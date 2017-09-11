@@ -146,7 +146,7 @@ namespace m0.ZeroCode
 
         void prepareImportList_FromString_import()
         {
-            Regex rgx = new Regex("import \"(?<name>.*)\" @(?<link>.*)\\r");
+            Regex rgx = new Regex("import[ ]+\"(?<name>.*)\"[ ]+@(?<link>.*[^ ])[ ]*\\r");
 
             foreach (Match match in rgx.Matches(text))
             {
@@ -169,7 +169,7 @@ namespace m0.ZeroCode
 
         void prepareImportList_FromString_importMeta()
         {
-            Regex rgx = new Regex("import meta \"(?<name>.*)\" @(?<link>.*)\\r");
+            Regex rgx = new Regex("import[ ]+meta[ ]+\"(?<name>.*)\"[ ]+@(?<link>.*[^ ])[ ]*\\r");
 
             foreach (Match match in rgx.Matches(text))
             {
@@ -209,7 +209,7 @@ namespace m0.ZeroCode
 
         void prepareImportList_FromString_importDirect()
         {
-            Regex rgx = new Regex("import direct @(?<link>.*)\\r");
+            Regex rgx = new Regex("import[ ]+direct[ ]+@(?<link>.*[^ ])[ ]*\\r");
 
             foreach (Match match in rgx.Matches(text))
             {
@@ -226,7 +226,7 @@ namespace m0.ZeroCode
 
         void prepareImportList_FromString_importDirectMeta()
         {
-            Regex rgx = new Regex("import direct meta @(?<link>.*)\\r");
+            Regex rgx = new Regex("import[ ]+direct[ ]+meta[ ]+@(?<link>.*[^ ])[ ]*\\r");
 
             foreach (Match match in rgx.Matches(text))
             {
@@ -247,9 +247,13 @@ namespace m0.ZeroCode
             lineNo = 0;
         }
 
-        string removeQuotas(string s)
+        string processAsQuoted(string s)
         {
-            return s.Substring(1, s.Length - 2);
+            s=s.Substring(1, s.Length - 2);
+
+            s=s.Replace("\\\"","\"");
+
+            return s;
         }
 
         string removeLinkPrefix(string s)
@@ -333,7 +337,7 @@ namespace m0.ZeroCode
                     string afterColon = currentLineInner.Trim();
 
                     if (afterColon[0] == '"') // if is new value
-                        return _baseVertex.AddVertex(null, removeQuotas(afterColon));
+                        return _baseVertex.AddVertex(null, processAsQuoted(afterColon));
 
                     if (afterColon[0] == '@')
                         return _baseVertex.AddEdge(null, processLink(removeLinkPrefix(afterColon))).To;
@@ -349,7 +353,7 @@ namespace m0.ZeroCode
                     IVertex meta = processLink(beforeColon);
 
                     if (afterColon[0] == '"') // if is new value
-                        return _baseVertex.AddVertex(meta, removeQuotas(afterColon));
+                        return _baseVertex.AddVertex(meta, processAsQuoted(afterColon));
                     else
                         return _baseVertex.AddEdge(meta, processLink(afterColon)).To;
                 }
@@ -369,7 +373,6 @@ namespace m0.ZeroCode
                 examinedKeywords = examinedKeywords_All;
 
                 _tryKeyword(s, 0, 0);
-
 
                 return true;
             }

@@ -731,7 +731,7 @@ namespace m0
             //
             // (?<left>) + (?<right>)
 
-            IVertex o_plus = smuk.AddVertex(keyword, "(?<left>) +(?<SUB>) (?<right>)");
+            /*IVertex o_plus = smuk.AddVertex(keyword, "(?<left>) +(?<SUB>) (?<right>)");
 
             IVertex o_plus_any = o_plus.AddVertex(any, "");
 
@@ -770,7 +770,7 @@ namespace m0
             IVertex o_call_any_param=o_call_any.AddVertex(smu.Get(@"MultiOperator\Expression"), "(?<expr>)");
 
             o_call_any_param.AddEdge(smb.Get(@"$KeywordManyRoot"), smb.Get(@"$Empty"));
-
+            */
         }
 
         void CreateSystemTextLanguageZeroCode()
