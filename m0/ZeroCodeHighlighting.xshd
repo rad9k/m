@@ -1,0 +1,105 @@
+﻿<?xml version="1.0"?>
+<SyntaxDefinition name="Custom Highlighting" xmlns="http://icsharpcode.net/sharpdevelop/syntaxdefinition/2008">
+<!--  <Color name="keyword" fontWeight="bold" foreground="#4F608F" />
+  <Color name="Keyword" fontWeight="bold" foreground="#2F4172" />
+  <Color name="DolarKeyword" foreground="#897BAF" />
+  <Color name="String" fontWeight="bold" foreground="#417C81" />
+  <Color name="Operator" fontWeight="bold" foreground="#AA8639" />
+  <Color name="DoubleColon" fontWeight="bold" foreground="#D4B26A" />-->
+
+  <Color name="grey"  foreground="#999999" />
+  <Color name="keyword" fontWeight="bold" foreground="#00C2CF" />
+  <Color name="Keyword" fontWeight="bold" foreground="#00C2CF" />
+  <Color name="DolarKeyword" foreground="#00008F" />
+  <Color name="String" fontWeight="bold" foreground="#6733D5" />
+  <Color name="Operator" fontWeight="bold" foreground="#FF0000" />
+  <Color name="DoubleColon" fontWeight="bold" foreground="#255867" />
+
+  
+
+  <!-- This is the main ruleset. -->
+  <RuleSet>
+    
+      <Rule color="grey">
+      \# (.)?
+    </Rule>
+
+    <Span color="String">
+      <Begin>"</Begin>
+      <End>"</End>
+      <RuleSet>
+        <!-- nested span for escape sequences -->
+        <Span begin="\\" end="." />
+      </RuleSet>
+    </Span>
+
+    <Keywords color="keyword">
+      <Word>import</Word>
+      <Word>import meta</Word>
+      <Word>import direct</Word>
+      <Word>import direct meta</Word>
+      <Word>class</Word>
+      <Word>attribute</Word>
+      <Word>association</Word>
+      <Word>aggregation</Word>
+      <Word>function</Word>
+      <Word>variable</Word>
+      <Word>foreach</Word>
+      <Word>while</Word>
+      <Word>if</Word>
+      <Word>else</Word>
+      <Word>switch</Word>
+      <Word>case</Word>
+      <Word>default</Word>
+      <Word>return</Word>
+      <Word>method</Word>
+    </Keywords>
+
+    <Keywords color="Keyword">
+      <Word>Class</Word>
+      <Word>Attribute</Word>
+      <Word>Association</Word>
+      <Word>Aggregation</Word>
+      <Word>Function</Word>
+      <Word>Variable</Word>
+      <Word>ForEach</Word>
+      <Word>While</Word>
+      <Word>Do</Word>
+      <Word>If</Word>
+      <Word>Else</Word>
+      <Word>Switch</Word>
+      <Word>Case</Word>
+      <Word>Default</Word>
+      <Word>Return</Word>
+      <Word>Method</Word>
+      <Word>Target</Word>
+      <Word>CallMessage</Word>
+      <Word>CallParameter</Word>
+      <Word>Expression</Word>
+      <Word>Type</Word>
+      <Word>InputParameter</Word>
+    </Keywords>
+
+    <Rule color="DoubleColon">
+      ::
+    </Rule>
+
+    <Rule color="Operator">
+      \[|]|\{|}|\+|-|\*|/|\?|\\|:|--|\(|\)|,
+    </Rule>
+
+    <Rule color="Operator">
+      &lt;-
+    </Rule>
+
+
+    <Rule color="grey">
+      &lt;|&gt;|\^
+    </Rule>
+
+    <Rule color="DolarKeyword">
+      \$[a-zA-Z]+
+    </Rule>
+
+  </RuleSet>
+</SyntaxDefinition>

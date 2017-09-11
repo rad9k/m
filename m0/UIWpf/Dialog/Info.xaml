@@ -1,0 +1,10 @@
+﻿<Window x:Class="m0.UIWpf.Dialog.Info"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="info" Height="300" Width="300" WindowStartupLocation="CenterOwner" Background="{StaticResource 0VeryLightHighlightBrush}" Foreground="{StaticResource 0ForegroundBrush}">
+    <Grid>
+        <TextBox x:Name="content" TextWrapping="WrapWithOverflow" IsReadOnly="True" Foreground="{StaticResource 0ForegroundBrush}" SelectionBrush="{StaticResource 0VeryLightHighlightBrush}" BorderBrush="{StaticResource 0VeryLightHighlightBrush}" Background="{StaticResource 0VeryLightHighlightBrush}" Margin="10,32,9.6,68" BorderThickness="0"/>
+        <Button Content="OK" HorizontalAlignment="Right" Height="33" Margin="0,0,10,9.8" VerticalAlignment="Bottom" Width="107" Click="Button_Click"/>
+
+    </Grid>
+</Window>

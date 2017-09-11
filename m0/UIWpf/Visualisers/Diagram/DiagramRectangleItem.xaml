@@ -1,0 +1,27 @@
+﻿<my:DiagramRectangleItemBase xmlns:Visualisers="clr-namespace:m0.UIWpf.Visualisers"  x:Class="m0.UIWpf.Visualisers.Diagram.DiagramRectangleItem"
+             xmlns:my="clr-namespace:m0.UIWpf.Visualisers.Diagram"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             mc:Ignorable="d" 
+             >
+
+    <Border x:Name="Frame"  BorderBrush="{StaticResource 0ForegroundBrush}" BorderThickness="1" HorizontalAlignment="Stretch"  VerticalAlignment="Stretch">
+        <Grid x:Name="TheGrid">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="17"/>
+                <RowDefinition Height="1"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>        
+                
+        <TextBlock Grid.Row="0" x:Name="Title" HorizontalAlignment="Center" Padding="3,0,3,0"></TextBlock>
+
+            <Border x:Name="InternalFrame" Grid.Row="1"  BorderThickness="0.5"/>
+
+        </Grid>
+
+    </Border>
+
+
+</my:DiagramRectangleItemBase>

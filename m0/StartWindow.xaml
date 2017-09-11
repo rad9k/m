@@ -1,0 +1,8 @@
+﻿<Window x:Class="m0.StartWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="StartWindow" Height="300" Width="300" WindowStartupLocation="CenterScreen">
+    <Grid Height="196" Width="236">
+        <Button Content="-0" Height="42" HorizontalAlignment="Left" Margin="59,73,0,0" Name="button1" VerticalAlignment="Top" Width="111" Click="button1_Click" />
+    </Grid>
+</Window>

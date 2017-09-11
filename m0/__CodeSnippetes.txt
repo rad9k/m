@@ -1,0 +1,69 @@
+﻿
+            /*for (int i = 0; i < 4; i++)
+            {
+                IStore s = new BinarySerializationStore("xxx.xx"+i, z, new AccessLevelEnum[] { AccessLevelEnum.NoRestrictions });
+
+                IVertex v=s.Root.AddVertex(null,"baza "+i);
+
+                for (int ii = 0; ii < 4; ii++)
+                    v.AddVertex(null, " dodatkowy " + ii);
+
+            }*/
+
+/*            for (int i = 0; i < 4; i++){
+                IVertex v = z.Stores[i + 1].Root["$Empty"];
+
+                for (int j = 0; j < 4; j++)
+                {
+                    v.AddEdge(null,z.Stores[j+1].Root["$Empty"]);
+                }
+            }
+            
+            z.CommitTransaction();
+            */
+
+            //IStore ss = new BinarySerializationStore("xxx.xx0", z, new AccessLevelEnum[] { AccessLevelEnum.NoRestrictions });
+
+
+            IStore s = new BinarySerializationStore("xxx.xx", z, new AccessLevelEnum[] { AccessLevelEnum.NoRestrictions });
+
+
+            IVertex lang=s.Root.AddVertex(null, "lang");
+
+            lang.AddVertex(null, "meta1");
+            lang.AddVertex(null, "meta2");
+
+            s.Root.Value = "graf";
+
+            for (int i = 0; i < 4; i++)
+            {
+                IVertex v = s.Root.AddVertex(GraphUtil.DeepFindOneByValue(s.Root,"meta1"), "poziom 1 / " + i);
+
+                for (int ii = 0; ii < 4; ii++)
+                    v.AddVertex(GraphUtil.DeepFindOneByValue(s.Root, "meta2"), "poziom 2 / " + ii);
+
+                v.AddVertex(null, "poziom 2 /n ");
+            }
+
+            IVertex program=z.Root.AddVertex(null, "program");
+            IVertex rezultat=z.Root.AddVertex(null, "rezultat");
+            IVertex meta = z.Root.AddVertex(null, "meta");
+
+            meta.AddVertex(null, "imie");
+            meta.AddVertex(null, "nazwisko");
+            meta.AddVertex(null, "posiada");
+            meta.AddVertex(null, "kolor");
+            
+            //IVertex xx=z.DefaultParser.Parse(program, "rot(imie:Magda,nazwisko:Tereszczuk,posiada:flaga(kolor:czerwony))");
+
+            //IVertex xx = z.DefaultParser.Parse(program, "rot{imie,imie,imie:Magda,imie:}");               
+
+            IVertex xx = z.DefaultParser.Parse(program, "\"ro\\\"t\"{test,\"t\\\"e\\\"s{t\",{\"t\\\"e\\\"s{t\"}}");               
+
+            z.DefaultExecuter.Execute(rezultat, meta, program);
+
+            Console.WriteLine(z.DefaultGraphCreationCodeGenerator.GraphCreationCodeGenerateAsString(program));
+
+            Console.WriteLine("***");
+
+            Console.WriteLine(z.DefaultGraphCreationCodeGenerator.GraphCreationCodeGenerateAsString(rezultat));

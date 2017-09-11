@@ -1,0 +1,9 @@
+﻿<Window x:Class="m0.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="MainWindow" Height="350" Width="525" xmlns:my="clr-namespace:m0.UIWpf">
+    <Grid>
+        <Button Content="JAZDA"    Name="button1" Click="button1_Click" Margin="0,0,255,12" />
+        <Button Content="DWA" Height="285" HorizontalAlignment="Left" Margin="278,12,0,0" Name="button2" VerticalAlignment="Top" Width="208" Click="button2_Click" />
+    </Grid>
+</Window>

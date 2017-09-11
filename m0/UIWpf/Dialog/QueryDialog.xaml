@@ -1,0 +1,45 @@
+﻿<UserControl xmlns:my="clr-namespace:m0.UIWpf.Visualisers"  x:Class="m0.UIWpf.Dialog.QueryDialog"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             mc:Ignorable="d" 
+             d:DesignHeight="300" d:DesignWidth="300" Background="{StaticResource 0BackgroundBrush}" Foreground="{StaticResource 0ForegroundBrush}">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition/>            
+            <RowDefinition/>
+            <RowDefinition Height="2*"/>            
+        </Grid.RowDefinitions>
+        
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>                
+                <RowDefinition Height="20"/>
+                <RowDefinition Height="4"/>
+            </Grid.RowDefinitions>
+
+            <TextBox Grid.Row="0" Name="Content" FontFamily="Consolas" HorizontalScrollBarVisibility="Visible" VerticalScrollBarVisibility="Visible" AcceptsReturn="True">
+            </TextBox>
+
+            <StackPanel Grid.Row="1" Orientation="Horizontal">
+                <Button Click="Run_Click">Run</Button>
+                <Button Click="Copy_Click">Copy to User Queries</Button>
+                <Button Click="Select_Click">Select All</Button>
+            </StackPanel>
+
+        </Grid>
+        
+        
+        <GridSplitter Background="{StaticResource 0ForegroundBrush}" ResizeDirection="Rows" Grid.Row="0" HorizontalAlignment="Stretch" VerticalAlignment="Bottom" Height="4"/>
+
+        <my:TreeVisualiser Grid.Row="1" x:Name="Queries"  DockPanel.Dock="Top"/>
+
+        <GridSplitter Background="{StaticResource 0ForegroundBrush}" ResizeDirection="Rows" Grid.Row="1" HorizontalAlignment="Stretch" VerticalAlignment="Bottom" Height="4"/>
+
+        <my:TreeVisualiser Grid.Row="2" x:Name="Resoult"  DockPanel.Dock="Top"/>
+
+        
+        
+    </Grid>
+</UserControl>

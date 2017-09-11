@@ -1,0 +1,10 @@
+﻿<Window x:Class="m0.UIWpf.Dialog.SelectDialogButton"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="" SizeToContent="WidthAndHeight" Background="{StaticResource 0VeryLightHighlightBrush}" Foreground="{StaticResource 0ForegroundBrush}" WindowStartupLocation="CenterOwner">
+    <Grid>
+        <Label Foreground="{StaticResource 0ForegroundBrush}" x:Name="Info" Content="Label" HorizontalAlignment="Left" Height="57" Margin="10,10,0,0" VerticalAlignment="Top" Width="174" FontSize="15"/>
+        <StackPanel x:Name="List" Orientation="Horizontal" Margin="10,45,9.333,12"/>
+        <!--<ListBox x:Name="List" Margin="10,39,9.6,48"/>-->
+    </Grid>
+</Window>
