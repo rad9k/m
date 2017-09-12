@@ -362,8 +362,8 @@ namespace m0.ZeroCode
             return null;
         }
 
-        List<IVertex> examinedKeywords_All;
-        List<IVertex> examinedKeywords;
+        Dictionary<IVertex,int> examinedKeywords_All;
+        Dictionary<IVertex,int> examinedKeywords;
 
         bool TryIsKeyword(string s)
         {
@@ -382,24 +382,24 @@ namespace m0.ZeroCode
 
         void _tryKeyword(string s, int sPos, int keywordPos)
         {
-            List<IVertex> newExaminedKeywords = new List<IVertex>();
+            Dictionary<IVertex,int> newExaminedKeywords = new List<IVertex>();
 
             foreach(IVertex v in examinedKeywords)
             {
-                //if (ZeroCodeUtil.tryStringMatch(((String)v.Value),keywordPos,"(?"))
+                if (ZeroCodeUtil.tryStringMatch(((String)v.Value),keywordPos,"(?"))
                 {
                 //    int x = 0;
                 }
 
                 String keyword = (String)v.Value;
 
-                if (keyword.Length<=keywordPos+1 && s[sPos] == keyword[keywordPos])
+                if (keyword.Length>keywordPos && s[sPos] == keyword[keywordPos])
                     newExaminedKeywords.Add(v);
             }
 
             examinedKeywords = newExaminedKeywords;
 
-            if (s.Length < sPos)
+            if (s.Length == ( sPos + 1))
                 return;
 
             _tryKeyword(s, sPos + 1, keywordPos + 1);
@@ -467,10 +467,10 @@ namespace m0.ZeroCode
         {
             setupHelpVariables();
 
-            examinedKeywords_All = new List<IVertex>();
+            examinedKeywords_All = new Dictionary<IVertex, int>();
 
             foreach (IEdge keyword in MinusZero.Instance.Root.GetAll(@"User\CurrentUser:\CodeSettings:\Keyword:\$Keyword:"))
-                examinedKeywords_All.Add(keyword.To);
+                examinedKeywords_All.Add(keyword.To,0);
         }
     }
 }
