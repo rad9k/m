@@ -328,7 +328,7 @@ namespace m0.ZeroCode
             else {
 
                 string currentLineInner = currentLineNoTabs.Substring(ZeroCodeCommon.CodeGraphVertexPrefix.Length, 
-                    currentLineNoTabs.Length - ZeroCodeCommon.CodeGraphVertexPrefix.Length - ZeroCodeCommon.CodeGraphVertexSuffix.Length);
+                   currentLineNoTabs.Length - ZeroCodeCommon.CodeGraphVertexPrefix.Length - ZeroCodeCommon.CodeGraphVertexSuffix.Length);
                     
                 int doubleColonPos = getDoubleColonPos(currentLineInner);
 
@@ -386,16 +386,21 @@ namespace m0.ZeroCode
 
             foreach(IVertex v in examinedKeywords)
             {
-                if (ZeroCodeUtil.tryStringMatch(((String)v.Value),keywordPos,"(?"))
+                //if (ZeroCodeUtil.tryStringMatch(((String)v.Value),keywordPos,"(?"))
                 {
-                    int x = 0;
+                //    int x = 0;
                 }
 
-                if (s[sPos + keywordPos] == ((String)v.Value)[keywordPos])
+                String keyword = (String)v.Value;
+
+                if (keyword.Length<=keywordPos+1 && s[sPos] == keyword[keywordPos])
                     newExaminedKeywords.Add(v);
             }
 
             examinedKeywords = newExaminedKeywords;
+
+            if (s.Length < sPos)
+                return;
 
             _tryKeyword(s, sPos + 1, keywordPos + 1);
         }
