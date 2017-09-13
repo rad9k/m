@@ -362,8 +362,16 @@ namespace m0.ZeroCode
             return null;
         }
 
-        Dictionary<IVertex,int> examinedKeywords_All;
-        Dictionary<IVertex,int> examinedKeywords;
+        enum keywordTryingState { keywordCharacter, expression}
+
+        class keywordTryingData
+        {
+            int pos;
+            keywordTryingState state;
+        }
+
+        Dictionary<IVertex, keywordTryingData> examinedKeywords_All;
+        Dictionary<IVertex, keywordTryingData> examinedKeywords;
 
         bool TryIsKeyword(string s)
         {
@@ -382,10 +390,12 @@ namespace m0.ZeroCode
 
         void _tryKeyword(string s, int sPos, int keywordPos)
         {
-            Dictionary<IVertex,int> newExaminedKeywords = new List<IVertex>();
+            Dictionary<IVertex, keywordTryingData> newExaminedKeywords = new Dictionary<IVertex, keywordTryingData>();
 
-            foreach(IVertex v in examinedKeywords)
+            foreach(IVertex v in examinedKeywords.Keys)
             {
+                int keywordPosition = examinedKeywords[v].pos +1;
+
                 if (ZeroCodeUtil.tryStringMatch(((String)v.Value),keywordPos,"(?"))
                 {
                 //    int x = 0;
@@ -393,8 +403,9 @@ namespace m0.ZeroCode
 
                 String keyword = (String)v.Value;
 
-                if (keyword.Length>keywordPos && s[sPos] == keyword[keywordPos])
-                    newExaminedKeywords.Add(v);
+                if (keyword.Length > keywordPos && s[sPos] == keyword[keywordPosition])
+                    newExaminedKeywords.Add(v, keywordPosition);
+                
             }
 
             examinedKeywords = newExaminedKeywords;
