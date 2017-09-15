@@ -366,8 +366,8 @@ namespace m0.ZeroCode
 
         class keywordTryingData
         {
-            int pos;
-            keywordTryingState state;
+            public int pos;
+            public keywordTryingState state;
         }
 
         Dictionary<IVertex, keywordTryingData> examinedKeywords_All;
@@ -404,8 +404,12 @@ namespace m0.ZeroCode
                 String keyword = (String)v.Value;
 
                 if (keyword.Length > keywordPos && s[sPos] == keyword[keywordPosition])
-                    newExaminedKeywords.Add(v, keywordPosition);
+                {
+                    keywordTryingData ktd = examinedKeywords[v];
+
+                    newExaminedKeywords.Add(v, ktd);
                 
+                }
             }
 
             examinedKeywords = newExaminedKeywords;
@@ -474,14 +478,24 @@ namespace m0.ZeroCode
             }
         }
 
+        private void PrepareExamineKeywords()
+        {
+            examinedKeywords_All = new Dictionary<IVertex, keywordTryingData>();
+
+            foreach (IEdge keyword in MinusZero.Instance.Root.GetAll(@"User\CurrentUser:\CodeSettings:\Keyword:\$Keyword:"))
+            {
+                keywordTryingData ktd = new keywordTryingData();
+
+                examinedKeywords_All.Add(keyword.To, 0);
+            }
+                
+        }
+
         public String2ZeroCodeGraphProcessing()
         {
             setupHelpVariables();
 
-            examinedKeywords_All = new Dictionary<IVertex, int>();
-
-            foreach (IEdge keyword in MinusZero.Instance.Root.GetAll(@"User\CurrentUser:\CodeSettings:\Keyword:\$Keyword:"))
-                examinedKeywords_All.Add(keyword.To,0);
+            PrepareExamineKeywords();
         }
     }
 }
