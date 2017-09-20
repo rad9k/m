@@ -366,19 +366,38 @@ namespace m0.ZeroCode
 
         class keywordTryingData
         {
+            public IVertex keywordVertex;
             public int pos;
             public keywordTryingState state;
+
+            Dictionary<string, object> subList = new Dictionary<string, object>();
+
+            public keywordTryingData(keywordTryingData source)
+            {
+                this.keywordVertex = source.keywordVertex;
+                this.pos = source.pos;
+                this.state = source.state;
+            }
         }
 
-        Dictionary<IVertex, keywordTryingData> examinedKeywords_All;
-        Dictionary<IVertex, keywordTryingData> examinedKeywords;
+        List<keywordTryingData> examinedKeywords_All;
+        List<keywordTryingData> examinedKeywords;
+
+        void copyExaminedKeywords(List<keywordTryingData> source, List<keywordTryingData> target)
+        {
+            foreach(keywordTryingData ktd in source)
+            {
+                keywordTryingData _ktd = new keywordTryingData(ktd);
+                target.Add(_ktd);
+            }              
+        }
 
         bool TryIsKeyword(string s)
         {
             if (!ZeroCodeUtil.tryStringMatch(s, 0, ZeroCodeCommon.CodeGraphVertexPrefix) 
                 && !ZeroCodeUtil.tryStringEndMatch(s, ZeroCodeCommon.CodeGraphVertexSuffix))
             {
-                examinedKeywords = examinedKeywords_All;
+                copyExaminedKeywords(examinedKeywords_All, examinedKeywords);
 
                 _tryKeyword(s, 0, 0);
 
@@ -486,7 +505,11 @@ namespace m0.ZeroCode
             {
                 keywordTryingData ktd = new keywordTryingData();
 
-                examinedKeywords_All.Add(keyword.To, 0);
+                ktd.pos = 0;
+
+                ktd.state = keywordTryingState.keywordCharacter;
+
+                examinedKeywords_All.Add(keyword.To, ktd);
             }
                 
         }
