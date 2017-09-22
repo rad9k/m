@@ -367,16 +367,38 @@ namespace m0.ZeroCode
         class keywordTryingData
         {
             public IVertex keywordVertex;
+            public String keyword;
             public int pos;
             public keywordTryingState state;
+            public string currentlyProcessedParameter;
 
-            Dictionary<string, object> subList = new Dictionary<string, object>();
+            Dictionary<string, object> sub = new Dictionary<string, object>();
 
             public keywordTryingData(keywordTryingData source)
             {
-                this.keywordVertex = source.keywordVertex;
-                this.pos = source.pos;
-                this.state = source.state;
+                keywordVertex = source.keywordVertex;
+                keyword = source.keyword;
+                pos = source.pos;
+                state = source.state;
+                currentlyProcessedParameter = source.currentlyProcessedParameter;
+            }
+
+            public keywordTryingData(IVertex k)
+            {
+                keywordVertex = k;
+                keyword = (String)keywordVertex.Value;
+
+                if (ZeroCodeUtil.tryStringMatch(keyword, 0, "(?"))
+                {
+                    pos = ZeroCodeUtil.getNextMatch(keyword, 2, ">)");
+                    currentlyProcessedParameter = keyword.Substring(3, pos - 3);
+                    state = keywordTryingState.expression;
+                }
+                else
+                {
+                    pos = 0;
+                    state = keywordTryingState.keywordCharacter;
+                }
             }
         }
 
@@ -397,6 +419,8 @@ namespace m0.ZeroCode
             if (!ZeroCodeUtil.tryStringMatch(s, 0, ZeroCodeCommon.CodeGraphVertexPrefix) 
                 && !ZeroCodeUtil.tryStringEndMatch(s, ZeroCodeCommon.CodeGraphVertexSuffix))
             {
+                examinedKeywords = new List<keywordTryingData>();
+
                 copyExaminedKeywords(examinedKeywords_All, examinedKeywords);
 
                 _tryKeyword(s, 0, 0);
@@ -409,32 +433,28 @@ namespace m0.ZeroCode
 
         void _tryKeyword(string s, int sPos, int keywordPos)
         {
-            Dictionary<IVertex, keywordTryingData> newExaminedKeywords = new Dictionary<IVertex, keywordTryingData>();
+            if (s.Length == sPos)
+                return;
 
-            foreach(IVertex v in examinedKeywords.Keys)
+            List<keywordTryingData> newExaminedKeywords = new List<keywordTryingData>();
+
+            foreach(keywordTryingData ktd in examinedKeywords)
             {
-                int keywordPosition = examinedKeywords[v].pos +1;
+                String keyword = (String)ktd.keywordVertex.Value;
 
-                if (ZeroCodeUtil.tryStringMatch(((String)v.Value),keywordPos,"(?"))
+                if (ZeroCodeUtil.tryStringMatch(keyword, keywordPos, "(?"))
                 {
-                //    int x = 0;
+                    //    int x = 0;
                 }
 
-                String keyword = (String)v.Value;
-
-                if (keyword.Length > keywordPos && s[sPos] == keyword[keywordPosition])
+                if (keyword.Length > keywordPos && s[sPos] == keyword[ktd.pos])
                 {
-                    keywordTryingData ktd = examinedKeywords[v];
-
-                    newExaminedKeywords.Add(v, ktd);
-                
+                    ktd.pos++;
+                    newExaminedKeywords.Add(ktd);
                 }
             }
 
             examinedKeywords = newExaminedKeywords;
-
-            if (s.Length == ( sPos + 1))
-                return;
 
             _tryKeyword(s, sPos + 1, keywordPos + 1);
         }
@@ -499,17 +519,13 @@ namespace m0.ZeroCode
 
         private void PrepareExamineKeywords()
         {
-            examinedKeywords_All = new Dictionary<IVertex, keywordTryingData>();
+            examinedKeywords_All = new List<keywordTryingData>();
 
             foreach (IEdge keyword in MinusZero.Instance.Root.GetAll(@"User\CurrentUser:\CodeSettings:\Keyword:\$Keyword:"))
             {
-                keywordTryingData ktd = new keywordTryingData();
+                keywordTryingData ktd = new keywordTryingData(keyword.To);
 
-                ktd.pos = 0;
-
-                ktd.state = keywordTryingState.keywordCharacter;
-
-                examinedKeywords_All.Add(keyword.To, ktd);
+                examinedKeywords_All.Add(ktd);
             }
                 
         }

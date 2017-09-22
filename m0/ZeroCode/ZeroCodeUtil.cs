@@ -36,7 +36,7 @@ namespace m0.ZeroCode
             return true;
         }
 
-        internal static bool tryStringEndMatch(string s, string toMatch)
+        public static bool tryStringEndMatch(string s, string toMatch)
         {
             int sLength = s.Length;
 
@@ -50,6 +50,21 @@ namespace m0.ZeroCode
                     return false;
 
             return true;
+        }
+
+        public static int getNextMatch(string s, int startFrom, string toMatch)
+        {
+            int pos = startFrom;
+
+            while ( (pos+toMatch.Length) < s.Length)
+            {
+                if (tryStringMatch(s, pos, toMatch))
+                    return pos;
+
+                pos++;
+            }
+
+            return -1;
         }
     }
 }
