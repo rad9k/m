@@ -373,7 +373,8 @@ namespace m0.ZeroCode
             public keywordTryingState state;
 
             public string currentlyProcessedParameter;
-            
+            public string afterParameterString;
+            public int sourceStringAfterWaitPosition;
 
             Dictionary<string, object> sub = new Dictionary<string, object>();
 
@@ -384,6 +385,8 @@ namespace m0.ZeroCode
                 currentPositionInKeyword = source.currentPositionInKeyword;
                 state = source.state;
                 currentlyProcessedParameter = source.currentlyProcessedParameter;
+                afterParameterString = source.afterParameterString;
+                sourceStringAfterWaitPosition = source.sourceStringAfterWaitPosition;
             }
 
             public keywordTryingData(IVertex k)
@@ -391,17 +394,8 @@ namespace m0.ZeroCode
                 keywordVertex = k;
                 keyword = (String)keywordVertex.Value;
 
-                if (ZeroCodeUtil.tryStringMatch(keyword, 0, "(?"))
-                {
-                    currentPositionInKeyword = ZeroCodeUtil.getNextMatch(keyword, 2, ">)");
-                    currentlyProcessedParameter = keyword.Substring(3, currentPositionInKeyword - 3);
-                    state = keywordTryingState.parameter;
-                }
-                else
-                {
-                    currentPositionInKeyword = 0;
-                    state = keywordTryingState.keywordCharacter;
-                }
+                currentPositionInKeyword = 0;
+                state = keywordTryingState.keywordCharacter; // that and rest of the fields will be updated in the _tryKeyword
             }
         }
 
@@ -439,32 +433,71 @@ namespace m0.ZeroCode
             if (s.Length == sPos)
                 return;
 
-            List<keywordTryingData> newExaminedKeywords = new List<keywordTryingData>();
+            bool shallProceed = true;
 
-            foreach(keywordTryingData ktd in examinedKeywords)
+            while (shallProceed)
             {
-                String keyword = (String)ktd.keywordVertex.Value;
 
-                if (ZeroCodeUtil.tryStringMatch(keyword, ktd.currentPositionInKeyword, "(?"))
-                {
-                    int endPos = ZeroCodeUtil.getNextMatch(keyword, 2, ">)");
-                    ktd.currentlyProcessedParameter = keyword.Substring(ktd.currentPositionInKeyword + 3, endPos - ktd.currentPositionInKeyword - 3);
-                    ktd.state = keywordTryingState.parameter;
-                }
+                List<keywordTryingData> newExaminedKeywords = new List<keywordTryingData>();
 
-                if (ktd.state == keywordTryingState.keywordCharacter)
+                foreach (keywordTryingData ktd in examinedKeywords)
                 {
-                    if (keyword.Length > ktd.currentPositionInKeyword && s[sPos] == keyword[ktd.currentPositionInKeyword])
+                    String keyword = (String)ktd.keywordVertex.Value;
+
+                    if (ZeroCodeUtil.tryStringMatch(keyword, ktd.currentPositionInKeyword, "(?<"))
                     {
-                        ktd.currentPositionInKeyword++;
-                        newExaminedKeywords.Add(ktd);
+                        int begCurrentPositionInKeyword = ktd.currentPositionInKeyword;
+
+                        ktd.currentPositionInKeyword = ZeroCodeUtil.getNextMatch(keyword, ktd.currentPositionInKeyword + 2, ">)") + 2;
+                        ktd.currentlyProcessedParameter = keyword.Substring(begCurrentPositionInKeyword + 3, ktd.currentPositionInKeyword - 5);
+                        ktd.afterParameterString = ZeroCodeUtil.getNextCharacterPartFromKeyword(keyword, ktd.currentPositionInKeyword);
+                        ktd.state = keywordTryingState.parameter;
+                    }
+
+                    if (ktd.state == keywordTryingState.keywordCharacter)
+                    {
+                        if (keyword.Length > ktd.currentPositionInKeyword && s[sPos] == keyword[ktd.currentPositionInKeyword])
+                        {
+                            ktd.currentPositionInKeyword++;
+                            newExaminedKeywords.Add(ktd);
+                        }
                     }
                 }
+
+                // store found keyword parameters
+
+                Dictionary<string, object> foundParameters = new Dictionary<string, object>();
+
+                // check if anything fits info keyword parameters
+                foreach (keywordTryingData ktd in examinedKeywords)
+                    if (ktd.state == keywordTryingState.parameter)
+                    {
+                        if (foundParameters.ContainsKey(ktd.afterParameterString))
+                        {
+
+                        }
+                        else
+                        {
+                            int sPosAfterParameter = ZeroCodeUtil.getNextMatch(s, sPos, ktd.afterParameterString);
+
+                            if (sPosAfterParameter != -1)
+                            {
+                                object found = null;
+
+                                found = s.Substring(sPos, sPosAfterParameter - sPos);
+
+                                foundParameters.Add(ktd.afterParameterString, found);
+                            }
+                        }
+                    }
+
+                examinedKeywords = newExaminedKeywords;
+
+                sPos++;
+
+                if (s.Length == sPos)
+                    shallProceed = false;
             }
-
-            examinedKeywords = newExaminedKeywords;
-
-            _tryKeyword(s, sPos + 1);
         }
 
         int getDoubleColonPos(string s)

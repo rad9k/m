@@ -66,5 +66,15 @@ namespace m0.ZeroCode
 
             return -1;
         }
+
+        public static string getNextCharacterPartFromKeyword(string keyword, int startFrom)
+        {
+            int nextParameterPos = getNextMatch(keyword, startFrom, "(?<");
+
+            if (nextParameterPos != -1)
+                return keyword.Substring(startFrom, nextParameterPos - startFrom);
+
+            return keyword.Substring(startFrom);
+        }
     }
 }

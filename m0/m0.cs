@@ -731,7 +731,7 @@ namespace m0
             //
             // (?<left>) + (?<right>)
 
-            /*IVertex o_plus = smuk.AddVertex(keyword, "(?<left>) +(?<SUB>) (?<right>)");
+            IVertex o_plus = smuk.AddVertex(keyword, "(?<left>) +(?<SUB>) (?<right>)");
 
             IVertex o_plus_any = o_plus.AddVertex(any, "");
 
@@ -740,7 +740,7 @@ namespace m0
             o_plus_any.AddVertex(smu.Get(@"DoubleOperator\LeftExpression"), "(?<left>)");
 
             o_plus_any.AddVertex(smu.Get(@"DoubleOperator\RightExpression"), "(?<right>)");
-            
+            /*
             // -
             //
             // (?<left>) - (?<right>)
