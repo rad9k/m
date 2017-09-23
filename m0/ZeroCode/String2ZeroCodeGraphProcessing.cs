@@ -362,15 +362,18 @@ namespace m0.ZeroCode
             return null;
         }
 
-        enum keywordTryingState { keywordCharacter, parameter}
+        enum keywordTryingState { keywordCharacter, parameter, waiting}
 
         class keywordTryingData
         {
             public IVertex keywordVertex;
             public String keyword;
-            public int positionInKeyword;
+
+            public int currentPositionInKeyword;
             public keywordTryingState state;
+
             public string currentlyProcessedParameter;
+            
 
             Dictionary<string, object> sub = new Dictionary<string, object>();
 
@@ -378,7 +381,7 @@ namespace m0.ZeroCode
             {
                 keywordVertex = source.keywordVertex;
                 keyword = source.keyword;
-                positionInKeyword = source.positionInKeyword;
+                currentPositionInKeyword = source.currentPositionInKeyword;
                 state = source.state;
                 currentlyProcessedParameter = source.currentlyProcessedParameter;
             }
@@ -390,13 +393,13 @@ namespace m0.ZeroCode
 
                 if (ZeroCodeUtil.tryStringMatch(keyword, 0, "(?"))
                 {
-                    positionInKeyword = ZeroCodeUtil.getNextMatch(keyword, 2, ">)");
-                    currentlyProcessedParameter = keyword.Substring(3, positionInKeyword - 3);
+                    currentPositionInKeyword = ZeroCodeUtil.getNextMatch(keyword, 2, ">)");
+                    currentlyProcessedParameter = keyword.Substring(3, currentPositionInKeyword - 3);
                     state = keywordTryingState.parameter;
                 }
                 else
                 {
-                    positionInKeyword = 0;
+                    currentPositionInKeyword = 0;
                     state = keywordTryingState.keywordCharacter;
                 }
             }
@@ -442,18 +445,18 @@ namespace m0.ZeroCode
             {
                 String keyword = (String)ktd.keywordVertex.Value;
 
-                if (ZeroCodeUtil.tryStringMatch(keyword, ktd.positionInKeyword, "(?"))
+                if (ZeroCodeUtil.tryStringMatch(keyword, ktd.currentPositionInKeyword, "(?"))
                 {
                     int endPos = ZeroCodeUtil.getNextMatch(keyword, 2, ">)");
-                    ktd.currentlyProcessedParameter = keyword.Substring(ktd.positionInKeyword + 3, endPos - ktd.positionInKeyword - 3);
+                    ktd.currentlyProcessedParameter = keyword.Substring(ktd.currentPositionInKeyword + 3, endPos - ktd.currentPositionInKeyword - 3);
                     ktd.state = keywordTryingState.parameter;
                 }
 
                 if (ktd.state == keywordTryingState.keywordCharacter)
                 {
-                    if (keyword.Length > ktd.positionInKeyword && s[sPos] == keyword[ktd.positionInKeyword])
+                    if (keyword.Length > ktd.currentPositionInKeyword && s[sPos] == keyword[ktd.currentPositionInKeyword])
                     {
-                        ktd.positionInKeyword++;
+                        ktd.currentPositionInKeyword++;
                         newExaminedKeywords.Add(ktd);
                     }
                 }
