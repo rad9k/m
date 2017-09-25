@@ -449,7 +449,7 @@ namespace m0.ZeroCode
                         int begCurrentPositionInKeyword = ktd.currentPositionInKeyword;
 
                         ktd.currentPositionInKeyword = ZeroCodeUtil.getNextMatch(keyword, ktd.currentPositionInKeyword + 2, ">)") + 2;
-                        ktd.currentlyProcessedParameter = keyword.Substring(begCurrentPositionInKeyword + 3, ktd.currentPositionInKeyword - 5);
+                        ktd.currentlyProcessedParameter = keyword.Substring(begCurrentPositionInKeyword + 3, ktd.currentPositionInKeyword - begCurrentPositionInKeyword - 5);
                         ktd.afterParameterString = ZeroCodeUtil.getNextCharacterPartFromKeyword(keyword, ktd.currentPositionInKeyword);
                         ktd.state = keywordTryingState.parameter;
                     }
