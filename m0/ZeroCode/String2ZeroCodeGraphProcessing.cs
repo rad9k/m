@@ -372,11 +372,11 @@ namespace m0.ZeroCode
             public int currentPositionInKeyword;
             public keywordTryingState state;
 
-            public string currentlyProcessedParameter;
+            public string currentlyProcessedParameterName;
             public string afterParameterString;
             public int sourceStringAfterWaitPosition;
 
-            Dictionary<string, object> sub = new Dictionary<string, object>();
+            public Dictionary<string, object> sub = new Dictionary<string, object>();
 
             public keywordTryingData(keywordTryingData source)
             {
@@ -384,7 +384,7 @@ namespace m0.ZeroCode
                 keyword = source.keyword;
                 currentPositionInKeyword = source.currentPositionInKeyword;
                 state = source.state;
-                currentlyProcessedParameter = source.currentlyProcessedParameter;
+                currentlyProcessedParameterName = source.currentlyProcessedParameterName;
                 afterParameterString = source.afterParameterString;
                 sourceStringAfterWaitPosition = source.sourceStringAfterWaitPosition;
             }
@@ -444,12 +444,13 @@ namespace m0.ZeroCode
                 {
                     String keyword = (String)ktd.keywordVertex.Value;
 
-                    if (ZeroCodeUtil.tryStringMatch(keyword, ktd.currentPositionInKeyword, "(?<"))
+                    if (ZeroCodeUtil.tryStringMatch(keyword, ktd.currentPositionInKeyword, "(?<")
+                        && ktd.state == keywordTryingState.keywordCharacter)
                     {
                         int begCurrentPositionInKeyword = ktd.currentPositionInKeyword;
 
                         ktd.currentPositionInKeyword = ZeroCodeUtil.getNextMatch(keyword, ktd.currentPositionInKeyword + 2, ">)") + 2;
-                        ktd.currentlyProcessedParameter = keyword.Substring(begCurrentPositionInKeyword + 3, ktd.currentPositionInKeyword - begCurrentPositionInKeyword - 5);
+                        ktd.currentlyProcessedParameterName = keyword.Substring(begCurrentPositionInKeyword + 3, ktd.currentPositionInKeyword - begCurrentPositionInKeyword - 5);
                         ktd.afterParameterString = ZeroCodeUtil.getNextCharacterPartFromKeyword(keyword, ktd.currentPositionInKeyword);
                         ktd.state = keywordTryingState.parameter;
                     }
@@ -462,6 +463,14 @@ namespace m0.ZeroCode
                             newExaminedKeywords.Add(ktd);
                         }
                     }
+
+                    if (ktd.state == keywordTryingState.waiting)
+                    {
+                        newExaminedKeywords.Add(ktd);
+
+                        if (sPos == ktd.currentPositionInKeyword)
+                            ktd.state = keywordTryingState.keywordCharacter;
+                    }
                 }
 
                 // store found keyword parameters
@@ -472,10 +481,10 @@ namespace m0.ZeroCode
                 foreach (keywordTryingData ktd in examinedKeywords)
                     if (ktd.state == keywordTryingState.parameter)
                     {
-                        if (foundParameters.ContainsKey(ktd.afterParameterString))
-                        {
+                        object foundParameter = null;
 
-                        }
+                        if (foundParameters.ContainsKey(ktd.afterParameterString))
+                            foundParameter = foundParameters[ktd.afterParameterString];
                         else
                         {
                             int sPosAfterParameter = ZeroCodeUtil.getNextMatch(s, sPos, ktd.afterParameterString);
@@ -487,8 +496,20 @@ namespace m0.ZeroCode
                                 found = s.Substring(sPos, sPosAfterParameter - sPos);
 
                                 foundParameters.Add(ktd.afterParameterString, found);
+
+                                foundParameter = found;
                             }
                         }
+
+                        if (foundParameter != null)
+                        {
+                            // adding as string
+                            ktd.sub.Add(ktd.currentlyProcessedParameterName, foundParameter);
+
+                            newExaminedKeywords.Add(ktd);
+                        }
+
+                        ktd.state = keywordTryingState.waiting;
                     }
 
                 examinedKeywords = newExaminedKeywords;
