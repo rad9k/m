@@ -369,8 +369,10 @@ namespace m0.ZeroCode
             public IVertex keywordVertex;
             public String keyword;
 
-            public int currentPositionInKeyword;
             public keywordTryingState state;
+            public int currentPositionInKeyword;
+            public int untilPositionWaiting;
+            
 
             public string currentlyProcessedParameterName;
             public string afterParameterString;
@@ -442,6 +444,14 @@ namespace m0.ZeroCode
                 {
                     String keyword = (String)ktd.keywordVertex.Value;
 
+                    if (ktd.state == keywordTryingState.waiting)
+                    {                     
+                        if (sPos == ktd.untilPositionWaiting)
+                            ktd.state = keywordTryingState.keywordCharacter;
+                        else
+                            newExaminedKeywords.Add(ktd);
+                    }
+
                     if (ZeroCodeUtil.tryStringMatch(keyword, ktd.currentPositionInKeyword, "(?<")
                         && ktd.state == keywordTryingState.keywordCharacter)
                     {
@@ -460,15 +470,7 @@ namespace m0.ZeroCode
                             ktd.currentPositionInKeyword++;
                             newExaminedKeywords.Add(ktd);
                         }
-                    }
-
-                    if (ktd.state == keywordTryingState.waiting)
-                    {
-                        newExaminedKeywords.Add(ktd);
-
-                        if (sPos == ktd.currentPositionInKeyword)
-                            ktd.state = keywordTryingState.keywordCharacter;
-                    }
+                    }                    
                 }
 
                 // store found keyword parameters
@@ -489,7 +491,7 @@ namespace m0.ZeroCode
 
                             if (sPosAfterParameter != -1)
                             {
-                                ktd.currentPositionInKeyword = sPosAfterParameter;
+                                ktd.untilPositionWaiting = sPosAfterParameter;
 
                                 object found = null;
 
