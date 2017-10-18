@@ -374,7 +374,6 @@ namespace m0.ZeroCode
 
             public string currentlyProcessedParameterName;
             public string afterParameterString;
-            public int sourceStringAfterWaitPosition;
 
             public Dictionary<string, object> sub = new Dictionary<string, object>();
 
@@ -386,7 +385,6 @@ namespace m0.ZeroCode
                 state = source.state;
                 currentlyProcessedParameterName = source.currentlyProcessedParameterName;
                 afterParameterString = source.afterParameterString;
-                sourceStringAfterWaitPosition = source.sourceStringAfterWaitPosition;
             }
 
             public keywordTryingData(IVertex k)
@@ -491,6 +489,8 @@ namespace m0.ZeroCode
 
                             if (sPosAfterParameter != -1)
                             {
+                                ktd.currentPositionInKeyword = sPosAfterParameter;
+
                                 object found = null;
 
                                 found = s.Substring(sPos, sPosAfterParameter - sPos);
