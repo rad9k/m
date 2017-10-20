@@ -726,12 +726,14 @@ namespace m0
             whwh.AddEdge(smb.Get(@"Vertex\$Is"), smu.Get("While"));
 
             whwh.AddVertex(smu.Get(@"While\Test"), "(?<test>)");
-                        
+
             // +
             //
             // (?<left>) + (?<right>)
 
-            IVertex o_plus = smuk.AddVertex(keyword, "(?<left>) +(?<SUB>) (?<right>)");
+            // IVertex o_plus = smuk.AddVertex(keyword, "(?<left>) +(?<SUB>) (?<right>)");
+
+            IVertex o_plus = smuk.AddVertex(keyword, "(?<left>) + (?<right>)");
 
             IVertex o_plus_any = o_plus.AddVertex(any, "");
 
