@@ -56,7 +56,7 @@ namespace m0.ZeroCode
         {
             int pos = startFrom;
 
-            while ( (pos+toMatch.Length) < s.Length)
+            while ( (pos+toMatch.Length) <= s.Length)
             {
                 if (tryStringMatch(s, pos, toMatch))
                     return pos;

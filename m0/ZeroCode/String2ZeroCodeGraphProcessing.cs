@@ -487,7 +487,11 @@ namespace m0.ZeroCode
                             foundParameter = foundParameters[ktd.afterParameterString];
                         else
                         {
-                            int sPosAfterParameter = ZeroCodeUtil.getNextMatch(s, sPos, ktd.afterParameterString);
+                            int sPosAfterParameter = -1;
+
+                            if(ktd.afterParameterString=="")
+                            else
+                                ZeroCodeUtil.getNextMatch(s, sPos, ktd.afterParameterString);
 
                             if (sPosAfterParameter != -1)
                             {
