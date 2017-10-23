@@ -422,7 +422,13 @@ namespace m0.ZeroCode
 
                 _tryKeyword(s, 0);
 
-                return true;
+                if (examinedKeywords.Count() > 0)
+                {
+                    return true;
+                }
+
+
+                return false;
             }
             else
                 return false;
@@ -437,7 +443,6 @@ namespace m0.ZeroCode
 
             while (shallProceed)
             {
-
                 List<keywordTryingData> newExaminedKeywords = new List<keywordTryingData>();
 
                 foreach (keywordTryingData ktd in examinedKeywords)
@@ -489,9 +494,9 @@ namespace m0.ZeroCode
                         {
                             int sPosAfterParameter = -1;
 
-                            if(ktd.afterParameterString=="")
-                            else
-                                ZeroCodeUtil.getNextMatch(s, sPos, ktd.afterParameterString);
+                            // if(ktd.afterParameterString=="")
+                            //else
+                            sPosAfterParameter=ZeroCodeUtil.getNextMatch(s, sPos, ktd.afterParameterString);
 
                             if (sPosAfterParameter != -1)
                             {
