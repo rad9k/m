@@ -323,7 +323,7 @@ namespace m0.ZeroCode
         {
             if (TryIsKeyword(currentLineNoTabs))
             {
-
+                AddKeywordVertex(_baseVertex, examinedKeywords);
             }
             else {
 
@@ -420,13 +420,10 @@ namespace m0.ZeroCode
 
                 copyExaminedKeywords(examinedKeywords_All, examinedKeywords);
 
-                _tryKeyword(s, 0);
+                _tryIsKeyword(s, 0);
 
                 if (examinedKeywords.Count() > 0)
-                {
                     return true;
-                }
-
 
                 return false;
             }
@@ -434,7 +431,7 @@ namespace m0.ZeroCode
                 return false;
         }
 
-        void _tryKeyword(string s, int sPos)
+        void _tryIsKeyword(string s, int sPos)
         {
             if (s.Length == sPos)
                 return;
@@ -532,11 +529,40 @@ namespace m0.ZeroCode
             }
         }
 
+        IVertex AddKeywordVertex(IVertex parent, List<keywordTryingData> keywords)
+        {
+            if (keywords.Count > 1)
+            {
+                int x = 0;
+            }
+
+            return _AddKeywordVertex(parent,keywords[0],keywords[0].keywordVertex);
+        }
+
+        IVertex _AddKeywordVertex(IVertex parent, keywordTryingData ktd, IVertex keywordAddingVertex)
+        {
+            IVertex nv=null;
+
+            foreach (IEdge e in keywordAddingVertex) {
+                if (ZeroCodeUtil.tryStringMatch((string)e.To.Value, 0, "(?<"))
+                {
+                    string name = ZeroCodeUtil.getRegexp((string)e.To.Value, Regex.Escape("(?<") + "(?<EXTRACT>.*)" + Regex.Escape(">)"));
+
+                    nv = parent.AddVertex(e.Meta, ktd.sub[name]);
+                }
+                else
+                    nv=parent.AddVertex(e.Meta, e.To);
+
+                _AddKeywordVertex(nv, ktd, e.To);
+            }
+
+            return nv;
+        }
+
         int getDoubleColonPos(string s)
         {
             return s.IndexOf("::");            
         }
-
 
         public IVertex Process(IVertex _baseVertex, string _text)
         {

@@ -3,11 +3,25 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Text.RegularExpressions;
 
 namespace m0.ZeroCode
 {
     public class ZeroCodeUtil
     {
+
+        public static string getRegexp(string s, string r)
+        {
+            Regex rgx = new Regex(r);
+
+            foreach (Match match in rgx.Matches(s))
+            {
+                return match.Groups["EXTRACT"].Value;
+            }
+
+            return null;
+        }
+
         public static string getQueryFirstAndSecondPart(string query, out string secondPart)
         {
             secondPart = null;
