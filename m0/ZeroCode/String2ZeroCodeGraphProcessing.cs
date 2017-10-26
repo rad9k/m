@@ -17,11 +17,13 @@ namespace m0.ZeroCode
         int pos;
         int lineNo;
 
+        int firstCharacterPos;
+
         string currentLine;
         string currentLineNoTabs;
 
-        int currentLineFirstCharacterPos;
-        int prevFirstCharacterPos;
+        int firstCharacterPosRelativeToCurrentLine;
+        int prevFirstCharacterPosRelativeToCurrentLine;
 
         //
 
@@ -35,8 +37,8 @@ namespace m0.ZeroCode
                 return true;
             }
 
-            prevFirstCharacterPos = currentLineFirstCharacterPos;
-            currentLineFirstCharacterPos = 0;
+            prevFirstCharacterPosRelativeToCurrentLine = firstCharacterPosRelativeToCurrentLine;
+            firstCharacterPosRelativeToCurrentLine = 0;
 
             if (pos >= text.Length)
                 return false;
@@ -52,7 +54,8 @@ namespace m0.ZeroCode
                 if (c != '\t' && !endOfTabsReached)
                 {
                     endOfTabsReached = true;
-                    currentLineFirstCharacterPos = pos-begPos;
+                    firstCharacterPosRelativeToCurrentLine = pos-begPos;
+                    firstCharacterPos = pos;
                 }
 
                 pos++;
@@ -64,7 +67,7 @@ namespace m0.ZeroCode
             else
                 currentLine = text.Substring(begPos, pos - begPos);
 
-            currentLineNoTabs = currentLine.Substring(currentLineFirstCharacterPos).Trim(); // can try witchout Trim
+            currentLineNoTabs = currentLine.Substring(firstCharacterPosRelativeToCurrentLine).Trim(); // can try witchout Trim
 
             lineNo++;
 
@@ -244,6 +247,7 @@ namespace m0.ZeroCode
         void initVariables()
         {
             pos = 0;
+            firstCharacterPos = 0;
             lineNo = 0;
         }
 
@@ -268,7 +272,7 @@ namespace m0.ZeroCode
 
         IVertex queryMetaMode(IVertex baseVertex, string query)
         {
-            return baseVertex.Get(query);
+            return baseVertex.Get(query); // TODO: to be corected
         }   
 
         IVertex processLink(string link)
@@ -591,23 +595,23 @@ namespace m0.ZeroCode
 
             while (ParseLine())
             {
-                if (currentLineFirstCharacterPos > prevFirstCharacterPos)
+                if (firstCharacterPosRelativeToCurrentLine > prevFirstCharacterPosRelativeToCurrentLine)
                 {
-                    int prevFirstCharacterPos_memory = prevFirstCharacterPos;
+                    int prevFirstCharacterPos_memory = prevFirstCharacterPosRelativeToCurrentLine;
                     //int currentLineFirstCharacterPos_memory = currentLineFirstCharacterPos;
 
                     Process_reccurent(prevVertex);
 
-                    prevFirstCharacterPos = prevFirstCharacterPos_memory;
+                    prevFirstCharacterPosRelativeToCurrentLine = prevFirstCharacterPos_memory;
                     // currentLineFirstCharacterPos = currentLineFirstCharacterPos_memory;
 
                     continue;
                 }
 
-                if (currentLineFirstCharacterPos == prevFirstCharacterPos)
+                if (firstCharacterPosRelativeToCurrentLine == prevFirstCharacterPosRelativeToCurrentLine)
                     prevVertex = ProcessLine(_baseVertex);
 
-                if (currentLineFirstCharacterPos < prevFirstCharacterPos)
+                if (firstCharacterPosRelativeToCurrentLine < prevFirstCharacterPosRelativeToCurrentLine)
                 {
                     skipParse = true;
 
