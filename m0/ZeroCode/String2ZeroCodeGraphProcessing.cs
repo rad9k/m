@@ -17,13 +17,13 @@ namespace m0.ZeroCode
         int pos;
         int lineNo;
 
-        int firstCharacterPos;
+        int firstCharacterPos_relativeToText; 
 
         string currentLine;
         string currentLineNoTabs;
 
-        int firstCharacterPosRelativeToCurrentLine;
-        int prevFirstCharacterPosRelativeToCurrentLine;
+        int firstCharacterPos_relativeToCurrentLine;
+        int prevFirstCharacterPos_relativeToCurrentLine;
 
         //
 
@@ -37,8 +37,8 @@ namespace m0.ZeroCode
                 return true;
             }
 
-            prevFirstCharacterPosRelativeToCurrentLine = firstCharacterPosRelativeToCurrentLine;
-            firstCharacterPosRelativeToCurrentLine = 0;
+            prevFirstCharacterPos_relativeToCurrentLine = firstCharacterPos_relativeToCurrentLine;
+            firstCharacterPos_relativeToCurrentLine = 0;
 
             if (pos >= text.Length)
                 return false;
@@ -54,8 +54,8 @@ namespace m0.ZeroCode
                 if (c != '\t' && !endOfTabsReached)
                 {
                     endOfTabsReached = true;
-                    firstCharacterPosRelativeToCurrentLine = pos-begPos;
-                    firstCharacterPos = pos;
+                    firstCharacterPos_relativeToCurrentLine = pos-begPos;
+                    firstCharacterPos_relativeToText = pos;
                 }
 
                 pos++;
@@ -67,7 +67,7 @@ namespace m0.ZeroCode
             else
                 currentLine = text.Substring(begPos, pos - begPos);
 
-            currentLineNoTabs = currentLine.Substring(firstCharacterPosRelativeToCurrentLine).Trim(); // can try witchout Trim
+            currentLineNoTabs = currentLine.Substring(firstCharacterPos_relativeToCurrentLine).Trim(); // can try witchout Trim
 
             lineNo++;
 
@@ -247,7 +247,7 @@ namespace m0.ZeroCode
         void initVariables()
         {
             pos = 0;
-            firstCharacterPos = 0;
+            firstCharacterPos_relativeToText = 0;
             lineNo = 0;
         }
 
@@ -381,6 +381,8 @@ namespace m0.ZeroCode
             public string currentlyProcessedParameterName;
             public string afterParameterString;
 
+            public bool matched;
+
             public Dictionary<string, object> sub = new Dictionary<string, object>();
 
             public keywordTryingData(keywordTryingData source)
@@ -424,7 +426,7 @@ namespace m0.ZeroCode
 
                 copyExaminedKeywords(examinedKeywords_All, examinedKeywords);
 
-                _tryIsKeyword(s, 0);
+                _tryIsKeyword(firstCharacterPos_relativeToText);
 
                 if (examinedKeywords.Count() > 0)
                     return true;
@@ -435,9 +437,9 @@ namespace m0.ZeroCode
                 return false;
         }
 
-        void _tryIsKeyword(string s, int sPos)
+        void _tryIsKeyword(int sPos)
         {
-            if (s.Length == sPos)
+            if (sPos == text.Length)
                 return;
 
             bool shallProceed = true;
@@ -471,9 +473,13 @@ namespace m0.ZeroCode
 
                     if (ktd.state == keywordTryingState.keywordCharacter)
                     {
-                        if (keyword.Length > ktd.currentPositionInKeyword && s[sPos] == keyword[ktd.currentPositionInKeyword])
+                        if (keyword.Length > ktd.currentPositionInKeyword && text[sPos] == keyword[ktd.currentPositionInKeyword])
                         {
-                            ktd.currentPositionInKeyword++;
+                            if (ktd.keyword.Length == ktd.currentPositionInKeyword + 1)
+                                ktd.matched = true;
+                            else
+                                ktd.currentPositionInKeyword++;
+
                             newExaminedKeywords.Add(ktd);
                         }
                     }                    
@@ -497,7 +503,7 @@ namespace m0.ZeroCode
 
                             // if(ktd.afterParameterString=="")
                             //else
-                            sPosAfterParameter=ZeroCodeUtil.getNextMatch(s, sPos, ktd.afterParameterString);
+                            sPosAfterParameter=ZeroCodeUtil.getNextMatch(text, sPos, ktd.afterParameterString);
 
                             if (sPosAfterParameter != -1)
                             {
@@ -505,7 +511,7 @@ namespace m0.ZeroCode
 
                                 object found = null;
 
-                                found = s.Substring(sPos, sPosAfterParameter - sPos);
+                                found = text.Substring(sPos, sPosAfterParameter - sPos);
 
                                 foundParameters.Add(ktd.afterParameterString, found);
 
@@ -528,8 +534,16 @@ namespace m0.ZeroCode
 
                 sPos++;
 
-                if (s.Length == sPos)
-                    shallProceed = false;
+                if (text[sPos] == '\r' || text[sPos] == '\n')
+                    foreach (keywordTryingData ktd in examinedKeywords)
+                        if (ktd.matched)
+                            shallProceed = false; // end of line and one of keywords matched
+
+                if (sPos == text.Length)
+                    shallProceed = false; // end of text
+
+                if (examinedKeywords.Count == 0)
+                    shallProceed = false; // no keyword found
             }
         }
 
@@ -595,23 +609,23 @@ namespace m0.ZeroCode
 
             while (ParseLine())
             {
-                if (firstCharacterPosRelativeToCurrentLine > prevFirstCharacterPosRelativeToCurrentLine)
+                if (firstCharacterPos_relativeToCurrentLine > prevFirstCharacterPos_relativeToCurrentLine)
                 {
-                    int prevFirstCharacterPos_memory = prevFirstCharacterPosRelativeToCurrentLine;
+                    int prevFirstCharacterPos_memory = prevFirstCharacterPos_relativeToCurrentLine;
                     //int currentLineFirstCharacterPos_memory = currentLineFirstCharacterPos;
 
                     Process_reccurent(prevVertex);
 
-                    prevFirstCharacterPosRelativeToCurrentLine = prevFirstCharacterPos_memory;
+                    prevFirstCharacterPos_relativeToCurrentLine = prevFirstCharacterPos_memory;
                     // currentLineFirstCharacterPos = currentLineFirstCharacterPos_memory;
 
                     continue;
                 }
 
-                if (firstCharacterPosRelativeToCurrentLine == prevFirstCharacterPosRelativeToCurrentLine)
+                if (firstCharacterPos_relativeToCurrentLine == prevFirstCharacterPos_relativeToCurrentLine)
                     prevVertex = ProcessLine(_baseVertex);
 
-                if (firstCharacterPosRelativeToCurrentLine < prevFirstCharacterPosRelativeToCurrentLine)
+                if (firstCharacterPos_relativeToCurrentLine < prevFirstCharacterPos_relativeToCurrentLine)
                 {
                     skipParse = true;
 
