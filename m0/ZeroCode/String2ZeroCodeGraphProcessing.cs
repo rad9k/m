@@ -426,7 +426,7 @@ namespace m0.ZeroCode
 
                 copyExaminedKeywords(examinedKeywords_All, examinedKeywords);
 
-                _tryIsKeyword(firstCharacterPos_relativeToText);
+                _tryIsKeyword(firstCharacterPos_relativeToText, text.Length);
 
                 if (examinedKeywords.Count() > 0)
                     return true;
@@ -437,9 +437,11 @@ namespace m0.ZeroCode
                 return false;
         }
 
-        void _tryIsKeyword(int sPos)
+        void _tryIsKeyword(int startPos, int endPos)
         {
-            if (sPos == text.Length)
+            int sPos = startPos;
+
+            if (sPos == endPos)
                 return;
 
             bool shallProceed = true;
@@ -511,6 +513,7 @@ namespace m0.ZeroCode
 
                                 object found = null;
 
+                                if(text[sPos]=='"' && text[])
                                 found = text.Substring(sPos, sPosAfterParameter - sPos);
 
                                 foundParameters.Add(ktd.afterParameterString, found);
@@ -539,8 +542,8 @@ namespace m0.ZeroCode
                         if (ktd.matched)
                             shallProceed = false; // end of line and one of keywords matched
 
-                if (sPos == text.Length)
-                    shallProceed = false; // end of text
+                if (sPos == endPos)
+                    shallProceed = false; // end of this part of text
 
                 if (examinedKeywords.Count == 0)
                     shallProceed = false; // no keyword found

@@ -645,7 +645,14 @@ namespace m0.UIWpf.Visualisers
                 TabList[group].ControlInfos.Add(MinusZero.Instance.CreateTempVertex(), ci);
             }
             else
-              TabList[group].ControlInfos.Add(meta, ci);
+            {
+                if (TabList[group].ControlInfos.ContainsKey(meta))
+                {
+                    int x = 0; // same meta sub vertex two times in meta vertex
+                }
+                else
+                    TabList[group].ControlInfos.Add(meta, ci);
+            }
 
             Panel place = GetUIPlace(group,section,ci);
 

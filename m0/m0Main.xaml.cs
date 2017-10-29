@@ -214,7 +214,8 @@ namespace m0
             Person.Get("IsPretty2").AddEdge(EdgeTarget, r.Get(@"TEST\Pretty"));
             Person.Get("IsPretty3").AddEdge(EdgeTarget, r.Get(@"TEST\Pretty"));
 
-            Person.AddEdge(smu.Get(@"Class\Attribute"), Person.Get("Surname"));
+            //Person.AddEdge(smu.Get(@"Class\Attribute"), Person.Get("Surname"));
+            // what is it for?
 
             GeneralUtil.ParseAndExcute(r.Get("TEST"), r.Get(@"TEST"), "{Person:Person1{Name:Radek,Surname:Tereszczuk,Age:34,NoseLength:\"2,3\",Money:999,IsGood:False,IsPretty:},Person:Person2{Name:Maurycy,Surname:Tereszczuk,Age:1,NoseLength:1.1,Money:9999,IsGood:True,IsPretty:}}");
 
