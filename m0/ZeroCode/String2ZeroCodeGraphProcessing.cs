@@ -260,7 +260,7 @@ namespace m0.ZeroCode
             return s;
         }
 
-        string removeLinkPrefix(string s)
+        string stringFromLinkString(string s)
         {
             return s.Substring(1);
         }
@@ -344,7 +344,7 @@ namespace m0.ZeroCode
                         return _baseVertex.AddVertex(null, processAsQuoted(afterColon));
 
                     if (afterColon[0] == '@')
-                        return _baseVertex.AddEdge(null, processLink(removeLinkPrefix(afterColon))).To;
+                        return _baseVertex.AddEdge(null, processLink(stringFromLinkString(afterColon))).To;
 
                     return _baseVertex.AddVertex(null, "SYNTAX ERROR");
                 }
@@ -356,7 +356,7 @@ namespace m0.ZeroCode
 
                     IVertex meta = processLink(beforeColon);
 
-                    if (afterColon[0] == '"') // if is new value
+                    if (afterColon[0] == ZeroCodeCommon.NewVertexPrefix) // if is new value
                         return _baseVertex.AddVertex(meta, processAsQuoted(afterColon));
                     else
                         return _baseVertex.AddEdge(meta, processLink(afterColon)).To;
@@ -513,7 +513,7 @@ namespace m0.ZeroCode
 
                                 object found = null;
 
-                                if(text[sPos]=='"' && text[])
+                                //if(text[sPos]=='"' && text[])
                                 found = text.Substring(sPos, sPosAfterParameter - sPos);
 
                                 foundParameters.Add(ktd.afterParameterString, found);

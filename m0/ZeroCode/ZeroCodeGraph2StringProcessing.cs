@@ -449,7 +449,7 @@ namespace m0.ZeroCode
             if(hideLinkPrefix)
                 SourceAppend(toAppend);
             else
-                SourceAppend(ZeroCodeCommon.getLinkString(toAppend));
+                SourceAppend(ZeroCodeCommon.stringToLinkString(toAppend));
         }
 
         void AppendAsNew(IVertex v)
@@ -458,7 +458,7 @@ namespace m0.ZeroCode
             {
                 //VertexesAsLink.Add(v, path + "\\" + v.Value); // what is it? not neccesarry now
 
-                SourceAppend(ZeroCodeCommon.getNewString(v.Value.ToString()));
+                SourceAppend(ZeroCodeCommon.stringToNewVertexString(v.Value.ToString()));
             }
         }
 
@@ -467,7 +467,7 @@ namespace m0.ZeroCode
             SourceAppend("$Is");
             AppendDoubleColon();
 
-            SourceAppend(ZeroCodeCommon.getLinkString(ZeroCodeCommon.tryEscape(e.To.Value.ToString())));            
+            SourceAppend(ZeroCodeCommon.stringToLinkString(ZeroCodeCommon.tryEscape(e.To.Value.ToString())));            
         }
 
         void AppendDoubleColon()
@@ -637,12 +637,12 @@ namespace m0.ZeroCode
 
             if (isMeta)
             {
-                SourceAppend("import meta " + ZeroCodeCommon.getNewString(importEdge.To.ToString()) + " ");
+                SourceAppend("import meta " + ZeroCodeCommon.stringToNewVertexString(importEdge.To.ToString()) + " ");
                 AppendAsLink_FromRoot(linkEdge.To);
             }
             else
             {
-                SourceAppend("import " + ZeroCodeCommon.getNewString(importEdge.To.ToString()) + " ");
+                SourceAppend("import " + ZeroCodeCommon.stringToNewVertexString(importEdge.To.ToString()) + " ");
                 AppendAsLink_FromRoot(linkEdge.To);
             }
 

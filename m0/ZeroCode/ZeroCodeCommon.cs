@@ -17,15 +17,19 @@ namespace m0.ZeroCode
 
         public static string CodeGraphVertexSuffix = ">";
 
-        public static string LineContinuationPrefix = "^";
+        public static char LineContinuationPrefix = '^';
 
-        public static string CodeGraphLinkPrefix = "@";
+        public static char CodeGraphLinkPrefix = '@';
 
-        public static string getLinkString(string s)
+        public static char NewVertexPrefix = '\"';
+
+        public static char NewVertexSuffix = '\"';
+
+        public static string stringToLinkString(string s)
         {
             return ZeroCodeCommon.CodeGraphLinkPrefix + s;
         }
-        public static string getNewString(object o)
+        public static string stringToNewVertexString(object o)
         {
             if (o == null)
                 return "";
@@ -38,7 +42,7 @@ namespace m0.ZeroCode
             if (s.IndexOf('\"') != -1)
                 s = s.Replace("\"", "\"");
 
-            return '\"' + s + '\"';
+            return NewVertexPrefix + s + NewVertexSuffix;
         }
 
         public static string getEscapedString(string s)
@@ -58,7 +62,7 @@ namespace m0.ZeroCode
             if (s.IndexOf(' ') != -1)
                 wasThereReplace = true;
 
-                if (s.IndexOf('\\') != -1)
+            if (s.IndexOf('\\') != -1)
             {
                 s = s.Replace("\\", "\\\\");
                 wasThereReplace = true;
