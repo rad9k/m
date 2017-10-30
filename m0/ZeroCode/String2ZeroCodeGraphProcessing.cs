@@ -427,7 +427,7 @@ namespace m0.ZeroCode
                 return false;
         }
 
-        void _tryIsKeyword(int startPos, int endPos)
+        void _tryIsKeyword(int startPos, int endPos,)
         {
             int sPos = startPos;
 
@@ -493,21 +493,24 @@ namespace m0.ZeroCode
                         {
                             int sPosAfterParameter = -1;
 
-                            // if(ktd.afterParameterString=="")
-                            //else
-                            sPosAfterParameter=ZeroCodeUtil.getNextMatch(text, sPos, ktd.afterParameterString);
-
-                            if (sPosAfterParameter != -1)
+                            if (ktd.afterParameterString == "")
                             {
-                                ktd.untilPositionWaiting = sPosAfterParameter;
 
+                            }
+                            else
+                            {
+                                sPosAfterParameter = ZeroCodeUtil.getNextMatch(text, sPos, ktd.afterParameterString);
 
-                                if (ZeroCodeCommon.isNewVertex(text, sPos, sPosAfterParameter - 1))
-                                    foundParameter = ZeroCodeCommon.stringFromNewVertexString(text.Substring(sPos, sPosAfterParameter - sPos));
+                                if (sPosAfterParameter != -1)
+                                {
+                                    ktd.untilPositionWaiting = sPosAfterParameter;
 
-                                if (ZeroCodeCommon.isLink(text, sPos, sPosAfterParameter - 1))
-                                    foundParameter = new ToVertexMock(ZeroCodeCommon.stringFromLinkString(text.Substring(sPos, sPosAfterParameter - sPos)));
+                                    if (ZeroCodeCommon.isNewVertex(text, sPos, sPosAfterParameter - 1))
+                                        foundParameter = ZeroCodeCommon.stringFromNewVertexString(text.Substring(sPos, sPosAfterParameter - sPos));
 
+                                    if (ZeroCodeCommon.isLink(text, sPos, sPosAfterParameter - 1))
+                                        foundParameter = new ToVertexMock(ZeroCodeCommon.stringFromLinkString(text.Substring(sPos, sPosAfterParameter - sPos)));
+                                }
                             }
                         }
 
