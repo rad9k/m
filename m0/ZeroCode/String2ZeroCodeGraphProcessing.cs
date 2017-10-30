@@ -251,19 +251,9 @@ namespace m0.ZeroCode
             lineNo = 0;
         }
 
-        string processAsQuoted(string s)
-        {
-            s=s.Substring(1, s.Length - 2);
+     
 
-            s=s.Replace("\\\"","\"");
-
-            return s;
-        }
-
-        string stringFromLinkString(string s)
-        {
-            return s.Substring(1);
-        }
+     
 
         IVertex query(IVertex baseVertex, string query)
         {
@@ -340,11 +330,11 @@ namespace m0.ZeroCode
                 {
                     string afterColon = currentLineInner.Trim();
 
-                    if (afterColon[0] == '"') // if is new value
-                        return _baseVertex.AddVertex(null, processAsQuoted(afterColon));
+                    if (afterColon[0] == ZeroCodeCommon.NewVertexPrefix) // if is new value
+                        return _baseVertex.AddVertex(null, ZeroCodeCommon.stringFromNewVertexString(afterColon));
 
-                    if (afterColon[0] == '@')
-                        return _baseVertex.AddEdge(null, processLink(stringFromLinkString(afterColon))).To;
+                    if (afterColon[0] == ZeroCodeCommon.CodeGraphLinkPrefix)
+                        return _baseVertex.AddEdge(null, processLink(ZeroCodeCommon.stringFromLinkString(afterColon))).To;
 
                     return _baseVertex.AddVertex(null, "SYNTAX ERROR");
                 }
@@ -357,7 +347,7 @@ namespace m0.ZeroCode
                     IVertex meta = processLink(beforeColon);
 
                     if (afterColon[0] == ZeroCodeCommon.NewVertexPrefix) // if is new value
-                        return _baseVertex.AddVertex(meta, processAsQuoted(afterColon));
+                        return _baseVertex.AddVertex(meta, ZeroCodeCommon.stringFromNewVertexString(afterColon));
                     else
                         return _baseVertex.AddEdge(meta, processLink(afterColon)).To;
                 }
@@ -511,19 +501,20 @@ namespace m0.ZeroCode
                             {
                                 ktd.untilPositionWaiting = sPosAfterParameter;
 
-                                object found = null;
 
-                                //if(text[sPos]=='"' && text[])
-                                found = text.Substring(sPos, sPosAfterParameter - sPos);
+                                if (ZeroCodeCommon.isNewVertex(text, sPos, sPosAfterParameter - 1))
+                                    foundParameter = ZeroCodeCommon.stringFromNewVertexString(text.Substring(sPos, sPosAfterParameter - sPos));
 
-                                foundParameters.Add(ktd.afterParameterString, found);
+                                if (ZeroCodeCommon.isLink(text, sPos, sPosAfterParameter - 1))
+                                    foundParameter = new ToVertexMock(ZeroCodeCommon.stringFromLinkString(text.Substring(sPos, sPosAfterParameter - sPos)));
 
-                                foundParameter = found;
                             }
                         }
 
                         if (foundParameter != null)
                         {
+                            foundParameters.Add(ktd.afterParameterString, foundParameter);
+
                             // adding as string
                             ktd.sub.Add(ktd.currentlyProcessedParameterName, foundParameter);
 
@@ -569,7 +560,13 @@ namespace m0.ZeroCode
                 {
                     string name = ZeroCodeUtil.getRegexp((string)e.To.Value, Regex.Escape("(?<") + "(?<EXTRACT>.*)" + Regex.Escape(">)"));
 
-                    nv = parent.AddVertex(e.Meta, ktd.sub[name]);
+                    object sub = ktd.sub[name];
+
+                    if(sub is string)
+                        nv = parent.AddVertex(e.Meta, ktd.sub[name]);
+
+                    if (sub is ToVertexMock)
+                        nv = parent.AddEdge(e.Meta, (IVertex)sub).To;
                 }
                 else
                     nv=parent.AddVertex(e.Meta, e.To);

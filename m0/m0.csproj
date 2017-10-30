@@ -257,6 +257,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="ZeroCode\String2ZeroCodeGraphProcessing.cs" />
+    <Compile Include="Graph\ToVertexMock.cs" />
     <Compile Include="ZeroCode\ZeroCodeCommon.cs" />
     <Compile Include="ZeroCode\ZeroCodeEngine.cs" />
     <Compile Include="ZeroCode\ZeroCodeGraph2StringProcessing.cs" />

@@ -85,7 +85,7 @@ namespace m0.ZeroCode
                 return;
 
             //s.Append(v.Value);
-            s.Append(ZeroCodeCommon.tryEscape(v.Value.ToString()));
+            s.Append(ZeroCodeCommon.stringToPossiblyEscapedString(v.Value.ToString()));
         }
 
         public static string GetStringFromEdgesList(List<IEdge> edgesList, bool isImportMeta)
@@ -103,7 +103,7 @@ namespace m0.ZeroCode
 
                 if (e.Meta != null && e.To == null)
                     //s.Append(e.Meta.Value);
-                    s.Append(ZeroCodeCommon.tryEscape(e.Meta.Value.ToString()));
+                    s.Append(ZeroCodeCommon.stringToPossiblyEscapedString(e.Meta.Value.ToString()));
 
                 StringBuilder toAppend = new StringBuilder();
 
@@ -137,7 +137,7 @@ namespace m0.ZeroCode
                     }
 
                     if(VertexOperations.IsMetaAndToVertexEnoughToIdentifyEdge(e.From, e.Meta, e.To))
-                        s.Append(ZeroCodeCommon.tryEscape(toAppend.ToString()));
+                        s.Append(ZeroCodeCommon.stringToPossiblyEscapedString(toAppend.ToString()));
                     else
                     {
                         int pos = 0;
@@ -150,7 +150,7 @@ namespace m0.ZeroCode
                             pos++;
                         } while (tv == e.To);
 
-                        s.Append(ZeroCodeCommon.tryEscape(toAppend.ToString()) + "|" + pos );
+                        s.Append(ZeroCodeCommon.stringToPossiblyEscapedString(toAppend.ToString()) + "|" + pos );
                     }
                 }    
 
@@ -467,7 +467,7 @@ namespace m0.ZeroCode
             SourceAppend("$Is");
             AppendDoubleColon();
 
-            SourceAppend(ZeroCodeCommon.stringToLinkString(ZeroCodeCommon.tryEscape(e.To.Value.ToString())));            
+            SourceAppend(ZeroCodeCommon.stringToLinkString(ZeroCodeCommon.stringToPossiblyEscapedString(e.To.Value.ToString())));            
         }
 
         void AppendDoubleColon()
@@ -488,11 +488,11 @@ namespace m0.ZeroCode
             foreach (IEdge e in baseVertex)
             {
                 if (GraphUtil.GetValueAndCompareStrings(e.To, toFind))
-                    return pre + toAdd + ZeroCodeCommon.tryEscape(e.Meta.Value.ToString()) + ":";
+                    return pre + toAdd + ZeroCodeCommon.stringToPossiblyEscapedString(e.Meta.Value.ToString()) + ":";
                 
                 if (!IsLink(e))
                 {
-                    string ret = FindKeywordEdge(pre + toAdd + ZeroCodeCommon.tryEscape(e.Meta.Value.ToString()) + ":", e.To, toFind);
+                    string ret = FindKeywordEdge(pre + toAdd + ZeroCodeCommon.stringToPossiblyEscapedString(e.Meta.Value.ToString()) + ":", e.To, toFind);
 
                     if (ret != null)
                         return ret;
@@ -598,7 +598,7 @@ namespace m0.ZeroCode
             {
                 if (!IsLink(e))
                 {
-                    IEdge found = GetKeywordManyRoot_reccurent(toAdd + ZeroCodeCommon.tryEscape(e.Meta.ToString()) +":",e, out keywordManyRootQueryString);
+                    IEdge found = GetKeywordManyRoot_reccurent(toAdd + ZeroCodeCommon.stringToPossiblyEscapedString(e.Meta.ToString()) +":",e, out keywordManyRootQueryString);
 
                     if (found != null)
                         return found;
@@ -1102,9 +1102,9 @@ namespace m0.ZeroCode
             string searchString;
 
             if (IsKeywordVertexWildcard(keywordEdge.To))
-                searchString = ZeroCodeCommon.tryEscape(keywordEdge.Meta.ToString()) + ":";
+                searchString = ZeroCodeCommon.stringToPossiblyEscapedString(keywordEdge.Meta.ToString()) + ":";
             else
-                searchString = ZeroCodeCommon.tryEscape(keywordEdge.Meta.ToString()) + ":" + ZeroCodeCommon.tryEscape(keywordEdge.To.ToString());
+                searchString = ZeroCodeCommon.stringToPossiblyEscapedString(keywordEdge.Meta.ToString()) + ":" + ZeroCodeCommon.stringToPossiblyEscapedString(keywordEdge.To.ToString());
 
             IVertex search = parentToCheck.GetAll(searchString);
 
@@ -1140,7 +1140,7 @@ namespace m0.ZeroCode
 
         public IList<IEdge> MatchGraphs_import(IEdge edgeToCheck)
         {
-            IEdge secondEdge = edgeToCheck.From.GetAll(ZeroCodeCommon.tryEscape(edgeToCheck.To.ToString()) + ":").FirstOrDefault();
+            IEdge secondEdge = edgeToCheck.From.GetAll(ZeroCodeCommon.stringToPossiblyEscapedString(edgeToCheck.To.ToString()) + ":").FirstOrDefault();
 
             if (secondEdge != null)
             {
@@ -1155,7 +1155,7 @@ namespace m0.ZeroCode
         {
             currentMatchGraphEdgeList = new List<IEdge>();
 
-            IVertex firstMatchingEdgesInGraphToCompare = graphToCompare.GetAll(ZeroCodeCommon.tryEscape(edgeToCheck.Meta.ToString()) + ":");
+            IVertex firstMatchingEdgesInGraphToCompare = graphToCompare.GetAll(ZeroCodeCommon.stringToPossiblyEscapedString(edgeToCheck.Meta.ToString()) + ":");
 
             IEdge firstMatchEdgeInGraphToCompare = null;
 

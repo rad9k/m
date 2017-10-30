@@ -44,14 +44,14 @@ namespace m0.Graph
         public static string GetIdentyfyingQuerySubString_ImportMeta(IEdge e)
         {
             if (VertexOperations.IsToVertexEnoughToIdentifyEdge(e.From, e.To))
-                return ZeroCodeCommon.tryEscape(e.To.ToString()+""); // there was no ToString. might cause problems
+                return ZeroCodeCommon.stringToPossiblyEscapedString(e.To.ToString()+""); // there was no ToString. might cause problems
             else
                 if (VertexOperations.IsMetaAndToVertexEnoughToIdentifyEdge(e.From, e.Meta, e.To))
-                    return ZeroCodeCommon.tryEscape(e.Meta.ToString()) + ":" + ZeroCodeCommon.tryEscape(e.To.ToString());
+                    return ZeroCodeCommon.stringToPossiblyEscapedString(e.Meta.ToString()) + ":" + ZeroCodeCommon.stringToPossiblyEscapedString(e.To.ToString());
                 else
                 {
                     int pos = 0;
-                    IVertex q = e.From.GetAll(ZeroCodeCommon.tryEscape(e.Meta.ToString()) + ":" + ZeroCodeCommon.tryEscape(e.To.ToString()));
+                    IVertex q = e.From.GetAll(ZeroCodeCommon.stringToPossiblyEscapedString(e.Meta.ToString()) + ":" + ZeroCodeCommon.stringToPossiblyEscapedString(e.To.ToString()));
 
                     IVertex tv;
                     do
@@ -60,7 +60,7 @@ namespace m0.Graph
                         pos++;
                     } while (tv != e.To);
 
-                    return ZeroCodeCommon.tryEscape(e.Meta.ToString()) + ":" + ZeroCodeCommon.tryEscape(e.To.ToString()) + "|" + pos ;
+                    return ZeroCodeCommon.stringToPossiblyEscapedString(e.Meta.ToString()) + ":" + ZeroCodeCommon.stringToPossiblyEscapedString(e.To.ToString()) + "|" + pos ;
                 }
         }
 
