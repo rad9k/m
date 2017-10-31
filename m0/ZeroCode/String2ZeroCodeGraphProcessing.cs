@@ -395,7 +395,7 @@ namespace m0.ZeroCode
             }
         }
 
-        List<keywordTryingData> examinedKeywords_All;
+        List<keywordTryingData> examinedKeywords_All; // all keywords are here
         List<keywordTryingData> examinedKeywords;
 
         void copyExaminedKeywords(List<keywordTryingData> source, List<keywordTryingData> target)
@@ -412,11 +412,10 @@ namespace m0.ZeroCode
             if (!ZeroCodeUtil.tryStringMatch(s, 0, ZeroCodeCommon.CodeGraphVertexPrefix) 
                 && !ZeroCodeUtil.tryStringEndMatch(s, ZeroCodeCommon.CodeGraphVertexSuffix))
             {
-                examinedKeywords = new List<keywordTryingData>();
+                string newVertex;
+                string link;
 
-                copyExaminedKeywords(examinedKeywords_All, examinedKeywords);
-
-                _tryIsKeyword(firstCharacterPos_relativeToText, text.Length);
+                _tryIsKeyword(firstCharacterPos_relativeToText, text.Length, out examinedKeywords, out newVertex, out link);
 
                 if (examinedKeywords.Count() > 0)
                     return true;
@@ -427,14 +426,53 @@ namespace m0.ZeroCode
                 return false;
         }
 
-        void _tryIsKeyword(int startPos, int endPos,)
+        void _tryIsKeyword(int startPos, int endPos,out List<keywordTryingData> examinedKeywords, out string newVertex, out string link)
         {
+            examinedKeywords = new List<keywordTryingData>();
+
+            copyExaminedKeywords(examinedKeywords_All, examinedKeywords);
+
+            newVertex = null;
+
+            link = null;
+
             int sPos = startPos;
 
             if (sPos == endPos)
                 return;
 
             bool shallProceed = true;
+
+            // newVertex
+
+            if (ZeroCodeUtil.tryStringMatch(text, sPos, ZeroCodeCommon.NewVertexPrefix.ToString()))
+            {
+                while (shallProceed)
+                {
+                    sPos++;
+
+                    if (text[sPos] == ZeroCodeCommon.NewVertexSuffix
+                        && sPos > 0 && text[sPos - 1] != ZeroCodeCommon.EscapeCharacter) // if is no \"
+                        shallProceed = false;
+                }
+
+                pos = sPos;
+
+                newVertex = ZeroCodeCommon.stringFromNewVertexString(text.Substring(startPos, sPos - startPos));
+
+                return;
+            }
+
+            // link
+
+            if (ZeroCodeUtil.tryStringMatch(text, startPos, ZeroCodeCommon.CodeGraphLinkPrefix.ToString()))
+            {
+
+            }
+
+            // keyword
+
+            
 
             while (shallProceed)
             {

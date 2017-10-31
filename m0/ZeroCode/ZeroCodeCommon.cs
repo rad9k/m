@@ -42,6 +42,8 @@ namespace m0.ZeroCode
 
         public static char EscapeSuffix = '\'';
 
+        public static char EscapeCharacter = '\\';
+
         // Link
         ///////
 
