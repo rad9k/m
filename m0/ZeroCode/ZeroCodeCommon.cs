@@ -57,6 +57,45 @@ namespace m0.ZeroCode
             return s.Substring(1);
         }
 
+        public static string stringFromLinkString(string text, int startPos, ref int pos)
+        {
+            string newVertex = null;
+
+            int sPos = startPos;
+
+            bool shallProceed = true;
+
+            if (ZeroCodeUtil.tryStringMatch(text, startPos, ZeroCodeCommon.CodeGraphLinkPrefix.ToString()))
+            {
+                bool isInEscape = false;
+
+                while (shallProceed)
+                {
+                    sPos++;
+
+                    if (text[sPos] == '\n' || text[sPos] == '\r')
+                        shallProceed = false;
+
+                    if (text[sPos] == ' ' && !isInEscape)
+                        shallProceed = false;
+
+                    if (text[sPos] == '\'' && !isInEscape)
+                        isInEscape = true;
+
+                    if (text[sPos] == '\'' && isInEscape
+                        && sPos > 0 && text[sPos - 1] != '\\') // if is no \"
+                        isInEscape = false;
+
+                }
+
+                pos = sPos;
+
+                newVertex = ZeroCodeCommon.stringFromLinkString(text.Substring(startPos, sPos - startPos));
+            }
+
+            return newVertex;
+        }
+
         public static bool isLink(string s, int beg, int end)
         {
             if (s[beg] == CodeGraphLinkPrefix)
@@ -93,6 +132,33 @@ namespace m0.ZeroCode
             s = s.Replace("\\\\", "\\");
 
             return s;
+        }
+
+        public static string stringFromNewVertexString(string text, int startPos, ref int pos)
+        {
+            string newVertex = null;
+
+            int sPos = startPos;
+
+            bool shallProceed = true;
+
+            if (ZeroCodeUtil.tryStringMatch(text, sPos, ZeroCodeCommon.NewVertexPrefix.ToString()))
+            {
+                while (shallProceed)
+                {
+                    sPos++;
+
+                    if (text[sPos] == ZeroCodeCommon.NewVertexSuffix
+                        && sPos > 0 && text[sPos - 1] != ZeroCodeCommon.EscapeCharacter) // if is no \"
+                        shallProceed = false;
+                }
+
+                pos = sPos;
+
+                newVertex = ZeroCodeCommon.stringFromNewVertexString(text.Substring(startPos, sPos - startPos));
+            }
+
+            return newVertex;
         }
 
         public static bool isNewVertex(string s, int beg, int end)

@@ -445,34 +445,21 @@ namespace m0.ZeroCode
 
             // newVertex
 
-            if (ZeroCodeUtil.tryStringMatch(text, sPos, ZeroCodeCommon.NewVertexPrefix.ToString()))
-            {
-                while (shallProceed)
-                {
-                    sPos++;
+            newVertex = ZeroCodeCommon.stringFromNewVertexString(text, startPos, ref pos);
 
-                    if (text[sPos] == ZeroCodeCommon.NewVertexSuffix
-                        && sPos > 0 && text[sPos - 1] != ZeroCodeCommon.EscapeCharacter) // if is no \"
-                        shallProceed = false;
-                }
-
-                pos = sPos;
-
-                newVertex = ZeroCodeCommon.stringFromNewVertexString(text.Substring(startPos, sPos - startPos));
-
+            if (newVertex != null)
                 return;
-            }
 
             // link
 
-            if (ZeroCodeUtil.tryStringMatch(text, startPos, ZeroCodeCommon.CodeGraphLinkPrefix.ToString()))
-            {
+            link = ZeroCodeCommon.stringFromLinkString(text, startPos, ref pos);
 
-            }
-
+            if (link != null)
+                return;
+            
             // keyword
 
-            
+
 
             while (shallProceed)
             {
