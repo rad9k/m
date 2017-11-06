@@ -415,7 +415,7 @@ namespace m0.ZeroCode
                 string newVertex;
                 string link;
 
-                _tryIsKeyword(firstCharacterPos_relativeToText, text.Length, out examinedKeywords, out newVertex, out link);
+                _tryIsKeyword(firstCharacterPos_relativeToText, text.Length, out examinedKeywords, out newVertex, out link, true);
 
                 if (examinedKeywords.Count() > 0)
                     return true;
@@ -426,7 +426,7 @@ namespace m0.ZeroCode
                 return false;
         }
 
-        void _tryIsKeyword(int startPos, int endPos,out List<keywordTryingData> examinedKeywords, out string newVertex, out string link)
+        void _tryIsKeyword(int startPos, int endPos,out List<keywordTryingData> examinedKeywords, out string newVertex, out string link, bool isTopLevelCall)
         {
             examinedKeywords = new List<keywordTryingData>();
 
@@ -443,24 +443,26 @@ namespace m0.ZeroCode
 
             bool shallProceed = true;
 
-            // newVertex
 
-            newVertex = ZeroCodeCommon.stringFromNewVertexString(text, startPos, ref pos);
+            if (!isTopLevelCall)
+            {
+                // newVertex
 
-            if (newVertex != null)
-                return;
+                newVertex = ZeroCodeCommon.stringFromNewVertexString(text, startPos, ref pos);
 
-            // link
+                if (newVertex != null)
+                    return;
 
-            link = ZeroCodeCommon.stringFromLinkString(text, startPos, ref pos);
+                // link
 
-            if (link != null)
-                return;
-            
+                link = ZeroCodeCommon.stringFromLinkString(text, startPos, ref pos);
+
+                if (link != null)
+                    return;
+            }
+
             // keyword
-
-
-
+            
             while (shallProceed)
             {
                 List<keywordTryingData> newExaminedKeywords = new List<keywordTryingData>();
@@ -520,6 +522,17 @@ namespace m0.ZeroCode
 
                             if (ktd.afterParameterString == "")
                             {
+                                List<keywordTryingData> foundKeywords = null;
+                                string foundNewVertex = null;
+                                string foundLink = null;
+
+                                _tryIsKeyword(sPos, endPos, out foundKeywords, out foundNewVertex, out foundLink, false);
+
+                                if (foundNewVertex != null)
+                                {
+                                    ktd.untilPositionWaiting
+                                    foundParameter = foundNewVertex;
+                                }
 
                             }
                             else
@@ -543,7 +556,6 @@ namespace m0.ZeroCode
                         {
                             foundParameters.Add(ktd.afterParameterString, foundParameter);
 
-                            // adding as string
                             ktd.sub.Add(ktd.currentlyProcessedParameterName, foundParameter);
 
                             newExaminedKeywords.Add(ktd);
