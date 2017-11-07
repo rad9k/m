@@ -365,7 +365,8 @@ namespace m0.ZeroCode
 
             public keywordTryingState state;
             public int currentPositionInKeyword;
-            public int untilPositionWaiting;
+            
+            public int waitingUntilPositionInText;
             
 
             public string currentlyProcessedParameterName;
@@ -415,7 +416,7 @@ namespace m0.ZeroCode
                 string newVertex;
                 string link;
 
-                _tryIsKeyword(firstCharacterPos_relativeToText, text.Length, out examinedKeywords, out newVertex, out link, true);
+                _tryIsKeyword(firstCharacterPos_relativeToText, text.Length, out examinedKeywords, out newVertex, out link, true, ref pos);
 
                 if (examinedKeywords.Count() > 0)
                     return true;
@@ -426,11 +427,9 @@ namespace m0.ZeroCode
                 return false;
         }
 
-        void _tryIsKeyword(int startPos, int endPos,out List<keywordTryingData> examinedKeywords, out string newVertex, out string link, bool isTopLevelCall)
+        void _tryIsKeyword(int startPos, int endPos,out List<keywordTryingData> examinedKeywords, out string newVertex, out string link, bool isTopLevelCall, ref int newPos)
         {
-            examinedKeywords = new List<keywordTryingData>();
-
-            copyExaminedKeywords(examinedKeywords_All, examinedKeywords);
+            examinedKeywords = new List<keywordTryingData>();            
 
             newVertex = null;
 
@@ -448,21 +447,23 @@ namespace m0.ZeroCode
             {
                 // newVertex
 
-                newVertex = ZeroCodeCommon.stringFromNewVertexString(text, startPos, ref pos);
+                newVertex = ZeroCodeCommon.tryStringFromNewVertexString(text, startPos, ref newPos);
 
                 if (newVertex != null)
                     return;
 
                 // link
 
-                link = ZeroCodeCommon.stringFromLinkString(text, startPos, ref pos);
+                link = ZeroCodeCommon.tryStringFromLinkString(text, startPos, ref newPos);
 
                 if (link != null)
                     return;
             }
 
             // keyword
-            
+
+            copyExaminedKeywords(examinedKeywords_All, examinedKeywords);
+
             while (shallProceed)
             {
                 List<keywordTryingData> newExaminedKeywords = new List<keywordTryingData>();
@@ -473,13 +474,21 @@ namespace m0.ZeroCode
 
                     if (ktd.state == keywordTryingState.waiting)
                     {                     
-                        if (sPos == ktd.untilPositionWaiting)
+                        if (sPos == ktd.waitingUntilPositionInText)
                             ktd.state = keywordTryingState.keywordCharacter;
                         else
                             newExaminedKeywords.Add(ktd);
                     }
 
-                    if (ZeroCodeUtil.tryStringMatch(keyword, ktd.currentPositionInKeyword, "(?<")
+                    if (ktd.keyword.Length <= ktd.currentPositionInKeyword + 1)
+                    {
+                        ktd.matched = true;
+
+                        newExaminedKeywords.Add(ktd);
+                    }                    
+
+                    if (!ktd.matched && 
+                        ZeroCodeUtil.tryStringMatch(keyword, ktd.currentPositionInKeyword, "(?<")
                         && ktd.state == keywordTryingState.keywordCharacter)
                     {
                         int begCurrentPositionInKeyword = ktd.currentPositionInKeyword;
@@ -489,19 +498,18 @@ namespace m0.ZeroCode
                         ktd.afterParameterString = ZeroCodeUtil.getNextCharacterPartFromKeyword(keyword, ktd.currentPositionInKeyword);
                         ktd.state = keywordTryingState.parameter;
                     }
-
-                    if (ktd.state == keywordTryingState.keywordCharacter)
+                    
+                    if (/*keyword.Length > ktd.currentPositionInKeyword &&*/
+                        !ktd.matched &&
+                        ktd.state == keywordTryingState.keywordCharacter &&
+                        text[sPos] == keyword[ktd.currentPositionInKeyword])
                     {
-                        if (keyword.Length > ktd.currentPositionInKeyword && text[sPos] == keyword[ktd.currentPositionInKeyword])
-                        {
-                            if (ktd.keyword.Length == ktd.currentPositionInKeyword + 1)
-                                ktd.matched = true;
-                            else
-                                ktd.currentPositionInKeyword++;
+                        ktd.currentPositionInKeyword++;
 
-                            newExaminedKeywords.Add(ktd);
-                        }
-                    }                    
+                        newExaminedKeywords.Add(ktd);
+                    }
+
+
                 }
 
                 // store found keyword parameters
@@ -525,13 +533,25 @@ namespace m0.ZeroCode
                                 List<keywordTryingData> foundKeywords = null;
                                 string foundNewVertex = null;
                                 string foundLink = null;
+                                int _newPos=0;
 
-                                _tryIsKeyword(sPos, endPos, out foundKeywords, out foundNewVertex, out foundLink, false);
+                                _tryIsKeyword(sPos, endPos, out foundKeywords, out foundNewVertex, out foundLink, false, ref _newPos);
 
                                 if (foundNewVertex != null)
                                 {
-                                    ktd.untilPositionWaiting
+                                    ktd.waitingUntilPositionInText = _newPos;
                                     foundParameter = foundNewVertex;
+                                }
+
+                                if (foundLink != null)
+                                {
+                                    ktd.waitingUntilPositionInText = _newPos;
+                                    foundParameter = new ToVertexMock(foundLink);
+                                }
+
+                                if (foundKeywords.Count() > 0)
+                                {
+                                    int x = 0;
                                 }
 
                             }
@@ -541,7 +561,7 @@ namespace m0.ZeroCode
 
                                 if (sPosAfterParameter != -1)
                                 {
-                                    ktd.untilPositionWaiting = sPosAfterParameter;
+                                    ktd.waitingUntilPositionInText = sPosAfterParameter;
 
                                     if (ZeroCodeCommon.isNewVertex(text, sPos, sPosAfterParameter - 1))
                                         foundParameter = ZeroCodeCommon.stringFromNewVertexString(text.Substring(sPos, sPosAfterParameter - sPos));

@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 // string                       NewVertexString
 //      stringToNewVertexString
 //      stringFromNewVertexString
+//      tryStringFromNewVertexString
 //      isNewVertex
 //                              Escaped
 //      stringToPossiblyEscapedString
@@ -14,6 +15,7 @@ using System.Threading.Tasks;
 //                              Link
 //      stringToLinkString
 //      stringFromLinkString
+//      tryStringFromLinkString
 //      isLink
 
 
@@ -57,7 +59,7 @@ namespace m0.ZeroCode
             return s.Substring(1);
         }
 
-        public static string stringFromLinkString(string text, int startPos, ref int pos)
+        public static string tryStringFromLinkString(string text, int startPos, ref int pos)
         {
             string newVertex = null;
 
@@ -134,7 +136,7 @@ namespace m0.ZeroCode
             return s;
         }
 
-        public static string stringFromNewVertexString(string text, int startPos, ref int pos)
+        public static string tryStringFromNewVertexString(string text, int startPos, ref int pos)
         {
             string newVertex = null;
 
@@ -155,7 +157,7 @@ namespace m0.ZeroCode
 
                 pos = sPos;
 
-                newVertex = ZeroCodeCommon.stringFromNewVertexString(text.Substring(startPos, sPos - startPos));
+                newVertex = ZeroCodeCommon.stringFromNewVertexString(text.Substring(startPos, sPos - startPos + 1));
             }
 
             return newVertex;
