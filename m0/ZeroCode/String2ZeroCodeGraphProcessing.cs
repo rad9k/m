@@ -1,5 +1,6 @@
 ﻿using m0.Foundation;
 using m0.Graph;
+using m0.ZeroTypes;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -414,7 +415,7 @@ namespace m0.ZeroCode
         bool TryIsKeyword(string s)
         {
             if (!ZeroCodeUtil.tryStringMatch(s, 0, ZeroCodeCommon.CodeGraphVertexPrefix) 
-                && !ZeroCodeUtil.tryStringEndMatch(s, ZeroCodeCommon.CodeGraphVertexSuffix))
+                || !ZeroCodeUtil.tryStringEndMatch(s, ZeroCodeCommon.CodeGraphVertexSuffix))
             {
                 string newVertex;
                 string link;
@@ -475,13 +476,14 @@ namespace m0.ZeroCode
                 {
                     String keyword = (String)ktd.keywordVertex.Value;
 
-                    if (ktd.keyword.Length <= ktd.currentPositionInKeyword + 1)
+                    if (sPos <= ktd.waitingUntilPositionInText
+                         && ktd.keyword.Length == ktd.currentPositionInKeyword)
                     {
                         ktd.matched = true;
 
                         newExaminedKeywords.Add(ktd);
                     }
-                    else
+                    else if(!ktd.matched)
                     {
                         if (ktd.state == keywordTryingState.waiting)
                         {
@@ -617,6 +619,17 @@ namespace m0.ZeroCode
                     if (examinedKeywords.Count == 0)
                         shallProceed = false; // no keyword found
                 }
+
+                // move out matched
+                /*
+                if (shallProceed) {
+                    List<keywordTryingData> tempKeywords = examinedKeywords;
+                    examinedKeywords = new List<keywordTryingData>();
+
+                    foreach (keywordTryingData ktd in tempKeywords)
+                        if (!ktd.matched)
+                            examinedKeywords.Add(ktd);
+                }*/
             }
         }
 
@@ -635,22 +648,29 @@ namespace m0.ZeroCode
             IVertex nv=null;
 
             foreach (IEdge e in keywordAddingVertex) {
-                if (ZeroCodeUtil.tryStringMatch((string)e.To.Value, 0, "(?<"))
+                if (VertexOperations.IsLink(e))
                 {
-                    string name = ZeroCodeUtil.getRegexp((string)e.To.Value, Regex.Escape("(?<") + "(?<EXTRACT>.*)" + Regex.Escape(">)"));
-
-                    object sub = ktd.sub[name];
-
-                    if(sub is string)
-                        nv = parent.AddVertex(e.Meta, ktd.sub[name]);
-
-                    if (sub is ToVertexMock)
-                        nv = parent.AddEdge(e.Meta, (IVertex)sub).To;
+                    nv = parent.AddEdge(e.Meta, e.To).To;
                 }
                 else
-                    nv=parent.AddVertex(e.Meta, e.To);
+                {
+                    if (ZeroCodeUtil.tryStringMatch((string)e.To.Value, 0, "(?<"))
+                    {
+                        string name = ZeroCodeUtil.getRegexp((string)e.To.Value, Regex.Escape("(?<") + "(?<EXTRACT>.*)" + Regex.Escape(">)"));
 
-                _AddKeywordVertex(nv, ktd, e.To);
+                        object sub = ktd.sub[name];
+
+                        if (sub is string)
+                            nv = parent.AddVertex(e.Meta, ktd.sub[name]);
+
+                        if (sub is ToVertexMock)
+                            nv = parent.AddEdge(e.Meta, (IVertex)sub).To;
+                    }
+                    else
+                        nv = parent.AddVertex(e.Meta, e.To);
+
+                    _AddKeywordVertex(nv, ktd, e.To);
+                }
             }
 
             return nv;

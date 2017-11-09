@@ -494,7 +494,7 @@ namespace m0
             // import meta
             //
             // import meta (?<name>) (?<link>)
-            /*
+            
             IVertex importMeta = smuk.AddVertex(keyword, "import meta (?<name>) (?<link>)");
 
             IVertex importMeta_name=importMeta.AddVertex(smb.Get(@"$ImportMeta"), "(?<name>)");
@@ -602,7 +602,7 @@ namespace m0
             attribute2_attribute.AddEdge(isAggregation, empty);
 
             attribute2_attribute.AddEdge(_is, smu.Get(@"Class\Attribute"));
-            */
+            
             // attribute
             //
             // attribute (?<name>) (?<type>)

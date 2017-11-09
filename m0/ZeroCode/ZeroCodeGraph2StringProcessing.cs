@@ -490,7 +490,7 @@ namespace m0.ZeroCode
                 if (GraphUtil.GetValueAndCompareStrings(e.To, toFind))
                     return pre + toAdd + ZeroCodeCommon.stringToPossiblyEscapedString(e.Meta.Value.ToString()) + ":";
                 
-                if (!IsLink(e))
+                if (!VertexOperations.IsLink(e))
                 {
                     string ret = FindKeywordEdge(pre + toAdd + ZeroCodeCommon.stringToPossiblyEscapedString(e.Meta.Value.ToString()) + ":", e.To, toFind);
 
@@ -596,7 +596,7 @@ namespace m0.ZeroCode
 
             foreach(IEdge e in baseEdge.To)
             {
-                if (!IsLink(e))
+                if (!VertexOperations.IsLink(e))
                 {
                     IEdge found = GetKeywordManyRoot_reccurent(toAdd + ZeroCodeCommon.stringToPossiblyEscapedString(e.Meta.ToString()) +":",e, out keywordManyRootQueryString);
 
@@ -758,7 +758,7 @@ namespace m0.ZeroCode
             {
                 string ret = null;
 
-                if(!IsLink(ee))
+                if(!VertexOperations.IsLink(ee))
                     ret=GetPathFromKeywordMatchAndKeywordEdge(km, ee, GraphUtil.GetIdentyfyingQuerySubString_ImportMeta(e) + suffix + path);
 
                 if (ret != null)
@@ -911,7 +911,7 @@ namespace m0.ZeroCode
 
                 AppendVertex(e, path, false);
 
-                if(!IsLink(e) && e != km.BaseEdge)
+                if(!VertexOperations.IsLink(e) && e != km.BaseEdge)
                     wasThereNewLine = AppendSubVertexes(km, e, path);
             }
         }
@@ -970,7 +970,7 @@ namespace m0.ZeroCode
 
         private bool AppendVertex(IEdge e, string path, bool appendSuffix)
         {
-            if (IsLink(e))
+            if (VertexOperations.IsLink(e))
             {
                 //SourceAppend("L!");
                 AppendAsLink(e.To, null, false);
@@ -1019,21 +1019,6 @@ namespace m0.ZeroCode
 
             if (path == null ||
                 firstQuery == secondQuery)
-                return true;
-
-            return false;
-        }
-
-        public static bool IsLink(IEdge e)
-        {
-            if (GeneralUtil.CompareStrings(e.Meta.Value, "$EdgeTarget"))
-                return true;
-
-            if (e.Meta.Get("$EdgeTarget:") != null && e.Meta.Get("$IsAggregation:") == null)
-                //||e.Meta.Get("$VertexTarget") != null)
-                return true;
-
-            if (e.Meta.Get("$$IsLink:") != null)
                 return true;
 
             return false;
@@ -1114,7 +1099,7 @@ namespace m0.ZeroCode
             {
                 if (/*!KeywordMatchedSubGraphEdges.ContainsKey(searchResult) &&*/ !currentMatchGraphEdgeList.Contains(searchResult))
                 {
-                    if(!IsLink(keywordEdge))
+                    if(!VertexOperations.IsLink(keywordEdge))
                         foreach (IEdge subKeywordEdge in keywordEdge.To)
                             if (/*!IsLink(subKeywordEdge) 
                                 && */!GeneralUtil.CompareStrings(subKeywordEdge.Meta,"$KeywordManyRoot") 
@@ -1301,7 +1286,7 @@ namespace m0.ZeroCode
                 suffix = "\\";
 
             foreach (IEdge ee in e.To.OutEdgesRaw)
-                if (!IsLink(ee)) 
+                if (!VertexOperations.IsLink(ee)) 
                 {
                     string LinkString = path + suffix + GraphUtil.GetIdentyfyingQuerySubString_ImportMeta(ee);
 
@@ -1344,7 +1329,7 @@ namespace m0.ZeroCode
 
                     CheckVertexIfItMachesAnyKeywordGraphs(ee, LinkString);                    
 
-                    if (!BeenList.Contains(ee)&&!IsLink(ee))
+                    if (!BeenList.Contains(ee)&&!VertexOperations.IsLink(ee))
                         MatchKeywords(ee, LinkString);
                 }
         }
@@ -1431,7 +1416,7 @@ namespace m0.ZeroCode
             
             bool been = false;
 
-            bool isLink = IsLink(baseEdge);
+            bool isLink = VertexOperations.IsLink(baseEdge);
 
             if (BeenList.Contains(baseEdge)&&!isLink)
                 been = true;            

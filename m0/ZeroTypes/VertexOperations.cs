@@ -11,6 +11,20 @@ namespace m0.ZeroTypes
 {
     public class VertexOperations
     {
+        public static bool IsLink(IEdge e)
+        {
+            if (GeneralUtil.CompareStrings(e.Meta.Value, "$EdgeTarget"))
+                return true;
+
+            if (e.Meta.Get("$EdgeTarget:") != null && e.Meta.Get("$IsAggregation:") == null)
+                //||e.Meta.Get("$VertexTarget") != null)
+                return true;
+
+            if (e.Meta.Get("$$IsLink:") != null)
+                return true;
+
+            return false;
+        }
         public static bool IsMetaAndToVertexEnoughToIdentifyEdge(IVertex baseEdge, IVertex meta, IVertex to)
         {
             if (to.Value == null)
