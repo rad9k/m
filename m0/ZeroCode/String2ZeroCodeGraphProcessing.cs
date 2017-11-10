@@ -360,7 +360,7 @@ namespace m0.ZeroCode
             return null;
         }
 
-        enum keywordTryingState { keywordCharacter, parameter, waiting}
+        enum keywordTryingState { keywordCharacter, parameter, waiting, matched}
 
         class keywordTryingData
         {
@@ -375,8 +375,6 @@ namespace m0.ZeroCode
 
             public string currentlyProcessedParameterName;
             public string afterParameterString;
-
-            public bool matched;
 
             public Dictionary<string, object> sub = new Dictionary<string, object>();
 
@@ -475,7 +473,60 @@ namespace m0.ZeroCode
                 foreach (keywordTryingData ktd in examinedKeywords)
                 {
                     String keyword = (String)ktd.keywordVertex.Value;
+                    
+                    if (ktd.state == keywordTryingState.matched)
+                    {// matched => matched
+                        if(sPos <= ktd.waitingUntilPositionInText)
+                            newExaminedKeywords.Add(ktd);
+                    }
+                    else
+                    {
+                        // (any) => matched
+                        if(ktd.keyword.Length == ktd.currentPositionInKeyword)
+                        {
+                            ktd.state = keywordTryingState.matched;
 
+                            newExaminedKeywords.Add(ktd);
+                        }
+
+                        // waiting => keywordCharacter
+                        // waiting => waiting
+                        if (ktd.state == keywordTryingState.waiting)
+                        {
+                            if (sPos == ktd.waitingUntilPositionInText)
+                                ktd.state = keywordTryingState.keywordCharacter; // waiting => keywordCharacter
+                            else
+                                newExaminedKeywords.Add(ktd);  // waiting => waiting
+                        }
+
+                        // keywordCharacter => parameter
+                        // keywordCharacter => keywordCharacer
+                        if(ktd.state== keywordTryingState.keywordCharacter)
+                        {
+                            // keywordCharacter => parameter
+                            if (ZeroCodeUtil.tryStringMatch(keyword, ktd.currentPositionInKeyword, "(?<"))
+                            {
+                                int begCurrentPositionInKeyword = ktd.currentPositionInKeyword;
+
+                                ktd.currentPositionInKeyword = ZeroCodeUtil.getNextMatch(keyword, ktd.currentPositionInKeyword + 2, ">)") + 2;
+                                ktd.currentlyProcessedParameterName = keyword.Substring(begCurrentPositionInKeyword + 3, ktd.currentPositionInKeyword - begCurrentPositionInKeyword - 5);
+                                ktd.afterParameterString = ZeroCodeUtil.getNextCharacterPartFromKeyword(keyword, ktd.currentPositionInKeyword);
+                                ktd.state = keywordTryingState.parameter;
+                            }else
+                                // keywordCharacter => keywordCharacer
+                                if (/*keyword.Length > ktd.currentPositionInKeyword &&*/
+                                text[sPos] == keyword[ktd.currentPositionInKeyword])
+                                {
+                                    ktd.currentPositionInKeyword++;
+
+                                    newExaminedKeywords.Add(ktd);
+                                }
+
+                        }                    
+                    }
+
+                    ///
+                    /*
                     if (sPos <= ktd.waitingUntilPositionInText
                          && ktd.keyword.Length == ktd.currentPositionInKeyword)
                     {
@@ -505,14 +556,14 @@ namespace m0.ZeroCode
                         }
 
                         if (/*keyword.Length > ktd.currentPositionInKeyword &&*/
-                            ktd.state == keywordTryingState.keywordCharacter &&
+                            /*ktd.state == keywordTryingState.keywordCharacter &&
                             text[sPos] == keyword[ktd.currentPositionInKeyword])
                         {
                             ktd.currentPositionInKeyword++;
 
                             newExaminedKeywords.Add(ktd);
                         }
-                    }
+                    }*/
                 }
 
                 // store found keyword parameters
@@ -531,18 +582,18 @@ namespace m0.ZeroCode
 
                         bool allreadyAdded = false;
 
-                        if (foundParameters.ContainsKey(ktd.afterParameterString))
+                       /* if (foundParameters.ContainsKey(ktd.afterParameterString))
                         {
                             allreadyAdded = true;
                             foundParameter = foundParameters[ktd.afterParameterString];
                             _waitingUntilPositionInText = foundParameters_waitingUntilPositionInText[ktd.afterParameterString];
                         }
-                        else
+                        else*/ // THIS IS NOT WORKING GOOD NOW. TO BE CORRECTED
                         {
                             int sPosAfterParameter = -1;
 
-                            if (ktd.afterParameterString == "")
-                            {
+                           // if (ktd.afterParameterString == "")
+                           // {
                                 List<keywordTryingData> foundKeywords = null;
                                 string foundNewVertex = null;
                                 string foundLink = null;
@@ -566,7 +617,7 @@ namespace m0.ZeroCode
                                 {
                                     int x = 0; // HOW IS THAT
                                 }
-                            }
+                          /*  } // THIS DOES NOT WORK THAT SIMPLE....
                             else
                             {
                                 sPosAfterParameter = ZeroCodeUtil.getNextMatch(text, sPos, ktd.afterParameterString);
@@ -581,18 +632,18 @@ namespace m0.ZeroCode
                                     if (ZeroCodeCommon.isLink(text, sPos, sPosAfterParameter - 1))
                                         foundParameter = new ToVertexMock(ZeroCodeCommon.stringFromLinkString(text.Substring(sPos, sPosAfterParameter - sPos)));
                                 }
-                            }
+                            }*/
                         }
 
                         if (foundParameter != null)
                         {
-                            if (!allreadyAdded)
+                            /*if (!allreadyAdded)
                             {
                                 foundParameters.Add(ktd.afterParameterString, foundParameter);
                                 foundParameters_waitingUntilPositionInText.Add(ktd.afterParameterString, ktd.waitingUntilPositionInText);
                             }
                             else
-                                ktd.waitingUntilPositionInText = _waitingUntilPositionInText;
+                                ktd.waitingUntilPositionInText = _waitingUntilPositionInText;*/ // TURNED OFF NOW
 
                             ktd.sub.Add(ktd.currentlyProcessedParameterName, foundParameter);
 
@@ -613,7 +664,7 @@ namespace m0.ZeroCode
                 {
                     if (text[sPos] == '\r' || text[sPos] == '\n')
                         foreach (keywordTryingData ktd in examinedKeywords)
-                            if (ktd.matched)
+                            if (ktd.state== keywordTryingState.matched)
                                 shallProceed = false; // end of line and one of keywords matched
 
                     if (examinedKeywords.Count == 0)
@@ -650,7 +701,20 @@ namespace m0.ZeroCode
             foreach (IEdge e in keywordAddingVertex) {
                 if (VertexOperations.IsLink(e))
                 {
-                    nv = parent.AddEdge(e.Meta, e.To).To;
+                    if (ZeroCodeUtil.tryStringMatch((string)e.To.Value, 0, "(?<"))
+                    {
+                        string name = ZeroCodeUtil.getRegexp((string)e.To.Value, Regex.Escape("(?<") + "(?<EXTRACT>.*)" + Regex.Escape(">)"));
+
+                        object sub = ktd.sub[name];
+
+                        if (sub is string)
+                            nv = parent.AddVertex(e.Meta, ktd.sub[name]); // ERROR
+
+                        if (sub is ToVertexMock)
+                            nv = parent.AddEdge(e.Meta, (IVertex)sub).To;
+                    }
+                    else
+                        nv = parent.AddEdge(e.Meta, e.To).To;
                 }
                 else
                 {

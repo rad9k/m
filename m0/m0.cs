@@ -588,14 +588,14 @@ namespace m0
             //
             // attribute (?<name>) (?<type>) <(?<MinValue>):(?<MaxValue>)>
 
-            IVertex attribute2 = smuk.AddVertex(keyword, "attribute (?<name>) (?<type>) <(?<MinValue>):(?<MaxValue>)>");
+            IVertex attribute2 = smuk.AddVertex(keyword, "attribute (?<name>) (?<type>) <(?<xMinValue>):(?<MaxValue>)>");
 
 
             IVertex attribute2_attribute = attribute2.AddVertex(smu.Get(@"Class\Attribute"), "(?<name>)");
 
             attribute2_attribute.AddVertex(smb.Get(@"Vertex\$EdgeTarget"), "(?<type>)");
 
-            attribute2_attribute.AddVertex(smu.Get(@"Class\Attribute\MinValue"), "(?<MinValue>)");
+            attribute2_attribute.AddVertex(smu.Get(@"Class\Attribute\MinValue"), "(?<xMinValue>)");
 
             attribute2_attribute.AddVertex(smu.Get(@"Class\Attribute\MaxValue"), "(?<MaxValue>)");
 
