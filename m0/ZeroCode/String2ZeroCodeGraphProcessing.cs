@@ -318,7 +318,12 @@ namespace m0.ZeroCode
         {
             if (TryIsKeyword(currentLineNoTabs))
             {
-                AddKeywordVertex(_baseVertex, examinedKeywords);
+                if (examinedKeywords.Count > 1)
+                {
+                    int x = 0; // HOW IS THAT
+                }
+
+                AddKeywordVertex(_baseVertex, examinedKeywords[0]);
             }
             else {
 
@@ -418,11 +423,14 @@ namespace m0.ZeroCode
                 string newVertex;
                 string link;
 
-                _tryIsKeyword(firstCharacterPos_relativeToText, text.Length - 1, out examinedKeywords, out newVertex, out link, true, ref pos);
+                int tryPos = 0; 
+
+                _tryIsKeyword(firstCharacterPos_relativeToText, text.Length - 1, out examinedKeywords, out newVertex, out link, true, ref tryPos);
 
                 if (examinedKeywords.Count() > 0)
                 {
-                    pos++;
+                    if (pos < tryPos)
+                        pos = tryPos;
 
                     return true;
                 }
@@ -664,21 +672,21 @@ namespace m0.ZeroCode
                 newPos = sPos;
         }
 
-        IVertex AddKeywordVertex(IVertex parent, List<keywordTryingData> keywords)
+        IVertex AddKeywordVertex(IVertex parent, keywordTryingData keyword)
         {
-            if (keywords.Count > 1)
-            {
-                int x = 0; // HOW IS THAT
-            }
-
-            return _AddKeywordVertex(parent,keywords[0],keywords[0].keywordVertex);
+            return _AddKeywordVertex(parent,keyword,keyword.keywordVertex,null);
         }
 
-        IVertex _AddKeywordVertex(IVertex parent, keywordTryingData ktd, IVertex keywordAddingVertex)
+        IVertex _AddKeywordVertex(IVertex parent, keywordTryingData ktd, IVertex keywordAddingVertex, IVertex useMetaWhenANY)
         {
             IVertex nv=null;
 
             foreach (IEdge e in keywordAddingVertex) {
+                IVertex meta = e.Meta;
+
+                if ((string)e.Meta.Value == "(?<ANY>)")
+                    meta = useMetaWhenANY;
+
                 if (VertexOperations.IsLink(e))
                 {
                     if (ZeroCodeUtil.tryStringMatch((string)e.To.Value, 0, "(?<"))
@@ -688,13 +696,16 @@ namespace m0.ZeroCode
                         object sub = ktd.sub[name];
 
                         if (sub is string)
-                            nv = parent.AddVertex(e.Meta, ktd.sub[name]); // ERROR
+                            nv = parent.AddVertex(meta, ktd.sub[name]); // ERROR
 
                         if (sub is ToVertexMock)
-                            nv = parent.AddEdge(e.Meta, (IVertex)sub).To;
+                            nv = parent.AddEdge(meta, (IVertex)sub).To;
+
+                        if (sub is keywordTryingData)
+                            nv = _AddKeywordVertex(parent, (keywordTryingData)sub, ((keywordTryingData)sub).keywordVertex, meta);
                     }
                     else
-                        nv = parent.AddEdge(e.Meta, e.To).To;
+                        nv = parent.AddEdge(meta, e.To).To;
                 }
                 else
                 {
@@ -705,15 +716,18 @@ namespace m0.ZeroCode
                         object sub = ktd.sub[name];
 
                         if (sub is string)
-                            nv = parent.AddVertex(e.Meta, ktd.sub[name]);
+                            nv = parent.AddVertex(meta, ktd.sub[name]);
 
                         if (sub is ToVertexMock)
-                            nv = parent.AddEdge(e.Meta, (IVertex)sub).To;
+                            nv = parent.AddEdge(meta, (IVertex)sub).To;
+
+                        if (sub is keywordTryingData)
+                            nv = _AddKeywordVertex(parent, (keywordTryingData)sub, ((keywordTryingData)sub).keywordVertex, meta);
                     }
                     else
-                        nv = parent.AddVertex(e.Meta, e.To);
+                        nv = parent.AddVertex(meta, e.To);
 
-                    _AddKeywordVertex(nv, ktd, e.To);
+                    _AddKeywordVertex(nv, ktd, e.To, null);
                 }
             }
 

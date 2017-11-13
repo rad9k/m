@@ -742,12 +742,14 @@ namespace m0
             o_plus_any.AddVertex(smu.Get(@"DoubleOperator\LeftExpression"), "(?<left>)");
 
             o_plus_any.AddVertex(smu.Get(@"DoubleOperator\RightExpression"), "(?<right>)");
-            /*
+            
             // -
             //
             // (?<left>) - (?<right>)
 
-            IVertex o_minus = smuk.AddVertex(keyword, "(?<left>) -(?<SUB>) (?<right>)");
+            //IVertex o_minus = smuk.AddVertex(keyword, "(?<left>) -(?<SUB>) (?<right>)");
+
+            IVertex o_minus = smuk.AddVertex(keyword, "(?<left>) - (?<right>)");
 
             IVertex o_minus_any = o_minus.AddVertex(any, "");
 
@@ -772,7 +774,7 @@ namespace m0
             IVertex o_call_any_param=o_call_any.AddVertex(smu.Get(@"MultiOperator\Expression"), "(?<expr>)");
 
             o_call_any_param.AddEdge(smb.Get(@"$KeywordManyRoot"), smb.Get(@"$Empty"));
-            */
+            
         }
 
         void CreateSystemTextLanguageZeroCode()
