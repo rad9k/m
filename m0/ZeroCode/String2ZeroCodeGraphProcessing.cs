@@ -418,10 +418,14 @@ namespace m0.ZeroCode
                 string newVertex;
                 string link;
 
-                _tryIsKeyword(firstCharacterPos_relativeToText, text.Length, out examinedKeywords, out newVertex, out link, true, ref pos);
+                _tryIsKeyword(firstCharacterPos_relativeToText, text.Length - 1, out examinedKeywords, out newVertex, out link, true, ref pos);
 
                 if (examinedKeywords.Count() > 0)
+                {
+                    pos++;
+
                     return true;
+                }
 
                 return false;
             }
@@ -444,22 +448,34 @@ namespace m0.ZeroCode
 
             bool shallProceed = true;
 
+            int tryNewPos = 0;
+            string tryNewVertex = null;
+            string tryLink = null;
 
             if (!isTopLevelCall)
             {
                 // newVertex
 
-                newVertex = ZeroCodeCommon.tryStringFromNewVertexString(text, startPos, ref newPos);
+                tryNewVertex = ZeroCodeCommon.tryStringFromNewVertexString(text, startPos, ref tryNewPos);
 
-                if (newVertex != null)
+                if (tryNewVertex != null && tryNewPos == endPos) // check if found fills all the needed space
+                {
+                    newVertex = tryNewVertex;
+                    newPos = tryNewPos;
                     return;
+                }
 
                 // link
 
-                link = ZeroCodeCommon.tryStringFromLinkString(text, startPos, ref newPos);
+                tryLink = ZeroCodeCommon.tryStringFromLinkString(text, startPos, ref tryNewPos);
 
-                if (link != null)
+                if (tryLink != null &&
+                    (tryNewPos == endPos)) // check if found fills all the needed space
+                {
+                    link = tryLink;
+                    newPos = tryNewPos;
                     return;
+                }
             }
 
             // keyword
@@ -521,49 +537,8 @@ namespace m0.ZeroCode
 
                                     newExaminedKeywords.Add(ktd);
                                 }
-
                         }                    
                     }
-
-                    ///
-                    /*
-                    if (sPos <= ktd.waitingUntilPositionInText
-                         && ktd.keyword.Length == ktd.currentPositionInKeyword)
-                    {
-                        ktd.matched = true;
-
-                        newExaminedKeywords.Add(ktd);
-                    }
-                    else if(!ktd.matched)
-                    {
-                        if (ktd.state == keywordTryingState.waiting)
-                        {
-                            if (sPos == ktd.waitingUntilPositionInText)
-                                ktd.state = keywordTryingState.keywordCharacter;
-                            else
-                                newExaminedKeywords.Add(ktd);
-                        }
-
-                        if (ZeroCodeUtil.tryStringMatch(keyword, ktd.currentPositionInKeyword, "(?<")
-                        && ktd.state == keywordTryingState.keywordCharacter)
-                        {
-                            int begCurrentPositionInKeyword = ktd.currentPositionInKeyword;
-
-                            ktd.currentPositionInKeyword = ZeroCodeUtil.getNextMatch(keyword, ktd.currentPositionInKeyword + 2, ">)") + 2;
-                            ktd.currentlyProcessedParameterName = keyword.Substring(begCurrentPositionInKeyword + 3, ktd.currentPositionInKeyword - begCurrentPositionInKeyword - 5);
-                            ktd.afterParameterString = ZeroCodeUtil.getNextCharacterPartFromKeyword(keyword, ktd.currentPositionInKeyword);
-                            ktd.state = keywordTryingState.parameter;
-                        }
-
-                        if (/*keyword.Length > ktd.currentPositionInKeyword &&*/
-                            /*ktd.state == keywordTryingState.keywordCharacter &&
-                            text[sPos] == keyword[ktd.currentPositionInKeyword])
-                        {
-                            ktd.currentPositionInKeyword++;
-
-                            newExaminedKeywords.Add(ktd);
-                        }
-                    }*/
                 }
 
                 // store found keyword parameters
@@ -588,18 +563,28 @@ namespace m0.ZeroCode
                             foundParameter = foundParameters[ktd.afterParameterString];
                             _waitingUntilPositionInText = foundParameters_waitingUntilPositionInText[ktd.afterParameterString];
                         }
-                        else*/ // THIS IS NOT WORKING GOOD NOW. TO BE CORRECTED
+                        else*/ // THIS MIGHT NOT WORK GOOD NOW. TO BE CHECKED / CORRECTED
                         {
-                            int sPosAfterParameter = -1;
+                            int isTryKeyword_endPos = 0;
 
-                           // if (ktd.afterParameterString == "")
-                           // {
+                            if (ktd.afterParameterString != "")
+                            {
+                                int sPosAfterParameter = ZeroCodeUtil.getNextMatch(text, sPos, ktd.afterParameterString);
+
+                                if (sPosAfterParameter != -1)
+                                    isTryKeyword_endPos = sPosAfterParameter;
+                                else
+                                    isTryKeyword_endPos = -1; // do not search; this keyword does not fit in text
+                            }
+                                
+                            if(isTryKeyword_endPos != -1)
+                            {
                                 List<keywordTryingData> foundKeywords = null;
                                 string foundNewVertex = null;
                                 string foundLink = null;
                                 int _newPos = 0;
 
-                                _tryIsKeyword(sPos, endPos, out foundKeywords, out foundNewVertex, out foundLink, false, ref _newPos);
+                                _tryIsKeyword(sPos, isTryKeyword_endPos, out foundKeywords, out foundNewVertex, out foundLink, false, ref _newPos);
 
                                 if (foundNewVertex != null)
                                 {
@@ -615,24 +600,18 @@ namespace m0.ZeroCode
 
                                 if (foundKeywords.Count() > 0)
                                 {
-                                    int x = 0; // HOW IS THAT
+                                    ktd.waitingUntilPositionInText = _newPos;
+
+                                    foundParameter = foundKeywords[0];
+
+                                    if(foundParameters.Count() > 1)
+                                    {
+                                        int x = 0; // HOW IS THAT
+                                    }
+
                                 }
-                          /*  } // THIS DOES NOT WORK THAT SIMPLE....
-                            else
-                            {
-                                sPosAfterParameter = ZeroCodeUtil.getNextMatch(text, sPos, ktd.afterParameterString);
-
-                                if (sPosAfterParameter != -1)
-                                {
-                                    ktd.waitingUntilPositionInText = sPosAfterParameter;
-
-                                    if (ZeroCodeCommon.isNewVertex(text, sPos, sPosAfterParameter - 1))
-                                        foundParameter = ZeroCodeCommon.stringFromNewVertexString(text.Substring(sPos, sPosAfterParameter - sPos));
-
-                                    if (ZeroCodeCommon.isLink(text, sPos, sPosAfterParameter - 1))
-                                        foundParameter = new ToVertexMock(ZeroCodeCommon.stringFromLinkString(text.Substring(sPos, sPosAfterParameter - sPos)));
-                                }
-                            }*/
+                            }
+                            
                         }
 
                         if (foundParameter != null)
@@ -670,18 +649,19 @@ namespace m0.ZeroCode
                     if (examinedKeywords.Count == 0)
                         shallProceed = false; // no keyword found
                 }
-
-                // move out matched
-                /*
-                if (shallProceed) {
-                    List<keywordTryingData> tempKeywords = examinedKeywords;
-                    examinedKeywords = new List<keywordTryingData>();
-
-                    foreach (keywordTryingData ktd in tempKeywords)
-                        if (!ktd.matched)
-                            examinedKeywords.Add(ktd);
-                }*/
             }
+
+            // if no keywords found, we can use tryNewVertex/tryLink, that are:
+            // - not filling needed space
+            // - endPos==0 => needed space not defined 
+
+            if (examinedKeywords.Count == 0)
+            {
+                newVertex = tryNewVertex;
+                link = tryLink;
+                newPos = tryNewPos;
+            }else
+                newPos = sPos;
         }
 
         IVertex AddKeywordVertex(IVertex parent, List<keywordTryingData> keywords)

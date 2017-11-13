@@ -155,7 +155,7 @@ namespace m0.ZeroCode
                         shallProceed = false;
                 }
 
-                pos = sPos;
+                pos = sPos + 1;
 
                 newVertex = ZeroCodeCommon.stringFromNewVertexString(text.Substring(startPos, sPos - startPos + 1));
             }

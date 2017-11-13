@@ -494,7 +494,7 @@ namespace m0
             // import meta
             //
             // import meta (?<name>) (?<link>)
-            
+            /*
             IVertex importMeta = smuk.AddVertex(keyword, "import meta (?<name>) (?<link>)");
 
             IVertex importMeta_name=importMeta.AddVertex(smb.Get(@"$ImportMeta"), "(?<name>)");
@@ -540,11 +540,11 @@ namespace m0
 
             comment.AddVertex(smb.Get(@"Vertex\$Description"), "(?<text>)");
 
-            
+            */
             // attribute
             //
             // attribute (?<name>) (?<type>) (?<MinCardinality>):(?<MaxCardinality>) <(?<MinValue>):(?<MaxValue>)>
-
+            
             IVertex attribute3 = smuk.AddVertex(keyword, "attribute (?<name>) (?<type>) (?<MinCardinality>):(?<MaxCardinality>) <(?<MinValue>):(?<MaxValue>)>");
 
 
@@ -567,7 +567,7 @@ namespace m0
             // attribute
             //
             // attribute (?<name>) (?<type>) (?<MinCardinality>):(?<MaxCardinality>) 
-
+            
             IVertex attribute4 = smuk.AddVertex(keyword, "attribute (?<name>) (?<type>) (?<MinCardinality>):(?<MaxCardinality>)");
 
 
@@ -583,7 +583,7 @@ namespace m0
 
             attribute4_attribute.AddEdge(_is, smu.Get(@"Class\Attribute"));
 
-
+            
             // attribute
             //
             // attribute (?<name>) (?<type>) <(?<MinValue>):(?<MaxValue>)>
@@ -606,7 +606,7 @@ namespace m0
             // attribute
             //
             // attribute (?<name>) (?<type>)
-
+            
             IVertex attribute = smuk.AddVertex(keyword, "attribute (?<name>) (?<type>)");
 
 
