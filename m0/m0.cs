@@ -544,7 +544,7 @@ namespace m0
             // attribute
             //
             // attribute (?<name>) (?<type>) (?<MinCardinality>):(?<MaxCardinality>) <(?<MinValue>):(?<MaxValue>)>
-            
+            /*
             IVertex attribute3 = smuk.AddVertex(keyword, "attribute (?<name>) (?<type>) (?<MinCardinality>):(?<MaxCardinality>) <(?<MinValue>):(?<MaxValue>)>");
 
 
@@ -617,7 +617,7 @@ namespace m0
             attribute_attribute.AddEdge(isAggregation, empty);
 
             attribute_attribute.AddEdge(_is, smu.Get(@"Class\Attribute"));
-            /*
+            
             // aassociation
             //
             // association (?<name>) (?<type>) (?<MinCardinality>):(?<MaxCardinality>)
@@ -759,12 +759,44 @@ namespace m0
 
             o_minus_any.AddVertex(smu.Get(@"DoubleOperator\RightExpression"), "(?<right>)");
 
+            // *
+            //
+            // (?<left>) * (?<right>)
 
+            //IVertex o_mul = smuk.AddVertex(keyword, "(?<left>) *(?<SUB>) (?<right>)");
+
+            IVertex o_mul = smuk.AddVertex(keyword, "(?<left>) * (?<right>)");
+
+            IVertex o_mul_any = o_mul.AddVertex(any, "");
+
+            //o_mul_any.AddEdge(smb.Get(@"Vertex\$Is"), smu.Get(" "));
+
+            o_mul_any.AddVertex(smb.Get(@"Vertex\$Is"), "*"); // TO BE CORRECTED
+
+            o_mul_any.AddVertex(smu.Get(@"DoubleOperator\LeftExpression"), "(?<left>)");
+
+            o_mul_any.AddVertex(smu.Get(@"DoubleOperator\RightExpression"), "(?<right>)");
+
+            // /
+            //
+            // (?<left>) - (?<right>)
+
+            //IVertex o_div = smuk.AddVertex(keyword, "(?<left>) /(?<SUB>) (?<right>)");
+
+            IVertex o_div = smuk.AddVertex(keyword, "(?<left>) / (?<right>)");
+
+            IVertex o_div_any = o_div.AddVertex(any, "");
+
+            o_div_any.AddEdge(smb.Get(@"Vertex\$Is"), smu.Get("/"));
+
+            o_div_any.AddVertex(smu.Get(@"DoubleOperator\LeftExpression"), "(?<left>)");
+
+            o_div_any.AddVertex(smu.Get(@"DoubleOperator\RightExpression"), "(?<right>)");
 
             // []
             //
             // [(*(+, +) (?<expr>)*)]
-
+            /*
             IVertex o_call = smuk.AddVertex(keyword, "[(*(+, +)(?<expr>)*)]");
 
             IVertex o_call_any = o_call.AddVertex(any, "");
@@ -774,7 +806,7 @@ namespace m0
             IVertex o_call_any_param=o_call_any.AddVertex(smu.Get(@"MultiOperator\Expression"), "(?<expr>)");
 
             o_call_any_param.AddEdge(smb.Get(@"$KeywordManyRoot"), smb.Get(@"$Empty"));
-            
+            */
         }
 
         void CreateSystemTextLanguageZeroCode()

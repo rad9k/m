@@ -579,7 +579,8 @@ namespace m0.ZeroCode
                             {
                                 int sPosAfterParameter = ZeroCodeUtil.getNextMatch(text, sPos, ktd.afterParameterString);
 
-                                if (sPosAfterParameter != -1)
+                                if (sPosAfterParameter != -1 
+                                    && ( (sPosAfterParameter < endPos) || (endPos==0) ))
                                     isTryKeyword_endPos = sPosAfterParameter;
                                 else
                                     isTryKeyword_endPos = -1; // do not search; this keyword does not fit in text
