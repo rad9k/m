@@ -323,7 +323,7 @@ namespace m0.ZeroCode
                     int x = 0; // HOW IS THAT
                 }
 
-                AddKeywordVertex(_baseVertex, examinedKeywords[0]);
+                AddKeywordVertex(_baseVertex, examinedKeywords[1]);
             }
             else {
 
@@ -443,6 +443,8 @@ namespace m0.ZeroCode
 
         void _tryIsKeyword(int startPos, int endPos,out List<keywordTryingData> examinedKeywords, out string newVertex, out string link, bool isTopLevelCall, ref int newPos)
         {
+            MinusZero.Instance.Log(1, "_tryIsKeyword", "BEG startPos:" + startPos + " endPos:" + endPos);
+
             examinedKeywords = new List<keywordTryingData>();            
 
             newVertex = null;
@@ -536,7 +538,11 @@ namespace m0.ZeroCode
                                 ktd.currentlyProcessedParameterName = keyword.Substring(begCurrentPositionInKeyword + 3, ktd.currentPositionInKeyword - begCurrentPositionInKeyword - 5);
                                 ktd.afterParameterString = ZeroCodeUtil.getNextCharacterPartFromKeyword(keyword, ktd.currentPositionInKeyword);
                                 ktd.state = keywordTryingState.parameter;
-                            }else
+
+                                MinusZero.Instance.Log(1, "_tryIsKeyword", "(?< match found begCurrentPositionInKeyword:"+ begCurrentPositionInKeyword + " currentPositionInKeyword:"+ktd.currentPositionInKeyword+ " currentlyProcessedParameterName:"+ktd.currentlyProcessedParameterName+ " afterParameterString:"+ktd.afterParameterString);
+
+                            }
+                            else
                                 // keywordCharacter => keywordCharacer
                                 if (/*keyword.Length > ktd.currentPositionInKeyword &&*/
                                 text[sPos] == keyword[ktd.currentPositionInKeyword])
@@ -565,19 +571,22 @@ namespace m0.ZeroCode
 
                         bool allreadyAdded = false;
 
-                       /* if (foundParameters.ContainsKey(ktd.afterParameterString))
+                        if (foundParameters.ContainsKey(ktd.afterParameterString))
                         {
                             allreadyAdded = true;
                             foundParameter = foundParameters[ktd.afterParameterString];
                             _waitingUntilPositionInText = foundParameters_waitingUntilPositionInText[ktd.afterParameterString];
                         }
-                        else*/ // THIS MIGHT NOT WORK GOOD NOW. TO BE CHECKED / CORRECTED
+                        else // THIS MIGHT NOT WORK GOOD NOW. TO BE CHECKED / CORRECTED
                         {
                             int isTryKeyword_endPos = 0;
 
                             if (ktd.afterParameterString != "")
                             {
                                 int sPosAfterParameter = ZeroCodeUtil.getNextMatch(text, sPos, ktd.afterParameterString);
+
+                                MinusZero.Instance.Log(1, "_tryIsKeyword", "sPosAfterParameter:"+ sPosAfterParameter+ " for afterParameterString:"+ktd.afterParameterString);
+
 
                                 if (sPosAfterParameter != -1 
                                     && ( (sPosAfterParameter < endPos) || (endPos==0) ))
@@ -592,6 +601,9 @@ namespace m0.ZeroCode
                                 string foundNewVertex = null;
                                 string foundLink = null;
                                 int _newPos = 0;
+
+                                MinusZero.Instance.Log(1, "_tryIsKeyword", "will run _tryIs for:"+ ktd.currentlyProcessedParameterName);
+
 
                                 _tryIsKeyword(sPos, isTryKeyword_endPos, out foundKeywords, out foundNewVertex, out foundLink, false, ref _newPos);
 
@@ -625,15 +637,19 @@ namespace m0.ZeroCode
 
                         if (foundParameter != null)
                         {
-                            /*if (!allreadyAdded)
+                            if (!allreadyAdded)
                             {
                                 foundParameters.Add(ktd.afterParameterString, foundParameter);
                                 foundParameters_waitingUntilPositionInText.Add(ktd.afterParameterString, ktd.waitingUntilPositionInText);
                             }
                             else
-                                ktd.waitingUntilPositionInText = _waitingUntilPositionInText;*/ // TURNED OFF NOW
+                                ktd.waitingUntilPositionInText = _waitingUntilPositionInText; // TURNED OFF NOW
 
                             ktd.sub.Add(ktd.currentlyProcessedParameterName, foundParameter);
+
+
+                            MinusZero.Instance.Log(1, "_tryIsKeyword", "sub add:" + ktd.currentlyProcessedParameterName+" foundParameter:"+foundParameter);
+
 
                             newExaminedKeywords.Add(ktd);
                         }
@@ -671,6 +687,38 @@ namespace m0.ZeroCode
                 newPos = tryNewPos;
             }else
                 newPos = sPos;
+
+            MinusZero.Instance.Log(1, "_tryIsKeyword", "END newVertex:"+newVertex+" link:"+link+" keywordsCount:"+examinedKeywords.Count);
+
+            log_keywords(examinedKeywords, 0);
+        }
+
+        void log_keywords(List<keywordTryingData> examinedKeywords, int pos)
+        {
+            string pre = "";
+
+            for (int x = 0; x < pos; x++)
+                pre += " ";
+
+            foreach (keywordTryingData ktd in examinedKeywords)
+            {
+                MinusZero.Instance.Log(1, "_tryIsKeyword", pre + "-keyword:" + ktd.keyword + " sub count:" + ktd.sub.Count);
+
+                foreach (KeyValuePair<string, object> o in ktd.sub)
+                {
+                    MinusZero.Instance.Log(1, "_tryIsKeyword", pre + "-sub:" + o);
+
+                    if (o.Value is keywordTryingData)
+                    {
+                        List<keywordTryingData> l = new List<keywordTryingData>();
+                        l.Add((keywordTryingData)o.Value);
+                        log_keywords(l, pos + 1);
+                    }
+
+                    
+
+                }
+            }
         }
 
         IVertex AddKeywordVertex(IVertex parent, keywordTryingData keyword)

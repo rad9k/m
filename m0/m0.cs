@@ -2648,7 +2648,7 @@ namespace m0
 
         private System.IO.StreamWriter logFile;
 
-        public bool DoLog=false;
+        public bool DoLog=true;
 
         public int LogLevel=1;
 
@@ -2666,7 +2666,7 @@ namespace m0
         public void Log(int Level,string Where, string What)
         {
             if(DoLog&&Level<=LogLevel)
-                logFile.WriteLine(System.DateTime.Now.ToLongTimeString()+":"+ System.DateTime.Now.Millisecond+" "+Where+": "+What);
+                logFile.WriteLine(System.DateTime.Now.ToLongTimeString()+":["+Level+"]:"+ System.DateTime.Now.Millisecond+" "+Where+": "+What);
         }
 
         private void DisposeLog()
@@ -2674,6 +2674,8 @@ namespace m0
             Log(0,"DisposeLog", "STOP");
             logFile.Close();
         }
+
+        ///
 
         private void AddIsAttribute(string what)
         {
@@ -2775,9 +2777,16 @@ namespace m0
             IsInitialized = true;
         }
 
+        bool disposed = false;
+
         public void Dispose()
         {
-           // DisposeLog();
+            if (!disposed)
+            {
+                DisposeLog();
+
+                disposed = true;
+            }
         }
 
         public void Refresh()

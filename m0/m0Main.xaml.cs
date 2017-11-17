@@ -52,67 +52,9 @@ namespace m0
             GraphUtil.ReplaceEdge(stv.Vertex.Get("BaseEdge:"), "To", MinusZero.Instance.Root);                                    
             
             this.root.Content=stv;
-                   
-           // test();
-            
-            //Window1 w = new Window1();
-            //w.Show();
         }
 
-        void test3()
-        {            
-            IVertex r=MinusZero.Instance.Root;
-
-            IVertex res = r.GetAll("\"C:\"\\");
-
-            IPlatformClass stv = (IPlatformClass)PlatformClass.CreatePlatformObject(r.Get(@"System\Meta\Visualiser\GraphVisualiser"));
-
-            //GraphUtil.ReplaceEdge(stv.Vertex, "BaseVertex", r.Get("\"C:\""));
-            //GraphUtil.ReplaceEdge(stv.Vertex, "BaseVertex", r.Get("\"C:\"\\Windows"));
-            //GraphUtil.ReplaceEdge(stv.Vertex, "BaseVertex", r.Get(@"TEST\Person"));
-            GraphUtil.ReplaceEdge(stv.Vertex, "BaseVertex", r);
-
-
-            
-
-            GraphUtil.ReplaceEdge(stv.Vertex, "SelectedVertexes", res);
-
-            MinusZero.Instance.DefaultShow.ShowContent(stv);
-
-            /////////////////////
-
-
-            IPlatformClass sv = (IPlatformClass)PlatformClass.CreatePlatformObject(r.Get(@"System\Meta\Visualiser\TreeVisualiser"));
-
-            GraphUtil.ReplaceEdge(sv.Vertex, "BaseVertex", r);
-
-            GraphUtil.ReplaceEdge(sv.Vertex, "SelectedVertexes", res);
-
-            MinusZero.Instance.DefaultShow.ShowContent(sv);
-            
-        }
-
-        void test2()
-        {
-            IVertex r=MinusZero.Instance.Root;
-
-            IPlatformClass stv = (IPlatformClass)PlatformClass.CreatePlatformObject(r.Get(@"System\Meta\Visualiser\TreeVisualiser"));
-
-            GraphUtil.ReplaceEdge(stv.Vertex, "BaseVertex", r);
-
-            MinusZero.Instance.DefaultShow.ShowContent(stv);            
-        }
-
-        void test(){
-            /*ListVisualiser slv = new ListVisualiser();
-            
-            GraphUtil.ReplaceEdge(slv.Vertex, "BaseVertex", MinusZero.Instance.Root.Get(@"TEST\Person1"));
-
-            MinusZero.Instance.DefaultShow.ShowContent(slv);
-            */
-            
-
-        }
+        
 
         private string randomChars()
         {
@@ -697,6 +639,11 @@ namespace m0
         public void EditDialog(IVertex baseVertex, Point? position)
         {
             ShowContentFloating_withSize( new EditDialog(baseVertex, position),500,550);
+        }
+
+        private void Window_Closed(object sender, EventArgs e)
+        {
+            m0.MinusZero.Instance.Dispose();
         }
     }
 }
