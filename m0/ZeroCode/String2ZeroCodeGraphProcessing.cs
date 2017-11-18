@@ -579,7 +579,11 @@ namespace m0.ZeroCode
                         }
                         else // THIS MIGHT NOT WORK GOOD NOW. TO BE CHECKED / CORRECTED
                         {
-                            int isTryKeyword_endPos = 0;
+                            int isTryKeyword_endPos = endPos;
+
+
+                            MinusZero.Instance.Log(1, "_tryIsKeyword", "! " + ktd.keyword + " / " + ktd.afterParameterString + "| ("+sPos+","+endPos+")");
+
 
                             if (ktd.afterParameterString != "")
                             {

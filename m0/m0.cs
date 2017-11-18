@@ -758,7 +758,7 @@ namespace m0
             o_minus_any.AddVertex(smu.Get(@"DoubleOperator\LeftExpression"), "(?<left>)");
 
             o_minus_any.AddVertex(smu.Get(@"DoubleOperator\RightExpression"), "(?<right>)");
-
+            
             // *
             //
             // (?<left>) * (?<right>)
