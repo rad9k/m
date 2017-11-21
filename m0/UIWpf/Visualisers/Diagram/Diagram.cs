@@ -397,7 +397,7 @@ namespace m0.UIWpf.Visualisers.Diagram
         {
             if (ActualHeight != 0 || IsFirstPainted)
             {
-                MinusZero.Instance.Log(1, "Diagram", "");
+                //MinusZero.Instance.Log(1, "Diagram", "");
 
                 // turn off Vertex.Change listener
 

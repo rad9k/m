@@ -119,10 +119,10 @@ namespace m0.Graph
 
             nv.Value = val;
 
-            if(val==null)
+            /*if(val==null)
                 MinusZero.Instance.Log(3,"AddVertex", "NULL");
             else
-                MinusZero.Instance.Log(3,"AddVertex",val.ToString());
+                MinusZero.Instance.Log(3,"AddVertex",val.ToString());*/
 
             AddEdge(metaVertex, nv);
 

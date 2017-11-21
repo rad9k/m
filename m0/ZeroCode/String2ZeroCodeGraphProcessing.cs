@@ -443,7 +443,7 @@ namespace m0.ZeroCode
 
         void _tryIsKeyword(int startPos, int endPos,out List<keywordTryingData> examinedKeywords, out string newVertex, out string link, bool isTopLevelCall, ref int newPos)
         {
-            MinusZero.Instance.Log(1, "_tryIsKeyword", "BEG startPos:" + startPos + " endPos:" + endPos);
+           // MinusZero.Instance.Log(1, "_tryIsKeyword", "BEG startPos:" + startPos + " endPos:" + endPos);
 
             examinedKeywords = new List<keywordTryingData>();            
 
@@ -539,7 +539,7 @@ namespace m0.ZeroCode
                                 ktd.afterParameterString = ZeroCodeUtil.getNextCharacterPartFromKeyword(keyword, ktd.currentPositionInKeyword);
                                 ktd.state = keywordTryingState.parameter;
 
-                                MinusZero.Instance.Log(1, "_tryIsKeyword", "(?< match found begCurrentPositionInKeyword:"+ begCurrentPositionInKeyword + " currentPositionInKeyword:"+ktd.currentPositionInKeyword+ " currentlyProcessedParameterName:"+ktd.currentlyProcessedParameterName+ " afterParameterString:"+ktd.afterParameterString);
+                                //MinusZero.Instance.Log(1, "_tryIsKeyword", "(?< match found begCurrentPositionInKeyword:"+ begCurrentPositionInKeyword + " currentPositionInKeyword:"+ktd.currentPositionInKeyword+ " currentlyProcessedParameterName:"+ktd.currentlyProcessedParameterName+ " afterParameterString:"+ktd.afterParameterString);
 
                             }
                             else
@@ -582,14 +582,14 @@ namespace m0.ZeroCode
                             int isTryKeyword_endPos = endPos;
 
 
-                            MinusZero.Instance.Log(1, "_tryIsKeyword", "! " + ktd.keyword + " / " + ktd.afterParameterString + "| ("+sPos+","+endPos+")");
+                            //MinusZero.Instance.Log(1, "_tryIsKeyword", "! " + ktd.keyword + " / " + ktd.afterParameterString + "| ("+sPos+","+endPos+")");
 
 
                             if (ktd.afterParameterString != "")
                             {
                                 int sPosAfterParameter = ZeroCodeUtil.getNextMatch(text, sPos, ktd.afterParameterString);
 
-                                MinusZero.Instance.Log(1, "_tryIsKeyword", "sPosAfterParameter:"+ sPosAfterParameter+ " for afterParameterString:"+ktd.afterParameterString);
+                               // MinusZero.Instance.Log(1, "_tryIsKeyword", "sPosAfterParameter:"+ sPosAfterParameter+ " for afterParameterString:"+ktd.afterParameterString);
 
 
                                 if (sPosAfterParameter != -1 
@@ -606,7 +606,7 @@ namespace m0.ZeroCode
                                 string foundLink = null;
                                 int _newPos = 0;
 
-                                MinusZero.Instance.Log(1, "_tryIsKeyword", "will run _tryIs for:"+ ktd.currentlyProcessedParameterName);
+                                //MinusZero.Instance.Log(1, "_tryIsKeyword", "will run _tryIs for:"+ ktd.currentlyProcessedParameterName);
 
 
                                 _tryIsKeyword(sPos, isTryKeyword_endPos, out foundKeywords, out foundNewVertex, out foundLink, false, ref _newPos);
@@ -652,7 +652,7 @@ namespace m0.ZeroCode
                             ktd.sub.Add(ktd.currentlyProcessedParameterName, foundParameter);
 
 
-                            MinusZero.Instance.Log(1, "_tryIsKeyword", "sub add:" + ktd.currentlyProcessedParameterName+" foundParameter:"+foundParameter);
+                            //MinusZero.Instance.Log(1, "_tryIsKeyword", "sub add:" + ktd.currentlyProcessedParameterName+" foundParameter:"+foundParameter);
 
 
                             newExaminedKeywords.Add(ktd);
@@ -692,9 +692,9 @@ namespace m0.ZeroCode
             }else
                 newPos = sPos;
 
-            MinusZero.Instance.Log(1, "_tryIsKeyword", "END newVertex:"+newVertex+" link:"+link+" keywordsCount:"+examinedKeywords.Count);
+            //MinusZero.Instance.Log(1, "_tryIsKeyword", "END newVertex:"+newVertex+" link:"+link+" keywordsCount:"+examinedKeywords.Count);
 
-            log_keywords(examinedKeywords, 0);
+            //log_keywords(examinedKeywords, 0);
         }
 
         void log_keywords(List<keywordTryingData> examinedKeywords, int pos)

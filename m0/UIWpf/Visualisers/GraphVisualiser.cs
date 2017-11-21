@@ -310,7 +310,7 @@ namespace m0.UIWpf.Visualisers
         {            
             if (ActualHeight != 0)
             {
-                MinusZero.Instance.Log(1, "PaintGraph", "");
+                //MinusZero.Instance.Log(1, "PaintGraph", "");
 
                 // turn off Vertex.Change listener
 
@@ -368,7 +368,7 @@ namespace m0.UIWpf.Visualisers
 
         protected void AddCircle(int level, IList<IVertex> InnerCircleVertexes)
         {
-            MinusZero.Instance.Log(1,"AddCircle", level.ToString());
+            //MinusZero.Instance.Log(1,"AddCircle", level.ToString());
 
             IList<IVertex> CircleVertexes=new List<IVertex>();
 

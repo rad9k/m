@@ -208,7 +208,7 @@ namespace m0.Graph
         { 
             //
             MinusZero m0 = MinusZero.Instance;
-            m0.Log(2,"Execute", "\"" + expression + "\"");
+            //m0.Log(2,"Execute", "\"" + expression + "\"");
             bool prevDoLog = m0.DoLog;
             m0.DoLog = false;
             //
@@ -228,7 +228,7 @@ namespace m0.Graph
         {
             //
             MinusZero m0=MinusZero.Instance;
-            m0.Log(2,"Get", "\"" + query + "\"");
+            //m0.Log(2,"Get", "\"" + query + "\"");
             bool prevDoLog = m0.DoLog;
             m0.DoLog = false;
             //
@@ -262,7 +262,7 @@ namespace m0.Graph
         {
             //
             MinusZero m0 = MinusZero.Instance;
-            m0.Log(2, "GetAll", "\"" + query + "\"");
+            //m0.Log(2, "GetAll", "\"" + query + "\"");
             bool prevDoLog = m0.DoLog;
             m0.DoLog = false;
             //
