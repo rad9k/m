@@ -401,6 +401,33 @@ namespace m0.ZeroCode
                 currentPositionInKeyword = 0;
                 state = keywordTryingState.keywordCharacter; // that and rest of the fields will be updated in the _tryKeyword
             }
+
+            internal bool isCurrentPositionParameterMatch()
+            {
+                if (ZeroCodeUtil.tryStringMatch(keyword, currentPositionInKeyword, "(?<"))
+                    return true;
+                else
+                    return false;
+            }
+
+            internal bool isCurrentPositionCharacterMatch(char v)
+            {
+                if (keyword[currentPositionInKeyword] == v)
+                    return true;
+                else
+                    return false;
+            }
+
+            internal void GetParameter()
+            {
+                int begCurrentPositionInKeyword = currentPositionInKeyword;
+
+                currentPositionInKeyword = ZeroCodeUtil.getNextMatch(keyword, currentPositionInKeyword + 2, ">)") + 2;
+                currentlyProcessedParameterName = keyword.Substring(begCurrentPositionInKeyword + 3, currentPositionInKeyword - begCurrentPositionInKeyword - 5);
+                afterParameterString = ZeroCodeUtil.getNextCharacterPartFromKeyword(keyword, currentPositionInKeyword);
+
+                state = keywordTryingState.parameter;
+            }
         }
 
         List<keywordTryingData> examinedKeywords_All; // all keywords are here
@@ -530,22 +557,15 @@ namespace m0.ZeroCode
                         if(ktd.state== keywordTryingState.keywordCharacter)
                         {
                             // keywordCharacter => parameter
-                            if (ZeroCodeUtil.tryStringMatch(keyword, ktd.currentPositionInKeyword, "(?<"))
+                            if(ktd.isCurrentPositionParameterMatch())
                             {
-                                int begCurrentPositionInKeyword = ktd.currentPositionInKeyword;
-
-                                ktd.currentPositionInKeyword = ZeroCodeUtil.getNextMatch(keyword, ktd.currentPositionInKeyword + 2, ">)") + 2;
-                                ktd.currentlyProcessedParameterName = keyword.Substring(begCurrentPositionInKeyword + 3, ktd.currentPositionInKeyword - begCurrentPositionInKeyword - 5);
-                                ktd.afterParameterString = ZeroCodeUtil.getNextCharacterPartFromKeyword(keyword, ktd.currentPositionInKeyword);
-                                ktd.state = keywordTryingState.parameter;
+                                ktd.GetParameter();
 
                                 //MinusZero.Instance.Log(1, "_tryIsKeyword", "(?< match found begCurrentPositionInKeyword:"+ begCurrentPositionInKeyword + " currentPositionInKeyword:"+ktd.currentPositionInKeyword+ " currentlyProcessedParameterName:"+ktd.currentlyProcessedParameterName+ " afterParameterString:"+ktd.afterParameterString);
-
                             }
                             else
                                 // keywordCharacter => keywordCharacer
-                                if (/*keyword.Length > ktd.currentPositionInKeyword &&*/
-                                text[sPos] == keyword[ktd.currentPositionInKeyword])
+                                if ( ktd.isCurrentPositionCharacterMatch(text[sPos]) )
                                 {
                                     ktd.currentPositionInKeyword++;
 
@@ -581,16 +601,13 @@ namespace m0.ZeroCode
                         {
                             int isTryKeyword_endPos = endPos;
 
-
                             //MinusZero.Instance.Log(1, "_tryIsKeyword", "! " + ktd.keyword + " / " + ktd.afterParameterString + "| ("+sPos+","+endPos+")");
-
 
                             if (ktd.afterParameterString != "")
                             {
                                 int sPosAfterParameter = ZeroCodeUtil.getNextMatch(text, sPos, ktd.afterParameterString);
 
                                // MinusZero.Instance.Log(1, "_tryIsKeyword", "sPosAfterParameter:"+ sPosAfterParameter+ " for afterParameterString:"+ktd.afterParameterString);
-
 
                                 if (sPosAfterParameter != -1 
                                     && ( (sPosAfterParameter < endPos) || (endPos==0) ))
@@ -607,7 +624,6 @@ namespace m0.ZeroCode
                                 int _newPos = 0;
 
                                 //MinusZero.Instance.Log(1, "_tryIsKeyword", "will run _tryIs for:"+ ktd.currentlyProcessedParameterName);
-
 
                                 _tryIsKeyword(sPos, isTryKeyword_endPos, out foundKeywords, out foundNewVertex, out foundLink, false, ref _newPos);
 
@@ -633,10 +649,8 @@ namespace m0.ZeroCode
                                     {
                                         int x = 0; // HOW IS THAT
                                     }
-
                                 }
                             }
-                            
                         }
 
                         if (foundParameter != null)
@@ -681,7 +695,7 @@ namespace m0.ZeroCode
             }
 
             // if no keywords found, we can use tryNewVertex/tryLink, that are:
-            // - not filling needed space
+            // - filling needed space
             // - endPos==0 => needed space not defined 
 
             if (examinedKeywords.Count == 0)
