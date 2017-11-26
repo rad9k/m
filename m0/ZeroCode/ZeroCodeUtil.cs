@@ -40,7 +40,7 @@ namespace m0.ZeroCode
         {
             int toMatchLength = toMatch.Length;
 
-            if (s.Length < toMatchLength)
+            if (s.Length < pos + toMatchLength)
                 return false;
 
             for (int x = 0; x < toMatchLength; x++)
