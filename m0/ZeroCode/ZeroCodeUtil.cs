@@ -22,18 +22,23 @@ namespace m0.ZeroCode
             return null;
         }
 
-        public static string getQueryFirstAndSecondPart(string query, out string secondPart)
+        public static void getQueryFirstAndSecondPart(string query, out string firstPart, out string secondPart)
         {
+            firstPart = null;
             secondPart = null;
 
             int slashPos=query.IndexOf('\\');
 
             if (slashPos == -1)
-                return query;
+            {
+                firstPart = query;
+                return;
+            }
+                
 
             secondPart = query.Substring(slashPos+1, query.Length - slashPos -1);
 
-            return query.Substring(0, slashPos);
+            firstPart = query.Substring(0, slashPos);
         }
 
         public static bool tryStringMatch(string s, int pos, string toMatch)
@@ -83,7 +88,12 @@ namespace m0.ZeroCode
 
         public static string getNextCharacterPartFromKeyword(string keyword, int startFrom)
         {
-            int nextParameterPos = getNextMatch(keyword, startFrom, "(?<");
+            int nextParameterPos = getNextMatch(keyword, startFrom, "(*(+");
+
+            if (nextParameterPos != -1)
+                return keyword.Substring(startFrom, nextParameterPos - startFrom);
+
+            nextParameterPos = getNextMatch(keyword, startFrom, "(?<");
 
             if (nextParameterPos != -1)
                 return keyword.Substring(startFrom, nextParameterPos - startFrom);

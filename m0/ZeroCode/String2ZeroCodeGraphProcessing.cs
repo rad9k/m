@@ -272,7 +272,9 @@ namespace m0.ZeroCode
 
             string secondPart;
 
-            string firstPart = ZeroCodeUtil.getQueryFirstAndSecondPart(link, out secondPart);
+            string firstPart;
+
+            ZeroCodeUtil.getQueryFirstAndSecondPart(link, out firstPart, out secondPart);
 
             IVertex tryIf;
 
@@ -323,7 +325,7 @@ namespace m0.ZeroCode
                     int x = 0; // HOW IS THAT
                 }
 
-                AddKeywordVertex(_baseVertex, examinedKeywords[0]);
+                return AddKeywordVertex(_baseVertex, examinedKeywords[0]);
             }
             else {
 
@@ -377,12 +379,15 @@ namespace m0.ZeroCode
             
             public int waitingUntilPositionInText;
             public int matchedOnPositionInText;
-            
 
             public string currentlyProcessedParameterName;
             public string afterParameterString;
 
-            public Dictionary<string, object> sub = new Dictionary<string, object>();
+            public string multiParameterSeparator;
+            public string multiParameterString;
+            public int currentPositionInMultiParameterString;
+
+            public Dictionary<string, List<object>> parameters = new Dictionary<string, List<object>>();
 
             public keywordTryingData(keywordTryingData source)
             {
@@ -403,15 +408,26 @@ namespace m0.ZeroCode
                 state = keywordTryingState.keywordCharacter; // that and rest of the fields will be updated in the _tryKeyword
             }
 
-            internal bool currentPositionInKeyword_isParameterMatch()
+            public bool currentPositionInKeyword_isParameterMatch()
             {
+                if(ZeroCodeUtil.tryStringMatch(keyword, currentPositionInKeyword, "(*(+")){
+                    int multiParameterSeparatorEndPos = ZeroCodeUtil.getNextMatch(keyword, currentPositionInKeyword + 4, "+)");
+
+                    multiParameterSeparator = keyword.Substring(currentPositionInKeyword + 4, multiParameterSeparatorEndPos - currentPositionInKeyword - 4);
+
+                    int multiParameterStringEndPos = ZeroCodeUtil.getNextMatch(keyword, multiParameterSeparatorEndPos, "*)");
+
+                    multiParameterString = keyword.Substring(multiParameterSeparatorEndPos + 2, multiParameterStringEndPos - multiParameterSeparatorEndPos - 2);
+                }
+
+
                 if (ZeroCodeUtil.tryStringMatch(keyword, currentPositionInKeyword, "(?<"))
                     return true;
                 else
                     return false;
             }
 
-            internal bool currentPositionCharacter_isCharacterMatch(char v)
+            public bool currentPositionCharacter_isCharacterMatch(char v)
             {
                 MinusZero.Instance.Log(1, "isCharacterMatch",v+" ? "+ keyword[currentPositionInKeyword] + " | curPositionInKeyword:"+currentPositionInKeyword);
                 if (keyword[currentPositionInKeyword] == v)
@@ -420,7 +436,7 @@ namespace m0.ZeroCode
                     return false;
             }
 
-            internal void GetParameter()
+            public void GetParameter()
             {
                 int begCurrentPositionInKeyword = currentPositionInKeyword;
 
@@ -433,9 +449,17 @@ namespace m0.ZeroCode
                 state = keywordTryingState.parameter;
             }
 
-            internal void currentPositionInKeyword_Increase()
+            public void currentPositionInKeyword_Increase()
             {
                 currentPositionInKeyword++;
+            }
+
+            public void AddParameter(string name, object val)
+            {
+                if (!parameters.ContainsKey(name))
+                    parameters.Add(name, new List<object>());
+
+                parameters[name].Add(val);
             }
         }
 
@@ -461,7 +485,7 @@ namespace m0.ZeroCode
 
                 int tryPos = 0; 
 
-                _tryIsKeyword("",firstCharacterPos_relativeToText, -1, text.Length - 1, out examinedKeywords, out newVertex, out link, true, ref tryPos);
+                _tryIsKeyword("",firstCharacterPos_relativeToText, -1, 0, text.Length - 1, out examinedKeywords, out newVertex, out link, true, ref tryPos);
 
                 if (examinedKeywords.Count() > 0)
                 {
@@ -477,12 +501,17 @@ namespace m0.ZeroCode
                 return false;
         }
 
-        void _tryIsKeyword(string LOGPREFIX, int startPos, int prev_startPos, int endPos,out List<keywordTryingData> examinedKeywords, out string newVertex, out string link, bool isTopLevelCall, ref int newPos)
+        void _tryIsKeyword(string LOGPREFIX, int startPos, int prev_startPos, int isPrevStartPosSameAsStartPosParentCount, int endPos,out List<keywordTryingData> examinedKeywords, out string newVertex, out string link, bool isTopLevelCall, ref int newPos)
         {
             bool isPrevStartPosSameAsStartPos = false;
 
+            int isPrevStartPosSameAsStartPosThisCount = isPrevStartPosSameAsStartPosParentCount;
+
             if (startPos == prev_startPos)
+            {
                 isPrevStartPosSameAsStartPos = true;
+                isPrevStartPosSameAsStartPosThisCount++;
+            }
 
             string xx = "";
 
@@ -541,8 +570,8 @@ namespace m0.ZeroCode
                 }
             }
 
-            //if (isPrevStartPosSameAsStartPos) // do not want inifinite recursion
-              //  return;
+            if (isPrevStartPosSameAsStartPos && isPrevStartPosSameAsStartPosParentCount==1) // do not want inifinite recursion
+                return;
 
             // keyword
 
@@ -665,7 +694,7 @@ namespace m0.ZeroCode
                                 if (sPosAfterParameter != -1
                                     && ((sPosAfterParameter < endPos) || (endPos == 0)))
                                 {
-                                    //isTryKeyword_endPos = sPosAfterParameter;
+                                    //isTryKeyword_endPos = sPosAfterParameter; // that will not work
                                 }
                                 else
                                     isTryKeyword_endPos = -1; // do not search; this keyword does not fit in text
@@ -682,7 +711,7 @@ namespace m0.ZeroCode
 
                                 MinusZero.Instance.Log(1, LOGPREFIX+"_tryIsKeyword", "will run _tryIs for:"+ ktd.currentlyProcessedParameterName);
 
-                                _tryIsKeyword(LOGPREFIX+"    ",sPos, startPos, isTryKeyword_endPos, out foundKeywords, out foundNewVertex, out foundLink, false, ref _newPos);
+                                _tryIsKeyword(LOGPREFIX+"    ",sPos, startPos, isPrevStartPosSameAsStartPosThisCount, isTryKeyword_endPos, out foundKeywords, out foundNewVertex, out foundLink, false, ref _newPos);
 
                                 MinusZero.Instance.Log(1, "_tryIsKeyword", LOGPREFIX+"waitingUntilPositionInText <= _newPos:" + _newPos);
 
@@ -722,7 +751,7 @@ namespace m0.ZeroCode
                             else
                                 ktd.waitingUntilPositionInText = _waitingUntilPositionInText; // TURNED OFF NOW
 
-                            ktd.sub.Add(ktd.currentlyProcessedParameterName, foundParameter);
+                            ktd.AddParameter(ktd.currentlyProcessedParameterName, foundParameter);
 
                             MinusZero.Instance.Log(1, "_tryIsKeyword", LOGPREFIX+"sub add:" + ktd.currentlyProcessedParameterName+" foundParameter:"+foundParameter);
 
@@ -823,16 +852,17 @@ namespace m0.ZeroCode
 
             foreach (keywordTryingData ktd in examinedKeywords)
             {
-                MinusZero.Instance.Log(1, "_tryIsKeyword", LOGPREFIX+pre + "-keyword:" + ktd.keyword + " sub count:" + ktd.sub.Count);
+                MinusZero.Instance.Log(1, "_tryIsKeyword", LOGPREFIX+pre + "-keyword:" + ktd.keyword + " sub count:" + ktd.parameters.Count);
 
-                foreach (KeyValuePair<string, object> o in ktd.sub)
+                foreach (KeyValuePair<string, List<object>> o in ktd.parameters)
                 {
                     MinusZero.Instance.Log(1, "_tryIsKeyword", LOGPREFIX+pre + "-sub:" + o);
 
-                    if (o.Value is keywordTryingData)
+                    foreach(object oo in o.Value)
+                    if (oo is keywordTryingData)
                     {
                         List<keywordTryingData> l = new List<keywordTryingData>();
-                        l.Add((keywordTryingData)o.Value);
+                        l.Add((keywordTryingData)oo);
                         log_keywords(l, pos + 1, LOGPREFIX);
                     }
 
@@ -863,16 +893,19 @@ namespace m0.ZeroCode
                     {
                         string name = ZeroCodeUtil.getRegexp((string)e.To.Value, Regex.Escape("(?<") + "(?<EXTRACT>.*)" + Regex.Escape(">)"));
 
-                        object sub = ktd.sub[name];
+                        List<object> subs = ktd.parameters[name];
 
-                        if (sub is string)
-                            nv = parent.AddVertex(meta, ktd.sub[name]); // ERROR
+                        foreach (object sub in subs)
+                        {
+                            if (sub is string)
+                                nv = parent.AddVertex(meta, sub); // ERROR
 
-                        if (sub is ToVertexMock)
-                            nv = parent.AddEdge(meta, (IVertex)sub).To;
+                            if (sub is ToVertexMock)
+                                nv = parent.AddEdge(meta, (IVertex)sub).To;
 
-                        if (sub is keywordTryingData)
-                            nv = _AddKeywordVertex(parent, (keywordTryingData)sub, ((keywordTryingData)sub).keywordVertex, meta);
+                            if (sub is keywordTryingData)
+                                nv = _AddKeywordVertex(parent, (keywordTryingData)sub, ((keywordTryingData)sub).keywordVertex, meta);
+                        }
                     }
                     else
                         nv = parent.AddEdge(meta, e.To).To;
@@ -883,16 +916,19 @@ namespace m0.ZeroCode
                     {
                         string name = ZeroCodeUtil.getRegexp((string)e.To.Value, Regex.Escape("(?<") + "(?<EXTRACT>.*)" + Regex.Escape(">)"));
 
-                        object sub = ktd.sub[name];
+                        List<object> subs = ktd.parameters[name];
 
-                        if (sub is string)
-                            nv = parent.AddVertex(meta, ktd.sub[name]);
+                        foreach (object sub in subs)
+                        {
+                            if (sub is string)
+                                nv = parent.AddVertex(meta, sub);
 
-                        if (sub is ToVertexMock)
-                            nv = parent.AddEdge(meta, (IVertex)sub).To;
+                            if (sub is ToVertexMock)
+                                nv = parent.AddEdge(meta, (IVertex)sub).To;
 
-                        if (sub is keywordTryingData)
-                            nv = _AddKeywordVertex(parent, (keywordTryingData)sub, ((keywordTryingData)sub).keywordVertex, meta);
+                            if (sub is keywordTryingData)
+                                nv = _AddKeywordVertex(parent, (keywordTryingData)sub, ((keywordTryingData)sub).keywordVertex, meta);
+                        }
                     }
                     else
                         nv = parent.AddVertex(meta, e.To);
