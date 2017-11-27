@@ -383,9 +383,12 @@ namespace m0.ZeroCode
             public string currentlyProcessedParameterName;
             public string afterParameterString;
 
-            public string multiParameterSeparator;
-            public string multiParameterString;
-            public int currentPositionInMultiParameterString;
+            // below attributes are hidden
+
+            string multiParameterSeparator;
+            string multiParameterString;
+            int currentPositionInMultiParameterString = -1; // if >0 => we are in the multiParam region
+            string postMultiParameterString;
 
             public Dictionary<string, List<object>> parameters = new Dictionary<string, List<object>>();
 
@@ -418,8 +421,16 @@ namespace m0.ZeroCode
                     int multiParameterStringEndPos = ZeroCodeUtil.getNextMatch(keyword, multiParameterSeparatorEndPos, "*)");
 
                     multiParameterString = keyword.Substring(multiParameterSeparatorEndPos + 2, multiParameterStringEndPos - multiParameterSeparatorEndPos - 2);
+
+                    currentPositionInMultiParameterString = 0;
+                    //currentPositionInKeyword = multiParameterSeparatorEndPos + 2;
                 }
 
+                if (currentPositionInMultiParameterString != -1 &&
+                    ZeroCodeUtil.tryStringMatch(keyword, currentPositionInKeyword, "(?<"))
+                    return true;
+                else
+                    return false;
 
                 if (ZeroCodeUtil.tryStringMatch(keyword, currentPositionInKeyword, "(?<"))
                     return true;
@@ -430,6 +441,8 @@ namespace m0.ZeroCode
             public bool currentPositionCharacter_isCharacterMatch(char v)
             {
                 MinusZero.Instance.Log(1, "isCharacterMatch",v+" ? "+ keyword[currentPositionInKeyword] + " | curPositionInKeyword:"+currentPositionInKeyword);
+
+
                 if (keyword[currentPositionInKeyword] == v)
                     return true;
                 else
