@@ -88,17 +88,20 @@ namespace m0.ZeroCode
 
         public static string getNextCharacterPartFromKeyword(string keyword, int startFrom)
         {
-            int nextParameterPos = getNextMatch(keyword, startFrom, "(*(+");
+            int firstTryPos = getNextMatch(keyword, startFrom, "(*(+");
 
-            if (nextParameterPos != -1)
-                return keyword.Substring(startFrom, nextParameterPos - startFrom);
+            int secondTryPos = getNextMatch(keyword, startFrom, "(?<");
 
-            nextParameterPos = getNextMatch(keyword, startFrom, "(?<");
+            if(firstTryPos==-1 && secondTryPos==-1)
+                return keyword.Substring(startFrom);
 
-            if (nextParameterPos != -1)
-                return keyword.Substring(startFrom, nextParameterPos - startFrom);
+            if(secondTryPos == -1)
+                return keyword.Substring(startFrom, firstTryPos - startFrom);
 
-            return keyword.Substring(startFrom);
+            if(firstTryPos == -1)
+                return keyword.Substring(startFrom, secondTryPos - startFrom);
+
+            return keyword.Substring(startFrom, Math.Min(firstTryPos,secondTryPos) - startFrom);
         }
     }
 }

@@ -383,12 +383,18 @@ namespace m0.ZeroCode
             public string currentlyProcessedParameterName;
             public string afterParameterString;
 
+            public int multiParameterCount = 0;
+
             // below attributes are hidden
 
             string multiParameterSeparator;
             string multiParameterString;
-            int currentPositionInMultiParameterString = -1; // if >0 => we are in the multiParam region
-            string postMultiParameterString;
+            string multiParamPlusSeparatorString;
+
+            int currentPositionInMultiParamPlusSeparatorString = -1;
+
+            int multiParameterStringBegPosition = -1;
+            int multiParameterStringEndPosition = -1;
 
             public Dictionary<string, List<object>> parameters = new Dictionary<string, List<object>>();
 
@@ -413,24 +419,33 @@ namespace m0.ZeroCode
 
             public bool currentPositionInKeyword_isParameterMatch()
             {
-                if(ZeroCodeUtil.tryStringMatch(keyword, currentPositionInKeyword, "(*(+")){
+                if(ZeroCodeUtil.tryStringMatch(keyword, currentPositionInKeyword, "(*(+")
+                    && currentPositionInMultiParamPlusSeparatorString == -1)
+                {
                     int multiParameterSeparatorEndPos = ZeroCodeUtil.getNextMatch(keyword, currentPositionInKeyword + 4, "+)");
 
                     multiParameterSeparator = keyword.Substring(currentPositionInKeyword + 4, multiParameterSeparatorEndPos - currentPositionInKeyword - 4);
 
-                    int multiParameterStringEndPos = ZeroCodeUtil.getNextMatch(keyword, multiParameterSeparatorEndPos, "*)");
+                    multiParameterStringBegPosition = multiParameterSeparatorEndPos + 2;
 
-                    multiParameterString = keyword.Substring(multiParameterSeparatorEndPos + 2, multiParameterStringEndPos - multiParameterSeparatorEndPos - 2);
+                    multiParameterStringEndPosition = ZeroCodeUtil.getNextMatch(keyword, multiParameterSeparatorEndPos, "*)") + 1;
 
-                    currentPositionInMultiParameterString = 0;
-                    //currentPositionInKeyword = multiParameterSeparatorEndPos + 2;
+                    multiParameterString = keyword.Substring(multiParameterStringBegPosition, multiParameterStringEndPosition - multiParameterStringBegPosition - 1);
+
+                    multiParamPlusSeparatorString = multiParameterString + multiParameterSeparator;
+
+                    currentPositionInMultiParamPlusSeparatorString = 0;
+
+                    multiParameterCount = 1;
                 }
 
-                if (currentPositionInMultiParameterString != -1 &&
-                    ZeroCodeUtil.tryStringMatch(keyword, currentPositionInKeyword, "(?<"))
-                    return true;
-                else
-                    return false;
+                if (isInMultiParameter())
+                {
+                    if (ZeroCodeUtil.tryStringMatch(multiParamPlusSeparatorString, currentPositionInMultiParamPlusSeparatorString, "(?<"))
+                        return true;
+                    else
+                        return false;
+                }
 
                 if (ZeroCodeUtil.tryStringMatch(keyword, currentPositionInKeyword, "(?<"))
                     return true;
@@ -438,10 +453,36 @@ namespace m0.ZeroCode
                     return false;
             }
 
+            bool isInMultiParameter() // do not need that now, but maybe in the future?
+            {
+                return currentPositionInMultiParamPlusSeparatorString != -1;
+                //return currentPositionInKeyword >= multiParameterStringBegPosition && currentPositionInKeyword <= multiParameterStringEndPosition;
+            }
+
             public bool currentPositionCharacter_isCharacterMatch(char v)
             {
                 MinusZero.Instance.Log(1, "isCharacterMatch",v+" ? "+ keyword[currentPositionInKeyword] + " | curPositionInKeyword:"+currentPositionInKeyword);
 
+                if (v == ']')
+                {
+                    int x = 0;
+                }
+
+                if (isInMultiParameter())
+                {
+                    if (currentPositionInMultiParamPlusSeparatorString == multiParameterString.Length && // after multi param string
+                        keyword[multiParameterStringEndPosition + 1] == v) // we are going out of multi
+                    {
+                        currentPositionInKeyword = multiParameterStringEndPosition + 1;
+                        currentPositionInMultiParamPlusSeparatorString = -1; // out of multi
+                        return true;
+                    }
+
+                    if (multiParamPlusSeparatorString[currentPositionInMultiParamPlusSeparatorString] == v)
+                        return true;
+                    else
+                        return false;
+                }
 
                 if (keyword[currentPositionInKeyword] == v)
                     return true;
@@ -451,20 +492,55 @@ namespace m0.ZeroCode
 
             public void GetParameter()
             {
-                int begCurrentPositionInKeyword = currentPositionInKeyword;
+                int currentPosition;
+                string str;
 
-                currentPositionInKeyword = ZeroCodeUtil.getNextMatch(keyword, currentPositionInKeyword + 2, ">)") + 2;
-                currentlyProcessedParameterName = keyword.Substring(begCurrentPositionInKeyword + 3, currentPositionInKeyword - begCurrentPositionInKeyword - 5);
-                afterParameterString = ZeroCodeUtil.getNextCharacterPartFromKeyword(keyword, currentPositionInKeyword);
+                if (isInMultiParameter())
+                {
+                    MinusZero.Instance.Log(1, "GetParameter", "MULTI: currentPositionInMultiParamPlusSeparatorString:"+ currentPositionInMultiParamPlusSeparatorString);
+                    currentPosition = currentPositionInMultiParamPlusSeparatorString;
+                    str = multiParamPlusSeparatorString;
+                }
+                else
+                {
+                    MinusZero.Instance.Log(1, "GetParameter", "NORMAL");
+                    currentPosition = currentPositionInKeyword;
+                    str = keyword;
+                }
 
-                MinusZero.Instance.Log(1, "GetParameter", "currentlyProcessedParameterName:"+ currentlyProcessedParameterName+" curPositionInKeyword:" + currentPositionInKeyword+ " afterParameterString:"+ afterParameterString);
+                int begCurrentPosition = currentPosition;
+
+                currentPosition = ZeroCodeUtil.getNextMatch(str, currentPosition + 2, ">)") + 2;
+                currentlyProcessedParameterName = str.Substring(begCurrentPosition + 3, currentPosition - begCurrentPosition - 5);
+
+                if (isInMultiParameter() && currentPosition == multiParameterString.Length)
+                    afterParameterString = "";
+                else
+                    afterParameterString = ZeroCodeUtil.getNextCharacterPartFromKeyword(str, currentPosition);
+
+                MinusZero.Instance.Log(1, "GetParameter", "currentlyProcessedParameterName:"+ currentlyProcessedParameterName+" curPosition:" + currentPosition+ " afterParameterString:"+ afterParameterString);
 
                 state = keywordTryingState.parameter;
+
+                if (isInMultiParameter())
+                    currentPositionInMultiParamPlusSeparatorString = currentPosition;
+                else
+                    currentPositionInKeyword = currentPosition;
+                   
             }
 
             public void currentPositionInKeyword_Increase()
             {
-                currentPositionInKeyword++;
+                if (currentPositionInMultiParamPlusSeparatorString != -1)
+                {
+                    currentPositionInMultiParamPlusSeparatorString++;
+                    MinusZero.Instance.Log(1, "currentPositionInKeyword_Increase", "MULTI:"+ currentPositionInMultiParamPlusSeparatorString);
+                }
+                else
+                {
+                    currentPositionInKeyword++;
+                    MinusZero.Instance.Log(1, "currentPositionInKeyword_Increase", "NORMAL:" + currentPositionInKeyword);
+                }
             }
 
             public void AddParameter(string name, object val)
