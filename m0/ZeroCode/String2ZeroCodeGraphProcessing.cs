@@ -1,5 +1,6 @@
 ﻿using m0.Foundation;
 using m0.Graph;
+using m0.Util;
 using m0.ZeroTypes;
 using System;
 using System.Collections.Generic;
@@ -462,12 +463,7 @@ namespace m0.ZeroCode
             public bool currentPositionCharacter_isCharacterMatch(char v)
             {
                 MinusZero.Instance.Log(1, "isCharacterMatch",v+" ? "+ keyword[currentPositionInKeyword] + " | curPositionInKeyword:"+currentPositionInKeyword);
-
-                if (v == ']')
-                {
-                    int x = 0;
-                }
-
+                
                 if (isInMultiParameter())
                 {
                     if (currentPositionInMultiParamPlusSeparatorString == multiParameterString.Length && // after multi param string
@@ -531,11 +527,18 @@ namespace m0.ZeroCode
 
             public void currentPositionInKeyword_Increase()
             {
-                if (currentPositionInMultiParamPlusSeparatorString != -1)
+                if (isInMultiParameter())
                 {
-                    currentPositionInMultiParamPlusSeparatorString++;
-                    MinusZero.Instance.Log(1, "currentPositionInKeyword_Increase", "MULTI:"+ currentPositionInMultiParamPlusSeparatorString);
-                }
+                    if (currentPositionInMultiParamPlusSeparatorString < multiParamPlusSeparatorString.Length - 1)
+                        currentPositionInMultiParamPlusSeparatorString++;
+                    else
+                    {
+                        currentPositionInMultiParamPlusSeparatorString = 0;
+                        multiParameterCount++;
+                    }
+
+                        MinusZero.Instance.Log(1, "currentPositionInKeyword_Increase", "MULTI:" + currentPositionInMultiParamPlusSeparatorString);
+                    }
                 else
                 {
                     currentPositionInKeyword++;
@@ -963,66 +966,86 @@ namespace m0.ZeroCode
 
         IVertex AddKeywordVertex(IVertex parent, keywordTryingData keyword)
         {
-            return _AddKeywordVertex(parent,keyword,keyword.keywordVertex,null);
+            return _AddKeywordVertex(parent,keyword,keyword.keywordVertex,null,0);
         }
 
-        IVertex _AddKeywordVertex(IVertex parent, keywordTryingData ktd, IVertex keywordAddingVertex, IVertex useMetaWhenANY)
+        IVertex _AddKeywordVertex(IVertex parent, keywordTryingData ktd, IVertex keywordAddingVertex, IVertex useMetaWhenANY, int subCount)
         {
             IVertex nv=null;
 
+            int min_subCount = 0;
+            int max_subCount = 0;
+
+            if (subCount != 0)
+            {
+                min_subCount = subCount;
+                max_subCount = subCount;
+            }
+
             foreach (IEdge e in keywordAddingVertex) {
-                IVertex meta = e.Meta;
-
-                if ((string)e.Meta.Value == "(?<ANY>)")
-                    meta = useMetaWhenANY;
-
-                if (VertexOperations.IsLink(e))
+                if (e.To.Get(@"$KeywordManyRoot:") != null)
                 {
-                    if (ZeroCodeUtil.tryStringMatch((string)e.To.Value, 0, "(?<"))
-                    {
-                        string name = ZeroCodeUtil.getRegexp((string)e.To.Value, Regex.Escape("(?<") + "(?<EXTRACT>.*)" + Regex.Escape(">)"));
-
-                        List<object> subs = ktd.parameters[name];
-
-                        foreach (object sub in subs)
-                        {
-                            if (sub is string)
-                                nv = parent.AddVertex(meta, sub); // ERROR
-
-                            if (sub is ToVertexMock)
-                                nv = parent.AddEdge(meta, (IVertex)sub).To;
-
-                            if (sub is keywordTryingData)
-                                nv = _AddKeywordVertex(parent, (keywordTryingData)sub, ((keywordTryingData)sub).keywordVertex, meta);
-                        }
-                    }
-                    else
-                        nv = parent.AddEdge(meta, e.To).To;
+                    min_subCount = 0;
+                    max_subCount = ktd.multiParameterCount - 1;
                 }
-                else
+
+                for (int cnt_subCount = min_subCount; cnt_subCount <= max_subCount; cnt_subCount++)
                 {
-                    if (ZeroCodeUtil.tryStringMatch((string)e.To.Value, 0, "(?<"))
-                    {
-                        string name = ZeroCodeUtil.getRegexp((string)e.To.Value, Regex.Escape("(?<") + "(?<EXTRACT>.*)" + Regex.Escape(">)"));
+                        if (GeneralUtil.CompareStrings(e.Meta, "$KeywordManyRoot"))
+                            continue;
 
-                        List<object> subs = ktd.parameters[name];
 
-                        foreach (object sub in subs)
+                        IVertex meta = e.Meta;
+
+                        if ((string)e.Meta.Value == "(?<ANY>)")
+                            meta = useMetaWhenANY;
+
+                        if (VertexOperations.IsLink(e))
                         {
-                            if (sub is string)
-                                nv = parent.AddVertex(meta, sub);
+                            if (ZeroCodeUtil.tryStringMatch((string)e.To.Value, 0, "(?<"))
+                            {
+                                string name = ZeroCodeUtil.getRegexp((string)e.To.Value, Regex.Escape("(?<") + "(?<EXTRACT>.*)" + Regex.Escape(">)"));
 
-                            if (sub is ToVertexMock)
-                                nv = parent.AddEdge(meta, (IVertex)sub).To;
+                                List<object> subs = ktd.parameters[name];
 
-                            if (sub is keywordTryingData)
-                                nv = _AddKeywordVertex(parent, (keywordTryingData)sub, ((keywordTryingData)sub).keywordVertex, meta);
+                                object sub = subs[cnt_subCount];
+
+                                if (sub is string)
+                                    nv = parent.AddVertex(meta, sub); // ERROR
+
+                                if (sub is ToVertexMock)
+                                    nv = parent.AddEdge(meta, (IVertex)sub).To;
+
+                                if (sub is keywordTryingData)
+                                    nv = _AddKeywordVertex(parent, (keywordTryingData)sub, ((keywordTryingData)sub).keywordVertex, meta, cnt_subCount);
+                            }
+                            else
+                                nv = parent.AddEdge(meta, e.To).To;
                         }
-                    }
-                    else
-                        nv = parent.AddVertex(meta, e.To);
+                        else
+                        {
+                            if (ZeroCodeUtil.tryStringMatch((string)e.To.Value, 0, "(?<"))
+                            {
+                                string name = ZeroCodeUtil.getRegexp((string)e.To.Value, Regex.Escape("(?<") + "(?<EXTRACT>.*)" + Regex.Escape(">)"));
 
-                    _AddKeywordVertex(nv, ktd, e.To, null);
+                                List<object> subs = ktd.parameters[name];
+
+                                object sub = subs[cnt_subCount];
+
+                                if (sub is string)
+                                    nv = parent.AddVertex(meta, sub);
+
+                                if (sub is ToVertexMock)
+                                    nv = parent.AddEdge(meta, (IVertex)sub).To;
+
+                                if (sub is keywordTryingData)
+                                    nv = _AddKeywordVertex(parent, (keywordTryingData)sub, ((keywordTryingData)sub).keywordVertex, meta, cnt_subCount);
+                            }
+                            else
+                                nv = parent.AddVertex(meta, e.To);
+
+                            _AddKeywordVertex(nv, ktd, e.To, null, cnt_subCount);
+                        }
                 }
             }
 
