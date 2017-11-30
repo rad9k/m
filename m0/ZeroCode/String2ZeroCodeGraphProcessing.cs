@@ -251,11 +251,7 @@ namespace m0.ZeroCode
             pos = 0;
             firstCharacterPos_relativeToText = 0;
             lineNo = 0;
-        }
-
-     
-
-     
+        }     
 
         IVertex query(IVertex baseVertex, string query)
         {
@@ -316,6 +312,61 @@ namespace m0.ZeroCode
 
             return MinusZero.Instance.Root.Get(link);
         }
+
+        ///
+
+        public IVertex Process(IVertex _baseVertex, string _text)
+        {
+            baseVertex = _baseVertex;
+            text = _text + "\r\n"; // for regexpes
+
+
+            initVariables();
+
+
+            prepareImportList();
+
+            ParseLine();
+
+
+            Process_reccurent(baseVertex);
+
+            return null;
+        }
+
+        bool skipParse = false;
+
+        void Process_reccurent(IVertex _baseVertex)
+        {
+            IVertex prevVertex = ProcessLine(_baseVertex);
+
+            while (ParseLine())
+            {
+                if (firstCharacterPos_relativeToCurrentLine > prevFirstCharacterPos_relativeToCurrentLine)
+                {
+                    int prevFirstCharacterPos_memory = prevFirstCharacterPos_relativeToCurrentLine;
+
+                    Process_reccurent(prevVertex);
+
+                    prevFirstCharacterPos_relativeToCurrentLine = prevFirstCharacterPos_memory;
+
+                    continue;
+                }
+
+                if (firstCharacterPos_relativeToCurrentLine == prevFirstCharacterPos_relativeToCurrentLine)
+                    prevVertex = ProcessLine(_baseVertex);
+
+                if (firstCharacterPos_relativeToCurrentLine < prevFirstCharacterPos_relativeToCurrentLine)
+                {
+                    skipParse = true;
+
+                    return;
+                }
+            }
+        }
+
+        IVertex lastVertex;
+        int newLineCount;
 
         IVertex ProcessLine(IVertex _baseVertex)
         {
@@ -1055,58 +1106,6 @@ namespace m0.ZeroCode
         int getDoubleColonPos(string s)
         {
             return s.IndexOf("::");            
-        }
-
-        public IVertex Process(IVertex _baseVertex, string _text)
-        {
-            baseVertex = _baseVertex;
-            text = _text+"\r\n"; // for regexpes
-
-
-            initVariables();
-
-
-            prepareImportList();
-
-            ParseLine();
-
-
-            Process_reccurent(baseVertex);
-
-            return null;
-        }
-
-        bool skipParse = false;
-
-        void Process_reccurent(IVertex _baseVertex)
-        {
-            IVertex prevVertex = ProcessLine(_baseVertex);
-
-            while (ParseLine())
-            {
-                if (firstCharacterPos_relativeToCurrentLine > prevFirstCharacterPos_relativeToCurrentLine)
-                {
-                    int prevFirstCharacterPos_memory = prevFirstCharacterPos_relativeToCurrentLine;
-                    //int currentLineFirstCharacterPos_memory = currentLineFirstCharacterPos;
-
-                    Process_reccurent(prevVertex);
-
-                    prevFirstCharacterPos_relativeToCurrentLine = prevFirstCharacterPos_memory;
-                    // currentLineFirstCharacterPos = currentLineFirstCharacterPos_memory;
-
-                    continue;
-                }
-
-                if (firstCharacterPos_relativeToCurrentLine == prevFirstCharacterPos_relativeToCurrentLine)
-                    prevVertex = ProcessLine(_baseVertex);
-
-                if (firstCharacterPos_relativeToCurrentLine < prevFirstCharacterPos_relativeToCurrentLine)
-                {
-                    skipParse = true;
-
-                    return;
-                }
-            }
         }
 
         private void PrepareExamineKeywords()

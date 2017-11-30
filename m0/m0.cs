@@ -491,7 +491,7 @@ namespace m0
             IVertex smuk = smu.AddVertex(null, "Keyword");
 
             IVertex any = smuk.AddVertex(null, "(?<ANY>)");
-            /*
+            
             // import meta
             //
             // import meta (?<name>) (?<link>)
@@ -680,7 +680,7 @@ namespace m0
             aggregation_aggregation.AddVertex(smb.Get(@"Vertex\$EdgeTarget"), "(?<type>)");
 
             aggregation_aggregation.AddEdge(_is, smu.Get(@"Class\Aggregation"));
-            */
+            
             // function
             //
             // function (?<name>) (?<returnType>) [(*(+, +)(?<paramType>) (?<paramName>)*)]
@@ -698,7 +698,7 @@ namespace m0
 
             ffip.AddEdge(smb.Get(@"$KeywordManyRoot"), smb.Get(@"$Empty"));
 
-            /*
+            
             // function
             //
             // function (?<name>) [(*(+, +)(?<paramType>) (?<paramName>)*)]
@@ -820,7 +820,7 @@ namespace m0
             o_par_any.AddEdge(smb.Get(@"Vertex\$Is"), smu.Get("()"));
 
             o_par_any.AddVertex(smu.Get(@"SingleOperator\TargetExpression"), "(?<expr>)");
-            */
+            
         }
 
         void CreateSystemTextLanguageZeroCode()

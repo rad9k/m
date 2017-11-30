@@ -103,5 +103,20 @@ namespace m0.ZeroCode
 
             return keyword.Substring(startFrom, Math.Min(firstTryPos,secondTryPos) - startFrom);
         }
+
+        public static bool isStringOnlyWhiteSpaces(string s)
+        {
+            bool onlyWhite = true;
+
+            foreach (char c in s)
+                if (c != ' ' && c != '\t')
+                {
+                    onlyWhite = false;
+                    break;
+                }
+
+            return onlyWhite;
+
+        }
     }
 }
