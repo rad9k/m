@@ -27,6 +27,8 @@ namespace m0.ZeroCode
         int firstCharacterPos_relativeToCurrentLine;
         int prevFirstCharacterPos_relativeToCurrentLine;
 
+        bool currentLineConsistOfWhiteSpacesOnly;
+
         //
 
         IVertex r = m0.MinusZero.Instance.Root;
@@ -39,11 +41,15 @@ namespace m0.ZeroCode
                 return true;
             }
 
-            prevFirstCharacterPos_relativeToCurrentLine = firstCharacterPos_relativeToCurrentLine;
+            int temp_prevFirstCharacterPos_relativeToCurrentLine = firstCharacterPos_relativeToCurrentLine;
+
             firstCharacterPos_relativeToCurrentLine = 0;
 
             if (pos >= text.Length)
+            {
+                firstCharacterPos_relativeToText = pos;
                 return false;
+            }
 
             char c = text[pos];
 
@@ -74,6 +80,16 @@ namespace m0.ZeroCode
             lineNo++;
 
             pos += 2;
+
+            // and now check if there are only whitespaces
+
+            if (ZeroCodeUtil.isStringOnlyWhiteSpaces(currentLineNoTabs))
+            {
+                newLineCount++;
+                ParseLine();
+            }
+
+            prevFirstCharacterPos_relativeToCurrentLine = temp_prevFirstCharacterPos_relativeToCurrentLine;
 
             return true;
         }
@@ -145,8 +161,6 @@ namespace m0.ZeroCode
             // "import direct meta (?<link>)"
 
             prepareImportList_FromString_importDirectMeta();
-
-
         }
 
         void prepareImportList_FromString_import()
@@ -331,6 +345,8 @@ namespace m0.ZeroCode
 
             Process_reccurent(baseVertex);
 
+            AddNewLines();
+
             return null;
         }
 
@@ -347,6 +363,7 @@ namespace m0.ZeroCode
                     int prevFirstCharacterPos_memory = prevFirstCharacterPos_relativeToCurrentLine;
 
                     Process_reccurent(prevVertex);
+                    //Process_reccurent(lastAddedVertex);
 
                     prevFirstCharacterPos_relativeToCurrentLine = prevFirstCharacterPos_memory;
 
@@ -365,11 +382,36 @@ namespace m0.ZeroCode
             }
         }
 
-        IVertex lastVertex;
+        IVertex lastAddedVertex;
+        IVertex lastAddedVertexParent;
         int newLineCount;
+
+        void AddNewLines()
+        {
+            if(lastAddedVertex!=null && newLineCount!=0)
+                lastAddedVertex.AddVertex(smb.Get("$NewLine"), newLineCount);
+
+            newLineCount = 0;
+        }
+
+        IVertex AddVertex(IVertex baseVertex, IVertex meta, object val)
+        {
+            lastAddedVertexParent = baseVertex;
+            lastAddedVertex = baseVertex.AddVertex(meta, val);
+            return lastAddedVertex;
+        }
+
+        IEdge AddEdge(IVertex baseVertex, IVertex meta, IVertex to)
+        {
+            lastAddedVertexParent = baseVertex;
+            lastAddedVertex = null;
+            return baseVertex.AddEdge(meta, to);
+        }
 
         IVertex ProcessLine(IVertex _baseVertex)
         {
+            AddNewLines();
+
             if (TryIsKeyword(currentLineNoTabs))
             {
                 if (examinedKeywords.Count > 1)
@@ -394,12 +436,12 @@ namespace m0.ZeroCode
                     string afterColon = currentLineInner.Trim();
 
                     if (afterColon[0] == ZeroCodeCommon.NewVertexPrefix) // if is new value
-                        return _baseVertex.AddVertex(null, ZeroCodeCommon.stringFromNewVertexString(afterColon));
+                        return AddVertex(_baseVertex, null, ZeroCodeCommon.stringFromNewVertexString(afterColon));
 
                     if (afterColon[0] == ZeroCodeCommon.CodeGraphLinkPrefix)
-                        return _baseVertex.AddEdge(null, processLink(ZeroCodeCommon.stringFromLinkString(afterColon))).To;
+                        return AddEdge(_baseVertex, null, processLink(ZeroCodeCommon.stringFromLinkString(afterColon))).To;
 
-                    return _baseVertex.AddVertex(null, "SYNTAX ERROR");
+                    return AddVertex(_baseVertex, null, "SYNTAX ERROR");
                 }
                 else
                 {
@@ -410,9 +452,9 @@ namespace m0.ZeroCode
                     IVertex meta = processLink(beforeColon);
 
                     if (afterColon[0] == ZeroCodeCommon.NewVertexPrefix) // if is new value
-                        return _baseVertex.AddVertex(meta, ZeroCodeCommon.stringFromNewVertexString(afterColon));
+                        return AddVertex(_baseVertex, meta, ZeroCodeCommon.stringFromNewVertexString(afterColon));
                     else
-                        return _baseVertex.AddEdge(meta, processLink(afterColon)).To;
+                        return AddEdge(_baseVertex, meta, processLink(afterColon)).To;
                 }
             }
 
@@ -620,6 +662,9 @@ namespace m0.ZeroCode
 
         bool TryIsKeyword(string s)
         {
+            if (firstCharacterPos_relativeToText >= text.Length)
+                return false;
+
             if (!ZeroCodeUtil.tryStringMatch(s, 0, ZeroCodeCommon.CodeGraphVertexPrefix) 
                 || !ZeroCodeUtil.tryStringEndMatch(s, ZeroCodeCommon.CodeGraphVertexSuffix))
             {
@@ -1042,61 +1087,60 @@ namespace m0.ZeroCode
 
                 for (int cnt_subCount = min_subCount; cnt_subCount <= max_subCount; cnt_subCount++)
                 {
-                        if (GeneralUtil.CompareStrings(e.Meta, "$KeywordManyRoot"))
-                            continue;
+                    if (GeneralUtil.CompareStrings(e.Meta, "$KeywordManyRoot"))
+                        continue;
 
+                    IVertex meta = e.Meta;
 
-                        IVertex meta = e.Meta;
+                    if ((string)e.Meta.Value == "(?<ANY>)")
+                        meta = useMetaWhenANY;
 
-                        if ((string)e.Meta.Value == "(?<ANY>)")
-                            meta = useMetaWhenANY;
-
-                        if (VertexOperations.IsLink(e))
+                    if (VertexOperations.IsLink(e))
+                    {
+                        if (ZeroCodeUtil.tryStringMatch((string)e.To.Value, 0, "(?<"))
                         {
-                            if (ZeroCodeUtil.tryStringMatch((string)e.To.Value, 0, "(?<"))
-                            {
-                                string name = ZeroCodeUtil.getRegexp((string)e.To.Value, Regex.Escape("(?<") + "(?<EXTRACT>.*)" + Regex.Escape(">)"));
+                            string name = ZeroCodeUtil.getRegexp((string)e.To.Value, Regex.Escape("(?<") + "(?<EXTRACT>.*)" + Regex.Escape(">)"));
 
-                                List<object> subs = ktd.parameters[name];
+                            List<object> subs = ktd.parameters[name];
 
-                                object sub = subs[cnt_subCount];
+                            object sub = subs[cnt_subCount];
 
-                                if (sub is string)
-                                    nv = parent.AddVertex(meta, sub); // ERROR
+                            if (sub is string)
+                                nv = AddVertex(parent, meta, sub); // was marked: ERROR. why?? 
 
-                                if (sub is ToVertexMock)
-                                    nv = parent.AddEdge(meta, (IVertex)sub).To;
+                            if (sub is ToVertexMock)
+                                nv = AddEdge(parent, meta, (IVertex)sub).To;
 
-                                if (sub is keywordTryingData)
-                                    nv = _AddKeywordVertex(parent, (keywordTryingData)sub, ((keywordTryingData)sub).keywordVertex, meta, cnt_subCount);
-                            }
-                            else
-                                nv = parent.AddEdge(meta, e.To).To;
+                            if (sub is keywordTryingData)
+                                nv = _AddKeywordVertex(parent, (keywordTryingData)sub, ((keywordTryingData)sub).keywordVertex, meta, cnt_subCount);
                         }
                         else
-                        {
-                            if (ZeroCodeUtil.tryStringMatch((string)e.To.Value, 0, "(?<"))
-                            {
-                                string name = ZeroCodeUtil.getRegexp((string)e.To.Value, Regex.Escape("(?<") + "(?<EXTRACT>.*)" + Regex.Escape(">)"));
-
-                                List<object> subs = ktd.parameters[name];
-
-                                object sub = subs[cnt_subCount];
-
-                                if (sub is string)
-                                    nv = parent.AddVertex(meta, sub);
-
-                                if (sub is ToVertexMock)
-                                    nv = parent.AddEdge(meta, (IVertex)sub).To;
-
-                                if (sub is keywordTryingData)
-                                    nv = _AddKeywordVertex(parent, (keywordTryingData)sub, ((keywordTryingData)sub).keywordVertex, meta, cnt_subCount);
-                            }
-                            else
-                                nv = parent.AddVertex(meta, e.To);
-
-                            _AddKeywordVertex(nv, ktd, e.To, null, cnt_subCount);
+                            nv = AddEdge(parent, meta, e.To).To;
                         }
+                    else
+                    {
+                        if (ZeroCodeUtil.tryStringMatch((string)e.To.Value, 0, "(?<"))
+                        {
+                            string name = ZeroCodeUtil.getRegexp((string)e.To.Value, Regex.Escape("(?<") + "(?<EXTRACT>.*)" + Regex.Escape(">)"));
+
+                            List<object> subs = ktd.parameters[name];
+
+                            object sub = subs[cnt_subCount];
+
+                            if (sub is string)
+                                nv = AddVertex(parent, meta, sub);
+
+                            if (sub is ToVertexMock)
+                                nv = AddEdge(parent, meta, (IVertex)sub).To;
+
+                            if (sub is keywordTryingData)
+                                nv = _AddKeywordVertex(parent, (keywordTryingData)sub, ((keywordTryingData)sub).keywordVertex, meta, cnt_subCount);
+                        }
+                        else
+                            nv = AddVertex(parent, meta, e.To);
+
+                       _AddKeywordVertex(nv, ktd, e.To, null, cnt_subCount);
+                    }
                 }
             }
 
