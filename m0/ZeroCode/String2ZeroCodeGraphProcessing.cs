@@ -388,8 +388,16 @@ namespace m0.ZeroCode
 
         void AddNewLines()
         {
-            if(lastAddedVertex!=null && newLineCount!=0)
-                lastAddedVertex.AddVertex(smb.Get("$NewLine"), newLineCount);
+            //if(lastAddedVertex!=null && newLineCount!=0)
+            //  lastAddedVertex.AddVertex(smb.Get("$NewLine"), newLineCount);
+
+            if (newLineCount != 0)
+            {
+                if(lastAddedVertex != null)
+                    lastAddedVertex.AddVertex(smb.Get("$NewLine"), newLineCount);
+                else
+                    lastAddedVertexParent.AddVertex(smb.Get("$NewLine"), newLineCount);
+            }
 
             newLineCount = 0;
         }
@@ -511,7 +519,7 @@ namespace m0.ZeroCode
                 state = keywordTryingState.keywordCharacter; // that and rest of the fields will be updated in the _tryKeyword
             }
 
-            public bool currentPositionInKeyword_isParameterMatch()
+            public bool currentPositionInKeyword_isParameterMatch(char v)
             {
                 if(ZeroCodeUtil.tryStringMatch(keyword, currentPositionInKeyword, "(*(+")
                     && currentPositionInMultiParamPlusSeparatorString == -1)
@@ -528,9 +536,15 @@ namespace m0.ZeroCode
 
                     multiParamPlusSeparatorString = multiParameterString + multiParameterSeparator;
 
-                    currentPositionInMultiParamPlusSeparatorString = 0;
-
-                    multiParameterCount = 1;
+                    if (v == keyword[multiParameterStringEndPosition + 1])
+                    {
+                        currentPositionInKeyword = multiParameterStringEndPosition + 1;
+                    }
+                    else
+                    {// if there ARE muli parameters at all!
+                        currentPositionInMultiParamPlusSeparatorString = 0;
+                        multiParameterCount = 1;
+                    }
                 }
 
                 if (isInMultiParameter())
@@ -559,8 +573,8 @@ namespace m0.ZeroCode
                 
                 if (isInMultiParameter())
                 {
-                    if (currentPositionInMultiParamPlusSeparatorString == multiParameterString.Length && // after multi param string
-                        keyword[multiParameterStringEndPosition + 1] == v) // we are going out of multi
+                    if (currentPositionInMultiParamPlusSeparatorString == multiParameterString.Length // after multi param string
+                        && keyword[multiParameterStringEndPosition + 1] == v) // we are going out of multi
                     {
                         currentPositionInKeyword = multiParameterStringEndPosition + 1;
                         currentPositionInMultiParamPlusSeparatorString = -1; // out of multi
@@ -824,7 +838,7 @@ namespace m0.ZeroCode
                         if(ktd.state== keywordTryingState.keywordCharacter)
                         {
                             // keywordCharacter => parameter
-                            if(ktd.currentPositionInKeyword_isParameterMatch())
+                            if(ktd.currentPositionInKeyword_isParameterMatch(text[sPos]))
                             {
                                 ktd.GetParameter();
                             }
