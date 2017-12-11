@@ -1067,9 +1067,6 @@ namespace m0.ZeroCode
                         l.Add((keywordTryingData)oo);
                         log_keywords(l, pos + 1, LOGPREFIX);
                     }
-
-                    
-
                 }
             }
         }
@@ -1106,7 +1103,8 @@ namespace m0.ZeroCode
 
                     IVertex meta = e.Meta;
 
-                    if ((string)e.Meta.Value == "(?<ANY>)")
+                    //if ((string)e.Meta.Value == "(?<ANY>)")
+                    if(useMetaWhenANY != null)
                         meta = useMetaWhenANY;
 
                     if (VertexOperations.IsLink(e))
