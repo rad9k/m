@@ -690,6 +690,8 @@ namespace m0
 
             IVertex function_function = function.AddVertex(smu.Get(@"Function"), "(?<name>)");
 
+            function_function.AddEdge(smb.Get(@"Vertex\$Is"), smu.Get("Function"));
+
             function_function.AddVertex(smu.Get(@"Function\Output"), "(?<returnType>)");
 
             IVertex ffip = function_function.AddVertex(smu.Get(@"Function\InputParameter"), "(?<paramName>)");
@@ -706,7 +708,9 @@ namespace m0
             IVertex function2 = smuk.AddVertex(keyword, "function (?<name>) [(*(+, +)(?<paramType>) (?<paramName>)*)]");
 
 
-            IVertex function2_function = function2.AddVertex(smu.Get(@"Function"), "(?<name>)");            
+            IVertex function2_function = function2.AddVertex(smu.Get(@"Function"), "(?<name>)");
+
+            function2_function.AddEdge(smb.Get(@"Vertex\$Is"), smu.Get("Function"));
 
             IVertex f2fip = function2_function.AddVertex(smu.Get(@"Function\InputParameter"), "(?<paramName>)");
 
