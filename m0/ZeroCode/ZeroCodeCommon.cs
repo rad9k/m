@@ -85,7 +85,7 @@ namespace m0.ZeroCode
                         isInEscape = true;
 
                     if (text[sPos] == '\'' && isInEscape
-                        && sPos > 0 && text[sPos - 1] != '\\') // if is no \"
+                        && sPos > 0 && text[sPos - 1] != '\\') // if is no \'
                         isInEscape = false;
 
                 }

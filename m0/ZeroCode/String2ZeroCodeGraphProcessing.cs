@@ -461,8 +461,13 @@ namespace m0.ZeroCode
 
                     if (afterColon[0] == ZeroCodeCommon.NewVertexPrefix) // if is new value
                         return AddVertex(_baseVertex, meta, ZeroCodeCommon.stringFromNewVertexString(afterColon));
-                    else
-                        return AddEdge(_baseVertex, meta, processLink(afterColon)).To;
+                    //else
+                    //  return AddEdge(_baseVertex, meta, processLink(afterColon)).To;
+
+                    if (afterColon[0] == ZeroCodeCommon.CodeGraphLinkPrefix)
+                        return AddEdge(_baseVertex, meta, processLink(ZeroCodeCommon.stringFromLinkString(afterColon))).To;
+
+                    return AddVertex(_baseVertex, null, "SYNTAX ERROR");
                 }
             }
 
@@ -1124,7 +1129,7 @@ namespace m0.ZeroCode
                                 nv = AddEdge(parent, meta, (IVertex)sub).To;
 
                             if (sub is keywordTryingData)
-                                nv = _AddKeywordVertex(parent, (keywordTryingData)sub, ((keywordTryingData)sub).keywordVertex, meta, cnt_subCount);
+                                nv = _AddKeywordVertex(parent, (keywordTryingData)sub, ((keywordTryingData)sub).keywordVertex, meta, 0); // cnt_subCount);
                         }
                         else
                             nv = AddEdge(parent, meta, e.To).To;
@@ -1146,7 +1151,7 @@ namespace m0.ZeroCode
                                 nv = AddEdge(parent, meta, (IVertex)sub).To;
 
                             if (sub is keywordTryingData)
-                                nv = _AddKeywordVertex(parent, (keywordTryingData)sub, ((keywordTryingData)sub).keywordVertex, meta, cnt_subCount);
+                                nv = _AddKeywordVertex(parent, (keywordTryingData)sub, ((keywordTryingData)sub).keywordVertex, meta, 0);// cnt_subCount);
                         }
                         else
                             nv = AddVertex(parent, meta, e.To);

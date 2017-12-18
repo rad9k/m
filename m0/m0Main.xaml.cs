@@ -497,6 +497,8 @@ namespace m0
 
             IVertex function_function = where.AddVertex(smu.Get(@"Function"), "Sleep");
 
+            function_function.AddEdge(smb.Get(@"Vertex\$Is"), smu.Get("Function"));
+
             function_function.AddEdge(smu.Get(@"Function\Output"), smzt.Get("Integer"));
 
             IVertex ffi = function_function.AddVertex(smu.Get(@"Function\InputParameter"), "time");
