@@ -447,9 +447,9 @@ namespace m0.ZeroCode
             }
 
             if(hideLinkPrefix)
-                SourceAppend(toAppend);
+                SourceAppend(ZeroCodeCommon.stringToLinkString(toAppend, true));
             else
-                SourceAppend(ZeroCodeCommon.stringToLinkString(toAppend));
+                SourceAppend(ZeroCodeCommon.stringToLinkString(toAppend, false));
         }
 
         void AppendAsNew(IVertex v)
@@ -467,7 +467,7 @@ namespace m0.ZeroCode
             SourceAppend("$Is");
             AppendDoubleColon();
 
-            SourceAppend(ZeroCodeCommon.stringToLinkString(ZeroCodeCommon.stringToPossiblyEscapedString(e.To.Value.ToString())));            
+            SourceAppend(ZeroCodeCommon.stringToLinkString(ZeroCodeCommon.stringToPossiblyEscapedString(e.To.Value.ToString()),true));            
         }
 
         void AppendDoubleColon()
@@ -795,7 +795,6 @@ namespace m0.ZeroCode
                         SourceAppend(part);
 
                     wasThereNewLine = AppendSubVertexes(km, km.BaseEdge, km.BaseEdgePath);
-
                 }
                 else
                 {
@@ -909,7 +908,7 @@ namespace m0.ZeroCode
             {
                 string path = GetPathFromKeywordMatchAndKeywordEdge(km, e, null);
 
-                AppendVertex(e, path, false);
+                AppendVertex(e, path, false, false);
 
                 if(!VertexOperations.IsLink(e) && e != km.BaseEdge)
                     wasThereNewLine = AppendSubVertexes(km, e, path);
@@ -965,15 +964,15 @@ namespace m0.ZeroCode
                 AppendDoubleColon();
             }
 
-            return AppendVertex(e, path, true);
+            return AppendVertex(e, path, true, true);
         }
 
-        private bool AppendVertex(IEdge e, string path, bool appendSuffix)
+        private bool AppendVertex(IEdge e, string path, bool appendSuffix, bool hideLinkPrefix)
         {
             if (VertexOperations.IsLink(e))
             {
-                //SourceAppend("L!");
-                AppendAsLink(e.To, null, false);
+                //SourceAppend("L1!");
+                AppendAsLink(e.To, null, hideLinkPrefix);
 
                 if (appendSuffix)
                       AppendSuffix();
@@ -999,7 +998,8 @@ namespace m0.ZeroCode
                     // 
                     // IN CASE OF EXPLOSION - uncomment
 
-                    AppendAsLink(e.To, null, false);
+                    //SourceAppend("L2!");
+                    AppendAsLink(e.To, null, hideLinkPrefix);
 
                     if (appendSuffix)
                         AppendSuffix();

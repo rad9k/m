@@ -49,9 +49,12 @@ namespace m0.ZeroCode
         // Link
         ///////
 
-        public static string stringToLinkString(string s)
+        public static string stringToLinkString(string s, bool hideLinkPrefix)
         {
-            return ZeroCodeCommon.CodeGraphLinkPrefix + s;
+            if (hideLinkPrefix)
+                return s;
+            else
+                return ZeroCodeCommon.CodeGraphLinkPrefix + s;
         }
 
         public static string stringFromLinkString(string s)
