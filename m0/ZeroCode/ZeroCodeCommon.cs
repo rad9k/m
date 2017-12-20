@@ -57,11 +57,16 @@ namespace m0.ZeroCode
                 return ZeroCodeCommon.CodeGraphLinkPrefix + s;
         }
 
-        public static string stringFromLinkString(string s)
+        public static string stringFromLinkString(string s, bool hideLinkPrefix)
         {
-            return s.Substring(1);
+            if (hideLinkPrefix)
+                return s;
+            else
+                return s.Substring(1);
         }
 
+        // to be used only in ZeroCodeCommon.stringFromLinkString( , FALSE) scenario
+        // and that means that TO BE USED ONLY IN KEYWORDS
         public static string tryStringFromLinkString(string text, int startPos, ref int pos)
         {
             string newVertex = null;
@@ -95,7 +100,7 @@ namespace m0.ZeroCode
 
                 pos = sPos;
 
-                newVertex = ZeroCodeCommon.stringFromLinkString(text.Substring(startPos, sPos - startPos));
+                newVertex = ZeroCodeCommon.stringFromLinkString(text.Substring(startPos, sPos - startPos), false);
             }
 
             return newVertex;

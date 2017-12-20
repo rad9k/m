@@ -322,9 +322,23 @@ namespace m0.ZeroCode
             tryIf = queryMetaMode(importDirectMetaList, "\\" + link);
 
             if (tryIf != null)
-                return tryIf;          
+                return tryIf;
 
-            return MinusZero.Instance.Root.Get(link);
+            // try from local root
+
+            tryIf = query(baseVertex, link);
+
+            if (tryIf != null)
+                return tryIf;
+
+            // try from global root
+
+            tryIf = MinusZero.Instance.Root.Get(link);
+
+            if (tryIf != null)
+                return tryIf;
+
+            return MinusZero.Instance.Empty;
         }
 
         ///
@@ -446,10 +460,10 @@ namespace m0.ZeroCode
                     if (afterColon[0] == ZeroCodeCommon.NewVertexPrefix) // if is new value
                         return AddVertex(_baseVertex, null, ZeroCodeCommon.stringFromNewVertexString(afterColon));
 
-                    if (afterColon[0] == ZeroCodeCommon.CodeGraphLinkPrefix)
-                        return AddEdge(_baseVertex, null, processLink(ZeroCodeCommon.stringFromLinkString(afterColon))).To;
+                    //if (afterColon[0] == ZeroCodeCommon.CodeGraphLinkPrefix)
+                    return AddEdge(_baseVertex, null, processLink(ZeroCodeCommon.stringFromLinkString(afterColon, true))).To;
 
-                    return AddVertex(_baseVertex, null, "SYNTAX ERROR");
+                    //return AddVertex(_baseVertex, null, "SYNTAX ERROR");
                 }
                 else
                 {
@@ -464,10 +478,10 @@ namespace m0.ZeroCode
                     //else
                     //  return AddEdge(_baseVertex, meta, processLink(afterColon)).To;
 
-                    if (afterColon[0] == ZeroCodeCommon.CodeGraphLinkPrefix)
-                        return AddEdge(_baseVertex, meta, processLink(ZeroCodeCommon.stringFromLinkString(afterColon))).To;
+                    //if (afterColon[0] == ZeroCodeCommon.CodeGraphLinkPrefix)
+                    return AddEdge(_baseVertex, meta, processLink(ZeroCodeCommon.stringFromLinkString(afterColon, true))).To;
 
-                    return AddVertex(_baseVertex, null, "SYNTAX ERROR");
+                    //return AddVertex(_baseVertex, null, "SYNTAX ERROR");
                 }
             }
 
