@@ -309,7 +309,8 @@ namespace m0
                 ",SingleOperator{TargetExpression{$MinCardinality:1,$MaxCardinality:1}}"+
                 ",DoubleOperator{LeftExpression{$MinCardinality:1,$MaxCardinality:1},RightExpression{$MinCardinality:1,$MaxCardinality:1}}" +
                 ",MultiOperator{TargetExpression{$MinCardinality:1,$MaxCardinality:-1}}" +
-                ",Value,NewVertex" +
+                ",Query" +
+                //",NewVertex"+
                 ",[]" +
                 ",[[]]" +
                 ",\"{}\"{TargetExpression},+,-,\"* \",/,?,\"\\ \",\"|\",\"||\",(),<-,--" +
@@ -339,8 +340,8 @@ namespace m0
             smu.Get(@"DoubleOperator").AddEdge(sm.Get("*$Inherits"), smu.Get("Expression"));
             smu.Get(@"MultiOperator").AddEdge(sm.Get("*$Inherits"), smu.Get("Expression"));
 
-            smu.Get(@"Value").AddEdge(sm.Get("*$Inherits"), smu.Get("SingleOperator"));
-            smu.Get(@"NewVertex").AddEdge(sm.Get("*$Inherits"), smu.Get("SingleOperator"));
+            smu.Get(@"Query").AddEdge(sm.Get("*$Inherits"), smu.Get("SingleOperator"));
+            //smu.Get(@"NewVertex").AddEdge(sm.Get("*$Inherits"), smu.Get("SingleOperator"));
             smu.Get(@"[]").AddEdge(sm.Get("*$Inherits"), smu.Get("MultiOperator"));
             smu.Get(@"[[]]").AddEdge(sm.Get("*$Inherits"), smu.Get("MultiOperator"));
             smu.Get("\"{}\"").AddEdge(sm.Get("*$Inherits"), smu.Get("MultiOperator"));
@@ -420,6 +421,7 @@ namespace m0
             smu.Get(@"While\Do").AddEdge(sm.Get(@"*$EdgeTarget"), smu.Get(@"Atom"));
 
             // smu.Get(@"ForEach\Variable").AddEdge(sm.Get(@"*$EdgeTarget"), smu.Get(@"Value")); // NO NO. NO NO NO NO
+            smu.Get(@"ForEach\Variable").AddEdge(sm.Get(@"*$EdgeTarget"), smu.Get(@"Query")); // better this
             smu.Get(@"ForEach\Set").AddEdge(sm.Get(@"*$EdgeTarget"), smu.Get(@"Atom"));
             smu.Get(@"ForEach\Do").AddEdge(sm.Get(@"*$EdgeTarget"), smu.Get(@"Atom"));
 
@@ -440,7 +442,6 @@ namespace m0
             smu.Get(@"While\Test").AddEdge(isAggregation, Empty);
             smu.Get(@"While\Do").AddEdge(isAggregation, Empty);
 
-            // smu.Get(@"ForEach\Variable").AddEdge(sm.Get(@"*$EdgeTarget"), smu.Get(@"Value")); // NO NO. NO NO NO NO
             smu.Get(@"ForEach\Set").AddEdge(isAggregation, Empty);
             smu.Get(@"ForEach\Do").AddEdge(isAggregation, Empty);
 
@@ -452,8 +453,8 @@ namespace m0
             package.AddEdge(null, smu.Get("StateMachine"));
             package.AddEdge(null, smu.Get("Enum"));
             package.AddEdge(null, smu.Get("Class"));
-            package.AddEdge(null, smu.Get("Value"));
-            package.AddEdge(null, smu.Get("NewVertex"));
+            package.AddEdge(null, smu.Get("Query"));
+            //package.AddEdge(null, smu.Get("NewVertex"));
             package.AddEdge(null, smu.Get("[]"));
             package.AddEdge(null, smu.Get("[[]]"));
             package.AddEdge(null, smu.Get("\"{}\""));
@@ -2027,7 +2028,7 @@ namespace m0
        -1, 0, 0, 0,
        -1, 0, 0, 100);
 
-            AddNextLine(vSingleOperator);
+            AddNextLine(vMultiOperator);
 
 
             /////////////////////////////////////////////////////////////////////////
