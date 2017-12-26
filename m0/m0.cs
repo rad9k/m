@@ -199,7 +199,7 @@ namespace m0
         {
             IVertex sm = Root.Get(@"System\Meta");
 
-            GeneralUtil.ParseAndExcute(sm, null, "{Base{Vertex{$$IsLink,$Inherits,$Is,$EdgeTarget,$VertexTarget,$IsAggregation,$MinCardinality,$MaxCardinality,$MinTargetCardinality,$MaxTargetCardinality,$DefaultValue,$DefaultViewVisualiser,$DefaultEditVisualiser,$DefaultOpenVisualiser,$Group,$Section,$Description,Author,Dependency},$Empty,$Import,$ImportMeta,$Keyword,$KeywordManyRoot,$NewLine}}");
+            GeneralUtil.ParseAndExcute(sm, null, "{Base{Vertex{$$IsLink,$Inherits,$Is,$EdgeTarget,$VertexTarget,$IsAggregation,$MinCardinality,$MaxCardinality,$MinTargetCardinality,$MaxTargetCardinality,$DefaultValue,$DefaultViewVisualiser,$DefaultEditVisualiser,$DefaultOpenVisualiser,$Group,$Section,$Description,Author,Dependency},$Empty,$Import,$ImportMeta,$Keyword,$KeywordManyRoot,$EmptyKeyword,$NewLine}}");
 
             sm.Get(@"Presentation\$Hide").AddEdge(sm.Get(@"Base\Vertex\$EdgeTarget"), sm.Get(@"Base\Vertex"));
 
@@ -825,7 +825,19 @@ namespace m0
             o_par_any.AddEdge(smb.Get(@"Vertex\$Is"), smu.Get("()"));
 
             o_par_any.AddVertex(smu.Get(@"SingleOperator\TargetExpression"), "(?<expr>)");
-            
+
+            // E M P T Y :) K E Y W O R D
+            //
+            //
+
+            IVertex emptyKeyword = smuk.AddVertex(keyword, "$EmptyKeyword");
+
+            IVertex emptyKeyword_any = emptyKeyword.AddVertex(any, "");
+
+            emptyKeyword_any.AddEdge(smb.Get(@"Vertex\$Is"), smu.Get("Query"));
+
+            emptyKeyword_any.AddVertex(smu.Get(@"SingleOperator\TargetExpression"), "(?<expr>)");
+
         }
 
         void CreateSystemTextLanguageZeroCode()

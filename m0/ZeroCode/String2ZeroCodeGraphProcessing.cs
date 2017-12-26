@@ -682,6 +682,7 @@ namespace m0.ZeroCode
         }
 
         List<keywordTryingData> examinedKeywords_All; // all keywords are here
+        Dictionary<char, List<string>> allKeywordsDictionary;
         List<keywordTryingData> examinedKeywords;
 
         void copyExaminedKeywords(List<keywordTryingData> source, List<keywordTryingData> target)
@@ -1187,13 +1188,51 @@ namespace m0.ZeroCode
         {
             examinedKeywords_All = new List<keywordTryingData>();
 
+            allKeywordsDictionary = new Dictionary<char, List<string>>();
+
             foreach (IEdge keyword in MinusZero.Instance.Root.GetAll(@"User\CurrentUser:\CodeSettings:\Keyword:\$Keyword:"))
             {
                 keywordTryingData ktd = new keywordTryingData(keyword.To);
 
                 examinedKeywords_All.Add(ktd);
+
+                string keywordString = keyword.To.Value.ToString();
+
+                if (keywordString.Length > 0)
+                {
+                    char firstCharacter = keywordString[0];
+
+                    if (firstCharacter != '$')
+                    {
+                        if (allKeywordsDictionary.ContainsKey(firstCharacter))
+                            allKeywordsDictionary[firstCharacter].Add(getUntilFirstParameter(keywordString));
+                        else
+                        {
+                            List<string> kl = new List<string>();
+
+                            allKeywordsDictionary.Add(firstCharacter, kl);
+
+                            kl.Add(getUntilFirstParameter(keywordString));
+                        }
+                        
+                    }
+                }
             }
                 
+        }
+
+        private string getUntilFirstParameter(string keywordString)
+        {
+            for(int x = 1; x < keywordString.Length; x++)
+            {
+                if (ZeroCodeUtil.tryStringMatch(keywordString, x, "(?<"))
+                    return keywordString.Substring(0, x - 1);
+
+                if (ZeroCodeUtil.tryStringMatch(keywordString, x, "(*"))
+                    return keywordString.Substring(0, x - 1);
+            }
+
+            return keywordString;
         }
 
         public String2ZeroCodeGraphProcessing()
