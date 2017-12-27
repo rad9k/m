@@ -682,8 +682,10 @@ namespace m0.ZeroCode
         }
 
         List<keywordTryingData> examinedKeywords_All; // all keywords are here
-        Dictionary<char, List<string>> allKeywordsDictionary;
+        Dictionary<char, List<string>> allKeywordsDictionary_notStartingWithParameter;
         List<keywordTryingData> examinedKeywords;
+
+        IVertex emptyKeywordVertex;
 
         void copyExaminedKeywords(List<keywordTryingData> source, List<keywordTryingData> target)
         {
@@ -707,7 +709,7 @@ namespace m0.ZeroCode
 
                 int tryPos = 0; 
 
-                _tryIsKeyword("",firstCharacterPos_relativeToText, -1, 0, text.Length - 1, out examinedKeywords, out newVertex, out link, true, ref tryPos);
+                _tryIsKeyword("",firstCharacterPos_relativeToText, -1, 0, text.Length - 1, text.Length - 1, out examinedKeywords, out newVertex, out link, true, ref tryPos);
 
                 if (examinedKeywords.Count() > 0)
                 {
@@ -723,7 +725,7 @@ namespace m0.ZeroCode
                 return false;
         }
 
-        void _tryIsKeyword(string LOGPREFIX, int startPos, int prev_startPos, int isPrevStartPosSameAsStartPosParentCount, int endPos,out List<keywordTryingData> examinedKeywords, out string newVertex, out string link, bool isTopLevelCall, ref int newPos)
+        void _tryIsKeyword(string LOGPREFIX, int startPos, int prev_startPos, int isPrevStartPosSameAsStartPosParentCount, int endPos, int endPos_forZeroKeyword, out List<keywordTryingData> examinedKeywords, out string newVertex, out string link, bool isTopLevelCall, ref int newPos)
         {
             bool isPrevStartPosSameAsStartPos = false;
 
@@ -794,6 +796,13 @@ namespace m0.ZeroCode
 
             if (isPrevStartPosSameAsStartPos && isPrevStartPosSameAsStartPosParentCount==1) // do not want inifinite recursion
                 return;
+
+            // zero keyword
+
+            if (testIfIsKeyword(startPos))
+            {
+
+            }
 
             // keyword
 
@@ -916,7 +925,7 @@ namespace m0.ZeroCode
                                 if (sPosAfterParameter != -1
                                     && ((sPosAfterParameter < endPos) || (endPos == 0)))
                                 {
-                                    //isTryKeyword_endPos = sPosAfterParameter; // that will not work
+                                    isTryKeyword_endPos = sPosAfterParameter; 
                                 }
                                 else
                                     isTryKeyword_endPos = -1; // do not search; this keyword does not fit in text
@@ -933,7 +942,7 @@ namespace m0.ZeroCode
 
                                 MinusZero.Instance.Log(1, LOGPREFIX+"_tryIsKeyword", "will run _tryIs for:"+ ktd.currentlyProcessedParameterName);
 
-                                _tryIsKeyword(LOGPREFIX+"    ",sPos, startPos, isPrevStartPosSameAsStartPosThisCount, isTryKeyword_endPos, out foundKeywords, out foundNewVertex, out foundLink, false, ref _newPos);
+                                _tryIsKeyword(LOGPREFIX+"    ",sPos, startPos, isPrevStartPosSameAsStartPosThisCount, endPos, isTryKeyword_endPos, out foundKeywords, out foundNewVertex, out foundLink, false, ref _newPos);
 
                                 MinusZero.Instance.Log(1, "_tryIsKeyword", LOGPREFIX+"waitingUntilPositionInText <= _newPos:" + _newPos);
 
@@ -1065,6 +1074,16 @@ namespace m0.ZeroCode
             log_keywords(examinedKeywords, 0, LOGPREFIX);
         }
 
+        private bool testIfIsKeyword(int startPos)
+        {
+            char charAtPos = text[startPos];
+
+            if (!allKeywordsDictionary_notStartingWithParameter.ContainsKey(charAtPos))
+                return false;
+
+            List<string> l = allKeywordsDictionary_notStartingWithParameter[charAtPos];
+        }
+
         void log_keywords(List<keywordTryingData> examinedKeywords, int pos, string LOGPREFIX)
         {
             string pre = "";
@@ -1188,7 +1207,7 @@ namespace m0.ZeroCode
         {
             examinedKeywords_All = new List<keywordTryingData>();
 
-            allKeywordsDictionary = new Dictionary<char, List<string>>();
+            allKeywordsDictionary_notStartingWithParameter = new Dictionary<char, List<string>>();
 
             foreach (IEdge keyword in MinusZero.Instance.Root.GetAll(@"User\CurrentUser:\CodeSettings:\Keyword:\$Keyword:"))
             {
@@ -1204,21 +1223,40 @@ namespace m0.ZeroCode
 
                     if (firstCharacter != '$')
                     {
-                        if (allKeywordsDictionary.ContainsKey(firstCharacter))
-                            allKeywordsDictionary[firstCharacter].Add(getUntilFirstParameter(keywordString));
-                        else
+                        string keywordUntilFirstParameter = getUntilFirstParameter(keywordString);
+
+                        if (!beginsWithParameter(keywordString))
                         {
-                            List<string> kl = new List<string>();
+                            if (allKeywordsDictionary_notStartingWithParameter.ContainsKey(firstCharacter))
+                            {
+                                if (!allKeywordsDictionary_notStartingWithParameter[firstCharacter].Contains(keywordUntilFirstParameter))
+                                    allKeywordsDictionary_notStartingWithParameter[firstCharacter].Add(keywordUntilFirstParameter);
+                            }
+                            else
+                            {
+                                List<string> kl = new List<string>();
 
-                            allKeywordsDictionary.Add(firstCharacter, kl);
+                                allKeywordsDictionary_notStartingWithParameter.Add(firstCharacter, kl);
 
-                            kl.Add(getUntilFirstParameter(keywordString));
+                                kl.Add(keywordUntilFirstParameter);
+                            }
                         }
-                        
+
                     }
                 }
             }
                 
+        }
+
+        private bool beginsWithParameter(string keywordString)
+        {
+            if (ZeroCodeUtil.tryStringMatch(keywordString, 0, "(?<"))
+                return true;
+
+            if (ZeroCodeUtil.tryStringMatch(keywordString, 0, "(*")) // needs some clever tests ideas, if this is valid????
+                return true;
+
+            return false;
         }
 
         private string getUntilFirstParameter(string keywordString)
@@ -1226,10 +1264,10 @@ namespace m0.ZeroCode
             for(int x = 1; x < keywordString.Length; x++)
             {
                 if (ZeroCodeUtil.tryStringMatch(keywordString, x, "(?<"))
-                    return keywordString.Substring(0, x - 1);
+                    return keywordString.Substring(0, x);
 
-                if (ZeroCodeUtil.tryStringMatch(keywordString, x, "(*"))
-                    return keywordString.Substring(0, x - 1);
+                if (ZeroCodeUtil.tryStringMatch(keywordString, x, "(*")) // needs some clever tests ideas, if this is valid????
+                    return keywordString.Substring(0, x);
             }
 
             return keywordString;
@@ -1240,6 +1278,8 @@ namespace m0.ZeroCode
             setupHelpVariables();
 
             PrepareExamineKeywords();
+
+            emptyKeywordVertex = MinusZero.Instance.Root.Get(@"User\CurrentUser:\CodeSettings:\Keyword:\$Keyword:$EmptyKeyword");
         }
     }
 }
