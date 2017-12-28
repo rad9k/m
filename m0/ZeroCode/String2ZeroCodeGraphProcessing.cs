@@ -683,6 +683,7 @@ namespace m0.ZeroCode
 
         List<keywordTryingData> examinedKeywords_All; // all keywords are here
         Dictionary<char, List<string>> allKeywordsDictionary_notStartingWithParameter;
+        Dictionary<char, List<string>> allKeywordsDictionary;
         List<keywordTryingData> examinedKeywords;
 
         IVertex emptyKeywordVertex;
@@ -796,12 +797,17 @@ namespace m0.ZeroCode
                 return;
 
             // zero keyword
-            /*
-            if (!testIfIsKeyword(startPos))
+            
+            if (text[startPos]!=ZeroCodeCommon.NewVertexPrefix
+                && text[startPos]!=ZeroCodeCommon.CodeGraphLinkPrefix
+                && !testIfIsKeyword_noStartingWithParameter(startPos))
             {
                 while (shallProceed)
                 {
                     sPos++;
+
+                    if (testIfIsKeyword(sPos))
+                        shallProceed = false;
 
                     if (text[sPos] == '\r' || text[sPos] == '\n')
                         shallProceed = false;
@@ -822,7 +828,7 @@ namespace m0.ZeroCode
                 newPos = sPos;
 
                 return;
-            }*/
+            }
             
             // keyword
 
@@ -1096,7 +1102,7 @@ namespace m0.ZeroCode
             log_keywords(examinedKeywords, 0, LOGPREFIX);
         }
 
-        private bool testIfIsKeyword(int startPos)
+        private bool testIfIsKeyword_noStartingWithParameter(int startPos)
         {
             char charAtPos = text[startPos];
 
@@ -1104,6 +1110,22 @@ namespace m0.ZeroCode
                 return false;
 
             List<string> l = allKeywordsDictionary_notStartingWithParameter[charAtPos];
+
+            foreach (string s in l)
+                if (ZeroCodeUtil.tryStringMatch(text, startPos, s))
+                    return true;
+
+            return false;
+        }
+
+        private bool testIfIsKeyword(int startPos)
+        {
+            char charAtPos = text[startPos];
+
+            if (!allKeywordsDictionary.ContainsKey(charAtPos))
+                return false;
+
+            List<string> l = allKeywordsDictionary[charAtPos];
 
             foreach (string s in l)
                 if (ZeroCodeUtil.tryStringMatch(text, startPos, s))
@@ -1237,6 +1259,8 @@ namespace m0.ZeroCode
 
             allKeywordsDictionary_notStartingWithParameter = new Dictionary<char, List<string>>();
 
+            allKeywordsDictionary = new Dictionary<char, List<string>>();
+
             foreach (IEdge keyword in MinusZero.Instance.Root.GetAll(@"User\CurrentUser:\CodeSettings:\Keyword:\$Keyword:"))
             {
                 if (GeneralUtil.CompareStrings("(?<EmptyKeyword>)", keyword.To.Value))
@@ -1250,30 +1274,49 @@ namespace m0.ZeroCode
 
                 if (keywordString.Length > 0)
                 {
-                    char firstCharacter = keywordString[0];
+                    // allKeywordsDictionary_notStartingWithParameter
 
-                    if (firstCharacter != '$')
+                    if (!beginsWithParameter(keywordString))
                     {
-                        string keywordUntilFirstParameter = getUntilFirstParameter(keywordString);
+                        char firstCharacter = keywordString[0];
 
-                        if (!beginsWithParameter(keywordString))
+                        string keywordUntilFirstParameter = ZeroCodeUtil.getNextCharacterPartFromKeyword(keywordString, 0);
+
+                        if (allKeywordsDictionary_notStartingWithParameter.ContainsKey(firstCharacter))
                         {
-                            if (allKeywordsDictionary_notStartingWithParameter.ContainsKey(firstCharacter))
-                            {
-                                if (!allKeywordsDictionary_notStartingWithParameter[firstCharacter].Contains(keywordUntilFirstParameter))
-                                    allKeywordsDictionary_notStartingWithParameter[firstCharacter].Add(keywordUntilFirstParameter);
-                            }
-                            else
-                            {
-                                List<string> kl = new List<string>();
-
-                                allKeywordsDictionary_notStartingWithParameter.Add(firstCharacter, kl);
-
-                                kl.Add(keywordUntilFirstParameter);
-                            }
+                            if (!allKeywordsDictionary_notStartingWithParameter[firstCharacter].Contains(keywordUntilFirstParameter))
+                                allKeywordsDictionary_notStartingWithParameter[firstCharacter].Add(keywordUntilFirstParameter);
                         }
+                        else
+                        {
+                            List<string> kl = new List<string>();
 
+                            allKeywordsDictionary_notStartingWithParameter.Add(firstCharacter, kl);
+
+                            kl.Add(keywordUntilFirstParameter);
+                        }
                     }
+
+                    // allKeywordsDictionary
+
+                    firstCharacter = ZeroCodeUtil.
+
+                    string keywordWithoutFirstParameterUntilNextParameter = getWithoutFirstParameterUntilNextParameter(keywordString);
+
+                    if (allKeywordsDictionary.ContainsKey(firstCharacter))
+                    {
+                        if (!allKeywordsDictionary[firstCharacter].Contains(keywordWithoutFirstParameterUntilNextParameter))
+                            allKeywordsDictionary[firstCharacter].Add(keywordWithoutFirstParameterUntilNextParameter);
+                    }
+                    else
+                    {
+                        List<string> kl = new List<string>();
+
+                        allKeywordsDictionary.Add(firstCharacter, kl);
+
+                        kl.Add(keywordWithoutFirstParameterUntilNextParameter);
+                    }
+
                 }
             }
                 
@@ -1290,18 +1333,16 @@ namespace m0.ZeroCode
             return false;
         }
 
-        private string getUntilFirstParameter(string keywordString)
+        private string getWithoutFirstParameterUntilNextParameter(string keywordString)
         {
-            for(int x = 1; x < keywordString.Length; x++)
+            if (ZeroCodeUtil.tryStringMatch(keywordString, 0, "(?<"))
             {
-                if (ZeroCodeUtil.tryStringMatch(keywordString, x, "(?<"))
-                    return keywordString.Substring(0, x);
+                int firstParameterEndPos = ZeroCodeUtil.getNextMatch(keywordString, 0, ">)") + 2;
 
-                if (ZeroCodeUtil.tryStringMatch(keywordString, x, "(*")) // needs some clever tests ideas, if this is valid????
-                    return keywordString.Substring(0, x);
+                return ZeroCodeUtil.getNextCharacterPartFromKeyword(keywordString, firstParameterEndPos);
             }
-
-            return keywordString;
+            else
+                return ZeroCodeUtil.getNextCharacterPartFromKeyword(keywordString,0);
         }
 
         public String2ZeroCodeGraphProcessing()

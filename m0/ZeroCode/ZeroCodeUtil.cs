@@ -88,6 +88,17 @@ namespace m0.ZeroCode
 
         public static string getNextCharacterPartFromKeyword(string keyword, int startFrom)
         {
+            for (int x = startFrom; x < keyword.Length; x++)
+            {
+                if (ZeroCodeUtil.tryStringMatch(keyword, x, "(?<"))
+                    return keyword.Substring(startFrom, x - startFrom);
+
+                if (ZeroCodeUtil.tryStringMatch(keyword, x, "(*")) // needs some clever tests ideas, if this is valid????
+                    return keyword.Substring(startFrom, x - startFrom);
+            }
+
+            return keyword.Substring(startFrom);
+            /*
             int firstTryPos = getNextMatch(keyword, startFrom, "(*(+");
 
             int secondTryPos = getNextMatch(keyword, startFrom, "(?<");
@@ -101,7 +112,7 @@ namespace m0.ZeroCode
             if(firstTryPos == -1)
                 return keyword.Substring(startFrom, secondTryPos - startFrom);
 
-            return keyword.Substring(startFrom, Math.Min(firstTryPos,secondTryPos) - startFrom);
+            return keyword.Substring(startFrom, Math.Min(firstTryPos,secondTryPos) - startFrom);*/
         }
 
         public static bool isStringOnlyWhiteSpaces(string s)
