@@ -767,8 +767,7 @@ namespace m0.ZeroCode
 
                 tryNewVertex = ZeroCodeCommon.tryStringFromNewVertexString(text, startPos, ref tryNewPos);
 
-                if (tryNewVertex != null && 
-                    ( (tryNewPos == endPos) || isPrevStartPosSameAsStartPos ))
+                if (tryNewVertex != null && ((tryNewPos == endPos) || isPrevStartPosSameAsStartPos)) 
                     // check if found fills all the needed space
                 {
                     newVertex = tryNewVertex;
@@ -782,8 +781,7 @@ namespace m0.ZeroCode
 
                 tryLink = ZeroCodeCommon.tryStringFromLinkString(text, startPos, ref tryNewPos);
 
-                if (tryLink != null &&
-                    ( (tryNewPos == endPos) || isPrevStartPosSameAsStartPos )) 
+                if (tryLink != null && ((tryNewPos == endPos) || isPrevStartPosSameAsStartPos))
                     // check if found fills all the needed space
                 {
                     link = tryLink;
@@ -798,15 +796,39 @@ namespace m0.ZeroCode
                 return;
 
             // zero keyword
-
-            if (testIfIsKeyword(startPos))
+            /*
+            if (!testIfIsKeyword(startPos))
             {
+                while (shallProceed)
+                {
+                    sPos++;
 
-            }
+                    if (text[sPos] == '\r' || text[sPos] == '\n')
+                        shallProceed = false;
 
+                    if (sPos == endPos_forZeroKeyword)
+                        shallProceed = false;
+                }
+
+                keywordTryingData ktd = new keywordTryingData(emptyKeywordVertex);
+
+                List<object> l = new List<object>();
+                l.Add(text.Substring(startPos, sPos - startPos));
+
+                ktd.parameters.Add("EmptyKeyword", l);
+
+                examinedKeywords.Add(ktd);
+
+                newPos = sPos;
+
+                return;
+            }*/
+            
             // keyword
 
             copyExaminedKeywords(examinedKeywords_All, examinedKeywords);
+
+            shallProceed = true;
 
             while (shallProceed)
             {
@@ -1082,6 +1104,12 @@ namespace m0.ZeroCode
                 return false;
 
             List<string> l = allKeywordsDictionary_notStartingWithParameter[charAtPos];
+
+            foreach (string s in l)
+                if (ZeroCodeUtil.tryStringMatch(text, startPos, s))
+                    return true;
+
+            return false;
         }
 
         void log_keywords(List<keywordTryingData> examinedKeywords, int pos, string LOGPREFIX)
@@ -1211,6 +1239,9 @@ namespace m0.ZeroCode
 
             foreach (IEdge keyword in MinusZero.Instance.Root.GetAll(@"User\CurrentUser:\CodeSettings:\Keyword:\$Keyword:"))
             {
+                if (GeneralUtil.CompareStrings("(?<EmptyKeyword>)", keyword.To.Value))
+                    continue;
+
                 keywordTryingData ktd = new keywordTryingData(keyword.To);
 
                 examinedKeywords_All.Add(ktd);
@@ -1279,7 +1310,7 @@ namespace m0.ZeroCode
 
             PrepareExamineKeywords();
 
-            emptyKeywordVertex = MinusZero.Instance.Root.Get(@"User\CurrentUser:\CodeSettings:\Keyword:\$Keyword:$EmptyKeyword");
+            emptyKeywordVertex = MinusZero.Instance.Root.Get(@"User\CurrentUser:\CodeSettings:\Keyword:\$Keyword:(?<EmptyKeyword>)");
         }
     }
 }
