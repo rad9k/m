@@ -86,7 +86,19 @@ namespace m0.ZeroCode
             return -1;
         }
 
-        public static string getNextCharacterPartFromKeyword(string keyword, int startFrom)
+        public static char getFirstCharacterFromKeyword(string keyword)
+        {
+            if (ZeroCodeUtil.tryStringMatch(keyword, 0, "(?<"))
+            {
+                int pos = ZeroCodeUtil.getNextMatch(keyword, 3, ">)");
+
+                return keyword[pos + 2];
+            }
+            else
+                return keyword[0];
+        }
+
+        public static string getNextCharacterPartFromKeyword_startingFromNonParameter(string keyword, int startFrom)
         {
             for (int x = startFrom; x < keyword.Length; x++)
             {

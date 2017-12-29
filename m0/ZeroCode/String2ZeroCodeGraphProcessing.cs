@@ -448,7 +448,11 @@ namespace m0.ZeroCode
                 if (currentLineNoTabs.Length == 0)
                     return null;
 
-                string currentLineInner = currentLineNoTabs.Substring(ZeroCodeCommon.CodeGraphVertexPrefix.Length, 
+                if (currentLineNoTabs[0] != ZeroCodeCommon.CodeGraphVertexPrefix[0]
+                    || currentLineNoTabs[currentLineNoTabs.Length - 1] != ZeroCodeCommon.CodeGraphVertexSuffix[0])
+                    return null;
+
+                    string currentLineInner = currentLineNoTabs.Substring(ZeroCodeCommon.CodeGraphVertexPrefix.Length, 
                    currentLineNoTabs.Length - ZeroCodeCommon.CodeGraphVertexPrefix.Length - ZeroCodeCommon.CodeGraphVertexSuffix.Length);
                     
                 int doubleColonPos = getDoubleColonPos(currentLineInner);
@@ -638,7 +642,7 @@ namespace m0.ZeroCode
                 if (isInMultiParameter() && currentPosition == multiParameterString.Length)
                     afterParameterString = "";
                 else
-                    afterParameterString = ZeroCodeUtil.getNextCharacterPartFromKeyword(str, currentPosition);
+                    afterParameterString = ZeroCodeUtil.getNextCharacterPartFromKeyword_startingFromNonParameter(str, currentPosition);
 
                 MinusZero.Instance.Log(1, "GetParameter", "currentlyProcessedParameterName:"+ currentlyProcessedParameterName+" curPosition:" + currentPosition+ " afterParameterString:"+ afterParameterString);
 
@@ -726,6 +730,21 @@ namespace m0.ZeroCode
                 return false;
         }
 
+        void addEmptyKeyword(List<keywordTryingData> examinedKeywords, string value)
+        {
+            if (value == null || value == "")
+                return;
+
+            keywordTryingData ktd = new keywordTryingData(emptyKeywordVertex);
+
+            List<object> l = new List<object>();
+            l.Add(value);
+
+            ktd.parameters.Add("EmptyKeyword", l);
+
+            examinedKeywords.Add(ktd);
+        }
+
         void _tryIsKeyword(string LOGPREFIX, int startPos, int prev_startPos, int isPrevStartPosSameAsStartPosParentCount, int endPos, int endPos_forZeroKeyword, out List<keywordTryingData> examinedKeywords, out string newVertex, out string link, bool isTopLevelCall, ref int newPos)
         {
             bool isPrevStartPosSameAsStartPos = false;
@@ -761,6 +780,7 @@ namespace m0.ZeroCode
             int tryNewPos = 0;
             string tryNewVertex = null;
             string tryLink = null;
+            string tryEmptyKeyword = null;
 
             if (!isTopLevelCall)
             {
@@ -793,9 +813,6 @@ namespace m0.ZeroCode
                 }
             }
 
-            if (isPrevStartPosSameAsStartPos && isPrevStartPosSameAsStartPosParentCount==1) // do not want inifinite recursion
-                return;
-
             // zero keyword
             
             if (text[startPos]!=ZeroCodeCommon.NewVertexPrefix
@@ -816,20 +833,35 @@ namespace m0.ZeroCode
                         shallProceed = false;
                 }
 
-                keywordTryingData ktd = new keywordTryingData(emptyKeywordVertex);
+                if (text[startPos] == 'b')
+                {
+                    int x = 0;
+                }
 
-                List<object> l = new List<object>();
-                l.Add(text.Substring(startPos, sPos - startPos));
+                tryEmptyKeyword = text.Substring(startPos, sPos - startPos);
 
-                ktd.parameters.Add("EmptyKeyword", l);
+                if (sPos == endPos_forZeroKeyword || isPrevStartPosSameAsStartPos)
+                {
 
-                examinedKeywords.Add(ktd);
+                    addEmptyKeyword(examinedKeywords, tryEmptyKeyword);
 
-                newPos = sPos;
+                    newPos = sPos + 1;
 
-                return;
+                    return;
+                }
+                else
+                {
+                    tryNewPos = sPos + 1;
+
+                    sPos = startPos;
+                }
             }
-            
+
+            // no infinite reccursion
+
+            if (isPrevStartPosSameAsStartPos && isPrevStartPosSameAsStartPosParentCount == 1) // do not want inifinite recursion
+                return;
+
             // keyword
 
             copyExaminedKeywords(examinedKeywords_All, examinedKeywords);
@@ -1093,6 +1125,7 @@ namespace m0.ZeroCode
             {
                 newVertex = tryNewVertex;
                 link = tryLink;
+                addEmptyKeyword(examinedKeywords, tryEmptyKeyword);
                 newPos = tryNewPos;
             }else
                 newPos = sPos;
@@ -1272,15 +1305,17 @@ namespace m0.ZeroCode
 
                 string keywordString = keyword.To.Value.ToString();
 
+                char firstCharacter;
+
                 if (keywordString.Length > 0)
                 {
                     // allKeywordsDictionary_notStartingWithParameter
 
                     if (!beginsWithParameter(keywordString))
                     {
-                        char firstCharacter = keywordString[0];
+                        firstCharacter = keywordString[0];
 
-                        string keywordUntilFirstParameter = ZeroCodeUtil.getNextCharacterPartFromKeyword(keywordString, 0);
+                        string keywordUntilFirstParameter = ZeroCodeUtil.getNextCharacterPartFromKeyword_startingFromNonParameter(keywordString, 0);
 
                         if (allKeywordsDictionary_notStartingWithParameter.ContainsKey(firstCharacter))
                         {
@@ -1299,7 +1334,7 @@ namespace m0.ZeroCode
 
                     // allKeywordsDictionary
 
-                    firstCharacter = ZeroCodeUtil.
+                    firstCharacter = ZeroCodeUtil.getFirstCharacterFromKeyword(keywordString);
 
                     string keywordWithoutFirstParameterUntilNextParameter = getWithoutFirstParameterUntilNextParameter(keywordString);
 
@@ -1339,10 +1374,10 @@ namespace m0.ZeroCode
             {
                 int firstParameterEndPos = ZeroCodeUtil.getNextMatch(keywordString, 0, ">)") + 2;
 
-                return ZeroCodeUtil.getNextCharacterPartFromKeyword(keywordString, firstParameterEndPos);
+                return ZeroCodeUtil.getNextCharacterPartFromKeyword_startingFromNonParameter(keywordString, firstParameterEndPos);
             }
             else
-                return ZeroCodeUtil.getNextCharacterPartFromKeyword(keywordString,0);
+                return ZeroCodeUtil.getNextCharacterPartFromKeyword_startingFromNonParameter(keywordString,0);
         }
 
         public String2ZeroCodeGraphProcessing()

@@ -686,7 +686,7 @@ namespace m0
             //
             // function (?<name>) (?<returnType>) [(*(+, +)(?<paramType>) (?<paramName>)*)]
 
-            IVertex function = smuk.AddVertex(keyword, "function (?<name>) (?<returnType>) [(*(+, +)(?<paramType>) (?<paramName>)*)]");
+            IVertex function = smuk.AddVertex(keyword, "function (?<name>) (?<returnType>)[(*(+, +)(?<paramType>) (?<paramName>)*)]");
 
 
             IVertex function_function = function.AddVertex(smu.Get(@"Function"), "(?<name>)");
@@ -825,11 +825,11 @@ namespace m0
             o_par_any.AddEdge(smb.Get(@"Vertex\$Is"), smu.Get("()"));
 
             o_par_any.AddVertex(smu.Get(@"SingleOperator\TargetExpression"), "(?<expr>)");
-
+            
             // E M P T Y :) K E Y W O R D
             //
             //
-
+            
             IVertex emptyKeyword = smuk.AddVertex(keyword, "(?<EmptyKeyword>)");
 
             IVertex emptyKeyword_any = emptyKeyword.AddVertex(any, "");
