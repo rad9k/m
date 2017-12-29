@@ -745,7 +745,7 @@ namespace m0.ZeroCode
             examinedKeywords.Add(ktd);
         }
 
-        void _tryIsKeyword(string LOGPREFIX, int startPos, int prev_startPos, int isPrevStartPosSameAsStartPosParentCount, int endPos, int endPos_forZeroKeyword, out List<keywordTryingData> examinedKeywords, out string newVertex, out string link, bool isTopLevelCall, ref int newPos)
+        void _tryIsKeyword(string LOGPREFIX, int startPos, int prev_startPos, int isPrevStartPosSameAsStartPosParentCount, int endPos, int endPos_forAtomParts, out List<keywordTryingData> examinedKeywords, out string newVertex, out string link, bool isTopLevelCall, ref int newPos)
         {
             bool isPrevStartPosSameAsStartPos = false;
 
@@ -788,7 +788,8 @@ namespace m0.ZeroCode
 
                 tryNewVertex = ZeroCodeCommon.tryStringFromNewVertexString(text, startPos, ref tryNewPos);
 
-                if (tryNewVertex != null && ((tryNewPos == endPos) || isPrevStartPosSameAsStartPos)) 
+                if (tryNewVertex != null 
+                    && ((tryNewPos == endPos_forAtomParts) || isPrevStartPosSameAsStartPos)) 
                     // check if found fills all the needed space
                 {
                     newVertex = tryNewVertex;
@@ -800,9 +801,9 @@ namespace m0.ZeroCode
 
                 // link
 
-                tryLink = ZeroCodeCommon.tryStringFromLinkString(text, startPos, ref tryNewPos);
+                tryLink = ZeroCodeCommon.tryStringFromLinkString(text, startPos, ref tryNewPos, endPos_forAtomParts);
 
-                if (tryLink != null && ((tryNewPos == endPos) || isPrevStartPosSameAsStartPos))
+                if (tryLink != null && ((tryNewPos == endPos_forAtomParts) || isPrevStartPosSameAsStartPos))
                     // check if found fills all the needed space
                 {
                     link = tryLink;
@@ -829,7 +830,7 @@ namespace m0.ZeroCode
                     if (text[sPos] == '\r' || text[sPos] == '\n')
                         shallProceed = false;
 
-                    if (sPos == endPos_forZeroKeyword)
+                    if (sPos == endPos_forAtomParts)
                         shallProceed = false;
                 }
 
@@ -840,18 +841,18 @@ namespace m0.ZeroCode
 
                 tryEmptyKeyword = text.Substring(startPos, sPos - startPos);
 
-                if (sPos == endPos_forZeroKeyword || isPrevStartPosSameAsStartPos)
+                if (sPos == endPos_forAtomParts || isPrevStartPosSameAsStartPos)
                 {
 
                     addEmptyKeyword(examinedKeywords, tryEmptyKeyword);
 
-                    newPos = sPos + 1;
+                    newPos = sPos;// + 1;
 
                     return;
                 }
                 else
                 {
-                    tryNewPos = sPos + 1;
+                    tryNewPos = sPos;// + 1;
 
                     sPos = startPos;
                 }
@@ -972,7 +973,7 @@ namespace m0.ZeroCode
                         }
                         else // THIS MIGHT NOT WORK GOOD NOW. TO BE CHECKED / CORRECTED
                         {
-                            int isTryKeyword_endPos = endPos;
+                            int isTryKeyword_endPos = endPos_forAtomParts;
 
                             MinusZero.Instance.Log(1, "_tryIsKeyword", LOGPREFIX+"TRY for parameter:" +ktd.currentlyProcessedParameterName+" for keyword:" + ktd.keyword + " afterParameterString:" + ktd.afterParameterString + "| ("+sPos+","+endPos+")");
 

@@ -67,7 +67,7 @@ namespace m0.ZeroCode
 
         // to be used only in ZeroCodeCommon.stringFromLinkString( , FALSE) scenario
         // and that means that TO BE USED ONLY IN KEYWORDS
-        public static string tryStringFromLinkString(string text, int startPos, ref int pos)
+        public static string tryStringFromLinkString(string text, int startPos, ref int pos, int endPos)
         {
             string newVertex = null;
 
@@ -83,6 +83,9 @@ namespace m0.ZeroCode
                 {
                     sPos++;
 
+                    if (sPos == endPos)
+                        shallProceed = false;
+
                     if (text[sPos] == '\n' || text[sPos] == '\r')
                         shallProceed = false;
 
@@ -95,7 +98,6 @@ namespace m0.ZeroCode
                     if (text[sPos] == '\'' && isInEscape
                         && sPos > 0 && text[sPos - 1] != '\\') // if is no \'
                         isInEscape = false;
-
                 }
 
                 pos = sPos;
