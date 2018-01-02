@@ -686,8 +686,8 @@ namespace m0.ZeroCode
         }
 
         List<keywordTryingData> examinedKeywords_All; // all keywords are here
-        Dictionary<char, List<string>> allKeywordsDictionary_notStartingWithParameter;
-        Dictionary<char, List<string>> allKeywordsDictionary;
+        Dictionary<char, List<string>> allKeywordsSubstringsDictionary_onlyFirstSubstring;
+        Dictionary<char, List<string>> allKeywordsSubstringDictionary;
         List<keywordTryingData> examinedKeywords;
 
         IVertex emptyKeywordVertex;
@@ -782,11 +782,66 @@ namespace m0.ZeroCode
             string tryLink = null;
             string tryEmptyKeyword = null;
 
+            //
+
+            if (!testIfIsKeyword_noStartingWithParameter(startPos))
+            {
+                while (shallProceed)
+                {
+                    sPos++;
+
+                    if (testIfIsKeyword(sPos))
+                        shallProceed = false;
+
+                    if (text[sPos] == '\r' || text[sPos] == '\n')
+                        shallProceed = false;
+
+                    if (sPos == endPos_forAtomParts)
+                        shallProceed = false;
+                }
+
+                string foundString = text.Substring(startPos, sPos - startPos);
+
+                tryNewPos = sPos + 1;
+
+                sPos = startPos;
+
+                if (!isTopLevelCall 
+                    && ZeroCodeCommon.isNewVertexString(foundString))
+                    tryNewVertex = ZeroCodeCommon.stringFromNewVertexString(foundString);
+                else if (!isTopLevelCall 
+                    && ZeroCodeCommon.isLinkString(foundString))
+                    tryLink = ZeroCodeCommon.stringFromLinkString(foundString, false);
+                else
+                    tryEmptyKeyword = foundString;
+
+                if (sPos == endPos_forAtomParts || isPrevStartPosSameAsStartPos)
+                {
+                    newVertex = tryNewVertex;
+
+                    link = tryLink;
+
+                    if(tryEmptyKeyword!=null)
+                        addEmptyKeyword(examinedKeywords, tryEmptyKeyword);
+
+                    newPos = sPos + 1;
+
+                    MinusZero.Instance.Log(1, "_tryIsKeyword", LOGPREFIX + "RETURN:" + tryEmptyKeyword + " newPos:" + newPos);
+
+                    return;
+                }
+                
+            }
+
+            //
+            /*
             if (!isTopLevelCall)
             {
                 // newVertex
 
                 tryNewVertex = ZeroCodeCommon.tryStringFromNewVertexString(text, startPos, ref tryNewPos);
+
+                MinusZero.Instance.Log(1, "_tryIsKeyword", LOGPREFIX + "TRY newVertex: " + tryNewVertex +" tryNewPos:"+tryNewPos);
 
                 if (tryNewVertex != null 
                     && ((tryNewPos == endPos_forAtomParts) || isPrevStartPosSameAsStartPos)) 
@@ -802,6 +857,8 @@ namespace m0.ZeroCode
                 // link
 
                 tryLink = ZeroCodeCommon.tryStringFromLinkString(text, startPos, ref tryNewPos, endPos_forAtomParts);
+
+                MinusZero.Instance.Log(1, "_tryIsKeyword", LOGPREFIX + "TRY link: " + tryLink + " tryNewPos:" + tryNewPos);
 
                 if (tryLink != null && ((tryNewPos == endPos_forAtomParts) || isPrevStartPosSameAsStartPos))
                     // check if found fills all the needed space
@@ -834,11 +891,6 @@ namespace m0.ZeroCode
                         shallProceed = false;
                 }
 
-                if (text[startPos] == 'b')
-                {
-                    int x = 0;
-                }
-
                 tryEmptyKeyword = text.Substring(startPos, sPos - startPos);
 
                 if (sPos == endPos_forAtomParts || isPrevStartPosSameAsStartPos)
@@ -846,18 +898,25 @@ namespace m0.ZeroCode
 
                     addEmptyKeyword(examinedKeywords, tryEmptyKeyword);
 
-                    newPos = sPos;// + 1;
+                    newPos = sPos + 1;
+
+                    MinusZero.Instance.Log(1, "_tryIsKeyword", LOGPREFIX + "RETURN emptyKeyboard:" + tryEmptyKeyword + " newPos:" + newPos);
 
                     return;
                 }
                 else
                 {
-                    tryNewPos = sPos;// + 1;
+                    tryNewPos = sPos + 1;
+
+                    // YOU TELL ME !!!!!! WHY IT WORX IF THERE IS spos+1 above and no + 1 here!!! best!/r
+
+                    MinusZero.Instance.Log(1, "_tryIsKeyword", LOGPREFIX + "TRY emptyKeyboard:" + tryEmptyKeyword + " tryNewPos:" + tryNewPos);
+
 
                     sPos = startPos;
                 }
             }
-
+            */
             // no infinite reccursion
 
             if (isPrevStartPosSameAsStartPos && isPrevStartPosSameAsStartPosParentCount == 1) // do not want inifinite recursion
@@ -979,6 +1038,10 @@ namespace m0.ZeroCode
 
                             if (ktd.afterParameterString != "")
                             {
+                                if (ktd.afterParameterString[0] == ']')
+                                {
+                                    int x = 0;
+                                }
                                 int sPosAfterParameter = ZeroCodeUtil.getNextMatch(text, sPos, ktd.afterParameterString);
 
                                 MinusZero.Instance.Log(1, "_tryIsKeyword", LOGPREFIX+"sPosAfterParameter:" + sPosAfterParameter+ " for afterParameterString:"+ktd.afterParameterString);
@@ -1005,18 +1068,22 @@ namespace m0.ZeroCode
 
                                 _tryIsKeyword(LOGPREFIX+"    ",sPos, startPos, isPrevStartPosSameAsStartPosThisCount, endPos, isTryKeyword_endPos, out foundKeywords, out foundNewVertex, out foundLink, false, ref _newPos);
 
-                                MinusZero.Instance.Log(1, "_tryIsKeyword", LOGPREFIX+"waitingUntilPositionInText <= _newPos:" + _newPos);
-
                                 if (foundNewVertex != null)
                                 {
                                     ktd.waitingUntilPositionInText = _newPos;
                                     foundParameter = foundNewVertex;
+
+                                    MinusZero.Instance.Log(1, "_tryIsKeyword", LOGPREFIX + "FOUND PARAMETER VERTEX:" + foundParameter.ToString() + " waitUntil:" + ktd.waitingUntilPositionInText);
+
                                 }
 
                                 if (foundLink != null)
                                 {
                                     ktd.waitingUntilPositionInText = _newPos;
                                     foundParameter = new ToVertexMock(foundLink);
+     
+
+                                    MinusZero.Instance.Log(1, "_tryIsKeyword", LOGPREFIX + "FOUND PARAMETER LINK:" + foundParameter.ToString() + " waitUntil:" + ktd.waitingUntilPositionInText);
                                 }
 
                                 if (foundKeywords.Count() > 0)
@@ -1025,7 +1092,10 @@ namespace m0.ZeroCode
 
                                     foundParameter = foundKeywords[0];
 
-                                    if(foundParameters.Count() > 1)
+
+                                    MinusZero.Instance.Log(1, "_tryIsKeyword", LOGPREFIX + "FOUND PARAMETER KEYWORDS:" + foundParameter.ToString() + " waitUntil:" + ktd.waitingUntilPositionInText);
+
+                                    if (foundParameters.Count() > 1)
                                     {
                                         int x = 0; // HOW IS THAT
                                     }
@@ -1140,10 +1210,10 @@ namespace m0.ZeroCode
         {
             char charAtPos = text[startPos];
 
-            if (!allKeywordsDictionary_notStartingWithParameter.ContainsKey(charAtPos))
+            if (!allKeywordsSubstringsDictionary_onlyFirstSubstring.ContainsKey(charAtPos))
                 return false;
 
-            List<string> l = allKeywordsDictionary_notStartingWithParameter[charAtPos];
+            List<string> l = allKeywordsSubstringsDictionary_onlyFirstSubstring[charAtPos];
 
             foreach (string s in l)
                 if (ZeroCodeUtil.tryStringMatch(text, startPos, s))
@@ -1156,10 +1226,10 @@ namespace m0.ZeroCode
         {
             char charAtPos = text[startPos];
 
-            if (!allKeywordsDictionary.ContainsKey(charAtPos))
+            if (!allKeywordsSubstringDictionary.ContainsKey(charAtPos))
                 return false;
 
-            List<string> l = allKeywordsDictionary[charAtPos];
+            List<string> l = allKeywordsSubstringDictionary[charAtPos];
 
             foreach (string s in l)
                 if (ZeroCodeUtil.tryStringMatch(text, startPos, s))
@@ -1291,9 +1361,9 @@ namespace m0.ZeroCode
         {
             examinedKeywords_All = new List<keywordTryingData>();
 
-            allKeywordsDictionary_notStartingWithParameter = new Dictionary<char, List<string>>();
+            allKeywordsSubstringsDictionary_onlyFirstSubstring = new Dictionary<char, List<string>>();
 
-            allKeywordsDictionary = new Dictionary<char, List<string>>();
+            allKeywordsSubstringDictionary = new Dictionary<char, List<string>>();
 
             foreach (IEdge keyword in MinusZero.Instance.Root.GetAll(@"User\CurrentUser:\CodeSettings:\Keyword:\$Keyword:"))
             {
@@ -1310,49 +1380,15 @@ namespace m0.ZeroCode
 
                 if (keywordString.Length > 0)
                 {
-                    // allKeywordsDictionary_notStartingWithParameter
+                    // allKeywordsDictionary_onlyFirstSubstring
 
                     if (!beginsWithParameter(keywordString))
-                    {
-                        firstCharacter = keywordString[0];
-
-                        string keywordUntilFirstParameter = ZeroCodeUtil.getNextCharacterPartFromKeyword_startingFromNonParameter(keywordString, 0);
-
-                        if (allKeywordsDictionary_notStartingWithParameter.ContainsKey(firstCharacter))
-                        {
-                            if (!allKeywordsDictionary_notStartingWithParameter[firstCharacter].Contains(keywordUntilFirstParameter))
-                                allKeywordsDictionary_notStartingWithParameter[firstCharacter].Add(keywordUntilFirstParameter);
-                        }
-                        else
-                        {
-                            List<string> kl = new List<string>();
-
-                            allKeywordsDictionary_notStartingWithParameter.Add(firstCharacter, kl);
-
-                            kl.Add(keywordUntilFirstParameter);
-                        }
-                    }
+                        addSubString(allKeywordsSubstringsDictionary_onlyFirstSubstring, 
+                            ZeroCodeUtil.getNextCharacterPartFromKeyword_startingFromNonParameter(keywordString, 0));
 
                     // allKeywordsDictionary
 
-                    firstCharacter = ZeroCodeUtil.getFirstCharacterFromKeyword(keywordString);
-
-                    string keywordWithoutFirstParameterUntilNextParameter = getWithoutFirstParameterUntilNextParameter(keywordString);
-
-                    if (allKeywordsDictionary.ContainsKey(firstCharacter))
-                    {
-                        if (!allKeywordsDictionary[firstCharacter].Contains(keywordWithoutFirstParameterUntilNextParameter))
-                            allKeywordsDictionary[firstCharacter].Add(keywordWithoutFirstParameterUntilNextParameter);
-                    }
-                    else
-                    {
-                        List<string> kl = new List<string>();
-
-                        allKeywordsDictionary.Add(firstCharacter, kl);
-
-                        kl.Add(keywordWithoutFirstParameterUntilNextParameter);
-                    }
-
+                    addNonParameterKeywordSubstrings(keywordString);
                 }
             }
                 
@@ -1369,16 +1405,85 @@ namespace m0.ZeroCode
             return false;
         }
 
-        private string getWithoutFirstParameterUntilNextParameter(string keywordString)
+        private void addNonParameterKeywordSubstrings(string keywordString)
         {
-            if (ZeroCodeUtil.tryStringMatch(keywordString, 0, "(?<"))
-            {
-                int firstParameterEndPos = ZeroCodeUtil.getNextMatch(keywordString, 0, ">)") + 2;
+            if (keywordString == "")
+                return;
 
-                return ZeroCodeUtil.getNextCharacterPartFromKeyword_startingFromNonParameter(keywordString, firstParameterEndPos);
+            bool isInsideParameter = false;
+
+            int prevPos = 0;
+
+            int keywordPos;
+
+            for (keywordPos = 0; keywordPos < keywordString.Length; keywordPos++)
+            {
+                if (!isInsideParameter && ZeroCodeUtil.tryStringMatch(keywordString, keywordPos, "(?<"))
+                {
+                    isInsideParameter = true;
+
+                    addSubString(allKeywordsSubstringDictionary, keywordString.Substring(prevPos, keywordPos - prevPos));
+                }
+
+                if (isInsideParameter && ZeroCodeUtil.tryStringMatch(keywordString, keywordPos, ">)"))
+                {
+                    isInsideParameter = false;
+                    prevPos = keywordPos + 2;
+                }
+
+                if (ZeroCodeUtil.tryStringMatch(keywordString, keywordPos, "(*"))
+                {
+                    addSubString(allKeywordsSubstringDictionary, keywordString.Substring(prevPos, keywordPos - prevPos));
+
+                    prevPos = keywordPos + 2;
+                }
+
+                if (ZeroCodeUtil.tryStringMatch(keywordString, keywordPos, "*)"))
+                {
+                    addSubString(allKeywordsSubstringDictionary, keywordString.Substring(prevPos, keywordPos - prevPos));
+
+                    prevPos = keywordPos + 2;
+                }
+
+                if (ZeroCodeUtil.tryStringMatch(keywordString, keywordPos, "(+"))
+                {
+                    addSubString(allKeywordsSubstringDictionary, keywordString.Substring(prevPos, keywordPos - prevPos));
+
+                    prevPos = keywordPos + 2;
+                }
+
+                if (ZeroCodeUtil.tryStringMatch(keywordString, keywordPos, "+)"))
+                {
+                    addSubString(allKeywordsSubstringDictionary, keywordString.Substring(prevPos, keywordPos - prevPos));
+
+                    prevPos = keywordPos + 2;
+                }
+            }
+
+            addSubString(allKeywordsSubstringDictionary, keywordString.Substring(prevPos, keywordPos - prevPos));
+        }
+
+        private void addSubString(Dictionary<char, List<string>> dict, string subString)
+        {
+            if (subString.Length == 0)
+                return;
+
+            char firstCharacter = subString[0];
+
+            if (dict.ContainsKey(firstCharacter))
+            {
+                if (!dict[firstCharacter].Contains(subString))
+                    dict[firstCharacter].Add(subString);
             }
             else
-                return ZeroCodeUtil.getNextCharacterPartFromKeyword_startingFromNonParameter(keywordString,0);
+            {
+                List<string> kl = new List<string>();
+
+                dict.Add(firstCharacter, kl);
+
+                kl.Add(subString);
+            }
+
         }
 
         public String2ZeroCodeGraphProcessing()

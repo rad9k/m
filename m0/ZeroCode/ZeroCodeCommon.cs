@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 //      stringToNewVertexString
 //      stringFromNewVertexString
 //      tryStringFromNewVertexString
-//      isNewVertex
+//      isNewVertexString
 //                              Escaped
 //      stringToPossiblyEscapedString
 //      stringFromEscapedString
@@ -16,7 +16,7 @@ using System.Threading.Tasks;
 //      stringToLinkString
 //      stringFromLinkString
 //      tryStringFromLinkString
-//      isLink
+//      isLinkString
 
 
 namespace m0.ZeroCode
@@ -89,8 +89,8 @@ namespace m0.ZeroCode
                     if (text[sPos] == '\n' || text[sPos] == '\r')
                         shallProceed = false;
 
-                    if (text[sPos] == ' ' && !isInEscape)
-                        shallProceed = false;
+                    //if (text[sPos] == ' ' && !isInEscape)
+                      //  shallProceed = false;
 
                     if (text[sPos] == '\'' && !isInEscape)
                         isInEscape = true;
@@ -108,9 +108,18 @@ namespace m0.ZeroCode
             return newVertex;
         }
 
-        public static bool isLink(string s, int beg, int end)
+        public static bool isLinkString(string s, int beg, int end)
         {
             if (s[beg] == CodeGraphLinkPrefix)
+                return true;
+
+            return false;
+        }
+
+        public static bool isLinkString(string s)
+        {
+            if (s.Length > 0
+                && s[0] == ZeroCodeCommon.CodeGraphLinkPrefix)
                 return true;
 
             return false;
@@ -173,9 +182,18 @@ namespace m0.ZeroCode
             return newVertex;
         }
 
-        public static bool isNewVertex(string s, int beg, int end)
+        public static bool isNewVertexString(string s, int beg, int end)
         {
             if (s[beg] == NewVertexPrefix && s[end] == NewVertexSuffix)
+                return true;
+
+            return false;
+        }
+        public static bool isNewVertexString(string s)
+        {
+            if (s.Length > 0
+                && s[0] == ZeroCodeCommon.NewVertexPrefix
+                && s[s.Length - 1] == ZeroCodeCommon.NewVertexSuffix)
                 return true;
 
             return false;

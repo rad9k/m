@@ -782,11 +782,10 @@ namespace m0
             o_mul_any.AddVertex(smu.Get(@"DoubleOperator\LeftExpression"), "(?<left>)");
 
             o_mul_any.AddVertex(smu.Get(@"DoubleOperator\RightExpression"), "(?<right>)");
-            
 
             // /
             //
-            // (?<left>) - (?<right>)
+            // (?<left>) / (?<right>)
 
             //IVertex o_div = smuk.AddVertex(keyword, "(?<left>) /(?<SUB>) (?<right>)");
 
@@ -825,11 +824,23 @@ namespace m0
             o_par_any.AddEdge(smb.Get(@"Vertex\$Is"), smu.Get("()"));
 
             o_par_any.AddVertex(smu.Get(@"SingleOperator\TargetExpression"), "(?<expr>)");
+
+            // \
+            //
+            // (?<expr>) \
+
+            IVertex o_path = smuk.AddVertex(keyword, @"(?<expr>) \ ");
+
+            IVertex o_path_any = o_path.AddVertex(any, "");
+
+            o_path_any.AddEdge(smb.Get(@"Vertex\$Is"), smu.Get("\"\\ \""));
+
+            o_path_any.AddVertex(smu.Get(@"SingleOperator\TargetExpression"), "(?<expr>)");
             
             // E M P T Y :) K E Y W O R D
             //
             //
-            
+
             IVertex emptyKeyword = smuk.AddVertex(keyword, "(?<EmptyKeyword>)");
 
             IVertex emptyKeyword_any = emptyKeyword.AddVertex(any, "");
