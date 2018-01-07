@@ -434,58 +434,79 @@ namespace m0.ZeroCode
         {
             AddNewLines();
 
-            if (TryIsKeyword(currentLineNoTabs))
+            bool shallProcess = true;
+            IVertex toReturnVertex = null;
+
+            while (shallProcess)
             {
-                if (examinedKeywords.Count > 1)
+                if (TryIsKeyword(currentLineNoTabs))
                 {
-                    int x = 0; // HOW IS THAT
-                }
+                    if (examinedKeywords.Count > 1)
+                    {
+                        int x = 0; // HOW IS THAT
+                    }
 
-                return AddKeywordVertex(_baseVertex, examinedKeywords[0]);
-            }
-            else {
+                    keywordTryingData chosenKeyword = examinedKeywords[0];
+                    int posAfterMatch = chosenKeyword.matchedOnPositionInText;
 
-                if (currentLineNoTabs.Length == 0)
-                    return null;
+                    if (toReturnVertex==null)
+                        toReturnVertex=AddKeywordVertex(_baseVertex, chosenKeyword);
+                    else
+                        AddKeywordVertex(_baseVertex, chosenKeyword);
 
-                if (currentLineNoTabs[0] != ZeroCodeCommon.CodeGraphVertexPrefix[0]
-                    || currentLineNoTabs[currentLineNoTabs.Length - 1] != ZeroCodeCommon.CodeGraphVertexSuffix[0])
-                    return null;
+                    if (posAfterMatch >= text.Length || text[posAfterMatch] == '\r')
+                    {
+                        return toReturnVertex;
+                    }
 
-                    string currentLineInner = currentLineNoTabs.Substring(ZeroCodeCommon.CodeGraphVertexPrefix.Length, 
-                   currentLineNoTabs.Length - ZeroCodeCommon.CodeGraphVertexPrefix.Length - ZeroCodeCommon.CodeGraphVertexSuffix.Length);
-                    
-                int doubleColonPos = getDoubleColonPos(currentLineInner);
-
-                if (doubleColonPos == -1) // no meta (before ::)
-                {
-                    string afterColon = currentLineInner.Trim();
-
-                    if (afterColon[0] == ZeroCodeCommon.NewVertexPrefix) // if is new value
-                        return AddVertex(_baseVertex, null, ZeroCodeCommon.stringFromNewVertexString(afterColon));
-
-                    //if (afterColon[0] == ZeroCodeCommon.CodeGraphLinkPrefix)
-                    return AddEdge(_baseVertex, null, processLink(ZeroCodeCommon.stringFromLinkString(afterColon, true))).To;
-
-                    //return AddVertex(_baseVertex, null, "SYNTAX ERROR");
+                    firstCharacterPos_relativeToText = posAfterMatch;
                 }
                 else
                 {
-                    string beforeColon = currentLineInner.Substring(0, doubleColonPos).Trim();
+                    if (currentLineNoTabs.Length == 0)
+                        return null;
 
-                    string afterColon = currentLineInner.Substring(doubleColonPos + 2, currentLineInner.Length - doubleColonPos-2).Trim();
+                    if (currentLineNoTabs[0] != ZeroCodeCommon.CodeGraphVertexPrefix[0]
+                        || currentLineNoTabs[currentLineNoTabs.Length - 1] != ZeroCodeCommon.CodeGraphVertexSuffix[0])
+                        return null;
 
-                    IVertex meta = processLink(beforeColon);
+                    shallProcess = false;
 
-                    if (afterColon[0] == ZeroCodeCommon.NewVertexPrefix) // if is new value
-                        return AddVertex(_baseVertex, meta, ZeroCodeCommon.stringFromNewVertexString(afterColon));
-                    //else
-                    //  return AddEdge(_baseVertex, meta, processLink(afterColon)).To;
+                    string currentLineInner = currentLineNoTabs.Substring(ZeroCodeCommon.CodeGraphVertexPrefix.Length,
+                        currentLineNoTabs.Length - ZeroCodeCommon.CodeGraphVertexPrefix.Length - ZeroCodeCommon.CodeGraphVertexSuffix.Length);
 
-                    //if (afterColon[0] == ZeroCodeCommon.CodeGraphLinkPrefix)
-                    return AddEdge(_baseVertex, meta, processLink(ZeroCodeCommon.stringFromLinkString(afterColon, true))).To;
+                    int doubleColonPos = getDoubleColonPos(currentLineInner);
 
-                    //return AddVertex(_baseVertex, null, "SYNTAX ERROR");
+                    if (doubleColonPos == -1) // no meta (before ::)
+                    {
+                        string afterColon = currentLineInner.Trim();
+
+                        if (afterColon[0] == ZeroCodeCommon.NewVertexPrefix) // if is new value
+                            return AddVertex(_baseVertex, null, ZeroCodeCommon.stringFromNewVertexString(afterColon));
+
+                        //if (afterColon[0] == ZeroCodeCommon.CodeGraphLinkPrefix)
+                        return AddEdge(_baseVertex, null, processLink(ZeroCodeCommon.stringFromLinkString(afterColon, true))).To;
+
+                        //return AddVertex(_baseVertex, null, "SYNTAX ERROR");
+                    }
+                    else
+                    {
+                        string beforeColon = currentLineInner.Substring(0, doubleColonPos).Trim();
+
+                        string afterColon = currentLineInner.Substring(doubleColonPos + 2, currentLineInner.Length - doubleColonPos - 2).Trim();
+
+                        IVertex meta = processLink(beforeColon);
+
+                        if (afterColon[0] == ZeroCodeCommon.NewVertexPrefix) // if is new value
+                            return AddVertex(_baseVertex, meta, ZeroCodeCommon.stringFromNewVertexString(afterColon));
+                        //else
+                        //  return AddEdge(_baseVertex, meta, processLink(afterColon)).To;
+
+                        //if (afterColon[0] == ZeroCodeCommon.CodeGraphLinkPrefix)
+                        return AddEdge(_baseVertex, meta, processLink(ZeroCodeCommon.stringFromLinkString(afterColon, true))).To;
+
+                        //return AddVertex(_baseVertex, null, "SYNTAX ERROR");
+                    }
                 }
             }
 
@@ -496,6 +517,7 @@ namespace m0.ZeroCode
 
         class keywordTryingData
         {
+            public String2ZeroCodeGraphProcessing processing;
             public IVertex keywordVertex;
             public String keyword;
 
@@ -525,6 +547,7 @@ namespace m0.ZeroCode
 
             public keywordTryingData(keywordTryingData source)
             {
+                processing = source.processing;
                 keywordVertex = source.keywordVertex;
                 keyword = source.keyword;
                 currentPositionInKeyword = source.currentPositionInKeyword;
@@ -533,8 +556,9 @@ namespace m0.ZeroCode
                 afterParameterString = source.afterParameterString;
             }
 
-            public keywordTryingData(IVertex k)
+            public keywordTryingData(IVertex k, String2ZeroCodeGraphProcessing _processing)
             {
+                processing = _processing;
                 keywordVertex = k;
                 keyword = (String)keywordVertex.Value;
 
@@ -616,7 +640,7 @@ namespace m0.ZeroCode
                     return false;
             }
 
-            public void GetParameter()
+            public void GetParameter(int curPos)
             {
                 int currentPosition;
                 string str;
@@ -640,7 +664,25 @@ namespace m0.ZeroCode
                 currentlyProcessedParameterName = str.Substring(begCurrentPosition + 3, currentPosition - begCurrentPosition - 5);
 
                 if (isInMultiParameter() && currentPosition == multiParameterString.Length)
-                    afterParameterString = "";
+                {
+                    int whatMatch;
+
+                    string afterSeparatorString = ZeroCodeUtil.getNextCharacterPartFromKeyword_startingFromNonParameter(keyword, multiParameterStringEndPosition + 1);
+
+                    int twoPos = ZeroCodeUtil.getNextMatch_twoAtOnce(processing.text, curPos, 
+                        multiParameterSeparator,
+                        afterSeparatorString, 
+                        out whatMatch);
+
+                    if(whatMatch==0)
+                        afterParameterString = "";
+
+                    if (whatMatch == 1)
+                        afterParameterString = multiParameterSeparator;
+
+                    if (whatMatch == 2)
+                        afterParameterString = afterSeparatorString;
+                }
                 else
                     afterParameterString = ZeroCodeUtil.getNextCharacterPartFromKeyword_startingFromNonParameter(str, currentPosition);
 
@@ -730,12 +772,14 @@ namespace m0.ZeroCode
                 return false;
         }
 
-        void addEmptyKeyword(List<keywordTryingData> examinedKeywords, string value)
+        void addEmptyKeyword(List<keywordTryingData> examinedKeywords, string value, int matchedOnPositionInText)
         {
             if (value == null || value == "")
                 return;
 
-            keywordTryingData ktd = new keywordTryingData(emptyKeywordVertex);
+            keywordTryingData ktd = new keywordTryingData(emptyKeywordVertex, this);
+
+            ktd.matchedOnPositionInText = matchedOnPositionInText;
 
             List<object> l = new List<object>();
             l.Add(value);
@@ -802,18 +846,18 @@ namespace m0.ZeroCode
 
                 string foundString = text.Substring(startPos, sPos - startPos);
 
-                tryNewPos = sPos + 1;
-
-                sPos = startPos;
-
-                if (!isTopLevelCall 
+                if (!isTopLevelCall
                     && ZeroCodeCommon.isNewVertexString(foundString))
                     tryNewVertex = ZeroCodeCommon.stringFromNewVertexString(foundString);
-                else if (!isTopLevelCall 
+                else if (!isTopLevelCall
                     && ZeroCodeCommon.isLinkString(foundString))
                     tryLink = ZeroCodeCommon.stringFromLinkString(foundString, false);
                 else
+                {
                     tryEmptyKeyword = foundString;
+
+                    sPos++;
+                }
 
                 if (sPos == endPos_forAtomParts || isPrevStartPosSameAsStartPos)
                 {
@@ -822,101 +866,23 @@ namespace m0.ZeroCode
                     link = tryLink;
 
                     if(tryEmptyKeyword!=null)
-                        addEmptyKeyword(examinedKeywords, tryEmptyKeyword);
+                        addEmptyKeyword(examinedKeywords, tryEmptyKeyword, sPos);
 
-                    newPos = sPos + 1;
+                    newPos = sPos;
 
                     MinusZero.Instance.Log(1, "_tryIsKeyword", LOGPREFIX + "RETURN:" + tryEmptyKeyword + " newPos:" + newPos);
 
                     return;
                 }
-                
-            }
-
-            //
-            /*
-            if (!isTopLevelCall)
-            {
-                // newVertex
-
-                tryNewVertex = ZeroCodeCommon.tryStringFromNewVertexString(text, startPos, ref tryNewPos);
-
-                MinusZero.Instance.Log(1, "_tryIsKeyword", LOGPREFIX + "TRY newVertex: " + tryNewVertex +" tryNewPos:"+tryNewPos);
-
-                if (tryNewVertex != null 
-                    && ((tryNewPos == endPos_forAtomParts) || isPrevStartPosSameAsStartPos)) 
-                    // check if found fills all the needed space
-                {
-                    newVertex = tryNewVertex;
-                    newPos = tryNewPos;
-
-                    MinusZero.Instance.Log(1, "_tryIsKeyword", LOGPREFIX + "RETURN newVertex: " + newVertex);
-                    return;
-                }
-
-                // link
-
-                tryLink = ZeroCodeCommon.tryStringFromLinkString(text, startPos, ref tryNewPos, endPos_forAtomParts);
-
-                MinusZero.Instance.Log(1, "_tryIsKeyword", LOGPREFIX + "TRY link: " + tryLink + " tryNewPos:" + tryNewPos);
-
-                if (tryLink != null && ((tryNewPos == endPos_forAtomParts) || isPrevStartPosSameAsStartPos))
-                    // check if found fills all the needed space
-                {
-                    link = tryLink;
-                    newPos = tryNewPos;
-
-                    MinusZero.Instance.Log(1, "_tryIsKeyword", LOGPREFIX + "RETURN link: " + link);
-                    return;
-                }
-            }
-
-            // zero keyword
-            
-            if (text[startPos]!=ZeroCodeCommon.NewVertexPrefix
-                && text[startPos]!=ZeroCodeCommon.CodeGraphLinkPrefix
-                && !testIfIsKeyword_noStartingWithParameter(startPos))
-            {
-                while (shallProceed)
-                {
-                    sPos++;
-
-                    if (testIfIsKeyword(sPos))
-                        shallProceed = false;
-
-                    if (text[sPos] == '\r' || text[sPos] == '\n')
-                        shallProceed = false;
-
-                    if (sPos == endPos_forAtomParts)
-                        shallProceed = false;
-                }
-
-                tryEmptyKeyword = text.Substring(startPos, sPos - startPos);
-
-                if (sPos == endPos_forAtomParts || isPrevStartPosSameAsStartPos)
-                {
-
-                    addEmptyKeyword(examinedKeywords, tryEmptyKeyword);
-
-                    newPos = sPos + 1;
-
-                    MinusZero.Instance.Log(1, "_tryIsKeyword", LOGPREFIX + "RETURN emptyKeyboard:" + tryEmptyKeyword + " newPos:" + newPos);
-
-                    return;
-                }
                 else
                 {
-                    tryNewPos = sPos + 1;
-
-                    // YOU TELL ME !!!!!! WHY IT WORX IF THERE IS spos+1 above and no + 1 here!!! best!/r
-
-                    MinusZero.Instance.Log(1, "_tryIsKeyword", LOGPREFIX + "TRY emptyKeyboard:" + tryEmptyKeyword + " tryNewPos:" + tryNewPos);
-
+                    tryNewPos = sPos;
 
                     sPos = startPos;
                 }
+                
             }
-            */
+            
             // no infinite reccursion
 
             if (isPrevStartPosSameAsStartPos && isPrevStartPosSameAsStartPosParentCount == 1) // do not want inifinite recursion
@@ -989,7 +955,7 @@ namespace m0.ZeroCode
                             // keywordCharacter => parameter
                             if(ktd.currentPositionInKeyword_isParameterMatch(text[sPos]))
                             {
-                                ktd.GetParameter();
+                                ktd.GetParameter(sPos);
                             }
                             else
                                 // keywordCharacter => keywordCharacer
@@ -1038,10 +1004,6 @@ namespace m0.ZeroCode
 
                             if (ktd.afterParameterString != "")
                             {
-                                if (ktd.afterParameterString[0] == ']')
-                                {
-                                    int x = 0;
-                                }
                                 int sPosAfterParameter = ZeroCodeUtil.getNextMatch(text, sPos, ktd.afterParameterString);
 
                                 MinusZero.Instance.Log(1, "_tryIsKeyword", LOGPREFIX+"sPosAfterParameter:" + sPosAfterParameter+ " for afterParameterString:"+ktd.afterParameterString);
@@ -1074,7 +1036,6 @@ namespace m0.ZeroCode
                                     foundParameter = foundNewVertex;
 
                                     MinusZero.Instance.Log(1, "_tryIsKeyword", LOGPREFIX + "FOUND PARAMETER VERTEX:" + foundParameter.ToString() + " waitUntil:" + ktd.waitingUntilPositionInText);
-
                                 }
 
                                 if (foundLink != null)
@@ -1082,7 +1043,6 @@ namespace m0.ZeroCode
                                     ktd.waitingUntilPositionInText = _newPos;
                                     foundParameter = new ToVertexMock(foundLink);
      
-
                                     MinusZero.Instance.Log(1, "_tryIsKeyword", LOGPREFIX + "FOUND PARAMETER LINK:" + foundParameter.ToString() + " waitUntil:" + ktd.waitingUntilPositionInText);
                                 }
 
@@ -1091,7 +1051,6 @@ namespace m0.ZeroCode
                                     ktd.waitingUntilPositionInText = _newPos - 1;
 
                                     foundParameter = foundKeywords[0];
-
 
                                     MinusZero.Instance.Log(1, "_tryIsKeyword", LOGPREFIX + "FOUND PARAMETER KEYWORDS:" + foundParameter.ToString() + " waitUntil:" + ktd.waitingUntilPositionInText);
 
@@ -1125,7 +1084,7 @@ namespace m0.ZeroCode
 
                 examinedKeywords = newExaminedKeywords;
 
-                // check if only one matched
+                // check how many matched
 
                 int matchedKeywords = 0;
 
@@ -1196,7 +1155,7 @@ namespace m0.ZeroCode
             {
                 newVertex = tryNewVertex;
                 link = tryLink;
-                addEmptyKeyword(examinedKeywords, tryEmptyKeyword);
+                addEmptyKeyword(examinedKeywords, tryEmptyKeyword, tryNewPos);
                 newPos = tryNewPos;
             }else
                 newPos = sPos;
@@ -1263,6 +1222,8 @@ namespace m0.ZeroCode
                 }
             }
         }
+
+        IVertex LocalRoot;
 
         IVertex AddKeywordVertex(IVertex parent, keywordTryingData keyword)
         {
@@ -1370,7 +1331,7 @@ namespace m0.ZeroCode
                 if (GeneralUtil.CompareStrings("(?<EmptyKeyword>)", keyword.To.Value))
                     continue;
 
-                keywordTryingData ktd = new keywordTryingData(keyword.To);
+                keywordTryingData ktd = new keywordTryingData(keyword.To, this);
 
                 examinedKeywords_All.Add(ktd);
 
@@ -1498,3 +1459,87 @@ namespace m0.ZeroCode
 }
 
 
+//
+/*
+if (!isTopLevelCall)
+{
+    // newVertex
+
+    tryNewVertex = ZeroCodeCommon.tryStringFromNewVertexString(text, startPos, ref tryNewPos);
+
+    MinusZero.Instance.Log(1, "_tryIsKeyword", LOGPREFIX + "TRY newVertex: " + tryNewVertex +" tryNewPos:"+tryNewPos);
+
+    if (tryNewVertex != null 
+        && ((tryNewPos == endPos_forAtomParts) || isPrevStartPosSameAsStartPos)) 
+        // check if found fills all the needed space
+    {
+        newVertex = tryNewVertex;
+        newPos = tryNewPos;
+
+        MinusZero.Instance.Log(1, "_tryIsKeyword", LOGPREFIX + "RETURN newVertex: " + newVertex);
+        return;
+    }
+
+    // link
+
+    tryLink = ZeroCodeCommon.tryStringFromLinkString(text, startPos, ref tryNewPos, endPos_forAtomParts);
+
+    MinusZero.Instance.Log(1, "_tryIsKeyword", LOGPREFIX + "TRY link: " + tryLink + " tryNewPos:" + tryNewPos);
+
+    if (tryLink != null && ((tryNewPos == endPos_forAtomParts) || isPrevStartPosSameAsStartPos))
+        // check if found fills all the needed space
+    {
+        link = tryLink;
+        newPos = tryNewPos;
+
+        MinusZero.Instance.Log(1, "_tryIsKeyword", LOGPREFIX + "RETURN link: " + link);
+        return;
+    }
+}
+
+// zero keyword
+
+if (text[startPos]!=ZeroCodeCommon.NewVertexPrefix
+    && text[startPos]!=ZeroCodeCommon.CodeGraphLinkPrefix
+    && !testIfIsKeyword_noStartingWithParameter(startPos))
+{
+    while (shallProceed)
+    {
+        sPos++;
+
+        if (testIfIsKeyword(sPos))
+            shallProceed = false;
+
+        if (text[sPos] == '\r' || text[sPos] == '\n')
+            shallProceed = false;
+
+        if (sPos == endPos_forAtomParts)
+            shallProceed = false;
+    }
+
+    tryEmptyKeyword = text.Substring(startPos, sPos - startPos);
+
+    if (sPos == endPos_forAtomParts || isPrevStartPosSameAsStartPos)
+    {
+
+        addEmptyKeyword(examinedKeywords, tryEmptyKeyword);
+
+        newPos = sPos + 1;
+
+        MinusZero.Instance.Log(1, "_tryIsKeyword", LOGPREFIX + "RETURN emptyKeyboard:" + tryEmptyKeyword + " newPos:" + newPos);
+
+        return;
+    }
+    else
+    {
+        tryNewPos = sPos + 1;
+
+        // YOU TELL ME !!!!!! WHY IT WORX IF THERE IS spos+1 above and no + 1 here!!! best!/r
+
+        MinusZero.Instance.Log(1, "_tryIsKeyword", LOGPREFIX + "TRY emptyKeyboard:" + tryEmptyKeyword + " tryNewPos:" + tryNewPos);
+
+
+        sPos = startPos;
+    }
+}
+*/

@@ -199,7 +199,7 @@ namespace m0
         {
             IVertex sm = Root.Get(@"System\Meta");
 
-            GeneralUtil.ParseAndExcute(sm, null, "{Base{Vertex{$$IsLink,$Inherits,$Is,$EdgeTarget,$VertexTarget,$IsAggregation,$MinCardinality,$MaxCardinality,$MinTargetCardinality,$MaxTargetCardinality,$DefaultValue,$DefaultViewVisualiser,$DefaultEditVisualiser,$DefaultOpenVisualiser,$Group,$Section,$Description,Author,Dependency},$Empty,$Import,$ImportMeta,$Keyword,$KeywordManyRoot,$NewLine}}");
+            GeneralUtil.ParseAndExcute(sm, null, "{Base{Vertex{$$IsLink,$Inherits,$Is,$EdgeTarget,$VertexTarget,$IsAggregation,$MinCardinality,$MaxCardinality,$MinTargetCardinality,$MaxTargetCardinality,$DefaultValue,$DefaultViewVisualiser,$DefaultEditVisualiser,$DefaultOpenVisualiser,$Group,$Section,$Description,Author,Dependency},$Empty,$Import,$ImportMeta,$Keyword,$KeywordManyRoot,$LocalRoot,$StartInLocalRoot,$NewLine}}");
 
             sm.Get(@"Presentation\$Hide").AddEdge(sm.Get(@"Base\Vertex\$EdgeTarget"), sm.Get(@"Base\Vertex"));
 
@@ -782,7 +782,7 @@ namespace m0
             o_mul_any.AddVertex(smu.Get(@"DoubleOperator\LeftExpression"), "(?<left>)");
 
             o_mul_any.AddVertex(smu.Get(@"DoubleOperator\RightExpression"), "(?<right>)");
-
+            
             // /
             //
             // (?<left>) / (?<right>)
@@ -798,7 +798,7 @@ namespace m0
             o_div_any.AddVertex(smu.Get(@"DoubleOperator\LeftExpression"), "(?<left>)");
 
             o_div_any.AddVertex(smu.Get(@"DoubleOperator\RightExpression"), "(?<right>)");
-
+            
             // []
             //
             // [(*(+, +) (?<expr>)*)]
@@ -824,12 +824,14 @@ namespace m0
             o_par_any.AddEdge(smb.Get(@"Vertex\$Is"), smu.Get("()"));
 
             o_par_any.AddVertex(smu.Get(@"SingleOperator\TargetExpression"), "(?<expr>)");
-
+            
             // \
             //
             // (?<expr>) \
 
             IVertex o_path = smuk.AddVertex(keyword, @"(?<expr>) \ ");
+
+            o_path.AddVertex(smb.Get("$StartInLocalRoot"), "");
 
             IVertex o_path_any = o_path.AddVertex(any, "");
 
@@ -840,14 +842,16 @@ namespace m0
             // E M P T Y :) K E Y W O R D
             //
             //
-
+            
             IVertex emptyKeyword = smuk.AddVertex(keyword, "(?<EmptyKeyword>)");
 
             IVertex emptyKeyword_any = emptyKeyword.AddVertex(any, "");
 
             emptyKeyword_any.AddEdge(smb.Get(@"Vertex\$Is"), smu.Get("Query"));
 
-            emptyKeyword_any.AddVertex(smu.Get(@"SingleOperator\TargetExpression"), "(?<EmptyKeyword>)");
+            IVertex emptyKeyword_any_targetExpr=emptyKeyword_any.AddVertex(smu.Get(@"SingleOperator\TargetExpression"), "(?<EmptyKeyword>)");
+
+            emptyKeyword_any_targetExpr.AddVertex(smb.Get("$LocalRoot"), "");
 
         }
 

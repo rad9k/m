@@ -86,6 +86,42 @@ namespace m0.ZeroCode
             return -1;
         }
 
+        public static int getNextMatch_twoAtOnce(string s, int startFrom, string toMatch1, string toMatch2, out int whatMatch)
+        {
+            whatMatch = 0;
+
+            int pos = startFrom;
+
+            bool shallProcess = true;
+
+            while (shallProcess)
+            {
+                bool canCheck1 = (pos + toMatch1.Length) <= s.Length;
+                bool canCheck2 = (pos + toMatch2.Length) <= s.Length;
+
+                if (!canCheck1 && !canCheck2)
+                    shallProcess = false;
+                else
+                {
+                    if (canCheck1 && tryStringMatch(s, pos, toMatch1))
+                    {
+                        whatMatch = 1;
+                        return pos;
+                    }
+
+                    if (canCheck2 && tryStringMatch(s, pos, toMatch2))
+                    {
+                        whatMatch = 2;
+                        return pos;
+                    }
+                }
+
+                pos++;
+            }
+
+            return -1;
+        }
+
         public static char getFirstCharacterFromKeyword(string keyword)
         {
             if (ZeroCodeUtil.tryStringMatch(keyword, 0, "(?<"))
