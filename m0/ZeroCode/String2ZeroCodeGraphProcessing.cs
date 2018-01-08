@@ -1230,6 +1230,15 @@ namespace m0.ZeroCode
             return _AddKeywordVertex(parent,keyword,keyword.keywordVertex,null,0);
         }
 
+        bool AddKeywordVertex_canAddVertex(IVertex meta)
+        {
+            if (GeneralUtil.CompareStrings("$LocalRoot", meta.Value)
+            || GeneralUtil.CompareStrings("$StartInLocalRoot", meta.Value))
+                return false;
+
+            return true;
+        }
+
         IVertex _AddKeywordVertex(IVertex parent, keywordTryingData ktd, IVertex keywordAddingVertex, IVertex useMetaWhenANY, int subCount)
         {
             IVertex nv=null;
@@ -1271,7 +1280,7 @@ namespace m0.ZeroCode
 
                             object sub = subs[cnt_subCount];
 
-                            if (sub is string)
+                            if (sub is string && AddKeywordVertex_canAddVertex(meta))
                                 nv = AddVertex(parent, meta, sub); // was marked: ERROR. why?? 
 
                             if (sub is ToVertexMock)
@@ -1293,7 +1302,7 @@ namespace m0.ZeroCode
 
                             object sub = subs[cnt_subCount];
 
-                            if (sub is string)
+                            if (sub is string && AddKeywordVertex_canAddVertex(meta))
                                 nv = AddVertex(parent, meta, sub);
 
                             if (sub is ToVertexMock)
@@ -1302,7 +1311,7 @@ namespace m0.ZeroCode
                             if (sub is keywordTryingData)
                                 nv = _AddKeywordVertex(parent, (keywordTryingData)sub, ((keywordTryingData)sub).keywordVertex, meta, 0);// cnt_subCount);
                         }
-                        else
+                        else if (AddKeywordVertex_canAddVertex(meta))
                             nv = AddVertex(parent, meta, e.To);
 
                        _AddKeywordVertex(nv, ktd, e.To, null, cnt_subCount);
