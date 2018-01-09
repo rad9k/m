@@ -436,6 +436,7 @@ namespace m0.ZeroCode
 
             bool shallProcess = true;
             IVertex toReturnVertex = null;
+           // LocalRoot=null;
 
             while (shallProcess)
             {
@@ -1054,7 +1055,7 @@ namespace m0.ZeroCode
 
                                     MinusZero.Instance.Log(1, "_tryIsKeyword", LOGPREFIX + "FOUND PARAMETER KEYWORDS:" + foundParameter.ToString() + " waitUntil:" + ktd.waitingUntilPositionInText);
 
-                                    if (foundParameters.Count() > 1)
+                                    if (foundKeywords.Count() > 1)
                                     {
                                         int x = 0; // HOW IS THAT
                                     }
@@ -1230,13 +1231,27 @@ namespace m0.ZeroCode
             return _AddKeywordVertex(parent,keyword,keyword.keywordVertex,null,0);
         }
 
-        bool AddKeywordVertex_canAddVertex(IVertex meta)
+        void AddKeywordVertex_AddVertex(IVertex baseVertex, IEdge edgeForMeta, IVertex meta, object val, ref IVertex nv)
         {
-            if (GeneralUtil.CompareStrings("$LocalRoot", meta.Value)
-            || GeneralUtil.CompareStrings("$StartInLocalRoot", meta.Value))
-                return false;
+            if (GeneralUtil.CompareStrings("$LocalRoot", edgeForMeta.Meta.Value)
+            || GeneralUtil.CompareStrings("$StartInLocalRoot", edgeForMeta.Meta.Value))
+                return;
 
-            return true;
+            if (edgeForMeta.To.Get("$StartInLocalRoot:") != null && LocalRoot != null)
+                nv = AddVertex(LocalRoot, meta, val);
+            else
+                nv = AddVertex(baseVertex, meta, val);
+
+            if (edgeForMeta.To.Get("$LocalRoot:") != null)
+                LocalRoot = nv;
+        }
+
+        IEdge AddKeywordVertex_AddEdge(IVertex baseVertex, IEdge edgeForMeta, IVertex meta, IVertex to)
+        {
+            if(edgeForMeta.To.Get("$StartInLocalRoot:") != null && LocalRoot!=null)
+                return AddEdge(LocalRoot, meta, to);
+
+            return AddEdge(baseVertex, meta, to);
         }
 
         IVertex _AddKeywordVertex(IVertex parent, keywordTryingData ktd, IVertex keywordAddingVertex, IVertex useMetaWhenANY, int subCount)
@@ -1266,8 +1281,7 @@ namespace m0.ZeroCode
 
                     IVertex meta = e.Meta;
 
-                    //if ((string)e.Meta.Value == "(?<ANY>)")
-                    if(useMetaWhenANY != null)
+                    if ((string)e.Meta.Value == "(?<ANY>)" && useMetaWhenANY != null)
                         meta = useMetaWhenANY;
 
                     if (VertexOperations.IsLink(e))
@@ -1280,17 +1294,17 @@ namespace m0.ZeroCode
 
                             object sub = subs[cnt_subCount];
 
-                            if (sub is string && AddKeywordVertex_canAddVertex(meta))
-                                nv = AddVertex(parent, meta, sub); // was marked: ERROR. why?? 
+                            if (sub is string)
+                                AddKeywordVertex_AddVertex(parent, e, meta, sub, ref nv); // was marked: ERROR. why?? 
 
                             if (sub is ToVertexMock)
-                                nv = AddEdge(parent, meta, (IVertex)sub).To;
+                                nv = AddKeywordVertex_AddEdge(parent, e, meta, (IVertex)sub).To;
 
                             if (sub is keywordTryingData)
                                 nv = _AddKeywordVertex(parent, (keywordTryingData)sub, ((keywordTryingData)sub).keywordVertex, meta, 0); // cnt_subCount);
                         }
                         else
-                            nv = AddEdge(parent, meta, e.To).To;
+                            nv = AddKeywordVertex_AddEdge(parent, e, meta, e.To).To;
                         }
                     else
                     {
@@ -1302,17 +1316,17 @@ namespace m0.ZeroCode
 
                             object sub = subs[cnt_subCount];
 
-                            if (sub is string && AddKeywordVertex_canAddVertex(meta))
-                                nv = AddVertex(parent, meta, sub);
+                            if (sub is string)
+                                AddKeywordVertex_AddVertex(parent, e, meta, sub, ref nv);
 
                             if (sub is ToVertexMock)
-                                nv = AddEdge(parent, meta, (IVertex)sub).To;
+                                nv = AddKeywordVertex_AddEdge(parent, e, meta, (IVertex)sub).To;
 
                             if (sub is keywordTryingData)
                                 nv = _AddKeywordVertex(parent, (keywordTryingData)sub, ((keywordTryingData)sub).keywordVertex, meta, 0);// cnt_subCount);
                         }
-                        else if (AddKeywordVertex_canAddVertex(meta))
-                            nv = AddVertex(parent, meta, e.To);
+                        else
+                            AddKeywordVertex_AddVertex(parent, e, meta, e.To, ref nv);
 
                        _AddKeywordVertex(nv, ktd, e.To, null, cnt_subCount);
                     }

@@ -824,25 +824,31 @@ namespace m0
             o_par_any.AddEdge(smb.Get(@"Vertex\$Is"), smu.Get("()"));
 
             o_par_any.AddVertex(smu.Get(@"SingleOperator\TargetExpression"), "(?<expr>)");
-            
+
             // \
             //
-            // (?<expr>) \
+            // \
 
-            IVertex o_path = smuk.AddVertex(keyword, @"(?<expr>) \ ");
+            //IVertex o_path = smuk.AddVertex(keyword, @"(?<expr>) \ ");
 
-            o_path.AddVertex(smb.Get("$StartInLocalRoot"), "");
+            IVertex o_path = smuk.AddVertex(keyword, @"\");
 
             IVertex o_path_any = o_path.AddVertex(any, "");
 
+            o_path_any.AddVertex(smb.Get("$StartInLocalRoot"), "");
+
             o_path_any.AddEdge(smb.Get(@"Vertex\$Is"), smu.Get("\"\\ \""));
 
-            o_path_any.AddVertex(smu.Get(@"SingleOperator\TargetExpression"), "(?<expr>)");
-            
+            //IVertex o_path_any_targetExpr = o_path_any.AddVertex(smu.Get(@"SingleOperator\TargetExpression"), "(?<expr>)");
+
+            IVertex o_path_any_targetExpr = o_path_any.AddVertex(smu.Get(@"SingleOperator\TargetExpression"), "");
+
+            o_path_any_targetExpr.AddVertex(smb.Get("$LocalRoot"), "");
+
             // E M P T Y :) K E Y W O R D
             //
             //
-            
+
             IVertex emptyKeyword = smuk.AddVertex(keyword, "(?<EmptyKeyword>)");
 
             IVertex emptyKeyword_any = emptyKeyword.AddVertex(any, "");
