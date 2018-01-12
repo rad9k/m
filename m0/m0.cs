@@ -824,14 +824,14 @@ namespace m0
             o_par_any.AddEdge(smb.Get(@"Vertex\$Is"), smu.Get("()"));
 
             o_par_any.AddVertex(smu.Get(@"SingleOperator\TargetExpression"), "(?<expr>)");
-
+            
             // \
             //
             // \
 
             //IVertex o_path = smuk.AddVertex(keyword, @"(?<expr>) \ ");
 
-            IVertex o_path = smuk.AddVertex(keyword, @"\");
+            IVertex o_path = smuk.AddVertex(keyword, @" \ ");
 
             IVertex o_path_any = o_path.AddVertex(any, "");
 
@@ -852,6 +852,8 @@ namespace m0
             IVertex emptyKeyword = smuk.AddVertex(keyword, "(?<EmptyKeyword>)");
 
             IVertex emptyKeyword_any = emptyKeyword.AddVertex(any, "");
+
+            emptyKeyword_any.AddVertex(smb.Get("$StartInLocalRoot"), "");
 
             emptyKeyword_any.AddEdge(smb.Get(@"Vertex\$Is"), smu.Get("Query"));
 

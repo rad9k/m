@@ -436,7 +436,7 @@ namespace m0.ZeroCode
 
             bool shallProcess = true;
             IVertex toReturnVertex = null;
-           // LocalRoot=null;
+            LocalRoot=null;
 
             while (shallProcess)
             {
@@ -804,8 +804,8 @@ namespace m0.ZeroCode
 
             string xx = "";
 
-            for (int x = startPos; x <= endPos; x++)
-                xx += " "+x+":"+text[x];
+            //for (int x = startPos; x <= endPos; x++)
+            //    xx += " "+x+":"+text[x];
 
             MinusZero.Instance.Log(1, "_tryIsKeyword", LOGPREFIX+"BEG startPos:" + startPos + " prevSpos:"+prev_startPos+" same:"+isPrevStartPosSameAsStartPos+" endPos:" + endPos+" "+xx);
 
@@ -857,7 +857,7 @@ namespace m0.ZeroCode
                 {
                     tryEmptyKeyword = foundString;
 
-                    sPos++;
+                    sPos++; // hmmm ????
                 }
 
                 if (sPos == endPos_forAtomParts || isPrevStartPosSameAsStartPos)
@@ -867,7 +867,7 @@ namespace m0.ZeroCode
                     link = tryLink;
 
                     if(tryEmptyKeyword!=null)
-                        addEmptyKeyword(examinedKeywords, tryEmptyKeyword, sPos);
+                        addEmptyKeyword(examinedKeywords, tryEmptyKeyword, sPos-1);
 
                     newPos = sPos;
 
@@ -1156,7 +1156,7 @@ namespace m0.ZeroCode
             {
                 newVertex = tryNewVertex;
                 link = tryLink;
-                addEmptyKeyword(examinedKeywords, tryEmptyKeyword, tryNewPos);
+                addEmptyKeyword(examinedKeywords, tryEmptyKeyword, tryNewPos-1);
                 newPos = tryNewPos;
             }else
                 newPos = sPos;
