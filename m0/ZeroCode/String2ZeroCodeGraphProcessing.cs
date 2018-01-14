@@ -343,6 +343,11 @@ namespace m0.ZeroCode
 
         ///
 
+        class 
+
+
+        ///
+
         public IVertex Process(IVertex _baseVertex, string _text)
         {
             baseVertex = _baseVertex;
@@ -1226,9 +1231,17 @@ namespace m0.ZeroCode
 
         IVertex LocalRoot;
 
-        IVertex AddKeywordVertex(IVertex parent, keywordTryingData keyword)
+        void DoesContainLocalRoot(IVertex keyword)
         {
-            return _AddKeywordVertex(parent,keyword,keyword.keywordVertex,null,0);
+            if (keyword.Get(@"\$LocalRoot:") == null)
+                LocalRoot = null;
+        }
+
+        IVertex AddKeywordVertex(IVertex parent, keywordTryingData ktd)
+        {
+            DoesContainLocalRoot(ktd.keywordVertex);
+
+            return _AddKeywordVertex(parent,ktd,ktd.keywordVertex,null,0);
         }
 
         void AddKeywordVertex_AddVertex(IVertex baseVertex, IEdge edgeForMeta, IVertex meta, object val, ref IVertex nv)
@@ -1301,7 +1314,10 @@ namespace m0.ZeroCode
                                 nv = AddKeywordVertex_AddEdge(parent, e, meta, (IVertex)sub).To;
 
                             if (sub is keywordTryingData)
+                            {
+                                DoesContainLocalRoot(((keywordTryingData)sub).keywordVertex);
                                 nv = _AddKeywordVertex(parent, (keywordTryingData)sub, ((keywordTryingData)sub).keywordVertex, meta, 0); // cnt_subCount);
+                            }
                         }
                         else
                             nv = AddKeywordVertex_AddEdge(parent, e, meta, e.To).To;
@@ -1323,7 +1339,11 @@ namespace m0.ZeroCode
                                 nv = AddKeywordVertex_AddEdge(parent, e, meta, (IVertex)sub).To;
 
                             if (sub is keywordTryingData)
+                            {
+                                DoesContainLocalRoot(((keywordTryingData)sub).keywordVertex);
+
                                 nv = _AddKeywordVertex(parent, (keywordTryingData)sub, ((keywordTryingData)sub).keywordVertex, meta, 0);// cnt_subCount);
+                            }
                         }
                         else
                             AddKeywordVertex_AddVertex(parent, e, meta, e.To, ref nv);
