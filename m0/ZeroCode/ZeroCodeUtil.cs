@@ -22,6 +22,42 @@ namespace m0.ZeroCode
             return null;
         }
 
+
+        public static int getNextCRLF(string s, int pos)
+        {
+            bool shallProcess=true;
+
+            while(shallProcess)
+            {
+                if (pos > s.Length)
+                    return -1;
+
+                if (s[pos] == '\r' || s[pos] == '\n')
+                    return pos;
+
+                pos++;
+            }
+
+            return -1; // no hit @here
+        }
+
+        public static int trimRight(string s, int pos)
+        {
+            while (s[pos] == ' ')
+                pos++;
+
+            return pos;
+        }
+
+        public static int trimLeft(string s, int pos)
+        {
+            while (s[pos] == ' ')
+                pos--;
+
+            return pos;
+        }
+    }
+
         public static void getQueryFirstAndSecondPart(string query, out string firstPart, out string secondPart)
         {
             firstPart = null;

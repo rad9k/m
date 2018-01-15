@@ -343,10 +343,51 @@ namespace m0.ZeroCode
 
         ///
 
-        class 
+        class LineInfo
+        {
+            public int tabCount;
+            public bool lineContinuation;
+            public int lineBeg;
+            public int lineEnd;
+        }
 
+        List<LineInfo> lineInfoList;
 
         ///
+
+        public void prepareLineInfoList()
+        {
+            lineInfoList = new List<LineInfo>();
+
+            int p = 0;
+
+            while (true)
+            {
+                LineInfo li = new LineInfo();
+
+                int lineEndWithoutTrim = ZeroCodeUtil.getNextCRLF(text, p);
+
+                if (lineEndWithoutTrim == -1)
+                    return;
+
+                li.tabCount = 0;
+
+                while (text[p] == '\t') {
+                    li.tabCount++;
+                    p++;
+                }
+
+                int lineBegWithoutTrim = p;
+
+                li.lineBeg = ZeroCodeUtil.trimRight(text, lineBegWithoutTrim);
+                li.lineEnd = ZeroCodeUtil.trimLeft(text, lineEndWithoutTrim);
+
+                if (text[li.lineBeg] == ZeroCodeCommon.LineContinuationPrefix)
+                    li.lineContinuation = true;
+
+                lineInfoList.Add(li);
+            }
+        }
 
         public IVertex Process(IVertex _baseVertex, string _text)
         {
@@ -355,6 +396,9 @@ namespace m0.ZeroCode
 
 
             initVariables();
+
+
+            prepareLineInfoList();
 
 
             prepareImportList();
