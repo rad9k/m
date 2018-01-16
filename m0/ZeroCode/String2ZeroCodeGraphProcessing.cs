@@ -365,27 +365,57 @@ namespace m0.ZeroCode
             {
                 LineInfo li = new LineInfo();
 
-                int lineEndWithoutTrim = ZeroCodeUtil.getNextCRLF(text, p);
+                int lineEndWithoutTrim,next;
 
-                if (lineEndWithoutTrim == -1)
-                    return;
+                if (ZeroCodeUtil.isCRLF(text[p]))
+                {
+                    li.lineBeg = p;
+                    li.lineEnd = p;
+                    li.tabCount = 0;
+                    li.lineContinuation = false;
 
-                li.tabCount = 0;
+                    next = p;
+                }
+                else
+                {
+                    lineEndWithoutTrim = ZeroCodeUtil.getNextCRLF(text, p) - 1;
 
-                while (text[p] == '\t') {
-                    li.tabCount++;
-                    p++;
+                    if (lineEndWithoutTrim == -1)
+                        return;
+
+                    li.tabCount = 0;
+
+                    while (text[p] == '\t')
+                    {
+                        li.tabCount++;
+                        p++;
+                    }
+
+                    int lineBegWithoutTrim = p;
+
+                    li.lineBeg = ZeroCodeUtil.trimRight(text, lineBegWithoutTrim);
+                    li.lineEnd = ZeroCodeUtil.trimLeft(text, lineEndWithoutTrim);
+
+                    if (text[li.lineBeg] == ZeroCodeCommon.LineContinuationPrefix)
+                        li.lineContinuation = true;
+
+                    next = lineEndWithoutTrim + 1;
                 }
 
-                int lineBegWithoutTrim = p;
-
-                li.lineBeg = ZeroCodeUtil.trimRight(text, lineBegWithoutTrim);
-                li.lineEnd = ZeroCodeUtil.trimLeft(text, lineEndWithoutTrim);
-
-                if (text[li.lineBeg] == ZeroCodeCommon.LineContinuationPrefix)
-                    li.lineContinuation = true;
-
                 lineInfoList.Add(li);
+
+                next++;
+
+                if (next + 1 >= text.Length)
+                    return;
+
+                if (ZeroCodeUtil.isCRLF(text[next]))
+                    next++;
+
+                if (next >= text.Length)
+                    return;
+
+                p = next;
             }
         }
 
