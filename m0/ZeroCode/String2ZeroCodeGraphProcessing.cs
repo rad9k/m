@@ -20,20 +20,52 @@ namespace m0.ZeroCode
         int lineNo;
 
         int firstCharacterPos_relativeToText; 
-
-        string currentLine;
+  
         string currentLineNoTabs;
 
         int firstCharacterPos_relativeToCurrentLine;
         int prevFirstCharacterPos_relativeToCurrentLine;
 
-        bool currentLineConsistOfWhiteSpacesOnly;
-
+      
         //
 
         IVertex r = m0.MinusZero.Instance.Root;
 
+        LineInfo currentLineInfo;
+
         bool ParseLine()
+        {
+            prevFirstCharacterPos_relativeToCurrentLine = firstCharacterPos_relativeToCurrentLine;
+
+            lineNo++;
+
+            if (lineNo >= lineInfoList.Count)
+                return false;
+
+            currentLineInfo = lineInfoList[lineNo];
+
+            firstCharacterPos_relativeToText = currentLineInfo.lineBeg;
+
+            firstCharacterPos_relativeToCurrentLine = currentLineInfo.lineBeg;
+
+            pos = firstCharacterPos_relativeToCurrentLine;
+
+            currentLineNoTabs = text.Substring(currentLineInfo.lineBeg, currentLineInfo.lineEnd - currentLineInfo.lineBeg + 1);
+
+            // and now check if there are only whitespaces
+
+            if (ZeroCodeUtil.isStringOnlyWhiteSpaces(currentLineNoTabs))
+            {
+                newLineCount++;
+                ParseLine();
+            }
+
+            return true;
+        }
+
+        //string currentLine;
+        //bool currentLineConsistOfWhiteSpacesOnly;
+        /*bool ParseLine()
         {
             if (skipParse)
             {
@@ -92,7 +124,7 @@ namespace m0.ZeroCode
             prevFirstCharacterPos_relativeToCurrentLine = temp_prevFirstCharacterPos_relativeToCurrentLine;
 
             return true;
-        }
+        }*/
 
         IVertex importList;
         IVertex importMetaList;
@@ -427,11 +459,11 @@ namespace m0.ZeroCode
 
             initVariables();
 
-
             prepareLineInfoList();
 
-
             prepareImportList();
+
+            lineNo = -1;
 
             ParseLine();
 
