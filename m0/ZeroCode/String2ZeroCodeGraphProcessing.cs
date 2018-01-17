@@ -48,7 +48,7 @@ namespace m0.ZeroCode
 
             firstCharacterPos_relativeToCurrentLine = currentLineInfo.lineBeg;
 
-            pos = currentLineInfo.lineEnd;
+            pos = currentLineInfo.lineEnd_NoTrim + 2;
 
             currentLineNoTabs = text.Substring(currentLineInfo.lineBeg, currentLineInfo.lineEnd - currentLineInfo.lineBeg + 1);
 
@@ -62,10 +62,10 @@ namespace m0.ZeroCode
 
             return true;
         }
-
-        //string currentLine;
-        //bool currentLineConsistOfWhiteSpacesOnly;
-        /*bool ParseLine()
+        
+        /*string currentLine;
+        bool currentLineConsistOfWhiteSpacesOnly;
+        bool ParseLine()
         {
             if (skipParse)
             {
@@ -381,6 +381,8 @@ namespace m0.ZeroCode
             public bool lineContinuation;
             public int lineBeg;
             public int lineEnd;
+
+            public int lineEnd_NoTrim;
         }
 
         List<LineInfo> lineInfoList;
@@ -403,6 +405,7 @@ namespace m0.ZeroCode
                 {
                     li.lineBeg = p;
                     li.lineEnd = p;
+                    li.lineEnd_NoTrim = p;
                     li.tabCount = 0;
                     li.lineContinuation = false;
 
@@ -427,6 +430,7 @@ namespace m0.ZeroCode
 
                     li.lineBeg = ZeroCodeUtil.trimRight(text, lineBegWithoutTrim);
                     li.lineEnd = ZeroCodeUtil.trimLeft(text, lineEndWithoutTrim);
+                    li.lineEnd_NoTrim = lineEndWithoutTrim;
 
                     if (text[li.lineBeg] == ZeroCodeCommon.LineContinuationPrefix)
                         li.lineContinuation = true;
