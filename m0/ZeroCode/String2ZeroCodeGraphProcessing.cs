@@ -48,7 +48,7 @@ namespace m0.ZeroCode
 
             firstCharacterPos_relativeToCurrentLine = currentLineInfo.lineBeg;
 
-            pos = firstCharacterPos_relativeToCurrentLine;
+            pos = currentLineInfo.lineEnd;
 
             currentLineNoTabs = text.Substring(currentLineInfo.lineBeg, currentLineInfo.lineEnd - currentLineInfo.lineBeg + 1);
 
