@@ -35,12 +35,34 @@ namespace m0.ZeroCode
 
         bool ParseLine()
         {
+            MinusZero.Instance.Log(0, "ParseLine NEW BEG", "skipParse:" + skipParse + " pos:" + pos + " lineNo:" + lineNo
+                + " firstCharacterPos_relativeToText:" + firstCharacterPos_relativeToText + " currentLineNoTabs:" + currentLineNoTabs
+                + " firstCharacterPos_relativeToCurrentLine:" + firstCharacterPos_relativeToCurrentLine);
+
+            if (skipParse)
+            {
+                skipParse = false;
+
+                MinusZero.Instance.Log(0, "ParseLine NEW skipParse END", "skipParse:" + skipParse + " pos:" + pos + " lineNo:" + lineNo
+                + " firstCharacterPos_relativeToText:" + firstCharacterPos_relativeToText + " currentLineNoTabs:" + currentLineNoTabs
+                + " firstCharacterPos_relativeToCurrentLine:" + firstCharacterPos_relativeToCurrentLine);
+                return true;
+            }
+
             prevFirstCharacterPos_relativeToCurrentLine = firstCharacterPos_relativeToCurrentLine;
 
             lineNo++;
 
-            if (lineNo >= lineInfoList.Count)
+            if (lineNo >= lineInfoList.Count) {
+
+                firstCharacterPos_relativeToText = pos;
+
+                MinusZero.Instance.Log(0, "ParseLine NEW false END", "skipParse:" + skipParse + " pos:" + pos + " lineNo:" + lineNo
+                   + " firstCharacterPos_relativeToText:" + firstCharacterPos_relativeToText + " currentLineNoTabs:" + currentLineNoTabs
+                   + " firstCharacterPos_relativeToCurrentLine:" + firstCharacterPos_relativeToCurrentLine);
+
                 return false;
+            }
 
             currentLineInfo = lineInfoList[lineNo];
 
@@ -48,83 +70,122 @@ namespace m0.ZeroCode
 
             firstCharacterPos_relativeToCurrentLine = currentLineInfo.lineBeg;
 
-            pos = currentLineInfo.lineEnd_NoTrim + 2;
 
-            currentLineNoTabs = text.Substring(currentLineInfo.lineBeg, currentLineInfo.lineEnd - currentLineInfo.lineBeg + 1);
 
+            if (currentLineInfo.isEmpty)
+            {
+                pos = currentLineInfo.lineEnd_NoTrim + 2;
+                currentLineNoTabs = "";
+            }
+            else
+            {
+                pos = currentLineInfo.lineEnd_NoTrim + 3;
+                currentLineNoTabs = text.Substring(currentLineInfo.lineBeg, currentLineInfo.lineEnd - currentLineInfo.lineBeg + 1);
+            }
             // and now check if there are only whitespaces
+
+            MinusZero.Instance.Log(0, "ParseLine NEW", "currentLineNoTabs:"+ currentLineNoTabs+ " currentLineNoTabsLength:"+ currentLineNoTabs.Length);
 
             if (ZeroCodeUtil.isStringOnlyWhiteSpaces(currentLineNoTabs))
             {
+                MinusZero.Instance.Log(0, "ParseLine NEW", "isStringOnlyWhiteSpaces");
                 newLineCount++;
                 ParseLine();
             }
+
+            MinusZero.Instance.Log(0, "ParseLine NEW END", "skipParse:" + skipParse + " pos:" + pos + " lineNo:" + lineNo
+               + " firstCharacterPos_relativeToText:" + firstCharacterPos_relativeToText + " currentLineNoTabs:" + currentLineNoTabs
+               + " firstCharacterPos_relativeToCurrentLine:" + firstCharacterPos_relativeToCurrentLine);
+
 
             return true;
         }
         
-        /*string currentLine;
-        bool currentLineConsistOfWhiteSpacesOnly;
-        bool ParseLine()
-        {
-            if (skipParse)
-            {
-                skipParse = false;
-                return true;
-            }
-
-            int temp_prevFirstCharacterPos_relativeToCurrentLine = firstCharacterPos_relativeToCurrentLine;
-
-            firstCharacterPos_relativeToCurrentLine = 0;
-
-            if (pos >= text.Length)
-            {
-                firstCharacterPos_relativeToText = pos;
-                return false;
-            }
-
-            char c = text[pos];
-
-            int begPos = pos;
-
-            bool endOfTabsReached = false;
-
-            while (c != '\n' && c != '\r' && pos < (text.Length-1))
-            {
-                if (c != '\t' && !endOfTabsReached)
+              /*  string currentLine;
+                bool currentLineConsistOfWhiteSpacesOnly;
+                bool ParseLine()
                 {
-                    endOfTabsReached = true;
-                    firstCharacterPos_relativeToCurrentLine = pos-begPos;
-                    firstCharacterPos_relativeToText = pos;
-                }
+                    MinusZero.Instance.Log(0, "ParseLine OLD BEG", "skipParse:" + skipParse + " pos:" + pos + " lineNo:" + lineNo
+                        + " firstCharacterPos_relativeToText:" + firstCharacterPos_relativeToText + " currentLineNoTabs:" + currentLineNoTabs
+                        + " firstCharacterPos_relativeToCurrentLine:" + firstCharacterPos_relativeToCurrentLine);
 
-                pos++;
-                c = text[pos];
-            }
+                    if (skipParse)
+                    {
+                        skipParse = false;
 
-            if(pos == (text.Length - 1))
-                currentLine = text.Substring(begPos,pos - begPos + 1);
-            else
-                currentLine = text.Substring(begPos, pos - begPos);
+                        MinusZero.Instance.Log(0, "ParseLine OLD skipParse END", "skipParse:" + skipParse + " pos:" + pos + " lineNo:" + lineNo
+                        + " firstCharacterPos_relativeToText:" + firstCharacterPos_relativeToText + " currentLineNoTabs:" + currentLineNoTabs
+                        + " firstCharacterPos_relativeToCurrentLine:" + firstCharacterPos_relativeToCurrentLine);
+                        return true;
+                    }
 
-            currentLineNoTabs = currentLine.Substring(firstCharacterPos_relativeToCurrentLine).Trim(); // can try witchout Trim
+                    int temp_prevFirstCharacterPos_relativeToCurrentLine = firstCharacterPos_relativeToCurrentLine;
 
-            lineNo++;
+                    firstCharacterPos_relativeToCurrentLine = 0;
 
-            pos += 2;
 
-            // and now check if there are only whitespaces
+                    if (pos >= text.Length)
+                    {
+                        firstCharacterPos_relativeToText = pos;
 
-            if (ZeroCodeUtil.isStringOnlyWhiteSpaces(currentLineNoTabs))
-            {
-                newLineCount++;
-                ParseLine();
-            }
+                MinusZero.Instance.Log(0, "ParseLine OLD false END", "skipParse:" + skipParse + " pos:" + pos + " lineNo:" + lineNo
+                        + " firstCharacterPos_relativeToText:" + firstCharacterPos_relativeToText + " currentLineNoTabs:" + currentLineNoTabs
+                        + " firstCharacterPos_relativeToCurrentLine:" + firstCharacterPos_relativeToCurrentLine);
 
-            prevFirstCharacterPos_relativeToCurrentLine = temp_prevFirstCharacterPos_relativeToCurrentLine;
+                    return false;
+                    }
 
-            return true;
-        }*/
+                    char c = text[pos];
+
+                    int begPos = pos;
+
+                    bool endOfTabsReached = false;
+
+                    while (c != '\n' && c != '\r' && pos < (text.Length-1))
+                    {
+                        if (c != '\t' && !endOfTabsReached)
+                        {
+                            endOfTabsReached = true;
+                            firstCharacterPos_relativeToCurrentLine = pos-begPos;
+                            firstCharacterPos_relativeToText = pos;
+                        }
+
+                        pos++;
+                        c = text[pos];
+                    }
+
+                    if(pos == (text.Length - 1))
+                        currentLine = text.Substring(begPos,pos - begPos + 1);
+                    else
+                        currentLine = text.Substring(begPos, pos - begPos);
+
+                    currentLineNoTabs = currentLine.Substring(firstCharacterPos_relativeToCurrentLine).Trim(); // can try witchout Trim
+
+                    lineNo++;
+
+                    pos += 2;
+
+                    // and now check if there are only whitespaces
+
+                    MinusZero.Instance.Log(0, "ParseLine OLD", "currentLineNoTabs:"+ currentLineNoTabs+ " currentLineNoTabsLength:"+ currentLineNoTabs.Length);
+
+
+                    if (ZeroCodeUtil.isStringOnlyWhiteSpaces(currentLineNoTabs))
+                    {
+                        MinusZero.Instance.Log(0, "ParseLine OLD", "isStringOnlyWhiteSpaces");
+                        newLineCount++;
+                        ParseLine();
+                    }
+
+                    prevFirstCharacterPos_relativeToCurrentLine = temp_prevFirstCharacterPos_relativeToCurrentLine;
+
+                    MinusZero.Instance.Log(0, "ParseLine OLD END", "skipParse:" + skipParse + " pos:" + pos + " lineNo:" + lineNo
+                    + " firstCharacterPos_relativeToText:" + firstCharacterPos_relativeToText + " currentLineNoTabs:" + currentLineNoTabs
+                    + " firstCharacterPos_relativeToCurrentLine:" + firstCharacterPos_relativeToCurrentLine);
+
+
+                    return true;
+                }*/
 
         IVertex importList;
         IVertex importMetaList;
@@ -383,6 +444,7 @@ namespace m0.ZeroCode
             public int lineEnd;
 
             public int lineEnd_NoTrim;
+            public bool isEmpty;
         }
 
         List<LineInfo> lineInfoList;
@@ -408,6 +470,7 @@ namespace m0.ZeroCode
                     li.lineEnd_NoTrim = p;
                     li.tabCount = 0;
                     li.lineContinuation = false;
+                    li.isEmpty = true;
 
                     next = p;
                 }
@@ -430,12 +493,19 @@ namespace m0.ZeroCode
 
                     li.lineBeg = ZeroCodeUtil.trimRight(text, lineBegWithoutTrim);
                     li.lineEnd = ZeroCodeUtil.trimLeft(text, lineEndWithoutTrim);
+
                     li.lineEnd_NoTrim = lineEndWithoutTrim;
 
                     if (text[li.lineBeg] == ZeroCodeCommon.LineContinuationPrefix)
                         li.lineContinuation = true;
 
-                    next = lineEndWithoutTrim + 1;
+                    if (li.lineEnd < li.lineBeg)
+                    {
+                        li.isEmpty = true;
+                        next = lineEndWithoutTrim + 1;
+                    }
+                    else
+                        next = lineEndWithoutTrim + 1;
                 }
 
                 lineInfoList.Add(li);

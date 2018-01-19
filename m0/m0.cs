@@ -2704,7 +2704,7 @@ namespace m0
 
         public bool DoLog=true;
 
-        public int LogLevel=1;
+        public int LogLevel=0;
 
         private void InitializeLog()
         {
@@ -2744,7 +2744,9 @@ namespace m0
             IVertex ameta=root.Get(@"System\Meta\UML\Class\"+what);
 
             foreach (IEdge v in attributes)
-                v.To.AddEdge(ismeta, ameta);
+                if(v.To.Get(@"$Is:"+ameta)==null)
+                    v.To.AddEdge(ismeta, ameta);
+            
         }
 
         private void AddIsAggregation()
@@ -2760,13 +2762,14 @@ namespace m0
         }
 
         private void AddIsAggregation_inner(string s) { 
-        /*    IVertex isaggregationtarget = root.GetAll(s);
+            IVertex isaggregationtarget = root.GetAll(s);
 
             IVertex isAggregation = root.Get(@"System\Meta\Base\Vertex\$IsAggregation");
             IVertex empty = root.Get(@"System\Meta\Base\$Empty");
 
             foreach (IEdge v in isaggregationtarget)
-                v.To.AddEdge(isAggregation, empty);*/
+                if (v.To.Get(@"$IsAggregation:") == null)
+                    v.To.AddEdge(isAggregation, empty);
         }
 
         public void Initialize(){
