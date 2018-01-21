@@ -13,27 +13,50 @@ namespace m0.ZeroCode
 {
     public class String2ZeroCodeGraphProcessing
     {
-        IVertex baseVertex;
+        /*class ParsingStack
+        {
+            public IVertex baseVertex;
+
+            public int textBeg;
+            public int textEnd;
+
+            public int pos;
+            public int lineNo;
+
+            public int firstCharacterPos_relativeToText;
+
+            public string currentLineNoTabs;
+
+            public int firstCharacterPos_relativeToCurrentLine;
+            public int prevFirstCharacterPos_relativeToCurrentLine;
+
+        }*/
+
+        //ParsingStack stack;
+
+        
         string text;
 
-        int pos;
-        int lineNo;
+        public IVertex baseVertex;
 
-        int firstCharacterPos_relativeToText; 
-  
-        string currentLineNoTabs;
+        public int pos;
+        public int lineNo;
 
-        int firstCharacterPos_relativeToCurrentLine;
-        int prevFirstCharacterPos_relativeToCurrentLine;
+        public int firstCharacterPos_relativeToText;
 
-      
+        public string currentLineNoTabs;
+
+        public int firstCharacterPos_relativeToCurrentLine;
+        public int prevFirstCharacterPos_relativeToCurrentLine;
+
+
         //
 
         IVertex r = m0.MinusZero.Instance.Root;
 
         LineInfo currentLineInfo;
 
-        bool ParseLine()
+        /*bool ParseLine()
         {
             MinusZero.Instance.Log(0, "ParseLine NEW BEG", "skipParse:" + skipParse + " pos:" + pos + " lineNo:" + lineNo
                 + " firstCharacterPos_relativeToText:" + firstCharacterPos_relativeToText + " currentLineNoTabs:" + currentLineNoTabs
@@ -99,9 +122,9 @@ namespace m0.ZeroCode
 
 
             return true;
-        }
+        }*/
         
-              /*  string currentLine;
+                string currentLine;
                 bool currentLineConsistOfWhiteSpacesOnly;
                 bool ParseLine()
                 {
@@ -185,7 +208,7 @@ namespace m0.ZeroCode
 
 
                     return true;
-                }*/
+                }
 
         IVertex importList;
         IVertex importMetaList;
@@ -525,6 +548,15 @@ namespace m0.ZeroCode
             }
         }
 
+
+/*        private IVertex ProcessTextPart(IVertex baseVertex, int textBeg, int textEnd)
+        {
+            stack = new ParsingStack();
+
+            
+            return null;
+        }*/
+
         public IVertex Process(IVertex _baseVertex, string _text)
         {
             baseVertex = _baseVertex;
@@ -621,7 +653,7 @@ namespace m0.ZeroCode
 
             bool shallProcess = true;
             IVertex toReturnVertex = null;
-            LocalRoot=null;
+            //LocalRoot=null;
 
             while (shallProcess)
             {
@@ -1413,7 +1445,8 @@ namespace m0.ZeroCode
 
         void DoesContainLocalRoot(IVertex keyword)
         {
-            if (keyword.Get(@"\$LocalRoot:") == null)
+            //if (keyword.Get(@"\$LocalRoot:") == null)
+            if (keyword.Get(@"\$StartInLocalRoot:") == null)
                 LocalRoot = null;
         }
 
