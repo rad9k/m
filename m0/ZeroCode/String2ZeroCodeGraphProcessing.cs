@@ -42,12 +42,12 @@ namespace m0.ZeroCode
         public int pos;
         public int lineNo;
 
-        public int firstCharacterPos_relativeToText;
+        public int firstCharacterPos;
+        public int prevFirstCharacterPos;
 
         public string currentLineNoTabs;
 
-        public int firstCharacterPos_relativeToCurrentLine;
-        public int prevFirstCharacterPos_relativeToCurrentLine;
+
 
 
         //
@@ -56,43 +56,38 @@ namespace m0.ZeroCode
 
         LineInfo currentLineInfo;
 
-        /*bool ParseLine()
+        bool _ParseLine()
         {
             MinusZero.Instance.Log(0, "ParseLine NEW BEG", "skipParse:" + skipParse + " pos:" + pos + " lineNo:" + lineNo
-                + " firstCharacterPos_relativeToText:" + firstCharacterPos_relativeToText + " currentLineNoTabs:" + currentLineNoTabs
-                + " firstCharacterPos_relativeToCurrentLine:" + firstCharacterPos_relativeToCurrentLine);
+                + " firstCharacterPos:" + firstCharacterPos + " currentLineNoTabs:" + currentLineNoTabs);
 
             if (skipParse)
             {
                 skipParse = false;
 
                 MinusZero.Instance.Log(0, "ParseLine NEW skipParse END", "skipParse:" + skipParse + " pos:" + pos + " lineNo:" + lineNo
-                + " firstCharacterPos_relativeToText:" + firstCharacterPos_relativeToText + " currentLineNoTabs:" + currentLineNoTabs
-                + " firstCharacterPos_relativeToCurrentLine:" + firstCharacterPos_relativeToCurrentLine);
+                + " firstCharacterPos:" + firstCharacterPos + " currentLineNoTabs:" + currentLineNoTabs);
                 return true;
             }
 
-            prevFirstCharacterPos_relativeToCurrentLine = firstCharacterPos_relativeToCurrentLine;
+            prevFirstCharacterPos = firstCharacterPos;
 
             lineNo++;
 
             if (lineNo >= lineInfoList.Count) {
 
-                firstCharacterPos_relativeToText = pos;
+                firstCharacterPos = pos;
 
                 MinusZero.Instance.Log(0, "ParseLine NEW false END", "skipParse:" + skipParse + " pos:" + pos + " lineNo:" + lineNo
-                   + " firstCharacterPos_relativeToText:" + firstCharacterPos_relativeToText + " currentLineNoTabs:" + currentLineNoTabs
-                   + " firstCharacterPos_relativeToCurrentLine:" + firstCharacterPos_relativeToCurrentLine);
+                   + " firstCharacterPos:" + firstCharacterPos + " currentLineNoTabs:" + currentLineNoTabs
+                   + " firstCharacterPos:" + firstCharacterPos);
 
                 return false;
             }
 
             currentLineInfo = lineInfoList[lineNo];
 
-            firstCharacterPos_relativeToText = currentLineInfo.lineBeg;
-
-            firstCharacterPos_relativeToCurrentLine = currentLineInfo.lineBeg;
-
+            firstCharacterPos = currentLineInfo.lineBeg;
 
 
             if (currentLineInfo.isEmpty)
@@ -117,43 +112,39 @@ namespace m0.ZeroCode
             }
 
             MinusZero.Instance.Log(0, "ParseLine NEW END", "skipParse:" + skipParse + " pos:" + pos + " lineNo:" + lineNo
-               + " firstCharacterPos_relativeToText:" + firstCharacterPos_relativeToText + " currentLineNoTabs:" + currentLineNoTabs
-               + " firstCharacterPos_relativeToCurrentLine:" + firstCharacterPos_relativeToCurrentLine);
+               + " firstCharacterPos:" + firstCharacterPos + " currentLineNoTabs:" + currentLineNoTabs);
 
 
             return true;
-        }*/
+        }
         
                 string currentLine;
                 bool currentLineConsistOfWhiteSpacesOnly;
                 bool ParseLine()
                 {
                     MinusZero.Instance.Log(0, "ParseLine OLD BEG", "skipParse:" + skipParse + " pos:" + pos + " lineNo:" + lineNo
-                        + " firstCharacterPos_relativeToText:" + firstCharacterPos_relativeToText + " currentLineNoTabs:" + currentLineNoTabs
-                        + " firstCharacterPos_relativeToCurrentLine:" + firstCharacterPos_relativeToCurrentLine);
+                        + " firstCharacterPos:" + firstCharacterPos + " currentLineNoTabs:" + currentLineNoTabs);
 
                     if (skipParse)
                     {
                         skipParse = false;
 
                         MinusZero.Instance.Log(0, "ParseLine OLD skipParse END", "skipParse:" + skipParse + " pos:" + pos + " lineNo:" + lineNo
-                        + " firstCharacterPos_relativeToText:" + firstCharacterPos_relativeToText + " currentLineNoTabs:" + currentLineNoTabs
-                        + " firstCharacterPos_relativeToCurrentLine:" + firstCharacterPos_relativeToCurrentLine);
+                        + " firstCharacterPos:" + firstCharacterPos + " currentLineNoTabs:" + currentLineNoTabs);
                         return true;
                     }
 
-                    int temp_prevFirstCharacterPos_relativeToCurrentLine = firstCharacterPos_relativeToCurrentLine;
+                    int temp_prevFirstCharacterPos = firstCharacterPos;
 
-                    firstCharacterPos_relativeToCurrentLine = 0;
+                    firstCharacterPos = 0;
 
 
                     if (pos >= text.Length)
                     {
-                        firstCharacterPos_relativeToText = pos;
+                        firstCharacterPos = pos;
 
                 MinusZero.Instance.Log(0, "ParseLine OLD false END", "skipParse:" + skipParse + " pos:" + pos + " lineNo:" + lineNo
-                        + " firstCharacterPos_relativeToText:" + firstCharacterPos_relativeToText + " currentLineNoTabs:" + currentLineNoTabs
-                        + " firstCharacterPos_relativeToCurrentLine:" + firstCharacterPos_relativeToCurrentLine);
+                        + " firstCharacterPos:" + firstCharacterPos + " currentLineNoTabs:" + currentLineNoTabs);
 
                     return false;
                     }
@@ -169,8 +160,7 @@ namespace m0.ZeroCode
                         if (c != '\t' && !endOfTabsReached)
                         {
                             endOfTabsReached = true;
-                            firstCharacterPos_relativeToCurrentLine = pos-begPos;
-                            firstCharacterPos_relativeToText = pos;
+                            firstCharacterPos = pos;
                         }
 
                         pos++;
@@ -182,7 +172,7 @@ namespace m0.ZeroCode
                     else
                         currentLine = text.Substring(begPos, pos - begPos);
 
-                    currentLineNoTabs = currentLine.Substring(firstCharacterPos_relativeToCurrentLine).Trim(); // can try witchout Trim
+                    currentLineNoTabs = currentLine.Substring(firstCharacterPos).Trim(); // can try witchout Trim
 
                     lineNo++;
 
@@ -200,11 +190,11 @@ namespace m0.ZeroCode
                         ParseLine();
                     }
 
-                    prevFirstCharacterPos_relativeToCurrentLine = temp_prevFirstCharacterPos_relativeToCurrentLine;
+                    prevFirstCharacterPos = temp_prevFirstCharacterPos;
 
                     MinusZero.Instance.Log(0, "ParseLine OLD END", "skipParse:" + skipParse + " pos:" + pos + " lineNo:" + lineNo
-                    + " firstCharacterPos_relativeToText:" + firstCharacterPos_relativeToText + " currentLineNoTabs:" + currentLineNoTabs
-                    + " firstCharacterPos_relativeToCurrentLine:" + firstCharacterPos_relativeToCurrentLine);
+                    + " firstCharacterPos_relativeToText:" + firstCharacterPos + " currentLineNoTabs:" + currentLineNoTabs
+                    + " firstCharacterPos_relativeToCurrentLine:" + firstCharacterPos);
 
 
                     return true;
@@ -379,7 +369,7 @@ namespace m0.ZeroCode
         void initVariables()
         {
             pos = 0;
-            firstCharacterPos_relativeToText = 0;
+            firstCharacterPos = 0;
             lineNo = 0;
         }     
 
@@ -589,22 +579,22 @@ namespace m0.ZeroCode
 
             while (ParseLine())
             {
-                if (firstCharacterPos_relativeToCurrentLine > prevFirstCharacterPos_relativeToCurrentLine)
+                if (firstCharacterPos > prevFirstCharacterPos)
                 {
-                    int prevFirstCharacterPos_memory = prevFirstCharacterPos_relativeToCurrentLine;
+                    int prevFirstCharacterPos_memory = prevFirstCharacterPos;
 
                     Process_reccurent(prevVertex);
                     //Process_reccurent(lastAddedVertex);
 
-                    prevFirstCharacterPos_relativeToCurrentLine = prevFirstCharacterPos_memory;
+                    prevFirstCharacterPos = prevFirstCharacterPos_memory;
 
                     continue;
                 }
 
-                if (firstCharacterPos_relativeToCurrentLine == prevFirstCharacterPos_relativeToCurrentLine)
+                if (firstCharacterPos == prevFirstCharacterPos)
                     prevVertex = ProcessLine(_baseVertex);
 
-                if (firstCharacterPos_relativeToCurrentLine < prevFirstCharacterPos_relativeToCurrentLine)
+                if (firstCharacterPos < prevFirstCharacterPos)
                 {
                     skipParse = true;
 
@@ -677,7 +667,7 @@ namespace m0.ZeroCode
                         return toReturnVertex;
                     }
 
-                    firstCharacterPos_relativeToText = posAfterMatch;
+                    firstCharacterPos = posAfterMatch;
                 }
                 else
                 {
@@ -963,7 +953,7 @@ namespace m0.ZeroCode
 
         bool TryIsKeyword(string s)
         {
-            if (firstCharacterPos_relativeToText >= text.Length)
+            if (firstCharacterPos >= text.Length)
                 return false;
 
             if (!ZeroCodeUtil.tryStringMatch(s, 0, ZeroCodeCommon.CodeGraphVertexPrefix) 
@@ -974,7 +964,7 @@ namespace m0.ZeroCode
 
                 int tryPos = 0; 
 
-                _tryIsKeyword("",firstCharacterPos_relativeToText, -1, 0, text.Length - 1, text.Length - 1, out examinedKeywords, out newVertex, out link, true, ref tryPos);
+                _tryIsKeyword("",firstCharacterPos, -1, 0, text.Length - 1, text.Length - 1, out examinedKeywords, out newVertex, out link, true, ref tryPos);
 
                 if (examinedKeywords.Count() > 0)
                 {
