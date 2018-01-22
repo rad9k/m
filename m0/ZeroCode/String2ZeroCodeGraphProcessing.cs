@@ -13,192 +13,186 @@ namespace m0.ZeroCode
 {
     public class String2ZeroCodeGraphProcessing
     {
-        /*class ParsingStack
+        class ParsingStack
         {
-            public IVertex baseVertex;
-
-            public int textBeg;
-            public int textEnd;
+            public int begLine;
+            public int endLine;
 
             public int pos;
             public int lineNo;
+            public LineInfo currentLineInfo;
 
-            public int firstCharacterPos_relativeToText;
+            public int firstCharacterPos;
+            public int prevFirstCharacterPos;
 
             public string currentLineNoTabs;
 
-            public int firstCharacterPos_relativeToCurrentLine;
-            public int prevFirstCharacterPos_relativeToCurrentLine;
+            public IVertex LocalRoot;
 
-        }*/
+            public IVertex lastAddedVertex;
+            public IVertex lastAddedVertexParent;
+            public int newLineCount;
 
-        //ParsingStack stack;
+            public bool skipParse = false;
 
-        
-        string text;
+            public ParsingStack(int _begLine, int _endLine)
+            {
+                begLine = _begLine;
+                endLine = _endLine;
+               
+                lineNo = begLine - 1;
+            }
+        }
 
         public IVertex baseVertex;
 
-        public int pos;
-        public int lineNo;
-
-        public int firstCharacterPos;
-        public int prevFirstCharacterPos;
-
-        public string currentLineNoTabs;
-
-
-
+        string text;
 
         //
 
         IVertex r = m0.MinusZero.Instance.Root;
 
-        LineInfo currentLineInfo;
-
-        bool _ParseLine()
+        bool ParseLine(ParsingStack s)
         {
-            MinusZero.Instance.Log(0, "ParseLine NEW BEG", "skipParse:" + skipParse + " pos:" + pos + " lineNo:" + lineNo
-                + " firstCharacterPos:" + firstCharacterPos + " currentLineNoTabs:" + currentLineNoTabs);
+            MinusZero.Instance.Log(0, "ParseLine NEW BEG", "skipParse:" + s.skipParse + " pos:" + s.pos + " lineNo:" + s.lineNo
+                + " firstCharacterPos:" + s.firstCharacterPos + " currentLineNoTabs:" + s.currentLineNoTabs);
 
-            if (skipParse)
+            if (s.skipParse)
             {
-                skipParse = false;
+                s.skipParse = false;
 
-                MinusZero.Instance.Log(0, "ParseLine NEW skipParse END", "skipParse:" + skipParse + " pos:" + pos + " lineNo:" + lineNo
-                + " firstCharacterPos:" + firstCharacterPos + " currentLineNoTabs:" + currentLineNoTabs);
+                MinusZero.Instance.Log(0, "ParseLine NEW skipParse END", "skipParse:" + s.skipParse + " pos:" + s.pos + " lineNo:" + s.lineNo
+                + " firstCharacterPos:" + s.firstCharacterPos + " currentLineNoTabs:" + s.currentLineNoTabs);
                 return true;
             }
 
-            prevFirstCharacterPos = firstCharacterPos;
+            s.prevFirstCharacterPos = s.firstCharacterPos;
 
-            lineNo++;
+            s.lineNo++;
 
-            if (lineNo >= lineInfoList.Count) {
+            if (s.lineNo >= lineInfoList.Count) {
 
-                firstCharacterPos = pos;
+                s.firstCharacterPos = s.pos;
 
-                MinusZero.Instance.Log(0, "ParseLine NEW false END", "skipParse:" + skipParse + " pos:" + pos + " lineNo:" + lineNo
-                   + " firstCharacterPos:" + firstCharacterPos + " currentLineNoTabs:" + currentLineNoTabs
-                   + " firstCharacterPos:" + firstCharacterPos);
+                MinusZero.Instance.Log(0, "ParseLine NEW false END", "skipParse:" + s.skipParse + " pos:" + s.pos + " lineNo:" + s.lineNo
+                   + " firstCharacterPos:" + s.firstCharacterPos + " currentLineNoTabs:" + s.currentLineNoTabs);
 
                 return false;
             }
 
-            currentLineInfo = lineInfoList[lineNo];
+            s.currentLineInfo = lineInfoList[s.lineNo];
 
-            firstCharacterPos = currentLineInfo.lineBeg;
+            s.firstCharacterPos = s.currentLineInfo.lineBeg;
 
 
-            if (currentLineInfo.isEmpty)
+            if (s.currentLineInfo.isEmpty)
             {
-                pos = currentLineInfo.lineEnd_NoTrim + 2;
-                currentLineNoTabs = "";
+                s.pos = s.currentLineInfo.lineEnd_NoTrim + 2;
+                s.currentLineNoTabs = "";
             }
             else
             {
-                pos = currentLineInfo.lineEnd_NoTrim + 3;
-                currentLineNoTabs = text.Substring(currentLineInfo.lineBeg, currentLineInfo.lineEnd - currentLineInfo.lineBeg + 1);
+                s.pos = s.currentLineInfo.lineEnd_NoTrim + 3;
+                s.currentLineNoTabs = text.Substring(s.currentLineInfo.lineBeg, s.currentLineInfo.lineEnd - s.currentLineInfo.lineBeg + 1);
             }
             // and now check if there are only whitespaces
 
-            MinusZero.Instance.Log(0, "ParseLine NEW", "currentLineNoTabs:"+ currentLineNoTabs+ " currentLineNoTabsLength:"+ currentLineNoTabs.Length);
+            MinusZero.Instance.Log(0, "ParseLine NEW", "currentLineNoTabs:"+ s.currentLineNoTabs + " currentLineNoTabsLength:"+ s.currentLineNoTabs.Length);
 
-            if (ZeroCodeUtil.isStringOnlyWhiteSpaces(currentLineNoTabs))
+            if (ZeroCodeUtil.isStringOnlyWhiteSpaces(s.currentLineNoTabs))
             {
                 MinusZero.Instance.Log(0, "ParseLine NEW", "isStringOnlyWhiteSpaces");
-                newLineCount++;
-                ParseLine();
+                s.newLineCount++;
+                ParseLine(s);
             }
 
-            MinusZero.Instance.Log(0, "ParseLine NEW END", "skipParse:" + skipParse + " pos:" + pos + " lineNo:" + lineNo
-               + " firstCharacterPos:" + firstCharacterPos + " currentLineNoTabs:" + currentLineNoTabs);
+            MinusZero.Instance.Log(0, "ParseLine NEW END", "skipParse:" + s.skipParse + " pos:" + s.pos + " lineNo:" + s.lineNo
+               + " firstCharacterPos:" + s.firstCharacterPos + " currentLineNoTabs:" + s.currentLineNoTabs);
 
 
             return true;
         }
         
-                string currentLine;
-                bool currentLineConsistOfWhiteSpacesOnly;
-                bool ParseLine()
+        /*string currentLine;
+        bool currentLineConsistOfWhiteSpacesOnly;
+        bool ParseLine(ParsingStack s)
+        {
+            MinusZero.Instance.Log(0, "ParseLine OLD BEG", "skipParse:" + s.skipParse + " pos:" + s.pos + " lineNo:" + s.lineNo
+                + " firstCharacterPos:" + s.firstCharacterPos + " currentLineNoTabs:" + s.currentLineNoTabs);
+
+            if (s.skipParse)
+            {
+                s.skipParse = false;
+
+                MinusZero.Instance.Log(0, "ParseLine OLD skipParse END", "skipParse:" + s.skipParse + " pos:" + s.pos + " lineNo:" + s.lineNo
+                + " firstCharacterPos:" + s.firstCharacterPos + " currentLineNoTabs:" + s.currentLineNoTabs);
+                return true;
+            }
+
+            int temp_prevFirstCharacterPos = s.firstCharacterPos;
+
+            s.firstCharacterPos = 0;
+
+
+            if (s.pos >= text.Length)
+            {
+                s.firstCharacterPos = s.pos;
+
+        MinusZero.Instance.Log(0, "ParseLine OLD false END", "skipParse:" + s.skipParse + " pos:" + s.pos + " lineNo:" + s.lineNo
+                + " firstCharacterPos:" + s.firstCharacterPos + " currentLineNoTabs:" + s.currentLineNoTabs);
+
+            return false;
+            }
+
+            char c = text[s.pos];
+
+            int begPos = s.pos;
+
+            bool endOfTabsReached = false;
+
+            while (c != '\n' && c != '\r' && s.pos < (text.Length-1))
+            {
+                if (c != '\t' && !endOfTabsReached)
                 {
-                    MinusZero.Instance.Log(0, "ParseLine OLD BEG", "skipParse:" + skipParse + " pos:" + pos + " lineNo:" + lineNo
-                        + " firstCharacterPos:" + firstCharacterPos + " currentLineNoTabs:" + currentLineNoTabs);
-
-                    if (skipParse)
-                    {
-                        skipParse = false;
-
-                        MinusZero.Instance.Log(0, "ParseLine OLD skipParse END", "skipParse:" + skipParse + " pos:" + pos + " lineNo:" + lineNo
-                        + " firstCharacterPos:" + firstCharacterPos + " currentLineNoTabs:" + currentLineNoTabs);
-                        return true;
-                    }
-
-                    int temp_prevFirstCharacterPos = firstCharacterPos;
-
-                    firstCharacterPos = 0;
-
-
-                    if (pos >= text.Length)
-                    {
-                        firstCharacterPos = pos;
-
-                MinusZero.Instance.Log(0, "ParseLine OLD false END", "skipParse:" + skipParse + " pos:" + pos + " lineNo:" + lineNo
-                        + " firstCharacterPos:" + firstCharacterPos + " currentLineNoTabs:" + currentLineNoTabs);
-
-                    return false;
-                    }
-
-                    char c = text[pos];
-
-                    int begPos = pos;
-
-                    bool endOfTabsReached = false;
-
-                    while (c != '\n' && c != '\r' && pos < (text.Length-1))
-                    {
-                        if (c != '\t' && !endOfTabsReached)
-                        {
-                            endOfTabsReached = true;
-                            firstCharacterPos = pos;
-                        }
-
-                        pos++;
-                        c = text[pos];
-                    }
-
-                    if(pos == (text.Length - 1))
-                        currentLine = text.Substring(begPos,pos - begPos + 1);
-                    else
-                        currentLine = text.Substring(begPos, pos - begPos);
-
-                    currentLineNoTabs = currentLine.Substring(firstCharacterPos).Trim(); // can try witchout Trim
-
-                    lineNo++;
-
-                    pos += 2;
-
-                    // and now check if there are only whitespaces
-
-                    MinusZero.Instance.Log(0, "ParseLine OLD", "currentLineNoTabs:"+ currentLineNoTabs+ " currentLineNoTabsLength:"+ currentLineNoTabs.Length);
-
-
-                    if (ZeroCodeUtil.isStringOnlyWhiteSpaces(currentLineNoTabs))
-                    {
-                        MinusZero.Instance.Log(0, "ParseLine OLD", "isStringOnlyWhiteSpaces");
-                        newLineCount++;
-                        ParseLine();
-                    }
-
-                    prevFirstCharacterPos = temp_prevFirstCharacterPos;
-
-                    MinusZero.Instance.Log(0, "ParseLine OLD END", "skipParse:" + skipParse + " pos:" + pos + " lineNo:" + lineNo
-                    + " firstCharacterPos_relativeToText:" + firstCharacterPos + " currentLineNoTabs:" + currentLineNoTabs
-                    + " firstCharacterPos_relativeToCurrentLine:" + firstCharacterPos);
-
-
-                    return true;
+                    endOfTabsReached = true;
+                    s.firstCharacterPos = s.pos;
                 }
+
+                s.pos++;
+                c = text[s.pos];
+            }
+
+            if(s.pos == (text.Length - 1))
+                currentLine = text.Substring(begPos, s.pos - begPos + 1);
+            else
+                currentLine = text.Substring(begPos, s.pos - begPos);
+
+            s.currentLineNoTabs = currentLine.Substring(s.firstCharacterPos).Trim(); // can try witchout Trim
+
+            s.lineNo++;
+
+            s.pos += 2;
+
+            // and now check if there are only whitespaces
+
+            MinusZero.Instance.Log(0, "ParseLine OLD", "currentLineNoTabs:"+ s.currentLineNoTabs + " currentLineNoTabsLength:"+ s.currentLineNoTabs.Length);
+
+
+            if (ZeroCodeUtil.isStringOnlyWhiteSpaces(s.currentLineNoTabs))
+            {
+                MinusZero.Instance.Log(0, "ParseLine OLD", "isStringOnlyWhiteSpaces");
+                s.newLineCount++;
+                ParseLine(s);
+            }
+
+            s.prevFirstCharacterPos = temp_prevFirstCharacterPos;
+
+            MinusZero.Instance.Log(0, "ParseLine OLD END", "skipParse:" + s.skipParse + " pos:" + s.pos + " lineNo:" + s.lineNo
+            + " firstCharacterPos_relativeToText:" + s.firstCharacterPos + " currentLineNoTabs:" + s.currentLineNoTabs);
+
+
+            return true;
+        }*/
 
         IVertex importList;
         IVertex importMetaList;
@@ -366,13 +360,6 @@ namespace m0.ZeroCode
             }
         }
 
-        void initVariables()
-        {
-            pos = 0;
-            firstCharacterPos = 0;
-            lineNo = 0;
-        }     
-
         IVertex query(IVertex baseVertex, string query)
         {
             return baseVertex.Get(query);
@@ -538,108 +525,99 @@ namespace m0.ZeroCode
             }
         }
 
-
-/*        private IVertex ProcessTextPart(IVertex baseVertex, int textBeg, int textEnd)
+        private IVertex ProcessTextPart(IVertex baseVertex, int begLine, int endLine)
         {
-            stack = new ParsingStack();
+            ParsingStack stack = new ParsingStack(begLine, endLine);
 
-            
+            ParseLine(stack);
+
+            Process_reccurent(stack, baseVertex);
+
+            AddNewLines(stack);
+
             return null;
-        }*/
+        }
 
         public IVertex Process(IVertex _baseVertex, string _text)
         {
             baseVertex = _baseVertex;
+
             text = _text + "\r\n"; // for regexpes
-
-
-            initVariables();
 
             prepareLineInfoList();
 
             prepareImportList();
 
-            lineNo = -1;
 
-            ParseLine();
+            ProcessTextPart(_baseVertex, 0, lineInfoList.Count - 1);
 
-
-            Process_reccurent(baseVertex);
-
-            AddNewLines();
 
             return null;
-        }
+        }    
 
-        bool skipParse = false;
-
-        void Process_reccurent(IVertex _baseVertex)
+        void Process_reccurent(ParsingStack s, IVertex _baseVertex)
         {
-            IVertex prevVertex = ProcessLine(_baseVertex);
+            IVertex prevVertex = ProcessLine(s, _baseVertex);
 
-            while (ParseLine())
+            while (ParseLine(s))
             {
-                if (firstCharacterPos > prevFirstCharacterPos)
+                if (s.firstCharacterPos > s.prevFirstCharacterPos)
                 {
-                    int prevFirstCharacterPos_memory = prevFirstCharacterPos;
+                    int prevFirstCharacterPos_memory = s.prevFirstCharacterPos;
 
-                    Process_reccurent(prevVertex);
+                    Process_reccurent(s, prevVertex);
                     //Process_reccurent(lastAddedVertex);
 
-                    prevFirstCharacterPos = prevFirstCharacterPos_memory;
+                    s.prevFirstCharacterPos = prevFirstCharacterPos_memory;
 
                     continue;
                 }
 
-                if (firstCharacterPos == prevFirstCharacterPos)
-                    prevVertex = ProcessLine(_baseVertex);
+                if (s.firstCharacterPos == s.prevFirstCharacterPos)
+                    prevVertex = ProcessLine(s, _baseVertex);
 
-                if (firstCharacterPos < prevFirstCharacterPos)
+                if (s.firstCharacterPos < s.prevFirstCharacterPos)
                 {
-                    skipParse = true;
+                    s.skipParse = true;
 
                     return;
                 }
             }
-        }
+        }   
 
-        IVertex lastAddedVertex;
-        IVertex lastAddedVertexParent;
-        int newLineCount;
-
-        void AddNewLines()
+        void AddNewLines(ParsingStack s)
         {
             //if(lastAddedVertex!=null && newLineCount!=0)
             //  lastAddedVertex.AddVertex(smb.Get("$NewLine"), newLineCount);
 
-            if (newLineCount != 0)
+            if (s.newLineCount != 0)
             {
-                if(lastAddedVertex != null)
-                    lastAddedVertex.AddVertex(smb.Get("$NewLine"), newLineCount);
+                if(s.lastAddedVertex != null)
+                    s.lastAddedVertex.AddVertex(smb.Get("$NewLine"), s.newLineCount);
                 else
-                    lastAddedVertexParent.AddVertex(smb.Get("$NewLine"), newLineCount);
+                    s.lastAddedVertexParent.AddVertex(smb.Get("$NewLine"), s.newLineCount);
             }
 
-            newLineCount = 0;
+            s.newLineCount = 0;
         }
 
-        IVertex AddVertex(IVertex baseVertex, IVertex meta, object val)
+        IVertex AddVertex(ParsingStack s, IVertex baseVertex, IVertex meta, object val)
         {
-            lastAddedVertexParent = baseVertex;
-            lastAddedVertex = baseVertex.AddVertex(meta, val);
-            return lastAddedVertex;
+            s.lastAddedVertexParent = baseVertex;
+            s.lastAddedVertex = baseVertex.AddVertex(meta, val);
+            return s.lastAddedVertex;
         }
 
-        IEdge AddEdge(IVertex baseVertex, IVertex meta, IVertex to)
+        IEdge AddEdge(ParsingStack s, IVertex baseVertex, IVertex meta, IVertex to)
         {
-            lastAddedVertexParent = baseVertex;
-            lastAddedVertex = null;
+            s.lastAddedVertexParent = baseVertex;
+            s.lastAddedVertex = null;
             return baseVertex.AddEdge(meta, to);
         }
 
-        IVertex ProcessLine(IVertex _baseVertex)
+        IVertex ProcessLine(ParsingStack s, IVertex _baseVertex)
         {
-            AddNewLines();
+            AddNewLines(s);
 
             bool shallProcess = true;
             IVertex toReturnVertex = null;
@@ -647,7 +625,7 @@ namespace m0.ZeroCode
 
             while (shallProcess)
             {
-                if (TryIsKeyword(currentLineNoTabs))
+                if (TryIsKeyword(s, s.currentLineNoTabs))
                 {
                     if (examinedKeywords.Count > 1)
                     {
@@ -658,30 +636,30 @@ namespace m0.ZeroCode
                     int posAfterMatch = chosenKeyword.matchedOnPositionInText;
 
                     if (toReturnVertex==null)
-                        toReturnVertex=AddKeywordVertex(_baseVertex, chosenKeyword);
+                        toReturnVertex=AddKeywordVertex(s, _baseVertex, chosenKeyword);
                     else
-                        AddKeywordVertex(_baseVertex, chosenKeyword);
+                        AddKeywordVertex(s, _baseVertex, chosenKeyword);
 
                     if (posAfterMatch >= text.Length || text[posAfterMatch] == '\r')
                     {
                         return toReturnVertex;
                     }
 
-                    firstCharacterPos = posAfterMatch;
+                    s.firstCharacterPos = posAfterMatch;
                 }
                 else
                 {
-                    if (currentLineNoTabs.Length == 0)
+                    if (s.currentLineNoTabs.Length == 0)
                         return null;
 
-                    if (currentLineNoTabs[0] != ZeroCodeCommon.CodeGraphVertexPrefix[0]
-                        || currentLineNoTabs[currentLineNoTabs.Length - 1] != ZeroCodeCommon.CodeGraphVertexSuffix[0])
+                    if (s.currentLineNoTabs[0] != ZeroCodeCommon.CodeGraphVertexPrefix[0]
+                        || s.currentLineNoTabs[s.currentLineNoTabs.Length - 1] != ZeroCodeCommon.CodeGraphVertexSuffix[0])
                         return null;
 
                     shallProcess = false;
 
-                    string currentLineInner = currentLineNoTabs.Substring(ZeroCodeCommon.CodeGraphVertexPrefix.Length,
-                        currentLineNoTabs.Length - ZeroCodeCommon.CodeGraphVertexPrefix.Length - ZeroCodeCommon.CodeGraphVertexSuffix.Length);
+                    string currentLineInner = s.currentLineNoTabs.Substring(ZeroCodeCommon.CodeGraphVertexPrefix.Length,
+                        s.currentLineNoTabs.Length - ZeroCodeCommon.CodeGraphVertexPrefix.Length - ZeroCodeCommon.CodeGraphVertexSuffix.Length);
 
                     int doubleColonPos = getDoubleColonPos(currentLineInner);
 
@@ -690,10 +668,10 @@ namespace m0.ZeroCode
                         string afterColon = currentLineInner.Trim();
 
                         if (afterColon[0] == ZeroCodeCommon.NewVertexPrefix) // if is new value
-                            return AddVertex(_baseVertex, null, ZeroCodeCommon.stringFromNewVertexString(afterColon));
+                            return AddVertex(s, _baseVertex, null, ZeroCodeCommon.stringFromNewVertexString(afterColon));
 
                         //if (afterColon[0] == ZeroCodeCommon.CodeGraphLinkPrefix)
-                        return AddEdge(_baseVertex, null, processLink(ZeroCodeCommon.stringFromLinkString(afterColon, true))).To;
+                        return AddEdge(s, _baseVertex, null, processLink(ZeroCodeCommon.stringFromLinkString(afterColon, true))).To;
 
                         //return AddVertex(_baseVertex, null, "SYNTAX ERROR");
                     }
@@ -706,12 +684,12 @@ namespace m0.ZeroCode
                         IVertex meta = processLink(beforeColon);
 
                         if (afterColon[0] == ZeroCodeCommon.NewVertexPrefix) // if is new value
-                            return AddVertex(_baseVertex, meta, ZeroCodeCommon.stringFromNewVertexString(afterColon));
+                            return AddVertex(s, _baseVertex, meta, ZeroCodeCommon.stringFromNewVertexString(afterColon));
                         //else
                         //  return AddEdge(_baseVertex, meta, processLink(afterColon)).To;
 
                         //if (afterColon[0] == ZeroCodeCommon.CodeGraphLinkPrefix)
-                        return AddEdge(_baseVertex, meta, processLink(ZeroCodeCommon.stringFromLinkString(afterColon, true))).To;
+                        return AddEdge(s, _baseVertex, meta, processLink(ZeroCodeCommon.stringFromLinkString(afterColon, true))).To;
 
                         //return AddVertex(_baseVertex, null, "SYNTAX ERROR");
                     }
@@ -951,25 +929,25 @@ namespace m0.ZeroCode
             }              
         }
 
-        bool TryIsKeyword(string s)
+        bool TryIsKeyword(ParsingStack s, string ss)
         {
-            if (firstCharacterPos >= text.Length)
+            if (s.firstCharacterPos >= text.Length)
                 return false;
 
-            if (!ZeroCodeUtil.tryStringMatch(s, 0, ZeroCodeCommon.CodeGraphVertexPrefix) 
-                || !ZeroCodeUtil.tryStringEndMatch(s, ZeroCodeCommon.CodeGraphVertexSuffix))
+            if (!ZeroCodeUtil.tryStringMatch(ss, 0, ZeroCodeCommon.CodeGraphVertexPrefix) 
+                || !ZeroCodeUtil.tryStringEndMatch(ss, ZeroCodeCommon.CodeGraphVertexSuffix))
             {
                 string newVertex;
                 string link;
 
                 int tryPos = 0; 
 
-                _tryIsKeyword("",firstCharacterPos, -1, 0, text.Length - 1, text.Length - 1, out examinedKeywords, out newVertex, out link, true, ref tryPos);
+                _tryIsKeyword(s, "", s.firstCharacterPos, -1, 0, text.Length - 1, text.Length - 1, out examinedKeywords, out newVertex, out link, true, ref tryPos);
 
                 if (examinedKeywords.Count() > 0)
                 {
-                    if (pos < tryPos)
-                        pos = tryPos;
+                    if (s.pos < tryPos)
+                        s.pos = tryPos;
 
                     return true;
                 }
@@ -980,7 +958,7 @@ namespace m0.ZeroCode
                 return false;
         }
 
-        void addEmptyKeyword(List<keywordTryingData> examinedKeywords, string value, int matchedOnPositionInText)
+        void addEmptyKeyword(ParsingStack s, List<keywordTryingData> examinedKeywords, string value, int matchedOnPositionInText)
         {
             if (value == null || value == "")
                 return;
@@ -997,7 +975,7 @@ namespace m0.ZeroCode
             examinedKeywords.Add(ktd);
         }
 
-        void _tryIsKeyword(string LOGPREFIX, int startPos, int prev_startPos, int isPrevStartPosSameAsStartPosParentCount, int endPos, int endPos_forAtomParts, out List<keywordTryingData> examinedKeywords, out string newVertex, out string link, bool isTopLevelCall, ref int newPos)
+        void _tryIsKeyword(ParsingStack s, string LOGPREFIX, int startPos, int prev_startPos, int isPrevStartPosSameAsStartPosParentCount, int endPos, int endPos_forAtomParts, out List<keywordTryingData> examinedKeywords, out string newVertex, out string link, bool isTopLevelCall, ref int newPos)
         {
             bool isPrevStartPosSameAsStartPos = false;
 
@@ -1074,7 +1052,7 @@ namespace m0.ZeroCode
                     link = tryLink;
 
                     if(tryEmptyKeyword!=null)
-                        addEmptyKeyword(examinedKeywords, tryEmptyKeyword, sPos-1);
+                        addEmptyKeyword(s, examinedKeywords, tryEmptyKeyword, sPos-1);
 
                     newPos = sPos;
 
@@ -1236,7 +1214,7 @@ namespace m0.ZeroCode
 
                                 MinusZero.Instance.Log(1, LOGPREFIX+"_tryIsKeyword", "will run _tryIs for:"+ ktd.currentlyProcessedParameterName);
 
-                                _tryIsKeyword(LOGPREFIX+"    ",sPos, startPos, isPrevStartPosSameAsStartPosThisCount, endPos, isTryKeyword_endPos, out foundKeywords, out foundNewVertex, out foundLink, false, ref _newPos);
+                                _tryIsKeyword(s, LOGPREFIX+"    ",sPos, startPos, isPrevStartPosSameAsStartPosThisCount, endPos, isTryKeyword_endPos, out foundKeywords, out foundNewVertex, out foundLink, false, ref _newPos);
 
                                 if (foundNewVertex != null)
                                 {
@@ -1363,7 +1341,7 @@ namespace m0.ZeroCode
             {
                 newVertex = tryNewVertex;
                 link = tryLink;
-                addEmptyKeyword(examinedKeywords, tryEmptyKeyword, tryNewPos-1);
+                addEmptyKeyword(s, examinedKeywords, tryEmptyKeyword, tryNewPos-1);
                 newPos = tryNewPos;
             }else
                 newPos = sPos;
@@ -1431,46 +1409,46 @@ namespace m0.ZeroCode
             }
         }
 
-        IVertex LocalRoot;
+        
 
-        void DoesContainLocalRoot(IVertex keyword)
+        void DoesContainLocalRoot(ParsingStack s, IVertex keyword)
         {
             //if (keyword.Get(@"\$LocalRoot:") == null)
             if (keyword.Get(@"\$StartInLocalRoot:") == null)
-                LocalRoot = null;
+                s.LocalRoot = null;
         }
 
-        IVertex AddKeywordVertex(IVertex parent, keywordTryingData ktd)
+        IVertex AddKeywordVertex(ParsingStack s, IVertex parent, keywordTryingData ktd)
         {
-            DoesContainLocalRoot(ktd.keywordVertex);
+            DoesContainLocalRoot(s, ktd.keywordVertex);
 
-            return _AddKeywordVertex(parent,ktd,ktd.keywordVertex,null,0);
+            return _AddKeywordVertex(s, parent,ktd,ktd.keywordVertex,null,0);
         }
 
-        void AddKeywordVertex_AddVertex(IVertex baseVertex, IEdge edgeForMeta, IVertex meta, object val, ref IVertex nv)
+        void AddKeywordVertex_AddVertex(ParsingStack s, IVertex baseVertex, IEdge edgeForMeta, IVertex meta, object val, ref IVertex nv)
         {
             if (GeneralUtil.CompareStrings("$LocalRoot", edgeForMeta.Meta.Value)
             || GeneralUtil.CompareStrings("$StartInLocalRoot", edgeForMeta.Meta.Value))
                 return;
 
-            if (edgeForMeta.To.Get("$StartInLocalRoot:") != null && LocalRoot != null)
-                nv = AddVertex(LocalRoot, meta, val);
+            if (edgeForMeta.To.Get("$StartInLocalRoot:") != null && s.LocalRoot != null)
+                nv = AddVertex(s, s.LocalRoot, meta, val);
             else
-                nv = AddVertex(baseVertex, meta, val);
+                nv = AddVertex(s, baseVertex, meta, val);
 
             if (edgeForMeta.To.Get("$LocalRoot:") != null)
-                LocalRoot = nv;
+                s.LocalRoot = nv;
         }
 
-        IEdge AddKeywordVertex_AddEdge(IVertex baseVertex, IEdge edgeForMeta, IVertex meta, IVertex to)
+        IEdge AddKeywordVertex_AddEdge(ParsingStack s, IVertex baseVertex, IEdge edgeForMeta, IVertex meta, IVertex to)
         {
-            if(edgeForMeta.To.Get("$StartInLocalRoot:") != null && LocalRoot!=null)
-                return AddEdge(LocalRoot, meta, to);
+            if(edgeForMeta.To.Get("$StartInLocalRoot:") != null && s.LocalRoot !=null)
+                return AddEdge(s, s.LocalRoot, meta, to);
 
-            return AddEdge(baseVertex, meta, to);
+            return AddEdge(s, baseVertex, meta, to);
         }
 
-        IVertex _AddKeywordVertex(IVertex parent, keywordTryingData ktd, IVertex keywordAddingVertex, IVertex useMetaWhenANY, int subCount)
+        IVertex _AddKeywordVertex(ParsingStack s, IVertex parent, keywordTryingData ktd, IVertex keywordAddingVertex, IVertex useMetaWhenANY, int subCount)
         {
             IVertex nv=null;
 
@@ -1511,19 +1489,19 @@ namespace m0.ZeroCode
                             object sub = subs[cnt_subCount];
 
                             if (sub is string)
-                                AddKeywordVertex_AddVertex(parent, e, meta, sub, ref nv); // was marked: ERROR. why?? 
+                                AddKeywordVertex_AddVertex(s, parent, e, meta, sub, ref nv); // was marked: ERROR. why?? 
 
                             if (sub is ToVertexMock)
-                                nv = AddKeywordVertex_AddEdge(parent, e, meta, (IVertex)sub).To;
+                                nv = AddKeywordVertex_AddEdge(s, parent, e, meta, (IVertex)sub).To;
 
                             if (sub is keywordTryingData)
                             {
-                                DoesContainLocalRoot(((keywordTryingData)sub).keywordVertex);
-                                nv = _AddKeywordVertex(parent, (keywordTryingData)sub, ((keywordTryingData)sub).keywordVertex, meta, 0); // cnt_subCount);
+                                DoesContainLocalRoot(s, ((keywordTryingData)sub).keywordVertex);
+                                nv = _AddKeywordVertex(s, parent, (keywordTryingData)sub, ((keywordTryingData)sub).keywordVertex, meta, 0); // cnt_subCount);
                             }
                         }
                         else
-                            nv = AddKeywordVertex_AddEdge(parent, e, meta, e.To).To;
+                            nv = AddKeywordVertex_AddEdge(s, parent, e, meta, e.To).To;
                         }
                     else
                     {
@@ -1536,22 +1514,22 @@ namespace m0.ZeroCode
                             object sub = subs[cnt_subCount];
 
                             if (sub is string)
-                                AddKeywordVertex_AddVertex(parent, e, meta, sub, ref nv);
+                                AddKeywordVertex_AddVertex(s, parent, e, meta, sub, ref nv);
 
                             if (sub is ToVertexMock)
-                                nv = AddKeywordVertex_AddEdge(parent, e, meta, (IVertex)sub).To;
+                                nv = AddKeywordVertex_AddEdge(s, parent, e, meta, (IVertex)sub).To;
 
                             if (sub is keywordTryingData)
                             {
-                                DoesContainLocalRoot(((keywordTryingData)sub).keywordVertex);
+                                DoesContainLocalRoot(s, ((keywordTryingData)sub).keywordVertex);
 
-                                nv = _AddKeywordVertex(parent, (keywordTryingData)sub, ((keywordTryingData)sub).keywordVertex, meta, 0);// cnt_subCount);
+                                nv = _AddKeywordVertex(s, parent, (keywordTryingData)sub, ((keywordTryingData)sub).keywordVertex, meta, 0);// cnt_subCount);
                             }
                         }
                         else
-                            AddKeywordVertex_AddVertex(parent, e, meta, e.To, ref nv);
+                            AddKeywordVertex_AddVertex(s, parent, e, meta, e.To, ref nv);
 
-                       _AddKeywordVertex(nv, ktd, e.To, null, cnt_subCount);
+                       _AddKeywordVertex(s, nv, ktd, e.To, null, cnt_subCount);
                     }
                 }
             }
@@ -1600,7 +1578,6 @@ namespace m0.ZeroCode
             }
                 
         }
-
         private bool beginsWithParameter(string keywordString)
         {
             if (ZeroCodeUtil.tryStringMatch(keywordString, 0, "(?<"))
