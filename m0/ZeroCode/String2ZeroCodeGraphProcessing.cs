@@ -15,15 +15,14 @@ namespace m0.ZeroCode
     {
         class ParsingStack
         {
+            String2ZeroCodeGraphProcessing parent;
+
             public int begLine;
             public int endLine;
 
             public int pos;
             public int lineNo;
             public LineInfo currentLineInfo;
-
-            public int firstCharacterPos;
-            public int prevFirstCharacterPos;
 
             public string currentLineNoTabs;
 
@@ -34,13 +33,25 @@ namespace m0.ZeroCode
             public int newLineCount;
 
             public bool skipParse = false;
+            public int parseRecurrentReturnNo = -1;
 
-            public ParsingStack(int _begLine, int _endLine)
+            public ParsingStack(String2ZeroCodeGraphProcessing _parent, int _begLine, int _endLine)
             {
+                parent = _parent;
                 begLine = _begLine;
                 endLine = _endLine;
                
                 lineNo = begLine - 1;
+            }
+
+            public int getThisTabCount()
+            {
+                return currentLineInfo.tabCount;
+            }
+
+            public int getPrevTabCount()
+            {
+                return parent.lineInfoList[lineNo - 1].tabCount; // to be corrected
             }
         }
 
@@ -48,152 +59,44 @@ namespace m0.ZeroCode
 
         string text;
 
+        List<LineInfo> lineInfoList;
+
         //
 
         IVertex r = m0.MinusZero.Instance.Root;
 
         bool ParseLine(ParsingStack s)
         {
-            MinusZero.Instance.Log(0, "ParseLine NEW BEG", "skipParse:" + s.skipParse + " pos:" + s.pos + " lineNo:" + s.lineNo
-                + " firstCharacterPos:" + s.firstCharacterPos + " currentLineNoTabs:" + s.currentLineNoTabs);
-
             if (s.skipParse)
             {
                 s.skipParse = false;
 
-                MinusZero.Instance.Log(0, "ParseLine NEW skipParse END", "skipParse:" + s.skipParse + " pos:" + s.pos + " lineNo:" + s.lineNo
-                + " firstCharacterPos:" + s.firstCharacterPos + " currentLineNoTabs:" + s.currentLineNoTabs);
                 return true;
             }
 
-            s.prevFirstCharacterPos = s.firstCharacterPos;
-
             s.lineNo++;
 
-            if (s.lineNo >= lineInfoList.Count) {
-
-                s.firstCharacterPos = s.pos;
-
-                MinusZero.Instance.Log(0, "ParseLine NEW false END", "skipParse:" + s.skipParse + " pos:" + s.pos + " lineNo:" + s.lineNo
-                   + " firstCharacterPos:" + s.firstCharacterPos + " currentLineNoTabs:" + s.currentLineNoTabs);
-
-                return false;
-            }
+            if (s.lineNo > s.endLine) 
+                return false;          
 
             s.currentLineInfo = lineInfoList[s.lineNo];
 
-            s.firstCharacterPos = s.currentLineInfo.lineBeg;
-
-
             if (s.currentLineInfo.isEmpty)
-            {
-                s.pos = s.currentLineInfo.lineEnd_NoTrim + 2;
                 s.currentLineNoTabs = "";
-            }
             else
-            {
-                s.pos = s.currentLineInfo.lineEnd_NoTrim + 3;
                 s.currentLineNoTabs = text.Substring(s.currentLineInfo.lineBeg, s.currentLineInfo.lineEnd - s.currentLineInfo.lineBeg + 1);
-            }
+            
             // and now check if there are only whitespaces
-
-            MinusZero.Instance.Log(0, "ParseLine NEW", "currentLineNoTabs:"+ s.currentLineNoTabs + " currentLineNoTabsLength:"+ s.currentLineNoTabs.Length);
 
             if (ZeroCodeUtil.isStringOnlyWhiteSpaces(s.currentLineNoTabs))
             {
-                MinusZero.Instance.Log(0, "ParseLine NEW", "isStringOnlyWhiteSpaces");
                 s.newLineCount++;
                 ParseLine(s);
             }
-
-            MinusZero.Instance.Log(0, "ParseLine NEW END", "skipParse:" + s.skipParse + " pos:" + s.pos + " lineNo:" + s.lineNo
-               + " firstCharacterPos:" + s.firstCharacterPos + " currentLineNoTabs:" + s.currentLineNoTabs);
-
 
             return true;
         }
         
-        /*string currentLine;
-        bool currentLineConsistOfWhiteSpacesOnly;
-        bool ParseLine(ParsingStack s)
-        {
-            MinusZero.Instance.Log(0, "ParseLine OLD BEG", "skipParse:" + s.skipParse + " pos:" + s.pos + " lineNo:" + s.lineNo
-                + " firstCharacterPos:" + s.firstCharacterPos + " currentLineNoTabs:" + s.currentLineNoTabs);
-
-            if (s.skipParse)
-            {
-                s.skipParse = false;
-
-                MinusZero.Instance.Log(0, "ParseLine OLD skipParse END", "skipParse:" + s.skipParse + " pos:" + s.pos + " lineNo:" + s.lineNo
-                + " firstCharacterPos:" + s.firstCharacterPos + " currentLineNoTabs:" + s.currentLineNoTabs);
-                return true;
-            }
-
-            int temp_prevFirstCharacterPos = s.firstCharacterPos;
-
-            s.firstCharacterPos = 0;
-
-
-            if (s.pos >= text.Length)
-            {
-                s.firstCharacterPos = s.pos;
-
-        MinusZero.Instance.Log(0, "ParseLine OLD false END", "skipParse:" + s.skipParse + " pos:" + s.pos + " lineNo:" + s.lineNo
-                + " firstCharacterPos:" + s.firstCharacterPos + " currentLineNoTabs:" + s.currentLineNoTabs);
-
-            return false;
-            }
-
-            char c = text[s.pos];
-
-            int begPos = s.pos;
-
-            bool endOfTabsReached = false;
-
-            while (c != '\n' && c != '\r' && s.pos < (text.Length-1))
-            {
-                if (c != '\t' && !endOfTabsReached)
-                {
-                    endOfTabsReached = true;
-                    s.firstCharacterPos = s.pos;
-                }
-
-                s.pos++;
-                c = text[s.pos];
-            }
-
-            if(s.pos == (text.Length - 1))
-                currentLine = text.Substring(begPos, s.pos - begPos + 1);
-            else
-                currentLine = text.Substring(begPos, s.pos - begPos);
-
-            s.currentLineNoTabs = currentLine.Substring(s.firstCharacterPos).Trim(); // can try witchout Trim
-
-            s.lineNo++;
-
-            s.pos += 2;
-
-            // and now check if there are only whitespaces
-
-            MinusZero.Instance.Log(0, "ParseLine OLD", "currentLineNoTabs:"+ s.currentLineNoTabs + " currentLineNoTabsLength:"+ s.currentLineNoTabs.Length);
-
-
-            if (ZeroCodeUtil.isStringOnlyWhiteSpaces(s.currentLineNoTabs))
-            {
-                MinusZero.Instance.Log(0, "ParseLine OLD", "isStringOnlyWhiteSpaces");
-                s.newLineCount++;
-                ParseLine(s);
-            }
-
-            s.prevFirstCharacterPos = temp_prevFirstCharacterPos;
-
-            MinusZero.Instance.Log(0, "ParseLine OLD END", "skipParse:" + s.skipParse + " pos:" + s.pos + " lineNo:" + s.lineNo
-            + " firstCharacterPos_relativeToText:" + s.firstCharacterPos + " currentLineNoTabs:" + s.currentLineNoTabs);
-
-
-            return true;
-        }*/
-
         IVertex importList;
         IVertex importMetaList;
         IVertex importDirectList;
@@ -447,8 +350,6 @@ namespace m0.ZeroCode
             public bool isEmpty;
         }
 
-        List<LineInfo> lineInfoList;
-
         ///
 
         public void prepareLineInfoList()
@@ -527,7 +428,7 @@ namespace m0.ZeroCode
 
         private IVertex ProcessTextPart(IVertex baseVertex, int begLine, int endLine)
         {
-            ParsingStack stack = new ParsingStack(begLine, endLine);
+            ParsingStack stack = new ParsingStack(this, begLine, endLine);
 
             ParseLine(stack);
 
@@ -561,24 +462,37 @@ namespace m0.ZeroCode
 
             while (ParseLine(s))
             {
-                if (s.firstCharacterPos > s.prevFirstCharacterPos)
+                if(s.parseRecurrentReturnNo > 0)
                 {
-                    int prevFirstCharacterPos_memory = s.prevFirstCharacterPos;
+                    s.parseRecurrentReturnNo--;
+                    s.skipParse = true;
+                    return;
+                }
 
+                int thisTabCount = s.getThisTabCount();
+                int prevTabCount = s.getPrevTabCount();
+
+                if (s.parseRecurrentReturnNo == 0)
+                {
+                    s.parseRecurrentReturnNo = -1;
+                    prevTabCount = thisTabCount - 1; // need to simulate
+                }
+
+                if (thisTabCount > prevTabCount)
+                {
                     Process_reccurent(s, prevVertex);
-                    //Process_reccurent(lastAddedVertex);
-
-                    s.prevFirstCharacterPos = prevFirstCharacterPos_memory;
 
                     continue;
                 }
 
-                if (s.firstCharacterPos == s.prevFirstCharacterPos)
+                if (thisTabCount == prevTabCount)
                     prevVertex = ProcessLine(s, _baseVertex);
 
-                if (s.firstCharacterPos < s.prevFirstCharacterPos)
+                if (thisTabCount < prevTabCount)
                 {
                     s.skipParse = true;
+
+                    s.parseRecurrentReturnNo = prevTabCount - thisTabCount;
 
                     return;
                 }
@@ -587,10 +501,7 @@ namespace m0.ZeroCode
 
         void AddNewLines(ParsingStack s)
         {
-            //if(lastAddedVertex!=null && newLineCount!=0)
-            //  lastAddedVertex.AddVertex(smb.Get("$NewLine"), newLineCount);
-
-            if (s.newLineCount != 0)
+           if (s.newLineCount != 0)
             {
                 if(s.lastAddedVertex != null)
                     s.lastAddedVertex.AddVertex(smb.Get("$NewLine"), s.newLineCount);
@@ -621,7 +532,7 @@ namespace m0.ZeroCode
 
             bool shallProcess = true;
             IVertex toReturnVertex = null;
-            //LocalRoot=null;
+            s.LocalRoot=null;
 
             while (shallProcess)
             {
@@ -645,7 +556,7 @@ namespace m0.ZeroCode
                         return toReturnVertex;
                     }
 
-                    s.firstCharacterPos = posAfterMatch;
+                    s.currentLineInfo.lineBeg = posAfterMatch;
                 }
                 else
                 {
@@ -931,7 +842,7 @@ namespace m0.ZeroCode
 
         bool TryIsKeyword(ParsingStack s, string ss)
         {
-            if (s.firstCharacterPos >= text.Length)
+            if (s.currentLineInfo.lineBeg >= text.Length)
                 return false;
 
             if (!ZeroCodeUtil.tryStringMatch(ss, 0, ZeroCodeCommon.CodeGraphVertexPrefix) 
@@ -942,7 +853,7 @@ namespace m0.ZeroCode
 
                 int tryPos = 0; 
 
-                _tryIsKeyword(s, "", s.firstCharacterPos, -1, 0, text.Length - 1, text.Length - 1, out examinedKeywords, out newVertex, out link, true, ref tryPos);
+                _tryIsKeyword(s, "", s.currentLineInfo.lineBeg, -1, 0, text.Length - 1, text.Length - 1, out examinedKeywords, out newVertex, out link, true, ref tryPos);
 
                 if (examinedKeywords.Count() > 0)
                 {
