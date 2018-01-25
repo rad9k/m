@@ -19,9 +19,9 @@ namespace m0.UIWpf
 {
     public class UIWpf
     {
-        public static FontWeight MetaWeight = FontWeight.FromOpenTypeWeight(550);
+        public static FontWeight MetaWeight = FontWeights.Normal; // FontWeight.FromOpenTypeWeight(550);
         public static FontWeight BoldWeight = FontWeight.FromOpenTypeWeight(550);
-        public static FontWeight ValueWeight = FontWeights.Normal;
+        public static FontWeight ValueWeight = FontWeight.FromOpenTypeWeight(550); // FontWeights.Normal;
 
         public static void InitializeUIWpf()
         {
