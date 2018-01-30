@@ -20,7 +20,6 @@ namespace m0.ZeroCode
             public int begLine;
             public int endLine;
 
-            public int pos;
             public int lineNo;
             public LineInfo currentLineInfo;
 
@@ -583,12 +582,7 @@ namespace m0.ZeroCode
                 _tryIsKeyword(s, "", s.currentLineInfo.lineBeg, -1, 0, text.Length - 1, text.Length - 1, out examinedKeywords, out newVertex, out link, true, ref tryPos);
 
                 if (examinedKeywords.Count() > 0)
-                {
-                    if (s.pos < tryPos)
-                        s.pos = tryPos;
-
-                    return true;
-                }
+                    return true;                
 
                 return false;
             }
