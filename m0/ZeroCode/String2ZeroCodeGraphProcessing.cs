@@ -1045,8 +1045,8 @@ namespace m0.ZeroCode
 
         void DoesContainLocalRoot(ParsingStack s, IVertex keyword)
         {
-            //if (keyword.Get(@"\$LocalRoot:") == null)
-            if (keyword.Get(@"\$StartInLocalRoot:") == null)
+            if (keyword.Get(@"\$LocalRoot:") == null)
+            //if (keyword.Get(@"\$StartInLocalRoot:") == null)
                 s.LocalRoot = null;
         }
 
