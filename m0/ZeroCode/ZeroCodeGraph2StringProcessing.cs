@@ -826,7 +826,12 @@ namespace m0.ZeroCode
 
             //bool wasThereNewLine = false;
 
-            foreach (IEdge ee in GetKewordEdgeByQuerystring(km, keywordManyRootQueryString).From)
+            IEdge edgeFromKeywordManyRootQueryString = GetKewordEdgeByQuerystring(km, keywordManyRootQueryString);
+
+            if (edgeFromKeywordManyRootQueryString == null)
+                return wasThereNewLine;
+
+            foreach (IEdge ee in edgeFromKeywordManyRootQueryString.From)
             {
                 if (ee.Meta == keywordManyRoot.Meta)
                 {
@@ -1084,6 +1089,9 @@ namespace m0.ZeroCode
 
         public bool GetGraphMatch(IVertex parentToCheck, IEdge keywordEdge)
         {
+            if (keywordEdge.To.Get("$KeywordManyRoot:") != null)
+                return true;
+
             string searchString;
 
             if (IsKeywordVertexWildcard(keywordEdge.To))
@@ -1436,6 +1444,4 @@ namespace m0.ZeroCode
             AppendAdditionalNewLines(baseEdge);
         }
     }
-
- 
 }
