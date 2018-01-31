@@ -996,6 +996,25 @@ namespace m0.ZeroCode
 
                 examinedKeywords = examinedKeywords.Where(m => m.state == keywordTryingState.matched
                     && m.matchedOnPositionInText == maxMatchedOnPositionInText).ToList();
+
+                /////////////////////////////////////////////////////
+                //                                                 //
+                //    >   >  > >> A S S U M P T I O N <<<  <   <   //
+                //                                                 //
+                /////////////////////////////////////////////////////
+
+                // WE ASSUME THAT ONLY examinedKeywords[0] will be used forther
+
+                //
+
+                keywordTryingData ktd = examinedKeywords[0]; // ASSUMPTION
+
+                if(  ktd.matchedOnPositionInText < s.currentLineInfo.lineEnd 
+                    && isLocalRootKeyword(ktd))
+                    newPos = _tryIsNextLocalRootKeyword(s, LOGPREFIX, newPos, ktd.matchedOnPositionInText + 1, ktd);
+
+                //
+
             }
 
             // if no keywords found, we can use tryNewVertex/tryLink, that are:
@@ -1029,6 +1048,14 @@ namespace m0.ZeroCode
             log_keywords(examinedKeywords, 0, LOGPREFIX);
         }
 
+        bool isLocalRootKeyword(keywordTryingData ktd)
+        {
+            if (ktd.keywordVertex.Get(@"\$StartInLocalRoot:") != null)
+                return true;
+            else
+                return false;
+        }
+
         private int _tryIsNextLocalRootKeyword(ParsingStack s, string LOGPREFIX, int newPos, int sPos, keywordTryingData ktd)
         {
             List<keywordTryingData> _examinedKeywords = new List<keywordTryingData>();
@@ -1043,6 +1070,8 @@ namespace m0.ZeroCode
             if (_examinedKeywords.Count > 0)
             {
                 ktd.LocalRootNext = _examinedKeywords[0];
+
+                ktd.matchedOnPositionInText = ktd.LocalRootNext.matchedOnPositionInText;
 
                 newPos = _tryPos;
             }
