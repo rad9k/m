@@ -54,6 +54,17 @@ namespace m0.ZeroCode
             }
         }
 
+        //
+
+        List<keywordTryingData> examinedKeywords_All; // all keywords are here
+        List<keywordTryingData> examinedKeywords_LocalRootOnly; // all keywords are here
+        Dictionary<char, List<string>> allKeywordsSubstringsDictionary_onlyFirstSubstring;
+        Dictionary<char, List<string>> allKeywordsSubstringsDictionary;
+
+        IVertex emptyKeywordVertex;
+
+        // PROCESS dependent
+
         public IVertex baseVertex;
 
         string text;
@@ -355,7 +366,11 @@ namespace m0.ZeroCode
 
             public int multiParameterCount = 0;
 
-            // below attributes are hidden
+            public Dictionary<string, List<object>> parameters = new Dictionary<string, List<object>>();
+
+            public keywordTryingData LocalRootNext;
+
+            //
 
             string multiParameterSeparator;
             string multiParameterString;
@@ -365,8 +380,6 @@ namespace m0.ZeroCode
 
             int multiParameterStringBegPosition = -1;
             int multiParameterStringEndPosition = -1;
-
-            public Dictionary<string, List<object>> parameters = new Dictionary<string, List<object>>();
 
             public keywordTryingData(keywordTryingData source)
             {
@@ -550,12 +563,9 @@ namespace m0.ZeroCode
             }
         }
 
-        List<keywordTryingData> examinedKeywords_All; // all keywords are here
-        Dictionary<char, List<string>> allKeywordsSubstringsDictionary_onlyFirstSubstring;
-        Dictionary<char, List<string>> allKeywordsSubstringDictionary;
-        List<keywordTryingData> examinedKeywords;
-
-        IVertex emptyKeywordVertex;
+   ///////////////////////////////////////////////////
+   ///////////////////////////////////////////////////
+   ///////////////////////////////////////////////////
 
         void copyExaminedKeywords(List<keywordTryingData> source, List<keywordTryingData> target)
         {
@@ -566,34 +576,38 @@ namespace m0.ZeroCode
             }              
         }
 
-        bool TryIsKeyword(ParsingStack s, string ss)
+        List<keywordTryingData> TryIfIsKeywordLine(ParsingStack s)
         {
-            if (s.currentLineInfo.lineBeg >= text.Length)
-                return false;
+            List<keywordTryingData> examinedKeywords;
 
-            if (!ZeroCodeUtil.tryStringMatch(ss, 0, ZeroCodeCommon.CodeGraphVertexPrefix) 
-                || !ZeroCodeUtil.tryStringEndMatch(ss, ZeroCodeCommon.CodeGraphVertexSuffix))
+            if (s.currentLineInfo.lineBeg >= text.Length)
+                return null;
+
+            if (!ZeroCodeUtil.tryStringMatch(s.currentLineNoTabs, 0, ZeroCodeCommon.CodeGraphVertexPrefix) 
+                || !ZeroCodeUtil.tryStringEndMatch(s.currentLineNoTabs, ZeroCodeCommon.CodeGraphVertexSuffix))
             {
                 string newVertex;
                 string link;
 
                 int tryPos = 0; 
 
-                _tryIsKeyword(s, "", s.currentLineInfo.lineBeg, -1, 0, text.Length - 1, text.Length - 1, out examinedKeywords, out newVertex, out link, true, ref tryPos);
+                _tryIsKeyword(s, "", s.currentLineInfo.lineBeg, -1, 0, text.Length - 1, text.Length - 1, out examinedKeywords, out newVertex, out link, true, ref tryPos, false);
 
                 if (examinedKeywords.Count() > 0)
-                    return true;                
+                    return examinedKeywords;                
 
-                return false;
+                return null;
             }
             else
-                return false;
+                return null;
         }
 
-        void addEmptyKeyword(ParsingStack s, List<keywordTryingData> examinedKeywords, string value, int matchedOnPositionInText)
+        keywordTryingData createEmptyKeyword(ParsingStack s, string value, int matchedOnPositionInText)
         {
             if (value == null || value == "")
-                return;
+            {
+                int x = 0; // WTF???
+            }
 
             keywordTryingData ktd = new keywordTryingData(emptyKeywordVertex, this);
 
@@ -604,10 +618,10 @@ namespace m0.ZeroCode
 
             ktd.parameters.Add("EmptyKeyword", l);
 
-            examinedKeywords.Add(ktd);
+            return ktd;
         }
 
-        void _tryIsKeyword(ParsingStack s, string LOGPREFIX, int startPos, int prev_startPos, int isPrevStartPosSameAsStartPosParentCount, int endPos, int endPos_forAtomParts, out List<keywordTryingData> examinedKeywords, out string newVertex, out string link, bool isTopLevelCall, ref int newPos)
+        void _tryIsKeyword(ParsingStack s, string LOGPREFIX, int startPos, int prev_startPos, int isPrevStartPosSameAsStartPosParentCount, int endPos, int endPos_forAtomParts, out List<keywordTryingData> examinedKeywords, out string newVertex, out string link, bool isTopLevelCall, ref int newPos, bool lookForLocalRootOnly)
         {
             bool isPrevStartPosSameAsStartPos = false;
 
@@ -646,13 +660,13 @@ namespace m0.ZeroCode
 
             //
 
-            if (!testIfIsKeyword_noStartingWithParameter(startPos))
+            if (!testIfIsKeywordSubstring(startPos))
             {
                 while (shallProceed)
                 {
                     sPos++;
 
-                    if (testIfIsKeyword(sPos))
+                    if (testIfIsKeywordSubstring(sPos))
                         shallProceed = false;
 
                     if (text[sPos] == '\r' || text[sPos] == '\n')
@@ -677,14 +691,38 @@ namespace m0.ZeroCode
                     sPos++; // hmmm ????
                 }
 
-                if (sPos == endPos_forAtomParts || isPrevStartPosSameAsStartPos)
+
+                if ( //(tryEmptyKeyword != null || lookForLocalRootOnly==false) &&
+                     ( sPos == endPos_forAtomParts || isPrevStartPosSameAsStartPos) )
                 {
                     newVertex = tryNewVertex;
 
                     link = tryLink;
 
-                    if(tryEmptyKeyword!=null)
-                        addEmptyKeyword(s, examinedKeywords, tryEmptyKeyword, sPos-1);
+                    if (tryEmptyKeyword != null)
+                    {
+                        keywordTryingData ktd = createEmptyKeyword(s, tryEmptyKeyword, sPos - 1);
+
+                        //
+
+                        List<keywordTryingData> _examinedKeywords = new List<keywordTryingData>();
+
+                        string _newVertex;
+                        string _link;
+
+                        int _tryPos = 0;
+
+                        _tryIsKeyword(s, LOGPREFIX + "    ", sPos - 1, -1, 0, text.Length - 1, text.Length - 1, out _examinedKeywords, out _newVertex, out _link, true, ref _tryPos, true);
+                        
+                        if(_examinedKeywords.Count > 0)
+                        {
+                            ktd.LocalRootNext = _examinedKeywords[0];
+                        }
+
+                        //
+
+                        examinedKeywords.Add(ktd);
+                    }
 
                     newPos = sPos;
 
@@ -708,7 +746,10 @@ namespace m0.ZeroCode
 
             // keyword
 
-            copyExaminedKeywords(examinedKeywords_All, examinedKeywords);
+            if(lookForLocalRootOnly)
+                copyExaminedKeywords(examinedKeywords_LocalRootOnly, examinedKeywords);
+            else
+                copyExaminedKeywords(examinedKeywords_All, examinedKeywords);
 
             shallProceed = true;
 
@@ -846,7 +887,7 @@ namespace m0.ZeroCode
 
                                 MinusZero.Instance.Log(1, LOGPREFIX+"_tryIsKeyword", "will run _tryIs for:"+ ktd.currentlyProcessedParameterName);
 
-                                _tryIsKeyword(s, LOGPREFIX+"    ",sPos, startPos, isPrevStartPosSameAsStartPosThisCount, endPos, isTryKeyword_endPos, out foundKeywords, out foundNewVertex, out foundLink, false, ref _newPos);
+                                _tryIsKeyword(s, LOGPREFIX+"    ",sPos, startPos, isPrevStartPosSameAsStartPosThisCount, endPos, isTryKeyword_endPos, out foundKeywords, out foundNewVertex, out foundLink, false, ref _newPos, false);
 
                                 if (foundNewVertex != null)
                                 {
@@ -973,7 +1014,13 @@ namespace m0.ZeroCode
             {
                 newVertex = tryNewVertex;
                 link = tryLink;
-                addEmptyKeyword(s, examinedKeywords, tryEmptyKeyword, tryNewPos-1);
+
+                if (tryEmptyKeyword != null)
+                {
+                    keywordTryingData ktd = createEmptyKeyword(s, tryEmptyKeyword, tryNewPos - 1);
+                    examinedKeywords.Add(ktd);
+                }
+
                 newPos = tryNewPos;
             }else
                 newPos = sPos;
@@ -987,10 +1034,10 @@ namespace m0.ZeroCode
         {
             char charAtPos = text[startPos];
 
-            if (!allKeywordsSubstringsDictionary_onlyFirstSubstring.ContainsKey(charAtPos))
+            if (!allKeywordsSubstringsDictionary.ContainsKey(charAtPos))
                 return false;
 
-            List<string> l = allKeywordsSubstringsDictionary_onlyFirstSubstring[charAtPos];
+            List<string> l = allKeywordsSubstringsDictionary[charAtPos];
 
             foreach (string s in l)
                 if (ZeroCodeUtil.tryStringMatch(text, startPos, s))
@@ -999,14 +1046,14 @@ namespace m0.ZeroCode
             return false;
         }
 
-        private bool testIfIsKeyword(int startPos)
+        private bool testIfIsKeywordSubstring(int startPos)
         {
             char charAtPos = text[startPos];
 
-            if (!allKeywordsSubstringDictionary.ContainsKey(charAtPos))
+            if (!allKeywordsSubstringsDictionary.ContainsKey(charAtPos))
                 return false;
 
-            List<string> l = allKeywordsSubstringDictionary[charAtPos];
+            List<string> l = allKeywordsSubstringsDictionary[charAtPos];
 
             foreach (string s in l)
                 if (ZeroCodeUtil.tryStringMatch(text, startPos, s))
@@ -1045,37 +1092,52 @@ namespace m0.ZeroCode
 
         void DoesContainLocalRoot(ParsingStack s, IVertex keyword)
         {
-            //if (keyword.Get(@"\$LocalRoot:") == null)
-            if (keyword.Get(@"\$StartInLocalRoot:") == null)
+            /*
+            if (keyword.Get(@"\$LocalRoot:") == null)
+            //if (keyword.Get(@"\$StartInLocalRoot:") == null)
                 s.LocalRoot = null;
+                */
         }
 
         IVertex AddKeywordVertex(ParsingStack s, IVertex parent, keywordTryingData ktd)
         {
+            if (ktd.LocalRootNext != null)
+            {
+                int x = 0;
+            }
+
             DoesContainLocalRoot(s, ktd.keywordVertex);
 
             return _AddKeywordVertex(s, parent,ktd,ktd.keywordVertex,null,0);
         }
 
-        void AddKeywordVertex_AddVertex(ParsingStack s, IVertex baseVertex, IEdge edgeForMeta, IVertex meta, object val, ref IVertex nv)
+        void AddKeywordVertex_AddVertex(ParsingStack s, IVertex baseVertex, IEdge edgeForMeta, IVertex meta, object val, ref IVertex nv, keywordTryingData ktd)
         {
             if (GeneralUtil.CompareStrings("$LocalRoot", edgeForMeta.Meta.Value)
             || GeneralUtil.CompareStrings("$StartInLocalRoot", edgeForMeta.Meta.Value))
                 return;
 
-            if (edgeForMeta.To.Get("$StartInLocalRoot:") != null && s.LocalRoot != null)
-                nv = AddVertex(s, s.LocalRoot, meta, val);
-            else
+          //  if (edgeForMeta.To.Get("$StartInLocalRoot:") != null && s.LocalRoot != null)
+          //      nv = AddVertex(s, s.LocalRoot, meta, val);
+         //   else
                 nv = AddVertex(s, baseVertex, meta, val);
 
-            if (edgeForMeta.To.Get("$LocalRoot:") != null)
-                s.LocalRoot = nv;
+            if(ktd.LocalRootNext!=null)
+            {
+                int x = 0;
+            }
+
+            if (edgeForMeta.To.Get("$StartInLocalRoot:") != null && ktd.LocalRootNext != null)
+                _AddKeywordVertex(s, nv,ktd.LocalRootNext,ktd.LocalRootNext.keywordVertex,null,0);
+
+          //  if (edgeForMeta.To.Get("$LocalRoot:") != null)
+          //     s.LocalRoot = nv;
         }
 
         IEdge AddKeywordVertex_AddEdge(ParsingStack s, IVertex baseVertex, IEdge edgeForMeta, IVertex meta, IVertex to)
         {
-            if(edgeForMeta.To.Get("$StartInLocalRoot:") != null && s.LocalRoot !=null)
-                return AddEdge(s, s.LocalRoot, meta, to);
+           // if(edgeForMeta.To.Get("$StartInLocalRoot:") != null && s.LocalRoot !=null)
+            //    return AddEdge(s, s.LocalRoot, meta, to);
 
             return AddEdge(s, baseVertex, meta, to);
         }
@@ -1121,7 +1183,7 @@ namespace m0.ZeroCode
                             object sub = subs[cnt_subCount];
 
                             if (sub is string)
-                                AddKeywordVertex_AddVertex(s, parent, e, meta, sub, ref nv); // was marked: ERROR. why?? 
+                                AddKeywordVertex_AddVertex(s, parent, e, meta, sub, ref nv, ktd); // was marked: ERROR. why?? 
 
                             if (sub is ToVertexMock)
                                 nv = AddKeywordVertex_AddEdge(s, parent, e, meta, (IVertex)sub).To;
@@ -1146,7 +1208,7 @@ namespace m0.ZeroCode
                             object sub = subs[cnt_subCount];
 
                             if (sub is string)
-                                AddKeywordVertex_AddVertex(s, parent, e, meta, sub, ref nv);
+                                AddKeywordVertex_AddVertex(s, parent, e, meta, sub, ref nv, ktd);
 
                             if (sub is ToVertexMock)
                                 nv = AddKeywordVertex_AddEdge(s, parent, e, meta, (IVertex)sub).To;
@@ -1159,7 +1221,7 @@ namespace m0.ZeroCode
                             }
                         }
                         else
-                            AddKeywordVertex_AddVertex(s, parent, e, meta, e.To, ref nv);
+                            AddKeywordVertex_AddVertex(s, parent, e, meta, e.To, ref nv, ktd);
 
                        _AddKeywordVertex(s, nv, ktd, e.To, null, cnt_subCount);
                     }
@@ -1174,22 +1236,35 @@ namespace m0.ZeroCode
             return s.IndexOf("::");            
         }
 
-        private void PrepareExamineKeywords()
+        private void PrepareDictionaries()
         {
             examinedKeywords_All = new List<keywordTryingData>();
 
+            examinedKeywords_LocalRootOnly = new List<keywordTryingData>();
+
             allKeywordsSubstringsDictionary_onlyFirstSubstring = new Dictionary<char, List<string>>();
 
-            allKeywordsSubstringDictionary = new Dictionary<char, List<string>>();
+            allKeywordsSubstringsDictionary = new Dictionary<char, List<string>>();
 
             foreach (IEdge keyword in MinusZero.Instance.Root.GetAll(@"User\CurrentUser:\CodeSettings:\Keyword:\$Keyword:"))
             {
                 if (GeneralUtil.CompareStrings("(?<EmptyKeyword>)", keyword.To.Value))
                     continue;
 
+                // examinedKeywords_All
+
                 keywordTryingData ktd = new keywordTryingData(keyword.To, this);
 
                 examinedKeywords_All.Add(ktd);
+
+                // examinedKeywords_LocalRootOnly
+
+                if (keyword.To.Get(@"\$StartInLocalRoot:") != null)
+                {
+                    keywordTryingData ktd2 = new keywordTryingData(keyword.To, this);
+
+                    examinedKeywords_LocalRootOnly.Add(ktd2);
+                }
 
                 string keywordString = keyword.To.Value.ToString();
 
@@ -1238,7 +1313,7 @@ namespace m0.ZeroCode
                 {
                     isInsideParameter = true;
 
-                    addSubString(allKeywordsSubstringDictionary, keywordString.Substring(prevPos, keywordPos - prevPos));
+                    addSubString(allKeywordsSubstringsDictionary, keywordString.Substring(prevPos, keywordPos - prevPos));
                 }
 
                 if (isInsideParameter && ZeroCodeUtil.tryStringMatch(keywordString, keywordPos, ">)"))
@@ -1249,34 +1324,34 @@ namespace m0.ZeroCode
 
                 if (ZeroCodeUtil.tryStringMatch(keywordString, keywordPos, "(*"))
                 {
-                    addSubString(allKeywordsSubstringDictionary, keywordString.Substring(prevPos, keywordPos - prevPos));
+                    addSubString(allKeywordsSubstringsDictionary, keywordString.Substring(prevPos, keywordPos - prevPos));
 
                     prevPos = keywordPos + 2;
                 }
 
                 if (ZeroCodeUtil.tryStringMatch(keywordString, keywordPos, "*)"))
                 {
-                    addSubString(allKeywordsSubstringDictionary, keywordString.Substring(prevPos, keywordPos - prevPos));
+                    addSubString(allKeywordsSubstringsDictionary, keywordString.Substring(prevPos, keywordPos - prevPos));
 
                     prevPos = keywordPos + 2;
                 }
 
                 if (ZeroCodeUtil.tryStringMatch(keywordString, keywordPos, "(+"))
                 {
-                    addSubString(allKeywordsSubstringDictionary, keywordString.Substring(prevPos, keywordPos - prevPos));
+                    addSubString(allKeywordsSubstringsDictionary, keywordString.Substring(prevPos, keywordPos - prevPos));
 
                     prevPos = keywordPos + 2;
                 }
 
                 if (ZeroCodeUtil.tryStringMatch(keywordString, keywordPos, "+)"))
                 {
-                    addSubString(allKeywordsSubstringDictionary, keywordString.Substring(prevPos, keywordPos - prevPos));
+                    addSubString(allKeywordsSubstringsDictionary, keywordString.Substring(prevPos, keywordPos - prevPos));
 
                     prevPos = keywordPos + 2;
                 }
             }
 
-            addSubString(allKeywordsSubstringDictionary, keywordString.Substring(prevPos, keywordPos - prevPos));
+            addSubString(allKeywordsSubstringsDictionary, keywordString.Substring(prevPos, keywordPos - prevPos));
         }
 
         private void addSubString(Dictionary<char, List<string>> dict, string subString)
@@ -1300,15 +1375,6 @@ namespace m0.ZeroCode
                 kl.Add(subString);
             }
 
-        }
-
-        public String2ZeroCodeGraphProcessing()
-        {
-            setupHelpVariables();
-
-            PrepareExamineKeywords();
-
-            emptyKeywordVertex = MinusZero.Instance.Root.Get(@"User\CurrentUser:\CodeSettings:\Keyword:\$Keyword:(?<EmptyKeyword>)");
         }
 
         ///
@@ -1400,79 +1466,6 @@ namespace m0.ZeroCode
             }
         }
 
-        private IVertex ProcessTextPart(IVertex baseVertex, int begLine, int endLine)
-        {
-            ParsingStack stack = new ParsingStack(this, begLine, endLine);
-
-            ParseLine(stack);
-
-            Process_reccurent(stack, baseVertex);
-
-            AddNewLines(stack);
-
-            return null;
-        }
-
-        public IVertex Process(IVertex _baseVertex, string _text)
-        {
-            baseVertex = _baseVertex;
-
-            text = _text + "\r\n"; // for regexpes
-
-            prepareLineInfoList();
-
-            prepareImportList();
-
-
-            ProcessTextPart(_baseVertex, 0, lineInfoList.Count - 1);
-
-
-            return null;
-        }
-
-        void Process_reccurent(ParsingStack s, IVertex _baseVertex)
-        {
-            IVertex prevVertex = ProcessLine(s, _baseVertex);
-
-            while (ParseLine(s))
-            {
-                if (s.parseRecurrentReturnNo > 0)
-                {
-                    s.parseRecurrentReturnNo--;
-                    s.skipParse = true;
-                    return;
-                }
-
-                int thisTabCount = s.getThisTabCount();
-                int prevTabCount = s.getPrevTabCount();
-
-                if (s.parseRecurrentReturnNo == 0)
-                {
-                    s.parseRecurrentReturnNo = -1;
-                    prevTabCount = thisTabCount - 1; // need to simulate
-                }
-
-                if (thisTabCount > prevTabCount)
-                {
-                    Process_reccurent(s, prevVertex);
-
-                    continue;
-                }
-
-                if (thisTabCount == prevTabCount)
-                    prevVertex = ProcessLine(s, _baseVertex);
-
-                if (thisTabCount < prevTabCount)
-                {
-                    s.skipParse = true;
-
-                    s.parseRecurrentReturnNo = prevTabCount - thisTabCount;
-
-                    return;
-                }
-            }
-        }
-
         void AddNewLines(ParsingStack s)
         {
             if (s.newLineCount != 0)
@@ -1510,7 +1503,9 @@ namespace m0.ZeroCode
 
             while (shallProcess)
             {
-                if (TryIsKeyword(s, s.currentLineNoTabs))
+                List<keywordTryingData> examinedKeywords = TryIfIsKeywordLine(s);
+
+                if (examinedKeywords != null)
                 {
                     if (examinedKeywords.Count > 1)
                     {
@@ -1582,6 +1577,88 @@ namespace m0.ZeroCode
             }
 
             return null;
+        }
+
+        void Process_reccurent(ParsingStack s, IVertex _baseVertex)
+        {
+            IVertex prevVertex = ProcessLine(s, _baseVertex);
+
+            while (ParseLine(s))
+            {
+                if (s.parseRecurrentReturnNo > 0)
+                {
+                    s.parseRecurrentReturnNo--;
+                    s.skipParse = true;
+                    return;
+                }
+
+                int thisTabCount = s.getThisTabCount();
+                int prevTabCount = s.getPrevTabCount();
+
+                if (s.parseRecurrentReturnNo == 0)
+                {
+                    s.parseRecurrentReturnNo = -1;
+                    prevTabCount = thisTabCount - 1; // need to simulate
+                }
+
+                if (thisTabCount > prevTabCount)
+                {
+                    Process_reccurent(s, prevVertex);
+
+                    continue;
+                }
+
+                if (thisTabCount == prevTabCount)
+                    prevVertex = ProcessLine(s, _baseVertex);
+
+                if (thisTabCount < prevTabCount)
+                {
+                    s.skipParse = true;
+
+                    s.parseRecurrentReturnNo = prevTabCount - thisTabCount;
+
+                    return;
+                }
+            }
+        }
+
+        private IVertex ProcessTextPart(IVertex baseVertex, int begLine, int endLine)
+        {
+            ParsingStack stack = new ParsingStack(this, begLine, endLine);
+
+            ParseLine(stack);
+
+            Process_reccurent(stack, baseVertex);
+
+            AddNewLines(stack);
+
+            return null;
+        }
+
+        public IVertex Process(IVertex _baseVertex, string _text)
+        {
+            baseVertex = _baseVertex;
+
+            text = _text + "\r\n"; // for regexpes
+
+            prepareLineInfoList();
+
+            prepareImportList();
+
+
+            ProcessTextPart(_baseVertex, 0, lineInfoList.Count - 1);
+
+
+            return null;
+        }
+
+        public String2ZeroCodeGraphProcessing()
+        {
+            setupHelpVariables();
+
+            PrepareDictionaries();
+
+            emptyKeywordVertex = MinusZero.Instance.Root.Get(@"User\CurrentUser:\CodeSettings:\Keyword:\$Keyword:(?<EmptyKeyword>)");
         }
     }
 }
