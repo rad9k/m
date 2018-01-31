@@ -648,6 +648,8 @@ namespace m0.ZeroCode
 
             int sPos = startPos;
 
+            int try_sPos = 0;
+
             if (sPos == endPos)
                 return;
 
@@ -689,6 +691,8 @@ namespace m0.ZeroCode
                     tryEmptyKeyword = foundString;
 
                     sPos++; // hmmm ????
+
+                    try_sPos = sPos;
                 }
 
 
@@ -705,19 +709,7 @@ namespace m0.ZeroCode
 
                         //
 
-                        List<keywordTryingData> _examinedKeywords = new List<keywordTryingData>();
-
-                        string _newVertex;
-                        string _link;
-
-                        int _tryPos = 0;
-
-                        _tryIsKeyword(s, LOGPREFIX + "    ", sPos - 1, -1, 0, text.Length - 1, text.Length - 1, out _examinedKeywords, out _newVertex, out _link, true, ref _tryPos, true);
-                        
-                        if(_examinedKeywords.Count > 0)
-                        {
-                            ktd.LocalRootNext = _examinedKeywords[0];
-                        }
+                        newPos = _tryIsNextLocalRootKeyword(s, LOGPREFIX, newPos, sPos, ktd);
 
                         //
 
@@ -1018,6 +1010,13 @@ namespace m0.ZeroCode
                 if (tryEmptyKeyword != null)
                 {
                     keywordTryingData ktd = createEmptyKeyword(s, tryEmptyKeyword, tryNewPos - 1);
+
+                    //
+
+                    newPos = _tryIsNextLocalRootKeyword(s, LOGPREFIX, newPos, try_sPos, ktd);
+
+                    //
+
                     examinedKeywords.Add(ktd);
                 }
 
@@ -1028,6 +1027,27 @@ namespace m0.ZeroCode
             MinusZero.Instance.Log(1, "_tryIsKeyword", LOGPREFIX+"END newVertex:" +newVertex+" link:"+link+" keywordsCount:"+examinedKeywords.Count);
 
             log_keywords(examinedKeywords, 0, LOGPREFIX);
+        }
+
+        private int _tryIsNextLocalRootKeyword(ParsingStack s, string LOGPREFIX, int newPos, int sPos, keywordTryingData ktd)
+        {
+            List<keywordTryingData> _examinedKeywords = new List<keywordTryingData>();
+
+            string _newVertex;
+            string _link;
+
+            int _tryPos = 0;
+
+            _tryIsKeyword(s, LOGPREFIX + "    ", sPos - 1, -1, 0, text.Length - 1, text.Length - 1, out _examinedKeywords, out _newVertex, out _link, true, ref _tryPos, true);
+
+            if (_examinedKeywords.Count > 0)
+            {
+                ktd.LocalRootNext = _examinedKeywords[0];
+
+                newPos = _tryPos;
+            }
+
+            return newPos;
         }
 
         private bool testIfIsKeyword_noStartingWithParameter(int startPos)
@@ -1101,11 +1121,6 @@ namespace m0.ZeroCode
 
         IVertex AddKeywordVertex(ParsingStack s, IVertex parent, keywordTryingData ktd)
         {
-            if (ktd.LocalRootNext != null)
-            {
-                int x = 0;
-            }
-
             DoesContainLocalRoot(s, ktd.keywordVertex);
 
             return _AddKeywordVertex(s, parent,ktd,ktd.keywordVertex,null,0);
@@ -1127,7 +1142,7 @@ namespace m0.ZeroCode
                 int x = 0;
             }
 
-            if (edgeForMeta.To.Get("$StartInLocalRoot:") != null && ktd.LocalRootNext != null)
+            if (edgeForMeta.To.Get("$LocalRoot:") != null && ktd.LocalRootNext != null)
                 _AddKeywordVertex(s, nv,ktd.LocalRootNext,ktd.LocalRootNext.keywordVertex,null,0);
 
           //  if (edgeForMeta.To.Get("$LocalRoot:") != null)
