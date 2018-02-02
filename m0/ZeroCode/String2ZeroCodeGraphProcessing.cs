@@ -659,8 +659,8 @@ namespace m0.ZeroCode
 
             string xx = "";
 
-            for (int x = startPos; x <= endPos; x++)
-                xx += " "+x+":"+text[x];
+            //for (int x = startPos; x <= endPos; x++)
+                //xx += " "+x+":"+text[x];
 
             MinusZero.Instance.Log(1, "_tryIsKeyword", LOGPREFIX+"BEG startPos:" + startPos + " prevSpos:"+prev_startPos+" same:"+isPrevStartPosSameAsStartPos+" endPos:" + endPos+" "+xx);
 
@@ -722,6 +722,8 @@ namespace m0.ZeroCode
 
                     link = tryLink;
 
+                    newPos = sPos;
+
                     if (tryEmptyKeyword != null)
                     {
                         keywordTryingData ktd = createEmptyKeyword(s, tryEmptyKeyword, sPos - 1);
@@ -734,9 +736,7 @@ namespace m0.ZeroCode
 
                         examinedKeywords.Add(ktd);
                     }
-
-                    newPos = sPos;
-
+                    
                     MinusZero.Instance.Log(1, "_tryIsKeyword", LOGPREFIX + "RETURN:" + tryEmptyKeyword + " newPos:" + newPos);
 
                     return;
@@ -854,6 +854,10 @@ namespace m0.ZeroCode
                 foreach (keywordTryingData ktd in examinedKeywords)
                     if (ktd.state == keywordTryingState.parameter)
                     {
+                        if (ktd.currentlyProcessedParameterName == "left")
+                        {
+                            int x = 0;
+                        }
                         object foundParameter = null;
 
                         int _waitingUntilPositionInText=0;
@@ -1030,7 +1034,7 @@ namespace m0.ZeroCode
 
                 if(  ktd.matchedOnPositionInText <= s.currentLineInfo.lineEnd 
                     && isLocalRootKeyword(ktd))
-                    newPos = _tryIsNextLocalRootKeyword(s, LOGPREFIX, newPos, ktd.matchedOnPositionInText + 1, ktd);
+                    sPos = _tryIsNextLocalRootKeyword(s, LOGPREFIX, sPos, ktd.matchedOnPositionInText + 1, ktd);
 
                 //
 
@@ -1045,6 +1049,8 @@ namespace m0.ZeroCode
                 newVertex = tryNewVertex;
                 link = tryLink;
 
+                newPos = tryNewPos;
+
                 if (tryEmptyKeyword != null)
                 {
                     keywordTryingData ktd = createEmptyKeyword(s, tryEmptyKeyword, tryNewPos - 1);
@@ -1057,8 +1063,6 @@ namespace m0.ZeroCode
 
                     examinedKeywords.Add(ktd);
                 }
-
-                newPos = tryNewPos;
             }else
                 newPos = sPos;
 
@@ -1329,8 +1333,6 @@ namespace m0.ZeroCode
 
                 string keywordString = keyword.To.Value.ToString();
 
-                char firstCharacter;
-
                 if (keywordString.Length > 0)
                 {
                     // allKeywordsDictionary_onlyFirstSubstring
@@ -1562,8 +1564,8 @@ namespace m0.ZeroCode
             IVertex toReturnVertex = null;
             s.LocalRoot = null;
 
-            while (shallProcess)
-            {
+            //while (shallProcess)
+            //{
                 List<keywordTryingData> examinedKeywords = TryIfIsKeywordLine(s);
 
                 if (examinedKeywords != null)
@@ -1575,20 +1577,22 @@ namespace m0.ZeroCode
 
                     keywordTryingData chosenKeyword = examinedKeywords[0];
 
-                    int posAfterMatch = chosenKeyword.getMatchedOnPositionInText_Reccurent();
+                    return AddKeywordVertex(s, _baseVertex, chosenKeyword);
 
-                    if (toReturnVertex == null)
-                        toReturnVertex = AddKeywordVertex(s, _baseVertex, chosenKeyword);
-                    else
-                        AddKeywordVertex(s, _baseVertex, chosenKeyword);
+                /*      int posAfterMatch = chosenKeyword.getMatchedOnPositionInText_Reccurent();
 
-                    if (posAfterMatch >= text.Length || text[posAfterMatch] == '\r')
-                    {
-                        return toReturnVertex;
-                    }
+                      if (toReturnVertex == null)
+                          toReturnVertex = AddKeywordVertex(s, _baseVertex, chosenKeyword);
+                      else
+                          AddKeywordVertex(s, _baseVertex, chosenKeyword);
 
-                    s.currentLineInfo.lineBeg = posAfterMatch;
-                }
+                      if (posAfterMatch >= text.Length || text[posAfterMatch] == '\r')
+                      {
+                          return toReturnVertex;
+                      }
+
+                      s.currentLineInfo.lineBeg = posAfterMatch;*/
+            }
                 else
                 {
                     if (s.currentLineNoTabs.Length == 0)
@@ -1636,7 +1640,7 @@ namespace m0.ZeroCode
                         //return AddVertex(_baseVertex, null, "SYNTAX ERROR");
                     }
                 }
-            }
+            //}
 
             return null;
         }

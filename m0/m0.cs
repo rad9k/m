@@ -492,11 +492,11 @@ namespace m0
             IVertex smuk = smu.AddVertex(null, "Keyword");
 
             IVertex any = smuk.AddVertex(null, "(?<ANY>)");
-            
+            /*
             // import meta
             //
             // import meta (?<name>) (?<link>)
-            /*
+            
             IVertex importMeta = smuk.AddVertex(keyword, "import meta (?<name>) (?<link>)");
 
             IVertex importMeta_name=importMeta.AddVertex(smb.Get(@"$ImportMeta"), "(?<name>)");
@@ -533,7 +533,7 @@ namespace m0
 
             IVertex importDirectMeta_link = importDirectMeta.AddVertex(smb.Get(@"$DirectMeta"), "(?<link>)");
                         
-            */
+            
             // comment
             //
             // # (?<text>)
@@ -541,7 +541,7 @@ namespace m0
             IVertex comment = smuk.AddVertex(keyword, "# (?<text>)");
 
             comment.AddVertex(smb.Get(@"Vertex\$Description"), "(?<text>)");
-            /*
+            
             
             // attribute
             //
@@ -565,7 +565,7 @@ namespace m0
             attribute3_attribute.AddEdge(isAggregation, empty);
 
             attribute3_attribute.AddEdge(_is, smu.Get(@"Class\Attribute"));
-
+            
             // attribute
             //
             // attribute (?<name>) (?<type>) (?<MinCardinality>):(?<MaxCardinality>) 
@@ -584,7 +584,7 @@ namespace m0
             attribute4_attribute.AddEdge(isAggregation, empty);
 
             attribute4_attribute.AddEdge(_is, smu.Get(@"Class\Attribute"));
-
+            
             
             // attribute
             //
@@ -732,7 +732,7 @@ namespace m0
             whwh.AddEdge(smb.Get(@"Vertex\$Is"), smu.Get("While"));
 
             whwh.AddVertex(smu.Get(@"While\Test"), "(?<test>)");
-            */
+            
             // +
             //
             // (?<left>) + (?<right>)
@@ -748,7 +748,7 @@ namespace m0
             o_plus_any.AddVertex(smu.Get(@"DoubleOperator\LeftExpression"), "(?<left>)");
 
             o_plus_any.AddVertex(smu.Get(@"DoubleOperator\RightExpression"), "(?<right>)");
-            /*
+            
             // -
             //
             // (?<left>) - (?<right>)
