@@ -402,6 +402,14 @@ namespace m0.ZeroCode
                 state = keywordTryingState.keywordCharacter; // that and rest of the fields will be updated in the _tryKeyword
             }
 
+            public int getMatchedOnPositionInText_Reccurent()
+            {
+                if (LocalRootNext == null)
+                    return this.matchedOnPositionInText;
+
+                return LocalRootNext.getMatchedOnPositionInText_Reccurent();
+            }
+
             public bool currentPositionInKeyword_isParameterMatch(char v)
             {
                 if(ZeroCodeUtil.tryStringMatch(keyword, currentPositionInKeyword, "(*(+")
@@ -623,6 +631,22 @@ namespace m0.ZeroCode
 
         void _tryIsKeyword(ParsingStack s, string LOGPREFIX, int startPos, int prev_startPos, int isPrevStartPosSameAsStartPosParentCount, int endPos, int endPos_forAtomParts, out List<keywordTryingData> examinedKeywords, out string newVertex, out string link, bool isTopLevelCall, ref int newPos, bool lookForLocalRootOnly)
         {
+            examinedKeywords = new List<keywordTryingData>();
+
+            newVertex = null;
+
+            link = null;
+
+            //
+
+            if (text[startPos] == '\r' || text[startPos] == '\n')
+                return;
+
+            if (startPos == endPos_forAtomParts)
+                return;
+
+            //
+
             bool isPrevStartPosSameAsStartPos = false;
 
             int isPrevStartPosSameAsStartPosThisCount = isPrevStartPosSameAsStartPosParentCount;
@@ -635,16 +659,11 @@ namespace m0.ZeroCode
 
             string xx = "";
 
-            //for (int x = startPos; x <= endPos; x++)
-            //    xx += " "+x+":"+text[x];
+            for (int x = startPos; x <= endPos; x++)
+                xx += " "+x+":"+text[x];
 
             MinusZero.Instance.Log(1, "_tryIsKeyword", LOGPREFIX+"BEG startPos:" + startPos + " prevSpos:"+prev_startPos+" same:"+isPrevStartPosSameAsStartPos+" endPos:" + endPos+" "+xx);
 
-            examinedKeywords = new List<keywordTryingData>();            
-
-            newVertex = null;
-
-            link = null;
 
             int sPos = startPos;
 
@@ -1009,7 +1028,7 @@ namespace m0.ZeroCode
 
                 keywordTryingData ktd = examinedKeywords[0]; // ASSUMPTION
 
-                if(  ktd.matchedOnPositionInText < s.currentLineInfo.lineEnd 
+                if(  ktd.matchedOnPositionInText <= s.currentLineInfo.lineEnd 
                     && isLocalRootKeyword(ktd))
                     newPos = _tryIsNextLocalRootKeyword(s, LOGPREFIX, newPos, ktd.matchedOnPositionInText + 1, ktd);
 
@@ -1070,8 +1089,6 @@ namespace m0.ZeroCode
             if (_examinedKeywords.Count > 0)
             {
                 ktd.LocalRootNext = _examinedKeywords[0];
-
-                ktd.matchedOnPositionInText = ktd.LocalRootNext.matchedOnPositionInText;
 
                 newPos = _tryPos;
             }
@@ -1557,7 +1574,8 @@ namespace m0.ZeroCode
                     }
 
                     keywordTryingData chosenKeyword = examinedKeywords[0];
-                    int posAfterMatch = chosenKeyword.matchedOnPositionInText;
+
+                    int posAfterMatch = chosenKeyword.getMatchedOnPositionInText_Reccurent();
 
                     if (toReturnVertex == null)
                         toReturnVertex = AddKeywordVertex(s, _baseVertex, chosenKeyword);

@@ -496,7 +496,7 @@ namespace m0
             // import meta
             //
             // import meta (?<name>) (?<link>)
-            
+            /*
             IVertex importMeta = smuk.AddVertex(keyword, "import meta (?<name>) (?<link>)");
 
             IVertex importMeta_name=importMeta.AddVertex(smb.Get(@"$ImportMeta"), "(?<name>)");
@@ -533,7 +533,7 @@ namespace m0
 
             IVertex importDirectMeta_link = importDirectMeta.AddVertex(smb.Get(@"$DirectMeta"), "(?<link>)");
                         
-
+            */
             // comment
             //
             // # (?<text>)
@@ -541,7 +541,7 @@ namespace m0
             IVertex comment = smuk.AddVertex(keyword, "# (?<text>)");
 
             comment.AddVertex(smb.Get(@"Vertex\$Description"), "(?<text>)");
-
+            /*
             
             // attribute
             //
@@ -732,7 +732,7 @@ namespace m0
             whwh.AddEdge(smb.Get(@"Vertex\$Is"), smu.Get("While"));
 
             whwh.AddVertex(smu.Get(@"While\Test"), "(?<test>)");
-            
+            */
             // +
             //
             // (?<left>) + (?<right>)
@@ -748,7 +748,7 @@ namespace m0
             o_plus_any.AddVertex(smu.Get(@"DoubleOperator\LeftExpression"), "(?<left>)");
 
             o_plus_any.AddVertex(smu.Get(@"DoubleOperator\RightExpression"), "(?<right>)");
-            
+            /*
             // -
             //
             // (?<left>) - (?<right>)
@@ -824,7 +824,7 @@ namespace m0
             o_par_any.AddEdge(smb.Get(@"Vertex\$Is"), smu.Get("()"));
 
             o_par_any.AddVertex(smu.Get(@"SingleOperator\TargetExpression"), "(?<expr>)");
-            
+            */
             // \
             //
             // \
@@ -2704,7 +2704,7 @@ namespace m0
 
         public bool DoLog=true;
 
-        public int LogLevel=0;
+        public int LogLevel=1;
 
         private void InitializeLog()
         {
