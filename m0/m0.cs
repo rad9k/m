@@ -492,7 +492,7 @@ namespace m0
             IVertex smuk = smu.AddVertex(null, "Keyword");
 
             IVertex any = smuk.AddVertex(null, "(?<ANY>)");
-            /*
+            
             // import meta
             //
             // import meta (?<name>) (?<link>)
@@ -824,7 +824,7 @@ namespace m0
             o_par_any.AddEdge(smb.Get(@"Vertex\$Is"), smu.Get("()"));
 
             o_par_any.AddVertex(smu.Get(@"SingleOperator\TargetExpression"), "(?<expr>)");
-            */
+            
             // \
             //
             // \

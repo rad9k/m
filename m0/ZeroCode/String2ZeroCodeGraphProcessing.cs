@@ -846,29 +846,31 @@ namespace m0.ZeroCode
 
                 // store found keyword parameters
 
-                Dictionary<string, object> foundParameters = new Dictionary<string, object>();
+                //  Dictionary<string, object> foundParameters = new Dictionary<string, object>();
 
-                Dictionary<string, int> foundParameters_waitingUntilPositionInText = new Dictionary<string, int>();
+                //Dictionary<string, int> foundParameters_waitingUntilPositionInText = new Dictionary<string, int>();
+
+                object memory_foundParameter = null;
+                int memory_foundParameter_waitingUntilPositionInText = 0;
 
                 // check if anything fits info keyword parameters
                 foreach (keywordTryingData ktd in examinedKeywords)
                     if (ktd.state == keywordTryingState.parameter)
                     {
-                        if (ktd.currentlyProcessedParameterName == "left")
-                        {
-                            int x = 0;
-                        }
                         object foundParameter = null;
 
                         int _waitingUntilPositionInText=0;
 
                         bool allreadyAdded = false;
 
-                        if (foundParameters.ContainsKey(ktd.afterParameterString))
+                    //    if (foundParameters.ContainsKey(ktd.afterParameterString))
+                    if(memory_foundParameter!=null)
                         {
                             allreadyAdded = true;
-                            foundParameter = foundParameters[ktd.afterParameterString];
-                            _waitingUntilPositionInText = foundParameters_waitingUntilPositionInText[ktd.afterParameterString];
+                            //foundParameter = foundParameters[ktd.afterParameterString];
+                            //_waitingUntilPositionInText = foundParameters_waitingUntilPositionInText[ktd.afterParameterString];
+                            foundParameter = memory_foundParameter;
+                            _waitingUntilPositionInText = memory_foundParameter_waitingUntilPositionInText;
                         }
                         else // THIS MIGHT NOT WORK GOOD NOW. TO BE CHECKED / CORRECTED
                         {
@@ -940,11 +942,13 @@ namespace m0.ZeroCode
                         {
                             if (!allreadyAdded)
                             {
-                                foundParameters.Add(ktd.afterParameterString, foundParameter);
-                                foundParameters_waitingUntilPositionInText.Add(ktd.afterParameterString, ktd.waitingUntilPositionInText);
+                                //foundParameters.Add(ktd.afterParameterString, foundParameter);
+                                //foundParameters_waitingUntilPositionInText.Add(ktd.afterParameterString, ktd.waitingUntilPositionInText);
+                                memory_foundParameter = foundParameter;
+                                memory_foundParameter_waitingUntilPositionInText = ktd.waitingUntilPositionInText;
                             }
                             else
-                                ktd.waitingUntilPositionInText = _waitingUntilPositionInText; // TURNED OFF NOW
+                                ktd.waitingUntilPositionInText = _waitingUntilPositionInText;
 
                             ktd.AddParameter(ktd.currentlyProcessedParameterName, foundParameter);
 
@@ -1030,6 +1034,11 @@ namespace m0.ZeroCode
 
                 //
 
+                if(examinedKeywords.Count > 1)
+                {
+                    int x = 0;
+                }
+
                 keywordTryingData ktd = examinedKeywords[0]; // ASSUMPTION
 
                 if(  ktd.matchedOnPositionInText <= s.currentLineInfo.lineEnd 
@@ -1093,6 +1102,11 @@ namespace m0.ZeroCode
             if (_examinedKeywords.Count > 0)
             {
                 ktd.LocalRootNext = _examinedKeywords[0];
+
+                if(_examinedKeywords.Count > 1)
+                {
+                    int x = 0;
+                }
 
                 newPos = _tryPos;
             }
@@ -1616,10 +1630,7 @@ namespace m0.ZeroCode
                         if (afterColon[0] == ZeroCodeCommon.NewVertexPrefix) // if is new value
                             return AddVertex(s, _baseVertex, null, ZeroCodeCommon.stringFromNewVertexString(afterColon));
 
-                        //if (afterColon[0] == ZeroCodeCommon.CodeGraphLinkPrefix)
                         return AddEdge(s, _baseVertex, null, processLink(ZeroCodeCommon.stringFromLinkString(afterColon, true))).To;
-
-                        //return AddVertex(_baseVertex, null, "SYNTAX ERROR");
                     }
                     else
                     {
@@ -1631,13 +1642,8 @@ namespace m0.ZeroCode
 
                         if (afterColon[0] == ZeroCodeCommon.NewVertexPrefix) // if is new value
                             return AddVertex(s, _baseVertex, meta, ZeroCodeCommon.stringFromNewVertexString(afterColon));
-                        //else
-                        //  return AddEdge(_baseVertex, meta, processLink(afterColon)).To;
 
-                        //if (afterColon[0] == ZeroCodeCommon.CodeGraphLinkPrefix)
                         return AddEdge(s, _baseVertex, meta, processLink(ZeroCodeCommon.stringFromLinkString(afterColon, true))).To;
-
-                        //return AddVertex(_baseVertex, null, "SYNTAX ERROR");
                     }
                 }
             //}
