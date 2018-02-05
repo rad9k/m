@@ -699,8 +699,7 @@ namespace m0.ZeroCode
 
                 string foundString = text.Substring(startPos, sPos - startPos);
 
-                if (!isTopLevelCall
-                    && ZeroCodeCommon.isNewVertexString(foundString))
+                if (ZeroCodeCommon.isNewVertexString(foundString))
                     tryNewVertex = ZeroCodeCommon.stringFromNewVertexString(foundString);
                 else if (!isTopLevelCall
                     && ZeroCodeCommon.isLinkString(foundString))
