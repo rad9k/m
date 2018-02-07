@@ -78,6 +78,9 @@ namespace m0
 
         public bool IsGUIDragging { get; set; }
 
+        //
+
+        public IVertex newValueKeywordVertex;
 
         public IVertex CreateTempVertex()
         {
@@ -857,12 +860,24 @@ namespace m0
 
             o_path_any_targetExpr.AddVertex(smb.Get("$LocalRoot"), "");
 
+            // ""
+            //
+            // "\"(?<value>)\""
+
+            IVertex newValueKeyword = smuk.AddVertex(keyword, "\"(?<value>)\"");
+
+            newValueKeywordVertex = newValueKeyword;
+
+            IVertex newValueKeyword_any = newValueKeyword.AddVertex(any, "(?<value>)");
+
+            newValueKeyword_any.AddVertex(smb.Get("$LocalRoot"), "");
+
 
             // E M P T Y :) K E Y W O R D
             //
             //
 
-            IVertex emptyKeyword = smuk.AddVertex(keyword, "(?<EmptyKeyword>)");
+            IVertex emptyKeyword = smuk.AddVertex(keyword, "(?<value>)");
 
             IVertex emptyKeyword_any = emptyKeyword.AddVertex(any, "");
 
@@ -870,7 +885,7 @@ namespace m0
 
             emptyKeyword_any.AddEdge(smb.Get(@"Vertex\$Is"), smu.Get("Query"));
 
-            IVertex emptyKeyword_any_targetExpr=emptyKeyword_any.AddVertex(smu.Get(@"SingleOperator\TargetExpression"), "(?<EmptyKeyword>)");
+            IVertex emptyKeyword_any_targetExpr=emptyKeyword_any.AddVertex(smu.Get(@"SingleOperator\TargetExpression"), "(?<value>)");
 
             emptyKeyword_any_targetExpr.AddVertex(smb.Get("$LocalRoot"), "");
 

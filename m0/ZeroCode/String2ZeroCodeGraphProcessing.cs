@@ -58,10 +58,12 @@ namespace m0.ZeroCode
 
         List<keywordTryingData> examinedKeywords_All; // all keywords are here
         List<keywordTryingData> examinedKeywords_LocalRootOnly; // all keywords are here
-        Dictionary<char, List<string>> allKeywordsSubstringsDictionary_onlyFirstSubstring;
         Dictionary<char, List<string>> allKeywordsSubstringsDictionary;
 
+        // special keywords
+
         IVertex emptyKeywordVertex;
+        IVertex newValueKeywordVertex;
 
         // PROCESS dependent
 
@@ -594,12 +596,11 @@ namespace m0.ZeroCode
             if (!ZeroCodeUtil.tryStringMatch(s.currentLineNoTabs, 0, ZeroCodeCommon.CodeGraphVertexPrefix) 
                 || !ZeroCodeUtil.tryStringEndMatch(s.currentLineNoTabs, ZeroCodeCommon.CodeGraphVertexSuffix))
             {
-                string newVertex;
                 string link;
 
                 int tryPos = 0; 
 
-                _tryIsKeyword(s, "", s.currentLineInfo.lineBeg, -1, 0, text.Length - 1, text.Length - 1, out examinedKeywords, out newVertex, out link, true, ref tryPos, false);
+                _tryIsKeyword(s, "", s.currentLineInfo.lineBeg, -1, 0, text.Length - 1, text.Length - 1, out examinedKeywords, out link, true, ref tryPos, false);
 
                 if (examinedKeywords.Count() > 0)
                     return examinedKeywords;                
@@ -610,30 +611,43 @@ namespace m0.ZeroCode
                 return null;
         }
 
-        keywordTryingData createEmptyKeyword(ParsingStack s, string value, int matchedOnPositionInText)
+        enum SpecialKeywordType { EmptyKeyword, NewVertexKeyword}
+
+        keywordTryingData createSpecialKeyword(ParsingStack s, string value, int matchedOnPositionInText, SpecialKeywordType type)
         {
             if (value == null || value == "")
             {
                 int x = 0; // WTF???
             }
 
-            keywordTryingData ktd = new keywordTryingData(emptyKeywordVertex, this);
+            IVertex toUseVertex=null;
+
+            switch (type)
+            {
+                case SpecialKeywordType.EmptyKeyword:
+                    toUseVertex = emptyKeywordVertex;
+                    break;
+
+                case SpecialKeywordType.NewVertexKeyword:
+                    toUseVertex = newValueKeywordVertex;
+                    break;
+            }
+
+            keywordTryingData ktd = new keywordTryingData(toUseVertex, this);
 
             ktd.matchedOnPositionInText = matchedOnPositionInText;
 
             List<object> l = new List<object>();
             l.Add(value);
 
-            ktd.parameters.Add("EmptyKeyword", l);
+            ktd.parameters.Add("value", l);
 
             return ktd;
         }
 
-        void _tryIsKeyword(ParsingStack s, string LOGPREFIX, int startPos, int prev_startPos, int isPrevStartPosSameAsStartPosParentCount, int endPos, int endPos_forAtomParts, out List<keywordTryingData> examinedKeywords, out string newVertex, out string link, bool isTopLevelCall, ref int newPos, bool lookForLocalRootOnly)
+        void _tryIsKeyword(ParsingStack s, string LOGPREFIX, int startPos, int prev_startPos, int isPrevStartPosSameAsStartPosParentCount, int endPos, int endPos_forAtomParts, out List<keywordTryingData> examinedKeywords, out string link, bool isTopLevelCall, ref int newPos, bool lookForLocalRootOnly)
         {
             examinedKeywords = new List<keywordTryingData>();
-
-            newVertex = null;
 
             link = null;
 
@@ -675,9 +689,12 @@ namespace m0.ZeroCode
             bool shallProceed = true;
 
             int tryNewPos = 0;
-            string tryNewVertex = null;
             string tryLink = null;
             string tryEmptyKeyword = null;
+
+            //
+
+            SpecialKeywordType specialType = SpecialKeywordType.NewVertexKeyword; // got to intialize
 
             //
 
@@ -700,13 +717,23 @@ namespace m0.ZeroCode
                 string foundString = text.Substring(startPos, sPos - startPos);
 
                 if (ZeroCodeCommon.isNewVertexString(foundString))
-                    tryNewVertex = ZeroCodeCommon.stringFromNewVertexString(foundString);
+                {
+                    tryEmptyKeyword = ZeroCodeCommon.stringFromNewVertexString(foundString);
+
+                    specialType = SpecialKeywordType.NewVertexKeyword;
+
+                    sPos++; // hmmm ????
+
+                    try_sPos = sPos;
+                }
                 else if (!isTopLevelCall
                     && ZeroCodeCommon.isLinkString(foundString))
                     tryLink = ZeroCodeCommon.stringFromLinkString(foundString, false);
                 else
                 {
                     tryEmptyKeyword = foundString;
+
+                    specialType = SpecialKeywordType.EmptyKeyword;
 
                     sPos++; // hmmm ????
 
@@ -717,15 +744,13 @@ namespace m0.ZeroCode
                 if ( //(tryEmptyKeyword != null || lookForLocalRootOnly==false) &&
                      ( sPos == endPos_forAtomParts || isPrevStartPosSameAsStartPos) )
                 {
-                    newVertex = tryNewVertex;
-
                     link = tryLink;
 
                     newPos = sPos;
 
                     if (tryEmptyKeyword != null)
                     {
-                        keywordTryingData ktd = createEmptyKeyword(s, tryEmptyKeyword, sPos - 1);
+                        keywordTryingData ktd = createSpecialKeyword(s, tryEmptyKeyword, sPos - 1, specialType);
 
                         //
 
@@ -897,21 +922,12 @@ namespace m0.ZeroCode
                             if (isTryKeyword_endPos != -1)
                             {
                                 List<keywordTryingData> foundKeywords = null;
-                                string foundNewVertex = null;
                                 string foundLink = null;
                                 int _newPos = 0;
 
                                 MinusZero.Instance.Log(1, LOGPREFIX+"_tryIsKeyword", "will run _tryIs for:"+ ktd.currentlyProcessedParameterName);
 
-                                _tryIsKeyword(s, LOGPREFIX+"    ",sPos, startPos, isPrevStartPosSameAsStartPosThisCount, endPos, isTryKeyword_endPos, out foundKeywords, out foundNewVertex, out foundLink, false, ref _newPos, false);
-
-                                if (foundNewVertex != null)
-                                {
-                                    ktd.waitingUntilPositionInText = _newPos;
-                                    foundParameter = foundNewVertex;
-
-                                    MinusZero.Instance.Log(1, "_tryIsKeyword", LOGPREFIX + "FOUND PARAMETER VERTEX:" + foundParameter.ToString() + " waitUntil:" + ktd.waitingUntilPositionInText);
-                                }
+                                _tryIsKeyword(s, LOGPREFIX+"    ",sPos, startPos, isPrevStartPosSameAsStartPosThisCount, endPos, isTryKeyword_endPos, out foundKeywords, out foundLink, false, ref _newPos, false);
 
                                 if (foundLink != null)
                                 {
@@ -1054,14 +1070,13 @@ namespace m0.ZeroCode
 
             if (examinedKeywords.Count == 0)
             {
-                newVertex = tryNewVertex;
                 link = tryLink;
 
                 newPos = tryNewPos;
 
                 if (tryEmptyKeyword != null)
                 {
-                    keywordTryingData ktd = createEmptyKeyword(s, tryEmptyKeyword, tryNewPos - 1);
+                    keywordTryingData ktd = createSpecialKeyword(s, tryEmptyKeyword, tryNewPos - 1,  specialType);
 
                     //
 
@@ -1074,7 +1089,7 @@ namespace m0.ZeroCode
             }else
                 newPos = sPos;
 
-            MinusZero.Instance.Log(1, "_tryIsKeyword", LOGPREFIX+"END newVertex:" +newVertex+" link:"+link+" keywordsCount:"+examinedKeywords.Count);
+            MinusZero.Instance.Log(1, "_tryIsKeyword", LOGPREFIX+"END link:"+link+" keywordsCount:"+examinedKeywords.Count);
 
             log_keywords(examinedKeywords, 0, LOGPREFIX);
         }
@@ -1091,12 +1106,11 @@ namespace m0.ZeroCode
         {
             List<keywordTryingData> _examinedKeywords = new List<keywordTryingData>();
 
-            string _newVertex;
             string _link;
 
             int _tryPos = 0;
 
-            _tryIsKeyword(s, LOGPREFIX + "    ", sPos - 1, -1, 0, text.Length - 1, text.Length - 1, out _examinedKeywords, out _newVertex, out _link, true, ref _tryPos, true);
+            _tryIsKeyword(s, LOGPREFIX + "    ", sPos - 1, -1, 0, text.Length - 1, text.Length - 1, out _examinedKeywords, out _link, true, ref _tryPos, true);
 
             if (_examinedKeywords.Count > 0)
             {
@@ -1320,13 +1334,12 @@ namespace m0.ZeroCode
 
             examinedKeywords_LocalRootOnly = new List<keywordTryingData>();
 
-            allKeywordsSubstringsDictionary_onlyFirstSubstring = new Dictionary<char, List<string>>();
-
             allKeywordsSubstringsDictionary = new Dictionary<char, List<string>>();
 
             foreach (IEdge keyword in MinusZero.Instance.Root.GetAll(@"User\CurrentUser:\CodeSettings:\Keyword:\$Keyword:"))
             {
-                if (GeneralUtil.CompareStrings("(?<EmptyKeyword>)", keyword.To.Value))
+                if (GeneralUtil.CompareStrings("(?<value>)", keyword.To.Value)
+                    || GeneralUtil.CompareStrings("\"(?<value>)\"", keyword.To.Value))
                     continue;
 
                 // examinedKeywords_All
@@ -1347,32 +1360,12 @@ namespace m0.ZeroCode
                 string keywordString = keyword.To.Value.ToString();
 
                 if (keywordString.Length > 0)
-                {
-                    // allKeywordsDictionary_onlyFirstSubstring
-
-                    if (!beginsWithParameter(keywordString))
-                        addSubString(allKeywordsSubstringsDictionary_onlyFirstSubstring, 
-                            ZeroCodeUtil.getNextCharacterPartFromKeyword_startingFromNonParameter(keywordString, 0));
-
-                    // allKeywordsDictionary
-
-                    addNonParameterKeywordSubstrings(keywordString);
-                }
+                    addKeywordsSubstrings(keywordString);
             }
                 
         }
-        private bool beginsWithParameter(string keywordString)
-        {
-            if (ZeroCodeUtil.tryStringMatch(keywordString, 0, "(?<"))
-                return true;
 
-            if (ZeroCodeUtil.tryStringMatch(keywordString, 0, "(*")) // needs some clever tests ideas, if this is valid????
-                return true;
-
-            return false;
-        }
-
-        private void addNonParameterKeywordSubstrings(string keywordString)
+        private void addKeywordsSubstrings(string keywordString)
         {
             if (keywordString == "")
                 return;
@@ -1729,7 +1722,12 @@ namespace m0.ZeroCode
 
             PrepareDictionaries();
 
-            emptyKeywordVertex = MinusZero.Instance.Root.Get(@"User\CurrentUser:\CodeSettings:\Keyword:\$Keyword:(?<EmptyKeyword>)");
+            emptyKeywordVertex = MinusZero.Instance.Root.Get(@"User\CurrentUser:\CodeSettings:\Keyword:\$Keyword:(?<value>)");
+
+            //IVertex temp = MinusZero.Instance.Root.Get("User\\CurrentUser:\\CodeSettings:\\Keyword:\\$Keyword:\\\"(?<value>)\\\"");
+
+            newValueKeywordVertex = MinusZero.Instance.newValueKeywordVertex;
+
         }
     }
 }
