@@ -98,6 +98,25 @@ namespace m0.ZeroCode
             return true;
         }
 
+        public static bool tryStringMatch_CRLF(string s, int pos, string toMatch)
+        {
+            int toMatchLength = toMatch.Length;
+
+            if (s.Length < pos + toMatchLength)
+                return false;
+
+            for (int x = 0; x < toMatchLength; x++)
+            {
+                if (toMatch[x] == '\r')
+                    return true;
+
+                if (s[pos + x] != toMatch[x])
+                    return false;
+            }
+
+            return true;
+        }
+
         public static bool tryStringEndMatch(string s, string toMatch)
         {
             int sLength = s.Length;
