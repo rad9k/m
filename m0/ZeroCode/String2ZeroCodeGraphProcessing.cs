@@ -34,6 +34,7 @@ namespace m0.ZeroCode
             public bool skipParse = false;
             public int parseRecurrentReturnNo = -1;
 
+
             public ParsingStack(String2ZeroCodeGraphProcessing _parent, int _begLine, int _endLine)
             {
                 parent = _parent;
@@ -51,6 +52,38 @@ namespace m0.ZeroCode
             public int getPrevTabCount()
             {
                 return parent.lineInfoList[lineNo - 1].tabCount; // to be corrected
+            }
+
+            bool ParseLine()
+            {
+                if (skipParse)
+                {
+                    skipParse = false;
+
+                    return true;
+                }
+
+                lineNo++;
+
+                if (lineNo > endLine)
+                    return false;
+
+                currentLineInfo = lineInfoList[s.lineNo];
+
+                if (s.currentLineInfo.isEmpty)
+                    s.currentLineNoTabs = "";
+                else
+                    s.currentLineNoTabs = text.Substring(s.currentLineInfo.lineBeg, s.currentLineInfo.lineEnd - s.currentLineInfo.lineBeg + 1);
+
+                // and now check if there are only whitespaces
+
+                if (ZeroCodeUtil.isStringOnlyWhiteSpaces(s.currentLineNoTabs))
+                {
+                    s.newLineCount++;
+                    return ParseLine(s);
+                }
+
+                return true;
             }
         }
 
@@ -77,37 +110,7 @@ namespace m0.ZeroCode
 
         IVertex r = m0.MinusZero.Instance.Root;
 
-        bool ParseLine(ParsingStack s)
-        {
-            if (s.skipParse)
-            {
-                s.skipParse = false;
-
-                return true;
-            }
-
-            s.lineNo++;
-
-            if (s.lineNo > s.endLine) 
-                return false;          
-
-            s.currentLineInfo = lineInfoList[s.lineNo];
-
-            if (s.currentLineInfo.isEmpty)
-                s.currentLineNoTabs = "";
-            else
-                s.currentLineNoTabs = text.Substring(s.currentLineInfo.lineBeg, s.currentLineInfo.lineEnd - s.currentLineInfo.lineBeg + 1);
-            
-            // and now check if there are only whitespaces
-
-            if (ZeroCodeUtil.isStringOnlyWhiteSpaces(s.currentLineNoTabs))
-            {
-                s.newLineCount++;
-                return ParseLine(s);
-            }
-
-            return true;
-        }
+    
         
         IVertex importList;
         IVertex importMetaList;
@@ -1004,12 +1007,19 @@ namespace m0.ZeroCode
                 else
                 {
                     if (text[sPos] == '\r' || text[sPos] == '\n')
+                    {
                         foreach (keywordTryingData ktd in examinedKeywords)
                             if (ktd.state == keywordTryingState.matched)
                             {
                                 shallProceed = false; // end of line and one of keywords matched
-                                MinusZero.Instance.Log(1, "_tryIsKeyword", LOGPREFIX+"SHALPROCEED FALSE end of line and one of keywords matched");
+                                MinusZero.Instance.Log(1, "_tryIsKeyword", LOGPREFIX + "SHALPROCEED FALSE end of line and one of keywords matched");
                             }
+
+                        if (examinedKeywords.Count > 0) // jump to next line
+                        {
+
+                        }
+                    }
 
                     if (examinedKeywords.Count == 0)
                     {
@@ -1455,8 +1465,15 @@ namespace m0.ZeroCode
             public int lineBeg;
             public int lineEnd;
 
-            public int lineEnd_NoTrim;
+            public int lineBeg_Raw;
+            //public int lineEnd_NoTrim;
             public bool isEmpty;
+
+            public int getPosWithParentTabsTrimmed(LineInfo parentLine)
+            {
+                return lineBeg_Raw + parentLine.tabCount;
+            }
+
         }
 
         ///
@@ -1477,7 +1494,8 @@ namespace m0.ZeroCode
                 {
                     li.lineBeg = p;
                     li.lineEnd = p;
-                    li.lineEnd_NoTrim = p;
+                    li.lineBeg_Raw = p;
+              //      li.lineEnd_NoTrim = p;
                     li.tabCount = 0;
                     li.lineContinuation = false;
                     li.isEmpty = true;
@@ -1493,6 +1511,8 @@ namespace m0.ZeroCode
 
                     li.tabCount = 0;
 
+                    li.lineBeg_Raw = p;
+
                     while (text[p] == '\t')
                     {
                         li.tabCount++;
@@ -1504,7 +1524,7 @@ namespace m0.ZeroCode
                     li.lineBeg = ZeroCodeUtil.trimRight(text, lineBegWithoutTrim);
                     li.lineEnd = ZeroCodeUtil.trimLeft(text, lineEndWithoutTrim);
 
-                    li.lineEnd_NoTrim = lineEndWithoutTrim;
+                //    li.lineEnd_NoTrim = lineEndWithoutTrim;
 
                     if (text[li.lineBeg] == ZeroCodeCommon.LineContinuationPrefix)
                         li.lineContinuation = true;
