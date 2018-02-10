@@ -54,7 +54,7 @@ namespace m0.ZeroCode
                 return parent.lineInfoList[lineNo - 1].tabCount; // to be corrected
             }
 
-            bool ParseLine()
+            public bool ParseNextLine()
             {
                 if (skipParse)
                 {
@@ -68,19 +68,19 @@ namespace m0.ZeroCode
                 if (lineNo > endLine)
                     return false;
 
-                currentLineInfo = lineInfoList[s.lineNo];
+                currentLineInfo = parent.lineInfoList[lineNo];
 
-                if (s.currentLineInfo.isEmpty)
-                    s.currentLineNoTabs = "";
+                if (currentLineInfo.isEmpty)
+                    currentLineNoTabs = "";
                 else
-                    s.currentLineNoTabs = text.Substring(s.currentLineInfo.lineBeg, s.currentLineInfo.lineEnd - s.currentLineInfo.lineBeg + 1);
+                    currentLineNoTabs = parent.text.Substring(currentLineInfo.lineBeg, currentLineInfo.lineEnd - currentLineInfo.lineBeg + 1);
 
                 // and now check if there are only whitespaces
 
-                if (ZeroCodeUtil.isStringOnlyWhiteSpaces(s.currentLineNoTabs))
+                if (ZeroCodeUtil.isStringOnlyWhiteSpaces(currentLineNoTabs))
                 {
-                    s.newLineCount++;
-                    return ParseLine(s);
+                    newLineCount++;
+                    return ParseNextLine();
                 }
 
                 return true;
@@ -1017,7 +1017,11 @@ namespace m0.ZeroCode
 
                         if (examinedKeywords.Count > 0) // jump to next line
                         {
+                            LineInfo prevLine = s.currentLineInfo;
 
+                            s.ParseNextLine();
+
+                            sPos = s.currentLineInfo.getPosWithParentTabsTrimmed(prevLine) - 1;
                         }
                     }
 
@@ -1473,7 +1477,6 @@ namespace m0.ZeroCode
             {
                 return lineBeg_Raw + parentLine.tabCount;
             }
-
         }
 
         ///
@@ -1667,7 +1670,7 @@ namespace m0.ZeroCode
         {
             IVertex prevVertex = ProcessLine(s, _baseVertex);
 
-            while (ParseLine(s))
+            while (s.ParseNextLine())
             {
                 if (s.parseRecurrentReturnNo > 0)
                 {
@@ -1710,7 +1713,7 @@ namespace m0.ZeroCode
         {
             ParsingStack stack = new ParsingStack(this, begLine, endLine);
 
-            ParseLine(stack);
+            stack.ParseNextLine();
 
             Process_reccurent(stack, baseVertex);
 
