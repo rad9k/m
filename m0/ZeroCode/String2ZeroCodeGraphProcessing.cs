@@ -417,10 +417,10 @@ namespace m0.ZeroCode
 
             public bool currentPositionInKeyword_isParameterMatch(char v)
             {
-                if(ZeroCodeUtil.tryStringMatch(keyword, currentPositionInKeyword, "(*"))
-                {
-                    if(ZeroCodeUtil.tryStringMatch(keyword, currentPositionInKeyword+2, "(+"))
-                    {
+                 if(ZeroCodeUtil.tryStringMatch(keyword, currentPositionInKeyword, "(*") &&!isInMultiParameter())
+                  {
+                      if(ZeroCodeUtil.tryStringMatch(keyword, currentPositionInKeyword+2, "(+"))
+                      {
                         int multiParameterSeparatorEndPos = ZeroCodeUtil.getNextMatch(keyword, currentPositionInKeyword + 4, "+)");
 
                         multiParameterSeparator = keyword.Substring(currentPositionInKeyword + 4, multiParameterSeparatorEndPos - currentPositionInKeyword - 4);
@@ -436,7 +436,7 @@ namespace m0.ZeroCode
                     else
                     {
 
-                    }             
+                    }           
 
                     if (v == keyword[multiParameterStringEndPosition + 1])
                     {
