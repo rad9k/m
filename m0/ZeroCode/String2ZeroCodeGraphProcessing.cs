@@ -417,20 +417,26 @@ namespace m0.ZeroCode
 
             public bool currentPositionInKeyword_isParameterMatch(char v)
             {
-                if(ZeroCodeUtil.tryStringMatch(keyword, currentPositionInKeyword, "(*(+")
-                    && currentPositionInMultiParamPlusSeparatorString == -1)
+                if(ZeroCodeUtil.tryStringMatch(keyword, currentPositionInKeyword, "(*"))
                 {
-                    int multiParameterSeparatorEndPos = ZeroCodeUtil.getNextMatch(keyword, currentPositionInKeyword + 4, "+)");
+                    if(ZeroCodeUtil.tryStringMatch(keyword, currentPositionInKeyword+2, "(+"))
+                    {
+                        int multiParameterSeparatorEndPos = ZeroCodeUtil.getNextMatch(keyword, currentPositionInKeyword + 4, "+)");
 
-                    multiParameterSeparator = keyword.Substring(currentPositionInKeyword + 4, multiParameterSeparatorEndPos - currentPositionInKeyword - 4);
+                        multiParameterSeparator = keyword.Substring(currentPositionInKeyword + 4, multiParameterSeparatorEndPos - currentPositionInKeyword - 4);
 
-                    multiParameterStringBegPosition = multiParameterSeparatorEndPos + 2;
+                        multiParameterStringBegPosition = multiParameterSeparatorEndPos + 2;
 
-                    multiParameterStringEndPosition = ZeroCodeUtil.getNextMatch(keyword, multiParameterSeparatorEndPos, "*)") + 1;
+                        multiParameterStringEndPosition = ZeroCodeUtil.getNextMatch(keyword, multiParameterSeparatorEndPos, "*)") + 1;
 
-                    multiParameterString = keyword.Substring(multiParameterStringBegPosition, multiParameterStringEndPosition - multiParameterStringBegPosition - 1);
+                        multiParameterString = keyword.Substring(multiParameterStringBegPosition, multiParameterStringEndPosition - multiParameterStringBegPosition - 1);
 
-                    multiParamPlusSeparatorString = multiParameterString + multiParameterSeparator;
+                        multiParamPlusSeparatorString = multiParameterString + multiParameterSeparator;
+                    }
+                    else
+                    {
+
+                    }             
 
                     if (v == keyword[multiParameterStringEndPosition + 1])
                     {
@@ -676,8 +682,8 @@ namespace m0.ZeroCode
 
             string xx = "";
 
-            //for (int x = startPos; x <= endPos; x++)
-                //xx += " "+x+":"+text[x];
+            for (int x = startPos; x <= endPos; x++)
+                xx += " "+x+":"+text[x];
 
             MinusZero.Instance.Log(1, "_tryIsKeyword", LOGPREFIX+"BEG startPos:" + startPos + " prevSpos:"+prev_startPos+" same:"+isPrevStartPosSameAsStartPos+" endPos:" + endPos+" "+xx);
 
@@ -1015,8 +1021,16 @@ namespace m0.ZeroCode
                                 MinusZero.Instance.Log(1, "_tryIsKeyword", LOGPREFIX + "SHALPROCEED FALSE end of line and one of keywords matched");
                             }
 
-                        if (examinedKeywords.Count > 0) // jump to next line
+
+                        IList<keywordTryingData> examined_keywordCharacter = examinedKeywords.Where(m => m.state == keywordTryingState.keywordCharacter).ToList();
+
+                        if (examined_keywordCharacter.Count() > 0) // jump to next line
                         {
+                            examinedKeywords = examined_keywordCharacter.Where(m => m.currentPositionCharacter_isCharacterMatch('\n')).ToList();
+
+                            foreach (keywordTryingData ktd in examinedKeywords)
+                                ktd.currentPositionInKeyword_Increase();
+
                             LineInfo prevLine = s.currentLineInfo;
 
                             s.ParseNextLine();
