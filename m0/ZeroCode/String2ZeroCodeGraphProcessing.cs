@@ -436,7 +436,15 @@ namespace m0.ZeroCode
                     }
                     else
                     {
+                        multiParameterSeparator = "";
 
+                        multiParameterStringBegPosition = currentPositionInKeyword + 2;
+
+                        multiParameterStringEndPosition = ZeroCodeUtil.getNextMatch(keyword, multiParameterStringBegPosition, "*)") + 1;
+
+                        multiParameterString = keyword.Substring(multiParameterStringBegPosition, multiParameterStringEndPosition - multiParameterStringBegPosition - 1);
+
+                        multiParamPlusSeparatorString = multiParameterString;
                     }           
 
                     if (v == keyword[multiParameterStringEndPosition + 1])

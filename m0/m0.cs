@@ -852,7 +852,7 @@ namespace m0
 
             //IVertex o_newSub = smuk.AddVertex(keyword, "{(*(+\r\n+)\t(?<expr>)*)\r\n}");
 
-            IVertex o_newSub = smuk.AddVertex(keyword, "{(*(+AA+)(?<expr>)*)BB}");
+            IVertex o_newSub = smuk.AddVertex(keyword, "{(*A(?<expr>)*)BB}");
 
             IVertex o_newSub_any = o_newSub.AddVertex(any, "");
 
