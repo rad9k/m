@@ -98,6 +98,20 @@ namespace m0.ZeroCode
             return true;
         }
 
+        public static bool tryStringMatch_TAB_SPECIAL(string s, int pos, string toMatch, int toRemoveTabs)
+        {
+            int toMatchLength = toMatch.Length;
+
+            if (s.Length < pos + toMatchLength)
+                return false;
+
+            for (int x = 0; x < toMatchLength; x++)
+                if (s[pos + x] != toMatch[x])
+                    return false;
+
+            return true;
+        }
+
         public static bool tryStringMatch_CRLF(string s, int pos, string toMatch)
         {
             int toMatchLength = toMatch.Length;
@@ -165,13 +179,13 @@ namespace m0.ZeroCode
                     shallProcess = false;
                 else
                 {
-                    if (canCheck1 && tryStringMatch(s, pos, toMatch1))
+                    if (canCheck1 && tryStringMatch(s, pos, toMatch1) && toMatch1.Length > 0)
                     {
                         whatMatch = 1;
                         return pos;
                     }
 
-                    if (canCheck2 && tryStringMatch(s, pos, toMatch2))
+                    if (canCheck2 && tryStringMatch(s, pos, toMatch2) && toMatch2.Length > 0)
                     {
                         whatMatch = 2;
                         return pos;

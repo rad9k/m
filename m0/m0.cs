@@ -495,11 +495,11 @@ namespace m0
             IVertex smuk = smu.AddVertex(null, "Keyword");
 
             IVertex any = smuk.AddVertex(null, "(?<ANY>)");
-
+            /*
             // import meta
             //
             // import meta (?<name>) (?<link>)
-            /*
+            
              IVertex importMeta = smuk.AddVertex(keyword, "import meta (?<name>) (?<link>)");
 
              IVertex importMeta_name=importMeta.AddVertex(smb.Get(@"$ImportMeta"), "(?<name>)");
@@ -799,7 +799,7 @@ namespace m0
              o_div_any.AddVertex(smu.Get(@"DoubleOperator\LeftExpression"), "(?<left>)");
 
              o_div_any.AddVertex(smu.Get(@"DoubleOperator\RightExpression"), "(?<right>)");
-             */
+             
              // []
              //
              // [(*(+, +) (?<expr>)*)]
@@ -813,7 +813,7 @@ namespace m0
              IVertex o_call_any_param=o_call_any.AddVertex(smu.Get(@"MultiOperator\Expression"), "(?<expr>)");
 
              o_call_any_param.AddEdge(smb.Get(@"$KeywordManyRoot"), smb.Get(@"$Empty"));
-            /*
+            
              // ()
              //
              // ((?<expr>))
@@ -829,7 +829,7 @@ namespace m0
              // \
              //
              // \
-
+             
              //IVertex o_path = smuk.AddVertex(keyword, @"(?<expr>) \ ");
 
              IVertex o_path = smuk.AddVertex(keyword, @" \ ");
@@ -852,7 +852,9 @@ namespace m0
 
             //IVertex o_newSub = smuk.AddVertex(keyword, "{(*(+\r\n+)\t(?<expr>)*)\r\n}");
 
-            IVertex o_newSub = smuk.AddVertex(keyword, "{(*A(?<expr>)*)BB}");
+            //IVertex o_newSub = smuk.AddVertex(keyword, "{(*(+, +)A(?<expr>)B*)C}");
+
+            IVertex o_newSub = smuk.AddVertex(keyword, "{(*\r\n(?<expr>)*)\r\n}");
 
             IVertex o_newSub_any = o_newSub.AddVertex(any, "");
 
@@ -861,7 +863,7 @@ namespace m0
              IVertex o_newSub_any_param = o_newSub_any.AddVertex(smu.Get(@"MultiOperator\Expression"), "(?<expr>)");
 
              o_newSub_any_param.AddEdge(smb.Get(@"$KeywordManyRoot"), smb.Get(@"$Empty"));
-
+             
 
              // ""
              //

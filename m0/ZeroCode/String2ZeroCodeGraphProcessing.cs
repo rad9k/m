@@ -357,7 +357,7 @@ namespace m0.ZeroCode
 
         class keywordTryingData
         {
-            public String2ZeroCodeGraphProcessing processing;
+            public String2ZeroCodeGraphProcessing parent;
             public IVertex keywordVertex;
             public String keyword;
 
@@ -381,6 +381,8 @@ namespace m0.ZeroCode
             string multiParameterSeparator;
             string multiParameterString;
             string multiParamPlusSeparatorString;
+            string multiParameterAfterParamBeforeSeparator;
+            string multiParameterAfterSeparatorString;
 
             int currentPositionInMultiParamPlusSeparatorString = -1;
 
@@ -389,7 +391,7 @@ namespace m0.ZeroCode
 
             public keywordTryingData(keywordTryingData source)
             {
-                processing = source.processing;
+                parent = source.parent;
                 keywordVertex = source.keywordVertex;
                 keyword = source.keyword;
                 currentPositionInKeyword = source.currentPositionInKeyword;
@@ -400,7 +402,7 @@ namespace m0.ZeroCode
 
             public keywordTryingData(IVertex k, String2ZeroCodeGraphProcessing _processing)
             {
-                processing = _processing;
+                parent = _processing;
                 keywordVertex = k;
                 keyword = (String)keywordVertex.Value;
 
@@ -416,7 +418,7 @@ namespace m0.ZeroCode
                 return LocalRootNext.getMatchedOnPositionInText_Reccurent();
             }
 
-            public bool currentPositionInKeyword_isParameterMatch(char v)
+            public bool currentPositionInKeyword_isParameterMatch(int curPos)
             {
                  if(ZeroCodeUtil.tryStringMatch(keyword, currentPositionInKeyword, "(*") &&!isInMultiParameter())
                   {
@@ -445,16 +447,22 @@ namespace m0.ZeroCode
                         multiParameterString = keyword.Substring(multiParameterStringBegPosition, multiParameterStringEndPosition - multiParameterStringBegPosition - 1);
 
                         multiParamPlusSeparatorString = multiParameterString;
-                    }           
+                    }
 
-                    if (v == keyword[multiParameterStringEndPosition + 1])
+                    int multiParameterAfterParamBeg = ZeroCodeUtil.getNextMatch(multiParameterString, 4, ">)") + 2;
+
+                    multiParameterAfterParamBeforeSeparator = multiParameterString.Substring(multiParameterAfterParamBeg);
+
+                    multiParameterAfterSeparatorString = ZeroCodeUtil.getNextCharacterPartFromKeyword_startingFromNonParameter(keyword, multiParameterStringEndPosition + 1);
+
+                    if(ZeroCodeUtil.tryStringMatch(parent.text, curPos, keyword.Substring(multiParameterStringEndPosition + 1)))
                     {
                         currentPositionInKeyword = multiParameterStringEndPosition + 1;
                     }
                     else
                     {// if there ARE muli parameters at all!
                         currentPositionInMultiParamPlusSeparatorString = 0;
-                        multiParameterCount = 1;
+                        multiParameterCount ++;
                     }
                 }
 
@@ -478,33 +486,35 @@ namespace m0.ZeroCode
                 //return currentPositionInKeyword >= multiParameterStringBegPosition && currentPositionInKeyword <= multiParameterStringEndPosition;
             }
 
-            public bool currentPositionCharacter_isCharacterMatch(char v)
+            public bool currentPositionCharacter_isCharacterMatch(ParsingStack s, int curPos)
             {
-                MinusZero.Instance.Log(1, "isCharacterMatch",v+" ? "+ keyword[currentPositionInKeyword] + " | curPositionInKeyword:"+currentPositionInKeyword);
+                MinusZero.Instance.Log(1, "isCharacterMatch", curPos + " ? "+ keyword[currentPositionInKeyword] + " | curPositionInKeyword:"+currentPositionInKeyword);
                 
                 if (isInMultiParameter())
                 {
-                    if (currentPositionInMultiParamPlusSeparatorString == multiParameterString.Length // after multi param string
-                        && keyword[multiParameterStringEndPosition + 1] == v) // we are going out of multi
+                    if ((currentPositionInMultiParamPlusSeparatorString == multiParameterString.Length // after multi param string
+                       || (multiParameterCount > 1 && currentPositionInMultiParamPlusSeparatorString == 0)) // after multi param and no separator
+                       // && keyword[multiParameterStringEndPosition + 1] == v) // we are going out of multi
+                       && ZeroCodeUtil.tryStringMatch_TAB_SPECIAL(parent.text,curPos,keyword.Substring(multiParameterStringEndPosition + 1), s.currentLineInfo.tabCount)) // this is the way
                     {
                         currentPositionInKeyword = multiParameterStringEndPosition + 1;
                         currentPositionInMultiParamPlusSeparatorString = -1; // out of multi
                         return true;
                     }
 
-                    if (multiParamPlusSeparatorString[currentPositionInMultiParamPlusSeparatorString] == v)
+                    if (multiParamPlusSeparatorString[currentPositionInMultiParamPlusSeparatorString] == parent.text[curPos])
                         return true;
                     else
                         return false;
                 }
 
-                if (keyword[currentPositionInKeyword] == v)
+                if (keyword[currentPositionInKeyword] == parent.text[curPos])
                     return true;
                 else
                     return false;
             }
 
-            public void GetParameter(int curPos)
+            public void PrepareParameterAndAfterParameterString(int curPos)
             {
                 int currentPosition;
                 string str;
@@ -527,27 +537,46 @@ namespace m0.ZeroCode
                 currentPosition = ZeroCodeUtil.getNextMatch(str, currentPosition + 2, ">)") + 2;
                 currentlyProcessedParameterName = str.Substring(begCurrentPosition + 3, currentPosition - begCurrentPosition - 5);
 
-                if (isInMultiParameter() && currentPosition == multiParameterString.Length)
-                {
-                    int whatMatch;
+                if (isInMultiParameter()) {
+                    if(currentPosition == multiParameterString.Length)
+                    {
+                            int whatMatch;
 
-                    string afterSeparatorString = ZeroCodeUtil.getNextCharacterPartFromKeyword_startingFromNonParameter(keyword, multiParameterStringEndPosition + 1);
+                            multiParameterAfterSeparatorString = ZeroCodeUtil.getNextCharacterPartFromKeyword_startingFromNonParameter(keyword, multiParameterStringEndPosition + 1);
 
-                    int twoPos = ZeroCodeUtil.getNextMatch_twoAtOnce(processing.text, curPos, 
-                        multiParameterSeparator,
-                        afterSeparatorString, 
-                        out whatMatch);
+                            int twoPos = ZeroCodeUtil.getNextMatch_twoAtOnce(parent.text, curPos,
+                                multiParameterSeparator,
+                                multiParameterAfterSeparatorString,
+                                out whatMatch);
 
-                    if(whatMatch==0)
-                        afterParameterString = "";
+                            if (whatMatch == 0)
+                                afterParameterString = "";
 
-                    if (whatMatch == 1)
-                        afterParameterString = multiParameterSeparator;
+                            if (whatMatch == 1)
+                                afterParameterString = multiParameterSeparator;
 
-                    if (whatMatch == 2)
-                        afterParameterString = afterSeparatorString;
-                }
-                else
+                            if (whatMatch == 2)
+                                afterParameterString = multiParameterAfterSeparatorString;
+                    }
+                    else
+                    {
+                        int whatMatch;
+
+                        ZeroCodeUtil.getNextMatch_twoAtOnce(parent.text, curPos,
+                            multiParameterAfterParamBeforeSeparator + multiParameterSeparator,
+                            multiParameterAfterParamBeforeSeparator + multiParameterAfterSeparatorString,
+                            out whatMatch);
+
+                        if (whatMatch == 0)
+                            afterParameterString = "";
+
+                        if (whatMatch == 1)
+                            afterParameterString = multiParameterAfterParamBeforeSeparator + multiParameterSeparator;
+
+                        if (whatMatch == 2)
+                            afterParameterString = multiParameterAfterParamBeforeSeparator + multiParameterAfterSeparatorString;
+                    }
+                } else
                     afterParameterString = ZeroCodeUtil.getNextCharacterPartFromKeyword_startingFromNonParameter(str, currentPosition);
 
                 MinusZero.Instance.Log(1, "GetParameter", "currentlyProcessedParameterName:"+ currentlyProcessedParameterName+" curPosition:" + currentPosition+ " afterParameterString:"+ afterParameterString);
@@ -555,7 +584,10 @@ namespace m0.ZeroCode
                 state = keywordTryingState.parameter;
 
                 if (isInMultiParameter())
-                    currentPositionInMultiParamPlusSeparatorString = currentPosition;
+                {
+                    currentPositionInMultiParamPlusSeparatorString = currentPosition - 1;
+                    currentPositionInKeyword_Increase();
+                }
                 else
                     currentPositionInKeyword = currentPosition;
                    
@@ -569,8 +601,8 @@ namespace m0.ZeroCode
                         currentPositionInMultiParamPlusSeparatorString++;
                     else
                     {
-                        currentPositionInMultiParamPlusSeparatorString = 0;
-                        multiParameterCount++;
+                        currentPositionInMultiParamPlusSeparatorString = -1;
+                      //  multiParameterCount++;
                     }
 
                         MinusZero.Instance.Log(1, "currentPositionInKeyword_Increase", "MULTI:" + currentPositionInMultiParamPlusSeparatorString);
@@ -691,15 +723,13 @@ namespace m0.ZeroCode
 
             string xx = "";
 
-            for (int x = startPos; x <= endPos; x++)
-                xx += " "+x+":"+text[x];
+            //for (int x = startPos; x <= endPos; x++)
+              //  xx += " "+x+":"+text[x];
 
             MinusZero.Instance.Log(1, "_tryIsKeyword", LOGPREFIX+"BEG startPos:" + startPos + " prevSpos:"+prev_startPos+" same:"+isPrevStartPosSameAsStartPos+" endPos:" + endPos+" "+xx);
 
 
             int sPos = startPos;
-
-            int try_sPos = 0;
 
             if (sPos == endPos)
                 return;
@@ -718,46 +748,44 @@ namespace m0.ZeroCode
 
             if (!testIfIsKeywordSubstring(startPos))
             {
-                while (shallProceed)
+                tryEmptyKeyword = ZeroCodeCommon.tryStringFromNewVertexString(text, startPos, ref sPos);
+
+                if (tryEmptyKeyword != null)
                 {
-                    sPos++;
-
-                    if (testIfIsKeywordSubstring(sPos))
-                        shallProceed = false;
-
-                    if (text[sPos] == '\r' || text[sPos] == '\n')
-                        shallProceed = false;
-
-                    if (sPos == endPos_forAtomParts)
-                        shallProceed = false;
-                }
-
-                string foundString = text.Substring(startPos, sPos - startPos);
-
-                if (ZeroCodeCommon.isNewVertexString(foundString))
-                {
-                    tryEmptyKeyword = ZeroCodeCommon.stringFromNewVertexString(foundString);
-
                     specialType = SpecialKeywordType.NewVertexKeyword;
 
                     sPos++; // hmmm ????
-
-                    try_sPos = sPos;
                 }
-                else if (!isTopLevelCall
-                    && ZeroCodeCommon.isLinkString(foundString))
-                    tryLink = ZeroCodeCommon.stringFromLinkString(foundString, false);
                 else
                 {
-                    tryEmptyKeyword = foundString;
+                    while (shallProceed)
+                    {
+                        sPos++;
 
-                    specialType = SpecialKeywordType.EmptyKeyword;
+                        if (testIfIsKeywordSubstring(sPos))
+                            shallProceed = false;
 
-                    sPos++; // hmmm ????
+                        if (text[sPos] == '\r' || text[sPos] == '\n')
+                            shallProceed = false;
 
-                    try_sPos = sPos;
+                        if (sPos == endPos_forAtomParts)
+                            shallProceed = false;
+                    }
+
+                    string foundString = text.Substring(startPos, sPos - startPos);
+
+                    if (!isTopLevelCall
+                        && ZeroCodeCommon.isLinkString(foundString))
+                        tryLink = ZeroCodeCommon.stringFromLinkString(foundString, false);
+                    else
+                    {
+                        tryEmptyKeyword = foundString;
+
+                        specialType = SpecialKeywordType.EmptyKeyword;
+
+                        sPos++; // hmmm ????
+                    }
                 }
-
 
                 if ( //(tryEmptyKeyword != null || lookForLocalRootOnly==false) &&
                      ( sPos == endPos_forAtomParts || isPrevStartPosSameAsStartPos) )
@@ -865,13 +893,13 @@ namespace m0.ZeroCode
                         if(ktd.state== keywordTryingState.keywordCharacter)
                         {
                             // keywordCharacter => parameter
-                            if(ktd.currentPositionInKeyword_isParameterMatch(text[sPos]))
+                            if(ktd.currentPositionInKeyword_isParameterMatch(sPos))
                             {
-                                ktd.GetParameter(sPos);
+                                ktd.PrepareParameterAndAfterParameterString(sPos);
                             }
                             else
                                 // keywordCharacter => keywordCharacer
-                                if ( ktd.currentPositionCharacter_isCharacterMatch(text[sPos]) )
+                                if ( ktd.currentPositionCharacter_isCharacterMatch(s, sPos) )
                                 {
                                     ktd.currentPositionInKeyword_Increase();
 
@@ -1021,7 +1049,7 @@ namespace m0.ZeroCode
                 }
                 else
                 {
-                    if (text[sPos] == '\r' || text[sPos] == '\n')
+                    if (text[sPos] == '\r')
                     {
                         foreach (keywordTryingData ktd in examinedKeywords)
                             if (ktd.state == keywordTryingState.matched)
@@ -1035,7 +1063,9 @@ namespace m0.ZeroCode
 
                         if (examined_keywordCharacter.Count() > 0) // jump to next line
                         {
-                            examinedKeywords = examined_keywordCharacter.Where(m => m.currentPositionCharacter_isCharacterMatch('\n')).ToList();
+                            sPos++;
+
+                            examinedKeywords = examined_keywordCharacter.Where(m => m.currentPositionCharacter_isCharacterMatch(s, sPos)).ToList();
 
                             foreach (keywordTryingData ktd in examinedKeywords)
                                 ktd.currentPositionInKeyword_Increase();
@@ -1117,7 +1147,7 @@ namespace m0.ZeroCode
 
                     //
 
-                    newPos = _tryIsNextLocalRootKeyword(s, LOGPREFIX, newPos, try_sPos, ktd);
+                    newPos = _tryIsNextLocalRootKeyword(s, LOGPREFIX, newPos, tryNewPos, ktd);
 
                     //
 
