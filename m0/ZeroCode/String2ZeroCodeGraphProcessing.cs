@@ -418,7 +418,7 @@ namespace m0.ZeroCode
                 return LocalRootNext.getMatchedOnPositionInText_Reccurent();
             }
 
-            public bool currentPositionInKeyword_isParameterMatch(int curPos)
+            public bool currentPositionInKeyword_isParameterMatch(ParsingStack s, int curPos)
             {
                  if(ZeroCodeUtil.tryStringMatch(keyword, currentPositionInKeyword, "(*") &&!isInMultiParameter())
                   {
@@ -455,7 +455,7 @@ namespace m0.ZeroCode
 
                     multiParameterAfterSeparatorString = ZeroCodeUtil.getNextCharacterPartFromKeyword_startingFromNonParameter(keyword, multiParameterStringEndPosition + 1);
 
-                    if(ZeroCodeUtil.tryStringMatch(parent.text, curPos, keyword.Substring(multiParameterStringEndPosition + 1)))
+                    if(ZeroCodeUtil.tabRemove_tryStringMatch(parent.text, curPos, keyword.Substring(multiParameterStringEndPosition + 1), s.currentLineInfo.tabCount))
                     {
                         currentPositionInKeyword = multiParameterStringEndPosition + 1;
                     }
@@ -495,7 +495,7 @@ namespace m0.ZeroCode
                     if ((currentPositionInMultiParamPlusSeparatorString == multiParameterString.Length // after multi param string
                        || (multiParameterCount > 1 && currentPositionInMultiParamPlusSeparatorString == 0)) // after multi param and no separator
                        // && keyword[multiParameterStringEndPosition + 1] == v) // we are going out of multi
-                       && ZeroCodeUtil.tryStringMatch_TAB_SPECIAL(parent.text,curPos,keyword.Substring(multiParameterStringEndPosition + 1), s.currentLineInfo.tabCount)) // this is the way
+                       && ZeroCodeUtil.tabRemove_tryStringMatch(parent.text,curPos,keyword.Substring(multiParameterStringEndPosition + 1), s.currentLineInfo.tabCount)) // this is the way
                     {
                         currentPositionInKeyword = multiParameterStringEndPosition + 1;
                         currentPositionInMultiParamPlusSeparatorString = -1; // out of multi
@@ -893,7 +893,7 @@ namespace m0.ZeroCode
                         if(ktd.state== keywordTryingState.keywordCharacter)
                         {
                             // keywordCharacter => parameter
-                            if(ktd.currentPositionInKeyword_isParameterMatch(sPos))
+                            if(ktd.currentPositionInKeyword_isParameterMatch(s, sPos))
                             {
                                 ktd.PrepareParameterAndAfterParameterString(sPos);
                             }

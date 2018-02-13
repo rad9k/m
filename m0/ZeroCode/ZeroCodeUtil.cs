@@ -98,16 +98,29 @@ namespace m0.ZeroCode
             return true;
         }
 
-        public static bool tryStringMatch_TAB_SPECIAL(string s, int pos, string toMatch, int toRemoveTabs)
+        public static bool tabRemove_tryStringMatch(string s, int pos, string toMatch, int toRemoveTabs)
         {
             int toMatchLength = toMatch.Length;
 
             if (s.Length < pos + toMatchLength)
                 return false;
 
+            int tabPhase = 0;
+
             for (int x = 0; x < toMatchLength; x++)
-                if (s[pos + x] != toMatch[x])
+            {
+                while (s[pos + x + tabPhase] == '\t' && toRemoveTabs > 0)
+                {
+                    toRemoveTabs--;
+                    tabPhase++;
+                }
+
+                if (s.Length < pos + toMatchLength + tabPhase)
                     return false;
+
+                if (s[pos + x + tabPhase] != toMatch[x])
+                    return false;
+            }
 
             return true;
         }
