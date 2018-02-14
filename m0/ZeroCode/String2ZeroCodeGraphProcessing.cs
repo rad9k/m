@@ -16,7 +16,9 @@ namespace m0.ZeroCode
     {
         class ParsingStack
         {
-            String2ZeroCodeGraphProcessing parent;
+            String2ZeroCodeGraphProcessing processing;
+
+            public ParsingStack parentStack;
 
             public int begLine;
             public int endLine;
@@ -35,14 +37,43 @@ namespace m0.ZeroCode
             public bool skipParse = false;
             public int parseRecurrentReturnNo = -1;
 
+            public int memory_tabCount = -1;
 
-            public ParsingStack(String2ZeroCodeGraphProcessing _parent, int _begLine, int _endLine)
+
+            public ParsingStack(String2ZeroCodeGraphProcessing _parent, ParsingStack _parentStack, int _begLine, int _endLine)
             {
-                parent = _parent;
+                processing = _parent;
+                parentStack = _parentStack;
                 begLine = _begLine;
                 endLine = _endLine;
                
                 lineNo = begLine - 1;
+            }
+
+            public ParsingStack(ParsingStack _parentStack)
+            {
+                processing = _parentStack.processing;
+
+                parentStack = _parentStack;
+
+                begLine = _parentStack.begLine;
+                endLine = _parentStack.endLine;
+
+                lineNo = _parentStack.lineNo;
+                currentLineInfo = _parentStack.currentLineInfo;
+
+                currentLineNoTabs = _parentStack.currentLineNoTabs;
+
+                LocalRoot = _parentStack.LocalRoot;
+
+                lastAddedVertex = _parentStack.lastAddedVertex;
+                lastAddedVertexParent = _parentStack.lastAddedVertexParent;
+                newLineCount = _parentStack.newLineCount;
+
+                skipParse = _parentStack.skipParse;
+                parseRecurrentReturnNo = _parentStack.parseRecurrentReturnNo;
+
+                memory_tabCount = _parentStack.memory_tabCount;
             }
 
             public int getThisTabCount()
@@ -52,7 +83,7 @@ namespace m0.ZeroCode
 
             public int getPrevTabCount()
             {
-                return parent.lineInfoList[lineNo - 1].tabCount; // to be corrected
+                return processing.lineInfoList[lineNo - 1].tabCount; // to be corrected
             }
 
             public bool ParseNextLine()
@@ -69,12 +100,12 @@ namespace m0.ZeroCode
                 if (lineNo > endLine)
                     return false;
 
-                currentLineInfo = parent.lineInfoList[lineNo];
+                currentLineInfo = processing.lineInfoList[lineNo];
 
                 if (currentLineInfo.isEmpty)
                     currentLineNoTabs = "";
                 else
-                    currentLineNoTabs = parent.text.Substring(currentLineInfo.lineBeg, currentLineInfo.lineEnd - currentLineInfo.lineBeg + 1);
+                    currentLineNoTabs = processing.text.Substring(currentLineInfo.lineBeg, currentLineInfo.lineEnd - currentLineInfo.lineBeg + 1);
 
                 // and now check if there are only whitespaces
 
@@ -1063,6 +1094,15 @@ namespace m0.ZeroCode
 
                         if (examined_keywordCharacter.Count() > 0) // jump to next line
                         {
+                            if(s.memory_tabCount == -1)
+                            {
+                                s = new ParsingStack(s);
+
+                                s.memory_tabCount = s.currentLineInfo.tabCount;
+                            }
+
+                            //
+
                             sPos++;
 
                             examinedKeywords = examined_keywordCharacter.Where(m => m.currentPositionCharacter_isCharacterMatch(s, sPos)).ToList();
@@ -1074,7 +1114,7 @@ namespace m0.ZeroCode
 
                             s.ParseNextLine();
 
-                            sPos = s.currentLineInfo.getPosWithParentTabsTrimmed(prevLine) - 1;
+                            sPos = s.currentLineInfo.getPosWithParentTabsTrimmed(s) - 1;
                         }
                     }
 
@@ -1095,6 +1135,19 @@ namespace m0.ZeroCode
                 {
                     int x = 0;
                 }
+            }
+
+            // out of shallProced
+
+            if (s.memory_tabCount != -1)
+            {
+                int lineNo = s.lineNo;
+
+                s = s.parentStack;
+
+                s.lineNo = lineNo;
+
+                s.memory_tabCount = -1;
             }
 
             // copy only matched and of maxMatchedOnPositionText
@@ -1526,9 +1579,9 @@ namespace m0.ZeroCode
             //public int lineEnd_NoTrim;
             public bool isEmpty;
 
-            public int getPosWithParentTabsTrimmed(LineInfo parentLine)
+            public int getPosWithParentTabsTrimmed(ParsingStack stack)
             {
-                return lineBeg_Raw + parentLine.tabCount;
+                return lineBeg_Raw + stack.memory_tabCount;
             }
         }
 
@@ -1764,7 +1817,7 @@ namespace m0.ZeroCode
 
         private IVertex ProcessTextPart(IVertex baseVertex, int begLine, int endLine)
         {
-            ParsingStack stack = new ParsingStack(this, begLine, endLine);
+            ParsingStack stack = new ParsingStack(this, null, begLine, endLine);
 
             stack.ParseNextLine();
 
