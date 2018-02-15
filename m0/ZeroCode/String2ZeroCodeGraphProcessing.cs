@@ -76,6 +76,32 @@ namespace m0.ZeroCode
                 memory_tabCount = _parentStack.memory_tabCount;
             }
 
+            public void CopyFrom(ParsingStack copyFrom)
+            {
+                processing = copyFrom.processing;
+
+                parentStack = copyFrom;
+
+                begLine = copyFrom.begLine;
+                endLine = copyFrom.endLine;
+
+                lineNo = copyFrom.lineNo;
+                currentLineInfo = copyFrom.currentLineInfo;
+
+                currentLineNoTabs = copyFrom.currentLineNoTabs;
+
+                LocalRoot = copyFrom.LocalRoot;
+
+                lastAddedVertex = copyFrom.lastAddedVertex;
+                lastAddedVertexParent = copyFrom.lastAddedVertexParent;
+                newLineCount = copyFrom.newLineCount;
+
+                skipParse = copyFrom.skipParse;
+                parseRecurrentReturnNo = copyFrom.parseRecurrentReturnNo;
+
+                memory_tabCount = copyFrom.memory_tabCount;
+            }
+
             public int getThisTabCount()
             {
                 return currentLineInfo.tabCount;
@@ -728,6 +754,8 @@ namespace m0.ZeroCode
 
         void _tryIsKeyword(ParsingStack s, string LOGPREFIX, int startPos, int prev_startPos, int isPrevStartPosSameAsStartPosParentCount, int endPos, int endPos_forAtomParts, out List<keywordTryingData> examinedKeywords, out string link, bool isTopLevelCall, ref int newPos, bool lookForLocalRootOnly)
         {
+            bool wasNewStackInThis_tryIsKeyword = false;
+
             examinedKeywords = new List<keywordTryingData>();
 
             link = null;
@@ -1004,7 +1032,10 @@ namespace m0.ZeroCode
 
                                 MinusZero.Instance.Log(1, LOGPREFIX+"_tryIsKeyword", "will run _tryIs for:"+ ktd.currentlyProcessedParameterName);
 
-                                _tryIsKeyword(s, LOGPREFIX+"    ",sPos, startPos, isPrevStartPosSameAsStartPosThisCount, endPos, isTryKeyword_endPos, out foundKeywords, out foundLink, false, ref _newPos, false);
+                                if(ktd.afterParameterString!=null&& ktd.afterParameterString.Length>0&& ktd.afterParameterString[0]!='\r')
+                                    _tryIsKeyword(s, LOGPREFIX+"    ",sPos, startPos, isPrevStartPosSameAsStartPosThisCount, endPos, isTryKeyword_endPos, out foundKeywords, out foundLink, false, ref _newPos, false);
+                                else
+                                    _tryIsKeyword(s, LOGPREFIX + "    ", sPos, startPos, isPrevStartPosSameAsStartPosThisCount, endPos, isTryKeyword_endPos, out foundKeywords, out foundLink, false, ref _newPos, false);
 
                                 if (foundLink != null)
                                 {
@@ -1094,11 +1125,13 @@ namespace m0.ZeroCode
 
                         if (examined_keywordCharacter.Count() > 0) // jump to next line
                         {
-                            if(s.memory_tabCount == -1)
+                            if(!wasNewStackInThis_tryIsKeyword)
                             {
                                 s = new ParsingStack(s);
 
                                 s.memory_tabCount = s.currentLineInfo.tabCount;
+
+                                wasNewStackInThis_tryIsKeyword = true;
                             }
 
                             //
@@ -1112,9 +1145,14 @@ namespace m0.ZeroCode
 
                             LineInfo prevLine = s.currentLineInfo;
 
-                            s.ParseNextLine();
+                            shallProceed=s.ParseNextLine();
 
-                            sPos = s.currentLineInfo.getPosWithParentTabsTrimmed(s) - 1;
+                            if (shallProceed)
+                            {
+                                sPos = s.currentLineInfo.getPosWithParentTabsTrimmed(s) - 1;
+
+                               // startPos = sPos + 1; // need to hak
+                            }
                         }
                     }
 
@@ -1139,13 +1177,13 @@ namespace m0.ZeroCode
 
             // out of shallProced
 
-            if (s.memory_tabCount != -1)
+            if (wasNewStackInThis_tryIsKeyword)
             {
-                int lineNo = s.lineNo;
+                ParsingStack old = s;
 
                 s = s.parentStack;
 
-                s.lineNo = lineNo;
+                s.CopyFrom(old);
 
                 s.memory_tabCount = -1;
             }
@@ -1174,12 +1212,15 @@ namespace m0.ZeroCode
                     int x = 0;
                 }
 
-                keywordTryingData ktd = examinedKeywords[0]; // ASSUMPTION
+                if (examinedKeywords.Count > 0)
+                {
 
-                if(  ktd.matchedOnPositionInText <= s.currentLineInfo.lineEnd 
-                    && isLocalRootKeyword(ktd))
-                    sPos = _tryIsNextLocalRootKeyword(s, LOGPREFIX, sPos, ktd.matchedOnPositionInText + 1, ktd);
+                    keywordTryingData ktd = examinedKeywords[0]; // ASSUMPTION
 
+                    if (ktd.matchedOnPositionInText <= s.currentLineInfo.lineEnd
+                        && isLocalRootKeyword(ktd))
+                        sPos = _tryIsNextLocalRootKeyword(s, LOGPREFIX, sPos, ktd.matchedOnPositionInText + 1, ktd);
+                }
                 //
 
             }

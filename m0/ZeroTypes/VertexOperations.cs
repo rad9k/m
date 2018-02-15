@@ -68,13 +68,13 @@ namespace m0.ZeroTypes
                     return true;
             }
 
-          //  int cnt2 = 0;
+            //  int cnt2 = 0;
 
-         //   foreach (IEdge e in baseEdge.OutEdgesRaw)
-             //   if (GraphUtil.GetValueAndCompareStrings(e.To, to.Value.ToString()))
-              //      cnt2++;
-
-            if (baseEdge.GetAll("\""+to.Value.ToString()+ "\"").Count() > 1)
+            //   foreach (IEdge e in baseEdge.OutEdgesRaw)
+            //   if (GraphUtil.GetValueAndCompareStrings(e.To, to.Value.ToString()))
+            //      cnt2++;
+            IVertex test = baseEdge.GetAll("\"" + to.Value.ToString() + "\"");
+            if (test!=null && test.Count() > 1)
           // if(cnt2 > 1)
                 return false;
 

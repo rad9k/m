@@ -733,7 +733,7 @@ namespace m0
              whwh.AddEdge(smb.Get(@"Vertex\$Is"), smu.Get("While"));
 
              whwh.AddVertex(smu.Get(@"While\Test"), "(?<test>)");
-
+             */
              // +
              //
              // (?<left>) + (?<right>)
@@ -749,7 +749,7 @@ namespace m0
              o_plus_any.AddVertex(smu.Get(@"DoubleOperator\LeftExpression"), "(?<left>)");
 
              o_plus_any.AddVertex(smu.Get(@"DoubleOperator\RightExpression"), "(?<right>)");
-
+            /*
              // -
              //
              // (?<left>) - (?<right>)
@@ -825,7 +825,7 @@ namespace m0
              o_par_any.AddEdge(smb.Get(@"Vertex\$Is"), smu.Get("()"));
 
              o_par_any.AddVertex(smu.Get(@"SingleOperator\TargetExpression"), "(?<expr>)");
-
+             */
              // \
              //
              // \
@@ -845,16 +845,16 @@ namespace m0
              IVertex o_path_any_targetExpr = o_path_any.AddVertex(smu.Get(@"SingleOperator\TargetExpression"), "");
 
              o_path_any_targetExpr.AddVertex(smb.Get("$LocalRoot"), "");
-             */
+             
             // {}
             //
             // {(*(+\r\n+)\t(?<expr>)*)\r\n}
 
             //IVertex o_newSub = smuk.AddVertex(keyword, "{(*(+\r\n+)\t(?<expr>)*)\r\n}");
 
-            //IVertex o_newSub = smuk.AddVertex(keyword, "{(*(+, +)A(?<expr>)B*)C}");
+            //IVertex o_newSub = smuk.AddVertex(keyword, "{(*A\t(?<expr>)*)A}");
 
-            IVertex o_newSub = smuk.AddVertex(keyword, "{(*\r\n\t(?<expr>)*)\r\n}");
+            IVertex o_newSub = smuk.AddVertex(keyword, "{(*\r\n(?<expr>)*)\r\n}");
 
             IVertex o_newSub_any = o_newSub.AddVertex(any, "");
 
