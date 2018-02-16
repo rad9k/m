@@ -1,5 +1,4 @@
-﻿// kupa
-using m0.Foundation;
+﻿using m0.Foundation;
 using m0.Graph;
 using m0.Util;
 using m0.ZeroTypes;
@@ -38,6 +37,7 @@ namespace m0.ZeroCode
             public int parseRecurrentReturnNo = -1;
 
             public int memory_tabCount = -1;
+            public bool can_initialize_memory_tabCount = true;
 
 
             public ParsingStack(String2ZeroCodeGraphProcessing _parent, ParsingStack _parentStack, int _begLine, int _endLine)
@@ -754,8 +754,6 @@ namespace m0.ZeroCode
 
         void _tryIsKeyword(ParsingStack s, string LOGPREFIX, int startPos, int prev_startPos, int isPrevStartPosSameAsStartPosParentCount, int endPos, int endPos_forAtomParts, out List<keywordTryingData> examinedKeywords, out string link, bool isTopLevelCall, ref int newPos, bool lookForLocalRootOnly)
         {
-            bool wasNewStackInThis_tryIsKeyword = false;
-
             examinedKeywords = new List<keywordTryingData>();
 
             link = null;
@@ -1032,10 +1030,23 @@ namespace m0.ZeroCode
 
                                 MinusZero.Instance.Log(1, LOGPREFIX+"_tryIsKeyword", "will run _tryIs for:"+ ktd.currentlyProcessedParameterName);
 
-                                if(ktd.afterParameterString!=null&& ktd.afterParameterString.Length>0&& ktd.afterParameterString[0]!='\r')
-                                    _tryIsKeyword(s, LOGPREFIX+"    ",sPos, startPos, isPrevStartPosSameAsStartPosThisCount, endPos, isTryKeyword_endPos, out foundKeywords, out foundLink, false, ref _newPos, false);
-                                else
-                                    _tryIsKeyword(s, LOGPREFIX + "    ", sPos, startPos, isPrevStartPosSameAsStartPosThisCount, endPos, isTryKeyword_endPos, out foundKeywords, out foundLink, false, ref _newPos, false);
+                                // NEW STACK
+
+                                ParsingStack newStack = new ParsingStack(s);
+
+                                s = newStack;
+
+                                s.can_initialize_memory_tabCount = true;
+
+                                //
+
+                                _tryIsKeyword(s, LOGPREFIX + "    ", sPos, startPos, isPrevStartPosSameAsStartPosThisCount, endPos, isTryKeyword_endPos, out foundKeywords, out foundLink, false, ref _newPos, false);
+
+                                // BACK TO OLD STACK
+
+                                s = s.parentStack;
+
+                                //
 
                                 if (foundLink != null)
                                 {
@@ -1120,28 +1131,37 @@ namespace m0.ZeroCode
                                 MinusZero.Instance.Log(1, "_tryIsKeyword", LOGPREFIX + "SHALPROCEED FALSE end of line and one of keywords matched");
                             }
 
-
-                        IList<keywordTryingData> examined_keywordCharacter = examinedKeywords.Where(m => m.state == keywordTryingState.keywordCharacter).ToList();
-
-                        if (examined_keywordCharacter.Count() > 0) // jump to next line
+                        if (shallProceed) // jump to next line
                         {
-                            if(!wasNewStackInThis_tryIsKeyword)
+                            if (s.can_initialize_memory_tabCount)
                             {
-                                s = new ParsingStack(s);
-
                                 s.memory_tabCount = s.currentLineInfo.tabCount;
-
-                                wasNewStackInThis_tryIsKeyword = true;
+                                s.can_initialize_memory_tabCount = false;
                             }
 
                             //
 
                             sPos++;
 
-                            examinedKeywords = examined_keywordCharacter.Where(m => m.currentPositionCharacter_isCharacterMatch(s, sPos)).ToList();
 
-                            foreach (keywordTryingData ktd in examinedKeywords)
-                                ktd.currentPositionInKeyword_Increase();
+                            List<keywordTryingData> new_examinedKeywords = new List<keywordTryingData>();
+
+                            foreach(keywordTryingData ktd in examinedKeywords)
+                            {
+                                if (ktd.state == keywordTryingState.keywordCharacter &&
+                                    ktd.currentPositionCharacter_isCharacterMatch(s, sPos))
+                                {
+                                    ktd.currentPositionInKeyword_Increase();
+
+                                    new_examinedKeywords.Add(ktd);
+                                }
+
+                                if (ktd.state == keywordTryingState.waiting &&
+                                    ktd.waitingUntilPositionInText <= sPos)
+                                    newExaminedKeywords.Add(ktd);
+                            }
+
+                            examinedKeywords = newExaminedKeywords;
 
                             LineInfo prevLine = s.currentLineInfo;
 
@@ -1177,16 +1197,8 @@ namespace m0.ZeroCode
 
             // out of shallProced
 
-            if (wasNewStackInThis_tryIsKeyword)
-            {
-                ParsingStack old = s;
-
-                s = s.parentStack;
-
-                s.CopyFrom(old);
-
-                s.memory_tabCount = -1;
-            }
+            s.memory_tabCount = -1;
+            s.can_initialize_memory_tabCount = true;
 
             // copy only matched and of maxMatchedOnPositionText
 
