@@ -76,7 +76,7 @@ namespace m0.ZeroCode
                 memory_tabCount = _parentStack.memory_tabCount;
             }
 
-            public void CopyFrom(ParsingStack copyFrom)
+            public void copyFrom(ParsingStack copyFrom)
             {
                 processing = copyFrom.processing;
 
@@ -112,7 +112,22 @@ namespace m0.ZeroCode
                 return processing.lineInfoList[lineNo - 1].tabCount; // to be corrected
             }
 
-            public bool ParseNextLine()
+            public int getNextLineWithSameTabCount()
+            {
+                List<LineInfo> li = processing.lineInfoList;
+                int iterationLineNo = lineNo + 1;
+
+                while (li[iterationLineNo].tabCount != li[lineNo].tabCount
+                    || iterationLineNo == li.Count)
+                    iterationLineNo++;
+
+                if (iterationLineNo == li.Count)
+                    return -1;
+
+                return iterationLineNo;
+            }
+
+            public bool parseNextLine()
             {
                 if (skipParse)
                 {
@@ -121,10 +136,10 @@ namespace m0.ZeroCode
                     return true;
                 }
 
-                lineNo++;
-
-                if (lineNo > endLine)
+                if (lineNo >= endLine)
                     return false;
+
+                lineNo++;
 
                 currentLineInfo = processing.lineInfoList[lineNo];
 
@@ -138,8 +153,36 @@ namespace m0.ZeroCode
                 if (ZeroCodeUtil.isStringOnlyWhiteSpaces(currentLineNoTabs))
                 {
                     newLineCount++;
-                    return ParseNextLine();
+                    return parseNextLine();
                 }
+
+                return true;
+            }
+
+            public bool goToLine(int newLineNo)
+            {
+
+                if (newLineNo > endLine)
+                    return false;
+
+                lineNo++;
+                
+                currentLineInfo = processing.lineInfoList[lineNo];
+
+                if (currentLineInfo.isEmpty)
+                    currentLineNoTabs = "";
+                else
+                    currentLineNoTabs = processing.text.Substring(currentLineInfo.lineBeg, currentLineInfo.lineEnd - currentLineInfo.lineBeg + 1);
+
+                // we will do not do this now BUT might think about it in future
+
+                // and now check if there are only whitespaces
+
+                /*if (ZeroCodeUtil.isStringOnlyWhiteSpaces(currentLineNoTabs))
+                {
+                    newLineCount++;
+                    return parseNextLine();
+                }*/
 
                 return true;
             }
@@ -1133,45 +1176,49 @@ namespace m0.ZeroCode
 
                         if (shallProceed) // jump to next line
                         {
-                            if (s.can_initialize_memory_tabCount)
+                            int nextLineWithSameTabCount = s.getNextLineWithSameTabCount();
+
+                            if ()
                             {
-                                s.memory_tabCount = s.currentLineInfo.tabCount;
-                                s.can_initialize_memory_tabCount = false;
+
                             }
-
-                            //
-
-                            sPos++;
-
-
-                            List<keywordTryingData> new_examinedKeywords = new List<keywordTryingData>();
-
-                            foreach(keywordTryingData ktd in examinedKeywords)
+                            else
                             {
-                                if (ktd.state == keywordTryingState.keywordCharacter &&
-                                    ktd.currentPositionCharacter_isCharacterMatch(s, sPos))
+                                if (s.can_initialize_memory_tabCount)
                                 {
-                                    ktd.currentPositionInKeyword_Increase();
-
-                                    new_examinedKeywords.Add(ktd);
+                                    s.memory_tabCount = s.currentLineInfo.tabCount;
+                                    s.can_initialize_memory_tabCount = false;
                                 }
 
-                                if (ktd.state == keywordTryingState.waiting &&
-                                    ktd.waitingUntilPositionInText <= sPos)
-                                    newExaminedKeywords.Add(ktd);
-                            }
+                                //
 
-                            examinedKeywords = newExaminedKeywords;
+                                sPos++;
 
-                            LineInfo prevLine = s.currentLineInfo;
+                                List<keywordTryingData> new_examinedKeywords = new List<keywordTryingData>();
 
-                            shallProceed=s.ParseNextLine();
+                                foreach (keywordTryingData ktd in examinedKeywords)
+                                {
+                                    if (ktd.state == keywordTryingState.keywordCharacter &&
+                                        ktd.currentPositionCharacter_isCharacterMatch(s, sPos))
+                                    {
+                                        ktd.currentPositionInKeyword_Increase();
 
-                            if (shallProceed)
-                            {
-                                sPos = s.currentLineInfo.getPosWithParentTabsTrimmed(s) - 1;
+                                        new_examinedKeywords.Add(ktd);
+                                    }
 
-                               // startPos = sPos + 1; // need to hak
+                                    if (ktd.state == keywordTryingState.waiting &&
+                                        ktd.waitingUntilPositionInText <= sPos)
+                                        newExaminedKeywords.Add(ktd);
+                                }
+
+                                examinedKeywords = newExaminedKeywords;
+
+                                LineInfo prevLine = s.currentLineInfo;
+
+                                shallProceed = s.parseNextLine();
+
+                                if (shallProceed)
+                                    sPos = s.currentLineInfo.getPosWithParentTabsTrimmed(s) - 1;
                             }
                         }
                     }
@@ -1624,7 +1671,7 @@ namespace m0.ZeroCode
         class LineInfo
         {
             public int tabCount;
-            public bool lineContinuation;
+            public bool startsWithLineContinuation;
             public int lineBeg;
             public int lineEnd;
 
@@ -1659,7 +1706,7 @@ namespace m0.ZeroCode
                     li.lineBeg_Raw = p;
               //      li.lineEnd_NoTrim = p;
                     li.tabCount = 0;
-                    li.lineContinuation = false;
+                    li.startsWithLineContinuation = false;
                     li.isEmpty = true;
 
                     next = p;
@@ -1689,7 +1736,7 @@ namespace m0.ZeroCode
                 //    li.lineEnd_NoTrim = lineEndWithoutTrim;
 
                     if (text[li.lineBeg] == ZeroCodeCommon.LineContinuationPrefix)
-                        li.lineContinuation = true;
+                        li.startsWithLineContinuation = true;
 
                     if (li.lineEnd < li.lineBeg)
                     {
@@ -1829,7 +1876,7 @@ namespace m0.ZeroCode
         {
             IVertex prevVertex = ProcessLine(s, _baseVertex);
 
-            while (s.ParseNextLine())
+            while (s.parseNextLine())
             {
                 if (s.parseRecurrentReturnNo > 0)
                 {
@@ -1872,7 +1919,7 @@ namespace m0.ZeroCode
         {
             ParsingStack stack = new ParsingStack(this, null, begLine, endLine);
 
-            stack.ParseNextLine();
+            stack.parseNextLine();
 
             Process_reccurent(stack, baseVertex);
 
