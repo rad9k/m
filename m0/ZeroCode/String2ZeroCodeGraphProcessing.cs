@@ -117,11 +117,14 @@ namespace m0.ZeroCode
                 List<LineInfo> li = processing.lineInfoList;
                 int iterationLineNo = lineNo + 1;
 
-                while (li[iterationLineNo].tabCount != li[lineNo].tabCount
-                    || iterationLineNo == li.Count)
+                while (iterationLineNo < li.Count 
+                    && li[iterationLineNo].tabCount != li[lineNo].tabCount)
                     iterationLineNo++;
 
-                if (iterationLineNo == li.Count)
+                if (iterationLineNo == li.Count) 
+                    return -1;
+
+                if (li[iterationLineNo].tabCount != li[lineNo].tabCount)
                     return -1;
 
                 return iterationLineNo;
@@ -1165,8 +1168,20 @@ namespace m0.ZeroCode
                 }
                 else
                 {
-                    if (text[sPos] == '\r')
+                    if(sPos + 1 < endPos && text[sPos + 1] == '\r')
                     {
+                        int nextLineWithSameTabCount = s.getNextLineWithSameTabCount();
+
+                        if (nextLineWithSameTabCount != -1 && lineInfoList[nextLineWithSameTabCount].startsWithLineContinuation)
+                        {
+                            s.goToLine(nextLineWithSameTabCount);
+
+                            sPos = s.currentLineInfo.lineBeg;
+                        }
+                    }
+
+                    if (text[sPos] == '\r')
+                    {                        
                         foreach (keywordTryingData ktd in examinedKeywords)
                             if (ktd.state == keywordTryingState.matched)
                             {
@@ -1176,51 +1191,42 @@ namespace m0.ZeroCode
 
                         if (shallProceed) // jump to next line
                         {
-                            int nextLineWithSameTabCount = s.getNextLineWithSameTabCount();
-
-                            if ()
+                            if (s.can_initialize_memory_tabCount)
                             {
-
+                                s.memory_tabCount = s.currentLineInfo.tabCount;
+                                s.can_initialize_memory_tabCount = false;
                             }
-                            else
+
+                            //
+
+                            sPos++;
+
+                            List<keywordTryingData> new_examinedKeywords = new List<keywordTryingData>();
+
+                            foreach (keywordTryingData ktd in examinedKeywords)
                             {
-                                if (s.can_initialize_memory_tabCount)
+                                if (ktd.state == keywordTryingState.keywordCharacter &&
+                                    ktd.currentPositionCharacter_isCharacterMatch(s, sPos))
                                 {
-                                    s.memory_tabCount = s.currentLineInfo.tabCount;
-                                    s.can_initialize_memory_tabCount = false;
+                                    ktd.currentPositionInKeyword_Increase();
+
+                                    new_examinedKeywords.Add(ktd);
                                 }
 
-                                //
-
-                                sPos++;
-
-                                List<keywordTryingData> new_examinedKeywords = new List<keywordTryingData>();
-
-                                foreach (keywordTryingData ktd in examinedKeywords)
-                                {
-                                    if (ktd.state == keywordTryingState.keywordCharacter &&
-                                        ktd.currentPositionCharacter_isCharacterMatch(s, sPos))
-                                    {
-                                        ktd.currentPositionInKeyword_Increase();
-
-                                        new_examinedKeywords.Add(ktd);
-                                    }
-
-                                    if (ktd.state == keywordTryingState.waiting &&
-                                        ktd.waitingUntilPositionInText <= sPos)
-                                        newExaminedKeywords.Add(ktd);
-                                }
-
-                                examinedKeywords = newExaminedKeywords;
-
-                                LineInfo prevLine = s.currentLineInfo;
-
-                                shallProceed = s.parseNextLine();
-
-                                if (shallProceed)
-                                    sPos = s.currentLineInfo.getPosWithParentTabsTrimmed(s) - 1;
+                                if (ktd.state == keywordTryingState.waiting &&
+                                    ktd.waitingUntilPositionInText <= sPos)
+                                    newExaminedKeywords.Add(ktd);
                             }
-                        }
+
+                            examinedKeywords = newExaminedKeywords;
+
+                            LineInfo prevLine = s.currentLineInfo;
+
+                            shallProceed = s.parseNextLine();
+
+                            if (shallProceed)
+                                sPos = s.currentLineInfo.getPosWithParentTabsTrimmed(s) - 1;
+                        }                        
                     }
 
                     if (examinedKeywords.Count == 0)
