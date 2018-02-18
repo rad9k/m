@@ -1176,7 +1176,11 @@ namespace m0.ZeroCode
                         {
                             s.goToLine(nextLineWithSameTabCount);
 
-                            sPos = s.currentLineInfo.lineBeg;
+                            foreach (keywordTryingData ktd in examinedKeywords)
+                                if (ktd.state == keywordTryingState.waiting && ktd.waitingUntilPositionInText == sPos + 1)
+                                    ktd.state = keywordTryingState.keywordCharacter;
+
+                                    sPos = s.currentLineInfo.lineBeg;                            
                         }
                     }
 
