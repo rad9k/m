@@ -495,7 +495,7 @@ namespace m0
             IVertex smuk = smu.AddVertex(null, "Keyword");
 
             IVertex any = smuk.AddVertex(null, "(?<ANY>)");
-            /*
+            
             // import meta
             //
             // import meta (?<name>) (?<link>)
@@ -607,7 +607,7 @@ namespace m0
              attribute2_attribute.AddEdge(isAggregation, empty);
 
              attribute2_attribute.AddEdge(_is, smu.Get(@"Class\Attribute"));
-             */
+             
              // attribute
              //
              // attribute (?<name>) (?<type>)
@@ -622,7 +622,7 @@ namespace m0
              attribute_attribute.AddEdge(isAggregation, empty);
 
              attribute_attribute.AddEdge(_is, smu.Get(@"Class\Attribute"));
-            /*
+            
              // aassociation
              //
              // association (?<name>) (?<type>) (?<MinCardinality>):(?<MaxCardinality>)
@@ -866,7 +866,6 @@ namespace m0
 
              o_newSub_any_param.AddEdge(smb.Get(@"$KeywordManyRoot"), smb.Get(@"$Empty"));
              
-            */
              // ""
              //
              // "\"(?<value>)\""
