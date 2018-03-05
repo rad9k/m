@@ -39,6 +39,9 @@ namespace m0.ZeroCode
             public int memory_tabCount = -1;
             public bool can_initialize_memory_tabCount = true;
 
+            public object lastAddedParameter;
+            public Dictionary<object, keywordTryingData> subGraphs;
+
 
             public ParsingStack(String2ZeroCodeGraphProcessing _parent, ParsingStack _parentStack, int _begLine, int _endLine)
             {
@@ -48,6 +51,8 @@ namespace m0.ZeroCode
                 endLine = _endLine;
                
                 lineNo = begLine - 1;
+
+                subGraphs = new Dictionary<object, keywordTryingData>();
             }
 
             public ParsingStack(ParsingStack _parentStack)
@@ -74,7 +79,12 @@ namespace m0.ZeroCode
                 parseRecurrentReturnNo = _parentStack.parseRecurrentReturnNo;
 
                 memory_tabCount = _parentStack.memory_tabCount;
-            }
+
+                can_initialize_memory_tabCount = _parentStack.can_initialize_memory_tabCount;
+
+                lastAddedParameter = _parentStack.lastAddedParameter;
+                subGraphs = _parentStack.subGraphs;
+        }
 
             public void copyFrom(ParsingStack copyFrom)
             {
@@ -100,6 +110,7 @@ namespace m0.ZeroCode
                 parseRecurrentReturnNo = copyFrom.parseRecurrentReturnNo;
 
                 memory_tabCount = copyFrom.memory_tabCount;
+                can_initialize_memory_tabCount = copyFrom.can_initialize_memory_tabCount;
             }
 
             public int getThisTabCount()
@@ -723,6 +734,11 @@ namespace m0.ZeroCode
                     parameters.Add(name, new List<object>());
 
                 parameters[name].Add(val);
+
+                if (val is string)
+                {
+                    int x = 0;
+                }
             }
         }
 
@@ -1135,6 +1151,8 @@ namespace m0.ZeroCode
                             MinusZero.Instance.Log(1, "_tryIsKeyword", LOGPREFIX+"sub add:" + ktd.currentlyProcessedParameterName+" foundParameter:"+foundParameter);
 
                             newExaminedKeywords.Add(ktd);
+
+                            s.lastAddedParameter = foundParameter;
                         }
                         
                         ktd.state = keywordTryingState.waiting;
@@ -1174,13 +1192,19 @@ namespace m0.ZeroCode
 
                         if (nextLineWithSameTabCount != -1 && lineInfoList[nextLineWithSameTabCount].startsWithLineContinuation)
                         {
+                            if (s.lastAddedParameter != null)
+                            {
+                                keywordTryingData k = new keywordTryingData(examinedKeywords[0]);
+                                s.subGraphs.Add(s.lastAddedParameter, k);
+                            }
+
                             s.goToLine(nextLineWithSameTabCount);
 
                             foreach (keywordTryingData ktd in examinedKeywords)
                                 if (ktd.state == keywordTryingState.waiting && ktd.waitingUntilPositionInText == sPos + 1)
                                     ktd.state = keywordTryingState.keywordCharacter;
 
-                                    sPos = s.currentLineInfo.lineBeg;                            
+                            sPos = s.currentLineInfo.lineBeg;                            
                         }
                     }
 
@@ -1415,21 +1439,8 @@ namespace m0.ZeroCode
             }
         }
 
-        
-
-        void DoesContainLocalRoot(ParsingStack s, IVertex keyword)
-        {
-            /*
-            if (keyword.Get(@"\$LocalRoot:") == null)
-            //if (keyword.Get(@"\$StartInLocalRoot:") == null)
-                s.LocalRoot = null;
-                */
-        }
-
         IVertex AddKeywordVertex(ParsingStack s, IVertex parent, keywordTryingData ktd)
         {
-            DoesContainLocalRoot(s, ktd.keywordVertex);
-
             return _AddKeywordVertex(s, parent,ktd,ktd.keywordVertex,null,0);
         }
 
@@ -1438,29 +1449,15 @@ namespace m0.ZeroCode
             if (GeneralUtil.CompareStrings("$LocalRoot", edgeForMeta.Meta.Value)
             || GeneralUtil.CompareStrings("$StartInLocalRoot", edgeForMeta.Meta.Value))
                 return;
-
-          //  if (edgeForMeta.To.Get("$StartInLocalRoot:") != null && s.LocalRoot != null)
-          //      nv = AddVertex(s, s.LocalRoot, meta, val);
-         //   else
-                nv = AddVertex(s, baseVertex, meta, val);
-
-            if(ktd.LocalRootNext!=null)
-            {
-                int x = 0;
-            }
+   
+            nv = AddVertex(s, baseVertex, meta, val);
 
             if (edgeForMeta.To.Get("$LocalRoot:") != null && ktd.LocalRootNext != null)
                 _AddKeywordVertex(s, nv,ktd.LocalRootNext,ktd.LocalRootNext.keywordVertex,null,0);
-
-          //  if (edgeForMeta.To.Get("$LocalRoot:") != null)
-          //     s.LocalRoot = nv;
         }
 
         IEdge AddKeywordVertex_AddEdge(ParsingStack s, IVertex baseVertex, IEdge edgeForMeta, IVertex meta, IVertex to)
         {
-           // if(edgeForMeta.To.Get("$StartInLocalRoot:") != null && s.LocalRoot !=null)
-            //    return AddEdge(s, s.LocalRoot, meta, to);
-
             return AddEdge(s, baseVertex, meta, to);
         }
 
@@ -1511,10 +1508,7 @@ namespace m0.ZeroCode
                                 nv = AddKeywordVertex_AddEdge(s, parent, e, meta, (IVertex)sub).To;
 
                             if (sub is keywordTryingData)
-                            {
-                                DoesContainLocalRoot(s, ((keywordTryingData)sub).keywordVertex);
                                 nv = _AddKeywordVertex(s, parent, (keywordTryingData)sub, ((keywordTryingData)sub).keywordVertex, meta, 0); // cnt_subCount);
-                            }
                         }
                         else
                             nv = AddKeywordVertex_AddEdge(s, parent, e, meta, e.To).To;
@@ -1536,16 +1530,18 @@ namespace m0.ZeroCode
                                 nv = AddKeywordVertex_AddEdge(s, parent, e, meta, (IVertex)sub).To;
 
                             if (sub is keywordTryingData)
-                            {
-                                DoesContainLocalRoot(s, ((keywordTryingData)sub).keywordVertex);
-
                                 nv = _AddKeywordVertex(s, parent, (keywordTryingData)sub, ((keywordTryingData)sub).keywordVertex, meta, 0);// cnt_subCount);
-                            }
                         }
                         else
                             AddKeywordVertex_AddVertex(s, parent, e, meta, e.To, ref nv, ktd);
 
                        _AddKeywordVertex(s, nv, ktd, e.To, null, cnt_subCount);
+
+                        if (s.subGraphs.ContainsKey(ktd))
+                        {
+                            _AddKeywordVertex(s, nv, s.subGraphs[ktd], s.subGraphs[ktd].keywordVertex, null, 0);
+                        }
+
                     }
                 }
             }
