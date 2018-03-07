@@ -858,6 +858,7 @@ namespace m0.ZeroCode
             int tryNewPos = 0;
             string tryLink = null;
             string tryEmptyKeyword = null;
+            ParsingStack tryEmptyKeywordStack=null;
 
             //
 
@@ -935,6 +936,15 @@ namespace m0.ZeroCode
                     tryNewPos = sPos;
 
                     sPos = startPos;
+
+                    if (tryEmptyKeyword != null)
+                    {
+                        // COPY STACK
+
+                        tryEmptyKeywordStack = new ParsingStack(s);                        
+
+                        //
+                    }
                 }
                 
             }
@@ -1331,6 +1341,10 @@ namespace m0.ZeroCode
                 if (tryEmptyKeyword != null)
                 {
                     keywordTryingData ktd = createSpecialKeyword(s, tryEmptyKeyword, tryNewPos - 1,  specialType);
+
+                    // GET THE STACK FROM COPY
+
+                    s = tryEmptyKeywordStack;
 
                     //
 
