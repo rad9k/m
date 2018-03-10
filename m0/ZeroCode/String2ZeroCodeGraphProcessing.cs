@@ -858,7 +858,8 @@ namespace m0.ZeroCode
             int tryNewPos = 0;
             string tryLink = null;
             string tryEmptyKeyword = null;
-            ParsingStack tryEmptyKeywordStack=null;
+            //ParsingStack tryEmptyKeywordStack=null;
+            int tryEmptyKeywordStack_LineNoMemory=-1;
 
             //
 
@@ -939,10 +940,10 @@ namespace m0.ZeroCode
 
                     if (tryEmptyKeyword != null)
                     {
-                        // COPY STACK
+                        // SAVE LINE NO MEMORY
 
-                        tryEmptyKeywordStack = new ParsingStack(s);                        
-
+                        //tryEmptyKeywordStack = new ParsingStack(s); // COPY STACK
+                        tryEmptyKeywordStack_LineNoMemory = s.lineNo - 1;
                         //
                     }
                 }
@@ -1342,9 +1343,12 @@ namespace m0.ZeroCode
                 {
                     keywordTryingData ktd = createSpecialKeyword(s, tryEmptyKeyword, tryNewPos - 1,  specialType);
 
-                    // GET THE STACK FROM COPY
+                    ParsingStack copy = s;
 
-                    s = tryEmptyKeywordStack;
+                    //s = tryEmptyKeywordStack; // THIS DOES NOT WORK // GET THE STACK FROM COPY
+
+                    s.lineNo = tryEmptyKeywordStack_LineNoMemory;
+                    s.parseNextLine();
 
                     //
 
@@ -1378,7 +1382,23 @@ namespace m0.ZeroCode
 
             int _tryPos = 0;
 
+            // NEW STACK
+
+           // ParsingStack newStack = new ParsingStack(s);
+
+            //s = newStack;
+
+            //s.can_initialize_memory_tabCount = true;
+
+            //
+
             _tryIsKeyword(s, LOGPREFIX + "    ", sPos - 1, -1, 0, text.Length - 1, text.Length - 1, out _examinedKeywords, out _link, true, ref _tryPos, true);
+
+            // BACK TO OLD STACK
+
+            //s = s.parentStack;
+
+            //
 
             if (_examinedKeywords.Count > 0)
             {
