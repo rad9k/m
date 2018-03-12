@@ -900,42 +900,22 @@ namespace m0.ZeroCode
                     }
                 }
 
-
                 newPos = sPos;
 
-                    if (tryEmptyKeyword != null)
-                    {
-                        keywordTryingData ktd = createSpecialKeyword(s, tryEmptyKeyword, sPos - 1, specialType);
-
-                        //
-
-                        newPos = _tryIsNextLocalRootKeyword(s, LOGPREFIX, newPos, sPos, ktd);
-
-                        //
-
-                        examinedKeywords.Add(ktd);
-                    }
-
-                    MinusZero.Instance.Log(1, "_tryIsKeyword", LOGPREFIX + "RETURN:" + tryEmptyKeyword + " newPos:" + newPos);
-
-                    return;
-                }
-                else
+                if (tryEmptyKeyword != null)
                 {
-                    tryNewPos = sPos;
+                    keywordTryingData ktd = createSpecialKeyword(s, tryEmptyKeyword, sPos - 1, specialType);
 
-                    sPos = startPos;
+                    //
 
-                    if (tryEmptyKeyword != null)
-                    {
-                        // SAVE LINE NO MEMORY
+                    newPos = _tryIsNextLocalRootKeyword(s, LOGPREFIX, newPos, sPos, ktd);
 
-                        //tryEmptyKeywordStack = new ParsingStack(s); // COPY STACK
-                        tryEmptyKeywordStack_LineNoMemory = s.lineNo - 1;
-                        //
-                    }
+                    //
+
+                    examinedKeywords.Add(ktd);
                 }
 
+                MinusZero.Instance.Log(1, "_tryAtom", LOGPREFIX + "RETURN:" + tryEmptyKeyword + " newPos:" + newPos);
             }
         }
 
@@ -1034,7 +1014,7 @@ namespace m0.ZeroCode
                 }
 
                 if ( //(tryEmptyKeyword != null || lookForLocalRootOnly==false) &&
-                     ( sPos == endPos_forAtomParts || isPrevStartPosSameAsStartPos) )
+                     ( sPos == endPos_forAtomParts || (isPrevStartPosSameAsStartPos && isPrevStartPosSameAsStartPosThisCount > 1)) ) // !!!
                 {
                     link = tryLink;
 
