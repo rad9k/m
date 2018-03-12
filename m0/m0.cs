@@ -802,20 +802,20 @@ namespace m0
 
             // :
             //
-            // :                         
+            // (?<leftAtom>):(?<rightAtom>)
+        
+            //IVertex o_div = smuk.AddVertex(keyword, "(?<left>) /(?<SUB>) (?<right>)");
 
-            IVertex o_colon = smuk.AddVertex(keyword, @"|");
+            IVertex o_colon = smuk.AddVertex(keyword, "(?<leftAtom>)|(?<rightAtom>)");
 
             IVertex o_colon_any = o_colon.AddVertex(any, "");
 
-            o_colon_any.AddVertex(smb.Get("$StartInLocalRoot"), "");
-
             o_colon_any.AddEdge(smb.Get(@"Vertex\$Is"), smu.Get("|"));
 
-            IVertex o_colon_any_targetExpr = o_colon_any.AddVertex(smu.Get(@"SingleOperator\TargetExpression"), "");
+            o_colon_any.AddVertex(smu.Get(@"DoubleOperator\LeftExpression"), "(?<leftAtom>)");
 
-            o_colon_any_targetExpr.AddVertex(smb.Get("$LocalRoot"), "");
-
+            o_colon_any.AddVertex(smu.Get(@"DoubleOperator\RightExpression"), "(?<rightAtom>)");
+          
             // ::
             //
             // ::                         

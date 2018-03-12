@@ -594,6 +594,14 @@ namespace m0.ZeroCode
                     return false;
             }
 
+            bool isCurrentlyProcessedParameterAtom()
+            {
+                if (currentlyProcessedParameterName.EndsWith("Atom"))
+                    return true;
+
+                return false;
+            }
+
             bool isInMultiParameter() // do not need that now, but maybe in the future?
             {
                 return currentPositionInMultiParamPlusSeparatorString != -1;
