@@ -594,7 +594,7 @@ namespace m0.ZeroCode
                     return false;
             }
 
-            bool isCurrentlyProcessedParameterAtom()
+            public bool isCurrentlyProcessedParameterAtom()
             {
                 if (currentlyProcessedParameterName.EndsWith("Atom"))
                     return true;
@@ -820,6 +820,123 @@ namespace m0.ZeroCode
             ktd.parameters.Add("value", l);
 
             return ktd;
+        }
+
+        class ParameterChache
+        {
+            public object Parameter = null;
+            public int waitingUntilPositionInText = 0;
+        }
+
+        void _tryAtom(ParsingStack s, string LOGPREFIX, int startPos, int endPos, out List<keywordTryingData> examinedKeywords, out string link, ref int newPos)
+        {
+            examinedKeywords = new List<keywordTryingData>();
+
+            link = null;
+
+            //
+
+            if (text[startPos] == '\r' || text[startPos] == '\n')
+                return;
+
+            if (startPos == endPos)
+                return;
+
+            //
+            
+            MinusZero.Instance.Log(1, "_tryAtom", LOGPREFIX + "BEG startPos:" + startPos + " endPos:" + endPos);
+
+            int sPos = startPos;
+
+            if (sPos == endPos)
+                return;
+
+            //
+
+            SpecialKeywordType specialType = SpecialKeywordType.NewVertexKeyword; // got to intialize
+
+            //
+
+            string tryEmptyKeyword;
+            bool shallProceed = true;
+
+            if (!testIfIsKeywordSubstring(startPos))
+            {
+                tryEmptyKeyword = ZeroCodeCommon.tryStringFromNewVertexString(text, startPos, ref sPos);
+
+                if (tryEmptyKeyword != null)
+                {
+                    specialType = SpecialKeywordType.NewVertexKeyword;
+
+                    sPos++; // hmmm ????
+                }
+                else
+                {
+                    while (shallProceed)
+                    {
+                        sPos++;
+
+                        if (testIfIsKeywordSubstring(sPos))
+                            shallProceed = false;
+
+                        if (text[sPos] == '\r' || text[sPos] == '\n')
+                            shallProceed = false;
+
+                        if (sPos == endPos)
+                            shallProceed = false;
+                    }
+
+                    string foundString = text.Substring(startPos, sPos - startPos);
+
+                    if (ZeroCodeCommon.isLinkString(foundString))
+                        link = ZeroCodeCommon.stringFromLinkString(foundString, false);
+                    else
+                    {
+                        tryEmptyKeyword = foundString;
+
+                        specialType = SpecialKeywordType.EmptyKeyword;
+
+                        sPos++; // hmmm ????
+                    }
+                }
+
+
+                newPos = sPos;
+
+                    if (tryEmptyKeyword != null)
+                    {
+                        keywordTryingData ktd = createSpecialKeyword(s, tryEmptyKeyword, sPos - 1, specialType);
+
+                        //
+
+                        newPos = _tryIsNextLocalRootKeyword(s, LOGPREFIX, newPos, sPos, ktd);
+
+                        //
+
+                        examinedKeywords.Add(ktd);
+                    }
+
+                    MinusZero.Instance.Log(1, "_tryIsKeyword", LOGPREFIX + "RETURN:" + tryEmptyKeyword + " newPos:" + newPos);
+
+                    return;
+                }
+                else
+                {
+                    tryNewPos = sPos;
+
+                    sPos = startPos;
+
+                    if (tryEmptyKeyword != null)
+                    {
+                        // SAVE LINE NO MEMORY
+
+                        //tryEmptyKeywordStack = new ParsingStack(s); // COPY STACK
+                        tryEmptyKeywordStack_LineNoMemory = s.lineNo - 1;
+                        //
+                    }
+                }
+
+            }
         }
 
         void _tryIsKeyword(ParsingStack s, string LOGPREFIX, int startPos, int prev_startPos, int isPrevStartPosSameAsStartPosParentCount, int endPos, int endPos_forAtomParts, out List<keywordTryingData> examinedKeywords, out string link, bool isTopLevelCall, ref int newPos, bool lookForLocalRootOnly)
@@ -1052,35 +1169,34 @@ namespace m0.ZeroCode
                     }
                 }
 
-                // store found keyword parameters
-
-                //  Dictionary<string, object> foundParameters = new Dictionary<string, object>();
-
-                //Dictionary<string, int> foundParameters_waitingUntilPositionInText = new Dictionary<string, int>();
-
-                object memory_foundParameter = null;
-                int memory_foundParameter_waitingUntilPositionInText = 0;
+                ParameterChache NonAtomParameterChache = null;
+                ParameterChache AtomParameterChache = null;
 
                 // check if anything fits info keyword parameters
                 foreach (keywordTryingData ktd in examinedKeywords)
                     if (ktd.state == keywordTryingState.parameter)
                     {
-                        object foundParameter = null;
 
-                        int _waitingUntilPositionInText=0;
+                        bool chacheHit = false;
 
-                        bool allreadyAdded = false;
+                        object foundParameter = null;                        
 
-                    //    if (foundParameters.ContainsKey(ktd.afterParameterString))
-                    if(memory_foundParameter!=null)
+                        if(ktd.isCurrentlyProcessedParameterAtom() && AtomParameterChache != null)
                         {
-                            allreadyAdded = true;
-                            //foundParameter = foundParameters[ktd.afterParameterString];
-                            //_waitingUntilPositionInText = foundParameters_waitingUntilPositionInText[ktd.afterParameterString];
-                            foundParameter = memory_foundParameter;
-                            _waitingUntilPositionInText = memory_foundParameter_waitingUntilPositionInText;
+                            chacheHit = true;
+                            foundParameter = AtomParameterChache.Parameter;
+                            ktd.waitingUntilPositionInText = AtomParameterChache.waitingUntilPositionInText;
                         }
-                        else // THIS MIGHT NOT WORK GOOD NOW. TO BE CHECKED / CORRECTED
+
+                        if (!chacheHit &&
+                            !ktd.isCurrentlyProcessedParameterAtom() && NonAtomParameterChache != null)
+                        {
+                            chacheHit = true;
+                            foundParameter = NonAtomParameterChache.Parameter;
+                            ktd.waitingUntilPositionInText = NonAtomParameterChache.waitingUntilPositionInText;
+                        }
+
+                        if(!chacheHit) 
                         {
                             int isTryKeyword_endPos = endPos_forAtomParts;
 
@@ -1111,23 +1227,28 @@ namespace m0.ZeroCode
 
                                 MinusZero.Instance.Log(1, LOGPREFIX+"_tryIsKeyword", "will run _tryIs for:"+ ktd.currentlyProcessedParameterName);
 
-                                // NEW STACK
+                                if (ktd.isCurrentlyProcessedParameterAtom())
+                                    _tryAtom(s, LOGPREFIX + "    ", sPos, isTryKeyword_endPos, out foundKeywords, out foundLink, ref _newPos);
+                                else
+                                {
+                                    // NEW STACK
 
-                                ParsingStack newStack = new ParsingStack(s);
+                                    ParsingStack newStack = new ParsingStack(s);
 
-                                s = newStack;
+                                    s = newStack;
 
-                                s.can_initialize_memory_tabCount = true;
+                                    s.can_initialize_memory_tabCount = true;
 
-                                //
+                                    //
 
-                                _tryIsKeyword(s, LOGPREFIX + "    ", sPos, startPos, isPrevStartPosSameAsStartPosThisCount, endPos, isTryKeyword_endPos, out foundKeywords, out foundLink, false, ref _newPos, false);
+                                    _tryIsKeyword(s, LOGPREFIX + "    ", sPos, startPos, isPrevStartPosSameAsStartPosThisCount, endPos, isTryKeyword_endPos, out foundKeywords, out foundLink, false, ref _newPos, false);
 
-                                // BACK TO OLD STACK
+                                    // BACK TO OLD STACK
 
-                                s = s.parentStack;
+                                    s = s.parentStack;
 
-                                //
+                                    //
+                                }
 
                                 if (foundLink != null)
                                 {
@@ -1155,15 +1276,20 @@ namespace m0.ZeroCode
 
                         if (foundParameter != null)
                         {
-                            if (!allreadyAdded)
-                            {
-                                //foundParameters.Add(ktd.afterParameterString, foundParameter);
-                                //foundParameters_waitingUntilPositionInText.Add(ktd.afterParameterString, ktd.waitingUntilPositionInText);
-                                memory_foundParameter = foundParameter;
-                                memory_foundParameter_waitingUntilPositionInText = ktd.waitingUntilPositionInText;
-                            }
-                            else
-                                ktd.waitingUntilPositionInText = _waitingUntilPositionInText;
+                            if (!chacheHit) {
+                                if (ktd.isCurrentlyProcessedParameterAtom())
+                                {
+                                    AtomParameterChache = new ParameterChache();
+                                    AtomParameterChache.Parameter = foundParameter;
+                                    AtomParameterChache.waitingUntilPositionInText = ktd.waitingUntilPositionInText;
+                                }
+                                else
+                                {
+                                    NonAtomParameterChache = new ParameterChache();
+                                    NonAtomParameterChache.Parameter = foundParameter;
+                                    NonAtomParameterChache.waitingUntilPositionInText = ktd.waitingUntilPositionInText;
+                                }
+                            }                                                        
 
                             ktd.AddParameter(ktd.currentlyProcessedParameterName, foundParameter);
 
