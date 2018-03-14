@@ -806,15 +806,16 @@ namespace m0
         
             //IVertex o_div = smuk.AddVertex(keyword, "(?<left>) /(?<SUB>) (?<right>)");
 
-            IVertex o_colon = smuk.AddVertex(keyword, "(?<leftAtom>)|(?<rightAtom>)");
+            IVertex o_colon = smuk.AddVertex(keyword, "(?<left>)|(?<right>)");
 
             IVertex o_colon_any = o_colon.AddVertex(any, "");
 
             o_colon_any.AddEdge(smb.Get(@"Vertex\$Is"), smu.Get("|"));
 
-            o_colon_any.AddVertex(smu.Get(@"DoubleOperator\LeftExpression"), "(?<leftAtom>)");
+            o_colon_any.AddVertex(smu.Get(@"DoubleOperator\LeftExpression"), "(?<left>)");
 
-            o_colon_any.AddVertex(smu.Get(@"DoubleOperator\RightExpression"), "(?<rightAtom>)");
+            o_colon_any.AddVertex(smu.Get(@"DoubleOperator\RightExpression"), "(?<right>)");
+
           /*
             // ::
             //

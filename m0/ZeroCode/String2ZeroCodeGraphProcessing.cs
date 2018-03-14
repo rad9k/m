@@ -1014,7 +1014,7 @@ namespace m0.ZeroCode
                 }
 
                 if ( //(tryEmptyKeyword != null || lookForLocalRootOnly==false) &&
-                     ( sPos == endPos_forAtomParts || (isPrevStartPosSameAsStartPos && isPrevStartPosSameAsStartPosThisCount > 1)) ) // !!!
+                     ( sPos == endPos_forAtomParts || (isPrevStartPosSameAsStartPos/* && isPrevStartPosSameAsStartPosThisCount > 1*/)) ) // !!!
                 {
                     link = tryLink;
 
@@ -1952,78 +1952,59 @@ namespace m0.ZeroCode
             bool shallProcess = true;
             IVertex toReturnVertex = null;
             s.LocalRoot = null;
+           
+            List<keywordTryingData> examinedKeywords = TryIfIsKeywordLine(s);
 
-            //while (shallProcess)
-            //{
-                List<keywordTryingData> examinedKeywords = TryIfIsKeywordLine(s);
-
-                if (examinedKeywords != null)
+            if (examinedKeywords != null)
+            {
+                if (examinedKeywords.Count > 1)
                 {
-                    if (examinedKeywords.Count > 1)
-                    {
-                        int x = 0; // HOW IS THAT
-                    }
+                    int x = 0; // HOW IS THAT
+                }
 
-                    keywordTryingData chosenKeyword = examinedKeywords[0];
+                keywordTryingData chosenKeyword = examinedKeywords[0];
 
-                    return AddKeywordVertex(s, _baseVertex, chosenKeyword);
-
-                /*      int posAfterMatch = chosenKeyword.getMatchedOnPositionInText_Reccurent();
-
-                      if (toReturnVertex == null)
-                          toReturnVertex = AddKeywordVertex(s, _baseVertex, chosenKeyword);
-                      else
-                          AddKeywordVertex(s, _baseVertex, chosenKeyword);
-
-                      if (posAfterMatch >= text.Length || text[posAfterMatch] == '\r')
-                      {
-                          return toReturnVertex;
-                      }
-
-                      s.currentLineInfo.lineBeg = posAfterMatch;*/
+                return AddKeywordVertex(s, _baseVertex, chosenKeyword);
             }
+            else
+            {
+                if (s.currentLineNoTabs.Length == 0)
+                    return null;
+
+                if (s.currentLineNoTabs[0] != ZeroCodeCommon.CodeGraphVertexPrefix[0]
+                    || s.currentLineNoTabs[s.currentLineNoTabs.Length - 1] != ZeroCodeCommon.CodeGraphVertexSuffix[0])
+                    return AddVertex(s, _baseVertex, null, "SYNTAX ERROR");
+
+                shallProcess = false;
+
+                string currentLineInner = s.currentLineNoTabs.Substring(ZeroCodeCommon.CodeGraphVertexPrefix.Length,
+                    s.currentLineNoTabs.Length - ZeroCodeCommon.CodeGraphVertexPrefix.Length - ZeroCodeCommon.CodeGraphVertexSuffix.Length);
+
+                int doubleColonPos = getDoubleColonPos(currentLineInner);
+
+                if (doubleColonPos == -1) // no meta (before ::)
+                {
+                    string afterColon = currentLineInner.Trim();
+
+                    if (afterColon[0] == ZeroCodeCommon.NewVertexPrefix) // if is new value
+                        return AddVertex(s, _baseVertex, null, ZeroCodeCommon.stringFromNewVertexString(afterColon));
+
+                    return AddEdge(s, _baseVertex, null, processLink(ZeroCodeCommon.stringFromLinkString(afterColon, true))).To;
+                }
                 else
                 {
-                    if (s.currentLineNoTabs.Length == 0)
-                        return null;
+                    string beforeColon = currentLineInner.Substring(0, doubleColonPos).Trim();
 
-                    if (s.currentLineNoTabs[0] != ZeroCodeCommon.CodeGraphVertexPrefix[0]
-                        || s.currentLineNoTabs[s.currentLineNoTabs.Length - 1] != ZeroCodeCommon.CodeGraphVertexSuffix[0])
-                        return AddVertex(s, _baseVertex, null, "SYNTAX ERROR");
+                    string afterColon = currentLineInner.Substring(doubleColonPos + 2, currentLineInner.Length - doubleColonPos - 2).Trim();
 
-                    shallProcess = false;
+                    IVertex meta = processLink(beforeColon);
 
-                    string currentLineInner = s.currentLineNoTabs.Substring(ZeroCodeCommon.CodeGraphVertexPrefix.Length,
-                        s.currentLineNoTabs.Length - ZeroCodeCommon.CodeGraphVertexPrefix.Length - ZeroCodeCommon.CodeGraphVertexSuffix.Length);
+                    if (afterColon[0] == ZeroCodeCommon.NewVertexPrefix) // if is new value
+                        return AddVertex(s, _baseVertex, meta, ZeroCodeCommon.stringFromNewVertexString(afterColon));
 
-                    int doubleColonPos = getDoubleColonPos(currentLineInner);
-
-                    if (doubleColonPos == -1) // no meta (before ::)
-                    {
-                        string afterColon = currentLineInner.Trim();
-
-                        if (afterColon[0] == ZeroCodeCommon.NewVertexPrefix) // if is new value
-                            return AddVertex(s, _baseVertex, null, ZeroCodeCommon.stringFromNewVertexString(afterColon));
-
-                        return AddEdge(s, _baseVertex, null, processLink(ZeroCodeCommon.stringFromLinkString(afterColon, true))).To;
-                    }
-                    else
-                    {
-                        string beforeColon = currentLineInner.Substring(0, doubleColonPos).Trim();
-
-                        string afterColon = currentLineInner.Substring(doubleColonPos + 2, currentLineInner.Length - doubleColonPos - 2).Trim();
-
-                        IVertex meta = processLink(beforeColon);
-
-                        if (afterColon[0] == ZeroCodeCommon.NewVertexPrefix) // if is new value
-                            return AddVertex(s, _baseVertex, meta, ZeroCodeCommon.stringFromNewVertexString(afterColon));
-
-                        return AddEdge(s, _baseVertex, meta, processLink(ZeroCodeCommon.stringFromLinkString(afterColon, true))).To;
-                    }
+                    return AddEdge(s, _baseVertex, meta, processLink(ZeroCodeCommon.stringFromLinkString(afterColon, true))).To;
                 }
-            //}
-
-            return null;
+            }
         }
 
         void Process_reccurent(ParsingStack s, IVertex _baseVertex)
