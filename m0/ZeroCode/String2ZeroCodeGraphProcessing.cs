@@ -777,7 +777,7 @@ namespace m0.ZeroCode
 
                 int tryPos = 0; 
 
-                _tryIsKeyword(s, "", s.currentLineInfo.lineBeg, -1, 0, text.Length - 1, text.Length - 1, out examinedKeywords, out link, true, ref tryPos, false);
+                _tryIsKeyword(s, "", s.currentLineInfo.lineBeg, -1, 0, text.Length - 1, text.Length - 1, false, out examinedKeywords, out link, true, ref tryPos, false);
 
                 if (examinedKeywords.Count() > 0)
                     return examinedKeywords;                
@@ -919,7 +919,7 @@ namespace m0.ZeroCode
             }
         }
 
-        void _tryIsKeyword(ParsingStack s, string LOGPREFIX, int startPos, int prev_startPos, int isPrevStartPosSameAsStartPosParentCount, int endPos, int endPos_forAtomParts, out List<keywordTryingData> examinedKeywords, out string link, bool isTopLevelCall, ref int newPos, bool lookForLocalRootOnly)
+        void _tryIsKeyword(ParsingStack s, string LOGPREFIX, int startPos, int prev_startPos, int isPrevStartPosSameAsStartPosParentCount, int endPos, int endPos_forAtomParts, bool afterKeywordPartExist, out List<keywordTryingData> examinedKeywords, out string link, bool isTopLevelCall, ref int newPos, bool lookForLocalRootOnly)
         {
             examinedKeywords = new List<keywordTryingData>();
 
@@ -972,6 +972,8 @@ namespace m0.ZeroCode
 
             //
 
+            int sPos_copy;
+
             if (!testIfIsKeywordSubstring(startPos))
             {
                 tryEmptyKeyword = ZeroCodeCommon.tryStringFromNewVertexString(text, startPos, ref sPos);
@@ -979,6 +981,8 @@ namespace m0.ZeroCode
                 if (tryEmptyKeyword != null)
                 {
                     specialType = SpecialKeywordType.NewVertexKeyword;
+
+                    sPos_copy = sPos;
 
                     sPos++; // hmmm ????
                 }
@@ -998,6 +1002,8 @@ namespace m0.ZeroCode
                             shallProceed = false;
                     }
 
+                    sPos_copy = sPos;
+
                     string foundString = text.Substring(startPos, sPos - startPos);
 
                     if (!isTopLevelCall
@@ -1013,7 +1019,9 @@ namespace m0.ZeroCode
                     }
                 }
 
-                if ( //(tryEmptyKeyword != null || lookForLocalRootOnly==false) &&
+                if //(// (afterKeywordPartExist && sPos_copy - 1 == endPos_forAtomParts && isPrevStartPosSameAsStartPos)
+                    //|| (!afterKeywordPartExist && (sPos == endPos_forAtomParts || isPrevStartPosSameAsStartPos)))
+                    ( //(tryEmptyKeyword != null || lookForLocalRootOnly==false) &&
                      ( sPos == endPos_forAtomParts || (isPrevStartPosSameAsStartPos/* && isPrevStartPosSameAsStartPosThisCount > 1*/)) ) // !!!
                 {
                     link = tryLink;
@@ -1180,6 +1188,8 @@ namespace m0.ZeroCode
                         {
                             int isTryKeyword_endPos = endPos_forAtomParts;
 
+                            bool _afterKeywordPartExist = false;
+
                             MinusZero.Instance.Log(1, "_tryIsKeyword", LOGPREFIX+"TRY for parameter:" +ktd.currentlyProcessedParameterName+" for keyword:" + ktd.keyword + " afterParameterString:" + ktd.afterParameterString + "| ("+sPos+","+endPos+")");
 
                             if (ktd.afterParameterString != "")
@@ -1191,7 +1201,8 @@ namespace m0.ZeroCode
                                 if (sPosAfterParameter != -1
                                     && ((sPosAfterParameter < endPos) || (endPos == 0)))
                                 {
-                                    isTryKeyword_endPos = sPosAfterParameter; 
+                                    isTryKeyword_endPos = sPosAfterParameter;
+                                    _afterKeywordPartExist = true;
                                 }
                                 else
                                     isTryKeyword_endPos = -1; // do not search; this keyword does not fit in text
@@ -1221,7 +1232,7 @@ namespace m0.ZeroCode
 
                                     //
 
-                                    _tryIsKeyword(s, LOGPREFIX + "    ", sPos, startPos, isPrevStartPosSameAsStartPosThisCount, endPos, isTryKeyword_endPos, out foundKeywords, out foundLink, false, ref _newPos, false);
+                                    _tryIsKeyword(s, LOGPREFIX + "    ", sPos, startPos, isPrevStartPosSameAsStartPosThisCount, endPos, isTryKeyword_endPos, _afterKeywordPartExist, out foundKeywords, out foundLink, false, ref _newPos, false);
 
                                     // BACK TO OLD STACK
 
@@ -1506,7 +1517,7 @@ namespace m0.ZeroCode
 
             //
 
-            _tryIsKeyword(s, LOGPREFIX + "    ", sPos - 1, -1, 0, text.Length - 1, text.Length - 1, out _examinedKeywords, out _link, true, ref _tryPos, true);
+            _tryIsKeyword(s, LOGPREFIX + "    ", sPos - 1, -1, 0, text.Length - 1, text.Length - 1, false, out _examinedKeywords, out _link, true, ref _tryPos, true);
 
             // BACK TO OLD STACK
 
