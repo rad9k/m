@@ -765,7 +765,15 @@ namespace m0.ZeroCode
 
         List<keywordTryingData> TryIfIsKeywordLine(ParsingStack s)
         {
-            List<keywordTryingData> examinedKeywords;
+            string xx = "";
+            for (int x = s.currentLineInfo.lineBeg; x <= s.currentLineInfo.lineEnd; x++)
+              xx += " "+x+":"+text[x];
+
+            MinusZero.Instance.Log(0, "TryIfIsKeywordLine", xx);
+
+            ////
+
+            List <keywordTryingData> examinedKeywords;
 
             if (s.currentLineInfo.lineBeg >= text.Length)
                 return null;
@@ -919,8 +927,41 @@ namespace m0.ZeroCode
             }
         }
 
+        class tryIsKeyword_Parameters
+        {
+            public ParsingStack s;
+            public string LOGPREFIX;
+            public int startPos;
+            public int prev_startPos;
+            public int isPrevStartPosSameAsStartPosParentCount;
+            public int endPos;
+            public int endPos_forAtomParts;
+            public bool afterKeywordPartExist;
+
+            public tryIsKeyword_Parameters(ParsingStack _s, string _LOGPREFIX, int _startPos, int _prev_startPos, int _isPrevStartPosSameAsStartPosParentCount, int _endPos, int _endPos_forAtomParts, bool _afterKeywordPartExist)
+            {
+                s = _s;
+                LOGPREFIX = _LOGPREFIX;
+                startPos = _startPos;
+                prev_startPos = _prev_startPos;
+                isPrevStartPosSameAsStartPosParentCount = _isPrevStartPosSameAsStartPosParentCount;
+                endPos = _endPos;
+                endPos_forAtomParts = _endPos_forAtomParts;
+                afterKeywordPartExist = _afterKeywordPartExist;
+            }
+
+            public override string ToString()
+            {
+                return "startPos:" + startPos + " prev_startPos:" + prev_startPos + " isPrevStartPosSameAsStartPosParentCount:" + isPrevStartPosSameAsStartPosParentCount + " endPos:" + endPos + " endPos_forAtomParts:" + endPos_forAtomParts + " afterKeywordPartExist:" + afterKeywordPartExist;
+            }
+        }
+
         void _tryIsKeyword(ParsingStack s, string LOGPREFIX, int startPos, int prev_startPos, int isPrevStartPosSameAsStartPosParentCount, int endPos, int endPos_forAtomParts, bool afterKeywordPartExist, out List<keywordTryingData> examinedKeywords, out string link, bool isTopLevelCall, ref int newPos, bool lookForLocalRootOnly)
         {
+            tryIsKeyword_Parameters callParams = new tryIsKeyword_Parameters(s, LOGPREFIX, startPos, prev_startPos, isPrevStartPosSameAsStartPosParentCount, endPos, endPos_forAtomParts, afterKeywordPartExist);
+
+            //
+
             examinedKeywords = new List<keywordTryingData>();
 
             link = null;
@@ -946,9 +987,6 @@ namespace m0.ZeroCode
             }
 
             string xx = "";
-
-            //for (int x = startPos; x <= endPos; x++)
-              //  xx += " "+x+":"+text[x];
 
             MinusZero.Instance.Log(1, "_tryIsKeyword", LOGPREFIX+"BEG startPos:" + startPos + " prevSpos:"+prev_startPos+" same:"+isPrevStartPosSameAsStartPos+" endPos:" + endPos+" "+xx);
 
@@ -1019,10 +1057,12 @@ namespace m0.ZeroCode
                     }
                 }
 
-                if //(// (afterKeywordPartExist && sPos_copy - 1 == endPos_forAtomParts && isPrevStartPosSameAsStartPos)
-                    //|| (!afterKeywordPartExist && (sPos == endPos_forAtomParts || isPrevStartPosSameAsStartPos)))
-                    ( //(tryEmptyKeyword != null || lookForLocalRootOnly==false) &&
-                     ( sPos == endPos_forAtomParts || (isPrevStartPosSameAsStartPos/* && isPrevStartPosSameAsStartPosThisCount > 1*/)) ) // !!!
+                MinusZero.Instance.Log(0, "_tryIfKeyword", LOGPREFIX + callParams.ToString());
+
+                if ( (afterKeywordPartExist && sPos_copy - 1 == endPos_forAtomParts && isPrevStartPosSameAsStartPos)
+                    || (!afterKeywordPartExist && (sPos == endPos_forAtomParts || isPrevStartPosSameAsStartPos)))
+                   // ( //(tryEmptyKeyword != null || lookForLocalRootOnly==false) &&
+                    // ( sPos == endPos_forAtomParts || (isPrevStartPosSameAsStartPos /*&& isPrevStartPosSameAsStartPosThisCount > 1*/)) ) // !!!
                 {
                     link = tryLink;
 
