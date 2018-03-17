@@ -952,14 +952,14 @@ namespace m0.ZeroCode
 
             public override string ToString()
             {
-                return "startPos:" + startPos + " prev_startPos:" + prev_startPos + " isPrevStartPosSameAsStartPosParentCount:" + isPrevStartPosSameAsStartPosParentCount + " endPos:" + endPos + " endPos_forAtomParts:" + endPos_forAtomParts + " afterKeywordPartExist:" + afterKeywordPartExist;
+                return "startPos: " + startPos + " prev_startPos: " + prev_startPos + " PrevStartCount: " + isPrevStartPosSameAsStartPosParentCount + " endPos: " + endPos + " endPos_forAtomParts: " + endPos_forAtomParts + " afterKeywordPartExist: " + afterKeywordPartExist;
             }
         }
 
         void _tryIsKeyword(ParsingStack s, string LOGPREFIX, int startPos, int prev_startPos, int isPrevStartPosSameAsStartPosParentCount, int endPos, int endPos_forAtomParts, bool afterKeywordPartExist, out List<keywordTryingData> examinedKeywords, out string link, bool isTopLevelCall, ref int newPos, bool lookForLocalRootOnly)
         {
             tryIsKeyword_Parameters callParams = new tryIsKeyword_Parameters(s, LOGPREFIX, startPos, prev_startPos, isPrevStartPosSameAsStartPosParentCount, endPos, endPos_forAtomParts, afterKeywordPartExist);
-
+            MinusZero.Instance.Log(0, "_tryIfKeyword: ENTER", LOGPREFIX + callParams.ToString());
             //
 
             examinedKeywords = new List<keywordTryingData>();
@@ -1057,13 +1057,14 @@ namespace m0.ZeroCode
                     }
                 }
 
-                MinusZero.Instance.Log(0, "_tryIfKeyword", LOGPREFIX + callParams.ToString());
+                MinusZero.Instance.Log(0, "_tryIfKeyword: TRY 0", LOGPREFIX + callParams.ToString());
 
-                if ( (afterKeywordPartExist && sPos_copy - 1 == endPos_forAtomParts && isPrevStartPosSameAsStartPos)
-                    || (!afterKeywordPartExist && (sPos == endPos_forAtomParts || isPrevStartPosSameAsStartPos)))
-                   // ( //(tryEmptyKeyword != null || lookForLocalRootOnly==false) &&
-                    // ( sPos == endPos_forAtomParts || (isPrevStartPosSameAsStartPos /*&& isPrevStartPosSameAsStartPosThisCount > 1*/)) ) // !!!
+                if //( (afterKeywordPartExist && sPos_copy - 1 == endPos_forAtomParts && isPrevStartPosSameAsStartPos)
+                    //|| (!afterKeywordPartExist && (sPos == endPos_forAtomParts || isPrevStartPosSameAsStartPos)))
+                    ( //(tryEmptyKeyword != null || lookForLocalRootOnly==false) &&
+                     ( sPos == endPos_forAtomParts || (isPrevStartPosSameAsStartPos /*&& isPrevStartPosSameAsStartPosThisCount > 1*/)) ) // !!!
                 {
+                    MinusZero.Instance.Log(0, "_tryIfKeyword: TRY 0", LOGPREFIX + "ENTER");
                     link = tryLink;
 
                     newPos = sPos;
