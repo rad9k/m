@@ -959,7 +959,7 @@ namespace m0.ZeroCode
         void _tryIsKeyword(ParsingStack s, string LOGPREFIX, int startPos, int prev_startPos, int isPrevStartPosSameAsStartPosParentCount, int endPos, int endPos_forAtomParts, bool afterKeywordPartExist, out List<keywordTryingData> examinedKeywords, out string link, bool isTopLevelCall, ref int newPos, bool lookForLocalRootOnly)
         {
             tryIsKeyword_Parameters callParams = new tryIsKeyword_Parameters(s, LOGPREFIX, startPos, prev_startPos, isPrevStartPosSameAsStartPosParentCount, endPos, endPos_forAtomParts, afterKeywordPartExist);
-            MinusZero.Instance.Log(0, "_tryIfKeyword: ENTER", LOGPREFIX + callParams.ToString());
+            MinusZero.Instance.Log(0, "_tryIfKeyword: run", LOGPREFIX + callParams.ToString());
             //
 
             examinedKeywords = new List<keywordTryingData>();
@@ -1057,14 +1057,14 @@ namespace m0.ZeroCode
                     }
                 }
 
-                MinusZero.Instance.Log(0, "_tryIfKeyword: TRY 0", LOGPREFIX + callParams.ToString());
+                MinusZero.Instance.Log(0, "_tryIfKeyword:", LOGPREFIX + "conditions 0: TRY");
 
-                if //( (afterKeywordPartExist && sPos_copy - 1 == endPos_forAtomParts && isPrevStartPosSameAsStartPos)
-                    //|| (!afterKeywordPartExist && (sPos == endPos_forAtomParts || isPrevStartPosSameAsStartPos)))
-                    ( //(tryEmptyKeyword != null || lookForLocalRootOnly==false) &&
-                     ( sPos == endPos_forAtomParts || (isPrevStartPosSameAsStartPos /*&& isPrevStartPosSameAsStartPosThisCount > 1*/)) ) // !!!
+                if ( (afterKeywordPartExist && sPos_copy - 1 == endPos_forAtomParts && isPrevStartPosSameAsStartPos)
+                    || (!afterKeywordPartExist && (sPos == endPos_forAtomParts || isPrevStartPosSameAsStartPos)))
+                    //( //(tryEmptyKeyword != null || lookForLocalRootOnly==false) &&
+                     //( sPos == endPos_forAtomParts || (isPrevStartPosSameAsStartPos /*&& isPrevStartPosSameAsStartPosThisCount > 1*/)) ) // !!!
                 {
-                    MinusZero.Instance.Log(0, "_tryIfKeyword: TRY 0", LOGPREFIX + "ENTER");
+                    MinusZero.Instance.Log(0, "_tryIfKeyword:", LOGPREFIX + "conditions 0: ENTER");
                     link = tryLink;
 
                     newPos = sPos;
@@ -1272,6 +1272,8 @@ namespace m0.ZeroCode
                                     s.can_initialize_memory_tabCount = true;
 
                                     //
+
+                                    MinusZero.Instance.Log(0, "_tryIfKeyword:", LOGPREFIX + "_tryIsCall / "+ktd.currentlyProcessedParameterName+" / " + ktd.keywordVertex.Value);
 
                                     _tryIsKeyword(s, LOGPREFIX + "    ", sPos, startPos, isPrevStartPosSameAsStartPosThisCount, endPos, isTryKeyword_endPos, _afterKeywordPartExist, out foundKeywords, out foundLink, false, ref _newPos, false);
 
