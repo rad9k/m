@@ -1059,10 +1059,10 @@ namespace m0.ZeroCode
 
                 MinusZero.Instance.Log(0, "_tryIfKeyword:", LOGPREFIX + "conditions 0: TRY");
 
-                if ( (afterKeywordPartExist && sPos_copy - 1 == endPos_forAtomParts && isPrevStartPosSameAsStartPos)
-                    || (!afterKeywordPartExist && (sPos == endPos_forAtomParts || isPrevStartPosSameAsStartPos)))
-                    //( //(tryEmptyKeyword != null || lookForLocalRootOnly==false) &&
-                     //( sPos == endPos_forAtomParts || (isPrevStartPosSameAsStartPos /*&& isPrevStartPosSameAsStartPosThisCount > 1*/)) ) // !!!
+                if// ( (afterKeywordPartExist && sPos_copy - 1 == endPos_forAtomParts && isPrevStartPosSameAsStartPos)
+                    //|| (!afterKeywordPartExist && (sPos == endPos_forAtomParts || isPrevStartPosSameAsStartPos)))
+                    ( //(tryEmptyKeyword != null || lookForLocalRootOnly==false) &&
+                     ( sPos == endPos_forAtomParts || (isPrevStartPosSameAsStartPos /*&& isPrevStartPosSameAsStartPosThisCount > 1*/)) ) // !!!
                 {
                     MinusZero.Instance.Log(0, "_tryIfKeyword:", LOGPREFIX + "conditions 0: ENTER");
                     link = tryLink;
@@ -1075,7 +1075,7 @@ namespace m0.ZeroCode
 
                         //
 
-                        newPos = _tryIsNextLocalRootKeyword(s, LOGPREFIX, newPos, sPos, ktd);
+                      //  newPos = _tryIsNextLocalRootKeyword(s, LOGPREFIX, newPos, sPos, ktd);
 
                         //
 
@@ -1273,7 +1273,8 @@ namespace m0.ZeroCode
 
                                     //
 
-                                    MinusZero.Instance.Log(0, "_tryIfKeyword:", LOGPREFIX + "_tryIsCall / "+ktd.currentlyProcessedParameterName+" / " + ktd.keywordVertex.Value);
+                                    MinusZero.Instance.Log(0, "_tryIfKeyword:", LOGPREFIX + "_tryIsCall / " + ktd.currentlyProcessedParameterName + " / " + ktd.keywordVertex.Value);
+
 
                                     _tryIsKeyword(s, LOGPREFIX + "    ", sPos, startPos, isPrevStartPosSameAsStartPosThisCount, endPos, isTryKeyword_endPos, _afterKeywordPartExist, out foundKeywords, out foundLink, false, ref _newPos, false);
 
@@ -1489,9 +1490,9 @@ namespace m0.ZeroCode
 
                     keywordTryingData ktd = examinedKeywords[0]; // ASSUMPTION
 
-                    if (ktd.matchedOnPositionInText <= s.currentLineInfo.lineEnd
+                    /*if (ktd.matchedOnPositionInText <= s.currentLineInfo.lineEnd
                         && isLocalRootKeyword(ktd))
-                        sPos = _tryIsNextLocalRootKeyword(s, LOGPREFIX, sPos, ktd.matchedOnPositionInText + 1, ktd);
+                        sPos = _tryIsNextLocalRootKeyword(s, LOGPREFIX, sPos, ktd.matchedOnPositionInText + 1, ktd);*/
                 }
                 //
 
