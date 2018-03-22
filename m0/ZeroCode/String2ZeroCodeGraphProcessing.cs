@@ -1107,7 +1107,7 @@ namespace m0.ZeroCode
             
             // no infinite reccursion
 
-            if (isPrevStartPosSameAsStartPos && isPrevStartPosSameAsStartPosParentCount == 1) // do not want inifinite recursion
+            if (isPrevStartPosSameAsStartPos && isPrevStartPosSameAsStartPosParentCount == 2) // do not want inifinite recursion
                 return;
 
             // keyword
@@ -1556,7 +1556,7 @@ namespace m0.ZeroCode
 
             // DO NO NEED THIS NOW !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-           // ParsingStack newStack = new ParsingStack(s);
+            ParsingStack newStack = new ParsingStack(s);
 
             //s = newStack;
 
