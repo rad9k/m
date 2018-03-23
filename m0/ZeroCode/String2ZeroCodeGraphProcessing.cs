@@ -916,7 +916,7 @@ namespace m0.ZeroCode
 
                     //
 
-                    newPos = _tryIsNextLocalRootKeyword(s, LOGPREFIX, newPos, sPos, ktd);
+                    //newPos = _tryIsNextLocalRootKeyword(s, LOGPREFIX, newPos, sPos, ktd);
 
                     //
 
@@ -959,7 +959,7 @@ namespace m0.ZeroCode
         void _tryIsKeyword(ParsingStack s, string LOGPREFIX, int startPos, int prev_startPos, int isPrevStartPosSameAsStartPosParentCount, int endPos, int endPos_forAtomParts, bool afterKeywordPartExist, out List<keywordTryingData> examinedKeywords, out string link, bool isTopLevelCall, ref int newPos, bool lookForLocalRootOnly)
         {
             tryIsKeyword_Parameters callParams = new tryIsKeyword_Parameters(s, LOGPREFIX, startPos, prev_startPos, isPrevStartPosSameAsStartPosParentCount, endPos, endPos_forAtomParts, afterKeywordPartExist);
-            MinusZero.Instance.Log(0, "_tryIfKeyword: run", LOGPREFIX + callParams.ToString());
+            MinusZero.Instance.Log(0, "_tryIfKeyword", LOGPREFIX + "RUN "+callParams.ToString());
             //
 
             examinedKeywords = new List<keywordTryingData>();
@@ -1057,7 +1057,7 @@ namespace m0.ZeroCode
                     }
                 }
 
-                MinusZero.Instance.Log(0, "_tryIfKeyword:", LOGPREFIX + "conditions 0: TRY / sPos_copy:" + sPos_copy + " isPrevStartPosSameAsStartPos: " + isPrevStartPosSameAsStartPos);
+                //MinusZero.Instance.Log(0, "_tryIfKeyword:", LOGPREFIX + "conditions 0: TRY / sPos_copy:" + sPos_copy + " isPrevStartPosSameAsStartPos: " + isPrevStartPosSameAsStartPos);
 
 
                 if ( (afterKeywordPartExist && sPos_copy == endPos_forAtomParts && isPrevStartPosSameAsStartPos)
@@ -1065,7 +1065,7 @@ namespace m0.ZeroCode
                    // ( //(tryEmptyKeyword != null || lookForLocalRootOnly==false) &&
                     // ( sPos == endPos_forAtomParts || (isPrevStartPosSameAsStartPos /*&& isPrevStartPosSameAsStartPosThisCount > 1*/)) ) // !!!
                 {
-                    MinusZero.Instance.Log(0, "_tryIfKeyword:", LOGPREFIX + "conditions 0: ENTER");
+                   // MinusZero.Instance.Log(0, "_tryIfKeyword", LOGPREFIX + "conditions 0: ENTER");
                     link = tryLink;
 
                     newPos = sPos;
@@ -1076,7 +1076,7 @@ namespace m0.ZeroCode
 
                         //
 
-                        newPos = _tryIsNextLocalRootKeyword(s, LOGPREFIX, newPos, sPos, ktd);
+                        //newPos = _tryIsNextLocalRootKeyword(s, LOGPREFIX, newPos, sPos, ktd);
 
                         //
 
@@ -1104,11 +1104,16 @@ namespace m0.ZeroCode
                 }
                 
             }
-            
+
             // no infinite reccursion
 
-            if (isPrevStartPosSameAsStartPos && isPrevStartPosSameAsStartPosParentCount == 2) // do not want inifinite recursion
+            MinusZero.Instance.Log(0, "_tryIsKeyword", LOGPREFIX + "REKURSION  same: " + isPrevStartPosSameAsStartPos + " sameTHISCount: "+ isPrevStartPosSameAsStartPosThisCount);
+
+            if (isPrevStartPosSameAsStartPos && isPrevStartPosSameAsStartPosThisCount == 3)
+            { // do not want inifinite recursion
+                MinusZero.Instance.Log(0, "_tryIsKeyword", LOGPREFIX + "HARD RETURN");
                 return;
+            }
 
             // keyword
 
@@ -1261,7 +1266,11 @@ namespace m0.ZeroCode
                                 MinusZero.Instance.Log(1, LOGPREFIX+"_tryIsKeyword", "will run _tryIs for:"+ ktd.currentlyProcessedParameterName);
 
                                 if (ktd.isCurrentlyProcessedParameterAtom())
+                                {
+                                    MinusZero.Instance.Log(0, "_tryIfKeyword", LOGPREFIX + "_tryATOM / " + ktd.currentlyProcessedParameterName + " / " + ktd.keywordVertex.Value);
+
                                     _tryAtom(s, LOGPREFIX + "    ", sPos, isTryKeyword_endPos, out foundKeywords, out foundLink, ref _newPos);
+                                }
                                 else
                                 {
                                     // NEW STACK
@@ -1274,7 +1283,7 @@ namespace m0.ZeroCode
 
                                     //
 
-                                    MinusZero.Instance.Log(0, "_tryIfKeyword:", LOGPREFIX + "_tryIsCall / " + ktd.currentlyProcessedParameterName + " / " + ktd.keywordVertex.Value);
+                                    MinusZero.Instance.Log(0, "_tryIfKeyword", LOGPREFIX + "_tryIsCall / " + ktd.currentlyProcessedParameterName + " / " + ktd.keywordVertex.Value);
 
 
                                     _tryIsKeyword(s, LOGPREFIX + "    ", sPos, startPos, isPrevStartPosSameAsStartPosThisCount, endPos, isTryKeyword_endPos, _afterKeywordPartExist, out foundKeywords, out foundLink, false, ref _newPos, false);
@@ -1491,9 +1500,9 @@ namespace m0.ZeroCode
 
                     keywordTryingData ktd = examinedKeywords[0]; // ASSUMPTION
 
-                    if (ktd.matchedOnPositionInText <= s.currentLineInfo.lineEnd
-                        && isLocalRootKeyword(ktd))
-                        sPos = _tryIsNextLocalRootKeyword(s, LOGPREFIX, sPos, ktd.matchedOnPositionInText + 1, ktd);
+                    //if (ktd.matchedOnPositionInText <= s.currentLineInfo.lineEnd
+                    //    && isLocalRootKeyword(ktd))
+                     //   sPos = _tryIsNextLocalRootKeyword(s, LOGPREFIX, sPos, ktd.matchedOnPositionInText + 1, ktd);
                 }
                 //
 
