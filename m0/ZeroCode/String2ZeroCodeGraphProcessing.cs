@@ -1124,9 +1124,9 @@ namespace m0.ZeroCode
             // no infinite reccursion
 
             string _s = "";
-            foreach (IVertex v in s.sameStartPosKewords.Keys)
-                if(v!=null)
-                    _s += ", " + v.Value;
+            foreach (KeyValuePair<IVertex,int> v in s.sameStartPosKewords)
+                //if(v!=null)
+                    _s += ", " + v.Key.Value+"["+v.Value+"]";
 
             MinusZero.Instance.Log(0, "_tryIsKeyword", LOGPREFIX + "REKURSION " + _s);
 
@@ -1308,7 +1308,7 @@ namespace m0.ZeroCode
 
                                 if (ktd.isCurrentlyProcessedParameterAtom())
                                 {
-                                    MinusZero.Instance.Log(0, "_tryIfKeyword", LOGPREFIX + "_tryATOM / " + ktd.currentlyProcessedParameterName + " / " + ktd.keywordVertex.Value);
+                                    //MinusZero.Instance.Log(0, "_tryIfKeyword", LOGPREFIX + "_tryATOM / " + ktd.currentlyProcessedParameterName + " / " + ktd.keywordVertex.Value);
 
                                     _tryAtom(s, LOGPREFIX + "    ", sPos, isTryKeyword_endPos, out foundKeywords, out foundLink, ref _newPos);
                                 }
@@ -1324,7 +1324,7 @@ namespace m0.ZeroCode
 
                                     //
 
-                                    MinusZero.Instance.Log(0, "_tryIfKeyword", LOGPREFIX + "_tryIsCall / " + ktd.currentlyProcessedParameterName + " / " + ktd.keywordVertex.Value);
+                                    //MinusZero.Instance.Log(0, "_tryIfKeyword", LOGPREFIX + "_tryIsCall / " + ktd.currentlyProcessedParameterName + " / " + ktd.keywordVertex.Value);
 
                                     _tryIsKeyword(s, LOGPREFIX + "    ", sPos, startPos, isPrevStartPosSameAsStartPosThisCount, endPos, isTryKeyword_endPos, _afterKeywordPartExist, out foundKeywords, out foundLink, false, ref _newPos, false, ktd.keywordVertex);
 
