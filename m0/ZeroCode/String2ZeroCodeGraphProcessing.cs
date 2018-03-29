@@ -949,8 +949,9 @@ namespace m0.ZeroCode
             public int endPos;
             public int endPos_forAtomParts;
             public bool afterKeywordPartExist;
+            public IVertex parentKeyword;
 
-            public tryIsKeyword_Parameters(ParsingStack _s, string _LOGPREFIX, int _startPos, int _prev_startPos, int _isPrevStartPosSameAsStartPosParentCount, int _endPos, int _endPos_forAtomParts, bool _afterKeywordPartExist)
+            public tryIsKeyword_Parameters(ParsingStack _s, string _LOGPREFIX, int _startPos, int _prev_startPos, int _isPrevStartPosSameAsStartPosParentCount, int _endPos, int _endPos_forAtomParts, bool _afterKeywordPartExist, IVertex _parentKeyword)
             {
                 s = _s;
                 LOGPREFIX = _LOGPREFIX;
@@ -960,17 +961,21 @@ namespace m0.ZeroCode
                 endPos = _endPos;
                 endPos_forAtomParts = _endPos_forAtomParts;
                 afterKeywordPartExist = _afterKeywordPartExist;
+                parentKeyword = _parentKeyword;
             }
 
             public override string ToString()
             {
-                return "startPos: " + startPos + " prev_startPos: " + prev_startPos + " PrevStartCount: " + isPrevStartPosSameAsStartPosParentCount + " endPos: " + endPos + " endPos_forAtomParts: " + endPos_forAtomParts + " afterKeywordPartExist: " + afterKeywordPartExist;
+                if(parentKeyword!=null)
+                    return "startPos: " + startPos + " parentKeyword: " + parentKeyword.Value + " prev_startPos: " + prev_startPos + " PrevStartCount: " + isPrevStartPosSameAsStartPosParentCount + " endPos: " + endPos + " endPos_forAtomParts: " + endPos_forAtomParts + " afterKeywordPartExist: " + afterKeywordPartExist;
+                else
+                    return "startPos: " + startPos + " parentKeyword: NULL" + " prev_startPos: " + prev_startPos + " PrevStartCount: " + isPrevStartPosSameAsStartPosParentCount + " endPos: " + endPos + " endPos_forAtomParts: " + endPos_forAtomParts + " afterKeywordPartExist: " + afterKeywordPartExist;
             }
         }
 
         void _tryIsKeyword(ParsingStack s, string LOGPREFIX, int startPos, int prev_startPos, int isPrevStartPosSameAsStartPosParentCount, int endPos, int endPos_forAtomParts, bool afterKeywordPartExist, out List<keywordTryingData> examinedKeywords, out string link, bool isTopLevelCall, ref int newPos, bool lookForLocalRootOnly, IVertex parentKeyword)
         {
-            tryIsKeyword_Parameters callParams = new tryIsKeyword_Parameters(s, LOGPREFIX, startPos, prev_startPos, isPrevStartPosSameAsStartPosParentCount, endPos, endPos_forAtomParts, afterKeywordPartExist);
+            tryIsKeyword_Parameters callParams = new tryIsKeyword_Parameters(s, LOGPREFIX, startPos, prev_startPos, isPrevStartPosSameAsStartPosParentCount, endPos, endPos_forAtomParts, afterKeywordPartExist, parentKeyword);
             MinusZero.Instance.Log(0, "_tryIfKeyword", LOGPREFIX + "RUN "+callParams.ToString());
             //
 
