@@ -928,7 +928,7 @@ namespace m0.ZeroCode
 
                     //
 
-                    //newPos = _tryIsNextLocalRootKeyword(s, LOGPREFIX, newPos, sPos, ktd);
+                    newPos = _tryIsNextLocalRootKeyword(s, LOGPREFIX, newPos, sPos, ktd);
 
                     //
 
@@ -1083,8 +1083,8 @@ namespace m0.ZeroCode
 
                 if ( (afterKeywordPartExist && sPos_copy == endPos_forAtomParts && isPrevStartPosSameAsStartPos)
                     || (!afterKeywordPartExist && (sPos == endPos_forAtomParts || isPrevStartPosSameAsStartPos)))
-                   // ( //(tryEmptyKeyword != null || lookForLocalRootOnly==false) &&
-                    // ( sPos == endPos_forAtomParts || (isPrevStartPosSameAsStartPos /*&& isPrevStartPosSameAsStartPosThisCount > 1*/)) ) // !!!
+                    //( //(tryEmptyKeyword != null || lookForLocalRootOnly==false) &&
+                     //( sPos == endPos_forAtomParts || (isPrevStartPosSameAsStartPos /*&& isPrevStartPosSameAsStartPosThisCount > 1*/)) ) // !!!
                 {
                    // MinusZero.Instance.Log(0, "_tryIfKeyword", LOGPREFIX + "conditions 0: ENTER");
                     link = tryLink;
@@ -1097,7 +1097,7 @@ namespace m0.ZeroCode
 
                         //
 
-                        //newPos = _tryIsNextLocalRootKeyword(s, LOGPREFIX, newPos, sPos, ktd);
+                        newPos = _tryIsNextLocalRootKeyword(s, LOGPREFIX, newPos, sPos, ktd);
 
                         //
 
@@ -1139,17 +1139,18 @@ namespace m0.ZeroCode
 
             if (parentKeyword!=null && s.sameStartPosKewords.ContainsKey(parentKeyword))
             {
-                if (s.sameStartPosKewords[parentKeyword] > 4)
+                if (s.sameStartPosKewords[parentKeyword] > 0)
                     containsCondition = true;
             }
 
            // if (isPrevStartPosSameAsStartPos && isPrevStartPosSameAsStartPosParentCount == 1)
-            if(containsCondition || (isPrevStartPosSameAsStartPos && isPrevStartPosSameAsStartPosParentCount == 5))
+            if(/*containsCondition ||*/ (isPrevStartPosSameAsStartPos && isPrevStartPosSameAsStartPosParentCount == 3))
             { // do not want inifinite recursion
                 if(containsCondition)
                     MinusZero.Instance.Log(0, "_tryIsKeyword", LOGPREFIX + "HARD RETURN PARENT "+ parentKeyword.Value);
                 else
                     MinusZero.Instance.Log(0, "_tryIsKeyword", LOGPREFIX + "HARD RETURN");
+
                 return;
             }
             else
@@ -1545,9 +1546,9 @@ namespace m0.ZeroCode
 
                     keywordTryingData ktd = examinedKeywords[0]; // ASSUMPTION
 
-                   // if (ktd.matchedOnPositionInText <= s.currentLineInfo.lineEnd
-                   //     && isLocalRootKeyword(ktd))
-                  //      sPos = _tryIsNextLocalRootKeyword(s, LOGPREFIX, sPos, ktd.matchedOnPositionInText + 1, ktd);
+                    if (ktd.matchedOnPositionInText <= s.currentLineInfo.lineEnd
+                        && isLocalRootKeyword(ktd))
+                        sPos = _tryIsNextLocalRootKeyword(s, LOGPREFIX, sPos, ktd.matchedOnPositionInText + 1, ktd);
                 }
                 //
 
@@ -1576,7 +1577,7 @@ namespace m0.ZeroCode
 
                     //
 
-                    //newPos = _tryIsNextLocalRootKeyword(s, LOGPREFIX, newPos, tryNewPos, ktd);
+                    newPos = _tryIsNextLocalRootKeyword(s, LOGPREFIX, newPos, tryNewPos, ktd);
 
                     //
 
