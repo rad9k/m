@@ -214,6 +214,11 @@ namespace m0.ZeroCode
             }
         }
 
+        // PARSER AUTO TEST SECTION
+
+        int l1089 = 1;
+        int l1149_dict = -1;
+        int l1149_parent = 1;
         //
 
         List<keywordTryingData> examinedKeywords_All; // all keywords are here
@@ -1080,11 +1085,26 @@ namespace m0.ZeroCode
 
                 //MinusZero.Instance.Log(0, "_tryIfKeyword:", LOGPREFIX + "conditions 0: TRY / sPos_copy:" + sPos_copy + " isPrevStartPosSameAsStartPos: " + isPrevStartPosSameAsStartPos);
 
+                bool c1089 = false;
 
-                if ( (afterKeywordPartExist && sPos_copy == endPos_forAtomParts && isPrevStartPosSameAsStartPos)
+                if (l1089 == 1)
+                {
+                    if ((afterKeywordPartExist && sPos_copy == endPos_forAtomParts && isPrevStartPosSameAsStartPos)
                     || (!afterKeywordPartExist && (sPos == endPos_forAtomParts || isPrevStartPosSameAsStartPos)))
+                        c1089 = true;
+                }
+
+                if(l1089== 2)
+                {
+                    if (sPos == endPos_forAtomParts || (isPrevStartPosSameAsStartPos /*&& isPrevStartPosSameAsStartPosThisCount > 1*/))
+                        c1089 = true;
+                }
+
+                if (c1089)
+                    //( (afterKeywordPartExist && sPos_copy == endPos_forAtomParts && isPrevStartPosSameAsStartPos)
+                    //|| (!afterKeywordPartExist && (sPos == endPos_forAtomParts || isPrevStartPosSameAsStartPos)))
                     //( //(tryEmptyKeyword != null || lookForLocalRootOnly==false) &&
-                     //( sPos == endPos_forAtomParts || (isPrevStartPosSameAsStartPos /*&& isPrevStartPosSameAsStartPosThisCount > 1*/)) ) // !!!
+                    // ( sPos == endPos_forAtomParts || (isPrevStartPosSameAsStartPos /*&& isPrevStartPosSameAsStartPosThisCount > 1*/)) ) // !!!
                 {
                    // MinusZero.Instance.Log(0, "_tryIfKeyword", LOGPREFIX + "conditions 0: ENTER");
                     link = tryLink;
@@ -1139,12 +1159,12 @@ namespace m0.ZeroCode
 
             if (parentKeyword!=null && s.sameStartPosKewords.ContainsKey(parentKeyword))
             {
-                if (s.sameStartPosKewords[parentKeyword] > 0)
+                if (s.sameStartPosKewords[parentKeyword] > l1149_dict)
                     containsCondition = true;
             }
 
            // if (isPrevStartPosSameAsStartPos && isPrevStartPosSameAsStartPosParentCount == 1)
-            if(/*containsCondition ||*/ (isPrevStartPosSameAsStartPos && isPrevStartPosSameAsStartPosParentCount == 3))
+            if((l1149_dict>-1 && containsCondition) || (l1149_parent>-1 && isPrevStartPosSameAsStartPos && isPrevStartPosSameAsStartPosParentCount == 6))
             { // do not want inifinite recursion
                 if(containsCondition)
                     MinusZero.Instance.Log(0, "_tryIsKeyword", LOGPREFIX + "HARD RETURN PARENT "+ parentKeyword.Value);
@@ -2174,6 +2194,15 @@ namespace m0.ZeroCode
             AddNewLines(stack);
 
             return null;
+        }
+
+        public IVertex ParserAutoTestProcess(IVertex _baseVertex, string _text, int _l1089, int _1149_dict, int _1149_parent)
+        {
+            this.l1089 = _l1089;
+            this.l1149_dict = _1149_dict;
+            this.l1149_parent = _1149_parent;
+
+            return Process(_baseVertex, _text);
         }
 
         public IVertex Process(IVertex _baseVertex, string _text)

@@ -2900,6 +2900,10 @@ namespace m0
             UIWpf.UIWpf.InitializeUIWpf();
 
             IsInitialized = true;
+
+            //
+
+            AutoTest.ParserTest();
         }
 
         bool disposed = false;
