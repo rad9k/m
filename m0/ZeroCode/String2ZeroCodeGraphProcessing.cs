@@ -1087,16 +1087,22 @@ namespace m0.ZeroCode
 
                 bool c1089 = false;
 
-                if (l1089 == 1)
+                if (l1089 == -1)
                 {
                     if ((afterKeywordPartExist && sPos_copy == endPos_forAtomParts && isPrevStartPosSameAsStartPos)
                     || (!afterKeywordPartExist && (sPos == endPos_forAtomParts || isPrevStartPosSameAsStartPos)))
                         c1089 = true;
                 }
 
-                if(l1089== 2)
+                if(l1089== 0)
                 {
                     if (sPos == endPos_forAtomParts || (isPrevStartPosSameAsStartPos /*&& isPrevStartPosSameAsStartPosThisCount > 1*/))
+                        c1089 = true;
+                }
+
+                if (l1089 > 0)
+                {
+                    if (sPos == endPos_forAtomParts || (isPrevStartPosSameAsStartPos && isPrevStartPosSameAsStartPosThisCount > l1089))
                         c1089 = true;
                 }
 
@@ -1164,7 +1170,7 @@ namespace m0.ZeroCode
             }
 
            // if (isPrevStartPosSameAsStartPos && isPrevStartPosSameAsStartPosParentCount == 1)
-            if((l1149_dict>-1 && containsCondition) || (l1149_parent>-1 && isPrevStartPosSameAsStartPos && isPrevStartPosSameAsStartPosParentCount == 6))
+            if((l1149_dict>-1 && containsCondition) || (l1149_parent>-1 && isPrevStartPosSameAsStartPos && isPrevStartPosSameAsStartPosParentCount == l1149_parent))
             { // do not want inifinite recursion
                 if(containsCondition)
                     MinusZero.Instance.Log(0, "_tryIsKeyword", LOGPREFIX + "HARD RETURN PARENT "+ parentKeyword.Value);

@@ -1,4 +1,5 @@
-﻿using m0.ZeroCode;
+﻿using m0.Foundation;
+using m0.ZeroCode;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,22 +10,61 @@ namespace m0
 {
     public class AutoTest
     {
-        string[,] testCases = new string[3, 2]{
-        {"c0", "(a + b) + c" },
-{ "c1","(a|aa + b) + c" },
-        { "c2", "((a|aa + b) + c) + d" }};
-        /*
-{c3 "c3: (((a|aa + b) + c) + d) + e" },
-c4: (a + ((x)) + b)
-c5: (((((a|aa + b|bb) + c) + d) + e) + f) + g
-c6: (a + b / c* (d - (e - (f))) + g)
-c7: (a \ b \ c + (d \ e - e \ f \ g))
-c8: (a + b / c* (d - (e + (f / (ff* (fff + fff2 - (x / v)))))) + g)
-*/
+        static string[,] testCases = new string[10, 3]{
+        {"c0", "(a + b) + c","+" },
+        {"c1", "(a|aa + b) + c","+" },
+        {"c2", "((a|aa + b) + c) + d","+"},
+        {"c3", "(((a|aa + b) + c) + d) + e","+"},
+        {"c4", "((((a|aa + b) + c) + d) + e) + f","+"},
+        {"c5", "(((((a|aa + b|bb) + c) + d) + e) + f) + g", "+" },
+        {"c6", "(a + ((x)) + b)","?"},
+        {"c7", "(a + b / c* (d - (e - (f))) + g)","?"},
+        {"c8", @"(a \ b \ c + (d \ e - e \ f \ g))","?"},
+        {"c9", "(a + b / c* (d - (e + (f / (ff* (fff + fff2 - (x / v)))))) + g)","?"}};
+
 
         public static void ParserTest()
         {
             String2ZeroCodeGraphProcessing parser = new String2ZeroCodeGraphProcessing();
 
+            System.IO.StreamWriter logFile = new System.IO.StreamWriter("AUTO_TEST.xls");
+            logFile.AutoFlush = true;
+
+            
+
+            for (int l1089 = -1; l1089 <= 3; l1089++)
+                for (int l1149_dict = -1; l1149_dict <= 3; l1149_dict++)
+                    for (int l1149_parent = -1; l1149_parent <= 3; l1149_parent++) {
+                        string line = l1089 + "\t" + l1149_dict + "\t" + l1149_parent;
+
+                        if(!(l1149_dict==-1 && l1149_parent==-1))
+                        for (int c = 0; c <= 5; c++)
+                        {
+                            //line += "\t" + testCases[c, 1];
+
+                            IVertex b = MinusZero.Instance.Root.AddVertex(null,"AUTO");
+
+                            try
+                            {
+                                IVertex r = parser.ParserAutoTestProcess(b, testCases[c, 1], l1089, l1149_dict, l1149_parent);
+
+                                    if (b.Get("SYNTAX ERROR") != null)
+                                        line += "\tSYNTAX";
+                                    else
+                                    {
+                                        if (b.Get(@"\" + testCases[c, 2]) != null)
+                                            line += "\tO";
+                                    }
+                            }
+                            catch (Exception e) {
+                                line += "\t" + e.ToString();
+                            }
+                        }
+
+                        logFile.WriteLine(line);
+                    }
+
+            logFile.Close();
+        }
     }
 }
