@@ -32,9 +32,9 @@ namespace m0
 
             
 
-            for (int l1089 = -1; l1089 <= 3; l1089++)
-                for (int l1149_dict = -1; l1149_dict <= 3; l1149_dict++)
-                    for (int l1149_parent = -1; l1149_parent <= 3; l1149_parent++) {
+            for (int l1089 = -1; l1089 <= 10; l1089++)
+                for (int l1149_dict = -1; l1149_dict <= 10; l1149_dict++)
+                    for (int l1149_parent = -1; l1149_parent <= 10; l1149_parent++) {
                         string line = l1089 + "\t" + l1149_dict + "\t" + l1149_parent;
 
                         if(!(l1149_dict==-1 && l1149_parent==-1))
