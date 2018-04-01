@@ -216,7 +216,7 @@ namespace m0.ZeroCode
 
         // PARSER AUTO TEST SECTION
 
-        int l1089 = 1;
+        int l1089 = 0;
         int l1149_dict = -1;
         int l1149_parent = 1;
         //
@@ -1170,7 +1170,7 @@ namespace m0.ZeroCode
             }
 
            // if (isPrevStartPosSameAsStartPos && isPrevStartPosSameAsStartPosParentCount == 1)
-            if((l1149_dict>-1 && containsCondition) || (l1149_parent>-1 && isPrevStartPosSameAsStartPos && isPrevStartPosSameAsStartPosParentCount == l1149_parent))
+            if((l1149_dict>-1 && containsCondition) || (l1149_parent>-1 && isPrevStartPosSameAsStartPos && isPrevStartPosSameAsStartPosParentCount >= l1149_parent))
             { // do not want inifinite recursion
                 if(containsCondition)
                     MinusZero.Instance.Log(0, "_tryIsKeyword", LOGPREFIX + "HARD RETURN PARENT "+ parentKeyword.Value);
