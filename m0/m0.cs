@@ -885,10 +885,6 @@ namespace m0
             //
             // {(*(+\r\n+)\t(?<expr>)*)\r\n}
 
-            //IVertex o_newSub = smuk.AddVertex(keyword, "{(*(+\r\n+)\t(?<expr>)*)\r\n}");
-
-            //IVertex o_newSub = smuk.AddVertex(keyword, "{(*A\t(?<expr>)*)A}");
-
             IVertex o_newSub = smuk.AddVertex(keyword, "{(*\r\n\t(?<expr>)*)\r\n}");
 
             IVertex o_newSub_any = o_newSub.AddVertex(any, "");
