@@ -26,7 +26,7 @@ namespace m0.UIWpf.Visualisers
 {
     public class CodeVisualiser : TextEditor, IPlatformClass, IDisposable, IHasLocalizableEdges, IOwnScrolling
     {
-        //TextEditor edit;
+    
         public CodeVisualiser()
         {
             MinusZero mz = MinusZero.Instance;            
