@@ -32,13 +32,13 @@ namespace m0
 
             
 
-            for (int l1089 = -1; l1089 <= -1; l1089++)
-                for (int l1149_dict = 0; l1149_dict <= 0; l1149_dict++)
-                    for (int l1149_parent = -1; l1149_parent <= -1; l1149_parent++) {
+            for (int l1089 = -1; l1089 <= 0; l1089++)
+                for (int l1149_dict = -1; l1149_dict <= 10; l1149_dict++)
+                    for (int l1149_parent = -1; l1149_parent <= 10; l1149_parent++) {
                         string line = l1089 + "\t" + l1149_dict + "\t" + l1149_parent;
 
                         if(!(l1149_dict==-1 && l1149_parent==-1))
-                        for (int c = 6; c <= 9; c++)
+                        for (int c = 1; c <= 5; c++)
                         {
                             //line += "\t" + testCases[c, 1];
 
@@ -48,13 +48,13 @@ namespace m0
                             {
                                 IVertex r = parser.ParserAutoTestProcess(b, testCases[c, 1], l1089, l1149_dict, l1149_parent);
 
-                            /*        if (b.Get("SYNTAX ERROR") != null)
+                                    if (b.Get("SYNTAX ERROR") != null)
                                         line += "\tSYNTAX";
                                     else
                                     {
                                         if (b.Get(@"\" + testCases[c, 2]) != null)
                                             line += "\tO";
-                                    }*/
+                                    }
                             }
                             catch (Exception e) {
                                 line += "\t" + e.ToString();

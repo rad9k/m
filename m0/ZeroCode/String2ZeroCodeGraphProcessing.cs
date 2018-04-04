@@ -1094,7 +1094,7 @@ namespace m0.ZeroCode
                         c1089 = true;
                 }
 
-                if(l1089== 0)
+                if(l1089 == 0)
                 {
                     if (sPos == endPos_forAtomParts || (isPrevStartPosSameAsStartPos /*&& isPrevStartPosSameAsStartPosThisCount > 1*/))
                         c1089 = true;
