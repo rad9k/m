@@ -216,9 +216,9 @@ namespace m0.ZeroCode
 
         // PARSER AUTO TEST SECTION
 
-        int l1089 = 0;
-        int l1149_dict = -1;
-        int l1149_parent = 1;
+        int l1089 = -1;
+        int l1149_dict = 0;
+        int l1149_parent = -1;
         //
 
         List<keywordTryingData> examinedKeywords_All; // all keywords are here
