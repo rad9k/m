@@ -216,9 +216,9 @@ namespace m0.ZeroCode
 
         // PARSER AUTO TEST SECTION
 
-        int l1089 = -1;
-        int l1149_dict = 0;
-        int l1149_parent = -1;
+        int l1089 = 0;
+        int l1149_dict = -1;
+        int l1149_parent = 1;
         //
 
         List<keywordTryingData> examinedKeywords_All; // all keywords are here
@@ -1123,7 +1123,7 @@ namespace m0.ZeroCode
 
                         //
 
-                        newPos = _tryIsNextLocalRootKeyword(s, LOGPREFIX, newPos, sPos, ktd);
+                        //newPos = _tryIsNextLocalRootKeyword(s, LOGPREFIX, newPos, sPos, ktd);
 
                         //
 
@@ -1159,7 +1159,7 @@ namespace m0.ZeroCode
                 //if(v!=null)
                     _s += ", " + v.Key.Value+"["+v.Value+"]";
 
-            MinusZero.Instance.Log(0, "_tryIsKeyword", LOGPREFIX + "REKURSION " + _s);
+           // MinusZero.Instance.Log(0, "_tryIsKeyword", LOGPREFIX + "REKURSION " + _s);
 
             bool containsCondition = false;
 
@@ -1172,9 +1172,9 @@ namespace m0.ZeroCode
            // if (isPrevStartPosSameAsStartPos && isPrevStartPosSameAsStartPosParentCount == 1)
             if((l1149_dict>-1 && containsCondition) || (l1149_parent>-1 && isPrevStartPosSameAsStartPos && isPrevStartPosSameAsStartPosParentCount >= l1149_parent))
             { // do not want inifinite recursion
-                if(containsCondition)
-                    MinusZero.Instance.Log(0, "_tryIsKeyword", LOGPREFIX + "HARD RETURN PARENT "+ parentKeyword.Value);
-                else
+               // if(containsCondition)
+               //     MinusZero.Instance.Log(0, "_tryIsKeyword", LOGPREFIX + "HARD RETURN PARENT "+ parentKeyword.Value);
+               // else
                     MinusZero.Instance.Log(0, "_tryIsKeyword", LOGPREFIX + "HARD RETURN");
 
                 return;
@@ -1572,9 +1572,9 @@ namespace m0.ZeroCode
 
                     keywordTryingData ktd = examinedKeywords[0]; // ASSUMPTION
 
-                    if (ktd.matchedOnPositionInText <= s.currentLineInfo.lineEnd
-                        && isLocalRootKeyword(ktd))
-                        sPos = _tryIsNextLocalRootKeyword(s, LOGPREFIX, sPos, ktd.matchedOnPositionInText + 1, ktd);
+                   // if (ktd.matchedOnPositionInText <= s.currentLineInfo.lineEnd
+                   //     && isLocalRootKeyword(ktd))
+                     //   sPos = _tryIsNextLocalRootKeyword(s, LOGPREFIX, sPos, ktd.matchedOnPositionInText + 1, ktd);
                 }
                 //
 
@@ -1603,7 +1603,7 @@ namespace m0.ZeroCode
 
                     //
 
-                    newPos = _tryIsNextLocalRootKeyword(s, LOGPREFIX, newPos, tryNewPos, ktd);
+                   // newPos = _tryIsNextLocalRootKeyword(s, LOGPREFIX, newPos, tryNewPos, ktd);
 
                     //
 

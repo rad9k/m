@@ -2761,7 +2761,7 @@ namespace m0
 
         public bool DoLog=true;
 
-        public int LogLevel=-1;
+        public int LogLevel=0;
 
         private void InitializeLog()
         {
@@ -2892,7 +2892,7 @@ namespace m0
 
             //
 
-            AutoTest.ParserTest();
+            //AutoTest.ParserTest();
         }
 
         bool disposed = false;
