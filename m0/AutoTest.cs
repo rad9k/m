@@ -12,11 +12,11 @@ namespace m0
     {
         static string[,] testCases = new string[10, 3]{
         {"c0", "(a + b) + c","+" },
-        {"c1", "(a|aa + b) + c","+" },
-        {"c2", "((a|aa + b) + c) + d","+"},
-        {"c3", "(((a|aa + b) + c) + d) + e","+"},
-        {"c4", "((((a|aa + b) + c) + d) + e) + f","+"},
-        {"c5", "(((((a|aa + b|bb) + c) + d) + e) + f) + g", "+" },
+        {"c1", "(aaaa + b) + c","+" },
+        {"c2", "((aaaa + b) + c) + d","+"},
+        {"c3", "(((aaaa + b) + c) + d) + e","+"},
+        {"c4", "((((aaaa + b) + c) + d) + e) + f","+"},
+        {"c5", "(((((aaaa + bbbb) + c) + d) + e) + f) + g", "+" },
         {"c6", "(a + ((x)) + b)","?"},
         {"c7", "(a + b / c * (d - (e - (f))) + g)","?"},
         {"c8", @"(a \ b \ c + (d \ e - e \ f \ g))","?"},
@@ -32,9 +32,9 @@ namespace m0
 
             
 
-            for (int l1089 = -1; l1089 <= 10; l1089++)
-                for (int l1149_dict = -1; l1149_dict <= 10; l1149_dict++)
-                    for (int l1149_parent = -1; l1149_parent <= 10; l1149_parent++) {
+            for (int l1089 = -1; l1089 <= 5; l1089++)
+                for (int l1149_dict = -1; l1149_dict <= 5; l1149_dict++)
+                    for (int l1149_parent = -1; l1149_parent <= 5; l1149_parent++) {
                         string line = l1089 + "\t" + l1149_dict + "\t" + l1149_parent;
 
                         if(!(l1149_dict==-1 && l1149_parent==-1))
