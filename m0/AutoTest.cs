@@ -30,14 +30,18 @@ namespace m0
             System.IO.StreamWriter logFile = new System.IO.StreamWriter(@"AUTO_TEST.xls");
             logFile.AutoFlush = true;
 
-            
 
-            for (int l1089 = -1; l1089 <= 5; l1089++)
-                for (int l1149_dict = -1; l1149_dict <= 5; l1149_dict++)
-                    for (int l1149_parent = -1; l1149_parent <= 5; l1149_parent++) {
-                        string line = l1089 + "\t" + l1149_dict + "\t" + l1149_parent;
 
-                        if(!(l1149_dict==-1 && l1149_parent==-1))
+            for(int l1009_left = 0; l1009_left <=4; l1009_left++)
+            for (int l1009_right = 0; l1009_right <= 4; l1009_right++)
+            for (int l1089 = -1; l1089 <= 7; l1089++)
+                for (int l1149_dict = -1; l1149_dict <= 7; l1149_dict++)
+                    for (int l1149_parent = -1; l1149_parent <= 7; l1149_parent++) {
+                        //string line = l1089 + "\t" + l1149_dict + "\t" + l1149_parent;
+
+                        string line = l1009_left + "\t" + l1009_right + "\t" +  l1089 + "\t" + l1149_dict + "\t" + l1149_parent;
+
+                        if (!(l1149_dict==-1 && l1149_parent==-1) && l1009_left!=l1009_right)
                         for (int c = 1; c <= 5; c++)
                         {
                             //line += "\t" + testCases[c, 1];
@@ -46,7 +50,7 @@ namespace m0
 
                             try
                             {
-                                IVertex r = parser.ParserAutoTestProcess(b, testCases[c, 1], l1089, l1149_dict, l1149_parent);
+                                IVertex r = parser.ParserAutoTestProcess(b, testCases[c, 1], l1089, l1149_dict, l1149_parent, l1009_left, l1009_right);
 
                                     if (b.Get("SYNTAX ERROR") != null)
                                         line += "\tSYNTAX";

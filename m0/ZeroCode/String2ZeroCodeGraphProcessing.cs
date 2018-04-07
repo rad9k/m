@@ -216,9 +216,13 @@ namespace m0.ZeroCode
 
         // PARSER AUTO TEST SECTION
 
-        int l1089 = 0;
-        int l1149_dict = -1;
-        int l1149_parent = 5;
+        int l1089 = -1;
+        int l1149_dict = 0;
+        int l1149_parent = -1;
+
+        int L1009_left = 0;
+        int L1009_right = 1;
+
         //
 
         List<keywordTryingData> examinedKeywords_All; // all keywords are here
@@ -802,7 +806,7 @@ namespace m0.ZeroCode
 
                 int tryPos = 0; 
 
-                _tryIsKeyword(s, "", s.currentLineInfo.lineBeg, -1, 0, text.Length - 1, text.Length - 1, false, out examinedKeywords, out link, true, ref tryPos, false, null, null);
+                _tryIsKeyword(s, "", s.currentLineInfo.lineBeg, s.currentLineInfo.lineBeg, 0, text.Length - 1, text.Length - 1, false, out examinedKeywords, out link, true, ref tryPos, false, null, null);
 
                 if (examinedKeywords.Count() > 0)
                     return examinedKeywords;                
@@ -1004,15 +1008,38 @@ namespace m0.ZeroCode
 
             int isPrevStartPosSameAsStartPosThisCount = isPrevStartPosSameAsStartPosParentCount;
 
-            //if (startPos == prev_startPos)
-            if(parentParams!=null && prev_startPos == parentParams.prev_startPos)
-            {
-                isPrevStartPosSameAsStartPos = true;
-                isPrevStartPosSameAsStartPosThisCount++;
-            }
-            else
-            {
-                s.sameStartPosKewords.Clear();
+            int left=0;
+            int right=-1;
+
+            if (parentParams != null) {
+
+                switch (L1009_left)
+                {
+                    case 0: left = startPos; break;
+                    case 1: left = prev_startPos; break;
+                    case 2: left = parentParams.startPos; break;
+                    case 3: left = parentParams.prev_startPos; break;
+                }
+
+                switch (L1009_right)
+                {
+                    case 0: right = startPos; break;
+                    case 1: right = prev_startPos; break;
+                    case 2: right = parentParams.startPos; break;
+                    case 3: right = parentParams.prev_startPos; break;
+                }
+
+                //if (startPos == prev_startPos)
+                //if (prev_startPos == parentParams.prev_startPos)
+                if(left == right)
+                {
+                    isPrevStartPosSameAsStartPos = true;
+                    isPrevStartPosSameAsStartPosThisCount++;
+                }
+                else
+                {
+                    s.sameStartPosKewords.Clear();
+                }
             }
 
             string xx = "";
@@ -2205,11 +2232,14 @@ namespace m0.ZeroCode
             return null;
         }
 
-        public IVertex ParserAutoTestProcess(IVertex _baseVertex, string _text, int _l1089, int _1149_dict, int _1149_parent)
+        public IVertex ParserAutoTestProcess(IVertex _baseVertex, string _text, int _l1089, int _1149_dict, int _1149_parent, int _l1009_left, int _l1009_right)
         {
             this.l1089 = _l1089;
             this.l1149_dict = _1149_dict;
             this.l1149_parent = _1149_parent;
+
+            this.L1009_left = _l1009_left;
+            this.L1009_right = _l1009_right;
 
             return Process(_baseVertex, _text);
         }
