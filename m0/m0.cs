@@ -2892,7 +2892,7 @@ namespace m0
 
             //
 
-            //AutoTest.ParserTest();
+            AutoTest.ParserTest();
         }
 
         bool disposed = false;
