@@ -216,9 +216,16 @@ namespace m0.ZeroCode
 
         // PARSER AUTO TEST SECTION
 
-        int l1089 = -1;
+        /*int l1089 = 10;
         int l1149_dict = 0;
-        int l1149_parent = -1;
+        int l1149_parent = 1;
+
+        int L1009_left = 0;
+        int L1009_right = 3;*/
+
+        int l1089 = 1;
+        int l1149_dict = -1;
+        int l1149_parent = 1;
 
         int L1009_left = 0;
         int L1009_right = 1;
@@ -790,7 +797,7 @@ namespace m0.ZeroCode
             for (int x = s.currentLineInfo.lineBeg; x <= s.currentLineInfo.lineEnd; x++)
               xx += " "+x+":"+text[x];
 
-            MinusZero.Instance.Log(0, "TryIfIsKeywordLine", xx);
+            MinusZero.Instance.Log(-1, "TryIfIsKeywordLine", xx);
 
             ////
 
@@ -804,7 +811,8 @@ namespace m0.ZeroCode
             {
                 string link;
 
-                int tryPos = 0; 
+                int tryPos = 0;
+
 
                 _tryIsKeyword(s, "", s.currentLineInfo.lineBeg, s.currentLineInfo.lineBeg, 0, text.Length - 1, text.Length - 1, false, out examinedKeywords, out link, true, ref tryPos, false, null, null);
 
@@ -988,6 +996,11 @@ namespace m0.ZeroCode
         {
             tryIsKeyword_Parameters callParams = new tryIsKeyword_Parameters(s, LOGPREFIX, startPos, prev_startPos, isPrevStartPosSameAsStartPosParentCount, endPos, endPos_forAtomParts, afterKeywordPartExist, parentKeyword, parentParams);
             MinusZero.Instance.Log(0, "_tryIfKeyword", LOGPREFIX + "RUN "+callParams.ToString());
+
+            if(parentKeyword==null)
+                MinusZero.Instance.Log(-1, "_tryIfKeyword", LOGPREFIX + prev_startPos );
+            else
+                MinusZero.Instance.Log(-1, "_tryIfKeyword", LOGPREFIX + prev_startPos + " " + parentKeyword.Value);
             //
 
             examinedKeywords = new List<keywordTryingData>();
