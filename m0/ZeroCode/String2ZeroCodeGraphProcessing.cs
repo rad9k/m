@@ -997,10 +997,6 @@ namespace m0.ZeroCode
             tryIsKeyword_Parameters callParams = new tryIsKeyword_Parameters(s, LOGPREFIX, startPos, prev_startPos, isPrevStartPosSameAsStartPosParentCount, endPos, endPos_forAtomParts, afterKeywordPartExist, parentKeyword, parentParams);
             MinusZero.Instance.Log(0, "_tryIfKeyword", LOGPREFIX + "RUN "+callParams.ToString());
 
-            if(parentKeyword==null)
-                MinusZero.Instance.Log(-1, "_tryIfKeyword", LOGPREFIX + prev_startPos );
-            else
-                MinusZero.Instance.Log(-1, "_tryIfKeyword", LOGPREFIX + prev_startPos + " " + parentKeyword.Value);
             //
 
             examinedKeywords = new List<keywordTryingData>();
@@ -1051,6 +1047,7 @@ namespace m0.ZeroCode
                 }
                 else
                 {
+                    isPrevStartPosSameAsStartPosThisCount = 0;
                     s.sameStartPosKewords.Clear();
                 }
             }
@@ -1213,7 +1210,7 @@ namespace m0.ZeroCode
             }
 
            // if (isPrevStartPosSameAsStartPos && isPrevStartPosSameAsStartPosParentCount == 1)
-            if((l1149_dict>-1 && containsCondition) || (l1149_parent>-1 && isPrevStartPosSameAsStartPos && isPrevStartPosSameAsStartPosParentCount >= l1149_parent))
+            if((l1149_dict>-1 && containsCondition) || (l1149_parent>-1 && isPrevStartPosSameAsStartPos && isPrevStartPosSameAsStartPosThisCount > l1149_parent))
             { // do not want inifinite recursion
                // if(containsCondition)
                //     MinusZero.Instance.Log(0, "_tryIsKeyword", LOGPREFIX + "HARD RETURN PARENT "+ parentKeyword.Value);
@@ -1401,7 +1398,19 @@ namespace m0.ZeroCode
 
                                     //MinusZero.Instance.Log(0, "_tryIfKeyword", LOGPREFIX + "_tryIsCall / " + ktd.currentlyProcessedParameterName + " / " + ktd.keywordVertex.Value);
 
-                                    _tryIsKeyword(s, LOGPREFIX + "    ", sPos, startPos, isPrevStartPosSameAsStartPosThisCount, endPos, isTryKeyword_endPos, _afterKeywordPartExist, out foundKeywords, out foundLink, false, ref _newPos, false, ktd.keywordVertex, callParams);
+                                    MinusZero.Instance.Log(-1, "_tryIfKeyword", LOGPREFIX + startPos + " " + ktd.keywordVertex.Value + ktd.currentlyProcessedParameterName);
+
+                                    if(startPos==9 && ktd.keywordVertex.Value== "(?<left>) + (?<right>)")
+                                    {
+                                        int x = 0;
+                                    }
+
+                                    int modified_isPrevStartPosSameAsStartPosThisCount = isPrevStartPosSameAsStartPosThisCount;
+
+                                   // if (sPos != startPos)
+                                      //  modified_isPrevStartPosSameAsStartPosThisCount = 0;
+
+                                    _tryIsKeyword(s, LOGPREFIX + "    ", sPos, startPos, modified_isPrevStartPosSameAsStartPosThisCount, endPos, isTryKeyword_endPos, _afterKeywordPartExist, out foundKeywords, out foundLink, false, ref _newPos, false, ktd.keywordVertex, callParams);
 
                                     // BACK TO OLD STACK
 

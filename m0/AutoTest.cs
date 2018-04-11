@@ -32,8 +32,8 @@ namespace m0
 
 
 
-            for(int l1009_left = 0; l1009_left <=3; l1009_left++)
-            for (int l1009_right = 0; l1009_right <= 3; l1009_right++)
+            for(int l1009_left = 0; l1009_left <=0; l1009_left++)
+            for (int l1009_right = 1; l1009_right <= 1; l1009_right++)
             for (int l1089 = -1; l1089 <= 2; l1089++)
                 for (int l1149_dict = -1; l1149_dict <= 4; l1149_dict++)
                     for (int l1149_parent = -1; l1149_parent <= 4; l1149_parent++) {
