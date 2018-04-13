@@ -18,7 +18,7 @@ namespace m0
         {"c4", "((((aaaa + b) + c) + d) + e) + f","+"},
         {"c5", "(((((aaaa + bbbb) + c) + d) + e) + f) + g", "+" },
         {"c6", "(a + ((x)) + b)","()"},
-        {"c7", "(a + b / c * (d - (e - (f))) + g)","?"},
+        {"c7", "(a + b / c * (d - (e - (f))) + g)","()"},
         {"c8", @"(a \ b \ c + (d \ e - e \ f \ g))","?"},
         {"c9", "(a + b / c * (d - (e + (f / (ff * (fff + fff2 - (x / v)))))) + g)","?"}};
 
@@ -36,13 +36,13 @@ namespace m0
             for (int l1009_right = 1; l1009_right <= 1; l1009_right++)
             for (int l1089 = -1; l1089 <= 2; l1089++)
                 for (int l1149_dict = -1; l1149_dict <= 4; l1149_dict++)
-                    for (int l1149_parent = -1; l1149_parent <= 4; l1149_parent++) {
+                    for (int l1149_parent = 1; l1149_parent <= 1; l1149_parent++) {
                         //string line = l1089 + "\t" + l1149_dict + "\t" + l1149_parent;
 
                         string line = l1009_left + "\t" + l1009_right + "\t" +  l1089 + "\t" + l1149_dict + "\t" + l1149_parent;
 
                         if (!(l1149_dict==-1 && l1149_parent==-1) && l1009_left!=l1009_right)
-                        for (int c = 1; c <= 6; c++)
+                        for (int c = 7; c <= 7; c++)
                         {
                             //line += "\t" + testCases[c, 1];
 

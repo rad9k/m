@@ -223,7 +223,7 @@ namespace m0.ZeroCode
         int L1009_left = 0;
         int L1009_right = 3;*/
 
-        int l1089 = 1;
+        int l1089 = 0;
         int l1149_dict = -1;
         int l1149_parent = 1;
 
@@ -1163,7 +1163,7 @@ namespace m0.ZeroCode
 
                         //
 
-                        //newPos = _tryIsNextLocalRootKeyword(s, LOGPREFIX, newPos, sPos, ktd);
+                        newPos = _tryIsNextLocalRootKeyword(s, LOGPREFIX, newPos, sPos, ktd);
 
                         //
 
@@ -1400,10 +1400,10 @@ namespace m0.ZeroCode
 
                                     MinusZero.Instance.Log(-1, "_tryIfKeyword", LOGPREFIX + startPos + " " + ktd.keywordVertex.Value + ktd.currentlyProcessedParameterName);
 
-                                    if(startPos==9 && ktd.keywordVertex.Value== "(?<left>) + (?<right>)")
-                                    {
-                                        int x = 0;
-                                    }
+                                    //if(startPos==9 && ktd.keywordVertex.Value== "(?<left>) + (?<right>)")
+                                   //// {
+                                    //    int x = 0;
+                                   // }
 
                                     int modified_isPrevStartPosSameAsStartPosThisCount = isPrevStartPosSameAsStartPosThisCount;
 
@@ -1624,9 +1624,9 @@ namespace m0.ZeroCode
 
                     keywordTryingData ktd = examinedKeywords[0]; // ASSUMPTION
 
-                   // if (ktd.matchedOnPositionInText <= s.currentLineInfo.lineEnd
-                   //     && isLocalRootKeyword(ktd))
-                     //   sPos = _tryIsNextLocalRootKeyword(s, LOGPREFIX, sPos, ktd.matchedOnPositionInText + 1, ktd);
+                    if (ktd.matchedOnPositionInText <= s.currentLineInfo.lineEnd
+                        && isLocalRootKeyword(ktd))
+                        sPos = _tryIsNextLocalRootKeyword(s, LOGPREFIX, sPos, ktd.matchedOnPositionInText + 1, ktd);
                 }
                 //
 
@@ -1655,7 +1655,7 @@ namespace m0.ZeroCode
 
                     //
 
-                   // newPos = _tryIsNextLocalRootKeyword(s, LOGPREFIX, newPos, tryNewPos, ktd);
+                    newPos = _tryIsNextLocalRootKeyword(s, LOGPREFIX, newPos, tryNewPos, ktd);
 
                     //
 
