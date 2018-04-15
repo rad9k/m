@@ -776,7 +776,7 @@ namespace m0
 
              IVertex o_mul_any = o_mul.AddVertex(any, "");
 
-             //o_mul_any.AddEdge(smb.Get(@"Vertex\$Is"), smu.Get(" "));
+             //o_mul_any.AddEdge(smb.Get(@"Vertex\$Is"), smu.Get("* "));
 
              o_mul_any.AddVertex(smb.Get(@"Vertex\$Is"), "*"); // TO BE CORRECTED
 
@@ -799,22 +799,28 @@ namespace m0
              o_div_any.AddVertex(smu.Get(@"DoubleOperator\LeftExpression"), "(?<left>)");
 
              o_div_any.AddVertex(smu.Get(@"DoubleOperator\RightExpression"), "(?<right>)");
-             
+
             // :
             //
             // :            
 
-            IVertex o_colon = smuk.AddVertex(keyword, "|");
+            //IVertex o_colon = smuk.AddVertex(keyword, "|");
+
+            IVertex o_colon = smuk.AddVertex(keyword, "(?<leftAtom>)|(?<rightAtom>)");
 
             IVertex o_colon_any = o_colon.AddVertex(any, "");
 
             o_colon_any.AddEdge(smb.Get(@"Vertex\$Is"), smu.Get("|"));
 
-            o_colon_any.AddVertex(smb.Get("$StartInLocalRoot"), "");            
+            o_colon_any.AddVertex(smu.Get(@"DoubleOperator\LeftExpression"), "(?<leftAtom>)");
 
-            IVertex o_colon_any_targetExpr = o_colon_any.AddVertex(smu.Get(@"SingleOperator\TargetExpression"), "");
+            o_colon_any.AddVertex(smu.Get(@"DoubleOperator\RightExpression"), "(?<rightAtom>)");
 
-            o_colon_any_targetExpr.AddVertex(smb.Get("$LocalRoot"), "");
+            //o_colon_any.AddVertex(smb.Get("$StartInLocalRoot"), "");            
+
+            //IVertex o_colon_any_targetExpr = o_colon_any.AddVertex(smu.Get(@"SingleOperator\TargetExpression"), "");
+
+            //o_colon_any_targetExpr.AddVertex(smb.Get("$LocalRoot"), "");
 
             // ::
             //

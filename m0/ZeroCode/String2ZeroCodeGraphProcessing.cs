@@ -223,7 +223,7 @@ namespace m0.ZeroCode
         int L1009_left = 0;
         int L1009_right = 3;*/
 
-        int l1089 = 0;
+        int l1089 = -1;
         int l1149_dict = -1;
         int l1149_parent = 1;
 
@@ -1129,7 +1129,7 @@ namespace m0.ZeroCode
 
                 if (l1089 == -1)
                 {
-                    if ((afterKeywordPartExist && sPos_copy == endPos_forAtomParts && isPrevStartPosSameAsStartPos)
+                    if ((afterKeywordPartExist && sPos_copy == endPos_forAtomParts && isPrevStartPosSameAsStartPos && isPrevStartPosSameAsStartPosThisCount > 2)
                     || (!afterKeywordPartExist && (sPos == endPos_forAtomParts || isPrevStartPosSameAsStartPos)))
                         c1089 = true;
                 }
@@ -1610,7 +1610,7 @@ namespace m0.ZeroCode
                 //                                                 //
                 /////////////////////////////////////////////////////
 
-                // WE ASSUME THAT ONLY examinedKeywords[0] will be used forther
+                // WE ASSUME THAT ONLY examinedKeywords[0] will be used further
 
                 //
 
