@@ -915,13 +915,13 @@ namespace m0
 
              IVertex emptyKeyword = smuk.AddVertex(keyword, "(?<value>)");
 
-             IVertex emptyKeyword_any = emptyKeyword.AddVertex(any, "");
+             IVertex emptyKeyword_any = emptyKeyword.AddVertex(any, "(?<value>)");
 
              emptyKeyword_any.AddVertex(smb.Get("$StartInLocalRoot"), "");
 
              emptyKeyword_any.AddEdge(smb.Get(@"Vertex\$Is"), smu.Get("Query"));
 
-             IVertex emptyKeyword_any_targetExpr=emptyKeyword_any.AddVertex(smu.Get(@"SingleOperator\TargetExpression"), "(?<value>)");
+             IVertex emptyKeyword_any_targetExpr=emptyKeyword_any.AddVertex(smu.Get(@"SingleOperator\TargetExpression"), "");
 
              emptyKeyword_any_targetExpr.AddVertex(smb.Get("$LocalRoot"), "");            
          }
