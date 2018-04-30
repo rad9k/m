@@ -799,14 +799,7 @@ namespace m0.ZeroCode
 
             MinusZero.Instance.Log(-1, "TryIfIsKeywordLine", xx);
 
-            ////
-
-            foreach (LineInfo i in lineInfoList)
-            {
-                MinusZero.Instance.Log
-            }
-
-            ////
+          
 
             List <keywordTryingData> examinedKeywords;
 
@@ -2159,7 +2152,8 @@ namespace m0.ZeroCode
             bool shallProcess = true;
             IVertex toReturnVertex = null;
             s.LocalRoot = null;
-           
+
+    
             List<keywordTryingData> examinedKeywords = TryIfIsKeywordLine(s);
 
             if (examinedKeywords != null)
@@ -2262,6 +2256,16 @@ namespace m0.ZeroCode
             ParsingStack stack = new ParsingStack(this, null, begLine, endLine);
 
             stack.parseNextLine();
+
+            ////
+
+            foreach (LineInfo i in lineInfoList)
+            {
+                MinusZero.Instance.Log(-1, "TryIfIsKeywordLine", i.startsWithLineContinuation + " " + text.Substring(i.lineBeg, i.lineEnd - i.lineBeg + 1));
+            }
+
+            ////
+
 
             Process_reccurent(stack, baseVertex);
 
