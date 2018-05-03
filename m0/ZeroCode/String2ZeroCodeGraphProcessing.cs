@@ -92,7 +92,7 @@ namespace m0.ZeroCode
 
                 lastAddedParameter = _parentStack.lastAddedParameter;
                 subGraphs = _parentStack.subGraphs;
-        }
+            }
 
             public void copyFrom(ParsingStack copyFrom)
             {
@@ -212,6 +212,7 @@ namespace m0.ZeroCode
 
                 return true;
             }
+
         }
 
         // PARSER AUTO TEST SECTION
@@ -873,8 +874,12 @@ namespace m0.ZeroCode
 
             //
 
-            if (text[startPos] == '\r' || text[startPos] == '\n')
+            if (s.currentLineInfo.IsLineEnd(startPos))
+            { // the + 2 might be not needed, but who knows....
+              // if (text[startPos] == '\r' || text[startPos] == '\n')
+                newPos = s.currentLineInfo.lineEnd_NoTrim + 1;
                 return;
+            }
 
             if (startPos == endPos)
                 return;
@@ -916,8 +921,12 @@ namespace m0.ZeroCode
                         if (testIfIsKeywordSubstring(sPos))
                             shallProceed = false;
 
-                        if (text[sPos] == '\r' || text[sPos] == '\n')
+                        if (s.currentLineInfo.IsLineEnd(sPos))
+                        { // the + 2 might be not needed, but who knows....
+                          //if (text[sPos] == '\r' || text[sPos] == '\n')
+                            sPos = s.currentLineInfo.lineEnd_NoTrim + 1;
                             shallProceed = false;
+                        }
 
                         if (sPos == endPos)
                             shallProceed = false;
@@ -1005,8 +1014,12 @@ namespace m0.ZeroCode
 
             //
 
-            if (text[startPos] == '\r' || text[startPos] == '\n')
+            if (s.currentLineInfo.IsLineEnd(startPos))
+            { // the + 2 might be not needed, but who knows....
+              //if (text[startPos] == '\r' || text[startPos] == '\n')
+                newPos = s.currentLineInfo.lineEnd_NoTrim + 1;
                 return;
+            }
 
             if (startPos == endPos_forAtomParts)
                 return;
@@ -1099,8 +1112,12 @@ namespace m0.ZeroCode
                         if (testIfIsKeywordSubstring(sPos))
                             shallProceed = false;
 
-                        if (text[sPos] == '\r' || text[sPos] == '\n')
+                        if (s.currentLineInfo.IsLineEnd(sPos))
+                        { // the + 2 might be not needed, but who knows....
+                          //if (text[sPos] == '\r' || text[sPos] == '\n')
+                            sPos = s.currentLineInfo.lineEnd_NoTrim + 1;
                             shallProceed = false;
+                        }
 
                         if (sPos == endPos_forAtomParts)
                             shallProceed = false;
@@ -1307,7 +1324,7 @@ namespace m0.ZeroCode
                                     ktd.currentPositionInKeyword_Increase();
 
                                     newExaminedKeywords.Add(ktd);
-                                MinusZero.Instance.Log(1, "_tryIsKeyword", LOGPREFIX+"sPos:" + sPos + " keywordCharacter -> keywordCharacter");
+                                    MinusZero.Instance.Log(1, "_tryIsKeyword", LOGPREFIX+"sPos:" + sPos + " keywordCharacter -> keywordCharacter");
                                 }
                                 else
                                 {
@@ -1500,7 +1517,8 @@ namespace m0.ZeroCode
                 }
                 else
                 {
-                    if(sPos + 1 < endPos && text[sPos + 1] == '\r')
+                    if (sPos + 1 < endPos && s.currentLineInfo.IsLineEnd(sPos - 1))
+                    //if(sPos + 1 < endPos && text[sPos + 1] == '\r')
                     {
                         int nextLineWithSameTabCount = s.getNextLineWithSameTabCount();
 
@@ -1522,8 +1540,11 @@ namespace m0.ZeroCode
                         }
                     }
 
-                    if (text[sPos] == '\r')
-                    {                        
+                    if(s.currentLineInfo.IsLineEnd(sPos))
+                    //if (text[sPos] == '\r')
+                    {
+                        sPos = s.currentLineInfo.lineEnd_NoTrim + 1;
+
                         foreach (keywordTryingData ktd in examinedKeywords)
                             if (ktd.state == keywordTryingState.matched)
                             {
@@ -1581,6 +1602,10 @@ namespace m0.ZeroCode
                 // ++
 
                 sPos++;
+
+                if (s.currentLineInfo.IsLineEnd(sPos))
+                    sPos = s.currentLineInfo.lineEnd_NoTrim + 1;
+
                 MinusZero.Instance.Log(1, "_tryIsKeyword", LOGPREFIX + "sPos++ " + sPos);
 
 
@@ -2029,13 +2054,21 @@ namespace m0.ZeroCode
             public int lineBeg;
             public int lineEnd;
 
-            public int lineBeg_Raw;
-            //public int lineEnd_NoTrim;
+            public int lineBeg_NoTrim;
+            public int lineEnd_NoTrim;
             public bool isEmpty;
 
             public int getPosWithParentTabsTrimmed(ParsingStack stack)
             {
-                return lineBeg_Raw + stack.memory_tabCount;
+                return lineBeg_NoTrim + stack.memory_tabCount;
+            }
+            public bool IsLineEnd(int pos)
+            {
+                if (pos == lineEnd + 1 /*|| pos == lineEnd + 2*/
+                    || pos == lineEnd_NoTrim + 1 /*|| pos == lineEnd_NoTrim + 2*/)
+                    return true;
+
+                return false;
             }
         }
 
@@ -2057,8 +2090,8 @@ namespace m0.ZeroCode
                 {
                     li.lineBeg = p;
                     li.lineEnd = p;
-                    li.lineBeg_Raw = p;
-              //      li.lineEnd_NoTrim = p;
+                    li.lineBeg_NoTrim = p;
+                    li.lineEnd_NoTrim = p;
                     li.tabCount = 0;
                     li.startsWithLineContinuation = false;
                     li.isEmpty = true;
@@ -2074,7 +2107,7 @@ namespace m0.ZeroCode
 
                     li.tabCount = 0;
 
-                    li.lineBeg_Raw = p;
+                    li.lineBeg_NoTrim = p;
 
                     while (text[p] == '\t')
                     {
@@ -2087,7 +2120,7 @@ namespace m0.ZeroCode
                     li.lineBeg = ZeroCodeUtil.trimRight(text, lineBegWithoutTrim);
                     li.lineEnd = ZeroCodeUtil.trimLeft(text, lineEndWithoutTrim);
 
-                //    li.lineEnd_NoTrim = lineEndWithoutTrim;
+                    li.lineEnd_NoTrim = lineEndWithoutTrim;
 
                     if (text[li.lineBeg] == ZeroCodeCommon.LineContinuationPrefix)
                         li.startsWithLineContinuation = true;
@@ -2261,7 +2294,7 @@ namespace m0.ZeroCode
 
             foreach (LineInfo i in lineInfoList)
             {
-                MinusZero.Instance.Log(-1, "TryIfIsKeywordLine", i.startsWithLineContinuation + " " + text.Substring(i.lineBeg, i.lineEnd - i.lineBeg + 1));
+                MinusZero.Instance.Log(-1, "TryIfIsKeywordLine", i.startsWithLineContinuation + " [" + text.Substring(i.lineBeg, i.lineEnd - i.lineBeg + 1)+"]");
             }
 
             ////
