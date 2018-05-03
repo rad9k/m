@@ -1517,7 +1517,7 @@ namespace m0.ZeroCode
                 }
                 else
                 {
-                    if (sPos + 1 < endPos && s.currentLineInfo.IsLineEnd(sPos - 1))
+                    if (sPos + 1 < endPos && s.currentLineInfo.IsLineEnd(sPos + 1))
                     //if(sPos + 1 < endPos && text[sPos + 1] == '\r')
                     {
                         int nextLineWithSameTabCount = s.getNextLineWithSameTabCount();
