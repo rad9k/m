@@ -190,10 +190,9 @@ namespace m0.ZeroCode
 
                 if (newLineNo > endLine)
                     return false;
-
-                lineNo++;
                 
-                currentLineInfo = processing.lineInfoList[lineNo];
+                currentLineInfo = processing.lineInfoList[newLineNo];
+                lineNo = newLineNo;
 
                 if (currentLineInfo.isEmpty)
                     currentLineNoTabs = "";
@@ -1564,7 +1563,7 @@ namespace m0.ZeroCode
 
                             sPos++;
 
-                            List<keywordTryingData> new_examinedKeywords = new List<keywordTryingData>();
+                            newExaminedKeywords = new List<keywordTryingData>();
 
                             foreach (keywordTryingData ktd in examinedKeywords)
                             {
@@ -1573,7 +1572,7 @@ namespace m0.ZeroCode
                                 {
                                     ktd.currentPositionInKeyword_Increase();
 
-                                    new_examinedKeywords.Add(ktd);
+                                    newExaminedKeywords.Add(ktd);
                                 }
 
                                 if (ktd.state == keywordTryingState.waiting &&
