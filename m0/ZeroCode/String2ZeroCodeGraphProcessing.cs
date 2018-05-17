@@ -1415,12 +1415,6 @@ namespace m0.ZeroCode
                                     //MinusZero.Instance.Log(0, "_tryIfKeyword", LOGPREFIX + "_tryIsCall / " + ktd.currentlyProcessedParameterName + " / " + ktd.keywordVertex.Value);
 
                                     MinusZero.Instance.Log(-1, "_tryIfKeyword", LOGPREFIX + startPos + " " + ktd.keywordVertex.Value + ktd.currentlyProcessedParameterName);
-
-                                    //if(startPos==9 && ktd.keywordVertex.Value== "(?<left>) + (?<right>)")
-                                   //// {
-                                    //    int x = 0;
-                                   // }
-
                                     int modified_isPrevStartPosSameAsStartPosThisCount = isPrevStartPosSameAsStartPosThisCount;
 
                                    // if (sPos != startPos)
@@ -1576,7 +1570,7 @@ namespace m0.ZeroCode
                                 }
 
                                 if (ktd.state == keywordTryingState.waiting &&
-                                    ktd.waitingUntilPositionInText <= sPos)
+                                    sPos <= ktd.waitingUntilPositionInText)
                                     newExaminedKeywords.Add(ktd);
                             }
 
