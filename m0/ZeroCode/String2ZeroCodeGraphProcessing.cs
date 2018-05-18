@@ -1327,7 +1327,7 @@ namespace m0.ZeroCode
                                 }
                                 else
                                 {
-                                    MinusZero.Instance.Log(1, "_tryIsKeyword", LOGPREFIX+"sPos:" + sPos + " out of. not keywordCharacter match");
+                                    MinusZero.Instance.Log(0, "_tryIsKeyword", LOGPREFIX+"sPos:" + sPos + "***OUT OF*** keywordCharacter match");
                                 }
                         }                    
                     }
@@ -1508,7 +1508,8 @@ namespace m0.ZeroCode
                     shallProceed = false; // end of this part of text
                     MinusZero.Instance.Log(1, "_tryIsKeyword", LOGPREFIX+"SHALPROCEED FALSE end of this part of text");
                 }
-                else
+
+                if(shallProceed)
                 {
                     if (sPos + 1 < endPos && s.currentLineInfo.IsLineEnd(sPos + 1))
                     //if(sPos + 1 < endPos && text[sPos + 1] == '\r')
