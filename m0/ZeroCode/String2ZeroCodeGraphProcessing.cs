@@ -1518,11 +1518,13 @@ namespace m0.ZeroCode
 
                         if (nextLineWithSameTabCount != -1 && lineInfoList[nextLineWithSameTabCount].startsWithLineContinuation)
                         {
-                            /*if (s.lastAddedParameter != null)
+                            if (s.lastAddedParameter != null)
                             {
-                                keywordTryingData k = new keywordTryingData(examinedKeywords[0]);
+                                keywordTryingData k = new keywordTryingData(examinedKeywords_All[4]);
+                                k.AddParameter("text", "nejm");
+
                                 s.subGraphs.Add(s.lastAddedParameter, k);
-                            }*/
+                            }
 
                             s.goToLine(nextLineWithSameTabCount);
 
@@ -1906,7 +1908,9 @@ namespace m0.ZeroCode
 
                         if (s.subGraphs.ContainsKey(ktd))
                         {
-                            _AddKeywordVertex(s, nv, s.subGraphs[ktd], s.subGraphs[ktd].keywordVertex, null, 0, null);
+                            _AddKeywordVertex(s, parent, s.subGraphs[ktd], s.subGraphs[ktd].keywordVertex, null, 0, null);
+
+                            s.subGraphs.Remove(ktd);
                         }
 
                     }
