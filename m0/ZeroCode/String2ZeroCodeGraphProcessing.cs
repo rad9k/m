@@ -13,6 +13,13 @@ namespace m0.ZeroCode
 {
     public class String2ZeroCodeGraphProcessing
     {
+        class TextRange
+        {
+            public int begLine;
+            public int endLine;
+        }
+
+
         class ParsingStack
         {
             public Dictionary<IVertex, int> sameStartPosKewords = new Dictionary<IVertex, int>();
@@ -44,7 +51,7 @@ namespace m0.ZeroCode
             public bool can_initialize_memory_tabCount = true;
 
             public object lastAddedParameter;
-            public Dictionary<object, keywordTryingData> subGraphs;
+            public Dictionary<object, TextRange> subGraphs;
 
 
             public ParsingStack(String2ZeroCodeGraphProcessing _parent, ParsingStack _parentStack, int _begLine, int _endLine)
@@ -56,7 +63,7 @@ namespace m0.ZeroCode
                
                 lineNo = begLine - 1;
 
-                subGraphs = new Dictionary<object, keywordTryingData>();
+                subGraphs = new Dictionary<object, TextRange>();
             }
 
             public ParsingStack(ParsingStack _parentStack)
@@ -1520,10 +1527,11 @@ namespace m0.ZeroCode
                         {
                             if (s.lastAddedParameter != null)
                             {
-                                keywordTryingData k = new keywordTryingData(examinedKeywords_All[4]);
-                                k.AddParameter("text", "nejm");
+                                TextRange subText = new TextRange();
+                                subText.begLine = s.lineNo + 1;
+                                subText.endLine = nextLineWithSameTabCount - 1;
 
-                                s.subGraphs.Add(s.lastAddedParameter, k);
+                                s.subGraphs.Add(s.lastAddedParameter, subText);
                             }
 
                             s.goToLine(nextLineWithSameTabCount);
@@ -1908,7 +1916,9 @@ namespace m0.ZeroCode
 
                         if (s.subGraphs.ContainsKey(ktd))
                         {
-                            _AddKeywordVertex(s, parent, s.subGraphs[ktd], s.subGraphs[ktd].keywordVertex, null, 0, null);
+                            //_AddKeywordVertex(s, parent, s.subGraphs[ktd], s.subGraphs[ktd].keywordVertex, null, 0, null);
+                            TextRange subText = s.subGraphs[ktd];
+                            ProcessTextPart(parent, subText.begLine, subText.endLine);
 
                             s.subGraphs.Remove(ktd);
                         }
@@ -2239,8 +2249,10 @@ namespace m0.ZeroCode
             }
         }
 
-        void Process_reccurent(ParsingStack s, IVertex _baseVertex)
+        IVertex Process_reccurent(ParsingStack s, IVertex _baseVertex)
         {
+            IVertex errors = null;
+
             IVertex prevVertex = ProcessLine(s, _baseVertex);
 
             while (s.parseNextLine())
@@ -2249,7 +2261,7 @@ namespace m0.ZeroCode
                 {
                     s.parseRecurrentReturnNo--;
                     s.skipParse = true;
-                    return;
+                    return errors;
                 }
 
                 int thisTabCount = s.getThisTabCount();
@@ -2277,9 +2289,11 @@ namespace m0.ZeroCode
 
                     s.parseRecurrentReturnNo = prevTabCount - thisTabCount;
 
-                    return;
+                    return errors;
                 }
             }
+
+            return errors;
         }
 
         private IVertex ProcessTextPart(IVertex baseVertex, int begLine, int endLine)
@@ -2298,11 +2312,11 @@ namespace m0.ZeroCode
             ////
 
 
-            Process_reccurent(stack, baseVertex);
+            IVertex errors=Process_reccurent(stack, baseVertex);
 
             AddNewLines(stack);
 
-            return null;
+            return errors;
         }
 
         public IVertex ParserAutoTestProcess(IVertex _baseVertex, string _text, int _l1089, int _1149_dict, int _1149_parent, int _l1009_left, int _l1009_right)
@@ -2327,8 +2341,9 @@ namespace m0.ZeroCode
 
             prepareImportList();
 
+            IVertex parseRoot = _baseVertex.AddVertex(null, "ParseRoot");
 
-            ProcessTextPart(_baseVertex, 0, lineInfoList.Count - 1);
+            ProcessTextPart(parseRoot, 0, lineInfoList.Count - 1);
 
 
             return null;
