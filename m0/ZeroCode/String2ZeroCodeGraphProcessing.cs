@@ -1935,19 +1935,21 @@ namespace m0.ZeroCode
                         else
                             AddKeywordVertex_AddVertex(s, parent, e, meta, e.To, ref nv, ktd, parentMetaEdge);
 
-                       _AddKeywordVertex(s, nv, ktd, e.To, null, cnt_subCount, null);
+                      
 
                         if (s.subTextRanges.ContainsKey(ktd))
                         {
                             TextRange subText = s.subTextRanges[ktd];
 
-                            //if (subText.isNonParameterRange)
-                         //       ProcessTextPart(nv, subText.begLine, subText.endLine);
-                          //  else
-                                ProcessTextPart(parent, subText.begLine, subText.endLine);
+                            //if (subText.isNonParameterRange) // do not need this, but who knows
+                                //ProcessTextPart(nv, subText.begLine, subText.endLine);
+                            //else
+                                ProcessTextPart(nv, subText.begLine, subText.endLine);
 
                             s.subTextRanges.Remove(ktd);
                         }
+
+                        _AddKeywordVertex(s, nv, ktd, e.To, null, cnt_subCount, null);
 
                     }
                 }

@@ -740,8 +740,6 @@ namespace m0
 
              IVertex o_plus = smuk.AddVertex(keyword, "(?<left>) +(?<SUB>) (?<right>)");
 
-             //IVertex o_plus = smuk.AddVertex(keyword, "(?<left>) + (?<right>)");
-
              IVertex o_plus_any = o_plus.AddVertex(any, "");
 
              o_plus_any.AddEdge(smb.Get(@"Vertex\$Is"), smu.Get("+"));
@@ -754,9 +752,7 @@ namespace m0
              //
              // (?<left>) - (?<right>)
 
-             //IVertex o_minus = smuk.AddVertex(keyword, "(?<left>) -(?<SUB>) (?<right>)");
-
-             IVertex o_minus = smuk.AddVertex(keyword, "(?<left>) - (?<right>)");
+             IVertex o_minus = smuk.AddVertex(keyword, "(?<left>) -(?<SUB>) (?<right>)");             
 
              IVertex o_minus_any = o_minus.AddVertex(any, "");
 
@@ -770,9 +766,7 @@ namespace m0
              //
              // (?<left>) * (?<right>)
 
-             //IVertex o_mul = smuk.AddVertex(keyword, "(?<left>) *(?<SUB>) (?<right>)");
-
-             IVertex o_mul = smuk.AddVertex(keyword, "(?<left>) * (?<right>)");
+             IVertex o_mul = smuk.AddVertex(keyword, "(?<left>) *(?<SUB>) (?<right>)");             
 
              IVertex o_mul_any = o_mul.AddVertex(any, "");
 
@@ -788,10 +782,8 @@ namespace m0
              //
              // (?<left>) / (?<right>)
 
-             //IVertex o_div = smuk.AddVertex(keyword, "(?<left>) /(?<SUB>) (?<right>)");
-
-             IVertex o_div = smuk.AddVertex(keyword, "(?<left>) / (?<right>)");
-
+             IVertex o_div = smuk.AddVertex(keyword, "(?<left>) /(?<SUB>) (?<right>)");
+             
              IVertex o_div_any = o_div.AddVertex(any, "");
 
              o_div_any.AddEdge(smb.Get(@"Vertex\$Is"), smu.Get("/"));
