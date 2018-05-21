@@ -17,6 +17,7 @@ namespace m0.ZeroCode
         {
             public int begLine;
             public int endLine;
+            public bool isNonParameterRange;
         }
 
 
@@ -50,8 +51,7 @@ namespace m0.ZeroCode
             public int memory_tabCount = -1;
             public bool can_initialize_memory_tabCount = true;
 
-            public object lastAddedParameter;
-            public Dictionary<object, TextRange> subGraphs;
+            public Dictionary<object, TextRange> subTextRanges;
 
 
             public ParsingStack(String2ZeroCodeGraphProcessing _parent, ParsingStack _parentStack, int _begLine, int _endLine)
@@ -63,7 +63,7 @@ namespace m0.ZeroCode
                
                 lineNo = begLine - 1;
 
-                subGraphs = new Dictionary<object, TextRange>();
+                subTextRanges = new Dictionary<object, TextRange>();
             }
 
             public ParsingStack(ParsingStack _parentStack)
@@ -97,8 +97,7 @@ namespace m0.ZeroCode
 
                 can_initialize_memory_tabCount = _parentStack.can_initialize_memory_tabCount;
 
-                lastAddedParameter = _parentStack.lastAddedParameter;
-                subGraphs = _parentStack.subGraphs;
+                subTextRanges = _parentStack.subTextRanges;
             }
 
             public void copyFrom(ParsingStack copyFrom)
@@ -525,6 +524,9 @@ namespace m0.ZeroCode
 
             public keywordTryingData LocalRootNext;
 
+            public object lastAddedParameter;
+            public bool isCurrentlyProcessedSubParameter;
+
             //
 
             string multiParameterSeparator;
@@ -622,6 +624,13 @@ namespace m0.ZeroCode
                     else
                         return false;
                 }
+                
+                if (ZeroCodeUtil.tryStringMatch(keyword, currentPositionInKeyword + 1, "(?<SUB>)"))
+                {
+                    isCurrentlyProcessedSubParameter = true;
+                    return false;
+                }else
+                    isCurrentlyProcessedSubParameter = false;
 
                 if (ZeroCodeUtil.tryStringMatch(keyword, currentPositionInKeyword, "(?<"))
                     return true;
@@ -752,6 +761,13 @@ namespace m0.ZeroCode
 
             public void currentPositionInKeyword_Increase()
             {
+
+                if (ZeroCodeUtil.tryStringMatch(keyword, currentPositionInKeyword + 1, "(?<SUB>)"))
+                {
+                    currentPositionInKeyword += 9;
+                    return;
+                }
+                
                 if (isInMultiParameter())
                 {
                     if (currentPositionInMultiParamPlusSeparatorString < multiParamPlusSeparatorString.Length - 1)
@@ -778,10 +794,7 @@ namespace m0.ZeroCode
 
                 parameters[name].Add(val);
 
-                if (val is string)
-                {
-                    int x = 0;
-                }
+                lastAddedParameter = val;
             }
         }
 
@@ -1477,13 +1490,16 @@ namespace m0.ZeroCode
                                 }
                             }                                                        
 
+                            if(foundParameter is string)
+                            {
+                                int a = 0;
+                            }
+
                             ktd.AddParameter(ktd.currentlyProcessedParameterName, foundParameter);
 
                             MinusZero.Instance.Log(1, "_tryIsKeyword", LOGPREFIX+"sub add:" + ktd.currentlyProcessedParameterName+" foundParameter:"+foundParameter);
 
                             newExaminedKeywords.Add(ktd);
-
-                            s.lastAddedParameter = foundParameter;
                         }
                         
                         ktd.state = keywordTryingState.waiting;
@@ -1518,20 +1534,27 @@ namespace m0.ZeroCode
 
                 if(shallProceed)
                 {
-                    if (sPos + 1 < endPos && s.currentLineInfo.IsLineEnd(sPos + 1))
+                    if (sPos + 1 < endPos && s.currentLineInfo.IsLineEnd(sPos + 1)) // SUB TEXT
                     //if(sPos + 1 < endPos && text[sPos + 1] == '\r')
                     {
                         int nextLineWithSameTabCount = s.getNextLineWithSameTabCount();
 
                         if (nextLineWithSameTabCount != -1 && lineInfoList[nextLineWithSameTabCount].startsWithLineContinuation)
                         {
-                            if (s.lastAddedParameter != null)
+                            foreach (keywordTryingData ktd in examinedKeywords)
                             {
                                 TextRange subText = new TextRange();
                                 subText.begLine = s.lineNo + 1;
                                 subText.endLine = nextLineWithSameTabCount - 1;
 
-                                s.subGraphs.Add(s.lastAddedParameter, subText);
+                                if (ktd.lastAddedParameter == null || ktd.isCurrentlyProcessedSubParameter)
+                                {
+                                    subText.isNonParameterRange = true;
+                                    s.subTextRanges.Add(ktd, subText);
+                                }
+                                else
+                                    if (!s.subTextRanges.ContainsKey(ktd.lastAddedParameter))
+                                    s.subTextRanges.Add(ktd.lastAddedParameter, subText);
                             }
 
                             s.goToLine(nextLineWithSameTabCount);
@@ -1544,7 +1567,7 @@ namespace m0.ZeroCode
                         }
                     }
 
-                    if(s.currentLineInfo.IsLineEnd(sPos))
+                    if(s.currentLineInfo.IsLineEnd(sPos)) // NEW LINE
                     //if (text[sPos] == '\r')
                     {
                         sPos = s.currentLineInfo.lineEnd_NoTrim + 1;
@@ -1914,13 +1937,16 @@ namespace m0.ZeroCode
 
                        _AddKeywordVertex(s, nv, ktd, e.To, null, cnt_subCount, null);
 
-                        if (s.subGraphs.ContainsKey(ktd))
+                        if (s.subTextRanges.ContainsKey(ktd))
                         {
-                            //_AddKeywordVertex(s, parent, s.subGraphs[ktd], s.subGraphs[ktd].keywordVertex, null, 0, null);
-                            TextRange subText = s.subGraphs[ktd];
-                            ProcessTextPart(parent, subText.begLine, subText.endLine);
+                            TextRange subText = s.subTextRanges[ktd];
 
-                            s.subGraphs.Remove(ktd);
+                            //if (subText.isNonParameterRange)
+                         //       ProcessTextPart(nv, subText.begLine, subText.endLine);
+                          //  else
+                                ProcessTextPart(parent, subText.begLine, subText.endLine);
+
+                            s.subTextRanges.Remove(ktd);
                         }
 
                     }

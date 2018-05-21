@@ -738,9 +738,9 @@ namespace m0
              //
              // (?<left>) + (?<right>)
 
-             // IVertex o_plus = smuk.AddVertex(keyword, "(?<left>) +(?<SUB>) (?<right>)");
+             IVertex o_plus = smuk.AddVertex(keyword, "(?<left>) +(?<SUB>) (?<right>)");
 
-             IVertex o_plus = smuk.AddVertex(keyword, "(?<left>) + (?<right>)");
+             //IVertex o_plus = smuk.AddVertex(keyword, "(?<left>) + (?<right>)");
 
              IVertex o_plus_any = o_plus.AddVertex(any, "");
 
