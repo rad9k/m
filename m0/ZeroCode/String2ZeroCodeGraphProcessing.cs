@@ -551,11 +551,27 @@ namespace m0.ZeroCode
                 afterParameterString = source.afterParameterString;
             }
 
+            static Dictionary<string, string> keywordNoSpacesDict = new Dictionary<string, string>();
+
+            public string removeSpaces(string s)
+            {
+                if (keywordNoSpacesDict.ContainsKey(s))
+                    return keywordNoSpacesDict[s];
+                else
+                {
+                    string noSpacesS = s.Replace(" ", "");
+
+                    keywordNoSpacesDict.Add(s, noSpacesS);
+
+                    return noSpacesS;
+                }
+            }
+
             public keywordTryingData(IVertex k, String2ZeroCodeGraphProcessing _processing)
             {
                 parent = _processing;
                 keywordVertex = k;
-                keyword = (String)keywordVertex.Value;
+                keyword = removeSpaces((String)keywordVertex.Value);
 
                 currentPositionInKeyword = 0;
                 state = keywordTryingState.keywordCharacter; // that and rest of the fields will be updated in the _tryKeyword
