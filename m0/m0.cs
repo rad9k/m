@@ -525,8 +525,6 @@ namespace m0
 
              IVertex importDirect_link = importDirect.AddVertex(smb.Get(@"$Direct"), "(?<link>)");
 
-            
-
 
              // import direct meta
              //
@@ -613,7 +611,6 @@ namespace m0
              // attribute (?<name>) (?<type>)
 
              IVertex attribute = smuk.AddVertex(keyword, "attribute (?<name>) (?<type>)");
-
 
              IVertex attribute_attribute = attribute.AddVertex(smu.Get(@"Class\Attribute"), "(?<name>)");
 

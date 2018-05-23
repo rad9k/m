@@ -2079,6 +2079,17 @@ namespace m0.ZeroCode
             if (subString.Length == 0)
                 return;
 
+            if (subString == " ")
+                return;
+
+            if (subString[0] == ' ')
+                subString = subString.Substring(1);
+
+            if (subString[subString.Length - 1] == ' ')
+                subString = subString.Substring(0, subString.Length - 1);
+
+            MinusZero.Instance.Log(-1, "", subString+"|");
+
             char firstCharacter = subString[0];
 
             if (dict.ContainsKey(firstCharacter))
