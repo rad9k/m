@@ -495,7 +495,7 @@ namespace m0
             IVertex smuk = smu.AddVertex(null, "Keyword");
 
             IVertex any = smuk.AddVertex(null, "(?<ANY>)");
-            
+            /*
             // import meta
             //
             // import meta (?<name>) (?<link>)
@@ -534,7 +534,7 @@ namespace m0
 
              IVertex importDirectMeta_link = importDirectMeta.AddVertex(smb.Get(@"$DirectMeta"), "(?<link>)");
 
-
+            
              // comment
              //
              // # (?<text>)
@@ -543,7 +543,7 @@ namespace m0
 
              comment.AddVertex(smb.Get(@"Vertex\$Description"), "(?<text>)");
 
-
+            
              // attribute
              //
              // attribute (?<name>) (?<type>) (?<MinCardinality>):(?<MaxCardinality>) <(?<MinValue>):(?<MaxValue>)>
@@ -605,7 +605,7 @@ namespace m0
              attribute2_attribute.AddEdge(isAggregation, empty);
 
              attribute2_attribute.AddEdge(_is, smu.Get(@"Class\Attribute"));
-             
+             */
              // attribute
              //
              // attribute (?<name>) (?<type>)
@@ -619,7 +619,7 @@ namespace m0
              attribute_attribute.AddEdge(isAggregation, empty);
 
              attribute_attribute.AddEdge(_is, smu.Get(@"Class\Attribute"));
-            
+            /*
              // aassociation
              //
              // association (?<name>) (?<type>) (?<MinCardinality>):(?<MaxCardinality>)
@@ -884,7 +884,7 @@ namespace m0
              IVertex o_newSub_any_param = o_newSub_any.AddVertex(smu.Get(@"MultiOperator\Expression"), "(?<expr>)");
 
              o_newSub_any_param.AddEdge(smb.Get(@"$KeywordManyRoot"), smb.Get(@"$Empty"));
-             
+             */
              // ""
              //
              // "\"(?<value>)\""
@@ -2756,7 +2756,7 @@ namespace m0
 
         public bool DoLog=true;
 
-        public int LogLevel=0;
+        public int LogLevel=1;
 
         private void InitializeLog()
         {

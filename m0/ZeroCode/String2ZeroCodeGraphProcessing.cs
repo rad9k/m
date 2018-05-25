@@ -571,7 +571,8 @@ namespace m0.ZeroCode
             {
                 parent = _processing;
                 keywordVertex = k;
-                keyword = removeSpaces((String)keywordVertex.Value);
+               // keyword = removeSpaces((String)keywordVertex.Value);
+                keyword = (String)keywordVertex.Value;
 
                 currentPositionInKeyword = 0;
                 state = keywordTryingState.keywordCharacter; // that and rest of the fields will be updated in the _tryKeyword
@@ -1291,6 +1292,11 @@ namespace m0.ZeroCode
 
             while (shallProceed)
             {
+                if (sPos == 9)
+                {
+                    int x = 0;
+                }
+
                 List<keywordTryingData> newExaminedKeywords = new List<keywordTryingData>();
 
                 foreach (keywordTryingData ktd in examinedKeywords)
@@ -1651,11 +1657,6 @@ namespace m0.ZeroCode
 
                 MinusZero.Instance.Log(1, "_tryIsKeyword", LOGPREFIX + "sPos++ " + sPos);
 
-
-                if (shallProceed==false)
-                {
-                    int x = 0;
-                }
             }
 
             // out of shallProced
@@ -2076,19 +2077,10 @@ namespace m0.ZeroCode
 
         private void addSubString(Dictionary<char, List<string>> dict, string subString)
         {
+          //  subString = subString.Trim();
+
             if (subString.Length == 0)
                 return;
-
-            if (subString == " ")
-                return;
-
-            if (subString[0] == ' ')
-                subString = subString.Substring(1);
-
-            if (subString[subString.Length - 1] == ' ')
-                subString = subString.Substring(0, subString.Length - 1);
-
-            MinusZero.Instance.Log(-1, "", subString+"|");
 
             char firstCharacter = subString[0];
 
@@ -2411,8 +2403,6 @@ namespace m0.ZeroCode
             PrepareDictionaries();
 
             emptyKeywordVertex = MinusZero.Instance.Root.Get(@"User\CurrentUser:\CodeSettings:\Keyword:\$Keyword:(?<value>)");
-
-            //IVertex temp = MinusZero.Instance.Root.Get("User\\CurrentUser:\\CodeSettings:\\Keyword:\\$Keyword:\\\"(?<value>)\\\"");
 
             newValueKeywordVertex = MinusZero.Instance.newValueKeywordVertex;
 
