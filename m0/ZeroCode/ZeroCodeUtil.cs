@@ -266,5 +266,98 @@ namespace m0.ZeroCode
             return onlyWhite;
 
         }
+
+        public static List<string> tokenizeKeyword(string k)
+        {
+            List<string> l = new List<string>();
+
+            string current = "";
+
+            for (int x = 0; x < k.Length; x++)
+            {
+                if (tryStringMatch(k, x, "(*"))
+                {
+                    x += 2;
+
+                    if (current != "")
+                        l.Add(current);
+
+                    l.Add("(*");
+                }
+
+                if (tryStringMatch(k, x, "*)"))
+                {
+                    x += 2;
+
+                    if (current != "")
+                    {
+                        l.Add(current);
+                        current = "";
+                    }
+
+                    l.Add("*)");
+                }
+
+                if (tryStringMatch(k, x, "(+"))
+                {
+                    x += 2;
+
+                    if (current != "")
+                    {
+                        l.Add(current);
+                        current = "";
+                    }
+
+                    l.Add("(+");
+                }
+
+                if (tryStringMatch(k, x, "+)"))
+                {
+                    x += 2;
+
+                    if (current != "")
+                    {
+                        l.Add(current);
+                        current = "";
+                    }
+
+                    l.Add("+)");
+                }
+
+                if (tryStringMatch(k, x, "(?<"))
+                {
+                    x += 3;
+
+                    if (current != "")
+                    {
+                        l.Add(current);
+                        current = "";
+                    }
+
+                    l.Add("(?<");
+                }
+
+                if (tryStringMatch(k, x, ">)"))
+                {
+                    x += 2;
+
+                    if (current != "")
+                    {
+                        l.Add(current);
+                        current = "";
+                    }
+
+                    l.Add(">)");
+                }
+
+                if(x < k.Length)
+                    current += k[x];
+            }
+
+            if (current != "")
+                l.Add(current);
+
+            return l;
+        }
     }
 }

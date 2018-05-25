@@ -559,11 +559,19 @@ namespace m0.ZeroCode
                     return keywordNoSpacesDict[s];
                 else
                 {
-                    string noSpacesS = s.Replace(" ", "");
+                    string noSpaces = "";
 
-                    keywordNoSpacesDict.Add(s, noSpacesS);
+                    List<string> l = ZeroCodeUtil.tokenizeKeyword(s);
 
-                    return noSpacesS;
+                    foreach (string t in l)
+                        if (!ZeroCodeUtil.isStringOnlyWhiteSpaces(t))
+                            noSpaces += t.Trim();
+                        else
+                            noSpaces += t;
+
+                    keywordNoSpacesDict.Add(s, noSpaces);
+
+                    return noSpaces;
                 }
             }
 
@@ -571,8 +579,11 @@ namespace m0.ZeroCode
             {
                 parent = _processing;
                 keywordVertex = k;
-               // keyword = removeSpaces((String)keywordVertex.Value);
-                keyword = (String)keywordVertex.Value;
+                keyword = removeSpaces((String)keywordVertex.Value);
+
+                MinusZero.Instance.Log(-1, "k", keyword);
+
+               // keyword = (String)keywordVertex.Value;
 
                 currentPositionInKeyword = 0;
                 state = keywordTryingState.keywordCharacter; // that and rest of the fields will be updated in the _tryKeyword
