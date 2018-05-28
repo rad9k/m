@@ -540,6 +540,8 @@ namespace m0.ZeroCode
             int multiParameterStringBegPosition = -1;
             int multiParameterStringEndPosition = -1;
 
+            bool lastCharWasSkippedSpace; // space support
+
             public keywordTryingData(keywordTryingData source)
             {
                 parent = source.parent;
@@ -561,13 +563,15 @@ namespace m0.ZeroCode
                 {
                     string noSpaces = "";
 
-                    List<string> l = ZeroCodeUtil.tokenizeKeyword(s);
+                    List<string> l = ZeroCodeUtil.tokenizeKeyword(s, true);
 
                     foreach (string t in l)
+                    {
                         if (!ZeroCodeUtil.isStringOnlyWhiteSpaces(t))
                             noSpaces += t.Trim();
                         else
                             noSpaces += t;
+                    }
 
                     keywordNoSpacesDict.Add(s, noSpaces);
 
@@ -580,8 +584,6 @@ namespace m0.ZeroCode
                 parent = _processing;
                 keywordVertex = k;
                 keyword = removeSpaces((String)keywordVertex.Value);
-
-                MinusZero.Instance.Log(-1, "k", keyword);
 
                // keyword = (String)keywordVertex.Value;
 
@@ -702,10 +704,20 @@ namespace m0.ZeroCode
                         return false;
                 }
 
-                if (keyword[currentPositionInKeyword] == parent.text[curPos])
+                lastCharWasSkippedSpace = false;
+
+                if (keyword[currentPositionInKeyword] == parent.text[curPos])                   
                     return true;
                 else
+                {
+                    if (parent.text[curPos] == ' ')
+                    {
+                        lastCharWasSkippedSpace = true;
+                        return true;
+                    }
+
                     return false;
+                }
             }
 
             public void PrepareParameterAndAfterParameterString(int curPos)
@@ -799,18 +811,22 @@ namespace m0.ZeroCode
                 if (isInMultiParameter())
                 {
                     if (currentPositionInMultiParamPlusSeparatorString < multiParamPlusSeparatorString.Length - 1)
-                        currentPositionInMultiParamPlusSeparatorString++;
+                    {
+                        if(!lastCharWasSkippedSpace)
+                            currentPositionInMultiParamPlusSeparatorString++;
+                    }
                     else
                     {
                         currentPositionInMultiParamPlusSeparatorString = -1;
-                      //  multiParameterCount++;
+                        //  multiParameterCount++;
                     }
 
                         MinusZero.Instance.Log(1, "currentPositionInKeyword_Increase", "MULTI:" + currentPositionInMultiParamPlusSeparatorString);
                     }
                 else
                 {
-                    currentPositionInKeyword++;
+                    if (!lastCharWasSkippedSpace)
+                        currentPositionInKeyword++;
                     MinusZero.Instance.Log(1, "currentPositionInKeyword_Increase", "NORMAL:" + currentPositionInKeyword);
                 }
             }
@@ -2006,9 +2022,9 @@ namespace m0.ZeroCode
                     continue;
 
                 // examinedKeywords_All
-
+         
                 keywordTryingData ktd = new keywordTryingData(keyword.To, this);
-
+               
                 examinedKeywords_All.Add(ktd);
 
                 // examinedKeywords_LocalRootOnly
@@ -2024,6 +2040,14 @@ namespace m0.ZeroCode
 
                 if (keywordString.Length > 0)
                     addKeywordsSubstrings(keywordString);
+
+                // add space to allKeywordsSubstringsDictionary
+
+                List<string> l = new List<string>();
+
+                l.Add(" ");
+
+                allKeywordsSubstringsDictionary.Add(' ', l);
             }
                 
         }
@@ -2088,7 +2112,7 @@ namespace m0.ZeroCode
 
         private void addSubString(Dictionary<char, List<string>> dict, string subString)
         {
-          //  subString = subString.Trim();
+            subString = subString.Trim();
 
             if (subString.Length == 0)
                 return;
@@ -2098,7 +2122,11 @@ namespace m0.ZeroCode
             if (dict.ContainsKey(firstCharacter))
             {
                 if (!dict[firstCharacter].Contains(subString))
+                {
                     dict[firstCharacter].Add(subString);
+
+                    MinusZero.Instance.Log(-1, "XX", subString);
+                }
             }
             else
             {
@@ -2107,6 +2135,7 @@ namespace m0.ZeroCode
                 dict.Add(firstCharacter, kl);
 
                 kl.Add(subString);
+                MinusZero.Instance.Log(-1, "XX", subString);
             }
 
         }

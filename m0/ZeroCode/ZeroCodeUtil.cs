@@ -267,7 +267,7 @@ namespace m0.ZeroCode
 
         }
 
-        public static List<string> tokenizeKeyword(string k)
+        public static List<string> tokenizeKeyword(string k, bool doNotCareAboutSub)
         {
             List<string> l = new List<string>();
 
@@ -322,6 +322,13 @@ namespace m0.ZeroCode
                     }
 
                     l.Add("+)");
+                }
+
+                if (tryStringMatch(k, x, "(?<SUB>)"))
+                {
+                    x += 8;
+
+                    current += "(?<SUB>)";
                 }
 
                 if (tryStringMatch(k, x, "(?<"))
