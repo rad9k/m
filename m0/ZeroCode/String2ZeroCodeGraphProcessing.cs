@@ -1409,6 +1409,8 @@ namespace m0.ZeroCode
                 foreach (keywordTryingData ktd in examinedKeywords)
                     if (ktd.state == keywordTryingState.parameter)
                     {
+                        while (text[sPos] == ' ') // spaces handling
+                            sPos++;
 
                         bool chacheHit = false;
 
@@ -2043,11 +2045,14 @@ namespace m0.ZeroCode
 
                 // add space to allKeywordsSubstringsDictionary
 
-                List<string> l = new List<string>();
+                if (!allKeywordsSubstringsDictionary.ContainsKey(' '))
+                {
+                    List<string> l = new List<string>();
 
-                l.Add(" ");
+                    l.Add(" ");
 
-                allKeywordsSubstringsDictionary.Add(' ', l);
+                    allKeywordsSubstringsDictionary.Add(' ', l);
+                }
             }
                 
         }

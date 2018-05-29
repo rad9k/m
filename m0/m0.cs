@@ -605,7 +605,7 @@ namespace m0
              attribute2_attribute.AddEdge(isAggregation, empty);
 
              attribute2_attribute.AddEdge(_is, smu.Get(@"Class\Attribute"));
-             */
+             
              // attribute
              //
              // attribute (?<name>) (?<type>)
@@ -619,7 +619,7 @@ namespace m0
              attribute_attribute.AddEdge(isAggregation, empty);
 
              attribute_attribute.AddEdge(_is, smu.Get(@"Class\Attribute"));
-            /*
+            
              // aassociation
              //
              // association (?<name>) (?<type>) (?<MinCardinality>):(?<MaxCardinality>)
@@ -730,21 +730,21 @@ namespace m0
              whwh.AddEdge(smb.Get(@"Vertex\$Is"), smu.Get("While"));
 
              whwh.AddVertex(smu.Get(@"While\Test"), "(?<test>)");
-             
-             // +
-             //
-             // (?<left>) + (?<right>)
+             */
+            // +
+            //
+            // (?<left>) + (?<right>)
 
-             IVertex o_plus = smuk.AddVertex(keyword, "(?<left>) +(?<SUB>) (?<right>)");
-
-             IVertex o_plus_any = o_plus.AddVertex(any, "");
+            IVertex o_plus = smuk.AddVertex(keyword, "(?<left>) +(?<SUB>) (?<right>)");
+            //IVertex o_plus = smuk.AddVertex(keyword, "(?<left>) + (?<right>)");
+            IVertex o_plus_any = o_plus.AddVertex(any, "");
 
              o_plus_any.AddEdge(smb.Get(@"Vertex\$Is"), smu.Get("+"));
 
              o_plus_any.AddVertex(smu.Get(@"DoubleOperator\LeftExpression"), "(?<left>)");
 
              o_plus_any.AddVertex(smu.Get(@"DoubleOperator\RightExpression"), "(?<right>)");
-            
+            /*
              // -
              //
              // (?<left>) - (?<right>)
