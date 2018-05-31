@@ -2297,6 +2297,7 @@ namespace m0.ZeroCode
                 if (s.lastAddedVertex != null)
                     s.lastAddedVertex.AddVertex(smb.Get("$NewLine"), s.newLineCount);
                 else
+                    if(s.lastAddedVertexParent!=null)
                     s.lastAddedVertexParent.AddVertex(smb.Get("$NewLine"), s.newLineCount);
             }
 
