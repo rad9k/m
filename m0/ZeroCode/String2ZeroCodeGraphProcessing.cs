@@ -1812,8 +1812,8 @@ namespace m0.ZeroCode
 
         private int _tryIsNextLocalRootKeyword(ParsingStack s, string LOGPREFIX, int newPos, int sPos, keywordTryingData ktd)
         {
-            while (text[sPos - 1] == ' ') // spaces handling
-                sPos++;
+           // while (text[sPos - 1] == ' ') // spaces handling
+             //   sPos++; // NO WAY !!!!!!!!!!!!!!!!!!! this will stuck @b in function "A" @b
 
             //
             List<keywordTryingData> _examinedKeywords = new List<keywordTryingData>();
