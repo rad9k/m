@@ -1612,15 +1612,8 @@ namespace m0.ZeroCode
 
                                 foreach (KeyValuePair<object, TextRange> kvp in s.subTextRanges)
                                     if (kvp.Key is keywordTryingData)
-                                    {
                                         if (kvp.Value.begLine == subText.begLine && checkIfKtdContainsKtdAsAParent(ktd, (keywordTryingData)kvp.Key))
-                                            canAddRange = false;
-                                    }
-                                    else
-                                    {
-                                        int x = 0;
-                                    }
-                                
+                                            canAddRange = false;                             
 
                                 if(canAddRange)
                                     if (ktd.lastAddedParameter == null || ktd.isCurrentlyProcessedSubParameter)
@@ -1807,14 +1800,6 @@ namespace m0.ZeroCode
                         return true;
 
             return false;
-
-            /*if (child.parentKeywordTrying == null)
-                return false;
-
-            if (child.parentKeywordTrying == parent)
-                return true;
-
-            return checkIfKtdContainsKtdAsAParent(parent, child.parentKeywordTrying);*/
         }
 
         bool isLocalRootKeyword(keywordTryingData ktd)
