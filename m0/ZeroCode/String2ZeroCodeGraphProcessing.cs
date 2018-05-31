@@ -928,6 +928,8 @@ namespace m0.ZeroCode
 
             ktd.parameters.Add("value", l);
 
+            //ktd.AddParameter("value", value); // been tested with above // no lastparam modification
+
             return ktd;
         }
 
@@ -1606,14 +1608,32 @@ namespace m0.ZeroCode
                                 subText.begLine = s.lineNo + 1;
                                 subText.endLine = nextLineWithSameTabCount - 1;
 
-                                if (ktd.lastAddedParameter == null || ktd.isCurrentlyProcessedSubParameter)
-                                {
-                                    subText.isNonParameterRange = true;
-                                    s.subTextRanges.Add(ktd, subText);
-                                }
-                                else
-                                    if (!s.subTextRanges.ContainsKey(ktd.lastAddedParameter))
-                                    s.subTextRanges.Add(ktd.lastAddedParameter, subText);
+                                bool canAddRange = true;
+
+                                foreach (KeyValuePair<object, TextRange> kvp in s.subTextRanges)
+                                    if (kvp.Key is keywordTryingData)
+                                    {
+                                        if (kvp.Value.begLine == subText.begLine && checkIfKtdContainsKtdAsAParent(ktd, (keywordTryingData)kvp.Key))
+                                            canAddRange = false;
+                                    }
+                                    else
+                                    {
+                                        int x = 0;
+                                    }
+                                
+
+                                if(canAddRange)
+                                    if (ktd.lastAddedParameter == null || ktd.isCurrentlyProcessedSubParameter)
+                                    {
+                                        subText.isNonParameterRange = true;
+                                        s.subTextRanges.Add(ktd, subText);
+                                    }
+                                    else
+                                        if (!s.subTextRanges.ContainsKey(ktd.lastAddedParameter))
+                                    {
+                                        MinusZero.Instance.Log(-1, "XXX", ((keywordTryingData)ktd.lastAddedParameter).keyword);
+                                        s.subTextRanges.Add(ktd.lastAddedParameter, subText);
+                                    }
                             }
 
                             s.goToLine(nextLineWithSameTabCount);
@@ -1773,6 +1793,28 @@ namespace m0.ZeroCode
             MinusZero.Instance.Log(1, "_tryIsKeyword", LOGPREFIX+"END link:"+link+" keywordsCount:"+examinedKeywords.Count);
 
             log_keywords(examinedKeywords, 0, LOGPREFIX);
+        }
+
+        bool checkIfKtdContainsKtdAsAParent(keywordTryingData test, keywordTryingData child)
+        {
+            if (test == child)
+                return true;
+
+            foreach (List<object> l in test.parameters.Values)
+                foreach(object o in l)
+                if (o is keywordTryingData)
+                    if (checkIfKtdContainsKtdAsAParent((keywordTryingData)o, child))
+                        return true;
+
+            return false;
+
+            /*if (child.parentKeywordTrying == null)
+                return false;
+
+            if (child.parentKeywordTrying == parent)
+                return true;
+
+            return checkIfKtdContainsKtdAsAParent(parent, child.parentKeywordTrying);*/
         }
 
         bool isLocalRootKeyword(keywordTryingData ktd)
