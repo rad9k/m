@@ -701,12 +701,26 @@ namespace m0
 
              ffip.AddEdge(smb.Get(@"$KeywordManyRoot"), smb.Get(@"$Empty"));
 
+            // function
+            //
+            // function (?<name>) (?<returnType>) [(*(+, +)(?<paramType>) (?<paramName>)*)]
 
-             // function
-             //
-             // function (?<name>) [(*(+, +)(?<paramType>) (?<paramName>)*)]
+            IVertex function3 = smuk.AddVertex(keyword, "fun (?<name>) (?<returnType>)[]");
 
-             IVertex function2 = smuk.AddVertex(keyword, "function (?<name>) [(*(+, +)(?<paramType>) (?<paramName>)*)]");
+
+            IVertex function_function3 = function3.AddVertex(smu.Get(@"Function"), "(?<name>)");
+
+            function_function3.AddEdge(smb.Get(@"Vertex\$Is"), smu.Get("Function"));
+
+            function_function3.AddVertex(smu.Get(@"Function\Output"), "(?<returnType>)");
+
+            
+
+            // function
+            //
+            // function (?<name>) [(*(+, +)(?<paramType>) (?<paramName>)*)]
+
+            IVertex function2 = smuk.AddVertex(keyword, "function (?<name>) [(*(+, +)(?<paramType>) (?<paramName>)*)]");
 
 
              IVertex function2_function = function2.AddVertex(smu.Get(@"Function"), "(?<name>)");
