@@ -795,7 +795,7 @@ namespace m0
 
             //IVertex o_colon = smuk.AddVertex(keyword, "|");
 
-            IVertex o_colon = smuk.AddVertex(keyword, "(?<leftAtom>)|(?<rightAtom>)");
+            IVertex o_colon = smuk.AddVertex(keyword, "(?<leftAtom>)|(?<SUB>)(?<rightAtom>)");
 
             IVertex o_colon_any = o_colon.AddVertex(any, "");
 

@@ -1496,12 +1496,12 @@ namespace m0.ZeroCode
                                     //MinusZero.Instance.Log(0, "_tryIfKeyword", LOGPREFIX + "_tryIsCall / " + ktd.currentlyProcessedParameterName + " / " + ktd.keywordVertex.Value);
 
                                     MinusZero.Instance.Log(-1, "_tryIfKeyword", LOGPREFIX + startPos + " " + ktd.keywordVertex.Value + ktd.currentlyProcessedParameterName);
-                                    int modified_isPrevStartPosSameAsStartPosThisCount = isPrevStartPosSameAsStartPosThisCount;
+                                   // int modified_isPrevStartPosSameAsStartPosThisCount = isPrevStartPosSameAsStartPosThisCount;
 
                                    // if (sPos != startPos)
                                       //  modified_isPrevStartPosSameAsStartPosThisCount = 0;
 
-                                    _tryIsKeyword(s, LOGPREFIX + "    ", sPos, startPos, modified_isPrevStartPosSameAsStartPosThisCount, endPos, isTryKeyword_endPos, _afterKeywordPartExist, out foundKeywords, out foundLink, false, ref _newPos, false, ktd.keywordVertex, callParams);
+                                    _tryIsKeyword(s, LOGPREFIX + "    ", sPos, startPos, isPrevStartPosSameAsStartPosThisCount, endPos, isTryKeyword_endPos, _afterKeywordPartExist, out foundKeywords, out foundLink, false, ref _newPos, false, ktd.keywordVertex, callParams);
 
                                     // BACK TO OLD STACK
 
@@ -1812,6 +1812,10 @@ namespace m0.ZeroCode
 
         private int _tryIsNextLocalRootKeyword(ParsingStack s, string LOGPREFIX, int newPos, int sPos, keywordTryingData ktd)
         {
+            while (text[sPos - 1] == ' ') // spaces handling
+                sPos++;
+
+            //
             List<keywordTryingData> _examinedKeywords = new List<keywordTryingData>();
 
             string _link;
