@@ -495,7 +495,7 @@ namespace m0
             IVertex smuk = smu.AddVertex(null, "Keyword");
 
             IVertex any = smuk.AddVertex(null, "(?<ANY>)");
-            /*
+            
             // import meta
             //
             // import meta (?<name>) (?<link>)
@@ -700,7 +700,7 @@ namespace m0
              ffip.AddVertex(smb.Get(@"Vertex\$VertexTarget"), "(?<paramType>)");
 
              ffip.AddEdge(smb.Get(@"$KeywordManyRoot"), smb.Get(@"$Empty"));
-            */
+            
 
             // function
             //
@@ -717,7 +717,7 @@ namespace m0
              f2fip.AddVertex(smb.Get(@"Vertex\$VertexTarget"), "(?<paramType>)");            
 
              f2fip.AddEdge(smb.Get(@"$KeywordManyRoot"),smb.Get(@"$Empty"));                        
-            /*
+            
              // while
              //
              // while ((?<test>))
@@ -883,7 +883,7 @@ namespace m0
              IVertex o_newSub_any_param = o_newSub_any.AddVertex(smu.Get(@"MultiOperator\Expression"), "(?<expr>)");
 
              o_newSub_any_param.AddEdge(smb.Get(@"$KeywordManyRoot"), smb.Get(@"$Empty"));
-             */
+             
              // ""
              //
              // "\"(?<value>)\""
