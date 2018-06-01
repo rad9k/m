@@ -567,6 +567,7 @@ namespace m0.ZeroCode
 
                     foreach (string t in l)
                     {
+                        MinusZero.Instance.Log(-1, "T", t);
                         if (!ZeroCodeUtil.isStringOnlyWhiteSpaces(t))
                             noSpaces += t.Trim();
                         else
@@ -584,6 +585,8 @@ namespace m0.ZeroCode
                 parent = _processing;
                 keywordVertex = k;
                 keyword = removeSpaces((String)keywordVertex.Value);
+
+                MinusZero.Instance.Log(-1, "KTD", keyword);
 
                // keyword = (String)keywordVertex.Value;
 
@@ -685,7 +688,9 @@ namespace m0.ZeroCode
             public bool currentPositionCharacter_isCharacterMatch(ParsingStack s, int curPos)
             {
                 MinusZero.Instance.Log(1, "isCharacterMatch", curPos + " ? "+ keyword[currentPositionInKeyword] + " | curPositionInKeyword:"+currentPositionInKeyword);
-                
+
+                lastCharWasSkippedSpace = false;
+
                 if (isInMultiParameter())
                 {
                     if ((currentPositionInMultiParamPlusSeparatorString == multiParameterString.Length // after multi param string
@@ -701,10 +706,16 @@ namespace m0.ZeroCode
                     if (multiParamPlusSeparatorString[currentPositionInMultiParamPlusSeparatorString] == parent.text[curPos])
                         return true;
                     else
-                        return false;
-                }
+                    {
+                        if (parent.text[curPos] == ' ')
+                        {
+                            lastCharWasSkippedSpace = true;
+                            return true;
+                        }
 
-                lastCharWasSkippedSpace = false;
+                        return false;
+                    }
+                }
 
                 if (keyword[currentPositionInKeyword] == parent.text[curPos])                   
                     return true;
@@ -818,15 +829,17 @@ namespace m0.ZeroCode
                 
                 if (isInMultiParameter())
                 {
-                    if (currentPositionInMultiParamPlusSeparatorString < multiParamPlusSeparatorString.Length - 1)
+                    if (!lastCharWasSkippedSpace)
                     {
-                        if(!lastCharWasSkippedSpace)
+                        if (currentPositionInMultiParamPlusSeparatorString < multiParamPlusSeparatorString.Length - 1)
+                        {
                             currentPositionInMultiParamPlusSeparatorString++;
-                    }
-                    else
-                    {
-                        currentPositionInMultiParamPlusSeparatorString = -1;
-                        //  multiParameterCount++;
+                        }
+                        else
+                        {
+                            currentPositionInMultiParamPlusSeparatorString = -1;
+                            //  multiParameterCount++;
+                        }
                     }
 
                         MinusZero.Instance.Log(1, "currentPositionInKeyword_Increase", "MULTI:" + currentPositionInMultiParamPlusSeparatorString);
@@ -1624,7 +1637,7 @@ namespace m0.ZeroCode
                                     else
                                         if (!s.subTextRanges.ContainsKey(ktd.lastAddedParameter))
                                     {
-                                        MinusZero.Instance.Log(-1, "XXX", ((keywordTryingData)ktd.lastAddedParameter).keyword);
+                                       // MinusZero.Instance.Log(-1, "XXX", ((keywordTryingData)ktd.lastAddedParameter).keyword);
                                         s.subTextRanges.Add(ktd.lastAddedParameter, subText);
                                     }
                             }

@@ -277,17 +277,20 @@ namespace m0.ZeroCode
             {
                 if (tryStringMatch(k, x, "(*"))
                 {
-                    x += 2;
+                    x += 1;
 
                     if (current != "")
+                    {
                         l.Add(current);
+                        current = "";
+                    }
 
                     l.Add("(*");
                 }
-
+                else
                 if (tryStringMatch(k, x, "*)"))
                 {
-                    x += 2;
+                    x += 1;
 
                     if (current != "")
                     {
@@ -297,10 +300,10 @@ namespace m0.ZeroCode
 
                     l.Add("*)");
                 }
-
+                else
                 if (tryStringMatch(k, x, "(+"))
                 {
-                    x += 2;
+                    x += 1;
 
                     if (current != "")
                     {
@@ -310,10 +313,10 @@ namespace m0.ZeroCode
 
                     l.Add("(+");
                 }
-
+                else
                 if (tryStringMatch(k, x, "+)"))
                 {
-                    x += 2;
+                    x += 1;
 
                     if (current != "")
                     {
@@ -323,28 +326,15 @@ namespace m0.ZeroCode
 
                     l.Add("+)");
                 }
-
+                else
                 if (tryStringMatch(k, x, "(?<SUB>)"))
                 {
-                    x += 8;
+                    x += 7;
 
                     current += "(?<SUB>)";
                 }
-
+                else
                 if (tryStringMatch(k, x, "(?<"))
-                {
-                    x += 3;
-
-                    if (current != "")
-                    {
-                        l.Add(current);
-                        current = "";
-                    }
-
-                    l.Add("(?<");
-                }
-
-                if (tryStringMatch(k, x, ">)"))
                 {
                     x += 2;
 
@@ -354,10 +344,23 @@ namespace m0.ZeroCode
                         current = "";
                     }
 
+                    l.Add("(?<");
+                }
+                else
+                if (tryStringMatch(k, x, ">)"))
+                {
+                    x += 1;
+
+                    if (current != "")
+                    {
+                        l.Add(current);
+                        current = "";
+                    }
+
                     l.Add(">)");
                 }
-
-                if(x < k.Length)
+                else
+                if (x < k.Length)
                     current += k[x];
             }
 
