@@ -202,7 +202,7 @@ namespace m0
         {
             IVertex sm = Root.Get(@"System\Meta");
 
-            GeneralUtil.ParseAndExcute(sm, null, "{Base{Vertex{$$IsLink,$Inherits,$Is,$EdgeTarget,$VertexTarget,$IsAggregation,$MinCardinality,$MaxCardinality,$MinTargetCardinality,$MaxTargetCardinality,$DefaultValue,$DefaultViewVisualiser,$DefaultEditVisualiser,$DefaultOpenVisualiser,$Group,$Section,$Description,Author,Dependency},$Empty,$Import,$ImportMeta,$Keyword,$KeywordManyRoot,$LocalRoot,$StartInLocalRoot,$NewLine}}");
+            GeneralUtil.ParseAndExcute(sm, null, "{Base{Vertex{$$IsLink,$Inherits,$Is,$EdgeTarget,$VertexTarget,$IsAggregation,$MinCardinality,$MaxCardinality,$MinTargetCardinality,$MaxTargetCardinality,$DefaultValue,$DefaultViewVisualiser,$DefaultEditVisualiser,$DefaultOpenVisualiser,$Group,$Section,$Description,Author,Dependency},$Empty,$Import,$ImportMeta,$Keyword,$KeywordGroup,$KeywordManyRoot,$LocalRoot,$StartInLocalRoot,$NewLine}}");
 
             sm.Get(@"Presentation\$Hide").AddEdge(sm.Get(@"Base\Vertex\$EdgeTarget"), sm.Get(@"Base\Vertex"));
 
@@ -487,6 +487,7 @@ namespace m0
             IVertex smb = Root.Get(@"System\Meta\Base");
 
             IVertex keyword = smb.Get(@"$Keyword");
+            IVertex keywordGroup = smb.Get(@"$KeywordGroup");
 
             IVertex isAggregation = root.Get(@"System\Meta\Base\Vertex\$IsAggregation");
             IVertex empty = root.Get(@"System\Meta\Base\$Empty");
@@ -794,15 +795,15 @@ namespace m0
 
             //IVertex o_colon = smuk.AddVertex(keyword, "|");
 
-            IVertex o_colon = smuk.AddVertex(keyword, "(?<leftAtom>)|(?<SUB>)(?<rightAtom>)");
+            IVertex o_colon = smuk.AddVertex(keyword, "(?<left_Atom>)|(?<SUB>)(?<right_Atom>)");
 
             IVertex o_colon_any = o_colon.AddVertex(any, "");
 
             o_colon_any.AddEdge(smb.Get(@"Vertex\$Is"), smu.Get("|"));
 
-            o_colon_any.AddVertex(smu.Get(@"DoubleOperator\LeftExpression"), "(?<leftAtom>)");
+            o_colon_any.AddVertex(smu.Get(@"DoubleOperator\LeftExpression"), "(?<left_Atom>)");
 
-            o_colon_any.AddVertex(smu.Get(@"DoubleOperator\RightExpression"), "(?<rightAtom>)");
+            o_colon_any.AddVertex(smu.Get(@"DoubleOperator\RightExpression"), "(?<right_Atom>)");
 
             //o_colon_any.AddVertex(smb.Get("$StartInLocalRoot"), "");            
 
@@ -892,6 +893,8 @@ namespace m0
 
              newValueKeywordVertex = newValueKeyword;
 
+             newValueKeyword.AddVertex(keywordGroup, "Atom");
+
              IVertex newValueKeyword_any = newValueKeyword.AddVertex(any, "(?<value>)");
 
              newValueKeyword_any.AddVertex(smb.Get("$LocalRoot"), "");
@@ -902,6 +905,8 @@ namespace m0
              //
 
              IVertex emptyKeyword = smuk.AddVertex(keyword, "(?<value>)");
+
+             emptyKeyword.AddVertex(keywordGroup, "Atom");
 
              IVertex emptyKeyword_any = emptyKeyword.AddVertex(any, "(?<value>)");
 
