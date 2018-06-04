@@ -884,12 +884,16 @@ namespace m0
              IVertex o_newSub_any_param = o_newSub_any.AddVertex(smu.Get(@"MultiOperator\Expression"), "(?<expr>)");
 
              o_newSub_any_param.AddEdge(smb.Get(@"$KeywordManyRoot"), smb.Get(@"$Empty"));
-             
-             // ""
-             //
-             // "\"(?<value>)\""
-             
-             IVertex newValueKeyword = smuk.AddVertex(keyword, "\"(?<value>)\"");
+
+            o_newSub.AddVertex(keywordGroup, "Dupa");
+
+            o_newSub.AddVertex(keywordGroup, "Kupa");
+
+            // ""
+            //
+            // "\"(?<value>)\""
+
+            IVertex newValueKeyword = smuk.AddVertex(keyword, "\"(?<value>)\"");
 
              newValueKeywordVertex = newValueKeyword;
 
@@ -899,16 +903,16 @@ namespace m0
 
              newValueKeyword_any.AddVertex(smb.Get("$LocalRoot"), "");
 
-            
-             // E M P T Y :) K E Y W O R D
-             //
-             //
 
-             IVertex emptyKeyword = smuk.AddVertex(keyword, "(?<value>)");
+            // E M P T Y :) K E Y W O R D
+            //
+            //
+
+            IVertex emptyKeyword = smuk.AddVertex(keyword, "(?<value>)");
 
              emptyKeyword.AddVertex(keywordGroup, "Atom");
 
-             IVertex emptyKeyword_any = emptyKeyword.AddVertex(any, "(?<value>)");
+            IVertex emptyKeyword_any = emptyKeyword.AddVertex(any, "(?<value>)");
 
              emptyKeyword_any.AddVertex(smb.Get("$StartInLocalRoot"), "");
 

@@ -238,8 +238,8 @@ namespace m0.ZeroCode
 
         //
 
-        List<keywordTryingData> examinedKeywords_All; // all keywords are here
-        List<keywordTryingData> examinedKeywords_LocalRootOnly; // all keywords are here
+        Dictionary<string, List<keywordTryingData>> examinedKeywords_All; // all keywords are here
+        Dictionary<string, List<keywordTryingData>> examinedKeywords_LocalRootOnly; // all keywords are here
         Dictionary<char, List<string>> allKeywordsSubstringsDictionary;
 
         // special keywords
@@ -899,7 +899,7 @@ namespace m0.ZeroCode
                 int tryPos = 0;
 
 
-                _tryIsKeyword(s, "", s.currentLineInfo.lineBeg, s.currentLineInfo.lineBeg, 0, text.Length - 1, text.Length - 1, false, out examinedKeywords, out link, true, ref tryPos, false, null, null);
+                _tryIsKeyword(s, "", s.currentLineInfo.lineBeg, s.currentLineInfo.lineBeg, 0, text.Length - 1, text.Length - 1, false, out examinedKeywords, out link, true, ref tryPos, false, null, null,"");
 
                 if (examinedKeywords.Count() > 0)
                     return examinedKeywords;                
@@ -1087,7 +1087,7 @@ namespace m0.ZeroCode
             }
         }
 
-        void _tryIsKeyword(ParsingStack s, string LOGPREFIX, int startPos, int prev_startPos, int isPrevStartPosSameAsStartPosParentCount, int endPos, int endPos_forAtomParts, bool afterKeywordPartExist, out List<keywordTryingData> examinedKeywords, out string link, bool isTopLevelCall, ref int newPos, bool lookForLocalRootOnly, IVertex parentKeyword, tryIsKeyword_Parameters parentParams)
+        void _tryIsKeyword(ParsingStack s, string LOGPREFIX, int startPos, int prev_startPos, int isPrevStartPosSameAsStartPosParentCount, int endPos, int endPos_forAtomParts, bool afterKeywordPartExist, out List<keywordTryingData> examinedKeywords, out string link, bool isTopLevelCall, ref int newPos, bool lookForLocalRootOnly, IVertex parentKeyword, tryIsKeyword_Parameters parentParams, string keywordsFilter)
         {
             tryIsKeyword_Parameters callParams = new tryIsKeyword_Parameters(s, LOGPREFIX, startPos, prev_startPos, isPrevStartPosSameAsStartPosParentCount, endPos, endPos_forAtomParts, afterKeywordPartExist, parentKeyword, parentParams);
             MinusZero.Instance.Log(0, "_tryIfKeyword", LOGPREFIX + "RUN "+callParams.ToString());
@@ -1334,9 +1334,9 @@ namespace m0.ZeroCode
             // keyword
 
             if(lookForLocalRootOnly)
-                copyExaminedKeywords(examinedKeywords_LocalRootOnly, examinedKeywords);
+                copyExaminedKeywords(examinedKeywords_LocalRootOnly[keywordsFilter], examinedKeywords);
             else
-                copyExaminedKeywords(examinedKeywords_All, examinedKeywords);
+                copyExaminedKeywords(examinedKeywords_All[keywordsFilter], examinedKeywords);
 
             shallProceed = true;
 
@@ -1514,7 +1514,7 @@ namespace m0.ZeroCode
                                    // if (sPos != startPos)
                                       //  modified_isPrevStartPosSameAsStartPosThisCount = 0;
 
-                                    _tryIsKeyword(s, LOGPREFIX + "    ", sPos, startPos, isPrevStartPosSameAsStartPosThisCount, endPos, isTryKeyword_endPos, _afterKeywordPartExist, out foundKeywords, out foundLink, false, ref _newPos, false, ktd.keywordVertex, callParams);
+                                    _tryIsKeyword(s, LOGPREFIX + "    ", sPos, startPos, isPrevStartPosSameAsStartPosThisCount, endPos, isTryKeyword_endPos, _afterKeywordPartExist, out foundKeywords, out foundLink, false, ref _newPos, false, ktd.keywordVertex, callParams, getKewordFilterFromParamName(ktd.currentlyProcessedParameterName));
 
                                     // BACK TO OLD STACK
 
@@ -1801,6 +1801,16 @@ namespace m0.ZeroCode
             log_keywords(examinedKeywords, 0, LOGPREFIX);
         }
 
+        string getKewordFilterFromParamName(string s)
+        {
+            int p = s.LastIndexOf('_');
+
+            if (p == -1 || p==s.Length-1)
+                return "";
+
+            return s.Substring(p + 1);
+        }
+
         bool checkIfKtdContainsKtdAsAParent(keywordTryingData test, keywordTryingData child)
         {
             if (test == child)
@@ -1847,7 +1857,7 @@ namespace m0.ZeroCode
 
             //
 
-            _tryIsKeyword(s, LOGPREFIX + "    ", sPos - 1, -1, 0, text.Length - 1, text.Length - 1, false, out _examinedKeywords, out _link, true, ref _tryPos, true, null, null);
+            _tryIsKeyword(s, LOGPREFIX + "    ", sPos - 1, -1, 0, text.Length - 1, text.Length - 1, false, out _examinedKeywords, out _link, true, ref _tryPos, true, null, null, getKewordFilterFromParamName(ktd.currentlyProcessedParameterName));
 
             // BACK TO OLD STACK
 
@@ -2063,9 +2073,15 @@ namespace m0.ZeroCode
 
         private void PrepareDictionaries()
         {
-            examinedKeywords_All = new List<keywordTryingData>();
+            examinedKeywords_All = new Dictionary<string, List<keywordTryingData>>();
 
-            examinedKeywords_LocalRootOnly = new List<keywordTryingData>();
+            examinedKeywords_All.Add("", new List<keywordTryingData>());
+
+            examinedKeywords_LocalRootOnly = new Dictionary<string, List<keywordTryingData>>();
+
+            examinedKeywords_LocalRootOnly.Add("", new List<keywordTryingData>());
+
+
 
             allKeywordsSubstringsDictionary = new Dictionary<char, List<string>>();
 
@@ -2079,7 +2095,17 @@ namespace m0.ZeroCode
          
                 keywordTryingData ktd = new keywordTryingData(keyword.To, this);
                
-                examinedKeywords_All.Add(ktd);
+                examinedKeywords_All[""].Add(ktd);
+
+                foreach(IEdge v in ktd.keywordVertex.GetAll("$KeywordGroup:"))
+                {
+                    string group = (string)v.To.Value;
+
+                    if (!examinedKeywords_All.ContainsKey(group))
+                        examinedKeywords_All.Add(group, new List<keywordTryingData>());
+
+                    examinedKeywords_All[group].Add(ktd);
+                }
 
                 // examinedKeywords_LocalRootOnly
 
@@ -2087,7 +2113,17 @@ namespace m0.ZeroCode
                 {
                     keywordTryingData ktd2 = new keywordTryingData(keyword.To, this);
 
-                    examinedKeywords_LocalRootOnly.Add(ktd2);
+                    examinedKeywords_LocalRootOnly[""].Add(ktd2);
+
+                    foreach (IEdge v in ktd.keywordVertex.GetAll("$KeywordGroup:"))
+                    {
+                        string group = (string)v.To.Value;
+
+                        if (!examinedKeywords_LocalRootOnly.ContainsKey(group))
+                            examinedKeywords_LocalRootOnly.Add(group, new List<keywordTryingData>());
+
+                        examinedKeywords_LocalRootOnly[group].Add(ktd);
+                    }
                 }
 
                 string keywordString = keyword.To.Value.ToString();
