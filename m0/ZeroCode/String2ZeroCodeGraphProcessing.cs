@@ -1249,7 +1249,7 @@ namespace m0.ZeroCode
                         c1089 = true;
                 }
 
-                if (c1089)
+                if (c1089 || keywordsFilter=="Atom")
                     //( (afterKeywordPartExist && sPos_copy == endPos_forAtomParts && isPrevStartPosSameAsStartPos)
                     //|| (!afterKeywordPartExist && (sPos == endPos_forAtomParts || isPrevStartPosSameAsStartPos)))
                     //( //(tryEmptyKeyword != null || lookForLocalRootOnly==false) &&
@@ -1313,7 +1313,9 @@ namespace m0.ZeroCode
             }
 
            // if (isPrevStartPosSameAsStartPos && isPrevStartPosSameAsStartPosParentCount == 1)
-            if((l1149_dict>-1 && containsCondition) || (l1149_parent>-1 && isPrevStartPosSameAsStartPos && isPrevStartPosSameAsStartPosThisCount > l1149_parent))
+            if((l1149_dict>-1 && containsCondition) 
+                || (l1149_parent>-1 && isPrevStartPosSameAsStartPos && isPrevStartPosSameAsStartPosThisCount > l1149_parent)
+                || keywordsFilter == "Atom")
             { // do not want inifinite recursion
                // if(containsCondition)
                //     MinusZero.Instance.Log(0, "_tryIsKeyword", LOGPREFIX + "HARD RETURN PARENT "+ parentKeyword.Value);
@@ -1488,14 +1490,14 @@ namespace m0.ZeroCode
 
                                 MinusZero.Instance.Log(1, LOGPREFIX+"_tryIsKeyword", "will run _tryIs for:"+ ktd.currentlyProcessedParameterName);
 
-                                if (ktd.isCurrentlyProcessedParameterAtom())
+                              /*  if (ktd.isCurrentlyProcessedParameterAtom())
                                 {
                                     //MinusZero.Instance.Log(0, "_tryIfKeyword", LOGPREFIX + "_tryATOM / " + ktd.currentlyProcessedParameterName + " / " + ktd.keywordVertex.Value);
 
                                     _tryAtom(s, LOGPREFIX + "    ", sPos, isTryKeyword_endPos, out foundKeywords, out foundLink, ref _newPos);
                                 }
                                 else
-                                {
+                                {*/
                                     // NEW STACK
 
                                     ParsingStack newStack = new ParsingStack(s);
@@ -1521,7 +1523,7 @@ namespace m0.ZeroCode
                                     s = s.parentStack;
 
                                     //
-                                }
+                                //}
 
                                 if (foundLink != null)
                                 {
@@ -1857,7 +1859,9 @@ namespace m0.ZeroCode
 
             //
 
-            _tryIsKeyword(s, LOGPREFIX + "    ", sPos - 1, -1, 0, text.Length - 1, text.Length - 1, false, out _examinedKeywords, out _link, true, ref _tryPos, true, null, null, getKewordFilterFromParamName(ktd.currentlyProcessedParameterName));
+            //_tryIsKeyword(s, LOGPREFIX + "    ", sPos - 1, -1, 0, text.Length - 1, text.Length - 1, false, out _examinedKeywords, out _link, true, ref _tryPos, true, null, null, getKewordFilterFromParamName(ktd.currentlyProcessedParameterName));
+
+            _tryIsKeyword(s, LOGPREFIX + "    ", sPos - 1, -1, 0, text.Length - 1, text.Length - 1, false, out _examinedKeywords, out _link, true, ref _tryPos, true, null, null, "");
 
             // BACK TO OLD STACK
 
@@ -1946,7 +1950,8 @@ namespace m0.ZeroCode
         void AddKeywordVertex_AddVertex(ParsingStack s, IVertex baseVertex, IEdge metaEdge, IVertex meta, object val, ref IVertex nv, keywordTryingData ktd, IEdge parentMetaEdge)
         {
             if (GeneralUtil.CompareStrings("$LocalRoot", metaEdge.Meta.Value)
-            || GeneralUtil.CompareStrings("$StartInLocalRoot", metaEdge.Meta.Value))
+            || GeneralUtil.CompareStrings("$StartInLocalRoot", metaEdge.Meta.Value)
+            || GeneralUtil.CompareStrings("$KeywordGroup", metaEdge.Meta.Value))
                 return;
 
             if (parentMetaEdge!=null
