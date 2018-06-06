@@ -107,6 +107,7 @@ namespace m0.UIWpf.Visualisers.Code
                 
                 else if (isClose)
                     for (int x = 0; x < closeTimes; x++)
+                        if(startOffsets.Count>0) // otherwise there was Exception
                     {                    
                         int startOffset = startOffsets.Pop();
 

@@ -586,7 +586,7 @@ namespace m0.ZeroCode
                 keywordVertex = k;
                 keyword = removeSpaces((String)keywordVertex.Value);
 
-                MinusZero.Instance.Log(-1, "KTD", keyword);
+                //MinusZero.Instance.Log(-1, "KTD", keyword);
 
                // keyword = (String)keywordVertex.Value;
 
@@ -899,7 +899,7 @@ namespace m0.ZeroCode
                 int tryPos = 0;
 
 
-                _tryIsKeyword(s, "", s.currentLineInfo.lineBeg, s.currentLineInfo.lineBeg, 0, text.Length - 1, text.Length - 1, false, out examinedKeywords, out link, true, ref tryPos, false, null, null,"");
+                _tryIsKeyword(s, "", s.currentLineInfo.lineBeg, s.currentLineInfo.lineBeg, 0, text.Length - 1, text.Length - 1, false, out examinedKeywords, out link, true, ref tryPos, false, null, null, "", false);
 
                 if (examinedKeywords.Count() > 0)
                     return examinedKeywords;                
@@ -1040,7 +1040,7 @@ namespace m0.ZeroCode
 
                     //
 
-                    newPos = _tryIsNextLocalRootKeyword(s, LOGPREFIX, newPos, sPos, ktd);
+                    newPos = _tryIsNextLocalRootKeyword(s, LOGPREFIX, newPos, sPos, ktd, false);
 
                     //
 
@@ -1087,7 +1087,7 @@ namespace m0.ZeroCode
             }
         }
 
-        void _tryIsKeyword(ParsingStack s, string LOGPREFIX, int startPos, int prev_startPos, int isPrevStartPosSameAsStartPosParentCount, int endPos, int endPos_forAtomParts, bool afterKeywordPartExist, out List<keywordTryingData> examinedKeywords, out string link, bool isTopLevelCall, ref int newPos, bool lookForLocalRootOnly, IVertex parentKeyword, tryIsKeyword_Parameters parentParams, string keywordsFilter)
+        void _tryIsKeyword(ParsingStack s, string LOGPREFIX, int startPos, int prev_startPos, int isPrevStartPosSameAsStartPosParentCount, int endPos, int endPos_forAtomParts, bool afterKeywordPartExist, out List<keywordTryingData> examinedKeywords, out string link, bool isTopLevelCall, ref int newPos, bool lookForLocalRootOnly, IVertex parentKeyword, tryIsKeyword_Parameters parentParams, string keywordsFilter, bool isSpaceNext)
         {
             tryIsKeyword_Parameters callParams = new tryIsKeyword_Parameters(s, LOGPREFIX, startPos, prev_startPos, isPrevStartPosSameAsStartPosParentCount, endPos, endPos_forAtomParts, afterKeywordPartExist, parentKeyword, parentParams);
             MinusZero.Instance.Log(0, "_tryIfKeyword", LOGPREFIX + "RUN "+callParams.ToString());
@@ -1177,7 +1177,7 @@ namespace m0.ZeroCode
 
             int sPos_copy;
 
-            if (!testIfIsKeywordSubstring(startPos))
+            if (!testIfIsKeywordSubstring(sPos))
             {
                 tryEmptyKeyword = ZeroCodeCommon.tryStringFromNewVertexString(text, startPos, ref sPos);
 
@@ -1266,7 +1266,7 @@ namespace m0.ZeroCode
 
                         //
 
-                        newPos = _tryIsNextLocalRootKeyword(s, LOGPREFIX, newPos, sPos, ktd);
+                        newPos = _tryIsNextLocalRootKeyword(s, LOGPREFIX, newPos, sPos, ktd, isSpaceNext);
 
                         //
 
@@ -1344,11 +1344,6 @@ namespace m0.ZeroCode
 
             while (shallProceed)
             {
-                if (sPos == 9)
-                {
-                    int x = 0;
-                }
-
                 List<keywordTryingData> newExaminedKeywords = new List<keywordTryingData>();
 
                 foreach (keywordTryingData ktd in examinedKeywords)
@@ -1464,8 +1459,13 @@ namespace m0.ZeroCode
 
                             MinusZero.Instance.Log(1, "_tryIsKeyword", LOGPREFIX+"TRY for parameter:" +ktd.currentlyProcessedParameterName+" for keyword:" + ktd.keyword + " afterParameterString:" + ktd.afterParameterString + "| ("+sPos+","+endPos+")");
 
+                            bool _isSpaceNext = false;
+
                             if (ktd.afterParameterString != "")
                             {
+                                if (ktd.afterParameterString.Length > 0 && ktd.afterParameterString[0] == ' ')
+                                    _isSpaceNext = true;
+
                                 int sPosAfterParameter = ZeroCodeUtil.getNextMatch(text, sPos, ktd.afterParameterString);
 
                                 MinusZero.Instance.Log(1, "_tryIsKeyword", LOGPREFIX+"sPosAfterParameter:" + sPosAfterParameter+ " for afterParameterString:"+ktd.afterParameterString);
@@ -1516,7 +1516,7 @@ namespace m0.ZeroCode
                                    // if (sPos != startPos)
                                       //  modified_isPrevStartPosSameAsStartPosThisCount = 0;
 
-                                    _tryIsKeyword(s, LOGPREFIX + "    ", sPos, startPos, isPrevStartPosSameAsStartPosThisCount, endPos, isTryKeyword_endPos, _afterKeywordPartExist, out foundKeywords, out foundLink, false, ref _newPos, false, ktd.keywordVertex, callParams, getKewordFilterFromParamName(ktd.currentlyProcessedParameterName));
+                                    _tryIsKeyword(s, LOGPREFIX + "    ", sPos, startPos, isPrevStartPosSameAsStartPosThisCount, endPos, isTryKeyword_endPos, _afterKeywordPartExist, out foundKeywords, out foundLink, false, ref _newPos, false, ktd.keywordVertex, callParams, getKewordFilterFromParamName(ktd.currentlyProcessedParameterName), _isSpaceNext);
 
                                     // BACK TO OLD STACK
 
@@ -1760,7 +1760,7 @@ namespace m0.ZeroCode
 
                     if (ktd.matchedOnPositionInText <= s.currentLineInfo.lineEnd
                         && isLocalRootKeyword(ktd))
-                        sPos = _tryIsNextLocalRootKeyword(s, LOGPREFIX, sPos, ktd.matchedOnPositionInText + 1, ktd);
+                        sPos = _tryIsNextLocalRootKeyword(s, LOGPREFIX, sPos, ktd.matchedOnPositionInText + 1, ktd, isSpaceNext);
                 }
                 //
 
@@ -1789,7 +1789,7 @@ namespace m0.ZeroCode
 
                     //
 
-                    newPos = _tryIsNextLocalRootKeyword(s, LOGPREFIX, newPos, tryNewPos, ktd);
+                    newPos = _tryIsNextLocalRootKeyword(s, LOGPREFIX, newPos, tryNewPos, ktd, isSpaceNext);
 
                     //
 
@@ -1835,10 +1835,11 @@ namespace m0.ZeroCode
                 return false;
         }
 
-        private int _tryIsNextLocalRootKeyword(ParsingStack s, string LOGPREFIX, int newPos, int sPos, keywordTryingData ktd)
+        private int _tryIsNextLocalRootKeyword(ParsingStack s, string LOGPREFIX, int newPos, int sPos, keywordTryingData ktd, bool isSpaceNext)
         {
-           // while (text[sPos - 1] == ' ') // spaces handling
-             //   sPos++; // NO WAY !!!!!!!!!!!!!!!!!!! this will stuck @b in function "A" @b
+            if(!isSpaceNext)
+                while (text[sPos - 1] == ' ') // spaces handling
+                    sPos++; // NO WAY !!!!!!!!!!!!!!!!!!! this will stuck @b in function "A" @b, so thats why I added !isSpaceNext
 
             //
             List<keywordTryingData> _examinedKeywords = new List<keywordTryingData>();
@@ -1861,7 +1862,7 @@ namespace m0.ZeroCode
 
             //_tryIsKeyword(s, LOGPREFIX + "    ", sPos - 1, -1, 0, text.Length - 1, text.Length - 1, false, out _examinedKeywords, out _link, true, ref _tryPos, true, null, null, getKewordFilterFromParamName(ktd.currentlyProcessedParameterName));
 
-            _tryIsKeyword(s, LOGPREFIX + "    ", sPos - 1, -1, 0, text.Length - 1, text.Length - 1, false, out _examinedKeywords, out _link, true, ref _tryPos, true, null, null, "");
+            _tryIsKeyword(s, LOGPREFIX + "    ", sPos - 1, -1, 0, text.Length - 1, text.Length - 1, false, out _examinedKeywords, out _link, true, ref _tryPos, true, null, null, "", isSpaceNext);
 
             // BACK TO OLD STACK
 
@@ -2055,11 +2056,14 @@ namespace m0.ZeroCode
                             TextRange subText = s.subTextRanges[ktd];
 
                             //if (subText.isNonParameterRange) // do not need this, but who knows
-                                //ProcessTextPart(nv, subText.begLine, subText.endLine);
+                            //ProcessTextPart(nv, subText.begLine, subText.endLine);
                             //else
+                            if (nv != null)
+                            {
                                 ProcessTextPart(nv, subText.begLine, subText.endLine);
 
-                            s.subTextRanges.Remove(ktd);
+                                s.subTextRanges.Remove(ktd);
+                            }
                         }
 
                         _AddKeywordVertex(s, nv, ktd, e.To, null, cnt_subCount, null);
