@@ -1423,6 +1423,8 @@ namespace m0.ZeroCode
                     }
                 }
 
+                Dictionary<string, ParameterChache> ParameterChache = new Dictionary<string, ParameterChache>();
+
                 ParameterChache NonAtomParameterChache = null;
                 ParameterChache AtomParameterChache = null;
 
@@ -1435,9 +1437,19 @@ namespace m0.ZeroCode
 
                         bool chacheHit = false;
 
-                        object foundParameter = null;                        
+                        object foundParameter = null;
 
-                        if(ktd.isCurrentlyProcessedParameterAtom() && AtomParameterChache != null)
+                        string paramFilterName = getKewordFilterFromParamName(ktd.currentlyProcessedParameterName);
+
+                        if (ParameterChache.ContainsKey(paramFilterName))
+                        {
+                            chacheHit = true;
+
+                            foundParameter = ParameterChache[paramFilterName].Parameter;
+                            ktd.waitingUntilPositionInText = ParameterChache[paramFilterName].waitingUntilPositionInText;
+                        }
+
+                        /*if(ktd.isCurrentlyProcessedParameterAtom() && AtomParameterChache != null)
                         {
                             chacheHit = true;
                             foundParameter = AtomParameterChache.Parameter;
@@ -1450,7 +1462,7 @@ namespace m0.ZeroCode
                             chacheHit = true;
                             foundParameter = NonAtomParameterChache.Parameter;
                             ktd.waitingUntilPositionInText = NonAtomParameterChache.waitingUntilPositionInText;
-                        }
+                        }*/
 
                         if(!chacheHit) 
                         {
@@ -1517,7 +1529,7 @@ namespace m0.ZeroCode
                                    // if (sPos != startPos)
                                       //  modified_isPrevStartPosSameAsStartPosThisCount = 0;
 
-                                    _tryIsKeyword(s, LOGPREFIX + "    ", sPos, startPos, isPrevStartPosSameAsStartPosThisCount, endPos, isTryKeyword_endPos, _afterKeywordPartExist, out foundKeywords, out foundLink, false, ref _newPos, false, ktd.keywordVertex, callParams, getKewordFilterFromParamName(ktd.currentlyProcessedParameterName), _isSpaceNext);
+                                    _tryIsKeyword(s, LOGPREFIX + "    ", sPos, startPos, isPrevStartPosSameAsStartPosThisCount, endPos, isTryKeyword_endPos, _afterKeywordPartExist, out foundKeywords, out foundLink, false, ref _newPos, false, ktd.keywordVertex, callParams, paramFilterName, _isSpaceNext);
 
                                     // BACK TO OLD STACK
 
@@ -1553,7 +1565,14 @@ namespace m0.ZeroCode
                         if (foundParameter != null)
                         {
                             if (!chacheHit) {
-                                if (ktd.isCurrentlyProcessedParameterAtom())
+                                ParameterChache p = new ParameterChache();
+
+                                p.Parameter = foundParameter;
+                                p.waitingUntilPositionInText = ktd.waitingUntilPositionInText;
+
+                                ParameterChache.Add(paramFilterName, p);
+
+                              /*  if (ktd.isCurrentlyProcessedParameterAtom())
                                 {
                                     AtomParameterChache = new ParameterChache();
                                     AtomParameterChache.Parameter = foundParameter;
@@ -1564,13 +1583,8 @@ namespace m0.ZeroCode
                                     NonAtomParameterChache = new ParameterChache();
                                     NonAtomParameterChache.Parameter = foundParameter;
                                     NonAtomParameterChache.waitingUntilPositionInText = ktd.waitingUntilPositionInText;
-                                }
+                                }*/
                             }                                                        
-
-                            if(foundParameter is string)
-                            {
-                                int a = 0;
-                            }
 
                             ktd.AddParameter(ktd.currentlyProcessedParameterName, foundParameter);
 
