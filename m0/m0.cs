@@ -825,15 +825,15 @@ namespace m0
             //
             // ::                         
 
-            IVertex o_doubleColon = smuk.AddVertex(keyword, "(?<left_Atom>)||(?<SUB>)(?<right_Atom>)");
+            IVertex o_doubleColon = smuk.AddVertex(keyword, "(?<left_QueryPart>)||(?<SUB>)(?<right_QueryPart>)");
 
             IVertex o_doubleColon_any = o_doubleColon.AddVertex(any, "");
 
             o_doubleColon_any.AddEdge(smb.Get(@"Vertex\$Is"), smu.Get("||"));
 
-            o_doubleColon_any.AddVertex(smu.Get(@"DoubleOperator\LeftExpression"), "(?<left_Atom>)");
+            o_doubleColon_any.AddVertex(smu.Get(@"DoubleOperator\LeftExpression"), "(?<left_QueryPart>)");
 
-            o_doubleColon_any.AddVertex(smu.Get(@"DoubleOperator\RightExpression"), "(?<right_Atom>)");
+            o_doubleColon_any.AddVertex(smu.Get(@"DoubleOperator\RightExpression"), "(?<right_QueryPart>)");
          
 
             /////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -912,9 +912,11 @@ namespace m0
 
              newValueKeywordVertex = newValueKeyword;
 
-             newValueKeyword.AddVertex(keywordGroup, "Atom");
+            // newValueKeyword.AddVertex(keywordGroup, "Atom");
 
-             IVertex newValueKeyword_any = newValueKeyword.AddVertex(any, "(?<value>)");
+            //newValueKeyword.AddVertex(keywordGroup, "QueryPart");
+
+            IVertex newValueKeyword_any = newValueKeyword.AddVertex(any, "(?<value>)");
 
              newValueKeyword_any.AddVertex(smb.Get("$LocalRoot"), "");
 
@@ -925,7 +927,9 @@ namespace m0
 
             IVertex emptyKeyword = smuk.AddVertex(keyword, "(?<value>)");
 
-             emptyKeyword.AddVertex(keywordGroup, "Atom");
+             //emptyKeyword.AddVertex(keywordGroup, "Atom");
+
+            //emptyKeyword.AddVertex(keywordGroup, "QueryPart");
 
             IVertex emptyKeyword_any = emptyKeyword.AddVertex(any, "(?<value>)");
 

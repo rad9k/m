@@ -2095,6 +2095,15 @@ namespace m0.ZeroCode
             return s.IndexOf("::");            
         }
 
+        private bool isSpecialKeyword(string keyword)
+        {
+            if (GeneralUtil.CompareStrings("(?<value>)", keyword)
+                    || GeneralUtil.CompareStrings("\"(?<value>)\"", keyword))
+                return true;
+
+            return false;
+        }
+
         private void PrepareDictionaries()
         {
             examinedKeywords_All = new Dictionary<string, List<keywordTryingData>>();
@@ -2111,15 +2120,15 @@ namespace m0.ZeroCode
 
             foreach (IEdge keyword in MinusZero.Instance.Root.GetAll(@"User\CurrentUser:\CodeSettings:\Keyword:\$Keyword:"))
             {
-                if (GeneralUtil.CompareStrings("(?<value>)", keyword.To.Value)
-                    || GeneralUtil.CompareStrings("\"(?<value>)\"", keyword.To.Value))
-                    continue;
+               // if(isSpecialKeyword((string)keyword.To.Value))
+               //     continue;
 
                 // examinedKeywords_All
          
                 keywordTryingData ktd = new keywordTryingData(keyword.To, this);
-               
-                examinedKeywords_All[""].Add(ktd);
+
+                if (!isSpecialKeyword(ktd.keyword))
+                    examinedKeywords_All[""].Add(ktd);
 
                 foreach(IEdge v in ktd.keywordVertex.GetAll("$KeywordGroup:"))
                 {
@@ -2137,7 +2146,8 @@ namespace m0.ZeroCode
                 {
                     keywordTryingData ktd2 = new keywordTryingData(keyword.To, this);
 
-                    examinedKeywords_LocalRootOnly[""].Add(ktd2);
+                    if (!isSpecialKeyword(ktd.keyword))
+                        examinedKeywords_LocalRootOnly[""].Add(ktd2);
 
                     foreach (IEdge v in ktd.keywordVertex.GetAll("$KeywordGroup:"))
                     {
