@@ -912,9 +912,9 @@ namespace m0
 
              newValueKeywordVertex = newValueKeyword;
 
-            // newValueKeyword.AddVertex(keywordGroup, "Atom");
+             newValueKeyword.AddVertex(keywordGroup, "Atom");
 
-            //newValueKeyword.AddVertex(keywordGroup, "QueryPart");
+            newValueKeyword.AddVertex(keywordGroup, "QueryPart");
 
             IVertex newValueKeyword_any = newValueKeyword.AddVertex(any, "(?<value>)");
 
@@ -927,9 +927,9 @@ namespace m0
 
             IVertex emptyKeyword = smuk.AddVertex(keyword, "(?<value>)");
 
-             //emptyKeyword.AddVertex(keywordGroup, "Atom");
+             emptyKeyword.AddVertex(keywordGroup, "Atom");
 
-            //emptyKeyword.AddVertex(keywordGroup, "QueryPart");
+            emptyKeyword.AddVertex(keywordGroup, "QueryPart");
 
             IVertex emptyKeyword_any = emptyKeyword.AddVertex(any, "(?<value>)");
 

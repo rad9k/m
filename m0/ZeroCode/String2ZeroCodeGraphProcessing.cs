@@ -238,6 +238,7 @@ namespace m0.ZeroCode
 
         //
 
+        List<string> specialKeywordGroups;
         Dictionary<string, List<keywordTryingData>> examinedKeywords_All; // all keywords are here
         Dictionary<string, List<keywordTryingData>> examinedKeywords_LocalRootOnly; // all keywords are here
         Dictionary<char, List<string>> allKeywordsSubstringsDictionary;
@@ -1250,7 +1251,7 @@ namespace m0.ZeroCode
                         c1089 = true;
                 }
 
-                if (c1089 || keywordsFilter=="Atom")
+                if (c1089 || specialKeywordGroups.Contains(keywordsFilter) /*keywordsFilter=="Atom"*/)
                     //( (afterKeywordPartExist && sPos_copy == endPos_forAtomParts && isPrevStartPosSameAsStartPos)
                     //|| (!afterKeywordPartExist && (sPos == endPos_forAtomParts || isPrevStartPosSameAsStartPos)))
                     //( //(tryEmptyKeyword != null || lookForLocalRootOnly==false) &&
@@ -2104,8 +2105,18 @@ namespace m0.ZeroCode
             return false;
         }
 
-        private void PrepareDictionaries()
+        private void prepareSpecialKeywordsGroups()
         {
+            specialKeywordGroups = new List<string>();
+
+            foreach (IEdge e in MinusZero.Instance.newValueKeywordVertex.GetAll("$KeywordGroup:"))
+                specialKeywordGroups.Add((string)e.To.Value);
+        }
+
+        private void prepareDictionaries()
+        {
+            prepareSpecialKeywordsGroups();
+
             examinedKeywords_All = new Dictionary<string, List<keywordTryingData>>();
 
             examinedKeywords_All.Add("", new List<keywordTryingData>());
@@ -2120,8 +2131,8 @@ namespace m0.ZeroCode
 
             foreach (IEdge keyword in MinusZero.Instance.Root.GetAll(@"User\CurrentUser:\CodeSettings:\Keyword:\$Keyword:"))
             {
-               // if(isSpecialKeyword((string)keyword.To.Value))
-               //     continue;
+                if(isSpecialKeyword((string)keyword.To.Value))
+                    continue;
 
                 // examinedKeywords_All
          
@@ -2134,7 +2145,7 @@ namespace m0.ZeroCode
                 {
                     string group = (string)v.To.Value;
 
-                    if (!examinedKeywords_All.ContainsKey(group))
+                   // if (!examinedKeywords_All.ContainsKey(group))
                         examinedKeywords_All.Add(group, new List<keywordTryingData>());
 
                     examinedKeywords_All[group].Add(ktd);
@@ -2146,7 +2157,7 @@ namespace m0.ZeroCode
                 {
                     keywordTryingData ktd2 = new keywordTryingData(keyword.To, this);
 
-                    if (!isSpecialKeyword(ktd.keyword))
+                  //  if (!isSpecialKeyword(ktd.keyword))
                         examinedKeywords_LocalRootOnly[""].Add(ktd2);
 
                     foreach (IEdge v in ktd.keywordVertex.GetAll("$KeywordGroup:"))
@@ -2568,7 +2579,7 @@ namespace m0.ZeroCode
         {
             setupHelpVariables();
 
-            PrepareDictionaries();
+            prepareDictionaries();
 
             emptyKeywordVertex = MinusZero.Instance.Root.Get(@"User\CurrentUser:\CodeSettings:\Keyword:\$Keyword:(?<value>)");
 
