@@ -2110,13 +2110,21 @@ namespace m0.ZeroCode
             specialKeywordGroups = new List<string>();
 
             foreach (IEdge e in MinusZero.Instance.newValueKeywordVertex.GetAll("$KeywordGroup:"))
-                specialKeywordGroups.Add((string)e.To.Value);
+            {
+                string group = (string)e.To.Value;
+
+                specialKeywordGroups.Add(group);
+
+                if (!examinedKeywords_All.ContainsKey(group))
+                    examinedKeywords_All.Add(group, new List<keywordTryingData>());
+
+                if (!examinedKeywords_LocalRootOnly.ContainsKey(group))
+                    examinedKeywords_LocalRootOnly.Add(group, new List<keywordTryingData>());
+            }
         }
 
         private void prepareDictionaries()
         {
-            prepareSpecialKeywordsGroups();
-
             examinedKeywords_All = new Dictionary<string, List<keywordTryingData>>();
 
             examinedKeywords_All.Add("", new List<keywordTryingData>());
@@ -2125,6 +2133,8 @@ namespace m0.ZeroCode
 
             examinedKeywords_LocalRootOnly.Add("", new List<keywordTryingData>());
 
+
+            prepareSpecialKeywordsGroups();
 
 
             allKeywordsSubstringsDictionary = new Dictionary<char, List<string>>();
@@ -2138,14 +2148,14 @@ namespace m0.ZeroCode
          
                 keywordTryingData ktd = new keywordTryingData(keyword.To, this);
 
-                if (!isSpecialKeyword(ktd.keyword))
+                //if (!isSpecialKeyword(ktd.keyword))
                     examinedKeywords_All[""].Add(ktd);
 
                 foreach(IEdge v in ktd.keywordVertex.GetAll("$KeywordGroup:"))
                 {
                     string group = (string)v.To.Value;
 
-                   // if (!examinedKeywords_All.ContainsKey(group))
+                    if (!examinedKeywords_All.ContainsKey(group))
                         examinedKeywords_All.Add(group, new List<keywordTryingData>());
 
                     examinedKeywords_All[group].Add(ktd);
@@ -2263,7 +2273,7 @@ namespace m0.ZeroCode
                 {
                     dict[firstCharacter].Add(subString);
 
-                    MinusZero.Instance.Log(-1, "XX", subString);
+                  //  MinusZero.Instance.Log(-1, "XX", subString);
                 }
             }
             else
@@ -2273,7 +2283,7 @@ namespace m0.ZeroCode
                 dict.Add(firstCharacter, kl);
 
                 kl.Add(subString);
-                MinusZero.Instance.Log(-1, "XX", subString);
+              //  MinusZero.Instance.Log(-1, "XX", subString);
             }
 
         }
