@@ -568,7 +568,7 @@ namespace m0.ZeroCode
 
                     foreach (string t in l)
                     {
-                        MinusZero.Instance.Log(-1, "T", t);
+                       // MinusZero.Instance.Log(-1, "T", t);
                         if (!ZeroCodeUtil.isStringOnlyWhiteSpaces(t))
                             noSpaces += t.Trim(new Char[]{' '});
                         else
@@ -590,7 +590,7 @@ namespace m0.ZeroCode
 
                 keyword = removeSpaces((String)keywordVertex.Value);
 
-                MinusZero.Instance.Log(-1, "KTD", keyword);
+               // MinusZero.Instance.Log(-1, "KTD", keyword);
 
                 currentPositionInKeyword = 0;
                 state = keywordTryingState.keywordCharacter; // that and rest of the fields will be updated in the _tryKeyword
