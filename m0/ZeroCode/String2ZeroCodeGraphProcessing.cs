@@ -1624,7 +1624,9 @@ namespace m0.ZeroCode
                     MinusZero.Instance.Log(1, "_tryIsKeyword", LOGPREFIX+"SHALPROCEED FALSE end of this part of text");
                 }
 
-                if(shallProceed)
+                MinusZero.Instance.Log(1, "_tryIsKeyword", LOGPREFIX + "%%% shallProceed:" + shallProceed + " t1:" + (sPos + 1 < endPos) + " t2: " + s.currentLineInfo.IsLineEnd(sPos + 1));
+
+                if (shallProceed)
                 {
                     if (sPos + 1 < endPos && s.currentLineInfo.IsLineEnd(sPos + 1)) // SUB TEXT
                     //if(sPos + 1 < endPos && text[sPos + 1] == '\r')
