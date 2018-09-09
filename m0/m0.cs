@@ -971,7 +971,7 @@ namespace m0
 
             newValueKeyword.AddVertex(keywordGroup, "Atom");
 
-            newValueKeyword.AddVertex(keywordGroup, "QueryPart");
+            //newValueKeyword.AddVertex(keywordGroup, "QueryPart");
 
             IVertex newValueKeyword_any = newValueKeyword.AddVertex(any, "(?<value>)");
 
