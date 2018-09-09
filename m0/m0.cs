@@ -82,6 +82,8 @@ namespace m0
 
         public IVertex newValueKeywordVertex;
 
+        public IVertex emptyKeywordVertex;
+
         public IVertex CreateTempVertex()
         {
             return new EasyVertex(this.tempstore);
@@ -807,6 +809,8 @@ namespace m0
 
             IVertex o_colon = smuk.AddVertex(keyword, "(?<left_QueryPart>)|(?<SUB>)(?<right_QueryPart>)");
 
+            o_colon.AddVertex(keywordGroup, "QueryPart");
+
             IVertex o_colon_any = o_colon.AddVertex(any, "");
 
             o_colon_any.AddEdge(smb.Get(@"Vertex\$Is"), smu.Get("|"));
@@ -850,12 +854,12 @@ namespace m0
 
             o_colon3_any.AddVertex(smu.Get(@"DoubleOperator\LeftExpression"), "(?<left_QueryPart>)");
             
-
+            */
             // :: /1
             //
             // (?<left_QueryPart>)||(?<SUB>)(?<right_QueryPart>)                         
 
-            IVertex o_doubleColon = smuk.AddVertex(keyword, "(?<left_QueryPart>)||(?<SUB>)(?<right_QueryPart>)");
+            IVertex o_doubleColon = smuk.AddVertex(keyword, "(?<left_QueryPart>)##(?<SUB>)(?<right_QueryPart>)");
 
             IVertex o_doubleColon_any = o_doubleColon.AddVertex(any, "");
 
@@ -864,7 +868,7 @@ namespace m0
             o_doubleColon_any.AddVertex(smu.Get(@"DoubleOperator\LeftExpression"), "(?<left_QueryPart>)");
 
             o_doubleColon_any.AddVertex(smu.Get(@"DoubleOperator\RightExpression"), "(?<right_QueryPart>)");
-
+            /*
             // :: /2
             //
             // ||(?<SUB>)(?<right_QueryPart>)                         
@@ -971,7 +975,8 @@ namespace m0
 
             newValueKeyword.AddVertex(keywordGroup, "Atom");
 
-            //newValueKeyword.AddVertex(keywordGroup, "QueryPart");
+            //newValueKeyword.AddVertex(keywordGroup, "QueryPart"); // as "(?<value>)" is special keyword it will be processed same as (?<value>)
+            // also it is not "QueryPart" :) but will be treted as being "QueryPart" - becouse of being special keyword. this is known limitation
 
             IVertex newValueKeyword_any = newValueKeyword.AddVertex(any, "(?<value>)");
 
@@ -983,6 +988,8 @@ namespace m0
             //
 
             IVertex emptyKeyword = smuk.AddVertex(keyword, "(?<value>)");
+
+            emptyKeywordVertex = emptyKeyword;
 
             emptyKeyword.AddVertex(keywordGroup, "Atom");
 

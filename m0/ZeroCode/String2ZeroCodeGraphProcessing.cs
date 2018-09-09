@@ -240,7 +240,7 @@ namespace m0.ZeroCode
 
         List<string> specialKeywordGroups;
         Dictionary<string, List<keywordTryingData>> examinedKeywords_All; // all keywords are here
-        Dictionary<string, List<keywordTryingData>> examinedKeywords_LocalRootOnly; // all keywords are here
+        Dictionary<string, List<keywordTryingData>> examinedKeywords_LocalRootOnly; // all keywords are here - LocalRoot only?
         Dictionary<char, List<string>> allKeywordsSubstringsDictionary;
 
         // special keywords
@@ -1207,10 +1207,10 @@ namespace m0.ZeroCode
 
             // no infinite reccursion
 
-            string _s = "";
-            foreach (KeyValuePair<IVertex,int> v in s.sameStartPosKewords)
+            //string _s = "";
+            //foreach (KeyValuePair<IVertex,int> v in s.sameStartPosKewords)
                 //if(v!=null)
-                    _s += ", " + v.Key.Value+"["+v.Value+"]";
+              //      _s += ", " + v.Key.Value+"["+v.Value+"]";
 
            // MinusZero.Instance.Log(0, "_tryIsKeyword", LOGPREFIX + "REKURSION " + _s);
 
@@ -2026,17 +2026,19 @@ namespace m0.ZeroCode
         {
             specialKeywordGroups = new List<string>();
 
-            foreach (IEdge e in MinusZero.Instance.newValueKeywordVertex.GetAll("$KeywordGroup:"))
+            //foreach (IEdge e in MinusZero.Instance.newValueKeywordVertex.GetAll("$KeywordGroup:"))
+            foreach (IEdge e in MinusZero.Instance.emptyKeywordVertex.GetAll("$KeywordGroup:")) // empty is more "special"
             {
                 string group = (string)e.To.Value;
 
                 specialKeywordGroups.Add(group);
 
-                if (!examinedKeywords_All.ContainsKey(group))
+                // should not need this
+                /*if (!examinedKeywords_All.ContainsKey(group))
                     examinedKeywords_All.Add(group, new List<keywordTryingData>());
 
                 if (!examinedKeywords_LocalRootOnly.ContainsKey(group))
-                    examinedKeywords_LocalRootOnly.Add(group, new List<keywordTryingData>());
+                    examinedKeywords_LocalRootOnly.Add(group, new List<keywordTryingData>());*/
             }
         }
 
@@ -2064,9 +2066,8 @@ namespace m0.ZeroCode
                 // examinedKeywords_All
          
                 keywordTryingData ktd = new keywordTryingData(keyword.To, this);
-
-                //if (!isSpecialKeyword(ktd.keyword))
-                    examinedKeywords_All[""].Add(ktd);
+                
+                examinedKeywords_All[""].Add(ktd);
 
                 foreach(IEdge v in ktd.keywordVertex.GetAll("$KeywordGroup:"))
                 {
@@ -2081,11 +2082,8 @@ namespace m0.ZeroCode
                 // examinedKeywords_LocalRootOnly
 
                 if (keyword.To.Get(@"\$StartInLocalRoot:") != null)
-                {
-                    keywordTryingData ktd2 = new keywordTryingData(keyword.To, this);
-
-                  //  if (!isSpecialKeyword(ktd.keyword))
-                        examinedKeywords_LocalRootOnly[""].Add(ktd2);
+                {                    
+                    examinedKeywords_LocalRootOnly[""].Add(ktd);
 
                     foreach (IEdge v in ktd.keywordVertex.GetAll("$KeywordGroup:"))
                     {
