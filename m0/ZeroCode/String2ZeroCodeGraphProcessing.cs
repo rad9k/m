@@ -1412,40 +1412,33 @@ namespace m0.ZeroCode
 
                                 MinusZero.Instance.Log(1, LOGPREFIX+"_tryIsKeyword", "will run _tryIs for:"+ ktd.currentlyProcessedParameterName);
 
-                              /*  if (ktd.isCurrentlyProcessedParameterAtom())
-                                {
-                                    //MinusZero.Instance.Log(0, "_tryIfKeyword", LOGPREFIX + "_tryATOM / " + ktd.currentlyProcessedParameterName + " / " + ktd.keywordVertex.Value);
+                              
+                                // NEW STACK
 
-                                    _tryAtom(s, LOGPREFIX + "    ", sPos, isTryKeyword_endPos, out foundKeywords, out foundLink, ref _newPos);
-                                }
-                                else
-                                {*/
-                                    // NEW STACK
+                                ParsingStack newStack = new ParsingStack(s);
 
-                                    ParsingStack newStack = new ParsingStack(s);
+                                s = newStack;
 
-                                    s = newStack;
+                                s.can_initialize_memory_tabCount = true;
 
-                                    s.can_initialize_memory_tabCount = true;
+                                //
 
-                                    //
+                                //MinusZero.Instance.Log(0, "_tryIfKeyword", LOGPREFIX + "_tryIsCall / " + ktd.currentlyProcessedParameterName + " / " + ktd.keywordVertex.Value);
 
-                                    //MinusZero.Instance.Log(0, "_tryIfKeyword", LOGPREFIX + "_tryIsCall / " + ktd.currentlyProcessedParameterName + " / " + ktd.keywordVertex.Value);
+                                MinusZero.Instance.Log(-1, "_tryIfKeyword", LOGPREFIX + startPos + " " + ktd.keywordVertex.Value + ktd.currentlyProcessedParameterName);
+                                // int modified_isPrevStartPosSameAsStartPosThisCount = isPrevStartPosSameAsStartPosThisCount;
 
-                                    MinusZero.Instance.Log(-1, "_tryIfKeyword", LOGPREFIX + startPos + " " + ktd.keywordVertex.Value + ktd.currentlyProcessedParameterName);
-                                   // int modified_isPrevStartPosSameAsStartPosThisCount = isPrevStartPosSameAsStartPosThisCount;
+                                // if (sPos != startPos)
+                                    //  modified_isPrevStartPosSameAsStartPosThisCount = 0;
 
-                                   // if (sPos != startPos)
-                                      //  modified_isPrevStartPosSameAsStartPosThisCount = 0;
+                                _tryIsKeyword(s, LOGPREFIX + "    ", sPos, startPos, isPrevStartPosSameAsStartPosThisCount, endPos, isTryKeyword_endPos, _afterKeywordPartExist, out foundKeywords, out foundLink, false, ref _newPos, false, ktd.keywordVertex, callParams, paramFilterName, _isSpaceNext);
 
-                                    _tryIsKeyword(s, LOGPREFIX + "    ", sPos, startPos, isPrevStartPosSameAsStartPosThisCount, endPos, isTryKeyword_endPos, _afterKeywordPartExist, out foundKeywords, out foundLink, false, ref _newPos, false, ktd.keywordVertex, callParams, paramFilterName, _isSpaceNext);
+                                // BACK TO OLD STACK
 
-                                    // BACK TO OLD STACK
+                                s = s.parentStack;
 
-                                    s = s.parentStack;
-
-                                    //
-                                //}
+                                //
+                              
 
                                 if (foundLink != null)
                                 {
