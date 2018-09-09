@@ -496,7 +496,7 @@ namespace m0
             IVertex smuk = smu.AddVertex(null, "Keyword");
 
             IVertex any = smuk.AddVertex(null, "(?<ANY>)");
-/*            
+            
             // import meta
             //
             // import meta (?<name>) (?<link>)
@@ -904,7 +904,7 @@ namespace m0
             // []
             //
             // [(*(+, +) (?<expr>)*)]
-            /*
+            
             IVertex o_call = smuk.AddVertex(keyword, "[(*(+, +)(?<expr>)*)]");
 
              IVertex o_call_any = o_call.AddVertex(any, "");
@@ -926,7 +926,7 @@ namespace m0
              o_par_any.AddEdge(smb.Get(@"Vertex\$Is"), smu.Get("()"));
 
              o_par_any.AddVertex(smu.Get(@"SingleOperator\TargetExpression"), "(?<expr>)");
-  */           
+     
              // \
              //
              // \                         
@@ -944,7 +944,7 @@ namespace m0
              IVertex o_path_any_targetExpr = o_path_any.AddVertex(smu.Get(@"SingleOperator\TargetExpression"), "");
 
              o_path_any_targetExpr.AddVertex(smb.Get("$LocalRoot"), "");
-             /*
+             
             // {}
             //
             // {(*(+\r\n+)\t(?<expr>)*)\r\n}
@@ -960,7 +960,7 @@ namespace m0
             IVertex o_newSub_any_param = o_newSub_any.AddVertex(smu.Get(@"MultiOperator\Expression"), "(?<expr>)");
 
             o_newSub_any_param.AddEdge(smb.Get(@"$KeywordManyRoot"), smb.Get(@"$Empty"));
-            */
+            
             // ""
             //
             // "\"(?<value>)\""
