@@ -813,6 +813,8 @@ namespace m0
 
             IVertex o_colon_any = o_colon.AddVertex(any, "");
 
+            o_colon_any.AddVertex(smb.Get("$StartInLocalRoot"), "");
+
             o_colon_any.AddEdge(smb.Get(@"Vertex\$Is"), smu.Get("|"));
 
             o_colon_any.AddVertex(smu.Get(@"DoubleOperator\LeftExpression"), "(?<left_QueryPart>)");
@@ -861,7 +863,8 @@ namespace m0
 
             IVertex o_doubleColon = smuk.AddVertex(keyword, "(?<left_QueryPart>)##(?<SUB>)(?<right_QueryPart>)");
 
-            IVertex o_doubleColon_any = o_doubleColon.AddVertex(any, "");
+            IVertex o_doubleColon_any = o_doubleColon.AddVertex(any, "");            
+
 
             o_doubleColon_any.AddEdge(smb.Get(@"Vertex\$Is"), smu.Get("||"));
 
