@@ -953,106 +953,7 @@ namespace m0.ZeroCode
             public object Parameter = null;
             public int waitingUntilPositionInText = 0;
         }
-
-        void _tryAtom(ParsingStack s, string LOGPREFIX, int startPos, int endPos, out List<keywordTryingData> examinedKeywords, out string link, ref int newPos)
-        {
-            examinedKeywords = new List<keywordTryingData>();
-
-            link = null;
-
-            //
-
-            if (s.currentLineInfo.IsLineEnd(startPos))
-            { // the + 2 might be not needed, but who knows....
-              // if (text[startPos] == '\r' || text[startPos] == '\n')
-                newPos = s.currentLineInfo.lineEnd_NoTrim + 1;
-                return;
-            }
-
-            if (startPos == endPos)
-                return;
-
-            //
-            
-            MinusZero.Instance.Log(1, "_tryAtom", LOGPREFIX + "BEG startPos:" + startPos + " endPos:" + endPos);
-
-            int sPos = startPos;
-
-            if (sPos == endPos)
-                return;
-
-            //
-
-            SpecialKeywordType specialType = SpecialKeywordType.NewVertexKeyword; // got to intialize
-
-            //
-
-            string tryEmptyKeyword;
-            bool shallProceed = true;
-
-            if (!testIfIsKeywordSubstring(startPos))
-            {
-                tryEmptyKeyword = ZeroCodeCommon.tryStringFromNewVertexString(text, startPos, ref sPos);
-
-                if (tryEmptyKeyword != null)
-                {
-                    specialType = SpecialKeywordType.NewVertexKeyword;
-
-                    sPos++; // hmmm ????
-                }
-                else
-                {
-                    while (shallProceed)
-                    {
-                        sPos++;
-
-                        if (testIfIsKeywordSubstring(sPos))
-                            shallProceed = false;
-
-                        if (s.currentLineInfo.IsLineEnd(sPos))
-                        { // the + 2 might be not needed, but who knows....
-                          //if (text[sPos] == '\r' || text[sPos] == '\n')
-                            sPos = s.currentLineInfo.lineEnd_NoTrim + 1;
-                            shallProceed = false;
-                        }
-
-                        if (sPos == endPos)
-                            shallProceed = false;
-                    }
-
-                    string foundString = text.Substring(startPos, sPos - startPos);
-
-                    if (ZeroCodeCommon.isLinkString(foundString))
-                        link = ZeroCodeCommon.stringFromLinkString(foundString, false);
-                    else
-                    {
-                        tryEmptyKeyword = foundString;
-
-                        specialType = SpecialKeywordType.EmptyKeyword;
-
-                        sPos++; // hmmm ????
-                    }
-                }
-
-                newPos = sPos;
-
-                if (tryEmptyKeyword != null)
-                {
-                    keywordTryingData ktd = createSpecialKeyword(s, tryEmptyKeyword, sPos - 1, specialType);
-
-                    //
-
-                    newPos = _tryIsNextLocalRootKeyword(s, LOGPREFIX, newPos, sPos, ktd, false);
-
-                    //
-
-                    examinedKeywords.Add(ktd);
-                }
-
-                MinusZero.Instance.Log(1, "_tryAtom", LOGPREFIX + "RETURN:" + tryEmptyKeyword + " newPos:" + newPos);
-            }
-        }
-
+       
         class tryIsKeyword_Parameters
         {
             public ParsingStack s;
@@ -1151,17 +1052,15 @@ namespace m0.ZeroCode
                     isPrevStartPosSameAsStartPosThisCount = 0;
                     s.sameStartPosKewords.Clear();
                 }
-            }
+            }            
 
-            string xx = "";
-
-            MinusZero.Instance.Log(1, "_tryIsKeyword", LOGPREFIX+"BEG startPos:" + startPos + " prevSpos:"+prev_startPos+" same:"+isPrevStartPosSameAsStartPos+" endPos:" + endPos+" "+xx);
+            MinusZero.Instance.Log(1, "_tryIsKeyword", LOGPREFIX+"BEG startPos:" + startPos + " prevSpos:"+prev_startPos+" same:"+isPrevStartPosSameAsStartPos+" endPos:" + endPos);
 
 
             int sPos = startPos;
 
             if (sPos == endPos)
-                return;
+                return;        
 
             // to be deleted
             if (sPos == 8)
@@ -1273,6 +1172,9 @@ namespace m0.ZeroCode
                         keywordTryingData ktd = createSpecialKeyword(s, tryEmptyKeyword, sPos - 1, specialType);
 
                         //
+
+                        // MIGHT BE NEEDED !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+                        //sPos = CheckIfThereIsSubTextAndProcessIt(s, endPos, null, ktd, sPos);
 
                         newPos = _tryIsNextLocalRootKeyword(s, LOGPREFIX, newPos, sPos, ktd, isSpaceNext);
 
@@ -1577,20 +1479,7 @@ namespace m0.ZeroCode
                                 p.Parameter = foundParameter;
                                 p.waitingUntilPositionInText = ktd.waitingUntilPositionInText;
 
-                                ParameterChache.Add(paramFilterName, p);
-
-                              /*  if (ktd.isCurrentlyProcessedParameterAtom())
-                                {
-                                    AtomParameterChache = new ParameterChache();
-                                    AtomParameterChache.Parameter = foundParameter;
-                                    AtomParameterChache.waitingUntilPositionInText = ktd.waitingUntilPositionInText;
-                                }
-                                else
-                                {
-                                    NonAtomParameterChache = new ParameterChache();
-                                    NonAtomParameterChache.Parameter = foundParameter;
-                                    NonAtomParameterChache.waitingUntilPositionInText = ktd.waitingUntilPositionInText;
-                                }*/
+                                ParameterChache.Add(paramFilterName, p);                                
                             }                                                        
 
                             ktd.AddParameter(ktd.currentlyProcessedParameterName, foundParameter);
@@ -1634,51 +1523,9 @@ namespace m0.ZeroCode
 
                 if (shallProceed)
                 {
-                    if (sPos + 1 < endPos && s.currentLineInfo.IsLineEnd(sPos + 1)) // SUB TEXT
-                    //if(sPos + 1 < endPos && text[sPos + 1] == '\r')
-                    {
-                        int nextLineWithSameTabCount = s.getNextLineWithSameTabCount();
+                    sPos = CheckIfThereIsSubTextAndProcessIt(s, endPos, examinedKeywords, null, sPos);
 
-                        if (nextLineWithSameTabCount != -1 && lineInfoList[nextLineWithSameTabCount].startsWithLineContinuation)
-                        {
-                            foreach (keywordTryingData ktd in examinedKeywords)
-                            {
-                                TextRange subText = new TextRange();
-                                subText.begLine = s.lineNo + 1;
-                                subText.endLine = nextLineWithSameTabCount - 1;
-
-                                bool canAddRange = true;
-
-                                foreach (KeyValuePair<object, TextRange> kvp in s.subTextRanges)
-                                    if (kvp.Key is keywordTryingData)
-                                        if (kvp.Value.begLine == subText.begLine && checkIfKtdContainsKtdAsAParent(ktd, (keywordTryingData)kvp.Key))
-                                            canAddRange = false;                             
-
-                                if(canAddRange)
-                                    if (ktd.lastAddedParameter == null || ktd.isCurrentlyProcessedSubParameter)
-                                    {
-                                        subText.isNonParameterRange = true;
-                                        s.subTextRanges.Add(ktd, subText);
-                                    }
-                                    else
-                                        if (!s.subTextRanges.ContainsKey(ktd.lastAddedParameter))
-                                    {
-                                       // MinusZero.Instance.Log(-1, "XXX", ((keywordTryingData)ktd.lastAddedParameter).keyword);
-                                        s.subTextRanges.Add(ktd.lastAddedParameter, subText);
-                                    }
-                            }
-
-                            s.goToLine(nextLineWithSameTabCount);
-
-                            foreach (keywordTryingData ktd in examinedKeywords)
-                                if (ktd.state == keywordTryingState.waiting && ktd.waitingUntilPositionInText == sPos + 1)
-                                    ktd.state = keywordTryingState.keywordCharacter;
-
-                            sPos = s.currentLineInfo.lineBeg;                            
-                        }
-                    }
-
-                    if(s.currentLineInfo.IsLineEnd(sPos)) // NEW LINE
+                    if (s.currentLineInfo.IsLineEnd(sPos)) // NEW LINE
                     //if (text[sPos] == '\r')
                     {
                         sPos = s.currentLineInfo.lineEnd_NoTrim + 1;
@@ -1727,16 +1574,16 @@ namespace m0.ZeroCode
 
                             if (shallProceed)
                                 sPos = s.currentLineInfo.getPosWithParentTabsTrimmed(s) - 1;
-                        }                        
+                        }
                     }
 
                     if (examinedKeywords.Count == 0)
                     {
                         shallProceed = false; // no keyword found
-                        MinusZero.Instance.Log(1, "_tryIsKeyword", LOGPREFIX+"SHALPROCEED FALSE  no keyword found");
+                        MinusZero.Instance.Log(1, "_tryIsKeyword", LOGPREFIX + "SHALPROCEED FALSE  no keyword found");
                     }
                 }
-                
+
                 // ++
 
                 sPos++;
@@ -1784,7 +1631,12 @@ namespace m0.ZeroCode
 
                     if (ktd.matchedOnPositionInText <= s.currentLineInfo.lineEnd
                         && isLocalRootKeyword(ktd))
+                    {
+                        // MIGHT BE NEEDED !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+                        //sPos = CheckIfThereIsSubTextAndProcessIt(s, endPos, null, ktd, sPos);
+
                         sPos = _tryIsNextLocalRootKeyword(s, LOGPREFIX, sPos, ktd.matchedOnPositionInText + 1, ktd, isSpaceNext);
+                    }
                 }
                 //
 
@@ -1813,7 +1665,12 @@ namespace m0.ZeroCode
 
                     //
 
-                    newPos = _tryIsNextLocalRootKeyword(s, LOGPREFIX, newPos, tryNewPos, ktd, isSpaceNext);
+                    int _newPos = CheckIfThereIsSubTextAndProcessIt(s, endPos, null, ktd, newPos - 2);
+
+                    if (_newPos > newPos - 2)
+                        newPos = _newPos + 2;                    
+
+                    newPos = _tryIsNextLocalRootKeyword(s, LOGPREFIX, newPos, newPos, ktd, isSpaceNext);
 
                     //
 
@@ -1825,6 +1682,65 @@ namespace m0.ZeroCode
             MinusZero.Instance.Log(1, "_tryIsKeyword", LOGPREFIX+"END link:"+link+" keywordsCount:"+examinedKeywords.Count);
 
             log_keywords(examinedKeywords, 0, LOGPREFIX);
+        }
+
+        private int CheckIfThereIsSubTextAndProcessIt(ParsingStack s, int endPos, List<keywordTryingData> examinedKeywords, keywordTryingData _ktd, int sPos)
+        {
+            if (examinedKeywords == null)
+            {
+                examinedKeywords = new List<keywordTryingData>();
+                examinedKeywords.Add(_ktd);
+            }
+
+
+            if (sPos + 1 < endPos && s.currentLineInfo.IsLineEnd(sPos + 1)) // SUB TEXT
+                                                                            //if(sPos + 1 < endPos && text[sPos + 1] == '\r')
+            {
+                int nextLineWithSameTabCount = s.getNextLineWithSameTabCount();
+
+                if (nextLineWithSameTabCount != -1 && lineInfoList[nextLineWithSameTabCount].startsWithLineContinuation)
+                {
+                    foreach (keywordTryingData ktd in examinedKeywords)
+                    {
+                        TextRange subText = new TextRange();
+                        subText.begLine = s.lineNo + 1;
+                        subText.endLine = nextLineWithSameTabCount - 1;
+
+                        bool canAddRange = true;
+
+                        foreach (KeyValuePair<object, TextRange> kvp in s.subTextRanges)
+                            if (kvp.Key is keywordTryingData)
+                                if (kvp.Value.begLine == subText.begLine && checkIfKtdContainsKtdAsAParent(ktd, (keywordTryingData)kvp.Key))
+                                    canAddRange = false;
+
+                        if (subText.begLine > subText.endLine)
+                            canAddRange = false;
+
+                        if (canAddRange)
+                            if (ktd.lastAddedParameter == null || ktd.isCurrentlyProcessedSubParameter)
+                            {
+                                subText.isNonParameterRange = true;
+                                s.subTextRanges.Add(ktd, subText);
+                            }
+                            else
+                                if (!s.subTextRanges.ContainsKey(ktd.lastAddedParameter))
+                            {
+                                // MinusZero.Instance.Log(-1, "XXX", ((keywordTryingData)ktd.lastAddedParameter).keyword);
+                                s.subTextRanges.Add(ktd.lastAddedParameter, subText);
+                            }
+                    }
+
+                    s.goToLine(nextLineWithSameTabCount);
+
+                    foreach (keywordTryingData ktd in examinedKeywords)
+                        if (ktd.state == keywordTryingState.waiting && ktd.waitingUntilPositionInText == sPos + 1)
+                            ktd.state = keywordTryingState.keywordCharacter;
+
+                    sPos = s.currentLineInfo.lineBeg;
+                }
+            }
+
+            return sPos;
         }
 
         string getKewordFilterFromParamName(string s)
@@ -1876,7 +1792,7 @@ namespace m0.ZeroCode
 
             // DO NO NEED THIS NOW !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-            ParsingStack newStack = new ParsingStack(s);
+            //ParsingStack newStack = new ParsingStack(s);
 
             //s = newStack;
 
