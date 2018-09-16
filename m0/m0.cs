@@ -872,7 +872,7 @@ namespace m0
 
             o_doubleColon_any.AddVertex(smu.Get(@"DoubleOperator\RightExpression"), "(?<right_QueryPart>)");
             */
-              /*
+              
             // :: /2
             //
             // ||(?<SUB>)(?<right_QueryPart>)                         
@@ -884,7 +884,7 @@ namespace m0
             o_doubleColon2_any.AddEdge(smb.Get(@"Vertex\$Is"), smu.Get("||"));
 
             o_doubleColon2_any.AddVertex(smu.Get(@"DoubleOperator\RightExpression"), "(?<right_QueryPart>)");
-            */
+            
             // :: /3
             //
             // (?<left_QueryPart>)||(?<SUB>)                        
