@@ -498,7 +498,7 @@ namespace m0
             IVertex smuk = smu.AddVertex(null, "Keyword");
 
             IVertex any = smuk.AddVertex(null, "(?<ANY>)");
-            
+            /*
             // import meta
             //
             // import meta (?<name>) (?<link>)
@@ -800,7 +800,7 @@ namespace m0
             /////////////////////////////////////////////////////////////////////////////////////////////////////////////
             /////////////////////////////////////////////////////////////////////////////////////////////////////////////
             /////////////////////////////////////////////////////////////////////////////////////////////////////////////
-            
+            */
             // : /1
             //
             // (?<left_QueryPart>)|(?<SUB>)(?<right_QueryPart>)            
@@ -871,7 +871,7 @@ namespace m0
             o_doubleColon_any.AddVertex(smu.Get(@"DoubleOperator\LeftExpression"), "(?<left_QueryPart>)");
 
             o_doubleColon_any.AddVertex(smu.Get(@"DoubleOperator\RightExpression"), "(?<right_QueryPart>)");
-            */
+            
               
             // :: /2
             //
@@ -884,7 +884,7 @@ namespace m0
             o_doubleColon2_any.AddEdge(smb.Get(@"Vertex\$Is"), smu.Get("||"));
 
             o_doubleColon2_any.AddVertex(smu.Get(@"DoubleOperator\RightExpression"), "(?<right_QueryPart>)");
-            
+            */
             // :: /3
             //
             // (?<left_QueryPart>)||(?<SUB>)                        
@@ -912,7 +912,7 @@ namespace m0
             // []
             //
             // [(*(+, +) (?<expr>)*)]
-            
+            /*
             IVertex o_call = smuk.AddVertex(keyword, "[(*(+, +)(?<expr>)*)]");
 
              IVertex o_call_any = o_call.AddVertex(any, "");
@@ -970,7 +970,7 @@ namespace m0
             IVertex o_newSub_any_param = o_newSub_any.AddVertex(smu.Get(@"MultiOperator\Expression"), "(?<expr>)");
 
             o_newSub_any_param.AddEdge(smb.Get(@"$KeywordManyRoot"), smb.Get(@"$Empty"));
-            
+            */
             // ""
             //
             // "\"(?<value>)\""
@@ -999,7 +999,7 @@ namespace m0
 
             emptyKeyword.AddVertex(keywordGroup, "Atom");
 
-            //emptyKeyword.AddVertex(keywordGroup, "QueryPart");
+            emptyKeyword.AddVertex(keywordGroup, "QueryPart");
 
             IVertex emptyKeyword_any = emptyKeyword.AddVertex(any, "(?<value>)");
 

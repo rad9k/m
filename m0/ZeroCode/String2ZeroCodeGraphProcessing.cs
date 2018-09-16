@@ -1152,7 +1152,7 @@ namespace m0.ZeroCode
                         c1089 = true;
                 }
 
-                if (c1089 || specialKeywordGroups_new.Contains(keywordsFilter) /*keywordsFilter=="Atom"*/)
+                if (c1089 || specialKeywordGroups_empty.Contains(keywordsFilter) /*keywordsFilter=="Atom"*/)
                     //( (afterKeywordPartExist && sPos_copy == endPos_forAtomParts && isPrevStartPosSameAsStartPos)
                     //|| (!afterKeywordPartExist && (sPos == endPos_forAtomParts || isPrevStartPosSameAsStartPos)))
                     //( //(tryEmptyKeyword != null || lookForLocalRootOnly==false) &&
