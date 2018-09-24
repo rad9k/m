@@ -808,6 +808,10 @@ namespace m0
             //IVertex o_colon = smuk.AddVertex(keyword, "|");
 
             IVertex o_colon = smuk.AddVertex(keyword, "(?<left_QueryPart>)|(?<SUB>)(?<right_QueryPart>)");
+            //IVertex o_colon = smuk.AddVertex(keyword, "(?<left>)|(?<SUB>)(?<right>)");
+
+            //IVertex o_colon = smuk.AddVertex(keyword, "(?<left>)|(?<SUB>)(?<right_QueryPart>)");
+
 
             o_colon.AddVertex(keywordGroup, "QueryPart");
 
@@ -818,8 +822,10 @@ namespace m0
             o_colon_any.AddEdge(smb.Get(@"Vertex\$Is"), smu.Get("|"));
 
             o_colon_any.AddVertex(smu.Get(@"DoubleOperator\LeftExpression"), "(?<left_QueryPart>)");
+            //o_colon_any.AddVertex(smu.Get(@"DoubleOperator\LeftExpression"), "(?<left>)");
 
             o_colon_any.AddVertex(smu.Get(@"DoubleOperator\RightExpression"), "(?<right_QueryPart>)");
+            //o_colon_any.AddVertex(smu.Get(@"DoubleOperator\RightExpression"), "(?<right>)");
 
             //o_colon_any.AddVertex(smb.Get("$StartInLocalRoot"), "");            
 
@@ -889,15 +895,20 @@ namespace m0
             //
             // (?<left_QueryPart>)||(?<SUB>)                        
 
-            IVertex o_doubleColon3 = smuk.AddVertex(keyword, "(?<left_QueryPart>)!(?<SUB>)");
+            //IVertex o_doubleColon3 = smuk.AddVertex(keyword, "(?<left_QueryPart>)!(?<SUB>)");
+            IVertex o_doubleColon3 = smuk.AddVertex(keyword, "(?<left>)!(?<SUB>)");
+
+            o_doubleColon3.AddVertex(keywordGroup, "QueryPart");
 
             IVertex o_doubleColon3_any = o_doubleColon3.AddVertex(any, "");
 
             o_doubleColon3_any.AddEdge(smb.Get(@"Vertex\$Is"), smu.Get("||"));
 
-            o_doubleColon3_any.AddVertex(smu.Get(@"DoubleOperator\LeftExpression"), "(?<left_QueryPart>)");
-            
-            
+            //o_doubleColon3_any.AddVertex(smu.Get(@"DoubleOperator\LeftExpression"), "(?<left_QueryPart>)");
+
+            o_doubleColon3_any.AddVertex(smu.Get(@"DoubleOperator\LeftExpression"), "(?<left>)");
+
+
 
             /////////////////////////////////////////////////////////////////////////////////////////////////////////////
             /////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -970,18 +981,18 @@ namespace m0
             IVertex o_newSub_any_param = o_newSub_any.AddVertex(smu.Get(@"MultiOperator\Expression"), "(?<expr>)");
 
             o_newSub_any_param.AddEdge(smb.Get(@"$KeywordManyRoot"), smb.Get(@"$Empty"));
-            */
+            
             // ""
             //
             // "\"(?<value>)\""
-
+            */
             IVertex newValueKeyword = smuk.AddVertex(keyword, "\"(?<value>)\"");
 
             newValueKeywordVertex = newValueKeyword;
 
             newValueKeyword.AddVertex(keywordGroup, "Atom");
 
-            //newValueKeyword.AddVertex(keywordGroup, "QueryPart"); // as "(?<value>)" is special keyword it will be processed same as (?<value>)
+            newValueKeyword.AddVertex(keywordGroup, "QueryPart"); // as "(?<value>)" is special keyword it will be processed same as (?<value>)
             // also it is not "QueryPart" :) but will be treted as being "QueryPart" - becouse of being special keyword. this is known limitation
 
             IVertex newValueKeyword_any = newValueKeyword.AddVertex(any, "(?<value>)");
@@ -2853,7 +2864,7 @@ namespace m0
 
         public bool DoLog=true;
 
-        public int LogLevel=1;
+        public int LogLevel=0;
 
         private void InitializeLog()
         {

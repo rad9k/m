@@ -1480,6 +1480,10 @@ namespace m0.ZeroCode
                             ktd.AddParameter(ktd.currentlyProcessedParameterName, foundParameter);
 
                             MinusZero.Instance.Log(1, "_tryIsKeyword", LOGPREFIX+"sub add:" + ktd.currentlyProcessedParameterName+" foundParameter:"+foundParameter);
+                            
+                            if(foundParameter is keywordTryingData)
+                            MinusZero.Instance.Log(1, "_tryIsKeyword", LOGPREFIX + ((keywordTryingData) foundParameter).keyword);
+
 
                             newExaminedKeywords.Add(ktd);
                         }
@@ -1984,8 +1988,6 @@ namespace m0.ZeroCode
                         else
                             AddKeywordVertex_AddVertex(s, parent, e, meta, e.To, ref nv, ktd, parentMetaEdge);
 
-                      
-
                         if (s.subTextRanges.ContainsKey(ktd))
                         {
                             TextRange subText = s.subTextRanges[ktd];
@@ -2034,7 +2036,7 @@ namespace m0.ZeroCode
             specialKeywordGroups_new = new List<string>();
 
             foreach (IEdge e in MinusZero.Instance.newValueKeywordVertex.GetAll("$KeywordGroup:"))
-                specialKeywordGroups_empty.Add((string)e.To.Value);
+                specialKeywordGroups_new.Add((string)e.To.Value);
         }
 
         private void prepareDictionaries()
