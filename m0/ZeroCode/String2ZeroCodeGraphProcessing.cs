@@ -1152,7 +1152,10 @@ namespace m0.ZeroCode
                         c1089 = true;
                 }
 
-                if (c1089 || specialKeywordGroups_empty.Contains(keywordsFilter) /*keywordsFilter=="Atom"*/)
+                // !!!!!!!!!!!!!!!!!!!!!!! A or B ! YOU DECIDE. I do not know :)
+
+                if (c1089 || specialKeywordGroups_empty.Contains(keywordsFilter) // A
+                    /*keywordsFilter=="Atom"*/) // B
                     //( (afterKeywordPartExist && sPos_copy == endPos_forAtomParts && isPrevStartPosSameAsStartPos)
                     //|| (!afterKeywordPartExist && (sPos == endPos_forAtomParts || isPrevStartPosSameAsStartPos)))
                     //( //(tryEmptyKeyword != null || lookForLocalRootOnly==false) &&
@@ -1221,7 +1224,7 @@ namespace m0.ZeroCode
            // if (isPrevStartPosSameAsStartPos && isPrevStartPosSameAsStartPosParentCount == 1)
             if((l1149_dict>-1 && containsCondition) 
                 || (l1149_parent>-1 && isPrevStartPosSameAsStartPos && isPrevStartPosSameAsStartPosThisCount > l1149_parent)
-                || keywordsFilter == "Atom")
+                || keywordsFilter == "Atom") // here we also should use A ????? that is specialKeywordGroups_empty.Contains(keywordsFilter)
             { // do not want inifinite recursion
                // if(containsCondition)
                //     MinusZero.Instance.Log(0, "_tryIsKeyword", LOGPREFIX + "HARD RETURN PARENT "+ parentKeyword.Value);
