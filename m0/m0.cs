@@ -498,7 +498,7 @@ namespace m0
             IVertex smuk = smu.AddVertex(null, "Keyword");
 
             IVertex any = smuk.AddVertex(null, "(?<ANY>)");
-            /*
+            
             // import meta
             //
             // import meta (?<name>) (?<link>)
@@ -732,7 +732,7 @@ namespace m0
              whwh.AddEdge(smb.Get(@"Vertex\$Is"), smu.Get("While"));
 
              whwh.AddVertex(smu.Get(@"While\Test"), "(?<test>)");
-             */
+             
             // +
             //
             // (?<left>) + (?<right>)
@@ -746,7 +746,7 @@ namespace m0
              o_plus_any.AddVertex(smu.Get(@"DoubleOperator\LeftExpression"), "(?<left>)");
 
              o_plus_any.AddVertex(smu.Get(@"DoubleOperator\RightExpression"), "(?<right>)");
-            /*
+            
             // -
             //
             // (?<left>) - (?<right>)
@@ -800,7 +800,7 @@ namespace m0
             /////////////////////////////////////////////////////////////////////////////////////////////////////////////
             /////////////////////////////////////////////////////////////////////////////////////////////////////////////
             /////////////////////////////////////////////////////////////////////////////////////////////////////////////
-            */
+            
             // : /1
             //
             // (?<left_QueryPart>)|(?<SUB>)(?<right_QueryPart>)            
@@ -867,7 +867,7 @@ namespace m0
             //
             // (?<left_QueryPart>)||(?<SUB>)(?<right_QueryPart>)                         
             
-            IVertex o_doubleColon = smuk.AddVertex(keyword, "(?<left_|>)!(?<SUB>)(?<right_Atom>)");
+            IVertex o_doubleColon = smuk.AddVertex(keyword, "(?<left_|>)!(?<SUB>)(?<right_|>)");
 
             IVertex o_doubleColon_any = o_doubleColon.AddVertex(any, "");            
 
@@ -876,12 +876,12 @@ namespace m0
 
             o_doubleColon_any.AddVertex(smu.Get(@"DoubleOperator\LeftExpression"), "(?<left_|>)");
 
-            o_doubleColon_any.AddVertex(smu.Get(@"DoubleOperator\RightExpression"), "(?<right_Atom>)");
+            o_doubleColon_any.AddVertex(smu.Get(@"DoubleOperator\RightExpression"), "(?<right_|>)");
 
             // :: /1 1
             //
             // (?<left_QueryPart>)||(?<SUB>)(?<right_QueryPart>)                         
-            /*
+            
             IVertex o_doubleColon11 = smuk.AddVertex(keyword, "(?<left_Atom>)!(?<SUB>)(?<right_Atom>)");
 
             IVertex o_doubleColon11_any = o_doubleColon11.AddVertex(any, "");
@@ -892,7 +892,7 @@ namespace m0
             o_doubleColon11_any.AddVertex(smu.Get(@"DoubleOperator\LeftExpression"), "(?<left_Atom>)");
 
             o_doubleColon11_any.AddVertex(smu.Get(@"DoubleOperator\RightExpression"), "(?<right_Atom>)");
-            */
+            
             /*
           // :: /2
           //

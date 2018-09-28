@@ -997,7 +997,7 @@ namespace m0.ZeroCode
 
         void _tryIsKeyword(ParsingStack s, string LOGPREFIX, int startPos, int prev_startPos, int isPrevStartPosSameAsStartPosParentCount, int endPos, int endPos_forAtomParts, bool afterKeywordPartExist, out List<keywordTryingData> examinedKeywords, out string link, bool isTopLevelCall, ref int newPos, bool lookForLocalRootOnly, IVertex parentKeyword, tryIsKeyword_Parameters parentParams, string keywordsFilter, bool isSpaceNext)
         {
-            tryIsKeyword_Parameters callParams = new tryIsKeyword_Parameters(s, LOGPREFIX, startPos, prev_startPos, isPrevStartPosSameAsStartPosParentCount, endPos, endPos_forAtomParts, afterKeywordPartExist, parentKeyword, parentParams, keywordsFilter, isSpaceNex);
+            tryIsKeyword_Parameters callParams = new tryIsKeyword_Parameters(s, LOGPREFIX, startPos, prev_startPos, isPrevStartPosSameAsStartPosParentCount, endPos, endPos_forAtomParts, afterKeywordPartExist, parentKeyword, parentParams, keywordsFilter, isSpaceNext);
             MinusZero.Instance.Log(0, "_tryIfKeyword", LOGPREFIX + "RUN "+callParams.ToString());
 
             //
@@ -1226,8 +1226,10 @@ namespace m0.ZeroCode
             }
 
            // if (isPrevStartPosSameAsStartPos && isPrevStartPosSameAsStartPosParentCount == 1)
-            if((l1149_dict>-1 && containsCondition) 
-                || (l1149_parent>-1 && isPrevStartPosSameAsStartPos && isPrevStartPosSameAsStartPosThisCount > l1149_parent)
+            if((l1149_dict>-1 && containsCondition)
+              //  || (l1149_parent>-1 && isPrevStartPosSameAsStartPos && isPrevStartPosSameAsStartPosThisCount > l1149_parent)
+              || (keywordsFilter == "" && l1149_parent > -1 && isPrevStartPosSameAsStartPos && isPrevStartPosSameAsStartPosThisCount > l1149_parent)
+              || (keywordsFilter != "" && l1149_parent > -1 && isPrevStartPosSameAsStartPos && isPrevStartPosSameAsStartPosThisCount > 2)
                 || keywordsFilter == "Atom") // here we also should use A ????? that is specialKeywordGroups_empty.Contains(keywordsFilter)
             { // do not want inifinite recursion
                // if(containsCondition)
