@@ -1785,7 +1785,9 @@ namespace m0.ZeroCode
 
         private int _tryIsNextLocalRootKeyword(ParsingStack s, string LOGPREFIX, int newPos, int sPos, keywordTryingData ktd, bool isSpaceNext)
         {
-            if(!isSpaceNext)
+            MinusZero.Instance.Log(1, "_tryIsKeyword", LOGPREFIX + "_tryIsNextLocalRootKeyword");
+
+            if (!isSpaceNext)
                 while (text[sPos - 1] == ' ') // spaces handling
                     sPos++; // NO WAY !!!!!!!!!!!!!!!!!!! this will stuck @b in function "A" @b, so thats why I added !isSpaceNext
 
