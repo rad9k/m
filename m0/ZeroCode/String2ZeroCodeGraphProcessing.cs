@@ -1352,6 +1352,8 @@ namespace m0.ZeroCode
                 foreach (keywordTryingData ktd in examinedKeywords)
                     if (ktd.state == keywordTryingState.parameter)
                     {
+                        int sPox_memory_if_parameterNotFound = sPos;
+
                         while (text[sPos] == ' ') // spaces handling
                             sPos++;
 
@@ -1368,21 +1370,6 @@ namespace m0.ZeroCode
                             foundParameter = ParameterChache[paramFilterName].Parameter;
                             ktd.waitingUntilPositionInText = ParameterChache[paramFilterName].waitingUntilPositionInText;
                         }
-
-                        /*if(ktd.isCurrentlyProcessedParameterAtom() && AtomParameterChache != null)
-                        {
-                            chacheHit = true;
-                            foundParameter = AtomParameterChache.Parameter;
-                            ktd.waitingUntilPositionInText = AtomParameterChache.waitingUntilPositionInText;
-                        }
-
-                        if (!chacheHit &&
-                            !ktd.isCurrentlyProcessedParameterAtom() && NonAtomParameterChache != null)
-                        {
-                            chacheHit = true;
-                            foundParameter = NonAtomParameterChache.Parameter;
-                            ktd.waitingUntilPositionInText = NonAtomParameterChache.waitingUntilPositionInText;
-                        }*/
 
                         if(!chacheHit) 
                         {
@@ -1436,7 +1423,7 @@ namespace m0.ZeroCode
 
                                 //MinusZero.Instance.Log(0, "_tryIfKeyword", LOGPREFIX + "_tryIsCall / " + ktd.currentlyProcessedParameterName + " / " + ktd.keywordVertex.Value);
 
-                                MinusZero.Instance.Log(-1, "_tryIfKeyword", LOGPREFIX + startPos + " " + ktd.keywordVertex.Value + ktd.currentlyProcessedParameterName);
+                                MinusZero.Instance.Log(-1, "_tryIfKeyword", LOGPREFIX + sPos + " " + ktd.keywordVertex.Value + ktd.currentlyProcessedParameterName);
                                 // int modified_isPrevStartPosSameAsStartPosThisCount = isPrevStartPosSameAsStartPosThisCount;
 
                                 // if (sPos != startPos)
@@ -1477,26 +1464,30 @@ namespace m0.ZeroCode
 
                         if (foundParameter != null)
                         {
-                            if (!chacheHit) {
+                            if (!chacheHit)
+                            {
                                 ParameterChache p = new ParameterChache();
 
                                 p.Parameter = foundParameter;
                                 p.waitingUntilPositionInText = ktd.waitingUntilPositionInText;
 
-                                ParameterChache.Add(paramFilterName, p);                                
-                            }                                                        
+                                ParameterChache.Add(paramFilterName, p);
+                            }
 
                             ktd.AddParameter(ktd.currentlyProcessedParameterName, foundParameter);
 
-                            MinusZero.Instance.Log(1, "_tryIsKeyword", LOGPREFIX+"sub add:" + ktd.currentlyProcessedParameterName+" foundParameter:"+foundParameter);
-                            
-                            if(foundParameter is keywordTryingData)
-                            MinusZero.Instance.Log(1, "_tryIsKeyword", LOGPREFIX + ((keywordTryingData) foundParameter).keyword);
+                            MinusZero.Instance.Log(1, "_tryIsKeyword", LOGPREFIX + "sub add:" + ktd.currentlyProcessedParameterName + " foundParameter:" + foundParameter);
+
+                            if (foundParameter is keywordTryingData)
+                                MinusZero.Instance.Log(1, "_tryIsKeyword", LOGPREFIX + ((keywordTryingData)foundParameter).keyword);
 
 
                             newExaminedKeywords.Add(ktd);
                         }
-                        
+                        else
+                            sPos = sPox_memory_if_parameterNotFound;
+
+
                         ktd.state = keywordTryingState.waiting;
                     }
 
@@ -1785,7 +1776,7 @@ namespace m0.ZeroCode
 
         private int _tryIsNextLocalRootKeyword(ParsingStack s, string LOGPREFIX, int newPos, int sPos, keywordTryingData ktd, bool isSpaceNext)
         {
-            MinusZero.Instance.Log(1, "_tryIsKeyword", LOGPREFIX + "_tryIsNextLocalRootKeyword");
+            MinusZero.Instance.Log(-1, "_tryIsKeyword", LOGPREFIX + "_tryIsNextLocalRootKeyword");
 
             if (!isSpaceNext)
                 while (text[sPos - 1] == ' ') // spaces handling
