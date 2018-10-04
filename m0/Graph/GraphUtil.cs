@@ -40,6 +40,13 @@ namespace m0.Graph
 
     public class GraphUtil
     {
+        public static string GetQueryStringPart(IVertex meta, IVertex to)
+        {
+            if (GeneralUtil.CompareStrings(meta.ToString(), "$Empty"))
+                return ZeroCodeCommon.stringToPossiblyEscapedString(to.ToString());
+            else
+                return ZeroCodeCommon.stringToPossiblyEscapedString(meta.ToString()) + ":" + ZeroCodeCommon.stringToPossiblyEscapedString(to.ToString());
+        }
 
         public static string GetIdentyfyingQuerySubString_ImportMeta(IEdge e)
         {
@@ -47,7 +54,7 @@ namespace m0.Graph
                 return ZeroCodeCommon.stringToPossiblyEscapedString(e.To.ToString()+""); // there was no ToString. might cause problems
             else
                 if (VertexOperations.IsMetaAndToVertexEnoughToIdentifyEdge(e.From, e.Meta, e.To))
-                    return ZeroCodeCommon.stringToPossiblyEscapedString(e.Meta.ToString()) + ":" + ZeroCodeCommon.stringToPossiblyEscapedString(e.To.ToString());
+                    return GetQueryStringPart(e.Meta, e.To);
                 else
                 {
                     int pos = 0;
@@ -60,7 +67,7 @@ namespace m0.Graph
                         pos++;
                     } while (tv != e.To);
 
-                    return ZeroCodeCommon.stringToPossiblyEscapedString(e.Meta.ToString()) + ":" + ZeroCodeCommon.stringToPossiblyEscapedString(e.To.ToString()) + "|" + pos ;
+                    return GetQueryStringPart(e.Meta,e.To) + "|" + pos ; // not sure if this | pos thing is feasible
                 }
         }
 
