@@ -564,7 +564,7 @@ namespace m0.UIWpf.Visualisers.Diagram
                     {
                         GraphUtil.DeleteEdgeByToVertex(Vertex, i.Vertex);
                         RemoveItem(i);
-                        VertexOperations.DeleteAllEdges(i.Vertex.Get(@"BaseEdge:\To:"));
+                        VertexOperations.DeleteAllInEdges(i.Vertex.Get(@"BaseEdge:\To:"));
                     }
 
                 }

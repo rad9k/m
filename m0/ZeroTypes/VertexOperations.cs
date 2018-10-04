@@ -104,11 +104,17 @@ namespace m0.ZeroTypes
 
         public static void DeleteOneEdge(IVertex source, IVertex metaVertex, IVertex toVertex)
         {
+            if (source == null || toVertex == null)
+                return;
+
             GraphUtil.DeleteEdge(source, metaVertex, toVertex);
         }
 
-        public static void DeleteAllEdges(IVertex toVertex)
+        public static void DeleteAllInEdges(IVertex toVertex)
         {
+            if (toVertex == null)
+                return;
+
             IList<IEdge> elist = GeneralUtil.CreateAndCopyList<IEdge>(toVertex.OutEdges);
 
             foreach (IEdge e in elist)
