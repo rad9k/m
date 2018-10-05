@@ -341,12 +341,14 @@ namespace m0.ZeroCode
     class VertexData
     {
         public string LinkString;
-        public int LinkLength;
+        public int NestedLevel;
+        public bool VertexHasBeenAppendedAsNew;
 
         public VertexData(String s,int l)
         {
             LinkString = s;
-            LinkLength = l;
+            NestedLevel = l;
+            VertexHasBeenAppendedAsNew = false;
         }
     }
 
@@ -1019,12 +1021,15 @@ namespace m0.ZeroCode
             if (!SubGraphVertexesDictionary.ContainsKey(e.To))
                 return false; // is it possible?
 
-            string firstQuery = SubGraphVertexesDictionary[e.To].LinkString;
+            VertexData eVertexData = SubGraphVertexesDictionary[e.To];
+            string firstQuery = eVertexData.LinkString;
             string secondQuery = path;
 
-            if (path == null ||
-                firstQuery == secondQuery)
+            if ((path == null || firstQuery == secondQuery) && !eVertexData.VertexHasBeenAppendedAsNew)
+            {
+                eVertexData.VertexHasBeenAppendedAsNew = true;
                 return true;
+            }
 
             return false;
         }
@@ -1304,12 +1309,12 @@ namespace m0.ZeroCode
                     {
                         VertexData l = SubGraphVertexesDictionary[ee.To];
 
-                        if (nestedLevel < l.LinkLength)
+                        if (nestedLevel < l.NestedLevel)
                         {
                             VertexData vd = SubGraphVertexesDictionary[ee.To];
 
                             vd.LinkString = LinkString;
-                            vd.LinkLength = nestedLevel;
+                            vd.NestedLevel = nestedLevel;
 
                             beenThereButNeedToReEnter = true;
                         }
