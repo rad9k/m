@@ -455,22 +455,25 @@ namespace m0.ZeroCode
 
             IVertex importLink = importList.Get(firstPart + ":");
 
-            if (importLink != null)
+            if (secondPart != null)
             {
-                tryIf = query(importLink, secondPart);
+                if (importLink != null)
+                {
+                    tryIf = query(importLink, secondPart);
 
-                if (tryIf != null)
-                    return tryIf;
-            }                 
-          
-            IVertex importMetaLink = importMetaList.Get(firstPart + ":");
+                    if (tryIf != null)
+                        return tryIf;
+                }
 
-            if (importMetaLink != null)
-            {
-                tryIf = queryMetaMode(importMetaLink, secondPart);
+                IVertex importMetaLink = importMetaList.Get(firstPart + ":");
 
-                if (tryIf != null)
-                    return tryIf;
+                if (importMetaLink != null)
+                {
+                    tryIf = queryMetaMode(importMetaLink, secondPart);
+
+                    if (tryIf != null)
+                        return tryIf;
+                }
             }
 
 
