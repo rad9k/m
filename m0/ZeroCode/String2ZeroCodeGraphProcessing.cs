@@ -439,8 +439,10 @@ namespace m0.ZeroCode
             return baseVertex.Get(query); // TODO: to be corected
         }   
 
-        IVertex processLink(string link)
+        IVertex ToVertexMock2VertexByLinkString(ToVertexMock mock)
         {
+            string link = mock.mockData.ToString();
+
             // try named link
 
             string secondPart;
@@ -479,7 +481,7 @@ namespace m0.ZeroCode
 
             // try direct link
 
-            tryIf = query(importDirectList, "\\"+link);
+            tryIf = query(importDirectList, "\\" + link);
 
             if (tryIf != null)
                 return tryIf;
@@ -504,6 +506,11 @@ namespace m0.ZeroCode
                 return tryIf;
 
             return MinusZero.Instance.Empty;
+        }
+
+        IVertex processLink(string link)
+        {
+            return new ToVertexMock(link);            
         }
 
         enum keywordTryingState { keywordCharacter, parameter, waiting, matched}

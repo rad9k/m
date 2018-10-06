@@ -14,7 +14,7 @@ namespace m0.Graph
         {
             mockData = _mockData;
 
-            Value = _mockData.ToString();
+            Value = ">"+_mockData.ToString()+"<";
         }
     }
 }
