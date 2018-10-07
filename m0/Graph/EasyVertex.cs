@@ -96,7 +96,7 @@ namespace m0.Graph
                             FullEdges.AddRange(e.To);
 
                     //return FullEdges;
-                    return ZeroCodeEngine_OLD.RemoveDuplicates(FullEdges);
+                    return ZeroCodeEngine_OLD.RemoveDuplicates(FullEdges); // can be optimised. probably
                 }else
                     return OutEdgesRaw;
             }

@@ -451,32 +451,40 @@ namespace m0.Graph
         {
             GraphIterator i = new GraphIterator(value);
 
-            return DeepIterator(findRoot, i.Compare,true).FirstOrDefault();
+            return DeepIterator(findRoot, i.Compare, true, false).FirstOrDefault();
         }
 
         static public IVertex DeepFindOneByMeta(IVertex findRoot, string value)
         {
             GraphIterator i = new GraphIterator(value);
 
-            return DeepIterator(findRoot, i.CompareMeta,true).FirstOrDefault();
+            return DeepIterator(findRoot, i.CompareMeta, true, false).FirstOrDefault();
         }        
 
-        static public IEnumerable<IVertex> DeepIterator(IVertex iterationRoot, GraphIteratorIterate iterate, bool isSingleResult)
+        static public IEnumerable<IVertex> DeepIterator(IVertex iterationRoot, GraphIteratorIterate iterate, bool isSingleResult, bool canModifyOutEdges)
         {
             List<IVertex> visited = new List<IVertex>();
 
             List<IVertex> returnList = new List<IVertex>();
 
-            DeepIterator_Reccurent(iterationRoot, iterate, visited, returnList, isSingleResult);
+            DeepIterator_Reccurent(iterationRoot, iterate, visited, returnList, isSingleResult, canModifyOutEdges);
 
             return returnList;
         }
 
-        static bool DeepIterator_Reccurent(IVertex iterationRoot, GraphIteratorIterate iterate, List<IVertex> visited, List<IVertex> returnList, bool isSingleResult)
+        static bool DeepIterator_Reccurent(IVertex iterationRoot, GraphIteratorIterate iterate, List<IVertex> visited, List<IVertex> returnList, bool isSingleResult, bool canModifyOutEdges)
         {
             bool toReturn = false;
 
-            foreach (IEdge e in iterationRoot.OutEdges)
+            IEnumerable<IEdge> outEdges;
+
+            if (canModifyOutEdges)
+                outEdges = iterationRoot.OutEdges.ToList();
+            else
+                outEdges = iterationRoot.OutEdges;
+
+            //foreach (IEdge e in iterationRoot.OutEdges)
+            foreach (IEdge e in outEdges)
             {
                 if (!visited.Contains(e.To))
                 {
@@ -488,7 +496,7 @@ namespace m0.Graph
                             return true;
                     }
 
-                    if (DeepIterator_Reccurent(e.To, iterate, visited, returnList, isSingleResult))
+                    if (DeepIterator_Reccurent(e.To, iterate, visited, returnList, isSingleResult, canModifyOutEdges))
                     {
                         toReturn = true;
 

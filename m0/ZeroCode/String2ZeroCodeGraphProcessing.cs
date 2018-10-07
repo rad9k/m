@@ -1094,6 +1094,10 @@ namespace m0.ZeroCode
 
             int sPos_copy;
 
+
+            ////////////////////////////// TU
+
+
             if (!testIfIsKeywordSubstring(sPos))
             {
                 tryEmptyKeyword = ZeroCodeCommon.tryStringFromNewVertexString(text, startPos, ref sPos);
@@ -2491,6 +2495,27 @@ namespace m0.ZeroCode
             return Process(_baseVertex, _text);
         }
 
+        private bool ProcessToVertexMocksToLinks_Delegate(IEdge edge)
+        {
+            IVertex iteratedVertex = edge.To;
+
+            if (iteratedVertex is ToVertexMock)
+            {
+                IVertex destination = ToVertexMock2VertexByLinkString((ToVertexMock) iteratedVertex);
+
+                edge.From.AddEdge(edge.Meta, destination);
+
+                //edge.From.DeleteEdge(edge);
+            }
+
+            return false;
+        }
+
+        private void ProcessToVertexMocksToLinks(IVertex baseVertex)
+        {
+            GraphUtil.DeepIterator(baseVertex, this.ProcessToVertexMocksToLinks_Delegate, false, true);
+        }
+
         public IVertex Process(IVertex _baseVertex, string _text)
         {
             baseVertex = _baseVertex;
@@ -2505,6 +2530,7 @@ namespace m0.ZeroCode
 
             ProcessTextPart(parseRoot, 0, lineInfoList.Count - 1);
 
+            ProcessToVertexMocksToLinks(parseRoot);
 
             return null;
         }

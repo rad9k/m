@@ -62,7 +62,7 @@ namespace m0.ZeroCode
             if (hideLinkPrefix)
                 return s;
             else
-                return s.Substring(1);
+                return s.Substring(ZeroCodeCommon.CodeGraphLinkPrefix.ToString().Length);
         }
 
         // to be used only in ZeroCodeCommon.stringFromLinkString( , FALSE) scenario
