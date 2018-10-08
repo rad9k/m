@@ -478,7 +478,6 @@ namespace m0.ZeroCode
                 }
             }
 
-
             // try direct link
 
             tryIf = query(importDirectList, "\\" + link);
@@ -1093,12 +1092,18 @@ namespace m0.ZeroCode
             //
 
             int sPos_copy;
+            
+            if (ZeroCodeUtil.tryStringMatch(text, sPos, ZeroCodeCommon.CodeGraphLinkPrefix.ToString())) // @
+            {
+                ZeroCodeCommon.tryStringFromLinkString(text, sPos, ref sPos, endPos_forAtomParts);
 
+                string foundString = text.Substring(startPos, sPos - startPos);
 
-            ////////////////////////////// TU
+                tryLink = ZeroCodeCommon.stringFromLinkString(foundString, false);
 
+                sPos_copy = sPos;
 
-            if (!testIfIsKeywordSubstring(sPos))
+            }else if (!testIfIsKeywordSubstring(sPos))
             {
                 tryEmptyKeyword = ZeroCodeCommon.tryStringFromNewVertexString(text, startPos, ref sPos);
 
@@ -1134,10 +1139,10 @@ namespace m0.ZeroCode
 
                     string foundString = text.Substring(startPos, sPos - startPos);
 
-                    if (!isTopLevelCall
+                    /*if (!isTopLevelCall
                         && ZeroCodeCommon.isLinkString(foundString))
                         tryLink = ZeroCodeCommon.stringFromLinkString(foundString, false);
-                    else
+                    else*/
                     {
                         tryEmptyKeyword = foundString;
 
@@ -1243,7 +1248,8 @@ namespace m0.ZeroCode
             if((l1149_dict>-1 && containsCondition)
               //  || (l1149_parent>-1 && isPrevStartPosSameAsStartPos && isPrevStartPosSameAsStartPosThisCount > l1149_parent)
               || (keywordsFilter == "" && l1149_parent > -1 && isPrevStartPosSameAsStartPos && isPrevStartPosSameAsStartPosThisCount > l1149_parent)
-              || (keywordsFilter != "" && l1149_parent > -1 && isPrevStartPosSameAsStartPos && isPrevStartPosSameAsStartPosThisCount > 2)
+              || (keywordsFilter != "" && l1149_parent > -1 && isPrevStartPosSameAsStartPos && isPrevStartPosSameAsStartPosThisCount > 2) // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+              // MIGHT NEED TO MAKE THIS "2" BEING CONFIGURED BY keywordsFilter !!!!!!!!!!!!!!!!!!!!!!!!
                 || keywordsFilter == "Atom") // here we also should use A ????? that is specialKeywordGroups_empty.Contains(keywordsFilter)
             { // do not want inifinite recursion
                // if(containsCondition)

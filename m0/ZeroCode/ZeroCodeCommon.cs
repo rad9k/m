@@ -89,8 +89,8 @@ namespace m0.ZeroCode
                     if (text[sPos] == '\n' || text[sPos] == '\r')
                         shallProceed = false;
 
-                    //if (text[sPos] == ' ' && !isInEscape)
-                      //  shallProceed = false;
+                    if (text[sPos] == ' ' && !isInEscape)
+                        shallProceed = false;
 
                     if (text[sPos] == '\'' && !isInEscape)
                         isInEscape = true;
