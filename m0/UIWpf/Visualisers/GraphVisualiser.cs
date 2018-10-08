@@ -302,6 +302,7 @@ namespace m0.UIWpf.Visualisers
 
         bool FastMode;
         bool MetaLabels;
+        bool ShowOutEdges;
         bool ShowInEdges;
 
         bool IsFirstPainted = false;
@@ -329,6 +330,11 @@ namespace m0.UIWpf.Visualisers
                     MetaLabels = true;
                 else
                     MetaLabels = false;
+
+                if (GeneralUtil.CompareStrings(Vertex.Get("ShowOutEdges:"), "True"))
+                    ShowOutEdges = true;
+                else
+                    ShowOutEdges = false;
 
                 if (GeneralUtil.CompareStrings(Vertex.Get("ShowInEdges:"), "True"))
                     ShowInEdges = true;
@@ -395,7 +401,8 @@ namespace m0.UIWpf.Visualisers
 
             foreach (IVertex v in InnerCircleVertexes)
             {
-                foreach (IEdge e in v)
+                if (ShowOutEdges)
+                    foreach (IEdge e in v)
                     if (!DisplayedVertexesUIElements.ContainsKey(e.To))
                     {
                         DisplayedVertexesUIElements.Add(e.To, dummyPointOut);
@@ -422,6 +429,7 @@ namespace m0.UIWpf.Visualisers
                 {
                     SimpleVisualiserWrapper vPoint = DisplayedVertexesUIElements[v];
 
+                    if (ShowOutEdges)
                     foreach (IEdge e in v)
                         if (!DisplayedVertexesUIElements.ContainsKey(e.To) || DisplayedVertexesUIElements[e.To] == dummyPointOut)
                         {
@@ -455,7 +463,9 @@ namespace m0.UIWpf.Visualisers
                             CircleVertexes.Add(e.From);
                             
                             cnt++;
-                        }                        
+                            }
+                            
+
                 }
 
             if (level < GraphUtil.GetIntegerValue(Vertex.Get("NumberOfCircles:")))
@@ -493,6 +503,7 @@ namespace m0.UIWpf.Visualisers
             Vertex.Get("NumberOfCircles:").Value = 2;
             Vertex.Get("FastMode:").Value = "True";
             Vertex.Get("MetaLabels:").Value = "True";
+            Vertex.Get("ShowOutEdges:").Value = "True";
         }
    
         public GraphVisualiser()
@@ -737,6 +748,9 @@ namespace m0.UIWpf.Visualisers
                 { PaintGraph(); return; }
 
             if (sender == Vertex.Get("MetaLabels:") && e.Type == VertexChangeType.ValueChanged)
+                { PaintGraph(); return; }
+
+            if (sender == Vertex.Get("ShowOutEdges:") && e.Type == VertexChangeType.ValueChanged)
                 { PaintGraph(); return; }
 
             if (sender == Vertex.Get("ShowInEdges:") && e.Type == VertexChangeType.ValueChanged)

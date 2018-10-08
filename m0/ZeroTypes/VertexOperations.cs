@@ -283,6 +283,9 @@ namespace m0.ZeroTypes
 
             foreach (IEdge child in children)
             {
+                if (GeneralUtil.CompareStrings(child.To,"ShowOutEdges")){
+                    int x = 0;
+                }
                 if(child.To.Get("$DefaultValue:")!=null)
                     nv.AddEdge(child.To, child.To.Get("$DefaultValue:"));
          //       else
