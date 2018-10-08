@@ -508,6 +508,28 @@ namespace m0.Graph
             return toReturn;
         }
 
+        static public IEnumerable<IVertex> GetSubGraph(IVertex iterationRoot)
+        {
+            List<IVertex> visited = new List<IVertex>();            
+
+            GetSubGraph_Reccurent(iterationRoot, visited);
+
+            return visited;
+        }
+
+        static void GetSubGraph_Reccurent(IVertex iterationRoot, List<IVertex> visited)
+        {
+            foreach (IEdge e in iterationRoot.OutEdges)            
+            {
+                if (!visited.Contains(e.To))
+                {
+                    visited.Add(e.To);
+         
+                    GetSubGraph_Reccurent(e.To, visited));                    
+                }
+            }            
+        }
+
         public static void AddHandlerIfDelegateListDoesNotContainsIt(IVertex baseVertex, VertexChange _delegate)
         {
             if (baseVertex!=null&& !GeneralUtil.DoDelegateListContainDelegate(baseVertex.GetChangeDelegateInvocationList(), _delegate))

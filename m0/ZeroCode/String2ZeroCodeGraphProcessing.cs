@@ -2522,9 +2522,18 @@ namespace m0.ZeroCode
             GraphUtil.DeepIterator(baseVertex, this.ProcessToVertexMocksToLinks_Delegate, false, true);
         }
 
+        IEnumerable<IVertex> SubGraphPreProcessing;
+
+        void GestSubGraphPreProcessing()
+        {
+            SubGraphPreProcessing = GraphUtil.GetSubGraph(baseVertex);
+        }
+
         public IVertex Process(IVertex _baseVertex, string _text)
         {
             baseVertex = _baseVertex;
+
+            void GestSubGraphPreProcessing();
 
             text = _text + "\r\n"; // for regexpes
 
