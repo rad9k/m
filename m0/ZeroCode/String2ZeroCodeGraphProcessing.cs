@@ -1093,65 +1093,67 @@ namespace m0.ZeroCode
 
             int sPos_copy;
             
-            if (ZeroCodeUtil.tryStringMatch(text, sPos, ZeroCodeCommon.CodeGraphLinkPrefix.ToString())) // @
+            if (!testIfIsKeywordSubstring(sPos))
             {
-                ZeroCodeCommon.tryStringFromLinkString(text, sPos, ref sPos, endPos_forAtomParts);
-
-                string foundString = text.Substring(startPos, sPos - startPos);
-
-                tryLink = ZeroCodeCommon.stringFromLinkString(foundString, false);
-
-                sPos_copy = sPos;
-
-            }else if (!testIfIsKeywordSubstring(sPos))
-            {
-                tryEmptyKeyword = ZeroCodeCommon.tryStringFromNewVertexString(text, startPos, ref sPos);
-
-                if (tryEmptyKeyword != null)
+                if (!isTopLevelCall && ZeroCodeUtil.tryStringMatch(text, sPos, ZeroCodeCommon.CodeGraphLinkPrefix.ToString())) // @
                 {
-                    specialType = SpecialKeywordType.NewVertexKeyword;
-
-                    sPos_copy = sPos;
-
-                    sPos++; // hmmm ????
-                }
-                else
-                {
-                    while (shallProceed)
-                    {
-                        sPos++;
-
-                        if (testIfIsKeywordSubstring(sPos))
-                            shallProceed = false;
-
-                        if (s.currentLineInfo.IsLineEnd(sPos))
-                        { // the + 2 might be not needed, but who knows....
-                          //if (text[sPos] == '\r' || text[sPos] == '\n')
-                            sPos = s.currentLineInfo.lineEnd_NoTrim + 1;
-                            shallProceed = false;
-                        }
-
-                        if (sPos == endPos_forAtomParts)
-                            shallProceed = false;
-                    }
-
-                    sPos_copy = sPos;
+                    ZeroCodeCommon.tryStringFromLinkString(text, sPos, ref sPos, endPos_forAtomParts);
 
                     string foundString = text.Substring(startPos, sPos - startPos);
 
-                    /*if (!isTopLevelCall
-                        && ZeroCodeCommon.isLinkString(foundString))
-                        tryLink = ZeroCodeCommon.stringFromLinkString(foundString, false);
-                    else*/
-                    {
-                        tryEmptyKeyword = foundString;
+                    tryLink = ZeroCodeCommon.stringFromLinkString(foundString, false);
 
-                        specialType = SpecialKeywordType.EmptyKeyword;
+                    sPos_copy = sPos;
+                }
+                else
+                {
+                    tryEmptyKeyword = ZeroCodeCommon.tryStringFromNewVertexString(text, startPos, ref sPos);
+
+                    if (tryEmptyKeyword != null)
+                    {
+                        specialType = SpecialKeywordType.NewVertexKeyword;
+
+                        sPos_copy = sPos;
 
                         sPos++; // hmmm ????
                     }
-                }
+                    else
+                    {
+                        while (shallProceed)
+                        {
+                            sPos++;
 
+                            if (testIfIsKeywordSubstring(sPos))
+                                shallProceed = false;
+
+                            if (s.currentLineInfo.IsLineEnd(sPos))
+                            { // the + 2 might be not needed, but who knows....
+                              //if (text[sPos] == '\r' || text[sPos] == '\n')
+                                sPos = s.currentLineInfo.lineEnd_NoTrim + 1;
+                                shallProceed = false;
+                            }
+
+                            if (sPos == endPos_forAtomParts)
+                                shallProceed = false;
+                        }
+
+                        sPos_copy = sPos;
+
+                        string foundString = text.Substring(startPos, sPos - startPos);
+
+                        /*if (!isTopLevelCall
+                            && ZeroCodeCommon.isLinkString(foundString))
+                            tryLink = ZeroCodeCommon.stringFromLinkString(foundString, false);
+                        else*/
+                        {
+                            tryEmptyKeyword = foundString;
+
+                            specialType = SpecialKeywordType.EmptyKeyword;
+
+                            sPos++; // hmmm ????
+                        }
+                    }
+                }
                 //MinusZero.Instance.Log(0, "_tryIfKeyword:", LOGPREFIX + "conditions 0: TRY / sPos_copy:" + sPos_copy + " isPrevStartPosSameAsStartPos: " + isPrevStartPosSameAsStartPos);
 
                 bool c1089 = false;
