@@ -2411,7 +2411,7 @@ namespace m0.ZeroCode
 
                     IVertex meta = processLink(beforeColon);
 
-                    if (afterColon[0] == ZeroCodeCommon.NewVertexPrefix) // if is new value
+                    if (afterColon.Length > 0 && afterColon[0] == ZeroCodeCommon.NewVertexPrefix) // if is new value
                         return AddVertex(s, _baseVertex, meta, ZeroCodeCommon.stringFromNewVertexString(afterColon));
 
                     return AddEdge(s, _baseVertex, meta, processLink(ZeroCodeCommon.stringFromLinkString(afterColon, true))).To;
@@ -2571,7 +2571,9 @@ namespace m0.ZeroCode
 
             if(found == null)
             {
-
+                // we can have some additonal logic in case we have not found the proper edge (for exmaple there might be some name change)
+                // BUT
+                // as for now the recommended way of changeing vertex value (atefact name) is string visualiser and not code generation / parsing
             }
 
             return found;
