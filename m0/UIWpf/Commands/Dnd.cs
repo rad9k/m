@@ -54,7 +54,7 @@ namespace m0.UIWpf.Commands
                 if (sender is IHasSelectableEdges)
                     ((IHasSelectableEdges)sender).UnselectAllSelectedEdges();
 
-                GraphUtil.RemoveAllEdges(dndVertex);
+                GraphUtil.RemoveAllEdges_WhereEdgeIsEdge(dndVertex);
             }
 
             MinusZero.Instance.IsGUIDragging = false;
@@ -86,7 +86,7 @@ namespace m0.UIWpf.Commands
                 if (sender is IHasSelectableEdges)
                     ((IHasSelectableEdges)sender).UnselectAllSelectedEdges();
 
-                GraphUtil.RemoveAllEdges(dndVertex);
+                GraphUtil.RemoveAllEdges_WhereEdgeIsEdge(dndVertex);
             }
 
             MinusZero.Instance.IsGUIDragging = false;
@@ -115,7 +115,7 @@ namespace m0.UIWpf.Commands
                 if (sender is IHasSelectableEdges)
                     ((IHasSelectableEdges)sender).UnselectAllSelectedEdges();
 
-                GraphUtil.RemoveAllEdges(dndVertex);
+                GraphUtil.RemoveAllEdges_WhereEdgeIsEdge(dndVertex);
             }
 
             MinusZero.Instance.IsGUIDragging = false;
@@ -153,7 +153,7 @@ namespace m0.UIWpf.Commands
                 if (sender is IHasSelectableEdges)
                     ((IHasSelectableEdges)sender).UnselectAllSelectedEdges();
 
-                GraphUtil.RemoveAllEdges(dndVertex);
+                GraphUtil.RemoveAllEdges_WhereEdgeIsEdge(dndVertex);
             }
 
             MinusZero.Instance.IsGUIDragging = false;
