@@ -461,10 +461,18 @@ namespace m0.UIWpf.Visualisers
                             SimpleVisualiserWrapper fromWrapper = Add(x, y, (FrameworkElement)GetVisualiser(e.From), e.From);
 
                             CircleVertexes.Add(e.From);
-                            
+
+                            AddLine(fromWrapper, vPoint, e.Meta);
+
                             cnt++;
-                            }
-                            
+                        }
+                        else
+                        {
+                            SimpleVisualiserWrapper eFromPoint = DisplayedVertexesUIElements[e.From];
+
+                            AddLine(eFromPoint, vPoint, e.Meta);
+                        }
+
 
                 }
 
@@ -475,7 +483,8 @@ namespace m0.UIWpf.Visualisers
                 foreach (IVertex v in CircleVertexes)
                 {
                     SimpleVisualiserWrapper vPoint = DisplayedVertexesUIElements[v];
-
+                    
+                    if(ShowOutEdges)
                     foreach(IEdge e in v)
                         if(DisplayedVertexesUIElements.ContainsKey(e.To)) // if vertex is allready displayed, connect it
                         {
@@ -483,6 +492,15 @@ namespace m0.UIWpf.Visualisers
 
                             AddLine(vPoint, eToPoint,e.Meta);                            
                         }
+
+                    if (ShowInEdges)
+                        foreach (IEdge e in v.InEdges)
+                            if (DisplayedVertexesUIElements.ContainsKey(e.From)) // if vertex is allready displayed, connect it
+                            {
+                                SimpleVisualiserWrapper eFromPoint = DisplayedVertexesUIElements[e.From];
+
+                                AddLine(eFromPoint, vPoint, e.Meta);
+                            }
 
                 }
             }
