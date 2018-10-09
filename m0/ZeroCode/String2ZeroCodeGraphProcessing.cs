@@ -2511,29 +2511,89 @@ namespace m0.ZeroCode
 
                 edge.From.AddEdge(edge.Meta, destination);
 
-                //edge.From.DeleteEdge(edge);
+                edge.From.DeleteEdge(edge);
             }
 
             return false;
         }
 
-        private void ProcessToVertexMocksToLinks(IVertex baseVertex)
+        private void ProcessToVertexMocksToLinks()
         {
-            GraphUtil.DeepIterator(baseVertex, this.ProcessToVertexMocksToLinks_Delegate, false, true);
+            GraphUtil.DeepIterator(parseRoot, this.ProcessToVertexMocksToLinks_Delegate, false, true);
         }
 
         IEnumerable<IVertex> SubGraphPreProcessing;
+
+        IVertex parseRoot;
 
         void GestSubGraphPreProcessing()
         {
             SubGraphPreProcessing = GraphUtil.GetSubGraph(baseVertex);
         }
 
+        void MoveInEdgesComingFromOutsideOfSubGraphToParseRoot()
+        {
+            List<IVertex> visited = new List<IVertex>();
+
+            MoveInEdgesComingFromOutsideOfSubGraphToParseRoot_Reccurent(baseVertex, parseRoot.FirstOrDefault().To, visited);
+        }
+
+        void MoveInEdgesComingFromOutsideOfSubGraphToParseRoot_Reccurent(IVertex iterationRoot, IVertex parsedVertex, List<IVertex> visited)
+        {
+            IList<IEdge> OutEdgesRaw = iterationRoot.OutEdgesRaw.ToList();
+
+            foreach (IEdge e in OutEdgesRaw)
+                if (e.To != parseRoot && !visited.Contains(e.To) && !VertexOperations.IsLink(e))
+                {
+                    visited.Add(e.To);
+
+                    IEdge foundInParsed = FindSimilarEdge(parsedVertex, e);
+
+                    if (foundInParsed != null)
+                        {
+                            MoveInEdgesComingFromOutsideOfSubGraphToParseVertex_forOneVertex(e.To, foundInParsed.To);
+
+                            MoveInEdgesComingFromOutsideOfSubGraphToParseRoot_Reccurent(e.To, foundInParsed.To, visited);
+                        }
+                }
+        }
+
+        IEdge FindSimilarEdge(IVertex findHere, IEdge toFind)
+        {
+            IEdge found = null;
+
+            foreach(IEdge e in findHere)
+                if(GeneralUtil.CompareStrings(e.Meta, toFind.Meta) && GeneralUtil.CompareStrings(e.To, toFind.To))
+                {
+                    found = e;
+                    break;
+                }
+
+            if(found == null)
+            {
+
+            }
+
+            return found;
+        }
+
+        void MoveInEdgesComingFromOutsideOfSubGraphToParseVertex_forOneVertex(IVertex existing, IVertex parsedVertex)
+        {
+            IList<IEdge> InEdgesRaw = existing.InEdgesRaw.ToList();
+
+            foreach (IEdge e in InEdgesRaw)
+                if (!SubGraphPreProcessing.Contains(e.From))
+                {
+                    e.From.DeleteEdge(e);
+                    e.From.AddEdge(e.Meta, parsedVertex);
+                }
+        }
+
         public IVertex Process(IVertex _baseVertex, string _text)
         {
             baseVertex = _baseVertex;
 
-            void GestSubGraphPreProcessing();
+            GestSubGraphPreProcessing();
 
             text = _text + "\r\n"; // for regexpes
 
@@ -2541,11 +2601,13 @@ namespace m0.ZeroCode
 
             prepareImportList();
 
-            IVertex parseRoot = _baseVertex.AddVertex(null, "ParseRoot");
+            parseRoot = _baseVertex.AddVertex(null, "ParseRoot");
 
             ProcessTextPart(parseRoot, 0, lineInfoList.Count - 1);
 
-            ProcessToVertexMocksToLinks(parseRoot);
+            ProcessToVertexMocksToLinks();
+
+            MoveInEdgesComingFromOutsideOfSubGraphToParseRoot();
 
             return null;
         }

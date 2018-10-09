@@ -300,6 +300,18 @@ namespace m0.Graph
                 v.DeleteEdge(e);
         }
 
+        static public void RemoveAllEdges_WhereEdgeIsEdge(IVertex v)
+        {
+            IList<IEdge> el = GeneralUtil.CreateAndCopyList<IEdge>(v);
+
+            foreach (IEdge e in el)
+            {
+                RemoveAllEdges(e.To);
+
+                v.DeleteEdge(e);
+            }
+        }
+
         static public void DeleteEdgeByToVertex(IVertex source, IVertex toVertex)
         {
             IEdge e = FindEdgeByToVertex(source, toVertex);
@@ -517,17 +529,13 @@ namespace m0.Graph
             return visited;
         }
 
-        static void GetSubGraph_Reccurent(IVertex iterationRoot, List<IVertex> visited)
+        static void GetSubGraph_Reccurent(IVertex baseVertex, List<IVertex> visited)
         {
-            foreach (IEdge e in iterationRoot.OutEdges)            
-            {
-                if (!visited.Contains(e.To))
-                {
-                    visited.Add(e.To);
-         
-                    GetSubGraph_Reccurent(e.To, visited));                    
-                }
-            }            
+            visited.Add(baseVertex);
+
+            foreach (IEdge e in baseVertex.OutEdges)
+                if (!visited.Contains(e.To) && !VertexOperations.IsLink(e))
+                        GetSubGraph_Reccurent(e.To, visited);                           
         }
 
         public static void AddHandlerIfDelegateListDoesNotContainsIt(IVertex baseVertex, VertexChange _delegate)
