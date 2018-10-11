@@ -1092,6 +1092,20 @@ namespace m0.ZeroCode
             return false;
         }
 
+        public bool isNotComparableKeywordEdge(string baseVertex) 
+            {
+                if (GeneralUtil.CompareStrings(baseVertex, "$KeywordManyRoot"))
+                    return true;
+
+                if (GeneralUtil.CompareStrings(baseVertex, "$LocalRoot"))
+                    return true;
+
+                if (GeneralUtil.CompareStrings(baseVertex, "$KeywordManyRoot"))
+                    return true;
+
+            return false;
+            } 
+
         public bool GetGraphMatch(IVertex parentToCheck, IEdge keywordEdge)
         {
             //if (keywordEdge.To.Get("$KeywordManyRoot:") != null)
@@ -1115,7 +1129,7 @@ namespace m0.ZeroCode
                     if(!VertexOperations.IsLink(keywordEdge))
                         foreach (IEdge subKeywordEdge in keywordEdge.To)
                             if (/*!IsLink(subKeywordEdge) 
-                                && */!GeneralUtil.CompareStrings(subKeywordEdge.Meta,"$KeywordManyRoot") // WTF ????
+                                && */!isNotComparableKeywordEdge(subKeywordEdge.Meta.ToString()) // WTF ????
                                 && GetGraphMatch(searchResult.To, subKeywordEdge) == false)
                                 return false;
 
