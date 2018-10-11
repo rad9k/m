@@ -649,7 +649,7 @@ namespace m0.UIWpf.Visualisers
                        {
                            UnselectAllSelected();                           
 
-                           GraphUtil.RemoveAllEdges(sv);
+                           GraphUtil.RemoveAllEdges_WhereEdgeIsEdge(sv);
 
                            kvp.Value.Select();
 
@@ -693,9 +693,11 @@ namespace m0.UIWpf.Visualisers
 
             if (tempSelectedVertexes != null)
             {
-                GraphUtil.RemoveAllEdges(sv);
+                GraphUtil.RemoveAllEdges_WhereEdgeIsEdge(sv);
 
                 GraphUtil.CopyEdges(tempSelectedVertexes, sv);
+
+                GraphUtil.RemoveAllEdges_WhereEdgeIsEdge(tempSelectedVertexes); // 11.10.2018 ADDED. should cause no problems
             }
 
         }
@@ -710,7 +712,7 @@ namespace m0.UIWpf.Visualisers
         {
             IVertex sv = Vertex.Get("SelectedEdges:");
 
-            GraphUtil.RemoveAllEdges(sv);
+            GraphUtil.RemoveAllEdges_WhereEdgeIsEdge(sv);
         }
         
         protected void SelectedVertexesUpdated()

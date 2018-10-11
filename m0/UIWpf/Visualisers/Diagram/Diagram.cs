@@ -968,7 +968,7 @@ namespace m0.UIWpf.Visualisers.Diagram
 
             TurnOffSelectedEdgesFireChange();
 
-            GraphUtil.RemoveAllEdges(sv);
+            GraphUtil.RemoveAllEdges_WhereEdgeIsEdge(sv);
 
             TurnOnSelectedEdgesFireChange();
 
@@ -1216,7 +1216,7 @@ namespace m0.UIWpf.Visualisers.Diagram
                 if (e.Data.GetData("DragSource") is IHasSelectableEdges)
                     ((IHasSelectableEdges)e.Data.GetData("DragSource")).UnselectAllSelectedEdges();
 
-                GraphUtil.RemoveAllEdges(dndVertex);
+                GraphUtil.RemoveAllEdges_WhereEdgeIsEdge(dndVertex);
             }
         }
 

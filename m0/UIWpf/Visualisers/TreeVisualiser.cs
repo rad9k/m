@@ -278,7 +278,7 @@ namespace m0.UIWpf.Visualisers
 
 
             if (!IsCtrl)
-                GraphUtil.RemoveAllEdges(sv);
+                GraphUtil.RemoveAllEdges_WhereEdgeIsEdge(sv);
 
             if (item.IsSelected)
                 Edge.AddEdge(sv, e);

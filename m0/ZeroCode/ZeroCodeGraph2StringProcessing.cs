@@ -1094,8 +1094,8 @@ namespace m0.ZeroCode
 
         public bool GetGraphMatch(IVertex parentToCheck, IEdge keywordEdge)
         {
-            if (keywordEdge.To.Get("$KeywordManyRoot:") != null)
-                return true;
+            //if (keywordEdge.To.Get("$KeywordManyRoot:") != null)
+            //   return true; // WTF ???? or Meta? eigher does not work for function parameters
 
             string searchString;
 
@@ -1115,7 +1115,7 @@ namespace m0.ZeroCode
                     if(!VertexOperations.IsLink(keywordEdge))
                         foreach (IEdge subKeywordEdge in keywordEdge.To)
                             if (/*!IsLink(subKeywordEdge) 
-                                && */!GeneralUtil.CompareStrings(subKeywordEdge.Meta,"$KeywordManyRoot") 
+                                && */!GeneralUtil.CompareStrings(subKeywordEdge.Meta,"$KeywordManyRoot") // WTF ????
                                 && GetGraphMatch(searchResult.To, subKeywordEdge) == false)
                                 return false;
 

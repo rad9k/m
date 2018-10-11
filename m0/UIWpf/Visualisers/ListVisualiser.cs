@@ -31,7 +31,7 @@ namespace m0.UIWpf.Visualisers
         public void UnselectAllSelectedEdges(){
             IVertex sv = Vertex.Get("SelectedEdges:");
 
-            GraphUtil.RemoveAllEdges(sv);
+            GraphUtil.RemoveAllEdges_WhereEdgeIsEdge(sv);
         }
 
         protected void _OnSelectionChanged(object sender, SelectionChangedEventArgs e){
@@ -438,7 +438,7 @@ namespace m0.UIWpf.Visualisers
 
             if (tempSelectedVertexes != null)
             {
-                GraphUtil.RemoveAllEdges(sv);
+                GraphUtil.RemoveAllEdges_WhereEdgeIsEdge(sv);
 
                 GraphUtil.CopyEdges(tempSelectedVertexes, sv);
             }

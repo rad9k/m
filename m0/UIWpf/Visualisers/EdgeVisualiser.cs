@@ -97,6 +97,8 @@ namespace m0.UIWpf.Visualisers
                 IsDisposed = true;
                 PlatformClass.RemoveVertexChangeListeners(this.Vertex, new VertexChange(VertexChange));
 
+                GraphUtil.RemoveAllEdges(Vertex.Get(@"BaseEdge:\To:"));
+
                 if (Vertex is IDisposable)
                     ((IDisposable)Vertex).Dispose();
             }

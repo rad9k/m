@@ -65,6 +65,8 @@ namespace m0.UIWpf.Dialog
                 else
                     Vertex.AddEdge(this.Meta.Vertex.Get(@"BaseEdge:\To:\To:"), this.To.Vertex.Get(@"BaseEdge:\To:\To:"));
 
+                To.Dispose(); // TO BE ADDED TO ALL DIALOGS !!!!!!!
+
                 MinusZero.Instance.DefaultShow.CloseWindowByContent(this);
             }
         }
