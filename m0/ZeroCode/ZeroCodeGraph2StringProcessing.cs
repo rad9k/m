@@ -1100,8 +1100,11 @@ namespace m0.ZeroCode
                 if (GeneralUtil.CompareStrings(baseVertex, "$LocalRoot"))
                     return true;
 
-                if (GeneralUtil.CompareStrings(baseVertex, "$KeywordManyRoot"))
-                    return true;
+                if (GeneralUtil.CompareStrings(baseVertex, "$StartInLocalRoot"))
+                     return true;
+
+                if (GeneralUtil.CompareStrings(baseVertex, "$KeywordGroup"))
+                     return true;
 
             return false;
             } 
@@ -1109,7 +1112,10 @@ namespace m0.ZeroCode
         public bool GetGraphMatch(IVertex parentToCheck, IEdge keywordEdge)
         {
             //if (keywordEdge.To.Get("$KeywordManyRoot:") != null)
-            //   return true; // WTF ???? or Meta? eigher does not work for function parameters
+            // return true; // WTF ???? or Meta? eigher does not work for function parameters
+
+            if (isNotComparableKeywordEdge(keywordEdge.Meta.ToString()))
+                return true;
 
             string searchString;
 
