@@ -704,7 +704,7 @@ namespace m0
 
              ffip.AddEdge(smb.Get(@"$KeywordManyRoot"), smb.Get(@"$Empty"));
             
-
+            
             // function
             //
             // function (?<name>) [(*(+, +)(?<paramType>) (?<paramName>)*)]

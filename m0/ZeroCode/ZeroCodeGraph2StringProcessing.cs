@@ -1146,10 +1146,13 @@ namespace m0.ZeroCode
                         if (keywordEdge.To.Get("$KeywordManyRoot:") == null)
                             return true;
                         else
-                            toReturn = true;
+                            toReturn = true; // this is strange. but we are leaving it AS IS. not to break something
                     }
                 }
             }
+
+            if (keywordEdge.To.Get("$KeywordManyRoot:") != null)
+                return true;
 
             return toReturn;
         }
