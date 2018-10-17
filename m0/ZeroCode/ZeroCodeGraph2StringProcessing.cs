@@ -1251,6 +1251,7 @@ namespace m0.ZeroCode
             //   return;
 
             foreach (IEdge keyword in MinusZero.Instance.Root.GetAll(@"User\CurrentUser:\CodeSettings:\Keyword:\"))
+            if(keyword.To != m0.MinusZero.Instance.newValueKeywordVertex)
             {              
                 IList<IEdge> matchedEdges = MatchGraphs(edgeToCheck, keyword.To);
 
