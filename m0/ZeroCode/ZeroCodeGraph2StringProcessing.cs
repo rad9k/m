@@ -506,6 +506,9 @@ namespace m0.ZeroCode
 
         IEdge GetFirstLevelKeywordEdge(KeywordMatch km, string firstEdgeMetaValue)
         {
+            if (firstEdgeMetaValue == "") // new :)
+                return km.MatchedEdges.FirstOrDefault();
+
             string meta = firstEdgeMetaValue.Substring(0, firstEdgeMetaValue.Length - 1);
 
             IEdge firstEdge = km.MatchedEdges.FirstOrDefault();
@@ -813,7 +816,6 @@ namespace m0.ZeroCode
                 SourceAppend(ZeroCodeCommon.LineContinuationPrefix + sentence.Substring(prevPos));
             else
                 SourceAppend(sentence.Substring(prevPos));
-            //SourceAppend(sentence.Substring(prevPos));
 
             return wasThereNewLine;
         }
@@ -915,9 +917,12 @@ namespace m0.ZeroCode
             {
                 string path = GetPathFromKeywordMatchAndKeywordEdge(km, e, null);
 
-                AppendVertex(e, path, false, false);
+                if(km.KeywordDefinition!=MinusZero.Instance.emptyKeywordVertex)
+                    AppendVertex(e, path, false, false); // non emptyKeword (standard)
+                else
+                    SourceAppend(e.To.Value.ToString()); // emptyKeyword handling
 
-                if(!VertexOperations.IsLink(e) && e != km.BaseEdge)
+                if (!VertexOperations.IsLink(e) && e != km.BaseEdge)
                     wasThereNewLine = AppendSubVertexes(km, e, path);
             }
         }
