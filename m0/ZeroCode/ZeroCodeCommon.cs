@@ -219,6 +219,12 @@ namespace m0.ZeroCode
             if (s.IndexOf(' ') != -1)
                 wasThereReplace = true;
 
+           // if (s.IndexOf('{') != -1)
+           //     wasThereReplace = true;
+
+           // if (s.IndexOf('}') != -1)
+           //     wasThereReplace = true;
+
             if (s.IndexOf('\\') != -1)
             {
                 s = s.Replace("\\", "\\\\");

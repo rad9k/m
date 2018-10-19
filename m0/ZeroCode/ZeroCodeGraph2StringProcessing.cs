@@ -1124,10 +1124,12 @@ namespace m0.ZeroCode
 
             string searchString;
 
-            if (IsKeywordVertexWildcard(keywordEdge.To))
-                searchString = ZeroCodeCommon.stringToPossiblyEscapedString(keywordEdge.Meta.ToString()) + ":";
-            else
-                searchString = ZeroCodeCommon.stringToPossiblyEscapedString(keywordEdge.Meta.ToString()) + ":" + ZeroCodeCommon.stringToPossiblyEscapedString(keywordEdge.To.ToString());
+            string searchString_secondPart = "";
+
+            if (!IsKeywordVertexWildcard(keywordEdge.To))
+                searchString_secondPart = ZeroCodeCommon.stringToPossiblyEscapedString(keywordEdge.To.ToString());
+
+            searchString = ZeroCodeCommon.stringToPossiblyEscapedString(keywordEdge.Meta.ToString()) + ":" + searchString_secondPart;
 
             IVertex search = parentToCheck.GetAll(searchString);
 
@@ -1135,6 +1137,12 @@ namespace m0.ZeroCode
 
             foreach (IEdge searchResult in search)
             {
+                if (searchString_secondPart == "{}")
+                { // HACK
+                    if (((string)searchResult.To.Value) != "{}")
+                        continue;
+                }
+
                 if (/*!KeywordMatchedSubGraphEdges.ContainsKey(searchResult) &&*/ !currentMatchGraphEdgeList.Contains(searchResult))
                 {
                     if(!VertexOperations.IsLink(keywordEdge))
@@ -1200,8 +1208,15 @@ namespace m0.ZeroCode
                 firstMatchingEdgesInGraphToCompare = graphToCompare.GetAll("(?<ANY>):");
 
                 if (firstMatchingEdgesInGraphToCompare.Count() > 0)
-                    if (GraphUtil.GetValueAndCompareStrings(edgeToCheck.To, (String)firstMatchingEdgesInGraphToCompare.FirstOrDefault().To.Value))
-                        firstMatchEdgeInGraphToCompare = firstMatchingEdgesInGraphToCompare.FirstOrDefault();
+                {
+                    IEdge e = firstMatchingEdgesInGraphToCompare.FirstOrDefault();
+
+                    if (IsKeywordVertexWildcard(e.To))
+                        firstMatchEdgeInGraphToCompare = e;
+                    else
+                        if (GraphUtil.GetValueAndCompareStrings(edgeToCheck.To, (String)e.To.Value))
+                            firstMatchEdgeInGraphToCompare = e;
+                }
             }
 
             if (firstMatchEdgeInGraphToCompare != null)
@@ -1255,13 +1270,19 @@ namespace m0.ZeroCode
             //if (KeywordMatchedSubGraphEdges.ContainsKey(edgeToCheck))
             //   return;
 
-            foreach (IEdge keyword in MinusZero.Instance.Root.GetAll(@"User\CurrentUser:\CodeSettings:\Keyword:\"))
+            foreach (IEdge keyword in MinusZero.Instance.Root.GetAll(@"User\CurrentUser:\CodeSettings:\Keyword:\$Keyword:"))
             if(keyword.To != m0.MinusZero.Instance.newValueKeywordVertex)
             {              
                 IList<IEdge> matchedEdges = MatchGraphs(edgeToCheck, keyword.To);
 
                 if (matchedEdges!=null && matchedEdges.Count > 0)
                 {
+                        if (((string)keyword.To.Value).StartsWith("{"))
+                        {
+                            matchedEdges = MatchGraphs(edgeToCheck, keyword.To);
+                        }
+
+
                     KeywordMatch match = new KeywordMatch();
 
                     // match.BaseEdge = matchedEdges[0];

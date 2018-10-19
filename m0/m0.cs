@@ -916,7 +916,7 @@ namespace m0
              IVertex o_call_any_param=o_call_any.AddVertex(smu.Get(@"MultiOperator\Expression"), "(?<expr>)");
 
              o_call_any_param.AddEdge(smb.Get(@"$KeywordManyRoot"), smb.Get(@"$Empty"));
-            */
+            
              // ()
              //
              // ((?<expr>))
@@ -930,7 +930,7 @@ namespace m0
             o_par_any.AddEdge(smb.Get(@"Vertex\$Is"), smu.Get("()"));
 
              o_par_any.AddVertex(smu.Get(@"SingleOperator\TargetExpression"), "(?<expr>)");
-     /*
+     */
              // \
              //
              // \                         
@@ -968,7 +968,7 @@ namespace m0
             // ""
             //
             // "\"(?<value>)\""
-            */
+            
             //IVertex newValueKeyword = smuk.AddVertex(keyword, "\"(?<value>)\"");
             IVertex newValueKeyword = smuk.AddVertex(keyword, "[(?<value>)]");
 
