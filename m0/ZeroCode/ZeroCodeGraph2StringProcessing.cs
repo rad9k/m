@@ -1122,26 +1122,27 @@ namespace m0.ZeroCode
             if (isNotComparableKeywordEdge(keywordEdge.Meta.ToString()))
                 return true;
 
-            string searchString;
+            //string searchString;
 
+            string searchString_firstPart = ZeroCodeCommon.stringToPossiblyEscapedString(keywordEdge.Meta.ToString());
             string searchString_secondPart = "";
 
             if (!IsKeywordVertexWildcard(keywordEdge.To))
-                searchString_secondPart = ZeroCodeCommon.stringToPossiblyEscapedString(keywordEdge.To.ToString());
+                //searchString_secondPart = ZeroCodeCommon.stringToPossiblyEscapedString(keywordEdge.To.ToString());
+                searchString_secondPart = keywordEdge.To.ToString();
 
-            searchString = ZeroCodeCommon.stringToPossiblyEscapedString(keywordEdge.Meta.ToString()) + ":" + searchString_secondPart;
+            //searchString = searchString_firstPart + ":" + searchString_secondPart;
 
-            IVertex search = parentToCheck.GetAll(searchString);
+            //IVertex search = parentToCheck.GetAll(searchString); // current query implementation does not handle quotas properly : {}, \ keywords does not work properly
 
             bool toReturn = false;
 
-            foreach (IEdge searchResult in search)
+            // foreach (IEdge searchResult in search)
+            foreach (IEdge searchResult in parentToCheck)
+                if(GeneralUtil.CompareStrings(searchString_firstPart,searchResult.Meta.Value)&& 
+                    (searchString_secondPart == "" || GeneralUtil.CompareStrings(searchString_secondPart, searchResult.To.Value)))
             {
-                if (searchString_secondPart == "{}")
-                { // HACK
-                    if (((string)searchResult.To.Value) != "{}")
-                        continue;
-                }
+           
 
                 if (/*!KeywordMatchedSubGraphEdges.ContainsKey(searchResult) &&*/ !currentMatchGraphEdgeList.Contains(searchResult))
                 {
@@ -1272,12 +1273,17 @@ namespace m0.ZeroCode
 
             foreach (IEdge keyword in MinusZero.Instance.Root.GetAll(@"User\CurrentUser:\CodeSettings:\Keyword:\$Keyword:"))
             if(keyword.To != m0.MinusZero.Instance.newValueKeywordVertex)
-            {              
+            {
+                if (((string)keyword.To.Value).StartsWith(@" \ "))
+                    {
+                        int x = 0;
+                    }
+
                 IList<IEdge> matchedEdges = MatchGraphs(edgeToCheck, keyword.To);
 
                 if (matchedEdges!=null && matchedEdges.Count > 0)
                 {
-                        if (((string)keyword.To.Value).StartsWith("{"))
+                        if (((string)keyword.To.Value).StartsWith(@" \ "))
                         {
                             matchedEdges = MatchGraphs(edgeToCheck, keyword.To);
                         }

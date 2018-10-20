@@ -93,6 +93,10 @@ namespace m0.UIWpf.Visualisers
             
             Foreground = new SolidColorBrush(Color.FromRgb(0X2B, 0X91, 0XAF));
 
+            this.LineNumbersForeground = new SolidColorBrush(Colors.LightGray);
+
+            this.ShowLineNumbers = true;
+
             foldingManager = FoldingManager.Install(TextArea);
             foldingStrategy = new TabFoldingStrategy();
             foldingStrategy.UpdateFoldings(foldingManager, Document);
@@ -126,6 +130,7 @@ namespace m0.UIWpf.Visualisers
         {
             Vertex.Get("ZoomVisualiserContent:").Value = 15.0;
             Vertex.Get("ShowWhiteSpace:").Value = "False";
+            Vertex.Get("ShowLineNumbers:").Value = "False";
             Vertex.Get("HighlightedLine:").Value = "True";
         }
 
@@ -169,6 +174,9 @@ namespace m0.UIWpf.Visualisers
                 ChangeZoomVisualiserContent();
 
             if (sender == Vertex.Get("ShowWhiteSpace:") && e.Type == VertexChangeType.ValueChanged)
+                UpdateEditView();
+
+            if (sender == Vertex.Get("ShowLineNumbers:") && e.Type == VertexChangeType.ValueChanged)
                 UpdateEditView();
 
             if (sender == Vertex.Get("HighlightedLine:") && e.Type == VertexChangeType.ValueChanged)
