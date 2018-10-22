@@ -459,32 +459,32 @@ namespace m0.Graph
             return null;            
         }
 
-        static public IVertex DeepFindOneByValue(IVertex findRoot, string value)
+        static public IVertex DeepFindOneByValue(IVertex findRoot, string value, bool canGoIntoLinks)
         {
             GraphIterator i = new GraphIterator(value);
 
-            return DeepIterator(findRoot, i.Compare, true, false).FirstOrDefault();
+            return DeepIterator(findRoot, i.Compare, true, false, canGoIntoLinks).FirstOrDefault();
         }
 
-        static public IVertex DeepFindOneByMeta(IVertex findRoot, string value)
+        static public IVertex DeepFindOneByMeta(IVertex findRoot, string value, bool canGoIntoLinks)
         {
             GraphIterator i = new GraphIterator(value);
 
-            return DeepIterator(findRoot, i.CompareMeta, true, false).FirstOrDefault();
+            return DeepIterator(findRoot, i.CompareMeta, true, false, canGoIntoLinks).FirstOrDefault();
         }        
 
-        static public IEnumerable<IVertex> DeepIterator(IVertex iterationRoot, GraphIteratorIterate iterate, bool isSingleResult, bool canModifyOutEdges)
+        static public IEnumerable<IVertex> DeepIterator(IVertex iterationRoot, GraphIteratorIterate iterate, bool isSingleResult, bool canModifyOutEdges, bool canGoIntoLinks)
         {
             List<IVertex> visited = new List<IVertex>();
 
             List<IVertex> returnList = new List<IVertex>();
 
-            DeepIterator_Reccurent(iterationRoot, iterate, visited, returnList, isSingleResult, canModifyOutEdges);
+            DeepIterator_Reccurent(iterationRoot, iterate, visited, returnList, isSingleResult, canModifyOutEdges, canGoIntoLinks);
 
             return returnList;
         }
 
-        static bool DeepIterator_Reccurent(IVertex iterationRoot, GraphIteratorIterate iterate, List<IVertex> visited, List<IVertex> returnList, bool isSingleResult, bool canModifyOutEdges)
+        static bool DeepIterator_Reccurent(IVertex iterationRoot, GraphIteratorIterate iterate, List<IVertex> visited, List<IVertex> returnList, bool isSingleResult, bool canModifyOutEdges, bool canGoIntoLinks)
         {
             bool toReturn = false;
 
@@ -499,6 +499,7 @@ namespace m0.Graph
             foreach (IEdge e in outEdges)
             {
                 if (!visited.Contains(e.To))
+                if (!canGoIntoLinks || !VertexOperations.IsLink(e))
                 {
                     visited.Add(e.To);
                     if (iterate(e))
@@ -508,7 +509,7 @@ namespace m0.Graph
                             return true;
                     }
 
-                    if (DeepIterator_Reccurent(e.To, iterate, visited, returnList, isSingleResult, canModifyOutEdges))
+                    if (DeepIterator_Reccurent(e.To, iterate, visited, returnList, isSingleResult, canModifyOutEdges, canGoIntoLinks))
                     {
                         toReturn = true;
 

@@ -123,7 +123,7 @@ namespace m0.ZeroCode
         {
             if (inputVertex != null)
                 // return (inputVertex.Get("*\"" + value.ToString() + "\""));
-                return GraphUtil.DeepFindOneByValue(inputVertex, (string)value);
+                return GraphUtil.DeepFindOneByValue(inputVertex, (string)value, true);
             else
                 return null;
         }

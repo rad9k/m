@@ -2521,7 +2521,7 @@ namespace m0.ZeroCode
 
         private void ProcessToVertexMocksToLinks()
         {
-            GraphUtil.DeepIterator(parseRoot, this.ProcessToVertexMocksToLinks_Delegate, false, true);
+            GraphUtil.DeepIterator(parseRoot, this.ProcessToVertexMocksToLinks_Delegate, false, true, false);
         }
 
         IEnumerable<IVertex> SubGraphPreProcessing;

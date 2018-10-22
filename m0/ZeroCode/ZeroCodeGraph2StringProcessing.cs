@@ -336,6 +336,37 @@ namespace m0.ZeroCode
         public int BaseEdgePathLength;
 
         public IList<IEdge> MatchedEdges;
+
+        public bool DoKeywordDefinitionContainLocalRoot;
+
+        public bool DoKeywordDefinitionContainStartInLocalRoot;
+
+        public bool IsStartInLocalRoot;
+
+        public KeywordMatch(IVertex _KeywordDefinition, ZeroCodeGraph2StringProcessing processing)
+        {
+            KeywordDefinition = _KeywordDefinition;
+
+            if (processing.DoKeywordDefinitionContainLocalRoot_Dictionary.ContainsKey(KeywordDefinition))
+                DoKeywordDefinitionContainLocalRoot = processing.DoKeywordDefinitionContainLocalRoot_Dictionary[KeywordDefinition];
+            else
+            {
+                if (GraphUtil.DeepFindOneByMeta(KeywordDefinition, "$LocalRoot", false) != null)
+                    DoKeywordDefinitionContainLocalRoot = true;
+
+                processing.DoKeywordDefinitionContainLocalRoot_Dictionary.Add(KeywordDefinition, DoKeywordDefinitionContainLocalRoot);
+            }
+
+            if (processing.DoKeywordDefinitionContainStartInLocalRoot_Dictionary.ContainsKey(KeywordDefinition))
+                DoKeywordDefinitionContainStartInLocalRoot = processing.DoKeywordDefinitionContainStartInLocalRoot_Dictionary[KeywordDefinition];
+            else
+            {
+                if (GraphUtil.DeepFindOneByMeta(KeywordDefinition, "$StartInLocalRoot", false) != null)
+                    DoKeywordDefinitionContainStartInLocalRoot = true;
+
+                processing.DoKeywordDefinitionContainStartInLocalRoot_Dictionary.Add(KeywordDefinition, DoKeywordDefinitionContainStartInLocalRoot);
+            }
+        }
     }
 
     class VertexData
@@ -366,9 +397,12 @@ namespace m0.ZeroCode
         public IDictionary<IVertex, VertexData> SubGraphVertexesDictionary;
         public IDictionary<IEdge, KeywordMatch> KeywordMatchedSubGraphEdges;
 
+        public IDictionary<IVertex, bool> DoKeywordDefinitionContainLocalRoot_Dictionary;
+        public IDictionary<IVertex, bool> DoKeywordDefinitionContainStartInLocalRoot_Dictionary;
+
         public ZeroCodeGraph2StringProcessing()
         {
-         
+
         }
 
         string Tab = "\t";
@@ -682,7 +716,7 @@ namespace m0.ZeroCode
 
             if (km.BaseEdge == keywordEdge /*&& isVertexNew(keywordEdge, GetPathFromKeywordMatchAndKeywordEdge(km, keywordEdge, ""))*/)
             {
-                if(!isNested)
+                if(!isNested && !km.IsStartInLocalRoot)
                     AppendNewLineAndTabs();
 
 
@@ -1266,7 +1300,7 @@ namespace m0.ZeroCode
             return count;
         }
 
-        public void CheckVertexIfItMachesAnyKeywordGraphs(IEdge edgeToCheck, string path)
+        public void CheckVertexIfItMachesAnyKeywordGraphs(IEdge edgeToCheck, string path, IEdge edgeToCheck_parent)
         {
             //if (KeywordMatchedSubGraphEdges.ContainsKey(edgeToCheck))
             //   return;
@@ -1283,13 +1317,12 @@ namespace m0.ZeroCode
 
                 if (matchedEdges!=null && matchedEdges.Count > 0)
                 {
-                        if (((string)keyword.To.Value).StartsWith(@" \ "))
-                        {
-                            matchedEdges = MatchGraphs(edgeToCheck, keyword.To);
-                        }
+                        //if (((string)keyword.To.Value).StartsWith(@" \ "))
+                        //{
+                         //   matchedEdges = MatchGraphs(edgeToCheck, keyword.To);
+                        //}
 
-
-                    KeywordMatch match = new KeywordMatch();
+                    KeywordMatch match = new KeywordMatch(keyword.To, this);
 
                     // match.BaseEdge = matchedEdges[0];
                     match.BaseEdge = edgeToCheck; // same as above
@@ -1297,8 +1330,15 @@ namespace m0.ZeroCode
 
                     match.BaseEdgePathLength = getNumberOfOccurances(match.BaseEdgePath, '\\');
 
-                    match.KeywordDefinition = keyword.To;
                     match.MatchedEdges = new List<IEdge>();
+
+                    if (KeywordMatchedSubGraphEdges.ContainsKey(edgeToCheck_parent))
+                    {
+                        KeywordMatch match_parent = KeywordMatchedSubGraphEdges[edgeToCheck_parent];
+
+                        if (match_parent.DoKeywordDefinitionContainLocalRoot && match.DoKeywordDefinitionContainLocalRoot)
+                            match.IsStartInLocalRoot = true;
+                    }
 
                     foreach (IEdge e in matchedEdges)
                     {
@@ -1396,7 +1436,7 @@ namespace m0.ZeroCode
                 {
                     string LinkString = path + suffix + GraphUtil.GetIdentyfyingQuerySubString_ImportMeta(ee);
 
-                    CheckVertexIfItMachesAnyKeywordGraphs(ee, LinkString);                    
+                    CheckVertexIfItMachesAnyKeywordGraphs(ee, LinkString, e);                    
 
                     if (!BeenList.Contains(ee)&&!VertexOperations.IsLink(ee))
                         MatchKeywords(ee, LinkString);
@@ -1411,6 +1451,9 @@ namespace m0.ZeroCode
             VertexesDictionary = new Dictionary<IVertex, VertexData>();
             SubGraphVertexesDictionary = new Dictionary<IVertex, VertexData>();
             KeywordMatchedSubGraphEdges = new Dictionary<IEdge, KeywordMatch>();
+
+            DoKeywordDefinitionContainLocalRoot_Dictionary = new Dictionary<IVertex, bool>();
+            DoKeywordDefinitionContainStartInLocalRoot_Dictionary = new Dictionary<IVertex, bool>();
 
             // 
 

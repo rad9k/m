@@ -79,6 +79,11 @@ namespace m0.UIWpf.Visualisers
             else
                 Options.ShowTabs = false;
 
+            if (GraphUtil.GetValueAndCompareStrings(Vertex.Get(@"ShowLineNumbers:"), "True"))
+                this.ShowLineNumbers = true;
+            else
+                this.ShowLineNumbers = false;
+
             if (GraphUtil.GetValueAndCompareStrings(Vertex.Get(@"HighlightedLine:"), "True"))
                 Options.HighlightCurrentLine = true;
             else
@@ -94,8 +99,6 @@ namespace m0.UIWpf.Visualisers
             Foreground = new SolidColorBrush(Color.FromRgb(0X2B, 0X91, 0XAF));
 
             this.LineNumbersForeground = new SolidColorBrush(Colors.LightGray);
-
-            this.ShowLineNumbers = true;
 
             foldingManager = FoldingManager.Install(TextArea);
             foldingStrategy = new TabFoldingStrategy();
