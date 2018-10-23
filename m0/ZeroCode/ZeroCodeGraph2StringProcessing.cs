@@ -411,6 +411,10 @@ namespace m0.ZeroCode
 
         void SourceAppend(string s)
         {
+            string NewLineStringPlusNewLine = getNewLineAndTabsString();
+
+            s = s.Replace("\r\n", NewLineStringPlusNewLine);
+
             Source.Append(s);
         }
 
@@ -444,12 +448,21 @@ namespace m0.ZeroCode
 
         int tabTimes; 
 
-        void AppendNewLineAndTabs()
+        string getNewLineAndTabsString()
         {
-            SourceAppend(NewLine);
+            StringBuilder sb = new StringBuilder();
+
+            sb.Append(NewLine);
 
             for (int i = 0; i < tabTimes; i++)
-                SourceAppend(Tab);
+                sb.Append(Tab);
+
+            return sb.ToString();
+        }
+
+        void AppendNewLineAndTabs()
+        {
+            SourceAppend(getNewLineAndTabsString());
         }   
 
         void AppendAdditionalNewLines(IEdge e)
@@ -761,12 +774,15 @@ namespace m0.ZeroCode
 
                     string manySentenceSecond = manySentenceFirst;
 
-                    manySentenceSecond = manySentenceSecond.Substring(0, manySentenceSecond.IndexOf("(+"))
-                        + manySentenceSecond.Substring(manySentenceSecond.IndexOf("(+") + 2, manySentenceSecond.IndexOf("+)") - manySentenceSecond.IndexOf("(+") - 2)
-                        + manySentenceSecond.Substring(manySentenceSecond.IndexOf("+)") + 2);
+                    if(sentence.Contains("(+") && sentence.Contains("+)"))
+                    {
+                        manySentenceSecond = manySentenceSecond.Substring(0, manySentenceSecond.IndexOf("(+"))
+                            + manySentenceSecond.Substring(manySentenceSecond.IndexOf("(+") + 2, manySentenceSecond.IndexOf("+)") - manySentenceSecond.IndexOf("(+") - 2)
+                            + manySentenceSecond.Substring(manySentenceSecond.IndexOf("+)") + 2);
 
-                    manySentenceFirst = manySentenceFirst.Substring(0, manySentenceFirst.IndexOf("(+"))
-                        + manySentenceFirst.Substring(manySentenceFirst.IndexOf("+)") + 2);
+                        manySentenceFirst = manySentenceFirst.Substring(0, manySentenceFirst.IndexOf("(+"))
+                            + manySentenceFirst.Substring(manySentenceFirst.IndexOf("+)") + 2);
+                    }                  
 
                     bool wasThereNewLine = false;
 
