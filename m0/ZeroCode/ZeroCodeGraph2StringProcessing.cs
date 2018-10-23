@@ -413,6 +413,12 @@ namespace m0.ZeroCode
         {
             string NewLineStringPlusNewLine = getNewLineAndTabsString();
 
+            if(s.Contains("\t") && specialTabTimesNonActivator)
+            {
+                specialTabTimesNonActivator = false;
+                s = s.Replace("\t", "");
+            }
+
             s = s.Replace("\r\n", NewLineStringPlusNewLine);
 
             Source.Append(s);
@@ -721,16 +727,26 @@ namespace m0.ZeroCode
             return false;
         }
 
+        bool specialTabTimesNonActivator;
+
         bool AppendKeyword(IEdge keywordEdge, bool isNested)
         {
             bool whatToReturn = true;
+
+            bool shouldDecreaseTabTimes = false;
 
             KeywordMatch km = KeywordMatchedSubGraphEdges[keywordEdge];
 
             if (km.BaseEdge == keywordEdge /*&& isVertexNew(keywordEdge, GetPathFromKeywordMatchAndKeywordEdge(km, keywordEdge, ""))*/)
             {
-                if(!isNested && !km.IsStartInLocalRoot)
+                if (!isNested && !km.IsStartInLocalRoot)
                     AppendNewLineAndTabs();
+                else //if (!isNested)
+                {
+                    tabTimes++;
+                    specialTabTimesNonActivator = true;
+                    shouldDecreaseTabTimes = true;
+                }
 
 
                 if (GraphUtil.GetValueAndCompareStrings(km.KeywordDefinition, "import (?<name>) (?<link>)"))
@@ -761,6 +777,9 @@ namespace m0.ZeroCode
 
                     if (sentence.Contains("(?<SUB>)"))
                         whatToReturn = false;
+
+                    if (shouldDecreaseTabTimes)
+                        tabTimes--;
                 }
                 else
                 {
@@ -789,6 +808,9 @@ namespace m0.ZeroCode
                     wasThereNewLine = ProcessSingleKeywordSentencePart(km, preManySentence, wasThereNewLine);
 
                     wasThereNewLine = ProcessManyKeywordSentencePart(km, manySentenceFirst, manySentenceSecond, keywordManyRoot, keywordManyRootQueryString, keywordManyRootBaseCount, wasThereNewLine);
+
+                    if (shouldDecreaseTabTimes)
+                        tabTimes--;
 
                     ProcessSingleKeywordSentencePart(km, postManySentence, wasThereNewLine);
                 }
