@@ -42,15 +42,20 @@ namespace m0.ZeroTypes
                     return true;
             }
 
-           // int cnt2 = 0;
+            int count = 0;
 
-            //foreach (IEdge e in baseEdge.OutEdgesRaw)
-            //    if (GraphUtil.GetValueAndCompareStrings(e.To, to.Value.ToString()) && GraphUtil.GetValueAndCompareStrings(e.Meta, meta.Value.ToString()))
-             //       cnt2++;
+            foreach(IEdge e in baseEdge.OutEdgesRaw)
+            {
+                if (GeneralUtil.CompareStrings(e.Meta.Value, meta.Value) && GeneralUtil.CompareStrings(e.To.Value, to.Value))
+                    count++;
 
-            if (baseEdge.GetAll("\""+meta.Value.ToString() + "\":\"" + to.Value.ToString()+ "\"").Count() > 1)
-           //if(cnt2 > 1)
-                return false;
+                if (count > 1)
+                    return false;
+
+            }
+
+           // if (baseEdge.GetAll("\""+meta.Value.ToString() + "\":\"" + to.Value.ToString()+ "\"").Count() > 1) // {} in the query
+            //    return false;
 
             return true;
         }

@@ -462,7 +462,9 @@ namespace m0.ZeroCode
 
         void AppendNewLineAndTabs()
         {
-            SourceAppend(getNewLineAndTabsString());
+            // SourceAppend(getNewLineAndTabsString()); << no as SourceAppend adds getNewLineAndTabsString() on its own
+
+            Source.Append(getNewLineAndTabsString());
         }   
 
         void AppendAdditionalNewLines(IEdge e)
@@ -480,8 +482,6 @@ namespace m0.ZeroCode
             else
                 SourceAppend(NewLine);
         }
-
-       
 
         void AppendAsLink(IVertex v, IEdge parent, bool hideLinkPrefix)
         {
