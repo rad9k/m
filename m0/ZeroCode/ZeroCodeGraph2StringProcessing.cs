@@ -411,15 +411,7 @@ namespace m0.ZeroCode
 
         void SourceAppend(string s)
         {
-            string NewLineStringPlusNewLine = getNewLineAndTabsString();
-
-            MinusZero.Instance.Log(0, "SourceAppend", s.Replace("\t","X"));
-            if (s.Contains("\t") /*&& specialTabTimesNonActivator*/)
-            {
-                MinusZero.Instance.Log(0, "SourceAppend", "AKTIVATOR!!!!!!!!!");
-                //specialTabTimesNonActivator = false;
-                s = s.Replace("\t", "");
-            }
+            string NewLineStringPlusNewLine = getNewLineAndTabsString();            
 
             s = s.Replace("\r\n", NewLineStringPlusNewLine);
 
@@ -727,9 +719,7 @@ namespace m0.ZeroCode
             }
 
             return false;
-        }
-
-        //bool specialTabTimesNonActivator;
+        }        
 
         bool AppendKeyword(IEdge keywordEdge, bool isNested)
         {
@@ -744,10 +734,8 @@ namespace m0.ZeroCode
                 if (!isNested && !km.IsStartInLocalRoot)
                     AppendNewLineAndTabs();
                 else //if (!isNested)
-                {
-                 //   MinusZero.Instance.Log(0, "AppendKeyword", "TABTIMES++");
+                {                 
                     tabTimes++;
-                 //   specialTabTimesNonActivator = true;
                     shouldDecreaseTabTimes = true;
                 }
 
@@ -814,12 +802,8 @@ namespace m0.ZeroCode
 
                     ProcessSingleKeywordSentencePart(km, postManySentence, wasThereNewLine);
 
-                    if (shouldDecreaseTabTimes)
-                    {
-                     //   MinusZero.Instance.Log(0, "AppendKeyword", "TABTIMES--");
-                        tabTimes--;
-                        //specialTabTimesNonActivator = false;
-                    }
+                    if (shouldDecreaseTabTimes)                                         
+                        tabTimes--;                    
 
                 }
 
