@@ -413,9 +413,11 @@ namespace m0.ZeroCode
         {
             string NewLineStringPlusNewLine = getNewLineAndTabsString();
 
-            if(s.Contains("\t") && specialTabTimesNonActivator)
+            MinusZero.Instance.Log(0, "SourceAppend", s.Replace("\t","X"));
+            if (s.Contains("\t") /*&& specialTabTimesNonActivator*/)
             {
-                specialTabTimesNonActivator = false;
+                MinusZero.Instance.Log(0, "SourceAppend", "AKTIVATOR!!!!!!!!!");
+                //specialTabTimesNonActivator = false;
                 s = s.Replace("\t", "");
             }
 
@@ -727,7 +729,7 @@ namespace m0.ZeroCode
             return false;
         }
 
-        bool specialTabTimesNonActivator;
+        //bool specialTabTimesNonActivator;
 
         bool AppendKeyword(IEdge keywordEdge, bool isNested)
         {
@@ -743,8 +745,9 @@ namespace m0.ZeroCode
                     AppendNewLineAndTabs();
                 else //if (!isNested)
                 {
+                 //   MinusZero.Instance.Log(0, "AppendKeyword", "TABTIMES++");
                     tabTimes++;
-                    specialTabTimesNonActivator = true;
+                 //   specialTabTimesNonActivator = true;
                     shouldDecreaseTabTimes = true;
                 }
 
@@ -809,10 +812,15 @@ namespace m0.ZeroCode
 
                     wasThereNewLine = ProcessManyKeywordSentencePart(km, manySentenceFirst, manySentenceSecond, keywordManyRoot, keywordManyRootQueryString, keywordManyRootBaseCount, wasThereNewLine);
 
-                    if (shouldDecreaseTabTimes)
-                        tabTimes--;
-
                     ProcessSingleKeywordSentencePart(km, postManySentence, wasThereNewLine);
+
+                    if (shouldDecreaseTabTimes)
+                    {
+                     //   MinusZero.Instance.Log(0, "AppendKeyword", "TABTIMES--");
+                        tabTimes--;
+                        //specialTabTimesNonActivator = false;
+                    }
+
                 }
 
                 return whatToReturn;
