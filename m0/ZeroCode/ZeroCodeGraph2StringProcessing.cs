@@ -1382,7 +1382,18 @@ namespace m0.ZeroCode
 
                                 if (oldMatch.BaseEdge == match.BaseEdge)
                                 {
-                                    if (match.BaseEdgePathLength < oldMatch.BaseEdgePathLength)
+                                    if (oldMatch.KeywordDefinition == MinusZero.Instance.newValueKeywordVertex)
+                                    {
+                                        KeywordMatchedSubGraphEdges.Remove(e);
+                                        KeywordMatchedSubGraphEdges.Add(e, match);
+                                    }
+                                    if (match.KeywordDefinition == MinusZero.Instance.newValueKeywordVertex)
+                                    {
+                                        KeywordMatchedSubGraphEdges.Remove(e);
+                                        KeywordMatchedSubGraphEdges.Add(e, match);
+                                    }
+
+                                        if (match.BaseEdgePathLength < oldMatch.BaseEdgePathLength)
                                     {
                                         oldMatch.BaseEdgePath = match.BaseEdgePath;
                                         oldMatch.BaseEdgePathLength = match.BaseEdgePathLength;
