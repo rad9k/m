@@ -1996,9 +1996,16 @@ namespace m0.ZeroCode
                         {
                             string name = ZeroCodeUtil.getRegexp((string)e.To.Value, Regex.Escape("(?<") + "(?<EXTRACT>.*)" + Regex.Escape(">)"));
 
-                            List<object> subs = ktd.parameters[name];
+                            List<object> subs;
+                            object sub;
 
-                            object sub = subs[cnt_subCount];
+                            if (name == "ANY")
+                                sub = "";
+                            else
+                            {
+                                subs = ktd.parameters[name];
+                                sub = subs[cnt_subCount];
+                            }
 
                             if (sub is string)
                                 AddKeywordVertex_AddVertex(s, parent, e, meta, sub, ref nv, ktd, parentMetaEdge);
@@ -2347,6 +2354,10 @@ namespace m0.ZeroCode
         IVertex AddVertex(ParsingStack s, IVertex baseVertex, IVertex meta, object val)
         {
             s.lastAddedVertexParent = baseVertex;
+
+            if (GeneralUtil.CompareStrings("(?<ANY>)", meta.Value))
+                meta = MinusZero.Instance.Empty;
+
             s.lastAddedVertex = baseVertex.AddVertex(meta, val);
             return s.lastAddedVertex;
         }

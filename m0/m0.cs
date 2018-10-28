@@ -498,6 +498,8 @@ namespace m0
             IVertex smuk = smu.AddVertex(null, "Keyword");
 
             IVertex any = smuk.AddVertex(null, "(?<ANY>)");
+
+            string anyString = "(?<ANY>)";
             
             // import meta
             //
@@ -955,7 +957,7 @@ namespace m0
 
             IVertex o_newSub = smuk.AddVertex(keyword, "{(*\r\n\t(?<expr>)*)\r\n}");
 
-            IVertex o_newSub_any = o_newSub.AddVertex(any, "");
+            IVertex o_newSub_any = o_newSub.AddVertex(any, anyString);
 
             o_newSub_any.AddVertex(smb.Get("$StartInLocalRoot"), "");
 

@@ -982,7 +982,7 @@ namespace m0.ZeroCode
                 string path = GetPathFromKeywordMatchAndKeywordEdge(km, e, null);
 
                 if(km.KeywordDefinition!=MinusZero.Instance.emptyKeywordVertex)
-                    AppendVertex(e, path, false, false); // non emptyKeword (standard)
+                    AppendVertex(e, path, false, false, false); // non emptyKeword (standard)
                 else
                     SourceAppend(e.To.Value.ToString()); // emptyKeyword handling
 
@@ -1031,19 +1031,23 @@ namespace m0.ZeroCode
 
             AppendNewLineAndTabs();
 
-            AppendPrefix();
+            bool prefixAppended = false;
 
             if (!IsNullOrEmpty(e.Meta))
             {
+                AppendPrefix();
+
+                prefixAppended = true;
+
                 AppendAsLink(e.Meta, parent, true);
 
                 AppendDoubleColon();
             }
 
-            return AppendVertex(e, path, true, true);
+            return AppendVertex(e, path, prefixAppended, true, true);
         }
 
-        private bool AppendVertex(IEdge e, string path, bool appendSuffix, bool hideLinkPrefix)
+        private bool AppendVertex(IEdge e, string path, bool prefixAppended, bool appendSuffix, bool hideLinkPrefix)
         {
             if (VertexOperations.IsLink(e))
             {
@@ -1063,18 +1067,16 @@ namespace m0.ZeroCode
                 {
                     AppendAsNew(e.To);
 
-                    if (appendSuffix)
+                    if (appendSuffix && prefixAppended)
                         AppendSuffix();
 
                     return true;
                 }
                 else
                 {
-                    // SourceAppend(" > " + firstQuery+" | "+secondQuery + " < ");
-                    // 
-                    // IN CASE OF EXPLOSION - uncomment
+                    if (appendSuffix)
+                        AppendPrefix();
 
-                    //SourceAppend("L2!");
                     AppendAsLink(e.To, null, hideLinkPrefix);
 
                     if (appendSuffix)
@@ -1250,6 +1252,11 @@ namespace m0.ZeroCode
             return null;
         }
 
+        public AddNewKeyword(IEdge baseEdge)
+        {
+
+        }
+
         public IList<IEdge> MatchGraphs(IEdge edgeToCheck, IVertex graphToCompare)
         {
             currentMatchGraphEdgeList = new List<IEdge>();
@@ -1268,6 +1275,8 @@ namespace m0.ZeroCode
                             firstMatchEdgeInGraphToCompare = e;
                 }
 
+            bool doNotAddEdgeToCheckToCurrentMatchGraphEdgeList = false;
+
             if (firstMatchEdgeInGraphToCompare == null) // lets try with (?<ANY>) @ meta
             {
                 firstMatchingEdgesInGraphToCompare = graphToCompare.GetAll("(?<ANY>):");
@@ -1277,16 +1286,25 @@ namespace m0.ZeroCode
                     IEdge e = firstMatchingEdgesInGraphToCompare.FirstOrDefault();
 
                     if (IsKeywordVertexWildcard(e.To))
+                    {
                         firstMatchEdgeInGraphToCompare = e;
+
+                        if (GeneralUtil.CompareStrings(e.To, "(?<ANY>)")) // we are going to have newValueKeyword here :)
+                            doNotAddEdgeToCheckToCurrentMatchGraphEdgeList = true;
+                    }
                     else
                         if (GraphUtil.GetValueAndCompareStrings(edgeToCheck.To, (String)e.To.Value))
-                            firstMatchEdgeInGraphToCompare = e;
+                        firstMatchEdgeInGraphToCompare = e;
                 }
             }
 
             if (firstMatchEdgeInGraphToCompare != null)
             {
-                currentMatchGraphEdgeList.Add(edgeToCheck);
+                if (doNotAddEdgeToCheckToCurrentMatchGraphEdgeList)
+                {
+
+                }else
+                    currentMatchGraphEdgeList.Add(edgeToCheck);
 
                 // if this is $ImportMeta or $Import we will handle it separetly
 
@@ -1347,9 +1365,9 @@ namespace m0.ZeroCode
 
                 if (matchedEdges!=null && matchedEdges.Count > 0)
                 {
-                        //if (((string)keyword.To.Value).StartsWith(@" \ "))
+                        //if (((string)keyword.To.Value).StartsWith("\"(?< value >)\""))
                         //{
-                         //   matchedEdges = MatchGraphs(edgeToCheck, keyword.To);
+                        //    matchedEdges = MatchGraphs(edgeToCheck, keyword.To);
                         //}
 
                     KeywordMatch match = new KeywordMatch(keyword.To, this);
@@ -1522,9 +1540,9 @@ namespace m0.ZeroCode
 
             ImportImports(graphBaseEdge.To);
 
-            AppendPrefix();
+            //AppendPrefix();
             AppendAsNew(graphBaseEdge.To);
-            AppendSuffix();
+            //AppendSuffix();
 
             foreach (IEdge e in graphBaseEdge.To.OutEdgesRaw)
                 ZeroCodeGraph2String_Reccurent(e, 1, graphBaseEdge,null);
