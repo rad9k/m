@@ -2017,7 +2017,8 @@ namespace m0.ZeroCode
                                 nv = _AddKeywordVertex(s, parent, (keywordTryingData)sub, ((keywordTryingData)sub).keywordVertex, meta, 0, null);// cnt_subCount);
                         }
                         else
-                            AddKeywordVertex_AddVertex(s, parent, e, meta, e.To, ref nv, ktd, parentMetaEdge);
+                            //AddKeywordVertex_AddVertex(s, parent, e, meta, e.To, ref nv, ktd, parentMetaEdge);
+                            AddKeywordVertex_AddVertex(s, parent, e, meta, e.To.Value, ref nv, ktd, parentMetaEdge);
 
                         if (s.subTextRanges.ContainsKey(ktd))
                         {
@@ -2355,7 +2356,7 @@ namespace m0.ZeroCode
         {
             s.lastAddedVertexParent = baseVertex;
 
-            if (GeneralUtil.CompareStrings("(?<ANY>)", meta.Value))
+            if (meta!=null && GeneralUtil.CompareStrings("(?<ANY>)", meta.Value))
                 meta = MinusZero.Instance.Empty;
 
             s.lastAddedVertex = baseVertex.AddVertex(meta, val);

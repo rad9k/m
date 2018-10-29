@@ -343,6 +343,8 @@ namespace m0.ZeroCode
 
         public bool IsStartInLocalRoot;
 
+        public string newValue;
+
         public KeywordMatch(IVertex _KeywordDefinition, ZeroCodeGraph2StringProcessing processing)
         {
             KeywordDefinition = _KeywordDefinition;
@@ -448,7 +450,8 @@ namespace m0.ZeroCode
             }
         }
 
-        int tabTimes; 
+        int tabTimes;
+        int tabTimesUsed;
 
         string getNewLineAndTabsString()
         {
@@ -458,6 +461,8 @@ namespace m0.ZeroCode
 
             for (int i = 0; i < tabTimes; i++)
                 sb.Append(Tab);
+
+            tabTimesUsed = tabTimes;
 
             return sb.ToString();
         }
@@ -763,6 +768,9 @@ namespace m0.ZeroCode
 
 
                 string sentence = (String)km.KeywordDefinition.Value;
+
+                if (km.newValue != null && km.newValue!="") // if there is ANY:ANY new value
+                    SourceAppend("\""+ km.newValue + "\" ");
 
                 if (keywordManyRoot == null)
                 {
@@ -1254,22 +1262,10 @@ namespace m0.ZeroCode
             return null;
         }
 
-        public void AddNewValueKeyword(IEdge baseEdge, string path)
+        public IList<IEdge> MatchGraphs(IEdge edgeToCheck, IVertex graphToCompare, out string newValueString)
         {
-            KeywordMatch match = new KeywordMatch(MinusZero.Instance.newValueKeywordVertex, this);
+            newValueString = null;
 
-            match.BaseEdge = baseEdge; 
-            match.BaseEdgePath = path;
-
-            match.BaseEdgePathLength = getNumberOfOccurances(match.BaseEdgePath, '\\');
-
-            match.MatchedEdges.Add(baseEdge);
-
-            KeywordMatchedSubGraphEdges.Add(baseEdge, match);
-        }
-
-        public IList<IEdge> MatchGraphs(IEdge edgeToCheck, IVertex graphToCompare, string pathForNewValueKeyword)
-        {
             currentMatchGraphEdgeList = new List<IEdge>();
 
             IVertex firstMatchingEdgesInGraphToCompare = graphToCompare.GetAll(ZeroCodeCommon.stringToPossiblyEscapedString(edgeToCheck.Meta.ToString()) + ":");
@@ -1286,8 +1282,6 @@ namespace m0.ZeroCode
                             firstMatchEdgeInGraphToCompare = e;
                 }
 
-            bool doNotAddEdgeToCheckToCurrentMatchGraphEdgeList = false;
-
             if (firstMatchEdgeInGraphToCompare == null) // lets try with (?<ANY>) @ meta
             {
                 firstMatchingEdgesInGraphToCompare = graphToCompare.GetAll("(?<ANY>):");
@@ -1301,7 +1295,7 @@ namespace m0.ZeroCode
                         firstMatchEdgeInGraphToCompare = e;
 
                         if (GeneralUtil.CompareStrings(e.To, "(?<ANY>)")) // we are going to have newValueKeyword here :)
-                            doNotAddEdgeToCheckToCurrentMatchGraphEdgeList = true;
+                            newValueString = (string)edgeToCheck.To.Value;
                     }
                     else
                         if (GraphUtil.GetValueAndCompareStrings(edgeToCheck.To, (String)e.To.Value))
@@ -1311,8 +1305,7 @@ namespace m0.ZeroCode
 
             if (firstMatchEdgeInGraphToCompare != null)
             {
-                if (!doNotAddEdgeToCheckToCurrentMatchGraphEdgeList)
-                    currentMatchGraphEdgeList.Add(edgeToCheck);
+                currentMatchGraphEdgeList.Add(edgeToCheck);
 
                 // if this is $ImportMeta or $Import we will handle it separetly
 
@@ -1337,9 +1330,6 @@ namespace m0.ZeroCode
                                 return null;                       
                     }
             }
-
-            if(doNotAddEdgeToCheckToCurrentMatchGraphEdgeList)
-                AddNewValueKeyword(edgeToCheck, pathForNewValueKeyword);
 
             return currentMatchGraphEdgeList;
         }
@@ -1371,7 +1361,9 @@ namespace m0.ZeroCode
                         int x = 0;
                     }
 
-                IList<IEdge> matchedEdges = MatchGraphs(edgeToCheck, keyword.To, path);
+                string newValueKeyword;
+
+                IList<IEdge> matchedEdges = MatchGraphs(edgeToCheck, keyword.To, out newValueKeyword);
 
                 if (matchedEdges!=null && matchedEdges.Count > 0)
                 {
@@ -1381,6 +1373,9 @@ namespace m0.ZeroCode
                         //}
 
                     KeywordMatch match = new KeywordMatch(keyword.To, this);
+
+                    if(newValueKeyword != null)
+                        match.newValue = newValueKeyword;
 
                     // match.BaseEdge = matchedEdges[0];
                     match.BaseEdge = edgeToCheck; // same as above
@@ -1392,7 +1387,7 @@ namespace m0.ZeroCode
                     {
                         KeywordMatch match_parent = KeywordMatchedSubGraphEdges[edgeToCheck_parent];
 
-                        if (match_parent.DoKeywordDefinitionContainLocalRoot && match.DoKeywordDefinitionContainLocalRoot)
+                        if (match_parent.DoKeywordDefinitionContainLocalRoot && match.DoKeywordDefinitionContainStartInLocalRoot)
                             match.IsStartInLocalRoot = true;
                     }
 
@@ -1408,18 +1403,7 @@ namespace m0.ZeroCode
 
                                 if (oldMatch.BaseEdge == match.BaseEdge)
                                 {
-                                    if (oldMatch.KeywordDefinition == MinusZero.Instance.newValueKeywordVertex)
-                                    {
-                                        KeywordMatchedSubGraphEdges.Remove(e);
-                                        KeywordMatchedSubGraphEdges.Add(e, match);
-                                    }
-                                    if (match.KeywordDefinition == MinusZero.Instance.newValueKeywordVertex)
-                                    {
-                                        KeywordMatchedSubGraphEdges.Remove(e);
-                                        KeywordMatchedSubGraphEdges.Add(e, match);
-                                    }
-
-                                        if (match.BaseEdgePathLength < oldMatch.BaseEdgePathLength)
+                                    if (match.BaseEdgePathLength < oldMatch.BaseEdgePathLength)
                                     {
                                         oldMatch.BaseEdgePath = match.BaseEdgePath;
                                         oldMatch.BaseEdgePathLength = match.BaseEdgePathLength;
@@ -1568,12 +1552,28 @@ namespace m0.ZeroCode
             SourceAppend(ZeroCodeCommon.CodeGraphVertexSuffix);
         }
 
+        int levelCorrection = 0;
+
         void ZeroCodeGraph2String_Reccurent(IEdge baseEdge, int level, IEdge parent, string path)
         {
             if (BeenList.Contains(baseEdge))
                 return;
 
-            tabTimes = level;
+            //tabTimes = level;
+
+            tabTimes = tabTimesUsed;
+
+            if (level > tabTimes + levelCorrection)
+            {
+                levelCorrection = level - tabTimes;
+                tabTimes++;
+            }
+
+            if (level < tabTimes)
+            {
+                tabTimes = level;
+                levelCorrection = 0;
+            }
 
             if (!ShallProcess(baseEdge))
                 return;
