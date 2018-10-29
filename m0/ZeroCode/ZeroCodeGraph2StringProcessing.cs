@@ -347,6 +347,8 @@ namespace m0.ZeroCode
         {
             KeywordDefinition = _KeywordDefinition;
 
+            MatchedEdges = new List<IEdge>();
+
             if (processing.DoKeywordDefinitionContainLocalRoot_Dictionary.ContainsKey(KeywordDefinition))
                 DoKeywordDefinitionContainLocalRoot = processing.DoKeywordDefinitionContainLocalRoot_Dictionary[KeywordDefinition];
             else
@@ -562,7 +564,7 @@ namespace m0.ZeroCode
 
             foreach (IEdge e in km.MatchedEdges)
                 if (e.From == firstEdge.From)
-                    if (GraphUtil.GetValueAndCompareStrings(e.Meta, meta))
+                    if (GraphUtil.GetValueAndCompareStrings(e.Meta, meta) || meta== "(?<ANY>)")
                         return e;
 
             return null;
@@ -1252,12 +1254,21 @@ namespace m0.ZeroCode
             return null;
         }
 
-        public AddNewKeyword(IEdge baseEdge)
+        public void AddNewValueKeyword(IEdge baseEdge, string path)
         {
+            KeywordMatch match = new KeywordMatch(MinusZero.Instance.newValueKeywordVertex, this);
 
+            match.BaseEdge = baseEdge; 
+            match.BaseEdgePath = path;
+
+            match.BaseEdgePathLength = getNumberOfOccurances(match.BaseEdgePath, '\\');
+
+            match.MatchedEdges.Add(baseEdge);
+
+            KeywordMatchedSubGraphEdges.Add(baseEdge, match);
         }
 
-        public IList<IEdge> MatchGraphs(IEdge edgeToCheck, IVertex graphToCompare)
+        public IList<IEdge> MatchGraphs(IEdge edgeToCheck, IVertex graphToCompare, string pathForNewValueKeyword)
         {
             currentMatchGraphEdgeList = new List<IEdge>();
 
@@ -1300,10 +1311,7 @@ namespace m0.ZeroCode
 
             if (firstMatchEdgeInGraphToCompare != null)
             {
-                if (doNotAddEdgeToCheckToCurrentMatchGraphEdgeList)
-                {
-
-                }else
+                if (!doNotAddEdgeToCheckToCurrentMatchGraphEdgeList)
                     currentMatchGraphEdgeList.Add(edgeToCheck);
 
                 // if this is $ImportMeta or $Import we will handle it separetly
@@ -1330,6 +1338,9 @@ namespace m0.ZeroCode
                     }
             }
 
+            if(doNotAddEdgeToCheckToCurrentMatchGraphEdgeList)
+                AddNewValueKeyword(edgeToCheck, pathForNewValueKeyword);
+
             return currentMatchGraphEdgeList;
         }
 
@@ -1343,7 +1354,6 @@ namespace m0.ZeroCode
                 n++;
                 count++;
             }
-    
 
             return count;
         }
@@ -1361,7 +1371,7 @@ namespace m0.ZeroCode
                         int x = 0;
                     }
 
-                IList<IEdge> matchedEdges = MatchGraphs(edgeToCheck, keyword.To);
+                IList<IEdge> matchedEdges = MatchGraphs(edgeToCheck, keyword.To, path);
 
                 if (matchedEdges!=null && matchedEdges.Count > 0)
                 {
@@ -1377,8 +1387,6 @@ namespace m0.ZeroCode
                     match.BaseEdgePath = path;
 
                     match.BaseEdgePathLength = getNumberOfOccurances(match.BaseEdgePath, '\\');
-
-                    match.MatchedEdges = new List<IEdge>();
 
                     if (KeywordMatchedSubGraphEdges.ContainsKey(edgeToCheck_parent))
                     {
