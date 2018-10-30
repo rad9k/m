@@ -392,7 +392,7 @@ namespace m0.ZeroCode
         public IEdge BaseEdge;
 
         public IList<IEdge> BeenList;
-        public IDictionary<IEdge, IVertex> BeenList_Keyword;
+        public IList<IEdge> BeenList_Keyword;
 
         public StringBuilder Source;
 
@@ -420,7 +420,7 @@ namespace m0.ZeroCode
 
             s = s.Replace("\r\n", NewLineStringPlusNewLine);
 
-            Source.Append(s);
+            Source.Append(s);            
         }
 
         void SourceAppend(char c)
@@ -451,8 +451,7 @@ namespace m0.ZeroCode
             }
         }
 
-        int tabTimes;
-        int tabTimesUsed;
+        int tabTimes;        
 
         string getNewLineAndTabsString()
         {
@@ -461,9 +460,7 @@ namespace m0.ZeroCode
             sb.Append(NewLine);
 
             for (int i = 0; i < tabTimes; i++)
-                sb.Append(Tab);
-
-            tabTimesUsed = tabTimes;
+                sb.Append(Tab);                       
 
             return sb.ToString();
         }
@@ -733,10 +730,10 @@ namespace m0.ZeroCode
         {
             KeywordMatch km = KeywordMatchedSubGraphEdges[keywordEdge];
 
-            if (BeenList_Keyword.ContainsKey(keywordEdge) && BeenList_Keyword[keywordEdge]==km.KeywordDefinition)
+            if (BeenList_Keyword.Contains(keywordEdge))
                 return false;
 
-            BeenList_Keyword.Add(keywordEdge,km.KeywordDefinition);
+            BeenList_Keyword.Add(keywordEdge);
 
             bool whatToReturn = true;
 
@@ -747,8 +744,8 @@ namespace m0.ZeroCode
             {
                 if (!isNested && !km.IsStartInLocalRoot)
                     AppendNewLineAndTabs();
-                else //if (!isNested)
-                {                 
+                else if(!km.IsStartInLocalRoot)
+                {                    
                     tabTimes++;
                     shouldDecreaseTabTimes = true;
                 }
@@ -800,6 +797,7 @@ namespace m0.ZeroCode
 
                     if (shouldDecreaseTabTimes)
                         tabTimes--;
+                 
                 }
                 else
                 {
@@ -833,10 +831,10 @@ namespace m0.ZeroCode
 
                     ProcessSingleKeywordSentencePart(km, postManySentence, wasThereNewLine, out notInterested);
 
-                    if (shouldDecreaseTabTimes)                                         
-                        tabTimes--;                    
-
-                }
+                    if (shouldDecreaseTabTimes)                    
+                        tabTimes--;
+                 
+                    }
 
                 return whatToReturn;
             }
@@ -1546,21 +1544,7 @@ namespace m0.ZeroCode
                 return;
 
             tabTimes = level;
-
-         /*   tabTimes = tabTimesUsed;
-
-            if (level > tabTimes + levelCorrection)
-            {
-                levelCorrection = level - tabTimes;
-                tabTimes++;
-            }
-
-            if (level < tabTimes)
-            {
-                tabTimes = level;
-                levelCorrection = 0;
-            }*/
-
+         
             if (!ShallProcess(baseEdge))
                 return;
 
@@ -1605,7 +1589,7 @@ namespace m0.ZeroCode
         public string Process(IEdge graphBaseEdge)
         {
             BeenList = new List<IEdge>();
-            BeenList_Keyword = new Dictionary<IEdge, IVertex>();
+            BeenList_Keyword = new List<IEdge>();
             Source = new StringBuilder();
             Imports = new Dictionary<IVertex, IList<IVertex>>();
             VertexesDictionary = new Dictionary<IVertex, VertexData>();
