@@ -1559,9 +1559,9 @@ namespace m0.ZeroCode
             if (BeenList.Contains(baseEdge))
                 return;
 
-            //tabTimes = level;
+            tabTimes = level;
 
-            tabTimes = tabTimesUsed;
+         /*   tabTimes = tabTimesUsed;
 
             if (level > tabTimes + levelCorrection)
             {
@@ -1573,7 +1573,7 @@ namespace m0.ZeroCode
             {
                 tabTimes = level;
                 levelCorrection = 0;
-            }
+            }*/
 
             if (!ShallProcess(baseEdge))
                 return;
