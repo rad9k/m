@@ -774,7 +774,19 @@ namespace m0.ZeroCode
 
                 if (keywordManyRoot == null)
                 {
-                    ProcessSingleKeywordSentencePart(km, sentence, false);
+                    bool zeroMatch;
+
+                    ProcessSingleKeywordSentencePart(km, sentence, false, out zeroMatch);
+
+                    if (zeroMatch&&km.DoKeywordDefinitionContainStartInLocalRoot)
+                    { // hack if there are no params but there are local roots
+                        IEdge e = km.BaseEdge;
+
+                        string path = GetPathFromKeywordMatchAndKeywordEdge(km, e, null);
+
+                        if (!VertexOperations.IsLink(e))
+                            AppendSubVertexes(km, e, path);
+                    }
 
                     if (sentence.Contains("(?<SUB>)"))
                         whatToReturn = false;
@@ -806,11 +818,13 @@ namespace m0.ZeroCode
 
                     bool wasThereNewLine = false;
 
-                    wasThereNewLine = ProcessSingleKeywordSentencePart(km, preManySentence, wasThereNewLine);
+                    bool notInterested;
+
+                    wasThereNewLine = ProcessSingleKeywordSentencePart(km, preManySentence, wasThereNewLine ,out notInterested);
 
                     wasThereNewLine = ProcessManyKeywordSentencePart(km, manySentenceFirst, manySentenceSecond, keywordManyRoot, keywordManyRootQueryString, keywordManyRootBaseCount, wasThereNewLine);
 
-                    ProcessSingleKeywordSentencePart(km, postManySentence, wasThereNewLine);
+                    ProcessSingleKeywordSentencePart(km, postManySentence, wasThereNewLine, out notInterested);
 
                     if (shouldDecreaseTabTimes)                                         
                         tabTimes--;                    
@@ -848,8 +862,10 @@ namespace m0.ZeroCode
 
         }
 
-        private bool ProcessSingleKeywordSentencePart(KeywordMatch km, string sentence, bool wasThereNewLine)
+        private bool ProcessSingleKeywordSentencePart(KeywordMatch km, string sentence, bool wasThereNewLine, out bool zeroMatch)
         {
+            zeroMatch = false;
+
             // find matches
             Regex rgx = new Regex(@"\(\?(A)?(V)?<[a-zA-Z0-9]+>\)");
 
@@ -857,7 +873,12 @@ namespace m0.ZeroCode
 
             //bool wasThereNewLine = false;
 
-            foreach (Match match in rgx.Matches(sentence))
+            MatchCollection matchCollection= rgx.Matches(sentence);
+
+            if (matchCollection.Count == 0)
+                zeroMatch = true;
+
+            foreach (Match match in matchCollection)
                 if (match.Value == "(?<SUB>)")
                 {
                     //
@@ -996,7 +1017,7 @@ namespace m0.ZeroCode
                 else
                     SourceAppend(e.To.Value.ToString()); // emptyKeyword handling
 
-                if (!VertexOperations.IsLink(e) && e != km.BaseEdge)
+                if (!VertexOperations.IsLink(e) /*&& e != km.BaseEdge*/)
                     wasThereNewLine = AppendSubVertexes(km, e, path);
             }
         }
@@ -1008,17 +1029,23 @@ namespace m0.ZeroCode
             bool wasFirstNewLine = false;
 
             foreach (IEdge e in baseEdge.To)
-                if (!km.MatchedEdges.Contains(e))
+            {
+                if (km.BaseEdge != baseEdge && !km.MatchedEdges.Contains(e))
                 {
                     if (wasFirstNewLine == false)
                     {
-                        tabTimes ++;
+                        tabTimes++;
                         wasFirstNewLine = true;
                         wasThereNewLine = true;
                     }
 
                     AppendEdge(e, null, basePath + "\\" + GraphUtil.GetIdentyfyingQuerySubString_ImportMeta(e));
                 }
+
+                if (km.DoKeywordDefinitionContainLocalRoot && km.MatchedEdges.Contains(e) && KeywordMatchedSubGraphEdges[e]!=km)
+                    AppendEdge(e, null, basePath + "\\" + GraphUtil.GetIdentyfyingQuerySubString_ImportMeta(e));
+                
+            }
 
             if (wasFirstNewLine)
             {
@@ -1295,7 +1322,7 @@ namespace m0.ZeroCode
                         firstMatchEdgeInGraphToCompare = e;
 
                         if (GeneralUtil.CompareStrings(e.To, "(?<ANY>)")) // we are going to have newValueKeyword here :)
-                            newValueString = (string)edgeToCheck.To.Value;
+                            newValueString = edgeToCheck.To.Value.ToString();
                     }
                     else
                         if (GraphUtil.GetValueAndCompareStrings(edgeToCheck.To, (String)e.To.Value))
@@ -1597,8 +1624,8 @@ namespace m0.ZeroCode
 
             bool isLink = VertexOperations.IsLink(baseEdge);
 
-            if (BeenList.Contains(baseEdge)&&!isLink)
-                been = true;            
+            //if (BeenList.Contains(baseEdge)&&!isLink)
+             //   been = true;     /?????????       
 
             bool appendAsNew = AppendEdge(baseEdge, parent, path);
 
