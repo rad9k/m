@@ -872,7 +872,7 @@ namespace m0.ZeroCode
             zeroMatch = false;
 
             // find matches
-            Regex rgx = new Regex(@"\(\?(A)?(V)?<[a-zA-Z0-9]+>\)");
+            Regex rgx = new Regex(@"\(\?(A)?(V)?<[a-zA-Z0-9_]+>\)");
 
             int prevPos = 0;
 
@@ -951,7 +951,7 @@ namespace m0.ZeroCode
                         else
                             sentence = sentenceSecond;
 
-                        Regex rgx = new Regex(@"\(\?(A)?(V)?<[a-zA-Z0-9]+>\)");
+                        Regex rgx = new Regex(@"\(\?(A)?(V)?<[a-zA-Z0-9_]+>\)");
 
                         int prevPos = 0;
 
