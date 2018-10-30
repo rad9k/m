@@ -238,6 +238,10 @@ namespace m0.ZeroCode
 
         //
 
+        IVertex errorList;
+
+        //
+
         List<string> specialKeywordGroups_new;
         List<string> specialKeywordGroups_empty;
         Dictionary<string, List<keywordTryingData>> examinedKeywords_All; // all keywords are here
@@ -2608,6 +2612,8 @@ namespace m0.ZeroCode
         public IVertex Process(IVertex _baseVertex, string _text)
         {
             baseVertex = _baseVertex;
+
+            errorList = MinusZero.Instance.CreateTempVertex();
 
             GestSubGraphPreProcessing();
 
