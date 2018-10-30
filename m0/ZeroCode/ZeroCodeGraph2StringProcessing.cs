@@ -392,6 +392,7 @@ namespace m0.ZeroCode
         public IEdge BaseEdge;
 
         public IList<IEdge> BeenList;
+        public IDictionary<IEdge, IVertex> BeenList_Keyword;
 
         public StringBuilder Source;
 
@@ -730,11 +731,17 @@ namespace m0.ZeroCode
 
         bool AppendKeyword(IEdge keywordEdge, bool isNested)
         {
+            KeywordMatch km = KeywordMatchedSubGraphEdges[keywordEdge];
+
+            if (BeenList_Keyword.ContainsKey(keywordEdge) && BeenList_Keyword[keywordEdge]==km.KeywordDefinition)
+                return false;
+
+            BeenList_Keyword.Add(keywordEdge,km.KeywordDefinition);
+
             bool whatToReturn = true;
 
             bool shouldDecreaseTabTimes = false;
 
-            KeywordMatch km = KeywordMatchedSubGraphEdges[keywordEdge];
 
             if (km.BaseEdge == keywordEdge /*&& isVertexNew(keywordEdge, GetPathFromKeywordMatchAndKeywordEdge(km, keywordEdge, ""))*/)
             {
@@ -1598,6 +1605,7 @@ namespace m0.ZeroCode
         public string Process(IEdge graphBaseEdge)
         {
             BeenList = new List<IEdge>();
+            BeenList_Keyword = new Dictionary<IEdge, IVertex>();
             Source = new StringBuilder();
             Imports = new Dictionary<IVertex, IList<IVertex>>();
             VertexesDictionary = new Dictionary<IVertex, VertexData>();
