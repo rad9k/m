@@ -1321,7 +1321,7 @@ namespace m0.ZeroCode
                     {
                         firstMatchEdgeInGraphToCompare = e;
 
-                        if (GeneralUtil.CompareStrings(e.To, "(?<ANY>)")) // we are going to have newValueKeyword here :)
+                        if (GeneralUtil.CompareStrings(e.To, "(?<ANY>)") && edgeToCheck.To.Value!=null) // we are going to have newValueKeyword here :)
                             newValueString = edgeToCheck.To.Value.ToString();
                     }
                     else
@@ -1521,54 +1521,6 @@ namespace m0.ZeroCode
                 }
         }
 
-        public string Process(IEdge graphBaseEdge)
-        {
-            BeenList = new List<IEdge>();
-            Source = new StringBuilder();
-            Imports = new Dictionary<IVertex, IList<IVertex>>();
-            VertexesDictionary = new Dictionary<IVertex, VertexData>();
-            SubGraphVertexesDictionary = new Dictionary<IVertex, VertexData>();
-            KeywordMatchedSubGraphEdges = new Dictionary<IEdge, KeywordMatch>();
-
-            DoKeywordDefinitionContainLocalRoot_Dictionary = new Dictionary<IVertex, bool>();
-            DoKeywordDefinitionContainStartInLocalRoot_Dictionary = new Dictionary<IVertex, bool>();
-
-            // 
-
-            BaseEdge = graphBaseEdge;
-
-            GetLinksForSubGraphVertexes(BaseEdge, null,0);
-
-            BeenList.Clear();
-
-            MatchKeywords(BaseEdge,null);
-
-            BeenList.Clear();
-
-            //
-
-            BeenList.Add(graphBaseEdge);
-
-            //
-
-
-
-            //ImportImports(MinusZero.Instance.Root.Get(@"System\TextLanguage\ZeroCode\DefaultImports"));
-
-            ImportImports(MinusZero.Instance.Root.Get(@"User\CurrentUser:\CodeSettings:"));
-
-            ImportImports(graphBaseEdge.To);
-
-            //AppendPrefix();
-            AppendAsNew(graphBaseEdge.To);
-            //AppendSuffix();
-
-            foreach (IEdge e in graphBaseEdge.To.OutEdgesRaw)
-                ZeroCodeGraph2String_Reccurent(e, 1, graphBaseEdge,null);
-
-            return Source.ToString();
-        }
-
         void AppendPrefix()
         {
             SourceAppend(ZeroCodeCommon.CodeGraphVertexPrefix);
@@ -1640,6 +1592,55 @@ namespace m0.ZeroCode
                     ZeroCodeGraph2String_Reccurent(e, level + 1, baseEdge, path);
 
             AppendAdditionalNewLines(baseEdge);
+        }
+
+
+        public string Process(IEdge graphBaseEdge)
+        {
+            BeenList = new List<IEdge>();
+            Source = new StringBuilder();
+            Imports = new Dictionary<IVertex, IList<IVertex>>();
+            VertexesDictionary = new Dictionary<IVertex, VertexData>();
+            SubGraphVertexesDictionary = new Dictionary<IVertex, VertexData>();
+            KeywordMatchedSubGraphEdges = new Dictionary<IEdge, KeywordMatch>();
+
+            DoKeywordDefinitionContainLocalRoot_Dictionary = new Dictionary<IVertex, bool>();
+            DoKeywordDefinitionContainStartInLocalRoot_Dictionary = new Dictionary<IVertex, bool>();
+
+            // 
+
+            BaseEdge = graphBaseEdge;
+
+            GetLinksForSubGraphVertexes(BaseEdge, null, 0);
+
+            BeenList.Clear();
+
+            MatchKeywords(BaseEdge, null);
+
+            BeenList.Clear();
+
+            //
+
+            BeenList.Add(graphBaseEdge);
+
+            //
+
+
+
+            //ImportImports(MinusZero.Instance.Root.Get(@"System\TextLanguage\ZeroCode\DefaultImports"));
+
+            ImportImports(MinusZero.Instance.Root.Get(@"User\CurrentUser:\CodeSettings:"));
+
+            ImportImports(graphBaseEdge.To);
+
+            //AppendPrefix();
+            AppendAsNew(graphBaseEdge.To);
+            //AppendSuffix();
+
+            foreach (IEdge e in graphBaseEdge.To.OutEdgesRaw)
+                ZeroCodeGraph2String_Reccurent(e, 1, graphBaseEdge, null);
+
+            return Source.ToString();
         }
     }
 }
