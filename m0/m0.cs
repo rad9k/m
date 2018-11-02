@@ -204,7 +204,7 @@ namespace m0
         {
             IVertex sm = Root.Get(@"System\Meta");
 
-            GeneralUtil.ParseAndExcute(sm, null, "{Base{Vertex{$$IsLink,$Inherits,$Is,$EdgeTarget,$VertexTarget,$IsAggregation,$MinCardinality,$MaxCardinality,$MinTargetCardinality,$MaxTargetCardinality,$DefaultValue,$DefaultViewVisualiser,$DefaultEditVisualiser,$DefaultOpenVisualiser,$Group,$Section,$Description,Author,Dependency},$Empty,$Import,$ImportMeta,$Keyword,$KeywordGroup,$KeywordManyRoot,$LocalRoot,$StartInLocalRoot,$NewLine}}");
+            GeneralUtil.ParseAndExcute(sm, null, "{Base{Vertex{$$IsLink,$Inherits,$Is,$EdgeTarget,$VertexTarget,$IsAggregation,$MinCardinality,$MaxCardinality,$MinTargetCardinality,$MaxTargetCardinality,$DefaultValue,$DefaultViewVisualiser,$DefaultEditVisualiser,$DefaultOpenVisualiser,$Group,$Section,$Description,Author,Dependency},$Empty,$Import,$ImportMeta,$Keyword,$KeywordGroup,$KeywordManyRoot,$LocalRoot,$StartInLocalRoot,$NewLine,$ParseRoot}}");
 
             sm.Get(@"Presentation\$Hide").AddEdge(sm.Get(@"Base\Vertex\$EdgeTarget"), sm.Get(@"Base\Vertex"));
 

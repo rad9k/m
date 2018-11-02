@@ -2609,6 +2609,43 @@ namespace m0.ZeroCode
                 }
         }
 
+        void AddError(int lineNumber, string value)
+        {
+            IVertex smz = MinusZero.Instance.Root.Get(@"System\Meta\ZeroTypes");
+
+            IVertex error = errorList.AddVertex(smz.Get("TextArtefact"), "");
+
+            error.AddVertex(smz.Get(@"TextArtefact\LineNumber"), lineNumber);
+
+            error.AddVertex(smz.Get(@"TextArtefact\Type"), smz.Get(@"TextArtefactTypeEnum\Error"));
+
+            error.AddVertex(smz.Get(@"TextArtefact\Value"), value);
+        }
+
+        void DeleteAllEdgesFromBaseVertex()
+        {
+            foreach (IEdge e in baseVertex.ToList())
+                if (!GeneralUtil.CompareStrings(e.Meta, "$ParseRoot"))
+                    baseVertex.DeleteEdge(e);
+
+        }
+
+        void MoveAllParseRootEdgesToBaseVertex()
+        {
+            object firstValue = parseRoot.FirstOrDefault().To.Value;
+
+            foreach(IEdge e in parseRoot.FirstOrDefault().To.ToList())
+            {
+                baseVertex.AddEdge(e.Meta, e.To);
+
+                parseRoot.DeleteEdge(e);
+            }
+
+            GraphUtil.DeleteEdgeByMeta(baseVertex, "$ParseRoot");
+
+            baseVertex.Value = firstValue;
+        }
+
         public IVertex Process(IVertex _baseVertex, string _text)
         {
             baseVertex = _baseVertex;
@@ -2623,15 +2660,20 @@ namespace m0.ZeroCode
 
             prepareImportList();
 
-            parseRoot = _baseVertex.AddVertex(null, "ParseRoot");
+            parseRoot = _baseVertex.AddVertex(MinusZero.Instance.Root.Get(@"System\Meta\Base\$ParseRoot"),"");
 
             ProcessTextPart(parseRoot, 0, lineInfoList.Count - 1);
 
             ProcessToVertexMocksToLinks();
 
-            MoveInEdgesComingFromOutsideOfSubGraphToParseRoot();
+            if (errorList.Count() == 0)
+            {
+                MoveInEdgesComingFromOutsideOfSubGraphToParseRoot();
+                DeleteAllEdgesFromBaseVertex();
+                MoveAllParseRootEdgesToBaseVertex();
+            }
 
-            return null;
+            return errorList;
         }
 
         public String2ZeroCodeGraphProcessing()

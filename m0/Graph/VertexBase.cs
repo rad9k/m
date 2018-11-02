@@ -115,6 +115,9 @@ namespace m0.Graph
 
         public virtual IVertex AddVertex(IVertex metaVertex, object val)
         {
+            if (val is IEdge)
+                throw new Exception("Trying to add Edge as Vertex");
+
             IVertex nv = (IVertex)Activator.CreateInstance(this.GetType(), new object[] { this.Store });
 
             nv.Value = val;
