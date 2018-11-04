@@ -2926,72 +2926,6 @@ namespace m0
                     v.To.AddEdge(isAggregation, empty);
         }
 
-        public void Initialize(){
-            InitializeLog();            
-
-            Bootstrap();
-
-            CreateSystem();            
-
-            Init();
-
-            CreateSystemMeta();
-
-            CreatePresentation();
-
-            CreateSystemMetaBase();
-
-            CreateSystemMetaUml();
-
-            CreateSystemMetaUml_Action_part();
-
-            
-
-            CreateSystemMetaZeroTypes();
-
-            CreateSystemTextLanguageZeroCode();
-
-
-            CreateSystemUMLKeywords();
-
-
-            CreateSystemMetaVisualiserDiagram();
-
-            CreateSystemMetaVisualiser();            
-
-            CreateSystemData();
-
-            CreateSystemDataVisualiserDiagram();
-
-            CreateSystemDataVisualiserDiagram_Uml();
-
-            CreateStoresMeta();            
-
-            CreateSystemMetaCommands();
-
-            CreateUserMeta();
-
-            CreateUsers();
-
-            AddIsAttribute("Attribute");
-
-            AddIsAttribute("Association");
-
-            AddIsAttribute("Aggregation");
-
-            AddIsAggregation();
-
-            AddDrives();            
-
-            UIWpf.UIWpf.InitializeUIWpf();
-
-            IsInitialized = true;
-
-            //
-
-           // AutoTest.ParserTest();
-        }
-
         bool disposed = false;
 
         public void Dispose()
@@ -3073,6 +3007,76 @@ namespace m0
             // store's constructor does this
 
             return store;
+        }
+
+
+        public void Initialize()
+        {
+            InitializeLog();
+
+            Bootstrap();
+
+            CreateSystem();
+
+            Init();
+
+            CreateSystemMeta();
+
+            CreatePresentation();
+
+            CreateSystemMetaBase();
+
+            CreateSystemMetaUml();
+
+            CreateSystemMetaUml_Action_part();
+
+
+
+            CreateSystemMetaZeroTypes();
+
+            CreateSystemTextLanguageZeroCode();
+
+
+            CreateSystemUMLKeywords();
+
+
+            CreateSystemMetaVisualiserDiagram();
+
+            CreateSystemMetaVisualiser();
+
+            CreateSystemData();
+
+            CreateSystemDataVisualiserDiagram();
+
+            CreateSystemDataVisualiserDiagram_Uml();
+
+            CreateStoresMeta();
+
+            CreateSystemMetaCommands();
+
+            CreateUserMeta();
+
+            CreateUsers();
+
+            AddIsAttribute("Attribute");
+
+            AddIsAttribute("Association");
+
+            AddIsAttribute("Aggregation");
+
+            AddIsAggregation();
+
+            AddDrives();
+
+            UIWpf.UIWpf.InitializeUIWpf();
+
+            IsInitialized = true;
+
+            //
+
+            Store.Json.JsonSerializationStore.test();
+
+            //AutoTest.ParserTest();
         }
     }
 }

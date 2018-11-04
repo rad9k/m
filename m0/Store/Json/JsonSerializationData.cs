@@ -1,0 +1,53 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using Jil;
+using m0.Foundation;
+
+namespace m0.Store.Json
+{
+    public class JsonSerializationData
+    {
+        public Dictionary<int, StoreId> StoreIdDictionary;
+        public List<JsonVertex> Vertexes;
+    }
+
+    public class JsonVertex
+    {
+        [JilDirective(Name = "Id", IsUnion = true)]
+        public string IdString;
+
+        [JilDirective(Name = "Id", IsUnion = true)]
+        public long IdLong;
+
+
+        [JilDirective(Name = "Value", IsUnion = true)]
+        public string ValueString;
+
+        [JilDirective(Name = "Value", IsUnion = true)]
+        public double ValueDouble;
+
+        public List<JsonEdge> Edges;
+    }
+
+    public class JsonEdge
+    {
+        public string MetaStoreId;
+
+
+        [JilDirective(Name = "MetaId", IsUnion = true)]
+        public string MetaIdString;
+
+        [JilDirective(Name = "MetaId", IsUnion = true)]
+        public long MetaIdLong;
+
+
+        [JilDirective(Name = "ToId", IsUnion = true)]
+        public string ToIdString;
+
+        [JilDirective(Name = "ToId", IsUnion = true)]
+        public long ToIdLong;
+    }
+}

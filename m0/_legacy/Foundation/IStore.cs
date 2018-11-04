@@ -6,15 +6,6 @@ using System.Threading.Tasks;
 
 namespace m0.Foundation
 {
-    public class StoreId
-    {
-        public string TypeName;
-
-        public string Identifier;
-    }
-    
-    
-    
     // IStore has to have constructor with following parameters:
     // - Identifier
     // - IStoreUniverse
