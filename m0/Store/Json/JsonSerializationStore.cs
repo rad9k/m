@@ -2,57 +2,91 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
 using System.Threading.Tasks;
+using m0.Foundation;
+using m0.Graph;
 
-using Jil;
-
-namespace m0.Store.Json
+namespace m0.Store
 {
-    class test
+    public class JsonSerializationStore:StoreBase
     {
-        public string name { get; set; }
-
-        public object o { get; set; }
-    }
-
-
-    class JsonSerializationStore
-    {
-        public static void test()
+        
+        
+        void Load()
         {
-            List<test> l = new List<test>();
+            if (File.Exists(Identifier))
+            {
+                FileStream readStream = new FileStream(Identifier, FileMode.Open);
+                BinaryFormatter formatter = new BinaryFormatter();
+                
+                VertexIdentifiersDictionary = (Dictionary<string, IVertex>)formatter.Deserialize(readStream);
+                string RootIdentifier = (string)formatter.Deserialize(readStream);
 
-            test t = new test();
-            t.name = "raz";
-            t.o = "Magda";
+                RestoreStoreDataInVertexes();
 
-            l.Add(t);
+                readStream.Close();
 
-            t = new test();
-            t.name = "raz";
-            t.o = 100;
+                _root = GetVertexByIdentifier(RootIdentifier);
 
-            l.Add(t);
-
-            t = new test();
-            t.name = "raz";
-            t.o = 100.0;
-
-            l.Add(t);
-
-            t = new test();
-            t.name = "raz";
-            t.o = 100.1;
-
-            l.Add(t);
-
-            var output = new StreamWriter("xxx");
-
-            JSON.SerializeDynamic(l, output);
-
-            output.Close();
+                Attach();
+            }
+            else
+            {
+                _root = new EasyVertex(this);
+            }
             
+        }
+
+        public override void Refresh()
+        {
+            RefreshPre();
+
+            Load();
+
+            RefreshPost();
+        }
+
+        public override void CommitTransaction()
+        {
+            if (DetachState != DetachStateEnum.Detached)
+                throw new Exception("Store not Detached");
+
+            FileStream writeStream = new FileStream(Identifier, FileMode.Create);
+            BinaryFormatter formatter = new BinaryFormatter();
+
+            NullStoreDataInVertexes();
+
+            formatter.Serialize(writeStream, VertexIdentifiersDictionary);
+            formatter.Serialize(writeStream, Root.Identifier);
+
+            writeStream.Close();
+
+            base.CommitTransaction();
+
+            RestoreStoreDataInVertexes();            
+        }
+
+        public bool RefreshOnRollback { get; set; }
+        
+        public override void RollbackTransaction()
+        {
+            if (RefreshOnRollback)
+                Refresh();
+            else
+                throw new NotSupportedException();
+
+            base.RollbackTransaction();
+        }
+
+
+        public BinarySerializationStore(String identifier, IStoreUniverse storeUniverse, AccessLevelEnum[] accessLeveList)
+            : base(identifier, storeUniverse, accessLeveList)
+        {
+            RefreshOnRollback = false;
+
+            Load();
         }
     }
 }

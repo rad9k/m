@@ -132,8 +132,8 @@
     <Compile Include="Store\FileSystem\FileVertex.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Store\Json\JsonSerializationData.cs" />
     <Compile Include="Store\Json\JsonSerializationStore.cs" />
+    <Compile Include="Store\Json\JsonSerializationData.cs" />
     <Compile Include="Store\MemoryStore.cs">
       <SubType>Code</SubType>
     </Compile>
