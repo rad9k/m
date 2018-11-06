@@ -42,8 +42,8 @@ namespace m0.Store
             if (!IsTemporaryStore)
             {
                 VertexIdentifiersDictionary.Add(Vertex.Identifier, Vertex);
-                //MinusZero.Instance.Log(4,"StoreVertexIdentifier", this.Identifier + " " + StoreVertexIdentifierCnt.ToString());
-                StoreVertexIdentifierCnt++;
+
+                //StoreVertexIdentifierCnt++;
             }
         }
     }

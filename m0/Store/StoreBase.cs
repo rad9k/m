@@ -155,12 +155,12 @@ namespace m0.Store
 
         protected Dictionary<string, IVertex> VertexIdentifiersDictionary;
 
-        protected int StoreVertexIdentifierCnt = 0;
+     //   protected int StoreVertexIdentifierCnt = 0;
         public virtual void StoreVertexIdentifier(IVertex Vertex)
         {
             VertexIdentifiersDictionary.Add(Vertex.Identifier,Vertex);
-           // MinusZero.Instance.Log(4,"StoreVertexIdentifier", this.Identifier+" "+StoreVertexIdentifierCnt.ToString());
-            StoreVertexIdentifierCnt++;
+           
+            //StoreVertexIdentifierCnt++;
         }
 
         public virtual void RemoveVertexIdentifier(IVertex Vertex)

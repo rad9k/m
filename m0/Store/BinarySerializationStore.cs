@@ -90,8 +90,6 @@ namespace m0.Store
         {
             if (RefreshOnRollback)
                 Refresh();
-            else
-                throw new NotSupportedException();
 
             base.RollbackTransaction();
         }

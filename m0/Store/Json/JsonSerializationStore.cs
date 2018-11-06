@@ -24,8 +24,6 @@ namespace m0.Store
                 VertexIdentifiersDictionary = (Dictionary<string, IVertex>)formatter.Deserialize(readStream);
                 string RootIdentifier = (string)formatter.Deserialize(readStream);
 
-                RestoreStoreDataInVertexes();
-
                 readStream.Close();
 
                 _root = GetVertexByIdentifier(RootIdentifier);
@@ -56,16 +54,13 @@ namespace m0.Store
             FileStream writeStream = new FileStream(Identifier, FileMode.Create);
             BinaryFormatter formatter = new BinaryFormatter();
 
-            NullStoreDataInVertexes();
 
             formatter.Serialize(writeStream, VertexIdentifiersDictionary);
             formatter.Serialize(writeStream, Root.Identifier);
 
             writeStream.Close();
 
-            base.CommitTransaction();
-
-            RestoreStoreDataInVertexes();            
+            base.CommitTransaction();        
         }
 
         public bool RefreshOnRollback { get; set; }
@@ -74,14 +69,12 @@ namespace m0.Store
         {
             if (RefreshOnRollback)
                 Refresh();
-            else
-                throw new NotSupportedException();
 
             base.RollbackTransaction();
         }
 
 
-        public BinarySerializationStore(String identifier, IStoreUniverse storeUniverse, AccessLevelEnum[] accessLeveList)
+        public JsonSerializationStore(String identifier, IStoreUniverse storeUniverse, AccessLevelEnum[] accessLeveList)
             : base(identifier, storeUniverse, accessLeveList)
         {
             RefreshOnRollback = false;

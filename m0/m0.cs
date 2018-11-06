@@ -3074,7 +3074,9 @@ namespace m0
 
             //
 
-            Store.Json.JsonSerializationStore.test();
+            JsonSerializationStore jss = new JsonSerializationStore(@"c:\x", this, new AccessLevelEnum[] { });
+
+            jss.CommitTransaction();
 
             //AutoTest.ParserTest();
         }
