@@ -7,8 +7,9 @@ using System.Text;
 using System.Threading.Tasks;
 using m0.Foundation;
 using m0.Graph;
+using Jil;
 
-namespace m0.Store
+namespace m0.Store.Json
 {
     public class JsonSerializationStore:StoreBase
     {
@@ -56,11 +57,12 @@ namespace m0.Store
             if (needToDetachAttach)
                 Detach();
 
-            FileStream writeStream = new FileStream(Identifier, FileMode.Create);
-            BinaryFormatter formatter = new BinaryFormatter();
+            StreamWriter writeStream = new StreamWriter(Identifier);
 
-            formatter.Serialize(writeStream, VertexIdentifiersDictionary);
-            formatter.Serialize(writeStream, Root.Identifier);
+            JsonSerializationData data = GetJsonSerializationData();
+
+            JSON.Serialize<JsonSerializationData>(data, writeStream);
+            
 
             writeStream.Close();
 
@@ -68,6 +70,13 @@ namespace m0.Store
 
             if (needToDetachAttach)
                 Detach();
+        }
+
+        private JsonSerializationData GetJsonSerializationData()
+        {
+            JsonSerializationData data = new JsonSerializationData();
+
+            return data;
         }
 
         public bool RefreshOnRollback { get; set; }

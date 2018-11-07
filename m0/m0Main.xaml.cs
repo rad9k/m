@@ -24,6 +24,7 @@ using m0.Util;
 using Xceed.Wpf.AvalonDock.Controls;
 using m0.UIWpf.Dialog;
 using m0.Store;
+using m0.Store.Json;
 
 namespace m0
 {
