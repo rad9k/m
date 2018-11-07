@@ -3074,10 +3074,6 @@ namespace m0
 
             //
 
-            JsonSerializationStore jss = new JsonSerializationStore(@"c:\x", this, new AccessLevelEnum[] { });
-
-            jss.CommitTransaction();
-
             //AutoTest.ParserTest();
         }
     }

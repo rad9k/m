@@ -23,6 +23,7 @@ using m0.ZeroTypes;
 using m0.Util;
 using Xceed.Wpf.AvalonDock.Controls;
 using m0.UIWpf.Dialog;
+using m0.Store;
 
 namespace m0
 {
@@ -73,25 +74,32 @@ namespace m0
         {
             IVertex r=MinusZero.Instance.Root;
 
-            GeneralUtil.ParseAndExcute(r, r.Get(@"System\Meta"), @"{TEST3{Class:Customer{},Class:Person{$Description:opis,Attribute:Name,Attribute:Surname,Attribute:DateOfBirth},Class:Company{Attribute:Name,Attribute:RegistrationNumber,},Class:Adress{Attribute:Line 1,Attribute:Line 2,Attribute:Line 3,Attribute:City,Attribute:County,Attribute:Postal code,Attribute:Country},Class:Basket{Attribute:Creation date,Attribute:Status},Class:Item{Attribute:Name,Attribute:Description,Attribute:Price}}}");
+            JsonSerializationStore jss = new JsonSerializationStore(@"c:\m0\x",MinusZero.Instance, new AccessLevelEnum[] { });
 
-            r.Get(@"TEST3\Customer").AddEdge(r.Get(@"System\Meta*$Is"), r.Get(@"System\Meta\UML\Class"));
-            r.Get(@"TEST3\Person").AddEdge(r.Get(@"System\Meta*$Is"), r.Get(@"System\Meta\UML\Class"));
-            r.Get(@"TEST3\Company").AddEdge(r.Get(@"System\Meta*$Is"), r.Get(@"System\Meta\UML\Class"));
-            r.Get(@"TEST3\Adress").AddEdge(r.Get(@"System\Meta*$Is"), r.Get(@"System\Meta\UML\Class"));
-            r.Get(@"TEST3\Basket").AddEdge(r.Get(@"System\Meta*$Is"), r.Get(@"System\Meta\UML\Class"));
-            r.Get(@"TEST3\Item").AddEdge(r.Get(@"System\Meta*$Is"), r.Get(@"System\Meta\UML\Class"));
+            IVertex tr = jss.Root;
 
-            GeneralUtil.ParseAndExcute(r, r.Get(@"System\Meta"), "{TEST2,TEST{Class:Person{Association:Spouse{$MaxCardinality:1,$MaxTargetCardinality:1},Aggregation:Child{$MaxCardinality:3},Attribute:Name,Attribute:Surname,Attribute:Age{MinValue:0,MaxValue:40},Attribute:NoseLength{MinValue:0,MaxValue:40},Attribute:Money{MinValue:0,MaxValue:1000},Attribute:IsGood,Attribute:IsPretty,Attribute:IsPretty2,Attribute:IsPretty3},Enum:Pretty{EnumValue:Yes,EnumValue:No,EnumValue:Maybe}}}");
+            // GeneralUtil.ParseAndExcute(r, r.Get(@"System\Meta"), @"{TEST3{Class:Customer{},Class:Person{$Description:opis,Attribute:Name,Attribute:Surname,Attribute:DateOfBirth},Class:Company{Attribute:Name,Attribute:RegistrationNumber,},Class:Adress{Attribute:Line 1,Attribute:Line 2,Attribute:Line 3,Attribute:City,Attribute:County,Attribute:Postal code,Attribute:Country},Class:Basket{Attribute:Creation date,Attribute:Status},Class:Item{Attribute:Name,Attribute:Description,Attribute:Price}}}");
 
-            r.Get(@"TEST\Pretty").AddEdge(r.Get(@"System\Meta*$Inherits"), r.Get(@"System\Meta\ZeroTypes\EnumBase"));
-            r.Get(@"TEST\Person").AddEdge(r.Get(@"System\Meta*$Is"), r.Get(@"System\Meta\UML\Class"));
+            GeneralUtil.ParseAndExcute(tr, r.Get(@"System\Meta"), @"{TEST3{Class:Customer{},Class:Person{$Description:opis,Attribute:Name,Attribute:Surname,Attribute:DateOfBirth},Class:Company{Attribute:Name,Attribute:RegistrationNumber,},Class:Adress{Attribute:Line 1,Attribute:Line 2,Attribute:Line 3,Attribute:City,Attribute:County,Attribute:Postal code,Attribute:Country},Class:Basket{Attribute:Creation date,Attribute:Status},Class:Item{Attribute:Name,Attribute:Description,Attribute:Price}}}");
+
+
+            tr.Get(@"TEST3\Customer").AddEdge(r.Get(@"System\Meta*$Is"), r.Get(@"System\Meta\UML\Class"));
+            tr.Get(@"TEST3\Person").AddEdge(r.Get(@"System\Meta*$Is"), r.Get(@"System\Meta\UML\Class"));
+            tr.Get(@"TEST3\Company").AddEdge(r.Get(@"System\Meta*$Is"), r.Get(@"System\Meta\UML\Class"));
+            tr.Get(@"TEST3\Adress").AddEdge(r.Get(@"System\Meta*$Is"), r.Get(@"System\Meta\UML\Class"));
+            tr.Get(@"TEST3\Basket").AddEdge(r.Get(@"System\Meta*$Is"), r.Get(@"System\Meta\UML\Class"));
+            tr.Get(@"TEST3\Item").AddEdge(r.Get(@"System\Meta*$Is"), r.Get(@"System\Meta\UML\Class"));
+
+            GeneralUtil.ParseAndExcute(tr, r.Get(@"System\Meta"), "{TEST2,TEST{Class:Person{Association:Spouse{$MaxCardinality:1,$MaxTargetCardinality:1},Aggregation:Child{$MaxCardinality:3},Attribute:Name,Attribute:Surname,Attribute:Age{MinValue:0,MaxValue:40},Attribute:NoseLength{MinValue:0,MaxValue:40},Attribute:Money{MinValue:0,MaxValue:1000},Attribute:IsGood,Attribute:IsPretty,Attribute:IsPretty2,Attribute:IsPretty3},Enum:Pretty{EnumValue:Yes,EnumValue:No,EnumValue:Maybe}}}");
+
+            tr.Get(@"TEST\Pretty").AddEdge(r.Get(@"System\Meta*$Inherits"), r.Get(@"System\Meta\ZeroTypes\EnumBase"));
+            tr.Get(@"TEST\Person").AddEdge(r.Get(@"System\Meta*$Is"), r.Get(@"System\Meta\UML\Class"));
 
             IVertex smzt=r.Get(@"System\Meta\ZeroTypes");
 
             IVertex EdgeTarget = r.Get(@"System\Meta*$EdgeTarget");
 
-            IVertex Person = r.Get(@"TEST\Person");
+            IVertex Person = tr.Get(@"TEST\Person");
 
 
 
@@ -152,61 +160,61 @@ namespace m0
             Person.Get("NoseLength").AddEdge(EdgeTarget, smzt.Get("Float"));
             Person.Get("Money").AddEdge(EdgeTarget, smzt.Get("Decimal"));
             Person.Get("IsGood").AddEdge(EdgeTarget, smzt.Get("Boolean"));
-            Person.Get("IsPretty").AddEdge(EdgeTarget, r.Get(@"TEST\Pretty"));
-            Person.Get("IsPretty2").AddEdge(EdgeTarget, r.Get(@"TEST\Pretty"));
-            Person.Get("IsPretty3").AddEdge(EdgeTarget, r.Get(@"TEST\Pretty"));
+            Person.Get("IsPretty").AddEdge(EdgeTarget, tr.Get(@"TEST\Pretty"));
+            Person.Get("IsPretty2").AddEdge(EdgeTarget, tr.Get(@"TEST\Pretty"));
+            Person.Get("IsPretty3").AddEdge(EdgeTarget, tr.Get(@"TEST\Pretty"));
 
             //Person.AddEdge(smu.Get(@"Class\Attribute"), Person.Get("Surname"));
             // what is it for?
 
-            GeneralUtil.ParseAndExcute(r.Get("TEST"), r.Get(@"TEST"), "{Person:Person1{Name:Radek,Surname:Tereszczuk,Age:34,NoseLength:\"2,3\",Money:999,IsGood:False,IsPretty:},Person:Person2{Name:Maurycy,Surname:Tereszczuk,Age:1,NoseLength:1.1,Money:9999,IsGood:True,IsPretty:}}");
+            GeneralUtil.ParseAndExcute(tr.Get("TEST"), tr.Get(@"TEST"), "{Person:Person1{Name:Radek,Surname:Tereszczuk,Age:34,NoseLength:\"2,3\",Money:999,IsGood:False,IsPretty:},Person:Person2{Name:Maurycy,Surname:Tereszczuk,Age:1,NoseLength:1.1,Money:9999,IsGood:True,IsPretty:}}");
 
-            GeneralUtil.ParseAndExcute(r.Get("TEST"), r.Get(@"TEST"), "{Person:Person3{Name:Radek,Surname:Tereszczuk,Age:34,NoseLength:\"2,3\",Money:999,IsGood:False,IsPretty:},Person:Person4{Name:Maurycy,Surname:Tereszczuk,Age:1,NoseLength:1.1,Money:9999,IsGood:True,IsPretty:}}");
+            GeneralUtil.ParseAndExcute(tr.Get("TEST"), tr.Get(@"TEST"), "{Person:Person3{Name:Radek,Surname:Tereszczuk,Age:34,NoseLength:\"2,3\",Money:999,IsGood:False,IsPretty:},Person:Person4{Name:Maurycy,Surname:Tereszczuk,Age:1,NoseLength:1.1,Money:9999,IsGood:True,IsPretty:}}");
             
-            r.Get(@"TEST\Person1").AddEdge(r.Get(@"System\Meta*$Is"), r.Get(@"TEST\Person"));
-            r.Get(@"TEST\Person2").AddEdge(r.Get(@"System\Meta*$Is"), r.Get(@"TEST\Person"));
-            r.Get(@"TEST\Person3").AddEdge(r.Get(@"System\Meta*$Is"), r.Get(@"TEST\Person"));
-            r.Get(@"TEST\Person4").AddEdge(r.Get(@"System\Meta*$Is"), r.Get(@"TEST\Person"));
+            tr.Get(@"TEST\Person1").AddEdge(r.Get(@"System\Meta*$Is"), tr.Get(@"TEST\Person"));
+            tr.Get(@"TEST\Person2").AddEdge(r.Get(@"System\Meta*$Is"), tr.Get(@"TEST\Person"));
+            tr.Get(@"TEST\Person3").AddEdge(r.Get(@"System\Meta*$Is"), tr.Get(@"TEST\Person"));
+            tr.Get(@"TEST\Person4").AddEdge(r.Get(@"System\Meta*$Is"), tr.Get(@"TEST\Person"));
 
-            GraphUtil.ReplaceEdge(r.Get(@"TEST\Person1"), "IsPretty", r.Get(@"TEST\Pretty\No"));
-            GraphUtil.ReplaceEdge(r.Get(@"TEST\Person2"), "IsPretty", r.Get(@"TEST\Pretty\Yes"));
-            GraphUtil.ReplaceEdge(r.Get(@"TEST\Person3"), "IsPretty", r.Get(@"TEST\Pretty\Yes"));
-            GraphUtil.ReplaceEdge(r.Get(@"TEST\Person4"), "IsPretty", r.Get(@"TEST\Pretty\Yes"));
+            GraphUtil.ReplaceEdge(tr.Get(@"TEST\Person1"), "IsPretty", tr.Get(@"TEST\Pretty\No"));
+            GraphUtil.ReplaceEdge(tr.Get(@"TEST\Person2"), "IsPretty", tr.Get(@"TEST\Pretty\Yes"));
+            GraphUtil.ReplaceEdge(tr.Get(@"TEST\Person3"), "IsPretty", tr.Get(@"TEST\Pretty\Yes"));
+            GraphUtil.ReplaceEdge(tr.Get(@"TEST\Person4"), "IsPretty", tr.Get(@"TEST\Pretty\Yes"));
                 
 
             for (int x = 0; x < 1; x++)
             {
-                GeneralUtil.ParseAndExcute(r.Get("TEST2"), r.Get(@"TEST"), "{Person:Person1"+x+"{Name:Radek,Surname:Tereszczuk,Age:34,NoseLength:\"2,3\",Money:999,IsGood:False,IsPretty:},Person:Person2"+x+"{Name:Maurycy,Surname:Tereszczuk,Age:1,NoseLength:1.1,Money:9999,IsGood:True,IsPretty:}}");
+                GeneralUtil.ParseAndExcute(tr.Get("TEST2"), tr.Get(@"TEST"), "{Person:Person1"+x+"{Name:Radek,Surname:Tereszczuk,Age:34,NoseLength:\"2,3\",Money:999,IsGood:False,IsPretty:},Person:Person2"+x+"{Name:Maurycy,Surname:Tereszczuk,Age:1,NoseLength:1.1,Money:9999,IsGood:True,IsPretty:}}");
                 
               
-                GeneralUtil.ParseAndExcute(r.Get("TEST2"), r.Get(@"TEST"), "{Person:Person3"+x+"{Name:Magda,Surname:Tereszczuk,Age:18,NoseLength:\"2,1\",Money:999,IsGood:True,IsPretty:},Person:Person4"+x+"{Name:Jan,Surname:Kuciak,Age:10,NoseLength:0.6,Money:99999,IsGood:True,IsPretty:}}");
+                GeneralUtil.ParseAndExcute(tr.Get("TEST2"), tr.Get(@"TEST"), "{Person:Person3"+x+"{Name:Magda,Surname:Tereszczuk,Age:18,NoseLength:\"2,1\",Money:999,IsGood:True,IsPretty:},Person:Person4"+x+"{Name:Jan,Surname:Kuciak,Age:10,NoseLength:0.6,Money:99999,IsGood:True,IsPretty:}}");
 
-                GraphUtil.ReplaceEdge(r.Get(@"TEST2\Person1"+x), "IsPretty", r.Get(@"TEST\Pretty\No"));
-                GraphUtil.ReplaceEdge(r.Get(@"TEST2\Person2"+x), "IsPretty", r.Get(@"TEST\Pretty\Yes"));
-                GraphUtil.ReplaceEdge(r.Get(@"TEST2\Person3"+x), "IsPretty", r.Get(@"TEST\Pretty\Yes"));
-                GraphUtil.ReplaceEdge(r.Get(@"TEST2\Person4"+x), "IsPretty", r.Get(@"TEST\Pretty\Yes"));
+                GraphUtil.ReplaceEdge(tr.Get(@"TEST2\Person1"+x), "IsPretty", tr.Get(@"TEST\Pretty\No"));
+                GraphUtil.ReplaceEdge(tr.Get(@"TEST2\Person2"+x), "IsPretty", tr.Get(@"TEST\Pretty\Yes"));
+                GraphUtil.ReplaceEdge(tr.Get(@"TEST2\Person3"+x), "IsPretty", tr.Get(@"TEST\Pretty\Yes"));
+                GraphUtil.ReplaceEdge(tr.Get(@"TEST2\Person4"+x), "IsPretty", tr.Get(@"TEST\Pretty\Yes"));
 
-                r.Get(@"TEST2\Person1"+x+@"\Radek").AddEdge(r.Get(@"System\Meta*$Is"), smzt.Get("String"));
+                tr.Get(@"TEST2\Person1"+x+@"\Radek").AddEdge(r.Get(@"System\Meta*$Is"), smzt.Get("String"));
 
 
-                r.Get(@"TEST2\Person1"+x).AddEdge(r.Get(@"System\Meta*$Is"), r.Get(@"TEST\Person"));
-                r.Get(@"TEST2\Person2"+x).AddEdge(r.Get(@"System\Meta*$Is"), r.Get(@"TEST\Person"));
-                r.Get(@"TEST2\Person3"+x).AddEdge(r.Get(@"System\Meta*$Is"), r.Get(@"TEST\Person"));
-                r.Get(@"TEST2\Person4"+x).AddEdge(r.Get(@"System\Meta*$Is"), r.Get(@"TEST\Person"));
+                tr.Get(@"TEST2\Person1"+x).AddEdge(r.Get(@"System\Meta*$Is"), tr.Get(@"TEST\Person"));
+                tr.Get(@"TEST2\Person2"+x).AddEdge(r.Get(@"System\Meta*$Is"), tr.Get(@"TEST\Person"));
+                tr.Get(@"TEST2\Person3"+x).AddEdge(r.Get(@"System\Meta*$Is"), tr.Get(@"TEST\Person"));
+                tr.Get(@"TEST2\Person4"+x).AddEdge(r.Get(@"System\Meta*$Is"), tr.Get(@"TEST\Person"));
             }
 
             for (int x = 0; x < 1; x++)
                 for (int y = 0; y < 1; y++)
                 {
-                r.Get(@"TEST2\Person1" + x).AddEdge(r.Get(@"TEST\Person\Child"), r.Get(@"TEST2\Person1" + y));
-                r.Get(@"TEST2\Person2" + x).AddEdge(r.Get(@"TEST\Person\Child"), r.Get(@"TEST2\Person2" + y));
-                r.Get(@"TEST2\Person3" + x).AddEdge(r.Get(@"TEST\Person\Child"), r.Get(@"TEST2\Person3" + y));
-                r.Get(@"TEST2\Person4" + x).AddEdge(r.Get(@"TEST\Person\Child"), r.Get(@"TEST2\Person4" + y));
+                tr.Get(@"TEST2\Person1" + x).AddEdge(tr.Get(@"TEST\Person\Child"), tr.Get(@"TEST2\Person1" + y));
+                tr.Get(@"TEST2\Person2" + x).AddEdge(tr.Get(@"TEST\Person\Child"), tr.Get(@"TEST2\Person2" + y));
+                tr.Get(@"TEST2\Person3" + x).AddEdge(tr.Get(@"TEST\Person\Child"), tr.Get(@"TEST2\Person3" + y));
+                tr.Get(@"TEST2\Person4" + x).AddEdge(tr.Get(@"TEST\Person\Child"), tr.Get(@"TEST2\Person4" + y));
             }
 
             for (int i = 1; i <= 1; i++)
             {
-                IVertex x=r.Get("TEST2").AddVertex(null, i);
+                IVertex x=tr.Get("TEST2").AddVertex(null, i);
 
                 for (int ii = 1; ii <= 1; ii++)
                 {
@@ -224,19 +232,19 @@ namespace m0
 
             //r.Get(@"TEST2\1").AddEdge(null, r.Get(@"TEST2\2\2 2\2 2 1"));
             
-            GeneralUtil.ParseAndExcute(r.Get("TEST"), r.Get(@"System\Meta"), "{Diagram:TestDiagram{ZoomVisualiserContent:100,SelectedEdges:,CreationPool:}}");
+            GeneralUtil.ParseAndExcute(tr.Get("TEST"), tr.Get(@"System\Meta"), "{Diagram:TestDiagram{ZoomVisualiserContent:100,SelectedEdges:,CreationPool:}}");
 
-            r.Get(@"TEST\TestDiagram").AddVertex(r.Get(@"System\Meta\Visualiser\Diagram\SizeX"), 600.0);
+            tr.Get(@"TEST\TestDiagram").AddVertex(r.Get(@"System\Meta\Visualiser\Diagram\SizeX"), 600.0);
 
-            r.Get(@"TEST\TestDiagram").AddVertex(r.Get(@"System\Meta\Visualiser\Diagram\SizeY"), 600.0);
+            tr.Get(@"TEST\TestDiagram").AddVertex(r.Get(@"System\Meta\Visualiser\Diagram\SizeY"), 600.0);
 
-            r.Get(@"TEST\TestDiagram").AddEdge(r.Get(@"System\Meta*$Is"), r.Get(@"System\Meta*Diagram"));
+            tr.Get(@"TEST\TestDiagram").AddEdge(r.Get(@"System\Meta*$Is"), r.Get(@"System\Meta*Diagram"));
             
-            IVertex i1=r.Get(@"TEST\TestDiagram").AddVertex(r.Get(@"System\Meta*Item"),null);
+            IVertex i1=tr.Get(@"TEST\TestDiagram").AddVertex(r.Get(@"System\Meta*Item"),null);
             
             GeneralUtil.ParseAndExcute(i1,r.Get(@"System\Meta"),"{PositionX:0,PositionY:0,SizeX:100,SizeY:100}");
 
-            IVertex i2 = r.Get(@"TEST\TestDiagram").AddVertex(r.Get(@"System\Meta*Item"), null);
+            IVertex i2 = tr.Get(@"TEST\TestDiagram").AddVertex(r.Get(@"System\Meta*Item"), null);
 
             GeneralUtil.ParseAndExcute(i2, r.Get(@"System\Meta"), "{PositionX:200,PositionY:200,SizeX:100,SizeY:100}");
 
@@ -244,23 +252,23 @@ namespace m0
 
             i1.AddEdge(r.Get(@"System\Meta\Visualiser\DiagramInternal\DiagramItemBase\Definition"), r.Get(@"System\Data\Visualiser\Diagram\Object"));
 
-            Edge.AddEdgeByToVertex(i1, r.Get(@"System\Meta\ZeroTypes\HasBaseEdge\BaseEdge"), r.Get(@"TEST\Person1"));
+            Edge.AddEdgeByToVertex(i1, r.Get(@"System\Meta\ZeroTypes\HasBaseEdge\BaseEdge"), tr.Get(@"TEST\Person1"));
 
             i2.AddEdge(r.Get(@"System\Meta*$Is"), r.Get(@"System\Meta\Visualiser\DiagramInternal\DiagramRectangleItem"));
 
             i2.AddEdge(r.Get(@"System\Meta\Visualiser\DiagramInternal\DiagramItemBase\Definition"), r.Get(@"System\Data\Visualiser\Diagram\Object"));
 
-            Edge.AddEdgeByToVertex(i2, r.Get(@"System\Meta\ZeroTypes\HasBaseEdge\BaseEdge"), r.Get(@"TEST\Person2"));
+            Edge.AddEdgeByToVertex(i2, r.Get(@"System\Meta\ZeroTypes\HasBaseEdge\BaseEdge"), tr.Get(@"TEST\Person2"));
 
             
 
 
 
-            i1 = r.Get(@"TEST\TestDiagram").AddVertex(r.Get(@"System\Meta*Item"), null);
+            i1 = tr.Get(@"TEST\TestDiagram").AddVertex(r.Get(@"System\Meta*Item"), null);
 
             GeneralUtil.ParseAndExcute(i1, r.Get(@"System\Meta"), "{PositionX:350,PositionY:0}");
 
-            i2 = r.Get(@"TEST\TestDiagram").AddVertex(r.Get(@"System\Meta*Item"), null);
+            i2 = tr.Get(@"TEST\TestDiagram").AddVertex(r.Get(@"System\Meta*Item"), null);
 
             GeneralUtil.ParseAndExcute(i2, r.Get(@"System\Meta"), "{PositionX:0,PositionY:350}");
 
@@ -268,13 +276,13 @@ namespace m0
 
             i1.AddEdge(r.Get(@"System\Meta*$Is"), r.Get(@"System\Meta\Visualiser\DiagramInternal\DiagramRectangleItem"));
 
-            Edge.AddEdgeByToVertex(i1, r.Get(@"System\Meta\ZeroTypes\HasBaseEdge\BaseEdge"), r.Get(@"TEST\Person3"));
+            Edge.AddEdgeByToVertex(i1, r.Get(@"System\Meta\ZeroTypes\HasBaseEdge\BaseEdge"), tr.Get(@"TEST\Person3"));
 
             i2.AddEdge(r.Get(@"System\Meta*$Is"), r.Get(@"System\Meta\Visualiser\DiagramInternal\DiagramRectangleItem"));
 
             i2.AddEdge(r.Get(@"System\Meta\Visualiser\DiagramInternal\DiagramItemBase\Definition"), r.Get(@"System\Data\Visualiser\Diagram\Object"));
 
-            Edge.AddEdgeByToVertex(i2, r.Get(@"System\Meta\ZeroTypes\HasBaseEdge\BaseEdge"), r.Get(@"TEST\Person4"));
+            Edge.AddEdgeByToVertex(i2, r.Get(@"System\Meta\ZeroTypes\HasBaseEdge\BaseEdge"), tr.Get(@"TEST\Person4"));
 
             /////////////////////
 
@@ -297,7 +305,7 @@ namespace m0
 
             //////////////////////
 
-            IVertex tt = r.Get("TEST").AddVertex(r.Get("System*Class"), "TestClass");
+            IVertex tt = tr.Get("TEST").AddVertex(r.Get("System*Class"), "TestClass");
 
             for(int x=0;x<1;x++)
                 for (int y = 0; y < 1; y++)
@@ -320,12 +328,12 @@ namespace m0
                     ttc.AddEdge(r.Get("System*$EdgeTarget"), r.Get("System*String"));
                 }
 
-            VertexOperations.AddInstance(r.Get("TEST"), tt);
+            VertexOperations.AddInstance(tr.Get("TEST"), tt);
 
             //////////////////////
 
 
-            IVertex start = r.Get(@"TEST3");
+            IVertex start = tr.Get(@"TEST3");
 
             for (int i = 0; i < 1; i++) {
                 IVertex sm = start.AddVertex(r.Get(@"System\Meta\UML\StateMachine"), "sm "+i);
@@ -342,26 +350,26 @@ namespace m0
 
             //////////////////////
 
-            IVertex associations = r.GetAll(@"TEST\Person\Association:");
+            IVertex associations = tr.GetAll(@"TEST\Person\Association:");
             IVertex ismeta = r.Get(@"System\Meta*$Is");
             IVertex asmeta = r.Get(@"System\Meta\UML\Class\Association");
 
             //foreach (IEdge v in associations)
              //   v.To.AddEdge(ismeta, asmeta);
             
-            IVertex attributes = r.GetAll(@"TEST\Person\Attribute:");
+            IVertex attributes = tr.GetAll(@"TEST\Person\Attribute:");
             //IVertex ismeta=r.Get(@"System\Meta*$Is");
             IVertex ameta=r.Get(@"System\Meta\UML\Class\Attribute");
 
             foreach (IEdge v in attributes)
                 v.To.AddEdge(ismeta, ameta);
 
-            attributes = r.GetAll(@"TEST3\\Attribute:");
+            attributes = tr.GetAll(@"TEST3\\Attribute:");
 
             foreach (IEdge v in attributes)
                 v.To.AddEdge(ismeta, ameta);
 
-            IVertex test = r.Get("TEST");
+            IVertex test = tr.Get("TEST");
 
             test.AddVertex(test.AddVertex(null, "Counter"),(int)0);
 
@@ -372,11 +380,11 @@ namespace m0
 
             vvv.Value="tst";
 
-            test.AddEdge(r.Get(@"TEST\tst"), r.Get(@"System\Meta\Visualiser"));
+            test.AddEdge(tr.Get(@"TEST\tst"), r.Get(@"System\Meta\Visualiser"));
 
             /////
 
-            IVertex aattributes = r.GetAll(@"TEST\\Attribute:");
+            IVertex aattributes = tr.GetAll(@"TEST\\Attribute:");
 
             IVertex isAggregation = r.Get(@"System\Meta\Base\Vertex\$IsAggregation");
             IVertex empty = r.Get(@"System\Meta\Base\$Empty");
@@ -384,14 +392,14 @@ namespace m0
             foreach (IEdge v in aattributes)
                 v.To.AddEdge(isAggregation, empty);
 
-            IVertex aggregations = r.GetAll(@"TEST\\Aggregation:");
+            IVertex aggregations = tr.GetAll(@"TEST\\Aggregation:");
 
             foreach (IEdge v in aggregations)
                 v.To.AddEdge(isAggregation, empty);
 
             ///
             
-            IVertex vx=r.AddVertex(null, "X");
+            IVertex vx=tr.AddVertex(null, "X");
 
             IVertex my = vx.AddVertex(null, "j e s ");
 
@@ -474,7 +482,7 @@ namespace m0
             //////////////////////////
 
 
-            IVertex xXx = r.AddVertex(null, "XX");
+            IVertex xXx = tr.AddVertex(null, "XX");
 
 
             addf(xXx);
@@ -482,8 +490,12 @@ namespace m0
 
             //////////////////////////
 
-            IVertex yv = r.AddVertex(null, "Y");
+            IVertex yv = tr.AddVertex(null, "Y");
 
+            /////////////////
+
+
+            jss.CommitTransaction();
 
         }
 

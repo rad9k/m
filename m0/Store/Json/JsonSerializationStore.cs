@@ -48,19 +48,26 @@ namespace m0.Store
 
         public override void CommitTransaction()
         {
+            bool needToDetachAttach = false;
+
             if (DetachState != DetachStateEnum.Detached)
-                throw new Exception("Store not Detached");
+                needToDetachAttach = true;
+
+            if (needToDetachAttach)
+                Detach();
 
             FileStream writeStream = new FileStream(Identifier, FileMode.Create);
             BinaryFormatter formatter = new BinaryFormatter();
-
 
             formatter.Serialize(writeStream, VertexIdentifiersDictionary);
             formatter.Serialize(writeStream, Root.Identifier);
 
             writeStream.Close();
 
-            base.CommitTransaction();        
+            base.CommitTransaction();
+
+            if (needToDetachAttach)
+                Detach();
         }
 
         public bool RefreshOnRollback { get; set; }
