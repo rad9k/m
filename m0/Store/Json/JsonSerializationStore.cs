@@ -17,7 +17,7 @@ namespace m0.Store.Json
         
         void Load()
         {
-            if (File.Exists(Identifier))
+          /*  if (File.Exists(Identifier))
             {
                 FileStream readStream = new FileStream(Identifier, FileMode.Open);
                 BinaryFormatter formatter = new BinaryFormatter();
@@ -31,7 +31,7 @@ namespace m0.Store.Json
 
                 Attach();
             }
-            else
+            else*/
             {
                 _root = new EasyVertex(this);
             }
@@ -69,7 +69,7 @@ namespace m0.Store.Json
             base.CommitTransaction();
 
             if (needToDetachAttach)
-                Detach();
+                Attach();
         }
 
         private JsonSerializationData GetJsonSerializationData()
@@ -95,7 +95,7 @@ namespace m0.Store.Json
         {
             RefreshOnRollback = false;
 
-            Load();
+           Load();
         }
     }
 }

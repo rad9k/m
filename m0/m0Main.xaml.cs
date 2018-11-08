@@ -77,7 +77,9 @@ namespace m0
 
             JsonSerializationStore jss = new JsonSerializationStore(@"c:\m0\x",MinusZero.Instance, new AccessLevelEnum[] { });
 
-            IVertex tr = jss.Root;
+            //IVertex tr = jss.Root;
+
+            IVertex tr = MinusZero.Instance.Root.AddVertex(null, "kupa");
 
             // GeneralUtil.ParseAndExcute(r, r.Get(@"System\Meta"), @"{TEST3{Class:Customer{},Class:Person{$Description:opis,Attribute:Name,Attribute:Surname,Attribute:DateOfBirth},Class:Company{Attribute:Name,Attribute:RegistrationNumber,},Class:Adress{Attribute:Line 1,Attribute:Line 2,Attribute:Line 3,Attribute:City,Attribute:County,Attribute:Postal code,Attribute:Country},Class:Basket{Attribute:Creation date,Attribute:Status},Class:Item{Attribute:Name,Attribute:Description,Attribute:Price}}}");
 
@@ -496,7 +498,7 @@ namespace m0
             /////////////////
 
 
-            jss.CommitTransaction();
+        //    jss.CommitTransaction();
 
         }
 
