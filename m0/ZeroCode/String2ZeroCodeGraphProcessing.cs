@@ -2403,7 +2403,11 @@ namespace m0.ZeroCode
 
                 if (s.currentLineNoTabs[0] != ZeroCodeCommon.CodeGraphVertexPrefix[0]
                     || s.currentLineNoTabs[s.currentLineNoTabs.Length - 1] != ZeroCodeCommon.CodeGraphVertexSuffix[0])
+                {
+                    AddError(s.lineNo, "SYNTAX ERROR");
+
                     return AddVertex(s, _baseVertex, null, "SYNTAX ERROR");
+                }
 
                 shallProcess = false;
 
@@ -2660,7 +2664,10 @@ namespace m0.ZeroCode
 
             prepareImportList();
 
-            parseRoot = _baseVertex.AddVertex(MinusZero.Instance.Root.Get(@"System\Meta\Base\$ParseRoot"),"");
+            GraphUtil.DeleteEdgeByMeta(baseVertex, "$ParseRoot");
+            GraphUtil.DeleteEdgeByMeta(baseVertex, "$ParseArtefacts");
+
+            parseRoot = baseVertex.AddVertex(MinusZero.Instance.Root.Get(@"System\Meta\Base\$ParseRoot"),"");
 
             ProcessTextPart(parseRoot, 0, lineInfoList.Count - 1);
 
@@ -2672,6 +2679,8 @@ namespace m0.ZeroCode
                 DeleteAllEdgesFromBaseVertex();
                 MoveAllParseRootEdgesToBaseVertex();
             }
+            else
+                baseVertex.AddEdge(MinusZero.Instance.Root.Get(@"System\Meta\Base\$ParseArtefacts"), errorList);
 
             return errorList;
         }
