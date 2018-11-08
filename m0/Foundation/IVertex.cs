@@ -31,7 +31,7 @@ namespace m0.Foundation
 
         Delegate[] GetChangeDelegateInvocationList();
 
-        string Identifier { get; }
+        object Identifier { get; }
 
         object Value {get; set;}
 

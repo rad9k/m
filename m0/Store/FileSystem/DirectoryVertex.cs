@@ -162,7 +162,7 @@ namespace m0.Store.FileSystem
 
             UsageCounter++; // identified vertex are used for volatile stores            
 
-            DI = new DirectoryInfo(Identifier);
+            DI = new DirectoryInfo(Identifier.ToString());
 
             Value = DI.Name;
         }

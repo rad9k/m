@@ -12,6 +12,12 @@ namespace m0.Store.Json
     {
         public Dictionary<int, StoreId> StoreIdDictionary;
         public List<JsonVertex> Vertexes;
+
+        [JilDirective(Name = "RootValue", IsUnion = true)]
+        public string RootValueString;
+
+        [JilDirective(Name = "RootValue", IsUnion = true)]
+        public double RootValueDouble;
     }
 
     public class JsonVertex
@@ -34,8 +40,7 @@ namespace m0.Store.Json
 
     public class JsonEdge
     {
-        public string MetaStoreId;
-
+        public int MetaStoreId;
 
         [JilDirective(Name = "MetaId", IsUnion = true)]
         public string MetaIdString;
@@ -43,6 +48,7 @@ namespace m0.Store.Json
         [JilDirective(Name = "MetaId", IsUnion = true)]
         public long MetaIdLong;
 
+        public int ToStoreId;
 
         [JilDirective(Name = "ToId", IsUnion = true)]
         public string ToIdString;

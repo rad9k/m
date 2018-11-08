@@ -16,5 +16,12 @@ namespace m0.Foundation
         void Attach();
 
         DetachStateEnum DetachState { get; }
+
+        string ToStoreIdentifier { get; }
+        string ToStoreTypeName { get; }
+        object ToIdentifier { get; }
+        string MetaStoreIdentifier { get; }
+        string MetaStoreTypeName { get; }
+        object MetaIdentifier { get; }
     }
 }

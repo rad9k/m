@@ -16,14 +16,14 @@ namespace m0.Store.FileSystem
             {
                 try
                 {
-                    return System.IO.File.ReadAllText(Identifier);
+                    return System.IO.File.ReadAllText(Identifier.ToString());
                 }
                 catch (Exception e) { }
                 return "";
             }
             set
             {
-                System.IO.StreamWriter file = new System.IO.StreamWriter(Identifier);
+                System.IO.StreamWriter file = new System.IO.StreamWriter(Identifier.ToString());
                 file.WriteLine(value);
 
                 file.Close();

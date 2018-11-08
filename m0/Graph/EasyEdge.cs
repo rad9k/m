@@ -15,8 +15,12 @@ namespace m0.Graph
         {
         }
 
-        protected string ToIdentifier, ToStoreIdentifier, ToStoreTypeName;
-        protected string MetaIdentifier, MetaStoreIdentifier, MetaStoreTypeName;
+        public string ToStoreIdentifier { get; set; }
+        public string ToStoreTypeName { get; set; }
+        public object ToIdentifier { get; set; }
+        public string MetaStoreIdentifier { get; set; }
+        public string MetaStoreTypeName { get; set; }
+        public object MetaIdentifier { get; set; }
 
         protected DetachStateEnum _detachState;
 

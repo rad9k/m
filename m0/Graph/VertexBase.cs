@@ -73,7 +73,7 @@ namespace m0.Graph
 
         public virtual int UsageCounter { get; set; }
 
-        public virtual string Identifier 
+        public virtual object Identifier 
         {
             get
             {

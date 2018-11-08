@@ -11,6 +11,12 @@ namespace m0.Foundation
         public string TypeName;
 
         public string Identifier;
+
+        public StoreId(string _TypeName, string _Identifier)
+        {
+            TypeName = _TypeName;
+            Identifier = _Identifier;
+        }
     }
     
     
@@ -48,6 +54,6 @@ namespace m0.Foundation
 
         void RemoveVertexIdentifier(IVertex Vertex);
 
-        IVertex GetVertexByIdentifier(string VertexIdentidier);
+        IVertex GetVertexByIdentifier(object VertexIdentidier);
     }
 }

@@ -70,7 +70,8 @@ namespace m0.Store
 
             foreach (IVertex v in VertexIdentifiersDictionary.Values)
             {
-                foreach (IEdge e in v.OutEdges)
+                //foreach (IEdge e in v.OutEdges)
+                foreach (IEdge e in v.OutEdgesRaw)
                     if (e is IDetachableEdge)
                     {
                         IDetachableEdge de = (IDetachableEdge)e;
@@ -88,7 +89,8 @@ namespace m0.Store
 
             foreach (IVertex v in VertexIdentifiersDictionary.Values)
             {
-                foreach (IEdge e in v.InEdges)
+                //foreach (IEdge e in v.InEdges)
+                foreach (IEdge e in v.InEdgesRaw)
                     if (e.From.Store == InDetachStore)
                         v.DeleteInEdge(e);
             }
@@ -108,7 +110,8 @@ namespace m0.Store
 
             foreach (IVertex v in VertexIdentifiersDictionary.Values)
             {
-               foreach (IEdge e in v.OutEdges)
+               //foreach (IEdge e in v.OutEdges)
+               foreach (IEdge e in v.OutEdgesRaw)
                     if (e is IDetachableEdge)
                     {
                         IDetachableEdge de = (IDetachableEdge)e;
@@ -126,7 +129,7 @@ namespace m0.Store
 
         public virtual void Close() { }
 
-        DetachStateEnum _DetachState;
+        protected DetachStateEnum _DetachState;
 
         public virtual DetachStateEnum DetachState
         {
@@ -146,14 +149,14 @@ namespace m0.Store
 
             _StoreUniverse = storeUniverse;
             
-            VertexIdentifiersDictionary = new Dictionary<string, IVertex>();
+            VertexIdentifiersDictionary = new Dictionary<object, IVertex>();
 
             _AcessLevel = GeneralUtil.CreateAndCopyList<AccessLevelEnum>(accessLeveList);
 
             storeUniverse.Stores.Add(this);
         }
 
-        protected Dictionary<string, IVertex> VertexIdentifiersDictionary;
+        protected Dictionary<object, IVertex> VertexIdentifiersDictionary;
 
      //   protected int StoreVertexIdentifierCnt = 0;
         public virtual void StoreVertexIdentifier(IVertex Vertex)
@@ -168,7 +171,7 @@ namespace m0.Store
             VertexIdentifiersDictionary.Remove(Vertex.Identifier);
         }
 
-        public virtual IVertex GetVertexByIdentifier(string VertexIdentifier)
+        public virtual IVertex GetVertexByIdentifier(object VertexIdentifier)
         {
             return VertexIdentifiersDictionary[VertexIdentifier]; 
         }

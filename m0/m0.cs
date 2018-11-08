@@ -2940,14 +2940,11 @@ namespace m0
 
         public void Refresh()
         {
-            List<string[]> StoresPersistency=new List<string[]>();
+            List<StoreId> StoresPersistency=new List<StoreId>();
 
             foreach (IStore s in Stores)
             {
-                string[] e=new string[2];
-
-                e[0] = s.TypeName;
-                e[1] = s.Identifier;
+                StoreId e = new StoreId(s.TypeName, s.Identifier);
 
                 StoresPersistency.Add(e);
 
@@ -2956,9 +2953,9 @@ namespace m0
 
             Bootstrap();
 
-            foreach (string[] e in StoresPersistency)
+            foreach (StoreId e in StoresPersistency)
             {
-                GetStore(e[0], e[1]);
+                GetStore(e.TypeName, e.Identifier);
             }
             
         }

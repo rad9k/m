@@ -82,7 +82,7 @@ namespace m0.Store.FileSystem
 
             UsageCounter++; // identified vertex are used for volatile stores
 
-            FI = new FileInfo(Identifier);
+            FI = new FileInfo(Identifier.ToString());
         }
     }
 }

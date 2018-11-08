@@ -80,7 +80,7 @@ namespace m0.Store.FileSystem
             //throw new NotImplementedException();
         }
 
-        public IVertex GetVertexByIdentifier(string VertexIdentidier)
+        public IVertex GetVertexByIdentifier(object VertexIdentidier)
         {
             throw new NotImplementedException();
         }

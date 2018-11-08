@@ -37,7 +37,7 @@ namespace m0.Store
                 FileStream readStream = new FileStream(Identifier, FileMode.Open);
                 BinaryFormatter formatter = new BinaryFormatter();
                 
-                VertexIdentifiersDictionary = (Dictionary<string, IVertex>)formatter.Deserialize(readStream);
+                VertexIdentifiersDictionary = (Dictionary<object, IVertex>)formatter.Deserialize(readStream);
                 string RootIdentifier = (string)formatter.Deserialize(readStream);
 
                 RestoreStoreDataInVertexes();
