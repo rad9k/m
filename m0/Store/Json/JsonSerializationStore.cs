@@ -17,21 +17,17 @@ namespace m0.Store.Json
         
         void Load()
         {
-          /*  if (File.Exists(Identifier))
+            if (File.Exists(Identifier))
             {
-                FileStream readStream = new FileStream(Identifier, FileMode.Open);
-                BinaryFormatter formatter = new BinaryFormatter();
-                
-                VertexIdentifiersDictionary = (Dictionary<string, IVertex>)formatter.Deserialize(readStream);
-                string RootIdentifier = (string)formatter.Deserialize(readStream);
+                StreamReader readStream = new StreamReader(Identifier);
+
+                JsonSerializationData data = JSON.Deserialize<JsonSerializationData>(readStream);
 
                 readStream.Close();
 
-                _root = GetVertexByIdentifier(RootIdentifier);
-
-                Attach();
+                _root = GetVertexByIdentifier(0);                
             }
-            else*/
+            else
             {
                 _root = new EasyVertex(this);
             }
@@ -182,7 +178,9 @@ namespace m0.Store.Json
         {
             RefreshOnRollback = false;
 
-           Load();
+            Load();
+
+            Attach();
         }
     }
 }
