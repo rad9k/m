@@ -68,16 +68,6 @@ namespace m0.Store.Json
         {
             JsonSerializationData data = new JsonSerializationData();
 
-            data.StoreIdDictionary = new Dictionary<int, StoreId>();
-
-            if (Root.Value != null)
-            {
-                if (Root.Value is string)
-                    data.RootValueString = (string)Root.Value;
-                else
-                    data.RootValueDouble = Convert.ToDouble(Root.Value); // :)
-            }
-
             data.Vertexes = new List<JsonVertex>();
 
             foreach(IVertex v in VertexIdentifiersDictionary.Values)
@@ -135,7 +125,10 @@ namespace m0.Store.Json
 
         private int GetStoreId(JsonSerializationData data, string StoreTypeName, string StoreIdentifier)
         {
-            foreach(KeyValuePair<int,StoreId> sid in data.StoreIdDictionary)
+            if (StoreTypeName == this.TypeName && StoreIdentifier == this.Identifier)
+                return 0;
+
+            foreach (KeyValuePair<int,StoreId> sid in data.StoreIdDictionary)
                 if (sid.Value.TypeName == StoreTypeName && sid.Value.Identifier == StoreIdentifier)
                     return sid.Key;
 
