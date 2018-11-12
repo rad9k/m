@@ -199,9 +199,9 @@ namespace m0.Graph
             _OutEdgesRaw = new List<IEdge>();
 
 
-            _Identifier = GeneralUtil.NewGuid().ToString();
+            _Identifier = Store.VertexIdentifierCount++;
 
-//            _Identifier = Guid.NewGuid().ToString(); //too slow
+            Value = "";
         }
 
         public override IVertex Execute(IVertex inputVertex, IVertex expression)

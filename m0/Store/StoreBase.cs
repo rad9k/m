@@ -18,7 +18,9 @@ namespace m0.Store
         {
             get { return _StoreUniverse; }
         }
-        
+
+        public virtual long VertexIdentifierCount { get; set; }
+
         public virtual string TypeName
         {
             get { return GeneralUtil.GetTypeName(this); }

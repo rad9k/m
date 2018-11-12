@@ -29,7 +29,11 @@ namespace m0.Store.Json
             }
             else
             {
-                _root = new EasyVertex(this);
+                EasyVertex __root = new EasyVertex(this);
+
+                __root.UsageCounter++;
+
+                _root = __root;
             }
             
         }

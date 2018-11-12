@@ -17,6 +17,11 @@ namespace m0.Foundation
             TypeName = _TypeName;
             Identifier = _Identifier;
         }
+
+        public StoreId() // for deserialisation
+        {
+
+        }
     }
     
     
@@ -29,6 +34,8 @@ namespace m0.Foundation
     public interface IStore:ITransactionRoot
     {
         IStoreUniverse StoreUniverse { get; }
+
+        long VertexIdentifierCount { get; set; }
 
         String TypeName { get; }
         

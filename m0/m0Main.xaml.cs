@@ -77,9 +77,13 @@ namespace m0
 
             JsonSerializationStore jss = new JsonSerializationStore(@"c:\m0\x",MinusZero.Instance, new AccessLevelEnum[] { });
 
-            //IVertex tr = jss.Root;
+            IVertex tr = jss.Root;
 
-            IVertex tr = MinusZero.Instance.Root.AddVertex(null, "kupa");
+            MinusZero.Instance.Root.AddEdge(null, jss.Root);
+
+            return;
+
+    //        IVertex tr = MinusZero.Instance.Root.AddVertex(null, "kupa");
 
             // GeneralUtil.ParseAndExcute(r, r.Get(@"System\Meta"), @"{TEST3{Class:Customer{},Class:Person{$Description:opis,Attribute:Name,Attribute:Surname,Attribute:DateOfBirth},Class:Company{Attribute:Name,Attribute:RegistrationNumber,},Class:Adress{Attribute:Line 1,Attribute:Line 2,Attribute:Line 3,Attribute:City,Attribute:County,Attribute:Postal code,Attribute:Country},Class:Basket{Attribute:Creation date,Attribute:Status},Class:Item{Attribute:Name,Attribute:Description,Attribute:Price}}}");
 
@@ -98,11 +102,25 @@ namespace m0
             tr.Get(@"TEST\Pretty").AddEdge(r.Get(@"System\Meta*$Inherits"), r.Get(@"System\Meta\ZeroTypes\EnumBase"));
             tr.Get(@"TEST\Person").AddEdge(r.Get(@"System\Meta*$Is"), r.Get(@"System\Meta\UML\Class"));
 
+
+            ///
+
+
+            jss.Detach();
+            jss.CommitTransaction();
+            jss.Attach();
+
+            ///
+
             IVertex smzt=r.Get(@"System\Meta\ZeroTypes");
 
             IVertex EdgeTarget = r.Get(@"System\Meta*$EdgeTarget");
 
             IVertex Person = tr.Get(@"TEST\Person");
+
+
+
+            //////////////
 
 
 
@@ -497,9 +515,8 @@ namespace m0
 
             /////////////////
 
-//            jss.Detach();
-  //          jss.CommitTransaction();
-    //        jss.Attach();
+
+       
         }
 
         void addf(IVertex where)

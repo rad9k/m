@@ -7,7 +7,7 @@ using m0.Util;
 
 namespace m0.Store.FileSystem
 {
-    public class FileSystemStore:IStore
+    public class FileSystemStore : IStore
     {
         public bool IncludeFileContent { get; set; }
 
@@ -17,6 +17,8 @@ namespace m0.Store.FileSystem
         {
             get { return _StoreUniverse; }
         }
+
+        public virtual long VertexIdentifierCount {get; set;}
 
         public virtual string TypeName
         {
