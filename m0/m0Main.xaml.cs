@@ -106,9 +106,7 @@ namespace m0
             ///
 
 
-            jss.Detach();
-            jss.CommitTransaction();
-            jss.Attach();
+    
 
             ///
 
@@ -515,8 +513,10 @@ namespace m0
 
             /////////////////
 
+          //  jss.Detach();
+          //  jss.CommitTransaction();
+          //  jss.Attach();
 
-       
         }
 
         void addf(IVertex where)

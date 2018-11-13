@@ -25,7 +25,13 @@ namespace m0.Store.Json
 
                 readStream.Close();
 
-                _root = GetVertexByIdentifier(0);                
+                ReconstructVertexesFromSerialisationData(data);
+
+                _root = GetVertexByIdentifier((long)0);
+
+                ((EasyVertex)_root).UsageCounter = 1;
+
+                Attach();
             }
             else
             {
@@ -36,6 +42,67 @@ namespace m0.Store.Json
                 _root = __root;
             }
             
+        }
+
+        private void ReconstructVertexesFromSerialisationData(JsonSerializationData data)
+        {
+            foreach(JsonVertex jv in data.Vertexes)
+            {
+                EasyVertex v = new EasyVertex(this);
+
+                if (jv.IdString == null)
+                    v._Identifier = jv.IdLong;
+                else
+                    v._Identifier = jv.IdString;
+
+                if (jv.ValueString == null)
+                    v.Value = jv.ValueDouble;
+                else
+                    v.Value = jv.ValueString;
+
+                v._Store = this;
+
+                VertexIdentifiersDictionary.Add(v.Identifier, v);
+
+                foreach(JsonEdge je in jv.Edges)
+                {
+                    object MetaId;
+                    object ToId;
+
+                    if (je.MetaIdString == null)
+                        MetaId = je.MetaIdLong;
+                    else
+                        MetaId = je.MetaIdString;
+
+                    if (je.ToIdString == null)
+                        ToId = je.ToIdLong;
+                    else
+                        ToId = je.ToIdString;
+
+                    StoreId MetaStoreId;
+
+                    if (je.MetaStoreId == 0)
+                        MetaStoreId = new StoreId(this.TypeName, this.Identifier);
+                    else
+                        MetaStoreId = data.StoreIdDictionary[je.MetaStoreId];
+
+                    StoreId ToStoreId;
+
+                    if (je.ToStoreId == 0)
+                        ToStoreId = new StoreId(this.TypeName, this.Identifier);
+                    else
+                        ToStoreId = data.StoreIdDictionary[je.ToStoreId];
+
+                    EasyEdge e = new EasyEdge(MetaStoreId.TypeName, MetaStoreId.Identifier, MetaId,
+                        ToStoreId.TypeName, ToStoreId.Identifier, ToId);
+
+                    e._DetachState = DetachStateEnum.Detached;
+
+                    e._From = v;
+
+                    v.OutEdgesRaw.Add(e);
+                }
+            }
         }
 
         public override void Refresh()
@@ -70,7 +137,9 @@ namespace m0.Store.Json
 
             data.Vertexes = new List<JsonVertex>();
 
-            foreach(IVertex v in VertexIdentifiersDictionary.Values)
+            data.StoreIdDictionary = new Dictionary<int, StoreId>();
+
+            foreach (IVertex v in VertexIdentifiersDictionary.Values)
             {
                 JsonVertex jv = new JsonVertex();
 

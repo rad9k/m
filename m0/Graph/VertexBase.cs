@@ -167,11 +167,11 @@ namespace m0.Graph
             throw new NotImplementedException();
         }
 
-        public IStore _store;
+        public IStore _Store;
 
         public virtual IStore Store
         {
-            get { return _store; }
+            get { return _Store; }
         }
 
         IList<AccessLevelEnum> _AccessLevel;
@@ -185,8 +185,8 @@ namespace m0.Graph
         {
             UsageCounter = 0;
 
-            _store = _Store;
-            _AccessLevel = GeneralUtil.CreateAndCopyList<AccessLevelEnum>(_store.AccessLevel);            
+            this._Store = _Store;
+            _AccessLevel = GeneralUtil.CreateAndCopyList<AccessLevelEnum>(this._Store.AccessLevel);            
         }
 
         public override string ToString()

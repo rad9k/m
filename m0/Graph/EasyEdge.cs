@@ -15,6 +15,17 @@ namespace m0.Graph
         {
         }
 
+        public EasyEdge(string _MetaStoreTypeName, string _MetaStoreIdentifier, object _MetaIdentifier,
+            string _ToStoreTypeName, string _ToStoreIdentifier, object _ToIdentifier)
+        {
+            ToStoreIdentifier = _ToStoreIdentifier;
+            ToStoreTypeName = _ToStoreTypeName;
+            ToIdentifier = _ToIdentifier;
+            MetaStoreIdentifier = _MetaStoreIdentifier;
+            MetaStoreTypeName = _MetaStoreTypeName;
+            MetaIdentifier = _MetaIdentifier;
+        }
+
         public string ToStoreIdentifier { get; set; }
         public string ToStoreTypeName { get; set; }
         public object ToIdentifier { get; set; }
@@ -22,9 +33,9 @@ namespace m0.Graph
         public string MetaStoreTypeName { get; set; }
         public object MetaIdentifier { get; set; }
 
-        protected DetachStateEnum _detachState;
+        public DetachStateEnum _DetachState;
 
-        public DetachStateEnum DetachState { get { return _detachState; } }
+        public DetachStateEnum DetachState { get { return _DetachState; } }
 
         public void Detach()
         {
@@ -49,7 +60,7 @@ namespace m0.Graph
 
             _meta = null;
 
-            _detachState = DetachStateEnum.Detached;
+            _DetachState = DetachStateEnum.Detached;
         }
 
         public void Attach()
@@ -78,7 +89,7 @@ namespace m0.Graph
             _meta = store.GetVertexByIdentifier(MetaIdentifier);
             
 
-            _detachState = DetachStateEnum.Attached;
+            _DetachState = DetachStateEnum.Attached;
         }
     }
 }

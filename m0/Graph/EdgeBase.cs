@@ -11,11 +11,11 @@ namespace m0.Graph
     [Serializable]
     public class EdgeBase:IEdge
     {
-        protected IVertex _from;
+        public IVertex _From;
         
         public virtual IVertex From
         {
-            get { return _from; }
+            get { return _From; }
         }
 
         protected IVertex _meta; 
@@ -34,7 +34,7 @@ namespace m0.Graph
 
         public EdgeBase(IVertex From, IVertex Meta, IVertex To)
         {
-            _from = From;
+            _From = From;
 
             if (Meta != null)            
                 _meta = Meta;                        
@@ -51,6 +51,11 @@ namespace m0.Graph
 
             if(_to!=null) // edge.To==null used for visualizing not existing edges (possible to be filled by user)
                 _to.AddInEdge(this);
+        }
+
+        public EdgeBase()
+        {
+
         }
 
         public override string ToString()

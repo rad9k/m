@@ -17,7 +17,7 @@ namespace m0.Store
             foreach (IVertex v in VertexIdentifiersDictionary.Values)
             {
                 VertexBase vb = (VertexBase)v;
-                vb._store = null;
+                vb._Store = null;
             }
         }
 
@@ -26,7 +26,7 @@ namespace m0.Store
             foreach (IVertex v in VertexIdentifiersDictionary.Values)
             {
                 VertexBase vb = (VertexBase)v;
-                vb._store = this;
+                vb._Store = this;
             }
         }
         

@@ -163,7 +163,8 @@ namespace m0.Store
      //   protected int StoreVertexIdentifierCnt = 0;
         public virtual void StoreVertexIdentifier(IVertex Vertex)
         {
-            VertexIdentifiersDictionary.Add(Vertex.Identifier,Vertex);
+            if(!VertexIdentifiersDictionary.ContainsKey(Vertex.Identifier))
+                VertexIdentifiersDictionary.Add(Vertex.Identifier,Vertex);
            
             //StoreVertexIdentifierCnt++;
         }

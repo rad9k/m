@@ -34,7 +34,7 @@ namespace m0.Graph
             }
         }
 
-        protected object _Identifier;
+        public object _Identifier;
         
         public override object Identifier { get { return _Identifier; }}
 
