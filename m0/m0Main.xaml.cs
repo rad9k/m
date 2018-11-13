@@ -46,7 +46,9 @@ namespace m0
             MinusZero.Instance.Initialize();
 
 
-            CreateTestData();
+            //CreateTestData();
+
+            SerTest();
 
 
             TreeVisualiser stv = new TreeVisualiser();
@@ -71,6 +73,30 @@ namespace m0
             return xxx;
         }
 
+        private void SerTest()
+        {
+            JsonSerializationStore s = new JsonSerializationStore(@"c:\m0\test1100", MinusZero.Instance, new AccessLevelEnum[] { });
+
+            SerTestCreate(s.Root);
+            SerTestSave(s);
+        }
+
+        void SerTestCreate(IVertex r)
+        {
+            for (int x = 0; x < 1100; x++) {
+                IVertex v = r.AddVertex(r, "KOHAM MAGDE");
+                for (int xx = 0; xx < 1100; xx++)
+                    v.AddVertex(r, "BARDZO KOHAM MAGDE");
+                }
+        }
+
+        void SerTestSave(IStore s)
+        {
+            s.Detach();
+            s.CommitTransaction();
+            s.Attach();
+        }
+
         private void CreateTestData()
         {
             IVertex r=MinusZero.Instance.Root;
@@ -83,9 +109,7 @@ namespace m0
 
             return;
 
-    //        IVertex tr = MinusZero.Instance.Root.AddVertex(null, "kupa");
-
-            // GeneralUtil.ParseAndExcute(r, r.Get(@"System\Meta"), @"{TEST3{Class:Customer{},Class:Person{$Description:opis,Attribute:Name,Attribute:Surname,Attribute:DateOfBirth},Class:Company{Attribute:Name,Attribute:RegistrationNumber,},Class:Adress{Attribute:Line 1,Attribute:Line 2,Attribute:Line 3,Attribute:City,Attribute:County,Attribute:Postal code,Attribute:Country},Class:Basket{Attribute:Creation date,Attribute:Status},Class:Item{Attribute:Name,Attribute:Description,Attribute:Price}}}");
+    //        IVertex tr = MinusZero.Instance.Root.AddVertex(null, "kupa");            
 
             GeneralUtil.ParseAndExcute(tr, r.Get(@"System\Meta"), @"{TEST3{Class:Customer{},Class:Person{$Description:opis,Attribute:Name,Attribute:Surname,Attribute:DateOfBirth},Class:Company{Attribute:Name,Attribute:RegistrationNumber,},Class:Adress{Attribute:Line 1,Attribute:Line 2,Attribute:Line 3,Attribute:City,Attribute:County,Attribute:Postal code,Attribute:Country},Class:Basket{Attribute:Creation date,Attribute:Status},Class:Item{Attribute:Name,Attribute:Description,Attribute:Price}}}");
 
@@ -154,20 +178,7 @@ namespace m0
 
             //
 
-            /*IVertex function2_function = Person.AddVertex(smu.Get(@"Function"), "Sleep");
-
-            function2_function.AddEdge(smu.Get(@"Function\Output"), smzt.Get("Integer"));
-
-            IVertex f2fi = function2_function.AddVertex(smu.Get(@"Function\InputParameter"), "time");
-
-            f2fi.AddEdge(smb.Get(@"Vertex\$VertexTarget"), smzt.Get("Integer"));
-
-
-            function2_function.AddVertex(smu.Get(@"[]"), null);
-
-            function2_function.AddVertex(smb.Get(@"$NewLine"), "3");
-
-            */
+            
 
             Person.Get("Name").AddEdge(EdgeTarget, smzt.Get("String"));
 
@@ -183,9 +194,7 @@ namespace m0
             Person.Get("IsPretty2").AddEdge(EdgeTarget, tr.Get(@"TEST\Pretty"));
             Person.Get("IsPretty3").AddEdge(EdgeTarget, tr.Get(@"TEST\Pretty"));
 
-            //Person.AddEdge(smu.Get(@"Class\Attribute"), Person.Get("Surname"));
-            // what is it for?
-
+            
             GeneralUtil.ParseAndExcute(tr.Get("TEST"), tr.Get(@"TEST"), "{Person:Person1{Name:Radek,Surname:Tereszczuk,Age:34,NoseLength:\"2,3\",Money:999,IsGood:False,IsPretty:},Person:Person2{Name:Maurycy,Surname:Tereszczuk,Age:1,NoseLength:1.1,Money:9999,IsGood:True,IsPretty:}}");
 
             GeneralUtil.ParseAndExcute(tr.Get("TEST"), tr.Get(@"TEST"), "{Person:Person3{Name:Radek,Surname:Tereszczuk,Age:34,NoseLength:\"2,3\",Money:999,IsGood:False,IsPretty:},Person:Person4{Name:Maurycy,Surname:Tereszczuk,Age:1,NoseLength:1.1,Money:9999,IsGood:True,IsPretty:}}");
@@ -247,9 +256,7 @@ namespace m0
                             xxx.AddVertex(null, i + " " + ii + " " + iii+" "+iiii);
                     }
                 }
-            }
-
-            //r.Get(@"TEST2\1").AddEdge(null, r.Get(@"TEST2\2\2 2\2 2 1"));
+            }            
             
             GeneralUtil.ParseAndExcute(tr.Get("TEST"), tr.Get(@"System\Meta"), "{Diagram:TestDiagram{ZoomVisualiserContent:100,SelectedEdges:,CreationPool:}}");
 
@@ -513,9 +520,9 @@ namespace m0
 
             /////////////////
 
-          //  jss.Detach();
-          //  jss.CommitTransaction();
-          //  jss.Attach();
+            jss.Detach();
+            jss.CommitTransaction();
+            jss.Attach();
 
         }
 
