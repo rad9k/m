@@ -2617,13 +2617,13 @@ namespace m0.ZeroCode
         {
             IVertex smz = MinusZero.Instance.Root.Get(@"System\Meta\ZeroTypes");
 
-            IVertex error = errorList.AddVertex(smz.Get("TextArtefact"), "");
+            IVertex error = errorList.AddVertex(smz.Get("Exception"), "");
 
-            error.AddVertex(smz.Get(@"TextArtefact\LineNumber"), lineNumber);
+            error.AddVertex(smz.Get(@"Exception\Where"), lineNumber.ToString());
 
-            error.AddVertex(smz.Get(@"TextArtefact\Type"), smz.Get(@"TextArtefactTypeEnum\Error"));
+            error.AddVertex(smz.Get(@"Exception\Type"), smz.Get(@"ExceptionTypeEnum\Error"));
 
-            error.AddVertex(smz.Get(@"TextArtefact\Value"), value);
+            error.AddVertex(smz.Get(@"Exception\What"), value);
         }
 
         void DeleteAllEdgesFromBaseVertex()
