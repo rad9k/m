@@ -148,7 +148,7 @@ namespace m0.ZeroCode
                         {
                             tv = q.ElementAt(pos).To;
                             pos++;
-                        } while (tv == e.To);
+                        } while (tv != e.To);
 
                         s.Append(ZeroCodeCommon.stringToPossiblyEscapedString(toAppend.ToString()) + "|" + pos );
                     }
