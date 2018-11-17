@@ -1102,7 +1102,7 @@ namespace m0
 
              sm.Get(@"ZeroTypes\ExceptionTypeEnum").AddEdge(sm.Get("*$Inherits"), sm.Get(@"ZeroTypes\EnumBase"));
 
-            sm.Get(@"ZeroTypes\Exception\What").AddEdge(sm.Get(@"*$EdgeTarget"), sm.Get(@"ZeroTypes\String"));
+            sm.Get(@"ZeroTypes\Exception\Where").AddEdge(sm.Get(@"*$EdgeTarget"), sm.Get(@"ZeroTypes\String"));
             sm.Get(@"ZeroTypes\Exception\Type").AddEdge(sm.Get(@"*$EdgeTarget"), sm.Get(@"ZeroTypes\ExceptionTypeEnum"));
             sm.Get(@"ZeroTypes\Exception\What").AddEdge(sm.Get(@"*$EdgeTarget"), sm.Get(@"ZeroTypes\String"));            
          }
@@ -2758,7 +2758,7 @@ namespace m0
             }
         }
 
-        void CreateStoresMeta()
+        void CreateSystemMetaStoreFileSystem()
         {
             FileSystemStore.FillSystemMeta();
         }
@@ -3047,7 +3047,7 @@ namespace m0
 
             CreateSystemDataVisualiserDiagram_Uml();
 
-            CreateStoresMeta();
+            CreateSystemMetaStoreFileSystem();
 
             CreateSystemMetaCommands();
 

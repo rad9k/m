@@ -113,6 +113,10 @@ namespace m0.Store.FileSystem
 
             IVertex mfs = z.Root.Get(@"System\Meta\Store").AddVertex(null,"FileSystem");
 
+            IVertex sm = Root.Get(@"System\Meta");
+
+            GeneralUtil.ParseAndExcute(mfs, sm, "{User{User:root,User:wlodek,User:tadek}}");
+
             mfs.AddVertex(null, "Drive");
 
             mfs.AddVertex(null, "File");
@@ -136,6 +140,8 @@ namespace m0.Store.FileSystem
             mfs.AddVertex(null, "ReadDateTime");
 
             mfs.AddVertex(null, "Content");
+
+            mfs.AddVertex(null, "$Store");
         }
 
         public FileSystemStore(string identifier, IStoreUniverse storeUniverse, AccessLevelEnum[] accessLeveList)
