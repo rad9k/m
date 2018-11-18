@@ -56,15 +56,17 @@ namespace m0.Store.FileSystem
 
                 CanFireChangeEvent = false;                
 
-                IVertex fsm = MinusZero.Instance.Root.Get(@"System\Meta\Store\FileSystem");                
+                IVertex fsm = MinusZero.Instance.Root.Get(@"System\Meta\Store\FileSystem");
 
-                AddMeta(fsm.Get("Filename"), DI.Name);
-                AddMeta(fsm.Get("Extension"), DI.Extension);                
-                AddMeta(fsm.Get("FullFilename"), DI.FullName);
-                AddMeta(fsm.Get("FileAttribute"), DI.Attributes.ToString());
-                AddMeta(fsm.Get("CreationDateTime"), DI.CreationTime.ToString());
-                AddMeta(fsm.Get("UpdateDateTime"), DI.LastWriteTime.ToString());
-                AddMeta(fsm.Get("ReadDateTime"), DI.LastAccessTime.ToString());
+                IVertex fsmd = fsm.Get(@"Directory");
+
+                AddMeta(fsmd.Get("Filename"), DI.Name);
+                AddMeta(fsmd.Get("Extension"), DI.Extension);                
+                AddMeta(fsmd.Get("FullFilename"), DI.FullName);
+                AddMeta(fsmd.Get("FileAttribute"), DI.Attributes.ToString());
+                AddMeta(fsmd.Get("CreationDateTime"), DI.CreationTime.ToString());
+                AddMeta(fsmd.Get("UpdateDateTime"), DI.LastWriteTime.ToString());
+                AddMeta(fsmd.Get("ReadDateTime"), DI.LastAccessTime.ToString());
                 
 
                 IVertex FileMetaVertex=fsm.Get("File");

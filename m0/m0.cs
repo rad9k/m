@@ -308,7 +308,7 @@ namespace m0
             // "\ " > "\"
             // "|" > ":"
             // "||" > "::"        
-
+            
             GeneralUtil.ParseAndExcute(smu, sm,
                 "{Expression,Atom"+
                 ",SingleOperator{TargetExpression{$MinCardinality:1,$MaxCardinality:1}}"+

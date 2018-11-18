@@ -111,37 +111,33 @@ namespace m0.Store.FileSystem
         {
             MinusZero z = MinusZero.Instance;
 
-            IVertex mfs = z.Root.Get(@"System\Meta\Store").AddVertex(null,"FileSystem");
+            IVertex mfsf = z.Root.Get(@"System\Meta\Store").AddVertex(null,"FileSystem");
 
-            IVertex sm = Root.Get(@"System\Meta");
+            IVertex sm = z.Root.Get(@"System\Meta");
 
-            GeneralUtil.ParseAndExcute(mfs, sm, "{User{User:root,User:wlodek,User:tadek}}");
+            GeneralUtil.ParseAndExcute(mfsf, sm, "{Class:Drive,Class:Directory{Attribute:Filename,Attribute:Extension,Attribute:FullFilename,Attribute:FileAttribute,Attribute:CreationDateTime,Attribute:UpdateDateTime,Attribute:ReadDateTime},Class:File{Attribute:Filename,Attribute:Extension,Attribute:FullFilename,Attribute:Size,Attribute:FileAttribute,Attribute:CreationDateTime,Attribute:UpdateDateTime,Attribute:ReadDateTime}}");
 
-            mfs.AddVertex(null, "Drive");
+            mfsf.Get("Drive").AddEdge(sm.Get(@"Base\$Inherits"), mfsf.Get("Directory"));
 
-            mfs.AddVertex(null, "File");
+            mfsf.Get(@"Directory\Filename").AddEdge(sm.Get(@"*$EdgeTarget"), sm.Get(@"ZeroTypes\String"));
+            mfsf.Get(@"Directory\Extension").AddEdge(sm.Get(@"*$EdgeTarget"), sm.Get(@"ZeroTypes\String"));
+            mfsf.Get(@"Directory\FullFilename").AddEdge(sm.Get(@"*$EdgeTarget"), sm.Get(@"ZeroTypes\String"));
+            mfsf.Get(@"Directory\FileAttribute").AddEdge(sm.Get(@"*$EdgeTarget"), sm.Get(@"ZeroTypes\String"));
+            mfsf.Get(@"Directory\CreationDateTime").AddEdge(sm.Get(@"*$EdgeTarget"), sm.Get(@"ZeroTypes\String"));
+            mfsf.Get(@"Directory\UpdateDateTime").AddEdge(sm.Get(@"*$EdgeTarget"), sm.Get(@"ZeroTypes\String"));
+            mfsf.Get(@"Directory\ReadDateTime").AddEdge(sm.Get(@"*$EdgeTarget"), sm.Get(@"ZeroTypes\String"));
 
-            mfs.AddVertex(null, "Directory");
+            mfsf.Get(@"File\Filename").AddEdge(sm.Get(@"*$EdgeTarget"), sm.Get(@"ZeroTypes\String"));
+            mfsf.Get(@"File\Extension").AddEdge(sm.Get(@"*$EdgeTarget"), sm.Get(@"ZeroTypes\String"));
+            mfsf.Get(@"File\FullFilename").AddEdge(sm.Get(@"*$EdgeTarget"), sm.Get(@"ZeroTypes\String"));
+            mfsf.Get(@"File\Size").AddEdge(sm.Get(@"*$EdgeTarget"), sm.Get(@"ZeroTypes\Integer"));
+            mfsf.Get(@"File\FileAttribute").AddEdge(sm.Get(@"*$EdgeTarget"), sm.Get(@"ZeroTypes\String"));
+            mfsf.Get(@"File\CreationDateTime").AddEdge(sm.Get(@"*$EdgeTarget"), sm.Get(@"ZeroTypes\String"));
+            mfsf.Get(@"File\UpdateDateTime").AddEdge(sm.Get(@"*$EdgeTarget"), sm.Get(@"ZeroTypes\String"));
+            mfsf.Get(@"File\ReadDateTime").AddEdge(sm.Get(@"*$EdgeTarget"), sm.Get(@"ZeroTypes\String"));
 
-            mfs.AddVertex(null, "Filename");
 
-            mfs.AddVertex(null, "Extension");
-
-            mfs.AddVertex(null, "FullFilename");
-
-            mfs.AddVertex(null, "Size");
-
-            mfs.AddVertex(null, "FileAttribute");
-
-            mfs.AddVertex(null, "CreationDateTime");
-
-            mfs.AddVertex(null, "UpdateDateTime");
-
-            mfs.AddVertex(null, "ReadDateTime");
-
-            mfs.AddVertex(null, "Content");
-
-            mfs.AddVertex(null, "$Store");
+            mfsf.AddVertex(null, "$Store");
         }
 
         public FileSystemStore(string identifier, IStoreUniverse storeUniverse, AccessLevelEnum[] accessLeveList)

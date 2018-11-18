@@ -54,19 +54,19 @@ namespace m0.Store.FileSystem
 
                 CanFireChangeEvent = false;
 
-                IVertex fsm = MinusZero.Instance.Root.Get(@"System\Meta\Store\FileSystem");
-                
-                AddMeta(fsm.Get("Filename"), FI.Name);
-                AddMeta(fsm.Get("Extension"), FI.Extension);
-                AddMeta(fsm.Get("FullFilename"), FI.FullName);
-                AddMeta(fsm.Get("Size"), FI.Length.ToString());
-                AddMeta(fsm.Get("FileAttribute"), FI.Attributes.ToString());
-                AddMeta(fsm.Get("CreationDateTime"), FI.CreationTime.ToString());
-                AddMeta(fsm.Get("UpdateDateTime"), FI.LastWriteTime.ToString());
-                AddMeta(fsm.Get("ReadDateTime"), FI.LastAccessTime.ToString());
+                IVertex fsmf = MinusZero.Instance.Root.Get(@"System\Meta\Store\FileSystem\File");
+
+                AddMeta(fsmf.Get("Filename"), FI.Name);
+                AddMeta(fsmf.Get("Extension"), FI.Extension);
+                AddMeta(fsmf.Get("FullFilename"), FI.FullName);
+                AddMeta(fsmf.Get("Size"), FI.Length.ToString());
+                AddMeta(fsmf.Get("FileAttribute"), FI.Attributes.ToString());
+                AddMeta(fsmf.Get("CreationDateTime"), FI.CreationTime.ToString());
+                AddMeta(fsmf.Get("UpdateDateTime"), FI.LastWriteTime.ToString());
+                AddMeta(fsmf.Get("ReadDateTime"), FI.LastAccessTime.ToString());
 
                 if (((FileSystemStore)this.Store).IncludeFileContent)
-                    AddEdge(fsm.Get("Content"), new FileContentVertex(FI.FullName, this.Store));
+                    AddEdge(fsmf.Get("Content"), new FileContentVertex(FI.FullName, this.Store));
 
                 CanFireChangeEvent = true;
                 OutEdgesFilled = true;
