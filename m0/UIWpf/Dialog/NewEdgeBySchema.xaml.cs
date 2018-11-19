@@ -45,7 +45,7 @@ namespace m0.UIWpf.Dialog
         {            
             Vertex.AddEdge(MetaVertex, this.To.Vertex.Get(@"BaseEdge:\To:\To:"));
 
-            MinusZero.Instance.DefaultShow.CloseWindowByContent(this);
+            MinusZero.Instance.DefaultUserInteraction.CloseWindowByContent(this);
         }
     }
 }

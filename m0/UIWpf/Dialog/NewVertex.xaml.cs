@@ -52,7 +52,7 @@ namespace m0.UIWpf.Dialog
 
         private void Button_Click_1(object sender, RoutedEventArgs e)
         {
-            MinusZero.Instance.DefaultShow.CloseWindowByContent(this);
+            MinusZero.Instance.DefaultUserInteraction.CloseWindowByContent(this);
 
             if (GeneralUtil.CompareStrings(this.Schema.Vertex.Get(@"BaseEdge:\To:\To:").Value, "$Empty"))
                 Vertex.AddVertex(null, this.Content.Text);
@@ -67,7 +67,7 @@ namespace m0.UIWpf.Dialog
                 v.Value = this.Content.Text;
 
                 if(VertexOperations.GetChildEdges(meta).Count()>0)
-                    MinusZero.Instance.DefaultShow.EditDialog(v, null);
+                    MinusZero.Instance.DefaultUserInteraction.EditDialog(v, null);
             }             
         }
     }

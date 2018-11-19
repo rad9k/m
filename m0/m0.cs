@@ -44,9 +44,9 @@ namespace m0
 
         public IVertex Empty { get { return empty; } }
         
-        IShow _DefaultShow;
+        IUserInteraction _DefaultUserInteraction;
 
-        public IShow DefaultShow { get { return _DefaultShow; } }
+        public IUserInteraction DefaultUserInteraction { get { return _DefaultUserInteraction; } }
         
         IParser _DefaultParser;
 
@@ -114,7 +114,7 @@ namespace m0
         void Init(){
             ZeroCode.ZeroCodeEngine_OLD zeroCodeEngine_OLD = new ZeroCode.ZeroCodeEngine_OLD();
 
-            _DefaultShow = m0Main.Instance;
+            _DefaultUserInteraction = m0Main.Instance;
 
             _DefaultParser = zeroCodeEngine_OLD;
 

@@ -534,7 +534,7 @@ namespace m0.UIWpf.Visualisers.Diagram
             IVertex optionAllEdgesDelete = options.AddVertex(null, "Remove from repository");
             IVertex optionCancel = options.AddVertex(null, "Cancel");
 
-            IVertex option = MinusZero.Instance.DefaultShow.SelectDialogButton(info, options, null);
+            IVertex option = MinusZero.Instance.DefaultUserInteraction.SelectDialogButton(info, options, null);
 
             if (option == null || option == optionCancel)
                 return;
@@ -590,7 +590,7 @@ namespace m0.UIWpf.Visualisers.Diagram
           
             IVertex optionCancel = options.AddVertex(null, "Cancel");
 
-            IVertex option = MinusZero.Instance.DefaultShow.SelectDialogButton(info, options, null);
+            IVertex option = MinusZero.Instance.DefaultUserInteraction.SelectDialogButton(info, options, null);
 
             if (option == optionCancel)
                 return;
@@ -1128,7 +1128,7 @@ namespace m0.UIWpf.Visualisers.Diagram
                     }
 
                     if (ForceShowEditForm.HasValue == true && ForceShowEditForm == true)
-                        MinusZero.Instance.DefaultShow.EditDialog(ve.To, UIWpf.GetMousePositionDnd(e));
+                        MinusZero.Instance.DefaultUserInteraction.EditDialog(ve.To, UIWpf.GetMousePositionDnd(e));
 
                   
                     AddDiagramItem(x,
@@ -1166,10 +1166,10 @@ namespace m0.UIWpf.Visualisers.Diagram
                                         ndi.BaseEdge);
                         }
                         else
-                            m0.MinusZero.Instance.DefaultShow.ShowInfo("There is allready diagram item, that visualises dropped vertex.\n\nNow, it is not possible to add second representation of same vertex.\n\nOne can change this limitation by changing \"User\\CurrentUser:\\Settings:\\AllowManyDiagramItemsForOneVertex:\" setting.");
+                            m0.MinusZero.Instance.DefaultUserInteraction.ShowException("There is allready diagram item, that visualises dropped vertex.\n\nNow, it is not possible to add second representation of same vertex.\n\nOne can change this limitation by changing \"User\\CurrentUser:\\Settings:\\AllowManyDiagramItemsForOneVertex:\" setting.");
                     }
                     else
-                        m0.MinusZero.Instance.DefaultShow.ShowInfo("There is allready \"" + ndi.DiagramItemDefinition.Value + "\" diagram item, that visualises dropped vertex.\n\nIt is not possible to add second representation of same vertex, with the same diagram item type.");
+                        m0.MinusZero.Instance.DefaultUserInteraction.ShowException("There is allready \"" + ndi.DiagramItemDefinition.Value + "\" diagram item, that visualises dropped vertex.\n\nIt is not possible to add second representation of same vertex, with the same diagram item type.");
                 }
             }
         }

@@ -93,7 +93,7 @@
     </ApplicationDefinition>
     <Compile Include="AutoTest.cs" />
     <Compile Include="Foundation\IPlatformClass.cs" />
-    <Compile Include="Foundation\IShow.cs" />
+    <Compile Include="Foundation\IUserInteraction.cs" />
     <Compile Include="Graph\NonActingEdge.cs" />
     <Compile Include="Process\UI\NonAtomProcess.cs" />
     <Compile Include="StartWindow.xaml.cs">
@@ -236,6 +236,7 @@
     <Compile Include="Util\GeneralUtil.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Util\UserInteractionUtil.cs" />
     <Compile Include="ZeroCode\String2ZeroCodeGraphProcessing.cs" />
     <Compile Include="Graph\ToVertexMock.cs" />
     <Compile Include="ZeroCode\ZeroCodeCommon.cs" />

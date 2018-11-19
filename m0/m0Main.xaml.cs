@@ -33,7 +33,7 @@ namespace m0
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
-    public partial class m0Main : Window, IShow
+    public partial class m0Main : Window, IUserInteraction
     {
         public static m0Main Instance;        
 
@@ -652,13 +652,21 @@ namespace m0
             layoutContent.Close();
         }
 
-        public void ShowInfo(string info)
+        public void ShowException(IVertex exception)
         {
             m0.UIWpf.Dialog.Info i = new UIWpf.Dialog.Info();
 
             i.Owner = this;
 
-            i.Text = info;
+            string toShow = "";
+
+            if (exception.Get("Type:") != null)
+                toShow += exception.Get("Type:")+" ";
+
+            if (exception.Get("Where:")!=null)
+                toShow += exception.Get("Where:") + " ";
+
+            i.Text = toShow;
 
             i.ShowDialog();
         }

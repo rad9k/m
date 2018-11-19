@@ -70,7 +70,7 @@ namespace m0.UIWpf.Dialog
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            MinusZero.Instance.DefaultShow.CloseWindowByContent(this);
+            MinusZero.Instance.DefaultUserInteraction.CloseWindowByContent(this);
 
             //Close();
         }

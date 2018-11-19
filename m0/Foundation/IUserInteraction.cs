@@ -6,7 +6,7 @@ using System.Windows;
 
 namespace m0.Foundation
 {
-    public interface IShow
+    public interface IUserInteraction
     {
         void ShowContent(object obj);
         
@@ -14,7 +14,7 @@ namespace m0.Foundation
 
         void CloseWindowByContent(object obj);
 
-        void ShowInfo(string info);
+        void ShowException(IVertex exception);
 
         IVertex SelectDialog(IVertex info, IVertex options, Point? position);
 

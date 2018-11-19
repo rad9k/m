@@ -67,7 +67,7 @@ namespace m0.UIWpf.Dialog
 
                 To.Dispose(); // TO BE ADDED TO ALL DIALOGS !!!!!!!
 
-                MinusZero.Instance.DefaultShow.CloseWindowByContent(this);
+                MinusZero.Instance.DefaultUserInteraction.CloseWindowByContent(this);
             }
         }
     }

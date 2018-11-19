@@ -2617,7 +2617,7 @@ namespace m0.ZeroCode
         {
             IVertex smz = MinusZero.Instance.Root.Get(@"System\Meta\ZeroTypes");
 
-            IVertex error = errorList.AddVertex(smz.Get("Exception"), "");
+            IVertex error = VertexOperations.AddInstance(errorList, smz.Get("Exception"));
 
             error.AddVertex(smz.Get(@"Exception\Where"), lineNumber.ToString());
 

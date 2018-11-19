@@ -258,7 +258,7 @@ namespace m0.ZeroTypes
                 n.AddEdge(MinusZero.Instance.Root.Get(@"System\Meta\Base\Vertex\$EdgeTarget"), toVertex);
 
                 if(ForceShowEditForm.HasValue==false || ForceShowEditForm==true)
-                    MinusZero.Instance.DefaultShow.EditDialog(e.To, position);
+                    MinusZero.Instance.DefaultUserInteraction.EditDialog(e.To, position);
 
                 return e;
             }
@@ -270,7 +270,12 @@ namespace m0.ZeroTypes
 
         public static IVertex AddInstance(IVertex baseVertex,IVertex metaVertex, IVertex edgeVertex){
 
-            IVertex nv = baseVertex.AddVertex(edgeVertex, null);
+            IVertex nv;
+
+            if (baseVertex != null)
+                nv = baseVertex.AddVertex(edgeVertex, null);
+            else
+                nv = MinusZero.Instance.CreateTempVertex();
 
             nv.AddEdge(MinusZero.Instance.Root.Get(@"System\Meta\Base\Vertex\$Is"), metaVertex);
 
@@ -287,10 +292,7 @@ namespace m0.ZeroTypes
 
 
             foreach (IEdge child in children)
-            {
-                if (GeneralUtil.CompareStrings(child.To,"ShowOutEdges")){
-                    int x = 0;
-                }
+            {                
                 if(child.To.Get("$DefaultValue:")!=null)
                     nv.AddEdge(child.To, child.To.Get("$DefaultValue:"));
          //       else
