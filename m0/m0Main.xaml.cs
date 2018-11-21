@@ -666,6 +666,9 @@ namespace m0
             if (exception.Get("Where:")!=null)
                 toShow += exception.Get("Where:") + " ";
 
+            if (exception.Get("What:") != null)
+                toShow += exception.Get("What:");
+
             i.Text = toShow;
 
             i.ShowDialog();
