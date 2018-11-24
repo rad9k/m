@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using m0.Foundation;
 using m0.Graph;
 using Jil;
+using m0.Util;
 
 namespace m0.Store.Json
 {
@@ -79,19 +80,37 @@ namespace m0.Store.Json
                     else
                         ToId = je.ToIdString;
 
-                    StoreId MetaStoreId;
+                    StoreId MetaStoreId = null;
 
                     if (je.MetaStoreId == 0)
                         MetaStoreId = new StoreId(this.TypeName, this.Identifier);
                     else
-                        MetaStoreId = data.StoreIdDictionary[je.MetaStoreId];
+                    {
+                        if (!data.StoreIdDictionary.ContainsKey(je.MetaStoreId))
+                        {
+                            MinusZero.Instance.DefaultUserInteraction.ShowException(
+                                UserInteractionUtil.CreateErrorVertex("Json Deserialisation from " + Identifier, "MetaStoreId " + je.MetaStoreId + " not found in StoreIdDictionary"));
+                            return;
+                        }
+                        else
+                            MetaStoreId = data.StoreIdDictionary[je.MetaStoreId];
+                    }
 
                     StoreId ToStoreId;
 
                     if (je.ToStoreId == 0)
                         ToStoreId = new StoreId(this.TypeName, this.Identifier);
                     else
-                        ToStoreId = data.StoreIdDictionary[je.ToStoreId];
+                    {
+                        if (!data.StoreIdDictionary.ContainsKey(je.ToStoreId))
+                        {
+                            MinusZero.Instance.DefaultUserInteraction.ShowException(
+                                UserInteractionUtil.CreateErrorVertex("Json Deserialisation from " + Identifier, "ToStoreId " + je.ToStoreId + " not found in StoreIdDictionary"));
+                            return;
+                        }
+                        else
+                            ToStoreId = data.StoreIdDictionary[je.ToStoreId];
+                    }
 
                     EasyEdge e = new EasyEdge(MetaStoreId.TypeName, MetaStoreId.Identifier, MetaId,
                         ToStoreId.TypeName, ToStoreId.Identifier, ToId);

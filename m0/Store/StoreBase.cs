@@ -176,6 +176,14 @@ namespace m0.Store
 
         public virtual IVertex GetVertexByIdentifier(object VertexIdentifier)
         {
+            if (!VertexIdentifiersDictionary.ContainsKey(VertexIdentifier))
+            {
+                MinusZero.Instance.DefaultUserInteraction.ShowException(
+                                UserInteractionUtil.CreateErrorVertex("Json Deserialisation from " + Identifier, VertexIdentifier + " not found in VertexIdDictionary"));
+
+                return null;
+            }
+
             return VertexIdentifiersDictionary[VertexIdentifier]; 
         }
     }

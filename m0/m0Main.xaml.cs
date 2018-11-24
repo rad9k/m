@@ -54,6 +54,10 @@ namespace m0
             GraphUtil.ReplaceEdge(stv.Vertex.Get("BaseEdge:"), "To", MinusZero.Instance.Root);                                    
             
             this.root.Content=stv;
+
+            this.Show();
+
+            SerTest();
         }
 
         
@@ -73,9 +77,9 @@ namespace m0
 
         private void SerTest()
         {
-            JsonSerializationStore s = new JsonSerializationStore(@"c:\m0\test1200", MinusZero.Instance, new AccessLevelEnum[] { });
+            JsonSerializationStore s = new JsonSerializationStore(@"c:\m0\test100", MinusZero.Instance, new AccessLevelEnum[] { });
 
-           // SerTestCreate(s.Root);
+            //SerTestCreate(s.Root);
             //SerTestSave(s);
         }
 
@@ -83,9 +87,9 @@ namespace m0
         {
             IVertex xxx = MinusZero.Instance.Root;
 
-            for (int x = 0; x < 1200; x++) {
+            for (int x = 0; x < 100; x++) {
                 IVertex v = r.AddVertex(xxx, "KOHAM MAGDE");
-                for (int xx = 0; xx < 1200; xx++)
+                for (int xx = 0; xx < 100; xx++)
                     v.AddVertex(xxx, "BARDZO KOHAM MAGDE");
                 }
         }
@@ -661,13 +665,13 @@ namespace m0
             string toShow = "";
 
             if (exception.Get("Type:") != null)
-                toShow += exception.Get("Type:")+" ";
+                toShow += "Type: "+exception.Get("Type:")+" ";
 
             if (exception.Get("Where:")!=null)
-                toShow += exception.Get("Where:") + " ";
+                toShow += "\n\nWhere: " + exception.Get("Where:") + " ";
 
             if (exception.Get("What:") != null)
-                toShow += exception.Get("What:");
+                toShow += "\n\nWhat: " + exception.Get("What:");
 
             i.Text = toShow;
 
