@@ -5,12 +5,15 @@ using System.Text;
 using m0.Foundation;
 using m0.Graph;
 using System.IO;
+using m0.Store.Json;
 
 namespace m0.Store.FileSystem
 {
     public class FileVertex : EasyVertex
     {        
         FileInfo FI;
+
+        public JsonSerializationStore JsonStore;
 
         public override object Value
         {
@@ -36,7 +39,7 @@ namespace m0.Store.FileSystem
 
         bool OutEdgesFilled = false;
 
-        void AddMeta(IVertex metaVertex, string value)
+        void AddNewVertexByMeta(IVertex metaVertex, string value)
         {
             IVertex v = new EasyVertex(this.Store);
 
@@ -56,17 +59,30 @@ namespace m0.Store.FileSystem
 
                 IVertex fsmf = MinusZero.Instance.Root.Get(@"System\Meta\Store\FileSystem\File");
 
-                AddMeta(fsmf.Get("Filename"), FI.Name);
-                AddMeta(fsmf.Get("Extension"), FI.Extension);
-                AddMeta(fsmf.Get("FullFilename"), FI.FullName);
-                AddMeta(fsmf.Get("Size"), FI.Length.ToString());
-                AddMeta(fsmf.Get("FileAttribute"), FI.Attributes.ToString());
-                AddMeta(fsmf.Get("CreationDateTime"), FI.CreationTime.ToString());
-                AddMeta(fsmf.Get("UpdateDateTime"), FI.LastWriteTime.ToString());
-                AddMeta(fsmf.Get("ReadDateTime"), FI.LastAccessTime.ToString());
+                AddNewVertexByMeta(fsmf.Get("Filename"), FI.Name); 
+
+                string extension = FI.Extension;
+
+                if (extension.Length > 1)
+                    extension = extension.Substring(1);
+
+                AddNewVertexByMeta(fsmf.Get("Extension"), extension);
+
+                AddNewVertexByMeta(fsmf.Get("FullFilename"), FI.FullName);
+                AddNewVertexByMeta(fsmf.Get("Size"), FI.Length.ToString());
+                AddNewVertexByMeta(fsmf.Get("FileAttribute"), FI.Attributes.ToString());
+                AddNewVertexByMeta(fsmf.Get("CreationDateTime"), FI.CreationTime.ToString());
+                AddNewVertexByMeta(fsmf.Get("UpdateDateTime"), FI.LastWriteTime.ToString());
+                AddNewVertexByMeta(fsmf.Get("ReadDateTime"), FI.LastAccessTime.ToString());
 
                 if (((FileSystemStore)this.Store).IncludeFileContent)
                     AddEdge(fsmf.Get("Content"), new FileContentVertex(FI.FullName, this.Store));
+
+                if (FI.Extension == ".m0" || FI.Extension == ".M0") {
+                    JsonStore = new JsonSerializationStore((string)this.Identifier, MinusZero.Instance, new AccessLevelEnum[] { });
+                    AddEdge(MinusZero.Instance.Root.Get(@"System\Meta\Store\FileSystem\$Store"), JsonStore.Root);
+                }
+
 
                 CanFireChangeEvent = true;
                 OutEdgesFilled = true;

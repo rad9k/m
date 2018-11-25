@@ -133,15 +133,6 @@ namespace m0.Graph
 
         public override IEdge AddEdge(IVertex metaVertex, IVertex destVertex)
         {
-            // LOG BEGIN
-            /*
-            if(metaVertex==null)
-                MinusZero.Instance.Log(3,"AddEdge", GeneralUtil.EmptyIfNull(this.Value) + " [NULL] " + GeneralUtil.EmptyIfNull(destVertex.Value));
-            else
-                MinusZero.Instance.Log(3,"AddEdge", GeneralUtil.EmptyIfNull(this.Value) + " [" + GeneralUtil.EmptyIfNull(metaVertex.Value) + "] " + GeneralUtil.EmptyIfNull(destVertex.Value));
-             */
-            // LOG END
-
             if (destVertex == null)
                 throw new Exception("target vertex can not be null");
 

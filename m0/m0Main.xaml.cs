@@ -55,9 +55,9 @@ namespace m0
             
             this.root.Content=stv;
 
-            this.Show();
+            //this.Show();
 
-            SerTest();
+            //SerTest();
         }
 
         
@@ -77,15 +77,15 @@ namespace m0
 
         private void SerTest()
         {
-            JsonSerializationStore s = new JsonSerializationStore(@"c:\m0\test100", MinusZero.Instance, new AccessLevelEnum[] { });
+            JsonSerializationStore s = new JsonSerializationStore(@"c:\m0\System100.M0", MinusZero.Instance, new AccessLevelEnum[] { });
 
-            //SerTestCreate(s.Root);
-            //SerTestSave(s);
+            SerTestCreate(s.Root);
+            SerTestSave(s);
         }
 
         void SerTestCreate(IVertex r)
         {
-            IVertex xxx = MinusZero.Instance.Root;
+            IVertex xxx = MinusZero.Instance.Root.Get("System");
 
             for (int x = 0; x < 100; x++) {
                 IVertex v = r.AddVertex(xxx, "KOHAM MAGDE");

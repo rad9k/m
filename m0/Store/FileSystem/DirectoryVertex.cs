@@ -61,7 +61,14 @@ namespace m0.Store.FileSystem
                 IVertex fsmd = fsm.Get(@"Directory");
 
                 AddMeta(fsmd.Get("Filename"), DI.Name);
-                AddMeta(fsmd.Get("Extension"), DI.Extension);                
+
+                string extension = DI.Extension;
+
+                if (extension.Length > 1)
+                    extension = extension.Substring(1);
+
+                AddMeta(fsmd.Get("Extension"), extension);
+                
                 AddMeta(fsmd.Get("FullFilename"), DI.FullName);
                 AddMeta(fsmd.Get("FileAttribute"), DI.Attributes.ToString());
                 AddMeta(fsmd.Get("CreationDateTime"), DI.CreationTime.ToString());

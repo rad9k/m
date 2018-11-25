@@ -13,6 +13,19 @@ namespace m0.Graph
     [Serializable]
     public class VertexBase:IVertex, IHasUsageCounter
     {
+        public IDictionary<object, object> OutEdgesByMeta { get; }
+
+        public IDictionary<object, object> OutEdgesByValue { get; }
+
+        public IDictionary<object, object> IngesByMeta { get; }
+
+        public IDictionary<object, object> InEdgesByValue { get; }
+
+        public bool InEdgesDictionariesNeedsRebuild { get; set; }
+
+        public bool OutEdgesDictionariesNeedsRebuild { get; set; }
+
+
         public IEdge this[string meta]
         {
             get {                
