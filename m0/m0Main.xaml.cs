@@ -128,18 +128,17 @@ namespace m0
                 switch (wParam.ToInt32())
                 {
                     case _TransactionSysMenuID:
-                        MessageBox.Show("\"Settings\" was clicked");
+                        
+
+
                         handled = true;
                         break;
                     case _AboutSysMenuID:
 
-                        m0.UIWpf.Forms.About about = new UIWpf.Forms.About();
-
-                        about.Owner = this_static;
-
-                        about.Show();
+                        m0.UIWpf.Forms.About about = new UIWpf.Forms.About(this_static);
 
                         handled = true;
+
                         break;
                 }
             }
