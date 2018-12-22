@@ -106,12 +106,11 @@ namespace m0
         private void m0Main_Loaded(object sender, RoutedEventArgs e)
         {
             /// Get the Handle for the Forms System Menu
-            IntPtr systemMenuHandle = GetSystemMenu(this.Handle, false);
-
-            /// Create our new System Menu items just before the Close menu item
-            InsertMenu(systemMenuHandle, 5, MF_BYPOSITION | MF_SEPARATOR, 0, string.Empty); // <-- Add a menu seperator
-            InsertMenu(systemMenuHandle, 6, MF_BYPOSITION, _TransactionSysMenuID, "Transactions");
-            InsertMenu(systemMenuHandle, 7, MF_BYPOSITION, _AboutSysMenuID, "About");
+            IntPtr systemMenuHandle = GetSystemMenu(this.Handle, false);            
+            
+            InsertMenu(systemMenuHandle, 0, MF_BYPOSITION, _TransactionSysMenuID, "Transactions");
+            InsertMenu(systemMenuHandle, 1, MF_BYPOSITION, _AboutSysMenuID, "About");
+            InsertMenu(systemMenuHandle, 2, MF_BYPOSITION | MF_SEPARATOR, 0, string.Empty); // <-- Add a menu seperator
 
             // Attach our WndProc handler to this Window
             HwndSource source = HwndSource.FromHwnd(this.Handle);

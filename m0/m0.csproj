@@ -170,6 +170,9 @@
     <Compile Include="UIWpf\Forms\About.xaml.cs">
       <DependentUpon>About.xaml</DependentUpon>
     </Compile>
+    <Compile Include="UIWpf\Forms\Transaction.xaml.cs">
+      <DependentUpon>Transaction.xaml</DependentUpon>
+    </Compile>
     <Compile Include="UIWpf\Geometry2D.cs" />
     <Compile Include="UIWpf\Visualisers\ClassVisualiser.cs" />
     <Compile Include="UIWpf\Visualisers\Code\TabFoldingStrategy.cs" />
@@ -353,6 +356,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="UIWpf\Forms\About.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UIWpf\Forms\Transaction.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
