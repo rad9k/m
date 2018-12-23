@@ -19,9 +19,13 @@ namespace m0.UIWpf.Forms
     /// </summary>
     public partial class Transaction : Window
     {
-        public Transaction()
+        public Transaction(Window owner)
         {
+            this.Owner = owner;
+
             InitializeComponent();
+
+            ShowDialog();
         }
     }
 }

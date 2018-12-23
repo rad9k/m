@@ -19,9 +19,12 @@ namespace m0.UIWpf.Forms
     /// </summary>
     public partial class About : Window
     {
-        public About()
+        public About(Window owner)
         {
+            this.Owner = owner;
             InitializeComponent();
+
+            ShowDialog();
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)

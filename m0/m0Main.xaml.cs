@@ -128,8 +128,8 @@ namespace m0
                 switch (wParam.ToInt32())
                 {
                     case _TransactionSysMenuID:
-                        
 
+                        m0.UIWpf.Forms.Transaction transaction = new UIWpf.Forms.Transaction(this_static);
 
                         handled = true;
                         break;
