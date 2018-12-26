@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:m0.UIWpf.Forms"
         mc:Ignorable="d"
-        Title="transaction" Height="379.65" Width="404" WindowStyle="ToolWindow" ResizeMode="CanResizeWithGrip">
+        Title="transaction" Height="379.65" Width="404" WindowStyle="ToolWindow" ResizeMode="CanResizeWithGrip" WindowStartupLocation="CenterOwner">
     <Grid>
         <GroupBox Header="store universe" HorizontalAlignment="Left" Height="86" Margin="10,10,0,0" VerticalAlignment="Top" Width="187">
             <Grid>
