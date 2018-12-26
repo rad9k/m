@@ -197,7 +197,7 @@ namespace m0
         {
             IVertex r=MinusZero.Instance.Root;
 
-            JsonSerializationStore jss = new JsonSerializationStore(@"c:\m0\x",MinusZero.Instance, new AccessLevelEnum[] { });
+            //JsonSerializationStore jss = new JsonSerializationStore(@"c:\m0\x",MinusZero.Instance, new AccessLevelEnum[] { });
 
           //  IVertex tr = jss.Root;
 
