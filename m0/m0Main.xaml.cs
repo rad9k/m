@@ -11,6 +11,8 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System.Runtime.InteropServices;
+using System.Windows.Interop;
 
 using m0.UIWpf;
 using m0.Graph;
@@ -55,12 +57,102 @@ namespace m0
             
             this.root.Content=stv;
 
-            //this.Show();
 
-            //SerTest();
+            this.Loaded += new RoutedEventHandler(m0Main_Loaded);
+
+            this_static = this;
+
         }
 
-        
+
+        // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+        // SYSTEM MENU BEG
+
+        // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+        #region Win32 API Stuff
+
+        // Define the Win32 API methods we are going to use
+        [DllImport("user32.dll")]
+        private static extern IntPtr GetSystemMenu(IntPtr hWnd, bool bRevert);
+
+        [DllImport("user32.dll")]
+        private static extern bool InsertMenu(IntPtr hMenu, Int32 wPosition, Int32 wFlags, Int32 wIDNewItem, string lpNewItem);
+
+        /// Define our Constants we will use
+        public const Int32 WM_SYSCOMMAND = 0x112;
+        public const Int32 MF_SEPARATOR = 0x800;
+        public const Int32 MF_BYPOSITION = 0x400;
+        public const Int32 MF_STRING = 0x0;
+
+        #endregion
+
+        // The constants we'll use to identify our custom system menu items
+        public const Int32 _TransactionSysMenuID = 1000;
+        public const Int32 _AboutSysMenuID = 1001;
+
+        /// <summary>
+        /// This is the Win32 Interop Handle for this Window
+        /// </summary>
+        public IntPtr Handle
+        {
+            get
+            {
+                return new WindowInteropHelper(this).Handle;
+            }
+        }
+
+        private void m0Main_Loaded(object sender, RoutedEventArgs e)
+        {
+            /// Get the Handle for the Forms System Menu
+            IntPtr systemMenuHandle = GetSystemMenu(this.Handle, false);            
+            
+            InsertMenu(systemMenuHandle, 0, MF_BYPOSITION, _TransactionSysMenuID, "Transactions");
+            InsertMenu(systemMenuHandle, 1, MF_BYPOSITION, _AboutSysMenuID, "About");
+            InsertMenu(systemMenuHandle, 2, MF_BYPOSITION | MF_SEPARATOR, 0, string.Empty); // <-- Add a menu seperator
+
+            // Attach our WndProc handler to this Window
+            HwndSource source = HwndSource.FromHwnd(this.Handle);
+            source.AddHook(new HwndSourceHook(WndProc));
+        }
+
+        static m0Main this_static;
+
+        private static IntPtr WndProc(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
+        {
+            // Check if a System Command has been executed
+            if (msg == WM_SYSCOMMAND)
+            {
+                // Execute the appropriate code for the System Menu item that was clicked
+                switch (wParam.ToInt32())
+                {
+                    case _TransactionSysMenuID:
+
+                        m0.UIWpf.Forms.Transaction transaction = new UIWpf.Forms.Transaction(this_static);
+
+                        handled = true;
+                        break;
+                    case _AboutSysMenuID:
+
+                        m0.UIWpf.Forms.About about = new UIWpf.Forms.About(this_static);
+
+                        handled = true;
+
+                        break;
+                }
+            }
+
+            return IntPtr.Zero;
+        }
+
+        // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+        // SYSTEM MENU END
+
+        // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+
 
         private string randomChars()
         {
@@ -77,19 +169,19 @@ namespace m0
 
         private void SerTest()
         {
-            JsonSerializationStore s = new JsonSerializationStore(@"c:\m0\System100.M0", MinusZero.Instance, new AccessLevelEnum[] { });
+            JsonSerializationStore s = new JsonSerializationStore(@"c:\m0\test1200", MinusZero.Instance, new AccessLevelEnum[] { });
 
-            SerTestCreate(s.Root);
-            SerTestSave(s);
+           // SerTestCreate(s.Root);
+            //SerTestSave(s);
         }
 
         void SerTestCreate(IVertex r)
         {
-            IVertex xxx = MinusZero.Instance.Root.Get("System");
+            IVertex xxx = MinusZero.Instance.Root;
 
-            for (int x = 0; x < 100; x++) {
+            for (int x = 0; x < 1200; x++) {
                 IVertex v = r.AddVertex(xxx, "KOHAM MAGDE");
-                for (int xx = 0; xx < 100; xx++)
+                for (int xx = 0; xx < 1200; xx++)
                     v.AddVertex(xxx, "BARDZO KOHAM MAGDE");
                 }
         }
@@ -665,13 +757,13 @@ namespace m0
             string toShow = "";
 
             if (exception.Get("Type:") != null)
-                toShow += "Type: "+exception.Get("Type:")+" ";
+                toShow += exception.Get("Type:")+" ";
 
             if (exception.Get("Where:")!=null)
-                toShow += "\n\nWhere: " + exception.Get("Where:") + " ";
+                toShow += exception.Get("Where:") + " ";
 
             if (exception.Get("What:") != null)
-                toShow += "\n\nWhat: " + exception.Get("What:");
+                toShow += exception.Get("What:");
 
             i.Text = toShow;
 
