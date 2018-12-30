@@ -35,11 +35,11 @@ namespace m0.Foundation
 
         object Value {get; set;}
 
-        IList<IEdge> OutEdgesRaw { get;}
+        IList<IEdge> OutEdgesRaw { get;} // without $Inherits
 
         IEnumerable<IEdge> InEdges { get; }
 
-        IList<IEdge> InEdgesRaw { get; }
+        IList<IEdge> InEdgesRaw { get; } // without $Inherits
 
         IEnumerable<IEdge> OutEdges { get; }
 
@@ -48,6 +48,8 @@ namespace m0.Foundation
         bool InEdgesDictionariesNeedsRebuild { get; set; }
 
         bool OutEdgesDictionariesNeedsRebuild { get; set; }
+
+
 
 
         // 2.0 END
