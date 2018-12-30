@@ -94,6 +94,7 @@
     <Compile Include="AutoTest.cs" />
     <Compile Include="Foundation\IPlatformClass.cs" />
     <Compile Include="Foundation\IUserInteraction.cs" />
+    <Compile Include="Graph\IDictionaredVertex.cs" />
     <Compile Include="Graph\NonActingEdge.cs" />
     <Compile Include="Process\UI\NonAtomProcess.cs" />
     <Compile Include="StartWindow.xaml.cs">

@@ -43,21 +43,14 @@ namespace m0.Foundation
 
         IEnumerable<IEdge> OutEdges { get; }
 
-        // Vertex 2.0 BEG
-
-        IDictionary<object, object> OutEdgesByMeta { get; }
-
-        IDictionary<object, object> OutEdgesByValue { get; }
-
-        IDictionary<object, object> IngesByMeta { get; }
-
-        IDictionary<object, object> InEdgesByValue { get; }
+        // 2.0 BEG
 
         bool InEdgesDictionariesNeedsRebuild { get; set; }
 
         bool OutEdgesDictionariesNeedsRebuild { get; set; }
 
-        // Vertex 2.0 END
+
+        // 2.0 END
 
         IVertex AddVertex(IVertex metaVertex, object val);
 
