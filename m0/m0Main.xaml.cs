@@ -670,7 +670,9 @@ namespace m0
 
         protected LayoutAnchorable _ShowContent(object obj)
         {            
-            LayoutAnchorable a = new LayoutAnchorable();                        
+            LayoutAnchorable a = new LayoutAnchorable();
+
+            a.CanClose = true;
 
             if (obj is IPlatformClass)
             {
