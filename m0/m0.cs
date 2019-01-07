@@ -2845,6 +2845,8 @@ namespace m0
 
                 //fss.IncludeFileContent = true;
 
+                fss.Root.AddVertex(Root.Get(@"System\Meta\Store\FileSystem\Drive\PathSeparator"), "\\");
+                    
                 Root.AddEdge(DriveMeta,fss.Root);
             }
         }

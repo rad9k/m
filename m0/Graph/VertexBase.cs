@@ -219,5 +219,15 @@ namespace m0.Graph
         {
             return ((IEnumerable)OutEdges).GetEnumerator();
         }
+
+        public void QueryOutEdges(string meta, string to, out IEdge result, out IList<IEdge> results)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void QueryInEdges(string meta, string to, out IEdge result, out IList<IEdge> results)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

@@ -22,8 +22,20 @@ namespace m0.Store.FileSystem
                 return FI.Name;
             }
             set
-            {                
-                //throw new NotImplementedException();
+            {
+                if (value is string)
+                {
+                    string newFileName = (string)value;
+
+                    //newFileName = FI.
+
+                    //System.IO.File.Exists()
+
+                    if ((string)value != FI.Name)
+                    {
+                      //  System.IO.File.Move(FI.FullName,)
+                    }
+                }
             }
         }        
 

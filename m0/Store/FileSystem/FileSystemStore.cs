@@ -115,9 +115,10 @@ namespace m0.Store.FileSystem
 
             IVertex sm = z.Root.Get(@"System\Meta");
 
-            GeneralUtil.ParseAndExcute(mfsf, sm, "{Class:Drive,Class:Directory{Attribute:Filename,Attribute:Extension,Attribute:FullFilename,Attribute:FileAttribute,Attribute:CreationDateTime,Attribute:UpdateDateTime,Attribute:ReadDateTime},Class:File{Attribute:Filename,Attribute:Extension,Attribute:FullFilename,Attribute:Size,Attribute:FileAttribute,Attribute:CreationDateTime,Attribute:UpdateDateTime,Attribute:ReadDateTime}}");
+            GeneralUtil.ParseAndExcute(mfsf, sm, "{Class:Drive{Attribute:PathSeparator},Class:Directory{Aggregation:File{$MinCardinality:0,$MaxCardinality:-1},Aggregation:Directory{$MinCardinality:0,$MaxCardinality:-1},Attribute:Filename,Attribute:Extension,Attribute:FullFilename,Attribute:FileAttribute,Attribute:CreationDateTime,Attribute:UpdateDateTime,Attribute:ReadDateTime},Class:File{Attribute:Filename,Attribute:Extension,Attribute:FullFilename,Attribute:Size,Attribute:FileAttribute,Attribute:CreationDateTime,Attribute:UpdateDateTime,Attribute:ReadDateTime}}");
 
-            mfsf.Get("Drive").AddEdge(sm.Get(@"Base\$Inherits"), mfsf.Get("Directory"));
+            mfsf.Get("Drive").AddEdge(sm.Get(@"Base\Vertex\$Inherits"), mfsf.Get("Directory"));
+            mfsf.Get(@"Drive\PathSeparator").AddEdge(sm.Get(@"*$EdgeTarget"), sm.Get(@"ZeroTypes\String"));
 
             mfsf.Get(@"Directory\Filename").AddEdge(sm.Get(@"*$EdgeTarget"), sm.Get(@"ZeroTypes\String"));
             mfsf.Get(@"Directory\Extension").AddEdge(sm.Get(@"*$EdgeTarget"), sm.Get(@"ZeroTypes\String"));
@@ -126,6 +127,10 @@ namespace m0.Store.FileSystem
             mfsf.Get(@"Directory\CreationDateTime").AddEdge(sm.Get(@"*$EdgeTarget"), sm.Get(@"ZeroTypes\String"));
             mfsf.Get(@"Directory\UpdateDateTime").AddEdge(sm.Get(@"*$EdgeTarget"), sm.Get(@"ZeroTypes\String"));
             mfsf.Get(@"Directory\ReadDateTime").AddEdge(sm.Get(@"*$EdgeTarget"), sm.Get(@"ZeroTypes\String"));
+            mfsf.Get(@"Directory\UpdateDateTime").AddEdge(sm.Get(@"*$EdgeTarget"), sm.Get(@"ZeroTypes\String"));
+            mfsf.Get(@"Directory\ReadDateTime").AddEdge(sm.Get(@"*$EdgeTarget"), sm.Get(@"ZeroTypes\String"));
+            mfsf.Get(@"Directory\File").AddEdge(sm.Get(@"*$EdgeTarget"), sm.Get(@"Store\FileSystem\File"));
+            mfsf.Get(@"Directory\Directory").AddEdge(sm.Get(@"*$EdgeTarget"), sm.Get(@"Store\FileSystem\Directory"));
 
             mfsf.Get(@"File\Filename").AddEdge(sm.Get(@"*$EdgeTarget"), sm.Get(@"ZeroTypes\String"));
             mfsf.Get(@"File\Extension").AddEdge(sm.Get(@"*$EdgeTarget"), sm.Get(@"ZeroTypes\String"));
