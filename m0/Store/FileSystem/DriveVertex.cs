@@ -11,9 +11,10 @@ namespace m0.Store.FileSystem
     {
         public DriveVertex(string identifier, IStore store) : base (identifier, store)
         {
+            IVertex pathSymbolVertex = m0.MinusZero.Instance.CreateTempVertex();
 
-
-            OutEdgesRaw.AddVertex(Root.Get(@"System\Meta\Store\FileSystem\Drive\PathSeparator"), "\\");
+            AddEdge(Root.Get(@"System\Meta\Store\FileSystem\Drive\PathSeparator"), pathSymbolVertex);
+            OutEdgesRaw.AddVertex(, "\\");
         }
     }
 }
