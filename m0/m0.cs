@@ -2843,9 +2843,7 @@ namespace m0
             {
                 FileSystemStore fss = new FileSystemStore(str, this, new AccessLevelEnum[] { AccessLevelEnum.NoRestrictions });
 
-                //fss.IncludeFileContent = true;
-
-                fss.Root.AddVertex(Root.Get(@"System\Meta\Store\FileSystem\Drive\PathSeparator"), "\\");
+                //fss.IncludeFileContent = true;                
                     
                 Root.AddEdge(DriveMeta,fss.Root);
             }
