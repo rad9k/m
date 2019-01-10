@@ -13,8 +13,10 @@ namespace m0.Store.FileSystem
         {
             IVertex pathSymbolVertex = m0.MinusZero.Instance.CreateTempVertex();
 
-            AddEdge(Root.Get(@"System\Meta\Store\FileSystem\Drive\PathSeparator"), pathSymbolVertex);
-            OutEdgesRaw.AddVertex(, "\\");
+            pathSymbolVertex.Value = "\\";
+
+            AddEdge(MinusZero.Instance.Root.Get(@"System\Meta\Store\FileSystem\Drive\PathSeparator"), pathSymbolVertex);
+            
         }
     }
 }

@@ -127,8 +127,6 @@ namespace m0.Store.FileSystem
             mfsf.Get(@"Directory\CreationDateTime").AddEdge(sm.Get(@"*$EdgeTarget"), sm.Get(@"ZeroTypes\String"));
             mfsf.Get(@"Directory\UpdateDateTime").AddEdge(sm.Get(@"*$EdgeTarget"), sm.Get(@"ZeroTypes\String"));
             mfsf.Get(@"Directory\ReadDateTime").AddEdge(sm.Get(@"*$EdgeTarget"), sm.Get(@"ZeroTypes\String"));
-            mfsf.Get(@"Directory\UpdateDateTime").AddEdge(sm.Get(@"*$EdgeTarget"), sm.Get(@"ZeroTypes\String"));
-            mfsf.Get(@"Directory\ReadDateTime").AddEdge(sm.Get(@"*$EdgeTarget"), sm.Get(@"ZeroTypes\String"));
             mfsf.Get(@"Directory\File").AddEdge(sm.Get(@"*$EdgeTarget"), sm.Get(@"Store\FileSystem\File"));
             mfsf.Get(@"Directory\Directory").AddEdge(sm.Get(@"*$EdgeTarget"), sm.Get(@"Store\FileSystem\Directory"));
 

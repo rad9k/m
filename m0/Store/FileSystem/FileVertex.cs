@@ -23,17 +23,24 @@ namespace m0.Store.FileSystem
             }
             set
             {
-                if (value is string)
+                if (value is string && (string)value != "")
                 {
                     string newFileName = (string)value;
 
-                    //newFileName = FI.
+                    newFileName = FI.DirectoryName + "\\" + newFileName.Trim();
 
-                    //System.IO.File.Exists()
+                    if (newFileName[newFileName.Length - 1] == '.')
+                        newFileName = newFileName.Substring(0, newFileName.Length - 1);
 
-                    if ((string)value != FI.Name)
-                    {
-                      //  System.IO.File.Move(FI.FullName,)
+                    if (newFileName != FI.FullName){                        
+                        while (System.IO.File.Exists(newFileName))
+                            newFileName = newFileName + ".new";
+
+                        System.IO.File.Move(FI.FullName, newFileName);
+
+                        FI = new FileInfo(newFileName);
+
+                        FireChange(new VertexChangeEventArgs(VertexChangeType.ValueChanged, null));
                     }
                 }
             }
