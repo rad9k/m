@@ -60,7 +60,7 @@ namespace m0.Store.FileSystem
         bool OutEdgesFilled = false;
 
         void AddMeta(IVertex metaVertex, string value)
-        {
+        {            
             IVertex v = new EasyVertex(this.Store);
 
             v.Value = value;
@@ -132,12 +132,12 @@ namespace m0.Store.FileSystem
 
         public override IVertex AddVertex(IVertex metaVertex, object val)
         {
-            if (val == null) return null;
+            if (val == null) val = "name";
 
             string name = val.ToString();
 
-            if (this.Get(name) != null)
-                return null;
+            while (this.Get(name) != null)
+                name += ".new";
 
             if (GeneralUtil.CompareStrings(metaVertex.Value,"Directory"))
             {                
