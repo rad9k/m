@@ -13,18 +13,39 @@ namespace m0.Store.FileSystem
     {        
         DirectoryInfo DI;
 
-        public override object Value { get; set; }
-        
-        /*{
+        public override object Value         
+        {
             get
             {
                 return DI.Name;
             }
             set
             {
-                throw new NotImplementedException();
+                if (value is string && (string)value != "")
+                {
+                    string newFileName = (string)value;
+
+                    string DI_DirectoryName = DI.FullName.Substring(0, DI.FullName.LastIndexOf('\\'));
+
+                    newFileName = DI_DirectoryName + "\\" + newFileName.Trim();
+
+                    if (newFileName[newFileName.Length - 1] == '.')
+                        newFileName = newFileName.Substring(0, newFileName.Length - 1);
+
+                    if (newFileName != DI.FullName)
+                    {
+                        while (System.IO.Directory.Exists(newFileName))
+                            newFileName = newFileName + ".new";
+
+                        System.IO.Directory.Move(DI.FullName, newFileName);
+
+                        DI = new DirectoryInfo(newFileName);
+
+                        FireChange(new VertexChangeEventArgs(VertexChangeType.ValueChanged, null));
+                    }
+                }
             }
-        } */       
+        }        
 
         public override void AddInEdge(IEdge edge)
         {
@@ -172,8 +193,6 @@ namespace m0.Store.FileSystem
             UsageCounter++; // identified vertex are used for volatile stores            
 
             DI = new DirectoryInfo(Identifier.ToString());
-
-            Value = DI.Name;
         }
     }
 }

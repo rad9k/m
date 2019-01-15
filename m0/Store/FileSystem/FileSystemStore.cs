@@ -157,8 +157,8 @@ namespace m0.Store.FileSystem
 
             String rvv = (String)_Root.Value;
 
-            if (rvv[rvv.Length - 1] == '\\') // problems with queries where vertex value has last character =="\\"
-                _Root.Value = rvv.Substring(0, rvv.Length - 1);            
+           // if (rvv[rvv.Length - 1] == '\\') // problems with queries where vertex value has last character =="\\"
+             //   _Root.Value = rvv.Substring(0, rvv.Length - 1);            
         }
     }
 }
