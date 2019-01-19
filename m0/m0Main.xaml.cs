@@ -759,10 +759,10 @@ namespace m0
             string toShow = "";
 
             if (exception.Get("Type:") != null)
-                toShow += exception.Get("Type:")+" ";
+                toShow += exception.Get("Type:")+"\n\n";
 
             if (exception.Get("Where:")!=null)
-                toShow += exception.Get("Where:") + " ";
+                toShow += exception.Get("Where:") + "\n\n";
 
             if (exception.Get("What:") != null)
                 toShow += exception.Get("What:");

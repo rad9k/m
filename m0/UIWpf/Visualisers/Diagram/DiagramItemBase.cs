@@ -241,7 +241,7 @@ namespace m0.UIWpf.Visualisers.Diagram
             }
 
                 if (v.Count() == 0)
-                    MinusZero.Instance.DefaultUserInteraction.ShowException(UserInteractionUtil.CreateErrorVertex(Diagram.Vertex.Value+" Diagram","There is no diagram line definition matching selected source and target items."));
+                    UserInteractionUtil.ShowError(Diagram.Vertex.Value+" Diagram","There is no diagram line definition matching selected source and target items.");
 
                 IVertex info = m0.MinusZero.Instance.CreateTempVertex();
                 info.Value = "choose diagram line:";
@@ -280,7 +280,7 @@ namespace m0.UIWpf.Visualisers.Diagram
                         AddDiagramLineVertex(edge, a.Get(@"OptionDiagramLineDefinition:"), toItem);
                     }
                     else
-                        MinusZero.Instance.DefaultUserInteraction.ShowException(UserInteractionUtil.CreateErrorVertex(Diagram.Vertex.Value+" Diagram", "Adding new diagram line  \"" + a.Value + "\" is not possible.\n\n" + test.Value));
+                        UserInteractionUtil.ShowError(Diagram.Vertex.Value+" Diagram", "Adding new diagram line  \"" + a.Value + "\" is not possible.\n\n" + test.Value);
                 }
                  
             

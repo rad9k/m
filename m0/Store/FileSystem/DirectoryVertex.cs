@@ -136,7 +136,7 @@ namespace m0.Store.FileSystem
 
             string name = val.ToString();
 
-            while (this.Get(name) != null)
+            while (this.Get("File:"+name) != null || this.Get("Directory:" + name) != null)
                 name += ".new";
 
             if (GeneralUtil.CompareStrings(metaVertex.Value,"Directory"))

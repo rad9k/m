@@ -10,6 +10,12 @@ namespace m0.Util
 {
     public class UserInteractionUtil
     {
+        public static void ShowError(object where, string what)
+        {
+            MinusZero.Instance.DefaultUserInteraction.ShowException(
+                UserInteractionUtil.CreateErrorVertex(where, what));
+        }
+        
         public static IVertex CreateErrorVertex(object where, string what)
         {
             IVertex smz = MinusZero.Instance.Root.Get(@"System\Meta\ZeroTypes");

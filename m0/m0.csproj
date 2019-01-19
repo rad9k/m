@@ -113,6 +113,7 @@
     <Compile Include="Store\FileSystem\FileSystemStore.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Store\FileSystem\FileSystemUtil.cs" />
     <Compile Include="Store\FileSystem\FileVertex.cs">
       <SubType>Code</SubType>
     </Compile>

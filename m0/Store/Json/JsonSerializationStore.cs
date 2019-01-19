@@ -13,26 +13,36 @@ using m0.Util;
 namespace m0.Store.Json
 {
     public class JsonSerializationStore:StoreBase
-    {
-        
-        
+    {          
         void Load()
         {
             if (File.Exists(Identifier))
             {
-                StreamReader readStream = new StreamReader(Identifier);
+                try
+                {
+                    StreamReader readStream = new StreamReader(Identifier);
 
-                JsonSerializationData data = JSON.Deserialize<JsonSerializationData>(readStream);
+                    JsonSerializationData data = JSON.Deserialize<JsonSerializationData>(readStream);
 
-                readStream.Close();
+                    readStream.Close();
 
-                ReconstructVertexesFromSerialisationData(data);
+                    ReconstructVertexesFromSerialisationData(data);
 
-                _root = GetVertexByIdentifier((long)0);
+                    _root = GetVertexByIdentifier((long)0);
 
-                ((EasyVertex)_root).UsageCounter = 1;
+                    ((EasyVertex)_root).UsageCounter = 1;
 
-                Attach();
+                    Attach();
+                }catch(Exception e)
+                {
+                    UserInteractionUtil.ShowError("Json Deserlialisation from " + Identifier, e.ToString());
+
+                    EasyVertex __root = new EasyVertex(this);
+
+                    __root.UsageCounter++;
+
+                    _root = __root;
+                }
             }
             else
             {
@@ -87,9 +97,9 @@ namespace m0.Store.Json
                     else
                     {
                         if (!data.StoreIdDictionary.ContainsKey(je.MetaStoreId))
-                        {
-                            MinusZero.Instance.DefaultUserInteraction.ShowException(
-                                UserInteractionUtil.CreateErrorVertex("Json Deserialisation from " + Identifier, "MetaStoreId " + je.MetaStoreId + " not found in StoreIdDictionary"));
+                        {                            
+                            UserInteractionUtil.ShowError("Json Deserialisation from " + Identifier, "MetaStoreId " + je.MetaStoreId + " not found in StoreIdDictionary");
+
                             return;
                         }
                         else
@@ -103,9 +113,9 @@ namespace m0.Store.Json
                     else
                     {
                         if (!data.StoreIdDictionary.ContainsKey(je.ToStoreId))
-                        {
-                            MinusZero.Instance.DefaultUserInteraction.ShowException(
-                                UserInteractionUtil.CreateErrorVertex("Json Deserialisation from " + Identifier, "ToStoreId " + je.ToStoreId + " not found in StoreIdDictionary"));
+                        {                            
+                            UserInteractionUtil.ShowError("Json Deserialisation from " + Identifier, "ToStoreId " + je.ToStoreId + " not found in StoreIdDictionary");
+
                             return;
                         }
                         else

@@ -32,9 +32,12 @@ namespace m0.Store.FileSystem
                     if (newFileName[newFileName.Length - 1] == '.')
                         newFileName = newFileName.Substring(0, newFileName.Length - 1);
 
-                    if (newFileName != FI.FullName){                        
+                    if (newFileName != FI.FullName){
                         while (System.IO.File.Exists(newFileName))
-                            newFileName = newFileName + ".new";
+                        {
+                            if()
+                            newFileName = FileSystemUtil.getFileName(newFileName) + ".new";
+                        }
 
                         System.IO.File.Move(FI.FullName, newFileName);
 
