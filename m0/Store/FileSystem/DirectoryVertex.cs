@@ -21,10 +21,13 @@ namespace m0.Store.FileSystem
             }
             set
             {
-                if (value is string && (string)value != "")
+                if (value is string)
                 {
-                    string newFileName = (string)value;
+                    string newFileName = FileSystemUtil.getFileNamePart((string)value);
 
+                    if (newFileName == "")
+                        return;
+                    
                     string DI_DirectoryName = DI.FullName.Substring(0, DI.FullName.LastIndexOf('\\'));
 
                     newFileName = DI_DirectoryName + "\\" + newFileName.Trim();
@@ -137,7 +140,7 @@ namespace m0.Store.FileSystem
             string name = val.ToString();
 
             while (this.Get("File:" + name) != null || this.Get("Directory:" + name) != null)
-                FileSystemUtil.addNew(name);
+                name=FileSystemUtil.addNew(name);
 
             if (GeneralUtil.CompareStrings(metaVertex.Value,"Directory"))
             {                

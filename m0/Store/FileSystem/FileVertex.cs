@@ -23,9 +23,12 @@ namespace m0.Store.FileSystem
             }
             set
             {
-                if (value is string && (string)value != "")
+                if (value is string)
                 {
-                    string newFileName = (string)value;
+                    string newFileName = FileSystemUtil.getFileNamePart((string)value);
+
+                    if (newFileName == "")
+                        return;
 
                     newFileName = FI.DirectoryName + "\\" + newFileName.Trim();
 
@@ -39,6 +42,8 @@ namespace m0.Store.FileSystem
                         System.IO.File.Move(FI.FullName, newFileName);
 
                         FI = new FileInfo(newFileName);
+
+                        fillOutEdges();
 
                         FireChange(new VertexChangeEventArgs(VertexChangeType.ValueChanged, null));
                     }
@@ -67,6 +72,38 @@ namespace m0.Store.FileSystem
             AddEdge(metaVertex, v);
         }
 
+        void fillOutEdges()
+        {
+            IVertex fsmf = MinusZero.Instance.Root.Get(@"System\Meta\Store\FileSystem\File");
+
+            AddNewVertexByMeta(fsmf.Get("Filename"), FI.Name);
+
+            string extension = FI.Extension;
+
+            if (extension.Length > 1)
+                extension = extension.Substring(1);
+
+            AddNewVertexByMeta(fsmf.Get("Extension"), extension);
+
+            AddNewVertexByMeta(fsmf.Get("FullFilename"), FI.FullName);
+            AddNewVertexByMeta(fsmf.Get("Size"), FI.Length.ToString());
+            AddNewVertexByMeta(fsmf.Get("FileAttribute"), FI.Attributes.ToString());
+            AddNewVertexByMeta(fsmf.Get("CreationDateTime"), FI.CreationTime.ToString());
+            AddNewVertexByMeta(fsmf.Get("UpdateDateTime"), FI.LastWriteTime.ToString());
+            AddNewVertexByMeta(fsmf.Get("ReadDateTime"), FI.LastAccessTime.ToString());
+
+            if (((FileSystemStore)this.Store).IncludeFileContent)
+                AddEdge(fsmf.Get("Content"), new FileContentVertex(FI.FullName, this.Store));
+
+            if (FI.Extension == ".m0" || FI.Extension == ".M0")
+            {
+                JsonStore = new JsonSerializationStore((string)this.Identifier, MinusZero.Instance, new AccessLevelEnum[] { });
+                AddEdge(MinusZero.Instance.Root.Get(@"System\Meta\Store\FileSystem\$Store"), JsonStore.Root);
+            }
+
+
+        }
+
         public override IEnumerable<IEdge> OutEdges
         {
             get
@@ -74,36 +111,10 @@ namespace m0.Store.FileSystem
                 if (OutEdgesFilled)
                     return OutEdgesRaw;
 
-                CanFireChangeEvent = false;
+                //    CanFireChangeEvent = false;
+                fillOutEdges();
 
-                IVertex fsmf = MinusZero.Instance.Root.Get(@"System\Meta\Store\FileSystem\File");
-
-                AddNewVertexByMeta(fsmf.Get("Filename"), FI.Name); 
-
-                string extension = FI.Extension;
-
-                if (extension.Length > 1)
-                    extension = extension.Substring(1);
-
-                AddNewVertexByMeta(fsmf.Get("Extension"), extension);
-
-                AddNewVertexByMeta(fsmf.Get("FullFilename"), FI.FullName);
-                AddNewVertexByMeta(fsmf.Get("Size"), FI.Length.ToString());
-                AddNewVertexByMeta(fsmf.Get("FileAttribute"), FI.Attributes.ToString());
-                AddNewVertexByMeta(fsmf.Get("CreationDateTime"), FI.CreationTime.ToString());
-                AddNewVertexByMeta(fsmf.Get("UpdateDateTime"), FI.LastWriteTime.ToString());
-                AddNewVertexByMeta(fsmf.Get("ReadDateTime"), FI.LastAccessTime.ToString());
-
-                if (((FileSystemStore)this.Store).IncludeFileContent)
-                    AddEdge(fsmf.Get("Content"), new FileContentVertex(FI.FullName, this.Store));
-
-                if (FI.Extension == ".m0" || FI.Extension == ".M0") {
-                    JsonStore = new JsonSerializationStore((string)this.Identifier, MinusZero.Instance, new AccessLevelEnum[] { });
-                    AddEdge(MinusZero.Instance.Root.Get(@"System\Meta\Store\FileSystem\$Store"), JsonStore.Root);
-                }
-
-
-                CanFireChangeEvent = true;
+              //  CanFireChangeEvent = true;
                 OutEdgesFilled = true;
 
                 return OutEdgesRaw;

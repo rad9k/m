@@ -14,7 +14,10 @@ namespace m0.Store.FileSystem
             string fileNamePart = getFileName(fileName);
             string extension = getExtension(fileName);
 
-            return pathPart + fileNamePart + ".new." + extension;
+            if(extension=="")
+                return pathPart + fileNamePart + ".new";
+            else
+                return pathPart + fileNamePart + ".new." + extension;
         }
 
         public static string getPathPart(string fileName)
@@ -22,7 +25,7 @@ namespace m0.Store.FileSystem
             int slashpos = fileName.LastIndexOf('\\');
 
             if (slashpos == -1)
-                return fileName;
+                return "";
 
             return fileName.Substring(0, slashpos+1);
         }
