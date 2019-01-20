@@ -35,7 +35,7 @@ namespace m0.Store.FileSystem
                     if (newFileName != DI.FullName)
                     {
                         while (System.IO.Directory.Exists(newFileName))
-                            newFileName = newFileName + ".new";
+                            newFileName = FileSystemUtil.addNew(newFileName);
 
                         System.IO.Directory.Move(DI.FullName, newFileName);
 
@@ -136,8 +136,8 @@ namespace m0.Store.FileSystem
 
             string name = val.ToString();
 
-            while (this.Get("File:"+name) != null || this.Get("Directory:" + name) != null)
-                name += ".new";
+            while (this.Get("File:" + name) != null || this.Get("Directory:" + name) != null)
+                FileSystemUtil.addNew(name);
 
             if (GeneralUtil.CompareStrings(metaVertex.Value,"Directory"))
             {                
@@ -170,6 +170,8 @@ namespace m0.Store.FileSystem
         {
             if (GeneralUtil.CompareStrings(edge.Meta.Value,"File"))
             {
+                UserInteractionUtil.ShowError(Identifier + " file", "tried to delete");
+                return;// not sure if there will be not unwanted file deletion
                 FileInfo fi= new FileInfo(Identifier + "\\" + edge.To.Value);
 
                 fi.Delete();
@@ -177,6 +179,9 @@ namespace m0.Store.FileSystem
 
             if (GeneralUtil.CompareStrings(edge.Meta.Value, "Directory"))
             {
+                UserInteractionUtil.ShowError(Identifier + " directory", "tried to delete");
+                return;// not sure if there will be not unwanted file deletion
+
                 DirectoryInfo di = new DirectoryInfo(Identifier + "\\" + edge.To.Value);
 
                 di.Delete();

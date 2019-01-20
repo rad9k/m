@@ -48,8 +48,8 @@ namespace m0
             MinusZero.Instance.Initialize();
 
 
-            CreateTestData();           
-
+            CreateTestData();
+            
 
             TreeVisualiser stv = new TreeVisualiser();
 
@@ -759,13 +759,13 @@ namespace m0
             string toShow = "";
 
             if (exception.Get("Type:") != null)
-                toShow += exception.Get("Type:")+"\n\n";
+                toShow += "type: "+exception.Get("Type:")+"\n\n";
 
             if (exception.Get("Where:")!=null)
-                toShow += exception.Get("Where:") + "\n\n";
+                toShow += "where: "+exception.Get("Where:") + "\n\n";
 
             if (exception.Get("What:") != null)
-                toShow += exception.Get("What:");
+                toShow += "what: "+exception.Get("What:");
 
             i.Text = toShow;
 

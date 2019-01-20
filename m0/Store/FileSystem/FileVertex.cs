@@ -34,10 +34,7 @@ namespace m0.Store.FileSystem
 
                     if (newFileName != FI.FullName){
                         while (System.IO.File.Exists(newFileName))
-                        {
-                            if()
-                            newFileName = FileSystemUtil.getFileName(newFileName) + ".new";
-                        }
+                            newFileName = FileSystemUtil.addNew(newFileName);
 
                         System.IO.File.Move(FI.FullName, newFileName);
 
