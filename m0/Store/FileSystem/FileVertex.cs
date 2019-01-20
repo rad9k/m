@@ -6,6 +6,7 @@ using m0.Foundation;
 using m0.Graph;
 using System.IO;
 using m0.Store.Json;
+using m0.ZeroTypes;
 
 namespace m0.Store.FileSystem
 {
@@ -74,6 +75,8 @@ namespace m0.Store.FileSystem
 
         void fillOutEdges()
         {
+            VertexOperations.DeleteAllOutEdges(this);
+
             IVertex fsmf = MinusZero.Instance.Root.Get(@"System\Meta\Store\FileSystem\File");
 
             AddNewVertexByMeta(fsmf.Get("Filename"), FI.Name);
@@ -100,8 +103,6 @@ namespace m0.Store.FileSystem
                 JsonStore = new JsonSerializationStore((string)this.Identifier, MinusZero.Instance, new AccessLevelEnum[] { });
                 AddEdge(MinusZero.Instance.Root.Get(@"System\Meta\Store\FileSystem\$Store"), JsonStore.Root);
             }
-
-
         }
 
         public override IEnumerable<IEdge> OutEdges

@@ -115,7 +115,13 @@ namespace m0.ZeroTypes
             GraphUtil.DeleteEdge(source, metaVertex, toVertex);
         }
 
-        public static void DeleteAllInEdges(IVertex toVertex)
+        public static void DeleteAllInOutEdges(IVertex toVertex)
+        {
+            DeleteAllOutEdges(toVertex);
+            DeleteAllInEdges(toVertex);
+        }
+
+        public static void DeleteAllOutEdges(IVertex toVertex)
         {
             if (toVertex == null)
                 return;
@@ -124,8 +130,14 @@ namespace m0.ZeroTypes
 
             foreach (IEdge e in elist)
                 e.From.DeleteEdge(e);
+        }
 
-            elist = GeneralUtil.CreateAndCopyList<IEdge>(toVertex.InEdges);
+        public static void DeleteAllInEdges(IVertex toVertex)
+        {
+            if (toVertex == null)
+                return;
+
+            IList<IEdge> elist = GeneralUtil.CreateAndCopyList<IEdge>(toVertex.InEdges);
 
             foreach (IEdge e in elist)
                 e.From.DeleteEdge(e);

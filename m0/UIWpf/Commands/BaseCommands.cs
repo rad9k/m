@@ -180,7 +180,7 @@ namespace m0.UIWpf.Commands
 
             if (inputVertex.Get("SelectedEdges:").Count() == 0)
                 if (allEdgesDelete)
-                    VertexOperations.DeleteAllInEdges(baseVertex.Get("To:"));
+                    VertexOperations.DeleteAllInOutEdges(baseVertex.Get("To:"));
                 else
                     VertexOperations.DeleteOneEdge(baseVertex.Get("From:"), baseVertex.Get("Meta:"), baseVertex.Get("To:"));
             else
@@ -188,7 +188,7 @@ namespace m0.UIWpf.Commands
                 IList<IEdge> selected=GeneralUtil.CreateAndCopyList(inputVertex.Get("SelectedEdges:"));
                 foreach (IEdge v in selected)
                     if(allEdgesDelete)
-                        VertexOperations.DeleteAllInEdges(v.To.Get("To:"));
+                        VertexOperations.DeleteAllInOutEdges(v.To.Get("To:"));
                     else
                         VertexOperations.DeleteOneEdge(v.To.Get("From:"), v.To.Get("Meta:"), v.To.Get("To:"));
             }
