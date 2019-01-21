@@ -37,7 +37,7 @@ namespace m0.Store.FileSystem
 
                     if (newFileName != DI.FullName)
                     {
-                        while (System.IO.Directory.Exists(newFileName))
+                        while (System.IO.Directory.Exists(newFileName) || System.IO.Directory.Exists(newFileName))
                             newFileName = FileSystemUtil.addNew(newFileName);
 
                         System.IO.Directory.Move(DI.FullName, newFileName);

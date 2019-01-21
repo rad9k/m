@@ -37,14 +37,14 @@ namespace m0.Store.FileSystem
                         newFileName = newFileName.Substring(0, newFileName.Length - 1);
 
                     if (newFileName != FI.FullName){
-                        while (System.IO.File.Exists(newFileName))
+                        while (System.IO.File.Exists(newFileName) || System.IO.Directory.Exists(newFileName))
                             newFileName = FileSystemUtil.addNew(newFileName);
 
                         System.IO.File.Move(FI.FullName, newFileName);
 
                         FI = new FileInfo(newFileName);
 
-                        fillOutEdges();
+                        refreshOutEdges();
 
                         FireChange(new VertexChangeEventArgs(VertexChangeType.ValueChanged, null));
                     }
@@ -63,37 +63,26 @@ namespace m0.Store.FileSystem
         }
 
         bool OutEdgesFilled = false;
-
-        void AddNewVertexByMeta(IVertex metaVertex, string value)
-        {
-            IVertex v = new EasyVertex(this.Store);
-
-            v.Value = value;
-
-            AddEdge(metaVertex, v);
-        }
-
-        void fillOutEdges()
-        {
-            VertexOperations.DeleteAllOutEdges(this);
-
+       
+        void refreshOutEdges()
+        {            
             IVertex fsmf = MinusZero.Instance.Root.Get(@"System\Meta\Store\FileSystem\File");
 
-            AddNewVertexByMeta(fsmf.Get("Filename"), FI.Name);
+            GraphUtil.SetVertexValue(this, fsmf.Get("Filename"), FI.Name);
 
             string extension = FI.Extension;
 
             if (extension.Length > 1)
                 extension = extension.Substring(1);
 
-            AddNewVertexByMeta(fsmf.Get("Extension"), extension);
+            GraphUtil.SetVertexValue(this, fsmf.Get("Extension"), extension);
 
-            AddNewVertexByMeta(fsmf.Get("FullFilename"), FI.FullName);
-            AddNewVertexByMeta(fsmf.Get("Size"), FI.Length.ToString());
-            AddNewVertexByMeta(fsmf.Get("FileAttribute"), FI.Attributes.ToString());
-            AddNewVertexByMeta(fsmf.Get("CreationDateTime"), FI.CreationTime.ToString());
-            AddNewVertexByMeta(fsmf.Get("UpdateDateTime"), FI.LastWriteTime.ToString());
-            AddNewVertexByMeta(fsmf.Get("ReadDateTime"), FI.LastAccessTime.ToString());
+            GraphUtil.SetVertexValue(this, fsmf.Get("FullFilename"), FI.FullName);
+            GraphUtil.SetVertexValue(this, fsmf.Get("Size"), FI.Length.ToString());
+            GraphUtil.SetVertexValue(this, fsmf.Get("FileAttribute"), FI.Attributes.ToString());
+            GraphUtil.SetVertexValue(this, fsmf.Get("CreationDateTime"), FI.CreationTime.ToString());
+            GraphUtil.SetVertexValue(this, fsmf.Get("UpdateDateTime"), FI.LastWriteTime.ToString());
+            GraphUtil.SetVertexValue(this, fsmf.Get("ReadDateTime"), FI.LastAccessTime.ToString());
 
             if (((FileSystemStore)this.Store).IncludeFileContent)
                 AddEdge(fsmf.Get("Content"), new FileContentVertex(FI.FullName, this.Store));
@@ -105,6 +94,15 @@ namespace m0.Store.FileSystem
             }
         }
 
+        void AddMeta(IVertex metaVertex, string value)
+        {
+            IVertex v = new EasyVertex(this.Store);
+
+            v.Value = value;
+
+            AddEdge(metaVertex, v);
+        }
+
         public override IEnumerable<IEdge> OutEdges
         {
             get
@@ -112,10 +110,29 @@ namespace m0.Store.FileSystem
                 if (OutEdgesFilled)
                     return OutEdgesRaw;
 
-                //    CanFireChangeEvent = false;
-                fillOutEdges();
+                    CanFireChangeEvent = false;
 
-              //  CanFireChangeEvent = true;
+                IVertex fsm = MinusZero.Instance.Root.Get(@"System\Meta\Store\FileSystem");
+
+                IVertex fsmf = fsm.Get(@"File");
+
+                AddMeta(fsmf.Get("Filename"), FI.Name);
+
+                string extension = FI.Extension;
+
+                if (extension.Length > 1)
+                    extension = extension.Substring(1);
+
+                AddMeta(fsmf.Get("Extension"), extension);
+
+                AddMeta(fsmf.Get("FullFilename"), FI.FullName);
+                AddMeta(fsmf.Get("Size"), FI.Length.ToString());
+                AddMeta(fsmf.Get("FileAttribute"), FI.Attributes.ToString());
+                AddMeta(fsmf.Get("CreationDateTime"), FI.CreationTime.ToString());
+                AddMeta(fsmf.Get("UpdateDateTime"), FI.LastWriteTime.ToString());
+                AddMeta(fsmf.Get("ReadDateTime"), FI.LastAccessTime.ToString());
+
+                CanFireChangeEvent = true;
                 OutEdgesFilled = true;
 
                 return OutEdgesRaw;
