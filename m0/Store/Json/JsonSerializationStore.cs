@@ -13,7 +13,9 @@ using m0.Util;
 namespace m0.Store.Json
 {
     public class JsonSerializationStore:StoreBase
-    {          
+    {
+        bool canWrite = true;
+
         void Load()
         {
             if (File.Exists(Identifier))
@@ -35,7 +37,9 @@ namespace m0.Store.Json
                     Attach();
                 }catch(Exception e)
                 {
-                    UserInteractionUtil.ShowError("Json Deserlialisation from " + Identifier, e.ToString());
+                    UserInteractionUtil.ShowError("Json Deserlialisation from " + Identifier, e.ToString() + "\n\nSAVING IS DISABLED FOR THE "+Identifier+" FILE. THIS WILL PROTECT THE FILE CONTENT");
+
+                    canWrite = false;
 
                     EasyVertex __root = new EasyVertex(this);
 
@@ -145,6 +149,12 @@ namespace m0.Store.Json
 
         public override void CommitTransaction()
         {
+            if (!canWrite)
+            {
+                UserInteractionUtil.ShowError("Json Serlialisation to " + Identifier, "\n\nSAVING IS DISABLED FOR THE " + Identifier + " FILE. THIS WILL PROTECT THE FILE CONTENT");
+                return;
+            }
+
             if (DetachState != DetachStateEnum.Detached)
                 throw new Exception("Store not Detached");
 

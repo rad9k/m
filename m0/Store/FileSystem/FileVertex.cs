@@ -40,11 +40,13 @@ namespace m0.Store.FileSystem
                         while (System.IO.File.Exists(newFileName) || System.IO.Directory.Exists(newFileName))
                             newFileName = FileSystemUtil.addNew(newFileName);
 
-                        System.IO.File.Move(FI.FullName, newFileName);
+                        FI.MoveTo(newFileName);
 
-                        FI = new FileInfo(newFileName);
+                        _Identifier = newFileName;                        
 
-                        refreshOutEdges();
+                        GraphUtil.RemoveAllEdges(this);
+
+                        updateOutEdges();
 
                         FireChange(new VertexChangeEventArgs(VertexChangeType.ValueChanged, null));
                     }
@@ -64,10 +66,8 @@ namespace m0.Store.FileSystem
 
         bool OutEdgesFilled = false;
        
-        void refreshOutEdges()
-        {
-            GraphUtil.RemoveAllEdges(this);
-
+        void updateOutEdges()
+        {            
             IVertex fsmf = MinusZero.Instance.Root.Get(@"System\Meta\Store\FileSystem\File");
 
             AddMeta(fsmf.Get("Filename"), FI.Name);
@@ -84,14 +84,7 @@ namespace m0.Store.FileSystem
             AddMeta(fsmf.Get("FileAttribute"), FI.Attributes.ToString());
             AddMeta(fsmf.Get("CreationDateTime"), FI.CreationTime.ToString());
             AddMeta(fsmf.Get("UpdateDateTime"), FI.LastWriteTime.ToString());
-            AddMeta(fsmf.Get("ReadDateTime"), FI.LastAccessTime.ToString());
-
-            ContentEdgesRefresh();
-        }
-
-        private void ContentEdgesRefresh()
-        {
-            IVertex fsmf = MinusZero.Instance.Root.Get(@"System\Meta\Store\FileSystem\File");
+            AddMeta(fsmf.Get("ReadDateTime"), FI.LastAccessTime.ToString());                        
 
             if (((FileSystemStore)this.Store).IncludeFileContent)
                 AddEdge(fsmf.Get("Content"), new FileContentVertex(FI.FullName, this.Store));
@@ -121,27 +114,7 @@ namespace m0.Store.FileSystem
 
                 CanFireChangeEvent = false;
 
-                IVertex fsm = MinusZero.Instance.Root.Get(@"System\Meta\Store\FileSystem");
-
-                IVertex fsmf = fsm.Get(@"File");
-
-                AddMeta(fsmf.Get("Filename"), FI.Name);
-
-                string extension = FI.Extension;
-
-                if (extension.Length > 1)
-                    extension = extension.Substring(1);
-
-                AddMeta(fsmf.Get("Extension"), extension);
-
-                AddMeta(fsmf.Get("FullFilename"), FI.FullName);
-                AddMeta(fsmf.Get("Size"), FI.Length.ToString());
-                AddMeta(fsmf.Get("FileAttribute"), FI.Attributes.ToString());
-                AddMeta(fsmf.Get("CreationDateTime"), FI.CreationTime.ToString());
-                AddMeta(fsmf.Get("UpdateDateTime"), FI.LastWriteTime.ToString());
-                AddMeta(fsmf.Get("ReadDateTime"), FI.LastAccessTime.ToString());
-
-                ContentEdgesRefresh();
+                updateOutEdges();
 
                 CanFireChangeEvent = true;
                 OutEdgesFilled = true;
