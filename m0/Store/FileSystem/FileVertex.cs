@@ -65,24 +65,33 @@ namespace m0.Store.FileSystem
         bool OutEdgesFilled = false;
        
         void refreshOutEdges()
-        {            
+        {
+            GraphUtil.RemoveAllEdges(this);
+
             IVertex fsmf = MinusZero.Instance.Root.Get(@"System\Meta\Store\FileSystem\File");
 
-            GraphUtil.SetVertexValue(this, fsmf.Get("Filename"), FI.Name);
+            AddMeta(fsmf.Get("Filename"), FI.Name);
 
             string extension = FI.Extension;
 
             if (extension.Length > 1)
                 extension = extension.Substring(1);
 
-            GraphUtil.SetVertexValue(this, fsmf.Get("Extension"), extension);
+            AddMeta(fsmf.Get("Extension"), extension);
 
-            GraphUtil.SetVertexValue(this, fsmf.Get("FullFilename"), FI.FullName);
-            GraphUtil.SetVertexValue(this, fsmf.Get("Size"), FI.Length.ToString());
-            GraphUtil.SetVertexValue(this, fsmf.Get("FileAttribute"), FI.Attributes.ToString());
-            GraphUtil.SetVertexValue(this, fsmf.Get("CreationDateTime"), FI.CreationTime.ToString());
-            GraphUtil.SetVertexValue(this, fsmf.Get("UpdateDateTime"), FI.LastWriteTime.ToString());
-            GraphUtil.SetVertexValue(this, fsmf.Get("ReadDateTime"), FI.LastAccessTime.ToString());
+            AddMeta(fsmf.Get("FullFilename"), FI.FullName);
+            AddMeta(fsmf.Get("Size"), FI.Length.ToString());
+            AddMeta(fsmf.Get("FileAttribute"), FI.Attributes.ToString());
+            AddMeta(fsmf.Get("CreationDateTime"), FI.CreationTime.ToString());
+            AddMeta(fsmf.Get("UpdateDateTime"), FI.LastWriteTime.ToString());
+            AddMeta(fsmf.Get("ReadDateTime"), FI.LastAccessTime.ToString());
+
+            ContentEdgesRefresh();
+        }
+
+        private void ContentEdgesRefresh()
+        {
+            IVertex fsmf = MinusZero.Instance.Root.Get(@"System\Meta\Store\FileSystem\File");
 
             if (((FileSystemStore)this.Store).IncludeFileContent)
                 AddEdge(fsmf.Get("Content"), new FileContentVertex(FI.FullName, this.Store));
@@ -110,7 +119,7 @@ namespace m0.Store.FileSystem
                 if (OutEdgesFilled)
                     return OutEdgesRaw;
 
-                    CanFireChangeEvent = false;
+                CanFireChangeEvent = false;
 
                 IVertex fsm = MinusZero.Instance.Root.Get(@"System\Meta\Store\FileSystem");
 
@@ -131,6 +140,8 @@ namespace m0.Store.FileSystem
                 AddMeta(fsmf.Get("CreationDateTime"), FI.CreationTime.ToString());
                 AddMeta(fsmf.Get("UpdateDateTime"), FI.LastWriteTime.ToString());
                 AddMeta(fsmf.Get("ReadDateTime"), FI.LastAccessTime.ToString());
+
+                ContentEdgesRefresh();
 
                 CanFireChangeEvent = true;
                 OutEdgesFilled = true;
