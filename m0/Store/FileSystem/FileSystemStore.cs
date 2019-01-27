@@ -84,7 +84,22 @@ namespace m0.Store.FileSystem
 
         public IVertex GetVertexByIdentifier(object VertexIdentidier)
         {
-            throw new NotImplementedException();
+            if(!(VertexIdentidier is string))
+            {
+                UserInteractionUtil.ShowError("trying to create FileSystemStore vertex from identifier " + VertexIdentidier + "in the "+Identifier+" store", "identifier is not string");
+                return null;
+            }
+
+            string fileName = (string)VertexIdentidier;
+
+            if (System.IO.File.Exists(fileName))
+                return new FileVertex(fileName, this);
+
+            if (System.IO.Directory.Exists(fileName) || (fileName.Length==3 && fileName[1]==':' && fileName[2]=='\\'))
+                return new DirectoryVertex(fileName, this);
+
+            UserInteractionUtil.ShowError("trying to create FileSystemStore vertex from identifier " + fileName + "in the " + Identifier + " store", "file or directory not found");
+            return null;
         }
 
         public void Refresh()

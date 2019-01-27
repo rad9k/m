@@ -289,7 +289,8 @@ namespace m0.ZeroTypes
             else
                 nv = MinusZero.Instance.CreateTempVertex();
 
-            nv.AddEdge(MinusZero.Instance.Root.Get(@"System\Meta\Base\Vertex\$Is"), metaVertex);
+            if (MinusZero.Instance.Root.Store.DetachState == DetachStateEnum.Attached)
+                nv.AddEdge(MinusZero.Instance.Root.Get(@"System\Meta\Base\Vertex\$Is"), metaVertex);
 
             ///
 

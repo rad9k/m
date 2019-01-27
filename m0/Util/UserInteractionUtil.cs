@@ -17,16 +17,44 @@ namespace m0.Util
         }
         
         public static IVertex CreateErrorVertex(object where, string what)
-        {
-            IVertex smz = MinusZero.Instance.Root.Get(@"System\Meta\ZeroTypes");
+        {            
+            IVertex _exception, _where, _type, _what, _error;
 
-            IVertex error = VertexOperations.AddInstance(null, smz.Get("Exception"));
+            if (MinusZero.Instance.Root.Store.DetachState!=DetachStateEnum.Attached) // we are in detached mode
+            {
+                _exception = MinusZero.Instance.CreateTempVertex();
+                _exception.Value = "Exception";
 
-            error.AddVertex(smz.Get(@"Exception\Where"), where);
+                _where = MinusZero.Instance.CreateTempVertex();
+                _where.Value = "Where";
 
-            error.AddVertex(smz.Get(@"Exception\Type"), smz.Get(@"ExceptionTypeEnum\Error"));
+                _type = MinusZero.Instance.CreateTempVertex();
+                _type.Value = "Type";
 
-            error.AddVertex(smz.Get(@"Exception\What"), what);
+                _what = MinusZero.Instance.CreateTempVertex();
+                _what.Value = "What";
+
+                _error = MinusZero.Instance.CreateTempVertex();
+                _error.Value = "Error";
+            }
+            else
+            {
+                IVertex smz = MinusZero.Instance.Root.Get(@"System\Meta\ZeroTypes");
+
+                _exception = smz.Get("Exception");
+                _where = smz.Get(@"Exception\Where");
+                _type = smz.Get(@"Exception\Type");
+                _what = smz.Get(@"Exception\What");
+                _error = smz.Get(@"ExceptionTypeEnum\Error");
+            }
+
+            IVertex error = VertexOperations.AddInstance(null, _exception);
+
+            error.AddVertex(_where, where);
+
+            error.AddVertex(_type, _error);
+
+            error.AddVertex(_what, what);
 
             return error;
         }
