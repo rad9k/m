@@ -7,6 +7,7 @@ using m0.Graph;
 using System.IO;
 using m0.Store.Json;
 using m0.ZeroTypes;
+using m0.Util;
 
 namespace m0.Store.FileSystem
 {
@@ -62,6 +63,13 @@ namespace m0.Store.FileSystem
         public override void DeleteInEdge(IEdge edge)
         {
 
+        }
+
+        public override IVertex AddVertex(IVertex metaVertex, object val)
+        {
+            UserInteractionUtil.ShowError("FileVertex.AddVertex", Identifier + " : can not create vertex here");
+
+            return null;
         }
 
         bool OutEdgesFilled = false;

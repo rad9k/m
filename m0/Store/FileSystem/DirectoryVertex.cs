@@ -142,7 +142,7 @@ namespace m0.Store.FileSystem
             while (this.Get("File:" + name) != null || this.Get("Directory:" + name) != null)
                 name=FileSystemUtil.addNew(name);
 
-            if (GeneralUtil.CompareStrings(metaVertex.Value,"Directory"))
+            if (GraphUtil.GetValueAndCompareStrings(metaVertex,"Directory"))
             {                
                 DI.CreateSubdirectory(name);
 
@@ -153,7 +153,7 @@ namespace m0.Store.FileSystem
                 return DirectoryVertex;
             }
 
-            if (GeneralUtil.CompareStrings(metaVertex.Value,"File"))
+            if (GraphUtil.GetValueAndCompareStrings(metaVertex,"File"))
             {
                 FileInfo fi = new FileInfo(this.Identifier + "\\" + name);
 
@@ -165,7 +165,9 @@ namespace m0.Store.FileSystem
 
                 return FileVertex;
             }
-            
+
+            UserInteractionUtil.ShowError("FileVertex.AddVertex", Identifier +" : can not create vertex here");
+
             return null;
         }
 

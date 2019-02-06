@@ -24,20 +24,31 @@ namespace m0.Store.Json
                 {
                     StreamReader readStream = new StreamReader(Identifier);
 
-                    JsonSerializationData data = JSON.Deserialize<JsonSerializationData>(readStream);
+                    if (readStream.EndOfStream)
+                    { // create new sub graph
+                        EasyVertex __root = new EasyVertex(this);
 
-                    readStream.Close();
+                        __root.UsageCounter++;
 
-                    ReconstructVertexesFromSerialisationData(data);
+                        _root = __root;
+                    }
+                    else
+                    { // load graph from store
+                        JsonSerializationData data = JSON.Deserialize<JsonSerializationData>(readStream);
 
-                    _root = GetVertexByIdentifier((long)0);
+                        readStream.Close();
 
-                    ((EasyVertex)_root).UsageCounter = 1;
+                        ReconstructVertexesFromSerialisationData(data);
 
-                    Attach();
+                        _root = GetVertexByIdentifier((long)0);
+
+                        ((EasyVertex)_root).UsageCounter = 1;
+
+                        Attach();
+                    }
                 }catch(Exception e)
-                {
-                    UserInteractionUtil.ShowError("Json Deserlialisation from " + Identifier, e.ToString() + "\n\nSAVING IS DISABLED FOR THE "+Identifier+" FILE. THIS WILL PROTECT THE FILE CONTENT");
+                { // can not deserislize graph
+                    UserInteractionUtil.ShowError("Json Deserlialisation from " + Identifier, e.ToString() + "\n\nAs json serialisation file " + Identifier +" has not been properly loaded, commit (saving) is disabled for the file. This will protect existing file content.");
 
                     canWrite = false;
 
@@ -49,7 +60,7 @@ namespace m0.Store.Json
                 }
             }
             else
-            {
+            { // create new
                 EasyVertex __root = new EasyVertex(this);
 
                 __root.UsageCounter++;
@@ -151,7 +162,7 @@ namespace m0.Store.Json
         {
             if (!canWrite)
             {
-                UserInteractionUtil.ShowError("Json Serlialisation to " + Identifier, "\n\nSAVING IS DISABLED FOR THE " + Identifier + " FILE. THIS WILL PROTECT THE FILE CONTENT");
+                UserInteractionUtil.ShowError("Json Serlialisation to " + Identifier, "As json serialisation file " + Identifier +" has not been properly loaded, commit(saving) is disabled for the file. This will protect existing file content.");
                 return;
             }
 

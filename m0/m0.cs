@@ -2932,10 +2932,17 @@ namespace m0
         {
             if (!disposed)
             {
+                Finalize();
+
                 DisposeLog();
 
                 disposed = true;
             }
+        }
+
+        void Finalize()
+        {
+            CommitTransaction();
         }
 
         public void Refresh()
