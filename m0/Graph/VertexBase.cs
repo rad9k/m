@@ -200,11 +200,6 @@ namespace m0.Graph
 
             nv.Value = val;
 
-            /*if(val==null)
-                MinusZero.Instance.Log(3,"AddVertex", "NULL");
-            else
-                MinusZero.Instance.Log(3,"AddVertex",val.ToString());*/
-
             AddEdge(metaVertex, nv);
 
             return nv;
@@ -212,7 +207,7 @@ namespace m0.Graph
 
         public virtual void AddInEdge(IEdge edge)
         {
-            Out
+            throw new NotImplementedException();
         }
 
         public virtual void DeleteInEdge(IEdge edge)

@@ -103,10 +103,14 @@ namespace m0.Graph
         }
 
         public override void AddInEdge(IEdge edge)
-        {
+        {            
             InEdgesRaw.Add(edge);
 
-            UsageCounter++;            
+            UsageCounter++;
+
+            InEdgesDictionariesNeedsRebuild = true;
+
+            VertexesThatInheritsDictionariesNeedsRebuild(true);
 
             //FireChange(new VertexChangeEventArgs(VertexChangeType.InEdgeAdded,edge));
             // not needed as for now
@@ -114,6 +118,8 @@ namespace m0.Graph
 
         public override void DeleteInEdge(IEdge _edge)
         {
+            base.DeleteInEdge(_edge);
+
             IEdge edge = null;
 
             foreach (IEdge e in InEdgesRaw)
@@ -125,6 +131,10 @@ namespace m0.Graph
                 InEdgesRaw.Remove(edge);
 
                 UsageCounter--;
+
+                InEdgesDictionariesNeedsRebuild = true;
+
+                VertexesThatInheritsDictionariesNeedsRebuild(true);
             }
 
             //FireChange(new VertexChangeEventArgs(VertexChangeType.InEdgeRemoved, edge));
@@ -141,6 +151,10 @@ namespace m0.Graph
             OutEdgesRaw.Add(ne);
 
             UsageCounter++;
+
+            OutEdgesDictionariesNeedsRebuild = true;
+
+            VertexesThatInheritsDictionariesNeedsRebuild(false);
 
             if (GeneralUtil.CompareStrings(ne.Meta.Value, "$Inherits"))
             {
@@ -167,6 +181,9 @@ namespace m0.Graph
                 OutEdgesRaw.Remove(edge);
 
                 UsageCounter--;
+
+                OutEdgesDictionariesNeedsRebuild = true;
+                VertexesThatInheritsDictionariesNeedsRebuild(false);
 
                 if (GeneralUtil.CompareStrings(edge.Meta.Value, "$Inherits"))
                 {
@@ -286,6 +303,36 @@ namespace m0.Graph
         public void Dispose()
         {
             GraphUtil.RemoveAllEdges(this);                        
+        }
+
+        private void VertexesThatInheritsDictionariesNeedsRebuild(bool inDictiories)
+        {
+            HashSet<IVertex> inheritsSet = GetVertexesThatInherits();
+
+            foreach (IVertex v in inheritsSet)
+                if (inDictiories)
+                    v.InEdgesDictionariesNeedsRebuild = true;
+                else
+                    v.OutEdgesDictionariesNeedsRebuild = true;
+        }
+
+        private HashSet<IVertex> GetVertexesThatInherits()
+        {
+            HashSet<IVertex> inheritsSet = new HashSet<IVertex>();
+
+            GetVertexesThatInherits_reccurent(this, inheritsSet);
+
+            return inheritsSet;
+        }
+
+        private void GetVertexesThatInherits_reccurent(IVertex baseVertex, HashSet<IVertex> inheritedSet)
+        {
+            foreach(IEdge e in OutEdges)
+                if(GeneralUtil.CompareStrings(e.Meta,"$Iherits") && !inheritedSet.Contains(e.To))
+                {
+                    inheritedSet.Add(e.To);
+                    GetVertexesThatInherits_reccurent(e.To, inheritedSet);
+                }
         }
     }
 }
