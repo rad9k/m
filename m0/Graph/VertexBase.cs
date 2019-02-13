@@ -13,18 +13,83 @@ namespace m0.Graph
     [Serializable]
     public class VertexBase:IVertex, IHasUsageCounter
     {
-        public IDictionary<object, object> OutEdgesByMeta { get; }
+        public IDictionary<object, IEdge> OutEdgesByMeta { get; }
 
-        public IDictionary<object, object> OutEdgesByValue { get; }
+        public IDictionary<object, IEdge> OutEdgesByValue { get; }
 
-        public IDictionary<object, object> IngesByMeta { get; }
+        public IDictionary<object, IEdge> OutEdgesByMetaAndValue { get; }
 
-        public IDictionary<object, object> InEdgesByValue { get; }
+        public IDictionary<object, IEdge> InEdgesByMeta { get; }
 
-        public bool InEdgesDictionariesNeedsRebuild { get; set; }
+        public IDictionary<object, IEdge> InEdgesByValue { get; }
 
-        public bool OutEdgesDictionariesNeedsRebuild { get; set; }
+        public IDictionary<object, IEdge> InEdgesByMetaAndValue { get; }
 
+        private bool _InEdgesDictionariesNeedsRebuild;
+        public bool InEdgesDictionariesNeedsRebuild {
+            get {
+                return _InEdgesDictionariesNeedsRebuild;
+            }
+            set {
+                if (value)
+                {
+                    _InEdgesDictionariesNeedsRebuild = true;
+
+                    InEdgesDictionariesNeedsRebuild_Meta = true;
+                    InEdgesDictionariesNeedsRebuild_Value = true;
+                    InEdgesDictionariesNeedsRebuild_MetaAndValue = true;
+                }
+                else
+                {
+                    _InEdgesDictionariesNeedsRebuild = false;
+
+                    InEdgesDictionariesNeedsRebuild_Meta = false;
+                    InEdgesDictionariesNeedsRebuild_Value = false;
+                    InEdgesDictionariesNeedsRebuild_MetaAndValue = false;
+                }
+            }
+        }
+
+        private bool InEdgesDictionariesNeedsRebuild_Meta { get; set; }
+
+        private bool InEdgesDictionariesNeedsRebuild_Value { get; set; }
+
+        private bool InEdgesDictionariesNeedsRebuild_MetaAndValue { get; set; }
+
+        private bool _OutEdgesDictionariesNeedsRebuild;
+
+        public bool OutEdgesDictionariesNeedsRebuild
+        {
+            get
+            {
+                return _OutEdgesDictionariesNeedsRebuild;
+            }
+            set
+            {
+                if (value)
+                {
+                    _OutEdgesDictionariesNeedsRebuild = true;
+
+                    OutEdgesDictionariesNeedsRebuild_Meta = true;
+                    OutEdgesDictionariesNeedsRebuild_Value = true;
+                    OutEdgesDictionariesNeedsRebuild_MetaAndValue = true;
+                }
+                else
+                {
+                    _OutEdgesDictionariesNeedsRebuild = false;
+
+                    OutEdgesDictionariesNeedsRebuild_Meta = false;
+                    OutEdgesDictionariesNeedsRebuild_Value = false;
+                    OutEdgesDictionariesNeedsRebuild_MetaAndValue = false;
+                }
+            }
+        }
+
+        private bool OutEdgesDictionariesNeedsRebuild_Meta { get; set; }
+
+        private bool OutEdgesDictionariesNeedsRebuild_Value { get; set; }
+
+        private bool OutEdgesDictionariesNeedsRebuild_MetaAndValue { get; set; }
 
         public IEdge this[string meta]
         {
@@ -147,7 +212,7 @@ namespace m0.Graph
 
         public virtual void AddInEdge(IEdge edge)
         {
-            throw new NotImplementedException();
+            Out
         }
 
         public virtual void DeleteInEdge(IEdge edge)
