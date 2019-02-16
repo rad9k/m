@@ -118,8 +118,6 @@ namespace m0.Graph
 
         public override void DeleteInEdge(IEdge _edge)
         {
-            base.DeleteInEdge(_edge);
-
             IEdge edge = null;
 
             foreach (IEdge e in InEdgesRaw)
@@ -327,7 +325,7 @@ namespace m0.Graph
 
         private void GetVertexesThatInherits_reccurent(IVertex baseVertex, HashSet<IVertex> inheritedSet)
         {
-            foreach(IEdge e in OutEdges)
+            foreach(IEdge e in OutEdgesRaw)
                 if(GeneralUtil.CompareStrings(e.Meta,"$Iherits") && !inheritedSet.Contains(e.To))
                 {
                     inheritedSet.Add(e.To);

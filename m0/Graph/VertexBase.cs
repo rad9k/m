@@ -35,6 +35,7 @@ namespace m0.Graph
                 {
                     _InEdgesDictionariesNeedsRebuild = true;
 
+                    InEdgesDictionariesNeedsRebuild_Edges = true;
                     InEdgesDictionariesNeedsRebuild_Meta = true;
                     InEdgesDictionariesNeedsRebuild_Value = true;
                     InEdgesDictionariesNeedsRebuild_MetaAndValue = true;
@@ -43,16 +44,19 @@ namespace m0.Graph
                 {
                     _InEdgesDictionariesNeedsRebuild = false;
 
+                    InEdgesDictionariesNeedsRebuild_Edges = false;
                     InEdgesDictionariesNeedsRebuild_Meta = false;
                     InEdgesDictionariesNeedsRebuild_Value = false;
                     InEdgesDictionariesNeedsRebuild_MetaAndValue = false;
                 }
             }
-        }
+        }    
+
+        private bool InEdgesDictionariesNeedsRebuild_Edges { get; set; }
 
         private bool InEdgesDictionariesNeedsRebuild_Meta { get; set; }
 
-        private bool InEdgesDictionariesNeedsRebuild_Value { get; set; }
+        private bool InEdgesDictionariesNeedsRebuild_Value { get; set; }        
 
         private bool InEdgesDictionariesNeedsRebuild_MetaAndValue { get; set; }
 
@@ -70,6 +74,7 @@ namespace m0.Graph
                 {
                     _OutEdgesDictionariesNeedsRebuild = true;
 
+                    OutEdgesDictionariesNeedsRebuild_Edges = true;
                     OutEdgesDictionariesNeedsRebuild_Meta = true;
                     OutEdgesDictionariesNeedsRebuild_Value = true;
                     OutEdgesDictionariesNeedsRebuild_MetaAndValue = true;
@@ -78,12 +83,15 @@ namespace m0.Graph
                 {
                     _OutEdgesDictionariesNeedsRebuild = false;
 
+                    OutEdgesDictionariesNeedsRebuild_Edges = false;
                     OutEdgesDictionariesNeedsRebuild_Meta = false;
                     OutEdgesDictionariesNeedsRebuild_Value = false;
                     OutEdgesDictionariesNeedsRebuild_MetaAndValue = false;
                 }
             }
         }
+
+        private bool OutEdgesDictionariesNeedsRebuild_Edges { get; set; }
 
         private bool OutEdgesDictionariesNeedsRebuild_Meta { get; set; }
 
