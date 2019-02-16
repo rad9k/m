@@ -52,13 +52,13 @@ namespace m0.Graph
             }
         }    
 
-        private bool InEdgesDictionariesNeedsRebuild_Edges { get; set; }
+        protected bool InEdgesDictionariesNeedsRebuild_Edges { get; set; }
 
-        private bool InEdgesDictionariesNeedsRebuild_Meta { get; set; }
+        protected bool InEdgesDictionariesNeedsRebuild_Meta { get; set; }
 
-        private bool InEdgesDictionariesNeedsRebuild_Value { get; set; }        
+        protected bool InEdgesDictionariesNeedsRebuild_Value { get; set; }
 
-        private bool InEdgesDictionariesNeedsRebuild_MetaAndValue { get; set; }
+        protected bool InEdgesDictionariesNeedsRebuild_MetaAndValue { get; set; }
 
         private bool _OutEdgesDictionariesNeedsRebuild;
 
@@ -91,13 +91,13 @@ namespace m0.Graph
             }
         }
 
-        private bool OutEdgesDictionariesNeedsRebuild_Edges { get; set; }
+        protected bool OutEdgesDictionariesNeedsRebuild_Edges { get; set; }
 
-        private bool OutEdgesDictionariesNeedsRebuild_Meta { get; set; }
+        protected bool OutEdgesDictionariesNeedsRebuild_Meta { get; set; }
 
-        private bool OutEdgesDictionariesNeedsRebuild_Value { get; set; }
+        protected bool OutEdgesDictionariesNeedsRebuild_Value { get; set; }
 
-        private bool OutEdgesDictionariesNeedsRebuild_MetaAndValue { get; set; }
+        protected bool OutEdgesDictionariesNeedsRebuild_MetaAndValue { get; set; }
 
         public IEdge this[string meta]
         {

@@ -209,14 +209,17 @@ namespace m0
 
             IVertex a = tr.AddVertex(null, "a");
             a.AddVertex(null, "aa");
+
             IVertex b = tr.AddVertex(null, "b");
             b.AddVertex(null, "bb");
 
             b.AddEdge(r.Get(@"System\Meta*$Inherits"), a);
 
             IVertex _c = tr.AddVertex(null, "c");
+            _c.AddEdge(r.Get(@"System\Meta*$Inherits"), b);
+            _c.AddVertex(null, "c");
 
-            _c.AddEdge(null, a);
+
 
             GeneralUtil.ParseAndExcute(tr, r.Get(@"System\Meta"), @"{TEST3{Class:Customer{},Class:Person{$Description:opis,Attribute:Name,Attribute:Surname,Attribute:DateOfBirth},Class:Company{Attribute:Name,Attribute:RegistrationNumber,},Class:Adress{Attribute:Line 1,Attribute:Line 2,Attribute:Line 3,Attribute:City,Attribute:County,Attribute:Postal code,Attribute:Country},Class:Basket{Attribute:Creation date,Attribute:Status},Class:Item{Attribute:Name,Attribute:Description,Attribute:Price}}}");
 

@@ -52,7 +52,7 @@ namespace m0.Graph
         private static void GetInheritChilds_recurrent(IVertex baseVertex, HashSet<IVertex> inheritedSet)
         {
             foreach (IEdge e in baseVertex.InEdgesRaw)
-                if (GeneralUtil.CompareStrings(e.Meta, "$Iherits") && !inheritedSet.Contains(e.From))
+                if (GeneralUtil.CompareStrings(e.Meta, "$Inherits") && !inheritedSet.Contains(e.From))
                 {
                     inheritedSet.Add(e.From);
                     GetInheritChilds_recurrent(e.From, inheritedSet);
@@ -68,13 +68,13 @@ namespace m0.Graph
             return inheritsSet;
         }
 
-        private void GetInheritParents_recurrent(IVertex baseVertex, HashSet<IVertex> inheritedSet)
+        private static void GetInheritParents_recurrent(IVertex baseVertex, HashSet<IVertex> inheritedSet)
         {
-            foreach (IEdge e in baseVertex.InEdgesRaw)
-                if (GeneralUtil.CompareStrings(e.Meta, "$Iherits") && !inheritedSet.Contains(e.From))
+            foreach (IEdge e in baseVertex.OutEdgesRaw)
+                if (GeneralUtil.CompareStrings(e.Meta, "$Inherits") && !inheritedSet.Contains(e.To))
                 {
-                    inheritedSet.Add(e.From);
-                    GetInheritParents_reccurent(e.From, inheritedSet);
+                    inheritedSet.Add(e.To);
+                    GetInheritParents_recurrent(e.To, inheritedSet);
                 }
         }
         public static string GetQueryStringPart(IVertex meta, IVertex to)

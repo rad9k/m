@@ -87,23 +87,38 @@ namespace m0.Graph
 
         public override IList<IEdge> OutEdgesRaw { get { return _OutEdgesRaw; } }
 
+        private IList<IEdge> _OutEdges;
+
         public override IEnumerable<IEdge> OutEdges
         {
             get
             {
-                if (HasInheritance)
+                if(OutEdgesDictionariesNeedsRebuild_Edges)
                 {
-                    List<IEdge> FullEdges = OutEdgesRaw.ToList();
-
-                    foreach (IEdge e in OutEdgesRaw)
-                        if (GeneralUtil.CompareStrings(e.Meta.Value, "$Inherits"))
-                            FullEdges.AddRange(e.To);
-
-                    //return FullEdges;
-                    return ZeroCodeEngine_OLD.RemoveDuplicates(FullEdges); // can be optimised. probably
-                }else
-                    return OutEdgesRaw;
+                    OutEdgesDictionariesRebuild_Edges();
+                    OutEdgesDictionariesNeedsRebuild_Edges = false;
+                    return _OutEdges;
+                }
+                else
+                    return _OutEdges;                
             }
+        }
+
+        private void OutEdgesDictionariesRebuild_Edges()
+        {
+            if (HasInheritance)
+            {
+                List<IEdge> FullEdges = OutEdgesRaw.ToList();
+
+                HashSet<IVertex> parents = GraphUtil.GetInheritParents(this);
+
+                foreach (IVertex v in parents)
+                    FullEdges.AddRange(v.OutEdgesRaw);    
+
+                _OutEdges = FullEdges;
+            }
+            else
+                _OutEdges = OutEdgesRaw;
         }
 
         public override void AddInEdge(IEdge edge)
@@ -114,7 +129,7 @@ namespace m0.Graph
 
             InEdgesDictionariesNeedsRebuild = true;
 
-            VertexesThatInheritsDictionariesNeedsRebuild(true);
+            InheritChildsDictionariesNeedsRebuild(true);
 
             //FireChange(new VertexChangeEventArgs(VertexChangeType.InEdgeAdded,edge));
             // not needed as for now
@@ -136,7 +151,7 @@ namespace m0.Graph
 
                 InEdgesDictionariesNeedsRebuild = true;
 
-                VertexesThatInheritsDictionariesNeedsRebuild(true);
+                InheritChildsDictionariesNeedsRebuild(true);
             }
 
             //FireChange(new VertexChangeEventArgs(VertexChangeType.InEdgeRemoved, edge));
@@ -156,7 +171,7 @@ namespace m0.Graph
 
             OutEdgesDictionariesNeedsRebuild = true;
 
-            VertexesThatInheritsDictionariesNeedsRebuild(false);
+            InheritChildsDictionariesNeedsRebuild(false);
 
             if (GeneralUtil.CompareStrings(ne.Meta.Value, "$Inherits"))
             {
@@ -185,7 +200,7 @@ namespace m0.Graph
                 UsageCounter--;
 
                 OutEdgesDictionariesNeedsRebuild = true;
-                VertexesThatInheritsDictionariesNeedsRebuild(false);
+                InheritChildsDictionariesNeedsRebuild(false);
 
                 if (GeneralUtil.CompareStrings(edge.Meta.Value, "$Inherits"))
                 {
@@ -212,6 +227,9 @@ namespace m0.Graph
             _Identifier = Store.VertexIdentifierCount++;
 
             Value = "";
+
+            InEdgesDictionariesNeedsRebuild = true;
+            OutEdgesDictionariesNeedsRebuild = true;
         }
 
         public override IVertex Execute(IVertex inputVertex, IVertex expression)
@@ -307,9 +325,9 @@ namespace m0.Graph
             GraphUtil.RemoveAllEdges(this);                        
         }
 
-        private void VertexesThatInheritsDictionariesNeedsRebuild(bool inDictiories)
+        private void InheritChildsDictionariesNeedsRebuild(bool inDictiories)
         {
-            HashSet<IVertex> inheritsSet = GetVertexesThatInherits();
+            HashSet<IVertex> inheritsSet = GraphUtil.GetInheritChilds(this);
 
             foreach (IVertex v in inheritsSet)
                 if (inDictiories)
@@ -317,7 +335,6 @@ namespace m0.Graph
                 else
                     v.OutEdgesDictionariesNeedsRebuild = true;
         }
-
         
     }
 }
