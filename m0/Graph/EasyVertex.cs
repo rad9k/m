@@ -60,27 +60,38 @@ namespace m0.Graph
 
         public override IList<IEdge> InEdgesRaw { get { return _InEdgesRaw; } }
 
+        private IList<IEdge> _InEdges;
+
         public override IEnumerable<IEdge> InEdges
         {
             get
             {
-                if (HasInheritance)
+                if (InEdgesDictionariesNeedsRebuild_Edges)
                 {
-                    List<IEdge> FullEdges = InEdgesRaw.ToList();
-
-                    /*  foreach (IEdge e in InEdgesRaw) // that is wrong
-                          if (GeneralUtil.CompareStrings(e.Meta.Value, "$Inherits"))
-                              FullEdges.AddRange(e.To);*/
-
-                    foreach (IEdge e in OutEdgesRaw)
-                        if (GeneralUtil.CompareStrings(e.Meta.Value, "$Inherits"))
-                            FullEdges.AddRange(e.To.InEdges);
-
-                    return FullEdges;
+                    InEdgesDictionariesRebuild_Edges();
+                    InEdgesDictionariesNeedsRebuild_Edges = false;
+                    return _InEdges;
                 }
                 else
-                    return InEdgesRaw;
+                    return _InEdges;
+            }                       
+        }
+
+        private void InEdgesDictionariesRebuild_Edges()
+        {
+            if (HasInheritance)
+            {
+                List<IEdge> FullEdges = InEdgesRaw.ToList();
+
+                HashSet<IVertex> parents = GraphUtil.GetInheritParents(this);
+
+                foreach (IVertex v in parents)
+                    FullEdges.AddRange(v.InEdgesRaw);
+
+                _InEdges = FullEdges;
             }
+            else
+                _InEdges = InEdgesRaw;
         }
 
         protected IList<IEdge> _OutEdgesRaw;
