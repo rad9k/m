@@ -40,6 +40,24 @@ namespace m0.Graph
 
     public class GraphUtil
     {
+        private HashSet<IVertex> GetVertexesThatInherits(IVertex baseVertex)
+        {
+            HashSet<IVertex> inheritsSet = new HashSet<IVertex>();
+
+            GetVertexesThatInherits_reccurent(baseVertex, this, inheritsSet);
+
+            return inheritsSet;
+        }
+
+        private void GetVertexesThatInherits_reccurent(IVertex baseVertex, HashSet<IVertex> inheritedSet)
+        {
+            foreach (IEdge e in InEdgesRaw)
+                if (GeneralUtil.CompareStrings(e.Meta, "$Iherits") && !inheritedSet.Contains(e.From))
+                {
+                    inheritedSet.Add(e.From);
+                    GetVertexesThatInherits_reccurent(e.From, inheritedSet);
+                }
+        }
         public static string GetQueryStringPart(IVertex meta, IVertex to)
         {
             if (GeneralUtil.CompareStrings(meta.ToString(), "$Empty"))

@@ -68,9 +68,13 @@ namespace m0.Graph
                 {
                     List<IEdge> FullEdges = InEdgesRaw.ToList();
 
-                    foreach (IEdge e in InEdgesRaw)
+                    /*  foreach (IEdge e in InEdgesRaw) // that is wrong
+                          if (GeneralUtil.CompareStrings(e.Meta.Value, "$Inherits"))
+                              FullEdges.AddRange(e.To);*/
+
+                    foreach (IEdge e in OutEdgesRaw)
                         if (GeneralUtil.CompareStrings(e.Meta.Value, "$Inherits"))
-                            FullEdges.AddRange(e.To);
+                            FullEdges.AddRange(e.To.InEdges);
 
                     return FullEdges;
                 }
@@ -314,23 +318,6 @@ namespace m0.Graph
                     v.OutEdgesDictionariesNeedsRebuild = true;
         }
 
-        private HashSet<IVertex> GetVertexesThatInherits()
-        {
-            HashSet<IVertex> inheritsSet = new HashSet<IVertex>();
-
-            GetVertexesThatInherits_reccurent(this, inheritsSet);
-
-            return inheritsSet;
-        }
-
-        private void GetVertexesThatInherits_reccurent(IVertex baseVertex, HashSet<IVertex> inheritedSet)
-        {
-            foreach(IEdge e in OutEdgesRaw)
-                if(GeneralUtil.CompareStrings(e.Meta,"$Iherits") && !inheritedSet.Contains(e.To))
-                {
-                    inheritedSet.Add(e.To);
-                    GetVertexesThatInherits_reccurent(e.To, inheritedSet);
-                }
-        }
+        
     }
 }
