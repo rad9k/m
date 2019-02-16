@@ -106,8 +106,7 @@ namespace m0.Graph
             {
                 if(OutEdgesDictionariesNeedsRebuild_Edges)
                 {
-                    OutEdgesDictionariesRebuild_Edges();
-                    OutEdgesDictionariesNeedsRebuild_Edges = false;
+                    OutEdgesDictionariesRebuild_Edges();                    
                     return _OutEdges;
                 }
                 else
@@ -130,7 +129,202 @@ namespace m0.Graph
             }
             else
                 _OutEdges = OutEdgesRaw;
+
+            OutEdgesDictionariesNeedsRebuild_Edges = false;
         }
+
+        private void InEdgesDictionariesRebuild_Meta()
+        {
+            _InEdgesByMeta = new Dictionary<object, object>();
+
+            foreach(IEdge e in InEdges)
+            {
+                object key = e.Meta.Value;
+                object value = e.To.Value;
+
+                if (_InEdgesByMeta.ContainsKey(key))
+                {
+                    object existingValue = _InEdgesByMeta[key];
+
+                    if (existingValue is List_VertexBase) // list exists
+                    {
+                        ((IList<object>)existingValue).Add(value);
+                    }
+                    else // need to create list
+                    {
+                        IList<object> list = new List_VertexBase();
+                        list.Add(existingValue);
+
+                        _InEdgesByMeta[key] = list;
+                    }                        
+                }
+                else
+                    _InEdgesByMeta.Add(key, value);
+            }
+
+            InEdgesDictionariesNeedsRebuild_Meta = false;
+        }
+
+        private void OutEdgesDictionariesRebuild_Meta()
+        {
+            _OutEdgesByMeta = new Dictionary<object, object>();
+
+            foreach (IEdge e in OutEdges)
+            {
+                object key = e.Meta.Value;
+                object value = e.To.Value;
+
+                if (_OutEdgesByMeta.ContainsKey(key))
+                {
+                    object existingValue = _OutEdgesByMeta[key];
+
+                    if (existingValue is List_VertexBase) // list exists
+                    {
+                        ((IList<object>)existingValue).Add(value);
+                    }
+                    else // need to create list
+                    {
+                        IList<object> list = new List_VertexBase();
+                        list.Add(existingValue);
+
+                        _OutEdgesByMeta[key] = list;
+                    }
+                }
+                else
+                    _OutEdgesByMeta.Add(key, value);
+            }
+
+            OutEdgesDictionariesNeedsRebuild_Meta = false;
+        }
+
+        private void InEdgesDictionariesRebuild_Value()
+        {
+            _InEdgesByValue = new Dictionary<object, object>();
+
+            foreach (IEdge e in InEdges)
+            {
+                object key = e.To.Value;
+                object value = e.To.Value;
+
+                if (_InEdgesByValue.ContainsKey(key))
+                {
+                    object existingValue = _InEdgesByValue[key];
+
+                    if (existingValue is List_VertexBase) // list exists
+                    {
+                        ((IList<object>)existingValue).Add(value);
+                    }
+                    else // need to create list
+                    {
+                        IList<object> list = new List_VertexBase();
+                        list.Add(existingValue);
+
+                        _InEdgesByValue[key] = list;
+                    }
+                }
+                else
+                    _InEdgesByValue.Add(key, value);
+            }
+
+            InEdgesDictionariesNeedsRebuild_Value = false;
+        }
+
+        private void OutEdgesDictionariesRebuild_Value()
+        {
+            _OutEdgesByValue = new Dictionary<object, object>();
+
+            foreach (IEdge e in OutEdges)
+            {
+                object key = e.To.Value;
+                object value = e.To.Value;
+
+                if (_OutEdgesByValue.ContainsKey(key))
+                {
+                    object existingValue = _OutEdgesByValue[key];
+
+                    if (existingValue is List_VertexBase) // list exists
+                    {
+                        ((IList<object>)existingValue).Add(value);
+                    }
+                    else // need to create list
+                    {
+                        IList<object> list = new List_VertexBase();
+                        list.Add(existingValue);
+
+                        _OutEdgesByValue[key] = list;
+                    }
+                }
+                else
+                    _OutEdgesByValue.Add(key, value);
+            }
+
+            OutEdgesDictionariesNeedsRebuild_Value = false;
+        }
+
+        private void InEdgesDictionariesRebuild_MetaAndValue()
+        {
+            _InEdgesByMetaAndValue = new Dictionary<object, object>();
+
+            foreach (IEdge e in InEdges)
+            {
+                object key = e.Meta.Value.ToString()+"|"+e.To.Value.ToString();
+                object value = e.To.Value;
+
+                if (_InEdgesByMetaAndValue.ContainsKey(key))
+                {
+                    object existingValue = _InEdgesByMetaAndValue[key];
+
+                    if (existingValue is List_VertexBase) // list exists
+                    {
+                        ((IList<object>)existingValue).Add(value);
+                    }
+                    else // need to create list
+                    {
+                        IList<object> list = new List_VertexBase();
+                        list.Add(existingValue);
+
+                        _InEdgesByMetaAndValue[key] = list;
+                    }
+                }
+                else
+                    _InEdgesByMetaAndValue.Add(key, value);
+            }
+
+            InEdgesDictionariesNeedsRebuild_MetaAndValue = false;
+        }
+
+        private void OutEdgesDictionariesRebuild_MetaAndValue()
+        {
+            _OutEdgesByMetaAndValue = new Dictionary<object, object>();
+
+            foreach (IEdge e in OutEdges)
+            {
+                object key = e.Meta.Value.ToString() + "|" + e.To.Value.ToString();
+                object value = e.To.Value;
+
+                if (_OutEdgesByMetaAndValue.ContainsKey(key))
+                {
+                    object existingValue = _OutEdgesByMetaAndValue[key];
+
+                    if (existingValue is List_VertexBase) // list exists
+                    {
+                        ((IList<object>)existingValue).Add(value);
+                    }
+                    else // need to create list
+                    {
+                        IList<object> list = new List_VertexBase();
+                        list.Add(existingValue);
+
+                        _OutEdgesByMetaAndValue[key] = list;
+                    }
+                }
+                else
+                    _OutEdgesByMetaAndValue.Add(key, value);
+            }
+
+            OutEdgesDictionariesNeedsRebuild_MetaAndValue = false;
+        }
+
 
         public override void AddInEdge(IEdge edge)
         {            

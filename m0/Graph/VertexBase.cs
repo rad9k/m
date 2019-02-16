@@ -10,20 +10,27 @@ using m0.Util;
 
 namespace m0.Graph
 {
+    public class List_VertexBase : List<object> { } // to be used in dictionaries, to identify list of List<object> :)
     [Serializable]
     public class VertexBase:IVertex, IHasUsageCounter
     {
-        public IDictionary<object, IEdge> OutEdgesByMeta { get; }
+        protected IDictionary<object, object> _OutEdgesByMeta;
+        public IDictionary<object, object> OutEdgesByMeta { get { return _OutEdgesByMeta; } }
 
-        public IDictionary<object, IEdge> OutEdgesByValue { get; }
+        protected IDictionary<object, object> _OutEdgesByValue;
+        public IDictionary<object, object> OutEdgesByValue { get { return _OutEdgesByValue; } }
 
-        public IDictionary<object, IEdge> OutEdgesByMetaAndValue { get; }
+        protected IDictionary<object, object> _OutEdgesByMetaAndValue;
+        public IDictionary<object, object> OutEdgesByMetaAndValue { get { return _OutEdgesByMetaAndValue; } }
 
-        public IDictionary<object, IEdge> InEdgesByMeta { get; }
+        protected IDictionary<object, object> _InEdgesByMeta;
+        public IDictionary<object, object> InEdgesByMeta { get { return _InEdgesByMeta; } }
 
-        public IDictionary<object, IEdge> InEdgesByValue { get; }
+        protected IDictionary<object, object> _InEdgesByValue;
+        public IDictionary<object, object> InEdgesByValue { get { return _InEdgesByValue; } }
 
-        public IDictionary<object, IEdge> InEdgesByMetaAndValue { get; }
+        protected IDictionary<object, object> _InEdgesByMetaAndValue;
+        public IDictionary<object, object> InEdgesByMetaAndValue { get { return _InEdgesByMetaAndValue; } }
 
         private bool _InEdgesDictionariesNeedsRebuild;
         public bool InEdgesDictionariesNeedsRebuild {
