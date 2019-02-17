@@ -612,6 +612,9 @@ namespace m0.Graph
                 if (InEdgesDictionariesNeedsRebuild_Meta)
                     InEdgesDictionariesRebuild_Meta();
 
+                if (!InEdgesByMeta.ContainsKey(meta))
+                    return;
+
                 object val = InEdgesByMeta[meta];
 
                 if (val is List_VertexBase)
@@ -624,6 +627,9 @@ namespace m0.Graph
             {
                 if (InEdgesDictionariesNeedsRebuild_Value)
                     InEdgesDictionariesRebuild_Value();
+
+                if (!InEdgesByValue.ContainsKey(from))
+                    return;
 
                 object val = InEdgesByValue[from];
 

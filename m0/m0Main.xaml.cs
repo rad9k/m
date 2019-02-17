@@ -210,35 +210,37 @@ namespace m0
             IVertex meta_a = tr.AddVertex(null, "meta_a");
             IVertex meta_b = tr.AddVertex(null, "meta_b");
 
+            IVertex s = tr.AddVertex(null, "s");
+
             IVertex a = tr.AddVertex(null, "a");
-            a.AddVertex(null, "aa");
-            a.AddVertex(meta_a, "aa");
+            s.AddVertex(null, a);
+            s.AddVertex(meta_a, a);
 
             IVertex b = tr.AddVertex(null, "b");
-            b.AddVertex(null, "bb");
-            b.AddVertex(meta_b, "bb");
-            b.AddVertex(meta_a, "ab");
+            s.AddVertex(null, b);
+            s.AddVertex(meta_b, b);
+            s.AddVertex(meta_a, b);
 
             //b.AddEdge(r.Get(@"System\Meta*$Inherits"), a);
 
             IEdge result;
             IList<IEdge> results;
 
-            a.QueryOutEdges(null, "aa", out result, out results);
-            a.QueryOutEdges("meta_a", null, out result, out results);
-            a.QueryOutEdges("meta_a", "aa", out result, out results);
-            a.QueryOutEdges("meta_a", "b", out result, out results);
-            a.QueryOutEdges(null, "b", out result, out results);
+            a.QueryInEdges(null, "s", out result, out results);
+            a.QueryInEdges("meta_a", null, out result, out results);
+            a.QueryInEdges("meta_a", "aa", out result, out results);
+            a.QueryInEdges("meta_a", "s", out result, out results);
+            a.QueryInEdges(null, "b", out result, out results);
 
-            b.QueryOutEdges(null, "aa", out result, out results);
-            b.QueryOutEdges("meta_a", null, out result, out results);
-            b.QueryOutEdges("meta_a", "b", out result, out results);
-            b.QueryOutEdges(null, "b", out result, out results);
+            b.QueryInEdges(null, "aa", out result, out results);
+            b.QueryInEdges("meta_a", null, out result, out results);
+            b.QueryInEdges("meta_a", "s", out result, out results);
+            b.QueryInEdges(null, "b", out result, out results);
 
-            b.QueryOutEdges(null, "bb", out result, out results);
-            b.QueryOutEdges("meta_b", null, out result, out results);
-            b.QueryOutEdges("meta_b", "bb", out result, out results);
-            b.QueryOutEdges(null, "b", out result, out results);
+            b.QueryInEdges(null, "s", out result, out results);
+            b.QueryInEdges("meta_b", null, out result, out results);
+            b.QueryInEdges("meta_b", "s", out result, out results);
+            b.QueryInEdges(null, "b", out result, out results);
 
 
 
