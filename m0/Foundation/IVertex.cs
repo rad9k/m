@@ -52,7 +52,7 @@ namespace m0.Foundation
 
         void QueryOutEdges(object meta, object to, out IEdge result, out IList<IEdge> results);
 
-        void QueryInEdges(object meta, object to, out IEdge result, out IList<IEdge> results);
+        void QueryInEdges(object meta, object from, out IEdge result, out IList<IEdge> results);
 
         // 2.0 END
 

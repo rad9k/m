@@ -300,7 +300,7 @@ namespace m0.Graph
             throw new NotImplementedException();
         }
 
-        public virtual void QueryInEdges(object meta, object to, out IEdge result, out IList<IEdge> results)
+        public virtual void QueryInEdges(object meta, object from, out IEdge result, out IList<IEdge> results)
         {
             throw new NotImplementedException();
         }

@@ -205,7 +205,7 @@ namespace m0.Graph
 
             foreach (IEdge e in InEdges)
             {
-                object key = e.To.Value;
+                object key = e.From.Value;
                 IEdge value = e;
 
                 if (_InEdgesByValue.ContainsKey(key))
@@ -270,7 +270,7 @@ namespace m0.Graph
 
             foreach (IEdge e in InEdges)
             {
-                object key = GraphUtil.GetMetaAndValueObject(e.Meta.Value, e.To.Value);
+                object key = GraphUtil.GetMetaAndValueObject(e.Meta.Value, e.From.Value);
                 IEdge value = e;
 
                 if (_InEdgesByMetaAndValue.ContainsKey(key))
@@ -556,6 +556,9 @@ namespace m0.Graph
                 if (OutEdgesDictionariesNeedsRebuild_Meta)
                     OutEdgesDictionariesRebuild_Meta();
 
+                if (!OutEdgesByMeta.ContainsKey(meta))
+                    return; 
+
                 object val = OutEdgesByMeta[meta];
 
                 if (val is List_VertexBase)
@@ -568,6 +571,9 @@ namespace m0.Graph
             {
                 if (OutEdgesDictionariesNeedsRebuild_Value)
                     OutEdgesDictionariesRebuild_Value();
+
+                if (!OutEdgesByValue.ContainsKey(to))
+                    return;
 
                 object val = OutEdgesByValue[to];
 
@@ -582,7 +588,12 @@ namespace m0.Graph
                 if (OutEdgesDictionariesNeedsRebuild_MetaAndValue)
                     OutEdgesDictionariesRebuild_MetaAndValue();
 
-                object val = OutEdgesByMetaAndValue[GraphUtil.GetMetaAndValueObject(meta,to)];
+                object searchKey = GraphUtil.GetMetaAndValueObject(meta, to);
+
+                if (!OutEdgesByMetaAndValue.ContainsKey(searchKey))
+                    return;
+
+                object val = OutEdgesByMetaAndValue[searchKey];
 
                 if (val is List_VertexBase)
                     results = (IList<IEdge>)val;
@@ -591,12 +602,12 @@ namespace m0.Graph
             }
         }
 
-        public override void QueryInEdges(object meta, object to, out IEdge result, out IList<IEdge> results)
+        public override void QueryInEdges(object meta, object from, out IEdge result, out IList<IEdge> results)
         {
             result = null;
             results = null;
 
-            if (meta != null && to == null)
+            if (meta != null && from == null)
             {
                 if (InEdgesDictionariesNeedsRebuild_Meta)
                     InEdgesDictionariesRebuild_Meta();
@@ -609,12 +620,12 @@ namespace m0.Graph
                     result = (IEdge)val;
             }
 
-            if (meta == null && to != null)
+            if (meta == null && from != null)
             {
                 if (InEdgesDictionariesNeedsRebuild_Value)
                     InEdgesDictionariesRebuild_Value();
 
-                object val = InEdgesByValue[to];
+                object val = InEdgesByValue[from];
 
                 if (val is List_VertexBase)
                     results = (IList<IEdge>)val;
@@ -622,12 +633,17 @@ namespace m0.Graph
                     result = (IEdge)val;
             }
 
-            if (meta != null && to != null)
+            if (meta != null && from != null)
             {
                 if (InEdgesDictionariesNeedsRebuild_MetaAndValue)
                     InEdgesDictionariesRebuild_MetaAndValue();
 
-                object val = InEdgesByMetaAndValue[GraphUtil.GetMetaAndValueObject(meta, to)];
+                object searchKey = GraphUtil.GetMetaAndValueObject(meta, from);
+
+                if (!InEdgesByMetaAndValue.ContainsKey(searchKey))
+                    return;
+
+                object val = InEdgesByMetaAndValue[searchKey];
 
                 if (val is List_VertexBase)
                     results = (IList<IEdge>)val;

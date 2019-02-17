@@ -207,21 +207,42 @@ namespace m0
 
             IVertex tr = MinusZero.Instance.Root.AddVertex(null, "kupa");
 
+            IVertex meta_a = tr.AddVertex(null, "meta_a");
+            IVertex meta_b = tr.AddVertex(null, "meta_b");
+
             IVertex a = tr.AddVertex(null, "a");
             a.AddVertex(null, "aa");
+            a.AddVertex(meta_a, "aa");
 
             IVertex b = tr.AddVertex(null, "b");
             b.AddVertex(null, "bb");
+            b.AddVertex(meta_b, "bb");
+            b.AddVertex(meta_a, "ab");
 
-            b.AddEdge(r.Get(@"System\Meta*$Inherits"), a);
+            //b.AddEdge(r.Get(@"System\Meta*$Inherits"), a);
 
-            IVertex _c = tr.AddVertex(null, "c");
-            _c.AddEdge(r.Get(@"System\Meta*$Inherits"), b);
-            _c.AddVertex(null, "c");
+            IEdge result;
+            IList<IEdge> results;
 
-            IVertex _d = tr.AddVertex(null, "d");
-            
-            _d.AddEdge(null, a);
+            a.QueryOutEdges(null, "aa", out result, out results);
+            a.QueryOutEdges("meta_a", null, out result, out results);
+            a.QueryOutEdges("meta_a", "aa", out result, out results);
+            a.QueryOutEdges("meta_a", "b", out result, out results);
+            a.QueryOutEdges(null, "b", out result, out results);
+
+            b.QueryOutEdges(null, "aa", out result, out results);
+            b.QueryOutEdges("meta_a", null, out result, out results);
+            b.QueryOutEdges("meta_a", "b", out result, out results);
+            b.QueryOutEdges(null, "b", out result, out results);
+
+            b.QueryOutEdges(null, "bb", out result, out results);
+            b.QueryOutEdges("meta_b", null, out result, out results);
+            b.QueryOutEdges("meta_b", "bb", out result, out results);
+            b.QueryOutEdges(null, "b", out result, out results);
+
+
+
+
 
 
 
