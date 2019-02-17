@@ -208,8 +208,11 @@ namespace m0.Graph
 
         public virtual IVertex AddVertex(IVertex metaVertex, object val)
         {
+            if (val is IVertex)
+                throw new Exception("Trying to add Vertex as Vertex value");
+
             if (val is IEdge)
-                throw new Exception("Trying to add Edge as Vertex");
+                throw new Exception("Trying to add Edge as Vertex value");
 
             IVertex nv = (IVertex)Activator.CreateInstance(this.GetType(), new object[] { this.Store });
 

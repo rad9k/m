@@ -213,15 +213,15 @@ namespace m0
             IVertex s = tr.AddVertex(null, "s");
 
             IVertex a = tr.AddVertex(null, "a");
-            s.AddVertex(null, a);
-            s.AddVertex(meta_a, a);
+            s.AddEdge(null, a);
+            s.AddEdge(meta_a, a);
 
             IVertex b = tr.AddVertex(null, "b");
-            s.AddVertex(null, b);
-            s.AddVertex(meta_b, b);
-            s.AddVertex(meta_a, b);
+            s.AddEdge(null, b);
+            s.AddEdge(meta_b, b);
+            s.AddEdge(meta_a, b);
 
-            //b.AddEdge(r.Get(@"System\Meta*$Inherits"), a);
+            b.AddEdge(r.Get(@"System\Meta*$Inherits"), a);
 
             IEdge result;
             IList<IEdge> results;
