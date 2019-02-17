@@ -248,12 +248,12 @@ namespace m0.Graph
             throw new NotImplementedException();
         }
 
-        public virtual IVertex Get(string query)
+        public virtual IVertex Get(bool metaMode, string query)
         {
             throw new NotImplementedException();
         }
 
-        public virtual IVertex GetAll(string query)
+        public virtual IVertex GetAll(bool metaMode, string query)
         {
             throw new NotImplementedException();
         }

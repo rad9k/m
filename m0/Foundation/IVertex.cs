@@ -70,9 +70,9 @@ namespace m0.Foundation
         IVertex Execute(IVertex inputVertex, IVertex expression);
 
 
-        IVertex Get(string query);
+        IVertex Get(bool metaMode, string query);
 
-        IVertex GetAll(string query);
+        IVertex GetAll(bool metaMode, string query);
 
         IEdge this[string meta] { get; } // for databinding
                         

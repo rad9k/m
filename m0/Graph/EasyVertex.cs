@@ -462,7 +462,7 @@ namespace m0.Graph
 
         private static IDictionary<String, IVertex> ParseChache= new Dictionary<String,IVertex>();
 
-        public override IVertex Get(string query)
+        public override IVertex Get(bool metaMode, string query)
         {
             //
             MinusZero m0=MinusZero.Instance;
@@ -496,7 +496,7 @@ namespace m0.Graph
             return MinusZero.Instance.DefaultExecuter.Get(this, queryVertex);            
         }
 
-        public override IVertex GetAll(string query)
+        public override IVertex GetAll(bool metaMode, string query)
         {
             //
             MinusZero m0 = MinusZero.Instance;
