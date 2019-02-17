@@ -207,7 +207,7 @@ namespace m0
 
             IVertex tr = MinusZero.Instance.Root.AddVertex(null, "kupa");
 
-            IVertex meta_a = tr.AddVertex(null, "meta_a");
+            /*IVertex meta_a = tr.AddVertex(null, "meta_a");
             IVertex meta_b = tr.AddVertex(null, "meta_b");
 
             IVertex s = tr.AddVertex(null, "s");
@@ -241,7 +241,7 @@ namespace m0
             b.QueryInEdges("meta_b", null, out result, out results);
             b.QueryInEdges("meta_b", "s", out result, out results);
             b.QueryInEdges(null, "b", out result, out results);
-
+            */
 
 
 
