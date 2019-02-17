@@ -40,6 +40,12 @@ namespace m0.Graph
 
     public class GraphUtil
     {
+        public static object GetMetaAndValueObject(object meta, object value)
+        {
+            return meta.ToString() + "|" + value.ToString(); // this is no good !!!!!!!!!. possible error when meta or value contains "|"
+
+            //return meta.GetHashCode() + value.GetHashCode(); // this is better
+        }
         public static HashSet<IVertex> GetInheritChilds(IVertex baseVertex)
         {
             HashSet<IVertex> inheritsSet = new HashSet<IVertex>();

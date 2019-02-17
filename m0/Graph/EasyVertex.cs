@@ -140,7 +140,7 @@ namespace m0.Graph
             foreach(IEdge e in InEdges)
             {
                 object key = e.Meta.Value;
-                object value = e.To.Value;
+                IEdge value = e;
 
                 if (_InEdgesByMeta.ContainsKey(key))
                 {
@@ -148,12 +148,13 @@ namespace m0.Graph
 
                     if (existingValue is List_VertexBase) // list exists
                     {
-                        ((IList<object>)existingValue).Add(value);
+                        ((IList<IEdge>)existingValue).Add(value);
                     }
                     else // need to create list
                     {
-                        IList<object> list = new List_VertexBase();
-                        list.Add(existingValue);
+                        IList<IEdge> list = new List_VertexBase();
+                        list.Add((IEdge)existingValue);
+                        list.Add(value);
 
                         _InEdgesByMeta[key] = list;
                     }                        
@@ -172,7 +173,7 @@ namespace m0.Graph
             foreach (IEdge e in OutEdges)
             {
                 object key = e.Meta.Value;
-                object value = e.To.Value;
+                IEdge value = e;
 
                 if (_OutEdgesByMeta.ContainsKey(key))
                 {
@@ -180,12 +181,13 @@ namespace m0.Graph
 
                     if (existingValue is List_VertexBase) // list exists
                     {
-                        ((IList<object>)existingValue).Add(value);
+                        ((IList<IEdge>)existingValue).Add(value);
                     }
                     else // need to create list
                     {
-                        IList<object> list = new List_VertexBase();
-                        list.Add(existingValue);
+                        IList<IEdge> list = new List_VertexBase();
+                        list.Add((IEdge)existingValue);
+                        list.Add(value);
 
                         _OutEdgesByMeta[key] = list;
                     }
@@ -204,7 +206,7 @@ namespace m0.Graph
             foreach (IEdge e in InEdges)
             {
                 object key = e.To.Value;
-                object value = e.To.Value;
+                IEdge value = e;
 
                 if (_InEdgesByValue.ContainsKey(key))
                 {
@@ -212,12 +214,13 @@ namespace m0.Graph
 
                     if (existingValue is List_VertexBase) // list exists
                     {
-                        ((IList<object>)existingValue).Add(value);
+                        ((IList<IEdge>)existingValue).Add(value);
                     }
                     else // need to create list
                     {
-                        IList<object> list = new List_VertexBase();
-                        list.Add(existingValue);
+                        IList<IEdge> list = new List_VertexBase();
+                        list.Add((IEdge)existingValue);
+                        list.Add(value);
 
                         _InEdgesByValue[key] = list;
                     }
@@ -236,7 +239,7 @@ namespace m0.Graph
             foreach (IEdge e in OutEdges)
             {
                 object key = e.To.Value;
-                object value = e.To.Value;
+                IEdge value = e;
 
                 if (_OutEdgesByValue.ContainsKey(key))
                 {
@@ -244,12 +247,13 @@ namespace m0.Graph
 
                     if (existingValue is List_VertexBase) // list exists
                     {
-                        ((IList<object>)existingValue).Add(value);
+                        ((IList<IEdge>)existingValue).Add(value);
                     }
                     else // need to create list
                     {
-                        IList<object> list = new List_VertexBase();
-                        list.Add(existingValue);
+                        IList<IEdge> list = new List_VertexBase();
+                        list.Add((IEdge)existingValue);
+                        list.Add(value);
 
                         _OutEdgesByValue[key] = list;
                     }
@@ -260,15 +264,14 @@ namespace m0.Graph
 
             OutEdgesDictionariesNeedsRebuild_Value = false;
         }
-
         private void InEdgesDictionariesRebuild_MetaAndValue()
         {
             _InEdgesByMetaAndValue = new Dictionary<object, object>();
 
             foreach (IEdge e in InEdges)
             {
-                object key = e.Meta.Value.ToString()+"|"+e.To.Value.ToString();
-                object value = e.To.Value;
+                object key = GraphUtil.GetMetaAndValueObject(e.Meta.Value, e.To.Value);
+                IEdge value = e;
 
                 if (_InEdgesByMetaAndValue.ContainsKey(key))
                 {
@@ -276,12 +279,13 @@ namespace m0.Graph
 
                     if (existingValue is List_VertexBase) // list exists
                     {
-                        ((IList<object>)existingValue).Add(value);
+                        ((IList<IEdge>)existingValue).Add(value);
                     }
                     else // need to create list
                     {
-                        IList<object> list = new List_VertexBase();
-                        list.Add(existingValue);
+                        IList<IEdge> list = new List_VertexBase();
+                        list.Add((IEdge)existingValue);
+                        list.Add(value);
 
                         _InEdgesByMetaAndValue[key] = list;
                     }
@@ -299,8 +303,8 @@ namespace m0.Graph
 
             foreach (IEdge e in OutEdges)
             {
-                object key = e.Meta.Value.ToString() + "|" + e.To.Value.ToString();
-                object value = e.To.Value;
+                object key = GraphUtil.GetMetaAndValueObject(e.Meta.Value,e.To.Value);
+                IEdge value = e;
 
                 if (_OutEdgesByMetaAndValue.ContainsKey(key))
                 {
@@ -308,12 +312,13 @@ namespace m0.Graph
 
                     if (existingValue is List_VertexBase) // list exists
                     {
-                        ((IList<object>)existingValue).Add(value);
+                        ((IList<IEdge>)existingValue).Add(value);
                     }
                     else // need to create list
                     {
-                        IList<object> list = new List_VertexBase();
-                        list.Add(existingValue);
+                        IList<IEdge> list = new List_VertexBase();
+                        list.Add((IEdge)existingValue);
+                        list.Add(value);
 
                         _OutEdgesByMetaAndValue[key] = list;
                     }
@@ -540,6 +545,95 @@ namespace m0.Graph
                 else
                     v.OutEdgesDictionariesNeedsRebuild = true;
         }
-        
+
+        public override void QueryOutEdges(object meta, object to, out IEdge result, out IList<IEdge> results)
+        {
+            result = null;
+            results = null;
+
+            if(meta!=null && to == null)
+            {
+                if (OutEdgesDictionariesNeedsRebuild_Meta)
+                    OutEdgesDictionariesRebuild_Meta();
+
+                object val = OutEdgesByMeta[meta];
+
+                if (val is List_VertexBase)
+                    results = (IList<IEdge>)val;
+                else
+                    result = (IEdge)val;
+            }
+
+            if (meta == null && to != null)
+            {
+                if (OutEdgesDictionariesNeedsRebuild_Value)
+                    OutEdgesDictionariesRebuild_Value();
+
+                object val = OutEdgesByValue[to];
+
+                if (val is List_VertexBase)
+                    results = (IList<IEdge>)val;
+                else
+                    result = (IEdge)val;
+            }
+
+            if (meta != null && to != null)
+            {
+                if (OutEdgesDictionariesNeedsRebuild_MetaAndValue)
+                    OutEdgesDictionariesRebuild_MetaAndValue();
+
+                object val = OutEdgesByMetaAndValue[GraphUtil.GetMetaAndValueObject(meta,to)];
+
+                if (val is List_VertexBase)
+                    results = (IList<IEdge>)val;
+                else
+                    result = (IEdge)val;
+            }
+        }
+
+        public override void QueryInEdges(object meta, object to, out IEdge result, out IList<IEdge> results)
+        {
+            result = null;
+            results = null;
+
+            if (meta != null && to == null)
+            {
+                if (InEdgesDictionariesNeedsRebuild_Meta)
+                    InEdgesDictionariesRebuild_Meta();
+
+                object val = InEdgesByMeta[meta];
+
+                if (val is List_VertexBase)
+                    results = (IList<IEdge>)val;
+                else
+                    result = (IEdge)val;
+            }
+
+            if (meta == null && to != null)
+            {
+                if (InEdgesDictionariesNeedsRebuild_Value)
+                    InEdgesDictionariesRebuild_Value();
+
+                object val = InEdgesByValue[to];
+
+                if (val is List_VertexBase)
+                    results = (IList<IEdge>)val;
+                else
+                    result = (IEdge)val;
+            }
+
+            if (meta != null && to != null)
+            {
+                if (InEdgesDictionariesNeedsRebuild_MetaAndValue)
+                    InEdgesDictionariesRebuild_MetaAndValue();
+
+                object val = InEdgesByMetaAndValue[GraphUtil.GetMetaAndValueObject(meta, to)];
+
+                if (val is List_VertexBase)
+                    results = (IList<IEdge>)val;
+                else
+                    result = (IEdge)val;
+            }
+        }
     }
 }

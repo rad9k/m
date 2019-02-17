@@ -50,9 +50,9 @@ namespace m0.Foundation
         bool OutEdgesDictionariesNeedsRebuild { get; set; }
 
 
-        void QueryOutEdges(string meta, string to, out IEdge result, out IList<IEdge> results);
+        void QueryOutEdges(object meta, object to, out IEdge result, out IList<IEdge> results);
 
-        void QueryInEdges(string meta, string to, out IEdge result, out IList<IEdge> results);
+        void QueryInEdges(object meta, object to, out IEdge result, out IList<IEdge> results);
 
         // 2.0 END
 

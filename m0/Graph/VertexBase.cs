@@ -10,7 +10,7 @@ using m0.Util;
 
 namespace m0.Graph
 {
-    public class List_VertexBase : List<object> { } // to be used in dictionaries, to identify list of List<object> :)
+    public class List_VertexBase : List<IEdge> { } // to be used in dictionaries, to identify list of List<IEdge> :)
     [Serializable]
     public class VertexBase:IVertex, IHasUsageCounter
     {
@@ -295,12 +295,12 @@ namespace m0.Graph
             return ((IEnumerable)OutEdges).GetEnumerator();
         }
 
-        public void QueryOutEdges(string meta, string to, out IEdge result, out IList<IEdge> results)
+        public virtual void QueryOutEdges(object meta, object to, out IEdge result, out IList<IEdge> results)
         {
             throw new NotImplementedException();
         }
 
-        public void QueryInEdges(string meta, string to, out IEdge result, out IList<IEdge> results)
+        public virtual void QueryInEdges(object meta, object to, out IEdge result, out IList<IEdge> results)
         {
             throw new NotImplementedException();
         }
