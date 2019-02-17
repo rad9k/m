@@ -90,13 +90,13 @@ namespace m0.UIWpf.Visualisers
 
         private IVertex getMetaForForm()
         {
-            if(Vertex.Get(@"BaseEdge:\Meta:") == null/* || Vertex.Get(@"BaseEdge:\Meta:").Count() == 0*/)
+            if(Vertex.Get(false, @"BaseEdge:\Meta:") == null/* || Vertex.Get(false, @"BaseEdge:\Meta:").Count() == 0*/)
                 return null;
 
-            IVertex v=GraphUtil.GetMostInheritedMeta(Vertex.Get(@"BaseEdge:\To:"),Vertex.Get(@"BaseEdge:\Meta:"));
+            IVertex v=GraphUtil.GetMostInheritedMeta(Vertex.Get(false, @"BaseEdge:\To:"),Vertex.Get(false, @"BaseEdge:\Meta:"));
 
-            if (v!=null && v.Get(@"$EdgeTarget:") != null)
-                return v.Get(@"$EdgeTarget:");
+            if (v!=null && v.Get(false, @"$EdgeTarget:") != null)
+                return v.Get(false, @"$EdgeTarget:");
             else
                 return v;
         }
@@ -107,8 +107,8 @@ namespace m0.UIWpf.Visualisers
                 if (meta == null)
                     return " | ";
 
-                string _section = (string)GraphUtil.GetValue(meta.Get("$Section:")); 
-                string _group = (string)GraphUtil.GetValue(meta.Get("$Group:"));
+                string _section = (string)GraphUtil.GetValue(meta.Get(false, "$Section:")); 
+                string _group = (string)GraphUtil.GetValue(meta.Get(false, "$Group:"));
 
                 if(_group==null && _section==null)
                     return "";
@@ -126,7 +126,7 @@ namespace m0.UIWpf.Visualisers
                 if (meta == null)
                     return "";
 
-                string _group=(string)GraphUtil.GetValue(meta.Get("$Group:"));
+                string _group=(string)GraphUtil.GetValue(meta.Get(false, "$Group:"));
 
                 if (_group == null)
                     return "";
@@ -143,7 +143,7 @@ namespace m0.UIWpf.Visualisers
             if (SectionsAsTabs)
                 return null;
             else
-                return (string)GraphUtil.GetValue(meta.Get("$Section:")); 
+                return (string)GraphUtil.GetValue(meta.Get(false, "$Section:")); 
         }
 
         bool BaseVertexEdgeAdded_PreFill = false;
@@ -182,7 +182,7 @@ namespace m0.UIWpf.Visualisers
         {
             TabList = new Dictionary<string, TabInfo>();
 
-            IVertex basTo = Vertex.Get(@"BaseEdge:\To:");
+            IVertex basTo = Vertex.Get(false, @"BaseEdge:\To:");
 
             IVertex metaForForm = getMetaForForm();
 
@@ -195,8 +195,8 @@ namespace m0.UIWpf.Visualisers
                 foreach (IEdge e in basTo)
                 {
                     childs.Add(e);
-                    if (!visited.Contains(e.Meta) && e.Meta.Get("$Hide:") == null)
-                        if (basTo.GetAll(e.Meta + ":").Count() > 1)
+                    if (!visited.Contains(e.Meta) && e.Meta.Get(false, "$Hide:") == null)
+                        if (basTo.GetAll(false, e.Meta + ":").Count() > 1)
                         {
                             PreFillFormAnalyseEdge(e.Meta, true);
                             visited.Add(e.Meta);
@@ -211,8 +211,8 @@ namespace m0.UIWpf.Visualisers
                 {
                     childs.Add(e);
 
-                    if (e.To.Get("$Hide:") == null)
-                        if (GraphUtil.GetIntegerValue(e.To.Get("$MaxCardinality:")) > 1 || GraphUtil.GetIntegerValue(e.To.Get("$MaxCardinality:")) == -1)
+                    if (e.To.Get(false, "$Hide:") == null)
+                        if (GraphUtil.GetIntegerValue(e.To.Get(false, "$MaxCardinality:")) > 1 || GraphUtil.GetIntegerValue(e.To.Get(false, "$MaxCardinality:")) == -1)
                             PreFillFormAnalyseEdge(e.To, true);
                         else
                             PreFillFormAnalyseEdge(e.To, false);
@@ -221,7 +221,7 @@ namespace m0.UIWpf.Visualisers
 
             if (ExpertMode)
             {
-                foreach (IEdge e in MinusZero.Instance.Root.Get(@"System\Meta\Base\Vertex"))
+                foreach (IEdge e in MinusZero.Instance.Root.Get(false, @"System\Meta\Base\Vertex"))
                 {
                     bool contains = false;
 
@@ -259,26 +259,26 @@ namespace m0.UIWpf.Visualisers
             //  if (!isLoaded)
             //    return;
 
-            IVertex basTo = Vertex.Get(@"BaseEdge:\To:");            
+            IVertex basTo = Vertex.Get(false, @"BaseEdge:\To:");            
 
             if (basTo != null)
             {
-                if ((string)Vertex.Get(@"SectionsAsTabs:").Value == "True")
+                if ((string)Vertex.Get(false, @"SectionsAsTabs:").Value == "True")
                     SectionsAsTabs = true;
                 else
                     SectionsAsTabs = false;
 
-                if ((string)Vertex.Get(@"MetaOnLeft:").Value == "True")
+                if ((string)Vertex.Get(false, @"MetaOnLeft:").Value == "True")
                     MetaOnLeft = true;
                 else
                     MetaOnLeft = false;
 
-                if ((string)Vertex.Get(@"ExpertMode:").Value == "True")
+                if ((string)Vertex.Get(false, @"ExpertMode:").Value == "True")
                     ExpertMode = true;
                 else
                     ExpertMode = false;
 
-                ColumnNumber =GraphUtil.GetIntegerValue(Vertex.Get(@"ColumnNumber:"));
+                ColumnNumber =GraphUtil.GetIntegerValue(Vertex.Get(false, @"ColumnNumber:"));
 
                 IVertex metaForForm = getMetaForForm();
 
@@ -296,8 +296,8 @@ namespace m0.UIWpf.Visualisers
                     {
                         childs.Add(e);
 
-                        if (!visited.Contains(e.Meta)&&e.Meta.Get("$Hide:") == null)
-                            if (basTo.GetAll(e.Meta + ":").Count() > 1)
+                        if (!visited.Contains(e.Meta)&&e.Meta.Get(false, "$Hide:") == null)
+                            if (basTo.GetAll(false, e.Meta + ":").Count() > 1)
                             {
                                 AddEdge(e.Meta, true);
                                 visited.Add(e.Meta);
@@ -312,8 +312,8 @@ namespace m0.UIWpf.Visualisers
                     {
                         childs.Add(e);
 
-                        if (e.To.Get("$Hide:") == null)
-                            if (GraphUtil.GetIntegerValue(e.To.Get("$MaxCardinality:")) > 1 || GraphUtil.GetIntegerValue(e.To.Get("$MaxCardinality:")) == -1)
+                        if (e.To.Get(false, "$Hide:") == null)
+                            if (GraphUtil.GetIntegerValue(e.To.Get(false, "$MaxCardinality:")) > 1 || GraphUtil.GetIntegerValue(e.To.Get(false, "$MaxCardinality:")) == -1)
                                 AddEdge(e.To, true);
                             else
                                 AddEdge(e.To, false);
@@ -323,7 +323,7 @@ namespace m0.UIWpf.Visualisers
 
                 if (ExpertMode)
                 {
-                    foreach (IEdge e in MinusZero.Instance.Root.Get(@"System\Meta\Base\Vertex"))
+                    foreach (IEdge e in MinusZero.Instance.Root.Get(false, @"System\Meta\Base\Vertex"))
                     {
                         bool contains = false;
 
@@ -586,21 +586,21 @@ namespace m0.UIWpf.Visualisers
                 TableVisualiser tv = new TableVisualiser();
 
                 if (ExpertMode)
-                    GraphUtil.SetVertexValue(tv.Vertex, MinusZero.Instance.Root.Get(@"System\Meta\Visualiser\Table\ExpertMode"), "True");
+                    GraphUtil.SetVertexValue(tv.Vertex, MinusZero.Instance.Root.Get(false, @"System\Meta\Visualiser\Table\ExpertMode"), "True");
                 
 
                 // need to remove and add to have "transaction"
-                GraphUtil.CreateOrReplaceEdge(tv.Vertex.Get("ToShowEdgesMeta:"), r.Get(@"System\Meta\ZeroTypes\Edge\Meta"), meta);
+                GraphUtil.CreateOrReplaceEdge(tv.Vertex.Get(false, "ToShowEdgesMeta:"), r.Get(false, @"System\Meta\ZeroTypes\Edge\Meta"), meta);
 
-                IVertex v = tv.Vertex.Get("ToShowEdgesMeta:");
+                IVertex v = tv.Vertex.Get(false, "ToShowEdgesMeta:");
 
                 GraphUtil.DeleteEdgeByMeta(tv.Vertex, "ToShowEdgesMeta");
 
-                tv.Vertex.AddEdge(MinusZero.Instance.Root.Get(@"System\Meta\Visualiser\Table\ToShowEdgesMeta"), v);
+                tv.Vertex.AddEdge(MinusZero.Instance.Root.Get(false, @"System\Meta\Visualiser\Table\ToShowEdgesMeta"), v);
 
-                //GraphUtil.CreateOrReplaceEdge(tv.Vertex.Get("ToShowEdgesMeta:"), r.Get(@"System\Meta\ZeroTypes\Edge\To"), e.To); // do not need
+                //GraphUtil.CreateOrReplaceEdge(tv.Vertex.Get(false, "ToShowEdgesMeta:"), r.Get(false, @"System\Meta\ZeroTypes\Edge\To"), e.To); // do not need
 
-                GraphUtil.ReplaceEdge(tv.Vertex.Get("BaseEdge:"), "To", Vertex.Get(@"BaseEdge:\To:"));
+                GraphUtil.ReplaceEdge(tv.Vertex.Get(false, "BaseEdge:"), "To", Vertex.Get(false, @"BaseEdge:\To:"));
 
                 dataControl = tv;
             }
@@ -610,7 +610,7 @@ namespace m0.UIWpf.Visualisers
                 {
                     StringVisualiser sv = new StringVisualiser();
 
-                    Edge.ReplaceEdgeEdges(sv.Vertex.Get("BaseEdge:"), Vertex.GetAll(@"BaseEdge:\To:").FirstOrDefault());
+                    Edge.ReplaceEdgeEdges(sv.Vertex.Get(false, "BaseEdge:"), Vertex.GetAll(false, @"BaseEdge:\To:").FirstOrDefault());
 
                     dataControl = sv;
                 }
@@ -620,11 +620,11 @@ namespace m0.UIWpf.Visualisers
 
                     IEdge e;
 
-                    e = Vertex.GetAll(@"BaseEdge:\To:\" + (string)meta.Value + ":").FirstOrDefault();
+                    e = Vertex.GetAll(false, @"BaseEdge:\To:\" + (string)meta.Value + ":").FirstOrDefault();
 
                     if (e == null) // no edge in data vertex
                     {
-                        w.BaseEdge = new EasyEdge(Vertex.Get(@"BaseEdge:\To:"), meta, null);
+                        w.BaseEdge = new EasyEdge(Vertex.Get(false, @"BaseEdge:\To:"), meta, null);
                     }
                     else
                         w.BaseEdge = e;
@@ -703,9 +703,9 @@ namespace m0.UIWpf.Visualisers
 
                 Vertex.Value = "FormVisualiser" + this.GetHashCode();
 
-                ClassVertex.AddIsClassAndAllAttributesAndAssociations(Vertex, mz.Root.Get(@"System\Meta\Visualiser\Form"));
+                ClassVertex.AddIsClassAndAllAttributesAndAssociations(Vertex, mz.Root.Get(false, @"System\Meta\Visualiser\Form"));
 
-                ClassVertex.AddIsClassAndAllAttributesAndAssociations(Vertex.Get("BaseEdge:"), mz.Root.Get(@"System\Meta\ZeroTypes\Edge"));
+                ClassVertex.AddIsClassAndAllAttributesAndAssociations(Vertex.Get(false, "BaseEdge:"), mz.Root.Get(false, @"System\Meta\ZeroTypes\Edge"));
 
                 SetVertexDefaultValues();
 
@@ -723,23 +723,23 @@ namespace m0.UIWpf.Visualisers
 
         protected virtual void SetVertexDefaultValues()
         {
-            Vertex.Get("ZoomVisualiserContent:").Value = 100;
-            Vertex.Get("ColumnNumber:").Value = 1;
-            Vertex.Get("SectionsAsTabs:").Value = "False";
-            Vertex.Get("MetaOnLeft:").Value = "False";  
+            Vertex.Get(false, "ZoomVisualiserContent:").Value = 100;
+            Vertex.Get(false, "ColumnNumber:").Value = 1;
+            Vertex.Get(false, "SectionsAsTabs:").Value = "False";
+            Vertex.Get(false, "MetaOnLeft:").Value = "False";  
         }
 
         void OnLoad(object sender, RoutedEventArgs e)
         {
             isLoaded = true;
 
-            //Vertex.Get("ColumnNumber:").Value = (int)this.ActualWidth/300;
+            //Vertex.Get(false, "ColumnNumber:").Value = (int)this.ActualWidth/300;
         }   
 
 
         protected void ChangeZoomVisualiserContent()
         {
-            double scale = ((double)GraphUtil.GetIntegerValue(Vertex.Get("ZoomVisualiserContent:"))) / 100;
+            double scale = ((double)GraphUtil.GetIntegerValue(Vertex.Get(false, "ZoomVisualiserContent:"))) / 100;
 
             if (scale != 1.0)
                 this.LayoutTransform = new ScaleTransform(scale, scale);
@@ -750,7 +750,7 @@ namespace m0.UIWpf.Visualisers
         protected void VertexChange(object sender, VertexChangeEventArgs e)
         {
             if ((sender == Vertex) && (e.Type == VertexChangeType.EdgeAdded) && (GeneralUtil.CompareStrings(e.Edge.Meta.Value, "BaseEdge"))
-                || ((sender == Vertex.Get("BaseEdge:")) && (e.Type == VertexChangeType.EdgeAdded) && ((GeneralUtil.CompareStrings(e.Edge.Meta.Value, "To")))))
+                || ((sender == Vertex.Get(false, "BaseEdge:")) && (e.Type == VertexChangeType.EdgeAdded) && ((GeneralUtil.CompareStrings(e.Edge.Meta.Value, "To")))))
             {
                 UpdateBaseEdge();
             }
@@ -758,22 +758,22 @@ namespace m0.UIWpf.Visualisers
             if ((sender == Vertex) && (e.Type == VertexChangeType.EdgeAdded) && (GeneralUtil.CompareStrings(e.Edge.Meta.Value, "BaseEdge")))
                 UpdateBaseEdge();
 
-            if (sender == Vertex.Get(@"BaseEdge:\To:") && (e.Type == VertexChangeType.EdgeAdded || e.Type == VertexChangeType.EdgeRemoved))
+            if (sender == Vertex.Get(false, @"BaseEdge:\To:") && (e.Type == VertexChangeType.EdgeAdded || e.Type == VertexChangeType.EdgeRemoved))
                 UpdateBaseEdge();
 
-            if (sender == Vertex.Get(@"ColumnNumber:") && (e.Type == VertexChangeType.ValueChanged))
+            if (sender == Vertex.Get(false, @"ColumnNumber:") && (e.Type == VertexChangeType.ValueChanged))
                 UpdateBaseEdge();
 
-            if (sender == Vertex.Get(@"SectionsAsTabs:") && (e.Type == VertexChangeType.ValueChanged))
+            if (sender == Vertex.Get(false, @"SectionsAsTabs:") && (e.Type == VertexChangeType.ValueChanged))
                 UpdateBaseEdge();
 
-            if (sender == Vertex.Get(@"MetaOnLeft:") && (e.Type == VertexChangeType.ValueChanged))
+            if (sender == Vertex.Get(false, @"MetaOnLeft:") && (e.Type == VertexChangeType.ValueChanged))
                 UpdateBaseEdge();
 
-            if (sender == Vertex.Get(@"ExpertMode:") && (e.Type == VertexChangeType.ValueChanged))
+            if (sender == Vertex.Get(false, @"ExpertMode:") && (e.Type == VertexChangeType.ValueChanged))
                 UpdateBaseEdge();
 
-            if (sender == Vertex.Get("ZoomVisualiserContent:") && e.Type == VertexChangeType.ValueChanged)
+            if (sender == Vertex.Get(false, "ZoomVisualiserContent:") && e.Type == VertexChangeType.ValueChanged)
                 ChangeZoomVisualiserContent();
         }
 
@@ -832,7 +832,7 @@ namespace m0.UIWpf.Visualisers
             IVertex v = GetEdgeByLocation(e.GetPosition(this));
 
             if (v != null)
-                Dnd.DoFormDrop(null, Vertex.Get(@"BaseEdge:\To:"), v.Get("To:"), e);
+                Dnd.DoFormDrop(null, Vertex.Get(false, @"BaseEdge:\To:"), v.Get(false, "To:"), e);
 
             e.Handled = true;
         }        

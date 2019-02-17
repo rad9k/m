@@ -31,9 +31,9 @@ namespace m0.UIWpf.Visualisers
                 
                 Vertex.Value="StringVisualiser" + this.GetHashCode();
 
-                ClassVertex.AddIsClassAndAllAttributesAndAssociations(Vertex, mz.Root.Get(@"System\Meta\Visualiser\String"));
+                ClassVertex.AddIsClassAndAllAttributesAndAssociations(Vertex, mz.Root.Get(false, @"System\Meta\Visualiser\String"));
 
-                ClassVertex.AddIsClassAndAllAttributesAndAssociations(Vertex.Get("BaseEdge:"), mz.Root.Get(@"System\Meta\ZeroTypes\Edge"));
+                ClassVertex.AddIsClassAndAllAttributesAndAssociations(Vertex.Get(false, "BaseEdge:"), mz.Root.Get(false, @"System\Meta\ZeroTypes\Edge"));
 
                 this.Loaded += new RoutedEventHandler(OnLoad);
 
@@ -66,12 +66,12 @@ namespace m0.UIWpf.Visualisers
         {        
             base.OnTextChanged(e);    
 
-            IVertex bv = Vertex.Get(@"BaseEdge:\To:");
+            IVertex bv = Vertex.Get(false, @"BaseEdge:\To:");
 
             if (bv == null)
             {
-                IVertex from= Vertex.Get(@"BaseEdge:\From:");
-                IVertex meta= Vertex.Get(@"BaseEdge:\Meta:");
+                IVertex from= Vertex.Get(false, @"BaseEdge:\From:");
+                IVertex meta= Vertex.Get(false, @"BaseEdge:\Meta:");
 
                 GraphUtil.SetVertexValue(from,meta, this.Text);
 
@@ -97,7 +97,7 @@ namespace m0.UIWpf.Visualisers
         }
 
         private void UpdateBaseEdge(){
-            IVertex bv = Vertex.Get(@"BaseEdge:\To:");
+            IVertex bv = Vertex.Get(false, @"BaseEdge:\To:");
 
             if (bv != null && bv.Value != null /*&& ((String)bv.Value) != "$Empty"*/)
             {
@@ -113,8 +113,8 @@ namespace m0.UIWpf.Visualisers
             if ((sender == Vertex) && (e.Type == VertexChangeType.EdgeAdded) && (GeneralUtil.CompareStrings(e.Edge.Meta.Value, "BaseEdge")))
                 UpdateBaseEdge();                        
 
-            if ( (sender == Vertex.Get("BaseEdge:")) && (e.Type == VertexChangeType.EdgeAdded) && (GeneralUtil.CompareStrings(e.Edge.Meta.Value, "To"))
-                || (sender == Vertex.Get(@"BaseEdge:\To:") && e.Type==VertexChangeType.ValueChanged) )            
+            if ( (sender == Vertex.Get(false, "BaseEdge:")) && (e.Type == VertexChangeType.EdgeAdded) && (GeneralUtil.CompareStrings(e.Edge.Meta.Value, "To"))
+                || (sender == Vertex.Get(false, @"BaseEdge:\To:") && e.Type==VertexChangeType.ValueChanged) )            
                 UpdateBaseEdge();
             
         }
@@ -153,7 +153,7 @@ namespace m0.UIWpf.Visualisers
 
         public IVertex GetEdgeByLocation(Point point)
         {
-            return Vertex.Get(@"BaseEdge:");
+            return Vertex.Get(false, @"BaseEdge:");
         }
 
         public IVertex GetEdgeByVisualElement(FrameworkElement visualElement)
@@ -191,13 +191,13 @@ namespace m0.UIWpf.Visualisers
                 (Math.Abs(diff.X) > Dnd.MinimumHorizontalDragDistance) ||
                 (Math.Abs(diff.Y) > Dnd.MinimumVerticalDragDistance)))
             {
-                if (Vertex.Get(@"BaseEdge:\To:") != null)
+                if (Vertex.Get(false, @"BaseEdge:\To:") != null)
                 {
                     isDraggin = true;
 
                     IVertex dndVertex = MinusZero.Instance.CreateTempVertex();
 
-                    dndVertex.AddEdge(null, Vertex.Get(@"BaseEdge:"));
+                    dndVertex.AddEdge(null, Vertex.Get(false, @"BaseEdge:"));
 
                     DataObject dragData = new DataObject("Vertex", dndVertex);
                     dragData.SetData("DragSource", this);
@@ -213,7 +213,7 @@ namespace m0.UIWpf.Visualisers
 
         private void dndDrop(object sender, DragEventArgs e)
         {
-            Dnd.DoDrop(this,Vertex.Get(@"BaseEdge:\To:"), e);
+            Dnd.DoDrop(this,Vertex.Get(false, @"BaseEdge:\To:"), e);
         }
 
         private void dndMouseEnter(object sender, MouseEventArgs e)

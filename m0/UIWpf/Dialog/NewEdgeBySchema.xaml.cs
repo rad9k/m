@@ -43,7 +43,7 @@ namespace m0.UIWpf.Dialog
 
         private void Button_Click_1(object sender, RoutedEventArgs e)
         {            
-            Vertex.AddEdge(MetaVertex, this.To.Vertex.Get(@"BaseEdge:\To:\To:"));
+            Vertex.AddEdge(MetaVertex, this.To.Vertex.Get(false, @"BaseEdge:\To:\To:"));
 
             MinusZero.Instance.DefaultUserInteraction.CloseWindowByContent(this);
         }

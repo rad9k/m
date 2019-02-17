@@ -10,7 +10,7 @@ namespace m0.ZeroCode
 {
     public class ZeroCodeEngine : IZeroCodeGraph2String, IParser
     {
-        public IVertex Parse(IVertex rootVertex, string text)
+        public IVertex Parse(bool metaMode, IVertex rootVertex, string text)
         {             
             String2ZeroCodeGraphProcessing p = new String2ZeroCodeGraphProcessing();
 

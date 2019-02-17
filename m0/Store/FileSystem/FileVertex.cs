@@ -76,31 +76,31 @@ namespace m0.Store.FileSystem
        
         void updateOutEdges()
         {            
-            IVertex fsmf = MinusZero.Instance.Root.Get(@"System\Meta\Store\FileSystem\File");
+            IVertex fsmf = MinusZero.Instance.Root.Get(false, @"System\Meta\Store\FileSystem\File");
 
-            AddMeta(fsmf.Get("Filename"), FI.Name);
+            AddMeta(fsmf.Get(false, "Filename"), FI.Name);
 
             string extension = FI.Extension;
 
             if (extension.Length > 1)
                 extension = extension.Substring(1);
 
-            AddMeta(fsmf.Get("Extension"), extension);
+            AddMeta(fsmf.Get(false, "Extension"), extension);
 
-            AddMeta(fsmf.Get("FullFilename"), FI.FullName);
-            AddMeta(fsmf.Get("Size"), FI.Length.ToString());
-            AddMeta(fsmf.Get("FileAttribute"), FI.Attributes.ToString());
-            AddMeta(fsmf.Get("CreationDateTime"), FI.CreationTime.ToString());
-            AddMeta(fsmf.Get("UpdateDateTime"), FI.LastWriteTime.ToString());
-            AddMeta(fsmf.Get("ReadDateTime"), FI.LastAccessTime.ToString());                        
+            AddMeta(fsmf.Get(false, "FullFilename"), FI.FullName);
+            AddMeta(fsmf.Get(false, "Size"), FI.Length.ToString());
+            AddMeta(fsmf.Get(false, "FileAttribute"), FI.Attributes.ToString());
+            AddMeta(fsmf.Get(false, "CreationDateTime"), FI.CreationTime.ToString());
+            AddMeta(fsmf.Get(false, "UpdateDateTime"), FI.LastWriteTime.ToString());
+            AddMeta(fsmf.Get(false, "ReadDateTime"), FI.LastAccessTime.ToString());                        
 
             if (((FileSystemStore)this.Store).IncludeFileContent)
-                AddEdge(fsmf.Get("Content"), new FileContentVertex(FI.FullName, this.Store));
+                AddEdge(fsmf.Get(false, "Content"), new FileContentVertex(FI.FullName, this.Store));
 
             if (FI.Extension == ".m0" || FI.Extension == ".M0")
             {
                 JsonStore = new JsonSerializationStore((string)this.Identifier, MinusZero.Instance, new AccessLevelEnum[] { });
-                AddEdge(MinusZero.Instance.Root.Get(@"System\Meta\Store\FileSystem\$Store"), JsonStore.Root);
+                AddEdge(MinusZero.Instance.Root.Get(false, @"System\Meta\Store\FileSystem\$Store"), JsonStore.Root);
             }
         }
 

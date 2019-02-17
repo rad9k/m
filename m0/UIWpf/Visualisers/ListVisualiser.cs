@@ -29,7 +29,7 @@ namespace m0.UIWpf.Visualisers
         protected bool TurnOffSelectedVertexesUpdate = false;
 
         public void UnselectAllSelectedEdges(){
-            IVertex sv = Vertex.Get("SelectedEdges:");
+            IVertex sv = Vertex.Get(false, "SelectedEdges:");
 
             GraphUtil.RemoveAllEdges_WhereEdgeIsEdge(sv);
         }
@@ -39,11 +39,11 @@ namespace m0.UIWpf.Visualisers
             {
                 TurnOffSelectedItemsUpdate = true;
                 
-                IVertex sv = Vertex.Get("SelectedEdges:");
+                IVertex sv = Vertex.Get(false, "SelectedEdges:");
 
                 UnselectAllSelectedEdges();
 
-                IVertex baseVertex = Vertex.Get(@"BaseEdge:\To:");
+                IVertex baseVertex = Vertex.Get(false, @"BaseEdge:\To:");
 
                 foreach (IEdge ee in ThisDataGrid.SelectedItems)
                     Edge.AddEdge(sv, baseVertex, ee.Meta, ee.To); // becouse of possible FilterQuery
@@ -60,10 +60,10 @@ namespace m0.UIWpf.Visualisers
 
             DataGridTextColumn metaColumn = new DataGridTextColumn();
 
-            if( GraphUtil.GetValueAndCompareStrings(Vertex.Get("ShowHeader:"), "True"))
+            if( GraphUtil.GetValueAndCompareStrings(Vertex.Get(false, "ShowHeader:"), "True"))
                 metaColumn.Header = "meta";
 
-            if (GraphUtil.GetValueAndCompareStrings(Vertex.Get("ShowMeta:"), "False"))
+            if (GraphUtil.GetValueAndCompareStrings(Vertex.Get(false, "ShowMeta:"), "False"))
                 ShowMeta = false;
             else
                 ShowMeta = true;
@@ -75,7 +75,7 @@ namespace m0.UIWpf.Visualisers
                 mb.Mode = BindingMode.OneWay;
                 metaColumn.Binding = mb;
 
-                if (GeneralUtil.CompareStrings(Vertex.Get("IsMetaRightAlign:").Value, "True"))
+                if (GeneralUtil.CompareStrings(Vertex.Get(false, "IsMetaRightAlign:").Value, "True"))
                     metaColumn.CellStyle = (Style)FindResource("0ListMetaColumnRight");
                 else
                     metaColumn.CellStyle = (Style)FindResource("0ListMetaColumnLeft");
@@ -95,7 +95,7 @@ namespace m0.UIWpf.Visualisers
             // CELL TEMPLATE
             //
 
-            if (GeneralUtil.CompareStrings(Vertex.Get("IsAllVisualisersEdit:").Value, "True"))
+            if (GeneralUtil.CompareStrings(Vertex.Get(false, "IsAllVisualisersEdit:").Value, "True"))
             {
                 valueColumn.CellTemplate = new DataTemplate();
                 FrameworkElementFactory factory = new FrameworkElementFactory(typeof(VisualiserEditWrapper));
@@ -118,7 +118,7 @@ namespace m0.UIWpf.Visualisers
             EditFactory.SetBinding(VisualiserEditWrapper.BaseEdgeProperty, new Binding(""));
             valueColumn.CellEditingTemplate.VisualTree = EditFactory;
 
-            if (GraphUtil.GetValueAndCompareStrings(Vertex.Get("ShowHeader:"), "True"))
+            if (GraphUtil.GetValueAndCompareStrings(Vertex.Get(false, "ShowHeader:"), "True"))
                  valueColumn.Header = "value";
 
             ThisDataGrid.Columns.Add(valueColumn); 
@@ -131,28 +131,28 @@ namespace m0.UIWpf.Visualisers
             ThisDataGrid.HorizontalGridLinesBrush = (Brush)FindResource("0ForegroundBrush");
             ThisDataGrid.VerticalGridLinesBrush = (Brush)FindResource("0ForegroundBrush");
 
-            if (GraphUtil.GetValueAndCompareStrings(Vertex.Get("GridStyle:"), "Vertical"))
+            if (GraphUtil.GetValueAndCompareStrings(Vertex.Get(false, "GridStyle:"), "Vertical"))
             {
                 ThisDataGrid.BorderThickness = new System.Windows.Thickness(0);
                 ThisDataGrid.GridLinesVisibility = DataGridGridLinesVisibility.Vertical;                
             }
-            else if (GraphUtil.GetValueAndCompareStrings(Vertex.Get("GridStyle:"), "Horizontal"))
+            else if (GraphUtil.GetValueAndCompareStrings(Vertex.Get(false, "GridStyle:"), "Horizontal"))
             {
                 ThisDataGrid.BorderThickness = new System.Windows.Thickness(0);
                 ThisDataGrid.GridLinesVisibility = DataGridGridLinesVisibility.Horizontal;                
             }
-            else if (GraphUtil.GetValueAndCompareStrings(Vertex.Get("GridStyle:"), "All"))
+            else if (GraphUtil.GetValueAndCompareStrings(Vertex.Get(false, "GridStyle:"), "All"))
             {
                 ThisDataGrid.BorderThickness = new System.Windows.Thickness(0);
                 ThisDataGrid.GridLinesVisibility = DataGridGridLinesVisibility.All;                
             }
-            else if (GraphUtil.GetValueAndCompareStrings(Vertex.Get("GridStyle:"), "AllAndRound"))
+            else if (GraphUtil.GetValueAndCompareStrings(Vertex.Get(false, "GridStyle:"), "AllAndRound"))
             {
                 ThisDataGrid.BorderThickness = new System.Windows.Thickness(1);
                 ThisDataGrid.GridLinesVisibility = DataGridGridLinesVisibility.All;
                 ThisDataGrid.BorderBrush = (Brush)FindResource("0ForegroundBrush");
             }
-            else if (GraphUtil.GetValueAndCompareStrings(Vertex.Get("GridStyle:"), "Round"))
+            else if (GraphUtil.GetValueAndCompareStrings(Vertex.Get(false, "GridStyle:"), "Round"))
             {
                 ThisDataGrid.BorderThickness = new System.Windows.Thickness(1);
                 ThisDataGrid.BorderBrush = (Brush)FindResource("0LightGrayBrush");
@@ -167,7 +167,7 @@ namespace m0.UIWpf.Visualisers
 
         protected void ChangeZoomVisualiserContent()
         {
-            double scale = ((double)GraphUtil.GetIntegerValue(Vertex.Get("ZoomVisualiserContent:")))/100;
+            double scale = ((double)GraphUtil.GetIntegerValue(Vertex.Get(false, "ZoomVisualiserContent:")))/100;
 
             if (scale != 1.0)
                 this.LayoutTransform = new ScaleTransform(scale, scale);
@@ -183,11 +183,11 @@ namespace m0.UIWpf.Visualisers
 
             ThisDataGrid.SelectedItems.Clear();
 
-            IVertex b=Vertex.Get(@"BaseEdge:\To:");
+            IVertex b=Vertex.Get(false, @"BaseEdge:\To:");
 
             if(b!=null)
-            foreach(IEdge e in Vertex.Get("SelectedEdges:")){
-                IEdge ee = GraphUtil.FindEdgeByToVertex(b, e.To.Get("To:"));
+            foreach(IEdge e in Vertex.Get(false, "SelectedEdges:")){
+                IEdge ee = GraphUtil.FindEdgeByToVertex(b, e.To.Get(false, "To:"));
                 if (ee != null)
                     ThisDataGrid.SelectedItems.Add(ee);
             }
@@ -196,12 +196,12 @@ namespace m0.UIWpf.Visualisers
         }
 
         protected virtual void SetVertexDefaultValues(){
-            Vertex.Get("IsMetaRightAlign:").Value = "False";
-            Vertex.Get("IsAllVisualisersEdit:").Value = "False";
-            Vertex.Get("ShowMeta:").Value = "True";
-            Vertex.Get("ZoomVisualiserContent:").Value = 100;
+            Vertex.Get(false, "IsMetaRightAlign:").Value = "False";
+            Vertex.Get(false, "IsAllVisualisersEdit:").Value = "False";
+            Vertex.Get(false, "ShowMeta:").Value = "True";
+            Vertex.Get(false, "ZoomVisualiserContent:").Value = 100;
 
-            GraphUtil.ReplaceEdge(Vertex, "GridStyle", MinusZero.Instance.Root.Get(@"System\Meta\Visualiser\GridStyleEnum\None"));
+            GraphUtil.ReplaceEdge(Vertex, "GridStyle", MinusZero.Instance.Root.Get(false, @"System\Meta\Visualiser\GridStyleEnum\None"));
         }
 
         protected virtual void AddFooter() { }
@@ -210,14 +210,14 @@ namespace m0.UIWpf.Visualisers
         {
             MinusZero mz = MinusZero.Instance;
 
-            //Vertex = mz.Root.Get(@"System\Session\Visualisers").AddVertex(null, "ListVisualiser" + this.GetHashCode());
+            //Vertex = mz.Root.Get(false, @"System\Session\Visualisers").AddVertex(null, "ListVisualiser" + this.GetHashCode());
 
             Vertex = mz.CreateTempVertex();
             Vertex.Value = "ListVisualiser" + this.GetHashCode();
 
-            ClassVertex.AddIsClassAndAllAttributesAndAssociations(Vertex, mz.Root.Get(@"System\Meta\Visualiser\List"));
+            ClassVertex.AddIsClassAndAllAttributesAndAssociations(Vertex, mz.Root.Get(false, @"System\Meta\Visualiser\List"));
 
-            ClassVertex.AddIsClassAndAllAttributesAndAssociations(Vertex.Get("BaseEdge:"), mz.Root.Get(@"System\Meta\ZeroTypes\Edge"));
+            ClassVertex.AddIsClassAndAllAttributesAndAssociations(Vertex.Get(false, "BaseEdge:"), mz.Root.Get(false, @"System\Meta\ZeroTypes\Edge"));
            
         
         }
@@ -269,15 +269,15 @@ namespace m0.UIWpf.Visualisers
         }
 
         protected virtual void UpdateBaseEdge(){
-            IVertex bas = Vertex.Get(@"BaseEdge:\To:");
+            IVertex bas = Vertex.Get(false, @"BaseEdge:\To:");
 
             if (bas != null)
             {
                 ResetView();
 
-                if (Vertex.Get(@"FilterQuery:") != null&&Vertex.Get(@"FilterQuery:").Value!=null)
+                if (Vertex.Get(false, @"FilterQuery:") != null&&Vertex.Get(false, @"FilterQuery:").Value!=null)
                 {
-                    IVertex data=VertexOperations.DoFilter(bas, Vertex.Get(@"FilterQuery:"));
+                    IVertex data=VertexOperations.DoFilter(bas, Vertex.Get(false, @"FilterQuery:"));
 
                     if (data != null)
                         ThisDataGrid.ItemsSource = data.ToList();
@@ -293,44 +293,44 @@ namespace m0.UIWpf.Visualisers
         protected virtual void VertexChange(object sender, VertexChangeEventArgs e)
         {
             if ((sender == Vertex) && (e.Type == VertexChangeType.EdgeAdded) && (GeneralUtil.CompareStrings(e.Edge.Meta.Value, "BaseEdge"))
-                 || (sender == Vertex.Get("BaseEdge:") && e.Type == VertexChangeType.ValueChanged)
-                || ((sender == Vertex.Get("BaseEdge:")) && (e.Type == VertexChangeType.EdgeAdded) && ((GeneralUtil.CompareStrings(e.Edge.Meta.Value, "To")))))
+                 || (sender == Vertex.Get(false, "BaseEdge:") && e.Type == VertexChangeType.ValueChanged)
+                || ((sender == Vertex.Get(false, "BaseEdge:")) && (e.Type == VertexChangeType.EdgeAdded) && ((GeneralUtil.CompareStrings(e.Edge.Meta.Value, "To")))))
                 UpdateBaseEdge();
 
-            if (sender == Vertex.Get(@"BaseEdge:\To:") && (e.Type == VertexChangeType.EdgeAdded || e.Type == VertexChangeType.EdgeRemoved))
+            if (sender == Vertex.Get(false, @"BaseEdge:\To:") && (e.Type == VertexChangeType.EdgeAdded || e.Type == VertexChangeType.EdgeRemoved))
                 UpdateBaseEdge();
 
             if ((sender == Vertex) && (e.Type == VertexChangeType.EdgeAdded) && (GeneralUtil.CompareStrings(e.Edge.Meta.Value, "SelectedEdges")))
                 SelectedVertexesUpdated();
 
-            if ((sender == Vertex.Get("SelectedEdges:")) && ((e.Type == VertexChangeType.EdgeAdded)||(e.Type == VertexChangeType.EdgeRemoved)))
+            if ((sender == Vertex.Get(false, "SelectedEdges:")) && ((e.Type == VertexChangeType.EdgeAdded)||(e.Type == VertexChangeType.EdgeRemoved)))
                 SelectedVertexesUpdated();
 
-            if (sender is IVertex && GraphUtil.FindEdgeByToVertex(Vertex.GetAll(@"SelectedEdges:\"), (IVertex)sender) != null)
+            if (sender is IVertex && GraphUtil.FindEdgeByToVertex(Vertex.GetAll(false, @"SelectedEdges:\"), (IVertex)sender) != null)
                 SelectedVertexesUpdated();
 
-            if (sender == Vertex.Get("IsMetaRightAlign:") && e.Type == VertexChangeType.ValueChanged) 
+            if (sender == Vertex.Get(false, "IsMetaRightAlign:") && e.Type == VertexChangeType.ValueChanged) 
                 ResetView();
 
-            if (sender == Vertex.Get("IsAllVisualisersEdit:") && e.Type == VertexChangeType.ValueChanged)
+            if (sender == Vertex.Get(false, "IsAllVisualisersEdit:") && e.Type == VertexChangeType.ValueChanged)
                 ResetView();
 
-            if (sender == Vertex.Get("ZoomVisualiserContent:") && e.Type == VertexChangeType.ValueChanged)
+            if (sender == Vertex.Get(false, "ZoomVisualiserContent:") && e.Type == VertexChangeType.ValueChanged)
                 ChangeZoomVisualiserContent();
 
-            if (sender == Vertex.Get("FilterQuery:") && e.Type == VertexChangeType.ValueChanged)
+            if (sender == Vertex.Get(false, "FilterQuery:") && e.Type == VertexChangeType.ValueChanged)
                 UpdateBaseEdge();
       
             if ((sender == Vertex) && (e.Type == VertexChangeType.EdgeAdded) && (GeneralUtil.CompareStrings(e.Edge.Meta.Value, "FilterQuery")))
                 UpdateBaseEdge();
 
-            if (sender == Vertex.Get("ShowMeta:") && e.Type == VertexChangeType.ValueChanged)
+            if (sender == Vertex.Get(false, "ShowMeta:") && e.Type == VertexChangeType.ValueChanged)
                 ResetView();
 
             if ((sender == Vertex) && (e.Type == VertexChangeType.EdgeAdded) && (GeneralUtil.CompareStrings(e.Edge.Meta.Value, "ShowMeta")))
                 ResetView();
 
-            if (sender == Vertex.Get("ShowHeader:") && e.Type == VertexChangeType.ValueChanged)
+            if (sender == Vertex.Get(false, "ShowHeader:") && e.Type == VertexChangeType.ValueChanged)
                 ResetView();
 
             if ((sender == Vertex) && (e.Type == VertexChangeType.EdgeAdded) && (GeneralUtil.CompareStrings(e.Edge.Meta.Value, "ShowHeader")))
@@ -365,7 +365,7 @@ namespace m0.UIWpf.Visualisers
                 IsDisposed = true;
                 MinusZero mz = MinusZero.Instance;
 
-                //GraphUtil.DeleteEdgeByToVertex(mz.Root.Get(@"System\Session\Visualisers"), Vertex);
+                //GraphUtil.DeleteEdgeByToVertex(mz.Root.Get(false, @"System\Session\Visualisers"), Vertex);
 
                 PlatformClass.RemoveVertexChangeListeners(this.Vertex, new VertexChange(VertexChange));
 
@@ -404,8 +404,8 @@ namespace m0.UIWpf.Visualisers
 
             // DO WANT THIS FEATURE ?
             //
-            if (GeneralUtil.CompareStrings(MinusZero.Instance.Root.Get(@"User\CurrentUser:\Settings:\AllowBlankAreaDragAndDrop:").Value, "StartAndEnd"))
-                return Vertex.Get("BaseEdge:");
+            if (GeneralUtil.CompareStrings(MinusZero.Instance.Root.Get(false, @"User\CurrentUser:\Settings:\AllowBlankAreaDragAndDrop:").Value, "StartAndEnd"))
+                return Vertex.Get(false, "BaseEdge:");
             else
                 return null;
             
@@ -429,12 +429,12 @@ namespace m0.UIWpf.Visualisers
         {
             tempSelectedVertexes = MinusZero.Instance.CreateTempVertex();
 
-            GraphUtil.CopyEdges(Vertex.Get("SelectedEdges:"), tempSelectedVertexes);
+            GraphUtil.CopyEdges(Vertex.Get(false, "SelectedEdges:"), tempSelectedVertexes);
         }
 
         protected void RestoreSelectedVertexes()
         {
-            IVertex sv = Vertex.Get("SelectedEdges:");
+            IVertex sv = Vertex.Get(false, "SelectedEdges:");
 
             if (tempSelectedVertexes != null)
             {
@@ -487,8 +487,8 @@ namespace m0.UIWpf.Visualisers
 
                 IVertex dndVertex = MinusZero.Instance.CreateTempVertex();
 
-                if (Vertex.Get(@"SelectedEdges:\") != null)
-                    foreach (IEdge ee in Vertex.GetAll(@"SelectedEdges:\"))
+                if (Vertex.Get(false, @"SelectedEdges:\") != null)
+                    foreach (IEdge ee in Vertex.GetAll(false, @"SelectedEdges:\"))
                         dndVertex.AddEdge(null, ee.To);
                 else
                 {
@@ -517,11 +517,11 @@ namespace m0.UIWpf.Visualisers
         {
             IVertex v = GetEdgeByLocation(e.GetPosition(this));
 
-            if (v == null && GeneralUtil.CompareStrings(MinusZero.Instance.Root.Get(@"User\CurrentUser:\Settings:\AllowBlankAreaDragAndDrop:").Value, "OnlyEnd"))
-                v = Vertex.Get("BaseEdge:");
+            if (v == null && GeneralUtil.CompareStrings(MinusZero.Instance.Root.Get(false, @"User\CurrentUser:\Settings:\AllowBlankAreaDragAndDrop:").Value, "OnlyEnd"))
+                v = Vertex.Get(false, "BaseEdge:");
 
             if (v != null)
-                Dnd.DoDrop(null, v.Get("To:"), e);
+                Dnd.DoDrop(null, v.Get(false, "To:"), e);
 
             e.Handled = true;
         }

@@ -37,11 +37,11 @@ namespace m0.UIWpf.Visualisers.Diagram
 
         public override void VertexSetedUp()
         {
-            if (Vertex.Get("VisualiserClass:") != null)
+            if (Vertex.Get(false, "VisualiserClass:") != null)
             {
-                ContentVisualiser = PlatformClass.CreatePlatformObject(Vertex.Get("VisualiserClass:"));
+                ContentVisualiser = PlatformClass.CreatePlatformObject(Vertex.Get(false, "VisualiserClass:"));
 
-                GraphUtil.ReplaceEdge(ContentVisualiser.Vertex, "BaseEdge", Vertex.Get("BaseEdge:"));
+                GraphUtil.ReplaceEdge(ContentVisualiser.Vertex, "BaseEdge", Vertex.Get(false, "BaseEdge:"));
 
                 Grid.SetRow((UIElement)ContentVisualiser, 2);
 
@@ -55,8 +55,8 @@ namespace m0.UIWpf.Visualisers.Diagram
 
             //VisualiserUpdate(); done in base.VertexSetedUp();
            
-            if (Vertex.Get("VisualiserVertex:") != null && ContentVisualiser != null)
-                Diagram.AddEdgesFromDefintion(ContentVisualiser.Vertex, Vertex.Get("VisualiserVertex:"));
+            if (Vertex.Get(false, "VisualiserVertex:") != null && ContentVisualiser != null)
+                Diagram.AddEdgesFromDefintion(ContentVisualiser.Vertex, Vertex.Get(false, "VisualiserVertex:"));
 
             base.VertexSetedUp();
         }
@@ -65,10 +65,10 @@ namespace m0.UIWpf.Visualisers.Diagram
         {
             base.VisualiserUpdate();
 
-            if (Vertex.Get("ShowMeta:False") != null)
+            if (Vertex.Get(false, "ShowMeta:False") != null)
             {
-                if (Vertex.Get(@"BaseEdge:\To:").Value != null)
-                    this.Title.Text = Vertex.Get(@"BaseEdge:\To:").Value.ToString();
+                if (Vertex.Get(false, @"BaseEdge:\To:").Value != null)
+                    this.Title.Text = Vertex.Get(false, @"BaseEdge:\To:").Value.ToString();
                 else
                     this.Title.Text = "Ø";
             }
@@ -76,13 +76,13 @@ namespace m0.UIWpf.Visualisers.Diagram
             {
                 string mtext, ttext;
 
-                if (Vertex.Get(@"BaseEdge:\Meta:").Value != null)
-                    mtext = Vertex.Get(@"BaseEdge:\Meta:").Value.ToString();
+                if (Vertex.Get(false, @"BaseEdge:\Meta:").Value != null)
+                    mtext = Vertex.Get(false, @"BaseEdge:\Meta:").Value.ToString();
                 else
                     mtext = "Ø";
 
-                if (Vertex.Get(@"BaseEdge:\To:").Value != null)
-                    ttext = Vertex.Get(@"BaseEdge:\To:").Value.ToString();
+                if (Vertex.Get(false, @"BaseEdge:\To:").Value != null)
+                    ttext = Vertex.Get(false, @"BaseEdge:\To:").Value.ToString();
                 else
                     ttext = "Ø";
 
@@ -91,14 +91,14 @@ namespace m0.UIWpf.Visualisers.Diagram
 
 
 
-            if (Vertex.Get("RoundEdgeSize:") != null)
+            if (Vertex.Get(false, "RoundEdgeSize:") != null)
             {
-                int esize = GraphUtil.GetIntegerValue(Vertex.Get("RoundEdgeSize:"));
+                int esize = GraphUtil.GetIntegerValue(Vertex.Get(false, "RoundEdgeSize:"));
 
                 
                 this.Frame.CornerRadius = new CornerRadius(esize);
 
-                if (Vertex.Get("VisualiserClass:") != null)
+                if (Vertex.Get(false, "VisualiserClass:") != null)
                 {
                     this.Title.Margin = new Thickness(esize, esize, esize, 0);
 
@@ -209,7 +209,7 @@ namespace m0.UIWpf.Visualisers.Diagram
 
         public override void VertexChange(object sender, VertexChangeEventArgs e)
         {
-            if (sender == Vertex.Get(@"RoundEdgeSize:"))
+            if (sender == Vertex.Get(false, @"RoundEdgeSize:"))
                 VisualiserUpdate();
 
             base.VertexChange(sender, e);

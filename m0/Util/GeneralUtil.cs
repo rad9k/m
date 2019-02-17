@@ -114,7 +114,7 @@ namespace m0.Util
 
             IVertex expressionAsVertex = MinusZero.Instance.CreateTempVertex();
 
-            z.DefaultParser.Parse(expressionAsVertex, expressionAsString);
+            z.DefaultParser.Parse(false, expressionAsVertex, expressionAsString);
 
             return z.DefaultExecuter.Execute(baseVertex, inputVertex, expressionAsVertex);
         }

@@ -34,9 +34,9 @@ namespace m0.UIWpf.Visualisers
 
                 Vertex.Value = "ClassVisualiser" + this.GetHashCode();
 
-                ClassVertex.AddIsClassAndAllAttributesAndAssociations(Vertex, mz.Root.Get(@"System\Meta\Visualiser\Class"));
+                ClassVertex.AddIsClassAndAllAttributesAndAssociations(Vertex, mz.Root.Get(false, @"System\Meta\Visualiser\Class"));
 
-                ClassVertex.AddIsClassAndAllAttributesAndAssociations(Vertex.Get("BaseEdge:"), mz.Root.Get(@"System\Meta\ZeroTypes\Edge"));         
+                ClassVertex.AddIsClassAndAllAttributesAndAssociations(Vertex.Get(false, "BaseEdge:"), mz.Root.Get(false, @"System\Meta\ZeroTypes\Edge"));         
 
                 
                 this.AllowDrop = false;
@@ -54,14 +54,14 @@ namespace m0.UIWpf.Visualisers
 
         private void UpdateBaseEdge()
         {
-            IVertex bv = Vertex.Get(@"BaseEdge:\To:");
+            IVertex bv = Vertex.Get(false, @"BaseEdge:\To:");
 
             if (bv != null && bv.Value != null /*&& ((String)bv.Value)!="$Empty"*/){
                 StringBuilder sb=new StringBuilder();
 
                 bool isFirst=true;
 
-                foreach(IEdge e in bv.GetAll(@"Attribute:")){
+                foreach(IEdge e in bv.GetAll(false, @"Attribute:")){
                     if(isFirst==false)
                         sb.Append("\n");
                     else
@@ -69,8 +69,8 @@ namespace m0.UIWpf.Visualisers
 
                     sb.Append(e.To.Value);
 
-                    if (e.To.Get("$EdgeTarget:") != null)
-                        sb.Append(" : " + e.To.Get(@"$EdgeTarget:"));
+                    if (e.To.Get(false, "$EdgeTarget:") != null)
+                        sb.Append(" : " + e.To.Get(false, @"$EdgeTarget:"));
 
                     string cardinalites = ClassVertex.GetStringCardinalities(e.To);
 
@@ -89,11 +89,11 @@ namespace m0.UIWpf.Visualisers
             if ((sender == Vertex) && (e.Type == VertexChangeType.EdgeAdded) && (GeneralUtil.CompareStrings(e.Edge.Meta.Value, "BaseEdge")))
                 UpdateBaseEdge();                        
 
-            if ((sender == Vertex.Get("BaseEdge:")) && (e.Type == VertexChangeType.EdgeAdded) && (GeneralUtil.CompareStrings(e.Edge.Meta.Value, "To"))
-                || (sender == Vertex.Get(@"BaseEdge:\To:") && e.Type == VertexChangeType.ValueChanged))            
+            if ((sender == Vertex.Get(false, "BaseEdge:")) && (e.Type == VertexChangeType.EdgeAdded) && (GeneralUtil.CompareStrings(e.Edge.Meta.Value, "To"))
+                || (sender == Vertex.Get(false, @"BaseEdge:\To:") && e.Type == VertexChangeType.ValueChanged))            
                 UpdateBaseEdge();
 
-            if(sender == Vertex.Get(@"BaseEdge:\To:") && e.Type == VertexChangeType.EdgeAdded){
+            if(sender == Vertex.Get(false, @"BaseEdge:\To:") && e.Type == VertexChangeType.EdgeAdded){
                 e.Edge.To.Change += new VertexChange(VertexChange);
 
                 manuallyAddedVertexChangeListeners.Add(e.Edge.To);
@@ -101,7 +101,7 @@ namespace m0.UIWpf.Visualisers
                 UpdateBaseEdge();
             }
 
-            if (sender == Vertex.Get(@"BaseEdge:\To:") && e.Type == VertexChangeType.EdgeRemoved)
+            if (sender == Vertex.Get(false, @"BaseEdge:\To:") && e.Type == VertexChangeType.EdgeRemoved)
             {
                 e.Edge.To.Change -= new VertexChange(VertexChange);
 
@@ -110,7 +110,7 @@ namespace m0.UIWpf.Visualisers
                 UpdateBaseEdge();
             }
 
-            foreach (IEdge ee in Vertex.GetAll(@"BaseEdge:\To:\"))
+            foreach (IEdge ee in Vertex.GetAll(false, @"BaseEdge:\To:\"))
                 if (sender == ee.To) // all events
                     UpdateBaseEdge();
         }        
@@ -152,7 +152,7 @@ namespace m0.UIWpf.Visualisers
 
         public IVertex GetEdgeByLocation(System.Windows.Point point)
         {
-            return Vertex.Get(@"BaseEdge:");
+            return Vertex.Get(false, @"BaseEdge:");
         }
 
         public IVertex GetEdgeByVisualElement(System.Windows.FrameworkElement visualElement)

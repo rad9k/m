@@ -52,11 +52,11 @@ namespace m0
                             {
                                 IVertex r = parser.ParserAutoTestProcess(b, testCases[c, 1], l1089, l1149_dict, l1149_parent, l1009_left, l1009_right);
 
-                                    if (b.Get("SYNTAX ERROR") != null)
+                                    if (b.Get(false, "SYNTAX ERROR") != null)
                                         line += "\tSYNTAX";
                                     else
                                     {
-                                        if (b.Get(@"\" + testCases[c, 2]) != null)
+                                        if (b.Get(false, @"\" + testCases[c, 2]) != null)
                                             line += "\tO";
                                     }
                             }

@@ -26,29 +26,29 @@ namespace m0.UIWpf.Commands
             if (
                 ((sender == selectSynchronisedVisualiser) && (e.Type == VertexChangeType.EdgeAdded) && (GeneralUtil.CompareStrings(e.Edge.Meta.Value, "SelectedEdges")))
             ||
-            (sender is IVertex && GraphUtil.FindEdgeByToVertex(selectSynchronisedVisualiser.GetAll(@"SelectedEdges:\"),(IVertex)sender)!=null && ((e.Type == VertexChangeType.EdgeAdded) || (e.Type == VertexChangeType.EdgeRemoved)))
+            (sender is IVertex && GraphUtil.FindEdgeByToVertex(selectSynchronisedVisualiser.GetAll(false, @"SelectedEdges:\"),(IVertex)sender)!=null && ((e.Type == VertexChangeType.EdgeAdded) || (e.Type == VertexChangeType.EdgeRemoved)))
              ||
-            (sender is IVertex && selectSynchronisedVisualiser.Get(@"SelectedEdges:")==(IVertex)sender && ((e.Type == VertexChangeType.EdgeAdded) || (e.Type == VertexChangeType.EdgeRemoved)))
+            (sender is IVertex && selectSynchronisedVisualiser.Get(false, @"SelectedEdges:")==(IVertex)sender && ((e.Type == VertexChangeType.EdgeAdded) || (e.Type == VertexChangeType.EdgeRemoved)))
                 ){
-                    if (baseSynchronisedVertex.Get(@"BaseEdge:\To:") == null) // if Disposed
+                    if (baseSynchronisedVertex.Get(false, @"BaseEdge:\To:") == null) // if Disposed
                     {
                         PlatformClass.RemoveVertexChangeListeners(selectSynchronisedVisualiser, new VertexChange(this.SynchronisedVisualiserChange));
                     }
                     else
                     {
-                        IVertex selEdgesFirst = selectSynchronisedVisualiser.Get(@"SelectedEdges:\");
+                        IVertex selEdgesFirst = selectSynchronisedVisualiser.Get(false, @"SelectedEdges:\");
 
                         if (selEdgesFirst != null)
                         {
-                            IVertex firstSelectedVertexEdgeTo = selEdgesFirst.Get("To:");
+                            IVertex firstSelectedVertexEdgeTo = selEdgesFirst.Get(false, "To:");
 
                             if (firstSelectedVertexEdgeTo != null)
-                                GraphUtil.ReplaceEdge(baseSynchronisedVertex.Get("BaseEdge:"), "To", firstSelectedVertexEdgeTo);
+                                GraphUtil.ReplaceEdge(baseSynchronisedVertex.Get(false, "BaseEdge:"), "To", firstSelectedVertexEdgeTo);
 
-                            IVertex firstSelectedVertexEdgeMeta = selEdgesFirst.Get("Meta:");
+                            IVertex firstSelectedVertexEdgeMeta = selEdgesFirst.Get(false, "Meta:");
 
                             if (firstSelectedVertexEdgeMeta != null)
-                                GraphUtil.ReplaceEdge(baseSynchronisedVertex.Get("BaseEdge:"), "Meta", firstSelectedVertexEdgeMeta);
+                                GraphUtil.ReplaceEdge(baseSynchronisedVertex.Get(false, "BaseEdge:"), "Meta", firstSelectedVertexEdgeMeta);
                         }                        
                     }
             }                
@@ -58,7 +58,7 @@ namespace m0.UIWpf.Commands
     public class BaseCommands
     {
         public static IVertex NewVertex(IVertex baseVertex,IVertex inputVertex){
-            NewVertex d = new NewVertex(baseVertex.Get("To:"));
+            NewVertex d = new NewVertex(baseVertex.Get(false, "To:"));
 
             MinusZero.Instance.DefaultUserInteraction.ShowContentFloating(d);
 
@@ -67,7 +67,7 @@ namespace m0.UIWpf.Commands
 
         public static IVertex NewVertexBySchema(IVertex baseVertex, IVertex inputVertex)
         {
-            IVertex Vertex = baseVertex.Get("To:");
+            IVertex Vertex = baseVertex.Get(false, "To:");
             IVertex MetaVertex = inputVertex;
 
             IVertex v = VertexOperations.AddInstance(Vertex, MetaVertex);
@@ -86,7 +86,7 @@ namespace m0.UIWpf.Commands
 
         public static IVertex NewEdge(IVertex baseVertex, IVertex inputVertex)
         {
-            NewEdge d = new NewEdge(baseVertex.Get("To:"));
+            NewEdge d = new NewEdge(baseVertex.Get(false, "To:"));
 
             MinusZero.Instance.DefaultUserInteraction.ShowContentFloating(d);
 
@@ -95,7 +95,7 @@ namespace m0.UIWpf.Commands
 
         public static IVertex NewEdgeBySchema(IVertex baseVertex, IVertex inputVertex)
         {
-            NewEdgeBySchema d = new NewEdgeBySchema(baseVertex.Get("To:"), inputVertex);
+            NewEdgeBySchema d = new NewEdgeBySchema(baseVertex.Get(false, "To:"), inputVertex);
 
             MinusZero.Instance.DefaultUserInteraction.ShowContentFloating(d);
 
@@ -104,9 +104,9 @@ namespace m0.UIWpf.Commands
 
         public static IVertex NewDiagram(IVertex baseVertex, IVertex inputVertex)
         {
-            IVertex dv = VertexOperations.AddInstance(baseVertex.Get("To:"), MinusZero.Instance.Root.Get(@"System\Meta\Visualiser\Class:Diagram"));
+            IVertex dv = VertexOperations.AddInstance(baseVertex.Get(false, "To:"), MinusZero.Instance.Root.Get(false, @"System\Meta\Visualiser\Class:Diagram"));
 
-            GraphUtil.CreateOrReplaceEdge(dv, MinusZero.Instance.Root.Get(@"System\Meta\Visualiser\Class:Diagram\CreationPool"), baseVertex.Get("To:"));
+            GraphUtil.CreateOrReplaceEdge(dv, MinusZero.Instance.Root.Get(false, @"System\Meta\Visualiser\Class:Diagram\CreationPool"), baseVertex.Get(false, "To:"));
 
             MinusZero.Instance.DefaultUserInteraction.EditDialog(dv, null);           
 
@@ -132,10 +132,10 @@ namespace m0.UIWpf.Commands
 
             CutPasteStore.Clear();
 
-            if (inputVertex.Get("SelectedEdges:").Count() == 0)
+            if (inputVertex.Get(false, "SelectedEdges:").Count() == 0)
                 CutPasteStore.Add(baseVertex);
             else
-                foreach (IEdge e in inputVertex.Get("SelectedEdges:"))
+                foreach (IEdge e in inputVertex.Get(false, "SelectedEdges:"))
                     CutPasteStore.Add(e.To);
 
             return null;
@@ -146,9 +146,9 @@ namespace m0.UIWpf.Commands
             foreach (IVertex v in CutPasteStore)
             {
                 if(DoCut)
-                    VertexOperations.DeleteOneEdge(v.Get("From:"), v.Get("Meta:"), v.Get("To:"));
+                    VertexOperations.DeleteOneEdge(v.Get(false, "From:"), v.Get(false, "Meta:"), v.Get(false, "To:"));
 
-                baseVertex.Get("To:").AddEdge(v.Get("Meta:"), v.Get("To:"));
+                baseVertex.Get(false, "To:").AddEdge(v.Get(false, "Meta:"), v.Get(false, "To:"));
             }
 
             return null;
@@ -178,19 +178,19 @@ namespace m0.UIWpf.Commands
             if (GeneralUtil.CompareStrings(option.Value, "Remove from repository"))
                 allEdgesDelete = true;
 
-            if (inputVertex.Get("SelectedEdges:").Count() == 0)
+            if (inputVertex.Get(false, "SelectedEdges:").Count() == 0)
                 if (allEdgesDelete)
-                    VertexOperations.DeleteAllInOutEdges(baseVertex.Get("To:"));
+                    VertexOperations.DeleteAllInOutEdges(baseVertex.Get(false, "To:"));
                 else
-                    VertexOperations.DeleteOneEdge(baseVertex.Get("From:"), baseVertex.Get("Meta:"), baseVertex.Get("To:"));
+                    VertexOperations.DeleteOneEdge(baseVertex.Get(false, "From:"), baseVertex.Get(false, "Meta:"), baseVertex.Get(false, "To:"));
             else
             {
-                IList<IEdge> selected=GeneralUtil.CreateAndCopyList(inputVertex.Get("SelectedEdges:"));
+                IList<IEdge> selected=GeneralUtil.CreateAndCopyList(inputVertex.Get(false, "SelectedEdges:"));
                 foreach (IEdge v in selected)
                     if(allEdgesDelete)
-                        VertexOperations.DeleteAllInOutEdges(v.To.Get("To:"));
+                        VertexOperations.DeleteAllInOutEdges(v.To.Get(false, "To:"));
                     else
-                        VertexOperations.DeleteOneEdge(v.To.Get("From:"), v.To.Get("Meta:"), v.To.Get("To:"));
+                        VertexOperations.DeleteOneEdge(v.To.Get(false, "From:"), v.To.Get(false, "Meta:"), v.To.Get(false, "To:"));
             }
 
             return null;
@@ -198,7 +198,7 @@ namespace m0.UIWpf.Commands
 
         public static IVertex Query(IVertex baseVertex, IVertex inputVertex)
         {
-            QueryDialog d = new QueryDialog(baseVertex.Get("To:"));
+            QueryDialog d = new QueryDialog(baseVertex.Get(false, "To:"));
 
             MinusZero.Instance.DefaultUserInteraction.ShowContentFloating(d);
 
@@ -209,16 +209,16 @@ namespace m0.UIWpf.Commands
         {
             IVertex DefaultVis;
 
-            DefaultVis=baseVertex.Get(@"Meta:\$DefaultOpenVisualiser:");
+            DefaultVis=baseVertex.Get(false, @"Meta:\$DefaultOpenVisualiser:");
 
             if(DefaultVis==null)
-                DefaultVis=baseVertex.Get(@"To:\$Is:\$Is:\$DefaultOpenVisualiser:"); // yes. bad but it is
+                DefaultVis=baseVertex.Get(false, @"To:\$Is:\$Is:\$DefaultOpenVisualiser:"); // yes. bad but it is
 
             if (DefaultVis == null)
-                DefaultVis = baseVertex.Get(@"Meta:\$EdgeTarget:\$DefaultEditVisualiser:");
+                DefaultVis = baseVertex.Get(false, @"Meta:\$EdgeTarget:\$DefaultEditVisualiser:");
 
             if (DefaultVis == null)
-                DefaultVis = MinusZero.Instance.Root.Get(@"System\Meta\Visualiser\Form");
+                DefaultVis = MinusZero.Instance.Root.Get(false, @"System\Meta\Visualiser\Form");
 
             if (GeneralUtil.CompareStrings(DefaultVis.Value, "Diagram"))
                 return OpenDiagram(baseVertex, DefaultVis);
@@ -228,12 +228,12 @@ namespace m0.UIWpf.Commands
 
         public static IVertex OpenFormVisualiser(IVertex baseVertex)
         {            
-            return OpenVisualiser(baseVertex, MinusZero.Instance.Root.Get(@"System\Meta\Visualiser\Form"));
+            return OpenVisualiser(baseVertex, MinusZero.Instance.Root.Get(false, @"System\Meta\Visualiser\Form"));
         }
 
         public static IVertex OpenDiagram(IVertex baseVertex, IVertex inputVertex)
         {
-            IPlatformClass sv = (IPlatformClass)PlatformClass.CreatePlatformObject(baseVertex.Get("To:"));
+            IPlatformClass sv = (IPlatformClass)PlatformClass.CreatePlatformObject(baseVertex.Get(false, "To:"));
 
             //GraphUtil.ReplaceEdge(sv.Vertex, "BaseEdge", baseVertex);
 
@@ -258,7 +258,7 @@ namespace m0.UIWpf.Commands
         {
             IPlatformClass sv = (IPlatformClass)PlatformClass.CreatePlatformObject(inputVertex);
 
-            GraphUtil.ReplaceEdge(sv.Vertex.Get("BaseEdge:"), "To", baseVertex.Get("Meta:"));            
+            GraphUtil.ReplaceEdge(sv.Vertex.Get(false, "BaseEdge:"), "To", baseVertex.Get(false, "Meta:"));            
 
             MinusZero.Instance.DefaultUserInteraction.ShowContent(sv);
 
@@ -280,19 +280,19 @@ namespace m0.UIWpf.Commands
 
         public static IVertex OpenVisualiserSelectedBase(IVertex baseVertex, IVertex inputVertex)
         {
-            IPlatformClass pc = (IPlatformClass)PlatformClass.CreatePlatformObject(inputVertex.Get("VisualiserClass:"));
+            IPlatformClass pc = (IPlatformClass)PlatformClass.CreatePlatformObject(inputVertex.Get(false, "VisualiserClass:"));
 
-            GraphUtil.ReplaceEdge(pc.Vertex.Get("BaseEdge:"),"Meta", baseVertex.Get("Meta:"));
+            GraphUtil.ReplaceEdge(pc.Vertex.Get(false, "BaseEdge:"),"Meta", baseVertex.Get(false, "Meta:"));
 
-            GraphUtil.ReplaceEdge(pc.Vertex.Get("BaseEdge:"), "To", baseVertex.Get("To:"));
+            GraphUtil.ReplaceEdge(pc.Vertex.Get(false, "BaseEdge:"), "To", baseVertex.Get(false, "To:"));
 
-            IVertex synchronisedVisualiser = inputVertex.Get("SynchronisedVisualiser:");
+            IVertex synchronisedVisualiser = inputVertex.Get(false, "SynchronisedVisualiser:");
 
             BaseSelectedSynchronisedHelper helper = new BaseSelectedSynchronisedHelper(pc.Vertex, synchronisedVisualiser);
 
             PlatformClass.RegisterVertexChangeListeners(synchronisedVisualiser,new VertexChange(helper.SynchronisedVisualiserChange), new string[]{"BaseEdge","SelectedEdges"});
             
-            IVertex firstSelectedVertex = synchronisedVisualiser.Get(@"SelectedEdges:\");
+            IVertex firstSelectedVertex = synchronisedVisualiser.Get(false, @"SelectedEdges:\");
 
             if (firstSelectedVertex != null)
                 GraphUtil.ReplaceEdge(pc.Vertex, "BaseEdge", firstSelectedVertex);
@@ -304,11 +304,11 @@ namespace m0.UIWpf.Commands
 
         public static IVertex OpenVisualiserSelectedSelected(IVertex baseVertex, IVertex inputVertex)
         {
-            IPlatformClass pc = (IPlatformClass)PlatformClass.CreatePlatformObject(inputVertex.Get("VisualiserClass:"));
+            IPlatformClass pc = (IPlatformClass)PlatformClass.CreatePlatformObject(inputVertex.Get(false, "VisualiserClass:"));
 
             GraphUtil.ReplaceEdge(pc.Vertex, "BaseEdge", baseVertex);
 
-            GraphUtil.ReplaceEdge(pc.Vertex, "SelectedEdges", inputVertex.Get(@"SynchronisedVisualiser:\SelectedEdges:"));
+            GraphUtil.ReplaceEdge(pc.Vertex, "SelectedEdges", inputVertex.Get(false, @"SynchronisedVisualiser:\SelectedEdges:"));
 
             MinusZero.Instance.DefaultUserInteraction.ShowContent(pc);
 

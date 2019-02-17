@@ -81,7 +81,7 @@ namespace m0.UIWpf
 
             w.Scale = 0.6;            
 
-            GraphUtil.ReplaceEdge(w.Vertex.Get("BaseEdge:"), "To", pc.Vertex);
+            GraphUtil.ReplaceEdge(w.Vertex.Get(false, "BaseEdge:"), "To", pc.Vertex);
            
             this.expander.Content = w;
         }

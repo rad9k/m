@@ -36,7 +36,7 @@ namespace m0.UIWpf.Visualisers
             // CELL TEMPLATE
             //
 
-            if (GeneralUtil.CompareStrings(Vertex.Get("IsAllVisualisersEdit:").Value, "True"))
+            if (GeneralUtil.CompareStrings(Vertex.Get(false, "IsAllVisualisersEdit:").Value, "True"))
             {
                 valueColumn.CellTemplate = new DataTemplate();
                 FrameworkElementFactory factory = new FrameworkElementFactory(typeof(VisualiserEditWrapper));
@@ -59,7 +59,7 @@ namespace m0.UIWpf.Visualisers
             EditFactory.SetBinding(VisualiserEditWrapper.BaseEdgeProperty, new Binding(bindingString));
             valueColumn.CellEditingTemplate.VisualTree = EditFactory;
 
-            if (GraphUtil.GetValueAndCompareStrings(Vertex.Get("ShowHeader:"), "True"))
+            if (GraphUtil.GetValueAndCompareStrings(Vertex.Get(false, "ShowHeader:"), "True"))
                 valueColumn.Header = columnName + " ";
 
             ThisDataGrid.Columns.Add(valueColumn);

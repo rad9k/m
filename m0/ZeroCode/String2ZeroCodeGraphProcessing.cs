@@ -286,21 +286,21 @@ namespace m0.ZeroCode
 
         void prepareImportList_User()
         {
-            IVertex codeSettings = r.Get(@"User\CurrentUser:\CodeSettings:");
+            IVertex codeSettings = r.Get(false, @"User\CurrentUser:\CodeSettings:");
 
             // named imports
 
-            foreach (IEdge e in codeSettings.GetAll("$ImportMeta:"))
+            foreach (IEdge e in codeSettings.GetAll(false, "$ImportMeta:"))
             {
-                IVertex v = codeSettings.Get(e.To + ":");
+                IVertex v = codeSettings.Get(false, e.To + ":");
 
                 if (v != null)
                     importMetaList.AddEdge(e.To, v);
             }
 
-            foreach (IEdge e in codeSettings.GetAll("$Import:"))
+            foreach (IEdge e in codeSettings.GetAll(false, "$Import:"))
             {
-                IVertex v = codeSettings.Get(e.To + ":");
+                IVertex v = codeSettings.Get(false, e.To + ":");
 
                 if (v != null)
                     importList.AddEdge(e.To, v);
@@ -308,11 +308,11 @@ namespace m0.ZeroCode
 
             // direct imports
 
-            foreach (IEdge e in codeSettings.GetAll("$DirectMeta:"))
+            foreach (IEdge e in codeSettings.GetAll(false, "$DirectMeta:"))
                 importDirectMetaList.AddEdge(e.Meta, e.To);
             
 
-            foreach (IEdge e in codeSettings.GetAll("$Direct:"))
+            foreach (IEdge e in codeSettings.GetAll(false, "$Direct:"))
                 importDirectList.AddEdge(e.Meta, e.To);
             
         }
@@ -350,7 +350,7 @@ namespace m0.ZeroCode
 
                 namev.Value = name;
 
-                IVertex target=r.Get(link);
+                IVertex target=r.Get(false, link);
 
                 if (target != null)
                     importList.AddEdge(namev, target);
@@ -375,7 +375,7 @@ namespace m0.ZeroCode
                 namev.Value = name;
 
 
-                IVertex target = r.Get(link);
+                IVertex target = r.Get(false, link);
 
                 if (target != null)
                     importMetaList.AddEdge(namev, target);
@@ -392,11 +392,11 @@ namespace m0.ZeroCode
 
         void setupHelpVariables()
         {
-            smb = r.Get(@"System\Meta\Base");
+            smb = r.Get(false, @"System\Meta\Base");
 
-            Direct = smb.Get("$Direct");
+            Direct = smb.Get(false, "$Direct");
 
-            DirectMeta = smb.Get("$DirectMeta");
+            DirectMeta = smb.Get(false, "$DirectMeta");
         }
 
         void prepareImportList_FromString_importDirect()
@@ -407,7 +407,7 @@ namespace m0.ZeroCode
             {
                 string link = match.Groups["link"].Value;
 
-                IVertex target = r.Get(link);
+                IVertex target = r.Get(false, link);
 
                 if (target != null)
                     importDirectList.AddEdge(Direct, target);
@@ -424,7 +424,7 @@ namespace m0.ZeroCode
             {
                 string link = match.Groups["link"].Value;
 
-                IVertex target = r.Get(link);
+                IVertex target = r.Get(false, link);
 
                 if (target != null)
                     importDirectMetaList.AddEdge(Direct, target);
@@ -435,12 +435,12 @@ namespace m0.ZeroCode
 
         IVertex query(IVertex baseVertex, string query)
         {
-            return baseVertex.Get(query);
+            return baseVertex.Get(false, query);
         }
 
         IVertex queryMetaMode(IVertex baseVertex, string query)
         {
-            return baseVertex.Get(query); // TODO: to be corected
+            return baseVertex.Get(false, query); // TODO: to be corected
         }   
 
         IVertex ToVertexMock2VertexByLinkString(ToVertexMock mock)
@@ -459,7 +459,7 @@ namespace m0.ZeroCode
 
             // named link
 
-            IVertex importLink = importList.Get(firstPart + ":");
+            IVertex importLink = importList.Get(false, firstPart + ":");
 
             if (secondPart != null)
             {
@@ -471,7 +471,7 @@ namespace m0.ZeroCode
                         return tryIf;
                 }
 
-                IVertex importMetaLink = importMetaList.Get(firstPart + ":");
+                IVertex importMetaLink = importMetaList.Get(false, firstPart + ":");
 
                 if (importMetaLink != null)
                 {
@@ -503,7 +503,7 @@ namespace m0.ZeroCode
 
             // try from global root
 
-            tryIf = MinusZero.Instance.Root.Get(link);
+            tryIf = MinusZero.Instance.Root.Get(false, link);
 
             if (tryIf != null)
                 return tryIf;
@@ -1794,7 +1794,7 @@ namespace m0.ZeroCode
 
         bool isLocalRootKeyword(keywordTryingData ktd)
         {
-            if (ktd.keywordVertex.Get(@"\$StartInLocalRoot:") != null)
+            if (ktd.keywordVertex.Get(false, @"\$StartInLocalRoot:") != null)
                 return true;
             else
                 return false;
@@ -1923,7 +1923,7 @@ namespace m0.ZeroCode
                 return;
 
             if (parentMetaEdge!=null
-                && parentMetaEdge.To.Get("$LocalRoot:") != null 
+                && parentMetaEdge.To.Get(false, "$LocalRoot:") != null 
                 && GeneralUtil.CompareStrings("(?<ANY>)", meta))
             {
                 if(val!=null && !GeneralUtil.CompareStrings("",val))
@@ -1933,7 +1933,7 @@ namespace m0.ZeroCode
             }else
                 nv = AddVertex(s, baseVertex, meta, val);
 
-            if (metaEdge.To.Get("$LocalRoot:") != null && ktd.LocalRootNext != null)
+            if (metaEdge.To.Get(false, "$LocalRoot:") != null && ktd.LocalRootNext != null)
                 _AddKeywordVertex(s, nv, ktd.LocalRootNext, ktd.LocalRootNext.keywordVertex, null, 0, metaEdge);
         }
 
@@ -1956,7 +1956,7 @@ namespace m0.ZeroCode
             }
 
             foreach (IEdge e in keywordAddingVertex) {
-                if (e.To.Get(@"$KeywordManyRoot:") != null)
+                if (e.To.Get(false, @"$KeywordManyRoot:") != null)
                 {
                     min_subCount = 0;
                     max_subCount = ktd.multiParameterCount - 1;
@@ -2066,12 +2066,12 @@ namespace m0.ZeroCode
         {
             specialKeywordGroups_empty = new List<string>();
 
-            foreach (IEdge e in MinusZero.Instance.emptyKeywordVertex.GetAll("$KeywordGroup:"))
+            foreach (IEdge e in MinusZero.Instance.emptyKeywordVertex.GetAll(false, "$KeywordGroup:"))
                 specialKeywordGroups_empty.Add((string)e.To.Value);
 
             specialKeywordGroups_new = new List<string>();
 
-            foreach (IEdge e in MinusZero.Instance.newValueKeywordVertex.GetAll("$KeywordGroup:"))
+            foreach (IEdge e in MinusZero.Instance.newValueKeywordVertex.GetAll(false, "$KeywordGroup:"))
                 specialKeywordGroups_new.Add((string)e.To.Value);
         }
 
@@ -2091,7 +2091,7 @@ namespace m0.ZeroCode
 
             allKeywordsSubstringsDictionary = new Dictionary<char, List<string>>();
 
-            foreach (IEdge keyword in MinusZero.Instance.Root.GetAll(@"User\CurrentUser:\CodeSettings:\Keyword:\$Keyword:"))
+            foreach (IEdge keyword in MinusZero.Instance.Root.GetAll(false, @"User\CurrentUser:\CodeSettings:\Keyword:\$Keyword:"))
             {
                 if(isSpecialKeyword((string)keyword.To.Value))
                     continue;
@@ -2102,7 +2102,7 @@ namespace m0.ZeroCode
                 
                 examinedKeywords_All[""].Add(ktd);
 
-                foreach(IEdge v in ktd.keywordVertex.GetAll("$KeywordGroup:"))
+                foreach(IEdge v in ktd.keywordVertex.GetAll(false, "$KeywordGroup:"))
                 {
                     string group = (string)v.To.Value;
 
@@ -2114,11 +2114,11 @@ namespace m0.ZeroCode
 
                 // examinedKeywords_LocalRootOnly
 
-                if (keyword.To.Get(@"\$StartInLocalRoot:") != null)
+                if (keyword.To.Get(false, @"\$StartInLocalRoot:") != null)
                 {                    
                     examinedKeywords_StartInLocalRootOnly[""].Add(ktd);
 
-                    foreach (IEdge v in ktd.keywordVertex.GetAll("$KeywordGroup:"))
+                    foreach (IEdge v in ktd.keywordVertex.GetAll(false, "$KeywordGroup:"))
                     {
                         string group = (string)v.To.Value;
 
@@ -2347,10 +2347,10 @@ namespace m0.ZeroCode
             if (s.newLineCount != 0)
             {
                 if (s.lastAddedVertex != null)
-                    s.lastAddedVertex.AddVertex(smb.Get("$NewLine"), s.newLineCount);
+                    s.lastAddedVertex.AddVertex(smb.Get(false, "$NewLine"), s.newLineCount);
                 else
                     if(s.lastAddedVertexParent!=null)
-                    s.lastAddedVertexParent.AddVertex(smb.Get("$NewLine"), s.newLineCount);
+                    s.lastAddedVertexParent.AddVertex(smb.Get(false, "$NewLine"), s.newLineCount);
             }
 
             s.newLineCount = 0;
@@ -2615,15 +2615,15 @@ namespace m0.ZeroCode
 
         void AddError(int lineNumber, string value)
         {
-            IVertex smz = MinusZero.Instance.Root.Get(@"System\Meta\ZeroTypes");
+            IVertex smz = MinusZero.Instance.Root.Get(false, @"System\Meta\ZeroTypes");
 
-            IVertex error = VertexOperations.AddInstance(errorList, smz.Get("Exception"));
+            IVertex error = VertexOperations.AddInstance(errorList, smz.Get(false, "Exception"));
 
-            error.AddVertex(smz.Get(@"Exception\Where"), lineNumber.ToString());
+            error.AddVertex(smz.Get(false, @"Exception\Where"), lineNumber.ToString());
 
-            error.AddVertex(smz.Get(@"Exception\Type"), smz.Get(@"ExceptionTypeEnum\Error"));
+            error.AddVertex(smz.Get(false, @"Exception\Type"), smz.Get(false, @"ExceptionTypeEnum\Error"));
 
-            error.AddVertex(smz.Get(@"Exception\What"), value);
+            error.AddVertex(smz.Get(false, @"Exception\What"), value);
         }
 
         void DeleteAllEdgesFromBaseVertex()
@@ -2667,7 +2667,7 @@ namespace m0.ZeroCode
             GraphUtil.DeleteEdgeByMeta(baseVertex, "$ParseRoot");
             GraphUtil.DeleteEdgeByMeta(baseVertex, "$ParseArtefacts");
 
-            parseRoot = baseVertex.AddVertex(MinusZero.Instance.Root.Get(@"System\Meta\Base\$ParseRoot"),"");
+            parseRoot = baseVertex.AddVertex(MinusZero.Instance.Root.Get(false, @"System\Meta\Base\$ParseRoot"),"");
 
             ProcessTextPart(parseRoot, 0, lineInfoList.Count - 1);
 
@@ -2680,7 +2680,7 @@ namespace m0.ZeroCode
                 MoveAllParseRootEdgesToBaseVertex();
             }
             else
-                baseVertex.AddEdge(MinusZero.Instance.Root.Get(@"System\Meta\Base\$ParseArtefacts"), errorList);
+                baseVertex.AddEdge(MinusZero.Instance.Root.Get(false, @"System\Meta\Base\$ParseArtefacts"), errorList);
 
             return errorList;
         }
@@ -2691,7 +2691,7 @@ namespace m0.ZeroCode
 
             prepareDictionaries();
 
-            emptyKeywordVertex = MinusZero.Instance.Root.Get(@"User\CurrentUser:\CodeSettings:\Keyword:\$Keyword:(?<value>)");
+            emptyKeywordVertex = MinusZero.Instance.Root.Get(false, @"User\CurrentUser:\CodeSettings:\Keyword:\$Keyword:(?<value>)");
 
             newValueKeywordVertex = MinusZero.Instance.newValueKeywordVertex;
 

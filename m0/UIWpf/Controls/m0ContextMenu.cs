@@ -83,12 +83,12 @@ namespace m0.UIWpf.Controls
 
         private void FillNewVertexAndEdgeBySchemaMenu()
         {
-            IVertex baseVertex = Edge.Get(@"To:");
+            IVertex baseVertex = Edge.Get(false, @"To:");
 
-            IVertex r = baseVertex.GetAll(@"$Is:");
+            IVertex r = baseVertex.GetAll(false, @"$Is:");
 
             if (r.Count() == 0)
-                r = Edge.GetAll(@"Meta:"); ;
+                r = Edge.GetAll(false, @"Meta:"); ;
 
             if (r.Count() == 0 || r.FirstOrDefault().To.Value==null || GeneralUtil.CompareStrings(r.FirstOrDefault().To.Value, "$Empty"))
             {
@@ -103,7 +103,7 @@ namespace m0.UIWpf.Controls
             foreach (IEdge e in r)
                 NewVertexAndEdgeBySchema_FillForMeta(baseVertex, e.To, VertexOperations.GetChildEdges(e.To));
 
-            NewVertexAndEdgeBySchema_FillForMeta(baseVertex, MinusZero.Instance.Root.Get(@"System\Meta\Base\Vertex"), MinusZero.Instance.Root.GetAll(@"System\Meta\Base\Vertex\"));
+            NewVertexAndEdgeBySchema_FillForMeta(baseVertex, MinusZero.Instance.Root.Get(false, @"System\Meta\Base\Vertex"), MinusZero.Instance.Root.GetAll(false, @"System\Meta\Base\Vertex\"));
 
             NewVertexBySchema.IsEnabled = true;
             NewEdgeBySchema.IsEnabled = true;
@@ -237,9 +237,9 @@ namespace m0.UIWpf.Controls
 
         void AddOpenTop()
         {           
-            IVertex formVis = root.Get(@"System\Meta\Visualiser\Form");
+            IVertex formVis = root.Get(false, @"System\Meta\Visualiser\Form");
 
-            IVertex codeVis = root.Get(@"System\Meta\Visualiser\Code");
+            IVertex codeVis = root.Get(false, @"System\Meta\Visualiser\Code");
 
            
             MenuItem formMenuItem = createMenuItem("Open Form");
@@ -267,9 +267,9 @@ namespace m0.UIWpf.Controls
             
             this.Items.Add(OpenVisualiser);
 
-            // IVertex vislist = root.GetAll(@"System\Meta\Visualiser\"); BaseEdge ones currently not supported
+            // IVertex vislist = root.GetAll(false, @"System\Meta\Visualiser\"); BaseEdge ones currently not supported
 
-            IVertex vislist = root.GetAll(@"System\Meta\Visualiser\Class:{$Inherits:HasBaseEdge}");
+            IVertex vislist = root.GetAll(false, @"System\Meta\Visualiser\Class:{$Inherits:HasBaseEdge}");
 
             foreach (IEdge vis in vislist)
             {
@@ -336,7 +336,7 @@ namespace m0.UIWpf.Controls
 
             /////////////////////// selected synchronised
 
-            vislist = root.GetAll(@"System\Meta\Visualiser\Class:{$Inherits:HasSelectedEdges}");
+            vislist = root.GetAll(false, @"System\Meta\Visualiser\Class:{$Inherits:HasSelectedEdges}");
 
             MenuItem OpenVisualiserSelectedSelected = createMenuItem("Open SelectedEdges<>SelectedEdges synchronised Visualiser");
             Special.Items.Add(OpenVisualiserSelectedSelected);            
@@ -455,8 +455,8 @@ namespace m0.UIWpf.Controls
 
             IVertex root = MinusZero.Instance.Root;
 
-            input.AddEdge(root.Get(@"System\Meta\Commands*VisualiserClass"), ((IVertex)((MenuItem)sender).Tag));
-            input.AddEdge(root.Get(@"System\Meta\Commands*SynchronisedVisualiser"), PlatformClass.Vertex);
+            input.AddEdge(root.Get(false, @"System\Meta\Commands*VisualiserClass"), ((IVertex)((MenuItem)sender).Tag));
+            input.AddEdge(root.Get(false, @"System\Meta\Commands*SynchronisedVisualiser"), PlatformClass.Vertex);
 
             BaseCommands.OpenVisualiserSelectedBase(this.Edge, input);
         }
@@ -467,8 +467,8 @@ namespace m0.UIWpf.Controls
 
             IVertex root=MinusZero.Instance.Root;
 
-            input.AddEdge(root.Get(@"System\Meta\Commands*VisualiserClass"), ((IVertex)((MenuItem)sender).Tag));
-            input.AddEdge(root.Get(@"System\Meta\Commands*SynchronisedVisualiser"), PlatformClass.Vertex);
+            input.AddEdge(root.Get(false, @"System\Meta\Commands*VisualiserClass"), ((IVertex)((MenuItem)sender).Tag));
+            input.AddEdge(root.Get(false, @"System\Meta\Commands*SynchronisedVisualiser"), PlatformClass.Vertex);
 
             BaseCommands.OpenVisualiserSelectedSelected(this.Edge, input);
         }

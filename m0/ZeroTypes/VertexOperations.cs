@@ -16,11 +16,11 @@ namespace m0.ZeroTypes
             if (GeneralUtil.CompareStrings(e.Meta.Value, "$EdgeTarget"))
                 return true;
 
-            if (e.Meta.Get("$EdgeTarget:") != null && e.Meta.Get("$IsAggregation:") == null)
-                //||e.Meta.Get("$VertexTarget") != null)
+            if (e.Meta.Get(false, "$EdgeTarget:") != null && e.Meta.Get(false, "$IsAggregation:") == null)
+                //||e.Meta.Get(false, "$VertexTarget") != null)
                 return true;
 
-            if (e.Meta.Get("$$IsLink:") != null)
+            if (e.Meta.Get(false, "$$IsLink:") != null)
                 return true;
 
             return false;
@@ -35,7 +35,7 @@ namespace m0.ZeroTypes
                  //   if (GraphUtil.GetValueAndCompareStrings(e.Meta, meta.Value.ToString()))
                   //      cnt++;
 
-                if (baseEdge.GetAll("\""+meta.Value.ToString() + "\":").Count() > 1)
+                if (baseEdge.GetAll(false, "\""+meta.Value.ToString() + "\":").Count() > 1)
                // if(cnt > 1)
                     return false;
                 else
@@ -54,7 +54,7 @@ namespace m0.ZeroTypes
 
             }
 
-           // if (baseEdge.GetAll("\""+meta.Value.ToString() + "\":\"" + to.Value.ToString()+ "\"").Count() > 1) // {} in the query
+           // if (baseEdge.GetAll(false, "\""+meta.Value.ToString() + "\":\"" + to.Value.ToString()+ "\"").Count() > 1) // {} in the query
             //    return false;
 
             return true;
@@ -66,7 +66,7 @@ namespace m0.ZeroTypes
             {
                // int cnt = baseEdge.OutEdgesRaw.Count;
 
-                if (baseEdge.GetAll("").Count() > 1)
+                if (baseEdge.GetAll(false, "").Count() > 1)
                // if(cnt > 1)
                     return false;
                 else
@@ -78,7 +78,7 @@ namespace m0.ZeroTypes
             //   foreach (IEdge e in baseEdge.OutEdgesRaw)
             //   if (GraphUtil.GetValueAndCompareStrings(e.To, to.Value.ToString()))
             //      cnt2++;
-            IVertex test = baseEdge.GetAll("\"" + to.Value.ToString() + "\"");
+            IVertex test = baseEdge.GetAll(false, "\"" + to.Value.ToString() + "\"");
             if (test!=null && test.Count() > 1)
           // if(cnt2 > 1)
                 return false;
@@ -88,7 +88,7 @@ namespace m0.ZeroTypes
 
         public static bool IsInheritedEdge(IVertex baseVertex, IVertex metaVertex)
         {
-            foreach (IEdge e in baseVertex.GetAll("$Inherits:"))
+            foreach (IEdge e in baseVertex.GetAll(false, "$Inherits:"))
                 if (_IsInheritedEdge(e.To, metaVertex))
                     return true;
 
@@ -97,10 +97,10 @@ namespace m0.ZeroTypes
 
         private static bool _IsInheritedEdge(IVertex baseVertex, IVertex metaVertex)
         {
-            if (baseVertex.Get(metaVertex.Value + ":") != null)
+            if (baseVertex.Get(false, metaVertex.Value + ":") != null)
                 return true;
 
-            foreach (IEdge e in baseVertex.GetAll("$Inherits:"))
+            foreach (IEdge e in baseVertex.GetAll(false, "$Inherits:"))
                 if (_IsInheritedEdge(e.To, metaVertex))
                     return true;
 
@@ -153,7 +153,7 @@ namespace m0.ZeroTypes
 
         public static IVertex GetChildEdges(IVertex metaVertex)
         {
-            IVertex edgeTarget = metaVertex.Get("$EdgeTarget:");
+            IVertex edgeTarget = metaVertex.Get(false, "$EdgeTarget:");
             if (edgeTarget != null && edgeTarget != metaVertex)
                 return GetChildEdges(edgeTarget);
 
@@ -162,11 +162,11 @@ namespace m0.ZeroTypes
             foreach (IEdge e in metaVertex)
             {
                 if (GeneralUtil.CompareStrings(e.Meta, "$VertexTarget"))
-                    ret.AddEdge(null, m0.MinusZero.Instance.Root.Get(@"System\Meta\Base\Vertex\$EdgeTarget"));
+                    ret.AddEdge(null, m0.MinusZero.Instance.Root.Get(false, @"System\Meta\Base\Vertex\$EdgeTarget"));
                 else
                     if ((e.To.Value != null) && ((string)e.To.Value != "") && (((string)e.To.Value)[0] != '$') &&
                     (GeneralUtil.CompareStrings(e.Meta, "$Empty") || ((string)e.Meta.Value)[0] != '$')) // is extanded                    
-                                                                                                        // if (e.To.Get("$VertexTarget:") != null || e.To.Get("$EdgeTarget:") != null)
+                                                                                                        // if (e.To.Get(false, "$VertexTarget:") != null || e.To.Get(false, "$EdgeTarget:") != null)
                     ret.AddEdge(null, e.To);
             }
 
@@ -176,7 +176,7 @@ namespace m0.ZeroTypes
         // as this is one of most important conceptual definitions, the historic version of the method. it does not support meta vertexes that creates edge+vertex
         /*        public static IVertex GetChildEdges(IVertex metaVertex)
                 {                        
-                    IVertex edgeTarget = metaVertex.Get("$EdgeTarget:");
+                    IVertex edgeTarget = metaVertex.Get(false, "$EdgeTarget:");
                     if (edgeTarget != null && edgeTarget!=metaVertex)
                         return GetChildEdges(edgeTarget);
 
@@ -185,11 +185,11 @@ namespace m0.ZeroTypes
                     foreach (IEdge e in metaVertex)
                     {
                         if(GeneralUtil.CompareStrings(e.Meta,"$VertexTarget"))
-                            ret.AddEdge(null,m0.MinusZero.Instance.Root.Get(@"System\Meta\Base\Vertex\$EdgeTarget"));
+                            ret.AddEdge(null,m0.MinusZero.Instance.Root.Get(false, @"System\Meta\Base\Vertex\$EdgeTarget"));
                         else
                             //if (!GeneralUtil.CompareStrings(e.Meta, "$Is") && !GeneralUtil.CompareStrings(e.Meta, "$Inherits")) // to be extanded
                             if (GeneralUtil.CompareStrings(e.Meta, "$Empty")||((string)e.Meta.Value)[0] != '$') // is extanded                    
-                                if (e.To.Get("$VertexTarget:") != null || e.To.Get("$EdgeTarget:") != null)
+                                if (e.To.Get(false, "$VertexTarget:") != null || e.To.Get(false, "$EdgeTarget:") != null)
                                     ret.AddEdge(null,e.To);
                     }
 
@@ -198,7 +198,7 @@ namespace m0.ZeroTypes
 
         public static IVertex DoFilter(IVertex baseVertex, IVertex FilterQuery)
         {
-            return baseVertex.GetAll((string)FilterQuery.Value);
+            return baseVertex.GetAll(false, (string)FilterQuery.Value);
         }
 
         public static bool InheritanceCompare(IVertex baseVertex, string toCompare)
@@ -206,7 +206,7 @@ namespace m0.ZeroTypes
             if (GeneralUtil.CompareStrings(baseVertex.Value, toCompare))
                 return true;
 
-            foreach (IEdge e in baseVertex.GetAll("$Inherits:"))
+            foreach (IEdge e in baseVertex.GetAll(false, "$Inherits:"))
                 if (InheritanceCompare(e.To, toCompare))
                     return true;
 
@@ -215,7 +215,7 @@ namespace m0.ZeroTypes
 
         public static IVertex TestIfNewEdgeValid(IVertex baseVertex, IVertex metaVertex, IVertex toVertex)
         {
-            int MaxCardinality = GraphUtil.GetIntegerValue(metaVertex.Get(@"$MaxCardinality:"));
+            int MaxCardinality = GraphUtil.GetIntegerValue(metaVertex.Get(false, @"$MaxCardinality:"));
 
             if (MaxCardinality != -1 && MaxCardinality != GraphUtil.NullInt)
             {
@@ -235,7 +235,7 @@ namespace m0.ZeroTypes
                 }
             }
 
-            int MaxTargetCardinality = GraphUtil.GetIntegerValue(metaVertex.Get(@"$MaxTargetCardinality:"));
+            int MaxTargetCardinality = GraphUtil.GetIntegerValue(metaVertex.Get(false, @"$MaxTargetCardinality:"));
 
             if (MaxTargetCardinality != -1 && MaxTargetCardinality != GraphUtil.NullInt && toVertex!=null)
             {
@@ -260,14 +260,14 @@ namespace m0.ZeroTypes
 
         public static IEdge AddEdgeOrVertexByMeta(IVertex baseVertex, IVertex metaVertex, IVertex toVertex, Point position, bool? CreateEdgeOnly, bool? ForceShowEditForm)
         {
-            if (metaVertex.Get(@"$VertexTarget:") != null
+            if (metaVertex.Get(false, @"$VertexTarget:") != null
                 && (CreateEdgeOnly.HasValue == false||CreateEdgeOnly==false))
             {                
                 IVertex n=VertexOperations.AddInstance(baseVertex,metaVertex);
 
                 IEdge e = new EasyEdge(baseVertex, metaVertex, n);
 
-                n.AddEdge(MinusZero.Instance.Root.Get(@"System\Meta\Base\Vertex\$EdgeTarget"), toVertex);
+                n.AddEdge(MinusZero.Instance.Root.Get(false, @"System\Meta\Base\Vertex\$EdgeTarget"), toVertex);
 
                 if(ForceShowEditForm.HasValue==false || ForceShowEditForm==true)
                     MinusZero.Instance.DefaultUserInteraction.EditDialog(e.To, position);
@@ -290,24 +290,24 @@ namespace m0.ZeroTypes
                 nv = MinusZero.Instance.CreateTempVertex();
 
             if (MinusZero.Instance.Root.Store.DetachState == DetachStateEnum.Attached)
-                nv.AddEdge(MinusZero.Instance.Root.Get(@"System\Meta\Base\Vertex\$Is"), metaVertex);
+                nv.AddEdge(MinusZero.Instance.Root.Get(false, @"System\Meta\Base\Vertex\$Is"), metaVertex);
 
             ///
 
-            if (metaVertex.Get("$IsAggregation:") != null)
-                nv.AddVertex(MinusZero.Instance.Root.Get(@"System\Meta\Base\Vertex\$IsAggregation"), MinusZero.Instance.Root.Get(@"System\Meta\Base\$Empty"));
+            if (metaVertex.Get(false, "$IsAggregation:") != null)
+                nv.AddVertex(MinusZero.Instance.Root.Get(false, @"System\Meta\Base\Vertex\$IsAggregation"), MinusZero.Instance.Root.Get(false, @"System\Meta\Base\$Empty"));
 
             ///
 
-            //IVertex children = metaVertex.GetAll("{$MinCardinality:1}"); 
+            //IVertex children = metaVertex.GetAll(false, "{$MinCardinality:1}"); 
 
             IVertex children = metaVertex; // can use VertexOperations.GetChildEdges, but $DefaultValue: should be OK
 
 
             foreach (IEdge child in children)
             {                
-                if(child.To.Get("$DefaultValue:")!=null)
-                    nv.AddEdge(child.To, child.To.Get("$DefaultValue:"));
+                if(child.To.Get(false, "$DefaultValue:")!=null)
+                    nv.AddEdge(child.To, child.To.Get(false, "$DefaultValue:"));
          //       else
            //         nv.AddVertex(child.To, null);
             }
@@ -337,19 +337,19 @@ namespace m0.ZeroTypes
         public static IVertex AddInstanceByEdgeVertex(IVertex baseVertex, IVertex edgeVertex) // by EdgeTarget or VertexTarget or by iself
         {
             // $EdgeTarget
-            IVertex edgeVertexEdgeTarget = edgeVertex.Get("$EdgeTarget:");
+            IVertex edgeVertexEdgeTarget = edgeVertex.Get(false, "$EdgeTarget:");
 
             if (edgeVertexEdgeTarget != null)
                 return AddInstance(baseVertex, edgeVertexEdgeTarget, edgeVertex);
 
             // $VertexTarget
-            IVertex edgeVertexVertexTarget = edgeVertex.Get("$VertexTarget:");
+            IVertex edgeVertexVertexTarget = edgeVertex.Get(false, "$VertexTarget:");
 
             if (edgeVertexVertexTarget != null)
             {
                 IVertex ret = AddInstance(baseVertex, edgeVertex, edgeVertex);
 
-                //   GraphUtil.CreateOrReplaceEdge(ret, MinusZero.Instance.Root.Get(@"System\Meta\Base\Vertex\$EdgeTarget"), edgeVertexVertexTarget);
+                //   GraphUtil.CreateOrReplaceEdge(ret, MinusZero.Instance.Root.Get(false, @"System\Meta\Base\Vertex\$EdgeTarget"), edgeVertexVertexTarget);
                 //
                 // ???? this is not working like this
 

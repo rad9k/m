@@ -80,29 +80,29 @@ namespace m0.Store.FileSystem
 
                 CanFireChangeEvent = false;                
 
-                IVertex fsm = MinusZero.Instance.Root.Get(@"System\Meta\Store\FileSystem");
+                IVertex fsm = MinusZero.Instance.Root.Get(false, @"System\Meta\Store\FileSystem");
 
-                IVertex fsmd = fsm.Get(@"Directory");
+                IVertex fsmd = fsm.Get(false, @"Directory");
 
-                AddMeta(fsmd.Get("Filename"), DI.Name);
+                AddMeta(fsmd.Get(false, "Filename"), DI.Name);
 
                 string extension = DI.Extension;
 
                 if (extension.Length > 1)
                     extension = extension.Substring(1);
 
-                AddMeta(fsmd.Get("Extension"), extension);
+                AddMeta(fsmd.Get(false, "Extension"), extension);
                 
-                AddMeta(fsmd.Get("FullFilename"), DI.FullName);
-                AddMeta(fsmd.Get("FileAttribute"), DI.Attributes.ToString());
-                AddMeta(fsmd.Get("CreationDateTime"), DI.CreationTime.ToString());
-                AddMeta(fsmd.Get("UpdateDateTime"), DI.LastWriteTime.ToString());
-                AddMeta(fsmd.Get("ReadDateTime"), DI.LastAccessTime.ToString());
+                AddMeta(fsmd.Get(false, "FullFilename"), DI.FullName);
+                AddMeta(fsmd.Get(false, "FileAttribute"), DI.Attributes.ToString());
+                AddMeta(fsmd.Get(false, "CreationDateTime"), DI.CreationTime.ToString());
+                AddMeta(fsmd.Get(false, "UpdateDateTime"), DI.LastWriteTime.ToString());
+                AddMeta(fsmd.Get(false, "ReadDateTime"), DI.LastAccessTime.ToString());
                 
 
-                IVertex FileMetaVertex=fsm.Get("File");
+                IVertex FileMetaVertex=fsm.Get(false, "File");
 
-                IVertex DirectoryMetaVertex=fsm.Get("Directory");
+                IVertex DirectoryMetaVertex=fsm.Get(false, "Directory");
 
                 try{
                     foreach (FileSystemInfo fsi in DI.EnumerateFileSystemInfos())                
@@ -139,7 +139,7 @@ namespace m0.Store.FileSystem
 
             string name = val.ToString();
 
-            while (this.Get("File:" + name) != null || this.Get("Directory:" + name) != null)
+            while (this.Get(false, "File:" + name) != null || this.Get(false, "Directory:" + name) != null)
                 name=FileSystemUtil.addNew(name);
 
             if (GraphUtil.GetValueAndCompareStrings(metaVertex,"Directory"))

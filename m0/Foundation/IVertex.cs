@@ -64,15 +64,17 @@ namespace m0.Foundation
         
         IEdge AddEdge(IVertex metaVertex, IVertex destVertex);
 
-        void DeleteEdge(IEdge edge);
-
-
-        IVertex Execute(IVertex inputVertex, IVertex expression);
+        void DeleteEdge(IEdge edge);        
 
 
         IVertex Get(bool metaMode, string query);
 
         IVertex GetAll(bool metaMode, string query);
+
+        IVertex Get(IVertex expression);
+
+        IVertex GetAll(IVertex expression);
+
 
         IEdge this[string meta] { get; } // for databinding
                         

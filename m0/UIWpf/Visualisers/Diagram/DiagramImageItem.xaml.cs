@@ -23,12 +23,12 @@ namespace m0.UIWpf.Visualisers.Diagram
         {
             base.VisualiserUpdate();
             
-            BitmapImage b = new BitmapImage(new Uri("images\\"+Vertex.Get("Filename:"), UriKind.Relative));
+            BitmapImage b = new BitmapImage(new Uri("images\\"+Vertex.Get(false, "Filename:"), UriKind.Relative));
             int q = b.PixelHeight; // will not load without this
             Image.Source = b;
 
-            if (Vertex.Get(@"BaseEdge:\To:").Value != null)
-                this.Title.Text = Vertex.Get(@"BaseEdge:\To:").Value.ToString();
+            if (Vertex.Get(false, @"BaseEdge:\To:").Value != null)
+                this.Title.Text = Vertex.Get(false, @"BaseEdge:\To:").Value.ToString();
             else
                 this.Title.Text = "Ø";
         }

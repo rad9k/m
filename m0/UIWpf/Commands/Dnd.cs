@@ -44,11 +44,11 @@ namespace m0.UIWpf.Commands
 
                 if (ee != null)
                 {
-                    GraphUtil.CreateOrReplaceEdge(baseEdge.Get("To:"), r.Get(@"System\Meta\ZeroTypes\Edge\Meta"), ee.To.Get("Meta:"));
-                    GraphUtil.CreateOrReplaceEdge(baseEdge.Get("To:"), r.Get(@"System\Meta\ZeroTypes\Edge\To"), ee.To.Get("To:"));                    
+                    GraphUtil.CreateOrReplaceEdge(baseEdge.Get(false, "To:"), r.Get(false, @"System\Meta\ZeroTypes\Edge\Meta"), ee.To.Get(false, "Meta:"));
+                    GraphUtil.CreateOrReplaceEdge(baseEdge.Get(false, "To:"), r.Get(false, @"System\Meta\ZeroTypes\Edge\To"), ee.To.Get(false, "To:"));                    
 
-                    //GraphUtil.ReplaceEdge(baseEdge.Get("To:"), "Meta", ee.To.Get("Meta:"));
-                    //GraphUtil.ReplaceEdge(baseEdge.Get("To:"), "To", ee.To.Get("To:"));
+                    //GraphUtil.ReplaceEdge(baseEdge.Get(false, "To:"), "Meta", ee.To.Get(false, "Meta:"));
+                    //GraphUtil.ReplaceEdge(baseEdge.Get(false, "To:"), "To", ee.To.Get(false, "To:"));
                 }
 
                 if (sender is IHasSelectableEdges)
@@ -77,9 +77,9 @@ namespace m0.UIWpf.Commands
 
                 if (ee != null)
                 {
-                    IVertex toMeta = r.Get(@"System\Meta\ZeroTypes\Edge\To");
-                    GraphUtil.CreateOrReplaceEdge(baseEdge.Get("From:"), baseEdge.Get("Meta:"), ee.To.Get("To:"));
-                    GraphUtil.CreateOrReplaceEdge(baseEdge, toMeta, ee.To.Get("To:")); // this is needed for some update scenarios
+                    IVertex toMeta = r.Get(false, @"System\Meta\ZeroTypes\Edge\To");
+                    GraphUtil.CreateOrReplaceEdge(baseEdge.Get(false, "From:"), baseEdge.Get(false, "Meta:"), ee.To.Get(false, "To:"));
+                    GraphUtil.CreateOrReplaceEdge(baseEdge, toMeta, ee.To.Get(false, "To:")); // this is needed for some update scenarios
                 }
              
 
@@ -103,13 +103,13 @@ namespace m0.UIWpf.Commands
             {
                 IVertex dndVertex = e.Data.GetData("Vertex") as IVertex;
 
-                IVertex maxCardinality = metaVertex.Get("$MaxCardinality:");
+                IVertex maxCardinality = metaVertex.Get(false, "$MaxCardinality:");
 
                 if (maxCardinality != null && (GraphUtil.GetIntegerValue(maxCardinality) == -1 || GraphUtil.GetIntegerValue(maxCardinality) > 1)) // ADD
                     foreach (IEdge ee in dndVertex)
-                        baseVertex.AddEdge(metaVertex, ee.To.Get("To:"));
+                        baseVertex.AddEdge(metaVertex, ee.To.Get(false, "To:"));
                 else // REPLACE
-                    GraphUtil.ReplaceEdge(baseVertex, metaVertex, dndVertex.First().To.Get("To:"));
+                    GraphUtil.ReplaceEdge(baseVertex, metaVertex, dndVertex.First().To.Get(false, "To:"));
                     
 
                 if (sender is IHasSelectableEdges)
@@ -130,7 +130,7 @@ namespace m0.UIWpf.Commands
 
             bool doCopy = false;
 
-            if(GeneralUtil.CompareStrings(MinusZero.Instance.Root.Get(@"User\CurrentUser:\Settings:\CopyOnDragAndDrop:").Value, "True"))
+            if(GeneralUtil.CompareStrings(MinusZero.Instance.Root.Get(false, @"User\CurrentUser:\Settings:\CopyOnDragAndDrop:").Value, "True"))
                 doCopy=true;
 
 
@@ -140,13 +140,13 @@ namespace m0.UIWpf.Commands
 
                 foreach (IEdge ee in dndVertex)
                     if (doCopy)
-                        baseVertex.AddEdge(ee.To.Get("Meta:"), ee.To.Get("To:"));
+                        baseVertex.AddEdge(ee.To.Get(false, "Meta:"), ee.To.Get(false, "To:"));
                     else
                     {
-                        if (ee.To.Get("To:") != baseVertex) // do not want to cut and paste to itself
+                        if (ee.To.Get(false, "To:") != baseVertex) // do not want to cut and paste to itself
                         {
-                            GraphUtil.DeleteEdge(ee.To.Get("From:"), ee.To.Get("Meta:"), ee.To.Get("To:"));
-                            baseVertex.AddEdge(ee.To.Get("Meta:"), ee.To.Get("To:"));
+                            GraphUtil.DeleteEdge(ee.To.Get(false, "From:"), ee.To.Get(false, "Meta:"), ee.To.Get(false, "To:"));
+                            baseVertex.AddEdge(ee.To.Get(false, "Meta:"), ee.To.Get(false, "To:"));
                         }
                     }                        
 

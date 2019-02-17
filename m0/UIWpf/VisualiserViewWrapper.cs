@@ -31,43 +31,43 @@ namespace m0.UIWpf
 
         public static void BaseEdgeChangedCallback(DependencyObject d, DependencyPropertyChangedEventArgs _e)
         {
-            //int counter = (int)MinusZero.Instance.Root.Get(@"TEST\Counter:").Value;
+            //int counter = (int)MinusZero.Instance.Root.Get(false, @"TEST\Counter:").Value;
             //counter++;
-            //MinusZero.Instance.Root.Get(@"TEST\Counter:").Value = counter;
+            //MinusZero.Instance.Root.Get(false, @"TEST\Counter:").Value = counter;
 
             VisualiserViewWrapper _this = (VisualiserViewWrapper)d;
             IEdge e = (IEdge)_e.NewValue;
 
             IPlatformClass pc;
 
-            IVertex defvis = e.Meta.Get(@"$DefaultViewVisualiser:");
+            IVertex defvis = e.Meta.Get(false, @"$DefaultViewVisualiser:");
 
             if (defvis == null)
-                defvis = e.Meta.Get(@"$EdgeTarget:\$DefaultViewVisualiser:");
+                defvis = e.Meta.Get(false, @"$EdgeTarget:\$DefaultViewVisualiser:");
 
             if (defvis == null)
-                defvis = e.Meta.Get(@"$VertexTarget:\$DefaultViewVisualiser:");
+                defvis = e.Meta.Get(false, @"$VertexTarget:\$DefaultViewVisualiser:");
 
             if (defvis == null)
-                defvis = e.Meta.Get(@"$EdgeTarget:\$Is:\$DefaultEditVisualiser:");
+                defvis = e.Meta.Get(false, @"$EdgeTarget:\$Is:\$DefaultEditVisualiser:");
 
             if (defvis == null)
-                defvis = e.Meta.Get(@"$VertexTarget:\$Is:\$DefaultEditVisualiser:");
+                defvis = e.Meta.Get(false, @"$VertexTarget:\$Is:\$DefaultEditVisualiser:");
 
             if (defvis == null && e.To != null)
-                defvis = e.To.Get(@"$Is:\$DefaultViewVisualiser:");
+                defvis = e.To.Get(false, @"$Is:\$DefaultViewVisualiser:");
 
             if (defvis != null)
             {
                 pc = (IPlatformClass)PlatformClass.CreatePlatformObject(defvis);
 
-                if (defvis.Get("$Inherits:HasBaseEdge") != null)
-                    Edge.ReplaceEdgeEdges(pc.Vertex.Get("BaseEdge:"), e);
+                if (defvis.Get(false, "$Inherits:HasBaseEdge") != null)
+                    Edge.ReplaceEdgeEdges(pc.Vertex.Get(false, "BaseEdge:"), e);
             }
             else
             {
                 pc = new StringViewVisualiser();
-                Edge.ReplaceEdgeEdges(pc.Vertex.Get("BaseEdge:"), e);
+                Edge.ReplaceEdgeEdges(pc.Vertex.Get(false, "BaseEdge:"), e);
             }
             
             _this.Content = pc;

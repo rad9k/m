@@ -39,13 +39,13 @@ namespace m0.Util
             }
             else
             {
-                IVertex smz = MinusZero.Instance.Root.Get(@"System\Meta\ZeroTypes");
+                IVertex smz = MinusZero.Instance.Root.Get(false, @"System\Meta\ZeroTypes");
 
-                _exception = smz.Get("Exception");
-                _where = smz.Get(@"Exception\Where");
-                _type = smz.Get(@"Exception\Type");
-                _what = smz.Get(@"Exception\What");
-                _error = smz.Get(@"ExceptionTypeEnum\Error");
+                _exception = smz.Get(false, "Exception");
+                _where = smz.Get(false, @"Exception\Where");
+                _type = smz.Get(false, @"Exception\Type");
+                _what = smz.Get(false, @"Exception\What");
+                _error = smz.Get(false, @"ExceptionTypeEnum\Error");
             }
 
             IVertex error = VertexOperations.AddInstance(null, _exception);

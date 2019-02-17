@@ -15,7 +15,7 @@ namespace m0.Store.FileSystem
 
             pathSymbolVertex.Value = "\\";
 
-            AddEdge(MinusZero.Instance.Root.Get(@"System\Meta\Store\FileSystem\Drive\PathSeparator"), pathSymbolVertex);
+            AddEdge(MinusZero.Instance.Root.Get(false, @"System\Meta\Store\FileSystem\Drive\PathSeparator"), pathSymbolVertex);
             
         }
     }

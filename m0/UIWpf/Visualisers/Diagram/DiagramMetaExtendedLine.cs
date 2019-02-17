@@ -62,15 +62,15 @@ namespace m0.UIWpf.Visualisers.Diagram
             Diagram.TheCanvas.Children.Add(LineEndings);
             Diagram.TheCanvas.Children.Add(Line);
 
-            if(Vertex.Get(@"BaseEdge:\Meta:")== MinusZero.Instance.Empty)
+            if(Vertex.Get(false, @"BaseEdge:\Meta:")== MinusZero.Instance.Empty)
                 return;
 
            /* foreach (DiagramItemBase i in Diagram.Items)
-                if (i.Vertex.Get(@"BaseEdge:\To:") == Vertex.Get(@"BaseEdge:\Meta:"))
+                if (i.Vertex.Get(false, @"BaseEdge:\To:") == Vertex.Get(false, @"BaseEdge:\Meta:"))
                     MetaDiagramItem = i;*/
 
-            if (Diagram.GetItemsDictionary().ContainsKey(Vertex.Get(@"BaseEdge:\Meta:")))
-                MetaDiagramItem = Diagram.GetItemsDictionary()[Vertex.Get(@"BaseEdge:\Meta:")].FirstOrDefault();
+            if (Diagram.GetItemsDictionary().ContainsKey(Vertex.Get(false, @"BaseEdge:\Meta:")))
+                MetaDiagramItem = Diagram.GetItemsDictionary()[Vertex.Get(false, @"BaseEdge:\Meta:")].FirstOrDefault();
 
             if (MetaDiagramItem != null)
             {

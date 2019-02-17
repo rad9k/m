@@ -38,7 +38,7 @@ namespace m0.UIWpf.Dialog
 
             this.baseVertex = baseVertex;
 
-            GraphUtil.ReplaceEdge(this.Queries.Vertex.Get("BaseEdge:"), "To", z.Root.Get(@"User\CurrentUser:\Queries:"));
+            GraphUtil.ReplaceEdge(this.Queries.Vertex.Get(false, "BaseEdge:"), "To", z.Root.Get(false, @"User\CurrentUser:\Queries:"));
 
             PlatformClass.RegisterVertexChangeListeners(Queries.Vertex, QueriesVertexChange, new string[] { "BaseEdge", "SelectedEdges" });
 
@@ -58,15 +58,15 @@ namespace m0.UIWpf.Dialog
 
             MinusZero z = MinusZero.Instance;
 
-            GraphUtil.ReplaceEdge(this.Resoult.Vertex.Get("BaseEdge:"),"To",z.Empty);            
+            GraphUtil.ReplaceEdge(this.Resoult.Vertex.Get(false, "BaseEdge:"),"To",z.Empty);            
                        
-            IVertex res = baseVertex.GetAll(Content.Text);
+            IVertex res = baseVertex.GetAll(false, Content.Text);
 
             if (res != null)
             {
                 this.Resoult.UnselectAllSelectedEdges();
 
-                GraphUtil.ReplaceEdge(this.Resoult.Vertex.Get("BaseEdge:"), "To", res);                
+                GraphUtil.ReplaceEdge(this.Resoult.Vertex.Get(false, "BaseEdge:"), "To", res);                
             }
             
         }
@@ -82,13 +82,13 @@ namespace m0.UIWpf.Dialog
 
             if (Content.Text != "")
             {
-                z.Root.Get(@"User\CurrentUser:\Queries").AddVertex(null, Content.Text);
+                z.Root.Get(false, @"User\CurrentUser:\Queries").AddVertex(null, Content.Text);
             }
         }
 
         private void QueriesVertexChange(object sender, VertexChangeEventArgs e){
-            if(sender==Queries.Vertex.Get(@"SelectedEdges:\")&&e.Type==VertexChangeType.EdgeAdded&&GeneralUtil.CompareStrings(e.Edge.Meta.Value,"To"))
-                Content.Text=Queries.Vertex.Get(@"SelectedEdges:\\To:").Value.ToString();
+            if(sender==Queries.Vertex.Get(false, @"SelectedEdges:\")&&e.Type==VertexChangeType.EdgeAdded&&GeneralUtil.CompareStrings(e.Edge.Meta.Value,"To"))
+                Content.Text=Queries.Vertex.Get(false, @"SelectedEdges:\\To:").Value.ToString();
         }
     }
 }

@@ -22,9 +22,9 @@ namespace m0.ZeroTypes
 
             IVertex r = MinusZero.Instance.Root;
 
-            edge.AddEdge(r.Get(@"System\Meta\ZeroTypes\Edge\From"), EdgeVertex.Get("From:"));
-            edge.AddEdge(r.Get(@"System\Meta\ZeroTypes\Edge\Meta"), EdgeVertex.Get("Meta:"));
-            edge.AddEdge(r.Get(@"System\Meta\ZeroTypes\Edge\To"), EdgeVertex.Get("To:"));   
+            edge.AddEdge(r.Get(false, @"System\Meta\ZeroTypes\Edge\From"), EdgeVertex.Get(false, "From:"));
+            edge.AddEdge(r.Get(false, @"System\Meta\ZeroTypes\Edge\Meta"), EdgeVertex.Get(false, "Meta:"));
+            edge.AddEdge(r.Get(false, @"System\Meta\ZeroTypes\Edge\To"), EdgeVertex.Get(false, "To:"));   
         }
 
         static public void CreateEdgeAndCreateOrReplaceEdgeByMeta(IVertex baseVertex, IVertex metaVertex, IEdge Edge)
@@ -44,20 +44,20 @@ namespace m0.ZeroTypes
 
             IVertex r = MinusZero.Instance.Root;
 
-            edge.AddEdge(r.Get(@"System\Meta\ZeroTypes\Edge\From"), Edge.From);
-            edge.AddEdge(r.Get(@"System\Meta\ZeroTypes\Edge\Meta"), Edge.Meta);
-            edge.AddEdge(r.Get(@"System\Meta\ZeroTypes\Edge\To"), Edge.To);
+            edge.AddEdge(r.Get(false, @"System\Meta\ZeroTypes\Edge\From"), Edge.From);
+            edge.AddEdge(r.Get(false, @"System\Meta\ZeroTypes\Edge\Meta"), Edge.Meta);
+            edge.AddEdge(r.Get(false, @"System\Meta\ZeroTypes\Edge\To"), Edge.To);
         }
 
         static public IVertex AddEdgeByToVertex(IVertex baseVertex, IVertex toVertex)
         {
             IVertex r = MinusZero.Instance.Root;
 
-            IVertex ev = baseVertex.AddVertex(r.Get(@"System\Meta\ZeroTypes\Edge"), null);
+            IVertex ev = baseVertex.AddVertex(r.Get(false, @"System\Meta\ZeroTypes\Edge"), null);
 
-            ev.AddVertex(r.Get(@"System\Meta\ZeroTypes\Edge\From"), null);
-            ev.AddEdge(r.Get(@"System\Meta\ZeroTypes\Edge\Meta"),MinusZero.Instance.Empty);
-            ev.AddEdge(r.Get(@"System\Meta\ZeroTypes\Edge\To"), toVertex);                        
+            ev.AddVertex(r.Get(false, @"System\Meta\ZeroTypes\Edge\From"), null);
+            ev.AddEdge(r.Get(false, @"System\Meta\ZeroTypes\Edge\Meta"),MinusZero.Instance.Empty);
+            ev.AddEdge(r.Get(false, @"System\Meta\ZeroTypes\Edge\To"), toVertex);                        
 
             return ev;
         }
@@ -68,9 +68,9 @@ namespace m0.ZeroTypes
 
             IVertex ev = baseVertex.AddVertex(MetaEdge, null);
 
-            ev.AddVertex(r.Get(@"System\Meta\ZeroTypes\Edge\From"), null);
-            ev.AddEdge(r.Get(@"System\Meta\ZeroTypes\Edge\Meta"), MinusZero.Instance.Empty);
-            ev.AddEdge(r.Get(@"System\Meta\ZeroTypes\Edge\To"), toVertex);
+            ev.AddVertex(r.Get(false, @"System\Meta\ZeroTypes\Edge\From"), null);
+            ev.AddEdge(r.Get(false, @"System\Meta\ZeroTypes\Edge\Meta"), MinusZero.Instance.Empty);
+            ev.AddEdge(r.Get(false, @"System\Meta\ZeroTypes\Edge\To"), toVertex);
 
             return ev;
         }
@@ -79,11 +79,11 @@ namespace m0.ZeroTypes
         {
             IVertex r = MinusZero.Instance.Root;
 
-            IVertex ev = baseVertex.AddVertex(r.Get(@"System\Meta\ZeroTypes\Edge"), null);
+            IVertex ev = baseVertex.AddVertex(r.Get(false, @"System\Meta\ZeroTypes\Edge"), null);
 
-            ev.AddEdge(r.Get(@"System\Meta\ZeroTypes\Edge\From"), fromEdge);
-            ev.AddEdge(r.Get(@"System\Meta\ZeroTypes\Edge\Meta"), metaEdge);
-            ev.AddEdge(r.Get(@"System\Meta\ZeroTypes\Edge\To"), toVertex);
+            ev.AddEdge(r.Get(false, @"System\Meta\ZeroTypes\Edge\From"), fromEdge);
+            ev.AddEdge(r.Get(false, @"System\Meta\ZeroTypes\Edge\Meta"), metaEdge);
+            ev.AddEdge(r.Get(false, @"System\Meta\ZeroTypes\Edge\To"), toVertex);
 
             return ev;
         }
@@ -92,7 +92,7 @@ namespace m0.ZeroTypes
         {
             IVertex r=MinusZero.Instance.Root;
 
-            IVertex ev = baseVertex.AddVertex(r.Get(@"System\Meta\ZeroTypes\Edge"), null);
+            IVertex ev = baseVertex.AddVertex(r.Get(false, @"System\Meta\ZeroTypes\Edge"), null);
 
             AddEdgeEdges(ev, edge);
 
@@ -103,7 +103,7 @@ namespace m0.ZeroTypes
         {
             IVertex r = MinusZero.Instance.Root;
 
-            baseVertex.AddEdge(r.Get(@"System\Meta\ZeroTypes\Edge"), edge);          
+            baseVertex.AddEdge(r.Get(false, @"System\Meta\ZeroTypes\Edge"), edge);          
         }
 
         static public IVertex CreateTempEdge(IEdge edge)
@@ -131,44 +131,44 @@ namespace m0.ZeroTypes
         {
             IVertex r = MinusZero.Instance.Root;
 
-            baseVertex.AddEdge(r.Get(@"System\Meta\ZeroTypes\Edge\From"), edge.From);
-           baseVertex.AddEdge(r.Get(@"System\Meta\ZeroTypes\Edge\Meta"), edge.Meta);
-            baseVertex.AddEdge(r.Get(@"System\Meta\ZeroTypes\Edge\To"), edge.To);
+            baseVertex.AddEdge(r.Get(false, @"System\Meta\ZeroTypes\Edge\From"), edge.From);
+           baseVertex.AddEdge(r.Get(false, @"System\Meta\ZeroTypes\Edge\Meta"), edge.Meta);
+            baseVertex.AddEdge(r.Get(false, @"System\Meta\ZeroTypes\Edge\To"), edge.To);
         }
 
         static public void AddEdgeEdges(IVertex baseVertex, IVertex edgeFrom, IVertex edgeMeta, IVertex edgeTo)
         {
             IVertex r = MinusZero.Instance.Root;
 
-            baseVertex.AddVertex(r.Get(@"System\Meta\ZeroTypes\Edge\From"), edgeFrom);
-            baseVertex.AddEdge(r.Get(@"System\Meta\ZeroTypes\Edge\Meta"), edgeMeta);
-            baseVertex.AddEdge(r.Get(@"System\Meta\ZeroTypes\Edge\To"), edgeTo);
+            baseVertex.AddVertex(r.Get(false, @"System\Meta\ZeroTypes\Edge\From"), edgeFrom);
+            baseVertex.AddEdge(r.Get(false, @"System\Meta\ZeroTypes\Edge\Meta"), edgeMeta);
+            baseVertex.AddEdge(r.Get(false, @"System\Meta\ZeroTypes\Edge\To"), edgeTo);
         }
 
         static public void AddEdgeEdgesOnlyMetaTo(IVertex baseVertex, IVertex edgeMeta, IVertex edgeTo)
         {
             IVertex r = MinusZero.Instance.Root;
 
-            baseVertex.AddVertex(r.Get(@"System\Meta\ZeroTypes\Edge\From"), null);
-            baseVertex.AddEdge(r.Get(@"System\Meta\ZeroTypes\Edge\Meta"), edgeMeta);
-            baseVertex.AddEdge(r.Get(@"System\Meta\ZeroTypes\Edge\To"), edgeTo);
+            baseVertex.AddVertex(r.Get(false, @"System\Meta\ZeroTypes\Edge\From"), null);
+            baseVertex.AddEdge(r.Get(false, @"System\Meta\ZeroTypes\Edge\Meta"), edgeMeta);
+            baseVertex.AddEdge(r.Get(false, @"System\Meta\ZeroTypes\Edge\To"), edgeTo);
         }
 
         static public void AddEdgeEdgesOnlyTo(IVertex baseVertex, IVertex toVertex)
         {
             IVertex r = MinusZero.Instance.Root;
 
-            baseVertex.AddVertex(r.Get(@"System\Meta\ZeroTypes\Edge\From"), null);
-            baseVertex.AddEdge(r.Get(@"System\Meta\ZeroTypes\Edge\Meta"), MinusZero.Instance.Empty);
-            baseVertex.AddEdge(r.Get(@"System\Meta\ZeroTypes\Edge\To"), toVertex);
+            baseVertex.AddVertex(r.Get(false, @"System\Meta\ZeroTypes\Edge\From"), null);
+            baseVertex.AddEdge(r.Get(false, @"System\Meta\ZeroTypes\Edge\Meta"), MinusZero.Instance.Empty);
+            baseVertex.AddEdge(r.Get(false, @"System\Meta\ZeroTypes\Edge\To"), toVertex);
         }
 
         static public IEdge FindEdgeByEdge(IVertex baseVertex, IEdge edge)
         {
             foreach (IEdge e in baseVertex)
-                if (e.To.Get("From:") == edge.From
-                       && e.To.Get("Meta:") == edge.Meta
-                       && e.To.Get("To:") == edge.To
+                if (e.To.Get(false, "From:") == edge.From
+                       && e.To.Get(false, "Meta:") == edge.Meta
+                       && e.To.Get(false, "To:") == edge.To
                        )
                     return e;
 
@@ -178,7 +178,7 @@ namespace m0.ZeroTypes
         static public IEdge FindEdgeByEdgeOnlyToVertex(IVertex baseVertex, IEdge edge)
         {
             foreach (IEdge e in baseVertex)
-                if (e.To.Get("To:") == edge.To)
+                if (e.To.Get(false, "To:") == edge.To)
                     return e;
 
             return null;
@@ -203,7 +203,7 @@ namespace m0.ZeroTypes
         static public IEdge FindEdgeByEdgeTo(IVertex baseVertex, IVertex to)
         {
             foreach (IEdge e in baseVertex)
-                if (e.To.Get("To:") == to)
+                if (e.To.Get(false, "To:") == to)
                     return e;
 
             return null;

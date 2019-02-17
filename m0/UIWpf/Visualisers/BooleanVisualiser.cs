@@ -31,9 +31,9 @@ namespace m0.UIWpf.Visualisers
                 
                 Vertex.Value="BooleanVisualiser" + this.GetHashCode();
 
-                ClassVertex.AddIsClassAndAllAttributesAndAssociations(Vertex, mz.Root.Get(@"System\Meta\Visualiser\Boolean"));
+                ClassVertex.AddIsClassAndAllAttributesAndAssociations(Vertex, mz.Root.Get(false, @"System\Meta\Visualiser\Boolean"));
 
-                ClassVertex.AddIsClassAndAllAttributesAndAssociations(Vertex.Get("BaseEdge:"), mz.Root.Get(@"System\Meta\ZeroTypes\Edge"));
+                ClassVertex.AddIsClassAndAllAttributesAndAssociations(Vertex.Get(false, "BaseEdge:"), mz.Root.Get(false, @"System\Meta\ZeroTypes\Edge"));
 
                 this.Loaded += new RoutedEventHandler(OnLoad);
 
@@ -60,32 +60,32 @@ namespace m0.UIWpf.Visualisers
             {
                 IVertex r = MinusZero.Instance.Root;
 
-                IVertex from = Vertex.Get(@"BaseEdge:\From:");
-                IVertex meta = Vertex.Get(@"BaseEdge:\Meta:");
-                IVertex toMeta = r.Get(@"System\Meta\ZeroTypes\Edge\To");
+                IVertex from = Vertex.Get(false, @"BaseEdge:\From:");
+                IVertex meta = Vertex.Get(false, @"BaseEdge:\Meta:");
+                IVertex toMeta = r.Get(false, @"System\Meta\ZeroTypes\Edge\To");
 
                 if (from != null && meta != null)
                 {
-                    //GraphUtil.ReplaceEdge(Vertex.Get("BaseEdge:"), "To", GraphUtil.SetVertexValue(from, meta, "True")); // NOT
-                    //GraphUtil.SetVertexValue(Vertex.Get("BaseEdge:"), toMeta, GraphUtil.SetVertexValue(from, meta, "True")); // NOT!!!!
+                    //GraphUtil.ReplaceEdge(Vertex.Get(false, "BaseEdge:"), "To", GraphUtil.SetVertexValue(from, meta, "True")); // NOT
+                    //GraphUtil.SetVertexValue(Vertex.Get(false, "BaseEdge:"), toMeta, GraphUtil.SetVertexValue(from, meta, "True")); // NOT!!!!
 
-                    GraphUtil.CreateOrReplaceEdge(Vertex.Get("BaseEdge:"), toMeta, GraphUtil.SetVertexValue(from, meta, "True"));
+                    GraphUtil.CreateOrReplaceEdge(Vertex.Get(false, "BaseEdge:"), toMeta, GraphUtil.SetVertexValue(from, meta, "True"));
 
                     IsNull = false;
                 }
             }
 
-            if (Vertex.Get(@"BaseEdge:\To:") != null)
+            if (Vertex.Get(false, @"BaseEdge:\To:") != null)
             {
                 if (this.IsChecked == true)
-                    Vertex.Get(@"BaseEdge:\To:").Value = "True";
+                    Vertex.Get(false, @"BaseEdge:\To:").Value = "True";
                 else
-                    Vertex.Get(@"BaseEdge:\To:").Value = "False";
+                    Vertex.Get(false, @"BaseEdge:\To:").Value = "False";
             }
         }
 
         private void UpdateBaseEdge(){
-            IVertex bv = Vertex.Get(@"BaseEdge:\To:");
+            IVertex bv = Vertex.Get(false, @"BaseEdge:\To:");
 
             if (bv != null && bv.Value != null)
             {
@@ -103,9 +103,9 @@ namespace m0.UIWpf.Visualisers
         protected void VertexChange(object sender, VertexChangeEventArgs e)
         {
             if ((sender == Vertex) && (e.Type == VertexChangeType.EdgeAdded) && (GeneralUtil.CompareStrings(e.Edge.Meta.Value, "BaseEdge"))
-                 || (sender == Vertex.Get("BaseEdge:") && e.Type == VertexChangeType.ValueChanged)
-                || ((sender == Vertex.Get("BaseEdge:")) && (e.Type == VertexChangeType.EdgeAdded) && ((GeneralUtil.CompareStrings(e.Edge.Meta.Value, "To"))))
-                || (sender == Vertex.Get(@"BaseEdge:\To:") && e.Type == VertexChangeType.ValueChanged))
+                 || (sender == Vertex.Get(false, "BaseEdge:") && e.Type == VertexChangeType.ValueChanged)
+                || ((sender == Vertex.Get(false, "BaseEdge:")) && (e.Type == VertexChangeType.EdgeAdded) && ((GeneralUtil.CompareStrings(e.Edge.Meta.Value, "To"))))
+                || (sender == Vertex.Get(false, @"BaseEdge:\To:") && e.Type == VertexChangeType.ValueChanged))
             {
                 UpdateBaseEdge();
             }
@@ -145,7 +145,7 @@ namespace m0.UIWpf.Visualisers
 
         public IVertex GetEdgeByLocation(System.Windows.Point point)
         {
-            return Vertex.Get("BaseEdge:");
+            return Vertex.Get(false, "BaseEdge:");
         }
 
         public IVertex GetEdgeByVisualElement(System.Windows.FrameworkElement visualElement)
@@ -183,13 +183,13 @@ namespace m0.UIWpf.Visualisers
                 (Math.Abs(diff.X) > Dnd.MinimumHorizontalDragDistance) ||
                 (Math.Abs(diff.Y) > Dnd.MinimumVerticalDragDistance)))
             {
-                if (Vertex.Get(@"BaseEdge:\To:") != null)
+                if (Vertex.Get(false, @"BaseEdge:\To:") != null)
                 {
                     isDraggin = true;
 
                     IVertex dndVertex = MinusZero.Instance.CreateTempVertex();
 
-                    dndVertex.AddEdge(null, Vertex.Get(@"BaseEdge:"));
+                    dndVertex.AddEdge(null, Vertex.Get(false, @"BaseEdge:"));
 
                     DataObject dragData = new DataObject("Vertex", dndVertex);
                     dragData.SetData("DragSource", this);
@@ -203,7 +203,7 @@ namespace m0.UIWpf.Visualisers
 
         private void dndDrop(object sender, DragEventArgs e)
         {
-            Dnd.DoDrop(this, Vertex.Get(@"BaseEdge:\To:"), e);
+            Dnd.DoDrop(this, Vertex.Get(false, @"BaseEdge:\To:"), e);
         }
 
         private void dndMouseEnter(object sender, MouseEventArgs e)

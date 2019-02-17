@@ -73,7 +73,7 @@ namespace m0.UIWpf.Visualisers.Diagram
             {
                 // ToDiagramItem:
 
-                IVertex toDiagramItem = l.Vertex.Get(@"ToDiagramItem:");
+                IVertex toDiagramItem = l.Vertex.Get(false, @"ToDiagramItem:");
 
                 if (DiagramLinesToDiagramItemDictionary.ContainsKey(toDiagramItem))
                     DiagramLinesToDiagramItemDictionary[toDiagramItem].Add(l);
@@ -87,7 +87,7 @@ namespace m0.UIWpf.Visualisers.Diagram
 
                // BaseEdge:\To:
 
-                    IVertex BaseEdgeTo= l.Vertex.Get(@"BaseEdge:\To:");
+                    IVertex BaseEdgeTo= l.Vertex.Get(false, @"BaseEdge:\To:");
 
                 if (DiagramLinesBaseEdgeToDictionary.ContainsKey(BaseEdgeTo))
                     DiagramLinesBaseEdgeToDictionary[BaseEdgeTo].Add(l);
@@ -148,8 +148,8 @@ namespace m0.UIWpf.Visualisers.Diagram
 
         public virtual void VisualiserUpdate()       {
 
-            double sizeX = GraphUtil.GetDoubleValue(Vertex.Get("SizeX:"));
-            double sizeY = GraphUtil.GetDoubleValue(Vertex.Get("SizeY:"));
+            double sizeX = GraphUtil.GetDoubleValue(Vertex.Get(false, "SizeX:"));
+            double sizeY = GraphUtil.GetDoubleValue(Vertex.Get(false, "SizeY:"));
 
             if (sizeX != GraphUtil.NullDouble && sizeY != GraphUtil.NullDouble)
             {
@@ -157,18 +157,18 @@ namespace m0.UIWpf.Visualisers.Diagram
                 Height = sizeY;
             }
 
-            if(Vertex.Get("BackgroundColor:")!=null)
-                BackgroundColor = UIWpf.GetBrushFromColorVertex(Vertex.Get("BackgroundColor:"));
+            if(Vertex.Get(false, "BackgroundColor:")!=null)
+                BackgroundColor = UIWpf.GetBrushFromColorVertex(Vertex.Get(false, "BackgroundColor:"));
             else
                 BackgroundColor = (Brush)FindResource("0BackgroundBrush");
 
-            if (Vertex.Get("ForegroundColor:") != null)
-                ForegroundColor = UIWpf.GetBrushFromColorVertex(Vertex.Get("ForegroundColor:"));
+            if (Vertex.Get(false, "ForegroundColor:") != null)
+                ForegroundColor = UIWpf.GetBrushFromColorVertex(Vertex.Get(false, "ForegroundColor:"));
             else
                 ForegroundColor = (Brush)FindResource("0ForegroundBrush");
 
-            if (GraphUtil.GetDoubleValue(Vertex.Get("LineWidth:")) != GraphUtil.NullDouble)
-                LineWidth = GraphUtil.GetDoubleValue(Vertex.Get("LineWidth:"));
+            if (GraphUtil.GetDoubleValue(Vertex.Get(false, "LineWidth:")) != GraphUtil.NullDouble)
+                LineWidth = GraphUtil.GetDoubleValue(Vertex.Get(false, "LineWidth:"));
 
             SetBackAndForeground();
         }
@@ -197,35 +197,35 @@ namespace m0.UIWpf.Visualisers.Diagram
 
         public virtual void DoCreateDiagramLine(DiagramItemBase toItem)
         {
-            IVertex toEdge=toItem.Vertex.Get("BaseEdge:");
+            IVertex toEdge=toItem.Vertex.Get(false, "BaseEdge:");
 
             IVertex r=m0.MinusZero.Instance.Root;
 
             IVertex v = m0.MinusZero.Instance.CreateTempVertex();
 
 
-            foreach (IEdge def in Vertex.GetAll(@"Definition:\DiagramLineDefinition:")) 
+            foreach (IEdge def in Vertex.GetAll(false, @"Definition:\DiagramLineDefinition:")) 
             {
                 bool CreateEdgeOnly = false;
 
-                if (GraphUtil.GetValueAndCompareStrings(def.To.Get("CreateEdgeOnly:"), "True"))
+                if (GraphUtil.GetValueAndCompareStrings(def.To.Get(false, "CreateEdgeOnly:"), "True"))
                     CreateEdgeOnly = true;
                                    
-                foreach (IEdge e in Vertex.GetAll(@"BaseEdge:\To:\" + def.To.Get("EdgeTestQuery:")))
+                foreach (IEdge e in Vertex.GetAll(false, @"BaseEdge:\To:\" + def.To.Get(false, "EdgeTestQuery:")))
                 {
                     bool canAdd = true;
 
-                    if (def.To.Get("ToDiagramItemTestQuery:") != null && toItem.Vertex.Get((string)def.To.Get("ToDiagramItemTestQuery:").Value) == null)
+                    if (def.To.Get(false, "ToDiagramItemTestQuery:") != null && toItem.Vertex.Get(false, (string)def.To.Get(false, "ToDiagramItemTestQuery:").Value) == null)
                         canAdd = false;
 
-                    if (e.To.Get(@"$EdgeTarget:") != null 
-                        && !GeneralUtil.CompareStrings(e.To.Get(@"$EdgeTarget:").Value,"Vertex") // Vertexes do not have $Is:Vertex
-                        && toEdge.Get(@"To:\$Is:" + (string)e.To.Get(@"$EdgeTarget:").Value) == null)
+                    if (e.To.Get(false, @"$EdgeTarget:") != null 
+                        && !GeneralUtil.CompareStrings(e.To.Get(false, @"$EdgeTarget:").Value,"Vertex") // Vertexes do not have $Is:Vertex
+                        && toEdge.Get(false, @"To:\$Is:" + (string)e.To.Get(false, @"$EdgeTarget:").Value) == null)
                         canAdd = false;
 
                     if (CreateEdgeOnly==false 
-                        && e.To.Get(@"$VertexTarget:") != null 
-                        && toEdge.Get(@"To:\$Is:" + (string)e.To.Get(@"$VertexTarget:").Value) == null)
+                        && e.To.Get(false, @"$VertexTarget:") != null 
+                        && toEdge.Get(false, @"To:\$Is:" + (string)e.To.Get(false, @"$VertexTarget:").Value) == null)
                         canAdd = false;
 
                     if (canAdd)
@@ -233,11 +233,11 @@ namespace m0.UIWpf.Visualisers.Diagram
                 }
 
                 if (GeneralUtil.CompareStrings(def.To.Value, "Edge"))// Vertex\Edge
-                    foreach (IEdge e in r.Get(@"System\Meta\Base\Vertex"))
+                    foreach (IEdge e in r.Get(false, @"System\Meta\Base\Vertex"))
                         AddNewLineOption(v, def, e);
 
-                if (GeneralUtil.CompareStrings(def.To.Get("EdgeTestQuery:"), "$EdgeTarget")) // $EdgeTarget is not present as there is no inheritance from Vertex
-                    AddNewLineOption(v, def, GraphUtil.FindEdgeByToVertex(r.Get(@"System\Meta\Base\Vertex"),"$EdgeTarget"));
+                if (GeneralUtil.CompareStrings(def.To.Get(false, "EdgeTestQuery:"), "$EdgeTarget")) // $EdgeTarget is not present as there is no inheritance from Vertex
+                    AddNewLineOption(v, def, GraphUtil.FindEdgeByToVertex(r.Get(false, @"System\Meta\Base\Vertex"),"$EdgeTarget"));
             }
 
                 if (v.Count() == 0)
@@ -252,32 +252,32 @@ namespace m0.UIWpf.Visualisers.Diagram
             IVertex a = MinusZero.Instance.DefaultUserInteraction.SelectDialog(info, v, mousePosition);
 
                 if (a != null){
-                    IVertex test = VertexOperations.TestIfNewEdgeValid(Vertex.Get(@"BaseEdge:\To:"), a.Get("OptionEdge:"), toEdge.Get("To:"));
+                    IVertex test = VertexOperations.TestIfNewEdgeValid(Vertex.Get(false, @"BaseEdge:\To:"), a.Get(false, "OptionEdge:"), toEdge.Get(false, "To:"));
 
                     if (test == null)
                     {
                         bool? ForceShowEditForm = null; // ForceShowEditForm
 
-                        if (a.Get(@"OptionDiagramLineDefinition:\ForceShowEditForm:") != null)
+                        if (a.Get(false, @"OptionDiagramLineDefinition:\ForceShowEditForm:") != null)
                         {
-                            if (GeneralUtil.CompareStrings(a.Get(@"OptionDiagramLineDefinition:\ForceShowEditForm:"), "True"))
+                            if (GeneralUtil.CompareStrings(a.Get(false, @"OptionDiagramLineDefinition:\ForceShowEditForm:"), "True"))
                                 ForceShowEditForm = true;
 
-                            if (GeneralUtil.CompareStrings(a.Get(@"OptionDiagramLineDefinition:\ForceShowEditForm:"), "False"))
+                            if (GeneralUtil.CompareStrings(a.Get(false, @"OptionDiagramLineDefinition:\ForceShowEditForm:"), "False"))
                                 ForceShowEditForm = false;
                         }
 
                         bool CreateEdgeOnly = false; // CreateEdgeOnly
 
-                        if (GraphUtil.GetValueAndCompareStrings(a.Get(@"OptionDiagramLineDefinition:\CreateEdgeOnly:"), "True"))
+                        if (GraphUtil.GetValueAndCompareStrings(a.Get(false, @"OptionDiagramLineDefinition:\CreateEdgeOnly:"), "True"))
                            CreateEdgeOnly = true;
 
 
                         CanAutomaticallyAddEdges = false; // for VertexChange
-                        IEdge edge = VertexOperations.AddEdgeOrVertexByMeta(Vertex.Get(@"BaseEdge:\To:"), a.Get("OptionEdge:"), toEdge.Get("To:"), mousePosition, CreateEdgeOnly, ForceShowEditForm);
+                        IEdge edge = VertexOperations.AddEdgeOrVertexByMeta(Vertex.Get(false, @"BaseEdge:\To:"), a.Get(false, "OptionEdge:"), toEdge.Get(false, "To:"), mousePosition, CreateEdgeOnly, ForceShowEditForm);
                         CanAutomaticallyAddEdges = true; 
 
-                        AddDiagramLineVertex(edge, a.Get(@"OptionDiagramLineDefinition:"), toItem);
+                        AddDiagramLineVertex(edge, a.Get(false, @"OptionDiagramLineDefinition:"), toItem);
                     }
                     else
                         UserInteractionUtil.ShowError(Diagram.Vertex.Value+" Diagram", "Adding new diagram line  \"" + a.Value + "\" is not possible.\n\n" + test.Value);
@@ -292,8 +292,8 @@ namespace m0.UIWpf.Visualisers.Diagram
 
             IVertex vv = v.AddVertex(null, e.To.Value + " (" + def.To.Value + ")");//def.To.Value + " for " + e.To.Value);
 
-            vv.AddEdge(r.Get(@"System\Meta\Visualiser\DiagramInternal\DiagramItemBase\OptionEdge"), e.To);
-            vv.AddEdge(r.Get(@"System\Meta\Visualiser\DiagramInternal\DiagramItemBase\OptionDiagramLineDefinition"), def.To);
+            vv.AddEdge(r.Get(false, @"System\Meta\Visualiser\DiagramInternal\DiagramItemBase\OptionEdge"), e.To);
+            vv.AddEdge(r.Get(false, @"System\Meta\Visualiser\DiagramInternal\DiagramItemBase\OptionDiagramLineDefinition"), def.To);
         }        
 
         public void AddDiagramLineVertex(IEdge edge, IVertex diagramLineDefinition, DiagramItemBase toItem)
@@ -302,13 +302,13 @@ namespace m0.UIWpf.Visualisers.Diagram
 
             ((EasyVertex)Vertex).CanFireChangeEvent = false;
 
-            IVertex l = VertexOperations.AddInstance(Vertex, diagramLineDefinition.Get("DiagramLineClass:"), r.Get(@"System\Meta\Visualiser\DiagramInternal\DiagramItemBase\DiagramLine"));
+            IVertex l = VertexOperations.AddInstance(Vertex, diagramLineDefinition.Get(false, "DiagramLineClass:"), r.Get(false, @"System\Meta\Visualiser\DiagramInternal\DiagramItemBase\DiagramLine"));
 
-            GraphUtil.CreateOrReplaceEdge(l, r.Get(@"System\Meta\Visualiser\DiagramInternal\DiagramLineBase\ToDiagramItem"), toItem.Vertex);
+            GraphUtil.CreateOrReplaceEdge(l, r.Get(false, @"System\Meta\Visualiser\DiagramInternal\DiagramLineBase\ToDiagramItem"), toItem.Vertex);
 
-            GraphUtil.CreateOrReplaceEdge(l, r.Get(@"System\Meta\Visualiser\DiagramInternal\DiagramLineBase\Definition"), diagramLineDefinition);
+            GraphUtil.CreateOrReplaceEdge(l, r.Get(false, @"System\Meta\Visualiser\DiagramInternal\DiagramLineBase\Definition"), diagramLineDefinition);
             
-            Edge.CreateEdgeAndCreateOrReplaceEdgeByMeta(l, r.Get(@"System\Meta\ZeroTypes\HasBaseEdge\BaseEdge"), edge);
+            Edge.CreateEdgeAndCreateOrReplaceEdgeByMeta(l, r.Get(false, @"System\Meta\ZeroTypes\HasBaseEdge\BaseEdge"), edge);
 
             AddDiagramLineObject(toItem, l);
 
@@ -321,8 +321,8 @@ namespace m0.UIWpf.Visualisers.Diagram
 
             newline.Diagram = this.Diagram;
 
-            if (newline.Vertex.Get(@"Definition:\DiagramLineVertex:") != null)
-                Diagram.AddEdgesFromDefintion(newline.Vertex, newline.Vertex.Get(@"Definition:\DiagramLineVertex:"));        
+            if (newline.Vertex.Get(false, @"Definition:\DiagramLineVertex:") != null)
+                Diagram.AddEdgesFromDefintion(newline.Vertex, newline.Vertex.Get(false, @"Definition:\DiagramLineVertex:"));        
 
             newline.FromDiagramItem = this;
 
@@ -339,7 +339,7 @@ namespace m0.UIWpf.Visualisers.Diagram
 
         IEdge GetLineEdgeFromLineObject(DiagramLineBase line)
         {
-            foreach (IEdge e in Vertex.GetAll("DiagramLine:"))
+            foreach (IEdge e in Vertex.GetAll(false, "DiagramLine:"))
                 if (e.To == line.Vertex)
                     return e;
 
@@ -372,7 +372,7 @@ namespace m0.UIWpf.Visualisers.Diagram
                 sameToItemLines.Add(l);
 
             /*foreach (DiagramLineBase l in DiagramLines) // OOO
-                if (l.Vertex.Get("ToDiagramItem:") == toItem.Vertex)
+                if (l.Vertex.Get(false, "ToDiagramItem:") == toItem.Vertex)
                     sameToItemLines.Add(l);*/
 
             List<DiagramLineBase> sameFromItemLinesTo = new List<DiagramLineBase>();
@@ -382,7 +382,7 @@ namespace m0.UIWpf.Visualisers.Diagram
                 sameFromItemLinesTo.Add(l);
 
             /*foreach (DiagramLineBase l in toItem.DiagramLines) // OOO
-                if (l.Vertex.Get("ToDiagramItem:") == this.Vertex)
+                if (l.Vertex.Get(false, "ToDiagramItem:") == this.Vertex)
                     sameFromItemLinesTo.Add(l);*/
 
             int allCnt = sameToItemLines.Count() + sameFromItemLinesTo.Count();
@@ -579,30 +579,30 @@ namespace m0.UIWpf.Visualisers.Diagram
 
         public virtual void VertexChange(object sender, VertexChangeEventArgs e)
         {
-            if (sender == Vertex.Get(@"BaseEdge:\To:") && e.Type == VertexChangeType.EdgeRemoved)
+            if (sender == Vertex.Get(false, @"BaseEdge:\To:") && e.Type == VertexChangeType.EdgeRemoved)
             {
                 DiagramLineBase toRemove=null;
 
                 foreach (DiagramLineBase l in DiagramLines)
-                    if (l.Vertex.Get(@"BaseEdge:\Meta:") == e.Edge.Meta &&
-                        l.Vertex.Get(@"BaseEdge:\To:") == e.Edge.To)
+                    if (l.Vertex.Get(false, @"BaseEdge:\Meta:") == e.Edge.Meta &&
+                        l.Vertex.Get(false, @"BaseEdge:\To:") == e.Edge.To)
                         toRemove = l;
 
                 if(toRemove!=null)
                     RemoveDiagramLine(toRemove);
             }
 
-            if (sender == Vertex.Get(@"BaseEdge:\To:") && e.Type == VertexChangeType.ValueChanged)
+            if (sender == Vertex.Get(false, @"BaseEdge:\To:") && e.Type == VertexChangeType.ValueChanged)
                 VertexContentChange();
 
-            if (sender == Vertex.Get(@"BaseEdge:\To:") && e.Type == VertexChangeType.EdgeAdded && CanAutomaticallyAddEdges)
+            if (sender == Vertex.Get(false, @"BaseEdge:\To:") && e.Type == VertexChangeType.EdgeAdded && CanAutomaticallyAddEdges)
             {
                 Diagram.CheckAndUpdateDiagramLinesForItem(this); 
             }
 
-            if (sender == Vertex.Get(@"LineWidth:") ||
-                sender == Vertex.Get(@"BackgroundColor:") || sender == Vertex.Get(@"BackgroundColor:\Red:") || sender == Vertex.Get(@"BackgroundColor:\Green:") || sender == Vertex.Get(@"BackgroundColor:\Blue:") || sender == Vertex.Get(@"BackgroundColor:\Opacity:") ||
-                sender == Vertex.Get(@"ForegroundColor:") || sender == Vertex.Get(@"ForegroundColor:\Red:") || sender == Vertex.Get(@"ForegroundColor:\Green:") || sender == Vertex.Get(@"ForegroundColor:\Blue:") || sender == Vertex.Get(@"ForegroundColor:\Opacity:"))
+            if (sender == Vertex.Get(false, @"LineWidth:") ||
+                sender == Vertex.Get(false, @"BackgroundColor:") || sender == Vertex.Get(false, @"BackgroundColor:\Red:") || sender == Vertex.Get(false, @"BackgroundColor:\Green:") || sender == Vertex.Get(false, @"BackgroundColor:\Blue:") || sender == Vertex.Get(false, @"BackgroundColor:\Opacity:") ||
+                sender == Vertex.Get(false, @"ForegroundColor:") || sender == Vertex.Get(false, @"ForegroundColor:\Red:") || sender == Vertex.Get(false, @"ForegroundColor:\Green:") || sender == Vertex.Get(false, @"ForegroundColor:\Blue:") || sender == Vertex.Get(false, @"ForegroundColor:\Opacity:"))
                     VisualiserUpdate();
 
             if (sender == Vertex || e.Type == VertexChangeType.EdgeAdded)
@@ -611,12 +611,12 @@ namespace m0.UIWpf.Visualisers.Diagram
 
         public void AddToSelectedEdges()
         {
-            Edge.AddEdge(Diagram.Vertex.Get("SelectedEdges:"), Vertex.Get("BaseEdge:"));
+            Edge.AddEdge(Diagram.Vertex.Get(false, "SelectedEdges:"), Vertex.Get(false, "BaseEdge:"));
         }
 
         public void RemoveFromSelectedEdges()
         {
-            GraphUtil.DeleteEdgeByToVertex(Diagram.Vertex.Get("SelectedEdges:"), Vertex.Get("BaseEdge:"));
+            GraphUtil.DeleteEdgeByToVertex(Diagram.Vertex.Get(false, "SelectedEdges:"), Vertex.Get(false, "BaseEdge:"));
         }
 
         protected void MouseLeftButtonDownHandler(object sender, MouseButtonEventArgs e)
@@ -629,7 +629,7 @@ namespace m0.UIWpf.Visualisers.Diagram
             Diagram.ClickTarget = ClickTargetEnum.Item;
             Diagram.ClickedItem = this;
 
-            IVertex selectedEdges = Vertex.Get("SelectedEdges:");
+            IVertex selectedEdges = Vertex.Get(false, "SelectedEdges:");
 
             if (Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl))
             {
@@ -767,14 +767,14 @@ namespace m0.UIWpf.Visualisers.Diagram
 
         public void MoveItem(double x, double y)
         {
-            double deltax = GraphUtil.GetDoubleValue(Vertex.Get("PositionX:")) - x;
-            double deltay = GraphUtil.GetDoubleValue(Vertex.Get("PositionY:")) - y;
+            double deltax = GraphUtil.GetDoubleValue(Vertex.Get(false, "PositionX:")) - x;
+            double deltay = GraphUtil.GetDoubleValue(Vertex.Get(false, "PositionY:")) - y;
 
-            Vertex.Get("PositionX:").Value = x;
-            Vertex.Get("PositionY:").Value = y;
+            Vertex.Get(false, "PositionX:").Value = x;
+            Vertex.Get(false, "PositionY:").Value = y;
 
-            Canvas.SetLeft(this, GraphUtil.GetDoubleValue(Vertex.Get("PositionX:")));
-            Canvas.SetTop(this, GraphUtil.GetDoubleValue(Vertex.Get("PositionY:")));
+            Canvas.SetLeft(this, GraphUtil.GetDoubleValue(Vertex.Get(false, "PositionX:")));
+            Canvas.SetTop(this, GraphUtil.GetDoubleValue(Vertex.Get(false, "PositionY:")));
 
             foreach (UIElement a in Anchors)
             {
@@ -790,16 +790,16 @@ namespace m0.UIWpf.Visualisers.Diagram
             if (width < 0 || height < 0)
                 return;
 
-            Vertex.Get("PositionX:").Value = left;
-            Vertex.Get("PositionY:").Value = top;
+            Vertex.Get(false, "PositionX:").Value = left;
+            Vertex.Get(false, "PositionY:").Value = top;
 
             Canvas.SetLeft(this, left);
             Canvas.SetTop(this, top);
 
             IVertex r=m0.MinusZero.Instance.Root;
 
-            GraphUtil.SetVertexValue(this.Vertex,r.Get(@"System\Meta\Visualiser\Diagram\SizeX"), width);
-            GraphUtil.SetVertexValue(this.Vertex, r.Get(@"System\Meta\Visualiser\Diagram\SizeY"), height);
+            GraphUtil.SetVertexValue(this.Vertex,r.Get(false, @"System\Meta\Visualiser\Diagram\SizeX"), width);
+            GraphUtil.SetVertexValue(this.Vertex, r.Get(false, @"System\Meta\Visualiser\Diagram\SizeY"), height);
 
             Width = width;
             Height = height;

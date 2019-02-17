@@ -52,7 +52,7 @@ namespace m0.UIWpf.Visualisers.Diagram
 
             this.Loaded += new RoutedEventHandler(OnLoad);
 
-            ItemName.Content = baseedge.Get("To:").Value;
+            ItemName.Content = baseedge.Get(false, "To:").Value;
 
             if (!CheckIfThereIChoiceRemembered())
             {
@@ -79,7 +79,7 @@ namespace m0.UIWpf.Visualisers.Diagram
 
             IEdge e=temp.AddEdge(null, toTest);
 
-            IVertex res = temp.GetAll(query);
+            IVertex res = temp.GetAll(false, query);
 
             temp.DeleteEdge(e);
 
@@ -97,43 +97,43 @@ namespace m0.UIWpf.Visualisers.Diagram
 
            if (InstanceRadio.IsChecked == true)
            {
-                IVertex Instance = m0.MinusZero.Instance.Root.GetAll(@"System\Data\Visualiser\Diagram\{InstanceCreation:Instance}");
+                IVertex Instance = m0.MinusZero.Instance.Root.GetAll(false, @"System\Data\Visualiser\Diagram\{InstanceCreation:Instance}");
              
                foreach(IEdge d in Instance)
-                    //if (BaseEdge.Get("To:").Get((string)GraphUtil.GetValue(d.To.Get("MetaVertexTestQuery:"))) != null)
-                    if(testVertex(BaseEdge.Get("To:"),(string)GraphUtil.GetValue(d.To.Get("MetaVertexTestQuery:"))))
+                    //if (BaseEdge.Get(false, "To:").Get(false, (string)GraphUtil.GetValue(d.To.Get(false, "MetaVertexTestQuery:"))) != null)
+                    if(testVertex(BaseEdge.Get(false, "To:"),(string)GraphUtil.GetValue(d.To.Get(false, "MetaVertexTestQuery:"))))
                          ItemsList.AddEdge(null, d.To);
 
-                IVertex InstanceAndDirect = m0.MinusZero.Instance.Root.GetAll(@"System\Data\Visualiser\Diagram\{InstanceCreation:InstanceAndDirect}");
+                IVertex InstanceAndDirect = m0.MinusZero.Instance.Root.GetAll(false, @"System\Data\Visualiser\Diagram\{InstanceCreation:InstanceAndDirect}");
 
                 foreach (IEdge d in InstanceAndDirect) 
-                     //if (BaseEdge.Get("To:").Get((string)GraphUtil.GetValue(d.To.Get("MetaVertexTestQuery:"))) != null)
-                     if(testVertex(BaseEdge.Get("To:"),(string)GraphUtil.GetValue(d.To.Get("MetaVertexTestQuery:"))))
+                     //if (BaseEdge.Get(false, "To:").Get(false, (string)GraphUtil.GetValue(d.To.Get(false, "MetaVertexTestQuery:"))) != null)
+                     if(testVertex(BaseEdge.Get(false, "To:"),(string)GraphUtil.GetValue(d.To.Get(false, "MetaVertexTestQuery:"))))
                          ItemsList.AddEdge(null, d.To);        
            }
            else
            {               
-               IVertex InstanceAndDirect = m0.MinusZero.Instance.Root.GetAll(@"System\Data\Visualiser\Diagram\{InstanceCreation:InstanceAndDirect}");
+               IVertex InstanceAndDirect = m0.MinusZero.Instance.Root.GetAll(false, @"System\Data\Visualiser\Diagram\{InstanceCreation:InstanceAndDirect}");
 
                foreach (IEdge d in InstanceAndDirect)
                {
-                   //if (BaseEdge.Get("To:").Get((string)GraphUtil.GetValue(d.To.Get("DirectVertexTestQuery:"))) != null)
-                   if (testVertex(BaseEdge.Get("To:"), (string)GraphUtil.GetValue(d.To.Get("DirectVertexTestQuery:"))))
+                   //if (BaseEdge.Get(false, "To:").Get(false, (string)GraphUtil.GetValue(d.To.Get(false, "DirectVertexTestQuery:"))) != null)
+                   if (testVertex(BaseEdge.Get(false, "To:"), (string)GraphUtil.GetValue(d.To.Get(false, "DirectVertexTestQuery:"))))
                        ItemsList.AddEdge(null, d.To);
                    else
-                       if ((string)GraphUtil.GetValue(d.To.Get("DirectVertexTestQuery:")) == "")
+                       if ((string)GraphUtil.GetValue(d.To.Get(false, "DirectVertexTestQuery:")) == "")
                            ItemsList.AddEdge(null, d.To);
                }
 
-               IVertex Direct = m0.MinusZero.Instance.Root.GetAll(@"System\Data\Visualiser\Diagram\{InstanceCreation:Direct}");
+               IVertex Direct = m0.MinusZero.Instance.Root.GetAll(false, @"System\Data\Visualiser\Diagram\{InstanceCreation:Direct}");
 
                foreach (IEdge d in Direct)
                {
-                   //if (BaseEdge.Get("To:").Get((string)GraphUtil.GetValue(d.To.Get("DirectVertexTestQuery:"))) != null)
-                   if (testVertex(BaseEdge.Get("To:"), (string)GraphUtil.GetValue(d.To.Get("DirectVertexTestQuery:"))))
+                   //if (BaseEdge.Get(false, "To:").Get(false, (string)GraphUtil.GetValue(d.To.Get(false, "DirectVertexTestQuery:"))) != null)
+                   if (testVertex(BaseEdge.Get(false, "To:"), (string)GraphUtil.GetValue(d.To.Get(false, "DirectVertexTestQuery:"))))
                        ItemsList.AddEdge(null, d.To);
                    else
-                       if ((string)GraphUtil.GetValue(d.To.Get("DirectVertexTestQuery:")) == "")
+                       if ((string)GraphUtil.GetValue(d.To.Get(false, "DirectVertexTestQuery:")) == "")
                            ItemsList.AddEdge(null, d.To);
                }
              
@@ -187,7 +187,7 @@ namespace m0.UIWpf.Visualisers.Diagram
             IVertex question = MinusZero.Instance.CreateTempVertex();
 
             if (InstanceRadio.IsChecked == false)
-                question.Value= "create diagram item for " + baseedge.Get("Meta:").Value;
+                question.Value= "create diagram item for " + baseedge.Get(false, "Meta:").Value;
             else
                 question.Value = "create diagram item for " + ItemName.Content;
 

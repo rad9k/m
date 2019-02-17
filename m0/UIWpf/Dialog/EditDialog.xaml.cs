@@ -51,7 +51,7 @@ namespace m0.UIWpf.Dialog
 
             Wrap.SetContent(FormVisuliser);
 
-            GraphUtil.ReplaceEdge(FormVisuliser.Vertex.Get("BaseEdge:"), "To", baseVertex);
+            GraphUtil.ReplaceEdge(FormVisuliser.Vertex.Get(false, "BaseEdge:"), "To", baseVertex);
 
             this.Loaded += new RoutedEventHandler(OnLoad);
 

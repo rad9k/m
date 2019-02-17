@@ -240,7 +240,7 @@ namespace m0.UIWpf.Visualisers
 
             TurnOffSelectedVertexesUpdate = true;
 
-            IVertex sv = Vertex.Get("SelectedEdges:");
+            IVertex sv = Vertex.Get(false, "SelectedEdges:");
 
             foreach (TreeViewItem i in Items)
                 SelectedVertexesUpdated_Reccurent(i,sv);
@@ -272,7 +272,7 @@ namespace m0.UIWpf.Visualisers
 
             TurnOffSelectedItemsUpdate = true;
 
-            IVertex sv = Vertex.Get("SelectedEdges:");
+            IVertex sv = Vertex.Get(false, "SelectedEdges:");
 
             IEdge e=(IEdge)item.Tag;
 
@@ -290,7 +290,7 @@ namespace m0.UIWpf.Visualisers
             // currently there is no support for same vertex in two places in tree begin selected / unselected
             // this is due to performance
             //
-            /*IVertex sv = Vertex.Get("SelectedVertexes:");
+            /*IVertex sv = Vertex.Get(false, "SelectedVertexes:");
 
             GraphUtil.RemoveAllEdges(sv);
 
@@ -305,7 +305,7 @@ namespace m0.UIWpf.Visualisers
         {
             TurnOffSelectedEdgesFireChange();
 
-            GraphUtil.RemoveAllEdges_WhereEdgeIsEdge(Vertex.Get("SelectedEdges:"));
+            GraphUtil.RemoveAllEdges_WhereEdgeIsEdge(Vertex.Get(false, "SelectedEdges:"));
 
             TurnOnSelectedEdgesFireChange();         
 
@@ -314,14 +314,14 @@ namespace m0.UIWpf.Visualisers
 
         private void TurnOnSelectedEdgesFireChange()
         {
-            if (Vertex.Get("SelectedEdges:") is VertexBase)
-                ((VertexBase)Vertex.Get("SelectedEdges:")).CanFireChangeEvent = true;
+            if (Vertex.Get(false, "SelectedEdges:") is VertexBase)
+                ((VertexBase)Vertex.Get(false, "SelectedEdges:")).CanFireChangeEvent = true;
         }
 
         private void TurnOffSelectedEdgesFireChange()
         {
-            if (Vertex.Get("SelectedEdges:") is VertexBase)
-                ((VertexBase)Vertex.Get("SelectedEdges:")).CanFireChangeEvent = false;
+            if (Vertex.Get(false, "SelectedEdges:") is VertexBase)
+                ((VertexBase)Vertex.Get(false, "SelectedEdges:")).CanFireChangeEvent = false;
         }
 
         public void ClearAllSelectedItems()
@@ -358,7 +358,7 @@ namespace m0.UIWpf.Visualisers
 
             TurnOffSelectedVertexesUpdate = true;
 
-            IVertex sv = Vertex.Get("SelectedEdges:");
+            IVertex sv = Vertex.Get(false, "SelectedEdges:");
 
             if (Edge.FindEdgeByEdge(sv, e)!=null)
                 i.IsSelected = true;
@@ -403,7 +403,7 @@ namespace m0.UIWpf.Visualisers
         {
             ClearAllItems();
 
-            IVertex bas = Vertex.Get(@"BaseEdge:\To:");            
+            IVertex bas = Vertex.Get(false, @"BaseEdge:\To:");            
 
             if (bas != null)            
                 foreach (IEdge e in bas)
@@ -412,7 +412,7 @@ namespace m0.UIWpf.Visualisers
 
         protected void ChangeZoomVisualiserContent()
         {
-            double scale = ((double)GraphUtil.GetIntegerValue(Vertex.Get("ZoomVisualiserContent:"))) / 100;
+            double scale = ((double)GraphUtil.GetIntegerValue(Vertex.Get(false, "ZoomVisualiserContent:"))) / 100;
 
             if (scale != 1.0)
                 this.LayoutTransform = new ScaleTransform(scale, scale);
@@ -422,19 +422,19 @@ namespace m0.UIWpf.Visualisers
 
         protected void SetVertexDefaultValues()
         {         
-            Vertex.Get("ZoomVisualiserContent:").Value = 100;
+            Vertex.Get(false, "ZoomVisualiserContent:").Value = 100;
         }
 
         public void SelectAllInBaseEdge()
         {
             TurnOffSelectedItemsUpdate=true;
 
-            IVertex selectedEdges = Vertex.Get("SelectedEdges:");
+            IVertex selectedEdges = Vertex.Get(false, "SelectedEdges:");
 
             if (selectedEdges is VertexBase)
                 ((VertexBase)selectedEdges).CanFireChangeEvent = false;                        
 
-            foreach (IEdge ee in Vertex.Get(@"BaseEdge:\To:"))
+            foreach (IEdge ee in Vertex.Get(false, @"BaseEdge:\To:"))
                 Edge.AddEdge(selectedEdges, ee);
 
             if (selectedEdges is VertexBase)
@@ -468,14 +468,14 @@ namespace m0.UIWpf.Visualisers
 
             if (mz != null && mz.IsInitialized)
             {                
-                //Vertex = mz.Root.Get(@"System\Session\Visualisers").AddVertex(null, "TreeVisualiser" + this.GetHashCode());
+                //Vertex = mz.Root.Get(false, @"System\Session\Visualisers").AddVertex(null, "TreeVisualiser" + this.GetHashCode());
 
                 Vertex = mz.CreateTempVertex();
                 Vertex.Value = "TreeVisualiser" + this.GetHashCode();
 
-                ClassVertex.AddIsClassAndAllAttributesAndAssociations(Vertex, mz.Root.Get(@"System\Meta\Visualiser\Tree"));
+                ClassVertex.AddIsClassAndAllAttributesAndAssociations(Vertex, mz.Root.Get(false, @"System\Meta\Visualiser\Tree"));
 
-                ClassVertex.AddIsClassAndAllAttributesAndAssociations(Vertex.Get("BaseEdge:"), mz.Root.Get(@"System\Meta\ZeroTypes\Edge"));
+                ClassVertex.AddIsClassAndAllAttributesAndAssociations(Vertex.Get(false, "BaseEdge:"), mz.Root.Get(false, @"System\Meta\ZeroTypes\Edge"));
 
                 SetVertexDefaultValues();          
 
@@ -492,27 +492,27 @@ namespace m0.UIWpf.Visualisers
         protected void VertexChange(object sender, VertexChangeEventArgs e)
         {
             if ((sender == Vertex) && (e.Type == VertexChangeType.EdgeAdded) && (GeneralUtil.CompareStrings(e.Edge.Meta.Value, "BaseEdge"))
-                ||((sender==Vertex.Get("BaseEdge:"))&&(e.Type==VertexChangeType.EdgeAdded)&&((GeneralUtil.CompareStrings(e.Edge.Meta.Value, "To")))))
+                ||((sender==Vertex.Get(false, "BaseEdge:"))&&(e.Type==VertexChangeType.EdgeAdded)&&((GeneralUtil.CompareStrings(e.Edge.Meta.Value, "To")))))
             {
                 UpdateBaseEdge();                
             }
 
-            if (sender == Vertex.Get(@"BaseEdge:\To:") && (e.Type == VertexChangeType.EdgeAdded))
+            if (sender == Vertex.Get(false, @"BaseEdge:\To:") && (e.Type == VertexChangeType.EdgeAdded))
                 EdgeAdded(e);
 
-            if (sender == Vertex.Get(@"BaseEdge:\To:") &&  (e.Type == VertexChangeType.EdgeRemoved))
+            if (sender == Vertex.Get(false, @"BaseEdge:\To:") &&  (e.Type == VertexChangeType.EdgeRemoved))
                 EdgeRemoved(e);
 
             if ((sender == Vertex) && (e.Type == VertexChangeType.EdgeAdded) && (GeneralUtil.CompareStrings(e.Edge.Meta.Value, "SelectedEdges")))
                 SelectedVertexesUpdated();
 
-            if ((sender == Vertex.Get("SelectedEdges:")) && ((e.Type == VertexChangeType.EdgeAdded) || (e.Type == VertexChangeType.EdgeRemoved)))
+            if ((sender == Vertex.Get(false, "SelectedEdges:")) && ((e.Type == VertexChangeType.EdgeAdded) || (e.Type == VertexChangeType.EdgeRemoved)))
                 SelectedVertexesUpdated();
 
-            if(sender is IVertex && GraphUtil.FindEdgeByToVertex(Vertex.GetAll(@"SelectedEdges:\"),(IVertex)sender)!=null)
+            if(sender is IVertex && GraphUtil.FindEdgeByToVertex(Vertex.GetAll(false, @"SelectedEdges:\"),(IVertex)sender)!=null)
                 SelectedVertexesUpdated();
 
-            if (sender == Vertex.Get("ZoomVisualiserContent:") && e.Type == VertexChangeType.ValueChanged)
+            if (sender == Vertex.Get(false, "ZoomVisualiserContent:") && e.Type == VertexChangeType.ValueChanged)
                 ChangeZoomVisualiserContent();                       
         }
 
@@ -556,7 +556,7 @@ namespace m0.UIWpf.Visualisers
                 IsDisposed = true;
                 MinusZero mz = MinusZero.Instance;
 
-                //GraphUtil.DeleteEdgeByToVertex(mz.Root.Get(@"System\Session\Visualisers"), Vertex);
+                //GraphUtil.DeleteEdgeByToVertex(mz.Root.Get(false, @"System\Session\Visualisers"), Vertex);
 
                 PlatformClass.RemoveVertexChangeListeners(this.Vertex, new VertexChange(VertexChange));
 
@@ -575,8 +575,8 @@ namespace m0.UIWpf.Visualisers
             GetVertexByLocation_Reccurent(this.Items, p);
 
             // DO NOT WANT THIS FEATURE            
-            if (vertexByLocationToReturn == null && GeneralUtil.CompareStrings(MinusZero.Instance.Root.Get(@"User\CurrentUser:\Settings:\AllowBlankAreaDragAndDrop:").Value, "StartAndEnd"))
-                vertexByLocationToReturn = Vertex.Get(@"BaseEdge:");
+            if (vertexByLocationToReturn == null && GeneralUtil.CompareStrings(MinusZero.Instance.Root.Get(false, @"User\CurrentUser:\Settings:\AllowBlankAreaDragAndDrop:").Value, "StartAndEnd"))
+                vertexByLocationToReturn = Vertex.Get(false, @"BaseEdge:");
 
             return vertexByLocationToReturn;
         }
@@ -637,8 +637,8 @@ namespace m0.UIWpf.Visualisers
 
                 IVertex dndVertex = MinusZero.Instance.CreateTempVertex();
 
-                if (Vertex.Get(@"SelectedEdges:\") != null)
-                    foreach (IEdge ee in Vertex.GetAll(@"SelectedEdges:\"))
+                if (Vertex.Get(false, @"SelectedEdges:\") != null)
+                    foreach (IEdge ee in Vertex.GetAll(false, @"SelectedEdges:\"))
                         dndVertex.AddEdge(null, ee.To);
                 else
                 {
@@ -663,11 +663,11 @@ namespace m0.UIWpf.Visualisers
         {
             IVertex v = GetEdgeByLocation(e.GetPosition(this));
 
-            if (v == null && GeneralUtil.CompareStrings(MinusZero.Instance.Root.Get(@"User\CurrentUser:\Settings:\AllowBlankAreaDragAndDrop:").Value, "OnlyEnd"))            
-                v = Vertex.Get("BaseEdge:");
+            if (v == null && GeneralUtil.CompareStrings(MinusZero.Instance.Root.Get(false, @"User\CurrentUser:\Settings:\AllowBlankAreaDragAndDrop:").Value, "OnlyEnd"))            
+                v = Vertex.Get(false, "BaseEdge:");
 
             if(v!=null)
-                Dnd.DoDrop(null, v.Get("To:"), e);
+                Dnd.DoDrop(null, v.Get(false, "To:"), e);
 
             e.Handled = true;
         }

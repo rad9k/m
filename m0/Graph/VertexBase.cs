@@ -109,12 +109,12 @@ namespace m0.Graph
         public IEdge this[string meta]
         {
             get {                
-                IVertex r = this.GetAll(meta + ":");
+                IVertex r = this.GetAll(false, meta + ":");
 
                 if (r.Count() > 0)
                     return r.First();
 
-                IVertex metavertexs = this.GetAll(@"$Is:\" + meta);
+                IVertex metavertexs = this.GetAll(false, @"$Is:\" + meta);
 
                 if (metavertexs.Count() > 0)
                 {
@@ -128,7 +128,7 @@ namespace m0.Graph
                 {
                     if (meta == "$EdgeTarget")
                     {
-                        IEdge metavertex = m0.MinusZero.Instance.Root.GetAll(@"System\Meta\Base\Vertex\$EdgeTarget").FirstOrDefault();
+                        IEdge metavertex = m0.MinusZero.Instance.Root.GetAll(false, @"System\Meta\Base\Vertex\$EdgeTarget").FirstOrDefault();
 
                         IEdge newedge = new EasyEdge(this, metavertex.To, null);
 
@@ -138,7 +138,7 @@ namespace m0.Graph
 
                 // inherits from Vertex. hiddenly
                 // this is for Table Visualiser
-                IEdge vertexMetaVertex = m0.MinusZero.Instance.Root.GetAll(@"System\Meta\Base\Vertex\" + meta).FirstOrDefault();
+                IEdge vertexMetaVertex = m0.MinusZero.Instance.Root.GetAll(false, @"System\Meta\Base\Vertex\" + meta).FirstOrDefault();
 
                 if(vertexMetaVertex!=null)
                    return new EasyEdge(this, vertexMetaVertex.To, null);
@@ -242,12 +242,7 @@ namespace m0.Graph
         {
             throw new NotImplementedException();
         }
-
-        public virtual IVertex Execute(IVertex inputVertex, IVertex expression)
-        {
-            throw new NotImplementedException();
-        }
-
+        
         public virtual IVertex Get(bool metaMode, string query)
         {
             throw new NotImplementedException();
@@ -257,6 +252,17 @@ namespace m0.Graph
         {
             throw new NotImplementedException();
         }
+
+        public virtual IVertex Get(IVertex expression)
+        {
+            throw new NotImplementedException();
+        }
+
+        public virtual IVertex GetAll(IVertex expression)
+        {
+            throw new NotImplementedException();
+        }
+
 
         public IStore _Store;
 

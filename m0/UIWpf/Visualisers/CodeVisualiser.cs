@@ -37,9 +37,9 @@ namespace m0.UIWpf.Visualisers
 
                 Vertex.Value = "CodeVisualiser" + this.GetHashCode();
 
-                ClassVertex.AddIsClassAndAllAttributesAndAssociations(Vertex, mz.Root.Get(@"System\Meta\Visualiser\Code"));
+                ClassVertex.AddIsClassAndAllAttributesAndAssociations(Vertex, mz.Root.Get(false, @"System\Meta\Visualiser\Code"));
 
-                ClassVertex.AddIsClassAndAllAttributesAndAssociations(Vertex.Get("BaseEdge:"), mz.Root.Get(@"System\Meta\ZeroTypes\Edge"));
+                ClassVertex.AddIsClassAndAllAttributesAndAssociations(Vertex.Get(false, "BaseEdge:"), mz.Root.Get(false, @"System\Meta\ZeroTypes\Edge"));
 
                 SetVertexDefaultValues();
 
@@ -65,7 +65,7 @@ namespace m0.UIWpf.Visualisers
         {
             if (e.Key == Key.Escape) {
                 m0.ZeroCode.ZeroCodeEngine zce = new ZeroCode.ZeroCodeEngine();
-                zce.Parse(Vertex.Get(@"BaseEdge:\To:"), Text);
+                zce.Parse(true, Vertex.Get(false, @"BaseEdge:\To:"), Text);
                 }
         }
 
@@ -74,17 +74,17 @@ namespace m0.UIWpf.Visualisers
 
         void UpdateEditView()
         {
-            if(GraphUtil.GetValueAndCompareStrings(Vertex.Get(@"ShowWhiteSpace:"),"True"))
+            if(GraphUtil.GetValueAndCompareStrings(Vertex.Get(false, @"ShowWhiteSpace:"),"True"))
                 Options.ShowTabs = true;
             else
                 Options.ShowTabs = false;
 
-            if (GraphUtil.GetValueAndCompareStrings(Vertex.Get(@"ShowLineNumbers:"), "True"))
+            if (GraphUtil.GetValueAndCompareStrings(Vertex.Get(false, @"ShowLineNumbers:"), "True"))
                 this.ShowLineNumbers = true;
             else
                 this.ShowLineNumbers = false;
 
-            if (GraphUtil.GetValueAndCompareStrings(Vertex.Get(@"HighlightedLine:"), "True"))
+            if (GraphUtil.GetValueAndCompareStrings(Vertex.Get(false, @"HighlightedLine:"), "True"))
                 Options.HighlightCurrentLine = true;
             else
                 Options.HighlightCurrentLine = false;
@@ -131,10 +131,10 @@ namespace m0.UIWpf.Visualisers
 
         protected virtual void SetVertexDefaultValues()
         {
-            Vertex.Get("ZoomVisualiserContent:").Value = 15.0;
-            Vertex.Get("ShowWhiteSpace:").Value = "False";
-            Vertex.Get("ShowLineNumbers:").Value = "False";
-            Vertex.Get("HighlightedLine:").Value = "True";
+            Vertex.Get(false, "ZoomVisualiserContent:").Value = 15.0;
+            Vertex.Get(false, "ShowWhiteSpace:").Value = "False";
+            Vertex.Get(false, "ShowLineNumbers:").Value = "False";
+            Vertex.Get(false, "HighlightedLine:").Value = "True";
         }
 
         void OnLoad(object sender, RoutedEventArgs e)
@@ -145,11 +145,11 @@ namespace m0.UIWpf.Visualisers
 
         private void UpdateBaseEdge()
         {
-            IVertex bv = Vertex.Get(@"BaseEdge:\To:");
+            IVertex bv = Vertex.Get(false, @"BaseEdge:\To:");
 
             if (bv != null /*&& bv.Value != null && ((String)bv.Value)!="$Empty"*/)
             {
-                NonActingEdge ee = new NonActingEdge(Vertex.Get(@"BaseEdge:\From:"), Vertex.Get(@"BaseEdge:\Meta:"), Vertex.Get(@"BaseEdge:\To:"));
+                NonActingEdge ee = new NonActingEdge(Vertex.Get(false, @"BaseEdge:\From:"), Vertex.Get(false, @"BaseEdge:\Meta:"), Vertex.Get(false, @"BaseEdge:\To:"));
                 this.Text = this.Text = MinusZero.Instance.DefaultZeroCode2String.ZeroCodeGraph2String(ee);
             }
             else
@@ -158,7 +158,7 @@ namespace m0.UIWpf.Visualisers
 
         protected void ChangeZoomVisualiserContent()
         {
-            double scale = ((double)GraphUtil.GetDoubleValue(Vertex.Get("ZoomVisualiserContent:")));
+            double scale = ((double)GraphUtil.GetDoubleValue(Vertex.Get(false, "ZoomVisualiserContent:")));
 
             this.FontSize = scale;
         }
@@ -169,20 +169,20 @@ namespace m0.UIWpf.Visualisers
             if ((sender == Vertex) && (e.Type == VertexChangeType.EdgeAdded) && (GeneralUtil.CompareStrings(e.Edge.Meta.Value, "BaseEdge")))
                 UpdateBaseEdge();                        
 
-            if ((sender == Vertex.Get("BaseEdge:")) && (e.Type == VertexChangeType.EdgeAdded) && (GeneralUtil.CompareStrings(e.Edge.Meta.Value, "To"))
-                || (sender == Vertex.Get(@"BaseEdge:\To:") && e.Type == VertexChangeType.ValueChanged))            
+            if ((sender == Vertex.Get(false, "BaseEdge:")) && (e.Type == VertexChangeType.EdgeAdded) && (GeneralUtil.CompareStrings(e.Edge.Meta.Value, "To"))
+                || (sender == Vertex.Get(false, @"BaseEdge:\To:") && e.Type == VertexChangeType.ValueChanged))            
                 UpdateBaseEdge();
 
-            if (sender == Vertex.Get("ZoomVisualiserContent:") && e.Type == VertexChangeType.ValueChanged)
+            if (sender == Vertex.Get(false, "ZoomVisualiserContent:") && e.Type == VertexChangeType.ValueChanged)
                 ChangeZoomVisualiserContent();
 
-            if (sender == Vertex.Get("ShowWhiteSpace:") && e.Type == VertexChangeType.ValueChanged)
+            if (sender == Vertex.Get(false, "ShowWhiteSpace:") && e.Type == VertexChangeType.ValueChanged)
                 UpdateEditView();
 
-            if (sender == Vertex.Get("ShowLineNumbers:") && e.Type == VertexChangeType.ValueChanged)
+            if (sender == Vertex.Get(false, "ShowLineNumbers:") && e.Type == VertexChangeType.ValueChanged)
                 UpdateEditView();
 
-            if (sender == Vertex.Get("HighlightedLine:") && e.Type == VertexChangeType.ValueChanged)
+            if (sender == Vertex.Get(false, "HighlightedLine:") && e.Type == VertexChangeType.ValueChanged)
                 UpdateEditView();
         }        
 
@@ -220,7 +220,7 @@ namespace m0.UIWpf.Visualisers
 
         public IVertex GetEdgeByLocation(System.Windows.Point point)
         {
-            return Vertex.Get(@"BaseEdge:");
+            return Vertex.Get(false, @"BaseEdge:");
         }
 
         public IVertex GetEdgeByVisualElement(System.Windows.FrameworkElement visualElement)
@@ -258,13 +258,13 @@ namespace m0.UIWpf.Visualisers
                 (Math.Abs(diff.X) > Dnd.MinimumHorizontalDragDistance) ||
                 (Math.Abs(diff.Y) > Dnd.MinimumVerticalDragDistance)))
             {
-                if (Vertex.Get(@"BaseEdge:\To:") != null)
+                if (Vertex.Get(false, @"BaseEdge:\To:") != null)
                 {
                     isDraggin = true;
 
                     IVertex dndVertex = MinusZero.Instance.CreateTempVertex();
                  
-                    dndVertex.AddEdge(null, Vertex.Get(@"BaseEdge:"));
+                    dndVertex.AddEdge(null, Vertex.Get(false, @"BaseEdge:"));
 
                     DataObject dragData = new DataObject("Vertex", dndVertex);
                     dragData.SetData("DragSource", this);
@@ -278,7 +278,7 @@ namespace m0.UIWpf.Visualisers
 
         private void dndDrop(object sender, DragEventArgs e)
         {
-            Dnd.DoDrop(this,Vertex.Get(@"BaseEdge:\To:"), e);
+            Dnd.DoDrop(this,Vertex.Get(false, @"BaseEdge:\To:"), e);
         }
 
         private void dndMouseEnter(object sender, MouseEventArgs e)

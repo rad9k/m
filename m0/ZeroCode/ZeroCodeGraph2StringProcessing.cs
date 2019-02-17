@@ -35,9 +35,9 @@ namespace m0.ZeroCode
 
            if (_parent != null)
             {
-                IVertex Is = _parent.To.Get("$Is:");
+                IVertex Is = _parent.To.Get(false, "$Is:");
 
-                if (Is != null && Is.Get(v.Value.ToString()) == v)
+                if (Is != null && Is.Get(false, v.Value.ToString()) == v)
                     return (v.Value.ToString());
             }
 
@@ -141,7 +141,7 @@ namespace m0.ZeroCode
                     else
                     {
                         int pos = 0;
-                        IVertex q = e.From.GetAll(e.Meta + ":" + e.To);
+                        IVertex q = e.From.GetAll(false, e.Meta + ":" + e.To);
 
                         IVertex tv;
                         do
@@ -196,7 +196,7 @@ namespace m0.ZeroCode
                         {
                             bool isMeta = false;
 
-                            if (ikv.Get(@"$Is:$ImportMeta") != null)
+                            if (ikv.Get(false, @"$Is:$ImportMeta") != null)
                                 isMeta = true;
 
                             IEdge ee = new NonActingEdge(null, ikv, null);
@@ -430,10 +430,10 @@ namespace m0.ZeroCode
 
         void ImportImports(IVertex baseVertex)
         {
-            foreach (IEdge e in baseVertex.GetAll("{$Is:$ImportMeta}:"))
+            foreach (IEdge e in baseVertex.GetAll(false, "{$Is:$ImportMeta}:"))
                 ImportImports_internal(e);
 
-            foreach (IEdge e in baseVertex.GetAll("{$Is:$Import}:"))
+            foreach (IEdge e in baseVertex.GetAll(false, "{$Is:$Import}:"))
                 ImportImports_internal(e);
         }
 
@@ -474,7 +474,7 @@ namespace m0.ZeroCode
 
         void AppendAdditionalNewLines(IEdge e)
         {
-            IVertex nl = e.To.Get(@"$NewLine:");
+            IVertex nl = e.To.Get(false, @"$NewLine:");
 
             if (nl == null)
                 return;
@@ -587,7 +587,7 @@ namespace m0.ZeroCode
                     
                     secondQueryPart = queryString.Substring(firstSlahPosition + 1, queryString.Length - firstSlahPosition - 1);                    
 
-                    return km.BaseEdge.To.GetAll(secondQueryPart).FirstOrDefault();
+                    return km.BaseEdge.To.GetAll(false, secondQueryPart).FirstOrDefault();
                 }
 
                 firstSlahPosition = queryString.IndexOf('\\');
@@ -597,7 +597,7 @@ namespace m0.ZeroCode
 
                 IEdge firstLevelKeyworEdge = GetFirstLevelKeywordEdge(km, firstEdgeQueryPart);
 
-                return firstLevelKeyworEdge.To.GetAll(secondQueryPart).FirstOrDefault();
+                return firstLevelKeyworEdge.To.GetAll(false, secondQueryPart).FirstOrDefault();
             } else
                 return GetFirstLevelKeywordEdge(km, queryString);
         }
@@ -638,7 +638,7 @@ namespace m0.ZeroCode
         {
             keywordManyRootQueryString = "";
 
-            if (baseEdge.To.Get("$KeywordManyRoot:") != null)
+            if (baseEdge.To.Get(false, "$KeywordManyRoot:") != null)
             {
                 keywordManyRootQueryString = path;
                 return baseEdge;
@@ -964,7 +964,7 @@ namespace m0.ZeroCode
                             if (queryString == "")
                                 e = ee;
                             else
-                                e = ee.To.GetAll(queryString).FirstOrDefault();
+                                e = ee.To.GetAll(false, queryString).FirstOrDefault();
 
                             BeenList.Add(ee); // :O)
 
@@ -1183,10 +1183,10 @@ namespace m0.ZeroCode
             if (GeneralUtil.CompareStrings(e.Meta.Value, "$ImportMeta"))
                 return false;
 
-            if (e.Meta.Get(@"$Is:$Import") != null)
+            if (e.Meta.Get(false, @"$Is:$Import") != null)
                 return false;
 
-            if (e.Meta.Get(@"$Is:$ImportMeta") != null)
+            if (e.Meta.Get(false, @"$Is:$ImportMeta") != null)
                 return false;*/
 
             return true;
@@ -1224,7 +1224,7 @@ namespace m0.ZeroCode
 
         public bool GetGraphMatch(IVertex parentToCheck, IEdge keywordEdge)
         {
-            //if (keywordEdge.To.Get("$KeywordManyRoot:") != null)
+            //if (keywordEdge.To.Get(false, "$KeywordManyRoot:") != null)
             // return true; // WTF ???? or Meta? eigher does not work for function parameters
 
             if (isNotComparableKeywordEdge(keywordEdge.Meta.ToString()))
@@ -1241,7 +1241,7 @@ namespace m0.ZeroCode
 
             //searchString = searchString_firstPart + ":" + searchString_secondPart;
 
-            //IVertex search = parentToCheck.GetAll(searchString); // current query implementation does not handle quotas properly : {}, \ keywords does not work properly
+            //IVertex search = parentToCheck.GetAll(false, searchString); // current query implementation does not handle quotas properly : {}, \ keywords does not work properly
 
             bool toReturn = false;
 
@@ -1265,7 +1265,7 @@ namespace m0.ZeroCode
                     {
                         currentMatchGraphEdgeList.Add(searchResult);
 
-                        if (keywordEdge.To.Get("$KeywordManyRoot:") == null)
+                        if (keywordEdge.To.Get(false, "$KeywordManyRoot:") == null)
                             return true;
                         else
                             toReturn = true; // this is strange. but we are leaving it AS IS. not to break something
@@ -1273,7 +1273,7 @@ namespace m0.ZeroCode
                 }
             }
 
-            if (keywordEdge.To.Get("$KeywordManyRoot:") != null)
+            if (keywordEdge.To.Get(false, "$KeywordManyRoot:") != null)
                 return true;
 
             return toReturn;
@@ -1283,7 +1283,7 @@ namespace m0.ZeroCode
 
         public IList<IEdge> MatchGraphs_import(IEdge edgeToCheck)
         {
-            IEdge secondEdge = edgeToCheck.From.GetAll(ZeroCodeCommon.stringToPossiblyEscapedString(edgeToCheck.To.ToString()) + ":").FirstOrDefault();
+            IEdge secondEdge = edgeToCheck.From.GetAll(false, ZeroCodeCommon.stringToPossiblyEscapedString(edgeToCheck.To.ToString()) + ":").FirstOrDefault();
 
             if (secondEdge != null)
             {
@@ -1300,7 +1300,7 @@ namespace m0.ZeroCode
 
             currentMatchGraphEdgeList = new List<IEdge>();
 
-            IVertex firstMatchingEdgesInGraphToCompare = graphToCompare.GetAll(ZeroCodeCommon.stringToPossiblyEscapedString(edgeToCheck.Meta.ToString()) + ":");
+            IVertex firstMatchingEdgesInGraphToCompare = graphToCompare.GetAll(false, ZeroCodeCommon.stringToPossiblyEscapedString(edgeToCheck.Meta.ToString()) + ":");
 
             IEdge firstMatchEdgeInGraphToCompare = null;
 
@@ -1316,7 +1316,7 @@ namespace m0.ZeroCode
 
             if (firstMatchEdgeInGraphToCompare == null) // lets try with (?<ANY>) @ meta
             {
-                firstMatchingEdgesInGraphToCompare = graphToCompare.GetAll("(?<ANY>):");
+                firstMatchingEdgesInGraphToCompare = graphToCompare.GetAll(false, "(?<ANY>):");
 
                 if (firstMatchingEdgesInGraphToCompare.Count() > 0)
                 {
@@ -1385,7 +1385,7 @@ namespace m0.ZeroCode
             //if (KeywordMatchedSubGraphEdges.ContainsKey(edgeToCheck))
             //   return;
 
-            foreach (IEdge keyword in MinusZero.Instance.Root.GetAll(@"User\CurrentUser:\CodeSettings:\Keyword:\$Keyword:"))
+            foreach (IEdge keyword in MinusZero.Instance.Root.GetAll(false, @"User\CurrentUser:\CodeSettings:\Keyword:\$Keyword:"))
             if(keyword.To != m0.MinusZero.Instance.newValueKeywordVertex)
             {
                 if (((string)keyword.To.Value).StartsWith(@" \ "))
@@ -1619,9 +1619,9 @@ namespace m0.ZeroCode
 
 
 
-            //ImportImports(MinusZero.Instance.Root.Get(@"System\TextLanguage\ZeroCode\DefaultImports"));
+            //ImportImports(MinusZero.Instance.Root.Get(false, @"System\TextLanguage\ZeroCode\DefaultImports"));
 
-            ImportImports(MinusZero.Instance.Root.Get(@"User\CurrentUser:\CodeSettings:"));
+            ImportImports(MinusZero.Instance.Root.Get(false, @"User\CurrentUser:\CodeSettings:"));
 
             ImportImports(graphBaseEdge.To);
 

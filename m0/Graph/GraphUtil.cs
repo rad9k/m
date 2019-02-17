@@ -101,7 +101,7 @@ namespace m0.Graph
                 else
                 {
                     int pos = 0;
-                    IVertex q = e.From.GetAll(ZeroCodeCommon.stringToPossiblyEscapedString(e.Meta.ToString()) + ":" + ZeroCodeCommon.stringToPossiblyEscapedString(e.To.ToString()));
+                    IVertex q = e.From.GetAll(false, ZeroCodeCommon.stringToPossiblyEscapedString(e.Meta.ToString()) + ":" + ZeroCodeCommon.stringToPossiblyEscapedString(e.To.ToString()));
 
                     IVertex tv;
                     do
@@ -118,15 +118,15 @@ namespace m0.Graph
         {
             IVertex _startMeta = startMeta;
 
-            if (startMeta.Get("$EdgeTarget") != null)
-                _startMeta = startMeta.Get("$EdgeTarget:");
+            if (startMeta.Get(false, "$EdgeTarget") != null)
+                _startMeta = startMeta.Get(false, "$EdgeTarget:");
 
             IVertex highestInheritanceLevel=null;
             int highestInheritanceLevel_level = 0;
 
             int tempLevel;
 
-            foreach (IEdge e in baseVertex.GetAll("$Is:"))
+            foreach (IEdge e in baseVertex.GetAll(false, "$Is:"))
             {
                 tempLevel = getInheritanceLevel(e.To, _startMeta, 0);
 
@@ -147,7 +147,7 @@ namespace m0.Graph
 
             int biggest = 0;
 
-            foreach (IEdge e in testMeta.GetAll("$Inherits:"))
+            foreach (IEdge e in testMeta.GetAll(false, "$Inherits:"))
             {
                 int temp = getInheritanceLevel(e.To, startMeta, input + 1);
                 if (temp > biggest)
@@ -184,7 +184,7 @@ namespace m0.Graph
 
         public static IVertex SetVertexValue(IVertex vertex, IVertex metaVertex, object value)
         {
-            IVertex getByMeta=vertex.Get(metaVertex.Value + ":");
+            IVertex getByMeta=vertex.Get(false, metaVertex.Value + ":");
 
             if (getByMeta == null)
                 return vertex.AddVertex(metaVertex, value);

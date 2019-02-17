@@ -23,7 +23,7 @@ namespace m0.TextLanguage.GoldParser
 
         public bool RemoveBeginEndQuotas;
 
-        public IVertex Parse(IVertex rootVertex, string text)
+        public IVertex Parse(bool metaMode, IVertex rootVertex, string text)
         {
 
             if (goldParser.Parse(new System.IO.StringReader(text)))
@@ -73,13 +73,13 @@ namespace m0.TextLanguage.GoldParser
                 {
                     string leaf = ParseLeaf( (string)reduction[x].Data );
 
-                    //IVertex def= langDef.Get("\"" + leaf + "\"");                    
+                    //IVertex def= langDef.Get(false, "\"" + leaf + "\"");                    
                     IVertex def = GraphUtil.FindOneByValue(langDef, leaf);
 
                     if (def != null)
                     {
 
-                        //if (def.Get("PreviousTerminalMoveDown:") != null)
+                        //if (def.Get(false, "PreviousTerminalMoveDown:") != null)
                         if (GraphUtil.FindOneByMeta(def, "PreviousTerminalMoveDown") != null)
                         {
                             IEdge previousEdge = v.OutEdges.Last();
@@ -92,14 +92,14 @@ namespace m0.TextLanguage.GoldParser
 
                             current.AddEdge(previousEdge.Meta, previousEdge.To);
 
-                            // }else if(def.Get("MoveDownToPreviousContainerTerminalOrCretedEmpty:")!=null){
+                            // }else if(def.Get(false, "MoveDownToPreviousContainerTerminalOrCretedEmpty:")!=null){
 
                         }
                         else if (GraphUtil.FindOneByMeta(def, "MoveDownToPreviousContainerTerminalOrCretedEmpty") != null)
                         {
                             IEdge previousEdge = v.OutEdges.LastOrDefault();
 
-                            //if ((previousEdge!=null)&&((GeneralUtil.CompareStrings(previousEdge.Meta.Value,"$Empty"))||(previousEdge.Meta.Get("ContainerTerminal:")!=null)))
+                            //if ((previousEdge!=null)&&((GeneralUtil.CompareStrings(previousEdge.Meta.Value,"$Empty"))||(previousEdge.Meta.Get(false, "ContainerTerminal:")!=null)))
                             if (
                                 ((previousEdge != null) && generatedVertexList.Contains(previousEdge.To)) && (
                                  ((GeneralUtil.CompareStrings(previousEdge.Meta.Value, "$Empty"))
@@ -114,7 +114,7 @@ namespace m0.TextLanguage.GoldParser
                             }
                             else
                             {
-                                //current = v.AddVertex(MetaTextLanguageParsedTree.Get("$EmptyContainerTerminal"), null);
+                                //current = v.AddVertex(MetaTextLanguageParsedTree.Get(false, "$EmptyContainerTerminal"), null);
 
                                 current = v.AddVertex(GraphUtil.FindOneByValue(MetaTextLanguageParsedTree, "$EmptyContainerTerminal"), null);
 

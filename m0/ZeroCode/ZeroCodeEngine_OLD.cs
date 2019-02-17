@@ -24,9 +24,9 @@ namespace m0.ZeroCode
 
  #region Parse
 
-        public IVertex Parse(Foundation.IVertex rootVertex, string text)
+        public IVertex Parse(bool metaMode, Foundation.IVertex rootVertex, string text)
         {
-            return Parser.Parse(rootVertex, text);
+            return Parser.Parse(metaMode, rootVertex, text);
         }
 
  #endregion
@@ -122,7 +122,7 @@ namespace m0.ZeroCode
         private IVertex FindMetaVertex(IVertex inputVertex, object value)
         {
             if (inputVertex != null)
-                // return (inputVertex.Get("*\"" + value.ToString() + "\""));
+                // return (inputVertex.Get(false, "*\"" + value.ToString() + "\""));
                 return GraphUtil.DeepFindOneByValue(inputVertex, (string)value, true);
             else
                 return null;

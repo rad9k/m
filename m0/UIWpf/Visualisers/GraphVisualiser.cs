@@ -281,7 +281,7 @@ namespace m0.UIWpf.Visualisers
             {
                 StringViewVisualiser s = new StringViewVisualiser();
 
-                GraphUtil.ReplaceEdge(s.Vertex.Get("BaseEdge:"), "To", v);
+                GraphUtil.ReplaceEdge(s.Vertex.Get(false, "BaseEdge:"), "To", v);
 
                 s.ContextMenu = null; // no contextmenu, as there is gloal one for whole GraphVisualiser
 
@@ -321,22 +321,22 @@ namespace m0.UIWpf.Visualisers
 
                 IsPaiting = true;
 
-                if (GeneralUtil.CompareStrings(Vertex.Get("FastMode:"), "True"))
+                if (GeneralUtil.CompareStrings(Vertex.Get(false, "FastMode:"), "True"))
                     FastMode = true;
                 else
                     FastMode = false;
 
-                if (GeneralUtil.CompareStrings(Vertex.Get("MetaLabels:"), "True"))
+                if (GeneralUtil.CompareStrings(Vertex.Get(false, "MetaLabels:"), "True"))
                     MetaLabels = true;
                 else
                     MetaLabels = false;
 
-                if (GeneralUtil.CompareStrings(Vertex.Get("ShowOutEdges:"), "True"))
+                if (GeneralUtil.CompareStrings(Vertex.Get(false, "ShowOutEdges:"), "True"))
                     ShowOutEdges = true;
                 else
                     ShowOutEdges = false;
 
-                if (GeneralUtil.CompareStrings(Vertex.Get("ShowInEdges:"), "True"))
+                if (GeneralUtil.CompareStrings(Vertex.Get(false, "ShowInEdges:"), "True"))
                     ShowInEdges = true;
                 else
                     ShowInEdges = false;
@@ -349,9 +349,9 @@ namespace m0.UIWpf.Visualisers
                     
                 DisplayedVertexesUIElements.Clear();
 
-                //GraphUtil.RemoveAllEdges(Vertex.Get("DisplayedEdges:"));
+                //GraphUtil.RemoveAllEdges(Vertex.Get(false, "DisplayedEdges:"));
                 
-                Width = GraphUtil.GetIntegerValue(Vertex.Get("NumberOfCircles:"))*GraphUtil.GetIntegerValue(Vertex.Get("VisualiserCircleSize:"))*2;
+                Width = GraphUtil.GetIntegerValue(Vertex.Get(false, "NumberOfCircles:"))*GraphUtil.GetIntegerValue(Vertex.Get(false, "VisualiserCircleSize:"))*2;
                 Height = Width;                
                              
                 AddCircle(0,null);
@@ -380,7 +380,7 @@ namespace m0.UIWpf.Visualisers
 
             if (level == 0)
             {
-                IVertex b=Vertex.Get(@"BaseEdge:\To:");
+                IVertex b=Vertex.Get(false, @"BaseEdge:\To:");
 
                 double x = this.Width / 2;
                 double y = this.Height / 2;
@@ -420,9 +420,9 @@ namespace m0.UIWpf.Visualisers
 
             double cnt = 0;
 
-            int CircleSize=GraphUtil.GetIntegerValue(Vertex.Get("VisualiserCircleSize:"));
+            int CircleSize=GraphUtil.GetIntegerValue(Vertex.Get(false, "VisualiserCircleSize:"));
 
-            //IVertex DisplayedEdges = Vertex.Get("DisplayedEdges:");
+            //IVertex DisplayedEdges = Vertex.Get(false, "DisplayedEdges:");
 
             if (OutAndInEdgesCount > 0)
                 foreach (IVertex v in InnerCircleVertexes)
@@ -476,7 +476,7 @@ namespace m0.UIWpf.Visualisers
 
                 }
 
-            if (level < GraphUtil.GetIntegerValue(Vertex.Get("NumberOfCircles:")))
+            if (level < GraphUtil.GetIntegerValue(Vertex.Get(false, "NumberOfCircles:")))
                 AddCircle(level + 1, CircleVertexes);
             else // lines from last circle
             {
@@ -516,12 +516,12 @@ namespace m0.UIWpf.Visualisers
 
         protected void SetVertexDefaultValues()
         {
-            Vertex.Get("ZoomVisualiserContent:").Value = 100;
-            Vertex.Get("VisualiserCircleSize:").Value = 200;
-            Vertex.Get("NumberOfCircles:").Value = 2;
-            Vertex.Get("FastMode:").Value = "True";
-            Vertex.Get("MetaLabels:").Value = "True";
-            Vertex.Get("ShowOutEdges:").Value = "True";
+            Vertex.Get(false, "ZoomVisualiserContent:").Value = 100;
+            Vertex.Get(false, "VisualiserCircleSize:").Value = 200;
+            Vertex.Get(false, "NumberOfCircles:").Value = 2;
+            Vertex.Get(false, "FastMode:").Value = "True";
+            Vertex.Get(false, "MetaLabels:").Value = "True";
+            Vertex.Get(false, "ShowOutEdges:").Value = "True";
         }
    
         public GraphVisualiser()
@@ -536,14 +536,14 @@ namespace m0.UIWpf.Visualisers
 
             if (mz != null && mz.IsInitialized)
             {
-                //Vertex = mz.Root.Get(@"System\Session\Visualisers").AddVertex(null, "GraphVisualiser" + this.GetHashCode()); 
+                //Vertex = mz.Root.Get(false, @"System\Session\Visualisers").AddVertex(null, "GraphVisualiser" + this.GetHashCode()); 
 
                 Vertex = mz.CreateTempVertex();
                 Vertex.Value = "GraphVisualiser" + this.GetHashCode();
 
-                ClassVertex.AddIsClassAndAllAttributesAndAssociations(Vertex, mz.Root.Get(@"System\Meta\Visualiser\Graph"));
+                ClassVertex.AddIsClassAndAllAttributesAndAssociations(Vertex, mz.Root.Get(false, @"System\Meta\Visualiser\Graph"));
 
-                ClassVertex.AddIsClassAndAllAttributesAndAssociations(Vertex.Get("BaseEdge:"), mz.Root.Get(@"System\Meta\ZeroTypes\Edge"));
+                ClassVertex.AddIsClassAndAllAttributesAndAssociations(Vertex.Get(false, "BaseEdge:"), mz.Root.Get(false, @"System\Meta\ZeroTypes\Edge"));
 
                 SetVertexDefaultValues();
                 
@@ -559,7 +559,7 @@ namespace m0.UIWpf.Visualisers
         }
 
         private void UpdateBaseEdge(){
-            IVertex bv = Vertex.Get(@"BaseEdge:\To:");
+            IVertex bv = Vertex.Get(false, @"BaseEdge:\To:");
 
             if (bv != null)
             {
@@ -569,7 +569,7 @@ namespace m0.UIWpf.Visualisers
 
         protected void ChangeZoomVisualiserContent()
         {
-            double scale = ((double)GraphUtil.GetIntegerValue(Vertex.Get("ZoomVisualiserContent:"))) / 100;
+            double scale = ((double)GraphUtil.GetIntegerValue(Vertex.Get(false, "ZoomVisualiserContent:"))) / 100;
 
             if (scale != 1.0)
             {
@@ -610,7 +610,7 @@ namespace m0.UIWpf.Visualisers
                 KeyValuePair<IVertex, SimpleVisualiserWrapper> kvp = DisplayedVertexesUIElements.Where(x => ((SimpleVisualiserWrapper)x.Value).Child == e.Source).FirstOrDefault();
 
                 if (kvp.Key != null)                
-                    GraphUtil.ReplaceEdge(Vertex.Get("BaseEdge:"), "To", kvp.Key);                                    
+                    GraphUtil.ReplaceEdge(Vertex.Get(false, "BaseEdge:"), "To", kvp.Key);                                    
             }
 
             if (e.ClickCount == 1) // change Selection
@@ -626,7 +626,7 @@ namespace m0.UIWpf.Visualisers
                        if (Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl))
                            IsCtrl = true;
 
-                       IVertex sv = Vertex.Get("SelectedEdges:");
+                       IVertex sv = Vertex.Get(false, "SelectedEdges:");
                        
 
                        if (IsCtrl)
@@ -671,11 +671,11 @@ namespace m0.UIWpf.Visualisers
 
         protected void UnselectAllSelected()
         {
-            IVertex sv = Vertex.Get("SelectedEdges:");
+            IVertex sv = Vertex.Get(false, "SelectedEdges:");
 
             foreach (IEdge v in sv)
-                if (v.To.Get("To:") != null && DisplayedVertexesUIElements.ContainsKey(v.To.Get("To:")))
-                    DisplayedVertexesUIElements[v.To.Get("To:")].Unselect();            
+                if (v.To.Get(false, "To:") != null && DisplayedVertexesUIElements.ContainsKey(v.To.Get(false, "To:")))
+                    DisplayedVertexesUIElements[v.To.Get(false, "To:")].Unselect();            
         }        
 
         IVertex tempSelectedVertexes;
@@ -684,12 +684,12 @@ namespace m0.UIWpf.Visualisers
         {
             tempSelectedVertexes = MinusZero.Instance.CreateTempVertex();
 
-            GraphUtil.CopyEdges(Vertex.Get("SelectedEdges:"), tempSelectedVertexes);
+            GraphUtil.CopyEdges(Vertex.Get(false, "SelectedEdges:"), tempSelectedVertexes);
         }
 
         protected void RestoreSelectedVertexes()
         {
-            IVertex sv = Vertex.Get("SelectedEdges:");
+            IVertex sv = Vertex.Get(false, "SelectedEdges:");
 
             if (tempSelectedVertexes != null)
             {
@@ -710,7 +710,7 @@ namespace m0.UIWpf.Visualisers
 
         public void UnselectAllSelectedEdges()
         {
-            IVertex sv = Vertex.Get("SelectedEdges:");
+            IVertex sv = Vertex.Get(false, "SelectedEdges:");
 
             GraphUtil.RemoveAllEdges_WhereEdgeIsEdge(sv);
         }
@@ -727,53 +727,53 @@ namespace m0.UIWpf.Visualisers
 
         protected void SelectWrappersForSelectedVertexes()
         {
-            IVertex sv = Vertex.Get("SelectedEdges:");
+            IVertex sv = Vertex.Get(false, "SelectedEdges:");
 
             foreach (IEdge e in sv)
             {
-                if (e.To.Get("To:")!=null&&DisplayedVertexesUIElements.ContainsKey(e.To.Get("To:")))
-                    DisplayedVertexesUIElements[e.To.Get("To:")].Select();
+                if (e.To.Get(false, "To:")!=null&&DisplayedVertexesUIElements.ContainsKey(e.To.Get(false, "To:")))
+                    DisplayedVertexesUIElements[e.To.Get(false, "To:")].Select();
             }
         }
         
         public void VertexChange(object sender, VertexChangeEventArgs e)
         {
             if ((sender == Vertex) && (e.Type == VertexChangeType.EdgeAdded) && (GeneralUtil.CompareStrings(e.Edge.Meta.Value, "BaseEdge"))
-                || (sender == Vertex.Get("BaseEdge:") && e.Type == VertexChangeType.ValueChanged)
-               || ((sender == Vertex.Get("BaseEdge:")) && (e.Type == VertexChangeType.EdgeAdded) && ((GeneralUtil.CompareStrings(e.Edge.Meta.Value, "To")))))
+                || (sender == Vertex.Get(false, "BaseEdge:") && e.Type == VertexChangeType.ValueChanged)
+               || ((sender == Vertex.Get(false, "BaseEdge:")) && (e.Type == VertexChangeType.EdgeAdded) && ((GeneralUtil.CompareStrings(e.Edge.Meta.Value, "To")))))
                 { UpdateBaseEdge(); return; }
 
-            if (sender == Vertex.Get(@"BaseEdge:\To:") && (e.Type == VertexChangeType.EdgeAdded || e.Type == VertexChangeType.EdgeRemoved))
+            if (sender == Vertex.Get(false, @"BaseEdge:\To:") && (e.Type == VertexChangeType.EdgeAdded || e.Type == VertexChangeType.EdgeRemoved))
                 { UpdateBaseEdge(); return; }
 
             if ((sender == Vertex) && (e.Type == VertexChangeType.EdgeAdded) && (GeneralUtil.CompareStrings(e.Edge.Meta.Value, "SelectedEdges")))
                 { SelectedVertexesUpdated(); return; }
 
-            if ((sender == Vertex.Get("SelectedEdges:")) && ((e.Type == VertexChangeType.EdgeAdded) || (e.Type == VertexChangeType.EdgeRemoved)))
+            if ((sender == Vertex.Get(false, "SelectedEdges:")) && ((e.Type == VertexChangeType.EdgeAdded) || (e.Type == VertexChangeType.EdgeRemoved)))
                 { SelectedVertexesUpdated(); return; }
 
-            if (sender is IVertex && GraphUtil.FindEdgeByToVertex(Vertex.GetAll(@"SelectedEdges:\"), (IVertex)sender) != null)
+            if (sender is IVertex && GraphUtil.FindEdgeByToVertex(Vertex.GetAll(false, @"SelectedEdges:\"), (IVertex)sender) != null)
                 { SelectedVertexesUpdated(); return; }
 
-            if (sender == Vertex.Get("ZoomVisualiserContent:") && e.Type == VertexChangeType.ValueChanged)
+            if (sender == Vertex.Get(false, "ZoomVisualiserContent:") && e.Type == VertexChangeType.ValueChanged)
                 { ChangeZoomVisualiserContent(); return; }
 
-            if (sender == Vertex.Get("VisualiserCircleSize:") && e.Type == VertexChangeType.ValueChanged)
+            if (sender == Vertex.Get(false, "VisualiserCircleSize:") && e.Type == VertexChangeType.ValueChanged)
                 { PaintGraph(); return; }
 
-            if (sender == Vertex.Get("NumberOfCircles:") && e.Type == VertexChangeType.ValueChanged)
+            if (sender == Vertex.Get(false, "NumberOfCircles:") && e.Type == VertexChangeType.ValueChanged)
                 { PaintGraph(); return; }
 
-            if (sender == Vertex.Get("FastMode:") && e.Type == VertexChangeType.ValueChanged)
+            if (sender == Vertex.Get(false, "FastMode:") && e.Type == VertexChangeType.ValueChanged)
                 { PaintGraph(); return; }
 
-            if (sender == Vertex.Get("MetaLabels:") && e.Type == VertexChangeType.ValueChanged)
+            if (sender == Vertex.Get(false, "MetaLabels:") && e.Type == VertexChangeType.ValueChanged)
                 { PaintGraph(); return; }
 
-            if (sender == Vertex.Get("ShowOutEdges:") && e.Type == VertexChangeType.ValueChanged)
+            if (sender == Vertex.Get(false, "ShowOutEdges:") && e.Type == VertexChangeType.ValueChanged)
                 { PaintGraph(); return; }
 
-            if (sender == Vertex.Get("ShowInEdges:") && e.Type == VertexChangeType.ValueChanged)
+            if (sender == Vertex.Get(false, "ShowInEdges:") && e.Type == VertexChangeType.ValueChanged)
                 { PaintGraph(); return; }     
         }        
 
@@ -804,7 +804,7 @@ namespace m0.UIWpf.Visualisers
                 IsDisposed = true;
                 MinusZero mz = MinusZero.Instance;
 
-                //GraphUtil.DeleteEdgeByToVertex(mz.Root.Get(@"System\Session\Visualisers"), Vertex);
+                //GraphUtil.DeleteEdgeByToVertex(mz.Root.Get(false, @"System\Session\Visualisers"), Vertex);
 
                 foreach (UIElement e in DisplayedVertexesUIElements.Values)
                     if (e is IDisposable)
@@ -837,8 +837,8 @@ namespace m0.UIWpf.Visualisers
             }
 
             // DO WANT THIS FEATURE
-            if (vertexByLocationToReturn == null&&GeneralUtil.CompareStrings(MinusZero.Instance.Root.Get(@"User\CurrentUser:\Settings:\AllowBlankAreaDragAndDrop:").Value, "StartAndEnd"))
-                vertexByLocationToReturn = Vertex.Get(@"BaseEdge:");
+            if (vertexByLocationToReturn == null&&GeneralUtil.CompareStrings(MinusZero.Instance.Root.Get(false, @"User\CurrentUser:\Settings:\AllowBlankAreaDragAndDrop:").Value, "StartAndEnd"))
+                vertexByLocationToReturn = Vertex.Get(false, @"BaseEdge:");
 
             return vertexByLocationToReturn;
         }
@@ -883,8 +883,8 @@ namespace m0.UIWpf.Visualisers
 
                 IVertex dndVertex = MinusZero.Instance.CreateTempVertex();
 
-                if (Vertex.Get(@"SelectedEdges:\") != null)
-                    foreach (IEdge ee in Vertex.GetAll(@"SelectedEdges:\"))
+                if (Vertex.Get(false, @"SelectedEdges:\") != null)
+                    foreach (IEdge ee in Vertex.GetAll(false, @"SelectedEdges:\"))
                         dndVertex.AddEdge(null, ee.To);
                 else
                 {
@@ -907,11 +907,11 @@ namespace m0.UIWpf.Visualisers
         {
             IVertex v = GetEdgeByLocation(e.GetPosition(this));
 
-            if (v == null && GeneralUtil.CompareStrings(MinusZero.Instance.Root.Get(@"User\CurrentUser:\Settings:\AllowBlankAreaDragAndDrop:").Value,"OnlyEnd"))
-                v = Vertex.Get("BaseEdge:");
+            if (v == null && GeneralUtil.CompareStrings(MinusZero.Instance.Root.Get(false, @"User\CurrentUser:\Settings:\AllowBlankAreaDragAndDrop:").Value,"OnlyEnd"))
+                v = Vertex.Get(false, "BaseEdge:");
 
             if (v != null)
-                Dnd.DoDrop(null, v.Get("To:"), e);
+                Dnd.DoDrop(null, v.Get(false, "To:"), e);
         }
 
         private void dndMouseEnter(object sender, MouseEventArgs e)

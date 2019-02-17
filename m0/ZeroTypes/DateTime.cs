@@ -10,15 +10,15 @@ namespace m0.ZeroTypes
     {
         public static void FillDateTime(IVertex basevertex, System.DateTime datetime)
         {
-            IVertex sm = MinusZero.Instance.Root.Get(@"System\Meta");
+            IVertex sm = MinusZero.Instance.Root.Get(false, @"System\Meta");
 
-            basevertex.AddVertex(sm.Get(@"ZeroTypes\DateTime\Year"),datetime.Year);            
-            basevertex.AddVertex(sm.Get(@"ZeroTypes\DateTime\Month"),datetime.Month);
-            basevertex.AddVertex(sm.Get(@"ZeroTypes\DateTime\Day"),datetime.Day);
-            basevertex.AddVertex(sm.Get(@"ZeroTypes\DateTime\Hour"),datetime.Hour);
-            basevertex.AddVertex(sm.Get(@"ZeroTypes\DateTime\Minute"),datetime.Minute);
-            basevertex.AddVertex(sm.Get(@"ZeroTypes\DateTime\Second"),datetime.Second);
-            basevertex.AddVertex(sm.Get(@"ZeroTypes\DateTime\Millisecond"), datetime.Millisecond);
+            basevertex.AddVertex(sm.Get(false, @"ZeroTypes\DateTime\Year"),datetime.Year);            
+            basevertex.AddVertex(sm.Get(false, @"ZeroTypes\DateTime\Month"),datetime.Month);
+            basevertex.AddVertex(sm.Get(false, @"ZeroTypes\DateTime\Day"),datetime.Day);
+            basevertex.AddVertex(sm.Get(false, @"ZeroTypes\DateTime\Hour"),datetime.Hour);
+            basevertex.AddVertex(sm.Get(false, @"ZeroTypes\DateTime\Minute"),datetime.Minute);
+            basevertex.AddVertex(sm.Get(false, @"ZeroTypes\DateTime\Second"),datetime.Second);
+            basevertex.AddVertex(sm.Get(false, @"ZeroTypes\DateTime\Millisecond"), datetime.Millisecond);
         }
     }
 }

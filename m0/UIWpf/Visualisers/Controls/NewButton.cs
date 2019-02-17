@@ -45,8 +45,8 @@ namespace m0.UIWpf.Visualisers.Controls
 
             if (v != null)
             {
-                IVertex baseVertex=v.Vertex.Get(@"BaseEdge:\To:");
-                IVertex toShowEdgesMeta = v.Vertex.Get(@"ToShowEdgesMeta:\Meta:");
+                IVertex baseVertex=v.Vertex.Get(false, @"BaseEdge:\To:");
+                IVertex toShowEdgesMeta = v.Vertex.Get(false, @"ToShowEdgesMeta:\Meta:");
 
                 //VertexOperations.AddInstance(baseVertex, toShowEdgesMeta);
                 VertexOperations.AddInstanceByEdgeVertex(baseVertex, toShowEdgesMeta);

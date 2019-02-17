@@ -28,9 +28,9 @@ namespace m0.UIWpf.Visualisers
 
                 Vertex.Value = "EnumVisualiser" + this.GetHashCode();
 
-                ClassVertex.AddIsClassAndAllAttributesAndAssociations(Vertex, mz.Root.Get(@"System\Meta\Visualiser\Enum"));
+                ClassVertex.AddIsClassAndAllAttributesAndAssociations(Vertex, mz.Root.Get(false, @"System\Meta\Visualiser\Enum"));
 
-                ClassVertex.AddIsClassAndAllAttributesAndAssociations(Vertex.Get("BaseEdge:"), mz.Root.Get(@"System\Meta\ZeroTypes\Edge"));
+                ClassVertex.AddIsClassAndAllAttributesAndAssociations(Vertex.Get(false, "BaseEdge:"), mz.Root.Get(false, @"System\Meta\ZeroTypes\Edge"));
 
                 this.Loaded += new RoutedEventHandler(OnLoad);
 
@@ -61,13 +61,13 @@ namespace m0.UIWpf.Visualisers
                 {
                     IVertex tag = (IVertex)((ComboBoxItem)this.SelectedItem).Tag;
 
-                    IVertex bev = Vertex.Get("BaseEdge:");
+                    IVertex bev = Vertex.Get(false, "BaseEdge:");
 
                     if (bev != null)
                     {
-                        IVertex fromv = bev.Get("From:");
-                        IVertex metav = bev.Get("Meta:");
-                        IVertex tov = bev.Get("To:");
+                        IVertex fromv = bev.Get(false, "From:");
+                        IVertex metav = bev.Get(false, "Meta:");
+                        IVertex tov = bev.Get(false, "To:");
 
                         if (tov != tag) // is there any change ?
                         {
@@ -75,7 +75,7 @@ namespace m0.UIWpf.Visualisers
 
                             GraphUtil.CreateOrReplaceEdge(fromv, metav, tag);
 
-                            GraphUtil.CreateOrReplaceEdge(bev, MinusZero.Instance.Root.Get(@"System\Meta\ZeroTypes\Edge\To"), tag);                            
+                            GraphUtil.CreateOrReplaceEdge(bev, MinusZero.Instance.Root.Get(false, @"System\Meta\ZeroTypes\Edge\To"), tag);                            
                         }
                     }                    
                 }
@@ -88,21 +88,21 @@ namespace m0.UIWpf.Visualisers
 
         private void UpdateBaseEdge()
         {
-            IVertex bev = Vertex.Get("BaseEdge:");
+            IVertex bev = Vertex.Get(false, "BaseEdge:");
 
             if (bev == null)
                 return;
 
-            IVertex fromv = bev.Get("From:");
-            IVertex metav = bev.Get("Meta:");
-            IVertex tov = bev.Get("To:");
+            IVertex fromv = bev.Get(false, "From:");
+            IVertex metav = bev.Get(false, "Meta:");
+            IVertex tov = bev.Get(false, "To:");
 
             if(fromv!=null && metav!=null && tov!=null){                
                 this.Items.Clear();
 
                 ComboBoxItem SelectedItem=null;
 
-                foreach (IEdge e in metav.GetAll(@"$EdgeTarget:\EnumValue:"))
+                foreach (IEdge e in metav.GetAll(false, @"$EdgeTarget:\EnumValue:"))
                 {
                     ComboBoxItem i = new ComboBoxItem();
                     i.Content = e.To.Value;
@@ -122,9 +122,9 @@ namespace m0.UIWpf.Visualisers
         protected void VertexChange(object sender, VertexChangeEventArgs e)
         {
             if ((sender == Vertex) && (e.Type == VertexChangeType.EdgeAdded) && (GeneralUtil.CompareStrings(e.Edge.Meta.Value, "BaseEdge"))
-                 || (sender == Vertex.Get("BaseEdge:") && e.Type == VertexChangeType.EdgeAdded)
-                || (sender == Vertex.Get(@"BaseEdge:\To:") && e.Type == VertexChangeType.ValueChanged)
-                || sender == Vertex.Get(@"BaseEdge:\Meta:"))
+                 || (sender == Vertex.Get(false, "BaseEdge:") && e.Type == VertexChangeType.EdgeAdded)
+                || (sender == Vertex.Get(false, @"BaseEdge:\To:") && e.Type == VertexChangeType.ValueChanged)
+                || sender == Vertex.Get(false, @"BaseEdge:\Meta:"))
             {
                 UpdateBaseEdge();
             }
@@ -187,13 +187,13 @@ namespace m0.UIWpf.Visualisers
                 (Math.Abs(diff.X) > Dnd.MinimumHorizontalDragDistance) ||
                 (Math.Abs(diff.Y) > Dnd.MinimumVerticalDragDistance)))
             {
-                if (Vertex.Get(@"BaseEdge:\To:") != null)
+                if (Vertex.Get(false, @"BaseEdge:\To:") != null)
                 {
                     isDraggin = true;
 
                     IVertex dndVertex = MinusZero.Instance.CreateTempVertex();
 
-                    dndVertex.AddEdge(null, Vertex.Get(@"BaseEdge:"));
+                    dndVertex.AddEdge(null, Vertex.Get(false, @"BaseEdge:"));
 
                     DataObject dragData = new DataObject("Vertex", dndVertex);
                     dragData.SetData("DragSource", this);
@@ -207,7 +207,7 @@ namespace m0.UIWpf.Visualisers
 
         private void dndDrop(object sender, DragEventArgs e)
         {
-            Dnd.DoDrop(this, Vertex.Get(@"BaseEdge:\To:"), e);
+            Dnd.DoDrop(this, Vertex.Get(false, @"BaseEdge:\To:"), e);
         }
 
         private void dndMouseEnter(object sender, MouseEventArgs e)

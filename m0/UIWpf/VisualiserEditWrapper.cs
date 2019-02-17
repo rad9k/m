@@ -35,37 +35,37 @@ namespace m0.UIWpf
 
             IPlatformClass pc;
 
-            IVertex defvis = e.Meta.Get(@"$DefaultEditVisualiser:");
+            IVertex defvis = e.Meta.Get(false, @"$DefaultEditVisualiser:");
            
 
             if (defvis == null)
-                defvis = e.Meta.Get(@"$EdgeTarget:\$DefaultEditVisualiser:");
+                defvis = e.Meta.Get(false, @"$EdgeTarget:\$DefaultEditVisualiser:");
 
            // if (defvis == null)
-             //   defvis = e.Meta.Get(@"$VertexTarget:\$DefaultEditVisualiser:");
+             //   defvis = e.Meta.Get(false, @"$VertexTarget:\$DefaultEditVisualiser:");
              //
              // in TableVisualiser it makes Class\Association, Class\Aggregation not editable 
 
             if (defvis == null)
-                defvis = e.Meta.Get(@"$EdgeTarget:\$Is:\$DefaultEditVisualiser:");
+                defvis = e.Meta.Get(false, @"$EdgeTarget:\$Is:\$DefaultEditVisualiser:");
 
             if (defvis == null)
-                defvis = e.Meta.Get(@"$VertexTarget:\$Is:\$DefaultEditVisualiser:");
+                defvis = e.Meta.Get(false, @"$VertexTarget:\$Is:\$DefaultEditVisualiser:");
 
             if (defvis == null && e.To!=null)
-                defvis = e.To.Get(@"$Is:\$DefaultEditVisualiser:");
+                defvis = e.To.Get(false, @"$Is:\$DefaultEditVisualiser:");
 
             if (defvis != null)
             {
                 pc = (IPlatformClass)PlatformClass.CreatePlatformObject(defvis);
                 
-                if (defvis.Get("$Inherits:HasBaseEdge") != null)                
-                    Edge.ReplaceEdgeEdges(pc.Vertex.Get("BaseEdge:"), e);                                    
+                if (defvis.Get(false, "$Inherits:HasBaseEdge") != null)                
+                    Edge.ReplaceEdgeEdges(pc.Vertex.Get(false, "BaseEdge:"), e);                                    
             }
             else
             {
                 pc = new StringVisualiser();
-                Edge.ReplaceEdgeEdges(pc.Vertex.Get("BaseEdge:"), e);                                                    
+                Edge.ReplaceEdgeEdges(pc.Vertex.Get(false, "BaseEdge:"), e);                                                    
             }
 
             _this.Content = pc;            

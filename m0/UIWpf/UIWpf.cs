@@ -42,15 +42,15 @@ namespace m0.UIWpf
 
         public static Brush GetBrushFromColorVertex(IVertex colorVertex)
         {
-            if(colorVertex.Get("Opacity:")==null)
-                return new SolidColorBrush(Color.FromArgb(255,(byte)GraphUtil.GetIntegerValue(colorVertex.Get("Red:"))
-                    ,(byte)GraphUtil.GetIntegerValue(colorVertex.Get("Green:"))
-                    ,(byte)GraphUtil.GetIntegerValue(colorVertex.Get("Blue:"))));
+            if(colorVertex.Get(false, "Opacity:")==null)
+                return new SolidColorBrush(Color.FromArgb(255,(byte)GraphUtil.GetIntegerValue(colorVertex.Get(false, "Red:"))
+                    ,(byte)GraphUtil.GetIntegerValue(colorVertex.Get(false, "Green:"))
+                    ,(byte)GraphUtil.GetIntegerValue(colorVertex.Get(false, "Blue:"))));
             else
-                return new SolidColorBrush(Color.FromArgb((byte)GraphUtil.GetIntegerValue(colorVertex.Get("Opacity:"))
-                    , (byte)GraphUtil.GetIntegerValue(colorVertex.Get("Red:"))
-                    , (byte)GraphUtil.GetIntegerValue(colorVertex.Get("Green:"))
-                    , (byte)GraphUtil.GetIntegerValue(colorVertex.Get("Blue:"))));
+                return new SolidColorBrush(Color.FromArgb((byte)GraphUtil.GetIntegerValue(colorVertex.Get(false, "Opacity:"))
+                    , (byte)GraphUtil.GetIntegerValue(colorVertex.Get(false, "Red:"))
+                    , (byte)GraphUtil.GetIntegerValue(colorVertex.Get(false, "Green:"))
+                    , (byte)GraphUtil.GetIntegerValue(colorVertex.Get(false, "Blue:"))));
         }
 
         public static double GetHorizontalSizeOfCharacterString(int Characters)

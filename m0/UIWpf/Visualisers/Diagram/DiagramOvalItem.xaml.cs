@@ -37,8 +37,8 @@ namespace m0.UIWpf.Visualisers.Diagram
         {
             base.VisualiserUpdate();
 
-            if (Vertex.Get(@"BaseEdge:\To:").Value != null)
-                this.Text.Text = Vertex.Get(@"BaseEdge:\To:").Value.ToString();
+            if (Vertex.Get(false, @"BaseEdge:\To:").Value != null)
+                this.Text.Text = Vertex.Get(false, @"BaseEdge:\To:").Value.ToString();
             else
                 this.Text.Text = "Ø";
 

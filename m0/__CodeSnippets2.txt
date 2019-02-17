@@ -50,10 +50,10 @@ namespace m0
             Console.WriteLine(z.DefaultGraphCreationCodeGenerator.GraphCreationCodeGenerateAsString(z.Root));
             Console.WriteLine("***");
 
-            //IVertex res = r.GetAll(@"meta1:{meta3:{3node 3},meta3:2node 2{meta1:3node 1}}");
+            //IVertex res = r.GetAll(false, @"meta1:{meta3:{3node 3},meta3:2node 2{meta1:3node 1}}");
 
-            IVertex res = r.GetAll("{{meta3:3node 1},2node 1}");            
-            //IVertex res = r.GetAll("{}");            
+            IVertex res = r.GetAll(false, "{{meta3:3node 1},2node 1}");            
+            //IVertex res = r.GetAll(false, "{}");            
 
             foreach (IEdge e in res)
                 Console.WriteLine("- " + e.Meta.Value + ":" + e.To.Value);

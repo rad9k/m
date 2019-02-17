@@ -102,7 +102,7 @@ namespace m0.UIWpf.Visualisers.Diagram
 
             foreach(DiagramItemBase i in Items)
             {
-                IVertex baseEdgeTo = i.Vertex.Get(@"BaseEdge:\To:");
+                IVertex baseEdgeTo = i.Vertex.Get(false, @"BaseEdge:\To:");
 
                 if (ItemsDictionary.ContainsKey(baseEdgeTo))
                     ItemsDictionary[baseEdgeTo].Add(i);
@@ -138,12 +138,12 @@ namespace m0.UIWpf.Visualisers.Diagram
         // TOO
         protected List<DiagramItemBase> GetItemsByBaseEdge(IVertex to)
         {
-           return GetItemsDictionary()[to.Get("To:")];
+           return GetItemsDictionary()[to.Get(false, "To:")];
             
             /*List<DiagramItemBase> r = new List<DiagramItemBase>();
 
             foreach (DiagramItemBase i in GetItemsDictionary)
-               if (i.Vertex.Get(@"BaseEdge:\To:") == to.Get("To:"))
+               if (i.Vertex.Get(false, @"BaseEdge:\To:") == to.Get(false, "To:"))
                     r.Add(i);
 
             return r;*/
@@ -176,8 +176,8 @@ namespace m0.UIWpf.Visualisers.Diagram
                 
 
                 Panel.SetZIndex(item, 1);
-                Canvas.SetLeft(item, GraphUtil.GetDoubleValue(item.Vertex.Get("PositionX:")));
-                Canvas.SetTop(item, GraphUtil.GetDoubleValue(item.Vertex.Get("PositionY:")));        
+                Canvas.SetLeft(item, GraphUtil.GetDoubleValue(item.Vertex.Get(false, "PositionX:")));
+                Canvas.SetTop(item, GraphUtil.GetDoubleValue(item.Vertex.Get(false, "PositionY:")));        
 
                 TheCanvas.Children.Add(item);
 
@@ -193,23 +193,23 @@ namespace m0.UIWpf.Visualisers.Diagram
            foreach(DiagramItemBase item in Items){
                metatopairs.Clear();
 
-               foreach (IEdge l in item.Vertex.GetAll("DiagramLine:")) // calculate DiagramLines number and Edges number for each Meta/To edge pair
+               foreach (IEdge l in item.Vertex.GetAll(false, "DiagramLine:")) // calculate DiagramLines number and Edges number for each Meta/To edge pair
                {
                    MetaToPair found = null;
 
                    foreach (MetaToPair pair in metatopairs)
-                       if (pair.Meta == l.To.Get(@"BaseEdge:\Meta:") && pair.To == l.To.Get(@"BaseEdge:\To:"))
+                       if (pair.Meta == l.To.Get(false, @"BaseEdge:\Meta:") && pair.To == l.To.Get(false, @"BaseEdge:\To:"))
                            found = pair;
 
                    if (found == null)
                    {
                        MetaToPair newpair = new MetaToPair();
-                       newpair.Meta = l.To.Get(@"BaseEdge:\Meta:");
-                       newpair.To = l.To.Get(@"BaseEdge:\To:");
+                       newpair.Meta = l.To.Get(false, @"BaseEdge:\Meta:");
+                       newpair.To = l.To.Get(false, @"BaseEdge:\To:");
                        newpair.DiagramLinesNumber = 1;
                        newpair.EdgesNumber = 0;
 
-                       foreach(IEdge e in item.Vertex.GetAll(@"BaseEdge:\To:\"))
+                       foreach(IEdge e in item.Vertex.GetAll(false, @"BaseEdge:\To:\"))
                            if (newpair.Meta == e.Meta && newpair.To == e.To)
                                newpair.EdgesNumber++;
 
@@ -221,18 +221,18 @@ namespace m0.UIWpf.Visualisers.Diagram
 
                foreach(MetaToPair pair in metatopairs){ // delete DiagramLines for edges that been deleted
                    if(pair.DiagramLinesNumber>pair.EdgesNumber)
-                       foreach(IEdge e in item.Vertex.GetAll("DiagramLine:")){
-                           if(pair.Meta == e.To.Get(@"BaseEdge:\Meta:") && pair.To == e.To.Get(@"BaseEdge:\To:") && pair.DiagramLinesNumber>pair.EdgesNumber){
+                       foreach(IEdge e in item.Vertex.GetAll(false, "DiagramLine:")){
+                           if(pair.Meta == e.To.Get(false, @"BaseEdge:\Meta:") && pair.To == e.To.Get(false, @"BaseEdge:\To:") && pair.DiagramLinesNumber>pair.EdgesNumber){
                                item.Vertex.DeleteEdge(e);
                                pair.DiagramLinesNumber--;
 
-                                IVertex c = m0.MinusZero.Instance.Root.Get(@"TEST\Counter:");
+                                IVertex c = m0.MinusZero.Instance.Root.Get(false, @"TEST\Counter:");
                                 c.Value=((int)c.Value)+1;
                            }
                        }
                }
 
-               foreach (IEdge l in item.Vertex.GetAll("DiagramLine:")) // add diagram line objects
+               foreach (IEdge l in item.Vertex.GetAll(false, "DiagramLine:")) // add diagram line objects
                    item.AddDiagramLineObject(GetToDiagramItemFromLineVertex(l.To), l.To);
                }
                             
@@ -243,25 +243,25 @@ namespace m0.UIWpf.Visualisers.Diagram
         {
             IVertex toFind = null;
 
-            if (lineVertex.Get(@"BaseEdge:\Meta:\$VertexTarget:") != null
-                && !GraphUtil.GetValueAndCompareStrings(lineVertex.Get(@"Definition:\CreateEdgeOnly:"), "True"))
-                toFind = lineVertex.Get(@"BaseEdge:\To:\$EdgeTarget:");
+            if (lineVertex.Get(false, @"BaseEdge:\Meta:\$VertexTarget:") != null
+                && !GraphUtil.GetValueAndCompareStrings(lineVertex.Get(false, @"Definition:\CreateEdgeOnly:"), "True"))
+                toFind = lineVertex.Get(false, @"BaseEdge:\To:\$EdgeTarget:");
             else
-                toFind = lineVertex.Get(@"BaseEdge:\To:");
+                toFind = lineVertex.Get(false, @"BaseEdge:\To:");
 
             if (toFind != null)
                 foreach(DiagramItemBase i in GetItemsDictionary()[toFind])
-                    if (!(lineVertex.Get(@"Definition:\ToDiagramItemTestQuery:") != null && i.Vertex.Get((string)lineVertex.Get(@"Definition:\ToDiagramItemTestQuery:").Value) == null))
+                    if (!(lineVertex.Get(false, @"Definition:\ToDiagramItemTestQuery:") != null && i.Vertex.Get(false, (string)lineVertex.Get(false, @"Definition:\ToDiagramItemTestQuery:").Value) == null))
                         return i;
 
                /* foreach (DiagramItemBase i in Items)
                 {
                     bool canReturn = true;
 
-                    if (lineVertex.Get(@"Definition:\ToDiagramItemTestQuery:") != null && i.Vertex.Get((string)lineVertex.Get(@"Definition:\ToDiagramItemTestQuery:").Value) == null)
+                    if (lineVertex.Get(false, @"Definition:\ToDiagramItemTestQuery:") != null && i.Vertex.Get(false, (string)lineVertex.Get(false, @"Definition:\ToDiagramItemTestQuery:").Value) == null)
                         canReturn = false;
 
-                    if (i.Vertex.Get(@"BaseEdge:\To:") == toFind && canReturn)
+                    if (i.Vertex.Get(false, @"BaseEdge:\To:") == toFind && canReturn)
                         return i;
                 }*/
 
@@ -275,8 +275,8 @@ namespace m0.UIWpf.Visualisers.Diagram
 
             List<DiagramItemBase> list=new List<DiagramItemBase>();
 
-            if (edge.Meta.Get(@"$VertexTarget:") != null)
-                toFind = edge.To.Get(@"$EdgeTarget:");
+            if (edge.Meta.Get(false, @"$VertexTarget:") != null)
+                toFind = edge.To.Get(false, @"$EdgeTarget:");
             else
                 toFind = edge.To;
 
@@ -285,7 +285,7 @@ namespace m0.UIWpf.Visualisers.Diagram
            /* if (toFind != null)
                 foreach (DiagramItemBase i in Items)
                 {                  
-                    if (i.Vertex.Get(@"BaseEdge:\To:") == toFind)
+                    if (i.Vertex.Get(false, @"BaseEdge:\To:") == toFind)
                         list.Add(i);
                 }
 
@@ -342,14 +342,14 @@ namespace m0.UIWpf.Visualisers.Diagram
 
         private void TurnOnSelectedEdgesFireChange()
         {
-            if (Vertex.Get("SelectedEdges:") is VertexBase)
-                ((VertexBase)Vertex.Get("SelectedEdges:")).CanFireChangeEvent = true;
+            if (Vertex.Get(false, "SelectedEdges:") is VertexBase)
+                ((VertexBase)Vertex.Get(false, "SelectedEdges:")).CanFireChangeEvent = true;
         }
 
         private void TurnOffSelectedEdgesFireChange()
         {
-            if (Vertex.Get("SelectedEdges:") is VertexBase)
-                ((VertexBase)Vertex.Get("SelectedEdges:")).CanFireChangeEvent = false;
+            if (Vertex.Get(false, "SelectedEdges:") is VertexBase)
+                ((VertexBase)Vertex.Get(false, "SelectedEdges:")).CanFireChangeEvent = false;
         }
 
         void SelectItemsBySelectionArea(double left, double top, double right, double bottom)
@@ -415,12 +415,12 @@ namespace m0.UIWpf.Visualisers.Diagram
 
                 ClearItems();
 
-                Width = GraphUtil.GetDoubleValue(Vertex.Get("SizeX:"));
-                Height = GraphUtil.GetDoubleValue(Vertex.Get("SizeY:"));
+                Width = GraphUtil.GetDoubleValue(Vertex.Get(false, "SizeX:"));
+                Height = GraphUtil.GetDoubleValue(Vertex.Get(false, "SizeY:"));
 
                 Background = new SolidColorBrush(Color.FromRgb(255, 200, 200));
 
-                foreach (IEdge ie in Vertex.GetAll("Item:"))
+                foreach (IEdge ie in Vertex.GetAll(false, "Item:"))
                     AddItem(ie.To);
 
                 UpdateLayout(); // here
@@ -521,7 +521,7 @@ namespace m0.UIWpf.Visualisers.Diagram
 
         private void DeleteSelectedItems()
         {
-            if (Vertex.GetAll(@"SelectedEdges:\").Count() == 0)
+            if (Vertex.GetAll(false, @"SelectedEdges:\").Count() == 0)
                 return;
 
             IVertex info = m0.MinusZero.Instance.CreateTempVertex();
@@ -539,12 +539,12 @@ namespace m0.UIWpf.Visualisers.Diagram
             if (option == null || option == optionCancel)
                 return;
 
-            IList<IEdge> selectedEdges = GeneralUtil.CreateAndCopyList<IEdge>(Vertex.GetAll(@"SelectedEdges:\"));
+            IList<IEdge> selectedEdges = GeneralUtil.CreateAndCopyList<IEdge>(Vertex.GetAll(false, @"SelectedEdges:\"));
 
             UnselectAllSelectedEdges();
 
             foreach (IEdge e in selectedEdges)
-                foreach (DiagramItemBase i in GetItemsDictionary()[e.To.Get("To:")])
+                foreach (DiagramItemBase i in GetItemsDictionary()[e.To.Get(false, "To:")])
                 {  // what about multiple items for same BaseEdge:\To: ?
 
                     if (option == optionDiagramItemDelete)
@@ -557,14 +557,14 @@ namespace m0.UIWpf.Visualisers.Diagram
                     {
                         GraphUtil.DeleteEdgeByToVertex(Vertex, i.Vertex);
                         RemoveItem(i);
-                        VertexOperations.DeleteOneEdge(i.Vertex.Get(@"BaseEdge:\From:"), i.Vertex.Get(@"BaseEdge:\Meta:"),i.Vertex.Get(@"BaseEdge:\To:"));
+                        VertexOperations.DeleteOneEdge(i.Vertex.Get(false, @"BaseEdge:\From:"), i.Vertex.Get(false, @"BaseEdge:\Meta:"),i.Vertex.Get(false, @"BaseEdge:\To:"));
                     }
 
                     if (option == optionAllEdgesDelete)
                     {
                         GraphUtil.DeleteEdgeByToVertex(Vertex, i.Vertex);
                         RemoveItem(i);
-                        VertexOperations.DeleteAllInOutEdges(i.Vertex.Get(@"BaseEdge:\To:"));
+                        VertexOperations.DeleteAllInOutEdges(i.Vertex.Get(false, @"BaseEdge:\To:"));
                     }
 
                 }
@@ -574,7 +574,7 @@ namespace m0.UIWpf.Visualisers.Diagram
         {
             bool onlyEdge = true;
 
-            if (selectedLine.Vertex.Get(@"BaseEdge:\Meta:\$VertexTarget:") != null)
+            if (selectedLine.Vertex.Get(false, @"BaseEdge:\Meta:\$VertexTarget:") != null)
                 onlyEdge = false;
 
             IVertex info = m0.MinusZero.Instance.CreateTempVertex();
@@ -599,19 +599,19 @@ namespace m0.UIWpf.Visualisers.Diagram
 
             if (onlyEdge)
             {             
-                GraphUtil.DeleteEdge(selectedLine.FromDiagramItem.Vertex.Get(@"BaseEdge:\To:"), 
-                    selectedLine.Vertex.Get(@"BaseEdge:\Meta:"),
-                    selectedLine.Vertex.Get(@"BaseEdge:\To:"));
+                GraphUtil.DeleteEdge(selectedLine.FromDiagramItem.Vertex.Get(false, @"BaseEdge:\To:"), 
+                    selectedLine.Vertex.Get(false, @"BaseEdge:\Meta:"),
+                    selectedLine.Vertex.Get(false, @"BaseEdge:\To:"));
             }
             else
             {
-                GraphUtil.DeleteEdge(selectedLine.Vertex.Get(@"BaseEdge:\To:"),
-               MinusZero.Instance.Root.Get(@"System\Meta\Base\Vertex\$EdgeTarget"),
-               selectedLine.Vertex.Get(@"BaseEdge:\To:\$EdgeTarget:"));
+                GraphUtil.DeleteEdge(selectedLine.Vertex.Get(false, @"BaseEdge:\To:"),
+               MinusZero.Instance.Root.Get(false, @"System\Meta\Base\Vertex\$EdgeTarget"),
+               selectedLine.Vertex.Get(false, @"BaseEdge:\To:\$EdgeTarget:"));
 
-                GraphUtil.DeleteEdge(selectedLine.FromDiagramItem.Vertex.Get(@"BaseEdge:\To:"),
-                  selectedLine.Vertex.Get(@"BaseEdge:\Meta:"),
-                  selectedLine.Vertex.Get(@"BaseEdge:\To:"));
+                GraphUtil.DeleteEdge(selectedLine.FromDiagramItem.Vertex.Get(false, @"BaseEdge:\To:"),
+                  selectedLine.Vertex.Get(false, @"BaseEdge:\Meta:"),
+                  selectedLine.Vertex.Get(false, @"BaseEdge:\To:"));
             }
         }
 
@@ -685,7 +685,7 @@ namespace m0.UIWpf.Visualisers.Diagram
 
                 MovingSprites.Clear();
 
-                foreach (IEdge ed in Vertex.GetAll(@"SelectedEdges:\"))
+                foreach (IEdge ed in Vertex.GetAll(false, @"SelectedEdges:\"))
                     foreach (DiagramItemBase item in GetItemsByBaseEdge(ed.To))
                     {
                         double rx = Canvas.GetLeft(item);
@@ -710,8 +710,8 @@ namespace m0.UIWpf.Visualisers.Diagram
             {
                 foreach(Rectangle r in MovingSprites)
                 {
-                    Canvas.SetLeft(r, GraphUtil.GetDoubleValue(((DiagramItemBase)r.Tag).Vertex.Get(@"PositionX:"))+x);
-                    Canvas.SetTop(r, GraphUtil.GetDoubleValue(((DiagramItemBase)r.Tag).Vertex.Get(@"PositionY:")) + y);                 
+                    Canvas.SetLeft(r, GraphUtil.GetDoubleValue(((DiagramItemBase)r.Tag).Vertex.Get(false, @"PositionX:"))+x);
+                    Canvas.SetTop(r, GraphUtil.GetDoubleValue(((DiagramItemBase)r.Tag).Vertex.Get(false, @"PositionY:")) + y);                 
                 }
             }
         }
@@ -723,10 +723,10 @@ namespace m0.UIWpf.Visualisers.Diagram
             foreach (Rectangle r in MovingSprites)
                 TheCanvas.Children.Remove(r);
 
-            foreach (IEdge ed in Vertex.GetAll(@"SelectedEdges:\"))
+            foreach (IEdge ed in Vertex.GetAll(false, @"SelectedEdges:\"))
                 foreach (DiagramItemBase item in GetItemsByBaseEdge(ed.To))
-                    item.MoveItem(GraphUtil.GetDoubleValue(item.Vertex.Get("PositionX:")) + x,
-                        GraphUtil.GetDoubleValue(item.Vertex.Get("PositionY:")) + y);
+                    item.MoveItem(GraphUtil.GetDoubleValue(item.Vertex.Get(false, "PositionX:")) + x,
+                        GraphUtil.GetDoubleValue(item.Vertex.Get(false, "PositionY:")) + y);
         }
 
         protected void MouseMoveHandler(object sender, MouseEventArgs e)
@@ -810,8 +810,8 @@ namespace m0.UIWpf.Visualisers.Diagram
 
                 if (ClickTarget == ClickTargetEnum.Item) // item move
                 {
-                    if ((Vertex.GetAll(@"SelectedEdges:\").Count() > 0 && ClickedItem.IsSelected == false) ||
-                        Vertex.GetAll(@"SelectedEdges:\").Count() > 1)
+                    if ((Vertex.GetAll(false, @"SelectedEdges:\").Count() > 0 && ClickedItem.IsSelected == false) ||
+                        Vertex.GetAll(false, @"SelectedEdges:\").Count() > 1)
                     {
                         if (ClickedItem.IsSelected == false)
                             ClickedItem.AddToSelectedEdges();
@@ -819,10 +819,10 @@ namespace m0.UIWpf.Visualisers.Diagram
                         AddOrMoveMultiSelectionMovingSprites(e.GetPosition(ClickedItem).X - ClickPositionX_ItemCordinates,
                             e.GetPosition(ClickedItem).Y - ClickPositionY_ItemCordinates);
 
-                        /*foreach (IEdge ed in Vertex.GetAll(@"SelectedEdges:\"))
+                        /*foreach (IEdge ed in Vertex.GetAll(false, @"SelectedEdges:\"))
                             foreach (DiagramItemBase item in GetItemsByBaseEdge(ed.To))
-                                item.MoveItem(GraphUtil.GetDoubleValue(item.Vertex.Get("PositionX:")) + (e.GetPosition(ClickedItem).X - ClickPositionX_ItemCordinates),
-                                    GraphUtil.GetDoubleValue(item.Vertex.Get("PositionY:")) + (e.GetPosition(ClickedItem).Y - ClickPositionY_ItemCordinates));
+                                item.MoveItem(GraphUtil.GetDoubleValue(item.Vertex.Get(false, "PositionX:")) + (e.GetPosition(ClickedItem).X - ClickPositionX_ItemCordinates),
+                                    GraphUtil.GetDoubleValue(item.Vertex.Get(false, "PositionY:")) + (e.GetPosition(ClickedItem).Y - ClickPositionY_ItemCordinates));
                                     */
                     }
                     else
@@ -943,7 +943,7 @@ namespace m0.UIWpf.Visualisers.Diagram
 
         protected void ChangeZoomVisualiserContent()
         {
-            double scale = ((double)GraphUtil.GetIntegerValue(Vertex.Get("ZoomVisualiserContent:"))) / 100;
+            double scale = ((double)GraphUtil.GetIntegerValue(Vertex.Get(false, "ZoomVisualiserContent:"))) / 100;
 
             if (scale != 1.0)
             {
@@ -964,7 +964,7 @@ namespace m0.UIWpf.Visualisers.Diagram
 
         public void UnselectAllSelectedEdges()
         {
-            IVertex sv = Vertex.Get("SelectedEdges:");
+            IVertex sv = Vertex.Get(false, "SelectedEdges:");
 
             TurnOffSelectedEdgesFireChange();
 
@@ -987,14 +987,14 @@ namespace m0.UIWpf.Visualisers.Diagram
 
         protected void SelectWrappersForSelectedVertexes()
         {
-            IVertex sv = Vertex.Get("SelectedEdges:");
+            IVertex sv = Vertex.Get(false, "SelectedEdges:");
 
             foreach (IEdge e in sv)
-                if(GetItemsDictionary().ContainsKey(e.To.Get("To:")))
-                foreach (DiagramItemBase i in GetItemsDictionary()[e.To.Get("To:")])
+                if(GetItemsDictionary().ContainsKey(e.To.Get(false, "To:")))
+                foreach (DiagramItemBase i in GetItemsDictionary()[e.To.Get(false, "To:")])
                     i.Select();
 
-            /*if (i.Vertex.Get(@"BaseEdge:\To:") == e.To.Get("To:"))
+            /*if (i.Vertex.Get(false, @"BaseEdge:\To:") == e.To.Get(false, "To:"))
                 i.Select();    */
         }
 
@@ -1003,16 +1003,16 @@ namespace m0.UIWpf.Visualisers.Diagram
             if ((sender == Vertex) && (e.Type == VertexChangeType.EdgeAdded) && (GeneralUtil.CompareStrings(e.Edge.Meta.Value, "SelectedEdges")))
             { SelectedVertexesUpdated(); return; }
 
-            if ((sender == Vertex.Get("SelectedEdges:")) && ((e.Type == VertexChangeType.EdgeAdded) || (e.Type == VertexChangeType.EdgeRemoved)))
+            if ((sender == Vertex.Get(false, "SelectedEdges:")) && ((e.Type == VertexChangeType.EdgeAdded) || (e.Type == VertexChangeType.EdgeRemoved)))
             { SelectedVertexesUpdated(); return; }
 
-            if (sender is IVertex && GraphUtil.FindEdgeByToVertex(Vertex.GetAll(@"SelectedEdges:\"), (IVertex)sender) != null)
+            if (sender is IVertex && GraphUtil.FindEdgeByToVertex(Vertex.GetAll(false, @"SelectedEdges:\"), (IVertex)sender) != null)
             { SelectedVertexesUpdated(); return; }
 
-            if (sender == Vertex.Get("ZoomVisualiserContent:") && e.Type == VertexChangeType.ValueChanged)
+            if (sender == Vertex.Get(false, "ZoomVisualiserContent:") && e.Type == VertexChangeType.ValueChanged)
             { ChangeZoomVisualiserContent(); return; }
 
-            if ((sender == Vertex.Get("SizeX:") || sender == Vertex.Get("SizeY:")) && e.Type == VertexChangeType.ValueChanged)
+            if ((sender == Vertex.Get(false, "SizeX:") || sender == Vertex.Get(false, "SizeY:")) && e.Type == VertexChangeType.ValueChanged)
             { PaintDiagram(); return; }   
         }
 
@@ -1027,7 +1027,7 @@ namespace m0.UIWpf.Visualisers.Diagram
 
                 if (_Vertex != null)
                 {
-                    GraphUtil.DeleteEdgeByToVertex(mz.Root.Get(@"System\Session\Visualisers"), Vertex);
+                    GraphUtil.DeleteEdgeByToVertex(mz.Root.Get(false, @"System\Session\Visualisers"), Vertex);
 
                     PlatformClass.RemoveVertexChangeListeners(this.Vertex, new VertexChange(VertexChange));
                 }
@@ -1036,7 +1036,7 @@ namespace m0.UIWpf.Visualisers.Diagram
 
                 PlatformClass.RegisterVertexChangeListeners(this.Vertex, new VertexChange(VertexChange), new string[] { "BaseEdge", "SelectedEdges" });
 
-                //mz.Root.Get(@"System\Session\Visualisers").AddEdge(null, Vertex);
+                //mz.Root.Get(false, @"System\Session\Visualisers").AddEdge(null, Vertex);
 
                 PaintDiagram();
             }
@@ -1056,7 +1056,7 @@ namespace m0.UIWpf.Visualisers.Diagram
                     if (e is IDisposable)
                         ((IDisposable)e).Dispose();
                 
-                //GraphUtil.DeleteEdgeByToVertex(mz.Root.Get(@"System\Session\Visualisers"), Vertex);
+                //GraphUtil.DeleteEdgeByToVertex(mz.Root.Get(false, @"System\Session\Visualisers"), Vertex);
 
                 PlatformClass.RemoveVertexChangeListeners(this.Vertex, new VertexChange(VertexChange));
 
@@ -1080,8 +1080,8 @@ namespace m0.UIWpf.Visualisers.Diagram
                 if (VisualTreeHelper.HitTest(i, TranslatePoint(p, i)) != null)
                 {
                     IVertex v = MinusZero.Instance.CreateTempVertex();
-                    //Edge.AddEdgeEdgesOnlyTo(v, i.Vertex.Get(@"BaseEdge:\To:"));
-                    Edge.AddEdgeEdges(v,i.Vertex.Get(@"BaseEdge:\From:"),i.Vertex.Get(@"BaseEdge:\Meta:"), i.Vertex.Get(@"BaseEdge:\To:"));
+                    //Edge.AddEdgeEdgesOnlyTo(v, i.Vertex.Get(false, @"BaseEdge:\To:"));
+                    Edge.AddEdgeEdges(v,i.Vertex.Get(false, @"BaseEdge:\From:"),i.Vertex.Get(false, @"BaseEdge:\Meta:"), i.Vertex.Get(false, @"BaseEdge:\To:"));
                     vertexByLocationToReturn = v;
                 }
             }          
@@ -1111,19 +1111,19 @@ namespace m0.UIWpf.Visualisers.Diagram
             {
                 if (ndi.InstanceOfMeta)
                 {
-                    IEdge ve = VertexOperations.AddInstanceAndReturnEdge(Vertex.Get("CreationPool:"), ndi.BaseEdge.Get("To:"));
+                    IEdge ve = VertexOperations.AddInstanceAndReturnEdge(Vertex.Get(false, "CreationPool:"), ndi.BaseEdge.Get(false, "To:"));
                     IVertex v = ve.To;
 
                     v.Value = ndi.InstanceValue;
 
                     bool? ForceShowEditForm = null;
 
-                    if (ndi.DiagramItemDefinition.Get(@"ForceShowEditForm:") != null)
+                    if (ndi.DiagramItemDefinition.Get(false, @"ForceShowEditForm:") != null)
                     {
-                        if (GeneralUtil.CompareStrings(ndi.DiagramItemDefinition.Get(@"ForceShowEditForm:"), "True"))
+                        if (GeneralUtil.CompareStrings(ndi.DiagramItemDefinition.Get(false, @"ForceShowEditForm:"), "True"))
                             ForceShowEditForm = true;
 
-                        if (GeneralUtil.CompareStrings(ndi.DiagramItemDefinition.Get(@"ForceShowEditForm:"), "False"))
+                        if (GeneralUtil.CompareStrings(ndi.DiagramItemDefinition.Get(false, @"ForceShowEditForm:"), "False"))
                             ForceShowEditForm = false;
                     }
 
@@ -1134,31 +1134,31 @@ namespace m0.UIWpf.Visualisers.Diagram
                     AddDiagramItem(x,
                                    y,
                                    ndi.DiagramItemDefinition,
-                                   ndi.BaseEdge.Get("To:"), v);
+                                   ndi.BaseEdge.Get(false, "To:"), v);
                 }
                 else
                 {
                     bool ThereIsDiagramItemOfThisClassAndThisBaseEdgeTo = false;
                     bool ThereIsDiagramItemOfThisBaseEdgeTo = false;
 
-                    IVertex DiagramItemOfThisDiagramItemDefinition = Vertex.GetAll(@"Item:{Definition:" + ndi.DiagramItemDefinition.Value + "}");
+                    IVertex DiagramItemOfThisDiagramItemDefinition = Vertex.GetAll(false, @"Item:{Definition:" + ndi.DiagramItemDefinition.Value + "}");
 
                     foreach (IEdge ee in DiagramItemOfThisDiagramItemDefinition)
-                        if (ee.To.Get(@"BaseEdge:\To:") == ndi.BaseEdge.Get("To:"))
+                        if (ee.To.Get(false, @"BaseEdge:\To:") == ndi.BaseEdge.Get(false, "To:"))
                             ThereIsDiagramItemOfThisClassAndThisBaseEdgeTo = true;
 
-                    if(GetItemsDictionary().ContainsKey(ndi.BaseEdge.Get("To:")))
-                    foreach (DiagramItemBase b in GetItemsDictionary()[ndi.BaseEdge.Get("To:")])
+                    if(GetItemsDictionary().ContainsKey(ndi.BaseEdge.Get(false, "To:")))
+                    foreach (DiagramItemBase b in GetItemsDictionary()[ndi.BaseEdge.Get(false, "To:")])
                         ThereIsDiagramItemOfThisBaseEdgeTo = true;
 
-                    /*if (b.Vertex.Get(@"BaseEdge:\To:") == ndi.BaseEdge.Get("To:"))
+                    /*if (b.Vertex.Get(false, @"BaseEdge:\To:") == ndi.BaseEdge.Get(false, "To:"))
                         ThereIsDiagramItemOfThisBaseEdgeTo = true;*/
 
 
                     if (ThereIsDiagramItemOfThisClassAndThisBaseEdgeTo == false)
                     {
                         if (ThereIsDiagramItemOfThisBaseEdgeTo == false ||
-                            GeneralUtil.CompareStrings(r.Get(@"User\CurrentUser:\Settings:\AllowManyDiagramItemsForOneVertex:").Value, "True"))
+                            GeneralUtil.CompareStrings(r.Get(false, @"User\CurrentUser:\Settings:\AllowManyDiagramItemsForOneVertex:").Value, "True"))
                         {
                             AddDiagramItem(x,
                                         y,
@@ -1224,19 +1224,19 @@ namespace m0.UIWpf.Visualisers.Diagram
         private IVertex AddDiagramItem_Base(double x,double y, IVertex DiagramItemDefinition){
             IVertex r = m0.MinusZero.Instance.Root;
 
-            IVertex v = VertexOperations.AddInstance(Vertex, DiagramItemDefinition.Get("DiagramItemClass:"), r.Get(@"System\Meta\Visualiser\Diagram\Item"));
+            IVertex v = VertexOperations.AddInstance(Vertex, DiagramItemDefinition.Get(false, "DiagramItemClass:"), r.Get(false, @"System\Meta\Visualiser\Diagram\Item"));
 
-            GraphUtil.SetVertexValue(v, r.Get(@"System\Meta\Visualiser\DiagramInternal\DiagramItemBase\PositionX"), x);
-            GraphUtil.SetVertexValue(v, r.Get(@"System\Meta\Visualiser\DiagramInternal\DiagramItemBase\PositionY"), y);
+            GraphUtil.SetVertexValue(v, r.Get(false, @"System\Meta\Visualiser\DiagramInternal\DiagramItemBase\PositionX"), x);
+            GraphUtil.SetVertexValue(v, r.Get(false, @"System\Meta\Visualiser\DiagramInternal\DiagramItemBase\PositionY"), y);
 
-            GraphUtil.CreateOrReplaceEdge(v, r.Get(@"System\Meta\Visualiser\DiagramInternal\DiagramItemBase\Definition"), DiagramItemDefinition);
+            GraphUtil.CreateOrReplaceEdge(v, r.Get(false, @"System\Meta\Visualiser\DiagramInternal\DiagramItemBase\Definition"), DiagramItemDefinition);
 
-            //GraphUtil.CreateOrReplaceEdge(v, r.Get(@"System\Meta\ZeroTypes\HasBaseEdge\BaseEdge"), null);
+            //GraphUtil.CreateOrReplaceEdge(v, r.Get(false, @"System\Meta\ZeroTypes\HasBaseEdge\BaseEdge"), null);
 
-            v.AddVertex(r.Get(@"System\Meta\ZeroTypes\HasBaseEdge\BaseEdge"), null);
+            v.AddVertex(r.Get(false, @"System\Meta\ZeroTypes\HasBaseEdge\BaseEdge"), null);
 
-            if (v.Get(@"Definition:\DiagramItemVertex:") != null)
-                AddEdgesFromDefintion(v, v.Get(@"Definition:\DiagramItemVertex:"));
+            if (v.Get(false, @"Definition:\DiagramItemVertex:") != null)
+                AddEdgesFromDefintion(v, v.Get(false, @"Definition:\DiagramItemVertex:"));
 
             return v;
         }
@@ -1246,7 +1246,7 @@ namespace m0.UIWpf.Visualisers.Diagram
 
             IVertex v = AddDiagramItem_Base(x, y, DiagramItemDefinition);
             
-            GraphUtil.CreateOrReplaceEdge(v, r.Get(@"System\Meta\ZeroTypes\HasBaseEdge\BaseEdge"), BaseEdge);
+            GraphUtil.CreateOrReplaceEdge(v, r.Get(false, @"System\Meta\ZeroTypes\HasBaseEdge\BaseEdge"), BaseEdge);
 
             AddItem(v);            
         }
@@ -1255,7 +1255,7 @@ namespace m0.UIWpf.Visualisers.Diagram
         {
             IVertex v = AddDiagramItem_Base(x, y, DiagramItemDefinition);
 
-            IVertex be = v.Get("BaseEdge:");
+            IVertex be = v.Get(false, "BaseEdge:");
 
             Edge.AddEdgeEdgesOnlyMetaTo(be, metaVertex, newVertex);
 
@@ -1274,12 +1274,12 @@ namespace m0.UIWpf.Visualisers.Diagram
         {
             IEnumerable<IEdge> edges;
 
-            if (item.Vertex.Get(@"Definition:\DoNotShowInherited:True") != null)
-                edges = item.Vertex.Get(@"BaseEdge:\To:").OutEdgesRaw;
+            if (item.Vertex.Get(false, @"Definition:\DoNotShowInherited:True") != null)
+                edges = item.Vertex.Get(false, @"BaseEdge:\To:").OutEdgesRaw;
             else
-                edges = item.Vertex.Get(@"BaseEdge:\To:");
+                edges = item.Vertex.Get(false, @"BaseEdge:\To:");
 
-            foreach (IEdge e in item.Vertex.Get(@"BaseEdge:\To:"))
+            foreach (IEdge e in item.Vertex.Get(false, @"BaseEdge:\To:"))
             {
                 List<DiagramItemBase> toDiagramItems = null;
 
@@ -1288,11 +1288,11 @@ namespace m0.UIWpf.Visualisers.Diagram
 
                 if(item.GetDiagramLinesBaseEdgeToDictionary().ContainsKey(e.To))
                 foreach (DiagramLineBase l in item.GetDiagramLinesBaseEdgeToDictionary()[e.To])
-                    if (l.Vertex.Get(@"BaseEdge:\Meta:") == e.Meta)
+                    if (l.Vertex.Get(false, @"BaseEdge:\Meta:") == e.Meta)
                         needAdding = false;
                         
-               // foreach (IEdge ee in item.Vertex.GetAll("DiagramLine:")) ////////////// OOO
-                 //   if (ee.To.Get(@"BaseEdge:\Meta:") == e.Meta && ee.To.Get(@"BaseEdge:\To:") == e.To)
+               // foreach (IEdge ee in item.Vertex.GetAll(false, "DiagramLine:")) ////////////// OOO
+                 //   if (ee.To.Get(false, @"BaseEdge:\Meta:") == e.Meta && ee.To.Get(false, @"BaseEdge:\To:") == e.To)
                  //       needAdding = false;
 
                 if (needAdding) {
@@ -1306,8 +1306,8 @@ namespace m0.UIWpf.Visualisers.Diagram
                         {
                             bool canAdd = true;
 
-                           // if (item.Vertex.Get(@"Definition:\DoNotShowInherited:True") != null)
-                            //    if (VertexOperations.IsInheritedEdge(item.Vertex.Get(@"BaseEdge:\To:"), e.Meta))
+                           // if (item.Vertex.Get(false, @"Definition:\DoNotShowInherited:True") != null)
+                            //    if (VertexOperations.IsInheritedEdge(item.Vertex.Get(false, @"BaseEdge:\To:"), e.Meta))
                              //       canAdd = false;
                              //
                              // done upper. left to check if done correctly
@@ -1329,17 +1329,17 @@ namespace m0.UIWpf.Visualisers.Diagram
             foreach (DiagramItemBase i in GetItemsDictionary()[toEdge.To])
                 r.Add(i);
 
-            if (toEdge.Meta.Get("$VertexTarget:") != null && toEdge.To.Get("$EdgeTarget:")!=null)
-            if(GetItemsDictionary().ContainsKey(toEdge.To.Get("$EdgeTarget:")))
-            foreach (DiagramItemBase i in GetItemsDictionary()[toEdge.To.Get("$EdgeTarget:")])
+            if (toEdge.Meta.Get(false, "$VertexTarget:") != null && toEdge.To.Get(false, "$EdgeTarget:")!=null)
+            if(GetItemsDictionary().ContainsKey(toEdge.To.Get(false, "$EdgeTarget:")))
+            foreach (DiagramItemBase i in GetItemsDictionary()[toEdge.To.Get(false, "$EdgeTarget:")])
                 r.Add(i);
 
             /*foreach (DiagramItemBase i in Items)
             {
-                if (i.Vertex.Get(@"BaseEdge:\To:") == toEdge.To)
+                if (i.Vertex.Get(false, @"BaseEdge:\To:") == toEdge.To)
                     r.Add(i);
 
-                if (toEdge.Meta.Get("$VertexTarget:") != null && toEdge.To.Get("$EdgeTarget:") == i.Vertex.Get(@"BaseEdge:\To:"))
+                if (toEdge.Meta.Get(false, "$VertexTarget:") != null && toEdge.To.Get(false, "$EdgeTarget:") == i.Vertex.Get(false, @"BaseEdge:\To:"))
                     r.Add(i);
             }*/
 
@@ -1347,22 +1347,22 @@ namespace m0.UIWpf.Visualisers.Diagram
         }
 
         public IVertex GetLineDefinition(IEdge e,IVertex Vertex, DiagramItemBase toItem){
-            if (GeneralUtil.CompareStrings(Vertex.Get("Definition:"), "Vertex")) // Vertex / Edge
-                return Vertex.Get(@"Definition:\DiagramLineDefinition:Edge");
+            if (GeneralUtil.CompareStrings(Vertex.Get(false, "Definition:"), "Vertex")) // Vertex / Edge
+                return Vertex.Get(false, @"Definition:\DiagramLineDefinition:Edge");
 
-            foreach (IEdge def in Vertex.GetAll(@"Definition:\DiagramLineDefinition:"))
+            foreach (IEdge def in Vertex.GetAll(false, @"Definition:\DiagramLineDefinition:"))
             {
                 bool canReturn=true;
 
-                if(def.To.Get("EdgeTestQuery:")!=null){
+                if(def.To.Get(false, "EdgeTestQuery:")!=null){
                     canReturn=false;
 
-                    foreach (IEdge toTest in Vertex.GetAll(@"BaseEdge:\To:\" + def.To.Get("EdgeTestQuery:")))
+                    foreach (IEdge toTest in Vertex.GetAll(false, @"BaseEdge:\To:\" + def.To.Get(false, "EdgeTestQuery:")))
                         if (toTest.To == e.Meta)
                             canReturn = true;
                 }
 
-                if (canReturn && def.To.Get("ToDiagramItemTestQuery:") != null && toItem.Vertex.Get((string)def.To.Get("ToDiagramItemTestQuery:").Value) != null)
+                if (canReturn && def.To.Get(false, "ToDiagramItemTestQuery:") != null && toItem.Vertex.Get(false, (string)def.To.Get(false, "ToDiagramItemTestQuery:").Value) != null)
                     return def.To;
             }
 

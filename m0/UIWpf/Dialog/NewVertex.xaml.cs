@@ -39,7 +39,7 @@ namespace m0.UIWpf.Dialog
             
             IVertex SchemaEdge=MinusZero.Instance.CreateTempVertex();            
             Edge.AddEdgeEdgesOnlyTo(SchemaEdge,MinusZero.Instance.Empty);
-            GraphUtil.ReplaceEdge(this.Schema.Vertex.Get("BaseEdge:"),"To",SchemaEdge);
+            GraphUtil.ReplaceEdge(this.Schema.Vertex.Get(false, "BaseEdge:"),"To",SchemaEdge);
 
             this.Loaded += new RoutedEventHandler(OnLoad);
         }
@@ -54,13 +54,13 @@ namespace m0.UIWpf.Dialog
         {
             MinusZero.Instance.DefaultUserInteraction.CloseWindowByContent(this);
 
-            if (GeneralUtil.CompareStrings(this.Schema.Vertex.Get(@"BaseEdge:\To:\To:").Value, "$Empty"))
+            if (GeneralUtil.CompareStrings(this.Schema.Vertex.Get(false, @"BaseEdge:\To:\To:").Value, "$Empty"))
                 Vertex.AddVertex(null, this.Content.Text);
             else
             {
-                //Vertex.AddVertex(this.Schema.Vertex.Get(@"BaseEdge:\To:\To:"), this.Content.Text);
+                //Vertex.AddVertex(this.Schema.Vertex.Get(false, @"BaseEdge:\To:\To:"), this.Content.Text);
 
-                IVertex meta = this.Schema.Vertex.Get(@"BaseEdge:\To:\To:");
+                IVertex meta = this.Schema.Vertex.Get(false, @"BaseEdge:\To:\To:");
 
                 IVertex v=VertexOperations.AddInstance(Vertex, meta);
 

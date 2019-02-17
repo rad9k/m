@@ -9,6 +9,6 @@ namespace m0.TextLanguage
 {
     public interface IParser
     {
-        IVertex Parse(IVertex rootVertex, string text);
+        IVertex Parse(bool metaMode, IVertex rootVertex, string text);
     }
 }

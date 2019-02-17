@@ -37,15 +37,15 @@ namespace m0.UIWpf.Visualisers
 
             if (mz != null && mz.IsInitialized)
             {
-                //Vertex = mz.Root.Get(@"System\Session\Visualisers").AddVertex(null, "WrapVisualiser" + this.GetHashCode());
+                //Vertex = mz.Root.Get(false, @"System\Session\Visualisers").AddVertex(null, "WrapVisualiser" + this.GetHashCode());
 
                 Vertex = mz.CreateTempVertex();
 
                 Vertex.Value = "WrapVisualiser" + this.GetHashCode();
 
-                ClassVertex.AddIsClassAndAllAttributesAndAssociations(Vertex, mz.Root.Get(@"System\Meta\Visualiser\Wrap"));
+                ClassVertex.AddIsClassAndAllAttributesAndAssociations(Vertex, mz.Root.Get(false, @"System\Meta\Visualiser\Wrap"));
 
-                ClassVertex.AddIsClassAndAllAttributesAndAssociations(Vertex.Get("BaseEdge:"), mz.Root.Get(@"System\Meta\ZeroTypes\Edge"));
+                ClassVertex.AddIsClassAndAllAttributesAndAssociations(Vertex.Get(false, "BaseEdge:"), mz.Root.Get(false, @"System\Meta\ZeroTypes\Edge"));
 
                // DO NOT WANT CONTEXTMENU HERE
                 // this.ContextMenu = new m0ContextMenu(this);
@@ -80,7 +80,7 @@ namespace m0.UIWpf.Visualisers
 
         protected void UpdateBaseEdge()
         {
-            IVertex bas = Vertex.Get(@"BaseEdge:\To:");
+            IVertex bas = Vertex.Get(false, @"BaseEdge:\To:");
 
             if (bas != null)
             {
@@ -88,7 +88,7 @@ namespace m0.UIWpf.Visualisers
 
                 foreach (IEdge e in bas)
                 {
-                    if(e.Meta.Get("$Hide:")==null)
+                    if(e.Meta.Get(false, "$Hide:")==null)
                         AddEdge(e);
                 }
             }
@@ -100,10 +100,10 @@ namespace m0.UIWpf.Visualisers
             if ((sender == Vertex) && (e.Type == VertexChangeType.EdgeAdded) && (GeneralUtil.CompareStrings(e.Edge.Meta.Value, "BaseEdge")))
                 UpdateBaseEdge();                        
 
-            if ((sender == Vertex.Get("BaseEdge:")) && (e.Type == VertexChangeType.EdgeAdded) && (GeneralUtil.CompareStrings(e.Edge.Meta.Value, "To")))            
+            if ((sender == Vertex.Get(false, "BaseEdge:")) && (e.Type == VertexChangeType.EdgeAdded) && (GeneralUtil.CompareStrings(e.Edge.Meta.Value, "To")))            
                 UpdateBaseEdge();                        
 
-            if (sender == Vertex.Get(@"BaseEdge:\To:") && (e.Type == VertexChangeType.EdgeAdded || e.Type == VertexChangeType.EdgeRemoved))
+            if (sender == Vertex.Get(false, @"BaseEdge:\To:") && (e.Type == VertexChangeType.EdgeAdded || e.Type == VertexChangeType.EdgeRemoved))
                 UpdateBaseEdge();
         }
 
@@ -134,7 +134,7 @@ namespace m0.UIWpf.Visualisers
                 IsDisposed = true;
                 MinusZero mz = MinusZero.Instance;
 
-                //GraphUtil.DeleteEdgeByToVertex(mz.Root.Get(@"System\Session\Visualisers"), Vertex);
+                //GraphUtil.DeleteEdgeByToVertex(mz.Root.Get(false, @"System\Session\Visualisers"), Vertex);
 
                 foreach (UIElement e in Children)
                 {

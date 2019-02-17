@@ -440,94 +440,78 @@ namespace m0.Graph
 
             InEdgesDictionariesNeedsRebuild = true;
             OutEdgesDictionariesNeedsRebuild = true;
-        }
+        }        
 
-        public override IVertex Execute(IVertex inputVertex, IVertex expression)
-        { 
-            //
-            MinusZero m0 = MinusZero.Instance;
-            //m0.Log(2,"Execute", "\"" + expression + "\"");
-            bool prevDoLog = m0.DoLog;
-            m0.DoLog = false;
-            //
-
-            IVertex ret= MinusZero.Instance.DefaultExecuter.Execute(this, inputVertex, expression);
-
-            //
-            m0.DoLog = prevDoLog;
-            //
-
-            return ret;
-        }
-
-        private static IDictionary<String, IVertex> ParseChache= new Dictionary<String,IVertex>();
+        private static IDictionary<String, IVertex> QueryParseChache = new Dictionary<String,IVertex>();
+        private static IDictionary<String, IVertex> QueryParseChache_metaMode = new Dictionary<String, IVertex>();
 
         public override IVertex Get(bool metaMode, string query)
-        {
-            //
-            MinusZero m0=MinusZero.Instance;
-            //m0.Log(2,"Get", "\"" + query + "\"");
-            bool prevDoLog = m0.DoLog;
-            m0.DoLog = false;
-            //
-
+        {            
             IVertex queryVertex = null;
             IVertex parseError = null;
 
-            if (ParseChache.ContainsKey(query))
-                queryVertex = ParseChache[query];
+            IDictionary<String, IVertex> chache;
+
+            if (metaMode)
+                chache = QueryParseChache_metaMode;
+            else
+                chache = QueryParseChache;
+
+            if (chache.ContainsKey(query))
+                queryVertex = chache[query];
             else            
             {
                 queryVertex = MinusZero.Instance.CreateTempVertex();
 
-                parseError = MinusZero.Instance.DefaultParser.Parse(queryVertex, query);
+                parseError = MinusZero.Instance.DefaultParser.Parse(metaMode, queryVertex, query);
 
                 if (parseError == null)
-                    ParseChache.Add(query, queryVertex);
-            }
-                            
-            //
-            m0.DoLog = prevDoLog;
-            //
+                    chache.Add(query, queryVertex);
+            }                                      
 
             if (parseError != null)
                 return null;
 
-            return MinusZero.Instance.DefaultExecuter.Get(this, queryVertex);            
+            return Get(queryVertex);
         }
 
         public override IVertex GetAll(bool metaMode, string query)
-        {
-            //
-            MinusZero m0 = MinusZero.Instance;
-            //m0.Log(2, "GetAll", "\"" + query + "\"");
-            bool prevDoLog = m0.DoLog;
-            m0.DoLog = false;
-            //
-
+        {            
             IVertex queryVertex = null;
             IVertex parseError = null;
 
-            if (ParseChache.ContainsKey(query))
-                queryVertex = ParseChache[query];
+            IDictionary<String, IVertex> chache;
+
+            if (metaMode)
+                chache = QueryParseChache_metaMode;
+            else
+                chache = QueryParseChache;
+
+            if (chache.ContainsKey(query))
+                queryVertex = chache[query];
             else
             {
                 queryVertex = MinusZero.Instance.CreateTempVertex();
 
-                parseError = MinusZero.Instance.DefaultParser.Parse(queryVertex, query);
+                parseError = MinusZero.Instance.DefaultParser.Parse(metaMode, queryVertex, query);
 
                 if (parseError == null)
-                    ParseChache.Add(query, queryVertex);
-            }
-
-            //
-            m0.DoLog = prevDoLog;
-            //
+                    chache.Add(query, queryVertex);
+            }            
 
             if (parseError != null)
                 return null;
 
-            return MinusZero.Instance.DefaultExecuter.GetAll(this, queryVertex);
+            return GetAll (queryVertex);            
+        }
+        public override IVertex Get(IVertex expression)
+        {
+            return MinusZero.Instance.DefaultExecuter.Get(this, expression);
+        }
+
+        public override IVertex GetAll(IVertex expression)
+        {
+            return MinusZero.Instance.DefaultExecuter.GetAll(this, expression);
         }
 
         public void Dispose()

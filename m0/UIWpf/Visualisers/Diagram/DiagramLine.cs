@@ -29,26 +29,26 @@ namespace m0.UIWpf.Visualisers.Diagram
 
         private void VertexChange(object sender, VertexChangeEventArgs e)
         {
-            if ((sender == Vertex.Get(@"BaseEdge:\To:") || sender == Vertex.Get(@"BaseEdge:\Meta:"))
+            if ((sender == Vertex.Get(false, @"BaseEdge:\To:") || sender == Vertex.Get(false, @"BaseEdge:\Meta:"))
                 && e.Type == VertexChangeType.ValueChanged)
                 VertexUpdated();
 
             if ((e.Type == VertexChangeType.EdgeAdded && (GeneralUtil.CompareStrings(e.Edge.Meta.Value,"IsDashed")||GeneralUtil.CompareStrings(e.Edge.Meta.Value,"LineWidth")))
-                || (e.Type == VertexChangeType.ValueChanged && (sender == Vertex.Get(@"IsDashed:")||sender == Vertex.Get(@"LineWidth:"))))
+                || (e.Type == VertexChangeType.ValueChanged && (sender == Vertex.Get(false, @"IsDashed:")||sender == Vertex.Get(false, @"LineWidth:"))))
             {
                 UpdateLine();
             }
 
             if ((e.Type == VertexChangeType.EdgeAdded && (GeneralUtil.CompareStrings(e.Edge.Meta.Value,"StartAnchor") || GeneralUtil.CompareStrings(e.Edge.Meta.Value,"EndAnchor")))
-                || (e.Type == VertexChangeType.ValueChanged && (sender == Vertex.Get(@"StartAnchor:")||sender == Vertex.Get(@"EndAnchor:"))))
+                || (e.Type == VertexChangeType.ValueChanged && (sender == Vertex.Get(false, @"StartAnchor:")||sender == Vertex.Get(false, @"EndAnchor:"))))
             {
                 UpdateLineEnds();
             }
 
             if ((e.Type == VertexChangeType.EdgeAdded && (GeneralUtil.CompareStrings(e.Edge.Meta.Value, "BackgroundColor") || GeneralUtil.CompareStrings(e.Edge.Meta.Value, "ForegroundColor")))
                 || (e.Type == VertexChangeType.ValueChanged && (
-                  sender == Vertex.Get(@"BackgroundColor:") || sender == Vertex.Get(@"BackgroundColor:\Red:") || sender == Vertex.Get(@"BackgroundColor:\Green:") || sender == Vertex.Get(@"BackgroundColor:\Blue:") || sender == Vertex.Get(@"BackgroundColor:\Opacity:") ||
-                   sender == Vertex.Get(@"ForegroundColor:") || sender == Vertex.Get(@"ForegroundColor:\Red:") || sender == Vertex.Get(@"ForegroundColor:\Green:") || sender == Vertex.Get(@"ForegroundColor:\Blue:") || sender == Vertex.Get(@"ForegroundColor:\Opacity:")       
+                  sender == Vertex.Get(false, @"BackgroundColor:") || sender == Vertex.Get(false, @"BackgroundColor:\Red:") || sender == Vertex.Get(false, @"BackgroundColor:\Green:") || sender == Vertex.Get(false, @"BackgroundColor:\Blue:") || sender == Vertex.Get(false, @"BackgroundColor:\Opacity:") ||
+                   sender == Vertex.Get(false, @"ForegroundColor:") || sender == Vertex.Get(false, @"ForegroundColor:\Red:") || sender == Vertex.Get(false, @"ForegroundColor:\Green:") || sender == Vertex.Get(false, @"ForegroundColor:\Blue:") || sender == Vertex.Get(false, @"ForegroundColor:\Opacity:")       
                 )))
             {
                 UpdateLineEnds();
@@ -57,15 +57,15 @@ namespace m0.UIWpf.Visualisers.Diagram
 
         protected virtual void UpdateLine()
         {
-            if (GraphUtil.GetDoubleValue(Vertex.Get("LineWidth:")) != GraphUtil.NullDouble)
-                LineWidth = GraphUtil.GetDoubleValue(Vertex.Get("LineWidth:"));
+            if (GraphUtil.GetDoubleValue(Vertex.Get(false, "LineWidth:")) != GraphUtil.NullDouble)
+                LineWidth = GraphUtil.GetDoubleValue(Vertex.Get(false, "LineWidth:"));
             else
                 LineWidth = 1;
 
             Line.StrokeThickness = LineWidth;
             LineEndings.StrokeThickness = LineWidth;
 
-            if (GeneralUtil.CompareStrings(Vertex.Get("IsDashed:"), "True"))
+            if (GeneralUtil.CompareStrings(Vertex.Get(false, "IsDashed:"), "True"))
                 Line.StrokeDashArray = new DoubleCollection(new double[] { 5, 3 });
             else
                 Line.StrokeDashArray = null;
@@ -73,13 +73,13 @@ namespace m0.UIWpf.Visualisers.Diagram
 
         protected virtual void UpdateLineEnds()
         {
-            if (Vertex.Get("BackgroundColor:") != null)
-                BackgroundColor = UIWpf.GetBrushFromColorVertex(Vertex.Get("BackgroundColor:"));
+            if (Vertex.Get(false, "BackgroundColor:") != null)
+                BackgroundColor = UIWpf.GetBrushFromColorVertex(Vertex.Get(false, "BackgroundColor:"));
             else
                 BackgroundColor = (Brush)Line.FindResource("0BackgroundBrush");
 
-            if (Vertex.Get("ForegroundColor:") != null)
-                ForegroundColor = UIWpf.GetBrushFromColorVertex(Vertex.Get("ForegroundColor:"));
+            if (Vertex.Get(false, "ForegroundColor:") != null)
+                ForegroundColor = UIWpf.GetBrushFromColorVertex(Vertex.Get(false, "ForegroundColor:"));
             else
                 ForegroundColor = (Brush)Line.FindResource("0ForegroundBrush");
 
@@ -88,8 +88,8 @@ namespace m0.UIWpf.Visualisers.Diagram
             Label.Foreground = ForegroundColor;
 
 
-            string StartAnchor = (string)GraphUtil.GetValue(Vertex.Get(@"StartAnchor:"));
-            string EndAnchor = (string)GraphUtil.GetValue(Vertex.Get(@"EndAnchor:"));
+            string StartAnchor = (string)GraphUtil.GetValue(Vertex.Get(false, @"StartAnchor:"));
+            string EndAnchor = (string)GraphUtil.GetValue(Vertex.Get(false, @"EndAnchor:"));
 
             if (StartAnchor == "Straight")
             {
@@ -202,19 +202,19 @@ namespace m0.UIWpf.Visualisers.Diagram
         Brush HighlightFillBrush = null;
 
         private void VertexUpdated(){
-            if (Vertex.Get(@"Definition:Inheritence") != null) // not to display $Inherits
+            if (Vertex.Get(false, @"Definition:Inheritence") != null) // not to display $Inherits
                 return;
 
-            if (Vertex.Get(@"BaseEdge:\Meta:\$VertexTarget:")!=null
-                &&!GraphUtil.GetValueAndCompareStrings(Vertex.Get(@"Definition:\CreateEdgeOnly:"),"True"))
+            if (Vertex.Get(false, @"BaseEdge:\Meta:\$VertexTarget:")!=null
+                &&!GraphUtil.GetValueAndCompareStrings(Vertex.Get(false, @"Definition:\CreateEdgeOnly:"),"True"))
             {
-                IVertex v=Vertex.Get(@"BaseEdge:\To:");
+                IVertex v=Vertex.Get(false, @"BaseEdge:\To:");
                 if(v.Value!=null&&!GeneralUtil.CompareStrings(v.Value,"$Empty"))
                       Label.Text = (string)v.Value;
             }
             else
             {
-                IVertex v = Vertex.Get(@"BaseEdge:\Meta:");
+                IVertex v = Vertex.Get(false, @"BaseEdge:\Meta:");
                 if (v.Value != null && !GeneralUtil.CompareStrings(v.Value, "$Empty"))
                     Label.Text = (string)v.Value;
             }        

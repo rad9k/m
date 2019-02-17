@@ -22,8 +22,8 @@ namespace m0.UML
 
         public static string GetStringCardinalities(IVertex baseVertex)
         {
-            string min = GetStringCardinality(baseVertex.Get("$MinCardinality:"));
-            string max = GetStringCardinality(baseVertex.Get("$MaxCardinality:"));
+            string min = GetStringCardinality(baseVertex.Get(false, "$MinCardinality:"));
+            string max = GetStringCardinality(baseVertex.Get(false, "$MaxCardinality:"));
 
             if (min == "1" && max == "1")
                 return "";
@@ -35,12 +35,12 @@ namespace m0.UML
         }
 
         public static void AddAllAttributesAndAssociationsVertexes(IVertex ObjectVertex){
-            IVertex AttributeVertexes = ObjectVertex.GetAll(@"$Is:\Attribute:");
+            IVertex AttributeVertexes = ObjectVertex.GetAll(false, @"$Is:\Attribute:");
 
             foreach (IEdge e in AttributeVertexes)
                 ObjectVertex.AddVertex(e.To, null);
 
-            IVertex AssociationVertexes = ObjectVertex.GetAll(@"$Is:\Association:");
+            IVertex AssociationVertexes = ObjectVertex.GetAll(false, @"$Is:\Association:");
 
             foreach (IEdge e in AssociationVertexes)
                 ObjectVertex.AddVertex(e.To, null);
@@ -48,9 +48,9 @@ namespace m0.UML
 
         public static void AddIsClassAndAllAttributesAndAssociations(IVertex ObjectVertex, IVertex ClassVertex)
         {
-            IVertex smuv = MinusZero.Instance.Root.Get(@"System\Meta\Base\Vertex");
+            IVertex smuv = MinusZero.Instance.Root.Get(false, @"System\Meta\Base\Vertex");
 
-            ObjectVertex.AddEdge(smuv.Get("$Is"), ClassVertex);
+            ObjectVertex.AddEdge(smuv.Get(false, "$Is"), ClassVertex);
 
             AddAllAttributesAndAssociationsVertexes(ObjectVertex);
         }

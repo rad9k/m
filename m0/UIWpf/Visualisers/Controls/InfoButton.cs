@@ -55,7 +55,7 @@ namespace m0.UIWpf.Visualisers.Controls
             FormVisualiser v=(FormVisualiser)UIWpf.getParentFormVisualiser(this);
 
             if (v != null)
-                Edge.ReplaceEdgeEdges(v.Vertex.Get("BaseEdge:"), BaseEdge);
+                Edge.ReplaceEdgeEdges(v.Vertex.Get(false, "BaseEdge:"), BaseEdge);
             else
             {
                 IVertex v2 = MinusZero.Instance.CreateTempVertex();
