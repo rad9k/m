@@ -150,7 +150,7 @@ namespace m0.UIWpf.Visualisers
             if (bv != null /*&& bv.Value != null && ((String)bv.Value)!="$Empty"*/)
             {
                 NonActingEdge ee = new NonActingEdge(Vertex.Get(false, @"BaseEdge:\From:"), Vertex.Get(false, @"BaseEdge:\Meta:"), Vertex.Get(false, @"BaseEdge:\To:"));
-                this.Text = this.Text = MinusZero.Instance.DefaultZeroCode2String.ZeroCodeGraph2String(ee);
+                this.Text = this.Text = MinusZero.Instance.DefaultCodeGenerator.ZeroCodeGraph2String(ee);
             }
             else
                 this.Text = "Ø";

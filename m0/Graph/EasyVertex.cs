@@ -641,5 +641,41 @@ namespace m0.Graph
                     result = (IEdge)val;
             }
         }
+
+        public IVertex NewGet(bool metaMode, string query)
+        {
+            return null;
+        }
+
+        public IVertex NewGetAll(bool metaMode, string query)
+        {
+            IVertex queryVertex = null;
+            IVertex parseError = null;
+
+            IDictionary<String, IVertex> chache;
+
+            if (metaMode)
+                chache = QueryParseChache_metaMode;
+            else
+                chache = QueryParseChache;
+
+            if (chache.ContainsKey(query))
+                queryVertex = chache[query];
+            else
+            {
+                queryVertex = MinusZero.Instance.CreateTempVertex();
+
+                parseError = MinusZero.Instance.NewDefaultParser.Parse(metaMode, queryVertex, query);
+
+                if (parseError == null || parseError.Count() == 0)
+                    chache.Add(query, queryVertex);
+            }
+
+            if (parseError != null && parseError.Count() > 0)
+                return null;
+
+            return MinusZero.Instance.NewDefaultExecuter.GetAll(this, queryVertex);            
+        }
+
     }
 }

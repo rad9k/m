@@ -116,7 +116,7 @@ namespace m0.Util
 
             z.DefaultParser.Parse(false, expressionAsVertex, expressionAsString);
 
-            return z.DefaultExecuter.Execute(baseVertex, inputVertex, expressionAsVertex);
+            return ZeroCode.ZeroCodeEngine_OLD.Instance.OldStyleExecute(baseVertex, inputVertex, expressionAsVertex);
         }
     }
 }

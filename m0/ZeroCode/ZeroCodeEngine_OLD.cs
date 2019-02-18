@@ -29,9 +29,14 @@ namespace m0.ZeroCode
             return Parser.Parse(metaMode, rootVertex, text);
         }
 
- #endregion
+        #endregion
 
- #region Execute
+        public IVertex Execute(IVertex baseVertex, IVertex expression)
+        {
+            throw new NotImplementedException();
+        }
+
+        #region Execute
 
         private string DequoteString(string s)
         {
@@ -42,7 +47,7 @@ namespace m0.ZeroCode
             return s;
         }
         
-        public IVertex Execute(IVertex baseVertex, IVertex inputVertex, IVertex expression)
+        public IVertex OldStyleExecute(IVertex baseVertex, IVertex inputVertex, IVertex expression)
         {
             foreach (IEdge e in expression)
             {
@@ -501,10 +506,13 @@ namespace m0.ZeroCode
             }
         }
 
-#endregion
+        #endregion
+        public static ZeroCodeEngine_OLD Instance;
 
         public ZeroCodeEngine_OLD()
-        {            
+        {
+            Instance = this;
+
             GenerateWhiteSpaces = true;
 
             AlwaysGenerateQuotas = false;

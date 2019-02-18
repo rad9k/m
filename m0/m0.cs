@@ -59,6 +59,19 @@ namespace m0
 
         IVertex _DefaultLanguageDefinition;
 
+        //
+
+        IParser New_DefaultParser;
+
+        public IParser NewDefaultParser { get { return New_DefaultParser; } }
+
+
+        IExecuter New_DefaultExecuter;
+
+        public IExecuter NewDefaultExecuter { get { return New_DefaultExecuter; } }        
+
+        //
+
         public IVertex DefaultLanguageDefinition { get { return _DefaultLanguageDefinition; } }
 
 
@@ -72,9 +85,9 @@ namespace m0
         public IVertex MetaTextLanguageParsedTreeVertex {get {return _MetaTextLanguageParsedTreeVertex; } }
 
         
-        IZeroCodeGraph2String _DefaultZeroCode2String;
+        ICodeGenerator _DefaultCodeGenerator;
 
-        public IZeroCodeGraph2String DefaultZeroCode2String  { get { return _DefaultZeroCode2String; } }
+        public ICodeGenerator DefaultCodeGenerator  { get { return _DefaultCodeGenerator; } }
 
         public bool IsGUIDragging { get; set; }
 
@@ -112,9 +125,9 @@ namespace m0
         }
 
         void Init(){
-            ZeroCode.ZeroCodeEngine_OLD zeroCodeEngine_OLD = new ZeroCode.ZeroCodeEngine_OLD();
-
             _DefaultUserInteraction = m0Main.Instance;
+
+            ZeroCode.ZeroCodeEngine_OLD zeroCodeEngine_OLD = new ZeroCode.ZeroCodeEngine_OLD();           
 
             _DefaultParser = zeroCodeEngine_OLD;
 
@@ -122,7 +135,10 @@ namespace m0
 
             ZeroCode.ZeroCodeEngine zeroCodeEngine = new ZeroCode.ZeroCodeEngine();
 
-            _DefaultZeroCode2String = zeroCodeEngine;            
+            New_DefaultParser = zeroCodeEngine;
+            New_DefaultExecuter = zeroCodeEngine;
+
+            _DefaultCodeGenerator = zeroCodeEngine;            
         }
 
 

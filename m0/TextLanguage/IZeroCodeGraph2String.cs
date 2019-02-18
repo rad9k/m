@@ -7,7 +7,7 @@ using m0.Foundation;
 
 namespace m0.TextLanguage
 {
-    public interface IZeroCodeGraph2String
+    public interface ICodeGenerator
     {
         string ZeroCodeGraph2String(IEdge graphBaseEdge);
 

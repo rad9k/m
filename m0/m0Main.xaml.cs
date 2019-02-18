@@ -207,7 +207,7 @@ namespace m0
 
             IVertex tr = MinusZero.Instance.Root.AddVertex(null, "kupa");
 
-            /*IVertex meta_a = tr.AddVertex(null, "meta_a");
+            IVertex meta_a = tr.AddVertex(null, "meta_a");
             IVertex meta_b = tr.AddVertex(null, "meta_b");
 
             IVertex s = tr.AddVertex(null, "s");
@@ -223,7 +223,9 @@ namespace m0
 
             b.AddEdge(r.Get(false, @"System\Meta*$Inherits"), a);
 
-            IEdge result;
+            IVertex re = ((EasyVertex)tr).NewGetAll(false, "meta_a|a");
+
+            /*IEdge result;
             IList<IEdge> results;
 
             a.QueryInEdges(null, "s", out result, out results);

@@ -90,6 +90,7 @@ namespace m0.Graph
             
 
             _DetachState = DetachStateEnum.Attached;
-        }
+        }      
+
     }
 }

@@ -8,8 +8,27 @@ using m0.Foundation;
 
 namespace m0.ZeroCode
 {
-    public class ZeroCodeEngine : IZeroCodeGraph2String, IParser
+    public class ZeroCodeEngine : ICodeGenerator, IParser, IExecuter
     {
+        public IVertex Execute(IVertex baseVertex, IVertex expression)
+        {
+            ZeroCodeExecuter executer = new ZeroCodeExecuter();
+            return executer.Execute(baseVertex, expression);
+        }
+
+        public IVertex Get(IVertex baseVertex, IVertex expression)
+        {
+            ZeroCodeExecuter executer = new ZeroCodeExecuter();
+            return executer.Get(baseVertex, expression);
+        }
+
+        public IVertex GetAll(IVertex baseVertex, IVertex expression)
+        {
+            ZeroCodeExecuter executer = new ZeroCodeExecuter();
+
+            return executer.GetAll(baseVertex, expression);
+        }
+
         public IVertex Parse(bool metaMode, IVertex rootVertex, string text)
         {             
             String2ZeroCodeGraphProcessing p = new String2ZeroCodeGraphProcessing();
