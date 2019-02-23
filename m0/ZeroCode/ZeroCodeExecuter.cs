@@ -24,8 +24,17 @@ namespace m0.ZeroCode
 
         public IVertex GetAll(IVertex baseVertex, IVertex expression)
         {
-            throw new NotImplementedException();
+            IVertex qs = CreateQueryStack();
+
+            
         }
+
+        private IVertex CreateQueryStack()
+        {
+            return MinusZero.Instance.CreateTempVertex();
+        }
+
+        private string 
 
         public ZeroCodeExecuter()
         {

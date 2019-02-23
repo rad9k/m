@@ -2621,7 +2621,7 @@ namespace m0.ZeroCode
 
             error.AddVertex(smz.Get(false, @"Exception\Where"), lineNumber.ToString());
 
-            error.AddVertex(smz.Get(false, @"Exception\Type"), smz.Get(false, @"ExceptionTypeEnum\Error"));
+            error.AddEdge(smz.Get(false, @"Exception\Type"), smz.Get(false, @"ExceptionTypeEnum\Error"));
 
             error.AddVertex(smz.Get(false, @"Exception\What"), value);
         }
