@@ -223,7 +223,7 @@ namespace m0
 
             b.AddEdge(r.Get(false, @"System\Meta*$Inherits"), a);
 
-            IVertex re = ((EasyVertex)tr).NewGetAll(false, "meta_a|a");
+            IVertex re = ((EasyVertex)s).NewGetAll(false, "meta_a|a");
 
             /*IEdge result;
             IList<IEdge> results;
