@@ -829,7 +829,7 @@ namespace m0
 
             IVertex o_colon_any = o_colon.AddVertex(any, "");
 
-            //o_colon_any.AddVertex(smb.Get(false, "$StartInLocalRoot"), ""); // DO WE NEED THAT??????
+            o_colon_any.AddVertex(smb.Get(false, "$StartInLocalRoot"), ""); // DO WE NEED THAT??????
 
             o_colon_any.AddEdge(smb.Get(false, @"Vertex\$Is"), smu.Get(false, "|"));
 
@@ -837,7 +837,7 @@ namespace m0
 
             o_colon_any.AddVertex(smu.Get(false, @"DoubleOperator\RightExpression"), "(?<right_Atom>)");
 
-            
+            /*
             // : /2
             //
             // |(?<SUB>)(?<right_QueryPart>)            
@@ -849,6 +849,8 @@ namespace m0
             o_colon2.AddVertex(keywordGroup, "Colon");
 
             IVertex o_colon2_any = o_colon2.AddVertex(any, "");
+
+            o_colon2_any.AddVertex(smb.Get(false, "$StartInLocalRoot"), ""); // DO WE NEED THAT??????
 
             o_colon2_any.AddEdge(smb.Get(false, @"Vertex\$Is"), smu.Get(false, "|"));
 
@@ -866,11 +868,13 @@ namespace m0
 
             IVertex o_colon3_any = o_colon3.AddVertex(any, "");
 
+            o_colon3_any.AddVertex(smb.Get(false, "$StartInLocalRoot"), ""); // DO WE NEED THAT??????
+
             o_colon3_any.AddEdge(smb.Get(false, @"Vertex\$Is"), smu.Get(false, "|"));
 
             o_colon3_any.AddVertex(smu.Get(false, @"DoubleOperator\LeftExpression"), "(?<left_Atom>)");
             
-
+            */
             // :: /1
             //
             // (?<left_QueryPart>)||(?<SUB>)(?<right_QueryPart>)                         
@@ -910,7 +914,7 @@ namespace m0
 
             o_doubleColon3_any.AddVertex(smu.Get(false, @"DoubleOperator\LeftExpression"), "(?<left_Colon>)");
 
-
+            
             /////////////////////////////////////////////////////////////////////////////////////////////////////////////
             /////////////////////////////////////////////////////////////////////////////////////////////////////////////
             /////////////////////////////////////////////////////////////////////////////////////////////////////////////
