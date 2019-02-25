@@ -14,6 +14,7 @@ namespace m0.ZeroCode
         IVertex inputVertex;
 
         const string colon = "|";
+        const string slash = @"\ ";
 
         static IList<IEdge> dummy = new List<IEdge>();
 
@@ -47,10 +48,23 @@ namespace m0.ZeroCode
 
                 AddResults(baseVertex, true, meta, value, qs);
 
-            }
+                IVertex target=null;
+                
+                if(right!=null)
+                    target = GetTargetExpression(right);
 
-            if (qs.Count() == 0)
-                return null;
+                if (target != null)
+                {
+                    if (CheckIs(target, slash))
+                    {
+                        IVertex newExpression = GetTargetExpression(target);
+
+                        qs = stepIntoAllEdges(qs);
+
+                        return GetAll(qs, newExpression);
+                    }
+                }
+            }
 
             return qs;
         }
@@ -58,6 +72,17 @@ namespace m0.ZeroCode
         private IVertex CreateQueryStack()
         {
             return new NoInEdgeInOutVertexVertex(MinusZero.Instance.TempStore);
+        }
+
+        private IVertex stepIntoAllEdges(IVertex oldQs)
+        {
+            IVertex newQs = CreateQueryStack();
+
+            foreach (IEdge e in oldQs)
+                foreach (IEdge ee in e.To)
+                    newQs.AddEdge(ee.Meta, ee.To);
+
+            return newQs;
         }
 
         private bool CheckIs(IVertex v, string i)
@@ -72,16 +97,17 @@ namespace m0.ZeroCode
 
         private IVertex GetLeft(IVertex v)
         {
-            IVertex i = GraphUtil.GetOutFirst(v, "LeftExpression", null);
-
-            return i;
+            return GraphUtil.GetOutFirst(v, "LeftExpression", null);
         }
 
         private IVertex GetRight(IVertex v)
         {
-            IVertex i = GraphUtil.GetOutFirst(v, "RightExpression", null);
+            return GraphUtil.GetOutFirst(v, "RightExpression", null);
+        }
 
-            return i;
+        private IVertex GetTargetExpression(IVertex v)
+        {
+            return GraphUtil.GetOutFirst(v, "TargetExpression", null);
         }
 
         public void AddResults(IVertex baseVertex, bool outEdges, object meta, object value, IVertex toAdd)
