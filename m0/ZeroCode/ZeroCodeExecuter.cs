@@ -128,9 +128,6 @@ namespace m0.ZeroCode
                     toAdd.AddEdge(e.Meta, e.To);
         }
 
-        IVertex 
-
-        private
 
         public ZeroCodeExecuter()
         {
