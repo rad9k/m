@@ -516,7 +516,7 @@ namespace m0
             IVertex any = smuk.AddVertex(null, "(?<ANY>)");
 
             string anyString = "(?<ANY>)";
-            
+            /*
             // import meta
             //
             // import meta (?<name>) (?<link>)
@@ -818,7 +818,7 @@ namespace m0
             /////////////////////////////////////////////////////////////////////////////////////////////////////////////
             /////////////////////////////////////////////////////////////////////////////////////////////////////////////
             /////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
+            */
             // : /1
             //
             // (?<left_QueryPart>)|(?<SUB>)(?<right_QueryPart>)            
@@ -920,7 +920,7 @@ namespace m0
             /////////////////////////////////////////////////////////////////////////////////////////////////////////////
             /////////////////////////////////////////////////////////////////////////////////////////////////////////////
             /////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
+            /*
             // []
             //
             // [(*(+, +) (?<expr>)*)]
@@ -948,7 +948,7 @@ namespace m0
             o_par_any.AddEdge(smb.Get(false, @"Vertex\$Is"), smu.Get(false, "()"));
 
              o_par_any.AddVertex(smu.Get(false, @"SingleOperator\TargetExpression"), "(?<expr>)");
-     
+     */
              // \
              //
              // \                         
@@ -970,7 +970,7 @@ namespace m0
             // {}
             //
             // {(*(+\r\n+)\t(?<expr>)*)\r\n}
-
+            /*
             IVertex o_newSub = smuk.AddVertex(keyword, "{(*\r\n\t(?<expr>)*)\r\n}");
 
             IVertex o_newSub_any = o_newSub.AddVertex(any, anyString);
@@ -982,7 +982,7 @@ namespace m0
             IVertex o_newSub_any_param = o_newSub_any.AddVertex(smu.Get(false, @"MultiOperator\Expression"), "(?<expr>)");
 
             o_newSub_any_param.AddEdge(smb.Get(false, @"$KeywordManyRoot"), smb.Get(false, @"$Empty"));
-            
+            */
             // ""
             //
             // "\"(?<value>)\""
