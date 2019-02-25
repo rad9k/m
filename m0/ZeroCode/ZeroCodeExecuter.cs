@@ -27,6 +27,10 @@ namespace m0.ZeroCode
             throw new NotImplementedException();
         }
 
+        IVertex 
+
+        private
+
         public ZeroCodeExecuter()
         {
 
