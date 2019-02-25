@@ -39,7 +39,39 @@ namespace m0.Graph
     }
 
     public class GraphUtil
-    {
+    {        
+        public static IVertex GetOutFirst(IVertex baseVertex, object meta, object value)
+        {
+            IEdge result;
+            IList<IEdge> results;
+            
+            baseVertex.QueryOutEdges(meta, value, out result, out results);            
+
+            if (result != null)
+                return result.To;
+
+            if (results != null && results.Count > 0)
+                return results.First().To;
+
+            return null;
+        }
+
+        public static IVertex GetInFirst(IVertex baseVertex, object meta, object value)
+        {
+            IEdge result;
+            IList<IEdge> results;
+            
+            baseVertex.QueryInEdges(meta, value, out result, out results);
+
+            if (result != null)
+                return result.To;
+
+            if (results != null && results.Count > 0)
+                return results.First().To;
+
+            return null;
+        }
+
         public static object GetMetaAndValueObject(object meta, object value)
         {
             return meta.ToString() + "|" + value.ToString(); // this is no good !!!!!!!!!. possible error when meta or value contains "|"

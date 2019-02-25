@@ -13,12 +13,14 @@ namespace m0.ZeroCode
         public IVertex Execute(IVertex baseVertex, IVertex expression)
         {
             ZeroCodeExecuter executer = new ZeroCodeExecuter();
+
             return executer.Execute(baseVertex, expression);
         }
 
         public IVertex Get(IVertex baseVertex, IVertex expression)
         {
             ZeroCodeExecuter executer = new ZeroCodeExecuter();
+
             return executer.Get(baseVertex, expression);
         }
 

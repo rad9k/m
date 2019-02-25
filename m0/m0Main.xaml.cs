@@ -193,19 +193,9 @@ namespace m0
             s.Attach();
         }
 
-        private void CreateTestData()
+        private void queryTest(IVertex tr)
         {
-            IVertex r=MinusZero.Instance.Root;
-
-            //JsonSerializationStore jss = new JsonSerializationStore(@"c:\m0\x",MinusZero.Instance, new AccessLevelEnum[] { });
-
-          //  IVertex tr = jss.Root;
-
-            //MinusZero.Instance.Root.AddEdge(null, jss.Root);
-
-            //return;
-
-            IVertex tr = MinusZero.Instance.Root.AddVertex(null, "kupa");
+            IVertex r = MinusZero.Instance.Root;
 
             IVertex meta_a = tr.AddVertex(null, "meta_a");
             IVertex meta_b = tr.AddVertex(null, "meta_b");
@@ -221,9 +211,31 @@ namespace m0
             s.AddEdge(meta_b, b);
             s.AddEdge(meta_a, b);
 
+            a.AddEdge(meta_a, b);
+
             b.AddEdge(r.Get(false, @"System\Meta*$Inherits"), a);
 
-            IVertex re = ((EasyVertex)tr).NewGetAll(false, "meta_a|a");
+            IVertex re = ((EasyVertex)s).NewGetAll(false, @"meta_a|a\meta_a|b");
+            re = ((EasyVertex)s).NewGetAll(false, "meta_b|a");
+            re = ((EasyVertex)s).NewGetAll(false, "meta_a|");
+            re = ((EasyVertex)s).NewGetAll(false, "meta_b|");
+        }
+
+        private void CreateTestData()
+        {
+            IVertex r=MinusZero.Instance.Root;
+
+            //JsonSerializationStore jss = new JsonSerializationStore(@"c:\m0\x",MinusZero.Instance, new AccessLevelEnum[] { });
+
+          //  IVertex tr = jss.Root;
+
+            //MinusZero.Instance.Root.AddEdge(null, jss.Root);
+
+            //return;
+
+            IVertex tr = MinusZero.Instance.Root.AddVertex(null, "kupa");
+
+            queryTest(tr);
 
             /*IEdge result;
             IList<IEdge> results;
