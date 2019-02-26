@@ -835,9 +835,11 @@ namespace m0
 
             o_colon_any.AddVertex(smu.Get(false, @"DoubleOperator\LeftExpression"), "(?<left_Atom>)");
 
-            o_colon_any.AddVertex(smu.Get(false, @"DoubleOperator\RightExpression"), "(?<right_Atom>)");
+            IVertex o_colon_any_right = o_colon_any.AddVertex(smu.Get(false, @"DoubleOperator\RightExpression"), "(?<right_Atom>)");
 
-            /*
+            o_colon_any_right.AddVertex(smb.Get(false, "$LocalRoot"), "");
+
+            
             // : /2
             //
             // |(?<SUB>)(?<right_QueryPart>)            
@@ -854,7 +856,9 @@ namespace m0
 
             o_colon2_any.AddEdge(smb.Get(false, @"Vertex\$Is"), smu.Get(false, "|"));
 
-            o_colon2_any.AddVertex(smu.Get(false, @"DoubleOperator\RightExpression"), "(?<right_Atom>)");
+            IVertex o_colon2_any_right=o_colon2_any.AddVertex(smu.Get(false, @"DoubleOperator\RightExpression"), "(?<right_Atom>)");
+
+            o_colon2_any_right.AddVertex(smb.Get(false, "$LocalRoot"), "");
 
             // : /3
             //
@@ -872,9 +876,11 @@ namespace m0
 
             o_colon3_any.AddEdge(smb.Get(false, @"Vertex\$Is"), smu.Get(false, "|"));
 
-            o_colon3_any.AddVertex(smu.Get(false, @"DoubleOperator\LeftExpression"), "(?<left_Atom>)");
-            
-            */
+            IVertex o_colon3_any_right = o_colon3_any.AddVertex(smu.Get(false, @"DoubleOperator\LeftExpression"), "(?<left_Atom>)");
+
+            o_colon3_any_right.AddVertex(smb.Get(false, "$LocalRoot"), "");
+
+            /*
             // :: /1
             //
             // (?<left_QueryPart>)||(?<SUB>)(?<right_QueryPart>)                         
@@ -913,8 +919,8 @@ namespace m0
             o_doubleColon3_any.AddEdge(smb.Get(false, @"Vertex\$Is"), smu.Get(false, "||"));
 
             o_doubleColon3_any.AddVertex(smu.Get(false, @"DoubleOperator\LeftExpression"), "(?<left_Colon>)");
+            */
 
-            
             /////////////////////////////////////////////////////////////////////////////////////////////////////////////
             /////////////////////////////////////////////////////////////////////////////////////////////////////////////
             /////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -953,11 +959,11 @@ namespace m0
 
              o_par_any.AddVertex(smu.Get(false, @"SingleOperator\TargetExpression"), "(?<expr>)");
      */
-             // \
-             //
-             // \                         
+            // \
+            //
+            // \                         
 
-             IVertex o_path = smuk.AddVertex(keyword, @" \ ");
+            IVertex o_path = smuk.AddVertex(keyword, @" \ ");
 
              //o_path.AddVertex(keywordGroup, "QueryPart");
 
