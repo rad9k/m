@@ -1794,7 +1794,7 @@ namespace m0.ZeroCode
 
         bool isLocalRootKeyword(keywordTryingData ktd)
         {
-            if (ktd.keywordVertex.Get(false, @"\$StartInLocalRoot:") != null)
+            if (ktd.keywordVertex.Get(false, @"\$StartInLocalRoot:") != null) // check agains LocalRoot presence should be better idea. to be verified
                 return true;
             else
                 return false;
