@@ -1031,7 +1031,7 @@ namespace m0
 
             IVertex emptyKeyword_any_targetExpr=emptyKeyword_any.AddVertex(smu.Get(false, @"SingleOperator\TargetExpression"), "");
 
-            emptyKeyword_any_targetExpr.AddVertex(smb.Get(false, "$LocalRoot"), "");            
+            emptyKeyword_any_targetExpr.AddVertex(smb.Get(false, "$LocalRoot"), "AfterEmpty");            
          }
 
          void CreateSystemTextLanguageZeroCode()

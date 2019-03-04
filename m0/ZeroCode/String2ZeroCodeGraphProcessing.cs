@@ -20,6 +20,10 @@ namespace m0.ZeroCode
             public bool isNonParameterRange;
         }
 
+        class KeywordInfo
+        {
+            public string LocalRootKeywordsGroup;
+        }
 
         class ParsingStack
         {
@@ -245,8 +249,10 @@ namespace m0.ZeroCode
         List<string> specialKeywordGroups_new;
         List<string> specialKeywordGroups_empty;
         Dictionary<string, List<keywordTryingData>> examinedKeywords_All; // all keywords are here
-        Dictionary<string, List<keywordTryingData>> examinedKeywords_StartInLocalRootOnly; // all keywords are here - LocalRoot only?
+        Dictionary<string, List<keywordTryingData>> examinedKeywords_StartInLocalRootOnly; // StartInLocalRoot only?
         Dictionary<char, List<string>> allKeywordsSubstringsDictionary;
+
+        Dictionary<IVertex, KeywordInfo> keywordInfoDict;
 
         // special keywords
 
@@ -894,11 +900,11 @@ namespace m0.ZeroCode
 
         List<keywordTryingData> TryIfIsKeywordLine(ParsingStack s)
         {
-            string xx = "";
-            for (int x = s.currentLineInfo.lineBeg; x <= s.currentLineInfo.lineEnd; x++)
-              xx += " "+x+":"+text[x];
+           // string xx = "";
+           // for (int x = s.currentLineInfo.lineBeg; x <= s.currentLineInfo.lineEnd; x++)
+            //  xx += " "+x+":"+text[x];
 
-            MinusZero.Instance.Log(-1, "TryIfIsKeywordLine", xx);
+           // MinusZero.Instance.Log(-1, "TryIfIsKeywordLine", xx);
 
           
 
@@ -2085,6 +2091,8 @@ namespace m0.ZeroCode
 
             examinedKeywords_StartInLocalRootOnly.Add("", new List<keywordTryingData>());
 
+            keywordInfoDict = new Dictionary<IVertex, KeywordInfo>();
+
 
             prepareSpecialKeywordsGroups();
 
@@ -2093,41 +2101,55 @@ namespace m0.ZeroCode
 
             foreach (IEdge keyword in MinusZero.Instance.Root.GetAll(false, @"User\CurrentUser:\CodeSettings:\Keyword:\$Keyword:"))
             {
-                if(isSpecialKeyword((string)keyword.To.Value))
-                    continue;
-
-                // examinedKeywords_All
-         
                 keywordTryingData ktd = new keywordTryingData(keyword.To, this);
-                
-                examinedKeywords_All[""].Add(ktd);
 
-                foreach(IEdge v in ktd.keywordVertex.GetAll(false, "$KeywordGroup:"))
+                if (!isSpecialKeyword((string)keyword.To.Value))
                 {
-                    string group = (string)v.To.Value;
-
-                    if (!examinedKeywords_All.ContainsKey(group))
-                        examinedKeywords_All.Add(group, new List<keywordTryingData>());
-
-                    examinedKeywords_All[group].Add(ktd);
-                }
-
-                // examinedKeywords_LocalRootOnly
-
-                if (keyword.To.Get(false, @"\$StartInLocalRoot:") != null)
-                {                    
-                    examinedKeywords_StartInLocalRootOnly[""].Add(ktd);
+                    // examinedKeywords_All
+                    
+                    examinedKeywords_All[""].Add(ktd);
 
                     foreach (IEdge v in ktd.keywordVertex.GetAll(false, "$KeywordGroup:"))
                     {
                         string group = (string)v.To.Value;
 
-                        if (!examinedKeywords_StartInLocalRootOnly.ContainsKey(group))
-                            examinedKeywords_StartInLocalRootOnly.Add(group, new List<keywordTryingData>());
+                        if (!examinedKeywords_All.ContainsKey(group))
+                            examinedKeywords_All.Add(group, new List<keywordTryingData>());
 
-                        examinedKeywords_StartInLocalRootOnly[group].Add(ktd);
+                        examinedKeywords_All[group].Add(ktd);
                     }
+
+                    // examinedKeywords_StartInLocalRootOnly
+
+                    if (keyword.To.Get(false, @"\$StartInLocalRoot:") != null)
+                    {
+                        examinedKeywords_StartInLocalRootOnly[""].Add(ktd);
+
+                        foreach (IEdge v in ktd.keywordVertex.GetAll(false, "$KeywordGroup:"))
+                        {
+                            string group = (string)v.To.Value;
+
+                            if (!examinedKeywords_StartInLocalRootOnly.ContainsKey(group))
+                                examinedKeywords_StartInLocalRootOnly.Add(group, new List<keywordTryingData>());
+
+                            examinedKeywords_StartInLocalRootOnly[group].Add(ktd);
+                        }
+                    }
+
                 }
+
+                // keywordInfo
+
+                KeywordInfo ki = new KeywordInfo();
+
+                IVertex localRoot = GraphUtil.DeepFindOneByMeta(ktd.keywordVertex, "$LocalRoot", false);
+
+                if (localRoot != null && ((string)localRoot.Value)!="")
+                    ki.LocalRootKeywordsGroup = (string)localRoot.Value;
+
+                keywordInfoDict.Add(ktd.keywordVertex, ki);
+
+                
 
                 string keywordString = keyword.To.Value.ToString();
 
