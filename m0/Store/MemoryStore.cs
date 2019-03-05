@@ -39,12 +39,7 @@ namespace m0.Store
 
         public override void StoreVertexIdentifier(IVertex Vertex)
         {
-            if (!IsTemporaryStore)
-            {
-                VertexIdentifiersDictionary.Add(Vertex.Identifier, Vertex);
-
-                //StoreVertexIdentifierCnt++;
-            }
+            VertexIdentifiersDictionary.Add(Vertex.Identifier, Vertex);
         }
     }
 }
