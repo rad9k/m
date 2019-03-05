@@ -2113,7 +2113,7 @@ namespace m0.ZeroCode
                 if (!isSpecialKeyword((string)keyword.To.Value))
                 {
                     // examinedKeywords_All
-                    
+
                     examinedKeywords_All[""].Add(ktd);
 
                     foreach (IEdge v in ktd.keywordVertex.GetAll(false, "$KeywordGroup:"))
@@ -2143,6 +2143,12 @@ namespace m0.ZeroCode
                         }
                     }
 
+                    //
+
+                    string keywordString = keyword.To.Value.ToString();
+
+                    if (keywordString.Length > 0)
+                        addKeywordsSubstrings(keywordString);
                 }
 
                 // keywordInfo
@@ -2151,28 +2157,22 @@ namespace m0.ZeroCode
 
                 IVertex localRoot = GraphUtil.DeepFindOneByMeta(ktd.keywordVertex, "$LocalRoot", false);
 
-                if (localRoot != null && ((string)localRoot.Value)!="")
+                if (localRoot != null && ((string)localRoot.Value) != "")
                     ki.LocalRootKeywordsGroup = (string)localRoot.Value;
 
                 keywordInfoDict.Add(ktd.keywordVertex, ki);
 
-                
+            }              
 
-                string keywordString = keyword.To.Value.ToString();
+            // add space to allKeywordsSubstringsDictionary
 
-                if (keywordString.Length > 0)
-                    addKeywordsSubstrings(keywordString);
+            if (!allKeywordsSubstringsDictionary.ContainsKey(' '))
+            {
+                List<string> l = new List<string>();
 
-                // add space to allKeywordsSubstringsDictionary
+                l.Add(" ");
 
-                if (!allKeywordsSubstringsDictionary.ContainsKey(' '))
-                {
-                    List<string> l = new List<string>();
-
-                    l.Add(" ");
-
-                    allKeywordsSubstringsDictionary.Add(' ', l);
-                }
+                allKeywordsSubstringsDictionary.Add(' ', l);
             }
                 
         }

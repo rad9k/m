@@ -45,11 +45,6 @@ namespace m0.Graph
 
             ToIdentifier = To.Identifier;
 
-            if (ToIdentifier == (object)1706278)
-            {
-                int x = 0;
-            }
-
             To.DeleteInEdge(this);
 
             _to = null;
