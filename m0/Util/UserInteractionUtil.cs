@@ -52,7 +52,7 @@ namespace m0.Util
 
             error.AddVertex(_where, where);
 
-            error.AddVertex(_type, _error);
+            error.AddEdge(_type, _error);
 
             error.AddVertex(_what, what);
 

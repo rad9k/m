@@ -1808,7 +1808,14 @@ namespace m0.ZeroCode
 
         private int _tryIsNextLocalRootKeyword(ParsingStack s, string LOGPREFIX, int newPos, int sPos, keywordTryingData ktd, bool isSpaceNext)
         {
+            string keywordsFilter = "";
+
             MinusZero.Instance.Log(-1, "_tryIsKeyword", LOGPREFIX + "_tryIsNextLocalRootKeyword");
+
+            KeywordInfo ki = keywordInfoDict[ktd.keywordVertex];
+
+           // if (ki.LocalRootKeywordsGroup != null)
+            //    keywordsFilter = ki.LocalRootKeywordsGroup;
 
             if (!isSpaceNext)
                 while (text[sPos - 1] == ' ') // spaces handling
@@ -1835,7 +1842,7 @@ namespace m0.ZeroCode
 
             //_tryIsKeyword(s, LOGPREFIX + "    ", sPos - 1, -1, 0, text.Length - 1, text.Length - 1, false, out _examinedKeywords, out _link, true, ref _tryPos, true, null, null, getKewordFilterFromParamName(ktd.currentlyProcessedParameterName));
 
-            _tryIsKeyword(s, LOGPREFIX + "    ", sPos - 1, -1, 0, text.Length - 1, text.Length - 1, false, out _examinedKeywords, out _link, true, ref _tryPos, true, null, null, "", isSpaceNext);
+            _tryIsKeyword(s, LOGPREFIX + "    ", sPos - 1, -1, 0, text.Length - 1, text.Length - 1, false, out _examinedKeywords, out _link, true, ref _tryPos, true, null, null, keywordsFilter, isSpaceNext);
 
             // BACK TO OLD STACK
 

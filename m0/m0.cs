@@ -965,9 +965,11 @@ namespace m0
 
             IVertex o_path = smuk.AddVertex(keyword, @" \ ");
 
-             //o_path.AddVertex(keywordGroup, "QueryPart");
+            //o_path.AddVertex(keywordGroup, "AfterEmpty");
 
-             IVertex o_path_any = o_path.AddVertex(any, "");
+            //o_path.AddVertex(keywordGroup, "QueryPart");
+
+            IVertex o_path_any = o_path.AddVertex(any, "");
 
              o_path_any.AddVertex(smb.Get(false, "$StartInLocalRoot"), "");
 
@@ -1003,6 +1005,7 @@ namespace m0
 
             newValueKeyword.AddVertex(keywordGroup, "Atom");
 
+            // QueryPart should be removed. we leave it for a second not to destroy someting
             newValueKeyword.AddVertex(keywordGroup, "QueryPart"); // as "(?<value>)" is special keyword it will be processed same as (?<value>)
             // also it is not "QueryPart" :) but will be treted as being "QueryPart" - becouse of being special keyword. this is known limitation
 
@@ -1021,6 +1024,7 @@ namespace m0
 
             emptyKeyword.AddVertex(keywordGroup, "Atom");
 
+            // QueryPart should be removed. we leave it for a second not to destroy someting
             emptyKeyword.AddVertex(keywordGroup, "QueryPart");
 
             IVertex emptyKeyword_any = emptyKeyword.AddVertex(any, "(?<value>)");
