@@ -839,7 +839,7 @@ namespace m0
 
            // o_colon_any_right.AddVertex(smb.Get(false, "$LocalRoot"), "");
 
-            /*
+            
             // : /2
             //
             // |(?<SUB>)(?<right_QueryPart>)            
@@ -859,7 +859,7 @@ namespace m0
             IVertex o_colon2_any_right=o_colon2_any.AddVertex(smu.Get(false, @"DoubleOperator\RightExpression"), "(?<right_Atom>)");
 
             o_colon2_any_right.AddVertex(smb.Get(false, "$LocalRoot"), "");
-
+            
             // : /3
             //
             // (?<left_QueryPart>)|(?<SUB>)            
@@ -879,7 +879,7 @@ namespace m0
             IVertex o_colon3_any_right = o_colon3_any.AddVertex(smu.Get(false, @"DoubleOperator\LeftExpression"), "(?<left_Atom>)");
 
             o_colon3_any_right.AddVertex(smb.Get(false, "$LocalRoot"), "");
-            */
+            /*
             
             // :: /1
             //
@@ -919,7 +919,7 @@ namespace m0
             o_doubleColon3_any.AddEdge(smb.Get(false, @"Vertex\$Is"), smu.Get(false, "||"));
 
             o_doubleColon3_any.AddVertex(smu.Get(false, @"DoubleOperator\LeftExpression"), "(?<left_Colon>)");
-            
+            */
 
             /////////////////////////////////////////////////////////////////////////////////////////////////////////////
             /////////////////////////////////////////////////////////////////////////////////////////////////////////////
