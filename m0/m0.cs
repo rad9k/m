@@ -837,7 +837,7 @@ namespace m0
 
             IVertex o_colon_any_right = o_colon_any.AddVertex(smu.Get(false, @"DoubleOperator\RightExpression"), "(?<right_Atom>)");
 
-           // o_colon_any_right.AddVertex(smb.Get(false, "$LocalRoot"), "");
+            o_colon_any_right.AddVertex(smb.Get(false, "$LocalRoot"), "");
 
             
             // : /2
@@ -846,7 +846,7 @@ namespace m0
 
             //IVertex o_colon = smuk.AddVertex(keyword, "|");
 
-            IVertex o_colon2 = smuk.AddVertex(keyword, "|(?<SUB>)(?<right_Atom>)");
+           /* IVertex o_colon2 = smuk.AddVertex(keyword, "|(?<SUB>)(?<right_Atom>)");
 
             o_colon2.AddVertex(keywordGroup, "Colon");
 
@@ -858,7 +858,7 @@ namespace m0
 
             IVertex o_colon2_any_right=o_colon2_any.AddVertex(smu.Get(false, @"DoubleOperator\RightExpression"), "(?<right_Atom>)");
 
-            o_colon2_any_right.AddVertex(smb.Get(false, "$LocalRoot"), "");
+            o_colon2_any_right.AddVertex(smb.Get(false, "$LocalRoot"), "");*/
             
             // : /3
             //

@@ -1969,6 +1969,12 @@ namespace m0.ZeroCode
             }
 
             foreach (IEdge e in keywordAddingVertex) {
+
+                if (GeneralUtil.CompareStrings("LeftExpression", e.Meta))
+                {
+                    int x = 9;
+                }
+
                 if (e.To.Get(false, @"$KeywordManyRoot:") != null)
                 {
                     min_subCount = 0;
