@@ -878,7 +878,9 @@ namespace m0
 
             IVertex o_colon3_any_right = o_colon3_any.AddVertex(smu.Get(false, @"DoubleOperator\LeftExpression"), "(?<left_Atom>)");
 
-            o_colon3_any_right.AddVertex(smb.Get(false, "$LocalRoot"), "");
+            IVertex o_colon3_any_target= o_colon3_any.AddVertex(smu.Get(false, @"SingleOperator\TargetExpression"), "");
+
+            o_colon3_any_target.AddVertex(smb.Get(false, "$LocalRoot"), "");
             /*
             
             // :: /1
