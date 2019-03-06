@@ -1929,12 +1929,7 @@ namespace m0.ZeroCode
         }
 
         void AddKeywordVertex_AddVertex(ParsingStack s, IVertex baseVertex, IEdge metaEdge, IVertex meta, object val, ref IVertex nv, keywordTryingData ktd, IEdge parentMetaEdge)
-        {
-            if (GeneralUtil.CompareStrings(metaEdge.Meta.Value, "LeftExpression"))
-            {
-                int x = 0;
-            }
-
+        {            
             if (GeneralUtil.CompareStrings("$LocalRoot", metaEdge.Meta.Value)
             || GeneralUtil.CompareStrings("$StartInLocalRoot", metaEdge.Meta.Value)
             || GeneralUtil.CompareStrings("$KeywordGroup", metaEdge.Meta.Value))
@@ -1979,13 +1974,7 @@ namespace m0.ZeroCode
                 max_subCount = subCount;
             }
 
-            foreach (IEdge e in keywordAddingVertex) {
-
-                if (GeneralUtil.CompareStrings("LeftExpression", e.Meta))
-                {
-                    int x = 9;
-                }
-
+            foreach (IEdge e in keywordAddingVertex) {                
                 if (e.To.Get(false, @"$KeywordManyRoot:") != null)
                 {
                     min_subCount = 0;
