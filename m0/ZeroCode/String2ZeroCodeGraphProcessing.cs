@@ -1930,6 +1930,11 @@ namespace m0.ZeroCode
 
         void AddKeywordVertex_AddVertex(ParsingStack s, IVertex baseVertex, IEdge metaEdge, IVertex meta, object val, ref IVertex nv, keywordTryingData ktd, IEdge parentMetaEdge)
         {
+            if (GeneralUtil.CompareStrings(metaEdge.Meta.Value, "LeftExpression"))
+            {
+                int x = 0;
+            }
+
             if (GeneralUtil.CompareStrings("$LocalRoot", metaEdge.Meta.Value)
             || GeneralUtil.CompareStrings("$StartInLocalRoot", metaEdge.Meta.Value)
             || GeneralUtil.CompareStrings("$KeywordGroup", metaEdge.Meta.Value))
@@ -1945,6 +1950,8 @@ namespace m0.ZeroCode
                 nv = baseVertex;
             }else
                 nv = AddVertex(s, baseVertex, meta, val);
+
+   
 
             if (metaEdge.To.Get(false, "$LocalRoot:") != null && ktd.LocalRootNext != null)
                 _AddKeywordVertex(s, nv, ktd.LocalRootNext, ktd.LocalRootNext.keywordVertex, null, 0, metaEdge);
