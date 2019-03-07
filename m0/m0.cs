@@ -516,7 +516,7 @@ namespace m0
             IVertex any = smuk.AddVertex(null, "(?<ANY>)");
 
             string anyString = "(?<ANY>)";
-            
+            /*
             // import meta
             //
             // import meta (?<name>) (?<link>)
@@ -822,17 +822,21 @@ namespace m0
             // :: /1
             //
             // (?<left_QueryPart>)||(?<SUB>)(?<right_QueryPart>)                         
-
-            IVertex o_doubleColon = smuk.AddVertex(keyword, "(?<left_Colon>)||(?<SUB>)(?<right_Colon>)");
+            */
+            IVertex o_doubleColon = smuk.AddVertex(keyword, "(?<left_Colon>)XX(?<SUB>)(?<right_Colon>)");            
 
             IVertex o_doubleColon_any = o_doubleColon.AddVertex(any, "");
+
+            o_doubleColon_any.AddVertex(smb.Get(false, "$StartInLocalRoot"), ""); // DO WE NEED THAT??????
 
             o_doubleColon_any.AddEdge(smb.Get(false, @"Vertex\$Is"), smu.Get(false, "||"));
 
             o_doubleColon_any.AddVertex(smu.Get(false, @"DoubleOperator\LeftExpression"), "(?<left_Colon>)");
 
-            o_doubleColon_any.AddVertex(smu.Get(false, @"DoubleOperator\RightExpression"), "(?<right_Colon>)");
+            IVertex o_doubleColon_any_right = o_doubleColon_any.AddVertex(smu.Get(false, @"DoubleOperator\RightExpression"), "(?<right_Colon>)");
 
+            o_doubleColon_any_right.AddVertex(smb.Get(false, "$LocalRoot"), "");
+            /*
             // :: /2
             //
             // ||(?<SUB>)(?<right_QueryPart>)                         
@@ -858,7 +862,7 @@ namespace m0
 
             o_doubleColon3_any.AddVertex(smu.Get(false, @"DoubleOperator\LeftExpression"), "(?<left_Colon>)");
 
-
+            */
             // : /1
             //
             // (?<left_QueryPart>)|(?<SUB>)(?<right_QueryPart>)            
@@ -877,9 +881,9 @@ namespace m0
 
             IVertex o_colon_any_right = o_colon_any.AddVertex(smu.Get(false, @"DoubleOperator\RightExpression"), "(?<right_Atom>)");
 
-            o_colon_any_right.AddVertex(smb.Get(false, "$LocalRoot"), "");
+            o_colon_any_right.AddVertex(smb.Get(false, "$LocalRoot"), "test");
 
-
+            /*
             // : /2
             //
             // |(?<SUB>)(?<right_QueryPart>)            
@@ -985,7 +989,7 @@ namespace m0
             // {}
             //
             // {(*(+\r\n+)\t(?<expr>)*)\r\n}
-            
+       
             IVertex o_newSub = smuk.AddVertex(keyword, "{(*\r\n\t(?<expr>)*)\r\n}");
 
             IVertex o_newSub_any = o_newSub.AddVertex(any, anyString);
@@ -997,7 +1001,7 @@ namespace m0
             IVertex o_newSub_any_param = o_newSub_any.AddVertex(smu.Get(false, @"MultiOperator\Expression"), "(?<expr>)");
 
             o_newSub_any_param.AddEdge(smb.Get(false, @"$KeywordManyRoot"), smb.Get(false, @"$Empty"));
-            
+         */   
             // ""
             //
             // "\"(?<value>)\""
