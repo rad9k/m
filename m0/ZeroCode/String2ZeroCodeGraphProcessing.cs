@@ -1814,8 +1814,8 @@ namespace m0.ZeroCode
 
             KeywordInfo ki = keywordInfoDict[ktd.keywordVertex];
 
-            if (ki.LocalRootKeywordsGroup != null)
-                keywordsFilter = ki.LocalRootKeywordsGroup;
+            //if (ki.LocalRootKeywordsGroup != null)
+            //    keywordsFilter = ki.LocalRootKeywordsGroup;
 
             if (!isSpaceNext)
                 while (text[sPos - 1] == ' ') // spaces handling
