@@ -970,7 +970,7 @@ namespace m0
             // \
             //
             // \                         
-
+            */
             IVertex o_path = smuk.AddVertex(keyword, @" \ ");
 
             o_path.AddVertex(keywordGroup, "AfterEmpty");
@@ -986,7 +986,7 @@ namespace m0
              IVertex o_path_any_targetExpr = o_path_any.AddVertex(smu.Get(false, @"SingleOperator\TargetExpression"), "");
 
              o_path_any_targetExpr.AddVertex(smb.Get(false, "$LocalRoot"), "");
-       
+       /*
             // {}
             //
             // {(*(+\r\n+)\t(?<expr>)*)\r\n}
@@ -1043,6 +1043,23 @@ namespace m0
             IVertex emptyKeyword_any_targetExpr = emptyKeyword_any.AddVertex(smu.Get(false, @"SingleOperator\TargetExpression"), "");
 
             emptyKeyword_any_targetExpr.AddVertex(smb.Get(false, "$LocalRoot"), "");
+
+            //TEST
+            /*
+
+            IVertex eKeyword = smuk.AddVertex(keyword, "O");            
+
+            eKeyword.AddVertex(keywordGroup, "b");
+            
+            eKeyword.AddVertex(any, "OOO");
+
+
+            IVertex bKeyword = smuk.AddVertex(keyword, "A(?<v_b>)A");            
+
+            bKeyword.AddVertex(any, "(?<v_b>)").AddVertex(any, "AA");*/
+
+
+
         }
 
         void CreateSystemTextLanguageZeroCode()
