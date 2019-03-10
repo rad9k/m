@@ -20,7 +20,7 @@ namespace m0.ZeroTypes
                 //||e.Meta.Get(false, "$VertexTarget") != null)
                 return true;
 
-            if (e.Meta.Get(false, "$$IsLink:") != null)
+            if (e.Meta.Get(false, "$IsLink:") != null)
                 return true;
 
             return false;

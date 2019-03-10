@@ -355,7 +355,7 @@ namespace m0.ZeroCode
                 DoKeywordDefinitionContainLocalRoot = processing.DoKeywordDefinitionContainLocalRoot_Dictionary[KeywordDefinition];
             else
             {
-                if (GraphUtil.DeepFindOneByMeta(KeywordDefinition, "$LocalRoot", false) != null)
+                if (GraphUtil.DeepFindOneByMeta(KeywordDefinition, "$$LocalRoot", false) != null)
                     DoKeywordDefinitionContainLocalRoot = true;
 
                 processing.DoKeywordDefinitionContainLocalRoot_Dictionary.Add(KeywordDefinition, DoKeywordDefinitionContainLocalRoot);
@@ -365,7 +365,7 @@ namespace m0.ZeroCode
                 DoKeywordDefinitionContainStartInLocalRoot = processing.DoKeywordDefinitionContainStartInLocalRoot_Dictionary[KeywordDefinition];
             else
             {
-                if (GraphUtil.DeepFindOneByMeta(KeywordDefinition, "$StartInLocalRoot", false) != null)
+                if (GraphUtil.DeepFindOneByMeta(KeywordDefinition, "$$StartInLocalRoot", false) != null)
                     DoKeywordDefinitionContainStartInLocalRoot = true;
 
                 processing.DoKeywordDefinitionContainStartInLocalRoot_Dictionary.Add(KeywordDefinition, DoKeywordDefinitionContainStartInLocalRoot);
@@ -638,7 +638,7 @@ namespace m0.ZeroCode
         {
             keywordManyRootQueryString = "";
 
-            if (baseEdge.To.Get(false, "$KeywordManyRoot:") != null)
+            if (baseEdge.To.Get(false, "$$KeywordManyRoot:") != null)
             {
                 keywordManyRootQueryString = path;
                 return baseEdge;
@@ -1207,16 +1207,16 @@ namespace m0.ZeroCode
 
         public bool isNotComparableKeywordEdge(string baseVertex) 
             {
-                if (GeneralUtil.CompareStrings(baseVertex, "$KeywordManyRoot"))
+                if (GeneralUtil.CompareStrings(baseVertex, "$$KeywordManyRoot"))
                     return true;
 
-                if (GeneralUtil.CompareStrings(baseVertex, "$LocalRoot"))
+                if (GeneralUtil.CompareStrings(baseVertex, "$$LocalRoot"))
                     return true;
 
-                if (GeneralUtil.CompareStrings(baseVertex, "$StartInLocalRoot"))
+                if (GeneralUtil.CompareStrings(baseVertex, "$$StartInLocalRoot"))
                      return true;
 
-                if (GeneralUtil.CompareStrings(baseVertex, "$KeywordGroup"))
+                if (GeneralUtil.CompareStrings(baseVertex, "$$KeywordGroup"))
                      return true;
 
             return false;
@@ -1224,7 +1224,7 @@ namespace m0.ZeroCode
 
         public bool GetGraphMatch(IVertex parentToCheck, IEdge keywordEdge)
         {
-            //if (keywordEdge.To.Get(false, "$KeywordManyRoot:") != null)
+            //if (keywordEdge.To.Get(false, "$$KeywordManyRoot:") != null)
             // return true; // WTF ???? or Meta? eigher does not work for function parameters
 
             if (isNotComparableKeywordEdge(keywordEdge.Meta.ToString()))
@@ -1265,7 +1265,7 @@ namespace m0.ZeroCode
                     {
                         currentMatchGraphEdgeList.Add(searchResult);
 
-                        if (keywordEdge.To.Get(false, "$KeywordManyRoot:") == null)
+                        if (keywordEdge.To.Get(false, "$$KeywordManyRoot:") == null)
                             return true;
                         else
                             toReturn = true; // this is strange. but we are leaving it AS IS. not to break something
@@ -1273,7 +1273,7 @@ namespace m0.ZeroCode
                 }
             }
 
-            if (keywordEdge.To.Get(false, "$KeywordManyRoot:") != null)
+            if (keywordEdge.To.Get(false, "$$KeywordManyRoot:") != null)
                 return true;
 
             return toReturn;

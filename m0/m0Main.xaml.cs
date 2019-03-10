@@ -553,7 +553,7 @@ namespace m0
 
             IVertex vvv = VertexOperations.AddInstance(test, r.Get(false, @"System\Meta\Base\$Import"));
 
-            vvv.AddEdge(r.Get(false, @"System\Meta\Base\Vertex\$$IsLink"), MinusZero.Instance.Empty);
+            vvv.AddEdge(r.Get(false, @"System\Meta\Base\Vertex\$IsLink"), MinusZero.Instance.Empty);
 
             vvv.Value="tst";
 

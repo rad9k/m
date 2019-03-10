@@ -1800,7 +1800,7 @@ namespace m0.ZeroCode
 
         bool isLocalRootKeyword(keywordTryingData ktd)
         {
-            if (ktd.keywordVertex.Get(false, @"\$StartInLocalRoot:") != null) // check agains LocalRoot presence should be better idea. to be verified
+            if (ktd.keywordVertex.Get(false, @"\$$StartInLocalRoot:") != null) // check agains LocalRoot presence should be better idea. to be verified
                 return true;
             else
                 return false;
@@ -1930,13 +1930,13 @@ namespace m0.ZeroCode
 
         void AddKeywordVertex_AddVertex(ParsingStack s, IVertex baseVertex, IEdge metaEdge, IVertex meta, object val, ref IVertex nv, keywordTryingData ktd, IEdge parentMetaEdge)
         {            
-            if (GeneralUtil.CompareStrings("$LocalRoot", metaEdge.Meta.Value)
-            || GeneralUtil.CompareStrings("$StartInLocalRoot", metaEdge.Meta.Value)
-            || GeneralUtil.CompareStrings("$KeywordGroup", metaEdge.Meta.Value))
+            if (GeneralUtil.CompareStrings("$$LocalRoot", metaEdge.Meta.Value)
+            || GeneralUtil.CompareStrings("$$StartInLocalRoot", metaEdge.Meta.Value)
+            || GeneralUtil.CompareStrings("$$KeywordGroup", metaEdge.Meta.Value))
                 return;
 
             if (parentMetaEdge != null
-                && parentMetaEdge.To.Get(false, "$LocalRoot:") != null
+                && parentMetaEdge.To.Get(false, "$$LocalRoot:") != null
                 && GeneralUtil.CompareStrings("(?<ANY>)", meta))
             {
                 if (val != null && !GeneralUtil.CompareStrings("", val))
@@ -1952,7 +1952,7 @@ namespace m0.ZeroCode
 
         private void tryLocalRootAdd(ParsingStack s, IEdge metaEdge, IVertex nv, keywordTryingData ktd)
         {
-            if (metaEdge.To.Get(false, "$LocalRoot:") != null && ktd.LocalRootNext != null)
+            if (metaEdge.To.Get(false, "$$LocalRoot:") != null && ktd.LocalRootNext != null)
                 _AddKeywordVertex(s, nv, ktd.LocalRootNext, ktd.LocalRootNext.keywordVertex, null, 0, metaEdge);
         }
 
@@ -1975,7 +1975,7 @@ namespace m0.ZeroCode
             }
 
             foreach (IEdge e in keywordAddingVertex) {                
-                if (e.To.Get(false, @"$KeywordManyRoot:") != null)
+                if (e.To.Get(false, @"$$KeywordManyRoot:") != null)
                 {
                     min_subCount = 0;
                     max_subCount = ktd.multiParameterCount - 1;
@@ -1983,7 +1983,7 @@ namespace m0.ZeroCode
 
                 for (int cnt_subCount = min_subCount; cnt_subCount <= max_subCount; cnt_subCount++)
                 {
-                    if (GeneralUtil.CompareStrings(e.Meta, "$KeywordManyRoot"))
+                    if (GeneralUtil.CompareStrings(e.Meta, "$$KeywordManyRoot"))
                         continue;
 
                     IVertex meta = e.Meta;
@@ -2087,12 +2087,12 @@ namespace m0.ZeroCode
         {
             specialKeywordGroups_empty = new List<string>();
 
-            foreach (IEdge e in MinusZero.Instance.emptyKeywordVertex.GetAll(false, "$KeywordGroup:"))
+            foreach (IEdge e in MinusZero.Instance.emptyKeywordVertex.GetAll(false, "$$KeywordGroup:"))
                 specialKeywordGroups_empty.Add((string)e.To.Value);
 
             specialKeywordGroups_new = new List<string>();
 
-            foreach (IEdge e in MinusZero.Instance.newValueKeywordVertex.GetAll(false, "$KeywordGroup:"))
+            foreach (IEdge e in MinusZero.Instance.newValueKeywordVertex.GetAll(false, "$$KeywordGroup:"))
                 specialKeywordGroups_new.Add((string)e.To.Value);
         }
 
@@ -2124,7 +2124,7 @@ namespace m0.ZeroCode
 
                     examinedKeywords_All[""].Add(ktd);
 
-                    foreach (IEdge v in ktd.keywordVertex.GetAll(false, "$KeywordGroup:"))
+                    foreach (IEdge v in ktd.keywordVertex.GetAll(false, "$$KeywordGroup:"))
                     {
                         string group = (string)v.To.Value;
 
@@ -2136,11 +2136,11 @@ namespace m0.ZeroCode
 
                     // examinedKeywords_StartInLocalRootOnly
 
-                    if (keyword.To.Get(false, @"\$StartInLocalRoot:") != null)
+                    if (keyword.To.Get(false, @"\$$StartInLocalRoot:") != null)
                     {
                         examinedKeywords_StartInLocalRootOnly[""].Add(ktd);
 
-                        foreach (IEdge v in ktd.keywordVertex.GetAll(false, "$KeywordGroup:"))
+                        foreach (IEdge v in ktd.keywordVertex.GetAll(false, "$$KeywordGroup:"))
                         {
                             string group = (string)v.To.Value;
 
@@ -2163,7 +2163,7 @@ namespace m0.ZeroCode
 
                 KeywordInfo ki = new KeywordInfo();
 
-                IVertex localRoot = GraphUtil.DeepFindOneByMeta(ktd.keywordVertex, "$LocalRoot", false);
+                IVertex localRoot = GraphUtil.DeepFindOneByMeta(ktd.keywordVertex, "$$LocalRoot", false);
 
                 if (localRoot != null && ((string)localRoot.Value) != "")
                     ki.LocalRootKeywordsGroup = (string)localRoot.Value;

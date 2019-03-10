@@ -4,11 +4,24 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Text.RegularExpressions;
+using m0.Foundation;
 
 namespace m0.ZeroCode
 {
     public class ZeroCodeUtil
     {
+       public static bool IsDoubleDolarMeta(IEdge e)
+        {
+            if (!(e.Meta.Value is string))
+                return false;
+
+            string metaValue = (string)e.Meta.Value;
+
+            if (metaValue[0] == '$' && metaValue[1] == '$')
+                return true;
+
+            return false;
+        }
 
         public static string getRegexp(string s, string r)
         {

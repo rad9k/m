@@ -221,7 +221,7 @@ namespace m0
         {
             IVertex sm = Root.Get(false, @"System\Meta");
 
-            GeneralUtil.ParseAndExcute(sm, null, "{Base{Vertex{$$IsLink,$Inherits,$Is,$EdgeTarget,$VertexTarget,$IsAggregation,$MinCardinality,$MaxCardinality,$MinTargetCardinality,$MaxTargetCardinality,$DefaultValue,$DefaultViewVisualiser,$DefaultEditVisualiser,$DefaultOpenVisualiser,$Group,$Section,$Description,Author,Dependency},$Empty,$Import,$ImportMeta,$Keyword,$KeywordGroup,$KeywordManyRoot,$LocalRoot,$StartInLocalRoot,$NewLine,$ParseRoot,$ParseArtefacts}}");
+            GeneralUtil.ParseAndExcute(sm, null, "{Base{Vertex{$IsLink,$Inherits,$Is,$EdgeTarget,$VertexTarget,$IsAggregation,$MinCardinality,$MaxCardinality,$MinTargetCardinality,$MaxTargetCardinality,$DefaultValue,$DefaultViewVisualiser,$DefaultEditVisualiser,$DefaultOpenVisualiser,$Group,$Section,$Description,Author,Dependency},$Empty,$Import,$ImportMeta,$Keyword,$$KeywordGroup,$$KeywordManyRoot,$$LocalRoot,$$StartInLocalRoot,$$EmptyKeyword,$$NewVertexKeyword,$NewLine,$ParseRoot,$ParseArtefacts}}");
 
             sm.Get(false, @"Presentation\$Hide").AddEdge(sm.Get(false, @"Base\Vertex\$EdgeTarget"), sm.Get(false, @"Base\Vertex"));
 
@@ -257,11 +257,11 @@ namespace m0
 
             // hack for now
 
-            sm.Get(false, @"Base\Vertex\$DefaultViewVisualiser").AddEdge(sm.Get(false, @"*$$IsLink"), sm.Get(false, @"Base\Vertex"));
+            sm.Get(false, @"Base\Vertex\$DefaultViewVisualiser").AddEdge(sm.Get(false, @"*$IsLink"), sm.Get(false, @"Base\Vertex"));
 
-            sm.Get(false, @"Base\Vertex\$DefaultEditVisualiser").AddEdge(sm.Get(false, @"*$$IsLink"), sm.Get(false, @"Base\Vertex"));
+            sm.Get(false, @"Base\Vertex\$DefaultEditVisualiser").AddEdge(sm.Get(false, @"*$IsLink"), sm.Get(false, @"Base\Vertex"));
 
-            sm.Get(false, @"Base\Vertex\$DefaultOpenVisualiser").AddEdge(sm.Get(false, @"*$$IsLink"), sm.Get(false, @"Base\Vertex"));
+            sm.Get(false, @"Base\Vertex\$DefaultOpenVisualiser").AddEdge(sm.Get(false, @"*$IsLink"), sm.Get(false, @"Base\Vertex"));
 
 
             sm.Get(false, @"Base\Vertex\$IsAggregation").AddEdge(sm.Get(false, @"*$EdgeTarget"), sm.Get(false, @"Base\Vertex"));
@@ -506,7 +506,7 @@ namespace m0
             IVertex smb = Root.Get(false, @"System\Meta\Base");
 
             IVertex keyword = smb.Get(false, @"$Keyword");
-            IVertex keywordGroup = smb.Get(false, @"$KeywordGroup");
+            IVertex keywordGroup = smb.Get(false, @"$$KeywordGroup");
 
             IVertex isAggregation = root.Get(false, @"System\Meta\Base\Vertex\$IsAggregation");
             IVertex empty = root.Get(false, @"System\Meta\Base\$Empty");
@@ -515,6 +515,9 @@ namespace m0
             IVertex smuk = smu.AddVertex(null, "Keyword");
 
             IVertex any = smuk.AddVertex(null, "(?<ANY>)");
+
+            IVertex emptyKeyword = smb.Get(false, "$$EmptyKeyword");
+            IVertex newKeyword = smb.Get(false, "$$NewVertexKeyword");
 
             string anyString = "(?<ANY>)";
             /*
@@ -721,7 +724,7 @@ namespace m0
 
              ffip.AddVertex(smb.Get(false, @"Vertex\$VertexTarget"), "(?<paramType>)");
 
-             ffip.AddEdge(smb.Get(false, @"$KeywordManyRoot"), smb.Get(false, @"$Empty"));
+             ffip.AddEdge(smb.Get(false, @"$$KeywordManyRoot"), smb.Get(false, @"$Empty"));
             
             
             // function
@@ -738,7 +741,7 @@ namespace m0
 
              f2fip.AddVertex(smb.Get(false, @"Vertex\$VertexTarget"), "(?<paramType>)");            
 
-             f2fip.AddEdge(smb.Get(false, @"$KeywordManyRoot"),smb.Get(false, @"$Empty"));                        
+             f2fip.AddEdge(smb.Get(false, @"$$KeywordManyRoot"),smb.Get(false, @"$Empty"));                        
             
              // while
              //
@@ -830,7 +833,7 @@ namespace m0
 
             IVertex o_colon_any = o_colon.AddVertex(any, "");
 
-            //  o_colon_any.AddVertex(smb.Get(false, "$StartInLocalRoot"), ""); // DO WE NEED THAT??????
+            //  o_colon_any.AddVertex(smb.Get(false, "$$StartInLocalRoot"), ""); // DO WE NEED THAT??????
 
             o_colon_any.AddEdge(smb.Get(false, @"Vertex\$Is"), smu.Get(false, "|"));
 
@@ -838,7 +841,7 @@ namespace m0
 
             IVertex o_colon_any_right = o_colon_any.AddVertex(smu.Get(false, @"DoubleOperator\RightExpression"), "(?<right_Atom>)");
 
-            //  o_colon_any_right.AddVertex(smb.Get(false, "$LocalRoot"), "test");
+            //  o_colon_any_right.AddVertex(smb.Get(false, "$$LocalRoot"), "test");
 
             /*
             // : /2
@@ -853,13 +856,13 @@ namespace m0
 
             IVertex o_colon2_any = o_colon2.AddVertex(any, "");
 
-            o_colon2_any.AddVertex(smb.Get(false, "$StartInLocalRoot"), ""); // DO WE NEED THAT??????
+            o_colon2_any.AddVertex(smb.Get(false, "$$StartInLocalRoot"), ""); // DO WE NEED THAT??????
 
             o_colon2_any.AddEdge(smb.Get(false, @"Vertex\$Is"), smu.Get(false, "|"));
 
             IVertex o_colon2_any_right = o_colon2_any.AddVertex(smu.Get(false, @"DoubleOperator\RightExpression"), "(?<right_Atom>)");
 
-            o_colon2_any_right.AddVertex(smb.Get(false, "$LocalRoot"), "AfterEmpty");
+            o_colon2_any_right.AddVertex(smb.Get(false, "$$LocalRoot"), "AfterEmpty");
 
             // : /3
             //
@@ -873,7 +876,7 @@ namespace m0
 
             IVertex o_colon3_any = o_colon3.AddVertex(any, "");
 
-            o_colon3_any.AddVertex(smb.Get(false, "$StartInLocalRoot"), ""); // DO WE NEED THAT??????
+            o_colon3_any.AddVertex(smb.Get(false, "$$StartInLocalRoot"), ""); // DO WE NEED THAT??????
 
             o_colon3_any.AddEdge(smb.Get(false, @"Vertex\$Is"), smu.Get(false, "|"));
 
@@ -881,7 +884,7 @@ namespace m0
 
             IVertex o_colon3_any_target = o_colon3_any.AddVertex(smu.Get(false, @"SingleOperator\TargetExpression"), "");
 
-            o_colon3_any_target.AddVertex(smb.Get(false, "$LocalRoot"), "AfterEmpty");
+            o_colon3_any_target.AddVertex(smb.Get(false, "$$LocalRoot"), "AfterEmpty");
 
             
             // :: /1
@@ -892,7 +895,7 @@ namespace m0
 
             IVertex o_doubleColon_any = o_doubleColon.AddVertex(any, "");
 
-            //o_doubleColon_any.AddVertex(smb.Get(false, "$StartInLocalRoot"), ""); // DO WE NEED THAT??????
+            //o_doubleColon_any.AddVertex(smb.Get(false, "$$StartInLocalRoot"), ""); // DO WE NEED THAT??????
 
             o_doubleColon_any.AddEdge(smb.Get(false, @"Vertex\$Is"), smu.Get(false, "||"));
 
@@ -900,7 +903,7 @@ namespace m0
 
             IVertex o_doubleColon_any_right = o_doubleColon_any.AddVertex(smu.Get(false, @"DoubleOperator\RightExpression"), "(?<right_Colon>)");
 
-            //o_doubleColon_any_right.AddVertex(smb.Get(false, "$LocalRoot"), "");
+            //o_doubleColon_any_right.AddVertex(smb.Get(false, "$$LocalRoot"), "");
             /*
             // :: /2
             //
@@ -951,7 +954,7 @@ namespace m0
 
              IVertex o_call_any_param=o_call_any.AddVertex(smu.Get(false, @"MultiOperator\Expression"), "(?<expr>)");
 
-             o_call_any_param.AddEdge(smb.Get(false, @"$KeywordManyRoot"), smb.Get(false, @"$Empty"));
+             o_call_any_param.AddEdge(smb.Get(false, @"$$KeywordManyRoot"), smb.Get(false, @"$Empty"));
             
              // ()
              //
@@ -979,13 +982,13 @@ namespace m0
 
             IVertex o_path_any = o_path.AddVertex(any, "");
 
-             o_path_any.AddVertex(smb.Get(false, "$StartInLocalRoot"), "");
+             o_path_any.AddVertex(smb.Get(false, "$$StartInLocalRoot"), "");
 
              o_path_any.AddEdge(smb.Get(false, @"Vertex\$Is"), smu.Get(false, "\"\\ \""));             
 
              IVertex o_path_any_targetExpr = o_path_any.AddVertex(smu.Get(false, @"SingleOperator\TargetExpression"), "");
 
-             o_path_any_targetExpr.AddVertex(smb.Get(false, "$LocalRoot"), "");
+             o_path_any_targetExpr.AddVertex(smb.Get(false, "$$LocalRoot"), "");
        /*
             // {}
             //
@@ -995,13 +998,13 @@ namespace m0
 
             IVertex o_newSub_any = o_newSub.AddVertex(any, anyString);
 
-            o_newSub_any.AddVertex(smb.Get(false, "$StartInLocalRoot"), "");
+            o_newSub_any.AddVertex(smb.Get(false, "$$StartInLocalRoot"), "");
 
             o_newSub_any.AddEdge(smb.Get(false, @"Vertex\$Is"), smu.Get(false, "\"{}\""));
 
             IVertex o_newSub_any_param = o_newSub_any.AddVertex(smu.Get(false, @"MultiOperator\Expression"), "(?<expr>)");
 
-            o_newSub_any_param.AddEdge(smb.Get(false, @"$KeywordManyRoot"), smb.Get(false, @"$Empty"));
+            o_newSub_any_param.AddEdge(smb.Get(false, @"$$KeywordManyRoot"), smb.Get(false, @"$Empty"));
          */
             // ""
             //
@@ -1011,6 +1014,8 @@ namespace m0
 
             newValueKeywordVertex = newValueKeyword;
 
+            //newValueKeyword.AddVertex(newKeyword, "");
+
             newValueKeyword.AddVertex(keywordGroup, "Atom");
 
             // QueryPart should be removed. we leave it for a second not to destroy someting
@@ -1019,33 +1024,35 @@ namespace m0
 
             IVertex newValueKeyword_any = newValueKeyword.AddVertex(any, "(?<value>)");
 
-            newValueKeyword_any.AddVertex(smb.Get(false, "$LocalRoot"), "");
+            newValueKeyword_any.AddVertex(smb.Get(false, "$$LocalRoot"), "");
 
 
             // E M P T Y :) K E Y W O R D
             //
             //
 
-            IVertex emptyKeyword = smuk.AddVertex(keyword, "(?<value>)");
+            IVertex empty1Keyword = smuk.AddVertex(keyword, "(?<value>)");
 
-            emptyKeywordVertex = emptyKeyword;
+            emptyKeywordVertex = empty1Keyword;
 
-            emptyKeyword.AddVertex(keywordGroup, "Atom");
+            empty1Keyword.AddVertex(emptyKeyword,"");
+
+            empty1Keyword.AddVertex(keywordGroup, "Atom");
             
             //emptyKeyword.AddVertex(keywordGroup, "Colon");
 
-            IVertex emptyKeyword_any = emptyKeyword.AddVertex(any, "(?<value>)");
+            IVertex empty1Keyword_any = empty1Keyword.AddVertex(any, "(?<value>)");
 
-            emptyKeyword_any.AddVertex(smb.Get(false, "$StartInLocalRoot"), "");
+            empty1Keyword_any.AddVertex(smb.Get(false, "$$StartInLocalRoot"), "");
 
-            emptyKeyword_any.AddEdge(smb.Get(false, @"Vertex\$Is"), smu.Get(false, "Query"));
+            empty1Keyword_any.AddEdge(smb.Get(false, @"Vertex\$Is"), smu.Get(false, "Query"));
 
-            IVertex emptyKeyword_any_targetExpr = emptyKeyword_any.AddVertex(smu.Get(false, @"SingleOperator\TargetExpression"), "");
+            IVertex empty1Keyword_any_targetExpr = empty1Keyword_any.AddVertex(smu.Get(false, @"SingleOperator\TargetExpression"), "");
 
-            emptyKeyword_any_targetExpr.AddVertex(smb.Get(false, "$LocalRoot"), "");
+            empty1Keyword_any_targetExpr.AddVertex(smb.Get(false, "$$LocalRoot"), "");
 
             //TEST
-            /*
+            
 
             IVertex eKeyword = smuk.AddVertex(keyword, "O");            
 
@@ -1056,7 +1063,7 @@ namespace m0
 
             IVertex bKeyword = smuk.AddVertex(keyword, "A(?<v_b>)A");            
 
-            bKeyword.AddVertex(any, "(?<v_b>)").AddVertex(any, "AA");*/
+            bKeyword.AddVertex(any, "(?<v_b>)").AddVertex(any, "AA");
 
 
 
@@ -1076,7 +1083,7 @@ namespace m0
 
             DirectMeta.Value = "$DirectMeta";
 
-            DirectMeta.AddEdge(Root.Get(false, @"System\Meta\Base\Vertex\$$IsLink"), Empty);
+            DirectMeta.AddEdge(Root.Get(false, @"System\Meta\Base\Vertex\$IsLink"), Empty);
 
             di.AddEdge(DirectMeta, Root.Get(false, @"System\Meta\UML"));
 
@@ -1092,7 +1099,7 @@ namespace m0
 
             Direct.Value = "$Direct";
 
-            Direct.AddEdge(Root.Get(false, @"System\Meta\Base\Vertex\$$IsLink"), Empty);
+            Direct.AddEdge(Root.Get(false, @"System\Meta\Base\Vertex\$IsLink"), Empty);
 
             //di.AddEdge(Direct, Root); // :O) now its hanging
 
@@ -1102,7 +1109,7 @@ namespace m0
 
             System.Value = "System";
 
-            System.AddEdge(Root.Get(false, @"System\Meta\Base\Vertex\$$IsLink"), Empty);
+            System.AddEdge(Root.Get(false, @"System\Meta\Base\Vertex\$IsLink"), Empty);
 
             di.AddEdge(System, Root.Get(false, @"System"));
         }
