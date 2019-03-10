@@ -1189,6 +1189,11 @@ namespace m0.ZeroCode
 
                 // !!!!!!!!!!!!!!!!!!!!!!! A or B ! YOU DECIDE. I do not know :)
 
+                if (keywordsFilter == "b")
+                {
+                    int x = 0;
+                }
+
                 if (c1089 || specialKeywordGroups_empty.Contains(keywordsFilter) // A
                     /*keywordsFilter=="Atom"*/) // B
                     //( (afterKeywordPartExist && sPos_copy == endPos_forAtomParts && isPrevStartPosSameAsStartPos)
@@ -1929,11 +1934,14 @@ namespace m0.ZeroCode
         }
 
         void AddKeywordVertex_AddVertex(ParsingStack s, IVertex baseVertex, IEdge metaEdge, IVertex meta, object val, ref IVertex nv, keywordTryingData ktd, IEdge parentMetaEdge)
-        {            
-            if (GeneralUtil.CompareStrings("$$LocalRoot", metaEdge.Meta.Value)
-            || GeneralUtil.CompareStrings("$$StartInLocalRoot", metaEdge.Meta.Value)
-            || GeneralUtil.CompareStrings("$$KeywordGroup", metaEdge.Meta.Value))
+        {
+            if (ZeroCodeUtil.IsDoubleDolarMeta(metaEdge))
                 return;
+
+            //if (GeneralUtil.CompareStrings("$$LocalRoot", metaEdge.Meta.Value)
+            //|| GeneralUtil.CompareStrings("$$StartInLocalRoot", metaEdge.Meta.Value)
+            //|| GeneralUtil.CompareStrings("$$KeywordGroup", metaEdge.Meta.Value))
+              //  return;
 
             if (parentMetaEdge != null
                 && parentMetaEdge.To.Get(false, "$$LocalRoot:") != null
