@@ -1019,6 +1019,12 @@ namespace m0.ZeroCode
             tryIsKeyword_Parameters callParams = new tryIsKeyword_Parameters(s, LOGPREFIX, startPos, prev_startPos, isPrevStartPosSameAsStartPosParentCount, endPos, endPos_forAtomParts, afterKeywordPartExist, parentKeyword, parentParams, keywordsFilter, isSpaceNext);
             MinusZero.Instance.Log(0, "_tryIfKeyword", LOGPREFIX + "RUN "+callParams.ToString());
 
+
+            if (keywordsFilter == "b")
+            {
+                int x = 0;
+            }
+
             //
 
             examinedKeywords = new List<keywordTryingData>();
@@ -1189,10 +1195,7 @@ namespace m0.ZeroCode
 
                 // !!!!!!!!!!!!!!!!!!!!!!! A or B ! YOU DECIDE. I do not know :)
 
-                if (keywordsFilter == "b")
-                {
-                    int x = 0;
-                }
+            
 
                 if (c1089 || specialKeywordGroups_empty.Contains(keywordsFilter) // A
                     /*keywordsFilter=="Atom"*/) // B

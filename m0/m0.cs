@@ -1027,7 +1027,7 @@ namespace m0
             newValueKeyword_any.AddVertex(smb.Get(false, "$$LocalRoot"), "");
 
 
-            // E M P T Y :) K E Y W O R D
+            // E M P T Y :) K E Y W O R D 1
             //
             //
 
@@ -1051,8 +1051,31 @@ namespace m0
 
             empty1Keyword_any_targetExpr.AddVertex(smb.Get(false, "$$LocalRoot"), "");
 
-            //TEST
+            // E M P T Y :) K E Y W O R D 2
+            //
+            //
+
+            IVertex empty2Keyword = smuk.AddVertex(keyword, "(?<value>)");
             
+
+            empty1Keyword.AddVertex(emptyKeyword, "");
+
+            empty1Keyword.AddVertex(keywordGroup, "Atom");
+
+            //emptyKeyword.AddVertex(keywordGroup, "Colon");
+
+            IVertex empty1Keyword_any = empty1Keyword.AddVertex(any, "(?<value>)");
+
+            empty1Keyword_any.AddVertex(smb.Get(false, "$$StartInLocalRoot"), "");
+
+            empty1Keyword_any.AddEdge(smb.Get(false, @"Vertex\$Is"), smu.Get(false, "Query"));
+
+            IVertex empty1Keyword_any_targetExpr = empty1Keyword_any.AddVertex(smu.Get(false, @"SingleOperator\TargetExpression"), "");
+
+            empty1Keyword_any_targetExpr.AddVertex(smb.Get(false, "$$LocalRoot"), "");
+
+            //TEST
+
 
             IVertex eKeyword = smuk.AddVertex(keyword, "O");            
 
