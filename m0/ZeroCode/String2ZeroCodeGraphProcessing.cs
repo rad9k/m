@@ -250,7 +250,7 @@ namespace m0.ZeroCode
         List<string> specialKeywordGroups_empty;
 
         Dictionary<string, IVertex> emptyKeywordByGroupsDictionary;
-        Dictionary<string, IVertex> emptyKeywordByGroupsDictionary;
+        Dictionary<string, IVertex> newKeywordByGroupsDictionary;
         Dictionary<string, List<keywordTryingData>> examinedKeywords_All; // all keywords are here
         Dictionary<string, List<keywordTryingData>> examinedKeywords_StartInLocalRootOnly; // StartInLocalRoot only?
         Dictionary<char, List<string>> allKeywordsSubstringsDictionary;
@@ -2108,6 +2108,11 @@ namespace m0.ZeroCode
 
             foreach (IEdge e in MinusZero.Instance.newValueKeywordVertex.GetAll(false, "$$KeywordGroup:"))
                 specialKeywordGroups_new.Add((string)e.To.Value);
+
+
+            emptyKeywordByGroupsDictionary = new Dictionary<string, IVertex>();
+
+            newKeywordByGroupsDictionary = new Dictionary<string, IVertex>();
         }
 
         private void prepareDictionaries()
