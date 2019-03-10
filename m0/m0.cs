@@ -1037,9 +1037,7 @@ namespace m0
 
             empty1Keyword.AddVertex(emptyKeyword,"");
 
-            empty1Keyword.AddVertex(keywordGroup, "Atom");
-            
-            //emptyKeyword.AddVertex(keywordGroup, "Colon");
+            empty1Keyword.AddVertex(keywordGroup, "Atom");                       
 
             IVertex empty1Keyword_any = empty1Keyword.AddVertex(any, "(?<value>)");
 
@@ -1058,21 +1056,19 @@ namespace m0
             IVertex empty2Keyword = smuk.AddVertex(keyword, "(?<value>)");
             
 
-            empty1Keyword.AddVertex(emptyKeyword, "");
+            empty2Keyword.AddVertex(emptyKeyword, "");
 
-            empty1Keyword.AddVertex(keywordGroup, "Atom");
+            empty2Keyword.AddVertex(keywordGroup, "AtomX");            
 
-            //emptyKeyword.AddVertex(keywordGroup, "Colon");
+            IVertex empty2Keyword_any = empty2Keyword.AddVertex(any, "(?<value>)");
 
-            IVertex empty1Keyword_any = empty1Keyword.AddVertex(any, "(?<value>)");
+            empty2Keyword_any.AddVertex(smb.Get(false, "$$StartInLocalRoot"), "");
 
-            empty1Keyword_any.AddVertex(smb.Get(false, "$$StartInLocalRoot"), "");
+            empty2Keyword_any.AddEdge(smb.Get(false, @"Vertex\$Is"), smu.Get(false, "Query"));
 
-            empty1Keyword_any.AddEdge(smb.Get(false, @"Vertex\$Is"), smu.Get(false, "Query"));
+            IVertex empty2Keyword_any_targetExpr = empty1Keyword_any.AddVertex(smu.Get(false, @"SingleOperator\TargetExpression"), "");
 
-            IVertex empty1Keyword_any_targetExpr = empty1Keyword_any.AddVertex(smu.Get(false, @"SingleOperator\TargetExpression"), "");
-
-            empty1Keyword_any_targetExpr.AddVertex(smb.Get(false, "$$LocalRoot"), "");
+            empty2Keyword_any_targetExpr.AddVertex(smb.Get(false, "$$LocalRoot"), "");
 
             //TEST
 
