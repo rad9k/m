@@ -2113,6 +2113,8 @@ namespace m0.ZeroCode
             emptyKeywordByGroupsDictionary = new Dictionary<string, IVertex>();
 
             newKeywordByGroupsDictionary = new Dictionary<string, IVertex>();
+
+            //foreach(IEdge )
         }
 
         private void prepareDictionaries()
