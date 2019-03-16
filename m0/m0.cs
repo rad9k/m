@@ -180,9 +180,7 @@ namespace m0
 
             // FormalTextLanguage\ZeroCode
 
-            IVertex zc = tl.AddVertex(null, "ZeroCode");
-
-            _DefaultLanguageDefinition = zc;
+            // later
 
 
             // FormalTextLanguage\ZeroCode_OLD
@@ -1090,7 +1088,9 @@ namespace m0
 
         void CreateSystemFormalTextLanguageZeroCode()
         {
-            IVertex zc = Root.Get(false, @"System\FormalTextLanguage\ZeroCode");
+            IVertex zc = Root.Get(false, @"System\FormalTextLanguage").AddVertex(Root.Get(false,@"System\Meta\ZeroTypes\FormalTextLanguege"),"ZeroCode");
+
+            zc.AddVertex(Root.Get(false, @"System\Meta\Base\Vertex\$Is"), Root.Get(false, @"System\Meta\ZeroTypes\FormalTextLanguege"));
 
             IVertex b = Root.Get(false, @"System\Meta\Base");
 
@@ -2881,14 +2881,14 @@ namespace m0
         {
             IVertex sm = Root.Get(false, @"System\Meta");
 
-            GeneralUtil.ParseAndExcute(user, sm, "{Settings:{CopyOnDragAndDrop:False,AllowManyDiagramItemsForOneVertex:True},CodeSettings:,Queries:{String:test,String:\"test{test2}\"}}");
+            GeneralUtil.ParseAndExcute(user, sm, "{Settings:{CopyOnDragAndDrop:False,AllowManyDiagramItemsForOneVertex:True},Queries:{String:test,String:\"test{test2}\"}}");
 
             user.Get(false, "Settings:").AddEdge(sm.Get(false, "*AllowBlankAreaDragAndDrop"), sm.Get(false, @"User\AllowBlankAreaDragAndDropEnum\StartAndEnd"));
 
             user.AddEdge(sm.Get(false, @"*$Is"), sm.Get(false, @"User\User"));
             user.Get(false, "Settings:").AddEdge(sm.Get(false, @"*$Is"), sm.Get(false, @"User\Settings"));
 
-            //user.AddEdge(sm.Get(false,@"User\User\DefaultFormalTextLanguage"),Root.Get("TextLang")
+            user.AddEdge(sm.Get(false, @"User\User\DefaultFormalTextLanguage"), Root.Get(false, @"System\FormalTextLanguage\ZeroCode"));
 
             //IVertex cs = user.Get(false, @"CodeSettings:");
             //cs.AddEdge(sm.Get(false, @"*$Is"), sm.Get(false, @"User\CodeSettings"));
