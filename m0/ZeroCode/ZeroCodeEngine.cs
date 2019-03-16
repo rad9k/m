@@ -1,4 +1,4 @@
-﻿using m0.TextLanguage;
+﻿using m0.FormalTextLanguage;
 using System;
 using System.Collections.Generic;
 using System.Linq;

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using m0.Foundation;
 using m0.Store;
 using m0.Graph;
-using m0.TextLanguage;
+using m0.FormalTextLanguage;
 using m0.Store.FileSystem;
 using m0.Util;
 using m0.ZeroTypes;
@@ -80,9 +80,9 @@ namespace m0
         public IVertex DefaultLanguageDefinition_OLD { get { return _DefaultLanguageDefinition_OLD; } }
 
 
-        IVertex _MetaTextLanguageParsedTreeVertex;
+        IVertex _MetaFormalTextLanguageParsedTreeVertex;
 
-        public IVertex MetaTextLanguageParsedTreeVertex { get { return _MetaTextLanguageParsedTreeVertex; } }
+        public IVertex MetaFormalTextLanguageParsedTreeVertex { get { return _MetaFormalTextLanguageParsedTreeVertex; } }
 
 
         ICodeGenerator _DefaultCodeGenerator;
@@ -152,13 +152,13 @@ namespace m0
 
             IVertex meta = system.AddVertex(null, "Meta");
 
-            IVertex tl = system.AddVertex(null, "TextLanguage");
+            IVertex tl = system.AddVertex(null, "FormalTextLanguage");
 
-            IVertex mtl = meta.AddVertex(null, "TextLanguage");
+            IVertex mtl = meta.AddVertex(null, "FormalTextLanguage");
 
             IVertex sto = meta.AddVertex(null, "Store");
 
-            // Meta\TextLanguage\Parser
+            // Meta\FormalTextLanguage\Parser
 
             IVertex mtp = mtl.AddVertex(null, "Parser");
 
@@ -169,23 +169,23 @@ namespace m0
             IVertex ct = mtp.AddVertex(null, "ContainerTerminal");
 
 
-            // Meta\TextLanguage\ParsedTree
+            // Meta\FormalTextLanguage\ParsedTree
 
             IVertex mtpt = mtl.AddVertex(null, "ParsedTree");
 
-            _MetaTextLanguageParsedTreeVertex = mtpt;
+            _MetaFormalTextLanguageParsedTreeVertex = mtpt;
 
             IVertex empty = mtpt.AddVertex(null, "$EmptyContainerTerminal");
             empty.AddVertex(ct, null);
 
-            // TextLanguage\ZeroCode
+            // FormalTextLanguage\ZeroCode
 
             IVertex zc = tl.AddVertex(null, "ZeroCode");
 
             _DefaultLanguageDefinition = zc;
 
 
-            // TextLanguage\ZeroCode_OLD
+            // FormalTextLanguage\ZeroCode_OLD
 
             IVertex zco = tl.AddVertex(null, "ZeroCode_OLD");
 
@@ -1058,7 +1058,7 @@ namespace m0
 
             empty2Keyword.AddVertex(emptyKeyword, "");
 
-            empty2Keyword.AddVertex(keywordGroup, "AtomX");            
+            empty2Keyword.AddVertex(keywordGroup, "Atom");            
 
             IVertex empty2Keyword_any = empty2Keyword.AddVertex(any, "(?<value>)");
 
@@ -1088,9 +1088,9 @@ namespace m0
 
         }
 
-        void CreateSystemTextLanguageZeroCode()
+        void CreateSystemFormalTextLanguageZeroCode()
         {
-            IVertex zc = Root.Get(false, @"System\TextLanguage\ZeroCode");
+            IVertex zc = Root.Get(false, @"System\FormalTextLanguage\ZeroCode");
 
             IVertex b = Root.Get(false, @"System\Meta\Base");
 
@@ -2888,15 +2888,17 @@ namespace m0
             user.AddEdge(sm.Get(false, @"*$Is"), sm.Get(false, @"User\User"));
             user.Get(false, "Settings:").AddEdge(sm.Get(false, @"*$Is"), sm.Get(false, @"User\Settings"));
 
-            IVertex cs = user.Get(false, @"CodeSettings:");
-            cs.AddEdge(sm.Get(false, @"*$Is"), sm.Get(false, @"User\CodeSettings"));
+            //user.AddEdge(sm.Get(false,@"User\User\DefaultFormalTextLanguage"),Root.Get("TextLang")
 
-            cs.AddEdge(sm.Get(false, @"User\CodeSettings\Keyword"), sm.Get(false, @"UML\Keyword"));
+            //IVertex cs = user.Get(false, @"CodeSettings:");
+            //cs.AddEdge(sm.Get(false, @"*$Is"), sm.Get(false, @"User\CodeSettings"));
 
-            foreach (IEdge e in Root.GetAll(false, @"System\TextLanguage\ZeroCode\DefaultImports\"))
+            //cs.AddEdge(sm.Get(false, @"User\CodeSettings\Keyword"), sm.Get(false, @"UML\Keyword"));
+
+            //foreach (IEdge e in Root.GetAll(false, @"System\FormalTextLanguage\ZeroCode\DefaultImports\"))
                 //if (!GraphUtil.GetValueAndCompareStrings(e.To, "$DirectMeta") && !GraphUtil.GetValueAndCompareStrings(e.To, "$Direct"))
-                cs.AddEdge(e.Meta, e.To);
-
+              //  cs.AddEdge(e.Meta, e.To);
+              // XXX
             IVertex session = user.AddVertex(sm.Get(false, @"User\User\Session"), null);
             user.AddEdge(sm.Get(false, @"User\User\CurrentSession"), session);
         }
@@ -3121,7 +3123,7 @@ namespace m0
 
             CreateSystemMetaZeroTypes();
 
-            CreateSystemTextLanguageZeroCode();
+            CreateSystemFormalTextLanguageZeroCode();
 
 
             CreateSystemUMLKeywords();

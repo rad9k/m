@@ -48,7 +48,7 @@ namespace m0
             MinusZero.Instance.Initialize();
 
 
-            CreateTestData();
+//            CreateTestData();
             
 
             TreeVisualiser stv = new TreeVisualiser();

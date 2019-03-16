@@ -9,7 +9,7 @@ using m0.Util;
 using m0;
 
 
-namespace m0.TextLanguage.GoldParser
+namespace m0.FormalTextLanguage.GoldParser
 {
     class GoldGenericParser: IParser
     {
@@ -17,7 +17,7 @@ namespace m0.TextLanguage.GoldParser
 
         IVertex langDef;
 
-        IVertex MetaTextLanguageParsedTree;
+        IVertex MetaFormalTextLanguageParsedTree;
 
         public bool EscapeQuotas;
 
@@ -114,9 +114,9 @@ namespace m0.TextLanguage.GoldParser
                             }
                             else
                             {
-                                //current = v.AddVertex(MetaTextLanguageParsedTree.Get(false, "$EmptyContainerTerminal"), null);
+                                //current = v.AddVertex(MetaFormalTextLanguageParsedTree.Get(false, "$EmptyContainerTerminal"), null);
 
-                                current = v.AddVertex(GraphUtil.FindOneByValue(MetaTextLanguageParsedTree, "$EmptyContainerTerminal"), null);
+                                current = v.AddVertex(GraphUtil.FindOneByValue(MetaFormalTextLanguageParsedTree, "$EmptyContainerTerminal"), null);
 
                                 generatedVertexList.Add(current);
 
@@ -150,7 +150,7 @@ namespace m0.TextLanguage.GoldParser
 
             langDef = languageDefinitionRoot;
 
-            MetaTextLanguageParsedTree = MinusZero.Instance.MetaTextLanguageParsedTreeVertex;
+            MetaFormalTextLanguageParsedTree = MinusZero.Instance.MetaFormalTextLanguageParsedTreeVertex;
         }
     }
 }

@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-using m0.TextLanguage;
+using m0.FormalTextLanguage;
 using m0.Foundation;
-using m0.TextLanguage.GoldParser;
+using m0.FormalTextLanguage.GoldParser;
 using m0.Graph;
 using m0.Util;
 using m0.ZeroTypes;

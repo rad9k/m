@@ -5,7 +5,7 @@ using System.Text;
 
 using m0.Foundation;
 
-namespace m0.TextLanguage
+namespace m0.FormalTextLanguage
 {
     public interface IExecuter
     {

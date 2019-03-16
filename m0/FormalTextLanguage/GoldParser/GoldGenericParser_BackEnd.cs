@@ -5,7 +5,7 @@ using System.Text;
 
 using System.IO;
 
-namespace m0.TextLanguage.GoldParser
+namespace m0.FormalTextLanguage.GoldParser
 {
     class GoldGenericParser_BackEnd
     {

@@ -125,19 +125,19 @@
     <Compile Include="Store\StoreBase.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="TextLanguage\GoldParser\GoldGenericParser.cs">
+    <Compile Include="FormalTextLanguage\GoldParser\GoldGenericParser.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="TextLanguage\GoldParser\GoldGenericParser_BackEnd.cs">
+    <Compile Include="FormalTextLanguage\GoldParser\GoldGenericParser_BackEnd.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="TextLanguage\IExecuter.cs">
+    <Compile Include="FormalTextLanguage\IExecuter.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="TextLanguage\IZeroCodeGraph2String.cs">
+    <Compile Include="FormalTextLanguage\IZeroCodeGraph2String.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="TextLanguage\IParser.cs">
+    <Compile Include="FormalTextLanguage\IParser.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="UIWpf\Commands\BaseCommands.cs" />

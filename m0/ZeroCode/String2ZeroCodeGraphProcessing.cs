@@ -295,6 +295,8 @@ namespace m0.ZeroCode
 
         void prepareImportList_User()
         {
+            return;
+            // XXX
             IVertex codeSettings = r.Get(false, @"User\CurrentUser:\CodeSettings:");
 
             // named imports
