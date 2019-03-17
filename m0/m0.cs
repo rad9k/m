@@ -500,6 +500,10 @@ namespace m0
 
         void CreateSystemUMLKeywords()
         {
+            IVertex zc = Root.Get(false, @"System\FormalTextLanguage\ZeroCode");
+            IVertex k=zc.AddVertex(Root.Get(false, @"System\Meta\ZeroTypes\FormalTextLanguage\Keywords"), "");
+
+
             IVertex smu = Root.Get(false, @"System\Meta\UML");
             IVertex smb = Root.Get(false, @"System\Meta\Base");
 
@@ -509,21 +513,20 @@ namespace m0
             IVertex isAggregation = root.Get(false, @"System\Meta\Base\Vertex\$IsAggregation");
             IVertex empty = root.Get(false, @"System\Meta\Base\$Empty");
             IVertex _is = root.Get(false, @"System\Meta\Base\Vertex\$Is");
+            
 
-            IVertex smuk = smu.AddVertex(null, "Keyword");
-
-            IVertex any = smuk.AddVertex(null, "(?<ANY>)");
+            IVertex any = k.AddVertex(null, "(?<ANY>)");
 
             IVertex emptyKeyword = smb.Get(false, "$$EmptyKeyword");
             IVertex newKeyword = smb.Get(false, "$$NewVertexKeyword");
 
             string anyString = "(?<ANY>)";
-            /*
+            
             // import meta
             //
             // import meta (?<name>) (?<link>)
             
-             IVertex importMeta = smuk.AddVertex(keyword, "import meta (?<name>) (?<link>)");
+             IVertex importMeta = k.AddVertex(keyword, "import meta (?<name>) (?<link>)");
 
              IVertex importMeta_name=importMeta.AddVertex(smb.Get(false, @"$ImportMeta"), "(?<name>)");
 
@@ -534,7 +537,7 @@ namespace m0
              //
              // import (?<name>) (?<link>)
 
-             IVertex import = smuk.AddVertex(keyword, "import (?<name>) (?<link>)");
+             IVertex import = k.AddVertex(keyword, "import (?<name>) (?<link>)");
 
              IVertex import_name = import.AddVertex(smb.Get(false, @"$Import"), "(?<name>)");
 
@@ -544,7 +547,7 @@ namespace m0
              //
              // import direct  (?<link>)
 
-             IVertex importDirect = smuk.AddVertex(keyword, "import direct (?<link>)");
+             IVertex importDirect = k.AddVertex(keyword, "import direct (?<link>)");
 
              IVertex importDirect_link = importDirect.AddVertex(smb.Get(false, @"$Direct"), "(?<link>)");
 
@@ -553,7 +556,7 @@ namespace m0
              //
              // import direct meta (?<link>)
 
-             IVertex importDirectMeta = smuk.AddVertex(keyword, "import direct meta (?<link>)");
+             IVertex importDirectMeta = k.AddVertex(keyword, "import direct meta (?<link>)");
 
              IVertex importDirectMeta_link = importDirectMeta.AddVertex(smb.Get(false, @"$DirectMeta"), "(?<link>)");
 
@@ -562,7 +565,7 @@ namespace m0
              //
              // # (?<text>)
 
-             IVertex comment = smuk.AddVertex(keyword, "# (?<text>)");
+             IVertex comment = k.AddVertex(keyword, "# (?<text>)");
 
              comment.AddVertex(smb.Get(false, @"Vertex\$Description"), "(?<text>)");
 
@@ -571,7 +574,7 @@ namespace m0
              //
              // attribute (?<name>) (?<type>) (?<MinCardinality>):(?<MaxCardinality>) <(?<MinValue>):(?<MaxValue>)>
 
-             IVertex attribute3 = smuk.AddVertex(keyword, "attribute (?<name>) (?<type>) (?<MinCardinality>):(?<MaxCardinality>) <(?<MinValue>):(?<MaxValue>)>");
+             IVertex attribute3 = k.AddVertex(keyword, "attribute (?<name>) (?<type>) (?<MinCardinality>):(?<MaxCardinality>) <(?<MinValue>):(?<MaxValue>)>");
 
 
              IVertex attribute3_attribute = attribute3.AddVertex(smu.Get(false, @"Class\Attribute"), "(?<name>)");
@@ -594,7 +597,7 @@ namespace m0
              //
              // attribute (?<name>) (?<type>) (?<MinCardinality>):(?<MaxCardinality>) 
 
-             IVertex attribute4 = smuk.AddVertex(keyword, "attribute (?<name>) (?<type>) (?<MinCardinality>):(?<MaxCardinality>)");
+             IVertex attribute4 = k.AddVertex(keyword, "attribute (?<name>) (?<type>) (?<MinCardinality>):(?<MaxCardinality>)");
 
 
              IVertex attribute4_attribute = attribute4.AddVertex(smu.Get(false, @"Class\Attribute"), "(?<name>)");
@@ -614,7 +617,7 @@ namespace m0
              //
              // attribute (?<name>) (?<type>) <(?<MinValue>):(?<MaxValue>)>
 
-             IVertex attribute2 = smuk.AddVertex(keyword, "attribute (?<name>) (?<type>) <(?<xMinValue>):(?<MaxValue>)>");
+             IVertex attribute2 = k.AddVertex(keyword, "attribute (?<name>) (?<type>) <(?<xMinValue>):(?<MaxValue>)>");
 
 
              IVertex attribute2_attribute = attribute2.AddVertex(smu.Get(false, @"Class\Attribute"), "(?<name>)");
@@ -633,7 +636,7 @@ namespace m0
              //
              // attribute (?<name>) (?<type>)
 
-             IVertex attribute = smuk.AddVertex(keyword, "attribute (?<name>) (?<type>)");
+             IVertex attribute = k.AddVertex(keyword, "attribute (?<name>) (?<type>)");
 
              IVertex attribute_attribute = attribute.AddVertex(smu.Get(false, @"Class\Attribute"), "(?<name>)");
 
@@ -647,7 +650,7 @@ namespace m0
              //
              // association (?<name>) (?<type>) (?<MinCardinality>):(?<MaxCardinality>)
 
-             IVertex association2 = smuk.AddVertex(keyword, "association (?<name>) (?<type>) (?<MinCardinality>):(?<MaxCardinality>)");
+             IVertex association2 = k.AddVertex(keyword, "association (?<name>) (?<type>) (?<MinCardinality>):(?<MaxCardinality>)");
 
 
              IVertex association2_association = association2.AddVertex(smu.Get(false, @"Class\Association"), "(?<name>)");
@@ -665,7 +668,7 @@ namespace m0
              //
              // association (?<name>) (?<type>)
 
-             IVertex association = smuk.AddVertex(keyword, "association (?<name>) (?<type>)");
+             IVertex association = k.AddVertex(keyword, "association (?<name>) (?<type>)");
 
 
              IVertex association_association = association.AddVertex(smu.Get(false, @"Class\Association"), "(?<name>)");
@@ -678,7 +681,7 @@ namespace m0
              //
              // aggregation (?<name>) (?<type>) (?<MinCardinality>):(?<MaxCardinality>)
 
-             IVertex aggregation2 = smuk.AddVertex(keyword, "aggregation (?<name>) (?<type>) (?<MinCardinality>):(?<MaxCardinality>)");
+             IVertex aggregation2 = k.AddVertex(keyword, "aggregation (?<name>) (?<type>) (?<MinCardinality>):(?<MaxCardinality>)");
 
 
              IVertex aggregation2_aggregation = aggregation2.AddVertex(smu.Get(false, @"Class\Aggregation"), "(?<name>)");
@@ -696,7 +699,7 @@ namespace m0
              //
              // aggregation (?<name>) (?<type>)
 
-             IVertex aggregation = smuk.AddVertex(keyword, "aggregation (?<name>) (?<type>)");
+             IVertex aggregation = k.AddVertex(keyword, "aggregation (?<name>) (?<type>)");
 
 
              IVertex aggregation_aggregation = aggregation.AddVertex(smu.Get(false, @"Class\Aggregation"), "(?<name>)");
@@ -709,7 +712,7 @@ namespace m0
              //
              // function (?<name>) (?<returnType>) [(*(+, +)(?<paramType>) (?<paramName>)*)]
 
-             IVertex function = smuk.AddVertex(keyword, "function (?<name>) (?<returnType>)[(*(+, +)(?<paramType>) (?<paramName>)*)]");
+             IVertex function = k.AddVertex(keyword, "function (?<name>) (?<returnType>)[(*(+, +)(?<paramType>) (?<paramName>)*)]");
 
 
              IVertex function_function = function.AddVertex(smu.Get(false, @"Function"), "(?<name>)");
@@ -729,7 +732,7 @@ namespace m0
             //
             // function (?<name>) [(*(+, +)(?<paramType>) (?<paramName>)*)]
 
-             IVertex function2 = smuk.AddVertex(keyword, "function (?<name>) [(*(+, +)(?<paramType>) (?<paramName>)*)]");
+             IVertex function2 = k.AddVertex(keyword, "function (?<name>) [(*(+, +)(?<paramType>) (?<paramName>)*)]");
 
              IVertex function2_function = function2.AddVertex(smu.Get(false, @"Function"), "(?<name>)");
 
@@ -745,7 +748,7 @@ namespace m0
              //
              // while ((?<test>))
 
-             IVertex wh = smuk.AddVertex(keyword, "while (?<test>)");
+             IVertex wh = k.AddVertex(keyword, "while (?<test>)");
 
              IVertex whwh = wh.AddVertex(smu.Get(false, @"While"), "");
 
@@ -757,7 +760,7 @@ namespace m0
             //
             // (?<left>) + (?<right>)
 
-            IVertex o_plus = smuk.AddVertex(keyword, "(?<left>) +(?<SUB>) (?<right>)");
+            IVertex o_plus = k.AddVertex(keyword, "(?<left>) +(?<SUB>) (?<right>)");
             //IVertex o_plus = smuk.AddVertex(keyword, "(?<left>) + (?<right>)");
             IVertex o_plus_any = o_plus.AddVertex(any, "");
 
@@ -771,7 +774,7 @@ namespace m0
             //
             // (?<left>) - (?<right>)
 
-            IVertex o_minus = smuk.AddVertex(keyword, "(?<left>) -(?<SUB>) (?<right>)");             
+            IVertex o_minus = k.AddVertex(keyword, "(?<left>) -(?<SUB>) (?<right>)");             
 
              IVertex o_minus_any = o_minus.AddVertex(any, "");
 
@@ -785,7 +788,7 @@ namespace m0
              //
              // (?<left>) * (?<right>)
 
-             IVertex o_mul = smuk.AddVertex(keyword, "(?<left>) *(?<SUB>) (?<right>)");             
+             IVertex o_mul = k.AddVertex(keyword, "(?<left>) *(?<SUB>) (?<right>)");             
 
              IVertex o_mul_any = o_mul.AddVertex(any, "");
 
@@ -801,7 +804,7 @@ namespace m0
              //
              // (?<left>) / (?<right>)
 
-             IVertex o_div = smuk.AddVertex(keyword, "(?<left>) /(?<SUB>) (?<right>)");
+             IVertex o_div = k.AddVertex(keyword, "(?<left>) /(?<SUB>) (?<right>)");
              
              IVertex o_div_any = o_div.AddVertex(any, "");
 
@@ -820,12 +823,12 @@ namespace m0
             /////////////////////////////////////////////////////////////////////////////////////////////////////////////
             /////////////////////////////////////////////////////////////////////////////////////////////////////////////
             /////////////////////////////////////////////////////////////////////////////////////////////////////////////
-           */
+           
             // : /1
             //
             // (?<left_QueryPart>)|(?<SUB>)(?<right_QueryPart>)            
 
-            IVertex o_colon = smuk.AddVertex(keyword, "(?<left_Atom>)|(?<SUB>)(?<right_Atom>)");
+            IVertex o_colon = k.AddVertex(keyword, "(?<left_Atom>)|(?<SUB>)(?<right_Atom>)");
 
             o_colon.AddVertex(keywordGroup, "Colon");
 
@@ -841,14 +844,14 @@ namespace m0
 
             //  o_colon_any_right.AddVertex(smb.Get(false, "$$LocalRoot"), "test");
 
-            /*
+            
             // : /2
             //
             // |(?<SUB>)(?<right_QueryPart>)            
 
             //IVertex o_colon = smuk.AddVertex(keyword, "|");
 
-            IVertex o_colon2 = smuk.AddVertex(keyword, "|(?<SUB>)(?<right_Atom>)");
+            IVertex o_colon2 = k.AddVertex(keyword, "|(?<SUB>)(?<right_Atom>)");
 
             o_colon2.AddVertex(keywordGroup, "Colon");
 
@@ -868,7 +871,7 @@ namespace m0
 
             //IVertex o_colon = smuk.AddVertex(keyword, "|");
 
-            IVertex o_colon3 = smuk.AddVertex(keyword, "(?<left_Atom>)|(?<SUB>)");
+            IVertex o_colon3 = k.AddVertex(keyword, "(?<left_Atom>)|(?<SUB>)");
 
             o_colon3.AddVertex(keywordGroup, "Colon");
 
@@ -888,8 +891,8 @@ namespace m0
             // :: /1
             //
             // (?<left_QueryPart>)||(?<SUB>)(?<right_QueryPart>)                         
-            */
-            IVertex o_doubleColon = smuk.AddVertex(keyword, "(?<left_Colon>)XX(?<SUB>)(?<right_Colon>)");
+            
+            IVertex o_doubleColon = k.AddVertex(keyword, "(?<left_Colon>)XX(?<SUB>)(?<right_Colon>)");
 
             IVertex o_doubleColon_any = o_doubleColon.AddVertex(any, "");
 
@@ -902,12 +905,12 @@ namespace m0
             IVertex o_doubleColon_any_right = o_doubleColon_any.AddVertex(smu.Get(false, @"DoubleOperator\RightExpression"), "(?<right_Colon>)");
 
             //o_doubleColon_any_right.AddVertex(smb.Get(false, "$$LocalRoot"), "");
-            /*
+            
             // :: /2
             //
             // ||(?<SUB>)(?<right_QueryPart>)                         
 
-            IVertex o_doubleColon2 = smuk.AddVertex(keyword, "||(?<SUB>)(?<right_Colon>)");
+            IVertex o_doubleColon2 = k.AddVertex(keyword, "||(?<SUB>)(?<right_Colon>)");
 
              IVertex o_doubleColon2_any = o_doubleColon2.AddVertex(any, "");
 
@@ -920,7 +923,7 @@ namespace m0
             //
             // (?<left_QueryPart>)||(?<SUB>)                        
 
-            IVertex o_doubleColon3 = smuk.AddVertex(keyword, "(?<left_Colon>)||(?<SUB>)");
+            IVertex o_doubleColon3 = k.AddVertex(keyword, "(?<left_Colon>)||(?<SUB>)");
 
             IVertex o_doubleColon3_any = o_doubleColon3.AddVertex(any, "");
 
@@ -928,7 +931,7 @@ namespace m0
 
             o_doubleColon3_any.AddVertex(smu.Get(false, @"DoubleOperator\LeftExpression"), "(?<left_Colon>)");
 
-            */
+            
 
             /////////////////////////////////////////////////////////////////////////////////////////////////////////////
             /////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -939,12 +942,12 @@ namespace m0
             /////////////////////////////////////////////////////////////////////////////////////////////////////////////
             /////////////////////////////////////////////////////////////////////////////////////////////////////////////
             /////////////////////////////////////////////////////////////////////////////////////////////////////////////
-            /*
+            
             // []
             //
             // [(*(+, +) (?<expr>)*)]
 
-            IVertex o_call = smuk.AddVertex(keyword, "[(*(+, +)(?<expr>)*)]");
+            IVertex o_call = k.AddVertex(keyword, "[(*(+, +)(?<expr>)*)]");
 
              IVertex o_call_any = o_call.AddVertex(any, "");
 
@@ -958,7 +961,7 @@ namespace m0
              //
              // ((?<expr>))
 
-             IVertex o_par = smuk.AddVertex(keyword, "((?<expr>))");            
+             IVertex o_par = k.AddVertex(keyword, "((?<expr>))");            
 
             IVertex o_par_any = o_par.AddVertex(any, "");
 
@@ -971,8 +974,8 @@ namespace m0
             // \
             //
             // \                         
-            */
-            IVertex o_path = smuk.AddVertex(keyword, @" \ ");
+            
+            IVertex o_path = k.AddVertex(keyword, @" \ ");
 
             o_path.AddVertex(keywordGroup, "AfterEmpty");
 
@@ -987,12 +990,12 @@ namespace m0
              IVertex o_path_any_targetExpr = o_path_any.AddVertex(smu.Get(false, @"SingleOperator\TargetExpression"), "");
 
              o_path_any_targetExpr.AddVertex(smb.Get(false, "$$LocalRoot"), "");
-       /*
+      
             // {}
             //
             // {(*(+\r\n+)\t(?<expr>)*)\r\n}
        
-            IVertex o_newSub = smuk.AddVertex(keyword, "{(*\r\n\t(?<expr>)*)\r\n}");
+            IVertex o_newSub = k.AddVertex(keyword, "{(*\r\n\t(?<expr>)*)\r\n}");
 
             IVertex o_newSub_any = o_newSub.AddVertex(any, anyString);
 
@@ -1003,12 +1006,12 @@ namespace m0
             IVertex o_newSub_any_param = o_newSub_any.AddVertex(smu.Get(false, @"MultiOperator\Expression"), "(?<expr>)");
 
             o_newSub_any_param.AddEdge(smb.Get(false, @"$$KeywordManyRoot"), smb.Get(false, @"$Empty"));
-         */
+         
             // ""
             //
             // "\"(?<value>)\""
 
-            IVertex newValueKeyword = smuk.AddVertex(keyword, "\"(?<value>)\"");
+            IVertex newValueKeyword = k.AddVertex(keyword, "\"(?<value>)\"");
 
             newValueKeywordVertex = newValueKeyword;
 
@@ -1029,7 +1032,7 @@ namespace m0
             //
             //
 
-            IVertex empty1Keyword = smuk.AddVertex(keyword, "(?<value>)");
+            IVertex empty1Keyword = k.AddVertex(keyword, "(?<value>)");
 
             emptyKeywordVertex = empty1Keyword;
 
@@ -1051,7 +1054,7 @@ namespace m0
             //
             //
 
-            IVertex empty2Keyword = smuk.AddVertex(keyword, "(?<value>)");
+            IVertex empty2Keyword = k.AddVertex(keyword, "(?<value>)");
             
 
             empty2Keyword.AddVertex(emptyKeyword, "");
@@ -1071,14 +1074,14 @@ namespace m0
             //TEST
 
 
-            IVertex eKeyword = smuk.AddVertex(keyword, "O");            
+            IVertex eKeyword = k.AddVertex(keyword, "O");            
 
             eKeyword.AddVertex(keywordGroup, "b");
             
             eKeyword.AddVertex(any, "OOO");
 
 
-            IVertex bKeyword = smuk.AddVertex(keyword, "A(?<v_b>)A");            
+            IVertex bKeyword = k.AddVertex(keyword, "A(?<v_b>)A");            
 
             bKeyword.AddVertex(any, "(?<v_b>)").AddVertex(any, "AA");
 
@@ -1094,9 +1097,7 @@ namespace m0
 
             IVertex b = Root.Get(false, @"System\Meta\Base");
 
-            IVertex di = zc.AddVertex(Root.Get(false, @"System\Meta\ZeroTypes\FormalTextLanguage\DefaultImports"), "");
-
-            zc.AddEdge(Root.Get(false, @"System\Meta\ZeroTypes\FormalTextLanguage\Keywords"), Root.Get(false,@"System\Meta\UML"));
+            IVertex di = zc.AddVertex(Root.Get(false, @"System\Meta\ZeroTypes\FormalTextLanguage\DefaultImports"), "");            
 
             //
 
