@@ -1088,13 +1088,15 @@ namespace m0
 
         void CreateSystemFormalTextLanguageZeroCode()
         {
-            IVertex zc = Root.Get(false, @"System\FormalTextLanguage").AddVertex(Root.Get(false,@"System\Meta\ZeroTypes\FormalTextLanguege"),"ZeroCode");
+            IVertex zc = Root.Get(false, @"System\FormalTextLanguage").AddVertex(Root.Get(false,@ "System\Meta\ZeroTypes\FormalTextLanguage"),"ZeroCode");
 
-            zc.AddVertex(Root.Get(false, @"System\Meta\Base\Vertex\$Is"), Root.Get(false, @"System\Meta\ZeroTypes\FormalTextLanguege"));
+            zc.AddEdge(Root.Get(false, @"System\Meta\Base\Vertex\$Is"), Root.Get(false, @"System\Meta\ZeroTypes\FormalTextLanguage"));
 
             IVertex b = Root.Get(false, @"System\Meta\Base");
 
-            IVertex di = zc.AddVertex(null, "DefaultImports");
+            IVertex di = zc.AddVertex(Root.Get(false, @"System\Meta\ZeroTypes\FormalTextLanguage\DefaultImports"), "");
+
+            zc.AddEdge(Root.Get(false, @"System\Meta\ZeroTypes\FormalTextLanguage\Keywords"), Root.Get(false,@"System);
 
             //
 
@@ -1120,7 +1122,7 @@ namespace m0
 
             Direct.AddEdge(Root.Get(false, @"System\Meta\Base\Vertex\$IsLink"), Empty);
 
-            //di.AddEdge(Direct, Root); // :O) now its hanging
+            //di.AddEdge(Direct, Root); // :O) now its hanging XXX
 
             //
 
