@@ -1088,7 +1088,7 @@ namespace m0
 
         void CreateSystemFormalTextLanguageZeroCode()
         {
-            IVertex zc = Root.Get(false, @"System\FormalTextLanguage").AddVertex(Root.Get(false,@ "System\Meta\ZeroTypes\FormalTextLanguage"),"ZeroCode");
+            IVertex zc = Root.Get(false, @"System\FormalTextLanguage").AddVertex(Root.Get(false, @"System\Meta\ZeroTypes\FormalTextLanguage"),"ZeroCode");
 
             zc.AddEdge(Root.Get(false, @"System\Meta\Base\Vertex\$Is"), Root.Get(false, @"System\Meta\ZeroTypes\FormalTextLanguage"));
 
@@ -1096,7 +1096,7 @@ namespace m0
 
             IVertex di = zc.AddVertex(Root.Get(false, @"System\Meta\ZeroTypes\FormalTextLanguage\DefaultImports"), "");
 
-            zc.AddEdge(Root.Get(false, @"System\Meta\ZeroTypes\FormalTextLanguage\Keywords"), Root.Get(false,@"System);
+            zc.AddEdge(Root.Get(false, @"System\Meta\ZeroTypes\FormalTextLanguage\Keywords"), Root.Get(false,@"System\Meta\UML"));
 
             //
 
