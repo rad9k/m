@@ -10,6 +10,10 @@ namespace m0.ZeroCode
 {
     public class ZeroCodeEngine : ICodeGenerator, IParser, IExecuter
     {
+        String2ZeroCodeGraphProcessing String2ZeroCodeGraphProcessing_Instance;
+        ZeroCodeExecuter ZeroCodeExecuter_Instance;
+        ZeroCodeGraph2StringProcessing ZeroCodeGraph2StringProcessing_Instance;
+
         public IVertex Execute(IVertex baseVertex, IVertex expression)
         {
             ZeroCodeExecuter executer = new ZeroCodeExecuter();
@@ -44,6 +48,15 @@ namespace m0.ZeroCode
 
             return p.Process(graphBaseEdge);
 
+        }
+
+        public ZeroCodeEngine()
+        {
+            IVertex DefaultFormalTextLanguage = MinusZero.Instance.Root.Get(false, @"User\CurrentUser:\DefaultFormalTextLanguage:");
+
+            String2ZeroCodeGraphProcessing String2ZeroCodeGraphProcessing_Instance;
+            ZeroCodeExecuter ZeroCodeExecuter_Instance;
+            ZeroCodeGraph2StringProcessing ZeroCodeGraph2StringProcessing_Instance;
         }
     }
 }

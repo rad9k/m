@@ -242,6 +242,10 @@ namespace m0.ZeroCode
 
         //
 
+        IVertex FormalTextLanguage;
+
+        //
+
         IVertex errorList;
 
         //
@@ -2745,8 +2749,10 @@ namespace m0.ZeroCode
             return errorList;
         }
 
-        public String2ZeroCodeGraphProcessing()
+        public String2ZeroCodeGraphProcessing(IVertex formalTextLanguage)
         {
+            FormalTextLanguage = formalTextLanguage;
+
             setupHelpVariables();
 
             prepareDictionaries();
