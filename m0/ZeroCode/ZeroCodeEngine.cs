@@ -54,9 +54,9 @@ namespace m0.ZeroCode
         {
             IVertex DefaultFormalTextLanguage = MinusZero.Instance.Root.Get(false, @"User\CurrentUser:\DefaultFormalTextLanguage:");
 
-            String2ZeroCodeGraphProcessing String2ZeroCodeGraphProcessing_Instance;
-            ZeroCodeExecuter ZeroCodeExecuter_Instance;
-            ZeroCodeGraph2StringProcessing ZeroCodeGraph2StringProcessing_Instance;
+            String2ZeroCodeGraphProcessing_Instance = new String2ZeroCodeGraphProcessing(DefaultFormalTextLanguage);
+            ZeroCodeExecuter_Instance = new ZeroCodeExecuter();
+            ZeroCodeGraph2StringProcessing_Instance = new ZeroCodeGraph2StringProcessing(DefaultFormalTextLanguage);
         }
     }
 }

@@ -405,9 +405,11 @@ namespace m0.ZeroCode
         public IDictionary<IVertex, bool> DoKeywordDefinitionContainLocalRoot_Dictionary;
         public IDictionary<IVertex, bool> DoKeywordDefinitionContainStartInLocalRoot_Dictionary;
 
-        public ZeroCodeGraph2StringProcessing()
-        {
+        IVertex FormalTextLanguage;
 
+        public ZeroCodeGraph2StringProcessing(IVertex formalTextLanguage)
+        {
+            FormalTextLanguage = formalTextLanguage;
         }
 
         string Tab = "\t";
