@@ -15,38 +15,28 @@ namespace m0.ZeroCode
         ZeroCodeGraph2StringProcessing ZeroCodeGraph2StringProcessing_Instance;
 
         public IVertex Execute(IVertex baseVertex, IVertex expression)
-        {
-            ZeroCodeExecuter executer = new ZeroCodeExecuter();
-
-            return executer.Execute(baseVertex, expression);
+        {            
+            return ZeroCodeExecuter_Instance.Execute(baseVertex, expression);
         }
 
         public IVertex Get(IVertex baseVertex, IVertex expression)
-        {
-            ZeroCodeExecuter executer = new ZeroCodeExecuter();
-
-            return executer.Get(baseVertex, expression);
+        {            
+            return ZeroCodeExecuter_Instance.Get(baseVertex, expression);
         }
 
         public IVertex GetAll(IVertex baseVertex, IVertex expression)
-        {
-            ZeroCodeExecuter executer = new ZeroCodeExecuter();
-
-            return executer.GetAll(baseVertex, expression);
+        {            
+            return ZeroCodeExecuter_Instance.GetAll(baseVertex, expression);
         }
 
         public IVertex Parse(bool metaMode, IVertex rootVertex, string text)
         {             
-            String2ZeroCodeGraphProcessing p = new String2ZeroCodeGraphProcessing();
-
-            return p.Process(rootVertex, text); 
+            return String2ZeroCodeGraphProcessing_Instance.Process(rootVertex, text); 
         }
 
         public string ZeroCodeGraph2String(IEdge graphBaseEdge)
-        {
-            ZeroCodeGraph2StringProcessing p = new ZeroCodeGraph2StringProcessing();
-
-            return p.Process(graphBaseEdge);
+        {            
+            return ZeroCodeGraph2StringProcessing_Instance.Process(graphBaseEdge);
 
         }
 

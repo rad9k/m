@@ -132,8 +132,11 @@ namespace m0
 
             _DefaultParser = zeroCodeEngine_OLD;
 
-            _DefaultExecuter = zeroCodeEngine_OLD;
+            _DefaultExecuter = zeroCodeEngine_OLD;                        
+        }
 
+        void Init_AfterZeroCodeDefintionCreated()
+        {
             ZeroCode.ZeroCodeEngine zeroCodeEngine = new ZeroCode.ZeroCodeEngine();
 
             New_DefaultParser = zeroCodeEngine;
@@ -498,7 +501,7 @@ namespace m0
             package.AddEdge(null, sm.Get(false, @"Base\$ImportMeta"));
         }
 
-        void CreateSystemUMLKeywords()
+        void CreateSystemFormalTextLanguegeZeroCode_Keywords()
         {
             IVertex zc = Root.Get(false, @"System\FormalTextLanguage\ZeroCode");
             IVertex k=zc.AddVertex(Root.Get(false, @"System\Meta\ZeroTypes\FormalTextLanguage\Keywords"), "");
@@ -3116,7 +3119,7 @@ namespace m0
 
             CreatePresentation();
 
-            CreateSystemMetaBase();
+            CreateSystemMetaBase();            
 
             CreateSystemMetaUml();
 
@@ -3129,7 +3132,10 @@ namespace m0
             CreateSystemFormalTextLanguageZeroCode();
 
 
-            CreateSystemUMLKeywords();
+            CreateSystemFormalTextLanguegeZeroCode_Keywords();
+
+
+            Init_AfterZeroCodeDefintionCreated();
 
 
             CreateSystemMetaVisualiserDiagram();

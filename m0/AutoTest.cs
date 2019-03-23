@@ -25,7 +25,9 @@ namespace m0
 
         public static void ParserTest()
         {
-            String2ZeroCodeGraphProcessing parser = new String2ZeroCodeGraphProcessing();
+            IVertex DefaultFormalTextLanguage = MinusZero.Instance.Root.Get(false, @"User\CurrentUser:\DefaultFormalTextLanguage:");
+
+            String2ZeroCodeGraphProcessing parser = new String2ZeroCodeGraphProcessing(DefaultFormalTextLanguage);
 
             System.IO.StreamWriter logFile = new System.IO.StreamWriter(@"AUTO_TEST.xls");
             logFile.AutoFlush = true;
