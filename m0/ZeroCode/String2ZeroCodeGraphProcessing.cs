@@ -263,8 +263,8 @@ namespace m0.ZeroCode
 
         // special keywords
 
-        IVertex emptyKeywordVertex;
-        IVertex newValueKeywordVertex;
+        IVertex _emptyKeywordVertex;
+        IVertex _newValueKeywordVertex;
 
         // PROCESS dependent
 
@@ -955,11 +955,11 @@ namespace m0.ZeroCode
             switch (type)
             {
                 case SpecialKeywordType.EmptyKeyword:
-                    toUseVertex = emptyKeywordVertex;
+                //    toUseVertex = emptyKeywordVertex; XXX
                     break;
 
                 case SpecialKeywordType.NewVertexKeyword:
-                    toUseVertex = newValueKeywordVertex;
+                    // toUseVertex = newValueKeywordVertex; XXX
                     break;
             }
 
@@ -2107,13 +2107,13 @@ namespace m0.ZeroCode
         {
             specialKeywordGroups_empty = new List<string>();
 
-            foreach (IEdge e in MinusZero.Instance.emptyKeywordVertex.GetAll(false, "$$KeywordGroup:"))
-                specialKeywordGroups_empty.Add((string)e.To.Value);
+            //foreach (IEdge e in MinusZero.Instance.emptyKeywordVertex.GetAll(false, "$$KeywordGroup:"))
+              //  specialKeywordGroups_empty.Add((string)e.To.Value);
 
             specialKeywordGroups_new = new List<string>();
 
-            foreach (IEdge e in MinusZero.Instance.newValueKeywordVertex.GetAll(false, "$$KeywordGroup:"))
-                specialKeywordGroups_new.Add((string)e.To.Value);
+            //foreach (IEdge e in MinusZero.Instance.newValueKeywordVertex.GetAll(false, "$$KeywordGroup:"))
+              //  specialKeywordGroups_new.Add((string)e.To.Value);
 
 
             emptyKeywordByGroupsDictionary = ZeroCodeUtil.getFilteredKeywordListByGroup(FormalTextLanguage, "$$EmptyKeyword:");
@@ -2755,9 +2755,9 @@ namespace m0.ZeroCode
 
             prepareDictionaries();
 
-            emptyKeywordVertex = MinusZero.Instance.Root.Get(false, @"User\CurrentUser:\CodeSettings:\Keyword:\$Keyword:(?<value>)");
+            //emptyKeywordVertex = MinusZero.Instance.Root.Get(false, @"User\CurrentUser:\CodeSettings:\Keyword:\$Keyword:(?<value>)");
 
-            newValueKeywordVertex = MinusZero.Instance.newValueKeywordVertex;
+            //newValueKeywordVertex = MinusZero.Instance.newValueKeywordVertex;
 
         }
     }

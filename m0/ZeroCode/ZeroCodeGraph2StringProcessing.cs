@@ -1,6 +1,5 @@
 ﻿using m0.Foundation;
 using m0.Graph;
-using m0.FormalTextLanguage;
 using m0.Util;
 using m0.ZeroTypes;
 using System;
@@ -8,7 +7,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 
 namespace m0.ZeroCode
 {
@@ -406,13 +404,16 @@ namespace m0.ZeroCode
         public IDictionary<IVertex, bool> DoKeywordDefinitionContainStartInLocalRoot_Dictionary;
 
         IVertex FormalTextLanguage;
-        IList<IVertex> newValueKeywordVertexList;
+        IList<IVertex> newVertexKeywordVertexList;
+        IList<IVertex> emptyKeywordVertexList;
 
         public ZeroCodeGraph2StringProcessing(IVertex formalTextLanguage)
         {
             FormalTextLanguage = formalTextLanguage;
 
-            newValueKeywordVertexList = ZeroCodeUtil.getNewValueKeywordVertexesList(FormalTextLanguage);
+            newVertexKeywordVertexList = ZeroCodeUtil.getFilteredKeywordList(FormalTextLanguage, "$$NewVertexKeyword:");
+            emptyKeywordVertexList = ZeroCodeUtil.getFilteredKeywordList(FormalTextLanguage, "$$EmptyKeyword:");
+
         }
 
         string Tab = "\t";
@@ -1022,7 +1023,7 @@ namespace m0.ZeroCode
             {
                 string path = GetPathFromKeywordMatchAndKeywordEdge(km, e, null);
 
-                if(km.KeywordDefinition!=MinusZero.Instance.emptyKeywordVertex)
+                if(!emptyKeywordVertexList.Contains(km.KeywordDefinition))
                     AppendVertex(e, path, false, false, false); // non emptyKeword (standard)
                 else
                     SourceAppend(e.To.Value.ToString()); // emptyKeyword handling
@@ -1393,7 +1394,7 @@ namespace m0.ZeroCode
             //foreach (IEdge keyword in MinusZero.Instance.Root.GetAll(false, @"User\CurrentUser:\CodeSettings:\Keyword:\$Keyword:"))
             foreach (IEdge keyword in FormalTextLanguage.GetAll(false, @"Keywords:\$Keyword:"))
                 //if (keyword.To != m0.MinusZero.Instance.newValueKeywordVertex)
-                if(!newValueKeywordVertexList.Contains(keyword.To))
+                if(!newVertexKeywordVertexList.Contains(keyword.To))
             {
                 if (((string)keyword.To.Value).StartsWith(@" \ "))
                     {

@@ -93,9 +93,9 @@ namespace m0
 
         //
 
-        public IVertex newValueKeywordVertex;
+        public IVertex _newValueKeywordVertex;
 
-        public IVertex emptyKeywordVertex;
+        public IVertex _emptyKeywordVertex;
 
         public IVertex CreateTempVertex()
         {
@@ -1016,7 +1016,7 @@ namespace m0
 
             IVertex newValueKeyword = k.AddVertex(keyword, "\"(?<value>)\"");
 
-            newValueKeywordVertex = newValueKeyword;
+            _newValueKeywordVertex = newValueKeyword;
 
             newValueKeyword.AddVertex(newVertexKeyword, "");
 
@@ -1037,7 +1037,7 @@ namespace m0
 
             IVertex empty1Keyword = k.AddVertex(keyword, "(?<value>)");
 
-            emptyKeywordVertex = empty1Keyword;
+            _emptyKeywordVertex = empty1Keyword;
 
 
             empty1Keyword.AddVertex(emptyKeyword,"");
