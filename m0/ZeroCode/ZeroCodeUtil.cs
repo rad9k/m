@@ -10,6 +10,17 @@ namespace m0.ZeroCode
 {
     public class ZeroCodeUtil
     {
+       public static IList<IVertex> getNewValueKeywordVertexesList(IVertex FormalTextLanguage)
+        {
+            IList<IVertex> list = new List<IVertex>();
+
+            foreach(IEdge e in FormalTextLanguage.GetAll(false, @"Keywords:\$Keyword:"))
+                if (e.To.Get(false, "$$NewVertexKeyword") != null)
+                    list.Add(e.To);
+
+            return list;
+        }
+
        public static bool IsDoubleDolarMeta(IEdge e)
         {
             if (!(e.Meta.Value is string))

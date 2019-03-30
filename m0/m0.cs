@@ -521,7 +521,7 @@ namespace m0
             IVertex any = k.AddVertex(null, "(?<ANY>)");
 
             IVertex emptyKeyword = smb.Get(false, "$$EmptyKeyword");
-            IVertex newKeyword = smb.Get(false, "$$NewVertexKeyword");
+            IVertex newVertexKeyword = smb.Get(false, "$$NewVertexKeyword");
 
             string anyString = "(?<ANY>)";
             
@@ -1018,7 +1018,7 @@ namespace m0
 
             newValueKeywordVertex = newValueKeyword;
 
-            //newValueKeyword.AddVertex(newKeyword, "");
+            newValueKeyword.AddVertex(newVertexKeyword, "");
 
             newValueKeyword.AddVertex(keywordGroup, "Atom");
 
@@ -1038,6 +1038,7 @@ namespace m0
             IVertex empty1Keyword = k.AddVertex(keyword, "(?<value>)");
 
             emptyKeywordVertex = empty1Keyword;
+
 
             empty1Keyword.AddVertex(emptyKeyword,"");
 

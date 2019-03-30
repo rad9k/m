@@ -406,10 +406,13 @@ namespace m0.ZeroCode
         public IDictionary<IVertex, bool> DoKeywordDefinitionContainStartInLocalRoot_Dictionary;
 
         IVertex FormalTextLanguage;
+        IList<IVertex> newValueKeywordVertexList;
 
         public ZeroCodeGraph2StringProcessing(IVertex formalTextLanguage)
         {
             FormalTextLanguage = formalTextLanguage;
+
+            newValueKeywordVertexList = ZeroCodeUtil.getNewValueKeywordVertexesList(FormalTextLanguage);
         }
 
         string Tab = "\t";
@@ -1389,7 +1392,8 @@ namespace m0.ZeroCode
 
             //foreach (IEdge keyword in MinusZero.Instance.Root.GetAll(false, @"User\CurrentUser:\CodeSettings:\Keyword:\$Keyword:"))
             foreach (IEdge keyword in FormalTextLanguage.GetAll(false, @"Keywords:\$Keyword:"))
-                if (keyword.To != m0.MinusZero.Instance.newValueKeywordVertex)
+                //if (keyword.To != m0.MinusZero.Instance.newValueKeywordVertex)
+                if()
             {
                 if (((string)keyword.To.Value).StartsWith(@" \ "))
                     {
