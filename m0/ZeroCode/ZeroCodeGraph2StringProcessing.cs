@@ -1393,7 +1393,7 @@ namespace m0.ZeroCode
             //foreach (IEdge keyword in MinusZero.Instance.Root.GetAll(false, @"User\CurrentUser:\CodeSettings:\Keyword:\$Keyword:"))
             foreach (IEdge keyword in FormalTextLanguage.GetAll(false, @"Keywords:\$Keyword:"))
                 //if (keyword.To != m0.MinusZero.Instance.newValueKeywordVertex)
-                if()
+                if(!newValueKeywordVertexList.Contains(keyword.To))
             {
                 if (((string)keyword.To.Value).StartsWith(@" \ "))
                     {

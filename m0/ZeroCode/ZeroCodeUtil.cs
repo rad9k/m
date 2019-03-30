@@ -15,11 +15,36 @@ namespace m0.ZeroCode
             IList<IVertex> list = new List<IVertex>();
 
             foreach(IEdge e in FormalTextLanguage.GetAll(false, @"Keywords:\$Keyword:"))
-                if (e.To.Get(false, "$$NewVertexKeyword") != null)
+                if (e.To.Get(false, "$$NewVertexKeyword:") != null)
                     list.Add(e.To);
 
             return list;
         }
+
+        public static IDictionary<string, IList<IVertex>> getFilteredKeywordListByGroup(IVertex FormalTextLanguage,string Filter)
+        {
+            Dictionary<string, IList<IVertex>> list = new Dictionary<string, IList<IVertex>>();
+
+            foreach(IEdge e in FormalTextLanguage.GetAll(false, @"Keywords:\$Keyword:{" + Filter+"}"))           
+                {
+                IVertex groups = e.To.GetAll(false, @"$$KeywordGroup:");
+
+                foreach(IEdge group in groups)
+                {
+                    string groupName = (string)group.To.Value;
+
+                    if (!list.ContainsKey(groupName))
+                        list.Add(groupName, new List<IVertex>());
+
+                    list[groupName].Add(e.To);
+
+                }
+
+            }
+
+            return list;
+        }
+
 
        public static bool IsDoubleDolarMeta(IEdge e)
         {

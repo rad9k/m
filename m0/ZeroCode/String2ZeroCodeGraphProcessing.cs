@@ -253,13 +253,13 @@ namespace m0.ZeroCode
         List<string> specialKeywordGroups_new;
         List<string> specialKeywordGroups_empty;
 
-        Dictionary<string, IVertex> emptyKeywordByGroupsDictionary;
-        Dictionary<string, IVertex> newKeywordByGroupsDictionary;
-        Dictionary<string, List<keywordTryingData>> examinedKeywords_All; // all keywords are here
-        Dictionary<string, List<keywordTryingData>> examinedKeywords_StartInLocalRootOnly; // StartInLocalRoot only?
-        Dictionary<char, List<string>> allKeywordsSubstringsDictionary;
+        IDictionary<string, IList<IVertex>> emptyKeywordByGroupsDictionary;
+        IDictionary<string, IList<IVertex>> newKeywordByGroupsDictionary;
+        IDictionary<string, List<keywordTryingData>> examinedKeywords_All; // all keywords are here
+        IDictionary<string, List<keywordTryingData>> examinedKeywords_StartInLocalRootOnly; // StartInLocalRoot only?
+        IDictionary<char, List<string>> allKeywordsSubstringsDictionary;
 
-        Dictionary<IVertex, KeywordInfo> keywordInfoDict;
+        IDictionary<IVertex, KeywordInfo> keywordInfoDict;
 
         // special keywords
 
@@ -2116,11 +2116,9 @@ namespace m0.ZeroCode
                 specialKeywordGroups_new.Add((string)e.To.Value);
 
 
-            emptyKeywordByGroupsDictionary = new Dictionary<string, IVertex>();
+            emptyKeywordByGroupsDictionary = ZeroCodeUtil.getFilteredKeywordListByGroup(FormalTextLanguage, "$$EmptyKeyword:");
 
-            newKeywordByGroupsDictionary = new Dictionary<string, IVertex>();
-
-            //foreach(IEdge )
+            newKeywordByGroupsDictionary = ZeroCodeUtil.getFilteredKeywordListByGroup(FormalTextLanguage, "$$NewVertexKeyword:");                        
         }
 
         private void prepareDictionaries()
@@ -2270,7 +2268,7 @@ namespace m0.ZeroCode
             addSubString(allKeywordsSubstringsDictionary, keywordString.Substring(prevPos, keywordPos - prevPos));
         }
 
-        private void addSubString(Dictionary<char, List<string>> dict, string subString)
+        private void addSubString(IDictionary<char, List<string>> dict, string subString)
         {
             subString = subString.Trim();
 
