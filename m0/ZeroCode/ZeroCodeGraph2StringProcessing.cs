@@ -1387,8 +1387,9 @@ namespace m0.ZeroCode
             //if (KeywordMatchedSubGraphEdges.ContainsKey(edgeToCheck))
             //   return;
 
-            foreach (IEdge keyword in MinusZero.Instance.Root.GetAll(false, @"User\CurrentUser:\CodeSettings:\Keyword:\$Keyword:"))
-            if(keyword.To != m0.MinusZero.Instance.newValueKeywordVertex)
+            //foreach (IEdge keyword in MinusZero.Instance.Root.GetAll(false, @"User\CurrentUser:\CodeSettings:\Keyword:\$Keyword:"))
+            foreach (IEdge keyword in FormalTextLanguage.GetAll(false, @"Keywords:\$Keyword:"))
+                if (keyword.To != m0.MinusZero.Instance.newValueKeywordVertex)
             {
                 if (((string)keyword.To.Value).StartsWith(@" \ "))
                     {
@@ -1621,10 +1622,11 @@ namespace m0.ZeroCode
 
 
 
-            //ImportImports(MinusZero.Instance.Root.Get(false, @"System\TextLanguage\ZeroCode\DefaultImports"));
+            //ImportImports(MinusZero.Instance.Root.Get(false, @"System\FormalTextLanguage\ZeroCode\DefaultImports:"));
 
-            ImportImports(MinusZero.Instance.Root.Get(false, @"User\CurrentUser:\CodeSettings:"));
+            //ImportImports(MinusZero.Instance.Root.Get(false, @"User\CurrentUser:\CodeSettings:"));
 
+            ImportImports(FormalTextLanguage.Get(false, "DefaultImports:"));
             ImportImports(graphBaseEdge.To);
 
             //AppendPrefix();

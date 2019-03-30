@@ -3135,9 +3135,6 @@ namespace m0
             CreateSystemFormalTextLanguegeZeroCode_Keywords();
 
 
-            Init_AfterZeroCodeDefintionCreated();
-
-
             CreateSystemMetaVisualiserDiagram();
 
             CreateSystemMetaVisualiser();
@@ -3155,6 +3152,11 @@ namespace m0
             CreateUserMeta();
 
             CreateUsers();
+
+
+            Init_AfterZeroCodeDefintionCreated();
+
+
 
             AddIsAttribute("Attribute");
 

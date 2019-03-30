@@ -48,7 +48,7 @@ namespace m0
             MinusZero.Instance.Initialize();
 
 
-//            CreateTestData();
+            CreateTestData();
             
 
             TreeVisualiser stv = new TreeVisualiser();
@@ -235,7 +235,9 @@ namespace m0
 
             IVertex tr = MinusZero.Instance.Root.AddVertex(null, "kupa");
 
-            queryTest(tr);
+            //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+            //queryTest(tr);
 
             /*IEdge result;
             IList<IEdge> results;
