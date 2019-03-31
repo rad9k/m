@@ -250,8 +250,8 @@ namespace m0.ZeroCode
 
         //
 
-        List<string> specialKeywordGroups_new;
-        List<string> specialKeywordGroups_empty;
+        List<string> _specialKeywordGroups_new;
+        List<string> _specialKeywordGroups_empty;
 
         IDictionary<string, IList<IVertex>> emptyKeywordByGroupsDictionary;
         IDictionary<string, IList<IVertex>> newKeywordByGroupsDictionary;
@@ -2105,14 +2105,14 @@ namespace m0.ZeroCode
 
         private void prepareSpecialKeywordsGroups()
         {
-            specialKeywordGroups_empty = new List<string>();
+            ///specialKeywordGroups_empty = new List<string>();
 
-            //foreach (IEdge e in MinusZero.Instance.emptyKeywordVertex.GetAll(false, "$$KeywordGroup:"))
+            //foreach (IEdge e in MinusZero.Instance.emptyKeywordVertex.GetAll(false, "$$KeywordGroup:")) // XXX
               //  specialKeywordGroups_empty.Add((string)e.To.Value);
 
-            specialKeywordGroups_new = new List<string>();
+            //specialKeywordGroups_new = new List<string>();
 
-            //foreach (IEdge e in MinusZero.Instance.newValueKeywordVertex.GetAll(false, "$$KeywordGroup:"))
+            //foreach (IEdge e in MinusZero.Instance.newValueKeywordVertex.GetAll(false, "$$KeywordGroup:")) // XXX
               //  specialKeywordGroups_new.Add((string)e.To.Value);
 
 
