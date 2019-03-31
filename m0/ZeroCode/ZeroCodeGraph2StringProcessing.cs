@@ -1396,11 +1396,6 @@ namespace m0.ZeroCode
                 //if (keyword.To != m0.MinusZero.Instance.newValueKeywordVertex)
                 if(!newVertexKeywordVertexList.Contains(keyword.To))
             {
-                if (((string)keyword.To.Value).StartsWith(@" \ "))
-                    {
-                        int x = 0;
-                    }
-
                 string newValueKeyword;
 
                 IList<IEdge> matchedEdges = MatchGraphs(edgeToCheck, keyword.To, out newValueKeyword);
