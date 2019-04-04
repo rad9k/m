@@ -254,7 +254,7 @@ namespace m0.ZeroCode
         List<string> _specialKeywordGroups_empty;
 
         IDictionary<string, IList<IVertex>> emptyKeywordByGroupsDictionary;
-        IDictionary<string, IList<IVertex>> newKeywordByGroupsDictionary;
+        IDictionary<string, IList<IVertex>> newVertexKeywordByGroupsDictionary;
         IDictionary<string, List<keywordTryingData>> examinedKeywords_All; // all keywords are here
         IDictionary<string, List<keywordTryingData>> examinedKeywords_StartInLocalRootOnly; // StartInLocalRoot only?
         IDictionary<char, List<string>> allKeywordsSubstringsDictionary;
@@ -943,25 +943,23 @@ namespace m0.ZeroCode
 
         enum SpecialKeywordType { EmptyKeyword, NewVertexKeyword}
 
-        keywordTryingData createSpecialKeyword(ParsingStack s, string value, int matchedOnPositionInText, SpecialKeywordType type)
-        {
-            if (value == null || value == "")
-            {
-                int x = 0; // WTF???
-            }
-
+        keywordTryingData createSpecialKeyword(ParsingStack s, string value, int matchedOnPositionInText, SpecialKeywordType type, IVertex possible_newVertexKeyword, IVertex possible_emptyKeyword)
+        {            
             IVertex toUseVertex=null;
 
             switch (type)
             {
                 case SpecialKeywordType.EmptyKeyword:
-                //    toUseVertex = emptyKeywordVertex; XXX
+                    toUseVertex = possible_emptyKeyword; 
                     break;
 
                 case SpecialKeywordType.NewVertexKeyword:
-                    // toUseVertex = newValueKeywordVertex; XXX
+                    toUseVertex = possible_newVertexKeyword; 
                     break;
             }
+
+            if (toUseVertex == null)
+                return null;
 
             keywordTryingData ktd = new keywordTryingData(toUseVertex, this);
 
@@ -1027,12 +1025,6 @@ namespace m0.ZeroCode
         {
             tryIsKeyword_Parameters callParams = new tryIsKeyword_Parameters(s, LOGPREFIX, startPos, prev_startPos, isPrevStartPosSameAsStartPosParentCount, endPos, endPos_forAtomParts, afterKeywordPartExist, parentKeyword, parentParams, keywordsFilter, isSpaceNext);
             MinusZero.Instance.Log(0, "_tryIfKeyword", LOGPREFIX + "RUN "+callParams.ToString());
-
-
-            if (keywordsFilter == "b")
-            {
-                int x = 0;
-            }
 
             //
 
@@ -1113,6 +1105,9 @@ namespace m0.ZeroCode
             //
 
             SpecialKeywordType specialType = SpecialKeywordType.NewVertexKeyword; // got to intialize
+
+            IVertex possible_emptyKeywordByKeywordsFilter = null;
+            IVertex possible_newVertexKeywordByKeywordsFilter = null;
 
             //
 
@@ -1203,10 +1198,27 @@ namespace m0.ZeroCode
                 }
 
                 // !!!!!!!!!!!!!!!!!!!!!!! A or B ! YOU DECIDE. I do not know :)
+                
 
-            
+                if (emptyKeywordByGroupsDictionary.ContainsKey(keywordsFilter))
+                {
+                    IList<IVertex> list = emptyKeywordByGroupsDictionary[keywordsFilter];
 
-                if (c1089 || specialKeywordGroups_empty.Contains(keywordsFilter) // A
+                    if (list.Count > 0)
+                        possible_emptyKeywordByKeywordsFilter = list[0];
+                }
+
+                if (newVertexKeywordByGroupsDictionary.ContainsKey(keywordsFilter))
+                {
+                    IList<IVertex> list = newVertexKeywordByGroupsDictionary[keywordsFilter];
+
+                    if (list.Count > 0)
+                        possible_newVertexKeywordByKeywordsFilter = list[0];
+                }
+
+
+                if (c1089 || (possible_emptyKeywordByKeywordsFilter!=null || possible_newVertexKeywordByKeywordsFilter!=null)
+                    //_specialKeywordGroups_empty.Contains(keywordsFilter) // A
                     /*keywordsFilter=="Atom"*/) // B
                     //( (afterKeywordPartExist && sPos_copy == endPos_forAtomParts && isPrevStartPosSameAsStartPos)
                     //|| (!afterKeywordPartExist && (sPos == endPos_forAtomParts || isPrevStartPosSameAsStartPos)))
@@ -1220,18 +1232,21 @@ namespace m0.ZeroCode
 
                     if (tryEmptyKeyword != null)
                     {
-                        keywordTryingData ktd = createSpecialKeyword(s, tryEmptyKeyword, sPos - 1, specialType);
+                        keywordTryingData ktd = createSpecialKeyword(s, tryEmptyKeyword, sPos - 1, specialType, possible_newVertexKeywordByKeywordsFilter, possible_emptyKeywordByKeywordsFilter);
 
-                        //
+                        if (ktd != null)
+                        {
+                            //
 
-                        // MIGHT BE NEEDED !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-                        //sPos = CheckIfThereIsSubTextAndProcessIt(s, endPos, null, ktd, sPos);
+                            // MIGHT BE NEEDED !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+                            //sPos = CheckIfThereIsSubTextAndProcessIt(s, endPos, null, ktd, sPos);
 
-                        newPos = _tryIsNextLocalRootKeyword(s, LOGPREFIX, newPos, sPos, ktd, isSpaceNext);
+                            newPos = _tryIsNextLocalRootKeyword(s, LOGPREFIX, newPos, sPos, ktd, isSpaceNext);
 
-                        //
+                            //
 
-                        examinedKeywords.Add(ktd);
+                            examinedKeywords.Add(ktd);
+                        }
                     }
                     
                     MinusZero.Instance.Log(1, "_tryIsKeyword", LOGPREFIX + "RETURN:" + tryEmptyKeyword + " newPos:" + newPos);
@@ -1702,7 +1717,7 @@ namespace m0.ZeroCode
 
                 if (tryEmptyKeyword != null)
                 {
-                    keywordTryingData ktd = createSpecialKeyword(s, tryEmptyKeyword, tryNewPos - 1,  specialType);
+                    keywordTryingData ktd = createSpecialKeyword(s, tryEmptyKeyword, tryNewPos - 1,  specialType, possible_newVertexKeywordByKeywordsFilter, possible_emptyKeywordByKeywordsFilter);
 
                     ParsingStack copy = s;
 
@@ -2118,7 +2133,7 @@ namespace m0.ZeroCode
 
             emptyKeywordByGroupsDictionary = ZeroCodeUtil.getFilteredKeywordListByGroup(FormalTextLanguage, "$$EmptyKeyword:");
 
-            newKeywordByGroupsDictionary = ZeroCodeUtil.getFilteredKeywordListByGroup(FormalTextLanguage, "$$NewVertexKeyword:");                        
+            newVertexKeywordByGroupsDictionary = ZeroCodeUtil.getFilteredKeywordListByGroup(FormalTextLanguage, "$$NewVertexKeyword:");                        
         }
 
         private void prepareDictionaries()
