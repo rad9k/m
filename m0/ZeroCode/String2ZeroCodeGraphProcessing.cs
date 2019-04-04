@@ -1719,25 +1719,28 @@ namespace m0.ZeroCode
                 {
                     keywordTryingData ktd = createSpecialKeyword(s, tryEmptyKeyword, tryNewPos - 1,  specialType, possible_newVertexKeywordByKeywordsFilter, possible_emptyKeywordByKeywordsFilter);
 
-                    ParsingStack copy = s;
+                    if (ktd != null)
+                    {
+                        ParsingStack copy = s;
 
-                    //s = tryEmptyKeywordStack; // THIS DOES NOT WORK // GET THE STACK FROM COPY
+                        //s = tryEmptyKeywordStack; // THIS DOES NOT WORK // GET THE STACK FROM COPY
 
-                    s.lineNo = tryEmptyKeywordStack_LineNoMemory;
-                    s.parseNextLine();
+                        s.lineNo = tryEmptyKeywordStack_LineNoMemory;
+                        s.parseNextLine();
 
-                    //
+                        //
 
-                    int _newPos = CheckIfThereIsSubTextAndProcessIt(s, endPos, null, ktd, newPos - 2);
+                        int _newPos = CheckIfThereIsSubTextAndProcessIt(s, endPos, null, ktd, newPos - 2);
 
-                    if (_newPos > newPos - 2)
-                        newPos = _newPos + 2;                    
+                        if (_newPos > newPos - 2)
+                            newPos = _newPos + 2;
 
-                    newPos = _tryIsNextLocalRootKeyword(s, LOGPREFIX, newPos, newPos, ktd, isSpaceNext);
+                        newPos = _tryIsNextLocalRootKeyword(s, LOGPREFIX, newPos, newPos, ktd, isSpaceNext);
 
-                    //
+                        //
 
-                    examinedKeywords.Add(ktd);
+                        examinedKeywords.Add(ktd);
+                    }
                 }
             }else
                 newPos = sPos;

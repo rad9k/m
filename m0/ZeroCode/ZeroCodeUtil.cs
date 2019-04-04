@@ -18,16 +18,24 @@ namespace m0.ZeroCode
                 {
                 IVertex groups = e.To.GetAll(false, @"$$KeywordGroup:");
 
-                foreach(IEdge group in groups)
+                string groupName;
+
+                foreach (IEdge group in groups)
                 {
-                    string groupName = (string)group.To.Value;
+                    groupName = (string)group.To.Value;
 
                     if (!list.ContainsKey(groupName))
                         list.Add(groupName, new List<IVertex>());
 
                     list[groupName].Add(e.To);
-
                 }
+
+                groupName = "";
+
+                if (!list.ContainsKey(groupName))
+                    list.Add(groupName, new List<IVertex>());
+
+                list[groupName].Add(e.To);
 
             }
 
