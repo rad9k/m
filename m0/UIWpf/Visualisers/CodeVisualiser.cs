@@ -64,8 +64,7 @@ namespace m0.UIWpf.Visualisers
         private void CodeVisualiser_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.Key == Key.Escape) {
-                m0.ZeroCode.ZeroCodeEngine zce = new ZeroCode.ZeroCodeEngine();
-                zce.Parse(true, Vertex.Get(false, @"BaseEdge:\To:"), Text);
+                MinusZero.Instance.DefaultParser.Parse(true, Vertex.Get(false, @"BaseEdge:\To:"), Text);
                 }
         }
 
