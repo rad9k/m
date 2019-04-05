@@ -63,9 +63,9 @@ namespace m0.UIWpf.Visualisers
 
         private void CodeVisualiser_KeyDown(object sender, KeyEventArgs e)
         {
-            if (e.Key == Key.Escape) {
-                MinusZero.Instance.DefaultParser.Parse(true, Vertex.Get(false, @"BaseEdge:\To:"), Text);
-                }
+            if (e.Key == Key.Escape) 
+                MinusZero.Instance.NewDefaultParser.Parse(true, Vertex.Get(false, @"BaseEdge:\To:"), Text);
+                
         }
 
         TabFoldingStrategy foldingStrategy;
