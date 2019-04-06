@@ -1057,7 +1057,7 @@ namespace m0
             //
             //
 
-            IVertex empty2Keyword = k.AddVertex(keyword, "(?<value>)");
+  /*          IVertex empty2Keyword = k.AddVertex(keyword, "(?<value>)");
             
 
             empty2Keyword.AddVertex(emptyKeyword, "");
@@ -1072,7 +1072,7 @@ namespace m0
 
             IVertex empty2Keyword_any_targetExpr = empty1Keyword_any.AddVertex(smu.Get(false, @"SingleOperator\TargetExpression"), "");
 
-            empty2Keyword_any_targetExpr.AddVertex(smb.Get(false, "$$LocalRoot"), "");
+            empty2Keyword_any_targetExpr.AddVertex(smb.Get(false, "$$LocalRoot"), "");*/
 
             //TEST
 

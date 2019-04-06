@@ -300,9 +300,10 @@ namespace m0.ZeroCode
 
         void prepareImportList_User()
         {
-            return;
+          //  return;
             // XXX
-            IVertex codeSettings = r.Get(false, @"User\CurrentUser:\CodeSettings:");
+            IVertex codeSettings = FormalTextLanguage.Get(false, "DefaultImports:");
+                //r.Get(false, @"User\CurrentUser:\CodeSettings:");
 
             // named imports
 
@@ -2774,9 +2775,10 @@ namespace m0.ZeroCode
 
             prepareDictionaries();
 
-            //emptyKeywordVertex = MinusZero.Instance.Root.Get(false, @"User\CurrentUser:\CodeSettings:\Keyword:\$Keyword:(?<value>)");
+            _emptyKeywordVertex = FormalTextLanguage.Get(false, @"Keywords:\$Keyword:(?<value>)");
+                //MinusZero.Instance.Root.Get(false, @"User\CurrentUser:\CodeSettings:\Keyword:\$Keyword:(?<value>)");
 
-            //newValueKeywordVertex = MinusZero.Instance.newValueKeywordVertex;
+            _newValueKeywordVertex = MinusZero.Instance._newValueKeywordVertex;
 
         }
     }
