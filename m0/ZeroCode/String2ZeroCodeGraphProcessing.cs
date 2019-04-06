@@ -249,23 +249,14 @@ namespace m0.ZeroCode
         IVertex errorList;
 
         //
-
-        List<string> _specialKeywordGroups_new;
-        List<string> _specialKeywordGroups_empty;
-
+        
         IDictionary<string, IList<IVertex>> emptyKeywordByGroupsDictionary;
         IDictionary<string, IList<IVertex>> newVertexKeywordByGroupsDictionary;
         IDictionary<string, List<keywordTryingData>> examinedKeywords_All; // all keywords are here
         IDictionary<string, List<keywordTryingData>> examinedKeywords_StartInLocalRootOnly; // StartInLocalRoot only?
         IDictionary<char, List<string>> allKeywordsSubstringsDictionary;
 
-        IDictionary<IVertex, KeywordInfo> keywordInfoDict;
-
-        // special keywords
-
-
-        IVertex _emptyKeywordVertex;
-        IVertex _newValueKeywordVertex;
+        IDictionary<IVertex, KeywordInfo> keywordInfoDict;        
 
         // PROCESS dependent
 
@@ -951,14 +942,12 @@ namespace m0.ZeroCode
 
             switch (type)
             {
-                case SpecialKeywordType.EmptyKeyword:
-                    // toUseVertex = possible_emptyKeyword; 
-                    toUseVertex = _emptyKeywordVertex;
+                case SpecialKeywordType.EmptyKeyword:                    
+                     toUseVertex = possible_emptyKeyword;                     
                     break;
 
-                case SpecialKeywordType.NewVertexKeyword:
-                    //toUseVertex = possible_newVertexKeyword; 
-                    toUseVertex = _newValueKeywordVertex;
+                case SpecialKeywordType.NewVertexKeyword:                    
+                    toUseVertex = possible_newVertexKeyword;                     
                     break;
             }
 
@@ -1221,14 +1210,14 @@ namespace m0.ZeroCode
                 }
 
 
-                if (c1089 || //(possible_emptyKeywordByKeywordsFilter!=null || possible_newVertexKeywordByKeywordsFilter!=null)
-                    _specialKeywordGroups_empty.Contains(keywordsFilter) // A
+                if (c1089 || ((possible_emptyKeywordByKeywordsFilter!=null || possible_newVertexKeywordByKeywordsFilter!=null) && keywordsFilter!="")
+                    //_specialKeywordGroups_empty.Contains(keywordsFilter) // A
                     /*keywordsFilter=="Atom"*/) // B
                     //( (afterKeywordPartExist && sPos_copy == endPos_forAtomParts && isPrevStartPosSameAsStartPos)
                     //|| (!afterKeywordPartExist && (sPos == endPos_forAtomParts || isPrevStartPosSameAsStartPos)))
                     //( //(tryEmptyKeyword != null || lookForLocalRootOnly==false) &&
                     // ( sPos == endPos_forAtomParts || (isPrevStartPosSameAsStartPos /*&& isPrevStartPosSameAsStartPosThisCount > 1*/)) ) // !!!
-                {
+                {             
                    // MinusZero.Instance.Log(0, "_tryIfKeyword", LOGPREFIX + "conditions 0: ENTER");
                     link = tryLink;
 
@@ -2126,18 +2115,7 @@ namespace m0.ZeroCode
         }
 
         private void prepareSpecialKeywordsGroups()
-        {
-            _specialKeywordGroups_empty = new List<string>();
-
-            foreach (IEdge e in MinusZero.Instance._emptyKeywordVertex.GetAll(false, "$$KeywordGroup:")) // XXX
-                _specialKeywordGroups_empty.Add((string)e.To.Value);
-
-            _specialKeywordGroups_new = new List<string>();
-
-            foreach (IEdge e in MinusZero.Instance._newValueKeywordVertex.GetAll(false, "$$KeywordGroup:")) // XXX
-                _specialKeywordGroups_new.Add((string)e.To.Value);
-
-
+        {            
             emptyKeywordByGroupsDictionary = ZeroCodeUtil.getFilteredKeywordListByGroup(FormalTextLanguage, "$$EmptyKeyword:");
 
             newVertexKeywordByGroupsDictionary = ZeroCodeUtil.getFilteredKeywordListByGroup(FormalTextLanguage, "$$NewVertexKeyword:");                        
@@ -2775,13 +2753,7 @@ namespace m0.ZeroCode
 
             setupHelpVariables();
 
-            prepareDictionaries();
-
-            _emptyKeywordVertex = FormalTextLanguage.Get(false, @"Keywords:\$Keyword:(?<value>)");
-                //MinusZero.Instance.Root.Get(false, @"User\CurrentUser:\CodeSettings:\Keyword:\$Keyword:(?<value>)");
-
-            _newValueKeywordVertex = MinusZero.Instance._newValueKeywordVertex;
-
+            prepareDictionaries(); 
         }
     }
 }

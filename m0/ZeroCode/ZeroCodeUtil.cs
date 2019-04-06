@@ -30,7 +30,8 @@ namespace m0.ZeroCode
                     list[groupName].Add(e.To);
                 }
 
-                groupName = "";
+                groupName = ""; // THIS CAUSES PROBLEM
+                // but we leave it becouse if (c1089 || ((possible_emptyKeywordByKeywordsFilter!=null || possible_newVertexKeywordByKeywordsFilter!=null) && keywordsFilter!="") << keywordsFilter!=""
 
                 if (!list.ContainsKey(groupName))
                     list.Add(groupName, new List<IVertex>());

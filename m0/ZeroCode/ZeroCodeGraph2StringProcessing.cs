@@ -1023,8 +1023,7 @@ namespace m0.ZeroCode
             {
                 string path = GetPathFromKeywordMatchAndKeywordEdge(km, e, null);
 
-                //if(!emptyKeywordVertexList.Contains(km.KeywordDefinition))
-                if (km.KeywordDefinition != MinusZero.Instance._emptyKeywordVertex)
+                if(!emptyKeywordVertexList.Contains(km.KeywordDefinition))                
                     AppendVertex(e, path, false, false, false); // non emptyKeword (standard)
                 else
                     SourceAppend(e.To.Value.ToString()); // emptyKeyword handling
@@ -1395,9 +1394,8 @@ namespace m0.ZeroCode
             //   return;
 
             //foreach (IEdge keyword in MinusZero.Instance.Root.GetAll(false, @"User\CurrentUser:\CodeSettings:\Keyword:\$Keyword:"))
-            foreach (IEdge keyword in FormalTextLanguage.GetAll(false, @"Keywords:\$Keyword:"))
-                if (keyword.To != m0.MinusZero.Instance._newValueKeywordVertex)
-                //if(!newVertexKeywordVertexList.Contains(keyword.To))
+            foreach (IEdge keyword in FormalTextLanguage.GetAll(false, @"Keywords:\$Keyword:"))             
+                if(!newVertexKeywordVertexList.Contains(keyword.To))
             {
                 string newValueKeyword;
 
@@ -1622,12 +1620,6 @@ namespace m0.ZeroCode
             BeenList.Add(graphBaseEdge);
 
             //
-
-
-
-            //ImportImports(MinusZero.Instance.Root.Get(false, @"System\FormalTextLanguage\ZeroCode\DefaultImports:"));
-
-            //ImportImports(MinusZero.Instance.Root.Get(false, @"User\CurrentUser:\CodeSettings:"));
 
             ImportImports(FormalTextLanguage.Get(false, "DefaultImports:"));
             ImportImports(graphBaseEdge.To);
