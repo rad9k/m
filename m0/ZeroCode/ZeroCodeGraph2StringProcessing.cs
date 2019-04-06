@@ -1023,7 +1023,8 @@ namespace m0.ZeroCode
             {
                 string path = GetPathFromKeywordMatchAndKeywordEdge(km, e, null);
 
-                if(!emptyKeywordVertexList.Contains(km.KeywordDefinition))
+                //if(!emptyKeywordVertexList.Contains(km.KeywordDefinition))
+                if (km.KeywordDefinition != MinusZero.Instance._emptyKeywordVertex)
                     AppendVertex(e, path, false, false, false); // non emptyKeword (standard)
                 else
                     SourceAppend(e.To.Value.ToString()); // emptyKeyword handling
@@ -1393,8 +1394,8 @@ namespace m0.ZeroCode
 
             //foreach (IEdge keyword in MinusZero.Instance.Root.GetAll(false, @"User\CurrentUser:\CodeSettings:\Keyword:\$Keyword:"))
             foreach (IEdge keyword in FormalTextLanguage.GetAll(false, @"Keywords:\$Keyword:"))
-                //if (keyword.To != m0.MinusZero.Instance.newValueKeywordVertex)
-                if(!newVertexKeywordVertexList.Contains(keyword.To))
+                if (keyword.To != m0.MinusZero.Instance._newValueKeywordVertex)
+                //if(!newVertexKeywordVertexList.Contains(keyword.To))
             {
                 string newValueKeyword;
 
