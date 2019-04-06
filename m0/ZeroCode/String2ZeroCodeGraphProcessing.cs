@@ -263,6 +263,7 @@ namespace m0.ZeroCode
 
         // special keywords
 
+
         IVertex _emptyKeywordVertex;
         IVertex _newValueKeywordVertex;
 
