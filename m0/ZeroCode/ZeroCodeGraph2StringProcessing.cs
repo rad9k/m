@@ -1234,7 +1234,8 @@ namespace m0.ZeroCode
             //if (keywordEdge.To.Get(false, "$$KeywordManyRoot:") != null)
             // return true; // WTF ???? or Meta? eigher does not work for function parameters
 
-            if (isNotComparableKeywordEdge(keywordEdge.Meta.ToString()))
+            if(ZeroCodeUtil.IsDoubleDolarMeta(keywordEdge))
+            //if (isNotComparableKeywordEdge(keywordEdge.Meta.ToString()))
                 return true;
 
             //string searchString;
@@ -1261,10 +1262,11 @@ namespace m0.ZeroCode
 
                 if (/*!KeywordMatchedSubGraphEdges.ContainsKey(searchResult) &&*/ !currentMatchGraphEdgeList.Contains(searchResult))
                 {
-                    if(!VertexOperations.IsLink(keywordEdge))
-                        foreach (IEdge subKeywordEdge in keywordEdge.To)
-                            if (/*!IsLink(subKeywordEdge) 
-                                && */!isNotComparableKeywordEdge(subKeywordEdge.Meta.ToString()) // WTF ????
+                        if (!VertexOperations.IsLink(keywordEdge))
+                            foreach (IEdge subKeywordEdge in keywordEdge.To)
+                                if (/*!IsLink(subKeywordEdge) 
+                                && !isNotComparableKeywordEdge(subKeywordEdge.Meta.ToString()) // WTF ????*/
+                                !ZeroCodeUtil.IsDoubleDolarMeta(subKeywordEdge)
                                 && GetGraphMatch(searchResult.To, subKeywordEdge) == false)
                                 return false;
 
