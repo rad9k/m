@@ -952,11 +952,13 @@ namespace m0.ZeroCode
             switch (type)
             {
                 case SpecialKeywordType.EmptyKeyword:
-                    toUseVertex = possible_emptyKeyword; 
+                    // toUseVertex = possible_emptyKeyword; 
+                    toUseVertex = _emptyKeywordVertex;
                     break;
 
                 case SpecialKeywordType.NewVertexKeyword:
-                    toUseVertex = possible_newVertexKeyword; 
+                    //toUseVertex = possible_newVertexKeyword; 
+                    toUseVertex = _newValueKeywordVertex;
                     break;
             }
 
@@ -1219,8 +1221,8 @@ namespace m0.ZeroCode
                 }
 
 
-                if (c1089 || (possible_emptyKeywordByKeywordsFilter!=null || possible_newVertexKeywordByKeywordsFilter!=null)
-                    //_specialKeywordGroups_empty.Contains(keywordsFilter) // A
+                if (c1089 || //(possible_emptyKeywordByKeywordsFilter!=null || possible_newVertexKeywordByKeywordsFilter!=null)
+                    _specialKeywordGroups_empty.Contains(keywordsFilter) // A
                     /*keywordsFilter=="Atom"*/) // B
                     //( (afterKeywordPartExist && sPos_copy == endPos_forAtomParts && isPrevStartPosSameAsStartPos)
                     //|| (!afterKeywordPartExist && (sPos == endPos_forAtomParts || isPrevStartPosSameAsStartPos)))
@@ -2125,15 +2127,15 @@ namespace m0.ZeroCode
 
         private void prepareSpecialKeywordsGroups()
         {
-            ///specialKeywordGroups_empty = new List<string>();
+            _specialKeywordGroups_empty = new List<string>();
 
-            //foreach (IEdge e in MinusZero.Instance.emptyKeywordVertex.GetAll(false, "$$KeywordGroup:")) // XXX
-              //  specialKeywordGroups_empty.Add((string)e.To.Value);
+            foreach (IEdge e in MinusZero.Instance._emptyKeywordVertex.GetAll(false, "$$KeywordGroup:")) // XXX
+                _specialKeywordGroups_empty.Add((string)e.To.Value);
 
-            //specialKeywordGroups_new = new List<string>();
+            _specialKeywordGroups_new = new List<string>();
 
-            //foreach (IEdge e in MinusZero.Instance.newValueKeywordVertex.GetAll(false, "$$KeywordGroup:")) // XXX
-              //  specialKeywordGroups_new.Add((string)e.To.Value);
+            foreach (IEdge e in MinusZero.Instance._newValueKeywordVertex.GetAll(false, "$$KeywordGroup:")) // XXX
+                _specialKeywordGroups_new.Add((string)e.To.Value);
 
 
             emptyKeywordByGroupsDictionary = ZeroCodeUtil.getFilteredKeywordListByGroup(FormalTextLanguage, "$$EmptyKeyword:");
