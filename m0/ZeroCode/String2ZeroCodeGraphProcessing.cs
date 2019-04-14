@@ -1984,7 +1984,11 @@ namespace m0.ZeroCode
         private void tryLocalRootAdd(ParsingStack s, IEdge metaEdge, IVertex nv, keywordTryingData ktd)
         {
             if (metaEdge.To.Get(false, "$$LocalRoot:") != null && ktd.LocalRootNext != null)
+            {
                 _AddKeywordVertex(s, nv, ktd.LocalRootNext, ktd.LocalRootNext.keywordVertex, null, 0, metaEdge);
+
+                ktd.LocalRootNext = null; // XXX this is hack to not call tryLocalRootAdd
+            }
         }
 
         IEdge AddKeywordVertex_AddEdge(ParsingStack s, IVertex baseVertex, IEdge edgeForMeta, IVertex meta, IVertex to)

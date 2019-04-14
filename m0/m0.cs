@@ -1027,6 +1027,8 @@ namespace m0
 
             IVertex newValueKeyword_any = newValueKeyword.AddVertex(any, "(?<value>)");
 
+            newValueKeyword_any.AddVertex(smb.Get(false, "$$StartInLocalRoot"), "");
+
             newValueKeyword_any.AddVertex(smb.Get(false, "$$LocalRoot"), "");
 
 

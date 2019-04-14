@@ -1211,23 +1211,6 @@ namespace m0.ZeroCode
             return false;
         }
 
-        public bool isNotComparableKeywordEdge(string baseVertex) 
-            {
-                if (GeneralUtil.CompareStrings(baseVertex, "$$KeywordManyRoot"))
-                    return true;
-
-                if (GeneralUtil.CompareStrings(baseVertex, "$$LocalRoot"))
-                    return true;
-
-                if (GeneralUtil.CompareStrings(baseVertex, "$$StartInLocalRoot"))
-                     return true;
-
-                if (GeneralUtil.CompareStrings(baseVertex, "$$KeywordGroup"))
-                     return true;
-
-            return false;
-            } 
-
         public bool GetGraphMatch(IVertex parentToCheck, IEdge keywordEdge)
         {
             //if (keywordEdge.To.Get(false, "$$KeywordManyRoot:") != null)
