@@ -524,7 +524,7 @@ namespace m0
             IVertex newVertexKeyword = smb.Get(false, "$$NewVertexKeyword");
 
             string anyString = "(?<ANY>)";
-            /*
+            
             // import meta
             //
             // import meta (?<name>) (?<link>)
@@ -973,7 +973,7 @@ namespace m0
             o_par_any.AddEdge(smb.Get(false, @"Vertex\$Is"), smu.Get(false, "()"));
 
              o_par_any.AddVertex(smu.Get(false, @"SingleOperator\TargetExpression"), "(?<expr>)");
-     */
+     
             // \
             //
             // \                         
@@ -993,7 +993,7 @@ namespace m0
              IVertex o_path_any_targetExpr = o_path_any.AddVertex(smu.Get(false, @"SingleOperator\TargetExpression"), "");
 
              o_path_any_targetExpr.AddVertex(smb.Get(false, "$$LocalRoot"), "");
-      /*
+      
             // {}
             //
             // {(*(+\r\n+)\t(?<expr>)*)\r\n}
@@ -1009,7 +1009,7 @@ namespace m0
             IVertex o_newSub_any_param = o_newSub_any.AddVertex(smu.Get(false, @"MultiOperator\Expression"), "(?<expr>)");
 
             o_newSub_any_param.AddEdge(smb.Get(false, @"$$KeywordManyRoot"), smb.Get(false, @"$Empty"));
-        */ 
+         
             // ""
             //
             // "\"(?<value>)\""
@@ -1027,9 +1027,9 @@ namespace m0
 
             IVertex newValueKeyword_any = newValueKeyword.AddVertex(any, "(?<value>)");
 
-            newValueKeyword_any.AddVertex(smb.Get(false, "$$StartInLocalRoot"), "");
+            IVertex newValueKeyword_any_targetExpr = newValueKeyword_any.AddVertex(smu.Get(false, @"SingleOperator\TargetExpression"), "");
 
-            newValueKeyword_any.AddVertex(smb.Get(false, "$$LocalRoot"), "");
+            newValueKeyword_any_targetExpr.AddVertex(smb.Get(false, "$$LocalRoot"), "");
 
 
             // E M P T Y :) K E Y W O R D 1

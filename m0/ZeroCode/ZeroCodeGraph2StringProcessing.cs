@@ -1264,7 +1264,7 @@ namespace m0.ZeroCode
                 }
             }
 
-            if (keywordEdge.To.Get(false, "$$KeywordManyRoot:") != null)
+            if (keywordEdge.To.Get(false, "$$KeywordManyRoot:") != null || keywordEdge.To.Get(false, "$$LocalRoot:") != null)
                 return true;
 
             return toReturn;

@@ -22,6 +22,7 @@ namespace m0.ZeroCode
 
         class KeywordInfo
         {
+            public bool HasLocalRoot;
             public string LocalRootKeywordsGroup;
         }
 
@@ -1685,8 +1686,7 @@ namespace m0.ZeroCode
 
                     keywordTryingData ktd = examinedKeywords[0]; // ASSUMPTION
 
-                    if (ktd.matchedOnPositionInText <= s.currentLineInfo.lineEnd
-                        && isLocalRootKeyword(ktd))
+                    if (ktd.matchedOnPositionInText <= s.currentLineInfo.lineEnd)
                     {
                         // MIGHT BE NEEDED !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
                         //sPos = CheckIfThereIsSubTextAndProcessIt(s, endPos, null, ktd, sPos);
@@ -1826,16 +1826,11 @@ namespace m0.ZeroCode
             return false;
         }
 
-        bool isLocalRootKeyword(keywordTryingData ktd)
-        {
-            if (ktd.keywordVertex.Get(false, @"\$$StartInLocalRoot:") != null) // check agains LocalRoot presence should be better idea. to be verified
-                return true;
-            else
-                return false;
-        }
-
         private int _tryIsNextLocalRootKeyword(ParsingStack s, string LOGPREFIX, int newPos, int sPos, keywordTryingData ktd, bool isSpaceNext)
         {
+            if(!keywordInfoDict[ktd.keywordVertex].HasLocalRoot)
+                return newPos;
+
             string keywordsFilter = "";
 
             MinusZero.Instance.Log(-1, "_tryIsKeyword", LOGPREFIX + "_tryIsNextLocalRootKeyword");
@@ -1964,7 +1959,7 @@ namespace m0.ZeroCode
             //if (GeneralUtil.CompareStrings("$$LocalRoot", metaEdge.Meta.Value)
             //|| GeneralUtil.CompareStrings("$$StartInLocalRoot", metaEdge.Meta.Value)
             //|| GeneralUtil.CompareStrings("$$KeywordGroup", metaEdge.Meta.Value))
-              //  return;
+            //  return;
 
             if (parentMetaEdge != null
                 && parentMetaEdge.To.Get(false, "$$LocalRoot:") != null
@@ -1976,7 +1971,13 @@ namespace m0.ZeroCode
                 nv = baseVertex;
             }
             else
-                nv = AddVertex(s, baseVertex, meta, val);
+            {
+                if (metaEdge.To.Get(false, "$$LocalRoot:") != null) {
+                    if(ktd.LocalRootNext != null)
+                        nv = AddVertex(s, baseVertex, meta, val);
+                }else
+                    nv = AddVertex(s, baseVertex, meta, val);
+            }
 
             tryLocalRootAdd(s, metaEdge, nv, ktd);
         }
@@ -1987,7 +1988,7 @@ namespace m0.ZeroCode
             {
                 _AddKeywordVertex(s, nv, ktd.LocalRootNext, ktd.LocalRootNext.keywordVertex, null, 0, metaEdge);
 
-                ktd.LocalRootNext = null; // XXX this is hack to not call tryLocalRootAdd
+                ktd.LocalRootNext = null; // XXX this is hack not to add local root again
             }
         }
 
@@ -2194,8 +2195,12 @@ namespace m0.ZeroCode
 
                 IVertex localRoot = GraphUtil.DeepFindOneByMeta(ktd.keywordVertex, "$$LocalRoot", false);
 
-                if (localRoot != null && ((string)localRoot.Value) != "")
-                    ki.LocalRootKeywordsGroup = (string)localRoot.Value;
+                if (localRoot != null) {
+                    ki.HasLocalRoot = true;
+
+                    if ((string)localRoot.Value != "")
+                       ki.LocalRootKeywordsGroup = (string)localRoot.Value;
+                }
 
                 keywordInfoDict.Add(ktd.keywordVertex, ki);
 
