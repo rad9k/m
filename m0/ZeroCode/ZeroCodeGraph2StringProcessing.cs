@@ -1377,12 +1377,12 @@ namespace m0.ZeroCode
             //   return;
 
             //foreach (IEdge keyword in MinusZero.Instance.Root.GetAll(false, @"User\CurrentUser:\CodeSettings:\Keyword:\$Keyword:"))
-            foreach (IEdge keyword in FormalTextLanguage.GetAll(false, @"Keywords:\$Keyword:"))             
-                if(!newVertexKeywordVertexList.Contains(keyword.To))
-            {
-                string newValueKeyword;
+            foreach (IEdge keyword in FormalTextLanguage.GetAll(false, @"Keywords:\$Keyword:"))
+                if (!newVertexKeywordVertexList.Contains(keyword.To))
+                {
+                    string newValueKeyword;
 
-                IList<IEdge> matchedEdges = MatchGraphs(edgeToCheck, keyword.To, out newValueKeyword);
+                    IList<IEdge> matchedEdges = MatchGraphs(edgeToCheck, keyword.To, out newValueKeyword);
 
                 if (matchedEdges!=null && matchedEdges.Count > 0)
                 {
@@ -1408,6 +1408,11 @@ namespace m0.ZeroCode
 
                         if (match_parent.DoKeywordDefinitionContainLocalRoot && match.DoKeywordDefinitionContainStartInLocalRoot)
                             match.IsStartInLocalRoot = true;
+                    }
+                    else
+                    {
+                            if (!GraphUtil.GetValueAndCompareStrings(edgeToCheck.Meta, "$Empty") && match.DoKeywordDefinitionContainStartInLocalRoot)
+                                match.IsStartInLocalRoot = true; // XXX this is done for "a"\
                     }
 
                     foreach (IEdge e in matchedEdges)
