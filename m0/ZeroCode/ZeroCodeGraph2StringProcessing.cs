@@ -1386,7 +1386,7 @@ namespace m0.ZeroCode
                     if (CheckMatchForKeywordAndAddKeywordMatchIfThereIsMatch(edgeToCheck, path, edgeToCheck_parent, keyword.To))
                         thereWasMatch = true;
 
-            //if(!thereWasMatch && !KeywordMatchedSubGraphEdges.ContainsKey(edgeToCheck)) // WE CAN HAVE KEYWORD MATCH FOR NEW VERTEX HERE
+            //if(!thereWasMatch && !KeywordMatchedSubGraphEdges.ContainsKey(edgeToCheck)) // WE CAN HAVE KEYWORD MATCH FOR NEW VERTEX HERE!
               //  CheckMatchForKeywordAndAddKeywordMatchIfThereIsMatch(edgeToCheck, path, edgeToCheck_parent, newVertexKeywordVertexList[0]);
         }
 
