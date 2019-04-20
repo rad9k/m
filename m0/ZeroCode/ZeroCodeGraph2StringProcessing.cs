@@ -1400,11 +1400,7 @@ namespace m0.ZeroCode
 
             if (matchedEdges != null && matchedEdges.Count > 0)
             {
-                thereWasMatch = true;
-                //if (((string)keyword.To.Value).StartsWith("\"(?< value >)\""))
-                //{
-                //    matchedEdges = MatchGraphs(edgeToCheck, keyword.To);
-                //}
+                thereWasMatch = true;                
 
                 KeywordMatch match = new KeywordMatch(keywordVertex, this);
 

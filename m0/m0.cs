@@ -847,7 +847,9 @@ namespace m0
 
             IVertex o_colon_any_right = o_colon_any.AddVertex(smu.Get(false, @"DoubleOperator\RightExpression"), "(?<right_Empty2>)");
 
-            o_colon_any_right.AddVertex(smb.Get(false, "$$LocalRoot"), "Slash");
+            IVertex o_colon_any_targetExpr = o_colon_any.AddVertex(smu.Get(false, @"SingleOperator\TargetExpression"), "");            
+
+            o_colon_any_targetExpr.AddVertex(smb.Get(false, "$$LocalRoot"), "Slash");
 
             /*
             // : /2
@@ -1088,7 +1090,7 @@ namespace m0
 
             empty2Keyword_any.AddEdge(smb.Get(false, @"Vertex\$Is"), smu.Get(false, "Query"));
 
-            IVertex empty2Keyword_any_targetExpr = empty1Keyword_any.AddVertex(smu.Get(false, @"SingleOperator\TargetExpression"), "");
+            IVertex empty2Keyword_any_targetExpr = empty2Keyword_any.AddVertex(smu.Get(false, @"SingleOperator\TargetExpression"), "");
 
             empty2Keyword_any_targetExpr.AddVertex(smb.Get(false, "$$LocalRoot"), "Inner");
 
