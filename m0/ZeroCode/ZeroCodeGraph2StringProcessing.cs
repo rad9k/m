@@ -518,7 +518,8 @@ namespace m0.ZeroCode
             {
                 //VertexesAsLink.Add(v, path + "\\" + v.Value); // what is it? not neccesarry now
 
-                SourceAppend(ZeroCodeCommon.stringToNewVertexString(v.Value.ToString()));
+                SourceAppend(ZeroCodeCommon.stringToNewVertexString(v.Value.ToString())); // XXX we are catching newVertexes as keywords so...
+                //SourceAppend(v.Value.ToString());
             }
         }
 
@@ -1040,10 +1041,12 @@ namespace m0.ZeroCode
             bool wasFirstNewLine = false;
 
             foreach (IEdge e in baseEdge.To)
-            {
-                if (km.BaseEdge != baseEdge && !km.MatchedEdges.Contains(e))
+            {                
+                if (km.BaseEdge != baseEdge && !km.MatchedEdges.Contains(e)) 
                 {
-                    if (wasFirstNewLine == false)
+                    KeywordMatch km_for_e = KeywordMatchedSubGraphEdges[e];
+
+                    if (wasFirstNewLine == false && km_for_e.IsStartInLocalRoot == false) //  && km_for_e.IsStartInLocalRoot==false XXX
                     {
                         tabTimes++;
                         wasFirstNewLine = true;
@@ -1383,8 +1386,8 @@ namespace m0.ZeroCode
                     if (CheckMatchForKeywordAndAddKeywordMatchIfThereIsMatch(edgeToCheck, path, edgeToCheck_parent, keyword.To))
                         thereWasMatch = true;
 
-            if(!thereWasMatch && !KeywordMatchedSubGraphEdges.ContainsKey(edgeToCheck))
-                CheckMatchForKeywordAndAddKeywordMatchIfThereIsMatch(edgeToCheck, path, edgeToCheck_parent, newVertexKeywordVertexList[0]);
+            //if(!thereWasMatch && !KeywordMatchedSubGraphEdges.ContainsKey(edgeToCheck)) // WE CAN HAVE KEYWORD MATCH FOR NEW VERTEX HERE
+              //  CheckMatchForKeywordAndAddKeywordMatchIfThereIsMatch(edgeToCheck, path, edgeToCheck_parent, newVertexKeywordVertexList[0]);
         }
 
         private bool CheckMatchForKeywordAndAddKeywordMatchIfThereIsMatch(IEdge edgeToCheck, string path, IEdge edgeToCheck_parent, IVertex keywordVertex)
@@ -1414,7 +1417,7 @@ namespace m0.ZeroCode
 
                 match.BaseEdgePathLength = getNumberOfOccurances(match.BaseEdgePath, '\\');
 
-                if (KeywordMatchedSubGraphEdges.ContainsKey(edgeToCheck_parent))
+                /*if (KeywordMatchedSubGraphEdges.ContainsKey(edgeToCheck_parent))
                 {
                     KeywordMatch match_parent = KeywordMatchedSubGraphEdges[edgeToCheck_parent];
 
@@ -1422,10 +1425,10 @@ namespace m0.ZeroCode
                         match.IsStartInLocalRoot = true;
                 }
                 else
-                {
+                {*/
                     if (!GraphUtil.GetValueAndCompareStrings(edgeToCheck.Meta, "$Empty") && match.DoKeywordDefinitionContainStartInLocalRoot)
                         match.IsStartInLocalRoot = true; // XXX this is done for "a"\
-                }
+                //} // XXX
 
                 foreach (IEdge e in matchedEdges)
                 {
