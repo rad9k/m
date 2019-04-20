@@ -1376,88 +1376,102 @@ namespace m0.ZeroCode
             //if (KeywordMatchedSubGraphEdges.ContainsKey(edgeToCheck))
             //   return;
 
-            //foreach (IEdge keyword in MinusZero.Instance.Root.GetAll(false, @"User\CurrentUser:\CodeSettings:\Keyword:\$Keyword:"))
+            bool thereWasMatch = false;
+
             foreach (IEdge keyword in FormalTextLanguage.GetAll(false, @"Keywords:\$Keyword:"))
                 if (!newVertexKeywordVertexList.Contains(keyword.To))
+                    if (CheckMatchForKeywordAndAddKeywordMatchIfThereIsMatch(edgeToCheck, path, edgeToCheck_parent, keyword.To))
+                        thereWasMatch = true;
+
+            if(!thereWasMatch && !KeywordMatchedSubGraphEdges.ContainsKey(edgeToCheck))
+                CheckMatchForKeywordAndAddKeywordMatchIfThereIsMatch(edgeToCheck, path, edgeToCheck_parent, newVertexKeywordVertexList[0]);
+        }
+
+        private bool CheckMatchForKeywordAndAddKeywordMatchIfThereIsMatch(IEdge edgeToCheck, string path, IEdge edgeToCheck_parent, IVertex keywordVertex)
+        {
+            bool thereWasMatch = false;
+
+            string newValueKeyword;
+
+            IList<IEdge> matchedEdges = MatchGraphs(edgeToCheck, keywordVertex, out newValueKeyword);
+
+            if (matchedEdges != null && matchedEdges.Count > 0)
+            {
+                thereWasMatch = true;
+                //if (((string)keyword.To.Value).StartsWith("\"(?< value >)\""))
+                //{
+                //    matchedEdges = MatchGraphs(edgeToCheck, keyword.To);
+                //}
+
+                KeywordMatch match = new KeywordMatch(keywordVertex, this);
+
+                if (newValueKeyword != null)
+                    match.newValue = newValueKeyword;
+
+                // match.BaseEdge = matchedEdges[0];
+                match.BaseEdge = edgeToCheck; // same as above
+                match.BaseEdgePath = path;
+
+                match.BaseEdgePathLength = getNumberOfOccurances(match.BaseEdgePath, '\\');
+
+                if (KeywordMatchedSubGraphEdges.ContainsKey(edgeToCheck_parent))
                 {
-                    string newValueKeyword;
+                    KeywordMatch match_parent = KeywordMatchedSubGraphEdges[edgeToCheck_parent];
 
-                    IList<IEdge> matchedEdges = MatchGraphs(edgeToCheck, keyword.To, out newValueKeyword);
-
-                if (matchedEdges!=null && matchedEdges.Count > 0)
+                    if (match_parent.DoKeywordDefinitionContainLocalRoot && match.DoKeywordDefinitionContainStartInLocalRoot)
+                        match.IsStartInLocalRoot = true;
+                }
+                else
                 {
-                        //if (((string)keyword.To.Value).StartsWith("\"(?< value >)\""))
-                        //{
-                        //    matchedEdges = MatchGraphs(edgeToCheck, keyword.To);
-                        //}
+                    if (!GraphUtil.GetValueAndCompareStrings(edgeToCheck.Meta, "$Empty") && match.DoKeywordDefinitionContainStartInLocalRoot)
+                        match.IsStartInLocalRoot = true; // XXX this is done for "a"\
+                }
 
-                    KeywordMatch match = new KeywordMatch(keyword.To, this);
+                foreach (IEdge e in matchedEdges)
+                {
+                    match.MatchedEdges.Add(e);
 
-                    if(newValueKeyword != null)
-                        match.newValue = newValueKeyword;
-
-                    // match.BaseEdge = matchedEdges[0];
-                    match.BaseEdge = edgeToCheck; // same as above
-                    match.BaseEdgePath = path;
-
-                    match.BaseEdgePathLength = getNumberOfOccurances(match.BaseEdgePath, '\\');
-
-                    if (KeywordMatchedSubGraphEdges.ContainsKey(edgeToCheck_parent))
+                    if (KeywordMatchedSubGraphEdges.ContainsKey(e))
                     {
-                        KeywordMatch match_parent = KeywordMatchedSubGraphEdges[edgeToCheck_parent];
+                        if (match.BaseEdge.To == e.To)
+                        {
+                            KeywordMatch oldMatch = KeywordMatchedSubGraphEdges[e];
 
-                        if (match_parent.DoKeywordDefinitionContainLocalRoot && match.DoKeywordDefinitionContainStartInLocalRoot)
-                            match.IsStartInLocalRoot = true;
-                    }
-                    else
-                    {
-                            if (!GraphUtil.GetValueAndCompareStrings(edgeToCheck.Meta, "$Empty") && match.DoKeywordDefinitionContainStartInLocalRoot)
-                                match.IsStartInLocalRoot = true; // XXX this is done for "a"\
-                    }
-
-                    foreach (IEdge e in matchedEdges)
-                    {
-                        match.MatchedEdges.Add(e);
-
-                        if (KeywordMatchedSubGraphEdges.ContainsKey(e))
-                        { 
-                            if(match.BaseEdge.To == e.To)
+                            if (oldMatch.BaseEdge == match.BaseEdge)
                             {
-                                KeywordMatch oldMatch = KeywordMatchedSubGraphEdges[e];
-
-                                if (oldMatch.BaseEdge == match.BaseEdge)
+                                if (match.BaseEdgePathLength < oldMatch.BaseEdgePathLength)
                                 {
-                                    if (match.BaseEdgePathLength < oldMatch.BaseEdgePathLength)
-                                    {
-                                        oldMatch.BaseEdgePath = match.BaseEdgePath;
-                                        oldMatch.BaseEdgePathLength = match.BaseEdgePathLength;
-                                    }
+                                    oldMatch.BaseEdgePath = match.BaseEdgePath;
+                                    oldMatch.BaseEdgePathLength = match.BaseEdgePathLength;
                                 }
-                                else
-                                {
-                                    KeywordMatchedSubGraphEdges.Remove(e);
-                                    KeywordMatchedSubGraphEdges.Add(e, match);
-                                }
-
-                                //KeywordMatch oldMatch = KeywordMatchedSubGraphEdges[e];
-
-                                //oldMatch.BaseEdgePath = match.BaseEdgePath;
-                                //oldMatch.BaseEdgePathLength = match.BaseEdgePathLength;
                             }
-
-                          /*  if (KeywordMatchedSubGraphEdges[e].BaseEdge.To != e.To
-                                || 
-                                && match.BaseEdgePathLength < KeywordMatchedSubGraphEdges[e].BaseEdgePathLength) 
+                            else
                             {
                                 KeywordMatchedSubGraphEdges.Remove(e);
                                 KeywordMatchedSubGraphEdges.Add(e, match);
-                            }*/
-                          
-                        }else
-                           KeywordMatchedSubGraphEdges.Add(e, match);
+                            }
+
+                            //KeywordMatch oldMatch = KeywordMatchedSubGraphEdges[e];
+
+                            //oldMatch.BaseEdgePath = match.BaseEdgePath;
+                            //oldMatch.BaseEdgePathLength = match.BaseEdgePathLength;
+                        }
+
+                        /*  if (KeywordMatchedSubGraphEdges[e].BaseEdge.To != e.To
+                              || 
+                              && match.BaseEdgePathLength < KeywordMatchedSubGraphEdges[e].BaseEdgePathLength) 
+                          {
+                              KeywordMatchedSubGraphEdges.Remove(e);
+                              KeywordMatchedSubGraphEdges.Add(e, match);
+                          }*/
+
                     }
+                    else
+                        KeywordMatchedSubGraphEdges.Add(e, match);
                 }
             }
+
+            return thereWasMatch;
         }
 
         public void GetLinksForSubGraphVertexes(IEdge e, string path, int nestedLevel)
