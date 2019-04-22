@@ -329,14 +329,14 @@ namespace m0
 
             GeneralUtil.ParseAndExcute(smu, sm,
                 "{Expression,Atom" +
-                ",SingleOperator{TargetExpression{$MinCardinality:1,$MaxCardinality:1}}" +
+                ",SingleOperator{NextExpression{$MinCardinality:1,$MaxCardinality:1}}" +
                 ",DoubleOperator{LeftExpression{$MinCardinality:1,$MaxCardinality:1},RightExpression{$MinCardinality:1,$MaxCardinality:1}}" +
-                ",MultiOperator{TargetExpression{$MinCardinality:1,$MaxCardinality:-1}}" +
+                ",MultiOperator{Expression{$MinCardinality:1,$MaxCardinality:-1}}" +
                 ",Query" +
                 //",NewVertex"+
                 ",[]" +
                 ",[[]]" +
-                ",\"{}\"{TargetExpression},+,-,\"* \",/,?,\"\\ \",\"|\",\"||\",(),<-,--" +
+                ",\"{}\",\"{CRLF}\",+,-,\"* \",/,?,\"\\ \",\"|\",\"||\",(),<-,--" +
                 ",Action,Return{Expression},NextOut{Next{$MinCardinality:0,$MaxCardinality:1}}" +
                 ",StackFrameCreator{Do{$MinCardinality:0,$MaxCardinality:1},Variable{$MinCardinality:0,$MaxCardinality:-1},Type{$MinCardinality:0,$MaxCardinality:-1}}" +
                 ",StackFrameCreatorWithInputOutput{Output{$MinCardinality:0,$MaxCardinality:1},InputParameter{$MinCardinality:0,$MaxCardinality:-1}}" +
@@ -367,6 +367,8 @@ namespace m0
             //smu.Get(false, @"NewVertex").AddEdge(sm.Get(false, "*$Inherits"), smu.Get(false, "SingleOperator"));
             smu.Get(false, @"[]").AddEdge(sm.Get(false, "*$Inherits"), smu.Get(false, "MultiOperator"));
             smu.Get(false, @"[[]]").AddEdge(sm.Get(false, "*$Inherits"), smu.Get(false, "MultiOperator"));
+            smu.Get(false, "\"{CRLF}\"").AddEdge(sm.Get(false, "*$Inherits"), smu.Get(false, "MultiOperator"));
+            smu.Get(false, "\"{}\"").AddEdge(sm.Get(false, "*$Inherits"), smu.Get(false, "SingleOperator"));
             smu.Get(false, "\"{}\"").AddEdge(sm.Get(false, "*$Inherits"), smu.Get(false, "MultiOperator"));
             smu.Get(false, @"+").AddEdge(sm.Get(false, "*$Inherits"), smu.Get(false, "DoubleOperator"));
             smu.Get(false, @"-").AddEdge(sm.Get(false, "*$Inherits"), smu.Get(false, "DoubleOperator"));
@@ -414,16 +416,16 @@ namespace m0
             //expression edges
             smu.Get(false, @"StackFrameCreatorWithInputOutput\InputParameter").AddEdge(sm.Get(false, @"*$VertexTarget"), smu.Get(false, @"Type"));
 
-            smu.Get(false, @"SingleOperator\TargetExpression").AddEdge(sm.Get(false, @"*$EdgeTarget"), smu.Get(false, @"Atom"));
+            smu.Get(false, @"SingleOperator\NextExpression").AddEdge(sm.Get(false, @"*$EdgeTarget"), smu.Get(false, @"Atom"));
             smu.Get(false, @"DoubleOperator\LeftExpression").AddEdge(sm.Get(false, @"*$EdgeTarget"), smu.Get(false, @"Atom"));
             smu.Get(false, @"DoubleOperator\RightExpression").AddEdge(sm.Get(false, @"*$EdgeTarget"), smu.Get(false, @"Atom"));
-            smu.Get(false, @"MultiOperator\TargetExpression").AddEdge(sm.Get(false, @"*$EdgeTarget"), smu.Get(false, @"Atom"));
+            smu.Get(false, @"MultiOperator\Expression").AddEdge(sm.Get(false, @"*$EdgeTarget"), smu.Get(false, @"Atom"));
 
             // $IsAggregation's for EdgeTargets
-            smu.Get(false, @"SingleOperator\TargetExpression").AddEdge(isAggregation, Empty);
+            smu.Get(false, @"SingleOperator\NextExpression").AddEdge(isAggregation, Empty);
             smu.Get(false, @"DoubleOperator\LeftExpression").AddEdge(isAggregation, Empty);
             smu.Get(false, @"DoubleOperator\RightExpression").AddEdge(isAggregation, Empty);
-            smu.Get(false, @"MultiOperator\TargetExpression").AddEdge(isAggregation, Empty);
+            smu.Get(false, @"MultiOperator\Expression").AddEdge(isAggregation, Empty);
 
 
             //rest edges
@@ -480,6 +482,7 @@ namespace m0
             //package.AddEdge(null, smu.Get(false, "NewVertex"));
             package.AddEdge(null, smu.Get(false, "[]"));
             package.AddEdge(null, smu.Get(false, "[[]]"));
+            package.AddEdge(null, smu.Get(false, "\"{CRLF}\""));
             package.AddEdge(null, smu.Get(false, "\"{}\""));
             package.AddEdge(null, smu.Get(false, "+"));
             package.AddEdge(null, smu.Get(false, "-"));
@@ -856,7 +859,7 @@ namespace m0
 
             IVertex o_colon_any_right = o_colon_any.AddVertex(smu.Get(false, @"DoubleOperator\RightExpression"), "(?<right_Empty2>)");
 
-            IVertex o_colon_any_targetExpr = o_colon_any.AddVertex(smu.Get(false, @"SingleOperator\TargetExpression"), "");            
+            IVertex o_colon_any_targetExpr = o_colon_any.AddVertex(smu.Get(false, @"SingleOperator\NextExpression"), "");            
 
             o_colon_any_targetExpr.AddEdge(smb.Get(false, "$$LocalRoot"), kgd_Slash);
 
@@ -899,7 +902,7 @@ namespace m0
 
             IVertex o_colon3_any_right = o_colon3_any.AddVertex(smu.Get(false, @"DoubleOperator\LeftExpression"), "(?<left_Atom>)");
 
-            IVertex o_colon3_any_target = o_colon3_any.AddVertex(smu.Get(false, @"SingleOperator\TargetExpression"), "");
+            IVertex o_colon3_any_target = o_colon3_any.AddVertex(smu.Get(false, @"SingleOperator\NextExpression"), "");
 
             o_colon3_any_target.AddVertex(smb.Get(false, "$$LocalRoot"), "AfterEmpty");*/
 
@@ -918,9 +921,9 @@ namespace m0
 
             IVertex o_doubleColon_any_right = o_doubleColon_any.AddVertex(smu.Get(false, @"DoubleOperator\RightExpression"), "(?<right_ColonEmptyNew>)");
 
-            IVertex o_doubleColon_any_targetExpr = o_doubleColon_any.AddVertex(smu.Get(false, @"SingleOperator\TargetExpression"), "");            
+            IVertex o_doubleColon_any_targetExpr = o_doubleColon_any.AddVertex(smu.Get(false, @"SingleOperator\NextExpression"), "");            
 
-            o_doubleColon_any_right.AddEdge(smb.Get(false, "$$LocalRoot"), kgd_InnerCreation);
+            o_doubleColon_any_targetExpr.AddEdge(smb.Get(false, "$$LocalRoot"), kgd_InnerCreation);
            
             // :: /2
             //
@@ -983,7 +986,7 @@ namespace m0
 
             o_par_any.AddEdge(smb.Get(false, @"Vertex\$Is"), smu.Get(false, "()"));
 
-             o_par_any.AddVertex(smu.Get(false, @"SingleOperator\TargetExpression"), "(?<expr>)");
+             o_par_any.AddVertex(smu.Get(false, @"SingleOperator\NextExpression"), "(?<expr>)");
      
             // \
             //
@@ -1001,7 +1004,7 @@ namespace m0
 
             o_Slash_any.AddEdge(smb.Get(false, @"Vertex\$Is"), smu.Get(false, "\"\\ \""));             
 
-             IVertex o_Slash_any_targetExpr = o_Slash_any.AddVertex(smu.Get(false, @"SingleOperator\TargetExpression"), "");
+             IVertex o_Slash_any_targetExpr = o_Slash_any.AddVertex(smu.Get(false, @"SingleOperator\NextExpression"), "");
 
             o_Slash_any_targetExpr.AddEdge(smb.Get(false, "$$LocalRoot"), kgd_ColonEmpty);
 
@@ -1018,7 +1021,7 @@ namespace m0
 
             o_InnerCreation_any.AddVertex(smb.Get(false, "$$StartInLocalRoot"), "");
 
-            o_InnerCreation_any.AddEdge(smb.Get(false, @"Vertex\$Is"), smu.Get(false, "\"{}\""));
+            o_InnerCreation_any.AddEdge(smb.Get(false, @"Vertex\$Is"), smu.Get(false, "\"{CRLF}\""));
 
             IVertex o_InnerCreation_any_param = o_InnerCreation_any.AddVertex(smu.Get(false, @"MultiOperator\Expression"), "(?<expr>)");
 
@@ -1040,7 +1043,7 @@ namespace m0
 
             o_Inner_any.AddEdge(smb.Get(false, @"Vertex\$Is"), smu.Get(false, "\"{}\""));
 
-            IVertex o_Inner_any_targetExpr = o_Inner_any.AddVertex(smu.Get(false, @"SingleOperator\TargetExpression"), "");
+            IVertex o_Inner_any_targetExpr = o_Inner_any.AddVertex(smu.Get(false, @"SingleOperator\NextExpression"), "");
 
             o_Inner_any_targetExpr.AddEdge(smb.Get(false, "$$LocalRoot"), kgd_Slash);
 
@@ -1058,7 +1061,7 @@ namespace m0
             
             IVertex newValueKeyword_any = newValueKeyword.AddVertex(any, "(?<value>)");            
 
-            IVertex newValueKeyword_any_targetExpr = newValueKeyword_any.AddVertex(smu.Get(false, @"SingleOperator\TargetExpression"), "");
+            IVertex newValueKeyword_any_targetExpr = newValueKeyword_any.AddVertex(smu.Get(false, @"SingleOperator\NextExpression"), "");
 
             newValueKeyword_any_targetExpr.AddEdge(smb.Get(false, "$$LocalRoot"), kgd_InnerCreation);
 
@@ -1083,7 +1086,7 @@ namespace m0
 
             empty1Keyword_any.AddEdge(smb.Get(false, @"Vertex\$Is"), smu.Get(false, "Query"));
 
-            IVertex empty1Keyword_any_targetExpr = empty1Keyword_any.AddVertex(smu.Get(false, @"SingleOperator\TargetExpression"), "");
+            IVertex empty1Keyword_any_targetExpr = empty1Keyword_any.AddVertex(smu.Get(false, @"SingleOperator\NextExpression"), "");
 
             empty1Keyword_any_targetExpr.AddEdge(smb.Get(false, "$$LocalRoot"), kgd_SlashInner);
 
@@ -1101,7 +1104,7 @@ namespace m0
 
             empty2Keyword_any.AddEdge(smb.Get(false, @"Vertex\$Is"), smu.Get(false, "Query"));
 
-            IVertex empty2Keyword_any_targetExpr = empty2Keyword_any.AddVertex(smu.Get(false, @"SingleOperator\TargetExpression"), "");
+            IVertex empty2Keyword_any_targetExpr = empty2Keyword_any.AddVertex(smu.Get(false, @"SingleOperator\NextExpression"), "");
 
             empty2Keyword_any_targetExpr.AddEdge(smb.Get(false, "$$LocalRoot"), kgd_Inner);
 
@@ -2294,7 +2297,7 @@ namespace m0
 
             AddDiagramLine_Combo(vSingleOperator,
        "Expression",
-       @"$Is:SingleOperator\TargetExpression",
+       @"$Is:SingleOperator\NextExpression",
        @"BaseEdge:\To:\$Is:Atom",
        sm.Get(false, @"*DiagramInternal\DiagramLine"),
        true,
@@ -2324,7 +2327,7 @@ namespace m0
 
             AddDiagramLine_Combo(vMultiOperator,
        "Expression",
-       @"$Is:MultiOperator\TargetExpression",
+       @"$Is:MultiOperator\Expression",
        @"BaseEdge:\To:\$Is:Atom",
        sm.Get(false, @"*DiagramInternal\DiagramLine"),
        true,
@@ -2829,6 +2832,7 @@ namespace m0
                 new PackageLine("[]","MultiOperator") ,
                 new PackageLine("[[]]","MultiOperator"),
                 new PackageLine("{}","MultiOperator"),
+                new PackageLine("{CRLF}","MultiOperator"),
                 new PackageLine("+","DoubleOperator"),
                 new PackageLine("-","DoubleOperator"),
                 new PackageLine("\"* \"","DoubleOperator"),
