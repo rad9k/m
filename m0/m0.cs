@@ -222,7 +222,7 @@ namespace m0
         {
             IVertex sm = Root.Get(false, @"System\Meta");
 
-            GeneralUtil.ParseAndExcute(sm, null, "{Base{Vertex{$IsLink,$Inherits,$Is,$EdgeTarget,$VertexTarget,$IsAggregation,$MinCardinality,$MaxCardinality,$MinTargetCardinality,$MaxTargetCardinality,$DefaultValue,$DefaultViewVisualiser,$DefaultEditVisualiser,$DefaultOpenVisualiser,$Group,$Section,$Description,Author,Dependency},$Empty,$Import,$ImportMeta,$Keyword,$$KeywordGroup,$$KeywordManyRoot,$$LocalRoot,$$StartInLocalRoot,$$EmptyKeyword,$$NewVertexKeyword,$NewLine,$ParseRoot,$ParseArtefacts}}");
+            GeneralUtil.ParseAndExcute(sm, null, "{Base{Vertex{$IsLink,$Inherits,$Is,$EdgeTarget,$VertexTarget,$IsAggregation,$MinCardinality,$MaxCardinality,$MinTargetCardinality,$MaxTargetCardinality,$DefaultValue,$DefaultViewVisualiser,$DefaultEditVisualiser,$DefaultOpenVisualiser,$Group,$Section,$Description,Author,Dependency},$Empty,$Import,$ImportMeta,$Keyword,$KeywordGroupDefinition,$$KeywordGroup,$$KeywordManyRoot,$$LocalRoot,$$StartInLocalRoot,$$EmptyKeyword,$$NewVertexKeyword,$NewLine,$ParseRoot,$ParseArtefacts}}");
 
             sm.Get(false, @"Presentation\$Hide").AddEdge(sm.Get(false, @"Base\Vertex\$EdgeTarget"), sm.Get(false, @"Base\Vertex"));
 
@@ -512,6 +512,9 @@ namespace m0
 
             IVertex keyword = smb.Get(false, @"$Keyword");
             IVertex keywordGroup = smb.Get(false, @"$$KeywordGroup");
+            IVertex keywordGroupDefinition = smb.Get(false, @"$KeywordGroupDefinition");
+
+            IVertex kgd_ColonEmptyNew = k.AddVertex(keywordGroupDefinition, "ColonEmptyNew");
 
             IVertex isAggregation = root.Get(false, @"System\Meta\Base\Vertex\$IsAggregation");
             IVertex empty = root.Get(false, @"System\Meta\Base\$Empty");
@@ -833,7 +836,7 @@ namespace m0
 
             IVertex o_colon = k.AddVertex(keyword, "(?<left_Empty2>)|(?<SUB>)(?<right_Empty2>)");
 
-            o_colon.AddVertex(keywordGroup, "ColonEmptyNew");
+            o_colon.AddVertex(keywordGroup, kgd_ColonEmptyNew);
 
             o_colon.AddVertex(keywordGroup, "ColonEmpty");            
 
@@ -1043,7 +1046,7 @@ namespace m0
 
             newValueKeyword.AddVertex(newVertexKeyword, "");
 
-            newValueKeyword.AddVertex(keywordGroup, "ColonEmptyNew");
+            newValueKeyword.AddEdge(keywordGroup, kgd_ColonEmptyNew);
             
             IVertex newValueKeyword_any = newValueKeyword.AddVertex(any, "(?<value>)");            
 
@@ -1062,9 +1065,9 @@ namespace m0
 
             empty1Keyword.AddVertex(emptyKeyword,"");
 
-            empty1Keyword.AddVertex(keywordGroup, "ColonEmptyNew");
+            empty1Keyword.AddEdge(keywordGroup, kgd_ColonEmptyNew);
 
-            empty1Keyword.AddVertex(keywordGroup, "ColonEmpty");
+            empty1Keyword.AddEdge(keywordGroup, kgd_ColonEmpty);
 
             IVertex empty1Keyword_any = empty1Keyword.AddVertex(any, "(?<value>)");
 
@@ -1074,7 +1077,7 @@ namespace m0
 
             IVertex empty1Keyword_any_targetExpr = empty1Keyword_any.AddVertex(smu.Get(false, @"SingleOperator\TargetExpression"), "");
 
-            empty1Keyword_any_targetExpr.AddVertex(smb.Get(false, "$$LocalRoot"), "SlashInner");
+            empty1Keyword_any_targetExpr.AddVertex(smb.Get(false, "$$LocalRoot"), kgd_SlashInner);
 
             // E M P T Y :) K E Y W O R D 2
             //
@@ -1084,7 +1087,7 @@ namespace m0
             
             empty2Keyword.AddVertex(emptyKeyword, "");
 
-            empty2Keyword.AddVertex(keywordGroup, "Empty2");            
+            empty2Keyword.AddVertex(keywordGroup, kgd_Empty2);            
 
             IVertex empty2Keyword_any = empty2Keyword.AddVertex(any, "(?<value>)");            
 
@@ -1092,7 +1095,7 @@ namespace m0
 
             IVertex empty2Keyword_any_targetExpr = empty2Keyword_any.AddVertex(smu.Get(false, @"SingleOperator\TargetExpression"), "");
 
-            empty2Keyword_any_targetExpr.AddVertex(smb.Get(false, "$$LocalRoot"), "Inner");
+            empty2Keyword_any_targetExpr.AddVertex(smb.Get(false, "$$LocalRoot"), kgd_Inner);
 
             //TEST
 
