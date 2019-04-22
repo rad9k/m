@@ -918,6 +918,8 @@ namespace m0
 
             IVertex o_doubleColon_any_right = o_doubleColon_any.AddVertex(smu.Get(false, @"DoubleOperator\RightExpression"), "(?<right_ColonEmptyNew>)");
 
+            IVertex o_doubleColon_any_targetExpr = o_doubleColon_any.AddVertex(smu.Get(false, @"SingleOperator\TargetExpression"), "");            
+
             o_doubleColon_any_right.AddEdge(smb.Get(false, "$$LocalRoot"), kgd_InnerCreation);
            
             // :: /2
