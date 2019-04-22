@@ -928,7 +928,7 @@ namespace m0
             // :: /2
             //
             // ||(?<SUB>)(?<right_QueryPart>)                         
-
+             
 /*            IVertex o_doubleColon2 = k.AddVertex(keyword, "||(?<SUB>)(?<right_Colon>)");
 
              IVertex o_doubleColon2_any = o_doubleColon2.AddVertex(any, "");
