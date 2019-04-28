@@ -328,12 +328,11 @@ namespace m0
             // "||" > "::"        
 
             GeneralUtil.ParseAndExcute(smu, sm,
-                "{Expression,Atom" +
+                "{ExpressionAtom,Atom" +
                 ",SingleOperator{NextExpression{$MinCardinality:1,$MaxCardinality:1}}" +
                 ",DoubleOperator{LeftExpression{$MinCardinality:1,$MaxCardinality:1},RightExpression{$MinCardinality:1,$MaxCardinality:1}}" +
                 ",MultiOperator{Expression{$MinCardinality:1,$MaxCardinality:-1}}" +
                 ",Query" +
-                //",NewVertex"+
                 ",[]" +
                 ",[[]]" +
                 ",\"{}\",\"{CRLF}\",+,-,\"* \",/,?,\"\\ \",\"|\",\"||\",(),<-,--" +
@@ -357,11 +356,11 @@ namespace m0
 
 
             // expression inherits
-            smu.Get(false, @"Expression").AddEdge(sm.Get(false, "*$Inherits"), smu.Get(false, "Atom"));
-            smu.Get(false, @"Expression").AddEdge(sm.Get(false, "*$Inherits"), smu.Get(false, "NextOut"));
-            smu.Get(false, @"SingleOperator").AddEdge(sm.Get(false, "*$Inherits"), smu.Get(false, "Expression"));
-            smu.Get(false, @"DoubleOperator").AddEdge(sm.Get(false, "*$Inherits"), smu.Get(false, "Expression"));
-            smu.Get(false, @"MultiOperator").AddEdge(sm.Get(false, "*$Inherits"), smu.Get(false, "Expression"));
+            smu.Get(false, @"ExpressionAtom").AddEdge(sm.Get(false, "*$Inherits"), smu.Get(false, "Atom"));
+            smu.Get(false, @"ExpressionAtom").AddEdge(sm.Get(false, "*$Inherits"), smu.Get(false, "NextOut"));
+            smu.Get(false, @"SingleOperator").AddEdge(sm.Get(false, "*$Inherits"), smu.Get(false, "ExpressionAtom"));
+            smu.Get(false, @"DoubleOperator").AddEdge(sm.Get(false, "*$Inherits"), smu.Get(false, "ExpressionAtom"));
+            smu.Get(false, @"MultiOperator").AddEdge(sm.Get(false, "*$Inherits"), smu.Get(false, "ExpressionAtom"));
 
             smu.Get(false, @"Query").AddEdge(sm.Get(false, "*$Inherits"), smu.Get(false, "SingleOperator"));
             //smu.Get(false, @"NewVertex").AddEdge(sm.Get(false, "*$Inherits"), smu.Get(false, "SingleOperator"));
@@ -522,7 +521,7 @@ namespace m0
             IVertex kgd_Empty2 = k.AddVertex(keywordGroupDefinition, "Empty2");
             IVertex kgd_InnerCreation = k.AddVertex(keywordGroupDefinition, "InnerCreation");
             IVertex kgd_Slash = k.AddVertex(keywordGroupDefinition, "Slash");
-            IVertex kgd_SlashInner = k.AddVertex(keywordGroupDefinition, "SlashInner");
+            IVertex kgd_SlashInner2 = k.AddVertex(keywordGroupDefinition, "SlashInner2");
             IVertex kgd_Inner = k.AddVertex(keywordGroupDefinition, "Inner");
 
             IVertex isAggregation = root.Get(false, @"System\Meta\Base\Vertex\$IsAggregation");
@@ -1035,8 +1034,6 @@ namespace m0
 
             o_Inner.AddEdge(keywordGroup, kgd_Inner);
 
-            o_Inner.AddEdge(keywordGroup, kgd_SlashInner);
-
             IVertex o_Inner_any = o_Inner.AddVertex(any, anyString);
 
             o_Inner_any.AddVertex(smb.Get(false, "$$StartInLocalRoot"), "");
@@ -1045,7 +1042,23 @@ namespace m0
 
             IVertex o_Inner_any_targetExpr = o_Inner_any.AddVertex(smu.Get(false, @"SingleOperator\NextExpression"), "");
 
-            o_Inner_any_targetExpr.AddEdge(smb.Get(false, "$$LocalRoot"), kgd_Slash);
+            // {}            
+            //
+            // {(*(+,+)(?<expr>)*)}
+
+            IVertex o_Inner2 = k.AddVertex(keyword, "{}");
+
+            o_Inner2.AddEdge(keywordGroup, kgd_SlashInner2);
+
+            IVertex o_Inner2_any = o_Inner.AddVertex(any, anyString);
+
+            o_Inner2_any.AddVertex(smb.Get(false, "$$StartInLocalRoot"), "");
+
+            o_Inner2_any.AddEdge(smb.Get(false, @"Vertex\$Is"), smu.Get(false, "\"{}\""));
+
+            IVertex o_Inner2_any_targetExpr = o_Inner2_any.AddVertex(smu.Get(false, @"SingleOperator\NextExpression"), "");
+
+            o_Inner2_any_targetExpr.AddEdge(smb.Get(false, "$$LocalRoot"), kgd_Slash);
 
             // ""
             //
@@ -1088,7 +1101,7 @@ namespace m0
 
             IVertex empty1Keyword_any_targetExpr = empty1Keyword_any.AddVertex(smu.Get(false, @"SingleOperator\NextExpression"), "");
 
-            empty1Keyword_any_targetExpr.AddEdge(smb.Get(false, "$$LocalRoot"), kgd_SlashInner);
+            empty1Keyword_any_targetExpr.AddEdge(smb.Get(false, "$$LocalRoot"), kgd_SlashInner2);
 
             // E M P T Y :) K E Y W O R D 2
             //
@@ -2156,7 +2169,7 @@ namespace m0
              -1, 0, 0, 0);
         }
 
-        void AddOutput(IVertex diagramItem)
+       /* void AddOutput(IVertex diagramItem) // not used now, but might :/ be inspiring in future
         {
             IVertex sm = Root.Get(false, @"System\Meta");
 
@@ -2173,7 +2186,7 @@ namespace m0
               -1, false,
              -1, 0, 0, 0,
              -1, 0, 0, 0);
-        }
+        }*/
 
         void CreateSystemDataVisualiserDiagram_Uml()
         {

@@ -1162,6 +1162,12 @@ namespace m0.ZeroCode
                         {
                             tryEmptyKeyword = foundString;
 
+                            if (foundString == "b")
+                            {
+                                int x = 0;
+                            }
+
+
                             specialType = SpecialKeywordType.EmptyKeyword;
 
                             sPos++; // hmmm ????
@@ -1211,7 +1217,7 @@ namespace m0.ZeroCode
                 }
 
 
-                if (c1089 || ((possible_emptyKeywordByKeywordsFilter!=null || possible_newVertexKeywordByKeywordsFilter!=null) && keywordsFilter!="")
+                if (c1089 && ((possible_emptyKeywordByKeywordsFilter!=null || possible_newVertexKeywordByKeywordsFilter!=null) && keywordsFilter!="")
                     //_specialKeywordGroups_empty.Contains(keywordsFilter) // A
                     /*keywordsFilter=="Atom"*/) // B
                     //( (afterKeywordPartExist && sPos_copy == endPos_forAtomParts && isPrevStartPosSameAsStartPos)
@@ -2110,11 +2116,15 @@ namespace m0.ZeroCode
             return s.IndexOf("::");            
         }
 
-        private bool isSpecialKeyword(string keyword)
+        private bool isSpecialKeyword(IVertex keyword)
         {
-            if (GeneralUtil.CompareStrings("(?<value>)", keyword)
-                    || GeneralUtil.CompareStrings("\"(?<value>)\"", keyword))
+            if (keyword.Get(false, "$$EmptyKeyword:") != null)
                 return true;
+
+            if (keyword.Get(false, "$$NewVertexKeyword:") != null)
+                return true;
+
+         
 
             return false;
         }
@@ -2148,7 +2158,7 @@ namespace m0.ZeroCode
             {
                 keywordTryingData ktd = new keywordTryingData(keyword.To, this);
 
-                if (!isSpecialKeyword((string)keyword.To.Value))
+                if (!isSpecialKeyword(keyword.To))
                 {
                     // examinedKeywords_All
 
