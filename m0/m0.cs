@@ -995,7 +995,7 @@ namespace m0
 
             o_Slash.AddEdge(keywordGroup, kgd_Slash);
 
-            o_Slash.AddEdge(keywordGroup, kgd_SlashInner);
+            o_Slash.AddEdge(keywordGroup, kgd_SlashInner2);
 
             IVertex o_Slash_any = o_Slash.AddVertex(any, "");
 
@@ -1040,8 +1040,6 @@ namespace m0
 
             o_Inner_any.AddEdge(smb.Get(false, @"Vertex\$Is"), smu.Get(false, "\"{}\""));
 
-            IVertex o_Inner_any_targetExpr = o_Inner_any.AddVertex(smu.Get(false, @"SingleOperator\NextExpression"), "");
-
             // {}            
             //
             // {(*(+,+)(?<expr>)*)}
@@ -1050,7 +1048,7 @@ namespace m0
 
             o_Inner2.AddEdge(keywordGroup, kgd_SlashInner2);
 
-            IVertex o_Inner2_any = o_Inner.AddVertex(any, anyString);
+            IVertex o_Inner2_any = o_Inner2.AddVertex(any, anyString);
 
             o_Inner2_any.AddVertex(smb.Get(false, "$$StartInLocalRoot"), "");
 

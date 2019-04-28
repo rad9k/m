@@ -104,7 +104,7 @@ namespace m0.Graph
         {
             get
             {
-                if(OutEdgesDictionariesNeedsRebuild_Edges)
+                if (OutEdgesDictionariesNeedsRebuild_Edges)
                 {
                     OutEdgesDictionariesRebuild_Edges();                    
                     return _OutEdges;
