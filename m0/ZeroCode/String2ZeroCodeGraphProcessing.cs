@@ -1672,33 +1672,29 @@ namespace m0.ZeroCode
                 examinedKeywords = examinedKeywords.Where(m => m.state == keywordTryingState.matched
                     && m.matchedOnPositionInText == maxMatchedOnPositionInText).ToList();
 
-                /////////////////////////////////////////////////////
-                //                                                 //
-                //    >   >  > >> A S S U M P T I O N <<<  <   <   //
-                //                                                 //
-                /////////////////////////////////////////////////////
-
-                // WE ASSUME THAT ONLY examinedKeywords[0] will be used further
-
-                //
-
-                if(examinedKeywords.Count > 1)
-                {
-                    int x = 0;
-                }
+                keywordTryingData maxKtd = null;
+                int maxKtdSpos = -1;
 
                 if (examinedKeywords.Count > 0)
                 {
+                    int savedSpos = sPos;
 
-                    keywordTryingData ktd = examinedKeywords[0]; // ASSUMPTION
-
-                    if (ktd.matchedOnPositionInText <= s.currentLineInfo.lineEnd)
+                    foreach(keywordTryingData ktd in examinedKeywords)
                     {
-                        // MIGHT BE NEEDED !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-                        //sPos = CheckIfThereIsSubTextAndProcessIt(s, endPos, null, ktd, sPos);
+                        if (ktd.matchedOnPositionInText <= s.currentLineInfo.lineEnd)
+                        {
+                            // MIGHT BE NEEDED !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+                            //sPos = CheckIfThereIsSubTextAndProcessIt(s, endPos, null, ktd, sPos);
 
-                        sPos = _tryIsNextLocalRootKeyword(s, LOGPREFIX, sPos, ktd.matchedOnPositionInText + 1, ktd, isSpaceNext);
-                    }
+                            sPos = _tryIsNextLocalRootKeyword(s, LOGPREFIX, savedSpos, ktd.matchedOnPositionInText + 1, ktd, isSpaceNext);
+                        }
+
+                        if(maxKtd == null || sPos > maxKtdSpos)
+                        {
+                            maxKtd = ktd;
+                            maxKtdSpos = sPos;
+                        }
+                    }                    
                 }
                 //
 

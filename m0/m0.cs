@@ -535,7 +535,7 @@ namespace m0
             IVertex newVertexKeyword = smb.Get(false, "$$NewVertexKeyword");
 
             string anyString = "(?<ANY>)";
-            
+            /*
             // import meta
             //
             // import meta (?<name>) (?<link>)
@@ -960,7 +960,7 @@ namespace m0
             /////////////////////////////////////////////////////////////////////////////////////////////////////////////
             /////////////////////////////////////////////////////////////////////////////////////////////////////////////
             /////////////////////////////////////////////////////////////////////////////////////////////////////////////
-            
+            /*
             // []
             //
             // [(*(+, +) (?<expr>)*)]
@@ -1029,12 +1029,14 @@ namespace m0
             // {}            
             //
             // {(*(+,+)(?<expr>)*)}
-
+            */
             IVertex o_Inner = k.AddVertex(keyword, "{}");
 
             o_Inner.AddEdge(keywordGroup, kgd_Inner);
 
             IVertex o_Inner_any = o_Inner.AddVertex(any, anyString);
+
+            o_Inner.AddVertex(empty, "raz");
 
             o_Inner_any.AddVertex(smb.Get(false, "$$StartInLocalRoot"), "");
 
@@ -1049,6 +1051,8 @@ namespace m0
             o_Inner2.AddEdge(keywordGroup, kgd_SlashInner2);
 
             IVertex o_Inner2_any = o_Inner2.AddVertex(any, anyString);
+
+            o_Inner2.AddVertex(empty, "dwa");
 
             o_Inner2_any.AddVertex(smb.Get(false, "$$StartInLocalRoot"), "");
 
@@ -1104,7 +1108,7 @@ namespace m0
             // E M P T Y :) K E Y W O R D 2
             //
             //
-
+            /*
             IVertex empty2Keyword = k.AddVertex(keyword, "(?<value>)");
             
             empty2Keyword.AddVertex(emptyKeyword, "");
@@ -1132,7 +1136,7 @@ namespace m0
             IVertex bKeyword = k.AddVertex(keyword, "A(?<v_b>)A");            
 
             bKeyword.AddVertex(any, "(?<v_b>)").AddVertex(any, "AA");*/
-
+            
 
 
         }
