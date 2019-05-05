@@ -1694,7 +1694,10 @@ namespace m0.ZeroCode
                             maxKtd = ktd;
                             maxKtdSpos = sPos;
                         }
-                    }                    
+                    }
+
+                    examinedKeywords = new List<keywordTryingData>();
+                    examinedKeywords.Add(maxKtd);
                 }
                 //
 
