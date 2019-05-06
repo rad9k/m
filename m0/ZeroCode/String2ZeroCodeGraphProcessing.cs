@@ -937,36 +937,41 @@ namespace m0.ZeroCode
 
         enum SpecialKeywordType { EmptyKeyword, NewVertexKeyword}
 
-        keywordTryingData createSpecialKeyword(ParsingStack s, string value, int matchedOnPositionInText, SpecialKeywordType type, IVertex possible_newVertexKeyword, IVertex possible_emptyKeyword)
-        {            
-            IVertex toUseVertex=null;
+        IList<keywordTryingData> createSpecialKeyword(ParsingStack s, string value, int matchedOnPositionInText, SpecialKeywordType type, IList<IVertex> possible_newVertexKeyword, IList<IVertex> possible_emptyKeyword)
+        {
+            List<keywordTryingData> ktdListToReturn = new List<keywordTryingData>();
+
+            IList<IVertex> toUseVertexList=null;
 
             switch (type)
             {
                 case SpecialKeywordType.EmptyKeyword:                    
-                     toUseVertex = possible_emptyKeyword;                     
+                     toUseVertexList = possible_emptyKeyword;                     
                     break;
 
                 case SpecialKeywordType.NewVertexKeyword:                    
-                    toUseVertex = possible_newVertexKeyword;                     
+                    toUseVertexList = possible_newVertexKeyword;                     
                     break;
             }
 
-            if (toUseVertex == null)
-                return null;
+            if (toUseVertexList == null)
+                return ktdListToReturn;
 
-            keywordTryingData ktd = new keywordTryingData(toUseVertex, this);
+            foreach(IVertex keywordVertex in toUseVertexList)
+            {
+                keywordTryingData ktd = new keywordTryingData(keywordVertex, this);
 
-            ktd.matchedOnPositionInText = matchedOnPositionInText;
+                ktd.matchedOnPositionInText = matchedOnPositionInText;
 
-            List<object> l = new List<object>();
-            l.Add(value);
+                List<object> l = new List<object>();
+                l.Add(value);
 
-            ktd.parameters.Add("value", l);
+                ktd.parameters.Add("value", l);
 
-            //ktd.AddParameter("value", value); // been tested with above // no lastparam modification
-
-            return ktd;
+                ktdListToReturn.Add(ktd);
+            }
+            
+            return ktdListToReturn;
         }
 
         class ParameterChache
@@ -1100,8 +1105,8 @@ namespace m0.ZeroCode
 
             SpecialKeywordType specialType = SpecialKeywordType.NewVertexKeyword; // got to intialize
 
-            IVertex possible_emptyKeywordByKeywordsFilter = null;
-            IVertex possible_newVertexKeywordByKeywordsFilter = null;
+            IList<IVertex> possible_emptyKeyworsByKeywordsFilter;
+            IList<IVertex> possible_newVertexKeywordsByKeywordsFilter;
 
             //
 
@@ -1162,12 +1167,6 @@ namespace m0.ZeroCode
                         {
                             tryEmptyKeyword = foundString;
 
-                            if (foundString == "b")
-                            {
-                                int x = 0;
-                            }
-
-
                             specialType = SpecialKeywordType.EmptyKeyword;
 
                             sPos++; // hmmm ????
@@ -1198,26 +1197,19 @@ namespace m0.ZeroCode
                 }
 
                 // !!!!!!!!!!!!!!!!!!!!!!! A or B ! YOU DECIDE. I do not know :)
-                
+
 
                 if (emptyKeywordByGroupsDictionary.ContainsKey(keywordsFilter))
-                {
-                    IList<IVertex> list = emptyKeywordByGroupsDictionary[keywordsFilter];
-
-                    if (list.Count > 0)
-                        possible_emptyKeywordByKeywordsFilter = list[0];
-                }
+                    possible_emptyKeyworsByKeywordsFilter = emptyKeywordByGroupsDictionary[keywordsFilter];
+                else
+                    possible_emptyKeyworsByKeywordsFilter = new List<IVertex>();
 
                 if (newVertexKeywordByGroupsDictionary.ContainsKey(keywordsFilter))
-                {
-                    IList<IVertex> list = newVertexKeywordByGroupsDictionary[keywordsFilter];
-
-                    if (list.Count > 0)
-                        possible_newVertexKeywordByKeywordsFilter = list[0];
-                }
-
-
-                if (c1089 && ((possible_emptyKeywordByKeywordsFilter!=null || possible_newVertexKeywordByKeywordsFilter!=null) && keywordsFilter!="")
+                    possible_newVertexKeywordsByKeywordsFilter = newVertexKeywordByGroupsDictionary[keywordsFilter];
+                else
+                    possible_newVertexKeywordsByKeywordsFilter = new List<IVertex>();
+                
+                if (c1089 && ((possible_emptyKeyworsByKeywordsFilter!=null || possible_newVertexKeywordsByKeywordsFilter!=null) && keywordsFilter!="")
                     //_specialKeywordGroups_empty.Contains(keywordsFilter) // A
                     /*keywordsFilter=="Atom"*/) // B
                     //( (afterKeywordPartExist && sPos_copy == endPos_forAtomParts && isPrevStartPosSameAsStartPos)
@@ -1232,7 +1224,12 @@ namespace m0.ZeroCode
 
                     if (tryEmptyKeyword != null)
                     {
-                        keywordTryingData ktd = createSpecialKeyword(s, tryEmptyKeyword, sPos - 1, specialType, possible_newVertexKeywordByKeywordsFilter, possible_emptyKeywordByKeywordsFilter);
+                        IList<keywordTryingData> ktdList = createSpecialKeyword(s, tryEmptyKeyword, sPos - 1, specialType, possible_newVertexKeywordsByKeywordsFilter, possible_emptyKeyworsByKeywordsFilter);
+
+                        keywordTryingData maxKtd = null;
+                        int maxKtdSpos = -1;
+
+                        foreach()
 
                         if (ktd != null)
                         {
@@ -1715,7 +1712,7 @@ namespace m0.ZeroCode
 
                 if (tryEmptyKeyword != null)
                 {
-                    keywordTryingData ktd = createSpecialKeyword(s, tryEmptyKeyword, tryNewPos - 1,  specialType, possible_newVertexKeywordByKeywordsFilter, possible_emptyKeywordByKeywordsFilter);
+                    keywordTryingData ktd = createSpecialKeyword(s, tryEmptyKeyword, tryNewPos - 1,  specialType, possible_newVertexKeywordsByKeywordsFilter, possible_emptyKeyworsByKeywordsFilter);
 
                     if (ktd != null)
                     {
