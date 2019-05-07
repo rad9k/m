@@ -1105,8 +1105,8 @@ namespace m0.ZeroCode
 
             SpecialKeywordType specialType = SpecialKeywordType.NewVertexKeyword; // got to intialize
 
-            IList<IVertex> possible_emptyKeyworsByKeywordsFilter;
-            IList<IVertex> possible_newVertexKeywordsByKeywordsFilter;
+            IList<IVertex> possible_emptyKeyworsByKeywordsFilter = new List<IVertex>(); ;
+            IList<IVertex> possible_newVertexKeywordsByKeywordsFilter = new List<IVertex>(); ;
 
             //
 
@@ -1200,14 +1200,10 @@ namespace m0.ZeroCode
 
 
                 if (emptyKeywordByGroupsDictionary.ContainsKey(keywordsFilter))
-                    possible_emptyKeyworsByKeywordsFilter = emptyKeywordByGroupsDictionary[keywordsFilter];
-                else
-                    possible_emptyKeyworsByKeywordsFilter = new List<IVertex>();
+                    possible_emptyKeyworsByKeywordsFilter = emptyKeywordByGroupsDictionary[keywordsFilter];                
 
                 if (newVertexKeywordByGroupsDictionary.ContainsKey(keywordsFilter))
-                    possible_newVertexKeywordsByKeywordsFilter = newVertexKeywordByGroupsDictionary[keywordsFilter];
-                else
-                    possible_newVertexKeywordsByKeywordsFilter = new List<IVertex>();
+                    possible_newVertexKeywordsByKeywordsFilter = newVertexKeywordByGroupsDictionary[keywordsFilter];                
                 
                 if (c1089 && ((possible_emptyKeyworsByKeywordsFilter!=null || possible_newVertexKeywordsByKeywordsFilter!=null) && keywordsFilter!="")
                     //_specialKeywordGroups_empty.Contains(keywordsFilter) // A
@@ -1227,26 +1223,27 @@ namespace m0.ZeroCode
                         IList<keywordTryingData> ktdList = createSpecialKeyword(s, tryEmptyKeyword, sPos - 1, specialType, possible_newVertexKeywordsByKeywordsFilter, possible_emptyKeyworsByKeywordsFilter);
 
                         keywordTryingData maxKtd = null;
-                        int maxKtdSpos = -1;
+                        int maxKtdNewPos = -1;
 
-                        foreach()
-
-                        if (ktd != null)
+                        foreach (keywordTryingData ktd in ktdList)
                         {
-                            //
-
                             // MIGHT BE NEEDED !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
                             //sPos = CheckIfThereIsSubTextAndProcessIt(s, endPos, null, ktd, sPos);
 
                             newPos = _tryIsNextLocalRootKeyword(s, LOGPREFIX, newPos, sPos, ktd, isSpaceNext);
 
-                            //
-
-                            examinedKeywords.Add(ktd);
+                            if (maxKtd == null || newPos > maxKtdNewPos)
+                            {
+                                maxKtd = ktd;
+                                maxKtdNewPos = newPos;
+                            }
                         }
+
+                        if (maxKtd != null)
+                            examinedKeywords.Add(maxKtd);
+
+                        MinusZero.Instance.Log(1, "_tryIsKeyword", LOGPREFIX + "RETURN:" + tryEmptyKeyword + " newPos:" + newPos);
                     }
-                    
-                    MinusZero.Instance.Log(1, "_tryIsKeyword", LOGPREFIX + "RETURN:" + tryEmptyKeyword + " newPos:" + newPos);
 
                     return;
                 }
@@ -1712,19 +1709,23 @@ namespace m0.ZeroCode
 
                 if (tryEmptyKeyword != null)
                 {
-                    keywordTryingData ktd = createSpecialKeyword(s, tryEmptyKeyword, tryNewPos - 1,  specialType, possible_newVertexKeywordsByKeywordsFilter, possible_emptyKeyworsByKeywordsFilter);
+                    IList<keywordTryingData> ktdList = createSpecialKeyword(s, tryEmptyKeyword, tryNewPos - 1,  specialType, possible_newVertexKeywordsByKeywordsFilter, possible_emptyKeyworsByKeywordsFilter);
 
-                    if (ktd != null)
+                    keywordTryingData maxKtd = null;
+                    int maxKtdNewPos = -1;
+
+                    if (ktdList.Count > 0) // not sure if we have to, but to act as old code
                     {
-                        ParsingStack copy = s;
+                        // ParsingStack copy = s; // ?????
 
                         //s = tryEmptyKeywordStack; // THIS DOES NOT WORK // GET THE STACK FROM COPY
 
                         s.lineNo = tryEmptyKeywordStack_LineNoMemory;
                         s.parseNextLine();
+                    }
 
-                        //
-
+                    foreach (keywordTryingData ktd in ktdList)
+                    {                                                
                         int _newPos = CheckIfThereIsSubTextAndProcessIt(s, endPos, null, ktd, newPos - 2);
 
                         if (_newPos > newPos - 2)
@@ -1732,10 +1733,15 @@ namespace m0.ZeroCode
 
                         newPos = _tryIsNextLocalRootKeyword(s, LOGPREFIX, newPos, newPos, ktd, isSpaceNext);
 
-                        //
-
-                        examinedKeywords.Add(ktd);
+                        if (maxKtd == null || newPos > maxKtdNewPos)
+                        {
+                            maxKtd = ktd;
+                            maxKtdNewPos = newPos;
+                        }
                     }
+
+                    if (maxKtd != null)
+                        examinedKeywords.Add(maxKtd);                    
                 }
             }else
                 newPos = sPos;
