@@ -517,7 +517,7 @@ namespace m0
             IVertex keywordGroupDefinition = smb.Get(false, @"$KeywordGroupDefinition");
 
             IVertex kgd_ColonEmptyNew = k.AddVertex(keywordGroupDefinition, "ColonEmptyNew");
-            IVertex kgd_ColonEmpty = k.AddVertex(keywordGroupDefinition, "ColonEmpty");
+            IVertex kgd_ColonEmptySlash = k.AddVertex(keywordGroupDefinition, "ColonEmpty");
             IVertex kgd_Empty2 = k.AddVertex(keywordGroupDefinition, "Empty2");
             IVertex kgd_InnerCreation = k.AddVertex(keywordGroupDefinition, "InnerCreation");
             IVertex kgd_Slash = k.AddVertex(keywordGroupDefinition, "Slash");
@@ -846,7 +846,7 @@ namespace m0
 
             o_colon.AddEdge(keywordGroup, kgd_ColonEmptyNew);
 
-            o_colon.AddEdge(keywordGroup, kgd_ColonEmpty);            
+            o_colon.AddEdge(keywordGroup, kgd_ColonEmptySlash);            
 
             IVertex o_colon_any = o_colon.AddVertex(any, "");
 
@@ -997,6 +997,8 @@ namespace m0
 
             o_Slash.AddEdge(keywordGroup, kgd_SlashInner2);
 
+            o_Slash.AddEdge(keywordGroup, kgd_ColonEmptySlash);
+
             IVertex o_Slash_any = o_Slash.AddVertex(any, "");
 
             o_Slash_any.AddVertex(smb.Get(false, "$$StartInLocalRoot"), "");
@@ -1005,7 +1007,7 @@ namespace m0
 
              IVertex o_Slash_any_targetExpr = o_Slash_any.AddVertex(smu.Get(false, @"SingleOperator\NextExpression"), "");
 
-            o_Slash_any_targetExpr.AddEdge(smb.Get(false, "$$LocalRoot"), kgd_ColonEmpty);
+            o_Slash_any_targetExpr.AddEdge(smb.Get(false, "$$LocalRoot"), kgd_ColonEmptySlash);
             
             // {
             // }
@@ -1093,7 +1095,7 @@ namespace m0
 
             empty1Keyword.AddEdge(keywordGroup, kgd_ColonEmptyNew);
 
-            empty1Keyword.AddEdge(keywordGroup, kgd_ColonEmpty);
+            empty1Keyword.AddEdge(keywordGroup, kgd_ColonEmptySlash);
 
             IVertex empty1Keyword_any = empty1Keyword.AddVertex(any, "(?<value>)");
 
