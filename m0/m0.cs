@@ -517,7 +517,7 @@ namespace m0
             IVertex keywordGroupDefinition = smb.Get(false, @"$KeywordGroupDefinition");
 
             IVertex kgd_ColonEmptyNew = k.AddVertex(keywordGroupDefinition, "ColonEmptyNew");
-            IVertex kgd_ColonEmptySlash = k.AddVertex(keywordGroupDefinition, "ColonEmpty");
+            IVertex kgd_ColonEmptySlash = k.AddVertex(keywordGroupDefinition, "ColonEmptySlash");
             IVertex kgd_Empty2 = k.AddVertex(keywordGroupDefinition, "Empty2");
             IVertex kgd_InnerCreation = k.AddVertex(keywordGroupDefinition, "InnerCreation");
             IVertex kgd_Slash = k.AddVertex(keywordGroupDefinition, "Slash");
