@@ -535,7 +535,7 @@ namespace m0
             IVertex newVertexKeyword = smb.Get(false, "$$NewVertexKeyword");
 
             string anyString = "(?<ANY>)";
-            
+            /*
             // import meta
             //
             // import meta (?<name>) (?<link>)
@@ -909,7 +909,7 @@ namespace m0
             // :: /1
             //
             // (?<left_ColonEmptyNew>)||(?<SUB>)(?<right_ColonEmptyNew>)                         
-
+/*
             IVertex o_doubleColon = k.AddVertex(keyword, "(?<left_ColonEmptyNew>)||(?<SUB>)(?<right_ColonEmptyNew>)");
 
             IVertex o_doubleColon_any = o_doubleColon.AddVertex(any, "");            
@@ -964,7 +964,7 @@ namespace m0
             // []
             //
             // [(*(+, +) (?<expr>)*)]
-
+/*
             IVertex o_call = k.AddVertex(keyword, "[(*(+, +)(?<expr>)*)]");
 
              IVertex o_call_any = o_call.AddVertex(any, "");
@@ -990,7 +990,7 @@ namespace m0
             // \
             //
             // \                         
-            
+            */
             IVertex o_Slash = k.AddVertex(keyword, @" \ ");
 
             o_Slash.AddEdge(keywordGroup, kgd_Slash);
@@ -1013,7 +1013,7 @@ namespace m0
             // }
             //
             // {(*\r\n\t(?<expr>)*)\r\n}
-
+/*
             IVertex o_InnerCreation = k.AddVertex(keyword, "{(*\r\n\t(?<expr>)*)\r\n}");
 
             o_InnerCreation.AddEdge(keywordGroup, kgd_InnerCreation);
@@ -1063,7 +1063,7 @@ namespace m0
             IVertex o_Inner2_any_targetExpr = o_Inner2_any.AddVertex(smu.Get(false, @"SingleOperator\NextExpression"), "");
 
             o_Inner2_any_targetExpr.AddEdge(smb.Get(false, "$$LocalRoot"), kgd_Slash);
-
+*/
             // ""
             //
             // "\"(?<value>)\""
@@ -1110,7 +1110,7 @@ namespace m0
             // E M P T Y :) K E Y W O R D 2
             //
             //
-            
+            /*
             IVertex empty2Keyword = k.AddVertex(keyword, "(?<value>)");
             
             empty2Keyword.AddVertex(emptyKeyword, "");
