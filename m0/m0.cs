@@ -1051,23 +1051,7 @@ namespace m0
 
             o_InnerCreation_any_param.AddEdge(smb.Get(false, @"$$KeywordManyRoot"), smb.Get(false, @"$Empty"));
 
-            // {}            
-            //
-            // {(*(+,+)(?<expr>)*)}
-            
-            IVertex o_Inner = k.AddVertex(keyword, "{}");
-
-            o_Inner.AddEdge(keywordGroup, kgd_Inner);
-
-            IVertex o_Inner_any = o_Inner.AddVertex(any, anyString);
-
-            //o_Inner_any.AddVertex(empty, "raz");
-
-            o_Inner_any.AddVertex(smb.Get(false, "$$StartInLocalRoot"), "");
-
-            o_Inner_any.AddEdge(smb.Get(false, @"Vertex\$Is"), smu.Get(false, "\"{}\""));
-
-            // {}            
+            // {} // 2       
             //
             // {(*(+,+)(?<expr>)*)}
 
@@ -1090,6 +1074,22 @@ namespace m0
             IVertex o_Inner2_any_targetExpr = o_Inner2_any.AddVertex(smu.Get(false, @"SingleOperator\NextExpression"), "");
 
             o_Inner2_any_targetExpr.AddEdge(smb.Get(false, "$$LocalRoot"), kgd_SlashMark);
+
+            // {} // 1
+            //
+            // {(*(+,+)(?<expr>)*)}
+
+            IVertex o_Inner = k.AddVertex(keyword, "{}");
+
+            o_Inner.AddEdge(keywordGroup, kgd_Inner);
+
+            IVertex o_Inner_any = o_Inner.AddVertex(any, anyString);
+
+            //o_Inner_any.AddVertex(empty, "raz");
+
+            o_Inner_any.AddVertex(smb.Get(false, "$$StartInLocalRoot"), "");
+
+            o_Inner_any.AddEdge(smb.Get(false, @"Vertex\$Is"), smu.Get(false, "\"{}\""));            
 
             // ""
             //
