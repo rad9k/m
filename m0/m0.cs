@@ -1038,7 +1038,7 @@ namespace m0
 
             IVertex o_Inner_any = o_Inner.AddVertex(any, anyString);
 
-            //o_Inner.AddVertex(empty, "raz");
+            o_Inner.AddVertex(empty, "raz");
 
             o_Inner_any.AddVertex(smb.Get(false, "$$StartInLocalRoot"), "");
 
@@ -1054,7 +1054,7 @@ namespace m0
 
             IVertex o_Inner2_any = o_Inner2.AddVertex(any, anyString);
 
-           // o_Inner2.AddVertex(empty, "dwa");
+            o_Inner2.AddVertex(empty, "dwa");
 
             o_Inner2_any.AddVertex(smb.Get(false, "$$StartInLocalRoot"), "");
 

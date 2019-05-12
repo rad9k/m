@@ -573,7 +573,7 @@ namespace m0.Graph
             //foreach (IEdge e in iterationRoot.OutEdges)
             foreach (IEdge e in outEdges)
             {                
-                if (!canGoIntoLinks || !VertexOperations.IsLink(e)) // this canGoIntoLinks looks bad, should be canGoIntoLinks XXX TO BE TESTED
+                if (canGoIntoLinks || !VertexOperations.IsLink(e)) // this canGoIntoLinks looks bad, should be canGoIntoLinks XXX TO BE TESTED
                 {                    
                     if (iterate(e))
                     {
