@@ -1026,9 +1026,9 @@ namespace m0
 
             o_Mark_any.AddVertex(smb.Get(false, "$$StartInLocalRoot"), "");
 
-            o_Mark_any.AddEdge(smb.Get(false, @"Vertex\$Is"), smu.Get(false, "\"\\ \""));
+            o_Mark_any.AddEdge(smb.Get(false, @"Vertex\$Is"), smu.Get(false, "?"));
 
-            IVertex o_Mark_any_targetExpr = o_Slash_any.AddVertex(smu.Get(false, @"SingleOperator\NextExpression"), "");
+            IVertex o_Mark_any_targetExpr = o_Mark_any.AddVertex(smu.Get(false, @"SingleOperator\NextExpression"), "");
 
             o_Mark_any_targetExpr.AddEdge(smb.Get(false, "$$LocalRoot"), kgd_ColonEmptyInner2SlashMark);
 
