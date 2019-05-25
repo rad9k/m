@@ -1585,7 +1585,19 @@ namespace m0.ZeroCode
 
             if (appendAsNew /*&& !been*/ && !isLink)
                 foreach (IEdge e in baseEdge.To.OutEdgesRaw)
-                    ZeroCodeGraph2String_Reccurent(e, level + 1, baseEdge, path);
+                {
+                    int newLevel = level + 1;
+
+                    if (KeywordMatchedSubGraphEdges.ContainsKey(e))
+                    {
+                        KeywordMatch km = KeywordMatchedSubGraphEdges[e];
+
+                        if (km.IsStartInLocalRoot)
+                            newLevel = level; // XXX :) should work
+                    }
+
+                    ZeroCodeGraph2String_Reccurent(e, newLevel, baseEdge, path);
+                }
 
             AppendAdditionalNewLines(baseEdge);
         }
