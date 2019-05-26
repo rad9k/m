@@ -343,6 +343,8 @@ namespace m0.ZeroCode
 
         public string newValue;
 
+        public int tabTimesForRootVertex;
+
         public KeywordMatch(IVertex _KeywordDefinition, ZeroCodeGraph2StringProcessing processing)
         {
             KeywordDefinition = _KeywordDefinition;
@@ -1593,7 +1595,7 @@ namespace m0.ZeroCode
                         KeywordMatch km = KeywordMatchedSubGraphEdges[e];
 
                         if (km.IsStartInLocalRoot)
-                            newLevel = level; // XXX :) should work
+                            newLevel = level; // XXX :) should work level should be preserved at the km level
                     }
 
                     ZeroCodeGraph2String_Reccurent(e, newLevel, baseEdge, path);
