@@ -493,19 +493,19 @@ namespace m0.ZeroCode
 
             // try direct link
 
-            tryIf = query(importDirectList, "\\" + link);
+            tryIf = query(importDirectList, @"\" + link);
 
             if (tryIf != null)
                 return tryIf;
 
-            tryIf = queryMetaMode(importDirectMetaList, "\\" + link);
+            tryIf = queryMetaMode(importDirectMetaList, @"\" + link);
 
             if (tryIf != null)
                 return tryIf;
 
             // try from local root
 
-            tryIf = query(baseVertex, link);
+            tryIf = query(baseVertex, @"$ParseRoot:\\"+link);
 
             if (tryIf != null)
                 return tryIf;

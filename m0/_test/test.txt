@@ -4,6 +4,15 @@
 		}
 	}
 
+<"Y">
+	a\b\c
+	a|aa\b\c|cc
+	a{}|aa{}\b\c{}|cc{}
+	a{}|aa{}\b\c{}|cc{}||d{}|d{}\e\f{}|ff{}
+	a{}\
+	{}\{}
+	{}\
+
 ________________________
 c0: (a + b) + c
 c1: (a|aa + b) + c
@@ -47,13 +56,13 @@ ___________
 		attribute "aa" @a "1":"2"
 			attribute "a" @a <"3":"4">
 				attribute "aaa" @a
-			association "b" @b "1":"2"
-				association "b" @b
-			aggregation "c" @b "1":"2"
-				aggregation "c" @b
+			association "b" @a "1":"2"
+				association "b" @a
+			aggregation "c" @a "1":"2"
+				aggregation "c" @a
 	function "f" @String[]
-	function "f2" @String[@s "s", @ss "ss"]
-		function "f3" [@s "s", @ss "ss"]
+	function "f2" @String[@a "s", @a "ss"]
+		function "f3" [@a "s", @a "ss"]
 			function "f4" []
 				# "desc"
 	while "kupa"

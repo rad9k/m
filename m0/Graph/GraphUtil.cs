@@ -572,27 +572,24 @@ namespace m0.Graph
 
             //foreach (IEdge e in iterationRoot.OutEdges)
             foreach (IEdge e in outEdges)
-            {                
-                if (canGoIntoLinks || !VertexOperations.IsLink(e)) // this canGoIntoLinks looks bad, should be canGoIntoLinks XXX TO BE TESTED
-                {                    
-                    if (iterate(e))
+            {
+                if (iterate(e))
+                {
+                    returnList.Add(e.To);
+                    if (isSingleResult)
+                        return true;
+                }
+
+                if (!visited.Contains(e.To) && (canGoIntoLinks || !VertexOperations.IsLink(e))) // this canGoIntoLinks looks bad, should be canGoIntoLinks XXX TO BE TESTED
+                {                                                            
+                    visited.Add(e.To);
+
+                    if (DeepIterator_Reccurent(e.To, iterate, visited, returnList, isSingleResult, canModifyOutEdges, canGoIntoLinks))
                     {
-                        returnList.Add(e.To);
-                        if (isSingleResult)
-                            return true;
-                    }
+                        toReturn = true;
 
-                    if (!visited.Contains(e.To))
-                    {
-                        visited.Add(e.To);
-
-                        if (DeepIterator_Reccurent(e.To, iterate, visited, returnList, isSingleResult, canModifyOutEdges, canGoIntoLinks))
-                        {
-                            toReturn = true;
-
-                            break;
-                        }
-                    }
+                        break;
+                    }                    
                 }                
             }
 
