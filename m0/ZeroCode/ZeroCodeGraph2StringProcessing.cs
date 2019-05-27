@@ -753,7 +753,7 @@ namespace m0.ZeroCode
             {
                 if (!isNested && !km.IsStartInLocalRoot)
                     AppendNewLineAndTabs();
-                else if(!km.IsStartInLocalRoot)
+                else if(km.tabTimesForRootVertex==0) // WTF??? /*if(!km.IsStartInLocalRoot)*/ // XXX hmmmmmm
                 {                    
                     tabTimes++;
                     shouldDecreaseTabTimes = true;
