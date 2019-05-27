@@ -1072,11 +1072,19 @@ namespace m0.ZeroCode
 
             return wasThereNewLine;
         }
+        
+        bool ShouldAppendKeywordHere(IEdge e, string path)
+        {
+            if (SubGraphVertexesDictionary.ContainsKey(e.To) && SubGraphVertexesDictionary[e.To].LinkString == path)
+                return true;
+            else
+                return false;
+        }
 
         bool AppendEdge(IEdge e, IEdge parent, string path)
         {
             if (KeywordMatchedSubGraphEdges.ContainsKey(e))
-               if (SubGraphVertexesDictionary.ContainsKey(e.To) && SubGraphVertexesDictionary[e.To].LinkString == path)
+               if (ShouldAppendKeywordHere(e,path))
                     return AppendKeyword(e, false);
                 else
                     if(KeywordMatchedSubGraphEdges[e].BaseEdge.To!=e.To) // :O)
@@ -1575,7 +1583,16 @@ namespace m0.ZeroCode
             bool isLink = VertexOperations.IsLink(baseEdge);
 
             //if (BeenList.Contains(baseEdge)&&!isLink)
-             //   been = true;     /?????????       
+            //   been = true;     /?????????  
+
+            KeywordMatch thisKm = null;
+
+            if (KeywordMatchedSubGraphEdges.ContainsKey(baseEdge))
+                if (ShouldAppendKeywordHere(baseEdge, path))
+                {
+                    thisKm = KeywordMatchedSubGraphEdges[baseEdge];
+                    thisKm.tabTimesForRootVertex = level;
+                }
 
             bool appendAsNew = AppendEdge(baseEdge, parent, path);
 
@@ -1592,10 +1609,15 @@ namespace m0.ZeroCode
 
                     if (KeywordMatchedSubGraphEdges.ContainsKey(e))
                     {
-                        KeywordMatch km = KeywordMatchedSubGraphEdges[e];
+                        KeywordMatch localKm = KeywordMatchedSubGraphEdges[e];
 
-                        if (km.IsStartInLocalRoot)
-                            newLevel = level; // XXX :) should work level should be preserved at the km level
+                        if (localKm.IsStartInLocalRoot)
+                        {
+                            if (thisKm != null)
+                                newLevel = thisKm.tabTimesForRootVertex;
+                            else
+                                newLevel = level; // XXX :) should work level should be preserved at the km level
+                        }
                     }
 
                     ZeroCodeGraph2String_Reccurent(e, newLevel, baseEdge, path);
