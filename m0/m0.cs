@@ -835,6 +835,82 @@ namespace m0
             /////////////////////////////////////////////////////////////////////////////////////////////////////////////
             /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+           
+            // :: /1
+            //
+            // (?<left_ColonEmptyNew>)||(?<SUB>)(?<right_ColonEmptyNew>)                         
+
+            IVertex o_doubleColon = k.AddVertex(keyword, "(?<left_ColonEmptyInner2SlashMarkNew>)||(?<SUB>)(?<right_ColonEmptyInner2SlashMarkNew>)");
+
+            IVertex o_doubleColon_any = o_doubleColon.AddVertex(any, "");            
+
+            o_doubleColon_any.AddEdge(smb.Get(false, @"Vertex\$Is"), smu.Get(false, "||"));
+
+            o_doubleColon_any.AddVertex(smu.Get(false, @"DoubleOperator\LeftExpression"), "(?<left_ColonEmptyInner2SlashMarkNew>)");
+
+            IVertex o_doubleColon_any_right = o_doubleColon_any.AddVertex(smu.Get(false, @"DoubleOperator\RightExpression"), "(?<right_ColonEmptyInner2SlashMarkNew>)");
+
+            IVertex o_doubleColon_any_targetExpr = o_doubleColon_any.AddVertex(smu.Get(false, @"SingleOperator\NextExpression"), "");            
+
+            o_doubleColon_any_targetExpr.AddEdge(smb.Get(false, "$$LocalRoot"), kgd_InnerCreation);
+
+            // :: /2
+            //
+            // ||(?<SUB>)(?<right_ColonEmptyNew>)                         
+
+            IVertex o_doubleColon2 = k.AddVertex(keyword, "||(?<SUB>)(?<right_ColonEmptyInner2SlashMarkNew>)");
+
+            IVertex o_doubleColon2_any = o_doubleColon2.AddVertex(any, "");
+
+            o_doubleColon2_any.AddEdge(smb.Get(false, @"Vertex\$Is"), smu.Get(false, "||"));
+            
+            IVertex o_doubleColon2_any_right = o_doubleColon2_any.AddVertex(smu.Get(false, @"DoubleOperator\RightExpression"), "(?<right_ColonEmptyInner2SlashMarkNew>)");
+
+            IVertex o_doubleColon2_any_targetExpr = o_doubleColon2_any.AddVertex(smu.Get(false, @"SingleOperator\NextExpression"), "");
+
+            o_doubleColon2_any_targetExpr.AddEdge(smb.Get(false, "$$LocalRoot"), kgd_InnerCreation);
+
+            // :: /3
+            //
+            // (?<left_ColonEmptyNew>)||(?<SUB>)                         
+
+            IVertex o_doubleColon3 = k.AddVertex(keyword, "(?<left_ColonEmptyInner2SlashMarkNew>)||(?<SUB>)");
+
+            IVertex o_doubleColon3_any = o_doubleColon3.AddVertex(any, "");
+
+            o_doubleColon3_any.AddEdge(smb.Get(false, @"Vertex\$Is"), smu.Get(false, "||"));
+
+            o_doubleColon3_any.AddVertex(smu.Get(false, @"DoubleOperator\LeftExpression"), "(?<left_ColonEmptyInner2SlashMarkNew>)");
+
+            IVertex o_doubleColon3_any_targetExpr = o_doubleColon3_any.AddVertex(smu.Get(false, @"SingleOperator\NextExpression"), "");
+
+            o_doubleColon3_any_targetExpr.AddEdge(smb.Get(false, "$$LocalRoot"), kgd_InnerCreation);
+
+            // :: /2
+            //
+            // ||(?<SUB>)(?<right_QueryPart>)                         
+
+            /*            IVertex o_doubleColon2 = k.AddVertex(keyword, "||(?<SUB>)(?<right_Colon>)");
+
+                         IVertex o_doubleColon2_any = o_doubleColon2.AddVertex(any, "");
+
+                         o_doubleColon2_any.AddEdge(smb.Get(false, @"Vertex\$Is"), smu.Get(false, "||"));
+
+                         o_doubleColon2_any.AddVertex(smu.Get(false, @"DoubleOperator\RightExpression"), "(?<right_Colon>)");
+
+
+                        // :: /3
+                        //
+                        // (?<left_QueryPart>)||(?<SUB>)                        
+
+                        IVertex o_doubleColon3 = k.AddVertex(keyword, "(?<left_Colon>)||(?<SUB>)");
+
+                        IVertex o_doubleColon3_any = o_doubleColon3.AddVertex(any, "");
+
+                        o_doubleColon3_any.AddEdge(smb.Get(false, @"Vertex\$Is"), smu.Get(false, "||"));
+
+                        o_doubleColon3_any.AddVertex(smu.Get(false, @"DoubleOperator\LeftExpression"), "(?<left_Colon>)");*/
+
             // : /1
             //
             // (?<left_Empty2>)|(?<SUB>)(?<right_Empty2>)            
@@ -843,7 +919,7 @@ namespace m0
 
             o_colon.AddEdge(keywordGroup, kgd_ColonEmptyInner2SlashMarkNew);
 
-            o_colon.AddEdge(keywordGroup, kgd_ColonEmptyInner2SlashMark);            
+            o_colon.AddEdge(keywordGroup, kgd_ColonEmptyInner2SlashMark);
 
             IVertex o_colon_any = o_colon.AddVertex(any, "");
 
@@ -855,9 +931,53 @@ namespace m0
 
             IVertex o_colon_any_right = o_colon_any.AddVertex(smu.Get(false, @"DoubleOperator\RightExpression"), "(?<right_Empty2>)");
 
-            IVertex o_colon_any_targetExpr = o_colon_any.AddVertex(smu.Get(false, @"SingleOperator\NextExpression"), "");            
+            IVertex o_colon_any_targetExpr = o_colon_any.AddVertex(smu.Get(false, @"SingleOperator\NextExpression"), "");
 
             o_colon_any_targetExpr.AddEdge(smb.Get(false, "$$LocalRoot"), kgd_SlashMark);
+
+            // : /2
+            //
+            // |(?<SUB>)(?<right_Empty2>)            
+
+            IVertex o_colon2 = k.AddVertex(keyword, "|(?<SUB>)(?<right_Empty2>)");
+
+            o_colon2.AddEdge(keywordGroup, kgd_ColonEmptyInner2SlashMarkNew);
+
+            o_colon2.AddEdge(keywordGroup, kgd_ColonEmptyInner2SlashMark);
+
+            IVertex o_colon2_any = o_colon2.AddVertex(any, "");
+
+            o_colon2_any.AddVertex(smb.Get(false, "$$StartInLocalRoot"), "");
+
+            o_colon2_any.AddEdge(smb.Get(false, @"Vertex\$Is"), smu.Get(false, "|"));
+
+            IVertex o_colon2_any_right = o_colon2_any.AddVertex(smu.Get(false, @"DoubleOperator\RightExpression"), "(?<right_Empty2>)");
+
+            IVertex o_colon2_any_targetExpr = o_colon2_any.AddVertex(smu.Get(false, @"SingleOperator\NextExpression"), "");
+
+            o_colon2_any_targetExpr.AddEdge(smb.Get(false, "$$LocalRoot"), kgd_SlashMark);
+
+            // : /3
+            //
+            // (?<left_Empty2>)|(?<SUB>)            
+
+            IVertex o_colon3 = k.AddVertex(keyword, "(?<left_Empty2>)|(?<SUB>)");
+
+            o_colon3.AddEdge(keywordGroup, kgd_ColonEmptyInner2SlashMarkNew);
+
+            o_colon3.AddEdge(keywordGroup, kgd_ColonEmptyInner2SlashMark);
+
+            IVertex o_colon3_any = o_colon3.AddVertex(any, "");
+
+            o_colon3_any.AddVertex(smb.Get(false, "$$StartInLocalRoot"), "");
+
+            o_colon3_any.AddEdge(smb.Get(false, @"Vertex\$Is"), smu.Get(false, "|"));
+
+            o_colon3_any.AddVertex(smu.Get(false, @"DoubleOperator\LeftExpression"), "(?<left_Empty2>)");
+
+            IVertex o_colon3_any_targetExpr = o_colon3_any.AddVertex(smu.Get(false, @"SingleOperator\NextExpression"), "");
+
+            o_colon3_any_targetExpr.AddEdge(smb.Get(false, "$$LocalRoot"), kgd_SlashMark);
 
             /*
             // : /2
@@ -903,50 +1023,6 @@ namespace m0
             o_colon3_any_target.AddVertex(smb.Get(false, "$$LocalRoot"), "AfterEmpty");*/
 
 
-            // :: /1
-            //
-            // (?<left_ColonEmptyNew>)||(?<SUB>)(?<right_ColonEmptyNew>)                         
-
-            IVertex o_doubleColon = k.AddVertex(keyword, "(?<left_ColonEmptyInner2SlashMarkNew>)||(?<SUB>)(?<right_ColonEmptyInner2SlashMarkNew>)");
-
-            IVertex o_doubleColon_any = o_doubleColon.AddVertex(any, "");            
-
-            o_doubleColon_any.AddEdge(smb.Get(false, @"Vertex\$Is"), smu.Get(false, "||"));
-
-            o_doubleColon_any.AddVertex(smu.Get(false, @"DoubleOperator\LeftExpression"), "(?<left_ColonEmptyInner2SlashMarkNew>)");
-
-            IVertex o_doubleColon_any_right = o_doubleColon_any.AddVertex(smu.Get(false, @"DoubleOperator\RightExpression"), "(?<right_ColonEmptyInner2SlashMarkNew>)");
-
-            IVertex o_doubleColon_any_targetExpr = o_doubleColon_any.AddVertex(smu.Get(false, @"SingleOperator\NextExpression"), "");            
-
-            o_doubleColon_any_targetExpr.AddEdge(smb.Get(false, "$$LocalRoot"), kgd_InnerCreation);
-           
-            // :: /2
-            //
-            // ||(?<SUB>)(?<right_QueryPart>)                         
-             
-/*            IVertex o_doubleColon2 = k.AddVertex(keyword, "||(?<SUB>)(?<right_Colon>)");
-
-             IVertex o_doubleColon2_any = o_doubleColon2.AddVertex(any, "");
-
-             o_doubleColon2_any.AddEdge(smb.Get(false, @"Vertex\$Is"), smu.Get(false, "||"));
-
-             o_doubleColon2_any.AddVertex(smu.Get(false, @"DoubleOperator\RightExpression"), "(?<right_Colon>)");
-
-
-            // :: /3
-            //
-            // (?<left_QueryPart>)||(?<SUB>)                        
-
-            IVertex o_doubleColon3 = k.AddVertex(keyword, "(?<left_Colon>)||(?<SUB>)");
-
-            IVertex o_doubleColon3_any = o_doubleColon3.AddVertex(any, "");
-
-            o_doubleColon3_any.AddEdge(smb.Get(false, @"Vertex\$Is"), smu.Get(false, "||"));
-
-            o_doubleColon3_any.AddVertex(smu.Get(false, @"DoubleOperator\LeftExpression"), "(?<left_Colon>)");*/
-
-            
 
             /////////////////////////////////////////////////////////////////////////////////////////////////////////////
             /////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -957,7 +1033,7 @@ namespace m0
             /////////////////////////////////////////////////////////////////////////////////////////////////////////////
             /////////////////////////////////////////////////////////////////////////////////////////////////////////////
             /////////////////////////////////////////////////////////////////////////////////////////////////////////////
-            
+
             // []
             //
             // [(*(+, +) (?<expr>)*)]
