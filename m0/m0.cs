@@ -532,7 +532,7 @@ namespace m0
             IVertex newVertexKeyword = smb.Get(false, "$$NewVertexKeyword");
 
             string anyString = "(?<ANY>)";
-            
+            /*
             // import meta
             //
             // import meta (?<name>) (?<link>)
@@ -869,7 +869,7 @@ namespace m0
             IVertex o_doubleColon2_any_targetExpr = o_doubleColon2_any.AddVertex(smu.Get(false, @"SingleOperator\NextExpression"), "");
 
             o_doubleColon2_any_targetExpr.AddEdge(smb.Get(false, "$$LocalRoot"), kgd_InnerCreation);
-
+            */
             // :: /3
             //
             // (?<left_ColonEmptyNew>)||(?<SUB>)                         
@@ -914,7 +914,7 @@ namespace m0
             // : /1
             //
             // (?<left_Empty2>)|(?<SUB>)(?<right_Empty2>)            
-
+            /*
             IVertex o_colon = k.AddVertex(keyword, "(?<left_Empty2>)|(?<SUB>)(?<right_Empty2>)");
 
             o_colon.AddEdge(keywordGroup, kgd_ColonEmptyInner2SlashMarkNew);
@@ -956,12 +956,12 @@ namespace m0
             IVertex o_colon2_any_targetExpr = o_colon2_any.AddVertex(smu.Get(false, @"SingleOperator\NextExpression"), "");
 
             o_colon2_any_targetExpr.AddEdge(smb.Get(false, "$$LocalRoot"), kgd_SlashMark);
-
+            */
             // : /3
             //
             // (?<left_Empty2>)|(?<SUB>)            
 
-            IVertex o_colon3 = k.AddVertex(keyword, "(?<left_Empty2>)|(?<SUB>)");
+            IVertex o_colon3 = k.AddVertex(keyword, "(?<left_Empty2>)|(?<SUB>)");            
 
             o_colon3.AddEdge(keywordGroup, kgd_ColonEmptyInner2SlashMarkNew);
 
@@ -1037,7 +1037,7 @@ namespace m0
             // []
             //
             // [(*(+, +) (?<expr>)*)]
-
+            /*
             IVertex o_call = k.AddVertex(keyword, "[(*(+, +)(?<expr>)*)]");
 
              IVertex o_call_any = o_call.AddVertex(any, "");
@@ -1170,7 +1170,7 @@ namespace m0
             // ""
             //
             // "\"(?<value>)\""
-
+            */
             IVertex newValueKeyword = k.AddVertex(keyword, "\"(?<value>)\"");
 
             _newValueKeywordVertex = newValueKeyword;

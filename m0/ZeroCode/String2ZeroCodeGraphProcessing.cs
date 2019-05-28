@@ -1027,6 +1027,11 @@ namespace m0.ZeroCode
 
             //
 
+            if(startPos == 6 && prev_startPos == 6 && isPrevStartPosSameAsStartPosParentCount == 0 && endPos == 10 && endPos_forAtomParts == 10 && afterKeywordPartExist == false && isTopLevelCall == true && lookForLocalRootOnly ==false && parentKeyword == null && parentParams == null)
+            {
+                int x = 0;
+            }
+
             examinedKeywords = new List<keywordTryingData>();
 
             link = null;
@@ -1105,8 +1110,8 @@ namespace m0.ZeroCode
 
             SpecialKeywordType specialType = SpecialKeywordType.NewVertexKeyword; // got to intialize
 
-            IList<IVertex> possible_emptyKeyworsByKeywordsFilter = new List<IVertex>(); ;
-            IList<IVertex> possible_newVertexKeywordsByKeywordsFilter = new List<IVertex>(); ;
+            IList<IVertex> possible_emptyKeyworsByKeywordsFilter = new List<IVertex>(); 
+            IList<IVertex> possible_newVertexKeywordsByKeywordsFilter = new List<IVertex>(); 
 
             //
 
@@ -1689,6 +1694,8 @@ namespace m0.ZeroCode
                             maxKtdSpos = sPos;
                         }
                     }
+
+                    List<keywordTryingData> c = examinedKeywords;
 
                     examinedKeywords = new List<keywordTryingData>();
                     examinedKeywords.Add(maxKtd);
