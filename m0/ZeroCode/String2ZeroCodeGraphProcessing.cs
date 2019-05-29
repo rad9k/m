@@ -1575,7 +1575,7 @@ namespace m0.ZeroCode
                     MinusZero.Instance.Log(1, "_tryIsKeyword", LOGPREFIX + "SHALPROCEED FALSE only matched");
                 }
 
-                if (sPos == endPos)
+                if (sPos == endPos || sPos == endPos_forAtomParts)
                 {
                     shallProceed = false; // end of this part of text
                     MinusZero.Instance.Log(1, "_tryIsKeyword", LOGPREFIX+"SHALPROCEED FALSE end of this part of text");
