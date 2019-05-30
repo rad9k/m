@@ -24,6 +24,7 @@ namespace m0.ZeroCode
         {
             public bool HasLocalRoot;
             public string LocalRootKeywordsGroup;
+            public bool NonSelfRecursiveParameters;
         }
 
         class ParsingStack
@@ -924,7 +925,7 @@ namespace m0.ZeroCode
                 int tryPos = 0;
 
 
-                _tryIsKeyword(s, "", s.currentLineInfo.lineBeg, s.currentLineInfo.lineBeg, 0, text.Length - 1, text.Length - 1, false, out examinedKeywords, out link, true, ref tryPos, false, null, null, "", false);
+                _tryIsKeyword(s, "", s.currentLineInfo.lineBeg, s.currentLineInfo.lineBeg, 0, text.Length - 1, text.Length - 1, false, false, out examinedKeywords, out link, true, ref tryPos, false, null, null, "", false);
 
                 if (examinedKeywords.Count() > 0)
                     return examinedKeywords;                
@@ -1020,17 +1021,12 @@ namespace m0.ZeroCode
             }
         }
 
-        void _tryIsKeyword(ParsingStack s, string LOGPREFIX, int startPos, int prev_startPos, int isPrevStartPosSameAsStartPosParentCount, int endPos, int endPos_forAtomParts, bool afterKeywordPartExist, out List<keywordTryingData> examinedKeywords, out string link, bool isTopLevelCall, ref int newPos, bool lookForLocalRootOnly, IVertex parentKeyword, tryIsKeyword_Parameters parentParams, string keywordsFilter, bool isSpaceNext)
+        void _tryIsKeyword(ParsingStack s, string LOGPREFIX, int startPos, int prev_startPos, int isPrevStartPosSameAsStartPosParentCount, int endPos, int endPos_forAtomParts, bool canStopByForAtomParts, bool afterKeywordPartExist, out List<keywordTryingData> examinedKeywords, out string link, bool isTopLevelCall, ref int newPos, bool lookForLocalRootOnly, IVertex parentKeyword, tryIsKeyword_Parameters parentParams, string keywordsFilter, bool isSpaceNext)
         {
             tryIsKeyword_Parameters callParams = new tryIsKeyword_Parameters(s, LOGPREFIX, startPos, prev_startPos, isPrevStartPosSameAsStartPosParentCount, endPos, endPos_forAtomParts, afterKeywordPartExist, parentKeyword, parentParams, keywordsFilter, isSpaceNext);
             MinusZero.Instance.Log(0, "_tryIfKeyword", LOGPREFIX + "RUN "+callParams.ToString());
 
             //
-
-            if(startPos == 6 && prev_startPos == 6 && isPrevStartPosSameAsStartPosParentCount == 0 && endPos == 10 && endPos_forAtomParts == 10 && afterKeywordPartExist == false && isTopLevelCall == true && lookForLocalRootOnly ==false && parentKeyword == null && parentParams == null)
-            {
-                int x = 0;
-            }
 
             examinedKeywords = new List<keywordTryingData>();
 
@@ -1490,9 +1486,15 @@ namespace m0.ZeroCode
                                 // int modified_isPrevStartPosSameAsStartPosThisCount = isPrevStartPosSameAsStartPosThisCount;
 
                                 // if (sPos != startPos)
-                                    //  modified_isPrevStartPosSameAsStartPosThisCount = 0;
+                                //  modified_isPrevStartPosSameAsStartPosThisCount = 0;
 
-                                _tryIsKeyword(s, LOGPREFIX + "    ", sPos, startPos, isPrevStartPosSameAsStartPosThisCount, endPos, isTryKeyword_endPos, _afterKeywordPartExist, out foundKeywords, out foundLink, false, ref _newPos, false, ktd.keywordVertex, callParams, paramFilterName, _isSpaceNext);
+                                // XXX
+
+                                bool _canStopByForAtomParts = false;
+                                if (keywordInfoDict[ktd.keywordVertex].NonSelfRecursiveParameters)
+                                    _canStopByForAtomParts = true;
+
+                                _tryIsKeyword(s, LOGPREFIX + "    ", sPos, startPos, isPrevStartPosSameAsStartPosThisCount, endPos, isTryKeyword_endPos, _canStopByForAtomParts, _afterKeywordPartExist, out foundKeywords, out foundLink, false, ref _newPos, false, ktd.keywordVertex, callParams, paramFilterName, _isSpaceNext);
 
                                 // BACK TO OLD STACK
 
@@ -1575,7 +1577,12 @@ namespace m0.ZeroCode
                     MinusZero.Instance.Log(1, "_tryIsKeyword", LOGPREFIX + "SHALPROCEED FALSE only matched");
                 }
 
-                if (sPos == endPos || sPos == endPos_forAtomParts)
+                if (canStopByForAtomParts && sPos == endPos_forAtomParts)
+                {
+                    shallProceed = false; // end of this part of text
+                }
+
+                if (sPos == endPos )
                 {
                     shallProceed = false; // end of this part of text
                     MinusZero.Instance.Log(1, "_tryIsKeyword", LOGPREFIX+"SHALPROCEED FALSE end of this part of text");
@@ -1880,7 +1887,7 @@ namespace m0.ZeroCode
 
             //_tryIsKeyword(s, LOGPREFIX + "    ", sPos - 1, -1, 0, text.Length - 1, text.Length - 1, false, out _examinedKeywords, out _link, true, ref _tryPos, true, null, null, getKewordFilterFromParamName(ktd.currentlyProcessedParameterName));
 
-            _tryIsKeyword(s, LOGPREFIX + "    ", sPos - 1, -1, 0, text.Length - 1, text.Length - 1, false, out _examinedKeywords, out _link, true, ref _tryPos, true, null, null, keywordsFilter, isSpaceNext);
+            _tryIsKeyword(s, LOGPREFIX + "    ", sPos - 1, -1, 0, text.Length - 1, text.Length - 1, false, false, out _examinedKeywords, out _link, true, ref _tryPos, true, null, null, keywordsFilter, isSpaceNext);
 
             // BACK TO OLD STACK
 
@@ -2208,22 +2215,9 @@ namespace m0.ZeroCode
                         addKeywordsSubstrings(keywordString);
                 }
 
-                // keywordInfo
+                PrepareKeywordInfo(ktd);
 
-                KeywordInfo ki = new KeywordInfo();
-
-                IVertex localRoot = GraphUtil.DeepFindOneByMeta(ktd.keywordVertex, "$$LocalRoot", false);
-
-                if (localRoot != null) {
-                    ki.HasLocalRoot = true;
-
-                    if ((string)localRoot.Value != "")
-                       ki.LocalRootKeywordsGroup = (string)localRoot.Value;
-                }
-
-                keywordInfoDict.Add(ktd.keywordVertex, ki);
-
-            }              
+            }
 
             // add space to allKeywordsSubstringsDictionary
 
@@ -2236,6 +2230,26 @@ namespace m0.ZeroCode
                 allKeywordsSubstringsDictionary.Add(' ', l);
             }
                 
+        }
+
+        private void PrepareKeywordInfo(keywordTryingData ktd)
+        {            
+            KeywordInfo ki = new KeywordInfo();
+
+            IVertex localRoot = GraphUtil.DeepFindOneByMeta(ktd.keywordVertex, "$$LocalRoot", false);
+
+            if (localRoot != null)
+            {
+                ki.HasLocalRoot = true;
+
+                if ((string)localRoot.Value != "")
+                    ki.LocalRootKeywordsGroup = (string)localRoot.Value;
+            }
+
+            if (ktd.keywordVertex.Get(false, "$$NonSelfRecursiveParameters:") != null)
+                ki.NonSelfRecursiveParameters = true;
+
+            keywordInfoDict.Add(ktd.keywordVertex, ki);
         }
 
         private void addKeywordsSubstrings(string keywordString)
