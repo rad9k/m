@@ -1169,7 +1169,7 @@ namespace m0
 
 
 
-            o_Inner2_any.AddVertex(null, "dwa");
+            //o_Inner2_any.AddVertex(null, "dwa");
 
             IVertex o_Inner2_any_any_param = o_Inner2_any.AddVertex(smu.Get(false, @"MultiOperator\Expression"), "(?<expr>)");
 
@@ -1194,19 +1194,18 @@ namespace m0
 
             o_Inner.AddEdge(keywordGroup, kgd_Inner);
 
-            IVertex o_Inner_any = o_Inner.AddVertex(any, anyString);
-
-          //  IVertex o_Inner_any_any_param = o_Inner_any.AddVertex(smu.Get(false, @"MultiOperator\Expression"), "(?<expr1>)");
-
-         //   o_Inner_any_any_param.AddEdge(smb.Get(false, @"$$KeywordManyRoot"), smb.Get(false, @"$Empty"));
+            IVertex o_Inner_any = o_Inner.AddVertex(any, anyString);            
 
 
             o_Inner_any.AddVertex(smb.Get(false, "$$StartInLocalRoot"), "");
-
+            
 
 
             o_Inner_any.AddEdge(smb.Get(false, @"Vertex\$Is"), smu.Get(false, "\"{}\""));
 
+            //IVertex o_Inner_any_any_param = o_Inner_any.AddVertex(smu.Get(false, @"MultiOperator\Expression"), "(?<expr1>)");
+
+            //o_Inner_any_any_param.AddEdge(smb.Get(false, @"$$KeywordManyRoot"), smb.Get(false, @"$Empty"));
 
 
 
