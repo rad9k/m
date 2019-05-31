@@ -1618,7 +1618,7 @@ namespace m0.ZeroCode
             if (baseEdge == BaseEdge)
                 been = false; // hack
 
-            if (appendAsNew /*&& !been*/ && !isLink)
+            if (/*appendAsNew && !been &&*/ !isLink)
                 foreach (IEdge e in baseEdge.To.OutEdgesRaw)
                 {
                     int newLevel = level + 1;
