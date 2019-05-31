@@ -843,6 +843,8 @@ namespace m0
 
             IVertex o_doubleColon = k.AddVertex(keyword, "(?<left_ColonEmptyInner2SlashMarkNew>) || (?<right_ColonEmptyInner2SlashMarkNew>)");
 
+            //IVertex o_doubleColon = k.AddVertex(keyword, "(?<left_ColonEmptyInner2SlashMarkNew>)||(?<SUB>)(?<right_ColonEmptyInner2SlashMarkNew>)");
+
             o_doubleColon.AddVertex(nonSelfRecursiveParameters, "");
 
             IVertex o_doubleColon_any = o_doubleColon.AddVertex(any, "");            
@@ -863,6 +865,8 @@ namespace m0
 
             IVertex o_doubleColon2 = k.AddVertex(keyword, "|| (?<right_ColonEmptyInner2SlashMarkNew>)");
 
+            //IVertex o_doubleColon2 = k.AddVertex(keyword, "||(?<SUB>)(?<right_ColonEmptyInner2SlashMarkNew>)");
+
             o_doubleColon2.AddVertex(nonSelfRecursiveParameters, "");
 
             IVertex o_doubleColon2_any = o_doubleColon2.AddVertex(any, "");
@@ -880,6 +884,8 @@ namespace m0
             // (?<left_ColonEmptyNew>)||(?<SUB>)                         
 
             IVertex o_doubleColon3 = k.AddVertex(keyword, "(?<left_ColonEmptyInner2SlashMarkNew>) ||");
+
+            // Vertex o_doubleColon3 = k.AddVertex(keyword, "(?<left_ColonEmptyInner2SlashMarkNew>)||(?<SUB>)");
 
             o_doubleColon3.AddVertex(nonSelfRecursiveParameters, "");
 
@@ -1138,7 +1144,7 @@ namespace m0
             //
             // {(*(+,+)(?<expr>)*)}
 
-            IVertex o_Inner2 = k.AddVertex(keyword, "{}");
+            IVertex o_Inner2 = k.AddVertex(keyword, "{(*(+,+)(?<expr2>)*)}");
 
             o_Inner2.AddEdge(keywordGroup, kgd_SlashMarkInner2);
 
@@ -1148,7 +1154,7 @@ namespace m0
 
             IVertex o_Inner2_any = o_Inner2.AddVertex(any, anyString);
 
-            //o_Inner2_any.AddVertex(empty, "dwa");
+           
 
             o_Inner2_any.AddVertex(smb.Get(false, "$$StartInLocalRoot"), "");
 
@@ -1158,26 +1164,34 @@ namespace m0
 
             o_Inner2_any_targetExpr.AddEdge(smb.Get(false, "$$LocalRoot"), kgd_SlashMark);
 
+
+            IVertex o_Inner2_any_any_param = o_Inner2_any.AddVertex(smu.Get(false, @"MultiOperator\Expression"), "(?<expr2>)");
+
+            o_Inner2_any_any_param.AddEdge(smb.Get(false, @"$$KeywordManyRoot"), smb.Get(false, @"$Empty"));
+
             // {} // 1
             //
             // {(*(+,+)(?<expr>)*)}
 
-            IVertex o_Inner = k.AddVertex(keyword, "{}");
+            IVertex o_Inner = k.AddVertex(keyword, "{(*(+,+)(?<expr1>)*)}");
 
             o_Inner.AddEdge(keywordGroup, kgd_Inner);
 
             IVertex o_Inner_any = o_Inner.AddVertex(any, anyString);
 
-            //o_Inner_any.AddVertex(empty, "raz");
 
             o_Inner_any.AddVertex(smb.Get(false, "$$StartInLocalRoot"), "");
 
-            o_Inner_any.AddEdge(smb.Get(false, @"Vertex\$Is"), smu.Get(false, "\"{}\""));            
+            o_Inner_any.AddEdge(smb.Get(false, @"Vertex\$Is"), smu.Get(false, "\"{}\""));
+
+            IVertex o_Inner_any_any_param = o_Inner_any.AddVertex(smu.Get(false, @"MultiOperator\Expression"), "(?<expr2>)");
+
+            o_Inner_any_any_param.AddEdge(smb.Get(false, @"$$KeywordManyRoot"), smb.Get(false, @"$Empty"));
 
             // ""
             //
             // "\"(?<value>)\""
-            
+
             IVertex newValueKeyword = k.AddVertex(keyword, "\"(?<value>)\"");
 
             _newValueKeywordVertex = newValueKeyword;

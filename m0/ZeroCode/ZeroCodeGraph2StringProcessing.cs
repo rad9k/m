@@ -141,10 +141,26 @@ namespace m0.ZeroCode
                         int pos = 0;
                         IVertex q = e.From.GetAll(false, e.Meta + ":" + e.To);
 
+                        IEdge result;
+                        IList<IEdge> results;
+
+                        e.From.QueryOutEdges(e.Meta, e.To, out result, out results);
+
+                        IList<IEdge> listToUse;
+
+                        if (results != null)
+                            listToUse = results;
+                        else
+                        {
+                            listToUse = new List<IEdge>();
+                            if(result!=null)
+                                listToUse.Add(result);
+                        }
+
                         IVertex tv;
                         do
                         {
-                            tv = q.ElementAt(pos).To;
+                            tv = listToUse.ElementAt(pos).To;
                             pos++;
                         } while (tv != e.To);
 
