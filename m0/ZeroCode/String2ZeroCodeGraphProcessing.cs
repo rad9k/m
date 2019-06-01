@@ -2038,6 +2038,10 @@ namespace m0.ZeroCode
                     min_subCount = 0;
                     max_subCount = ktd.multiParameterCount - 1;
                 }
+                else {
+                    min_subCount = 0; // XXX
+                    max_subCount = 0;
+                }
 
                 for (int cnt_subCount = min_subCount; cnt_subCount <= max_subCount; cnt_subCount++)
                 {
