@@ -13,9 +13,18 @@
 	a{}|aa{}\b\c{}|cc{}||
 	a| ||
 	|| |b
+	a{}
 	a{}\
 	{}\{}
 	{}\
+	a{x,y}|aa{x,y}\b\c{x,y}|cc{x,y}
+	a{x,y}|aa{x,y}\b\c{x,y}|cc{x,y}||d{x,y}|d{x,y}\e\f{x,y}|ff{x,y}
+	||d{x,y}|d{x,y}\e\f{x,y}|ff{x,y}
+	a{x,y}|aa{x,y}\b\c{x,y}|cc{x,y}||	
+	a{x,y}
+	a{x,y}\
+	{x,y}\{x,y}
+	{x,y}\
 
 ________________________
 c0: (a + b) + c

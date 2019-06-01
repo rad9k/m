@@ -327,8 +327,9 @@ namespace m0
             GeneralUtil.ParseAndExcute(smu, sm,
                 "{ExpressionAtom,Atom" +
                 ",SingleOperator{NextExpression{$MinCardinality:1,$MaxCardinality:1}}" +
+                ",SingleNestedOperator{Expression{$MinCardinality:1,$MaxCardinality:1}}" +
                 ",DoubleOperator{LeftExpression{$MinCardinality:1,$MaxCardinality:1},RightExpression{$MinCardinality:1,$MaxCardinality:1}}" +
-                ",MultiOperator{Expression{$MinCardinality:1,$MaxCardinality:-1}}" +
+                ",MultiOperator{Expression{$MinCardinality:0,$MaxCardinality:-1}}" +
                 ",Query" +
                 ",[]" +
                 ",[[]]" +
@@ -356,6 +357,7 @@ namespace m0
             smu.Get(false, @"ExpressionAtom").AddEdge(sm.Get(false, "*$Inherits"), smu.Get(false, "Atom"));
             smu.Get(false, @"ExpressionAtom").AddEdge(sm.Get(false, "*$Inherits"), smu.Get(false, "NextOut"));
             smu.Get(false, @"SingleOperator").AddEdge(sm.Get(false, "*$Inherits"), smu.Get(false, "ExpressionAtom"));
+            smu.Get(false, @"SingleNestedOperator").AddEdge(sm.Get(false, "*$Inherits"), smu.Get(false, "ExpressionAtom"));
             smu.Get(false, @"DoubleOperator").AddEdge(sm.Get(false, "*$Inherits"), smu.Get(false, "ExpressionAtom"));
             smu.Get(false, @"MultiOperator").AddEdge(sm.Get(false, "*$Inherits"), smu.Get(false, "ExpressionAtom"));
 
@@ -374,7 +376,7 @@ namespace m0
             smu.Get(false, "\"\\ \"").AddEdge(sm.Get(false, "*$Inherits"), smu.Get(false, "SingleOperator"));
             smu.Get(false, "\"|\"").AddEdge(sm.Get(false, "*$Inherits"), smu.Get(false, "SingleOperator"));
             smu.Get(false, "\"||\"").AddEdge(sm.Get(false, "*$Inherits"), smu.Get(false, "DoubleOperator"));
-            smu.Get(false, @"()").AddEdge(sm.Get(false, "*$Inherits"), smu.Get(false, "SingleOperator"));
+            smu.Get(false, @"()").AddEdge(sm.Get(false, "*$Inherits"), smu.Get(false, "SingleNestedOperator"));
             smu.Get(false, @"<-").AddEdge(sm.Get(false, "*$Inherits"), smu.Get(false, "DoubleOperator"));
             smu.Get(false, @"--").AddEdge(sm.Get(false, "*$Inherits"), smu.Get(false, "DoubleOperator"));
 
@@ -413,12 +415,14 @@ namespace m0
             smu.Get(false, @"StackFrameCreatorWithInputOutput\InputParameter").AddEdge(sm.Get(false, @"*$VertexTarget"), smu.Get(false, @"Type"));
 
             smu.Get(false, @"SingleOperator\NextExpression").AddEdge(sm.Get(false, @"*$EdgeTarget"), smu.Get(false, @"Atom"));
+            smu.Get(false, @"SingleNestedOperator\Expression").AddEdge(sm.Get(false, @"*$EdgeTarget"), smu.Get(false, @"Atom"));
             smu.Get(false, @"DoubleOperator\LeftExpression").AddEdge(sm.Get(false, @"*$EdgeTarget"), smu.Get(false, @"Atom"));
             smu.Get(false, @"DoubleOperator\RightExpression").AddEdge(sm.Get(false, @"*$EdgeTarget"), smu.Get(false, @"Atom"));
             smu.Get(false, @"MultiOperator\Expression").AddEdge(sm.Get(false, @"*$EdgeTarget"), smu.Get(false, @"Atom"));
 
             // $IsAggregation's for EdgeTargets
             smu.Get(false, @"SingleOperator\NextExpression").AddEdge(isAggregation, Empty);
+            smu.Get(false, @"SingleNestedOperator\Expression").AddEdge(isAggregation, Empty);
             smu.Get(false, @"DoubleOperator\LeftExpression").AddEdge(isAggregation, Empty);
             smu.Get(false, @"DoubleOperator\RightExpression").AddEdge(isAggregation, Empty);
             smu.Get(false, @"MultiOperator\Expression").AddEdge(isAggregation, Empty);
@@ -488,6 +492,7 @@ namespace m0
             package.AddEdge(null, smu.Get(false, "\"\\ \""));
             package.AddEdge(null, smu.Get(false, "\"|\""));
             package.AddEdge(null, smu.Get(false, "\"||\""));
+            package.AddEdge(null, smu.Get(false, "()"));
             package.AddEdge(null, smu.Get(false, "<-"));
             package.AddEdge(null, smu.Get(false, "--"));
             package.AddEdge(null, smu.Get(false, "Section"));
@@ -1071,7 +1076,7 @@ namespace m0
 
             o_par_any.AddEdge(smb.Get(false, @"Vertex\$Is"), smu.Get(false, "()"));
 
-             o_par_any.AddVertex(smu.Get(false, @"SingleOperator\NextExpression"), "(?<expr>)");
+             o_par_any.AddVertex(smu.Get(false, @"SingleNestedOperator\Expression"), "(?<expr>)");
      
             // \
             //
