@@ -2633,18 +2633,23 @@ namespace m0.ZeroCode
 
         private bool ProcessToVertexMocksToLinks_Delegate(IEdge edge)
         {
-            IVertex iteratedVertex = edge.To;
-
-            if (iteratedVertex is ToVertexMock)
+            if(edge.Meta is ToVertexMock || edge.To is ToVertexMock)
             {
-                IVertex destination = ToVertexMock2VertexByLinkString((ToVertexMock) iteratedVertex);
+                IVertex metaVertex = edge.Meta;
 
-                edge.From.AddEdge(edge.Meta, destination);
+                IVertex toVertex = edge.To;
+
+                if(metaVertex is ToVertexMock)
+                    metaVertex = ToVertexMock2VertexByLinkString((ToVertexMock)metaVertex);
+
+                if (toVertex is ToVertexMock)
+                    toVertex = ToVertexMock2VertexByLinkString((ToVertexMock)toVertex);
+
+                edge.From.AddEdge(metaVertex, toVertex);
 
                 edge.From.DeleteEdge(edge);
             }
-
-            return false;
+            return false;            
         }
 
         private void ProcessToVertexMocksToLinks()
