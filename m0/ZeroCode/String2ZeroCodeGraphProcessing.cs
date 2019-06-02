@@ -518,12 +518,23 @@ namespace m0.ZeroCode
             if (tryIf != null)
                 return tryIf;
 
+            if (mock.parentVertex != null)
+            {
+                foreach (IEdge inEdge in mock.parentVertex.InEdges)
+                {
+                    IVertex found = inEdge.Meta.Get(false, link);
+                    
+                    if (found != null)
+                            return found;                    
+                }
+            }
+
             return MinusZero.Instance.Empty;
         }
 
-        IVertex processLink(string link)
+        IVertex processLink(string link, IVertex parent)
         {
-            return new ToVertexMock(link);            
+            return new ToVertexMock(link, parent);            
         }
 
         enum keywordTryingState { keywordCharacter, parameter, waiting, matched}
@@ -1506,7 +1517,7 @@ namespace m0.ZeroCode
                                 if (foundLink != null)
                                 {
                                     ktd.waitingUntilPositionInText = _newPos;
-                                    foundParameter = new ToVertexMock(foundLink);
+                                    foundParameter = new ToVertexMock(foundLink, null);
      
                                     MinusZero.Instance.Log(1, "_tryIsKeyword", LOGPREFIX + "FOUND PARAMETER LINK:" + foundParameter.ToString() + " waitUntil:" + ktd.waitingUntilPositionInText);
                                 }
@@ -2531,7 +2542,7 @@ namespace m0.ZeroCode
                     if (afterColon[0] == ZeroCodeCommon.NewVertexPrefix) // if is new value
                         return AddVertex(s, _baseVertex, null, ZeroCodeCommon.stringFromNewVertexString(afterColon));
 
-                    return AddEdge(s, _baseVertex, null, processLink(ZeroCodeCommon.stringFromLinkString(afterColon, true))).To;
+                    return AddEdge(s, _baseVertex, null, processLink(ZeroCodeCommon.stringFromLinkString(afterColon, true), null)).To;
                 }
                 else
                 {
@@ -2539,12 +2550,12 @@ namespace m0.ZeroCode
 
                     string afterColon = currentLineInner.Substring(doubleColonPos + 2, currentLineInner.Length - doubleColonPos - 2).Trim();
 
-                    IVertex meta = processLink(beforeColon);
+                    IVertex meta = processLink(beforeColon, _baseVertex);
 
                     if (afterColon.Length > 0 && afterColon[0] == ZeroCodeCommon.NewVertexPrefix) // if is new value
                         return AddVertex(s, _baseVertex, meta, ZeroCodeCommon.stringFromNewVertexString(afterColon));
 
-                    return AddEdge(s, _baseVertex, meta, processLink(ZeroCodeCommon.stringFromLinkString(afterColon, true))).To;
+                    return AddEdge(s, _baseVertex, meta, processLink(ZeroCodeCommon.stringFromLinkString(afterColon, true), null)).To;
                 }
             }
         }

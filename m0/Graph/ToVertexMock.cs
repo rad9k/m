@@ -1,4 +1,5 @@
-﻿using System;
+﻿using m0.Foundation;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -10,9 +11,13 @@ namespace m0.Graph
     {
         public object mockData;
 
-        public ToVertexMock(object _mockData): base(m0.MinusZero.Instance.TempStore)
+        public IVertex parentVertex;
+
+        public ToVertexMock(object _mockData, IVertex _parentVertex): base(m0.MinusZero.Instance.TempStore)
         {
             mockData = _mockData;
+
+            parentVertex = _parentVertex;
 
             Value = _mockData.ToString();
         }
