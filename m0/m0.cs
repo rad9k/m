@@ -519,8 +519,7 @@ namespace m0
             IVertex keywordGroupDefinition = smb.Get(false, @"$KeywordGroupDefinition");            
 
             IVertex kgd_ColonEmptyInner2SlashMarkNew = k.AddVertex(keywordGroupDefinition, "ColonEmptyInner2SlashMarkNew");
-            IVertex kgd_ColonEmptyInner2SlashMark = k.AddVertex(keywordGroupDefinition, "ColonEmptyInner2SlashMark");
-            IVertex kgd_Empty2 = k.AddVertex(keywordGroupDefinition, "Empty2");
+            IVertex kgd_ColonEmptyInner2SlashMark = k.AddVertex(keywordGroupDefinition, "ColonEmptyInner2SlashMark");            
             IVertex kgd_Empty2Inner = k.AddVertex(keywordGroupDefinition, "Empty2Inner");
             IVertex kgd_InnerCreation = k.AddVertex(keywordGroupDefinition, "InnerCreation");
             IVertex kgd_SlashMark = k.AddVertex(keywordGroupDefinition, "SlashMark");
@@ -1269,7 +1268,7 @@ namespace m0
             
             empty2Keyword.AddVertex(emptyKeyword, "");
 
-            empty2Keyword.AddEdge(keywordGroup, kgd_Empty2);            
+            empty2Keyword.AddEdge(keywordGroup, kgd_Empty2Inner);            
 
             IVertex empty2Keyword_any = empty2Keyword.AddVertex(any, "(?<value>)");            
 
