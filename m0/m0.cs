@@ -521,6 +521,7 @@ namespace m0
             IVertex kgd_ColonEmptyInner2SlashMarkNew = k.AddVertex(keywordGroupDefinition, "ColonEmptyInner2SlashMarkNew");
             IVertex kgd_ColonEmptyInner2SlashMark = k.AddVertex(keywordGroupDefinition, "ColonEmptyInner2SlashMark");
             IVertex kgd_Empty2 = k.AddVertex(keywordGroupDefinition, "Empty2");
+            IVertex kgd_Empty2Inner = k.AddVertex(keywordGroupDefinition, "Empty2Inner");
             IVertex kgd_InnerCreation = k.AddVertex(keywordGroupDefinition, "InnerCreation");
             IVertex kgd_SlashMark = k.AddVertex(keywordGroupDefinition, "SlashMark");
             IVertex kgd_SlashMarkInner2 = k.AddVertex(keywordGroupDefinition, "SlashMarkInner2");
@@ -933,7 +934,7 @@ namespace m0
             //
             // (?<left_Empty2>)|(?<SUB>)(?<right_Empty2>)            
             
-            IVertex o_colon = k.AddVertex(keyword, "(?<left_Empty2>)|(?<SUB>)(?<right_Empty2>)");
+            IVertex o_colon = k.AddVertex(keyword, "(?<left_Empty2Inner>)|(?<SUB>)(?<right_Empty2Inner>)");
 
             o_colon.AddEdge(keywordGroup, kgd_ColonEmptyInner2SlashMarkNew);
 
@@ -945,9 +946,9 @@ namespace m0
 
             o_colon_any.AddEdge(smb.Get(false, @"Vertex\$Is"), smu.Get(false, "|"));
 
-            o_colon_any.AddVertex(smu.Get(false, @"DoubleOperator\LeftExpression"), "(?<left_Empty2>)");
+            o_colon_any.AddVertex(smu.Get(false, @"DoubleOperator\LeftExpression"), "(?<left_Empty2Inner>)");
 
-            IVertex o_colon_any_right = o_colon_any.AddVertex(smu.Get(false, @"DoubleOperator\RightExpression"), "(?<right_Empty2>)");
+            IVertex o_colon_any_right = o_colon_any.AddVertex(smu.Get(false, @"DoubleOperator\RightExpression"), "(?<right_Empty2Inner>)");
 
             IVertex o_colon_any_targetExpr = o_colon_any.AddVertex(smu.Get(false, @"SingleOperator\NextExpression"), "");
 
@@ -1198,7 +1199,8 @@ namespace m0
             //IVertex o_Inner = k.AddVertex(keyword, "{}");
 
             o_Inner.AddEdge(keywordGroup, kgd_Inner);
-
+            o_Inner.AddEdge(keywordGroup, kgd_Empty2Inner);
+            
             IVertex o_Inner_any = o_Inner.AddVertex(any, anyString);
 
 
