@@ -197,28 +197,24 @@ namespace m0
         {
             IVertex r = MinusZero.Instance.Root;
 
-            IVertex meta_a = tr.AddVertex(null, "meta_a");
-            IVertex meta_b = tr.AddVertex(null, "meta_b");
+            IVertex ma = tr.AddVertex(null, "ma");
+            IVertex mb = tr.AddVertex(null, "mb");
+            IVertex maa = tr.AddVertex(null, "maa");
+            IVertex mbb = tr.AddVertex(null, "mbb");
+            IVertex bas = tr.AddVertex(null, "bas");
 
-            IVertex s = tr.AddVertex(null, "s");
+            IVertex a = bas.AddVertex(ma, "a");
+            IVertex b = bas.AddVertex(mb, "b");
 
-            IVertex a = tr.AddVertex(null, "a");
-            s.AddEdge(null, a);
-            s.AddEdge(meta_a, a);
+            IVertex aa = a.AddVertex(maa, "aa");
+            IVertex bb = b.AddVertex(mbb, "bb");
 
-            IVertex b = tr.AddVertex(null, "b");
-            s.AddEdge(null, b);
-            s.AddEdge(meta_b, b);
-            s.AddEdge(meta_a, b);
 
-            a.AddEdge(meta_a, b);
+            //b.AddEdge(r.Get(false, @"System\Meta*$Inherits"), a);
 
-            b.AddEdge(r.Get(false, @"System\Meta*$Inherits"), a);
-
-            IVertex re = ((EasyVertex)s).NewGetAll(false, @"meta_a|a\meta_a|b");
-            re = ((EasyVertex)s).NewGetAll(false, "meta_b|a");
-            re = ((EasyVertex)s).NewGetAll(false, "meta_a|");
-            re = ((EasyVertex)s).NewGetAll(false, "meta_b|");
+            IVertex re = ((EasyVertex)bas).NewGetAll(false, @"\");
+            re = ((EasyVertex)bas).NewGetAll(false, @"");
+            
         }
 
         private void CreateTestData()
@@ -237,32 +233,7 @@ namespace m0
 
             //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-            //queryTest(tr);
-
-            /*IEdge result;
-            IList<IEdge> results;
-
-            a.QueryInEdges(null, "s", out result, out results);
-            a.QueryInEdges("meta_a", null, out result, out results);
-            a.QueryInEdges("meta_a", "aa", out result, out results);
-            a.QueryInEdges("meta_a", "s", out result, out results);
-            a.QueryInEdges(null, "b", out result, out results);
-
-            b.QueryInEdges(null, "aa", out result, out results);
-            b.QueryInEdges("meta_a", null, out result, out results);
-            b.QueryInEdges("meta_a", "s", out result, out results);
-            b.QueryInEdges(null, "b", out result, out results);
-
-            b.QueryInEdges(null, "s", out result, out results);
-            b.QueryInEdges("meta_b", null, out result, out results);
-            b.QueryInEdges("meta_b", "s", out result, out results);
-            b.QueryInEdges(null, "b", out result, out results);
-            */
-
-
-
-
-
+            queryTest(tr);
 
             GeneralUtil.ParseAndExcute(tr, r.Get(false, @"System\Meta"), @"{TEST3{Class:Customer{},Class:Person{$Description:opis,Attribute:Name,Attribute:Surname,Attribute:DateOfBirth},Class:Company{Attribute:Name,Attribute:RegistrationNumber,},Class:Adress{Attribute:Line 1,Attribute:Line 2,Attribute:Line 3,Attribute:City,Attribute:County,Attribute:Postal code,Attribute:Country},Class:Basket{Attribute:Creation date,Attribute:Status},Class:Item{Attribute:Name,Attribute:Description,Attribute:Price}}}");
 

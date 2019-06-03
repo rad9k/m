@@ -128,6 +128,11 @@ namespace m0.ZeroCode
                     toAdd.AddEdge(e.Meta, e.To);
         }
 
+        public IVertex InnerOperator (IVertex inputQs, IVertex instructionVertex)
+        {
+            return inputQs;
+        }
+
 
         public ZeroCodeExecuter()
         {
