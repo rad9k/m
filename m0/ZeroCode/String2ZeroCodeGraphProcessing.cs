@@ -522,6 +522,9 @@ namespace m0.ZeroCode
             {
                 foreach (IEdge inEdge in mock.parentVertex.InEdges)
                 {
+                    if (GeneralUtil.CompareStrings(inEdge.Meta.Value, link))
+                        return inEdge.Meta;
+
                     IVertex found = inEdge.Meta.Get(false, link);
                     
                     if (found != null)
@@ -2542,7 +2545,7 @@ namespace m0.ZeroCode
                     if (afterColon[0] == ZeroCodeCommon.NewVertexPrefix) // if is new value
                         return AddVertex(s, _baseVertex, null, ZeroCodeCommon.stringFromNewVertexString(afterColon));
 
-                    return AddEdge(s, _baseVertex, null, processLink(ZeroCodeCommon.stringFromLinkString(afterColon, true), null)).To;
+                    return AddEdge(s, _baseVertex, null, processLink(ZeroCodeCommon.stringFromLinkString(afterColon, true), _baseVertex)).To;
                 }
                 else
                 {
@@ -2555,7 +2558,7 @@ namespace m0.ZeroCode
                     if (afterColon.Length > 0 && afterColon[0] == ZeroCodeCommon.NewVertexPrefix) // if is new value
                         return AddVertex(s, _baseVertex, meta, ZeroCodeCommon.stringFromNewVertexString(afterColon));
 
-                    return AddEdge(s, _baseVertex, meta, processLink(ZeroCodeCommon.stringFromLinkString(afterColon, true), null)).To;
+                    return AddEdge(s, _baseVertex, meta, processLink(ZeroCodeCommon.stringFromLinkString(afterColon, true), _baseVertex)).To;
                 }
             }
         }
@@ -2795,10 +2798,10 @@ namespace m0.ZeroCode
 
             ProcessTextPart(parseRoot, 0, lineInfoList.Count - 1);
 
-            ProcessToVertexMocksToLinks();
-
             if (errorList.Count() == 0)
             {
+                ProcessToVertexMocksToLinks();
+
                 MoveInEdgesComingFromOutsideOfSubGraphToParseRoot();
                 DeleteAllEdgesFromBaseVertex();
                 MoveAllParseRootEdgesToBaseVertex();

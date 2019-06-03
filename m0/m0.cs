@@ -1151,8 +1151,6 @@ namespace m0
 
             IVertex o_Inner2 = k.AddVertex(keyword, "{(*(+,+)(?<expr>)*)}");
 
-            //IVertex o_Inner2 = k.AddVertex(keyword, "{}");
-
             o_Inner2.AddEdge(keywordGroup, kgd_SlashMarkInner2);
 
             o_Inner2.AddEdge(keywordGroup, kgd_ColonEmptyInner2SlashMarkNew);
@@ -1161,32 +1159,17 @@ namespace m0
 
             IVertex o_Inner2_any = o_Inner2.AddVertex(any, anyString);
 
-
-
-
             o_Inner2_any.AddVertex(smb.Get(false, "$$StartInLocalRoot"), "");
 
-
-
             o_Inner2_any.AddEdge(smb.Get(false, @"Vertex\$Is"), smu.Get(false, "\"{}\""));
-
-
-
-
-
-            //o_Inner2_any.AddVertex(null, "dwa");
 
             IVertex o_Inner2_any_any_param = o_Inner2_any.AddVertex(smu.Get(false, @"MultiOperator\Expression"), "(?<expr>)");
 
             o_Inner2_any_any_param.AddEdge(smb.Get(false, @"$$KeywordManyRoot"), smb.Get(false, @"$Empty"));
 
-
             IVertex o_Inner2_any_targetExpr = o_Inner2_any.AddVertex(smu.Get(false, @"SingleOperator\NextExpression"), "");
 
             o_Inner2_any_targetExpr.AddEdge(smb.Get(false, "$$LocalRoot"), kgd_SlashMark);
-
-
-
 
 
             // {} // 1
@@ -1195,26 +1178,18 @@ namespace m0
 
            IVertex o_Inner = k.AddVertex(keyword, "{(*(+,+)(?<expr1>)*)}");
 
-            //IVertex o_Inner = k.AddVertex(keyword, "{}");
-
             o_Inner.AddEdge(keywordGroup, kgd_Inner);
             o_Inner.AddEdge(keywordGroup, kgd_Empty2Inner);
             
             IVertex o_Inner_any = o_Inner.AddVertex(any, anyString);
 
-
-
-            o_Inner_any.AddVertex(smb.Get(false, "$$StartInLocalRoot"), "");
-
-            
+            o_Inner_any.AddVertex(smb.Get(false, "$$StartInLocalRoot"), "");            
 
             o_Inner_any.AddEdge(smb.Get(false, @"Vertex\$Is"), smu.Get(false, "\"{}\""));
-
 
             IVertex o_Inner_any_any_param = o_Inner_any.AddVertex(smu.Get(false, @"MultiOperator\Expression"), "(?<expr1>)");
 
             o_Inner_any_any_param.AddEdge(smb.Get(false, @"$$KeywordManyRoot"), smb.Get(false, @"$Empty"));
-
 
 
             // ""
