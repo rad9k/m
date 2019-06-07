@@ -2,9 +2,8 @@
 using m0.Graph;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using m0.ZeroCode.Instructions;
+using m0.ZeroCode.Helpers;
 
 namespace m0.ZeroCode
 {
@@ -30,12 +29,14 @@ namespace m0.ZeroCode
 
         public IVertex GetAll(IVertex baseVertex, IVertex expression)
         {
-            IVertex qs = CreateQueryStack();            
+            ZeroCodeExecution exe = new ZeroCodeExecution();
 
-            if (CheckIs(expression, colon))
+            IVertex qs = InstructionHelpers.CreateQueryStack();            
+
+            if (InstructionHelpers.CheckIs(expression, colon))
             {
-                IVertex left = GetLeft(expression);
-                IVertex right = GetRight(expression);
+                IVertex left = InstructionHelpers.GetLeft(expression);
+                IVertex right = InstructionHelpers.GetRight(expression);
 
                 object meta=null;
                 object value = null;
@@ -46,20 +47,20 @@ namespace m0.ZeroCode
                 if (right != null)
                     value = right.Value;
 
-                AddResults(baseVertex, true, meta, value, qs);
+                BaseInstructions.AddResults(baseVertex, true, meta, value, qs);
 
-                IVertex target=null;
+                IVertex nextExpression=null;
                 
                 if(right!=null)
-                    target = GetTargetExpression(right);
+                    nextExpression = InstructionHelpers.GetNextExpression(right);
 
-                if (target != null)
+                if (nextExpression != null)
                 {
-                    if (CheckIs(target, slash))
+                    if (InstructionHelpers.CheckIs(nextExpression, slash))
                     {
-                        IVertex newExpression = GetTargetExpression(target);
+                        IVertex newExpression = InstructionHelpers.GetNextExpression(nextExpression);
 
-                        qs = stepIntoAllEdges(qs);
+                        qs = BaseInstructions.stepIntoAllEdges(exe,qs,nextExpression);
 
                         return GetAll(qs, newExpression);
                     }
@@ -69,69 +70,9 @@ namespace m0.ZeroCode
             return qs;
         }
 
-        private IVertex CreateQueryStack()
-        {
-            return new NoInEdgeInOutVertexVertex(MinusZero.Instance.TempStore);
-        }
+      
 
-        private IVertex stepIntoAllEdges(IVertex oldQs)
-        {
-            IVertex newQs = CreateQueryStack();
-
-            foreach (IEdge e in oldQs)
-                foreach (IEdge ee in e.To)
-                    newQs.AddEdge(ee.Meta, ee.To);
-
-            return newQs;
-        }
-
-        private bool CheckIs(IVertex v, string i)
-        {
-            IVertex iv=GraphUtil.GetOutFirst(v, "$Is", (object) i);
-
-            if (iv != null)
-                return true;
-
-            return false;
-        }
-
-        private IVertex GetLeft(IVertex v)
-        {
-            return GraphUtil.GetOutFirst(v, "LeftExpression", null);
-        }
-
-        private IVertex GetRight(IVertex v)
-        {
-            return GraphUtil.GetOutFirst(v, "RightExpression", null);
-        }
-
-        private IVertex GetTargetExpression(IVertex v)
-        {
-            return GraphUtil.GetOutFirst(v, "TargetExpression", null);
-        }
-
-        public void AddResults(IVertex baseVertex, bool outEdges, object meta, object value, IVertex toAdd)
-        {
-            IEdge result;
-            IList<IEdge> results;
-
-            if(outEdges)
-                baseVertex.QueryOutEdges(meta, value, out result, out results);
-            else
-                baseVertex.QueryInEdges(meta, value, out result, out results);
-
-            if (result != null)            
-                toAdd.AddEdge(result.Meta, result.To);
-
-            if (results != null)
-                foreach (IEdge e in results)
-                    toAdd.AddEdge(e.Meta, e.To);
-        }
-
-        public IVertex InnerOperator (IVertex inputQs, IVertex instructionVertex)
-        {
-            return inputQs;
-        }
+      
 
 
         public ZeroCodeExecuter()
