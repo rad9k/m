@@ -242,6 +242,7 @@
     <Compile Include="UIWpf\VisualiserEditWrapper.cs" />
     <Compile Include="UIWpf\VisualiserViewWrapper.cs" />
     <Compile Include="UML\ClassVertex.cs" />
+    <Compile Include="Util\DelegateFactory.cs" />
     <Compile Include="Util\GeneralUtil.cs">
       <SubType>Code</SubType>
     </Compile>
