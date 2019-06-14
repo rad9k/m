@@ -313,6 +313,11 @@ namespace m0
             sm.Get(false, @"UML\StateMachine").AddEdge(sm.Get(false, "*$Inherits"), sm.Get(false, @"UML\AtomType"));
         }
 
+        void AddDotNetEndPoint(IVertex baseVertex, string methodName)
+        {
+            IVertex callableEndPoint = Root.Get(false, @"System\Meta\ZeroTypes\CallableEndPoint");
+        }
+
         void CreateSystemMetaUml_Action_part()
         {
             IVertex smu = Root.Get(false, @"System\Meta\UML");
@@ -343,6 +348,10 @@ namespace m0
                 ",While{Test{$MinCardinality:1,$MaxCardinality:1},Do{$MinCardinality:0,$MaxCardinality:1}}" +
                 ",ForEach{Variable{$MinCardinality:0,$MaxCardinality:1},Set{$MinCardinality:1,$MaxCardinality:1},Do{$MinCardinality:0,$MaxCardinality:1}}" +
                 "}");
+
+            // CallableEndPoint
+
+            AddDotNetEndPoint(smu.Get(false, "\"|\""), "ColonOperator");
 
             // method
             IVertex method = sm.Get(false, @"UML\Class").AddVertex(null, "Method");

@@ -43,5 +43,10 @@ namespace m0.ZeroCode.Instructions
         {
             return inputQs;
         }
+
+        public static IVertex ColonOperator(ZeroCodeExecution exe, IVertex inputQs, IVertex instructionVertex)
+        {
+            return inputQs;
+        }
     }
 }
