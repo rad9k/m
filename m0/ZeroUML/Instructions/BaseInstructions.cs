@@ -5,8 +5,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using m0.ZeroCode.Helpers;
+using m0.ZeroCode;
 
-namespace m0.ZeroCode.Instructions
+namespace m0.ZeroUML.Instructions
 {
     public class BaseInstructions
     {

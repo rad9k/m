@@ -2,7 +2,7 @@
 using m0.Graph;
 using System;
 using System.Collections.Generic;
-using m0.ZeroCode.Instructions;
+using m0.ZeroUML.Instructions;
 using m0.ZeroCode.Helpers;
 
 namespace m0.ZeroCode
