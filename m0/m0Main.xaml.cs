@@ -238,17 +238,17 @@ namespace m0
             GeneralUtil.ParseAndExcute(tr, r.Get(false, @"System\Meta"), @"{TEST3{Class:Customer{},Class:Person{$Description:opis,Attribute:Name,Attribute:Surname,Attribute:DateOfBirth},Class:Company{Attribute:Name,Attribute:RegistrationNumber,},Class:Adress{Attribute:Line 1,Attribute:Line 2,Attribute:Line 3,Attribute:City,Attribute:County,Attribute:Postal code,Attribute:Country},Class:Basket{Attribute:Creation date,Attribute:Status},Class:Item{Attribute:Name,Attribute:Description,Attribute:Price}}}");
 
 
-            tr.Get(false, @"TEST3\Customer").AddEdge(r.Get(false, @"System\Meta*$Is"), r.Get(false, @"System\Meta\UML\Class"));
-            tr.Get(false, @"TEST3\Person").AddEdge(r.Get(false, @"System\Meta*$Is"), r.Get(false, @"System\Meta\UML\Class"));
-            tr.Get(false, @"TEST3\Company").AddEdge(r.Get(false, @"System\Meta*$Is"), r.Get(false, @"System\Meta\UML\Class"));
-            tr.Get(false, @"TEST3\Adress").AddEdge(r.Get(false, @"System\Meta*$Is"), r.Get(false, @"System\Meta\UML\Class"));
-            tr.Get(false, @"TEST3\Basket").AddEdge(r.Get(false, @"System\Meta*$Is"), r.Get(false, @"System\Meta\UML\Class"));
-            tr.Get(false, @"TEST3\Item").AddEdge(r.Get(false, @"System\Meta*$Is"), r.Get(false, @"System\Meta\UML\Class"));
+            tr.Get(false, @"TEST3\Customer").AddEdge(r.Get(false, @"System\Meta*$Is"), r.Get(false, @"System\Meta\ZeroUML\Class"));
+            tr.Get(false, @"TEST3\Person").AddEdge(r.Get(false, @"System\Meta*$Is"), r.Get(false, @"System\Meta\ZeroUML\Class"));
+            tr.Get(false, @"TEST3\Company").AddEdge(r.Get(false, @"System\Meta*$Is"), r.Get(false, @"System\Meta\ZeroUML\Class"));
+            tr.Get(false, @"TEST3\Adress").AddEdge(r.Get(false, @"System\Meta*$Is"), r.Get(false, @"System\Meta\ZeroUML\Class"));
+            tr.Get(false, @"TEST3\Basket").AddEdge(r.Get(false, @"System\Meta*$Is"), r.Get(false, @"System\Meta\ZeroUML\Class"));
+            tr.Get(false, @"TEST3\Item").AddEdge(r.Get(false, @"System\Meta*$Is"), r.Get(false, @"System\Meta\ZeroUML\Class"));
 
             GeneralUtil.ParseAndExcute(tr, r.Get(false, @"System\Meta"), "{TEST2,TEST{Class:Person{Association:Spouse{$MaxCardinality:1,$MaxTargetCardinality:1},Aggregation:Child{$MaxCardinality:3},Attribute:Name,Attribute:Surname,Attribute:Age{MinValue:0,MaxValue:40},Attribute:NoseLength{MinValue:0,MaxValue:40},Attribute:Money{MinValue:0,MaxValue:1000},Attribute:IsGood,Attribute:IsPretty,Attribute:IsPretty2,Attribute:IsPretty3},Enum:Pretty{EnumValue:Yes,EnumValue:No,EnumValue:Maybe}}}");
 
             tr.Get(false, @"TEST\Pretty").AddEdge(r.Get(false, @"System\Meta*$Inherits"), r.Get(false, @"System\Meta\ZeroTypes\EnumBase"));
-            tr.Get(false, @"TEST\Person").AddEdge(r.Get(false, @"System\Meta*$Is"), r.Get(false, @"System\Meta\UML\Class"));
+            tr.Get(false, @"TEST\Person").AddEdge(r.Get(false, @"System\Meta*$Is"), r.Get(false, @"System\Meta\ZeroUML\Class"));
 
 
             ///
@@ -270,7 +270,7 @@ namespace m0
 
 
 
-            IVertex smu = r.Get(false, @"System\Meta\UML");
+            IVertex smu = r.Get(false, @"System\Meta\ZeroUML");
             IVertex smb = r.Get(false, @"System\Meta\Base");
 
 
@@ -486,30 +486,30 @@ namespace m0
             IVertex start = tr.Get(false, @"TEST3");
 
             for (int i = 0; i < 1; i++) {
-                IVertex sm = start.AddVertex(r.Get(false, @"System\Meta\UML\StateMachine"), "sm "+i);
+                IVertex sm = start.AddVertex(r.Get(false, @"System\Meta\ZeroUML\StateMachine"), "sm "+i);
 
                 for (int ii = 0; ii < 1; ii++)
-                    sm.AddVertex(r.Get(false, @"System\Meta\UML\StateMachine\State"), "state "+ii+" of machine"+i);
+                    sm.AddVertex(r.Get(false, @"System\Meta\ZeroUML\StateMachine\State"), "state "+ii+" of machine"+i);
 
                 IVertex allstates = sm.GetAll(false, "");
 
                 foreach (IEdge e in allstates)
                     foreach (IEdge ee in allstates)
-                        e.To.AddEdge(r.Get(false, @"System\Meta\UML\StateMachine\State\Transition"), ee.To);
+                        e.To.AddEdge(r.Get(false, @"System\Meta\ZeroUML\StateMachine\State\Transition"), ee.To);
             }
 
             //////////////////////
 
             IVertex associations = tr.GetAll(false, @"TEST\Person\Association:");
             IVertex ismeta = r.Get(false, @"System\Meta*$Is");
-            IVertex asmeta = r.Get(false, @"System\Meta\UML\Class\Association");
+            IVertex asmeta = r.Get(false, @"System\Meta\ZeroUML\Class\Association");
 
             //foreach (IEdge v in associations)
              //   v.To.AddEdge(ismeta, asmeta);
             
             IVertex attributes = tr.GetAll(false, @"TEST\Person\Attribute:");
             //IVertex ismeta=r.Get(false, @"System\Meta*$Is");
-            IVertex ameta=r.Get(false, @"System\Meta\UML\Class\Attribute");
+            IVertex ameta=r.Get(false, @"System\Meta\ZeroUML\Class\Attribute");
 
             foreach (IEdge v in attributes)
                 v.To.AddEdge(ismeta, ameta);
@@ -655,7 +655,7 @@ namespace m0
             IVertex r=MinusZero.Instance.Root;
 
             IVertex smzt=r.Get(false, @"System\Meta\ZeroTypes");
-            IVertex smu = r.Get(false, @"System\Meta\UML");
+            IVertex smu = r.Get(false, @"System\Meta\ZeroUML");
             IVertex smb = r.Get(false, @"System\Meta\Base");
 
             IVertex function_function = where.AddVertex(smu.Get(false, @"Function"), "Sleep");

@@ -7,7 +7,7 @@ using m0.Foundation;
 using System.Collections.ObjectModel;
 using System.Windows;
 using m0.Util;
-using m0.UML;
+using m0.ZeroUML;
 using m0.ZeroTypes;
 using System.Windows.Input;
 using System.Windows.Media;

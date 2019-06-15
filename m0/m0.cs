@@ -219,7 +219,7 @@ namespace m0
         {
             IVertex sm = Root.Get(false, @"System\Meta");
 
-            GeneralUtil.ParseAndExcute(sm, null, "{Base{Vertex{$IsLink,$Inherits,$Is,$EdgeTarget,$VertexTarget,$IsAggregation,$MinCardinality,$MaxCardinality,$MinTargetCardinality,$MaxTargetCardinality,$DefaultValue,$DefaultViewVisualiser,$DefaultEditVisualiser,$DefaultOpenVisualiser,$Group,$Section,$Description,Author,Dependency},$Empty,$Import,$ImportMeta,$Keyword,$KeywordGroupDefinition,$$KeywordGroup,$$KeywordManyRoot,$$LocalRoot,$$StartInLocalRoot,$$EmptyKeyword,$$NewVertexKeyword,$$NonSelfRecursiveParameters,$NewLine,$ParseRoot,$ParseArtefacts}}");
+            GeneralUtil.ParseAndExcute(sm, null, "{Base{Vertex{$IsLink,$Inherits,$Is,$EdgeTarget,$VertexTarget,$IsAggregation,$MinCardinality,$MaxCardinality,$MinTargetCardinality,$MaxTargetCardinality,$DefaultValue,$DefaultViewVisualiser,$DefaultEditVisualiser,$DefaultOpenVisualiser,$Group,$Section,$Description,$CallableEndPoint,Author,Dependency},$Empty,$Import,$ImportMeta,$Keyword,$KeywordGroupDefinition,$$KeywordGroup,$$KeywordManyRoot,$$LocalRoot,$$StartInLocalRoot,$$EmptyKeyword,$$NewVertexKeyword,$$NonSelfRecursiveParameters,$NewLine,$ParseRoot,$ParseArtefacts}}");
 
             sm.Get(false, @"Presentation\$Hide").AddEdge(sm.Get(false, @"Base\Vertex\$EdgeTarget"), sm.Get(false, @"Base\Vertex"));
 
@@ -265,62 +265,72 @@ namespace m0
             sm.Get(false, @"Base\Vertex\$IsAggregation").AddEdge(sm.Get(false, @"*$EdgeTarget"), sm.Get(false, @"Base\Vertex"));
         }
 
-        void CreateSystemMetaUml()
+        void CreateSystemMetaZeroUML()
         {
             IVertex sm = Root.Get(false, @"System\Meta");
 
-            GeneralUtil.ParseAndExcute(sm, null, "{UML{Type,AtomType,StateMachine{State{Transition}},Enum{EnumValue},Selector,Class{Attribute{MinValue,MaxValue},Association,Aggregation}}}");
+            GeneralUtil.ParseAndExcute(sm, null, "{ZeroUML{Type,AtomType,StateMachine{State{Transition}},Enum{EnumValue},Selector,Class{Attribute{MinValue,MaxValue},Association,Aggregation}}}");
 
-            GeneralUtil.ParseAndExcute(sm.Get(false, @"UML\Selector"), sm, "{$MinCardinality:0,$MaxCardinality:-1}");
+            GeneralUtil.ParseAndExcute(sm.Get(false, @"ZeroUML\Selector"), sm, "{$MinCardinality:0,$MaxCardinality:-1}");
 
-            sm.Get(false, @"UML\Class\Attribute").AddEdge(sm.Get(false, @"*$IsAggregation"), empty);
+            sm.Get(false, @"ZeroUML\Class\Attribute").AddEdge(sm.Get(false, @"*$IsAggregation"), empty);
 
-            sm.Get(false, @"UML\Class\Aggregation").AddEdge(sm.Get(false, @"*$IsAggregation"), empty);
+            sm.Get(false, @"ZeroUML\Class\Aggregation").AddEdge(sm.Get(false, @"*$IsAggregation"), empty);
 
-            GeneralUtil.ParseAndExcute(sm.Get(false, @"UML\Enum\EnumValue"), sm, "{$MinCardinality:0,$MaxCardinality:-1}");
+            GeneralUtil.ParseAndExcute(sm.Get(false, @"ZeroUML\Enum\EnumValue"), sm, "{$MinCardinality:0,$MaxCardinality:-1}");
 
-            sm.Get(false, @"UML\Enum\EnumValue").AddEdge(sm.Get(false, @"*$EdgeTarget"), sm.Get(false, @"Base\Vertex"));
+            sm.Get(false, @"ZeroUML\Enum\EnumValue").AddEdge(sm.Get(false, @"*$EdgeTarget"), sm.Get(false, @"Base\Vertex"));
 
-            sm.Get(false, @"UML\Enum\EnumValue").AddEdge(sm.Get(false, @"*$IsAggregation"), empty);
+            sm.Get(false, @"ZeroUML\Enum\EnumValue").AddEdge(sm.Get(false, @"*$IsAggregation"), empty);
 
-            GeneralUtil.ParseAndExcute(sm.Get(false, @"UML\StateMachine\State"), sm, "{$MinCardinality:0,$MaxCardinality:-1}");
+            GeneralUtil.ParseAndExcute(sm.Get(false, @"ZeroUML\StateMachine\State"), sm, "{$MinCardinality:0,$MaxCardinality:-1}");
 
-            GeneralUtil.ParseAndExcute(sm.Get(false, @"UML\StateMachine\State\Transition"), sm, "{$MinCardinality:0,$MaxCardinality:-1}");
+            GeneralUtil.ParseAndExcute(sm.Get(false, @"ZeroUML\StateMachine\State\Transition"), sm, "{$MinCardinality:0,$MaxCardinality:-1}");
 
-            sm.Get(false, @"UML\StateMachine\State\Transition").AddEdge(sm.Get(false, @"*$EdgeTarget"), sm.Get(false, @"UML\StateMachine\State"));
-
-
-            sm.Get(false, @"UML\Class").AddEdge(sm.Get(false, "*$Inherits"), sm.Get(false, @"UML\Type"));
-
-            sm.Get(false, @"UML\Class").AddEdge(null, sm.Get(false, "*$Inherits"));
+            sm.Get(false, @"ZeroUML\StateMachine\State\Transition").AddEdge(sm.Get(false, @"*$EdgeTarget"), sm.Get(false, @"ZeroUML\StateMachine\State"));
 
 
+            sm.Get(false, @"ZeroUML\Class").AddEdge(sm.Get(false, "*$Inherits"), sm.Get(false, @"ZeroUML\Type"));
 
-            Root.Get(false, @"System\Meta\UML\Class\Attribute").AddEdge(sm.Get(false, @"*$Inherits"), sm.Get(false, @"UML\Selector"));
-            Root.Get(false, @"System\Meta\UML\Class\Attribute").AddEdge(sm.Get(false, @"*$VertexTarget"), sm.Get(false, @"UML\Type"));
-
-            Root.Get(false, @"System\Meta\UML\Class\Association").AddEdge(sm.Get(false, @"*$Inherits"), sm.Get(false, @"UML\Selector"));
-            Root.Get(false, @"System\Meta\UML\Class\Association").AddEdge(sm.Get(false, @"*$VertexTarget"), sm.Get(false, @"UML\Class"));
-
-            Root.Get(false, @"System\Meta\UML\Class\Aggregation").AddEdge(sm.Get(false, @"*$Inherits"), sm.Get(false, @"UML\Selector"));
-            Root.Get(false, @"System\Meta\UML\Class\Aggregation").AddEdge(sm.Get(false, @"*$VertexTarget"), sm.Get(false, @"UML\Class"));
+            sm.Get(false, @"ZeroUML\Class").AddEdge(null, sm.Get(false, "*$Inherits"));
 
 
-            // sm.Get(false, @"UML\Type").AddEdge(sm.Get(false, "*$Inherits"),sm.Get(false, @"Base\Vertex"));    // do not want it at last for now        
 
-            sm.Get(false, @"UML\AtomType").AddEdge(sm.Get(false, "*$Inherits"), sm.Get(false, @"UML\Type"));
-            sm.Get(false, @"UML\Enum").AddEdge(sm.Get(false, "*$Inherits"), sm.Get(false, @"UML\AtomType")); // was UML\Type
-            sm.Get(false, @"UML\StateMachine").AddEdge(sm.Get(false, "*$Inherits"), sm.Get(false, @"UML\AtomType"));
+            Root.Get(false, @"System\Meta\ZeroUML\Class\Attribute").AddEdge(sm.Get(false, @"*$Inherits"), sm.Get(false, @"ZeroUML\Selector"));
+            Root.Get(false, @"System\Meta\ZeroUML\Class\Attribute").AddEdge(sm.Get(false, @"*$VertexTarget"), sm.Get(false, @"ZeroUML\Type"));
+
+            Root.Get(false, @"System\Meta\ZeroUML\Class\Association").AddEdge(sm.Get(false, @"*$Inherits"), sm.Get(false, @"ZeroUML\Selector"));
+            Root.Get(false, @"System\Meta\ZeroUML\Class\Association").AddEdge(sm.Get(false, @"*$VertexTarget"), sm.Get(false, @"ZeroUML\Class"));
+
+            Root.Get(false, @"System\Meta\ZeroUML\Class\Aggregation").AddEdge(sm.Get(false, @"*$Inherits"), sm.Get(false, @"ZeroUML\Selector"));
+            Root.Get(false, @"System\Meta\ZeroUML\Class\Aggregation").AddEdge(sm.Get(false, @"*$VertexTarget"), sm.Get(false, @"ZeroUML\Class"));
+
+
+            // sm.Get(false, @"ZeroUML\Type").AddEdge(sm.Get(false, "*$Inherits"),sm.Get(false, @"Base\Vertex"));    // do not want it at last for now        
+
+            sm.Get(false, @"ZeroUML\AtomType").AddEdge(sm.Get(false, "*$Inherits"), sm.Get(false, @"ZeroUML\Type"));
+            sm.Get(false, @"ZeroUML\Enum").AddEdge(sm.Get(false, "*$Inherits"), sm.Get(false, @"ZeroUML\AtomType")); // was ZeroUML\Type
+            sm.Get(false, @"ZeroUML\StateMachine").AddEdge(sm.Get(false, "*$Inherits"), sm.Get(false, @"ZeroUML\AtomType"));
         }
 
-        void AddDotNetEndPoint(IVertex baseVertex, string methodName)
+        void AddDotNetEndPoint(IVertex baseVertex, string _methodName)
         {
-            IVertex callableEndPoint = Root.Get(false, @"System\Meta\ZeroTypes\CallableEndPoint");
+            IVertex callableEndPoint = Root.Get(false, @"System\Meta\Base\Vertex\$CallableEndPoint");
+            IVertex dotNetEndPoint = Root.Get(false, @"System\Meta\ZeroTypes\DotNetEndPoint");
+            IVertex typeName = Root.Get(false, @"System\Meta\ZeroTypes\DotNetEndPoint\TypeName");
+            IVertex methodName = Root.Get(false, @"System\Meta\ZeroTypes\DotNetEndPoint\MethodName");
+            IVertex _is = Root.Get(false, @"System\Meta\Base\Vertex\$Is");
+
+            IVertex n = baseVertex.AddVertex(callableEndPoint, null);
+            n.AddEdge(_is, dotNetEndPoint);
+            n.AddVertex(typeName, "m0.ZeroCode.Instructions.BaseInstructions");
+            n.AddVertex(methodName, _methodName);
+            
         }
 
-        void CreateSystemMetaUml_Action_part()
+        void CreateSystemMetaZeroUML_Action_part()
         {
-            IVertex smu = Root.Get(false, @"System\Meta\UML");
+            IVertex smu = Root.Get(false, @"System\Meta\ZeroUML");
             IVertex sm = Root.Get(false, @"System\Meta");
 
             IVertex isAggregation = Root.Get(false, @"System\Meta\Base\Vertex\$IsAggregation");
@@ -354,7 +364,7 @@ namespace m0
             AddDotNetEndPoint(smu.Get(false, "\"|\""), "ColonOperator");
 
             // method
-            IVertex method = sm.Get(false, @"UML\Class").AddVertex(null, "Method");
+            IVertex method = sm.Get(false, @"ZeroUML\Class").AddVertex(null, "Method");
             method.AddEdge(sm.Get(false, "*$Inherits"), smu.Get(false, "StackFrameCreatorWithInputOutput"));
             GeneralUtil.ParseAndExcute(method, sm, "{$MinCardinality: 0,$MaxCardinality: -1}");
 
@@ -520,7 +530,7 @@ namespace m0
             IVertex k=zc.AddVertex(Root.Get(false, @"System\Meta\ZeroTypes\FormalTextLanguage\Keywords"), "");
 
 
-            IVertex smu = Root.Get(false, @"System\Meta\UML");
+            IVertex smu = Root.Get(false, @"System\Meta\ZeroUML");
             IVertex smb = Root.Get(false, @"System\Meta\Base");
 
             IVertex keyword = smb.Get(false, @"$Keyword");
@@ -1298,7 +1308,7 @@ namespace m0
 
             DirectMeta.AddEdge(Root.Get(false, @"System\Meta\Base\Vertex\$IsLink"), Empty);
 
-            di.AddEdge(DirectMeta, Root.Get(false, @"System\Meta\UML"));
+            di.AddEdge(DirectMeta, Root.Get(false, @"System\Meta\ZeroUML"));
 
             di.AddEdge(DirectMeta, Root.Get(false, @"System\Meta\Base"));
 
@@ -1334,20 +1344,22 @@ namespace m0
 
             GeneralUtil.ParseAndExcute(sm, sm, "{ZeroTypes{AtomType:String,AtomType:Integer,AtomType:Decimal,AtomType:Float,AtomType:Boolean,Vertex:VertexType,Class:Edge{Association:From{$MinCardinality:0,$MaxCardinality:1},Association:Meta{$MinCardinality:1,$MaxCardinality:1},Association:To{$MinCardinality:1,$MaxCardinality:1}},Class:DateTime{Attribute:Year{$MinCardinality:1,$MaxCardinality:1},Attribute:Month{$MinCardinality:1,$MaxCardinality:1},Attribute:Day{$MinCardinality:1,$MaxCardinality:1},Attribute:Hour{$MinCardinality:1,$MaxCardinality:1},Attribute:Minute{$MinCardinality:1,$MaxCardinality:1},Attribute:Second{$MinCardinality:1,$MaxCardinality:1},Attribute:Millisecond{$MinCardinality:0,$MaxCardinality:1}},Class:FormalTextLanguage{Aggregation:DefaultImports{$MinCardinality:0,$MaxCardinality:1},Aggregation:Keywords{$MinCardinality:0,$MaxCardinality:1}},Enum:EnumBase,Class:$PlatformClass{$PlatformClassName},Class:HasBaseEdge{Attribute:BaseEdge{$MinCardinality:1,$MaxCardinality:1}},Class:HasSelectedEdges{Attribute:SelectedEdges{$MinCardinality:1,$MaxCardinality:1,$DefaultValue:}},Class:HasFilter{Attribute:FilterQuery{$MinCardinality:0,$MaxCardinality:1}},Class:Color{Attribute:Red{MinValue:0,MaxValue:255,$MinCardinality:1,$MaxCardinality:1},Attribute:Green{MinValue:0,MaxValue:255,$MinCardinality:1,$MaxCardinality:1},Attribute:Blue{MinValue:0,MaxValue:255,$MinCardinality:1,$MaxCardinality:1},Attribute:Opacity{MinValue:0,MaxValue:255,$MinCardinality:0,$MaxCardinality:1}},Class:Exception{Attribute:Where{$MinCardinality:0,$MaxCardinality:1},Attribute:Type{$MinCardinality:0,$MaxCardinality:1},Attribute:What{$MinCardinality:1,$MaxCardinality:1}},Enum:ExceptionTypeEnum{EnumValue:Error,EnumValue:Warning,EnumValue:Info},Class:CallableEndPoint,Class:DotNetEndPoint{Attribute:TypeName,Attribute:MethodName}}}");
 
-            sm.Get(false, @"ZeroTypes\String").AddEdge(sm.Get(false, @"*$Is"), sm.Get(false, @"UML\AtomType"));
-            sm.Get(false, @"ZeroTypes\Integer").AddEdge(sm.Get(false, @"*$Is"), sm.Get(false, @"UML\AtomType"));
-            sm.Get(false, @"ZeroTypes\Decimal").AddEdge(sm.Get(false, @"*$Is"), sm.Get(false, @"UML\AtomType"));
-            sm.Get(false, @"ZeroTypes\Float").AddEdge(sm.Get(false, @"*$Is"), sm.Get(false, @"UML\AtomType"));
-            sm.Get(false, @"ZeroTypes\Boolean").AddEdge(sm.Get(false, @"*$Is"), sm.Get(false, @"UML\AtomType"));
+            sm.Get(false, @"Base\Vertex\$CallableEndPoint").AddEdge(sm.Get(false, @"*$EdgeTarget"), sm.Get(false, @"ZeroTypes\CallableEndPoint"));
+
+            sm.Get(false, @"ZeroTypes\String").AddEdge(sm.Get(false, @"*$Is"), sm.Get(false, @"ZeroUML\AtomType"));
+            sm.Get(false, @"ZeroTypes\Integer").AddEdge(sm.Get(false, @"*$Is"), sm.Get(false, @"ZeroUML\AtomType"));
+            sm.Get(false, @"ZeroTypes\Decimal").AddEdge(sm.Get(false, @"*$Is"), sm.Get(false, @"ZeroUML\AtomType"));
+            sm.Get(false, @"ZeroTypes\Float").AddEdge(sm.Get(false, @"*$Is"), sm.Get(false, @"ZeroUML\AtomType"));
+            sm.Get(false, @"ZeroTypes\Boolean").AddEdge(sm.Get(false, @"*$Is"), sm.Get(false, @"ZeroUML\AtomType"));
             sm.Get(false, @"ZeroTypes\VertexType").AddEdge(sm.Get(false, @"*$Is"), sm.Get(false, @"Base\Vertex"));
-            sm.Get(false, @"ZeroTypes\Edge").AddEdge(sm.Get(false, @"*$Is"), sm.Get(false, @"UML\Class"));
-            sm.Get(false, @"ZeroTypes\EnumBase").AddEdge(sm.Get(false, @"*$Is"), sm.Get(false, @"UML\Enum"));
-            sm.Get(false, @"ZeroTypes\DateTime").AddEdge(sm.Get(false, @"*$Is"), sm.Get(false, @"UML\Class"));
-            sm.Get(false, @"ZeroTypes\HasBaseEdge").AddEdge(sm.Get(false, @"*$Is"), sm.Get(false, @"UML\Class"));
-            sm.Get(false, @"ZeroTypes\HasSelectedEdges").AddEdge(sm.Get(false, @"*$Is"), sm.Get(false, @"UML\Class"));
-            sm.Get(false, @"ZeroTypes\HasFilter").AddEdge(sm.Get(false, @"*$Is"), sm.Get(false, @"UML\Class"));
-            sm.Get(false, @"ZeroTypes\$PlatformClass").AddEdge(sm.Get(false, @"*$Is"), sm.Get(false, @"UML\Class"));
-            sm.Get(false, @"ZeroTypes\Color").AddEdge(sm.Get(false, @"*$Is"), sm.Get(false, @"UML\Class"));
+            sm.Get(false, @"ZeroTypes\Edge").AddEdge(sm.Get(false, @"*$Is"), sm.Get(false, @"ZeroUML\Class"));
+            sm.Get(false, @"ZeroTypes\EnumBase").AddEdge(sm.Get(false, @"*$Is"), sm.Get(false, @"ZeroUML\Enum"));
+            sm.Get(false, @"ZeroTypes\DateTime").AddEdge(sm.Get(false, @"*$Is"), sm.Get(false, @"ZeroUML\Class"));
+            sm.Get(false, @"ZeroTypes\HasBaseEdge").AddEdge(sm.Get(false, @"*$Is"), sm.Get(false, @"ZeroUML\Class"));
+            sm.Get(false, @"ZeroTypes\HasSelectedEdges").AddEdge(sm.Get(false, @"*$Is"), sm.Get(false, @"ZeroUML\Class"));
+            sm.Get(false, @"ZeroTypes\HasFilter").AddEdge(sm.Get(false, @"*$Is"), sm.Get(false, @"ZeroUML\Class"));
+            sm.Get(false, @"ZeroTypes\$PlatformClass").AddEdge(sm.Get(false, @"*$Is"), sm.Get(false, @"ZeroUML\Class"));
+            sm.Get(false, @"ZeroTypes\Color").AddEdge(sm.Get(false, @"*$Is"), sm.Get(false, @"ZeroUML\Class"));
 
             sm.Get(false, @"ZeroTypes\EnumBase").AddEdge(sm.Get(false, @"*$EdgeTarget"), sm.Get(false, @"Base\Vertex"));
 
@@ -1400,7 +1412,7 @@ namespace m0
             smv.Get(false, @"DiagramInternal\InstanceCreationEnum").AddEdge(sm.Get(false, "*$Inherits"), sm.Get(false, @"ZeroTypes\EnumBase"));
             smv.Get(false, @"DiagramInternal\LineEndEnum").AddEdge(sm.Get(false, "*$Inherits"), sm.Get(false, @"ZeroTypes\EnumBase"));
 
-            smv.Get(false, @"DiagramInternal\DiagramItemBase").AddEdge(sm.Get(false, @"*$Is"), sm.Get(false, @"UML\Class"));
+            smv.Get(false, @"DiagramInternal\DiagramItemBase").AddEdge(sm.Get(false, @"*$Is"), sm.Get(false, @"ZeroUML\Class"));
             smv.Get(false, @"DiagramInternal\DiagramItemBase").AddEdge(sm.Get(false, "*$Inherits"), sm.Get(false, @"ZeroTypes\$PlatformClass"));
             smv.Get(false, @"DiagramInternal\DiagramItemBase").AddEdge(sm.Get(false, "*$Inherits"), sm.Get(false, @"ZeroTypes\HasBaseEdge"));
 
@@ -1433,7 +1445,7 @@ namespace m0
 
 
 
-            smv.Get(false, @"DiagramInternal\DiagramItemDefinition").AddEdge(sm.Get(false, @"*$Is"), sm.Get(false, @"UML\Class"));
+            smv.Get(false, @"DiagramInternal\DiagramItemDefinition").AddEdge(sm.Get(false, @"*$Is"), sm.Get(false, @"ZeroUML\Class"));
             smv.Get(false, @"DiagramInternal\DiagramItemDefinition\DirectVertexTestQuery").AddEdge(sm.Get(false, @"*$EdgeTarget"), sm.Get(false, @"ZeroTypes\String"));
             smv.Get(false, @"DiagramInternal\DiagramItemDefinition\MetaVertexTestQuery").AddEdge(sm.Get(false, @"*$EdgeTarget"), sm.Get(false, @"ZeroTypes\String"));
             smv.Get(false, @"DiagramInternal\DiagramItemDefinition\DiagramItemClass").AddEdge(sm.Get(false, @"*$EdgeTarget"), smv.Get(false, @"DiagramInternal\DiagramItemBase"));
@@ -1443,7 +1455,7 @@ namespace m0
             smv.Get(false, @"DiagramInternal\DiagramItemDefinition\DoNotShowInherited").AddEdge(sm.Get(false, @"*$EdgeTarget"), sm.Get(false, @"ZeroTypes\Boolean"));
             smv.Get(false, @"DiagramInternal\DiagramItemDefinition\ForceShowEditForm").AddEdge(sm.Get(false, @"*$EdgeTarget"), sm.Get(false, @"ZeroTypes\Boolean"));
 
-            smv.Get(false, @"DiagramInternal\DiagramLineBase").AddEdge(sm.Get(false, @"*$Is"), sm.Get(false, @"UML\Class"));
+            smv.Get(false, @"DiagramInternal\DiagramLineBase").AddEdge(sm.Get(false, @"*$Is"), sm.Get(false, @"ZeroUML\Class"));
             smv.Get(false, @"DiagramInternal\DiagramLineBase").AddEdge(sm.Get(false, "*$Inherits"), sm.Get(false, @"ZeroTypes\$PlatformClass"));
             smv.Get(false, @"DiagramInternal\DiagramLineBase").AddEdge(sm.Get(false, "*$Inherits"), sm.Get(false, @"ZeroTypes\HasBaseEdge"));
 
@@ -1462,7 +1474,7 @@ namespace m0
             smv.Get(false, @"DiagramInternal\DiagramLineBase\ToDiagramItem").AddEdge(sm.Get(false, @"*$EdgeTarget"), smv.Get(false, @"DiagramInternal\DiagramItemBase"));
             smv.Get(false, @"DiagramInternal\DiagramLineBase\ToDiagramItem").AddEdge(sm.Get(false, @"*$Section"), sm.Get(false, @"ZeroTypes\HasBaseEdge\BaseEdge\$Section:"));
 
-            smv.Get(false, @"DiagramInternal\DiagramLineDefinition").AddEdge(sm.Get(false, @"*$Is"), sm.Get(false, @"UML\Class"));
+            smv.Get(false, @"DiagramInternal\DiagramLineDefinition").AddEdge(sm.Get(false, @"*$Is"), sm.Get(false, @"ZeroUML\Class"));
             smv.Get(false, @"DiagramInternal\DiagramLineDefinition\EdgeTestQuery").AddEdge(sm.Get(false, @"*$EdgeTarget"), sm.Get(false, @"ZeroTypes\String"));
             smv.Get(false, @"DiagramInternal\DiagramLineDefinition\ToDiagramItemTestQuery").AddEdge(sm.Get(false, @"*$EdgeTarget"), sm.Get(false, @"ZeroTypes\String"));
             smv.Get(false, @"DiagramInternal\DiagramLineDefinition\DiagramLineClass").AddEdge(sm.Get(false, @"*$EdgeTarget"), smv.Get(false, @"DiagramInternal\DiagramLineBase"));
@@ -1470,26 +1482,26 @@ namespace m0
             smv.Get(false, @"DiagramInternal\DiagramLineDefinition\CreateEdgeOnly").AddEdge(sm.Get(false, @"*$EdgeTarget"), sm.Get(false, @"ZeroTypes\Boolean"));
             smv.Get(false, @"DiagramInternal\DiagramLineDefinition\ForceShowEditForm").AddEdge(sm.Get(false, @"*$EdgeTarget"), sm.Get(false, @"ZeroTypes\Boolean"));
 
-            smv.Get(false, @"DiagramInternal\DiagramImageItem").AddEdge(sm.Get(false, @"*$Is"), sm.Get(false, @"UML\Class"));
+            smv.Get(false, @"DiagramInternal\DiagramImageItem").AddEdge(sm.Get(false, @"*$Is"), sm.Get(false, @"ZeroUML\Class"));
             smv.Get(false, @"DiagramInternal\DiagramImageItem").AddEdge(sm.Get(false, "*$Inherits"), smv.Get(false, @"DiagramInternal\DiagramItemBase"));
             smv.Get(false, @"DiagramInternal\DiagramImageItem").AddVertex(sm.Get(false, "*$PlatformClassName"), @"m0.UIWpf.Visualisers.Diagram.DiagramImageItem, m0, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null");
             smv.Get(false, @"DiagramInternal\DiagramImageItem\Filename").AddEdge(sm.Get(false, @"*$EdgeTarget"), sm.Get(false, @"ZeroTypes\String"));
 
-            smv.Get(false, @"DiagramInternal\DiagramOvalItem").AddEdge(sm.Get(false, @"*$Is"), sm.Get(false, @"UML\Class"));
+            smv.Get(false, @"DiagramInternal\DiagramOvalItem").AddEdge(sm.Get(false, @"*$Is"), sm.Get(false, @"ZeroUML\Class"));
             smv.Get(false, @"DiagramInternal\DiagramOvalItem").AddEdge(sm.Get(false, "*$Inherits"), smv.Get(false, @"DiagramInternal\DiagramItemBase"));
             smv.Get(false, @"DiagramInternal\DiagramOvalItem").AddVertex(sm.Get(false, "*$PlatformClassName"), @"m0.UIWpf.Visualisers.Diagram.DiagramOvalItem, m0, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null");
 
-            smv.Get(false, @"DiagramInternal\DiagramRhombusItem").AddEdge(sm.Get(false, @"*$Is"), sm.Get(false, @"UML\Class"));
+            smv.Get(false, @"DiagramInternal\DiagramRhombusItem").AddEdge(sm.Get(false, @"*$Is"), sm.Get(false, @"ZeroUML\Class"));
             smv.Get(false, @"DiagramInternal\DiagramRhombusItem").AddEdge(sm.Get(false, "*$Inherits"), smv.Get(false, @"DiagramInternal\DiagramItemBase"));
             smv.Get(false, @"DiagramInternal\DiagramRhombusItem").AddVertex(sm.Get(false, "*$PlatformClassName"), @"m0.UIWpf.Visualisers.Diagram.DiagramRhombusItem, m0, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null");
 
 
 
-            smv.Get(false, @"DiagramInternal\DiagramRectangleItem").AddEdge(sm.Get(false, @"*$Is"), sm.Get(false, @"UML\Class"));
+            smv.Get(false, @"DiagramInternal\DiagramRectangleItem").AddEdge(sm.Get(false, @"*$Is"), sm.Get(false, @"ZeroUML\Class"));
             smv.Get(false, @"DiagramInternal\DiagramRectangleItem").AddEdge(sm.Get(false, "*$Inherits"), smv.Get(false, @"DiagramInternal\DiagramItemBase"));
             smv.Get(false, @"DiagramInternal\DiagramRectangleItem").AddVertex(sm.Get(false, "*$PlatformClassName"), @"m0.UIWpf.Visualisers.Diagram.DiagramRectangleItem, m0, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null");
 
-            smv.Get(false, @"DiagramInternal\DiagramRectangleItem\VisualiserClass").AddEdge(sm.Get(false, @"*$EdgeTarget"), sm.Get(false, @"UML\Class"));
+            smv.Get(false, @"DiagramInternal\DiagramRectangleItem\VisualiserClass").AddEdge(sm.Get(false, @"*$EdgeTarget"), sm.Get(false, @"ZeroUML\Class"));
             IVertex visualiserSection = smv.Get(false, @"DiagramInternal\DiagramRectangleItem\VisualiserClass").AddVertex(sm.Get(false, @"*$Section"), "Visualiser");
 
             smv.Get(false, @"DiagramInternal\DiagramRectangleItem\VisualiserVertex").AddEdge(sm.Get(false, @"*$EdgeTarget"), sm.Get(false, @"ZeroTypes\VertexType"));
@@ -1502,7 +1514,7 @@ namespace m0
             smv.Get(false, @"DiagramInternal\DiagramRectangleItem\ShowMeta").AddEdge(sm.Get(false, @"*$EdgeTarget"), sm.Get(false, @"ZeroTypes\Boolean"));
             smv.Get(false, @"DiagramInternal\DiagramRectangleItem\ShowMeta").AddEdge(sm.Get(false, @"*$Section"), lookSection);
 
-            smv.Get(false, @"DiagramInternal\DiagramLine").AddEdge(sm.Get(false, @"*$Is"), sm.Get(false, @"UML\Class"));
+            smv.Get(false, @"DiagramInternal\DiagramLine").AddEdge(sm.Get(false, @"*$Is"), sm.Get(false, @"ZeroUML\Class"));
             smv.Get(false, @"DiagramInternal\DiagramLine").AddEdge(sm.Get(false, "*$Inherits"), smv.Get(false, @"DiagramInternal\DiagramLineBase"));
             smv.Get(false, @"DiagramInternal\DiagramLine").AddVertex(sm.Get(false, "*$PlatformClassName"), @"m0.UIWpf.Visualisers.Diagram.DiagramLine, m0, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null");
 
@@ -1516,7 +1528,7 @@ namespace m0
             smv.Get(false, @"DiagramInternal\DiagramLine\IsDashed").AddEdge(sm.Get(false, @"*$Section"), lookSection);
 
 
-            smv.Get(false, @"DiagramInternal\DiagramMetaExtendedLine").AddEdge(sm.Get(false, @"*$Is"), sm.Get(false, @"UML\Class"));
+            smv.Get(false, @"DiagramInternal\DiagramMetaExtendedLine").AddEdge(sm.Get(false, @"*$Is"), sm.Get(false, @"ZeroUML\Class"));
             smv.Get(false, @"DiagramInternal\DiagramMetaExtendedLine").AddEdge(sm.Get(false, "*$Inherits"), smv.Get(false, @"DiagramInternal\DiagramLineBase"));
             smv.Get(false, @"DiagramInternal\DiagramMetaExtendedLine").AddVertex(sm.Get(false, "*$PlatformClassName"), @"m0.UIWpf.Visualisers.Diagram.DiagramMetaExtendedLine, m0, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null");
 
@@ -1543,7 +1555,7 @@ namespace m0
             sm.Get(false, @"Visualiser\Form").AddEdge(sm.Get(false, "*$Inherits"), sm.Get(false, @"ZeroTypes\$PlatformClass"));
             sm.Get(false, @"Visualiser\Form").AddEdge(sm.Get(false, "*$Inherits"), sm.Get(false, @"ZeroTypes\HasBaseEdge"));
             sm.Get(false, @"Visualiser\Form").AddVertex(sm.Get(false, "*$PlatformClassName"), @"m0.UIWpf.Visualisers.FormVisualiser, m0, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null");
-            sm.Get(false, @"Visualiser\Form").AddEdge(sm.Get(false, @"*$Is"), sm.Get(false, @"UML\Class"));
+            sm.Get(false, @"Visualiser\Form").AddEdge(sm.Get(false, @"*$Is"), sm.Get(false, @"ZeroUML\Class"));
             sm.Get(false, @"Visualiser\Form\ZoomVisualiserContent").AddEdge(sm.Get(false, @"*$EdgeTarget"), sm.Get(false, @"ZeroTypes\Integer"));
             sm.Get(false, @"Visualiser\Form\ZoomVisualiserContent").AddVertex(sm.Get(false, @"*MinValue"), 0);
             sm.Get(false, @"Visualiser\Form\ZoomVisualiserContent").AddVertex(sm.Get(false, @"*MaxValue"), 200);
@@ -1554,12 +1566,12 @@ namespace m0
             sm.Get(false, @"Visualiser\Form\MetaOnLeft").AddEdge(sm.Get(false, @"*$EdgeTarget"), sm.Get(false, @"ZeroTypes\Boolean"));
             sm.Get(false, @"Visualiser\Form\SectionsAsTabs").AddEdge(sm.Get(false, @"*$EdgeTarget"), sm.Get(false, @"ZeroTypes\Boolean"));
             sm.Get(false, @"Visualiser\Form\TableVisualiserVertex").AddEdge(sm.Get(false, @"*$EdgeTarget"), sm.Get(false, @"ZeroTypes\VertexType"));
-            //sm.Get(false, @"UML\Class").AddEdge(sm.Get(false, "UML*$DefaultOpenVisualiser"), sm.Get(false, @"Visualiser\Form"));
+            //sm.Get(false, @"ZeroUML\Class").AddEdge(sm.Get(false, "ZeroUML*$DefaultOpenVisualiser"), sm.Get(false, @"Visualiser\Form"));
 
             sm.Get(false, @"Visualiser\Code").AddEdge(sm.Get(false, "*$Inherits"), sm.Get(false, @"ZeroTypes\$PlatformClass"));
             sm.Get(false, @"Visualiser\Code").AddEdge(sm.Get(false, "*$Inherits"), sm.Get(false, @"ZeroTypes\HasBaseEdge"));
             sm.Get(false, @"Visualiser\Code").AddVertex(sm.Get(false, "*$PlatformClassName"), @"m0.UIWpf.Visualisers.CodeVisualiser, m0, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null");
-            sm.Get(false, @"Visualiser\Code").AddEdge(sm.Get(false, @"*$Is"), sm.Get(false, @"UML\Class"));
+            sm.Get(false, @"Visualiser\Code").AddEdge(sm.Get(false, @"*$Is"), sm.Get(false, @"ZeroUML\Class"));
             sm.Get(false, @"Visualiser\Code\ZoomVisualiserContent").AddEdge(sm.Get(false, @"*$EdgeTarget"), sm.Get(false, @"ZeroTypes\Float"));
             sm.Get(false, @"Visualiser\Code\ZoomVisualiserContent").AddVertex(sm.Get(false, @"*MinValue"), 1.0);
             sm.Get(false, @"Visualiser\Code\ZoomVisualiserContent").AddVertex(sm.Get(false, @"*MaxValue"), 30.0);
@@ -1570,14 +1582,14 @@ namespace m0
             sm.Get(false, @"Visualiser\Wrap").AddEdge(sm.Get(false, "*$Inherits"), sm.Get(false, @"ZeroTypes\$PlatformClass"));
             sm.Get(false, @"Visualiser\Wrap").AddEdge(sm.Get(false, "*$Inherits"), sm.Get(false, @"ZeroTypes\HasBaseEdge"));
             sm.Get(false, @"Visualiser\Wrap").AddVertex(sm.Get(false, "*$PlatformClassName"), @"m0.UIWpf.Visualisers.WrapVisualiser, m0, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null");
-            sm.Get(false, @"Visualiser\Wrap").AddEdge(sm.Get(false, @"*$Is"), sm.Get(false, @"UML\Class"));
+            sm.Get(false, @"Visualiser\Wrap").AddEdge(sm.Get(false, @"*$Is"), sm.Get(false, @"ZeroUML\Class"));
 
             sm.Get(false, @"Visualiser\List").AddEdge(sm.Get(false, "*$Inherits"), sm.Get(false, @"ZeroTypes\$PlatformClass"));
             sm.Get(false, @"Visualiser\List").AddEdge(sm.Get(false, "*$Inherits"), sm.Get(false, @"ZeroTypes\HasBaseEdge"));
             sm.Get(false, @"Visualiser\List").AddEdge(sm.Get(false, "*$Inherits"), sm.Get(false, @"ZeroTypes\HasSelectedEdges"));
             sm.Get(false, @"Visualiser\List").AddEdge(sm.Get(false, "*$Inherits"), sm.Get(false, @"ZeroTypes\HasFilter"));
             sm.Get(false, @"Visualiser\List").AddVertex(sm.Get(false, "*$PlatformClassName"), @"m0.UIWpf.Visualisers.ListVisualiser, m0, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null");
-            sm.Get(false, @"Visualiser\List").AddEdge(sm.Get(false, @"*$Is"), sm.Get(false, @"UML\Class"));
+            sm.Get(false, @"Visualiser\List").AddEdge(sm.Get(false, @"*$Is"), sm.Get(false, @"ZeroUML\Class"));
             sm.Get(false, @"Visualiser\List\ShowMeta").AddEdge(sm.Get(false, @"*$EdgeTarget"), sm.Get(false, @"ZeroTypes\Boolean"));
             sm.Get(false, @"Visualiser\List\ShowHeader").AddEdge(sm.Get(false, @"*$EdgeTarget"), sm.Get(false, @"ZeroTypes\Boolean"));
             sm.Get(false, @"Visualiser\List\GridStyle").AddEdge(sm.Get(false, @"*$EdgeTarget"), sm.Get(false, @"Visualiser\GridStyleEnum"));
@@ -1592,7 +1604,7 @@ namespace m0
             sm.Get(false, @"Visualiser\Table").AddEdge(sm.Get(false, "*$Inherits"), sm.Get(false, @"ZeroTypes\HasSelectedEdges"));
             sm.Get(false, @"Visualiser\Table").AddEdge(sm.Get(false, "*$Inherits"), sm.Get(false, @"ZeroTypes\HasFilter"));
             sm.Get(false, @"Visualiser\Table").AddVertex(sm.Get(false, "*$PlatformClassName"), @"m0.UIWpf.Visualisers.TableVisualiser, m0, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null");
-            sm.Get(false, @"Visualiser\Table").AddEdge(sm.Get(false, @"*$Is"), sm.Get(false, @"UML\Class"));
+            sm.Get(false, @"Visualiser\Table").AddEdge(sm.Get(false, @"*$Is"), sm.Get(false, @"ZeroUML\Class"));
             sm.Get(false, @"Visualiser\Table\ExpertMode").AddEdge(sm.Get(false, @"*$EdgeTarget"), sm.Get(false, @"ZeroTypes\Boolean"));
             sm.Get(false, @"Visualiser\Table\ToShowEdgesMeta").AddEdge(sm.Get(false, @"*$EdgeTarget"), sm.Get(false, @"ZeroTypes\Edge"));
             sm.Get(false, @"Visualiser\Table\ShowHeader").AddEdge(sm.Get(false, @"*$EdgeTarget"), sm.Get(false, @"ZeroTypes\Boolean"));
@@ -1608,7 +1620,7 @@ namespace m0
             sm.Get(false, @"Visualiser\TableFast").AddEdge(sm.Get(false, "*$Inherits"), sm.Get(false, @"ZeroTypes\HasSelectedEdges"));
             sm.Get(false, @"Visualiser\TableFast").AddEdge(sm.Get(false, "*$Inherits"), sm.Get(false, @"ZeroTypes\HasFilter"));
             sm.Get(false, @"Visualiser\TableFast").AddVertex(sm.Get(false, "*$PlatformClassName"), @"m0.UIWpf.Visualisers.TableFastVisualiser, m0, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null");
-            sm.Get(false, @"Visualiser\TableFast").AddEdge(sm.Get(false, @"*$Is"), sm.Get(false, @"UML\Class"));
+            sm.Get(false, @"Visualiser\TableFast").AddEdge(sm.Get(false, @"*$Is"), sm.Get(false, @"ZeroUML\Class"));
             sm.Get(false, @"Visualiser\TableFast\ToShowEdgesMeta").AddEdge(sm.Get(false, @"*$EdgeTarget"), sm.Get(false, @"ZeroTypes\Edge"));
             sm.Get(false, @"Visualiser\TableFast\ShowHeader").AddEdge(sm.Get(false, @"*$EdgeTarget"), sm.Get(false, @"ZeroTypes\Boolean"));
             sm.Get(false, @"Visualiser\TableFast\GridStyle").AddEdge(sm.Get(false, @"*$EdgeTarget"), sm.Get(false, @"Visualiser\GridStyleEnum"));
@@ -1623,7 +1635,7 @@ namespace m0
             sm.Get(false, @"Visualiser\Tree").AddEdge(sm.Get(false, "*$Inherits"), sm.Get(false, @"ZeroTypes\HasBaseEdge"));
             sm.Get(false, @"Visualiser\Tree").AddEdge(sm.Get(false, "*$Inherits"), sm.Get(false, @"ZeroTypes\HasSelectedEdges"));
             sm.Get(false, @"Visualiser\Tree").AddVertex(sm.Get(false, "*$PlatformClassName"), @"m0.UIWpf.Visualisers.TreeVisualiser, m0, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null");
-            sm.Get(false, @"Visualiser\Tree").AddEdge(sm.Get(false, @"*$Is"), sm.Get(false, @"UML\Class"));
+            sm.Get(false, @"Visualiser\Tree").AddEdge(sm.Get(false, @"*$Is"), sm.Get(false, @"ZeroUML\Class"));
             sm.Get(false, @"Visualiser\Tree\ZoomVisualiserContent").AddEdge(sm.Get(false, @"*$EdgeTarget"), sm.Get(false, @"ZeroTypes\Integer"));
             sm.Get(false, @"Visualiser\Tree\ZoomVisualiserContent").AddVertex(sm.Get(false, @"*MinValue"), 0);
             sm.Get(false, @"Visualiser\Tree\ZoomVisualiserContent").AddVertex(sm.Get(false, @"*MaxValue"), 200);
@@ -1633,7 +1645,7 @@ namespace m0
             sm.Get(false, @"Visualiser\Graph").AddEdge(sm.Get(false, "*$Inherits"), sm.Get(false, @"ZeroTypes\HasBaseEdge"));
             sm.Get(false, @"Visualiser\Graph").AddEdge(sm.Get(false, "*$Inherits"), sm.Get(false, @"ZeroTypes\HasSelectedEdges"));
             sm.Get(false, @"Visualiser\Graph").AddVertex(sm.Get(false, "*$PlatformClassName"), @"m0.UIWpf.Visualisers.GraphVisualiser, m0, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null");
-            sm.Get(false, @"Visualiser\Graph").AddEdge(sm.Get(false, @"*$Is"), sm.Get(false, @"UML\Class"));
+            sm.Get(false, @"Visualiser\Graph").AddEdge(sm.Get(false, @"*$Is"), sm.Get(false, @"ZeroUML\Class"));
             sm.Get(false, @"Visualiser\Graph\ZoomVisualiserContent").AddEdge(sm.Get(false, @"*$EdgeTarget"), sm.Get(false, @"ZeroTypes\Integer"));
             sm.Get(false, @"Visualiser\Graph\ZoomVisualiserContent").AddVertex(sm.Get(false, @"*MinValue"), 0);
             sm.Get(false, @"Visualiser\Graph\ZoomVisualiserContent").AddVertex(sm.Get(false, @"*MaxValue"), 200);
@@ -1651,79 +1663,79 @@ namespace m0
             sm.Get(false, @"Visualiser\Class").AddEdge(sm.Get(false, "*$Inherits"), sm.Get(false, @"ZeroTypes\$PlatformClass"));
             sm.Get(false, @"Visualiser\Class").AddEdge(sm.Get(false, "*$Inherits"), sm.Get(false, @"ZeroTypes\HasBaseEdge"));
             sm.Get(false, @"Visualiser\Class").AddVertex(sm.Get(false, "*$PlatformClassName"), @"m0.UIWpf.Visualisers.ClassVisualiser, m0, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null");
-            sm.Get(false, @"Visualiser\Class").AddEdge(sm.Get(false, @"*$Is"), sm.Get(false, @"UML\Class"));
+            sm.Get(false, @"Visualiser\Class").AddEdge(sm.Get(false, @"*$Is"), sm.Get(false, @"ZeroUML\Class"));
 
             sm.Get(false, @"Visualiser\String").AddEdge(sm.Get(false, "*$Inherits"), sm.Get(false, @"ZeroTypes\$PlatformClass"));
             sm.Get(false, @"Visualiser\String").AddEdge(sm.Get(false, "*$Inherits"), sm.Get(false, @"ZeroTypes\HasBaseEdge"));
             sm.Get(false, @"Visualiser\String").AddVertex(sm.Get(false, "*$PlatformClassName"), @"m0.UIWpf.Visualisers.StringVisualiser, m0, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null");
-            sm.Get(false, @"Visualiser\String").AddEdge(sm.Get(false, @"*$Is"), sm.Get(false, @"UML\Class"));
-            sm.Get(false, @"ZeroTypes\String").AddEdge(sm.Get(false, "UML*$DefaultEditVisualiser"), sm.Get(false, @"Visualiser\String"));
+            sm.Get(false, @"Visualiser\String").AddEdge(sm.Get(false, @"*$Is"), sm.Get(false, @"ZeroUML\Class"));
+            sm.Get(false, @"ZeroTypes\String").AddEdge(sm.Get(false, "ZeroUML*$DefaultEditVisualiser"), sm.Get(false, @"Visualiser\String"));
 
             sm.Get(false, @"Visualiser\StringView").AddEdge(sm.Get(false, "*$Inherits"), sm.Get(false, @"ZeroTypes\$PlatformClass"));
             sm.Get(false, @"Visualiser\StringView").AddEdge(sm.Get(false, "*$Inherits"), sm.Get(false, @"ZeroTypes\HasBaseEdge"));
             sm.Get(false, @"Visualiser\StringView").AddVertex(sm.Get(false, "*$PlatformClassName"), @"m0.UIWpf.Visualisers.StringViewVisualiser, m0, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null");
-            sm.Get(false, @"Visualiser\StringView").AddEdge(sm.Get(false, @"*$Is"), sm.Get(false, @"UML\Class"));
-            sm.Get(false, @"ZeroTypes\String").AddEdge(sm.Get(false, "UML*$DefaultViewVisualiser"), sm.Get(false, @"Visualiser\StringView"));
+            sm.Get(false, @"Visualiser\StringView").AddEdge(sm.Get(false, @"*$Is"), sm.Get(false, @"ZeroUML\Class"));
+            sm.Get(false, @"ZeroTypes\String").AddEdge(sm.Get(false, "ZeroUML*$DefaultViewVisualiser"), sm.Get(false, @"Visualiser\StringView"));
 
 
 
             sm.Get(false, @"Visualiser\Vertex").AddEdge(sm.Get(false, "*$Inherits"), sm.Get(false, @"ZeroTypes\$PlatformClass"));
             sm.Get(false, @"Visualiser\Vertex").AddEdge(sm.Get(false, "*$Inherits"), sm.Get(false, @"ZeroTypes\HasBaseEdge"));
             sm.Get(false, @"Visualiser\Vertex").AddVertex(sm.Get(false, "*$PlatformClassName"), @"m0.UIWpf.Visualisers.VertexVisualiser, m0, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null");
-            sm.Get(false, @"Visualiser\Vertex").AddEdge(sm.Get(false, @"*$Is"), sm.Get(false, @"UML\Class"));
+            sm.Get(false, @"Visualiser\Vertex").AddEdge(sm.Get(false, @"*$Is"), sm.Get(false, @"ZeroUML\Class"));
 
-            sm.Get(false, @"ZeroTypes\VertexType").AddEdge(sm.Get(false, "UML*$DefaultViewVisualiser"), sm.Get(false, @"Visualiser\Vertex"));
-            sm.Get(false, @"ZeroTypes\VertexType").AddEdge(sm.Get(false, "UML*$DefaultEditVisualiser"), sm.Get(false, @"Visualiser\Vertex"));
-            sm.Get(false, @"Base\Vertex\$Inherits").AddEdge(sm.Get(false, "UML*$DefaultEditVisualiser"), sm.Get(false, @"Visualiser\Vertex"));
-            sm.Get(false, @"Base\Vertex\$Inherits").AddEdge(sm.Get(false, "UML*$DefaultViewVisualiser"), sm.Get(false, @"Visualiser\Vertex"));
-            sm.Get(false, @"Base\Vertex\$EdgeTarget").AddEdge(sm.Get(false, "UML*$DefaultEditVisualiser"), sm.Get(false, @"Visualiser\Vertex"));
-            sm.Get(false, @"Base\Vertex\$EdgeTarget").AddEdge(sm.Get(false, "UML*$DefaultViewVisualiser"), sm.Get(false, @"Visualiser\Vertex"));
-            sm.Get(false, @"Base\Vertex\$VertexTarget").AddEdge(sm.Get(false, "UML*$DefaultEditVisualiser"), sm.Get(false, @"Visualiser\Vertex"));
-            sm.Get(false, @"Base\Vertex\$VertexTarget").AddEdge(sm.Get(false, "UML*$DefaultViewVisualiser"), sm.Get(false, @"Visualiser\Vertex"));
-            //sm.Get(false, @"UML\Class").AddEdge(sm.Get(false, "UML*$DefaultViewVisualiser"), sm.Get(false, @"Visualiser\VertexVisualiser"));
-            sm.Get(false, @"UML\Class").AddEdge(sm.Get(false, "UML*$DefaultEditVisualiser"), sm.Get(false, @"Visualiser\Vertex"));
+            sm.Get(false, @"ZeroTypes\VertexType").AddEdge(sm.Get(false, "ZeroUML*$DefaultViewVisualiser"), sm.Get(false, @"Visualiser\Vertex"));
+            sm.Get(false, @"ZeroTypes\VertexType").AddEdge(sm.Get(false, "ZeroUML*$DefaultEditVisualiser"), sm.Get(false, @"Visualiser\Vertex"));
+            sm.Get(false, @"Base\Vertex\$Inherits").AddEdge(sm.Get(false, "ZeroUML*$DefaultEditVisualiser"), sm.Get(false, @"Visualiser\Vertex"));
+            sm.Get(false, @"Base\Vertex\$Inherits").AddEdge(sm.Get(false, "ZeroUML*$DefaultViewVisualiser"), sm.Get(false, @"Visualiser\Vertex"));
+            sm.Get(false, @"Base\Vertex\$EdgeTarget").AddEdge(sm.Get(false, "ZeroUML*$DefaultEditVisualiser"), sm.Get(false, @"Visualiser\Vertex"));
+            sm.Get(false, @"Base\Vertex\$EdgeTarget").AddEdge(sm.Get(false, "ZeroUML*$DefaultViewVisualiser"), sm.Get(false, @"Visualiser\Vertex"));
+            sm.Get(false, @"Base\Vertex\$VertexTarget").AddEdge(sm.Get(false, "ZeroUML*$DefaultEditVisualiser"), sm.Get(false, @"Visualiser\Vertex"));
+            sm.Get(false, @"Base\Vertex\$VertexTarget").AddEdge(sm.Get(false, "ZeroUML*$DefaultViewVisualiser"), sm.Get(false, @"Visualiser\Vertex"));
+            //sm.Get(false, @"ZeroUML\Class").AddEdge(sm.Get(false, "ZeroUML*$DefaultViewVisualiser"), sm.Get(false, @"Visualiser\VertexVisualiser"));
+            sm.Get(false, @"ZeroUML\Class").AddEdge(sm.Get(false, "ZeroUML*$DefaultEditVisualiser"), sm.Get(false, @"Visualiser\Vertex"));
 
             sm.Get(false, @"Visualiser\Edge").AddEdge(sm.Get(false, "*$Inherits"), sm.Get(false, @"ZeroTypes\$PlatformClass"));
             sm.Get(false, @"Visualiser\Edge").AddEdge(sm.Get(false, "*$Inherits"), sm.Get(false, @"ZeroTypes\HasBaseEdge"));
             sm.Get(false, @"Visualiser\Edge").AddVertex(sm.Get(false, "*$PlatformClassName"), @"m0.UIWpf.Visualisers.EdgeVisualiser, m0, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null");
-            sm.Get(false, @"Visualiser\Edge").AddEdge(sm.Get(false, @"*$Is"), sm.Get(false, @"UML\Class"));
-            sm.Get(false, @"ZeroTypes\Edge").AddEdge(sm.Get(false, "UML*$DefaultViewVisualiser"), sm.Get(false, @"Visualiser\Edge"));
-            sm.Get(false, @"ZeroTypes\Edge").AddEdge(sm.Get(false, "UML*$DefaultEditVisualiser"), sm.Get(false, @"Visualiser\Edge"));
+            sm.Get(false, @"Visualiser\Edge").AddEdge(sm.Get(false, @"*$Is"), sm.Get(false, @"ZeroUML\Class"));
+            sm.Get(false, @"ZeroTypes\Edge").AddEdge(sm.Get(false, "ZeroUML*$DefaultViewVisualiser"), sm.Get(false, @"Visualiser\Edge"));
+            sm.Get(false, @"ZeroTypes\Edge").AddEdge(sm.Get(false, "ZeroUML*$DefaultEditVisualiser"), sm.Get(false, @"Visualiser\Edge"));
 
             sm.Get(false, @"Visualiser\Integer").AddEdge(sm.Get(false, "*$Inherits"), sm.Get(false, @"ZeroTypes\$PlatformClass"));
             sm.Get(false, @"Visualiser\Integer").AddEdge(sm.Get(false, "*$Inherits"), sm.Get(false, @"ZeroTypes\HasBaseEdge"));
             sm.Get(false, @"Visualiser\Integer").AddVertex(sm.Get(false, "*$PlatformClassName"), @"m0.UIWpf.Visualisers.IntegerVisualiser, m0, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null");
-            sm.Get(false, @"Visualiser\Integer").AddEdge(sm.Get(false, @"*$Is"), sm.Get(false, @"UML\Class"));
-            sm.Get(false, @"ZeroTypes\Integer").AddEdge(sm.Get(false, "UML*$DefaultEditVisualiser"), sm.Get(false, @"Visualiser\Integer"));
+            sm.Get(false, @"Visualiser\Integer").AddEdge(sm.Get(false, @"*$Is"), sm.Get(false, @"ZeroUML\Class"));
+            sm.Get(false, @"ZeroTypes\Integer").AddEdge(sm.Get(false, "ZeroUML*$DefaultEditVisualiser"), sm.Get(false, @"Visualiser\Integer"));
 
             sm.Get(false, @"Visualiser\Decimal").AddEdge(sm.Get(false, "*$Inherits"), sm.Get(false, @"ZeroTypes\$PlatformClass"));
             sm.Get(false, @"Visualiser\Decimal").AddEdge(sm.Get(false, "*$Inherits"), sm.Get(false, @"ZeroTypes\HasBaseEdge"));
             sm.Get(false, @"Visualiser\Decimal").AddVertex(sm.Get(false, "*$PlatformClassName"), @"m0.UIWpf.Visualisers.DecimalVisualiser, m0, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null");
-            sm.Get(false, @"Visualiser\Decimal").AddEdge(sm.Get(false, @"*$Is"), sm.Get(false, @"UML\Class"));
-            sm.Get(false, @"ZeroTypes\Decimal").AddEdge(sm.Get(false, "UML*$DefaultEditVisualiser"), sm.Get(false, @"Visualiser\Decimal"));
+            sm.Get(false, @"Visualiser\Decimal").AddEdge(sm.Get(false, @"*$Is"), sm.Get(false, @"ZeroUML\Class"));
+            sm.Get(false, @"ZeroTypes\Decimal").AddEdge(sm.Get(false, "ZeroUML*$DefaultEditVisualiser"), sm.Get(false, @"Visualiser\Decimal"));
 
             sm.Get(false, @"Visualiser\Float").AddEdge(sm.Get(false, "*$Inherits"), sm.Get(false, @"ZeroTypes\$PlatformClass"));
             sm.Get(false, @"Visualiser\Float").AddEdge(sm.Get(false, "*$Inherits"), sm.Get(false, @"ZeroTypes\HasBaseEdge"));
             sm.Get(false, @"Visualiser\Float").AddVertex(sm.Get(false, "*$PlatformClassName"), @"m0.UIWpf.Visualisers.FloatVisualiser, m0, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null");
-            sm.Get(false, @"Visualiser\Float").AddEdge(sm.Get(false, @"*$Is"), sm.Get(false, @"UML\Class"));
-            sm.Get(false, @"ZeroTypes\Float").AddEdge(sm.Get(false, "UML*$DefaultEditVisualiser"), sm.Get(false, @"Visualiser\Float"));
+            sm.Get(false, @"Visualiser\Float").AddEdge(sm.Get(false, @"*$Is"), sm.Get(false, @"ZeroUML\Class"));
+            sm.Get(false, @"ZeroTypes\Float").AddEdge(sm.Get(false, "ZeroUML*$DefaultEditVisualiser"), sm.Get(false, @"Visualiser\Float"));
 
             sm.Get(false, @"Visualiser\Boolean").AddEdge(sm.Get(false, "*$Inherits"), sm.Get(false, @"ZeroTypes\$PlatformClass"));
             sm.Get(false, @"Visualiser\Boolean").AddEdge(sm.Get(false, "*$Inherits"), sm.Get(false, @"ZeroTypes\HasBaseEdge"));
             sm.Get(false, @"Visualiser\Boolean").AddVertex(sm.Get(false, "*$PlatformClassName"), @"m0.UIWpf.Visualisers.BooleanVisualiser, m0, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null");
-            sm.Get(false, @"Visualiser\Boolean").AddEdge(sm.Get(false, @"*$Is"), sm.Get(false, @"UML\Class"));
-            sm.Get(false, @"ZeroTypes\Boolean").AddEdge(sm.Get(false, "UML*$DefaultEditVisualiser"), sm.Get(false, @"Visualiser\Boolean"));
-            sm.Get(false, @"ZeroTypes\Boolean").AddEdge(sm.Get(false, "UML*$DefaultViewVisualiser"), sm.Get(false, @"Visualiser\Boolean"));
+            sm.Get(false, @"Visualiser\Boolean").AddEdge(sm.Get(false, @"*$Is"), sm.Get(false, @"ZeroUML\Class"));
+            sm.Get(false, @"ZeroTypes\Boolean").AddEdge(sm.Get(false, "ZeroUML*$DefaultEditVisualiser"), sm.Get(false, @"Visualiser\Boolean"));
+            sm.Get(false, @"ZeroTypes\Boolean").AddEdge(sm.Get(false, "ZeroUML*$DefaultViewVisualiser"), sm.Get(false, @"Visualiser\Boolean"));
 
             sm.Get(false, @"Visualiser\Enum").AddEdge(sm.Get(false, "*$Inherits"), sm.Get(false, @"ZeroTypes\$PlatformClass"));
             sm.Get(false, @"Visualiser\Enum").AddEdge(sm.Get(false, "*$Inherits"), sm.Get(false, @"ZeroTypes\HasBaseEdge"));
             sm.Get(false, @"Visualiser\Enum").AddVertex(sm.Get(false, "*$PlatformClassName"), @"m0.UIWpf.Visualisers.EnumVisualiser, m0, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null");
-            sm.Get(false, @"Visualiser\Enum").AddEdge(sm.Get(false, @"*$Is"), sm.Get(false, @"UML\Class"));
-            sm.Get(false, @"ZeroTypes\EnumBase").AddEdge(sm.Get(false, "UML*$DefaultEditVisualiser"), sm.Get(false, @"Visualiser\Enum"));
+            sm.Get(false, @"Visualiser\Enum").AddEdge(sm.Get(false, @"*$Is"), sm.Get(false, @"ZeroUML\Class"));
+            sm.Get(false, @"ZeroTypes\EnumBase").AddEdge(sm.Get(false, "ZeroUML*$DefaultEditVisualiser"), sm.Get(false, @"Visualiser\Enum"));
 
             sm.Get(false, @"Visualiser\Diagram").AddEdge(sm.Get(false, "*$Inherits"), sm.Get(false, @"ZeroTypes\$PlatformClass"));
             sm.Get(false, @"Visualiser\Diagram").AddEdge(sm.Get(false, "*$Inherits"), sm.Get(false, @"ZeroTypes\HasSelectedEdges"));
-            sm.Get(false, @"Visualiser\Diagram").AddEdge(sm.Get(false, @"*$Is"), sm.Get(false, @"UML\Class"));
+            sm.Get(false, @"Visualiser\Diagram").AddEdge(sm.Get(false, @"*$Is"), sm.Get(false, @"ZeroUML\Class"));
             sm.Get(false, @"Visualiser\Diagram").AddVertex(sm.Get(false, "*$PlatformClassName"), @"m0.UIWpf.Visualisers.Diagram.Diagram, m0, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null");
             sm.Get(false, @"Visualiser\Diagram\ZoomVisualiserContent").AddEdge(sm.Get(false, @"*$EdgeTarget"), sm.Get(false, @"ZeroTypes\Integer"));
             sm.Get(false, @"Visualiser\Diagram\Item").AddEdge(sm.Get(false, @"*$EdgeTarget"), sm.Get(false, @"*DiagramItemBase"));
@@ -1736,7 +1748,7 @@ namespace m0
             sm.Get(false, @"Visualiser\Diagram\SizeY").AddVertex(sm.Get(false, @"*MinValue"), (double)0.0);
             sm.Get(false, @"Visualiser\Diagram\SizeY").AddVertex(sm.Get(false, @"*MaxValue"), (double)4000.0);
             sm.Get(false, @"Visualiser\Diagram\CreationPool").AddEdge(sm.Get(false, @"*$EdgeTarget"), sm.Get(false, @"ZeroTypes\VertexType"));
-            sm.Get(false, @"Visualiser\Diagram").AddEdge(sm.Get(false, "UML*$DefaultOpenVisualiser"), sm.Get(false, @"Visualiser\Diagram"));
+            sm.Get(false, @"Visualiser\Diagram").AddEdge(sm.Get(false, "ZeroUML*$DefaultOpenVisualiser"), sm.Get(false, @"Visualiser\Diagram"));
 
             IVertex diagramGeneralGroup = sm.Get(false, @"Visualiser\Diagram").AddVertex(sm.Get(false, @"*$Group"), "General");
             sm.Get(false, @"Visualiser\Diagram\CreationPool").AddEdge(sm.Get(false, @"*$Group"), diagramGeneralGroup);
@@ -2335,7 +2347,7 @@ namespace m0
              -1, 0, 0, 0);
         }*/
 
-        void CreateSystemDataVisualiserDiagram_Uml()
+        void CreateSystemDataVisualiserDiagram_ZeroUML()
         {
             IVertex sm = Root.Get(false, @"System\Meta");
 
@@ -3058,10 +3070,10 @@ namespace m0
 
             GeneralUtil.ParseAndExcute(sm, sm, "{User{CurrentUser,Class:NonAtomProcess{Attribute:StartTimeStamp{$MinCardinality:1,$MaxCardinality:1}},Class:Session{Attribute:StartTimeStamp{$MinCardinality:1,$MaxCardinality:1},Aggregation:Process{$MinCardinality:0,$MaxCardinality:-1}},Class:User{Attribute:CurrentSession{$MinCardinality:1,$MaxCardinality:1},Aggregation:Session{$MinCardinality:0,$MaxCardinality:-1},Aggregation:Settings{$MinCardinality:1,$MaxCardinality:1},Aggregation:DefaultFormalTextLanguage{$MinCardinality:1,$MaxCardinality:1},Aggregation:Queries{$MinCardinality:1,$MaxCardinality:1}},Class:Settings{Attribute:CopyOnDragAndDrop{$MinCardinality:1,$MaxCardinality:1},Association:AllowBlankAreaDragAndDrop{$MinCardinality:1,$MaxCardinality:1},Attribute:AllowManyDiagramItemsForOneVertex{$MinCardinality:1,$MaxCardinality:1}},Enum:AllowBlankAreaDragAndDropEnum{EnumValue:No,EnumValue:OnlyEnd,EnumValue:StartAndEnd}}}");
 
-            sm.Get(false, @"User\NonAtomProcess").AddEdge(sm.Get(false, @"*$Is"), sm.Get(false, @"UML\Class"));
-            sm.Get(false, @"User\Session").AddEdge(sm.Get(false, @"*$Is"), sm.Get(false, @"UML\Class"));
-            sm.Get(false, @"User\User").AddEdge(sm.Get(false, @"*$Is"), sm.Get(false, @"UML\Class"));
-            sm.Get(false, @"User\Settings").AddEdge(sm.Get(false, @"*$Is"), sm.Get(false, @"UML\Class"));
+            sm.Get(false, @"User\NonAtomProcess").AddEdge(sm.Get(false, @"*$Is"), sm.Get(false, @"ZeroUML\Class"));
+            sm.Get(false, @"User\Session").AddEdge(sm.Get(false, @"*$Is"), sm.Get(false, @"ZeroUML\Class"));
+            sm.Get(false, @"User\User").AddEdge(sm.Get(false, @"*$Is"), sm.Get(false, @"ZeroUML\Class"));
+            sm.Get(false, @"User\Settings").AddEdge(sm.Get(false, @"*$Is"), sm.Get(false, @"ZeroUML\Class"));
 
             sm.Get(false, @"User\NonAtomProcess\StartTimeStamp").AddEdge(sm.Get(false, @"*$EdgeTarget"), sm.Get(false, @"ZeroTypes\DateTime"));
             sm.Get(false, @"User\Session\StartTimeStamp").AddEdge(sm.Get(false, @"*$EdgeTarget"), sm.Get(false, @"ZeroTypes\DateTime"));
@@ -3094,7 +3106,7 @@ namespace m0
             //IVertex cs = user.Get(false, @"CodeSettings:");
             //cs.AddEdge(sm.Get(false, @"*$Is"), sm.Get(false, @"User\CodeSettings"));
 
-            //cs.AddEdge(sm.Get(false, @"User\CodeSettings\Keyword"), sm.Get(false, @"UML\Keyword"));
+            //cs.AddEdge(sm.Get(false, @"User\CodeSettings\Keyword"), sm.Get(false, @"ZeroUML\Keyword"));
 
             //foreach (IEdge e in Root.GetAll(false, @"System\FormalTextLanguage\ZeroCode\DefaultImports\"))
                 //if (!GraphUtil.GetValueAndCompareStrings(e.To, "$DirectMeta") && !GraphUtil.GetValueAndCompareStrings(e.To, "$Direct"))
@@ -3180,7 +3192,7 @@ namespace m0
         {
             IVertex attributes = root.GetAll(false, s);
             IVertex ismeta = root.Get(false, @"System\Meta*$Is");
-            IVertex ameta = root.Get(false, @"System\Meta\UML\Class\" + what);
+            IVertex ameta = root.Get(false, @"System\Meta\ZeroUML\Class\" + what);
 
             foreach (IEdge v in attributes)
                 if (v.To.Get(false, @"$Is:" + ameta) == null)
@@ -3316,13 +3328,11 @@ namespace m0
 
             CreateSystemMetaBase();            
 
-            CreateSystemMetaUml();
-
-            CreateSystemMetaUml_Action_part();
-
-
+            CreateSystemMetaZeroUML();
 
             CreateSystemMetaZeroTypes();
+
+            CreateSystemMetaZeroUML_Action_part();            
 
             CreateSystemFormalTextLanguageZeroCode();
 
@@ -3338,7 +3348,7 @@ namespace m0
 
             CreateSystemDataVisualiserDiagram();
 
-            CreateSystemDataVisualiserDiagram_Uml();
+            CreateSystemDataVisualiserDiagram_ZeroUML();
 
             CreateSystemMetaStoreFileSystem();
 

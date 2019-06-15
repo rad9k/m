@@ -7,7 +7,7 @@ using System.Windows.Controls;
 using m0.Foundation;
 using System.Windows.Data;
 using m0.Graph;
-using m0.UML;
+using m0.ZeroUML;
 using m0.ZeroTypes;
 using m0.Util;
 using System.Windows.Media;

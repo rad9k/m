@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Windows.Controls;
 using m0.Foundation;
-using m0.UML;
+using m0.ZeroUML;
 using m0.ZeroTypes;
 using System.Windows;
 using m0.Graph;

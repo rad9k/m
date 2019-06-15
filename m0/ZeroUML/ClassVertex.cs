@@ -5,7 +5,7 @@ using System.Text;
 using m0.Foundation;
 using m0.Graph;
 
-namespace m0.UML
+namespace m0.ZeroUML
 {
     public class ClassVertex
     {

@@ -1,7 +1,7 @@
 ﻿using m0.Foundation;
 using m0.Graph;
 using m0.UIWpf.Commands;
-using m0.UML;
+using m0.ZeroUML;
 using m0.Util;
 using m0.ZeroTypes;
 using System;
