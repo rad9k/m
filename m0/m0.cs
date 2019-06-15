@@ -323,7 +323,7 @@ namespace m0
 
             IVertex n = baseVertex.AddVertex(callableEndPoint, null);
             n.AddEdge(_is, dotNetEndPoint);
-            n.AddVertex(typeName, "m0.ZeroCode.Instructions.BaseInstructions");
+            n.AddVertex(typeName, "m0.ZeroUML.Instructions.BaseInstructions");
             n.AddVertex(methodName, _methodName);
             
         }

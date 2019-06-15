@@ -16,7 +16,7 @@ namespace m0.ZeroCode.Helpers
         }
         public static bool CheckIs(IVertex v, string i)
         {
-            IVertex iv = GraphUtil.GetOutFirst(v, "$Is", (object)i);
+            IVertex iv = GraphUtil.GetQueryOutFirst(v, "$Is", (object)i);
 
             if (iv != null)
                 return true;
@@ -26,17 +26,17 @@ namespace m0.ZeroCode.Helpers
 
         public static IVertex GetLeft(IVertex v)
         {
-            return GraphUtil.GetOutFirst(v, "LeftExpression", null);
+            return GraphUtil.GetQueryOutFirst(v, "LeftExpression", null);
         }
 
         public static IVertex GetRight(IVertex v)
         {
-            return GraphUtil.GetOutFirst(v, "RightExpression", null);
+            return GraphUtil.GetQueryOutFirst(v, "RightExpression", null);
         }
 
         public static IVertex GetNextExpression(IVertex v)
         {
-            return GraphUtil.GetOutFirst(v, "NextExpression", null);
+            return GraphUtil.GetQueryOutFirst(v, "NextExpression", null);
         }
     }
 }

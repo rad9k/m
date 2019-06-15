@@ -212,7 +212,7 @@ namespace m0
 
             //b.AddEdge(r.Get(false, @"System\Meta*$Inherits"), a);
 
-            IVertex re = ((EasyVertex)bas).NewGetAll(false, @"|a");
+            IVertex re = ((EasyVertex)bas).NewGetAll(false, @"ma|a");
             re = ((EasyVertex)bas).NewGetAll(false, @"");
             
         }

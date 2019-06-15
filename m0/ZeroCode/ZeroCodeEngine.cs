@@ -9,10 +9,7 @@ using m0.Foundation;
 namespace m0.ZeroCode
 {
     public class ZeroCodeEngine : ICodeGenerator, IParser, IExecuter
-    {
-        public Dictionary<IVertex,ZeroCodeExecution>
-
-
+    {     
         String2ZeroCodeGraphProcessing String2ZeroCodeGraphProcessing_Instance;
         ZeroCodeExecuter ZeroCodeExecuter_Instance;
         ZeroCodeGraph2StringProcessing ZeroCodeGraph2StringProcessing_Instance;

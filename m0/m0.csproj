@@ -241,7 +241,7 @@
     <Compile Include="UIWpf\Visualisers\TreeVisualiser.cs" />
     <Compile Include="UIWpf\VisualiserEditWrapper.cs" />
     <Compile Include="UIWpf\VisualiserViewWrapper.cs" />
-    <Compile Include="ZeroCode\DotNetEndPoint.cs" />
+    <Compile Include="ZeroCode\CallableEndPointDictionary.cs" />
     <Compile Include="ZeroUML\ClassVertex.cs" />
     <Compile Include="Util\GeneralUtil.cs">
       <SubType>Code</SubType>

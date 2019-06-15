@@ -35,6 +35,8 @@ namespace m0.ZeroCode
 
             if (InstructionHelpers.CheckIs(expression, colon))
             {
+                CallableEndPointDictionary.CallEndPoint(null, null, expression);
+
                 IVertex left = InstructionHelpers.GetLeft(expression);
                 IVertex right = InstructionHelpers.GetRight(expression);
 

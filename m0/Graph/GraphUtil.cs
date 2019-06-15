@@ -40,7 +40,7 @@ namespace m0.Graph
 
     public class GraphUtil
     {        
-        public static IVertex GetOutFirst(IVertex baseVertex, object meta, object value)
+        public static IVertex GetQueryOutFirst(IVertex baseVertex, object meta, object value)
         {
             IEdge result;
             IList<IEdge> results;
@@ -56,7 +56,7 @@ namespace m0.Graph
             return null;
         }
 
-        public static IVertex GetInFirst(IVertex baseVertex, object meta, object value)
+        public static IVertex GetQueryInFirst(IVertex baseVertex, object meta, object value)
         {
             IEdge result;
             IList<IEdge> results;
@@ -68,6 +68,38 @@ namespace m0.Graph
 
             if (results != null && results.Count > 0)
                 return results.First().To;
+
+            return null;
+        }
+
+        public static IEdge GetQueryOutFirstEdge(IVertex baseVertex, object meta, object value)
+        {
+            IEdge result;
+            IList<IEdge> results;
+
+            baseVertex.QueryOutEdges(meta, value, out result, out results);
+
+            if (result != null)
+                return result;
+
+            if (results != null && results.Count > 0)
+                return results.First();
+
+            return null;
+        }
+
+        public static IEdge GetQueryInFirstEdge(IVertex baseVertex, object meta, object value)
+        {
+            IEdge result;
+            IList<IEdge> results;
+
+            baseVertex.QueryInEdges(meta, value, out result, out results);
+
+            if (result != null)
+                return result;
+
+            if (results != null && results.Count > 0)
+                return results.First();
 
             return null;
         }
@@ -160,7 +192,7 @@ namespace m0.Graph
 
             foreach (IEdge e in baseVertex.GetAll(false, "$Is:"))
             {
-                tempLevel = getInheritanceLevel(e.To, _startMeta, 0);
+                tempLevel = GetInheritanceLevel(e.To, _startMeta, 0);
 
                 if (tempLevel >= highestInheritanceLevel_level)
                 {
@@ -172,7 +204,7 @@ namespace m0.Graph
             return highestInheritanceLevel; // if highestInheritanceLevel_level==0 then startMeta was not found
         }
 
-        private static int getInheritanceLevel(IVertex testMeta, IVertex startMeta, int input)
+        private static int GetInheritanceLevel(IVertex testMeta, IVertex startMeta, int input)
         {
             if (testMeta == startMeta)
                 return input;
@@ -181,7 +213,7 @@ namespace m0.Graph
 
             foreach (IEdge e in testMeta.GetAll(false, "$Inherits:"))
             {
-                int temp = getInheritanceLevel(e.To, startMeta, input + 1);
+                int temp = GetInheritanceLevel(e.To, startMeta, input + 1);
                 if (temp > biggest)
                     biggest = temp;
             }
@@ -216,7 +248,8 @@ namespace m0.Graph
 
         public static IVertex SetVertexValue(IVertex vertex, IVertex metaVertex, object value)
         {
-            IVertex getByMeta=vertex.Get(false, metaVertex.Value + ":");
+            //IVertex getByMeta=vertex.Get(false, metaVertex.Value + ":");
+            IVertex getByMeta = GetQueryOutFirst(vertex, metaVertex.Value, null);                
 
             if (getByMeta == null)
                 return vertex.AddVertex(metaVertex, value);
@@ -397,7 +430,9 @@ namespace m0.Graph
 
         static public void DeleteEdgeByMeta(IVertex source, string MetaValue)
         {
-            IEdge e = FindEdgeByMetaValue(source, MetaValue);
+            //IEdge e = FindEdgeByMetaValue(source, MetaValue);
+
+            IEdge e = GetQueryOutFirstEdge(source, MetaValue, null);                
 
             if (e != null)
                 source.DeleteEdge(e);
@@ -413,10 +448,11 @@ namespace m0.Graph
 
         static public IEdge FindEdgeByMetaValue(IVertex Vertex, string MetaValue)
         {
-            foreach (IEdge e in Vertex)
+            return GetQueryOutFirstEdge(Vertex, MetaValue, null);
+            /*foreach (IEdge e in Vertex)
                 if (GeneralUtil.CompareStrings(e.Meta.Value, MetaValue))
                     return e;
-            return null;
+            return null;*/
         }
 
         static public IEdge FindEdgeByMetaVertex(IVertex Vertex, IVertex metaVertex)
@@ -455,7 +491,8 @@ namespace m0.Graph
 
         static public IEdge ReplaceEdge(IVertex Vertex, string MetaValue, IVertex NewEdgeToVertex)
         {
-            IEdge toReplace = FindEdgeByMetaValue(Vertex, MetaValue);
+            //IEdge toReplace = FindEdgeByMetaValue(Vertex, MetaValue);
+            IEdge toReplace = GetQueryOutFirstEdge(Vertex, MetaValue, null);
 
             if (toReplace == null)
                 throw new Exception("Vertex does not have \"" + MetaValue + "\" edge");
@@ -518,20 +555,23 @@ namespace m0.Graph
 
         static public IVertex FindOneByValue(IVertex findRoot, string value)
         {
-            foreach (IEdge e in findRoot)
+            return GetQueryOutFirst(findRoot, null, value);
+            /*foreach (IEdge e in findRoot)
                 if (GeneralUtil.CompareStrings(e.To.Value, value))
                     return e.To;
 
-            return null;
+            return null;*/
         }
 
         static public IVertex FindOneByMeta(IVertex findRoot, string value)
         {
-            foreach (IEdge e in findRoot)
+            return GetQueryOutFirst(findRoot, value, null);
+
+            /*foreach (IEdge e in findRoot)
                 if (GeneralUtil.CompareStrings(e.Meta.Value, value))
                     return e.To;
 
-            return null;            
+            return null;            */
         }
 
         static public IVertex DeepFindOneByValue(IVertex findRoot, string value, bool canGoIntoLinks)
