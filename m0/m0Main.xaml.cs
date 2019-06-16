@@ -198,7 +198,14 @@ namespace m0
             m0.MinusZero.Instance.Log(2, "", "------ " + header);
 
             foreach (IEdge e in r)
-                m0.MinusZero.Instance.Log(2, "", "------ " + header);
+                m0.MinusZero.Instance.Log(2, "", "       " + e.Meta + " : " + e.To);
+        }
+
+        void q(IVertex baseVertex, string query)
+        {
+            IVertex re = ((EasyVertex)baseVertex).NewGetAll(false, query);
+
+            PrintRes("mb|b", re);
         }
 
         private void queryTest(IVertex tr)
@@ -225,9 +232,12 @@ namespace m0
             IVertex re = ((EasyVertex)bas).NewGetAll(false, @"");
             re = ((EasyVertex)bas).NewGetAll(false, @"mb|b");
 
-            PrintRes("mb|b", re);
+            
 
             re = ((EasyVertex)bas).NewGetAll(false, @"mbx|b");
+
+            
+
             re = ((EasyVertex)bas).NewGetAll(false, @"mb|bx");
             re = ((EasyVertex)bas).NewGetAll(false, @"mbx|");
             re = ((EasyVertex)bas).NewGetAll(false, @"mb|");
@@ -235,7 +245,7 @@ namespace m0
             re = ((EasyVertex)bas).NewGetAll(false, @"|b");
             re = ((EasyVertex)bas).NewGetAll(false, @"|");
             re = ((EasyVertex)bas).NewGetAll(false, @"mb");
-            re = ((EasyVertex)bas).NewGetAll(false, @"");
+            
             
         }
 
