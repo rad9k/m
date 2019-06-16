@@ -193,6 +193,14 @@ namespace m0
             s.Attach();
         }
 
+        void PrintRes(string header,IVertex r)
+        {
+            m0.MinusZero.Instance.Log(2, "", "------ " + header);
+
+            foreach (IEdge e in r)
+                m0.MinusZero.Instance.Log(2, "", "------ " + header);
+        }
+
         private void queryTest(IVertex tr)
         {
             IVertex r = MinusZero.Instance.Root;
@@ -212,8 +220,20 @@ namespace m0
 
             //b.AddEdge(r.Get(false, @"System\Meta*$Inherits"), a);
 
+            m0.MinusZero.Instance.LogLevel = 2;
+
             IVertex re = ((EasyVertex)bas).NewGetAll(false, @"");
             re = ((EasyVertex)bas).NewGetAll(false, @"mb|b");
+
+            PrintRes("mb|b", re);
+
+            re = ((EasyVertex)bas).NewGetAll(false, @"mbx|b");
+            re = ((EasyVertex)bas).NewGetAll(false, @"mb|bx");
+            re = ((EasyVertex)bas).NewGetAll(false, @"mbx|");
+            re = ((EasyVertex)bas).NewGetAll(false, @"mb|");
+            re = ((EasyVertex)bas).NewGetAll(false, @"|bx");
+            re = ((EasyVertex)bas).NewGetAll(false, @"|b");
+            re = ((EasyVertex)bas).NewGetAll(false, @"|");
             re = ((EasyVertex)bas).NewGetAll(false, @"mb");
             re = ((EasyVertex)bas).NewGetAll(false, @"");
             

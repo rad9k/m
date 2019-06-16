@@ -6,6 +6,8 @@ using System.Text;
 using System.Threading.Tasks;
 using m0.ZeroCode.Helpers;
 using m0.ZeroCode;
+using m0.Util;
+using m0.Graph;
 
 namespace m0.ZeroUML.Instructions
 {
@@ -45,9 +47,9 @@ namespace m0.ZeroUML.Instructions
             if(instructionVertex.Value==null)
                 return inputQs;
 
-            string v = instructionVertex.Value.ToString();
+            string value = instructionVertex.Value.ToString();
 
-            if (v == "" || v == "\r")
+            if (value == "" || value == "\r")
                 return inputQs;
 
             INoInEdgeInOutVertexVertex newQs = InstructionHelpers.CreateQueryStack();
@@ -56,9 +58,9 @@ namespace m0.ZeroUML.Instructions
             IList<IEdge> eList;
 
             if (exe.metaMode)                            
-                inputQs.QueryOutEdges(v, null, out e, out eList);            
+                inputQs.QueryOutEdges(value, null, out e, out eList);            
             else
-                inputQs.QueryOutEdges(null, v, out e, out eList);
+                inputQs.QueryOutEdges(null, value, out e, out eList);
 
             if (e != null)
                 newQs.AddEdgeForNoInEdgeInOutVertexVertex(e);
@@ -86,7 +88,34 @@ namespace m0.ZeroUML.Instructions
 
         public static IVertex ColonOperator(ZeroCodeExecution exe, IVertex inputQs, IVertex instructionVertex)
         {
-            return inputQs;
+            IVertex leftExpression = InstructionHelpers.GetLeft(instructionVertex);
+            IVertex rightExpression = InstructionHelpers.GetRight(instructionVertex);
+
+            string leftValue = GraphUtil.GetStringValue(leftExpression);
+            string rightValue = GraphUtil.GetStringValue(rightExpression);
+
+            string meta=null, to=null;
+
+            if (leftValue != null && leftValue != "")
+                meta = leftValue;
+
+            if (rightValue != null && rightValue != "")
+                to = rightValue;
+
+            INoInEdgeInOutVertexVertex newQs = InstructionHelpers.CreateQueryStack();
+
+            IEdge e;
+            IList<IEdge> eList;
+            
+            inputQs.QueryOutEdges(meta, to, out e, out eList);            
+
+            if (e != null)
+                newQs.AddEdgeForNoInEdgeInOutVertexVertex(e);
+
+            if (eList != null)
+                InstructionHelpers.AddToStack(eList, newQs);
+
+            return newQs;
         }
 
         public static IVertex DoubleOperator(ZeroCodeExecution exe, IVertex inputQs, IVertex instructionVertex)

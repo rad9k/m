@@ -230,6 +230,14 @@ namespace m0.Graph
                 return null;
         }
 
+        public static string GetStringValue(IVertex vertex)
+        {
+            if (vertex != null)
+                return vertex.Value.ToString();
+            else
+                return null;
+        }
+
         public static bool GetValueAndCompareStrings(IVertex vertex, string s)
         {
             if (vertex == null)

@@ -3320,6 +3320,8 @@ namespace m0
 
         public void Initialize()
         {
+            LogLevel = 0;
+
             InitializeLog();
 
             Bootstrap();
