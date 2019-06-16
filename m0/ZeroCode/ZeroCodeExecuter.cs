@@ -31,6 +31,19 @@ namespace m0.ZeroCode
         {
             ZeroCodeExecution exe = new ZeroCodeExecution();
 
+            exe.metaMode = true;
+
+            INoInEdgeInOutVertexVertex qs = InstructionHelpers.CreateQueryStack();
+
+            InstructionHelpers.AddToStack(baseVertex, qs);
+
+            return CallableEndPointDictionary.CallEndPoint(exe, qs, expression);            
+        }
+
+        public IVertex _GetAll(IVertex baseVertex, IVertex expression)
+        {
+            ZeroCodeExecution exe = new ZeroCodeExecution();
+
             IVertex qs = InstructionHelpers.CreateQueryStack();            
 
             if (InstructionHelpers.CheckIs(expression, colon))

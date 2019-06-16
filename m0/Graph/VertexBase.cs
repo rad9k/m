@@ -106,7 +106,7 @@ namespace m0.Graph
 
         protected bool OutEdgesDictionariesNeedsRebuild_MetaAndValue { get; set; }
 
-        public IEdge this[string meta]
+        public IEdge this[string meta] // XXX serveral optimisations needed!
         {
             get {                
                 IVertex r = this.GetAll(false, meta + ":");

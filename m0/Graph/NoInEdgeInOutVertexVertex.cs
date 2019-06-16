@@ -7,7 +7,7 @@ using m0.Util;
 
 namespace m0.Graph
 {
-    public class NoInEdgeInOutVertexVertex: EasyVertex
+    public class NoInEdgeInOutVertexVertex: EasyVertex, INoInEdgeInOutVertexVertex
     {
         public override IEdge AddEdge(Foundation.IVertex metaVertex, Foundation.IVertex destVertex)
         {           

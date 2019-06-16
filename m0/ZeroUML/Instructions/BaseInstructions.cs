@@ -31,11 +31,40 @@ namespace m0.ZeroUML.Instructions
 
         public static IVertex stepIntoAllEdges(ZeroCodeExecution exe, IVertex inputQs, IVertex instructionsVertex)
         {
-            IVertex newQs = InstructionHelpers.CreateQueryStack();
+            INoInEdgeInOutVertexVertex newQs = InstructionHelpers.CreateQueryStack();
 
             foreach (IEdge e in inputQs)
                 foreach (IEdge ee in e.To)
-                    newQs.AddEdge(ee.Meta, ee.To);
+                    newQs.AddEdgeForNoInEdgeInOutVertexVertex(ee);
+
+            return newQs;
+        }
+
+        public static IVertex QueryOperator(ZeroCodeExecution exe, IVertex inputQs, IVertex instructionVertex)
+        {
+            if(instructionVertex.Value==null)
+                return inputQs;
+
+            string v = instructionVertex.Value.ToString();
+
+            if (v == "" || v == "\r")
+                return inputQs;
+
+            INoInEdgeInOutVertexVertex newQs = InstructionHelpers.CreateQueryStack();
+
+            IEdge e;
+            IList<IEdge> eList;
+
+            if (exe.metaMode)                            
+                inputQs.QueryOutEdges(v, null, out e, out eList);            
+            else
+                inputQs.QueryOutEdges(null, v, out e, out eList);
+
+            if (e != null)
+                newQs.AddEdgeForNoInEdgeInOutVertexVertex(e);
+
+            if(eList != null)
+                InstructionHelpers.AddToStack(eList, newQs);
 
             return newQs;
         }
@@ -45,9 +74,24 @@ namespace m0.ZeroUML.Instructions
             return inputQs;
         }
 
+        public static IVertex StarOperator(ZeroCodeExecution exe, IVertex inputQs, IVertex instructionVertex)
+        {
+            return inputQs;
+        }
+
+        public static IVertex SlashOperator(ZeroCodeExecution exe, IVertex inputQs, IVertex instructionVertex)
+        {
+            return inputQs;
+        }
+
         public static IVertex ColonOperator(ZeroCodeExecution exe, IVertex inputQs, IVertex instructionVertex)
         {
             return inputQs;
         }
+
+        public static IVertex DoubleOperator(ZeroCodeExecution exe, IVertex inputQs, IVertex instructionVertex)
+        {
+            return inputQs;
+        }        
     }
 }

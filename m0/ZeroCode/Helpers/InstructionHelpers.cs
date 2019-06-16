@@ -10,10 +10,17 @@ namespace m0.ZeroCode.Helpers
 {
     public class InstructionHelpers
     {
-        public static IVertex CreateQueryStack()
+        public static INoInEdgeInOutVertexVertex CreateQueryStack()
         {
             return new NoInEdgeInOutVertexVertex(MinusZero.Instance.TempStore);
         }
+
+        public static void AddToStack(IEnumerable<IEdge> source, INoInEdgeInOutVertexVertex destination)
+        {            
+            foreach (IEdge e in source)
+                destination.AddEdgeForNoInEdgeInOutVertexVertex(e);
+        }
+
         public static bool CheckIs(IVertex v, string i)
         {
             IVertex iv = GraphUtil.GetQueryOutFirst(v, "$Is", (object)i);

@@ -11,6 +11,8 @@ namespace m0.ZeroCode
     {
         public IVertex stack;
 
+        public bool metaMode;
+
         public void executeInstruction(IVertex queryStack, IVertex instructionVertex)
         {
 
