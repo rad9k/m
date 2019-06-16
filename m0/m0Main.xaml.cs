@@ -205,7 +205,7 @@ namespace m0
         {
             IVertex re = ((EasyVertex)baseVertex).NewGetAll(false, query);
 
-            PrintRes("mb|b", re);
+            PrintRes(query, re);
         }
 
         private void queryTest(IVertex tr)
@@ -229,22 +229,16 @@ namespace m0
 
             m0.MinusZero.Instance.LogLevel = 2;
 
-            IVertex re = ((EasyVertex)bas).NewGetAll(false, @"");
-            re = ((EasyVertex)bas).NewGetAll(false, @"mb|b");
-
-            
-
-            re = ((EasyVertex)bas).NewGetAll(false, @"mbx|b");
-
-            
-
-            re = ((EasyVertex)bas).NewGetAll(false, @"mb|bx");
-            re = ((EasyVertex)bas).NewGetAll(false, @"mbx|");
-            re = ((EasyVertex)bas).NewGetAll(false, @"mb|");
-            re = ((EasyVertex)bas).NewGetAll(false, @"|bx");
-            re = ((EasyVertex)bas).NewGetAll(false, @"|b");
-            re = ((EasyVertex)bas).NewGetAll(false, @"|");
-            re = ((EasyVertex)bas).NewGetAll(false, @"mb");
+            q(bas, @"");
+            q(bas, @"mb|b");
+            q(bas, @"mbx|b");
+            q(bas, @"mb|bx");
+            q(bas, @"mbx|");
+            q(bas, @"mb|");
+            q(bas, @"|bx");
+            q(bas, @"|b");
+            q(bas, @"|");
+            q(bas, @"mb");
             
             
         }
