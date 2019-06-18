@@ -445,6 +445,9 @@ namespace m0.Graph
         private static IDictionary<String, IVertex> QueryParseChache = new Dictionary<String,IVertex>();
         private static IDictionary<String, IVertex> QueryParseChache_metaMode = new Dictionary<String, IVertex>();
 
+        private static IDictionary<String, IVertex> NewQueryParseChache = new Dictionary<String, IVertex>();
+        private static IDictionary<String, IVertex> NewQueryParseChache_metaMode = new Dictionary<String, IVertex>();
+
         public override IVertex Get(bool metaMode, string query)
         {            
             IVertex queryVertex = null;
@@ -466,7 +469,7 @@ namespace m0.Graph
                 parseError = MinusZero.Instance.DefaultParser.Parse(metaMode, queryVertex, query);
 
                 if (parseError == null)
-                    chache.Add(query, queryVertex);
+                    chache.Add(query, queryVertex);                
             }                                      
 
             if (parseError != null)
@@ -650,9 +653,9 @@ namespace m0.Graph
             IDictionary<String, IVertex> chache;
 
             if (metaMode)
-                chache = QueryParseChache_metaMode;
+                chache = NewQueryParseChache_metaMode;
             else
-                chache = QueryParseChache;
+                chache = NewQueryParseChache;
 
             if (chache.ContainsKey(query))
                 queryVertex = chache[query];
@@ -680,9 +683,9 @@ namespace m0.Graph
             IDictionary<String, IVertex> chache;
 
             if (metaMode)
-                chache = QueryParseChache_metaMode;
+                chache = NewQueryParseChache_metaMode;
             else
-                chache = QueryParseChache;
+                chache = NewQueryParseChache;
 
             if (chache.ContainsKey(query))
                 queryVertex = chache[query];

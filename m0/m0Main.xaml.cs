@@ -195,10 +195,11 @@ namespace m0
 
         void PrintRes(string header,IVertex r)
         {
-            m0.MinusZero.Instance.Log(2, "", "------ " + header);
+            m0.MinusZero.Instance.Log(-2, "", "------ " + header);
 
+            if(r!=null)
             foreach (IEdge e in r)
-                m0.MinusZero.Instance.Log(2, "", "       " + e.Meta + " : " + e.To);
+                m0.MinusZero.Instance.Log(-2, "", "       " + e.Meta + " : " + e.To);
         }
 
         void q(IVertex baseVertex, string query)
@@ -227,7 +228,7 @@ namespace m0
 
             //b.AddEdge(r.Get(false, @"System\Meta*$Inherits"), a);
 
-            m0.MinusZero.Instance.LogLevel = 2;
+            m0.MinusZero.Instance.LogLevel = -2;
 
             q(bas, @"");
             q(bas, @"mb|b");
@@ -237,10 +238,11 @@ namespace m0
             q(bas, @"mb|");
             q(bas, @"|bx");
             q(bas, @"|b");
-            //q(bas, @"|");
-          //  q(bas, @"mb");
-            
-            
+            q(bas, @"|");
+            q(bas, @"mb");
+            q(bas, @"b");
+
+
         }
 
         private void CreateTestData()

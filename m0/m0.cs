@@ -3320,7 +3320,7 @@ namespace m0
 
         public void Initialize()
         {
-            LogLevel = -1;
+            LogLevel = -2;
 
             InitializeLog();
 

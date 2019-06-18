@@ -37,59 +37,14 @@ namespace m0.ZeroCode
 
             InstructionHelpers.AddToStack(baseVertex, qs);
 
-            return CallableEndPointDictionary.CallEndPoint(exe, qs, expression);            
+            IVertex ret=CallableEndPointDictionary.CallEndPoint(exe, qs, expression);
+
+            if (ret != null)
+                return ret;
+
+            return MinusZero.Instance.CreateTempVertex();
         }
-
-        public IVertex _GetAll(IVertex baseVertex, IVertex expression)
-        {
-            ZeroCodeExecution exe = new ZeroCodeExecution();
-
-            IVertex qs = InstructionHelpers.CreateQueryStack();            
-
-            if (InstructionHelpers.CheckIs(expression, colon))
-            {
-                CallableEndPointDictionary.CallEndPoint(null, null, expression);
-
-                IVertex left = InstructionHelpers.GetLeft(expression);
-                IVertex right = InstructionHelpers.GetRight(expression);
-
-                object meta=null;
-                object value = null;
-
-                if (left != null)
-                    meta = left.Value;
-
-                if (right != null)
-                    value = right.Value;
-
-                BaseInstructions.AddResults(baseVertex, true, meta, value, qs);
-
-                IVertex nextExpression=null;
-                
-                if(right!=null)
-                    nextExpression = InstructionHelpers.GetNextExpression(right);
-
-                if (nextExpression != null)
-                {
-                    if (InstructionHelpers.CheckIs(nextExpression, slash))
-                    {
-                        IVertex newExpression = InstructionHelpers.GetNextExpression(nextExpression);
-
-                        qs = BaseInstructions.stepIntoAllEdges(exe,qs,nextExpression);
-
-                        return GetAll(qs, newExpression);
-                    }
-                }
-            }
-
-            return qs;
-        }
-
-      
-
-      
-
-
+        
         public ZeroCodeExecuter()
         {
 

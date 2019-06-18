@@ -2618,10 +2618,10 @@ namespace m0.ZeroCode
 
             ////
 
-            foreach (LineInfo i in lineInfoList)
+            /*foreach (LineInfo i in lineInfoList)
             {
                 MinusZero.Instance.Log(-1, "TryIfIsKeywordLine", i.startsWithLineContinuation + " [" + text.Substring(i.lineBeg, i.lineEnd - i.lineBeg + 1)+"]");
-            }
+            }*/
 
             ////
 
