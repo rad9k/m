@@ -13,9 +13,9 @@ namespace m0.ZeroCode
 
         public bool metaMode;
 
-        public void executeInstruction(IVertex queryStack, IVertex instructionVertex)
+        public IVertex executeInstruction(IVertex inputQs, IVertex instructionVertex)
         {
-
+            return CallableEndPointDictionary.CallEndPoint(this, inputQs, instructionVertex);
         }
     }
 }

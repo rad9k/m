@@ -237,8 +237,8 @@ namespace m0
             q(bas, @"mb|");
             q(bas, @"|bx");
             q(bas, @"|b");
-            q(bas, @"|");
-            q(bas, @"mb");
+            //q(bas, @"|");
+          //  q(bas, @"mb");
             
             
         }

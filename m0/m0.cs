@@ -3175,8 +3175,8 @@ namespace m0
         public void Log(int Level, string Where, string What)
         {
             if (DoLog && Level <= LogLevel)
-                //logFile.WriteLine(System.DateTime.Now.ToLongTimeString()+":"+ System.DateTime.Now.Millisecond+"["+Level+"]:"+" "+Where+": "+What);
-                logFile.WriteLine(What);
+                logFile.WriteLine(System.DateTime.Now.ToLongTimeString()+":"+ System.DateTime.Now.Millisecond+"["+Level+"]:"+" "+Where+": "+What);
+                //logFile.WriteLine(What);
         }
 
         private void DisposeLog()
@@ -3320,7 +3320,7 @@ namespace m0
 
         public void Initialize()
         {
-            LogLevel = 0;
+            LogLevel = -1;
 
             InitializeLog();
 
