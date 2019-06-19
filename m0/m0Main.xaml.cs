@@ -240,10 +240,10 @@ namespace m0
 
             m0.MinusZero.Instance.LogLevel = -2;
 
-            q(bas, @"ma|a\|aa2");
-            q(bas, @"ma\aa2");
-            q(bas, @"ma|a\|aa\");
-            q(bas, @"\\");
+            q(bas, @"{aa}");
+            q(bas, @"{aa2}");
+            q(bas, @"{aa,aa2}");
+            
 
             /*   q(bas, @"");
                q(bas, @"mb|b");
