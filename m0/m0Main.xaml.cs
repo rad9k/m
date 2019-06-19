@@ -199,7 +199,7 @@ namespace m0
 
             if(r!=null)
             foreach (IEdge e in r)
-                m0.MinusZero.Instance.Log(-2, "", "       " + e.Meta + " : " + e.To);
+                m0.MinusZero.Instance.Log(-2, "", "    " + e.Meta + " : " + e.To);
         }
 
         void q(IVertex baseVertex, string query)
@@ -230,6 +230,7 @@ namespace m0
             IVertex aa2 = a.AddVertex(maa, "aa2");
 
             IVertex bb = b.AddVertex(mbb, "bb");
+            IVertex baa = b.AddVertex(mbb, "aa");
 
             IVertex aaa = aa.AddVertex(ma, "aaa");
             IVertex aaa2 = aa.AddVertex(ma, "aaa2");
@@ -240,10 +241,14 @@ namespace m0
 
             m0.MinusZero.Instance.LogLevel = -2;
 
-            q(bas, @"{aa}");
-            q(bas, @"{aa2}");
-            q(bas, @"{aa,aa2}");
             
+            q(bas, @"|a{|aa,x}");
+            q(bas, @"{|aa,x}");
+            q(bas, @"|a{x}");
+            q(bas, @"{x}");
+            q(bas, @"{|aa2}");
+            q(bas, @"{|aa}");
+
 
             /*   q(bas, @"");
                q(bas, @"mb|b");

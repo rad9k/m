@@ -104,6 +104,28 @@ namespace m0.Graph
             return null;
         }
 
+        public static IList<IEdge> GetQueryOut(IVertex baseVertex, object meta, object value)
+        {
+            IEdge result;
+            IList<IEdge> results;
+
+            baseVertex.QueryOutEdges(meta, value, out result, out results);
+
+            if (result != null)
+            {
+                results = new List<IEdge>();
+                results.Add(result);
+                return results;
+            }
+
+            if (results != null && results.Count > 0)
+                return results;
+
+            return null;
+        }
+
+
+
         public static object GetMetaAndValueObject(object meta, object value)
         {
             return meta.ToString() + "@#$#@" + value.ToString(); // this is no good !!!!!!!!!. possible error when meta or value contains "@#$#@"

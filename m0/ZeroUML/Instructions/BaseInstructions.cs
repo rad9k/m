@@ -12,25 +12,7 @@ using m0.Graph;
 namespace m0.ZeroUML.Instructions
 {
     public class BaseInstructions
-    {
-        public static void AddResults(IVertex baseVertex, bool outEdges, object meta, object value, IVertex toAdd)
-        {
-            IEdge result;
-            IList<IEdge> results;
-
-            if (outEdges)
-                baseVertex.QueryOutEdges(meta, value, out result, out results);
-            else
-                baseVertex.QueryInEdges(meta, value, out result, out results);
-
-            if (result != null)
-                toAdd.AddEdge(result.Meta, result.To);
-
-            if (results != null)
-                foreach (IEdge e in results)
-                    toAdd.AddEdge(e.Meta, e.To);
-        }
-
+    {     
         public static IVertex stepIntoAllEdges(ZeroCodeExecution exe, IVertex inputQs, IVertex instructionsVertex)
         {
             INoInEdgeInOutVertexVertex newQs = InstructionHelpers.CreateQueryStack();
@@ -73,7 +55,28 @@ namespace m0.ZeroUML.Instructions
 
         public static IVertex InnerOperator(ZeroCodeExecution exe, IVertex inputQs, IVertex instructionVertex)
         {
-            return inputQs;
+            IList<IEdge> expressions = GraphUtil.GetQueryOut(instructionVertex, "Expression", null);
+
+            IVertex newQs = inputQs;
+            IVertex oldQs = inputQs;
+
+            foreach (IEdge expression in expressions)
+            {
+                INoInEdgeInOutVertexVertex _newQs = InstructionHelpers.CreateQueryStack();
+
+                foreach(IEdge e in oldQs)
+                {
+                    IVertex outQs = exe.executeInstruction(e.To, expression.To);
+
+                    if (outQs.OutEdges.Count() > 0)
+                        _newQs.AddEdgeForNoInEdgeInOutVertexVertex(e);
+                }
+
+                newQs = _newQs;
+                oldQs = _newQs;
+            }
+
+            return InstructionHelpers.NextExpressionHandle(exe, newQs, instructionVertex);
         }
 
         public static IVertex StarOperator(ZeroCodeExecution exe, IVertex inputQs, IVertex instructionVertex)
