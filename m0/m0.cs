@@ -362,9 +362,9 @@ namespace m0
             // CallableEndPoint
 
             AddDotNetEndPoint(smu.Get(false, "Query"), "QueryOperator");
-            AddDotNetEndPoint(smu.Get(false, "{}"), "InnerOperator");
-            AddDotNetEndPoint(smu.Get(false, "* "), "StarOperator");
-            AddDotNetEndPoint(smu.Get(false, "\\ "), "SlashOperator");
+            AddDotNetEndPoint(smu.Get(false, "\"{}\""), "InnerOperator");
+            AddDotNetEndPoint(smu.Get(false, "\"* \""), "StarOperator");
+            AddDotNetEndPoint(smu.Get(false, "\"\\ \""), "SlashOperator");
             AddDotNetEndPoint(smu.Get(false, "\"|\""), "ColonOperator");
             AddDotNetEndPoint(smu.Get(false, "\"||\""), "DoubleColonOperator");
             

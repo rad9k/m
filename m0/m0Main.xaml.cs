@@ -213,34 +213,49 @@ namespace m0
         {
             IVertex r = MinusZero.Instance.Root;
 
+            IVertex bas = tr.AddVertex(null, "bas");
+
             IVertex ma = tr.AddVertex(null, "ma");
             IVertex mb = tr.AddVertex(null, "mb");
+
             IVertex maa = tr.AddVertex(null, "maa");
             IVertex mbb = tr.AddVertex(null, "mbb");
-            IVertex bas = tr.AddVertex(null, "bas");
+
+            
 
             IVertex a = bas.AddVertex(ma, "a");
             IVertex b = bas.AddVertex(mb, "b");
 
             IVertex aa = a.AddVertex(maa, "aa");
+            IVertex aa2 = a.AddVertex(maa, "aa2");
+
             IVertex bb = b.AddVertex(mbb, "bb");
+
+            IVertex aaa = aa.AddVertex(ma, "aaa");
+            IVertex aaa2 = aa.AddVertex(ma, "aaa2");
+            IVertex bbb = bb.AddVertex(mb, "bbb");
 
 
             //b.AddEdge(r.Get(false, @"System\Meta*$Inherits"), a);
 
             m0.MinusZero.Instance.LogLevel = -2;
 
-            q(bas, @"");
-            q(bas, @"mb|b");
-            q(bas, @"mbx|b");
-            q(bas, @"mb|bx");
-            q(bas, @"mbx|");
-            q(bas, @"mb|");
-            q(bas, @"|bx");
-            q(bas, @"|b");
-            q(bas, @"|");
-            q(bas, @"mb");
-            q(bas, @"b");
+            q(bas, @"ma|a\|aa2");
+            q(bas, @"ma\aa2");
+            q(bas, @"ma|a\|aa\");
+            q(bas, @"\\");
+
+            /*   q(bas, @"");
+               q(bas, @"mb|b");
+               q(bas, @"mbx|b");
+               q(bas, @"mb|bx");
+               q(bas, @"mbx|");
+               q(bas, @"mb|");
+               q(bas, @"|bx");
+               q(bas, @"|b");
+               q(bas, @"|");
+               q(bas, @"mb");
+               q(bas, @"b");*/
 
 
         }

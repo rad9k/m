@@ -68,7 +68,7 @@ namespace m0.ZeroUML.Instructions
             if(eList != null)
                 InstructionHelpers.AddToStack(eList, newQs);
 
-            return newQs;
+            return InstructionHelpers.NextExpressionHandle(exe, newQs, instructionVertex);
         }
 
         public static IVertex InnerOperator(ZeroCodeExecution exe, IVertex inputQs, IVertex instructionVertex)
@@ -83,7 +83,13 @@ namespace m0.ZeroUML.Instructions
 
         public static IVertex SlashOperator(ZeroCodeExecution exe, IVertex inputQs, IVertex instructionVertex)
         {
-            return inputQs;
+            INoInEdgeInOutVertexVertex newQs = InstructionHelpers.CreateQueryStack();
+
+            foreach (IEdge e in inputQs)
+                foreach (IEdge ee in e.To)
+                    newQs.AddEdgeForNoInEdgeInOutVertexVertex(ee);
+
+            return InstructionHelpers.NextExpressionHandle(exe, newQs, instructionVertex);
         }
 
         public static IVertex ColonOperator(ZeroCodeExecution exe, IVertex inputQs, IVertex instructionVertex)
@@ -115,10 +121,10 @@ namespace m0.ZeroUML.Instructions
             if (eList != null)
                 InstructionHelpers.AddToStack(eList, newQs);
 
-            return newQs;
+            return InstructionHelpers.NextExpressionHandle(exe, newQs, instructionVertex);
         }
 
-        public static IVertex DoubleOperator(ZeroCodeExecution exe, IVertex inputQs, IVertex instructionVertex)
+        public static IVertex DoubleColonOperator(ZeroCodeExecution exe, IVertex inputQs, IVertex instructionVertex)
         {
             return inputQs;
         }        

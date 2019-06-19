@@ -45,5 +45,17 @@ namespace m0.ZeroCode.Helpers
         {
             return GraphUtil.GetQueryOutFirst(v, "NextExpression", null);
         }
+
+        public static IVertex NextExpressionHandle(ZeroCodeExecution exe, IVertex existingStackToReturn, IVertex instructionVertex)
+        {
+            IVertex nextExpression = InstructionHelpers.GetNextExpression(instructionVertex);
+
+            if (nextExpression != null)
+                return exe.executeInstruction(existingStackToReturn, nextExpression);
+
+            return existingStackToReturn;
+        }
+
+        
     }
 }
