@@ -13,26 +13,18 @@ namespace m0.ZeroUML.Instructions
 {
     public class BaseInstructions
     {     
-        public static IVertex stepIntoAllEdges(ZeroCodeExecution exe, IVertex inputQs, IVertex instructionsVertex)
+        public static INoInEdgeInOutVertexVertex QueryOperator(ZeroCodeExecution exe, IVertex inputQs, IVertex instructionVertex)
         {
-            INoInEdgeInOutVertexVertex newQs = InstructionHelpers.CreateQueryStack();
+            if (!(inputQs is INoInEdgeInOutVertexVertex))
+                return null;
 
-            foreach (IEdge e in inputQs)
-                foreach (IEdge ee in e.To)
-                    newQs.AddEdgeForNoInEdgeInOutVertexVertex(ee);
-
-            return newQs;
-        }
-
-        public static IVertex QueryOperator(ZeroCodeExecution exe, IVertex inputQs, IVertex instructionVertex)
-        {
             if(instructionVertex.Value==null)
-                return inputQs;
+                return (INoInEdgeInOutVertexVertex)inputQs;
 
             string value = instructionVertex.Value.ToString();
 
             if (value == "" || value == "\r")
-                return inputQs;
+                return (INoInEdgeInOutVertexVertex)inputQs;
 
             INoInEdgeInOutVertexVertex newQs = InstructionHelpers.CreateQueryStack();
 
@@ -53,38 +45,40 @@ namespace m0.ZeroUML.Instructions
             return InstructionHelpers.NextExpressionHandle(exe, newQs, instructionVertex);
         }
 
-        public static IVertex InnerOperator(ZeroCodeExecution exe, IVertex inputQs, IVertex instructionVertex)
+        public static INoInEdgeInOutVertexVertex InnerOperator(ZeroCodeExecution exe, IVertex inputQs, IVertex instructionVertex)
         {
+            if (!(inputQs is INoInEdgeInOutVertexVertex))
+                return null;
+
             IList<IEdge> expressions = GraphUtil.GetQueryOut(instructionVertex, "Expression", null);
 
-            IVertex newQs = inputQs;
-            IVertex oldQs = inputQs;
+            INoInEdgeInOutVertexVertex newQs = (INoInEdgeInOutVertexVertex) inputQs;
+            INoInEdgeInOutVertexVertex oldQs = (INoInEdgeInOutVertexVertex) inputQs;
 
             foreach (IEdge expression in expressions)
             {
-                INoInEdgeInOutVertexVertex _newQs = InstructionHelpers.CreateQueryStack();
+                newQs = InstructionHelpers.CreateQueryStack();
 
                 foreach(IEdge e in oldQs)
                 {
                     IVertex outQs = exe.executeInstruction(e.To, expression.To);
 
                     if (outQs.OutEdges.Count() > 0)
-                        _newQs.AddEdgeForNoInEdgeInOutVertexVertex(e);
+                        newQs.AddEdgeForNoInEdgeInOutVertexVertex(e);
                 }
-
-                newQs = _newQs;
-                oldQs = _newQs;
+                
+                oldQs = newQs;
             }
 
             return InstructionHelpers.NextExpressionHandle(exe, newQs, instructionVertex);
         }
 
-        public static IVertex StarOperator(ZeroCodeExecution exe, IVertex inputQs, IVertex instructionVertex)
+        public static INoInEdgeInOutVertexVertex StarOperator(ZeroCodeExecution exe, IVertex inputQs, IVertex instructionVertex)
         {
-            return inputQs;
+            return null;
         }
 
-        public static IVertex SlashOperator(ZeroCodeExecution exe, IVertex inputQs, IVertex instructionVertex)
+        public static INoInEdgeInOutVertexVertex SlashOperator(ZeroCodeExecution exe, IVertex inputQs, IVertex instructionVertex)
         {
             INoInEdgeInOutVertexVertex newQs = InstructionHelpers.CreateQueryStack();
 
@@ -95,7 +89,7 @@ namespace m0.ZeroUML.Instructions
             return InstructionHelpers.NextExpressionHandle(exe, newQs, instructionVertex);
         }
 
-        public static IVertex ColonOperator(ZeroCodeExecution exe, IVertex inputQs, IVertex instructionVertex)
+        public static INoInEdgeInOutVertexVertex ColonOperator(ZeroCodeExecution exe, IVertex inputQs, IVertex instructionVertex)
         {
             IVertex leftExpression = InstructionHelpers.GetLeft(instructionVertex);
             IVertex rightExpression = InstructionHelpers.GetRight(instructionVertex);
@@ -124,7 +118,7 @@ namespace m0.ZeroUML.Instructions
             if (eList != null)
                 InstructionHelpers.AddToStack(eList, newQs);
 
-            newQs = ColonSubExpressionProcess_Meta(newQs, leftExpression);
+           // newQs = ColonSubExpressionProcess_Meta(newQs, leftExpression);
 
             IVertex _newQs;
 
@@ -137,16 +131,6 @@ namespace m0.ZeroUML.Instructions
         }
 
         private static INoInEdgeInOutVertexVertex ColonSubExpressionProcess_Meta(INoInEdgeInOutVertexVertex inQs, IVertex expression)
-        {
-            IVertex nextExpression = InstructionHelpers.GetNextExpression(expression);
-
-            if (nextExpression == null)
-                return inQs;
-
-            return null;
-        }
-
-        private static INoInEdgeInOutVertexVertex ColonSubExpressionProcess_To(INoInEdgeInOutVertexVertex inQs, IVertex expression)
         {
             IVertex nextExpression = InstructionHelpers.GetNextExpression(expression);
 

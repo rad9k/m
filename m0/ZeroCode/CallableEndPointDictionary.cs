@@ -11,11 +11,11 @@ namespace m0.ZeroCode
 {
     public class CallableEndPointDictionary
     {
-        static Dictionary<IVertex, Func<ZeroCodeExecution, INoInEdgeInOutVertexVertex, IVertex, INoInEdgeInOutVertexVertex>> Dictionary = new Dictionary<IVertex, Func<ZeroCodeExecution, IVertex, IVertex, IVertex>>();
+        static Dictionary<IVertex, Func<ZeroCodeExecution, IVertex, IVertex, INoInEdgeInOutVertexVertex>> Dictionary = new Dictionary<IVertex, Func<ZeroCodeExecution, IVertex, IVertex, INoInEdgeInOutVertexVertex>>();
         
-        public static INoInEdgeInOutVertexVertex CallEndPoint(ZeroCodeExecution exe, INoInEdgeInOutVertexVertex inputQs, IVertex instructionVertex)
+        public static INoInEdgeInOutVertexVertex CallEndPoint(ZeroCodeExecution exe, IVertex inputQs, IVertex instructionVertex)
         {
-            Func<ZeroCodeExecution, IVertex, IVertex, IVertex> del = null;
+            Func<ZeroCodeExecution, IVertex, IVertex, INoInEdgeInOutVertexVertex> del = null;
 
             IVertex _is = GraphUtil.FindOneByMeta(instructionVertex, "$Is");
 
@@ -39,7 +39,7 @@ namespace m0.ZeroCode
                     Type type = Type.GetType(typeString);
                     MethodInfo method = type.GetMethod(methodString);
 
-                    del = (Func<ZeroCodeExecution, IVertex, IVertex, IVertex>)method.CreateDelegate(typeof(Func<ZeroCodeExecution, IVertex, IVertex, IVertex>));
+                    del = (Func<ZeroCodeExecution, IVertex, IVertex, INoInEdgeInOutVertexVertex>)method.CreateDelegate(typeof(Func<ZeroCodeExecution, IVertex, IVertex, INoInEdgeInOutVertexVertex>));
                 }
 
                 Dictionary.Add(_is, del);

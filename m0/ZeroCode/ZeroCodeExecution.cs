@@ -13,7 +13,7 @@ namespace m0.ZeroCode
 
         public bool metaMode;
 
-        public IVertex executeInstruction(INoInEdgeInOutVertexVertex inputQs, IVertex instructionVertex)
+        public INoInEdgeInOutVertexVertex executeInstruction(IVertex inputQs, IVertex instructionVertex)
         {
             return CallableEndPointDictionary.CallEndPoint(this, inputQs, instructionVertex);
         }

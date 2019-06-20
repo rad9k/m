@@ -46,14 +46,17 @@ namespace m0.ZeroCode.Helpers
             return GraphUtil.GetQueryOutFirst(v, "NextExpression", null);
         }
 
-        public static INoInEdgeInOutVertexVertex NextExpressionHandle(ZeroCodeExecution exe, INoInEdgeInOutVertexVertex existingStackToReturn, IVertex instructionVertex)
+        public static INoInEdgeInOutVertexVertex NextExpressionHandle(ZeroCodeExecution exe, IVertex inQs, IVertex instructionVertex)
         {
             IVertex nextExpression = InstructionHelpers.GetNextExpression(instructionVertex);
 
             if (nextExpression != null)
-                return exe.executeInstruction(existingStackToReturn, nextExpression);
+                return exe.executeInstruction(inQs, nextExpression);
 
-            return existingStackToReturn;
+            if (inQs is INoInEdgeInOutVertexVertex)
+                return (INoInEdgeInOutVertexVertex)inQs;
+
+            return null;
         }
 
         
