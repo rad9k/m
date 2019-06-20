@@ -46,7 +46,7 @@ namespace m0.ZeroCode.Helpers
             return GraphUtil.GetQueryOutFirst(v, "NextExpression", null);
         }
 
-        public static IVertex NextExpressionHandle(ZeroCodeExecution exe, IVertex existingStackToReturn, IVertex instructionVertex)
+        public static INoInEdgeInOutVertexVertex NextExpressionHandle(ZeroCodeExecution exe, INoInEdgeInOutVertexVertex existingStackToReturn, IVertex instructionVertex)
         {
             IVertex nextExpression = InstructionHelpers.GetNextExpression(instructionVertex);
 
