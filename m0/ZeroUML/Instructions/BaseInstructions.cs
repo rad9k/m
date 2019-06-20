@@ -124,7 +124,15 @@ namespace m0.ZeroUML.Instructions
             if (eList != null)
                 InstructionHelpers.AddToStack(eList, newQs);
 
+            newQs = ColonSubExpressionProcess(newQs, true, leftExpression);
+            newQs = ColonSubExpressionProcess(newQs, false, rightExpression);
+
             return InstructionHelpers.NextExpressionHandle(exe, newQs, instructionVertex);
+        }
+
+        private static INoInEdgeInOutVertexVertex ColonSubExpressionProcess(INoInEdgeInOutVertexVertex inQs, bool processMeta, IVertex expression)
+        {
+            return null;
         }
 
         public static IVertex DoubleColonOperator(ZeroCodeExecution exe, IVertex inputQs, IVertex instructionVertex)
