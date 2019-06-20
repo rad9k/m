@@ -132,7 +132,7 @@ namespace m0.ZeroUML.Instructions
 
         private static INoInEdgeInOutVertexVertex ColonSubExpressionProcess(INoInEdgeInOutVertexVertex inQs, bool processMeta, IVertex expression)
         {
-            return null;
+            return inQs;
         }
 
         public static IVertex DoubleColonOperator(ZeroCodeExecution exe, IVertex inputQs, IVertex instructionVertex)

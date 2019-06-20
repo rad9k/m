@@ -242,7 +242,7 @@ namespace m0
             m0.MinusZero.Instance.LogLevel = -2;
 
             
-            //q(bas, @"ma{|aa,x}");
+            q(bas, @"ma{|aa,x}");
             q(bas, @"ma{|aa2}");
             q(bas, @"ma{|aa2}\");
 
