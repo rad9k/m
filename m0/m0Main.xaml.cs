@@ -221,6 +221,10 @@ namespace m0
             IVertex maa = tr.AddVertex(null, "maa");
             IVertex mbb = tr.AddVertex(null, "mbb");
 
+            IVertex ma_x = ma.AddVertex(null,"x");
+
+            IVertex maa_x = maa.AddVertex(mb, "y");
+
             
 
             IVertex a = bas.AddVertex(ma, "a");
@@ -242,8 +246,12 @@ namespace m0
             m0.MinusZero.Instance.LogLevel = -2;
 
             
-            q(bas, @"|a{maa|aa2}");
-            
+            q(bas, @"\{x}|");
+            q(bas, @"\");
+            q(bas, @"\|{aaa}");
+            q(bas, @"\|aa");
+            q(bas, @"\|aa{aaa}");
+
 
 
             /*   q(bas, @"");
