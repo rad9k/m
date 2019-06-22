@@ -44,13 +44,12 @@ namespace m0.ZeroUML.Instructions
 
         public static INoInEdgeInOutVertexVertex InnerOperator(ZeroCodeExecution exe, IVertex inputQs, IVertex instructionVertex)
         {
-            if (!(inputQs is INoInEdgeInOutVertexVertex))
-                return null;
+            INoInEdgeInOutVertexVertex _inputQs = InstructionHelpers.MakeINoInEdgeInOutVertexVertex(inputQs);
 
             IList<IEdge> expressions = GraphUtil.GetQueryOut(instructionVertex, "Expression", null);
 
-            INoInEdgeInOutVertexVertex newQs = (INoInEdgeInOutVertexVertex) inputQs;
-            INoInEdgeInOutVertexVertex oldQs = (INoInEdgeInOutVertexVertex) inputQs;
+            INoInEdgeInOutVertexVertex newQs = _inputQs;
+            INoInEdgeInOutVertexVertex oldQs = _inputQs;
 
             foreach (IEdge expression in expressions)
             {
@@ -91,60 +90,100 @@ namespace m0.ZeroUML.Instructions
             IVertex leftExpression = InstructionHelpers.GetLeft(instructionVertex);
             IVertex rightExpression = InstructionHelpers.GetRight(instructionVertex);
 
-            string leftValue = GraphUtil.GetStringValue(leftExpression);
-            string rightValue = GraphUtil.GetStringValue(rightExpression);
+            bool isLeftExpressionQuery = false;
+            bool isRightExpressionQuery = false;
+            
+            if(leftExpression!=null)
+                isLeftExpressionQuery = InstructionHelpers.CheckIs(leftExpression, "Query");
 
-            string meta=null, to=null;
+            if(rightExpression!=null)
+                isRightExpressionQuery = InstructionHelpers.CheckIs(rightExpression, "Query");
+
+            string leftValue = null;
+            string rightValue = null;
+
+            if(isLeftExpressionQuery)
+                leftValue = GraphUtil.GetStringValue(leftExpression);
+
+            if(isRightExpressionQuery)
+                rightValue = GraphUtil.GetStringValue(rightExpression);
+
+            string metaQueryString=null, toQueryString=null;
 
             if (leftValue != null && leftValue != "")
-                meta = leftValue;
+                metaQueryString = leftValue;
 
             if (rightValue != null && rightValue != "")
-                to = rightValue;
+                toQueryString = rightValue;
 
             INoInEdgeInOutVertexVertex newQs = InstructionHelpers.CreateQueryStack();
 
-            IEdge e;
-            IList<IEdge> eList;
-            
-            inputQs.QueryOutEdges(meta, to, out e, out eList);            
+            if (isLeftExpressionQuery || isRightExpressionQuery)
+            {
+                IEdge e;
+                IList<IEdge> eList;
 
-            if (e != null)
-                newQs.AddEdgeForNoInEdgeInOutVertexVertex(e);
+                inputQs.QueryOutEdges(metaQueryString, toQueryString, out e, out eList);
 
-            if (eList != null)
-                InstructionHelpers.AddToStack(eList, newQs);
+                if (e != null)
+                    newQs.AddEdgeForNoInEdgeInOutVertexVertex(e);
+
+                if (eList != null)
+                    InstructionHelpers.AddToStack(eList, newQs);
+            }
+            else
+                InstructionHelpers.AddToStack(inputQs, newQs);
 
             //newQs = ColonSubExpressionProcess_Meta(newQs, leftExpression);
 
-            IVertex _newQs;
+            if (leftExpression != null)
+            {
+                if (isRightExpressionQuery)
+                {
+                    IVertex nextExpression = InstructionHelpers.GetNextExpression(instructionVertex);
+
+                    if (nextExpression != null)
+                        newQs = ColonSubExpressionProcess_Meta(exe, newQs, nextExpression);                    
+                }
+                else
+                    newQs = ColonSubExpressionProcess_Meta(exe, newQs, leftExpression);                        
+            }
 
             if (rightExpression != null)
-                _newQs = InstructionHelpers.NextExpressionHandle(exe, newQs, rightExpression);
-            else
-                _newQs = newQs;
+            {
+                if (isRightExpressionQuery)
+                    newQs = InstructionHelpers.NextExpressionHandle(exe, newQs, rightExpression);
+                else
+                    newQs = exe.executeInstruction(newQs, rightExpression);
+            }
+            
 
-            return InstructionHelpers.NextExpressionHandle(exe, _newQs, instructionVertex);
+            return InstructionHelpers.NextExpressionHandle(exe, newQs, instructionVertex);
         }
 
-        private static INoInEdgeInOutVertexVertex ColonSubExpressionProcess_Meta(INoInEdgeInOutVertexVertex inQs, IVertex expression)
-        {
-            IVertex nextExpression = InstructionHelpers.GetNextExpression(expression);
-
-            if (nextExpression == null)
-                return inQs;
-
+        private static INoInEdgeInOutVertexVertex ColonSubExpressionProcess_Meta(ZeroCodeExecution exe, INoInEdgeInOutVertexVertex inQs, IVertex expression)
+        {            
             Dictionary<IVertex, bool> metaDict = new Dictionary<IVertex, bool>();
 
             INoInEdgeInOutVertexVertex localQs = InstructionHelpers.CreateQueryStack();
 
-            foreach (IEdge e in inQs)            
+            foreach (IEdge e in inQs)
                 if (!metaDict.ContainsKey(e.Meta))
+                {
                     localQs.AddEdgeForNoInEdgeInOutVertexVertex(GraphUtil.CreateArtificialEdge(null, e.Meta));
+                    metaDict.Add(e.Meta, false);
+                }
             
-            //INoInEdgeInOutVertexVertex newLocalQs = InstructionHelpers.NextExpressionHandle()
+            INoInEdgeInOutVertexVertex afterCallQs = exe.executeInstruction(localQs, expression);
+
+            foreach (IEdge e in afterCallQs)
+                metaDict[e.To] = true;
 
             INoInEdgeInOutVertexVertex newQs = InstructionHelpers.CreateQueryStack();
+
+            foreach (IEdge e in inQs)
+                if (metaDict[e.Meta] == true)
+                    newQs.AddEdgeForNoInEdgeInOutVertexVertex(e);
 
             return newQs;
         }

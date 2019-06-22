@@ -552,6 +552,8 @@ namespace m0.Graph
                     results = (IList<IEdge>)val;
                 else
                     result = (IEdge)val;
+
+                return;
             }
 
             if (meta == null && to != null)
@@ -568,6 +570,8 @@ namespace m0.Graph
                     results = (IList<IEdge>)val;
                 else
                     result = (IEdge)val;
+
+                return;
             }
 
             if (meta != null && to != null)
@@ -586,7 +590,11 @@ namespace m0.Graph
                     results = (IList<IEdge>)val;
                 else
                     result = (IEdge)val;
+
+                return;
             }
+
+            results = OutEdges.ToList();
         }
 
         public override void QueryInEdges(object meta, object from, out IEdge result, out IList<IEdge> results)
@@ -608,6 +616,8 @@ namespace m0.Graph
                     results = (IList<IEdge>)val;
                 else
                     result = (IEdge)val;
+
+                return;
             }
 
             if (meta == null && from != null)
@@ -624,6 +634,8 @@ namespace m0.Graph
                     results = (IList<IEdge>)val;
                 else
                     result = (IEdge)val;
+
+                return;
             }
 
             if (meta != null && from != null)
@@ -642,7 +654,11 @@ namespace m0.Graph
                     results = (IList<IEdge>)val;
                 else
                     result = (IEdge)val;
+
+                return;
             }
+
+            results = InEdges.ToList();
         }
 
         public IVertex NewGet(bool metaMode, string query)

@@ -70,10 +70,7 @@ namespace m0.ZeroCode.Helpers
             if (nextExpression != null)
                 return exe.executeInstruction(inQs, nextExpression);
 
-            if (inQs is INoInEdgeInOutVertexVertex)
-                return (INoInEdgeInOutVertexVertex)inQs;
-
-            return null;
+            return MakeINoInEdgeInOutVertexVertex(inQs);            
         }
 
         
