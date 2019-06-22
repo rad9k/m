@@ -15,16 +15,13 @@ namespace m0.ZeroUML.Instructions
     {     
         public static INoInEdgeInOutVertexVertex QueryOperator(ZeroCodeExecution exe, IVertex inputQs, IVertex instructionVertex)
         {
-            if (!(inputQs is INoInEdgeInOutVertexVertex))
-                return null;
-
-            if(instructionVertex.Value==null)
-                return (INoInEdgeInOutVertexVertex)inputQs;
-
+            if (instructionVertex.Value == null)
+                return InstructionHelpers.MakeINoInEdgeInOutVertexVertex(inputQs);
+            
             string value = instructionVertex.Value.ToString();
 
             if (value == "" || value == "\r")
-                return (INoInEdgeInOutVertexVertex)inputQs;
+                return InstructionHelpers.MakeINoInEdgeInOutVertexVertex(inputQs);
 
             INoInEdgeInOutVertexVertex newQs = InstructionHelpers.CreateQueryStack();
 

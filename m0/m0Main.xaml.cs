@@ -246,11 +246,11 @@ namespace m0
             m0.MinusZero.Instance.LogLevel = -2;
 
             
-            q(bas, @"\{x}|");
+            q(bas, @"\{y}|");
             q(bas, @"\");
             q(bas, @"\|{aaa}");
             q(bas, @"\|aa");
-            q(bas, @"\|aa{aaa}");
+            q(bas, @"\|aa{|aaa}");
 
 
 

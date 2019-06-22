@@ -21,6 +21,23 @@ namespace m0.ZeroCode.Helpers
                 destination.AddEdgeForNoInEdgeInOutVertexVertex(e);
         }
 
+        public static INoInEdgeInOutVertexVertex CreateStackAndCopy(IEnumerable<IEdge> source)
+        {
+            INoInEdgeInOutVertexVertex newStack = CreateQueryStack();
+
+            AddToStack(source, newStack);
+
+            return newStack;
+        }
+
+        public static INoInEdgeInOutVertexVertex MakeINoInEdgeInOutVertexVertex(IVertex source)
+        {
+            if (source is INoInEdgeInOutVertexVertex)
+                return (INoInEdgeInOutVertexVertex)source;
+
+            return CreateStackAndCopy(source);
+        }
+
         public static bool CheckIs(IVertex v, string i)
         {
             IVertex iv = GraphUtil.GetQueryOutFirst(v, "$Is", (object)i);
