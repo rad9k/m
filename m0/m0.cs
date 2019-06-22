@@ -363,7 +363,7 @@ namespace m0
 
             AddDotNetEndPoint(smu.Get(false, "Query"), "QueryOperator");
             AddDotNetEndPoint(smu.Get(false, "\"{}\""), "InnerOperator");
-            AddDotNetEndPoint(smu.Get(false, "\"* \""), "StarOperator");
+            AddDotNetEndPoint(smu.Get(false, "?"), "QuestionMarkOperator");
             AddDotNetEndPoint(smu.Get(false, "\"\\ \""), "SlashOperator");
             AddDotNetEndPoint(smu.Get(false, "\"|\""), "ColonOperator");
             AddDotNetEndPoint(smu.Get(false, "\"||\""), "DoubleColonOperator");

@@ -16,9 +16,14 @@ namespace m0.Graph
     {
         object Value;
 
+        INoInEdgeInOutVertexVertex ValueAsINoInEdgeInOutVertexVertex;
+
         public GraphIterator(object value)
         {
             Value = value;
+
+            if (value is INoInEdgeInOutVertexVertex)
+                ValueAsINoInEdgeInOutVertexVertex = (INoInEdgeInOutVertexVertex)value;           
         }
 
         public bool Compare(IEdge vertex)
@@ -35,6 +40,14 @@ namespace m0.Graph
                 return true;
 
             return false;
+        }
+
+        public bool AddToINoInEdgeInOutVertexVertex(IEdge vertex)
+        {
+            if (ValueAsINoInEdgeInOutVertexVertex != null)
+                ValueAsINoInEdgeInOutVertexVertex.AddEdgeForNoInEdgeInOutVertexVertex(vertex);            
+
+            return true;
         }
     }
 

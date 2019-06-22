@@ -10,8 +10,8 @@ using m0.Util;
 using m0.Graph;
 
 namespace m0.ZeroUML.Instructions
-{
-    public class BaseInstructions
+{    
+        public class BaseInstructions
     {     
         public static INoInEdgeInOutVertexVertex QueryOperator(ZeroCodeExecution exe, IVertex inputQs, IVertex instructionVertex)
         {
@@ -69,9 +69,14 @@ namespace m0.ZeroUML.Instructions
             return InstructionHelpers.NextExpressionHandle(exe, newQs, instructionVertex);
         }
 
-        public static INoInEdgeInOutVertexVertex StarOperator(ZeroCodeExecution exe, IVertex inputQs, IVertex instructionVertex)
+        public static INoInEdgeInOutVertexVertex QuestionMarkOperator(ZeroCodeExecution exe, IVertex inputQs, IVertex instructionVertex)
         {
-            return null;
+            INoInEdgeInOutVertexVertex newQs = InstructionHelpers.CreateQueryStack();
+            GraphIterator iter = new GraphIterator(newQs);
+
+            GraphUtil.DeepIterator(inputQs,iter.AddToINoInEdgeInOutVertexVertex , false, false, true);
+
+            return InstructionHelpers.NextExpressionHandle(exe, newQs, instructionVertex);
         }
 
         public static INoInEdgeInOutVertexVertex SlashOperator(ZeroCodeExecution exe, IVertex inputQs, IVertex instructionVertex)
@@ -132,9 +137,7 @@ namespace m0.ZeroUML.Instructions
                     InstructionHelpers.AddToStack(eList, newQs);
             }
             else
-                InstructionHelpers.AddToStack(inputQs, newQs);
-
-            //newQs = ColonSubExpressionProcess_Meta(newQs, leftExpression);
+                InstructionHelpers.AddToStack(inputQs, newQs);            
 
             if (leftExpression != null)
             {

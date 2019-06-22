@@ -248,7 +248,8 @@ namespace m0
             m0.MinusZero.Instance.LogLevel = -2;
 
 
-            q(bas, @"*");
+            q(bas, @"?");
+            q(bas, @"?{maa|aa}");
             q(bas, @"{|x}|");
             q(bas, @"\{|y}|");
             q(bas, @"\{|{|yy}}|");
