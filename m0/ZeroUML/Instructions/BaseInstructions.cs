@@ -115,7 +115,7 @@ namespace m0.ZeroUML.Instructions
             if (eList != null)
                 InstructionHelpers.AddToStack(eList, newQs);
 
-           // newQs = ColonSubExpressionProcess_Meta(newQs, leftExpression);
+            //newQs = ColonSubExpressionProcess_Meta(newQs, leftExpression);
 
             IVertex _newQs;
 
@@ -134,7 +134,19 @@ namespace m0.ZeroUML.Instructions
             if (nextExpression == null)
                 return inQs;
 
-            return null;
+            Dictionary<IVertex, bool> metaDict = new Dictionary<IVertex, bool>();
+
+            INoInEdgeInOutVertexVertex localQs = InstructionHelpers.CreateQueryStack();
+
+            foreach (IEdge e in inQs)            
+                if (!metaDict.ContainsKey(e.Meta))
+                    localQs.AddEdgeForNoInEdgeInOutVertexVertex(GraphUtil.CreateArtificialEdge(null, e.Meta));
+            
+            //INoInEdgeInOutVertexVertex newLocalQs = InstructionHelpers.NextExpressionHandle()
+
+            INoInEdgeInOutVertexVertex newQs = InstructionHelpers.CreateQueryStack();
+
+            return newQs;
         }
 
         public static IVertex DoubleColonOperator(ZeroCodeExecution exe, IVertex inputQs, IVertex instructionVertex)

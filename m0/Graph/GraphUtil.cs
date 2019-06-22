@@ -39,7 +39,14 @@ namespace m0.Graph
     }
 
     public class GraphUtil
-    {        
+    {    
+        public static IEdge CreateArtificialEdge(IVertex meta, IVertex to)
+        {
+            EasyEdge e = new EasyEdge(null, meta, to);
+
+            return e;
+        }
+
         public static IVertex GetQueryOutFirst(IVertex baseVertex, object meta, object value)
         {
             IEdge result;
