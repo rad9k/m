@@ -156,8 +156,8 @@
     <Compile Include="UIWpf\Dialog\EditDialog.xaml.cs">
       <DependentUpon>EditDialog.xaml</DependentUpon>
     </Compile>
-    <Compile Include="UIWpf\Dialog\Info.xaml.cs">
-      <DependentUpon>Info.xaml</DependentUpon>
+    <Compile Include="UIWpf\Dialog\InfoWindow.xaml.cs">
+      <DependentUpon>InfoWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="UIWpf\Dialog\NewEdge.xaml.cs">
       <DependentUpon>NewEdge.xaml</DependentUpon>
@@ -165,14 +165,11 @@
     <Compile Include="UIWpf\Dialog\NewEdgeBySchema.xaml.cs">
       <DependentUpon>NewEdgeBySchema.xaml</DependentUpon>
     </Compile>
-    <Compile Include="UIWpf\Dialog\SelectDialog - Copy.xaml.cs">
-      <DependentUpon>SelectDialog - Copy.xaml</DependentUpon>
+    <Compile Include="UIWpf\Dialog\SelectWindowButton.xaml.cs">
+      <DependentUpon>SelectWindowButton.xaml</DependentUpon>
     </Compile>
-    <Compile Include="UIWpf\Dialog\SelectDialogButton.xaml.cs">
-      <DependentUpon>SelectDialogButton.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="UIWpf\Dialog\SelectDialog.xaml.cs">
-      <DependentUpon>SelectDialog.xaml</DependentUpon>
+    <Compile Include="UIWpf\Dialog\SelectWindow.xaml.cs">
+      <DependentUpon>SelectWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="UIWpf\Forms\About.xaml.cs">
       <DependentUpon>About.xaml</DependentUpon>
@@ -347,7 +344,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="UIWpf\Dialog\Info.xaml">
+    <Page Include="UIWpf\Dialog\InfoWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -359,15 +356,11 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="UIWpf\Dialog\SelectDialog - Copy.xaml">
+    <Page Include="UIWpf\Dialog\SelectWindowButton.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="UIWpf\Dialog\SelectDialogButton.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="UIWpf\Dialog\SelectDialog.xaml">
+    <Page Include="UIWpf\Dialog\SelectWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

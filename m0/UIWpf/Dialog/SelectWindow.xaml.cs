@@ -17,7 +17,7 @@ namespace m0.UIWpf.Dialog
     /// <summary>
     /// Interaction logic for SelectDialog.xaml
     /// </summary>
-    public partial class SelectDialog : Window
+    public partial class SelectWindow : Window
     {
         public IVertex SelectedOption = null;
 
@@ -28,7 +28,7 @@ namespace m0.UIWpf.Dialog
             UIWpf.SetWindowPosition(this, _mousePosition);
         }
 
-        public SelectDialog(IVertex info, IVertex options, Point? position)
+        public SelectWindow(IVertex info, IVertex options, Point? position)
         {            
             if (options.Count() > 1)
             {

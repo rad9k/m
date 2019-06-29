@@ -842,7 +842,7 @@ namespace m0
 
         public void ShowException(IVertex exception)
         {
-            m0.UIWpf.Dialog.Info i = new UIWpf.Dialog.Info();
+            m0.UIWpf.Dialog.InfoWindow i = new UIWpf.Dialog.InfoWindow();
 
             i.Owner = this;
 
@@ -864,14 +864,14 @@ namespace m0
 
         public IVertex SelectDialog(IVertex info, IVertex options, Point? position)
         {
-            SelectDialog d = new SelectDialog(info, options,position);
+            SelectWindow d = new SelectWindow(info, options,position);
 
             return d.SelectedOption;
         }
 
         public IVertex SelectDialogButton(IVertex info, IVertex options, Point? position)
         {
-            SelectDialogButton d = new SelectDialogButton(info, options, position);
+            SelectWindowButton d = new SelectWindowButton(info, options, position);
 
             return d.SelectedOption;
         }

@@ -1,4 +1,4 @@
-﻿<Window x:Class="m0.UIWpf.Dialog.SelectDialog"
+﻿<Window x:Class="m0.UIWpf.Dialog.SelectWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="" Height="300" Width="300" Background="{StaticResource 0VeryLightHighlightBrush}" Foreground="{StaticResource 0ForegroundBrush}" WindowStyle="ToolWindow">
