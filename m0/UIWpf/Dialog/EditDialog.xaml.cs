@@ -32,8 +32,8 @@ namespace m0.UIWpf.Dialog
             return baseVertex.Value + " edit / new";
         }
 
-          void OnLoad(object sender, RoutedEventArgs e)
-           {
+        void OnLoad(object sender, RoutedEventArgs e)
+        {
             FormVisuliser.Focus();
 
             //UIWpf.SetWindowPosition(this, _mousePosition);

@@ -153,6 +153,9 @@
     <Compile Include="UIWpf\Controls\Fast\ArrowPolyline.cs" />
     <Compile Include="UIWpf\Controls\m0ContextMenu.cs" />
     <Compile Include="UIWpf\Controls\SliderWithStopDragging.cs" />
+    <Compile Include="UIWpf\Dialog\ExecuteDialog.xaml.cs">
+      <DependentUpon>ExecuteDialog.xaml</DependentUpon>
+    </Compile>
     <Compile Include="UIWpf\Dialog\EditDialog.xaml.cs">
       <DependentUpon>EditDialog.xaml</DependentUpon>
     </Compile>
@@ -339,6 +342,10 @@
     <Page Include="StartWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UIWpf\Dialog\ExecuteDialog.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="UIWpf\Dialog\EditDialog.xaml">
       <SubType>Designer</SubType>

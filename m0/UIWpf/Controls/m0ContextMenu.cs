@@ -27,13 +27,15 @@ namespace m0.UIWpf.Controls
 
             AddOpen();
 
-            AddSeparator();
-
-            AddOpenTop();
+            AddExecute();
 
             AddSeparator();
 
-            AddOpenVisualiserItems();
+            AddOpenFormCode();            
+
+            AddSeparator();
+
+            AddOpenAsSpecial();
 
             AddSeparator();
 
@@ -45,7 +47,7 @@ namespace m0.UIWpf.Controls
 
             AddSeparator();
 
-            AddZeroMenuItems();            
+            AddQuery();            
 
             AddSeparator();
 
@@ -228,14 +230,14 @@ namespace m0.UIWpf.Controls
             this.Items.Add(Delete);
         }
 
-        private void AddZeroMenuItems()
+        private void AddQuery()
         {
             MenuItem Query = createMenuItem("Query");
             Query.Click += OnQuery;
             this.Items.Add(Query);            
         }
 
-        void AddOpenTop()
+        void AddOpenFormCode()
         {           
             IVertex formVis = root.Get(false, @"System\Meta\Visualiser\Form");
 
@@ -261,7 +263,14 @@ namespace m0.UIWpf.Controls
 
         }
 
-        void AddOpenVisualiserItems()
+        private void AddExecute()
+        {
+            MenuItem Execute = createMenuItem("Execute");
+            Execute.Click += OnExecute;
+            this.Items.Add(Execute);
+        }
+
+        void AddOpenAsSpecial()
         {
             MenuItem OpenVisualiser = createMenuItem("Open As");
             
@@ -432,6 +441,11 @@ namespace m0.UIWpf.Controls
         void OnOpen(object sender, System.Windows.RoutedEventArgs e)
         {
             BaseCommands.Open(this.Edge, null);
+        }
+
+        void OnExecute(object sender, System.Windows.RoutedEventArgs e)
+        {
+            BaseCommands.Execute(this.Edge, null);
         }
 
         void OnOpenVisualiser(object sender, System.Windows.RoutedEventArgs e)

@@ -57,7 +57,16 @@ namespace m0.UIWpf.Commands
 
     public class BaseCommands
     {
-        public static IVertex NewVertex(IVertex baseVertex,IVertex inputVertex){
+        public static IVertex Execute(IVertex baseVertex, IVertex inputVertex)
+        {
+            ExecuteDialog e = new ExecuteDialog(baseVertex);
+
+            MinusZero.Instance.DefaultUserInteraction.ShowContentFloating(e);
+
+            return null;
+        }
+
+       public static IVertex NewVertex(IVertex baseVertex,IVertex inputVertex){
             NewVertex d = new NewVertex(baseVertex.Get(false, "To:"));
 
             MinusZero.Instance.DefaultUserInteraction.ShowContentFloating(d);
