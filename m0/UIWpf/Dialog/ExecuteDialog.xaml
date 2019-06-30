@@ -10,18 +10,40 @@
 
 
     <Grid>
+        <Grid Margin="0,0,0,48.4" >
 
-        <TextBlock x:Name="textBlock" HorizontalAlignment="Left" Height="22" Margin="10,10,0,0" TextWrapping="Wrap" Text="Stack Vertex" VerticalAlignment="Top"/>
-        <Border BorderThickness="1" BorderBrush="{StaticResource 0ForegroundBrush}" Margin="10,32,10,0" Height="20" VerticalAlignment="Top">
-            <Visualisers:EdgeVisualiser x:Name="StackVertexControl"    />
-        </Border>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition/>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+            
+            <Grid Grid.Column="0">
+                <TextBlock HorizontalAlignment="Left" Height="22" Margin="10,10,0,0" TextWrapping="Wrap" Text="Input Stack Vertex" VerticalAlignment="Top"/>
+                <Border BorderThickness="1" BorderBrush="{StaticResource 0ForegroundBrush}" Margin="10,32,10,0" Height="20" VerticalAlignment="Top">
+                    <Visualisers:EdgeVisualiser x:Name="InputStackVertexControl"    />
+                </Border>
 
-        <TextBlock Margin="10,76,0,0" Text="Stack Content" VerticalAlignment="Top" HorizontalAlignment="Left"  Height="22"  Width="97" TextWrapping="Wrap"/>
+                <TextBlock Margin="10,76,0,0" Text="Input Stack Content" VerticalAlignment="Top" HorizontalAlignment="Left"  Height="22"  Width="97" TextWrapping="Wrap"/>
+                <Border BorderThickness="1" BorderBrush="{StaticResource 0ForegroundBrush}" Margin="10,94,10,48.4">
+                    <Visualisers:TreeVisualiser x:Name="InputStackContentControl"   />
+                </Border>
+            </Grid>
 
-        <Border BorderThickness="1" BorderBrush="{StaticResource 0ForegroundBrush}" Margin="10,94,10,48.4">
-            <Visualisers:TreeVisualiser x:Name="StackContentControl"   />
-        </Border>
+            <Grid Grid.Column="1">
+                <TextBlock HorizontalAlignment="Left" Height="22" Margin="10,10,0,0" TextWrapping="Wrap" Text="Output Stack Vertex" VerticalAlignment="Top"/>
+                <Border BorderThickness="1" BorderBrush="{StaticResource 0ForegroundBrush}" Margin="10,32,10,0" Height="20" VerticalAlignment="Top">
+                    <Visualisers:EdgeVisualiser x:Name="OutputStackVertexControl"    />
+                </Border>
 
+                <TextBlock Margin="10,76,0,0" Text="Output Stack Content" VerticalAlignment="Top" HorizontalAlignment="Left"  Height="22"  Width="97" TextWrapping="Wrap"/>
+                <Border BorderThickness="1" BorderBrush="{StaticResource 0ForegroundBrush}" Margin="10,94,10,48.4">
+                    <Visualisers:TreeVisualiser x:Name="OutputStackContentControl"   />
+                </Border>
+            </Grid>
+
+        </Grid>
+                        
+        
         <Button Content="Execute" Margin="0,0,10,10.4" HorizontalAlignment="Right" Width="107" Height="33" VerticalAlignment="Bottom" Click="ExecuteButton_Click"/>
 
     </Grid>

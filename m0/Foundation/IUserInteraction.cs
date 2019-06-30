@@ -6,11 +6,13 @@ using System.Windows;
 
 namespace m0.Foundation
 {
+    public enum FloatingWindowSize {Micro, Small, Medium, Large };
+
     public interface IUserInteraction
-    {
+    {        
         void ShowContent(object obj);
         
-        void ShowContentFloating(object obj);
+        void ShowContentFloating(object obj, FloatingWindowSize size);
 
         void CloseWindowByContent(object obj);
 

@@ -811,12 +811,46 @@ namespace m0
             return a;
         }
 
-        public int DialogWindowDefaultWidth=300;
-        public int DialogWindowDefaultHeight = 325;
+        public int DialogWindowDefaultWidth_Micro = 300;
+        public int DialogWindowDefaultHeight_Micro = 210;
 
-        public void ShowContentFloating(object obj)
+        public int DialogWindowDefaultWidth_Small=300;
+        public int DialogWindowDefaultHeight_Small = 325;
+
+        public int DialogWindowDefaultWidth_Medium = 300*2;
+        public int DialogWindowDefaultHeight_Medium = (int)(325*1.5);
+
+        public int DialogWindowDefaultWidth_Large = 750;
+        public int DialogWindowDefaultHeight_Large = 550;
+
+        public void ShowContentFloating(object obj, FloatingWindowSize size)
         {
-            ShowContentFloating_withSize(obj, DialogWindowDefaultWidth, DialogWindowDefaultHeight);
+            int width=0, height=0;
+
+            switch (size)
+            {
+                case FloatingWindowSize.Micro:
+                    width = DialogWindowDefaultWidth_Micro;
+                    height = DialogWindowDefaultHeight_Micro;
+                    break;
+
+                case FloatingWindowSize.Small:
+                    width = DialogWindowDefaultWidth_Small;
+                    height = DialogWindowDefaultHeight_Small;
+                    break;
+
+                case FloatingWindowSize.Medium:
+                    width = DialogWindowDefaultWidth_Medium;
+                    height = DialogWindowDefaultHeight_Medium;
+                    break;
+
+                case FloatingWindowSize.Large:
+                    width = DialogWindowDefaultWidth_Large;
+                    height = DialogWindowDefaultHeight_Large;
+                    break;
+            }
+
+            ShowContentFloating_withSize(obj, width, height);
         }
 
         public void ShowContentFloating_withSize(object obj, double DialogWindowWidth, double DialogWindowHeight){            
