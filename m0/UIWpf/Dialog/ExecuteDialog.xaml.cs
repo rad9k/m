@@ -35,7 +35,8 @@ namespace m0.UIWpf.Dialog
 
             InitializeComponent();
 
-            
+            IVertex q = InputStackVertexControl.Vertex;
+            q = InputStackVertexControl.Vertex;
         }
 
         private void ExecuteButton_Click(object sender, RoutedEventArgs e)

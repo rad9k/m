@@ -190,6 +190,8 @@ namespace m0.UIWpf.Visualisers
         protected override void UpdateBaseEdge(){
             IVertex bas = Vertex.Get(false, @"BaseEdge:\To:");
 
+            // check if we are in the middle of 
+
             if (bas != null)
             {                
                 ToShowEdgesMeta = null;
@@ -258,9 +260,9 @@ namespace m0.UIWpf.Visualisers
             if ((sender == Vertex) && (e.Type == VertexChangeType.EdgeAdded) && (GeneralUtil.CompareStrings(e.Edge.Meta.Value, "ToShowEdgesMeta")))         
                 UpdateBaseEdge();
 
-            //if (sender == Vertex.Get(false, @"ToShowEdgesMeta:") && (e.Type == VertexChangeType.EdgeAdded || e.Type == VertexChangeType.EdgeRemoved))
-              //  UpdateBaseEdge();
-              // there is update loop with this, so commenting out and leaving only what is above
+            if (sender == Vertex.Get(false, @"ToShowEdgesMeta:") && (e.Type == VertexChangeType.EdgeAdded || e.Type == VertexChangeType.EdgeRemoved))
+                UpdateBaseEdge();
+              // there WAS is update loop with this, so commenting out and leaving only what is above
 
             if ((sender == Vertex) && (e.Type == VertexChangeType.EdgeAdded) && (GeneralUtil.CompareStrings(e.Edge.Meta.Value, "SelectedEdges")))
                 SelectedVertexesUpdated();

@@ -295,7 +295,7 @@ namespace m0.ZeroTypes
             ///
 
             if (metaVertex.Get(false, "$IsAggregation:") != null)
-                nv.AddVertex(MinusZero.Instance.Root.Get(false, @"System\Meta\Base\Vertex\$IsAggregation"), MinusZero.Instance.Root.Get(false, @"System\Meta\Base\$Empty"));
+                nv.AddEdge(MinusZero.Instance.Root.Get(false, @"System\Meta\Base\Vertex\$IsAggregation"), MinusZero.Instance.Root.Get(false, @"System\Meta\Base\$Empty"));
 
             ///
 
