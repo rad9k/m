@@ -43,7 +43,7 @@ namespace m0.Graph
 
             ToStoreTypeName = To.Store.TypeName;
 
-            ToIdentifier = To.Identifier;
+            ToIdentifier = To.Identifier;            
 
             To.DeleteInEdge(this);
 

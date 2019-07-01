@@ -99,6 +99,13 @@ namespace m0
             return new EasyVertex(this.tempstore);
         }
 
+        public IVertex tempRoot;
+
+        public IEdge CreateTempEdge()
+        {
+            return new EasyEdge(tempRoot, empty, CreateTempVertex());
+        }
+
         void Bootstrap()
         {
             IStore rootstore = new MemoryStore("$-0$ROOT$STORE$", this, new AccessLevelEnum[] { AccessLevelEnum.NoRestrictions });
@@ -118,6 +125,8 @@ namespace m0
 
             empty.Value = "$Empty";
 
+
+            tempRoot = CreateTempVertex();
 
         }
 

@@ -24,9 +24,63 @@ namespace m0.UIWpf.Dialog
     {
         IVertex baseVertex;
 
+        IEdge inputStackEdge;
+        IEdge outputStackEdge;
+
+        enum StateEnum { NotStarted, Executing, AfterExecution};
+
+        StateEnum State;
+
         public override string ToString()
         {
             return baseVertex + " execute";
+        }
+
+        void SetState(StateEnum toBeState)
+        {
+            State = toBeState;
+
+            switch (State)
+            {
+                case StateEnum.NotStarted:
+                    this.ExecuteButton.IsEnabled = true;
+                    this.InputStackEdgeControl.IsEnabled = true;
+                    this.InputStackContentControl.IsEnabled = true;
+                    this.OutputStackEdgeControl.IsEnabled = false;
+                    this.OutputStackContentControl.IsEnabled = false;
+
+                    CreateInputStack();
+
+                    Edge.ReplaceEdgeEdges(InputStackEdgeControl.Vertex.Get(false, "BaseEdge:"), inputStackEdge);
+                    Edge.ReplaceEdgeEdges(InputStackContentControl.Vertex.Get(false, "BaseEdge:"), inputStackEdge);
+
+                    break;
+
+                case StateEnum.Executing:
+                    this.ExecuteButton.IsEnabled = false;
+                    this.InputStackEdgeControl.IsEnabled = false;
+                    this.InputStackContentControl.IsEnabled = false;
+                    this.OutputStackEdgeControl.IsEnabled = false;
+                    this.OutputStackContentControl.IsEnabled = false;
+                    break;
+
+                case StateEnum.AfterExecution:
+                    this.ExecuteButton.IsEnabled = true;
+                    this.InputStackEdgeControl.IsEnabled = true;
+                    this.InputStackContentControl.IsEnabled = true;
+                    this.OutputStackEdgeControl.IsEnabled = true;
+                    this.OutputStackContentControl.IsEnabled = true;
+
+                    Edge.ReplaceEdgeEdges(OutputStackEdgeControl.Vertex.Get(false, "BaseEdge:"), outputStackEdge);
+                    Edge.ReplaceEdgeEdges(OutputStackContentControl.Vertex.Get(false, "BaseEdge:"), outputStackEdge);
+
+                    break;
+            }
+        }
+
+        void CreateInputStack()
+        {
+            inputStackEdge = m0.MinusZero.Instance.CreateTempEdge();
         }
 
         public ExecuteDialog(IVertex _baseVertex)
@@ -35,13 +89,20 @@ namespace m0.UIWpf.Dialog
 
             InitializeComponent();
 
-            IVertex q = InputStackVertexControl.Vertex;
-            q = InputStackVertexControl.Vertex;
+            SetState(StateEnum.NotStarted);
+
         }
 
         private void ExecuteButton_Click(object sender, RoutedEventArgs e)
         {
-          
+            SetState(StateEnum.Executing);
+
+            outputStackEdge = m0.MinusZero.Instance.CreateTempEdge();
+
+
+            outputStackEdge.To.AddVertex(null, "TEST");
+
+            SetState(StateEnum.AfterExecution);
         }
     }
 }

@@ -190,9 +190,11 @@ namespace m0.UIWpf.Visualisers
         protected override void UpdateBaseEdge(){
             IVertex bas = Vertex.Get(false, @"BaseEdge:\To:");
 
-            // check if we are in the middle of 
+            if (Vertex.Get(false, @"ToShowEdgesMeta:\Meta:") == null) // check if we are in the middle of ToShowEdgesMeta sub vertexes switching
+                if (Vertex.Get(false, @"ToShowEdgesMeta:\To:") != null)
+                    return;
 
-            if (bas != null)
+                    if (bas != null)
             {                
                 ToShowEdgesMeta = null;
 

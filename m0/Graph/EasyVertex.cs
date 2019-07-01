@@ -435,7 +435,7 @@ namespace m0.Graph
 
 
             _Identifier = Store.VertexIdentifierCount++;
-
+            
             Value = "";
 
             InEdgesDictionariesNeedsRebuild = true;

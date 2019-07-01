@@ -63,8 +63,10 @@ namespace m0.Store.FileSystem
         bool OutEdgesFilled = false;
 
         void AddMeta(IVertex metaVertex, string value)
-        {            
-            IVertex v = new EasyVertex(this.Store);
+        {
+            //IVertex v = new EasyVertex(this.Store);
+
+            IVertex v = new EasyVertex(MinusZero.Instance.TempStore);
 
             v.Value = value;
 
