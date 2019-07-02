@@ -1,6 +1,7 @@
 ﻿using m0.Foundation;
 using m0.Graph;
 using m0.UIWpf.Visualisers;
+using m0.Util;
 using m0.ZeroTypes;
 using System;
 using System.Collections.Generic;
@@ -50,8 +51,8 @@ namespace m0.UIWpf.Dialog
                     this.OutputStackContentControl.IsEnabled = false;
 
                     CreateInputStack();
-
-                    Edge.ReplaceEdgeEdges(InputStackEdgeControl.Vertex.Get(false, "BaseEdge:"), inputStackEdge);
+                    
+                    Edge.AddEdgeEdges(InputStackEdgeControl.Vertex.Get(false, @"BaseEdge:\To:"), inputStackEdge);
                     Edge.ReplaceEdgeEdges(InputStackContentControl.Vertex.Get(false, "BaseEdge:"), inputStackEdge);
 
                     break;
@@ -70,8 +71,8 @@ namespace m0.UIWpf.Dialog
                     this.InputStackContentControl.IsEnabled = true;
                     this.OutputStackEdgeControl.IsEnabled = true;
                     this.OutputStackContentControl.IsEnabled = true;
-
-                    Edge.ReplaceEdgeEdges(OutputStackEdgeControl.Vertex.Get(false, "BaseEdge:"), outputStackEdge);
+                    
+                    Edge.AddEdgeEdges(OutputStackEdgeControl.Vertex.Get(false, @"BaseEdge:\To:"), outputStackEdge);
                     Edge.ReplaceEdgeEdges(OutputStackContentControl.Vertex.Get(false, "BaseEdge:"), outputStackEdge);
 
                     break;
@@ -83,6 +84,15 @@ namespace m0.UIWpf.Dialog
             inputStackEdge = m0.MinusZero.Instance.CreateTempEdge();
         }
 
+        void updateStackEdgeFromInputStackEdgeControl()
+        {
+            inputStackEdge = new EasyEdge(InputStackEdgeControl.Vertex.Get(false, @"BaseEdge:\To:\From:"),
+                                          InputStackEdgeControl.Vertex.Get(false, @"BaseEdge:\To:\Meta:"),
+                                          InputStackEdgeControl.Vertex.Get(false, @"BaseEdge:\To:\To:"));
+
+            Edge.ReplaceEdgeEdges(InputStackContentControl.Vertex.Get(false, "BaseEdge:"), inputStackEdge);
+        }
+
         public ExecuteDialog(IVertex _baseVertex)
         {
             baseVertex = _baseVertex;
@@ -91,6 +101,16 @@ namespace m0.UIWpf.Dialog
 
             SetState(StateEnum.NotStarted);
 
+            PlatformClass.RegisterVertexChangeListeners(InputStackEdgeControl.Vertex, new VertexChange(inputStackEdgeControl_VertexChange), new string[] { "BaseEdge" });
+        }
+
+        protected void inputStackEdgeControl_VertexChange(object sender, VertexChangeEventArgs e)
+        {
+            //if ((sender == InputStackEdgeControl.Vertex) && (e.Type == VertexChangeType.EdgeAdded) && (GeneralUtil.CompareStrings(e.Edge.Meta.Value, "BaseEdge")))                         
+
+            if ((sender == InputStackEdgeControl.Vertex.Get(false, "BaseEdge:")) && (e.Type == VertexChangeType.EdgeAdded) && (GeneralUtil.CompareStrings(e.Edge.Meta.Value, "To"))
+                || (sender == InputStackEdgeControl.Vertex.Get(false, @"BaseEdge:\To:") && e.Type == VertexChangeType.EdgeAdded))
+                updateStackEdgeFromInputStackEdgeControl();
         }
 
         private void ExecuteButton_Click(object sender, RoutedEventArgs e)

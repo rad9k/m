@@ -141,7 +141,7 @@ namespace m0.UIWpf.Commands
 
             CutPasteStore.Clear();
 
-            if (inputVertex.Get(false, "SelectedEdges:").Count() == 0)
+            if (inputVertex.Get(false, "SelectedEdges:")==null || inputVertex.Get(false, "SelectedEdges:").Count() == 0)
                 CutPasteStore.Add(baseVertex);
             else
                 foreach (IEdge e in inputVertex.Get(false, "SelectedEdges:"))

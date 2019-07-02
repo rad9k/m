@@ -150,7 +150,11 @@ namespace m0.UIWpf.Visualisers
 
                     IVertex dndVertex = MinusZero.Instance.CreateTempVertex();
 
-                    dndVertex.AddEdge(null, Vertex.Get(false, @"BaseEdge:"));
+                    //dndVertex.AddEdge(null, Vertex.Get(false, @"BaseEdge:")); // this is
+
+                    dndVertex.AddEdge(null, Vertex.Get(false, @"BaseEdge:\To:")); 
+
+
 
                     DataObject dragData = new DataObject("Vertex", dndVertex);
                     dragData.SetData("DragSource", this);
