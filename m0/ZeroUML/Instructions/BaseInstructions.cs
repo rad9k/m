@@ -11,7 +11,7 @@ using m0.Graph;
 
 namespace m0.ZeroUML.Instructions
 {    
-        public class BaseInstructions
+    public class BaseInstructions
     {     
         public static INoInEdgeInOutVertexVertex QueryOperator(ZeroCodeExecution exe, IVertex inputQs, IVertex instructionVertex)
         {
