@@ -19,21 +19,34 @@ namespace m0.ZeroCode
 
         public IVertex Execute(IVertex baseVertex, IVertex expression)
         {
-            throw new NotImplementedException();
+            ZeroCodeExecution exe = new ZeroCodeExecution();
+
+            exe.metaMode = true;
+
+            INoInEdgeInOutVertexVertex stack = InstructionHelpers.MakeINoInEdgeInOutVertexVertex(baseVertex);
+
+
+
+            return stack;
         }
 
-        public IVertex Get(IVertex baseVertex, IVertex expression)
+        public IVertex Get(bool metaMode, IVertex baseVertex, IVertex expression)
         {
-            throw new NotImplementedException();
+            IVertex res = GetAll(metaMode, baseVertex, expression);
+
+            if (res != null && res.OutEdgesRaw.Count > 0)
+                return res.OutEdgesRaw[0].To;
+
+            return null;
         }
 
-        public IVertex GetAll(IVertex baseVertex, IVertex expression)
+        public IVertex GetAll(bool metaMode, IVertex baseVertex, IVertex expression)
         {
             ZeroCodeExecution exe = new ZeroCodeExecution();
 
             exe.metaMode = true;
 
-            INoInEdgeInOutVertexVertex qs = InstructionHelpers.CreateQueryStack();
+            INoInEdgeInOutVertexVertex qs = InstructionHelpers.CreateStack();
 
             InstructionHelpers.AddToStack(baseVertex, qs);
 

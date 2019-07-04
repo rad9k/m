@@ -23,7 +23,7 @@ namespace m0.FormalTextLanguage.GoldParser
 
         public bool RemoveBeginEndQuotas;
 
-        public IVertex Parse(bool metaMode, IVertex rootVertex, string text)
+        public IVertex Parse(IVertex rootVertex, string text)
         {
 
             if (goldParser.Parse(new System.IO.StringReader(text)))

@@ -11,8 +11,8 @@ namespace m0.FormalTextLanguage
     {
         IVertex Execute(IVertex baseVertex, IVertex expression);
 
-        IVertex Get(IVertex baseVertex, IVertex expression);
+        IVertex Get(bool metaMode, IVertex baseVertex, IVertex expression);
 
-        IVertex GetAll(IVertex baseVertex, IVertex expression);
+        IVertex GetAll(bool metaMode, IVertex baseVertex, IVertex expression);
     }
 }

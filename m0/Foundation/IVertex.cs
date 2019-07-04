@@ -71,9 +71,9 @@ namespace m0.Foundation
 
         IVertex GetAll(bool metaMode, string query);
 
-        IVertex Get(IVertex expression);
+        IVertex Get(bool metaMode, IVertex expression);
 
-        IVertex GetAll(IVertex expression);
+        IVertex GetAll(bool metaMode, IVertex expression);
 
 
         IEdge this[string meta] { get; } // for databinding

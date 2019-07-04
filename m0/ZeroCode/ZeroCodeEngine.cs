@@ -19,17 +19,17 @@ namespace m0.ZeroCode
             return ZeroCodeExecuter_Instance.Execute(baseVertex, expression);
         }
 
-        public IVertex Get(IVertex baseVertex, IVertex expression)
+        public IVertex Get(bool metaMode, IVertex baseVertex, IVertex expression)
         {            
-            return ZeroCodeExecuter_Instance.Get(baseVertex, expression);
+            return ZeroCodeExecuter_Instance.Get(metaMode, baseVertex, expression);
         }
 
-        public IVertex GetAll(IVertex baseVertex, IVertex expression)
+        public IVertex GetAll(bool metaMode, IVertex baseVertex, IVertex expression)
         {            
-            return ZeroCodeExecuter_Instance.GetAll(baseVertex, expression);
+            return ZeroCodeExecuter_Instance.GetAll(metaMode, baseVertex, expression);
         }
 
-        public IVertex Parse(bool metaMode, IVertex rootVertex, string text)
+        public IVertex Parse(IVertex rootVertex, string text)
         {             
             return String2ZeroCodeGraphProcessing_Instance.Process(rootVertex, text); 
         }

@@ -10,7 +10,7 @@ namespace m0.ZeroCode.Helpers
 {
     public class InstructionHelpers
     {
-        public static INoInEdgeInOutVertexVertex CreateQueryStack()
+        public static INoInEdgeInOutVertexVertex CreateStack()
         {
             return new NoInEdgeInOutVertexVertex(MinusZero.Instance.TempStore);
         }
@@ -23,7 +23,7 @@ namespace m0.ZeroCode.Helpers
 
         public static INoInEdgeInOutVertexVertex CreateStackAndCopy(IEnumerable<IEdge> source)
         {
-            INoInEdgeInOutVertexVertex newStack = CreateQueryStack();
+            INoInEdgeInOutVertexVertex newStack = CreateStack();
 
             AddToStack(source, newStack);
 
@@ -73,6 +73,15 @@ namespace m0.ZeroCode.Helpers
             return MakeINoInEdgeInOutVertexVertex(inQs);            
         }
 
+        public static INoInEdgeInOutVertexVertex SequentiallyExecuteInstructions(ZeroCodeExecution exe, INoInEdgeInOutVertexVertex inStack, IVertex baseVertex)
+        {
+            INoInEdgeInOutVertexVertex stack = inStack;
+
+            foreach (IEdge e in baseVertex)
+                stack = exe.executeInstruction(stack, e.To);
+
+            return stack;
+        }
         
     }
 }

@@ -12,7 +12,7 @@ namespace m0.Graph
 {
     public class List_VertexBase : List<IEdge> { } // to be used in dictionaries, to identify list of List<IEdge> :)
     [Serializable]
-    public class VertexBase:IVertex, IHasUsageCounter
+    public class VertexBase: IVertex, IHasUsageCounter
     {
         protected IDictionary<object, object> _OutEdgesByMeta;
         public IDictionary<object, object> OutEdgesByMeta { get { return _OutEdgesByMeta; } }
@@ -253,12 +253,12 @@ namespace m0.Graph
             throw new NotImplementedException();
         }
 
-        public virtual IVertex Get(IVertex expression)
+        public virtual IVertex Get(bool metaMode, IVertex expression)
         {
             throw new NotImplementedException();
         }
 
-        public virtual IVertex GetAll(IVertex expression)
+        public virtual IVertex GetAll(bool metaMode, IVertex expression)
         {
             throw new NotImplementedException();
         }

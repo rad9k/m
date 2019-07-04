@@ -114,7 +114,7 @@ namespace m0.Util
 
             IVertex expressionAsVertex = MinusZero.Instance.CreateTempVertex();
 
-            z.DefaultParser.Parse(false, expressionAsVertex, expressionAsString);
+            z.DefaultParser.Parse(expressionAsVertex, expressionAsString);
 
             return ZeroCode.ZeroCodeEngine_OLD.Instance.OldStyleExecute(baseVertex, inputVertex, expressionAsVertex);
         }

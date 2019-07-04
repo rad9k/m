@@ -14,7 +14,7 @@ using System.Runtime.InteropServices;
 namespace m0.Graph
 {
     [Serializable]
-    public class EasyVertex:VertexBase, IDisposable
+    public class EasyVertex: VertexBase, IDisposable
     {        
         public override int UsageCounter
         {
@@ -371,7 +371,8 @@ namespace m0.Graph
         public override IEdge AddEdge(IVertex metaVertex, IVertex destVertex)
         {
             if (destVertex == null)
-                throw new Exception("target vertex can not be null");
+                destVertex = MinusZero.Instance.Empty; // can be
+                //throw new Exception("target vertex can not be null");
 
             EdgeBase ne = new EasyEdge(this, metaVertex, destVertex);
 
@@ -466,7 +467,7 @@ namespace m0.Graph
             {
                 queryVertex = MinusZero.Instance.CreateTempVertex();
 
-                parseError = MinusZero.Instance.DefaultParser.Parse(metaMode, queryVertex, query);
+                parseError = MinusZero.Instance.DefaultParser.Parse(queryVertex, query);
 
                 if (parseError == null)
                     chache.Add(query, queryVertex);                
@@ -475,7 +476,7 @@ namespace m0.Graph
             if (parseError != null)
                 return null;
 
-            return Get(queryVertex);
+            return Get(metaMode, queryVertex);
         }
 
         public override IVertex GetAll(bool metaMode, string query)
@@ -496,7 +497,7 @@ namespace m0.Graph
             {
                 queryVertex = MinusZero.Instance.CreateTempVertex();
 
-                parseError = MinusZero.Instance.DefaultParser.Parse(metaMode, queryVertex, query);
+                parseError = MinusZero.Instance.DefaultParser.Parse(queryVertex, query);
 
                 if (parseError == null)
                     chache.Add(query, queryVertex);
@@ -505,16 +506,16 @@ namespace m0.Graph
             if (parseError != null)
                 return null;
 
-            return GetAll (queryVertex);            
+            return GetAll (metaMode, queryVertex);            
         }
-        public override IVertex Get(IVertex expression)
+        public override IVertex Get(bool metaMode, IVertex expression)
         {
-            return MinusZero.Instance.DefaultExecuter.Get(this, expression);
+            return MinusZero.Instance.DefaultExecuter.Get(metaMode, this, expression);
         }
 
-        public override IVertex GetAll(IVertex expression)
+        public override IVertex GetAll(bool metaMode, IVertex expression)
         {
-            return MinusZero.Instance.DefaultExecuter.GetAll(this, expression);
+            return MinusZero.Instance.DefaultExecuter.GetAll(metaMode, this, expression);
         }
 
         public void Dispose()
@@ -679,7 +680,7 @@ namespace m0.Graph
             {
                 queryVertex = MinusZero.Instance.CreateTempVertex();
 
-                parseError = MinusZero.Instance.NewDefaultParser.Parse(metaMode, queryVertex, query);
+                parseError = MinusZero.Instance.NewDefaultParser.Parse(queryVertex, query);
 
                 if (parseError == null || parseError.Count() == 0)
                     chache.Add(query, queryVertex);
@@ -688,7 +689,7 @@ namespace m0.Graph
             if (parseError != null && parseError.Count() > 0)
                 return null;
 
-            return MinusZero.Instance.NewDefaultExecuter.Get(this, queryVertex);
+            return MinusZero.Instance.NewDefaultExecuter.Get(metaMode, this, queryVertex);
         }
 
         public IVertex NewGetAll(bool metaMode, string query)
@@ -709,7 +710,7 @@ namespace m0.Graph
             {
                 queryVertex = MinusZero.Instance.CreateTempVertex();
 
-                parseError = MinusZero.Instance.NewDefaultParser.Parse(metaMode, queryVertex, query);
+                parseError = MinusZero.Instance.NewDefaultParser.Parse(queryVertex, query);
 
                 if (parseError == null || parseError.Count() == 0)
                     chache.Add(query, queryVertex);
@@ -718,7 +719,7 @@ namespace m0.Graph
             if (parseError != null && parseError.Count() > 0)
                 return null;
 
-            return MinusZero.Instance.NewDefaultExecuter.GetAll(this, queryVertex);            
+            return MinusZero.Instance.NewDefaultExecuter.GetAll(metaMode, this, queryVertex);            
         }
 
     }

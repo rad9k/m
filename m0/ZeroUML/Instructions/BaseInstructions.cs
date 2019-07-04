@@ -12,7 +12,13 @@ using m0.Graph;
 namespace m0.ZeroUML.Instructions
 {    
     public class BaseInstructions
-    {     
+    {
+        ////////////////////////////////////////////////////////////////
+        //
+        // Q U E R Y kindgdom
+        //
+        ////////////////////////////////////////////////////////////////
+        
         public static INoInEdgeInOutVertexVertex QueryOperator(ZeroCodeExecution exe, IVertex inputQs, IVertex instructionVertex)
         {
             if (instructionVertex.Value == null)
@@ -23,7 +29,7 @@ namespace m0.ZeroUML.Instructions
             if (value == "" || value == "\r")
                 return InstructionHelpers.MakeINoInEdgeInOutVertexVertex(inputQs);
 
-            INoInEdgeInOutVertexVertex newQs = InstructionHelpers.CreateQueryStack();
+            INoInEdgeInOutVertexVertex newQs = InstructionHelpers.CreateStack();
 
             IEdge e;
             IList<IEdge> eList;
@@ -53,7 +59,7 @@ namespace m0.ZeroUML.Instructions
 
             foreach (IEdge expression in expressions)
             {
-                newQs = InstructionHelpers.CreateQueryStack();
+                newQs = InstructionHelpers.CreateStack();
 
                 foreach(IEdge e in oldQs)
                 {
@@ -71,7 +77,7 @@ namespace m0.ZeroUML.Instructions
 
         public static INoInEdgeInOutVertexVertex QuestionMarkOperator(ZeroCodeExecution exe, IVertex inputQs, IVertex instructionVertex)
         {
-            INoInEdgeInOutVertexVertex newQs = InstructionHelpers.CreateQueryStack();
+            INoInEdgeInOutVertexVertex newQs = InstructionHelpers.CreateStack();
             GraphIterator iter = new GraphIterator(newQs);
 
             GraphUtil.DeepIterator(inputQs,iter.AddToINoInEdgeInOutVertexVertex , false, false, true);
@@ -81,7 +87,7 @@ namespace m0.ZeroUML.Instructions
 
         public static INoInEdgeInOutVertexVertex SlashOperator(ZeroCodeExecution exe, IVertex inputQs, IVertex instructionVertex)
         {
-            INoInEdgeInOutVertexVertex newQs = InstructionHelpers.CreateQueryStack();
+            INoInEdgeInOutVertexVertex newQs = InstructionHelpers.CreateStack();
 
             foreach (IEdge e in inputQs)
                 foreach (IEdge ee in e.To)
@@ -121,7 +127,7 @@ namespace m0.ZeroUML.Instructions
             if (rightValue != null && rightValue != "")
                 toQueryString = rightValue;
 
-            INoInEdgeInOutVertexVertex newQs = InstructionHelpers.CreateQueryStack();
+            INoInEdgeInOutVertexVertex newQs = InstructionHelpers.CreateStack();
 
             if (isLeftExpressionQuery || isRightExpressionQuery)
             {
@@ -168,7 +174,7 @@ namespace m0.ZeroUML.Instructions
         {            
             Dictionary<IVertex, bool> metaDict = new Dictionary<IVertex, bool>();
 
-            INoInEdgeInOutVertexVertex localQs = InstructionHelpers.CreateQueryStack();
+            INoInEdgeInOutVertexVertex localQs = InstructionHelpers.CreateStack();
 
             foreach (IEdge e in inQs)
                 if (!metaDict.ContainsKey(e.Meta))
@@ -182,7 +188,7 @@ namespace m0.ZeroUML.Instructions
             foreach (IEdge e in afterCallQs)
                 metaDict[e.To] = true;
 
-            INoInEdgeInOutVertexVertex newQs = InstructionHelpers.CreateQueryStack();
+            INoInEdgeInOutVertexVertex newQs = InstructionHelpers.CreateStack();
 
             foreach (IEdge e in inQs)
                 if (metaDict[e.Meta] == true)
@@ -190,6 +196,34 @@ namespace m0.ZeroUML.Instructions
 
             return newQs;
         }
+
+        ////////////////////////////////////////////////////////////////
+        //
+        // O P E R A T O R S
+        //
+        ////////////////////////////////////////////////////////////////
+
+        public static IVertex CopyValue(ZeroCodeExecution exe, IVertex inputQs, IVertex instructionVertex)
+        {
+            return inputQs;
+        }
+
+        public static IVertex AddEdges(ZeroCodeExecution exe, IVertex inputQs, IVertex instructionVertex)
+        {
+            return inputQs;
+        }
+
+        public static IVertex RemoveEdges(ZeroCodeExecution exe, IVertex inputQs, IVertex instructionVertex)
+        {
+            return inputQs;
+        }
+
+        ////////////////////////////////////////////////////////////////
+        //
+        // V E R T E X   C R E A T I O N
+        //
+        ////////////////////////////////////////////////////////////////
+
 
         public static IVertex DoubleColonOperator(ZeroCodeExecution exe, IVertex inputQs, IVertex instructionVertex)
         {

@@ -12,7 +12,7 @@ using m0.ZeroTypes;
 
 namespace m0.ZeroCode
 {
-    public class ZeroCodeEngine_OLD:IParser, IExecuter
+    public class ZeroCodeEngine_OLD: IParser, IExecuter
     {
         private GoldGenericParser Parser;
 
@@ -24,9 +24,9 @@ namespace m0.ZeroCode
 
  #region Parse
 
-        public IVertex Parse(bool metaMode, Foundation.IVertex rootVertex, string text)
+        public IVertex Parse(Foundation.IVertex rootVertex, string text)
         {
-            return Parser.Parse(metaMode, rootVertex, text);
+            return Parser.Parse(rootVertex, text);
         }
 
         #endregion
@@ -137,7 +137,7 @@ namespace m0.ZeroCode
 
 #region Get
 
-        public IVertex Get(IVertex baseVertex, IVertex expression)
+        public IVertex Get(bool metaMode, IVertex baseVertex, IVertex expression)
         {
             IEdge e = GetAll_Internal(baseVertex, expression,true).FirstOrDefault(); // what do U think ? :O)
                 //.LastOrDefault(); // becouse of the inheritance (to get last edge that is defined in particular vertex and not inherenced one)
@@ -148,7 +148,7 @@ namespace m0.ZeroCode
                 return e.To;
         }
 
-        public IVertex GetAll(IVertex baseVertex, IVertex expression)
+        public IVertex GetAll(bool metaMode, IVertex baseVertex, IVertex expression)
         {
             return GetAll_Internal(baseVertex, expression, false);
         }

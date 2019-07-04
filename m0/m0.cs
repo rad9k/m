@@ -357,7 +357,7 @@ namespace m0
                 ",Query" +
                 ",[]" +
                 ",[[]]" +
-                ",\"{}\",\"{CRLF}\",+,-,\"* \",/,?,\"\\ \",\"|\",\"||\",(),<-,--" +
+                ",\"{}\",\"{CRLF}\",+,-,\"* \",/,?,\"\\ \",\"|\",\"||\",(),=,+=,-=" +
                 ",Action,Return{Expression},NextOut{Next{$MinCardinality:0,$MaxCardinality:1}}" +
                 ",StackFrameCreator{Do{$MinCardinality:0,$MaxCardinality:1},Variable{$MinCardinality:0,$MaxCardinality:-1},Type{$MinCardinality:0,$MaxCardinality:-1}}" +
                 ",StackFrameCreatorWithInputOutput{Output{$MinCardinality:0,$MaxCardinality:1},InputParameter{$MinCardinality:0,$MaxCardinality:-1}}" +
@@ -376,7 +376,11 @@ namespace m0
             AddDotNetEndPoint(smu.Get(false, "\"\\ \""), "SlashOperator");
             AddDotNetEndPoint(smu.Get(false, "\"|\""), "ColonOperator");
             AddDotNetEndPoint(smu.Get(false, "\"||\""), "DoubleColonOperator");
-            
+
+            AddDotNetEndPoint(smu.Get(false, "="), "ValueCopy");
+            AddDotNetEndPoint(smu.Get(false, "+="), "AddEdges");
+            AddDotNetEndPoint(smu.Get(false, "-="), "RemoveEdges");
+
 
             // method
             IVertex method = sm.Get(false, @"ZeroUML\Class").AddVertex(null, "Method");
@@ -411,10 +415,9 @@ namespace m0
             smu.Get(false, "\"|\"").AddEdge(sm.Get(false, "*$Inherits"), smu.Get(false, "SingleOperator"));
             smu.Get(false, "\"||\"").AddEdge(sm.Get(false, "*$Inherits"), smu.Get(false, "DoubleOperator"));
             smu.Get(false, @"()").AddEdge(sm.Get(false, "*$Inherits"), smu.Get(false, "SingleNestedOperator"));
-            smu.Get(false, @"<-").AddEdge(sm.Get(false, "*$Inherits"), smu.Get(false, "DoubleOperator"));
-            smu.Get(false, @"--").AddEdge(sm.Get(false, "*$Inherits"), smu.Get(false, "DoubleOperator"));
-
-            // string s = Regex.Escape(@"[]{}+-*/?\:::<---()");
+            smu.Get(false, @"=").AddEdge(sm.Get(false, "*$Inherits"), smu.Get(false, "DoubleOperator"));
+            smu.Get(false, @"+=").AddEdge(sm.Get(false, "*$Inherits"), smu.Get(false, "DoubleOperator"));
+            smu.Get(false, @"-=").AddEdge(sm.Get(false, "*$Inherits"), smu.Get(false, "DoubleOperator"));
 
             // rest inherits
             smu.Get(false, @"Action").AddEdge(sm.Get(false, "*$Inherits"), smu.Get(false, "Atom"));
@@ -527,8 +530,9 @@ namespace m0
             package.AddEdge(null, smu.Get(false, "\"|\""));
             package.AddEdge(null, smu.Get(false, "\"||\""));
             package.AddEdge(null, smu.Get(false, "()"));
-            package.AddEdge(null, smu.Get(false, "<-"));
-            package.AddEdge(null, smu.Get(false, "--"));
+            package.AddEdge(null, smu.Get(false, "="));
+            package.AddEdge(null, smu.Get(false, "+="));
+            package.AddEdge(null, smu.Get(false, "-="));
             package.AddEdge(null, smu.Get(false, "Section"));
             package.AddEdge(null, smu.Get(false, "Function"));
             package.AddEdge(null, smu.Get(false, "If"));
@@ -696,12 +700,26 @@ namespace m0
              attribute_attribute.AddEdge(isAggregation, empty);
 
              attribute_attribute.AddEdge(_is, smu.Get(false, @"Class\Attribute"));
-            
-             // aassociation
-             //
-             // association (?<name>) (?<type>) (?<MinCardinality>):(?<MaxCardinality>)
 
-             IVertex association2 = k.AddVertex(keyword, "association (?<name>) (?<type>) (?<MinCardinality>):(?<MaxCardinality>)");
+            // variable
+            //
+            // variable (?<name>) (?<type>)
+
+            IVertex variable = k.AddVertex(keyword, "variable (?<name>) (?<type>)");
+
+            IVertex variable_variable = variable.AddVertex(smu.Get(false, @"StackFrameCreator\Variable"), "(?<name>)");
+
+            variable_variable.AddVertex(smb.Get(false, @"Vertex\$EdgeTarget"), "(?<type>)");
+
+            variable_variable.AddEdge(isAggregation, empty);
+
+            variable_variable.AddEdge(_is, smu.Get(false, @"StackFrameCreator\Variable"));
+
+            // aassociation
+            //
+            // association (?<name>) (?<type>) (?<MinCardinality>):(?<MaxCardinality>)
+
+            IVertex association2 = k.AddVertex(keyword, "association (?<name>) (?<type>) (?<MinCardinality>):(?<MaxCardinality>)");
 
 
              IVertex association2_association = association2.AddVertex(smu.Get(false, @"Class\Association"), "(?<name>)");

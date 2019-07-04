@@ -52,7 +52,9 @@ namespace m0.UIWpf.Dialog
 
                     CreateInputStack();
                     
-                    Edge.AddEdgeEdges(InputStackEdgeControl.Vertex.Get(false, @"BaseEdge:\To:"), inputStackEdge);
+                    IVertex InputStackEdgeControlBaseEdge = InputStackEdgeControl.Vertex.Get(false, @"BaseEdge:\To:");
+                    GraphUtil.RemoveAllEdges(InputStackEdgeControlBaseEdge);
+                    Edge.AddEdgeEdges(InputStackEdgeControlBaseEdge, inputStackEdge);
                     Edge.ReplaceEdgeEdges(InputStackContentControl.Vertex.Get(false, "BaseEdge:"), inputStackEdge);
 
                     break;
@@ -71,8 +73,10 @@ namespace m0.UIWpf.Dialog
                     this.InputStackContentControl.IsEnabled = true;
                     this.OutputStackEdgeControl.IsEnabled = true;
                     this.OutputStackContentControl.IsEnabled = true;
-                    
-                    Edge.AddEdgeEdges(OutputStackEdgeControl.Vertex.Get(false, @"BaseEdge:\To:"), outputStackEdge);
+
+                    IVertex OutputStackEdgeControlBaseEdge = OutputStackEdgeControl.Vertex.Get(false, @"BaseEdge:\To:");
+                    GraphUtil.RemoveAllEdges(OutputStackEdgeControlBaseEdge);
+                    Edge.AddEdgeEdges(OutputStackEdgeControlBaseEdge, outputStackEdge);
                     Edge.ReplaceEdgeEdges(OutputStackContentControl.Vertex.Get(false, "BaseEdge:"), outputStackEdge);
 
                     break;
@@ -117,11 +121,10 @@ namespace m0.UIWpf.Dialog
         {
             SetState(StateEnum.Executing);
 
-            outputStackEdge = m0.MinusZero.Instance.CreateTempEdge();
+            IVertex outputStackVertex = m0.MinusZero.Instance.NewDefaultExecuter.Execute(inputStackEdge.To, baseVertex.Get(false, "To:"));
 
-
-            outputStackEdge.To.AddVertex(null, "TEST");
-
+            outputStackEdge = GraphUtil.CreateArtificialEdge(null, outputStackVertex);
+            
             SetState(StateEnum.AfterExecution);
         }
     }
