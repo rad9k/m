@@ -48,6 +48,11 @@ namespace m0.ZeroCode.Helpers
             return false;
         }
 
+        public static IVertex GetIs(IVertex v)
+        {
+            return GraphUtil.GetQueryOutFirst(v, "$Is", null);
+        }
+
         public static IVertex GetLeft(IVertex v)
         {
             return GraphUtil.GetQueryOutFirst(v, "LeftExpression", null);

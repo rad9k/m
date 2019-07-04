@@ -203,19 +203,36 @@ namespace m0.ZeroUML.Instructions
         //
         ////////////////////////////////////////////////////////////////
 
-        public static IVertex CopyValue(ZeroCodeExecution exe, IVertex inputQs, IVertex instructionVertex)
+        public static INoInEdgeInOutVertexVertex CopyValue(ZeroCodeExecution exe, IVertex inputStack, IVertex instructionVertex)
         {
-            return inputQs;
+            return null;
         }
 
-        public static IVertex AddEdges(ZeroCodeExecution exe, IVertex inputQs, IVertex instructionVertex)
+        public static INoInEdgeInOutVertexVertex AddEdges(ZeroCodeExecution exe, IVertex inputStack, IVertex instructionVertex)
         {
-            return inputQs;
+            return null;
         }
 
-        public static IVertex RemoveEdges(ZeroCodeExecution exe, IVertex inputQs, IVertex instructionVertex)
+        public static INoInEdgeInOutVertexVertex RemoveEdges(ZeroCodeExecution exe, IVertex inputStack, IVertex instructionVertex)
         {
-            return inputQs;
+            return null;
+        }
+
+        ////////////////////////////////////////////////////////////////
+        //
+        // StackFrameCreator
+        //
+        ////////////////////////////////////////////////////////////////
+
+        public static INoInEdgeInOutVertexVertex CreateStackEdge(ZeroCodeExecution exe, IVertex inputStack, IVertex instructionVertex)
+        {
+            INoInEdgeInOutVertexVertex stack = InstructionHelpers.MakeINoInEdgeInOutVertexVertex(inputStack);
+
+            //IVertex _is = InstructionHelpers.GetIs(instructionVertex);
+
+            stack.AddVertex(instructionVertex, "");
+
+            return stack;
         }
 
         ////////////////////////////////////////////////////////////////
@@ -224,10 +241,9 @@ namespace m0.ZeroUML.Instructions
         //
         ////////////////////////////////////////////////////////////////
 
-
-        public static IVertex DoubleColonOperator(ZeroCodeExecution exe, IVertex inputQs, IVertex instructionVertex)
+        public static INoInEdgeInOutVertexVertex DoubleColonOperator(ZeroCodeExecution exe, IVertex inputStack, IVertex instructionVertex)
         {
-            return inputQs;
+            return null;
         }        
     }
 }

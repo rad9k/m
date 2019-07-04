@@ -370,6 +370,8 @@ namespace m0
 
             // CallableEndPoint
 
+            // query
+
             AddDotNetEndPoint(smu.Get(false, "Query"), "QueryOperator");
             AddDotNetEndPoint(smu.Get(false, "\"{}\""), "InnerOperator");
             AddDotNetEndPoint(smu.Get(false, "?"), "QuestionMarkOperator");
@@ -377,9 +379,18 @@ namespace m0
             AddDotNetEndPoint(smu.Get(false, "\"|\""), "ColonOperator");
             AddDotNetEndPoint(smu.Get(false, "\"||\""), "DoubleColonOperator");
 
+            // operators
+
             AddDotNetEndPoint(smu.Get(false, "="), "ValueCopy");
             AddDotNetEndPoint(smu.Get(false, "+="), "AddEdges");
             AddDotNetEndPoint(smu.Get(false, "-="), "RemoveEdges");
+
+            // StackFrameCreator
+
+            AddDotNetEndPoint(smu.Get(false, @"StackFrameCreator\Variable"), "CreateStackEdge");
+
+            // vertex creation
+
 
 
             // method
@@ -703,17 +714,35 @@ namespace m0
 
             // variable
             //
-            // variable (?<name>) (?<type>)
+            // variable (?<name>) (?<type>) (?<MinCardinality>):(?<MaxCardinality>)
 
-            IVertex variable = k.AddVertex(keyword, "variable (?<name>) (?<type>)");
+            IVertex variable = k.AddVertex(keyword, "variable (?<name>) (?<type>) (?<MinCardinality>):(?<MaxCardinality>)");
 
             IVertex variable_variable = variable.AddVertex(smu.Get(false, @"StackFrameCreator\Variable"), "(?<name>)");
 
             variable_variable.AddVertex(smb.Get(false, @"Vertex\$EdgeTarget"), "(?<type>)");
 
+            variable_variable.AddVertex(smb.Get(false, @"Vertex\$MinCardinality"), "(?<MinCardinality>)");
+
+            variable_variable.AddVertex(smb.Get(false, @"Vertex\$MaxCardinality"), "(?<MaxCardinality>)");
+
             variable_variable.AddEdge(isAggregation, empty);
 
             variable_variable.AddEdge(_is, smu.Get(false, @"StackFrameCreator\Variable"));
+
+            // variable
+            //
+            // variable (?<name>) (?<type>)
+
+            IVertex variable2 = k.AddVertex(keyword, "variable (?<name>) (?<type>)");
+
+            IVertex variable2_variable = variable2.AddVertex(smu.Get(false, @"StackFrameCreator\Variable"), "(?<name>)");
+
+            variable2_variable.AddVertex(smb.Get(false, @"Vertex\$EdgeTarget"), "(?<type>)");
+
+            variable2_variable.AddEdge(isAggregation, empty);
+
+            variable2_variable.AddEdge(_is, smu.Get(false, @"StackFrameCreator\Variable"));
 
             // aassociation
             //

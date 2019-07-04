@@ -274,10 +274,10 @@ namespace m0.Graph
 
         public static string GetStringValue(IVertex vertex)
         {
-            if (vertex != null)
+            if (vertex != null && vertex.Value != null)
                 return vertex.Value.ToString();
             else
-                return null;
+                return "";
         }
 
         public static bool GetValueAndCompareStrings(IVertex vertex, string s)

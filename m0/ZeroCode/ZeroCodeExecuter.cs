@@ -25,7 +25,7 @@ namespace m0.ZeroCode
 
             INoInEdgeInOutVertexVertex stack = InstructionHelpers.MakeINoInEdgeInOutVertexVertex(baseVertex);
 
-
+            stack = InstructionHelpers.SequentiallyExecuteInstructions(exe, stack, expression);
 
             return stack;
         }
