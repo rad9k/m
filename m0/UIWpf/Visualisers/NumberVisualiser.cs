@@ -178,9 +178,9 @@ namespace m0.UIWpf.Visualisers
                 T test=default(T);
 
                 if (test is float)
-                    col0.Width = new GridLength(UIWpf.GetHorizontalSizeOfCharacterString((int)Math.Ceiling(2*Math.Log10(Math.Max(GraphUtil.ToInt<T>(MinValue), GraphUtil.ToInt<T>(MaxValue))))));
+                    col0.Width = new GridLength(UIWpf.GetHorizontalSizeOfCharacterString((int)Math.Ceiling(2*Math.Log10(Math.Max((int)GraphUtil.ToInt<T>(MinValue), (int)GraphUtil.ToInt<T>(MaxValue))))));
                 else
-                    col0.Width = new GridLength(UIWpf.GetHorizontalSizeOfCharacterString((int)Math.Ceiling(Math.Log10(Math.Max(GraphUtil.ToInt<T>(MinValue), GraphUtil.ToInt<T>(MaxValue))))));
+                    col0.Width = new GridLength(UIWpf.GetHorizontalSizeOfCharacterString((int)Math.Ceiling(Math.Log10(Math.Max((int)GraphUtil.ToInt<T>(MinValue), (int)GraphUtil.ToInt<T>(MaxValue))))));
 
                 this.ColumnDefinitions.Add(col0);
 
@@ -199,8 +199,10 @@ namespace m0.UIWpf.Visualisers
                 
                 Slider = new MySlider();                
                 Slider.MinWidth = 60; //////////////////////////////////////// !!!!!!!!!!!
-                Slider.Minimum = GraphUtil.ToDouble<T>(MinValue);
-                Slider.Maximum = GraphUtil.ToDouble<T>(MaxValue);
+
+                if(MinValue != null && MaxValue!=null)
+                Slider.Minimum = (double)GraphUtil.ToDouble<T>(MinValue);
+                Slider.Maximum = (double)GraphUtil.ToDouble<T>(MaxValue);
                 Slider.IsSnapToTickEnabled = true;
                 Slider.Foreground = (Brush)FindResource("0GrayBrush");
                 Slider.TickFrequency = 1;
@@ -287,7 +289,7 @@ namespace m0.UIWpf.Visualisers
                     bv.Value = Parse(TextBox.Text);
 
                     if (IsRanged)
-                        Slider.Value = GraphUtil.ToDouble<T>((T)bv.Value);
+                        Slider.Value = (double)GraphUtil.ToDouble<T>((T)bv.Value);
                 }
 
                 ValueChangeing = false;
@@ -343,8 +345,13 @@ namespace m0.UIWpf.Visualisers
             if (bv == null) { }
             else if (bv.Value == null)
             {
-                MinValue = GraphUtil.GetNumberValue<T>(bmv.Get(false, "MinValue:"));
-                MaxValue = GraphUtil.GetNumberValue<T>(bmv.Get(false, "MaxValue:"));
+                T _minValue = GraphUtil.GetNumberValue<T>(bmv.Get(false, "MinValue:"));
+                T _maxValue = GraphUtil.GetNumberValue<T>(bmv.Get(false, "MaxValue:"));
+
+                if (_minValue != null && _minValue != null) {
+                    MinValue = _minValue;
+                    MaxValue = _maxValue;
+                }
                 CreateComposite();
                 IsNull = true;
             }
@@ -366,7 +373,7 @@ namespace m0.UIWpf.Visualisers
                 TextBox.Text = value.ToString();
 
                 if (IsRanged)
-                    Slider.Value = GraphUtil.ToDouble<T>(value);
+                    Slider.Value = (double)GraphUtil.ToDouble<T>(value);
 
                 ValueChangeing = false;
             }

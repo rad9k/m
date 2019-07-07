@@ -176,8 +176,15 @@ namespace m0.UIWpf.Visualisers.Diagram
                 
 
                 Panel.SetZIndex(item, 1);
-                Canvas.SetLeft(item, GraphUtil.GetDoubleValue(item.Vertex.Get(false, "PositionX:")));
-                Canvas.SetTop(item, GraphUtil.GetDoubleValue(item.Vertex.Get(false, "PositionY:")));        
+
+                double? positionX = GraphUtil.GetDoubleValue(item.Vertex.Get(false, "PositionX:"));
+                double? positionY = GraphUtil.GetDoubleValue(item.Vertex.Get(false, "PositionY:"));
+
+                if (positionX != null && positionY != null)
+                {
+                    Canvas.SetLeft(item, (double)positionX);
+                    Canvas.SetTop(item, (double)positionY);
+                }
 
                 TheCanvas.Children.Add(item);
 
@@ -415,8 +422,13 @@ namespace m0.UIWpf.Visualisers.Diagram
 
                 ClearItems();
 
-                Width = GraphUtil.GetDoubleValue(Vertex.Get(false, "SizeX:"));
-                Height = GraphUtil.GetDoubleValue(Vertex.Get(false, "SizeY:"));
+                double? width = GraphUtil.GetDoubleValue(Vertex.Get(false, "SizeX:"));
+                double? height = GraphUtil.GetDoubleValue(Vertex.Get(false, "SizeY:"));
+
+                if (width != null && height != null) {
+                    Width = (double) width ;
+                    Height = (double) height;
+                }
 
                 Background = new SolidColorBrush(Color.FromRgb(255, 200, 200));
 
@@ -710,8 +722,14 @@ namespace m0.UIWpf.Visualisers.Diagram
             {
                 foreach(Rectangle r in MovingSprites)
                 {
-                    Canvas.SetLeft(r, GraphUtil.GetDoubleValue(((DiagramItemBase)r.Tag).Vertex.Get(false, @"PositionX:"))+x);
-                    Canvas.SetTop(r, GraphUtil.GetDoubleValue(((DiagramItemBase)r.Tag).Vertex.Get(false, @"PositionY:")) + y);                 
+                    double? positionX = GraphUtil.GetDoubleValue(((DiagramItemBase)r.Tag).Vertex.Get(false, @"PositionX:"));
+                    double? positionY = GraphUtil.GetDoubleValue(((DiagramItemBase)r.Tag).Vertex.Get(false, @"PositionY:"));
+
+                    if (positionX != null && positionY != null)
+                    {
+                        Canvas.SetLeft(r, (double)positionX +x);
+                        Canvas.SetTop(r, (double)positionY + y);
+                    }
                 }
             }
         }
@@ -725,8 +743,13 @@ namespace m0.UIWpf.Visualisers.Diagram
 
             foreach (IEdge ed in Vertex.GetAll(false, @"SelectedEdges:\"))
                 foreach (DiagramItemBase item in GetItemsByBaseEdge(ed.To))
-                    item.MoveItem(GraphUtil.GetDoubleValue(item.Vertex.Get(false, "PositionX:")) + x,
-                        GraphUtil.GetDoubleValue(item.Vertex.Get(false, "PositionY:")) + y);
+                {
+                    double? positionX = GraphUtil.GetDoubleValue(item.Vertex.Get(false, "PositionX:"));
+                    double? positionY = GraphUtil.GetDoubleValue(item.Vertex.Get(false, "PositionY:"));
+
+                    if(positionX!=null && positionY!=null)
+                        item.MoveItem((double)positionX + x, (double)positionY + y);
+                }
         }
 
         protected void MouseMoveHandler(object sender, MouseEventArgs e)

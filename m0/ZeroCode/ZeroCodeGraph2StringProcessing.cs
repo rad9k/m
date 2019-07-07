@@ -503,9 +503,9 @@ namespace m0.ZeroCode
             if (nl == null)
                 return;
 
-            int nlAsInt = GraphUtil.GetIntegerValue(nl);
+            int? nlAsInt = GraphUtil.GetIntegerValue(nl);
 
-            if (nlAsInt != GraphUtil.NullInt)
+            if (nlAsInt != null)
                 for (int x = 0; x < nlAsInt; x++)
                     SourceAppend(NewLine);
             else

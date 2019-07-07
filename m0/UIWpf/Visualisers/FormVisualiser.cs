@@ -278,7 +278,10 @@ namespace m0.UIWpf.Visualisers
                 else
                     ExpertMode = false;
 
-                ColumnNumber =GraphUtil.GetIntegerValue(Vertex.Get(false, @"ColumnNumber:"));
+                int? _columnNumber = GraphUtil.GetIntegerValue(Vertex.Get(false, @"ColumnNumber:"));
+
+                if (_columnNumber != null)
+                    ColumnNumber = (int)_columnNumber;
 
                 IVertex metaForForm = getMetaForForm();
 

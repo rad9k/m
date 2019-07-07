@@ -314,13 +314,13 @@ namespace m0.Graph
         {
             T test=default(T);
 
-            if (test is int)
+            if (test is int?)
                 return (T)(object)GetIntegerValue(Vertex);
 
-            if (test is decimal)
+            if (test is decimal?)
                 return (T)(object)GetDecimalValue(Vertex);
 
-            if (test is double)
+            if (test is double?)
                 return (T)(object)GetDoubleValue(Vertex);
 
             return default(T);
@@ -328,6 +328,9 @@ namespace m0.Graph
 
         static public bool IsNullNumber<T>(T Value)
         {
+            if (Value == null)
+                return true;
+            /*
             T test = default(T);
 
             if (test is int)
@@ -341,61 +344,60 @@ namespace m0.Graph
             if (test is double)
                 if ((double)(object)Value == NullDouble)
                     return true;
+            */
 
             return false;
         }
 
-        static public int ToInt<T>(T Value)
+        static public int? ToInt<T>(T Value)
         {
             T test = default(T);
 
-            if (test is int)
-                return (int)(object)Value;
+            if (test is int?)
+                return (int?)(object)Value;
 
-            if (test is decimal)
-                return (int)(decimal)(object)Value;
+            if (test is decimal?)
+                return (int?)(decimal?)(object)Value;
 
-            if (test is double)
-                return (int)(double)(object)Value;
+            if (test is double?)
+                return (int?)(double?)(object)Value;
 
-            return NullInt;
+            return null;
         }
 
-        static public double ToDouble<T>(T Value)
+        static public double? ToDouble<T>(T Value)
         {
             T test = default(T);
 
-            if (test is int)
-                return (double)(int)(object)Value;
+            if (test is int?)
+                return (double?)(int?)(object)Value;
 
-            if (test is decimal)
-                return (double)(decimal)(object)Value;
+            if (test is decimal?)
+                return (double?)(decimal?)(object)Value;
 
-            if (test is double)
-                return (double)(object)Value;
+            if (test is double?)
+                return (double?)(object)Value;
 
-            return NullDouble;
+            return null;
         }
 
-        static public T FromDouble<T>(double Value)
+        static public T FromDouble<T>(double? Value)
         {
             T test = default(T);
 
-            if (test is int)
-                return (T)(object)(int)Value;
+            if (test is int?)
+                return (T)(object)(int?)Value;
 
-            if (test is decimal)
-                return (T)(object)(decimal)Value;
+            if (test is decimal?)
+                return (T)(object)(decimal?)Value;
 
-            if (test is double)
-                return (T)(object)(double)Value;
+            if (test is double?)
+                return (T)(object)(double?)Value;
 
             return test;
         }
 
-        static public int NullInt = -99999;
-
-        static public int GetIntegerValue(IVertex Vertex)
+        static public int? GetIntegerValue(IVertex Vertex)
         {
             if (Vertex!=null&&Vertex.Value!=null)
                 {
@@ -405,18 +407,16 @@ namespace m0.Graph
                         if (Int32.TryParse((string)Vertex.Value, out r))
                             return r;
 
-                        return NullInt;
+                        return null;
                     }
 
                     if (Vertex.Value is int)
                         return (int)Vertex.Value;                      
                 }
-            return NullInt;
+            return null;
         }
 
-        static public decimal NullDecimal = -99999;
-
-        static public decimal GetDecimalValue(IVertex Vertex)
+        static public decimal? GetDecimalValue(IVertex Vertex)
         {
             if (Vertex != null && Vertex.Value != null)
             {
@@ -426,12 +426,10 @@ namespace m0.Graph
                 if (Vertex.Value is decimal)
                     return (decimal)Vertex.Value;
             }
-            return NullDecimal;
+            return null;
         }
-
-        static public double NullDouble = -99999;
-
-        static public double GetDoubleValue(IVertex Vertex)
+        
+        static public double? GetDoubleValue(IVertex Vertex)
         {
             if (Vertex != null && Vertex.Value != null)
             {
@@ -441,7 +439,7 @@ namespace m0.Graph
                 if (Vertex.Value is double)
                     return (double)Vertex.Value;
             }
-            return NullDouble;
+            return null;
         }        
 
         static public void CopyEdges(IVertex source, IVertex destination)

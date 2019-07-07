@@ -21,10 +21,13 @@ namespace m0.UIWpf.Visualisers.Diagram
 
             base.VisualiserUpdate();
 
-            if (GraphUtil.GetDoubleValue(Vertex.Get(false, @"SizeX:")) != GraphUtil.NullInt && GraphUtil.GetDoubleValue(Vertex.Get(false, @"SizeY:")) != GraphUtil.NullInt)
+            double? width = GraphUtil.GetDoubleValue(Vertex.Get(false, @"SizeX:"));
+            double? height = GraphUtil.GetDoubleValue(Vertex.Get(false, @"SizeY:"));
+
+            if (width != null && height != null)
             {
-                this.Width = GraphUtil.GetDoubleValue(Vertex.Get(false, @"SizeX:"));
-                this.Height = GraphUtil.GetDoubleValue(Vertex.Get(false, @"SizeY:"));
+                this.Width = (double)width;
+                this.Height = (double)height;
             }
         }
 

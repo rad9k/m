@@ -57,8 +57,10 @@ namespace m0.UIWpf.Visualisers.Diagram
 
         protected virtual void UpdateLine()
         {
-            if (GraphUtil.GetDoubleValue(Vertex.Get(false, "LineWidth:")) != GraphUtil.NullDouble)
-                LineWidth = GraphUtil.GetDoubleValue(Vertex.Get(false, "LineWidth:"));
+
+            double? _lineWidth = GraphUtil.GetDoubleValue(Vertex.Get(false, "LineWidth:"));
+            if (_lineWidth != null)
+                LineWidth = (double)_lineWidth;
             else
                 LineWidth = 1;
 

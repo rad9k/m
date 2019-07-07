@@ -284,7 +284,7 @@ namespace m0
             IVertex code = x.AddVertex(null, "code");
             IVertex stack = x.AddVertex(null, "stack");
 
-            MinusZero.Instance.NewDefaultParser.Parse(code, "\"Code\"\r\n\tvariable \"Magunia\" @String");
+            MinusZero.Instance.NewDefaultParser.Parse(code, "\"Code\"\r\n\tvariable \"Magunia\" @String 5:10");
             
         }
 

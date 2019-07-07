@@ -5,7 +5,7 @@ using System.Text;
 
 namespace m0.UIWpf.Visualisers
 {
-    public class IntegerVisualiser: NumberVisualiser<int>
+    public class IntegerVisualiser: NumberVisualiser<int?>
     {
     }
 }

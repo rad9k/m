@@ -351,7 +351,7 @@ namespace m0.UIWpf.Visualisers
 
                 //GraphUtil.RemoveAllEdges(Vertex.Get(false, "DisplayedEdges:"));
                 
-                Width = GraphUtil.GetIntegerValue(Vertex.Get(false, "NumberOfCircles:"))*GraphUtil.GetIntegerValue(Vertex.Get(false, "VisualiserCircleSize:"))*2;
+                Width = ((int)GraphUtil.GetIntegerValue(Vertex.Get(false, "NumberOfCircles:")))*((int)GraphUtil.GetIntegerValue(Vertex.Get(false, "VisualiserCircleSize:")))*2;
                 Height = Width;                
                              
                 AddCircle(0,null);
@@ -420,8 +420,11 @@ namespace m0.UIWpf.Visualisers
 
             double cnt = 0;
 
-            int CircleSize=GraphUtil.GetIntegerValue(Vertex.Get(false, "VisualiserCircleSize:"));
-
+            int CircleSize=0;
+            
+            int? _circleSize =GraphUtil.GetIntegerValue(Vertex.Get(false, "VisualiserCircleSize:"));
+            if (_circleSize != null)
+                CircleSize = (int)_circleSize;
             //IVertex DisplayedEdges = Vertex.Get(false, "DisplayedEdges:");
 
             if (OutAndInEdgesCount > 0)

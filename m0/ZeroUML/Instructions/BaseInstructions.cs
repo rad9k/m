@@ -205,7 +205,16 @@ namespace m0.ZeroUML.Instructions
 
         public static INoInEdgeInOutVertexVertex CopyValue(ZeroCodeExecution exe, IVertex inputStack, IVertex instructionVertex)
         {
-            return null;
+            IVertex leftExpression = InstructionHelpers.GetLeft(instructionVertex);
+            IVertex rightExpression = InstructionHelpers.GetRight(instructionVertex);
+
+            if(leftExpression!=null && rightExpression != null)
+            {
+                INoInEdgeInOutVertexVertex leftExecuteResult = exe.executeInstruction(exe.stack, leftExpression);
+                INoInEdgeInOutVertexVertex rightExecuteResult = exe.executeInstruction(exe.stack, rightExpression);
+            }
+
+            
         }
 
         public static INoInEdgeInOutVertexVertex AddEdges(ZeroCodeExecution exe, IVertex inputStack, IVertex instructionVertex)
@@ -228,9 +237,13 @@ namespace m0.ZeroUML.Instructions
         {
             INoInEdgeInOutVertexVertex stack = InstructionHelpers.MakeINoInEdgeInOutVertexVertex(inputStack);
 
-            //IVertex _is = InstructionHelpers.GetIs(instructionVertex);
+            int? minCardinality = GraphUtil.GetIntegerValue(instructionVertex.Get(false, "$MinCardinality:"));
 
-            stack.AddVertex(instructionVertex, "");
+            if(minCardinality != null)
+                for(int x=0;x<minCardinality;x++)
+                    stack.AddVertex(instructionVertex, "");
+            else
+                stack.AddVertex(instructionVertex, "");
 
             return stack;
         }

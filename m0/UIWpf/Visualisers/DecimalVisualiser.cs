@@ -18,7 +18,7 @@ using m0.UIWpf.Commands;
 
 namespace m0.UIWpf.Visualisers
 {
-    public class DecimalVisualiser : NumberVisualiser<decimal>
+    public class DecimalVisualiser : NumberVisualiser<decimal?>
     {
     }
 }

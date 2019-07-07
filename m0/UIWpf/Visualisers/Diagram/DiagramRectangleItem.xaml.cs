@@ -90,12 +90,12 @@ namespace m0.UIWpf.Visualisers.Diagram
             }
 
 
+            int? _esize = GraphUtil.GetIntegerValue(Vertex.Get(false, "RoundEdgeSize:"));
 
-            if (Vertex.Get(false, "RoundEdgeSize:") != null)
+            if (_esize != null)
             {
-                int esize = GraphUtil.GetIntegerValue(Vertex.Get(false, "RoundEdgeSize:"));
+                int esize = (int)_esize;
 
-                
                 this.Frame.CornerRadius = new CornerRadius(esize);
 
                 if (Vertex.Get(false, "VisualiserClass:") != null)

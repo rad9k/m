@@ -148,13 +148,13 @@ namespace m0.UIWpf.Visualisers.Diagram
 
         public virtual void VisualiserUpdate()       {
 
-            double sizeX = GraphUtil.GetDoubleValue(Vertex.Get(false, "SizeX:"));
-            double sizeY = GraphUtil.GetDoubleValue(Vertex.Get(false, "SizeY:"));
+            double? sizeX = GraphUtil.GetDoubleValue(Vertex.Get(false, "SizeX:"));
+            double? sizeY = GraphUtil.GetDoubleValue(Vertex.Get(false, "SizeY:"));
 
-            if (sizeX != GraphUtil.NullDouble && sizeY != GraphUtil.NullDouble)
+            if (sizeX != null && sizeY != null)
             {
-                Width = sizeX;
-                Height = sizeY;
+                Width = (double) sizeX;
+                Height = (double) sizeY;
             }
 
             if(Vertex.Get(false, "BackgroundColor:")!=null)
@@ -167,8 +167,10 @@ namespace m0.UIWpf.Visualisers.Diagram
             else
                 ForegroundColor = (Brush)FindResource("0ForegroundBrush");
 
-            if (GraphUtil.GetDoubleValue(Vertex.Get(false, "LineWidth:")) != GraphUtil.NullDouble)
-                LineWidth = GraphUtil.GetDoubleValue(Vertex.Get(false, "LineWidth:"));
+            double? _lineWidth = GraphUtil.GetDoubleValue(Vertex.Get(false, "LineWidth:"));
+
+            if (_lineWidth != null)
+                LineWidth = (double)_lineWidth;
 
             SetBackAndForeground();
         }
@@ -767,14 +769,23 @@ namespace m0.UIWpf.Visualisers.Diagram
 
         public void MoveItem(double x, double y)
         {
-            double deltax = GraphUtil.GetDoubleValue(Vertex.Get(false, "PositionX:")) - x;
-            double deltay = GraphUtil.GetDoubleValue(Vertex.Get(false, "PositionY:")) - y;
+            double? _positionX = GraphUtil.GetDoubleValue(Vertex.Get(false, "PositionX:"));
+            double? _positionY = GraphUtil.GetDoubleValue(Vertex.Get(false, "PositionY:"));
+
+            if (_positionX == null || _positionY == null)
+                return;
+
+            double positionX = (double)_positionX;
+            double positionY = (double)_positionY;
+
+            double deltax = positionX - x;
+            double deltay = positionY - y;
 
             Vertex.Get(false, "PositionX:").Value = x;
             Vertex.Get(false, "PositionY:").Value = y;
 
-            Canvas.SetLeft(this, GraphUtil.GetDoubleValue(Vertex.Get(false, "PositionX:")));
-            Canvas.SetTop(this, GraphUtil.GetDoubleValue(Vertex.Get(false, "PositionY:")));
+            Canvas.SetLeft(this, x);
+            Canvas.SetTop(this, y);
 
             foreach (UIElement a in Anchors)
             {

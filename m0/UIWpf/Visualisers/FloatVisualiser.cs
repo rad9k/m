@@ -18,7 +18,7 @@ using m0.UIWpf.Foundation;
 
 namespace m0.UIWpf.Visualisers
 {
-    public class FloatVisualiser : NumberVisualiser<double>
+    public class FloatVisualiser : NumberVisualiser<double?>
     {
     }
 }

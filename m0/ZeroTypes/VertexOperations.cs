@@ -215,9 +215,9 @@ namespace m0.ZeroTypes
 
         public static IVertex TestIfNewEdgeValid(IVertex baseVertex, IVertex metaVertex, IVertex toVertex)
         {
-            int MaxCardinality = GraphUtil.GetIntegerValue(metaVertex.Get(false, @"$MaxCardinality:"));
+            int? MaxCardinality = GraphUtil.GetIntegerValue(metaVertex.Get(false, @"$MaxCardinality:"));
 
-            if (MaxCardinality != -1 && MaxCardinality != GraphUtil.NullInt)
+            if (MaxCardinality != -1 && MaxCardinality != null)
             {
                 int cnt = 0;
 
@@ -235,9 +235,9 @@ namespace m0.ZeroTypes
                 }
             }
 
-            int MaxTargetCardinality = GraphUtil.GetIntegerValue(metaVertex.Get(false, @"$MaxTargetCardinality:"));
+            int? MaxTargetCardinality = GraphUtil.GetIntegerValue(metaVertex.Get(false, @"$MaxTargetCardinality:"));
 
-            if (MaxTargetCardinality != -1 && MaxTargetCardinality != GraphUtil.NullInt && toVertex!=null)
+            if (MaxTargetCardinality != -1 && MaxTargetCardinality != null && toVertex!=null)
             {
                 int cnt = 0;
 
