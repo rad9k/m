@@ -9,7 +9,7 @@ namespace m0.ZeroCode
 {
     public class ZeroCodeExecution
     {
-        public IVertex stack;
+        public INoInEdgeInOutVertexVertex stack;
 
         public bool metaMode;
 

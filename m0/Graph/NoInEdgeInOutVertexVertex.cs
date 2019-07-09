@@ -29,9 +29,11 @@ namespace m0.Graph
             OutEdgesRaw.Add(e);
         }
 
-        public override void DeleteEdge(IEdge _edge)
+        public override void DeleteEdge(IEdge edge)
         {
-            _edge.From.DeleteEdge(_edge);
+            OutEdgesRaw.Remove(edge);
+
+            //_edge.From.DeleteEdge(_edge); // what for it was?
         }            
     }
 }

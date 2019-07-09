@@ -203,18 +203,55 @@ namespace m0.ZeroUML.Instructions
         //
         ////////////////////////////////////////////////////////////////
 
-        public static INoInEdgeInOutVertexVertex CopyValue(ZeroCodeExecution exe, IVertex inputStack, IVertex instructionVertex)
+        public static INoInEdgeInOutVertexVertex ValueCopy(ZeroCodeExecution exe, IVertex inputStack, IVertex instructionVertex)
         {
+            INoInEdgeInOutVertexVertex stack = exe.stack;
+
             IVertex leftExpression = InstructionHelpers.GetLeft(instructionVertex);
-            IVertex rightExpression = InstructionHelpers.GetRight(instructionVertex);
+            IVertex rightExpression = InstructionHelpers.GetRight(instructionVertex);         
 
             if(leftExpression!=null && rightExpression != null)
             {
                 INoInEdgeInOutVertexVertex leftExecuteResult = exe.executeInstruction(exe.stack, leftExpression);
-                INoInEdgeInOutVertexVertex rightExecuteResult = exe.executeInstruction(exe.stack, rightExpression);
+                INoInEdgeInOutVertexVertex rightExecuteResult;
+
+                if (leftExecuteResult != null)
+                {
+                    if (InstructionHelpers.CheckIsNewVertex(rightExpression))
+                    {
+                        rightExecuteResult = InstructionHelpers.CreateStack();
+                        rightExecuteResult.AddEdgeForNoInEdgeInOutVertexVertex(GraphUtil.CreateArtificialEdge(null, rightExpression));
+                    }
+                    else
+                    {
+                        rightExecuteResult = exe.executeInstruction(exe.stack, rightExpression);
+                    }
+
+                    if(rightExecuteResult.Count() > 0)
+                    {
+                        // delete all edges from leftExecuteResult
+
+                        foreach (IEdge e in leftExecuteResult)
+                            e.From.DeleteEdge(e);
+
+                        if (rightExecuteResult.Count() == 1)
+                        {
+                            IVertex singleRightResult = rightExecuteResult.FirstOrDefault().To;
+
+                            foreach (IEdge e in leftExecuteResult)
+                                e.From.AddEdge(e.Meta, singleRightResult);
+
+                        }
+                    }
+
+                    
+                        
+                }
+
+                
             }
 
-            
+            return stack;
         }
 
         public static INoInEdgeInOutVertexVertex AddEdges(ZeroCodeExecution exe, IVertex inputStack, IVertex instructionVertex)
@@ -235,7 +272,7 @@ namespace m0.ZeroUML.Instructions
 
         public static INoInEdgeInOutVertexVertex CreateStackEdge(ZeroCodeExecution exe, IVertex inputStack, IVertex instructionVertex)
         {
-            INoInEdgeInOutVertexVertex stack = InstructionHelpers.MakeINoInEdgeInOutVertexVertex(inputStack);
+            INoInEdgeInOutVertexVertex stack = exe.stack;
 
             int? minCardinality = GraphUtil.GetIntegerValue(instructionVertex.Get(false, "$MinCardinality:"));
 

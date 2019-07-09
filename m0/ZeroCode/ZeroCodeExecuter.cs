@@ -23,11 +23,9 @@ namespace m0.ZeroCode
 
             exe.metaMode = true;
 
-            INoInEdgeInOutVertexVertex stack = InstructionHelpers.MakeINoInEdgeInOutVertexVertex(baseVertex);
+            exe.stack = InstructionHelpers.MakeINoInEdgeInOutVertexVertex(baseVertex);
 
-            stack = InstructionHelpers.SequentiallyExecuteInstructions(exe, stack, expression);
-
-            return stack;
+            return InstructionHelpers.SequentiallyExecuteInstructions(exe, exe.stack, expression);            
         }
 
         public IVertex Get(bool metaMode, IVertex baseVertex, IVertex expression)

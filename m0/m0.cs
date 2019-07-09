@@ -357,7 +357,7 @@ namespace m0
                 ",Query" +
                 ",[]" +
                 ",[[]]" +
-                ",\"{}\",\"{CRLF}\",+,-,\"* \",/,?,\"\\ \",\"|\",\"||\",(),=,+=,-=" +
+                ",\"{}\",\"{CRLF}\",+,-,\" *\",/,?,\"\\ \",\"|\",\"||\",(),<-,+=,-=" +
                 ",Action,Return{Expression},NextOut{Next{$MinCardinality:0,$MaxCardinality:1}}" +
                 ",StackFrameCreator{Do{$MinCardinality:0,$MaxCardinality:1},Variable{$MinCardinality:0,$MaxCardinality:-1},Type{$MinCardinality:0,$MaxCardinality:-1}}" +
                 ",StackFrameCreatorWithInputOutput{Output{$MinCardinality:0,$MaxCardinality:1},InputParameter{$MinCardinality:0,$MaxCardinality:-1}}" +
@@ -381,7 +381,7 @@ namespace m0
 
             // operators
 
-            AddDotNetEndPoint(smu.Get(false, "="), "ValueCopy");
+            AddDotNetEndPoint(smu.Get(false, "<-"), "ValueCopy");
             AddDotNetEndPoint(smu.Get(false, "+="), "AddEdges");
             AddDotNetEndPoint(smu.Get(false, "-="), "RemoveEdges");
 
@@ -419,14 +419,14 @@ namespace m0
             smu.Get(false, "\"{}\"").AddEdge(sm.Get(false, "*$Inherits"), smu.Get(false, "MultiOperator"));
             smu.Get(false, @"+").AddEdge(sm.Get(false, "*$Inherits"), smu.Get(false, "DoubleOperator"));
             smu.Get(false, @"-").AddEdge(sm.Get(false, "*$Inherits"), smu.Get(false, "DoubleOperator"));
-            smu.Get(false, "\"* \"").AddEdge(sm.Get(false, "*$Inherits"), smu.Get(false, "DoubleOperator"));
+            smu.Get(false, "\" *\"").AddEdge(sm.Get(false, "*$Inherits"), smu.Get(false, "DoubleOperator"));
             smu.Get(false, @"/").AddEdge(sm.Get(false, "*$Inherits"), smu.Get(false, "DoubleOperator"));
             smu.Get(false, @"?").AddEdge(sm.Get(false, "*$Inherits"), smu.Get(false, "SingleOperator"));
             smu.Get(false, "\"\\ \"").AddEdge(sm.Get(false, "*$Inherits"), smu.Get(false, "SingleOperator"));
             smu.Get(false, "\"|\"").AddEdge(sm.Get(false, "*$Inherits"), smu.Get(false, "SingleOperator"));
             smu.Get(false, "\"||\"").AddEdge(sm.Get(false, "*$Inherits"), smu.Get(false, "DoubleOperator"));
             smu.Get(false, @"()").AddEdge(sm.Get(false, "*$Inherits"), smu.Get(false, "SingleNestedOperator"));
-            smu.Get(false, @"=").AddEdge(sm.Get(false, "*$Inherits"), smu.Get(false, "DoubleOperator"));
+            smu.Get(false, @"<-").AddEdge(sm.Get(false, "*$Inherits"), smu.Get(false, "DoubleOperator"));
             smu.Get(false, @"+=").AddEdge(sm.Get(false, "*$Inherits"), smu.Get(false, "DoubleOperator"));
             smu.Get(false, @"-=").AddEdge(sm.Get(false, "*$Inherits"), smu.Get(false, "DoubleOperator"));
 
@@ -534,14 +534,14 @@ namespace m0
             package.AddEdge(null, smu.Get(false, "\"{}\""));
             package.AddEdge(null, smu.Get(false, "+"));
             package.AddEdge(null, smu.Get(false, "-"));
-            package.AddEdge(null, smu.Get(false, "* "));
+            package.AddEdge(null, smu.Get(false, " *"));
             package.AddEdge(null, smu.Get(false, "/"));
             package.AddEdge(null, smu.Get(false, "?"));
             package.AddEdge(null, smu.Get(false, "\"\\ \""));
             package.AddEdge(null, smu.Get(false, "\"|\""));
             package.AddEdge(null, smu.Get(false, "\"||\""));
             package.AddEdge(null, smu.Get(false, "()"));
-            package.AddEdge(null, smu.Get(false, "="));
+            package.AddEdge(null, smu.Get(false, "<-"));
             package.AddEdge(null, smu.Get(false, "+="));
             package.AddEdge(null, smu.Get(false, "-="));
             package.AddEdge(null, smu.Get(false, "Section"));
@@ -853,7 +853,64 @@ namespace m0
              whwh.AddEdge(smb.Get(false, @"Vertex\$Is"), smu.Get(false, "While"));
 
              whwh.AddVertex(smu.Get(false, @"While\Test"), "(?<test>)");
-             
+
+
+            /////////////////////////////////////////////////////////
+            //
+            // copy / sub graph add / sub graph substract operators
+            //
+            ////////////////////////////////////////////////////////
+
+            // =
+            //
+            // (?<left>) = (?<right>)
+
+            IVertex o_copy = k.AddVertex(keyword, "(?<left>) =(?<SUB>) (?<right>)");
+
+            IVertex o_copy_any = o_copy.AddVertex(any, "");
+
+            o_copy_any.AddEdge(smb.Get(false, @"Vertex\$Is"), smu.Get(false, "<-"));
+
+            o_copy_any.AddVertex(smu.Get(false, @"DoubleOperator\LeftExpression"), "(?<left>)");
+
+            o_copy_any.AddVertex(smu.Get(false, @"DoubleOperator\RightExpression"), "(?<right>)");
+
+            // +=
+            //
+            // (?<left>) += (?<right>)
+
+            IVertex o_graphAdd = k.AddVertex(keyword, "(?<left>) +=(?<SUB>) (?<right>)");
+
+            IVertex o_graphAdd_any = o_graphAdd.AddVertex(any, "");
+
+            o_graphAdd_any.AddEdge(smb.Get(false, @"Vertex\$Is"), smu.Get(false, "+=")); // TO BE CORRECTED
+
+            o_graphAdd_any.AddVertex(smu.Get(false, @"DoubleOperator\LeftExpression"), "(?<left>)");
+
+            o_graphAdd_any.AddVertex(smu.Get(false, @"DoubleOperator\RightExpression"), "(?<right>)");
+
+            // -=
+            //
+            // (?<left>) -= (?<right>)
+
+            IVertex o_graphSubstract = k.AddVertex(keyword, "(?<left>) -=(?<SUB>) (?<right>)");
+
+            IVertex o_graphSubstract_any = o_graphSubstract.AddVertex(any, "");
+
+            o_graphSubstract_any.AddEdge(smb.Get(false, @"Vertex\$Is"), smu.Get(false, "-=")); // TO BE CORRECTED
+
+            o_graphSubstract_any.AddVertex(smu.Get(false, @"DoubleOperator\LeftExpression"), "(?<left>)");
+
+            o_graphSubstract_any.AddVertex(smu.Get(false, @"DoubleOperator\RightExpression"), "(?<right>)");
+
+
+            /////////////////////////////////////////////////////////
+            //
+            // algebraic operators
+            //
+            ////////////////////////////////////////////////////////
+
+
             // +
             //
             // (?<left>) + (?<right>)
@@ -890,7 +947,7 @@ namespace m0
 
              IVertex o_mul_any = o_mul.AddVertex(any, "");
 
-             //o_mul_any.AddEdge(smb.Get(false, @"Vertex\$Is"), smu.Get(false, "* "));
+             //o_mul_any.AddEdge(smb.Get(false, @"Vertex\$Is"), smu.Get(false, " *"));
 
              o_mul_any.AddVertex(smb.Get(false, @"Vertex\$Is"), "*"); // TO BE CORRECTED
 

@@ -144,8 +144,6 @@ namespace m0.Graph
             return null;
         }
 
-
-
         public static object GetMetaAndValueObject(object meta, object value)
         {
             return meta.ToString() + "@#$#@" + value.ToString(); // this is no good !!!!!!!!!. possible error when meta or value contains "@#$#@"
@@ -483,6 +481,16 @@ namespace m0.Graph
             IEdge e = GetQueryOutFirstEdge(source, MetaValue, null);                
 
             if (e != null)
+                source.DeleteEdge(e);
+        }
+
+        static public void DeleteEdgesByMeta(IVertex source, string MetaValue)
+        {
+            //IEdge e = FindEdgeByMetaValue(source, MetaValue);
+
+            IList<IEdge> edges = GetQueryOut(source, MetaValue, null);
+
+            foreach(IEdge e in edges)            
                 source.DeleteEdge(e);
         }
 

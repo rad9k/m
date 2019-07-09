@@ -48,6 +48,16 @@ namespace m0.ZeroCode.Helpers
             return false;
         }
 
+        public static bool CheckIsNewVertex(IVertex v)
+        {
+            IVertex iv = GraphUtil.GetQueryOutFirst(v, "$Is", null);
+
+            if (iv == null)
+                return true;
+
+            return false;
+        }
+
         public static IVertex GetIs(IVertex v)
         {
             return GraphUtil.GetQueryOutFirst(v, "$Is", null);
