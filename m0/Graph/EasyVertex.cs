@@ -48,8 +48,19 @@ namespace m0.Graph
             set{
                 _Value = value;
 
+                ValueChanged();
+
                 FireChange(new VertexChangeEventArgs(VertexChangeType.ValueChanged, null));
             }
+        }
+
+        protected void ValueChanged()
+        {
+            foreach (IEdge e in InEdges)
+                e.From.OutEdgesDictionariesNeedsRebuild = true;
+
+            foreach (IEdge e in OutEdges)
+                e.To.InEdgesDictionariesNeedsRebuild = true;
         }
 
         protected bool HasInheritance=false;
@@ -398,11 +409,12 @@ namespace m0.Graph
 
         public override void DeleteEdge(IEdge _edge)
         {
-            IEdge edge = null;
+            IEdge edge = _edge;
 
-            foreach (IEdge e in OutEdgesRaw)
-                if(e.Meta==_edge.Meta && e.To==_edge.To)
-                   edge = e;
+            if(!OutEdgesRaw.Contains(edge))
+                foreach (IEdge e in OutEdgesRaw)
+                    if(e.Meta==_edge.Meta && e.To==_edge.To)
+                       edge = e;
 
             if (edge != null)
             {
@@ -436,11 +448,11 @@ namespace m0.Graph
 
 
             _Identifier = Store.VertexIdentifierCount++;
-            
-            Value = "";
 
             InEdgesDictionariesNeedsRebuild = true;
             OutEdgesDictionariesNeedsRebuild = true;
+
+            Value = "";
         }        
 
         private static IDictionary<String, IVertex> QueryParseChache = new Dictionary<String,IVertex>();
@@ -523,7 +535,7 @@ namespace m0.Graph
             GraphUtil.RemoveAllEdges(this);                        
         }
 
-        private void InheritChildsDictionariesNeedsRebuild(bool inDictiories)
+        protected void InheritChildsDictionariesNeedsRebuild(bool inDictiories)
         {
             HashSet<IVertex> inheritsSet = GraphUtil.GetInheritChilds(this);
 
