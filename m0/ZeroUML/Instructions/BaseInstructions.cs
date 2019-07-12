@@ -234,7 +234,7 @@ namespace m0.ZeroUML.Instructions
                         foreach (IEdge e in leftExecuteResult)
                             e.From.DeleteEdge(e);
 
-                        if (rightExecuteResult.Count() == 1)
+                        if (rightExecuteResult.Count() == 1) 
                         {
                             IVertex singleRightResult = rightExecuteResult.FirstOrDefault().To;
 
