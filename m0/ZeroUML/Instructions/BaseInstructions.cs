@@ -203,7 +203,9 @@ namespace m0.ZeroUML.Instructions
         //
         ////////////////////////////////////////////////////////////////
 
-        public delegate void AlgebraicVertexVisitorDelegate(IEdge leftEdge, IEdge rightEdge);
+        public delegate void AlgebraicVertexVisitor_EdgeEdge(IEdge leftEdge, IEdge rightEdge);
+
+        public delegate void AlgebraicVertexVisitor_EdgeListOfEdges(IEdge leftEdge, IList<IEdge> rightEdge);
 
         public class AlgebraicVertexVisitor
         {
@@ -214,7 +216,12 @@ namespace m0.ZeroUML.Instructions
                 exe = _exe;
             }
 
-            public void ValueCopyIterator(IEdge leftEdge, IEdge rightEdge)
+            public void CopyVertexValueIterator(IEdge leftEdge, IEdge rightEdge)
+            {
+
+            }
+
+            public void RedirectEdgeToVertexIterator(IEdge leftEdge, IList<IEdge> rightEdge)
             {
 
             }
@@ -230,7 +237,7 @@ namespace m0.ZeroUML.Instructions
             }
         }
 
-        public static void ZeroAlgebraLeftRightProcessor(ZeroCodeExecution exe, AlgebraicVertexVisitorDelegate instructionOperator, IVertex leftExpression, IVertex rightExpression)
+        public static void ZeroAlgebraLeftRightProcessor(ZeroCodeExecution exe, AlgebraicVertexVisitor_EdgeEdge visitor_EdgeEdge, AlgebraicVertexVisitor_EdgeListOfEdges visitor_EdgeListOfEdges, IVertex leftExpression, IVertex rightExpression)
         {
 
             if (leftExpression != null && rightExpression != null)
@@ -266,16 +273,11 @@ namespace m0.ZeroUML.Instructions
 
                         }
                     }
-
-
-
                 }
-
-
             }
         }
 
-        public static INoInEdgeInOutVertexVertex ValueCopy(ZeroCodeExecution exe, IVertex inputStack, IVertex instructionVertex)
+        public static INoInEdgeInOutVertexVertex CopyVertexValue(ZeroCodeExecution exe, IVertex inputStack, IVertex instructionVertex)
         {
             INoInEdgeInOutVertexVertex stack = exe.stack;
 
@@ -284,7 +286,21 @@ namespace m0.ZeroUML.Instructions
 
             AlgebraicVertexVisitor visitor = new AlgebraicVertexVisitor(exe);
 
-            ZeroAlgebraLeftRightProcessor(exe, visitor.ValueCopyIterator, leftExpression, rightExpression);
+            ZeroAlgebraLeftRightProcessor(exe, visitor.CopyVertexValueIterator, null, leftExpression, rightExpression);
+
+            return stack;
+        }
+
+        public static INoInEdgeInOutVertexVertex RedirectEdgeToVertex(ZeroCodeExecution exe, IVertex inputStack, IVertex instructionVertex)
+        {
+            INoInEdgeInOutVertexVertex stack = exe.stack;
+
+            IVertex leftExpression = InstructionHelpers.GetLeft(instructionVertex);
+            IVertex rightExpression = InstructionHelpers.GetRight(instructionVertex);
+
+            AlgebraicVertexVisitor visitor = new AlgebraicVertexVisitor(exe);
+
+            ZeroAlgebraLeftRightProcessor(exe, null, visitor.RedirectEdgeToVertexIterator, leftExpression, rightExpression);
 
             return stack;
         }
@@ -298,7 +314,7 @@ namespace m0.ZeroUML.Instructions
 
             AlgebraicVertexVisitor visitor = new AlgebraicVertexVisitor(exe);
 
-            ZeroAlgebraLeftRightProcessor(exe, visitor.ValueCopyIterator, leftExpression, rightExpression);
+            ZeroAlgebraLeftRightProcessor(exe, visitor.AddEdgesIterator, null, leftExpression, rightExpression);
 
             return stack;
         }
@@ -312,7 +328,7 @@ namespace m0.ZeroUML.Instructions
 
             AlgebraicVertexVisitor visitor = new AlgebraicVertexVisitor(exe);
 
-            ZeroAlgebraLeftRightProcessor(exe, visitor.ValueCopyIterator, leftExpression, rightExpression);
+            ZeroAlgebraLeftRightProcessor(exe, visitor.RemoveEdgesIterator, null, leftExpression, rightExpression);
 
             return stack;
         }

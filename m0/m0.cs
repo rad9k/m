@@ -357,7 +357,7 @@ namespace m0
                 ",Query" +
                 ",[]" +
                 ",[[]]" +
-                ",\"{}\",\"{CRLF}\",+,-,\" *\",/,?,\"\\ \",\"|\",\"||\",(),<-,+=,-=" +
+                ",\"{}\",\"{CRLF}\",+,-,\" *\",/,?,\"\\ \",\"|\",\"||\",(),CopyVertexValue,RedirectEdgeToVertex,AddEdges,RemoveEdges" +
                 ",Action,Return{Expression},NextOut{Next{$MinCardinality:0,$MaxCardinality:1}}" +
                 ",StackFrameCreator{Do{$MinCardinality:0,$MaxCardinality:1},Variable{$MinCardinality:0,$MaxCardinality:-1},Type{$MinCardinality:0,$MaxCardinality:-1}}" +
                 ",StackFrameCreatorWithInputOutput{Output{$MinCardinality:0,$MaxCardinality:1},InputParameter{$MinCardinality:0,$MaxCardinality:-1}}" +
@@ -381,9 +381,10 @@ namespace m0
 
             // operators
 
-            AddDotNetEndPoint(smu.Get(false, "<-"), "ValueCopy");
-            AddDotNetEndPoint(smu.Get(false, "+="), "AddEdges");
-            AddDotNetEndPoint(smu.Get(false, "-="), "RemoveEdges");
+            AddDotNetEndPoint(smu.Get(false, "CopyVertexValue"), "CopyVertexValue");
+            AddDotNetEndPoint(smu.Get(false, "RedirectEdgeToVertex"), "RedirectEdgeToVertex");
+            AddDotNetEndPoint(smu.Get(false, "AddEdges"), "AddEdges");
+            AddDotNetEndPoint(smu.Get(false, "RemoveEdges"), "RemoveEdges");
 
             // StackFrameCreator
 
@@ -426,9 +427,10 @@ namespace m0
             smu.Get(false, "\"|\"").AddEdge(sm.Get(false, "*$Inherits"), smu.Get(false, "SingleOperator"));
             smu.Get(false, "\"||\"").AddEdge(sm.Get(false, "*$Inherits"), smu.Get(false, "DoubleOperator"));
             smu.Get(false, @"()").AddEdge(sm.Get(false, "*$Inherits"), smu.Get(false, "SingleNestedOperator"));
-            smu.Get(false, @"<-").AddEdge(sm.Get(false, "*$Inherits"), smu.Get(false, "DoubleOperator"));
-            smu.Get(false, @"+=").AddEdge(sm.Get(false, "*$Inherits"), smu.Get(false, "DoubleOperator"));
-            smu.Get(false, @"-=").AddEdge(sm.Get(false, "*$Inherits"), smu.Get(false, "DoubleOperator"));
+            smu.Get(false, @"CopyVertexValue").AddEdge(sm.Get(false, "*$Inherits"), smu.Get(false, "DoubleOperator"));
+            smu.Get(false, @"RedirectEdgeToVertex").AddEdge(sm.Get(false, "*$Inherits"), smu.Get(false, "DoubleOperator"));
+            smu.Get(false, @"AddEdges").AddEdge(sm.Get(false, "*$Inherits"), smu.Get(false, "DoubleOperator"));
+            smu.Get(false, @"RemoveEdges").AddEdge(sm.Get(false, "*$Inherits"), smu.Get(false, "DoubleOperator"));
 
             // rest inherits
             smu.Get(false, @"Action").AddEdge(sm.Get(false, "*$Inherits"), smu.Get(false, "Atom"));
