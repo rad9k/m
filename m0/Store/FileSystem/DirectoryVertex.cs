@@ -73,7 +73,7 @@ namespace m0.Store.FileSystem
             AddEdge(metaVertex, v);
         }
 
-        public override IEnumerable<IEdge> OutEdges
+        public override IList<IEdge> OutEdges
         {
             get
             {

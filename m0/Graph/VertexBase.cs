@@ -186,7 +186,7 @@ namespace m0.Graph
             }
         }
 
-        public virtual IEnumerable<IEdge> InEdges
+        public virtual IList<IEdge> InEdges
         {
             get { throw new NotImplementedException(); }
         }
@@ -196,7 +196,7 @@ namespace m0.Graph
             get { throw new NotImplementedException(); }
         }
 
-        public virtual IEnumerable<IEdge> OutEdges
+        public virtual IList<IEdge> OutEdges
         {
             get { throw new NotImplementedException(); }
         }

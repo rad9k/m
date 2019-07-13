@@ -73,7 +73,7 @@ namespace m0.Graph
 
         private IList<IEdge> _InEdges;
 
-        public override IEnumerable<IEdge> InEdges
+        public override IList<IEdge> InEdges
         {
             get
             {
@@ -111,7 +111,7 @@ namespace m0.Graph
 
         private IList<IEdge> _OutEdges;
 
-        public override IEnumerable<IEdge> OutEdges
+        public override IList<IEdge> OutEdges
         {
             get
             {

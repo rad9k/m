@@ -37,11 +37,11 @@ namespace m0.Foundation
 
         IList<IEdge> OutEdgesRaw { get;} // without $Inherits
 
-        IEnumerable<IEdge> InEdges { get; }
+        IList<IEdge> InEdges { get; }
 
         IList<IEdge> InEdgesRaw { get; } // without $Inherits
 
-        IEnumerable<IEdge> OutEdges { get; }
+        IList<IEdge> OutEdges { get; }
 
         // 2.0 BEG
 

@@ -205,7 +205,7 @@ namespace m0.ZeroUML.Instructions
 
         public delegate void AlgebraicVertexVisitor_EdgeEdge(IEdge leftEdge, IEdge rightEdge);
 
-        public delegate void AlgebraicVertexVisitor_EdgeListOfEdges(IEdge leftEdge, IList<IEdge> rightEdge);
+        public delegate void AlgebraicVertexVisitor_EdgeListOfEdges(IEdge leftEdge, IList<IEdge> rightEdges);
 
         public class AlgebraicVertexVisitor
         {
@@ -214,31 +214,32 @@ namespace m0.ZeroUML.Instructions
             public AlgebraicVertexVisitor(ZeroCodeExecution _exe)
             {
                 exe = _exe;
+            }            
+
+            public void RedirectEdgeToVertexIterator(IEdge leftEdge, IEdge rightEdge)
+            {                
+                leftEdge.From.AddEdge(leftEdge.Meta, rightEdge.To);
             }
 
-            public void CopyVertexValueIterator(IEdge leftEdge, IEdge rightEdge)
+            public void AddEdgesIterator(IEdge leftEdge, IList<IEdge> rightEdges)
             {
-
+                foreach (IEdge e in rightEdges)
+                    leftEdge.To.AddEdge(e.Meta, e.To);
             }
 
-            public void RedirectEdgeToVertexIterator(IEdge leftEdge, IList<IEdge> rightEdge)
+            public void DeleteEdgesIterator(IEdge leftEdge, IList<IEdge> rightEdges)
             {
-
-            }
-
-            public void AddEdgesIterator(IEdge leftEdge, IEdge rightEdge)
-            {
-
-            }
-
-            public void RemoveEdgesIterator(IEdge leftEdge, IEdge rightEdge)
-            {
-
+                foreach (IEdge e in rightEdges)                    
+                    leftEdge.To.DeleteEdge(e);
             }
         }
 
-        public static void ZeroAlgebraLeftRightProcessor(ZeroCodeExecution exe, AlgebraicVertexVisitor_EdgeEdge visitor_EdgeEdge, AlgebraicVertexVisitor_EdgeListOfEdges visitor_EdgeListOfEdges, IVertex leftExpression, IVertex rightExpression)
+        public static void ZeroAlgebraLeftRightProcessor(ZeroCodeExecution exe, AlgebraicVertexVisitor_EdgeEdge visitor_EdgeEdge, AlgebraicVertexVisitor_EdgeListOfEdges visitor_EdgeListOfEdges, IVertex leftExpression, IVertex rightExpression, bool deleteLeftEdges)
         {
+            bool CopyVertexValue = false;
+
+            if (visitor_EdgeEdge == null && visitor_EdgeListOfEdges == null) // CopyVertexValue visitor is implemented in the ZeroAlgebraLeftRightProcessor body
+                CopyVertexValue = true; // as there could be a need to create new vertexes if righExecuteResult.Count > l, and if we are creating new vertexes, they should have right value from the start, so need to do it here
 
             if (leftExpression != null && rightExpression != null)
             {
@@ -257,12 +258,37 @@ namespace m0.ZeroUML.Instructions
                         rightExecuteResult = exe.executeInstruction(exe.stack, rightExpression);
                     }
 
-                    if (rightExecuteResult.Count() > 0)
-                    {
-                        // delete all edges from leftExecuteResult
-
+                    if (deleteLeftEdges)                    
                         foreach (IEdge e in leftExecuteResult)
-                            e.From.DeleteEdge(e);
+                            e.From.DeleteEdge(e);                    
+
+                    if(leftExecuteResult.Count() == 1)
+                    {
+                        IEdge leftExecuteResultFirst = leftExecuteResult.FirstOrDefault();
+
+                        if (CopyVertexValue) {
+                            //leftExecuteResultFirst.To.Value = 
+                            if(rightExecuteResult.Count() > 1) { // need to create more left Edges
+                                IVertex toAddVertex = leftExecuteResultFirst.From;
+
+                              //  for (int x = 1; x <= rightExecuteResult.Count(); x++)
+                                //    toAddVertex.a
+                            }
+                        }
+
+
+                        /*foreach (var item in list1.Zip(list2, (a, b) => new { a, b }))
+                        {
+                            // use item.a and item.b
+                        }*/
+
+                     //   visitor_EdgeEdge?.Invoke()
+                    } else
+                    if (leftExecuteResult.Count() > 0)
+                    {
+
+                        IDictionary<EdgeKey_FromMeta, IList<IEdge>> dict = InstructionHelpers.CreateEdgeKey_FromMetaDictionary(leftExecuteResult);
+
 
                         if (rightExecuteResult.Count() == 1)
                         {
@@ -286,7 +312,7 @@ namespace m0.ZeroUML.Instructions
 
             AlgebraicVertexVisitor visitor = new AlgebraicVertexVisitor(exe);
 
-            ZeroAlgebraLeftRightProcessor(exe, visitor.CopyVertexValueIterator, null, leftExpression, rightExpression);
+            ZeroAlgebraLeftRightProcessor(exe, null, null, leftExpression, rightExpression, false);
 
             return stack;
         }
@@ -300,7 +326,7 @@ namespace m0.ZeroUML.Instructions
 
             AlgebraicVertexVisitor visitor = new AlgebraicVertexVisitor(exe);
 
-            ZeroAlgebraLeftRightProcessor(exe, null, visitor.RedirectEdgeToVertexIterator, leftExpression, rightExpression);
+            ZeroAlgebraLeftRightProcessor(exe, visitor.RedirectEdgeToVertexIterator, null, leftExpression, rightExpression, true);
 
             return stack;
         }
@@ -314,12 +340,12 @@ namespace m0.ZeroUML.Instructions
 
             AlgebraicVertexVisitor visitor = new AlgebraicVertexVisitor(exe);
 
-            ZeroAlgebraLeftRightProcessor(exe, visitor.AddEdgesIterator, null, leftExpression, rightExpression);
+            ZeroAlgebraLeftRightProcessor(exe, null, visitor.AddEdgesIterator, leftExpression, rightExpression, false);
 
             return stack;
         }
 
-        public static INoInEdgeInOutVertexVertex RemoveEdges(ZeroCodeExecution exe, IVertex inputStack, IVertex instructionVertex)
+        public static INoInEdgeInOutVertexVertex DeleteEdges(ZeroCodeExecution exe, IVertex inputStack, IVertex instructionVertex)
         {
             INoInEdgeInOutVertexVertex stack = exe.stack;
 
@@ -328,7 +354,7 @@ namespace m0.ZeroUML.Instructions
 
             AlgebraicVertexVisitor visitor = new AlgebraicVertexVisitor(exe);
 
-            ZeroAlgebraLeftRightProcessor(exe, visitor.RemoveEdgesIterator, null, leftExpression, rightExpression);
+            ZeroAlgebraLeftRightProcessor(exe, null, visitor.DeleteEdgesIterator, leftExpression, rightExpression, false);
 
             return stack;
         }
