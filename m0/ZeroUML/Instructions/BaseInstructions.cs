@@ -264,7 +264,7 @@ namespace m0.ZeroUML.Instructions
 
                     if(leftExecuteResult.Count() == 1)
                     {
-                        IEdge leftExecuteResultFirst = leftExecuteResult.FirstOrDefault();
+                        IEdge leftExecuteResultFirst = leftExecuteResult.OutEdges[0];
 
                         if (CopyVertexValue) {
                             //leftExecuteResultFirst.To.Value = 
@@ -292,7 +292,7 @@ namespace m0.ZeroUML.Instructions
 
                         if (rightExecuteResult.Count() == 1)
                         {
-                            IVertex singleRightResult = rightExecuteResult.FirstOrDefault().To;
+                            IVertex singleRightResult = rightExecuteResult.OutEdges[0].To;
 
                             foreach (IEdge e in leftExecuteResult)
                                 e.From.AddEdge(e.Meta, singleRightResult);
