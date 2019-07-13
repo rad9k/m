@@ -203,14 +203,37 @@ namespace m0.ZeroUML.Instructions
         //
         ////////////////////////////////////////////////////////////////
 
-        public static INoInEdgeInOutVertexVertex ValueCopy(ZeroCodeExecution exe, IVertex inputStack, IVertex instructionVertex)
+        public delegate void AlgebraicVertexVisitorDelegate(IEdge leftEdge, IEdge rightEdge);
+
+        public class AlgebraicVertexVisitor
         {
-            INoInEdgeInOutVertexVertex stack = exe.stack;
+            ZeroCodeExecution exe;
 
-            IVertex leftExpression = InstructionHelpers.GetLeft(instructionVertex);
-            IVertex rightExpression = InstructionHelpers.GetRight(instructionVertex);         
+            public AlgebraicVertexVisitor(ZeroCodeExecution _exe)
+            {
+                exe = _exe;
+            }
 
-            if(leftExpression!=null && rightExpression != null)
+            public void ValueCopyIterator(IEdge leftEdge, IEdge rightEdge)
+            {
+
+            }
+
+            public void AddEdgesIterator(IEdge leftEdge, IEdge rightEdge)
+            {
+
+            }
+
+            public void RemoveEdgesIterator(IEdge leftEdge, IEdge rightEdge)
+            {
+
+            }
+        }
+
+        public static void ZeroAlgebraLeftRightProcessor(ZeroCodeExecution exe, AlgebraicVertexVisitorDelegate instructionOperator, IVertex leftExpression, IVertex rightExpression)
+        {
+
+            if (leftExpression != null && rightExpression != null)
             {
                 INoInEdgeInOutVertexVertex leftExecuteResult = exe.executeInstruction(exe.stack, leftExpression);
                 INoInEdgeInOutVertexVertex rightExecuteResult;
@@ -227,14 +250,14 @@ namespace m0.ZeroUML.Instructions
                         rightExecuteResult = exe.executeInstruction(exe.stack, rightExpression);
                     }
 
-                    if(rightExecuteResult.Count() > 0)
+                    if (rightExecuteResult.Count() > 0)
                     {
                         // delete all edges from leftExecuteResult
 
                         foreach (IEdge e in leftExecuteResult)
                             e.From.DeleteEdge(e);
 
-                        if (rightExecuteResult.Count() == 1) 
+                        if (rightExecuteResult.Count() == 1)
                         {
                             IVertex singleRightResult = rightExecuteResult.FirstOrDefault().To;
 
@@ -244,24 +267,54 @@ namespace m0.ZeroUML.Instructions
                         }
                     }
 
-                    
-                        
+
+
                 }
 
-                
+
             }
+        }
+
+        public static INoInEdgeInOutVertexVertex ValueCopy(ZeroCodeExecution exe, IVertex inputStack, IVertex instructionVertex)
+        {
+            INoInEdgeInOutVertexVertex stack = exe.stack;
+
+            IVertex leftExpression = InstructionHelpers.GetLeft(instructionVertex);
+            IVertex rightExpression = InstructionHelpers.GetRight(instructionVertex);
+
+            AlgebraicVertexVisitor visitor = new AlgebraicVertexVisitor(exe);
+
+            ZeroAlgebraLeftRightProcessor(exe, visitor.ValueCopyIterator, leftExpression, rightExpression);
 
             return stack;
         }
 
         public static INoInEdgeInOutVertexVertex AddEdges(ZeroCodeExecution exe, IVertex inputStack, IVertex instructionVertex)
         {
-            return null;
+            INoInEdgeInOutVertexVertex stack = exe.stack;
+
+            IVertex leftExpression = InstructionHelpers.GetLeft(instructionVertex);
+            IVertex rightExpression = InstructionHelpers.GetRight(instructionVertex);
+
+            AlgebraicVertexVisitor visitor = new AlgebraicVertexVisitor(exe);
+
+            ZeroAlgebraLeftRightProcessor(exe, visitor.ValueCopyIterator, leftExpression, rightExpression);
+
+            return stack;
         }
 
         public static INoInEdgeInOutVertexVertex RemoveEdges(ZeroCodeExecution exe, IVertex inputStack, IVertex instructionVertex)
         {
-            return null;
+            INoInEdgeInOutVertexVertex stack = exe.stack;
+
+            IVertex leftExpression = InstructionHelpers.GetLeft(instructionVertex);
+            IVertex rightExpression = InstructionHelpers.GetRight(instructionVertex);
+
+            AlgebraicVertexVisitor visitor = new AlgebraicVertexVisitor(exe);
+
+            ZeroAlgebraLeftRightProcessor(exe, visitor.ValueCopyIterator, leftExpression, rightExpression);
+
+            return stack;
         }
 
         ////////////////////////////////////////////////////////////////

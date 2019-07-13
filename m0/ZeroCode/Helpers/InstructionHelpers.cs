@@ -97,6 +97,27 @@ namespace m0.ZeroCode.Helpers
 
             return stack;
         }
+
+        public static IDictionary<EdgeKey_FromMeta, IList<IEdge>> CreateEdgeKey_FromMetaDictionary(INoInEdgeInOutVertexVertex queryResult)
+        {
+            IDictionary<EdgeKey_FromMeta, IList<IEdge>> dict = new Dictionary<EdgeKey_FromMeta, IList<IEdge>>();
+
+            foreach(IEdge e in queryResult)
+            {
+                EdgeKey_FromMeta ekfm = new EdgeKey_FromMeta(e);
+
+                if (dict.ContainsKey(ekfm))
+                    dict[ekfm].Add(e);
+                else
+                {
+                    IList<IEdge> list = new List<IEdge>();
+                    list.Add(e);
+                    dict.Add(ekfm, list);
+                }
+            }
+
+            return dict;
+        }
         
     }
 }
