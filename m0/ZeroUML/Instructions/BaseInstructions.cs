@@ -266,21 +266,22 @@ namespace m0.ZeroUML.Instructions
                     {
                         IEdge leftExecuteResultFirst = leftExecuteResult.OutEdges[0];
 
-                        if (CopyVertexValue) {
-                            //leftExecuteResultFirst.To.Value = 
+                        if (CopyVertexValue) { // CopyVertexValue operator logic
+                            leftExecuteResultFirst.To.Value = rightExecuteResult.OutEdges[0]; // COPY
+
                             if(rightExecuteResult.Count() > 1) { // need to create more left Edges
                                 IVertex toAddVertex = leftExecuteResultFirst.From;
 
-                              //  for (int x = 1; x <= rightExecuteResult.Count(); x++)
-                                //    toAddVertex.a
+                                for (int x = 1; x <= rightExecuteResult.Count(); x++)
+                                {
+                                    IEdge rightEdge = rightExecuteResult.OutEdges[x];
+                                    toAddVertex.AddVertex(rightEdge.Meta, rightEdge.To.Value); // CREATE VERTEX AND COPY
+                                }
                             }
                         }
 
 
-                        /*foreach (var item in list1.Zip(list2, (a, b) => new { a, b }))
-                        {
-                            // use item.a and item.b
-                        }*/
+                        
 
                      //   visitor_EdgeEdge?.Invoke()
                     } else
