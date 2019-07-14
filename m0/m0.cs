@@ -357,7 +357,7 @@ namespace m0
                 ",Query" +
                 ",[]" +
                 ",[[]]" +
-                ",\"{}\",\"{CRLF}\",+,-,\" *\",/,?,\"\\ \",\"|\",\"||\",(),CopyVertexValue,RedirectEdgeToVertex,AddEdges,DeleteEdges" +
+                ",\"{}\",\"{CRLF}\",+,-,\" *\",/,?,\"\\ \",\"|\",\"||\",(),CopyVertexValue,RedirectLeftEdgesToRightVertexes,AddLeftEdgesToRightVertexes,AddRightEdgesIntoLeftEdges,DeleteRightVertexes,DeleteRightEdgesFromLeftEdges,DeleteRightVertexesFromLeftEdges" +
                 ",Action,Return{Expression},NextOut{Next{$MinCardinality:0,$MaxCardinality:1}}" +
                 ",StackFrameCreator{Do{$MinCardinality:0,$MaxCardinality:1},Variable{$MinCardinality:0,$MaxCardinality:-1},Type{$MinCardinality:0,$MaxCardinality:-1}}" +
                 ",StackFrameCreatorWithInputOutput{Output{$MinCardinality:0,$MaxCardinality:1},InputParameter{$MinCardinality:0,$MaxCardinality:-1}}" +
@@ -382,9 +382,12 @@ namespace m0
             // operators
 
             AddDotNetEndPoint(smu.Get(false, "CopyVertexValue"), "CopyVertexValue");
-            AddDotNetEndPoint(smu.Get(false, "RedirectEdgeToVertex"), "RedirectEdgeToVertex");
-            AddDotNetEndPoint(smu.Get(false, "AddEdges"), "AddEdges");
-            AddDotNetEndPoint(smu.Get(false, "DeleteEdges"), "DeleteEdges");
+            AddDotNetEndPoint(smu.Get(false, "RedirectLeftEdgesToRightVertexes"), "RedirectLeftEdgesToRightVertexes");
+            AddDotNetEndPoint(smu.Get(false, "AddLeftEdgesToRightVertexes"), "AddLeftEdgesToRightVertexes");
+            AddDotNetEndPoint(smu.Get(false, "AddRightEdgesIntoLeftEdges"), "AddRightEdgesIntoLeftEdges");
+            AddDotNetEndPoint(smu.Get(false, "DeleteRightVertexes"), "DeleteRightVertexes");
+            AddDotNetEndPoint(smu.Get(false, "DeleteRightEdgesFromLeftEdges"), "DeleteRightEdgesFromLeftEdges");
+            AddDotNetEndPoint(smu.Get(false, "DeleteRightVertexesFromLeftEdges"), "DeleteRightVertexesFromLeftEdges");
 
             // StackFrameCreator
 
@@ -428,9 +431,12 @@ namespace m0
             smu.Get(false, "\"||\"").AddEdge(sm.Get(false, "*$Inherits"), smu.Get(false, "DoubleOperator"));
             smu.Get(false, @"()").AddEdge(sm.Get(false, "*$Inherits"), smu.Get(false, "SingleNestedOperator"));
             smu.Get(false, @"CopyVertexValue").AddEdge(sm.Get(false, "*$Inherits"), smu.Get(false, "DoubleOperator"));
-            smu.Get(false, @"RedirectEdgeToVertex").AddEdge(sm.Get(false, "*$Inherits"), smu.Get(false, "DoubleOperator"));
-            smu.Get(false, @"AddEdges").AddEdge(sm.Get(false, "*$Inherits"), smu.Get(false, "DoubleOperator"));
-            smu.Get(false, @"DeleteEdges").AddEdge(sm.Get(false, "*$Inherits"), smu.Get(false, "DoubleOperator"));
+            smu.Get(false, @"RedirectLeftEdgesToRightVertexes").AddEdge(sm.Get(false, "*$Inherits"), smu.Get(false, "DoubleOperator"));
+            smu.Get(false, @"AddLeftEdgesToRightVertexes").AddEdge(sm.Get(false, "*$Inherits"), smu.Get(false, "DoubleOperator"));
+            smu.Get(false, @"AddRightEdgesIntoLeftEdges").AddEdge(sm.Get(false, "*$Inherits"), smu.Get(false, "DoubleOperator"));
+            smu.Get(false, @"DeleteRightVertexes").AddEdge(sm.Get(false, "*$Inherits"), smu.Get(false, "DoubleOperator"));
+            smu.Get(false, @"DeleteRightEdgesFromLeftEdges").AddEdge(sm.Get(false, "*$Inherits"), smu.Get(false, "DoubleOperator"));
+            smu.Get(false, @"DeleteRightVertexesFromLeftEdges").AddEdge(sm.Get(false, "*$Inherits"), smu.Get(false, "DoubleOperator"));
 
             // rest inherits
             smu.Get(false, @"Action").AddEdge(sm.Get(false, "*$Inherits"), smu.Get(false, "Atom"));
@@ -544,9 +550,12 @@ namespace m0
             package.AddEdge(null, smu.Get(false, "\"||\""));
             package.AddEdge(null, smu.Get(false, "()"));
             package.AddEdge(null, smu.Get(false, "CopyVertexValue"));
-            package.AddEdge(null, smu.Get(false, "RedirectEdgeToVertex"));
-            package.AddEdge(null, smu.Get(false, "AddEdges"));
-            package.AddEdge(null, smu.Get(false, "DeleteEdges"));
+            package.AddEdge(null, smu.Get(false, "RedirectLeftEdgesToRightVertexes"));
+            package.AddEdge(null, smu.Get(false, "AddLeftEdgesToRightVertexes"));
+            package.AddEdge(null, smu.Get(false, "AddRightEdgesIntoLeftEdges"));
+            package.AddEdge(null, smu.Get(false, "DeleteRightVertexes"));
+            package.AddEdge(null, smu.Get(false, "DeleteRightEdgesFromLeftEdges"));
+            package.AddEdge(null, smu.Get(false, "DeleteRightVertexesFromLeftEdges"));
             package.AddEdge(null, smu.Get(false, "Section"));
             package.AddEdge(null, smu.Get(false, "Function"));
             package.AddEdge(null, smu.Get(false, "If"));
@@ -560,7 +569,7 @@ namespace m0
         void CreateSystemFormalTextLanguegeZeroCode_Keywords()
         {
             IVertex zc = Root.Get(false, @"System\FormalTextLanguage\ZeroCode");
-            IVertex k=zc.AddVertex(Root.Get(false, @"System\Meta\ZeroTypes\FormalTextLanguage\Keywords"), "");
+            IVertex k = zc.AddVertex(Root.Get(false, @"System\Meta\ZeroTypes\FormalTextLanguage\Keywords"), "");
 
 
             IVertex smu = Root.Get(false, @"System\Meta\ZeroUML");
@@ -568,10 +577,10 @@ namespace m0
 
             IVertex keyword = smb.Get(false, @"$Keyword");
             IVertex keywordGroup = smb.Get(false, @"$$KeywordGroup");
-            IVertex keywordGroupDefinition = smb.Get(false, @"$KeywordGroupDefinition");            
+            IVertex keywordGroupDefinition = smb.Get(false, @"$KeywordGroupDefinition");
 
             IVertex kgd_ColonEmptyInner2SlashMarkNew = k.AddVertex(keywordGroupDefinition, "ColonEmptyInner2SlashMarkNew");
-            IVertex kgd_ColonEmptyInner2SlashMark = k.AddVertex(keywordGroupDefinition, "ColonEmptyInner2SlashMark");            
+            IVertex kgd_ColonEmptyInner2SlashMark = k.AddVertex(keywordGroupDefinition, "ColonEmptyInner2SlashMark");
             IVertex kgd_Empty2Inner = k.AddVertex(keywordGroupDefinition, "Empty2Inner");
             IVertex kgd_InnerCreation = k.AddVertex(keywordGroupDefinition, "InnerCreation");
             IVertex kgd_SlashMark = k.AddVertex(keywordGroupDefinition, "SlashMark");
@@ -581,7 +590,7 @@ namespace m0
             IVertex isAggregation = root.Get(false, @"System\Meta\Base\Vertex\$IsAggregation");
             IVertex empty = root.Get(false, @"System\Meta\Base\$Empty");
             IVertex _is = root.Get(false, @"System\Meta\Base\Vertex\$Is");
-            
+
 
             IVertex any = k.AddVertex(null, "(?<ANY>)");
 
@@ -590,130 +599,130 @@ namespace m0
             IVertex nonSelfRecursiveParameters = smb.Get(false, @"$$NonSelfRecursiveParameters");
 
             string anyString = "(?<ANY>)";
-            
+
             // import meta
             //
             // import meta (?<name>) (?<link>)
-            
-             IVertex importMeta = k.AddVertex(keyword, "import meta (?<name>) (?<link>)");
 
-             IVertex importMeta_name=importMeta.AddVertex(smb.Get(false, @"$ImportMeta"), "(?<name>)");
+            IVertex importMeta = k.AddVertex(keyword, "import meta (?<name>) (?<link>)");
 
-             importMeta.AddVertex(importMeta_name, "(?<link>)");
+            IVertex importMeta_name = importMeta.AddVertex(smb.Get(false, @"$ImportMeta"), "(?<name>)");
 
-
-             // import
-             //
-             // import (?<name>) (?<link>)
-
-             IVertex import = k.AddVertex(keyword, "import (?<name>) (?<link>)");
-
-             IVertex import_name = import.AddVertex(smb.Get(false, @"$Import"), "(?<name>)");
-
-             import.AddVertex(import_name, "(?<link>)");
-
-             // import direct 
-             //
-             // import direct  (?<link>)
-
-             IVertex importDirect = k.AddVertex(keyword, "import direct (?<link>)");
-
-             IVertex importDirect_link = importDirect.AddVertex(smb.Get(false, @"$Direct"), "(?<link>)");
+            importMeta.AddVertex(importMeta_name, "(?<link>)");
 
 
-             // import direct meta
-             //
-             // import direct meta (?<link>)
+            // import
+            //
+            // import (?<name>) (?<link>)
 
-             IVertex importDirectMeta = k.AddVertex(keyword, "import direct meta (?<link>)");
+            IVertex import = k.AddVertex(keyword, "import (?<name>) (?<link>)");
 
-             IVertex importDirectMeta_link = importDirectMeta.AddVertex(smb.Get(false, @"$DirectMeta"), "(?<link>)");
+            IVertex import_name = import.AddVertex(smb.Get(false, @"$Import"), "(?<name>)");
 
-            
-             // comment
-             //
-             // # (?<text>)
+            import.AddVertex(import_name, "(?<link>)");
 
-             IVertex comment = k.AddVertex(keyword, "# (?<text>)");
+            // import direct 
+            //
+            // import direct  (?<link>)
 
-             comment.AddVertex(smb.Get(false, @"Vertex\$Description"), "(?<text>)");
+            IVertex importDirect = k.AddVertex(keyword, "import direct (?<link>)");
 
-            
-             // attribute
-             //
-             // attribute (?<name>) (?<type>) (?<MinCardinality>):(?<MaxCardinality>) <(?<MinValue>):(?<MaxValue>)>
-
-             IVertex attribute3 = k.AddVertex(keyword, "attribute (?<name>) (?<type>) (?<MinCardinality>):(?<MaxCardinality>) <(?<MinValue>):(?<MaxValue>)>");
+            IVertex importDirect_link = importDirect.AddVertex(smb.Get(false, @"$Direct"), "(?<link>)");
 
 
-             IVertex attribute3_attribute = attribute3.AddVertex(smu.Get(false, @"Class\Attribute"), "(?<name>)");
+            // import direct meta
+            //
+            // import direct meta (?<link>)
 
-             attribute3_attribute.AddVertex(smb.Get(false, @"Vertex\$EdgeTarget"), "(?<type>)");
+            IVertex importDirectMeta = k.AddVertex(keyword, "import direct meta (?<link>)");
 
-             attribute3_attribute.AddVertex(smu.Get(false, @"Class\Attribute\MinValue"), "(?<MinValue>)");
-
-             attribute3_attribute.AddVertex(smu.Get(false, @"Class\Attribute\MaxValue"), "(?<MaxValue>)");
-
-             attribute3_attribute.AddVertex(smb.Get(false, @"Vertex\$MinCardinality"), "(?<MinCardinality>)");
-
-             attribute3_attribute.AddVertex(smb.Get(false, @"Vertex\$MaxCardinality"), "(?<MaxCardinality>)");
-
-             attribute3_attribute.AddEdge(isAggregation, empty);
-
-             attribute3_attribute.AddEdge(_is, smu.Get(false, @"Class\Attribute"));
-
-             // attribute
-             //
-             // attribute (?<name>) (?<type>) (?<MinCardinality>):(?<MaxCardinality>) 
-
-             IVertex attribute4 = k.AddVertex(keyword, "attribute (?<name>) (?<type>) (?<MinCardinality>):(?<MaxCardinality>)");
+            IVertex importDirectMeta_link = importDirectMeta.AddVertex(smb.Get(false, @"$DirectMeta"), "(?<link>)");
 
 
-             IVertex attribute4_attribute = attribute4.AddVertex(smu.Get(false, @"Class\Attribute"), "(?<name>)");
+            // comment
+            //
+            // # (?<text>)
 
-             attribute4_attribute.AddVertex(smb.Get(false, @"Vertex\$EdgeTarget"), "(?<type>)");
+            IVertex comment = k.AddVertex(keyword, "# (?<text>)");
 
-             attribute4_attribute.AddVertex(smb.Get(false, @"Vertex\$MinCardinality"), "(?<MinCardinality>)");
-
-             attribute4_attribute.AddVertex(smb.Get(false, @"Vertex\$MaxCardinality"), "(?<MaxCardinality>)");
-
-             attribute4_attribute.AddEdge(isAggregation, empty);
-
-             attribute4_attribute.AddEdge(_is, smu.Get(false, @"Class\Attribute"));
+            comment.AddVertex(smb.Get(false, @"Vertex\$Description"), "(?<text>)");
 
 
-             // attribute
-             //
-             // attribute (?<name>) (?<type>) <(?<MinValue>):(?<MaxValue>)>
+            // attribute
+            //
+            // attribute (?<name>) (?<type>) (?<MinCardinality>):(?<MaxCardinality>) <(?<MinValue>):(?<MaxValue>)>
 
-             IVertex attribute2 = k.AddVertex(keyword, "attribute (?<name>) (?<type>) <(?<xMinValue>):(?<MaxValue>)>");
+            IVertex attribute3 = k.AddVertex(keyword, "attribute (?<name>) (?<type>) (?<MinCardinality>):(?<MaxCardinality>) <(?<MinValue>):(?<MaxValue>)>");
 
 
-             IVertex attribute2_attribute = attribute2.AddVertex(smu.Get(false, @"Class\Attribute"), "(?<name>)");
+            IVertex attribute3_attribute = attribute3.AddVertex(smu.Get(false, @"Class\Attribute"), "(?<name>)");
 
-             attribute2_attribute.AddVertex(smb.Get(false, @"Vertex\$EdgeTarget"), "(?<type>)");
+            attribute3_attribute.AddVertex(smb.Get(false, @"Vertex\$EdgeTarget"), "(?<type>)");
 
-             attribute2_attribute.AddVertex(smu.Get(false, @"Class\Attribute\MinValue"), "(?<xMinValue>)");
+            attribute3_attribute.AddVertex(smu.Get(false, @"Class\Attribute\MinValue"), "(?<MinValue>)");
 
-             attribute2_attribute.AddVertex(smu.Get(false, @"Class\Attribute\MaxValue"), "(?<MaxValue>)");
+            attribute3_attribute.AddVertex(smu.Get(false, @"Class\Attribute\MaxValue"), "(?<MaxValue>)");
 
-             attribute2_attribute.AddEdge(isAggregation, empty);
+            attribute3_attribute.AddVertex(smb.Get(false, @"Vertex\$MinCardinality"), "(?<MinCardinality>)");
 
-             attribute2_attribute.AddEdge(_is, smu.Get(false, @"Class\Attribute"));
-             
-             // attribute
-             //
-             // attribute (?<name>) (?<type>)
+            attribute3_attribute.AddVertex(smb.Get(false, @"Vertex\$MaxCardinality"), "(?<MaxCardinality>)");
 
-             IVertex attribute = k.AddVertex(keyword, "attribute (?<name>) (?<type>)");
+            attribute3_attribute.AddEdge(isAggregation, empty);
 
-             IVertex attribute_attribute = attribute.AddVertex(smu.Get(false, @"Class\Attribute"), "(?<name>)");
+            attribute3_attribute.AddEdge(_is, smu.Get(false, @"Class\Attribute"));
 
-             attribute_attribute.AddVertex(smb.Get(false, @"Vertex\$EdgeTarget"), "(?<type>)");
+            // attribute
+            //
+            // attribute (?<name>) (?<type>) (?<MinCardinality>):(?<MaxCardinality>) 
 
-             attribute_attribute.AddEdge(isAggregation, empty);
+            IVertex attribute4 = k.AddVertex(keyword, "attribute (?<name>) (?<type>) (?<MinCardinality>):(?<MaxCardinality>)");
 
-             attribute_attribute.AddEdge(_is, smu.Get(false, @"Class\Attribute"));
+
+            IVertex attribute4_attribute = attribute4.AddVertex(smu.Get(false, @"Class\Attribute"), "(?<name>)");
+
+            attribute4_attribute.AddVertex(smb.Get(false, @"Vertex\$EdgeTarget"), "(?<type>)");
+
+            attribute4_attribute.AddVertex(smb.Get(false, @"Vertex\$MinCardinality"), "(?<MinCardinality>)");
+
+            attribute4_attribute.AddVertex(smb.Get(false, @"Vertex\$MaxCardinality"), "(?<MaxCardinality>)");
+
+            attribute4_attribute.AddEdge(isAggregation, empty);
+
+            attribute4_attribute.AddEdge(_is, smu.Get(false, @"Class\Attribute"));
+
+
+            // attribute
+            //
+            // attribute (?<name>) (?<type>) <(?<MinValue>):(?<MaxValue>)>
+
+            IVertex attribute2 = k.AddVertex(keyword, "attribute (?<name>) (?<type>) <(?<xMinValue>):(?<MaxValue>)>");
+
+
+            IVertex attribute2_attribute = attribute2.AddVertex(smu.Get(false, @"Class\Attribute"), "(?<name>)");
+
+            attribute2_attribute.AddVertex(smb.Get(false, @"Vertex\$EdgeTarget"), "(?<type>)");
+
+            attribute2_attribute.AddVertex(smu.Get(false, @"Class\Attribute\MinValue"), "(?<xMinValue>)");
+
+            attribute2_attribute.AddVertex(smu.Get(false, @"Class\Attribute\MaxValue"), "(?<MaxValue>)");
+
+            attribute2_attribute.AddEdge(isAggregation, empty);
+
+            attribute2_attribute.AddEdge(_is, smu.Get(false, @"Class\Attribute"));
+
+            // attribute
+            //
+            // attribute (?<name>) (?<type>)
+
+            IVertex attribute = k.AddVertex(keyword, "attribute (?<name>) (?<type>)");
+
+            IVertex attribute_attribute = attribute.AddVertex(smu.Get(false, @"Class\Attribute"), "(?<name>)");
+
+            attribute_attribute.AddVertex(smb.Get(false, @"Vertex\$EdgeTarget"), "(?<type>)");
+
+            attribute_attribute.AddEdge(isAggregation, empty);
+
+            attribute_attribute.AddEdge(_is, smu.Get(false, @"Class\Attribute"));
 
             // variable
             //
@@ -754,172 +763,164 @@ namespace m0
             IVertex association2 = k.AddVertex(keyword, "association (?<name>) (?<type>) (?<MinCardinality>):(?<MaxCardinality>)");
 
 
-             IVertex association2_association = association2.AddVertex(smu.Get(false, @"Class\Association"), "(?<name>)");
+            IVertex association2_association = association2.AddVertex(smu.Get(false, @"Class\Association"), "(?<name>)");
 
-             association2_association.AddVertex(smb.Get(false, @"Vertex\$MinCardinality"), "(?<MinCardinality>)");
+            association2_association.AddVertex(smb.Get(false, @"Vertex\$MinCardinality"), "(?<MinCardinality>)");
 
-             association2_association.AddVertex(smb.Get(false, @"Vertex\$MaxCardinality"), "(?<MaxCardinality>)");
+            association2_association.AddVertex(smb.Get(false, @"Vertex\$MaxCardinality"), "(?<MaxCardinality>)");
 
-             association2_association.AddVertex(smb.Get(false, @"Vertex\$EdgeTarget"), "(?<type>)");
+            association2_association.AddVertex(smb.Get(false, @"Vertex\$EdgeTarget"), "(?<type>)");
 
-             association2_association.AddEdge(_is, smu.Get(false, @"Class\Association"));
-
-
-             // aassociation
-             //
-             // association (?<name>) (?<type>)
-
-             IVertex association = k.AddVertex(keyword, "association (?<name>) (?<type>)");
+            association2_association.AddEdge(_is, smu.Get(false, @"Class\Association"));
 
 
-             IVertex association_association = association.AddVertex(smu.Get(false, @"Class\Association"), "(?<name>)");
+            // aassociation
+            //
+            // association (?<name>) (?<type>)
 
-             association_association.AddVertex(smb.Get(false, @"Vertex\$EdgeTarget"), "(?<type>)");
-
-             association_association.AddEdge(_is, smu.Get(false, @"Class\Association"));
-
-             // aggregation
-             //
-             // aggregation (?<name>) (?<type>) (?<MinCardinality>):(?<MaxCardinality>)
-
-             IVertex aggregation2 = k.AddVertex(keyword, "aggregation (?<name>) (?<type>) (?<MinCardinality>):(?<MaxCardinality>)");
+            IVertex association = k.AddVertex(keyword, "association (?<name>) (?<type>)");
 
 
-             IVertex aggregation2_aggregation = aggregation2.AddVertex(smu.Get(false, @"Class\Aggregation"), "(?<name>)");
+            IVertex association_association = association.AddVertex(smu.Get(false, @"Class\Association"), "(?<name>)");
 
-             aggregation2_aggregation.AddVertex(smb.Get(false, @"Vertex\$MinCardinality"), "(?<MinCardinality>)");
+            association_association.AddVertex(smb.Get(false, @"Vertex\$EdgeTarget"), "(?<type>)");
 
-             aggregation2_aggregation.AddVertex(smb.Get(false, @"Vertex\$MaxCardinality"), "(?<MaxCardinality>)");
+            association_association.AddEdge(_is, smu.Get(false, @"Class\Association"));
 
-             aggregation2_aggregation.AddVertex(smb.Get(false, @"Vertex\$EdgeTarget"), "(?<type>)");
+            // aggregation
+            //
+            // aggregation (?<name>) (?<type>) (?<MinCardinality>):(?<MaxCardinality>)
 
-             aggregation2_aggregation.AddEdge(_is, smu.Get(false, @"Class\Aggregation"));
-
-
-             // aggregation
-             //
-             // aggregation (?<name>) (?<type>)
-
-             IVertex aggregation = k.AddVertex(keyword, "aggregation (?<name>) (?<type>)");
+            IVertex aggregation2 = k.AddVertex(keyword, "aggregation (?<name>) (?<type>) (?<MinCardinality>):(?<MaxCardinality>)");
 
 
-             IVertex aggregation_aggregation = aggregation.AddVertex(smu.Get(false, @"Class\Aggregation"), "(?<name>)");
+            IVertex aggregation2_aggregation = aggregation2.AddVertex(smu.Get(false, @"Class\Aggregation"), "(?<name>)");
 
-             aggregation_aggregation.AddVertex(smb.Get(false, @"Vertex\$EdgeTarget"), "(?<type>)");
+            aggregation2_aggregation.AddVertex(smb.Get(false, @"Vertex\$MinCardinality"), "(?<MinCardinality>)");
 
-             aggregation_aggregation.AddEdge(_is, smu.Get(false, @"Class\Aggregation"));
+            aggregation2_aggregation.AddVertex(smb.Get(false, @"Vertex\$MaxCardinality"), "(?<MaxCardinality>)");
 
-             // function
-             //
-             // function (?<name>) (?<returnType>) [(*(+, +)(?<paramType>) (?<paramName>)*)]
+            aggregation2_aggregation.AddVertex(smb.Get(false, @"Vertex\$EdgeTarget"), "(?<type>)");
 
-             IVertex function = k.AddVertex(keyword, "function (?<name>) (?<returnType>)[(*(+, +)(?<paramType>) (?<paramName>)*)]");
+            aggregation2_aggregation.AddEdge(_is, smu.Get(false, @"Class\Aggregation"));
 
 
-             IVertex function_function = function.AddVertex(smu.Get(false, @"Function"), "(?<name>)");
+            // aggregation
+            //
+            // aggregation (?<name>) (?<type>)
 
-             function_function.AddEdge(smb.Get(false, @"Vertex\$Is"), smu.Get(false, "Function"));
+            IVertex aggregation = k.AddVertex(keyword, "aggregation (?<name>) (?<type>)");
 
-             function_function.AddVertex(smu.Get(false, @"Function\Output"), "(?<returnType>)");
 
-             IVertex ffip = function_function.AddVertex(smu.Get(false, @"Function\InputParameter"), "(?<paramName>)");
+            IVertex aggregation_aggregation = aggregation.AddVertex(smu.Get(false, @"Class\Aggregation"), "(?<name>)");
 
-             ffip.AddVertex(smb.Get(false, @"Vertex\$VertexTarget"), "(?<paramType>)");
+            aggregation_aggregation.AddVertex(smb.Get(false, @"Vertex\$EdgeTarget"), "(?<type>)");
 
-             ffip.AddEdge(smb.Get(false, @"$$KeywordManyRoot"), smb.Get(false, @"$Empty"));
-            
-            
+            aggregation_aggregation.AddEdge(_is, smu.Get(false, @"Class\Aggregation"));
+
+            // function
+            //
+            // function (?<name>) (?<returnType>) [(*(+, +)(?<paramType>) (?<paramName>)*)]
+
+            IVertex function = k.AddVertex(keyword, "function (?<name>) (?<returnType>)[(*(+, +)(?<paramType>) (?<paramName>)*)]");
+
+
+            IVertex function_function = function.AddVertex(smu.Get(false, @"Function"), "(?<name>)");
+
+            function_function.AddEdge(smb.Get(false, @"Vertex\$Is"), smu.Get(false, "Function"));
+
+            function_function.AddVertex(smu.Get(false, @"Function\Output"), "(?<returnType>)");
+
+            IVertex ffip = function_function.AddVertex(smu.Get(false, @"Function\InputParameter"), "(?<paramName>)");
+
+            ffip.AddVertex(smb.Get(false, @"Vertex\$VertexTarget"), "(?<paramType>)");
+
+            ffip.AddEdge(smb.Get(false, @"$$KeywordManyRoot"), smb.Get(false, @"$Empty"));
+
+
             // function
             //
             // function (?<name>) [(*(+, +)(?<paramType>) (?<paramName>)*)]
 
-             IVertex function2 = k.AddVertex(keyword, "function (?<name>) [(*(+, +)(?<paramType>) (?<paramName>)*)]");
+            IVertex function2 = k.AddVertex(keyword, "function (?<name>) [(*(+, +)(?<paramType>) (?<paramName>)*)]");
 
-             IVertex function2_function = function2.AddVertex(smu.Get(false, @"Function"), "(?<name>)");
+            IVertex function2_function = function2.AddVertex(smu.Get(false, @"Function"), "(?<name>)");
 
-             function2_function.AddEdge(smb.Get(false, @"Vertex\$Is"), smu.Get(false, "Function"));
+            function2_function.AddEdge(smb.Get(false, @"Vertex\$Is"), smu.Get(false, "Function"));
 
-             IVertex f2fip = function2_function.AddVertex(smu.Get(false, @"Function\InputParameter"), "(?<paramName>)");
+            IVertex f2fip = function2_function.AddVertex(smu.Get(false, @"Function\InputParameter"), "(?<paramName>)");
 
-             f2fip.AddVertex(smb.Get(false, @"Vertex\$VertexTarget"), "(?<paramType>)");            
+            f2fip.AddVertex(smb.Get(false, @"Vertex\$VertexTarget"), "(?<paramType>)");
 
-             f2fip.AddEdge(smb.Get(false, @"$$KeywordManyRoot"),smb.Get(false, @"$Empty"));                        
-            
-             // while
-             //
-             // while ((?<test>))
+            f2fip.AddEdge(smb.Get(false, @"$$KeywordManyRoot"), smb.Get(false, @"$Empty"));
 
-             IVertex wh = k.AddVertex(keyword, "while (?<test>)");
+            // while
+            //
+            // while ((?<test>))
 
-             IVertex whwh = wh.AddVertex(smu.Get(false, @"While"), "");
+            IVertex wh = k.AddVertex(keyword, "while (?<test>)");
 
-             whwh.AddEdge(smb.Get(false, @"Vertex\$Is"), smu.Get(false, "While"));
+            IVertex whwh = wh.AddVertex(smu.Get(false, @"While"), "");
 
-             whwh.AddVertex(smu.Get(false, @"While\Test"), "(?<test>)");
+            whwh.AddEdge(smb.Get(false, @"Vertex\$Is"), smu.Get(false, "While"));
+
+            whwh.AddVertex(smu.Get(false, @"While\Test"), "(?<test>)");
 
 
             /////////////////////////////////////////////////////////
             //
-            // copy / sub graph add / sub graph substract operators
+            // graph algebra operators
+            //
+            // := CopyVertexValue
+            // =  RedirectLeftEdgesToRightVertexes
+            // += AddLeftEdgesToRightVertexes
+            // +< AddRightEdgesIntoLeftEdges
+            // ~= DeleteRightVertexes
+            // -< DeleteRightEdgesFromLeftEdges
+            // ~< DeleteRightVertexesFromLeftEdges
             //
             ////////////////////////////////////////////////////////
+
+            // :=
+            //
+            // (?<left>) := (?<right>)
+            AddLeftRightOperator(k, smu, smb, keyword, any, "(?<left>) :=(?<SUB>)(?<right>)", "CopyVertexValue");
 
             // =
             //
             // (?<left>) = (?<right>)
 
-            IVertex o_copy = k.AddVertex(keyword, "(?<left>) =(?<SUB>) (?<right>)");
+            AddLeftRightOperator(k, smu, smb, keyword, any, "(?<left>) =(?<SUB>) (?<right>)", "RedirectLeftEdgesToRightVertexes");
 
-            IVertex o_copy_any = o_copy.AddVertex(any, "");
-
-            o_copy_any.AddEdge(smb.Get(false, @"Vertex\$Is"), smu.Get(false, "CopyVertexValue"));
-
-            o_copy_any.AddVertex(smu.Get(false, @"DoubleOperator\LeftExpression"), "(?<left>)");
-
-            o_copy_any.AddVertex(smu.Get(false, @"DoubleOperator\RightExpression"), "(?<right>)");
-
-            // <-
+            // +=
             //
-            // (?<left>) <- (?<right>)
+            // (?<left>) += (?<right>)
 
-            IVertex o_redirect = k.AddVertex(keyword, "(?<left>) <-(?<SUB>) (?<right>)");
+            AddLeftRightOperator(k, smu, smb, keyword, any, "(?<left>) +=(?<SUB>) (?<right>)", "AddLeftEdgesToRightVertexes");
 
-            IVertex o_redirect_any = o_redirect.AddVertex(any, "");
-
-            o_redirect_any.AddEdge(smb.Get(false, @"Vertex\$Is"), smu.Get(false, "RedirectEdgeToVertex"));
-
-            o_redirect_any.AddVertex(smu.Get(false, @"DoubleOperator\LeftExpression"), "(?<left>)");
-
-            o_redirect_any.AddVertex(smu.Get(false, @"DoubleOperator\RightExpression"), "(?<right>)");
-
-            // <-+
+            // +<
             //
-            // (?<left>) <-+ (?<right>)
+            // (?<left>) +< (?<right>)
 
-            IVertex o_graphAdd = k.AddVertex(keyword, "(?<left>) <-+(?<SUB>) (?<right>)");
+            AddLeftRightOperator(k, smu, smb, keyword, any, "(?<left>) +<(?<SUB>) (?<right>)", "AddRightEdgesIntoLeftEdges");
 
-            IVertex o_graphAdd_any = o_graphAdd.AddVertex(any, "");
-
-            o_graphAdd_any.AddEdge(smb.Get(false, @"Vertex\$Is"), smu.Get(false, "AddEdges")); 
-
-            o_graphAdd_any.AddVertex(smu.Get(false, @"DoubleOperator\LeftExpression"), "(?<left>)");
-
-            o_graphAdd_any.AddVertex(smu.Get(false, @"DoubleOperator\RightExpression"), "(?<right>)");
-
-            // <--
+            // ~=
             //
-            // (?<left>) <-- (?<right>)
+            // (?<left>) ~= (?<right>)
 
-            IVertex o_graphSubstract = k.AddVertex(keyword, "(?<left>) <--(?<SUB>) (?<right>)");
+            AddLeftRightOperator(k, smu, smb, keyword, any, "(?<left>) ~=(?<SUB>) (?<right>)", "DeleteRightVertexes");
 
-            IVertex o_graphSubstract_any = o_graphSubstract.AddVertex(any, "");
+            // -<
+            //
+            // (?<left>) -< (?<right>)
 
-            o_graphSubstract_any.AddEdge(smb.Get(false, @"Vertex\$Is"), smu.Get(false, "DeleteEdges")); 
+            AddLeftRightOperator(k, smu, smb, keyword, any, "(?<left>) -<(?<SUB>) (?<right>)", "DeleteRightEdgesFromLeftEdges");
 
-            o_graphSubstract_any.AddVertex(smu.Get(false, @"DoubleOperator\LeftExpression"), "(?<left>)");
+            // ~<
+            //
+            // (?<left>) ~< (?<right>)
 
-            o_graphSubstract_any.AddVertex(smu.Get(false, @"DoubleOperator\RightExpression"), "(?<right>)");
-
+            AddLeftRightOperator(k, smu, smb, keyword, any, "(?<left>) ~<(?<SUB>) (?<right>)", "DeleteRightVertexesFromLeftEdges");
 
             /////////////////////////////////////////////////////////
             //
@@ -936,55 +937,55 @@ namespace m0
             //IVertex o_plus = smuk.AddVertex(keyword, "(?<left>) + (?<right>)");
             IVertex o_plus_any = o_plus.AddVertex(any, "");
 
-             o_plus_any.AddEdge(smb.Get(false, @"Vertex\$Is"), smu.Get(false, "+"));
+            o_plus_any.AddEdge(smb.Get(false, @"Vertex\$Is"), smu.Get(false, "+"));
 
-             o_plus_any.AddVertex(smu.Get(false, @"DoubleOperator\LeftExpression"), "(?<left>)");
+            o_plus_any.AddVertex(smu.Get(false, @"DoubleOperator\LeftExpression"), "(?<left>)");
 
-             o_plus_any.AddVertex(smu.Get(false, @"DoubleOperator\RightExpression"), "(?<right>)");
-            
+            o_plus_any.AddVertex(smu.Get(false, @"DoubleOperator\RightExpression"), "(?<right>)");
+
             // -
             //
             // (?<left>) - (?<right>)
 
-            IVertex o_minus = k.AddVertex(keyword, "(?<left>) -(?<SUB>) (?<right>)");             
+            IVertex o_minus = k.AddVertex(keyword, "(?<left>) -(?<SUB>) (?<right>)");
 
-             IVertex o_minus_any = o_minus.AddVertex(any, "");
+            IVertex o_minus_any = o_minus.AddVertex(any, "");
 
-             o_minus_any.AddEdge(smb.Get(false, @"Vertex\$Is"), smu.Get(false, "-"));
+            o_minus_any.AddEdge(smb.Get(false, @"Vertex\$Is"), smu.Get(false, "-"));
 
-             o_minus_any.AddVertex(smu.Get(false, @"DoubleOperator\LeftExpression"), "(?<left>)");
+            o_minus_any.AddVertex(smu.Get(false, @"DoubleOperator\LeftExpression"), "(?<left>)");
 
-             o_minus_any.AddVertex(smu.Get(false, @"DoubleOperator\RightExpression"), "(?<right>)");
-            
-             // *
-             //
-             // (?<left>) * (?<right>)
+            o_minus_any.AddVertex(smu.Get(false, @"DoubleOperator\RightExpression"), "(?<right>)");
 
-             IVertex o_mul = k.AddVertex(keyword, "(?<left>) *(?<SUB>) (?<right>)");             
+            // *
+            //
+            // (?<left>) * (?<right>)
 
-             IVertex o_mul_any = o_mul.AddVertex(any, "");
+            IVertex o_mul = k.AddVertex(keyword, "(?<left>) *(?<SUB>) (?<right>)");
 
-             //o_mul_any.AddEdge(smb.Get(false, @"Vertex\$Is"), smu.Get(false, " *"));
+            IVertex o_mul_any = o_mul.AddVertex(any, "");
 
-             o_mul_any.AddVertex(smb.Get(false, @"Vertex\$Is"), "*"); // TO BE CORRECTED
+            //o_mul_any.AddEdge(smb.Get(false, @"Vertex\$Is"), smu.Get(false, " *"));
 
-             o_mul_any.AddVertex(smu.Get(false, @"DoubleOperator\LeftExpression"), "(?<left>)");
+            o_mul_any.AddVertex(smb.Get(false, @"Vertex\$Is"), "*"); // TO BE CORRECTED
 
-             o_mul_any.AddVertex(smu.Get(false, @"DoubleOperator\RightExpression"), "(?<right>)");
+            o_mul_any.AddVertex(smu.Get(false, @"DoubleOperator\LeftExpression"), "(?<left>)");
 
-             // /
-             //
-             // (?<left>) / (?<right>)
+            o_mul_any.AddVertex(smu.Get(false, @"DoubleOperator\RightExpression"), "(?<right>)");
 
-             IVertex o_div = k.AddVertex(keyword, "(?<left>) /(?<SUB>) (?<right>)");
-             
-             IVertex o_div_any = o_div.AddVertex(any, "");
+            // /
+            //
+            // (?<left>) / (?<right>)
 
-             o_div_any.AddEdge(smb.Get(false, @"Vertex\$Is"), smu.Get(false, "/"));
+            IVertex o_div = k.AddVertex(keyword, "(?<left>) /(?<SUB>) (?<right>)");
 
-             o_div_any.AddVertex(smu.Get(false, @"DoubleOperator\LeftExpression"), "(?<left>)");
+            IVertex o_div_any = o_div.AddVertex(any, "");
 
-             o_div_any.AddVertex(smu.Get(false, @"DoubleOperator\RightExpression"), "(?<right>)");
+            o_div_any.AddEdge(smb.Get(false, @"Vertex\$Is"), smu.Get(false, "/"));
+
+            o_div_any.AddVertex(smu.Get(false, @"DoubleOperator\LeftExpression"), "(?<left>)");
+
+            o_div_any.AddVertex(smu.Get(false, @"DoubleOperator\RightExpression"), "(?<right>)");
 
             /////////////////////////////////////////////////////////////////////////////////////////////////////////////
             /////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -996,7 +997,7 @@ namespace m0
             /////////////////////////////////////////////////////////////////////////////////////////////////////////////
             /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-           
+
             // :: /1
             //
             // (?<left_ColonEmptyNew>)||(?<SUB>)(?<right_ColonEmptyNew>)                         
@@ -1007,7 +1008,7 @@ namespace m0
 
             o_doubleColon.AddVertex(nonSelfRecursiveParameters, "");
 
-            IVertex o_doubleColon_any = o_doubleColon.AddVertex(any, "");            
+            IVertex o_doubleColon_any = o_doubleColon.AddVertex(any, "");
 
             o_doubleColon_any.AddEdge(smb.Get(false, @"Vertex\$Is"), smu.Get(false, "||"));
 
@@ -1015,7 +1016,7 @@ namespace m0
 
             IVertex o_doubleColon_any_right = o_doubleColon_any.AddVertex(smu.Get(false, @"DoubleOperator\RightExpression"), "(?<right_ColonEmptyInner2SlashMarkNew>)");
 
-            IVertex o_doubleColon_any_targetExpr = o_doubleColon_any.AddVertex(smu.Get(false, @"SingleOperator\NextExpression"), "");            
+            IVertex o_doubleColon_any_targetExpr = o_doubleColon_any.AddVertex(smu.Get(false, @"SingleOperator\NextExpression"), "");
 
             o_doubleColon_any_targetExpr.AddEdge(smb.Get(false, "$$LocalRoot"), kgd_InnerCreation);
 
@@ -1032,13 +1033,13 @@ namespace m0
             IVertex o_doubleColon2_any = o_doubleColon2.AddVertex(any, "");
 
             o_doubleColon2_any.AddEdge(smb.Get(false, @"Vertex\$Is"), smu.Get(false, "||"));
-            
+
             IVertex o_doubleColon2_any_right = o_doubleColon2_any.AddVertex(smu.Get(false, @"DoubleOperator\RightExpression"), "(?<right_ColonEmptyInner2SlashMarkNew>)");
 
             IVertex o_doubleColon2_any_targetExpr = o_doubleColon2_any.AddVertex(smu.Get(false, @"SingleOperator\NextExpression"), "");
 
             o_doubleColon2_any_targetExpr.AddEdge(smb.Get(false, "$$LocalRoot"), kgd_InnerCreation);
-            
+
             // :: /3
             //
             // (?<left_ColonEmptyNew>)||(?<SUB>)                         
@@ -1087,7 +1088,7 @@ namespace m0
             // : /1
             //
             // (?<left_Empty2>)|(?<SUB>)(?<right_Empty2>)            
-            
+
             IVertex o_colon = k.AddVertex(keyword, "(?<left_Empty2Inner>)|(?<SUB>)(?<right_Empty2Inner>)");
 
             o_colon.AddEdge(keywordGroup, kgd_ColonEmptyInner2SlashMarkNew);
@@ -1129,12 +1130,12 @@ namespace m0
             IVertex o_colon2_any_targetExpr = o_colon2_any.AddVertex(smu.Get(false, @"SingleOperator\NextExpression"), "");
 
             o_colon2_any_targetExpr.AddEdge(smb.Get(false, "$$LocalRoot"), kgd_SlashMark);
-            
+
             // : /3
             //
             // (?<left_Empty2>)|(?<SUB>)            
 
-            IVertex o_colon3 = k.AddVertex(keyword, "(?<left_Empty2Inner>)|(?<SUB>)");            
+            IVertex o_colon3 = k.AddVertex(keyword, "(?<left_Empty2Inner>)|(?<SUB>)");
 
             o_colon3.AddEdge(keywordGroup, kgd_ColonEmptyInner2SlashMarkNew);
 
@@ -1210,33 +1211,33 @@ namespace m0
             // []
             //
             // [(*(+, +) (?<expr>)*)]
-            
+
             IVertex o_call = k.AddVertex(keyword, "[(*(+, +)(?<expr>)*)]");
 
-             IVertex o_call_any = o_call.AddVertex(any, "");
+            IVertex o_call_any = o_call.AddVertex(any, "");
 
-             o_call_any.AddEdge(smb.Get(false, @"Vertex\$Is"), smu.Get(false, "[]"));
+            o_call_any.AddEdge(smb.Get(false, @"Vertex\$Is"), smu.Get(false, "[]"));
 
-             IVertex o_call_any_param=o_call_any.AddVertex(smu.Get(false, @"MultiOperator\Expression"), "(?<expr>)");
+            IVertex o_call_any_param = o_call_any.AddVertex(smu.Get(false, @"MultiOperator\Expression"), "(?<expr>)");
 
-             o_call_any_param.AddEdge(smb.Get(false, @"$$KeywordManyRoot"), smb.Get(false, @"$Empty"));
-            
-             // ()
-             //
-             // ((?<expr>))
+            o_call_any_param.AddEdge(smb.Get(false, @"$$KeywordManyRoot"), smb.Get(false, @"$Empty"));
 
-             IVertex o_par = k.AddVertex(keyword, "((?<expr>))");            
+            // ()
+            //
+            // ((?<expr>))
 
-            IVertex o_par_any = o_par.AddVertex(any, "");            
+            IVertex o_par = k.AddVertex(keyword, "((?<expr>))");
+
+            IVertex o_par_any = o_par.AddVertex(any, "");
 
             o_par_any.AddEdge(smb.Get(false, @"Vertex\$Is"), smu.Get(false, "()"));
 
-             o_par_any.AddVertex(smu.Get(false, @"SingleNestedOperator\Expression"), "(?<expr>)");
-     
+            o_par_any.AddVertex(smu.Get(false, @"SingleNestedOperator\Expression"), "(?<expr>)");
+
             // \
             //
             // \                         
-            
+
             IVertex o_Slash = k.AddVertex(keyword, @" \ ");
 
             o_Slash.AddEdge(keywordGroup, kgd_SlashMark);
@@ -1251,9 +1252,9 @@ namespace m0
 
             o_Slash_any.AddVertex(smb.Get(false, "$$StartInLocalRoot"), "");
 
-            o_Slash_any.AddEdge(smb.Get(false, @"Vertex\$Is"), smu.Get(false, "\"\\ \""));             
+            o_Slash_any.AddEdge(smb.Get(false, @"Vertex\$Is"), smu.Get(false, "\"\\ \""));
 
-             IVertex o_Slash_any_targetExpr = o_Slash_any.AddVertex(smu.Get(false, @"SingleOperator\NextExpression"), "");
+            IVertex o_Slash_any_targetExpr = o_Slash_any.AddVertex(smu.Get(false, @"SingleOperator\NextExpression"), "");
 
             o_Slash_any_targetExpr.AddEdge(smb.Get(false, "$$LocalRoot"), kgd_ColonEmptyInner2SlashMark);
 
@@ -1331,14 +1332,14 @@ namespace m0
             //
             // {(*(+,+)(?<expr>)*)}
 
-           IVertex o_Inner = k.AddVertex(keyword, "{(*(+,+)(?<expr1>)*)}");
+            IVertex o_Inner = k.AddVertex(keyword, "{(*(+,+)(?<expr1>)*)}");
 
             o_Inner.AddEdge(keywordGroup, kgd_Inner);
             o_Inner.AddEdge(keywordGroup, kgd_Empty2Inner);
-            
+
             IVertex o_Inner_any = o_Inner.AddVertex(any, anyString);
 
-            o_Inner_any.AddVertex(smb.Get(false, "$$StartInLocalRoot"), "");            
+            o_Inner_any.AddVertex(smb.Get(false, "$$StartInLocalRoot"), "");
 
             o_Inner_any.AddEdge(smb.Get(false, @"Vertex\$Is"), smu.Get(false, "\"{}\""));
 
@@ -1358,8 +1359,8 @@ namespace m0
             newValueKeyword.AddVertex(newVertexKeyword, "");
 
             newValueKeyword.AddEdge(keywordGroup, kgd_ColonEmptyInner2SlashMarkNew);
-            
-            IVertex newValueKeyword_any = newValueKeyword.AddVertex(any, "(?<value>)");            
+
+            IVertex newValueKeyword_any = newValueKeyword.AddVertex(any, "(?<value>)");
 
             IVertex newValueKeyword_any_targetExpr = newValueKeyword_any.AddVertex(smu.Get(false, @"SingleOperator\NextExpression"), "");
 
@@ -1374,7 +1375,7 @@ namespace m0
 
             _emptyKeywordVertex = empty1Keyword;
 
-            empty1Keyword.AddVertex(emptyKeyword,"");
+            empty1Keyword.AddVertex(emptyKeyword, "");
 
             empty1Keyword.AddEdge(keywordGroup, kgd_ColonEmptyInner2SlashMarkNew);
 
@@ -1393,14 +1394,14 @@ namespace m0
             // E M P T Y :) K E Y W O R D 2
             //
             //
-            
+
             IVertex empty2Keyword = k.AddVertex(keyword, "(?<value>)");
-            
+
             empty2Keyword.AddVertex(emptyKeyword, "");
 
-            empty2Keyword.AddEdge(keywordGroup, kgd_Empty2Inner);            
+            empty2Keyword.AddEdge(keywordGroup, kgd_Empty2Inner);
 
-            IVertex empty2Keyword_any = empty2Keyword.AddVertex(any, "(?<value>)");            
+            IVertex empty2Keyword_any = empty2Keyword.AddVertex(any, "(?<value>)");
 
             empty2Keyword_any.AddEdge(smb.Get(false, @"Vertex\$Is"), smu.Get(false, "Query"));
 
@@ -1421,9 +1422,22 @@ namespace m0
             IVertex bKeyword = k.AddVertex(keyword, "A(?<v_b>)A");            
 
             bKeyword.AddVertex(any, "(?<v_b>)").AddVertex(any, "AA");*/
-            
 
 
+
+        }
+
+        private static void AddLeftRightOperator(IVertex k, IVertex smu, IVertex smb, IVertex keyword, IVertex any, String text, String _is)
+        {
+            IVertex o_copy = k.AddVertex(keyword, text);
+
+            IVertex o_copy_any = o_copy.AddVertex(any, "");
+
+            o_copy_any.AddEdge(smb.Get(false, @"Vertex\$Is"), smu.Get(false, _is));
+
+            o_copy_any.AddVertex(smu.Get(false, @"DoubleOperator\LeftExpression"), "(?<left>)");
+
+            o_copy_any.AddVertex(smu.Get(false, @"DoubleOperator\RightExpression"), "(?<right>)");
         }
 
         void CreateSystemFormalTextLanguageZeroCode()
