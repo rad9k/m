@@ -64,8 +64,11 @@ namespace m0.Foundation
         
         IEdge AddEdge(IVertex metaVertex, IVertex destVertex);
 
-        void DeleteEdge(IEdge edge);        
+        void AddEdgesList(IEnumerable<IEdge> edges);
 
+        void DeleteEdge(IEdge edge);
+
+        void DeleteEdgesList(IEnumerable<IEdge> edges);
 
         IVertex Get(bool metaMode, string query);
 

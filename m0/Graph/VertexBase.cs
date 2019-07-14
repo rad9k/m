@@ -238,11 +238,21 @@ namespace m0.Graph
             throw new NotImplementedException();
         }
 
+        public virtual void AddEdgesList(IEnumerable<IEdge> edges)
+        {
+            throw new NotImplementedException();
+        }
+
         public virtual void DeleteEdge(IEdge edge)
         {
             throw new NotImplementedException();
         }
-        
+
+        public virtual void DeleteEdgesList(IEnumerable<IEdge> edges)
+        {
+            throw new NotImplementedException();
+        }
+
         public virtual IVertex Get(bool metaMode, string query)
         {
             throw new NotImplementedException();
