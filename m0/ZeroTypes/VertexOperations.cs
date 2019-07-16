@@ -173,7 +173,7 @@ namespace m0.ZeroTypes
             return ret;
         }
 
-        // as this is one of most important conceptual definitions, the historic version of the method. it does not support meta vertexes that creates edge+vertex
+        // as this is one of most important conceptual definitions, the historic version of the method. it does not support meta Vertices that creates edge+vertex
         /*        public static IVertex GetChildEdges(IVertex metaVertex)
                 {                        
                     IVertex edgeTarget = metaVertex.Get(false, "$EdgeTarget:");

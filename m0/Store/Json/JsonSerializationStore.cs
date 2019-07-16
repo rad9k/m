@@ -38,7 +38,7 @@ namespace m0.Store.Json
 
                         readStream.Close();
 
-                        ReconstructVertexesFromSerialisationData(data);
+                        ReconstructVerticesFromSerialisationData(data);
 
                         _root = GetVertexByIdentifier((long)0);
 
@@ -70,9 +70,9 @@ namespace m0.Store.Json
             
         }
 
-        private void ReconstructVertexesFromSerialisationData(JsonSerializationData data)
+        private void ReconstructVerticesFromSerialisationData(JsonSerializationData data)
         {
-            foreach(JsonVertex jv in data.Vertexes)
+            foreach(JsonVertex jv in data.Vertices)
             {
                 EasyVertex v = new EasyVertex(this);
 
@@ -185,7 +185,7 @@ namespace m0.Store.Json
         {
             JsonSerializationData data = new JsonSerializationData();
 
-            data.Vertexes = new List<JsonVertex>();
+            data.Vertices = new List<JsonVertex>();
 
             data.StoreIdDictionary = new Dictionary<int, StoreId>();
 
@@ -206,7 +206,7 @@ namespace m0.Store.Json
                         jv.ValueDouble = Convert.ToDouble(v.Value); // :)
                 }
 
-                data.Vertexes.Add(jv);
+                data.Vertices.Add(jv);
 
                 jv.Edges = new List<JsonEdge>();
 

@@ -383,7 +383,7 @@ namespace m0.UIWpf.Visualisers.Diagram
 
             TurnOnSelectedEdgesFireChange();
 
-            SelectedVertexesUpdated();
+            SelectedVerticesUpdated();
         }
 
         private void VertexChangeListenOff()
@@ -450,7 +450,7 @@ namespace m0.UIWpf.Visualisers.Diagram
 
                
 
-                SelectWrappersForSelectedVertexes();
+                SelectWrappersForSelectedVertices();
 
                 IsFirstPainted = true;
 
@@ -995,20 +995,20 @@ namespace m0.UIWpf.Visualisers.Diagram
 
             TurnOnSelectedEdgesFireChange();
 
-            SelectedVertexesUpdated();
+            SelectedVerticesUpdated();
         }
 
-        protected void SelectedVertexesUpdated()
+        protected void SelectedVerticesUpdated()
         {
             if (IsFirstPainted)
             {
                 UnselectAll();
 
-                SelectWrappersForSelectedVertexes();
+                SelectWrappersForSelectedVertices();
             }
         }
 
-        protected void SelectWrappersForSelectedVertexes()
+        protected void SelectWrappersForSelectedVertices()
         {
             IVertex sv = Vertex.Get(false, "SelectedEdges:");
 
@@ -1024,13 +1024,13 @@ namespace m0.UIWpf.Visualisers.Diagram
         public void VertexChange(object sender, VertexChangeEventArgs e)
         {            
             if ((sender == Vertex) && (e.Type == VertexChangeType.EdgeAdded) && (GeneralUtil.CompareStrings(e.Edge.Meta.Value, "SelectedEdges")))
-            { SelectedVertexesUpdated(); return; }
+            { SelectedVerticesUpdated(); return; }
 
             if ((sender == Vertex.Get(false, "SelectedEdges:")) && ((e.Type == VertexChangeType.EdgeAdded) || (e.Type == VertexChangeType.EdgeRemoved)))
-            { SelectedVertexesUpdated(); return; }
+            { SelectedVerticesUpdated(); return; }
 
             if (sender is IVertex && GraphUtil.FindEdgeByToVertex(Vertex.GetAll(false, @"SelectedEdges:\"), (IVertex)sender) != null)
-            { SelectedVertexesUpdated(); return; }
+            { SelectedVerticesUpdated(); return; }
 
             if (sender == Vertex.Get(false, "ZoomVisualiserContent:") && e.Type == VertexChangeType.ValueChanged)
             { ChangeZoomVisualiserContent(); return; }

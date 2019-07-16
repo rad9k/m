@@ -47,8 +47,8 @@ namespace m0.ZeroCode
             }
                         
 
-            if (zcg2sp.VertexesDictionary.ContainsKey(v))
-                return zcg2sp.VertexesDictionary[v].LinkString;
+            if (zcg2sp.VerticesDictionary.ContainsKey(v))
+                return zcg2sp.VerticesDictionary[v].LinkString;
 
             linkBeenList = new List<IVertex>();
 
@@ -63,10 +63,10 @@ namespace m0.ZeroCode
             
 
             if(shortestLinkLength!=99999)
-               zcg2sp.VertexesDictionary.Add(v, new VertexData(shortestLink, shortestLinkLength));
+               zcg2sp.VerticesDictionary.Add(v, new VertexData(shortestLink, shortestLinkLength));
 
-            if (shortestLinkLength == 99999 && zcg2sp.SubGraphVertexesDictionary.ContainsKey(v))
-                return zcg2sp.SubGraphVertexesDictionary[v].LinkString;
+            if (shortestLinkLength == 99999 && zcg2sp.SubGraphVerticesDictionary.ContainsKey(v))
+                return zcg2sp.SubGraphVerticesDictionary[v].LinkString;
 
             return shortestLink;
         }
@@ -253,11 +253,11 @@ namespace m0.ZeroCode
             {
                 bool canUse = true;
 
-                if (this.zcg2sp.SubGraphVertexesDictionary.ContainsKey(Vertex))
+                if (this.zcg2sp.SubGraphVerticesDictionary.ContainsKey(Vertex))
                 {
                     canUse = false;
 
-                    string properVertexLink = this.zcg2sp.SubGraphVertexesDictionary[Vertex].LinkString;
+                    string properVertexLink = this.zcg2sp.SubGraphVerticesDictionary[Vertex].LinkString;
 
                     string toTestLink = returnedLink;
 
@@ -414,8 +414,8 @@ namespace m0.ZeroCode
 
         public IDictionary<IVertex, IList<IVertex>> Imports;
 
-        public IDictionary<IVertex, VertexData> VertexesDictionary;
-        public IDictionary<IVertex, VertexData> SubGraphVertexesDictionary;
+        public IDictionary<IVertex, VertexData> VerticesDictionary;
+        public IDictionary<IVertex, VertexData> SubGraphVerticesDictionary;
         public IDictionary<IEdge, KeywordMatch> KeywordMatchedSubGraphEdges;
 
         public IDictionary<IVertex, bool> DoKeywordDefinitionContainLocalRoot_Dictionary;
@@ -534,9 +534,9 @@ namespace m0.ZeroCode
         {
             if (!IsNull(v))
             {
-                //VertexesAsLink.Add(v, path + "\\" + v.Value); // what is it? not neccesarry now
+                //VerticesAsLink.Add(v, path + "\\" + v.Value); // what is it? not neccesarry now
 
-                SourceAppend(ZeroCodeCommon.stringToNewVertexString(v.Value.ToString())); // XXX we are catching newVertexes as keywords so...
+                SourceAppend(ZeroCodeCommon.stringToNewVertexString(v.Value.ToString())); // XXX we are catching newVertices as keywords so...
                 //SourceAppend(v.Value.ToString());
             }
         }
@@ -814,7 +814,7 @@ namespace m0.ZeroCode
                         string path = GetPathFromKeywordMatchAndKeywordEdge(km, e, null);
 
                         if (!VertexOperations.IsLink(e))
-                            AppendSubVertexes(km, e, path);
+                            AppendSubVertices(km, e, path);
                     }
 
                     if (sentence.Contains("(?<SUB>)"))
@@ -924,7 +924,7 @@ namespace m0.ZeroCode
                     else
                         SourceAppend(part);
 
-                    wasThereNewLine = AppendSubVertexes(km, km.BaseEdge, km.BaseEdgePath);
+                    wasThereNewLine = AppendSubVertices(km, km.BaseEdge, km.BaseEdgePath);
                 }
                 else
                 {
@@ -1048,11 +1048,11 @@ namespace m0.ZeroCode
                     SourceAppend(e.To.Value.ToString()); // emptyKeyword handling
 
                 if (!VertexOperations.IsLink(e) /*&& e != km.BaseEdge*/)
-                    wasThereNewLine = AppendSubVertexes(km, e, path);
+                    wasThereNewLine = AppendSubVertices(km, e, path);
             }
         }
 
-        private bool AppendSubVertexes(KeywordMatch km, IEdge baseEdge, string basePath)
+        private bool AppendSubVertices(KeywordMatch km, IEdge baseEdge, string basePath)
         {
             bool wasThereNewLine = false;
 
@@ -1091,7 +1091,7 @@ namespace m0.ZeroCode
         
         bool ShouldAppendKeywordHere(IEdge e, string path)
         {
-            if (SubGraphVertexesDictionary.ContainsKey(e.To) && SubGraphVertexesDictionary[e.To].LinkString == path)
+            if (SubGraphVerticesDictionary.ContainsKey(e.To) && SubGraphVerticesDictionary[e.To].LinkString == path)
                 return true;
             else
                 return false;
@@ -1138,7 +1138,7 @@ namespace m0.ZeroCode
             }
             else
             {
-                //  SourceAppend("<" + SubGraphVertexesAsLink[e.To].String + ":" + path + ">");
+                //  SourceAppend("<" + SubGraphVerticesAsLink[e.To].String + ":" + path + ">");
 
                 if (isVertexNew(e, path))
                 {
@@ -1166,10 +1166,10 @@ namespace m0.ZeroCode
 
         private bool isVertexNew(IEdge e, string path)
         {
-            if (!SubGraphVertexesDictionary.ContainsKey(e.To))
+            if (!SubGraphVerticesDictionary.ContainsKey(e.To))
                 return false; // is it possible?
 
-            VertexData eVertexData = SubGraphVertexesDictionary[e.To];
+            VertexData eVertexData = SubGraphVerticesDictionary[e.To];
             string firstQuery = eVertexData.LinkString;
             string secondQuery = path;
 
@@ -1499,7 +1499,7 @@ namespace m0.ZeroCode
             return thereWasMatch;
         }
 
-        public void GetLinksForSubGraphVertexes(IEdge e, string path, int nestedLevel)
+        public void GetLinksForSubGraphVertices(IEdge e, string path, int nestedLevel)
         {
             BeenList.Add(e);
 
@@ -1515,13 +1515,13 @@ namespace m0.ZeroCode
 
                     bool beenThereButNeedToReEnter = false;
 
-                    if (SubGraphVertexesDictionary.ContainsKey(ee.To))
+                    if (SubGraphVerticesDictionary.ContainsKey(ee.To))
                     {
-                        VertexData l = SubGraphVertexesDictionary[ee.To];
+                        VertexData l = SubGraphVerticesDictionary[ee.To];
 
                         if (nestedLevel < l.NestedLevel)
                         {
-                            VertexData vd = SubGraphVertexesDictionary[ee.To];
+                            VertexData vd = SubGraphVerticesDictionary[ee.To];
 
                             vd.LinkString = LinkString;
                             vd.NestedLevel = nestedLevel;
@@ -1529,10 +1529,10 @@ namespace m0.ZeroCode
                             beenThereButNeedToReEnter = true;
                         }
                     }else
-                        SubGraphVertexesDictionary.Add(ee.To, new VertexData(LinkString, nestedLevel));
+                        SubGraphVerticesDictionary.Add(ee.To, new VertexData(LinkString, nestedLevel));
 
                     if(beenThereButNeedToReEnter || !BeenList.Contains(ee))
-                        GetLinksForSubGraphVertexes(ee, LinkString, nestedLevel+1);
+                        GetLinksForSubGraphVertices(ee, LinkString, nestedLevel+1);
                 }
         }
 
@@ -1649,8 +1649,8 @@ namespace m0.ZeroCode
             BeenList_Keyword = new List<IEdge>();
             Source = new StringBuilder();
             Imports = new Dictionary<IVertex, IList<IVertex>>();
-            VertexesDictionary = new Dictionary<IVertex, VertexData>();
-            SubGraphVertexesDictionary = new Dictionary<IVertex, VertexData>();
+            VerticesDictionary = new Dictionary<IVertex, VertexData>();
+            SubGraphVerticesDictionary = new Dictionary<IVertex, VertexData>();
             KeywordMatchedSubGraphEdges = new Dictionary<IEdge, KeywordMatch>();
 
             DoKeywordDefinitionContainLocalRoot_Dictionary = new Dictionary<IVertex, bool>();
@@ -1660,7 +1660,7 @@ namespace m0.ZeroCode
 
             BaseEdge = graphBaseEdge;
 
-            GetLinksForSubGraphVertexes(BaseEdge, null, 0);
+            GetLinksForSubGraphVertices(BaseEdge, null, 0);
 
             BeenList.Clear();
 

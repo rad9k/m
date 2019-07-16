@@ -12,7 +12,7 @@ namespace m0.Store
 {
     public class BinarySerializationStore:StoreBase
     {
-        void NullStoreDataInVertexes()
+        void NullStoreDataInVertices()
         {
             foreach (IVertex v in VertexIdentifiersDictionary.Values)
             {
@@ -21,7 +21,7 @@ namespace m0.Store
             }
         }
 
-        void RestoreStoreDataInVertexes()
+        void RestoreStoreDataInVertices()
         {
             foreach (IVertex v in VertexIdentifiersDictionary.Values)
             {
@@ -40,7 +40,7 @@ namespace m0.Store
                 VertexIdentifiersDictionary = (Dictionary<object, IVertex>)formatter.Deserialize(readStream);
                 string RootIdentifier = (string)formatter.Deserialize(readStream);
 
-                RestoreStoreDataInVertexes();
+                RestoreStoreDataInVertices();
 
                 readStream.Close();
 
@@ -72,7 +72,7 @@ namespace m0.Store
             FileStream writeStream = new FileStream(Identifier, FileMode.Create);
             BinaryFormatter formatter = new BinaryFormatter();
 
-            NullStoreDataInVertexes();
+            NullStoreDataInVertices();
 
             formatter.Serialize(writeStream, VertexIdentifiersDictionary);
             formatter.Serialize(writeStream, Root.Identifier);
@@ -81,7 +81,7 @@ namespace m0.Store
 
             base.CommitTransaction();
 
-            RestoreStoreDataInVertexes();            
+            RestoreStoreDataInVertices();            
         }
 
         public bool RefreshOnRollback { get; set; }

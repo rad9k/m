@@ -407,6 +407,12 @@ namespace m0.Graph
             return ne;
         }
 
+        public override void AddEdgesList(IEnumerable<IEdge> edges)
+        {
+            foreach (IEdge e in edges) // possibly not optimal implementation
+                AddEdge(e.Meta, e.To);
+        }
+
         public override void DeleteEdge(IEdge _edge)
         {
             IEdge edge = _edge;
@@ -439,7 +445,13 @@ namespace m0.Graph
             }
             //else // becouse of inheritance this may happen
                 //throw new Exception(_edge.Meta + " : " + _edge.To + " edge does not exist in given Vertex");
-        }        
+        }
+
+        public override void DeleteEdgesList(IEnumerable<IEdge> edges)
+        {
+            foreach (IEdge e in edges) // possibly not optimal implementation
+                DeleteEdge(e); // Meta/To check to be performed
+        }
 
         public EasyVertex(IStore _store):base(_store)
         {

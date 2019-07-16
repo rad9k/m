@@ -11,7 +11,7 @@ namespace m0.Store.Json
     public class JsonSerializationData
     {
         public Dictionary<int, StoreId> StoreIdDictionary;
-        public List<JsonVertex> Vertexes;
+        public List<JsonVertex> Vertices;
     }
 
     public class JsonVertex

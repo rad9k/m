@@ -29,14 +29,14 @@ namespace m0.UIWpf.Visualisers
         {
             IsSelected = true;
 
-            TreeParent.UpdateSelectedVertexes(IsCtrl, this);
+            TreeParent.UpdateSelectedVertices(IsCtrl, this);
         }
 
         private void Unselect(bool IsCtrl)
         {
             IsSelected = false;
 
-            TreeParent.UpdateSelectedVertexes(IsCtrl, this);
+            TreeParent.UpdateSelectedVertices(IsCtrl, this);
         }
 
         private bool _IsSelected;
@@ -231,24 +231,24 @@ namespace m0.UIWpf.Visualisers
     {              
         protected bool TurnOffSelectedItemsUpdate = false;
 
-        protected bool TurnOffSelectedVertexesUpdate = false;
+        protected bool TurnOffSelectedVerticesUpdate = false;
 
-        public void SelectedVertexesUpdated()
+        public void SelectedVerticesUpdated()
         {
             if (TurnOffSelectedItemsUpdate)
                 return;
 
-            TurnOffSelectedVertexesUpdate = true;
+            TurnOffSelectedVerticesUpdate = true;
 
             IVertex sv = Vertex.Get(false, "SelectedEdges:");
 
             foreach (TreeViewItem i in Items)
-                SelectedVertexesUpdated_Reccurent(i,sv);
+                SelectedVerticesUpdated_Reccurent(i,sv);
 
-            TurnOffSelectedVertexesUpdate = false;
+            TurnOffSelectedVerticesUpdate = false;
         }
 
-        private void SelectedVertexesUpdated_Reccurent(TreeViewItem i,IVertex sv)
+        private void SelectedVerticesUpdated_Reccurent(TreeViewItem i,IVertex sv)
         {
             if (i is TreeVisualiserViewItem)
             {
@@ -262,12 +262,12 @@ namespace m0.UIWpf.Visualisers
             }
 
             foreach (TreeViewItem ii in i.Items)
-                SelectedVertexesUpdated_Reccurent(ii, sv);
+                SelectedVerticesUpdated_Reccurent(ii, sv);
         }
 
-        public void UpdateSelectedVertexes(bool IsCtrl, TreeVisualiserViewItem item)
+        public void UpdateSelectedVertices(bool IsCtrl, TreeVisualiserViewItem item)
         {
-            if (TurnOffSelectedVertexesUpdate)
+            if (TurnOffSelectedVerticesUpdate)
                 return;
 
             TurnOffSelectedItemsUpdate = true;
@@ -290,12 +290,12 @@ namespace m0.UIWpf.Visualisers
             // currently there is no support for same vertex in two places in tree begin selected / unselected
             // this is due to performance
             //
-            /*IVertex sv = Vertex.Get(false, "SelectedVertexes:");
+            /*IVertex sv = Vertex.Get(false, "SelectedVertices:");
 
             GraphUtil.RemoveAllEdges(sv);
 
             foreach (TreeViewItem i in Items)
-                UpdateSelectedVertexes_Reccurent(i, sv);
+                UpdateSelectedVertices_Reccurent(i, sv);
              */
 
             TurnOffSelectedItemsUpdate = false;
@@ -326,14 +326,14 @@ namespace m0.UIWpf.Visualisers
 
         public void ClearAllSelectedItems()
         {
-            bool bef = TurnOffSelectedVertexesUpdate;
+            bool bef = TurnOffSelectedVerticesUpdate;
 
-            TurnOffSelectedVertexesUpdate = true;
+            TurnOffSelectedVerticesUpdate = true;
 
             foreach (TreeViewItem i in Items)
                 ClearAllSelectedItems_Reccurent(i);
 
-            TurnOffSelectedVertexesUpdate = bef;
+            TurnOffSelectedVerticesUpdate = bef;
         }
 
         private void ClearAllSelectedItems_Reccurent(TreeViewItem i)
@@ -356,14 +356,14 @@ namespace m0.UIWpf.Visualisers
 
             
 
-            TurnOffSelectedVertexesUpdate = true;
+            TurnOffSelectedVerticesUpdate = true;
 
             IVertex sv = Vertex.Get(false, "SelectedEdges:");
 
             if (Edge.FindEdgeByEdge(sv, e)!=null)
                 i.IsSelected = true;
 
-            TurnOffSelectedVertexesUpdate = false;
+            TurnOffSelectedVerticesUpdate = false;
 
             if(generateDeeperLevel)
                 if (e.To.Count() > 0)
@@ -504,13 +504,13 @@ namespace m0.UIWpf.Visualisers
                 EdgeRemoved(e);
 
             if ((sender == Vertex) && (e.Type == VertexChangeType.EdgeAdded) && (GeneralUtil.CompareStrings(e.Edge.Meta.Value, "SelectedEdges")))
-                SelectedVertexesUpdated();
+                SelectedVerticesUpdated();
 
             if ((sender == Vertex.Get(false, "SelectedEdges:")) && ((e.Type == VertexChangeType.EdgeAdded) || (e.Type == VertexChangeType.EdgeRemoved)))
-                SelectedVertexesUpdated();
+                SelectedVerticesUpdated();
 
             if(sender is IVertex && GraphUtil.FindEdgeByToVertex(Vertex.GetAll(false, @"SelectedEdges:\"),(IVertex)sender)!=null)
-                SelectedVertexesUpdated();
+                SelectedVerticesUpdated();
 
             if (sender == Vertex.Get(false, "ZoomVisualiserContent:") && e.Type == VertexChangeType.ValueChanged)
                 ChangeZoomVisualiserContent();                       

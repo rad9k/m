@@ -26,7 +26,7 @@ namespace m0.UIWpf.Visualisers
 
         protected bool TurnOffSelectedItemsUpdate = false;
 
-        protected bool TurnOffSelectedVertexesUpdate = false;
+        protected bool TurnOffSelectedVerticesUpdate = false;
 
         public void UnselectAllSelectedEdges(){
             IVertex sv = Vertex.Get(false, "SelectedEdges:");
@@ -35,7 +35,7 @@ namespace m0.UIWpf.Visualisers
         }
 
         protected void _OnSelectionChanged(object sender, SelectionChangedEventArgs e){
-            if (!TurnOffSelectedVertexesUpdate)
+            if (!TurnOffSelectedVerticesUpdate)
             {
                 TurnOffSelectedItemsUpdate = true;
                 
@@ -175,11 +175,11 @@ namespace m0.UIWpf.Visualisers
                 this.LayoutTransform = null;
         }        
 
-        protected void SelectedVertexesUpdated(){
+        protected void SelectedVerticesUpdated(){
             if (TurnOffSelectedItemsUpdate)
                 return;
 
-            TurnOffSelectedVertexesUpdate = true;
+            TurnOffSelectedVerticesUpdate = true;
 
             ThisDataGrid.SelectedItems.Clear();
 
@@ -192,7 +192,7 @@ namespace m0.UIWpf.Visualisers
                     ThisDataGrid.SelectedItems.Add(ee);
             }
 
-            TurnOffSelectedVertexesUpdate = false;
+            TurnOffSelectedVerticesUpdate = false;
         }
 
         protected virtual void SetVertexDefaultValues(){
@@ -301,13 +301,13 @@ namespace m0.UIWpf.Visualisers
                 UpdateBaseEdge();
 
             if ((sender == Vertex) && (e.Type == VertexChangeType.EdgeAdded) && (GeneralUtil.CompareStrings(e.Edge.Meta.Value, "SelectedEdges")))
-                SelectedVertexesUpdated();
+                SelectedVerticesUpdated();
 
             if ((sender == Vertex.Get(false, "SelectedEdges:")) && ((e.Type == VertexChangeType.EdgeAdded)||(e.Type == VertexChangeType.EdgeRemoved)))
-                SelectedVertexesUpdated();
+                SelectedVerticesUpdated();
 
             if (sender is IVertex && GraphUtil.FindEdgeByToVertex(Vertex.GetAll(false, @"SelectedEdges:\"), (IVertex)sender) != null)
-                SelectedVertexesUpdated();
+                SelectedVerticesUpdated();
 
             if (sender == Vertex.Get(false, "IsMetaRightAlign:") && e.Type == VertexChangeType.ValueChanged) 
                 ResetView();
@@ -423,24 +423,24 @@ namespace m0.UIWpf.Visualisers
 
         ///// DRAG AND DROP
 
-        IVertex tempSelectedVertexes;
+        IVertex tempSelectedVertices;
 
-        protected void CopySelectedVertexesToTemp()
+        protected void CopySelectedVerticesToTemp()
         {
-            tempSelectedVertexes = MinusZero.Instance.CreateTempVertex();
+            tempSelectedVertices = MinusZero.Instance.CreateTempVertex();
 
-            GraphUtil.CopyEdges(Vertex.Get(false, "SelectedEdges:"), tempSelectedVertexes);
+            GraphUtil.CopyEdges(Vertex.Get(false, "SelectedEdges:"), tempSelectedVertices);
         }
 
-        protected void RestoreSelectedVertexes()
+        protected void RestoreSelectedVertices()
         {
             IVertex sv = Vertex.Get(false, "SelectedEdges:");
 
-            if (tempSelectedVertexes != null)
+            if (tempSelectedVertices != null)
             {
                 GraphUtil.RemoveAllEdges_WhereEdgeIsEdge(sv);
 
-                GraphUtil.CopyEdges(tempSelectedVertexes, sv);
+                GraphUtil.CopyEdges(tempSelectedVertices, sv);
             }
         }
 
@@ -454,7 +454,7 @@ namespace m0.UIWpf.Visualisers
             dndStartPoint = e.GetPosition(this);
             hasButtonBeenDown = true;
 
-            CopySelectedVertexesToTemp();
+            CopySelectedVerticesToTemp();
 
             MinusZero.Instance.IsGUIDragging = false;
         }
@@ -483,7 +483,7 @@ namespace m0.UIWpf.Visualisers
             {
                 isDraggin = true;
 
-                RestoreSelectedVertexes();
+                RestoreSelectedVertices();
 
                 IVertex dndVertex = MinusZero.Instance.CreateTempVertex();
 

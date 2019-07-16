@@ -42,10 +42,10 @@ namespace m0.ZeroTypes
         public void Listener(object sender, VertexChangeEventArgs e){            
             if (CheckSender(sender) && (e.Type==VertexChangeType.EdgeAdded) && (!GeneralUtil.CompareStrings(e.Edge.Meta.Value,"$Is")))
             {
-                IVertex AttributeVertexes = ((IVertex)sender).GetAll(false, @"$Is:\Selector:");
-                //IVertex AttributeVertexes = ((IVertex)sender).GetAll(false, @"$Is:{$Inherits:$PlatformClass}\Selector:");
+                IVertex AttributeVertices = ((IVertex)sender).GetAll(false, @"$Is:\Selector:");
+                //IVertex AttributeVertices = ((IVertex)sender).GetAll(false, @"$Is:{$Inherits:$PlatformClass}\Selector:");
 
-                foreach (IEdge ed in AttributeVertexes)
+                foreach (IEdge ed in AttributeVertices)
                     if (e.Edge.Meta == ed.To)                    
                         GraphUtil.AddHandlerIfDelegateListDoesNotContainsIt(e.Edge.To, this.Listener);                        
 
@@ -65,10 +65,10 @@ namespace m0.ZeroTypes
 
             if (CheckSender(sender) && (e.Type == VertexChangeType.EdgeRemoved) && (!GeneralUtil.CompareStrings(e.Edge.Meta.Value, "$Is")))
             {
-                IVertex AttributeVertexes = ((IVertex)sender).GetAll(false, @"$Is:\Selector:");
-                //IVertex AttributeVertexes = ((IVertex)sender).GetAll(false, @"$Is:{$Inherits:$PlatformClass}\Selector:");
+                IVertex AttributeVertices = ((IVertex)sender).GetAll(false, @"$Is:\Selector:");
+                //IVertex AttributeVertices = ((IVertex)sender).GetAll(false, @"$Is:{$Inherits:$PlatformClass}\Selector:");
 
-                foreach (IEdge ed in AttributeVertexes)
+                foreach (IEdge ed in AttributeVertices)
                     if (e.Edge.Meta == ed.To)
                         e.Edge.To.Change -= new VertexChange(this.Listener);
 
@@ -122,9 +122,9 @@ namespace m0.ZeroTypes
 
             PlatformClassVertex.Change += new VertexChange(listener.Listener);
 
-            IVertex AttributeVertexes = PlatformClassVertex.GetAll(false, @"$Is:{$Inherits:$PlatformClass}\Selector:");
+            IVertex AttributeVertices = PlatformClassVertex.GetAll(false, @"$Is:{$Inherits:$PlatformClass}\Selector:");
 
-            foreach (IEdge e in AttributeVertexes)
+            foreach (IEdge e in AttributeVertices)
             {
                 foreach (IEdge ee in PlatformClassVertex.GetAll(false, e.To.Value + ":"))
                 {
@@ -142,9 +142,9 @@ namespace m0.ZeroTypes
         {
             RemoveVertexChangeListeners_ForVertex(PlatformClassVertex,PlatformClassVertex, action);
 
-            IVertex AttributeVertexes = PlatformClassVertex.GetAll(false, @"$Is:{$Inherits:$PlatformClass}\Selector:");
+            IVertex AttributeVertices = PlatformClassVertex.GetAll(false, @"$Is:{$Inherits:$PlatformClass}\Selector:");
 
-            foreach (IEdge e in AttributeVertexes)
+            foreach (IEdge e in AttributeVertices)
             {
                 foreach (IEdge ee in PlatformClassVertex.GetAll(false, e.To.Value + ":"))                    
                     RemoveVertexChangeListeners_ForVertex(e.To, PlatformClassVertex,action);

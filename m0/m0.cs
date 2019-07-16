@@ -357,7 +357,7 @@ namespace m0
                 ",Query" +
                 ",[]" +
                 ",[[]]" +
-                ",\"{}\",\"{CRLF}\",+,-,\" *\",/,?,\"\\ \",\"|\",\"||\",(),CopyVertexValue,RedirectLeftEdgesToRightVertexes,AddLeftEdgesToRightVertexes,AddRightEdgesIntoLeftEdges,DeleteRightVertexes,DeleteRightEdgesFromLeftEdges,DeleteRightVertexesFromLeftEdges" +
+                ",\"{}\",\"{CRLF}\",+,-,\" *\",/,?,\"\\ \",\"|\",\"||\",(),CopyVertexValue,RedirectLeftEdgesToRightVertices,AddLeftEdgesToRightVertices,AddRightEdgesIntoLeftEdges,DeleteRightVertices,DeleteRightEdgesFromLeftEdges,DeleteRightVerticesFromLeftEdges" +
                 ",Action,Return{Expression},NextOut{Next{$MinCardinality:0,$MaxCardinality:1}}" +
                 ",StackFrameCreator{Do{$MinCardinality:0,$MaxCardinality:1},Variable{$MinCardinality:0,$MaxCardinality:-1},Type{$MinCardinality:0,$MaxCardinality:-1}}" +
                 ",StackFrameCreatorWithInputOutput{Output{$MinCardinality:0,$MaxCardinality:1},InputParameter{$MinCardinality:0,$MaxCardinality:-1}}" +
@@ -382,12 +382,12 @@ namespace m0
             // operators
 
             AddDotNetEndPoint(smu.Get(false, "CopyVertexValue"), "CopyVertexValue");
-            AddDotNetEndPoint(smu.Get(false, "RedirectLeftEdgesToRightVertexes"), "RedirectLeftEdgesToRightVertexes");
-            AddDotNetEndPoint(smu.Get(false, "AddLeftEdgesToRightVertexes"), "AddLeftEdgesToRightVertexes");
+            AddDotNetEndPoint(smu.Get(false, "RedirectLeftEdgesToRightVertices"), "RedirectLeftEdgesToRightVertices");
+            AddDotNetEndPoint(smu.Get(false, "AddLeftEdgesToRightVertices"), "AddLeftEdgesToRightVertices");
             AddDotNetEndPoint(smu.Get(false, "AddRightEdgesIntoLeftEdges"), "AddRightEdgesIntoLeftEdges");
-            AddDotNetEndPoint(smu.Get(false, "DeleteRightVertexes"), "DeleteRightVertexes");
+            AddDotNetEndPoint(smu.Get(false, "DeleteRightVertices"), "DeleteRightVertices");
             AddDotNetEndPoint(smu.Get(false, "DeleteRightEdgesFromLeftEdges"), "DeleteRightEdgesFromLeftEdges");
-            AddDotNetEndPoint(smu.Get(false, "DeleteRightVertexesFromLeftEdges"), "DeleteRightVertexesFromLeftEdges");
+            AddDotNetEndPoint(smu.Get(false, "DeleteRightVerticesFromLeftEdges"), "DeleteRightVerticesFromLeftEdges");
 
             // StackFrameCreator
 
@@ -431,12 +431,12 @@ namespace m0
             smu.Get(false, "\"||\"").AddEdge(sm.Get(false, "*$Inherits"), smu.Get(false, "DoubleOperator"));
             smu.Get(false, @"()").AddEdge(sm.Get(false, "*$Inherits"), smu.Get(false, "SingleNestedOperator"));
             smu.Get(false, @"CopyVertexValue").AddEdge(sm.Get(false, "*$Inherits"), smu.Get(false, "DoubleOperator"));
-            smu.Get(false, @"RedirectLeftEdgesToRightVertexes").AddEdge(sm.Get(false, "*$Inherits"), smu.Get(false, "DoubleOperator"));
-            smu.Get(false, @"AddLeftEdgesToRightVertexes").AddEdge(sm.Get(false, "*$Inherits"), smu.Get(false, "DoubleOperator"));
+            smu.Get(false, @"RedirectLeftEdgesToRightVertices").AddEdge(sm.Get(false, "*$Inherits"), smu.Get(false, "DoubleOperator"));
+            smu.Get(false, @"AddLeftEdgesToRightVertices").AddEdge(sm.Get(false, "*$Inherits"), smu.Get(false, "DoubleOperator"));
             smu.Get(false, @"AddRightEdgesIntoLeftEdges").AddEdge(sm.Get(false, "*$Inherits"), smu.Get(false, "DoubleOperator"));
-            smu.Get(false, @"DeleteRightVertexes").AddEdge(sm.Get(false, "*$Inherits"), smu.Get(false, "DoubleOperator"));
+            smu.Get(false, @"DeleteRightVertices").AddEdge(sm.Get(false, "*$Inherits"), smu.Get(false, "DoubleOperator"));
             smu.Get(false, @"DeleteRightEdgesFromLeftEdges").AddEdge(sm.Get(false, "*$Inherits"), smu.Get(false, "DoubleOperator"));
-            smu.Get(false, @"DeleteRightVertexesFromLeftEdges").AddEdge(sm.Get(false, "*$Inherits"), smu.Get(false, "DoubleOperator"));
+            smu.Get(false, @"DeleteRightVerticesFromLeftEdges").AddEdge(sm.Get(false, "*$Inherits"), smu.Get(false, "DoubleOperator"));
 
             // rest inherits
             smu.Get(false, @"Action").AddEdge(sm.Get(false, "*$Inherits"), smu.Get(false, "Atom"));
@@ -550,12 +550,12 @@ namespace m0
             package.AddEdge(null, smu.Get(false, "\"||\""));
             package.AddEdge(null, smu.Get(false, "()"));
             package.AddEdge(null, smu.Get(false, "CopyVertexValue"));
-            package.AddEdge(null, smu.Get(false, "RedirectLeftEdgesToRightVertexes"));
-            package.AddEdge(null, smu.Get(false, "AddLeftEdgesToRightVertexes"));
+            package.AddEdge(null, smu.Get(false, "RedirectLeftEdgesToRightVertices"));
+            package.AddEdge(null, smu.Get(false, "AddLeftEdgesToRightVertices"));
             package.AddEdge(null, smu.Get(false, "AddRightEdgesIntoLeftEdges"));
-            package.AddEdge(null, smu.Get(false, "DeleteRightVertexes"));
+            package.AddEdge(null, smu.Get(false, "DeleteRightVertices"));
             package.AddEdge(null, smu.Get(false, "DeleteRightEdgesFromLeftEdges"));
-            package.AddEdge(null, smu.Get(false, "DeleteRightVertexesFromLeftEdges"));
+            package.AddEdge(null, smu.Get(false, "DeleteRightVerticesFromLeftEdges"));
             package.AddEdge(null, smu.Get(false, "Section"));
             package.AddEdge(null, smu.Get(false, "Function"));
             package.AddEdge(null, smu.Get(false, "If"));
@@ -872,12 +872,12 @@ namespace m0
             // graph algebra operators
             //
             // := CopyVertexValue
-            // =  RedirectLeftEdgesToRightVertexes
-            // += AddLeftEdgesToRightVertexes
+            // =  RedirectLeftEdgesToRightVertices
+            // += AddLeftEdgesToRightVertices
             // +< AddRightEdgesIntoLeftEdges
-            // ~= DeleteRightVertexes
+            // ~= DeleteRightVertices
             // -< DeleteRightEdgesFromLeftEdges
-            // ~< DeleteRightVertexesFromLeftEdges
+            // ~< DeleteRightVerticesFromLeftEdges
             //
             ////////////////////////////////////////////////////////
 
@@ -890,13 +890,13 @@ namespace m0
             //
             // (?<left>) = (?<right>)
 
-            AddLeftRightOperator(k, smu, smb, keyword, any, "(?<left>) =(?<SUB>) (?<right>)", "RedirectLeftEdgesToRightVertexes");
+            AddLeftRightOperator(k, smu, smb, keyword, any, "(?<left>) =(?<SUB>) (?<right>)", "RedirectLeftEdgesToRightVertices");
 
             // +=
             //
             // (?<left>) += (?<right>)
 
-            AddLeftRightOperator(k, smu, smb, keyword, any, "(?<left>) +=(?<SUB>) (?<right>)", "AddLeftEdgesToRightVertexes");
+            AddLeftRightOperator(k, smu, smb, keyword, any, "(?<left>) +=(?<SUB>) (?<right>)", "AddLeftEdgesToRightVertices");
 
             // +<
             //
@@ -908,7 +908,7 @@ namespace m0
             //
             // (?<left>) ~= (?<right>)
 
-            AddLeftRightOperator(k, smu, smb, keyword, any, "(?<left>) ~=(?<SUB>) (?<right>)", "DeleteRightVertexes");
+            AddLeftRightOperator(k, smu, smb, keyword, any, "(?<left>) ~=(?<SUB>) (?<right>)", "DeleteRightVertices");
 
             // -<
             //
@@ -920,7 +920,7 @@ namespace m0
             //
             // (?<left>) ~< (?<right>)
 
-            AddLeftRightOperator(k, smu, smb, keyword, any, "(?<left>) ~<(?<SUB>) (?<right>)", "DeleteRightVertexesFromLeftEdges");
+            AddLeftRightOperator(k, smu, smb, keyword, any, "(?<left>) ~<(?<SUB>) (?<right>)", "DeleteRightVerticesFromLeftEdges");
 
             /////////////////////////////////////////////////////////
             //

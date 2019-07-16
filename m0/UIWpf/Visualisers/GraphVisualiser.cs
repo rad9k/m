@@ -194,10 +194,10 @@ namespace m0.UIWpf.Visualisers
             Canvas.SetLeft(e, x-e.ActualWidth/2);
             Canvas.SetTop(e, y-e.ActualHeight/2);
             
-            if (!DisplayedVertexesUIElements.ContainsKey(baseVertex))
-                DisplayedVertexesUIElements.Add(baseVertex, e);
+            if (!DisplayedVerticesUIElements.ContainsKey(baseVertex))
+                DisplayedVerticesUIElements.Add(baseVertex, e);
             else
-                DisplayedVertexesUIElements[baseVertex] = e;
+                DisplayedVerticesUIElements[baseVertex] = e;
             
             return e;
         }        
@@ -343,11 +343,11 @@ namespace m0.UIWpf.Visualisers
 
                 this.Children.Clear();
 
-                foreach (UIElement e in DisplayedVertexesUIElements.Values)
+                foreach (UIElement e in DisplayedVerticesUIElements.Values)
                     if (e is IDisposable)
                         ((IDisposable)e).Dispose();
                     
-                DisplayedVertexesUIElements.Clear();
+                DisplayedVerticesUIElements.Clear();
 
                 //GraphUtil.RemoveAllEdges(Vertex.Get(false, "DisplayedEdges:"));
                 
@@ -356,7 +356,7 @@ namespace m0.UIWpf.Visualisers
                              
                 AddCircle(0,null);
 
-                SelectWrappersForSelectedVertexes();
+                SelectWrappersForSelectedVertices();
 
                 IsFirstPainted = true;
 
@@ -370,13 +370,13 @@ namespace m0.UIWpf.Visualisers
             }
         }
 
-        Dictionary<IVertex, SimpleVisualiserWrapper> DisplayedVertexesUIElements;
+        Dictionary<IVertex, SimpleVisualiserWrapper> DisplayedVerticesUIElements;
 
-        protected void AddCircle(int level, IList<IVertex> InnerCircleVertexes)
+        protected void AddCircle(int level, IList<IVertex> InnerCircleVertices)
         {
             //MinusZero.Instance.Log(1,"AddCircle", level.ToString());
 
-            IList<IVertex> CircleVertexes=new List<IVertex>();
+            IList<IVertex> CircleVertices=new List<IVertex>();
 
             if (level == 0)
             {
@@ -387,9 +387,9 @@ namespace m0.UIWpf.Visualisers
 
                 Add(x, y, (FrameworkElement)GetVisualiser(b),b).UpdateLayout();                
 
-                CircleVertexes.Add(b);
+                CircleVertices.Add(b);
 
-                AddCircle(1, CircleVertexes);
+                AddCircle(1, CircleVertices);
 
                 return;
             }
@@ -399,21 +399,21 @@ namespace m0.UIWpf.Visualisers
             SimpleVisualiserWrapper dummyPointIn = new SimpleVisualiserWrapper(null,null,this);
             SimpleVisualiserWrapper dummyPointOut = new SimpleVisualiserWrapper(null, null, this);
 
-            foreach (IVertex v in InnerCircleVertexes)
+            foreach (IVertex v in InnerCircleVertices)
             {
                 if (ShowOutEdges)
                     foreach (IEdge e in v)
-                    if (!DisplayedVertexesUIElements.ContainsKey(e.To))
+                    if (!DisplayedVerticesUIElements.ContainsKey(e.To))
                     {
-                        DisplayedVertexesUIElements.Add(e.To, dummyPointOut);
+                        DisplayedVerticesUIElements.Add(e.To, dummyPointOut);
                         OutAndInEdgesCount++;
                     }
 
                 if(ShowInEdges)
                 foreach (IEdge e in v.InEdges)
-                    if (!DisplayedVertexesUIElements.ContainsKey(e.From))
+                    if (!DisplayedVerticesUIElements.ContainsKey(e.From))
                     {
-                        DisplayedVertexesUIElements.Add(e.From, dummyPointIn);
+                        DisplayedVerticesUIElements.Add(e.From, dummyPointIn);
                         OutAndInEdgesCount++;
                     }
             }
@@ -428,20 +428,20 @@ namespace m0.UIWpf.Visualisers
             //IVertex DisplayedEdges = Vertex.Get(false, "DisplayedEdges:");
 
             if (OutAndInEdgesCount > 0)
-                foreach (IVertex v in InnerCircleVertexes)
+                foreach (IVertex v in InnerCircleVertices)
                 {
-                    SimpleVisualiserWrapper vPoint = DisplayedVertexesUIElements[v];
+                    SimpleVisualiserWrapper vPoint = DisplayedVerticesUIElements[v];
 
                     if (ShowOutEdges)
                     foreach (IEdge e in v)
-                        if (!DisplayedVertexesUIElements.ContainsKey(e.To) || DisplayedVertexesUIElements[e.To] == dummyPointOut)
+                        if (!DisplayedVerticesUIElements.ContainsKey(e.To) || DisplayedVerticesUIElements[e.To] == dummyPointOut)
                         {
                             double x = (this.Width / 2) + Math.Cos(cnt / OutAndInEdgesCount * Math.PI * 2) * CircleSize * level;
                             double y = (this.Height / 2) + Math.Sin(cnt / OutAndInEdgesCount * Math.PI * 2) * CircleSize * level;
 
                             SimpleVisualiserWrapper toWrapper =  Add(x, y, (FrameworkElement)GetVisualiser(e.To), e.To);                            
 
-                            CircleVertexes.Add(e.To);                            
+                            CircleVertices.Add(e.To);                            
                         
                             AddLine(vPoint, toWrapper, e.Meta);
 
@@ -449,21 +449,21 @@ namespace m0.UIWpf.Visualisers
                         }
                         else
                         {
-                            SimpleVisualiserWrapper eToPoint = DisplayedVertexesUIElements[e.To];
+                            SimpleVisualiserWrapper eToPoint = DisplayedVerticesUIElements[e.To];
 
                             AddLine(vPoint, eToPoint,e.Meta);                            
                         }
 
                     if(ShowInEdges)
                     foreach (IEdge e in v.InEdges)
-                        if (!DisplayedVertexesUIElements.ContainsKey(e.From) || DisplayedVertexesUIElements[e.From] == dummyPointIn)
+                        if (!DisplayedVerticesUIElements.ContainsKey(e.From) || DisplayedVerticesUIElements[e.From] == dummyPointIn)
                         {
                             double x = (this.Width / 2) + Math.Cos(cnt / OutAndInEdgesCount * Math.PI * 2) * CircleSize * level;
                             double y = (this.Height / 2) + Math.Sin(cnt / OutAndInEdgesCount * Math.PI * 2) * CircleSize * level;                            
 
                             SimpleVisualiserWrapper fromWrapper = Add(x, y, (FrameworkElement)GetVisualiser(e.From), e.From);
 
-                            CircleVertexes.Add(e.From);
+                            CircleVertices.Add(e.From);
 
                             AddLine(fromWrapper, vPoint, e.Meta);
 
@@ -471,7 +471,7 @@ namespace m0.UIWpf.Visualisers
                         }
                         else
                         {
-                            SimpleVisualiserWrapper eFromPoint = DisplayedVertexesUIElements[e.From];
+                            SimpleVisualiserWrapper eFromPoint = DisplayedVerticesUIElements[e.From];
 
                             AddLine(eFromPoint, vPoint, e.Meta);
                         }
@@ -480,27 +480,27 @@ namespace m0.UIWpf.Visualisers
                 }
 
             if (level < GraphUtil.GetIntegerValue(Vertex.Get(false, "NumberOfCircles:")))
-                AddCircle(level + 1, CircleVertexes);
+                AddCircle(level + 1, CircleVertices);
             else // lines from last circle
             {
-                foreach (IVertex v in CircleVertexes)
+                foreach (IVertex v in CircleVertices)
                 {
-                    SimpleVisualiserWrapper vPoint = DisplayedVertexesUIElements[v];
+                    SimpleVisualiserWrapper vPoint = DisplayedVerticesUIElements[v];
                     
                     if(ShowOutEdges)
                     foreach(IEdge e in v)
-                        if(DisplayedVertexesUIElements.ContainsKey(e.To)) // if vertex is allready displayed, connect it
+                        if(DisplayedVerticesUIElements.ContainsKey(e.To)) // if vertex is allready displayed, connect it
                         {
-                            SimpleVisualiserWrapper eToPoint = DisplayedVertexesUIElements[e.To];
+                            SimpleVisualiserWrapper eToPoint = DisplayedVerticesUIElements[e.To];
 
                             AddLine(vPoint, eToPoint,e.Meta);                            
                         }
 
                     if (ShowInEdges)
                         foreach (IEdge e in v.InEdges)
-                            if (DisplayedVertexesUIElements.ContainsKey(e.From)) // if vertex is allready displayed, connect it
+                            if (DisplayedVerticesUIElements.ContainsKey(e.From)) // if vertex is allready displayed, connect it
                             {
-                                SimpleVisualiserWrapper eFromPoint = DisplayedVertexesUIElements[e.From];
+                                SimpleVisualiserWrapper eFromPoint = DisplayedVerticesUIElements[e.From];
 
                                 AddLine(eFromPoint, vPoint, e.Meta);
                             }
@@ -531,7 +531,7 @@ namespace m0.UIWpf.Visualisers
         {
             MinusZero mz = MinusZero.Instance;            
 
-            DisplayedVertexesUIElements = new Dictionary<IVertex, SimpleVisualiserWrapper>();
+            DisplayedVerticesUIElements = new Dictionary<IVertex, SimpleVisualiserWrapper>();
 
             this.Background = (Brush)FindResource("0BackgroundBrush");
 
@@ -587,7 +587,7 @@ namespace m0.UIWpf.Visualisers
 
         protected override void OnMouseMove(MouseEventArgs e)
         {
-            KeyValuePair<IVertex, SimpleVisualiserWrapper> kvp = DisplayedVertexesUIElements.Where(x => ((SimpleVisualiserWrapper)x.Value).Child == e.Source).FirstOrDefault();
+            KeyValuePair<IVertex, SimpleVisualiserWrapper> kvp = DisplayedVerticesUIElements.Where(x => ((SimpleVisualiserWrapper)x.Value).Child == e.Source).FirstOrDefault();
 
             if (kvp.Value != null&&((SimpleVisualiserWrapper)kvp.Value).IsHighlighted==false)
             {
@@ -608,9 +608,9 @@ namespace m0.UIWpf.Visualisers
         {
             if (e.ClickCount == 2) // switch to another BaseVertex
             {
-                RestoreSelectedVertexes();
+                RestoreSelectedVertices();
                 
-                KeyValuePair<IVertex, SimpleVisualiserWrapper> kvp = DisplayedVertexesUIElements.Where(x => ((SimpleVisualiserWrapper)x.Value).Child == e.Source).FirstOrDefault();
+                KeyValuePair<IVertex, SimpleVisualiserWrapper> kvp = DisplayedVerticesUIElements.Where(x => ((SimpleVisualiserWrapper)x.Value).Child == e.Source).FirstOrDefault();
 
                 if (kvp.Key != null)                
                     GraphUtil.ReplaceEdge(Vertex.Get(false, "BaseEdge:"), "To", kvp.Key);                                    
@@ -618,11 +618,11 @@ namespace m0.UIWpf.Visualisers
 
             if (e.ClickCount == 1) // change Selection
             {
-                   KeyValuePair<IVertex, SimpleVisualiserWrapper> kvp = DisplayedVertexesUIElements.Where(x => ((SimpleVisualiserWrapper)x.Value).Child == e.Source).FirstOrDefault();
+                   KeyValuePair<IVertex, SimpleVisualiserWrapper> kvp = DisplayedVerticesUIElements.Where(x => ((SimpleVisualiserWrapper)x.Value).Child == e.Source).FirstOrDefault();
 
                    if (kvp.Key != null)
                    {
-                       CopySelectedVertexesToTemp();                           
+                       CopySelectedVerticesToTemp();                           
 
                        bool IsCtrl = false;
 
@@ -677,37 +677,37 @@ namespace m0.UIWpf.Visualisers
             IVertex sv = Vertex.Get(false, "SelectedEdges:");
 
             foreach (IEdge v in sv)
-                if (v.To.Get(false, "To:") != null && DisplayedVertexesUIElements.ContainsKey(v.To.Get(false, "To:")))
-                    DisplayedVertexesUIElements[v.To.Get(false, "To:")].Unselect();            
+                if (v.To.Get(false, "To:") != null && DisplayedVerticesUIElements.ContainsKey(v.To.Get(false, "To:")))
+                    DisplayedVerticesUIElements[v.To.Get(false, "To:")].Unselect();            
         }        
 
-        IVertex tempSelectedVertexes;
+        IVertex tempSelectedVertices;
 
-        protected void CopySelectedVertexesToTemp()
+        protected void CopySelectedVerticesToTemp()
         {
-            tempSelectedVertexes = MinusZero.Instance.CreateTempVertex();
+            tempSelectedVertices = MinusZero.Instance.CreateTempVertex();
 
-            GraphUtil.CopyEdges(Vertex.Get(false, "SelectedEdges:"), tempSelectedVertexes);
+            GraphUtil.CopyEdges(Vertex.Get(false, "SelectedEdges:"), tempSelectedVertices);
         }
 
-        protected void RestoreSelectedVertexes()
+        protected void RestoreSelectedVertices()
         {
             IVertex sv = Vertex.Get(false, "SelectedEdges:");
 
-            if (tempSelectedVertexes != null)
+            if (tempSelectedVertices != null)
             {
                 GraphUtil.RemoveAllEdges_WhereEdgeIsEdge(sv);
 
-                GraphUtil.CopyEdges(tempSelectedVertexes, sv);
+                GraphUtil.CopyEdges(tempSelectedVertices, sv);
 
-                GraphUtil.RemoveAllEdges_WhereEdgeIsEdge(tempSelectedVertexes); // 11.10.2018 ADDED. should cause no problems
+                GraphUtil.RemoveAllEdges_WhereEdgeIsEdge(tempSelectedVertices); // 11.10.2018 ADDED. should cause no problems
             }
 
         }
 
         protected void UnselectAll()
         {
-            foreach(KeyValuePair<IVertex,SimpleVisualiserWrapper> key in DisplayedVertexesUIElements)
+            foreach(KeyValuePair<IVertex,SimpleVisualiserWrapper> key in DisplayedVerticesUIElements)
                 key.Value.Unselect();
         }
 
@@ -718,24 +718,24 @@ namespace m0.UIWpf.Visualisers
             GraphUtil.RemoveAllEdges_WhereEdgeIsEdge(sv);
         }
         
-        protected void SelectedVertexesUpdated()
+        protected void SelectedVerticesUpdated()
         {
             if (IsFirstPainted)
             {
                 UnselectAll();
 
-                SelectWrappersForSelectedVertexes();
+                SelectWrappersForSelectedVertices();
             }
         }
 
-        protected void SelectWrappersForSelectedVertexes()
+        protected void SelectWrappersForSelectedVertices()
         {
             IVertex sv = Vertex.Get(false, "SelectedEdges:");
 
             foreach (IEdge e in sv)
             {
-                if (e.To.Get(false, "To:")!=null&&DisplayedVertexesUIElements.ContainsKey(e.To.Get(false, "To:")))
-                    DisplayedVertexesUIElements[e.To.Get(false, "To:")].Select();
+                if (e.To.Get(false, "To:")!=null&&DisplayedVerticesUIElements.ContainsKey(e.To.Get(false, "To:")))
+                    DisplayedVerticesUIElements[e.To.Get(false, "To:")].Select();
             }
         }
         
@@ -750,13 +750,13 @@ namespace m0.UIWpf.Visualisers
                 { UpdateBaseEdge(); return; }
 
             if ((sender == Vertex) && (e.Type == VertexChangeType.EdgeAdded) && (GeneralUtil.CompareStrings(e.Edge.Meta.Value, "SelectedEdges")))
-                { SelectedVertexesUpdated(); return; }
+                { SelectedVerticesUpdated(); return; }
 
             if ((sender == Vertex.Get(false, "SelectedEdges:")) && ((e.Type == VertexChangeType.EdgeAdded) || (e.Type == VertexChangeType.EdgeRemoved)))
-                { SelectedVertexesUpdated(); return; }
+                { SelectedVerticesUpdated(); return; }
 
             if (sender is IVertex && GraphUtil.FindEdgeByToVertex(Vertex.GetAll(false, @"SelectedEdges:\"), (IVertex)sender) != null)
-                { SelectedVertexesUpdated(); return; }
+                { SelectedVerticesUpdated(); return; }
 
             if (sender == Vertex.Get(false, "ZoomVisualiserContent:") && e.Type == VertexChangeType.ValueChanged)
                 { ChangeZoomVisualiserContent(); return; }
@@ -809,7 +809,7 @@ namespace m0.UIWpf.Visualisers
 
                 //GraphUtil.DeleteEdgeByToVertex(mz.Root.Get(false, @"System\Session\Visualisers"), Vertex);
 
-                foreach (UIElement e in DisplayedVertexesUIElements.Values)
+                foreach (UIElement e in DisplayedVerticesUIElements.Values)
                     if (e is IDisposable)
                         ((IDisposable)e).Dispose();
 
@@ -829,7 +829,7 @@ namespace m0.UIWpf.Visualisers
         {
             vertexByLocationToReturn = null;
 
-            foreach (KeyValuePair<IVertex, SimpleVisualiserWrapper> kvp in DisplayedVertexesUIElements)
+            foreach (KeyValuePair<IVertex, SimpleVisualiserWrapper> kvp in DisplayedVerticesUIElements)
             {
                 if (VisualTreeHelper.HitTest(kvp.Value, TranslatePoint(p, kvp.Value)) != null)
                 {
@@ -866,7 +866,7 @@ namespace m0.UIWpf.Visualisers
             dndStartPoint = e.GetPosition(this);
             hasButtonBeenDown = true;
 
-            CopySelectedVertexesToTemp();
+            CopySelectedVerticesToTemp();
 
             MinusZero.Instance.IsGUIDragging = false;
         }        
@@ -882,7 +882,7 @@ namespace m0.UIWpf.Visualisers
                 (Math.Abs(diff.X) > Dnd.MinimumHorizontalDragDistance) ||
                 (Math.Abs(diff.Y) > Dnd.MinimumVerticalDragDistance)))
             {
-                RestoreSelectedVertexes();
+                RestoreSelectedVertices();
 
                 IVertex dndVertex = MinusZero.Instance.CreateTempVertex();
 

@@ -239,7 +239,7 @@ namespace m0.ZeroUML.Instructions
             bool CopyVertexValue = false;
 
             if (visitor_EdgeEdge == null && visitor_EdgeListOfEdges == null) // CopyVertexValue visitor is implemented in the ZeroAlgebraLeftRightProcessor body
-                CopyVertexValue = true; // as there could be a need to create new vertexes if righExecuteResult.Count > l, and if we are creating new vertexes, they should have right value from the start, so need to do it here
+                CopyVertexValue = true; // as there could be a need to create new Vertices if righExecuteResult.Count > l, and if we are creating new Vertices, they should have right value from the start, so need to do it here
 
             if (leftExpression != null && rightExpression != null)
             {

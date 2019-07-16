@@ -34,15 +34,15 @@ namespace m0.ZeroUML
             return "["+min+".."+max+"]";
         }
 
-        public static void AddAllAttributesAndAssociationsVertexes(IVertex ObjectVertex){
-            IVertex AttributeVertexes = ObjectVertex.GetAll(false, @"$Is:\Attribute:");
+        public static void AddAllAttributesAndAssociationsVertices(IVertex ObjectVertex){
+            IVertex AttributeVertices = ObjectVertex.GetAll(false, @"$Is:\Attribute:");
 
-            foreach (IEdge e in AttributeVertexes)
+            foreach (IEdge e in AttributeVertices)
                 ObjectVertex.AddVertex(e.To, null);
 
-            IVertex AssociationVertexes = ObjectVertex.GetAll(false, @"$Is:\Association:");
+            IVertex AssociationVertices = ObjectVertex.GetAll(false, @"$Is:\Association:");
 
-            foreach (IEdge e in AssociationVertexes)
+            foreach (IEdge e in AssociationVertices)
                 ObjectVertex.AddVertex(e.To, null);
         }
 
@@ -52,7 +52,7 @@ namespace m0.ZeroUML
 
             ObjectVertex.AddEdge(smuv.Get(false, "$Is"), ClassVertex);
 
-            AddAllAttributesAndAssociationsVertexes(ObjectVertex);
+            AddAllAttributesAndAssociationsVertices(ObjectVertex);
         }
     }
 }

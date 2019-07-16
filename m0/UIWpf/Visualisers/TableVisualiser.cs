@@ -190,7 +190,7 @@ namespace m0.UIWpf.Visualisers
         protected override void UpdateBaseEdge(){
             IVertex bas = Vertex.Get(false, @"BaseEdge:\To:");
 
-            if (Vertex.Get(false, @"ToShowEdgesMeta:\Meta:") == null) // check if we are in the middle of ToShowEdgesMeta sub vertexes switching
+            if (Vertex.Get(false, @"ToShowEdgesMeta:\Meta:") == null) // check if we are in the middle of ToShowEdgesMeta sub Vertices switching
                 if (Vertex.Get(false, @"ToShowEdgesMeta:\To:") != null)
                     return;
 
@@ -267,13 +267,13 @@ namespace m0.UIWpf.Visualisers
               // there WAS is update loop with this, so commenting out and leaving only what is above
 
             if ((sender == Vertex) && (e.Type == VertexChangeType.EdgeAdded) && (GeneralUtil.CompareStrings(e.Edge.Meta.Value, "SelectedEdges")))
-                SelectedVertexesUpdated();
+                SelectedVerticesUpdated();
 
             if ((sender == Vertex.Get(false, "SelectedEdges:")) && ((e.Type == VertexChangeType.EdgeAdded)||(e.Type == VertexChangeType.EdgeRemoved)))
-                SelectedVertexesUpdated();
+                SelectedVerticesUpdated();
 
             if (sender is IVertex && GraphUtil.FindEdgeByToVertex(Vertex.GetAll(false, @"SelectedEdges:\"), (IVertex)sender) != null)
-                SelectedVertexesUpdated();
+                SelectedVerticesUpdated();
 
             if (sender == Vertex.Get(false, "IsMetaRightAlign:") && e.Type == VertexChangeType.ValueChanged) 
                 ResetView();

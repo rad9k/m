@@ -221,7 +221,7 @@ namespace m0.UIWpf.Visualisers.Diagram
                         canAdd = false;
 
                     if (e.To.Get(false, @"$EdgeTarget:") != null 
-                        && !GeneralUtil.CompareStrings(e.To.Get(false, @"$EdgeTarget:").Value,"Vertex") // Vertexes do not have $Is:Vertex
+                        && !GeneralUtil.CompareStrings(e.To.Get(false, @"$EdgeTarget:").Value,"Vertex") // Vertices do not have $Is:Vertex
                         && toEdge.Get(false, @"To:\$Is:" + (string)e.To.Get(false, @"$EdgeTarget:").Value) == null)
                         canAdd = false;
 
