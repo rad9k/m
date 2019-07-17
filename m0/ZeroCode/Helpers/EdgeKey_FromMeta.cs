@@ -19,7 +19,7 @@ namespace m0.ZeroCode.Helpers
         public override int GetHashCode()
         {
             if(edge.From!=null && edge.Meta!=null)
-                return edge.From.GetHashCode() + edge.To.GetHashCode();
+                return edge.From.GetHashCode() + edge.Meta.GetHashCode();
 
             if (edge.From != null)
                 return edge.From.GetHashCode();

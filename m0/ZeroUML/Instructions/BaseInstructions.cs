@@ -278,17 +278,12 @@ namespace m0.ZeroUML.Instructions
                                     toAddVertex.AddVertex(rightEdge.Meta, rightEdge.To.Value); // CREATE VERTEX AND COPY
                                 }
                             }
-                        }
-
-
-                        
-
+                        }                       
                      //   visitor_EdgeEdge?.Invoke()
                     } else
                     if (leftExecuteResult.Count() > 0)
                     {
-
-                        IDictionary<EdgeKey_FromMeta, IList<IEdge>> dict = InstructionHelpers.CreateEdgeKey_FromMetaDictionary(leftExecuteResult);
+                        IDictionary<int, IList<IEdge>> dict = InstructionHelpers.CreateEdgeKey_FromMetaDictionary(leftExecuteResult);
 
 
                         if (rightExecuteResult.Count() == 1)
@@ -312,7 +307,39 @@ namespace m0.ZeroUML.Instructions
             IVertex leftExpression = InstructionHelpers.GetLeft(instructionVertex);
             IVertex rightExpression = InstructionHelpers.GetRight(instructionVertex);
 
-           
+            if (leftExpression == null || rightExpression == null)
+                return stack;
+
+            INoInEdgeInOutVertexVertex leftExecuteResult = exe.executeInstruction(exe.stack, leftExpression);
+            INoInEdgeInOutVertexVertex _rightExecuteResult = exe.executeInstruction(exe.stack, rightExpression);
+
+            IList<IEdge> rightExecuteResult = _rightExecuteResult.OutEdges;
+
+            IDictionary<int, IList<IEdge>> leftFromMeta_dict = InstructionHelpers.CreateEdgeKey_FromMetaDictionary(leftExecuteResult);
+
+            int rightCountMax = rightExecuteResult.Count() - 1;
+
+            foreach(KeyValuePair<int, IList<IEdge>> localLeft in leftFromMeta_dict)
+            {
+                int localLeftCountMax = localLeft.Value.Count() - 1;
+
+                if (localLeftCountMax > rightCountMax)
+                    for (int x = rightCountMax + 1; x <= localLeftCountMax; x++) {
+                        IEdge toDelete = localLeft.Value[x];
+                        toDelete.From.DeleteEdge(toDelete);
+                    }
+
+                for (int x = 0; x <= localLeftCountMax; x++)
+                    localLeft.Value[x].To.Value = rightExecuteResult[x].To.Value;
+
+                if (localLeftCountMax < rightCountMax)
+                {
+                    IEdge toAdd = localLeft.Value[0];
+
+                    for (int x = localLeftCountMax + 1; x <= rightCountMax; x++)
+                        toAdd.From.AddVertex(toAdd.Meta, rightExecuteResult[x].To.Value);                   
+                }
+            }
 
             return stack;
         }
@@ -379,21 +406,6 @@ namespace m0.ZeroUML.Instructions
 
         // -=
         public static INoInEdgeInOutVertexVertex DeleteRightEdgesFromLeftEdges(ZeroCodeExecution exe, IVertex inputStack, IVertex instructionVertex)
-        {
-            INoInEdgeInOutVertexVertex stack = exe.stack;
-
-            IVertex leftExpression = InstructionHelpers.GetLeft(instructionVertex);
-            IVertex rightExpression = InstructionHelpers.GetRight(instructionVertex);
-
-            AlgebraicVertexVisitor visitor = new AlgebraicVertexVisitor(exe);
-
-            ZeroAlgebraLeftRightProcessor(exe, null, visitor.DeleteEdgesIterator, leftExpression, rightExpression, false);
-
-            return stack;
-        }
-
-        // -<
-        public static INoInEdgeInOutVertexVertex DeleteRightVerticesFromLeftEdges(ZeroCodeExecution exe, IVertex inputStack, IVertex instructionVertex)
         {
             INoInEdgeInOutVertexVertex stack = exe.stack;
 
