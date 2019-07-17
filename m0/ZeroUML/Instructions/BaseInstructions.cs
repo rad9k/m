@@ -324,10 +324,15 @@ namespace m0.ZeroUML.Instructions
                 int localLeftCountMax = localLeft.Value.Count() - 1;
 
                 if (localLeftCountMax > rightCountMax)
-                    for (int x = rightCountMax + 1; x <= localLeftCountMax; x++) {
+                {
+                    for (int x = rightCountMax + 1; x <= localLeftCountMax; x++)
+                    {
                         IEdge toDelete = localLeft.Value[x];
                         toDelete.From.DeleteEdge(toDelete);
                     }
+
+                    localLeftCountMax = rightCountMax;
+                }
 
                 for (int x = 0; x <= localLeftCountMax; x++)
                     localLeft.Value[x].To.Value = rightExecuteResult[x].To.Value;
