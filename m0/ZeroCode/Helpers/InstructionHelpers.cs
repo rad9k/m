@@ -98,23 +98,21 @@ namespace m0.ZeroCode.Helpers
             return stack;
         }
 
-        public static IDictionary<int, IList<IEdge>> CreateEdgeKey_FromMetaDictionary(INoInEdgeInOutVertexVertex queryResult)
+        public static IDictionary<EdgeKey_FromMeta, IList<IEdge>> CreateEdgeKey_FromMetaDictionary(INoInEdgeInOutVertexVertex queryResult)
         {
-            IDictionary<int, IList<IEdge>> dict = new Dictionary<int, IList<IEdge>>();
+            IDictionary<EdgeKey_FromMeta, IList<IEdge>> dict = new Dictionary<EdgeKey_FromMeta, IList<IEdge>>();
 
             foreach(IEdge e in queryResult)
             {
                 EdgeKey_FromMeta ekfm = new EdgeKey_FromMeta(e);
 
-                int ekfm_hash = ekfm.GetHashCode();
-
-                if (dict.ContainsKey(ekfm_hash))
-                    dict[ekfm_hash].Add(e);
+                if (dict.ContainsKey(ekfm))
+                    dict[ekfm].Add(e);
                 else
                 {
                     IList<IEdge> list = new List<IEdge>();
                     list.Add(e);
-                    dict.Add(ekfm_hash, list);
+                    dict.Add(ekfm, list);
                 }
             }
 

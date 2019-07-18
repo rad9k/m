@@ -18,7 +18,7 @@ namespace m0.ZeroCode.Helpers
 
         public override int GetHashCode()
         {
-            if(edge.From!=null && edge.Meta!=null)
+            if (edge.From!=null && edge.Meta!=null)
                 return edge.From.GetHashCode() + edge.Meta.GetHashCode();
 
             if (edge.From != null)
@@ -28,6 +28,22 @@ namespace m0.ZeroCode.Helpers
                 return -1 * edge.To.GetHashCode();
 
             return 0;
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (obj == null || GetType() != obj.GetType())
+                return false;
+
+            EdgeKey_FromMeta other = (EdgeKey_FromMeta)obj;
+
+            if (this.edge.From != other.edge.From)
+                return false;
+
+            if (this.edge.Meta != other.edge.Meta)
+                return false;
+
+            return true;
         }
     }
 }

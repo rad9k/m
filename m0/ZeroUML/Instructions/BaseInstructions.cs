@@ -283,7 +283,7 @@ namespace m0.ZeroUML.Instructions
                     } else
                     if (leftExecuteResult.Count() > 0)
                     {
-                        IDictionary<int, IList<IEdge>> dict = InstructionHelpers.CreateEdgeKey_FromMetaDictionary(leftExecuteResult);
+                        //IDictionary<int, IList<IEdge>> dict = InstructionHelpers.CreateEdgeKey_FromMetaDictionary(leftExecuteResult);
 
 
                         if (rightExecuteResult.Count() == 1)
@@ -315,11 +315,11 @@ namespace m0.ZeroUML.Instructions
 
             IList<IEdge> rightExecuteResult = _rightExecuteResult.OutEdges;
 
-            IDictionary<int, IList<IEdge>> leftFromMeta_dict = InstructionHelpers.CreateEdgeKey_FromMetaDictionary(leftExecuteResult);
+            IDictionary<EdgeKey_FromMeta, IList<IEdge>> leftFromMeta_dict = InstructionHelpers.CreateEdgeKey_FromMetaDictionary(leftExecuteResult);
 
             int rightCountMax = rightExecuteResult.Count() - 1;
 
-            foreach(KeyValuePair<int, IList<IEdge>> localLeft in leftFromMeta_dict)
+            foreach(KeyValuePair<EdgeKey_FromMeta, IList<IEdge>> localLeft in leftFromMeta_dict)
             {
                 int localLeftCountMax = localLeft.Value.Count() - 1;
 
