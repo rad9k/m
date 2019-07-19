@@ -357,7 +357,7 @@ namespace m0
                 ",Query" +
                 ",[]" +
                 ",[[]]" +
-                ",\"{}\",\"{CRLF}\",+,-,\" *\",/,?,\"\\ \",\"|\",\"||\",(),CopyVertexValue,RedirectLeftEdgesToRightVertices,AddLeftEdgesToRightVertices,AddRightEdgesIntoLeftEdges,DeleteRightVertices,DeleteRightEdgesFromLeftEdges,DeleteRightVerticesFromLeftEdges" +
+                ",\"{}\",\"{CRLF}\",EdgeSetAdd,EdgeSetSubstract,+,-,\" *\",/,?,\"\\ \",\"|\",\"||\",(),CopyVertexValue,RedirectLeftEdgesToRightVertices,AddLeftEdgesToRightVertices,AddRightEdgesIntoLeftEdges,DeleteRightVertices,DeleteRightEdgesFromLeftEdges,DeleteRightVerticesFromLeftEdges" +
                 ",Action,Return{Expression},NextOut{Next{$MinCardinality:0,$MaxCardinality:1}}" +
                 ",StackFrameCreator{Do{$MinCardinality:0,$MaxCardinality:1},Variable{$MinCardinality:0,$MaxCardinality:-1},Type{$MinCardinality:0,$MaxCardinality:-1}}" +
                 ",StackFrameCreatorWithInputOutput{Output{$MinCardinality:0,$MaxCardinality:1},InputParameter{$MinCardinality:0,$MaxCardinality:-1}}" +
@@ -388,6 +388,11 @@ namespace m0
             AddDotNetEndPoint(smu.Get(false, "DeleteRightVertices"), "DeleteRightVertices");
             AddDotNetEndPoint(smu.Get(false, "DeleteRightEdgesFromLeftEdges"), "DeleteRightEdgesFromLeftEdges");
             AddDotNetEndPoint(smu.Get(false, "DeleteRightVerticesFromLeftEdges"), "DeleteRightVerticesFromLeftEdges");
+
+            // edge set operators
+
+            AddDotNetEndPoint(smu.Get(false, "EdgeSetAdd"), "EdgeSetAdd");
+            AddDotNetEndPoint(smu.Get(false, "EdgeSetSubstract"), "EdgeSetSubstract");
 
             // StackFrameCreator
 
@@ -540,6 +545,8 @@ namespace m0
             package.AddEdge(null, smu.Get(false, "[[]]"));
             package.AddEdge(null, smu.Get(false, "\"{CRLF}\""));
             package.AddEdge(null, smu.Get(false, "\"{}\""));
+            package.AddEdge(null, smu.Get(false, "EdgeSetAdd"));
+            package.AddEdge(null, smu.Get(false, "EdgeSetSubstract"));
             package.AddEdge(null, smu.Get(false, "+"));
             package.AddEdge(null, smu.Get(false, "-"));
             package.AddEdge(null, smu.Get(false, " *"));
@@ -921,6 +928,24 @@ namespace m0
             // (?<left>) ~< (?<right>)
 
             AddLeftRightOperator(k, smu, smb, keyword, any, "(?<left>) ~<(?<SUB>) (?<right>)", "DeleteRightVerticesFromLeftEdges");
+
+            /////////////////////////////////////////////////////////
+            //
+            // edge set operators
+            //
+            ////////////////////////////////////////////////////////
+
+            // >+<
+            //
+            // (?<left>) >+< (?<right>)
+
+            AddLeftRightOperator(k, smu, smb, keyword, any, "(?<left>) >+<(?<SUB>) (?<right>)", "EdgeSetAdd");
+
+            // >-<
+            //
+            // (?<left>) >-< (?<right>)
+
+            AddLeftRightOperator(k, smu, smb, keyword, any, "(?<left>) >-<(?<SUB>) (?<right>)", "EdgeSetSubstract");
 
             /////////////////////////////////////////////////////////
             //

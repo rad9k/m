@@ -202,103 +202,7 @@ namespace m0.ZeroUML.Instructions
         // O P E R A T O R S
         //
         ////////////////////////////////////////////////////////////////
-
-        public delegate void AlgebraicVertexVisitor_EdgeEdge(IEdge leftEdge, IEdge rightEdge);
-
-        public delegate void AlgebraicVertexVisitor_EdgeListOfEdges(IEdge leftEdge, IList<IEdge> rightEdges);
-
-        public class AlgebraicVertexVisitor
-        {
-            ZeroCodeExecution exe;
-
-            public AlgebraicVertexVisitor(ZeroCodeExecution _exe)
-            {
-                exe = _exe;
-            }            
-
-            public void RedirectEdgeToVertexIterator(IEdge leftEdge, IEdge rightEdge)
-            {                
-                leftEdge.From.AddEdge(leftEdge.Meta, rightEdge.To);
-            }
-
-            public void AddEdgesIterator(IEdge leftEdge, IList<IEdge> rightEdges)
-            {
-                foreach (IEdge e in rightEdges)
-                    leftEdge.To.AddEdge(e.Meta, e.To);
-            }
-
-            public void DeleteEdgesIterator(IEdge leftEdge, IList<IEdge> rightEdges)
-            {
-                foreach (IEdge e in rightEdges)                    
-                    leftEdge.To.DeleteEdge(e);
-            }
-        }
-
-        public static void ZeroAlgebraLeftRightProcessor(ZeroCodeExecution exe, AlgebraicVertexVisitor_EdgeEdge visitor_EdgeEdge, AlgebraicVertexVisitor_EdgeListOfEdges visitor_EdgeListOfEdges, IVertex leftExpression, IVertex rightExpression, bool deleteLeftEdges)
-        {
-            bool CopyVertexValue = false;
-
-            if (visitor_EdgeEdge == null && visitor_EdgeListOfEdges == null) // CopyVertexValue visitor is implemented in the ZeroAlgebraLeftRightProcessor body
-                CopyVertexValue = true; // as there could be a need to create new Vertices if righExecuteResult.Count > l, and if we are creating new Vertices, they should have right value from the start, so need to do it here
-
-            if (leftExpression != null && rightExpression != null)
-            {
-                INoInEdgeInOutVertexVertex leftExecuteResult = exe.executeInstruction(exe.stack, leftExpression);
-                INoInEdgeInOutVertexVertex rightExecuteResult;
-
-                if (leftExecuteResult != null)
-                {
-                    if (InstructionHelpers.CheckIsNewVertex(rightExpression))
-                    {
-                        rightExecuteResult = InstructionHelpers.CreateStack();
-                        rightExecuteResult.AddEdgeForNoInEdgeInOutVertexVertex(GraphUtil.CreateArtificialEdge(null, rightExpression));
-                    }
-                    else
-                    {
-                        rightExecuteResult = exe.executeInstruction(exe.stack, rightExpression);
-                    }
-
-                    if (deleteLeftEdges)                    
-                        foreach (IEdge e in leftExecuteResult)
-                            e.From.DeleteEdge(e);                    
-
-                    if(leftExecuteResult.Count() == 1)
-                    {
-                        IEdge leftExecuteResultFirst = leftExecuteResult.OutEdges[0];
-
-                        if (CopyVertexValue) { // CopyVertexValue operator logic
-                            leftExecuteResultFirst.To.Value = rightExecuteResult.OutEdges[0]; // COPY
-
-                            if(rightExecuteResult.Count() > 1) { // need to create more left Edges
-                                IVertex toAddVertex = leftExecuteResultFirst.From;
-
-                                for (int x = 1; x <= rightExecuteResult.Count(); x++)
-                                {
-                                    IEdge rightEdge = rightExecuteResult.OutEdges[x];
-                                    toAddVertex.AddVertex(rightEdge.Meta, rightEdge.To.Value); // CREATE VERTEX AND COPY
-                                }
-                            }
-                        }                       
-                     //   visitor_EdgeEdge?.Invoke()
-                    } else
-                    if (leftExecuteResult.Count() > 0)
-                    {
-                        //IDictionary<int, IList<IEdge>> dict = InstructionHelpers.CreateEdgeKey_FromMetaDictionary(leftExecuteResult);
-
-
-                        if (rightExecuteResult.Count() == 1)
-                        {
-                            IVertex singleRightResult = rightExecuteResult.OutEdges[0].To;
-
-                            foreach (IEdge e in leftExecuteResult)
-                                e.From.AddEdge(e.Meta, singleRightResult);
-
-                        }
-                    }
-                }
-            }
-        }
-
+ 
         // :=
         public static INoInEdgeInOutVertexVertex CopyVertexValue(ZeroCodeExecution exe, IVertex inputStack, IVertex instructionVertex)
         {
@@ -442,9 +346,16 @@ namespace m0.ZeroUML.Instructions
             ISet<IEdge> rightResultToSet = InstructionHelpers.CreateEdgeKey_ToSet(_rightExecuteResult);
 
             foreach (IEdge leftEdge in leftExecuteResult)
+            {
+                HashSet<IEdge> usedEdges = new HashSet<IEdge>();
+
                 foreach (IEdge rightEdge in rightResultToSet)
-                    if(leftEdge.To == rightEdge.To)
+                    if (leftEdge.To == rightEdge.To && !usedEdges.Contains(rightEdge))
+                    {
                         leftEdge.From.DeleteEdge(leftEdge);
+                        usedEdges.Add(rightEdge);
+                    }
+            }
 
             return exe.stack;
         }
@@ -466,12 +377,7 @@ namespace m0.ZeroUML.Instructions
             IList<IEdge> rightResultMetaToEdgesList = InstructionHelpers.CreateEdgeKey_MetaToEdgesList(_rightExecuteResult);
 
             foreach (IEdge leftEdge in leftExecuteResult)
-                foreach (IEdge intoLeftEdge in leftEdge.To)
-                    intoLeftEdge.To.DeleteEdgesList(rightResultMetaToEdgesList);
-
-                  //  foreach (EdgeKey_MetaTo rightEdgeKey in rightResultToSet)
-                   //     if(intoLeftEdge.Meta == rightEdgeKey.edge.Meta && leftEdge.To == rightEdgeKey.edge.To)
-                     //       leftEdge.From.DeleteEdge(rightEdgeKey.edge);
+                    leftEdge.To.DeleteEdgesList(rightResultMetaToEdgesList);
 
             return exe.stack;
         }
@@ -479,17 +385,66 @@ namespace m0.ZeroUML.Instructions
         // ~<
         public static INoInEdgeInOutVertexVertex DeleteRightVerticesFromLeftEdges(ZeroCodeExecution exe, IVertex inputStack, IVertex instructionVertex)
         {
-            INoInEdgeInOutVertexVertex stack = exe.stack;
-
             IVertex leftExpression = InstructionHelpers.GetLeft(instructionVertex);
             IVertex rightExpression = InstructionHelpers.GetRight(instructionVertex);
 
-            AlgebraicVertexVisitor visitor = new AlgebraicVertexVisitor(exe);
+            if (leftExpression == null || rightExpression == null)
+                return exe.stack;
 
-            ZeroAlgebraLeftRightProcessor(exe, null, visitor.DeleteEdgesIterator, leftExpression, rightExpression, false);
+            INoInEdgeInOutVertexVertex _leftExecuteResult = exe.executeInstruction(exe.stack, leftExpression);
+            INoInEdgeInOutVertexVertex _rightExecuteResult = exe.executeInstruction(exe.stack, rightExpression);
 
-            return stack;
+            IList<IEdge> leftExecuteResult = _leftExecuteResult.OutEdges;
+
+            ISet<IEdge> rightResultToSet = InstructionHelpers.CreateEdgeKey_ToSet(_rightExecuteResult);
+
+            foreach (IEdge leftEdge in leftExecuteResult)
+                foreach(IEdge intoLeftEdge in leftEdge.To.ToList<IEdge>())
+                {
+                    HashSet<IEdge> usedEdges = new HashSet<IEdge>();
+
+                    foreach (IEdge rightEdge in rightResultToSet)
+                        if (intoLeftEdge.To == rightEdge.To && !usedEdges.Contains(rightEdge))
+                        {
+                            intoLeftEdge.From.DeleteEdge(intoLeftEdge);
+                            usedEdges.Add(rightEdge);
+                        }
+                }
+
+            return exe.stack;
         }
+
+        ////////////////////////////////////////////////////////////////
+        //
+        // edge set operators
+        //
+        ////////////////////////////////////////////////////////////////
+
+        public static INoInEdgeInOutVertexVertex EdgeSetAdd(ZeroCodeExecution exe, IVertex inputStack, IVertex instructionVertex)
+        {
+            IVertex leftExpression = InstructionHelpers.GetLeft(instructionVertex);
+            IVertex rightExpression = InstructionHelpers.GetRight(instructionVertex);
+
+            if (leftExpression == null || rightExpression == null)
+                return exe.stack;
+
+            INoInEdgeInOutVertexVertex _leftExecuteResult = exe.executeInstruction(exe.stack, leftExpression);
+            INoInEdgeInOutVertexVertex _rightExecuteResult = exe.executeInstruction(exe.stack, rightExpression);
+
+            IList<IEdge> leftExecuteResult = _leftExecuteResult.OutEdges;
+            IList<IEdge> rightExecuteResult = _rightExecuteResult.OutEdges;
+
+            INoInEdgeInOutVertexVertex localStack = InstructionHelpers.CreateStack();
+
+            foreach (IEdge e in leftExecuteResult)
+                localStack.AddEdge(e.Meta, e.To);
+
+            foreach (IEdge e in rightExecuteResult)
+                localStack.AddEdge(e.Meta, e.To);            
+
+            return localStack;
+        }
+
 
         ////////////////////////////////////////////////////////////////
         //
