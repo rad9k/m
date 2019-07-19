@@ -428,34 +428,55 @@ namespace m0.ZeroUML.Instructions
         // ~=
         public static INoInEdgeInOutVertexVertex DeleteRightVertices(ZeroCodeExecution exe, IVertex inputStack, IVertex instructionVertex)
         {
-            INoInEdgeInOutVertexVertex stack = exe.stack;
-
             IVertex leftExpression = InstructionHelpers.GetLeft(instructionVertex);
             IVertex rightExpression = InstructionHelpers.GetRight(instructionVertex);
 
-            AlgebraicVertexVisitor visitor = new AlgebraicVertexVisitor(exe);
+            if (leftExpression == null || rightExpression == null)
+                return exe.stack;
 
-            ZeroAlgebraLeftRightProcessor(exe, null, visitor.DeleteEdgesIterator, leftExpression, rightExpression, false);
+            INoInEdgeInOutVertexVertex _leftExecuteResult = exe.executeInstruction(exe.stack, leftExpression);
+            INoInEdgeInOutVertexVertex _rightExecuteResult = exe.executeInstruction(exe.stack, rightExpression);
 
-            return stack;
-        }
+            IList<IEdge> leftExecuteResult = _leftExecuteResult.OutEdges;
 
-        // -=
-        public static INoInEdgeInOutVertexVertex DeleteRightEdgesFromLeftEdges(ZeroCodeExecution exe, IVertex inputStack, IVertex instructionVertex)
-        {
-            INoInEdgeInOutVertexVertex stack = exe.stack;
+            ISet<IEdge> rightResultToSet = InstructionHelpers.CreateEdgeKey_ToSet(_rightExecuteResult);
 
-            IVertex leftExpression = InstructionHelpers.GetLeft(instructionVertex);
-            IVertex rightExpression = InstructionHelpers.GetRight(instructionVertex);
+            foreach (IEdge leftEdge in leftExecuteResult)
+                foreach (IEdge rightEdge in rightResultToSet)
+                    if(leftEdge.To == rightEdge.To)
+                        leftEdge.From.DeleteEdge(leftEdge);
 
-            AlgebraicVertexVisitor visitor = new AlgebraicVertexVisitor(exe);
-
-            ZeroAlgebraLeftRightProcessor(exe, null, visitor.DeleteEdgesIterator, leftExpression, rightExpression, false);
-
-            return stack;
+            return exe.stack;
         }
 
         // -<
+        public static INoInEdgeInOutVertexVertex DeleteRightEdgesFromLeftEdges(ZeroCodeExecution exe, IVertex inputStack, IVertex instructionVertex)
+        {
+            IVertex leftExpression = InstructionHelpers.GetLeft(instructionVertex);
+            IVertex rightExpression = InstructionHelpers.GetRight(instructionVertex);
+
+            if (leftExpression == null || rightExpression == null)
+                return exe.stack;
+
+            INoInEdgeInOutVertexVertex _leftExecuteResult = exe.executeInstruction(exe.stack, leftExpression);
+            INoInEdgeInOutVertexVertex _rightExecuteResult = exe.executeInstruction(exe.stack, rightExpression);
+
+            IList<IEdge> leftExecuteResult = _leftExecuteResult.OutEdges;
+
+            IList<IEdge> rightResultMetaToEdgesList = InstructionHelpers.CreateEdgeKey_MetaToEdgesList(_rightExecuteResult);
+
+            foreach (IEdge leftEdge in leftExecuteResult)
+                foreach (IEdge intoLeftEdge in leftEdge.To)
+                    intoLeftEdge.To.DeleteEdgesList(rightResultMetaToEdgesList);
+
+                  //  foreach (EdgeKey_MetaTo rightEdgeKey in rightResultToSet)
+                   //     if(intoLeftEdge.Meta == rightEdgeKey.edge.Meta && leftEdge.To == rightEdgeKey.edge.To)
+                     //       leftEdge.From.DeleteEdge(rightEdgeKey.edge);
+
+            return exe.stack;
+        }
+
+        // ~<
         public static INoInEdgeInOutVertexVertex DeleteRightVerticesFromLeftEdges(ZeroCodeExecution exe, IVertex inputStack, IVertex instructionVertex)
         {
             INoInEdgeInOutVertexVertex stack = exe.stack;
