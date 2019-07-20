@@ -445,6 +445,27 @@ namespace m0.ZeroUML.Instructions
             return localStack;
         }
 
+        public static INoInEdgeInOutVertexVertex EdgeSetSubstract(ZeroCodeExecution exe, IVertex inputStack, IVertex instructionVertex)
+        {
+            IVertex leftExpression = InstructionHelpers.GetLeft(instructionVertex);
+            IVertex rightExpression = InstructionHelpers.GetRight(instructionVertex);
+
+            if (leftExpression == null || rightExpression == null)
+                return exe.stack;
+
+            INoInEdgeInOutVertexVertex leftExecuteResult = exe.executeInstruction(exe.stack, leftExpression);
+            INoInEdgeInOutVertexVertex _rightExecuteResult = exe.executeInstruction(exe.stack, rightExpression);
+
+            //IList<IEdge> leftExecuteResult = _leftExecuteResult.OutEdges;
+            IList<IEdge> rightExecuteResult = _rightExecuteResult.OutEdges;
+
+            INoInEdgeInOutVertexVertex localStack = leftExecuteResult;
+
+            leftExecuteResult.DeleteEdgesList(rightExecuteResult);            
+
+            return localStack ;
+        }
+
 
         ////////////////////////////////////////////////////////////////
         //
