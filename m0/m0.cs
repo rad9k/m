@@ -394,6 +394,13 @@ namespace m0
             AddDotNetEndPoint(smu.Get(false, "EdgeSetAdd"), "EdgeSetAdd");
             AddDotNetEndPoint(smu.Get(false, "EdgeSetSubstract"), "EdgeSetSubstract");
 
+            // standard algebraic operators operators
+            
+            AddDotNetEndPoint(smu.Get(false, "+"), "Add");
+            AddDotNetEndPoint(smu.Get(false, "-"), "Substract");
+            AddDotNetEndPoint(smu.Get(false, "\" *\""), "Multiply");
+            AddDotNetEndPoint(smu.Get(false, "/"), "Divide");
+
             // StackFrameCreator
 
             AddDotNetEndPoint(smu.Get(false, @"StackFrameCreator\Variable"), "CreateStackEdge");

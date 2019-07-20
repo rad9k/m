@@ -199,7 +199,7 @@ namespace m0.ZeroUML.Instructions
 
         ////////////////////////////////////////////////////////////////
         //
-        // O P E R A T O R S
+        // E D G E  O P E R A T O R S
         //
         ////////////////////////////////////////////////////////////////
  
@@ -456,7 +456,6 @@ namespace m0.ZeroUML.Instructions
             INoInEdgeInOutVertexVertex leftExecuteResult = exe.executeInstruction(exe.stack, leftExpression);
             INoInEdgeInOutVertexVertex _rightExecuteResult = exe.executeInstruction(exe.stack, rightExpression);
 
-            //IList<IEdge> leftExecuteResult = _leftExecuteResult.OutEdges;
             IList<IEdge> rightExecuteResult = _rightExecuteResult.OutEdges;
 
             INoInEdgeInOutVertexVertex localStack = leftExecuteResult;
@@ -466,6 +465,86 @@ namespace m0.ZeroUML.Instructions
             return localStack ;
         }
 
+        ////////////////////////////////////////////////////////////////
+        //
+        // O P E R A T O R S
+        //
+        ////////////////////////////////////////////////////////////////
+
+        public static INoInEdgeInOutVertexVertex Add(ZeroCodeExecution exe, IVertex inputStack, IVertex instructionVertex)
+        {
+            IVertex leftExpression = InstructionHelpers.GetLeft(instructionVertex);
+            IVertex rightExpression = InstructionHelpers.GetRight(instructionVertex);
+
+            if (leftExpression == null || rightExpression == null)
+                return exe.stack;
+
+            INoInEdgeInOutVertexVertex _leftExecuteResult = exe.executeInstruction(exe.stack, leftExpression);
+            INoInEdgeInOutVertexVertex _rightExecuteResult = exe.executeInstruction(exe.stack, rightExpression);
+
+            IList<IEdge> leftExecuteResult = _leftExecuteResult.OutEdges;
+            IList<IEdge> rightExecuteResult = _rightExecuteResult.OutEdges;
+
+            INoInEdgeInOutVertexVertex localStack = InstructionHelpers.CreateStack();
+
+            int? left = GraphUtil.GetIntegerValue(leftExecuteResult[0].To);
+            int? right = GraphUtil.GetIntegerValue(rightExecuteResult[0].To);
+
+            localStack.AddVertex(null, left + right);
+
+            return localStack;
+        }
+
+        public static INoInEdgeInOutVertexVertex Substract(ZeroCodeExecution exe, IVertex inputStack, IVertex instructionVertex)
+        {
+            IVertex leftExpression = InstructionHelpers.GetLeft(instructionVertex);
+            IVertex rightExpression = InstructionHelpers.GetRight(instructionVertex);
+
+            if (leftExpression == null || rightExpression == null)
+                return exe.stack;
+
+            INoInEdgeInOutVertexVertex _leftExecuteResult = exe.executeInstruction(exe.stack, leftExpression);
+            INoInEdgeInOutVertexVertex _rightExecuteResult = exe.executeInstruction(exe.stack, rightExpression);
+
+            IList<IEdge> leftExecuteResult = _leftExecuteResult.OutEdges;
+            IList<IEdge> rightExecuteResult = _rightExecuteResult.OutEdges;
+
+            return null;
+        }
+
+        public static INoInEdgeInOutVertexVertex Multiply(ZeroCodeExecution exe, IVertex inputStack, IVertex instructionVertex)
+        {
+            IVertex leftExpression = InstructionHelpers.GetLeft(instructionVertex);
+            IVertex rightExpression = InstructionHelpers.GetRight(instructionVertex);
+
+            if (leftExpression == null || rightExpression == null)
+                return exe.stack;
+
+            INoInEdgeInOutVertexVertex _leftExecuteResult = exe.executeInstruction(exe.stack, leftExpression);
+            INoInEdgeInOutVertexVertex _rightExecuteResult = exe.executeInstruction(exe.stack, rightExpression);
+
+            IList<IEdge> leftExecuteResult = _leftExecuteResult.OutEdges;
+            IList<IEdge> rightExecuteResult = _rightExecuteResult.OutEdges;
+
+            return null;
+        }
+
+        public static INoInEdgeInOutVertexVertex Divide(ZeroCodeExecution exe, IVertex inputStack, IVertex instructionVertex)
+        {
+            IVertex leftExpression = InstructionHelpers.GetLeft(instructionVertex);
+            IVertex rightExpression = InstructionHelpers.GetRight(instructionVertex);
+
+            if (leftExpression == null || rightExpression == null)
+                return exe.stack;
+
+            INoInEdgeInOutVertexVertex _leftExecuteResult = exe.executeInstruction(exe.stack, leftExpression);
+            INoInEdgeInOutVertexVertex _rightExecuteResult = exe.executeInstruction(exe.stack, rightExpression);
+
+            IList<IEdge> leftExecuteResult = _leftExecuteResult.OutEdges;
+            IList<IEdge> rightExecuteResult = _rightExecuteResult.OutEdges;
+
+            return null;
+        }
 
         ////////////////////////////////////////////////////////////////
         //
