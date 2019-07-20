@@ -284,7 +284,40 @@ namespace m0
             IVertex code = x.AddVertex(null, "code");
             IVertex stack = x.AddVertex(null, "stack");
 
-            MinusZero.Instance.NewDefaultParser.Parse(code, "\"Code\"\r\n\tvariable \"Test\" @String\r\n\tvariable \"Test2\" @String\r\n\tvariable \"Test3\" @String\r\n\tvariable \"Magunia\" @String 5:10\r\n\tvariable \"Radek\" @String 2:2\r\n\tRadek += \"Koha\"\r\n\tMagunia+<Radek\r\n\tTest +< Magunia >+< Radek\r\n\tTest2 = Test\\ >-< \"TST\"\r\n\tTest3 +< Test\\ >-< Radek");
+            /*MinusZero.Instance.NewDefaultParser.Parse(code,
+                "\"Code\"" + "" +
+                "\r\n\tvariable \"A\" @String" +
+                "\r\n\tvariable \"B\" @String" +
+                "\r\n\tvariable \"C\" @String" +
+                "\r\n\tvariable \"D\" @String" +
+                "\r\n\tA +< \"A1\"" +
+                "\r\n\tA +< \"A2\"" +
+                "\r\n\tA +< \"A3\"" +
+                "\r\n\tB +< \"B1\"" +
+                "\r\n\tB +< \"B2\"" +
+                "\r\n\tB +< \"B3\"" +
+                "\r\n\tA := \"val A\"" +
+                "\r\n\tB := \"val B\"" +
+                "\r\n\tC +< A\\ >+< B\\" +
+                "\r\n\tD +< C\\ >-< B\\"
+                
+                );*/
+
+            MinusZero.Instance.NewDefaultParser.Parse(code,
+                "\"Code\"" +
+                "\r\n\tvariable \"Test\" @String" +
+                "\r\n\tvariable \"Test2\" @String" +
+                "\r\n\tvariable \"Test3\" @String" +
+                "\r\n\tvariable \"Magunia\" @String 5:10" +
+                "\r\n\tvariable \"Radek\" @String 2:2"+
+                "\r\n\tRadek += \"Koha\""+
+                "\r\n\tMagunia+<Radek" +
+                "\r\n\tTest +< Magunia >+< Radek >+< Radek" +
+                "\r\n\tTest2 = Test\\ >+< \"TST\"" +
+                "\r\n\tTest3 = \"TEST#3\""+
+                "\r\n\tTest3 += Test\\ >-< Radek"
+                );
+
 
             //MinusZero.Instance.NewDefaultParser.Parse(code, "\"Code\"\r\n\tvariable \"Magunia\" @String 5:10\r\n\tvariable \"Radek\" @String 2:2\r\n\tRadek += \"Koha\"\r\n\tMagunia=Radek\r\n\tMagunia ~= Radek|Koha");
 
