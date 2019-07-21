@@ -303,30 +303,31 @@ namespace m0
                 
                 );*/
 
-/*            MinusZero.Instance.NewDefaultParser.Parse(code,
-                "\"Code\"" +
-                "\r\n\tvariable \"Test\" @String" +
-                "\r\n\tvariable \"Test2\" @String" +
-                "\r\n\tvariable \"Test3\" @String" +
-                "\r\n\tvariable \"Magunia\" @String 5:10" +
-                "\r\n\tvariable \"Radek\" @String 2:2"+
-                "\r\n\tRadek += \"Koha\""+
-                "\r\n\tMagunia+<Radek" +
-                "\r\n\tTest +< Magunia >+< Radek >+< Radek" +
-                "\r\n\tTest2 = Test\\ >+< \"TST\"" +
-                "\r\n\tTest3 = \"TEST#3\""+
-                "\r\n\tTest3 += Test\\ >-< Radek"
-                );*/
+            /*            MinusZero.Instance.NewDefaultParser.Parse(code,
+                            "\"Code\"" +
+                            "\r\n\tvariable \"Test\" @String" +
+                            "\r\n\tvariable \"Test2\" @String" +
+                            "\r\n\tvariable \"Test3\" @String" +
+                            "\r\n\tvariable \"Magunia\" @String 5:10" +
+                            "\r\n\tvariable \"Radek\" @String 2:2"+
+                            "\r\n\tRadek += \"Koha\""+
+                            "\r\n\tMagunia+<Radek" +
+                            "\r\n\tTest +< Magunia >+< Radek >+< Radek" +
+                            "\r\n\tTest2 = Test\\ >+< \"TST\"" +
+                            "\r\n\tTest3 = \"TEST#3\""+
+                            "\r\n\tTest3 += Test\\ >-< Radek"
+                            );*/
 
             MinusZero.Instance.NewDefaultParser.Parse(code,
             "\"Code\"" +
             "\r\n\tvariable \"A\" @String" +
             "\r\n\tvariable \"B\" @String" +
             "\r\n\tvariable \"C\" @String" +
-            "\r\n\tA = \"1,0\"" +
+            "\r\n\tA = \"1.0\"" +
             "\r\n\tA += \"2\"" +
-            "\r\n\tB = A / \"3\" * \"6\"" +
-            "\r\n\tC = B * \"3\""
+            "\r\n\tB = (A / \"3\") * \"6.1\"" +
+            "\r\n\tC = \"c\" <+> \"cc\" <+> \"ccc\"" +
+            "\r\n\tA = C<\"1\">"
             );
 
 

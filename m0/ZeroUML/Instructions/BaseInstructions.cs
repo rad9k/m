@@ -15,7 +15,7 @@ namespace m0.ZeroUML.Instructions
     {
         ////////////////////////////////////////////////////////////////
         //
-        // Q U E R Y kindgdom
+        // query 
         //
         ////////////////////////////////////////////////////////////////
 
@@ -24,12 +24,12 @@ namespace m0.ZeroUML.Instructions
         public static INoInEdgeInOutVertexVertex QueryOperator(ZeroCodeExecution exe, IVertex inputQs, IVertex instructionVertex)
         {
             if (instructionVertex.Value == null)
-                return InstructionHelpers.MakeINoInEdgeInOutVertexVertex(inputQs);
+                return InstructionHelpers.Create_INoInEdgeInOutVertexVertex_FromEdgesList(inputQs);
 
             string value = instructionVertex.Value.ToString();
 
             if (value == "" || value == "\r")
-                return InstructionHelpers.MakeINoInEdgeInOutVertexVertex(inputQs);
+                return InstructionHelpers.Create_INoInEdgeInOutVertexVertex_FromEdgesList(inputQs);
 
             INoInEdgeInOutVertexVertex newQs = InstructionHelpers.CreateStack();
 
@@ -52,7 +52,7 @@ namespace m0.ZeroUML.Instructions
 
         public static INoInEdgeInOutVertexVertex InnerOperator(ZeroCodeExecution exe, IVertex inputQs, IVertex instructionVertex)
         {
-            INoInEdgeInOutVertexVertex _inputQs = InstructionHelpers.MakeINoInEdgeInOutVertexVertex(inputQs);
+            INoInEdgeInOutVertexVertex _inputQs = InstructionHelpers.Create_INoInEdgeInOutVertexVertex_FromEdgesList(inputQs);
 
             IList<IEdge> expressions = GraphUtil.GetQueryOut(instructionVertex, "Expression", null);
 
@@ -203,11 +203,12 @@ namespace m0.ZeroUML.Instructions
 
         ////////////////////////////////////////////////////////////////
         //
-        // E D G E  O P E R A T O R S
+        // edge operators
         //
         ////////////////////////////////////////////////////////////////
 
 #region EdgeOperators
+
         // :=
         public static INoInEdgeInOutVertexVertex CopyVertexValue(ZeroCodeExecution exe, IVertex inputStack, IVertex instructionVertex)
         {
@@ -474,17 +475,26 @@ namespace m0.ZeroUML.Instructions
             return localStack;
         }
 
-#endregion
+        public static INoInEdgeInOutVertexVertex SetInex(ZeroCodeExecution exe, IVertex inputStack, IVertex instructionVertex)
+        {
+            INoInEdgeInOutVertexVertex localStack = InstructionHelpers.CreateStack();
+
+
+
+            return localStack;
+        }
+
+            #endregion
 
         ////////////////////////////////////////////////////////////////
         //
-        // O P E R A T O R S
+        // number algebra operators
         //
         ////////////////////////////////////////////////////////////////
 
 #region Operators
 
-        public static INoInEdgeInOutVertexVertex Add(ZeroCodeExecution exe, IVertex inputStack, IVertex instructionVertex)
+            public static INoInEdgeInOutVertexVertex Add(ZeroCodeExecution exe, IVertex inputStack, IVertex instructionVertex)
         {
             IVertex leftExpression = InstructionHelpers.GetLeft(instructionVertex);
             IVertex rightExpression = InstructionHelpers.GetRight(instructionVertex);
@@ -522,7 +532,7 @@ namespace m0.ZeroUML.Instructions
                     return _Add_Logic_decimal(leftNumbers, rightNumbers);
             }
 
-            return InstructionHelpers.MakeINoInEdgeInOutVertexVertex(inputStack);
+            return InstructionHelpers.Create_INoInEdgeInOutVertexVertex_FromEdgesList(inputStack);
         }
 
         static INoInEdgeInOutVertexVertex _Add_Logic_int(IList<object> leftNumbers, IList<object> rightNumbers)
@@ -645,7 +655,7 @@ namespace m0.ZeroUML.Instructions
                     return _Substract_Logic_decimal(leftNumbers, rightNumbers);
             }
 
-            return InstructionHelpers.MakeINoInEdgeInOutVertexVertex(inputStack);
+            return InstructionHelpers.Create_INoInEdgeInOutVertexVertex_FromEdgesList(inputStack);
         }
         static INoInEdgeInOutVertexVertex _Substract_Logic_int(IList<object> leftNumbers, IList<object> rightNumbers)
         {
@@ -767,7 +777,7 @@ namespace m0.ZeroUML.Instructions
                     return _Multiply_Logic_decimal(leftNumbers, rightNumbers);
             }
 
-            return InstructionHelpers.MakeINoInEdgeInOutVertexVertex(inputStack);
+            return InstructionHelpers.Create_INoInEdgeInOutVertexVertex_FromEdgesList(inputStack);
         }
 
         static INoInEdgeInOutVertexVertex _Multiply_Logic_int(IList<object> leftNumbers, IList<object> rightNumbers)
@@ -890,7 +900,7 @@ namespace m0.ZeroUML.Instructions
                     return _Divide_Logic_decimal(leftNumbers, rightNumbers);
             }
 
-            return InstructionHelpers.MakeINoInEdgeInOutVertexVertex(inputStack);
+            return InstructionHelpers.Create_INoInEdgeInOutVertexVertex_FromEdgesList(inputStack);
         }
 
         static INoInEdgeInOutVertexVertex _Divide_Logic_int(IList<object> leftNumbers, IList<object> rightNumbers)
@@ -979,9 +989,31 @@ namespace m0.ZeroUML.Instructions
 
         ////////////////////////////////////////////////////////////////
         //
-        // StackFrameCreator
+        // general operators
         //
         ////////////////////////////////////////////////////////////////
+
+        #region GeneralOperators
+
+        public static INoInEdgeInOutVertexVertex Bracket(ZeroCodeExecution exe, IVertex inputStack, IVertex instructionVertex)
+        {
+            return InstructionHelpers.Create_INoInEdgeInOutVertexVertex_FromEdgesList(inputStack);
+        }
+
+        public static INoInEdgeInOutVertexVertex Call(ZeroCodeExecution exe, IVertex inputStack, IVertex instructionVertex)
+        {
+            return null;
+        }
+
+        #endregion
+
+        ////////////////////////////////////////////////////////////////
+        //
+        // stack operators
+        //
+        ////////////////////////////////////////////////////////////////
+
+        #region StackOperators
 
         public static INoInEdgeInOutVertexVertex CreateStackEdge(ZeroCodeExecution exe, IVertex inputStack, IVertex instructionVertex)
         {
@@ -997,6 +1029,8 @@ namespace m0.ZeroUML.Instructions
 
             return stack;
         }
+
+#endregion
 
         ////////////////////////////////////////////////////////////////
         //

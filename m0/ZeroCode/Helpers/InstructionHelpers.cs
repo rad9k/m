@@ -30,7 +30,7 @@ namespace m0.ZeroCode.Helpers
             return newStack;
         }
 
-        public static INoInEdgeInOutVertexVertex MakeINoInEdgeInOutVertexVertex(IVertex source)
+        public static INoInEdgeInOutVertexVertex Create_INoInEdgeInOutVertexVertex_FromEdgesList(IEnumerable<IEdge> source)
         {
             if (source is INoInEdgeInOutVertexVertex)
                 return (INoInEdgeInOutVertexVertex)source;
@@ -85,7 +85,7 @@ namespace m0.ZeroCode.Helpers
             if (nextExpression != null)
                 return exe.executeInstruction(inQs, nextExpression);
 
-            return MakeINoInEdgeInOutVertexVertex(inQs);            
+            return Create_INoInEdgeInOutVertexVertex_FromEdgesList(inQs);            
         }
 
         public static INoInEdgeInOutVertexVertex SequentiallyExecuteInstructions(ZeroCodeExecution exe, INoInEdgeInOutVertexVertex inStack, IVertex baseVertex)

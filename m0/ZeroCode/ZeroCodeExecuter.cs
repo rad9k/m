@@ -23,7 +23,7 @@ namespace m0.ZeroCode
 
             exe.metaMode = true;
 
-            exe.stack = InstructionHelpers.MakeINoInEdgeInOutVertexVertex(baseVertex);
+            exe.stack = InstructionHelpers.Create_INoInEdgeInOutVertexVertex_FromEdgesList(baseVertex);
 
             return InstructionHelpers.SequentiallyExecuteInstructions(exe, exe.stack, expression);            
         }

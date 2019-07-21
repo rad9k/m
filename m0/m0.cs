@@ -7,7 +7,9 @@ using m0.Util;
 using m0.ZeroTypes;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
+using System.Threading;
 
 namespace m0
 {
@@ -104,6 +106,11 @@ namespace m0
         public IEdge CreateTempEdge()
         {
             return new EasyEdge(tempRoot, empty, CreateTempVertex());
+        }
+
+        void PreBootstrap()
+        {
+            Thread.CurrentThread.CurrentCulture = CultureInfo.CreateSpecificCulture("en-GB");
         }
 
         void Bootstrap()
@@ -351,12 +358,13 @@ namespace m0
             GeneralUtil.ParseAndExcute(smu, sm,
                 "{ExpressionAtom,Atom" +
                 ",SingleOperator{NextExpression{$MinCardinality:1,$MaxCardinality:1}}" +
+                ",SingleExpressionOperator{Expression{$MinCardinality:1,$MaxCardinality:1}}" +
                 ",SingleNestedOperator{Expression{$MinCardinality:1,$MaxCardinality:1}}" +
                 ",DoubleOperator{LeftExpression{$MinCardinality:1,$MaxCardinality:1},RightExpression{$MinCardinality:1,$MaxCardinality:1}}" +
                 ",MultiOperator{Expression{$MinCardinality:0,$MaxCardinality:-1}}" +
                 ",Query" +
-                ",[]" +
-                ",[[]]" +
+                ",[]{Target{$MinCardinality:0,$MaxCardinality:1}}" +
+                ",<>" +
                 ",\"{}\",\"{CRLF}\",EdgeSetAdd,EdgeSetSubstract,+,-,Mul,/,?,\"\\ \",\"|\",\"||\",(),CopyVertexValue,RedirectLeftEdgesToRightVertices,AddLeftEdgesToRightVertices,AddRightEdgesIntoLeftEdges,DeleteRightVertices,DeleteRightEdgesFromLeftEdges,DeleteRightVerticesFromLeftEdges" +
                 ",Action,Return{Expression},NextOut{Next{$MinCardinality:0,$MaxCardinality:1}}" +
                 ",StackFrameCreator{Do{$MinCardinality:0,$MaxCardinality:1},Variable{$MinCardinality:0,$MaxCardinality:-1},Type{$MinCardinality:0,$MaxCardinality:-1}}" +
@@ -379,7 +387,7 @@ namespace m0
             AddDotNetEndPoint(smu.Get(false, "\"|\""), "ColonOperator");
             AddDotNetEndPoint(smu.Get(false, "\"||\""), "DoubleColonOperator");
 
-            // operators
+            // edge operators
 
             AddDotNetEndPoint(smu.Get(false, "CopyVertexValue"), "CopyVertexValue");
             AddDotNetEndPoint(smu.Get(false, "RedirectLeftEdgesToRightVertices"), "RedirectLeftEdgesToRightVertices");
@@ -393,21 +401,25 @@ namespace m0
 
             AddDotNetEndPoint(smu.Get(false, "EdgeSetAdd"), "EdgeSetAdd");
             AddDotNetEndPoint(smu.Get(false, "EdgeSetSubstract"), "EdgeSetSubstract");
+            AddDotNetEndPoint(smu.Get(false, "<>"), "SetIndex");
 
-            // standard algebraic operators operators
-            
+            // number algebra operators
+
             AddDotNetEndPoint(smu.Get(false, "+"), "Add");
             AddDotNetEndPoint(smu.Get(false, "-"), "Substract");
             AddDotNetEndPoint(smu.Get(false, "Mul"), "Multiply");
             AddDotNetEndPoint(smu.Get(false, "/"), "Divide");
 
-            // StackFrameCreator
+            // general operators
+
+            AddDotNetEndPoint(smu.Get(false, "()"), "Bracket");
+            AddDotNetEndPoint(smu.Get(false, "[]"), "Call");
+
+            // stack operators
 
             AddDotNetEndPoint(smu.Get(false, @"StackFrameCreator\Variable"), "CreateStackEdge");
 
-            // vertex creation
-
-
+            ////////////////////////////////////////////////////////////////////////
 
             // method
             IVertex method = sm.Get(false, @"ZeroUML\Class").AddVertex(null, "Method");
@@ -422,6 +434,7 @@ namespace m0
             smu.Get(false, @"ExpressionAtom").AddEdge(sm.Get(false, "*$Inherits"), smu.Get(false, "Atom"));
             smu.Get(false, @"ExpressionAtom").AddEdge(sm.Get(false, "*$Inherits"), smu.Get(false, "NextOut"));
             smu.Get(false, @"SingleOperator").AddEdge(sm.Get(false, "*$Inherits"), smu.Get(false, "ExpressionAtom"));
+            smu.Get(false, @"SingleExpressionOperator").AddEdge(sm.Get(false, "*$Inherits"), smu.Get(false, "SingleOperator"));
             smu.Get(false, @"SingleNestedOperator").AddEdge(sm.Get(false, "*$Inherits"), smu.Get(false, "ExpressionAtom"));
             smu.Get(false, @"DoubleOperator").AddEdge(sm.Get(false, "*$Inherits"), smu.Get(false, "ExpressionAtom"));
             smu.Get(false, @"MultiOperator").AddEdge(sm.Get(false, "*$Inherits"), smu.Get(false, "ExpressionAtom"));
@@ -429,7 +442,7 @@ namespace m0
             smu.Get(false, @"Query").AddEdge(sm.Get(false, "*$Inherits"), smu.Get(false, "SingleOperator"));
             //smu.Get(false, @"NewVertex").AddEdge(sm.Get(false, "*$Inherits"), smu.Get(false, "SingleOperator"));
             smu.Get(false, @"[]").AddEdge(sm.Get(false, "*$Inherits"), smu.Get(false, "MultiOperator"));
-            smu.Get(false, @"[[]]").AddEdge(sm.Get(false, "*$Inherits"), smu.Get(false, "MultiOperator"));
+            smu.Get(false, @"<>").AddEdge(sm.Get(false, "*$Inherits"), smu.Get(false, "SingleExpressionOperator"));
             smu.Get(false, "\"{CRLF}\"").AddEdge(sm.Get(false, "*$Inherits"), smu.Get(false, "MultiOperator"));
             smu.Get(false, "\"{}\"").AddEdge(sm.Get(false, "*$Inherits"), smu.Get(false, "SingleOperator"));
             smu.Get(false, "\"{}\"").AddEdge(sm.Get(false, "*$Inherits"), smu.Get(false, "MultiOperator"));
@@ -483,6 +496,7 @@ namespace m0
             smu.Get(false, @"StackFrameCreatorWithInputOutput\InputParameter").AddEdge(sm.Get(false, @"*$VertexTarget"), smu.Get(false, @"Type"));
 
             smu.Get(false, @"SingleOperator\NextExpression").AddEdge(sm.Get(false, @"*$EdgeTarget"), smu.Get(false, @"Atom"));
+            smu.Get(false, @"SingleExpressionOperator\Expression").AddEdge(sm.Get(false, @"*$EdgeTarget"), smu.Get(false, @"Atom"));
             smu.Get(false, @"SingleNestedOperator\Expression").AddEdge(sm.Get(false, @"*$EdgeTarget"), smu.Get(false, @"Atom"));
             smu.Get(false, @"DoubleOperator\LeftExpression").AddEdge(sm.Get(false, @"*$EdgeTarget"), smu.Get(false, @"Atom"));
             smu.Get(false, @"DoubleOperator\RightExpression").AddEdge(sm.Get(false, @"*$EdgeTarget"), smu.Get(false, @"Atom"));
@@ -490,6 +504,7 @@ namespace m0
 
             // $IsAggregation's for EdgeTargets
             smu.Get(false, @"SingleOperator\NextExpression").AddEdge(isAggregation, Empty);
+            smu.Get(false, @"SingleExpressionOperator\Expression").AddEdge(isAggregation, Empty);
             smu.Get(false, @"SingleNestedOperator\Expression").AddEdge(isAggregation, Empty);
             smu.Get(false, @"DoubleOperator\LeftExpression").AddEdge(isAggregation, Empty);
             smu.Get(false, @"DoubleOperator\RightExpression").AddEdge(isAggregation, Empty);
@@ -499,6 +514,8 @@ namespace m0
             //rest edges
             smu.Get(false, @"Return\Expression").AddEdge(sm.Get(false, @"*$EdgeTarget"), smu.Get(false, @"Atom"));
             smu.Get(false, @"NextOut\Next").AddEdge(sm.Get(false, @"*$EdgeTarget"), smu.Get(false, @"Atom"));
+
+            smu.Get(false, @"[]\Target").AddEdge(sm.Get(false, @"*$EdgeTarget"), smu.Get(false, @"StackFrameCreator"));
 
             smu.Get(false, @"StackFrameCreator\Do").AddEdge(sm.Get(false, @"*$EdgeTarget"), smu.Get(false, @"Atom"));
             smu.Get(false, @"StackFrameCreator\Variable").AddEdge(sm.Get(false, @"*$VertexTarget"), smu.Get(false, @"Type"));
@@ -549,7 +566,7 @@ namespace m0
             package.AddEdge(null, smu.Get(false, "Query"));
             //package.AddEdge(null, smu.Get(false, "NewVertex"));
             package.AddEdge(null, smu.Get(false, "[]"));
-            package.AddEdge(null, smu.Get(false, "[[]]"));
+            package.AddEdge(null, smu.Get(false, "<>"));
             package.AddEdge(null, smu.Get(false, "\"{CRLF}\""));
             package.AddEdge(null, smu.Get(false, "\"{}\""));
             package.AddEdge(null, smu.Get(false, "EdgeSetAdd"));
@@ -942,17 +959,31 @@ namespace m0
             //
             ////////////////////////////////////////////////////////
 
-            // >+<
+            // <+>
             //
-            // (?<left>) >+< (?<right>)
+            // (?<left>) <+> (?<right>)
 
-            AddLeftRightOperator(k, smu, smb, keyword, any, "(?<left>) >+<(?<SUB>) (?<right>)", "EdgeSetAdd");
+            AddLeftRightOperator(k, smu, smb, keyword, any, "(?<left>) <+>(?<SUB>) (?<right>)", "EdgeSetAdd");
 
-            // >-<
+            // <->
             //
             // (?<left>) >-< (?<right>)
 
-            AddLeftRightOperator(k, smu, smb, keyword, any, "(?<left>) >-<(?<SUB>) (?<right>)", "EdgeSetSubstract");
+            AddLeftRightOperator(k, smu, smb, keyword, any, "(?<left>) <->(?<SUB>) (?<right>)", "EdgeSetSubstract");
+
+            // <>
+            //
+            // <(?<expr>)>
+
+            IVertex o_index = k.AddVertex(keyword, "<(?<expr>)>");
+
+            IVertex o_index_any = o_index.AddVertex(any, "");
+
+            o_index_any.AddEdge(smb.Get(false, @"Vertex\$Is"), smu.Get(false, "-"));
+
+            o_index_any.AddVertex(smu.Get(false, @"SingleExpressionOperator\Expression"), "(?<expr>)");
+
+            o_index_any.AddVertex(smu.Get(false, @"DoubleOperator\RightExpression"), "(?<right>)");
 
             /////////////////////////////////////////////////////////
             //
@@ -3497,6 +3528,8 @@ namespace m0
             LogLevel = -2;
 
             InitializeLog();
+
+            PreBootstrap();            
 
             Bootstrap();
 
