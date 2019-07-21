@@ -357,7 +357,7 @@ namespace m0
                 ",Query" +
                 ",[]" +
                 ",[[]]" +
-                ",\"{}\",\"{CRLF}\",EdgeSetAdd,EdgeSetSubstract,+,-,\" *\",/,?,\"\\ \",\"|\",\"||\",(),CopyVertexValue,RedirectLeftEdgesToRightVertices,AddLeftEdgesToRightVertices,AddRightEdgesIntoLeftEdges,DeleteRightVertices,DeleteRightEdgesFromLeftEdges,DeleteRightVerticesFromLeftEdges" +
+                ",\"{}\",\"{CRLF}\",EdgeSetAdd,EdgeSetSubstract,+,-,Mul,/,?,\"\\ \",\"|\",\"||\",(),CopyVertexValue,RedirectLeftEdgesToRightVertices,AddLeftEdgesToRightVertices,AddRightEdgesIntoLeftEdges,DeleteRightVertices,DeleteRightEdgesFromLeftEdges,DeleteRightVerticesFromLeftEdges" +
                 ",Action,Return{Expression},NextOut{Next{$MinCardinality:0,$MaxCardinality:1}}" +
                 ",StackFrameCreator{Do{$MinCardinality:0,$MaxCardinality:1},Variable{$MinCardinality:0,$MaxCardinality:-1},Type{$MinCardinality:0,$MaxCardinality:-1}}" +
                 ",StackFrameCreatorWithInputOutput{Output{$MinCardinality:0,$MaxCardinality:1},InputParameter{$MinCardinality:0,$MaxCardinality:-1}}" +
@@ -398,7 +398,7 @@ namespace m0
             
             AddDotNetEndPoint(smu.Get(false, "+"), "Add");
             AddDotNetEndPoint(smu.Get(false, "-"), "Substract");
-            AddDotNetEndPoint(smu.Get(false, "\" *\""), "Multiply");
+            AddDotNetEndPoint(smu.Get(false, "Mul"), "Multiply");
             AddDotNetEndPoint(smu.Get(false, "/"), "Divide");
 
             // StackFrameCreator
@@ -435,7 +435,7 @@ namespace m0
             smu.Get(false, "\"{}\"").AddEdge(sm.Get(false, "*$Inherits"), smu.Get(false, "MultiOperator"));
             smu.Get(false, @"+").AddEdge(sm.Get(false, "*$Inherits"), smu.Get(false, "DoubleOperator"));
             smu.Get(false, @"-").AddEdge(sm.Get(false, "*$Inherits"), smu.Get(false, "DoubleOperator"));
-            smu.Get(false, "\" *\"").AddEdge(sm.Get(false, "*$Inherits"), smu.Get(false, "DoubleOperator"));
+            smu.Get(false, "Mul").AddEdge(sm.Get(false, "*$Inherits"), smu.Get(false, "DoubleOperator"));
             smu.Get(false, @"/").AddEdge(sm.Get(false, "*$Inherits"), smu.Get(false, "DoubleOperator"));
             smu.Get(false, @"?").AddEdge(sm.Get(false, "*$Inherits"), smu.Get(false, "SingleOperator"));
             smu.Get(false, "\"\\ \"").AddEdge(sm.Get(false, "*$Inherits"), smu.Get(false, "SingleOperator"));
@@ -556,7 +556,7 @@ namespace m0
             package.AddEdge(null, smu.Get(false, "EdgeSetSubstract"));
             package.AddEdge(null, smu.Get(false, "+"));
             package.AddEdge(null, smu.Get(false, "-"));
-            package.AddEdge(null, smu.Get(false, " *"));
+            package.AddEdge(null, smu.Get(false, "Mul"));
             package.AddEdge(null, smu.Get(false, "/"));
             package.AddEdge(null, smu.Get(false, "?"));
             package.AddEdge(null, smu.Get(false, "\"\\ \""));
@@ -997,9 +997,7 @@ namespace m0
 
             IVertex o_mul_any = o_mul.AddVertex(any, "");
 
-            //o_mul_any.AddEdge(smb.Get(false, @"Vertex\$Is"), smu.Get(false, " *"));
-
-            o_mul_any.AddVertex(smb.Get(false, @"Vertex\$Is"), "*"); // TO BE CORRECTED
+            o_mul_any.AddEdge(smb.Get(false, @"Vertex\$Is"), smu.Get(false, "Mul"));            
 
             o_mul_any.AddVertex(smu.Get(false, @"DoubleOperator\LeftExpression"), "(?<left>)");
 

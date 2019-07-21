@@ -308,6 +308,56 @@ namespace m0.Graph
             }            
         }
 
+        static public void GetNumberValue(IVertex Vertex, out object number)
+        {
+            number = null;
+
+            if (Vertex == null || Vertex.Value == null)
+                return;
+
+            if (Vertex.Value is int)
+            {
+                number = Vertex.Value;
+                return;
+            }
+
+            if (Vertex.Value is double)
+            {
+                number = Vertex.Value;
+                return;
+            }
+
+            if (Vertex.Value is decimal)
+            {
+                number = Vertex.Value;
+                return;
+            }
+
+            if (Vertex.Value is string)
+            {
+                int _outInt;
+                if (Int32.TryParse((string)Vertex.Value, out _outInt))
+                {
+                    number = _outInt;
+                    return;
+                }
+
+                double _outDouble;
+                if (Double.TryParse((string)Vertex.Value, out _outDouble))
+                {
+                    number = _outDouble;
+                    return;
+                }
+
+                decimal _outDecimal;
+                if (Decimal.TryParse((string)Vertex.Value, out _outDecimal))
+                {
+                    number = _outDecimal;
+                    return;
+                }
+            }
+        }
+
         static public T GetNumberValue<T>(IVertex Vertex)
         {
             T test=default(T);
@@ -328,22 +378,7 @@ namespace m0.Graph
         {
             if (Value == null)
                 return true;
-            /*
-            T test = default(T);
-
-            if (test is int)
-                if ((int)(object)Value == NullInt)
-                    return true;
-
-            if (test is decimal)
-                if ((decimal)(object)Value == NullDecimal)
-                    return true;
-
-            if (test is double)
-                if ((double)(object)Value == NullDouble)
-                    return true;
-            */
-
+            
             return false;
         }
 
@@ -399,17 +434,17 @@ namespace m0.Graph
         {
             if (Vertex!=null&&Vertex.Value!=null)
                 {
-                    if (Vertex.Value is string)
+                if (Vertex.Value is int)
+                    return (int)Vertex.Value;
+
+                if (Vertex.Value is string)
                     {
                         int r;
                         if (Int32.TryParse((string)Vertex.Value, out r))
                             return r;
 
                         return null;
-                    }
-
-                    if (Vertex.Value is int)
-                        return (int)Vertex.Value;                      
+                    }                    
                 }
             return null;
         }
@@ -418,11 +453,11 @@ namespace m0.Graph
         {
             if (Vertex != null && Vertex.Value != null)
             {
-                if (Vertex.Value is string)
-                    return Decimal.Parse((string)Vertex.Value);
-
                 if (Vertex.Value is decimal)
                     return (decimal)Vertex.Value;
+
+                if (Vertex.Value is string)
+                    return Decimal.Parse((string)Vertex.Value);                
             }
             return null;
         }
@@ -431,11 +466,11 @@ namespace m0.Graph
         {
             if (Vertex != null && Vertex.Value != null)
             {
-                if (Vertex.Value is string)
-                    return Double.Parse((string)Vertex.Value);
-
                 if (Vertex.Value is double)
                     return (double)Vertex.Value;
+
+                if (Vertex.Value is string)
+                    return Double.Parse((string)Vertex.Value);                
             }
             return null;
         }        

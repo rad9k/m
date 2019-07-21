@@ -164,5 +164,53 @@ namespace m0.ZeroCode.Helpers
             return dict;
         }
 
+        public enum GetNumberListResult { Integer, Double, Decimal}
+
+        public static IList<object> GetNumberList(IList<IEdge> edges, out GetNumberListResult resultType)
+        {
+            resultType = GetNumberListResult.Decimal;
+
+            bool allInteger = true;
+            bool allDouble = true;
+
+            IList<object> list = new List<object>();
+
+            object number;
+
+            foreach(IEdge e in edges)
+            {
+                GraphUtil.GetNumberValue(e.To, out number);
+
+                if (!(number is int))
+                    allInteger = false;
+
+                if (!(number is double) && !(number is int))
+                    allDouble = false;
+
+                if (number != null)
+                    list.Add(number);
+            }
+
+            if (allInteger)
+                resultType = GetNumberListResult.Integer;
+            else
+                if (allDouble)
+                resultType = GetNumberListResult.Double;
+
+            return list;
+        }
+
+        public static GetNumberListResult GetCommonNubmerResultDenominator(GetNumberListResult left, GetNumberListResult right)
+        {
+            GetNumberListResult result = GetNumberListResult.Integer;
+
+            if (left == GetNumberListResult.Double || right == GetNumberListResult.Double)
+                result = GetNumberListResult.Double;
+
+            if (left == GetNumberListResult.Decimal || right == GetNumberListResult.Decimal)
+                result = GetNumberListResult.Decimal;
+
+            return result;
+        }
     }
 }

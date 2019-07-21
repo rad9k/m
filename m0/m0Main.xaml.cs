@@ -323,7 +323,10 @@ namespace m0
             "\r\n\tvariable \"A\" @String" +
             "\r\n\tvariable \"B\" @String" +
             "\r\n\tvariable \"C\" @String" +
-            "\r\n\tA = \"1\" + \"2\""            
+            "\r\n\tA = \"1,0\"" +
+            "\r\n\tA += \"2\"" +
+            "\r\n\tB = A / \"3\" * \"6\"" +
+            "\r\n\tC = B * \"3\""
             );
 
 
