@@ -362,15 +362,13 @@ namespace m0.Graph
 
         static public T GetNumberValue<T>(IVertex Vertex)
         {
-            T test=default(T);
-
-            if (test is int?)
+            if (typeof(T) == typeof(int?))
                 return (T)(object)GetIntegerValue(Vertex);
 
-            if (test is decimal?)
+            if (typeof(T) == typeof(decimal?))
                 return (T)(object)GetDecimalValue(Vertex);
 
-            if (test is double?)
+            if (typeof(T) == typeof(double?))
                 return (T)(object)GetDoubleValue(Vertex);
 
             return default(T);
@@ -385,51 +383,45 @@ namespace m0.Graph
         }
 
         static public int? ToInt<T>(T Value)
-        {
-            T test = default(T);
-
-            if (test is int?)
+        {            
+            if (typeof(T) == typeof(int?))
                 return (int?)(object)Value;
 
-            if (test is decimal?)
+            if (typeof(T) == typeof(decimal?))
                 return (int?)(decimal?)(object)Value;
 
-            if (test is double?)
+            if (typeof(T) == typeof(double?))
                 return (int?)(double?)(object)Value;
 
             return null;
         }
 
         static public double? ToDouble<T>(T Value)
-        {
-            T test = default(T);
-
-            if (test is int?)
+        {            
+            if (typeof(T) == typeof(int?))
                 return (double?)(int?)(object)Value;
 
-            if (test is decimal?)
+            if (typeof(T) == typeof(decimal?))
                 return (double?)(decimal?)(object)Value;
 
-            if (test is double?)
+            if (typeof(T) == typeof(double?))
                 return (double?)(object)Value;
 
             return null;
         }
 
         static public T FromDouble<T>(double? Value)
-        {
-            T test = default(T);
-
-            if (test is int?)
+        {            
+            if (typeof(T) == typeof(int?))
                 return (T)(object)(int?)Value;
 
-            if (test is decimal?)
+            if (typeof(T) == typeof(decimal?))
                 return (T)(object)(decimal?)Value;
 
-            if (test is double?)
+            if (typeof(T) == typeof(double?))
                 return (T)(object)(double?)Value;
 
-            return test;
+            return default(T);
         }
 
         static public int? GetIntegerValue(IVertex Vertex)
