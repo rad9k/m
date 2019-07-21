@@ -73,6 +73,11 @@ namespace m0.ZeroCode.Helpers
             return GraphUtil.GetQueryOutFirst(v, "RightExpression", null);
         }
 
+        public static IVertex GetExpression(IVertex v)
+        {
+            return GraphUtil.GetQueryOutFirst(v, "Expression", null);
+        }
+
         public static IVertex GetNextExpression(IVertex v)
         {
             return GraphUtil.GetQueryOutFirst(v, "NextExpression", null);

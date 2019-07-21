@@ -55,7 +55,9 @@ namespace m0.Graph
     {    
         public static IEdge CreateArtificialEdge(IVertex meta, IVertex to)
         {
-            EasyEdge e = new EasyEdge(null, meta, to);
+            //EasyEdge e = new EasyEdge(null, meta, to);
+
+            NoInEdgeInOutVertexEdge e = new NoInEdgeInOutVertexEdge(null, meta, to);
 
             return e;
         }

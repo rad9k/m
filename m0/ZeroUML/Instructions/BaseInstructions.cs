@@ -475,12 +475,25 @@ namespace m0.ZeroUML.Instructions
             return localStack;
         }
 
-        public static INoInEdgeInOutVertexVertex SetInex(ZeroCodeExecution exe, IVertex inputStack, IVertex instructionVertex)
-        {
+        public static INoInEdgeInOutVertexVertex SetIndex(ZeroCodeExecution exe, IVertex inputStack, IVertex instructionVertex)
+        {            
+            IVertex expression = InstructionHelpers.GetExpression(instructionVertex);            
+
+            if (expression == null)
+                return InstructionHelpers.Create_INoInEdgeInOutVertexVertex_FromEdgesList(inputStack);
+
+            INoInEdgeInOutVertexVertex executeResult = exe.executeInstruction(exe.stack, expression);
+
             INoInEdgeInOutVertexVertex localStack = InstructionHelpers.CreateStack();
 
+            foreach(IEdge e in executeResult)
+            {
+                int? index=GraphUtil.GetIntegerValue(e.To);
 
-
+                if (index != null && index >=1 && index <= inputStack.OutEdges.Count())
+                    localStack.AddEdgeForNoInEdgeInOutVertexVertex(inputStack.OutEdges[(int)index - 1]);
+            }
+            
             return localStack;
         }
 

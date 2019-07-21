@@ -57,7 +57,8 @@ namespace m0.Graph
         protected void ValueChanged()
         {
             foreach (IEdge e in InEdges)
-                e.From.OutEdgesDictionariesNeedsRebuild = true;
+                if(e.From!=null) // there could be artificial edge, with From==null
+                    e.From.OutEdgesDictionariesNeedsRebuild = true;
 
             foreach (IEdge e in OutEdges)
                 e.To.InEdgesDictionariesNeedsRebuild = true;
