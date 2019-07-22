@@ -853,7 +853,7 @@ namespace m0
             //
             // function (?<name>) (?<returnType>) [(*(+, +)(?<paramType>) (?<paramName>)*)]
 
-            IVertex function = k.AddVertex(keyword, "function (?<name>) (?<returnType>)[(*(+, +)(?<paramType>) (?<paramName>)*)]");
+      /*      IVertex function = k.AddVertex(keyword, "function (?<name>) (?<returnType>)((*(+, +)(?<paramType>) (?<paramName>)*))");
 
 
             IVertex function_function = function.AddVertex(smu.Get(false, @"Function"), "(?<name>)");
@@ -873,7 +873,7 @@ namespace m0
             //
             // function (?<name>) [(*(+, +)(?<paramType>) (?<paramName>)*)]
 
-            IVertex function2 = k.AddVertex(keyword, "function (?<name>) [(*(+, +)(?<paramType>) (?<paramName>)*)]");
+            IVertex function2 = k.AddVertex(keyword, "function (?<name>) ((*(+, +)(?<paramType>) (?<paramName>)*))");
 
             IVertex function2_function = function2.AddVertex(smu.Get(false, @"Function"), "(?<name>)");
 
@@ -883,7 +883,7 @@ namespace m0
 
             f2fip.AddVertex(smb.Get(false, @"Vertex\$VertexTarget"), "(?<paramType>)");
 
-            f2fip.AddEdge(smb.Get(false, @"$$KeywordManyRoot"), smb.Get(false, @"$Empty"));
+            f2fip.AddEdge(smb.Get(false, @"$$KeywordManyRoot"), smb.Get(false, @"$Empty"));*/
 
             // while
             //
@@ -1285,15 +1285,17 @@ namespace m0
             //
             // [(*(+, +) (?<expr>)*)]
 
-            IVertex o_call = k.AddVertex(keyword, "[(*(+, +)(?<expr>)*)]");
+            /*IVertex o_call = k.AddVertex(keyword, "(?<target>)[(*(+, +)(?<expr>)*)]");
 
             IVertex o_call_any = o_call.AddVertex(any, "");
 
             o_call_any.AddEdge(smb.Get(false, @"Vertex\$Is"), smu.Get(false, "[]"));
 
+            IVertex o_call_any_target = o_call_any.AddVertex(smu.Get(false, @"[]\Target"), "(?<target>)");
+
             IVertex o_call_any_param = o_call_any.AddVertex(smu.Get(false, @"MultiOperator\Expression"), "(?<expr>)");
 
-            o_call_any_param.AddEdge(smb.Get(false, @"$$KeywordManyRoot"), smb.Get(false, @"$Empty"));
+            o_call_any_param.AddEdge(smb.Get(false, @"$$KeywordManyRoot"), smb.Get(false, @"$Empty"));*/
 
             // ()
             //
@@ -1485,16 +1487,7 @@ namespace m0
             //TEST
 
 
-            /*IVertex eKeyword = k.AddVertex(keyword, "O");            
-
-            eKeyword.AddVertex(keywordGroup, "b");
             
-            eKeyword.AddVertex(any, "OOO");
-
-
-            IVertex bKeyword = k.AddVertex(keyword, "A(?<v_b>)A");            
-
-            bKeyword.AddVertex(any, "(?<v_b>)").AddVertex(any, "AA");*/
 
 
 
