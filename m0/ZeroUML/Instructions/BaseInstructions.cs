@@ -65,7 +65,7 @@ namespace m0.ZeroUML.Instructions
 
                 foreach (IEdge e in oldQs)
                 {
-                    IVertex outQs = exe.executeInstruction(e.To, expression.To);
+                    IVertex outQs = exe.ExecuteInstruction(e.To, expression.To);
 
                     if (outQs.OutEdges.Count() > 0)
                         newQs.AddEdgeForNoInEdgeInOutVertexVertex(e);
@@ -165,7 +165,7 @@ namespace m0.ZeroUML.Instructions
                 if (isRightExpressionQuery)
                     newQs = InstructionHelpers.NextExpressionHandle(exe, newQs, rightExpression);
                 else
-                    newQs = exe.executeInstruction(newQs, rightExpression);
+                    newQs = exe.ExecuteInstruction(newQs, rightExpression);
             }
 
 
@@ -185,7 +185,7 @@ namespace m0.ZeroUML.Instructions
                     metaDict.Add(e.Meta, false);
                 }
 
-            INoInEdgeInOutVertexVertex afterCallQs = exe.executeInstruction(localQs, expression);
+            INoInEdgeInOutVertexVertex afterCallQs = exe.ExecuteInstruction(localQs, expression);
 
             foreach (IEdge e in afterCallQs)
                 metaDict[e.To] = true;
@@ -218,8 +218,8 @@ namespace m0.ZeroUML.Instructions
             if (leftExpression == null || rightExpression == null)
                 return exe.stack;
 
-            INoInEdgeInOutVertexVertex leftExecuteResult = exe.executeInstruction(exe.stack, leftExpression);
-            INoInEdgeInOutVertexVertex _rightExecuteResult = exe.executeInstruction(exe.stack, rightExpression);
+            INoInEdgeInOutVertexVertex leftExecuteResult = exe.ExecuteInstruction(exe.stack, leftExpression);
+            INoInEdgeInOutVertexVertex _rightExecuteResult = exe.ExecuteInstruction(exe.stack, rightExpression);
 
             IList<IEdge> rightExecuteResult = _rightExecuteResult.OutEdges;
 
@@ -266,8 +266,8 @@ namespace m0.ZeroUML.Instructions
             if (leftExpression == null || rightExpression == null)
                 return exe.stack;
 
-            INoInEdgeInOutVertexVertex leftExecuteResult = exe.executeInstruction(exe.stack, leftExpression);
-            INoInEdgeInOutVertexVertex _rightExecuteResult = exe.executeInstruction(exe.stack, rightExpression);
+            INoInEdgeInOutVertexVertex leftExecuteResult = exe.ExecuteInstruction(exe.stack, leftExpression);
+            INoInEdgeInOutVertexVertex _rightExecuteResult = exe.ExecuteInstruction(exe.stack, rightExpression);
 
             IList<IEdge> rightExecuteResult = _rightExecuteResult.OutEdges;
 
@@ -295,8 +295,8 @@ namespace m0.ZeroUML.Instructions
             if (leftExpression == null || rightExpression == null)
                 return exe.stack;
 
-            INoInEdgeInOutVertexVertex leftExecuteResult = exe.executeInstruction(exe.stack, leftExpression);
-            INoInEdgeInOutVertexVertex _rightExecuteResult = exe.executeInstruction(exe.stack, rightExpression);
+            INoInEdgeInOutVertexVertex leftExecuteResult = exe.ExecuteInstruction(exe.stack, leftExpression);
+            INoInEdgeInOutVertexVertex _rightExecuteResult = exe.ExecuteInstruction(exe.stack, rightExpression);
 
             IList<IEdge> rightExecuteResult = _rightExecuteResult.OutEdges;
 
@@ -322,8 +322,8 @@ namespace m0.ZeroUML.Instructions
             if (leftExpression == null || rightExpression == null)
                 return exe.stack;
 
-            INoInEdgeInOutVertexVertex _leftExecuteResult = exe.executeInstruction(exe.stack, leftExpression);
-            INoInEdgeInOutVertexVertex _rightExecuteResult = exe.executeInstruction(exe.stack, rightExpression);
+            INoInEdgeInOutVertexVertex _leftExecuteResult = exe.ExecuteInstruction(exe.stack, leftExpression);
+            INoInEdgeInOutVertexVertex _rightExecuteResult = exe.ExecuteInstruction(exe.stack, rightExpression);
 
             IList<IEdge> leftExecuteResult = _leftExecuteResult.OutEdges;
             IList<IEdge> rightExecuteResult = _rightExecuteResult.OutEdges;
@@ -344,8 +344,8 @@ namespace m0.ZeroUML.Instructions
             if (leftExpression == null || rightExpression == null)
                 return exe.stack;
 
-            INoInEdgeInOutVertexVertex _leftExecuteResult = exe.executeInstruction(exe.stack, leftExpression);
-            INoInEdgeInOutVertexVertex _rightExecuteResult = exe.executeInstruction(exe.stack, rightExpression);
+            INoInEdgeInOutVertexVertex _leftExecuteResult = exe.ExecuteInstruction(exe.stack, leftExpression);
+            INoInEdgeInOutVertexVertex _rightExecuteResult = exe.ExecuteInstruction(exe.stack, rightExpression);
 
             IList<IEdge> leftExecuteResult = _leftExecuteResult.OutEdges;
 
@@ -375,8 +375,8 @@ namespace m0.ZeroUML.Instructions
             if (leftExpression == null || rightExpression == null)
                 return exe.stack;
 
-            INoInEdgeInOutVertexVertex _leftExecuteResult = exe.executeInstruction(exe.stack, leftExpression);
-            INoInEdgeInOutVertexVertex _rightExecuteResult = exe.executeInstruction(exe.stack, rightExpression);
+            INoInEdgeInOutVertexVertex _leftExecuteResult = exe.ExecuteInstruction(exe.stack, leftExpression);
+            INoInEdgeInOutVertexVertex _rightExecuteResult = exe.ExecuteInstruction(exe.stack, rightExpression);
 
             IList<IEdge> leftExecuteResult = _leftExecuteResult.OutEdges;
 
@@ -397,8 +397,8 @@ namespace m0.ZeroUML.Instructions
             if (leftExpression == null || rightExpression == null)
                 return exe.stack;
 
-            INoInEdgeInOutVertexVertex _leftExecuteResult = exe.executeInstruction(exe.stack, leftExpression);
-            INoInEdgeInOutVertexVertex _rightExecuteResult = exe.executeInstruction(exe.stack, rightExpression);
+            INoInEdgeInOutVertexVertex _leftExecuteResult = exe.ExecuteInstruction(exe.stack, leftExpression);
+            INoInEdgeInOutVertexVertex _rightExecuteResult = exe.ExecuteInstruction(exe.stack, rightExpression);
 
             IList<IEdge> leftExecuteResult = _leftExecuteResult.OutEdges;
 
@@ -438,8 +438,8 @@ namespace m0.ZeroUML.Instructions
             if (leftExpression == null || rightExpression == null)
                 return exe.stack;
 
-            INoInEdgeInOutVertexVertex _leftExecuteResult = exe.executeInstruction(exe.stack, leftExpression);
-            INoInEdgeInOutVertexVertex _rightExecuteResult = exe.executeInstruction(exe.stack, rightExpression);
+            INoInEdgeInOutVertexVertex _leftExecuteResult = exe.ExecuteInstruction(exe.stack, leftExpression);
+            INoInEdgeInOutVertexVertex _rightExecuteResult = exe.ExecuteInstruction(exe.stack, rightExpression);
 
             IList<IEdge> leftExecuteResult = _leftExecuteResult.OutEdges;
             IList<IEdge> rightExecuteResult = _rightExecuteResult.OutEdges;
@@ -463,8 +463,8 @@ namespace m0.ZeroUML.Instructions
             if (leftExpression == null || rightExpression == null)
                 return exe.stack;
 
-            INoInEdgeInOutVertexVertex leftExecuteResult = exe.executeInstruction(exe.stack, leftExpression);
-            INoInEdgeInOutVertexVertex _rightExecuteResult = exe.executeInstruction(exe.stack, rightExpression);
+            INoInEdgeInOutVertexVertex leftExecuteResult = exe.ExecuteInstruction(exe.stack, leftExpression);
+            INoInEdgeInOutVertexVertex _rightExecuteResult = exe.ExecuteInstruction(exe.stack, rightExpression);
 
             IList<IEdge> rightExecuteResult = _rightExecuteResult.OutEdges;
 
@@ -482,7 +482,7 @@ namespace m0.ZeroUML.Instructions
             if (expression == null)
                 return InstructionHelpers.Create_INoInEdgeInOutVertexVertex_FromEdgesList(inputStack);
 
-            INoInEdgeInOutVertexVertex executeResult = exe.executeInstruction(exe.stack, expression);
+            INoInEdgeInOutVertexVertex executeResult = exe.ExecuteInstruction(exe.stack, expression);
 
             INoInEdgeInOutVertexVertex localStack = InstructionHelpers.CreateStack();
 
@@ -515,8 +515,8 @@ namespace m0.ZeroUML.Instructions
             if (leftExpression == null || rightExpression == null)
                 return exe.stack;
 
-            INoInEdgeInOutVertexVertex _leftExecuteResult = exe.executeInstruction(inputStack, leftExpression);
-            INoInEdgeInOutVertexVertex _rightExecuteResult = exe.executeInstruction(inputStack, rightExpression);
+            INoInEdgeInOutVertexVertex _leftExecuteResult = exe.ExecuteInstruction(inputStack, leftExpression);
+            INoInEdgeInOutVertexVertex _rightExecuteResult = exe.ExecuteInstruction(inputStack, rightExpression);
 
             IList<IEdge> leftExecuteResult = _leftExecuteResult.OutEdges;
             IList<IEdge> rightExecuteResult = _rightExecuteResult.OutEdges;
@@ -638,8 +638,8 @@ namespace m0.ZeroUML.Instructions
             if (leftExpression == null || rightExpression == null)
                 return exe.stack;
 
-            INoInEdgeInOutVertexVertex _leftExecuteResult = exe.executeInstruction(inputStack, leftExpression);
-            INoInEdgeInOutVertexVertex _rightExecuteResult = exe.executeInstruction(inputStack, rightExpression);
+            INoInEdgeInOutVertexVertex _leftExecuteResult = exe.ExecuteInstruction(inputStack, leftExpression);
+            INoInEdgeInOutVertexVertex _rightExecuteResult = exe.ExecuteInstruction(inputStack, rightExpression);
 
             IList<IEdge> leftExecuteResult = _leftExecuteResult.OutEdges;
             IList<IEdge> rightExecuteResult = _rightExecuteResult.OutEdges;
@@ -760,8 +760,8 @@ namespace m0.ZeroUML.Instructions
             if (leftExpression == null || rightExpression == null)
                 return exe.stack;
 
-            INoInEdgeInOutVertexVertex _leftExecuteResult = exe.executeInstruction(inputStack, leftExpression);
-            INoInEdgeInOutVertexVertex _rightExecuteResult = exe.executeInstruction(inputStack, rightExpression);
+            INoInEdgeInOutVertexVertex _leftExecuteResult = exe.ExecuteInstruction(inputStack, leftExpression);
+            INoInEdgeInOutVertexVertex _rightExecuteResult = exe.ExecuteInstruction(inputStack, rightExpression);
 
             IList<IEdge> leftExecuteResult = _leftExecuteResult.OutEdges;
             IList<IEdge> rightExecuteResult = _rightExecuteResult.OutEdges;
@@ -883,8 +883,8 @@ namespace m0.ZeroUML.Instructions
             if (leftExpression == null || rightExpression == null)
                 return exe.stack;
 
-            INoInEdgeInOutVertexVertex _leftExecuteResult = exe.executeInstruction(inputStack, leftExpression);
-            INoInEdgeInOutVertexVertex _rightExecuteResult = exe.executeInstruction(inputStack, rightExpression);
+            INoInEdgeInOutVertexVertex _leftExecuteResult = exe.ExecuteInstruction(inputStack, leftExpression);
+            INoInEdgeInOutVertexVertex _rightExecuteResult = exe.ExecuteInstruction(inputStack, rightExpression);
 
             IList<IEdge> leftExecuteResult = _leftExecuteResult.OutEdges;
             IList<IEdge> rightExecuteResult = _rightExecuteResult.OutEdges;
@@ -1015,6 +1015,12 @@ namespace m0.ZeroUML.Instructions
 
         public static INoInEdgeInOutVertexVertex Call(ZeroCodeExecution exe, IVertex inputStack, IVertex instructionVertex)
         {
+            INoInEdgeInOutVertexVertex newStack = InstructionHelpers.CreateStack();
+
+            exe.AddStackFrame(newStack);
+
+            exe.RemoveStackFrame();
+
             return null;
         }
 

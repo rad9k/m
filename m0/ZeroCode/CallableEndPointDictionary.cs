@@ -11,7 +11,7 @@ namespace m0.ZeroCode
 {
     public class CallableEndPointDictionary
     {
-        static Dictionary<IVertex, Func<ZeroCodeExecution, IVertex, IVertex, INoInEdgeInOutVertexVertex>> Dictionary = new Dictionary<IVertex, Func<ZeroCodeExecution, IVertex, IVertex, INoInEdgeInOutVertexVertex>>();
+        static Dictionary<IVertex, Func<ZeroCodeExecution, IVertex, IVertex, INoInEdgeInOutVertexVertex>> DotNetEndPointDictionary = new Dictionary<IVertex, Func<ZeroCodeExecution, IVertex, IVertex, INoInEdgeInOutVertexVertex>>();
         
         public static INoInEdgeInOutVertexVertex CallEndPoint(ZeroCodeExecution exe, IVertex inputQs, IVertex instructionVertex)
         {
@@ -22,8 +22,8 @@ namespace m0.ZeroCode
             if (_is == null)
                 return null;
 
-            if (Dictionary.ContainsKey(_is))
-                del = Dictionary[_is];
+            if (DotNetEndPointDictionary.ContainsKey(_is))
+                del = DotNetEndPointDictionary[_is];
             else
             {            
                 IVertex ep = GraphUtil.FindOneByMeta(_is, "$CallableEndPoint");
@@ -42,7 +42,7 @@ namespace m0.ZeroCode
                     del = (Func<ZeroCodeExecution, IVertex, IVertex, INoInEdgeInOutVertexVertex>)method.CreateDelegate(typeof(Func<ZeroCodeExecution, IVertex, IVertex, INoInEdgeInOutVertexVertex>));
                 }
 
-                Dictionary.Add(_is, del);
+                DotNetEndPointDictionary.Add(_is, del);
             }
 
             if (del == null)

@@ -15,7 +15,26 @@ namespace m0.ZeroCode
 
         public bool metaMode;
 
-        public INoInEdgeInOutVertexVertex executeInstruction(IVertex inputQs, IVertex instructionVertex)
+        public void AddStackFrame(INoInEdgeInOutVertexVertex newStackFrame)
+        {
+            newStackFrame.AddEdge(MinusZero.Instance.StackFrameInherits, stack);
+
+            stack = newStackFrame;
+        }
+
+        public void RemoveStackFrame()
+        {
+            IVertex _prevStackFrame = stack.Get(false, @"$StackFrameInherits:");
+
+            if(_prevStackFrame != null && _prevStackFrame is INoInEdgeInOutVertexVertex)
+            {
+                INoInEdgeInOutVertexVertex prevStackFrame = (INoInEdgeInOutVertexVertex)_prevStackFrame;
+
+                stack = prevStackFrame;
+            }
+        }
+
+        public INoInEdgeInOutVertexVertex ExecuteInstruction(IVertex inputQs, IVertex instructionVertex)
         {
             if (InstructionHelpers.GetIs(instructionVertex) == null)
             {

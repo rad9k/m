@@ -13,7 +13,7 @@ namespace m0.ZeroCode.Helpers
         public static INoInEdgeInOutVertexVertex CreateStack()
         {
             return new NoInEdgeInOutVertexVertex(MinusZero.Instance.TempStore);
-        }
+        }       
 
         public static void AddToStack(IEnumerable<IEdge> source, INoInEdgeInOutVertexVertex destination)
         {            
@@ -88,7 +88,7 @@ namespace m0.ZeroCode.Helpers
             IVertex nextExpression = InstructionHelpers.GetNextExpression(instructionVertex);
 
             if (nextExpression != null)
-                return exe.executeInstruction(inQs, nextExpression);
+                return exe.ExecuteInstruction(inQs, nextExpression);
 
             return Create_INoInEdgeInOutVertexVertex_FromEdgesList(inQs);            
         }
@@ -98,7 +98,7 @@ namespace m0.ZeroCode.Helpers
             INoInEdgeInOutVertexVertex stack = inStack;
 
             foreach (IEdge e in baseVertex)
-                stack = exe.executeInstruction(stack, e.To);
+                stack = exe.ExecuteInstruction(stack, e.To);
 
             return stack;
         }
