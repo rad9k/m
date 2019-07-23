@@ -853,7 +853,7 @@ namespace m0
             //
             // function (?<name>) (?<returnType>) [(*(+, +)(?<paramType>) (?<paramName>)*)]
 
-      /*      IVertex function = k.AddVertex(keyword, "function (?<name>) (?<returnType>)((*(+, +)(?<paramType>) (?<paramName>)*))");
+            IVertex function = k.AddVertex(keyword, "function (?<name>) (?<returnType>)((*(+, +)(?<paramType>) (?<paramName>)*))");
 
 
             IVertex function_function = function.AddVertex(smu.Get(false, @"Function"), "(?<name>)");
@@ -883,7 +883,7 @@ namespace m0
 
             f2fip.AddVertex(smb.Get(false, @"Vertex\$VertexTarget"), "(?<paramType>)");
 
-            f2fip.AddEdge(smb.Get(false, @"$$KeywordManyRoot"), smb.Get(false, @"$Empty"));*/
+            f2fip.AddEdge(smb.Get(false, @"$$KeywordManyRoot"), smb.Get(false, @"$Empty"));
 
             // while
             //
@@ -1075,9 +1075,9 @@ namespace m0
             //
             // (?<left_ColonEmptyNew>)||(?<SUB>)(?<right_ColonEmptyNew>)                         
 
-            IVertex o_doubleColon = k.AddVertex(keyword, "(?<left_ColonEmptyInner2SlashMarkNew>) || (?<right_ColonEmptyInner2SlashMarkNew>)");
+            IVertex o_doubleColon = k.AddVertex(keyword, "(?<left_ColonEmptyInner2SlashMarkIndexNew>) || (?<right_ColonEmptyInner2SlashMarkIndexNew>)");
 
-            //IVertex o_doubleColon = k.AddVertex(keyword, "(?<left_ColonEmptyInner2SlashMarkNew>)||(?<SUB>)(?<right_ColonEmptyInner2SlashMarkNew>)");
+            //IVertex o_doubleColon = k.AddVertex(keyword, "(?<left_ColonEmptyInner2SlashMarkIndexNew>)||(?<SUB>)(?<right_ColonEmptyInner2SlashMarkIndexNew>)");
 
             o_doubleColon.AddVertex(nonSelfRecursiveParameters, "");
 
@@ -1085,9 +1085,9 @@ namespace m0
 
             o_doubleColon_any.AddEdge(smb.Get(false, @"Vertex\$Is"), smu.Get(false, "||"));
 
-            o_doubleColon_any.AddVertex(smu.Get(false, @"DoubleOperator\LeftExpression"), "(?<left_ColonEmptyInner2SlashMarkNew>)");
+            o_doubleColon_any.AddVertex(smu.Get(false, @"DoubleOperator\LeftExpression"), "(?<left_ColonEmptyInner2SlashMarkIndexNew>)");
 
-            IVertex o_doubleColon_any_right = o_doubleColon_any.AddVertex(smu.Get(false, @"DoubleOperator\RightExpression"), "(?<right_ColonEmptyInner2SlashMarkNew>)");
+            IVertex o_doubleColon_any_right = o_doubleColon_any.AddVertex(smu.Get(false, @"DoubleOperator\RightExpression"), "(?<right_ColonEmptyInner2SlashMarkIndexNew>)");
 
             IVertex o_doubleColon_any_targetExpr = o_doubleColon_any.AddVertex(smu.Get(false, @"SingleOperator\NextExpression"), "");
 
@@ -1097,9 +1097,9 @@ namespace m0
             //
             // ||(?<SUB>)(?<right_ColonEmptyNew>)                         
 
-            IVertex o_doubleColon2 = k.AddVertex(keyword, "|| (?<right_ColonEmptyInner2SlashMarkNew>)");
+            IVertex o_doubleColon2 = k.AddVertex(keyword, "|| (?<right_ColonEmptyInner2SlashMarkIndexNew>)");
 
-            //IVertex o_doubleColon2 = k.AddVertex(keyword, "||(?<SUB>)(?<right_ColonEmptyInner2SlashMarkNew>)");
+            //IVertex o_doubleColon2 = k.AddVertex(keyword, "||(?<SUB>)(?<right_ColonEmptyInner2SlashMarkIndexNew>)");
 
             o_doubleColon2.AddVertex(nonSelfRecursiveParameters, "");
 
@@ -1107,7 +1107,7 @@ namespace m0
 
             o_doubleColon2_any.AddEdge(smb.Get(false, @"Vertex\$Is"), smu.Get(false, "||"));
 
-            IVertex o_doubleColon2_any_right = o_doubleColon2_any.AddVertex(smu.Get(false, @"DoubleOperator\RightExpression"), "(?<right_ColonEmptyInner2SlashMarkNew>)");
+            IVertex o_doubleColon2_any_right = o_doubleColon2_any.AddVertex(smu.Get(false, @"DoubleOperator\RightExpression"), "(?<right_ColonEmptyInner2SlashMarkIndexNew>)");
 
             IVertex o_doubleColon2_any_targetExpr = o_doubleColon2_any.AddVertex(smu.Get(false, @"SingleOperator\NextExpression"), "");
 
@@ -1117,9 +1117,9 @@ namespace m0
             //
             // (?<left_ColonEmptyNew>)||(?<SUB>)                         
 
-            IVertex o_doubleColon3 = k.AddVertex(keyword, "(?<left_ColonEmptyInner2SlashMarkNew>) ||");
+            IVertex o_doubleColon3 = k.AddVertex(keyword, "(?<left_ColonEmptyInner2SlashMarkIndexNew>) ||");
 
-            // Vertex o_doubleColon3 = k.AddVertex(keyword, "(?<left_ColonEmptyInner2SlashMarkNew>)||(?<SUB>)");
+            // Vertex o_doubleColon3 = k.AddVertex(keyword, "(?<left_ColonEmptyInner2SlashMarkIndexNew>)||(?<SUB>)");
 
             o_doubleColon3.AddVertex(nonSelfRecursiveParameters, "");
 
@@ -1127,7 +1127,7 @@ namespace m0
 
             o_doubleColon3_any.AddEdge(smb.Get(false, @"Vertex\$Is"), smu.Get(false, "||"));
 
-            o_doubleColon3_any.AddVertex(smu.Get(false, @"DoubleOperator\LeftExpression"), "(?<left_ColonEmptyInner2SlashMarkNew>)");
+            o_doubleColon3_any.AddVertex(smu.Get(false, @"DoubleOperator\LeftExpression"), "(?<left_ColonEmptyInner2SlashMarkIndexNew>)");
 
             IVertex o_doubleColon3_any_targetExpr = o_doubleColon3_any.AddVertex(smu.Get(false, @"SingleOperator\NextExpression"), "");
 
@@ -1285,7 +1285,7 @@ namespace m0
             //
             // [(*(+, +) (?<expr>)*)]
 
-            /*IVertex o_call = k.AddVertex(keyword, "(?<target>)[(*(+, +)(?<expr>)*)]");
+            IVertex o_call = k.AddVertex(keyword, "(?<target>)[(*(+, +)(?<expr>)*)]");
 
             IVertex o_call_any = o_call.AddVertex(any, "");
 
@@ -1295,7 +1295,7 @@ namespace m0
 
             IVertex o_call_any_param = o_call_any.AddVertex(smu.Get(false, @"MultiOperator\Expression"), "(?<expr>)");
 
-            o_call_any_param.AddEdge(smb.Get(false, @"$$KeywordManyRoot"), smb.Get(false, @"$Empty"));*/
+            o_call_any_param.AddEdge(smb.Get(false, @"$$KeywordManyRoot"), smb.Get(false, @"$Empty"));
 
             // ()
             //
@@ -1483,13 +1483,6 @@ namespace m0
             IVertex empty2Keyword_any_targetExpr = empty2Keyword_any.AddVertex(smu.Get(false, @"SingleOperator\NextExpression"), "");
 
             empty2Keyword_any_targetExpr.AddEdge(smb.Get(false, "$$LocalRoot"), kgd_Inner);
-
-            //TEST
-
-
-            
-
-
 
         }
 

@@ -84,7 +84,7 @@ ___________
 	function "f" @String()
 	function "f2" @String(@a "s", @a "ss")
 		function "f3" (@a "s", @a "ss")
-			function "f4" []
+			function "f4" ()
 				# "desc"
 	while "kupa"
 		@f[]
