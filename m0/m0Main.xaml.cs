@@ -323,12 +323,9 @@ namespace m0
             "\r\n\tvariable \"A\" @String" +
             "\r\n\tvariable \"B\" @String" +
             "\r\n\tvariable \"C\" @String" +
-            "\r\n\tA = \"1.0\"" +
-            "\r\n\tA += \"2\"" +
-            "\r\n\tB = (A / \"3\") * \"6.1\"" +
-            "\r\n\tC = \"c\" <+> \"cc\" <+> \"ccc\" <+> \"3\"" +
-            //"\r\n\tA = C -\"1\""
-            "\r\n\tA = C<\"1\">"
+            "\r\n\tfunction \"X\"(@String \"imie\")" +
+            "\r\n\t\tA=imie" +
+            "\r\n\t@X[\"Radek\"]"
             );
 
 

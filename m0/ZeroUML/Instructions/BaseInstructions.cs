@@ -1017,9 +1017,39 @@ namespace m0.ZeroUML.Instructions
         {
             INoInEdgeInOutVertexVertex newStack = InstructionHelpers.CreateStack();
 
-            exe.AddStackFrame(newStack);
+            IVertex target = instructionVertex.Get(false, "Target:");
 
-            exe.RemoveStackFrame();
+            if(!InstructionHelpers.CheckIs(target, "Function"))
+            {
+                INoInEdgeInOutVertexVertex targetExpressionExecution = exe.ExecuteInstruction(exe.stack, target); 
+                if (targetExpressionExecution.Count() > 0)
+                    target = targetExpressionExecution.OutEdges[0].To;
+            }
+
+            if (target == null)
+                return exe.stack;
+
+            IVertex expressions = instructionVertex.GetAll(false, "Expression:");
+            IVertex inputParameters = target.GetAll(false, "InputParameter:");
+
+            for (int x=0; x < expressions.Count(); x++)
+            {
+                IVertex expression = expressions.OutEdges[x].To;
+                IVertex inputParameter = inputParameters.OutEdges[x].To;
+
+                INoInEdgeInOutVertexVertex expressionExecution = exe.ExecuteInstruction(exe.stack, expression);
+
+                foreach (IEdge e in expressionExecution)
+                    exe.stack.AddEdge(inputParameter, e.To);
+            }
+
+            
+
+            //exe.AddStackFrame(newStack);
+
+           // InstructionHelpers.SequentiallyExecuteInstructions(exe, exe.stack, target);
+
+            //exe.RemoveStackFrame();
 
             return null;
         }
@@ -1032,7 +1062,7 @@ namespace m0.ZeroUML.Instructions
         //
         ////////////////////////////////////////////////////////////////
 
-        #region StackOperators
+#region StackOperators
 
         public static INoInEdgeInOutVertexVertex CreateStackEdge(ZeroCodeExecution exe, IVertex inputStack, IVertex instructionVertex)
         {

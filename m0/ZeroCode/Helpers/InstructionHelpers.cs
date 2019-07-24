@@ -98,7 +98,8 @@ namespace m0.ZeroCode.Helpers
             INoInEdgeInOutVertexVertex stack = inStack;
 
             foreach (IEdge e in baseVertex)
-                stack = exe.ExecuteInstruction(stack, e.To);
+                //stack = exe.ExecuteInstruction(stack, e.To);
+                exe.ExecuteInstruction(stack, e.To);
 
             return stack;
         }
