@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Text.RegularExpressions;
 using m0.Foundation;
+using m0.Util;
 
 namespace m0.ZeroCode
 {
@@ -53,6 +54,22 @@ namespace m0.ZeroCode
             return list;
         }
 
+        public static bool IsDolarMeta(IEdge e)
+        {
+            if (!(e.Meta.Value is string))
+                return false;
+
+            string metaValue = (string)e.Meta.Value;
+
+            if (metaValue == "$Empty")
+                return false;
+
+            if (metaValue.Length >= 1 && metaValue[0] == '$')
+                return true;
+
+            return false;
+        }
+
         public static bool IsDoubleDolarMeta(IEdge e)
         {
             if (!(e.Meta.Value is string))
@@ -60,7 +77,7 @@ namespace m0.ZeroCode
 
             string metaValue = (string)e.Meta.Value;
 
-            if (metaValue[0] == '$' && metaValue[1] == '$')
+            if (metaValue.Length >= 2 && metaValue[0] == '$' && metaValue[1] == '$')
                 return true;
 
             return false;

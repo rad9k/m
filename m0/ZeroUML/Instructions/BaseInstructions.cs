@@ -1002,11 +1002,24 @@ namespace m0.ZeroUML.Instructions
 
         ////////////////////////////////////////////////////////////////
         //
+        // logic operators
+        //
+        ////////////////////////////////////////////////////////////////
+
+#region LogicOperators
+
+        //",Equal,NotEqual,And,Or,MoreThan,LessThan,MoreOrEqualThan,LessOrEqualThan"
+
+#endregion
+
+
+        ////////////////////////////////////////////////////////////////
+        //
         // general operators
         //
         ////////////////////////////////////////////////////////////////
 
-        #region GeneralOperators
+#region GeneralOperators
 
         public static INoInEdgeInOutVertexVertex Bracket(ZeroCodeExecution exe, IVertex inputStack, IVertex instructionVertex)
         {
@@ -1029,6 +1042,8 @@ namespace m0.ZeroUML.Instructions
             if (target == null)
                 return exe.stack;
 
+            exe.AddStackFrame(newStack); // ENTER NEW STACK
+
             IVertex expressions = instructionVertex.GetAll(false, "Expression:");
             IVertex inputParameters = target.GetAll(false, "InputParameter:");
 
@@ -1043,18 +1058,15 @@ namespace m0.ZeroUML.Instructions
                     exe.stack.AddEdge(inputParameter, e.To);
             }
 
-            
 
-            //exe.AddStackFrame(newStack);
+            InstructionHelpers.SequentiallyExecuteInstructions(exe, exe.stack, target);
 
-           // InstructionHelpers.SequentiallyExecuteInstructions(exe, exe.stack, target);
+            exe.RemoveStackFrame(); // LEAVE NEW STACK
 
-            //exe.RemoveStackFrame();
-
-            return null;
+            return exe.stack;
         }
 
-        #endregion
+#endregion
 
         ////////////////////////////////////////////////////////////////
         //

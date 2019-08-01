@@ -324,7 +324,10 @@ namespace m0
             "\r\n\tvariable \"B\" @String" +
             "\r\n\tvariable \"C\" @String" +
             "\r\n\tfunction \"X\"(@String \"imie\")" +
-            "\r\n\t\tA=imie" +
+            "\r\n\t\tvariable \"B\" @String" +
+            "\r\n\t\tB=imie" +
+            "\r\n\t\tA=B" +
+            "\r\n\t\tB=\"main b\"" +
             "\r\n\t@X[\"Radek\"]"
             );
 

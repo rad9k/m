@@ -44,7 +44,7 @@ namespace m0
 
         IVertex stackFrameInherits;
 
-        public IVertex StackFrameInherits { get { return StackFrameInherits; } }
+        public IVertex StackFrameInherits { get { return stackFrameInherits; } }
 
         IVertex empty;
 
@@ -248,9 +248,9 @@ namespace m0
 
             empty = sm.Get(false, @"Base\$Empty"); // there are some bugs related to this and old zeroscript.get
 
-            inherits = sm.Get(false, @"Base\$Inherits");
+            inherits = sm.Get(false, @"Base\Vertex\$Inherits");
 
-            stackFrameInherits = sm.Get(false, @"Base\$StackFrameInherits");
+            stackFrameInherits = sm.Get(false, @"Base\Vertex\$StackFrameInherits");
 
 
             sm.Get(false, @"Base\Vertex\$Is").AddEdge(sm.Get(false, @"Presentation\$Hide"), empty);
@@ -377,6 +377,7 @@ namespace m0
                 ",[]{Target{$MinCardinality:0,$MaxCardinality:1}}" +
                 ",<>" +
                 ",\"{}\",\"{CRLF}\",EdgeSetAdd,EdgeSetSubstract,+,-,Mul,/,?,\"\\ \",\"|\",\"||\",(),CopyVertexValue,RedirectLeftEdgesToRightVertices,AddLeftEdgesToRightVertices,AddRightEdgesIntoLeftEdges,DeleteRightVertices,DeleteRightEdgesFromLeftEdges,DeleteRightVerticesFromLeftEdges" +
+                ",Equal,NotEqual,Negation,And,Or,MoreThan,LessThan,MoreOrEqualThan,LessOrEqualThan" +
                 ",Action,Return{Expression},NextOut{Next{$MinCardinality:0,$MaxCardinality:1}}" +
                 ",StackFrameCreator{Do{$MinCardinality:0,$MaxCardinality:1},Variable{$MinCardinality:0,$MaxCardinality:-1},Type{$MinCardinality:0,$MaxCardinality:-1}}" +
                 ",StackFrameCreatorWithInputOutput{Output{$MinCardinality:0,$MaxCardinality:1},InputParameter{$MinCardinality:0,$MaxCardinality:-1}}" +
@@ -421,6 +422,18 @@ namespace m0
             AddDotNetEndPoint(smu.Get(false, "Mul"), "Multiply");
             AddDotNetEndPoint(smu.Get(false, "/"), "Divide");
 
+            // logic operators
+
+            AddDotNetEndPoint(smu.Get(false, "Equal"), "Equal");
+            AddDotNetEndPoint(smu.Get(false, "NotEqual"), "NotEqual");
+            AddDotNetEndPoint(smu.Get(false, "Negation"), "Negation");
+            AddDotNetEndPoint(smu.Get(false, "And"), "And");
+            AddDotNetEndPoint(smu.Get(false, "Or"), "Or");
+            AddDotNetEndPoint(smu.Get(false, "MoreThan"), "MoreThan");
+            AddDotNetEndPoint(smu.Get(false, "LessThan"), "LessThan");
+            AddDotNetEndPoint(smu.Get(false, "MoreOrEqualThan"), "MoreOrEqualThan");
+            AddDotNetEndPoint(smu.Get(false, "LessOrEqualThan"), "LessOrEqualThan");
+
             // general operators
 
             AddDotNetEndPoint(smu.Get(false, "()"), "Bracket");
@@ -457,10 +470,22 @@ namespace m0
             smu.Get(false, "\"{CRLF}\"").AddEdge(sm.Get(false, "*$Inherits"), smu.Get(false, "MultiOperator"));
             smu.Get(false, "\"{}\"").AddEdge(sm.Get(false, "*$Inherits"), smu.Get(false, "SingleOperator"));
             smu.Get(false, "\"{}\"").AddEdge(sm.Get(false, "*$Inherits"), smu.Get(false, "MultiOperator"));
+
             smu.Get(false, @"+").AddEdge(sm.Get(false, "*$Inherits"), smu.Get(false, "DoubleOperator"));
             smu.Get(false, @"-").AddEdge(sm.Get(false, "*$Inherits"), smu.Get(false, "DoubleOperator"));
             smu.Get(false, "Mul").AddEdge(sm.Get(false, "*$Inherits"), smu.Get(false, "DoubleOperator"));
             smu.Get(false, @"/").AddEdge(sm.Get(false, "*$Inherits"), smu.Get(false, "DoubleOperator"));
+
+            smu.Get(false, "Equal").AddEdge(sm.Get(false, "*$Inherits"), smu.Get(false, "DoubleOperator"));
+            smu.Get(false, "NotEqual").AddEdge(sm.Get(false, "*$Inherits"), smu.Get(false, "DoubleOperator"));
+            smu.Get(false, "Negation").AddEdge(sm.Get(false, "*$Inherits"), smu.Get(false, "SingleExpressionOperator"));
+            smu.Get(false, "And").AddEdge(sm.Get(false, "*$Inherits"), smu.Get(false, "DoubleOperator"));
+            smu.Get(false, "Or").AddEdge(sm.Get(false, "*$Inherits"), smu.Get(false, "DoubleOperator"));
+            smu.Get(false, "MoreThan").AddEdge(sm.Get(false, "*$Inherits"), smu.Get(false, "DoubleOperator"));
+            smu.Get(false, "LessThan").AddEdge(sm.Get(false, "*$Inherits"), smu.Get(false, "DoubleOperator"));
+            smu.Get(false, "MoreOrEqualThan").AddEdge(sm.Get(false, "*$Inherits"), smu.Get(false, "DoubleOperator"));
+            smu.Get(false, "LessOrEqualThan").AddEdge(sm.Get(false, "*$Inherits"), smu.Get(false, "DoubleOperator"));
+
             smu.Get(false, @"?").AddEdge(sm.Get(false, "*$Inherits"), smu.Get(false, "SingleOperator"));
             smu.Get(false, "\"\\ \"").AddEdge(sm.Get(false, "*$Inherits"), smu.Get(false, "SingleOperator"));
             smu.Get(false, "\"|\"").AddEdge(sm.Get(false, "*$Inherits"), smu.Get(false, "SingleOperator"));
@@ -582,10 +607,22 @@ namespace m0
             package.AddEdge(null, smu.Get(false, "\"{}\""));
             package.AddEdge(null, smu.Get(false, "EdgeSetAdd"));
             package.AddEdge(null, smu.Get(false, "EdgeSetSubstract"));
+
             package.AddEdge(null, smu.Get(false, "+"));
             package.AddEdge(null, smu.Get(false, "-"));
             package.AddEdge(null, smu.Get(false, "Mul"));
             package.AddEdge(null, smu.Get(false, "/"));
+
+            package.AddEdge(null, smu.Get(false, "Equal"));
+            package.AddEdge(null, smu.Get(false, "NotEqual"));
+            package.AddEdge(null, smu.Get(false, "Negation"));
+            package.AddEdge(null, smu.Get(false, "And"));
+            package.AddEdge(null, smu.Get(false, "Or"));
+            package.AddEdge(null, smu.Get(false, "MoreThan"));
+            package.AddEdge(null, smu.Get(false, "LessThan"));
+            package.AddEdge(null, smu.Get(false, "MoreOrEqualThan"));
+            package.AddEdge(null, smu.Get(false, "LessOrEqualThan"));
+
             package.AddEdge(null, smu.Get(false, "?"));
             package.AddEdge(null, smu.Get(false, "\"\\ \""));
             package.AddEdge(null, smu.Get(false, "\"|\""));

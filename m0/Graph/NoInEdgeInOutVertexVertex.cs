@@ -70,6 +70,33 @@ namespace m0.Graph
 
                 FireChange(new VertexChangeEventArgs(VertexChangeType.EdgeRemoved, edge));
             }
-        }            
+        }
+
+        public override void QueryOutEdges(object meta, object from, out IEdge result, out IList<IEdge> results)
+        {
+            result = null;
+            results = null;
+
+            base.QueryOutEdges(meta, from, out result, out results);
+
+            if (result != null || results != null)
+                return;
+
+            IEdge _result;
+            IList<IEdge> _results;
+
+            base.QueryOutEdges("$StackFrameInherits", null, out _result, out _results);
+
+            IVertex stackFrameInherits_inheritsFrom = null;
+
+            if (_results != null)
+                stackFrameInherits_inheritsFrom = _results[0].To;
+
+            if (_result != null)
+                stackFrameInherits_inheritsFrom = _result.To;
+
+            if (stackFrameInherits_inheritsFrom != null)
+                stackFrameInherits_inheritsFrom.QueryOutEdges(meta, from, out result, out results);
+        }
     }
 }
