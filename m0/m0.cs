@@ -1108,11 +1108,38 @@ namespace m0
 
             o_div_any.AddVertex(smu.Get(false, @"DoubleOperator\RightExpression"), "(?<right>)");
 
+            /////////////////////////////////////////////////////////
+            //
+            // logic operators
+            //
+            ////////////////////////////////////////////////////////
+
+            // ==
+            //
+            // (?<left>) == (?<right>)
+
+            AddLeftRightOperator(k, smu, smb, keyword, any, "(?<left>) ==(?<SUB>) (?<right>)", "Equal");
+
+            // !=
+            //
+            // (?<left>) != (?<right>)
+
+            AddLeftRightOperator(k, smu, smb, keyword, any, "(?<left>) ==(?<SUB>) (?<right>)", "Equal");
+
+            // ==
+            //
+            // (?<left>) == (?<right>)
+
+            AddLeftRightOperator(k, smu, smb, keyword, any, "(?<left>) ==(?<SUB>) (?<right>)", "Equal");
+
+
+
+
             /////////////////////////////////////////////////////////////////////////////////////////////////////////////
             /////////////////////////////////////////////////////////////////////////////////////////////////////////////
             /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-            // UNDER CONSTRUCTION ZONE
+            // UNDER CONSTRUCTION ZONE START ???? this is legacy info now :)
 
             /////////////////////////////////////////////////////////////////////////////////////////////////////////////
             /////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1323,7 +1350,7 @@ namespace m0
             /////////////////////////////////////////////////////////////////////////////////////////////////////////////
             /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-            // UNDER CONSTRUCTION ZONE
+            // UNDER CONSTRUCTION ZONE END ????
 
             /////////////////////////////////////////////////////////////////////////////////////////////////////////////
             /////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1534,7 +1561,7 @@ namespace m0
 
         }
 
-        private static void AddLeftRightOperator(IVertex k, IVertex smu, IVertex smb, IVertex keyword, IVertex any, String text, String _is)
+        private static void AddLeftRightOperator(IVertex k, IVertex smu, IVertex smb, IVertex keyword, IVertex any, string text, String _is)
         {
             IVertex o_copy = k.AddVertex(keyword, text);
 
@@ -1545,6 +1572,17 @@ namespace m0
             o_copy_any.AddVertex(smu.Get(false, @"DoubleOperator\LeftExpression"), "(?<left>)");
 
             o_copy_any.AddVertex(smu.Get(false, @"DoubleOperator\RightExpression"), "(?<right>)");
+        }
+
+        private static void AddSingleNestedOperator(IVertex k, IVertex smu, IVertex smb, IVertex keyword, IVertex any, string text, String _is)
+        {
+            IVertex o_copy = k.AddVertex(keyword, text);
+
+            IVertex o_copy_any = o_copy.AddVertex(any, "");
+
+            o_copy_any.AddEdge(smb.Get(false, @"Vertex\$Is"), smu.Get(false, _is));
+
+            o_copy_any.AddVertex(smu.Get(false, @"SingleNestedOperator\Expression"), "(?<expr>)");
         }
 
         void CreateSystemFormalTextLanguageZeroCode()

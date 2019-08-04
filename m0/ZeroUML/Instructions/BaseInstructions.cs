@@ -507,7 +507,7 @@ namespace m0.ZeroUML.Instructions
 
 #region Operators
 
-            public static INoInEdgeInOutVertexVertex Add(ZeroCodeExecution exe, IVertex inputStack, IVertex instructionVertex)
+        public static INoInEdgeInOutVertexVertex Add(ZeroCodeExecution exe, IVertex inputStack, IVertex instructionVertex)
         {
             IVertex leftExpression = InstructionHelpers.GetLeft(instructionVertex);
             IVertex rightExpression = InstructionHelpers.GetRight(instructionVertex);
@@ -1006,11 +1006,49 @@ namespace m0.ZeroUML.Instructions
         //
         ////////////////////////////////////////////////////////////////
 
-#region LogicOperators
+        #region LogicOperators
 
-        //",Equal,NotEqual,And,Or,MoreThan,LessThan,MoreOrEqualThan,LessOrEqualThan"
+        public static INoInEdgeInOutVertexVertex Equal(ZeroCodeExecution exe, IVertex inputStack, IVertex instructionVertex)
+        {
 
-#endregion
+        }
+
+        public static INoInEdgeInOutVertexVertex NotEqual(ZeroCodeExecution exe, IVertex inputStack, IVertex instructionVertex)
+        {
+
+        }
+
+        public static INoInEdgeInOutVertexVertex Negation(ZeroCodeExecution exe, IVertex inputStack, IVertex instructionVertex)
+        {
+
+        }
+
+        public static INoInEdgeInOutVertexVertex And(ZeroCodeExecution exe, IVertex inputStack, IVertex instructionVertex)
+        {
+
+        }
+
+        public static INoInEdgeInOutVertexVertex MoreThan(ZeroCodeExecution exe, IVertex inputStack, IVertex instructionVertex)
+        {
+
+        }
+
+        public static INoInEdgeInOutVertexVertex LessThan(ZeroCodeExecution exe, IVertex inputStack, IVertex instructionVertex)
+        {
+
+        }
+
+        public static INoInEdgeInOutVertexVertex MoreOrEqualThan(ZeroCodeExecution exe, IVertex inputStack, IVertex instructionVertex)
+        {
+
+        }
+
+        public static INoInEdgeInOutVertexVertex LessOrEqualThan(ZeroCodeExecution exe, IVertex inputStack, IVertex instructionVertex)
+        {
+
+        }
+
+        #endregion
 
 
         ////////////////////////////////////////////////////////////////
@@ -1019,7 +1057,7 @@ namespace m0.ZeroUML.Instructions
         //
         ////////////////////////////////////////////////////////////////
 
-#region GeneralOperators
+        #region GeneralOperators
 
         public static INoInEdgeInOutVertexVertex Bracket(ZeroCodeExecution exe, IVertex inputStack, IVertex instructionVertex)
         {
