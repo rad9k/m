@@ -464,7 +464,6 @@ namespace m0
             smu.Get(false, @"MultiOperator").AddEdge(sm.Get(false, "*$Inherits"), smu.Get(false, "ExpressionAtom"));
 
             smu.Get(false, @"Query").AddEdge(sm.Get(false, "*$Inherits"), smu.Get(false, "SingleOperator"));
-            //smu.Get(false, @"NewVertex").AddEdge(sm.Get(false, "*$Inherits"), smu.Get(false, "SingleOperator"));
             smu.Get(false, @"[]").AddEdge(sm.Get(false, "*$Inherits"), smu.Get(false, "MultiOperator"));
             smu.Get(false, @"<>").AddEdge(sm.Get(false, "*$Inherits"), smu.Get(false, "SingleExpressionOperator"));
             smu.Get(false, "\"{CRLF}\"").AddEdge(sm.Get(false, "*$Inherits"), smu.Get(false, "MultiOperator"));
@@ -600,7 +599,6 @@ namespace m0
             package.AddEdge(null, smu.Get(false, "Enum"));
             package.AddEdge(null, smu.Get(false, "Class"));
             package.AddEdge(null, smu.Get(false, "Query"));
-            //package.AddEdge(null, smu.Get(false, "NewVertex"));
             package.AddEdge(null, smu.Get(false, "[]"));
             package.AddEdge(null, smu.Get(false, "<>"));
             package.AddEdge(null, smu.Get(false, "\"{CRLF}\""));
@@ -1124,15 +1122,49 @@ namespace m0
             //
             // (?<left>) != (?<right>)
 
-            AddLeftRightOperator(k, smu, smb, keyword, any, "(?<left>) ==(?<SUB>) (?<right>)", "Equal");
+            AddLeftRightOperator(k, smu, smb, keyword, any, "(?<left>) ==(?<SUB>) (?<right>)", "NotEqual");
 
-            // ==
+            // !
             //
-            // (?<left>) == (?<right>)
+            //  !(?<expr>)
 
-            AddLeftRightOperator(k, smu, smb, keyword, any, "(?<left>) ==(?<SUB>) (?<right>)", "Equal");
+            AddSingleNestedOperator(k, smu, smb, keyword, any, "!(?<expr>)", "Negation");
 
+            // &
+            //
+            // (?<left>) & (?<right>)
 
+            AddLeftRightOperator(k, smu, smb, keyword, any, "(?<left>) &(?<SUB>) (?<right>)", "And");
+
+            // |
+            //
+            // (?<left>) | (?<right>)
+
+            AddLeftRightOperator(k, smu, smb, keyword, any, "(?<left>) %(?<SUB>) (?<right>)", "Or");
+
+            // >
+            //
+            // (?<left>) > (?<right>)
+
+            AddLeftRightOperator(k, smu, smb, keyword, any, "(?<left>) >(?<SUB>) (?<right>)", "MoreThan");
+
+            // <
+            //
+            // (?<left>) < (?<right>)
+
+            AddLeftRightOperator(k, smu, smb, keyword, any, "(?<left>) <(?<SUB>) (?<right>)", "LessThan");
+
+            // >=
+            //
+            // (?<left>) >= (?<right>)
+
+            AddLeftRightOperator(k, smu, smb, keyword, any, "(?<left>) >=(?<SUB>) (?<right>)", "MoreOrEqualThan");
+
+            // <=
+            //
+            // (?<left>) <= (?<right>)
+
+            AddLeftRightOperator(k, smu, smb, keyword, any, "(?<left>) <=(?<SUB>) (?<right>)", "LessOrEqualThan");
 
 
             /////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1376,6 +1408,9 @@ namespace m0
             //
             // ((?<expr>))
 
+            //AddSingleNestedOperator(k, smu, smb, keyword, any, "((?<expr>))", "()");
+
+
             IVertex o_par = k.AddVertex(keyword, "((?<expr>))");
 
             IVertex o_par_any = o_par.AddVertex(any, "");
@@ -1561,7 +1596,7 @@ namespace m0
 
         }
 
-        private static void AddLeftRightOperator(IVertex k, IVertex smu, IVertex smb, IVertex keyword, IVertex any, string text, String _is)
+        private static void AddLeftRightOperator(IVertex k, IVertex smu, IVertex smb, IVertex keyword, IVertex any, string text, string _is)
         {
             IVertex o_copy = k.AddVertex(keyword, text);
 
@@ -1574,7 +1609,7 @@ namespace m0
             o_copy_any.AddVertex(smu.Get(false, @"DoubleOperator\RightExpression"), "(?<right>)");
         }
 
-        private static void AddSingleNestedOperator(IVertex k, IVertex smu, IVertex smb, IVertex keyword, IVertex any, string text, String _is)
+        private static void AddSingleNestedOperator(IVertex k, IVertex smu, IVertex smb, IVertex keyword, IVertex any, string text, string _is)
         {
             IVertex o_copy = k.AddVertex(keyword, text);
 

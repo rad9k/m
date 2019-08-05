@@ -1006,46 +1006,83 @@ namespace m0.ZeroUML.Instructions
         //
         ////////////////////////////////////////////////////////////////
 
-        #region LogicOperators
+#region LogicOperators
 
         public static INoInEdgeInOutVertexVertex Equal(ZeroCodeExecution exe, IVertex inputStack, IVertex instructionVertex)
         {
+            IVertex leftExpression = InstructionHelpers.GetLeft(instructionVertex);
+            IVertex rightExpression = InstructionHelpers.GetRight(instructionVertex);
 
+            if (leftExpression == null || rightExpression == null)
+                return exe.stack;
+
+            INoInEdgeInOutVertexVertex _leftExecuteResult = exe.ExecuteInstruction(inputStack, leftExpression);
+            INoInEdgeInOutVertexVertex _rightExecuteResult = exe.ExecuteInstruction(inputStack, rightExpression);
+
+            IList<IEdge> leftExecuteResult = _leftExecuteResult.OutEdges;
+            IList<IEdge> rightExecuteResult = _rightExecuteResult.OutEdges;
+
+
+
+            if (leftNumbers.Count == 0)
+                return InstructionHelpers.CreateStackAndCopy(rightExecuteResult);
+
+            if (rightNumbers.Count == 0)
+                return InstructionHelpers.CreateStackAndCopy(leftExecuteResult);
+
+            switch (InstructionHelpers.GetCommonNubmerResultDenominator(leftResultType, rightResultType))
+            {
+                case InstructionHelpers.GetNumberListResult.Integer:
+                    return _Add_Logic_int(leftNumbers, rightNumbers); // can not use generics when doing T + T
+
+                case InstructionHelpers.GetNumberListResult.Double:
+                    return _Add_Logic_double(leftNumbers, rightNumbers);
+
+                case InstructionHelpers.GetNumberListResult.Decimal:
+                    return _Add_Logic_decimal(leftNumbers, rightNumbers);
+            }
+
+            return InstructionHelpers.Create_INoInEdgeInOutVertexVertex_FromEdgesList(inputStack);
         }
 
         public static INoInEdgeInOutVertexVertex NotEqual(ZeroCodeExecution exe, IVertex inputStack, IVertex instructionVertex)
         {
-
+            return null;
         }
 
         public static INoInEdgeInOutVertexVertex Negation(ZeroCodeExecution exe, IVertex inputStack, IVertex instructionVertex)
         {
-
+            return null;
         }
 
         public static INoInEdgeInOutVertexVertex And(ZeroCodeExecution exe, IVertex inputStack, IVertex instructionVertex)
         {
+            return null;
+        }
 
+        public static INoInEdgeInOutVertexVertex Or(ZeroCodeExecution exe, IVertex inputStack, IVertex instructionVertex)
+        {
+            return null;
         }
 
         public static INoInEdgeInOutVertexVertex MoreThan(ZeroCodeExecution exe, IVertex inputStack, IVertex instructionVertex)
         {
-
+            return null;
         }
 
         public static INoInEdgeInOutVertexVertex LessThan(ZeroCodeExecution exe, IVertex inputStack, IVertex instructionVertex)
         {
-
+            return null;
         }
 
         public static INoInEdgeInOutVertexVertex MoreOrEqualThan(ZeroCodeExecution exe, IVertex inputStack, IVertex instructionVertex)
         {
-
+            return null;
         }
 
         public static INoInEdgeInOutVertexVertex LessOrEqualThan(ZeroCodeExecution exe, IVertex inputStack, IVertex instructionVertex)
         {
-
+            return null;
         }
 
         #endregion
@@ -1057,11 +1094,13 @@ namespace m0.ZeroUML.Instructions
         //
         ////////////////////////////////////////////////////////////////
 
-        #region GeneralOperators
+#region GeneralOperators
 
         public static INoInEdgeInOutVertexVertex Bracket(ZeroCodeExecution exe, IVertex inputStack, IVertex instructionVertex)
         {
-            return InstructionHelpers.Create_INoInEdgeInOutVertexVertex_FromEdgesList(inputStack);
+            IVertex expression = instructionVertex.Get(false, "Expression:");
+
+            return exe.ExecuteInstruction(inputStack, expression);
         }
 
         public static INoInEdgeInOutVertexVertex Call(ZeroCodeExecution exe, IVertex inputStack, IVertex instructionVertex)
