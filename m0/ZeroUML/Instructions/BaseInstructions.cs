@@ -1023,7 +1023,6 @@ namespace m0.ZeroUML.Instructions
             IList<IEdge> rightExecuteResult = _rightExecuteResult.OutEdges;
 
 
-
             if (leftNumbers.Count == 0)
                 return InstructionHelpers.CreateStackAndCopy(rightExecuteResult);
 
