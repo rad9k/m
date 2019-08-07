@@ -1022,26 +1022,27 @@ namespace m0.ZeroUML.Instructions
             IList<IEdge> leftExecuteResult = _leftExecuteResult.OutEdges;
             IList<IEdge> rightExecuteResult = _rightExecuteResult.OutEdges;
 
+            int toBeProcessedCount;
 
-            if (leftNumbers.Count == 0)
-                return InstructionHelpers.CreateStackAndCopy(rightExecuteResult);
+            if (leftExecuteResult.Count > rightExecuteResult.Count)
+                toBeProcessedCount = rightExecuteResult.Count;
+            else
+                toBeProcessedCount = leftExecuteResult.Count;
 
-            if (rightNumbers.Count == 0)
-                return InstructionHelpers.CreateStackAndCopy(leftExecuteResult);
-
-            switch (InstructionHelpers.GetCommonNubmerResultDenominator(leftResultType, rightResultType))
+            for(int x=0; x < toBeProcessedCount; x++)
             {
-                case InstructionHelpers.GetNumberListResult.Integer:
-                    return _Add_Logic_int(leftNumbers, rightNumbers); // can not use generics when doing T + T
+                IVertex left = leftExecuteResult[x].To;
+                IVertex right = rightExecuteResult[x].To;
 
-                case InstructionHelpers.GetNumberListResult.Double:
-                    return _Add_Logic_double(leftNumbers, rightNumbers);
 
-                case InstructionHelpers.GetNumberListResult.Decimal:
-                    return _Add_Logic_decimal(leftNumbers, rightNumbers);
             }
 
-            return InstructionHelpers.Create_INoInEdgeInOutVertexVertex_FromEdgesList(inputStack);
+                return InstructionHelpers.CreateStackAndCopy(rightExecuteResult);
+
+           // if (rightNumbers.Count == 0)
+          //      return InstructionHelpers.CreateStackAndCopy(leftExecuteResult);
+
+
         }
 
         public static INoInEdgeInOutVertexVertex NotEqual(ZeroCodeExecution exe, IVertex inputStack, IVertex instructionVertex)

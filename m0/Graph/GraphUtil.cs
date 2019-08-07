@@ -296,6 +296,11 @@ namespace m0.Graph
             }
         }
 
+        public static bool IsEqual(IVertex leftVertex, IVertex rightVertex)
+        {
+            return false;
+        }
+
         public static IVertex SetVertexValue(IVertex vertex, IVertex metaVertex, object value)
         {
             //IVertex getByMeta=vertex.Get(false, metaVertex.Value + ":");
