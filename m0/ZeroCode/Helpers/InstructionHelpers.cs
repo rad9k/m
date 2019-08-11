@@ -211,11 +211,27 @@ namespace m0.ZeroCode.Helpers
         {
             GetNumberListResult result = GetNumberListResult.Integer;
 
+            if (left == GetNumberListResult.Decimal || right == GetNumberListResult.Decimal)
+                result = GetNumberListResult.Decimal;
+
             if (left == GetNumberListResult.Double || right == GetNumberListResult.Double)
                 result = GetNumberListResult.Double;
 
-            if (left == GetNumberListResult.Decimal || right == GetNumberListResult.Decimal)
+            return result;
+        }
+
+        public static GetNumberListResult GetCommonNubmerTypeDenominator(object left, object right)
+        {
+            Type leftType = left.GetType();
+            Type rightType = right.GetType();
+
+            GetNumberListResult result = GetNumberListResult.Integer;
+
+            if (leftType == typeof(decimal) || rightType == typeof(decimal))
                 result = GetNumberListResult.Decimal;
+
+            if (leftType == typeof(double) || rightType == typeof(double))
+                result = GetNumberListResult.Double;
 
             return result;
         }

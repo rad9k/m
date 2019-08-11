@@ -298,6 +298,7 @@ namespace m0.Graph
 
         public static bool IsEqual(IVertex leftVertex, IVertex rightVertex)
         {
+
             return false;
         }
 

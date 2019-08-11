@@ -1029,11 +1029,52 @@ namespace m0.ZeroUML.Instructions
             else
                 toBeProcessedCount = leftExecuteResult.Count;
 
-            for(int x=0; x < toBeProcessedCount; x++)
-            {
-                IVertex left = leftExecuteResult[x].To;
-                IVertex right = rightExecuteResult[x].To;
+            INoInEdgeInOutVertexVertex localStack = InstructionHelpers.CreateStack();
 
+            for (int x=0; x < toBeProcessedCount; x++)
+            {
+                bool isEqual = false;
+
+                IVertex leftVertex = leftExecuteResult[x].To;
+                IVertex rightVertex = rightExecuteResult[x].To;
+
+                object leftNumber;
+                object rightNumber;
+
+                GraphUtil.GetNumberValue(leftVertex, out leftNumber);
+                GraphUtil.GetNumberValue(rightVertex, out rightNumber);
+
+                if(leftNumber!=null && rightNumber != null)
+                {
+                    switch(InstructionHelpers.GetCommonNubmerTypeDenominator(leftNumber, rightNumber))
+                    {
+                        case InstructionHelpers.GetNumberListResult.Integer:
+                            int leftInt = Convert.ToInt32(leftNumber);
+                            int rightInt = Convert.ToInt32(rightNumber);
+                            if (leftInt == rightInt)
+                                isEqual = true;
+                            break;
+
+                        case InstructionHelpers.GetNumberListResult.Double:
+                            double leftDouble = Convert.ToDouble(leftNumber);
+                            double rightDouble = Convert.ToDouble(rightNumber);
+                            if (leftDouble == rightDouble)
+                                isEqual = true;
+                            break;
+
+                        case InstructionHelpers.GetNumberListResult.Decimal:
+                            decimal leftDecimal = Convert.ToDecimal(leftNumber);
+                            decimal rightDecimal = Convert.ToDecimal(rightNumber);
+                            if (leftDecimal == rightDecimal)
+                                isEqual = true;
+                            break;
+                    }
+                }
+
+                if (isEqual)
+                    localStack.AddVertex(null, "True");
+                else
+                    localStack.AddVertex(null, "False");
 
             }
 
