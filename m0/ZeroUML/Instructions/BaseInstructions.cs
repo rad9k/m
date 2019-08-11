@@ -1044,9 +1044,9 @@ namespace m0.ZeroUML.Instructions
                 GraphUtil.GetNumberValue(leftVertex, out leftNumber);
                 GraphUtil.GetNumberValue(rightVertex, out rightNumber);
 
-                if(leftNumber!=null && rightNumber != null)
+                if (leftNumber != null && rightNumber != null)
                 {
-                    switch(InstructionHelpers.GetCommonNubmerTypeDenominator(leftNumber, rightNumber))
+                    switch (InstructionHelpers.GetCommonNubmerTypeDenominator(leftNumber, rightNumber))
                     {
                         case InstructionHelpers.GetNumberListResult.Integer:
                             int leftInt = Convert.ToInt32(leftNumber);
@@ -1070,6 +1070,8 @@ namespace m0.ZeroUML.Instructions
                             break;
                     }
                 }
+                else
+                    isEqual = GraphUtil.GetValueAndCompareStrings(leftVertex, rightVertex);
 
                 if (isEqual)
                     localStack.AddVertex(null, "True");
@@ -1078,12 +1080,7 @@ namespace m0.ZeroUML.Instructions
 
             }
 
-                return InstructionHelpers.CreateStackAndCopy(rightExecuteResult);
-
-           // if (rightNumbers.Count == 0)
-          //      return InstructionHelpers.CreateStackAndCopy(leftExecuteResult);
-
-
+            return localStack;
         }
 
         public static INoInEdgeInOutVertexVertex NotEqual(ZeroCodeExecution exe, IVertex inputStack, IVertex instructionVertex)

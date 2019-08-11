@@ -296,6 +296,17 @@ namespace m0.Graph
             }
         }
 
+        public static bool GetValueAndCompareStrings(IVertex vertexLeft, IVertex vertexRight)
+        {
+            if (vertexLeft == null || vertexRight == null)
+                return false;
+
+            if (vertexLeft.Value != null && vertexRight.Value!=null)
+                return vertexLeft.Value.ToString() == vertexRight.Value.ToString();
+
+            return false;
+        }
+
         public static bool IsEqual(IVertex leftVertex, IVertex rightVertex)
         {
 

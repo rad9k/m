@@ -318,7 +318,7 @@ namespace m0
                             "\r\n\tTest3 += Test\\ >-< Radek"
                             );*/
 
-            MinusZero.Instance.NewDefaultParser.Parse(code,
+            /*MinusZero.Instance.NewDefaultParser.Parse(code,
             "\"Code\"" +
             "\r\n\tvariable \"A\" @String" +
             "\r\n\tvariable \"B\" @String" +
@@ -329,7 +329,20 @@ namespace m0
             "\r\n\t\tA=B" +
             "\r\n\t\tB=\"main b\"" +
             "\r\n\t@X[\"Radek\"]"
-            );
+            );*/
+
+            MinusZero.Instance.NewDefaultParser.Parse(code,
+           "\"Code\"" +
+           "\r\n\tvariable \"A\" @String" +
+           "\r\n\tvariable \"B\" @String" +
+           "\r\n\tvariable \"C\" @String" +
+           "\r\n\tA = \"10,0\"" +
+           "\r\n\tA += \"y\"" +
+           "\r\n\tB = \"10\"" +
+           "\r\n\tB += \"yy\"" +
+           "\r\n\tB += \"y\"" +
+           "\r\n\tC = A==B"
+           );
 
 
 
