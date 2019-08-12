@@ -1008,7 +1008,7 @@ namespace m0.ZeroUML.Instructions
 
 #region LogicOperators
 
-        public static INoInEdgeInOutVertexVertex Equal(ZeroCodeExecution exe, IVertex inputStack, IVertex instructionVertex)
+        private static INoInEdgeInOutVertexVertex LogicDoubleOperator(LogicDoubleOpertorEnum opetationType, ZeroCodeExecution exe, IVertex inputStack, IVertex instructionVertex)
         {
             IVertex leftExpression = InstructionHelpers.GetLeft(instructionVertex);
             IVertex rightExpression = InstructionHelpers.GetRight(instructionVertex);
@@ -1033,47 +1033,14 @@ namespace m0.ZeroUML.Instructions
 
             for (int x=0; x < toBeProcessedCount; x++)
             {
-                bool isEqual = false;
+                bool logicalResult = false;
 
                 IVertex leftVertex = leftExecuteResult[x].To;
                 IVertex rightVertex = rightExecuteResult[x].To;
 
-                object leftNumber;
-                object rightNumber;
+                logicalResult = LogicDoubleOperator_VertexLevel(leftVertex, rightVertex, opetationType);
 
-                GraphUtil.GetNumberValue(leftVertex, out leftNumber);
-                GraphUtil.GetNumberValue(rightVertex, out rightNumber);
-
-                if (leftNumber != null && rightNumber != null)
-                {
-                    switch (InstructionHelpers.GetCommonNubmerTypeDenominator(leftNumber, rightNumber))
-                    {
-                        case InstructionHelpers.GetNumberListResult.Integer:
-                            int leftInt = Convert.ToInt32(leftNumber);
-                            int rightInt = Convert.ToInt32(rightNumber);
-                            if (leftInt == rightInt)
-                                isEqual = true;
-                            break;
-
-                        case InstructionHelpers.GetNumberListResult.Double:
-                            double leftDouble = Convert.ToDouble(leftNumber);
-                            double rightDouble = Convert.ToDouble(rightNumber);
-                            if (leftDouble == rightDouble)
-                                isEqual = true;
-                            break;
-
-                        case InstructionHelpers.GetNumberListResult.Decimal:
-                            decimal leftDecimal = Convert.ToDecimal(leftNumber);
-                            decimal rightDecimal = Convert.ToDecimal(rightNumber);
-                            if (leftDecimal == rightDecimal)
-                                isEqual = true;
-                            break;
-                    }
-                }
-                else
-                    isEqual = GraphUtil.GetValueAndCompareStrings(leftVertex, rightVertex);
-
-                if (isEqual)
+                if (logicalResult)
                     localStack.AddVertex(null, "True");
                 else
                     localStack.AddVertex(null, "False");
@@ -1083,9 +1050,93 @@ namespace m0.ZeroUML.Instructions
             return localStack;
         }
 
+        enum LogicDoubleOpertorEnum {Equal, NotEqual, Negation, And, Or, MoreThan, LessThan, MoreOrEqualThan, LessOrEqualThan }
+
+        private static bool LogicDoubleOperator_VertexLevel(IVertex leftVertex, IVertex rightVertex, LogicDoubleOpertorEnum operationType)
+        {
+            bool logicalResult = false;
+
+            object leftNumber;
+            object rightNumber;
+
+            GraphUtil.GetNumberValue(leftVertex, out leftNumber);
+            GraphUtil.GetNumberValue(rightVertex, out rightNumber);
+
+            if (leftNumber != null && rightNumber != null)
+            {
+                switch (InstructionHelpers.GetCommonNubmerTypeDenominator(leftNumber, rightNumber))
+                {
+                    case InstructionHelpers.GetNumberListResult.Integer:
+                        int leftInt = Convert.ToInt32(leftNumber);
+                        int rightInt = Convert.ToInt32(rightNumber);
+                        logicalResult = LogicDoubleOperator_ExecuteNumeric<int>(leftInt, rightInt, operationType, 0);
+                        break;
+
+                    case InstructionHelpers.GetNumberListResult.Double:
+                        double leftDouble = Convert.ToDouble(leftNumber);
+                        double rightDouble = Convert.ToDouble(rightNumber);
+                        logicalResult = LogicDoubleOperator_ExecuteNumeric<double>(leftDouble, rightDouble, operationType, 0);
+                        break;
+
+                    case InstructionHelpers.GetNumberListResult.Decimal:
+                        decimal leftDecimal = Convert.ToDecimal(leftNumber);
+                        decimal rightDecimal = Convert.ToDecimal(rightNumber);
+                        logicalResult = LogicDoubleOperator_ExecuteNumeric<decimal>(leftDecimal, rightDecimal, operationType, 0);
+                        break;
+                }
+            }
+            else
+                logicalResult = GraphUtil.GetValueAndCompareStrings(leftVertex, rightVertex);
+
+            return logicalResult;
+        }
+
+        private static bool LogicDoubleOperator_ExecuteNumeric<T>(T leftValue, T rightValue, LogicDoubleOpertorEnum operationType, T zeroValue)
+        {
+            bool output = false;
+
+            switch (operationType)
+            {
+                case LogicDoubleOpertorEnum.Equal:
+                    if (EqualityComparer<T>.Default.Equals(leftValue, rightValue))
+                        output = true;
+                    break;
+
+                case LogicDoubleOpertorEnum.NotEqual:
+                    if (!EqualityComparer<T>.Default.Equals(leftValue, rightValue))
+                        output = true;
+                    break;
+
+                case LogicDoubleOpertorEnum.And:
+                    if (Comparer<T>.Default.Compare(zeroValue, leftValue) < 0 &&
+                        Comparer<T>.Default.Compare(zeroValue, rightValue) < 0)
+                        output = true;
+                    break;
+
+                case LogicDoubleOpertorEnum.Or:
+                    if (Comparer<T>.Default.Compare(zeroValue, leftValue) < 0 ||
+                        Comparer<T>.Default.Compare(zeroValue, rightValue) < 0)
+                        output = true;
+                    break;
+
+                case LogicDoubleOpertorEnum.MoreThan:
+                    if (Comparer<T>.Default.Compare(leftValue, rightValue) > 0)
+                        output = true;
+                    break;
+
+            }
+
+            return output;
+        }
+
+        public static INoInEdgeInOutVertexVertex Equal(ZeroCodeExecution exe, IVertex inputStack, IVertex instructionVertex)
+        {
+            return LogicDoubleOperator(LogicDoubleOpertorEnum.Equal, exe, inputStack, instructionVertex);
+        }
+
         public static INoInEdgeInOutVertexVertex NotEqual(ZeroCodeExecution exe, IVertex inputStack, IVertex instructionVertex)
         {
-            return null;
+            return LogicDoubleOperator(LogicDoubleOpertorEnum.NotEqual, exe, inputStack, instructionVertex);
         }
 
         public static INoInEdgeInOutVertexVertex Negation(ZeroCodeExecution exe, IVertex inputStack, IVertex instructionVertex)
@@ -1095,32 +1146,32 @@ namespace m0.ZeroUML.Instructions
 
         public static INoInEdgeInOutVertexVertex And(ZeroCodeExecution exe, IVertex inputStack, IVertex instructionVertex)
         {
-            return null;
+            return LogicDoubleOperator(LogicDoubleOpertorEnum.And, exe, inputStack, instructionVertex);
         }
 
         public static INoInEdgeInOutVertexVertex Or(ZeroCodeExecution exe, IVertex inputStack, IVertex instructionVertex)
         {
-            return null;
+            return LogicDoubleOperator(LogicDoubleOpertorEnum.Or, exe, inputStack, instructionVertex);
         }
 
         public static INoInEdgeInOutVertexVertex MoreThan(ZeroCodeExecution exe, IVertex inputStack, IVertex instructionVertex)
         {
-            return null;
+            return LogicDoubleOperator(LogicDoubleOpertorEnum.MoreThan, exe, inputStack, instructionVertex);
         }
 
         public static INoInEdgeInOutVertexVertex LessThan(ZeroCodeExecution exe, IVertex inputStack, IVertex instructionVertex)
         {
-            return null;
+            return LogicDoubleOperator(LogicDoubleOpertorEnum.LessThan, exe, inputStack, instructionVertex);
         }
 
         public static INoInEdgeInOutVertexVertex MoreOrEqualThan(ZeroCodeExecution exe, IVertex inputStack, IVertex instructionVertex)
         {
-            return null;
+            return LogicDoubleOperator(LogicDoubleOpertorEnum.MoreOrEqualThan, exe, inputStack, instructionVertex);
         }
 
         public static INoInEdgeInOutVertexVertex LessOrEqualThan(ZeroCodeExecution exe, IVertex inputStack, IVertex instructionVertex)
         {
-            return null;
+            return LogicDoubleOperator(LogicDoubleOpertorEnum.LessOrEqualThan, exe, inputStack, instructionVertex);
         }
 
         #endregion

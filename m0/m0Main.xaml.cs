@@ -336,12 +336,12 @@ namespace m0
            "\r\n\tvariable \"A\" @String" +
            "\r\n\tvariable \"B\" @String" +
            "\r\n\tvariable \"C\" @String" +
-           "\r\n\tA = \"10,0\"" +
-           "\r\n\tA += \"y\"" +
-           "\r\n\tB = \"10\"" +
+           "\r\n\tA = \"0\"" +
+           "\r\n\tA += \"1\"" +
+           "\r\n\tB = \"1\"" +
+           "\r\n\tB += \"0\"" +
            "\r\n\tB += \"yy\"" +
-           "\r\n\tB += \"y\"" +
-           "\r\n\tC = A==B"
+           "\r\n\tC = A>B"
            );
 
 
