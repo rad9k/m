@@ -1086,7 +1086,7 @@ namespace m0.ZeroUML.Instructions
                 }
             }
             else
-                logicalResult = GraphUtil.GetValueAndCompareStrings(leftVertex, rightVertex);
+                logicalResult = LogicDoubleOperator_ExecuteString(leftVertex, rightVertex, operationType);
 
             return logicalResult;
         }
@@ -1124,6 +1124,79 @@ namespace m0.ZeroUML.Instructions
                         output = true;
                     break;
 
+                case LogicDoubleOpertorEnum.MoreOrEqualThan:
+                    if (Comparer<T>.Default.Compare(leftValue, rightValue) >= 0 )
+                        output = true;
+                    break;
+
+                case LogicDoubleOpertorEnum.LessThan:
+                    if (Comparer<T>.Default.Compare(leftValue, rightValue) < 0)
+                        output = true;
+                    break;
+
+                case LogicDoubleOpertorEnum.LessOrEqualThan:
+                    if (Comparer<T>.Default.Compare(leftValue, rightValue) <= 0)
+                        output = true;
+                    break;
+            }
+
+            return output;
+        }
+
+
+        private static bool LogicDoubleOperator_ExecuteString(IVertex leftVertex, IVertex rightVertex, LogicDoubleOpertorEnum operationType)
+        {
+            bool output = false;
+
+            if (leftVertex == null || leftVertex.Value == null || rightVertex == null || rightVertex.Value == null)
+                return output;
+
+            string leftValue = leftVertex.Value.ToString();
+            string rightValue = rightVertex.Value.ToString();
+
+            switch (operationType)
+            {
+                case LogicDoubleOpertorEnum.Equal:
+                    if (EqualityComparer<string>.Default.Equals(leftValue, rightValue))
+                        output = true;
+                    break;
+
+                case LogicDoubleOpertorEnum.NotEqual:
+                    if (!EqualityComparer<string>.Default.Equals(leftValue, rightValue))
+                        output = true;
+                    break;
+
+                case LogicDoubleOpertorEnum.And:
+                    if ((Comparer<string>.Default.Compare("True", leftValue) == 0 || Comparer<string>.Default.Compare("true", leftValue) == 0  || Comparer<string>.Default.Compare("1", leftValue) == 0) &&
+                        (Comparer<string>.Default.Compare("True", rightValue) == 0 || Comparer<string>.Default.Compare("true", rightValue) == 0 || Comparer<string>.Default.Compare("1", rightValue) == 0 ))
+                        output = true;
+                    break;
+
+                case LogicDoubleOpertorEnum.Or:
+                    if ((Comparer<string>.Default.Compare("True", leftValue) == 0 || Comparer<string>.Default.Compare("true", leftValue) == 0 || Comparer<string>.Default.Compare("1", leftValue) == 0) ||
+                        (Comparer<string>.Default.Compare("True", rightValue) == 0 || Comparer<string>.Default.Compare("true", rightValue) == 0 || Comparer<string>.Default.Compare("1", rightValue) == 0))
+                        output = true;
+                    break;
+
+                case LogicDoubleOpertorEnum.MoreThan:
+                    if (Comparer<string>.Default.Compare(leftValue, rightValue) > 0)
+                        output = true;
+                    break;
+
+                case LogicDoubleOpertorEnum.MoreOrEqualThan:
+                    if (Comparer<string>.Default.Compare(leftValue, rightValue) >= 0)
+                        output = true;
+                    break;
+
+                case LogicDoubleOpertorEnum.LessThan:
+                    if (Comparer<string>.Default.Compare(leftValue, rightValue) < 0)
+                        output = true;
+                    break;
+
+                case LogicDoubleOpertorEnum.LessOrEqualThan:
+                    if (Comparer<string>.Default.Compare(leftValue, rightValue) <= 0)
+                        output = true;
+                    break;
             }
 
             return output;

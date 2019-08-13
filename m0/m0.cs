@@ -1122,7 +1122,7 @@ namespace m0
             //
             // (?<left>) != (?<right>)
 
-            AddLeftRightOperator(k, smu, smb, keyword, any, "(?<left>) ==(?<SUB>) (?<right>)", "NotEqual");
+            AddLeftRightOperator(k, smu, smb, keyword, any, "(?<left>) !=(?<SUB>) (?<right>)", "NotEqual");
 
             // !
             //
