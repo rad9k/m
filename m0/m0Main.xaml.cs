@@ -331,29 +331,43 @@ namespace m0
             "\r\n\t@X[\"Radek\"]"
             );*/
 
+            /* MinusZero.Instance.NewDefaultParser.Parse(code,
+            "\"Code\"" +
+            "\r\n\tvariable \"A\" @String" +
+            "\r\n\tvariable \"B\" @String" +
+            "\r\n\tvariable \"C\" @String" +
+            "\r\n\tvariable \"D\" @String" +
+            "\r\n\tA = \"A\"" +
+            "\r\n\tA += \"A\"" +
+            "\r\n\tA += \"B\"" +
+            "\r\n\tA += \"True\"" +
+            "\r\n\tA += \"True\"" +
+            "\r\n\tA += \"1\"" +
+            "\r\n\tB = \"A\"" +
+            "\r\n\tB += \"B\"" +
+            "\r\n\tB += \"A\"" +
+            "\r\n\tB += \"1\"" +
+            "\r\n\tB += \"0\"" +
+            "\r\n\tB += \"1\"" +
+            "\r\n\tC = A<B"+
+            "\r\n\tD = !C"
+            );*/
+
+            //() ! <>
+
             MinusZero.Instance.NewDefaultParser.Parse(code,
            "\"Code\"" +
            "\r\n\tvariable \"A\" @String" +
            "\r\n\tvariable \"B\" @String" +
            "\r\n\tvariable \"C\" @String" +
            "\r\n\tvariable \"D\" @String" +
-           "\r\n\tA = \"A\"" +
-           "\r\n\tA += \"A\"" +
-           "\r\n\tA += \"B\"" +
-           "\r\n\tA += \"True\"" +
-           "\r\n\tA += \"True\"" +
-           "\r\n\tA += \"1\"" +
-           "\r\n\tB = \"A\"" +
-           "\r\n\tB += \"B\"" +
-           "\r\n\tB += \"A\"" +
-           "\r\n\tB += \"1\"" +
-           "\r\n\tB += \"0\"" +
-           "\r\n\tB += \"1\"" +
-           "\r\n\tC = A<B"+
+           "\r\n\tA = \"1\"" +
+           "\r\n\tA += \"2\"" +
+           "\r\n\tA += \"3\"" +
+           "\r\n\tB = (\"1\" + \"2\") * \"3\"" +
+           "\r\n\tC = A<\"2\">" +
            "\r\n\tD = !C"
            );
-
-
 
             //MinusZero.Instance.NewDefaultParser.Parse(code, "\"Code\"\r\n\tvariable \"Magunia\" @String 5:10\r\n\tvariable \"Radek\" @String 2:2\r\n\tRadek += \"Koha\"\r\n\tMagunia=Radek\r\n\tMagunia ~= Radek|Koha");
 
