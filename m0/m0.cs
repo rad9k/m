@@ -1401,20 +1401,17 @@ namespace m0
 
             o_call_any_param.AddEdge(smb.Get(false, @"$$KeywordManyRoot"), smb.Get(false, @"$Empty"));
 
+            // return
+            //
+            // return (?<expr>)
+
+            AddSingleExpressionOperator(k, smu, smb, keyword, any, "return (?<expr>)", "Return");
+
             // ()
             //
             // ((?<expr>))
 
             AddSingleExpressionOperator(k, smu, smb, keyword, any, "((?<expr>))", "()");
-
-
-            /*IVertex o_par = k.AddVertex(keyword, "((?<expr>))");
-
-            IVertex o_par_any = o_par.AddVertex(any, "");
-
-            o_par_any.AddEdge(smb.Get(false, @"Vertex\$Is"), smu.Get(false, "()"));
-
-            o_par_any.AddVertex(smu.Get(false, @"SingleExpressionOperator\Expression"), "(?<expr>)");*/
 
             // \
             //

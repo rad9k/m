@@ -1409,6 +1409,11 @@ namespace m0.ZeroUML.Instructions
             return exe.stack;
         }
 
+        public static INoInEdgeInOutVertexVertex Return(ZeroCodeExecution exe, IVertex inputStack, IVertex instructionVertex)
+        {
+            return null;
+        }
+
 #endregion
 
         ////////////////////////////////////////////////////////////////

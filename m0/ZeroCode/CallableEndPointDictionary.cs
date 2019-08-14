@@ -11,7 +11,9 @@ namespace m0.ZeroCode
 {
     public class CallableEndPointDictionary
     {
-        static Dictionary<IVertex, Func<ZeroCodeExecution, IVertex, IVertex, INoInEdgeInOutVertexVertex>> DotNetEndPointDictionary = new Dictionary<IVertex, Func<ZeroCodeExecution, IVertex, IVertex, INoInEdgeInOutVertexVertex>>();
+        delegate INoInEdgeInOutVertexVertex CallableEndPointDelegate(T input, out U output);
+
+        static Dictionary<IVertex, Func<ZeroCodeExecution, IVertex, IVertex, ref bool, INoInEdgeInOutVertexVertex>> DotNetEndPointDictionary = new Dictionary<IVertex, Func<ZeroCodeExecution, IVertex, IVertex, INoInEdgeInOutVertexVertex>>();
         
         public static INoInEdgeInOutVertexVertex CallEndPoint(ZeroCodeExecution exe, IVertex inputQs, IVertex instructionVertex)
         {

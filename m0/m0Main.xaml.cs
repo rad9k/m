@@ -355,7 +355,7 @@ namespace m0
 
             //() ! <>
 
-            MinusZero.Instance.NewDefaultParser.Parse(code,
+            /*MinusZero.Instance.NewDefaultParser.Parse(code,
            "\"Code\"" +
            "\r\n\tvariable \"A\" @String" +
            "\r\n\tvariable \"B\" @String" +
@@ -367,7 +367,18 @@ namespace m0
            "\r\n\tB = (\"1\" + \"2\") * \"3\"" +
            "\r\n\tC = A<\"2\">" +
            "\r\n\tD = !C"
-           );
+           );*/
+
+            MinusZero.Instance.NewDefaultParser.Parse(code,
+          "\"Code\"" +
+          "\r\n\tvariable \"A\" @String" +
+          "\r\n\tvariable \"B\" @String" +
+          "\r\n\tvariable \"C\" @String" +
+          "\r\n\tvariable \"D\" @String" +
+          "\r\n\tfunction \"Add\" @Integer(@Integer \"x\")" +
+          "\r\n\t\treturn x" +
+          "\r\n\tA = @Add[\"3\"]"
+          );
 
             //MinusZero.Instance.NewDefaultParser.Parse(code, "\"Code\"\r\n\tvariable \"Magunia\" @String 5:10\r\n\tvariable \"Radek\" @String 2:2\r\n\tRadek += \"Koha\"\r\n\tMagunia=Radek\r\n\tMagunia ~= Radek|Koha");
 
