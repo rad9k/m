@@ -438,6 +438,7 @@ namespace m0
 
             AddDotNetEndPoint(smu.Get(false, "()"), "Bracket");
             AddDotNetEndPoint(smu.Get(false, "[]"), "Call");
+            AddDotNetEndPoint(smu.Get(false, "Return"), "Return");
 
             // stack operators
 

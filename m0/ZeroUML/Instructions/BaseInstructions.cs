@@ -521,8 +521,8 @@ namespace m0.ZeroUML.Instructions
             IList<IEdge> leftExecuteResult = _leftExecuteResult.OutEdges;
             IList<IEdge> rightExecuteResult = _rightExecuteResult.OutEdges;
 
-            InstructionHelpers.GetNumberListResult leftResultType;
-            InstructionHelpers.GetNumberListResult rightResultType;
+            InstructionHelpers.NumericTypeEnum leftResultType;
+            InstructionHelpers.NumericTypeEnum rightResultType;
 
             IList<object> leftNumbers = InstructionHelpers.GetNumberList(leftExecuteResult, out leftResultType);
             IList<object> rightNumbers = InstructionHelpers.GetNumberList(rightExecuteResult, out rightResultType);
@@ -535,13 +535,13 @@ namespace m0.ZeroUML.Instructions
 
             switch (InstructionHelpers.GetCommonNubmerResultDenominator(leftResultType, rightResultType))
             {
-                case InstructionHelpers.GetNumberListResult.Integer:
+                case InstructionHelpers.NumericTypeEnum.Integer:
                     return _Add_Logic_int(leftNumbers, rightNumbers); // can not use generics when doing T + T
 
-                case InstructionHelpers.GetNumberListResult.Double:
+                case InstructionHelpers.NumericTypeEnum.Double:
                     return _Add_Logic_double(leftNumbers, rightNumbers);
 
-                case InstructionHelpers.GetNumberListResult.Decimal:
+                case InstructionHelpers.NumericTypeEnum.Decimal:
                     return _Add_Logic_decimal(leftNumbers, rightNumbers);
             }
 
@@ -644,8 +644,8 @@ namespace m0.ZeroUML.Instructions
             IList<IEdge> leftExecuteResult = _leftExecuteResult.OutEdges;
             IList<IEdge> rightExecuteResult = _rightExecuteResult.OutEdges;
 
-            InstructionHelpers.GetNumberListResult leftResultType;
-            InstructionHelpers.GetNumberListResult rightResultType;
+            InstructionHelpers.NumericTypeEnum leftResultType;
+            InstructionHelpers.NumericTypeEnum rightResultType;
 
             IList<object> leftNumbers = InstructionHelpers.GetNumberList(leftExecuteResult, out leftResultType);
             IList<object> rightNumbers = InstructionHelpers.GetNumberList(rightExecuteResult, out rightResultType);
@@ -658,13 +658,13 @@ namespace m0.ZeroUML.Instructions
 
             switch (InstructionHelpers.GetCommonNubmerResultDenominator(leftResultType, rightResultType))
             {
-                case InstructionHelpers.GetNumberListResult.Integer:
+                case InstructionHelpers.NumericTypeEnum.Integer:
                     return _Substract_Logic_int(leftNumbers, rightNumbers); // can not use generics when doing T + T
 
-                case InstructionHelpers.GetNumberListResult.Double:
+                case InstructionHelpers.NumericTypeEnum.Double:
                     return _Substract_Logic_double(leftNumbers, rightNumbers);
 
-                case InstructionHelpers.GetNumberListResult.Decimal:
+                case InstructionHelpers.NumericTypeEnum.Decimal:
                     return _Substract_Logic_decimal(leftNumbers, rightNumbers);
             }
 
@@ -766,8 +766,8 @@ namespace m0.ZeroUML.Instructions
             IList<IEdge> leftExecuteResult = _leftExecuteResult.OutEdges;
             IList<IEdge> rightExecuteResult = _rightExecuteResult.OutEdges;
 
-            InstructionHelpers.GetNumberListResult leftResultType;
-            InstructionHelpers.GetNumberListResult rightResultType;
+            InstructionHelpers.NumericTypeEnum leftResultType;
+            InstructionHelpers.NumericTypeEnum rightResultType;
 
             IList<object> leftNumbers = InstructionHelpers.GetNumberList(leftExecuteResult, out leftResultType);
             IList<object> rightNumbers = InstructionHelpers.GetNumberList(rightExecuteResult, out rightResultType);
@@ -780,13 +780,13 @@ namespace m0.ZeroUML.Instructions
 
             switch (InstructionHelpers.GetCommonNubmerResultDenominator(leftResultType, rightResultType))
             {
-                case InstructionHelpers.GetNumberListResult.Integer:
+                case InstructionHelpers.NumericTypeEnum.Integer:
                     return _Multiply_Logic_int(leftNumbers, rightNumbers); // can not use generics when doing T + T
 
-                case InstructionHelpers.GetNumberListResult.Double:
+                case InstructionHelpers.NumericTypeEnum.Double:
                     return _Multiply_Logic_double(leftNumbers, rightNumbers);
 
-                case InstructionHelpers.GetNumberListResult.Decimal:
+                case InstructionHelpers.NumericTypeEnum.Decimal:
                     return _Multiply_Logic_decimal(leftNumbers, rightNumbers);
             }
 
@@ -889,8 +889,8 @@ namespace m0.ZeroUML.Instructions
             IList<IEdge> leftExecuteResult = _leftExecuteResult.OutEdges;
             IList<IEdge> rightExecuteResult = _rightExecuteResult.OutEdges;
 
-            InstructionHelpers.GetNumberListResult leftResultType;
-            InstructionHelpers.GetNumberListResult rightResultType;
+            InstructionHelpers.NumericTypeEnum leftResultType;
+            InstructionHelpers.NumericTypeEnum rightResultType;
 
             IList<object> leftNumbers = InstructionHelpers.GetNumberList(leftExecuteResult, out leftResultType);
             IList<object> rightNumbers = InstructionHelpers.GetNumberList(rightExecuteResult, out rightResultType);
@@ -903,13 +903,13 @@ namespace m0.ZeroUML.Instructions
 
             switch (InstructionHelpers.GetCommonNubmerResultDenominator(leftResultType, rightResultType))
             {
-                case InstructionHelpers.GetNumberListResult.Integer:
+                case InstructionHelpers.NumericTypeEnum.Integer:
                     return _Divide_Logic_int(leftNumbers, rightNumbers); // can not use generics when doing T + T
 
-                case InstructionHelpers.GetNumberListResult.Double:
+                case InstructionHelpers.NumericTypeEnum.Double:
                     return _Divide_Logic_double(leftNumbers, rightNumbers);
 
-                case InstructionHelpers.GetNumberListResult.Decimal:
+                case InstructionHelpers.NumericTypeEnum.Decimal:
                     return _Divide_Logic_decimal(leftNumbers, rightNumbers);
             }
 
@@ -1050,7 +1050,7 @@ namespace m0.ZeroUML.Instructions
             return localStack;
         }
 
-        enum LogicDoubleOpertorEnum {Equal, NotEqual, Negation, And, Or, MoreThan, LessThan, MoreOrEqualThan, LessOrEqualThan }
+        enum LogicDoubleOpertorEnum {Equal, NotEqual, And, Or, MoreThan, LessThan, MoreOrEqualThan, LessOrEqualThan }
 
         private static bool LogicDoubleOperator_VertexLevel(IVertex leftVertex, IVertex rightVertex, LogicDoubleOpertorEnum operationType)
         {
@@ -1064,21 +1064,21 @@ namespace m0.ZeroUML.Instructions
 
             if (leftNumber != null && rightNumber != null)
             {
-                switch (InstructionHelpers.GetCommonNubmerTypeDenominator(leftNumber, rightNumber))
+                switch (InstructionHelpers.GetCommonNumericTypeDenominator(leftNumber, rightNumber))
                 {
-                    case InstructionHelpers.GetNumberListResult.Integer:
+                    case InstructionHelpers.NumericTypeEnum.Integer:
                         int leftInt = Convert.ToInt32(leftNumber);
                         int rightInt = Convert.ToInt32(rightNumber);
                         logicalResult = LogicDoubleOperator_ExecuteNumeric<int>(leftInt, rightInt, operationType, 0);
                         break;
 
-                    case InstructionHelpers.GetNumberListResult.Double:
+                    case InstructionHelpers.NumericTypeEnum.Double:
                         double leftDouble = Convert.ToDouble(leftNumber);
                         double rightDouble = Convert.ToDouble(rightNumber);
                         logicalResult = LogicDoubleOperator_ExecuteNumeric<double>(leftDouble, rightDouble, operationType, 0);
                         break;
 
-                    case InstructionHelpers.GetNumberListResult.Decimal:
+                    case InstructionHelpers.NumericTypeEnum.Decimal:
                         decimal leftDecimal = Convert.ToDecimal(leftNumber);
                         decimal rightDecimal = Convert.ToDecimal(rightNumber);
                         logicalResult = LogicDoubleOperator_ExecuteNumeric<decimal>(leftDecimal, rightDecimal, operationType, 0);
@@ -1143,7 +1143,6 @@ namespace m0.ZeroUML.Instructions
             return output;
         }
 
-
         private static bool LogicDoubleOperator_ExecuteString(IVertex leftVertex, IVertex rightVertex, LogicDoubleOpertorEnum operationType)
         {
             bool output = false;
@@ -1202,6 +1201,111 @@ namespace m0.ZeroUML.Instructions
             return output;
         }
 
+        private static INoInEdgeInOutVertexVertex LogicSingleOperator(LogicSingleOpertorEnum opetationType, ZeroCodeExecution exe, IVertex inputStack, IVertex instructionVertex)
+        {
+            IVertex expression = InstructionHelpers.GetExpression(instructionVertex);
+
+            if (expression == null)
+                return exe.stack;
+
+            INoInEdgeInOutVertexVertex _executeResult = exe.ExecuteInstruction(inputStack, expression);
+
+            IList<IEdge> executeResult = _executeResult.OutEdges;
+
+            int toBeProcessedCount = executeResult.Count;
+
+            INoInEdgeInOutVertexVertex localStack = InstructionHelpers.CreateStack();
+
+            for (int x = 0; x < toBeProcessedCount; x++)
+            {
+                bool logicalResult = false;
+
+                IVertex vertex = executeResult[x].To;
+
+                logicalResult = LogicSingleOperator_VertexLevel(vertex, opetationType);
+
+                if (logicalResult)
+                    localStack.AddVertex(null, "True");
+                else
+                    localStack.AddVertex(null, "False");
+
+            }
+
+            return localStack;
+        }
+
+        enum LogicSingleOpertorEnum { Negation }
+
+        private static bool LogicSingleOperator_VertexLevel(IVertex vertex, LogicSingleOpertorEnum operationType)
+        {
+            bool logicalResult = false;
+
+            object number;
+
+            GraphUtil.GetNumberValue(vertex, out number);
+
+            if (number!=null)
+            {
+                switch (InstructionHelpers.GetNumericType(number))
+                {
+                    case InstructionHelpers.NumericTypeEnum.Integer:
+                        int valInt = Convert.ToInt32(number);
+                        logicalResult = LogicSingleOperator_ExecuteNumeric<int>(valInt, operationType, 0);
+                        break;
+
+                    case InstructionHelpers.NumericTypeEnum.Double:
+                        double valDouble = Convert.ToDouble(number);
+                        logicalResult = LogicSingleOperator_ExecuteNumeric<double>(valDouble, operationType, 0);
+                        break;
+
+                    case InstructionHelpers.NumericTypeEnum.Decimal:
+                        decimal valDecimal = Convert.ToDecimal(number);
+                        logicalResult = LogicSingleOperator_ExecuteNumeric<decimal>(valDecimal, operationType, 0);
+                        break;
+                }
+            }
+            else
+                logicalResult = LogicSingleOperator_ExecuteString(vertex, operationType);
+
+            return logicalResult;
+        }
+
+        private static bool LogicSingleOperator_ExecuteNumeric<T>(T value, LogicSingleOpertorEnum operationType, T zeroValue)
+        {
+            bool output = false;
+
+            switch (operationType)
+            {
+                case LogicSingleOpertorEnum.Negation:
+                    if (EqualityComparer<T>.Default.Equals(value, zeroValue))
+                        output = true;
+                    break;
+            }
+
+            return output;
+        }
+
+        private static bool LogicSingleOperator_ExecuteString(IVertex vertex, LogicSingleOpertorEnum operationType)
+        {
+            bool output = false;
+
+            if (vertex == null)
+                return output;
+
+            string value = vertex.Value.ToString();
+
+            switch (operationType)
+            {
+                case LogicSingleOpertorEnum.Negation:
+                    if (EqualityComparer<string>.Default.Equals(value,"False") ||
+                        EqualityComparer<string>.Default.Equals(value, "false"))
+                        output = true;
+                    break;
+            }
+
+            return output;
+        }
+
         public static INoInEdgeInOutVertexVertex Equal(ZeroCodeExecution exe, IVertex inputStack, IVertex instructionVertex)
         {
             return LogicDoubleOperator(LogicDoubleOpertorEnum.Equal, exe, inputStack, instructionVertex);
@@ -1214,7 +1318,7 @@ namespace m0.ZeroUML.Instructions
 
         public static INoInEdgeInOutVertexVertex Negation(ZeroCodeExecution exe, IVertex inputStack, IVertex instructionVertex)
         {
-            return null;
+            return LogicSingleOperator(LogicSingleOpertorEnum.Negation, exe, inputStack, instructionVertex);
         }
 
         public static INoInEdgeInOutVertexVertex And(ZeroCodeExecution exe, IVertex inputStack, IVertex instructionVertex)

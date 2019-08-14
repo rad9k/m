@@ -171,11 +171,11 @@ namespace m0.ZeroCode.Helpers
             return dict;
         }
 
-        public enum GetNumberListResult { Integer, Double, Decimal}
+        public enum NumericTypeEnum { Integer, Double, Decimal}
 
-        public static IList<object> GetNumberList(IList<IEdge> edges, out GetNumberListResult resultType)
+        public static IList<object> GetNumberList(IList<IEdge> edges, out NumericTypeEnum resultType)
         {
-            resultType = GetNumberListResult.Decimal;
+            resultType = NumericTypeEnum.Decimal;
 
             bool allInteger = true;
             bool allDouble = true;
@@ -199,39 +199,54 @@ namespace m0.ZeroCode.Helpers
             }
 
             if (allInteger)
-                resultType = GetNumberListResult.Integer;
+                resultType = NumericTypeEnum.Integer;
             else
                 if (allDouble)
-                resultType = GetNumberListResult.Double;
+                resultType = NumericTypeEnum.Double;
 
             return list;
         }
 
-        public static GetNumberListResult GetCommonNubmerResultDenominator(GetNumberListResult left, GetNumberListResult right)
+        public static NumericTypeEnum GetCommonNubmerResultDenominator(NumericTypeEnum left, NumericTypeEnum right)
         {
-            GetNumberListResult result = GetNumberListResult.Integer;
+            NumericTypeEnum result = NumericTypeEnum.Integer;
 
-            if (left == GetNumberListResult.Decimal || right == GetNumberListResult.Decimal)
-                result = GetNumberListResult.Decimal;
+            if (left == NumericTypeEnum.Decimal || right == NumericTypeEnum.Decimal)
+                result = NumericTypeEnum.Decimal;
 
-            if (left == GetNumberListResult.Double || right == GetNumberListResult.Double)
-                result = GetNumberListResult.Double;
+            if (left == NumericTypeEnum.Double || right == NumericTypeEnum.Double)
+                result = NumericTypeEnum.Double;
 
             return result;
         }
 
-        public static GetNumberListResult GetCommonNubmerTypeDenominator(object left, object right)
+        public static NumericTypeEnum GetCommonNumericTypeDenominator(object left, object right)
         {
             Type leftType = left.GetType();
             Type rightType = right.GetType();
 
-            GetNumberListResult result = GetNumberListResult.Integer;
+            NumericTypeEnum result = NumericTypeEnum.Integer;
 
             if (leftType == typeof(decimal) || rightType == typeof(decimal))
-                result = GetNumberListResult.Decimal;
+                result = NumericTypeEnum.Decimal;
 
             if (leftType == typeof(double) || rightType == typeof(double))
-                result = GetNumberListResult.Double;
+                result = NumericTypeEnum.Double;
+
+            return result;
+        }
+
+        public static NumericTypeEnum GetNumericType(object obj)
+        {
+            Type type = obj.GetType();
+
+            NumericTypeEnum result = NumericTypeEnum.Integer;
+
+            if (type == typeof(decimal))
+                result = NumericTypeEnum.Decimal;
+
+            if (type == typeof(double))
+                result = NumericTypeEnum.Double;
 
             return result;
         }

@@ -350,8 +350,7 @@ namespace m0
            "\r\n\tB += \"0\"" +
            "\r\n\tB += \"1\"" +
            "\r\n\tC = A<B"+
-           "\r\n\tD = A<=B"
-           //"\r\n\tD = !C"
+           "\r\n\tD = !C"
            );
 
 
