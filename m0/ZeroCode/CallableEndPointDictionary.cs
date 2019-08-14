@@ -11,13 +11,15 @@ namespace m0.ZeroCode
 {
     public class CallableEndPointDictionary
     {
-        delegate INoInEdgeInOutVertexVertex CallableEndPointDelegate(T input, out U output);
+        delegate INoInEdgeInOutVertexVertex CallableEndPointDelegate(ZeroCodeExecution exe, IVertex inputStack, IVertex instructionVertex, out bool IsStackFrameReturn);
 
-        static Dictionary<IVertex, Func<ZeroCodeExecution, IVertex, IVertex, ref bool, INoInEdgeInOutVertexVertex>> DotNetEndPointDictionary = new Dictionary<IVertex, Func<ZeroCodeExecution, IVertex, IVertex, INoInEdgeInOutVertexVertex>>();
+        static Dictionary<IVertex, CallableEndPointDelegate> DotNetEndPointDictionary = new Dictionary<IVertex, CallableEndPointDelegate>();
         
-        public static INoInEdgeInOutVertexVertex CallEndPoint(ZeroCodeExecution exe, IVertex inputQs, IVertex instructionVertex)
+        public static INoInEdgeInOutVertexVertex CallEndPoint(ZeroCodeExecution exe, IVertex inputQs, IVertex instructionVertex, out bool IsStackFrameReturn)
         {
-            Func<ZeroCodeExecution, IVertex, IVertex, INoInEdgeInOutVertexVertex> del = null;
+            IsStackFrameReturn = false;
+
+            CallableEndPointDelegate del = null;
 
             IVertex _is = GraphUtil.FindOneByMeta(instructionVertex, "$Is");
 
@@ -41,7 +43,7 @@ namespace m0.ZeroCode
                     Type type = Type.GetType(typeString);
                     MethodInfo method = type.GetMethod(methodString);
 
-                    del = (Func<ZeroCodeExecution, IVertex, IVertex, INoInEdgeInOutVertexVertex>)method.CreateDelegate(typeof(Func<ZeroCodeExecution, IVertex, IVertex, INoInEdgeInOutVertexVertex>));
+                    del = (CallableEndPointDelegate)method.CreateDelegate(typeof(CallableEndPointDelegate));
                 }
 
                 DotNetEndPointDictionary.Add(_is, del);
@@ -50,7 +52,7 @@ namespace m0.ZeroCode
             if (del == null)
                 return null;
 
-            return del.Invoke(exe, inputQs, instructionVertex);            
+            return del.Invoke(exe, inputQs, instructionVertex, out IsStackFrameReturn);            
         }
     }
 }
