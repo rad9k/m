@@ -83,14 +83,22 @@ namespace m0.ZeroCode.Helpers
             return GraphUtil.GetQueryOutFirst(v, "NextExpression", null);
         }
 
-        public static INoInEdgeInOutVertexVertex NextExpressionHandle(ZeroCodeExecution exe, IVertex inQs, IVertex instructionVertex)
+        public static INoInEdgeInOutVertexVertex NextExpressionHandle(ZeroCodeExecution exe, IVertex inStack, IVertex instructionVertex)
         {
+            bool dummy;
+
+            return NextExpressionHandle(exe, inStack, instructionVertex, out dummy);
+        }
+
+        public static INoInEdgeInOutVertexVertex NextExpressionHandle(ZeroCodeExecution exe, IVertex inStack, IVertex instructionVertex, out bool isStackFrameReturn)
+        {
+            isStackFrameReturn = false;
             IVertex nextExpression = InstructionHelpers.GetNextExpression(instructionVertex);
 
             if (nextExpression != null)
-                return exe.ExecuteInstruction(inQs, nextExpression);
+                return exe.ExecuteInstruction(inStack, nextExpression, out isStackFrameReturn);
 
-            return Create_INoInEdgeInOutVertexVertex_FromEdgesList(inQs);            
+            return Create_INoInEdgeInOutVertexVertex_FromEdgesList(inStack);            
         }
 
         public static INoInEdgeInOutVertexVertex SequentiallyExecuteInstructions(ZeroCodeExecution exe, INoInEdgeInOutVertexVertex inStack, IVertex baseVertex)

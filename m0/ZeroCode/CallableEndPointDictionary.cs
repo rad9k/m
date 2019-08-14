@@ -14,8 +14,15 @@ namespace m0.ZeroCode
         delegate INoInEdgeInOutVertexVertex CallableEndPointDelegate(ZeroCodeExecution exe, IVertex inputStack, IVertex instructionVertex, out bool IsStackFrameReturn);
 
         static Dictionary<IVertex, CallableEndPointDelegate> DotNetEndPointDictionary = new Dictionary<IVertex, CallableEndPointDelegate>();
-        
-        public static INoInEdgeInOutVertexVertex CallEndPoint(ZeroCodeExecution exe, IVertex inputQs, IVertex instructionVertex, out bool IsStackFrameReturn)
+
+        public static INoInEdgeInOutVertexVertex CallEndPoint(ZeroCodeExecution exe, IVertex inputStack, IVertex instructionVertex)
+        {
+            bool dummy;
+
+            return CallEndPoint(exe, inputStack, instructionVertex, out dummy);
+        }
+
+        public static INoInEdgeInOutVertexVertex CallEndPoint(ZeroCodeExecution exe, IVertex inputStack, IVertex instructionVertex, out bool IsStackFrameReturn)
         {
             IsStackFrameReturn = false;
 
@@ -52,7 +59,7 @@ namespace m0.ZeroCode
             if (del == null)
                 return null;
 
-            return del.Invoke(exe, inputQs, instructionVertex, out IsStackFrameReturn);            
+            return del.Invoke(exe, inputStack, instructionVertex, out IsStackFrameReturn);            
         }
     }
 }

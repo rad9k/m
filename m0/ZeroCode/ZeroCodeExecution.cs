@@ -36,6 +36,15 @@ namespace m0.ZeroCode
 
         public INoInEdgeInOutVertexVertex ExecuteInstruction(IVertex inputQs, IVertex instructionVertex)
         {
+            bool dummy;
+
+            return ExecuteInstruction(inputQs, instructionVertex, out dummy);
+        }
+
+        public INoInEdgeInOutVertexVertex ExecuteInstruction(IVertex inputQs, IVertex instructionVertex, out bool isStackFrameReturn)
+        {
+            isStackFrameReturn = false;
+
             if (InstructionHelpers.GetIs(instructionVertex) == null)
             {
                 INoInEdgeInOutVertexVertex stack = InstructionHelpers.CreateStack();
@@ -43,7 +52,7 @@ namespace m0.ZeroCode
                 return stack;
             }
 
-            return CallableEndPointDictionary.CallEndPoint(this, inputQs, instructionVertex);
+            return CallableEndPointDictionary.CallEndPoint(this, inputQs, instructionVertex, out isStackFrameReturn);
         }
     }
 }
