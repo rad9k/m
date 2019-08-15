@@ -1476,11 +1476,14 @@ namespace m0.ZeroUML.Instructions
         {
             isStackFrameReturn = true;
 
-            IVertex stack = inputStack;
-
             IVertex expression = instructionVertex.Get(false, "Expression:");
 
-            return null;
+            if (expression != null)
+            {
+                return exe.ExecuteInstruction(inputStack, expression);
+            }
+
+            return InstructionHelpers.Create_INoInEdgeInOutVertexVertex_FromEdgesList(inputStack);
         }
 
 #endregion
