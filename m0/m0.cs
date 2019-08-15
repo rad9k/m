@@ -377,7 +377,7 @@ namespace m0
                 ",<>" +
                 ",\"{}\",\"{CRLF}\",EdgeSetAdd,EdgeSetSubstract,+,-,Mul,/,?,\"\\ \",\"|\",\"||\",(),CopyVertexValue,RedirectLeftEdgesToRightVertices,AddLeftEdgesToRightVertices,AddRightEdgesIntoLeftEdges,DeleteRightVertices,DeleteRightEdgesFromLeftEdges,DeleteRightVerticesFromLeftEdges" +
                 ",Equal,NotEqual,Negation,And,Or,MoreThan,LessThan,MoreOrEqualThan,LessOrEqualThan" +
-                ",Action,Return{Expression},NextOut{Next{$MinCardinality:0,$MaxCardinality:1}}" +
+                ",Action,Return{Expression{$MinCardinality:0,$MaxCardinality:1}},NextOut{Next{$MinCardinality:0,$MaxCardinality:1}}" +
                 ",StackFrameCreator{Do{$MinCardinality:0,$MaxCardinality:1},Variable{$MinCardinality:0,$MaxCardinality:-1},Type{$MinCardinality:0,$MaxCardinality:-1}}" +
                 ",StackFrameCreatorWithInputOutput{Output{$MinCardinality:0,$MaxCardinality:1},InputParameter{$MinCardinality:0,$MaxCardinality:-1}}" +
                 ",Function,Section" +
@@ -1407,6 +1407,12 @@ namespace m0
 
             AddSingleExpressionOperator(k, smu, smb, keyword, any, "return (?<expr>)", "Return");
 
+            // return
+            //
+            // return (?<expr>)
+
+            AddKeyword(k, smu, smb, keyword, any, "return", "Return");
+
             // ()
             //
             // ((?<expr>))
@@ -1612,6 +1618,15 @@ namespace m0
             o_copy_any.AddEdge(smb.Get(false, @"Vertex\$Is"), smu.Get(false, _is));
 
             o_copy_any.AddVertex(smu.Get(false, @"SingleExpressionOperator\Expression"), "(?<expr>)");
+        }
+
+        private static void AddKeyword(IVertex k, IVertex smu, IVertex smb, IVertex keyword, IVertex any,  string text, string _is)
+        {
+            IVertex o_copy = k.AddVertex(keyword, text);
+
+            IVertex o_copy_any = o_copy.AddVertex(any, "");
+
+            o_copy_any.AddEdge(smb.Get(false, @"Vertex\$Is"), smu.Get(false, _is));
         }
 
         void CreateSystemFormalTextLanguageZeroCode()

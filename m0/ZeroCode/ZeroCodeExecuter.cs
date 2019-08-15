@@ -25,7 +25,9 @@ namespace m0.ZeroCode
 
             exe.stack = InstructionHelpers.Create_INoInEdgeInOutVertexVertex_FromEdgesList(baseVertex);
 
-            return InstructionHelpers.SequentiallyExecuteInstructions(exe, exe.stack, expression);            
+            bool local_isStackFrameReturn;
+
+            return InstructionHelpers.SequentiallyExecuteInstructions(exe, exe.stack, expression, out local_isStackFrameReturn);            
         }
 
         public IVertex Get(bool metaMode, IVertex baseVertex, IVertex expression)

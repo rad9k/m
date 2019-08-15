@@ -101,14 +101,29 @@ namespace m0.ZeroCode.Helpers
             return Create_INoInEdgeInOutVertexVertex_FromEdgesList(inStack);            
         }
 
-        public static INoInEdgeInOutVertexVertex SequentiallyExecuteInstructions(ZeroCodeExecution exe, INoInEdgeInOutVertexVertex inStack, IVertex baseVertex)
+        public static INoInEdgeInOutVertexVertex SequentiallyExecuteInstructions(ZeroCodeExecution exe, INoInEdgeInOutVertexVertex inStack, IVertex baseVertex, out bool isStackFrameReturn)
         {
+            isStackFrameReturn = false;
+
             INoInEdgeInOutVertexVertex stack = inStack;
 
             foreach (IEdge e in baseVertex)
                 //stack = exe.ExecuteInstruction(stack, e.To); // XXX another interesting processing approach
-                if(!ZeroCodeUtil.IsDolarMeta(e)) // XXX in some cases it might not work - instruction with meta begginning with $ will not be executed. nor its children
-                    exe.ExecuteInstruction(stack, e.To);
+                if (!ZeroCodeUtil.IsDolarMeta(e))
+                { // XXX in some cases it might not work - instruction with meta begginning with $ will not be executed. nor its children
+                    bool local_isStackFrameReturn;
+
+                    INoInEdgeInOutVertexVertex possibleToReturnStack = exe.ExecuteInstruction(stack, e.To, out local_isStackFrameReturn);
+
+                    if (local_isStackFrameReturn)
+                    {
+                        isStackFrameReturn = true;
+
+                        stack = possibleToReturnStack;
+
+                        break;
+                    }
+                }
 
             return stack;
         }

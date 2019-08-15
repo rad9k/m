@@ -21,8 +21,10 @@ namespace m0.ZeroUML.Instructions
 
 #region Query
 
-        public static INoInEdgeInOutVertexVertex QueryOperator(ZeroCodeExecution exe, IVertex inputQs, IVertex instructionVertex)
+        public static INoInEdgeInOutVertexVertex QueryOperator(ZeroCodeExecution exe, IVertex inputQs, IVertex instructionVertex, out bool isStackFrameReturn)
         {
+            isStackFrameReturn = false;
+
             if (instructionVertex.Value == null)
                 return InstructionHelpers.Create_INoInEdgeInOutVertexVertex_FromEdgesList(inputQs);
 
@@ -50,8 +52,10 @@ namespace m0.ZeroUML.Instructions
             return InstructionHelpers.NextExpressionHandle(exe, newQs, instructionVertex);
         }
 
-        public static INoInEdgeInOutVertexVertex InnerOperator(ZeroCodeExecution exe, IVertex inputQs, IVertex instructionVertex)
+        public static INoInEdgeInOutVertexVertex InnerOperator(ZeroCodeExecution exe, IVertex inputQs, IVertex instructionVertex, out bool isStackFrameReturn)
         {
+            isStackFrameReturn = false;
+
             INoInEdgeInOutVertexVertex _inputQs = InstructionHelpers.Create_INoInEdgeInOutVertexVertex_FromEdgesList(inputQs);
 
             IList<IEdge> expressions = GraphUtil.GetQueryOut(instructionVertex, "Expression", null);
@@ -77,8 +81,10 @@ namespace m0.ZeroUML.Instructions
             return InstructionHelpers.NextExpressionHandle(exe, newQs, instructionVertex);
         }
 
-        public static INoInEdgeInOutVertexVertex QuestionMarkOperator(ZeroCodeExecution exe, IVertex inputQs, IVertex instructionVertex)
+        public static INoInEdgeInOutVertexVertex QuestionMarkOperator(ZeroCodeExecution exe, IVertex inputQs, IVertex instructionVertex, out bool isStackFrameReturn)
         {
+            isStackFrameReturn = false;
+
             INoInEdgeInOutVertexVertex newQs = InstructionHelpers.CreateStack();
             GraphIterator iter = new GraphIterator(newQs);
 
@@ -87,8 +93,10 @@ namespace m0.ZeroUML.Instructions
             return InstructionHelpers.NextExpressionHandle(exe, newQs, instructionVertex);
         }
 
-        public static INoInEdgeInOutVertexVertex SlashOperator(ZeroCodeExecution exe, IVertex inputQs, IVertex instructionVertex)
+        public static INoInEdgeInOutVertexVertex SlashOperator(ZeroCodeExecution exe, IVertex inputQs, IVertex instructionVertex, out bool isStackFrameReturn)
         {
+            isStackFrameReturn = false;
+
             INoInEdgeInOutVertexVertex newQs = InstructionHelpers.CreateStack();
 
             foreach (IEdge e in inputQs)
@@ -98,8 +106,10 @@ namespace m0.ZeroUML.Instructions
             return InstructionHelpers.NextExpressionHandle(exe, newQs, instructionVertex);
         }
 
-        public static INoInEdgeInOutVertexVertex ColonOperator(ZeroCodeExecution exe, IVertex inputQs, IVertex instructionVertex)
+        public static INoInEdgeInOutVertexVertex ColonOperator(ZeroCodeExecution exe, IVertex inputQs, IVertex instructionVertex, out bool isStackFrameReturn)
         {
+            isStackFrameReturn = false;
+
             IVertex leftExpression = InstructionHelpers.GetLeft(instructionVertex);
             IVertex rightExpression = InstructionHelpers.GetRight(instructionVertex);
 
@@ -168,7 +178,6 @@ namespace m0.ZeroUML.Instructions
                     newQs = exe.ExecuteInstruction(newQs, rightExpression);
             }
 
-
             return InstructionHelpers.NextExpressionHandle(exe, newQs, instructionVertex);
         }
 
@@ -210,8 +219,10 @@ namespace m0.ZeroUML.Instructions
 #region EdgeOperators
 
         // :=
-        public static INoInEdgeInOutVertexVertex CopyVertexValue(ZeroCodeExecution exe, IVertex inputStack, IVertex instructionVertex)
+        public static INoInEdgeInOutVertexVertex CopyVertexValue(ZeroCodeExecution exe, IVertex inputStack, IVertex instructionVertex, out bool isStackFrameReturn)
         {
+            isStackFrameReturn = false;
+
             IVertex leftExpression = InstructionHelpers.GetLeft(instructionVertex);
             IVertex rightExpression = InstructionHelpers.GetRight(instructionVertex);
 
@@ -258,8 +269,10 @@ namespace m0.ZeroUML.Instructions
         }
 
         // =
-        public static INoInEdgeInOutVertexVertex RedirectLeftEdgesToRightVertices(ZeroCodeExecution exe, IVertex inputStack, IVertex instructionVertex)
+        public static INoInEdgeInOutVertexVertex RedirectLeftEdgesToRightVertices(ZeroCodeExecution exe, IVertex inputStack, IVertex instructionVertex, out bool isStackFrameReturn)
         {
+            isStackFrameReturn = false;
+
             IVertex leftExpression = InstructionHelpers.GetLeft(instructionVertex);
             IVertex rightExpression = InstructionHelpers.GetRight(instructionVertex);
 
@@ -287,8 +300,10 @@ namespace m0.ZeroUML.Instructions
         }
 
         // +=
-        public static INoInEdgeInOutVertexVertex AddLeftEdgesToRightVertices(ZeroCodeExecution exe, IVertex inputStack, IVertex instructionVertex)
+        public static INoInEdgeInOutVertexVertex AddLeftEdgesToRightVertices(ZeroCodeExecution exe, IVertex inputStack, IVertex instructionVertex, out bool isStackFrameReturn)
         {
+            isStackFrameReturn = false;
+
             IVertex leftExpression = InstructionHelpers.GetLeft(instructionVertex);
             IVertex rightExpression = InstructionHelpers.GetRight(instructionVertex);
 
@@ -314,8 +329,10 @@ namespace m0.ZeroUML.Instructions
         }
 
         // +<
-        public static INoInEdgeInOutVertexVertex AddRightEdgesIntoLeftEdges(ZeroCodeExecution exe, IVertex inputStack, IVertex instructionVertex)
+        public static INoInEdgeInOutVertexVertex AddRightEdgesIntoLeftEdges(ZeroCodeExecution exe, IVertex inputStack, IVertex instructionVertex, out bool isStackFrameReturn)
         {
+            isStackFrameReturn = false;
+
             IVertex leftExpression = InstructionHelpers.GetLeft(instructionVertex);
             IVertex rightExpression = InstructionHelpers.GetRight(instructionVertex);
 
@@ -336,8 +353,10 @@ namespace m0.ZeroUML.Instructions
         }
 
         // ~=
-        public static INoInEdgeInOutVertexVertex DeleteRightVertices(ZeroCodeExecution exe, IVertex inputStack, IVertex instructionVertex)
+        public static INoInEdgeInOutVertexVertex DeleteRightVertices(ZeroCodeExecution exe, IVertex inputStack, IVertex instructionVertex, out bool isStackFrameReturn)
         {
+            isStackFrameReturn = false;
+
             IVertex leftExpression = InstructionHelpers.GetLeft(instructionVertex);
             IVertex rightExpression = InstructionHelpers.GetRight(instructionVertex);
 
@@ -367,8 +386,10 @@ namespace m0.ZeroUML.Instructions
         }
 
         // -<
-        public static INoInEdgeInOutVertexVertex DeleteRightEdgesFromLeftEdges(ZeroCodeExecution exe, IVertex inputStack, IVertex instructionVertex)
+        public static INoInEdgeInOutVertexVertex DeleteRightEdgesFromLeftEdges(ZeroCodeExecution exe, IVertex inputStack, IVertex instructionVertex, out bool isStackFrameReturn)
         {
+            isStackFrameReturn = false;
+
             IVertex leftExpression = InstructionHelpers.GetLeft(instructionVertex);
             IVertex rightExpression = InstructionHelpers.GetRight(instructionVertex);
 
@@ -389,8 +410,10 @@ namespace m0.ZeroUML.Instructions
         }
 
         // ~<
-        public static INoInEdgeInOutVertexVertex DeleteRightVerticesFromLeftEdges(ZeroCodeExecution exe, IVertex inputStack, IVertex instructionVertex)
+        public static INoInEdgeInOutVertexVertex DeleteRightVerticesFromLeftEdges(ZeroCodeExecution exe, IVertex inputStack, IVertex instructionVertex, out bool isStackFrameReturn)
         {
+            isStackFrameReturn = false;
+
             IVertex leftExpression = InstructionHelpers.GetLeft(instructionVertex);
             IVertex rightExpression = InstructionHelpers.GetRight(instructionVertex);
 
@@ -430,8 +453,10 @@ namespace m0.ZeroUML.Instructions
 
 #region EdgeSetOperators
 
-        public static INoInEdgeInOutVertexVertex EdgeSetAdd(ZeroCodeExecution exe, IVertex inputStack, IVertex instructionVertex)
+        public static INoInEdgeInOutVertexVertex EdgeSetAdd(ZeroCodeExecution exe, IVertex inputStack, IVertex instructionVertex, out bool isStackFrameReturn)
         {
+            isStackFrameReturn = false;
+
             IVertex leftExpression = InstructionHelpers.GetLeft(instructionVertex);
             IVertex rightExpression = InstructionHelpers.GetRight(instructionVertex);
 
@@ -455,8 +480,10 @@ namespace m0.ZeroUML.Instructions
             return localStack;
         }
 
-        public static INoInEdgeInOutVertexVertex EdgeSetSubstract(ZeroCodeExecution exe, IVertex inputStack, IVertex instructionVertex)
+        public static INoInEdgeInOutVertexVertex EdgeSetSubstract(ZeroCodeExecution exe, IVertex inputStack, IVertex instructionVertex, out bool isStackFrameReturn)
         {
+            isStackFrameReturn = false;
+
             IVertex leftExpression = InstructionHelpers.GetLeft(instructionVertex);
             IVertex rightExpression = InstructionHelpers.GetRight(instructionVertex);
 
@@ -475,8 +502,10 @@ namespace m0.ZeroUML.Instructions
             return localStack;
         }
 
-        public static INoInEdgeInOutVertexVertex SetIndex(ZeroCodeExecution exe, IVertex inputStack, IVertex instructionVertex)
-        {            
+        public static INoInEdgeInOutVertexVertex SetIndex(ZeroCodeExecution exe, IVertex inputStack, IVertex instructionVertex, out bool isStackFrameReturn)
+        {
+            isStackFrameReturn = false;
+
             IVertex expression = InstructionHelpers.GetExpression(instructionVertex);            
 
             if (expression == null)
@@ -507,8 +536,10 @@ namespace m0.ZeroUML.Instructions
 
 #region Operators
 
-        public static INoInEdgeInOutVertexVertex Add(ZeroCodeExecution exe, IVertex inputStack, IVertex instructionVertex)
+        public static INoInEdgeInOutVertexVertex Add(ZeroCodeExecution exe, IVertex inputStack, IVertex instructionVertex, out bool isStackFrameReturn)
         {
+            isStackFrameReturn = false;
+
             IVertex leftExpression = InstructionHelpers.GetLeft(instructionVertex);
             IVertex rightExpression = InstructionHelpers.GetRight(instructionVertex);
 
@@ -630,8 +661,10 @@ namespace m0.ZeroUML.Instructions
             return localStack;
         }
 
-        public static INoInEdgeInOutVertexVertex Substract(ZeroCodeExecution exe, IVertex inputStack, IVertex instructionVertex)
+        public static INoInEdgeInOutVertexVertex Substract(ZeroCodeExecution exe, IVertex inputStack, IVertex instructionVertex, out bool isStackFrameReturn)
         {
+            isStackFrameReturn = false;
+
             IVertex leftExpression = InstructionHelpers.GetLeft(instructionVertex);
             IVertex rightExpression = InstructionHelpers.GetRight(instructionVertex);
 
@@ -752,8 +785,10 @@ namespace m0.ZeroUML.Instructions
             return localStack;
         }
 
-        public static INoInEdgeInOutVertexVertex Multiply(ZeroCodeExecution exe, IVertex inputStack, IVertex instructionVertex)
+        public static INoInEdgeInOutVertexVertex Multiply(ZeroCodeExecution exe, IVertex inputStack, IVertex instructionVertex, out bool isStackFrameReturn)
         {
+            isStackFrameReturn = false;
+
             IVertex leftExpression = InstructionHelpers.GetLeft(instructionVertex);
             IVertex rightExpression = InstructionHelpers.GetRight(instructionVertex);
 
@@ -875,8 +910,10 @@ namespace m0.ZeroUML.Instructions
             return localStack;
         }
 
-        public static INoInEdgeInOutVertexVertex Divide(ZeroCodeExecution exe, IVertex inputStack, IVertex instructionVertex)
+        public static INoInEdgeInOutVertexVertex Divide(ZeroCodeExecution exe, IVertex inputStack, IVertex instructionVertex, out bool isStackFrameReturn)
         {
+            isStackFrameReturn = false;
+
             IVertex leftExpression = InstructionHelpers.GetLeft(instructionVertex);
             IVertex rightExpression = InstructionHelpers.GetRight(instructionVertex);
 
@@ -1306,48 +1343,66 @@ namespace m0.ZeroUML.Instructions
             return output;
         }
 
-        public static INoInEdgeInOutVertexVertex Equal(ZeroCodeExecution exe, IVertex inputStack, IVertex instructionVertex)
+        public static INoInEdgeInOutVertexVertex Equal(ZeroCodeExecution exe, IVertex inputStack, IVertex instructionVertex, out bool isStackFrameReturn)
         {
+            isStackFrameReturn = false;
+
             return LogicDoubleOperator(LogicDoubleOpertorEnum.Equal, exe, inputStack, instructionVertex);
         }
 
-        public static INoInEdgeInOutVertexVertex NotEqual(ZeroCodeExecution exe, IVertex inputStack, IVertex instructionVertex)
+        public static INoInEdgeInOutVertexVertex NotEqual(ZeroCodeExecution exe, IVertex inputStack, IVertex instructionVertex, out bool isStackFrameReturn)
         {
+            isStackFrameReturn = false;
+
             return LogicDoubleOperator(LogicDoubleOpertorEnum.NotEqual, exe, inputStack, instructionVertex);
         }
 
-        public static INoInEdgeInOutVertexVertex Negation(ZeroCodeExecution exe, IVertex inputStack, IVertex instructionVertex)
+        public static INoInEdgeInOutVertexVertex Negation(ZeroCodeExecution exe, IVertex inputStack, IVertex instructionVertex, out bool isStackFrameReturn)
         {
+            isStackFrameReturn = false;
+
             return LogicSingleOperator(LogicSingleOpertorEnum.Negation, exe, inputStack, instructionVertex);
         }
 
-        public static INoInEdgeInOutVertexVertex And(ZeroCodeExecution exe, IVertex inputStack, IVertex instructionVertex)
+        public static INoInEdgeInOutVertexVertex And(ZeroCodeExecution exe, IVertex inputStack, IVertex instructionVertex, out bool isStackFrameReturn)
         {
+            isStackFrameReturn = false;
+
             return LogicDoubleOperator(LogicDoubleOpertorEnum.And, exe, inputStack, instructionVertex);
         }
 
-        public static INoInEdgeInOutVertexVertex Or(ZeroCodeExecution exe, IVertex inputStack, IVertex instructionVertex)
+        public static INoInEdgeInOutVertexVertex Or(ZeroCodeExecution exe, IVertex inputStack, IVertex instructionVertex, out bool isStackFrameReturn)
         {
+            isStackFrameReturn = false;
+
             return LogicDoubleOperator(LogicDoubleOpertorEnum.Or, exe, inputStack, instructionVertex);
         }
 
-        public static INoInEdgeInOutVertexVertex MoreThan(ZeroCodeExecution exe, IVertex inputStack, IVertex instructionVertex)
+        public static INoInEdgeInOutVertexVertex MoreThan(ZeroCodeExecution exe, IVertex inputStack, IVertex instructionVertex, out bool isStackFrameReturn)
         {
+            isStackFrameReturn = false;
+
             return LogicDoubleOperator(LogicDoubleOpertorEnum.MoreThan, exe, inputStack, instructionVertex);
         }
 
-        public static INoInEdgeInOutVertexVertex LessThan(ZeroCodeExecution exe, IVertex inputStack, IVertex instructionVertex)
+        public static INoInEdgeInOutVertexVertex LessThan(ZeroCodeExecution exe, IVertex inputStack, IVertex instructionVertex, out bool isStackFrameReturn)
         {
+            isStackFrameReturn = false;
+
             return LogicDoubleOperator(LogicDoubleOpertorEnum.LessThan, exe, inputStack, instructionVertex);
         }
 
-        public static INoInEdgeInOutVertexVertex MoreOrEqualThan(ZeroCodeExecution exe, IVertex inputStack, IVertex instructionVertex)
+        public static INoInEdgeInOutVertexVertex MoreOrEqualThan(ZeroCodeExecution exe, IVertex inputStack, IVertex instructionVertex, out bool isStackFrameReturn)
         {
+            isStackFrameReturn = false;
+
             return LogicDoubleOperator(LogicDoubleOpertorEnum.MoreOrEqualThan, exe, inputStack, instructionVertex);
         }
 
-        public static INoInEdgeInOutVertexVertex LessOrEqualThan(ZeroCodeExecution exe, IVertex inputStack, IVertex instructionVertex)
+        public static INoInEdgeInOutVertexVertex LessOrEqualThan(ZeroCodeExecution exe, IVertex inputStack, IVertex instructionVertex, out bool isStackFrameReturn)
         {
+            isStackFrameReturn = false;
+
             return LogicDoubleOperator(LogicDoubleOpertorEnum.LessOrEqualThan, exe, inputStack, instructionVertex);
         }
 
@@ -1362,15 +1417,19 @@ namespace m0.ZeroUML.Instructions
 
 #region GeneralOperators
 
-        public static INoInEdgeInOutVertexVertex Bracket(ZeroCodeExecution exe, IVertex inputStack, IVertex instructionVertex)
+        public static INoInEdgeInOutVertexVertex Bracket(ZeroCodeExecution exe, IVertex inputStack, IVertex instructionVertex, out bool isStackFrameReturn)
         {
+            isStackFrameReturn = false;
+
             IVertex expression = instructionVertex.Get(false, "Expression:");
 
             return exe.ExecuteInstruction(inputStack, expression);
         }
 
-        public static INoInEdgeInOutVertexVertex Call(ZeroCodeExecution exe, IVertex inputStack, IVertex instructionVertex)
+        public static INoInEdgeInOutVertexVertex Call(ZeroCodeExecution exe, IVertex inputStack, IVertex instructionVertex, out bool isStackFrameReturn)
         {
+            isStackFrameReturn = false;
+
             INoInEdgeInOutVertexVertex newStack = InstructionHelpers.CreateStack();
 
             IVertex target = instructionVertex.Get(false, "Target:");
@@ -1401,16 +1460,26 @@ namespace m0.ZeroUML.Instructions
                     exe.stack.AddEdge(inputParameter, e.To);
             }
 
+            bool local_isStackFrameReturn;
 
-            InstructionHelpers.SequentiallyExecuteInstructions(exe, exe.stack, target);
+            INoInEdgeInOutVertexVertex possibleToReturnStack = InstructionHelpers.SequentiallyExecuteInstructions(exe, exe.stack, target, out local_isStackFrameReturn);
 
             exe.RemoveStackFrame(); // LEAVE NEW STACK
 
-            return exe.stack;
+            if (local_isStackFrameReturn)
+                return possibleToReturnStack;
+            else
+                return exe.stack;
         }
 
-        public static INoInEdgeInOutVertexVertex Return(ZeroCodeExecution exe, IVertex inputStack, IVertex instructionVertex)
+        public static INoInEdgeInOutVertexVertex Return(ZeroCodeExecution exe, IVertex inputStack, IVertex instructionVertex, out bool isStackFrameReturn)
         {
+            isStackFrameReturn = true;
+
+            IVertex stack = inputStack;
+
+            IVertex expression = instructionVertex.Get(false, "Expression:");
+
             return null;
         }
 
@@ -1424,8 +1493,10 @@ namespace m0.ZeroUML.Instructions
 
 #region StackOperators
 
-        public static INoInEdgeInOutVertexVertex CreateStackEdge(ZeroCodeExecution exe, IVertex inputStack, IVertex instructionVertex)
+        public static INoInEdgeInOutVertexVertex CreateStackEdge(ZeroCodeExecution exe, IVertex inputStack, IVertex instructionVertex, out bool isStackFrameReturn)
         {
+            isStackFrameReturn = false;
+
             INoInEdgeInOutVertexVertex stack = exe.stack;
 
             int? minCardinality = GraphUtil.GetIntegerValue(instructionVertex.Get(false, "$MinCardinality:"));
@@ -1447,8 +1518,10 @@ namespace m0.ZeroUML.Instructions
         //
         ////////////////////////////////////////////////////////////////
 
-        public static INoInEdgeInOutVertexVertex DoubleColonOperator(ZeroCodeExecution exe, IVertex inputStack, IVertex instructionVertex)
+        public static INoInEdgeInOutVertexVertex DoubleColonOperator(ZeroCodeExecution exe, IVertex inputStack, IVertex instructionVertex, out bool isStackFrameReturn)
         {
+            isStackFrameReturn = false;
+
             return null;
         }        
     }

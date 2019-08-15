@@ -375,7 +375,7 @@ namespace m0
           "\r\n\tvariable \"B\" @String" +
           "\r\n\tvariable \"C\" @String" +
           "\r\n\tvariable \"D\" @String" +
-          "\r\n\tfunction \"Add\" @Integer(@Integer \"x\")" +
+          "\r\n\tfunction \"Add\" @Integer(@Integer \"x\")" + 
           "\r\n\t\treturn x" +
           "\r\n\tA = @Add[\"3\"]"
           );
