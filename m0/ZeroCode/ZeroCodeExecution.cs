@@ -15,8 +15,10 @@ namespace m0.ZeroCode
 
         public bool metaMode;
 
-        public void AddStackFrame(INoInEdgeInOutVertexVertex newStackFrame)
+        public void AddStackFrame()
         {
+            INoInEdgeInOutVertexVertex newStackFrame = InstructionHelpers.CreateStack();
+
             newStackFrame.AddEdge(MinusZero.Instance.StackFrameInherits, stack);
 
             stack = newStackFrame;

@@ -383,8 +383,8 @@ namespace m0
                 ",Function,Section" +
                 ",If{Test{$MinCardinality:1,$MaxCardinality:1},Then{$MinCardinality:0,$MaxCardinality:1},Else{$MinCardinality:0,$MaxCardinality:1}}" +
                 ",Switch{Expression{$MinCardinality:1,$MaxCardinality:1},Case{Expression{$MinCardinality:1,$MaxCardinality:1}},Default}" +
-                ",While{Test{$MinCardinality:1,$MaxCardinality:1},Do{$MinCardinality:0,$MaxCardinality:1}}" +
-                ",ForEach{Variable{$MinCardinality:0,$MaxCardinality:1},Set{$MinCardinality:1,$MaxCardinality:1},Do{$MinCardinality:0,$MaxCardinality:1}}" +
+                ",While{Test{$MinCardinality:1,$MaxCardinality:1}}" +
+                ",ForEach{Variable{$MinCardinality:1,$MaxCardinality:1},Set{$MinCardinality:1,$MaxCardinality:1}}" +
                 "}");
 
             // CallableEndPoint
@@ -438,6 +438,8 @@ namespace m0
             AddDotNetEndPoint(smu.Get(false, "()"), "Bracket");
             AddDotNetEndPoint(smu.Get(false, "[]"), "Call");
             AddDotNetEndPoint(smu.Get(false, "Return"), "Return");
+            AddDotNetEndPoint(smu.Get(false, "ForEach"), "ForEach");
+            AddDotNetEndPoint(smu.Get(false, "While"), "While");
 
             // stack operators
 
@@ -560,12 +562,10 @@ namespace m0
             smu.Get(false, @"Switch\Case\Expression").AddEdge(sm.Get(false, @"*$EdgeTarget"), smu.Get(false, @"Atom"));
 
             smu.Get(false, @"While\Test").AddEdge(sm.Get(false, @"*$EdgeTarget"), smu.Get(false, @"Atom"));
-            smu.Get(false, @"While\Do").AddEdge(sm.Get(false, @"*$EdgeTarget"), smu.Get(false, @"Atom"));
 
-            // smu.Get(false, @"ForEach\Variable").AddEdge(sm.Get(false, @"*$EdgeTarget"), smu.Get(false, @"Value")); // NO NO. NO NO NO NO
-            smu.Get(false, @"ForEach\Variable").AddEdge(sm.Get(false, @"*$EdgeTarget"), smu.Get(false, @"Query")); // better this
+           // smu.Get(false, @"ForEach\Variable").AddEdge(sm.Get(false, @"*$EdgeTarget"), smu.Get(false, @"Query")); // better this
             smu.Get(false, @"ForEach\Set").AddEdge(sm.Get(false, @"*$EdgeTarget"), smu.Get(false, @"Atom"));
-            smu.Get(false, @"ForEach\Do").AddEdge(sm.Get(false, @"*$EdgeTarget"), smu.Get(false, @"Atom"));
+
 
             // $IsAggregation's for EdgeTargets
             smu.Get(false, @"Return\Expression").AddEdge(isAggregation, Empty);
@@ -582,10 +582,8 @@ namespace m0
             smu.Get(false, @"Switch\Case\Expression").AddEdge(isAggregation, Empty);
 
             smu.Get(false, @"While\Test").AddEdge(isAggregation, Empty);
-            smu.Get(false, @"While\Do").AddEdge(isAggregation, Empty);
 
             smu.Get(false, @"ForEach\Set").AddEdge(isAggregation, Empty);
-            smu.Get(false, @"ForEach\Do").AddEdge(isAggregation, Empty);
 
             // package
             IVertex package = smu.AddVertex(null, "Package");
@@ -1412,6 +1410,32 @@ namespace m0
             // return (?<expr>)
 
             AddKeyword(k, smu, smb, keyword, any, "return", "Return");
+
+            // foreach
+            //
+            // foreach (?<var>) in (?<set>)
+
+            IVertex o_foreach = k.AddVertex(keyword, "foreach (?<var>) in (?<set>)");
+
+            IVertex o_foreach_any = o_foreach.AddVertex(any, "");
+
+            o_foreach_any.AddEdge(smb.Get(false, @"Vertex\$Is"), smu.Get(false, "ForEach"));
+
+            o_foreach_any.AddVertex(smu.Get(false, @"ForEach\Variable"), "(?<var>)");
+
+            o_foreach_any.AddVertex(smu.Get(false, @"ForEach\Set"), "(?<set>)");
+
+            // while
+            //
+            // while (?<test>)
+
+            IVertex o_while = k.AddVertex(keyword, "while (?<test>)");
+
+            IVertex o_while_any = o_while.AddVertex(any, "");
+
+            o_while_any.AddEdge(smb.Get(false, @"Vertex\$Is"), smu.Get(false, "While"));
+
+            o_while_any.AddVertex(smu.Get(false, @"While\Test"), "(?<test>)");
 
             // ()
             //

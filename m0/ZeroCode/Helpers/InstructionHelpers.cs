@@ -1,5 +1,6 @@
 ﻿using m0.Foundation;
 using m0.Graph;
+using m0.Util;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,10 +14,10 @@ namespace m0.ZeroCode.Helpers
         public static INoInEdgeInOutVertexVertex CreateStack()
         {
             return new NoInEdgeInOutVertexVertex(MinusZero.Instance.TempStore);
-        }       
+        }
 
         public static void AddToStack(IEnumerable<IEdge> source, INoInEdgeInOutVertexVertex destination)
-        {            
+        {
             foreach (IEdge e in source)
                 destination.AddEdgeForNoInEdgeInOutVertexVertex(e);
         }
@@ -98,7 +99,7 @@ namespace m0.ZeroCode.Helpers
             if (nextExpression != null)
                 return exe.ExecuteInstruction(inStack, nextExpression, out isStackFrameReturn);
 
-            return Create_INoInEdgeInOutVertexVertex_FromEdgesList(inStack);            
+            return Create_INoInEdgeInOutVertexVertex_FromEdgesList(inStack);
         }
 
         public static INoInEdgeInOutVertexVertex SequentiallyExecuteInstructions(ZeroCodeExecution exe, INoInEdgeInOutVertexVertex inStack, IVertex baseVertex, out bool isStackFrameReturn)
@@ -132,7 +133,7 @@ namespace m0.ZeroCode.Helpers
         {
             IDictionary<EdgeKey_FromMeta, IList<IEdge>> dict = new Dictionary<EdgeKey_FromMeta, IList<IEdge>>();
 
-            foreach(IEdge e in queryResult)
+            foreach (IEdge e in queryResult)
             {
                 EdgeKey_FromMeta ekfm = new EdgeKey_FromMeta(e);
 
@@ -194,7 +195,7 @@ namespace m0.ZeroCode.Helpers
             return dict;
         }
 
-        public enum NumericTypeEnum { Integer, Double, Decimal}
+        public enum NumericTypeEnum { Integer, Double, Decimal }
 
         public static IList<object> GetNumberList(IList<IEdge> edges, out NumericTypeEnum resultType)
         {
@@ -207,7 +208,7 @@ namespace m0.ZeroCode.Helpers
 
             object number;
 
-            foreach(IEdge e in edges)
+            foreach (IEdge e in edges)
             {
                 GraphUtil.GetNumberValue(e.To, out number);
 
@@ -272,6 +273,58 @@ namespace m0.ZeroCode.Helpers
                 result = NumericTypeEnum.Double;
 
             return result;
+        }
+
+        public static bool isTrue(IVertex _baseVertex)
+        {
+            if (_baseVertex == null || _baseVertex.Count() == 0)
+                return false;
+
+            IVertex baseVertex = _baseVertex.OutEdges[0].To;
+
+            if (baseVertex.Value == null)
+                return false;
+
+            object val;
+
+            GraphUtil.GetNumberValue(baseVertex, out val);
+
+            if (val != null)
+            {
+                NumericTypeEnum numericType = GetNumericType(val);
+
+                switch (numericType)
+                {
+                    case NumericTypeEnum.Decimal:
+                        if (NumberCompare<decimal>((decimal)val, 1))
+                            return true;
+                        break;
+
+                    case NumericTypeEnum.Double:
+                        if (NumberCompare<double>((double)val, 1))
+                            return true;
+                        break;
+
+                    case NumericTypeEnum.Integer:
+                        if (NumberCompare<int>((int)val, 1))
+                            return true;
+                        break;
+                }
+            }
+
+            if (GeneralUtil.CompareStrings(baseVertex.Value, "True") ||
+                GeneralUtil.CompareStrings(baseVertex.Value, "true"))
+                return true;
+
+            return false;
+        }
+
+        private static bool NumberCompare<T>(T leftValue, T rightValue)
+        {
+            if (EqualityComparer<T>.Default.Equals((T)leftValue, rightValue))
+                return true;
+
+            return false;
         }
     }
 }

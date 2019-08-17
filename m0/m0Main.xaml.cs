@@ -369,7 +369,7 @@ namespace m0
            "\r\n\tD = !C"
            );*/
 
-            MinusZero.Instance.NewDefaultParser.Parse(code,
+            /*MinusZero.Instance.NewDefaultParser.Parse(code,
           "\"Code\"" +
           "\r\n\tvariable \"A\" @String" +
           "\r\n\tvariable \"B\" @String" +
@@ -378,7 +378,46 @@ namespace m0
           "\r\n\tfunction \"Add\" @Integer(@Integer \"x\")" + 
           "\r\n\t\treturn x+\"1\"" +
           "\r\n\tA = @Add[\"3\"]"
-          );
+          );*/
+
+               /*MinusZero.Instance.NewDefaultParser.Parse(code,
+             "\"Code\"" +
+             "\r\n\tvariable \"A\" @String" +
+             "\r\n\tvariable \"B\" @String" +
+             "\r\n\tvariable \"C\" @String" +
+             "\r\n\tvariable \"D\" @String" +
+             "\r\n\tvariable \"E\" @String" +
+             "\r\n\tA = \"1\"" +
+             "\r\n\tA += \"2\"" +
+             "\r\n\tA += \"3\"" +
+             "\r\n\tA += \"4\"" +
+             "\r\n\tB = \"1\"" +
+             "\r\n\tB += \"2\"" +
+             "\r\n\tB += \"3\"" +
+             "\r\n\tB += \"4\"" +
+             "\r\n\tforeach \"X\" in A" +
+             "\r\n\t\tforeach \"Y\" in B" +
+             "\r\n\t\t\tC += (X*\"4\") + Y" +
+             "\r\n\tforeach \"X\" in A" +
+             "\r\n\t\tforeach \"Y\" in B" +
+             "\r\n\t\t\tforeach \"Z\" in C" +
+             "\r\n\t\t\t\tD += (Z * \"20\") + (X*\"4\") + Y" +
+             "\r\n\tforeach \"X\" in A" +
+             "\r\n\t\tforeach \"Y\" in B" +
+             "\r\n\t\t\tforeach \"W\" in D" +
+             "\r\n\t\t\t\tE += (W * \"200\") + (Z * \"20\") + (X*\"4\") + Y"
+             );*/
+
+            MinusZero.Instance.NewDefaultParser.Parse(code,
+       "\"Code\"" +
+       "\r\n\tvariable \"A\" @String" +
+       "\r\n\tvariable \"B\" @String" +
+       "\r\n\tA = \"0\"" +
+       "\r\n\twhile A <= \"100\"" +
+       "\r\n\t\tB += A" +
+       "\r\n\t\tA = A + \"1\""
+
+       );
 
             //MinusZero.Instance.NewDefaultParser.Parse(code, "\"Code\"\r\n\tvariable \"Magunia\" @String 5:10\r\n\tvariable \"Radek\" @String 2:2\r\n\tRadek += \"Koha\"\r\n\tMagunia=Radek\r\n\tMagunia ~= Radek|Koha");
 

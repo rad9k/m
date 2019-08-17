@@ -68,6 +68,11 @@ namespace m0.ZeroCode
             if (shortestLinkLength == 99999 && zcg2sp.SubGraphVerticesDictionary.ContainsKey(v))
                 return zcg2sp.SubGraphVerticesDictionary[v].LinkString;
 
+            if(shortestLink == "LINK NOT FOUND")
+            {
+                int x = 0;
+            }
+
             return shortestLink;
         }
 
