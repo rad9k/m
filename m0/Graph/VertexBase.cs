@@ -12,7 +12,7 @@ namespace m0.Graph
 {
     public class List_VertexBase : List<IEdge> { } // to be used in dictionaries, to identify list of List<IEdge> :)
     [Serializable]
-    public class VertexBase: IVertex, IHasUsageCounter
+    public class VertexBase: IVertex, IHasUsageCounter, IDisposable
     {
         protected IDictionary<object, object> _OutEdgesByMeta;
         public IDictionary<object, object> OutEdgesByMeta { get { return _OutEdgesByMeta; } }
@@ -233,6 +233,11 @@ namespace m0.Graph
             throw new NotImplementedException();
         }
 
+        public virtual void DeleteInEdgeOnlyIn(IEdge edge)
+        {
+            throw new NotImplementedException();
+        }
+
         public virtual IEdge AddEdge(IVertex metaVertex, IVertex destVertex)
         {
             throw new NotImplementedException();
@@ -244,6 +249,11 @@ namespace m0.Graph
         }
 
         public virtual void DeleteEdge(IEdge edge)
+        {
+            throw new NotImplementedException();
+        }
+
+        public virtual void DeleteEdgeOnlyOut(IEdge edge)
         {
             throw new NotImplementedException();
         }
@@ -320,6 +330,11 @@ namespace m0.Graph
         }
 
         public virtual void QueryInEdges(object meta, object from, out IEdge result, out IList<IEdge> results)
+        {
+            throw new NotImplementedException();
+        }
+        
+        public void Dispose()
         {
             throw new NotImplementedException();
         }

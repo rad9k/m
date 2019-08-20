@@ -408,7 +408,7 @@ namespace m0
              "\r\n\t\t\t\tE += (W * \"200\") + (Z * \"20\") + (X*\"4\") + Y"
              );*/
 
-            MinusZero.Instance.NewDefaultParser.Parse(code,
+           /* MinusZero.Instance.NewDefaultParser.Parse(code,
        "\"Code\"" +
        "\r\n\tvariable \"A\" @String" +
        "\r\n\tvariable \"B\" @String" +
@@ -417,7 +417,13 @@ namespace m0
        "\r\n\t\tB += A" +
        "\r\n\t\tA = A + \"1\""
 
-       );
+       );*/
+
+            MinusZero.Instance.NewDefaultParser.Parse(code,
+        "\"Code\"" +
+        "\r\n\t\"TEST\""
+
+        );
 
             //MinusZero.Instance.NewDefaultParser.Parse(code, "\"Code\"\r\n\tvariable \"Magunia\" @String 5:10\r\n\tvariable \"Radek\" @String 2:2\r\n\tRadek += \"Koha\"\r\n\tMagunia=Radek\r\n\tMagunia ~= Radek|Koha");
 

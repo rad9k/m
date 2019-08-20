@@ -367,6 +367,19 @@ namespace m0.Graph
 
             if (edge != null)
             {
+                DeleteInEdgeOnlyIn(edge);
+
+                edge.From.DeleteEdgeOnlyOut(edge);
+            }
+
+            //FireChange(new VertexChangeEventArgs(VertexChangeType.InEdgeRemoved, edge));
+            // not needed as for now
+        }
+
+        public override void DeleteInEdgeOnlyIn(IEdge edge)
+        {
+            if (edge != null)
+            {
                 InEdgesRaw.Remove(edge);
 
                 UsageCounter--;
@@ -425,6 +438,18 @@ namespace m0.Graph
 
             if (edge != null)
             {
+                DeleteEdgeOnlyOut(edge);
+
+                edge.To.DeleteInEdgeOnlyIn(edge);
+            }
+            //else // becouse of inheritance this may happen
+                //throw new Exception(_edge.Meta + " : " + _edge.To + " edge does not exist in given Vertex");
+        }
+
+        public override void DeleteEdgeOnlyOut(IEdge edge)
+        {
+            if (edge != null)
+            {
                 OutEdgesRaw.Remove(edge);
 
                 UsageCounter--;
@@ -441,11 +466,9 @@ namespace m0.Graph
                 }
 
                 FireChange(new VertexChangeEventArgs(VertexChangeType.EdgeRemoved, edge));
-
-                edge.To.DeleteInEdge(edge);
             }
             //else // becouse of inheritance this may happen
-                //throw new Exception(_edge.Meta + " : " + _edge.To + " edge does not exist in given Vertex");
+            //throw new Exception(_edge.Meta + " : " + _edge.To + " edge does not exist in given Vertex");
         }
 
         public override void DeleteEdgesList(IEnumerable<IEdge> edges)
@@ -543,9 +566,60 @@ namespace m0.Graph
             return MinusZero.Instance.DefaultExecuter.GetAll(metaMode, this, expression);
         }
 
+        bool hasBeenDisposed = false;
         public void Dispose()
         {
-            GraphUtil.RemoveAllEdges(this);                        
+            if (!hasBeenDisposed)
+            {
+                DeleteAllInEdges();
+                DeleteAllEdges();
+
+                hasBeenDisposed = true;
+            }
+        }
+
+        public void DeleteAllInEdges()
+        {
+            foreach(IEdge edge in InEdgesRaw)
+            {
+                InEdgesRaw.Remove(edge);
+
+                UsageCounter--;
+
+                edge.From.DeleteEdgeOnlyOut(edge);
+
+                //FireChange(new VertexChangeEventArgs(VertexChangeType.InEdgeRemoved, edge));
+                // not needed as for now
+            }
+
+            InEdgesDictionariesNeedsRebuild = true;
+
+            InheritChildsDictionariesNeedsRebuild(true);
+        }
+
+        private void DeleteAllEdges()
+        {
+            foreach (IEdge edge in InEdgesRaw)
+            {
+                OutEdgesRaw.Remove(edge);
+
+                UsageCounter--;
+
+                if (GeneralUtil.CompareStrings(edge.Meta.Value, "$Inherits"))
+                {
+                    InheritanceCount--;
+
+                    if (InheritanceCount == 0)
+                        HasInheritance = false;
+                }
+
+                FireChange(new VertexChangeEventArgs(VertexChangeType.EdgeRemoved, edge));
+
+                edge.To.DeleteInEdgeOnlyIn(edge);
+            }
+
+            OutEdgesDictionariesNeedsRebuild = true;
+            InheritChildsDictionariesNeedsRebuild(false);
         }
 
         protected void InheritChildsDictionariesNeedsRebuild(bool inDictiories)

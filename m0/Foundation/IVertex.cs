@@ -25,7 +25,7 @@ namespace m0.Foundation
 
     // IVertex has to have constructor with:
     // - IStore param
-    public interface IVertex : IEnumerable<IEdge>
+    public interface IVertex : IEnumerable<IEdge>, IDisposable
     {
         event VertexChange Change;
 
@@ -61,12 +61,16 @@ namespace m0.Foundation
         void AddInEdge(IEdge edge);
 
         void DeleteInEdge(IEdge edge);
-        
+
+        void DeleteInEdgeOnlyIn(IEdge edge);
+
         IEdge AddEdge(IVertex metaVertex, IVertex destVertex);
 
         void AddEdgesList(IEnumerable<IEdge> edges);
 
         void DeleteEdge(IEdge edge);
+
+        void DeleteEdgeOnlyOut(IEdge edge);
 
         void DeleteEdgesList(IEnumerable<IEdge> edges);
 
