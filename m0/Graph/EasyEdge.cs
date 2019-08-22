@@ -45,7 +45,7 @@ namespace m0.Graph
 
             ToIdentifier = To.Identifier;            
 
-            To.DeleteInEdge(this);
+            To.DeleteInEdgeOnlyIn(this);
 
             _to = null;
 

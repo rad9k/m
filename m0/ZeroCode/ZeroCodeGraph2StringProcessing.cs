@@ -1129,9 +1129,11 @@ namespace m0.ZeroCode
             return AppendVertex(e, path, prefixAppended, true, true);
         }
 
+        private bool isQuery()
+
         private bool AppendVertex(IEdge e, string path, bool prefixAppended, bool appendSuffix, bool hideLinkPrefix)
         {
-            if (VertexOperations.IsLink(e))
+            if (VertexOperations.IsLink(e) && e.To.Ge)
             {
                 //SourceAppend("L1!");
                 AppendAsLink(e.To, null, hideLinkPrefix);
