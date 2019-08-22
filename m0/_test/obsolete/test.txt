@@ -81,13 +81,12 @@ ___________
 				association "b" @a
 			aggregation "c" @a "1":"2"
 				aggregation "c" @a
-	function "f" @String()
-	function "f2" @String(@a "s", @a "ss")
-		function "f3" (@a "s", @a "ss")
-			function "f4" ()
+	function "f" @String[]
+	function "f2" @String[@a "s", @a "ss"]
+		function "f3" [@a "s", @a "ss"]
+			function "f4" []
 				# "desc"
 	while "kupa"
-		@f[]
 	
 	
 _____
