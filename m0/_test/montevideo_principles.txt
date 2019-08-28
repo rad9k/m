@@ -1,4 +1,31 @@
-﻿"Code"
+﻿1) Any expression can be: new vertex (""), direct graph query (@), stack based runtime query ({$Is:Query}).
+
+2) In the case expression being direct graph query (@), 
+   if the target edge result set contains stack based runtime query ({$Is:Query}) as first edge, 
+   the stack based runtime query ({$Is:Query}) is executed and returned as expression value.
+
+3) For stack based runtime queries ({$Is:Query}), at the beggining of code graph execution,
+   special variable (named $) is added to the stack bottom. The $ variable points to code graph execution root.
+
+4) In the case the expression execution to be returned is stack based runtime query ({$Is:Query}),
+   the direct graph query (@) can not be used for the expression, as it will couse stack based runtime query execution.
+   In this case, the $ variable and another (A)stack based runtime query should be used, 
+   poiting to the stack based runtime query ({$Is:Query}) to be returned as expression execution, 
+   as a first edge in the resulting edge set.
+
+_______________________________________________
+
+"Code"
+	"varX"
+	"TEST"
+		<varX::"5">
+		"10"
+	variable "A" @String
+	A = "1" + @TEST\5 + $\TEST\10 
+	
+_______________________________________________
+
+"Code"
 	"TEST"
 		function "X" ()
 	@TEST\X[]
