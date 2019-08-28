@@ -47,7 +47,7 @@ namespace m0.ZeroCode
         {
             isStackFrameReturn = false;
 
-            if (InstructionHelpers.GetIs(instructionVertex) == null)
+            if (InstructionHelpers.GetIs(instructionVertex) == null) // new vertex
             {
                 INoInEdgeInOutVertexVertex stack = InstructionHelpers.CreateStack();
                 stack.AddEdgeForNoInEdgeInOutVertexVertex(GraphUtil.CreateArtificialEdge(null, instructionVertex));

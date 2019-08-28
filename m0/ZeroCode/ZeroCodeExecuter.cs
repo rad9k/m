@@ -17,6 +17,11 @@ namespace m0.ZeroCode
 
         static IList<IEdge> dummy = new List<IEdge>();
 
+        private void AddDolar(ZeroCodeExecution exe)
+        {
+
+        }
+        
         public IVertex Execute(IVertex baseVertex, IVertex expression)
         {
             ZeroCodeExecution exe = new ZeroCodeExecution();

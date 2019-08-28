@@ -12,13 +12,13 @@
    In this case, the $ variable and another (A)stack based runtime query should be used, 
    poiting to the stack based runtime query ({$Is:Query}) to be returned as expression execution, 
    as a first edge in the resulting edge set.
-
+   
 _______________________________________________
 
 "Code"
-	"varX"
+	"X"
 	"TEST"
-		<varX::"5">
+		<X::"5">
 		"10"
 	variable "A" @String
 	A = "1" + @TEST\5 + $\TEST\10 
