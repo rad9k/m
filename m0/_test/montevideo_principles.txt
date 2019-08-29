@@ -1,4 +1,10 @@
-﻿1) Any expression can be: new vertex (""), direct graph query (@), stack based runtime query ({$Is:Query}).
+﻿1) In the unified graph grammar representation, any expression can be: 
+	- value sub-graph ("") - characterized by lack of $CallableEndPoint in the edge's meta vertex
+		such sub-graph has always only one root level edges
+	- executable sub-graph - characterized by existence of $CallableEndPoint in the edge's meta vertex
+		execution of such sub-graph, can resoult in many root level edges
+	- direct graph query (@)
+		it points to one of above ones
 
 2) In the case expression being direct graph query (@), 
    if the target edge result set contains stack based runtime query ({$Is:Query}) as first edge, 

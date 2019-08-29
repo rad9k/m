@@ -15,11 +15,11 @@ namespace m0.ZeroCode
         const string colon = "|";
         const string slash = @"\ ";
 
-        static IList<IEdge> dummy = new List<IEdge>();
+        IVertex dolar;
 
-        private void AddDolar(ZeroCodeExecution exe)
+        private void AddDolar(ZeroCodeExecution exe, IVertex expression)
         {
-
+            exe.stack.AddEdge(dolar, expression);   
         }
         
         public IVertex Execute(IVertex baseVertex, IVertex expression)
@@ -29,6 +29,8 @@ namespace m0.ZeroCode
             exe.metaMode = true;
 
             exe.stack = InstructionHelpers.Create_INoInEdgeInOutVertexVertex_FromEdgesList(baseVertex);
+
+            AddDolar(exe, expression);
 
             bool local_isStackFrameReturn;
 
@@ -65,7 +67,7 @@ namespace m0.ZeroCode
         
         public ZeroCodeExecuter()
         {
-
+            dolar = MinusZero.Instance.Root.Get(false, @"System\Meta\Base\$");
         }
 
     }
