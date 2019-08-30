@@ -47,6 +47,13 @@ namespace m0.ZeroCode
         {
             isStackFrameReturn = false;
 
+            IVertex is_v = InstructionHelpers.GetIs(instructionVertex);
+
+            if(InstructionHelpers.CheckIfHasExecutableEndPoint(is_v))
+                return CallableEndPointDictionary.CallEndPoint(this, inputQs, instructionVertex, out isStackFrameReturn);
+            
+            //if(InstructionHelpers.CheckIfIsAtomType(is_v))
+
             if (InstructionHelpers.GetIs(instructionVertex) == null) // new vertex
             {
                 INoInEdgeInOutVertexVertex stack = InstructionHelpers.CreateStack();
@@ -54,7 +61,7 @@ namespace m0.ZeroCode
                 return stack;
             }
 
-            return CallableEndPointDictionary.CallEndPoint(this, inputQs, instructionVertex, out isStackFrameReturn);
+            return null;
         }
     }
 }

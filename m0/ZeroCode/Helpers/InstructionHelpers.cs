@@ -49,11 +49,42 @@ namespace m0.ZeroCode.Helpers
             return false;
         }
 
-        public static bool CheckIsNewVertex(IVertex v)
+        public static bool CheckIfIsOrInherits(IVertex baseVertex, string value)
         {
-            IVertex iv = GraphUtil.GetQueryOutFirst(v, "$Is", null);
+            HashSet<IVertex> inheritsSet = new HashSet<IVertex>();
 
-            if (iv == null)
+            return CheckIfIsOrInherits_recurrent(baseVertex, inheritsSet, value);
+        }
+
+        private static bool CheckIfIsOrInherits_recurrent(IVertex baseVertex, HashSet<IVertex> inheritedSet, string value)
+        {
+            if (GraphUtil.GetValueAndCompareStrings(baseVertex, value))
+                return true;
+
+            foreach (IEdge e in GraphUtil.GetQueryOut(baseVertex, "$Inherits", null))
+                if (!inheritedSet.Contains(e.To))
+                {
+                    inheritedSet.Add(e.To);
+                    if (CheckIfIsOrInherits_recurrent(e.To, inheritedSet, value))
+                        return true;
+                }
+
+            return false;
+        }
+
+        public static bool CheckIfIsAtomType(IVertex is_v)
+        {
+            if (is_v == null)
+                return true;
+
+            return CheckIfIsOrInherits(is_v, "AtomType");
+        }
+
+        public static bool CheckIfHasExecutableEndPoint(IVertex is_v)
+        {
+            IVertex eepv = GraphUtil.GetQueryOutFirst(is_v, "$ExecutableEndPoint", null);
+
+            if (eepv != null)
                 return true;
 
             return false;

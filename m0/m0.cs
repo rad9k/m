@@ -242,7 +242,7 @@ namespace m0
         {
             IVertex sm = Root.Get(false, @"System\Meta");
 
-            GeneralUtil.ParseAndExcute(sm, null, "{Base{$,Vertex{$IsLink,$Inherits,$StackFrameInherits,$Is,$EdgeTarget,$VertexTarget,$IsAggregation,$MinCardinality,$MaxCardinality,$MinTargetCardinality,$MaxTargetCardinality,$DefaultValue,$DefaultViewVisualiser,$DefaultEditVisualiser,$DefaultOpenVisualiser,$Group,$Section,$Description,$CallableEndPoint,Author,Dependency},$Empty,$Import,$ImportMeta,$Keyword,$KeywordGroupDefinition,$$KeywordGroup,$$KeywordManyRoot,$$LocalRoot,$$StartInLocalRoot,$$EmptyKeyword,$$NewVertexKeyword,$$NonSelfRecursiveParameters,$NewLine,$ParseRoot,$ParseArtefacts}}");
+            GeneralUtil.ParseAndExcute(sm, null, "{Base{$,Vertex{$IsLink,$Inherits,$StackFrameInherits,$Is,$EdgeTarget,$VertexTarget,$IsAggregation,$MinCardinality,$MaxCardinality,$MinTargetCardinality,$MaxTargetCardinality,$DefaultValue,$DefaultViewVisualiser,$DefaultEditVisualiser,$DefaultOpenVisualiser,$Group,$Section,$Description,$ExecutableEndPoint,Author,Dependency},$Empty,$Import,$ImportMeta,$Keyword,$KeywordGroupDefinition,$$KeywordGroup,$$KeywordManyRoot,$$LocalRoot,$$StartInLocalRoot,$$EmptyKeyword,$$NewVertexKeyword,$$NonSelfRecursiveParameters,$NewLine,$ParseRoot,$ParseArtefacts}}");
 
             sm.Get(false, @"Presentation\$Hide").AddEdge(sm.Get(false, @"Base\Vertex\$EdgeTarget"), sm.Get(false, @"Base\Vertex"));
 
@@ -342,7 +342,7 @@ namespace m0
 
         void AddDotNetEndPoint(IVertex baseVertex, string _methodName)
         {
-            IVertex callableEndPoint = Root.Get(false, @"System\Meta\Base\Vertex\$CallableEndPoint");
+            IVertex callableEndPoint = Root.Get(false, @"System\Meta\Base\Vertex\$ExecutableEndPoint");
             IVertex dotNetEndPoint = Root.Get(false, @"System\Meta\ZeroTypes\DotNetEndPoint");
             IVertex typeName = Root.Get(false, @"System\Meta\ZeroTypes\DotNetEndPoint\TypeName");
             IVertex methodName = Root.Get(false, @"System\Meta\ZeroTypes\DotNetEndPoint\MethodName");
@@ -1709,7 +1709,7 @@ namespace m0
 
             GeneralUtil.ParseAndExcute(sm, sm, "{ZeroTypes{AtomType:String,AtomType:Integer,AtomType:Decimal,AtomType:Float,AtomType:Boolean,Vertex:VertexType,Class:Edge{Association:From{$MinCardinality:0,$MaxCardinality:1},Association:Meta{$MinCardinality:1,$MaxCardinality:1},Association:To{$MinCardinality:1,$MaxCardinality:1}},Class:DateTime{Attribute:Year{$MinCardinality:1,$MaxCardinality:1},Attribute:Month{$MinCardinality:1,$MaxCardinality:1},Attribute:Day{$MinCardinality:1,$MaxCardinality:1},Attribute:Hour{$MinCardinality:1,$MaxCardinality:1},Attribute:Minute{$MinCardinality:1,$MaxCardinality:1},Attribute:Second{$MinCardinality:1,$MaxCardinality:1},Attribute:Millisecond{$MinCardinality:0,$MaxCardinality:1}},Class:FormalTextLanguage{Aggregation:DefaultImports{$MinCardinality:0,$MaxCardinality:1},Aggregation:Keywords{$MinCardinality:0,$MaxCardinality:1}},Enum:EnumBase,Class:$PlatformClass{$PlatformClassName},Class:HasBaseEdge{Attribute:BaseEdge{$MinCardinality:1,$MaxCardinality:1}},Class:HasSelectedEdges{Attribute:SelectedEdges{$MinCardinality:1,$MaxCardinality:1,$DefaultValue:}},Class:HasFilter{Attribute:FilterQuery{$MinCardinality:0,$MaxCardinality:1}},Class:Color{Attribute:Red{MinValue:0,MaxValue:255,$MinCardinality:1,$MaxCardinality:1},Attribute:Green{MinValue:0,MaxValue:255,$MinCardinality:1,$MaxCardinality:1},Attribute:Blue{MinValue:0,MaxValue:255,$MinCardinality:1,$MaxCardinality:1},Attribute:Opacity{MinValue:0,MaxValue:255,$MinCardinality:0,$MaxCardinality:1}},Class:Exception{Attribute:Where{$MinCardinality:0,$MaxCardinality:1},Attribute:Type{$MinCardinality:0,$MaxCardinality:1},Attribute:What{$MinCardinality:1,$MaxCardinality:1}},Enum:ExceptionTypeEnum{EnumValue:Error,EnumValue:Warning,EnumValue:Info},Class:CallableEndPoint,Class:DotNetEndPoint{Attribute:TypeName,Attribute:MethodName}}}");
 
-            sm.Get(false, @"Base\Vertex\$CallableEndPoint").AddEdge(sm.Get(false, @"*$EdgeTarget"), sm.Get(false, @"ZeroTypes\CallableEndPoint"));
+            sm.Get(false, @"Base\Vertex\$ExecutableEndPoint").AddEdge(sm.Get(false, @"*$EdgeTarget"), sm.Get(false, @"ZeroTypes\CallableEndPoint"));
 
             sm.Get(false, @"ZeroTypes\String").AddEdge(sm.Get(false, @"*$Is"), sm.Get(false, @"ZeroUML\AtomType"));
             sm.Get(false, @"ZeroTypes\Integer").AddEdge(sm.Get(false, @"*$Is"), sm.Get(false, @"ZeroUML\AtomType"));

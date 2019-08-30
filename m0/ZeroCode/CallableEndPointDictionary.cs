@@ -37,7 +37,7 @@ namespace m0.ZeroCode
                 del = DotNetEndPointDictionary[_is];
             else
             {            
-                IVertex ep = GraphUtil.FindOneByMeta(_is, "$CallableEndPoint");
+                IVertex ep = GraphUtil.FindOneByMeta(_is, "$ExecutableEndPoint");
 
                 if (ep == null)
                     return null;

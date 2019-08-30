@@ -95,7 +95,7 @@ namespace m0.Graph
             {
                 List<IEdge> FullEdges = InEdgesRaw.ToList();
 
-                HashSet<IVertex> parents = GraphUtil.GetInheritParents(this);
+                HashSet<IVertex> parents = GraphUtil.GetInheritParents_RawEnumerate(this);
 
                 foreach (IVertex v in parents)
                     FullEdges.AddRange(v.InEdgesRaw);
@@ -132,7 +132,7 @@ namespace m0.Graph
             {
                 List<IEdge> FullEdges = OutEdgesRaw.ToList();
 
-                HashSet<IVertex> parents = GraphUtil.GetInheritParents(this);
+                HashSet<IVertex> parents = GraphUtil.GetInheritParents_RawEnumerate(this);
 
                 foreach (IVertex v in parents)
                     FullEdges.AddRange(v.OutEdgesRaw);    
@@ -440,6 +440,8 @@ namespace m0.Graph
             {
                 DeleteEdgeOnlyOut(edge);
 
+               // FireChange(new VertexChangeEventArgs(VertexChangeType.EdgeRemoved, edge)); // it is in DeleteEdgeOnlyOut 
+
                 edge.To.DeleteInEdgeOnlyIn(edge);
             }
             //else // becouse of inheritance this may happen
@@ -580,7 +582,8 @@ namespace m0.Graph
 
         public void DeleteAllInEdges()
         {
-            foreach(IEdge edge in InEdgesRaw)
+            //foreach(IEdge edge in InEdgesRaw) // constant "collection modified during enumeration" exceptions
+            foreach (IEdge edge in InEdgesRaw.ToList()) 
             {
                 InEdgesRaw.Remove(edge);
 
@@ -624,7 +627,7 @@ namespace m0.Graph
 
         protected void InheritChildsDictionariesNeedsRebuild(bool inDictiories)
         {
-            HashSet<IVertex> inheritsSet = GraphUtil.GetInheritChilds(this);
+            HashSet<IVertex> inheritsSet = GraphUtil.GetInheritChilds_RawEnumerate(this);
 
             foreach (IVertex v in inheritsSet)
                 if (inDictiories)

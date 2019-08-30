@@ -148,47 +148,48 @@ namespace m0.Graph
 
         public static object GetMetaAndValueObject(object meta, object value)
         {
-            return meta.ToString() + "@#$#@" + value.ToString(); // this is no good !!!!!!!!!. possible error when meta or value contains "@#$#@"
+            //return meta.ToString() + "@#$#@" + value.ToString(); // this is no good !!!!!!!!!. possible error when meta or value contains "@#$#@"
 
-            //return meta.GetHashCode() + value.GetHashCode(); // this is better
+            return meta.GetHashCode() + value.GetHashCode(); // this is better
         }
-        public static HashSet<IVertex> GetInheritChilds(IVertex baseVertex)
+        public static HashSet<IVertex> GetInheritChilds_RawEnumerate(IVertex baseVertex)
         {
             HashSet<IVertex> inheritsSet = new HashSet<IVertex>();
 
-            GetInheritChilds_recurrent(baseVertex, inheritsSet);
+            GetInheritChilds_RawEnumerate_recurrent(baseVertex, inheritsSet);
 
             return inheritsSet;
         }
 
-        private static void GetInheritChilds_recurrent(IVertex baseVertex, HashSet<IVertex> inheritedSet)
+        private static void GetInheritChilds_RawEnumerate_recurrent(IVertex baseVertex, HashSet<IVertex> inheritedSet)
         {
             foreach (IEdge e in baseVertex.InEdgesRaw)
                 if (GeneralUtil.CompareStrings(e.Meta, "$Inherits") && !inheritedSet.Contains(e.From))
                 {
                     inheritedSet.Add(e.From);
-                    GetInheritChilds_recurrent(e.From, inheritedSet);
+                    GetInheritChilds_RawEnumerate_recurrent(e.From, inheritedSet);
                 }
         }
 
-        public static HashSet<IVertex> GetInheritParents(IVertex baseVertex)
+        public static HashSet<IVertex> GetInheritParents_RawEnumerate(IVertex baseVertex)
         {
             HashSet<IVertex> inheritsSet = new HashSet<IVertex>();
 
-            GetInheritParents_recurrent(baseVertex, inheritsSet);
+            GetInheritParents_RawEnumerate_recurrent(baseVertex, inheritsSet);
 
             return inheritsSet;
         }
 
-        private static void GetInheritParents_recurrent(IVertex baseVertex, HashSet<IVertex> inheritedSet)
+        private static void GetInheritParents_RawEnumerate_recurrent(IVertex baseVertex, HashSet<IVertex> inheritedSet)
         {
             foreach (IEdge e in baseVertex.OutEdgesRaw)
                 if (GeneralUtil.CompareStrings(e.Meta, "$Inherits") && !inheritedSet.Contains(e.To))
                 {
                     inheritedSet.Add(e.To);
-                    GetInheritParents_recurrent(e.To, inheritedSet);
+                    GetInheritParents_RawEnumerate_recurrent(e.To, inheritedSet);
                 }
         }
+
         public static string GetQueryStringPart(IVertex meta, IVertex to)
         {
             if (GeneralUtil.CompareStrings(meta.ToString(), "$Empty"))
