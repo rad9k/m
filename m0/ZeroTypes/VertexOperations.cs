@@ -25,6 +25,27 @@ namespace m0.ZeroTypes
 
             return false;
         }
+
+        public static void DeepVertexCopy(IVertex source, IVertex destination)
+        {
+            destination.Value = source.Value;
+
+            DeepVertexCopy_reccurent(source, destination);
+        }
+
+        private static void DeepVertexCopy_reccurent(IVertex source, IVertex destination)
+        {
+            foreach (IEdge e in source.OutEdges)
+                if (!IsLink(e))
+                {
+                    IVertex newVertex = destination.AddVertex(e.Meta, e.To.Value);
+
+                    DeepVertexCopy_reccurent(newVertex, e.To);
+                }
+                else
+                    destination.AddEdge(e.Meta, e.To);
+        }
+
         public static bool IsMetaAndToVertexEnoughToIdentifyEdge(IVertex baseEdge, IVertex meta, IVertex to)
         {
             if (to.Value == null)

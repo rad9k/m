@@ -958,7 +958,7 @@ namespace m0
             // :=
             //
             // (?<left>) := (?<right>)
-            AddLeftRightOperator(k, smu, smb, keyword, any, "(?<left>) :=(?<SUB>)(?<right>)", "CopyVertexValue");
+            AddLeftRightOperator(k, smu, smb, keyword, any, "(?<left>) :=(?<SUB>) (?<right>)", "CopyVertexValue");
 
             // =
             //

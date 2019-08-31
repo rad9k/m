@@ -14,7 +14,7 @@
 
 2) In the case expression being code view time query (@), depending on the query target vertex:
 	- atom value subgraph (""). atom value is copied to the newly created stack returned
-	- non atom value subgraph. newly created stack returned has edge poiting to value subgraph root vertex
+	- non atom value subgraph. newly created stack returned has edge poiting to subgraph root vertex
 	- executable subgraph. sub-graph execution stack is returned
 
 3) For executable subgraph queries, at the beggining of code graph execution,

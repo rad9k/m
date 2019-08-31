@@ -1,6 +1,7 @@
 ﻿using m0.Foundation;
 using m0.Graph;
 using m0.ZeroCode.Helpers;
+using m0.ZeroTypes;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -49,19 +50,28 @@ namespace m0.ZeroCode
 
             IVertex is_v = InstructionHelpers.GetIs(instructionVertex);
 
-            if(InstructionHelpers.CheckIfHasExecutableEndPoint(is_v))
-                return CallableEndPointDictionary.CallEndPoint(this, inputQs, instructionVertex, out isStackFrameReturn);
-            
-            //if(InstructionHelpers.CheckIfIsAtomType(is_v))
 
-            if (InstructionHelpers.GetIs(instructionVertex) == null) // new vertex
+            if(InstructionHelpers.CheckIfIsAtomType(is_v)) // AtomType => deep copy 
             {
                 INoInEdgeInOutVertexVertex stack = InstructionHelpers.CreateStack();
-                stack.AddEdgeForNoInEdgeInOutVertexVertex(GraphUtil.CreateArtificialEdge(null, instructionVertex));
+
+                IVertex copiedVertex = stack.AddVertex(null, null);
+
+                VertexOperations.DeepVertexCopy(instructionVertex, copiedVertex);
+
                 return stack;
             }
 
-            return null;
+            if (InstructionHelpers.CheckIfHasExecutableEndPoint(is_v))
+                return CallableEndPointDictionary.CallEndPoint(this, inputQs, instructionVertex, out isStackFrameReturn);
+
+            // non atom value subgraph => add edge to subgraph's root
+
+            INoInEdgeInOutVertexVertex stack_ = InstructionHelpers.CreateStack();
+
+            stack_.AddEdgeForNoInEdgeInOutVertexVertex(GraphUtil.CreateArtificialEdge(null, instructionVertex));
+
+            return stack_;
         }
     }
 }

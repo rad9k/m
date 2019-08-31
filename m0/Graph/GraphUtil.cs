@@ -143,14 +143,14 @@ namespace m0.Graph
             if (results != null && results.Count > 0)
                 return results;
 
-            return null;
+            return new List<IEdge>();
         }
 
         public static object GetMetaAndValueObject(object meta, object value)
         {
-            //return meta.ToString() + "@#$#@" + value.ToString(); // this is no good !!!!!!!!!. possible error when meta or value contains "@#$#@"
+            return meta.ToString() + "@#$#@" + value.ToString(); // this is no good !!!!!!!!!. possible error when meta or value contains "@#$#@"
 
-            return meta.GetHashCode() + value.GetHashCode(); // this is better
+            //return (long) (meta.GetHashCode() + value.GetHashCode()); // this is better BUT MAKES STRANGE ERROR XXX HELP
         }
         public static HashSet<IVertex> GetInheritChilds_RawEnumerate(IVertex baseVertex)
         {
@@ -523,8 +523,6 @@ namespace m0.Graph
 
         static public void DeleteEdgeByMeta(IVertex source, string MetaValue)
         {
-            //IEdge e = FindEdgeByMetaValue(source, MetaValue);
-
             IEdge e = GetQueryOutFirstEdge(source, MetaValue, null);                
 
             if (e != null)
@@ -533,8 +531,6 @@ namespace m0.Graph
 
         static public void DeleteEdgesByMeta(IVertex source, string MetaValue)
         {
-            //IEdge e = FindEdgeByMetaValue(source, MetaValue);
-
             IList<IEdge> edges = GetQueryOut(source, MetaValue, null);
 
             foreach(IEdge e in edges)            
@@ -552,10 +548,6 @@ namespace m0.Graph
         static public IEdge FindEdgeByMetaValue(IVertex Vertex, string MetaValue)
         {
             return GetQueryOutFirstEdge(Vertex, MetaValue, null);
-            /*foreach (IEdge e in Vertex)
-                if (GeneralUtil.CompareStrings(e.Meta.Value, MetaValue))
-                    return e;
-            return null;*/
         }
 
         static public IEdge FindEdgeByMetaVertex(IVertex Vertex, IVertex metaVertex)
