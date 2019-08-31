@@ -1533,9 +1533,9 @@ namespace m0.ZeroUML.Instructions
                 bool local_isStackFrameReturn = false;
                 INoInEdgeInOutVertexVertex possibleToReturnStack = null;
 
-                IVertex testResult = exe.ExecuteInstruction(exe.stack, test);
+                INoInEdgeInOutVertexVertex testResult = exe.ExecuteInstruction(exe.stack, test);
 
-                while (InstructionHelpers.isTrue(testResult))
+                while (InstructionHelpers.isTrue_Stack(testResult))
                 {
                     exe.AddStackFrame(); // ENTER NEW STACK
 

@@ -306,13 +306,19 @@ namespace m0.ZeroCode.Helpers
             return result;
         }
 
-        public static bool isTrue(IVertex _baseVertex)
+        public static bool isTrue_Stack(IVertex baseVertex)
         {
-            if (_baseVertex == null || _baseVertex.Count() == 0)
+            if (baseVertex == null || baseVertex.Count() == 0)
                 return false;
 
-            IVertex baseVertex = _baseVertex.OutEdges[0].To;
+            foreach (IEdge e in baseVertex)
+                if (!isTrue_Vertex(e.To))
+                    return false;
 
+            return true;
+        }
+
+        public static bool isTrue_Vertex(IVertex baseVertex) { 
             if (baseVertex.Value == null)
                 return false;
 
