@@ -376,7 +376,7 @@ namespace m0
                 ",[]{Target{$MinCardinality:0,$MaxCardinality:1}}" +
                 ",<>" +
                 ",\"{}\",\"{CRLF}\",EdgeSetAdd,EdgeSetSubstract,+,-,Mul,/,?,\"\\ \",\"|\",\"||\",(),CopyVertexValue,RedirectLeftEdgesToRightVertices,AddLeftEdgesToRightVertices,AddRightEdgesIntoLeftEdges,DeleteRightVertices,DeleteRightEdgesFromLeftEdges,DeleteRightVerticesFromLeftEdges" +
-                ",Equal,NotEqual,Negation,And,Or,MoreThan,LessThan,MoreOrEqualThan,LessOrEqualThan" +
+                ",Equal,StrongEqual,NotEqual,Negation,And,Or,MoreThan,LessThan,MoreOrEqualThan,LessOrEqualThan" +
                 ",Action,Return{Expression{$MinCardinality:0,$MaxCardinality:1}},NextOut{Next{$MinCardinality:0,$MaxCardinality:1}}" +
                 ",StackFrameCreator{Do{$MinCardinality:0,$MaxCardinality:1},Variable{$MinCardinality:0,$MaxCardinality:-1},Type{$MinCardinality:0,$MaxCardinality:-1}}" +
                 ",StackFrameCreatorWithInputOutput{Output{$MinCardinality:0,$MaxCardinality:1},InputParameter{$MinCardinality:0,$MaxCardinality:-1}}" +
@@ -385,6 +385,7 @@ namespace m0
                 ",Switch{Expression{$MinCardinality:1,$MaxCardinality:1},Case{Expression{$MinCardinality:1,$MaxCardinality:1}},Default}" +
                 ",While{Test{$MinCardinality:1,$MaxCardinality:1}}" +
                 ",ForEach{Variable{$MinCardinality:1,$MaxCardinality:1},Set{$MinCardinality:1,$MaxCardinality:1}}" +
+                ",EmptySet,Constant" +
                 "}");
 
             // CallableEndPoint
@@ -413,6 +414,7 @@ namespace m0
             AddDotNetEndPoint(smu.Get(false, "EdgeSetAdd"), "EdgeSetAdd");
             AddDotNetEndPoint(smu.Get(false, "EdgeSetSubstract"), "EdgeSetSubstract");
             AddDotNetEndPoint(smu.Get(false, "<>"), "SetIndex");
+            AddDotNetEndPoint(smu.Get(false, "EmptySet"), "EmptySet");
 
             // number algebra operators
 
@@ -424,6 +426,7 @@ namespace m0
             // logic operators
 
             AddDotNetEndPoint(smu.Get(false, "Equal"), "Equal");
+            AddDotNetEndPoint(smu.Get(false, "StrongEqual"), "StrongEqual");
             AddDotNetEndPoint(smu.Get(false, "NotEqual"), "NotEqual");
             AddDotNetEndPoint(smu.Get(false, "Negation"), "Negation");
             AddDotNetEndPoint(smu.Get(false, "And"), "And");
@@ -457,6 +460,9 @@ namespace m0
 
 
             // expression inherits
+            smu.Get(false, @"Constant").AddEdge(sm.Get(false, "*$Inherits"), smu.Get(false, "Atom"));
+            smu.Get(false, @"EmptySet").AddEdge(sm.Get(false, "*$Inherits"), smu.Get(false, "Constant"));
+
             smu.Get(false, @"ExpressionAtom").AddEdge(sm.Get(false, "*$Inherits"), smu.Get(false, "Atom"));
             smu.Get(false, @"ExpressionAtom").AddEdge(sm.Get(false, "*$Inherits"), smu.Get(false, "NextOut"));
             smu.Get(false, @"SingleOperator").AddEdge(sm.Get(false, "*$Inherits"), smu.Get(false, "ExpressionAtom"));
@@ -477,6 +483,7 @@ namespace m0
             smu.Get(false, @"/").AddEdge(sm.Get(false, "*$Inherits"), smu.Get(false, "DoubleOperator"));
 
             smu.Get(false, "Equal").AddEdge(sm.Get(false, "*$Inherits"), smu.Get(false, "DoubleOperator"));
+            smu.Get(false, "StrongEqual").AddEdge(sm.Get(false, "*$Inherits"), smu.Get(false, "DoubleOperator"));
             smu.Get(false, "NotEqual").AddEdge(sm.Get(false, "*$Inherits"), smu.Get(false, "DoubleOperator"));
             smu.Get(false, "Negation").AddEdge(sm.Get(false, "*$Inherits"), smu.Get(false, "SingleExpressionOperator"));
             smu.Get(false, "And").AddEdge(sm.Get(false, "*$Inherits"), smu.Get(false, "DoubleOperator"));
@@ -602,6 +609,7 @@ namespace m0
             package.AddEdge(null, smu.Get(false, "\"{}\""));
             package.AddEdge(null, smu.Get(false, "EdgeSetAdd"));
             package.AddEdge(null, smu.Get(false, "EdgeSetSubstract"));
+            package.AddEdge(null, smu.Get(false, "EmptySet"));
 
             package.AddEdge(null, smu.Get(false, "+"));
             package.AddEdge(null, smu.Get(false, "-"));
@@ -609,6 +617,7 @@ namespace m0
             package.AddEdge(null, smu.Get(false, "/"));
 
             package.AddEdge(null, smu.Get(false, "Equal"));
+            package.AddEdge(null, smu.Get(false, "StrongEqual"));
             package.AddEdge(null, smu.Get(false, "NotEqual"));
             package.AddEdge(null, smu.Get(false, "Negation"));
             package.AddEdge(null, smu.Get(false, "And"));
@@ -1040,6 +1049,18 @@ namespace m0
 
             o_index_any_targetExpr.AddEdge(smb.Get(false, "$$LocalRoot"), kgd_ColonEmptyInner2SlashMarkIndex);
 
+            // 00
+            //
+            // 00
+
+            IVertex o_emptySet = k.AddVertex(keyword, "00");
+
+            IVertex o_emptySet_any = o_emptySet.AddVertex(any, "");
+
+            o_emptySet_any.AddEdge(smb.Get(false, @"Vertex\$Is"), smu.Get(false, "EmptySet"));
+
+            
+
             /////////////////////////////////////////////////////////
             //
             // algebraic operators
@@ -1114,6 +1135,12 @@ namespace m0
             // (?<left>) == (?<right>)
 
             AddLeftRightOperator(k, smu, smb, keyword, any, "(?<left>) ==(?<SUB>) (?<right>)", "Equal");
+
+            // ===
+            //
+            // (?<left>) === (?<right>)
+
+            AddLeftRightOperator(k, smu, smb, keyword, any, "(?<left>) ===(?<SUB>) (?<right>)", "StrongEqual");
 
             // !=
             //

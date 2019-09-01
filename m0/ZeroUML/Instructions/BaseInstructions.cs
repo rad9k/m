@@ -526,7 +526,16 @@ namespace m0.ZeroUML.Instructions
             return localStack;
         }
 
-            #endregion
+        public static INoInEdgeInOutVertexVertex EmptySet(ZeroCodeExecution exe, IVertex inputStack, IVertex instructionVertex, out bool isStackFrameReturn)
+        {
+            isStackFrameReturn = false;
+           
+            INoInEdgeInOutVertexVertex localStack = InstructionHelpers.CreateStack();            
+
+            return localStack;
+        }
+
+        #endregion
 
         ////////////////////////////////////////////////////////////////
         //
@@ -534,7 +543,7 @@ namespace m0.ZeroUML.Instructions
         //
         ////////////////////////////////////////////////////////////////
 
-#region Operators
+        #region Operators
 
         public static INoInEdgeInOutVertexVertex Add(ZeroCodeExecution exe, IVertex inputStack, IVertex instructionVertex, out bool isStackFrameReturn)
         {
@@ -1045,7 +1054,7 @@ namespace m0.ZeroUML.Instructions
 
 #region LogicOperators
 
-        private static INoInEdgeInOutVertexVertex LogicDoubleOperator(LogicDoubleOpertorEnum opetationType, ZeroCodeExecution exe, IVertex inputStack, IVertex instructionVertex)
+        private static INoInEdgeInOutVertexVertex LogicDoubleOperator(LogicDoubleOpertorEnum opetationType, ZeroCodeExecution exe, IVertex inputStack, IVertex instructionVertex, String leftAndRightResultsEmptyOperatorResult)
         {
             IVertex leftExpression = InstructionHelpers.GetLeft(instructionVertex);
             IVertex rightExpression = InstructionHelpers.GetRight(instructionVertex);
@@ -1068,20 +1077,27 @@ namespace m0.ZeroUML.Instructions
 
             INoInEdgeInOutVertexVertex localStack = InstructionHelpers.CreateStack();
 
-            for (int x=0; x < toBeProcessedCount; x++)
+            if (toBeProcessedCount == 0) // left and right empty
             {
-                bool logicalResult = false;
+                localStack.AddVertex(null, leftAndRightResultsEmptyOperatorResult);
+            }
+            else
+            {
+                for (int x = 0; x < toBeProcessedCount; x++)
+                {
+                    bool logicalResult = false;
 
-                IVertex leftVertex = leftExecuteResult[x].To;
-                IVertex rightVertex = rightExecuteResult[x].To;
+                    IVertex leftVertex = leftExecuteResult[x].To;
+                    IVertex rightVertex = rightExecuteResult[x].To;
 
-                logicalResult = LogicDoubleOperator_VertexLevel(leftVertex, rightVertex, opetationType);
+                    logicalResult = LogicDoubleOperator_VertexLevel(leftVertex, rightVertex, opetationType);
 
-                if (logicalResult)
-                    localStack.AddVertex(null, "True");
-                else
-                    localStack.AddVertex(null, "False");
+                    if (logicalResult)
+                        localStack.AddVertex(null, "True");
+                    else
+                        localStack.AddVertex(null, "False");
 
+                }
             }
 
             return localStack;
@@ -1347,14 +1363,14 @@ namespace m0.ZeroUML.Instructions
         {
             isStackFrameReturn = false;
 
-            return LogicDoubleOperator(LogicDoubleOpertorEnum.Equal, exe, inputStack, instructionVertex);
+            return LogicDoubleOperator(LogicDoubleOpertorEnum.Equal, exe, inputStack, instructionVertex, "True");
         }
 
         public static INoInEdgeInOutVertexVertex NotEqual(ZeroCodeExecution exe, IVertex inputStack, IVertex instructionVertex, out bool isStackFrameReturn)
         {
             isStackFrameReturn = false;
 
-            return LogicDoubleOperator(LogicDoubleOpertorEnum.NotEqual, exe, inputStack, instructionVertex);
+            return LogicDoubleOperator(LogicDoubleOpertorEnum.NotEqual, exe, inputStack, instructionVertex, "False");
         }
 
         public static INoInEdgeInOutVertexVertex Negation(ZeroCodeExecution exe, IVertex inputStack, IVertex instructionVertex, out bool isStackFrameReturn)
@@ -1368,42 +1384,42 @@ namespace m0.ZeroUML.Instructions
         {
             isStackFrameReturn = false;
 
-            return LogicDoubleOperator(LogicDoubleOpertorEnum.And, exe, inputStack, instructionVertex);
+            return LogicDoubleOperator(LogicDoubleOpertorEnum.And, exe, inputStack, instructionVertex, "False");
         }
 
         public static INoInEdgeInOutVertexVertex Or(ZeroCodeExecution exe, IVertex inputStack, IVertex instructionVertex, out bool isStackFrameReturn)
         {
             isStackFrameReturn = false;
 
-            return LogicDoubleOperator(LogicDoubleOpertorEnum.Or, exe, inputStack, instructionVertex);
+            return LogicDoubleOperator(LogicDoubleOpertorEnum.Or, exe, inputStack, instructionVertex, "False");
         }
 
         public static INoInEdgeInOutVertexVertex MoreThan(ZeroCodeExecution exe, IVertex inputStack, IVertex instructionVertex, out bool isStackFrameReturn)
         {
             isStackFrameReturn = false;
 
-            return LogicDoubleOperator(LogicDoubleOpertorEnum.MoreThan, exe, inputStack, instructionVertex);
+            return LogicDoubleOperator(LogicDoubleOpertorEnum.MoreThan, exe, inputStack, instructionVertex, "False");
         }
 
         public static INoInEdgeInOutVertexVertex LessThan(ZeroCodeExecution exe, IVertex inputStack, IVertex instructionVertex, out bool isStackFrameReturn)
         {
             isStackFrameReturn = false;
 
-            return LogicDoubleOperator(LogicDoubleOpertorEnum.LessThan, exe, inputStack, instructionVertex);
+            return LogicDoubleOperator(LogicDoubleOpertorEnum.LessThan, exe, inputStack, instructionVertex, "False");
         }
 
         public static INoInEdgeInOutVertexVertex MoreOrEqualThan(ZeroCodeExecution exe, IVertex inputStack, IVertex instructionVertex, out bool isStackFrameReturn)
         {
             isStackFrameReturn = false;
 
-            return LogicDoubleOperator(LogicDoubleOpertorEnum.MoreOrEqualThan, exe, inputStack, instructionVertex);
+            return LogicDoubleOperator(LogicDoubleOpertorEnum.MoreOrEqualThan, exe, inputStack, instructionVertex, "True");
         }
 
         public static INoInEdgeInOutVertexVertex LessOrEqualThan(ZeroCodeExecution exe, IVertex inputStack, IVertex instructionVertex, out bool isStackFrameReturn)
         {
             isStackFrameReturn = false;
 
-            return LogicDoubleOperator(LogicDoubleOpertorEnum.LessOrEqualThan, exe, inputStack, instructionVertex);
+            return LogicDoubleOperator(LogicDoubleOpertorEnum.LessOrEqualThan, exe, inputStack, instructionVertex, "True");
         }
 
         #endregion
