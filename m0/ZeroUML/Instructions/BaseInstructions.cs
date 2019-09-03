@@ -1209,12 +1209,28 @@ namespace m0.ZeroUML.Instructions
             switch (operationType)
             {
                 case LogicDoubleOpertorEnum.Equal:
-                    if (EqualityComparer<string>.Default.Equals(leftValue, rightValue))
-                        output = true;
+                    if (
+                        EqualityComparer<string>.Default.Equals(leftValue, rightValue) ||
+
+                        ( (Comparer<string>.Default.Compare("True", leftValue) == 0 || Comparer<string>.Default.Compare("true", leftValue) == 0 || Comparer<string>.Default.Compare("1", leftValue) == 0) 
+                        && (Comparer<string>.Default.Compare("True", rightValue) == 0 || Comparer<string>.Default.Compare("true", rightValue) == 0 || Comparer<string>.Default.Compare("1", rightValue) == 0) ) || // both true
+
+                        ( (Comparer<string>.Default.Compare("False", leftValue) == 0 || Comparer<string>.Default.Compare("false", leftValue) == 0 || Comparer<string>.Default.Compare("0", leftValue) == 0)
+                        && (Comparer<string>.Default.Compare("False", rightValue) == 0 || Comparer<string>.Default.Compare("false", rightValue) == 0 || Comparer<string>.Default.Compare("0", rightValue) == 0) )  // both false
+                        )                        
+                            output = true;
                     break;
 
                 case LogicDoubleOpertorEnum.NotEqual:
-                    if (!EqualityComparer<string>.Default.Equals(leftValue, rightValue))
+                    if(
+                        !EqualityComparer<string>.Default.Equals(leftValue, rightValue) ||
+
+                        ((Comparer<string>.Default.Compare("True", leftValue) == 0 || Comparer<string>.Default.Compare("true", leftValue) == 0 || Comparer<string>.Default.Compare("1", leftValue) == 0)
+                        && (Comparer<string>.Default.Compare("False", rightValue) == 0 || Comparer<string>.Default.Compare("false", rightValue) == 0 || Comparer<string>.Default.Compare("0", rightValue) == 0)) || // true false
+
+                        ((Comparer<string>.Default.Compare("False", leftValue) == 0 || Comparer<string>.Default.Compare("false", leftValue) == 0 || Comparer<string>.Default.Compare("0", leftValue) == 0)
+                        && (Comparer<string>.Default.Compare("True", rightValue) == 0 || Comparer<string>.Default.Compare("true", rightValue) == 0 || Comparer<string>.Default.Compare("1", rightValue) == 0))  // false true
+                        )
                         output = true;
                     break;
 
