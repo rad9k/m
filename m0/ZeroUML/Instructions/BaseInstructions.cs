@@ -8,6 +8,7 @@ using m0.ZeroCode.Helpers;
 using m0.ZeroCode;
 using m0.Util;
 using m0.Graph;
+using static m0.ZeroCode.Helpers.InstructionHelpers;
 
 namespace m0.ZeroUML.Instructions
 {
@@ -1212,11 +1213,9 @@ namespace m0.ZeroUML.Instructions
                     if (
                         EqualityComparer<string>.Default.Equals(leftValue, rightValue) ||
 
-                        ( (Comparer<string>.Default.Compare("True", leftValue) == 0 || Comparer<string>.Default.Compare("true", leftValue) == 0 || Comparer<string>.Default.Compare("1", leftValue) == 0) 
-                        && (Comparer<string>.Default.Compare("True", rightValue) == 0 || Comparer<string>.Default.Compare("true", rightValue) == 0 || Comparer<string>.Default.Compare("1", rightValue) == 0) ) || // both true
+                        (InstructionHelpers.GetBolleanValue(leftVertex) == BooleanEnum.True && InstructionHelpers.GetBolleanValue(rightVertex) == BooleanEnum.True) || // true true
 
-                        ( (Comparer<string>.Default.Compare("False", leftValue) == 0 || Comparer<string>.Default.Compare("false", leftValue) == 0 || Comparer<string>.Default.Compare("0", leftValue) == 0)
-                        && (Comparer<string>.Default.Compare("False", rightValue) == 0 || Comparer<string>.Default.Compare("false", rightValue) == 0 || Comparer<string>.Default.Compare("0", rightValue) == 0) )  // both false
+                        (InstructionHelpers.GetBolleanValue(leftVertex) == BooleanEnum.False && InstructionHelpers.GetBolleanValue(rightVertex) == BooleanEnum.False) // false false
                         )                        
                             output = true;
                     break;
@@ -1225,24 +1224,21 @@ namespace m0.ZeroUML.Instructions
                     if(
                         !EqualityComparer<string>.Default.Equals(leftValue, rightValue) ||
 
-                        ((Comparer<string>.Default.Compare("True", leftValue) == 0 || Comparer<string>.Default.Compare("true", leftValue) == 0 || Comparer<string>.Default.Compare("1", leftValue) == 0)
-                        && (Comparer<string>.Default.Compare("False", rightValue) == 0 || Comparer<string>.Default.Compare("false", rightValue) == 0 || Comparer<string>.Default.Compare("0", rightValue) == 0)) || // true false
+                        (InstructionHelpers.GetBolleanValue(leftVertex) == BooleanEnum.True && InstructionHelpers.GetBolleanValue(rightVertex) == BooleanEnum.False) || // true false
 
-                        ((Comparer<string>.Default.Compare("False", leftValue) == 0 || Comparer<string>.Default.Compare("false", leftValue) == 0 || Comparer<string>.Default.Compare("0", leftValue) == 0)
-                        && (Comparer<string>.Default.Compare("True", rightValue) == 0 || Comparer<string>.Default.Compare("true", rightValue) == 0 || Comparer<string>.Default.Compare("1", rightValue) == 0))  // false true
+                        (InstructionHelpers.GetBolleanValue(leftVertex) == BooleanEnum.False && InstructionHelpers.GetBolleanValue(rightVertex) == BooleanEnum.True) // false true
                         )
+
                         output = true;
                     break;
 
                 case LogicDoubleOpertorEnum.And:
-                    if ((Comparer<string>.Default.Compare("True", leftValue) == 0 || Comparer<string>.Default.Compare("true", leftValue) == 0  || Comparer<string>.Default.Compare("1", leftValue) == 0) &&
-                        (Comparer<string>.Default.Compare("True", rightValue) == 0 || Comparer<string>.Default.Compare("true", rightValue) == 0 || Comparer<string>.Default.Compare("1", rightValue) == 0 ))
+                    if (InstructionHelpers.GetBolleanValue(leftVertex) == BooleanEnum.True && InstructionHelpers.GetBolleanValue(rightVertex) == BooleanEnum.True)
                         output = true;
                     break;
 
                 case LogicDoubleOpertorEnum.Or:
-                    if ((Comparer<string>.Default.Compare("True", leftValue) == 0 || Comparer<string>.Default.Compare("true", leftValue) == 0 || Comparer<string>.Default.Compare("1", leftValue) == 0) ||
-                        (Comparer<string>.Default.Compare("True", rightValue) == 0 || Comparer<string>.Default.Compare("true", rightValue) == 0 || Comparer<string>.Default.Compare("1", rightValue) == 0))
+                    if (InstructionHelpers.GetBolleanValue(leftVertex) == BooleanEnum.True || InstructionHelpers.GetBolleanValue(rightVertex) == BooleanEnum.True)
                         output = true;
                     break;
 
@@ -1567,7 +1563,7 @@ namespace m0.ZeroUML.Instructions
 
                 INoInEdgeInOutVertexVertex testResult = exe.ExecuteInstruction(exe.stack, test);
 
-                while (InstructionHelpers.isTrue_Stack(testResult))
+                while (InstructionHelpers.IsTrue_Stack(testResult))
                 {
                     exe.AddStackFrame(); // ENTER NEW STACK
 

@@ -306,19 +306,19 @@ namespace m0.ZeroCode.Helpers
             return result;
         }
 
-        public static bool isTrue_Stack(IVertex baseVertex)
+        public static bool IsTrue_Stack(IVertex baseVertex)
         {
             if (baseVertex == null || baseVertex.Count() == 0)
                 return false;
 
             foreach (IEdge e in baseVertex)
-                if (!isTrue_Vertex(e.To))
+                if (!IsTrue_Vertex(e.To))
                     return false;
 
             return true;
         }
 
-        public static bool isTrue_Vertex(IVertex baseVertex) { 
+        public static bool IsTrue_Vertex(IVertex baseVertex) { 
             if (baseVertex.Value == null)
                 return false;
 
@@ -354,6 +354,57 @@ namespace m0.ZeroCode.Helpers
                 return true;
 
             return false;
+        }
+
+        public enum BooleanEnum { True, False, Undefined}
+
+        public static BooleanEnum GetBolleanValue(IVertex baseVertex)
+        {
+            if (baseVertex.Value == null)
+                return BooleanEnum.Undefined;
+
+            object val;
+
+            GraphUtil.GetNumberValue(baseVertex, out val);
+
+            if (val != null)
+            {
+                NumericTypeEnum numericType = GetNumericType(val);
+
+                switch (numericType)
+                {
+                    case NumericTypeEnum.Decimal:
+                        if (NumberCompare<decimal>((decimal)val, 1))
+                            return BooleanEnum.True;
+                        if (NumberCompare<decimal>((decimal)val, 0))
+                            return BooleanEnum.False;
+                        break;
+
+                    case NumericTypeEnum.Double:
+                        if (NumberCompare<double>((double)val, 1))
+                            return BooleanEnum.True;
+                        if (NumberCompare<double>((double)val, 0))
+                            return BooleanEnum.False;
+                        break;
+
+                    case NumericTypeEnum.Integer:
+                        if (NumberCompare<int>((int)val, 1))
+                            return BooleanEnum.True;
+                        if (NumberCompare<int>((int)val, 0))
+                            return BooleanEnum.False;
+                        break;
+                }
+            }
+
+            if (GeneralUtil.CompareStrings(baseVertex.Value, "True") ||
+                GeneralUtil.CompareStrings(baseVertex.Value, "true"))
+                return BooleanEnum.True;
+
+            if (GeneralUtil.CompareStrings(baseVertex.Value, "False") ||
+                GeneralUtil.CompareStrings(baseVertex.Value, "false"))
+                return BooleanEnum.False;
+
+            return BooleanEnum.Undefined;
         }
 
         private static bool NumberCompare<T>(T leftValue, T rightValue)
