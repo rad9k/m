@@ -1104,7 +1104,7 @@ namespace m0.ZeroUML.Instructions
             return localStack;
         }
 
-        enum LogicDoubleOpertorEnum {Equal, NotEqual, And, Or, MoreThan, LessThan, MoreOrEqualThan, LessOrEqualThan }
+        enum LogicDoubleOpertorEnum {Equal, ExactEqual, NotEqual, And, Or, MoreThan, LessThan, MoreOrEqualThan, LessOrEqualThan }
 
         private static bool LogicDoubleOperator_VertexLevel(IVertex leftVertex, IVertex rightVertex, LogicDoubleOpertorEnum operationType)
         {
@@ -1152,6 +1152,11 @@ namespace m0.ZeroUML.Instructions
             switch (operationType)
             {
                 case LogicDoubleOpertorEnum.Equal:
+                    if (EqualityComparer<T>.Default.Equals(leftValue, rightValue))
+                        output = true;
+                    break;
+
+                case LogicDoubleOpertorEnum.ExactEqual:
                     if (EqualityComparer<T>.Default.Equals(leftValue, rightValue))
                         output = true;
                     break;
@@ -1218,6 +1223,13 @@ namespace m0.ZeroUML.Instructions
                         (InstructionHelpers.GetBolleanValue(leftVertex) == BooleanEnum.False && InstructionHelpers.GetBolleanValue(rightVertex) == BooleanEnum.False) // false false
                         )                        
                             output = true;
+                    break;
+
+                case LogicDoubleOpertorEnum.ExactEqual:
+                    if (
+                        EqualityComparer<string>.Default.Equals(leftValue, rightValue)
+                        )
+                        output = true;
                     break;
 
                 case LogicDoubleOpertorEnum.NotEqual:
@@ -1376,6 +1388,13 @@ namespace m0.ZeroUML.Instructions
             isStackFrameReturn = false;
 
             return LogicDoubleOperator(LogicDoubleOpertorEnum.Equal, exe, inputStack, instructionVertex, "True");
+        }
+
+        public static INoInEdgeInOutVertexVertex ExactEqual(ZeroCodeExecution exe, IVertex inputStack, IVertex instructionVertex, out bool isStackFrameReturn)
+        {
+            isStackFrameReturn = false;
+
+            return LogicDoubleOperator(LogicDoubleOpertorEnum.ExactEqual, exe, inputStack, instructionVertex, "True");
         }
 
         public static INoInEdgeInOutVertexVertex NotEqual(ZeroCodeExecution exe, IVertex inputStack, IVertex instructionVertex, out bool isStackFrameReturn)
