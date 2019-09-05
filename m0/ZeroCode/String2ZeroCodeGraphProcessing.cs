@@ -2663,6 +2663,12 @@ namespace m0.ZeroCode
 
                 edge.From.DeleteEdge(edge);
             }
+            else
+            {
+                edge.From.AddEdge(edge.Meta, edge.To);
+
+                edge.From.DeleteEdge(edge);
+            }
             return false;            
         }
 
