@@ -57,8 +57,8 @@ namespace m0.ZeroCode.Helpers
         }
 
         private static bool CheckIfIsOrInherits_recurrent(IVertex baseVertex, HashSet<IVertex> inheritedSet, string value)
-        {
-            if (GraphUtil.GetValueAndCompareStrings(baseVertex, value))
+        {            
+            if (GraphUtil.GetValueAndCompareStrings(GraphUtil.GetQueryOutFirst(baseVertex, "$Is", null), value))
                 return true;
 
             foreach (IEdge e in GraphUtil.GetQueryOut(baseVertex, "$Inherits", null))

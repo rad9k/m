@@ -36,17 +36,16 @@ _______________________________________________
 
 "Code"
 	"10"
-		<$Is :: String>
-	variable "A" @String
-	A = @10
-	A := A + 1
+	variable "Atom" @String
+	Atom = @10
+	Atom := Atom + "1"
+	"20"
+		<$Is :: Class>
+		# "not atom"
+	variable "NotAtom" @String
+	NotAtom = @20
+	NotAtom := NotAtom + "1"
 
-"Code"
-	"10"
-		<$Is :: String>
-	A = @10
-
-	
 _______________________________________________
 
 "Code"
