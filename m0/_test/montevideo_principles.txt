@@ -51,7 +51,18 @@ _______________________________________________
 "Code"
 	"TEST"
 		function "X" ()
-	@TEST\X[]
+			return "1"
+	variable "a" @Vertex
+	a = @TEST\X[]
+
+"Code"
+	"TEST"
+		function "X" (@Integer "a")
+			return a + "1"
+	variable "cvtq" @Vertex
+	variable "rtq" @Vertex
+	cvtq = @TEST\X["1"]
+	rtq = $ \ |TEST \ |X["2"]
 
 _______________________________________________
 
