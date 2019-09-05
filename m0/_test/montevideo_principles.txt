@@ -2,20 +2,21 @@
 	- value subgraph - a subgraph, starting with one root vertex, characterized by $Is:{$ExecutableEndPoint:} == 00
 	- atom value subgraph (""), a value subgraph, characterized by $Is:AtomType != 00 or $Is: == 00
 	- non atom value subgraph (""), a value sub-graph, characterized by $Is: != 00 and $Is:AtomType == 00
-	- executable subgraph - a subgraph, starting with one vertex, characterized by $Is:{$ExecutableEndPoint:} != 00
-	  execution of it may resoult in set of root level edges
+	- executable subgraph - a subgraph, starting with one vertex, characterized by $Is:{$ExecutableEndPoint:} != 00.
+	  execution of it may result in set of root level edges
 	- code view time graph query (@) - a @ starting query, that performs on the code graph in the code view time.
 	  by @ definition, it points to only one vertex
 
 1) In the unified grammar graph representation, any expression can be: 
 	- atom value subgraph (""). atom value is copied to the newly created stack returned
-	- executable subgraph. subgraph execution stack is returned
+	- non atom value subgraph (""). newly created stack returned has edge poiting to subgraph root vertex
+	- executable subgraph. subgraph is executed and execution stack is returned
 	- code view time query (@). depending on the query target
 
 2) In the case expression being code view time query (@), depending on the query target vertex:
 	- atom value subgraph (""). atom value is copied to the newly created stack returned
-	- non atom value subgraph. newly created stack returned has edge poiting to subgraph root vertex
-	- executable subgraph. sub-graph execution stack is returned
+	- non atom value subgraph (""). newly created stack returned has edge poiting to subgraph root vertex
+	- executable subgraph. sub-graph is executed and execution stack is returned
 
 3) For executable subgraph queries, at the beggining of code graph execution,
    special variable (named $) is added to the stack bottom. The $ variable points to code graph execution root.
