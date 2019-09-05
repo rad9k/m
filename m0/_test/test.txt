@@ -35,18 +35,15 @@
 	|{}\
 
 ________________________
-c0: (a + b) + c
-c1: (a|aa + b) + c
-c1b:(aaaa + b) + c
-c2: 
-((a|a + b) + c) + d
-(((a|a + b) + c) + d) + e
-((((a|a + b) + c) + d) + e) + f
-(((((a|a + b|bb) + c) + d) + e) + f) + g
-(a + (((((((x))))))) + b)
-(a + b / c * (d - (e - (f))) + g)
-(a \ b \ c + (d \ e - e \ f \ g))
-(a + b / c * (d - (e + (f / (ff * (fff + fff2 - (x / v)))))) + g)
+"Y"
+	((a|a + b) + c) + d
+	(((a|a + b) + c) + d) + e
+	((((a|a + b) + c) + d) + e) + f
+	(((((a|a + b|bb) + c) + d) + e) + f) + g
+	(a + (((((((x))))))) + b)
+	(a + b / c * (d - (e - (f))) + g)
+	(a \ b \ c + (d \ e - e \ f \ g))
+	(a + b / c * (d - (e + (f / (ff * (fff + fff2 - (x / v)))))) + g)
 ___________
 <"Y">
 	"A"{
@@ -73,9 +70,9 @@ ___________
 	(((((a|aa + b|bb) + c) + d) + e) + f) + g
 	(a + b / c * (d - (e - (f))) + g)
 	(a \ b \ c + (d \ e - e \ f \ g))
-	attribute "a" @a "1":"2" <"3":"4">
+	attribute "a" @a "1":"2" <<"3".."4">>
 		attribute "aa" @a "1":"2"
-			attribute "a" @a <"3":"4">
+			attribute "a" @a <<"3".."4">>
 				attribute "aaa" @a
 			association "b" @a "1":"2"
 				association "b" @a

@@ -1047,12 +1047,14 @@ namespace m0.ZeroCode
             {
                 string path = GetPathFromKeywordMatchAndKeywordEdge(km, e, null);
 
+                bool wasNewVertex = true; // for empty
+
                 if(!emptyKeywordVertexList.Contains(km.KeywordDefinition))                
-                    AppendVertex(e, path, false, false, false); // non emptyKeword (standard)
+                    wasNewVertex = AppendVertex(e, path, false, false, false); // non emptyKeword (standard)
                 else
                     SourceAppend(e.To.Value.ToString()); // emptyKeyword handling
 
-                if (!VertexOperations.IsLink(e) /*&& e != km.BaseEdge*/)
+                if (wasNewVertex && !VertexOperations.IsLink(e) /*&& e != km.BaseEdge*/)
                     wasThereNewLine = AppendSubVertices(km, e, path);
             }
         }
@@ -1064,18 +1066,26 @@ namespace m0.ZeroCode
             bool wasFirstNewLine = false;
 
             foreach (IEdge e in baseEdge.To)
-            {                
-                if (km.BaseEdge != baseEdge && !km.MatchedEdges.Contains(e)) 
+            {
+                if (km.BaseEdge != baseEdge && !km.MatchedEdges.Contains(e))
                 {
-                    KeywordMatch km_for_e = KeywordMatchedSubGraphEdges[e];
+                    if (KeywordMatchedSubGraphEdges.ContainsKey(e)) { // XXX do not quite know what I'm doing, but this is for this below to work :/
+                        //	"10"
+                        //      <$Is::String >    
+                        //   A = @10
+                        KeywordMatch km_for_e = KeywordMatchedSubGraphEdges[e];
 
-                    if (wasFirstNewLine == false && km_for_e.IsStartInLocalRoot == false) //  && km_for_e.IsStartInLocalRoot==false XXX
-                    {
-                        tabTimes++;
-                        wasFirstNewLine = true;
-                        wasThereNewLine = true;
+                        if (wasFirstNewLine == false && km_for_e.IsStartInLocalRoot == false) //  && km_for_e.IsStartInLocalRoot==false XXX
+                        {
+                            tabTimes++;
+                            wasFirstNewLine = true;
+                            wasThereNewLine = true;
+                        }
                     }
-
+                    else
+                    {
+                        int x = 0;
+                    }
                     AppendEdge(e, null, basePath + "\\" + GraphUtil.GetIdentyfyingQuerySubString_ImportMeta(e));
                 }
 

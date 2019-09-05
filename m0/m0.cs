@@ -733,9 +733,9 @@ namespace m0
 
             // attribute
             //
-            // attribute (?<name>) (?<type>) (?<MinCardinality>):(?<MaxCardinality>) <(?<MinValue>):(?<MaxValue>)>
+            // attribute (?<name>) (?<type>) (?<MinCardinality>):(?<MaxCardinality>) <<(?<MinValue>)..(?<MaxValue>)>>
 
-            IVertex attribute3 = k.AddVertex(keyword, "attribute (?<name>) (?<type>) (?<MinCardinality>):(?<MaxCardinality>) <(?<MinValue>):(?<MaxValue>)>");
+            IVertex attribute3 = k.AddVertex(keyword, "attribute (?<name>) (?<type>) (?<MinCardinality>):(?<MaxCardinality>) <<(?<MinValue>)..(?<MaxValue>)>>");
 
 
             IVertex attribute3_attribute = attribute3.AddVertex(smu.Get(false, @"Class\Attribute"), "(?<name>)");
@@ -776,9 +776,9 @@ namespace m0
 
             // attribute
             //
-            // attribute (?<name>) (?<type>) <(?<MinValue>):(?<MaxValue>)>
+            // attribute (?<name>) (?<type>) <<(?<MinValue>)..(?<MaxValue>)>>
 
-            IVertex attribute2 = k.AddVertex(keyword, "attribute (?<name>) (?<type>) <(?<xMinValue>):(?<MaxValue>)>");
+            IVertex attribute2 = k.AddVertex(keyword, "attribute (?<name>) (?<type>) <<(?<xMinValue>)..(?<MaxValue>)>>");
 
 
             IVertex attribute2_attribute = attribute2.AddVertex(smu.Get(false, @"Class\Attribute"), "(?<name>)");
