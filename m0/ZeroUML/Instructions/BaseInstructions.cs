@@ -1349,13 +1349,13 @@ namespace m0.ZeroUML.Instructions
 
         private static bool LogicSingleOperator_ExecuteNumeric<T>(T value, LogicSingleOpertorEnum operationType, T zeroValue)
         {
-            bool output = false;
+            bool output = true;
 
             switch (operationType)
             {
                 case LogicSingleOpertorEnum.Negation:
-                    if (EqualityComparer<T>.Default.Equals(value, zeroValue))
-                        output = true;
+                    if (Comparer<T>.Default.Compare((T)value, zeroValue) > 0)                        
+                        output = false;
                     break;
             }
 
