@@ -46,6 +46,8 @@ namespace m0.ZeroCode
 
         public static char EscapeCharacter = '\\';
 
+        public static string[] CodeViewTimeLinkKeywordParts = { "\\", "{","}","|","||",":","::","<",">"};
+
         // Link
         ///////
 
@@ -67,7 +69,7 @@ namespace m0.ZeroCode
 
         // to be used only in ZeroCodeCommon.stringFromLinkString( , FALSE) scenario
         // and that means that TO BE USED ONLY IN KEYWORDS
-        public static string tryStringFromLinkString(string text, int startPos, ref int pos, int endPos)
+        public static string tryStringFromLinkString(string text, int startPos, ref int pos, int endPos, IDictionary<char, List<string>> allKeywordsSubstringsDictionary)
         {
             string newVertex = null;
 
@@ -82,6 +84,9 @@ namespace m0.ZeroCode
                 while (shallProceed)
                 {
                     sPos++;
+
+                    if (testIfIsKeywordSubstring(sPos, text, allKeywordsSubstringsDictionary))
+                        shallProceed = false;
 
                     if (sPos == endPos)
                         shallProceed = false;
@@ -106,6 +111,22 @@ namespace m0.ZeroCode
             }
 
             return newVertex;
+        }
+
+        public static bool testIfIsKeywordSubstring(int startPos, string text, IDictionary<char, List<string>> allKeywordsSubstringsDictionary)
+        {
+            char charAtPos = text[startPos];
+
+            if (!allKeywordsSubstringsDictionary.ContainsKey(charAtPos))
+                return false;
+
+            List<string> l = allKeywordsSubstringsDictionary[charAtPos];
+
+            foreach (string s in l)
+                if (ZeroCodeUtil.tryStringMatch(text, startPos, s))
+                    return true;
+
+            return false;
         }
 
         public static bool isLinkString(string s, int beg, int end)

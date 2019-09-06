@@ -257,6 +257,7 @@ namespace m0.ZeroCode
         IDictionary<string, List<keywordTryingData>> examinedKeywords_All; // all keywords are here
         IDictionary<string, List<keywordTryingData>> examinedKeywords_StartInLocalRootOnly; // StartInLocalRoot only?
         IDictionary<char, List<string>> allKeywordsSubstringsDictionary;
+        IDictionary<char, List<string>> allKeywordsSubstringsDictionary_witchoutCodeViewTimeLinkKeywordParts;
 
         IDictionary<IVertex, KeywordInfo> keywordInfoDict;        
 
@@ -1127,11 +1128,11 @@ namespace m0.ZeroCode
 
             int sPos_copy;
             
-            if (!testIfIsKeywordSubstring(sPos))
+            if (!ZeroCodeCommon.testIfIsKeywordSubstring(sPos, text, allKeywordsSubstringsDictionary))
             {
                 if (!isTopLevelCall && ZeroCodeUtil.tryStringMatch(text, sPos, ZeroCodeCommon.CodeGraphLinkPrefix.ToString())) // @
                 {
-                    ZeroCodeCommon.tryStringFromLinkString(text, sPos, ref sPos, endPos_forAtomParts);
+                    ZeroCodeCommon.tryStringFromLinkString(text, sPos, ref sPos, endPos_forAtomParts, allKeywordsSubstringsDictionary_witchoutCodeViewTimeLinkKeywordParts);
 
                     string foundString = text.Substring(startPos, sPos - startPos);
 
@@ -1157,7 +1158,7 @@ namespace m0.ZeroCode
                         {
                             sPos++;
 
-                            if (testIfIsKeywordSubstring(sPos))
+                            if (ZeroCodeCommon.testIfIsKeywordSubstring(sPos, text, allKeywordsSubstringsDictionary))
                                 shallProceed = false;
 
                             if (s.currentLineInfo.IsLineEnd(sPos))
@@ -1940,22 +1941,6 @@ namespace m0.ZeroCode
             return false;
         }
 
-        private bool testIfIsKeywordSubstring(int startPos)
-        {
-            char charAtPos = text[startPos];
-
-            if (!allKeywordsSubstringsDictionary.ContainsKey(charAtPos))
-                return false;
-
-            List<string> l = allKeywordsSubstringsDictionary[charAtPos];
-
-            foreach (string s in l)
-                if (ZeroCodeUtil.tryStringMatch(text, startPos, s))
-                    return true;
-
-            return false;
-        }
-
         void log_keywords(List<keywordTryingData> examinedKeywords, int pos, string LOGPREFIX)
         {
             string pre = "";
@@ -2187,6 +2172,7 @@ namespace m0.ZeroCode
 
 
             allKeywordsSubstringsDictionary = new Dictionary<char, List<string>>();
+            allKeywordsSubstringsDictionary_witchoutCodeViewTimeLinkKeywordParts = new Dictionary<char, List<string>>();
 
             foreach (IEdge keyword in FormalTextLanguage.GetAll(false, @"Keywords:\$Keyword:"))
             {
@@ -2287,7 +2273,7 @@ namespace m0.ZeroCode
                 {
                     isInsideParameter = true;
 
-                    addSubString(allKeywordsSubstringsDictionary, keywordString.Substring(prevPos, keywordPos - prevPos));
+                    addSubString(keywordString.Substring(prevPos, keywordPos - prevPos));
                 }
 
                 if (isInsideParameter && ZeroCodeUtil.tryStringMatch(keywordString, keywordPos, ">)"))
@@ -2298,40 +2284,51 @@ namespace m0.ZeroCode
 
                 if (ZeroCodeUtil.tryStringMatch(keywordString, keywordPos, "(*"))
                 {
-                    addSubString(allKeywordsSubstringsDictionary, keywordString.Substring(prevPos, keywordPos - prevPos));
+                    addSubString(keywordString.Substring(prevPos, keywordPos - prevPos));
 
                     prevPos = keywordPos + 2;
                 }
 
                 if (ZeroCodeUtil.tryStringMatch(keywordString, keywordPos, "*)"))
                 {
-                    addSubString(allKeywordsSubstringsDictionary, keywordString.Substring(prevPos, keywordPos - prevPos));
+                    addSubString(keywordString.Substring(prevPos, keywordPos - prevPos));
 
                     prevPos = keywordPos + 2;
                 }
 
                 if (ZeroCodeUtil.tryStringMatch(keywordString, keywordPos, "(+"))
                 {
-                    addSubString(allKeywordsSubstringsDictionary, keywordString.Substring(prevPos, keywordPos - prevPos));
+                    addSubString(keywordString.Substring(prevPos, keywordPos - prevPos));
 
                     prevPos = keywordPos + 2;
                 }
 
                 if (ZeroCodeUtil.tryStringMatch(keywordString, keywordPos, "+)"))
                 {
-                    addSubString(allKeywordsSubstringsDictionary, keywordString.Substring(prevPos, keywordPos - prevPos));
+                    addSubString(keywordString.Substring(prevPos, keywordPos - prevPos));
 
                     prevPos = keywordPos + 2;
                 }
             }
 
-            addSubString(allKeywordsSubstringsDictionary, keywordString.Substring(prevPos, keywordPos - prevPos));
+            addSubString(keywordString.Substring(prevPos, keywordPos - prevPos));
         }
 
-        private void addSubString(IDictionary<char, List<string>> dict, string subString)
+        private void addSubString(string subString)
         {
             subString = subString.Trim();
 
+            if (subString.Length == 0)
+                return;
+
+            addSubString_dictionary(allKeywordsSubstringsDictionary, subString);
+
+            if(!ZeroCodeCommon.CodeViewTimeLinkKeywordParts.Contains(subString) && !Char.IsLetter(subString[0]))
+                addSubString_dictionary(allKeywordsSubstringsDictionary_witchoutCodeViewTimeLinkKeywordParts, subString);
+        }
+
+        private void addSubString_dictionary(IDictionary<char, List<string>> dict, string subString)
+        {
             if (subString.Length == 0)
                 return;
 
