@@ -333,17 +333,20 @@ namespace m0.ZeroCode.Helpers
                 switch (numericType)
                 {
                     case NumericTypeEnum.Decimal:
-                        if (NumberCompare<decimal>((decimal)val, 1))
+                        if(Comparer<decimal>.Default.Compare((decimal)val, 0) > 0)
+                        //if (NumberCompare<decimal>((decimal)val, 1)) // other def of true
                             return true;
                         break;
 
                     case NumericTypeEnum.Double:
-                        if (NumberCompare<double>((double)val, 1))
+                        if (Comparer<double>.Default.Compare((double)val, 0) > 0)
+                        //if (NumberCompare<double>((double)val, 1))
                             return true;
                         break;
 
                     case NumericTypeEnum.Integer:
-                        if (NumberCompare<int>((int)val, 1))
+                        if (Comparer<int>.Default.Compare((int)val, 0) > 0)
+                        //if (NumberCompare<int>((int)val, 1))
                             return true;
                         break;
                 }

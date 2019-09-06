@@ -284,8 +284,9 @@ namespace m0
             IVertex code = x.AddVertex(null, "code");
             IVertex stack = x.AddVertex(null, "stack");
 
-            /*MinusZero.Instance.NewDefaultParser.Parse(code,
-                "\"Code\"" + "" +
+            IVertex code1 = code.AddVertex(null, null);
+            MinusZero.Instance.NewDefaultParser.Parse(code1,
+                "\"Code1\"" + "" +
                 "\r\n\tvariable \"A\" @String" +
                 "\r\n\tvariable \"B\" @String" +
                 "\r\n\tvariable \"C\" @String" +
@@ -298,13 +299,14 @@ namespace m0
                 "\r\n\tB +< \"B3\"" +
                 "\r\n\tA := \"val A\"" +
                 "\r\n\tB := \"val B\"" +
-                "\r\n\tC +< A\\ >+< B\\" +
-                "\r\n\tD +< C\\ >-< B\\"
+                "\r\n\tC +< A\\ <+> B\\" +
+                "\r\n\tD +< C\\ <-> B\\"
                 
-                );*/
+                );
 
-            /*            MinusZero.Instance.NewDefaultParser.Parse(code,
-                            "\"Code\"" +
+            IVertex code2 = code.AddVertex(null, null);
+            MinusZero.Instance.NewDefaultParser.Parse(code2,
+                            "\"Code2\"" +
                             "\r\n\tvariable \"Test\" @String" +
                             "\r\n\tvariable \"Test2\" @String" +
                             "\r\n\tvariable \"Test3\" @String" +
@@ -312,14 +314,15 @@ namespace m0
                             "\r\n\tvariable \"Radek\" @String 2:2"+
                             "\r\n\tRadek += \"Koha\""+
                             "\r\n\tMagunia+<Radek" +
-                            "\r\n\tTest +< Magunia >+< Radek >+< Radek" +
-                            "\r\n\tTest2 = Test\\ >+< \"TST\"" +
+                            "\r\n\tTest +< Magunia <+> Radek <+> Radek" +
+                            "\r\n\tTest2 = Test\\ <+> \"TST\"" +
                             "\r\n\tTest3 = \"TEST#3\""+
-                            "\r\n\tTest3 += Test\\ >-< Radek"
-                            );*/
+                            "\r\n\tTest3 += Test\\ <-> Radek"
+                            );
 
-            /*MinusZero.Instance.NewDefaultParser.Parse(code,
-            "\"Code\"" +
+            IVertex code3 = code.AddVertex(null, null);
+            MinusZero.Instance.NewDefaultParser.Parse(code3,
+            "\"Code3\"" +
             "\r\n\tvariable \"A\" @String" +
             "\r\n\tvariable \"B\" @String" +
             "\r\n\tvariable \"C\" @String" +
@@ -329,10 +332,11 @@ namespace m0
             "\r\n\t\tA=B" +
             "\r\n\t\tB=\"main b\"" +
             "\r\n\t@X[\"Radek\"]"
-            );*/
+            );
 
-            /* MinusZero.Instance.NewDefaultParser.Parse(code,
-            "\"Code\"" +
+            IVertex code4 = code.AddVertex(null, null);
+            MinusZero.Instance.NewDefaultParser.Parse(code4,
+            "\"Code4\"" +
             "\r\n\tvariable \"A\" @String" +
             "\r\n\tvariable \"B\" @String" +
             "\r\n\tvariable \"C\" @String" +
@@ -351,12 +355,13 @@ namespace m0
             "\r\n\tB += \"1\"" +
             "\r\n\tC = A<B"+
             "\r\n\tD = !C"
-            );*/
+            );
 
             //() ! <>
 
-            /*MinusZero.Instance.NewDefaultParser.Parse(code,
-           "\"Code\"" +
+            IVertex code5 = code.AddVertex(null, null);
+            MinusZero.Instance.NewDefaultParser.Parse(code5,
+           "\"Code5\"" +
            "\r\n\tvariable \"A\" @String" +
            "\r\n\tvariable \"B\" @String" +
            "\r\n\tvariable \"C\" @String" +
@@ -367,10 +372,11 @@ namespace m0
            "\r\n\tB = (\"1\" + \"2\") * \"3\"" +
            "\r\n\tC = A<\"2\">" +
            "\r\n\tD = !C"
-           );*/
+           );
 
-            /*MinusZero.Instance.NewDefaultParser.Parse(code,
-          "\"Code\"" +
+            IVertex code6 = code.AddVertex(null, null);
+            MinusZero.Instance.NewDefaultParser.Parse(code6,
+          "\"Code6\"" +
           "\r\n\tvariable \"A\" @String" +
           "\r\n\tvariable \"B\" @String" +
           "\r\n\tvariable \"C\" @String" +
@@ -378,10 +384,11 @@ namespace m0
           "\r\n\tfunction \"Add\" @Integer(@Integer \"x\")" + 
           "\r\n\t\treturn x+\"1\"" +
           "\r\n\tA = @Add[\"3\"]"
-          );*/
+          );
 
-               /*MinusZero.Instance.NewDefaultParser.Parse(code,
-             "\"Code\"" +
+            IVertex code7 = code.AddVertex(null, null);
+            MinusZero.Instance.NewDefaultParser.Parse(code7,
+             "\"Code7\"" +
              "\r\n\tvariable \"A\" @String" +
              "\r\n\tvariable \"B\" @String" +
              "\r\n\tvariable \"C\" @String" +
@@ -406,10 +413,11 @@ namespace m0
              "\r\n\t\tforeach \"Y\" in B" +
              "\r\n\t\t\tforeach \"W\" in D" +
              "\r\n\t\t\t\tE += (W * \"200\") + (Z * \"20\") + (X*\"4\") + Y"
-             );*/
+             );
 
-           /* MinusZero.Instance.NewDefaultParser.Parse(code,
-       "\"Code\"" +
+            IVertex code8 = code.AddVertex(null, null);
+            MinusZero.Instance.NewDefaultParser.Parse(code8,
+       "\"Code8\"" +
        "\r\n\tvariable \"A\" @String" +
        "\r\n\tvariable \"B\" @String" +
        "\r\n\tA = \"0\"" +
@@ -417,9 +425,10 @@ namespace m0
        "\r\n\t\tB += A" +
        "\r\n\t\tA = A + \"1\""
 
-       );*/
+       );
 
-            MinusZero.Instance.NewDefaultParser.Parse(code,
+            IVertex code9 = code.AddVertex(null, null);
+            MinusZero.Instance.NewDefaultParser.Parse(code9,
         "\"Code\"" +
         "\r\n\t\"TEST\""
 
