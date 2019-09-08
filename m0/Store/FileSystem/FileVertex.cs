@@ -40,7 +40,7 @@ namespace m0.Store.FileSystem
                     if (newFileName != FI.FullName){
                         while (System.IO.File.Exists(newFileName) || System.IO.Directory.Exists(newFileName))
                             newFileName = FileSystemUtil.addNew(newFileName);
-
+                        
                         FI.MoveTo(newFileName);
 
                         _Identifier = newFileName;                        

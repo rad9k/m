@@ -1494,7 +1494,9 @@ namespace m0.ZeroUML.Instructions
             IVertex expressions = instructionVertex.GetAll(false, "Expression:");
             IVertex inputParameters = target.GetAll(false, "InputParameter:");
 
-            for (int x=0; x < expressions.Count(); x++)
+            int minParameters = Math.Min(expressions.Count(), inputParameters.Count());
+
+            for (int x=0; x < minParameters; x++)
             {
                 IVertex expression = expressions.OutEdges[x].To;
                 IVertex inputParameter = inputParameters.OutEdges[x].To;
