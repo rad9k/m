@@ -1082,10 +1082,6 @@ namespace m0.ZeroCode
                             wasThereNewLine = true;
                         }
                     }
-                    else
-                    {
-                        int x = 0;
-                    }
                     AppendEdge(e, null, basePath + "\\" + GraphUtil.GetIdentyfyingQuerySubString_ImportMeta(e));
                 }
 

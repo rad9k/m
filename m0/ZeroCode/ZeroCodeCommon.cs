@@ -129,9 +129,9 @@ namespace m0.ZeroCode
             return false;
         }
 
-        public static bool isLinkString(string s, int beg, int end)
+        public static bool isLinkString(string s, int beg)
         {
-            if (s[beg] == CodeGraphLinkPrefix)
+            if (s[beg] == CodeGraphLinkPrefix && s.Length>=beg && s[beg + 1] != CodeGraphLinkPrefix) // @@ support
                 return true;
 
             return false;

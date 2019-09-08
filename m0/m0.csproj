@@ -453,16 +453,19 @@
     <Resource Include="Images\Untitled1.png" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="_test\obsolete\test.txt" />
+    <Resource Include="_PROJECT\test\obsolete\test.txt" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="_test\querytest.txt" />
+    <Resource Include="_PROJECT\test\querytest.txt" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="_test\test.txt" />
+    <Resource Include="_PROJECT\test\test.txt" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="_test\montevideo_principles.txt" />
+    <Resource Include="_PROJECT\theory\montevideo_principles.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="_PROJECT\I_S_S_U_E_S.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

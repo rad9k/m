@@ -367,7 +367,7 @@ namespace m0
             // "||" > "::"        
 
             GeneralUtil.ParseAndExcute(smu, sm,
-                "{ExpressionAtom,Atom" +
+                "{At{Target{$MinCardinality:1,$MaxCardinality:1}},ExpressionAtom,Atom" +
                 ",SingleOperator{NextExpression{$MinCardinality:1,$MaxCardinality:1}}" +
                 ",SingleExpressionOperator{Expression{$MinCardinality:1,$MaxCardinality:1}}" +
                 ",DoubleOperator{LeftExpression{$MinCardinality:1,$MaxCardinality:1},RightExpression{$MinCardinality:1,$MaxCardinality:1}}" +
@@ -389,6 +389,10 @@ namespace m0
                 "}");
 
             // CallableEndPoint
+
+            // At
+
+            AddDotNetEndPoint(smu.Get(false, "At"), "At");
 
             // query
 
@@ -495,7 +499,7 @@ namespace m0
 
             smu.Get(false, @"?").AddEdge(sm.Get(false, "*$Inherits"), smu.Get(false, "SingleOperator"));
             smu.Get(false, "\"\\ \"").AddEdge(sm.Get(false, "*$Inherits"), smu.Get(false, "SingleOperator"));
-            smu.Get(false, "\"|\"").AddEdge(sm.Get(false, "*$Inherits"), smu.Get(false, "SingleOperator"));
+            smu.Get(false, "\"|\"").AddEdge(sm.Get(false, "*$Inherits"), smu.Get(false, "DoubleOperator"));
             smu.Get(false, "\"||\"").AddEdge(sm.Get(false, "*$Inherits"), smu.Get(false, "DoubleOperator"));
             smu.Get(false, @"()").AddEdge(sm.Get(false, "*$Inherits"), smu.Get(false, "SingleExpressionOperator"));
             smu.Get(false, @"CopyVertexValue").AddEdge(sm.Get(false, "*$Inherits"), smu.Get(false, "DoubleOperator"));
@@ -534,6 +538,9 @@ namespace m0
             smu.Get(false, @"ForEach").AddEdge(sm.Get(false, "*$Inherits"), smu.Get(false, "Action"));
 
             smu.Get(false, @"Function").AddEdge(sm.Get(false, "*$Inherits"), smu.Get(false, "StackFrameCreatorWithInputOutput"));
+
+            //At
+            smu.Get(false, @"At\Target").AddEdge(sm.Get(false, @"*$EdgeTarget"), smu.Get(false, @"Vertex"));
 
             //expression edges
             smu.Get(false, @"StackFrameCreatorWithInputOutput\InputParameter").AddEdge(sm.Get(false, @"*$VertexTarget"), smu.Get(false, @"Type"));
@@ -598,6 +605,7 @@ namespace m0
             IVertex package = smu.AddVertex(null, "Package");
 
 
+            package.AddEdge(null, smu.Get(false, "At"));
             package.AddEdge(null, smu.Get(false, "AtomType"));
             package.AddEdge(null, smu.Get(false, "StateMachine"));
             package.AddEdge(null, smu.Get(false, "Enum"));
@@ -682,6 +690,19 @@ namespace m0
             IVertex nonSelfRecursiveParameters = smb.Get(false, @"$$NonSelfRecursiveParameters");
 
             string anyString = "(?<ANY>)";
+
+            // @
+            //
+            // @(?<link>)
+
+            IVertex at = k.AddVertex(keyword, "@(?<link>)");
+
+            IVertex at_at = at.AddVertex(smu.Get(false, @"At"), "");
+
+            at_at.AddEdge(_is, smu.Get(false, @"At"));
+
+            at_at.AddVertex(smu.Get(false, @"At\Target"), "(?<link>)");
+
 
             // import meta
             //

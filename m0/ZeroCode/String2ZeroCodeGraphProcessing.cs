@@ -1127,10 +1127,13 @@ namespace m0.ZeroCode
             //
 
             int sPos_copy;
-            
-            if (!ZeroCodeCommon.testIfIsKeywordSubstring(sPos, text, allKeywordsSubstringsDictionary))
+
+            bool _isLink = ZeroCodeCommon.isLinkString(text, sPos);
+
+
+            if (!ZeroCodeCommon.testIfIsKeywordSubstring(sPos, text, allKeywordsSubstringsDictionary) || _isLink)
             {
-                if (!isTopLevelCall && ZeroCodeUtil.tryStringMatch(text, sPos, ZeroCodeCommon.CodeGraphLinkPrefix.ToString())) // @
+                if (!isTopLevelCall && _isLink) // @
                 {
                     ZeroCodeCommon.tryStringFromLinkString(text, sPos, ref sPos, endPos_forAtomParts, allKeywordsSubstringsDictionary_witchoutCodeViewTimeLinkKeywordParts);
 
@@ -1404,10 +1407,18 @@ namespace m0.ZeroCode
                                 // keywordCharacter => keywordCharacer
                                 if ( ktd.currentPositionCharacter_isCharacterMatch(s, sPos) )
                                 {
-                                    ktd.currentPositionInKeyword_Increase(sPos);
+                                    if (ktd.keyword[0] == ZeroCodeCommon.CodeGraphLinkPrefix && text.Length >= sPos && text[sPos + 1] != ZeroCodeCommon.CodeGraphLinkPrefix)
+                                    {
+                                        // XXX
+                                        // this is @ but not @@
+                                    }
+                                    else
+                                    {
+                                        ktd.currentPositionInKeyword_Increase(sPos);
 
-                                    newExaminedKeywords.Add(ktd);
-                                    MinusZero.Instance.Log(1, "_tryIsKeyword", LOGPREFIX+"sPos:" + sPos + " keywordCharacter -> keywordCharacter");
+                                        newExaminedKeywords.Add(ktd);
+                                        MinusZero.Instance.Log(1, "_tryIsKeyword", LOGPREFIX + "sPos:" + sPos + " keywordCharacter -> keywordCharacter");
+                                    }
                                 }
                                 else
                                 {
@@ -1733,6 +1744,7 @@ namespace m0.ZeroCode
             if (examinedKeywords.Count == 0)
             {
                 link = tryLink;
+
 
                 newPos = tryNewPos;
 
@@ -2318,7 +2330,7 @@ namespace m0.ZeroCode
         {
             subString = subString.Trim();
 
-            if (subString.Length == 0)
+            if (subString.Length == 0 || subString[0] == ZeroCodeCommon.CodeGraphLinkPrefix) // XXX CodeGraphLinkPrefix hack for @@
                 return;
 
             addSubString_dictionary(allKeywordsSubstringsDictionary, subString);

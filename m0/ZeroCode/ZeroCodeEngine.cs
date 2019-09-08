@@ -35,7 +35,8 @@ namespace m0.ZeroCode
         }
 
         public string ZeroCodeGraph2String(IEdge graphBaseEdge)
-        {            
+        {
+            //return "";
             return ZeroCodeGraph2StringProcessing_Instance.Process(graphBaseEdge);
         }
 

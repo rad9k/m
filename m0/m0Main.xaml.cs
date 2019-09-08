@@ -429,8 +429,9 @@ namespace m0
 
             IVertex code9 = code.AddVertex(null, null);
             MinusZero.Instance.NewDefaultParser.Parse(code9,
-        "\"Code\"" +
-        "\r\n\t\"TEST\""
+        "\"Code9\"" +
+        "\r\n\tvariable \"a\" @Vertex" +
+        "\r\n\ta=@System"
 
         );
 
