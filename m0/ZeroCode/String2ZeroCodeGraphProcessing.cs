@@ -254,6 +254,7 @@ namespace m0.ZeroCode
         
         IDictionary<string, IList<IVertex>> emptyKeywordByGroupsDictionary;
         IDictionary<string, IList<IVertex>> newVertexKeywordByGroupsDictionary;
+        IDictionary<string, IList<IVertex>> linkKeywordByGroupsDictionary;
         IDictionary<string, List<keywordTryingData>> examinedKeywords_All; // all keywords are here
         IDictionary<string, List<keywordTryingData>> examinedKeywords_StartInLocalRootOnly; // StartInLocalRoot only?
         IDictionary<char, List<string>> allKeywordsSubstringsDictionary;
@@ -1122,7 +1123,8 @@ namespace m0.ZeroCode
             SpecialKeywordType specialType = SpecialKeywordType.NewVertexKeyword; // got to intialize
 
             IList<IVertex> possible_emptyKeyworsByKeywordsFilter = new List<IVertex>(); 
-            IList<IVertex> possible_newVertexKeywordsByKeywordsFilter = new List<IVertex>(); 
+            IList<IVertex> possible_newVertexKeywordsByKeywordsFilter = new List<IVertex>();
+            IList<IVertex> possible_linkKeywordsByKeywordsFilter = new List<IVertex>();
 
             //
 
@@ -2164,7 +2166,9 @@ namespace m0.ZeroCode
         {            
             emptyKeywordByGroupsDictionary = ZeroCodeUtil.getFilteredKeywordListByGroup(FormalTextLanguage, "$$EmptyKeyword:");
 
-            newVertexKeywordByGroupsDictionary = ZeroCodeUtil.getFilteredKeywordListByGroup(FormalTextLanguage, "$$NewVertexKeyword:");                        
+            newVertexKeywordByGroupsDictionary = ZeroCodeUtil.getFilteredKeywordListByGroup(FormalTextLanguage, "$$NewVertexKeyword:");
+
+            linkKeywordByGroupsDictionary = ZeroCodeUtil.getFilteredKeywordListByGroup(FormalTextLanguage, "$$LinkKeyword:");
         }
 
         private void prepareDictionaries()

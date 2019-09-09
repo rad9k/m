@@ -99,10 +99,6 @@ namespace m0
 
         //
 
-        public IVertex _newValueKeywordVertex;
-
-        public IVertex _emptyKeywordVertex;
-
         public IVertex CreateTempVertex()
         {
             return new EasyVertex(this.tempstore);
@@ -242,7 +238,7 @@ namespace m0
         {
             IVertex sm = Root.Get(false, @"System\Meta");
 
-            GeneralUtil.ParseAndExcute(sm, null, "{Base{$,Vertex{$IsLink,$Inherits,$StackFrameInherits,$Is,$EdgeTarget,$VertexTarget,$IsAggregation,$MinCardinality,$MaxCardinality,$MinTargetCardinality,$MaxTargetCardinality,$DefaultValue,$DefaultViewVisualiser,$DefaultEditVisualiser,$DefaultOpenVisualiser,$Group,$Section,$Description,$ExecutableEndPoint,Author,Dependency},$Empty,$Import,$ImportMeta,$Keyword,$KeywordGroupDefinition,$$KeywordGroup,$$KeywordManyRoot,$$LocalRoot,$$StartInLocalRoot,$$EmptyKeyword,$$NewVertexKeyword,$$NonSelfRecursiveParameters,$NewLine,$ParseRoot,$ParseArtefacts}}");
+            GeneralUtil.ParseAndExcute(sm, null, "{Base{$,Vertex{$IsLink,$Inherits,$StackFrameInherits,$Is,$EdgeTarget,$VertexTarget,$IsAggregation,$MinCardinality,$MaxCardinality,$MinTargetCardinality,$MaxTargetCardinality,$DefaultValue,$DefaultViewVisualiser,$DefaultEditVisualiser,$DefaultOpenVisualiser,$Group,$Section,$Description,$ExecutableEndPoint,Author,Dependency},$Empty,$Import,$ImportMeta,$Keyword,$KeywordGroupDefinition,$$KeywordGroup,$$KeywordManyRoot,$$LocalRoot,$$StartInLocalRoot,$$EmptyKeyword,$$NewVertexKeyword,$$LinkKeyword,$$NonSelfRecursiveParameters,$NewLine,$ParseRoot,$ParseArtefacts}}");
 
             sm.Get(false, @"Presentation\$Hide").AddEdge(sm.Get(false, @"Base\Vertex\$EdgeTarget"), sm.Get(false, @"Base\Vertex"));
 
@@ -687,6 +683,7 @@ namespace m0
 
             IVertex emptyKeyword = smb.Get(false, "$$EmptyKeyword");
             IVertex newVertexKeyword = smb.Get(false, "$$NewVertexKeyword");
+            IVertex linkKeyword = smb.Get(false, "$$LinkKeyword");
             IVertex nonSelfRecursiveParameters = smb.Get(false, @"$$NonSelfRecursiveParameters");
 
             string anyString = "(?<ANY>)";
@@ -696,6 +693,8 @@ namespace m0
             // @(?<link>)
 
             IVertex at = k.AddVertex(keyword, "@(?<link>)");
+
+            at.AddVertex(linkKeyword, "");
 
             IVertex at_at = at.AddVertex(smu.Get(false, @"At"), "");
 
@@ -1613,8 +1612,6 @@ namespace m0
 
             IVertex newValueKeyword = k.AddVertex(keyword, "\"(?<value>)\"");
 
-            _newValueKeywordVertex = newValueKeyword;
-
             newValueKeyword.AddVertex(newVertexKeyword, "");
 
             newValueKeyword.AddEdge(keywordGroup, kgd_ColonEmptyInner2SlashMarkIndexNew);
@@ -1631,8 +1628,6 @@ namespace m0
             //
 
             IVertex empty1Keyword = k.AddVertex(keyword, "(?<value>)");
-
-            _emptyKeywordVertex = empty1Keyword;
 
             empty1Keyword.AddVertex(emptyKeyword, "");
 
