@@ -36,6 +36,8 @@ namespace m0.ZeroCode
 
         public static char CodeGraphLinkPrefix = '@';
 
+        public static string CodeGraphLinkKeyword = "@@"; // we store it here and in the textlanguage
+
         public static char NewVertexPrefix = '\"';
 
         public static char NewVertexSuffix = '\"';
@@ -46,7 +48,7 @@ namespace m0.ZeroCode
 
         public static char EscapeCharacter = '\\';
 
-        public static string[] CodeViewTimeLinkKeywordParts = { "\\", "{","}","|","||",":","::","<",">"};
+        public static string[] CodeViewTimeLinkKeywordParts = { "\\", "{","}","|","||",":","::","<",">",","}; // we store it here and in the textlanguage, but in general this is XXX. big question remins: how do you do cvtq while the code is in some different language?
 
         // Link
         ///////
@@ -65,6 +67,11 @@ namespace m0.ZeroCode
                 return s;
             else
                 return s.Substring(ZeroCodeCommon.CodeGraphLinkPrefix.ToString().Length);
+        }
+
+        public static string stringFromLinkKeywordString(string s)
+        {
+            return s.Substring(ZeroCodeCommon.CodeGraphLinkKeyword.ToString().Length).TrimEnd();
         }
 
         // to be used only in ZeroCodeCommon.stringFromLinkString( , FALSE) scenario
@@ -137,14 +144,14 @@ namespace m0.ZeroCode
             return false;
         }
 
-        public static bool isLinkString(string s)
+        public static bool isLinkKeywordString(string s, int beg)
         {
-            if (s.Length > 0
-                && s[0] == ZeroCodeCommon.CodeGraphLinkPrefix)
-                return true;
+            for (int x = 0; x < CodeGraphLinkKeyword.Length; x++)
+                if (s[beg + x] != CodeGraphLinkKeyword[x])
+                    return false;
 
-            return false;
-        }
+            return true;
+        }        
 
         //  NewVertexString
         ///////////////////

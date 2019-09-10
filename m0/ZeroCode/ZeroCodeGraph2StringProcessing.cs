@@ -548,10 +548,11 @@ namespace m0.ZeroCode
 
         void AppendIs(IEdge e)
         {            
-            SourceAppend("$Is");
+            SourceAppend("@$Is");
             AppendDoubleColon();
 
-            SourceAppend(ZeroCodeCommon.stringToLinkString(ZeroCodeCommon.stringToPossiblyEscapedString(e.To.Value.ToString()),true));            
+            //SourceAppend(ZeroCodeCommon.stringToLinkString(ZeroCodeCommon.stringToPossiblyEscapedString(e.To.Value.ToString()), true));
+            SourceAppend(ZeroCodeCommon.stringToLinkString(ZeroCodeCommon.stringToPossiblyEscapedString(e.To.Value.ToString()),false));            
         }
 
         void AppendDoubleColon()
@@ -1127,7 +1128,9 @@ namespace m0.ZeroCode
 
                 prefixAppended = true;
 
-                AppendAsLink(e.Meta, parent, true);
+                //AppendAsLink(e.Meta, parent, true);
+
+                AppendAsLink(e.Meta, parent, false); // XXX we want cvtq linx in <> with @
 
                 AppendDoubleColon();
             }

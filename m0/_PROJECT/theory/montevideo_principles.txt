@@ -6,19 +6,29 @@
    execution of it may result in a set of root level edges
  - code view time graph query (@) - a @ starting a query, that performs on the code graph in the code view time.
    by @ definition, it points to only one vertex
+ - code view time graph query link expression (@@) - special link keyword (@). it's "Target" edge points to vertex, 
+   that in code is displayed as the code view time graph query (@)
+   by @ definition, it points to only one vertex
 
 1) In the unified grammar graph representation, any expression can be: 
  - atom value subgraph (""). atom value is copied to the newly created stack returned
  - non atom value subgraph (""). newly created stack returned has edge pointing to subgraph root vertex
  - executable subgraph. subgraph is executed and the execution stack is returned
  - code view time query (@). depending on the query target
+ - code view time graph query link expression (@@). depending on the query target
 
-2) In the case expression being code view time query (@), depending on the query target vertex:
+2) In the case expression being code view time query (@) or code view time graph query link expression (@@), 
+   depending on the query target vertex:
  - atom value subgraph (""). atom value is copied to the newly created stack returned
  - non atom value subgraph (""). newly created stack returned has edge pointing to subgraph root vertex
  - executable subgraph. sub-graph is executed and the execution stack is returned
 
-3) For executable subgraph queries, at the beginning of code graph execution,
+3) The code view time graph query link expression (@@) needs to be introduced as keyword subgraph edges does
+   not have to be links, thus in code view will containt it's target vertexes subgraphs and not
+   code view time queries, as expected. This is especially a case when target vertexes subgraph is 
+   not part of code view subgraph.
+
+4) For executable subgraph queries, at the beginning of code graph execution,
    special variable (named $) is added to the stack bottom. The $ variable points to code graph execution root.
 
    
