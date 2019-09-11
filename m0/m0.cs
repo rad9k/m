@@ -688,20 +688,6 @@ namespace m0
 
             string anyString = "(?<ANY>)";
 
-            // @
-            //
-            // @(?<value>)
-
-            IVertex at = k.AddVertex(keyword, "@(?<value>)");
-
-            at.AddVertex(linkKeyword, "");
-
-            IVertex at_at = at.AddVertex(any, "");
-
-            at_at.AddEdge(_is, smu.Get(false, @"Link"));
-
-            at_at.AddVertex(smu.Get(false, @"Link\Target"), "(?<value>)");
-
 
             // import meta
             //
@@ -1662,6 +1648,20 @@ namespace m0
             IVertex empty2Keyword_any_targetExpr = empty2Keyword_any.AddVertex(smu.Get(false, @"SingleOperator\NextExpression"), "");
 
             empty2Keyword_any_targetExpr.AddEdge(smb.Get(false, "$$LocalRoot"), kgd_Inner);
+
+            // @
+            //
+            // @(?<value>)
+
+            IVertex at = k.AddVertex(keyword, "@(?<value>)");
+
+            at.AddVertex(linkKeyword, "");
+
+            IVertex at_at = at.AddVertex(any, "");
+
+            at_at.AddEdge(_is, smu.Get(false, @"Link"));
+
+            at_at.AddVertex(smu.Get(false, @"Link\Target"), "(?<value>)");
 
         }
 

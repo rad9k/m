@@ -1468,7 +1468,8 @@ namespace m0.ZeroUML.Instructions
         {
             isStackFrameReturn = false;
 
-            IVertex expression = instructionVertex.Get(false, "Expression:");
+            IVertex expression = GraphUtil.GetQueryOutFirst(instructionVertex, "Expression", null);
+                //instructionVertex.Get(false, "Expression:");
 
             return exe.ExecuteInstruction(inputStack, expression);
         }
@@ -1477,7 +1478,8 @@ namespace m0.ZeroUML.Instructions
         {
             isStackFrameReturn = false;
 
-            IVertex target = instructionVertex.Get(false, "Target:");
+            IVertex target = GraphUtil.GetQueryOutFirst(instructionVertex, "Target", null);
+                //instructionVertex.Get(false, "Target:");
 
             if(!InstructionHelpers.CheckIs(target, "Function"))
             {
@@ -1491,15 +1493,17 @@ namespace m0.ZeroUML.Instructions
 
             exe.AddStackFrame(); // ENTER NEW STACK
 
-            IVertex expressions = instructionVertex.GetAll(false, "Expression:");
-            IVertex inputParameters = target.GetAll(false, "InputParameter:");
+            IList<IEdge> expressions = GraphUtil.GetQueryOut(instructionVertex, "Expression", null);
+            //instructionVertex.GetAll(false, "Expression:");
+            IList<IEdge> inputParameters = GraphUtil.GetQueryOut(target, "InputParameter", null);
+                //target.GetAll(false, "InputParameter:");
 
             int minParameters = Math.Min(expressions.Count(), inputParameters.Count());
 
             for (int x=0; x < minParameters; x++)
             {
-                IVertex expression = expressions.OutEdges[x].To;
-                IVertex inputParameter = inputParameters.OutEdges[x].To;
+                IVertex expression = expressions[x].To;
+                IVertex inputParameter = inputParameters[x].To;
 
                 INoInEdgeInOutVertexVertex expressionExecution = exe.ExecuteInstruction(exe.stack, expression);
 
@@ -1523,7 +1527,8 @@ namespace m0.ZeroUML.Instructions
         {
             isStackFrameReturn = true;
 
-            IVertex expression = instructionVertex.Get(false, "Expression:");
+            IVertex expression = GraphUtil.GetQueryOutFirst(instructionVertex, "Expression", null);
+                //instructionVertex.Get(false, "Expression:");
 
             if (expression != null)
             {
@@ -1537,10 +1542,12 @@ namespace m0.ZeroUML.Instructions
         {
             isStackFrameReturn = false;
 
-            IVertex variable = instructionVertex.Get(false, "Variable:");
-            IVertex set = instructionVertex.Get(false, "Set:");
+            IVertex variable = GraphUtil.GetQueryOutFirst(instructionVertex, "Variable", null);
+            //instructionVertex.Get(false, "Variable:");
+            IVertex set = GraphUtil.GetQueryOutFirst(instructionVertex, "Set", null); 
+                //instructionVertex.Get(false, "Set:");
 
-            if(variable!=null && set != null)
+            if (variable!=null && set != null)
             {
                 INoInEdgeInOutVertexVertex setExecution = exe.ExecuteInstruction(exe.stack, set);
 
@@ -1574,7 +1581,8 @@ namespace m0.ZeroUML.Instructions
         {
             isStackFrameReturn = false;
 
-            IVertex test = instructionVertex.Get(false, "Test:");
+            IVertex test = GraphUtil.GetQueryOutFirst(instructionVertex, "Test", null); 
+                //instructionVertex.Get(false, "Test:");
 
             if (test != null)
             {
@@ -1606,6 +1614,20 @@ namespace m0.ZeroUML.Instructions
             return InstructionHelpers.Create_INoInEdgeInOutVertexVertex_FromEdgesList(inputStack);
         }
 
+        public static INoInEdgeInOutVertexVertex Link(ZeroCodeExecution exe, IVertex inputStack, IVertex instructionVertex, out bool isStackFrameReturn)
+        {
+            isStackFrameReturn = false;
+
+            INoInEdgeInOutVertexVertex newStack = InstructionHelpers.CreateStack();
+
+            IVertex target = GraphUtil.GetQueryOutFirst(instructionVertex, "Target", null);
+
+            if (target != null)
+                newStack.AddEdgeForNoInEdgeInOutVertexVertex(GraphUtil.CreateArtificialEdge(null, target));
+
+            return newStack;
+        }
+
         #endregion
 
         ////////////////////////////////////////////////////////////////
@@ -1614,7 +1636,7 @@ namespace m0.ZeroUML.Instructions
         //
         ////////////////////////////////////////////////////////////////
 
-        #region StackOperators
+#region StackOperators
 
         public static INoInEdgeInOutVertexVertex CreateStackEdge(ZeroCodeExecution exe, IVertex inputStack, IVertex instructionVertex, out bool isStackFrameReturn)
         {

@@ -1,6 +1,8 @@
-﻿1. @System || "new"
+﻿   -1. @System || "new"
 2. can not create Files
 3. exception handling throught custom meta code
-4. escape sequences in rtq support by keywords
+4. escape sequences in rtq support by keywords [8]
 5. root level queries on "stack root -1"
-6. @@
+   -6. @@
+7. basic perf check
+8. Get/GetAll switch [7]

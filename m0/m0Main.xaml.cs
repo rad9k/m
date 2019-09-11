@@ -431,7 +431,7 @@ namespace m0
             MinusZero.Instance.NewDefaultParser.Parse(code9,
         "\"Code9\"" +
         "\r\n\tvariable \"a\" @Vertex" +
-        "\r\n\ta=@System"
+        "\r\n\ta=@@System"
 
         );
 
