@@ -1135,7 +1135,8 @@ namespace m0.ZeroCode
                 AppendDoubleColon();
             }
 
-            return AppendVertex(e, path, prefixAppended, true, true);
+            //return AppendVertex(e, path, prefixAppended, true, true);
+            return AppendVertex(e, path, prefixAppended, true, false); // XXX we want cvtq linx in <> with @
         }
 
         private bool AppendVertex(IEdge e, string path, bool prefixAppended, bool appendSuffix, bool hideLinkPrefix)
