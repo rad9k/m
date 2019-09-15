@@ -214,6 +214,9 @@ namespace m0.Graph
             if (val is IEdge)
                 throw new Exception("Trying to add Edge as Vertex value");
 
+            if (val == null)
+                val = "";
+
             IVertex nv = (IVertex)Activator.CreateInstance(this.GetType(), new object[] { this.Store });
 
             nv.Value = val;

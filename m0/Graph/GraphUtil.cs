@@ -148,9 +148,26 @@ namespace m0.Graph
 
         public static object GetMetaAndValueObject(object meta, object value)
         {
-            return meta.ToString() + "@#$#@" + value.ToString(); // this is no good !!!!!!!!!. possible error when meta or value contains "@#$#@"
+            /*StringBuilder sb = new StringBuilder();
+            if (meta != null)
+                sb.Append(meta.ToString());
 
-            //return (long) (meta.GetHashCode() + value.GetHashCode()); // this is better BUT MAKES STRANGE ERROR XXX HELP
+            sb.Append("@#$#@");
+
+            if (value != null)
+                sb.Append(value.ToString());            
+
+            return sb.ToString();*/
+
+            int toRet = 0;
+            if (meta != null)
+                toRet = meta.GetHashCode();
+
+
+            if (value != null)
+                toRet += value.GetHashCode();
+
+            return toRet;
         }
         public static HashSet<IVertex> GetInheritChilds_RawEnumerate(IVertex baseVertex)
         {

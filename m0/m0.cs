@@ -1724,6 +1724,8 @@ namespace m0
 
             di.AddEdge(DirectMeta, Root.Get(false, @"System\Meta\ZeroTypes"));
 
+            di.AddEdge(DirectMeta, Root); // ROOT
+
             //
 
             IVertex Direct = VertexOperations.AddInstance(b, Root.Get(false, @"System\Meta\Base\$Import"));

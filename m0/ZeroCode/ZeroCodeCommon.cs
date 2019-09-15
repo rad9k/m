@@ -242,10 +242,10 @@ namespace m0.ZeroCode
 
             string s=o.ToString();
 
-            bool wasThereReplace = false;
+            bool needToSurroundWithEscape = false;
 
             if (s.IndexOf(' ') != -1)
-                wasThereReplace = true;
+                needToSurroundWithEscape = true;
 
            // if (s.IndexOf('{') != -1)
            //     wasThereReplace = true;
@@ -256,16 +256,19 @@ namespace m0.ZeroCode
             if (s.IndexOf('\\') != -1)
             {
                 s = s.Replace("\\", "\\\\");
-                wasThereReplace = true;
+                needToSurroundWithEscape = true;
             }
 
             if (s.IndexOf('\'') != -1)
             {
                 s = s.Replace("'", "\\'");
-                wasThereReplace = true;
+                needToSurroundWithEscape = true;
             }
 
-            if (wasThereReplace)
+        //    if (s.IndexOf('<') != -1 || s.IndexOf('>') != -1) // XXX
+           //         needToSurroundWithEscape = true;
+
+            if (needToSurroundWithEscape)
                 return surroundWithEscape(s);
             else
                 return s;

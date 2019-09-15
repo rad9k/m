@@ -149,7 +149,13 @@ namespace m0.ZeroCode
                         IEdge result;
                         IList<IEdge> results;
 
+                        if (e.Meta.Value.ToString() == "Item")
+                        {
+                            int xx = 0;
+                        }
+
                         e.From.QueryOutEdges(e.Meta, e.To, out result, out results);
+
 
                         IList<IEdge> listToUse;
 
@@ -169,7 +175,7 @@ namespace m0.ZeroCode
                             pos++;
                         } while (tv != e.To);
 
-                        s.Append(ZeroCodeCommon.stringToPossiblyEscapedString(toAppend.ToString()) + "|" + pos );
+                        s.Append(ZeroCodeCommon.stringToPossiblyEscapedString(toAppend.ToString()) + "<" + pos +">");
                     }
                 }    
 

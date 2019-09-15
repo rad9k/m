@@ -681,27 +681,27 @@ namespace m0
 
             //////////////////////
 
-            IVertex tt = tr.Get(false, "TEST").AddVertex(r.Get(false, "System*Class"), "TestClass");
+            IVertex tt = tr.Get(false, "TEST").AddVertex(r.Get(false, "System\\Meta\\ZeroUML\\Class"), "TestClass");
 
             for(int x=0;x<1;x++)
                 for (int y = 0; y < 1; y++)
                 {
-                    IVertex tta = tt.AddVertex(r.Get(false, "System*Attribute"), "a" + x + " " + y + ";" + randomChars());
-                    tta.AddVertex(r.Get(false, "System*$Group"), x.ToString());
-                    tta.AddVertex(r.Get(false, "System*$Section"), y.ToString());
+                    IVertex tta = tt.AddVertex(r.Get(false, "System\\Meta\\ZeroUML\\Class\\Attribute"), "a" + x + " " + y + ";" + randomChars());
+                    tta.AddVertex(r.Get(false, "System\\Meta\\Base\\Vertex\\$Group"), x.ToString());
+                    tta.AddVertex(r.Get(false, "System\\Meta\\Base\\Vertex\\$Section"), y.ToString());
 
-                    tta.AddEdge(r.Get(false, "System*$EdgeTarget"), r.Get(false, "System*String"));
+                    tta.AddEdge(r.Get(false, "System\\Meta\\Base\\Vertex\\$EdgeTarget"), r.Get(false, "System\\Meta\\ZeroTypes\\String"));
 
-                    IVertex ttb = tt.AddVertex(r.Get(false, "System*Attribute"), "b" + x + " " + y + ";" + randomChars());
-                    ttb.AddVertex(r.Get(false, "System*$Group"), x.ToString());
+                    IVertex ttb = tt.AddVertex(r.Get(false, "System\\Meta\\ZeroUML\\Class\\Attribute"), "b" + x + " " + y + ";" + randomChars());
+                    ttb.AddVertex(r.Get(false, "System\\Meta\\Base\\Vertex\\$Group"), x.ToString());
                     //ttb.AddVertex(r.Get(false, "System*$Section"), y.ToString());
-                    ttb.AddEdge(r.Get(false, "System*$EdgeTarget"), r.Get(false, "System*String"));
+                    ttb.AddEdge(r.Get(false, "System\\Meta\\Base\\Vertex\\$EdgeTarget"), r.Get(false, "System\\Meta\\ZeroTypes\\String"));
 
-                    IVertex ttc = tt.AddVertex(r.Get(false, "System*Attribute"), "c" + x + " " + y + ";" + randomChars());
-                    ttc.AddVertex(r.Get(false, "System*$Group"), x.ToString());
-                    ttc.AddVertex(r.Get(false, "System*$Section"), y.ToString());
-                    ttc.AddVertex(r.Get(false, "System*$MaxCardinality"), 6);
-                    ttc.AddEdge(r.Get(false, "System*$EdgeTarget"), r.Get(false, "System*String"));
+                    IVertex ttc = tt.AddVertex(r.Get(false, "System\\Meta\\ZeroUML\\Class\\Attribute"), "c" + x + " " + y + ";" + randomChars());
+                    ttc.AddVertex(r.Get(false, "System\\Meta\\Base\\Vertex\\$Group"), x.ToString());
+                    ttc.AddVertex(r.Get(false, "System\\Meta\\Base\\Vertex\\$Section"), y.ToString());
+                    ttc.AddVertex(r.Get(false, "System\\Meta\\Base\\Vertex\\$MaxCardinality"), 6);
+                    ttc.AddEdge(r.Get(false, "System\\Meta\\Base\\Vertex\\$EdgeTarget"), r.Get(false, "System\\Meta\\ZeroTypes\\String"));
                 }
 
             VertexOperations.AddInstance(tr.Get(false, "TEST"), tt);
