@@ -128,7 +128,7 @@ namespace m0.ZeroCode.Helpers
             IVertex nextExpression = InstructionHelpers.GetNextExpression(instructionVertex);
 
             if (nextExpression != null)
-                return exe.ExecuteInstruction(inStack, nextExpression, out isStackFrameReturn);
+                return exe.ExecuteInstructionByMontevideoPrinciples(inStack, nextExpression, out isStackFrameReturn);
 
             return Create_INoInEdgeInOutVertexVertex_FromEdgesList(inStack);
         }
@@ -145,7 +145,7 @@ namespace m0.ZeroCode.Helpers
                 { // XXX in some cases it might not work - instruction with meta begginning with $ will not be executed. nor its children
                     bool local_isStackFrameReturn;
 
-                    INoInEdgeInOutVertexVertex possibleToReturnStack = exe.ExecuteInstruction(stack, e.To, out local_isStackFrameReturn);
+                    INoInEdgeInOutVertexVertex possibleToReturnStack = exe.ExecuteInstructionByMontevideoPrinciples(stack, e.To, out local_isStackFrameReturn);
 
                     if (local_isStackFrameReturn)
                     {
@@ -377,23 +377,23 @@ namespace m0.ZeroCode.Helpers
                 switch (numericType)
                 {
                     case NumericTypeEnum.Decimal:
-                        if (NumberCompare<decimal>((decimal)val, 1))
+                        if (Comparer<double>.Default.Compare(0, (double)val) < 0)
                             return BooleanEnum.True;
-                        if (NumberCompare<decimal>((decimal)val, 0))
+                        else
                             return BooleanEnum.False;
                         break;
 
                     case NumericTypeEnum.Double:
-                        if (NumberCompare<double>((double)val, 1))
+                        if (Comparer<double>.Default.Compare(0, (double)val) < 0)
                             return BooleanEnum.True;
-                        if (NumberCompare<double>((double)val, 0))
+                        else
                             return BooleanEnum.False;
                         break;
 
                     case NumericTypeEnum.Integer:
-                        if (NumberCompare<int>((int)val, 1))
+                        if(Comparer<int>.Default.Compare(0, (int)val) < 0)                        
                             return BooleanEnum.True;
-                        if (NumberCompare<int>((int)val, 0))
+                        else
                             return BooleanEnum.False;
                         break;
                 }
@@ -412,10 +412,10 @@ namespace m0.ZeroCode.Helpers
 
         private static bool NumberCompare<T>(T leftValue, T rightValue)
         {
-            if (EqualityComparer<T>.Default.Equals((T)leftValue, rightValue))
+            if (EqualityComparer<T>.Default.Equals(leftValue, rightValue))
                 return true;
 
             return false;
-        }
+        }        
     }
 }

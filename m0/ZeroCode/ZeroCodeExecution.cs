@@ -37,14 +37,14 @@ namespace m0.ZeroCode
             }
         }
 
-        public INoInEdgeInOutVertexVertex ExecuteInstruction(IVertex inputQs, IVertex instructionVertex)
+        public INoInEdgeInOutVertexVertex ExecuteInstructionByMontevideoPrinciples(IVertex inputQs, IVertex instructionVertex)
         {
             bool dummy;
 
-            return ExecuteInstruction(inputQs, instructionVertex, out dummy);
+            return ExecuteInstructionByMontevideoPrinciples(inputQs, instructionVertex, out dummy);
         }
 
-        public INoInEdgeInOutVertexVertex ExecuteInstruction(IVertex inputQs, IVertex instructionVertex, out bool isStackFrameReturn)
+        public INoInEdgeInOutVertexVertex ExecuteInstructionByMontevideoPrinciples(IVertex inputQs, IVertex instructionVertex, out bool isStackFrameReturn)
         {
             isStackFrameReturn = false;
 

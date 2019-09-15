@@ -23,8 +23,8 @@
  - non atom value subgraph (""). newly created stack returned has edge pointing to subgraph root vertex
  - executable subgraph. sub-graph is executed and the execution stack is returned
 
-3) The code view time graph query link expression (@@) needs to be introduced as keyword subgraph edges does
-   not have to be links, thus in code view will containt it's target vertexes subgraphs and not
+3) The code view time graph query link expression (@@) needs to be introduced as grammar keyword subgraph 
+   edges does not have to be links, thus in code view will containt it's target vertexes subgraphs and not
    code view time queries, as expected. This is especially a case when target vertexes subgraph is 
    not part of code view subgraph.
 
@@ -39,7 +39,15 @@ _______________________________________________
 		<@X :: "5">
 		"10"
 	variable "A" @String
-	A = "1" + @TEST\5 + $ \ |TEST \ |10 + @@Code\TEST\5
+	A = "1" + @TEST\5 + $ \ |TEST \ |10 + @@TEST\5
+
+_______________________________________________
+
+"Code"
+	"X"
+		"2" * ("2" + "1")
+	variable "A" @String
+	A = "1" + @X\ + $ \ |X \  + @@X\
 _______________________________________________
 
 "Code"
