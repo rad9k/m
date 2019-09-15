@@ -31,17 +31,15 @@
 4) For executable subgraph queries, at the beginning of code graph execution,
    special variable (named $) is added to the stack bottom. The $ variable points to code graph execution root.
 
-   
 _______________________________________________
 
 "Code"
 	"X"
 	"TEST"
-		<X :: "5">
+		<@X :: "5">
 		"10"
 	variable "A" @String
 	A = "1" + @TEST\5 + $ \ |TEST \ |10
-
 _______________________________________________
 
 "Code"
@@ -50,20 +48,13 @@ _______________________________________________
 	Atom = @10
 	Atom := Atom + "1"
 	"20"
-		<$Is :: Class>
+		<@$Is :: @Class>
 		# "not atom"
 	variable "NotAtom" @String
 	NotAtom = @20
 	NotAtom := NotAtom + "1"
 
 _______________________________________________
-
-"Code"
-	"TEST"
-		function "X" ()
-			return "1"
-	variable "a" @Vertex
-	a = @TEST\X[]
 
 "Code"
 	"TEST"
@@ -74,24 +65,14 @@ _______________________________________________
 	cvtq = @TEST\X["1"]
 	rtq = $ \ |TEST \ |X["2"]
 
+_______________________________________________
+ADDITIONAL
+_______________________________________________
+
+
+
+
 "Code"
 	function "X" ()
 	@X[]
 	a+b
-
-_______________________________________________
-
-"Code"
-	"varX"
-	"TEST"
-		<varX::"5">
-	variable "A" @String
-	A = @TEST\5 + "1"
-
-	
-_______________________________________________
-
-"Code"
-	"TEST"
-		function "X" ()
-	$\TEST\X[]
