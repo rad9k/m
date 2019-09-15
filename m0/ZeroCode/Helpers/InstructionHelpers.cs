@@ -16,7 +16,7 @@ namespace m0.ZeroCode.Helpers
             return new NoInEdgeInOutVertexVertex(MinusZero.Instance.TempStore);
         }
 
-        public static void AddToStack(IEnumerable<IEdge> source, INoInEdgeInOutVertexVertex destination)
+        public static void AddToStack(INoInEdgeInOutVertexVertex destination, IEnumerable<IEdge> source)
         {
             foreach (IEdge e in source)
                 destination.AddEdgeForNoInEdgeInOutVertexVertex(e);
@@ -26,7 +26,7 @@ namespace m0.ZeroCode.Helpers
         {
             INoInEdgeInOutVertexVertex newStack = CreateStack();
 
-            AddToStack(source, newStack);
+            AddToStack(newStack, source);
 
             return newStack;
         }

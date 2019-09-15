@@ -1,8 +1,27 @@
-﻿   -1. @System || "new"
+﻿!!!!!!!!!!!!!!!!!!!!!!!!!!!!! TO DO:
+
+9. [] as subexpression
 2. can not create Files
-3. exception handling throught custom meta code
-4. escape sequences in rtq support by keywords [8]
-5. root level queries on "stack root -1"
-   -6. @@
+13. common implementation of montevideo principles
+
+<><><> FUTURE 0
+
 7. basic perf check
 8. Get/GetAll switch [7]
+4. escape sequences in rtq support by keywords [8] and especially '<' and '>'
+10. <@BaseEdge :: ""> [4] [11]
+					<@From :: @kupa\TEST\TestDiagram\Item:<4>\\> ??? from where
+					<@Meta :: @> ???
+					<@To :: @TEST\Person4>
+11. Diagram perf update
+
+<><><> FUTURE 1
+
+3. exception handling throught custom meta code
+12. execution stop / continuation / stack copy?
+
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!! Done:
+
+1. @System || "new"
+6. @@
+5. root level queries on "stack root -1"   

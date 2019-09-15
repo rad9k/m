@@ -17,11 +17,16 @@ namespace m0.ZeroCode
 
         IVertex dolar;
 
-        private void AddDolar(ZeroCodeExecution exe, IVertex expression)
+        private void AddDolarToStack(ZeroCodeExecution exe, IVertex expression)
         {
             exe.stack.AddEdge(dolar, expression);   
         }
-        
+
+        private void AddRootToStack(ZeroCodeExecution exe)
+        {
+            exe.stack.AddEdge(MinusZero.Instance.StackFrameInherits, MinusZero.Instance.Root);
+        }
+
         public IVertex Execute(IVertex baseVertex, IVertex expression)
         {
             ZeroCodeExecution exe = new ZeroCodeExecution();
@@ -30,7 +35,9 @@ namespace m0.ZeroCode
 
             exe.stack = InstructionHelpers.Create_INoInEdgeInOutVertexVertex_FromEdgesList(baseVertex);
 
-            AddDolar(exe, expression);
+            AddRootToStack(exe);
+
+            AddDolarToStack(exe, expression);
 
             bool local_isStackFrameReturn;
 
@@ -55,7 +62,7 @@ namespace m0.ZeroCode
 
             INoInEdgeInOutVertexVertex qs = InstructionHelpers.CreateStack();
 
-            InstructionHelpers.AddToStack(baseVertex, qs);
+            InstructionHelpers.AddToStack(qs, baseVertex);
 
             IVertex ret=CallableEndPointDictionary.CallEndPoint(exe, qs, expression);
 

@@ -48,7 +48,7 @@ namespace m0.ZeroUML.Instructions
                 newQs.AddEdgeForNoInEdgeInOutVertexVertex(e);
 
             if (eList != null)
-                InstructionHelpers.AddToStack(eList, newQs);
+                InstructionHelpers.AddToStack(newQs, eList);
 
             return InstructionHelpers.NextExpressionHandle(exe, newQs, instructionVertex);
         }
@@ -153,10 +153,10 @@ namespace m0.ZeroUML.Instructions
                     newQs.AddEdgeForNoInEdgeInOutVertexVertex(e);
 
                 if (eList != null)
-                    InstructionHelpers.AddToStack(eList, newQs);
+                    InstructionHelpers.AddToStack(newQs, eList);
             }
             else
-                InstructionHelpers.AddToStack(inputQs, newQs);
+                InstructionHelpers.AddToStack(newQs, inputQs);
 
             if (leftExpression != null)
             {

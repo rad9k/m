@@ -154,7 +154,7 @@ namespace m0.ZeroCode
                             int xx = 0;
                         }
 
-                        e.From.QueryOutEdges(e.Meta, e.To, out result, out results);
+                        e.From.QueryOutEdges(e.Meta.Value, e.To.Value, out result, out results);
 
 
                         IList<IEdge> listToUse;

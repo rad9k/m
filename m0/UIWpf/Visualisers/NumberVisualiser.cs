@@ -343,7 +343,7 @@ namespace m0.UIWpf.Visualisers
                 return;
 
             if (bv == null) { }
-            else if (bv.Value == null)
+            else if (bv.Value == null || bv.Value =="")
             {
                 T _minValue = GraphUtil.GetNumberValue<T>(bmv.Get(false, "MinValue:"));
                 T _maxValue = GraphUtil.GetNumberValue<T>(bmv.Get(false, "MaxValue:"));
