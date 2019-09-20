@@ -666,7 +666,7 @@ namespace m0
             IVertex keywordGroup = smb.Get(false, @"$$KeywordGroup");
             IVertex keywordGroupDefinition = smb.Get(false, @"$KeywordGroupDefinition");
 
-            IVertex kgd_ColonEmptyInner2SlashMarkIndexNew = k.AddVertex(keywordGroupDefinition, "ColonEmptyInner2SlashMarkIndexNew");
+            IVertex kgd_ColonEmptyInner2SlashMarkIndexNewLink = k.AddVertex(keywordGroupDefinition, "ColonEmptyInner2SlashMarkIndexNewLink");
             IVertex kgd_ColonEmptyInner2SlashMarkIndex = k.AddVertex(keywordGroupDefinition, "ColonEmptyInner2SlashMarkIndex");
             IVertex kgd_Empty2Inner = k.AddVertex(keywordGroupDefinition, "Empty2Inner");
             IVertex kgd_InnerCreation = k.AddVertex(keywordGroupDefinition, "InnerCreation");
@@ -1041,7 +1041,7 @@ namespace m0
 
             o_index.AddEdge(keywordGroup, kgd_ColonEmptyInner2SlashMarkIndex);
 
-            o_index.AddEdge(keywordGroup, kgd_ColonEmptyInner2SlashMarkIndexNew);
+            o_index.AddEdge(keywordGroup, kgd_ColonEmptyInner2SlashMarkIndexNewLink);
 
             IVertex o_index_any = o_index.AddVertex(any, "");
 
@@ -1212,7 +1212,7 @@ namespace m0
             //
             // (?<left_ColonEmptyNew>)||(?<SUB>)(?<right_ColonEmptyNew>)                         
 
-            IVertex o_doubleColon = k.AddVertex(keyword, "(?<left_ColonEmptyInner2SlashMarkIndexNew>) || (?<right_ColonEmptyInner2SlashMarkIndexNew>)");
+            IVertex o_doubleColon = k.AddVertex(keyword, "(?<left_ColonEmptyInner2SlashMarkIndexNewLink>) || (?<right_ColonEmptyInner2SlashMarkIndexNewLink>)");
 
             //IVertex o_doubleColon = k.AddVertex(keyword, "(?<left_ColonEmptyInner2SlashMarkIndexNew>)||(?<SUB>)(?<right_ColonEmptyInner2SlashMarkIndexNew>)");
 
@@ -1222,9 +1222,9 @@ namespace m0
 
             o_doubleColon_any.AddEdge(smb.Get(false, @"Vertex\$Is"), smu.Get(false, "||"));
 
-            o_doubleColon_any.AddVertex(smu.Get(false, @"DoubleOperator\LeftExpression"), "(?<left_ColonEmptyInner2SlashMarkIndexNew>)");
+            o_doubleColon_any.AddVertex(smu.Get(false, @"DoubleOperator\LeftExpression"), "(?<left_ColonEmptyInner2SlashMarkIndexNewLink>)");
 
-            IVertex o_doubleColon_any_right = o_doubleColon_any.AddVertex(smu.Get(false, @"DoubleOperator\RightExpression"), "(?<right_ColonEmptyInner2SlashMarkIndexNew>)");
+            IVertex o_doubleColon_any_right = o_doubleColon_any.AddVertex(smu.Get(false, @"DoubleOperator\RightExpression"), "(?<right_ColonEmptyInner2SlashMarkIndexNewLink>)");
 
             IVertex o_doubleColon_any_targetExpr = o_doubleColon_any.AddVertex(smu.Get(false, @"SingleOperator\NextExpression"), "");
 
@@ -1234,7 +1234,7 @@ namespace m0
             //
             // ||(?<SUB>)(?<right_ColonEmptyNew>)                         
 
-            IVertex o_doubleColon2 = k.AddVertex(keyword, "|| (?<right_ColonEmptyInner2SlashMarkIndexNew>)");
+            IVertex o_doubleColon2 = k.AddVertex(keyword, "|| (?<right_ColonEmptyInner2SlashMarkIndexNewLink>)");
 
             //IVertex o_doubleColon2 = k.AddVertex(keyword, "||(?<SUB>)(?<right_ColonEmptyInner2SlashMarkIndexNew>)");
 
@@ -1244,7 +1244,7 @@ namespace m0
 
             o_doubleColon2_any.AddEdge(smb.Get(false, @"Vertex\$Is"), smu.Get(false, "||"));
 
-            IVertex o_doubleColon2_any_right = o_doubleColon2_any.AddVertex(smu.Get(false, @"DoubleOperator\RightExpression"), "(?<right_ColonEmptyInner2SlashMarkIndexNew>)");
+            IVertex o_doubleColon2_any_right = o_doubleColon2_any.AddVertex(smu.Get(false, @"DoubleOperator\RightExpression"), "(?<right_ColonEmptyInner2SlashMarkIndexNewLink>)");
 
             IVertex o_doubleColon2_any_targetExpr = o_doubleColon2_any.AddVertex(smu.Get(false, @"SingleOperator\NextExpression"), "");
 
@@ -1254,7 +1254,7 @@ namespace m0
             //
             // (?<left_ColonEmptyNew>)||(?<SUB>)                         
 
-            IVertex o_doubleColon3 = k.AddVertex(keyword, "(?<left_ColonEmptyInner2SlashMarkIndexNew>) ||");
+            IVertex o_doubleColon3 = k.AddVertex(keyword, "(?<left_ColonEmptyInner2SlashMarkIndexNewLink>) ||");
 
             // Vertex o_doubleColon3 = k.AddVertex(keyword, "(?<left_ColonEmptyInner2SlashMarkIndexNew>)||(?<SUB>)");
 
@@ -1264,7 +1264,7 @@ namespace m0
 
             o_doubleColon3_any.AddEdge(smb.Get(false, @"Vertex\$Is"), smu.Get(false, "||"));
 
-            o_doubleColon3_any.AddVertex(smu.Get(false, @"DoubleOperator\LeftExpression"), "(?<left_ColonEmptyInner2SlashMarkIndexNew>)");
+            o_doubleColon3_any.AddVertex(smu.Get(false, @"DoubleOperator\LeftExpression"), "(?<left_ColonEmptyInner2SlashMarkIndexNewLink>)");
 
             IVertex o_doubleColon3_any_targetExpr = o_doubleColon3_any.AddVertex(smu.Get(false, @"SingleOperator\NextExpression"), "");
 
@@ -1301,7 +1301,7 @@ namespace m0
 
             IVertex o_colon = k.AddVertex(keyword, "(?<left_Empty2Inner>)|(?<SUB>)(?<right_Empty2Inner>)");
 
-            o_colon.AddEdge(keywordGroup, kgd_ColonEmptyInner2SlashMarkIndexNew);
+            o_colon.AddEdge(keywordGroup, kgd_ColonEmptyInner2SlashMarkIndexNewLink);
 
             o_colon.AddEdge(keywordGroup, kgd_ColonEmptyInner2SlashMarkIndex);
 
@@ -1325,7 +1325,7 @@ namespace m0
 
             IVertex o_colon2 = k.AddVertex(keyword, "|(?<SUB>)(?<right_Empty2Inner>)");
 
-            o_colon2.AddEdge(keywordGroup, kgd_ColonEmptyInner2SlashMarkIndexNew);
+            o_colon2.AddEdge(keywordGroup, kgd_ColonEmptyInner2SlashMarkIndexNewLink);
 
             o_colon2.AddEdge(keywordGroup, kgd_ColonEmptyInner2SlashMarkIndex);
 
@@ -1426,13 +1426,13 @@ namespace m0
             //
             // [(*(+, +) (?<expr>)*)]
 
-              IVertex o_call = k.AddVertex(keyword, "(?<target_ColonEmptyInner2SlashMarkIndexNew>)[(*(+, +)(?<expr>)*)]");
+              IVertex o_call = k.AddVertex(keyword, "(?<target_ColonEmptyInner2SlashMarkIndexNewLink>)[(*(+, +)(?<expr>)*)]");
 
               IVertex o_call_any = o_call.AddVertex(any, "");
 
               o_call_any.AddEdge(smb.Get(false, @"Vertex\$Is"), smu.Get(false, "[]"));
 
-              IVertex o_call_any_target = o_call_any.AddVertex(smu.Get(false, @"[]\Target"), "(?<target_ColonEmptyInner2SlashMarkIndexNew>)");
+              IVertex o_call_any_target = o_call_any.AddVertex(smu.Get(false, @"[]\Target"), "(?<target_ColonEmptyInner2SlashMarkIndexNewLink>)");
 
               IVertex o_call_any_param = o_call_any.AddVertex(smu.Get(false, @"MultiOperator\Expression"), "(?<expr>)");
            
@@ -1510,7 +1510,7 @@ namespace m0
 
             o_Slash.AddEdge(keywordGroup, kgd_ColonEmptyInner2SlashMarkIndex);
 
-            o_Slash.AddEdge(keywordGroup, kgd_ColonEmptyInner2SlashMarkIndexNew);
+            o_Slash.AddEdge(keywordGroup, kgd_ColonEmptyInner2SlashMarkIndexNewLink);
 
             IVertex o_Slash_any = o_Slash.AddVertex(any, "");
 
@@ -1534,7 +1534,7 @@ namespace m0
 
             o_Mark.AddEdge(keywordGroup, kgd_ColonEmptyInner2SlashMarkIndex);
 
-            o_Mark.AddEdge(keywordGroup, kgd_ColonEmptyInner2SlashMarkIndexNew);
+            o_Mark.AddEdge(keywordGroup, kgd_ColonEmptyInner2SlashMarkIndexNewLink);
 
             IVertex o_Mark_any = o_Mark.AddVertex(any, "");
 
@@ -1573,7 +1573,7 @@ namespace m0
 
             o_Inner2.AddEdge(keywordGroup, kgd_SlashMarkIndexInner2);
 
-            o_Inner2.AddEdge(keywordGroup, kgd_ColonEmptyInner2SlashMarkIndexNew);
+            o_Inner2.AddEdge(keywordGroup, kgd_ColonEmptyInner2SlashMarkIndexNewLink);
 
             o_Inner2.AddEdge(keywordGroup, kgd_ColonEmptyInner2SlashMarkIndex);
 
@@ -1620,7 +1620,7 @@ namespace m0
 
             newValueKeyword.AddVertex(newVertexKeyword, "");
 
-            newValueKeyword.AddEdge(keywordGroup, kgd_ColonEmptyInner2SlashMarkIndexNew);
+            newValueKeyword.AddEdge(keywordGroup, kgd_ColonEmptyInner2SlashMarkIndexNewLink);
 
             IVertex newValueKeyword_any = newValueKeyword.AddVertex(any, "(?<value>)");
 
@@ -1637,7 +1637,7 @@ namespace m0
 
             empty1Keyword.AddVertex(emptyKeyword, "");
 
-            empty1Keyword.AddEdge(keywordGroup, kgd_ColonEmptyInner2SlashMarkIndexNew);
+            empty1Keyword.AddEdge(keywordGroup, kgd_ColonEmptyInner2SlashMarkIndexNewLink);
 
             empty1Keyword.AddEdge(keywordGroup, kgd_ColonEmptyInner2SlashMarkIndex);
 
@@ -1674,6 +1674,8 @@ namespace m0
             // @(?<value>)
 
             IVertex at = k.AddVertex(keyword, "@(?<value>)");
+
+            at.AddEdge(keywordGroup, kgd_ColonEmptyInner2SlashMarkIndexNewLink);
 
             at.AddVertex(linkKeyword, "");
 
