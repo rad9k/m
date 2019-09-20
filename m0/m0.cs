@@ -560,8 +560,8 @@ namespace m0
             smu.Get(false, @"Return\Expression").AddEdge(sm.Get(false, @"*$EdgeTarget"), smu.Get(false, @"Atom"));
             smu.Get(false, @"NextOut\Next").AddEdge(sm.Get(false, @"*$EdgeTarget"), smu.Get(false, @"Atom"));
 
-            smu.Get(false, @"[]\Target").AddEdge(sm.Get(false, @"*$EdgeTarget"), smu.Get(false, @"StackFrameCreator"));
-            //smu.Get(false, @"[]\Target").AddEdge(sm.Get(false, @"*$EdgeTarget"), smu.Get(false, @"Atom")); // XXX
+            //smu.Get(false, @"[]\Target").AddEdge(sm.Get(false, @"*$EdgeTarget"), smu.Get(false, @"StackFrameCreator"));
+            smu.Get(false, @"[]\Target").AddEdge(sm.Get(false, @"*$EdgeTarget"), smu.Get(false, @"Atom")); // XXX
 
             smu.Get(false, @"StackFrameCreator\Do").AddEdge(sm.Get(false, @"*$EdgeTarget"), smu.Get(false, @"Atom"));
             smu.Get(false, @"StackFrameCreator\Variable").AddEdge(sm.Get(false, @"*$VertexTarget"), smu.Get(false, @"Type"));
@@ -1345,23 +1345,27 @@ namespace m0
             //
             // (?<left_Empty2>)|(?<SUB>)            
 
-            IVertex o_colon3 = k.AddVertex(keyword, "(?<left_Empty2Inner>)|(?<SUB>)");
+            //IVertex o_colon3 = k.AddVertex(keyword, "(?<left_Empty2Inner>)|(?<SUB>)");
 
-            o_colon3.AddEdge(keywordGroup, kgd_ColonEmptyInner2SlashMarkIndexNew);
+            IVertex o_colon3 = k.AddVertex(keyword, "(?<left>)|");
 
-            o_colon3.AddEdge(keywordGroup, kgd_ColonEmptyInner2SlashMarkIndex);
+            //o_colon3.AddEdge(keywordGroup, kgd_ColonEmptyInner2SlashMarkIndexNew);
+
+            //o_colon3.AddEdge(keywordGroup, kgd_ColonEmptyInner2SlashMarkIndex);
 
             IVertex o_colon3_any = o_colon3.AddVertex(any, "");
 
-            o_colon3_any.AddVertex(smb.Get(false, "$$StartInLocalRoot"), "");
+            //o_colon3_any.AddVertex(smb.Get(false, "$$StartInLocalRoot"), "");
 
             o_colon3_any.AddEdge(smb.Get(false, @"Vertex\$Is"), smu.Get(false, "|"));
 
-            o_colon3_any.AddVertex(smu.Get(false, @"DoubleOperator\LeftExpression"), "(?<left_Empty2Inner>)");
+            //o_colon3_any.AddVertex(smu.Get(false, @"DoubleOperator\LeftExpression"), "(?<left_Empty2Inner>)");
 
-            IVertex o_colon3_any_targetExpr = o_colon3_any.AddVertex(smu.Get(false, @"SingleOperator\NextExpression"), "");
+            o_colon3_any.AddVertex(smu.Get(false, @"DoubleOperator\LeftExpression"), "(?<left>)");
 
-            o_colon3_any_targetExpr.AddEdge(smb.Get(false, "$$LocalRoot"), kgd_SlashMarkIndex);
+            //IVertex o_colon3_any_targetExpr = o_colon3_any.AddVertex(smu.Get(false, @"SingleOperator\NextExpression"), "");
+
+            //o_colon3_any_targetExpr.AddEdge(smb.Get(false, "$$LocalRoot"), kgd_SlashMarkIndex);
 
             /*
             // : /2
@@ -1422,32 +1426,34 @@ namespace m0
             //
             // [(*(+, +) (?<expr>)*)]
 
-            IVertex o_call = k.AddVertex(keyword, "`(?<target>)[(*(+, +)(?<expr>)*)]");
+            /*  IVertex o_call = k.AddVertex(keyword, "`(?<target>)[(*(+, +)(?<expr>)*)]");
 
-            IVertex o_call_any = o_call.AddVertex(any, "");
+              IVertex o_call_any = o_call.AddVertex(any, "");
 
-            o_call_any.AddEdge(smb.Get(false, @"Vertex\$Is"), smu.Get(false, "[]"));
+              o_call_any.AddEdge(smb.Get(false, @"Vertex\$Is"), smu.Get(false, "[]"));
 
-            IVertex o_call_any_target = o_call_any.AddVertex(smu.Get(false, @"[]\Target"), "(?<target>)");
+              IVertex o_call_any_target = o_call_any.AddVertex(smu.Get(false, @"[]\Target"), "(?<target>)");
 
-            IVertex o_call_any_param = o_call_any.AddVertex(smu.Get(false, @"MultiOperator\Expression"), "(?<expr>)");
+              IVertex o_call_any_param = o_call_any.AddVertex(smu.Get(false, @"MultiOperator\Expression"), "(?<expr>)");
 
-            o_call_any_param.AddEdge(smb.Get(false, @"$$KeywordManyRoot"), smb.Get(false, @"$Empty"));
+              o_call_any_param.AddEdge(smb.Get(false, @"$$KeywordManyRoot"), smb.Get(false, @"$Empty"));*/
 
             // test
 
-            /*IVertex o_xcall = k.AddVertex(keyword, "`(?<target>)^");
+            IVertex o_xcall = k.AddVertex(keyword, "(?<left_Colon>)^");
 
             IVertex o_xcall_any = o_xcall.AddVertex(any, "");
 
-            o_xcall_any.AddEdge(smb.Get(false, @"Vertex\$Is"), smu.Get(false, "[]"));
+            o_xcall_any.AddEdge(smb.Get(false, @"Vertex\$Is"), smu.Get(false, "DoubleOperator"));
 
-            IVertex o_xcall_any_target = o_xcall_any.AddVertex(smu.Get(false, @"[]\Target"), "(?<target>)");
+            o_xcall_any.AddVertex(smu.Get(false, @"DoubleOperator\LeftExpression"), "(?<left_Colon>)");
+
+            //o_xcall_any.AddVertex(smu.Get(false, @"DoubleOperator\RightExpression"), "(?<right>)");
 
             //IVertex o_xcall_any_param = o_xcall_any.AddVertex(smu.Get(false, @"MultiOperator\Expression"), "(?<expr>)");
 
             //o_xcall_any_param.AddEdge(smb.Get(false, @"$$KeywordManyRoot"), smb.Get(false, @"$Empty"));
-            */
+
             // return
             //
             // return (?<expr>)
