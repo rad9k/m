@@ -1422,7 +1422,7 @@ namespace m0
             //
             // [(*(+, +) (?<expr>)*)]
 
-            /*IVertex o_call = k.AddVertex(keyword, "(?<target>)[(*(+, +)(?<expr>)*)]");
+            IVertex o_call = k.AddVertex(keyword, "`(?<target>)[(*(+, +)(?<expr>)*)]");
 
             IVertex o_call_any = o_call.AddVertex(any, "");
 
@@ -1432,11 +1432,11 @@ namespace m0
 
             IVertex o_call_any_param = o_call_any.AddVertex(smu.Get(false, @"MultiOperator\Expression"), "(?<expr>)");
 
-            o_call_any_param.AddEdge(smb.Get(false, @"$$KeywordManyRoot"), smb.Get(false, @"$Empty"));*/
+            o_call_any_param.AddEdge(smb.Get(false, @"$$KeywordManyRoot"), smb.Get(false, @"$Empty"));
 
             // test
 
-            IVertex o_xcall = k.AddVertex(keyword, "(?<target>)^~");
+            /*IVertex o_xcall = k.AddVertex(keyword, "`(?<target>)^");
 
             IVertex o_xcall_any = o_xcall.AddVertex(any, "");
 
@@ -1447,7 +1447,7 @@ namespace m0
             //IVertex o_xcall_any_param = o_xcall_any.AddVertex(smu.Get(false, @"MultiOperator\Expression"), "(?<expr>)");
 
             //o_xcall_any_param.AddEdge(smb.Get(false, @"$$KeywordManyRoot"), smb.Get(false, @"$Empty"));
-
+            */
             // return
             //
             // return (?<expr>)
