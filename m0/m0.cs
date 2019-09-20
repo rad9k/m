@@ -1426,17 +1426,17 @@ namespace m0
             //
             // [(*(+, +) (?<expr>)*)]
 
-            /*  IVertex o_call = k.AddVertex(keyword, "`(?<target>)[(*(+, +)(?<expr>)*)]");
+              IVertex o_call = k.AddVertex(keyword, "(?<target_ColonEmptyInner2SlashMarkIndexNew>)[(*(+, +)(?<expr>)*)]");
 
               IVertex o_call_any = o_call.AddVertex(any, "");
 
               o_call_any.AddEdge(smb.Get(false, @"Vertex\$Is"), smu.Get(false, "[]"));
 
-              IVertex o_call_any_target = o_call_any.AddVertex(smu.Get(false, @"[]\Target"), "(?<target>)");
+              IVertex o_call_any_target = o_call_any.AddVertex(smu.Get(false, @"[]\Target"), "(?<target_ColonEmptyInner2SlashMarkIndexNew>)");
 
               IVertex o_call_any_param = o_call_any.AddVertex(smu.Get(false, @"MultiOperator\Expression"), "(?<expr>)");
-
-              o_call_any_param.AddEdge(smb.Get(false, @"$$KeywordManyRoot"), smb.Get(false, @"$Empty"));*/
+           
+              o_call_any_param.AddEdge(smb.Get(false, @"$$KeywordManyRoot"), smb.Get(false, @"$Empty"));
 
             // test
 
