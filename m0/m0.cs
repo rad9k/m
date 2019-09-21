@@ -366,13 +366,12 @@ namespace m0
                 "{Link{Target{$MinCardinality:1,$MaxCardinality:1}},ExpressionAtom,Atom" +
                 ",SingleOperator{NextExpression{$MinCardinality:1,$MaxCardinality:1}}" +
                 ",SingleExpressionOperator{Expression{$MinCardinality:1,$MaxCardinality:1}}" +
-                ",DoubleOperator{LeftExpression{$MinCardinality:1,$MaxCardinality:1},RightExpression{$MinCardinality:1,$MaxCardinality:1}}" +
-                ",DoubleLinkOperator{LeftExpression{$MinCardinality:1,$MaxCardinality:1},RightExpression{$MinCardinality:1,$MaxCardinality:1}}" +
+                ",DoubleOperator{LeftExpression{$MinCardinality:1,$MaxCardinality:1},RightExpression{$MinCardinality:1,$MaxCardinality:1}}" +                
                 ",MultiOperator{Expression{$MinCardinality:0,$MaxCardinality:-1}}" +
                 ",Query" +
                 ",[]{Target{$MinCardinality:0,$MaxCardinality:1}}" +
                 ",<>" +
-                ",\"{}\",\"{CRLF}\",EdgeSetAdd,EdgeSetSubstract,+,-,Mul,/,?,\"\\ \",\"|\",\"||\",(),CopyVertexValue,RedirectLeftEdgesToRightVertices,AddLeftEdgesToRightVertices,AddRightEdgesIntoLeftEdges,DeleteRightVertices,DeleteRightEdgesFromLeftEdges,DeleteRightVerticesFromLeftEdges" +
+                ",\"{}\",\"{CRLF}\",EdgeSetAdd,EdgeSetSubstract,+,-,Mul,/,?,\"\\ \",\"|\",\"||\",;;,`,(),CopyVertexValue,RedirectLeftEdgesToRightVertices,AddLeftEdgesToRightVertices,AddRightEdgesIntoLeftEdges,DeleteRightVertices,DeleteRightEdgesFromLeftEdges,DeleteRightVerticesFromLeftEdges" +
                 ",Equal,ExactEqual,NotEqual,Negation,And,Or,MoreThan,LessThan,MoreOrEqualThan,LessOrEqualThan" +
                 ",Action,Return{Expression{$MinCardinality:0,$MaxCardinality:1}},NextOut{Next{$MinCardinality:0,$MaxCardinality:1}}" +
                 ",StackFrameCreator{Do{$MinCardinality:0,$MaxCardinality:1},Variable{$MinCardinality:0,$MaxCardinality:-1},Type{$MinCardinality:0,$MaxCardinality:-1}}" +
@@ -451,6 +450,8 @@ namespace m0
             // vertex creation operators
 
             AddDotNetEndPoint(smu.Get(false, "\"||\""), "DoubleColonOperator");
+            AddDotNetEndPoint(smu.Get(false, "\";;\""), "DoubleSemiColonOperator");
+            AddDotNetEndPoint(smu.Get(false, "`"), "MetaToTo");
 
             ////////////////////////////////////////////////////////////////////////
 
@@ -500,7 +501,8 @@ namespace m0
             smu.Get(false, @"?").AddEdge(sm.Get(false, "*$Inherits"), smu.Get(false, "SingleOperator"));
             smu.Get(false, "\"\\ \"").AddEdge(sm.Get(false, "*$Inherits"), smu.Get(false, "SingleOperator"));
             smu.Get(false, "\"|\"").AddEdge(sm.Get(false, "*$Inherits"), smu.Get(false, "DoubleOperator"));
-            smu.Get(false, "\"||\"").AddEdge(sm.Get(false, "*$Inherits"), smu.Get(false, "DoubleLinkOperator"));
+            smu.Get(false, "\"||\"").AddEdge(sm.Get(false, "*$Inherits"), smu.Get(false, "DoubleOperator"));
+            smu.Get(false, "`").AddEdge(sm.Get(false, "*$Inherits"), smu.Get(false, "SingleExpressionOperator"));
             smu.Get(false, @"()").AddEdge(sm.Get(false, "*$Inherits"), smu.Get(false, "SingleExpressionOperator"));
             smu.Get(false, @"CopyVertexValue").AddEdge(sm.Get(false, "*$Inherits"), smu.Get(false, "DoubleOperator"));
             smu.Get(false, @"RedirectLeftEdgesToRightVertices").AddEdge(sm.Get(false, "*$Inherits"), smu.Get(false, "DoubleOperator"));
@@ -548,9 +550,7 @@ namespace m0
             smu.Get(false, @"SingleOperator\NextExpression").AddEdge(sm.Get(false, @"*$EdgeTarget"), smu.Get(false, @"Atom"));
             smu.Get(false, @"SingleExpressionOperator\Expression").AddEdge(sm.Get(false, @"*$EdgeTarget"), smu.Get(false, @"Atom"));
             smu.Get(false, @"DoubleOperator\LeftExpression").AddEdge(sm.Get(false, @"*$EdgeTarget"), smu.Get(false, @"Atom"));
-            smu.Get(false, @"DoubleOperator\RightExpression").AddEdge(sm.Get(false, @"*$EdgeTarget"), smu.Get(false, @"Atom"));
-            smu.Get(false, @"DoubleLinkOperator\LeftExpression").AddEdge(sm.Get(false, @"*$EdgeTarget"), smu.Get(false, @"Atom"));
-            smu.Get(false, @"DoubleLinkOperator\RightExpression").AddEdge(sm.Get(false, @"*$EdgeTarget"), smu.Get(false, @"Atom"));
+            smu.Get(false, @"DoubleOperator\RightExpression").AddEdge(sm.Get(false, @"*$EdgeTarget"), smu.Get(false, @"Atom"));            
             smu.Get(false, @"MultiOperator\Expression").AddEdge(sm.Get(false, @"*$EdgeTarget"), smu.Get(false, @"Atom"));
 
             // $IsAggregation's for EdgeTargets
@@ -558,8 +558,7 @@ namespace m0
             smu.Get(false, @"SingleExpressionOperator\Expression").AddEdge(isAggregation, Empty);
             smu.Get(false, @"DoubleOperator\LeftExpression").AddEdge(isAggregation, Empty);
             smu.Get(false, @"DoubleOperator\RightExpression").AddEdge(isAggregation, Empty);
-            smu.Get(false, @"MultiOperator\Expression").AddEdge(isAggregation, Empty);
-            // NO DoubleLinkOperator here !!!!
+            smu.Get(false, @"MultiOperator\Expression").AddEdge(isAggregation, Empty);            
 
             smu.Get(false, @"[]\Target").AddEdge(isAggregation, Empty); // XXX
 
@@ -642,6 +641,7 @@ namespace m0
             package.AddEdge(null, smu.Get(false, "\"\\ \""));
             package.AddEdge(null, smu.Get(false, "\"|\""));
             package.AddEdge(null, smu.Get(false, "\"||\""));
+            package.AddEdge(null, smu.Get(false, "`"));
             package.AddEdge(null, smu.Get(false, "()"));
             package.AddEdge(null, smu.Get(false, "CopyVertexValue"));
             package.AddEdge(null, smu.Get(false, "RedirectLeftEdgesToRightVertices"));
@@ -1204,16 +1204,13 @@ namespace m0
             AddLeftRightOperator(k, smu, smb, keyword, any, "(?<left>) <=(?<SUB>) (?<right>)", "LessOrEqualThan");
 
 
-            /////////////////////////////////////////////////////////////////////////////////////////////////////////////
-            /////////////////////////////////////////////////////////////////////////////////////////////////////////////
-            /////////////////////////////////////////////////////////////////////////////////////////////////////////////
+            ////////////////////////////////////////////////////////////////
+            //
+            // vertex creation operators
+            //
+            ////////////////////////////////////////////////////////////////
 
-            // UNDER CONSTRUCTION ZONE START ???? this is legacy info now :)
-
-            /////////////////////////////////////////////////////////////////////////////////////////////////////////////
-            /////////////////////////////////////////////////////////////////////////////////////////////////////////////
-            /////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
+            AddSingleExpressionOperator(k, smu, smb, keyword, any, "`(?<expr>)", "`");
 
             // :: /1
             //
@@ -1221,7 +1218,7 @@ namespace m0
 
             IVertex o_doubleColon = k.AddVertex(keyword, "(?<left_ColonEmptyInner2SlashMarkIndexNewLink>) || (?<right_ColonEmptyInner2SlashMarkIndexNewLink>)");
 
-            //IVertex o_doubleColon = k.AddVertex(keyword, "(?<left_ColonEmptyInner2SlashMarkIndexNew>)||(?<SUB>)(?<right_ColonEmptyInner2SlashMarkIndexNew>)");
+            //IVertex o_doubleColon = k.AddVertex(keyword, "(?<left_ColonEmptyInner2SlashMarkIndexNewLink>)||(?<SUB>)(?<right_ColonEmptyInner2SlashMarkIndexNewLink>)");
 
             o_doubleColon.AddVertex(nonSelfRecursiveParameters, "");
 
@@ -1229,9 +1226,9 @@ namespace m0
 
             o_doubleColon_any.AddEdge(smb.Get(false, @"Vertex\$Is"), smu.Get(false, "||"));
 
-            o_doubleColon_any.AddVertex(smu.Get(false, @"DoubleLinkOperator\LeftExpression"), "(?<left_ColonEmptyInner2SlashMarkIndexNewLink>)");
+            o_doubleColon_any.AddVertex(smu.Get(false, @"DoubleOperator\LeftExpression"), "(?<left_ColonEmptyInner2SlashMarkIndexNewLink>)");
 
-            IVertex o_doubleColon_any_right = o_doubleColon_any.AddVertex(smu.Get(false, @"DoubleLinkOperator\RightExpression"), "(?<right_ColonEmptyInner2SlashMarkIndexNewLink>)");
+            IVertex o_doubleColon_any_right = o_doubleColon_any.AddVertex(smu.Get(false, @"DoubleOperator\RightExpression"), "(?<right_ColonEmptyInner2SlashMarkIndexNewLink>)");
 
             IVertex o_doubleColon_any_targetExpr = o_doubleColon_any.AddVertex(smu.Get(false, @"SingleOperator\NextExpression"), "");
 
@@ -1243,7 +1240,7 @@ namespace m0
 
             IVertex o_doubleColon2 = k.AddVertex(keyword, "|| (?<right_ColonEmptyInner2SlashMarkIndexNewLink>)");
 
-            //IVertex o_doubleColon2 = k.AddVertex(keyword, "||(?<SUB>)(?<right_ColonEmptyInner2SlashMarkIndexNew>)");
+            //IVertex o_doubleColon2 = k.AddVertex(keyword, "||(?<SUB>)(?<right_ColonEmptyInner2SlashMarkIndexNewLink>)");
 
             o_doubleColon2.AddVertex(nonSelfRecursiveParameters, "");
 
@@ -1251,7 +1248,7 @@ namespace m0
 
             o_doubleColon2_any.AddEdge(smb.Get(false, @"Vertex\$Is"), smu.Get(false, "||"));
 
-            IVertex o_doubleColon2_any_right = o_doubleColon2_any.AddVertex(smu.Get(false, @"DoubleLinkOperator\RightExpression"), "(?<right_ColonEmptyInner2SlashMarkIndexNewLink>)");
+            IVertex o_doubleColon2_any_right = o_doubleColon2_any.AddVertex(smu.Get(false, @"DoubleOperator\RightExpression"), "(?<right_ColonEmptyInner2SlashMarkIndexNewLink>)");
 
             IVertex o_doubleColon2_any_targetExpr = o_doubleColon2_any.AddVertex(smu.Get(false, @"SingleOperator\NextExpression"), "");
 
@@ -1263,7 +1260,7 @@ namespace m0
 
             IVertex o_doubleColon3 = k.AddVertex(keyword, "(?<left_ColonEmptyInner2SlashMarkIndexNewLink>) ||");
 
-            // Vertex o_doubleColon3 = k.AddVertex(keyword, "(?<left_ColonEmptyInner2SlashMarkIndexNew>)||(?<SUB>)");
+            // Vertex o_doubleColon3 = k.AddVertex(keyword, "(?<left_ColonEmptyInner2SlashMarkIndexNewLink>)||(?<SUB>)");
 
             o_doubleColon3.AddVertex(nonSelfRecursiveParameters, "");
 
@@ -1271,36 +1268,11 @@ namespace m0
 
             o_doubleColon3_any.AddEdge(smb.Get(false, @"Vertex\$Is"), smu.Get(false, "||"));
 
-            o_doubleColon3_any.AddVertex(smu.Get(false, @"DoubleLinkOperator\LeftExpression"), "(?<left_ColonEmptyInner2SlashMarkIndexNewLink>)");
+            o_doubleColon3_any.AddVertex(smu.Get(false, @"DoubleOperator\LeftExpression"), "(?<left_ColonEmptyInner2SlashMarkIndexNewLink>)");
 
             IVertex o_doubleColon3_any_targetExpr = o_doubleColon3_any.AddVertex(smu.Get(false, @"SingleOperator\NextExpression"), "");
 
-            o_doubleColon3_any_targetExpr.AddEdge(smb.Get(false, "$$LocalRoot"), kgd_InnerCreation);
-
-            // :: /2
-            //
-            // ||(?<SUB>)(?<right_QueryPart>)                         
-
-            /*            IVertex o_doubleColon2 = k.AddVertex(keyword, "||(?<SUB>)(?<right_Colon>)");
-
-                         IVertex o_doubleColon2_any = o_doubleColon2.AddVertex(any, "");
-
-                         o_doubleColon2_any.AddEdge(smb.Get(false, @"Vertex\$Is"), smu.Get(false, "||"));
-
-                         o_doubleColon2_any.AddVertex(smu.Get(false, @"DoubleOperator\RightExpression"), "(?<right_Colon>)");
-
-
-                        // :: /3
-                        //
-                        // (?<left_QueryPart>)||(?<SUB>)                        
-
-                        IVertex o_doubleColon3 = k.AddVertex(keyword, "(?<left_Colon>)||(?<SUB>)");
-
-                        IVertex o_doubleColon3_any = o_doubleColon3.AddVertex(any, "");
-
-                        o_doubleColon3_any.AddEdge(smb.Get(false, @"Vertex\$Is"), smu.Get(false, "||"));
-
-                        o_doubleColon3_any.AddVertex(smu.Get(false, @"DoubleOperator\LeftExpression"), "(?<left_Colon>)");*/
+            o_doubleColon3_any_targetExpr.AddEdge(smb.Get(false, "$$LocalRoot"), kgd_InnerCreation);            
 
             // : /1
             //
@@ -1352,27 +1324,23 @@ namespace m0
             //
             // (?<left_Empty2>)|(?<SUB>)            
 
-            //IVertex o_colon3 = k.AddVertex(keyword, "(?<left_Empty2Inner>)|(?<SUB>)");
+            IVertex o_colon3 = k.AddVertex(keyword, "(?<left_Empty2Inner>)|(?<SUB>)");            
 
-            IVertex o_colon3 = k.AddVertex(keyword, "(?<left>)|");
+            o_colon3.AddEdge(keywordGroup, kgd_ColonEmptyInner2SlashMarkIndexNewLink);
 
-            //o_colon3.AddEdge(keywordGroup, kgd_ColonEmptyInner2SlashMarkIndexNew);
-
-            //o_colon3.AddEdge(keywordGroup, kgd_ColonEmptyInner2SlashMarkIndex);
+            o_colon3.AddEdge(keywordGroup, kgd_ColonEmptyInner2SlashMarkIndex);
 
             IVertex o_colon3_any = o_colon3.AddVertex(any, "");
 
-            //o_colon3_any.AddVertex(smb.Get(false, "$$StartInLocalRoot"), "");
+            o_colon3_any.AddVertex(smb.Get(false, "$$StartInLocalRoot"), "");
 
             o_colon3_any.AddEdge(smb.Get(false, @"Vertex\$Is"), smu.Get(false, "|"));
 
-            //o_colon3_any.AddVertex(smu.Get(false, @"DoubleOperator\LeftExpression"), "(?<left_Empty2Inner>)");
+            o_colon3_any.AddVertex(smu.Get(false, @"DoubleOperator\LeftExpression"), "(?<left_Empty2Inner>)");            
 
-            o_colon3_any.AddVertex(smu.Get(false, @"DoubleOperator\LeftExpression"), "(?<left>)");
+            IVertex o_colon3_any_targetExpr = o_colon3_any.AddVertex(smu.Get(false, @"SingleOperator\NextExpression"), "");
 
-            //IVertex o_colon3_any_targetExpr = o_colon3_any.AddVertex(smu.Get(false, @"SingleOperator\NextExpression"), "");
-
-            //o_colon3_any_targetExpr.AddEdge(smb.Get(false, "$$LocalRoot"), kgd_SlashMarkIndex);
+            o_colon3_any_targetExpr.AddEdge(smb.Get(false, "$$LocalRoot"), kgd_SlashMarkIndex);
 
             /*
             // : /2
@@ -1416,18 +1384,7 @@ namespace m0
             IVertex o_colon3_any_target = o_colon3_any.AddVertex(smu.Get(false, @"SingleOperator\NextExpression"), "");
 
             o_colon3_any_target.AddVertex(smb.Get(false, "$$LocalRoot"), "AfterEmpty");*/
-
-
-
-            /////////////////////////////////////////////////////////////////////////////////////////////////////////////
-            /////////////////////////////////////////////////////////////////////////////////////////////////////////////
-            /////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-            // UNDER CONSTRUCTION ZONE END ????
-
-            /////////////////////////////////////////////////////////////////////////////////////////////////////////////
-            /////////////////////////////////////////////////////////////////////////////////////////////////////////////
-            /////////////////////////////////////////////////////////////////////////////////////////////////////////////
+            
 
             // []
             //

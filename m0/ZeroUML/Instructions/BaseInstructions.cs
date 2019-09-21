@@ -1663,13 +1663,20 @@ namespace m0.ZeroUML.Instructions
         //
         ////////////////////////////////////////////////////////////////
 
-#region "VertexCreationOperators"
+        #region "VertexCreationOperators"
+
+        public static INoInEdgeInOutVertexVertex MetaToTo(ZeroCodeExecution exe, IVertex inputStack, IVertex instructionVertex, out bool isStackFrameReturn)
+        {
+            isStackFrameReturn = false;
+
+            return null;
+        }
 
         public static INoInEdgeInOutVertexVertex DoubleColonOperator(ZeroCodeExecution exe, IVertex inputStack, IVertex instructionVertex, out bool isStackFrameReturn)
         {
             isStackFrameReturn = false;
 
-            IVertex creationTarget = exe.stack; // XXX
+            INoInEdgeInOutVertexVertex creationTarget = InstructionHelpers.CreateStack();
 
             IVertex leftExpression = InstructionHelpers.GetLeft(instructionVertex);
             IVertex rightExpression = InstructionHelpers.GetRight(instructionVertex);
@@ -1688,10 +1695,16 @@ namespace m0.ZeroUML.Instructions
                 creationTarget.AddEdge(meta, to);
             }
 
+            return creationTarget;
+        }
+
+        public static INoInEdgeInOutVertexVertex DoubleSemiColonOperator(ZeroCodeExecution exe, IVertex inputStack, IVertex instructionVertex, out bool isStackFrameReturn)
+        {
+            isStackFrameReturn = false;
             return null;
         }
 
-#endregion
+        #endregion
 
     }
 }
