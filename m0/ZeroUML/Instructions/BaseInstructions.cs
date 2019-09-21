@@ -1655,19 +1655,43 @@ namespace m0.ZeroUML.Instructions
             return stack;
         }
 
-#endregion
+        #endregion
 
         ////////////////////////////////////////////////////////////////
         //
-        // V E R T E X   C R E A T I O N
+        // vertex creation operators
         //
         ////////////////////////////////////////////////////////////////
+
+#region "VertexCreationOperators"
 
         public static INoInEdgeInOutVertexVertex DoubleColonOperator(ZeroCodeExecution exe, IVertex inputStack, IVertex instructionVertex, out bool isStackFrameReturn)
         {
             isStackFrameReturn = false;
 
+            IVertex creationTarget = exe.stack; // XXX
+
+            IVertex leftExpression = InstructionHelpers.GetLeft(instructionVertex);
+            IVertex rightExpression = InstructionHelpers.GetRight(instructionVertex);
+
+            if (leftExpression == null || rightExpression == null)
+                return exe.stack;
+
+            INoInEdgeInOutVertexVertex leftExecuteResult = exe.ExecuteInstructionByMontevideoPrinciples(inputStack, leftExpression);
+            INoInEdgeInOutVertexVertex rightExecuteResult = exe.ExecuteInstructionByMontevideoPrinciples(inputStack, rightExpression);
+
+            if(leftExecuteResult.OutEdges.Count > 0 && rightExecuteResult.OutEdges.Count > 0) // what about more than one edge in results
+            {
+                IVertex meta = leftExecuteResult.OutEdges[0].To;
+                IVertex to = rightExecuteResult.OutEdges[0].To;
+
+                creationTarget.AddEdge(meta, to);
+            }
+
             return null;
-        }        
+        }
+
+#endregion
+
     }
 }
