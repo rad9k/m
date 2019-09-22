@@ -1,6 +1,10 @@
 ﻿!!!!!!!!!!!!!!!!!!!!!!!!!!!!! TO DO:
+14. add () to ||
+15. add _ to || [16]
+16. _ operator 
+17. ` operator
+18. <> operator
 
-9. [] as subexpression
 2. can not create Files
 
 <><><> FUTURE 0
@@ -18,7 +22,7 @@
 
 3. exception handling throught custom meta code
 12. execution stop / continuation / stack copy?
-14. add () to || / ;;
+
 
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!! Done:
 
@@ -26,3 +30,4 @@
 6. @@
 5. root level queries on "stack root -1"   
 13. common implementation of montevideo principles
+9. [] as subexpression

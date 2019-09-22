@@ -219,7 +219,7 @@ namespace m0.ZeroUML.Instructions
 
 #region EdgeOperators
 
-        // :=
+        // := XXX
         public static INoInEdgeInOutVertexVertex CopyVertexValue(ZeroCodeExecution exe, IVertex inputStack, IVertex instructionVertex, out bool isStackFrameReturn)
         {
             isStackFrameReturn = false;
@@ -524,6 +524,17 @@ namespace m0.ZeroUML.Instructions
                     localStack.AddEdgeForNoInEdgeInOutVertexVertex(inputStack.OutEdges[(int)index - 1]);
             }
             
+            return localStack;
+        }
+
+        public static INoInEdgeInOutVertexVertex SetCount(ZeroCodeExecution exe, IVertex inputStack, IVertex instructionVertex, out bool isStackFrameReturn)
+        {
+            isStackFrameReturn = false;
+            
+            INoInEdgeInOutVertexVertex localStack = InstructionHelpers.CreateStack();
+
+            localStack.AddVertex(null, inputStack.OutEdges.Count());
+
             return localStack;
         }
 
@@ -1666,6 +1677,13 @@ namespace m0.ZeroUML.Instructions
         #region "VertexCreationOperators"
 
         public static INoInEdgeInOutVertexVertex MetaToTo(ZeroCodeExecution exe, IVertex inputStack, IVertex instructionVertex, out bool isStackFrameReturn)
+        {
+            isStackFrameReturn = false;
+
+            return null;
+        }
+
+        public static INoInEdgeInOutVertexVertex CopySet(ZeroCodeExecution exe, IVertex inputStack, IVertex instructionVertex, out bool isStackFrameReturn)
         {
             isStackFrameReturn = false;
 
