@@ -370,8 +370,8 @@ namespace m0
                 ",MultiOperator{Expression{$MinCardinality:0,$MaxCardinality:-1}}" +
                 ",Query" +
                 ",[]{Target{$MinCardinality:0,$MaxCardinality:1}}" +
-                ",<X>,<>" +
-                ",\"{}\",\"{CRLF}\",EdgeSetAdd,EdgeSetSubstract,+,-,Mul,/,?,\"\\ \",\"|\",\"||\",_,`,(),RedirectLeftEdgesToRightVertices,AddLeftEdgesToRightVertices,AddRightEdgesIntoLeftEdges,DeleteRightVertices,DeleteRightEdgesFromLeftEdges,DeleteRightVerticesFromLeftEdges" +
+                ",SetIndex,SetCount" +
+                ",\"{}\",\"{CRLF}\",EdgeSetAdd,EdgeSetSubstract,+,-,Mul,/,?,\"\\ \",\"|\",\"||\",CopySet,MetaToTo,(),RedirectLeftEdgesToRightVertices,AddLeftEdgesToRightVertices,AddRightEdgesIntoLeftEdges,DeleteRightVertices,DeleteRightEdgesFromLeftEdges,DeleteRightVerticesFromLeftEdges" +
                 ",Equal,ExactEqual,NotEqual,Negation,And,Or,MoreThan,LessThan,MoreOrEqualThan,LessOrEqualThan" +
                 ",Action,Return{Expression{$MinCardinality:0,$MaxCardinality:1}},NextOut{Next{$MinCardinality:0,$MaxCardinality:1}}" +
                 ",StackFrameCreator{Do{$MinCardinality:0,$MaxCardinality:1},Variable{$MinCardinality:0,$MaxCardinality:-1},Type{$MinCardinality:0,$MaxCardinality:-1}}" +
@@ -411,8 +411,8 @@ namespace m0
 
             AddDotNetEndPoint(smu.Get(false, "EdgeSetAdd"), "EdgeSetAdd");
             AddDotNetEndPoint(smu.Get(false, "EdgeSetSubstract"), "EdgeSetSubstract");
-            AddDotNetEndPoint(smu.Get(false, "<X>"), "SetIndex");
-            AddDotNetEndPoint(smu.Get(false, "<>"), "SetCount");
+            AddDotNetEndPoint(smu.Get(false, "SetIndex"), "SetIndex");
+            AddDotNetEndPoint(smu.Get(false, "SetCount"), "SetCount");
             AddDotNetEndPoint(smu.Get(false, "EmptySet"), "EmptySet");
 
             // number algebra operators
@@ -450,8 +450,8 @@ namespace m0
             // vertex creation operators
 
             AddDotNetEndPoint(smu.Get(false, "\"||\""), "DoubleColonOperator");
-            AddDotNetEndPoint(smu.Get(false, "_"), "CopySet");
-            AddDotNetEndPoint(smu.Get(false, "`"), "MetaToTo");
+            AddDotNetEndPoint(smu.Get(false, "CopySet"), "CopySet");
+            AddDotNetEndPoint(smu.Get(false, "MetaToto"), "MetaToTo");
 
             ////////////////////////////////////////////////////////////////////////
 
@@ -477,8 +477,8 @@ namespace m0
 
             smu.Get(false, @"Query").AddEdge(sm.Get(false, "*$Inherits"), smu.Get(false, "SingleOperator"));
             smu.Get(false, @"[]").AddEdge(sm.Get(false, "*$Inherits"), smu.Get(false, "MultiOperator"));
-            smu.Get(false, @"<X>").AddEdge(sm.Get(false, "*$Inherits"), smu.Get(false, "SingleExpressionOperator"));
-            smu.Get(false, @"<>").AddEdge(sm.Get(false, "*$Inherits"), smu.Get(false, "SingleOperator"));
+            smu.Get(false, @"SetIndex").AddEdge(sm.Get(false, "*$Inherits"), smu.Get(false, "SingleExpressionOperator"));
+            smu.Get(false, @"SetCount").AddEdge(sm.Get(false, "*$Inherits"), smu.Get(false, "SingleOperator"));
             smu.Get(false, "\"{CRLF}\"").AddEdge(sm.Get(false, "*$Inherits"), smu.Get(false, "MultiOperator"));
             smu.Get(false, "\"{}\"").AddEdge(sm.Get(false, "*$Inherits"), smu.Get(false, "SingleOperator"));
             smu.Get(false, "\"{}\"").AddEdge(sm.Get(false, "*$Inherits"), smu.Get(false, "MultiOperator"));
@@ -503,8 +503,8 @@ namespace m0
             smu.Get(false, "\"\\ \"").AddEdge(sm.Get(false, "*$Inherits"), smu.Get(false, "SingleOperator"));
             smu.Get(false, "\"|\"").AddEdge(sm.Get(false, "*$Inherits"), smu.Get(false, "DoubleOperator"));
             smu.Get(false, "\"||\"").AddEdge(sm.Get(false, "*$Inherits"), smu.Get(false, "DoubleOperator"));
-            smu.Get(false, "_").AddEdge(sm.Get(false, "*$Inherits"), smu.Get(false, "SingleOperator"));
-            smu.Get(false, "`").AddEdge(sm.Get(false, "*$Inherits"), smu.Get(false, "SingleOperator"));
+            smu.Get(false, "CopySet").AddEdge(sm.Get(false, "*$Inherits"), smu.Get(false, "SingleOperator"));
+            smu.Get(false, "MetaToTo").AddEdge(sm.Get(false, "*$Inherits"), smu.Get(false, "SingleOperator"));
             smu.Get(false, @"()").AddEdge(sm.Get(false, "*$Inherits"), smu.Get(false, "SingleExpressionOperator"));            
             smu.Get(false, @"RedirectLeftEdgesToRightVertices").AddEdge(sm.Get(false, "*$Inherits"), smu.Get(false, "DoubleOperator"));
             smu.Get(false, @"AddLeftEdgesToRightVertices").AddEdge(sm.Get(false, "*$Inherits"), smu.Get(false, "DoubleOperator"));
@@ -615,8 +615,8 @@ namespace m0
             package.AddEdge(null, smu.Get(false, "Class"));
             package.AddEdge(null, smu.Get(false, "Query"));
             package.AddEdge(null, smu.Get(false, "[]"));
-            package.AddEdge(null, smu.Get(false, "<X>"));
-            package.AddEdge(null, smu.Get(false, "<>"));
+            package.AddEdge(null, smu.Get(false, "SetIndex"));
+            package.AddEdge(null, smu.Get(false, "SetCount"));
             package.AddEdge(null, smu.Get(false, "\"{CRLF}\""));
             package.AddEdge(null, smu.Get(false, "\"{}\""));
             package.AddEdge(null, smu.Get(false, "EdgeSetAdd"));
@@ -643,8 +643,8 @@ namespace m0
             package.AddEdge(null, smu.Get(false, "\"\\ \""));
             package.AddEdge(null, smu.Get(false, "\"|\""));
             package.AddEdge(null, smu.Get(false, "\"||\""));
-            package.AddEdge(null, smu.Get(false, "_"));
-            package.AddEdge(null, smu.Get(false, "`"));
+            package.AddEdge(null, smu.Get(false, "CopySet"));
+            package.AddEdge(null, smu.Get(false, "MetaToTo"));
             package.AddEdge(null, smu.Get(false, "()"));            
             package.AddEdge(null, smu.Get(false, "RedirectLeftEdgesToRightVertices"));
             package.AddEdge(null, smu.Get(false, "AddLeftEdgesToRightVertices"));
@@ -1050,7 +1050,7 @@ namespace m0
 
             o_index_any.AddVertex(smb.Get(false, "$$StartInLocalRoot"), "");
 
-            o_index_any.AddEdge(smb.Get(false, @"Vertex\$Is"), smu.Get(false, "<X>"));
+            o_index_any.AddEdge(smb.Get(false, @"Vertex\$Is"), smu.Get(false, "SetIndex"));
 
             o_index_any.AddVertex(smu.Get(false, @"SingleExpressionOperator\Expression"), "(?<expr>)");
             
@@ -1076,7 +1076,7 @@ namespace m0
 
             o_setCount_any.AddVertex(smb.Get(false, "$$StartInLocalRoot"), "");
 
-            o_setCount_any.AddEdge(smb.Get(false, @"Vertex\$Is"), smu.Get(false, "<>"));
+            o_setCount_any.AddEdge(smb.Get(false, @"Vertex\$Is"), smu.Get(false, "SetCount"));
 
             IVertex o_setCount_any_targetExpr = o_index_any.AddVertex(smu.Get(false, @"SingleOperator\NextExpression"), "");
 
@@ -1360,15 +1360,29 @@ namespace m0
 
             IVertex o_colon3_any_targetExpr = o_colon3_any.AddVertex(smu.Get(false, @"SingleOperator\NextExpression"), "");
 
-            o_colon3_any_targetExpr.AddEdge(smb.Get(false, "$$LocalRoot"), kgd_SlashMarkIndex);           
-            
+            o_colon3_any_targetExpr.AddEdge(smb.Get(false, "$$LocalRoot"), kgd_SlashMarkIndex);
+
+
+            // _
+            //
+            //  _(?<expr>)
+
+            AddSingleExpressionOperator(k, smu, smb, keyword, any, "_(?<expr>)", "CopySet");
+
+
+            // `
+            //
+            //  `(?<expr>)
+
+            AddSingleExpressionOperator(k, smu, smb, keyword, any, "`(?<expr>)", "MetaToTo");
+
             //////////////////// common
 
             // []
             //
             // [(*(+, +) (?<expr>)*)]
 
-              IVertex o_call = k.AddVertex(keyword, "(?<target_ColonEmptyInner2SlashMarkIndexNewLink>)[(*(+, +)(?<expr>)*)]");
+            IVertex o_call = k.AddVertex(keyword, "(?<target_ColonEmptyInner2SlashMarkIndexNewLink>)[(*(+, +)(?<expr>)*)]");
 
               IVertex o_call_any = o_call.AddVertex(any, "");
 

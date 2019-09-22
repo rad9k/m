@@ -219,56 +219,6 @@ namespace m0.ZeroUML.Instructions
 
 #region EdgeOperators
 
-        // := XXX
-        public static INoInEdgeInOutVertexVertex CopyVertexValue(ZeroCodeExecution exe, IVertex inputStack, IVertex instructionVertex, out bool isStackFrameReturn)
-        {
-            isStackFrameReturn = false;
-
-            IVertex leftExpression = InstructionHelpers.GetLeft(instructionVertex);
-            IVertex rightExpression = InstructionHelpers.GetRight(instructionVertex);
-
-            if (leftExpression == null || rightExpression == null)
-                return exe.stack;
-
-            INoInEdgeInOutVertexVertex leftExecuteResult = exe.ExecuteInstructionByMontevideoPrinciples(exe.stack, leftExpression);
-            INoInEdgeInOutVertexVertex _rightExecuteResult = exe.ExecuteInstructionByMontevideoPrinciples(exe.stack, rightExpression);
-
-            IList<IEdge> rightExecuteResult = _rightExecuteResult.OutEdges;
-
-            IDictionary<EdgeKey_FromMeta, IList<IEdge>> leftFromMeta_dict = InstructionHelpers.CreateEdgeKey_FromMetaDictionary(leftExecuteResult);
-
-            int rightCountMax = rightExecuteResult.Count() - 1;
-
-            foreach (KeyValuePair<EdgeKey_FromMeta, IList<IEdge>> localLeft in leftFromMeta_dict)
-            {
-                int localLeftCountMax = localLeft.Value.Count() - 1;
-
-                if (localLeftCountMax > rightCountMax)
-                {
-                    for (int x = rightCountMax + 1; x <= localLeftCountMax; x++)
-                    {
-                        IEdge toDelete = localLeft.Value[x];
-                        toDelete.From.DeleteEdge(toDelete);
-                    }
-
-                    localLeftCountMax = rightCountMax;
-                }
-
-                for (int x = 0; x <= localLeftCountMax; x++)
-                    localLeft.Value[x].To.Value = rightExecuteResult[x].To.Value;
-
-                if (localLeftCountMax < rightCountMax)
-                {
-                    IEdge toAdd = localLeft.Value[0];
-
-                    for (int x = localLeftCountMax + 1; x <= rightCountMax; x++)
-                        toAdd.From.AddVertex(toAdd.Meta, rightExecuteResult[x].To.Value);
-                }
-            }
-
-            return exe.stack;
-        }
-
         // =
         public static INoInEdgeInOutVertexVertex RedirectLeftEdgesToRightVertices(ZeroCodeExecution exe, IVertex inputStack, IVertex instructionVertex, out bool isStackFrameReturn)
         {
@@ -1680,7 +1630,21 @@ namespace m0.ZeroUML.Instructions
         {
             isStackFrameReturn = false;
 
-            return null;
+            IVertex expression = InstructionHelpers.GetExpression(instructionVertex);
+
+            if (expression == null)
+                return exe.stack;
+
+            INoInEdgeInOutVertexVertex expressionResult = exe.ExecuteInstructionByMontevideoPrinciples(inputStack, expression);
+
+            INoInEdgeInOutVertexVertex newStack = InstructionHelpers.CreateStack();
+
+            foreach(IEdge e in expressionResult)
+            {
+
+            }
+
+            return newStack;
         }
 
         public static INoInEdgeInOutVertexVertex CopySet(ZeroCodeExecution exe, IVertex inputStack, IVertex instructionVertex, out bool isStackFrameReturn)

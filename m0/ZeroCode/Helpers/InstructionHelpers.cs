@@ -80,6 +80,18 @@ namespace m0.ZeroCode.Helpers
             return CheckIfIsOrInherits(is_v, "AtomType");
         }
 
+        public static void CopyVertex(IEdge edgeToCopy, IVertex copyTo)
+        {
+            if (CheckIfIsAtomType(edgeToCopy.To))
+            {
+                copyTo.AddVertex(edgeToCopy.Meta, edgeToCopy.To.Value);
+            }
+            else
+            {
+
+            }
+        }
+
         public static bool CheckIfHasExecutableEndPoint(IVertex is_v)
         {
             IVertex eepv = GraphUtil.GetQueryOutFirst(is_v, "$ExecutableEndPoint", null);
@@ -381,21 +393,18 @@ namespace m0.ZeroCode.Helpers
                             return BooleanEnum.True;
                         else
                             return BooleanEnum.False;
-                        break;
 
                     case NumericTypeEnum.Double:
                         if (Comparer<double>.Default.Compare(0, (double)val) < 0)
                             return BooleanEnum.True;
                         else
                             return BooleanEnum.False;
-                        break;
 
                     case NumericTypeEnum.Integer:
                         if(Comparer<int>.Default.Compare(0, (int)val) < 0)                        
                             return BooleanEnum.True;
                         else
                             return BooleanEnum.False;
-                        break;
                 }
             }
 
