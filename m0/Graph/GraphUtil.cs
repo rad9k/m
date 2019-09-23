@@ -748,6 +748,26 @@ namespace m0.Graph
             return toReturn;
         }
 
+        static public void DeepCopy(IEdge edgeToCopy, IVertex copyTo)
+        {
+            List<IVertex> visited = new List<IVertex>();            
+
+            DeepCopy_Reccurent(edgeToCopy, copyTo, visited);            
+        }
+
+        static void DeepCopy_Reccurent(IEdge edgeToCopy, IVertex copyTo, List<IVertex> visited)
+        {
+            visited.Add(edgeToCopy.To);
+
+            IVertex newVertex = copyTo.AddVertex(edgeToCopy.Meta, edgeToCopy.To.Value);
+
+            foreach (IEdge e in edgeToCopy.To)
+                if (!visited.Contains(e.To) && !VertexOperations.IsLink(e))
+                    DeepCopy_Reccurent(e, newVertex, visited);
+                else
+                    newVertex.AddEdge(e.Meta, e.To);                      
+        }
+
         static public IEnumerable<IVertex> GetSubGraph(IVertex iterationRoot)
         {
             List<IVertex> visited = new List<IVertex>();            

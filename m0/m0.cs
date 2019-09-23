@@ -451,7 +451,7 @@ namespace m0
 
             AddDotNetEndPoint(smu.Get(false, "\"||\""), "DoubleColonOperator");
             AddDotNetEndPoint(smu.Get(false, "CopySet"), "CopySet");
-            AddDotNetEndPoint(smu.Get(false, "MetaToto"), "MetaToTo");
+            AddDotNetEndPoint(smu.Get(false, "MetaToTo"), "MetaToTo");
 
             ////////////////////////////////////////////////////////////////////////
 

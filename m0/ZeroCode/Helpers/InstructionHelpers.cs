@@ -83,13 +83,10 @@ namespace m0.ZeroCode.Helpers
         public static void CopyVertex(IEdge edgeToCopy, IVertex copyTo)
         {
             if (CheckIfIsAtomType(edgeToCopy.To))
-            {
-                copyTo.AddVertex(edgeToCopy.Meta, edgeToCopy.To.Value);
-            }
-            else
-            {
-
-            }
+                copyTo.AddVertex(edgeToCopy.Meta, edgeToCopy.To.Value);            
+            else            
+                GraphUtil.DeepCopy(edgeToCopy, copyTo);
+            
         }
 
         public static bool CheckIfHasExecutableEndPoint(IVertex is_v)
