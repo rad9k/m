@@ -1624,7 +1624,7 @@ namespace m0.ZeroUML.Instructions
         //
         ////////////////////////////////////////////////////////////////
 
-        #region "VertexCreationOperators"
+        #region VertexCreationOperators
 
         public static INoInEdgeInOutVertexVertex MetaToTo(ZeroCodeExecution exe, IVertex inputStack, IVertex instructionVertex, out bool isStackFrameReturn)
         {
@@ -1651,7 +1651,19 @@ namespace m0.ZeroUML.Instructions
         {
             isStackFrameReturn = false;
 
-            return null;
+            IVertex expression = InstructionHelpers.GetExpression(instructionVertex);
+
+            if (expression == null)
+                return exe.stack;
+
+            INoInEdgeInOutVertexVertex expressionResult = exe.ExecuteInstructionByMontevideoPrinciples(inputStack, expression);
+
+            INoInEdgeInOutVertexVertex newStack = InstructionHelpers.CreateStack();
+
+            foreach (IEdge e in expressionResult)
+                InstructionHelpers.CopyVertex(e, newStack);
+
+            return newStack;
         }
 
         public static INoInEdgeInOutVertexVertex DoubleColonOperator(ZeroCodeExecution exe, IVertex inputStack, IVertex instructionVertex, out bool isStackFrameReturn)
@@ -1688,5 +1700,79 @@ namespace m0.ZeroUML.Instructions
 
         #endregion
 
+        ////////////////////////////////////////////////////////////////
+        //
+        // meta
+        //
+        ////////////////////////////////////////////////////////////////
+
+
+        #region Meta
+
+        public static INoInEdgeInOutVertexVertex Execute(ZeroCodeExecution exe, IVertex inputStack, IVertex instructionVertex, out bool isStackFrameReturn)
+        {
+            isStackFrameReturn = false;
+
+            IVertex expression = InstructionHelpers.GetExpression(instructionVertex);
+
+            if (expression == null)
+                return exe.stack;
+
+            INoInEdgeInOutVertexVertex expressionResult = exe.ExecuteInstructionByMontevideoPrinciples(inputStack, expression);
+
+            INoInEdgeInOutVertexVertex newStack = InstructionHelpers.CreateStack();
+
+            foreach (IEdge e in expressionResult)
+            {
+
+            }
+
+            return newStack;
+        }
+
+        public static INoInEdgeInOutVertexVertex Parse(ZeroCodeExecution exe, IVertex inputStack, IVertex instructionVertex, out bool isStackFrameReturn)
+        {
+            isStackFrameReturn = false;
+
+            IVertex expression = InstructionHelpers.GetExpression(instructionVertex);
+
+            if (expression == null)
+                return exe.stack;
+
+            INoInEdgeInOutVertexVertex expressionResult = exe.ExecuteInstructionByMontevideoPrinciples(inputStack, expression);
+
+            INoInEdgeInOutVertexVertex newStack = InstructionHelpers.CreateStack();
+
+            foreach (IEdge e in expressionResult)
+            {
+
+            }
+
+            return newStack;
+        }
+
+        public static INoInEdgeInOutVertexVertex Generate(ZeroCodeExecution exe, IVertex inputStack, IVertex instructionVertex, out bool isStackFrameReturn)
+        {
+            isStackFrameReturn = false;
+
+            IVertex expression = InstructionHelpers.GetExpression(instructionVertex);
+
+            if (expression == null)
+                return exe.stack;
+
+            INoInEdgeInOutVertexVertex expressionResult = exe.ExecuteInstructionByMontevideoPrinciples(inputStack, expression);
+
+            INoInEdgeInOutVertexVertex newStack = InstructionHelpers.CreateStack();
+
+            foreach (IEdge e in expressionResult)
+            {
+
+            }
+
+            return newStack;
+        }
+
+        #endregion
     }
 }
+

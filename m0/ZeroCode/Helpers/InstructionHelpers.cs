@@ -91,6 +91,9 @@ namespace m0.ZeroCode.Helpers
 
         public static bool CheckIfHasExecutableEndPoint(IVertex is_v)
         {
+            if (is_v == null)
+                return false;
+
             IVertex eepv = GraphUtil.GetQueryOutFirst(is_v, "$ExecutableEndPoint", null);
 
             if (eepv != null)

@@ -467,7 +467,9 @@
   <ItemGroup>
     <Resource Include="_PROJECT\I_S_S_U_E_S.txt" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Resource Include="_PROJECT\theory\montevideo_principles 2.txt" />
+  </ItemGroup>
   <ItemGroup>
     <Resource Include="_PROJECT\workbench\creation.txt" />
   </ItemGroup>

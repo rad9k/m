@@ -51,7 +51,7 @@ namespace m0.ZeroCode
             IVertex is_v = InstructionHelpers.GetIs(instructionVertex);
 
 
-            if(InstructionHelpers.CheckIfIsAtomType(is_v)) // AtomType => deep copy 
+            /*if(InstructionHelpers.CheckIfIsAtomType(is_v)) // AtomType => deep copy 
             {
                 INoInEdgeInOutVertexVertex stack = InstructionHelpers.CreateStack();
 
@@ -60,7 +60,7 @@ namespace m0.ZeroCode
                 VertexOperations.DeepVertexCopy(instructionVertex, copiedVertex);
 
                 return stack;
-            }
+            }*/
 
             if (InstructionHelpers.CheckIfHasExecutableEndPoint(is_v))
                 return CallableEndPointDictionary.CallEndPoint(this, inputQs, instructionVertex, out isStackFrameReturn);

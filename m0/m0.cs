@@ -382,6 +382,7 @@ namespace m0
                 ",While{Test{$MinCardinality:1,$MaxCardinality:1}}" +
                 ",ForEach{Variable{$MinCardinality:1,$MaxCardinality:1},Set{$MinCardinality:1,$MaxCardinality:1}}" +
                 ",EmptySet,Constant" +
+                ",Execute,Parse,Generate" +
                 "}");
 
             // CallableEndPoint
@@ -452,6 +453,13 @@ namespace m0
             AddDotNetEndPoint(smu.Get(false, "\"||\""), "DoubleColonOperator");
             AddDotNetEndPoint(smu.Get(false, "CopySet"), "CopySet");
             AddDotNetEndPoint(smu.Get(false, "MetaToTo"), "MetaToTo");
+
+            // meta
+
+            AddDotNetEndPoint(smu.Get(false, "Execute"), "Execute");
+            AddDotNetEndPoint(smu.Get(false, "Parse"), "Parse");
+            AddDotNetEndPoint(smu.Get(false, "Generate"), "Generate");
+
 
             ////////////////////////////////////////////////////////////////////////
 
