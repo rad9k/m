@@ -347,8 +347,19 @@ namespace m0
             IVertex n = baseVertex.AddVertex(callableEndPoint, null);
             n.AddEdge(_is, dotNetEndPoint);
             n.AddVertex(typeName, "m0.ZeroUML.Instructions.BaseInstructions");
+            
             n.AddVertex(methodName, _methodName);
             
+        }
+
+        void AddCodeContainerEndPoint(IVertex baseVertex)
+        {
+            IVertex callableEndPoint = Root.Get(false, @"System\Meta\Base\Vertex\$ExecutableEndPoint");
+            IVertex codeContainerEndPoint = Root.Get(false, @"System\Meta\ZeroTypes\CodeContainer");
+            IVertex _is = Root.Get(false, @"System\Meta\Base\Vertex\$Is");
+
+            IVertex n = baseVertex.AddVertex(callableEndPoint, null);
+            n.AddEdge(_is, codeContainerEndPoint);            
         }
 
         void CreateSystemMetaZeroUML_Action_part()
@@ -365,7 +376,7 @@ namespace m0
             GeneralUtil.ParseAndExcute(smu, sm,
                 "{Link{Target{$MinCardinality:1,$MaxCardinality:1}},ExpressionAtom,Atom" +
                 ",SingleOperator{NextExpression{$MinCardinality:1,$MaxCardinality:1}}" +
-                ",SingleExpressionOperator{Expression{$MinCardinality:1,$MaxCardinality:1}}" +
+                ",SingleExpressionOperator{Expression{$MinCardinality:1,$MaxCardinality:1}}" +                
                 ",DoubleOperator{LeftExpression{$MinCardinality:1,$MaxCardinality:1},RightExpression{$MinCardinality:1,$MaxCardinality:1}}" +                
                 ",MultiOperator{Expression{$MinCardinality:0,$MaxCardinality:-1}}" +
                 ",Query" +
@@ -382,7 +393,7 @@ namespace m0
                 ",While{Test{$MinCardinality:1,$MaxCardinality:1}}" +
                 ",ForEach{Variable{$MinCardinality:1,$MaxCardinality:1},Set{$MinCardinality:1,$MaxCardinality:1}}" +
                 ",EmptySet,Constant" +
-                ",Execute,Parse,Generate" +
+                ",Execute,Parse{FormalTextLanguage{$MinCardinality:0,$MaxCardinality:1}},Generate{FormalTextLanguage{$MinCardinality:0,$MaxCardinality:1}}" +
                 "}");
 
             // CallableEndPoint
@@ -478,7 +489,7 @@ namespace m0
 
             smu.Get(false, @"ExpressionAtom").AddEdge(sm.Get(false, "*$Inherits"), smu.Get(false, "Atom"));
             smu.Get(false, @"ExpressionAtom").AddEdge(sm.Get(false, "*$Inherits"), smu.Get(false, "NextOut"));
-            smu.Get(false, @"SingleOperator").AddEdge(sm.Get(false, "*$Inherits"), smu.Get(false, "ExpressionAtom"));
+            smu.Get(false, @"SingleOperator").AddEdge(sm.Get(false, "*$Inherits"), smu.Get(false, "ExpressionAtom"));            
             smu.Get(false, @"SingleExpressionOperator").AddEdge(sm.Get(false, "*$Inherits"), smu.Get(false, "SingleOperator"));
             smu.Get(false, @"DoubleOperator").AddEdge(sm.Get(false, "*$Inherits"), smu.Get(false, "ExpressionAtom"));
             smu.Get(false, @"MultiOperator").AddEdge(sm.Get(false, "*$Inherits"), smu.Get(false, "ExpressionAtom"));
@@ -550,6 +561,10 @@ namespace m0
 
             smu.Get(false, @"Function").AddEdge(sm.Get(false, "*$Inherits"), smu.Get(false, "StackFrameCreatorWithInputOutput"));
 
+            smu.Get(false, @"Execute").AddEdge(sm.Get(false, "*$Inherits"), smu.Get(false, "SingleOperator"));
+            smu.Get(false, @"Parse").AddEdge(sm.Get(false, "*$Inherits"), smu.Get(false, "SingleOperator"));
+            smu.Get(false, @"Generate").AddEdge(sm.Get(false, "*$Inherits"), smu.Get(false, "SingleOperator"));
+
             //Link
             smu.Get(false, @"Link\Target").AddEdge(sm.Get(false, @"*$EdgeTarget"), smu.Get(false, @"Vertex"));
 
@@ -593,6 +608,10 @@ namespace m0
            // smu.Get(false, @"ForEach\Variable").AddEdge(sm.Get(false, @"*$EdgeTarget"), smu.Get(false, @"Query")); // better this
             smu.Get(false, @"ForEach\Set").AddEdge(sm.Get(false, @"*$EdgeTarget"), smu.Get(false, @"Atom"));
 
+            // meta            
+            smu.Get(false, @"Parse\FormalTextLanguage").AddEdge(sm.Get(false, @"*$EdgeTarget"), smu.Get(false, @"Atom"));
+            smu.Get(false, @"Generate\FormalTextLanguage").AddEdge(sm.Get(false, @"*$EdgeTarget"), smu.Get(false, @"Atom"));
+
 
             // $IsAggregation's for EdgeTargets
             smu.Get(false, @"Return\Expression").AddEdge(isAggregation, Empty);
@@ -615,6 +634,7 @@ namespace m0
             // package
             IVertex package = smu.AddVertex(null, "Package");
 
+            AddCodeContainerEndPoint(smu.Get(false, "Package"));
 
             package.AddEdge(null, smu.Get(false, "Link"));
             package.AddEdge(null, smu.Get(false, "AtomType"));
@@ -1633,6 +1653,39 @@ namespace m0
 
             at_at.AddVertex(smu.Get(false, @"Link\Target"), "(?<value>)");
 
+            //////////////////// meta
+
+            // <execute>
+            //
+            // <execute>(?<expr>)
+
+            AddSingleExpressionOperator(k, smu, smb, keyword, any, "<execute>(?<expr>)", "Execute");
+
+            // <parse>
+            //
+            // <parse>(?<expr>)
+
+            /*IVertex o_parse = k.AddVertex(keyword, "<parse>(?<expr>)");
+
+            IVertex o_parse_any = o_parse.AddVertex(any, "");
+
+            o_parse_any.AddEdge(_is, smu.Get(false, @"Parse"));
+
+            o_parse_any.AddVertex(smu.Get(false, @"SingleExpressionOperator\Expression"), "(?<expr>)");*/
+
+            // <parse>
+            //
+            // <parse (?<language>)>(?<expr>)
+
+            IVertex o_parse2 = k.AddVertex(keyword, "<parse (?<language>)>(?<expr>)");
+
+            IVertex o_parse2_any = o_parse2.AddVertex(any, "");
+
+            o_parse2_any.AddEdge(_is, smu.Get(false, @"Parse"));
+
+            o_parse2_any.AddVertex(smu.Get(false, @"SingleExpressionOperator\Expression"), "(?<expr>)");
+
+            o_parse2_any.AddVertex(smu.Get(false, @"Parse\FormalTextLanguage"), "(?<language>)");
         }
 
         private static void AddLeftRightOperator(IVertex k, IVertex smu, IVertex smb, IVertex keyword, IVertex any, string text, string _is)
@@ -1722,7 +1775,7 @@ namespace m0
             IVertex sm = Root.Get(false, @"System\Meta");
 
 
-            GeneralUtil.ParseAndExcute(sm, sm, "{ZeroTypes{AtomType:String,AtomType:Integer,AtomType:Decimal,AtomType:Float,AtomType:Boolean,Vertex:VertexType,Class:Edge{Association:From{$MinCardinality:0,$MaxCardinality:1},Association:Meta{$MinCardinality:1,$MaxCardinality:1},Association:To{$MinCardinality:1,$MaxCardinality:1}},Class:DateTime{Attribute:Year{$MinCardinality:1,$MaxCardinality:1},Attribute:Month{$MinCardinality:1,$MaxCardinality:1},Attribute:Day{$MinCardinality:1,$MaxCardinality:1},Attribute:Hour{$MinCardinality:1,$MaxCardinality:1},Attribute:Minute{$MinCardinality:1,$MaxCardinality:1},Attribute:Second{$MinCardinality:1,$MaxCardinality:1},Attribute:Millisecond{$MinCardinality:0,$MaxCardinality:1}},Class:FormalTextLanguage{Aggregation:DefaultImports{$MinCardinality:0,$MaxCardinality:1},Aggregation:Keywords{$MinCardinality:0,$MaxCardinality:1}},Enum:EnumBase,Class:$PlatformClass{$PlatformClassName},Class:HasBaseEdge{Attribute:BaseEdge{$MinCardinality:1,$MaxCardinality:1}},Class:HasSelectedEdges{Attribute:SelectedEdges{$MinCardinality:1,$MaxCardinality:1,$DefaultValue:}},Class:HasFilter{Attribute:FilterQuery{$MinCardinality:0,$MaxCardinality:1}},Class:Color{Attribute:Red{MinValue:0,MaxValue:255,$MinCardinality:1,$MaxCardinality:1},Attribute:Green{MinValue:0,MaxValue:255,$MinCardinality:1,$MaxCardinality:1},Attribute:Blue{MinValue:0,MaxValue:255,$MinCardinality:1,$MaxCardinality:1},Attribute:Opacity{MinValue:0,MaxValue:255,$MinCardinality:0,$MaxCardinality:1}},Class:Exception{Attribute:Where{$MinCardinality:0,$MaxCardinality:1},Attribute:Type{$MinCardinality:0,$MaxCardinality:1},Attribute:What{$MinCardinality:1,$MaxCardinality:1}},Enum:ExceptionTypeEnum{EnumValue:Error,EnumValue:Warning,EnumValue:Info},Class:CallableEndPoint,Class:DotNetEndPoint{Attribute:TypeName,Attribute:MethodName}}}");
+            GeneralUtil.ParseAndExcute(sm, sm, "{ZeroTypes{AtomType:String,AtomType:Integer,AtomType:Decimal,AtomType:Float,AtomType:Boolean,Vertex:VertexType,Class:Edge{Association:From{$MinCardinality:0,$MaxCardinality:1},Association:Meta{$MinCardinality:1,$MaxCardinality:1},Association:To{$MinCardinality:1,$MaxCardinality:1}},Class:DateTime{Attribute:Year{$MinCardinality:1,$MaxCardinality:1},Attribute:Month{$MinCardinality:1,$MaxCardinality:1},Attribute:Day{$MinCardinality:1,$MaxCardinality:1},Attribute:Hour{$MinCardinality:1,$MaxCardinality:1},Attribute:Minute{$MinCardinality:1,$MaxCardinality:1},Attribute:Second{$MinCardinality:1,$MaxCardinality:1},Attribute:Millisecond{$MinCardinality:0,$MaxCardinality:1}},Class:FormalTextLanguage{Aggregation:DefaultImports{$MinCardinality:0,$MaxCardinality:1},Aggregation:Keywords{$MinCardinality:0,$MaxCardinality:1}},Enum:EnumBase,Class:$PlatformClass{$PlatformClassName},Class:HasBaseEdge{Attribute:BaseEdge{$MinCardinality:1,$MaxCardinality:1}},Class:HasSelectedEdges{Attribute:SelectedEdges{$MinCardinality:1,$MaxCardinality:1,$DefaultValue:}},Class:HasFilter{Attribute:FilterQuery{$MinCardinality:0,$MaxCardinality:1}},Class:Color{Attribute:Red{MinValue:0,MaxValue:255,$MinCardinality:1,$MaxCardinality:1},Attribute:Green{MinValue:0,MaxValue:255,$MinCardinality:1,$MaxCardinality:1},Attribute:Blue{MinValue:0,MaxValue:255,$MinCardinality:1,$MaxCardinality:1},Attribute:Opacity{MinValue:0,MaxValue:255,$MinCardinality:0,$MaxCardinality:1}},Class:Exception{Attribute:Where{$MinCardinality:0,$MaxCardinality:1},Attribute:Type{$MinCardinality:0,$MaxCardinality:1},Attribute:What{$MinCardinality:1,$MaxCardinality:1}},Enum:ExceptionTypeEnum{EnumValue:Error,EnumValue:Warning,EnumValue:Info},Class:CallableEndPoint,Class:CodeContainer,Class:DotNetEndPoint{Attribute:TypeName,Attribute:MethodName}}}");
 
             sm.Get(false, @"Base\Vertex\$ExecutableEndPoint").AddEdge(sm.Get(false, @"*$EdgeTarget"), sm.Get(false, @"ZeroTypes\CallableEndPoint"));
 
@@ -1772,6 +1825,7 @@ namespace m0
             sm.Get(false, @"ZeroTypes\Exception\Type").AddEdge(sm.Get(false, @"*$EdgeTarget"), sm.Get(false, @"ZeroTypes\ExceptionTypeEnum"));
             sm.Get(false, @"ZeroTypes\Exception\What").AddEdge(sm.Get(false, @"*$EdgeTarget"), sm.Get(false, @"ZeroTypes\String"));
 
+            sm.Get(false, @"ZeroTypes\CodeContainer").AddEdge(sm.Get(false, "*$Inherits"), sm.Get(false, @"ZeroTypes\CallableEndPoint"));
             sm.Get(false, @"ZeroTypes\DotNetEndPoint").AddEdge(sm.Get(false, "*$Inherits"), sm.Get(false, @"ZeroTypes\CallableEndPoint"));
 
             sm.Get(false, @"ZeroTypes\DotNetEndPoint\TypeName").AddEdge(sm.Get(false, @"*$EdgeTarget"), sm.Get(false, @"ZeroTypes\String"));

@@ -22,6 +22,7 @@
 
 3. exception handling throught custom meta code
 12. execution stop / continuation / stack copy?
+19. [] as begginning of Query
 
 
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!! Done:

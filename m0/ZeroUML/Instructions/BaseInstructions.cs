@@ -1706,7 +1706,6 @@ namespace m0.ZeroUML.Instructions
         //
         ////////////////////////////////////////////////////////////////
 
-
         #region Meta
 
         public static INoInEdgeInOutVertexVertex Execute(ZeroCodeExecution exe, IVertex inputStack, IVertex instructionVertex, out bool isStackFrameReturn)
