@@ -577,7 +577,7 @@ namespace m0
             smu.Get(false, @"DoubleOperator\RightExpression").AddEdge(sm.Get(false, @"*$EdgeTarget"), smu.Get(false, @"Atom"));            
             smu.Get(false, @"MultiOperator\Expression").AddEdge(sm.Get(false, @"*$EdgeTarget"), smu.Get(false, @"Atom"));
 
-            // $IsAggregation's for EdgeTargets
+            // $IsAggregation's for expressions
             smu.Get(false, @"SingleOperator\NextExpression").AddEdge(isAggregation, Empty);
             smu.Get(false, @"SingleExpressionOperator\Expression").AddEdge(isAggregation, Empty);
             smu.Get(false, @"DoubleOperator\LeftExpression").AddEdge(isAggregation, Empty);
@@ -611,6 +611,9 @@ namespace m0
             // meta            
             smu.Get(false, @"Parse\FormalTextLanguage").AddEdge(sm.Get(false, @"*$EdgeTarget"), smu.Get(false, @"Atom"));
             smu.Get(false, @"Generate\FormalTextLanguage").AddEdge(sm.Get(false, @"*$EdgeTarget"), smu.Get(false, @"Atom"));
+
+            smu.Get(false, @"Parse\FormalTextLanguage").AddEdge(isAggregation, Empty);
+            smu.Get(false, @"Generate\FormalTextLanguage").AddEdge(isAggregation, Empty);
 
 
             // $IsAggregation's for EdgeTargets
@@ -1677,7 +1680,7 @@ namespace m0
             //
             // <parse (?<language>)>(?<expr>)
 
-            IVertex o_parse2 = k.AddVertex(keyword, "<parse (?<language>)>(?<expr>)");
+            IVertex o_parse2 = k.AddVertex(keyword, "<<parse (?<language>)>>(?<expr>)");
 
             IVertex o_parse2_any = o_parse2.AddVertex(any, "");
 
