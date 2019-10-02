@@ -393,7 +393,7 @@ namespace m0
                 ",While{Test{$MinCardinality:1,$MaxCardinality:1}}" +
                 ",ForEach{Variable{$MinCardinality:1,$MaxCardinality:1},Set{$MinCardinality:1,$MaxCardinality:1}}" +
                 ",EmptySet,Constant" +
-                ",Execute,Parse{FormalTextLanguage{$MinCardinality:0,$MaxCardinality:1}},Generate{FormalTextLanguage{$MinCardinality:0,$MaxCardinality:1}}" +
+                ",Execute,Parse,ParseWithLanguage{FormalTextLanguage{$MinCardinality:0,$MaxCardinality:1}},Generate,GenerateWithLanguage{FormalTextLanguage{$MinCardinality:0,$MaxCardinality:1}}" +
                 "}");
 
             // CallableEndPoint
@@ -470,6 +470,9 @@ namespace m0
             AddDotNetEndPoint(smu.Get(false, "Execute"), "Execute");
             AddDotNetEndPoint(smu.Get(false, "Parse"), "Parse");
             AddDotNetEndPoint(smu.Get(false, "Generate"), "Generate");
+            AddDotNetEndPoint(smu.Get(false, "ParseWithLanguage"), "Parse");
+            AddDotNetEndPoint(smu.Get(false, "GenerateWithLanguage"), "Generate");
+
 
 
             ////////////////////////////////////////////////////////////////////////
@@ -609,11 +612,11 @@ namespace m0
             smu.Get(false, @"ForEach\Set").AddEdge(sm.Get(false, @"*$EdgeTarget"), smu.Get(false, @"Atom"));
 
             // meta            
-            smu.Get(false, @"Parse\FormalTextLanguage").AddEdge(sm.Get(false, @"*$EdgeTarget"), smu.Get(false, @"Atom"));
-            smu.Get(false, @"Generate\FormalTextLanguage").AddEdge(sm.Get(false, @"*$EdgeTarget"), smu.Get(false, @"Atom"));
+            smu.Get(false, @"ParseWithLanguage\FormalTextLanguage").AddEdge(sm.Get(false, @"*$EdgeTarget"), smu.Get(false, @"Atom"));
+            smu.Get(false, @"GenerateWithLanguage\FormalTextLanguage").AddEdge(sm.Get(false, @"*$EdgeTarget"), smu.Get(false, @"Atom"));
 
-            smu.Get(false, @"Parse\FormalTextLanguage").AddEdge(isAggregation, Empty);
-            smu.Get(false, @"Generate\FormalTextLanguage").AddEdge(isAggregation, Empty);
+            smu.Get(false, @"ParseWithLanguage\FormalTextLanguage").AddEdge(isAggregation, Empty);
+            smu.Get(false, @"GenerateWithLanguage\FormalTextLanguage").AddEdge(isAggregation, Empty);
 
 
             // $IsAggregation's for EdgeTargets
@@ -1658,37 +1661,64 @@ namespace m0
 
             //////////////////// meta
 
-            // <execute>
+            // <<execute>>
             //
-            // <execute>(?<expr>)
+            // <<execute>>(?<expr>)
 
-            AddSingleExpressionOperator(k, smu, smb, keyword, any, "<execute>(?<expr>)", "Execute");
+            AddSingleExpressionOperator(k, smu, smb, keyword, any, "<<execute>>(?<expr>)", "Execute");
 
-            // <parse>
+            // <<parse>>
             //
-            // <parse>(?<expr>)
+            // <<parse>>(?<expr>)
 
-            /*IVertex o_parse = k.AddVertex(keyword, "<parse>(?<expr>)");
+            IVertex o_parse = k.AddVertex(keyword, "<<parse>>(?<expr>)");
 
             IVertex o_parse_any = o_parse.AddVertex(any, "");
 
             o_parse_any.AddEdge(_is, smu.Get(false, @"Parse"));
 
-            o_parse_any.AddVertex(smu.Get(false, @"SingleExpressionOperator\Expression"), "(?<expr>)");*/
+            o_parse_any.AddVertex(smu.Get(false, @"SingleExpressionOperator\Expression"), "(?<expr>)");
 
-            // <parse>
+            // <<parse>>
             //
-            // <parse (?<language>)>(?<expr>)
+            // <<parse (?<language>)>>(?<expr>)
 
             IVertex o_parse2 = k.AddVertex(keyword, "<<parse (?<language>)>>(?<expr>)");
 
             IVertex o_parse2_any = o_parse2.AddVertex(any, "");
 
-            o_parse2_any.AddEdge(_is, smu.Get(false, @"Parse"));
+            o_parse2_any.AddEdge(_is, smu.Get(false, @"ParseWithLanguage"));
 
-            o_parse2_any.AddVertex(smu.Get(false, @"SingleExpressionOperator\Expression"), "(?<expr>)");
+            o_parse2_any.AddVertex(smu.Get(false, @"ParseWithLanguage\FormalTextLanguage"), "(?<language>)");
 
-            o_parse2_any.AddVertex(smu.Get(false, @"Parse\FormalTextLanguage"), "(?<language>)");
+            o_parse2_any.AddVertex(smu.Get(false, @"SingleExpressionOperator\Expression"), "(?<expr>)");            
+
+            // <<generate>>
+            //
+            // <<generate>>(?<expr>)
+
+            IVertex o_generate = k.AddVertex(keyword, "<<generate>>(?<expr>)");
+
+            IVertex o_generate_any = o_generate.AddVertex(any, "");
+
+            o_generate_any.AddEdge(_is, smu.Get(false, @"Generate"));
+
+            o_generate_any.AddVertex(smu.Get(false, @"SingleExpressionOperator\Expression"), "(?<expr>)");
+
+            // <<generate>>
+            //
+            // <<generate (?<language>)>>(?<expr>)
+
+            IVertex o_generate2 = k.AddVertex(keyword, "<<generate (?<language>)>>(?<expr>)");
+
+            IVertex o_generate2_any = o_generate2.AddVertex(any, "");
+
+            o_generate2_any.AddEdge(_is, smu.Get(false, @"GenerateWithLanguage"));
+
+            o_generate2_any.AddVertex(smu.Get(false, @"SingleExpressionOperator\Expression"), "(?<expr>)");
+
+            o_generate2_any.AddVertex(smu.Get(false, @"GenerateWithLanguage\FormalTextLanguage"), "(?<language>)");
+
         }
 
         private static void AddLeftRightOperator(IVertex k, IVertex smu, IVertex smb, IVertex keyword, IVertex any, string text, string _is)
