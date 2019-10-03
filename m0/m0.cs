@@ -1661,17 +1661,17 @@ namespace m0
 
             //////////////////// meta
 
-            // <<execute>>
+            // execute
             //
-            // <<execute>>(?<expr>)
+            // execute((?<expr>))
 
-            AddSingleExpressionOperator(k, smu, smb, keyword, any, "<<execute>>(?<expr>)", "Execute");
+            AddSingleExpressionOperator(k, smu, smb, keyword, any, "execute((?<expr>))", "Execute");
 
-            // <<parse>>
+            // parse
             //
-            // <<parse>>(?<expr>)
+            // parse((?<expr>))
 
-            IVertex o_parse = k.AddVertex(keyword, "<<parse>>(?<expr>)");
+            IVertex o_parse = k.AddVertex(keyword, "parse(?<expr>)");
 
             IVertex o_parse_any = o_parse.AddVertex(any, "");
 

@@ -1723,7 +1723,10 @@ namespace m0.ZeroUML.Instructions
 
             foreach (IEdge e in expressionResult)
             {
+                INoInEdgeInOutVertexVertex nestedExpressionResult = exe.ExecuteInstructionByMontevideoPrinciples(inputStack, e.To);
 
+                foreach (IEdge ee in nestedExpressionResult)
+                    newStack.AddEdgeForNoInEdgeInOutVertexVertex(ee);
             }
 
             return newStack;
