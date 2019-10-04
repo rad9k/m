@@ -10,5 +10,7 @@ namespace m0.FormalTextLanguage
     public interface IParser
     {
         IVertex Parse(IVertex rootVertex, string text);
+
+        IVertex Parse(IVertex formalTextLanguage, IVertex rootVertex, string text);
     }
 }

@@ -9,7 +9,9 @@ namespace m0.FormalTextLanguage
 {
     public interface ICodeGenerator
     {
-        string ZeroCodeGraph2String(IEdge graphBaseEdge);
+        string Generate(IEdge graphBaseEdge);
+
+        string Generate(IVertex formalTextLanguage, IEdge graphBaseEdge);
 
     }
 }

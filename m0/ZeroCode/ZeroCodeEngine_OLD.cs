@@ -506,6 +506,11 @@ namespace m0.ZeroCode
             }
         }
 
+        public IVertex Parse(IVertex formalTextLanguage, IVertex rootVertex, string text)
+        {
+            throw new NotImplementedException();
+        }
+
         #endregion
         public static ZeroCodeEngine_OLD Instance;
 
@@ -517,7 +522,7 @@ namespace m0.ZeroCode
 
             AlwaysGenerateQuotas = false;
 
-            ZeroCodeTerminals = MinusZero.Instance.DefaultLanguageDefinition_OLD;
+            ZeroCodeTerminals = MinusZero.Instance.DefaultLanguageDefinition_ForOldParser;
 
             Parser = new GoldGenericParser("ZeroCode.egt", ZeroCodeTerminals);
                         

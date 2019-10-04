@@ -425,6 +425,11 @@ namespace m0.ZeroCode.Helpers
                 return true;
 
             return false;
-        }        
+        } 
+        
+       public static IEdge GetFirstExecutionEdge(ZeroCodeExecution exe, IVertex instructionVertex)
+       {
+            return exe.ExecuteInstructionByMontevideoPrinciples(exe.stack, instructionVertex).FirstOrDefault();
+       }
     }
 }

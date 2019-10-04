@@ -14,6 +14,11 @@ namespace m0.ZeroCode
         ZeroCodeExecuter ZeroCodeExecuter_Instance;
         ZeroCodeGraph2StringProcessing ZeroCodeGraph2StringProcessing_Instance;
 
+        Dictionary<IVertex, String2ZeroCodeGraphProcessing> String2ZeroCodeGraphProcessing_InstanceDictionary = new Dictionary<IVertex, String2ZeroCodeGraphProcessing>();
+        Dictionary<IVertex, ZeroCodeGraph2StringProcessing> ZeroCodeGraph2StringProcessing_InstanceDictionary = new Dictionary<IVertex, ZeroCodeGraph2StringProcessing>();
+
+
+
         public IVertex Execute(IVertex baseVertex, IVertex expression)
         {            
             return ZeroCodeExecuter_Instance.Execute(baseVertex, expression);
@@ -34,19 +39,48 @@ namespace m0.ZeroCode
             return String2ZeroCodeGraphProcessing_Instance.Process(rootVertex, text); 
         }
 
-        public string ZeroCodeGraph2String(IEdge graphBaseEdge)
+        public IVertex Parse(IVertex formalTextLanguage, IVertex rootVertex, string text)
         {
-            //return "";
+            String2ZeroCodeGraphProcessing instance;
+
+            if (String2ZeroCodeGraphProcessing_InstanceDictionary.ContainsKey(formalTextLanguage))
+                instance = String2ZeroCodeGraphProcessing_InstanceDictionary[formalTextLanguage];
+            else
+            {
+                instance = new String2ZeroCodeGraphProcessing(formalTextLanguage);
+
+                String2ZeroCodeGraphProcessing_InstanceDictionary.Add(formalTextLanguage, instance);
+            }
+
+            return instance.Process(rootVertex, text);
+        }
+
+        public string Generate(IEdge graphBaseEdge)
+        {
             return ZeroCodeGraph2StringProcessing_Instance.Process(graphBaseEdge);
+        }
+
+        public string Generate(IVertex formalTextLanguage, IEdge graphBaseEdge)
+        {
+            ZeroCodeGraph2StringProcessing instance;
+
+            if (ZeroCodeGraph2StringProcessing_InstanceDictionary.ContainsKey(formalTextLanguage))
+                instance = ZeroCodeGraph2StringProcessing_InstanceDictionary[formalTextLanguage];
+            else
+            {
+                instance = new ZeroCodeGraph2StringProcessing(formalTextLanguage);
+
+                ZeroCodeGraph2StringProcessing_InstanceDictionary.Add(formalTextLanguage, instance);
+            }
+
+            return instance.Process(graphBaseEdge);
         }
 
         public ZeroCodeEngine()
         {
-            IVertex DefaultFormalTextLanguage = MinusZero.Instance.Root.Get(false, @"User\CurrentUser:\DefaultFormalTextLanguage:");
-
-            String2ZeroCodeGraphProcessing_Instance = new String2ZeroCodeGraphProcessing(DefaultFormalTextLanguage);
+            String2ZeroCodeGraphProcessing_Instance = new String2ZeroCodeGraphProcessing(MinusZero.Instance.DefaultFormalTextLanguage);
             ZeroCodeExecuter_Instance = new ZeroCodeExecuter();
-            ZeroCodeGraph2StringProcessing_Instance = new ZeroCodeGraph2StringProcessing(DefaultFormalTextLanguage);
+            ZeroCodeGraph2StringProcessing_Instance = new ZeroCodeGraph2StringProcessing(MinusZero.Instance.DefaultFormalTextLanguage);
         }
     }
 }

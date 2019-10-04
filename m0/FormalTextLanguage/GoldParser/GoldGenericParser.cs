@@ -138,7 +138,12 @@ namespace m0.FormalTextLanguage.GoldParser
                         generatedVertexList.Add(current);
                     }
                 }
-        }     
+        }
+
+        public IVertex Parse(IVertex formalTextLanguage, IVertex rootVertex, string text)
+        {
+            throw new NotImplementedException();
+        }
 
         public GoldGenericParser(string fileName, IVertex languageDefinitionRoot)
         {

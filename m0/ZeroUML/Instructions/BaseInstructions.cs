@@ -1741,13 +1741,24 @@ namespace m0.ZeroUML.Instructions
             if (expression == null)
                 return exe.stack;
 
+            IVertex language;
+
+            IVertex instuctionFormalTextLanguage = GraphUtil.GetQueryOutFirst(instructionVertex, "FormalTextLanguage", null);
+
+            if (instuctionFormalTextLanguage == null)
+                language = MinusZero.Instance.DefaultFormalTextLanguage;
+            else
+                language = InstructionHelpers.GetFirstExecutionEdge(exe, instuctionFormalTextLanguage).To;
+
             INoInEdgeInOutVertexVertex expressionResult = exe.ExecuteInstructionByMontevideoPrinciples(inputStack, expression);
 
             INoInEdgeInOutVertexVertex newStack = InstructionHelpers.CreateStack();
 
             foreach (IEdge e in expressionResult)
             {
+                IVertex newVertex = newStack.AddVertex(null, "");
 
+                MinusZero.Instance.NewDefaultParser.Parse(language, newVertex, e.To.Value.ToString());
             }
 
             return newStack;
@@ -1762,13 +1773,24 @@ namespace m0.ZeroUML.Instructions
             if (expression == null)
                 return exe.stack;
 
+            IVertex language;
+
+            IVertex instuctionFormalTextLanguage = GraphUtil.GetQueryOutFirst(instructionVertex, "FormalTextLanguage", null);
+
+            if (instuctionFormalTextLanguage == null)
+                language = MinusZero.Instance.DefaultFormalTextLanguage;
+            else
+                language = InstructionHelpers.GetFirstExecutionEdge(exe, instuctionFormalTextLanguage).To;
+
             INoInEdgeInOutVertexVertex expressionResult = exe.ExecuteInstructionByMontevideoPrinciples(inputStack, expression);
 
             INoInEdgeInOutVertexVertex newStack = InstructionHelpers.CreateStack();
 
             foreach (IEdge e in expressionResult)
             {
+                string parsed = MinusZero.Instance.DefaultCodeGenerator.Generate(language, e);
 
+                newStack.AddVertex(null, parsed);
             }
 
             return newStack;

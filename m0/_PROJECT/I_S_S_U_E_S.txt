@@ -17,6 +17,7 @@
 					<@Meta :: @> ???
 					<@To :: @TEST\Person4>
 11. Diagram perf update
+12. parse / generate check
 
 <><><> FUTURE 1
 

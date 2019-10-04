@@ -63,7 +63,7 @@ namespace m0
 
         public IExecuter DefaultExecuter { get { return _DefaultExecuter; } }
 
-        IVertex _DefaultLanguageDefinition;
+        IVertex _DefaultFormalTextLanguage;
 
         //
 
@@ -78,12 +78,12 @@ namespace m0
 
         //
 
-        public IVertex DefaultLanguageDefinition { get { return _DefaultLanguageDefinition; } }
+        public IVertex DefaultFormalTextLanguage { get { return _DefaultFormalTextLanguage; } }
 
 
-        IVertex _DefaultLanguageDefinition_OLD;
+        IVertex _DefaultLanguageDefinition_ForOldParser;
 
-        public IVertex DefaultLanguageDefinition_OLD { get { return _DefaultLanguageDefinition_OLD; } }
+        public IVertex DefaultLanguageDefinition_ForOldParser { get { return _DefaultLanguageDefinition_ForOldParser; } }
 
 
         IVertex _MetaFormalTextLanguageParsedTreeVertex;
@@ -206,7 +206,7 @@ namespace m0
 
             IVertex zco = tl.AddVertex(null, "ZeroCode_OLD");
 
-            _DefaultLanguageDefinition_OLD = zco;
+            _DefaultLanguageDefinition_ForOldParser = zco;
 
             zco.AddVertex(null, ",");
 
@@ -1671,7 +1671,7 @@ namespace m0
             //
             // parse((?<expr>))
 
-            IVertex o_parse = k.AddVertex(keyword, "parse(?<expr>)");
+            IVertex o_parse = k.AddVertex(keyword, "parse((?<expr>))");
 
             IVertex o_parse_any = o_parse.AddVertex(any, "");
 
@@ -1679,11 +1679,11 @@ namespace m0
 
             o_parse_any.AddVertex(smu.Get(false, @"SingleExpressionOperator\Expression"), "(?<expr>)");
 
-            // <<parse>>
+            // parse
             //
-            // <<parse (?<language>)>>(?<expr>)
+            // parse (?<language>)((?<expr>))
 
-            IVertex o_parse2 = k.AddVertex(keyword, "<<parse (?<language>)>>(?<expr>)");
+            IVertex o_parse2 = k.AddVertex(keyword, "parse (?<language>)((?<expr>))");
 
             IVertex o_parse2_any = o_parse2.AddVertex(any, "");
 
@@ -1693,11 +1693,11 @@ namespace m0
 
             o_parse2_any.AddVertex(smu.Get(false, @"SingleExpressionOperator\Expression"), "(?<expr>)");            
 
-            // <<generate>>
+            // generate
             //
-            // <<generate>>(?<expr>)
+            // generate((?<expr>))
 
-            IVertex o_generate = k.AddVertex(keyword, "<<generate>>(?<expr>)");
+            IVertex o_generate = k.AddVertex(keyword, "generate((?<expr>))");
 
             IVertex o_generate_any = o_generate.AddVertex(any, "");
 
@@ -1705,11 +1705,11 @@ namespace m0
 
             o_generate_any.AddVertex(smu.Get(false, @"SingleExpressionOperator\Expression"), "(?<expr>)");
 
-            // <<generate>>
+            // generate
             //
-            // <<generate (?<language>)>>(?<expr>)
+            // generate (?<language>)((?<expr>))
 
-            IVertex o_generate2 = k.AddVertex(keyword, "<<generate (?<language>)>>(?<expr>)");
+            IVertex o_generate2 = k.AddVertex(keyword, "generate (?<language>)((?<expr>))");
 
             IVertex o_generate2_any = o_generate2.AddVertex(any, "");
 
@@ -3595,6 +3595,11 @@ namespace m0
             Root.Get(false, @"User").AddEdge(Root.Get(false, @"System\Meta\User\CurrentUser"), Root.Get(false, @"User\root"));
         }
 
+        void AfterCreateUsers()
+        {
+            _DefaultFormalTextLanguage = MinusZero.Instance.Root.Get(false, @"User\CurrentUser:\DefaultFormalTextLanguage:");
+        }
+
         void AddDrives()
         {
             string[] drives = System.IO.Directory.GetLogicalDrives();
@@ -3829,6 +3834,8 @@ namespace m0
 
             CreateUsers();
 
+            AfterCreateUsers();
+            
 
             Init_AfterZeroCodeDefintionCreated();
 
