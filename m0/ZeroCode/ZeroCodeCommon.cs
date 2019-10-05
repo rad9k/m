@@ -28,6 +28,8 @@ namespace m0.ZeroCode
         // core code style
         //////////////////////
 
+        public static string MetaSeparator = "|";
+
         public static string CodeGraphVertexPrefix = "<";
 
         public static string CodeGraphVertexSuffix = ">";

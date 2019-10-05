@@ -3,8 +3,8 @@
 15. add _ to || [16]
 16. _ operator 
 17. ` operator
-18. <> operator
-
+20. GetIdentyfyingQuerySubString_ImportMeta not workin <> queries
+21. IsMetaAndToVertexEnoughToIdentifyEdge and IsToVertexEnoughToIdentifyEdge
 2. can not create Files
 
 <><><> FUTURE 0
@@ -33,3 +33,4 @@
 5. root level queries on "stack root -1"   
 13. common implementation of montevideo principles
 9. [] as subexpression
+18. <> operator

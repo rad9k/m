@@ -215,7 +215,7 @@ namespace m0.Graph
                 return ZeroCodeCommon.stringToPossiblyEscapedString(meta.ToString()) + ":" + ZeroCodeCommon.stringToPossiblyEscapedString(to.ToString());
         }
 
-        public static string GetIdentyfyingQuerySubString_ImportMeta(IEdge e)
+        public static string GetIdentyfyingQuerySubString_ImportMeta(IEdge e) // this is used in String2Graph, so we need to reference ZeroCodeCommon.MetaSeparator
         {
             if (VertexOperations.IsToVertexEnoughToIdentifyEdge(e.From, e.To))
                 return ZeroCodeCommon.stringToPossiblyEscapedString(e.To.ToString()+""); // there was no ToString. might cause problems
@@ -225,7 +225,7 @@ namespace m0.Graph
                 else
                 {
                     int pos = 0;
-                    IVertex q = e.From.GetAll(false, ZeroCodeCommon.stringToPossiblyEscapedString(e.Meta.ToString()) + ":" + ZeroCodeCommon.stringToPossiblyEscapedString(e.To.ToString()));
+                    IVertex q = e.From.GetAll(false, ZeroCodeCommon.stringToPossiblyEscapedString(e.Meta.ToString()) + ZeroCodeCommon.MetaSeparator + ZeroCodeCommon.stringToPossiblyEscapedString(e.To.ToString()));
 
                     IVertex tv;
                     do
@@ -234,7 +234,7 @@ namespace m0.Graph
                         pos++;
                     } while (tv != e.To);
 
-                    return GetQueryStringPart(e.Meta,e.To) + "|" + pos ; // not sure if this | pos thing is feasible
+                    return GetQueryStringPart(e.Meta,e.To) + "<" + pos + ">"; // not sure if this | pos thing is feasible
                 }
         }
 

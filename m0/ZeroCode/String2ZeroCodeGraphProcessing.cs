@@ -445,12 +445,16 @@ namespace m0.ZeroCode
 
         IVertex query(IVertex baseVertex, string query)
         {
-            return baseVertex.Get(false, query);
+            //return baseVertex.Get(false, query);
+
+            return ((EasyVertex)baseVertex).NewGet(false, query);
         }
 
         IVertex queryMetaMode(IVertex baseVertex, string query)
         {
-            return baseVertex.Get(false, query); // TODO: to be corected
+            //return baseVertex.Get(false, query); // TODO: to be corected
+
+            return ((EasyVertex)baseVertex).NewGet(false, query);
         }   
 
         IVertex ToVertexMock2VertexByLinkString(ToVertexMock mock)
@@ -506,14 +510,16 @@ namespace m0.ZeroCode
 
             // try from local root
 
-            tryIf = query(baseVertex, @"$ParseRoot:\\"+link);
+            tryIf = query(baseVertex, @"$ParseRoot"+ZeroCodeCommon.MetaSeparator+@"\\"+link);            
 
             if (tryIf != null)
                 return tryIf;
 
             // try from global root
 
-            tryIf = MinusZero.Instance.Root.Get(false, link);
+            //tryIf = MinusZero.Instance.Root.Get(false, link);
+
+            tryIf = query(MinusZero.Instance.Root, link);
 
             if (tryIf != null)
                 return tryIf;
@@ -525,10 +531,10 @@ namespace m0.ZeroCode
                     if (GeneralUtil.CompareStrings(inEdge.Meta.Value, link))
                         return inEdge.Meta;
 
-                    IVertex found = inEdge.Meta.Get(false, link);
+                    IVertex found = inEdge.Meta.Get(false, link); // ??? for sure XXX I do not know why it works, but it should be there. perhaps
                     
                     if (found != null)
-                            return found;                    
+                        return found;                    
                 }
             }
 
