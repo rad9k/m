@@ -58,7 +58,7 @@ namespace m0.ZeroCode
         {
             ZeroCodeExecution exe = new ZeroCodeExecution();
 
-            exe.metaMode = true;
+            exe.metaMode = metaMode;
 
             INoInEdgeInOutVertexVertex qs = InstructionHelpers.CreateStack();
 

@@ -30,6 +30,8 @@ namespace m0.ZeroCode
 
         public static string MetaSeparator = "|";
 
+        //public static string MetaSeparator = ":";
+
         public static string CodeGraphVertexPrefix = "<";
 
         public static string CodeGraphVertexSuffix = ">";

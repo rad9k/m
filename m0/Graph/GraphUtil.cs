@@ -225,7 +225,8 @@ namespace m0.Graph
                 else
                 {
                     int pos = 0;
-                    IVertex q = e.From.GetAll(false, ZeroCodeCommon.stringToPossiblyEscapedString(e.Meta.ToString()) + ZeroCodeCommon.MetaSeparator + ZeroCodeCommon.stringToPossiblyEscapedString(e.To.ToString()));
+                    IVertex q = e.From.GetAll(false, ZeroCodeCommon.stringToPossiblyEscapedString(e.Meta.ToString()) + ":" + ZeroCodeCommon.stringToPossiblyEscapedString(e.To.ToString()));
+
 
                     IVertex tv;
                     do
