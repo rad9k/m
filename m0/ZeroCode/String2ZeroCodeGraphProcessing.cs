@@ -461,6 +461,12 @@ namespace m0.ZeroCode
         {
             string link = mock.mockData.ToString();
 
+            if(link=="X")
+            {
+                int x = 0;
+            }
+
+
             // try named link
 
             string secondPart;
