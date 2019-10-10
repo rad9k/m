@@ -224,6 +224,23 @@ namespace m0.ZeroCode
 
         }
 
+        class DictionariesForFormalTextLanguage
+        {
+            public IDictionary<string, IList<IVertex>> emptyKeywordByGroupsDictionary;
+            public IDictionary<string, IList<IVertex>> newVertexKeywordByGroupsDictionary;
+            public IDictionary<string, IList<IVertex>> linkKeywordByGroupsDictionary;
+            public IDictionary<string, List<keywordTryingData>> examinedKeywords_All; // all keywords are here
+            public IDictionary<string, List<keywordTryingData>> examinedKeywords_StartInLocalRootOnly; // StartInLocalRoot only?
+            public IDictionary<char, List<string>> allKeywordsSubstringsDictionary;
+            public IDictionary<char, List<string>> allKeywordsSubstringsDictionary_witchoutLinkKeywordParts;
+
+            public IDictionary<IVertex, KeywordInfo> keywordInfoDict;
+        }
+
+        DictionariesForFormalTextLanguage dict;
+
+        Dictionary<IVertex, DictionariesForFormalTextLanguage> DictionariesForFormalTextLanguageDictionary = new Dictionary<IVertex, DictionariesForFormalTextLanguage>();
+
         // PARSER AUTO TEST SECTION
 
         /*int l1089 = 10;
@@ -248,18 +265,6 @@ namespace m0.ZeroCode
 
         IVertex errorList;
 
-        //
-        
-        IDictionary<string, IList<IVertex>> emptyKeywordByGroupsDictionary;
-        IDictionary<string, IList<IVertex>> newVertexKeywordByGroupsDictionary;
-        IDictionary<string, IList<IVertex>> linkKeywordByGroupsDictionary;
-        IDictionary<string, List<keywordTryingData>> examinedKeywords_All; // all keywords are here
-        IDictionary<string, List<keywordTryingData>> examinedKeywords_StartInLocalRootOnly; // StartInLocalRoot only?
-        IDictionary<char, List<string>> allKeywordsSubstringsDictionary;
-        IDictionary<char, List<string>> allKeywordsSubstringsDictionary_witchoutLinkKeywordParts;
-
-        IDictionary<IVertex, KeywordInfo> keywordInfoDict;        
-
         // PROCESS dependent
 
         public IVertex baseVertex;
@@ -270,9 +275,7 @@ namespace m0.ZeroCode
 
         //
 
-        IVertex r = m0.MinusZero.Instance.Root;
-
-    
+        IVertex r = m0.MinusZero.Instance.Root;    
         
         IVertex importList;
         IVertex importMetaList;
@@ -292,11 +295,8 @@ namespace m0.ZeroCode
         }
 
         void prepareImportList_User()
-        {
-          //  return;
-            // XXX
-            IVertex codeSettings = FormalTextLanguage.Get(false, "DefaultImports:");
-                //r.Get(false, @"User\CurrentUser:\CodeSettings:");
+        {          
+            IVertex codeSettings = FormalTextLanguage.Get(false, "DefaultImports:");                
 
             // named imports
 
@@ -328,7 +328,6 @@ namespace m0.ZeroCode
         }
         void prepareImportList_FromString()
         {
-
             // "import (?<name>) (?<link>)"
 
             prepareImportList_FromString_import();
@@ -394,19 +393,22 @@ namespace m0.ZeroCode
             }
         }
 
-        IVertex smb;
+        static IVertex smb;
 
-        IVertex Direct;
+        static IVertex Direct;
 
-        IVertex DirectMeta;
+        static IVertex DirectMeta;
 
-        void setupHelpVariables()
+        void setupHelpVariables_onlyOnce()
         {
-            smb = r.Get(false, @"System\Meta\Base");
+            if (smb == null)
+            {
+                smb = r.Get(false, @"System\Meta\Base");
 
-            Direct = smb.Get(false, "$Direct");
+                Direct = smb.Get(false, "$Direct");
 
-            DirectMeta = smb.Get(false, "$DirectMeta");
+                DirectMeta = smb.Get(false, "$DirectMeta");
+            }
         }
 
         void prepareImportList_FromString_importDirect()
@@ -460,12 +462,6 @@ namespace m0.ZeroCode
         IVertex ToVertexMock2VertexByLinkString(ToVertexMock mock)
         {
             string link = mock.mockData.ToString();
-
-            if(link=="X")
-            {
-                int x = 0;
-            }
-
 
             // try named link
 
@@ -872,7 +868,6 @@ namespace m0.ZeroCode
 
             public void currentPositionInKeyword_Increase(int curSpos)
             {
-
                 if (isSubPlus1(curSpos))
                 {
                     currentPositionInKeyword += 9;
@@ -929,15 +924,7 @@ namespace m0.ZeroCode
         }
 
         List<keywordTryingData> TryIfIsKeywordLine(ParsingStack s)
-        {
-           // string xx = "";
-           // for (int x = s.currentLineInfo.lineBeg; x <= s.currentLineInfo.lineEnd; x++)
-            //  xx += " "+x+":"+text[x];
-
-           // MinusZero.Instance.Log(-1, "TryIfIsKeywordLine", xx);
-
-          
-
+        {     
             List <keywordTryingData> examinedKeywords;
 
             if (s.currentLineInfo.lineBeg >= text.Length)
@@ -950,7 +937,6 @@ namespace m0.ZeroCode
 
                 int tryPos = 0;
 
-
                 _tryIsKeyword(s, "", s.currentLineInfo.lineBeg, s.currentLineInfo.lineBeg, 0, text.Length - 1, text.Length - 1, false, false, out examinedKeywords, out link, true, ref tryPos, false, null, null, "", false);
 
                 if (examinedKeywords.Count() > 0)
@@ -962,7 +948,7 @@ namespace m0.ZeroCode
                 return null;
         }
 
-        enum SpecialKeywordType { EmptyKeyword, NewVertexKeyword, LinkKeyword}
+        enum SpecialKeywordType {EmptyKeyword, NewVertexKeyword, LinkKeyword}
 
         IList<keywordTryingData> createSpecialKeyword(ParsingStack s, object value, int matchedOnPositionInText, SpecialKeywordType type, IList<IVertex> possible_newVertexKeyword, IList<IVertex> possible_emptyKeyword, IList<IVertex> possible_linkKeyword)
         {
@@ -1148,11 +1134,11 @@ namespace m0.ZeroCode
             bool _isLink = ZeroCodeCommon.isLinkString(text, sPos);
 
 
-            if (!ZeroCodeCommon.testIfIsKeywordSubstring(sPos, text, allKeywordsSubstringsDictionary) || _isLink)
+            if (!ZeroCodeCommon.testIfIsKeywordSubstring(sPos, text, dict.allKeywordsSubstringsDictionary) || _isLink)
             {
                 if (!isTopLevelCall && _isLink) // @
                 {
-                    ZeroCodeCommon.tryStringFromLinkString(text, sPos, ref sPos, endPos_forAtomParts, allKeywordsSubstringsDictionary_witchoutLinkKeywordParts);
+                    ZeroCodeCommon.tryStringFromLinkString(text, sPos, ref sPos, endPos_forAtomParts, dict.allKeywordsSubstringsDictionary_witchoutLinkKeywordParts);
 
                     string foundString = text.Substring(startPos, sPos - startPos);
 
@@ -1180,10 +1166,10 @@ namespace m0.ZeroCode
                         {
                             sPos++;
 
-                            if (!isLinkKeyword && ZeroCodeCommon.testIfIsKeywordSubstring(sPos, text, allKeywordsSubstringsDictionary))
+                            if (!isLinkKeyword && ZeroCodeCommon.testIfIsKeywordSubstring(sPos, text, dict.allKeywordsSubstringsDictionary))
                                 shallProceed = false;
 
-                            if (isLinkKeyword && ZeroCodeCommon.testIfIsKeywordSubstring(sPos, text, allKeywordsSubstringsDictionary_witchoutLinkKeywordParts))
+                            if (isLinkKeyword && ZeroCodeCommon.testIfIsKeywordSubstring(sPos, text, dict.allKeywordsSubstringsDictionary_witchoutLinkKeywordParts))
                                 shallProceed = false;
 
                             if (s.currentLineInfo.IsLineEnd(sPos))
@@ -1243,14 +1229,14 @@ namespace m0.ZeroCode
                 // !!!!!!!!!!!!!!!!!!!!!!! A or B ! YOU DECIDE. I do not know :)
 
 
-                if (emptyKeywordByGroupsDictionary.ContainsKey(keywordsFilter))
-                    possible_emptyKeyworsByKeywordsFilter = emptyKeywordByGroupsDictionary[keywordsFilter];                
+                if (dict.emptyKeywordByGroupsDictionary.ContainsKey(keywordsFilter))
+                    possible_emptyKeyworsByKeywordsFilter = dict.emptyKeywordByGroupsDictionary[keywordsFilter];                
 
-                if (newVertexKeywordByGroupsDictionary.ContainsKey(keywordsFilter))
-                    possible_newVertexKeywordsByKeywordsFilter = newVertexKeywordByGroupsDictionary[keywordsFilter];
+                if (dict.newVertexKeywordByGroupsDictionary.ContainsKey(keywordsFilter))
+                    possible_newVertexKeywordsByKeywordsFilter = dict.newVertexKeywordByGroupsDictionary[keywordsFilter];
 
-                if (linkKeywordByGroupsDictionary.ContainsKey(keywordsFilter))
-                    possible_linkKeywordsByKeywordsFilter = linkKeywordByGroupsDictionary[keywordsFilter];
+                if (dict.linkKeywordByGroupsDictionary.ContainsKey(keywordsFilter))
+                    possible_linkKeywordsByKeywordsFilter = dict.linkKeywordByGroupsDictionary[keywordsFilter];
 
                 if (c1089 && ((possible_emptyKeyworsByKeywordsFilter!=null || possible_newVertexKeywordsByKeywordsFilter!=null) && keywordsFilter!="")
                     //_specialKeywordGroups_empty.Contains(keywordsFilter) // A
@@ -1357,13 +1343,13 @@ namespace m0.ZeroCode
 
             if (lookForLocalRootOnly)
             {
-                if (examinedKeywords_StartInLocalRootOnly.ContainsKey(keywordsFilter))
-                    copyExaminedKeywords(examinedKeywords_StartInLocalRootOnly[keywordsFilter], examinedKeywords);
+                if (dict.examinedKeywords_StartInLocalRootOnly.ContainsKey(keywordsFilter))
+                    copyExaminedKeywords(dict.examinedKeywords_StartInLocalRootOnly[keywordsFilter], examinedKeywords);
             }
             else
             {
-                if (examinedKeywords_All.ContainsKey(keywordsFilter))
-                    copyExaminedKeywords(examinedKeywords_All[keywordsFilter], examinedKeywords);
+                if (dict.examinedKeywords_All.ContainsKey(keywordsFilter))
+                    copyExaminedKeywords(dict.examinedKeywords_All[keywordsFilter], examinedKeywords);
             }
 
             shallProceed = true;
@@ -1545,7 +1531,7 @@ namespace m0.ZeroCode
                                 // XXX
 
                                 bool _canStopByForAtomParts = false;
-                                if (keywordInfoDict[ktd.keywordVertex].NonSelfRecursiveParameters)
+                                if (dict.keywordInfoDict[ktd.keywordVertex].NonSelfRecursiveParameters)
                                     _canStopByForAtomParts = true;
 
                                 _tryIsKeyword(s, LOGPREFIX + "    ", sPos, startPos, isPrevStartPosSameAsStartPosThisCount, endPos, isTryKeyword_endPos, _canStopByForAtomParts, _afterKeywordPartExist, out foundKeywords, out foundLink, false, ref _newPos, false, ktd.keywordVertex, callParams, paramFilterName, _isSpaceNext);
@@ -1905,14 +1891,14 @@ namespace m0.ZeroCode
 
         private int _tryIsNextLocalRootKeyword(ParsingStack s, string LOGPREFIX, int newPos, int sPos, keywordTryingData ktd, bool isSpaceNext)
         {
-            if(!keywordInfoDict[ktd.keywordVertex].HasLocalRoot)
+            if(!dict.keywordInfoDict[ktd.keywordVertex].HasLocalRoot)
                 return newPos;
 
             string keywordsFilter = "";
 
             MinusZero.Instance.Log(-1, "_tryIsKeyword", LOGPREFIX + "_tryIsNextLocalRootKeyword");
 
-            KeywordInfo ki = keywordInfoDict[ktd.keywordVertex];
+            KeywordInfo ki = dict.keywordInfoDict[ktd.keywordVertex];
 
             if (ki.LocalRootKeywordsGroup != null)
                 keywordsFilter = ki.LocalRootKeywordsGroup;
@@ -1969,10 +1955,10 @@ namespace m0.ZeroCode
         {
             char charAtPos = text[startPos];
 
-            if (!allKeywordsSubstringsDictionary.ContainsKey(charAtPos))
+            if (!dict.allKeywordsSubstringsDictionary.ContainsKey(charAtPos))
                 return false;
 
-            List<string> l = allKeywordsSubstringsDictionary[charAtPos];
+            List<string> l = dict.allKeywordsSubstringsDictionary[charAtPos];
 
             foreach (string s in l)
                 if (ZeroCodeUtil.tryStringMatch(text, startPos, s))
@@ -2189,33 +2175,35 @@ namespace m0.ZeroCode
             return false;
         }
 
-        private void prepareSpecialKeywordsGroups()
-        {            
-            emptyKeywordByGroupsDictionary = ZeroCodeUtil.getFilteredKeywordListByGroup(FormalTextLanguage, "$$EmptyKeyword:");
+        private void prepareSpecialKeywordsGroups(DictionariesForFormalTextLanguage d)
+        {
+            d.emptyKeywordByGroupsDictionary = ZeroCodeUtil.getFilteredKeywordListByGroup(FormalTextLanguage, "$$EmptyKeyword:");
 
-            newVertexKeywordByGroupsDictionary = ZeroCodeUtil.getFilteredKeywordListByGroup(FormalTextLanguage, "$$NewVertexKeyword:");
+            d.newVertexKeywordByGroupsDictionary = ZeroCodeUtil.getFilteredKeywordListByGroup(FormalTextLanguage, "$$NewVertexKeyword:");
 
-            linkKeywordByGroupsDictionary = ZeroCodeUtil.getFilteredKeywordListByGroup(FormalTextLanguage, "$$LinkKeyword:");
+            d.linkKeywordByGroupsDictionary = ZeroCodeUtil.getFilteredKeywordListByGroup(FormalTextLanguage, "$$LinkKeyword:");
         }
 
-        private void prepareDictionaries()
+        private void prepareDictionaries_ForFormalTextLanguage(IVertex formalTextLanguage)
         {
-            examinedKeywords_All = new Dictionary<string, List<keywordTryingData>>();
+            DictionariesForFormalTextLanguage d = new DictionariesForFormalTextLanguage();
 
-            examinedKeywords_All.Add("", new List<keywordTryingData>());
+            d.examinedKeywords_All = new Dictionary<string, List<keywordTryingData>>();
 
-            examinedKeywords_StartInLocalRootOnly = new Dictionary<string, List<keywordTryingData>>();
+            d.examinedKeywords_All.Add("", new List<keywordTryingData>());
 
-            examinedKeywords_StartInLocalRootOnly.Add("", new List<keywordTryingData>());
+            d.examinedKeywords_StartInLocalRootOnly = new Dictionary<string, List<keywordTryingData>>();
 
-            keywordInfoDict = new Dictionary<IVertex, KeywordInfo>();
+            d.examinedKeywords_StartInLocalRootOnly.Add("", new List<keywordTryingData>());
+
+            d.keywordInfoDict = new Dictionary<IVertex, KeywordInfo>();
 
 
-            prepareSpecialKeywordsGroups();
+            prepareSpecialKeywordsGroups(d);
 
 
-            allKeywordsSubstringsDictionary = new Dictionary<char, List<string>>();
-            allKeywordsSubstringsDictionary_witchoutLinkKeywordParts = new Dictionary<char, List<string>>();
+            d.allKeywordsSubstringsDictionary = new Dictionary<char, List<string>>();
+            d.allKeywordsSubstringsDictionary_witchoutLinkKeywordParts = new Dictionary<char, List<string>>();
 
             foreach (IEdge keyword in FormalTextLanguage.GetAll(false, @"Keywords:\$Keyword:"))
             {
@@ -2225,32 +2213,32 @@ namespace m0.ZeroCode
                 {
                     // examinedKeywords_All
 
-                    examinedKeywords_All[""].Add(ktd);
+                    d.examinedKeywords_All[""].Add(ktd);
 
                     foreach (IEdge v in ktd.keywordVertex.GetAll(false, "$$KeywordGroup:"))
                     {
                         string group = (string)v.To.Value;
 
-                        if (!examinedKeywords_All.ContainsKey(group))
-                            examinedKeywords_All.Add(group, new List<keywordTryingData>());
+                        if (!d.examinedKeywords_All.ContainsKey(group))
+                            d.examinedKeywords_All.Add(group, new List<keywordTryingData>());
 
-                        examinedKeywords_All[group].Add(ktd);
+                        d.examinedKeywords_All[group].Add(ktd);
                     }
 
                     // examinedKeywords_StartInLocalRootOnly
 
                     if (keyword.To.Get(false, @"\$$StartInLocalRoot:") != null)
                     {
-                        examinedKeywords_StartInLocalRootOnly[""].Add(ktd);
+                        d.examinedKeywords_StartInLocalRootOnly[""].Add(ktd);
 
                         foreach (IEdge v in ktd.keywordVertex.GetAll(false, "$$KeywordGroup:"))
                         {
                             string group = (string)v.To.Value;
 
-                            if (!examinedKeywords_StartInLocalRootOnly.ContainsKey(group))
-                                examinedKeywords_StartInLocalRootOnly.Add(group, new List<keywordTryingData>());
+                            if (!d.examinedKeywords_StartInLocalRootOnly.ContainsKey(group))
+                                d.examinedKeywords_StartInLocalRootOnly.Add(group, new List<keywordTryingData>());
 
-                            examinedKeywords_StartInLocalRootOnly[group].Add(ktd);
+                            d.examinedKeywords_StartInLocalRootOnly[group].Add(ktd);
                         }
                     }
 
@@ -2259,27 +2247,31 @@ namespace m0.ZeroCode
                     string keywordString = keyword.To.Value.ToString();
 
                     if (keywordString.Length > 0)
-                        addKeywordsSubstrings(keywordString);
+                        addKeywordsSubstrings(d, keywordString);
                 }
 
-                PrepareKeywordInfo(ktd);
+                PrepareKeywordInfo(d, ktd);
 
             }
 
             // add space to allKeywordsSubstringsDictionary
 
-            if (!allKeywordsSubstringsDictionary.ContainsKey(' '))
+            if (!d.allKeywordsSubstringsDictionary.ContainsKey(' '))
             {
                 List<string> l = new List<string>();
 
                 l.Add(" ");
 
-                allKeywordsSubstringsDictionary.Add(' ', l);
+                d.allKeywordsSubstringsDictionary.Add(' ', l);
             }
+
+            //
+
+            DictionariesForFormalTextLanguageDictionary.Add(formalTextLanguage, d);
                 
         }
 
-        private void PrepareKeywordInfo(keywordTryingData ktd)
+        private void PrepareKeywordInfo(DictionariesForFormalTextLanguage d, keywordTryingData ktd)
         {            
             KeywordInfo ki = new KeywordInfo();
 
@@ -2296,10 +2288,10 @@ namespace m0.ZeroCode
             if (ktd.keywordVertex.Get(false, "$$NonSelfRecursiveParameters:") != null)
                 ki.NonSelfRecursiveParameters = true;
 
-            keywordInfoDict.Add(ktd.keywordVertex, ki);
+            d.keywordInfoDict.Add(ktd.keywordVertex, ki);
         }
 
-        private void addKeywordsSubstrings(string keywordString)
+        private void addKeywordsSubstrings(DictionariesForFormalTextLanguage d, string keywordString)
         {
             if (keywordString == "")
                 return;
@@ -2316,7 +2308,7 @@ namespace m0.ZeroCode
                 {
                     isInsideParameter = true;
 
-                    addSubString(keywordString.Substring(prevPos, keywordPos - prevPos));
+                    addSubString(d, keywordString.Substring(prevPos, keywordPos - prevPos));
                 }
 
                 if (isInsideParameter && ZeroCodeUtil.tryStringMatch(keywordString, keywordPos, ">)"))
@@ -2327,47 +2319,47 @@ namespace m0.ZeroCode
 
                 if (ZeroCodeUtil.tryStringMatch(keywordString, keywordPos, "(*"))
                 {
-                    addSubString(keywordString.Substring(prevPos, keywordPos - prevPos));
+                    addSubString(d, keywordString.Substring(prevPos, keywordPos - prevPos));
 
                     prevPos = keywordPos + 2;
                 }
 
                 if (ZeroCodeUtil.tryStringMatch(keywordString, keywordPos, "*)"))
                 {
-                    addSubString(keywordString.Substring(prevPos, keywordPos - prevPos));
+                    addSubString(d, keywordString.Substring(prevPos, keywordPos - prevPos));
 
                     prevPos = keywordPos + 2;
                 }
 
                 if (ZeroCodeUtil.tryStringMatch(keywordString, keywordPos, "(+"))
                 {
-                    addSubString(keywordString.Substring(prevPos, keywordPos - prevPos));
+                    addSubString(d, keywordString.Substring(prevPos, keywordPos - prevPos));
 
                     prevPos = keywordPos + 2;
                 }
 
                 if (ZeroCodeUtil.tryStringMatch(keywordString, keywordPos, "+)"))
                 {
-                    addSubString(keywordString.Substring(prevPos, keywordPos - prevPos));
+                    addSubString(d, keywordString.Substring(prevPos, keywordPos - prevPos));
 
                     prevPos = keywordPos + 2;
                 }
             }
 
-            addSubString(keywordString.Substring(prevPos, keywordPos - prevPos));
+            addSubString(d, keywordString.Substring(prevPos, keywordPos - prevPos));
         }
 
-        private void addSubString(string subString)
+        private void addSubString(DictionariesForFormalTextLanguage d, string subString)
         {
             subString = subString.Trim();
 
             if (subString.Length == 0 || subString[0] == ZeroCodeCommon.CodeGraphLinkPrefix) // XXX CodeGraphLinkPrefix hack for @@
                 return;
 
-            addSubString_dictionary(allKeywordsSubstringsDictionary, subString);
+            addSubString_dictionary(d.allKeywordsSubstringsDictionary, subString);
 
             if(!ZeroCodeCommon.CodeViewTimeLinkKeywordParts.Contains(subString) && !Char.IsLetter(subString[0]))
-                addSubString_dictionary(allKeywordsSubstringsDictionary_witchoutLinkKeywordParts, subString);
+                addSubString_dictionary(d.allKeywordsSubstringsDictionary_witchoutLinkKeywordParts, subString);
         }
 
         private void addSubString_dictionary(IDictionary<char, List<string>> dict, string subString)
@@ -2658,16 +2650,6 @@ namespace m0.ZeroCode
 
             stack.parseNextLine();
 
-            ////
-
-            /*foreach (LineInfo i in lineInfoList)
-            {
-                MinusZero.Instance.Log(-1, "TryIfIsKeywordLine", i.startsWithLineContinuation + " [" + text.Substring(i.lineBeg, i.lineEnd - i.lineBeg + 1)+"]");
-            }*/
-
-            ////
-
-
             IVertex errors=Process_reccurent(stack, baseVertex);
 
             AddNewLines(stack);
@@ -2864,9 +2846,21 @@ namespace m0.ZeroCode
         {
             FormalTextLanguage = formalTextLanguage;
 
-            setupHelpVariables();
+            setupHelpVariables_onlyOnce();
 
-            prepareDictionaries(); 
+            if (DictionariesForFormalTextLanguageDictionary.ContainsKey(FormalTextLanguage))
+                dict = DictionariesForFormalTextLanguageDictionary[FormalTextLanguage];
+            else
+            {
+                prepareDictionaries_ForFormalTextLanguage(FormalTextLanguage);
+                dict = DictionariesForFormalTextLanguageDictionary[FormalTextLanguage];
+            }
+
+            
+
+            
+
+            
         }
     }
 }

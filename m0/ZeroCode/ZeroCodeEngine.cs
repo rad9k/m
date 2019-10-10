@@ -9,15 +9,11 @@ using m0.Foundation;
 namespace m0.ZeroCode
 {
     public class ZeroCodeEngine : ICodeGenerator, IParser, IExecuter
-    {     
-        String2ZeroCodeGraphProcessing String2ZeroCodeGraphProcessing_Instance;
+    {             
         ZeroCodeExecuter ZeroCodeExecuter_Instance;
         ZeroCodeGraph2StringProcessing ZeroCodeGraph2StringProcessing_Instance;
-
-        Dictionary<IVertex, String2ZeroCodeGraphProcessing> String2ZeroCodeGraphProcessing_InstanceDictionary = new Dictionary<IVertex, String2ZeroCodeGraphProcessing>();
+        
         Dictionary<IVertex, ZeroCodeGraph2StringProcessing> ZeroCodeGraph2StringProcessing_InstanceDictionary = new Dictionary<IVertex, ZeroCodeGraph2StringProcessing>();
-
-
 
         public IVertex Execute(IVertex baseVertex, IVertex expression)
         {            
@@ -35,22 +31,13 @@ namespace m0.ZeroCode
         }
 
         public IVertex Parse(IVertex rootVertex, string text)
-        {             
-            return String2ZeroCodeGraphProcessing_Instance.Process(rootVertex, text); 
+        {
+            return Parse(MinusZero.Instance.DefaultFormalTextLanguage, rootVertex, text);                
         }
 
         public IVertex Parse(IVertex formalTextLanguage, IVertex rootVertex, string text)
         {
-            String2ZeroCodeGraphProcessing instance;
-
-            if (String2ZeroCodeGraphProcessing_InstanceDictionary.ContainsKey(formalTextLanguage))
-                instance = String2ZeroCodeGraphProcessing_InstanceDictionary[formalTextLanguage];
-            else
-            {
-                instance = new String2ZeroCodeGraphProcessing(formalTextLanguage);
-
-                String2ZeroCodeGraphProcessing_InstanceDictionary.Add(formalTextLanguage, instance);
-            }
+            String2ZeroCodeGraphProcessing instance = new String2ZeroCodeGraphProcessing(formalTextLanguage);            
 
             return instance.Process(rootVertex, text);
         }
@@ -77,8 +64,7 @@ namespace m0.ZeroCode
         }
 
         public ZeroCodeEngine()
-        {
-            String2ZeroCodeGraphProcessing_Instance = new String2ZeroCodeGraphProcessing(MinusZero.Instance.DefaultFormalTextLanguage);
+        {            
             ZeroCodeExecuter_Instance = new ZeroCodeExecuter();
             ZeroCodeGraph2StringProcessing_Instance = new ZeroCodeGraph2StringProcessing(MinusZero.Instance.DefaultFormalTextLanguage);
         }
