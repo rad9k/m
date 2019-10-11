@@ -197,7 +197,6 @@ namespace m0.ZeroCode
 
             public bool goToLine(int newLineNo)
             {
-
                 if (newLineNo > endLine)
                     return false;
                 
@@ -235,6 +234,11 @@ namespace m0.ZeroCode
             public IDictionary<char, List<string>> allKeywordsSubstringsDictionary_witchoutLinkKeywordParts;
 
             public IDictionary<IVertex, KeywordInfo> keywordInfoDict;
+
+            public IVertex importList = MinusZero.Instance.CreateTempVertex();
+            public IVertex importMetaList = MinusZero.Instance.CreateTempVertex();
+            public IVertex importDirectList = MinusZero.Instance.CreateTempVertex();
+            public IVertex importDirectMetaList = MinusZero.Instance.CreateTempVertex();
         }
 
         DictionariesForFormalTextLanguage dict;
@@ -289,41 +293,38 @@ namespace m0.ZeroCode
             importDirectList = MinusZero.Instance.CreateTempVertex();
             importDirectMetaList = MinusZero.Instance.CreateTempVertex();
 
-            prepareImportList_User();
-
             prepareImportList_FromString();
         }
 
-        void prepareImportList_User()
+        void prepareImportList_FormalTextLanguage(DictionariesForFormalTextLanguage d)
         {          
-            IVertex codeSettings = FormalTextLanguage.Get(false, "DefaultImports:");                
+            IVertex formalTextLanguageDefaultImports = FormalTextLanguage.Get(false, "DefaultImports:");                
 
             // named imports
 
-            foreach (IEdge e in codeSettings.GetAll(false, "$ImportMeta:"))
+            foreach (IEdge e in formalTextLanguageDefaultImports.GetAll(false, "$ImportMeta:"))
             {
-                IVertex v = codeSettings.Get(false, e.To + ":");
+                IVertex v = formalTextLanguageDefaultImports.Get(false, e.To + ":");
 
                 if (v != null)
-                    importMetaList.AddEdge(e.To, v);
+                    d.importMetaList.AddEdge(e.To, v);
             }
 
-            foreach (IEdge e in codeSettings.GetAll(false, "$Import:"))
+            foreach (IEdge e in formalTextLanguageDefaultImports.GetAll(false, "$Import:"))
             {
-                IVertex v = codeSettings.Get(false, e.To + ":");
+                IVertex v = formalTextLanguageDefaultImports.Get(false, e.To + ":");
 
                 if (v != null)
-                    importList.AddEdge(e.To, v);
+                    d.importList.AddEdge(e.To, v);
             }
 
             // direct imports
 
-            foreach (IEdge e in codeSettings.GetAll(false, "$DirectMeta:"))
-                importDirectMetaList.AddEdge(e.Meta, e.To);
-            
+            foreach (IEdge e in formalTextLanguageDefaultImports.GetAll(false, "$DirectMeta:"))
+                d.importDirectMetaList.AddEdge(e.Meta, e.To);            
 
-            foreach (IEdge e in codeSettings.GetAll(false, "$Direct:"))
-                importDirectList.AddEdge(e.Meta, e.To);
+            foreach (IEdge e in formalTextLanguageDefaultImports.GetAll(false, "$Direct:"))
+                d.importDirectList.AddEdge(e.Meta, e.To);
             
         }
         void prepareImportList_FromString()
@@ -474,11 +475,12 @@ namespace m0.ZeroCode
             IVertex tryIf;
 
             // named link
-
-            IVertex importLink = importList.Get(false, firstPart + ":");
-
+          
             if (secondPart != null)
             {
+                // normal importList
+                IVertex importLink = importList.Get(false, firstPart + ":");
+
                 if (importLink != null)
                 {
                     tryIf = query(importLink, secondPart);
@@ -487,6 +489,18 @@ namespace m0.ZeroCode
                         return tryIf;
                 }
 
+                // dict importList
+                importLink = dict.importList.Get(false, firstPart + ":");
+
+                if (importLink != null)
+                {
+                    tryIf = query(importLink, secondPart);
+
+                    if (tryIf != null)
+                        return tryIf;
+                }
+
+                // normal importMetaList
                 IVertex importMetaLink = importMetaList.Get(false, firstPart + ":");
 
                 if (importMetaLink != null)
@@ -496,32 +510,50 @@ namespace m0.ZeroCode
                     if (tryIf != null)
                         return tryIf;
                 }
-            }
 
-            // try direct link
+                // dict importMetaList
+                importMetaLink = dict.importMetaList.Get(false, firstPart + ":");
+
+                if (importMetaLink != null)
+                {
+                    tryIf = queryMetaMode(importMetaLink, secondPart);
+
+                    if (tryIf != null)
+                        return tryIf;
+                }
+            }            
+
+            // normal direct link
 
             tryIf = query(importDirectList, @"\" + link);
 
             if (tryIf != null)
                 return tryIf;
 
+            // dict direct link
+
+            tryIf = query(dict.importDirectList, @"\" + link);
+
+            if (tryIf != null)
+                return tryIf;
+
+            // normal direct link meta
+
             tryIf = queryMetaMode(importDirectMetaList, @"\" + link);
 
+            if (tryIf != null)
+                return tryIf;
+
+            // dict direct link meta
+
+            tryIf = queryMetaMode(dict.importDirectMetaList, @"\" + link);
+            
             if (tryIf != null)
                 return tryIf;
 
             // try from local root
 
             tryIf = query(baseVertex, @"$ParseRoot"+ZeroCodeCommon.MetaSeparator+@"\\"+link);            
-
-            if (tryIf != null)
-                return tryIf;
-
-            // try from global root
-
-            //tryIf = MinusZero.Instance.Root.Get(false, link);
-
-            tryIf = query(MinusZero.Instance.Root, link);
 
             if (tryIf != null)
                 return tryIf;
@@ -2187,6 +2219,8 @@ namespace m0.ZeroCode
         private void prepareDictionaries_ForFormalTextLanguage(IVertex formalTextLanguage)
         {
             DictionariesForFormalTextLanguage d = new DictionariesForFormalTextLanguage();
+
+            prepareImportList_FormalTextLanguage(d);
 
             d.examinedKeywords_All = new Dictionary<string, List<keywordTryingData>>();
 
