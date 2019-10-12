@@ -1198,7 +1198,7 @@ namespace m0.ZeroCode
                         {
                             sPos++;
 
-                            if (!isLinkKeyword && ZeroCodeCommon.testIfIsKeywordSubstring(sPos, text, dict.allKeywordsSubstringsDictionary))
+                            if (!isLinkKeyword && ZeroCodeCommon.testIfIsKeywordSubstring(sPos, text, dict.allKeywordsSubstringsDictionary_witchoutLinkKeywordParts))
                                 shallProceed = false;
 
                             if (isLinkKeyword && ZeroCodeCommon.testIfIsKeywordSubstring(sPos, text, dict.allKeywordsSubstringsDictionary_witchoutLinkKeywordParts))
