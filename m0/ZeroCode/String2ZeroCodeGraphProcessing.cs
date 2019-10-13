@@ -231,6 +231,7 @@ namespace m0.ZeroCode
             public IDictionary<string, List<keywordTryingData>> examinedKeywords_All; // all keywords are here
             public IDictionary<string, List<keywordTryingData>> examinedKeywords_StartInLocalRootOnly; // StartInLocalRoot only?
             public IDictionary<char, List<string>> allKeywordsSubstringsDictionary;
+            public IDictionary<char, List<string>> allKeywordsSubstringsDictionary_witchoutAlpha;
             public IDictionary<char, List<string>> allKeywordsSubstringsDictionary_witchoutLinkKeywordParts;
 
             public IDictionary<IVertex, KeywordInfo> keywordInfoDict;
@@ -1198,7 +1199,7 @@ namespace m0.ZeroCode
                         {
                             sPos++;
 
-                            if (!isLinkKeyword && ZeroCodeCommon.testIfIsKeywordSubstring(sPos, text, dict.allKeywordsSubstringsDictionary_witchoutLinkKeywordParts))
+                            if (!isLinkKeyword && ZeroCodeCommon.testIfIsKeywordSubstring(sPos, text, dict.allKeywordsSubstringsDictionary_witchoutAlpha))
                                 shallProceed = false;
 
                             if (isLinkKeyword && ZeroCodeCommon.testIfIsKeywordSubstring(sPos, text, dict.allKeywordsSubstringsDictionary_witchoutLinkKeywordParts))
@@ -2237,6 +2238,7 @@ namespace m0.ZeroCode
 
 
             d.allKeywordsSubstringsDictionary = new Dictionary<char, List<string>>();
+            d.allKeywordsSubstringsDictionary_witchoutAlpha = new Dictionary<char, List<string>>();
             d.allKeywordsSubstringsDictionary_witchoutLinkKeywordParts = new Dictionary<char, List<string>>();
 
             foreach (IEdge keyword in FormalTextLanguage.GetAll(false, @"Keywords:\$Keyword:"))
@@ -2297,6 +2299,10 @@ namespace m0.ZeroCode
                 l.Add(" ");
 
                 d.allKeywordsSubstringsDictionary.Add(' ', l);
+
+                d.allKeywordsSubstringsDictionary_witchoutAlpha.Add(' ', l);
+
+                d.allKeywordsSubstringsDictionary_witchoutLinkKeywordParts.Add(' ', l);
             }
 
             //
@@ -2392,7 +2398,10 @@ namespace m0.ZeroCode
 
             addSubString_dictionary(d.allKeywordsSubstringsDictionary, subString);
 
-            if(!ZeroCodeCommon.CodeViewTimeLinkKeywordParts.Contains(subString) && !Char.IsLetter(subString[0]))
+            if (!Char.IsLetter(subString[0]))
+                addSubString_dictionary(d.allKeywordsSubstringsDictionary_witchoutAlpha, subString);
+
+            if (!ZeroCodeCommon.CodeViewTimeLinkKeywordParts.Contains(subString) && !Char.IsLetter(subString[0]))
                 addSubString_dictionary(d.allKeywordsSubstringsDictionary_witchoutLinkKeywordParts, subString);
         }
 
