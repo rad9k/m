@@ -95,6 +95,11 @@ namespace m0
 
         public ICodeGenerator DefaultCodeGenerator { get { return _DefaultCodeGenerator; } }
 
+
+        public IVertex EdgeTarget;
+        public IVertex Is;
+        public IVertex IsAggregation;
+
         public bool IsGUIDragging { get; set; }
 
         //
@@ -3783,6 +3788,13 @@ namespace m0
             return store;
         }
 
+        public void AddFastAccessVertexes()
+        {
+            EdgeTarget = Root.Get(false, @"System\Meta\Base\Vertex\$EdgeTarget");
+            Is = Root.Get(false, @"System\Meta\Base\Vertex\$Is");
+            IsAggregation = Root.Get(false, @"System\Meta\Base\Vertex\$IsAggregation");
+        }
+
 
         public void Initialize()
         {
@@ -3850,6 +3862,8 @@ namespace m0
             AddIsAggregation();
 
             AddDrives();
+
+            AddFastAccessVertexes();
 
             UIWpf.UIWpf.InitializeUIWpf();
 

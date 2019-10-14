@@ -146,6 +146,24 @@ namespace m0.Graph
             return new List<IEdge>();
         }
 
+        public static int GetQueryOutCount(IVertex baseVertex, object meta, object value)
+        {
+            IEdge result;
+            IList<IEdge> results;
+
+            baseVertex.QueryOutEdges(meta, value, out result, out results);
+
+            if (result != null)
+            {
+                return 1;
+            }
+
+            if (results != null)
+                return results.Count();
+
+            return 0;
+        }
+
         public static object GetMetaAndValueObject(object meta, object value)
         {
             /*StringBuilder sb = new StringBuilder();
