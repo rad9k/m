@@ -118,7 +118,7 @@ namespace m0.ZeroCode
                         {
                             Append(toAppend, e.Meta);
 
-                            toAppend.Append(":");
+                            toAppend.Append(ZeroCodeCommon.MetaSeparator);
                         }
 
                         Append(toAppend,e.To);
@@ -128,13 +128,13 @@ namespace m0.ZeroCode
                     {
                         if (e.Meta == null || GeneralUtil.CompareStrings(e.Meta,"$Empty"))
                         {
-                            toAppend.Append(":");
+                            toAppend.Append(ZeroCodeCommon.MetaSeparator);
                             Append(toAppend, e.To);
                         }else {
                             if(!VertexOperations.IsToVertexEnoughToIdentifyEdge(e.From,e.To))
                                 Append(toAppend, e.Meta);
 
-                            toAppend.Append(":");
+                            toAppend.Append(ZeroCodeCommon.MetaSeparator);
                             Append(toAppend, e.To);
                         }
                     }
@@ -148,11 +148,6 @@ namespace m0.ZeroCode
 
                         IEdge result;
                         IList<IEdge> results;
-
-                        if (e.Meta.Value.ToString() == "Item")
-                        {
-                            int xx = 0;
-                        }
 
                         e.From.QueryOutEdges(e.Meta.Value, e.To.Value, out result, out results);
 

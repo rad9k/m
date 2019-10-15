@@ -451,10 +451,10 @@ namespace m0.ZeroCode
         {
             //return baseVertex.Get(false, query);
 
-            return ((EasyVertex)baseVertex).NewGet(false, query);
+            return ((EasyVertex)baseVertex).NewGet(true, query);
         }
 
-        IVertex queryMetaMode(IVertex baseVertex, string query)
+        IVertex queryMetaImport(IVertex baseVertex, string query)
         {
             //return baseVertex.Get(false, query); // TODO: to be corected
 
@@ -506,7 +506,7 @@ namespace m0.ZeroCode
 
                 if (importMetaLink != null)
                 {
-                    tryIf = queryMetaMode(importMetaLink, secondPart);
+                    tryIf = queryMetaImport(importMetaLink, secondPart);
 
                     if (tryIf != null)
                         return tryIf;
@@ -517,7 +517,7 @@ namespace m0.ZeroCode
 
                 if (importMetaLink != null)
                 {
-                    tryIf = queryMetaMode(importMetaLink, secondPart);
+                    tryIf = queryMetaImport(importMetaLink, secondPart);
 
                     if (tryIf != null)
                         return tryIf;
@@ -540,14 +540,14 @@ namespace m0.ZeroCode
 
             // normal direct link meta
 
-            tryIf = queryMetaMode(importDirectMetaList, @"\" + link);
+            tryIf = queryMetaImport(importDirectMetaList, @"\" + link);
 
             if (tryIf != null)
                 return tryIf;
 
             // dict direct link meta
 
-            tryIf = queryMetaMode(dict.importDirectMetaList, @"\" + link);
+            tryIf = queryMetaImport(dict.importDirectMetaList, @"\" + link);
             
             if (tryIf != null)
                 return tryIf;

@@ -230,21 +230,21 @@ namespace m0.Graph
             if (GeneralUtil.CompareStrings(meta.ToString(), "$Empty"))
                 return ZeroCodeCommon.stringToPossiblyEscapedString(to.ToString());
             else
-                return ZeroCodeCommon.stringToPossiblyEscapedString(meta.ToString()) + ":" + ZeroCodeCommon.stringToPossiblyEscapedString(to.ToString());
+                return ZeroCodeCommon.stringToPossiblyEscapedString(meta.ToString()) + ZeroCodeCommon.MetaSeparator + ZeroCodeCommon.stringToPossiblyEscapedString(to.ToString());
         }
 
         public static string GetIdentyfyingQuerySubString_ImportMeta(IEdge e) // this is used in String2Graph, so we need to reference ZeroCodeCommon.MetaSeparator
         {
             if (VertexOperations.IsToVertexEnoughToIdentifyEdge(e.From, e.To))
-                return ZeroCodeCommon.stringToPossiblyEscapedString(e.To.ToString()+""); // there was no ToString. might cause problems
+                return ZeroCodeCommon.stringToPossiblyEscapedString(e.To.ToString()+""); // there was no ToString. might cause problems. XXX why this "" as we do not have null To?
             else
                 if (VertexOperations.IsMetaAndToVertexEnoughToIdentifyEdge(e.From, e.Meta, e.To))
                     return GetQueryStringPart(e.Meta, e.To);
                 else
                 {
                     int pos = 0;
-                    IVertex q = e.From.GetAll(false, ZeroCodeCommon.stringToPossiblyEscapedString(e.Meta.ToString()) + ":" + ZeroCodeCommon.stringToPossiblyEscapedString(e.To.ToString()));
-
+                    IList<IEdge> q = GraphUtil.GetQueryOut(e.From, e.Meta.Value, e.To.Value);
+                    //IVertex q = e.From.GetAll(false, ZeroCodeCommon.stringToPossiblyEscapedString(e.Meta.ToString()) + ZeroCodeCommon.MetaSeparator + ZeroCodeCommon.stringToPossiblyEscapedString(e.To.ToString()));
 
                     IVertex tv;
                     do
@@ -253,7 +253,7 @@ namespace m0.Graph
                         pos++;
                     } while (tv != e.To);
 
-                    return GetQueryStringPart(e.Meta,e.To) + "<" + pos + ">"; // not sure if this | pos thing is feasible
+                    return GetQueryStringPart(e.Meta,e.To) + "<" + pos + ">"; 
                 }
         }
 
@@ -261,15 +261,16 @@ namespace m0.Graph
         {
             IVertex _startMeta = startMeta;
 
-            if (startMeta.Get(false, "$EdgeTarget") != null)
-                _startMeta = startMeta.Get(false, "$EdgeTarget:");
+           // if (startMeta.Get(false, "$EdgeTarget") != null) // XXX this is error!!!!! but before correcting it, we need to check what will happen
+            //    _startMeta = startMeta.Get(false, "$EdgeTarget:");
 
             IVertex highestInheritanceLevel=null;
             int highestInheritanceLevel_level = 0;
 
             int tempLevel;
 
-            foreach (IEdge e in baseVertex.GetAll(false, "$Is:"))
+            foreach (IEdge e in GraphUtil.GetQueryOut(baseVertex,"$Is",null))
+            //foreach (IEdge e in baseVertex.GetAll(false, "$Is:"))
             {
                 tempLevel = GetInheritanceLevel(e.To, _startMeta, 0);
 
@@ -290,13 +291,13 @@ namespace m0.Graph
 
             int biggest = 0;
 
-            foreach (IEdge e in testMeta.GetAll(false, "$Inherits:"))
+            foreach(IEdge e in GraphUtil.GetQueryOut(testMeta, "$Inherits", false))
+            //foreach (IEdge e in testMeta.GetAll(false, "$Inherits:"))
             {
                 int temp = GetInheritanceLevel(e.To, startMeta, input + 1);
                 if (temp > biggest)
                     biggest = temp;
             }
-
 
             return biggest;
         }

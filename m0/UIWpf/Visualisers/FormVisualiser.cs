@@ -94,6 +94,7 @@ namespace m0.UIWpf.Visualisers
                 return null;
 
             IVertex v=GraphUtil.GetMostInheritedMeta(Vertex.Get(false, @"BaseEdge:\To:"),Vertex.Get(false, @"BaseEdge:\Meta:"));
+            // XXX there is error in GetMostInheritedMeta - see it 
 
             if (v!=null && v.Get(false, @"$EdgeTarget:") != null)
                 return v.Get(false, @"$EdgeTarget:");

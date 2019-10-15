@@ -679,7 +679,7 @@ namespace m0.Graph
 
             if (meta != null && to != null)
             {
-                if (OutEdgesDictionariesNeedsRebuild_MetaAndValue)
+               if (OutEdgesDictionariesNeedsRebuild_MetaAndValue)
                     OutEdgesDictionariesRebuild_MetaAndValue();
 
                 object searchKey = GraphUtil.GetMetaAndValueObject(meta, to);
