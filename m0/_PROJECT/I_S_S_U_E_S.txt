@@ -6,6 +6,9 @@
 20. GetIdentyfyingQuerySubString_ImportMeta not workin <> queries
 21. IsMetaAndToVertexEnoughToIdentifyEdge and IsToVertexEnoughToIdentifyEdge
 2. can not create Files
+22. := or something similar for base
+23. if / test
+24. class / method
 
 <><><> FUTURE 0
 
