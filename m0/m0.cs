@@ -1097,11 +1097,11 @@ namespace m0
 
             o_index_any_targetExpr.AddEdge(smb.Get(false, "$$LocalRoot"), kgd_ColonEmptyInner2SlashMarkIndex);
 
-            // ;<>
+            // <>
             //
-            // ;<>
+            // <>
 
-            IVertex o_setCount = k.AddVertex(keyword, ";<>");
+            IVertex o_setCount = k.AddVertex(keyword, "<>");
 
             o_setCount.AddEdge(keywordGroup, kgd_SlashMarkIndex);
 
@@ -1117,9 +1117,10 @@ namespace m0
 
             o_setCount_any.AddEdge(smb.Get(false, @"Vertex\$Is"), smu.Get(false, "SetCount"));
 
-            IVertex o_setCount_any_targetExpr = o_index_any.AddVertex(smu.Get(false, @"SingleOperator\NextExpression"), "");
+            // this is error. should be out
+            //IVertex o_setCount_any_targetExpr = o_index_any.AddVertex(smu.Get(false, @"SingleOperator\NextExpression"), "");
 
-            o_setCount_any_targetExpr.AddEdge(smb.Get(false, "$$LocalRoot"), kgd_ColonEmptyInner2SlashMarkIndex);
+            //o_setCount_any_targetExpr.AddEdge(smb.Get(false, "$$LocalRoot"), kgd_ColonEmptyInner2SlashMarkIndex);
 
             // 00
             //
@@ -1237,7 +1238,7 @@ namespace m0
             // (?<left>) | (?<right>)
 
             AddLeftRightOperator(k, smu, smb, keyword, any, "(?<left>) %(?<SUB>) (?<right>)", "Or");
-
+/*
             // >
             //
             // (?<left>) > (?<right>)
@@ -1261,7 +1262,7 @@ namespace m0
             // (?<left>) <= (?<right>)
 
             AddLeftRightOperator(k, smu, smb, keyword, any, "(?<left>) <=(?<SUB>) (?<right>)", "LessOrEqualThan");
-
+            */
 
             ////////////////////////////////////////////////////////////////
             //
@@ -1413,7 +1414,7 @@ namespace m0
             //
             //  `(?<expr>)
 
-            //AddSingleExpressionOperator(k, smu, smb, keyword, any, "`(?<expr>)", "MetaToTo");
+            AddSingleExpressionOperator(k, smu, smb, keyword, any, "`(?<expr>)", "MetaToTo");
 
             //////////////////// common
 

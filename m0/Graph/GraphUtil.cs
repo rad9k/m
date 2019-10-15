@@ -271,7 +271,7 @@ namespace m0.Graph
                         pos++;
                     } while (tv != e.To);
 
-                    return GetQueryStringPart(e.Meta,e.To) + ";\"" + pos + "\""; 
+                    return GetQueryStringPart(e.Meta,e.To) + ZeroCodeCommon.SetIndexPrefix + "\"" + pos + "\"" + ZeroCodeCommon.SetIndexPostfix; 
                 }
         }
 

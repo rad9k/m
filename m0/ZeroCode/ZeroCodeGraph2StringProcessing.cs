@@ -170,7 +170,7 @@ namespace m0.ZeroCode
                             pos++;
                         } while (tv != e.To);
 
-                        s.Append(ZeroCodeCommon.stringToPossiblyEscapedString(toAppend.ToString()) + ";\"" + pos +"\"");
+                        s.Append(ZeroCodeCommon.stringToPossiblyEscapedString(toAppend.ToString()) + ZeroCodeCommon.SetIndexPrefix + "\"" + pos +"\"" + ZeroCodeCommon.SetIndexPostfix);
                     }
                 }    
 
