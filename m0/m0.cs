@@ -783,7 +783,7 @@ namespace m0
             IVertex comment = k.AddVertex(keyword, "# (?<text>)");
 
             comment.AddVertex(smb.Get(false, @"Vertex\$Description"), "(?<text>)");
-
+            
 
             // attribute
             //
@@ -954,7 +954,7 @@ namespace m0
             aggregation_aggregation.AddVertex(smb.Get(false, @"Vertex\$EdgeTarget"), "(?<type>)");
 
             aggregation_aggregation.AddEdge(_is, smu.Get(false, @"Class\Aggregation"));
-
+            
             // function
             //
             // function (?<name>) (?<returnType>) [(*(+, +)(?<paramType>) (?<paramName>)*)]
@@ -1071,11 +1071,11 @@ namespace m0
 
             AddLeftRightOperator(k, smu, smb, keyword, any, "(?<left>) <->(?<SUB>) (?<right>)", "EdgeSetSubstract");
 
-            // <X>
+            // ;X
             //
-            // <(?<expr>)>
+            // ;(?<expr>)
 
-            IVertex o_index = k.AddVertex(keyword, "<(?<expr>)>");
+            IVertex o_index = k.AddVertex(keyword, ";(?<expr>)");
 
             o_index.AddEdge(keywordGroup, kgd_SlashMarkIndex);
 
@@ -1097,11 +1097,11 @@ namespace m0
 
             o_index_any_targetExpr.AddEdge(smb.Get(false, "$$LocalRoot"), kgd_ColonEmptyInner2SlashMarkIndex);
 
-            // <>
+            // ;<>
             //
-            // <>
+            // ;<>
 
-            IVertex o_setCount = k.AddVertex(keyword, "<>");
+            IVertex o_setCount = k.AddVertex(keyword, ";<>");
 
             o_setCount.AddEdge(keywordGroup, kgd_SlashMarkIndex);
 
@@ -1413,7 +1413,7 @@ namespace m0
             //
             //  `(?<expr>)
 
-            AddSingleExpressionOperator(k, smu, smb, keyword, any, "`(?<expr>)", "MetaToTo");
+            //AddSingleExpressionOperator(k, smu, smb, keyword, any, "`(?<expr>)", "MetaToTo");
 
             //////////////////// common
 

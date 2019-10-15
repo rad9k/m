@@ -52,7 +52,7 @@ namespace m0.ZeroCode
 
         public static char EscapeCharacter = '\\';
 
-        public static string[] CodeViewTimeLinkKeywordParts = { "\\", "{","}","|","||",":","::","<",">",","}; // we store it here and in the textlanguage, but in general this is XXX. big question remins: how do you do cvtq while the code is in some different language?
+        public static string[] CodeViewTimeLinkKeywordParts = { "\\", "{","}","|","||",":","::",";",","}; // we store it here and in the textlanguage, but in general this is XXX. big question remins: how do you do cvtq while the code is in some different language?
 
         // Link
         ///////
