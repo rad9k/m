@@ -16,7 +16,7 @@ namespace m0.ZeroTypes
             if (GeneralUtil.CompareStrings(e.Meta.Value, "$EdgeTarget"))
                 return true;
 
-            if (GraphUtil.ExistQueryOut(e.Meta, "$EdgeTarget", null) && GraphUtil.ExistQueryOut(e.Meta, "$IsAggregation", null))
+            if (GraphUtil.ExistQueryOut(e.Meta, "$EdgeTarget", null) && !GraphUtil.ExistQueryOut(e.Meta, "$IsAggregation", null))
                 return true;
             //WAS
             //if (e.Meta.Get(false, "$EdgeTarget:") != null && e.Meta.Get(false, "$IsAggregation:") == null)
@@ -35,11 +35,11 @@ namespace m0.ZeroTypes
 
         public static bool IsMetaAndToVertexEnoughToIdentifyEdge(IVertex baseVertex, IVertex meta, IVertex to)
         {
-            if (GraphUtil.ExistQueryOut(baseVertex, meta.Value, to.Value))
+            if (GraphUtil.GetQueryOutCount(baseVertex, meta.Value, to.Value) > 1)
                 return false;
             else
                 return true;
-                
+
             //WAS
             /*
             int count = 0;
@@ -70,7 +70,7 @@ namespace m0.ZeroTypes
                     return false;
             }
 
-            if (GraphUtil.ExistQueryOut(baseVertex, null, to.Value))
+            if (GraphUtil.GetQueryOutCount(baseVertex, null, to.Value) > 1)
                 return false;
             else
                 return true;
