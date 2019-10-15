@@ -3814,7 +3814,11 @@ namespace m0
 
             CreatePresentation();
 
-            CreateSystemMetaBase();            
+            CreateSystemMetaBase();
+
+
+            AddFastAccessVertexes();
+
 
             CreateSystemMetaZeroUML();
 
@@ -3863,7 +3867,7 @@ namespace m0
 
             AddDrives();
 
-            AddFastAccessVertexes();
+
 
             UIWpf.UIWpf.InitializeUIWpf();
 

@@ -16,7 +16,7 @@ namespace m0.ZeroTypes
             if (GeneralUtil.CompareStrings(e.Meta.Value, "$EdgeTarget"))
                 return true;
 
-            if (GraphUtil.GetQueryOutFirst(e.Meta, "$EdgeTarget", null) != null && GraphUtil.GetQueryOutFirst(e.Meta, "$IsAggregation", null) == null)
+            if (GraphUtil.ExistQueryOut(e.Meta, "$EdgeTarget", null) && GraphUtil.ExistQueryOut(e.Meta, "$IsAggregation", null))
                 return true;
             //WAS
             //if (e.Meta.Get(false, "$EdgeTarget:") != null && e.Meta.Get(false, "$IsAggregation:") == null)
@@ -35,7 +35,7 @@ namespace m0.ZeroTypes
 
         public static bool IsMetaAndToVertexEnoughToIdentifyEdge(IVertex baseVertex, IVertex meta, IVertex to)
         {
-            if (GraphUtil.GetQueryOutCount(baseVertex, meta.Value, to.Value) > 1)
+            if (GraphUtil.ExistQueryOut(baseVertex, meta.Value, to.Value))
                 return false;
             else
                 return true;
@@ -70,7 +70,7 @@ namespace m0.ZeroTypes
                     return false;
             }
 
-            if (GraphUtil.GetQueryOutCount(baseVertex, null, to.Value) > 1)
+            if (GraphUtil.ExistQueryOut(baseVertex, null, to.Value))
                 return false;
             else
                 return true;
@@ -88,7 +88,7 @@ namespace m0.ZeroTypes
 
         private static bool _IsInheritedEdge(IVertex baseVertex, IVertex metaVertex)
         {
-            if(GraphUtil.GetQueryOutCount(baseVertex, metaVertex.Value, null) >0 )
+            if(GraphUtil.ExistQueryOut(baseVertex, metaVertex.Value, null))
             //if (baseVertex.Get(false, metaVertex.Value + ":") != null)
                 return true;
 
@@ -258,7 +258,7 @@ namespace m0.ZeroTypes
 
         public static IEdge AddEdgeOrVertexByMeta(IVertex baseVertex, IVertex metaVertex, IVertex toVertex, Point position, bool? CreateEdgeOnly, bool? ForceShowEditForm)
         {
-            if (GraphUtil.GetQueryOutCount(metaVertex,"$VertexTarget",null) > 0
+            if (GraphUtil.ExistQueryOut(metaVertex,"$VertexTarget",null)
             //if (metaVertex.Get(false, @"$VertexTarget:") != null
                 && (CreateEdgeOnly.HasValue == false||CreateEdgeOnly==false))
             {                
@@ -293,7 +293,7 @@ namespace m0.ZeroTypes
 
             ///
 
-            if (GraphUtil.GetQueryOutCount(metaVertex,"$IsAggregation",null) > 0)
+            if (GraphUtil.ExistQueryOut(metaVertex,"$IsAggregation",null))
             //if (metaVertex.Get(false, "$IsAggregation:") != null)
                 nv.AddEdge(MinusZero.Instance.IsAggregation, MinusZero.Instance.Empty);
 
@@ -305,7 +305,7 @@ namespace m0.ZeroTypes
 
             foreach (IEdge child in children)
             {
-                if (GraphUtil.GetQueryOutCount(child.To, "$DefaultValue", null) > 0)
+                if (GraphUtil.ExistQueryOut(child.To, "$DefaultValue", null))
                     //if (child.To.Get(false, "$DefaultValue:")!=null)
                     nv.AddEdge(child.To, GraphUtil.GetQueryOutFirst(child.To, "$DefaultValue", null));
                     //nv.AddEdge(child.To, child.To.Get(false, "$DefaultValue:"));

@@ -554,7 +554,7 @@ namespace m0.ZeroCode
 
             // try from local root
 
-            tryIf = query(baseVertex, @"$ParseRoot"+ZeroCodeCommon.MetaSeparator+@"\\"+link);            
+            tryIf = queryMetaImport(baseVertex, @"$ParseRoot"+ZeroCodeCommon.MetaSeparator+@"\\"+link);            
 
             if (tryIf != null)
                 return tryIf;

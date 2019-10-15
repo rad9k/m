@@ -164,6 +164,24 @@ namespace m0.Graph
             return 0;
         }
 
+        public static bool ExistQueryOut(IVertex baseVertex, object meta, object value)
+        {
+            IEdge result;
+            IList<IEdge> results;
+
+            baseVertex.QueryOutEdges(meta, value, out result, out results);
+
+            if (result != null)
+            {
+                return true;
+            }
+
+            if (results != null)
+                return true;
+
+            return false;
+        }
+
         public static object GetMetaAndValueObject(object meta, object value)
         {
             /*StringBuilder sb = new StringBuilder();
