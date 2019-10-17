@@ -939,7 +939,8 @@ namespace m0.ZeroCode
 
                     IEdge e = GetKewordEdgeByQuerystring(km, queryString);
 
-                    BeenList.Add(e); // :O)
+                    if (VertexOperations.IsLink(e))
+                        BeenList.Add(e);
 
                     ProcessSentencePart(km, sentence, ref prevPos, ref wasThereNewLine, match, e);
                 }
@@ -998,7 +999,8 @@ namespace m0.ZeroCode
                             else
                                 e = ee.To.GetAll(false, queryString).FirstOrDefault();
 
-                            BeenList.Add(ee); // :O)
+                            if(VertexOperations.IsLink(ee))
+                                BeenList.Add(ee);
 
                             ProcessSentencePart(km, sentence, ref prevPos, ref wasThereNewLine, match, e);
                         }
@@ -1586,7 +1588,7 @@ namespace m0.ZeroCode
         int levelCorrection = 0;
 
         void ZeroCodeGraph2String_Reccurent(IEdge baseEdge, int level, IEdge parent, string path)
-        {
+        { 
             if (BeenList.Contains(baseEdge))
                 return;
 
@@ -1628,8 +1630,8 @@ namespace m0.ZeroCode
 
             bool appendAsNew = AppendEdge(baseEdge, parent, path);
 
-            if(!isLink)
-                BeenList.Add(baseEdge);
+            if (!isLink)
+                BeenList.Add(baseEdge);;
 
             if (baseEdge == BaseEdge)
                 been = false; // hack
