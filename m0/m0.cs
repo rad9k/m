@@ -1074,8 +1074,7 @@ namespace m0
             // ;X
             //
             // ;(?<expr>)
-            IVertex o_index = k.AddVertex(keyword, ";(?<expr>)");
-            //IVertex o_index = k.AddVertex(keyword, ";");
+            IVertex o_index = k.AddVertex(keyword, ";(?<expr>).");
 
             o_index.AddEdge(keywordGroup, kgd_SlashMarkIndex);
 
@@ -1091,9 +1090,7 @@ namespace m0
 
             o_index_any.AddEdge(smb.Get(false, @"Vertex\$Is"), smu.Get(false, "SetIndex"));
 
-             o_index_any.AddVertex(smu.Get(false, @"SingleExpressionOperator\Expression"), "(?<expr>)");
-
-           // o_index_any.AddVertex(smu.Get(false, @"SingleExpressionOperator\Expression"), "XXX");
+             o_index_any.AddVertex(smu.Get(false, @"SingleExpressionOperator\Expression"), "(?<expr>)");           
 
             IVertex o_index_any_targetExpr = o_index_any.AddVertex(smu.Get(false, @"SingleOperator\NextExpression"), "");
 

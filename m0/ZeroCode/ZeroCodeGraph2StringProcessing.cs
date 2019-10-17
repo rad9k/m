@@ -814,8 +814,9 @@ namespace m0.ZeroCode
 
                     ProcessSingleKeywordSentencePart(km, sentence, false, out zeroMatch);
 
-                    if (zeroMatch&&km.DoKeywordDefinitionContainStartInLocalRoot)
+                    if (/*zeroMatch&&*/km.DoKeywordDefinitionContainStartInLocalRoot) // XXX YYY
                     { // hack if there are no params but there are local roots
+                        // hack EDIT in order to a[b<"3">\] to work hack has been reduced by zeroMatch
                         IEdge e = km.BaseEdge;
 
                         string path = GetPathFromKeywordMatchAndKeywordEdge(km, e, null);
