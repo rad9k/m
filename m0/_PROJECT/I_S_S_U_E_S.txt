@@ -10,7 +10,14 @@
 23. if / test
 24. class / method
 25. ====
-26. a[x;"2"\]
+27. "Y"
+	"x"
+		"y"
+	"x"
+		"y"
+		"y"
+			"z"
+	a = @@x<<"2">>\y<<"2">>\z
 
 <><><> FUTURE 0
 
@@ -40,3 +47,4 @@
 13. common implementation of montevideo principles
 9. [] as subexpression
 18. <> operator
+26. a[x;"2"\]

@@ -1074,7 +1074,7 @@ namespace m0
             // ;X
             //
             // ;(?<expr>)
-            IVertex o_index = k.AddVertex(keyword, ";(?<expr>).");
+            IVertex o_index = k.AddVertex(keyword, "<<(?<expr>)>>");
 
             o_index.AddEdge(keywordGroup, kgd_SlashMarkIndex);
 
@@ -1237,7 +1237,7 @@ namespace m0
             // (?<left>) | (?<right>)
 
             AddLeftRightOperator(k, smu, smb, keyword, any, "(?<left>) %(?<SUB>) (?<right>)", "Or");
-/*
+
             // >
             //
             // (?<left>) > (?<right>)
@@ -1261,7 +1261,7 @@ namespace m0
             // (?<left>) <= (?<right>)
 
             AddLeftRightOperator(k, smu, smb, keyword, any, "(?<left>) <=(?<SUB>) (?<right>)", "LessOrEqualThan");
-            */
+            
 
             ////////////////////////////////////////////////////////////////
             //
