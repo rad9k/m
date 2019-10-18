@@ -232,7 +232,10 @@ namespace m0.ZeroCode
             public IDictionary<string, List<keywordTryingData>> examinedKeywords_StartInLocalRootOnly; // StartInLocalRoot only?
             public IDictionary<char, List<string>> allKeywordsSubstringsDictionary;
             public IDictionary<char, List<string>> allKeywordsSubstringsDictionary_witchoutAlpha;
-            public IDictionary<char, List<string>> allKeywordsSubstringsDictionary_witchoutLinkKeywordParts;
+            public IDictionary<char, List<string>> allKeywordsSubstringsPositiveDictionary_witchoutLinkKeywordParts;
+            public Dictionary<char, List<string>> allKeywordsSubstringsNegativeDictionary_witchoutLinkKeywordParts;
+
+
 
             public IDictionary<IVertex, KeywordInfo> keywordInfoDict;
 
@@ -1167,11 +1170,11 @@ namespace m0.ZeroCode
             bool _isLink = ZeroCodeCommon.isLinkString(text, sPos);
 
 
-            if (!ZeroCodeCommon.testIfIsKeywordSubstring(sPos, text, dict.allKeywordsSubstringsDictionary) || _isLink)
+            if (!ZeroCodeCommon.testIfIsKeywordSubstring(sPos, text, dict.allKeywordsSubstringsDictionary, null) || _isLink)
             {
                 if (!isTopLevelCall && _isLink) // @
                 {
-                    ZeroCodeCommon.tryStringFromLinkString(text, sPos, ref sPos, endPos_forAtomParts, dict.allKeywordsSubstringsDictionary_witchoutLinkKeywordParts);
+                    ZeroCodeCommon.tryStringFromLinkString(text, sPos, ref sPos, endPos_forAtomParts, dict.allKeywordsSubstringsPositiveDictionary_witchoutLinkKeywordParts);
 
                     string foundString = text.Substring(startPos, sPos - startPos);
 
@@ -1199,10 +1202,10 @@ namespace m0.ZeroCode
                         {
                             sPos++;
 
-                            if (!isLinkKeyword && ZeroCodeCommon.testIfIsKeywordSubstring(sPos, text, dict.allKeywordsSubstringsDictionary_witchoutAlpha))
+                            if (!isLinkKeyword && ZeroCodeCommon.testIfIsKeywordSubstring(sPos, text, dict.allKeywordsSubstringsDictionary_witchoutAlpha, null))
                                 shallProceed = false;
 
-                            if (isLinkKeyword && ZeroCodeCommon.testIfIsKeywordSubstring(sPos, text, dict.allKeywordsSubstringsDictionary_witchoutLinkKeywordParts))
+                            if (isLinkKeyword && ZeroCodeCommon.testIfIsKeywordSubstring(sPos, text, dict.allKeywordsSubstringsPositiveDictionary_witchoutLinkKeywordParts, dict.allKeywordsSubstringsNegativeDictionary_witchoutLinkKeywordParts))
                                 shallProceed = false;
 
                             if (s.currentLineInfo.IsLineEnd(sPos))
@@ -2239,7 +2242,8 @@ namespace m0.ZeroCode
 
             d.allKeywordsSubstringsDictionary = new Dictionary<char, List<string>>();
             d.allKeywordsSubstringsDictionary_witchoutAlpha = new Dictionary<char, List<string>>();
-            d.allKeywordsSubstringsDictionary_witchoutLinkKeywordParts = new Dictionary<char, List<string>>();
+            d.allKeywordsSubstringsPositiveDictionary_witchoutLinkKeywordParts = new Dictionary<char, List<string>>();
+            d.allKeywordsSubstringsNegativeDictionary_witchoutLinkKeywordParts = new Dictionary<char, List<string>>();
 
             foreach (IEdge keyword in FormalTextLanguage.GetAll(false, @"Keywords:\$Keyword:"))
             {
@@ -2289,9 +2293,19 @@ namespace m0.ZeroCode
                 PrepareKeywordInfo(d, ktd);
 
             }
+            
+            AddSpaceToAllKeywordsSubstringsDictionary(d);
 
-            // add space to allKeywordsSubstringsDictionary
+            PrepareNegativeNegativeDictionary_witchoutLinkKeywordParts(d);
 
+            //
+
+            DictionariesForFormalTextLanguageDictionary.Add(formalTextLanguage, d);
+
+        }
+
+        private void AddSpaceToAllKeywordsSubstringsDictionary(DictionariesForFormalTextLanguage d)
+        {
             if (!d.allKeywordsSubstringsDictionary.ContainsKey(' '))
             {
                 List<string> l = new List<string>();
@@ -2302,13 +2316,18 @@ namespace m0.ZeroCode
 
                 d.allKeywordsSubstringsDictionary_witchoutAlpha.Add(' ', l);
 
-                d.allKeywordsSubstringsDictionary_witchoutLinkKeywordParts.Add(' ', l);
+                d.allKeywordsSubstringsPositiveDictionary_witchoutLinkKeywordParts.Add(' ', l);
             }
+        }
 
-            //
+        private void PrepareNegativeNegativeDictionary_witchoutLinkKeywordParts(DictionariesForFormalTextLanguage d)
+        {
+            foreach(string s in ZeroCodeCommon.CodeViewTimeLinkKeywordParts)
+            {
+                char key = s[0];
 
-            DictionariesForFormalTextLanguageDictionary.Add(formalTextLanguage, d);
-                
+                GeneralUtil.DictionaryAdd<char, string>(d.allKeywordsSubstringsNegativeDictionary_witchoutLinkKeywordParts, key, s);
+            }
         }
 
         private void PrepareKeywordInfo(DictionariesForFormalTextLanguage d, keywordTryingData ktd)
@@ -2402,7 +2421,7 @@ namespace m0.ZeroCode
                 addSubString_dictionary(d.allKeywordsSubstringsDictionary_witchoutAlpha, subString);
 
             if (!ZeroCodeCommon.CodeViewTimeLinkKeywordParts.Contains(subString) && !Char.IsLetter(subString[0]))
-                addSubString_dictionary(d.allKeywordsSubstringsDictionary_witchoutLinkKeywordParts, subString);
+                addSubString_dictionary(d.allKeywordsSubstringsPositiveDictionary_witchoutLinkKeywordParts, subString);
         }
 
         private void addSubString_dictionary(IDictionary<char, List<string>> dict, string subString)

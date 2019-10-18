@@ -60,7 +60,8 @@ namespace m0.ZeroCode
 
         public static string SetIndexPostfix = ">>";
 
-        public static string[] CodeViewTimeLinkKeywordParts = { "\\", "{","}","|","||",":","::",SetIndexPrefix, SetIndexPostfix ,"," }; // we store it here and in the textlanguage, but in general this is XXX. big question remins: how do you do cvtq while the code is in some different language?
+        public static HashSet<string> CodeViewTimeLinkKeywordParts = new HashSet<string>(new string[] { "\\", "{", "}", "|", "||", ":", "::", SetIndexPrefix, SetIndexPostfix, "," }); 
+    // we store it here and in the textlanguage, but in general this is XXX. big question remins: how do you do cvtq while the code is in some different language?
 
         // Link
         ///////
@@ -104,7 +105,7 @@ namespace m0.ZeroCode
                 {
                     sPos++;
 
-                    if (testIfIsKeywordSubstring(sPos, text, allKeywordsSubstringsDictionary))
+                    if (testIfIsKeywordSubstring(sPos, text, allKeywordsSubstringsDictionary, null))
                         shallProceed = false;
 
                     if (sPos == endPos)
@@ -132,18 +133,39 @@ namespace m0.ZeroCode
             return newVertex;
         }
 
-        public static bool testIfIsKeywordSubstring(int startPos, string text, IDictionary<char, List<string>> allKeywordsSubstringsDictionary)
+        public static bool testIfIsKeywordSubstring(int startPos, string text, IDictionary<char, List<string>> keywordsSubstringsPositiveDictionary, IDictionary<char, List<string>> keywordsSubstringsNegativeDictionary)
         {
             char charAtPos = text[startPos];
 
-            if (!allKeywordsSubstringsDictionary.ContainsKey(charAtPos))
+            if (!keywordsSubstringsPositiveDictionary.ContainsKey(charAtPos))
                 return false;
 
-            List<string> l = allKeywordsSubstringsDictionary[charAtPos];
+            List<string> l = keywordsSubstringsPositiveDictionary[charAtPos];
 
             foreach (string s in l)
                 if (ZeroCodeUtil.tryStringMatch(text, startPos, s))
-                    return true;
+                {
+                    if (keywordsSubstringsNegativeDictionary == null)
+                        return true;
+                    else
+                    {
+                        if (keywordsSubstringsNegativeDictionary.ContainsKey(charAtPos))
+                        {
+                            List<string> negList = keywordsSubstringsNegativeDictionary[charAtPos];
+
+                            bool notFound = true;
+
+                            foreach (string ss in negList)
+                                if (ZeroCodeUtil.tryStringMatch(text, startPos, ss))
+                                    notFound = false;
+
+                            if (notFound)
+                                return true;
+                        }
+                        else
+                            return true;
+                    }
+                }
 
             return false;
         }

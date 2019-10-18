@@ -33,6 +33,18 @@ namespace m0.Util
             return Guid.NewGuid();
         }
 
+        public static void DictionaryAdd<key,value>(Dictionary<key,List<value>> dict, key _key, value _value)
+        {
+            if (dict.ContainsKey(_key))
+                dict[_key].Add(_value);
+            else
+            {
+                List<value> l = new List<value>();
+                l.Add(_value);
+                dict.Add(_key, l);
+            }
+        }
+
         public static string GetTypeName(object obj)
         {
             return obj.GetType().AssemblyQualifiedName;
