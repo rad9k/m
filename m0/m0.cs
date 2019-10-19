@@ -1481,7 +1481,7 @@ namespace m0
             //
             // \                         
 
-            IVertex o_Slash = k.AddVertex(keyword, @" \ ");
+            IVertex o_Slash = k.AddVertex(keyword, @"\");
 
             o_Slash.AddEdge(keywordGroup, kgd_SlashMarkIndex);
 

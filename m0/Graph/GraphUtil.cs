@@ -243,7 +243,7 @@ namespace m0.Graph
                 }
         }
 
-        public static string GetQueryStringPart(IVertex meta, IVertex to)
+        public static string GetQueryStringPart_MetaMode(IVertex meta, IVertex to)
         {
             if (GeneralUtil.CompareStrings(meta.ToString(), "$Empty"))
                 return ZeroCodeCommon.stringToPossiblyEscapedString(to.ToString());
@@ -251,13 +251,13 @@ namespace m0.Graph
                 return ZeroCodeCommon.stringToPossiblyEscapedString(meta.ToString()) + ZeroCodeCommon.MetaSeparator + ZeroCodeCommon.stringToPossiblyEscapedString(to.ToString());
         }
 
-        public static string GetIdentyfyingQuerySubString_ImportMeta(IEdge e) // this is used in String2Graph, so we need to reference ZeroCodeCommon.MetaSeparator
+        public static string GetIdentyfyingQuerySubString_MetaMode(IEdge e) // this is used in String2Graph, so we need to reference ZeroCodeCommon.MetaSeparator
         {
             if (VertexOperations.IsToVertexEnoughToIdentifyEdge(e.From, e.To))
                 return ZeroCodeCommon.stringToPossiblyEscapedString(e.To.ToString()+""); // there was no ToString. might cause problems. XXX why this "" as we do not have null To?
             else
                 if (VertexOperations.IsMetaAndToVertexEnoughToIdentifyEdge(e.From, e.Meta, e.To))
-                    return GetQueryStringPart(e.Meta, e.To);
+                    return GetQueryStringPart_MetaMode(e.Meta, e.To);
                 else
                 {
                     int pos = 0;
@@ -271,7 +271,7 @@ namespace m0.Graph
                         pos++;
                     } while (tv != e.To);
 
-                    return GetQueryStringPart(e.Meta,e.To) + ZeroCodeCommon.SetIndexPrefix + "\"" + pos + "\"" + ZeroCodeCommon.SetIndexPostfix; 
+                    return GetQueryStringPart_MetaMode(e.Meta,e.To) + ZeroCodeCommon.SetIndexPrefix + "\"" + pos + "\"" + ZeroCodeCommon.SetIndexPostfix; 
                 }
         }
 

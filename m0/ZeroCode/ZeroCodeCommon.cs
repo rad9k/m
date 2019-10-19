@@ -156,8 +156,12 @@ namespace m0.ZeroCode
                             bool notFound = true;
 
                             foreach (string ss in negList)
-                                if (ZeroCodeUtil.tryStringMatch(text, startPos, ss))
-                                    notFound = false;
+                                for (int back = 0; back < ss.Length; back++)
+                                {
+                                    if (startPos-back > 0 && ZeroCodeUtil.tryStringMatch(text, startPos - back, ss))
+                                        notFound = false;
+                                }
+                            
 
                             if (notFound)
                                 return true;

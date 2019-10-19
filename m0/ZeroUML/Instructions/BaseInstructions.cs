@@ -474,7 +474,7 @@ namespace m0.ZeroUML.Instructions
                     localStack.AddEdgeForNoInEdgeInOutVertexVertex(inputStack.OutEdges[(int)index - 1]);
             }
             
-            return localStack;
+            return InstructionHelpers.NextExpressionHandle(exe, localStack, instructionVertex);
         }
 
         public static INoInEdgeInOutVertexVertex SetCount(ZeroCodeExecution exe, IVertex inputStack, IVertex instructionVertex, out bool isStackFrameReturn)
@@ -1432,7 +1432,9 @@ namespace m0.ZeroUML.Instructions
             IVertex expression = GraphUtil.GetQueryOutFirst(instructionVertex, "Expression", null);
                 //instructionVertex.Get(false, "Expression:");
 
-            return exe.ExecuteInstructionByMontevideoPrinciples(inputStack, expression);
+            INoInEdgeInOutVertexVertex localStack = exe.ExecuteInstructionByMontevideoPrinciples(inputStack, expression);
+
+            return InstructionHelpers.NextExpressionHandle(exe, localStack, instructionVertex);
         }
 
         public static INoInEdgeInOutVertexVertex Call(ZeroCodeExecution exe, IVertex inputStack, IVertex instructionVertex, out bool isStackFrameReturn)

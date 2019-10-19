@@ -447,7 +447,22 @@ namespace m0
         "\r\n\tC = parse @@System\\FormalTextLanguage\\ZeroCode(\"a+b\")" +
         "\r\n\tD = execute(parse(\"A + A\"))"
         );
-            
+
+            IVertex code11 = code.AddVertex(null, null);
+            MinusZero.Instance.NewDefaultParser.Parse(code11,
+            "\"Code11\"" +
+            "\r\n\t\"x\"" +
+            "\r\n\t\t\"a\"" +
+            "\r\n\t\t\"z1\"" +
+            "\r\n\t\"x\"" +
+            "\r\n\t\t\"b\"" +
+            "\r\n\t\t\t\"z2\"" +
+            "\r\n\t\t\"b\"" +
+            "\r\n\t\t\t\"z3\"" +
+            "\r\n\tvariable \"a\" @String" +
+            "\r\n\ta = ($\\|x<<\"1\">>\\<+>$\\|x<<\"2\">>\\)\\" +
+            "\r\n\t@@x<<\"2\">>\\b<<\"2\">>\\z3");
+
             //MinusZero.Instance.NewDefaultParser.Parse(code, "\"Code\"\r\n\tvariable \"Magunia\" @String 5:10\r\n\tvariable \"Radek\" @String 2:2\r\n\tRadek += \"Koha\"\r\n\tMagunia=Radek\r\n\tMagunia ~= Radek|Koha");
 
 

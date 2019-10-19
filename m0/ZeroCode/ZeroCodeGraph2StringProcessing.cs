@@ -890,7 +890,7 @@ namespace m0.ZeroCode
                 string ret = null;
 
                 if(!VertexOperations.IsLink(ee))
-                    ret=GetPathFromKeywordMatchAndKeywordEdge(km, ee, GraphUtil.GetIdentyfyingQuerySubString_ImportMeta(e) + suffix + path);
+                    ret=GetPathFromKeywordMatchAndKeywordEdge(km, ee, GraphUtil.GetIdentyfyingQuerySubString_MetaMode(e) + suffix + path);
 
                 if (ret != null)
                     return ret;
@@ -1087,11 +1087,11 @@ namespace m0.ZeroCode
                             wasThereNewLine = true;
                         }
                     }
-                    AppendEdge(e, null, basePath + "\\" + GraphUtil.GetIdentyfyingQuerySubString_ImportMeta(e));
+                    AppendEdge(e, null, basePath + "\\" + GraphUtil.GetIdentyfyingQuerySubString_MetaMode(e));
                 }
 
                 if (km.DoKeywordDefinitionContainLocalRoot && km.MatchedEdges.Contains(e) && KeywordMatchedSubGraphEdges[e]!=km)
-                    AppendEdge(e, null, basePath + "\\" + GraphUtil.GetIdentyfyingQuerySubString_ImportMeta(e));
+                    AppendEdge(e, null, basePath + "\\" + GraphUtil.GetIdentyfyingQuerySubString_MetaMode(e));
                 
             }
 
@@ -1530,7 +1530,7 @@ namespace m0.ZeroCode
             foreach (IEdge ee in e.To.OutEdgesRaw)
                 if (!VertexOperations.IsLink(ee)) 
                 {
-                    string LinkString = path + suffix + GraphUtil.GetIdentyfyingQuerySubString_ImportMeta(ee);
+                    string LinkString = path + suffix + GraphUtil.GetIdentyfyingQuerySubString_MetaMode(ee);
 
                     bool beenThereButNeedToReEnter = false;
 
@@ -1567,7 +1567,7 @@ namespace m0.ZeroCode
             foreach (IEdge ee in e.To.OutEdgesRaw)
                 //if (!IsLink(ee))
                 {
-                    string LinkString = path + suffix + GraphUtil.GetIdentyfyingQuerySubString_ImportMeta(ee);
+                    string LinkString = path + suffix + GraphUtil.GetIdentyfyingQuerySubString_MetaMode(ee);
 
                     CheckVertexIfItMachesAnyKeywordGraphs(ee, LinkString, e);                    
 
@@ -1599,9 +1599,9 @@ namespace m0.ZeroCode
                 return;
 
             if (path != null)
-                path = path + "\\" + GraphUtil.GetIdentyfyingQuerySubString_ImportMeta(baseEdge);
+                path = path + "\\" + GraphUtil.GetIdentyfyingQuerySubString_MetaMode(baseEdge);
             else
-                path = GraphUtil.GetIdentyfyingQuerySubString_ImportMeta(baseEdge);
+                path = GraphUtil.GetIdentyfyingQuerySubString_MetaMode(baseEdge);
 
             if (GeneralUtil.CompareStrings(baseEdge.Meta, "$Is") && baseEdge.To == parent.Meta && !KeywordMatchedSubGraphEdges.ContainsKey(baseEdge))
             {

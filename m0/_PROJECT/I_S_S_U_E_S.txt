@@ -1,10 +1,7 @@
 ﻿!!!!!!!!!!!!!!!!!!!!!!!!!!!!! TO DO:
 14. add () to ||
 15. add _ to || [16]
-16. _ operator 
 17. ` operator
-20. GetIdentyfyingQuerySubString_ImportMeta not workin <> queries
-21. IsMetaAndToVertexEnoughToIdentifyEdge and IsToVertexEnoughToIdentifyEdge
 2. can not create Files
 22. := or something similar for base
 23. if / test
@@ -35,8 +32,8 @@
 
 3. exception handling throught custom meta code
 12. execution stop / continuation / stack copy?
-19. [] / execute as begginning of Query
-20. different keywords support
+19. [] / execute / () as begginning of Query
+20. different import keywords support
 
 
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!! Done:
@@ -48,3 +45,6 @@
 9. [] as subexpression
 18. <> operator
 26. a[x;"2"\]
+20. GetIdentyfyingQuerySubString_ImportMeta not workin <> queries
+21. IsMetaAndToVertexEnoughToIdentifyEdge and IsToVertexEnoughToIdentifyEdge
+16. _ operator 

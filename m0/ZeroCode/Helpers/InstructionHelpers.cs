@@ -51,23 +51,16 @@ namespace m0.ZeroCode.Helpers
 
         public static bool CheckIfIsOrInherits(IVertex baseVertex, string value)
         {
-            HashSet<IVertex> inheritsSet = new HashSet<IVertex>();
+            IList<IEdge> allIs = InstructionHelpers.GetAllIs(baseVertex);
 
-            return CheckIfIsOrInherits_recurrent(baseVertex, inheritsSet, value);
-        }
+            foreach(IEdge e in allIs)
+                if (GraphUtil.GetValueAndCompareStrings(e.To, value))
+                    return true;
 
-        private static bool CheckIfIsOrInherits_recurrent(IVertex baseVertex, HashSet<IVertex> inheritedSet, string value)
-        {            
-            if (GraphUtil.GetValueAndCompareStrings(GraphUtil.GetQueryOutFirst(baseVertex, "$Is", null), value))
-                return true;
-
-            foreach (IEdge e in GraphUtil.GetQueryOut(baseVertex, "$Inherits", null))
-                if (!inheritedSet.Contains(e.To))
-                {
-                    inheritedSet.Add(e.To);
-                    if (CheckIfIsOrInherits_recurrent(e.To, inheritedSet, value))
+            foreach (IEdge e in allIs)
+                foreach (IEdge ee in InstructionHelpers.GetAllIs(e.To))
+                    if (GraphUtil.GetValueAndCompareStrings(ee.To, value))
                         return true;
-                }
 
             return false;
         }
@@ -105,6 +98,11 @@ namespace m0.ZeroCode.Helpers
         public static IVertex GetIs(IVertex v)
         {
             return GraphUtil.GetQueryOutFirst(v, "$Is", null);
+        }
+
+        public static IList<IEdge> GetAllIs(IVertex v)
+        {
+            return GraphUtil.GetQueryOut(v, "$Is", null);
         }
 
         public static IVertex GetLeft(IVertex v)
