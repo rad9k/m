@@ -1,20 +1,12 @@
 ﻿!!!!!!!!!!!!!!!!!!!!!!!!!!!!! TO DO:
 14. add () to ||
 15. add _ to || [16]
-17. ` operator
 2. can not create Files
 22. := or something similar for base
 23. if / test
 24. class / method
 25. ====
-27. "Y"
-	"x"
-		"y"
-	"x"
-		"y"
-		"y"
-			"z"
-	a = @@x<<"2">>\y<<"2">>\z
+27. key added error on exit
 
 <><><> FUTURE 0
 
@@ -32,8 +24,9 @@
 
 3. exception handling throught custom meta code
 12. execution stop / continuation / stack copy?
-19. [] / execute / () as begginning of Query
+19. [] / execute / () / @@=>@() as begginning of Query
 20. different import keywords support
+21. [] / execute as || parameter
 
 
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!! Done:
@@ -48,3 +41,4 @@
 20. GetIdentyfyingQuerySubString_ImportMeta not workin <> queries
 21. IsMetaAndToVertexEnoughToIdentifyEdge and IsToVertexEnoughToIdentifyEdge
 16. _ operator 
+17. ` operator

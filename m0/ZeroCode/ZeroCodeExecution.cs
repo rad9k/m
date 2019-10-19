@@ -14,6 +14,8 @@ namespace m0.ZeroCode
     {
         public INoInEdgeInOutVertexVertex stack;
 
+        public INoInEdgeInOutVertexVertex newVertexCreationSpace;
+
         public bool metaMode;
 
         public void AddStackFrame()
@@ -48,28 +50,14 @@ namespace m0.ZeroCode
         {
             isStackFrameReturn = false;
 
-            IVertex is_v = InstructionHelpers.GetIs(instructionVertex);
+            IVertex is_v = InstructionHelpers.GetIs(instructionVertex);            
 
-
-            /*if(InstructionHelpers.CheckIfIsAtomType(is_v)) // AtomType => deep copy 
-            {
-                INoInEdgeInOutVertexVertex stack = InstructionHelpers.CreateStack();
-
-                IVertex copiedVertex = stack.AddVertex(null, null);
-
-                VertexOperations.DeepVertexCopy(instructionVertex, copiedVertex);
-
-                return stack;
-            }*/
-
-            if (InstructionHelpers.CheckIfHasExecutableEndPoint(is_v))
-                return CallableEndPointDictionary.CallEndPoint(this, inputQs, instructionVertex, out isStackFrameReturn);
-
-            // non atom value subgraph => add edge to subgraph's root
+            if (InstructionHelpers.CheckIfHasExecutableEndPoint(is_v))  // execute if you can
+                return CallableEndPointDictionary.CallEndPoint(this, inputQs, instructionVertex, out isStackFrameReturn);            
 
             INoInEdgeInOutVertexVertex stack_ = InstructionHelpers.CreateStack();
 
-            stack_.AddEdgeForNoInEdgeInOutVertexVertex(GraphUtil.CreateArtificialEdge(null, instructionVertex));
+            stack_.AddEdgeForNoInEdgeInOutVertexVertex(GraphUtil.CreateArtificialEdge(null, instructionVertex)); // create stack and put reference
 
             return stack_;
         }

@@ -35,6 +35,8 @@ namespace m0.ZeroCode
 
             exe.stack = InstructionHelpers.Create_INoInEdgeInOutVertexVertex_FromEdgesList(baseVertex);
 
+            exe.newVertexCreationSpace = exe.stack;
+
             AddRootToStack(exe);
 
             AddDolarToStack(exe, expression);

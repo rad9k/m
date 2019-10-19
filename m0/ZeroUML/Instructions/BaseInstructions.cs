@@ -1643,7 +1643,7 @@ namespace m0.ZeroUML.Instructions
 
             foreach(IEdge e in expressionResult)
             {
-
+                newStack.AddEdge(null, e.Meta);
             }
 
             return newStack;
@@ -1672,7 +1672,7 @@ namespace m0.ZeroUML.Instructions
         {
             isStackFrameReturn = false;
 
-            INoInEdgeInOutVertexVertex creationTarget = InstructionHelpers.CreateStack();
+            INoInEdgeInOutVertexVertex creationTarget = exe.newVertexCreationSpace;
 
             IVertex leftExpression = InstructionHelpers.GetLeft(instructionVertex);
             IVertex rightExpression = InstructionHelpers.GetRight(instructionVertex);
@@ -1686,18 +1686,14 @@ namespace m0.ZeroUML.Instructions
             if(leftExecuteResult.OutEdges.Count > 0 && rightExecuteResult.OutEdges.Count > 0) // what about more than one edge in results
             {
                 IVertex meta = leftExecuteResult.OutEdges[0].To;
-                IVertex to = rightExecuteResult.OutEdges[0].To;
 
-                creationTarget.AddEdge(meta, to);
+                foreach(IEdge e in rightExecuteResult)
+                {
+                    creationTarget.AddEdge(meta, e.To);
+                }                
             }
 
             return creationTarget;
-        }
-
-        public static INoInEdgeInOutVertexVertex DoubleSemiColonOperator(ZeroCodeExecution exe, IVertex inputStack, IVertex instructionVertex, out bool isStackFrameReturn)
-        {
-            isStackFrameReturn = false;
-            return null;
         }
 
         #endregion
