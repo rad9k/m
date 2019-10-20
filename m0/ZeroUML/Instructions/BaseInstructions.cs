@@ -1693,7 +1693,20 @@ namespace m0.ZeroUML.Instructions
                 }                
             }
 
-            return creationTarget;
+            return InstructionHelpers.NextExpressionHandle(exe, creationTarget, instructionVertex);            
+        }
+
+        public static INoInEdgeInOutVertexVertex InnerCreation(ZeroCodeExecution exe, IVertex inputStack, IVertex instructionVertex, out bool isStackFrameReturn)
+        {
+            isStackFrameReturn = false;
+            
+            foreach(IEdge e in inputStack)
+            {
+
+            }
+            
+
+            return InstructionHelpers.Create_INoInEdgeInOutVertexVertex_FromEdgesList(inputStack);
         }
 
         #endregion

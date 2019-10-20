@@ -387,7 +387,7 @@ namespace m0
                 ",Query" +
                 ",[]{Target{$MinCardinality:0,$MaxCardinality:1}}" +
                 ",SetIndex,SetCount" +
-                ",\"{}\",\"{CRLF}\",EdgeSetAdd,EdgeSetSubstract,+,-,Mul,/,?,\"\\ \",\"|\",\"||\",CopySet,MetaToTo,(),RedirectLeftEdgesToRightVertices,AddLeftEdgesToRightVertices,AddRightEdgesIntoLeftEdges,DeleteRightVertices,DeleteRightEdgesFromLeftEdges,DeleteRightVerticesFromLeftEdges" +
+                ",\"{}\",InnerCreation,EdgeSetAdd,EdgeSetSubstract,+,-,Mul,/,?,\"\\ \",\"|\",\"||\",CopySet,MetaToTo,(),RedirectLeftEdgesToRightVertices,AddLeftEdgesToRightVertices,AddRightEdgesIntoLeftEdges,DeleteRightVertices,DeleteRightEdgesFromLeftEdges,DeleteRightVerticesFromLeftEdges" +
                 ",Equal,ExactEqual,NotEqual,Negation,And,Or,MoreThan,LessThan,MoreOrEqualThan,LessOrEqualThan" +
                 ",Action,Return{Expression{$MinCardinality:0,$MaxCardinality:1}},NextOut{Next{$MinCardinality:0,$MaxCardinality:1}}" +
                 ",StackFrameCreator{Do{$MinCardinality:0,$MaxCardinality:1},Variable{$MinCardinality:0,$MaxCardinality:-1},Type{$MinCardinality:0,$MaxCardinality:-1}}" +
@@ -467,6 +467,7 @@ namespace m0
             // vertex creation operators
 
             AddDotNetEndPoint(smu.Get(false, "\"||\""), "DoubleColonOperator");
+            AddDotNetEndPoint(smu.Get(false, "InnerCreation"), "InnerCreation");
             AddDotNetEndPoint(smu.Get(false, "CopySet"), "CopySet");
             AddDotNetEndPoint(smu.Get(false, "MetaToTo"), "MetaToTo");
 
@@ -506,7 +507,7 @@ namespace m0
             smu.Get(false, @"[]").AddEdge(sm.Get(false, "*$Inherits"), smu.Get(false, "MultiOperator"));
             smu.Get(false, @"SetIndex").AddEdge(sm.Get(false, "*$Inherits"), smu.Get(false, "SingleExpressionOperator"));
             smu.Get(false, @"SetCount").AddEdge(sm.Get(false, "*$Inherits"), smu.Get(false, "SingleOperator"));
-            smu.Get(false, "\"{CRLF}\"").AddEdge(sm.Get(false, "*$Inherits"), smu.Get(false, "MultiOperator"));
+            smu.Get(false, "InnerCreation").AddEdge(sm.Get(false, "*$Inherits"), smu.Get(false, "MultiOperator"));
             smu.Get(false, "\"{}\"").AddEdge(sm.Get(false, "*$Inherits"), smu.Get(false, "SingleOperator"));
             smu.Get(false, "\"{}\"").AddEdge(sm.Get(false, "*$Inherits"), smu.Get(false, "MultiOperator"));
 
@@ -656,7 +657,7 @@ namespace m0
             package.AddEdge(null, smu.Get(false, "[]"));
             package.AddEdge(null, smu.Get(false, "SetIndex"));
             package.AddEdge(null, smu.Get(false, "SetCount"));
-            package.AddEdge(null, smu.Get(false, "\"{CRLF}\""));
+            package.AddEdge(null, smu.Get(false, "InnerCreation"));
             package.AddEdge(null, smu.Get(false, "\"{}\""));
             package.AddEdge(null, smu.Get(false, "EdgeSetAdd"));
             package.AddEdge(null, smu.Get(false, "EdgeSetSubstract"));
@@ -1555,7 +1556,7 @@ namespace m0
 
             o_InnerCreation_any.AddVertex(smb.Get(false, "$$StartInLocalRoot"), "");
 
-            o_InnerCreation_any.AddEdge(smb.Get(false, @"Vertex\$Is"), smu.Get(false, "\"{CRLF}\""));
+            o_InnerCreation_any.AddEdge(smb.Get(false, @"Vertex\$Is"), smu.Get(false, "InnerCreation"));
 
             IVertex o_InnerCreation_any_param = o_InnerCreation_any.AddVertex(smu.Get(false, @"MultiOperator\Expression"), "(?<expr>)");
 
@@ -3501,7 +3502,7 @@ namespace m0
                 new PackageLine("[]","MultiOperator") ,
                 new PackageLine("[[]]","MultiOperator"),
                 new PackageLine("{}","MultiOperator"),
-                new PackageLine("{CRLF}","MultiOperator"),
+                new PackageLine("InnerCreation","MultiOperator"),
                 new PackageLine("+","DoubleOperator"),
                 new PackageLine("-","DoubleOperator"),
                 new PackageLine("\"* \"","DoubleOperator"),
