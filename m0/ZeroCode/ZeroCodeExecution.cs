@@ -14,7 +14,7 @@ namespace m0.ZeroCode
     {
         public INoInEdgeInOutVertexVertex stack;
 
-        public INoInEdgeInOutVertexVertex newVertexCreationSpace;
+        public IVertex newVertexCreationSpace;
 
         public bool metaMode;
 
@@ -60,6 +60,18 @@ namespace m0.ZeroCode
             stack_.AddEdgeForNoInEdgeInOutVertexVertex(GraphUtil.CreateArtificialEdge(null, instructionVertex)); // create stack and put reference
 
             return stack_;
+        }
+
+        public INoInEdgeInOutVertexVertex ExecuteInstruction(IVertex inputQs, IVertex instructionVertex, out bool isStackFrameReturn)
+        {
+            isStackFrameReturn = false;
+
+            IVertex is_v = InstructionHelpers.GetIs(instructionVertex);
+
+            if (InstructionHelpers.CheckIfHasExecutableEndPoint(is_v))  // execute if you can
+                return CallableEndPointDictionary.CallEndPoint(this, inputQs, instructionVertex, out isStackFrameReturn);           
+
+            return InstructionHelpers.Create_INoInEdgeInOutVertexVertex_FromEdgesList(inputQs);
         }
     }
 }

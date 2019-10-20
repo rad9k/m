@@ -1476,7 +1476,7 @@ namespace m0.ZeroUML.Instructions
 
             bool local_isStackFrameReturn;
 
-            INoInEdgeInOutVertexVertex possibleToReturnStack = InstructionHelpers.SequentiallyExecuteInstructions(exe, exe.stack, target, out local_isStackFrameReturn);
+            INoInEdgeInOutVertexVertex possibleToReturnStack = InstructionHelpers.SequentiallyExecuteInstructions(exe, exe.stack, target, out local_isStackFrameReturn, false);
 
             exe.RemoveStackFrame(); // LEAVE NEW STACK
 
@@ -1525,7 +1525,7 @@ namespace m0.ZeroUML.Instructions
 
                     exe.stack.AddEdgeForNoInEdgeInOutVertexVertex(variableEdge);
 
-                    possibleToReturnStack = InstructionHelpers.SequentiallyExecuteInstructions(exe, exe.stack, instructionVertex, out local_isStackFrameReturn);
+                    possibleToReturnStack = InstructionHelpers.SequentiallyExecuteInstructions(exe, exe.stack, instructionVertex, out local_isStackFrameReturn, false);
 
                     if (local_isStackFrameReturn)
                         break;
@@ -1559,7 +1559,7 @@ namespace m0.ZeroUML.Instructions
                 {
                     exe.AddStackFrame(); // ENTER NEW STACK
 
-                    possibleToReturnStack = InstructionHelpers.SequentiallyExecuteInstructions(exe, exe.stack, instructionVertex, out local_isStackFrameReturn);
+                    possibleToReturnStack = InstructionHelpers.SequentiallyExecuteInstructions(exe, exe.stack, instructionVertex, out local_isStackFrameReturn, false);
 
                     if (local_isStackFrameReturn)
                         break;
@@ -1672,7 +1672,18 @@ namespace m0.ZeroUML.Instructions
         {
             isStackFrameReturn = false;
 
-            INoInEdgeInOutVertexVertex creationTarget = exe.newVertexCreationSpace;
+            bool isExeStackSameAsExeNewVertexCreationSpace = false;
+
+            if (exe.stack == exe.newVertexCreationSpace)
+                isExeStackSameAsExeNewVertexCreationSpace = true;
+
+            IVertex creationTarget = exe.newVertexCreationSpace;
+            IVertex stackForNextExpression;
+
+            if (isExeStackSameAsExeNewVertexCreationSpace)
+                stackForNextExpression = InstructionHelpers.CreateStack();
+            else
+                stackForNextExpression = creationTarget;            
 
             IVertex leftExpression = InstructionHelpers.GetLeft(instructionVertex);
             IVertex rightExpression = InstructionHelpers.GetRight(instructionVertex);
@@ -1690,21 +1701,39 @@ namespace m0.ZeroUML.Instructions
                 foreach(IEdge e in rightExecuteResult)
                 {
                     creationTarget.AddEdge(meta, e.To);
+
+                    if (isExeStackSameAsExeNewVertexCreationSpace)
+                        stackForNextExpression.AddEdge(meta, e.To);
                 }                
             }
 
-            return InstructionHelpers.NextExpressionHandle(exe, creationTarget, instructionVertex);            
+            return InstructionHelpers.NextExpressionHandle(exe, stackForNextExpression, instructionVertex);            
         }
 
         public static INoInEdgeInOutVertexVertex InnerCreation(ZeroCodeExecution exe, IVertex inputStack, IVertex instructionVertex, out bool isStackFrameReturn)
         {
             isStackFrameReturn = false;
-            
-            foreach(IEdge e in inputStack)
-            {
 
+            bool local_isStackFrameReturn = false;
+            INoInEdgeInOutVertexVertex possibleToReturnStack = null;
+
+            foreach (IEdge e in inputStack)
+            {
+                IVertex newVertexCreationSpace_copy = exe.newVertexCreationSpace;
+
+                exe.newVertexCreationSpace = e.To;
+
+                possibleToReturnStack = InstructionHelpers.SequentiallyExecuteInstructions(exe, 
+                    exe.stack, instructionVertex, out local_isStackFrameReturn, false);
+
+                exe.newVertexCreationSpace = newVertexCreationSpace_copy;
+
+                if (local_isStackFrameReturn)
+                    break;                
             }
-            
+
+            if (local_isStackFrameReturn)
+                return possibleToReturnStack;
 
             return InstructionHelpers.Create_INoInEdgeInOutVertexVertex_FromEdgesList(inputStack);
         }

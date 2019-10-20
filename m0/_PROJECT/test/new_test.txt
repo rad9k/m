@@ -1,0 +1,18 @@
+﻿"Y"
+	"NEW"
+	"HELLO"
+	"YES"
+	variable "a" @String
+	variable "b" @String
+	variable "c" @String
+	a = @@NEW
+	a+=@@NEW
+	b = @@HELLO
+	b+=@@HELLO
+	c = @@YES
+	c+=@@YES
+	@@String || a{
+		@@String || b{
+			@@String||c
+		}
+	}

@@ -143,7 +143,7 @@ namespace m0.ZeroCode.Helpers
             return Create_INoInEdgeInOutVertexVertex_FromEdgesList(inStack);
         }
 
-        public static INoInEdgeInOutVertexVertex SequentiallyExecuteInstructions(ZeroCodeExecution exe, INoInEdgeInOutVertexVertex inStack, IVertex baseVertex, out bool isStackFrameReturn)
+        public static INoInEdgeInOutVertexVertex SequentiallyExecuteInstructions(ZeroCodeExecution exe, INoInEdgeInOutVertexVertex inStack, IVertex baseVertex, out bool isStackFrameReturn, bool montevideo)
         {
             isStackFrameReturn = false;
 
@@ -155,7 +155,12 @@ namespace m0.ZeroCode.Helpers
                 { // XXX in some cases it might not work - instruction with meta begginning with $ will not be executed. nor its children
                     bool local_isStackFrameReturn;
 
-                    INoInEdgeInOutVertexVertex possibleToReturnStack = exe.ExecuteInstructionByMontevideoPrinciples(stack, e.To, out local_isStackFrameReturn);
+                    INoInEdgeInOutVertexVertex possibleToReturnStack;
+
+                    if (montevideo)
+                        possibleToReturnStack = exe.ExecuteInstructionByMontevideoPrinciples(stack, e.To, out local_isStackFrameReturn);
+                    else
+                        possibleToReturnStack = exe.ExecuteInstruction(stack, e.To, out local_isStackFrameReturn);
 
                     if (local_isStackFrameReturn)
                     {
