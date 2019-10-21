@@ -759,8 +759,14 @@ namespace m0.ZeroCode
         }        
 
         bool AppendKeyword(IEdge keywordEdge, bool isNested)
-        {
+        {            
             KeywordMatch km = KeywordMatchedSubGraphEdges[keywordEdge];
+
+            string s = keywordEdge.To.Value.ToString();
+            foreach (IEdge e in keywordEdge.To)
+                s += "," + e.To;
+
+            MinusZero.Instance.Log(-2, "", isNested + " " + km.KeywordDefinition.Value + " " + s + " ;" + Source );
 
             if (BeenList_Keyword.Contains(keywordEdge))
                 return false;
