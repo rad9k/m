@@ -1625,9 +1625,9 @@ namespace m0
 
             IVertex newValueKeyword_any = newValueKeyword.AddVertex(any, "(?<value>)");
 
-            IVertex newValueKeyword_any_targetExpr = newValueKeyword_any.AddVertex(smu.Get(false, @"SingleOperator\NextExpression"), "");
+           // IVertex newValueKeyword_any_targetExpr = newValueKeyword_any.AddVertex(smu.Get(false, @"SingleOperator\NextExpression"), "");
 
-            newValueKeyword_any_targetExpr.AddEdge(smb.Get(false, "$$LocalRoot"), kgd_InnerCreation);
+           // newValueKeyword_any_targetExpr.AddEdge(smb.Get(false, "$$LocalRoot"), kgd_InnerCreation);
 
 
             // E M P T Y :) K E Y W O R D 1
