@@ -1688,18 +1688,24 @@ namespace m0.ZeroUML.Instructions
             IVertex leftExpression = InstructionHelpers.GetLeft(instructionVertex);
             IVertex rightExpression = InstructionHelpers.GetRight(instructionVertex);
 
-            if (leftExpression == null || rightExpression == null)
+            if (rightExpression == null)
                 return exe.stack;
 
-            INoInEdgeInOutVertexVertex leftExecuteResult = exe.ExecuteInstructionByMontevideoPrinciples(inputStack, leftExpression);
+            INoInEdgeInOutVertexVertex leftExecuteResult=null;
+            if(leftExpression!= null)
+                leftExecuteResult = exe.ExecuteInstructionByMontevideoPrinciples(inputStack, leftExpression);
+
             INoInEdgeInOutVertexVertex rightExecuteResult = exe.ExecuteInstructionByMontevideoPrinciples(inputStack, rightExpression);
 
-            if(leftExecuteResult.OutEdges.Count > 0 && rightExecuteResult.OutEdges.Count > 0) // what about more than one edge in results
+            if(rightExecuteResult.OutEdges.Count > 0) // what about more than one edge in results
             {
-                IVertex meta = leftExecuteResult.OutEdges[0].To;
+                IVertex meta = null;
+
+                if(leftExecuteResult!=null && leftExecuteResult.OutEdges.Count > 0)
+                    meta = leftExecuteResult.OutEdges[0].To;
 
                 foreach(IEdge e in rightExecuteResult)
-                {
+                { 
                     creationTarget.AddEdge(meta, e.To);
 
                     if (isExeStackSameAsExeNewVertexCreationSpace)
