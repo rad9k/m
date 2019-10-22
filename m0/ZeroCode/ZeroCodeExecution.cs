@@ -25,6 +25,8 @@ namespace m0.ZeroCode
             newStackFrame.AddEdge(MinusZero.Instance.StackFrameInherits, stack);
 
             stack = newStackFrame;
+
+            newVertexCreationSpace = stack;
         }
 
         public void RemoveStackFrame()
@@ -36,6 +38,8 @@ namespace m0.ZeroCode
                 INoInEdgeInOutVertexVertex prevStackFrame = (INoInEdgeInOutVertexVertex)_prevStackFrame;
 
                 stack = prevStackFrame;
+
+                newVertexCreationSpace = prevStackFrame;
             }
         }
 

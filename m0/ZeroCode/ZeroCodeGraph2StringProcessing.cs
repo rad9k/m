@@ -483,11 +483,11 @@ namespace m0.ZeroCode
 
         int tabTimes;
 
-        /*Dictionary<int, int> tabTimesReductionDict = new Dictionary<int, int>();
+        Dictionary<int, int> tabTimesReductionDict = new Dictionary<int, int>();
 
         int prevTabTimes;
 
-        string getNewLineAndTabsString()
+        string getNewLineAndTabsString() // special version with tab control
         {
             StringBuilder sb = new StringBuilder();
 
@@ -528,9 +528,9 @@ namespace m0.ZeroCode
 
             return sb.ToString();
         }
-        */
+        
 
-        string getNewLineAndTabsString()
+        /*string getNewLineAndTabsString()
         {
             StringBuilder sb = new StringBuilder();
 
@@ -540,7 +540,7 @@ namespace m0.ZeroCode
                 sb.Append(Tab);
 
             return sb.ToString();
-        }
+        }*/
 
         void AppendNewLineAndTabs()
         {

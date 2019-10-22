@@ -1,6 +1,4 @@
 ﻿!!!!!!!!!!!!!!!!!!!!!!!!!!!!! TO DO:
-14. add () to ||
-15. add _ to || [16]
 2. can not create Files
 22. := or something similar for base
 23. if / test
@@ -26,7 +24,9 @@
 12. execution stop / continuation / stack copy?
 19. [] / execute / () / @@=>@() as begginning of Query
 20. different import keywords support
-21. [] / execute as || parameter
+21. [] / execute / without () as || parameter
+28. other quantifiers in queries
+29. meta string support in queries
 
 
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!! Done:
@@ -42,3 +42,5 @@
 21. IsMetaAndToVertexEnoughToIdentifyEdge and IsToVertexEnoughToIdentifyEdge
 16. _ operator 
 17. ` operator
+14. add () to ||
+15. add _ to || [16]
