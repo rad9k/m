@@ -483,7 +483,7 @@ namespace m0.ZeroCode
 
         int tabTimes;
 
-        Dictionary<int, int> tabTimesReductionDict = new Dictionary<int, int>();
+        /*Dictionary<int, int> tabTimesReductionDict = new Dictionary<int, int>();
 
         int prevTabTimes;
 
@@ -527,10 +527,10 @@ namespace m0.ZeroCode
                 sb.Append(Tab);                       
 
             return sb.ToString();
-        }
+        }*/
         
 
-        /*string getNewLineAndTabsString()
+        string getNewLineAndTabsString()
         {
             StringBuilder sb = new StringBuilder();
 
@@ -540,7 +540,7 @@ namespace m0.ZeroCode
                 sb.Append(Tab);
 
             return sb.ToString();
-        }*/
+        }
 
         void AppendNewLineAndTabs()
         {
@@ -1722,7 +1722,7 @@ namespace m0.ZeroCode
                             }
                             else
                             {
-                                newLevel = level; // XXX :) should work level should be preserved at the km level
+                               newLevel = level; // XXX :) should work level should be preserved at the km level
                                 MinusZero.Instance.Log(-2, "newLevel = level;", newLevel.ToString());
                             }
                         }
