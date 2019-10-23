@@ -361,6 +361,8 @@ namespace m0.ZeroCode
 
         public bool DoKeywordDefinitionContainStartInLocalRoot;
 
+        public bool DoKeywordDefinitionContainCRLF;
+
         public bool IsStartInLocalRoot;
 
         public string newValue;
@@ -370,6 +372,9 @@ namespace m0.ZeroCode
         public KeywordMatch(IVertex _KeywordDefinition, ZeroCodeGraph2StringProcessing processing)
         {
             KeywordDefinition = _KeywordDefinition;
+
+            if (KeywordDefinition.Value.ToString().Contains("\r\n"))
+                DoKeywordDefinitionContainCRLF = true;
 
             MatchedEdges = new List<IEdge>();
 
@@ -446,16 +451,17 @@ namespace m0.ZeroCode
 
         void SourceAppend(string s)
         {
+            if (s.Contains("\r")|| s.Contains("\n"))
+            {
+                MinusZero.Instance.Log(-2, "SourceAppend", tabTimes.ToString());
+            }
+
+
             string NewLineStringPlusNewLine = getNewLineAndTabsString();            
 
             s = s.Replace("\r\n", NewLineStringPlusNewLine);
 
             Source.Append(s);            
-        }
-
-        void SourceAppend(char c)
-        {
-            Source.Append(c);
         }
 
         void ImportImports(IVertex baseVertex)
@@ -547,6 +553,9 @@ namespace m0.ZeroCode
             // SourceAppend(getNewLineAndTabsString()); << no as SourceAppend adds getNewLineAndTabsString() on its own
 
             Source.Append(getNewLineAndTabsString());
+
+            MinusZero.Instance.Log(-2, "AppendNewLineAndTabs", tabTimes.ToString());
+
         }   
 
         void AppendAdditionalNewLines(IEdge e)
@@ -803,8 +812,9 @@ namespace m0.ZeroCode
             }
 
             return false;
-        }        
+        }
 
+        int trycount = 0;
         bool AppendKeyword(IEdge keywordEdge, bool isNested)
         {            
             KeywordMatch km = KeywordMatchedSubGraphEdges[keywordEdge];
@@ -827,10 +837,14 @@ namespace m0.ZeroCode
 
             if (km.BaseEdge == keywordEdge /*&& isVertexNew(keywordEdge, GetPathFromKeywordMatchAndKeywordEdge(km, keywordEdge, ""))*/)
             {
+                trycount++;
+                MinusZero.Instance.Log(-2, "AppendKeyword TRY", trycount.ToString());
+        
+
                 if (!isNested && !km.IsStartInLocalRoot)
                     AppendNewLineAndTabs();
-                else if(km.tabTimesForRootVertex==0) // WTF??? /*if(!km.IsStartInLocalRoot)*/ // XXX hmmmmmm
-                if (!km.IsStartInLocalRoot) // ?
+                else //if(km.tabTimesForRootVertex==0) // WTF??? /*if(!km.IsStartInLocalRoot)*/ // XXX hmmmmmm
+                if (/*!km.IsStartInLocalRoot &&*/ km.DoKeywordDefinitionContainCRLF && trycount!=10) // ?
                 {                    
                     tabTimes++;
                     shouldDecreaseTabTimes = true;
