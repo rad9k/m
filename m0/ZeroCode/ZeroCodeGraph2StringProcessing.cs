@@ -453,7 +453,11 @@ namespace m0.ZeroCode
         {
             if (s.Contains("\r")|| s.Contains("\n"))
             {
-                MinusZero.Instance.Log(-2, "SourceAppend", tabTimes.ToString());
+                MinusZero.Instance.Log(-2, "SourceAppend TAB ", tabTimes.ToString() + "!!!" + s);
+            }
+            else
+            {
+                MinusZero.Instance.Log(-2, "SourceAppend", "!!!" + s);
             }
 
 
@@ -839,12 +843,12 @@ namespace m0.ZeroCode
             {
                 trycount++;
                 MinusZero.Instance.Log(-2, "AppendKeyword TRY", trycount.ToString());
-        
+
 
                 if (!isNested && !km.IsStartInLocalRoot)
                     AppendNewLineAndTabs();
-                else //if(km.tabTimesForRootVertex==0) // WTF??? /*if(!km.IsStartInLocalRoot)*/ // XXX hmmmmmm
-                if (/*!km.IsStartInLocalRoot &&*/ km.DoKeywordDefinitionContainCRLF && trycount!=10) // ?
+                else if (km.tabTimesForRootVertex == 0) // WTF??? /*if(!km.IsStartInLocalRoot)*/ // XXX hmmmmmm
+                if (!km.IsStartInLocalRoot) // ?
                 {                    
                     tabTimes++;
                     shouldDecreaseTabTimes = true;
