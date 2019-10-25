@@ -844,11 +844,27 @@ namespace m0.ZeroCode
                 trycount++;
                 MinusZero.Instance.Log(-2, "AppendKeyword TRY", trycount.ToString());
 
+                if (trycount == 2)
+                {
+                    int x = 0;
+                }
+
+                if(km.DoKeywordDefinitionContainLocalRoot == false)
+                {
+                    int x = 0;
+                }
+
+                bool shouldOmmit = false;
+                if (km.DoKeywordDefinitionContainCRLF == false 
+                    && km.DoKeywordDefinitionContainLocalRoot 
+                    && km.DoKeywordDefinitionContainStartInLocalRoot==false
+                    && km.IsStartInLocalRoot == false)
+                    shouldOmmit = true;
 
                 if (!isNested && !km.IsStartInLocalRoot)
                     AppendNewLineAndTabs();
                 else if (km.tabTimesForRootVertex == 0) // WTF??? /*if(!km.IsStartInLocalRoot)*/ // XXX hmmmmmm
-                if (!km.IsStartInLocalRoot) // ?
+                if (!km.IsStartInLocalRoot && !shouldOmmit) // ?
                 {                    
                     tabTimes++;
                     shouldDecreaseTabTimes = true;
