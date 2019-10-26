@@ -369,7 +369,13 @@ namespace m0.ZeroCode
 
         public int tabTimesForRootVertex;
 
-        public KeywordMatch(IVertex _KeywordDefinition, ZeroCodeGraph2StringProcessing processing)
+        public bool WasHereTabAddingOmmit; // XXX yeah this is esoteric stuff. for "Y"
+        //a +< a || "m"{
+		//c||"x"{
+		//}
+        //}	
+
+    public KeywordMatch(IVertex _KeywordDefinition, ZeroCodeGraph2StringProcessing processing)
         {
             KeywordDefinition = _KeywordDefinition;
 
@@ -819,9 +825,12 @@ namespace m0.ZeroCode
         }
 
         int trycount = 0;
-        bool AppendKeyword(IEdge keywordEdge, bool isNested)
+        bool AppendKeyword(IEdge keywordEdge, bool isNested, bool ParentKmHasTabAddingOmmit)
         {            
             KeywordMatch km = KeywordMatchedSubGraphEdges[keywordEdge];
+
+            if (ParentKmHasTabAddingOmmit)
+                km.WasHereTabAddingOmmit = true;
 
             string s = keywordEdge.To.Value.ToString();
             foreach (IEdge e in keywordEdge.To)
@@ -844,22 +853,22 @@ namespace m0.ZeroCode
                 trycount++;
                 MinusZero.Instance.Log(-2, "AppendKeyword TRY", trycount.ToString());
 
-                if (trycount == 2)
-                {
-                    int x = 0;
-                }
-
-                if(km.DoKeywordDefinitionContainLocalRoot == false)
+                if (trycount == 9)
                 {
                     int x = 0;
                 }
 
                 bool shouldOmmit = false;
-                if (km.DoKeywordDefinitionContainCRLF == false 
-                    && km.DoKeywordDefinitionContainLocalRoot 
-                    && km.DoKeywordDefinitionContainStartInLocalRoot==false
-                    && km.IsStartInLocalRoot == false)
+                if (!ParentKmHasTabAddingOmmit &&
+                    !km.DoKeywordDefinitionContainCRLF
+                    && km.DoKeywordDefinitionContainLocalRoot
+                    && !km.DoKeywordDefinitionContainStartInLocalRoot
+                    && !km.IsStartInLocalRoot)
+                {
                     shouldOmmit = true;
+                    km.WasHereTabAddingOmmit = true;
+                    MinusZero.Instance.Log(-2, "AppendKeyword", "O M M I T");
+                }
 
                 if (!isNested && !km.IsStartInLocalRoot)
                     AppendNewLineAndTabs();
@@ -901,7 +910,7 @@ namespace m0.ZeroCode
                 {
                     bool zeroMatch;
 
-                    ProcessSingleKeywordSentencePart(km, sentence, false, out zeroMatch);
+                    ProcessSingleKeywordSentencePart(km, sentence, false, out zeroMatch, ParentKmHasTabAddingOmmit);
 
                     //if (/*zeroMatch&&*/km.DoKeywordDefinitionContainStartInLocalRoot) // XXX YYY
                     if (/*zeroMatch&&*/km.DoKeywordDefinitionContainLocalRoot) // WE SHOULD USE THAT ONE
@@ -951,11 +960,11 @@ namespace m0.ZeroCode
 
                     bool notInterested;
 
-                    wasThereNewLine = ProcessSingleKeywordSentencePart(km, preManySentence, wasThereNewLine ,out notInterested);
+                    wasThereNewLine = ProcessSingleKeywordSentencePart(km, preManySentence, wasThereNewLine ,out notInterested, ParentKmHasTabAddingOmmit);
 
-                    wasThereNewLine = ProcessManyKeywordSentencePart(km, manySentenceFirst, manySentenceSecond, keywordManyRoot, keywordManyRootQueryString, keywordManyRootBaseCount, wasThereNewLine);
+                    wasThereNewLine = ProcessManyKeywordSentencePart(km, manySentenceFirst, manySentenceSecond, keywordManyRoot, keywordManyRootQueryString, keywordManyRootBaseCount, wasThereNewLine, ParentKmHasTabAddingOmmit);
 
-                    ProcessSingleKeywordSentencePart(km, postManySentence, wasThereNewLine, out notInterested);
+                    ProcessSingleKeywordSentencePart(km, postManySentence, wasThereNewLine, out notInterested, ParentKmHasTabAddingOmmit);
 
                     if (shouldDecreaseTabTimes)
                     {
@@ -996,7 +1005,7 @@ namespace m0.ZeroCode
 
         }
 
-        private bool ProcessSingleKeywordSentencePart(KeywordMatch km, string sentence, bool wasThereNewLine, out bool zeroMatch)
+        private bool ProcessSingleKeywordSentencePart(KeywordMatch km, string sentence, bool wasThereNewLine, out bool zeroMatch, bool ParentKmHasTabAddingOmmit)
         {
             zeroMatch = false;
 
@@ -1039,7 +1048,7 @@ namespace m0.ZeroCode
                     if (VertexOperations.IsLink(e))
                         BeenList.Add(e);
 
-                    ProcessSentencePart(km, sentence, ref prevPos, ref wasThereNewLine, match, e);
+                    ProcessSentencePart(km, sentence, ref prevPos, ref wasThereNewLine, match, e, ParentKmHasTabAddingOmmit);
                 }
 
             if (wasThereNewLine)
@@ -1050,7 +1059,7 @@ namespace m0.ZeroCode
             return wasThereNewLine;
         }
 
-        private bool ProcessManyKeywordSentencePart(KeywordMatch km, string sentenceFirst, string sentenceSecond, IEdge keywordManyRoot, string keywordManyRootQueryString, int keywordManyRootBaseCount, bool wasThereNewLine)
+        private bool ProcessManyKeywordSentencePart(KeywordMatch km, string sentenceFirst, string sentenceSecond, IEdge keywordManyRoot, string keywordManyRootQueryString, int keywordManyRootBaseCount, bool wasThereNewLine, bool ParentKmHasTabAddingOmmit)
         {
             int keywordManyRootCount = 0;
 
@@ -1099,7 +1108,7 @@ namespace m0.ZeroCode
                             if(VertexOperations.IsLink(ee))
                                 BeenList.Add(ee);
 
-                            ProcessSentencePart(km, sentence, ref prevPos, ref wasThereNewLine, match, e);
+                            ProcessSentencePart(km, sentence, ref prevPos, ref wasThereNewLine, match, e, ParentKmHasTabAddingOmmit);
                         }
 
                       //  if (wasThereNewLine)
@@ -1114,7 +1123,7 @@ namespace m0.ZeroCode
             return wasThereNewLine;
         }
 
-        private void ProcessSentencePart(KeywordMatch km, string sentence, ref int prevPos, ref bool wasThereNewLine, Match match, IEdge e)
+        private void ProcessSentencePart(KeywordMatch km, string sentence, ref int prevPos, ref bool wasThereNewLine, Match match, IEdge e, bool ParentKmHasTabAddingOmmit)
         {
             //
 
@@ -1139,7 +1148,7 @@ namespace m0.ZeroCode
                     && KeywordMatchedSubGraphEdges[e].BaseEdge == e
                     && isVertexNew(e, GetPathFromKeywordMatchAndKeywordEdge(km, e, null)))
                 {
-                    AppendKeyword(e, true);
+                    AppendKeyword(e, true, ParentKmHasTabAddingOmmit);
 
                     edgeCovered = true;
                 }
@@ -1184,11 +1193,11 @@ namespace m0.ZeroCode
                             wasThereNewLine = true;
                         }
                     }
-                    AppendEdge(e, null, basePath + "\\" + GraphUtil.GetIdentyfyingQuerySubString_MetaMode(e));
+                    AppendEdge(e, null, basePath + "\\" + GraphUtil.GetIdentyfyingQuerySubString_MetaMode(e), km.WasHereTabAddingOmmit);
                 }
 
                 if (km.DoKeywordDefinitionContainLocalRoot && km.MatchedEdges.Contains(e) && KeywordMatchedSubGraphEdges[e]!=km)
-                    AppendEdge(e, null, basePath + "\\" + GraphUtil.GetIdentyfyingQuerySubString_MetaMode(e));
+                    AppendEdge(e, null, basePath + "\\" + GraphUtil.GetIdentyfyingQuerySubString_MetaMode(e), km.WasHereTabAddingOmmit);
                 
             }
 
@@ -1210,11 +1219,11 @@ namespace m0.ZeroCode
                 return false;
         }
 
-        bool AppendEdge(IEdge e, IEdge parent, string path)
+        bool AppendEdge(IEdge e, IEdge parent, string path, bool ParentKmHasTabAddingOmmit)
         {
             if (KeywordMatchedSubGraphEdges.ContainsKey(e))
                if (ShouldAppendKeywordHere(e,path))
-                    return AppendKeyword(e, false);
+                    return AppendKeyword(e, false, ParentKmHasTabAddingOmmit);
                 else
                     if(KeywordMatchedSubGraphEdges[e].BaseEdge.To!=e.To) // :O)
                           return true; // ?????????????????????? or true?
@@ -1728,7 +1737,7 @@ namespace m0.ZeroCode
                     thisKm.tabTimesForRootVertex = level;
                 }
 
-            bool appendAsNew = AppendEdge(baseEdge, parent, path);
+            bool appendAsNew = AppendEdge(baseEdge, parent, path, false);
 
             if (!isLink)
                 BeenList.Add(baseEdge);;

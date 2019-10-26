@@ -471,9 +471,6 @@
     <Resource Include="_PROJECT\theory\montevideo_principles 2.txt" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="_PROJECT\workbench\creation.txt" />
-  </ItemGroup>
-  <ItemGroup>
     <Resource Include="_PROJECT\test\new_test.txt" />
   </ItemGroup>
   <ItemGroup>
