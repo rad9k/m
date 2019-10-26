@@ -456,17 +456,7 @@ namespace m0.ZeroCode
         string NewLine = "\r\n";
 
         void SourceAppend(string s)
-        {
-            if (s.Contains("\r")|| s.Contains("\n"))
-            {
-                MinusZero.Instance.Log(-2, "SourceAppend TAB ", tabTimes.ToString() + "!!!" + s);
-            }
-            else
-            {
-                MinusZero.Instance.Log(-2, "SourceAppend", "!!!" + s);
-            }
-
-
+        {        
             string NewLineStringPlusNewLine = getNewLineAndTabsString();            
 
             s = s.Replace("\r\n", NewLineStringPlusNewLine);
@@ -562,10 +552,7 @@ namespace m0.ZeroCode
         {
             // SourceAppend(getNewLineAndTabsString()); << no as SourceAppend adds getNewLineAndTabsString() on its own
 
-            Source.Append(getNewLineAndTabsString());
-
-            MinusZero.Instance.Log(-2, "AppendNewLineAndTabs", tabTimes.ToString());
-
+            Source.Append(getNewLineAndTabsString());            
         }   
 
         void AppendAdditionalNewLines(IEdge e)
@@ -823,20 +810,13 @@ namespace m0.ZeroCode
 
             return false;
         }
-
-        int trycount = 0;
+        
         bool AppendKeyword(IEdge keywordEdge, bool isNested, bool ParentKmHasTabAddingOmmit)
         {            
             KeywordMatch km = KeywordMatchedSubGraphEdges[keywordEdge];
 
             if (ParentKmHasTabAddingOmmit)
-                km.WasHereTabAddingOmmit = true;
-
-            string s = keywordEdge.To.Value.ToString();
-            foreach (IEdge e in keywordEdge.To)
-                s += "," + e.To;
-
-            MinusZero.Instance.Log(-2, "", isNested + " " + km.KeywordDefinition.Value + " " + s + " ;" + Source );
+                km.WasHereTabAddingOmmit = true;            
 
             if (BeenList_Keyword.Contains(keywordEdge))
                 return false;
@@ -850,14 +830,6 @@ namespace m0.ZeroCode
 
             if (km.BaseEdge == keywordEdge /*&& isVertexNew(keywordEdge, GetPathFromKeywordMatchAndKeywordEdge(km, keywordEdge, ""))*/)
             {
-                trycount++;
-                MinusZero.Instance.Log(-2, "AppendKeyword TRY", trycount.ToString());
-
-                if (trycount == 9)
-                {
-                    int x = 0;
-                }
-
                 bool shouldOmmit = false;
                 if (!ParentKmHasTabAddingOmmit &&
                     !km.DoKeywordDefinitionContainCRLF
@@ -867,7 +839,6 @@ namespace m0.ZeroCode
                 {
                     shouldOmmit = true;
                     km.WasHereTabAddingOmmit = true;
-                    MinusZero.Instance.Log(-2, "AppendKeyword", "O M M I T");
                 }
 
                 if (!isNested && !km.IsStartInLocalRoot)
@@ -876,8 +847,7 @@ namespace m0.ZeroCode
                 if (!km.IsStartInLocalRoot && !shouldOmmit) // ?
                 {                    
                     tabTimes++;
-                    shouldDecreaseTabTimes = true;
-                    MinusZero.Instance.Log(-2, "AppendKeyword ++", tabTimes.ToString());
+                    shouldDecreaseTabTimes = true;                    
                 }
 
 
@@ -927,11 +897,8 @@ namespace m0.ZeroCode
                     if (sentence.Contains("(?<SUB>)"))
                         whatToReturn = false;
 
-                    if (shouldDecreaseTabTimes)
-                    {
-                        tabTimes--;
-                        MinusZero.Instance.Log(-2, "AppendKeyword --", tabTimes.ToString());
-                    }
+                    if (shouldDecreaseTabTimes)                    
+                        tabTimes--;                                            
                  
                 }
                 else
@@ -966,11 +933,8 @@ namespace m0.ZeroCode
 
                     ProcessSingleKeywordSentencePart(km, postManySentence, wasThereNewLine, out notInterested, ParentKmHasTabAddingOmmit);
 
-                    if (shouldDecreaseTabTimes)
-                    {
-                        tabTimes--;
-                        MinusZero.Instance.Log(-2, "AppendKeyword --", tabTimes.ToString());
-                    }
+                    if (shouldDecreaseTabTimes)                    
+                        tabTimes--;                        
                  
                     }
 
@@ -1187,8 +1151,7 @@ namespace m0.ZeroCode
 
                         if (wasFirstNewLine == false && km_for_e.IsStartInLocalRoot == false) //  && km_for_e.IsStartInLocalRoot==false XXX
                         {
-                            tabTimes++;
-                            MinusZero.Instance.Log(-2, "AppendSubVertices 2 ++", tabTimes.ToString());
+                            tabTimes++;                            
                             wasFirstNewLine = true;
                             wasThereNewLine = true;
                         }
@@ -1203,8 +1166,7 @@ namespace m0.ZeroCode
 
             if (wasFirstNewLine)
             {
-                tabTimes--;
-                MinusZero.Instance.Log(-2, "AppendSubVertices --", tabTimes.ToString());
+                tabTimes--;                
                 AppendNewLineAndTabs();
             }
 
@@ -1699,9 +1661,7 @@ namespace m0.ZeroCode
             if (BeenList.Contains(baseEdge))
                 return;
 
-            tabTimes = level;
-
-            MinusZero.Instance.Log(-2, "ZeroCodeGraph2String_Reccurent", tabTimes.ToString());
+            tabTimes = level;         
          
             if (!ShallProcess(baseEdge))
                 return;
@@ -1748,9 +1708,7 @@ namespace m0.ZeroCode
             if (/*appendAsNew && !been &&*/ !isLink)
                 foreach (IEdge e in baseEdge.To.OutEdgesRaw)
                 {
-                    int newLevel = level + 1;
-
-                    MinusZero.Instance.Log(-2, "int newLevel = level + 1;", newLevel.ToString());
+                    int newLevel = level + 1;                    
 
                     if (KeywordMatchedSubGraphEdges.ContainsKey(e))
                     {
@@ -1758,16 +1716,10 @@ namespace m0.ZeroCode
 
                         if (localKm.IsStartInLocalRoot)
                         {
-                            if (thisKm != null)
-                            {
-                                newLevel = thisKm.tabTimesForRootVertex;
-                                MinusZero.Instance.Log(-2, "newLevel = thisKm.tabTimesForRootVertex;", newLevel.ToString());
-                            }
-                            else
-                            {
-                               newLevel = level; // XXX :) should work level should be preserved at the km level
-                                MinusZero.Instance.Log(-2, "newLevel = level;", newLevel.ToString());
-                            }
+                            if (thisKm != null)                            
+                                newLevel = thisKm.tabTimesForRootVertex;                                
+                            else                            
+                               newLevel = level; // XXX :) should work level should be preserved at the km level                                
                         }
                     }
 
