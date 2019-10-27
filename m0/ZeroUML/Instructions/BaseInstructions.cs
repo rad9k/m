@@ -1080,6 +1080,14 @@ namespace m0.ZeroUML.Instructions
         {
             bool logicalResult = false;
 
+            if(operationType == LogicDoubleOpertorEnum.VertexEqual)
+            {
+                if (leftVertex == rightVertex)
+                    return true;
+                else
+                    return false;
+            }
+
             object leftNumber;
             object rightNumber;
 
@@ -1129,7 +1137,7 @@ namespace m0.ZeroUML.Instructions
                 case LogicDoubleOpertorEnum.ExactEqual:
                     if (EqualityComparer<T>.Default.Equals(leftValue, rightValue))
                         output = true;
-                    break;
+                    break;                
 
                 case LogicDoubleOpertorEnum.NotEqual:
                     if (!EqualityComparer<T>.Default.Equals(leftValue, rightValue))

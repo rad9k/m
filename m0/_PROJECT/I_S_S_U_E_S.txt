@@ -6,6 +6,13 @@
 25. ====
 27. key added error on exit
 31. imperative expressions in {}
+32. language definition correction
+33. standard base library
+34. "Y"
+	{
+		while "False"
+			"a"
+	}
 
 <><><> FUTURE 0
 
@@ -18,6 +25,7 @@
 					<@To :: @TEST\Person4>
 11. Diagram perf update
 12. parse / generate check
+34. Query dialog box refactoring
 
 <><><> FUTURE 1
 

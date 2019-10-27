@@ -996,18 +996,6 @@ namespace m0
 
             f2fip.AddEdge(smb.Get(false, @"$$KeywordManyRoot"), smb.Get(false, @"$Empty"));
 
-            // while
-            //
-            // while ((?<test>))
-
-            IVertex wh = k.AddVertex(keyword, "while (?<test>)");
-
-            IVertex whwh = wh.AddVertex(smu.Get(false, @"While"), "");
-
-            whwh.AddEdge(smb.Get(false, @"Vertex\$Is"), smu.Get(false, "While"));
-
-            whwh.AddVertex(smu.Get(false, @"While\Test"), "(?<test>)");
-
 
             /////////////////////////////////////////////////////////
             //

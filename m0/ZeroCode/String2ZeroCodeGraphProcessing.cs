@@ -2917,13 +2917,7 @@ namespace m0.ZeroCode
             {
                 prepareDictionaries_ForFormalTextLanguage(FormalTextLanguage);
                 dict = DictionariesForFormalTextLanguageDictionary[FormalTextLanguage];
-            }
-
-            
-
-            
-
-            
+            }            
         }
     }
 }
