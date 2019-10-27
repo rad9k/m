@@ -164,6 +164,21 @@ namespace m0.ZeroCode
                 return iterationLineNo;
             }
 
+            public int getNextLineWithLessTabCount()
+            {
+                List<LineInfo> li = processing.lineInfoList;
+                int iterationLineNo = lineNo + 1;
+
+                while (iterationLineNo < li.Count
+                    && li[iterationLineNo].tabCount > li[lineNo].tabCount)
+                    iterationLineNo++;
+
+                if (iterationLineNo == li.Count)
+                    return -1;                
+
+                return iterationLineNo;
+            }
+
             public bool parseNextLine()
             {
                 if (skipParse)
@@ -626,9 +641,9 @@ namespace m0.ZeroCode
 
             bool lastCharWasSkippedSpace; // space support
 
-            public keywordTryingData(keywordTryingData source)
-            {
-                parent = source.parent;
+            public keywordTryingData(keywordTryingData source, String2ZeroCodeGraphProcessing _parent)
+            {                
+                parent = _parent;
                 keywordVertex = source.keywordVertex;
                 keyword = source.keyword;
                 currentPositionInKeyword = source.currentPositionInKeyword;
@@ -955,7 +970,8 @@ namespace m0.ZeroCode
         {
             foreach(keywordTryingData ktd in source)
             {
-                keywordTryingData _ktd = new keywordTryingData(ktd);
+                keywordTryingData _ktd = new keywordTryingData(ktd, this);
+                
                 target.Add(_ktd);
             }              
         }
@@ -1670,7 +1686,7 @@ namespace m0.ZeroCode
 
                 if (shallProceed)
                 {
-                    sPos = SubAndChildCheckAndProcess(s, endPos, examinedKeywords, null, sPos);
+                    sPos = SubAndChildCheckAndProcess(s, endPos, examinedKeywords, null, sPos, parentKeyword);
 
                     if (s.currentLineInfo.IsLineEnd(sPos)) // NEW LINE
                     //if (text[sPos] == '\r')
@@ -1819,7 +1835,7 @@ namespace m0.ZeroCode
 
                     foreach (keywordTryingData ktd in ktdList)
                     {                                                
-                        int _newPos = SubAndChildCheckAndProcess(s, endPos, null, ktd, newPos - 2);
+                        int _newPos = SubAndChildCheckAndProcess(s, endPos, null, ktd, newPos - 2, parentKeyword);
 
                         if (_newPos > newPos - 2)
                             newPos = _newPos + 2;
@@ -1844,13 +1860,13 @@ namespace m0.ZeroCode
             log_keywords(examinedKeywords, 0, LOGPREFIX);
         }
 
-        private int SubAndChildCheckAndProcess(ParsingStack s, int endPos, List<keywordTryingData> examinedKeywords, keywordTryingData _ktd, int sPos)
+        private int SubAndChildCheckAndProcess(ParsingStack s, int endPos, List<keywordTryingData> examinedKeywords, keywordTryingData _ktd, int sPos, IVertex parentKeyword)
         {
             int outPos = CheckIfThereIsSubTextAndProcessIt(s, endPos, examinedKeywords, _ktd, sPos);
 
-          //  if (outPos == sPos)
-            //    return CheckIfInsideKeywordAndIfThereIsChildTextAndProcessIt(s, endPos, examinedKeywords, _ktd, sPos);
-            //else
+            if (outPos == sPos)
+                return CheckIfInsideKeywordAndIfThereIsChildTextAndProcessIt(s, endPos, examinedKeywords, _ktd, sPos, parentKeyword);
+            else
                 return outPos;
         }
 
@@ -1912,9 +1928,10 @@ namespace m0.ZeroCode
             return sPos;
         }
 
-        private int CheckIfInsideKeywordAndIfThereIsChildTextAndProcessIt(ParsingStack s, int endPos, List<keywordTryingData> examinedKeywords, keywordTryingData _ktd, int sPos)
+        private int CheckIfInsideKeywordAndIfThereIsChildTextAndProcessIt(ParsingStack s, int endPos, List<keywordTryingData> examinedKeywords, keywordTryingData _ktd, int sPos, IVertex parentKeyword)
         {
-            
+            if (parentKeyword==null || !dict.keywordInfoDict[parentKeyword].hasCRLF)
+                return sPos;
 
             if (examinedKeywords == null)
             {
@@ -1925,15 +1942,15 @@ namespace m0.ZeroCode
             if (sPos + 1 < endPos && s.currentLineInfo.IsLineEnd(sPos + 1)) // SUB TEXT
                                                                             //if(sPos + 1 < endPos && text[sPos + 1] == '\r')
             {
-                int nextLineWithSameTabCount = s.getNextLineWithSameTabCount();
+                int nextLineLessTabCount = s.getNextLineWithLessTabCount();
 
-                if (nextLineWithSameTabCount != -1 && !lineInfoList[nextLineWithSameTabCount].startsWithLineContinuation)
+                if (nextLineLessTabCount != -1 && nextLineLessTabCount != s.lineNo + 1 && !lineInfoList[nextLineLessTabCount].startsWithLineContinuation)
                 {
                     foreach (keywordTryingData ktd in examinedKeywords)
                     {
                         TextRange subText = new TextRange();
                         subText.begLine = s.lineNo + 1;
-                        subText.endLine = nextLineWithSameTabCount - 1;
+                        subText.endLine = nextLineLessTabCount - 1;
 
                         bool canAddRange = true;
 
@@ -1949,13 +1966,14 @@ namespace m0.ZeroCode
                             s.subTextRanges.Add(ktd, subText);                            
                     }
 
-                    s.goToLine(nextLineWithSameTabCount);
+                    s.goToLine(nextLineLessTabCount - 1);
 
-                    foreach (keywordTryingData ktd in examinedKeywords)
-                        if (ktd.state == keywordTryingState.waiting && ktd.waitingUntilPositionInText == sPos + 1)
-                            ktd.state = keywordTryingState.keywordCharacter;
+                    // foreach (keywordTryingData ktd in examinedKeywords)
+                    //   if (ktd.state == keywordTryingState.waiting && ktd.waitingUntilPositionInText == sPos + 1)
+                    //     ktd.state = keywordTryingState.keywordCharacter;
 
-                    sPos = s.currentLineInfo.lineBeg;
+                    sPos = s.currentLineInfo.lineEnd; // XXX migh need correction
+                        //s.currentLineInfo.lineBeg - 4;
                 }
             }
 
@@ -2229,20 +2247,21 @@ namespace m0.ZeroCode
                             //AddKeywordVertex_AddVertex(s, parent, e, meta, e.To, ref nv, ktd, parentMetaEdge);
                             AddKeywordVertex_AddVertex(s, parent, e, meta, e.To.Value, ref nv, ktd, parentMetaEdge);
 
-                        if (s.subTextRanges.ContainsKey(ktd) && nv!=null)
-                        {
-                            TextRange subText = s.subTextRanges[ktd];
+                        TextRange subText = null;
 
+                        if (s.subTextRanges.ContainsKey(ktd) && nv != null)
+                        {
+                            subText = s.subTextRanges[ktd];
+                            s.subTextRanges.Remove(ktd);
                             //if (subText.isNonParameterRange) // do not need this, but who knows
                             //ProcessTextPart(nv, subText.begLine, subText.endLine);
                             //else                            
-                            ProcessTextPart(nv, subText.begLine, subText.endLine);
-
-                            s.subTextRanges.Remove(ktd);                            
                         }
 
-                        _AddKeywordVertex(s, nv, ktd, e.To, null, cnt_subCount, null);
+                        _AddKeywordVertex(s, nv, ktd, e.To, null, cnt_subCount, null); // XXX maybe this should go after textranges
 
+                        if (subText!=null)                                                
+                            ProcessTextPart(nv, subText.begLine, subText.endLine);
                     }
                 }
             }
@@ -2352,30 +2371,29 @@ namespace m0.ZeroCode
 
             }
             
-            AddSpaceToAllKeywordsSubstringsDictionary(d);
+            AddSpaceToAllKeywordsSubstringsDictionaries(d);
 
             PrepareNegativeNegativeDictionary_witchoutLinkKeywordParts(d);
 
             //
 
             DictionariesForFormalTextLanguageDictionary.Add(formalTextLanguage, d);
-
         }
 
-        private void AddSpaceToAllKeywordsSubstringsDictionary(DictionariesForFormalTextLanguage d)
+        private void AddSpaceToAllKeywordsSubstringsDictionaries(DictionariesForFormalTextLanguage d)
         {
-            if (!d.allKeywordsSubstringsDictionary.ContainsKey(' '))
-            {
-                List<string> l = new List<string>();
+            List<string> l = new List<string>();
 
-                l.Add(" ");
+            l.Add(" ");
 
+            if (!d.allKeywordsSubstringsDictionary.ContainsKey(' '))            
                 d.allKeywordsSubstringsDictionary.Add(' ', l);
 
+            if (!d.allKeywordsSubstringsDictionary_witchoutAlpha.ContainsKey(' '))
                 d.allKeywordsSubstringsDictionary_witchoutAlpha.Add(' ', l);
 
-                d.allKeywordsSubstringsPositiveDictionary_witchoutLinkKeywordParts.Add(' ', l);
-            }
+            if (!d.allKeywordsSubstringsPositiveDictionary_witchoutLinkKeywordParts.ContainsKey(' '))
+                d.allKeywordsSubstringsPositiveDictionary_witchoutLinkKeywordParts.Add(' ', l);            
         }
 
         private void PrepareNegativeNegativeDictionary_witchoutLinkKeywordParts(DictionariesForFormalTextLanguage d)
