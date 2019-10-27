@@ -5,6 +5,7 @@
 24. class / method
 25. ====
 27. key added error on exit
+31. imperative expressions in {}
 
 <><><> FUTURE 0
 
@@ -27,7 +28,7 @@
 21. [] / execute / without () as || parameter
 28. other quantifiers in queries
 29. meta string support in queries
-
+30. |a +< {} support
 
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!! Done:
 
