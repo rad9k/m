@@ -37,6 +37,7 @@
 28. other quantifiers in queries
 29. meta string support in queries
 30. |a +< {} support
+35. sub support
 
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!! Done:
 

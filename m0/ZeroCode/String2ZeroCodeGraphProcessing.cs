@@ -23,6 +23,7 @@ namespace m0.ZeroCode
             public bool HasLocalRoot;
             public string LocalRootKeywordsGroup;
             public bool NonSelfRecursiveParameters;
+            public bool hasCRLF;
         }
 
         class ParsingStack
@@ -55,7 +56,7 @@ namespace m0.ZeroCode
             public int memory_tabCount = -1;
             public bool can_initialize_memory_tabCount = true;
 
-            public Dictionary<object, TextRange> subTextRanges;
+            public Dictionary<object, TextRange> subTextRanges;            
 
 
             public ParsingStack(String2ZeroCodeGraphProcessing _parent, ParsingStack _parentStack, int _begLine, int _endLine)
@@ -247,7 +248,7 @@ namespace m0.ZeroCode
 
         DictionariesForFormalTextLanguage dict;
 
-        Dictionary<IVertex, DictionariesForFormalTextLanguage> DictionariesForFormalTextLanguageDictionary = new Dictionary<IVertex, DictionariesForFormalTextLanguage>();
+        static Dictionary<IVertex, DictionariesForFormalTextLanguage> DictionariesForFormalTextLanguageDictionary = new Dictionary<IVertex, DictionariesForFormalTextLanguage>();
 
         // PARSER AUTO TEST SECTION
 
@@ -1669,7 +1670,7 @@ namespace m0.ZeroCode
 
                 if (shallProceed)
                 {
-                    sPos = CheckIfThereIsSubTextAndProcessIt(s, endPos, examinedKeywords, null, sPos);
+                    sPos = SubAndChildCheckAndProcess(s, endPos, examinedKeywords, null, sPos);
 
                     if (s.currentLineInfo.IsLineEnd(sPos)) // NEW LINE
                     //if (text[sPos] == '\r')
@@ -1818,7 +1819,7 @@ namespace m0.ZeroCode
 
                     foreach (keywordTryingData ktd in ktdList)
                     {                                                
-                        int _newPos = CheckIfThereIsSubTextAndProcessIt(s, endPos, null, ktd, newPos - 2);
+                        int _newPos = SubAndChildCheckAndProcess(s, endPos, null, ktd, newPos - 2);
 
                         if (_newPos > newPos - 2)
                             newPos = _newPos + 2;
@@ -1843,6 +1844,16 @@ namespace m0.ZeroCode
             log_keywords(examinedKeywords, 0, LOGPREFIX);
         }
 
+        private int SubAndChildCheckAndProcess(ParsingStack s, int endPos, List<keywordTryingData> examinedKeywords, keywordTryingData _ktd, int sPos)
+        {
+            int outPos = CheckIfThereIsSubTextAndProcessIt(s, endPos, examinedKeywords, _ktd, sPos);
+
+          //  if (outPos == sPos)
+            //    return CheckIfInsideKeywordAndIfThereIsChildTextAndProcessIt(s, endPos, examinedKeywords, _ktd, sPos);
+            //else
+                return outPos;
+        }
+
         private int CheckIfThereIsSubTextAndProcessIt(ParsingStack s, int endPos, List<keywordTryingData> examinedKeywords, keywordTryingData _ktd, int sPos)
         {
             if (examinedKeywords == null)
@@ -1850,7 +1861,6 @@ namespace m0.ZeroCode
                 examinedKeywords = new List<keywordTryingData>();
                 examinedKeywords.Add(_ktd);
             }
-
 
             if (sPos + 1 < endPos && s.currentLineInfo.IsLineEnd(sPos + 1)) // SUB TEXT
                                                                             //if(sPos + 1 < endPos && text[sPos + 1] == '\r')
@@ -1887,6 +1897,56 @@ namespace m0.ZeroCode
                                 // MinusZero.Instance.Log(-1, "XXX", ((keywordTryingData)ktd.lastAddedParameter).keyword);
                                 s.subTextRanges.Add(ktd.lastAddedParameter, subText);
                             }
+                    }
+
+                    s.goToLine(nextLineWithSameTabCount);
+
+                    foreach (keywordTryingData ktd in examinedKeywords)
+                        if (ktd.state == keywordTryingState.waiting && ktd.waitingUntilPositionInText == sPos + 1)
+                            ktd.state = keywordTryingState.keywordCharacter;
+
+                    sPos = s.currentLineInfo.lineBeg;
+                }
+            }
+
+            return sPos;
+        }
+
+        private int CheckIfInsideKeywordAndIfThereIsChildTextAndProcessIt(ParsingStack s, int endPos, List<keywordTryingData> examinedKeywords, keywordTryingData _ktd, int sPos)
+        {
+            
+
+            if (examinedKeywords == null)
+            {
+                examinedKeywords = new List<keywordTryingData>();
+                examinedKeywords.Add(_ktd);
+            }
+
+            if (sPos + 1 < endPos && s.currentLineInfo.IsLineEnd(sPos + 1)) // SUB TEXT
+                                                                            //if(sPos + 1 < endPos && text[sPos + 1] == '\r')
+            {
+                int nextLineWithSameTabCount = s.getNextLineWithSameTabCount();
+
+                if (nextLineWithSameTabCount != -1 && !lineInfoList[nextLineWithSameTabCount].startsWithLineContinuation)
+                {
+                    foreach (keywordTryingData ktd in examinedKeywords)
+                    {
+                        TextRange subText = new TextRange();
+                        subText.begLine = s.lineNo + 1;
+                        subText.endLine = nextLineWithSameTabCount - 1;
+
+                        bool canAddRange = true;
+
+                        foreach (KeyValuePair<object, TextRange> kvp in s.subTextRanges)
+                            if (kvp.Key is keywordTryingData)
+                                if (kvp.Value.begLine == subText.begLine && checkIfKtdContainsKtdAsAParent(ktd, (keywordTryingData)kvp.Key))
+                                    canAddRange = false;
+
+                        if (subText.begLine > subText.endLine)
+                            canAddRange = false;
+
+                        if (canAddRange)                            
+                            s.subTextRanges.Add(ktd, subText);                            
                     }
 
                     s.goToLine(nextLineWithSameTabCount);
@@ -2169,19 +2229,16 @@ namespace m0.ZeroCode
                             //AddKeywordVertex_AddVertex(s, parent, e, meta, e.To, ref nv, ktd, parentMetaEdge);
                             AddKeywordVertex_AddVertex(s, parent, e, meta, e.To.Value, ref nv, ktd, parentMetaEdge);
 
-                        if (s.subTextRanges.ContainsKey(ktd))
+                        if (s.subTextRanges.ContainsKey(ktd) && nv!=null)
                         {
                             TextRange subText = s.subTextRanges[ktd];
 
                             //if (subText.isNonParameterRange) // do not need this, but who knows
                             //ProcessTextPart(nv, subText.begLine, subText.endLine);
-                            //else
-                            if (nv != null)
-                            {
-                                ProcessTextPart(nv, subText.begLine, subText.endLine);
+                            //else                            
+                            ProcessTextPart(nv, subText.begLine, subText.endLine);
 
-                                s.subTextRanges.Remove(ktd);
-                            }
+                            s.subTextRanges.Remove(ktd);                            
                         }
 
                         _AddKeywordVertex(s, nv, ktd, e.To, null, cnt_subCount, null);
@@ -2334,6 +2391,9 @@ namespace m0.ZeroCode
         private void PrepareKeywordInfo(DictionariesForFormalTextLanguage d, keywordTryingData ktd)
         {            
             KeywordInfo ki = new KeywordInfo();
+
+            if (ktd.keyword.Contains("\r\n"))
+                ki.hasCRLF = true;
 
             IVertex localRoot = GraphUtil.DeepFindOneByMeta(ktd.keywordVertex, "$$LocalRoot", false);
 
