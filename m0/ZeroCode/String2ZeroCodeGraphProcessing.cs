@@ -1864,9 +1864,9 @@ namespace m0.ZeroCode
         {
             int outPos = CheckIfThereIsSubTextAndProcessIt(s, endPos, examinedKeywords, _ktd, sPos);
 
-            if (outPos == sPos)
-                return CheckIfInsideKeywordAndIfThereIsChildTextAndProcessIt(s, endPos, examinedKeywords, _ktd, sPos, parentKeyword);
-            else
+         //   if (outPos == sPos)
+          //      return CheckIfInsideKeywordAndIfThereIsChildTextAndProcessIt(s, endPos, examinedKeywords, _ktd, sPos, parentKeyword);
+          //  else
                 return outPos;
         }
 
@@ -1962,8 +1962,8 @@ namespace m0.ZeroCode
                         if (subText.begLine > subText.endLine)
                             canAddRange = false;
 
-                        if (canAddRange)                            
-                            s.subTextRanges.Add(ktd, subText);                            
+                       // if (canAddRange)                            
+                       //     s.subTextRanges.Add(ktd, subText);                            
                     }
 
                     s.goToLine(nextLineLessTabCount - 1);

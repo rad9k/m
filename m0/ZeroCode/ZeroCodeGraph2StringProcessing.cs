@@ -916,10 +916,7 @@ namespace m0.ZeroCode
 
                             tabTimes = tabTimes_copy;
                         }
-
-                    
-                    
-
+                                    
                     if (sentence.Contains("(?<SUB>)"))
                         whatToReturn = false;
 
