@@ -455,11 +455,23 @@ namespace m0.ZeroCode
 
         string NewLine = "\r\n";
 
+
+       // int cnt = 0;
+
         void SourceAppend(string s)
         {        
             string NewLineStringPlusNewLine = getNewLineAndTabsString();            
 
             s = s.Replace("\r\n", NewLineStringPlusNewLine);
+
+         /*   MinusZero.Instance.Log(-2, "S.A", s+" "+cnt);
+
+            if (cnt == 5)
+            {
+                int xxx = 0;
+            }
+
+            cnt++;*/
 
             Source.Append(s);            
         }
@@ -882,17 +894,31 @@ namespace m0.ZeroCode
 
                     ProcessSingleKeywordSentencePart(km, sentence, false, out zeroMatch, ParentKmHasTabAddingOmmit);
 
+                    IEdge be = km.BaseEdge;
+
+                    string path = GetPathFromKeywordMatchAndKeywordEdge(km, be, null);
+
                     //if (/*zeroMatch&&*/km.DoKeywordDefinitionContainStartInLocalRoot) // XXX YYY
                     if (/*zeroMatch&&*/km.DoKeywordDefinitionContainLocalRoot) // WE SHOULD USE THAT ONE
                     { // hack if there are no params but there are local roots
                         // hack EDIT in order to a[b<"3">\] to work hack has been reduced by zeroMatch
-                        IEdge e = km.BaseEdge;
 
-                        string path = GetPathFromKeywordMatchAndKeywordEdge(km, e, null);
-
-                        if (!VertexOperations.IsLink(e))
-                            AppendSubVertices(km, e, path);
+                        if (!VertexOperations.IsLink(be))
+                            AppendSubVertices(km, be, path);
                     }
+
+                    foreach (IEdge e in be.To)
+                        if (!km.MatchedEdges.Contains(e))
+                        {
+                            int tabTimes_copy = tabTimes;
+
+                            ZeroCodeGraph2String_Reccurent(e, tabTimes + 1, be, path); // XXX NEW
+
+                            tabTimes = tabTimes_copy;
+                        }
+
+                    
+                    
 
                     if (sentence.Contains("(?<SUB>)"))
                         whatToReturn = false;
@@ -1700,7 +1726,7 @@ namespace m0.ZeroCode
             bool appendAsNew = AppendEdge(baseEdge, parent, path, false);
 
             if (!isLink)
-                BeenList.Add(baseEdge);;
+                BeenList.Add(baseEdge);
 
             if (baseEdge == BaseEdge)
                 been = false; // hack
