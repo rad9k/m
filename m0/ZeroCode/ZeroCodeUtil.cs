@@ -198,23 +198,15 @@ namespace m0.ZeroCode
             return true;
         }
 
-        public static bool tryStringMatch_CRLF(string s, int pos, string toMatch)
+        public static bool doTextRangeContainString(string s, int beg, int end, string toMatch)
         {
-            int toMatchLength = toMatch.Length;
+            int cnt;
 
-            if (s.Length < pos + toMatchLength)
-                return false;
-
-            for (int x = 0; x < toMatchLength; x++)
-            {
-                if (toMatch[x] == '\r')
+            for (cnt = beg; cnt + toMatch.Length < end;cnt++)
+                if (tryStringMatch(s, cnt, toMatch))
                     return true;
 
-                if (s[pos + x] != toMatch[x])
-                    return false;
-            }
-
-            return true;
+            return false;
         }
 
         public static bool tryStringEndMatch(string s, string toMatch)

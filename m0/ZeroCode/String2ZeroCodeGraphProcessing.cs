@@ -164,9 +164,16 @@ namespace m0.ZeroCode
                 return iterationLineNo;
             }
 
-            public int getNextLineWithLessTabCount()
+            public int getNextLineWithLessTabCountIfNextLineHasMoreTabCount()
             {
                 List<LineInfo> li = processing.lineInfoList;
+
+                if (lineNo >= li.Count - 1)
+                    return -1;
+
+                if (li[lineNo + 1].tabCount <= currentLineInfo.tabCount)
+                    return -1;
+
                 int iterationLineNo = lineNo + 1;
 
                 while (iterationLineNo < li.Count
@@ -174,7 +181,7 @@ namespace m0.ZeroCode
                     iterationLineNo++;
 
                 if (iterationLineNo == li.Count)
-                    return -1;                
+                    return -1;
 
                 return iterationLineNo;
             }
@@ -1864,9 +1871,9 @@ namespace m0.ZeroCode
         {
             int outPos = CheckIfThereIsSubTextAndProcessIt(s, endPos, examinedKeywords, _ktd, sPos);
 
-         //   if (outPos == sPos)
-          //      return CheckIfInsideKeywordAndIfThereIsChildTextAndProcessIt(s, endPos, examinedKeywords, _ktd, sPos, parentKeyword);
-          //  else
+            if (outPos == sPos)
+                return CheckIfInsideKeywordAndIfThereIsChildTextAndProcessIt(s, endPos, examinedKeywords, _ktd, sPos, parentKeyword);
+            else
                 return outPos;
         }
 
@@ -1930,8 +1937,11 @@ namespace m0.ZeroCode
 
         private int CheckIfInsideKeywordAndIfThereIsChildTextAndProcessIt(ParsingStack s, int endPos, List<keywordTryingData> examinedKeywords, keywordTryingData _ktd, int sPos, IVertex parentKeyword)
         {
-            if (parentKeyword==null || !dict.keywordInfoDict[parentKeyword].hasCRLF)
+            if (parentKeyword == null || !dict.keywordInfoDict[parentKeyword].hasCRLF)
                 return sPos;
+
+            if (ZeroCodeUtil.doTextRangeContainString(text, lineInfoList[s.lineNo].lineBeg, lineInfoList[s.lineNo].lineEnd, ZeroCodeCommon.CRLFoperator))
+                return sPos; // XXX bit hacky but no better idea
 
             if (examinedKeywords == null)
             {
@@ -1939,14 +1949,16 @@ namespace m0.ZeroCode
                 examinedKeywords.Add(_ktd);
             }
 
-            if (sPos + 1 < endPos && s.currentLineInfo.IsLineEnd(sPos + 1)) // SUB TEXT
-                                                                            //if(sPos + 1 < endPos && text[sPos + 1] == '\r')
+            if (sPos + 1 < endPos && s.currentLineInfo.IsLineEnd(sPos + 1))
             {
-                int nextLineLessTabCount = s.getNextLineWithLessTabCount();
+                int nextLineLessTabCount = s.getNextLineWithLessTabCountIfNextLineHasMoreTabCount();
 
-                if (nextLineLessTabCount != -1 && nextLineLessTabCount != s.lineNo + 1 && !lineInfoList[nextLineLessTabCount].startsWithLineContinuation)
+                if (nextLineLessTabCount != -1 && nextLineLessTabCount > s.lineNo + 1 && !lineInfoList[nextLineLessTabCount].startsWithLineContinuation)
                 {
+                    bool rangeAdded = false;
+
                     foreach (keywordTryingData ktd in examinedKeywords)
+                    if(!dict.keywordInfoDict[ktd.keywordVertex].hasCRLF)
                     {
                         TextRange subText = new TextRange();
                         subText.begLine = s.lineNo + 1;
@@ -1962,18 +1974,20 @@ namespace m0.ZeroCode
                         if (subText.begLine > subText.endLine)
                             canAddRange = false;
 
-                       // if (canAddRange)                            
-                       //     s.subTextRanges.Add(ktd, subText);                            
+                        if (canAddRange)
+                        {
+                            rangeAdded = true;
+                            s.subTextRanges.Add(ktd, subText);
+                        }
                     }
 
-                    s.goToLine(nextLineLessTabCount - 1);
+                    if (rangeAdded)
+                    {
+                        s.goToLine(nextLineLessTabCount - 1);
 
-                    // foreach (keywordTryingData ktd in examinedKeywords)
-                    //   if (ktd.state == keywordTryingState.waiting && ktd.waitingUntilPositionInText == sPos + 1)
-                    //     ktd.state = keywordTryingState.keywordCharacter;
-
-                    sPos = s.currentLineInfo.lineEnd; // XXX migh need correction
-                        //s.currentLineInfo.lineBeg - 4;
+                        sPos = s.currentLineInfo.lineEnd; // XXX migh need correction
+                                                          //s.currentLineInfo.lineBeg - 4;
+                    }
                 }
             }
 
