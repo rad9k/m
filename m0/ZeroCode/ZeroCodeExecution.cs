@@ -26,7 +26,7 @@ namespace m0.ZeroCode
 
             stack = newStackFrame;
 
-            newVertexCreationSpace = stack;
+            //newVertexCreationSpace = stack; // what for????
         }
 
         public void RemoveStackFrame()
@@ -39,7 +39,7 @@ namespace m0.ZeroCode
 
                 stack = prevStackFrame;
 
-                newVertexCreationSpace = prevStackFrame;
+                //newVertexCreationSpace = prevStackFrame; // what for???
             }
         }
 

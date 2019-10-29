@@ -1,18 +1,11 @@
 ﻿"Y"
-	"NEW"
-	"HELLO"
-	"YES"
-	variable "a" @String
-	variable "b" @String
-	variable "c" @String
-	a = @@NEW
-	a+=@@NEW
-	b = @@HELLO
-	b+=@@HELLO
-	c = @@YES
-	c+=@@YES
-	@@String || a{
-		@@String || b{
-			@@String||c
-		}
+	"a"
+		"1"
+		"2"
+		"3"
+	@@String || "kupa"{
+		foreach "x" in $\|a\
+			(x+"10") || (x+"100"){
+				"co" || (x+"1000")
+			}
 	}
