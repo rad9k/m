@@ -202,7 +202,7 @@ namespace m0.ZeroCode
         {
             int cnt;
 
-            for (cnt = beg; cnt + toMatch.Length < end;cnt++)
+            for (cnt = beg; cnt + toMatch.Length -1 <= end;cnt++)
                 if (tryStringMatch(s, cnt, toMatch))
                     return true;
 

@@ -2,6 +2,9 @@
 	a +< a||B{
 		"c"||"d"{
 			e||"f"{
+				b13 + b14
+				while "False"
+					x=x+1
 			}
 		}
 	}
