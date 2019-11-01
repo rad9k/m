@@ -2252,13 +2252,13 @@ namespace m0.ZeroCode
                             if (sub is ToVertexMock)
                                 nv = AddKeywordVertex_AddEdge(s, parent, e, meta, (IVertex)sub).To;
 
-                            if (sub is keywordTryingData)
+                            if (sub is keywordTryingData)                              
                                 nv = _AddKeywordVertex(s, parent, (keywordTryingData)sub, ((keywordTryingData)sub).keywordVertex, meta, 0, null);// cnt_subCount);
 
                             tryLocalRootAdd(s, e, nv, ktd);
                         }
                         else
-                            //AddKeywordVertex_AddVertex(s, parent, e, meta, e.To, ref nv, ktd, parentMetaEdge);
+                            //AddKeywordVertex_AddVertex(s, parent, e, meta, e.To, ref nv, ktd, parentMetaEdge);                            
                             AddKeywordVertex_AddVertex(s, parent, e, meta, e.To.Value, ref nv, ktd, parentMetaEdge);
 
                         TextRange subText = null;
@@ -2274,14 +2274,30 @@ namespace m0.ZeroCode
 
                         _AddKeywordVertex(s, nv, ktd, e.To, null, cnt_subCount, null); // XXX maybe this should go after textranges
 
-                        if (subText!=null)                                                
-                            ProcessTextPart(nv, subText.begLine, subText.endLine);
+                        if (subText != null)
+                            specialAddingTextPartHack(nv, subText);
                     }
                 }
             }
 
             return nv;
         }
+
+        private void specialAddingTextPartHack(IVertex nv, TextRange subText)
+        {
+            ProcessTextPart(nv, subText.begLine - 1, subText.endLine);
+
+            int count = nv.OutEdges.Count;
+
+            IEdge lastEdge = nv.OutEdges[count - 1];
+
+            foreach (IEdge e in lastEdge.To)
+                if((count--)<=1)
+                    nv.AddEdge(e.Meta, e.To);
+
+            nv.DeleteEdge(lastEdge);
+        }
+        
 
         int getDoubleColonPos(string s)
         {

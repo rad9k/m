@@ -1,4 +1,27 @@
 ﻿"Y"
+	a||b{
+		if "True"
+			foreach "X" in a\b\c
+				a=b+c
+		test x
+			case "True"
+				t
+				a
+				b
+				c
+			case "False"
+				f
+				a
+				b
+				c
+			default
+				d
+				a
+				b
+				c
+	}
+	
+"Y"
 	a +< a||B{
 		"c"||"d"{
 			e||"f"{
