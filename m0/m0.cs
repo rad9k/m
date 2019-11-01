@@ -392,11 +392,10 @@ namespace m0
                 ",Action,Return{Expression{$MinCardinality:0,$MaxCardinality:1}},NextOut{Next{$MinCardinality:0,$MaxCardinality:1}}" +
                 ",StackFrameCreator{Do{$MinCardinality:0,$MaxCardinality:1},Variable{$MinCardinality:0,$MaxCardinality:-1},Type{$MinCardinality:0,$MaxCardinality:-1}}" +
                 ",StackFrameCreatorWithInputOutput{Output{$MinCardinality:0,$MaxCardinality:1},InputParameter{$MinCardinality:0,$MaxCardinality:-1}}" +
-                ",Function,Section" +
-                ",If{Test{$MinCardinality:1,$MaxCardinality:1},Then{$MinCardinality:0,$MaxCardinality:1},Else{$MinCardinality:0,$MaxCardinality:1}}" +
-                ",Switch{Expression{$MinCardinality:1,$MaxCardinality:1},Case{Expression{$MinCardinality:1,$MaxCardinality:1}},Default}" +
+                ",Function,Section" +                                
                 ",While{Test{$MinCardinality:1,$MaxCardinality:1}}" +
                 ",ForEach{Variable{$MinCardinality:1,$MaxCardinality:1},Set{$MinCardinality:1,$MaxCardinality:1}}" +
+                ",If{Test{$MinCardinality:1,$MaxCardinality:1}},Test{Expression{$MinCardinality:1,$MaxCardinality:1}},Case{Test{$MinCardinality:1,$MaxCardinality:1}},Default" +
                 ",EmptySet,Constant" +
                 ",Execute,Parse,ParseWithLanguage{FormalTextLanguage{$MinCardinality:0,$MaxCardinality:1}},Generate,GenerateWithLanguage{FormalTextLanguage{$MinCardinality:0,$MaxCardinality:1}}" +
                 "}");
@@ -460,6 +459,8 @@ namespace m0
             AddDotNetEndPoint(smu.Get(false, "Return"), "Return");
             AddDotNetEndPoint(smu.Get(false, "ForEach"), "ForEach");
             AddDotNetEndPoint(smu.Get(false, "While"), "While");
+            AddDotNetEndPoint(smu.Get(false, "If"), "If");
+            AddDotNetEndPoint(smu.Get(false, "Test"), "Test");
 
             // stack operators
 
@@ -554,18 +555,21 @@ namespace m0
             smu.Get(false, @"Section").AddEdge(sm.Get(false, "*$Inherits"), smu.Get(false, "NextOut"));
             smu.Get(false, @"Section").AddEdge(sm.Get(false, "*$Inherits"), smu.Get(false, "Action"));
             smu.Get(false, @"Section").AddEdge(sm.Get(false, "*$Inherits"), smu.Get(false, "StackFrameCreator"));
-
-            smu.Get(false, @"If").AddEdge(sm.Get(false, "*$Inherits"), smu.Get(false, "Action"));
-
-            smu.Get(false, @"If\Then").AddEdge(sm.Get(false, @"*$Inherits"), smu.Get(false, @"NextOut"));
-            smu.Get(false, @"If\Else").AddEdge(sm.Get(false, @"*$Inherits"), smu.Get(false, @"NextOut"));
-
-            smu.Get(false, @"Switch").AddEdge(sm.Get(false, "*$Inherits"), smu.Get(false, "Action"));
-            smu.Get(false, @"Switch\Case").AddEdge(sm.Get(false, "*$Inherits"), smu.Get(false, "NextOut"));
-            smu.Get(false, @"Switch\Default").AddEdge(sm.Get(false, "*$Inherits"), smu.Get(false, "NextOut"));
-
+                        
             smu.Get(false, @"While").AddEdge(sm.Get(false, "*$Inherits"), smu.Get(false, "NextOut"));
             smu.Get(false, @"While").AddEdge(sm.Get(false, "*$Inherits"), smu.Get(false, "Action"));
+
+            smu.Get(false, @"If").AddEdge(sm.Get(false, "*$Inherits"), smu.Get(false, "NextOut"));
+            smu.Get(false, @"If").AddEdge(sm.Get(false, "*$Inherits"), smu.Get(false, "Action"));
+
+            smu.Get(false, @"Test").AddEdge(sm.Get(false, "*$Inherits"), smu.Get(false, "NextOut"));
+            smu.Get(false, @"Test").AddEdge(sm.Get(false, "*$Inherits"), smu.Get(false, "Action"));
+
+            smu.Get(false, @"Case").AddEdge(sm.Get(false, "*$Inherits"), smu.Get(false, "NextOut")); // XXX got to think
+            smu.Get(false, @"Case").AddEdge(sm.Get(false, "*$Inherits"), smu.Get(false, "Action"));
+
+            smu.Get(false, @"Default").AddEdge(sm.Get(false, "*$Inherits"), smu.Get(false, "NextOut"));
+            smu.Get(false, @"Default").AddEdge(sm.Get(false, "*$Inherits"), smu.Get(false, "Action"));
 
             smu.Get(false, @"ForEach").AddEdge(sm.Get(false, "*$Inherits"), smu.Get(false, "NextOut"));
             smu.Get(false, @"ForEach").AddEdge(sm.Get(false, "*$Inherits"), smu.Get(false, "Action"));
@@ -607,16 +611,17 @@ namespace m0
             smu.Get(false, @"StackFrameCreator\Do").AddEdge(sm.Get(false, @"*$EdgeTarget"), smu.Get(false, @"Atom"));
             smu.Get(false, @"StackFrameCreator\Variable").AddEdge(sm.Get(false, @"*$VertexTarget"), smu.Get(false, @"Type"));
             smu.Get(false, @"StackFrameCreator\Type").AddEdge(sm.Get(false, @"*$EdgeTarget"), smu.Get(false, @"Type"));
-            smu.Get(false, @"StackFrameCreatorWithInputOutput\Output").AddEdge(sm.Get(false, @"*$EdgeTarget"), smu.Get(false, @"Type"));
+            smu.Get(false, @"StackFrameCreatorWithInputOutput\Output").AddEdge(sm.Get(false, @"*$EdgeTarget"), smu.Get(false, @"Type"));            
+            
+            smu.Get(false, @"While\Test").AddEdge(sm.Get(false, @"*$EdgeTarget"), smu.Get(false, @"Atom"));
 
             smu.Get(false, @"If\Test").AddEdge(sm.Get(false, @"*$EdgeTarget"), smu.Get(false, @"Atom"));
 
-            smu.Get(false, @"Switch\Expression").AddEdge(sm.Get(false, @"*$EdgeTarget"), smu.Get(false, @"Atom"));
-            smu.Get(false, @"Switch\Case\Expression").AddEdge(sm.Get(false, @"*$EdgeTarget"), smu.Get(false, @"Atom"));
+            smu.Get(false, @"Test\Expression").AddEdge(sm.Get(false, @"*$EdgeTarget"), smu.Get(false, @"Atom"));
 
-            smu.Get(false, @"While\Test").AddEdge(sm.Get(false, @"*$EdgeTarget"), smu.Get(false, @"Atom"));
+            smu.Get(false, @"Case\Test").AddEdge(sm.Get(false, @"*$EdgeTarget"), smu.Get(false, @"Atom"));
 
-           // smu.Get(false, @"ForEach\Variable").AddEdge(sm.Get(false, @"*$EdgeTarget"), smu.Get(false, @"Query")); // better this
+            // smu.Get(false, @"ForEach\Variable").AddEdge(sm.Get(false, @"*$EdgeTarget"), smu.Get(false, @"Query")); // better this
             smu.Get(false, @"ForEach\Set").AddEdge(sm.Get(false, @"*$EdgeTarget"), smu.Get(false, @"Atom"));
 
             // meta            
@@ -634,14 +639,15 @@ namespace m0
             smu.Get(false, @"StackFrameCreator\Do").AddEdge(isAggregation, Empty);
             smu.Get(false, @"StackFrameCreator\Variable").AddEdge(isAggregation, Empty);
             smu.Get(false, @"StackFrameCreator\Type").AddEdge(isAggregation, Empty);
-            //  smu.Get(false, @"StackFrameCreatorWithInputOutput\Output").AddEdge(isAggregation, Empty); // this - no!
+            //  smu.Get(false, @"StackFrameCreatorWithInputOutput\Output").AddEdge(isAggregation, Empty); // this - no!            
+            
+            smu.Get(false, @"While\Test").AddEdge(isAggregation, Empty);
 
             smu.Get(false, @"If\Test").AddEdge(isAggregation, Empty);
 
-            smu.Get(false, @"Switch\Expression").AddEdge(isAggregation, Empty);
-            smu.Get(false, @"Switch\Case\Expression").AddEdge(isAggregation, Empty);
+            smu.Get(false, @"Test\Expression").AddEdge(isAggregation, Empty);
 
-            smu.Get(false, @"While\Test").AddEdge(isAggregation, Empty);
+            smu.Get(false, @"Case\Test").AddEdge(isAggregation, Empty);
 
             smu.Get(false, @"ForEach\Set").AddEdge(isAggregation, Empty);
 
@@ -698,7 +704,7 @@ namespace m0
             package.AddEdge(null, smu.Get(false, "Section"));
             package.AddEdge(null, smu.Get(false, "Function"));
             package.AddEdge(null, smu.Get(false, "If"));
-            package.AddEdge(null, smu.Get(false, "Switch"));
+            package.AddEdge(null, smu.Get(false, "Test"));
             package.AddEdge(null, smu.Get(false, "While"));
             package.AddEdge(null, smu.Get(false, "ForEach"));
             package.AddEdge(null, sm.Get(false, @"Base\$Import"));

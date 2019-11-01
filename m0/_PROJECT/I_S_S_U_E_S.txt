@@ -3,16 +3,10 @@
 22. := or something similar for base
 23. if / test
 24. class / method
-25. ====
 27. key added error on exit
-31. imperative expressions in {}
 32. language definition correction
 33. standard base library
-34. "Y"
-	{
-		while "False"
-			"a"
-	}
+
 
 <><><> FUTURE 0
 
@@ -26,6 +20,8 @@
 11. Diagram perf update
 12. parse / generate check
 34. Query dialog box refactoring
+36. ZeroUML diagramming update
+37. pre/post text processing + if/test/case/default nextout?
 
 <><><> FUTURE 1
 
@@ -54,3 +50,10 @@
 17. ` operator
 14. add () to ||
 15. add _ to || [16]
+34. "Y"
+	{
+		while "False"
+			"a"
+	}
+31. imperative expressions in {}
+25. ====
