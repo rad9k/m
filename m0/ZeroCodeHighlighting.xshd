@@ -47,8 +47,7 @@
       <Word>foreach</Word>
       <Word>while</Word>
       <Word>if</Word>
-      <Word>else</Word>
-      <Word>switch</Word>
+      <Word>test</Word>      
       <Word>case</Word>
       <Word>default</Word>
       <Word>return</Word>

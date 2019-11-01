@@ -18,10 +18,14 @@
 					<@Meta :: @> ???
 					<@To :: @TEST\Person4>
 11. Diagram perf update
+
+<><><> FUTURE 0.5
+
 12. parse / generate check
 34. Query dialog box refactoring
 36. ZeroUML diagramming update
 37. pre/post text processing + if/test/case/default nextout?
+39. colors in editor
 
 <><><> FUTURE 1
 
@@ -34,6 +38,7 @@
 29. meta string support in queries
 30. |a +< {} support
 35. sub support
+38. child vertex short names support in ||{} for @@ and run time queries
 
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!! Done:
 

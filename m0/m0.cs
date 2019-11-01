@@ -1487,6 +1487,53 @@ namespace m0
 
             o_while_any.AddVertex(smu.Get(false, @"While\Test"), "(?<test>)");
 
+            // if
+            //
+            // if (?<test>)
+
+            IVertex o_if = k.AddVertex(keyword, "if (?<test>)");
+
+            IVertex o_if_any = o_if.AddVertex(any, "");
+
+            o_if_any.AddEdge(smb.Get(false, @"Vertex\$Is"), smu.Get(false, "If"));
+
+            o_if_any.AddVertex(smu.Get(false, @"If\Test"), "(?<test>)");
+
+            // test
+            //
+            // test (?<test>)
+
+            IVertex o_test = k.AddVertex(keyword, "test (?<expr>)");
+
+            IVertex o_test_any = o_test.AddVertex(any, "");
+
+            o_test_any.AddEdge(smb.Get(false, @"Vertex\$Is"), smu.Get(false, "Test"));
+
+            o_test_any.AddVertex(smu.Get(false, @"Test\Expression"), "(?<expr>)");
+
+            // case
+            //
+            // case (?<test>)
+
+            IVertex o_case = k.AddVertex(keyword, "case (?<test>)");
+
+            IVertex o_case_any = o_case.AddVertex(any, "");
+
+            o_case_any.AddEdge(smb.Get(false, @"Vertex\$Is"), smu.Get(false, "Case"));
+
+            o_case_any.AddVertex(smu.Get(false, @"Case\Test"), "(?<test>)");
+
+            // default
+            //
+            // default
+
+            IVertex o_default = k.AddVertex(keyword, "default");
+
+            IVertex o_default_any = o_default.AddVertex(any, "");
+
+            o_default_any.AddEdge(smb.Get(false, @"Vertex\$Is"), smu.Get(false, "Default"));
+            
+
             // ()
             //
             // ((?<expr>))
