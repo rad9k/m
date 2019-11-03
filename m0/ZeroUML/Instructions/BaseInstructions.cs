@@ -1507,7 +1507,7 @@ namespace m0.ZeroUML.Instructions
             if (local_isStackFrameReturn)
                 return possibleToReturnStack;
             else
-                return exe.stack;
+                return CreateStack();
         }
 
         public static INoInEdgeInOutVertexVertex Return(ZeroCodeExecution exe, IVertex inputStack, IVertex instructionVertex, out bool isStackFrameReturn)
