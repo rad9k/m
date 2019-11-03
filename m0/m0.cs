@@ -1517,7 +1517,7 @@ namespace m0
 
             IVertex o_case = k.AddVertex(keyword, "case (?<test>)");
 
-            IVertex o_case_any = o_case.AddVertex(any, "");
+            IVertex o_case_any = o_case.AddVertex(smu.Get(false, "Case"), "");
 
             o_case_any.AddEdge(smb.Get(false, @"Vertex\$Is"), smu.Get(false, "Case"));
 
@@ -1529,7 +1529,7 @@ namespace m0
 
             IVertex o_default = k.AddVertex(keyword, "default");
 
-            IVertex o_default_any = o_default.AddVertex(any, "");
+            IVertex o_default_any = o_default.AddVertex(smu.Get(false, "Default"), "");
 
             o_default_any.AddEdge(smb.Get(false, @"Vertex\$Is"), smu.Get(false, "Default"));
             

@@ -27,14 +27,14 @@ namespace m0.ZeroUML.Instructions
             isStackFrameReturn = false;
 
             if (instructionVertex.Value == null)
-                return InstructionHelpers.Create_INoInEdgeInOutVertexVertex_FromEdgesList(inputQs);
+                return Create_INoInEdgeInOutVertexVertex_FromEdgesList(inputQs);
 
             string value = instructionVertex.Value.ToString();
 
             if (value == "" || value == "\r")
-                return InstructionHelpers.Create_INoInEdgeInOutVertexVertex_FromEdgesList(inputQs);
+                return Create_INoInEdgeInOutVertexVertex_FromEdgesList(inputQs);
 
-            INoInEdgeInOutVertexVertex newQs = InstructionHelpers.CreateStack();
+            INoInEdgeInOutVertexVertex newQs = CreateStack();
 
             IEdge e;
             IList<IEdge> eList;
@@ -48,16 +48,16 @@ namespace m0.ZeroUML.Instructions
                 newQs.AddEdgeForNoInEdgeInOutVertexVertex(e);
 
             if (eList != null)
-                InstructionHelpers.AddToStack(newQs, eList);
+                AddToStack(newQs, eList);
 
-            return InstructionHelpers.NextExpressionHandle(exe, newQs, instructionVertex);
+            return NextExpressionHandle(exe, newQs, instructionVertex);
         }
 
         public static INoInEdgeInOutVertexVertex InnerOperator(ZeroCodeExecution exe, IVertex inputQs, IVertex instructionVertex, out bool isStackFrameReturn)
         {
             isStackFrameReturn = false;
 
-            INoInEdgeInOutVertexVertex _inputQs = InstructionHelpers.Create_INoInEdgeInOutVertexVertex_FromEdgesList(inputQs);
+            INoInEdgeInOutVertexVertex _inputQs = Create_INoInEdgeInOutVertexVertex_FromEdgesList(inputQs);
 
             IList<IEdge> expressions = GraphUtil.GetQueryOut(instructionVertex, "Expression", null);
 
@@ -66,7 +66,7 @@ namespace m0.ZeroUML.Instructions
 
             foreach (IEdge expression in expressions)
             {
-                newQs = InstructionHelpers.CreateStack();
+                newQs = CreateStack();
 
                 foreach (IEdge e in oldQs)
                 {
@@ -79,49 +79,49 @@ namespace m0.ZeroUML.Instructions
                 oldQs = newQs;
             }
 
-            return InstructionHelpers.NextExpressionHandle(exe, newQs, instructionVertex);
+            return NextExpressionHandle(exe, newQs, instructionVertex);
         }
 
         public static INoInEdgeInOutVertexVertex QuestionMarkOperator(ZeroCodeExecution exe, IVertex inputQs, IVertex instructionVertex, out bool isStackFrameReturn)
         {
             isStackFrameReturn = false;
 
-            INoInEdgeInOutVertexVertex newQs = InstructionHelpers.CreateStack();
+            INoInEdgeInOutVertexVertex newQs = CreateStack();
             GraphIterator iter = new GraphIterator(newQs);
 
             GraphUtil.DeepIterator(inputQs, iter.AddToINoInEdgeInOutVertexVertex, false, false, true);
 
-            return InstructionHelpers.NextExpressionHandle(exe, newQs, instructionVertex);
+            return NextExpressionHandle(exe, newQs, instructionVertex);
         }
 
         public static INoInEdgeInOutVertexVertex SlashOperator(ZeroCodeExecution exe, IVertex inputQs, IVertex instructionVertex, out bool isStackFrameReturn)
         {
             isStackFrameReturn = false;
 
-            INoInEdgeInOutVertexVertex newQs = InstructionHelpers.CreateStack();
+            INoInEdgeInOutVertexVertex newQs = CreateStack();
 
             foreach (IEdge e in inputQs)
                 foreach (IEdge ee in e.To)
                     newQs.AddEdgeForNoInEdgeInOutVertexVertex(ee);
 
-            return InstructionHelpers.NextExpressionHandle(exe, newQs, instructionVertex);
+            return NextExpressionHandle(exe, newQs, instructionVertex);
         }
 
         public static INoInEdgeInOutVertexVertex ColonOperator(ZeroCodeExecution exe, IVertex inputQs, IVertex instructionVertex, out bool isStackFrameReturn)
         {
             isStackFrameReturn = false;
 
-            IVertex leftExpression = InstructionHelpers.GetLeft(instructionVertex);
-            IVertex rightExpression = InstructionHelpers.GetRight(instructionVertex);
+            IVertex leftExpression = GetLeft(instructionVertex);
+            IVertex rightExpression = GetRight(instructionVertex);
 
             bool isLeftExpressionQuery = false;
             bool isRightExpressionQuery = false;
 
             if (leftExpression != null)
-                isLeftExpressionQuery = InstructionHelpers.CheckIs(leftExpression, "Query");
+                isLeftExpressionQuery = CheckIs(leftExpression, "Query");
 
             if (rightExpression != null)
-                isRightExpressionQuery = InstructionHelpers.CheckIs(rightExpression, "Query");
+                isRightExpressionQuery = CheckIs(rightExpression, "Query");
 
             string leftValue = null;
             string rightValue = null;
@@ -140,7 +140,7 @@ namespace m0.ZeroUML.Instructions
             if (rightValue != null && rightValue != "")
                 toQueryString = rightValue;
 
-            INoInEdgeInOutVertexVertex newQs = InstructionHelpers.CreateStack();
+            INoInEdgeInOutVertexVertex newQs = CreateStack();
 
             if (isLeftExpressionQuery || isRightExpressionQuery)
             {
@@ -153,16 +153,16 @@ namespace m0.ZeroUML.Instructions
                     newQs.AddEdgeForNoInEdgeInOutVertexVertex(e);
 
                 if (eList != null)
-                    InstructionHelpers.AddToStack(newQs, eList);
+                    AddToStack(newQs, eList);
             }
             else
-                InstructionHelpers.AddToStack(newQs, inputQs);
+                AddToStack(newQs, inputQs);
 
             if (leftExpression != null)
             {
                 if (isRightExpressionQuery)
                 {
-                    IVertex nextExpression = InstructionHelpers.GetNextExpression(instructionVertex);
+                    IVertex nextExpression = GetNextExpression(instructionVertex);
 
                     if (nextExpression != null)
                         newQs = ColonSubExpressionProcess_Meta(exe, newQs, nextExpression);
@@ -174,19 +174,19 @@ namespace m0.ZeroUML.Instructions
             if (rightExpression != null)
             {
                 if (isRightExpressionQuery)
-                    newQs = InstructionHelpers.NextExpressionHandle(exe, newQs, rightExpression);
+                    newQs = NextExpressionHandle(exe, newQs, rightExpression);
                 else
                     newQs = exe.ExecuteInstructionByMontevideoPrinciples(newQs, rightExpression);
             }
 
-            return InstructionHelpers.NextExpressionHandle(exe, newQs, instructionVertex);
+            return NextExpressionHandle(exe, newQs, instructionVertex);
         }
 
         private static INoInEdgeInOutVertexVertex ColonSubExpressionProcess_Meta(ZeroCodeExecution exe, INoInEdgeInOutVertexVertex inQs, IVertex expression)
         {
             Dictionary<IVertex, bool> metaDict = new Dictionary<IVertex, bool>();
 
-            INoInEdgeInOutVertexVertex localQs = InstructionHelpers.CreateStack();
+            INoInEdgeInOutVertexVertex localQs = CreateStack();
 
             foreach (IEdge e in inQs)
                 if (!metaDict.ContainsKey(e.Meta))
@@ -200,7 +200,7 @@ namespace m0.ZeroUML.Instructions
             foreach (IEdge e in afterCallQs)
                 metaDict[e.To] = true;
 
-            INoInEdgeInOutVertexVertex newQs = InstructionHelpers.CreateStack();
+            INoInEdgeInOutVertexVertex newQs = CreateStack();
 
             foreach (IEdge e in inQs)
                 if (metaDict[e.Meta] == true)
@@ -224,8 +224,8 @@ namespace m0.ZeroUML.Instructions
         {
             isStackFrameReturn = false;
 
-            IVertex leftExpression = InstructionHelpers.GetLeft(instructionVertex);
-            IVertex rightExpression = InstructionHelpers.GetRight(instructionVertex);
+            IVertex leftExpression = GetLeft(instructionVertex);
+            IVertex rightExpression = GetRight(instructionVertex);
 
             if (leftExpression == null || rightExpression == null)
                 return exe.stack;
@@ -235,7 +235,7 @@ namespace m0.ZeroUML.Instructions
 
             IList<IEdge> rightExecuteResult = _rightExecuteResult.OutEdges;
 
-            IDictionary<EdgeKey_FromMeta, IList<IEdge>> leftFromMeta_dict = InstructionHelpers.CreateEdgeKey_FromMetaDictionary(leftExecuteResult);
+            IDictionary<EdgeKey_FromMeta, IList<IEdge>> leftFromMeta_dict = CreateEdgeKey_FromMetaDictionary(leftExecuteResult);
 
             foreach (KeyValuePair<EdgeKey_FromMeta, IList<IEdge>> localLeft in leftFromMeta_dict)
             {
@@ -255,8 +255,8 @@ namespace m0.ZeroUML.Instructions
         {
             isStackFrameReturn = false;
 
-            IVertex leftExpression = InstructionHelpers.GetLeft(instructionVertex);
-            IVertex rightExpression = InstructionHelpers.GetRight(instructionVertex);
+            IVertex leftExpression = GetLeft(instructionVertex);
+            IVertex rightExpression = GetRight(instructionVertex);
 
             if (leftExpression == null || rightExpression == null)
                 return exe.stack;
@@ -266,7 +266,7 @@ namespace m0.ZeroUML.Instructions
 
             IList<IEdge> rightExecuteResult = _rightExecuteResult.OutEdges;
 
-            IDictionary<EdgeKey_FromMeta, IList<IEdge>> leftFromMeta_dict = InstructionHelpers.CreateEdgeKey_FromMetaDictionary(leftExecuteResult);
+            IDictionary<EdgeKey_FromMeta, IList<IEdge>> leftFromMeta_dict = CreateEdgeKey_FromMetaDictionary(leftExecuteResult);
 
             foreach (KeyValuePair<EdgeKey_FromMeta, IList<IEdge>> localLeft in leftFromMeta_dict)
             {
@@ -284,8 +284,8 @@ namespace m0.ZeroUML.Instructions
         {
             isStackFrameReturn = false;
 
-            IVertex leftExpression = InstructionHelpers.GetLeft(instructionVertex);
-            IVertex rightExpression = InstructionHelpers.GetRight(instructionVertex);
+            IVertex leftExpression = GetLeft(instructionVertex);
+            IVertex rightExpression = GetRight(instructionVertex);
 
             if (leftExpression == null || rightExpression == null)
                 return exe.stack;
@@ -294,7 +294,7 @@ namespace m0.ZeroUML.Instructions
 
 
             IVertex newVertexCreationSpace_copy = exe.newVertexCreationSpace;
-            exe.newVertexCreationSpace = InstructionHelpers.CreateStack();
+            exe.newVertexCreationSpace = CreateStack();
 
             INoInEdgeInOutVertexVertex _rightExecuteResult = exe.ExecuteInstructionByMontevideoPrinciples(exe.stack, rightExpression);
 
@@ -317,8 +317,8 @@ namespace m0.ZeroUML.Instructions
         {
             isStackFrameReturn = false;
 
-            IVertex leftExpression = InstructionHelpers.GetLeft(instructionVertex);
-            IVertex rightExpression = InstructionHelpers.GetRight(instructionVertex);
+            IVertex leftExpression = GetLeft(instructionVertex);
+            IVertex rightExpression = GetRight(instructionVertex);
 
             if (leftExpression == null || rightExpression == null)
                 return exe.stack;
@@ -328,7 +328,7 @@ namespace m0.ZeroUML.Instructions
 
             IList<IEdge> leftExecuteResult = _leftExecuteResult.OutEdges;
 
-            ISet<IEdge> rightResultToSet = InstructionHelpers.CreateEdgeKey_ToSet(_rightExecuteResult);
+            ISet<IEdge> rightResultToSet = CreateEdgeKey_ToSet(_rightExecuteResult);
 
             foreach (IEdge leftEdge in leftExecuteResult)
             {
@@ -350,8 +350,8 @@ namespace m0.ZeroUML.Instructions
         {
             isStackFrameReturn = false;
 
-            IVertex leftExpression = InstructionHelpers.GetLeft(instructionVertex);
-            IVertex rightExpression = InstructionHelpers.GetRight(instructionVertex);
+            IVertex leftExpression = GetLeft(instructionVertex);
+            IVertex rightExpression = GetRight(instructionVertex);
 
             if (leftExpression == null || rightExpression == null)
                 return exe.stack;
@@ -361,7 +361,7 @@ namespace m0.ZeroUML.Instructions
 
             IList<IEdge> leftExecuteResult = _leftExecuteResult.OutEdges;
 
-            IList<IEdge> rightResultMetaToEdgesList = InstructionHelpers.CreateEdgeKey_MetaToEdgesList(_rightExecuteResult);
+            IList<IEdge> rightResultMetaToEdgesList = CreateEdgeKey_MetaToEdgesList(_rightExecuteResult);
 
             foreach (IEdge leftEdge in leftExecuteResult)
                 leftEdge.To.DeleteEdgesList(rightResultMetaToEdgesList);
@@ -374,8 +374,8 @@ namespace m0.ZeroUML.Instructions
         {
             isStackFrameReturn = false;
 
-            IVertex leftExpression = InstructionHelpers.GetLeft(instructionVertex);
-            IVertex rightExpression = InstructionHelpers.GetRight(instructionVertex);
+            IVertex leftExpression = GetLeft(instructionVertex);
+            IVertex rightExpression = GetRight(instructionVertex);
 
             if (leftExpression == null || rightExpression == null)
                 return exe.stack;
@@ -385,7 +385,7 @@ namespace m0.ZeroUML.Instructions
 
             IList<IEdge> leftExecuteResult = _leftExecuteResult.OutEdges;
 
-            ISet<IEdge> rightResultToSet = InstructionHelpers.CreateEdgeKey_ToSet(_rightExecuteResult);
+            ISet<IEdge> rightResultToSet = CreateEdgeKey_ToSet(_rightExecuteResult);
 
             foreach (IEdge leftEdge in leftExecuteResult)
                 foreach (IEdge intoLeftEdge in leftEdge.To.ToList<IEdge>())
@@ -417,8 +417,8 @@ namespace m0.ZeroUML.Instructions
         {
             isStackFrameReturn = false;
 
-            IVertex leftExpression = InstructionHelpers.GetLeft(instructionVertex);
-            IVertex rightExpression = InstructionHelpers.GetRight(instructionVertex);
+            IVertex leftExpression = GetLeft(instructionVertex);
+            IVertex rightExpression = GetRight(instructionVertex);
 
             if (leftExpression == null || rightExpression == null)
                 return exe.stack;
@@ -429,7 +429,7 @@ namespace m0.ZeroUML.Instructions
             IList<IEdge> leftExecuteResult = _leftExecuteResult.OutEdges;
             IList<IEdge> rightExecuteResult = _rightExecuteResult.OutEdges;
 
-            INoInEdgeInOutVertexVertex localStack = InstructionHelpers.CreateStack();
+            INoInEdgeInOutVertexVertex localStack = CreateStack();
 
             foreach (IEdge e in leftExecuteResult)
                 localStack.AddEdge(e.Meta, e.To);
@@ -444,8 +444,8 @@ namespace m0.ZeroUML.Instructions
         {
             isStackFrameReturn = false;
 
-            IVertex leftExpression = InstructionHelpers.GetLeft(instructionVertex);
-            IVertex rightExpression = InstructionHelpers.GetRight(instructionVertex);
+            IVertex leftExpression = GetLeft(instructionVertex);
+            IVertex rightExpression = GetRight(instructionVertex);
 
             if (leftExpression == null || rightExpression == null)
                 return exe.stack;
@@ -466,14 +466,14 @@ namespace m0.ZeroUML.Instructions
         {
             isStackFrameReturn = false;
 
-            IVertex expression = InstructionHelpers.GetExpression(instructionVertex);            
+            IVertex expression = GetExpression(instructionVertex);            
 
             if (expression == null)
-                return InstructionHelpers.Create_INoInEdgeInOutVertexVertex_FromEdgesList(inputStack);
+                return Create_INoInEdgeInOutVertexVertex_FromEdgesList(inputStack);
 
             INoInEdgeInOutVertexVertex executeResult = exe.ExecuteInstructionByMontevideoPrinciples(exe.stack, expression);
 
-            INoInEdgeInOutVertexVertex localStack = InstructionHelpers.CreateStack();
+            INoInEdgeInOutVertexVertex localStack = CreateStack();
 
             foreach(IEdge e in executeResult)
             {
@@ -483,14 +483,14 @@ namespace m0.ZeroUML.Instructions
                     localStack.AddEdgeForNoInEdgeInOutVertexVertex(inputStack.OutEdges[(int)index - 1]);
             }
             
-            return InstructionHelpers.NextExpressionHandle(exe, localStack, instructionVertex);
+            return NextExpressionHandle(exe, localStack, instructionVertex);
         }
 
         public static INoInEdgeInOutVertexVertex SetCount(ZeroCodeExecution exe, IVertex inputStack, IVertex instructionVertex, out bool isStackFrameReturn)
         {
             isStackFrameReturn = false;
             
-            INoInEdgeInOutVertexVertex localStack = InstructionHelpers.CreateStack();
+            INoInEdgeInOutVertexVertex localStack = CreateStack();
 
             localStack.AddVertex(null, inputStack.OutEdges.Count());
 
@@ -501,7 +501,7 @@ namespace m0.ZeroUML.Instructions
         {
             isStackFrameReturn = false;
            
-            INoInEdgeInOutVertexVertex localStack = InstructionHelpers.CreateStack();            
+            INoInEdgeInOutVertexVertex localStack = CreateStack();            
 
             return localStack;
         }
@@ -520,8 +520,8 @@ namespace m0.ZeroUML.Instructions
         {
             isStackFrameReturn = false;
 
-            IVertex leftExpression = InstructionHelpers.GetLeft(instructionVertex);
-            IVertex rightExpression = InstructionHelpers.GetRight(instructionVertex);
+            IVertex leftExpression = GetLeft(instructionVertex);
+            IVertex rightExpression = GetRight(instructionVertex);
 
             if (leftExpression == null || rightExpression == null)
                 return exe.stack;
@@ -532,36 +532,36 @@ namespace m0.ZeroUML.Instructions
             IList<IEdge> leftExecuteResult = _leftExecuteResult.OutEdges;
             IList<IEdge> rightExecuteResult = _rightExecuteResult.OutEdges;
 
-            InstructionHelpers.NumericTypeEnum leftResultType;
-            InstructionHelpers.NumericTypeEnum rightResultType;
+            NumericTypeEnum leftResultType;
+            NumericTypeEnum rightResultType;
 
-            IList<object> leftNumbers = InstructionHelpers.GetNumberList(leftExecuteResult, out leftResultType);
-            IList<object> rightNumbers = InstructionHelpers.GetNumberList(rightExecuteResult, out rightResultType);
+            IList<object> leftNumbers = GetNumberList(leftExecuteResult, out leftResultType);
+            IList<object> rightNumbers = GetNumberList(rightExecuteResult, out rightResultType);
 
             if (leftNumbers.Count == 0)
-                return InstructionHelpers.CreateStackAndCopy(rightExecuteResult);
+                return CreateStackAndCopy(rightExecuteResult);
 
             if (rightNumbers.Count == 0)
-                return InstructionHelpers.CreateStackAndCopy(leftExecuteResult);
+                return CreateStackAndCopy(leftExecuteResult);
 
-            switch (InstructionHelpers.GetCommonNubmerResultDenominator(leftResultType, rightResultType))
+            switch (GetCommonNubmerResultDenominator(leftResultType, rightResultType))
             {
-                case InstructionHelpers.NumericTypeEnum.Integer:
+                case NumericTypeEnum.Integer:
                     return _Add_Logic_int(leftNumbers, rightNumbers); // can not use generics when doing T + T
 
-                case InstructionHelpers.NumericTypeEnum.Double:
+                case NumericTypeEnum.Double:
                     return _Add_Logic_double(leftNumbers, rightNumbers);
 
-                case InstructionHelpers.NumericTypeEnum.Decimal:
+                case NumericTypeEnum.Decimal:
                     return _Add_Logic_decimal(leftNumbers, rightNumbers);
             }
 
-            return InstructionHelpers.Create_INoInEdgeInOutVertexVertex_FromEdgesList(inputStack);
+            return Create_INoInEdgeInOutVertexVertex_FromEdgesList(inputStack);
         }
 
         static INoInEdgeInOutVertexVertex _Add_Logic_int(IList<object> leftNumbers, IList<object> rightNumbers)
         {
-            INoInEdgeInOutVertexVertex localStack = InstructionHelpers.CreateStack();
+            INoInEdgeInOutVertexVertex localStack = CreateStack();
 
             if (leftNumbers.Count == 1 || rightNumbers.Count > 1)
             {
@@ -588,7 +588,7 @@ namespace m0.ZeroUML.Instructions
         }
         static INoInEdgeInOutVertexVertex _Add_Logic_double(IList<object> leftNumbers, IList<object> rightNumbers)
         {
-            INoInEdgeInOutVertexVertex localStack = InstructionHelpers.CreateStack();
+            INoInEdgeInOutVertexVertex localStack = CreateStack();
 
             if (leftNumbers.Count == 1 || rightNumbers.Count > 1)
             {
@@ -615,7 +615,7 @@ namespace m0.ZeroUML.Instructions
         }
         static INoInEdgeInOutVertexVertex _Add_Logic_decimal(IList<object> leftNumbers, IList<object> rightNumbers)
         {
-            INoInEdgeInOutVertexVertex localStack = InstructionHelpers.CreateStack();
+            INoInEdgeInOutVertexVertex localStack = CreateStack();
 
             if (leftNumbers.Count == 1 || rightNumbers.Count > 1)
             {
@@ -645,8 +645,8 @@ namespace m0.ZeroUML.Instructions
         {
             isStackFrameReturn = false;
 
-            IVertex leftExpression = InstructionHelpers.GetLeft(instructionVertex);
-            IVertex rightExpression = InstructionHelpers.GetRight(instructionVertex);
+            IVertex leftExpression = GetLeft(instructionVertex);
+            IVertex rightExpression = GetRight(instructionVertex);
 
             if (leftExpression == null || rightExpression == null)
                 return exe.stack;
@@ -657,35 +657,35 @@ namespace m0.ZeroUML.Instructions
             IList<IEdge> leftExecuteResult = _leftExecuteResult.OutEdges;
             IList<IEdge> rightExecuteResult = _rightExecuteResult.OutEdges;
 
-            InstructionHelpers.NumericTypeEnum leftResultType;
-            InstructionHelpers.NumericTypeEnum rightResultType;
+            NumericTypeEnum leftResultType;
+            NumericTypeEnum rightResultType;
 
-            IList<object> leftNumbers = InstructionHelpers.GetNumberList(leftExecuteResult, out leftResultType);
-            IList<object> rightNumbers = InstructionHelpers.GetNumberList(rightExecuteResult, out rightResultType);
+            IList<object> leftNumbers = GetNumberList(leftExecuteResult, out leftResultType);
+            IList<object> rightNumbers = GetNumberList(rightExecuteResult, out rightResultType);
 
             if (leftNumbers.Count == 0)
-                return InstructionHelpers.CreateStackAndCopy(rightExecuteResult);
+                return CreateStackAndCopy(rightExecuteResult);
 
             if (rightNumbers.Count == 0)
-                return InstructionHelpers.CreateStackAndCopy(leftExecuteResult);
+                return CreateStackAndCopy(leftExecuteResult);
 
-            switch (InstructionHelpers.GetCommonNubmerResultDenominator(leftResultType, rightResultType))
+            switch (GetCommonNubmerResultDenominator(leftResultType, rightResultType))
             {
-                case InstructionHelpers.NumericTypeEnum.Integer:
+                case NumericTypeEnum.Integer:
                     return _Substract_Logic_int(leftNumbers, rightNumbers); // can not use generics when doing T + T
 
-                case InstructionHelpers.NumericTypeEnum.Double:
+                case NumericTypeEnum.Double:
                     return _Substract_Logic_double(leftNumbers, rightNumbers);
 
-                case InstructionHelpers.NumericTypeEnum.Decimal:
+                case NumericTypeEnum.Decimal:
                     return _Substract_Logic_decimal(leftNumbers, rightNumbers);
             }
 
-            return InstructionHelpers.Create_INoInEdgeInOutVertexVertex_FromEdgesList(inputStack);
+            return Create_INoInEdgeInOutVertexVertex_FromEdgesList(inputStack);
         }
         static INoInEdgeInOutVertexVertex _Substract_Logic_int(IList<object> leftNumbers, IList<object> rightNumbers)
         {
-            INoInEdgeInOutVertexVertex localStack = InstructionHelpers.CreateStack();
+            INoInEdgeInOutVertexVertex localStack = CreateStack();
 
             if (leftNumbers.Count == 1 || rightNumbers.Count > 1)
             {
@@ -712,7 +712,7 @@ namespace m0.ZeroUML.Instructions
         }
         static INoInEdgeInOutVertexVertex _Substract_Logic_double(IList<object> leftNumbers, IList<object> rightNumbers)
         {
-            INoInEdgeInOutVertexVertex localStack = InstructionHelpers.CreateStack();
+            INoInEdgeInOutVertexVertex localStack = CreateStack();
 
             if (leftNumbers.Count == 1 || rightNumbers.Count > 1)
             {
@@ -739,7 +739,7 @@ namespace m0.ZeroUML.Instructions
         }
         static INoInEdgeInOutVertexVertex _Substract_Logic_decimal(IList<object> leftNumbers, IList<object> rightNumbers)
         {
-            INoInEdgeInOutVertexVertex localStack = InstructionHelpers.CreateStack();
+            INoInEdgeInOutVertexVertex localStack = CreateStack();
 
             if (leftNumbers.Count == 1 || rightNumbers.Count > 1)
             {
@@ -769,8 +769,8 @@ namespace m0.ZeroUML.Instructions
         {
             isStackFrameReturn = false;
 
-            IVertex leftExpression = InstructionHelpers.GetLeft(instructionVertex);
-            IVertex rightExpression = InstructionHelpers.GetRight(instructionVertex);
+            IVertex leftExpression = GetLeft(instructionVertex);
+            IVertex rightExpression = GetRight(instructionVertex);
 
             if (leftExpression == null || rightExpression == null)
                 return exe.stack;
@@ -781,36 +781,36 @@ namespace m0.ZeroUML.Instructions
             IList<IEdge> leftExecuteResult = _leftExecuteResult.OutEdges;
             IList<IEdge> rightExecuteResult = _rightExecuteResult.OutEdges;
 
-            InstructionHelpers.NumericTypeEnum leftResultType;
-            InstructionHelpers.NumericTypeEnum rightResultType;
+            NumericTypeEnum leftResultType;
+            NumericTypeEnum rightResultType;
 
-            IList<object> leftNumbers = InstructionHelpers.GetNumberList(leftExecuteResult, out leftResultType);
-            IList<object> rightNumbers = InstructionHelpers.GetNumberList(rightExecuteResult, out rightResultType);
+            IList<object> leftNumbers = GetNumberList(leftExecuteResult, out leftResultType);
+            IList<object> rightNumbers = GetNumberList(rightExecuteResult, out rightResultType);
 
             if (leftNumbers.Count == 0)
-                return InstructionHelpers.CreateStackAndCopy(rightExecuteResult);
+                return CreateStackAndCopy(rightExecuteResult);
 
             if (rightNumbers.Count == 0)
-                return InstructionHelpers.CreateStackAndCopy(leftExecuteResult);
+                return CreateStackAndCopy(leftExecuteResult);
 
-            switch (InstructionHelpers.GetCommonNubmerResultDenominator(leftResultType, rightResultType))
+            switch (GetCommonNubmerResultDenominator(leftResultType, rightResultType))
             {
-                case InstructionHelpers.NumericTypeEnum.Integer:
+                case NumericTypeEnum.Integer:
                     return _Multiply_Logic_int(leftNumbers, rightNumbers); // can not use generics when doing T + T
 
-                case InstructionHelpers.NumericTypeEnum.Double:
+                case NumericTypeEnum.Double:
                     return _Multiply_Logic_double(leftNumbers, rightNumbers);
 
-                case InstructionHelpers.NumericTypeEnum.Decimal:
+                case NumericTypeEnum.Decimal:
                     return _Multiply_Logic_decimal(leftNumbers, rightNumbers);
             }
 
-            return InstructionHelpers.Create_INoInEdgeInOutVertexVertex_FromEdgesList(inputStack);
+            return Create_INoInEdgeInOutVertexVertex_FromEdgesList(inputStack);
         }
 
         static INoInEdgeInOutVertexVertex _Multiply_Logic_int(IList<object> leftNumbers, IList<object> rightNumbers)
         {
-            INoInEdgeInOutVertexVertex localStack = InstructionHelpers.CreateStack();
+            INoInEdgeInOutVertexVertex localStack = CreateStack();
 
             if (leftNumbers.Count == 1 || rightNumbers.Count > 1)
             {
@@ -837,7 +837,7 @@ namespace m0.ZeroUML.Instructions
         }
         static INoInEdgeInOutVertexVertex _Multiply_Logic_double(IList<object> leftNumbers, IList<object> rightNumbers)
         {
-            INoInEdgeInOutVertexVertex localStack = InstructionHelpers.CreateStack();
+            INoInEdgeInOutVertexVertex localStack = CreateStack();
 
             if (leftNumbers.Count == 1 || rightNumbers.Count > 1)
             {
@@ -864,7 +864,7 @@ namespace m0.ZeroUML.Instructions
         }
         static INoInEdgeInOutVertexVertex _Multiply_Logic_decimal(IList<object> leftNumbers, IList<object> rightNumbers)
         {
-            INoInEdgeInOutVertexVertex localStack = InstructionHelpers.CreateStack();
+            INoInEdgeInOutVertexVertex localStack = CreateStack();
 
             if (leftNumbers.Count == 1 || rightNumbers.Count > 1)
             {
@@ -894,8 +894,8 @@ namespace m0.ZeroUML.Instructions
         {
             isStackFrameReturn = false;
 
-            IVertex leftExpression = InstructionHelpers.GetLeft(instructionVertex);
-            IVertex rightExpression = InstructionHelpers.GetRight(instructionVertex);
+            IVertex leftExpression = GetLeft(instructionVertex);
+            IVertex rightExpression = GetRight(instructionVertex);
 
             if (leftExpression == null || rightExpression == null)
                 return exe.stack;
@@ -906,36 +906,36 @@ namespace m0.ZeroUML.Instructions
             IList<IEdge> leftExecuteResult = _leftExecuteResult.OutEdges;
             IList<IEdge> rightExecuteResult = _rightExecuteResult.OutEdges;
 
-            InstructionHelpers.NumericTypeEnum leftResultType;
-            InstructionHelpers.NumericTypeEnum rightResultType;
+            NumericTypeEnum leftResultType;
+            NumericTypeEnum rightResultType;
 
-            IList<object> leftNumbers = InstructionHelpers.GetNumberList(leftExecuteResult, out leftResultType);
-            IList<object> rightNumbers = InstructionHelpers.GetNumberList(rightExecuteResult, out rightResultType);
+            IList<object> leftNumbers = GetNumberList(leftExecuteResult, out leftResultType);
+            IList<object> rightNumbers = GetNumberList(rightExecuteResult, out rightResultType);
 
             if (leftNumbers.Count == 0)
-                return InstructionHelpers.CreateStackAndCopy(rightExecuteResult);
+                return CreateStackAndCopy(rightExecuteResult);
 
             if (rightNumbers.Count == 0)
-                return InstructionHelpers.CreateStackAndCopy(leftExecuteResult);
+                return CreateStackAndCopy(leftExecuteResult);
 
-            switch (InstructionHelpers.GetCommonNubmerResultDenominator(leftResultType, rightResultType))
+            switch (GetCommonNubmerResultDenominator(leftResultType, rightResultType))
             {
-                case InstructionHelpers.NumericTypeEnum.Integer:
+                case NumericTypeEnum.Integer:
                     return _Divide_Logic_int(leftNumbers, rightNumbers); // can not use generics when doing T + T
 
-                case InstructionHelpers.NumericTypeEnum.Double:
+                case NumericTypeEnum.Double:
                     return _Divide_Logic_double(leftNumbers, rightNumbers);
 
-                case InstructionHelpers.NumericTypeEnum.Decimal:
+                case NumericTypeEnum.Decimal:
                     return _Divide_Logic_decimal(leftNumbers, rightNumbers);
             }
 
-            return InstructionHelpers.Create_INoInEdgeInOutVertexVertex_FromEdgesList(inputStack);
+            return Create_INoInEdgeInOutVertexVertex_FromEdgesList(inputStack);
         }
 
         static INoInEdgeInOutVertexVertex _Divide_Logic_int(IList<object> leftNumbers, IList<object> rightNumbers)
         {
-            INoInEdgeInOutVertexVertex localStack = InstructionHelpers.CreateStack();
+            INoInEdgeInOutVertexVertex localStack = CreateStack();
 
             if (leftNumbers.Count == 1 || rightNumbers.Count > 1)
             {
@@ -962,7 +962,7 @@ namespace m0.ZeroUML.Instructions
         }
         static INoInEdgeInOutVertexVertex _Divide_Logic_double(IList<object> leftNumbers, IList<object> rightNumbers)
         {
-            INoInEdgeInOutVertexVertex localStack = InstructionHelpers.CreateStack();
+            INoInEdgeInOutVertexVertex localStack = CreateStack();
 
             if (leftNumbers.Count == 1 || rightNumbers.Count > 1)
             {
@@ -989,7 +989,7 @@ namespace m0.ZeroUML.Instructions
         }
         static INoInEdgeInOutVertexVertex _Divide_Logic_decimal(IList<object> leftNumbers, IList<object> rightNumbers)
         {
-            INoInEdgeInOutVertexVertex localStack = InstructionHelpers.CreateStack();
+            INoInEdgeInOutVertexVertex localStack = CreateStack();
 
             if (leftNumbers.Count == 1 || rightNumbers.Count > 1)
             {
@@ -1027,8 +1027,8 @@ namespace m0.ZeroUML.Instructions
 
         private static INoInEdgeInOutVertexVertex LogicDoubleOperator(LogicDoubleOpertorEnum opetationType, ZeroCodeExecution exe, IVertex inputStack, IVertex instructionVertex, String leftAndRightResultsEmptyOperatorResult)
         {
-            IVertex leftExpression = InstructionHelpers.GetLeft(instructionVertex);
-            IVertex rightExpression = InstructionHelpers.GetRight(instructionVertex);
+            IVertex leftExpression = GetLeft(instructionVertex);
+            IVertex rightExpression = GetRight(instructionVertex);
 
             if (leftExpression == null || rightExpression == null)
                 return exe.stack;
@@ -1046,7 +1046,7 @@ namespace m0.ZeroUML.Instructions
             else
                 toBeProcessedCount = leftExecuteResult.Count;
 
-            INoInEdgeInOutVertexVertex localStack = InstructionHelpers.CreateStack();
+            INoInEdgeInOutVertexVertex localStack = CreateStack();
 
             if (toBeProcessedCount == 0) // left and right empty
             {
@@ -1096,21 +1096,21 @@ namespace m0.ZeroUML.Instructions
 
             if (leftNumber != null && rightNumber != null)
             {
-                switch (InstructionHelpers.GetCommonNumericTypeDenominator(leftNumber, rightNumber))
+                switch (GetCommonNumericTypeDenominator(leftNumber, rightNumber))
                 {
-                    case InstructionHelpers.NumericTypeEnum.Integer:
+                    case NumericTypeEnum.Integer:
                         int leftInt = Convert.ToInt32(leftNumber);
                         int rightInt = Convert.ToInt32(rightNumber);
                         logicalResult = LogicDoubleOperator_ExecuteNumeric<int>(leftInt, rightInt, operationType, 0);
                         break;
 
-                    case InstructionHelpers.NumericTypeEnum.Double:
+                    case NumericTypeEnum.Double:
                         double leftDouble = Convert.ToDouble(leftNumber);
                         double rightDouble = Convert.ToDouble(rightNumber);
                         logicalResult = LogicDoubleOperator_ExecuteNumeric<double>(leftDouble, rightDouble, operationType, 0);
                         break;
 
-                    case InstructionHelpers.NumericTypeEnum.Decimal:
+                    case NumericTypeEnum.Decimal:
                         decimal leftDecimal = Convert.ToDecimal(leftNumber);
                         decimal rightDecimal = Convert.ToDecimal(rightNumber);
                         logicalResult = LogicDoubleOperator_ExecuteNumeric<decimal>(leftDecimal, rightDecimal, operationType, 0);
@@ -1196,9 +1196,9 @@ namespace m0.ZeroUML.Instructions
                     if (
                         EqualityComparer<string>.Default.Equals(leftValue, rightValue) ||
 
-                        (InstructionHelpers.GetBolleanValue(leftVertex) == BooleanEnum.True && InstructionHelpers.GetBolleanValue(rightVertex) == BooleanEnum.True) || // true true
+                        (GetBolleanValue(leftVertex) == BooleanEnum.True && GetBolleanValue(rightVertex) == BooleanEnum.True) || // true true
 
-                        (InstructionHelpers.GetBolleanValue(leftVertex) == BooleanEnum.False && InstructionHelpers.GetBolleanValue(rightVertex) == BooleanEnum.False) // false false
+                        (GetBolleanValue(leftVertex) == BooleanEnum.False && GetBolleanValue(rightVertex) == BooleanEnum.False) // false false
                         )                        
                             output = true;
                     break;
@@ -1214,21 +1214,21 @@ namespace m0.ZeroUML.Instructions
                     if(
                         !EqualityComparer<string>.Default.Equals(leftValue, rightValue) ||
 
-                        (InstructionHelpers.GetBolleanValue(leftVertex) == BooleanEnum.True && InstructionHelpers.GetBolleanValue(rightVertex) == BooleanEnum.False) || // true false
+                        (GetBolleanValue(leftVertex) == BooleanEnum.True && GetBolleanValue(rightVertex) == BooleanEnum.False) || // true false
 
-                        (InstructionHelpers.GetBolleanValue(leftVertex) == BooleanEnum.False && InstructionHelpers.GetBolleanValue(rightVertex) == BooleanEnum.True) // false true
+                        (GetBolleanValue(leftVertex) == BooleanEnum.False && GetBolleanValue(rightVertex) == BooleanEnum.True) // false true
                         )
 
                         output = true;
                     break;
 
                 case LogicDoubleOpertorEnum.And:
-                    if (InstructionHelpers.GetBolleanValue(leftVertex) == BooleanEnum.True && InstructionHelpers.GetBolleanValue(rightVertex) == BooleanEnum.True)
+                    if (GetBolleanValue(leftVertex) == BooleanEnum.True && GetBolleanValue(rightVertex) == BooleanEnum.True)
                         output = true;
                     break;
 
                 case LogicDoubleOpertorEnum.Or:
-                    if (InstructionHelpers.GetBolleanValue(leftVertex) == BooleanEnum.True || InstructionHelpers.GetBolleanValue(rightVertex) == BooleanEnum.True)
+                    if (GetBolleanValue(leftVertex) == BooleanEnum.True || GetBolleanValue(rightVertex) == BooleanEnum.True)
                         output = true;
                     break;
 
@@ -1258,7 +1258,7 @@ namespace m0.ZeroUML.Instructions
 
         private static INoInEdgeInOutVertexVertex LogicSingleOperator(LogicSingleOpertorEnum opetationType, ZeroCodeExecution exe, IVertex inputStack, IVertex instructionVertex)
         {
-            IVertex expression = InstructionHelpers.GetExpression(instructionVertex);
+            IVertex expression = GetExpression(instructionVertex);
 
             if (expression == null)
                 return exe.stack;
@@ -1269,7 +1269,7 @@ namespace m0.ZeroUML.Instructions
 
             int toBeProcessedCount = executeResult.Count;
 
-            INoInEdgeInOutVertexVertex localStack = InstructionHelpers.CreateStack();
+            INoInEdgeInOutVertexVertex localStack = CreateStack();
 
             for (int x = 0; x < toBeProcessedCount; x++)
             {
@@ -1301,19 +1301,19 @@ namespace m0.ZeroUML.Instructions
 
             if (number!=null)
             {
-                switch (InstructionHelpers.GetNumericType(number))
+                switch (GetNumericType(number))
                 {
-                    case InstructionHelpers.NumericTypeEnum.Integer:
+                    case NumericTypeEnum.Integer:
                         int valInt = Convert.ToInt32(number);
                         logicalResult = LogicSingleOperator_ExecuteNumeric<int>(valInt, operationType, 0);
                         break;
 
-                    case InstructionHelpers.NumericTypeEnum.Double:
+                    case NumericTypeEnum.Double:
                         double valDouble = Convert.ToDouble(number);
                         logicalResult = LogicSingleOperator_ExecuteNumeric<double>(valDouble, operationType, 0);
                         break;
 
-                    case InstructionHelpers.NumericTypeEnum.Decimal:
+                    case NumericTypeEnum.Decimal:
                         decimal valDecimal = Convert.ToDecimal(number);
                         logicalResult = LogicSingleOperator_ExecuteNumeric<decimal>(valDecimal, operationType, 0);
                         break;
@@ -1458,7 +1458,7 @@ namespace m0.ZeroUML.Instructions
 
             INoInEdgeInOutVertexVertex localStack = exe.ExecuteInstructionByMontevideoPrinciples(inputStack, expression);
 
-            return InstructionHelpers.NextExpressionHandle(exe, localStack, instructionVertex);
+            return NextExpressionHandle(exe, localStack, instructionVertex);
         }
 
         public static INoInEdgeInOutVertexVertex Call(ZeroCodeExecution exe, IVertex inputStack, IVertex instructionVertex, out bool isStackFrameReturn)
@@ -1468,7 +1468,7 @@ namespace m0.ZeroUML.Instructions
             IVertex target = GraphUtil.GetQueryOutFirst(instructionVertex, "Target", null);
                 //instructionVertex.Get(false, "Target:");
 
-            if(!InstructionHelpers.CheckIs(target, "Function"))
+            if(!CheckIs(target, "Function"))
             {
                 INoInEdgeInOutVertexVertex targetExpressionExecution = exe.ExecuteInstructionByMontevideoPrinciples(exe.stack, target); 
                 if (targetExpressionExecution.Count() > 0)
@@ -1500,7 +1500,7 @@ namespace m0.ZeroUML.Instructions
 
             bool local_isStackFrameReturn;
 
-            INoInEdgeInOutVertexVertex possibleToReturnStack = InstructionHelpers.SequentiallyExecuteInstructions(exe, exe.stack, target, out local_isStackFrameReturn, false);
+            INoInEdgeInOutVertexVertex possibleToReturnStack = SequentiallyExecuteInstructions(exe, exe.stack, target, out local_isStackFrameReturn, false);
 
             exe.RemoveStackFrame(); // LEAVE NEW STACK
 
@@ -1522,7 +1522,7 @@ namespace m0.ZeroUML.Instructions
                 return exe.ExecuteInstructionByMontevideoPrinciples(inputStack, expression);
             }
 
-            return InstructionHelpers.Create_INoInEdgeInOutVertexVertex_FromEdgesList(inputStack);
+            return Create_INoInEdgeInOutVertexVertex_FromEdgesList(inputStack);
         }
 
         public static INoInEdgeInOutVertexVertex ForEach(ZeroCodeExecution exe, IVertex inputStack, IVertex instructionVertex, out bool isStackFrameReturn)
@@ -1543,18 +1543,14 @@ namespace m0.ZeroUML.Instructions
                 {
                     exe.AddStackFrame(); // ENTER NEW STACK
 
-                    IEdge variableEdge = GraphUtil.CreateArtificialEdge(variable, setEdge.To);
-
-                    MinusZero.Instance.Log(-2, "foreach beg", setEdge.To.ToString());
+                    IEdge variableEdge = GraphUtil.CreateArtificialEdge(variable, setEdge.To);                    
 
                     exe.stack.AddEdgeForNoInEdgeInOutVertexVertex(variableEdge);
 
-                    possibleToReturnStack = InstructionHelpers.SequentiallyExecuteInstructions(exe, exe.stack, instructionVertex, out local_isStackFrameReturn, false);
+                    possibleToReturnStack = SequentiallyExecuteInstructions(exe, exe.stack, instructionVertex, out local_isStackFrameReturn, false);
 
                     if (local_isStackFrameReturn)
-                        break;
-
-                    MinusZero.Instance.Log(-2, "foreach end", setEdge.To.ToString());
+                        break;                    
 
                     exe.RemoveStackFrame();  // LEAVE NEW STACK
                 }
@@ -1563,7 +1559,7 @@ namespace m0.ZeroUML.Instructions
                     return possibleToReturnStack;
             }
 
-            return InstructionHelpers.Create_INoInEdgeInOutVertexVertex_FromEdgesList(inputStack);
+            return Create_INoInEdgeInOutVertexVertex_FromEdgesList(inputStack);
         }
 
         public static INoInEdgeInOutVertexVertex While(ZeroCodeExecution exe, IVertex inputStack, IVertex instructionVertex, out bool isStackFrameReturn)
@@ -1581,11 +1577,11 @@ namespace m0.ZeroUML.Instructions
 
                 INoInEdgeInOutVertexVertex testResult = exe.ExecuteInstructionByMontevideoPrinciples(exe.stack, test);
 
-                while (InstructionHelpers.IsTrue_Stack(testResult))
+                while (IsTrue_Stack(testResult))
                 {
                     exe.AddStackFrame(); // ENTER NEW STACK
 
-                    possibleToReturnStack = InstructionHelpers.SequentiallyExecuteInstructions(exe, exe.stack, instructionVertex, out local_isStackFrameReturn, false);
+                    possibleToReturnStack = SequentiallyExecuteInstructions(exe, exe.stack, instructionVertex, out local_isStackFrameReturn, false);
 
                     if (local_isStackFrameReturn)
                         break;
@@ -1600,64 +1596,76 @@ namespace m0.ZeroUML.Instructions
                     return possibleToReturnStack;
             }
 
-            return InstructionHelpers.Create_INoInEdgeInOutVertexVertex_FromEdgesList(inputStack);
+            return Create_INoInEdgeInOutVertexVertex_FromEdgesList(inputStack);
         }
 
         public static INoInEdgeInOutVertexVertex Link(ZeroCodeExecution exe, IVertex inputStack, IVertex instructionVertex, out bool isStackFrameReturn)
         {
             isStackFrameReturn = false;
 
-            INoInEdgeInOutVertexVertex newStack = InstructionHelpers.CreateStack();
+            INoInEdgeInOutVertexVertex newStack = CreateStack();
 
             IVertex target = GraphUtil.GetQueryOutFirst(instructionVertex, "Target", null);
 
             if (target != null)
                 return exe.ExecuteInstructionByMontevideoPrinciples(inputStack, target);
 
-            return InstructionHelpers.CreateStack();
+            return CreateStack();
         }
 
         public static INoInEdgeInOutVertexVertex If(ZeroCodeExecution exe, IVertex inputStack, IVertex instructionVertex, out bool isStackFrameReturn)
         {
             isStackFrameReturn = false;
 
-            INoInEdgeInOutVertexVertex newStack = InstructionHelpers.CreateStack();
+            IVertex test = GraphUtil.GetQueryOutFirst(instructionVertex, "Test", null);
 
-            IVertex target = GraphUtil.GetQueryOutFirst(instructionVertex, "Target", null);
+            if(test==null)
+                return Create_INoInEdgeInOutVertexVertex_FromEdgesList(inputStack);
 
-            if (target != null)
-                return exe.ExecuteInstructionByMontevideoPrinciples(inputStack, target);
+            INoInEdgeInOutVertexVertex testExecution = exe.ExecuteInstructionByMontevideoPrinciples(exe.stack, test);
 
-            return InstructionHelpers.CreateStack();
+            if(IsTrue_Stack(testExecution))            
+                return SequenciallyExecuteIntructionsWithNewStackAndIsStackFrameReturnSupport(exe, inputStack, instructionVertex, out isStackFrameReturn);            
+
+            return Create_INoInEdgeInOutVertexVertex_FromEdgesList(inputStack);
         }
+
+
 
         public static INoInEdgeInOutVertexVertex Test(ZeroCodeExecution exe, IVertex inputStack, IVertex instructionVertex, out bool isStackFrameReturn)
         {
             isStackFrameReturn = false;
 
-            INoInEdgeInOutVertexVertex newStack = InstructionHelpers.CreateStack();
+            IVertex expression = GraphUtil.GetQueryOutFirst(instructionVertex, "Expression", null);
 
-            IVertex target = GraphUtil.GetQueryOutFirst(instructionVertex, "Target", null);
+            if (expression == null)
+                return Create_INoInEdgeInOutVertexVertex_FromEdgesList(inputStack);
 
-            if (target != null)
-                return exe.ExecuteInstructionByMontevideoPrinciples(inputStack, target);
+            INoInEdgeInOutVertexVertex expressionExecution = exe.ExecuteInstructionByMontevideoPrinciples(exe.stack, expression);
 
-            return InstructionHelpers.CreateStack();
-        }
+            if(expressionExecution.OutEdges.Count==0)
+                return Create_INoInEdgeInOutVertexVertex_FromEdgesList(inputStack);
 
-        public static INoInEdgeInOutVertexVertex Case(ZeroCodeExecution exe, IVertex inputStack, IVertex instructionVertex, out bool isStackFrameReturn)
-        {
-            isStackFrameReturn = false;
+            IVertex firstExpression = expressionExecution.OutEdges[0].To;
 
-            INoInEdgeInOutVertexVertex newStack = InstructionHelpers.CreateStack();
+            IList<IEdge> cases = GraphUtil.GetQueryOut(instructionVertex, "Case", null);
 
-            IVertex target = GraphUtil.GetQueryOutFirst(instructionVertex, "Target", null);
+            foreach(IEdge _case in cases)
+            {
+                IVertex test = GraphUtil.GetQueryOutFirst(_case.To, "Test", null);
 
-            if (target != null)
-                return exe.ExecuteInstructionByMontevideoPrinciples(inputStack, target);
+                if (test != null)
+                    if (CompareVertexValues(firstExpression, test))
+                        return SequenciallyExecuteIntructionsWithNewStackAndIsStackFrameReturnSupport(exe, inputStack, _case.To, out isStackFrameReturn);
+            }
 
-            return InstructionHelpers.CreateStack();
-        }
+            IVertex _default = GraphUtil.GetQueryOutFirst(instructionVertex, "Default", null);
+
+            if(_default!=null)
+                return SequenciallyExecuteIntructionsWithNewStackAndIsStackFrameReturnSupport(exe, inputStack, _default, out isStackFrameReturn);
+
+            return Create_INoInEdgeInOutVertexVertex_FromEdgesList(inputStack);
+        }        
 
         #endregion
 
@@ -1700,14 +1708,14 @@ namespace m0.ZeroUML.Instructions
         {
             isStackFrameReturn = false;
 
-            IVertex expression = InstructionHelpers.GetExpression(instructionVertex);
+            IVertex expression = GetExpression(instructionVertex);
 
             if (expression == null)
                 return exe.stack;
 
             INoInEdgeInOutVertexVertex expressionResult = exe.ExecuteInstructionByMontevideoPrinciples(inputStack, expression);
 
-            INoInEdgeInOutVertexVertex newStack = InstructionHelpers.CreateStack();
+            INoInEdgeInOutVertexVertex newStack = CreateStack();
 
             foreach(IEdge e in expressionResult)
             {
@@ -1721,17 +1729,17 @@ namespace m0.ZeroUML.Instructions
         {
             isStackFrameReturn = false;
 
-            IVertex expression = InstructionHelpers.GetExpression(instructionVertex);
+            IVertex expression = GetExpression(instructionVertex);
 
             if (expression == null)
                 return exe.stack;
 
             INoInEdgeInOutVertexVertex expressionResult = exe.ExecuteInstructionByMontevideoPrinciples(inputStack, expression);
 
-            INoInEdgeInOutVertexVertex newStack = InstructionHelpers.CreateStack();
+            INoInEdgeInOutVertexVertex newStack = CreateStack();
 
             foreach (IEdge e in expressionResult)
-                InstructionHelpers.CopyVertex(e, newStack);
+                CopyVertex(e, newStack);
 
             return newStack;
         }
@@ -1749,12 +1757,12 @@ namespace m0.ZeroUML.Instructions
             IVertex stackForNextExpression;
 
             if (isExeStackSameAsExeNewVertexCreationSpace)
-                stackForNextExpression = InstructionHelpers.CreateStack();
+                stackForNextExpression = CreateStack();
             else
                 stackForNextExpression = creationTarget;            
 
-            IVertex leftExpression = InstructionHelpers.GetLeft(instructionVertex);
-            IVertex rightExpression = InstructionHelpers.GetRight(instructionVertex);
+            IVertex leftExpression = GetLeft(instructionVertex);
+            IVertex rightExpression = GetRight(instructionVertex);
 
             if (rightExpression == null)
                 return exe.stack;
@@ -1778,7 +1786,7 @@ namespace m0.ZeroUML.Instructions
                 {              
                     IEdge newEdge = creationTarget.AddEdge(meta, e.To);
 
-                    toReturn = InstructionHelpers.NextExpressionHandle(exe, newEdge.To, instructionVertex);
+                    toReturn = NextExpressionHandle(exe, newEdge.To, instructionVertex);
 
                     if (isExeStackSameAsExeNewVertexCreationSpace)
                         stackForNextExpression.AddEdge(meta, e.To);
@@ -1786,7 +1794,7 @@ namespace m0.ZeroUML.Instructions
             }         
 
             if (toReturn == null)
-                return InstructionHelpers.CreateStack();
+                return CreateStack();
             return toReturn;
         }
 
@@ -1801,7 +1809,7 @@ namespace m0.ZeroUML.Instructions
             
             exe.newVertexCreationSpace = inputStack;
 
-            possibleToReturnStack = InstructionHelpers.SequentiallyExecuteInstructions(exe, 
+            possibleToReturnStack = SequentiallyExecuteInstructions(exe, 
                     exe.stack, instructionVertex, out local_isStackFrameReturn, false);
 
             exe.newVertexCreationSpace = newVertexCreationSpace_copy;
@@ -1809,7 +1817,7 @@ namespace m0.ZeroUML.Instructions
             if (local_isStackFrameReturn)
                 return possibleToReturnStack;
             
-            return InstructionHelpers.Create_INoInEdgeInOutVertexVertex_FromEdgesList(inputStack);
+            return Create_INoInEdgeInOutVertexVertex_FromEdgesList(inputStack);
         }
 
         #endregion
@@ -1826,14 +1834,14 @@ namespace m0.ZeroUML.Instructions
         {
             isStackFrameReturn = false;
 
-            IVertex expression = InstructionHelpers.GetExpression(instructionVertex);
+            IVertex expression = GetExpression(instructionVertex);
 
             if (expression == null)
                 return exe.stack;
 
             INoInEdgeInOutVertexVertex expressionResult = exe.ExecuteInstructionByMontevideoPrinciples(inputStack, expression);
 
-            INoInEdgeInOutVertexVertex newStack = InstructionHelpers.CreateStack();
+            INoInEdgeInOutVertexVertex newStack = CreateStack();
 
             foreach (IEdge e in expressionResult)
             {
@@ -1850,7 +1858,7 @@ namespace m0.ZeroUML.Instructions
         {
             isStackFrameReturn = false;
 
-            IVertex expression = InstructionHelpers.GetExpression(instructionVertex);
+            IVertex expression = GetExpression(instructionVertex);
 
             if (expression == null)
                 return exe.stack;
@@ -1862,11 +1870,11 @@ namespace m0.ZeroUML.Instructions
             if (instuctionFormalTextLanguage == null)
                 language = MinusZero.Instance.DefaultFormalTextLanguage;
             else
-                language = InstructionHelpers.GetFirstExecutionEdge(exe, instuctionFormalTextLanguage).To;
+                language = GetFirstExecutionEdge(exe, instuctionFormalTextLanguage).To;
 
             INoInEdgeInOutVertexVertex expressionResult = exe.ExecuteInstructionByMontevideoPrinciples(inputStack, expression);
 
-            INoInEdgeInOutVertexVertex newStack = InstructionHelpers.CreateStack();
+            INoInEdgeInOutVertexVertex newStack = CreateStack();
 
             foreach (IEdge e in expressionResult)
             {
@@ -1882,7 +1890,7 @@ namespace m0.ZeroUML.Instructions
         {
             isStackFrameReturn = false;
 
-            IVertex expression = InstructionHelpers.GetExpression(instructionVertex);
+            IVertex expression = GetExpression(instructionVertex);
 
             if (expression == null)
                 return exe.stack;
@@ -1894,11 +1902,11 @@ namespace m0.ZeroUML.Instructions
             if (instuctionFormalTextLanguage == null)
                 language = MinusZero.Instance.DefaultFormalTextLanguage;
             else
-                language = InstructionHelpers.GetFirstExecutionEdge(exe, instuctionFormalTextLanguage).To;
+                language = GetFirstExecutionEdge(exe, instuctionFormalTextLanguage).To;
 
             INoInEdgeInOutVertexVertex expressionResult = exe.ExecuteInstructionByMontevideoPrinciples(inputStack, expression);
 
-            INoInEdgeInOutVertexVertex newStack = InstructionHelpers.CreateStack();
+            INoInEdgeInOutVertexVertex newStack = CreateStack();
 
             foreach (IEdge e in expressionResult)
             {

@@ -430,9 +430,81 @@ namespace m0.ZeroCode.Helpers
             return false;
         } 
         
-       public static IEdge GetFirstExecutionEdge(ZeroCodeExecution exe, IVertex instructionVertex)
-       {
-            return exe.ExecuteInstructionByMontevideoPrinciples(exe.stack, instructionVertex).FirstOrDefault();
-       }
+        public static IEdge GetFirstExecutionEdge(ZeroCodeExecution exe, IVertex instructionVertex)
+        {
+             return exe.ExecuteInstructionByMontevideoPrinciples(exe.stack, instructionVertex).FirstOrDefault();
+        }
+
+        public static INoInEdgeInOutVertexVertex SequenciallyExecuteIntructionsWithNewStackAndIsStackFrameReturnSupport(ZeroCodeExecution exe, IVertex inputStack, IVertex instructionVertex, out bool isStackFrameReturn)
+        {
+            isStackFrameReturn = false;
+
+            bool local_isStackFrameReturn = false;
+            INoInEdgeInOutVertexVertex possibleToReturnStack = null;
+
+            exe.AddStackFrame(); // ENTER NEW STACK                                
+
+            possibleToReturnStack = InstructionHelpers.SequentiallyExecuteInstructions(exe, exe.stack, instructionVertex, out isStackFrameReturn, false);
+
+            exe.RemoveStackFrame();  // LEAVE NEW STACK                
+
+            if (isStackFrameReturn)
+                return possibleToReturnStack;
+
+            return InstructionHelpers.Create_INoInEdgeInOutVertexVertex_FromEdgesList(inputStack);
+        }
+
+        public static bool CompareVertexValues(IVertex leftVertex, IVertex rightVertex)
+        {
+            object leftNumber;
+            object rightNumber;
+
+            GraphUtil.GetNumberValue(leftVertex, out leftNumber);
+            GraphUtil.GetNumberValue(rightVertex, out rightNumber);
+
+            if (leftNumber != null && rightNumber != null)
+            {
+                switch (GetCommonNumericTypeDenominator(leftNumber, rightNumber))
+                {
+                    case NumericTypeEnum.Integer:
+                        int leftInt = Convert.ToInt32(leftNumber);
+                        int rightInt = Convert.ToInt32(rightNumber);
+                        
+                        if (EqualityComparer<int>.Default.Equals(leftInt, rightInt))
+                            return true;
+                        else
+                            return false;                        
+
+                    case NumericTypeEnum.Double:
+                        double leftDouble = Convert.ToDouble(leftNumber);
+                        double rightDouble = Convert.ToDouble(rightNumber);
+
+                        if (EqualityComparer<double>.Default.Equals(leftDouble, rightDouble))
+                            return true;
+                        else
+                            return false;                        
+
+                    case NumericTypeEnum.Decimal:
+                        decimal leftDecimal = Convert.ToDecimal(leftNumber);
+                        decimal rightDecimal = Convert.ToDecimal(rightNumber);
+
+                        if (EqualityComparer<decimal>.Default.Equals(leftDecimal, rightDecimal))
+                            return true;
+                        else
+                            return false;                        
+                }
+            }
+
+            string leftValue = leftVertex.Value.ToString();
+            string rightValue = rightVertex.Value.ToString();
+
+            if (EqualityComparer<string>.Default.Equals(leftValue, rightValue) ||
+                        (GetBolleanValue(leftVertex) == BooleanEnum.True && GetBolleanValue(rightVertex) == BooleanEnum.True) || // true true
+                        (GetBolleanValue(leftVertex) == BooleanEnum.False && GetBolleanValue(rightVertex) == BooleanEnum.False) // false false
+                        )
+                return true;
+            else
+                return false;
+        }
     }
 }

@@ -1,4 +1,25 @@
 ﻿"Y"
+	variable "mis" @Boolean
+	if ("1" + "2") == "3"
+		mis = "True"
+	function "t" @String(@String "m")
+		test "4"
+			case "1"
+				return "raz"
+			case "2"
+				return "dwa"
+			case "3"
+				return "trzy"
+			default
+				return "def"
+			case "4"
+				if m == "True"
+					return "cztery"
+		return "kupa"
+	variable "a" @String
+	a = @t[mis]
+
+"Y"
 	a||b{
 		if "True"
 			foreach "X" in a\b\c
