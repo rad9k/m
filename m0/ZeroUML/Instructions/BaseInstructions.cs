@@ -1461,7 +1461,7 @@ namespace m0.ZeroUML.Instructions
             return NextExpressionHandle(exe, localStack, instructionVertex);
         }
 
-        public static INoInEdgeInOutVertexVertex Call(ZeroCodeExecution exe, IVertex inputStack, IVertex instructionVertex, out bool isStackFrameReturn)
+        public static INoInEdgeInOutVertexVertex FunctionCall(ZeroCodeExecution exe, IVertex inputStack, IVertex instructionVertex, out bool isStackFrameReturn)
         {
             isStackFrameReturn = false;
 

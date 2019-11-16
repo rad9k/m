@@ -39,7 +39,8 @@
 30. |a +< {} support
 35. sub support
 38. child vertex short names support in ||{}/ X+<||{} for @@ and run time queries
-41. . as attribute access
+41. . as attribute access or just
+42. $Is context of left operands to create new edges by incomplete meta
 
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!! Done:
 

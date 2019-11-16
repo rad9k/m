@@ -809,7 +809,7 @@ namespace m0
 
             IVertex vxx = vx.AddVertex(null, "VXX");
 
-            IVertex c = VertexOperations.AddInstance(vxx, smu.Get(false, "[]"));
+            IVertex c = VertexOperations.AddInstance(vxx, smu.Get(false, "FunctionCall"));
             
             c.Value="";
 

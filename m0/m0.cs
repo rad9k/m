@@ -385,8 +385,8 @@ namespace m0
                 ",DoubleOperator{LeftExpression{$MinCardinality:1,$MaxCardinality:1},RightExpression{$MinCardinality:1,$MaxCardinality:1}}" +                
                 ",MultiOperator{Expression{$MinCardinality:0,$MaxCardinality:-1}}" +
                 ",Query" +
-                ",FunctionCall{Target{$MinCardinality:0,$MaxCardinality:1}}" +
-                ",MethodCall,MethodGet,New" +
+                ",FunctionCall{Target{$MinCardinality:1,$MaxCardinality:1}}" +
+                ",MethodCall{Target{$MinCardinality:1,$MaxCardinality:1}},New" +
                 ",SetIndex,SetCount" +
                 ",\"{}\",InnerCreation,EdgeSetAdd,EdgeSetSubstract,+,-,Mul,/,?,\"\\ \",\"|\",\"||\",CopySet,MetaToTo,(),RedirectLeftEdgesToRightVertices,AddLeftEdgesToRightVertices,AddRightEdgesIntoLeftEdges,DeleteRightVertices,DeleteRightEdgesFromLeftEdges,DeleteRightVerticesFromLeftEdges" +
                 ",Equal,ExactEqual,VertexEqual,NotEqual,Negation,And,Or,MoreThan,LessThan,MoreOrEqualThan,LessOrEqualThan" +
@@ -456,7 +456,7 @@ namespace m0
             // general operators
 
             AddDotNetEndPoint(smu.Get(false, "()"), "Bracket");
-            AddDotNetEndPoint(smu.Get(false, "FunctionCall"), "Call");
+            AddDotNetEndPoint(smu.Get(false, "FunctionCall"), "FunctionCall");
             AddDotNetEndPoint(smu.Get(false, "Return"), "Return");
             AddDotNetEndPoint(smu.Get(false, "ForEach"), "ForEach");
             AddDotNetEndPoint(smu.Get(false, "While"), "While");
@@ -466,8 +466,7 @@ namespace m0
             // oo operators
 
             AddDotNetEndPoint(smu.Get(false, "MethodCall"), "MethodCall");
-            AddDotNetEndPoint(smu.Get(false, "MethodGet"), "MethodGet");
-            AddDotNetEndPoint(smu.Get(false, ""), "Test");
+            AddDotNetEndPoint(smu.Get(false, "New"), "New");
 
             // stack operators
 
@@ -519,6 +518,8 @@ namespace m0
             smu.Get(false, "InnerCreation").AddEdge(sm.Get(false, "*$Inherits"), smu.Get(false, "MultiOperator"));
             smu.Get(false, "\"{}\"").AddEdge(sm.Get(false, "*$Inherits"), smu.Get(false, "SingleOperator"));
             smu.Get(false, "\"{}\"").AddEdge(sm.Get(false, "*$Inherits"), smu.Get(false, "MultiOperator"));
+
+            smu.Get(false, @"MethodCall").AddEdge(sm.Get(false, "*$Inherits"), smu.Get(false, "MultiOperator"));
 
             smu.Get(false, @"+").AddEdge(sm.Get(false, "*$Inherits"), smu.Get(false, "DoubleOperator"));
             smu.Get(false, @"-").AddEdge(sm.Get(false, "*$Inherits"), smu.Get(false, "DoubleOperator"));
@@ -607,6 +608,7 @@ namespace m0
             smu.Get(false, @"MultiOperator\Expression").AddEdge(isAggregation, Empty);            
 
             smu.Get(false, @"FunctionCall\Target").AddEdge(isAggregation, Empty); // XXX
+            smu.Get(false, @"MethodCall\Target").AddEdge(isAggregation, Empty); // XXX
 
             //rest edges
             smu.Get(false, @"Return\Expression").AddEdge(sm.Get(false, @"*$EdgeTarget"), smu.Get(false, @"Atom"));
@@ -614,6 +616,7 @@ namespace m0
 
             //smu.Get(false, @"FunctionCall\Target").AddEdge(sm.Get(false, @"*$EdgeTarget"), smu.Get(false, @"StackFrameCreator"));
             smu.Get(false, @"FunctionCall\Target").AddEdge(sm.Get(false, @"*$EdgeTarget"), smu.Get(false, @"Atom")); // XXX
+            smu.Get(false, @"MethodCall\Target").AddEdge(sm.Get(false, @"*$EdgeTarget"), smu.Get(false, @"Atom")); // XXX
 
             smu.Get(false, @"StackFrameCreator\Do").AddEdge(sm.Get(false, @"*$EdgeTarget"), smu.Get(false, @"Atom"));
             smu.Get(false, @"StackFrameCreator\Variable").AddEdge(sm.Get(false, @"*$VertexTarget"), smu.Get(false, @"Type"));
@@ -714,6 +717,10 @@ namespace m0
             package.AddEdge(null, smu.Get(false, "Test"));
             package.AddEdge(null, smu.Get(false, "While"));
             package.AddEdge(null, smu.Get(false, "ForEach"));
+
+            package.AddEdge(null, smu.Get(false, "MethodCall"));
+            package.AddEdge(null, smu.Get(false, "New"));
+
             package.AddEdge(null, sm.Get(false, @"Base\$Import"));
             package.AddEdge(null, sm.Get(false, @"Base\$ImportMeta"));
         }
