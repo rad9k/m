@@ -1773,7 +1773,7 @@ namespace m0
 
             o_parse_any.AddEdge(_is, smu.Get(false, @"Parse"));
 
-            o_parse_any.AddVertex(smu.Get(false, @"SingleExpressionOperator\Expression"), "(?<expr>)");
+            o_parse_any.AddVertex(smu.Get(false, @"SingleOperator\Expression"), "(?<expr>)");
 
             // parse
             //
@@ -1787,7 +1787,7 @@ namespace m0
 
             o_parse2_any.AddVertex(smu.Get(false, @"ParseWithLanguage\FormalTextLanguage"), "(?<language>)");
 
-            o_parse2_any.AddVertex(smu.Get(false, @"SingleExpressionOperator\Expression"), "(?<expr>)");            
+            o_parse2_any.AddVertex(smu.Get(false, @"SingleOperator\Expression"), "(?<expr>)");            
 
             // generate
             //
@@ -1799,7 +1799,7 @@ namespace m0
 
             o_generate_any.AddEdge(_is, smu.Get(false, @"Generate"));
 
-            o_generate_any.AddVertex(smu.Get(false, @"SingleExpressionOperator\Expression"), "(?<expr>)");
+            o_generate_any.AddVertex(smu.Get(false, @"SingleOperator\Expression"), "(?<expr>)");
 
             // generate
             //
@@ -1811,7 +1811,7 @@ namespace m0
 
             o_generate2_any.AddEdge(_is, smu.Get(false, @"GenerateWithLanguage"));
 
-            o_generate2_any.AddVertex(smu.Get(false, @"SingleExpressionOperator\Expression"), "(?<expr>)");
+            o_generate2_any.AddVertex(smu.Get(false, @"SingleOperator\Expression"), "(?<expr>)");
 
             o_generate2_any.AddVertex(smu.Get(false, @"GenerateWithLanguage\FormalTextLanguage"), "(?<language>)");
 
@@ -1838,7 +1838,7 @@ namespace m0
 
             o_copy_any.AddEdge(smb.Get(false, @"Vertex\$Is"), smu.Get(false, _is));
 
-            o_copy_any.AddVertex(smu.Get(false, @"SingleExpressionOperator\Expression"), "(?<expr>)");
+            o_copy_any.AddVertex(smu.Get(false, @"SingleOperator\Expression"), "(?<expr>)");
         }
 
         private static void AddKeyword(IVertex k, IVertex smu, IVertex smb, IVertex keyword, IVertex any,  string text, string _is)
