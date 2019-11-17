@@ -297,8 +297,8 @@ namespace m0
                 "\r\n\tB +< \"B1\"" +
                 "\r\n\tB +< \"B2\"" +
                 "\r\n\tB +< \"B3\"" +
-                "\r\n\tA := \"val A\"" +
-                "\r\n\tB := \"val B\"" +
+                //"\r\n\tA = \"val A\"" +
+                //"\r\n\tB = \"val B\"" +
                 "\r\n\tC +< A\\ <+> B\\" +
                 "\r\n\tD +< C\\ <-> B\\"
                 

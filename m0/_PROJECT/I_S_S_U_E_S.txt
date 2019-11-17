@@ -1,11 +1,11 @@
 ﻿!!!!!!!!!!!!!!!!!!!!!!!!!!!!! TO DO:
 2. can not create Files
-22. := or something similar for base
+22. +<= or something similar for base
 24. class / method
 27. key added error on exit
 32. language definition correction
 33. standard base library
-
+43. :=
 
 <><><> FUTURE 0
 
