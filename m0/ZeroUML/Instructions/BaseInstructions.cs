@@ -1630,8 +1630,6 @@ namespace m0.ZeroUML.Instructions
             return Create_INoInEdgeInOutVertexVertex_FromEdgesList(inputStack);
         }
 
-
-
         public static INoInEdgeInOutVertexVertex Test(ZeroCodeExecution exe, IVertex inputStack, IVertex instructionVertex, out bool isStackFrameReturn)
         {
             isStackFrameReturn = false;
@@ -1919,6 +1917,79 @@ namespace m0.ZeroUML.Instructions
         }
 
         #endregion
+
+        ////////////////////////////////////////////////////////////////
+        //
+        // oo
+        //
+        ////////////////////////////////////////////////////////////////
+
+        public static INoInEdgeInOutVertexVertex MethodCall(ZeroCodeExecution exe, IVertex inputStack, IVertex instructionVertex, out bool isStackFrameReturn)
+        {
+            isStackFrameReturn = false;
+
+            IVertex target = GraphUtil.GetQueryOutFirst(instructionVertex, "Target", null);
+            //instructionVertex.Get(false, "Target:");
+
+            if (!CheckIs(target, "Function"))
+            {
+                INoInEdgeInOutVertexVertex targetExpressionExecution = exe.ExecuteInstructionByMontevideoPrinciples(exe.stack, target);
+                if (targetExpressionExecution.Count() > 0)
+                    target = targetExpressionExecution.OutEdges[0].To;
+            }
+
+            if (target == null)
+                return exe.stack;
+
+            exe.AddStackFrame(); // ENTER NEW STACK
+
+            IList<IEdge> expressions = GraphUtil.GetQueryOut(instructionVertex, "Expression", null);
+            //instructionVertex.GetAll(false, "Expression:");
+            IList<IEdge> inputParameters = GraphUtil.GetQueryOut(target, "InputParameter", null);
+            //target.GetAll(false, "InputParameter:");
+
+            int minParameters = Math.Min(expressions.Count(), inputParameters.Count());
+
+            for (int x = 0; x < minParameters; x++)
+            {
+                IVertex expression = expressions[x].To;
+                IVertex inputParameter = inputParameters[x].To;
+
+                INoInEdgeInOutVertexVertex expressionExecution = exe.ExecuteInstructionByMontevideoPrinciples(exe.stack, expression);
+
+                foreach (IEdge e in expressionExecution)
+                    exe.stack.AddEdge(inputParameter, e.To);
+            }
+
+            bool local_isStackFrameReturn;
+
+            INoInEdgeInOutVertexVertex possibleToReturnStack = SequentiallyExecuteInstructions(exe, exe.stack, target, out local_isStackFrameReturn, false);
+
+            exe.RemoveStackFrame(); // LEAVE NEW STACK
+
+            if (local_isStackFrameReturn)
+                return possibleToReturnStack;
+            else
+                return CreateStack();
+        }
+
+        public static INoInEdgeInOutVertexVertex New(ZeroCodeExecution exe, IVertex inputStack, IVertex instructionVertex, out bool isStackFrameReturn)
+        {
+            isStackFrameReturn = false;
+
+            IVertex test = GraphUtil.GetQueryOutFirst(instructionVertex, "Test", null);
+
+            if (test == null)
+                return Create_INoInEdgeInOutVertexVertex_FromEdgesList(inputStack);
+
+            INoInEdgeInOutVertexVertex testExecution = exe.ExecuteInstructionByMontevideoPrinciples(exe.stack, test);
+
+            if (IsTrue_Stack(testExecution))
+                return SequenciallyExecuteIntructionsWithNewStackAndIsStackFrameReturnSupport(exe, inputStack, instructionVertex, out isStackFrameReturn);
+
+            return Create_INoInEdgeInOutVertexVertex_FromEdgesList(inputStack);
+        }
+
     }
 }
 

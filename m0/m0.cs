@@ -15,8 +15,6 @@ namespace m0
 {
     public class MinusZero : IStoreUniverse, IDisposable
     {
-        public static bool flag = false; // for debug
-
         public static MinusZero Instance = new MinusZero();
 
         public bool IsInitialized = false;
@@ -1814,6 +1812,52 @@ namespace m0
             o_generate2_any.AddVertex(smu.Get(false, @"SingleOperator\Expression"), "(?<expr>)");
 
             o_generate2_any.AddVertex(smu.Get(false, @"GenerateWithLanguage\FormalTextLanguage"), "(?<language>)");
+
+            //////////////////// meta
+
+
+            // parse
+            //
+            // parse((?<expr>))
+
+            IVertex o_parse = k.AddVertex(keyword, "parse((?<expr>))");
+
+            IVertex o_parse_any = o_parse.AddVertex(any, "");
+
+            o_parse_any.AddEdge(_is, smu.Get(false, @"Parse"));
+
+            o_parse_any.AddVertex(smu.Get(false, @"SingleOperator\Expression"), "(?<expr>)");
+
+            //////////////////// meta
+
+            // new 
+            //
+            // new (?<expr>))
+
+            IVertex o_new = k.AddVertex(keyword, "new (?<expr>)");
+
+            IVertex o_new_any = o_new.AddVertex(any, "");
+
+            o_new_any.AddEdge(_is, smu.Get(false, @"New"));
+
+            o_new_any.AddVertex(smu.Get(false, @"SingleOperator\Expression"), "(?<expr>)");
+
+
+            // .[]
+            //
+            // [(*(+, +) (?<expr>)*)]
+
+            IVertex o_call = k.AddVertex(keyword, "(?<target_ColonEmptyInner2SlashMarkIndexNewLink>)[(*(+, +)(?<expr>)*)]");
+
+            IVertex o_call_any = o_call.AddVertex(any, "");
+
+            o_call_any.AddEdge(smb.Get(false, @"Vertex\$Is"), smu.Get(false, "FunctionCall"));
+
+            IVertex o_call_any_target = o_call_any.AddVertex(smu.Get(false, @"FunctionCall\Target"), "(?<target_ColonEmptyInner2SlashMarkIndexNewLink>)");
+
+            IVertex o_call_any_param = o_call_any.AddVertex(smu.Get(false, @"MultiOperator\Expression"), "(?<expr>)");
+
+            o_call_any_param.AddEdge(smb.Get(false, @"$$KeywordManyRoot"), smb.Get(false, @"$Empty"));
 
         }
 
