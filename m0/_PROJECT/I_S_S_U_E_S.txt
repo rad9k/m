@@ -1,6 +1,6 @@
 ﻿!!!!!!!!!!!!!!!!!!!!!!!!!!!!! TO DO:
 2. can not create Files
-22. +<= or something similar for base
+22. ++< or something similar for base
 24. class / method
 27. key added error on exit
 32. language definition correction
@@ -32,12 +32,12 @@
 
 3. exception handling throught custom meta code
 12. execution stop / continuation / stack copy?
-19. [] / execute / () / @@=>@() as begginning of Query
+19. [] / .[] / execute / () / @@=>@() as begginning of Query
 20. different import keywords support
 21. [] / execute / without () as || parameter
 28. other quantifiers in queries
 29. meta string support in queries
-30. |a +< {} support
+30. |a / a| / a|b +< {} support
 35. sub support
 38. child vertex short names support in ||{}/ X+<||{} for @@ and run time queries
 41. . as attribute access or just
