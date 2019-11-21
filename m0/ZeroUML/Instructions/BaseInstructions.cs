@@ -231,7 +231,15 @@ namespace m0.ZeroUML.Instructions
                 return exe.stack;
 
             INoInEdgeInOutVertexVertex leftExecuteResult = exe.ExecuteInstructionByMontevideoPrinciples(exe.stack, leftExpression);
+            //INoInEdgeInOutVertexVertex _rightExecuteResult = exe.ExecuteInstructionByMontevideoPrinciples(exe.stack, rightExpression);
+            IVertex newVertexCreationSpace_copy = exe.newVertexCreationSpace;
+            exe.newVertexCreationSpace = CreateStack();
+
             INoInEdgeInOutVertexVertex _rightExecuteResult = exe.ExecuteInstructionByMontevideoPrinciples(exe.stack, rightExpression);
+
+            exe.newVertexCreationSpace = newVertexCreationSpace_copy;
+            // NEW
+
 
             IList<IEdge> rightExecuteResult = _rightExecuteResult.OutEdges;
 
@@ -262,7 +270,16 @@ namespace m0.ZeroUML.Instructions
                 return exe.stack;
 
             INoInEdgeInOutVertexVertex leftExecuteResult = exe.ExecuteInstructionByMontevideoPrinciples(exe.stack, leftExpression);
+
+            //INoInEdgeInOutVertexVertex _rightExecuteResult = exe.ExecuteInstructionByMontevideoPrinciples(exe.stack, rightExpression);
+
+            IVertex newVertexCreationSpace_copy = exe.newVertexCreationSpace;
+            exe.newVertexCreationSpace = CreateStack();
+
             INoInEdgeInOutVertexVertex _rightExecuteResult = exe.ExecuteInstructionByMontevideoPrinciples(exe.stack, rightExpression);
+
+            exe.newVertexCreationSpace = newVertexCreationSpace_copy;
+            // NEW
 
             IList<IEdge> rightExecuteResult = _rightExecuteResult.OutEdges;
 
@@ -324,7 +341,15 @@ namespace m0.ZeroUML.Instructions
                 return exe.stack;
 
             INoInEdgeInOutVertexVertex _leftExecuteResult = exe.ExecuteInstructionByMontevideoPrinciples(exe.stack, leftExpression);
+            //INoInEdgeInOutVertexVertex _rightExecuteResult = exe.ExecuteInstructionByMontevideoPrinciples(exe.stack, rightExpression);
+
+            IVertex newVertexCreationSpace_copy = exe.newVertexCreationSpace;
+            exe.newVertexCreationSpace = CreateStack();
+
             INoInEdgeInOutVertexVertex _rightExecuteResult = exe.ExecuteInstructionByMontevideoPrinciples(exe.stack, rightExpression);
+
+            exe.newVertexCreationSpace = newVertexCreationSpace_copy;
+            // NEW
 
             IList<IEdge> leftExecuteResult = _leftExecuteResult.OutEdges;
 
@@ -357,7 +382,14 @@ namespace m0.ZeroUML.Instructions
                 return exe.stack;
 
             INoInEdgeInOutVertexVertex _leftExecuteResult = exe.ExecuteInstructionByMontevideoPrinciples(exe.stack, leftExpression);
+            //INoInEdgeInOutVertexVertex _rightExecuteResult = exe.ExecuteInstructionByMontevideoPrinciples(exe.stack, rightExpression);
+            IVertex newVertexCreationSpace_copy = exe.newVertexCreationSpace;
+            exe.newVertexCreationSpace = CreateStack();
+
             INoInEdgeInOutVertexVertex _rightExecuteResult = exe.ExecuteInstructionByMontevideoPrinciples(exe.stack, rightExpression);
+
+            exe.newVertexCreationSpace = newVertexCreationSpace_copy;
+            // NEW
 
             IList<IEdge> leftExecuteResult = _leftExecuteResult.OutEdges;
 
@@ -381,7 +413,14 @@ namespace m0.ZeroUML.Instructions
                 return exe.stack;
 
             INoInEdgeInOutVertexVertex _leftExecuteResult = exe.ExecuteInstructionByMontevideoPrinciples(exe.stack, leftExpression);
+            //INoInEdgeInOutVertexVertex _rightExecuteResult = exe.ExecuteInstructionByMontevideoPrinciples(exe.stack, rightExpression);
+            IVertex newVertexCreationSpace_copy = exe.newVertexCreationSpace;
+            exe.newVertexCreationSpace = CreateStack();
+
             INoInEdgeInOutVertexVertex _rightExecuteResult = exe.ExecuteInstructionByMontevideoPrinciples(exe.stack, rightExpression);
+
+            exe.newVertexCreationSpace = newVertexCreationSpace_copy;
+            // NEW
 
             IList<IEdge> leftExecuteResult = _leftExecuteResult.OutEdges;
 
@@ -1789,11 +1828,13 @@ namespace m0.ZeroUML.Instructions
                     if (isExeStackSameAsExeNewVertexCreationSpace)
                         stackForNextExpression.AddEdge(meta, e.To);
                 }                
-            }         
+            }
 
-            if (toReturn == null)
-                return CreateStack();
-            return toReturn;
+            return Create_INoInEdgeInOutVertexVertex_FromEdgesList(creationTarget);
+
+            //if (toReturn == null) // XXX
+            //return CreateStack();
+            //return toReturn;
         }
 
         public static INoInEdgeInOutVertexVertex InnerCreation(ZeroCodeExecution exe, IVertex inputStack, IVertex instructionVertex, out bool isStackFrameReturn)
