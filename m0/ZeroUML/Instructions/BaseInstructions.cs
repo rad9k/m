@@ -9,6 +9,7 @@ using m0.ZeroCode;
 using m0.Util;
 using m0.Graph;
 using static m0.ZeroCode.Helpers.InstructionHelpers;
+using m0.ZeroTypes;
 
 namespace m0.ZeroUML.Instructions
 {
@@ -2018,17 +2019,20 @@ namespace m0.ZeroUML.Instructions
         {
             isStackFrameReturn = false;
 
-            IVertex test = GraphUtil.GetQueryOutFirst(instructionVertex, "Test", null);
+            IVertex expression = GraphUtil.GetQueryOutFirst(instructionVertex, "Expression", null);
 
-            if (test == null)
+            if (expression == null)
                 return Create_INoInEdgeInOutVertexVertex_FromEdgesList(inputStack);
 
-            INoInEdgeInOutVertexVertex testExecution = exe.ExecuteInstructionByMontevideoPrinciples(exe.stack, test);
+            INoInEdgeInOutVertexVertex expressionExecution = exe.ExecuteInstructionByMontevideoPrinciples(inputStack, expression);
 
-            if (IsTrue_Stack(testExecution))
-                return SequenciallyExecuteIntructionsWithNewStackAndIsStackFrameReturnSupport(exe, inputStack, instructionVertex, out isStackFrameReturn);
+            INoInEdgeInOutVertexVertex localStack = CreateStack();
 
-            return Create_INoInEdgeInOutVertexVertex_FromEdgesList(inputStack);
+            foreach(IEdge e in expressionExecution)            
+                if(CheckIfIsOrInherits(e.To,"Class"))
+                    VertexOperations.AddInstance(localStack, e.To);
+                        
+            return localStack;
         }
 
     }

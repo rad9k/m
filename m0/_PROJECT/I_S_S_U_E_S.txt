@@ -42,6 +42,7 @@
 38. child vertex short names support in ||{}/ X+<||{} for @@ and run time queries
 41. . as attribute access or just
 42. $Is context of left operands to create new edges by incomplete meta
+45. new => constructor with parameters
 
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!! Done:
 
