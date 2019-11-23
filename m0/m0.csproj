@@ -270,6 +270,7 @@
     <Compile Include="ZeroTypes\Edge.cs" />
     <Compile Include="ZeroTypes\PlatformClass.cs" />
     <Compile Include="ZeroTypes\VertexOperations.cs" />
+    <Compile Include="ZeroUML\Instructions\ZeroUMLInstructionHelpers.cs" />
     <Page Include="m0Main.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>

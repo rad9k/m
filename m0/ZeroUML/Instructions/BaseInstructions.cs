@@ -2030,7 +2030,7 @@ namespace m0.ZeroUML.Instructions
 
             foreach(IEdge e in expressionExecution)            
                 if(CheckIfIsOrInherits(e.To,"Class"))
-                    VertexOperations.AddInstance(localStack, e.To);
+                    ZeroUMLInstructionHelpers.AddInstance(localStack, e.To);
                         
             return localStack;
         }

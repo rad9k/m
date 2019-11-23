@@ -807,14 +807,30 @@ namespace m0
             IVertex comment = k.AddVertex(keyword, "# (?<text>)");
 
             comment.AddVertex(smb.Get(false, @"Vertex\$Description"), "(?<text>)");
-            
+
+            // default value
+            //
+            // default value (?<expr>)
+
+            IVertex _default = k.AddVertex(keyword, "default value (?<expr>)");
+
+            _default.AddVertex(smb.Get(false, @"Vertex\$DefaultValue"), "(?<expr>)");
+
+            // class
+            //
+            // class (?<name>)
+
+            IVertex _class = k.AddVertex(keyword, "class (?<name>)");
+
+            IVertex class_class = _class.AddVertex(smu.Get(false, @"Class"), "(?<name>)");
+
+            class_class.AddEdge(_is, smu.Get(false, @"Class"));
 
             // attribute
             //
             // attribute (?<name>) (?<type>) (?<MinCardinality>):(?<MaxCardinality>) <<(?<MinValue>):(?<MaxValue>)>>
 
             IVertex attribute3 = k.AddVertex(keyword, "attribute (?<name>) (?<type>) (?<MinCardinality>):(?<MaxCardinality>) <<(?<MinValue>):(?<MaxValue>)>>");
-
 
             IVertex attribute3_attribute = attribute3.AddVertex(smu.Get(false, @"Class\Attribute"), "(?<name>)");
 
@@ -838,7 +854,6 @@ namespace m0
 
             IVertex attribute4 = k.AddVertex(keyword, "attribute (?<name>) (?<type>) (?<MinCardinality>):(?<MaxCardinality>)");
 
-
             IVertex attribute4_attribute = attribute4.AddVertex(smu.Get(false, @"Class\Attribute"), "(?<name>)");
 
             attribute4_attribute.AddVertex(smb.Get(false, @"Vertex\$EdgeTarget"), "(?<type>)");
@@ -851,13 +866,11 @@ namespace m0
 
             attribute4_attribute.AddEdge(_is, smu.Get(false, @"Class\Attribute"));
 
-
             // attribute
             //
             // attribute (?<name>) (?<type>) <<(?<MinValue>):(?<MaxValue>)>>
 
             IVertex attribute2 = k.AddVertex(keyword, "attribute (?<name>) (?<type>) <<(?<xMinValue>):(?<MaxValue>)>>");
-
 
             IVertex attribute2_attribute = attribute2.AddVertex(smu.Get(false, @"Class\Attribute"), "(?<name>)");
 
