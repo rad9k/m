@@ -548,7 +548,14 @@ namespace m0.ZeroCode
                     if (tryIf != null)
                         return tryIf;
                 }
-            }            
+            }
+
+            // try from local root
+
+            tryIf = queryMetaImport(baseVertex, @"$ParseRoot" + ZeroCodeCommon.MetaSeparator + @"\\" + link);
+
+            if (tryIf != null)
+                return tryIf;
 
             // normal direct link
 
@@ -576,14 +583,7 @@ namespace m0.ZeroCode
             tryIf = queryMetaImport(dict.importDirectMetaList, @"\" + link);
             
             if (tryIf != null)
-                return tryIf;
-
-            // try from local root
-
-            tryIf = queryMetaImport(baseVertex, @"$ParseRoot"+ZeroCodeCommon.MetaSeparator+@"\\"+link);            
-
-            if (tryIf != null)
-                return tryIf;
+                return tryIf;            
 
             if (mock.parentVertex != null)
             {

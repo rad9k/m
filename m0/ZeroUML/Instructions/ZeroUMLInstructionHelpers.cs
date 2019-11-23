@@ -1,4 +1,5 @@
 ﻿using m0.Foundation;
+using m0.Graph;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,33 +18,43 @@ namespace m0.ZeroUML.Instructions
                 return null;
 
             nv = baseVertex.AddVertex(metaVertex, null);
-            
-
-            if (MinusZero.Instance.Root.Store.DetachState == DetachStateEnum.Attached)
-                nv.AddEdge(MinusZero.Instance.Is, metaVertex);
-
-            ///
-
-            if (GraphUtil.ExistQueryOut(metaVertex, "$IsAggregation", null))
-                //if (metaVertex.Get(false, "$IsAggregation:") != null)
-                nv.AddEdge(MinusZero.Instance.IsAggregation, MinusZero.Instance.Empty);
-
-            ///
-
-            //IVertex children = metaVertex.GetAll(false, "{$MinCardinality:1}"); 
+                        
+            nv.AddEdge(MinusZero.Instance.Is, metaVertex);
 
             IVertex children = metaVertex; // can use VertexOperations.GetChildEdges, but $DefaultValue: should be OK
 
             foreach (IEdge child in children)
             {
-                if (GraphUtil.ExistQueryOut(child.To, "$DefaultValue", null))
-                    //if (child.To.Get(false, "$DefaultValue:")!=null)
-                    nv.AddEdge(child.To, GraphUtil.GetQueryOutFirst(child.To, "$DefaultValue", null));
-                //nv.AddEdge(child.To, child.To.Get(false, "$DefaultValue:"));
-                //       else
-                //         nv.AddVertex(child.To, null);
-            }
+                bool shouldAdd = false;
 
+                IVertex defaultValue = GraphUtil.GetQueryOutFirst(child.To, "$DefaultValue", null);
+
+                object value = null;
+
+                if (defaultValue != null) {
+                    shouldAdd = true;
+                    value = defaultValue.Value;
+                }
+                else
+                    value = "";
+
+                IVertex minCardinality = GraphUtil.GetQueryOutFirst(child.To, "$MinCardinality", null);
+
+                int minCardinalityValue;
+
+                if (minCardinality != null)
+                {
+                    shouldAdd = true;
+                    minCardinalityValue = (int)GraphUtil.GetIntegerValue(minCardinality);
+                }
+                else
+                    minCardinalityValue = 1;
+
+                if (shouldAdd)
+                    for (int x = 0; x < minCardinalityValue; x++)
+                        nv.AddVertex(child.To, value);
+            }
+                
             return nv;
         }
     }

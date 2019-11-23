@@ -288,7 +288,7 @@ namespace m0.ZeroTypes
             else
                 nv = MinusZero.Instance.CreateTempVertex();
 
-            if (MinusZero.Instance.Root.Store.DetachState == DetachStateEnum.Attached) // XXX
+            if (MinusZero.Instance.Root.Store.DetachState == DetachStateEnum.Attached) // XXX WTF?????
                 nv.AddEdge(MinusZero.Instance.Is, metaVertex);
 
             ///

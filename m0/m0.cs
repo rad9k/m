@@ -394,7 +394,7 @@ namespace m0
                 ",Function,Section" +                                
                 ",While{Test{$MinCardinality:1,$MaxCardinality:1}}" +
                 ",ForEach{Variable{$MinCardinality:1,$MaxCardinality:1},Set{$MinCardinality:1,$MaxCardinality:1}}" +
-                ",If{Test{$MinCardinality:1,$MaxCardinality:1}},Test{Expression{$MinCardinality:1,$MaxCardinality:1}},Case{Test{$MinCardinality:1,$MaxCardinality:1}},Default" +
+                ",If{Test{$MinCardinality:1,$MaxCardinality:1}},Test{Expression{$MinCardinality:1,$MaxCardinality:1}},Case{Test{$MinCardinality:1,$MaxCardinality:1}},Fallback" +
                 ",EmptySet,Constant" +
                 ",Execute,Parse,ParseWithLanguage{FormalTextLanguage{$MinCardinality:0,$MaxCardinality:1}},Generate,GenerateWithLanguage{FormalTextLanguage{$MinCardinality:0,$MaxCardinality:1}}" +
                 "}");
@@ -575,8 +575,8 @@ namespace m0
             smu.Get(false, @"Case").AddEdge(sm.Get(false, "*$Inherits"), smu.Get(false, "NextOut")); // XXX got to think
             smu.Get(false, @"Case").AddEdge(sm.Get(false, "*$Inherits"), smu.Get(false, "Action"));
 
-            smu.Get(false, @"Default").AddEdge(sm.Get(false, "*$Inherits"), smu.Get(false, "NextOut"));
-            smu.Get(false, @"Default").AddEdge(sm.Get(false, "*$Inherits"), smu.Get(false, "Action"));
+            smu.Get(false, @"Fallback").AddEdge(sm.Get(false, "*$Inherits"), smu.Get(false, "NextOut"));
+            smu.Get(false, @"Fallback").AddEdge(sm.Get(false, "*$Inherits"), smu.Get(false, "Action"));
 
             smu.Get(false, @"ForEach").AddEdge(sm.Get(false, "*$Inherits"), smu.Get(false, "NextOut"));
             smu.Get(false, @"ForEach").AddEdge(sm.Get(false, "*$Inherits"), smu.Get(false, "Action"));
@@ -808,11 +808,11 @@ namespace m0
 
             comment.AddVertex(smb.Get(false, @"Vertex\$Description"), "(?<text>)");
 
-            // default value
+            // default
             //
-            // default value (?<expr>)
+            // default (?<expr>)
 
-            IVertex _default = k.AddVertex(keyword, "default value (?<expr>)");
+            IVertex _default = k.AddVertex(keyword, "default (?<expr>)");
 
             _default.AddVertex(smb.Get(false, @"Vertex\$DefaultValue"), "(?<expr>)");
 
@@ -1549,15 +1549,15 @@ namespace m0
 
             o_case_any.AddVertex(smu.Get(false, @"Case\Test"), "(?<test>)");
 
-            // default
+            // fallback
             //
-            // default
+            // fallback
 
-            IVertex o_default = k.AddVertex(keyword, "default");
+            IVertex o_default = k.AddVertex(keyword, "fallback");
 
-            IVertex o_default_any = o_default.AddVertex(smu.Get(false, "Default"), "");
+            IVertex o_default_any = o_default.AddVertex(smu.Get(false, "Fallback"), "");
 
-            o_default_any.AddEdge(smb.Get(false, @"Vertex\$Is"), smu.Get(false, "Default"));
+            o_default_any.AddEdge(smb.Get(false, @"Vertex\$Is"), smu.Get(false, "Fallback"));
             
 
             // ()
@@ -3444,9 +3444,9 @@ namespace m0
        -1, 0, 0, 100);
 
             AddDiagramLine_Combo(vSwitch,
-       "Default",
-       @"$Is:Switch\Default",
-       @"Definition:Default",
+       "Fallback",
+       @"$Is:Switch\Fallback",
+       @"Definition:Fallback",
        sm.Get(false, @"*DiagramInternal\DiagramLine"),
        true,
              null,
@@ -3482,9 +3482,9 @@ namespace m0
 
             // Default
 
-            IVertex vDefault = AddDiagramItemDefinition_Combo_RectangleItem("Default", false,
-         @"{$Is:Default}",
-         "Default",
+            IVertex vDefault = AddDiagramItemDefinition_Combo_RectangleItem("Fallback", false,
+         @"{$Is:Fallback}",
+         "Fallback",
           sm.Get(false, @"*DiagramRectangleItem"),
           InstanceAndDirect,
           true, -1, 0, -1,

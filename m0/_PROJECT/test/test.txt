@@ -10,7 +10,7 @@
 				return "dwa"
 			case "3"
 				return "trzy"
-			default
+			fallback
 				return "def"
 			case "4"
 				if m == "True"

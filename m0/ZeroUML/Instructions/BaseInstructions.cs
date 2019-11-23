@@ -1697,10 +1697,10 @@ namespace m0.ZeroUML.Instructions
                         return SequenciallyExecuteIntructionsWithNewStackAndIsStackFrameReturnSupport(exe, inputStack, _case.To, out isStackFrameReturn);
             }
 
-            IVertex _default = GraphUtil.GetQueryOutFirst(instructionVertex, "Default", null);
+            IVertex _fallback = GraphUtil.GetQueryOutFirst(instructionVertex, "Fallback", null);
 
-            if(_default!=null)
-                return SequenciallyExecuteIntructionsWithNewStackAndIsStackFrameReturnSupport(exe, inputStack, _default, out isStackFrameReturn);
+            if(_fallback!=null)
+                return SequenciallyExecuteIntructionsWithNewStackAndIsStackFrameReturnSupport(exe, inputStack, _fallback, out isStackFrameReturn);
 
             return Create_INoInEdgeInOutVertexVertex_FromEdgesList(inputStack);
         }        

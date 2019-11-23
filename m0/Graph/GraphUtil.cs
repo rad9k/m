@@ -499,7 +499,7 @@ namespace m0.Graph
 
         static public int? GetIntegerValue(IVertex Vertex)
         {
-            if (Vertex!=null&&Vertex.Value!=null)
+            if (Vertex != null && Vertex.Value != null)
                 {
                 if (Vertex.Value is int)
                     return (int)Vertex.Value;

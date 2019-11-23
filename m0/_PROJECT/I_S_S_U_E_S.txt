@@ -1,7 +1,7 @@
 ﻿!!!!!!!!!!!!!!!!!!!!!!!!!!!!! TO DO:
 2. can not create Files
 22. ++< or something similar for base
-24. class / method
+24. new / class / method
 27. key added error on exit
 32. language definition correction
 33. standard base library
@@ -27,6 +27,7 @@
 37. pre/post text processing + if/test/case/default nextout?
 39. colors in editor
 40. <<a..b>>
+46. forms for Person bug
 
 <><><> FUTURE 1
 
