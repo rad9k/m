@@ -1997,9 +1997,9 @@ namespace m0.ZeroUML.Instructions
         {
             IVertex objectIs = GetIs(_object);
 
-            IVertex methodBody = objectIs.Get(true, targetExpression);
+            IVertex methodBody = objectIs.Get(false, targetExpression);            
 
-            if(!CheckIfIsOrInherits(methodBody,"Method"))
+            if (methodBody!=null && !CheckIfIsOrInherits(methodBody,"Method"))
                 return CreateStack(); 
 
             exe.AddStackFrame(); // ENTER NEW STACK
