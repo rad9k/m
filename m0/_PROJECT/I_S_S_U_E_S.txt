@@ -1,12 +1,10 @@
 ﻿!!!!!!!!!!!!!!!!!!!!!!!!!!!!! TO DO:
 2. can not create Files
 22. ++< or something similar for base
-24. new / class / method
 27. key added error on exit
-32. language definition correction
 33. standard base library
 43. :=
-44. & / | / ! > and or not
+49. what: 39505 not found in Vertex Identifiers Dictionary
 
 <><><> FUTURE 0
 
@@ -21,6 +19,7 @@
 
 <><><> FUTURE 0.5
 
+32. language definition correction to support languages inheritence
 12. parse / generate check
 34. Query dialog box refactoring
 36. ZeroUML diagramming update
@@ -70,3 +69,5 @@
 31. imperative expressions in {}
 25. ====
 23. if / test
+24. new / class / method
+44. & / | > and or

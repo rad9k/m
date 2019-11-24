@@ -1286,17 +1286,17 @@ namespace m0
 
             AddSingleOperator(k, smu, smb, keyword, any, "!(?<expr>)", "Negation");
 
-            // &
+            // and
             //
-            // (?<left>) & (?<right>)
+            // (?<left>) and (?<right>)
 
-            AddDoubleOperator(k, smu, smb, keyword, any, "(?<left>) &(?<SUB>) (?<right>)", "And");
+            AddDoubleOperator(k, smu, smb, keyword, any, "(?<left>) and(?<SUB>) (?<right>)", "And");
 
-            // |
+            // or
             //
-            // (?<left>) | (?<right>)
+            // (?<left>) or (?<right>)
 
-            AddDoubleOperator(k, smu, smb, keyword, any, "(?<left>) %(?<SUB>) (?<right>)", "Or");
+            AddDoubleOperator(k, smu, smb, keyword, any, "(?<left>) or(?<SUB>) (?<right>)", "Or");
 
             // >
             //
