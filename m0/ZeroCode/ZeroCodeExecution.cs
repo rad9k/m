@@ -24,22 +24,32 @@ namespace m0.ZeroCode
 
             newStackFrame.AddEdge(MinusZero.Instance.StackFrameInherits, stack);
 
-            stack = newStackFrame;
+            stack = newStackFrame;            
+        }
 
-            //newVertexCreationSpace = stack; // what for????
+        public void AddStackFrame(IVertex newStackFrame)
+        {            
+            newStackFrame.AddEdge(MinusZero.Instance.StackFrameInherits, stack);
+
+            stack = InstructionHelpers.Create_INoInEdgeInOutVertexVertex_FromEdgesList(newStackFrame);
         }
 
         public void RemoveStackFrame()
         {
-            IVertex _prevStackFrame = stack.Get(false, @"$StackFrameInherits:");
+            IEdge stackFrameInheritsEdge = GraphUtil.GetQueryOutFirstEdge(stack, "$StackFrameInherits", null);
+
+            if (stackFrameInheritsEdge == null)
+                throw new Exception("Can not remove stack frame. No $StackFrameInherits");
+
+            IVertex _prevStackFrame = stackFrameInheritsEdge.To;
+
+            stack.DeleteEdge(stackFrameInheritsEdge);
 
             if(_prevStackFrame != null && _prevStackFrame is INoInEdgeInOutVertexVertex)
             {
                 INoInEdgeInOutVertexVertex prevStackFrame = (INoInEdgeInOutVertexVertex)_prevStackFrame;
 
-                stack = prevStackFrame;
-
-                //newVertexCreationSpace = prevStackFrame; // what for???
+                stack = prevStackFrame;                
             }
         }
 

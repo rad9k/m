@@ -1976,15 +1976,12 @@ namespace m0.ZeroUML.Instructions
                 return exe.stack;
             
             IList<IEdge> parameterExpressions = GraphUtil.GetQueryOut(instructionVertex, "Expression", null);
-            IList<IEdge> inputParameters = GraphUtil.GetQueryOut(targetExpression, "InputParameter", null);
-
-            int minParameters = Math.Min(parameterExpressions.Count(), inputParameters.Count());
-
+            
             INoInEdgeInOutVertexVertex newStack = CreateStack();
 
             foreach(IEdge objectEdge in inputStack)
             {
-                INoInEdgeInOutVertexVertex returnedStack = MethodCallForOneObject(objectEdge.To, exe, targetExpression, parameterExpressions, inputParameters, minParameters);
+                INoInEdgeInOutVertexVertex returnedStack = MethodCallForOneObject(objectEdge.To, exe, targetExpression, parameterExpressions);
 
                 foreach (IEdge e in returnedStack)
                     newStack.AddEdgeForNoInEdgeInOutVertexVertex(e);
@@ -1993,16 +1990,21 @@ namespace m0.ZeroUML.Instructions
             return newStack;
         }
 
-        private static INoInEdgeInOutVertexVertex MethodCallForOneObject(IVertex _object, ZeroCodeExecution exe, IVertex targetExpression, IList<IEdge> parameterExpressions, IList<IEdge> inputParameters, int minParameters)
+        private static INoInEdgeInOutVertexVertex MethodCallForOneObject(IVertex theObject, ZeroCodeExecution exe, IVertex targetExpression, IList<IEdge> parameterExpressions)
         {
-            IVertex objectIs = GetIs(_object);
+            IVertex objectIs = GetIs(theObject);
 
-            IVertex methodBody = objectIs.Get(false, targetExpression);            
+            IVertex methodBody =  Get(false, objectIs, targetExpression);            
 
             if (methodBody!=null && !CheckIfIsOrInherits(methodBody,"Method"))
-                return CreateStack(); 
+                return CreateStack();
 
-            exe.AddStackFrame(); // ENTER NEW STACK
+            IList<IEdge> inputParameters = GraphUtil.GetQueryOut(methodBody, "InputParameter", null);
+
+            int minParameters = Math.Min(parameterExpressions.Count(), inputParameters.Count());
+
+            exe.AddStackFrame(theObject); // ENTER NEW STACK
+            exe.AddStackFrame();
 
             for (int x = 0; x < minParameters; x++)
             {
@@ -2019,6 +2021,7 @@ namespace m0.ZeroUML.Instructions
 
             INoInEdgeInOutVertexVertex possibleToReturnStack = SequentiallyExecuteInstructions(exe, exe.stack, methodBody, out local_isStackFrameReturn, false);
 
+            exe.RemoveStackFrame(); 
             exe.RemoveStackFrame(); // LEAVE NEW STACK
 
             if (local_isStackFrameReturn)
