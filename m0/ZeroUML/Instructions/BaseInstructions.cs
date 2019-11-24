@@ -1997,7 +1997,10 @@ namespace m0.ZeroUML.Instructions
         {
             IVertex objectIs = GetIs(_object);
 
-            IVertex method = _object.Get(true, targetExpression);
+            IVertex methodBody = objectIs.Get(true, targetExpression);
+
+            if(!CheckIfIsOrInherits(methodBody,"Method"))
+                return CreateStack(); 
 
             exe.AddStackFrame(); // ENTER NEW STACK
 
@@ -2014,7 +2017,7 @@ namespace m0.ZeroUML.Instructions
 
             bool local_isStackFrameReturn;
 
-            INoInEdgeInOutVertexVertex possibleToReturnStack = SequentiallyExecuteInstructions(exe, exe.stack, target, out local_isStackFrameReturn, false);
+            INoInEdgeInOutVertexVertex possibleToReturnStack = SequentiallyExecuteInstructions(exe, exe.stack, methodBody, out local_isStackFrameReturn, false);
 
             exe.RemoveStackFrame(); // LEAVE NEW STACK
 

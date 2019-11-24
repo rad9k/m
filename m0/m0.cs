@@ -936,7 +936,6 @@ namespace m0
 
             IVertex association2 = k.AddVertex(keyword, "association (?<name>) (?<type>) (?<MinCardinality>):(?<MaxCardinality>)");
 
-
             IVertex association2_association = association2.AddVertex(smu.Get(false, @"Class\Association"), "(?<name>)");
 
             association2_association.AddVertex(smb.Get(false, @"Vertex\$MinCardinality"), "(?<MinCardinality>)");
@@ -947,13 +946,11 @@ namespace m0
 
             association2_association.AddEdge(_is, smu.Get(false, @"Class\Association"));
 
-
             // aassociation
             //
             // association (?<name>) (?<type>)
 
             IVertex association = k.AddVertex(keyword, "association (?<name>) (?<type>)");
-
 
             IVertex association_association = association.AddVertex(smu.Get(false, @"Class\Association"), "(?<name>)");
 
@@ -967,7 +964,6 @@ namespace m0
 
             IVertex aggregation2 = k.AddVertex(keyword, "aggregation (?<name>) (?<type>) (?<MinCardinality>):(?<MaxCardinality>)");
 
-
             IVertex aggregation2_aggregation = aggregation2.AddVertex(smu.Get(false, @"Class\Aggregation"), "(?<name>)");
 
             aggregation2_aggregation.AddVertex(smb.Get(false, @"Vertex\$MinCardinality"), "(?<MinCardinality>)");
@@ -978,26 +974,57 @@ namespace m0
 
             aggregation2_aggregation.AddEdge(_is, smu.Get(false, @"Class\Aggregation"));
 
-
             // aggregation
             //
             // aggregation (?<name>) (?<type>)
 
             IVertex aggregation = k.AddVertex(keyword, "aggregation (?<name>) (?<type>)");
 
-
             IVertex aggregation_aggregation = aggregation.AddVertex(smu.Get(false, @"Class\Aggregation"), "(?<name>)");
 
             aggregation_aggregation.AddVertex(smb.Get(false, @"Vertex\$EdgeTarget"), "(?<type>)");
 
             aggregation_aggregation.AddEdge(_is, smu.Get(false, @"Class\Aggregation"));
-            
+
+            // method
+            //
+            // method (?<name>) (?<returnType>) [(*(+, +)(?<paramType>) (?<paramName>)*)]
+
+            IVertex method = k.AddVertex(keyword, "method (?<name>) (?<returnType>)((*(+, +)(?<paramType>) (?<paramName>)*))");
+
+            IVertex method_method = method.AddVertex(smu.Get(false, @"Class\Method"), "(?<name>)");
+
+            method_method.AddEdge(smb.Get(false, @"Vertex\$Is"), smu.Get(false, @"Class\Method"));
+
+            method_method.AddVertex(smu.Get(false, @"Class\Method\Output"), "(?<returnType>)");
+
+            IVertex mmip = method_method.AddVertex(smu.Get(false, @"Class\Method\InputParameter"), "(?<paramName>)");
+
+            mmip.AddVertex(smb.Get(false, @"Vertex\$VertexTarget"), "(?<paramType>)");
+
+            mmip.AddEdge(smb.Get(false, @"$$KeywordManyRoot"), smb.Get(false, @"$Empty"));
+
+            // method
+            //
+            // method (?<name>) [(*(+, +)(?<paramType>) (?<paramName>)*)]
+
+            IVertex method2 = k.AddVertex(keyword, "method (?<name>) ((*(+, +)(?<paramType>) (?<paramName>)*))");
+
+            IVertex method2_method = method2.AddVertex(smu.Get(false, @"Class\Method"), "(?<name>)");
+
+            method2_method.AddEdge(smb.Get(false, @"Vertex\$Is"), smu.Get(false, @"Class\Method"));
+
+            IVertex m2fip = method2_method.AddVertex(smu.Get(false, @"Class\Method\InputParameter"), "(?<paramName>)");
+
+            m2fip.AddVertex(smb.Get(false, @"Vertex\$VertexTarget"), "(?<paramType>)");
+
+            m2fip.AddEdge(smb.Get(false, @"$$KeywordManyRoot"), smb.Get(false, @"$Empty"));
+
             // function
             //
             // function (?<name>) (?<returnType>) [(*(+, +)(?<paramType>) (?<paramName>)*)]
 
             IVertex function = k.AddVertex(keyword, "function (?<name>) (?<returnType>)((*(+, +)(?<paramType>) (?<paramName>)*))");
-
 
             IVertex function_function = function.AddVertex(smu.Get(false, @"Function"), "(?<name>)");
 
@@ -1010,7 +1037,6 @@ namespace m0
             ffip.AddVertex(smb.Get(false, @"Vertex\$VertexTarget"), "(?<paramType>)");
 
             ffip.AddEdge(smb.Get(false, @"$$KeywordManyRoot"), smb.Get(false, @"$Empty"));
-
 
             // function
             //
@@ -1027,7 +1053,6 @@ namespace m0
             f2fip.AddVertex(smb.Get(false, @"Vertex\$VertexTarget"), "(?<paramType>)");
 
             f2fip.AddEdge(smb.Get(false, @"$$KeywordManyRoot"), smb.Get(false, @"$Empty"));
-
 
             /////////////////////////////////////////////////////////
             //
