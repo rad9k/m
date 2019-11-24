@@ -56,9 +56,10 @@ namespace m0.ZeroCode
 
             IVertex is_v = InstructionHelpers.GetIs(instructionVertex);            
 
-            if (InstructionHelpers.CheckIfHasExecutableEndPoint(is_v))  // execute if you can
-                return CallableEndPointDictionary.CallEndPoint(this, inputQs, instructionVertex, out isStackFrameReturn);            
+            if (InstructionHelpers.CheckIfHasExecutableEndPoint(is_v))  // execute if you can.....
+                return CallableEndPointDictionary.CallEndPoint(this, inputQs, instructionVertex, out isStackFrameReturn);
 
+            // ...OR...
             INoInEdgeInOutVertexVertex stack_ = InstructionHelpers.CreateStack();
 
             stack_.AddEdgeForNoInEdgeInOutVertexVertex(GraphUtil.CreateArtificialEdge(null, instructionVertex)); // create stack and put reference

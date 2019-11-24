@@ -1970,31 +1970,40 @@ namespace m0.ZeroUML.Instructions
         {
             isStackFrameReturn = false;
 
-            IVertex target = GraphUtil.GetQueryOutFirst(instructionVertex, "Target", null);
-            //instructionVertex.Get(false, "Target:");
+            IVertex targetExpression = GraphUtil.GetQueryOutFirst(instructionVertex, "Target", null);            
 
-            if (!CheckIs(target, "Function"))
+            if (targetExpression == null)
+                return exe.stack;
+            
+            IList<IEdge> parameterExpressions = GraphUtil.GetQueryOut(instructionVertex, "Expression", null);
+            IList<IEdge> inputParameters = GraphUtil.GetQueryOut(targetExpression, "InputParameter", null);
+
+            int minParameters = Math.Min(parameterExpressions.Count(), inputParameters.Count());
+
+            INoInEdgeInOutVertexVertex newStack = CreateStack();
+
+            foreach(IEdge objectEdge in inputStack)
             {
-                INoInEdgeInOutVertexVertex targetExpressionExecution = exe.ExecuteInstructionByMontevideoPrinciples(exe.stack, target);
-                if (targetExpressionExecution.Count() > 0)
-                    target = targetExpressionExecution.OutEdges[0].To;
+                INoInEdgeInOutVertexVertex returnedStack = MethodCallForOneObject(objectEdge.To, exe, targetExpression, parameterExpressions, inputParameters, minParameters);
+
+                foreach (IEdge e in returnedStack)
+                    newStack.AddEdgeForNoInEdgeInOutVertexVertex(e);
             }
 
-            if (target == null)
-                return exe.stack;
+            return newStack;
+        }
+
+        private static INoInEdgeInOutVertexVertex MethodCallForOneObject(IVertex _object, ZeroCodeExecution exe, IVertex targetExpression, IList<IEdge> parameterExpressions, IList<IEdge> inputParameters, int minParameters)
+        {
+            IVertex objectIs = GetIs(_object);
+
+            IVertex method = _object.Get(true, targetExpression);
 
             exe.AddStackFrame(); // ENTER NEW STACK
 
-            IList<IEdge> expressions = GraphUtil.GetQueryOut(instructionVertex, "Expression", null);
-            //instructionVertex.GetAll(false, "Expression:");
-            IList<IEdge> inputParameters = GraphUtil.GetQueryOut(target, "InputParameter", null);
-            //target.GetAll(false, "InputParameter:");
-
-            int minParameters = Math.Min(expressions.Count(), inputParameters.Count());
-
             for (int x = 0; x < minParameters; x++)
             {
-                IVertex expression = expressions[x].To;
+                IVertex expression = parameterExpressions[x].To;
                 IVertex inputParameter = inputParameters[x].To;
 
                 INoInEdgeInOutVertexVertex expressionExecution = exe.ExecuteInstructionByMontevideoPrinciples(exe.stack, expression);

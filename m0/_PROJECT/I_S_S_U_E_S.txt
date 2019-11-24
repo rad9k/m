@@ -44,6 +44,7 @@
 41. . as attribute access or just
 42. $Is context of left operands to create new edges by incomplete meta
 45. new => constructor with parameters
+47. how are edges added to stack (AddEdgeForNoInEdgeInOutVertexVertex ?) and the store implications (possible bug)
 
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!! Done:
 
