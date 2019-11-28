@@ -1285,13 +1285,13 @@ namespace m0
             //  !(?<expr>)
 
             AddSingleOperator(k, smu, smb, keyword, any, "!(?<expr>)", "Negation");
-
+            
             // and
             //
             // (?<left>) and (?<right>)
 
-            AddDoubleOperator(k, smu, smb, keyword, any, "(?<left>) and(?<SUB>) (?<right>)", "And");
-
+          //  AddDoubleOperator(k, smu, smb, keyword, any, "(?<left>) and(?<SUB>) (?<right>)", "And");
+            
             // or
             //
             // (?<left>) or (?<right>)

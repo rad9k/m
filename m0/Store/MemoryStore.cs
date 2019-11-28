@@ -37,9 +37,9 @@ namespace m0.Store
             _root = new EasyVertex(this);
         }
 
-        public override void StoreVertexIdentifier(IVertex Vertex)
-        {
-            VertexIdentifiersDictionary.Add(Vertex.Identifier, Vertex);
-        }
+     //   public override void StoreVertexIdentifier(IVertex Vertex)
+      //  {
+      //      VertexIdentifiersDictionary.Add(Vertex.Identifier, Vertex);
+      //  }
     }
 }

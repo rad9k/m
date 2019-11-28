@@ -69,15 +69,20 @@ namespace m0.Store
                 throw new Exception("Store not Attached");
 
             _DetachState = DetachStateEnum.Detaching;
-
+            int cnt = 0;
             foreach (IVertex v in VertexIdentifiersDictionary.Values)
             {
+                cnt++;
                 //foreach (IEdge e in v.OutEdges)
                 foreach (IEdge e in v.OutEdgesRaw) // ToList was bit beeded
                     //foreach (IEdge e in v.OutEdgesRaw.ToList()) // ToList was bit beeded
                     if (e is IDetachableEdge)
-                    {
+                    {                        
                         IDetachableEdge de = (IDetachableEdge)e;
+                        if (de.DetachState == DetachStateEnum.Detached)
+                        {
+                            int x = 0;
+                        }
                         if (de.To.Store!=this||(de.Meta!=null&&de.Meta.Store!=this))
                             de.Detach();
                     }
@@ -160,18 +165,38 @@ namespace m0.Store
         }
 
         protected Dictionary<object, IVertex> VertexIdentifiersDictionary;
-
+        bool added;
      //   protected int StoreVertexIdentifierCnt = 0;
         public virtual void StoreVertexIdentifier(IVertex Vertex)
         {
-            if(!VertexIdentifiersDictionary.ContainsKey(Vertex.Identifier))
+            
+            if (Vertex.Identifier is long &&
+                (long)Vertex.Identifier == 39468)
+            {
+                int x = 0;
+                added = true;
+            }
+
+            if (!VertexIdentifiersDictionary.ContainsKey(Vertex.Identifier))
                 VertexIdentifiersDictionary.Add(Vertex.Identifier,Vertex);
+
+            if(added && !VertexIdentifiersDictionary.ContainsKey(39468))
+            {
+                int x = 0;
+            }
            
             //StoreVertexIdentifierCnt++;
         }
 
         public virtual void RemoveVertexIdentifier(IVertex Vertex)
         {
+
+            if (Vertex.Identifier is long &&
+                (long)Vertex.Identifier == 39468)
+            {
+                int x = 0;
+            }
+
             VertexIdentifiersDictionary.Remove(Vertex.Identifier);
         }
 

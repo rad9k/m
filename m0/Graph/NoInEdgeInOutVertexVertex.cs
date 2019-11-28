@@ -40,6 +40,7 @@ namespace m0.Graph
 
         public void AddEdgeForNoInEdgeInOutVertexVertex(IEdge e){
             OutEdgesRaw.Add(e);
+            UsageCounter++;
         }
 
         public override void DeleteEdge(IEdge _edge)
