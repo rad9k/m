@@ -70,4 +70,7 @@
 25. ====
 23. if / test
 24. new / class / method
-44. & / | > and or
+
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!! FREEZER:
+
+44. & / | > and or --as there becomes to be space hell

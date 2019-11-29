@@ -1285,18 +1285,18 @@ namespace m0
             //  !(?<expr>)
 
             AddSingleOperator(k, smu, smb, keyword, any, "!(?<expr>)", "Negation");
-            
-            // and
-            //
-            // (?<left>) and (?<right>)
 
-          //  AddDoubleOperator(k, smu, smb, keyword, any, "(?<left>) and(?<SUB>) (?<right>)", "And");
-            
-            // or
+            // &
             //
-            // (?<left>) or (?<right>)
+            // (?<left>) & (?<right>)
 
-            AddDoubleOperator(k, smu, smb, keyword, any, "(?<left>) or(?<SUB>) (?<right>)", "Or");
+            AddDoubleOperator(k, smu, smb, keyword, any, "(?<left>) &(?<SUB>) (?<right>)", "And");
+
+            // |
+            //
+            // (?<left>) | (?<right>)
+
+            AddDoubleOperator(k, smu, smb, keyword, any, "(?<left>) %(?<SUB>) (?<right>)", "Or");
 
             // >
             //
