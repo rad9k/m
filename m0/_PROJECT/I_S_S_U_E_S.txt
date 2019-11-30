@@ -4,6 +4,12 @@
 27. key added error on exit
 33. standard base library
 43. :=
+52. "Y"
+	variable "a" @Vertex
+	variable "b" @Vertex
+	a +< @@$Inherits || @@System
+	b +< a\
+53. < :: <> ????
 
 <><><> FUTURE 0
 
