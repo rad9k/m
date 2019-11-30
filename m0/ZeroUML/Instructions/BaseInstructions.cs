@@ -459,25 +459,18 @@ namespace m0.ZeroUML.Instructions
             IVertex newVertexCreationSpace_copy = exe.newVertexCreationSpace;
             exe.newVertexCreationSpace = CreateStack();
 
-            INoInEdgeInOutVertexVertex _rightExecuteResult = exe.ExecuteInstructionByMontevideoPrinciples(exe.stack, rightExpression);
+            INoInEdgeInOutVertexVertex _rightExecuteResult = exe.ExecuteInstructionByMontevideoPrinciples(exe.stack, rightExpression);            
 
             exe.newVertexCreationSpace = newVertexCreationSpace_copy;
             // NEW
 
-
-            IList<IEdge> rightExecuteResult = _rightExecuteResult.OutEdges;
-
-            IDictionary<EdgeKey_FromMeta, IList<IEdge>> leftFromMeta_dict = CreateEdgeKey_FromMetaDictionary(leftExecuteResult);
-
-            foreach (KeyValuePair<EdgeKey_FromMeta, IList<IEdge>> localLeft in leftFromMeta_dict)
+            if (_rightExecuteResult.OutEdges.Count > 0)
             {
-                IEdge toAdd = localLeft.Value[0];
+                IVertex FirstRightVertex = _rightExecuteResult.OutEdges[0].To;
 
-                toAdd.From.DeleteEdgesList(localLeft.Value);
-
-                foreach (IEdge e in rightExecuteResult)
-                    toAdd.From.AddEdge(toAdd.Meta, e.To);
-            }
+                foreach (IEdge e in leftExecuteResult)
+                    e.To.Value = FirstRightVertex.Value;
+            }                
 
             return exe.stack;
         }

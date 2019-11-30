@@ -196,21 +196,6 @@ namespace m0.ZeroCode.Helpers
             return dict;
         }
 
-        public static ISet<EdgeKey_MetaTo> CreateEdgeKey_MetaToSet(INoInEdgeInOutVertexVertex queryResult)
-        {
-            HashSet<EdgeKey_MetaTo> dict = new HashSet<EdgeKey_MetaTo>();
-
-            foreach (IEdge e in queryResult)
-            {
-                EdgeKey_MetaTo ekmt = new EdgeKey_MetaTo(e);
-
-                if (!dict.Contains(ekmt))
-                    dict.Add(ekmt);
-            }
-
-            return dict;
-        }
-
         public static IList<IEdge> CreateEdgeKey_MetaToEdgesList(INoInEdgeInOutVertexVertex queryResult)
         {
             HashSet<EdgeKey_MetaTo> _dict = new HashSet<EdgeKey_MetaTo>();

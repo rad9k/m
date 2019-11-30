@@ -4,6 +4,7 @@
 27. key added error on exit
 33. standard base library
 43. :=
+52. System.NullReferenceException: 'Odwołanie do obiektu nie zostało ustawione na wystąpienie obiektu.' Store Base 86
 
 <><><> FUTURE 0
 
