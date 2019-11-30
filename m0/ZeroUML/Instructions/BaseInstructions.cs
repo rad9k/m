@@ -310,7 +310,6 @@ namespace m0.ZeroUML.Instructions
 
             INoInEdgeInOutVertexVertex _leftExecuteResult = exe.ExecuteInstructionByMontevideoPrinciples(exe.stack, leftExpression);
 
-
             IVertex newVertexCreationSpace_copy = exe.newVertexCreationSpace;
             exe.newVertexCreationSpace = CreateStack();
 
@@ -320,8 +319,6 @@ namespace m0.ZeroUML.Instructions
 
             IList<IEdge> leftExecuteResult = _leftExecuteResult.OutEdges;
             IList<IEdge> rightExecuteResult = _rightExecuteResult.OutEdges;
-
-            
 
             foreach (IEdge leftEdge in leftExecuteResult)                            
                 foreach (IEdge rightEdge in rightExecuteResult)
@@ -476,7 +473,7 @@ namespace m0.ZeroUML.Instructions
         }
 
         // <+<
-        public static INoInEdgeInOutVertexVertex AddRightEdgesIntoLeftEdgesAndSetStoreForSubGraphAsIsInLeftVertexes(ZeroCodeExecution exe, IVertex inputStack, IVertex instructionVertex, out bool isStackFrameReturn)
+        public static INoInEdgeInOutVertexVertex AddRightEdgesIntoFirstLeftEdgeAndSetStoreForSubGraphAsIsInLeftVertex(ZeroCodeExecution exe, IVertex inputStack, IVertex instructionVertex, out bool isStackFrameReturn)
         {
             isStackFrameReturn = false;
 
@@ -496,14 +493,13 @@ namespace m0.ZeroUML.Instructions
 
             exe.newVertexCreationSpace = newVertexCreationSpace_copy;
 
-            IList<IEdge> leftExecuteResult = _leftExecuteResult.OutEdges;
-            IList<IEdge> rightExecuteResult = _rightExecuteResult.OutEdges;
+            if(_leftExecuteResult.Count() > 0)
+            {
+                IVertex leftExecuteFirstVertex = _leftExecuteResult.OutEdges[0].To;
+                IList<IEdge> rightExecuteResult = _rightExecuteResult.OutEdges;
 
-
-
-            foreach (IEdge leftEdge in leftExecuteResult)
-                foreach (IEdge rightEdge in rightExecuteResult)
-                    leftEdge.To.AddEdge(rightEdge.Meta, rightEdge.To);
+                ZeroUMLInstructionHelpers.MoveEdgesIntoVertex(rightExecuteResult, leftExecuteFirstVertex);                                
+            }                       
 
             return exe.stack;
         }
@@ -2031,6 +2027,8 @@ namespace m0.ZeroUML.Instructions
         //
         ////////////////////////////////////////////////////////////////
 
+        #region oo
+
         public static INoInEdgeInOutVertexVertex MethodCall(ZeroCodeExecution exe, IVertex inputStack, IVertex instructionVertex, out bool isStackFrameReturn)
         {
             isStackFrameReturn = false;
@@ -2115,6 +2113,7 @@ namespace m0.ZeroUML.Instructions
             return localStack;
         }
 
+        #endregion
     }
 }
 

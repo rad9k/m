@@ -1,5 +1,6 @@
 ﻿using m0.Foundation;
 using m0.Graph;
+using m0.ZeroTypes;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -56,6 +57,24 @@ namespace m0.ZeroUML.Instructions
             }
                 
             return nv;
+        }
+
+        public static void MoveEdgesIntoVertex(IEnumerable<IEdge> toMoveList, IVertex moveTarget)
+        {
+            foreach(IEdge e in toMoveList.ToArray())
+                if (!VertexOperations.IsLink(e))
+                {
+                    IVertex newVertex = moveTarget.AddVertex(e.Meta, e.To.Value);
+
+                    foreach(IEdge edgeToETo in e.To.InEdgesRaw.ToArray())
+                    {
+                        edgeToETo.From.AddEdge(edgeToETo.Meta, newVertex);
+                      //  edgeToETo.From.DeleteEdge(edgeToETo);
+                    }
+
+                    //MoveEdgesIntoVertex(e.To, newVertex);
+                }
+
         }
     }
 }

@@ -2,14 +2,14 @@
 2. can not create Files
 22. <+< or something similar for base
 27. key added error on exit
-33. standard base library
-43. :=
+33. standard base library / method / func 
 52. "Y"
 	variable "a" @Vertex
 	variable "b" @Vertex
 	a +< @@$Inherits || @@System
 	b +< a\
 53. < :: <> ????
+54. "raz"||{}
 
 <><><> FUTURE 0
 
@@ -80,3 +80,4 @@
 25. ====
 23. if / test
 24. new / class / method
+43. :=

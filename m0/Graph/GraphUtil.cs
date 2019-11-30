@@ -14,21 +14,23 @@ namespace m0.Graph
 
     public class GraphIterator
     {
-        object Value;
+        object value;
 
-        INoInEdgeInOutVertexVertex ValueAsINoInEdgeInOutVertexVertex;
+        INoInEdgeInOutVertexVertex valueAsINoInEdgeInOutVertexVertex;
+
+        IStore store;
 
         public GraphIterator(object value)
         {
-            Value = value;
+            this.value = value;
 
             if (value is INoInEdgeInOutVertexVertex)
-                ValueAsINoInEdgeInOutVertexVertex = (INoInEdgeInOutVertexVertex)value;           
+                valueAsINoInEdgeInOutVertexVertex = (INoInEdgeInOutVertexVertex)value;            
         }
 
         public bool Compare(IEdge vertex)
         {
-            if (GeneralUtil.CompareStrings(Value,vertex.To.Value))
+            if (GeneralUtil.CompareStrings(value,vertex.To.Value))
                 return true;
 
             return false;
@@ -36,7 +38,7 @@ namespace m0.Graph
 
         public bool CompareMeta(IEdge vertex)
         {
-            if (GeneralUtil.CompareStrings(Value,vertex.Meta.Value))
+            if (GeneralUtil.CompareStrings(value,vertex.Meta.Value))
                 return true;
 
             return false;
@@ -44,11 +46,11 @@ namespace m0.Graph
 
         public bool AddToINoInEdgeInOutVertexVertex(IEdge vertex)
         {
-            if (ValueAsINoInEdgeInOutVertexVertex != null)
-                ValueAsINoInEdgeInOutVertexVertex.AddEdgeForNoInEdgeInOutVertexVertex(vertex);            
+            if (valueAsINoInEdgeInOutVertexVertex != null)
+                valueAsINoInEdgeInOutVertexVertex.AddEdgeForNoInEdgeInOutVertexVertex(vertex);            
 
             return true;
-        }
+        }        
     }
 
     public class GraphUtil
