@@ -386,7 +386,9 @@ namespace m0
                 ",FunctionCall{Target{$MinCardinality:1,$MaxCardinality:1}}" +
                 ",MethodCall{Target{$MinCardinality:1,$MaxCardinality:1}},New" +
                 ",SetIndex,SetCount" +
-                ",\"{}\",InnerCreation,EdgeSetAdd,EdgeSetSubstract,+,-,Mul,/,?,\"\\ \",\"|\",\"||\",CopySet,MetaToTo,(),RedirectLeftEdgesToRightVertices,AddLeftEdgesToRightVertices,AddRightEdgesIntoLeftEdges,DeleteRightVertices,DeleteRightEdgesFromLeftEdges,DeleteRightVerticesFromLeftEdges" +
+                ",\"{}\",InnerCreation,EdgeSetAdd,EdgeSetSubstract,+,-,Mul,/,?,\"\\ \",\"|\",\"||\",CopySet,MetaToTo,()"+
+                ",RedirectLeftEdgesToRightVertices,AddLeftEdgesToRightVertices,AddRightEdgesIntoLeftEdges,DeleteRightVertices,DeleteRightEdgesFromLeftEdges,DeleteRightVerticesFromLeftEdges" +
+                ",SetLeftVertexesToFirstRightVertexValue,AddRightEdgesIntoLeftEdgesAndSetStoreForSubGraphAsIsInLeftVertexes"+
                 ",Equal,ExactEqual,VertexEqual,NotEqual,Negation,And,Or,MoreThan,LessThan,MoreOrEqualThan,LessOrEqualThan" +
                 ",Action,Return{Expression{$MinCardinality:0,$MaxCardinality:1}},NextOut{Next{$MinCardinality:0,$MaxCardinality:1}}" +
                 ",StackFrameCreator{Do{$MinCardinality:0,$MaxCardinality:1},Variable{$MinCardinality:0,$MaxCardinality:-1},Type{$MinCardinality:0,$MaxCardinality:-1}}" +
@@ -421,6 +423,8 @@ namespace m0
             AddDotNetEndPoint(smu.Get(false, "DeleteRightVertices"), "DeleteRightVertices");
             AddDotNetEndPoint(smu.Get(false, "DeleteRightEdgesFromLeftEdges"), "DeleteRightEdgesFromLeftEdges");
             AddDotNetEndPoint(smu.Get(false, "DeleteRightVerticesFromLeftEdges"), "DeleteRightVerticesFromLeftEdges");
+            AddDotNetEndPoint(smu.Get(false, "SetLeftVertexesToFirstRightVertexValue"), "SetLeftVertexesToFirstRightVertexValue");
+            AddDotNetEndPoint(smu.Get(false, "AddRightEdgesIntoLeftEdgesAndSetStoreForSubGraphAsIsInLeftVertexes"), "AddRightEdgesIntoLeftEdgesAndSetStoreForSubGraphAsIsInLeftVertexes");
 
             // edge set operators
 
@@ -550,6 +554,8 @@ namespace m0
             smu.Get(false, @"DeleteRightVertices").AddEdge(sm.Get(false, "*$Inherits"), smu.Get(false, "DoubleOperator"));
             smu.Get(false, @"DeleteRightEdgesFromLeftEdges").AddEdge(sm.Get(false, "*$Inherits"), smu.Get(false, "DoubleOperator"));
             smu.Get(false, @"DeleteRightVerticesFromLeftEdges").AddEdge(sm.Get(false, "*$Inherits"), smu.Get(false, "DoubleOperator"));
+            smu.Get(false, @"SetLeftVertexesToFirstRightVertexValue").AddEdge(sm.Get(false, "*$Inherits"), smu.Get(false, "DoubleOperator"));
+            smu.Get(false, @"AddRightEdgesIntoLeftEdgesAndSetStoreForSubGraphAsIsInLeftVertexes").AddEdge(sm.Get(false, "*$Inherits"), smu.Get(false, "DoubleOperator"));
 
             // rest inherits
             smu.Get(false, @"Action").AddEdge(sm.Get(false, "*$Inherits"), smu.Get(false, "Atom"));
@@ -710,6 +716,8 @@ namespace m0
             package.AddEdge(null, smu.Get(false, "DeleteRightVertices"));
             package.AddEdge(null, smu.Get(false, "DeleteRightEdgesFromLeftEdges"));
             package.AddEdge(null, smu.Get(false, "DeleteRightVerticesFromLeftEdges"));
+            package.AddEdge(null, smu.Get(false, "SetLeftVertexesToFirstRightVertexValue"));
+            package.AddEdge(null, smu.Get(false, "AddRightEdgesIntoLeftEdgesAndSetStoreForSubGraphAsIsInLeftVertexes"));
             package.AddEdge(null, smu.Get(false, "Section"));
             package.AddEdge(null, smu.Get(false, "Function"));
             package.AddEdge(null, smu.Get(false, "If"));
@@ -1064,6 +1072,8 @@ namespace m0
             // ~= DeleteRightVertices
             // -< DeleteRightEdgesFromLeftEdges
             // ~< DeleteRightVerticesFromLeftEdges
+            // := SetLeftVertexesToFirstRightVertexValue
+            // <+< AddRightEdgesIntoLeftEdgesAndSetStoreForSubGraphAsIsInLeftVertexes
             //
             ////////////////////////////////////////////////////////            
 
@@ -1102,6 +1112,18 @@ namespace m0
             // (?<left>) ~< (?<right>)
 
             AddDoubleOperator(k, smu, smb, keyword, any, "(?<left>) ~<(?<SUB>) (?<right>)", "DeleteRightVerticesFromLeftEdges");
+
+            // :=
+            //
+            // (?<left>) := (?<right>)
+
+            AddDoubleOperator(k, smu, smb, keyword, any, "(?<left>) :=(?<SUB>) (?<right>)", "SetLeftVertexesToFirstRightVertexValue");
+
+            // <+<
+            //
+            // (?<left>) <+< (?<right>)
+
+            AddDoubleOperator(k, smu, smb, keyword, any, "(?<left>) <+<(?<SUB>) (?<right>)", "AddRightEdgesIntoLeftEdgesAndSetStoreForSubGraphAsIsInLeftVertexes");
 
             /////////////////////////////////////////////////////////
             //

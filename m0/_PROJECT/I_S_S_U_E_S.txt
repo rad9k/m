@@ -1,10 +1,9 @@
 ﻿!!!!!!!!!!!!!!!!!!!!!!!!!!!!! TO DO:
 2. can not create Files
-22. ++< or something similar for base
+22. <+< or something similar for base
 27. key added error on exit
 33. standard base library
 43. :=
-49. what: 39505 not found in Vertex Identifiers Dictionary
 
 <><><> FUTURE 0
 
@@ -16,6 +15,7 @@
 					<@Meta :: @> ???
 					<@To :: @TEST\Person4>
 11. Diagram perf update
+50. files rename HACK
 
 <><><> FUTURE 0.5
 
@@ -36,7 +36,7 @@
 20. different import keywords support
 21. [] / execute / without () as || parameter
 28. other quantifiers in queries
-29. meta string support in queries
+29. meta string support in queries - WHAT IS IT????
 30. |a / a| / a|b +< {} support
 35. sub support
 38. child vertex short names support in ||{}/ X+<||{} for @@ and run time queries
@@ -45,6 +45,10 @@
 45. new => constructor with parameters
 47. how are edges added to stack (AddEdgeForNoInEdgeInOutVertexVertex ?) and the store implications (possible bug)
 48. in edges in queries support
+44. & / | > and or [49]
+49. double keywords definition - required spaces / generated spaces
+50. views
+51. transactions
 
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!! Done:
 
@@ -70,7 +74,3 @@
 25. ====
 23. if / test
 24. new / class / method
-
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!! FREEZER:
-
-44. & / | > and or --as there becomes to be space hell

@@ -443,6 +443,78 @@ namespace m0.ZeroUML.Instructions
             return exe.stack;
         }
 
+        // :=
+        public static INoInEdgeInOutVertexVertex SetLeftVertexesToFirstRightVertexValue(ZeroCodeExecution exe, IVertex inputStack, IVertex instructionVertex, out bool isStackFrameReturn)
+        {
+            isStackFrameReturn = false;
+
+            IVertex leftExpression = GetLeft(instructionVertex);
+            IVertex rightExpression = GetRight(instructionVertex);
+
+            if (leftExpression == null || rightExpression == null)
+                return exe.stack;
+
+            INoInEdgeInOutVertexVertex leftExecuteResult = exe.ExecuteInstructionByMontevideoPrinciples(exe.stack, leftExpression);
+            //INoInEdgeInOutVertexVertex _rightExecuteResult = exe.ExecuteInstructionByMontevideoPrinciples(exe.stack, rightExpression);
+            IVertex newVertexCreationSpace_copy = exe.newVertexCreationSpace;
+            exe.newVertexCreationSpace = CreateStack();
+
+            INoInEdgeInOutVertexVertex _rightExecuteResult = exe.ExecuteInstructionByMontevideoPrinciples(exe.stack, rightExpression);
+
+            exe.newVertexCreationSpace = newVertexCreationSpace_copy;
+            // NEW
+
+
+            IList<IEdge> rightExecuteResult = _rightExecuteResult.OutEdges;
+
+            IDictionary<EdgeKey_FromMeta, IList<IEdge>> leftFromMeta_dict = CreateEdgeKey_FromMetaDictionary(leftExecuteResult);
+
+            foreach (KeyValuePair<EdgeKey_FromMeta, IList<IEdge>> localLeft in leftFromMeta_dict)
+            {
+                IEdge toAdd = localLeft.Value[0];
+
+                toAdd.From.DeleteEdgesList(localLeft.Value);
+
+                foreach (IEdge e in rightExecuteResult)
+                    toAdd.From.AddEdge(toAdd.Meta, e.To);
+            }
+
+            return exe.stack;
+        }
+
+        // <+<
+        public static INoInEdgeInOutVertexVertex AddRightEdgesIntoLeftEdgesAndSetStoreForSubGraphAsIsInLeftVertexes(ZeroCodeExecution exe, IVertex inputStack, IVertex instructionVertex, out bool isStackFrameReturn)
+        {
+            isStackFrameReturn = false;
+
+            IVertex leftExpression = GetLeft(instructionVertex);
+            IVertex rightExpression = GetRight(instructionVertex);
+
+            if (leftExpression == null || rightExpression == null)
+                return exe.stack;
+
+            INoInEdgeInOutVertexVertex _leftExecuteResult = exe.ExecuteInstructionByMontevideoPrinciples(exe.stack, leftExpression);
+
+
+            IVertex newVertexCreationSpace_copy = exe.newVertexCreationSpace;
+            exe.newVertexCreationSpace = CreateStack();
+
+            INoInEdgeInOutVertexVertex _rightExecuteResult = exe.ExecuteInstructionByMontevideoPrinciples(exe.stack, rightExpression);
+
+            exe.newVertexCreationSpace = newVertexCreationSpace_copy;
+
+            IList<IEdge> leftExecuteResult = _leftExecuteResult.OutEdges;
+            IList<IEdge> rightExecuteResult = _rightExecuteResult.OutEdges;
+
+
+
+            foreach (IEdge leftEdge in leftExecuteResult)
+                foreach (IEdge rightEdge in rightExecuteResult)
+                    leftEdge.To.AddEdge(rightEdge.Meta, rightEdge.To);
+
+            return exe.stack;
+        }
+
         #endregion
 
         ////////////////////////////////////////////////////////////////
@@ -451,7 +523,7 @@ namespace m0.ZeroUML.Instructions
         //
         ////////////////////////////////////////////////////////////////
 
-#region EdgeSetOperators
+        #region EdgeSetOperators
 
         public static INoInEdgeInOutVertexVertex EdgeSetAdd(ZeroCodeExecution exe, IVertex inputStack, IVertex instructionVertex, out bool isStackFrameReturn)
         {
