@@ -15,8 +15,8 @@
 	a +< @@$Inherits || @@System
 	b +< a\
 53. < :: <> ????
-54. "raz"||_@@{} ?? is it working OK
-55. ;; and || mod [54]
+54. ;; and || mod [54]
+		
 
 <><><> FUTURE 0
 
@@ -63,6 +63,7 @@
 49. double keywords definition - required spaces / generated spaces
 50. views
 51. transactions
+55. "2a"||@@System{} (have to use ||(@@){} instead)
 
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!! Done:
 
