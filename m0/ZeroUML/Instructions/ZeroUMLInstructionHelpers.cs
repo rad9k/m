@@ -68,6 +68,11 @@ namespace m0.ZeroUML.Instructions
 
                     foreach(IEdge edgeToETo in e.To.InEdgesRaw.ToArray())
                     {
+                        if(edgeToETo is m0.Graph.NoInEdgeInOutVertexEdge)
+                        {
+                            m0.Graph.NoInEdgeInOutVertexEdge no = (m0.Graph.NoInEdgeInOutVertexEdge)edgeToETo;
+                        }
+
                         edgeToETo.From.AddEdge(edgeToETo.Meta, newVertex);
                       //  edgeToETo.From.DeleteEdge(edgeToETo);
                     }

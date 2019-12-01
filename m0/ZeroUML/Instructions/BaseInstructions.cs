@@ -1861,16 +1861,20 @@ namespace m0.ZeroUML.Instructions
                 stackForNextExpression = creationTarget;            
 
             IVertex leftExpression = GetLeft(instructionVertex);
-            IVertex rightExpression = GetRight(instructionVertex);
-
-            if (rightExpression == null)
-                return exe.stack;
+            IVertex rightExpression = GetRight(instructionVertex);            
 
             INoInEdgeInOutVertexVertex leftExecuteResult=null;
             if(leftExpression!= null)
                 leftExecuteResult = exe.ExecuteInstructionByMontevideoPrinciples(inputStack, leftExpression);
 
-            INoInEdgeInOutVertexVertex rightExecuteResult = exe.ExecuteInstructionByMontevideoPrinciples(inputStack, rightExpression);
+            INoInEdgeInOutVertexVertex rightExecuteResult;
+
+            if (rightExpression == null)
+            {
+                rightExecuteResult = CreateStack();
+                rightExecuteResult.AddEdge()
+            }else
+                rightExecuteResult = exe.ExecuteInstructionByMontevideoPrinciples(inputStack, rightExpression);
 
             INoInEdgeInOutVertexVertex toReturn=null;
 

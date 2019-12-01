@@ -1,6 +1,12 @@
 ﻿!!!!!!!!!!!!!!!!!!!!!!!!!!!!! TO DO:
 2. can not create Files
 22. <+< or something similar for base
+"Y"
+	"raz"||"dwa"{
+		"trzy"||"cztery"
+	}
+	variable "a" @Vertex
+	a<+<raz
 27. key added error on exit
 33. standard base library / method / func 
 52. "Y"
@@ -9,7 +15,8 @@
 	a +< @@$Inherits || @@System
 	b +< a\
 53. < :: <> ????
-54. "raz"||{}
+54. "raz"||{} / ||"raz"{} ?? is it working OK
+55. ;; and || mod [54]
 
 <><><> FUTURE 0
 
@@ -42,11 +49,11 @@
 20. different import keywords support
 21. [] / execute / without () as || parameter
 28. other quantifiers in queries
-29. meta string support in queries - WHAT IS IT????
+29. meta string support in queries - going to stack and comparing with stack
 30. |a / a| / a|b +< {} support
 35. sub support
 38. child vertex short names support in ||{}/ X+<||{} for @@ and run time queries
-41. . as attribute access or just
+41. . as attribute / other $Is and not existing access
 42. $Is context of left operands to create new edges by incomplete meta
 45. new => constructor with parameters
 47. how are edges added to stack (AddEdgeForNoInEdgeInOutVertexVertex ?) and the store implications (possible bug)
@@ -64,7 +71,7 @@
 13. common implementation of montevideo principles
 9. [] as subexpression
 18. <> operator
-26. a[x;"2"\]
+26. a[x;"2"\] - WHAT WAS IT???
 20. GetIdentyfyingQuerySubString_ImportMeta not workin <> queries
 21. IsMetaAndToVertexEnoughToIdentifyEdge and IsToVertexEnoughToIdentifyEdge
 16. _ operator 

@@ -403,8 +403,7 @@ namespace m0.Graph
         public override IEdge AddEdge(IVertex metaVertex, IVertex destVertex)
         {
             if (destVertex == null)
-                destVertex = MinusZero.Instance.Empty; // can be
-                //throw new Exception("target vertex can not be null");
+                destVertex = MinusZero.Instance.Empty; // can be    
 
             EdgeBase ne = new EasyEdge(this, metaVertex, destVertex);
 
