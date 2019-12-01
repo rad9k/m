@@ -15,7 +15,7 @@
 	a +< @@$Inherits || @@System
 	b +< a\
 53. < :: <> ????
-54. "raz"||{} / ||"raz"{} ?? is it working OK
+54. "raz"||_@@{} ?? is it working OK
 55. ;; and || mod [54]
 
 <><><> FUTURE 0
@@ -40,6 +40,7 @@
 39. colors in editor
 40. <<a..b>>
 46. forms for Person bug
+56. table optimisation
 
 <><><> FUTURE 1
 

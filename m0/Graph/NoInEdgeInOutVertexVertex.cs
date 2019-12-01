@@ -9,12 +9,17 @@ namespace m0.Graph
 {
     public class NoInEdgeInOutVertexVertex: EasyVertex, INoInEdgeInOutVertexVertex
     {
+        protected override IVertex CreateVertexInstance()
+        {
+            return new EasyVertex(this.Store);                
+        }
+
         public override IEdge AddEdge(Foundation.IVertex metaVertex, Foundation.IVertex destVertex)
         {           
             if (destVertex == null)
                 destVertex = MinusZero.Instance.Empty; // can be
 
-            IEdge ne = new NoInEdgeInOutVertexEdge(this, metaVertex, destVertex);
+            IEdge ne = new NoInEdgeInOutVertexEdge(this, metaVertex, destVertex); // INoInEdgeInOutVertexVertex DIFF
 
             OutEdgesRaw.Add(ne);
 

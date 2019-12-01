@@ -1872,8 +1872,9 @@ namespace m0.ZeroUML.Instructions
             if (rightExpression == null)
             {
                 rightExecuteResult = CreateStack();
-                rightExecuteResult.AddEdge()
-            }else
+                rightExecuteResult.AddEdge(null, null); // will generate MinusZero.Instance.Empty
+            }
+            else
                 rightExecuteResult = exe.ExecuteInstructionByMontevideoPrinciples(inputStack, rightExpression);
 
             INoInEdgeInOutVertexVertex toReturn=null;

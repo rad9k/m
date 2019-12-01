@@ -206,6 +206,11 @@ namespace m0.Graph
             get { throw new NotImplementedException(); }
         }
 
+        protected virtual IVertex CreateVertexInstance()
+        {
+            return (IVertex)Activator.CreateInstance(this.GetType(), new object[] { this.Store });
+        }
+
         public virtual IVertex AddVertex(IVertex metaVertex, object val)
         {
             if (val is IVertex)
@@ -217,7 +222,7 @@ namespace m0.Graph
             if (val == null)
                 val = "";
 
-            IVertex nv = (IVertex)Activator.CreateInstance(this.GetType(), new object[] { this.Store });
+            IVertex nv = CreateVertexInstance();
 
             nv.Value = val;
 
