@@ -15,7 +15,7 @@
 	a +< @@$Inherits || @@System
 	b +< a\
 53. < :: <> ????
-54. ;; and || mod [54]
+54. ;; and || mod
 		
 
 <><><> FUTURE 0
