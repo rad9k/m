@@ -125,9 +125,9 @@ ___________
 	(((((a|aa + b|bb) + c) + d) + e) + f) + g
 	(a + b / c * (d - (e - (f))) + g)
 	(a \ b \ c + (d \ e - e \ f \ g))
-	attribute "a" @a "1":"2" <<"3".."4">>
+	attribute "a" @a "1":"2" <<"3":"4">>
 		attribute "aa" @a "1":"2"
-			attribute "a" @a <<"3".."4">>
+			attribute "a" @a <<"3":"4">>
 				attribute "aaa" @a
 			association "b" @a "1":"2"
 				association "b" @a
