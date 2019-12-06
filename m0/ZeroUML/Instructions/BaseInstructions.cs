@@ -1843,22 +1843,13 @@ namespace m0.ZeroUML.Instructions
             return newStack;
         }
 
+        // old, stackForNextExpression based version is in int the DoubleSemicolonOperator below
         public static INoInEdgeInOutVertexVertex DoubleColonOperator(ZeroCodeExecution exe, IVertex inputStack, IVertex instructionVertex, out bool isStackFrameReturn)
         {
             isStackFrameReturn = false;
 
-            bool isExeStackSameAsExeNewVertexCreationSpace = false;
-
-            if (exe.stack == exe.newVertexCreationSpace)
-                isExeStackSameAsExeNewVertexCreationSpace = true;
-
             IVertex creationTarget = exe.newVertexCreationSpace;
-            IVertex stackForNextExpression;
-
-            if (isExeStackSameAsExeNewVertexCreationSpace)
-                stackForNextExpression = CreateStack();
-            else
-                stackForNextExpression = creationTarget;            
+            IVertex stackForNextExpression;        
 
             IVertex leftExpression = GetLeft(instructionVertex);
             IVertex rightExpression = GetRight(instructionVertex);            
@@ -1887,14 +1878,68 @@ namespace m0.ZeroUML.Instructions
                     meta = leftExecuteResult.OutEdges[0].To;
 
                 foreach (IEdge e in rightExecuteResult)
-                {              
+                {
+                    IVertex newVertex = creationTarget.AddVertex(meta, e.To.Value);
+
+                    toReturn = NextExpressionHandle(exe, newVertex, instructionVertex);
+                }                
+            }
+
+            return Create_INoInEdgeInOutVertexVertex_FromEdgesList(creationTarget);
+        }
+
+        public static INoInEdgeInOutVertexVertex DoubleSemicolonOperator(ZeroCodeExecution exe, IVertex inputStack, IVertex instructionVertex, out bool isStackFrameReturn)
+        {
+            isStackFrameReturn = false;
+
+            //bool isExeStackSameAsExeNewVertexCreationSpace = false;
+
+            //  if (exe.stack == exe.newVertexCreationSpace)
+            //     isExeStackSameAsExeNewVertexCreationSpace = true;
+
+            IVertex creationTarget = exe.newVertexCreationSpace;
+            //IVertex stackForNextExpression;
+
+            // if (isExeStackSameAsExeNewVertexCreationSpace)
+            //     stackForNextExpression = CreateStack();
+            // else
+            //     stackForNextExpression = creationTarget;            
+
+            IVertex leftExpression = GetLeft(instructionVertex);
+            IVertex rightExpression = GetRight(instructionVertex);
+
+            INoInEdgeInOutVertexVertex leftExecuteResult = null;
+            if (leftExpression != null)
+                leftExecuteResult = exe.ExecuteInstructionByMontevideoPrinciples(inputStack, leftExpression);
+
+            INoInEdgeInOutVertexVertex rightExecuteResult;
+
+            if (rightExpression == null)
+            {
+                rightExecuteResult = CreateStack();
+                rightExecuteResult.AddEdge(null, null); // will generate MinusZero.Instance.Empty
+            }
+            else
+                rightExecuteResult = exe.ExecuteInstructionByMontevideoPrinciples(inputStack, rightExpression);
+
+            INoInEdgeInOutVertexVertex toReturn = null;
+
+            if (rightExecuteResult.OutEdges.Count > 0) // what about more than one edge in results
+            {
+                IVertex meta = null;
+
+                if (leftExecuteResult != null && leftExecuteResult.OutEdges.Count > 0)
+                    meta = leftExecuteResult.OutEdges[0].To;
+
+                foreach (IEdge e in rightExecuteResult)
+                {
                     IEdge newEdge = creationTarget.AddEdge(meta, e.To);
 
                     toReturn = NextExpressionHandle(exe, newEdge.To, instructionVertex);
 
-                    if (isExeStackSameAsExeNewVertexCreationSpace)
-                        stackForNextExpression.AddEdge(meta, e.To);
-                }                
+                    //       if (isExeStackSameAsExeNewVertexCreationSpace)
+                    //           stackForNextExpression.AddEdge(meta, e.To);
+                }
             }
 
             return Create_INoInEdgeInOutVertexVertex_FromEdgesList(creationTarget);
