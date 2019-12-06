@@ -1,23 +1,9 @@
 ﻿!!!!!!!!!!!!!!!!!!!!!!!!!!!!! TO DO:
 2. can not create Files
-22. <+< or something similar for base
-"Y"
-	"raz"||"dwa"{
-		"trzy"||"cztery"
-	}
-	variable "a" @Vertex
-	a<+<raz
 27. key added error on exit
 33. standard base library / method / func 
-52. "Y"
-	variable "a" @Vertex
-	variable "b" @Vertex
-	a +< @@$Inherits || @@System
-	b +< a\
 53. < :: <> ????
-54. ;; and || mod
 		
-
 <><><> FUTURE 0
 
 7. basic perf check
@@ -29,6 +15,8 @@
 					<@To :: @TEST\Person4>
 11. Diagram perf update
 50. files rename HACK
+39. colors in editor
+57. editor text prev
 
 <><><> FUTURE 0.5
 
@@ -37,7 +25,6 @@
 34. Query dialog box refactoring
 36. ZeroUML diagramming update
 37. pre/post text processing + if/test/case/default nextout?
-39. colors in editor
 40. <<a..b>>
 46. forms for Person bug
 56. table optimisation
@@ -65,6 +52,16 @@
 51. transactions
 55. "2a"||@@System{} (have to use ||(@@){} instead)
 
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!! ISSUES KNOWN:
+
+52. "Y"
+	variable "a" @Vertex
+	variable "b" @Vertex
+	a +< @@$Inherits || @@System
+	b +< a\
+
+	comment: edge duplicates in b
+
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!! Done:
 
 1. @System || "new"
@@ -90,3 +87,5 @@
 23. if / test
 24. new / class / method
 43. :=
+54. ;; and || mod
+22. <+< or something similar for base

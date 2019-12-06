@@ -9,6 +9,11 @@ namespace m0.Graph
 {
     public class NoInEdgeInOutVertexVertex: EasyVertex, INoInEdgeInOutVertexVertex
     {
+        public NoInEdgeInOutVertexVertex(IStore _Store): base(_Store)
+        {
+            AllowInheritance = false;
+        }
+
         protected override IVertex CreateVertexInstance()
         {
             return new EasyVertex(this.Store);                
@@ -40,8 +45,6 @@ namespace m0.Graph
 
             return ne;
         }
-
-        public NoInEdgeInOutVertexVertex(IStore _store) : base(_store) { }
 
         public void AddEdgeForNoInEdgeInOutVertexVertex(IEdge e){
             OutEdgesRaw.Add(e);

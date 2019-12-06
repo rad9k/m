@@ -24,13 +24,6 @@ namespace m0.Graph
             }
             set
             {
-
-                if (Identifier is long &&
-                    (long)Identifier == 39468)
-                {
-                    int x = 0;
-                }
-
                 if (base.UsageCounter < value && UsageCounter == 0 && Store.DetachState == DetachStateEnum.Attached)
                         Store.StoreVertexIdentifier(this);
 
@@ -71,7 +64,9 @@ namespace m0.Graph
                 e.To.InEdgesDictionariesNeedsRebuild = true;
         }
 
-        protected bool HasInheritance=false;
+        protected bool HasInheritance = false;
+
+        public bool AllowInheritance = true;
 
         protected int InheritanceCount = 0;
 
@@ -98,7 +93,7 @@ namespace m0.Graph
 
         private void InEdgesDictionariesRebuild_Edges()
         {
-            if (HasInheritance)
+            if (HasInheritance && AllowInheritance)
             {
                 List<IEdge> FullEdges = InEdgesRaw.ToList();
 
@@ -135,7 +130,7 @@ namespace m0.Graph
 
         private void OutEdgesDictionariesRebuild_Edges()
         {
-            if (HasInheritance)
+            if (HasInheritance && AllowInheritance)
             {
                 List<IEdge> FullEdges = OutEdgesRaw.ToList();
 
