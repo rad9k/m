@@ -1225,6 +1225,11 @@ namespace m0.ZeroCode
 
                 //AppendAsLink(e.Meta, parent, true);
 
+                if (((string)e.Meta.Value) == "$Is")
+                {
+                    int x = 0;
+                }
+
                 AppendAsLink(e.Meta, parent, false); // XXX we want cvtq linx in <> with @
 
                 AppendDoubleColon();
@@ -1261,7 +1266,7 @@ namespace m0.ZeroCode
                 }
                 else
                 {
-                    if (appendSuffix)
+                    if (!prefixAppended && appendSuffix)
                         AppendPrefix();
 
                     AppendAsLink(e.To, null, hideLinkPrefix);
