@@ -7,8 +7,7 @@
 <><><> FUTURE 0
 
 7. basic perf check
-8. Get/GetAll switch [7]
-4. escape sequences in rtq support by keywords [8] and especially '<' and '>'
+8. Get/GetAll switch [7] [58]
 10. <@BaseEdge :: ""> [4] [11]
 					<@From :: @kupa\TEST\TestDiagram\Item:<4>\\> ??? from where
 					<@Meta :: @> ???
@@ -17,9 +16,11 @@
 50. files rename HACK
 39. colors in editor
 57. editor text prev
+58. root export / import
 
 <><><> FUTURE 0.5
 
+4. escape sequences in rtq support by keywords [8] and especially '<' and '>'
 32. language definition correction to support languages inheritence
 12. parse / generate check
 34. Query dialog box refactoring
@@ -61,6 +62,7 @@
 	b +< a\
 
 	comment: edge duplicates in b
+53. BeenList as Edge. if no IsAggregation
 
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!! Done:
 
