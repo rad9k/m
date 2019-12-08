@@ -8,6 +8,7 @@ using m0.Graph;
 using System.Reflection;
 using System.Collections;
 using System.Runtime.InteropServices;
+using System.Text.RegularExpressions;
 
 namespace m0.Util
 {
@@ -43,6 +44,18 @@ namespace m0.Util
                 l.Add(_value);
                 dict.Add(_key, l);
             }
+        }
+
+        public static string GetRegexpEXTRACT(string s, string r)
+        {
+            Regex rgx = new Regex(r);
+
+            foreach (Match match in rgx.Matches(s))
+            {
+                return match.Groups["EXTRACT"].Value;
+            }
+
+            return null;
         }
 
         public static string GetTypeName(object obj)

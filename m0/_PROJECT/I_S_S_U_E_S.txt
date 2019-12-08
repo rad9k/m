@@ -2,7 +2,6 @@
 2. can not create Files
 27. key added error on exit
 33. standard base library / method / func 
-53. < :: <> ????
 		
 <><><> FUTURE 0
 
@@ -91,3 +90,4 @@
 43. :=
 54. ;; and || mod
 22. <+< or something similar for base
+53. < :: <> ????

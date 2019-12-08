@@ -1,4 +1,6 @@
-﻿using System;
+﻿using m0.Util;
+using m0.ZeroCode;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -14,10 +16,17 @@ namespace m0.Store.FileSystem
             string fileNamePart = getFileName(fileName);
             string extension = getExtension(fileName);
 
+            string numberInBrackets = GeneralUtil.GetRegexpEXTRACT(fileNamePart, ".(?<EXTRACT>).");
+
+            if (numberInBrackets != null)
+            {
+
+            }else
+
             if(extension=="")
-                return pathPart + fileNamePart + ".new";
+                return pathPart + fileNamePart + "(" + numberInBrackets + ")";
             else
-                return pathPart + fileNamePart + ".new." + extension;
+                return pathPart + fileNamePart + "(" + numberInBrackets + ")" + extension;
         }
 
         public static string getPathPart(string fileName)

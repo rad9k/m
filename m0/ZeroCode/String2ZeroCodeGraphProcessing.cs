@@ -2211,7 +2211,7 @@ namespace m0.ZeroCode
                     {
                         if (ZeroCodeUtil.tryStringMatch((string)e.To.Value, 0, "(?<"))
                         {
-                            string name = ZeroCodeUtil.getRegexp((string)e.To.Value, Regex.Escape("(?<") + "(?<EXTRACT>.*)" + Regex.Escape(">)"));
+                            string name = GeneralUtil.GetRegexpEXTRACT((string)e.To.Value, Regex.Escape("(?<") + "(?<EXTRACT>.*)" + Regex.Escape(">)"));
 
                             List<object> subs = ktd.parameters[name];
 
@@ -2233,7 +2233,7 @@ namespace m0.ZeroCode
                     {
                         if (ZeroCodeUtil.tryStringMatch((string)e.To.Value, 0, "(?<"))
                         {
-                            string name = ZeroCodeUtil.getRegexp((string)e.To.Value, Regex.Escape("(?<") + "(?<EXTRACT>.*)" + Regex.Escape(">)"));
+                            string name = GeneralUtil.GetRegexpEXTRACT((string)e.To.Value, Regex.Escape("(?<") + "(?<EXTRACT>.*)" + Regex.Escape(">)"));
 
                             List<object> subs;
                             object sub;

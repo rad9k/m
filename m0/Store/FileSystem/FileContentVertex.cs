@@ -38,16 +38,14 @@ namespace m0.Store.FileSystem
         public override void DeleteInEdge(IEdge edge)
         {
 
-        }
-
-        
+        }   
 
         public FileContentVertex(string identifier, IStore store)
             : base(store)
         {
-            _Identifier = identifier;
+            _Identifier = identifier; // identified vertex are used for volatile stores
 
-            UsageCounter++; // identified vertex are used for volatile stores            
+            UsageCounter++;             
         }
     }
 }

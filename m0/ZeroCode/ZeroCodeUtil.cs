@@ -83,19 +83,6 @@ namespace m0.ZeroCode
             return false;
         }
 
-        public static string getRegexp(string s, string r)
-        {
-            Regex rgx = new Regex(r);
-
-            foreach (Match match in rgx.Matches(s))
-            {
-                return match.Groups["EXTRACT"].Value;
-            }
-
-            return null;
-        }
-
-
         public static int getNextCRLF(string s, int pos)
         {
             bool shallProcess=true;

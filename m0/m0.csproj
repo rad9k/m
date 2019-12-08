@@ -107,7 +107,6 @@
     <Compile Include="Store\FileSystem\DirectoryVertex.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Store\FileSystem\DriveVertex.cs" />
     <Compile Include="Store\FileSystem\FileContentVertex.cs">
       <SubType>Code</SubType>
     </Compile>

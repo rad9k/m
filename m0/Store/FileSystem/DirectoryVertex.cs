@@ -179,6 +179,7 @@ namespace m0.Store.FileSystem
             {
                 UserInteractionUtil.ShowError(Identifier + " file", "tried to delete");
                 return;// not sure if there will be not unwanted file deletion
+
                 FileInfo fi= new FileInfo(Identifier + "\\" + edge.To.Value);
 
                 fi.Delete();
