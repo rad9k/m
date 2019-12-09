@@ -1,6 +1,6 @@
 ﻿!!!!!!!!!!!!!!!!!!!!!!!!!!!!! TO DO:
 27. key added error on exit
-33. standard base library / method / func 
+33. standard base library / method / func [58]
 59. copy $Empty?
 		
 <><><> FUTURE 0
