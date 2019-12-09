@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace m0.Store.FileSystem
@@ -16,17 +17,47 @@ namespace m0.Store.FileSystem
             string fileNamePart = getFileName(fileName);
             string extension = getExtension(fileName);
 
-            string numberInBrackets = GeneralUtil.GetRegexpEXTRACT(fileNamePart, ".(?<EXTRACT>).");
+            string pre, num;
 
-            if (numberInBrackets != null)
+            getPreNumFromFileNamePart(fileNamePart, out pre, out num);
+
+            if (num != null)
             {
+                int? numParsed = Int32.Parse(num);
 
-            }else
+                if (numParsed == null)
+                    numParsed = 1;
+                else
+                    numParsed++;
 
-            if(extension=="")
-                return pathPart + fileNamePart + "(" + numberInBrackets + ")";
+                if (extension == "")
+                    return pathPart + pre + "(" + numParsed + ")";
+                else
+                    return pathPart + pre + "(" + numParsed + ")." + extension;
+
+            }
             else
-                return pathPart + fileNamePart + "(" + numberInBrackets + ")" + extension;
+            {
+                if (extension == "")
+                    return pathPart + fileNamePart + "(1)";
+                else
+                    return pathPart + fileNamePart + "(1)." + extension;
+            }
+            
+        }
+
+        private static void getPreNumFromFileNamePart(string fileNamePart, out string pre, out string num)
+        {
+            Regex rgx = new Regex("(?<PRE>.+)[(](?<NUM>\\d+)[)]");
+
+            pre = null;
+            num = null;
+
+            foreach (Match match in rgx.Matches(fileNamePart))
+            {
+                pre = match.Groups["PRE"].Value;
+                num = match.Groups["NUM"].Value;
+            }
         }
 
         public static string getPathPart(string fileName)
