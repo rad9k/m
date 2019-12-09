@@ -43,7 +43,12 @@ namespace m0.Graph
 
             ToStoreTypeName = To.Store.TypeName;
 
-            ToIdentifier = To.Identifier;            
+            ToIdentifier = To.Identifier;
+
+            if (ToIdentifier is long && (long)ToIdentifier > (long)550 && (long)ToIdentifier < (long)560)
+            {
+                int x = 0;
+            }
 
             To.DeleteInEdgeOnlyIn(this);
 

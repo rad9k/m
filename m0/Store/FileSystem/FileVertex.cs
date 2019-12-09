@@ -45,9 +45,13 @@ namespace m0.Store.FileSystem
 
                         _Identifier = newFileName;                        
 
-                        GraphUtil.RemoveAllEdges(this);
+                        string extension = FileSystemUtil.getExtension(newFileName);
+                        if (extension == "m0" || extension == "M0") // need this now
+                        {
+                            GraphUtil.RemoveAllEdges(this);
 
-                        updateOutEdges();
+                            updateOutEdges();
+                        }
 
                         FireChange(new VertexChangeEventArgs(VertexChangeType.ValueChanged, null));
                     }
@@ -76,37 +80,37 @@ namespace m0.Store.FileSystem
        
         void updateOutEdges()
         {            
-            IVertex fsmf = MinusZero.Instance.Root.Get(false, @"System\Meta\Store\FileSystem\File");
 
-            AddMeta(fsmf.Get(false, "Filename"), FI.Name);
+
+            AddMeta(FileSystemStore.File_Filename, FI.Name);
 
             string extension = FI.Extension;
 
             if (extension.Length > 1)
                 extension = extension.Substring(1);
 
-            AddMeta(fsmf.Get(false, "Extension"), extension);
+            AddMeta(FileSystemStore.File_Extension, extension);
 
-            AddMeta(fsmf.Get(false, "FullFilename"), FI.FullName);
-            AddMeta(fsmf.Get(false, "Size"), FI.Length.ToString());
-            AddMeta(fsmf.Get(false, "FileAttribute"), FI.Attributes.ToString());
-            AddMeta(fsmf.Get(false, "CreationDateTime"), FI.CreationTime.ToString());
-            AddMeta(fsmf.Get(false, "UpdateDateTime"), FI.LastWriteTime.ToString());
-            AddMeta(fsmf.Get(false, "ReadDateTime"), FI.LastAccessTime.ToString());                        
+            AddMeta(FileSystemStore.File_FullFilename, FI.FullName);
+            AddMeta(FileSystemStore.File_Size, FI.Length.ToString());
+            AddMeta(FileSystemStore.File_FileAttribute, FI.Attributes.ToString());
+            AddMeta(FileSystemStore.File_CreationDateTime, FI.CreationTime.ToString());
+            AddMeta(FileSystemStore.File_UpdateDateTime, FI.LastWriteTime.ToString());
+            AddMeta(FileSystemStore.File_ReadDateTime, FI.LastAccessTime.ToString());                        
 
             if (((FileSystemStore)this.Store).IncludeFileContent)
-                AddEdge(fsmf.Get(false, "Content"), new FileContentVertex(FI.FullName, this.Store));
+                AddEdge(FileSystemStore.File_Content, new FileContentVertex(FI.FullName, this.Store));
 
             if (FI.Extension == ".m0" || FI.Extension == ".M0")
             {
                 JsonStore = new JsonSerializationStore((string)this.Identifier, MinusZero.Instance, new AccessLevelEnum[] { });
-                AddEdge(MinusZero.Instance.Root.Get(false, @"System\Meta\Store\FileSystem\$Store"), JsonStore.Root);
+                AddEdge(FileSystemStore.Store, JsonStore.Root);
             }
         }
 
         void AddMeta(IVertex metaVertex, string value)
         {
-            IVertex v = new EasyVertex(this.Store);
+            IVertex v = new EasyVertex(MinusZero.Instance.TempStore); // XXX
 
             v.Value = value;
 
@@ -139,6 +143,8 @@ namespace m0.Store.FileSystem
             UsageCounter++; // identified vertex are used for volatile stores
 
             FI = new FileInfo(Identifier.ToString());
+
+            FileSystemStore.FileVertexDictionary.Add(identifier, this);
         }
     }
 }

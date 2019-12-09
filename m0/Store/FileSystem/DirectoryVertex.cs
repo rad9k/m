@@ -40,6 +40,8 @@ namespace m0.Store.FileSystem
                         while (System.IO.Directory.Exists(newFileName) || System.IO.Directory.Exists(newFileName))
                             newFileName = FileSystemUtil.addNew(newFileName);
 
+                        _Identifier = newFileName;
+
                         System.IO.Directory.Move(DI.FullName, newFileName);
 
                         DI = new DirectoryInfo(newFileName);
@@ -82,29 +84,25 @@ namespace m0.Store.FileSystem
 
                 CanFireChangeEvent = false;                
 
-                IVertex fsm = MinusZero.Instance.Root.Get(false, @"System\Meta\Store\FileSystem");
-
-                IVertex fsmd = fsm.Get(false, @"Directory");
-
-                AddMeta(fsmd.Get(false, "Filename"), DI.Name);
+                AddMeta(FileSystemStore.Directory_Filename, DI.Name);
 
                 string extension = DI.Extension;
 
                 if (extension.Length > 1)
                     extension = extension.Substring(1);
 
-                AddMeta(fsmd.Get(false, "Extension"), extension);
+                AddMeta(FileSystemStore.Directory_Extension, extension);
                 
-                AddMeta(fsmd.Get(false, "FullFilename"), DI.FullName);
-                AddMeta(fsmd.Get(false, "FileAttribute"), DI.Attributes.ToString());
-                AddMeta(fsmd.Get(false, "CreationDateTime"), DI.CreationTime.ToString());
-                AddMeta(fsmd.Get(false, "UpdateDateTime"), DI.LastWriteTime.ToString());
-                AddMeta(fsmd.Get(false, "ReadDateTime"), DI.LastAccessTime.ToString());
+                AddMeta(FileSystemStore.Directory_FullFilename, DI.FullName);
+                AddMeta(FileSystemStore.Directory_FileAttribute, DI.Attributes.ToString());
+                AddMeta(FileSystemStore.Directory_CreationDateTime, DI.CreationTime.ToString());
+                AddMeta(FileSystemStore.Directory_UpdateDateTime, DI.LastWriteTime.ToString());
+                AddMeta(FileSystemStore.Directory_ReadDateTime, DI.LastAccessTime.ToString());
                 
 
-                IVertex FileMetaVertex=fsm.Get(false, "File");
+                IVertex FileMetaVertex= FileSystemStore.Directory_File;
 
-                IVertex DirectoryMetaVertex=fsm.Get(false, "Directory");
+                IVertex DirectoryMetaVertex= FileSystemStore.Directory;
 
                 try{
                     foreach (FileSystemInfo fsi in DI.EnumerateFileSystemInfos())                
@@ -206,6 +204,8 @@ namespace m0.Store.FileSystem
             UsageCounter++; // identified vertex are used for volatile stores            
 
             DI = new DirectoryInfo(Identifier.ToString());
+
+            FileSystemStore.DirectoryVertexDictionary.Add(identifier, this);
         }
     }
 }

@@ -1,7 +1,7 @@
 ﻿!!!!!!!!!!!!!!!!!!!!!!!!!!!!! TO DO:
-2. can not create Files
 27. key added error on exit
 33. standard base library / method / func 
+59. copy $Empty?
 		
 <><><> FUTURE 0
 
@@ -91,3 +91,4 @@
 54. ;; and || mod
 22. <+< or something similar for base
 53. < :: <> ????
+2. can not create Files
