@@ -1076,7 +1076,7 @@ namespace m0
             // ~= DeleteRightVertices
             // -< DeleteRightEdgesFromLeftEdges
             // ~< DeleteRightVerticesFromLeftEdges
-            // := SetLeftVertexesToFirstRightVertexValue
+            // <- SetLeftVertexesToFirstRightVertexValue
             // <+< AddRightEdgesIntoFirstLeftEdgeAndSetStoreForSubGraphAsIsInLeftVertex
             //
             ////////////////////////////////////////////////////////            
@@ -1117,11 +1117,11 @@ namespace m0
 
             AddDoubleOperator(k, smu, smb, keyword, any, "(?<left>) ~<(?<SUB>) (?<right>)", "DeleteRightVerticesFromLeftEdges");
 
-            // :=
+            // <-
             //
-            // (?<left>) := (?<right>)
+            // (?<left>) <- (?<right>)
 
-            AddDoubleOperator(k, smu, smb, keyword, any, "(?<left>) :=(?<SUB>) (?<right>)", "SetLeftVertexesToFirstRightVertexValue");
+            AddDoubleOperator(k, smu, smb, keyword, any, "(?<left>) <-(?<SUB>) (?<right>)", "SetLeftVertexesToFirstRightVertexValue");
 
             // <+<
             //
@@ -1322,7 +1322,7 @@ namespace m0
             //
             // (?<left>) | (?<right>)
 
-            AddDoubleOperator(k, smu, smb, keyword, any, "(?<left>) %(?<SUB>) (?<right>)", "Or");
+            AddDoubleOperator(k, smu, smb, keyword, any, "(?<left>) |(?<SUB>) (?<right>)", "Or");
 
             // >
             //
@@ -1361,9 +1361,9 @@ namespace m0
             //
             // (?<left_ColonEmptyNew>)||(?<SUB>)(?<right_ColonEmptyNew>)                         
 
-            IVertex o_doubleColon = k.AddVertex(keyword, "(?<left_ColonEmptyInner2SlashMarkIndexMethodNewLinkBracketCopy>) || (?<right_ColonEmptyInner2SlashMarkIndexMethodNewLinkBracketCopy>)");
+            IVertex o_doubleColon = k.AddVertex(keyword, "(?<left_ColonEmptyInner2SlashMarkIndexMethodNewLinkBracketCopy>) :: (?<right_ColonEmptyInner2SlashMarkIndexMethodNewLinkBracketCopy>)");
 
-            //IVertex o_doubleColon = k.AddVertex(keyword, "(?<left_ColonEmptyInner2SlashMarkIndexMethodNewLink>)||(?<SUB>)(?<right_ColonEmptyInner2SlashMarkIndexMethodNewLink>)");
+            //IVertex o_doubleColon = k.AddVertex(keyword, "(?<left_ColonEmptyInner2SlashMarkIndexMethodNewLink>)::(?<SUB>)(?<right_ColonEmptyInner2SlashMarkIndexMethodNewLink>)");
 
             o_doubleColon.AddVertex(nonSelfRecursiveParameters, "");
 
@@ -1384,9 +1384,9 @@ namespace m0
             //
             // ||(?<SUB>)(?<right_ColonEmptyNew>)                         
 
-            IVertex o_doubleColon2 = k.AddVertex(keyword, "|| (?<right_ColonEmptyInner2SlashMarkIndexMethodNewLinkBracketCopy>)");
+            IVertex o_doubleColon2 = k.AddVertex(keyword, ":: (?<right_ColonEmptyInner2SlashMarkIndexMethodNewLinkBracketCopy>)");
 
-            //IVertex o_doubleColon2 = k.AddVertex(keyword, "||(?<SUB>)(?<right_ColonEmptyInner2SlashMarkIndexMethodNewLink>)");
+            //IVertex o_doubleColon2 = k.AddVertex(keyword, "::(?<SUB>)(?<right_ColonEmptyInner2SlashMarkIndexMethodNewLink>)");
 
             o_doubleColon2.AddVertex(nonSelfRecursiveParameters, "");
 
@@ -1404,9 +1404,9 @@ namespace m0
             //
             // (?<left_ColonEmptyNew>)||(?<SUB>)                         
 
-            IVertex o_doubleColon3 = k.AddVertex(keyword, "(?<left_ColonEmptyInner2SlashMarkIndexMethodNewLinkBracketCopy>) ||");
+            IVertex o_doubleColon3 = k.AddVertex(keyword, "(?<left_ColonEmptyInner2SlashMarkIndexMethodNewLinkBracketCopy>) ::");
 
-            // Vertex o_doubleColon3 = k.AddVertex(keyword, "(?<left_ColonEmptyInner2SlashMarkIndexMethodNewLink>)||(?<SUB>)");
+            // Vertex o_doubleColon3 = k.AddVertex(keyword, "(?<left_ColonEmptyInner2SlashMarkIndexMethodNewLink>)::(?<SUB>)");
 
             o_doubleColon3.AddVertex(nonSelfRecursiveParameters, "");
 
@@ -1491,7 +1491,7 @@ namespace m0
             //
             // (?<left_Empty2>)|(?<SUB>)(?<right_Empty2>)            
 
-            IVertex o_colon = k.AddVertex(keyword, "(?<left_Empty2Inner>)|(?<SUB>)(?<right_Empty2Inner>)");
+            IVertex o_colon = k.AddVertex(keyword, "(?<left_Empty2Inner>):(?<SUB>)(?<right_Empty2Inner>)");
 
             o_colon.AddEdge(keywordGroup, kgd_ColonEmptyInner2SlashMarkIndexMethodNewLink);
 
@@ -1517,7 +1517,7 @@ namespace m0
             //
             // |(?<SUB>)(?<right_Empty2>)            
 
-            IVertex o_colon2 = k.AddVertex(keyword, "|(?<SUB>)(?<right_Empty2Inner>)");
+            IVertex o_colon2 = k.AddVertex(keyword, ":(?<SUB>)(?<right_Empty2Inner>)");
 
             o_colon2.AddEdge(keywordGroup, kgd_ColonEmptyInner2SlashMarkIndexMethodNewLink);
 
@@ -1541,7 +1541,7 @@ namespace m0
             //
             // (?<left_Empty2>)|(?<SUB>)            
 
-            IVertex o_colon3 = k.AddVertex(keyword, "(?<left_Empty2Inner>)|(?<SUB>)");            
+            IVertex o_colon3 = k.AddVertex(keyword, "(?<left_Empty2Inner>):(?<SUB>)");            
 
             o_colon3.AddEdge(keywordGroup, kgd_ColonEmptyInner2SlashMarkIndexMethodNewLink);
 

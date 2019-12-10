@@ -249,30 +249,30 @@ namespace m0
 
 
             q(bas, @"?");
-            q(bas, @"?{maa|aa}");
-            q(bas, @"{|x}|");
-            q(bas, @"\{|y}|");
-            q(bas, @"\{|{|yy}}|");
-            q(bas, @"\{|{mb|yy}}|");
-            q(bas, @"\{|{mb|yy,mb|z}}|");
+            q(bas, @"?{maa:aa}");
+            q(bas, @"{:x}:");
+            q(bas, @"\{:y}:");
+            q(bas, @"\{:{:yy}}:");
+            q(bas, @"\{:{mb:yy}}:");
+            q(bas, @"\{:{mb:yy,mb:z}}:");
             q(bas, @"\");
-            q(bas, @"|{|aa2}");
-            q(bas, @"\|aa");
-            q(bas, @"\|aa{|aaa}");
-            q(bas, @"\|aa{|aaa,|aaa}");
-            q(bas, @"\|aa{|aaa,|aaa,|aaa2,|x}");
+            q(bas, @":{:aa2}");
+            q(bas, @"\:aa");
+            q(bas, @"\:aa{:aaa}");
+            q(bas, @"\:aa{:aaa,:aaa}");
+            q(bas, @"\:aa{:aaa,:aaa,:aaa2,:x}");
 
 
 
             /*   q(bas, @"");
-               q(bas, @"mb|b");
-               q(bas, @"mbx|b");
-               q(bas, @"mb|bx");
-               q(bas, @"mbx|");
-               q(bas, @"mb|");
-               q(bas, @"|bx");
-               q(bas, @"|b");
-               q(bas, @"|");
+               q(bas, @"mb:b");
+               q(bas, @"mbx:b");
+               q(bas, @"mb:bx");
+               q(bas, @"mbx:");
+               q(bas, @"mb:");
+               q(bas, @":bx");
+               q(bas, @":b");
+               q(bas, @":");
                q(bas, @"mb");
                q(bas, @"b");*/
 
@@ -297,8 +297,8 @@ namespace m0
                 "\r\n\tB +< \"B1\"" +
                 "\r\n\tB +< \"B2\"" +
                 "\r\n\tB +< \"B3\"" +
-                "\r\n\tA := \"val A\"" +
-                "\r\n\tB := \"val B\"" +
+                "\r\n\tA <- \"val A\"" +
+                "\r\n\tB <- \"val B\"" +
                 "\r\n\tC +< A\\ <+> B\\" +
                 "\r\n\tD +< C\\ <-> B\\"
                 
@@ -442,8 +442,8 @@ namespace m0
         "\r\n\tvariable \"B\" @String" +
         "\r\n\tvariable \"C\" @Vertex" +
         "\r\n\tvariable \"D\" @Integer" +
-        "\r\n\tA = execute($ \\ | X \\ )" +
-        "\r\n\tB = generate @@System\\FormalTextLanguage\\ZeroCode($ \\ | X \\ )" +
+        "\r\n\tA = execute($ \\ : X \\ )" +
+        "\r\n\tB = generate @@System\\FormalTextLanguage\\ZeroCode($ \\ : X \\ )" +
         "\r\n\tC = parse @@System\\FormalTextLanguage\\ZeroCode(\"a+b\")" +
         "\r\n\tD = execute(parse(\"A + A\"))"
         );
@@ -460,10 +460,10 @@ namespace m0
             "\r\n\t\t\"b\"" +
             "\r\n\t\t\t\"z3\"" +
             "\r\n\tvariable \"a\" @String" +
-            "\r\n\ta = ($\\|x<<\"1\">>\\<+>$\\|x<<\"2\">>\\)\\" +
+            "\r\n\ta = ($\\:x<<\"1\">>\\<+>$\\:x<<\"2\">>\\)\\" +
             "\r\n\t@@x<<\"2\">>\\b<<\"2\">>\\z3");
 
-            //MinusZero.Instance.NewDefaultParser.Parse(code, "\"Code\"\r\n\tvariable \"Magunia\" @String 5:10\r\n\tvariable \"Radek\" @String 2:2\r\n\tRadek += \"Koha\"\r\n\tMagunia=Radek\r\n\tMagunia ~= Radek|Koha");
+            //MinusZero.Instance.NewDefaultParser.Parse(code, "\"Code\"\r\n\tvariable \"Magunia\" @String 5:10\r\n\tvariable \"Radek\" @String 2:2\r\n\tRadek += \"Koha\"\r\n\tMagunia=Radek\r\n\tMagunia ~= Radek:Koha");
 
 
 

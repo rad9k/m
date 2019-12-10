@@ -30,9 +30,9 @@ namespace m0.ZeroCode
 
         public static string CRLFoperator = "{";
 
-        public static string MetaSeparator = "|";
+        //public static string MetaSeparator = "|";
 
-        //public static string MetaSeparator = ":";
+        public static string MetaSeparator = ":";
 
         public static string CodeGraphVertexPrefix = "<";
 
@@ -54,15 +54,11 @@ namespace m0.ZeroCode
 
         public static char EscapeCharacter = '\\';
 
-       // public static string SetIndexPrefix = ";";
-
-      //  public static string SetIndexPostfix = "";
-
         public static string SetIndexPrefix = "<<";
 
         public static string SetIndexPostfix = ">>";
 
-        public static HashSet<string> CodeViewTimeLinkKeywordParts = new HashSet<string>(new string[] { "\\", "{", "}", "|", "||", ":", "::", SetIndexPrefix, SetIndexPostfix, "," }); 
+        public static HashSet<string> CodeViewTimeLinkKeywordParts = new HashSet<string>(new string[] { "\\", "{", "}", ":", "::", SetIndexPrefix, SetIndexPostfix, "," }); 
     // we store it here and in the textlanguage, but in general this is XXX. big question remins: how do you do cvtq while the code is in some different language?
 
         // Link
