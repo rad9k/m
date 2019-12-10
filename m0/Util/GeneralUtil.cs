@@ -132,16 +132,5 @@ namespace m0.Util
             else
                 return o.ToString();
         }
-
-        public static IVertex ParseAndExcute(IVertex baseVertex, IVertex inputVertex, string expressionAsString)
-        {
-            MinusZero z = MinusZero.Instance;
-
-            IVertex expressionAsVertex = MinusZero.Instance.CreateTempVertex();
-
-            z.DefaultParser.Parse(expressionAsVertex, expressionAsString);
-
-            return ZeroCode.ZeroCodeEngine_OLD.Instance.OldStyleExecute(baseVertex, inputVertex, expressionAsVertex);
-        }
     }
 }

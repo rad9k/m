@@ -10,7 +10,7 @@ using m0.Graph;
 using m0.Util;
 using m0.ZeroTypes;
 
-namespace m0.ZeroCode
+namespace m0.LegacySystem.ZeroCode
 {
     public class ZeroCodeEngine_OLD: IParser, IExecuter
     {

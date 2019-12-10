@@ -1,21 +1,19 @@
 ﻿!!!!!!!!!!!!!!!!!!!!!!!!!!!!! TO DO:
 27. key added error on exit
-33. standard base library / method / func 
-59. copy $Empty?
-		
-<><><> FUTURE 0
-
+33. standard base library / method / func [58]
+59. copy $Empty? [11]
+60. copy from Graph error [59]
 7. basic perf check
-8. Get/GetAll switch [7] [58]
+8. Get/GetAll switch [7]
 10. <@BaseEdge :: ""> [4] [11]
 					<@From :: @kupa\TEST\TestDiagram\Item:<4>\\> ??? from where
 					<@Meta :: @> ???
 					<@To :: @TEST\Person4>
-11. Diagram perf update
+11. Diagram perf update [8]
 50. files rename HACK
 39. colors in editor
 57. editor text prev
-58. root export / import
+58. root export / import [8]
 
 <><><> FUTURE 0.5
 
