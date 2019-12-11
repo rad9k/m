@@ -20,7 +20,7 @@
 	a = @t[mis]
 
 "Y"
-	a||b{
+	a::b{
 		if "True"
 			foreach "X" in a\b\c
 				a=b+c
@@ -43,9 +43,9 @@
 	}
 	
 "Y"
-	a +< a||B{
-		"c"||"d"{
-			e||"f"{
+	a +< a::B{
+		"c"::"d"{
+			e::"f"{
 				b13 + b14
 				while "False"
 					x=x+1
@@ -54,75 +54,75 @@
 	}
 
 <"Y">
-	||"A"{
-		||"A"{
+	::"A"{
+		::"A"{
 		}
 	}
 
 <"Y">
 	a\b\c
-	a|aa\b\c|cc
-	a{}|aa{}\b\c{}|cc{}
-	a{}|aa{}\b\c{}|cc{}||d{}|d{}\e\f{}|ff{}
-	||d{}|d{}\e\f{}|ff{}
-	a{}|aa{}\b\c{}|cc{}||
-	a| ||
-	|| |b
+	a:aa\b\c:cc
+	a{}:aa{}\b\c{}:cc{}
+	a{}:aa{}\b\c{}:cc{}::d{}:d{}\e\f{}:ff{}
+	::d{}:d{}\e\f{}:ff{}
+	a{}:aa{}\b\c{}:cc{}::
+	a: ::
+	:: :b
 	a{}
 	a{}\
 	{}\{}
 	{}\
-	a{x|xx,y{z|zz}|y}|aa{x,y}\b\c{x|xx,y{z|zz}|y}|cc{x,y}
-	a{x|xx,y{z|zz}|y}|aa{x,y}\b\c{x|xx,y{z|zz}|y}|cc{x,y}||d{x|xx,y{z|zz}|y}|d{x,y}\e\f{x|xx,y{z|zz}|y}|ff{x,y}
-	||d{x|xx,y{z|zz}|y}|d{x,y}\e\f{x|xx,y{z|zz}|y}|ff{x,y}
-	a{x|xx,y{z|zz}|y}|aa{x,y}\b\c{x|xx,y{z|zz}|y}|cc{x,y}||	
-	a{x|xx,y{z|zz}|y}
-	a{x|xx,y{z|zz}|y}\
-	{x|xx,y{z|zz}|y}\{x,y}
-	{x|xx,y{z|zz}|y}\
-	{}|{}||{}|{}
-	{}||
-	||{}
-	{}||{}
-	{}|
-	|{}
-	{}|\
-	|{}\
+	a{x:xx,y{z:zz}:y}:aa{x,y}\b\c{x:xx,y{z:zz}:y}:cc{x,y}
+	a{x:xx,y{z:zz}:y}:aa{x,y}\b\c{x:xx,y{z:zz}:y}:cc{x,y}::d{x:xx,y{z:zz}:y}:d{x,y}\e\f{x:xx,y{z:zz}:y}:ff{x,y}
+	::d{x:xx,y{z:zz}:y}:d{x,y}\e\f{x:xx,y{z:zz}:y}:ff{x,y}
+	a{x:xx,y{z:zz}:y}:aa{x,y}\b\c{x:xx,y{z:zz}:y}:cc{x,y}::	
+	a{x:xx,y{z:zz}:y}
+	a{x:xx,y{z:zz}:y}\
+	{x:xx,y{z:zz}:y}\{x,y}
+	{x:xx,y{z:zz}:y}\
+	{}:{}::{}:{}
+	{}::
+	::{}
+	{}::{}
+	{}:
+	:{}
+	{}:\
+	:{}\
 
 ________________________
 "Y"
-	((a|a + b) + c) + d
-	(((a|a + b) + c) + d) + e
-	((((a|a + b) + c) + d) + e) + f
-	(((((a|a + b|bb) + c) + d) + e) + f) + g
+	((a:a + b) + c) + d
+	(((a:a + b) + c) + d) + e
+	((((a:a + b) + c) + d) + e) + f
+	(((((a:a + b:bb) + c) + d) + e) + f) + g
 	(a + (((((((x))))))) + b)
 	(a + b / c * (d - (e - (f))) + g)
 	(a \ b \ c + (d \ e - e \ f \ g))
 	(a + b / c * (d - (e + (f / (ff * (fff + fff2 - (x / v)))))) + g)
 ___________
 <"Y">
-	||"A"{
-		||"a"
-		||"b"{
-			||"b2"{
-				||b11
-				||"b12"
+	::"A"{
+		::"a"
+		::"b"{
+			::"b2"{
+				::b11
+				::"b12"
 				"b13" + "b14"
 			}
-			||"b2"{
-				||b11
-				||"b12"
-				||(b13 + b14)
+			::"b2"{
+				::b11
+				::"b12"
+				::(b13 + b14)
 			}
 		}
-		||"c"{
-			||c1
-			||c2
+		::"c"{
+			::c1
+			::c2
 		}
 	}
 
 <"Y">
-	(((((a|aa + b|bb) + c) + d) + e) + f) + g
+	(((((a:aa + b:bb) + c) + d) + e) + f) + g
 	(a + b / c * (d - (e - (f))) + g)
 	(a \ b \ c + (d \ e - e \ f \ g))
 	attribute "a" @a "1":"2" <<"3":"4">>
