@@ -174,7 +174,7 @@ namespace m0.Store.FileSystem
             Directory = FileSystem.AddVertex(sm.Get(false, @"ZeroUML\Class"), "Directory");
             File = FileSystem.AddVertex(sm.Get(false, @"ZeroUML\Class"), "File");
 
-            Store = FileSystem.AddVertex(null, "$Store");
+            Store = FileSystem.AddVertex(null, "Store");
 
             mfsf.Get(false, "Drive").AddEdge(sm.Get(false, @"Base\Vertex\$Inherits"), mfsf.Get(false, "Directory"));
             mfsf.Get(false, @"Drive\PathSeparator").AddEdge(sm.Get(false, @"*$EdgeTarget"), sm.Get(false, @"ZeroTypes\String"));

@@ -1,4 +1,14 @@
 ﻿"Y"
+	variable "a" @Vertex
+	a = :C\:m0\:t.m0\$Store:
+	a <+< "testA" :: "testAA"{
+		"B" :: "BB"
+		"C" :: "CC"{
+			"D" :: "DD"
+		}
+	}
+
+"Y"
 	variable "mis" @Boolean
 	if ("1" + "2") == "3"
 		mis = "True"

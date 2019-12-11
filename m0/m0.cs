@@ -1966,7 +1966,7 @@ namespace m0
             //
             // [(*(+, +) (?<expr>)*)]
 
-            IVertex o_methodCall = k.AddVertex(keyword, ".(?<target_ColonEmptyInner2SlashMarkIndexMethodNewLink>)[(*(+, +)(?<expr>)*)]");
+            IVertex o_methodCall = k.AddVertex(keyword, "%(?<target_ColonEmptyInner2SlashMarkIndexMethodNewLink>)[(*(+, +)(?<expr>)*)]");
 
             o_methodCall.AddEdge(keywordGroup, kgd_SlashMarkIndexMethod);
 

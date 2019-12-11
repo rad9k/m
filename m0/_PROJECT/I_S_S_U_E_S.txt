@@ -1,4 +1,5 @@
 ﻿!!!!!!!!!!!!!!!!!!!!!!!!!!!!! TO DO:
+63. query bug - queryTest
 27. key added error on exit
 33. standard base library / method / func [58]
 59. copy $Empty? [11]
@@ -36,7 +37,7 @@
 21. [] / execute / without () as || parameter
 28. other quantifiers in queries
 29. meta string support in queries - going to stack and comparing with stack
-30. |a / a| / a|b +< {} support (have to use ()+<{} instead)
+30. |a / a| / a|b +< {} support AND ()+<{} DOES NOT WORK AS IT WAS SUPPOSED TO WORK WTF
 35. sub support
 38. child vertex short names support in ||{}/ X+<||{} for @@ and run time queries
 41. . as attribute / other $Is and not existing access
@@ -49,6 +50,7 @@
 50. views
 51. transactions
 55. "2a"||@@System{} (have to use ||(@@){} instead)
+61. Form reset after ".m0" for File:
 
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!! ISSUES KNOWN:
 

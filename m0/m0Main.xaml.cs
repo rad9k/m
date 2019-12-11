@@ -247,7 +247,8 @@ namespace m0
 
             m0.MinusZero.Instance.LogLevel = -2;
 
-
+            q(bas, @"ma:");
+            q(bas, @":b");
             q(bas, @"?");
             q(bas, @"?{maa:aa}");
             q(bas, @"{:x}:");
@@ -485,7 +486,7 @@ namespace m0
 
             //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-            // queryTest(tr);
+             queryTest(tr);
 
             exeTest(tr);
 

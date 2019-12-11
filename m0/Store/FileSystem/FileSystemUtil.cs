@@ -42,8 +42,7 @@ namespace m0.Store.FileSystem
                     return pathPart + fileNamePart + "(1)";
                 else
                     return pathPart + fileNamePart + "(1)." + extension;
-            }
-            
+            }           
         }
 
         private static void getPreNumFromFileNamePart(string fileNamePart, out string pre, out string num)

@@ -17,7 +17,10 @@ namespace m0.Store.FileSystem
         {
             get
             {
-                return DI.Name;
+                if (((string)Identifier).Length == 3 && ((string)Identifier)[1] == ':' && ((string)Identifier)[2] == '\\')
+                    return ((string)Identifier)[0].ToString();
+
+                return FileSystemUtil.getFileNamePart((string)Identifier);
             }
             set
             {
@@ -194,6 +197,14 @@ namespace m0.Store.FileSystem
             }
             
             base.DeleteEdge(edge);
+        }
+
+        string getFileName(string name)
+        {
+            if (name.Length == 3 && name[1]==':' && name[2]=='\\')
+                return name[0].ToString();
+
+            return name;
         }
 
         public DirectoryVertex(string identifier,IStore store)
