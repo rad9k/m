@@ -203,7 +203,7 @@ namespace m0.Graph
 
 
             if (value != null)
-                toRet += value.GetHashCode();
+                toRet += -2 * value.GetHashCode();
 
             return toRet;
         }

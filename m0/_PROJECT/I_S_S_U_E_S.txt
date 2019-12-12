@@ -1,5 +1,4 @@
 ﻿!!!!!!!!!!!!!!!!!!!!!!!!!!!!! TO DO:
-63. query bug - queryTest
 27. key added error on exit
 33. standard base library / method / func [58]
 59. copy $Empty? [11]
@@ -92,3 +91,4 @@
 22. <+< or something similar for base
 53. < :: <> ????
 2. can not create Files
+63. query bug - queryTest
