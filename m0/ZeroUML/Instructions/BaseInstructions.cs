@@ -167,13 +167,16 @@ namespace m0.ZeroUML.Instructions
 
                     if (nextExpression != null)
                         newQs = ColonSubExpressionProcess_Meta(exe, newQs, nextExpression);
-                }
+                }else
+                    newQs = ColonSubExpressionProcess_Meta(exe, newQs, leftExpression);
             }
 
             if (rightExpression != null)
             {
                 if (isRightExpressionQuery) 
                     newQs = NextExpressionHandle(exe, newQs, rightExpression);
+                else                    
+                    newQs = exe.ExecuteInstructionByMontevideoPrinciples(newQs, rightExpression);
             }
 
             return NextExpressionHandle(exe, newQs, instructionVertex);

@@ -10,7 +10,6 @@
 					<@Meta :: @> ???
 					<@To :: @TEST\Person4>
 11. Diagram perf update [8]
-50. files rename HACK
 39. colors in editor
 57. editor text prev
 58. root export / import [8]
@@ -61,7 +60,8 @@
 	b +< a\
 
 	comment: edge duplicates in b
-53. BeenList as Edge. if no IsAggregation
+53. BeenList as Edge. if no IsAggregation ??? what does it mean
+63. {Filename}: not returning Drives. when first level of a query is $Is!=Query and is {}, the stack travel by $StackFrameInherits works as not expected
 
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!! Done:
 
@@ -93,3 +93,4 @@
 53. < :: <> ????
 2. can not create Files
 63. query bug - queryTest
+50. files rename HACK
