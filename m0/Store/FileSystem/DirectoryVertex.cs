@@ -65,6 +65,45 @@ namespace m0.Store.FileSystem
             
         }
 
+        public override IEdge AddEdge(IVertex metaVertex, IVertex destVertex)
+        {
+            return AddFileDirectoryEdge(metaVertex, destVertex.Value);
+        }
+
+        private IEdge AddFileDirectoryEdge(IVertex metaVertex, object val)
+        {
+            if (val == null) val = "name";
+
+            string name = val.ToString();
+
+            while (this.Get(false, "File:" + name) != null || this.Get(false, "Directory:" + name) != null)
+                name = FileSystemUtil.addNew(name);
+
+            if (GraphUtil.GetValueAndCompareStrings(metaVertex, "Directory"))
+            {
+                DI.CreateSubdirectory(name);
+
+                IVertex DirectoryVertex = new DirectoryVertex(this.Identifier + "\\" + name, this.Store);
+
+                return base.AddEdge(metaVertex, DirectoryVertex);
+            }
+
+            if (GraphUtil.GetValueAndCompareStrings(metaVertex, "File"))
+            {
+                FileInfo fi = new FileInfo(this.Identifier + "\\" + name);
+
+                fi.Create();
+
+                IVertex FileVertex = new FileVertex(this.Identifier + "\\" + name, this.Store);
+
+                return base.AddEdge(metaVertex, FileVertex);
+            }
+
+            UserInteractionUtil.ShowError("FileVertex.AddVertex", Identifier + " : can not create vertex here");
+
+            return null;
+        }
+
         bool OutEdgesFilled = false;
 
         void AddMeta(IVertex metaVertex, string value)
@@ -75,7 +114,7 @@ namespace m0.Store.FileSystem
 
             v.Value = value;
 
-            AddEdge(metaVertex, v);
+            base.AddEdge(metaVertex, v);
         }
 
         public override IList<IEdge> OutEdges
@@ -115,18 +154,19 @@ namespace m0.Store.FileSystem
                         {
                             IVertex DirectoryVertex = new DirectoryVertex(fsi.FullName, this.Store);
 
-                            AddEdge(DirectoryMetaVertex, DirectoryVertex);
+                            base.AddEdge(DirectoryMetaVertex, DirectoryVertex);
                         }
 
                         if (fsi is FileInfo)
                         {
                             IVertex FileVertex = new FileVertex(fsi.FullName, this.Store);
 
-                            AddEdge(FileMetaVertex, FileVertex);
+                            base.AddEdge(FileMetaVertex, FileVertex);
                         }
                    
                     }
-                }catch (Exception e) { } // no access
+                }
+                catch (Exception e) { } // no access
 
 
                 CanFireChangeEvent = true;                
@@ -138,40 +178,7 @@ namespace m0.Store.FileSystem
 
         public override IVertex AddVertex(IVertex metaVertex, object val)
         {
-            if (val == null) val = "name";
-
-            string name = val.ToString();
-
-            while (this.Get(false, "File:" + name) != null || this.Get(false, "Directory:" + name) != null)
-                name=FileSystemUtil.addNew(name);
-
-            if (GraphUtil.GetValueAndCompareStrings(metaVertex,"Directory"))
-            {                
-                DI.CreateSubdirectory(name);
-
-                IVertex DirectoryVertex = new DirectoryVertex(this.Identifier+"\\"+name, this.Store);
-
-                AddEdge(metaVertex, DirectoryVertex);
-
-                return DirectoryVertex;
-            }
-
-            if (GraphUtil.GetValueAndCompareStrings(metaVertex,"File"))
-            {
-                FileInfo fi = new FileInfo(this.Identifier + "\\" + name);
-
-                fi.Create();                
-
-                IVertex FileVertex = new FileVertex(this.Identifier + "\\" + name, this.Store);
-
-                AddEdge(metaVertex, FileVertex);
-
-                return FileVertex;
-            }
-
-            UserInteractionUtil.ShowError("FileVertex.AddVertex", Identifier +" : can not create vertex here");
-
-            return null;
+            return AddFileDirectoryEdge(metaVertex, val).To;
         }
 
         public override void DeleteEdge(IEdge edge)

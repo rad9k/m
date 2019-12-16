@@ -366,7 +366,7 @@ namespace m0
             n.AddEdge(_is, codeContainerEndPoint);            
         }
 
-        void CreateSystemMetaZeroUML_Action_part()
+        void CreateSystemMetaZeroUML_ZeroCode_part()
         {
             IVertex smu = Root.Get(false, @"System\Meta\ZeroUML");
             IVertex sm = Root.Get(false, @"System\Meta");
@@ -2527,7 +2527,6 @@ namespace m0
             return v;
         }
 
-
         IVertex AddDiagramItemDefinition_Combo_RectangleItem(String Value, bool doNotShowInherited,
               String DirectVertexTestQuery,
               String MetaVertexTestQuery,
@@ -3612,13 +3611,9 @@ namespace m0
           0, true,
           null, false);
 
-
-
-
             AddNextLine(vCase);
 
             AddNextLine(vDefault);
-
 
             /////////////////////////////////////////////////////////////////////////
             // While
@@ -3777,7 +3772,7 @@ namespace m0
             -1, 0, 0, 100);
         }
 
-        public struct PackageLine
+        struct PackageLine
         {
             public string Is;
             public string Definition;
@@ -4053,21 +4048,20 @@ namespace m0
             return store;
         }
 
-        public void AddFastAccessVertexes()
+        private void AddFastAccessVertexes()
         {
             EdgeTarget = Root.Get(false, @"System\Meta\Base\Vertex\$EdgeTarget");
             Is = Root.Get(false, @"System\Meta\Base\Vertex\$Is");
             IsAggregation = Root.Get(false, @"System\Meta\Base\Vertex\$IsAggregation");
         }
 
-
-        public void Initialize()
+        private void Initialize_PreParserReady()
         {
             LogLevel = -2;
 
             InitializeLog();
 
-            PreBootstrap();            
+            PreBootstrap();
 
             Bootstrap();
 
@@ -4089,14 +4083,16 @@ namespace m0
 
             CreateSystemMetaZeroTypes();
 
-            CreateSystemMetaZeroUML_Action_part();            
+            CreateSystemMetaZeroUML_ZeroCode_part();
 
             CreateSystemFormalTextLanguageZeroCode();
 
 
             CreateSystemFormalTextLanguegeZeroCode_Keywords();
+        }
 
-
+        private void Initialize_PostParserReady()
+        {
             CreateSystemMetaVisualiserDiagram();
 
             CreateSystemMetaVisualiser();
@@ -4116,7 +4112,7 @@ namespace m0
             CreateUsers();
 
             AfterCreateUsers();
-            
+
 
             Init_AfterZeroCodeDefintionCreated();
 
@@ -4137,10 +4133,16 @@ namespace m0
             UIWpf.UIWpf.InitializeUIWpf();
 
             IsInitialized = true;
+        }
 
-            //
+        public void Initialize()
+        {
+            Initialize_PreParserReady();
 
-            //AutoTest.ParserTest();
+            // PARSER READY
+
+            Initialize_PostParserReady();
+
         }
     }
 }

@@ -91,7 +91,6 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="AutoTest.cs" />
     <Compile Include="Foundation\INoInEdgeInOutVertexVertex.cs" />
     <Compile Include="Foundation\IPlatformClass.cs" />
     <Compile Include="Foundation\IUserInteraction.cs" />
@@ -271,6 +270,7 @@
     <Compile Include="ZeroTypes\PlatformClass.cs" />
     <Compile Include="ZeroTypes\VertexOperations.cs" />
     <Compile Include="ZeroUML\Instructions\ZeroUMLInstructionHelpers.cs" />
+    <Compile Include="_PROJECT\Legacy Code\AutoTest.cs" />
     <Page Include="m0Main.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
