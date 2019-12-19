@@ -522,7 +522,7 @@ namespace m0.LegacySystem.ZeroCode
 
             AlwaysGenerateQuotas = false;
 
-            ZeroCodeTerminals = MinusZero.Instance.DefaultLanguageDefinition_ForOldParser;
+            ZeroCodeTerminals = LegacySystem.DefaultLanguageDefinition_ForOldParser;
 
             Parser = new GoldGenericParser("ZeroCode.egt", ZeroCodeTerminals);
                         

@@ -494,80 +494,8 @@ namespace m0.Graph
             Value = "";
         }        
 
-        private static IDictionary<String, IVertex> QueryParseChache = new Dictionary<String,IVertex>();
-        private static IDictionary<String, IVertex> QueryParseChache_metaMode = new Dictionary<String, IVertex>();
-
-        private static IDictionary<String, IVertex> NewQueryParseChache = new Dictionary<String, IVertex>();
-        private static IDictionary<String, IVertex> NewQueryParseChache_metaMode = new Dictionary<String, IVertex>();
-
-        public override IVertex Get(bool metaMode, string query)
-        {            
-            IVertex queryVertex = null;
-            IVertex parseError = null;
-
-            IDictionary<String, IVertex> chache;
-
-            if (metaMode)
-                chache = QueryParseChache_metaMode;
-            else
-                chache = QueryParseChache;
-
-            if (chache.ContainsKey(query))
-                queryVertex = chache[query];
-            else            
-            {
-                queryVertex = MinusZero.Instance.CreateTempVertex();
-
-                parseError = MinusZero.Instance.DefaultParser.Parse(queryVertex, query);
-
-                if (parseError == null)
-                    chache.Add(query, queryVertex);                
-            }                                      
-
-            if (parseError != null)
-                return null;
-
-            return Get(metaMode, queryVertex);
-        }
-
-        public override IVertex GetAll(bool metaMode, string query)
-        {            
-            IVertex queryVertex = null;
-            IVertex parseError = null;
-
-            IDictionary<String, IVertex> chache;
-
-            if (metaMode)
-                chache = QueryParseChache_metaMode;
-            else
-                chache = QueryParseChache;
-
-            if (chache.ContainsKey(query))
-                queryVertex = chache[query];
-            else
-            {
-                queryVertex = MinusZero.Instance.CreateTempVertex();
-
-                parseError = MinusZero.Instance.DefaultParser.Parse(queryVertex, query);
-
-                if (parseError == null)
-                    chache.Add(query, queryVertex);
-            }            
-
-            if (parseError != null)
-                return null;
-
-            return GetAll (metaMode, queryVertex);            
-        }
-        public override IVertex Get(bool metaMode, IVertex expression)
-        {
-            return MinusZero.Instance.DefaultExecuter.Get(metaMode, this, expression);
-        }
-
-        public override IVertex GetAll(bool metaMode, IVertex expression)
-        {
-            return MinusZero.Instance.DefaultExecuter.GetAll(metaMode, this, expression);
-        }
+        private static IDictionary<String, IVertex> QueryParseChache = new Dictionary<String, IVertex>();
+        private static IDictionary<String, IVertex> QueryParseChache_metaMode = new Dictionary<String, IVertex>();        
 
         bool hasBeenDisposed = false;
         public void Dispose()
@@ -765,7 +693,7 @@ namespace m0.Graph
             results = InEdges.ToList();
         }
 
-        public IVertex NewGet(bool metaMode, string query)
+        public IVertex Get(bool metaMode, string query)
         {
             IVertex queryVertex = null;
             IVertex parseError = null;
@@ -773,9 +701,9 @@ namespace m0.Graph
             IDictionary<String, IVertex> chache;
 
             if (metaMode)
-                chache = NewQueryParseChache_metaMode;
+                chache = QueryParseChache_metaMode;
             else
-                chache = NewQueryParseChache;
+                chache = QueryParseChache;
 
             if (chache.ContainsKey(query))
                 queryVertex = chache[query];
@@ -783,7 +711,7 @@ namespace m0.Graph
             {
                 queryVertex = MinusZero.Instance.CreateTempVertex();
 
-                parseError = MinusZero.Instance.NewDefaultParser.Parse(queryVertex, query);
+                parseError = MinusZero.Instance.DefaultParser.Parse(queryVertex, query);
 
                 if (parseError == null || parseError.Count() == 0)
                     chache.Add(query, queryVertex);
@@ -792,10 +720,10 @@ namespace m0.Graph
             if (parseError != null && parseError.Count() > 0)
                 return null;
 
-            return MinusZero.Instance.NewDefaultExecuter.Get(metaMode, this, queryVertex);
+            return MinusZero.Instance.DefaultExecuter.Get(metaMode, this, queryVertex);
         }
 
-        public IVertex NewGetAll(bool metaMode, string query)
+        public IVertex GetAll(bool metaMode, string query)
         {
             IVertex queryVertex = null;
             IVertex parseError = null;
@@ -803,9 +731,9 @@ namespace m0.Graph
             IDictionary<String, IVertex> chache;
 
             if (metaMode)
-                chache = NewQueryParseChache_metaMode;
+                chache = QueryParseChache_metaMode;
             else
-                chache = NewQueryParseChache;
+                chache = QueryParseChache;
 
             if (chache.ContainsKey(query))
                 queryVertex = chache[query];
@@ -813,7 +741,7 @@ namespace m0.Graph
             {
                 queryVertex = MinusZero.Instance.CreateTempVertex();
 
-                parseError = MinusZero.Instance.NewDefaultParser.Parse(queryVertex, query);
+                parseError = MinusZero.Instance.DefaultParser.Parse(queryVertex, query);
 
                 if (parseError == null || parseError.Count() == 0)
                     chache.Add(query, queryVertex);
@@ -822,7 +750,17 @@ namespace m0.Graph
             if (parseError != null && parseError.Count() > 0)
                 return null;
 
-            return MinusZero.Instance.NewDefaultExecuter.GetAll(metaMode, this, queryVertex);            
+            return MinusZero.Instance.DefaultExecuter.GetAll(metaMode, this, queryVertex);            
+        }        
+        
+        public override IVertex Get(bool metaMode, IVertex expression)
+        {
+            return MinusZero.Instance.DefaultExecuter.Get(metaMode, this, expression);
+        }
+
+        public override IVertex GetAll(bool metaMode, IVertex expression)
+        {
+            return MinusZero.Instance.DefaultExecuter.GetAll(metaMode, this, expression);
         }
 
     }

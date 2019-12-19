@@ -204,7 +204,7 @@ namespace m0
 
         void q(IVertex baseVertex, string query)
         {
-            IVertex re = ((EasyVertex)baseVertex).NewGetAll(false, query);
+            IVertex re = ((EasyVertex)baseVertex).GetAll(false, query);
 
             PrintRes(query, re);
         }
@@ -302,7 +302,7 @@ namespace m0
             IVertex stack = x.AddVertex(null, "stack");
 
             IVertex code1 = code.AddVertex(null, null);
-            MinusZero.Instance.NewDefaultParser.Parse(code1,
+            MinusZero.Instance.DefaultParser.Parse(code1,
                 "\"Code1\"" + "" +
                 "\r\n\tvariable \"A\" @String" +
                 "\r\n\tvariable \"B\" @String" +
@@ -322,7 +322,7 @@ namespace m0
                 );
 
             IVertex code2 = code.AddVertex(null, null);
-            MinusZero.Instance.NewDefaultParser.Parse(code2,
+            MinusZero.Instance.DefaultParser.Parse(code2,
                             "\"Code2\"" +
                             "\r\n\tvariable \"Test\" @String" +
                             "\r\n\tvariable \"Test2\" @String" +
@@ -338,7 +338,7 @@ namespace m0
                             );
 
             IVertex code3 = code.AddVertex(null, null);
-            MinusZero.Instance.NewDefaultParser.Parse(code3,
+            MinusZero.Instance.DefaultParser.Parse(code3,
             "\"Code3\"" +
             "\r\n\tvariable \"A\" @String" +
             "\r\n\tvariable \"B\" @String" +
@@ -352,7 +352,7 @@ namespace m0
             );
 
             IVertex code4 = code.AddVertex(null, null);
-            MinusZero.Instance.NewDefaultParser.Parse(code4,
+            MinusZero.Instance.DefaultParser.Parse(code4,
             "\"Code4\"" +
             "\r\n\tvariable \"A\" @String" +
             "\r\n\tvariable \"B\" @String" +
@@ -377,7 +377,7 @@ namespace m0
             //() ! <>
 
             IVertex code5 = code.AddVertex(null, null);
-            MinusZero.Instance.NewDefaultParser.Parse(code5,
+            MinusZero.Instance.DefaultParser.Parse(code5,
            "\"Code5\"" +
            "\r\n\tvariable \"A\" @String" +
            "\r\n\tvariable \"B\" @String" +
@@ -392,7 +392,7 @@ namespace m0
            );
 
             IVertex code6 = code.AddVertex(null, null);
-            MinusZero.Instance.NewDefaultParser.Parse(code6,
+            MinusZero.Instance.DefaultParser.Parse(code6,
           "\"Code6\"" +
           "\r\n\tvariable \"A\" @String" +
           "\r\n\tvariable \"B\" @String" +
@@ -404,7 +404,7 @@ namespace m0
           );
 
             IVertex code7 = code.AddVertex(null, null);
-            MinusZero.Instance.NewDefaultParser.Parse(code7,
+            MinusZero.Instance.DefaultParser.Parse(code7,
              "\"Code7\"" +
              "\r\n\tvariable \"A\" @String" +
              "\r\n\tvariable \"B\" @String" +
@@ -433,7 +433,7 @@ namespace m0
              );
 
             IVertex code8 = code.AddVertex(null, null);
-            MinusZero.Instance.NewDefaultParser.Parse(code8,
+            MinusZero.Instance.DefaultParser.Parse(code8,
        "\"Code8\"" +
        "\r\n\tvariable \"A\" @String" +
        "\r\n\tvariable \"B\" @String" +
@@ -445,13 +445,13 @@ namespace m0
        );
 
             IVertex code9 = code.AddVertex(null, null);
-            MinusZero.Instance.NewDefaultParser.Parse(code9,
+            MinusZero.Instance.DefaultParser.Parse(code9,
         "\"Code9\"" +
         "\r\n\tvariable \"a\" @Vertex" +
         "\r\n\ta=@@System");
             
                     IVertex code10 = code.AddVertex(null, null);
-            MinusZero.Instance.NewDefaultParser.Parse(code10,
+            MinusZero.Instance.DefaultParser.Parse(code10,
         "\"Code10\"" +
         "\r\n\t\"X\""+
         "\r\n\t\t\"2\" * (\"2\" + \"1\")"+
@@ -466,7 +466,7 @@ namespace m0
         );
 
             IVertex code11 = code.AddVertex(null, null);
-            MinusZero.Instance.NewDefaultParser.Parse(code11,
+            MinusZero.Instance.DefaultParser.Parse(code11,
             "\"Code11\"" +
             "\r\n\t\"x\"" +
             "\r\n\t\t\"a\"" +

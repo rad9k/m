@@ -121,7 +121,7 @@ namespace m0.UIWpf.Dialog
         {
             SetState(StateEnum.Executing);
 
-            IVertex outputStackVertex = m0.MinusZero.Instance.NewDefaultExecuter.Execute(inputStackEdge.To, baseVertex.Get(false, "To:"));
+            IVertex outputStackVertex = m0.MinusZero.Instance.DefaultExecuter.Execute(inputStackEdge.To, baseVertex.Get(false, "To:"));
 
             outputStackEdge = GraphUtil.CreateArtificialEdge(null, outputStackVertex);
             

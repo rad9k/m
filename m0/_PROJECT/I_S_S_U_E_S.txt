@@ -3,7 +3,6 @@
 33. standard base library / method / func [58]
 59. copy $Empty? [11]
 60. copy from Graph error [59]
-7. basic perf check
 8. Get/GetAll switch [7]
 10. <@BaseEdge :: ""> [4] [11]
 					<@From :: @kupa\TEST\TestDiagram\Item:<4>\\> ??? from where
@@ -13,6 +12,7 @@
 39. colors in editor
 57. editor text prev
 58. root export / import [8]
+64. child vertex short names support in ||{}/ X+<||{} for @@ 
 
 <><><> FUTURE 0.5
 
@@ -30,14 +30,14 @@
 
 3. exception handling throught custom meta code
 12. execution stop / continuation / stack copy?
-19. [] / .[] / execute / () / @@=>@() as begginning of Query
+19. [] / .[] / execute / () as begginning of Query
 20. different import keywords support
 21. [] / execute / without () as || parameter
 28. other quantifiers in queries
 29. meta string support in queries - going to stack and comparing with stack
 30. |a / a| / a|b +< {} support AND ()+<{} DOES NOT WORK AS IT WAS SUPPOSED TO WORK WTF
 35. sub support
-38. child vertex short names support in ||{}/ X+<||{} for @@ and run time queries
+38. child vertex short names support in ||{}/ X+<||{} for run time queries?
 41. . as attribute / other $Is and not existing access
 42. $Is context of left operands to create new edges by incomplete meta
 45. new => constructor with parameters
@@ -94,3 +94,4 @@
 2. can not create Files
 63. query bug - queryTest
 50. files rename HACK
+7. basic perf check

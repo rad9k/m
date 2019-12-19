@@ -1,0 +1,51 @@
+﻿using m0.FormalTextLanguage;
+using m0.Foundation;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace m0.LegacySystem.Graph
+{
+    public class EasyVertex
+    {
+        public static IExecuter DefaultExecuter;
+        public static IParser DefaultParser;
+
+        private static IDictionary<String, IVertex> QueryParseChache = new Dictionary<String, IVertex>();
+        private static IDictionary<String, IVertex> QueryParseChache_metaMode = new Dictionary<String, IVertex>();
+
+
+
+        public static IVertex Get(IVertex baseVertex, bool metaMode, string query)
+        {
+            IVertex queryVertex = null;
+            IVertex parseError = null;
+
+            IDictionary<String, IVertex> chache;
+
+            if (metaMode)
+                chache = QueryParseChache_metaMode;
+            else
+                chache = QueryParseChache;
+
+            if (chache.ContainsKey(query))
+                queryVertex = chache[query];
+            else
+            {
+                queryVertex = MinusZero.Instance.CreateTempVertex();
+
+                parseError = DefaultParser.Parse(queryVertex, query);
+
+                if (parseError == null)
+                    chache.Add(query, queryVertex);
+            }
+
+            if (parseError != null)
+                return null;
+
+            return DefaultExecuter.Get(metaMode, baseVertex, queryVertex);
+        }
+    }
+}

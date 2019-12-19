@@ -494,7 +494,7 @@ namespace m0.ZeroCode.Helpers
 
         public static IVertex Get(bool metaMode, IVertex baseVertex, IVertex expression)
         {
-            return MinusZero.Instance.NewDefaultExecuter.Get(metaMode, baseVertex, expression);
+            return MinusZero.Instance.DefaultExecuter.Get(metaMode, baseVertex, expression);
         }
     }
 }

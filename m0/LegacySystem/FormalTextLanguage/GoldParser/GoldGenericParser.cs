@@ -155,7 +155,7 @@ namespace m0.FormalTextLanguage.GoldParser
 
             langDef = languageDefinitionRoot;
 
-            MetaFormalTextLanguageParsedTree = MinusZero.Instance.MetaFormalTextLanguageParsedTreeVertex;
+            MetaFormalTextLanguageParsedTree = LegacySystem.LegacySystem.MetaFormalTextLanguageParsedTreeVertex;
         }
     }
 }

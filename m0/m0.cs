@@ -52,6 +52,9 @@ namespace m0
         IUserInteraction _DefaultUserInteraction;
 
         public IUserInteraction DefaultUserInteraction { get { return _DefaultUserInteraction; } }
+       
+
+        //
 
         IParser _DefaultParser;
 
@@ -62,32 +65,12 @@ namespace m0
 
         public IExecuter DefaultExecuter { get { return _DefaultExecuter; } }
 
-        IVertex _DefaultFormalTextLanguage;
-
         //
 
-        IParser New_DefaultParser;
-
-        public IParser NewDefaultParser { get { return New_DefaultParser; } }
-
-
-        IExecuter New_DefaultExecuter;
-
-        public IExecuter NewDefaultExecuter { get { return New_DefaultExecuter; } }
-
-        //
+        private IVertex _DefaultFormalTextLanguage;
 
         public IVertex DefaultFormalTextLanguage { get { return _DefaultFormalTextLanguage; } }
-
-
-        IVertex _DefaultLanguageDefinition_ForOldParser;
-
-        public IVertex DefaultLanguageDefinition_ForOldParser { get { return _DefaultLanguageDefinition_ForOldParser; } }
-
-
-        IVertex _MetaFormalTextLanguageParsedTreeVertex;
-
-        public IVertex MetaFormalTextLanguageParsedTreeVertex { get { return _MetaFormalTextLanguageParsedTreeVertex; } }
+        
 
 
         ICodeGenerator _DefaultCodeGenerator;
@@ -146,21 +129,15 @@ namespace m0
 
         void Init()
         {
-            _DefaultUserInteraction = m0Main.Instance;
-
-            LegacySystem.ZeroCode.ZeroCodeEngine_OLD zeroCodeEngine_OLD = new LegacySystem.ZeroCode.ZeroCodeEngine_OLD();
-
-            _DefaultParser = zeroCodeEngine_OLD;
-
-            _DefaultExecuter = zeroCodeEngine_OLD;                        
+            _DefaultUserInteraction = m0Main.Instance;            
         }
 
         void Init_AfterZeroCodeDefintionCreated()
         {
             ZeroCode.ZeroCodeEngine zeroCodeEngine = new ZeroCode.ZeroCodeEngine();
 
-            New_DefaultParser = zeroCodeEngine;
-            New_DefaultExecuter = zeroCodeEngine;
+            _DefaultParser = zeroCodeEngine;
+            _DefaultExecuter = zeroCodeEngine;
 
             _DefaultCodeGenerator = zeroCodeEngine;
         }
@@ -179,58 +156,7 @@ namespace m0
 
             IVertex sto = meta.AddVertex(null, "Store");
         }
-
-        void CreateLegacySystem()
-        {
-            IVertex legacySystem = Root.AddVertex(null, "LegacySystem");
-
-            IVertex meta = legacySystem.AddVertex(null, "Meta");
-
-            IVertex tl = legacySystem.AddVertex(null, "FormalTextLanguage");
-
-            IVertex mtl = meta.AddVertex(null, "FormalTextLanguage");
-
-            // Meta\FormalTextLanguage\Parser
-
-            IVertex mtp = mtl.AddVertex(null, "Parser");
-
-            IVertex ptmd = mtp.AddVertex(null, "PreviousTerminalMoveDown");
-
-            IVertex mdtpnltoce = mtp.AddVertex(null, "MoveDownToPreviousContainerTerminalOrCretedEmpty");
-
-            IVertex ct = mtp.AddVertex(null, "ContainerTerminal");
-
-
-            // Meta\FormalTextLanguage\ParsedTree
-
-            IVertex mtpt = mtl.AddVertex(null, "ParsedTree");
-
-            _MetaFormalTextLanguageParsedTreeVertex = mtpt;
-
-            IVertex empty = mtpt.AddVertex(null, "$EmptyContainerTerminal");
-            empty.AddVertex(ct, null);
-
-
-            // FormalTextLanguage\ZeroCode_OLD
-
-            IVertex zco = tl.AddVertex(null, "ZeroCode_OLD");
-
-            _DefaultLanguageDefinition_ForOldParser = zco;
-
-            zco.AddVertex(null, ",");
-
-            IVertex colon = zco.AddVertex(null, ":");
-            colon.AddVertex(ptmd, 1);
-            colon.AddVertex(ct, null);
-
-            zco.AddVertex(null, "\\");
-            zco.AddVertex(null, "*");
-            zco.AddVertex(null, "{").AddVertex(mdtpnltoce, null);
-            zco.AddVertex(null, "}").AddVertex(mdtpnltoce, null);
-            zco.AddVertex(null, "=");
-            zco.AddVertex(null, "!=");
-        }
-
+        
         void CreatePresentation()
         {
             IVertex sm = Root.Get(false, @"System\Meta");
@@ -4065,11 +3991,15 @@ namespace m0
 
             Bootstrap();
 
-            CreateSystem();
-
-            CreateLegacySystem();
+            CreateSystem();            
 
             Init();
+
+            ///////////
+
+            LegacySystem.LegacySystem.LegacyInit();
+
+            ///////////
 
             CreatePresentation();
 

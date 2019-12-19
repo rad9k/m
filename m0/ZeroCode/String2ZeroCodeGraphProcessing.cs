@@ -474,17 +474,13 @@ namespace m0.ZeroCode
         }
 
         IVertex query(IVertex baseVertex, string query)
-        {
-            //return baseVertex.Get(false, query);
-
-            return ((EasyVertex)baseVertex).NewGet(true, query);
+        {            
+            return baseVertex.Get(true, query);
         }
 
         IVertex queryMetaImport(IVertex baseVertex, string query)
         {
-            //return baseVertex.Get(false, query); // TODO: to be corected
-
-            return ((EasyVertex)baseVertex).NewGet(false, query);
+            return baseVertex.Get(false, query);            
         }   
 
         IVertex ToVertexMock2VertexByLinkString(ToVertexMock mock)
