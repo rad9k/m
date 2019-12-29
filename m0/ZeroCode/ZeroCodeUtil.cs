@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.Text.RegularExpressions;
 using m0.Foundation;
 using m0.Util;
+using m0.Graph;
 
 namespace m0.ZeroCode
 {
@@ -44,12 +45,15 @@ namespace m0.ZeroCode
             return list;
         }
 
-        public static IList<IVertex> getFilteredKeywordList(IVertex FormalTextLanguage, string Filter)
+        public static IList<IVertex> getFilteredKeywordList(IVertex FormalTextLanguage, string metaFilter)
         {
             IList<IVertex> list = new List<IVertex>();
 
-            foreach (IEdge e in FormalTextLanguage.GetAll(false, @"Keywords:\$Keyword:{" + Filter + "}"))                            
-                    list.Add(e.To);
+            IVertex keywords = GraphUtil.GetQueryOutFirst(FormalTextLanguage, "$Keywords", null);
+
+            //foreach (IEdge e in FormalTextLanguage.GetAll(false, @"Keywords:\$Keyword:{" + Filter + "}"))                            
+            foreach (IEdge e in GraphUtil.GetQueryOut(keywords, metaFilter, null))
+                list.Add(e.To);
             
             return list;
         }

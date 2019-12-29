@@ -76,7 +76,7 @@ namespace m0.ZeroCode
         
         public ZeroCodeExecuter()
         {
-            dolar = MinusZero.Instance.Root.Get(false, @"System\Meta\Base\$");
+            dolar = MinusZero.Instance.Dolar;
         }
 
     }

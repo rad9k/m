@@ -49,6 +49,10 @@ namespace m0
 
         public IVertex Empty { get { return empty; } }
 
+        IVertex dolar;
+
+        public IVertex Dolar { get { return dolar; } }
+
         IUserInteraction _DefaultUserInteraction;
 
         public IUserInteraction DefaultUserInteraction { get { return _DefaultUserInteraction; } }
@@ -174,11 +178,7 @@ namespace m0
                 LegacySystem.Graph.EasyVertex.Get(sm,false, @"Base\Vertex\$EdgeTarget"), 
                 LegacySystem.Graph.EasyVertex.Get(sm,false, @"Base\Vertex"));
 
-            empty = LegacySystem.Graph.EasyVertex.Get(sm,false, @"Base\$Empty"); // there are some bugs related to this and old zeroscript.get
-
-            inherits = LegacySystem.Graph.EasyVertex.Get(sm,false, @"Base\Vertex\$Inherits");
-
-            stackFrameInherits = LegacySystem.Graph.EasyVertex.Get(sm,false, @"Base\Vertex\$StackFrameInherits");
+            RootVariableVertexLinksCreate();
 
 
             LegacySystem.Graph.EasyVertex.Get(sm, false, @"Base\Vertex\$Is").AddEdge(LegacySystem.Graph.EasyVertex.Get(sm, false, @"Presentation\$Hide"), empty);
@@ -232,13 +232,33 @@ namespace m0
                 LegacySystem.Graph.EasyVertex.Get(sm, false, @"Base\Vertex"));
         }
 
+
+        void RootVariableVertexLinksCreate()
+        {
+            IVertex System = GraphUtil.GetQueryOutFirst(Root, null, "System");
+
+            IVertex Meta = GraphUtil.GetQueryOutFirst(System, null, "Meta");
+
+            IVertex Base = GraphUtil.GetQueryOutFirst(Meta, null, "Base");
+
+            empty = GraphUtil.GetQueryOutFirst(Base, null, "$Empty"); // there are some bugs related to this and old zeroscript.get
+
+            IVertex Vertex = GraphUtil.GetQueryOutFirst(Base, null, "Vertex");
+
+            inherits = GraphUtil.GetQueryOutFirst(Vertex, null, "$Inherits");
+
+            stackFrameInherits = GraphUtil.GetQueryOutFirst(Vertex, null, "$StackFrameInherits");
+
+            dolar = GraphUtil.GetQueryOutFirst(Base, null, "$");
+        }
+
         void CreateSystemMetaZeroUML()
         {
             IVertex sm = LegacySystem.Graph.EasyVertex.Get(Root, false, @"System\Meta");
 
             m0.LegacySystem.Util.GeneralUtil.ParseAndExcute(sm, null, "{ZeroUML{Type,AtomType,StateMachine{State{Transition}},Enum{EnumValue},Selector,Class{Attribute{MinValue,MaxValue},Association,Aggregation}}}");
 
-            m0.LegacySystem.Util.GeneralUtil.ParseAndExcute(sm.Get(false, @"ZeroUML\Selector"), sm, "{$MinCardinality:0,$MaxCardinality:-1}");
+            m0.LegacySystem.Util.GeneralUtil.ParseAndExcute(LegacySystem.Graph.EasyVertex.Get(sm, false, @"ZeroUML\Selector"), sm, "{$MinCardinality:0,$MaxCardinality:-1}");
 
             LegacySystem.Graph.EasyVertex.Get(sm, false, @"ZeroUML\Class\Attribute").AddEdge(
                 LegacySystem.Graph.EasyVertex.Get(sm, false, @"*$IsAggregation"), empty);
@@ -246,7 +266,7 @@ namespace m0
             LegacySystem.Graph.EasyVertex.Get(sm, false, @"ZeroUML\Class\Aggregation").AddEdge(
                 LegacySystem.Graph.EasyVertex.Get(sm, false, @"*$IsAggregation"), empty);
 
-            m0.LegacySystem.Util.GeneralUtil.ParseAndExcute(sm.Get(false, @"ZeroUML\Enum\EnumValue"), sm, "{$MinCardinality:0,$MaxCardinality:-1}");
+            m0.LegacySystem.Util.GeneralUtil.ParseAndExcute(LegacySystem.Graph.EasyVertex.Get(sm, false, @"ZeroUML\Enum\EnumValue"), sm, "{$MinCardinality:0,$MaxCardinality:-1}");
 
             LegacySystem.Graph.EasyVertex.Get(sm, false, @"ZeroUML\Enum\EnumValue").AddEdge(
                 LegacySystem.Graph.EasyVertex.Get(sm, false, @"*$EdgeTarget"),
@@ -257,7 +277,7 @@ namespace m0
 
             m0.LegacySystem.Util.GeneralUtil.ParseAndExcute(LegacySystem.Graph.EasyVertex.Get(sm, false, @"ZeroUML\StateMachine\State"), sm, "{$MinCardinality:0,$MaxCardinality:-1}");
 
-            m0.LegacySystem.Util.GeneralUtil.ParseAndExcute(sm.Get(false, @"ZeroUML\StateMachine\State\Transition"), sm, "{$MinCardinality:0,$MaxCardinality:-1}");
+            m0.LegacySystem.Util.GeneralUtil.ParseAndExcute(LegacySystem.Graph.EasyVertex.Get(sm, false, @"ZeroUML\StateMachine\State\Transition"), sm, "{$MinCardinality:0,$MaxCardinality:-1}");
 
             LegacySystem.Graph.EasyVertex.Get(sm, false, @"ZeroUML\StateMachine\State\Transition").AddEdge(
                 LegacySystem.Graph.EasyVertex.Get(sm, false, @"*$EdgeTarget"),
@@ -311,11 +331,11 @@ namespace m0
 
         void AddDotNetEndPoint(IVertex baseVertex, string _methodName)
         {
-            IVertex callableEndPoint = Root.Get(false, @"System\Meta\Base\Vertex\$ExecutableEndPoint");
-            IVertex dotNetEndPoint = Root.Get(false, @"System\Meta\ZeroTypes\DotNetEndPoint");
-            IVertex typeName = Root.Get(false, @"System\Meta\ZeroTypes\DotNetEndPoint\TypeName");
-            IVertex methodName = Root.Get(false, @"System\Meta\ZeroTypes\DotNetEndPoint\MethodName");
-            IVertex _is = Root.Get(false, @"System\Meta\Base\Vertex\$Is");
+            IVertex callableEndPoint = LegacySystem.Graph.EasyVertex.Get(Root, false, @"System\Meta\Base\Vertex\$ExecutableEndPoint");
+            IVertex dotNetEndPoint = LegacySystem.Graph.EasyVertex.Get(Root, false, @"System\Meta\ZeroTypes\DotNetEndPoint");
+            IVertex typeName = LegacySystem.Graph.EasyVertex.Get(Root, false, @"System\Meta\ZeroTypes\DotNetEndPoint\TypeName");
+            IVertex methodName = LegacySystem.Graph.EasyVertex.Get(Root, false, @"System\Meta\ZeroTypes\DotNetEndPoint\MethodName");
+            IVertex _is = LegacySystem.Graph.EasyVertex.Get(Root, false, @"System\Meta\Base\Vertex\$Is");
 
             IVertex n = baseVertex.AddVertex(callableEndPoint, null);
             n.AddEdge(_is, dotNetEndPoint);
@@ -327,9 +347,9 @@ namespace m0
 
         void AddCodeContainerEndPoint(IVertex baseVertex)
         {
-            IVertex callableEndPoint = Root.Get(false, @"System\Meta\Base\Vertex\$ExecutableEndPoint");
-            IVertex codeContainerEndPoint = Root.Get(false, @"System\Meta\ZeroTypes\CodeContainer");
-            IVertex _is = Root.Get(false, @"System\Meta\Base\Vertex\$Is");
+            IVertex callableEndPoint = LegacySystem.Graph.EasyVertex.Get(Root, false, @"System\Meta\Base\Vertex\$ExecutableEndPoint");
+            IVertex codeContainerEndPoint = LegacySystem.Graph.EasyVertex.Get(Root, false, @"System\Meta\ZeroTypes\CodeContainer");
+            IVertex _is = LegacySystem.Graph.EasyVertex.Get(Root, false, @"System\Meta\Base\Vertex\$Is");
 
             IVertex n = baseVertex.AddVertex(callableEndPoint, null);
             n.AddEdge(_is, codeContainerEndPoint);            
@@ -830,7 +850,7 @@ namespace m0
             // package
             IVertex package = smu.AddVertex(null, "Package");
 
-            AddCodeContainerEndPoint(LegacySystem.Graph.EasyVertex.Get(smu, false, "Package"));
+            AddCodeContainerEndPoint(LegacySystem.Graph.EasyVertex.Get(smu, false, "Package")); /// XXX WTF?????
 
             package.AddEdge(null, LegacySystem.Graph.EasyVertex.Get(smu, false, "Link"));
             package.AddEdge(null, LegacySystem.Graph.EasyVertex.Get(smu, false, "AtomType"));
@@ -1339,7 +1359,7 @@ namespace m0
 
             IVertex o_index_any_targetExpr = o_index_any.AddVertex(LegacySystem.Graph.EasyVertex.Get(smu, false, @"ExpressionAtom\NextExpression"), "");
 
-            o_index_any_targetExpr.AddEdge(smb.Get(false, "$$LocalRoot"), kgd_ColonEmptyInner2SlashMarkIndexMethod);
+            o_index_any_targetExpr.AddEdge(LegacySystem.Graph.EasyVertex.Get(smb, false, "$$LocalRoot"), kgd_ColonEmptyInner2SlashMarkIndexMethod);
 
             // <>
             //
@@ -1750,7 +1770,7 @@ namespace m0
 
             AddSingleOperator(k, smu, smb, keyword, any, "_(?<expr>)", "CopySet");
 
-            k.Get(false, "_(?<expr>)").AddEdge(keywordGroup, kgd_ColonEmptyInner2SlashMarkIndexMethodNewLinkBracketCopy);
+            LegacySystem.Graph.EasyVertex.Get(k, false, "_(?<expr>)").AddEdge(keywordGroup, kgd_ColonEmptyInner2SlashMarkIndexMethodNewLinkBracketCopy);
 
             // `
             //
@@ -1875,7 +1895,7 @@ namespace m0
 
             AddSingleOperator(k, smu, smb, keyword, any, "((?<expr>))", "()");
 
-            k.Get(false, "((?<expr>))").AddEdge(keywordGroup, kgd_ColonEmptyInner2SlashMarkIndexMethodNewLinkBracketCopy);
+            LegacySystem.Graph.EasyVertex.Get(k, false, "((?<expr>))").AddEdge(keywordGroup, kgd_ColonEmptyInner2SlashMarkIndexMethodNewLinkBracketCopy);
 
             // \
             //
@@ -2199,7 +2219,8 @@ namespace m0
 
             IVertex o_copy_any = o_copy.AddVertex(any, "");
 
-            o_copy_any.AddEdge(LegacySystem.Graph.EasyVertex.Get(smb, false, @"Vertex\$Is"), smu.Get(false, _is));
+            o_copy_any.AddEdge(LegacySystem.Graph.EasyVertex.Get(smb, false, @"Vertex\$Is"),
+                LegacySystem.Graph.EasyVertex.Get(smu, false, _is));
 
             o_copy_any.AddVertex(LegacySystem.Graph.EasyVertex.Get(smu, false, @"DoubleOperator\LeftExpression"), "(?<left>)");
 
@@ -2224,13 +2245,24 @@ namespace m0
 
             IVertex o_copy_any = o_copy.AddVertex(any, "");
 
-            o_copy_any.AddEdge(LegacySystem.Graph.EasyVertex.Get(smb, false, @"Vertex\$Is"), smu.Get(false, _is));
+            o_copy_any.AddEdge(LegacySystem.Graph.EasyVertex.Get(smb, false, @"Vertex\$Is"),
+                LegacySystem.Graph.EasyVertex.Get(smu, false, _is));
+        }
+
+        void RootVariableVertexLinksCreate2()
+        {
+            IVertex System = GraphUtil.GetQueryOutFirst(Root, null, "System");
+            IVertex FormalTextLanguage = GraphUtil.GetQueryOutFirst(System, null, "FormalTextLanguage");
+
+            _DefaultFormalTextLanguage = GraphUtil.GetQueryOutFirst(FormalTextLanguage, null, "ZeroCode");
         }
 
         void CreateSystemFormalTextLanguageZeroCode()
         {
             IVertex zc = LegacySystem.Graph.EasyVertex.Get(Root, false, @"System\FormalTextLanguage").AddVertex(
                 LegacySystem.Graph.EasyVertex.Get(Root, false, @"System\Meta\ZeroTypes\FormalTextLanguage"),"ZeroCode");
+
+            RootVariableVertexLinksCreate2();
 
             zc.AddEdge(LegacySystem.Graph.EasyVertex.Get(Root, false, @"System\Meta\Base\Vertex\$Is"),
                 LegacySystem.Graph.EasyVertex.Get(Root, false, @"System\Meta\ZeroTypes\FormalTextLanguage"));
@@ -4382,6 +4414,10 @@ namespace m0
 
         private void Initialize_PostParserReady()
         {
+            Init_AfterZeroCodeDefintionCreated();
+
+
+
             CreateSystemMetaVisualiserDiagram();
 
             CreateSystemMetaVisualiser();
@@ -4400,10 +4436,7 @@ namespace m0
 
             CreateUsers();
 
-            AfterCreateUsers();
-
-
-            Init_AfterZeroCodeDefintionCreated();
+            AfterCreateUsers();            
 
 
 

@@ -446,8 +446,8 @@ namespace m0.ZeroCode
         {
             FormalTextLanguage = formalTextLanguage;
 
-            newVertexKeywordVertexList = ZeroCodeUtil.getFilteredKeywordList(FormalTextLanguage, "$$NewVertexKeyword:");
-            emptyKeywordVertexList = ZeroCodeUtil.getFilteredKeywordList(FormalTextLanguage, "$$EmptyKeyword:");
+            newVertexKeywordVertexList = ZeroCodeUtil.getFilteredKeywordList(FormalTextLanguage, "$$NewVertexKeyword");
+            emptyKeywordVertexList = ZeroCodeUtil.getFilteredKeywordList(FormalTextLanguage, "$$EmptyKeyword");
 
         }
 

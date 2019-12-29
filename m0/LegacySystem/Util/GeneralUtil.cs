@@ -20,7 +20,9 @@ namespace m0.LegacySystem.Util
 
             IVertex expressionAsVertex = MinusZero.Instance.CreateTempVertex();
 
-            z.DefaultParser.Parse(expressionAsVertex, expressionAsString);
+            //z.DefaultParser.Parse(expressionAsVertex, expressionAsString);
+
+            LegacySystem.ZeroCodeEngine_OLD.Parse(expressionAsVertex, expressionAsString);
 
             return LegacySystem.ZeroCodeEngine_OLD.OldStyleExecute(baseVertex, inputVertex, expressionAsVertex);
         }
