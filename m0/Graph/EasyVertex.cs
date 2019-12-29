@@ -693,7 +693,7 @@ namespace m0.Graph
             results = InEdges.ToList();
         }
 
-        public IVertex Get(bool metaMode, string query)
+        public override IVertex Get(bool metaMode, string query)
         {
             IVertex queryVertex = null;
             IVertex parseError = null;
@@ -723,7 +723,7 @@ namespace m0.Graph
             return MinusZero.Instance.DefaultExecuter.Get(metaMode, this, queryVertex);
         }
 
-        public IVertex GetAll(bool metaMode, string query)
+        public override IVertex GetAll(bool metaMode, string query)
         {
             IVertex queryVertex = null;
             IVertex parseError = null;

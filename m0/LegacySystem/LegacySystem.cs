@@ -13,19 +13,22 @@ namespace m0.LegacySystem
 
         static public IVertex MetaFormalTextLanguageParsedTreeVertex;
 
+        static public m0.LegacySystem.ZeroCode.ZeroCodeEngine_OLD ZeroCodeEngine_OLD;
+
         static public void LegacyInit()
         {
             CreateLegacySystem();
 
-            m0.LegacySystem.ZeroCode.ZeroCodeEngine_OLD zeroCodeEngine_OLD = new m0.LegacySystem.ZeroCode.ZeroCodeEngine_OLD();
+            ZeroCodeEngine_OLD = new m0.LegacySystem.ZeroCode.ZeroCodeEngine_OLD();
 
-            Graph.EasyVertex.DefaultExecuter = zeroCodeEngine_OLD;
-            Graph.EasyVertex.DefaultParser = zeroCodeEngine_OLD;
+            Graph.EasyVertex.DefaultExecuter = ZeroCodeEngine_OLD;
+            Graph.EasyVertex.DefaultParser = ZeroCodeEngine_OLD;
         }
 
         static void CreateLegacySystem()
         {
-            IVertex legacySystem = m0.MinusZero.Instance.Root.AddVertex(null, "LegacySystem");
+            IVertex legacySystem = m0.MinusZero.Instance.CreateTempVertex();
+                //= m0.MinusZero.Instance.Root.AddVertex(null, "LegacySystem");
 
             IVertex meta = legacySystem.AddVertex(null, "Meta");
 
