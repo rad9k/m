@@ -431,11 +431,15 @@ namespace m0.ZeroCode
         {
             if (smb == null)
             {
-                smb = r.Get(false, @"System\Meta\Base");
+                IVertex System = GraphUtil.GetQueryOutFirst(MinusZero.Instance.Root, null, "System");
 
-                Direct = smb.Get(false, "$Direct");
+                IVertex Meta = GraphUtil.GetQueryOutFirst(System, null, "Meta");
 
-                DirectMeta = smb.Get(false, "$DirectMeta");
+                smb = GraphUtil.GetQueryOutFirst(Meta, null, "Base");                
+
+                Direct = GraphUtil.GetQueryOutFirst(smb, null, "$Direct");
+
+                DirectMeta = GraphUtil.GetQueryOutFirst(smb, null, "$DirectMeta");
             }
         }
 
