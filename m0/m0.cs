@@ -1826,9 +1826,10 @@ namespace m0
 
             IVertex o_if_any = o_if.AddVertex(any, "");
 
-            o_if_any.AddEdge(smb.Get(false, @"Vertex\$Is"), smu.Get(false, "If"));
+            o_if_any.AddEdge(LegacySystem.Graph.EasyVertex.Get(smb, false, @"Vertex\$Is"),
+                LegacySystem.Graph.EasyVertex.Get(smu, false, "If"));
 
-            o_if_any.AddVertex(smu.Get(false, @"If\Test"), "(?<test>)");
+            o_if_any.AddVertex(LegacySystem.Graph.EasyVertex.Get(smu, false, @"If\Test"), "(?<test>)");
 
             // test
             //
@@ -1838,9 +1839,10 @@ namespace m0
 
             IVertex o_test_any = o_test.AddVertex(any, "");
 
-            o_test_any.AddEdge(smb.Get(false, @"Vertex\$Is"), smu.Get(false, "Test"));
+            o_test_any.AddEdge(LegacySystem.Graph.EasyVertex.Get(smb, false, @"Vertex\$Is"),
+                LegacySystem.Graph.EasyVertex.Get(smu, false, "Test"));
 
-            o_test_any.AddVertex(smu.Get(false, @"Test\Expression"), "(?<expr>)");
+            o_test_any.AddVertex(LegacySystem.Graph.EasyVertex.Get(smu, false, @"Test\Expression"), "(?<expr>)");
 
             // case
             //
@@ -1848,11 +1850,12 @@ namespace m0
 
             IVertex o_case = k.AddVertex(keyword, "case (?<test>)");
 
-            IVertex o_case_any = o_case.AddVertex(smu.Get(false, "Case"), "");
+            IVertex o_case_any = o_case.AddVertex(LegacySystem.Graph.EasyVertex.Get(smu, false, "Case"), "");
 
-            o_case_any.AddEdge(smb.Get(false, @"Vertex\$Is"), smu.Get(false, "Case"));
+            o_case_any.AddEdge(LegacySystem.Graph.EasyVertex.Get(smb, false, @"Vertex\$Is"),
+                LegacySystem.Graph.EasyVertex.Get(smu, false, "Case"));
 
-            o_case_any.AddVertex(smu.Get(false, @"Case\Test"), "(?<test>)");
+            o_case_any.AddVertex(LegacySystem.Graph.EasyVertex.Get(smu, false, @"Case\Test"), "(?<test>)");
 
             // fallback
             //
@@ -1860,9 +1863,10 @@ namespace m0
 
             IVertex o_default = k.AddVertex(keyword, "fallback");
 
-            IVertex o_default_any = o_default.AddVertex(smu.Get(false, "Fallback"), "");
+            IVertex o_default_any = o_default.AddVertex(LegacySystem.Graph.EasyVertex.Get(smu, false, "Fallback"), "");
 
-            o_default_any.AddEdge(smb.Get(false, @"Vertex\$Is"), smu.Get(false, "Fallback"));
+            o_default_any.AddEdge(LegacySystem.Graph.EasyVertex.Get(smb, false, @"Vertex\$Is"),
+                LegacySystem.Graph.EasyVertex.Get(smu, false, "Fallback"));
             
 
             // ()
@@ -1891,13 +1895,14 @@ namespace m0
 
             IVertex o_Slash_any = o_Slash.AddVertex(any, "");
 
-            o_Slash_any.AddVertex(smb.Get(false, "$$StartInLocalRoot"), "");
+            o_Slash_any.AddVertex(LegacySystem.Graph.EasyVertex.Get(smb, false, "$$StartInLocalRoot"), "");
 
-            o_Slash_any.AddEdge(smb.Get(false, @"Vertex\$Is"), smu.Get(false, "\"\\ \""));
+            o_Slash_any.AddEdge(LegacySystem.Graph.EasyVertex.Get(smb, false, @"Vertex\$Is"),
+                LegacySystem.Graph.EasyVertex.Get(smu, false, "\"\\ \""));
 
-            IVertex o_Slash_any_targetExpr = o_Slash_any.AddVertex(smu.Get(false, @"ExpressionAtom\NextExpression"), "");
+            IVertex o_Slash_any_targetExpr = o_Slash_any.AddVertex(LegacySystem.Graph.EasyVertex.Get(smu, false, @"ExpressionAtom\NextExpression"), "");
 
-            o_Slash_any_targetExpr.AddEdge(smb.Get(false, "$$LocalRoot"), kgd_ColonEmptyInner2SlashMarkIndexMethod);
+            o_Slash_any_targetExpr.AddEdge(LegacySystem.Graph.EasyVertex.Get(smb, false, "$$LocalRoot"), kgd_ColonEmptyInner2SlashMarkIndexMethod);
 
             // ?
             //
@@ -1917,13 +1922,14 @@ namespace m0
 
             IVertex o_Mark_any = o_Mark.AddVertex(any, "");
 
-            o_Mark_any.AddVertex(smb.Get(false, "$$StartInLocalRoot"), "");
+            o_Mark_any.AddVertex(LegacySystem.Graph.EasyVertex.Get(smb, false, "$$StartInLocalRoot"), "");
 
-            o_Mark_any.AddEdge(smb.Get(false, @"Vertex\$Is"), smu.Get(false, "?"));
+            o_Mark_any.AddEdge(LegacySystem.Graph.EasyVertex.Get(smb, false, @"Vertex\$Is"),
+                LegacySystem.Graph.EasyVertex.Get(smu, false, "?"));
 
-            IVertex o_Mark_any_targetExpr = o_Mark_any.AddVertex(smu.Get(false, @"ExpressionAtom\NextExpression"), "");
+            IVertex o_Mark_any_targetExpr = o_Mark_any.AddVertex(LegacySystem.Graph.EasyVertex.Get(smu, false, @"ExpressionAtom\NextExpression"), "");
 
-            o_Mark_any_targetExpr.AddEdge(smb.Get(false, "$$LocalRoot"), kgd_ColonEmptyInner2SlashMarkIndexMethod);
+            o_Mark_any_targetExpr.AddEdge(LegacySystem.Graph.EasyVertex.Get(smb, false, "$$LocalRoot"), kgd_ColonEmptyInner2SlashMarkIndexMethod);
 
             // {
             // }
@@ -1936,13 +1942,15 @@ namespace m0
 
             IVertex o_InnerCreation_any = o_InnerCreation.AddVertex(any, anyString);
 
-            o_InnerCreation_any.AddVertex(smb.Get(false, "$$StartInLocalRoot"), "");
+            o_InnerCreation_any.AddVertex(LegacySystem.Graph.EasyVertex.Get(smb, false, "$$StartInLocalRoot"), "");
 
-            o_InnerCreation_any.AddEdge(smb.Get(false, @"Vertex\$Is"), smu.Get(false, "InnerCreation"));
+            o_InnerCreation_any.AddEdge(LegacySystem.Graph.EasyVertex.Get(smb, false, @"Vertex\$Is"),
+                LegacySystem.Graph.EasyVertex.Get(smu, false, "InnerCreation"));
 
-            IVertex o_InnerCreation_any_param = o_InnerCreation_any.AddVertex(smu.Get(false, @"MultiOperator\Expression"), "(?<expr>)");
+            IVertex o_InnerCreation_any_param = o_InnerCreation_any.AddVertex(LegacySystem.Graph.EasyVertex.Get(smu, false, @"MultiOperator\Expression"), "(?<expr>)");
 
-            o_InnerCreation_any_param.AddEdge(smb.Get(false, @"$$KeywordManyRoot"), smb.Get(false, @"$Empty"));
+            o_InnerCreation_any_param.AddEdge(LegacySystem.Graph.EasyVertex.Get(smb, false, @"$$KeywordManyRoot"),
+                LegacySystem.Graph.EasyVertex.Get(smb, false, @"$Empty"));
 
             // {} // 2       
             //
@@ -1960,17 +1968,19 @@ namespace m0
 
             IVertex o_Inner2_any = o_Inner2.AddVertex(any, anyString);
 
-            o_Inner2_any.AddVertex(smb.Get(false, "$$StartInLocalRoot"), "");
+            o_Inner2_any.AddVertex(LegacySystem.Graph.EasyVertex.Get(smb, false, "$$StartInLocalRoot"), "");
 
-            o_Inner2_any.AddEdge(smb.Get(false, @"Vertex\$Is"), smu.Get(false, "\"{}\""));
+            o_Inner2_any.AddEdge(LegacySystem.Graph.EasyVertex.Get(smb, false, @"Vertex\$Is"),
+                LegacySystem.Graph.EasyVertex.Get(smu, false, "\"{}\""));
 
-            IVertex o_Inner2_any_any_param = o_Inner2_any.AddVertex(smu.Get(false, @"MultiOperator\Expression"), "(?<expr>)");
+            IVertex o_Inner2_any_any_param = o_Inner2_any.AddVertex(LegacySystem.Graph.EasyVertex.Get(smu, false, @"MultiOperator\Expression"), "(?<expr>)");
 
-            o_Inner2_any_any_param.AddEdge(smb.Get(false, @"$$KeywordManyRoot"), smb.Get(false, @"$Empty"));
+            o_Inner2_any_any_param.AddEdge(LegacySystem.Graph.EasyVertex.Get(smb, false, @"$$KeywordManyRoot"),
+                LegacySystem.Graph.EasyVertex.Get(smb, false, @"$Empty"));
 
-            IVertex o_Inner2_any_targetExpr = o_Inner2_any.AddVertex(smu.Get(false, @"ExpressionAtom\NextExpression"), "");
+            IVertex o_Inner2_any_targetExpr = o_Inner2_any.AddVertex(LegacySystem.Graph.EasyVertex.Get(smu, false, @"ExpressionAtom\NextExpression"), "");
 
-            o_Inner2_any_targetExpr.AddEdge(smb.Get(false, "$$LocalRoot"), kgd_SlashMarkIndexMethod);
+            o_Inner2_any_targetExpr.AddEdge(LegacySystem.Graph.EasyVertex.Get(smb, false, "$$LocalRoot"), kgd_SlashMarkIndexMethod);
 
 
             // {} // 1
@@ -1984,13 +1994,14 @@ namespace m0
 
             IVertex o_Inner_any = o_Inner.AddVertex(any, anyString);
 
-            o_Inner_any.AddVertex(smb.Get(false, "$$StartInLocalRoot"), "");
+            o_Inner_any.AddVertex(LegacySystem.Graph.EasyVertex.Get(smb, false, "$$StartInLocalRoot"), "");
 
-            o_Inner_any.AddEdge(smb.Get(false, @"Vertex\$Is"), smu.Get(false, "\"{}\""));
+            o_Inner_any.AddEdge(LegacySystem.Graph.EasyVertex.Get(smb, false, @"Vertex\$Is"), LegacySystem.Graph.EasyVertex.Get(smu, false, "\"{}\""));
 
-            IVertex o_Inner_any_any_param = o_Inner_any.AddVertex(smu.Get(false, @"MultiOperator\Expression"), "(?<expr1>)");
+            IVertex o_Inner_any_any_param = o_Inner_any.AddVertex(LegacySystem.Graph.EasyVertex.Get(smu, false, @"MultiOperator\Expression"), "(?<expr1>)");
 
-            o_Inner_any_any_param.AddEdge(smb.Get(false, @"$$KeywordManyRoot"), smb.Get(false, @"$Empty"));
+            o_Inner_any_any_param.AddEdge(LegacySystem.Graph.EasyVertex.Get(smb, false, @"$$KeywordManyRoot"),
+                LegacySystem.Graph.EasyVertex.Get(smb, false, @"$Empty"));
 
 
             // ""
@@ -2028,13 +2039,14 @@ namespace m0
 
             IVertex empty1Keyword_any = empty1Keyword.AddVertex(any, "(?<value>)");
 
-            empty1Keyword_any.AddVertex(smb.Get(false, "$$StartInLocalRoot"), "");
+            empty1Keyword_any.AddVertex(LegacySystem.Graph.EasyVertex.Get(smb, false, "$$StartInLocalRoot"), "");
 
-            empty1Keyword_any.AddEdge(smb.Get(false, @"Vertex\$Is"), smu.Get(false, "Query"));
+            empty1Keyword_any.AddEdge(LegacySystem.Graph.EasyVertex.Get(smb, false, @"Vertex\$Is"),
+                LegacySystem.Graph.EasyVertex.Get(smu, false, "Query"));
 
-            IVertex empty1Keyword_any_targetExpr = empty1Keyword_any.AddVertex(smu.Get(false, @"ExpressionAtom\NextExpression"), "");
+            IVertex empty1Keyword_any_targetExpr = empty1Keyword_any.AddVertex(LegacySystem.Graph.EasyVertex.Get(smu, false, @"ExpressionAtom\NextExpression"), "");
 
-            empty1Keyword_any_targetExpr.AddEdge(smb.Get(false, "$$LocalRoot"), kgd_SlashMarkIndexMethodInner2);
+            empty1Keyword_any_targetExpr.AddEdge(LegacySystem.Graph.EasyVertex.Get(smb, false, "$$LocalRoot"), kgd_SlashMarkIndexMethodInner2);
 
             // E M P T Y :) K E Y W O R D 2
             //
@@ -2048,11 +2060,12 @@ namespace m0
 
             IVertex empty2Keyword_any = empty2Keyword.AddVertex(any, "(?<value>)");
 
-            empty2Keyword_any.AddEdge(smb.Get(false, @"Vertex\$Is"), smu.Get(false, "Query"));
+            empty2Keyword_any.AddEdge(LegacySystem.Graph.EasyVertex.Get(smb, false, @"Vertex\$Is"),
+                LegacySystem.Graph.EasyVertex.Get(smu, false, "Query"));
 
-            IVertex empty2Keyword_any_targetExpr = empty2Keyword_any.AddVertex(smu.Get(false, @"ExpressionAtom\NextExpression"), "");
+            IVertex empty2Keyword_any_targetExpr = empty2Keyword_any.AddVertex(LegacySystem.Graph.EasyVertex.Get(smu, false, @"ExpressionAtom\NextExpression"), "");
 
-            empty2Keyword_any_targetExpr.AddEdge(smb.Get(false, "$$LocalRoot"), kgd_Inner);
+            empty2Keyword_any_targetExpr.AddEdge(LegacySystem.Graph.EasyVertex.Get(smb, false, "$$LocalRoot"), kgd_Inner);
 
             // @
             //
@@ -2068,9 +2081,9 @@ namespace m0
 
             IVertex at_at = at.AddVertex(any, "");
 
-            at_at.AddEdge(_is, smu.Get(false, @"Link"));
+            at_at.AddEdge(_is, LegacySystem.Graph.EasyVertex.Get(smu, false, @"Link"));
 
-            at_at.AddVertex(smu.Get(false, @"Link\Target"), "(?<value>)");
+            at_at.AddVertex(LegacySystem.Graph.EasyVertex.Get(smu, false, @"Link\Target"), "(?<value>)");
 
             //////////////////// meta
 
@@ -2088,9 +2101,9 @@ namespace m0
 
             IVertex o_parse_any = o_parse.AddVertex(any, "");
 
-            o_parse_any.AddEdge(_is, smu.Get(false, @"Parse"));
+            o_parse_any.AddEdge(_is, LegacySystem.Graph.EasyVertex.Get(smu, false, @"Parse"));
 
-            o_parse_any.AddVertex(smu.Get(false, @"SingleOperator\Expression"), "(?<expr>)");
+            o_parse_any.AddVertex(LegacySystem.Graph.EasyVertex.Get(smu, false, @"SingleOperator\Expression"), "(?<expr>)");
 
             // parse
             //
@@ -2100,11 +2113,11 @@ namespace m0
 
             IVertex o_parse2_any = o_parse2.AddVertex(any, "");
 
-            o_parse2_any.AddEdge(_is, smu.Get(false, @"ParseWithLanguage"));
+            o_parse2_any.AddEdge(_is, LegacySystem.Graph.EasyVertex.Get(smu, false, @"ParseWithLanguage"));
 
-            o_parse2_any.AddVertex(smu.Get(false, @"ParseWithLanguage\FormalTextLanguage"), "(?<language>)");
+            o_parse2_any.AddVertex(LegacySystem.Graph.EasyVertex.Get(smu, false, @"ParseWithLanguage\FormalTextLanguage"), "(?<language>)");
 
-            o_parse2_any.AddVertex(smu.Get(false, @"SingleOperator\Expression"), "(?<expr>)");            
+            o_parse2_any.AddVertex(LegacySystem.Graph.EasyVertex.Get(smu, false, @"SingleOperator\Expression"), "(?<expr>)");            
 
             // generate
             //
@@ -2114,9 +2127,9 @@ namespace m0
 
             IVertex o_generate_any = o_generate.AddVertex(any, "");
 
-            o_generate_any.AddEdge(_is, smu.Get(false, @"Generate"));
+            o_generate_any.AddEdge(_is, LegacySystem.Graph.EasyVertex.Get(smu, false, @"Generate"));
 
-            o_generate_any.AddVertex(smu.Get(false, @"SingleOperator\Expression"), "(?<expr>)");
+            o_generate_any.AddVertex(LegacySystem.Graph.EasyVertex.Get(smu, false, @"SingleOperator\Expression"), "(?<expr>)");
 
             // generate
             //
@@ -2126,11 +2139,11 @@ namespace m0
 
             IVertex o_generate2_any = o_generate2.AddVertex(any, "");
 
-            o_generate2_any.AddEdge(_is, smu.Get(false, @"GenerateWithLanguage"));
+            o_generate2_any.AddEdge(_is, LegacySystem.Graph.EasyVertex.Get(smu, false, @"GenerateWithLanguage"));
 
-            o_generate2_any.AddVertex(smu.Get(false, @"SingleOperator\Expression"), "(?<expr>)");
+            o_generate2_any.AddVertex(LegacySystem.Graph.EasyVertex.Get(smu, false, @"SingleOperator\Expression"), "(?<expr>)");
 
-            o_generate2_any.AddVertex(smu.Get(false, @"GenerateWithLanguage\FormalTextLanguage"), "(?<language>)");
+            o_generate2_any.AddVertex(LegacySystem.Graph.EasyVertex.Get(smu, false, @"GenerateWithLanguage\FormalTextLanguage"), "(?<language>)");
 
 
             //////////////////// oo
@@ -2143,9 +2156,9 @@ namespace m0
 
             IVertex o_new_any = o_new.AddVertex(any, "");
 
-            o_new_any.AddEdge(_is, smu.Get(false, @"New"));
+            o_new_any.AddEdge(_is, LegacySystem.Graph.EasyVertex.Get(smu, false, @"New"));
 
-            o_new_any.AddVertex(smu.Get(false, @"SingleOperator\Expression"), "(?<expr>)");
+            o_new_any.AddVertex(LegacySystem.Graph.EasyVertex.Get(smu, false, @"SingleOperator\Expression"), "(?<expr>)");
 
 
             // .[]
@@ -2166,15 +2179,17 @@ namespace m0
 
             IVertex o_methodCall_any = o_methodCall.AddVertex(any, "");
 
-            o_methodCall_any.AddVertex(smb.Get(false, "$$StartInLocalRoot"), "");
+            o_methodCall_any.AddVertex(LegacySystem.Graph.EasyVertex.Get(smb, false, "$$StartInLocalRoot"), "");
 
-            o_methodCall_any.AddEdge(smb.Get(false, @"Vertex\$Is"), smu.Get(false, "MethodCall"));
+            o_methodCall_any.AddEdge(LegacySystem.Graph.EasyVertex.Get(smb, false, @"Vertex\$Is"),
+                LegacySystem.Graph.EasyVertex.Get(smu, false, "MethodCall"));
 
-            IVertex o_methodCall_any_target = o_methodCall_any.AddVertex(smu.Get(false, @"MethodCall\Target"), "(?<target_ColonEmptyInner2SlashMarkIndexMethodNewLink>)");
+            IVertex o_methodCall_any_target = o_methodCall_any.AddVertex(LegacySystem.Graph.EasyVertex.Get(smu, false, @"MethodCall\Target"), "(?<target_ColonEmptyInner2SlashMarkIndexMethodNewLink>)");
 
-            IVertex o_methodCall_any_param = o_methodCall_any.AddVertex(smu.Get(false, @"MultiOperator\Expression"), "(?<expr>)");
+            IVertex o_methodCall_any_param = o_methodCall_any.AddVertex(LegacySystem.Graph.EasyVertex.Get(smu, false, @"MultiOperator\Expression"), "(?<expr>)");
 
-            o_methodCall_any_param.AddEdge(smb.Get(false, @"$$KeywordManyRoot"), smb.Get(false, @"$Empty"));
+            o_methodCall_any_param.AddEdge(LegacySystem.Graph.EasyVertex.Get(smb, false, @"$$KeywordManyRoot"),
+                LegacySystem.Graph.EasyVertex.Get(smb, false, @"$Empty"));
 
         }
 
@@ -2184,11 +2199,11 @@ namespace m0
 
             IVertex o_copy_any = o_copy.AddVertex(any, "");
 
-            o_copy_any.AddEdge(smb.Get(false, @"Vertex\$Is"), smu.Get(false, _is));
+            o_copy_any.AddEdge(LegacySystem.Graph.EasyVertex.Get(smb, false, @"Vertex\$Is"), smu.Get(false, _is));
 
-            o_copy_any.AddVertex(smu.Get(false, @"DoubleOperator\LeftExpression"), "(?<left>)");
+            o_copy_any.AddVertex(LegacySystem.Graph.EasyVertex.Get(smu, false, @"DoubleOperator\LeftExpression"), "(?<left>)");
 
-            o_copy_any.AddVertex(smu.Get(false, @"DoubleOperator\RightExpression"), "(?<right>)");
+            o_copy_any.AddVertex(LegacySystem.Graph.EasyVertex.Get(smu, false, @"DoubleOperator\RightExpression"), "(?<right>)");
         }
 
         private static void AddSingleOperator(IVertex k, IVertex smu, IVertex smb, IVertex keyword, IVertex any, string text, string _is)
@@ -2197,9 +2212,10 @@ namespace m0
 
             IVertex o_copy_any = o_copy.AddVertex(any, "");
 
-            o_copy_any.AddEdge(smb.Get(false, @"Vertex\$Is"), smu.Get(false, _is));
+            o_copy_any.AddEdge(LegacySystem.Graph.EasyVertex.Get(smb, false, @"Vertex\$Is"),
+                LegacySystem.Graph.EasyVertex.Get(smu, false, _is));
 
-            o_copy_any.AddVertex(smu.Get(false, @"SingleOperator\Expression"), "(?<expr>)");
+            o_copy_any.AddVertex(LegacySystem.Graph.EasyVertex.Get(smu, false, @"SingleOperator\Expression"), "(?<expr>)");
         }
 
         private static void AddKeyword(IVertex k, IVertex smu, IVertex smb, IVertex keyword, IVertex any,  string text, string _is)
@@ -2208,7 +2224,7 @@ namespace m0
 
             IVertex o_copy_any = o_copy.AddVertex(any, "");
 
-            o_copy_any.AddEdge(smb.Get(false, @"Vertex\$Is"), smu.Get(false, _is));
+            o_copy_any.AddEdge(LegacySystem.Graph.EasyVertex.Get(smb, false, @"Vertex\$Is"), smu.Get(false, _is));
         }
 
         void CreateSystemFormalTextLanguageZeroCode()
