@@ -324,22 +324,27 @@ namespace m0.ZeroCode
         }
 
         void prepareImportList_FormalTextLanguage(DictionariesForFormalTextLanguage d)
-        {          
-            IVertex formalTextLanguageDefaultImports = FormalTextLanguage.Get(false, "DefaultImports:");                
+        {
+            //IVertex formalTextLanguageDefaultImports = FormalTextLanguage.Get(false, "DefaultImports:");                
+            IVertex formalTextLanguageDefaultImports = GraphUtil.GetQueryOutFirst(FormalTextLanguage, "DefaultImports", null);
 
             // named imports
 
-            foreach (IEdge e in formalTextLanguageDefaultImports.GetAll(false, "$ImportMeta:"))
+            //foreach (IEdge e in formalTextLanguageDefaultImports.GetAll(false, "$ImportMeta:"))
+            foreach (IEdge e in GraphUtil.GetQueryOut(formalTextLanguageDefaultImports, "$ImportMeta", null))
             {
-                IVertex v = formalTextLanguageDefaultImports.Get(false, e.To + ":");
+                //IVertex v = formalTextLanguageDefaultImports.Get(false, e.To + ":");
+                IVertex v = GraphUtil.GetQueryOutFirst(formalTextLanguageDefaultImports, e.To, null);
 
                 if (v != null)
                     d.importMetaList.AddEdge(e.To, v);
             }
 
-            foreach (IEdge e in formalTextLanguageDefaultImports.GetAll(false, "$Import:"))
+            //foreach (IEdge e in formalTextLanguageDefaultImports.GetAll(false, "$Import:"))
+            foreach (IEdge e in GraphUtil.GetQueryOut(formalTextLanguageDefaultImports, "$Import", null))
             {
-                IVertex v = formalTextLanguageDefaultImports.Get(false, e.To + ":");
+                //IVertex v = formalTextLanguageDefaultImports.Get(false, e.To + ":");
+                IVertex v = GraphUtil.GetQueryOutFirst(formalTextLanguageDefaultImports, e.To, null);
 
                 if (v != null)
                     d.importList.AddEdge(e.To, v);
@@ -347,7 +352,8 @@ namespace m0.ZeroCode
 
             // direct imports
 
-            foreach (IEdge e in formalTextLanguageDefaultImports.GetAll(false, "$DirectMeta:"))
+            //foreach (IEdge e in formalTextLanguageDefaultImports.GetAll(false, "$DirectMeta:"))
+            foreach (IEdge e in GraphUtil.GetQueryOut(formalTextLanguageDefaultImports, "$DirectMeta", null`))
                 d.importDirectMetaList.AddEdge(e.Meta, e.To);            
 
             foreach (IEdge e in formalTextLanguageDefaultImports.GetAll(false, "$Direct:"))
