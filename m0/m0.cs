@@ -737,9 +737,9 @@ namespace m0
                 LegacySystem.Graph.EasyVertex.Get(smu, false, @"Atom"));
 
             // $IsAggregation's for expressions
-            smu.Get(false, @"ExpressionAtom\NextExpression").AddEdge(isAggregation, Empty);
-            smu.Get(false, @"SingleOperator\Expression").AddEdge(isAggregation, Empty);
-            smu.Get(false, @"DoubleOperator\LeftExpression").AddEdge(isAggregation, Empty);
+            LegacySystem.Graph.EasyVertex.Get(smu, false, @"ExpressionAtom\NextExpression").AddEdge(isAggregation, Empty);
+            LegacySystem.Graph.EasyVertex.Get(smu, false, @"SingleOperator\Expression").AddEdge(isAggregation, Empty);
+            LegacySystem.Graph.EasyVertex.Get(smu, false, @"DoubleOperator\LeftExpression").AddEdge(isAggregation, Empty);
             smu.Get(false, @"DoubleOperator\RightExpression").AddEdge(isAggregation, Empty);
             smu.Get(false, @"MultiOperator\Expression").AddEdge(isAggregation, Empty);            
 
