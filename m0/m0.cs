@@ -740,142 +740,172 @@ namespace m0
             LegacySystem.Graph.EasyVertex.Get(smu, false, @"ExpressionAtom\NextExpression").AddEdge(isAggregation, Empty);
             LegacySystem.Graph.EasyVertex.Get(smu, false, @"SingleOperator\Expression").AddEdge(isAggregation, Empty);
             LegacySystem.Graph.EasyVertex.Get(smu, false, @"DoubleOperator\LeftExpression").AddEdge(isAggregation, Empty);
-            smu.Get(false, @"DoubleOperator\RightExpression").AddEdge(isAggregation, Empty);
-            smu.Get(false, @"MultiOperator\Expression").AddEdge(isAggregation, Empty);            
+            LegacySystem.Graph.EasyVertex.Get(smu, false, @"DoubleOperator\RightExpression").AddEdge(isAggregation, Empty);
+            LegacySystem.Graph.EasyVertex.Get(smu, false, @"MultiOperator\Expression").AddEdge(isAggregation, Empty);
 
-            smu.Get(false, @"FunctionCall\Target").AddEdge(isAggregation, Empty); // XXX
-            smu.Get(false, @"MethodCall\Target").AddEdge(isAggregation, Empty); // XXX
+            LegacySystem.Graph.EasyVertex.Get(smu, false, @"FunctionCall\Target").AddEdge(isAggregation, Empty); // XXX
+            LegacySystem.Graph.EasyVertex.Get(smu, false, @"MethodCall\Target").AddEdge(isAggregation, Empty); // XXX
 
             //rest edges
-            smu.Get(false, @"Return\Expression").AddEdge(sm.Get(false, @"*$EdgeTarget"), smu.Get(false, @"Atom"));
-            smu.Get(false, @"NextOut\Next").AddEdge(sm.Get(false, @"*$EdgeTarget"), smu.Get(false, @"Atom"));
+            LegacySystem.Graph.EasyVertex.Get(smu, false, @"Return\Expression").AddEdge(
+                LegacySystem.Graph.EasyVertex.Get(sm, false, @"*$EdgeTarget"),
+                LegacySystem.Graph.EasyVertex.Get(smu, false, @"Atom"));
+            LegacySystem.Graph.EasyVertex.Get(smu, false, @"NextOut\Next").AddEdge(
+                LegacySystem.Graph.EasyVertex.Get(sm, false, @"*$EdgeTarget"),
+                LegacySystem.Graph.EasyVertex.Get(smu, false, @"Atom"));
 
             //smu.Get(false, @"FunctionCall\Target").AddEdge(sm.Get(false, @"*$EdgeTarget"), smu.Get(false, @"StackFrameCreator"));
-            smu.Get(false, @"FunctionCall\Target").AddEdge(sm.Get(false, @"*$EdgeTarget"), smu.Get(false, @"Atom")); // XXX
-            smu.Get(false, @"MethodCall\Target").AddEdge(sm.Get(false, @"*$EdgeTarget"), smu.Get(false, @"Atom")); // XXX
+            LegacySystem.Graph.EasyVertex.Get(smu, false, @"FunctionCall\Target").AddEdge(
+                LegacySystem.Graph.EasyVertex.Get(sm, false, @"*$EdgeTarget"),
+                LegacySystem.Graph.EasyVertex.Get(smu, false, @"Atom")); // XXX
+            LegacySystem.Graph.EasyVertex.Get(smu, false, @"MethodCall\Target").AddEdge(
+                LegacySystem.Graph.EasyVertex.Get(sm, false, @"*$EdgeTarget"),
+                LegacySystem.Graph.EasyVertex.Get(smu, false, @"Atom")); // XXX
 
-            smu.Get(false, @"StackFrameCreator\Do").AddEdge(sm.Get(false, @"*$EdgeTarget"), smu.Get(false, @"Atom"));
-            smu.Get(false, @"StackFrameCreator\Variable").AddEdge(sm.Get(false, @"*$VertexTarget"), smu.Get(false, @"Type"));
-            smu.Get(false, @"StackFrameCreator\Type").AddEdge(sm.Get(false, @"*$EdgeTarget"), smu.Get(false, @"Type"));
-            smu.Get(false, @"StackFrameCreatorWithInputOutput\Output").AddEdge(sm.Get(false, @"*$EdgeTarget"), smu.Get(false, @"Type"));            
-            
-            smu.Get(false, @"While\Test").AddEdge(sm.Get(false, @"*$EdgeTarget"), smu.Get(false, @"Atom"));
+            LegacySystem.Graph.EasyVertex.Get(smu, false, @"StackFrameCreator\Do").AddEdge(
+                LegacySystem.Graph.EasyVertex.Get(sm, false, @"*$EdgeTarget"),
+                LegacySystem.Graph.EasyVertex.Get(smu, false, @"Atom"));
+            LegacySystem.Graph.EasyVertex.Get(smu, false, @"StackFrameCreator\Variable").AddEdge(
+                LegacySystem.Graph.EasyVertex.Get(sm, false, @"*$VertexTarget"),
+                LegacySystem.Graph.EasyVertex.Get(smu, false, @"Type"));
+            LegacySystem.Graph.EasyVertex.Get(smu, false, @"StackFrameCreator\Type").AddEdge(
+                LegacySystem.Graph.EasyVertex.Get(sm, false, @"*$EdgeTarget"),
+                LegacySystem.Graph.EasyVertex.Get(smu, false, @"Type"));
+            LegacySystem.Graph.EasyVertex.Get(smu, false, @"StackFrameCreatorWithInputOutput\Output").AddEdge(
+                LegacySystem.Graph.EasyVertex.Get(sm, false, @"*$EdgeTarget"),
+                LegacySystem.Graph.EasyVertex.Get(smu, false, @"Type"));
 
-            smu.Get(false, @"If\Test").AddEdge(sm.Get(false, @"*$EdgeTarget"), smu.Get(false, @"Atom"));
+            LegacySystem.Graph.EasyVertex.Get(smu, false, @"While\Test").AddEdge(
+                LegacySystem.Graph.EasyVertex.Get(sm, false, @"*$EdgeTarget"),
+                LegacySystem.Graph.EasyVertex.Get(smu, false, @"Atom"));
 
-            smu.Get(false, @"Test\Expression").AddEdge(sm.Get(false, @"*$EdgeTarget"), smu.Get(false, @"Atom"));
+            LegacySystem.Graph.EasyVertex.Get(smu, false, @"If\Test").AddEdge(
+                LegacySystem.Graph.EasyVertex.Get(sm, false, @"*$EdgeTarget"),
+                LegacySystem.Graph.EasyVertex.Get(smu, false, @"Atom"));
 
-            smu.Get(false, @"Case\Test").AddEdge(sm.Get(false, @"*$EdgeTarget"), smu.Get(false, @"Atom"));
+            LegacySystem.Graph.EasyVertex.Get(smu, false, @"Test\Expression").AddEdge(
+                LegacySystem.Graph.EasyVertex.Get(sm, false, @"*$EdgeTarget"),
+                LegacySystem.Graph.EasyVertex.Get(smu, false, @"Atom"));
+
+            LegacySystem.Graph.EasyVertex.Get(smu, false, @"Case\Test").AddEdge(
+                LegacySystem.Graph.EasyVertex.Get(sm, false, @"*$EdgeTarget"),
+                LegacySystem.Graph.EasyVertex.Get(smu, false, @"Atom"));
 
             // smu.Get(false, @"ForEach\Variable").AddEdge(sm.Get(false, @"*$EdgeTarget"), smu.Get(false, @"Query")); // better this
-            smu.Get(false, @"ForEach\Set").AddEdge(sm.Get(false, @"*$EdgeTarget"), smu.Get(false, @"Atom"));
+            LegacySystem.Graph.EasyVertex.Get(smu, false, @"ForEach\Set").AddEdge(
+                LegacySystem.Graph.EasyVertex.Get(sm, false, @"*$EdgeTarget"),
+                LegacySystem.Graph.EasyVertex.Get(smu, false, @"Atom"));
 
             // meta            
-            smu.Get(false, @"ParseWithLanguage\FormalTextLanguage").AddEdge(sm.Get(false, @"*$EdgeTarget"), smu.Get(false, @"Atom"));
-            smu.Get(false, @"GenerateWithLanguage\FormalTextLanguage").AddEdge(sm.Get(false, @"*$EdgeTarget"), smu.Get(false, @"Atom"));
+            LegacySystem.Graph.EasyVertex.Get(smu, false, @"ParseWithLanguage\FormalTextLanguage").AddEdge(
+                LegacySystem.Graph.EasyVertex.Get(sm, false, @"*$EdgeTarget"),
+                LegacySystem.Graph.EasyVertex.Get(smu, false, @"Atom"));
+            LegacySystem.Graph.EasyVertex.Get(smu, false, @"GenerateWithLanguage\FormalTextLanguage").AddEdge(
+                LegacySystem.Graph.EasyVertex.Get(sm, false, @"*$EdgeTarget"),
+                LegacySystem.Graph.EasyVertex.Get(smu, false, @"Atom"));
 
-            smu.Get(false, @"ParseWithLanguage\FormalTextLanguage").AddEdge(isAggregation, Empty);
-            smu.Get(false, @"GenerateWithLanguage\FormalTextLanguage").AddEdge(isAggregation, Empty);
+            LegacySystem.Graph.EasyVertex.Get(smu, false, @"ParseWithLanguage\FormalTextLanguage").AddEdge(isAggregation, Empty);
+            LegacySystem.Graph.EasyVertex.Get(smu, false, @"GenerateWithLanguage\FormalTextLanguage").AddEdge(isAggregation, Empty);
 
 
             // $IsAggregation's for EdgeTargets
-            smu.Get(false, @"Return\Expression").AddEdge(isAggregation, Empty);
-            smu.Get(false, @"NextOut\Next").AddEdge(isAggregation, Empty);
+            LegacySystem.Graph.EasyVertex.Get(smu, false, @"Return\Expression").AddEdge(isAggregation, Empty);
+            LegacySystem.Graph.EasyVertex.Get(smu, false, @"NextOut\Next").AddEdge(isAggregation, Empty);
 
-            smu.Get(false, @"StackFrameCreator\Do").AddEdge(isAggregation, Empty);
-            smu.Get(false, @"StackFrameCreator\Variable").AddEdge(isAggregation, Empty);
-            smu.Get(false, @"StackFrameCreator\Type").AddEdge(isAggregation, Empty);
+            LegacySystem.Graph.EasyVertex.Get(smu, false, @"StackFrameCreator\Do").AddEdge(isAggregation, Empty);
+            LegacySystem.Graph.EasyVertex.Get(smu, false, @"StackFrameCreator\Variable").AddEdge(isAggregation, Empty);
+            LegacySystem.Graph.EasyVertex.Get(smu, false, @"StackFrameCreator\Type").AddEdge(isAggregation, Empty);
             //  smu.Get(false, @"StackFrameCreatorWithInputOutput\Output").AddEdge(isAggregation, Empty); // this - no!            
-            
-            smu.Get(false, @"While\Test").AddEdge(isAggregation, Empty);
 
-            smu.Get(false, @"If\Test").AddEdge(isAggregation, Empty);
+            LegacySystem.Graph.EasyVertex.Get(smu, false, @"While\Test").AddEdge(isAggregation, Empty);
 
-            smu.Get(false, @"Test\Expression").AddEdge(isAggregation, Empty);
+            LegacySystem.Graph.EasyVertex.Get(smu, false, @"If\Test").AddEdge(isAggregation, Empty);
 
-            smu.Get(false, @"Case\Test").AddEdge(isAggregation, Empty);
+            LegacySystem.Graph.EasyVertex.Get(smu, false, @"Test\Expression").AddEdge(isAggregation, Empty);
 
-            smu.Get(false, @"ForEach\Set").AddEdge(isAggregation, Empty);
+            LegacySystem.Graph.EasyVertex.Get(smu, false, @"Case\Test").AddEdge(isAggregation, Empty);
+
+            LegacySystem.Graph.EasyVertex.Get(smu, false, @"ForEach\Set").AddEdge(isAggregation, Empty);
 
             // package
             IVertex package = smu.AddVertex(null, "Package");
 
-            AddCodeContainerEndPoint(smu.Get(false, "Package"));
+            AddCodeContainerEndPoint(LegacySystem.Graph.EasyVertex.Get(smu, false, "Package"));
 
-            package.AddEdge(null, smu.Get(false, "Link"));
-            package.AddEdge(null, smu.Get(false, "AtomType"));
-            package.AddEdge(null, smu.Get(false, "StateMachine"));
-            package.AddEdge(null, smu.Get(false, "Enum"));
-            package.AddEdge(null, smu.Get(false, "Class"));
-            package.AddEdge(null, smu.Get(false, "Query"));
-            package.AddEdge(null, smu.Get(false, "FunctionCall"));
-            package.AddEdge(null, smu.Get(false, "SetIndex"));
-            package.AddEdge(null, smu.Get(false, "SetCount"));
-            package.AddEdge(null, smu.Get(false, "InnerCreation"));
-            package.AddEdge(null, smu.Get(false, "\"{}\""));
-            package.AddEdge(null, smu.Get(false, "EdgeSetAdd"));
-            package.AddEdge(null, smu.Get(false, "EdgeSetSubstract"));
-            package.AddEdge(null, smu.Get(false, "EmptySet"));
+            package.AddEdge(null, LegacySystem.Graph.EasyVertex.Get(smu, false, "Link"));
+            package.AddEdge(null, LegacySystem.Graph.EasyVertex.Get(smu, false, "AtomType"));
+            package.AddEdge(null, LegacySystem.Graph.EasyVertex.Get(smu, false, "StateMachine"));
+            package.AddEdge(null, LegacySystem.Graph.EasyVertex.Get(smu, false, "Enum"));
+            package.AddEdge(null, LegacySystem.Graph.EasyVertex.Get(smu, false, "Class"));
+            package.AddEdge(null, LegacySystem.Graph.EasyVertex.Get(smu, false, "Query"));
+            package.AddEdge(null, LegacySystem.Graph.EasyVertex.Get(smu, false, "FunctionCall"));
+            package.AddEdge(null, LegacySystem.Graph.EasyVertex.Get(smu, false, "SetIndex"));
+            package.AddEdge(null, LegacySystem.Graph.EasyVertex.Get(smu, false, "SetCount"));
+            package.AddEdge(null, LegacySystem.Graph.EasyVertex.Get(smu, false, "InnerCreation"));
+            package.AddEdge(null, LegacySystem.Graph.EasyVertex.Get(smu, false, "\"{}\""));
+            package.AddEdge(null, LegacySystem.Graph.EasyVertex.Get(smu, false, "EdgeSetAdd"));
+            package.AddEdge(null, LegacySystem.Graph.EasyVertex.Get(smu, false, "EdgeSetSubstract"));
+            package.AddEdge(null, LegacySystem.Graph.EasyVertex.Get(smu, false, "EmptySet"));
 
-            package.AddEdge(null, smu.Get(false, "+"));
-            package.AddEdge(null, smu.Get(false, "-"));
-            package.AddEdge(null, smu.Get(false, "Mul"));
-            package.AddEdge(null, smu.Get(false, "/"));
+            package.AddEdge(null, LegacySystem.Graph.EasyVertex.Get(smu, false, "+"));
+            package.AddEdge(null, LegacySystem.Graph.EasyVertex.Get(smu, false, "-"));
+            package.AddEdge(null, LegacySystem.Graph.EasyVertex.Get(smu, false, "Mul"));
+            package.AddEdge(null, LegacySystem.Graph.EasyVertex.Get(smu, false, "/"));
 
-            package.AddEdge(null, smu.Get(false, "Equal"));
-            package.AddEdge(null, smu.Get(false, "ExactEqual"));
-            package.AddEdge(null, smu.Get(false, "VertexEqual"));
-            package.AddEdge(null, smu.Get(false, "NotEqual"));
-            package.AddEdge(null, smu.Get(false, "Negation"));
-            package.AddEdge(null, smu.Get(false, "And"));
-            package.AddEdge(null, smu.Get(false, "Or"));
-            package.AddEdge(null, smu.Get(false, "MoreThan"));
-            package.AddEdge(null, smu.Get(false, "LessThan"));
-            package.AddEdge(null, smu.Get(false, "MoreOrEqualThan"));
-            package.AddEdge(null, smu.Get(false, "LessOrEqualThan"));
+            package.AddEdge(null, LegacySystem.Graph.EasyVertex.Get(smu, false, "Equal"));
+            package.AddEdge(null, LegacySystem.Graph.EasyVertex.Get(smu, false, "ExactEqual"));
+            package.AddEdge(null, LegacySystem.Graph.EasyVertex.Get(smu, false, "VertexEqual"));
+            package.AddEdge(null, LegacySystem.Graph.EasyVertex.Get(smu, false, "NotEqual"));
+            package.AddEdge(null, LegacySystem.Graph.EasyVertex.Get(smu, false, "Negation"));
+            package.AddEdge(null, LegacySystem.Graph.EasyVertex.Get(smu, false, "And"));
+            package.AddEdge(null, LegacySystem.Graph.EasyVertex.Get(smu, false, "Or"));
+            package.AddEdge(null, LegacySystem.Graph.EasyVertex.Get(smu, false, "MoreThan"));
+            package.AddEdge(null, LegacySystem.Graph.EasyVertex.Get(smu, false, "LessThan"));
+            package.AddEdge(null, LegacySystem.Graph.EasyVertex.Get(smu, false, "MoreOrEqualThan"));
+            package.AddEdge(null, LegacySystem.Graph.EasyVertex.Get(smu, false, "LessOrEqualThan"));
 
-            package.AddEdge(null, smu.Get(false, "?"));
-            package.AddEdge(null, smu.Get(false, "\"\\ \""));
-            package.AddEdge(null, smu.Get(false, "Colon"));
-            package.AddEdge(null, smu.Get(false, "DoubleColon"));
-            package.AddEdge(null, smu.Get(false, "DoubleSemicolon"));
-            package.AddEdge(null, smu.Get(false, "CopySet"));
-            package.AddEdge(null, smu.Get(false, "MetaToTo"));
-            package.AddEdge(null, smu.Get(false, "()"));            
-            package.AddEdge(null, smu.Get(false, "RedirectLeftEdgesToRightVertices"));
-            package.AddEdge(null, smu.Get(false, "AddLeftEdgesToRightVertices"));
-            package.AddEdge(null, smu.Get(false, "AddRightEdgesIntoLeftEdges"));
-            package.AddEdge(null, smu.Get(false, "DeleteRightVertices"));
-            package.AddEdge(null, smu.Get(false, "DeleteRightEdgesFromLeftEdges"));
-            package.AddEdge(null, smu.Get(false, "DeleteRightVerticesFromLeftEdges"));
-            package.AddEdge(null, smu.Get(false, "SetLeftVertexesToFirstRightVertexValue"));
-            package.AddEdge(null, smu.Get(false, "AddRightEdgesIntoFirstLeftEdgeAndSetStoreForSubGraphAsIsInLeftVertex"));
-            package.AddEdge(null, smu.Get(false, "Section"));
-            package.AddEdge(null, smu.Get(false, "Function"));
-            package.AddEdge(null, smu.Get(false, "If"));
-            package.AddEdge(null, smu.Get(false, "Test"));
-            package.AddEdge(null, smu.Get(false, "While"));
-            package.AddEdge(null, smu.Get(false, "ForEach"));
+            package.AddEdge(null, LegacySystem.Graph.EasyVertex.Get(smu, false, "?"));
+            package.AddEdge(null, LegacySystem.Graph.EasyVertex.Get(smu, false, "\"\\ \""));
+            package.AddEdge(null, LegacySystem.Graph.EasyVertex.Get(smu, false, "Colon"));
+            package.AddEdge(null, LegacySystem.Graph.EasyVertex.Get(smu, false, "DoubleColon"));
+            package.AddEdge(null, LegacySystem.Graph.EasyVertex.Get(smu, false, "DoubleSemicolon"));
+            package.AddEdge(null, LegacySystem.Graph.EasyVertex.Get(smu, false, "CopySet"));
+            package.AddEdge(null, LegacySystem.Graph.EasyVertex.Get(smu, false, "MetaToTo"));
+            package.AddEdge(null, LegacySystem.Graph.EasyVertex.Get(smu, false, "()"));            
+            package.AddEdge(null, LegacySystem.Graph.EasyVertex.Get(smu, false, "RedirectLeftEdgesToRightVertices"));
+            package.AddEdge(null, LegacySystem.Graph.EasyVertex.Get(smu, false, "AddLeftEdgesToRightVertices"));
+            package.AddEdge(null, LegacySystem.Graph.EasyVertex.Get(smu, false, "AddRightEdgesIntoLeftEdges"));
+            package.AddEdge(null, LegacySystem.Graph.EasyVertex.Get(smu, false, "DeleteRightVertices"));
+            package.AddEdge(null, LegacySystem.Graph.EasyVertex.Get(smu, false, "DeleteRightEdgesFromLeftEdges"));
+            package.AddEdge(null, LegacySystem.Graph.EasyVertex.Get(smu, false, "DeleteRightVerticesFromLeftEdges"));
+            package.AddEdge(null, LegacySystem.Graph.EasyVertex.Get(smu, false, "SetLeftVertexesToFirstRightVertexValue"));
+            package.AddEdge(null, LegacySystem.Graph.EasyVertex.Get(smu, false, "AddRightEdgesIntoFirstLeftEdgeAndSetStoreForSubGraphAsIsInLeftVertex"));
+            package.AddEdge(null, LegacySystem.Graph.EasyVertex.Get(smu, false, "Section"));
+            package.AddEdge(null, LegacySystem.Graph.EasyVertex.Get(smu, false, "Function"));
+            package.AddEdge(null, LegacySystem.Graph.EasyVertex.Get(smu, false, "If"));
+            package.AddEdge(null, LegacySystem.Graph.EasyVertex.Get(smu, false, "Test"));
+            package.AddEdge(null, LegacySystem.Graph.EasyVertex.Get(smu, false, "While"));
+            package.AddEdge(null, LegacySystem.Graph.EasyVertex.Get(smu, false, "ForEach"));
 
-            package.AddEdge(null, smu.Get(false, "MethodCall"));
-            package.AddEdge(null, smu.Get(false, "New"));
+            package.AddEdge(null, LegacySystem.Graph.EasyVertex.Get(smu, false, "MethodCall"));
+            package.AddEdge(null, LegacySystem.Graph.EasyVertex.Get(smu, false, "New"));
 
-            package.AddEdge(null, sm.Get(false, @"Base\$Import"));
-            package.AddEdge(null, sm.Get(false, @"Base\$ImportMeta"));
+            package.AddEdge(null, LegacySystem.Graph.EasyVertex.Get(sm, false, @"Base\$Import"));
+            package.AddEdge(null, LegacySystem.Graph.EasyVertex.Get(sm, false, @"Base\$ImportMeta"));
         }
 
         void CreateSystemFormalTextLanguegeZeroCode_Keywords()
         {
-            IVertex zc = Root.Get(false, @"System\FormalTextLanguage\ZeroCode");
-            IVertex k = zc.AddVertex(Root.Get(false, @"System\Meta\ZeroTypes\FormalTextLanguage\Keywords"), "");
+            IVertex zc = LegacySystem.Graph.EasyVertex.Get(Root, false, @"System\FormalTextLanguage\ZeroCode");
+            IVertex k = zc.AddVertex(LegacySystem.Graph.EasyVertex.Get(Root, false, @"System\Meta\ZeroTypes\FormalTextLanguage\Keywords"), "");
 
 
-            IVertex smu = Root.Get(false, @"System\Meta\ZeroUML");
-            IVertex smb = Root.Get(false, @"System\Meta\Base");
+            IVertex smu = LegacySystem.Graph.EasyVertex.Get(Root, false, @"System\Meta\ZeroUML");
+            IVertex smb = LegacySystem.Graph.EasyVertex.Get(Root, false, @"System\Meta\Base");
 
-            IVertex keyword = smb.Get(false, @"$Keyword");
-            IVertex keywordGroup = smb.Get(false, @"$$KeywordGroup");
-            IVertex keywordGroupDefinition = smb.Get(false, @"$KeywordGroupDefinition");
+            IVertex keyword = LegacySystem.Graph.EasyVertex.Get(smb, false, @"$Keyword");
+            IVertex keywordGroup = LegacySystem.Graph.EasyVertex.Get(smb, false, @"$$KeywordGroup");
+            IVertex keywordGroupDefinition = LegacySystem.Graph.EasyVertex.Get(smb, false, @"$KeywordGroupDefinition");
 
             IVertex kgd_ColonEmptyInner2SlashMarkIndexMethodNewLink = k.AddVertex(keywordGroupDefinition, "ColonEmptyInner2SlashMarkIndexMethodNewLink");
             IVertex kgd_ColonEmptyInner2SlashMarkIndexMethodNewLinkBracketCopy = k.AddVertex(keywordGroupDefinition, "ColonEmptyInner2SlashMarkIndexMethodNewLinkBracketCopy");
@@ -886,17 +916,17 @@ namespace m0
             IVertex kgd_SlashMarkIndexMethodInner2 = k.AddVertex(keywordGroupDefinition, "SlashMarkIndexMethodInner2");
             IVertex kgd_Inner = k.AddVertex(keywordGroupDefinition, "Inner");
 
-            IVertex isAggregation = root.Get(false, @"System\Meta\Base\Vertex\$IsAggregation");
-            IVertex empty = root.Get(false, @"System\Meta\Base\$Empty");
-            IVertex _is = root.Get(false, @"System\Meta\Base\Vertex\$Is");
+            IVertex isAggregation = LegacySystem.Graph.EasyVertex.Get(root, false, @"System\Meta\Base\Vertex\$IsAggregation");
+            IVertex empty = LegacySystem.Graph.EasyVertex.Get(root, false, @"System\Meta\Base\$Empty");
+            IVertex _is = LegacySystem.Graph.EasyVertex.Get(root, false, @"System\Meta\Base\Vertex\$Is");
 
 
             IVertex any = k.AddVertex(null, "(?<ANY>)");
 
-            IVertex emptyKeyword = smb.Get(false, "$$EmptyKeyword");
-            IVertex newVertexKeyword = smb.Get(false, "$$NewVertexKeyword");
-            IVertex linkKeyword = smb.Get(false, "$$LinkKeyword");
-            IVertex nonSelfRecursiveParameters = smb.Get(false, @"$$NonSelfRecursiveParameters");
+            IVertex emptyKeyword = LegacySystem.Graph.EasyVertex.Get(smb, false, "$$EmptyKeyword");
+            IVertex newVertexKeyword = LegacySystem.Graph.EasyVertex.Get(smb, false, "$$NewVertexKeyword");
+            IVertex linkKeyword = LegacySystem.Graph.EasyVertex.Get(smb, false, "$$LinkKeyword");
+            IVertex nonSelfRecursiveParameters = LegacySystem.Graph.EasyVertex.Get(smb, false, @"$$NonSelfRecursiveParameters");
 
             string anyString = "(?<ANY>)";
 
@@ -907,7 +937,7 @@ namespace m0
 
             IVertex importMeta = k.AddVertex(keyword, "import meta (?<name>) (?<link>)");
 
-            IVertex importMeta_name = importMeta.AddVertex(smb.Get(false, @"$ImportMeta"), "(?<name>)");
+            IVertex importMeta_name = importMeta.AddVertex(LegacySystem.Graph.EasyVertex.Get(smb, false, @"$ImportMeta"), "(?<name>)");
 
             importMeta.AddVertex(importMeta_name, "(?<link>)");
 
@@ -918,7 +948,7 @@ namespace m0
 
             IVertex import = k.AddVertex(keyword, "import (?<name>) (?<link>)");
 
-            IVertex import_name = import.AddVertex(smb.Get(false, @"$Import"), "(?<name>)");
+            IVertex import_name = import.AddVertex(LegacySystem.Graph.EasyVertex.Get(smb, false, @"$Import"), "(?<name>)");
 
             import.AddVertex(import_name, "(?<link>)");
 
@@ -928,7 +958,7 @@ namespace m0
 
             IVertex importDirect = k.AddVertex(keyword, "import direct (?<link>)");
 
-            IVertex importDirect_link = importDirect.AddVertex(smb.Get(false, @"$Direct"), "(?<link>)");
+            IVertex importDirect_link = importDirect.AddVertex(LegacySystem.Graph.EasyVertex.Get(smb, false, @"$Direct"), "(?<link>)");
 
 
             // import direct meta
@@ -937,7 +967,7 @@ namespace m0
 
             IVertex importDirectMeta = k.AddVertex(keyword, "import direct meta (?<link>)");
 
-            IVertex importDirectMeta_link = importDirectMeta.AddVertex(smb.Get(false, @"$DirectMeta"), "(?<link>)");
+            IVertex importDirectMeta_link = importDirectMeta.AddVertex(LegacySystem.Graph.EasyVertex.Get(smb, false, @"$DirectMeta"), "(?<link>)");
 
 
             // comment
@@ -946,7 +976,7 @@ namespace m0
 
             IVertex comment = k.AddVertex(keyword, "# (?<text>)");
 
-            comment.AddVertex(smb.Get(false, @"Vertex\$Description"), "(?<text>)");
+            comment.AddVertex(LegacySystem.Graph.EasyVertex.Get(smb, false, @"Vertex\$Description"), "(?<text>)");
 
             // default
             //
@@ -954,7 +984,7 @@ namespace m0
 
             IVertex _default = k.AddVertex(keyword, "default (?<expr>)");
 
-            _default.AddVertex(smb.Get(false, @"Vertex\$DefaultValue"), "(?<expr>)");
+            _default.AddVertex(LegacySystem.Graph.EasyVertex.Get(smb, false, @"Vertex\$DefaultValue"), "(?<expr>)");
 
             // class
             //
@@ -962,9 +992,9 @@ namespace m0
 
             IVertex _class = k.AddVertex(keyword, "class (?<name>)");
 
-            IVertex class_class = _class.AddVertex(smu.Get(false, @"Class"), "(?<name>)");
+            IVertex class_class = _class.AddVertex(LegacySystem.Graph.EasyVertex.Get(smu, false, @"Class"), "(?<name>)");
 
-            class_class.AddEdge(_is, smu.Get(false, @"Class"));
+            class_class.AddEdge(_is, LegacySystem.Graph.EasyVertex.Get(smu, false, @"Class"));
 
             // attribute
             //
@@ -972,21 +1002,21 @@ namespace m0
 
             IVertex attribute3 = k.AddVertex(keyword, "attribute (?<name>) (?<type>) (?<MinCardinality>):(?<MaxCardinality>) <<(?<MinValue>):(?<MaxValue>)>>");
 
-            IVertex attribute3_attribute = attribute3.AddVertex(smu.Get(false, @"Class\Attribute"), "(?<name>)");
+            IVertex attribute3_attribute = attribute3.AddVertex(LegacySystem.Graph.EasyVertex.Get(smu, false, @"Class\Attribute"), "(?<name>)");
 
-            attribute3_attribute.AddVertex(smb.Get(false, @"Vertex\$EdgeTarget"), "(?<type>)");
+            attribute3_attribute.AddVertex(LegacySystem.Graph.EasyVertex.Get(smb, false, @"Vertex\$EdgeTarget"), "(?<type>)");
 
-            attribute3_attribute.AddVertex(smu.Get(false, @"Class\Attribute\MinValue"), "(?<MinValue>)");
+            attribute3_attribute.AddVertex(LegacySystem.Graph.EasyVertex.Get(smu, false, @"Class\Attribute\MinValue"), "(?<MinValue>)");
 
-            attribute3_attribute.AddVertex(smu.Get(false, @"Class\Attribute\MaxValue"), "(?<MaxValue>)");
+            attribute3_attribute.AddVertex(LegacySystem.Graph.EasyVertex.Get(smu, false, @"Class\Attribute\MaxValue"), "(?<MaxValue>)");
 
-            attribute3_attribute.AddVertex(smb.Get(false, @"Vertex\$MinCardinality"), "(?<MinCardinality>)");
+            attribute3_attribute.AddVertex(LegacySystem.Graph.EasyVertex.Get(smb, false, @"Vertex\$MinCardinality"), "(?<MinCardinality>)");
 
-            attribute3_attribute.AddVertex(smb.Get(false, @"Vertex\$MaxCardinality"), "(?<MaxCardinality>)");
+            attribute3_attribute.AddVertex(LegacySystem.Graph.EasyVertex.Get(smb, false, @"Vertex\$MaxCardinality"), "(?<MaxCardinality>)");
 
             attribute3_attribute.AddEdge(isAggregation, empty);
 
-            attribute3_attribute.AddEdge(_is, smu.Get(false, @"Class\Attribute"));
+            attribute3_attribute.AddEdge(_is, LegacySystem.Graph.EasyVertex.Get(smu, false, @"Class\Attribute"));
 
             // attribute
             //
@@ -994,17 +1024,17 @@ namespace m0
 
             IVertex attribute4 = k.AddVertex(keyword, "attribute (?<name>) (?<type>) (?<MinCardinality>):(?<MaxCardinality>)");
 
-            IVertex attribute4_attribute = attribute4.AddVertex(smu.Get(false, @"Class\Attribute"), "(?<name>)");
+            IVertex attribute4_attribute = attribute4.AddVertex(LegacySystem.Graph.EasyVertex.Get(smu, false, @"Class\Attribute"), "(?<name>)");
 
-            attribute4_attribute.AddVertex(smb.Get(false, @"Vertex\$EdgeTarget"), "(?<type>)");
+            attribute4_attribute.AddVertex(LegacySystem.Graph.EasyVertex.Get(smb, false, @"Vertex\$EdgeTarget"), "(?<type>)");
 
-            attribute4_attribute.AddVertex(smb.Get(false, @"Vertex\$MinCardinality"), "(?<MinCardinality>)");
+            attribute4_attribute.AddVertex(LegacySystem.Graph.EasyVertex.Get(smb, false, @"Vertex\$MinCardinality"), "(?<MinCardinality>)");
 
-            attribute4_attribute.AddVertex(smb.Get(false, @"Vertex\$MaxCardinality"), "(?<MaxCardinality>)");
+            attribute4_attribute.AddVertex(LegacySystem.Graph.EasyVertex.Get(smb, false, @"Vertex\$MaxCardinality"), "(?<MaxCardinality>)");
 
             attribute4_attribute.AddEdge(isAggregation, empty);
 
-            attribute4_attribute.AddEdge(_is, smu.Get(false, @"Class\Attribute"));
+            attribute4_attribute.AddEdge(_is, LegacySystem.Graph.EasyVertex.Get(smu, false, @"Class\Attribute"));
 
             // attribute
             //
@@ -1012,17 +1042,17 @@ namespace m0
 
             IVertex attribute2 = k.AddVertex(keyword, "attribute (?<name>) (?<type>) <<(?<xMinValue>):(?<MaxValue>)>>");
 
-            IVertex attribute2_attribute = attribute2.AddVertex(smu.Get(false, @"Class\Attribute"), "(?<name>)");
+            IVertex attribute2_attribute = attribute2.AddVertex(LegacySystem.Graph.EasyVertex.Get(smu, false, @"Class\Attribute"), "(?<name>)");
 
-            attribute2_attribute.AddVertex(smb.Get(false, @"Vertex\$EdgeTarget"), "(?<type>)");
+            attribute2_attribute.AddVertex(LegacySystem.Graph.EasyVertex.Get(smb, false, @"Vertex\$EdgeTarget"), "(?<type>)");
 
-            attribute2_attribute.AddVertex(smu.Get(false, @"Class\Attribute\MinValue"), "(?<xMinValue>)");
+            attribute2_attribute.AddVertex(LegacySystem.Graph.EasyVertex.Get(smu, false, @"Class\Attribute\MinValue"), "(?<xMinValue>)");
 
-            attribute2_attribute.AddVertex(smu.Get(false, @"Class\Attribute\MaxValue"), "(?<MaxValue>)");
+            attribute2_attribute.AddVertex(LegacySystem.Graph.EasyVertex.Get(smu, false, @"Class\Attribute\MaxValue"), "(?<MaxValue>)");
 
             attribute2_attribute.AddEdge(isAggregation, empty);
 
-            attribute2_attribute.AddEdge(_is, smu.Get(false, @"Class\Attribute"));
+            attribute2_attribute.AddEdge(_is, LegacySystem.Graph.EasyVertex.Get(smu, false, @"Class\Attribute"));
 
             // attribute
             //
@@ -1030,13 +1060,13 @@ namespace m0
 
             IVertex attribute = k.AddVertex(keyword, "attribute (?<name>) (?<type>)");
 
-            IVertex attribute_attribute = attribute.AddVertex(smu.Get(false, @"Class\Attribute"), "(?<name>)");
+            IVertex attribute_attribute = attribute.AddVertex(LegacySystem.Graph.EasyVertex.Get(smu, false, @"Class\Attribute"), "(?<name>)");
 
-            attribute_attribute.AddVertex(smb.Get(false, @"Vertex\$EdgeTarget"), "(?<type>)");
+            attribute_attribute.AddVertex(LegacySystem.Graph.EasyVertex.Get(smb, false, @"Vertex\$EdgeTarget"), "(?<type>)");
 
             attribute_attribute.AddEdge(isAggregation, empty);
 
-            attribute_attribute.AddEdge(_is, smu.Get(false, @"Class\Attribute"));
+            attribute_attribute.AddEdge(_is, LegacySystem.Graph.EasyVertex.Get(smu, false, @"Class\Attribute"));
 
             // variable
             //
@@ -1044,17 +1074,17 @@ namespace m0
 
             IVertex variable = k.AddVertex(keyword, "variable (?<name>) (?<type>) (?<MinCardinality>):(?<MaxCardinality>)");
 
-            IVertex variable_variable = variable.AddVertex(smu.Get(false, @"StackFrameCreator\Variable"), "(?<name>)");
+            IVertex variable_variable = variable.AddVertex(LegacySystem.Graph.EasyVertex.Get(smu, false, @"StackFrameCreator\Variable"), "(?<name>)");
 
-            variable_variable.AddVertex(smb.Get(false, @"Vertex\$EdgeTarget"), "(?<type>)");
+            variable_variable.AddVertex(LegacySystem.Graph.EasyVertex.Get(smb, false, @"Vertex\$EdgeTarget"), "(?<type>)");
 
-            variable_variable.AddVertex(smb.Get(false, @"Vertex\$MinCardinality"), "(?<MinCardinality>)");
+            variable_variable.AddVertex(LegacySystem.Graph.EasyVertex.Get(smb, false, @"Vertex\$MinCardinality"), "(?<MinCardinality>)");
 
-            variable_variable.AddVertex(smb.Get(false, @"Vertex\$MaxCardinality"), "(?<MaxCardinality>)");
+            variable_variable.AddVertex(LegacySystem.Graph.EasyVertex.Get(smb, false, @"Vertex\$MaxCardinality"), "(?<MaxCardinality>)");
 
             variable_variable.AddEdge(isAggregation, empty);
 
-            variable_variable.AddEdge(_is, smu.Get(false, @"StackFrameCreator\Variable"));
+            variable_variable.AddEdge(_is, LegacySystem.Graph.EasyVertex.Get(smu, false, @"StackFrameCreator\Variable"));
 
             // variable
             //
@@ -1062,13 +1092,13 @@ namespace m0
 
             IVertex variable2 = k.AddVertex(keyword, "variable (?<name>) (?<type>)");
 
-            IVertex variable2_variable = variable2.AddVertex(smu.Get(false, @"StackFrameCreator\Variable"), "(?<name>)");
+            IVertex variable2_variable = variable2.AddVertex(LegacySystem.Graph.EasyVertex.Get(smu, false, @"StackFrameCreator\Variable"), "(?<name>)");
 
-            variable2_variable.AddVertex(smb.Get(false, @"Vertex\$EdgeTarget"), "(?<type>)");
+            variable2_variable.AddVertex(LegacySystem.Graph.EasyVertex.Get(smb, false, @"Vertex\$EdgeTarget"), "(?<type>)");
 
             variable2_variable.AddEdge(isAggregation, empty);
 
-            variable2_variable.AddEdge(_is, smu.Get(false, @"StackFrameCreator\Variable"));
+            variable2_variable.AddEdge(_is, LegacySystem.Graph.EasyVertex.Get(smu, false, @"StackFrameCreator\Variable"));
 
             // aassociation
             //
@@ -1076,15 +1106,15 @@ namespace m0
 
             IVertex association2 = k.AddVertex(keyword, "association (?<name>) (?<type>) (?<MinCardinality>):(?<MaxCardinality>)");
 
-            IVertex association2_association = association2.AddVertex(smu.Get(false, @"Class\Association"), "(?<name>)");
+            IVertex association2_association = association2.AddVertex(LegacySystem.Graph.EasyVertex.Get(smu, false, @"Class\Association"), "(?<name>)");
 
-            association2_association.AddVertex(smb.Get(false, @"Vertex\$MinCardinality"), "(?<MinCardinality>)");
+            association2_association.AddVertex(LegacySystem.Graph.EasyVertex.Get(smb, false, @"Vertex\$MinCardinality"), "(?<MinCardinality>)");
 
-            association2_association.AddVertex(smb.Get(false, @"Vertex\$MaxCardinality"), "(?<MaxCardinality>)");
+            association2_association.AddVertex(LegacySystem.Graph.EasyVertex.Get(smb, false, @"Vertex\$MaxCardinality"), "(?<MaxCardinality>)");
 
-            association2_association.AddVertex(smb.Get(false, @"Vertex\$EdgeTarget"), "(?<type>)");
+            association2_association.AddVertex(LegacySystem.Graph.EasyVertex.Get(smb, false, @"Vertex\$EdgeTarget"), "(?<type>)");
 
-            association2_association.AddEdge(_is, smu.Get(false, @"Class\Association"));
+            association2_association.AddEdge(_is, LegacySystem.Graph.EasyVertex.Get(smu, false, @"Class\Association"));
 
             // aassociation
             //
@@ -1092,11 +1122,11 @@ namespace m0
 
             IVertex association = k.AddVertex(keyword, "association (?<name>) (?<type>)");
 
-            IVertex association_association = association.AddVertex(smu.Get(false, @"Class\Association"), "(?<name>)");
+            IVertex association_association = association.AddVertex(LegacySystem.Graph.EasyVertex.Get(smu, false, @"Class\Association"), "(?<name>)");
 
-            association_association.AddVertex(smb.Get(false, @"Vertex\$EdgeTarget"), "(?<type>)");
+            association_association.AddVertex(LegacySystem.Graph.EasyVertex.Get(smb, false, @"Vertex\$EdgeTarget"), "(?<type>)");
 
-            association_association.AddEdge(_is, smu.Get(false, @"Class\Association"));
+            association_association.AddEdge(_is, LegacySystem.Graph.EasyVertex.Get(smu, false, @"Class\Association"));
 
             // aggregation
             //
@@ -1104,15 +1134,15 @@ namespace m0
 
             IVertex aggregation2 = k.AddVertex(keyword, "aggregation (?<name>) (?<type>) (?<MinCardinality>):(?<MaxCardinality>)");
 
-            IVertex aggregation2_aggregation = aggregation2.AddVertex(smu.Get(false, @"Class\Aggregation"), "(?<name>)");
+            IVertex aggregation2_aggregation = aggregation2.AddVertex(LegacySystem.Graph.EasyVertex.Get(smu, false, @"Class\Aggregation"), "(?<name>)");
 
-            aggregation2_aggregation.AddVertex(smb.Get(false, @"Vertex\$MinCardinality"), "(?<MinCardinality>)");
+            aggregation2_aggregation.AddVertex(LegacySystem.Graph.EasyVertex.Get(smb, false, @"Vertex\$MinCardinality"), "(?<MinCardinality>)");
 
-            aggregation2_aggregation.AddVertex(smb.Get(false, @"Vertex\$MaxCardinality"), "(?<MaxCardinality>)");
+            aggregation2_aggregation.AddVertex(LegacySystem.Graph.EasyVertex.Get(smb, false, @"Vertex\$MaxCardinality"), "(?<MaxCardinality>)");
 
-            aggregation2_aggregation.AddVertex(smb.Get(false, @"Vertex\$EdgeTarget"), "(?<type>)");
+            aggregation2_aggregation.AddVertex(LegacySystem.Graph.EasyVertex.Get(smb, false, @"Vertex\$EdgeTarget"), "(?<type>)");
 
-            aggregation2_aggregation.AddEdge(_is, smu.Get(false, @"Class\Aggregation"));
+            aggregation2_aggregation.AddEdge(_is, LegacySystem.Graph.EasyVertex.Get(smu, false, @"Class\Aggregation"));
 
             // aggregation
             //
@@ -1120,11 +1150,11 @@ namespace m0
 
             IVertex aggregation = k.AddVertex(keyword, "aggregation (?<name>) (?<type>)");
 
-            IVertex aggregation_aggregation = aggregation.AddVertex(smu.Get(false, @"Class\Aggregation"), "(?<name>)");
+            IVertex aggregation_aggregation = aggregation.AddVertex(LegacySystem.Graph.EasyVertex.Get(smu, false, @"Class\Aggregation"), "(?<name>)");
 
-            aggregation_aggregation.AddVertex(smb.Get(false, @"Vertex\$EdgeTarget"), "(?<type>)");
+            aggregation_aggregation.AddVertex(LegacySystem.Graph.EasyVertex.Get(smb, false, @"Vertex\$EdgeTarget"), "(?<type>)");
 
-            aggregation_aggregation.AddEdge(_is, smu.Get(false, @"Class\Aggregation"));
+            aggregation_aggregation.AddEdge(_is, LegacySystem.Graph.EasyVertex.Get(smu, false, @"Class\Aggregation"));
 
             // method
             //
@@ -1132,17 +1162,19 @@ namespace m0
 
             IVertex method = k.AddVertex(keyword, "method (?<name>) (?<returnType>)((*(+, +)(?<paramType>) (?<paramName>)*))");
 
-            IVertex method_method = method.AddVertex(smu.Get(false, @"Class\Method"), "(?<name>)");
+            IVertex method_method = method.AddVertex(LegacySystem.Graph.EasyVertex.Get(smu, false, @"Class\Method"), "(?<name>)");
 
-            method_method.AddEdge(smb.Get(false, @"Vertex\$Is"), smu.Get(false, @"Class\Method"));
+            method_method.AddEdge(LegacySystem.Graph.EasyVertex.Get(smb, false, @"Vertex\$Is"), 
+                LegacySystem.Graph.EasyVertex.Get(smu, false, @"Class\Method"));
 
-            method_method.AddVertex(smu.Get(false, @"Class\Method\Output"), "(?<returnType>)");
+            method_method.AddVertex(LegacySystem.Graph.EasyVertex.Get(smu, false, @"Class\Method\Output"), "(?<returnType>)");
 
-            IVertex mmip = method_method.AddVertex(smu.Get(false, @"Class\Method\InputParameter"), "(?<paramName>)");
+            IVertex mmip = method_method.AddVertex(LegacySystem.Graph.EasyVertex.Get(smu, false, @"Class\Method\InputParameter"), "(?<paramName>)");
 
-            mmip.AddVertex(smb.Get(false, @"Vertex\$VertexTarget"), "(?<paramType>)");
+            mmip.AddVertex(LegacySystem.Graph.EasyVertex.Get(smb, false, @"Vertex\$VertexTarget"), "(?<paramType>)");
 
-            mmip.AddEdge(smb.Get(false, @"$$KeywordManyRoot"), smb.Get(false, @"$Empty"));
+            mmip.AddEdge(LegacySystem.Graph.EasyVertex.Get(smb, false, @"$$KeywordManyRoot"),
+                LegacySystem.Graph.EasyVertex.Get(smb, false, @"$Empty"));
 
             // method
             //
@@ -1150,15 +1182,17 @@ namespace m0
 
             IVertex method2 = k.AddVertex(keyword, "method (?<name>) ((*(+, +)(?<paramType>) (?<paramName>)*))");
 
-            IVertex method2_method = method2.AddVertex(smu.Get(false, @"Class\Method"), "(?<name>)");
+            IVertex method2_method = method2.AddVertex(LegacySystem.Graph.EasyVertex.Get(smu, false, @"Class\Method"), "(?<name>)");
 
-            method2_method.AddEdge(smb.Get(false, @"Vertex\$Is"), smu.Get(false, @"Class\Method"));
+            method2_method.AddEdge(LegacySystem.Graph.EasyVertex.Get(smb, false, @"Vertex\$Is"),
+                LegacySystem.Graph.EasyVertex.Get(smu, false, @"Class\Method"));
 
-            IVertex m2fip = method2_method.AddVertex(smu.Get(false, @"Class\Method\InputParameter"), "(?<paramName>)");
+            IVertex m2fip = method2_method.AddVertex(LegacySystem.Graph.EasyVertex.Get(smu, false, @"Class\Method\InputParameter"), "(?<paramName>)");
 
-            m2fip.AddVertex(smb.Get(false, @"Vertex\$VertexTarget"), "(?<paramType>)");
+            m2fip.AddVertex(LegacySystem.Graph.EasyVertex.Get(smb, false, @"Vertex\$VertexTarget"), "(?<paramType>)");
 
-            m2fip.AddEdge(smb.Get(false, @"$$KeywordManyRoot"), smb.Get(false, @"$Empty"));
+            m2fip.AddEdge(LegacySystem.Graph.EasyVertex.Get(smb, false, @"$$KeywordManyRoot"),
+                LegacySystem.Graph.EasyVertex.Get(smb, false, @"$Empty"));
 
             // function
             //
@@ -1166,17 +1200,19 @@ namespace m0
 
             IVertex function = k.AddVertex(keyword, "function (?<name>) (?<returnType>)((*(+, +)(?<paramType>) (?<paramName>)*))");
 
-            IVertex function_function = function.AddVertex(smu.Get(false, @"Function"), "(?<name>)");
+            IVertex function_function = function.AddVertex(LegacySystem.Graph.EasyVertex.Get(smu, false, @"Function"), "(?<name>)");
 
-            function_function.AddEdge(smb.Get(false, @"Vertex\$Is"), smu.Get(false, "Function"));
+            function_function.AddEdge(LegacySystem.Graph.EasyVertex.Get(smb, false, @"Vertex\$Is"),
+                LegacySystem.Graph.EasyVertex.Get(smu, false, "Function"));
 
-            function_function.AddVertex(smu.Get(false, @"Function\Output"), "(?<returnType>)");
+            function_function.AddVertex(LegacySystem.Graph.EasyVertex.Get(smu, false, @"Function\Output"), "(?<returnType>)");
 
-            IVertex ffip = function_function.AddVertex(smu.Get(false, @"Function\InputParameter"), "(?<paramName>)");
+            IVertex ffip = function_function.AddVertex(LegacySystem.Graph.EasyVertex.Get(smu, false, @"Function\InputParameter"), "(?<paramName>)");
 
-            ffip.AddVertex(smb.Get(false, @"Vertex\$VertexTarget"), "(?<paramType>)");
+            ffip.AddVertex(LegacySystem.Graph.EasyVertex.Get(smb, false, @"Vertex\$VertexTarget"), "(?<paramType>)");
 
-            ffip.AddEdge(smb.Get(false, @"$$KeywordManyRoot"), smb.Get(false, @"$Empty"));
+            ffip.AddEdge(LegacySystem.Graph.EasyVertex.Get(smb, false, @"$$KeywordManyRoot"), 
+                LegacySystem.Graph.EasyVertex.Get(smb, false, @"$Empty"));
 
             // function
             //
@@ -1184,15 +1220,17 @@ namespace m0
 
             IVertex function2 = k.AddVertex(keyword, "function (?<name>) ((*(+, +)(?<paramType>) (?<paramName>)*))");
 
-            IVertex function2_function = function2.AddVertex(smu.Get(false, @"Function"), "(?<name>)");
+            IVertex function2_function = function2.AddVertex(LegacySystem.Graph.EasyVertex.Get(smu, false, @"Function"), "(?<name>)");
 
-            function2_function.AddEdge(smb.Get(false, @"Vertex\$Is"), smu.Get(false, "Function"));
+            function2_function.AddEdge(LegacySystem.Graph.EasyVertex.Get(smb, false, @"Vertex\$Is"),
+                LegacySystem.Graph.EasyVertex.Get(smu, false, "Function"));
 
-            IVertex f2fip = function2_function.AddVertex(smu.Get(false, @"Function\InputParameter"), "(?<paramName>)");
+            IVertex f2fip = function2_function.AddVertex(LegacySystem.Graph.EasyVertex.Get(smu, false, @"Function\InputParameter"), "(?<paramName>)");
 
-            f2fip.AddVertex(smb.Get(false, @"Vertex\$VertexTarget"), "(?<paramType>)");
+            f2fip.AddVertex(LegacySystem.Graph.EasyVertex.Get(smb, false, @"Vertex\$VertexTarget"), "(?<paramType>)");
 
-            f2fip.AddEdge(smb.Get(false, @"$$KeywordManyRoot"), smb.Get(false, @"$Empty"));
+            f2fip.AddEdge(LegacySystem.Graph.EasyVertex.Get(smb, false, @"$$KeywordManyRoot"),
+                LegacySystem.Graph.EasyVertex.Get(smb, false, @"$Empty"));
 
             /////////////////////////////////////////////////////////
             //
@@ -2155,51 +2193,53 @@ namespace m0
 
         void CreateSystemFormalTextLanguageZeroCode()
         {
-            IVertex zc = Root.Get(false, @"System\FormalTextLanguage").AddVertex(Root.Get(false, @"System\Meta\ZeroTypes\FormalTextLanguage"),"ZeroCode");
+            IVertex zc = LegacySystem.Graph.EasyVertex.Get(Root, false, @"System\FormalTextLanguage").AddVertex(
+                LegacySystem.Graph.EasyVertex.Get(Root, false, @"System\Meta\ZeroTypes\FormalTextLanguage"),"ZeroCode");
 
-            zc.AddEdge(Root.Get(false, @"System\Meta\Base\Vertex\$Is"), Root.Get(false, @"System\Meta\ZeroTypes\FormalTextLanguage"));
+            zc.AddEdge(LegacySystem.Graph.EasyVertex.Get(Root, false, @"System\Meta\Base\Vertex\$Is"),
+                LegacySystem.Graph.EasyVertex.Get(Root, false, @"System\Meta\ZeroTypes\FormalTextLanguage"));
 
-            IVertex b = Root.Get(false, @"System\Meta\Base");
+            IVertex b = LegacySystem.Graph.EasyVertex.Get(Root, false, @"System\Meta\Base");
 
-            IVertex di = zc.AddVertex(Root.Get(false, @"System\Meta\ZeroTypes\FormalTextLanguage\DefaultImports"), "");            
+            IVertex di = zc.AddVertex(LegacySystem.Graph.EasyVertex.Get(Root, false, @"System\Meta\ZeroTypes\FormalTextLanguage\DefaultImports"), "");            
 
             //
 
-            IVertex DirectMeta = VertexOperations.AddInstance(b, Root.Get(false, @"System\Meta\Base\$ImportMeta"));
+            IVertex DirectMeta = VertexOperations.AddInstance(b, LegacySystem.Graph.EasyVertex.Get(Root, false, @"System\Meta\Base\$ImportMeta"));
 
             DirectMeta.Value = "$DirectMeta";
 
-            DirectMeta.AddEdge(Root.Get(false, @"System\Meta\Base\Vertex\$IsLink"), Empty);
+            DirectMeta.AddEdge(LegacySystem.Graph.EasyVertex.Get(Root, false, @"System\Meta\Base\Vertex\$IsLink"), Empty);
 
-            di.AddEdge(DirectMeta, Root.Get(false, @"System\Meta\ZeroUML"));
+            di.AddEdge(DirectMeta, LegacySystem.Graph.EasyVertex.Get(Root, false, @"System\Meta\ZeroUML"));
 
-            di.AddEdge(DirectMeta, Root.Get(false, @"System\Meta\Base"));
+            di.AddEdge(DirectMeta, LegacySystem.Graph.EasyVertex.Get(Root, false, @"System\Meta\Base"));
 
-            di.AddEdge(DirectMeta, Root.Get(false, @"System\Meta\Base\Vertex"));
+            di.AddEdge(DirectMeta, LegacySystem.Graph.EasyVertex.Get(Root, false, @"System\Meta\Base\Vertex"));
 
-            di.AddEdge(DirectMeta, Root.Get(false, @"System\Meta\ZeroTypes"));
+            di.AddEdge(DirectMeta, LegacySystem.Graph.EasyVertex.Get(Root, false, @"System\Meta\ZeroTypes"));
 
             di.AddEdge(DirectMeta, Root); // ROOT
 
             //
 
-            IVertex Direct = VertexOperations.AddInstance(b, Root.Get(false, @"System\Meta\Base\$Import"));
+            IVertex Direct = VertexOperations.AddInstance(b, LegacySystem.Graph.EasyVertex.Get(Root, false, @"System\Meta\Base\$Import"));
 
             Direct.Value = "$Direct";
 
-            Direct.AddEdge(Root.Get(false, @"System\Meta\Base\Vertex\$IsLink"), Empty);
+            Direct.AddEdge(LegacySystem.Graph.EasyVertex.Get(Root, false, @"System\Meta\Base\Vertex\$IsLink"), Empty);
 
             //di.AddEdge(Direct, Root); // :O) now its hanging XXX
 
             //
 
-            IVertex System = VertexOperations.AddInstance(di, Root.Get(false, @"System\Meta\Base\$ImportMeta"));
+            IVertex System = VertexOperations.AddInstance(di, LegacySystem.Graph.EasyVertex.Get(Root, false, @"System\Meta\Base\$ImportMeta"));
 
             System.Value = "System";
 
-            System.AddEdge(Root.Get(false, @"System\Meta\Base\Vertex\$IsLink"), Empty);
+            System.AddEdge(LegacySystem.Graph.EasyVertex.Get(Root, false, @"System\Meta\Base\Vertex\$IsLink"), Empty);
 
-            di.AddEdge(System, Root.Get(false, @"System"));
+            di.AddEdge(System, LegacySystem.Graph.EasyVertex.Get(Root, false, @"System"));
         }
 
         void CreateSystemMetaZeroTypes()
