@@ -353,10 +353,11 @@ namespace m0.ZeroCode
             // direct imports
 
             //foreach (IEdge e in formalTextLanguageDefaultImports.GetAll(false, "$DirectMeta:"))
-            foreach (IEdge e in GraphUtil.GetQueryOut(formalTextLanguageDefaultImports, "$DirectMeta", null`))
-                d.importDirectMetaList.AddEdge(e.Meta, e.To);            
+            foreach (IEdge e in GraphUtil.GetQueryOut(formalTextLanguageDefaultImports, "$DirectMeta", null))
+                d.importDirectMetaList.AddEdge(e.Meta, e.To);
 
-            foreach (IEdge e in formalTextLanguageDefaultImports.GetAll(false, "$Direct:"))
+            //foreach (IEdge e in formalTextLanguageDefaultImports.GetAll(false, "$Direct:"))
+            foreach (IEdge e in GraphUtil.GetQueryOut(formalTextLanguageDefaultImports, "$Direct", null))
                 d.importDirectList.AddEdge(e.Meta, e.To);
             
         }
@@ -393,7 +394,7 @@ namespace m0.ZeroCode
 
                 namev.Value = name;
 
-                IVertex target=r.Get(false, link);
+                IVertex target=r.Get(false, link); // YYY huston..... we assume that this get will not go into infinite reccursion as link variable is simple run time query
 
                 if (target != null)
                     importList.AddEdge(namev, target);
@@ -418,7 +419,7 @@ namespace m0.ZeroCode
                 namev.Value = name;
 
 
-                IVertex target = r.Get(false, link);
+                IVertex target = r.Get(false, link); // YYY huston..... we assume that this get will not go into infinite reccursion as link variable is simple run time query
 
                 if (target != null)
                     importMetaList.AddEdge(namev, target);
@@ -457,7 +458,7 @@ namespace m0.ZeroCode
             {
                 string link = match.Groups["link"].Value;
 
-                IVertex target = r.Get(false, link);
+                IVertex target = r.Get(false, link); // YYY huston..... we assume that this get will not go into infinite reccursion as link variable is simple run time query
 
                 if (target != null)
                     importDirectList.AddEdge(Direct, target);
@@ -474,7 +475,7 @@ namespace m0.ZeroCode
             {
                 string link = match.Groups["link"].Value;
 
-                IVertex target = r.Get(false, link);
+                IVertex target = r.Get(false, link); // YYY huston..... we assume that this get will not go into infinite reccursion as link variable is simple run time query
 
                 if (target != null)
                     importDirectMetaList.AddEdge(Direct, target);
@@ -485,12 +486,12 @@ namespace m0.ZeroCode
 
         IVertex query(IVertex baseVertex, string query)
         {            
-            return baseVertex.Get(true, query);
+            return baseVertex.Get(true, query); // YYY huston..... we assume that this get will not go into infinite reccursion as query variable is simple run time query
         }
 
         IVertex queryMetaImport(IVertex baseVertex, string query)
         {
-            return baseVertex.Get(false, query);            
+            return baseVertex.Get(false, query); // YYY huston..... we assume that this get will not go into infinite reccursion as query variable is simple run time query            
         }   
 
         IVertex ToVertexMock2VertexByLinkString(ToVertexMock mock)
@@ -512,7 +513,7 @@ namespace m0.ZeroCode
             if (secondPart != null)
             {
                 // normal importList
-                IVertex importLink = importList.Get(false, firstPart + ":");
+                IVertex importLink = importList.Get(false, firstPart + ":"); // YYY huston fisttPart variable to be simple run time query
 
                 if (importLink != null)
                 {
@@ -523,7 +524,7 @@ namespace m0.ZeroCode
                 }
 
                 // dict importList
-                importLink = dict.importList.Get(false, firstPart + ":");
+                importLink = dict.importList.Get(false, firstPart + ":"); // YYY huston fisttPart variable to be simple run time query
 
                 if (importLink != null)
                 {
@@ -534,7 +535,7 @@ namespace m0.ZeroCode
                 }
 
                 // normal importMetaList
-                IVertex importMetaLink = importMetaList.Get(false, firstPart + ":");
+                IVertex importMetaLink = importMetaList.Get(false, firstPart + ":"); // YYY huston fisttPart variable to be simple run time query
 
                 if (importMetaLink != null)
                 {
@@ -545,7 +546,7 @@ namespace m0.ZeroCode
                 }
 
                 // dict importMetaList
-                importMetaLink = dict.importMetaList.Get(false, firstPart + ":");
+                importMetaLink = dict.importMetaList.Get(false, firstPart + ":"); // YYY huston fisttPart variable to be simple run time query
 
                 if (importMetaLink != null)
                 {
@@ -599,7 +600,9 @@ namespace m0.ZeroCode
                         return inEdge.Meta;
 
                     IVertex found = inEdge.Meta.Get(false, link); // ??? for sure XXX I do not know why it works, but it should be there. perhaps
-                    
+                                                                  // YYY huston fisttPart variable to be simple run time query
+
+
                     if (found != null)
                         return found;                    
                 }
@@ -2144,7 +2147,8 @@ namespace m0.ZeroCode
             //  return;
 
             if (parentMetaEdge != null
-                && parentMetaEdge.To.Get(false, "$$LocalRoot:") != null
+                //&& parentMetaEdge.To.Get(false, "$$LocalRoot:") != null
+                && GraphUtil.GetQueryOutFirst(parentMetaEdge.To, "$$LocalRoot", null) != null
                 && GeneralUtil.CompareStrings("(?<ANY>)", meta))
             {
                 if (val != null && !GeneralUtil.CompareStrings("", val))
@@ -2154,8 +2158,10 @@ namespace m0.ZeroCode
             }
             else
             {
-                if (metaEdge.To.Get(false, "$$LocalRoot:") != null) {
-                    if(ktd.LocalRootNext != null)
+                //if (metaEdge.To.Get(false, "$$LocalRoot:") != null) {
+                if (GraphUtil.GetQueryOutFirst(metaEdge.To, "$$LocalRoot", null) != null)
+                {
+                    if (ktd.LocalRootNext != null)
                         nv = AddVertex(s, baseVertex, meta, val);
                 }else
                     nv = AddVertex(s, baseVertex, meta, val);
@@ -2166,7 +2172,8 @@ namespace m0.ZeroCode
 
         private void tryLocalRootAdd(ParsingStack s, IEdge metaEdge, IVertex nv, keywordTryingData ktd)
         {
-            if (metaEdge.To.Get(false, "$$LocalRoot:") != null && ktd.LocalRootNext != null)
+            //if (metaEdge.To.Get(false, "$$LocalRoot:") != null && ktd.LocalRootNext != null)
+            if (GraphUtil.GetQueryOutFirst(metaEdge.To, "$$LocalRoot", null) != null && ktd.LocalRootNext != null)
             {
                 _AddKeywordVertex(s, nv, ktd.LocalRootNext, ktd.LocalRootNext.keywordVertex, null, 0, metaEdge);
 
@@ -2192,8 +2199,9 @@ namespace m0.ZeroCode
                 max_subCount = subCount;
             }
 
-            foreach (IEdge e in keywordAddingVertex) {                
-                if (e.To.Get(false, @"$$KeywordManyRoot:") != null)
+            foreach (IEdge e in keywordAddingVertex) {
+                //if (e.To.Get(false, @"$$KeywordManyRoot:") != null)
+                if (GraphUtil.GetQueryOutFirst(e.To, "$$KeywordManyRoot", null) != null)
                 {
                     min_subCount = 0;
                     max_subCount = ktd.multiParameterCount - 1;
@@ -2312,13 +2320,16 @@ namespace m0.ZeroCode
 
         private bool isSpecialKeyword(IVertex keyword)
         {
-            if (keyword.Get(false, "$$EmptyKeyword:") != null)
+            //if (keyword.Get(false, "$$EmptyKeyword:") != null)
+            if (GraphUtil.GetQueryOutFirst(keyword, "$$EmptyKeyword", null) != null)
                 return true;
 
-            if (keyword.Get(false, "$$NewVertexKeyword:") != null)
+            //if (keyword.Get(false, "$$NewVertexKeyword:") != null)
+            if (GraphUtil.GetQueryOutFirst(keyword, "$$NewVertexKeyword", null) != null)
                 return true;
 
-            if (keyword.Get(false, "$$LinkKeyword:") != null)
+            //if (keyword.Get(false, "$$LinkKeyword:") != null)
+            if (GraphUtil.GetQueryOutFirst(keyword, "$$LinkKeyword", null) != null)
                 return true;
 
             return false;
@@ -2358,7 +2369,10 @@ namespace m0.ZeroCode
             d.allKeywordsSubstringsPositiveDictionary_witchoutLinkKeywordParts = new Dictionary<char, List<string>>();
             d.allKeywordsSubstringsNegativeDictionary_witchoutLinkKeywordParts = new Dictionary<char, List<string>>();
 
-            foreach (IEdge keyword in FormalTextLanguage.GetAll(false, @"Keywords:\$Keyword:"))
+            //foreach (IEdge keyword in FormalTextLanguage.GetAll(false, @"Keywords:\$Keyword:"))
+            IVertex keywords = GraphUtil.GetQueryOutFirst(FormalTextLanguage, "Keywords", null);
+
+            foreach(IEdge keyword in GraphUtil.GetQueryOut(keywords, "$Keyword", null))
             {
                 keywordTryingData ktd = new keywordTryingData(keyword.To, this);
 
