@@ -2382,7 +2382,8 @@ namespace m0.ZeroCode
 
                     d.examinedKeywords_All[""].Add(ktd);
 
-                    foreach (IEdge v in ktd.keywordVertex.GetAll(false, "$$KeywordGroup:"))
+                    //foreach (IEdge v in ktd.keywordVertex.GetAll(false, "$$KeywordGroup:"))
+                    foreach (IEdge v in GraphUtil.GetQueryOut(ktd.keywordVertex, "$$KeywordGroup", null))
                     {
                         string group = (string)v.To.Value;
 
@@ -2394,11 +2395,19 @@ namespace m0.ZeroCode
 
                     // examinedKeywords_StartInLocalRootOnly
 
-                    if (keyword.To.Get(false, @"\$$StartInLocalRoot:") != null)
+                    //if (keyword.To.Get(false, @"\$$StartInLocalRoot:") != null)
+                    bool anyHasStartInLocalRoot=false;
+
+                    foreach (IEdge e in keyword.To.OutEdges)
+                        if (GraphUtil.GetQueryOutFirst(e.To, "$$StartInLocalRoot", null) != null)
+                            anyHasStartInLocalRoot = true;
+
+                    if(anyHasStartInLocalRoot)
                     {
                         d.examinedKeywords_StartInLocalRootOnly[""].Add(ktd);
 
-                        foreach (IEdge v in ktd.keywordVertex.GetAll(false, "$$KeywordGroup:"))
+                        //foreach (IEdge v in ktd.keywordVertex.GetAll(false, "$$KeywordGroup:"))
+                        foreach (IEdge v in GraphUtil.GetQueryOut(ktd.keywordVertex, "$$KeywordGroup:", null))
                         {
                             string group = (string)v.To.Value;
 
@@ -2473,7 +2482,8 @@ namespace m0.ZeroCode
                     ki.LocalRootKeywordsGroup = (string)localRoot.Value;
             }
 
-            if (ktd.keywordVertex.Get(false, "$$NonSelfRecursiveParameters:") != null)
+            //if (ktd.keywordVertex.Get(false, "$$NonSelfRecursiveParameters:") != null)
+            if (GraphUtil.GetQueryOutFirst(ktd.keywordVertex, "$$NonSelfRecursiveParameters", null) != null)
                 ki.NonSelfRecursiveParameters = true;
 
             d.keywordInfoDict.Add(ktd.keywordVertex, ki);
@@ -2689,13 +2699,15 @@ namespace m0.ZeroCode
 
         void AddNewLines(ParsingStack s)
         {
+            IVertex newLineVertex = GraphUtil.GetQueryOutFirst(smb, null, "$NewLine");
+
             if (s.newLineCount != 0)
             {
                 if (s.lastAddedVertex != null)
-                    s.lastAddedVertex.AddVertex(smb.Get(false, "$NewLine"), s.newLineCount);
+                    s.lastAddedVertex.AddVertex(newLineVertex, s.newLineCount);
                 else
                     if(s.lastAddedVertexParent!=null)
-                    s.lastAddedVertexParent.AddVertex(smb.Get(false, "$NewLine"), s.newLineCount);
+                    s.lastAddedVertexParent.AddVertex(newLineVertex, s.newLineCount);
             }
 
             s.newLineCount = 0;
@@ -2963,15 +2975,24 @@ namespace m0.ZeroCode
 
         void AddError(int lineNumber, string value)
         {
-            IVertex smz = MinusZero.Instance.Root.Get(false, @"System\Meta\ZeroTypes");
+            //IVertex smz = MinusZero.Instance.Root.Get(false, @"System\Meta\ZeroTypes");
 
-            IVertex error = VertexOperations.AddInstance(errorList, smz.Get(false, "Exception"));
+            IVertex System = GraphUtil.GetQueryOutFirst(MinusZero.Instance.Root, null, "System");
+            IVertex Meta = GraphUtil.GetQueryOutFirst(System, null, "Meta");
+            IVertex smz = GraphUtil.GetQueryOutFirst(Meta, null, "ZeroTypes");
 
-            error.AddVertex(smz.Get(false, @"Exception\Where"), lineNumber.ToString());
+            //IVertex error = VertexOperations.AddInstance(errorList, smz.Get(false, "Exception"));
+            IVertex Exception = GraphUtil.GetQueryOutFirst(smz, null, "Exception");
 
-            error.AddEdge(smz.Get(false, @"Exception\Type"), smz.Get(false, @"ExceptionTypeEnum\Error"));
+            IVertex error = VertexOperations.AddInstance(errorList, Exception);
 
-            error.AddVertex(smz.Get(false, @"Exception\What"), value);
+            error.AddVertex(GraphUtil.GetQueryOutFirst(smz, null, "Where"), lineNumber.ToString());
+
+            IVertex ExceptionTypeEnum = GraphUtil.GetQueryOutFirst(smz, null, "ExceptionTypeEnum");
+
+            error.AddEdge(GraphUtil.GetQueryOutFirst(smz, null, "Type"), GraphUtil.GetQueryOutFirst(ExceptionTypeEnum, null, "Error"));
+
+            error.AddVertex(GraphUtil.GetQueryOutFirst(smz, null, "What"), value);
         }
 
         void DeleteAllEdgesFromBaseVertex()
@@ -3015,7 +3036,13 @@ namespace m0.ZeroCode
             GraphUtil.DeleteEdgeByMeta(baseVertex, "$ParseRoot");
             GraphUtil.DeleteEdgeByMeta(baseVertex, "$ParseArtefacts");
 
-            parseRoot = baseVertex.AddVertex(MinusZero.Instance.Root.Get(false, @"System\Meta\Base\$ParseRoot"),"");
+            //parseRoot = baseVertex.AddVertex(MinusZero.Instance.Root.Get(false, @"System\Meta\Base\$ParseRoot"),"");
+
+            IVertex System = GraphUtil.GetQueryOutFirst(MinusZero.Instance.Root, null, "System");
+            IVertex Meta = GraphUtil.GetQueryOutFirst(System, null, "Meta");
+            IVertex Base = GraphUtil.GetQueryOutFirst(Meta, null, "Base");
+
+            parseRoot = GraphUtil.GetQueryOutFirst(Base, null, "$ParseRoot");
 
             ProcessTextPart(parseRoot, 0, lineInfoList.Count - 1);
 
@@ -3028,7 +3055,12 @@ namespace m0.ZeroCode
                 MoveAllParseRootEdgesToBaseVertex();
             }
             else
-                baseVertex.AddEdge(MinusZero.Instance.Root.Get(false, @"System\Meta\Base\$ParseArtefacts"), errorList);
+            {
+                //baseVertex.AddEdge(MinusZero.Instance.Root.Get(false, @"System\Meta\Base\$ParseArtefacts"), errorList);
+
+                IVertex ParseArtefacts = GraphUtil.GetQueryOutFirst(Base, null, "$ParseArtefacts");
+                baseVertex.AddEdge(ParseArtefacts, errorList);
+            }
 
             return errorList;
         }

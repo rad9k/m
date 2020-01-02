@@ -12,13 +12,22 @@ namespace m0.ZeroCode
 {
     public class ZeroCodeUtil
     {       
-        public static IDictionary<string, IList<IVertex>> getFilteredKeywordListByGroup(IVertex FormalTextLanguage,string Filter)
+        public static IDictionary<string, IList<IVertex>> getFilteredKeywordListByGroup(IVertex FormalTextLanguage,string metaFilter)
         {
-            Dictionary<string, IList<IVertex>> list = new Dictionary<string, IList<IVertex>>();
+            IList<IVertex> keywordList = new List<IVertex>();
 
-            foreach(IEdge e in FormalTextLanguage.GetAll(false, @"Keywords:\$Keyword:{" + Filter+"}"))           
+            IVertex keywords = GraphUtil.GetQueryOutFirst(FormalTextLanguage, "Keywords", null);
+
+            foreach (IEdge e in GraphUtil.GetQueryOut(keywords, "$Keyword", null))
+                if (GraphUtil.GetQueryOutCount(e.To, metaFilter, null) > 0)
+                    keywordList.Add(e.To);
+
+            Dictionary<string, IList<IVertex>> list = new Dictionary<string, IList<IVertex>>();
+ 
+            foreach (IEdge e in keywordList)           
                 {
-                IVertex groups = e.To.GetAll(false, @"$$KeywordGroup:");
+                //IVertex groups = e.To.GetAll(false, @"$$KeywordGroup:");
+                IList<IEdge> groups = GraphUtil.GetQueryOut(e.To, "$$KeywordGroup", null);
 
                 string groupName;
 
