@@ -36,7 +36,7 @@
 21. [] / execute / without () as || parameter
 28. other quantifiers in queries
 29. meta string support in queries - going to stack and comparing with stack
-30. |a / a| / a|b +< {} support AND ()+<{} DOES NOT WORK AS IT WAS SUPPOSED TO WORK WTF
+30. |a / a| / a|b +< {} support AND ()+<{} DOES NOT WORK AS IT WAS SUPPOSED TO WORK WTF. BUT A\elo:mordy +< worx!
 35. sub support
 38. child vertex short names support in ||{}/ X+<||{} for run time queries?
 41. . as attribute / other $Is and not existing access
