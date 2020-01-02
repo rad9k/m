@@ -14,13 +14,13 @@ namespace m0.ZeroCode
     {       
         public static IDictionary<string, IList<IVertex>> getFilteredKeywordListByGroup(IVertex FormalTextLanguage,string metaFilter)
         {
-            IList<IVertex> keywordList = new List<IVertex>();
+            IList<IEdge> keywordList = new List<IEdge>();
 
             IVertex keywords = GraphUtil.GetQueryOutFirst(FormalTextLanguage, "Keywords", null);
 
             foreach (IEdge e in GraphUtil.GetQueryOut(keywords, "$Keyword", null))
                 if (GraphUtil.GetQueryOutCount(e.To, metaFilter, null) > 0)
-                    keywordList.Add(e.To);
+                    keywordList.Add(e);
 
             Dictionary<string, IList<IVertex>> list = new Dictionary<string, IList<IVertex>>();
  

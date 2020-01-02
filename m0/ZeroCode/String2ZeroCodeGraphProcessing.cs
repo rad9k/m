@@ -2337,11 +2337,11 @@ namespace m0.ZeroCode
 
         private void prepareSpecialKeywordsGroups(DictionariesForFormalTextLanguage d)
         {
-            d.emptyKeywordByGroupsDictionary = ZeroCodeUtil.getFilteredKeywordListByGroup(FormalTextLanguage, "$$EmptyKeyword:");
+            d.emptyKeywordByGroupsDictionary = ZeroCodeUtil.getFilteredKeywordListByGroup(FormalTextLanguage, "$$EmptyKeyword");
 
-            d.newVertexKeywordByGroupsDictionary = ZeroCodeUtil.getFilteredKeywordListByGroup(FormalTextLanguage, "$$NewVertexKeyword:");
+            d.newVertexKeywordByGroupsDictionary = ZeroCodeUtil.getFilteredKeywordListByGroup(FormalTextLanguage, "$$NewVertexKeyword");
 
-            d.linkKeywordByGroupsDictionary = ZeroCodeUtil.getFilteredKeywordListByGroup(FormalTextLanguage, "$$LinkKeyword:");
+            d.linkKeywordByGroupsDictionary = ZeroCodeUtil.getFilteredKeywordListByGroup(FormalTextLanguage, "$$LinkKeyword");
         }
 
         private void prepareDictionaries_ForFormalTextLanguage(IVertex formalTextLanguage)
