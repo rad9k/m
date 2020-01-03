@@ -3042,7 +3042,9 @@ namespace m0.ZeroCode
             IVertex Meta = GraphUtil.GetQueryOutFirst(System, null, "Meta");
             IVertex Base = GraphUtil.GetQueryOutFirst(Meta, null, "Base");
 
-            parseRoot = GraphUtil.GetQueryOutFirst(Base, null, "$ParseRoot");
+            IVertex _parseRoot = GraphUtil.GetQueryOutFirst(Base, null, "$ParseRoot");
+
+            parseRoot = baseVertex.AddVertex(_parseRoot, "");
 
             ProcessTextPart(parseRoot, 0, lineInfoList.Count - 1);
 
