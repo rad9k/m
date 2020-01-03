@@ -950,7 +950,7 @@ namespace m0
 
             string anyString = "(?<ANY>)";
 
-            /*
+            
             // import meta
             //
             // import meta (?<name>) (?<link>)
@@ -1896,7 +1896,7 @@ namespace m0
             AddSingleOperator(k, smu, smb, keyword, any, "((?<expr>))", "()");
 
             LegacySystem.Graph.EasyVertex.Get(k, false, "((?<expr>))").AddEdge(keywordGroup, kgd_ColonEmptyInner2SlashMarkIndexMethodNewLinkBracketCopy);
-            */
+            
             // \
             //
             // \                         
@@ -1923,7 +1923,7 @@ namespace m0
             IVertex o_Slash_any_targetExpr = o_Slash_any.AddVertex(LegacySystem.Graph.EasyVertex.Get(smu, false, @"ExpressionAtom\NextExpression"), "");
 
             o_Slash_any_targetExpr.AddEdge(LegacySystem.Graph.EasyVertex.Get(smb, false, "$$LocalRoot"), kgd_ColonEmptyInner2SlashMarkIndexMethod);
-            /*
+            
             // ?
             //
             // ?                         
@@ -2042,7 +2042,7 @@ namespace m0
 
             // newValueKeyword_any_targetExpr.AddEdge(smb.Get(false, "$$LocalRoot"), kgd_InnerCreation);
 
-            */
+            
             // E M P T Y :) K E Y W O R D 1
             //
             //
@@ -2067,7 +2067,7 @@ namespace m0
             IVertex empty1Keyword_any_targetExpr = empty1Keyword_any.AddVertex(LegacySystem.Graph.EasyVertex.Get(smu, false, @"ExpressionAtom\NextExpression"), "");
 
             empty1Keyword_any_targetExpr.AddEdge(LegacySystem.Graph.EasyVertex.Get(smb, false, "$$LocalRoot"), kgd_SlashMarkIndexMethodInner2);
-            /*
+            
             // E M P T Y :) K E Y W O R D 2
             //
             //
@@ -2210,7 +2210,7 @@ namespace m0
 
             o_methodCall_any_param.AddEdge(LegacySystem.Graph.EasyVertex.Get(smb, false, @"$$KeywordManyRoot"),
                 LegacySystem.Graph.EasyVertex.Get(smb, false, @"$Empty"));
-                */
+                
         }
 
         private static void AddDoubleOperator(IVertex k, IVertex smu, IVertex smb, IVertex keyword, IVertex any, string text, string _is)
@@ -2456,7 +2456,6 @@ namespace m0
 
         void CreateSystemMetaVisualiserDiagram()
         {
-            Root.Get(false, @"a\");
             IVertex sm = Root.Get(false, @"System\Meta");
 
             m0.LegacySystem.Util.GeneralUtil.ParseAndExcute(sm, sm, "{Visualiser}");

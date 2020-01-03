@@ -2407,7 +2407,7 @@ namespace m0.ZeroCode
                         d.examinedKeywords_StartInLocalRootOnly[""].Add(ktd);
 
                         //foreach (IEdge v in ktd.keywordVertex.GetAll(false, "$$KeywordGroup:"))
-                        foreach (IEdge v in GraphUtil.GetQueryOut(ktd.keywordVertex, "$$KeywordGroup:", null))
+                        foreach (IEdge v in GraphUtil.GetQueryOut(ktd.keywordVertex, "$$KeywordGroup", null))
                         {
                             string group = (string)v.To.Value;
 
