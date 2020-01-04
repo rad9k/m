@@ -3094,15 +3094,15 @@ namespace m0
 
             IVertex v2vv = v2.Get(false, @"DiagramItemVertex:\VisualiserVertex:");
 
-            v2vv.AddVertex(Root.Get(false, @"System\Meta*FilterQuery"), "{$Is:Attribute}:");
+            v2vv.AddVertex(Root.Get(false, @"System\Meta?FilterQuery"), "{$Is:Attribute}:");
 
-            v2vv.AddVertex(Root.Get(false, @"System\Meta*ShowHeader"), "False");
+            v2vv.AddVertex(Root.Get(false, @"System\Meta?ShowHeader"), "False");
 
             AddDiagramLine_Combo(v2,
                 "Association instance",
                 @"$Is:{$Is:Class}\Association:",
                 @"Definition:Object",
-                sm.Get(false, @"*DiagramInternal\DiagramLine"),
+                sm.Get(false, @"?DiagramInternal\DiagramLine"),
                 true,
                 null,
                 arrow,
@@ -3114,7 +3114,7 @@ namespace m0
                 "Aggregation instance",
                 @"$Is:{$Is:Class}\Aggregation:",
                 @"Definition:Object",
-                sm.Get(false, @"*DiagramInternal\DiagramLine"),
+                sm.Get(false, @"?DiagramInternal\DiagramLine"),
                 true,
                 diamond,
                 null,
@@ -3129,7 +3129,7 @@ namespace m0
             IVertex v3 = AddDiagramItemDefinition_Combo_RectangleItem("Class", true,
               @"{$Is:Class}",
               "Class",
-              sm.Get(false, @"*DiagramRectangleItem"),
+              sm.Get(false, @"?DiagramRectangleItem"),
               InstanceAndDirect,
               true, -1, 0, -1,
                 -1, 0, 0, 0,
@@ -3139,15 +3139,15 @@ namespace m0
 
             IVertex v3vv = v3.Get(false, @"DiagramItemVertex:\VisualiserVertex:");
 
-            v3vv.AddVertex(Root.Get(false, @"System\Meta*FilterQuery"), "Attribute:");
+            v3vv.AddVertex(Root.Get(false, @"System\Meta?FilterQuery"), "Attribute:");
 
-            v3vv.AddVertex(Root.Get(false, @"System\Meta*ShowHeader"), "False");
+            v3vv.AddVertex(Root.Get(false, @"System\Meta?ShowHeader"), "False");
 
             AddDiagramLine_Combo(v3,
              "Association",
              @"$Is:Class\Association",
              @"Definition:Class",
-             sm.Get(false, @"*DiagramInternal\DiagramLine"),
+             sm.Get(false, @"?DiagramInternal\DiagramLine"),
              false,
              null,
              null,
@@ -3159,7 +3159,7 @@ namespace m0
             "Aggregation",
             @"$Is:Class\Aggregation",
             @"Definition:Class",
-            sm.Get(false, @"*DiagramInternal\DiagramLine"),
+            sm.Get(false, @"?DiagramInternal\DiagramLine"),
             true,
             diamond,
             null,
@@ -3171,7 +3171,7 @@ namespace m0
             "Inheritence",
             @"$Is:Class\$Inherits",
             @"Definition:Class",
-            sm.Get(false, @"*DiagramInternal\DiagramLine"),
+            sm.Get(false, @"?DiagramInternal\DiagramLine"),
             true,
             null,
             triangle,
@@ -3186,7 +3186,7 @@ namespace m0
             IVertex vMethod = AddDiagramItemDefinition_Combo_RectangleItem("Method", false,
          @"{$Is:Method}",
          "Method",
-          sm.Get(false, @"*DiagramRectangleItem"),
+          sm.Get(false, @"?DiagramRectangleItem"),
           InstanceAndDirect,
           true, -1, 0, 5,
           -1, 0, 0, 0,
@@ -3198,7 +3198,7 @@ namespace m0
                     "Method",
                     @"$Is:Class\Method",
                     @"Definition:Method",
-                    sm.Get(false, @"*DiagramInternal\DiagramLine"),
+                    sm.Get(false, @"?DiagramInternal\DiagramLine"),
                     true,
                     filledDiamond,
                     null,
@@ -3210,7 +3210,7 @@ namespace m0
              "InputParameter",
              @"$Is:Method\InputParameter",
              @"Definition:InputParameter",
-             sm.Get(false, @"*DiagramInternal\DiagramLine"),
+             sm.Get(false, @"?DiagramInternal\DiagramLine"),
              true,
              filledDiamond,
              null,
@@ -3222,7 +3222,7 @@ namespace m0
              "Output",
             @"$Is:Method\Output",
             @"BaseEdge:\To:\$Is:Type",
-            sm.Get(false, @"*DiagramInternal\DiagramLine"),
+            sm.Get(false, @"?DiagramInternal\DiagramLine"),
             true,
             null,
             arrow,
@@ -3234,7 +3234,7 @@ namespace m0
           "Variable",
           @"$Is:Method\Variable",
           @"Definition:Variable",
-          sm.Get(false, @"*DiagramInternal\DiagramLine"),
+          sm.Get(false, @"?DiagramInternal\DiagramLine"),
           true,
           filledDiamond,
           null,
@@ -3246,7 +3246,7 @@ namespace m0
           "Type",
           @"$Is:Method\Type",
           @"BaseEdge:\To:\$Is:Type",
-          sm.Get(false, @"*DiagramInternal\DiagramLine"),
+          sm.Get(false, @"?DiagramInternal\DiagramLine"),
           true,
           filledDiamond,
           null,
@@ -3258,7 +3258,7 @@ namespace m0
           "Function",
           @"$Is:Method\Function",
           @"Definition:Function",
-          sm.Get(false, @"*DiagramInternal\DiagramLine"),
+          sm.Get(false, @"?DiagramInternal\DiagramLine"),
           true,
           filledDiamond,
           null,
@@ -3272,7 +3272,7 @@ namespace m0
            "Do",
            @"$Is:Method\Do",
             @"BaseEdge:\To:\$Is:Atom",
-            sm.Get(false, @"*DiagramInternal\DiagramLine"),
+            sm.Get(false, @"?DiagramInternal\DiagramLine"),
            true,
             null,
            filledTriangle,
@@ -3285,7 +3285,7 @@ namespace m0
             IVertex vInputParameter = AddDiagramItemDefinition_Combo_RectangleItem("InputParameter", false,
          @"{$Is:InputParameter}",
          "InputParameter",
-          sm.Get(false, @"*DiagramOvalItem"),
+          sm.Get(false, @"?DiagramOvalItem"),
           InstanceAndDirect,
           true, 20, 20, 2,
           -1, 0, 0, 0,
@@ -3297,7 +3297,7 @@ namespace m0
              "EdgeTarget",
              @"$EdgeTarget",
              @"BaseEdge:\To:\$Is:Type",
-             sm.Get(false, @"*DiagramInternal\DiagramLine"),
+             sm.Get(false, @"?DiagramInternal\DiagramLine"),
              true,
              null,
              arrow,
@@ -3310,7 +3310,7 @@ namespace m0
             IVertex vVariable = AddDiagramItemDefinition_Combo_RectangleItem("Variable", false,
          @"{$Is:Variable}",
          "Variable",
-          sm.Get(false, @"*DiagramRectangleItem"),
+          sm.Get(false, @"?DiagramRectangleItem"),
           InstanceAndDirect,
           true, -1, 0, 2,
           -1, 0, 0, 0,
@@ -3322,7 +3322,7 @@ namespace m0
           "EdgeTarget",
           @"$EdgeTarget",
           @"BaseEdge:\To:\$Is:Type",
-          sm.Get(false, @"*DiagramInternal\DiagramLine"),
+          sm.Get(false, @"?DiagramInternal\DiagramLine"),
           true,
           null,
           arrow,
@@ -3338,7 +3338,7 @@ namespace m0
             IVertex v4 = AddDiagramItemDefinition_Combo_RectangleItem("Vertex", false,
              @"",
              null,
-             sm.Get(false, @"*DiagramRectangleItem"),
+             sm.Get(false, @"?DiagramRectangleItem"),
              Direct,
             //   false, -1,0, -1,
             // -1, 0, 0, 0,
@@ -3354,7 +3354,7 @@ namespace m0
                "Edge",
                @"$Is:\",
                @"",
-               sm.Get(false, @"*DiagramInternal\DiagramMetaExtendedLine"),
+               sm.Get(false, @"?DiagramInternal\DiagramMetaExtendedLine"),
                true,
                null,
                arrow,
@@ -3367,13 +3367,13 @@ namespace m0
         {
             IVertex sm = Root.Get(false, @"System\Meta");
 
-            IVertex filledTriangle = sm.Get(false, @"*DiagramInternal\LineEndEnum\FilledTriangle");
+            IVertex filledTriangle = sm.Get(false, @"?DiagramInternal\LineEndEnum\FilledTriangle");
 
             AddDiagramLine_Combo(diagramItem,
              "Next",
              @"$Is:NextOut\Next",
               @"BaseEdge:\To:\$Is:Atom",
-              sm.Get(false, @"*DiagramInternal\DiagramLine"),
+              sm.Get(false, @"?DiagramInternal\DiagramLine"),
              true,
               null,
              filledTriangle,
@@ -3405,16 +3405,16 @@ namespace m0
         {
             IVertex sm = Root.Get(false, @"System\Meta");
 
-            IVertex Instance = sm.Get(false, "*Instance");
-            IVertex InstanceAndDirect = sm.Get(false, "*InstanceAndDirect");
-            IVertex Direct = sm.Get(false, "*Direct");
+            IVertex Instance = sm.Get(false, "?Instance");
+            IVertex InstanceAndDirect = sm.Get(false, "?InstanceAndDirect");
+            IVertex Direct = sm.Get(false, "?Direct");
 
-            IVertex arrow = sm.Get(false, @"*DiagramInternal\LineEndEnum\Arrow");
-            IVertex triangle = sm.Get(false, @"*DiagramInternal\LineEndEnum\Triangle");
-            IVertex filledTriangle = sm.Get(false, @"*DiagramInternal\LineEndEnum\FilledTriangle");
-            IVertex diamond = sm.Get(false, @"*DiagramInternal\LineEndEnum\Diamond");
-            IVertex filledDiamond = sm.Get(false, @"*DiagramInternal\LineEndEnum\FilledDiamond");
-            IVertex straight = sm.Get(false, @"*DiagramInternal\LineEndEnum\Straight");
+            IVertex arrow = sm.Get(false, @"?DiagramInternal\LineEndEnum\Arrow");
+            IVertex triangle = sm.Get(false, @"?DiagramInternal\LineEndEnum\Triangle");
+            IVertex filledTriangle = sm.Get(false, @"?DiagramInternal\LineEndEnum\FilledTriangle");
+            IVertex diamond = sm.Get(false, @"?DiagramInternal\LineEndEnum\Diamond");
+            IVertex filledDiamond = sm.Get(false, @"?DiagramInternal\LineEndEnum\FilledDiamond");
+            IVertex straight = sm.Get(false, @"?DiagramInternal\LineEndEnum\Straight");
 
 
             /////////////////////////////////////////////////////////////////////////
@@ -3424,7 +3424,7 @@ namespace m0
             IVertex vAtomType = AddDiagramItemDefinition_Combo_RectangleItem("AtomType", false,
          @"{$Is:AtomType}",
          "AtomType",
-          sm.Get(false, @"*DiagramRectangleItem"),
+          sm.Get(false, @"?DiagramRectangleItem"),
           InstanceAndDirect,
           true, -1, 0, -1,
           -1, 0, 0, 0,
@@ -3439,7 +3439,7 @@ namespace m0
             IVertex vStateMachine = AddDiagramItemDefinition_Combo_RectangleItem("StateMachine", false,
          @"{$Is:StateMachine}",
          "StateMachine",
-          sm.Get(false, @"*DiagramRectangleItem"),
+          sm.Get(false, @"?DiagramRectangleItem"),
           InstanceAndDirect,
           true, -1, 0, 2,
           -1, 0, 0, 0,
@@ -3451,7 +3451,7 @@ namespace m0
                "State",
                @"$Is:StateMachine\State",
                @"Definition:State",
-               sm.Get(false, @"*DiagramInternal\DiagramLine"),
+               sm.Get(false, @"?DiagramInternal\DiagramLine"),
                true,
                filledDiamond,
                null,
@@ -3462,7 +3462,7 @@ namespace m0
             IVertex vState = AddDiagramItemDefinition_Combo_RectangleItem("State", false,
          @"{$Is:State}",
          "State",
-          sm.Get(false, @"*DiagramRectangleItem"),
+          sm.Get(false, @"?DiagramRectangleItem"),
           InstanceAndDirect,
           true, -1, 0, -1,
           -1, 0, 0, 0,
@@ -3474,7 +3474,7 @@ namespace m0
                "Transition",
                @"$Is:State\Transition",
                @"Definition:State",
-               sm.Get(false, @"*DiagramInternal\DiagramLine"),
+               sm.Get(false, @"?DiagramInternal\DiagramLine"),
                true,
                null,
                arrow,
@@ -3489,17 +3489,17 @@ namespace m0
             IVertex vEnum = AddDiagramItemDefinition_Combo_RectangleItem("Enum", false,
          @"{$Is:Enum}",
          "Enum",
-          sm.Get(false, @"*DiagramRectangleItem"),
+          sm.Get(false, @"?DiagramRectangleItem"),
           InstanceAndDirect,
           true, -1, 0, -1,
           -1, 0, 0, 0,
           -1, 0, 0, 0,
           0, true,
-          Root.Get(false, @"System\Meta*List"), true);
+          Root.Get(false, @"System\Meta?List"), true);
 
             IVertex vEnum_vv = vEnum.Get(false, @"DiagramItemVertex:\VisualiserVertex:");
 
-            vEnum_vv.AddVertex(Root.Get(false, @"System\Meta*FilterQuery"), "EnumValue:");
+            vEnum_vv.AddVertex(Root.Get(false, @"System\Meta?FilterQuery"), "EnumValue:");
 
             vEnum_vv.AddVertex(Root.Get(false, @"System\Meta\Visualiser\List\ShowHeader"), "False");
             vEnum_vv.AddVertex(Root.Get(false, @"System\Meta\Visualiser\List\ShowMeta"), "False");
@@ -3513,7 +3513,7 @@ namespace m0
             IVertex vZeroOperator = AddDiagramItemDefinition_Combo_RectangleItem("ZeroOperator", false,
          @"{$Is:ZeroOperator}",
          "{$Inherits:ZeroOperator}",
-          sm.Get(false, @"*DiagramRectangleItem"),
+          sm.Get(false, @"?DiagramRectangleItem"),
           InstanceAndDirect,
           true, -1, 0, -1,
           -1, 0, 0, 0,
@@ -3525,7 +3525,7 @@ namespace m0
        "Expression",
        @"$Is:ExpressionAtom\NextExpression",
        @"BaseEdge:\To:\$Is:Atom",
-       sm.Get(false, @"*DiagramInternal\DiagramLine"),
+       sm.Get(false, @"?DiagramInternal\DiagramLine"),
        true,
        null,
        arrow,
@@ -3543,7 +3543,7 @@ namespace m0
             IVertex vMultiOperator = AddDiagramItemDefinition_Combo_RectangleItem("MultiOperator", false,
          @"{$Is:MultiOperator}",
          "{$Inherits:MultiOperator}",
-          sm.Get(false, @"*DiagramRectangleItem"),
+          sm.Get(false, @"?DiagramRectangleItem"),
           InstanceAndDirect,
           true, -1, 0, -1,
           -1, 0, 0, 0,
@@ -3555,7 +3555,7 @@ namespace m0
        "Expression",
        @"$Is:MultiOperator\Expression",
        @"BaseEdge:\To:\$Is:Atom",
-       sm.Get(false, @"*DiagramInternal\DiagramLine"),
+       sm.Get(false, @"?DiagramInternal\DiagramLine"),
        true,
        null,
        arrow,
@@ -3573,7 +3573,7 @@ namespace m0
             IVertex vDoubleOperator = AddDiagramItemDefinition_Combo_RectangleItem("DoubleOperator", false,
          @"{$Is:DoubleOperator}",
          "{$Inherits:DoubleOperator}",
-          sm.Get(false, @"*DiagramRectangleItem"),
+          sm.Get(false, @"?DiagramRectangleItem"),
           InstanceAndDirect,
           true, -1, 0, -1,
           -1, 0, 0, 0,
@@ -3585,7 +3585,7 @@ namespace m0
        "LeftExpression",
        @"$Is:DoubleOperator\LeftExpression",
        @"BaseEdge:\To:\$Is:Atom",
-       sm.Get(false, @"*DiagramInternal\DiagramLine"),
+       sm.Get(false, @"?DiagramInternal\DiagramLine"),
        true,
        null,
        arrow,
@@ -3597,7 +3597,7 @@ namespace m0
        "RightExpression",
        @"$Is:DoubleOperator\RightExpression",
        @"BaseEdge:\To:\$Is:Atom",
-       sm.Get(false, @"*DiagramInternal\DiagramLine"),
+       sm.Get(false, @"?DiagramInternal\DiagramLine"),
        true,
        null,
        arrow,
@@ -3614,7 +3614,7 @@ namespace m0
             IVertex vReturn = AddDiagramItemDefinition_Combo("Return", false,
                 @"{$Is:Return}",
          "Return",
-         sm.Get(false, @"*DiagramOvalItem"),
+         sm.Get(false, @"?DiagramOvalItem"),
          InstanceAndDirect,
          true, 40, 40, -1,
          0, 0, 0, 255,
@@ -3624,7 +3624,7 @@ namespace m0
        "Expression",
        @"$Is:Return\Expression",
        @"BaseEdge:\To:\$Is:Atom",
-       sm.Get(false, @"*DiagramInternal\DiagramLine"),
+       sm.Get(false, @"?DiagramInternal\DiagramLine"),
        true,
        null,
        arrow,
@@ -3641,7 +3641,7 @@ namespace m0
             IVertex vSection = AddDiagramItemDefinition_Combo_RectangleItem("Section", false,
          @"{$Is:Section}",
          "Section",
-          sm.Get(false, @"*DiagramRectangleItem"),
+          sm.Get(false, @"?DiagramRectangleItem"),
           InstanceAndDirect,
           true, -1, 0, 3,
           -1, 0, 0, 0,
@@ -3654,7 +3654,7 @@ namespace m0
           "Variable",
           @"$Is:Section\Variable",
           @"Definition:Variable",
-          sm.Get(false, @"*DiagramInternal\DiagramLine"),
+          sm.Get(false, @"?DiagramInternal\DiagramLine"),
           true,
           filledDiamond,
           null,
@@ -3666,7 +3666,7 @@ namespace m0
           "Function",
           @"$Is:Section\Function",
           @"Definition:Function",
-          sm.Get(false, @"*DiagramInternal\DiagramLine"),
+          sm.Get(false, @"?DiagramInternal\DiagramLine"),
           true,
           filledDiamond,
           null,
@@ -3678,7 +3678,7 @@ namespace m0
           "Type",
           @"$Is:Section\Type",
           @"BaseEdge:\To:\$Is:Type",
-          sm.Get(false, @"*DiagramInternal\DiagramLine"),
+          sm.Get(false, @"?DiagramInternal\DiagramLine"),
           true,
           filledDiamond,
           null,
@@ -3690,7 +3690,7 @@ namespace m0
          "Do",
          @"$Is:Method\Do",
           @"BaseEdge:\To:\$Is:Atom",
-          sm.Get(false, @"*DiagramInternal\DiagramLine"),
+          sm.Get(false, @"?DiagramInternal\DiagramLine"),
          true,
           null,
          filledTriangle,
@@ -3708,7 +3708,7 @@ namespace m0
             IVertex vFunction = AddDiagramItemDefinition_Combo_RectangleItem("Function", false,
          @"{$Is:Function}",
          "Function",
-          sm.Get(false, @"*DiagramRectangleItem"),
+          sm.Get(false, @"?DiagramRectangleItem"),
           InstanceAndDirect,
           true, -1, 0, 5,
           -1, 0, 0, 0,
@@ -3720,7 +3720,7 @@ namespace m0
              "InputParameter",
              @"$Is:Function\InputParameter",
              @"Definition:InputParameter",
-             sm.Get(false, @"*DiagramInternal\DiagramLine"),
+             sm.Get(false, @"?DiagramInternal\DiagramLine"),
              true,
              filledDiamond,
              null,
@@ -3732,7 +3732,7 @@ namespace m0
              "Output",
             @"$Is:Function\Output",
             @"BaseEdge:\To:\$Is:Type",
-            sm.Get(false, @"*DiagramInternal\DiagramLine"),
+            sm.Get(false, @"?DiagramInternal\DiagramLine"),
             true,
             null,
             arrow,
@@ -3744,7 +3744,7 @@ namespace m0
           "Variable",
           @"$Is:Function\Variable",
           @"Definition:Variable",
-          sm.Get(false, @"*DiagramInternal\DiagramLine"),
+          sm.Get(false, @"?DiagramInternal\DiagramLine"),
           true,
           filledDiamond,
           null,
@@ -3756,7 +3756,7 @@ namespace m0
           "Type",
           @"$Is:Function\Type",
           @"BaseEdge:\To:\$Is:Type",
-          sm.Get(false, @"*DiagramInternal\DiagramLine"),
+          sm.Get(false, @"?DiagramInternal\DiagramLine"),
           true,
           filledDiamond,
           null,
@@ -3768,7 +3768,7 @@ namespace m0
           "Function",
           @"$Is:Function\Function",
           @"Definition:Function",
-          sm.Get(false, @"*DiagramInternal\DiagramLine"),
+          sm.Get(false, @"?DiagramInternal\DiagramLine"),
           true,
           filledDiamond,
           null,
@@ -3780,7 +3780,7 @@ namespace m0
          "Do",
          @"$Is:Method\Do",
           @"BaseEdge:\To:\$Is:Atom",
-          sm.Get(false, @"*DiagramInternal\DiagramLine"),
+          sm.Get(false, @"?DiagramInternal\DiagramLine"),
          true,
           null,
          filledTriangle,
@@ -3796,7 +3796,7 @@ namespace m0
             IVertex vIf = AddDiagramItemDefinition_Combo("If", false,
          @"{$Is:If}",
          "If",
-          sm.Get(false, @"*DiagramRhombusItem"),
+          sm.Get(false, @"?DiagramRhombusItem"),
           InstanceAndDirect,
           true, -1, 0, -1,
           -1, 0, 0, 0,
@@ -3807,7 +3807,7 @@ namespace m0
        "Test",
        @"$Is:If\Test",
        @"BaseEdge:\To:\$Is:Atom",
-       sm.Get(false, @"*DiagramInternal\DiagramLine"),
+       sm.Get(false, @"?DiagramInternal\DiagramLine"),
        true,
        null,
        triangle,
@@ -3819,7 +3819,7 @@ namespace m0
        "Then",
        @"$Is:If\Then",
        @"BaseEdge:\To:\$Is:Atom",
-       sm.Get(false, @"*DiagramInternal\DiagramLine"),
+       sm.Get(false, @"?DiagramInternal\DiagramLine"),
        true,
               null,
        filledTriangle,
@@ -3831,7 +3831,7 @@ namespace m0
        "Else",
        @"$Is:If\Else",
        @"BaseEdge:\To:\$Is:Atom",
-       sm.Get(false, @"*DiagramInternal\DiagramLine"),
+       sm.Get(false, @"?DiagramInternal\DiagramLine"),
        true,
               null,
        filledTriangle,
@@ -3846,7 +3846,7 @@ namespace m0
             IVertex vSwitch = AddDiagramItemDefinition_Combo_RectangleItem("Switch", false,
          @"{$Is:Switch}",
          "Switch",
-          sm.Get(false, @"*DiagramRectangleItem"),
+          sm.Get(false, @"?DiagramRectangleItem"),
           InstanceAndDirect,
           true, -1, 0, -1,
           -1, 0, 0, 0,
@@ -3858,7 +3858,7 @@ namespace m0
        "Expression",
        @"$Is:Switch\Expression",
        @"BaseEdge:\To:\$Is:Atom",
-       sm.Get(false, @"*DiagramInternal\DiagramLine"),
+       sm.Get(false, @"?DiagramInternal\DiagramLine"),
        true,
        null,
        triangle,
@@ -3870,7 +3870,7 @@ namespace m0
        "Case",
        @"$Is:Switch\Case",
        @"Definition:Case",
-       sm.Get(false, @"*DiagramInternal\DiagramLine"),
+       sm.Get(false, @"?DiagramInternal\DiagramLine"),
        true,
               null,
        filledTriangle,
@@ -3882,7 +3882,7 @@ namespace m0
        "Fallback",
        @"$Is:Switch\Fallback",
        @"Definition:Fallback",
-       sm.Get(false, @"*DiagramInternal\DiagramLine"),
+       sm.Get(false, @"?DiagramInternal\DiagramLine"),
        true,
              null,
        filledTriangle,
@@ -3895,7 +3895,7 @@ namespace m0
             IVertex vCase = AddDiagramItemDefinition_Combo_RectangleItem("Case", false,
          @"{$Is:Case}",
          "Case",
-          sm.Get(false, @"*DiagramRectangleItem"),
+          sm.Get(false, @"?DiagramRectangleItem"),
           InstanceAndDirect,
           true, -1, 0, -1,
           -1, 0, 0, 0,
@@ -3907,7 +3907,7 @@ namespace m0
        "Expression",
        @"$Is:Case\Expression",
        @"BaseEdge:\To:\$Is:Atom",
-       sm.Get(false, @"*DiagramInternal\DiagramLine"),
+       sm.Get(false, @"?DiagramInternal\DiagramLine"),
        true,
        null,
        triangle,
@@ -3920,7 +3920,7 @@ namespace m0
             IVertex vDefault = AddDiagramItemDefinition_Combo_RectangleItem("Fallback", false,
          @"{$Is:Fallback}",
          "Fallback",
-          sm.Get(false, @"*DiagramRectangleItem"),
+          sm.Get(false, @"?DiagramRectangleItem"),
           InstanceAndDirect,
           true, -1, 0, -1,
           -1, 0, 0, 0,
@@ -3939,7 +3939,7 @@ namespace m0
             IVertex vWhile = AddDiagramItemDefinition_Combo_RectangleItem("While", false,
          @"{$Is:While}",
          "While",
-          sm.Get(false, @"*DiagramRectangleItem"),
+          sm.Get(false, @"?DiagramRectangleItem"),
           InstanceAndDirect,
           true, -1, 0, -1,
           -1, 0, 0, 0,
@@ -3951,7 +3951,7 @@ namespace m0
        "Test",
        @"$Is:While\Test",
        @"BaseEdge:\To:\$Is:Atom",
-       sm.Get(false, @"*DiagramInternal\DiagramLine"),
+       sm.Get(false, @"?DiagramInternal\DiagramLine"),
        true,
        null,
        triangle,
@@ -3963,7 +3963,7 @@ namespace m0
        "Do",
        @"$Is:While\Do",
        @"BaseEdge:\To:\$Is:Atom",
-       sm.Get(false, @"*DiagramInternal\DiagramLine"),
+       sm.Get(false, @"?DiagramInternal\DiagramLine"),
        true,
               null,
        filledTriangle,
@@ -3982,7 +3982,7 @@ namespace m0
             IVertex vForEach = AddDiagramItemDefinition_Combo_RectangleItem("ForEach", false,
          @"{$Is:ForEach}",
          "ForEach",
-          sm.Get(false, @"*DiagramRectangleItem"),
+          sm.Get(false, @"?DiagramRectangleItem"),
           InstanceAndDirect,
           true, -1, 0, -1,
           -1, 0, 0, 0,
@@ -3994,7 +3994,7 @@ namespace m0
        "Variable",
        @"$Is:ForEach\Variable",
        @"",
-       sm.Get(false, @"*DiagramInternal\DiagramLine"),
+       sm.Get(false, @"?DiagramInternal\DiagramLine"),
        true,
        diamond,
        null,
@@ -4007,7 +4007,7 @@ namespace m0
             "Set",
             @"$Is:ForEach\Set",
             @"BaseEdge:\To:\$Is:Atom",
-            sm.Get(false, @"*DiagramInternal\DiagramLine"),
+            sm.Get(false, @"?DiagramInternal\DiagramLine"),
             true,
             null,
             triangle,
@@ -4019,7 +4019,7 @@ namespace m0
        "Do",
        @"$Is:ForEach\Do",
        @"BaseEdge:\To:\$Is:Atom",
-       sm.Get(false, @"*DiagramInternal\DiagramLine"),
+       sm.Get(false, @"?DiagramInternal\DiagramLine"),
        true,
               null,
        filledTriangle,
@@ -4038,7 +4038,7 @@ namespace m0
             IVertex vPackage = AddDiagramItemDefinition_Combo_RectangleItem("Package", false,
          @"{$Is:Package}",
          "Package",
-          sm.Get(false, @"*DiagramRectangleItem"),
+          sm.Get(false, @"?DiagramRectangleItem"),
           InstanceAndDirect,
           true, -1, 0, 5,
           -1, 0, 0, 0,
@@ -4080,7 +4080,7 @@ namespace m0
             what.Is,
             @"$Is:Package\" + what.Is,
             @"Definition:" + what.Definition,
-            sm.Get(false, @"*DiagramInternal\DiagramLine"),
+            sm.Get(false, @"?DiagramInternal\DiagramLine"),
             true,
             diamond,
             null,
@@ -4119,24 +4119,24 @@ namespace m0
 
             m0.LegacySystem.Util.GeneralUtil.ParseAndExcute(sm, sm, "{User{CurrentUser,Class:NonAtomProcess{Attribute:StartTimeStamp{$MinCardinality:1,$MaxCardinality:1}},Class:Session{Attribute:StartTimeStamp{$MinCardinality:1,$MaxCardinality:1},Aggregation:Process{$MinCardinality:0,$MaxCardinality:-1}},Class:User{Attribute:CurrentSession{$MinCardinality:1,$MaxCardinality:1},Aggregation:Session{$MinCardinality:0,$MaxCardinality:-1},Aggregation:Settings{$MinCardinality:1,$MaxCardinality:1},Aggregation:DefaultFormalTextLanguage{$MinCardinality:1,$MaxCardinality:1},Aggregation:Queries{$MinCardinality:1,$MaxCardinality:1}},Class:Settings{Attribute:CopyOnDragAndDrop{$MinCardinality:1,$MaxCardinality:1},Association:AllowBlankAreaDragAndDrop{$MinCardinality:1,$MaxCardinality:1},Attribute:AllowManyDiagramItemsForOneVertex{$MinCardinality:1,$MaxCardinality:1}},Enum:AllowBlankAreaDragAndDropEnum{EnumValue:No,EnumValue:OnlyEnd,EnumValue:StartAndEnd}}}");
 
-            sm.Get(false, @"User\NonAtomProcess").AddEdge(sm.Get(false, @"*$Is"), sm.Get(false, @"ZeroUML\Class"));
-            sm.Get(false, @"User\Session").AddEdge(sm.Get(false, @"*$Is"), sm.Get(false, @"ZeroUML\Class"));
-            sm.Get(false, @"User\User").AddEdge(sm.Get(false, @"*$Is"), sm.Get(false, @"ZeroUML\Class"));
-            sm.Get(false, @"User\Settings").AddEdge(sm.Get(false, @"*$Is"), sm.Get(false, @"ZeroUML\Class"));
+            sm.Get(false, @"User\NonAtomProcess").AddEdge(sm.Get(false, @"?$Is"), sm.Get(false, @"ZeroUML\Class"));
+            sm.Get(false, @"User\Session").AddEdge(sm.Get(false, @"?$Is"), sm.Get(false, @"ZeroUML\Class"));
+            sm.Get(false, @"User\User").AddEdge(sm.Get(false, @"?$Is"), sm.Get(false, @"ZeroUML\Class"));
+            sm.Get(false, @"User\Settings").AddEdge(sm.Get(false, @"?$Is"), sm.Get(false, @"ZeroUML\Class"));
 
-            sm.Get(false, @"User\NonAtomProcess\StartTimeStamp").AddEdge(sm.Get(false, @"*$EdgeTarget"), sm.Get(false, @"ZeroTypes\DateTime"));
-            sm.Get(false, @"User\Session\StartTimeStamp").AddEdge(sm.Get(false, @"*$EdgeTarget"), sm.Get(false, @"ZeroTypes\DateTime"));
-            sm.Get(false, @"User\Session\Process").AddEdge(sm.Get(false, @"*$EdgeTarget"), sm.Get(false, @"User\NonAtomProcess")); // to be updated
-            sm.Get(false, @"User\User\Session").AddEdge(sm.Get(false, @"*$EdgeTarget"), sm.Get(false, @"User\Session"));
-            sm.Get(false, @"User\User\CurrentSession").AddEdge(sm.Get(false, @"*$EdgeTarget"), sm.Get(false, @"User\Session"));
-            sm.Get(false, @"User\User\Settings").AddEdge(sm.Get(false, @"*$EdgeTarget"), sm.Get(false, @"User\Settings"));
-            sm.Get(false, @"User\User\DefaultFormalTextLanguage").AddEdge(sm.Get(false, @"*$EdgeTarget"), sm.Get(false, @"ZeroTypes\FormalTextLanguage"));
-            sm.Get(false, @"User\User\Queries").AddEdge(sm.Get(false, @"*$EdgeTarget"), sm.Get(false, @"ZeroTypes\VertexType"));
-            sm.Get(false, @"User\AllowBlankAreaDragAndDropEnum").AddEdge(sm.Get(false, @"*$Inherits"), sm.Get(false, @"ZeroTypes\EnumBase"));
+            sm.Get(false, @"User\NonAtomProcess\StartTimeStamp").AddEdge(sm.Get(false, @"?$EdgeTarget"), sm.Get(false, @"ZeroTypes\DateTime"));
+            sm.Get(false, @"User\Session\StartTimeStamp").AddEdge(sm.Get(false, @"?$EdgeTarget"), sm.Get(false, @"ZeroTypes\DateTime"));
+            sm.Get(false, @"User\Session\Process").AddEdge(sm.Get(false, @"?$EdgeTarget"), sm.Get(false, @"User\NonAtomProcess")); // to be updated
+            sm.Get(false, @"User\User\Session").AddEdge(sm.Get(false, @"?$EdgeTarget"), sm.Get(false, @"User\Session"));
+            sm.Get(false, @"User\User\CurrentSession").AddEdge(sm.Get(false, @"?$EdgeTarget"), sm.Get(false, @"User\Session"));
+            sm.Get(false, @"User\User\Settings").AddEdge(sm.Get(false, @"?$EdgeTarget"), sm.Get(false, @"User\Settings"));
+            sm.Get(false, @"User\User\DefaultFormalTextLanguage").AddEdge(sm.Get(false, @"?$EdgeTarget"), sm.Get(false, @"ZeroTypes\FormalTextLanguage"));
+            sm.Get(false, @"User\User\Queries").AddEdge(sm.Get(false, @"?$EdgeTarget"), sm.Get(false, @"ZeroTypes\VertexType"));
+            sm.Get(false, @"User\AllowBlankAreaDragAndDropEnum").AddEdge(sm.Get(false, @"?$Inherits"), sm.Get(false, @"ZeroTypes\EnumBase"));
 
-            sm.Get(false, @"User\Settings\CopyOnDragAndDrop").AddEdge(sm.Get(false, @"*$EdgeTarget"), sm.Get(false, @"ZeroTypes\Boolean"));
-            sm.Get(false, @"User\Settings\AllowBlankAreaDragAndDrop").AddEdge(sm.Get(false, @"*$EdgeTarget"), sm.Get(false, @"*AllowBlankAreaDragAndDropEnum"));
-            sm.Get(false, @"User\Settings\AllowManyDiagramItemsForOneVertex").AddEdge(sm.Get(false, @"*$EdgeTarget"), sm.Get(false, @"ZeroTypes\Boolean"));
+            sm.Get(false, @"User\Settings\CopyOnDragAndDrop").AddEdge(sm.Get(false, @"?$EdgeTarget"), sm.Get(false, @"ZeroTypes\Boolean"));
+            sm.Get(false, @"User\Settings\AllowBlankAreaDragAndDrop").AddEdge(sm.Get(false, @"?$EdgeTarget"), sm.Get(false, @"?AllowBlankAreaDragAndDropEnum"));
+            sm.Get(false, @"User\Settings\AllowManyDiagramItemsForOneVertex").AddEdge(sm.Get(false, @"?$EdgeTarget"), sm.Get(false, @"ZeroTypes\Boolean"));
         }
 
         void CreateUser(IVertex user)
@@ -4145,10 +4145,10 @@ namespace m0
 
             m0.LegacySystem.Util.GeneralUtil.ParseAndExcute(user, sm, "{Settings:{CopyOnDragAndDrop:False,AllowManyDiagramItemsForOneVertex:True},Queries:{String:test,String:\"test{test2}\"}}");
 
-            user.Get(false, "Settings:").AddEdge(sm.Get(false, "*AllowBlankAreaDragAndDrop"), sm.Get(false, @"User\AllowBlankAreaDragAndDropEnum\StartAndEnd"));
+            user.Get(false, "Settings:").AddEdge(sm.Get(false, "?AllowBlankAreaDragAndDrop"), sm.Get(false, @"User\AllowBlankAreaDragAndDropEnum\StartAndEnd"));
 
-            user.AddEdge(sm.Get(false, @"*$Is"), sm.Get(false, @"User\User"));
-            user.Get(false, "Settings:").AddEdge(sm.Get(false, @"*$Is"), sm.Get(false, @"User\Settings"));
+            user.AddEdge(sm.Get(false, @"?$Is"), sm.Get(false, @"User\User"));
+            user.Get(false, "Settings:").AddEdge(sm.Get(false, @"?$Is"), sm.Get(false, @"User\Settings"));
 
             user.AddEdge(sm.Get(false, @"User\User\DefaultFormalTextLanguage"), Root.Get(false, @"System\FormalTextLanguage\ZeroCode"));
 
@@ -4237,15 +4237,15 @@ namespace m0
 
         private void AddIsAttribute(string what)
         {
-            AddIsAttribute_inner(@"System\Meta\ZeroTypes*" + what + ":", what);
-            AddIsAttribute_inner(@"System\Meta\Visualiser*" + what + ":", what);
-            AddIsAttribute_inner(@"System\Meta\User*" + what + ":", what);
+            AddIsAttribute_inner(@"System\Meta\ZeroTypes?" + what + ":", what);
+            AddIsAttribute_inner(@"System\Meta\Visualiser?" + what + ":", what);
+            AddIsAttribute_inner(@"System\Meta\User?" + what + ":", what);
         }
 
         private void AddIsAttribute_inner(string s, string what)
         {
             IVertex attributes = root.GetAll(false, s);
-            IVertex ismeta = root.Get(false, @"System\Meta*$Is");
+            IVertex ismeta = root.Get(false, @"System\Meta?$Is");
             IVertex ameta = root.Get(false, @"System\Meta\ZeroUML\Class\" + what);
 
             foreach (IEdge v in attributes)
@@ -4256,14 +4256,14 @@ namespace m0
 
         private void AddIsAggregation()
         {
-            AddIsAggregation_inner(@"System\Meta\ZeroTypes*Attribute:");
-            AddIsAggregation_inner(@"System\Meta\ZeroTypes*Aggregation:");
+            AddIsAggregation_inner(@"System\Meta\ZeroTypes?Attribute:");
+            AddIsAggregation_inner(@"System\Meta\ZeroTypes?Aggregation:");
 
-            AddIsAggregation_inner(@"System\Meta\Visualiser*Attribute:");
-            AddIsAggregation_inner(@"System\Meta\Visualiser*Aggregation:");
+            AddIsAggregation_inner(@"System\Meta\Visualiser?Attribute:");
+            AddIsAggregation_inner(@"System\Meta\Visualiser?Aggregation:");
 
-            AddIsAggregation_inner(@"System\Meta\User*Attribute:");
-            AddIsAggregation_inner(@"System\Meta\User*Aggregation:");
+            AddIsAggregation_inner(@"System\Meta\User?Attribute:");
+            AddIsAggregation_inner(@"System\Meta\User?Aggregation:");
         }
 
         private void AddIsAggregation_inner(string s)
