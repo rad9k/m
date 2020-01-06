@@ -176,71 +176,73 @@ namespace m0.Store.FileSystem
 
             Store = FileSystem.AddVertex(null, "$Store");
 
+            IVertex vEdgeTarget = sm.Get(false, @"Base\Vertex\$EdgeTarget");
+
             mfsf.Get(false, "Drive").AddEdge(sm.Get(false, @"Base\Vertex\$Inherits"), mfsf.Get(false, "Directory"));
-            mfsf.Get(false, @"Drive\PathSeparator").AddEdge(sm.Get(false, @"*$EdgeTarget"), sm.Get(false, @"ZeroTypes\String"));
+            mfsf.Get(false, @"Drive\PathSeparator").AddEdge(vEdgeTarget, sm.Get(false, @"ZeroTypes\String"));
 
             IVertex attribute = sm.Get(false, @"ZeroUML\Class\Attribute");
             IVertex aggregation = sm.Get(false, @"ZeroUML\Class\Aggregation");
 
             Directory_Filename = Directory.AddVertex(attribute, "Filename");
-            Directory_Filename.AddEdge(sm.Get(false, @"*$EdgeTarget"), sm.Get(false, @"ZeroTypes\String"));
+            Directory_Filename.AddEdge(vEdgeTarget, sm.Get(false, @"ZeroTypes\String"));
 
             Directory_Extension = Directory.AddVertex(attribute, "Extension");
-            Directory_Extension.AddEdge(sm.Get(false, @"*$EdgeTarget"), sm.Get(false, @"ZeroTypes\String"));
+            Directory_Extension.AddEdge(vEdgeTarget, sm.Get(false, @"ZeroTypes\String"));
 
             Directory_FullFilename = Directory.AddVertex(attribute, "FullFilename");
-            Directory_FullFilename.AddEdge(sm.Get(false, @"*$EdgeTarget"), sm.Get(false, @"ZeroTypes\String"));
+            Directory_FullFilename.AddEdge(vEdgeTarget, sm.Get(false, @"ZeroTypes\String"));
 
             Directory_FileAttribute = Directory.AddVertex(attribute, "FileAttribute");
-            Directory_FileAttribute.AddEdge(sm.Get(false, @"*$EdgeTarget"), sm.Get(false, @"ZeroTypes\String"));
+            Directory_FileAttribute.AddEdge(vEdgeTarget, sm.Get(false, @"ZeroTypes\String"));
 
             Directory_CreationDateTime = Directory.AddVertex(attribute, "CreationDateTime");
-            Directory_CreationDateTime.AddEdge(sm.Get(false, @"*$EdgeTarget"), sm.Get(false, @"ZeroTypes\String"));
+            Directory_CreationDateTime.AddEdge(vEdgeTarget, sm.Get(false, @"ZeroTypes\String"));
 
             Directory_UpdateDateTime = Directory.AddVertex(attribute, "UpdateDateTime");
-            Directory_UpdateDateTime.AddEdge(sm.Get(false, @"*$EdgeTarget"), sm.Get(false, @"ZeroTypes\String"));
+            Directory_UpdateDateTime.AddEdge(vEdgeTarget, sm.Get(false, @"ZeroTypes\String"));
 
             Directory_ReadDateTime = Directory.AddVertex(attribute, "ReadDateTime");
-            Directory_ReadDateTime.AddEdge(sm.Get(false, @"*$EdgeTarget"), sm.Get(false, @"ZeroTypes\String"));
+            Directory_ReadDateTime.AddEdge(vEdgeTarget, sm.Get(false, @"ZeroTypes\String"));
 
             Directory_File = Directory.AddVertex(aggregation, "File");
-            Directory_File.AddEdge(sm.Get(false, @"*$EdgeTarget"), sm.Get(false, @"Store\FileSystem\File"));
+            Directory_File.AddEdge(vEdgeTarget, sm.Get(false, @"Store\FileSystem\File"));
             Directory_File.AddVertex(sm.Get(false, @"Base\Vertex\$MinCardinality"), "0");
             Directory_File.AddVertex(sm.Get(false, @"Base\Vertex\$MaxCardinality"), "-1");
 
             Directory_Directory = Directory.AddVertex(aggregation, "Directory");
-            Directory_Directory.AddEdge(sm.Get(false, @"*$EdgeTarget"), sm.Get(false, @"Store\FileSystem\Directory"));
+            Directory_Directory.AddEdge(vEdgeTarget, sm.Get(false, @"Store\FileSystem\Directory"));
             Directory_Directory.AddVertex(sm.Get(false, @"Base\Vertex\$MinCardinality"), "0");
             Directory_Directory.AddVertex(sm.Get(false, @"Base\Vertex\$MaxCardinality"), "-1");
 
             File = mfsf.Get(false, @"File");
 
             File_Content = File.AddVertex(attribute, "Content");
-            File_Content.AddEdge(sm.Get(false, @"*$EdgeTarget"), sm.Get(false, @"ZeroTypes\Vertex"));
+            File_Content.AddEdge(vEdgeTarget, sm.Get(false, @"ZeroTypes\Vertex"));
 
             File_Filename = File.AddVertex(attribute, "Filename");
-            File_Filename.AddEdge(sm.Get(false, @"*$EdgeTarget"), sm.Get(false, @"ZeroTypes\String"));
+            File_Filename.AddEdge(vEdgeTarget, sm.Get(false, @"ZeroTypes\String"));
 
             File_Extension = File.AddVertex(attribute, "Extension");
-            File_Extension.AddEdge(sm.Get(false, @"*$EdgeTarget"), sm.Get(false, @"ZeroTypes\String"));
+            File_Extension.AddEdge(vEdgeTarget, sm.Get(false, @"ZeroTypes\String"));
 
             File_FullFilename = File.AddVertex(attribute, "FullFilename");
-            File_FullFilename.AddEdge(sm.Get(false, @"*$EdgeTarget"), sm.Get(false, @"ZeroTypes\String"));
+            File_FullFilename.AddEdge(vEdgeTarget, sm.Get(false, @"ZeroTypes\String"));
 
             File_Size = File.AddVertex(attribute, "Size");
-            File_Size.AddEdge(sm.Get(false, @"*$EdgeTarget"), sm.Get(false, @"ZeroTypes\Integer"));
+            File_Size.AddEdge(vEdgeTarget, sm.Get(false, @"ZeroTypes\Integer"));
 
             File_FileAttribute = File.AddVertex(attribute, "FileAttribute");
-            File_FileAttribute.AddEdge(sm.Get(false, @"*$EdgeTarget"), sm.Get(false, @"ZeroTypes\String"));
+            File_FileAttribute.AddEdge(vEdgeTarget, sm.Get(false, @"ZeroTypes\String"));
 
             File_CreationDateTime = File.AddVertex(attribute, "CreationDateTime");
-            File_CreationDateTime.AddEdge(sm.Get(false, @"*$EdgeTarget"), sm.Get(false, @"ZeroTypes\String"));
+            File_CreationDateTime.AddEdge(vEdgeTarget, sm.Get(false, @"ZeroTypes\String"));
 
             File_UpdateDateTime = File.AddVertex(attribute, "UpdateDateTime");
-            File_UpdateDateTime.AddEdge(sm.Get(false, @"*$EdgeTarget"), sm.Get(false, @"ZeroTypes\String"));
+            File_UpdateDateTime.AddEdge(vEdgeTarget, sm.Get(false, @"ZeroTypes\String"));
 
             File_ReadDateTime = File.AddVertex(attribute, "ReadDateTime");
-            File_ReadDateTime.AddEdge(sm.Get(false, @"*$EdgeTarget"), sm.Get(false, @"ZeroTypes\String"));
+            File_ReadDateTime.AddEdge(vEdgeTarget, sm.Get(false, @"ZeroTypes\String"));
         }
 
         public FileSystemStore(string identifier, IStoreUniverse storeUniverse, AccessLevelEnum[] accessLeveList)

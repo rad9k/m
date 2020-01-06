@@ -469,8 +469,8 @@ namespace m0.UIWpf.Controls
 
             IVertex root = MinusZero.Instance.Root;
 
-            input.AddEdge(root.Get(false, @"System\Meta\Commands*VisualiserClass"), ((IVertex)((MenuItem)sender).Tag));
-            input.AddEdge(root.Get(false, @"System\Meta\Commands*SynchronisedVisualiser"), PlatformClass.Vertex);
+            input.AddEdge(root.Get(false, @"System\Meta\Commands\VisualiserClass"), ((IVertex)((MenuItem)sender).Tag));
+            input.AddEdge(root.Get(false, @"System\Meta\Commands\SynchronisedVisualiser"), PlatformClass.Vertex);
 
             BaseCommands.OpenVisualiserSelectedBase(this.Edge, input);
         }
@@ -481,8 +481,8 @@ namespace m0.UIWpf.Controls
 
             IVertex root=MinusZero.Instance.Root;
 
-            input.AddEdge(root.Get(false, @"System\Meta\Commands*VisualiserClass"), ((IVertex)((MenuItem)sender).Tag));
-            input.AddEdge(root.Get(false, @"System\Meta\Commands*SynchronisedVisualiser"), PlatformClass.Vertex);
+            input.AddEdge(root.Get(false, @"System\Meta\Commands\VisualiserClass"), ((IVertex)((MenuItem)sender).Tag));
+            input.AddEdge(root.Get(false, @"System\Meta\Commands\SynchronisedVisualiser"), PlatformClass.Vertex);
 
             BaseCommands.OpenVisualiserSelectedSelected(this.Edge, input);
         }

@@ -165,38 +165,15 @@ namespace m0.Store
         }
 
         protected Dictionary<object, IVertex> VertexIdentifiersDictionary;
-        bool added;
-     //   protected int StoreVertexIdentifierCnt = 0;
+       
         public virtual void StoreVertexIdentifier(IVertex Vertex)
         {
-            
-            if (Vertex.Identifier is long &&
-                (long)Vertex.Identifier == 39468)
-            {
-                int x = 0;
-                added = true;
-            }
-
             if (!VertexIdentifiersDictionary.ContainsKey(Vertex.Identifier))
                 VertexIdentifiersDictionary.Add(Vertex.Identifier,Vertex);
-
-            if(added && !VertexIdentifiersDictionary.ContainsKey(39468))
-            {
-                int x = 0;
-            }
-           
-            //StoreVertexIdentifierCnt++;
         }
 
         public virtual void RemoveVertexIdentifier(IVertex Vertex)
         {
-
-            if (Vertex.Identifier is long &&
-                (long)Vertex.Identifier == 39468)
-            {
-                int x = 0;
-            }
-
             VertexIdentifiersDictionary.Remove(Vertex.Identifier);
         }
 
