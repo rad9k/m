@@ -509,17 +509,17 @@ namespace m0
             m0.LegacySystem.Util.GeneralUtil.ParseAndExcute(tr, r.Get(false, @"System\Meta"), @"{TEST3{Class:Customer{},Class:Person{$Description:opis,Attribute:Name,Attribute:Surname,Attribute:DateOfBirth},Class:Company{Attribute:Name,Attribute:RegistrationNumber,},Class:Adress{Attribute:Line 1,Attribute:Line 2,Attribute:Line 3,Attribute:City,Attribute:County,Attribute:Postal code,Attribute:Country},Class:Basket{Attribute:Creation date,Attribute:Status},Class:Item{Attribute:Name,Attribute:Description,Attribute:Price}}}");
 
 
-            tr.Get(false, @"TEST3\Customer").AddEdge(r.Get(false, @"System\Meta*$Is"), r.Get(false, @"System\Meta\ZeroUML\Class"));
-            tr.Get(false, @"TEST3\Person").AddEdge(r.Get(false, @"System\Meta*$Is"), r.Get(false, @"System\Meta\ZeroUML\Class"));
-            tr.Get(false, @"TEST3\Company").AddEdge(r.Get(false, @"System\Meta*$Is"), r.Get(false, @"System\Meta\ZeroUML\Class"));
-            tr.Get(false, @"TEST3\Adress").AddEdge(r.Get(false, @"System\Meta*$Is"), r.Get(false, @"System\Meta\ZeroUML\Class"));
-            tr.Get(false, @"TEST3\Basket").AddEdge(r.Get(false, @"System\Meta*$Is"), r.Get(false, @"System\Meta\ZeroUML\Class"));
-            tr.Get(false, @"TEST3\Item").AddEdge(r.Get(false, @"System\Meta*$Is"), r.Get(false, @"System\Meta\ZeroUML\Class"));
+            tr.Get(false, @"TEST3\Customer").AddEdge(r.Get(false, @"System\Meta?$Is"), r.Get(false, @"System\Meta\ZeroUML\Class"));
+            tr.Get(false, @"TEST3\Person").AddEdge(r.Get(false, @"System\Meta?$Is"), r.Get(false, @"System\Meta\ZeroUML\Class"));
+            tr.Get(false, @"TEST3\Company").AddEdge(r.Get(false, @"System\Meta?$Is"), r.Get(false, @"System\Meta\ZeroUML\Class"));
+            tr.Get(false, @"TEST3\Adress").AddEdge(r.Get(false, @"System\Meta?$Is"), r.Get(false, @"System\Meta\ZeroUML\Class"));
+            tr.Get(false, @"TEST3\Basket").AddEdge(r.Get(false, @"System\Meta?$Is"), r.Get(false, @"System\Meta\ZeroUML\Class"));
+            tr.Get(false, @"TEST3\Item").AddEdge(r.Get(false, @"System\Meta?$Is"), r.Get(false, @"System\Meta\ZeroUML\Class"));
 
             m0.LegacySystem.Util.GeneralUtil.ParseAndExcute(tr, r.Get(false, @"System\Meta"), "{TEST2,TEST{Class:Person{Association:Spouse{$MaxCardinality:1,$MaxTargetCardinality:1},Aggregation:Child{$MaxCardinality:3},Attribute:Name,Attribute:Surname,Attribute:Age{MinValue:0,MaxValue:40},Attribute:NoseLength{MinValue:0,MaxValue:40},Attribute:Money{MinValue:0,MaxValue:1000},Attribute:IsGood,Attribute:IsPretty,Attribute:IsPretty2,Attribute:IsPretty3},Enum:Pretty{EnumValue:Yes,EnumValue:No,EnumValue:Maybe}}}");
 
-            tr.Get(false, @"TEST\Pretty").AddEdge(r.Get(false, @"System\Meta*$Inherits"), r.Get(false, @"System\Meta\ZeroTypes\EnumBase"));
-            tr.Get(false, @"TEST\Person").AddEdge(r.Get(false, @"System\Meta*$Is"), r.Get(false, @"System\Meta\ZeroUML\Class"));
+            tr.Get(false, @"TEST\Pretty").AddEdge(r.Get(false, @"System\Meta?$Inherits"), r.Get(false, @"System\Meta\ZeroTypes\EnumBase"));
+            tr.Get(false, @"TEST\Person").AddEdge(r.Get(false, @"System\Meta?$Is"), r.Get(false, @"System\Meta\ZeroUML\Class"));
 
 
             ///
@@ -531,7 +531,7 @@ namespace m0
 
             IVertex smzt=r.Get(false, @"System\Meta\ZeroTypes");
 
-            IVertex EdgeTarget = r.Get(false, @"System\Meta*$EdgeTarget");
+            IVertex EdgeTarget = r.Get(false, @"System\Meta?$EdgeTarget");
 
             IVertex Person = tr.Get(false, @"TEST\Person");
 
@@ -577,8 +577,8 @@ namespace m0
 
             Person.Get(false, "Name").AddEdge(EdgeTarget, smzt.Get(false, "String"));
 
-            Person.Get(false, "Spouse").AddEdge(r.Get(false, @"System\Meta*$EdgeTarget"), Person);
-            Person.Get(false, "Child").AddEdge(r.Get(false, @"System\Meta*$EdgeTarget"), Person);
+            Person.Get(false, "Spouse").AddEdge(r.Get(false, @"System\Meta?$EdgeTarget"), Person);
+            Person.Get(false, "Child").AddEdge(r.Get(false, @"System\Meta?$EdgeTarget"), Person);
 
             Person.Get(false, "Surname").AddEdge(EdgeTarget, smzt.Get(false, "String"));
             Person.Get(false, "Age").AddEdge(EdgeTarget, smzt.Get(false, "Integer"));
@@ -594,10 +594,10 @@ namespace m0
 
             m0.LegacySystem.Util.GeneralUtil.ParseAndExcute(tr.Get(false, "TEST"), tr.Get(false, @"TEST"), "{Person:Person3{Name:Radek,Surname:Tereszczuk,Age:34,NoseLength:\"2,3\",Money:999,IsGood:False,IsPretty:},Person:Person4{Name:Maurycy,Surname:Tereszczuk,Age:1,NoseLength:1.1,Money:9999,IsGood:True,IsPretty:}}");
             
-            tr.Get(false, @"TEST\Person1").AddEdge(r.Get(false, @"System\Meta*$Is"), tr.Get(false, @"TEST\Person"));
-            tr.Get(false, @"TEST\Person2").AddEdge(r.Get(false, @"System\Meta*$Is"), tr.Get(false, @"TEST\Person"));
-            tr.Get(false, @"TEST\Person3").AddEdge(r.Get(false, @"System\Meta*$Is"), tr.Get(false, @"TEST\Person"));
-            tr.Get(false, @"TEST\Person4").AddEdge(r.Get(false, @"System\Meta*$Is"), tr.Get(false, @"TEST\Person"));
+            tr.Get(false, @"TEST\Person1").AddEdge(r.Get(false, @"System\Meta?$Is"), tr.Get(false, @"TEST\Person"));
+            tr.Get(false, @"TEST\Person2").AddEdge(r.Get(false, @"System\Meta?$Is"), tr.Get(false, @"TEST\Person"));
+            tr.Get(false, @"TEST\Person3").AddEdge(r.Get(false, @"System\Meta?$Is"), tr.Get(false, @"TEST\Person"));
+            tr.Get(false, @"TEST\Person4").AddEdge(r.Get(false, @"System\Meta>$Is"), tr.Get(false, @"TEST\Person"));
 
             GraphUtil.ReplaceEdge(tr.Get(false, @"TEST\Person1"), "IsPretty", tr.Get(false, @"TEST\Pretty\No"));
             GraphUtil.ReplaceEdge(tr.Get(false, @"TEST\Person2"), "IsPretty", tr.Get(false, @"TEST\Pretty\Yes"));
@@ -617,13 +617,13 @@ namespace m0
                 GraphUtil.ReplaceEdge(tr.Get(false, @"TEST2\Person3"+x), "IsPretty", tr.Get(false, @"TEST\Pretty\Yes"));
                 GraphUtil.ReplaceEdge(tr.Get(false, @"TEST2\Person4"+x), "IsPretty", tr.Get(false, @"TEST\Pretty\Yes"));
 
-                tr.Get(false, @"TEST2\Person1"+x+@"\Radek").AddEdge(r.Get(false, @"System\Meta*$Is"), smzt.Get(false, "String"));
+                tr.Get(false, @"TEST2\Person1"+x+@"\Radek").AddEdge(r.Get(false, @"System\Meta?$Is"), smzt.Get(false, "String"));
 
 
-                tr.Get(false, @"TEST2\Person1"+x).AddEdge(r.Get(false, @"System\Meta*$Is"), tr.Get(false, @"TEST\Person"));
-                tr.Get(false, @"TEST2\Person2"+x).AddEdge(r.Get(false, @"System\Meta*$Is"), tr.Get(false, @"TEST\Person"));
-                tr.Get(false, @"TEST2\Person3"+x).AddEdge(r.Get(false, @"System\Meta*$Is"), tr.Get(false, @"TEST\Person"));
-                tr.Get(false, @"TEST2\Person4"+x).AddEdge(r.Get(false, @"System\Meta*$Is"), tr.Get(false, @"TEST\Person"));
+                tr.Get(false, @"TEST2\Person1"+x).AddEdge(r.Get(false, @"System\Meta?$Is"), tr.Get(false, @"TEST\Person"));
+                tr.Get(false, @"TEST2\Person2"+x).AddEdge(r.Get(false, @"System\Meta?$Is"), tr.Get(false, @"TEST\Person"));
+                tr.Get(false, @"TEST2\Person3"+x).AddEdge(r.Get(false, @"System\Meta?$Is"), tr.Get(false, @"TEST\Person"));
+                tr.Get(false, @"TEST2\Person4"+x).AddEdge(r.Get(false, @"System\Meta?$Is"), tr.Get(false, @"TEST\Person"));
             }
 
             for (int x = 0; x < 1; x++)
@@ -659,23 +659,23 @@ namespace m0
 
             tr.Get(false, @"TEST\TestDiagram").AddVertex(r.Get(false, @"System\Meta\Visualiser\Diagram\SizeY"), 600.0);
 
-            tr.Get(false, @"TEST\TestDiagram").AddEdge(r.Get(false, @"System\Meta*$Is"), r.Get(false, @"System\Meta*Diagram"));
+            tr.Get(false, @"TEST\TestDiagram").AddEdge(r.Get(false, @"System\Meta?$Is"), r.Get(false, @"System\Meta?Diagram"));
             
-            IVertex i1=tr.Get(false, @"TEST\TestDiagram").AddVertex(r.Get(false, @"System\Meta*Item"),null);
+            IVertex i1=tr.Get(false, @"TEST\TestDiagram").AddVertex(r.Get(false, @"System\Meta?Item"),null);
 
             m0.LegacySystem.Util.GeneralUtil.ParseAndExcute(i1,r.Get(false, @"System\Meta"),"{PositionX:0,PositionY:0,SizeX:100,SizeY:100}");
 
-            IVertex i2 = tr.Get(false, @"TEST\TestDiagram").AddVertex(r.Get(false, @"System\Meta*Item"), null);
+            IVertex i2 = tr.Get(false, @"TEST\TestDiagram").AddVertex(r.Get(false, @"System\Meta?Item"), null);
 
             m0.LegacySystem.Util.GeneralUtil.ParseAndExcute(i2, r.Get(false, @"System\Meta"), "{PositionX:200,PositionY:200,SizeX:100,SizeY:100}");
 
-            i1.AddEdge(r.Get(false, @"System\Meta*$Is"), r.Get(false, @"System\Meta\Visualiser\DiagramInternal\DiagramRectangleItem"));
+            i1.AddEdge(r.Get(false, @"System\Meta?$Is"), r.Get(false, @"System\Meta\Visualiser\DiagramInternal\DiagramRectangleItem"));
 
             i1.AddEdge(r.Get(false, @"System\Meta\Visualiser\DiagramInternal\DiagramItemBase\Definition"), r.Get(false, @"System\Data\Visualiser\Diagram\Object"));
 
             Edge.AddEdgeByToVertex(i1, r.Get(false, @"System\Meta\ZeroTypes\HasBaseEdge\BaseEdge"), tr.Get(false, @"TEST\Person1"));
 
-            i2.AddEdge(r.Get(false, @"System\Meta*$Is"), r.Get(false, @"System\Meta\Visualiser\DiagramInternal\DiagramRectangleItem"));
+            i2.AddEdge(r.Get(false, @"System\Meta?$Is"), r.Get(false, @"System\Meta\Visualiser\DiagramInternal\DiagramRectangleItem"));
 
             i2.AddEdge(r.Get(false, @"System\Meta\Visualiser\DiagramInternal\DiagramItemBase\Definition"), r.Get(false, @"System\Data\Visualiser\Diagram\Object"));
 
@@ -685,21 +685,21 @@ namespace m0
 
 
 
-            i1 = tr.Get(false, @"TEST\TestDiagram").AddVertex(r.Get(false, @"System\Meta*Item"), null);
+            i1 = tr.Get(false, @"TEST\TestDiagram").AddVertex(r.Get(false, @"System\Meta?Item"), null);
 
             m0.LegacySystem.Util.GeneralUtil.ParseAndExcute(i1, r.Get(false, @"System\Meta"), "{PositionX:350,PositionY:0}");
 
-            i2 = tr.Get(false, @"TEST\TestDiagram").AddVertex(r.Get(false, @"System\Meta*Item"), null);
+            i2 = tr.Get(false, @"TEST\TestDiagram").AddVertex(r.Get(false, @"System\Meta?Item"), null);
 
             m0.LegacySystem.Util.GeneralUtil.ParseAndExcute(i2, r.Get(false, @"System\Meta"), "{PositionX:0,PositionY:350}");
 
             i1.AddEdge(r.Get(false, @"System\Meta\Visualiser\DiagramInternal\DiagramItemBase\Definition"), r.Get(false, @"System\Data\Visualiser\Diagram\Object"));
 
-            i1.AddEdge(r.Get(false, @"System\Meta*$Is"), r.Get(false, @"System\Meta\Visualiser\DiagramInternal\DiagramRectangleItem"));
+            i1.AddEdge(r.Get(false, @"System\Meta?$Is"), r.Get(false, @"System\Meta\Visualiser\DiagramInternal\DiagramRectangleItem"));
 
             Edge.AddEdgeByToVertex(i1, r.Get(false, @"System\Meta\ZeroTypes\HasBaseEdge\BaseEdge"), tr.Get(false, @"TEST\Person3"));
 
-            i2.AddEdge(r.Get(false, @"System\Meta*$Is"), r.Get(false, @"System\Meta\Visualiser\DiagramInternal\DiagramRectangleItem"));
+            i2.AddEdge(r.Get(false, @"System\Meta?$Is"), r.Get(false, @"System\Meta\Visualiser\DiagramInternal\DiagramRectangleItem"));
 
             i2.AddEdge(r.Get(false, @"System\Meta\Visualiser\DiagramInternal\DiagramItemBase\Definition"), r.Get(false, @"System\Data\Visualiser\Diagram\Object"));
 
@@ -772,7 +772,7 @@ namespace m0
             //////////////////////
 
             IVertex associations = tr.GetAll(false, @"TEST\Person\Association:");
-            IVertex ismeta = r.Get(false, @"System\Meta*$Is");
+            IVertex ismeta = r.Get(false, @"System\Meta?$Is");
             IVertex asmeta = r.Get(false, @"System\Meta\ZeroUML\Class\Association");
 
             //foreach (IEdge v in associations)
@@ -854,7 +854,7 @@ namespace m0
 
             // IVertex plus = VertexOperations.AddInstance(wh, smu.Get(false, "-"), smu.Get(false, @"While\Test"));
 
-            IVertex plus = VertexOperations.AddInstance(c, smu.Get(false, "+"), smu.Get(false, @"MultiOperator\Expression"));
+            //IVertex plus = VertexOperations.AddInstance(c, smu.Get(false, "+"), smu.Get(false, @"MultiOperator\Expression"));
 
             //plus.AddVertex(smb.Get(false, @"Vertex\$Description"), "plus opis MAIN");
 
@@ -864,7 +864,7 @@ namespace m0
 
             // plus.AddVertex(smu.Get(false, @"DoubleOperator\RightExpression"), "30");
 
-            plus.Value = "";
+            //plus.Value = "";
 
            // IVertex h = vx.AddVertex(null, "h");
 
@@ -874,7 +874,7 @@ namespace m0
 
            // vx.AddEdge(yyy, plus);
 
-              IVertex leftplus = VertexOperations.AddInstance(plus, smu.Get(false, "-"), smu.Get(false, @"DoubleOperator\LeftExpression"));
+              /*IVertex leftplus = VertexOperations.AddInstance(plus, smu.Get(false, "-"), smu.Get(false, @"DoubleOperator\LeftExpression"));
 
             leftplus.Value = "";
 
@@ -897,7 +897,7 @@ namespace m0
               v4.AddVertex(smb.Get(false, @"Vertex\$Description"), "opis");
 
 
-            
+            */
             
 
             //////////////////////////
