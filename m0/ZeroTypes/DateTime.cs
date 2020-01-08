@@ -10,15 +10,35 @@ namespace m0.ZeroTypes
     {
         public static void FillDateTime(IVertex basevertex, System.DateTime datetime)
         {
+            basevertex.AddVertex(Year, datetime.Year);            
+            basevertex.AddVertex(Month, datetime.Month);
+            basevertex.AddVertex(Day, datetime.Day);
+            basevertex.AddVertex(Hour, datetime.Hour);
+            basevertex.AddVertex(Minute, datetime.Minute);
+            basevertex.AddVertex(Second, datetime.Second);
+            basevertex.AddVertex(Millisecond, datetime.Millisecond);
+        }
+
+        static IVertex Year;
+        static IVertex Month;
+        static IVertex Day;
+        static IVertex Hour;
+        static IVertex Minute;
+        static IVertex Second;
+        static IVertex Millisecond;
+
+        public DateTime()
+        {
             IVertex sm = MinusZero.Instance.Root.Get(false, @"System\Meta");
 
-            basevertex.AddVertex(sm.Get(false, @"ZeroTypes\DateTime\Year"),datetime.Year);            
-            basevertex.AddVertex(sm.Get(false, @"ZeroTypes\DateTime\Month"),datetime.Month);
-            basevertex.AddVertex(sm.Get(false, @"ZeroTypes\DateTime\Day"),datetime.Day);
-            basevertex.AddVertex(sm.Get(false, @"ZeroTypes\DateTime\Hour"),datetime.Hour);
-            basevertex.AddVertex(sm.Get(false, @"ZeroTypes\DateTime\Minute"),datetime.Minute);
-            basevertex.AddVertex(sm.Get(false, @"ZeroTypes\DateTime\Second"),datetime.Second);
-            basevertex.AddVertex(sm.Get(false, @"ZeroTypes\DateTime\Millisecond"), datetime.Millisecond);
+            Year = sm.Get(false, @"ZeroTypes\DateTime\Year");
+            Month = sm.Get(false, @"ZeroTypes\DateTime\Month");
+            Day = sm.Get(false, @"ZeroTypes\DateTime\Day");
+            Hour = sm.Get(false, @"ZeroTypes\DateTime\Hour");
+            Minute = sm.Get(false, @"ZeroTypes\DateTime\Minute");
+            Second = sm.Get(false, @"ZeroTypes\DateTime\Second");
+            Millisecond = sm.Get(false, @"ZeroTypes\DateTime\Millisecond"); 
         }
+        
     }
 }

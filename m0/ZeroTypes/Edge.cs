@@ -9,6 +9,12 @@ namespace m0.ZeroTypes
 {
     public class Edge
     {
+        static IVertex vEdge = MinusZero.Instance.Root.Get(false, @"System\Meta\ZeroTypes\Edge");
+
+        static IVertex vFrom = MinusZero.Instance.Root.Get(false, @"System\Meta\ZeroTypes\Edge\From");
+        static IVertex vMeta = MinusZero.Instance.Root.Get(false, @"System\Meta\ZeroTypes\Edge\Meta");
+        static IVertex vTo = MinusZero.Instance.Root.Get(false, @"System\Meta\ZeroTypes\Edge\To");
+
         static public void CopyAndReplaceEdge(IVertex baseVertex, string MetaValue, IVertex EdgeVertex)
         {
             IEdge toReplace = GraphUtil.FindEdgeByMetaValue(baseVertex, MetaValue);
@@ -20,11 +26,9 @@ namespace m0.ZeroTypes
 
             IVertex edge = baseVertex.AddVertex(toReplace.Meta,null);
 
-            IVertex r = MinusZero.Instance.Root;
-
-            edge.AddEdge(r.Get(false, @"System\Meta\ZeroTypes\Edge\From"), EdgeVertex.Get(false, "From:"));
-            edge.AddEdge(r.Get(false, @"System\Meta\ZeroTypes\Edge\Meta"), EdgeVertex.Get(false, "Meta:"));
-            edge.AddEdge(r.Get(false, @"System\Meta\ZeroTypes\Edge\To"), EdgeVertex.Get(false, "To:"));   
+            edge.AddEdge(vFrom, EdgeVertex.Get(false, "From:"));
+            edge.AddEdge(vMeta, EdgeVertex.Get(false, "Meta:"));
+            edge.AddEdge(vTo, EdgeVertex.Get(false, "To:"));   
         }
 
         static public void CreateEdgeAndCreateOrReplaceEdgeByMeta(IVertex baseVertex, IVertex metaVertex, IEdge Edge)
@@ -44,20 +48,20 @@ namespace m0.ZeroTypes
 
             IVertex r = MinusZero.Instance.Root;
 
-            edge.AddEdge(r.Get(false, @"System\Meta\ZeroTypes\Edge\From"), Edge.From);
-            edge.AddEdge(r.Get(false, @"System\Meta\ZeroTypes\Edge\Meta"), Edge.Meta);
-            edge.AddEdge(r.Get(false, @"System\Meta\ZeroTypes\Edge\To"), Edge.To);
+            edge.AddEdge(vFrom, Edge.From);
+            edge.AddEdge(vMeta, Edge.Meta);
+            edge.AddEdge(vTo, Edge.To);
         }
 
         static public IVertex AddEdgeByToVertex(IVertex baseVertex, IVertex toVertex)
         {
             IVertex r = MinusZero.Instance.Root;
 
-            IVertex ev = baseVertex.AddVertex(r.Get(false, @"System\Meta\ZeroTypes\Edge"), null);
+            IVertex ev = baseVertex.AddVertex(vEdge, null);
 
-            ev.AddVertex(r.Get(false, @"System\Meta\ZeroTypes\Edge\From"), null);
-            ev.AddEdge(r.Get(false, @"System\Meta\ZeroTypes\Edge\Meta"),MinusZero.Instance.Empty);
-            ev.AddEdge(r.Get(false, @"System\Meta\ZeroTypes\Edge\To"), toVertex);                        
+            ev.AddVertex(vFrom, null);
+            ev.AddEdge(vMeta,MinusZero.Instance.Empty);
+            ev.AddEdge(vTo, toVertex);                        
 
             return ev;
         }
@@ -68,9 +72,9 @@ namespace m0.ZeroTypes
 
             IVertex ev = baseVertex.AddVertex(MetaEdge, null);
 
-            ev.AddVertex(r.Get(false, @"System\Meta\ZeroTypes\Edge\From"), null);
-            ev.AddEdge(r.Get(false, @"System\Meta\ZeroTypes\Edge\Meta"), MinusZero.Instance.Empty);
-            ev.AddEdge(r.Get(false, @"System\Meta\ZeroTypes\Edge\To"), toVertex);
+            ev.AddVertex(vFrom, null);
+            ev.AddEdge(vMeta, MinusZero.Instance.Empty);
+            ev.AddEdge(vTo, toVertex);
 
             return ev;
         }
@@ -79,11 +83,11 @@ namespace m0.ZeroTypes
         {
             IVertex r = MinusZero.Instance.Root;
 
-            IVertex ev = baseVertex.AddVertex(r.Get(false, @"System\Meta\ZeroTypes\Edge"), null);
+            IVertex ev = baseVertex.AddVertex(vEdge, null);
 
-            ev.AddEdge(r.Get(false, @"System\Meta\ZeroTypes\Edge\From"), fromEdge);
-            ev.AddEdge(r.Get(false, @"System\Meta\ZeroTypes\Edge\Meta"), metaEdge);
-            ev.AddEdge(r.Get(false, @"System\Meta\ZeroTypes\Edge\To"), toVertex);
+            ev.AddEdge(vFrom, fromEdge);
+            ev.AddEdge(vMeta, metaEdge);
+            ev.AddEdge(vTo, toVertex);
 
             return ev;
         }
@@ -92,7 +96,7 @@ namespace m0.ZeroTypes
         {
             IVertex r=MinusZero.Instance.Root;
 
-            IVertex ev = baseVertex.AddVertex(r.Get(false, @"System\Meta\ZeroTypes\Edge"), null);
+            IVertex ev = baseVertex.AddVertex(vEdge, null);
 
             AddEdgeEdges(ev, edge);
 
@@ -103,7 +107,7 @@ namespace m0.ZeroTypes
         {
             IVertex r = MinusZero.Instance.Root;
 
-            baseVertex.AddEdge(r.Get(false, @"System\Meta\ZeroTypes\Edge"), edge);          
+            baseVertex.AddEdge(vEdge, edge);          
         }
 
         static public IVertex CreateTempEdge(IEdge edge)
