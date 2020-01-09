@@ -1230,47 +1230,54 @@ namespace m0.ZeroCode
                     }
                     else
                     {
-                        bool isLinkKeyword = ZeroCodeCommon.isLinkKeywordString(text, sPos);
+                        string foundString;
+                        bool isLinkKeyword = false;
 
-                        while (shallProceed)
+                        foundString = ZeroCodeCommon.tryEscapedLinkString(text, ref sPos);
+
+                        if (foundString != null)
                         {
-                            sPos++;
+                            sPos_copy = sPos;
 
-                            if (!isLinkKeyword && ZeroCodeCommon.testIfIsKeywordSubstring(sPos, text, dict.allKeywordsSubstringsDictionary_witchoutAlpha, null))
-                                shallProceed = false;
+                        }else
+                        {
+                            isLinkKeyword = ZeroCodeCommon.isLinkKeywordString(text, sPos);
 
-                            if (isLinkKeyword && ZeroCodeCommon.testIfIsKeywordSubstring(sPos, text, dict.allKeywordsSubstringsPositiveDictionary_witchoutLinkKeywordParts, dict.allKeywordsSubstringsNegativeDictionary_witchoutLinkKeywordParts))
-                                shallProceed = false;
+                            while (shallProceed)
+                            {
+                                sPos++;
 
-                            if (s.currentLineInfo.IsLineEnd(sPos))
-                            { // the + 2 might be not needed, but who knows....
-                              //if (text[sPos] == '\r' || text[sPos] == '\n')
-                                sPos = s.currentLineInfo.lineEnd_NoTrim + 1;
-                                shallProceed = false;
+                                if (!isLinkKeyword && ZeroCodeCommon.testIfIsKeywordSubstring(sPos, text, dict.allKeywordsSubstringsDictionary_witchoutAlpha, null))
+                                    shallProceed = false;
+
+                                if (isLinkKeyword && ZeroCodeCommon.testIfIsKeywordSubstring(sPos, text, dict.allKeywordsSubstringsPositiveDictionary_witchoutLinkKeywordParts, dict.allKeywordsSubstringsNegativeDictionary_witchoutLinkKeywordParts))
+                                    shallProceed = false;
+
+                                if (s.currentLineInfo.IsLineEnd(sPos))
+                                { // the + 2 might be not needed, but who knows....
+                                  //if (text[sPos] == '\r' || text[sPos] == '\n')
+                                    sPos = s.currentLineInfo.lineEnd_NoTrim + 1;
+                                    shallProceed = false;
+                                }
+
+                                if (sPos == endPos_forAtomParts)
+                                    shallProceed = false;
                             }
 
-                            if (sPos == endPos_forAtomParts)
-                                shallProceed = false;
+                            sPos_copy = sPos;
+
+                            foundString = text.Substring(startPos, sPos - startPos);
+
                         }
+                    
+                        trySpecialKeyword = foundString;
 
-                        sPos_copy = sPos;
+                        if(isLinkKeyword)
+                            specialType = SpecialKeywordType.LinkKeyword;
+                        else
+                            specialType = SpecialKeywordType.EmptyKeyword;
 
-                        string foundString = text.Substring(startPos, sPos - startPos);
-
-                        /*if (!isTopLevelCall
-                            && ZeroCodeCommon.isLinkString(foundString))
-                            tryLink = ZeroCodeCommon.stringFromLinkString(foundString, false);
-                        else*/
-                        {
-                            trySpecialKeyword = foundString;
-
-                            if(isLinkKeyword)
-                                specialType = SpecialKeywordType.LinkKeyword;
-                            else
-                                specialType = SpecialKeywordType.EmptyKeyword;
-
-                            sPos++; // hmmm ????
-                        }
+                        sPos++; // hmmm ????
                     }
                 }
                 //MinusZero.Instance.Log(0, "_tryIfKeyword:", LOGPREFIX + "conditions 0: TRY / sPos_copy:" + sPos_copy + " isPrevStartPosSameAsStartPos: " + isPrevStartPosSameAsStartPos);

@@ -500,6 +500,8 @@ namespace m0
 
             IVertex tr = MinusZero.Instance.Root.AddVertex(null, "kupa");
 
+            IVertex _test = r.Get(false, ":'kupa'");
+
             //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
              queryTest(tr);

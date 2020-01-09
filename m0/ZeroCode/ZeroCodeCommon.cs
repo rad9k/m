@@ -48,9 +48,9 @@ namespace m0.ZeroCode
 
         public static char NewVertexSuffix = '\"';
 
-        public static char EscapePrefix = '\'';
+        public static char EscapedSequencePrefix = '\'';
 
-        public static char EscapeSuffix = '\'';
+        public static char EscapedSequenceSuffix = '\'';
 
         public static char EscapeCharacter = '\\';
 
@@ -212,9 +212,14 @@ namespace m0.ZeroCode
         {
             s = s.Substring(1, s.Length - 2);
 
-            s = s.Replace("\\\"", "\"");
+            //s = s.Replace("\\\\", "\\");
 
-            s = s.Replace("\\\\", "\\");
+            s = s.Replace(String.Concat(ZeroCodeCommon.EscapeCharacter, ZeroCodeCommon.EscapeCharacter), ZeroCodeCommon.EscapeCharacter.ToString());
+
+            // s = s.Replace("\\\"", "\"");
+
+            s = s.Replace(String.Concat(ZeroCodeCommon.EscapeCharacter,ZeroCodeCommon.NewVertexPrefix), ZeroCodeCommon.NewVertexPrefix.ToString());
+            s = s.Replace(String.Concat(ZeroCodeCommon.EscapeCharacter, ZeroCodeCommon.NewVertexSuffix), ZeroCodeCommon.NewVertexSuffix.ToString());
 
             return s;
         }
@@ -268,7 +273,7 @@ namespace m0.ZeroCode
 
         public static string surroundWithEscape(string s)
         {
-            return EscapePrefix + s + EscapeSuffix;
+            return EscapedSequencePrefix + s + EscapedSequenceSuffix;
         }
 
         public static string stringToPossiblyEscapedString(object o)
@@ -314,6 +319,35 @@ namespace m0.ZeroCode
         public static string stringFromEscapedString(string s)
         {
             return "";
+        }
+
+        internal static string tryEscapedLinkString(string text, ref int sPos)
+        {
+            int begSpos = sPos;
+
+            if (text[sPos] != ZeroCodeCommon.EscapedSequencePrefix)
+                return null;
+
+            bool canProceed=false;
+            do
+            {
+                sPos++;
+
+                canProceed = true;
+
+                if (text.Length > sPos && text[sPos - 1] == ZeroCodeCommon.EscapeCharacter && text[sPos] == ZeroCodeCommon.EscapedSequenceSuffix)
+                {
+
+                }
+                else if (text.Length <= sPos || text[sPos] == ZeroCodeCommon.EscapedSequenceSuffix || text[sPos] == '\r' || text[sPos] == '\n')
+                    canProceed = false;
+
+            } while (canProceed);
+
+            if (text[sPos] == ZeroCodeCommon.EscapedSequenceSuffix)
+                return text.Substring(begSpos + 1, sPos - begSpos - 1);
+
+            return null;
         }
 
         //////////////////////

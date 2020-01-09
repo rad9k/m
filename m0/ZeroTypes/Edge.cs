@@ -133,48 +133,43 @@ namespace m0.ZeroTypes
 
         static public void AddEdgeEdges(IVertex baseVertex, IEdge edge)
         {
-            IVertex r = MinusZero.Instance.Root;
-
-            baseVertex.AddEdge(r.Get(false, @"System\Meta\ZeroTypes\Edge\From"), edge.From);
-            baseVertex.AddEdge(r.Get(false, @"System\Meta\ZeroTypes\Edge\Meta"), edge.Meta);
-            baseVertex.AddEdge(r.Get(false, @"System\Meta\ZeroTypes\Edge\To"), edge.To);
+            baseVertex.AddEdge(vFrom, edge.From);
+            baseVertex.AddEdge(vMeta, edge.Meta);
+            baseVertex.AddEdge(vTo, edge.To);
         }
 
         static public void AddEdgeEdges(IVertex baseVertex, IVertex edgeFrom, IVertex edgeMeta, IVertex edgeTo)
         {
-            IVertex r = MinusZero.Instance.Root;
-
-            baseVertex.AddVertex(r.Get(false, @"System\Meta\ZeroTypes\Edge\From"), edgeFrom);
-            baseVertex.AddEdge(r.Get(false, @"System\Meta\ZeroTypes\Edge\Meta"), edgeMeta);
-            baseVertex.AddEdge(r.Get(false, @"System\Meta\ZeroTypes\Edge\To"), edgeTo);
+            baseVertex.AddVertex(vFrom, edgeFrom);
+            baseVertex.AddEdge(vMeta, edgeMeta);
+            baseVertex.AddEdge(vTo, edgeTo);
         }
 
         static public void AddEdgeEdgesOnlyMetaTo(IVertex baseVertex, IVertex edgeMeta, IVertex edgeTo)
         {
-            IVertex r = MinusZero.Instance.Root;
-
-            baseVertex.AddVertex(r.Get(false, @"System\Meta\ZeroTypes\Edge\From"), null);
-            baseVertex.AddEdge(r.Get(false, @"System\Meta\ZeroTypes\Edge\Meta"), edgeMeta);
-            baseVertex.AddEdge(r.Get(false, @"System\Meta\ZeroTypes\Edge\To"), edgeTo);
+            baseVertex.AddVertex(vFrom, null);
+            baseVertex.AddEdge(vMeta, edgeMeta);
+            baseVertex.AddEdge(vTo, edgeTo);
         }
 
         static public void AddEdgeEdgesOnlyTo(IVertex baseVertex, IVertex toVertex)
         {
-            IVertex r = MinusZero.Instance.Root;
-
-            baseVertex.AddVertex(r.Get(false, @"System\Meta\ZeroTypes\Edge\From"), null);
-            baseVertex.AddEdge(r.Get(false, @"System\Meta\ZeroTypes\Edge\Meta"), MinusZero.Instance.Empty);
-            baseVertex.AddEdge(r.Get(false, @"System\Meta\ZeroTypes\Edge\To"), toVertex);
+            baseVertex.AddVertex(vFrom, null);
+            baseVertex.AddEdge(vMeta, MinusZero.Instance.Empty);
+            baseVertex.AddEdge(vTo, toVertex);
         }
 
         static public IEdge FindEdgeByEdge(IVertex baseVertex, IEdge edge)
         {
             foreach (IEdge e in baseVertex)
-                if (e.To.Get(false, "From:") == edge.From
-                       && e.To.Get(false, "Meta:") == edge.Meta
-                       && e.To.Get(false, "To:") == edge.To
+                //if (e.To.Get(false, "From:") == edge.From
+                  //     && e.To.Get(false, "Meta:") == edge.Meta
+                    //   && e.To.Get(false, "To:") == edge.To
+                    if (GraphUtil.GetQueryInFirst(e.To, "From", null) == edge.From
+                       && GraphUtil.GetQueryInFirst(e.To, "Meta", null) == edge.Meta
+                       && GraphUtil.GetQueryInFirst(e.To, "To", null) == edge.To
                        )
-                    return e;
+                        return e;
 
             return null;
         }
@@ -182,7 +177,8 @@ namespace m0.ZeroTypes
         static public IEdge FindEdgeByEdgeOnlyToVertex(IVertex baseVertex, IEdge edge)
         {
             foreach (IEdge e in baseVertex)
-                if (e.To.Get(false, "To:") == edge.To)
+                //if (e.To.Get(false, "To:") == edge.To)
+                if (GraphUtil.GetQueryInFirst(e.To, "To", null) == edge.To)
                     return e;
 
             return null;
@@ -207,7 +203,8 @@ namespace m0.ZeroTypes
         static public IEdge FindEdgeByEdgeTo(IVertex baseVertex, IVertex to)
         {
             foreach (IEdge e in baseVertex)
-                if (e.To.Get(false, "To:") == to)
+                // if (e.To.Get(false, "To:") == to)
+                if (GraphUtil.GetQueryOutFirst(e.To, "To", null) == to)
                     return e;
 
             return null;
