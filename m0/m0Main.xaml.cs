@@ -301,6 +301,13 @@ namespace m0
             IVertex code = x.AddVertex(null, "code");
             IVertex stack = x.AddVertex(null, "stack");
 
+            IVertex code0 = code.AddVertex(null, null);
+            MinusZero.Instance.DefaultParser.Parse(code0,
+                "\"Code0\"" + "" +
+                "\r\n\tA +< \"A1\"" 
+                );
+
+
             IVertex code1 = code.AddVertex(null, null);
             MinusZero.Instance.DefaultParser.Parse(code1,
                 "\"Code1\"" + "" +
@@ -498,13 +505,11 @@ namespace m0
 
             //return;
 
-            IVertex tr = MinusZero.Instance.Root.AddVertex(null, "kupa");
-
-            IVertex _test = r.Get(false, ":'kupa'");
+            IVertex tr = MinusZero.Instance.Root.AddVertex(null, "examples");
 
             //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-             queryTest(tr);
+            queryTest(tr);
 
             exeTest(tr);
 

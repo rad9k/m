@@ -340,7 +340,10 @@ namespace m0.ZeroCode
             } while (canProceed);
 
             if (text[sPos] == ZeroCodeCommon.EscapedSequenceSuffix)
-                return text.Substring(begSpos + 1, sPos - begSpos - 1);
+            {
+                sPos++;
+                return text.Substring(begSpos + 1, sPos - begSpos - 2);
+            }
 
             return null;
         }
