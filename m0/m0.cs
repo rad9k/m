@@ -552,6 +552,13 @@ namespace m0
                 LegacySystem.Graph.EasyVertex.Get(sm, false, "*$Inherits"),
                 LegacySystem.Graph.EasyVertex.Get(smu, false, "SingleOperator"));
 
+            LegacySystem.Graph.EasyVertex.Get(smu, false, @"EdgeSetAdd").AddEdge(
+                LegacySystem.Graph.EasyVertex.Get(sm, false, "*$Inherits"),
+                LegacySystem.Graph.EasyVertex.Get(smu, false, "DoubleOperator"));
+            LegacySystem.Graph.EasyVertex.Get(smu, false, @"EdgeSetSubstract").AddEdge(
+                LegacySystem.Graph.EasyVertex.Get(sm, false, "*$Inherits"),
+                LegacySystem.Graph.EasyVertex.Get(smu, false, "DoubleOperator"));
+
             LegacySystem.Graph.EasyVertex.Get(smu, false, @"+").AddEdge(
                 LegacySystem.Graph.EasyVertex.Get(sm, false, "*$Inherits"),
                 LegacySystem.Graph.EasyVertex.Get(smu, false, "DoubleOperator"));
@@ -4256,6 +4263,9 @@ namespace m0
 
         private void AddIsAggregation()
         {
+            AddIsAggregation_inner(@"System\Meta\Store?Attribute:");
+            AddIsAggregation_inner(@"System\Meta\Store?Aggregation:");
+
             AddIsAggregation_inner(@"System\Meta\ZeroTypes?Attribute:");
             AddIsAggregation_inner(@"System\Meta\ZeroTypes?Aggregation:");
 

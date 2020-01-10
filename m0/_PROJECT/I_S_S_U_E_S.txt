@@ -4,10 +4,6 @@
 59. copy $Empty? [11]
 60. copy from Graph error [59]
 8. Get/GetAll switch [7]
-10. <@BaseEdge :: ""> [4] [11]
-					<@From :: @kupa\TEST\TestDiagram\Item:<4>\\> ??? from where
-					<@Meta :: @> ???
-					<@To :: @TEST\Person4>
 11. Diagram perf update [8]
 39. colors in editor
 57. editor text prev
@@ -18,6 +14,11 @@
 <><><> FUTURE 0.5
 
 4. escape sequences in rtq support by keywords [8] and especially '<' and '>'
+10. <@BaseEdge :: ""> [4] [11]
+					<@From :: @kupa\TEST\TestDiagram\Item:<4>\\> ??? from where
+					<@Meta :: @> ???
+					<@To :: @TEST\Person4>
+66. reference dict.allKeywordsSubstringsDictionary in ZeroCodeCommmon 291
 32. language definition correction to support languages inheritence
 12. parse / generate check
 34. Query dialog box refactoring

@@ -35,7 +35,7 @@ namespace m0.ZeroCode
             {
                 IVertex Is = _parent.To.Get(false, "$Is:");
 
-                if (Is != null && Is.Get(false, v.Value.ToString()) == v)
+                if (Is != null && Is.Get(false, ZeroCodeCommon.stringToPossiblyEscapedString(v.Value.ToString()) ) == v)
                     return (v.Value.ToString());
             }
 
@@ -234,7 +234,7 @@ namespace m0.ZeroCode
 
             linkBeenList.Add(v);
 
-            foreach (IEdge e in v.InEdgesRaw) 
+            foreach (IEdge e in v.InEdgesRaw.ToList()) // XXX toList added
                 if (!linkBeenList.Contains(e.From))
                 {
                     IEdge ee = new NonActingEdge(e.From, e.Meta, e.To);
@@ -678,8 +678,8 @@ namespace m0.ZeroCode
             if (queryString.Contains(@"\")) {
                 int firstSlahPosition;
 
-                if (queryString.StartsWith("(?<ANY>)")) // special handling of (?<ANY>) first level meta
-                {
+                if (queryString.StartsWith("(?<ANY>)") || queryString.StartsWith("'(?<ANY>)'")) // special handling of (?<ANY>) first level meta
+                { // XXX 'ANY'
                     firstSlahPosition = queryString.IndexOf('\\');
                     
                     secondQueryPart = queryString.Substring(firstSlahPosition + 1, queryString.Length - firstSlahPosition - 1);                    
@@ -1446,7 +1446,7 @@ namespace m0.ZeroCode
 
             if (firstMatchEdgeInGraphToCompare == null) // lets try with (?<ANY>) @ meta
             {
-                firstMatchingEdgesInGraphToCompare = graphToCompare.GetAll(false, "(?<ANY>):");
+                firstMatchingEdgesInGraphToCompare = graphToCompare.GetAll(false, "'(?<ANY>)':");
 
                 if (firstMatchingEdgesInGraphToCompare.Count() > 0)
                 {

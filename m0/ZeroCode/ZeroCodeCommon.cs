@@ -288,21 +288,21 @@ namespace m0.ZeroCode
             if (s.IndexOf(' ') != -1)
                 needToSurroundWithEscape = true;
 
-           // if (s.IndexOf('{') != -1)
-           //     wasThereReplace = true;
+            // XXX need to reference dict.allKeywordsSubstringsDictionary
 
-           // if (s.IndexOf('}') != -1)
-           //     wasThereReplace = true;
-
-            if (s.IndexOf('\\') != -1)
+            //if (s.IndexOf('\\') != -1)
+            if (s.IndexOf(EscapeCharacter) != -1)
             {
-                s = s.Replace("\\", "\\\\");
+                //s = s.Replace("\\", "\\\\");
+                s = s.Replace(EscapeCharacter.ToString(), String.Concat(EscapeCharacter, EscapeCharacter));
                 needToSurroundWithEscape = true;
             }
 
-            if (s.IndexOf('\'') != -1)
+            //if (s.IndexOf('\'') != -1)
+            if (s.IndexOf(EscapedSequencePrefix) != -1)
             {
-                s = s.Replace("'", "\\'");
+                //s = s.Replace("'", "\\'");
+                s = s.Replace(EscapedSequencePrefix.ToString(),String.Concat(EscapeCharacter,EscapedSequencePrefix));
                 needToSurroundWithEscape = true;
             }
 
@@ -314,11 +314,6 @@ namespace m0.ZeroCode
             else
                 return s;
 
-        }
-
-        public static string stringFromEscapedString(string s)
-        {
-            return "";
         }
 
         internal static string tryEscapedLinkString(string text, ref int sPos)
