@@ -33,6 +33,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="GOLD Engine">
+      <HintPath>..\m0\bin\Debug\GOLD Engine.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -43,11 +46,27 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="LegacySystem\FormalTextLanguage\GoldParser\GoldGenericParser.cs" />
+    <Compile Include="LegacySystem\FormalTextLanguage\GoldParser\GoldGenericParser_BackEnd.cs" />
+    <Compile Include="LegacySystem\Graph\EasyVertex.cs" />
+    <Compile Include="LegacySystem\LegacySystem.cs" />
+    <Compile Include="LegacySystem\m0.cs" />
+    <Compile Include="LegacySystem\Util\GeneralUtil.cs" />
+    <Compile Include="LegacySystem\ZeroCode\ZeroCodeEngine_OLD.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadata Include="Connected Services\" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\m0\m0.csproj">
+      <Project>{a8a00ded-611c-4ff5-8b12-5ecc14242b23}</Project>
+      <Name>m0</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
