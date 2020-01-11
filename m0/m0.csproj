@@ -6,7 +6,7 @@
     <ProductVersion>8.0.30703</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{A8A00DED-611C-4FF5-8B12-5ECC14242B23}</ProjectGuid>
-    <OutputType>WinExe</OutputType>
+    <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>m0</RootNamespace>
     <AssemblyName>m0</AssemblyName>
@@ -37,6 +37,9 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject />
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="GOLD Engine, Version=5.0.4337.25397, Culture=neutral, processorArchitecture=MSIL">
@@ -98,6 +101,7 @@
     <Compile Include="Graph\NonActingEdge.cs" />
     <Compile Include="LegacySystem\Graph\EasyVertex.cs" />
     <Compile Include="LegacySystem\LegacySystem.cs" />
+    <Compile Include="LegacySystem\m0.cs" />
     <Compile Include="LegacySystem\Util\GeneralUtil.cs" />
     <Compile Include="Process\UI\NonAtomProcess.cs" />
     <Compile Include="StartWindow.xaml.cs">
