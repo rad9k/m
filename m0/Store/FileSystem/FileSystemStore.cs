@@ -158,7 +158,45 @@ namespace m0.Store.FileSystem
         public static IVertex File_UpdateDateTime;
         public static IVertex File_ReadDateTime;
 
-        public static void FillSystemMeta()
+        static bool staticVariablesInitialisationMade = false;
+
+        private void IntializeStaticVariables()
+        {
+            MinusZero z = MinusZero.Instance;
+
+            FileSystem = z.Root.Get(false, @"System\Meta\Store\FileSystem");            
+
+            IVertex sm = z.Root.Get(false, @"System\Meta");                       
+
+            Directory = FileSystem.Get(false, "Directory");
+            File = FileSystem.Get(false, "File");
+
+            Store = FileSystem.Get(false, "$Store");
+                        
+            Directory_Filename = Directory.Get(false, "Filename");            
+            Directory_Extension = Directory.Get(false, "Extension");           
+            Directory_FullFilename = Directory.Get(false, "FullFilename");           
+            Directory_FileAttribute = Directory.Get(false, "FileAttribute");
+            Directory_CreationDateTime = Directory.Get(false, "CreationDateTime");
+            Directory_UpdateDateTime = Directory.Get(false, "UpdateDateTime");
+            Directory_ReadDateTime = Directory.Get(false, "ReadDateTime");
+            Directory_File = Directory.Get(false, "File");
+            Directory_Directory = Directory.Get(false, "Directory");
+
+            File_Content = File.Get(false, "Content");
+            File_Filename = File.Get(false, "Filename");
+            File_Extension = File.Get(false, "Extension");
+            File_FullFilename = File.Get(false, "FullFilename");
+            File_Size = File.Get(false, "Size");
+            File_FileAttribute = File.Get(false, "FileAttribute");
+            File_CreationDateTime = File.Get(false, "CreationDateTime");
+            File_UpdateDateTime = File.Get(false, "UpdateDateTime");
+            File_ReadDateTime = File.Get(false, "ReadDateTime");
+
+            staticVariablesInitialisationMade = true;
+        }
+
+        public static void FillSystemMeta() // called from m0_SYSTEM_GENERATE
         {
             MinusZero z = MinusZero.Instance;
 
@@ -247,6 +285,9 @@ namespace m0.Store.FileSystem
 
         public FileSystemStore(string identifier, IStoreUniverse storeUniverse, AccessLevelEnum[] accessLeveList)
         {
+            if (!staticVariablesInitialisationMade)
+                IntializeStaticVariables();
+
             _Identifier = identifier;
 
             _StoreUniverse = storeUniverse;

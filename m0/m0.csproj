@@ -440,10 +440,6 @@
     <EmbeddedResource Include="ZeroCodeHighlighting.xshd" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="__CodeSnippetes.txt" />
-    <Resource Include="__CodeSnippets2.txt" />
-  </ItemGroup>
-  <ItemGroup>
     <Resource Include="Images\Untitled1.png" />
   </ItemGroup>
   <ItemGroup>

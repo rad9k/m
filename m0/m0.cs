@@ -318,7 +318,7 @@ namespace m0
             return store;
         }
 
-        private void Initialize_PreParserReady()
+        public void Initialize()
         {
             LogLevel = -2;
 
@@ -326,71 +326,15 @@ namespace m0
 
             PreBootstrap();
 
-            Bootstrap();            
+            Bootstrap();
 
             Init();
 
-            ///////////
+            InitRootVariables();
 
-            LegacySystem.LegacySystem.LegacyInit();
-
-            ///////////
-
-            CreatePresentation();
-
-            CreateSystemMetaBase();
-
-
-            AddFastAccessVertexes();
-
-
-            CreateSystemMetaZeroUML();
-
-            CreateSystemMetaZeroTypes();
-
-            CreateSystemMetaZeroUML_ZeroCode_part();
-
-            CreateSystemFormalTextLanguageZeroCode();
-
-
-            CreateSystemFormalTextLanguegeZeroCode_Keywords();
-        }
-
-        private void Initialize_PostParserReady()
-        {
             Init_AfterZeroCodeDefintionCreated();
 
-
-
-            CreateSystemMetaVisualiserDiagram();
-
-            CreateSystemMetaVisualiser();
-
-            CreateSystemData();
-
-            CreateSystemDataVisualiserDiagram();
-
-            CreateSystemDataVisualiserDiagram_ZeroUML();
-
-            CreateSystemMetaStoreFileSystem();
-
-            CreateSystemMetaCommands();
-
-            CreateUserMeta();
-
-            CreateUsers();
-
-            AfterCreateUsers();            
-
-
-
-            AddIsAttribute("Attribute");
-
-            AddIsAttribute("Association");
-
-            AddIsAttribute("Aggregation");
-
-            AddIsAggregation();
+            FileSystemStore.FillSystemMeta();
 
             AddDrives();
 
@@ -399,20 +343,12 @@ namespace m0
             UIWpf.UIWpf.InitializeUIWpf();
 
             IsInitialized = true;
-        }
-
-        public void Initialize()
-        {
-            Initialize_PreParserReady();
-
-            // PARSER READY
-
-            Initialize_PostParserReady();
 
 
-            InitRootVariables();
 
-            FileSystemStore.FillSystemMeta();
+            
+
+            
         }
     }
 }

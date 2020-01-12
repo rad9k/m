@@ -46,6 +46,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CreateExamples.cs" />
     <Compile Include="LegacySystem\FormalTextLanguage\GoldParser\GoldGenericParser.cs" />
     <Compile Include="LegacySystem\FormalTextLanguage\GoldParser\GoldGenericParser_BackEnd.cs" />
     <Compile Include="LegacySystem\Graph\EasyVertex.cs" />
