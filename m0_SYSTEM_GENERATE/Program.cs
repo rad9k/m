@@ -1,4 +1,7 @@
-﻿using System;
+﻿using m0;
+using m0.Foundation;
+using m0.Store.Json;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -30,12 +33,18 @@ namespace m0_SYSTEM_GENERATE
             print("* legacy system initialized succesfully");
 
             print("* filling System");
+            print("* saving System to \"system.m0\"");
+
+            JsonSerializationStore s = new JsonSerializationStore(@"system.m0", MinusZero.Instance, new AccessLevelEnum[] { });
+
             print("* System saved to \"system.m0\"");
 
             print("* filling User");
+            print("* saving User to \"user.m0\"");
             print("* User saved to \"user.m0\"");
 
             print("* filling examples");
+            print("* saving examples to \"examples.m0\"");
             print("* examples saved to \"examples.m0\"");
 
             print("");
