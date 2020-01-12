@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-using m0;
+
 
 namespace m0_SYSTEM_GENERATE
 {
@@ -12,7 +12,7 @@ namespace m0_SYSTEM_GENERATE
     {
         static void Main(string[] args)
         {
-               
+            m0.LegacySystem.LegacySystem a = new m0.LegacySystem.LegacySystem();
         }
     }
 }

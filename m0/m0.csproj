@@ -99,10 +99,6 @@
     <Compile Include="Foundation\IUserInteraction.cs" />
     <Compile Include="Graph\IDictionaredVertex.cs" />
     <Compile Include="Graph\NonActingEdge.cs" />
-    <Compile Include="LegacySystem\Graph\EasyVertex.cs" />
-    <Compile Include="LegacySystem\LegacySystem.cs" />
-    <Compile Include="LegacySystem\m0.cs" />
-    <Compile Include="LegacySystem\Util\GeneralUtil.cs" />
     <Compile Include="Process\UI\NonAtomProcess.cs" />
     <Compile Include="StartWindow.xaml.cs">
       <DependentUpon>StartWindow.xaml</DependentUpon>
@@ -129,12 +125,6 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Store\StoreBase.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="LegacySystem\FormalTextLanguage\GoldParser\GoldGenericParser.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="LegacySystem\FormalTextLanguage\GoldParser\GoldGenericParser_BackEnd.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="FormalTextLanguage\IExecuter.cs">
@@ -267,9 +257,6 @@
     <Compile Include="ZeroCode\ZeroCodeExecuter.cs" />
     <Compile Include="ZeroCode\ZeroCodeExecution.cs" />
     <Compile Include="ZeroCode\ZeroCodeGraph2StringProcessing.cs" />
-    <Compile Include="LegacySystem\ZeroCode\ZeroCodeEngine_OLD.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="ZeroCode\ZeroCodeUtil.cs" />
     <Compile Include="ZeroTypes\DateTime.cs" />
     <Compile Include="ZeroTypes\Edge.cs" />
