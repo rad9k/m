@@ -28,12 +28,12 @@ namespace m0
         public IList<IStore> Stores { get { return stores; } }
 
 
-        IStore tempstore;
+        public IStore tempstore; // need this public hack for LegacySystem_m0 based generation in m0_SYSTEM_GENERATE
 
         public IStore TempStore { get { return tempstore; } }
 
 
-        IVertex root;
+        public IVertex root; // need this public hack for LegacySystem_m0 based generation in m0_SYSTEM_GENERATE
 
         public IVertex Root { get { return root; } }
 
@@ -48,7 +48,7 @@ namespace m0
         public IVertex StackFrameInherits { get { return stackFrameInherits; } }
 
 
-        IVertex empty;
+        public IVertex empty; // need this public hack for LegacySystem_m0 based generation in m0_SYSTEM_GENERATE
 
         public IVertex Empty { get { return empty; } }
 
@@ -63,28 +63,28 @@ namespace m0
         public IUserInteraction DefaultUserInteraction { get { return _DefaultUserInteraction; } }
         
 
-        IParser _DefaultParser;
+        public IParser _DefaultParser; // need this public hack for LegacySystem_m0 based generation in m0_SYSTEM_GENERATE
 
         public IParser DefaultParser { get { return _DefaultParser; } }
 
 
-        IExecuter _DefaultExecuter;
+        public IExecuter _DefaultExecuter; // need this public hack for LegacySystem_m0 based generation in m0_SYSTEM_GENERATE
 
         public IExecuter DefaultExecuter { get { return _DefaultExecuter; } }
 
         //
 
-        private IVertex _DefaultFormalTextLanguage;
+        public IVertex _DefaultFormalTextLanguage; // need this public hack for LegacySystem_m0 based generation in m0_SYSTEM_GENERATE
 
         public IVertex DefaultFormalTextLanguage { get { return _DefaultFormalTextLanguage; } }
         
 
-        ICodeGenerator _DefaultCodeGenerator;
+        public ICodeGenerator _DefaultCodeGenerator; // need this public hack for LegacySystem_m0 based generation in m0_SYSTEM_GENERATE
 
         public ICodeGenerator DefaultCodeGenerator { get { return _DefaultCodeGenerator; } }
 
 
-        IVertex tempRoot;
+        public IVertex tempRoot; // need this public hack for LegacySystem_m0 based generation in m0_SYSTEM_GENERATE
 
         public IVertex EdgeTarget;
         public IVertex Is;
@@ -207,7 +207,7 @@ namespace m0
 
         public int LogLevel = 0;
 
-        private void InitializeLog()
+        public void InitializeLog()   // need this public hack for LegacySystem_m0 based generation in m0_SYSTEM_GENERATE
         {
             if (DoLog)
             {
@@ -320,6 +320,9 @@ namespace m0
 
         public void Initialize()
         {
+            if (IsInitialized)
+                return;
+
             LogLevel = -2;
 
             InitializeLog();

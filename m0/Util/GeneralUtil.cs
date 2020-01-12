@@ -9,6 +9,7 @@ using System.Reflection;
 using System.Collections;
 using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
+using m0.Store.Json;
 
 namespace m0.Util
 {
@@ -32,6 +33,20 @@ namespace m0.Util
              return val;*/
 
             return Guid.NewGuid();
+        }
+
+        public static void CreateM0AndMoveEdgesIntoIt(string fileName, IVertex baseVertex)
+        {
+            JsonSerializationStore s = new JsonSerializationStore(fileName, MinusZero.Instance, new AccessLevelEnum[] { });
+
+            ZeroUML.Instructions.ZeroUMLInstructionHelpers.MoveEdgesIntoVertex(baseVertex, s.Root);
+
+            s.Root.Value = baseVertex.Value;
+            
+
+            s.Detach();
+            s.CommitTransaction();
+            s.Attach();
         }
 
         public static void DictionaryAdd<key,value>(Dictionary<key,List<value>> dict, key _key, value _value)

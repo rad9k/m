@@ -16,7 +16,7 @@ namespace m0
 {
     public class LegacySystem_MinusZero : IStoreUniverse, IDisposable
     {
-        public static MinusZero Instance = new MinusZero();
+        public static LegacySystem_MinusZero Instance = new LegacySystem_MinusZero();
 
         public bool IsInitialized = false;
 
@@ -113,6 +113,7 @@ namespace m0
 
             root = rootstore.Root;
 
+            MinusZero.Instance.root = root;
 
             Stores.Clear();
 
@@ -121,13 +122,18 @@ namespace m0
 
             tempstore = new MemoryStore("$-0$TEMP$STORE$", this, new AccessLevelEnum[] { AccessLevelEnum.NoRestrictions }, true);
 
+            MinusZero.Instance.tempstore = tempstore;
 
             empty = new IdentifiedVertex("$Empty", rootstore);
 
             empty.Value = "$Empty";
 
+            MinusZero.Instance.empty = empty;
+
 
             tempRoot = CreateTempVertex();
+
+            MinusZero.Instance.tempRoot = tempRoot;
 
         }
 
@@ -142,8 +148,11 @@ namespace m0
 
             _DefaultParser = zeroCodeEngine;
             _DefaultExecuter = zeroCodeEngine;
-
             _DefaultCodeGenerator = zeroCodeEngine;
+
+            MinusZero.Instance._DefaultParser = DefaultParser;
+            MinusZero.Instance._DefaultExecuter = DefaultExecuter;
+            MinusZero.Instance._DefaultCodeGenerator = DefaultCodeGenerator;
         }
 
 
@@ -2262,6 +2271,8 @@ namespace m0
             IVertex FormalTextLanguage = GraphUtil.GetQueryOutFirst(System, null, "FormalTextLanguage");
 
             _DefaultFormalTextLanguage = GraphUtil.GetQueryOutFirst(FormalTextLanguage, null, "ZeroCode");
+
+            MinusZero.Instance._DefaultFormalTextLanguage = DefaultFormalTextLanguage;
         }
 
         void CreateSystemFormalTextLanguageZeroCode()
@@ -4207,7 +4218,7 @@ namespace m0
 
         public LegacySystem_MinusZero()
         {
-            Initialize();
+            //Initialize();
         }
 
         private System.IO.StreamWriter logFile;
@@ -4217,10 +4228,10 @@ namespace m0
         public int LogLevel = 0;
 
         private void InitializeLog()
-        {
+        {            
             if (DoLog)
             {
-                logFile = new System.IO.StreamWriter("log.txt");
+                logFile = new System.IO.StreamWriter("LegacySystem_log.txt");
                 logFile.AutoFlush = true;
 
                 Log(0, "InitializeLog", "START");
@@ -4469,6 +4480,8 @@ namespace m0
 
         public void Initialize()
         {
+            MinusZero.Instance.InitializeLog();
+
             Initialize_PreParserReady();
 
             // PARSER READY

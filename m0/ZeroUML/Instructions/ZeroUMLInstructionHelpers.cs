@@ -74,7 +74,6 @@ namespace m0.ZeroUML.Instructions
 
                     MoveEdgesIntoVertex(e.To, newVertex);
                 }
-
         }
     }
 }

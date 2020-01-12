@@ -9,11 +9,13 @@ using m0.Foundation;
 using m0.Graph;
 using m0.ZeroTypes;
 
+// this one is a bit of trash
+
 namespace m0_SYSTEM_GENERATE
 {
     public class CreateExamples
     {
-        private string randomChars()
+        private static string randomChars()
         {
             Random r = new Random();
             int x = r.Next(5);
@@ -26,7 +28,7 @@ namespace m0_SYSTEM_GENERATE
             return xxx;
         }
 
-        void PrintRes(string header, IVertex r)
+        static void PrintRes(string header, IVertex r)
         {
             m0.MinusZero.Instance.Log(-2, "", "------ " + header);
 
@@ -35,14 +37,14 @@ namespace m0_SYSTEM_GENERATE
                     m0.MinusZero.Instance.Log(-2, "", "    " + e.Meta + " : " + e.To);
         }
 
-        void q(IVertex baseVertex, string query)
+        static void q(IVertex baseVertex, string query)
         {
             IVertex re = ((EasyVertex)baseVertex).GetAll(false, query);
 
             PrintRes(query, re);
         }
 
-        private void queryTest(IVertex tr)
+        static private void queryTest(IVertex tr)
         {
             IVertex r = MinusZero.Instance.Root;
 
@@ -129,7 +131,7 @@ namespace m0_SYSTEM_GENERATE
 
         }
 
-        void exeTest(IVertex x)
+        static void exeTest(IVertex x)
         {
             IVertex code = x.AddVertex(null, "code");
             IVertex stack = x.AddVertex(null, "stack");
@@ -320,7 +322,7 @@ namespace m0_SYSTEM_GENERATE
 
         }
 
-        private void CreateTestData()
+        public static void CreateTestData()
         {
             IVertex r = MinusZero.Instance.Root;
 
@@ -756,7 +758,7 @@ namespace m0_SYSTEM_GENERATE
 
         }
 
-        void addf(IVertex where)
+        static void addf(IVertex where)
         {
             IVertex r = MinusZero.Instance.Root;
 

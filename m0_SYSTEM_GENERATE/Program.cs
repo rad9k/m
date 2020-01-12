@@ -1,6 +1,7 @@
 ﻿using m0;
 using m0.Foundation;
 using m0.Store.Json;
+using m0.Util;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -32,19 +33,39 @@ namespace m0_SYSTEM_GENERATE
 
             print("* legacy system initialized succesfully");
 
-            print("* filling System");
+
+            //
+
+            print("* filling System and User");
+
+            LegacySystem_MinusZero.Instance.Initialize();
+
             print("* saving System to \"system.m0\"");
 
-            JsonSerializationStore s = new JsonSerializationStore(@"system.m0", MinusZero.Instance, new AccessLevelEnum[] { });
+            IVertex root= LegacySystem_MinusZero.Instance.Root;
+
+            GeneralUtil.CreateM0AndMoveEdgesIntoIt(@"system.m0", root.Get(false, "System"));
 
             print("* System saved to \"system.m0\"");
 
-            print("* filling User");
+            //
+
             print("* saving User to \"user.m0\"");
+
+            GeneralUtil.CreateM0AndMoveEdgesIntoIt("user.m0", root.Get(false, "User"));
+
             print("* User saved to \"user.m0\"");
 
+            //
+
             print("* filling examples");
+
+            CreateExamples.CreateTestData();
+
             print("* saving examples to \"examples.m0\"");
+
+            GeneralUtil.CreateM0AndMoveEdgesIntoIt("example.m0", root.Get(false, "example"));
+
             print("* examples saved to \"examples.m0\"");
 
             print("");
