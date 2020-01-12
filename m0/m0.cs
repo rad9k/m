@@ -37,28 +37,31 @@ namespace m0
 
         public IVertex Root { get { return root; } }
 
+
         IVertex inherits;
 
         public IVertex Inherits { get { return inherits; } }
+
 
         IVertex stackFrameInherits;
 
         public IVertex StackFrameInherits { get { return stackFrameInherits; } }
 
+
         IVertex empty;
 
         public IVertex Empty { get { return empty; } }
+
 
         IVertex dolar;
 
         public IVertex Dolar { get { return dolar; } }
 
+
         IUserInteraction _DefaultUserInteraction;
 
         public IUserInteraction DefaultUserInteraction { get { return _DefaultUserInteraction; } }
-       
-
-        //
+        
 
         IParser _DefaultParser;
 
@@ -76,11 +79,12 @@ namespace m0
         public IVertex DefaultFormalTextLanguage { get { return _DefaultFormalTextLanguage; } }
         
 
-
         ICodeGenerator _DefaultCodeGenerator;
 
         public ICodeGenerator DefaultCodeGenerator { get { return _DefaultCodeGenerator; } }
 
+
+        IVertex tempRoot;
 
         public IVertex EdgeTarget;
         public IVertex Is;
@@ -93,9 +97,7 @@ namespace m0
         public IVertex CreateTempVertex()
         {
             return new EasyVertex(this.tempstore);
-        }
-
-        public IVertex tempRoot;
+        }        
 
         public IEdge CreateTempEdge()
         {
@@ -126,9 +128,7 @@ namespace m0
 
             empty.Value = "$Empty";
 
-
             tempRoot = CreateTempVertex();
-
         }
 
         void Init()
@@ -145,110 +145,40 @@ namespace m0
 
             _DefaultCodeGenerator = zeroCodeEngine;
         }
-
-
        
-        void RootVariableVertexLinksCreate()
+        void InitRootVariables()
         {
             IVertex System = GraphUtil.GetQueryOutFirst(Root, null, "System");
 
             IVertex Meta = GraphUtil.GetQueryOutFirst(System, null, "Meta");
 
             IVertex Base = GraphUtil.GetQueryOutFirst(Meta, null, "Base");
-
-            empty = GraphUtil.GetQueryOutFirst(Base, null, "$Empty"); // there are some bugs related to this and old zeroscript.get
-
+            
             IVertex Vertex = GraphUtil.GetQueryOutFirst(Base, null, "Vertex");
+
+            //
+
+            empty = GraphUtil.GetQueryOutFirst(Base, null, "$Empty"); // there are some bugs related to this and old zeroscript.get ???
 
             inherits = GraphUtil.GetQueryOutFirst(Vertex, null, "$Inherits");
 
             stackFrameInherits = GraphUtil.GetQueryOutFirst(Vertex, null, "$StackFrameInherits");
 
             dolar = GraphUtil.GetQueryOutFirst(Base, null, "$");
-        }
 
-        
+            _DefaultFormalTextLanguage = MinusZero.Instance.Root.Get(false, @"User\CurrentUser:\DefaultFormalTextLanguage:");
+
+            EdgeTarget = GraphUtil.GetQueryOutFirst(Vertex, null, "$EdgeTarget");
+
+            Is = GraphUtil.GetQueryOutFirst(Vertex, null, "$Is");
+
+            IsAggregation = GraphUtil.GetQueryOutFirst(Vertex, null, "$IsAggregation");
+        }        
 
         void CreateSystemMetaStoreFileSystem()
         {
             FileSystemStore.FillSystemMeta();
-        }
-
-        void CreateSystemMetaCommands()
-        {
-            IVertex sm = Root.Get(false, @"System\Meta");
-
-            m0.LegacySystem.Util.GeneralUtil.ParseAndExcute(sm, sm, "{Commands{VisualiserClass,SynchronisedVisualiser}}");
-        }
-
-        void CreateUserMeta()
-        {
-            IVertex sm = Root.Get(false, @"System\Meta");
-
-            m0.LegacySystem.Util.GeneralUtil.ParseAndExcute(sm, sm, "{User{CurrentUser,Class:NonAtomProcess{Attribute:StartTimeStamp{$MinCardinality:1,$MaxCardinality:1}},Class:Session{Attribute:StartTimeStamp{$MinCardinality:1,$MaxCardinality:1},Aggregation:Process{$MinCardinality:0,$MaxCardinality:-1}},Class:User{Attribute:CurrentSession{$MinCardinality:1,$MaxCardinality:1},Aggregation:Session{$MinCardinality:0,$MaxCardinality:-1},Aggregation:Settings{$MinCardinality:1,$MaxCardinality:1},Aggregation:DefaultFormalTextLanguage{$MinCardinality:1,$MaxCardinality:1},Aggregation:Queries{$MinCardinality:1,$MaxCardinality:1}},Class:Settings{Attribute:CopyOnDragAndDrop{$MinCardinality:1,$MaxCardinality:1},Association:AllowBlankAreaDragAndDrop{$MinCardinality:1,$MaxCardinality:1},Attribute:AllowManyDiagramItemsForOneVertex{$MinCardinality:1,$MaxCardinality:1}},Enum:AllowBlankAreaDragAndDropEnum{EnumValue:No,EnumValue:OnlyEnd,EnumValue:StartAndEnd}}}");
-
-            sm.Get(false, @"User\NonAtomProcess").AddEdge(sm.Get(false, @"?$Is"), sm.Get(false, @"ZeroUML\Class"));
-            sm.Get(false, @"User\Session").AddEdge(sm.Get(false, @"?$Is"), sm.Get(false, @"ZeroUML\Class"));
-            sm.Get(false, @"User\User").AddEdge(sm.Get(false, @"?$Is"), sm.Get(false, @"ZeroUML\Class"));
-            sm.Get(false, @"User\Settings").AddEdge(sm.Get(false, @"?$Is"), sm.Get(false, @"ZeroUML\Class"));
-
-            sm.Get(false, @"User\NonAtomProcess\StartTimeStamp").AddEdge(sm.Get(false, @"?$EdgeTarget"), sm.Get(false, @"ZeroTypes\DateTime"));
-            sm.Get(false, @"User\Session\StartTimeStamp").AddEdge(sm.Get(false, @"?$EdgeTarget"), sm.Get(false, @"ZeroTypes\DateTime"));
-            sm.Get(false, @"User\Session\Process").AddEdge(sm.Get(false, @"?$EdgeTarget"), sm.Get(false, @"User\NonAtomProcess")); // to be updated
-            sm.Get(false, @"User\User\Session").AddEdge(sm.Get(false, @"?$EdgeTarget"), sm.Get(false, @"User\Session"));
-            sm.Get(false, @"User\User\CurrentSession").AddEdge(sm.Get(false, @"?$EdgeTarget"), sm.Get(false, @"User\Session"));
-            sm.Get(false, @"User\User\Settings").AddEdge(sm.Get(false, @"?$EdgeTarget"), sm.Get(false, @"User\Settings"));
-            sm.Get(false, @"User\User\DefaultFormalTextLanguage").AddEdge(sm.Get(false, @"?$EdgeTarget"), sm.Get(false, @"ZeroTypes\FormalTextLanguage"));
-            sm.Get(false, @"User\User\Queries").AddEdge(sm.Get(false, @"?$EdgeTarget"), sm.Get(false, @"ZeroTypes\VertexType"));
-            sm.Get(false, @"User\AllowBlankAreaDragAndDropEnum").AddEdge(sm.Get(false, @"?$Inherits"), sm.Get(false, @"ZeroTypes\EnumBase"));
-
-            sm.Get(false, @"User\Settings\CopyOnDragAndDrop").AddEdge(sm.Get(false, @"?$EdgeTarget"), sm.Get(false, @"ZeroTypes\Boolean"));
-            sm.Get(false, @"User\Settings\AllowBlankAreaDragAndDrop").AddEdge(sm.Get(false, @"?$EdgeTarget"), sm.Get(false, @"?AllowBlankAreaDragAndDropEnum"));
-            sm.Get(false, @"User\Settings\AllowManyDiagramItemsForOneVertex").AddEdge(sm.Get(false, @"?$EdgeTarget"), sm.Get(false, @"ZeroTypes\Boolean"));
-        }
-
-        void CreateUser(IVertex user)
-        {
-            IVertex sm = Root.Get(false, @"System\Meta");
-
-            m0.LegacySystem.Util.GeneralUtil.ParseAndExcute(user, sm, "{Settings:{CopyOnDragAndDrop:False,AllowManyDiagramItemsForOneVertex:True},Queries:{String:test,String:\"test{test2}\"}}");
-
-            user.Get(false, "Settings:").AddEdge(sm.Get(false, "?AllowBlankAreaDragAndDrop"), sm.Get(false, @"User\AllowBlankAreaDragAndDropEnum\StartAndEnd"));
-
-            user.AddEdge(sm.Get(false, @"?$Is"), sm.Get(false, @"User\User"));
-            user.Get(false, "Settings:").AddEdge(sm.Get(false, @"?$Is"), sm.Get(false, @"User\Settings"));
-
-            user.AddEdge(sm.Get(false, @"User\User\DefaultFormalTextLanguage"), Root.Get(false, @"System\FormalTextLanguage\ZeroCode"));
-
-            //IVertex cs = user.Get(false, @"CodeSettings:");
-            //cs.AddEdge(sm.Get(false, @"*$Is"), sm.Get(false, @"User\CodeSettings"));
-
-            //cs.AddEdge(sm.Get(false, @"User\CodeSettings\Keyword"), sm.Get(false, @"ZeroUML\Keyword"));
-
-            //foreach (IEdge e in Root.GetAll(false, @"System\FormalTextLanguage\ZeroCode\DefaultImports\"))
-                //if (!GraphUtil.GetValueAndCompareStrings(e.To, "$DirectMeta") && !GraphUtil.GetValueAndCompareStrings(e.To, "$Direct"))
-              //  cs.AddEdge(e.Meta, e.To);
-              // XXX
-            IVertex session = user.AddVertex(sm.Get(false, @"User\User\Session"), null);
-            user.AddEdge(sm.Get(false, @"User\User\CurrentSession"), session);
-        }
-
-        void CreateUsers()
-        {
-            IVertex sm = Root.Get(false, @"System\Meta\User");
-
-            m0.LegacySystem.Util.GeneralUtil.ParseAndExcute(Root, sm, "{User{User:root,User:wlodek,User:tadek}}");
-
-            foreach (IEdge u in Root.GetAll(false, @"User\"))
-                CreateUser(u.To);
-
-            Root.Get(false, @"User").AddEdge(Root.Get(false, @"System\Meta\User\CurrentUser"), Root.Get(false, @"User\root"));
-        }
-
-        void AfterCreateUsers()
-        {
-            _DefaultFormalTextLanguage = MinusZero.Instance.Root.Get(false, @"User\CurrentUser:\DefaultFormalTextLanguage:");
-        }
+        }        
 
         void AddDrives()
         {
@@ -291,8 +221,7 @@ namespace m0
         public void Log(int Level, string Where, string What)
         {
             if (DoLog && Level <= LogLevel)
-                logFile.WriteLine(System.DateTime.Now.ToLongTimeString()+":"+ System.DateTime.Now.Millisecond+"["+Level+"]:"+" "+Where+": "+What);
-                //logFile.WriteLine(What);
+                logFile.WriteLine(System.DateTime.Now.ToLongTimeString()+":"+ System.DateTime.Now.Millisecond+"["+Level+"]:"+" "+Where+": "+What);        
         }
 
         private void DisposeLog()
@@ -302,53 +231,7 @@ namespace m0
         }
 
         ///
-
-        private void AddIsAttribute(string what)
-        {
-            AddIsAttribute_inner(@"System\Meta\ZeroTypes?" + what + ":", what);
-            AddIsAttribute_inner(@"System\Meta\Visualiser?" + what + ":", what);
-            AddIsAttribute_inner(@"System\Meta\User?" + what + ":", what);
-        }
-
-        private void AddIsAttribute_inner(string s, string what)
-        {
-            IVertex attributes = root.GetAll(false, s);
-            IVertex ismeta = root.Get(false, @"System\Meta?$Is");
-            IVertex ameta = root.Get(false, @"System\Meta\ZeroUML\Class\" + what);
-
-            foreach (IEdge v in attributes)
-                if (v.To.Get(false, @"$Is:" + ameta) == null)
-                    v.To.AddEdge(ismeta, ameta);
-
-        }
-
-        private void AddIsAggregation()
-        {
-            AddIsAggregation_inner(@"System\Meta\Store?Attribute:");
-            AddIsAggregation_inner(@"System\Meta\Store?Aggregation:");
-
-            AddIsAggregation_inner(@"System\Meta\ZeroTypes?Attribute:");
-            AddIsAggregation_inner(@"System\Meta\ZeroTypes?Aggregation:");
-
-            AddIsAggregation_inner(@"System\Meta\Visualiser?Attribute:");
-            AddIsAggregation_inner(@"System\Meta\Visualiser?Aggregation:");
-
-            AddIsAggregation_inner(@"System\Meta\User?Attribute:");
-            AddIsAggregation_inner(@"System\Meta\User?Aggregation:");
-        }
-
-        private void AddIsAggregation_inner(string s)
-        {
-            IVertex isaggregationtarget = root.GetAll(false, s);
-
-            IVertex isAggregation = root.Get(false, @"System\Meta\Base\Vertex\$IsAggregation");
-            IVertex empty = root.Get(false, @"System\Meta\Base\$Empty");
-
-            foreach (IEdge v in isaggregationtarget)
-                if (v.To.Get(false, @"$IsAggregation:") == null)
-                    v.To.AddEdge(isAggregation, empty);
-        }
-
+        
         bool disposed = false;
 
         public void Dispose()
@@ -420,7 +303,6 @@ namespace m0
                 s.Attach();
         }
 
-
         public IStore GetStore(string StoreTypeName, string StoreIdentifier)
         {
             IStore store = Stores.Where(s => s.TypeName == StoreTypeName & s.Identifier == StoreIdentifier).FirstOrDefault();
@@ -436,13 +318,6 @@ namespace m0
             return store;
         }
 
-        private void AddFastAccessVertexes()
-        {
-            EdgeTarget = LegacySystem.Graph.EasyVertex.Get(Root, false, @"System\Meta\Base\Vertex\$EdgeTarget");
-            Is = LegacySystem.Graph.EasyVertex.Get(Root, false, @"System\Meta\Base\Vertex\$Is");
-            IsAggregation = LegacySystem.Graph.EasyVertex.Get(Root, false, @"System\Meta\Base\Vertex\$IsAggregation");
-        }
-
         private void Initialize_PreParserReady()
         {
             LogLevel = -2;
@@ -451,9 +326,7 @@ namespace m0
 
             PreBootstrap();
 
-            Bootstrap();
-
-            CreateSystem();            
+            Bootstrap();            
 
             Init();
 
@@ -537,7 +410,9 @@ namespace m0
             Initialize_PostParserReady();
 
 
-            RootVariableVertexLinksCreate();
+            InitRootVariables();
+
+            FileSystemStore.FillSystemMeta();
         }
     }
 }
