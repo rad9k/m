@@ -17,17 +17,32 @@ namespace m0_SYSTEM_GENERATE
 
         static void Main(string[] args)
         {
-            print("m0 SYSTEM GENERATE" +
-                "version 0.5 " +
-                "SYSTEM / USER / EXAMPLES m0 files generator");
+            print("m0 SYSTEM GENERATE");
+            print("version 0.5 ");
+            print("SYSTEM / USER / EXAMPLES m0 files generator");
 
             print("");
 
-            print("initializing legacy system");
+            print("* initializing legacy system");
 
             m0.LegacySystem.LegacySystem a = new m0.LegacySystem.LegacySystem();
 
-            print("legacy system initialized succesfully");
+            print("* legacy system initialized succesfully");
+
+            print("* filling System");
+            print("* System saved to \"system.m0\"");
+
+            print("* filling User");
+            print("* User saved to \"user.m0\"");
+
+            print("* filling examples");
+            print("* examples saved to \"examples.m0\"");
+
+            print("");
+
+            print("execution succesfull finish");
+            
+            //System.Console.ReadKey();
         }
     }
 }
