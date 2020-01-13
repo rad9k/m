@@ -61,18 +61,25 @@ namespace m0.ZeroUML.Instructions
 
         public static void MoveEdgesIntoVertex(IEnumerable<IEdge> toMoveList, IVertex moveTarget)
         {
+            _MoveEdgesIntoVertex(toMoveList, moveTarget, new List<IVertex>());
+        }
+
+        private static void _MoveEdgesIntoVertex(IEnumerable<IEdge> toMoveList, IVertex moveTarget, List<IVertex> beenList)
+        {
             foreach(IEdge e in toMoveList.ToArray())
-                if (!VertexOperations.IsLink(e))
+                if (!VertexOperations.IsLink(e) && !beenList.Contains(e.To))
                 {
+                    beenList.Add(e.To);
+
                     IVertex newVertex = moveTarget.AddVertex(e.Meta, e.To.Value);
 
-                    foreach(IEdge edgeToETo in e.To.InEdgesRaw.ToArray())
+                    /*foreach(IEdge edgeToETo in e.To.InEdgesRaw.ToArray())
                     {
                         edgeToETo.From.AddEdge(edgeToETo.Meta, newVertex);
                         edgeToETo.From.DeleteEdge(edgeToETo);
-                    }
+                    }*/
 
-                    MoveEdgesIntoVertex(e.To, newVertex);
+                    _MoveEdgesIntoVertex(e.To, newVertex, beenList);
                 }
         }
     }
