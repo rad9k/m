@@ -32,6 +32,10 @@ namespace m0
 
         public IStore TempStore { get { return tempstore; } }
 
+        IStore emptystore;
+
+        public IStore EmptyStore { get { return emptystore; } }
+
 
         IVertex root;
 
@@ -124,7 +128,9 @@ namespace m0
 
             MinusZero.Instance.tempstore = tempstore;
 
-            empty = new IdentifiedVertex("$Empty", rootstore);
+            emptystore = new MemoryStore("$-0$EMPTY$STORE$", this, new AccessLevelEnum[] { AccessLevelEnum.NoRestrictions }, true);
+
+            empty = new IdentifiedVertex("$Empty", emptystore);
 
             empty.Value = "$Empty";
 
@@ -181,7 +187,11 @@ namespace m0
         {
             IVertex sm = LegacySystem.Graph.EasyVertex.Get(Root,false, @"System\Meta");
 
-            m0.LegacySystem.Util.GeneralUtil.ParseAndExcute(sm, null, "{Base{$,Vertex{$IsLink,$Inherits,$StackFrameInherits,$Is,$EdgeTarget,$VertexTarget,$IsAggregation,$MinCardinality,$MaxCardinality,$MinTargetCardinality,$MaxTargetCardinality,$DefaultValue,$DefaultViewVisualiser,$DefaultEditVisualiser,$DefaultOpenVisualiser,$Group,$Section,$Description,$ExecutableEndPoint,Author,Dependency},$Empty,$Import,$ImportMeta,$Keyword,$KeywordGroupDefinition,$$KeywordGroup,$$KeywordManyRoot,$$LocalRoot,$$StartInLocalRoot,$$EmptyKeyword,$$NewVertexKeyword,$$LinkKeyword,$$NonSelfRecursiveParameters,$NewLine,$ParseRoot,$ParseArtefacts}}");
+            m0.LegacySystem.Util.GeneralUtil.ParseAndExcute(sm, null, "{Base{$,Vertex{$IsLink,$Inherits,$StackFrameInherits,$Is,$EdgeTarget,$VertexTarget,$IsAggregation,$MinCardinality,$MaxCardinality,$MinTargetCardinality,$MaxTargetCardinality,$DefaultValue,$DefaultViewVisualiser,$DefaultEditVisualiser,$DefaultOpenVisualiser,$Group,$Section,$Description,$ExecutableEndPoint,Author,Dependency},$Import,$ImportMeta,$Keyword,$KeywordGroupDefinition,$$KeywordGroup,$$KeywordManyRoot,$$LocalRoot,$$StartInLocalRoot,$$EmptyKeyword,$$NewVertexKeyword,$$LinkKeyword,$$NonSelfRecursiveParameters,$NewLine,$ParseRoot,$ParseArtefacts}}");
+
+            LegacySystem.Graph.EasyVertex.Get(sm, false, @"Base").AddEdge(
+                null,
+                Empty);
 
             LegacySystem.Graph.EasyVertex.Get(sm,false, @"Presentation\$Hide").AddEdge(
                 LegacySystem.Graph.EasyVertex.Get(sm,false, @"Base\Vertex\$EdgeTarget"), 
@@ -250,7 +260,8 @@ namespace m0
 
             IVertex Base = GraphUtil.GetQueryOutFirst(Meta, null, "Base");
 
-            empty = GraphUtil.GetQueryOutFirst(Base, null, "$Empty"); // there are some bugs related to this and old zeroscript.get
+            //empty = GraphUtil.GetQueryOutFirst(Base, null, "$Empty"); // there are some bugs related to this and old zeroscript.get
+            // we want to use $-0$EMPTY$STORE$
 
             IVertex Vertex = GraphUtil.GetQueryOutFirst(Base, null, "Vertex");
 
@@ -953,7 +964,8 @@ namespace m0
             IVertex kgd_Inner = k.AddVertex(keywordGroupDefinition, "Inner");
 
             IVertex isAggregation = LegacySystem.Graph.EasyVertex.Get(root, false, @"System\Meta\Base\Vertex\$IsAggregation");
-            IVertex empty = LegacySystem.Graph.EasyVertex.Get(root, false, @"System\Meta\Base\$Empty");
+            //IVertex empty = LegacySystem.Graph.EasyVertex.Get(root, false, @"System\Meta\Base\$Empty");
+            // we wanto to use instance.empty
             IVertex _is = LegacySystem.Graph.EasyVertex.Get(root, false, @"System\Meta\Base\Vertex\$Is");
 
 
@@ -1210,7 +1222,7 @@ namespace m0
             mmip.AddVertex(LegacySystem.Graph.EasyVertex.Get(smb, false, @"Vertex\$VertexTarget"), "(?<paramType>)");
 
             mmip.AddEdge(LegacySystem.Graph.EasyVertex.Get(smb, false, @"$$KeywordManyRoot"),
-                LegacySystem.Graph.EasyVertex.Get(smb, false, @"$Empty"));
+                Empty);
 
             // method
             //
@@ -1228,7 +1240,7 @@ namespace m0
             m2fip.AddVertex(LegacySystem.Graph.EasyVertex.Get(smb, false, @"Vertex\$VertexTarget"), "(?<paramType>)");
 
             m2fip.AddEdge(LegacySystem.Graph.EasyVertex.Get(smb, false, @"$$KeywordManyRoot"),
-                LegacySystem.Graph.EasyVertex.Get(smb, false, @"$Empty"));
+                Empty);
 
             // function
             //
@@ -1248,7 +1260,7 @@ namespace m0
             ffip.AddVertex(LegacySystem.Graph.EasyVertex.Get(smb, false, @"Vertex\$VertexTarget"), "(?<paramType>)");
 
             ffip.AddEdge(LegacySystem.Graph.EasyVertex.Get(smb, false, @"$$KeywordManyRoot"), 
-                LegacySystem.Graph.EasyVertex.Get(smb, false, @"$Empty"));
+                Empty);
 
             // function
             //
@@ -1266,7 +1278,7 @@ namespace m0
             f2fip.AddVertex(LegacySystem.Graph.EasyVertex.Get(smb, false, @"Vertex\$VertexTarget"), "(?<paramType>)");
 
             f2fip.AddEdge(LegacySystem.Graph.EasyVertex.Get(smb, false, @"$$KeywordManyRoot"),
-                LegacySystem.Graph.EasyVertex.Get(smb, false, @"$Empty"));
+                Empty);
 
             /////////////////////////////////////////////////////////
             //
@@ -1812,7 +1824,7 @@ namespace m0
               IVertex o_call_any_param = o_call_any.AddVertex(LegacySystem.Graph.EasyVertex.Get(smu, false, @"MultiOperator\Expression"), "(?<expr>)");
            
               o_call_any_param.AddEdge(LegacySystem.Graph.EasyVertex.Get(smb, false, @"$$KeywordManyRoot"),
-                  LegacySystem.Graph.EasyVertex.Get(smb, false, @"$Empty"));
+                  Empty);
 
             // return
             //
@@ -1986,7 +1998,7 @@ namespace m0
             IVertex o_InnerCreation_any_param = o_InnerCreation_any.AddVertex(LegacySystem.Graph.EasyVertex.Get(smu, false, @"MultiOperator\Expression"), "(?<expr>)");
 
             o_InnerCreation_any_param.AddEdge(LegacySystem.Graph.EasyVertex.Get(smb, false, @"$$KeywordManyRoot"),
-                LegacySystem.Graph.EasyVertex.Get(smb, false, @"$Empty"));
+                Empty);
 
             // {} // 2       
             //
@@ -2012,7 +2024,7 @@ namespace m0
             IVertex o_Inner2_any_any_param = o_Inner2_any.AddVertex(LegacySystem.Graph.EasyVertex.Get(smu, false, @"MultiOperator\Expression"), "(?<expr>)");
 
             o_Inner2_any_any_param.AddEdge(LegacySystem.Graph.EasyVertex.Get(smb, false, @"$$KeywordManyRoot"),
-                LegacySystem.Graph.EasyVertex.Get(smb, false, @"$Empty"));
+                Empty);
 
             IVertex o_Inner2_any_targetExpr = o_Inner2_any.AddVertex(LegacySystem.Graph.EasyVertex.Get(smu, false, @"ExpressionAtom\NextExpression"), "");
 
@@ -2037,7 +2049,7 @@ namespace m0
             IVertex o_Inner_any_any_param = o_Inner_any.AddVertex(LegacySystem.Graph.EasyVertex.Get(smu, false, @"MultiOperator\Expression"), "(?<expr1>)");
 
             o_Inner_any_any_param.AddEdge(LegacySystem.Graph.EasyVertex.Get(smb, false, @"$$KeywordManyRoot"),
-                LegacySystem.Graph.EasyVertex.Get(smb, false, @"$Empty"));
+                Empty);
                 
 
             // ""

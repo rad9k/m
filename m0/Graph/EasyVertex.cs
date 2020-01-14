@@ -486,7 +486,7 @@ namespace m0.Graph
             _OutEdgesRaw = new List<IEdge>();
 
 
-            _Identifier = Store.VertexIdentifierCount++;
+            _Identifier = Store.VertexIdentifierCount++;            
 
             InEdgesDictionariesNeedsRebuild = true;
             OutEdgesDictionariesNeedsRebuild = true;

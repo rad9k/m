@@ -168,6 +168,10 @@ namespace m0.Store
        
         public virtual void StoreVertexIdentifier(IVertex Vertex)
         {
+            if (GeneralUtil.CompareStrings(Vertex.Value,"$Empty"))
+            {
+                int x = 0;
+            }
             if (!VertexIdentifiersDictionary.ContainsKey(Vertex.Identifier))
                 VertexIdentifiersDictionary.Add(Vertex.Identifier,Vertex);
         }
