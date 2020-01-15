@@ -75,6 +75,8 @@ namespace m0.Store.FileSystem
             get { return _AcessLevel; }
         }
 
+        public bool AlwaysPresent { get { return false; } }
+
         public void StoreVertexIdentifier(IVertex Vertex)
         {
             //throw new NotImplementedException();

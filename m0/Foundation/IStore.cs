@@ -41,6 +41,7 @@ namespace m0.Foundation
         
         String Identifier { get; }
                
+        bool AlwaysPresent { get; } // if AlwaysPresent, do not have to move its vertexes in the ZeroUMLInstructionHelper.MoveEdgesIntoVertex
 
         void Detach();
 

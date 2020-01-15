@@ -67,7 +67,7 @@ namespace m0.ZeroUML.Instructions
         private static void _MoveEdgesIntoVertex(IEnumerable<IEdge> toMoveList, IVertex moveTarget, List<IVertex> beenList)
         {
             foreach(IEdge e in toMoveList.ToArray())
-                if (!VertexOperations.IsLink(e) && !beenList.Contains(e.To))
+                if (!VertexOperations.IsLink(e) && !beenList.Contains(e.To) && e.To.Store.AlwaysPresent == false)
                 {
                     beenList.Add(e.To);
 

@@ -64,7 +64,7 @@ namespace m0_SYSTEM_GENERATE
 
             print("* saving examples to \"examples.m0\"");
 
-            GeneralUtil.CreateM0AndMoveEdgesIntoIt("example.m0", root.Get(false, "example"));
+            GeneralUtil.CreateM0AndMoveEdgesIntoIt("example.m0", root.Get(false, "examples"));
 
             print("* examples saved to \"examples.m0\"");
 

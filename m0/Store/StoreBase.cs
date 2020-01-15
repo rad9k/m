@@ -151,6 +151,13 @@ namespace m0.Store
             get { return _AcessLevel; }
         }
 
+        protected bool alwaysPresent;
+
+        public bool AlwaysPresent
+        {
+            get { return alwaysPresent; }
+        }
+
         public StoreBase(string identifier, IStoreUniverse storeUniverse, AccessLevelEnum[] accessLeveList)
         {
             _Identifier = identifier;

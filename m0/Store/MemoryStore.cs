@@ -34,6 +34,9 @@ namespace m0.Store
         {
             IsTemporaryStore = _IsTemporaryStore;
 
+            if (identifier == "$-0$EMPTY$STORE$") // hack
+                alwaysPresent = true;
+
             _root = new EasyVertex(this);
         }
 

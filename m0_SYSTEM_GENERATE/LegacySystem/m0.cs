@@ -113,6 +113,8 @@ namespace m0
 
         void Bootstrap()
         {
+            MinusZero.Instance.stores = stores;
+
             IStore rootstore = new MemoryStore("$-0$ROOT$STORE$", this, new AccessLevelEnum[] { AccessLevelEnum.NoRestrictions });
 
             root = rootstore.Root;
@@ -132,9 +134,11 @@ namespace m0
 
             empty = new IdentifiedVertex("$Empty", emptystore);
 
-            empty.Value = "$Empty";
+            empty.Value = "$Empty";            
 
             MinusZero.Instance.empty = empty;
+
+            emptystore.Root.AddEdge(null, empty);
 
 
             tempRoot = CreateTempVertex();
@@ -2237,7 +2241,7 @@ namespace m0
             IVertex o_methodCall_any_param = o_methodCall_any.AddVertex(LegacySystem.Graph.EasyVertex.Get(smu, false, @"MultiOperator\Expression"), "(?<expr>)");
 
             o_methodCall_any_param.AddEdge(LegacySystem.Graph.EasyVertex.Get(smb, false, @"$$KeywordManyRoot"),
-                LegacySystem.Graph.EasyVertex.Get(smb, false, @"$Empty"));
+                Empty);
                 
         }
 
@@ -4304,7 +4308,6 @@ namespace m0
             IVertex isaggregationtarget = root.GetAll(false, s);
 
             IVertex isAggregation = root.Get(false, @"System\Meta\Base\Vertex\$IsAggregation");
-            IVertex empty = root.Get(false, @"System\Meta\Base\$Empty");
 
             foreach (IEdge v in isaggregationtarget)
                 if (v.To.Get(false, @"$IsAggregation:") == null)

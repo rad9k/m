@@ -23,7 +23,7 @@ namespace m0
         public AccessLevelEnum[] GetStoreDefaultAccessLevelList = new AccessLevelEnum[] { AccessLevelEnum.NoRestrictions };
 
 
-        IList<IStore> stores = new List<IStore>();
+        public IList<IStore> stores = new List<IStore>(); // need this public hack for LegacySystem_m0 based generation in m0_SYSTEM_GENERATE
 
         public IList<IStore> Stores { get { return stores; } }
 
