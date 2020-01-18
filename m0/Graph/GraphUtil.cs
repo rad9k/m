@@ -808,7 +808,7 @@ namespace m0.Graph
                     newVertex.AddEdge(e.Meta, e.To);                      
         }
 
-        static public IEnumerable<IVertex> GetSubGraph(IVertex iterationRoot)
+        static public List<IVertex> GetSubGraphAsList(IVertex iterationRoot)
         {
             List<IVertex> visited = new List<IVertex>();            
 

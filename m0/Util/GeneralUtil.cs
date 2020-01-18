@@ -10,6 +10,7 @@ using System.Collections;
 using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 using m0.Store.Json;
+using System.IO;
 
 namespace m0.Util
 {
@@ -37,12 +38,19 @@ namespace m0.Util
 
         public static void CreateM0AndMoveEdgesIntoIt(string fileName, IVertex baseVertex)
         {
+            CreateM0AndMoveEdgesIntoIt_LeaveVertexesFromList(fileName, baseVertex, new List<IVertex>());            
+        }
+
+        public static void CreateM0AndMoveEdgesIntoIt_LeaveVertexesFromList(string fileName, IVertex baseVertex, IList<IVertex> vertexToLeave)
+        {
+            File.Delete(fileName);
+
             JsonSerializationStore s = new JsonSerializationStore(fileName, MinusZero.Instance, new AccessLevelEnum[] { });
 
-            ZeroUML.Instructions.ZeroUMLInstructionHelpers.MoveEdgesIntoVertex(baseVertex, s.Root);
+            ZeroUML.Instructions.ZeroUMLInstructionHelpers.MoveEdgesIntoVertex_LeaveVertexesFromList(baseVertex, s.Root, vertexToLeave);
 
             s.Root.Value = baseVertex.Value;
-            
+
 
             s.Detach();
             s.CommitTransaction();

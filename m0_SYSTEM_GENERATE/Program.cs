@@ -1,5 +1,6 @@
 ﻿using m0;
 using m0.Foundation;
+using m0.Graph;
 using m0.Store.Json;
 using m0.Util;
 using System;
@@ -40,11 +41,13 @@ namespace m0_SYSTEM_GENERATE
 
             LegacySystem_MinusZero.Instance.Initialize();
 
-            print("* saving System to \"system.m0\"");
+            IVertex root = LegacySystem_MinusZero.Instance.Root;
+            IVertex System = root.Get(false, "System");
+            IVertex User = root.Get(false, "User");
 
-            IVertex root= LegacySystem_MinusZero.Instance.Root;
+            print("* saving System to \"system.m0\"");            
 
-            GeneralUtil.CreateM0AndMoveEdgesIntoIt(@"system.m0", root.Get(false, "System"));
+            GeneralUtil.CreateM0AndMoveEdgesIntoIt(@"system.m0", System);
 
             print("* System saved to \"system.m0\"");
 
@@ -52,7 +55,7 @@ namespace m0_SYSTEM_GENERATE
 
             print("* saving User to \"user.m0\"");
 
-            GeneralUtil.CreateM0AndMoveEdgesIntoIt("user.m0", root.Get(false, "User"));
+            GeneralUtil.CreateM0AndMoveEdgesIntoIt_LeaveVertexesFromList("user.m0", User, GraphUtil.GetSubGraphAsList(System) );
 
             print("* User saved to \"user.m0\"");
 
@@ -64,7 +67,8 @@ namespace m0_SYSTEM_GENERATE
 
             print("* saving examples to \"examples.m0\"");
 
-            GeneralUtil.CreateM0AndMoveEdgesIntoIt("example.m0", root.Get(false, "examples"));
+            IVertex examples = root.Get(false, "examples");            
+            GeneralUtil.CreateM0AndMoveEdgesIntoIt_LeaveVertexesFromList("examples.m0", User, GraphUtil.GetSubGraphAsList(examples));
 
             print("* examples saved to \"examples.m0\"");
 

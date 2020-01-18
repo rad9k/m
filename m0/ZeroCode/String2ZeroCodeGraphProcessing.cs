@@ -2917,7 +2917,7 @@ namespace m0.ZeroCode
 
         void GestSubGraphPreProcessing()
         {
-            SubGraphPreProcessing = GraphUtil.GetSubGraph(baseVertex);
+            SubGraphPreProcessing = GraphUtil.GetSubGraphAsList(baseVertex);
         }
 
         void MoveInEdgesComingFromOutsideOfSubGraphToParseRoot()
