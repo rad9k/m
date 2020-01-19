@@ -206,6 +206,11 @@ namespace m0.Graph
             get { throw new NotImplementedException(); }
         }
 
+        public virtual IList<IEdge> MetaInEdgesRaw
+        {
+            get { throw new NotImplementedException(); }
+        }
+
         protected virtual IVertex CreateVertexInstance()
         {
             return (IVertex)Activator.CreateInstance(this.GetType(), new object[] { this.Store });
@@ -229,6 +234,16 @@ namespace m0.Graph
             AddEdge(metaVertex, nv);
 
             return nv;
+        }
+
+        public virtual void AddMetaInEdge(IEdge edge)
+        {
+            throw new NotImplementedException();
+        }
+
+        public virtual void DeleteMetaInEdge(IEdge edge)
+        {
+            throw new NotImplementedException();
         }
 
         public virtual void AddInEdge(IEdge edge)

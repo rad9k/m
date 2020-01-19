@@ -64,28 +64,33 @@ namespace m0.ZeroUML.Instructions
             _MoveEdgesIntoVertex(toMoveList, moveTarget, new List<IVertex>());
         }
 
-        public static void MoveEdgesIntoVertex_LeaveVertexesFromList(IEnumerable<IEdge> toMoveList, IVertex moveTarget, IList<IVertex> vertexesToLeave)
+        public static void MoveEdgesIntoVertex_LeaveVertexesFromList(IEnumerable<IEdge> toMoveList, IVertex moveTarget, IList<IVertex> vertexesToLink)
         {
-            _MoveEdgesIntoVertex(toMoveList, moveTarget, vertexesToLeave);
+            _MoveEdgesIntoVertex(toMoveList, moveTarget, vertexesToLink);
         }
 
-        private static void _MoveEdgesIntoVertex(IEnumerable<IEdge> toMoveList, IVertex moveTarget, IList<IVertex> beenList)
+        private static void _MoveEdgesIntoVertex(IEnumerable<IEdge> toMoveList, IVertex moveTarget, IList<IVertex> vertexToLink)
         {
-            foreach(IEdge e in toMoveList.ToArray())
-                if (!VertexOperations.IsLink(e) && !beenList.Contains(e.To) && e.To.Store.AlwaysPresent == false)
-                {
-                    beenList.Add(e.To);
+            foreach (IEdge e in toMoveList.ToArray())
+                if(e.To.Store.AlwaysPresent || vertexToLink.Contains(e.To) || VertexOperations.IsLink(e))                
+                    moveTarget.AddEdge(e.Meta, e.To); // LINK ONLY
+                else {                 
+                    vertexToLink.Add(e.To); // FULL COPY
 
                     IVertex newVertex = moveTarget.AddVertex(e.Meta, e.To.Value);
 
-                    /*foreach(IEdge edgeToETo in e.To.InEdgesRaw.ToArray())
+                    vertexToLink.Add(newVertex); // FULL COPY
+
+                    foreach (IEdge edgeToETo in e.To.InEdgesRaw.ToArray())
                     {
                         edgeToETo.From.AddEdge(edgeToETo.Meta, newVertex);
-                        edgeToETo.From.DeleteEdge(edgeToETo);
-                    }*/
 
-                    _MoveEdgesIntoVertex(e.To, newVertex, beenList);
+                        edgeToETo.From.DeleteEdge(edgeToETo);
+                    }
+
+                    _MoveEdgesIntoVertex(e.To, newVertex, vertexToLink);
                 }
+           
         }
     }
 }

@@ -128,6 +128,10 @@ namespace m0.Graph
             }
         }
 
+        protected IList<IEdge> _MetaInEdgesRaw;
+
+        public override IList<IEdge> MetaInEdgesRaw { get { return _MetaInEdgesRaw; } }
+
         private void OutEdgesDictionariesRebuild_Edges()
         {
             if (HasInheritance && AllowInheritance)
@@ -344,6 +348,28 @@ namespace m0.Graph
             OutEdgesDictionariesNeedsRebuild_MetaAndValue = false;
         }
 
+        public override void AddMetaInEdge(IEdge edge)
+        {
+            MetaInEdgesRaw.Add(edge);
+
+            UsageCounter++;         
+        }
+
+        public override void DeleteMetaInEdge(IEdge _edge)
+        {
+            IEdge edge = null;
+
+            foreach (IEdge e in MetaInEdgesRaw)
+                if (e.Meta == _edge.Meta && e.From == _edge.From)
+                    edge = e;
+
+            if (edge != null)
+            {
+                InEdgesRaw.Remove(edge);
+
+                UsageCounter--;
+            }
+        }
 
         public override void AddInEdge(IEdge edge)
         {            
@@ -484,6 +510,7 @@ namespace m0.Graph
         {
             _InEdgesRaw = new List<IEdge>();
             _OutEdgesRaw = new List<IEdge>();
+            _MetaInEdgesRaw = new List<IEdge>();
 
 
             _Identifier = Store.VertexIdentifierCount++;            

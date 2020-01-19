@@ -41,11 +41,8 @@ namespace m0.Graph
             else
                 _meta = MinusZero.Instance.Empty;
 
-            if (Meta is IHasUsageCounter)
-            {
-                IHasUsageCounter huc = (IHasUsageCounter)Meta;
-                huc.UsageCounter++;
-            }
+            if (_meta != null)
+                _meta.AddMetaInEdge(this);            
 
             _to = To;
 

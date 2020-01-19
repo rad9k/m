@@ -37,11 +37,13 @@ namespace m0.Foundation
 
         IList<IEdge> OutEdgesRaw { get;} // without $Inherits
 
-        IList<IEdge> InEdges { get; }
+        IList<IEdge> OutEdges { get; }        
 
         IList<IEdge> InEdgesRaw { get; } // without $Inherits
 
-        IList<IEdge> OutEdges { get; }
+        IList<IEdge> InEdges { get; }        
+
+        IList<IEdge> MetaInEdgesRaw { get; } // without $Inherits
 
         // 2.0 BEG
 
@@ -57,6 +59,10 @@ namespace m0.Foundation
         // 2.0 END
 
         IVertex AddVertex(IVertex metaVertex, object val);
+
+        void AddMetaInEdge(IEdge edge);
+
+        void DeleteMetaInEdge(IEdge edge);
 
         void AddInEdge(IEdge edge);
 
