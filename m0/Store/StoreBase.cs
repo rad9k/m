@@ -101,6 +101,10 @@ namespace m0.Store
                 foreach (IEdge e in v.InEdgesRaw)
                     if (e.From.Store == InDetachStore)
                         v.DeleteInEdge(e);
+
+                foreach (IEdge e in v.MetaInEdgesRaw) // XXX ??? I do not know what this function does but I think that there should be also this part :)
+                    if (e.From.Store == InDetachStore)
+                        v.DeleteMetaInEdge(e);
             }
 
             _DetachState = DetachStateEnum.InDetached;
@@ -118,11 +122,13 @@ namespace m0.Store
 
             foreach (IVertex v in VertexIdentifiersDictionary.Values)
             {
+                MinusZero.Instance.Log(-2, "VERTEX " + v.Value, v.Store.TypeName);
                //foreach (IEdge e in v.OutEdges)
                foreach (IEdge e in v.OutEdgesRaw)
                     if (e is IDetachableEdge)
-                    {
+                    {                                                
                         IDetachableEdge de = (IDetachableEdge)e;
+                        MinusZero.Instance.Log(-2, "EDGE  " + de.MetaIdentifier + "//" + de.ToIdentifier, "META:"+de.MetaStoreIdentifier + " TO:"+de.ToStoreIdentifier);
                         if (de.DetachState == DetachStateEnum.Detached)
                             de.Attach();
 

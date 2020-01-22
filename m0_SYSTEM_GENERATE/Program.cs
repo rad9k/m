@@ -45,8 +45,8 @@ namespace m0_SYSTEM_GENERATE
             IVertex System = root.Get(false, "System");
             IVertex User = root.Get(false, "User");
 
-            print("* saving System to \"system.m0\"");            
-
+            print("* saving System to \"system.m0\"");
+            
             GeneralUtil.CreateM0AndMoveEdgesIntoIt(@"system.m0", System);
 
             print("* System saved to \"system.m0\"");

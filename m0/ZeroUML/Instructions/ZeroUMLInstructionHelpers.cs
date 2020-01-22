@@ -88,6 +88,13 @@ namespace m0.ZeroUML.Instructions
                         edgeToETo.From.DeleteEdge(edgeToETo);
                     }
 
+                    foreach (IEdge edgeToETo in e.To.MetaInEdgesRaw)
+                    {
+                        edgeToETo.From.AddEdge(newVertex, edgeToETo.To);
+
+                        edgeToETo.From.DeleteEdge(edgeToETo);
+                    }
+
                     _MoveEdgesIntoVertex(e.To, newVertex, vertexToLink);
                 }
            
