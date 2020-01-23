@@ -217,7 +217,7 @@ namespace m0.Store.Json
 
                         JsonEdge je = new JsonEdge();
 
-                        je.MetaStoreId = GetStoreId(data, de.MetaStoreTypeName, de.MetaStoreIdentifier);
+                        je.MetaStoreId = GetStoreId(data, de.MetaStoreTypeName, de.MetaStoreIdentifier, de.MetaIdentifier);
 
                         if (de.MetaIdentifier != null)
                         {
@@ -227,7 +227,7 @@ namespace m0.Store.Json
                                 je.MetaIdLong = (long)de.MetaIdentifier; // :)
                         }
 
-                        je.ToStoreId = GetStoreId(data, de.ToStoreTypeName, de.ToStoreIdentifier);
+                        je.ToStoreId = GetStoreId(data, de.ToStoreTypeName, de.ToStoreIdentifier, de.ToIdentifier);
 
                         if (de.ToIdentifier is string)
                             je.ToIdString = (string)de.ToIdentifier;
@@ -242,10 +242,13 @@ namespace m0.Store.Json
             return data;
         }
 
-        private int GetStoreId(JsonSerializationData data, string StoreTypeName, string StoreIdentifier)
+        private int GetStoreId(JsonSerializationData data, string StoreTypeName, string StoreIdentifier, object vertexIdentifier)
         {
             if (StoreTypeName == this.TypeName && StoreIdentifier == this.Identifier)
                 return 0;
+
+            if (StoreIdentifier == "$-0$ROOT$STORE$" && vertexIdentifier is long && (long)vertexIdentifier == 0)
+                return -1;
 
             foreach (KeyValuePair<int,StoreId> sid in data.StoreIdDictionary)
                 if (sid.Value.TypeName == StoreTypeName && sid.Value.Identifier == StoreIdentifier)

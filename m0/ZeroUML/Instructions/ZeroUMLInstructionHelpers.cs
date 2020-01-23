@@ -66,9 +66,9 @@ namespace m0.ZeroUML.Instructions
 
         private static void _MoveEdgesIntoVertex_SkipLinkInfo(IEnumerable<IEdge> toMoveList, IVertex moveTarget, IList<IVertex> vertexToLink)
         {
-            foreach (IEdge e in toMoveList.ToArray())
-                if (e.To.Store.AlwaysPresent || vertexToLink.Contains(e.To) /*|| VertexOperations.IsLink(e)*/) // IsLink IS SKIPPED
-                    moveTarget.AddEdge(e.Meta, e.To); // LINK ONLY
+            foreach (IEdge e in toMoveList.ToArray())                            
+                if (e.To.Store.AlwaysPresent || vertexToLink.Contains(e.To) || e.To == MinusZero.Instance.root /*|| VertexOperations.IsLink(e)*/) // IsLink IS SKIPPED                                    
+                    moveTarget.AddEdge(e.Meta, e.To); // LINK ONLY                
                 else
                 {
                     vertexToLink.Add(e.To); // FULL COPY
@@ -92,8 +92,7 @@ namespace m0.ZeroUML.Instructions
                     }
 
                     _MoveEdgesIntoVertex_SkipLinkInfo(e.To, newVertex, vertexToLink);
-                }
-
+                }            
         }
 
         public static void MoveEdgesIntoVertex(IEnumerable<IEdge> toMoveList, IVertex moveTarget)
