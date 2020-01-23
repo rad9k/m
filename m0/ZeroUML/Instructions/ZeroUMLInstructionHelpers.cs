@@ -58,6 +58,43 @@ namespace m0.ZeroUML.Instructions
                 
             return nv;
         }
+        
+        public static void MoveEdgesIntoVertex_SkipLinkInfo(IEnumerable<IEdge> toMoveList, IVertex moveTarget)
+        {
+            _MoveEdgesIntoVertex_SkipLinkInfo(toMoveList, moveTarget, new List<IVertex>());
+        }        
+
+        private static void _MoveEdgesIntoVertex_SkipLinkInfo(IEnumerable<IEdge> toMoveList, IVertex moveTarget, IList<IVertex> vertexToLink)
+        {
+            foreach (IEdge e in toMoveList.ToArray())
+                if (e.To.Store.AlwaysPresent || vertexToLink.Contains(e.To) /*|| VertexOperations.IsLink(e)*/) // IsLink IS SKIPPED
+                    moveTarget.AddEdge(e.Meta, e.To); // LINK ONLY
+                else
+                {
+                    vertexToLink.Add(e.To); // FULL COPY
+
+                    IVertex newVertex = moveTarget.AddVertex(e.Meta, e.To.Value);
+
+                    vertexToLink.Add(newVertex); // FULL COPY
+
+                    foreach (IEdge edgeToETo in e.To.InEdgesRaw.ToArray())
+                    {
+                        edgeToETo.From.AddEdge(edgeToETo.Meta, newVertex);
+
+                        edgeToETo.From.DeleteEdge(edgeToETo);
+                    }
+
+                    foreach (IEdge edgeToETo in e.To.MetaInEdgesRaw)
+                    {
+                        edgeToETo.From.AddEdge(newVertex, edgeToETo.To);
+
+                        edgeToETo.From.DeleteEdge(edgeToETo);
+                    }
+
+                    _MoveEdgesIntoVertex_SkipLinkInfo(e.To, newVertex, vertexToLink);
+                }
+
+        }
 
         public static void MoveEdgesIntoVertex(IEnumerable<IEdge> toMoveList, IVertex moveTarget)
         {
@@ -67,7 +104,7 @@ namespace m0.ZeroUML.Instructions
         public static void MoveEdgesIntoVertex_LeaveVertexesFromList(IEnumerable<IEdge> toMoveList, IVertex moveTarget, IList<IVertex> vertexesToLink)
         {
             _MoveEdgesIntoVertex(toMoveList, moveTarget, vertexesToLink);
-        }
+        }        
 
         private static void _MoveEdgesIntoVertex(IEnumerable<IEdge> toMoveList, IVertex moveTarget, IList<IVertex> vertexToLink)
         {

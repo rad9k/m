@@ -47,7 +47,7 @@ namespace m0_SYSTEM_GENERATE
 
             print("* saving System to \"system.m0\"");
             
-            GeneralUtil.CreateM0AndMoveEdgesIntoIt(@"system.m0", System);
+            GeneralUtil.CreateM0AndMoveEdgesIntoIt_SkipLinkInfo(@"system.m0", System);
 
             print("* System saved to \"system.m0\"");
 
