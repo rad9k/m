@@ -4484,7 +4484,7 @@ namespace m0
 
             AddIsAggregation();
 
-            AddDrives();
+            //AddDrives(); // remove for now. do not need that
 
 
     

@@ -128,7 +128,7 @@ namespace m0.Store
                     if (e is IDetachableEdge)
                     {                                                
                         IDetachableEdge de = (IDetachableEdge)e;
-                        MinusZero.Instance.Log(-2, "EDGE  " + de.MetaIdentifier + "//" + de.ToIdentifier, "META:"+de.MetaStoreIdentifier + " TO:"+de.ToStoreIdentifier);
+                        MinusZero.Instance.Log(-2, "EDGE  " + GeneralUtil.GetVertexByStoreIdAndId(de.m   + de.MetaIdentifier + "//" + de.ToIdentifier, "META:"+de.MetaStoreIdentifier + " TO:"+de.ToStoreIdentifier);
                         if (de.DetachState == DetachStateEnum.Detached)
                             de.Attach();
 
