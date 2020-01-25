@@ -35,6 +35,7 @@ namespace m0.Graph
         public EdgeBase(IVertex From, IVertex Meta, IVertex To)
         {
             _From = From;
+            _to = To;
 
             if (Meta != null)            
                 _meta = Meta;                        
@@ -42,11 +43,9 @@ namespace m0.Graph
                 _meta = MinusZero.Instance.Empty;
 
             if (_meta != null)
-                _meta.AddMetaInEdge(this);            
+                _meta.AddMetaInEdge(this);
 
-            _to = To;
-
-            if(_to!=null) // edge.To==null used for visualizing not existing edges (possible to be filled by user)
+            if (_to!=null) // edge.To==null used for visualizing not existing edges (possible to be filled by user)
                 _to.AddInEdge(this);
         }
 

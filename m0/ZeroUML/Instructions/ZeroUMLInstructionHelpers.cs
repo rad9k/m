@@ -97,7 +97,7 @@ namespace m0.ZeroUML.Instructions
                         edgeToETo.From.DeleteEdge(edgeToETo);
                     }
 
-                    foreach (IEdge edgeToETo in e.To.MetaInEdgesRaw)
+                    foreach (IEdge edgeToETo in e.To.MetaInEdgesRaw.ToArray())
                     {
                         if (edgeToETo.To.Value.ToString() == "Drive")
                         {
@@ -106,7 +106,7 @@ namespace m0.ZeroUML.Instructions
 
                         edgeToETo.From.AddEdge(newVertex, edgeToETo.To);
 
-                        edgeToETo.From.DeleteEdge(edgeToETo);
+                        edgeToETo.From.DeleteEdge(edgeToETo);                        
                     }
 
                     _MoveEdgesIntoVertex_SkipLinkInfo(e.To, newVertex, vertexToLink);

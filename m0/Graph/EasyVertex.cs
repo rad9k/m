@@ -350,8 +350,8 @@ namespace m0.Graph
 
         public override void AddMetaInEdge(IEdge edge)
         {
-            if (edge.From.Value.ToString()=="FileSystem" && edge.Meta.Value.ToString() =="Class")
-                //|| GeneralUtil.CompareStrings(this.Value, "Drive"))
+            if (edge.From.Value.ToString()=="FileSystem" && edge.Meta.Value.ToString() =="Class"
+                && GeneralUtil.CompareStrings(edge.To.Value.ToString(), "Drive"))
             {
                 int x = 0;
             }
@@ -473,7 +473,9 @@ namespace m0.Graph
             {
                 DeleteEdgeOnlyOut(edge);
 
-               // FireChange(new VertexChangeEventArgs(VertexChangeType.EdgeRemoved, edge)); // it is in DeleteEdgeOnlyOut 
+                // FireChange(new VertexChangeEventArgs(VertexChangeType.EdgeRemoved, edge)); // it is in DeleteEdgeOnlyOut 
+
+                edge.Meta.DeleteMetaInEdge(edge); // XXX I think that this is ok            
 
                 edge.To.DeleteInEdgeOnlyIn(edge);
             }
