@@ -99,7 +99,7 @@ namespace m0.ZeroUML.Instructions
 
                     foreach (IEdge edgeToETo in e.To.MetaInEdgesRaw)
                     {
-                        if (edgeToETo.To.Value.ToString() == "File")
+                        if (edgeToETo.To.Value.ToString() == "Drive")
                         {
                             int x = 0;
                         }
