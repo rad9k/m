@@ -66,14 +66,27 @@ namespace m0.ZeroUML.Instructions
 
         private static void _MoveEdgesIntoVertex_SkipLinkInfo(IEnumerable<IEdge> toMoveList, IVertex moveTarget, IList<IVertex> vertexToLink)
         {
-            foreach (IEdge e in toMoveList.ToArray())                            
+            foreach (IEdge e in toMoveList.ToArray())
                 if (e.To.Store.AlwaysPresent || vertexToLink.Contains(e.To) || e.To == MinusZero.Instance.root /*|| VertexOperations.IsLink(e)*/) // IsLink IS SKIPPED                                    
+                {
+                    MinusZero.Instance.Log(-2, "LINK", e.To.Value.ToString());
+
                     moveTarget.AddEdge(e.Meta, e.To); // LINK ONLY                
+                }
                 else
                 {
+                    MinusZero.Instance.Log(-2, "COPY", e.To.Value.ToString() + " [" + e.To.GetHashCode() + "]");
+
+                    if (e.To.Value.ToString() == "Class")
+                    {
+                        int x = 0;
+                    }
+
                     vertexToLink.Add(e.To); // FULL COPY
 
                     IVertex newVertex = moveTarget.AddVertex(e.Meta, e.To.Value);
+
+                    MinusZero.Instance.Log(-2, "NEW", newVertex.Value.ToString() + " [" + newVertex.GetHashCode() + "]");
 
                     vertexToLink.Add(newVertex); // FULL COPY
 
@@ -86,6 +99,11 @@ namespace m0.ZeroUML.Instructions
 
                     foreach (IEdge edgeToETo in e.To.MetaInEdgesRaw)
                     {
+                        if (edgeToETo.To.Value.ToString() == "File")
+                        {
+                            int x = 0;
+                        }
+
                         edgeToETo.From.AddEdge(newVertex, edgeToETo.To);
 
                         edgeToETo.From.DeleteEdge(edgeToETo);

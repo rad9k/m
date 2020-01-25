@@ -350,6 +350,12 @@ namespace m0.Graph
 
         public override void AddMetaInEdge(IEdge edge)
         {
+            if (edge.From.Value.ToString()=="FileSystem" && edge.Meta.Value.ToString() =="Class")
+                //|| GeneralUtil.CompareStrings(this.Value, "Drive"))
+            {
+                int x = 0;
+            }
+
             MetaInEdgesRaw.Add(edge);
 
             UsageCounter++;         

@@ -122,13 +122,21 @@ namespace m0.Store
 
             foreach (IVertex v in VertexIdentifiersDictionary.Values)
             {
-                MinusZero.Instance.Log(-2, "VERTEX " + v.Value, v.Store.TypeName);
+                MinusZero.Instance.Log(-2, "VERTEX " + v.Value + " [" + v.GetHashCode() +"]", v.Store.TypeName);
+
                //foreach (IEdge e in v.OutEdges)
                foreach (IEdge e in v.OutEdgesRaw)
                     if (e is IDetachableEdge)
                     {                                                
                         IDetachableEdge de = (IDetachableEdge)e;
-                        MinusZero.Instance.Log(-2, "EDGE  " + GeneralUtil.GetVertexByStoreIdAndId(de.m   + de.MetaIdentifier + "//" + de.ToIdentifier, "META:"+de.MetaStoreIdentifier + " TO:"+de.ToStoreIdentifier);
+
+                        IVertex meta = GeneralUtil.GetVertexByStoreIdAndId(de.MetaStoreIdentifier, de.MetaIdentifier);
+                        IVertex to = GeneralUtil.GetVertexByStoreIdAndId(de.ToStoreIdentifier, de.ToIdentifier);
+
+                        MinusZero.Instance.Log(-2, "EDGE  " + meta.Value 
+                            +":"+ to.Value + " [" + meta.GetHashCode() +" : " + to.GetHashCode() + "]"
+                            +" .." + de.MetaIdentifier + "//" + de.ToIdentifier, "META:"+de.MetaStoreIdentifier + " TO:"+de.ToStoreIdentifier);
+
                         if (de.DetachState == DetachStateEnum.Detached)
                             de.Attach();
 

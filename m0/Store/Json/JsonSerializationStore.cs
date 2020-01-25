@@ -16,6 +16,8 @@ namespace m0.Store.Json
     {
         bool canWrite = true;
 
+        private StoreId RootStore;
+
         void Load()
         {
             if (File.Exists(Identifier))
@@ -73,7 +75,7 @@ namespace m0.Store.Json
         private void ReconstructVerticesFromSerialisationData(JsonSerializationData data)
         {
             foreach(JsonVertex jv in data.Vertices)
-            {
+            {                
                 EasyVertex v = new EasyVertex(this);
 
                 if (jv.IdString == null)
@@ -135,6 +137,12 @@ namespace m0.Store.Json
                         }
                         else
                             ToStoreId = data.StoreIdDictionary[je.ToStoreId];
+                    }
+
+                    if ((long)ToId == -1)
+                    {
+                        ToStoreId = RootStore;
+                        ToId = MinusZero.Instance.root.Identifier;
                     }
 
                     EasyEdge e = new EasyEdge(MetaStoreId.TypeName, MetaStoreId.Identifier, MetaId,
@@ -295,6 +303,9 @@ namespace m0.Store.Json
         public JsonSerializationStore(String identifier, IStoreUniverse storeUniverse, AccessLevelEnum[] accessLeveList)
             : base(identifier, storeUniverse, accessLeveList)
         {
+            RootStore = new StoreId(MinusZero.Instance.root.Store.TypeName, MinusZero.Instance.root.Store.Identifier);
+
+
             RefreshOnRollback = false;
 
             Load();

@@ -149,6 +149,15 @@ namespace m0.Util
                 return o.ToString() == o2.ToString();
         }
 
+        public static IVertex GetVertexByStoreIdAndId(string storeIdentifier, object identifier)
+        {
+            foreach (IStore s in MinusZero.Instance.Stores)
+                if (s.Identifier == storeIdentifier)
+                    return s.GetVertexByIdentifier(identifier);
+
+            return null;
+        }
+
         public static bool DoDelegateListContainDelegate(Delegate[] delegates, Delegate _delegate)
         {
             if(delegates !=null)
