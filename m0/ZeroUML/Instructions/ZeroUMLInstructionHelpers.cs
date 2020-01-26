@@ -74,7 +74,7 @@ namespace m0.ZeroUML.Instructions
                     moveTarget.AddEdge(e.Meta, e.To); // LINK ONLY                
                 }
                 else
-                {
+                { // FULL COPY
                     MinusZero.Instance.Log(-2, "COPY", e.To.Value.ToString() + " [" + e.To.GetHashCode() + "]");
 
                     if (e.To.Value.ToString() == "Class")
@@ -82,20 +82,21 @@ namespace m0.ZeroUML.Instructions
                         int x = 0;
                     }
 
-                    vertexToLink.Add(e.To); // FULL COPY
+                    vertexToLink.Add(e.To); 
 
                     IVertex newVertex = moveTarget.AddVertex(e.Meta, e.To.Value);
 
                     MinusZero.Instance.Log(-2, "NEW", newVertex.Value.ToString() + " [" + newVertex.GetHashCode() + "]");
 
-                    vertexToLink.Add(newVertex); // FULL COPY
+                    vertexToLink.Add(newVertex);
 
                     foreach (IEdge edgeToETo in e.To.InEdgesRaw.ToArray())
                     {
-                        edgeToETo.From.AddEdge(edgeToETo.Meta, newVertex);
+                        if(edgeToETo.From!=moveTarget && edgeToETo.Meta!=e.Meta) // allready done when creating newVertex
+                            edgeToETo.From.AddEdge(edgeToETo.Meta, newVertex);
 
                         edgeToETo.From.DeleteEdge(edgeToETo);
-                    }
+                    }                    
 
                     foreach (IEdge edgeToETo in e.To.MetaInEdgesRaw.ToArray())
                     {
@@ -103,7 +104,7 @@ namespace m0.ZeroUML.Instructions
                         {
                             int x = 0;
                         }
-
+                        
                         edgeToETo.From.AddEdge(newVertex, edgeToETo.To);
 
                         edgeToETo.From.DeleteEdge(edgeToETo);                        
