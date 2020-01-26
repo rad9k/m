@@ -122,7 +122,7 @@ namespace m0.Store
 
             foreach (IVertex v in VertexIdentifiersDictionary.Values)
             {
-                MinusZero.Instance.Log(-2, "VERTEX " + v.Value + " [" + v.GetHashCode() +"]", v.Store.TypeName);
+                //MinusZero.Instance.Log(-2, "VERTEX " + v.Value + " [" + v.GetHashCode() +"]", v.Store.TypeName);
 
                //foreach (IEdge e in v.OutEdges)
                foreach (IEdge e in v.OutEdgesRaw)
@@ -130,12 +130,12 @@ namespace m0.Store
                     {                                                
                         IDetachableEdge de = (IDetachableEdge)e;
 
-                        IVertex meta = GeneralUtil.GetVertexByStoreIdAndId(de.MetaStoreIdentifier, de.MetaIdentifier);
+                  /*      IVertex meta = GeneralUtil.GetVertexByStoreIdAndId(de.MetaStoreIdentifier, de.MetaIdentifier);
                         IVertex to = GeneralUtil.GetVertexByStoreIdAndId(de.ToStoreIdentifier, de.ToIdentifier);
 
                         MinusZero.Instance.Log(-2, "EDGE  " + meta.Value 
                             +":"+ to.Value + " [" + meta.GetHashCode() +" : " + to.GetHashCode() + "]"
-                            +" .." + de.MetaIdentifier + "//" + de.ToIdentifier, "META:"+de.MetaStoreIdentifier + " TO:"+de.ToStoreIdentifier);
+                            +" .." + de.MetaIdentifier + "//" + de.ToIdentifier, "META:"+de.MetaStoreIdentifier + " TO:"+de.ToStoreIdentifier);*/
 
                         if (de.DetachState == DetachStateEnum.Detached)
                             de.Attach();
@@ -188,11 +188,7 @@ namespace m0.Store
         protected Dictionary<object, IVertex> VertexIdentifiersDictionary;
        
         public virtual void StoreVertexIdentifier(IVertex Vertex)
-        {
-            if (GeneralUtil.CompareStrings(Vertex.Value,"$Empty"))
-            {
-                int x = 0;
-            }
+        {            
             if (!VertexIdentifiersDictionary.ContainsKey(Vertex.Identifier))
                 VertexIdentifiersDictionary.Add(Vertex.Identifier,Vertex);
         }

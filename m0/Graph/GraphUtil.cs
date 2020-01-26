@@ -826,6 +826,24 @@ namespace m0.Graph
                         GetSubGraph_Reccurent(e.To, visited);                           
         }
 
+        static public List<IVertex> GetSubGraphWithLinksAsList(IVertex iterationRoot)
+        {
+            List<IVertex> visited = new List<IVertex>();
+
+            GetSubGraphWithLinks_Reccurent(iterationRoot, visited);
+
+            return visited;
+        }
+
+        static void GetSubGraphWithLinks_Reccurent(IVertex baseVertex, List<IVertex> visited)
+        {
+            visited.Add(baseVertex);
+
+            foreach (IEdge e in baseVertex.OutEdges)
+                if (!visited.Contains(e.To))
+                    GetSubGraphWithLinks_Reccurent(e.To, visited);
+        }
+
         public static void AddHandlerIfDelegateListDoesNotContainsIt(IVertex baseVertex, VertexChange _delegate)
         {
             if (baseVertex!=null&& !GeneralUtil.DoDelegateListContainDelegate(baseVertex.GetChangeDelegateInvocationList(), _delegate))

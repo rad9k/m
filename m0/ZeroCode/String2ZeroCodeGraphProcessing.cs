@@ -803,7 +803,7 @@ namespace m0.ZeroCode
 
             public bool currentPositionCharacter_isCharacterMatch(ParsingStack s, int curPos)
             {
-                MinusZero.Instance.Log(1, "isCharacterMatch", curPos + " ? "+ keyword[currentPositionInKeyword] + " | curPositionInKeyword:"+currentPositionInKeyword);
+                //MinusZero.Instance.Log(1, "isCharacterMatch", curPos + " ? "+ keyword[currentPositionInKeyword] + " | curPositionInKeyword:"+currentPositionInKeyword);
 
                 lastCharWasSkippedSpace = false;
 
@@ -854,13 +854,13 @@ namespace m0.ZeroCode
 
                 if (isInMultiParameter())
                 {
-                    MinusZero.Instance.Log(1, "GetParameter", "MULTI: currentPositionInMultiParamPlusSeparatorString:"+ currentPositionInMultiParamPlusSeparatorString);
+                    //MinusZero.Instance.Log(1, "GetParameter", "MULTI: currentPositionInMultiParamPlusSeparatorString:"+ currentPositionInMultiParamPlusSeparatorString);
                     currentPosition = currentPositionInMultiParamPlusSeparatorString;
                     str = multiParamPlusSeparatorString;
                 }
                 else
                 {
-                    MinusZero.Instance.Log(1, "GetParameter", "NORMAL");
+                    //MinusZero.Instance.Log(1, "GetParameter", "NORMAL");
                     currentPosition = currentPositionInKeyword;
                     str = keyword;
                 }
@@ -912,7 +912,7 @@ namespace m0.ZeroCode
                 } else
                     afterParameterString = ZeroCodeUtil.getNextCharacterPartFromKeyword_startingFromNonParameter(str, currentPosition);
 
-                MinusZero.Instance.Log(1, "GetParameter", "currentlyProcessedParameterName:"+ currentlyProcessedParameterName+" curPosition:" + currentPosition+ " afterParameterString:"+ afterParameterString);
+                //MinusZero.Instance.Log(1, "GetParameter", "currentlyProcessedParameterName:"+ currentlyProcessedParameterName+" curPosition:" + currentPosition+ " afterParameterString:"+ afterParameterString);
 
                 state = keywordTryingState.parameter;
 
@@ -957,13 +957,13 @@ namespace m0.ZeroCode
                         }
                     }
 
-                        MinusZero.Instance.Log(1, "currentPositionInKeyword_Increase", "MULTI:" + currentPositionInMultiParamPlusSeparatorString);
+                        //MinusZero.Instance.Log(1, "currentPositionInKeyword_Increase", "MULTI:" + currentPositionInMultiParamPlusSeparatorString);
                     }
                 else
                 {
                     if (!lastCharWasSkippedSpace)
                         currentPositionInKeyword++;
-                    MinusZero.Instance.Log(1, "currentPositionInKeyword_Increase", "NORMAL:" + currentPositionInKeyword);
+                    //MinusZero.Instance.Log(1, "currentPositionInKeyword_Increase", "NORMAL:" + currentPositionInKeyword);
                 }
             }
 
@@ -1111,7 +1111,8 @@ namespace m0.ZeroCode
         {
             //ZeroCodeCommon.testIfIsKeywordSubstring(0, "<<", dict.allKeywordsSubstringsPositiveDictionary_witchoutLinkKeywordParts, dict.allKeywordsSubstringsNegativeDictionary_witchoutLinkKeywordParts);
             tryIsKeyword_Parameters callParams = new tryIsKeyword_Parameters(s, LOGPREFIX, startPos, prev_startPos, isPrevStartPosSameAsStartPosParentCount, endPos, endPos_forAtomParts, afterKeywordPartExist, parentKeyword, parentParams, keywordsFilter, isSpaceNext);
-            MinusZero.Instance.Log(0, "_tryIfKeyword", LOGPREFIX + "RUN "+callParams.ToString());
+            
+            //MinusZero.Instance.Log(0, "_tryIfKeyword", LOGPREFIX + "RUN "+callParams.ToString());
 
             //
 
@@ -1172,7 +1173,7 @@ namespace m0.ZeroCode
                 }
             }            
 
-            MinusZero.Instance.Log(1, "_tryIsKeyword", LOGPREFIX+"BEG startPos:" + startPos + " prevSpos:"+prev_startPos+" same:"+isPrevStartPosSameAsStartPos+" endPos:" + endPos);
+            //MinusZero.Instance.Log(1, "_tryIsKeyword", LOGPREFIX+"BEG startPos:" + startPos + " prevSpos:"+prev_startPos+" same:"+isPrevStartPosSameAsStartPos+" endPos:" + endPos);
 
 
             int sPos = startPos;
@@ -1352,7 +1353,7 @@ namespace m0.ZeroCode
                         if (maxKtd != null)
                             examinedKeywords.Add(maxKtd);
 
-                        MinusZero.Instance.Log(1, "_tryIsKeyword", LOGPREFIX + "RETURN:" + trySpecialKeyword + " newPos:" + newPos);
+                        //MinusZero.Instance.Log(1, "_tryIsKeyword", LOGPREFIX + "RETURN:" + trySpecialKeyword + " newPos:" + newPos);
                     }
 
                     return;
@@ -1403,7 +1404,8 @@ namespace m0.ZeroCode
                // if(containsCondition)
                //     MinusZero.Instance.Log(0, "_tryIsKeyword", LOGPREFIX + "HARD RETURN PARENT "+ parentKeyword.Value);
                // else
-                    MinusZero.Instance.Log(0, "_tryIsKeyword", LOGPREFIX + "HARD RETURN");
+                    
+                //MinusZero.Instance.Log(0, "_tryIsKeyword", LOGPREFIX + "HARD RETURN");
 
                 return;
             }
@@ -1437,7 +1439,7 @@ namespace m0.ZeroCode
 
                 foreach (keywordTryingData ktd in examinedKeywords)
                 {
-                    MinusZero.Instance.Log(1, "_tryIsKeyword", LOGPREFIX+"*** "+ktd.keyword+" sPos:" + sPos + " waitingUntilPositionInText:" + ktd.waitingUntilPositionInText + " currentPositionInKeyword:" + ktd.currentPositionInKeyword + " state:"+ktd.state);
+                    //MinusZero.Instance.Log(1, "_tryIsKeyword", LOGPREFIX+"*** "+ktd.keyword+" sPos:" + sPos + " waitingUntilPositionInText:" + ktd.waitingUntilPositionInText + " currentPositionInKeyword:" + ktd.currentPositionInKeyword + " state:"+ktd.state);
 
                     String keyword = (String)ktd.keywordVertex.Value;
                     
@@ -1446,7 +1448,7 @@ namespace m0.ZeroCode
                         //if (sPos <= ktd.waitingUntilPositionInText)
                         {
                             newExaminedKeywords.Add(ktd);
-                            MinusZero.Instance.Log(1, "_tryIsKeyword", LOGPREFIX+"matched => matched");
+                            //MinusZero.Instance.Log(1, "_tryIsKeyword", LOGPREFIX+"matched => matched");
                         }
                     }
                     else
@@ -1465,7 +1467,7 @@ namespace m0.ZeroCode
                                 ktd.matchedOnPositionInText = sPos;
 
                                 newExaminedKeywords.Add(ktd);
-                                MinusZero.Instance.Log(1, "_tryIsKeyword", LOGPREFIX + "(any) => matched");
+                                //MinusZero.Instance.Log(1, "_tryIsKeyword", LOGPREFIX + "(any) => matched");
                             }
                         }
 
@@ -1475,12 +1477,12 @@ namespace m0.ZeroCode
                         {
                             if (sPos == ktd.waitingUntilPositionInText)
                             {
-                                MinusZero.Instance.Log(1, "_tryIsKeyword", LOGPREFIX+"waiting => keywordCharacter sPos:" + sPos + " fiished waiting");
+                                //MinusZero.Instance.Log(1, "_tryIsKeyword", LOGPREFIX+"waiting => keywordCharacter sPos:" + sPos + " fiished waiting");
                                 ktd.state = keywordTryingState.keywordCharacter; // waiting => keywordCharacter
                             }
                             else
                             {
-                                MinusZero.Instance.Log(1, "_tryIsKeyword", LOGPREFIX+"waiting => waiting sPos:" + sPos + " waiting "+text[sPos]);
+                                //MinusZero.Instance.Log(1, "_tryIsKeyword", LOGPREFIX+"waiting => waiting sPos:" + sPos + " waiting "+text[sPos]);
                                 newExaminedKeywords.Add(ktd);  // waiting => waiting
                             }
                         }
@@ -1508,12 +1510,12 @@ namespace m0.ZeroCode
                                         ktd.currentPositionInKeyword_Increase(sPos);
 
                                         newExaminedKeywords.Add(ktd);
-                                        MinusZero.Instance.Log(1, "_tryIsKeyword", LOGPREFIX + "sPos:" + sPos + " keywordCharacter -> keywordCharacter");
+                                    //    MinusZero.Instance.Log(1, "_tryIsKeyword", LOGPREFIX + "sPos:" + sPos + " keywordCharacter -> keywordCharacter");
                                     }
                                 }
                                 else
                                 {
-                                    MinusZero.Instance.Log(0, "_tryIsKeyword", LOGPREFIX+"sPos:" + sPos + "***OUT OF*** keywordCharacter match");
+                                  //  MinusZero.Instance.Log(0, "_tryIsKeyword", LOGPREFIX+"sPos:" + sPos + "***OUT OF*** keywordCharacter match");
                                 }
                         }                    
                     }
@@ -1553,7 +1555,7 @@ namespace m0.ZeroCode
 
                             bool _afterKeywordPartExist = false;
 
-                            MinusZero.Instance.Log(1, "_tryIsKeyword", LOGPREFIX+"TRY for parameter:" +ktd.currentlyProcessedParameterName+" for keyword:" + ktd.keyword + " afterParameterString:" + ktd.afterParameterString + "| ("+sPos+","+endPos+")");
+                            //MinusZero.Instance.Log(1, "_tryIsKeyword", LOGPREFIX+"TRY for parameter:" +ktd.currentlyProcessedParameterName+" for keyword:" + ktd.keyword + " afterParameterString:" + ktd.afterParameterString + "| ("+sPos+","+endPos+")");
 
                             bool _isSpaceNext = false;
 
@@ -1564,7 +1566,7 @@ namespace m0.ZeroCode
 
                                 int sPosAfterParameter = ZeroCodeUtil.getNextMatch(text, sPos, ktd.afterParameterString);
 
-                                MinusZero.Instance.Log(1, "_tryIsKeyword", LOGPREFIX+"sPosAfterParameter:" + sPosAfterParameter+ " for afterParameterString:"+ktd.afterParameterString);
+                              //  MinusZero.Instance.Log(1, "_tryIsKeyword", LOGPREFIX+"sPosAfterParameter:" + sPosAfterParameter+ " for afterParameterString:"+ktd.afterParameterString);
 
                                 if (sPosAfterParameter != -1
                                     && ((sPosAfterParameter < endPos) || (endPos == 0)))
@@ -1576,7 +1578,7 @@ namespace m0.ZeroCode
                                     isTryKeyword_endPos = -1; // do not search; this keyword does not fit in text
                             }
 
-                            MinusZero.Instance.Log(1, "_tryIsKeyword", LOGPREFIX+"isTryKeyword_endPos:" + isTryKeyword_endPos);
+                            //MinusZero.Instance.Log(1, "_tryIsKeyword", LOGPREFIX+"isTryKeyword_endPos:" + isTryKeyword_endPos);
 
                             if (isTryKeyword_endPos != -1)
                             {
@@ -1584,7 +1586,7 @@ namespace m0.ZeroCode
                                 string foundLink = null;
                                 int _newPos = 0;
 
-                                MinusZero.Instance.Log(1, LOGPREFIX+"_tryIsKeyword", "will run _tryIs for:"+ ktd.currentlyProcessedParameterName);
+                              //  MinusZero.Instance.Log(1, LOGPREFIX+"_tryIsKeyword", "will run _tryIs for:"+ ktd.currentlyProcessedParameterName);
 
                               
                                 // NEW STACK
@@ -1599,7 +1601,7 @@ namespace m0.ZeroCode
 
                                 //MinusZero.Instance.Log(0, "_tryIfKeyword", LOGPREFIX + "_tryIsCall / " + ktd.currentlyProcessedParameterName + " / " + ktd.keywordVertex.Value);
 
-                                MinusZero.Instance.Log(-1, "_tryIfKeyword", LOGPREFIX + sPos + " " + ktd.keywordVertex.Value + ktd.currentlyProcessedParameterName);
+                                //MinusZero.Instance.Log(-1, "_tryIfKeyword", LOGPREFIX + sPos + " " + ktd.keywordVertex.Value + ktd.currentlyProcessedParameterName);
                                 // int modified_isPrevStartPosSameAsStartPosThisCount = isPrevStartPosSameAsStartPosThisCount;
 
                                 // if (sPos != startPos)
@@ -1625,7 +1627,7 @@ namespace m0.ZeroCode
                                     ktd.waitingUntilPositionInText = _newPos;
                                     foundParameter = new ToVertexMock(foundLink, null);
      
-                                    MinusZero.Instance.Log(1, "_tryIsKeyword", LOGPREFIX + "FOUND PARAMETER LINK:" + foundParameter.ToString() + " waitUntil:" + ktd.waitingUntilPositionInText);
+                                  //  MinusZero.Instance.Log(1, "_tryIsKeyword", LOGPREFIX + "FOUND PARAMETER LINK:" + foundParameter.ToString() + " waitUntil:" + ktd.waitingUntilPositionInText);
                                 }
 
                                 if (foundKeywords.Count() > 0)
@@ -1634,7 +1636,7 @@ namespace m0.ZeroCode
 
                                     foundParameter = foundKeywords[0];
 
-                                    MinusZero.Instance.Log(1, "_tryIsKeyword", LOGPREFIX + "FOUND PARAMETER KEYWORDS:" + foundParameter.ToString() + " waitUntil:" + ktd.waitingUntilPositionInText);
+                                    //MinusZero.Instance.Log(1, "_tryIsKeyword", LOGPREFIX + "FOUND PARAMETER KEYWORDS:" + foundParameter.ToString() + " waitUntil:" + ktd.waitingUntilPositionInText);
 
                                     if (foundKeywords.Count() > 1)
                                     {
@@ -1658,10 +1660,10 @@ namespace m0.ZeroCode
 
                             ktd.AddParameter(ktd.currentlyProcessedParameterName, foundParameter);
 
-                            MinusZero.Instance.Log(1, "_tryIsKeyword", LOGPREFIX + "sub add:" + ktd.currentlyProcessedParameterName + " foundParameter:" + foundParameter);
+                            //MinusZero.Instance.Log(1, "_tryIsKeyword", LOGPREFIX + "sub add:" + ktd.currentlyProcessedParameterName + " foundParameter:" + foundParameter);
 
-                            if (foundParameter is keywordTryingData)
-                                MinusZero.Instance.Log(1, "_tryIsKeyword", LOGPREFIX + ((keywordTryingData)foundParameter).keyword);
+                            //if (foundParameter is keywordTryingData)
+                              //  MinusZero.Instance.Log(1, "_tryIsKeyword", LOGPREFIX + ((keywordTryingData)foundParameter).keyword);
 
 
                             newExaminedKeywords.Add(ktd);
@@ -1691,7 +1693,7 @@ namespace m0.ZeroCode
                 if (matchedKeywords == examinedKeywords.Count && matchedKeywords >= 1)
                 {
                     shallProceed = false;
-                    MinusZero.Instance.Log(1, "_tryIsKeyword", LOGPREFIX + "SHALPROCEED FALSE only matched");
+                    //MinusZero.Instance.Log(1, "_tryIsKeyword", LOGPREFIX + "SHALPROCEED FALSE only matched");
                 }
 
                 if (canStopByForAtomParts && sPos == endPos_forAtomParts)
@@ -1702,10 +1704,10 @@ namespace m0.ZeroCode
                 if (sPos == endPos )
                 {
                     shallProceed = false; // end of this part of text
-                    MinusZero.Instance.Log(1, "_tryIsKeyword", LOGPREFIX+"SHALPROCEED FALSE end of this part of text");
+                    //MinusZero.Instance.Log(1, "_tryIsKeyword", LOGPREFIX+"SHALPROCEED FALSE end of this part of text");
                 }
 
-                MinusZero.Instance.Log(1, "_tryIsKeyword", LOGPREFIX + "%%% " + text[sPos] + " shallProceed:" + shallProceed + " t1:" + (sPos + 1 < endPos) + " t2: " + s.currentLineInfo.IsLineEnd(sPos + 1));
+                //MinusZero.Instance.Log(1, "_tryIsKeyword", LOGPREFIX + "%%% " + text[sPos] + " shallProceed:" + shallProceed + " t1:" + (sPos + 1 < endPos) + " t2: " + s.currentLineInfo.IsLineEnd(sPos + 1));
 
                 if (shallProceed)
                 {
@@ -1720,7 +1722,7 @@ namespace m0.ZeroCode
                             if (ktd.state == keywordTryingState.matched)
                             {
                                 shallProceed = false; // end of line and one of keywords matched
-                                MinusZero.Instance.Log(1, "_tryIsKeyword", LOGPREFIX + "SHALPROCEED FALSE end of line and one of keywords matched");
+                                //MinusZero.Instance.Log(1, "_tryIsKeyword", LOGPREFIX + "SHALPROCEED FALSE end of line and one of keywords matched");
                             }
 
                         if (shallProceed) // jump to next line
@@ -1766,7 +1768,7 @@ namespace m0.ZeroCode
                     if (examinedKeywords.Count == 0)
                     {
                         shallProceed = false; // no keyword found
-                        MinusZero.Instance.Log(1, "_tryIsKeyword", LOGPREFIX + "SHALPROCEED FALSE  no keyword found");
+                        //MinusZero.Instance.Log(1, "_tryIsKeyword", LOGPREFIX + "SHALPROCEED FALSE  no keyword found");
                     }
                 }
 
@@ -1777,7 +1779,7 @@ namespace m0.ZeroCode
                 if (s.currentLineInfo.IsLineEnd(sPos))
                     sPos = s.currentLineInfo.lineEnd_NoTrim + 1;
 
-                MinusZero.Instance.Log(1, "_tryIsKeyword", LOGPREFIX + "sPos++ " + sPos);
+                //MinusZero.Instance.Log(1, "_tryIsKeyword", LOGPREFIX + "sPos++ " + sPos);
 
             }
 
@@ -1878,9 +1880,9 @@ namespace m0.ZeroCode
             }else
                 newPos = sPos;
 
-            MinusZero.Instance.Log(1, "_tryIsKeyword", LOGPREFIX+"END link:"+link+" keywordsCount:"+examinedKeywords.Count);
+            //MinusZero.Instance.Log(1, "_tryIsKeyword", LOGPREFIX+"END link:"+link+" keywordsCount:"+examinedKeywords.Count);
 
-            log_keywords(examinedKeywords, 0, LOGPREFIX);
+            //log_keywords(examinedKeywords, 0, LOGPREFIX);
         }
 
         private int SubAndChildCheckAndProcess(ParsingStack s, int endPos, List<keywordTryingData> examinedKeywords, keywordTryingData _ktd, int sPos, IVertex parentKeyword)
@@ -2041,7 +2043,7 @@ namespace m0.ZeroCode
 
             string keywordsFilter = "";
 
-            MinusZero.Instance.Log(-1, "_tryIsKeyword", LOGPREFIX + "_tryIsNextLocalRootKeyword");
+            //MinusZero.Instance.Log(-1, "_tryIsKeyword", LOGPREFIX + "_tryIsNextLocalRootKeyword");
 
             KeywordInfo ki = dict.keywordInfoDict[ktd.keywordVertex];
 
@@ -2132,7 +2134,7 @@ namespace m0.ZeroCode
                     {
                         List<keywordTryingData> l = new List<keywordTryingData>();
                         l.Add((keywordTryingData)oo);
-                        log_keywords(l, pos + 1, LOGPREFIX);
+                        //log_keywords(l, pos + 1, LOGPREFIX);
                     }
                 }
             }

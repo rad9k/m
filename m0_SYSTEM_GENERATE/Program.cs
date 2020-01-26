@@ -45,6 +45,12 @@ namespace m0_SYSTEM_GENERATE
             IVertex System = root.Get(false, "System");
             IVertex User = root.Get(false, "User");
 
+            IVertex aa = GeneralUtil.GetVertexByStoreIdAndId("$-0$ROOT$STORE$", (long)32);
+            aa = GeneralUtil.GetVertexByStoreIdAndId("$-0$ROOT$STORE$", (long)33);
+            aa = GeneralUtil.GetVertexByStoreIdAndId("$-0$ROOT$STORE$", (long)23);
+            aa = GeneralUtil.GetVertexByStoreIdAndId("$-0$ROOT$STORE$", (long)118);
+            aa = GeneralUtil.GetVertexByStoreIdAndId("$-0$ROOT$STORE$", (long)12);
+
             print("* saving System to \"system.m0\"");
             
             GeneralUtil.CreateM0AndMoveEdgesIntoIt_SkipLinkInfo(@"system.m0", System);
@@ -53,13 +59,17 @@ namespace m0_SYSTEM_GENERATE
 
             //
 
+            MinusZero.Instance.Log(-2, "UUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEERRRRRRRRRRRRRRRRR", "user");
+
             print("* saving User to \"user.m0\"");
 
-            GeneralUtil.CreateM0AndMoveEdgesIntoIt_LeaveVertexesFromList("user.m0", User, GraphUtil.GetSubGraphAsList(System) );
+            GeneralUtil.CreateM0AndMoveEdgesIntoIt_LeaveVertexesFromList("user.m0", User, GraphUtil.GetSubGraphWithLinksAsList(System) );
 
             print("* User saved to \"user.m0\"");
 
             //
+
+            MinusZero.Instance.Log(-2, "EXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXAMPLES", "examples");
 
             print("* filling examples");
 
@@ -68,7 +78,7 @@ namespace m0_SYSTEM_GENERATE
             print("* saving examples to \"examples.m0\"");
 
             IVertex examples = root.Get(false, "examples");            
-            GeneralUtil.CreateM0AndMoveEdgesIntoIt_LeaveVertexesFromList("examples.m0", User, GraphUtil.GetSubGraphAsList(examples));
+            GeneralUtil.CreateM0AndMoveEdgesIntoIt_LeaveVertexesFromList("examples.m0", User, GraphUtil.GetSubGraphWithLinksAsList(examples));
 
             print("* examples saved to \"examples.m0\"");
 

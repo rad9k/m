@@ -74,17 +74,30 @@ namespace m0.ZeroUML.Instructions
 
             _MoveEdgesIntoVertex_SkipLinkInfo(baseVertex, moveTarget, new List<IVertex>(), oldToNewVertexDictionary, toProcessEdges);
 
-            foreach(moveTargetAndIEdge mtae in toProcessEdges)            
-                if (oldToNewVertexDictionary.ContainsKey(mtae.edge.Meta))
-                    mtae.moveTarget.AddEdge(oldToNewVertexDictionary[mtae.edge.Meta], mtae.edge.To);
-                else
-                    mtae.moveTarget.AddEdge(mtae.edge.Meta, mtae.edge.To);            
+            foreach (moveTargetAndIEdge mtae in toProcessEdges)
+            {
+                IVertex meta = mtae.edge.Meta;
+
+                IVertex to = mtae.edge.To;
+
+                if (oldToNewVertexDictionary.ContainsKey(meta))
+                    meta = oldToNewVertexDictionary[meta];
+
+                if (oldToNewVertexDictionary.ContainsKey(to))
+                    to = oldToNewVertexDictionary[to];
+
+                mtae.moveTarget.AddEdge(meta, to);
+            }
         }        
 
         private static void _MoveEdgesIntoVertex_SkipLinkInfo(IEnumerable<IEdge> toMoveList, IVertex moveTarget, IList<IVertex> vertexToLink, Dictionary<IVertex, IVertex> oldToNewVertexDictionary, List<moveTargetAndIEdge> toProcessEdges)
         {
             foreach (IEdge e in toMoveList.ToArray())
-                if (e.To.Store.AlwaysPresent || vertexToLink.Contains(e.To) || e.To == MinusZero.Instance.root /*|| VertexOperations.IsLink(e)*/) // IsLink IS SKIPPED                                    
+                if (e.To.Store.AlwaysPresent || 
+                    oldToNewVertexDictionary.ContainsKey(e.To) || 
+                    vertexToLink.Contains(e.To) ||
+                    e.To == MinusZero.Instance.root 
+                    /*|| VertexOperations.IsLink(e)*/) // IsLink IS SKIPPED                                    
                 {
                     MinusZero.Instance.Log(-2, "LINK", e.To.Value.ToString());
 
@@ -169,7 +182,7 @@ namespace m0.ZeroUML.Instructions
                         edgeToETo.From.DeleteEdge(edgeToETo);
                     }
 
-                    foreach (IEdge edgeToETo in e.To.MetaInEdgesRaw)
+                    foreach (IEdge edgeToETo in e.To.MetaInEdgesRaw.ToArray())
                     {
                         edgeToETo.From.AddEdge(newVertex, edgeToETo.To);
 
