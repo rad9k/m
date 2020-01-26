@@ -363,9 +363,9 @@ namespace m0.Graph
 
         public override void DeleteMetaInEdge(IEdge _edge)
         {
-            IEdge edge = _edge;
+            IEdge edge = null;// _edge;
 
-            if (!MetaInEdgesRaw.Contains(edge))
+            //if (!MetaInEdgesRaw.Contains(edge))
                 foreach (IEdge e in MetaInEdgesRaw)
                     if (e.Meta == _edge.Meta && e.From == _edge.From)
                         edge = e;
@@ -394,9 +394,9 @@ namespace m0.Graph
 
         public override void DeleteInEdge(IEdge _edge)
         {
-            IEdge edge = _edge;
+            IEdge edge = null;// _edge;
 
-            if (!InEdgesRaw.Contains(edge))
+            //if (!InEdgesRaw.Contains(edge))
                 foreach (IEdge e in InEdgesRaw)
                   if (e.Meta == _edge.Meta && e.From == _edge.From)
                      edge = e;

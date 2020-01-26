@@ -58,20 +58,44 @@ namespace m0.ZeroUML.Instructions
                 
             return nv;
         }
-        
-        public static void MoveEdgesIntoVertex_SkipLinkInfo(IEnumerable<IEdge> toMoveList, IVertex moveTarget)
+
+        struct moveTargetAndIEdge
         {
-            _MoveEdgesIntoVertex_SkipLinkInfo(toMoveList, moveTarget, new List<IVertex>());
+            public IVertex moveTarget;
+            public IEdge edge;
+        }
+        
+        public static void MoveEdgesIntoVertex_SkipLinkInfo(IVertex baseVertex, IVertex moveTarget)
+        {
+            moveTarget.Value = baseVertex.Value;
+
+            Dictionary<IVertex, IVertex> oldToNewVertexDictionary = new Dictionary<IVertex, IVertex>();
+            List<moveTargetAndIEdge> toProcessEdges = new List<moveTargetAndIEdge>();
+
+            _MoveEdgesIntoVertex_SkipLinkInfo(baseVertex, moveTarget, new List<IVertex>(), oldToNewVertexDictionary, toProcessEdges);
+
+            foreach(moveTargetAndIEdge mtae in toProcessEdges)            
+                if (oldToNewVertexDictionary.ContainsKey(mtae.edge.Meta))
+                    mtae.moveTarget.AddEdge(oldToNewVertexDictionary[mtae.edge.Meta], mtae.edge.To);
+                else
+                    mtae.moveTarget.AddEdge(mtae.edge.Meta, mtae.edge.To);            
         }        
 
-        private static void _MoveEdgesIntoVertex_SkipLinkInfo(IEnumerable<IEdge> toMoveList, IVertex moveTarget, IList<IVertex> vertexToLink)
+        private static void _MoveEdgesIntoVertex_SkipLinkInfo(IEnumerable<IEdge> toMoveList, IVertex moveTarget, IList<IVertex> vertexToLink, Dictionary<IVertex, IVertex> oldToNewVertexDictionary, List<moveTargetAndIEdge> toProcessEdges)
         {
             foreach (IEdge e in toMoveList.ToArray())
                 if (e.To.Store.AlwaysPresent || vertexToLink.Contains(e.To) || e.To == MinusZero.Instance.root /*|| VertexOperations.IsLink(e)*/) // IsLink IS SKIPPED                                    
                 {
                     MinusZero.Instance.Log(-2, "LINK", e.To.Value.ToString());
 
-                    moveTarget.AddEdge(e.Meta, e.To); // LINK ONLY                
+                    moveTargetAndIEdge mtae = new moveTargetAndIEdge();
+
+                    mtae.moveTarget = moveTarget;
+                    mtae.edge = e;
+
+                    toProcessEdges.Add(mtae);
+
+                    // moveTarget.AddEdge(e.Meta, e.To); // LINK ONLY                
                 }
                 else
                 { // FULL COPY
@@ -82,9 +106,11 @@ namespace m0.ZeroUML.Instructions
                         int x = 0;
                     }
 
-                    vertexToLink.Add(e.To); 
+                    //vertexToLink.Add(e.To); 
 
                     IVertex newVertex = moveTarget.AddVertex(e.Meta, e.To.Value);
+
+                    oldToNewVertexDictionary.Add(e.To, newVertex);
 
                     MinusZero.Instance.Log(-2, "NEW", newVertex.Value.ToString() + " [" + newVertex.GetHashCode() + "]");
 
@@ -110,7 +136,7 @@ namespace m0.ZeroUML.Instructions
                         edgeToETo.From.DeleteEdge(edgeToETo);                        
                     }
 
-                    _MoveEdgesIntoVertex_SkipLinkInfo(e.To, newVertex, vertexToLink);
+                    _MoveEdgesIntoVertex_SkipLinkInfo(e.To, newVertex, vertexToLink, oldToNewVertexDictionary, toProcessEdges);
                 }            
         }
 
