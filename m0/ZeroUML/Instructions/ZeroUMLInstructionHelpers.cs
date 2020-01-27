@@ -65,15 +65,35 @@ namespace m0.ZeroUML.Instructions
             public IVertex moveTarget;
             public IEdge edge;
         }
-        
-        public static void MoveEdgesIntoVertex_SkipLinkInfo(IVertex baseVertex, IVertex moveTarget)
+
+        public static void MoveEdgesIntoVertex(IEnumerable<IEdge> toMoveList, IVertex moveTarget)
         {
-            moveTarget.Value = baseVertex.Value;
+            _MoveEdgesIntoVertex(toMoveList, moveTarget, new List<IVertex>(), false);
+        }
+
+        public static void MoveEdgesIntoVertex_LeaveVertexesFromList(IEnumerable<IEdge> toMoveList, IVertex moveTarget, IList<IVertex> vertexesToLink)
+        {
+            _MoveEdgesIntoVertex(toMoveList, moveTarget, vertexesToLink, false);
+        }
+
+        public static void MoveEdgesIntoVertex_SkipLinkInfo(IEnumerable<IEdge> toMoveList, IVertex moveTarget)
+        {
+            _MoveEdgesIntoVertex(toMoveList, moveTarget, new List<IVertex>(), true);
+        }
+
+        private static void _MoveEdgesIntoVertex(IEnumerable<IEdge> toMoveList, IVertex moveTarget, IList<IVertex> vertexesToLink, bool skipLinkInfo)
+        {
+            if (toMoveList is IVertex)
+            {
+                IVertex baseVertex = (IVertex)toMoveList;
+
+                moveTarget.Value = baseVertex.Value;
+            }
 
             Dictionary<IVertex, IVertex> oldToNewVertexDictionary = new Dictionary<IVertex, IVertex>();
             List<moveTargetAndIEdge> toProcessEdges = new List<moveTargetAndIEdge>();
 
-            _MoveEdgesIntoVertex_SkipLinkInfo(baseVertex, moveTarget, new List<IVertex>(), oldToNewVertexDictionary, toProcessEdges);
+            __MoveEdgesIntoVertex(toMoveList, moveTarget, vertexesToLink, oldToNewVertexDictionary, toProcessEdges, skipLinkInfo);
 
             foreach (moveTargetAndIEdge mtae in toProcessEdges)
             {
@@ -91,14 +111,14 @@ namespace m0.ZeroUML.Instructions
             }
         }        
 
-        private static void _MoveEdgesIntoVertex_SkipLinkInfo(IEnumerable<IEdge> toMoveList, IVertex moveTarget, IList<IVertex> vertexToLink, Dictionary<IVertex, IVertex> oldToNewVertexDictionary, List<moveTargetAndIEdge> toProcessEdges)
+        private static void __MoveEdgesIntoVertex(IEnumerable<IEdge> toMoveList, IVertex moveTarget, IList<IVertex> vertexToLink, Dictionary<IVertex, IVertex> oldToNewVertexDictionary, List<moveTargetAndIEdge> toProcessEdges, bool skipLinkInfo)
         {
             foreach (IEdge e in toMoveList.ToArray()) // LINK ONLY
                 if (e.To.Store.AlwaysPresent || 
                     oldToNewVertexDictionary.ContainsKey(e.To) || 
                     vertexToLink.Contains(e.To) ||
                     e.To == MinusZero.Instance.root 
-                    /*|| VertexOperations.IsLink(e)*/) // IsLink IS SKIPPED                                    
+                    || (!skipLinkInfo && VertexOperations.IsLink(e))) // IsLink
                 {
                     MinusZero.Instance.Log(-2, "LINK", e.To.Value.ToString());
 
@@ -144,21 +164,11 @@ namespace m0.ZeroUML.Instructions
                         edgeToETo.From.DeleteEdge(edgeToETo);                        
                     }
 
-                    _MoveEdgesIntoVertex_SkipLinkInfo(e.To, newVertex, vertexToLink, oldToNewVertexDictionary, toProcessEdges);
+                    __MoveEdgesIntoVertex(e.To, newVertex, vertexToLink, oldToNewVertexDictionary, toProcessEdges, skipLinkInfo);
                 }            
-        }
+        }     
 
-        public static void MoveEdgesIntoVertex(IEnumerable<IEdge> toMoveList, IVertex moveTarget)
-        {
-            _MoveEdgesIntoVertex(toMoveList, moveTarget, new List<IVertex>());
-        }
-
-        public static void MoveEdgesIntoVertex_LeaveVertexesFromList(IEnumerable<IEdge> toMoveList, IVertex moveTarget, IList<IVertex> vertexesToLink)
-        {
-            _MoveEdgesIntoVertex(toMoveList, moveTarget, vertexesToLink);
-        }        
-
-        private static void _MoveEdgesIntoVertex(IEnumerable<IEdge> toMoveList, IVertex moveTarget, IList<IVertex> vertexToLink)
+        /*private static void _MoveEdgesIntoVertex(IEnumerable<IEdge> toMoveList, IVertex moveTarget, IList<IVertex> vertexToLink)
         {
             foreach (IEdge e in toMoveList.ToArray())
                 if(e.To.Store.AlwaysPresent || vertexToLink.Contains(e.To) || VertexOperations.IsLink(e))                
@@ -187,6 +197,6 @@ namespace m0.ZeroUML.Instructions
                     _MoveEdgesIntoVertex(e.To, newVertex, vertexToLink);
                 }
            
-        }
+        }*/
     }
 }

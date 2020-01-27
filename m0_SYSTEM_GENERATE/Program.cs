@@ -41,19 +41,21 @@ namespace m0_SYSTEM_GENERATE
 
             LegacySystem_MinusZero.Instance.Initialize();
 
+            print("* filling examples");
+
+            CreateExamples.CreateTestData();
+
+            //
+
             IVertex root = LegacySystem_MinusZero.Instance.Root;
             IVertex System = root.Get(false, "System");
             IVertex User = root.Get(false, "User");
 
-            IVertex aa = GeneralUtil.GetVertexByStoreIdAndId("$-0$ROOT$STORE$", (long)32);
-            aa = GeneralUtil.GetVertexByStoreIdAndId("$-0$ROOT$STORE$", (long)33);
-            aa = GeneralUtil.GetVertexByStoreIdAndId("$-0$ROOT$STORE$", (long)23);
-            aa = GeneralUtil.GetVertexByStoreIdAndId("$-0$ROOT$STORE$", (long)118);
-            aa = GeneralUtil.GetVertexByStoreIdAndId("$-0$ROOT$STORE$", (long)12);
+            IVertex examples = root.Get(false, "examples");
 
             print("* saving System to \"system.m0\"");
             
-            GeneralUtil.CreateM0AndMoveEdgesIntoIt_SkipLinkInfo(@"system.m0", System);
+            IVertex newSystem = GeneralUtil.CreateM0AndMoveEdgesIntoIt_SkipLinkInfo(@"system.m0", System);
 
             print("* System saved to \"system.m0\"");
 
@@ -69,16 +71,11 @@ namespace m0_SYSTEM_GENERATE
 
             //
 
-            MinusZero.Instance.Log(-2, "EXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXAMPLES", "examples");
-
-            print("* filling examples");
-
-            CreateExamples.CreateTestData();
+            MinusZero.Instance.Log(-2, "EXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXAMPLES", "examples");            
 
             print("* saving examples to \"examples.m0\"");
 
-            IVertex examples = root.Get(false, "examples");            
-            GeneralUtil.CreateM0AndMoveEdgesIntoIt_LeaveVertexesFromList("examples.m0", User, GraphUtil.GetSubGraphWithLinksAsList(examples));
+            GeneralUtil.CreateM0AndMoveEdgesIntoIt_LeaveVertexesFromList("examples.m0", examples, GraphUtil.GetSubGraphWithLinksAsList(newSystem));
 
             print("* examples saved to \"examples.m0\"");
 

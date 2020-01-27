@@ -1,12 +1,4 @@
-﻿
-
-32 144 $Import:$Direct
-33 143 $ImportMeta:$DirectMeta
-23 93 $DefaultViewVisualiser:StringView
-118 92 $PlatformClassName:m0.UIWpf.Visual
-12 95 $Inherits:Directory
-
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!! TO DO:
+﻿!!!!!!!!!!!!!!!!!!!!!!!!!!!!! TO DO:
 27. key added error on exit
 33. standard base library / method / func [58]
 59. copy $Empty? [11]

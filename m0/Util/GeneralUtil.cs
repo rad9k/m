@@ -36,20 +36,19 @@ namespace m0.Util
             return Guid.NewGuid();
         }
 
-        public static void CreateM0AndMoveEdgesIntoIt_SkipLinkInfo(string fileName, IVertex baseVertex)
+        public static IVertex CreateM0AndMoveEdgesIntoIt_SkipLinkInfo(string fileName, IVertex baseVertex)
         {
             File.Delete(fileName);
 
             JsonSerializationStore s = new JsonSerializationStore(fileName, MinusZero.Instance, new AccessLevelEnum[] { });
 
-            ZeroUML.Instructions.ZeroUMLInstructionHelpers.MoveEdgesIntoVertex_SkipLinkInfo(baseVertex, s.Root);
-
-            s.Root.Value = baseVertex.Value;
-
+            ZeroUML.Instructions.ZeroUMLInstructionHelpers.MoveEdgesIntoVertex_SkipLinkInfo(baseVertex, s.Root);            
 
             s.Detach();
             s.CommitTransaction();
-            s.Attach();           
+            s.Attach();
+
+            return s.Root;
         }
 
         public static void CreateM0AndMoveEdgesIntoIt_LeaveVertexesFromList(string fileName, IVertex baseVertex, IList<IVertex> vertexToLeave)
@@ -59,9 +58,6 @@ namespace m0.Util
             JsonSerializationStore s = new JsonSerializationStore(fileName, MinusZero.Instance, new AccessLevelEnum[] { });
 
             ZeroUML.Instructions.ZeroUMLInstructionHelpers.MoveEdgesIntoVertex_LeaveVertexesFromList(baseVertex, s.Root, vertexToLeave);
-
-            s.Root.Value = baseVertex.Value;
-
 
             s.Detach();
             s.CommitTransaction();
