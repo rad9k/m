@@ -1,5 +1,6 @@
 ﻿using m0.Foundation;
 using m0.Graph;
+using m0.Util;
 using m0.ZeroTypes;
 using System;
 using System.Collections.Generic;
@@ -92,7 +93,7 @@ namespace m0.ZeroUML.Instructions
 
         private static void _MoveEdgesIntoVertex_SkipLinkInfo(IEnumerable<IEdge> toMoveList, IVertex moveTarget, IList<IVertex> vertexToLink, Dictionary<IVertex, IVertex> oldToNewVertexDictionary, List<moveTargetAndIEdge> toProcessEdges)
         {
-            foreach (IEdge e in toMoveList.ToArray())
+            foreach (IEdge e in toMoveList.ToArray()) // LINK ONLY
                 if (e.To.Store.AlwaysPresent || 
                     oldToNewVertexDictionary.ContainsKey(e.To) || 
                     vertexToLink.Contains(e.To) ||
@@ -106,22 +107,16 @@ namespace m0.ZeroUML.Instructions
                     mtae.moveTarget = moveTarget;
                     mtae.edge = e;
 
-                    toProcessEdges.Add(mtae);
-
-                    // moveTarget.AddEdge(e.Meta, e.To); // LINK ONLY                
+                    toProcessEdges.Add(mtae);        
                 }
                 else
                 { // FULL COPY
-                    MinusZero.Instance.Log(-2, "COPY", e.To.Value.ToString() + " [" + e.To.GetHashCode() + "]");
+                    IVertex meta = e.Meta;
 
-                    if (e.To.Value.ToString() == "Class")
-                    {
-                        int x = 0;
-                    }
+                    if (oldToNewVertexDictionary.ContainsKey(meta))
+                        meta = oldToNewVertexDictionary[meta];
 
-                    //vertexToLink.Add(e.To); 
-
-                    IVertex newVertex = moveTarget.AddVertex(e.Meta, e.To.Value);
+                    IVertex newVertex = moveTarget.AddVertex(meta, e.To.Value);
 
                     oldToNewVertexDictionary.Add(e.To, newVertex);
 
