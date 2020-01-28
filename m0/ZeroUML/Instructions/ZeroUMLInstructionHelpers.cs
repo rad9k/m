@@ -71,14 +71,14 @@ namespace m0.ZeroUML.Instructions
             _MoveEdgesIntoVertex(toMoveList, moveTarget, new List<IVertex>(), false, null);
         }
 
-        public static void MoveEdgesIntoVertex_LeaveVertexesFromList(IEnumerable<IEdge> toMoveList, IVertex moveTarget, IList<IVertex> vertexesToLink)
+        public static void MoveEdgesIntoVertex_LeaveVertexesFromListAndIncludeStore(IEnumerable<IEdge> toMoveList, IVertex moveTarget, IList<IVertex> vertexesToLink, string storeToIncludeIdentifier)
         {
-            _MoveEdgesIntoVertex(toMoveList, moveTarget, vertexesToLink, false, null);
+            _MoveEdgesIntoVertex(toMoveList, moveTarget, vertexesToLink, false, storeToIncludeIdentifier);
         }
 
         public static void MoveEdgesIntoVertex_SkipLinkInfo(IEnumerable<IEdge> toMoveList, IVertex moveTarget)
         {
-            _MoveEdgesIntoVertex(toMoveList, moveTarget, new List<IVertex>(), true);
+            _MoveEdgesIntoVertex(toMoveList, moveTarget, new List<IVertex>(), true, null);
         }
 
         private static void _MoveEdgesIntoVertex(IEnumerable<IEdge> toMoveList, IVertex moveTarget, IList<IVertex> vertexesToLink, bool skipLinkInfo, string storeToIncludeIdentifier)
@@ -128,6 +128,7 @@ namespace m0.ZeroUML.Instructions
                     e.To == MinusZero.Instance.root
                     || linkRelatedSkip) 
                 {
+
                     MinusZero.Instance.Log(-2, "LINK", e.To.Value.ToString());
 
                     moveTargetAndIEdge mtae = new moveTargetAndIEdge();

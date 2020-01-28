@@ -65,7 +65,7 @@ namespace m0_SYSTEM_GENERATE
 
             print("* saving User to \"user.m0\"");
 
-            GeneralUtil.CreateM0AndMoveEdgesIntoIt_LeaveVertexesFromList("user.m0", User, GraphUtil.GetSubGraphWithLinksAsListButExcludeRoot(newSystem) );
+            GeneralUtil.CreateM0AndMoveEdgesIntoIt_LeaveVertexesFromListAndIncludeStore("user.m0", User, GraphUtil.GetSubGraphWithLinksAsListButExcludeRoot(newSystem), "$-0$TEMP$STORE$" );
 
             print("* User saved to \"user.m0\"");
 
@@ -75,7 +75,7 @@ namespace m0_SYSTEM_GENERATE
 
             print("* saving examples to \"examples.m0\"");
 
-            GeneralUtil.CreateM0AndMoveEdgesIntoIt_LeaveVertexesFromList("examples.m0", examples, GraphUtil.GetSubGraphWithLinksAsListButExcludeRoot(newSystem));
+            GeneralUtil.CreateM0AndMoveEdgesIntoIt_LeaveVertexesFromListAndIncludeStore("examples.m0", examples, GraphUtil.GetSubGraphWithLinksAsListButExcludeRoot(newSystem), "$-0$TEMP$STORE$");
 
             print("* examples saved to \"examples.m0\"");
 

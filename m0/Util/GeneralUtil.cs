@@ -51,13 +51,13 @@ namespace m0.Util
             return s.Root;
         }
 
-        public static void CreateM0AndMoveEdgesIntoIt_LeaveVertexesFromList(string fileName, IVertex baseVertex, IList<IVertex> vertexToLeave)
+        public static void CreateM0AndMoveEdgesIntoIt_LeaveVertexesFromListAndIncludeStore(string fileName, IVertex baseVertex, IList<IVertex> vertexToLeave, string storeToIncludeIdentifier)
         {
             File.Delete(fileName);
 
             JsonSerializationStore s = new JsonSerializationStore(fileName, MinusZero.Instance, new AccessLevelEnum[] { });
 
-            ZeroUML.Instructions.ZeroUMLInstructionHelpers.MoveEdgesIntoVertex_LeaveVertexesFromList(baseVertex, s.Root, vertexToLeave);
+            ZeroUML.Instructions.ZeroUMLInstructionHelpers.MoveEdgesIntoVertex_LeaveVertexesFromListAndIncludeStore(baseVertex, s.Root, vertexToLeave, storeToIncludeIdentifier);
 
             s.Detach();
             s.CommitTransaction();
