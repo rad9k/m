@@ -166,11 +166,18 @@ namespace m0.Store.Json
             RefreshPost();
         }
 
+        Dictionary<string, StoreId> storeOverride = null;
+
+        public void SetStoreOverride(Dictionary<string, StoreId> _storeOverride)
+        {
+            storeOverride = _storeOverride;
+        }
+
         public override void CommitTransaction()
         {
             if (!canWrite)
             {
-                UserInteractionUtil.ShowError("Json Serlialisation to " + Identifier, "As json serialisation file " + Identifier +" has not been properly loaded, commit(saving) is disabled for the file. This will protect existing file content.");
+                UserInteractionUtil.ShowError("Json Serlialisation to " + Identifier, "As json serialisation file " + Identifier + " has not been properly loaded, commit(saving) is disabled for the file. This will protect existing file content.");
                 return;
             }
 
@@ -180,6 +187,15 @@ namespace m0.Store.Json
             StreamWriter writeStream = new StreamWriter(Identifier);
 
             JsonSerializationData data = GetJsonSerializationData();
+
+            if(storeOverride!=null)
+                foreach (StoreId storeId in data.StoreIdDictionary.Values)
+                    foreach(KeyValuePair<string, StoreId> kvp in storeOverride)
+                        if(kvp.Key == storeId.Identifier)
+                        {
+                            storeId.Identifier = kvp.Value.Identifier;
+                            storeId.TypeName = kvp.Value.TypeName;
+                        }
 
             JSON.Serialize<JsonSerializationData>(data, writeStream);
             

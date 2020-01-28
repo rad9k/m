@@ -59,23 +59,23 @@ namespace m0_SYSTEM_GENERATE
 
             print("* System saved to \"system.m0\"");
 
-            //
+            //            
 
-            MinusZero.Instance.Log(-2, "UUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEERRRRRRRRRRRRRRRRR", "user");
+            Dictionary<string, StoreId> storeOverride = new Dictionary<string, StoreId>();
+
+            storeOverride.Add("system.m0", new StoreId("m0.Store.MemoryStore, m0, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null", "$-0$ROOT$STORE$"));
 
             print("* saving User to \"user.m0\"");
 
-            GeneralUtil.CreateM0AndMoveEdgesIntoIt_IncludeEverythingBesidesList("user.m0", User, GraphUtil.GetSubGraphWithLinksAsListButExcludeRoot(newSystem));
+            GeneralUtil.CreateM0AndMoveEdgesIntoIt_IncludeEverythingBesidesList("user.m0", User, GraphUtil.GetSubGraphWithLinksAsListButExcludeRoot(newSystem), storeOverride);
 
             print("* User saved to \"user.m0\"");
 
             //
 
-            MinusZero.Instance.Log(-2, "EXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXAMPLES", "examples");            
-
             print("* saving examples to \"examples.m0\"");
 
-            GeneralUtil.CreateM0AndMoveEdgesIntoIt_IncludeEverythingBesidesList("examples.m0", examples, GraphUtil.GetSubGraphWithLinksAsListButExcludeRoot(newSystem));
+            GeneralUtil.CreateM0AndMoveEdgesIntoIt_IncludeEverythingBesidesList("examples.m0", examples, GraphUtil.GetSubGraphWithLinksAsListButExcludeRoot(newSystem), storeOverride);
 
             print("* examples saved to \"examples.m0\"");
 
