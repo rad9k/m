@@ -68,20 +68,43 @@ namespace m0.ZeroUML.Instructions
 
         public static void MoveEdgesIntoVertex(IEnumerable<IEdge> toMoveList, IVertex moveTarget)
         {
-            _MoveEdgesIntoVertex(toMoveList, moveTarget, new List<IVertex>(), false, null);
+            _MoveEdgesIntoVertex(toMoveList, moveTarget, new List<IVertex>(), false);
         }
 
-        public static void MoveEdgesIntoVertex_LeaveVertexesFromListAndIncludeStore(IEnumerable<IEdge> toMoveList, IVertex moveTarget, IList<IVertex> vertexesToLink, string storeToIncludeIdentifier)
+        public static void MoveEdgesIntoVertex_IncludeEverythingBesidesList(IEnumerable<IEdge> toMoveList, IVertex moveTarget, IList<IVertex> vertexesToLink)
         {
-            _MoveEdgesIntoVertex(toMoveList, moveTarget, vertexesToLink, false, storeToIncludeIdentifier);
+            _MoveEdgesIntoVertex(toMoveList, moveTarget, vertexesToLink, true);
         }
 
         public static void MoveEdgesIntoVertex_SkipLinkInfo(IEnumerable<IEdge> toMoveList, IVertex moveTarget)
         {
-            _MoveEdgesIntoVertex(toMoveList, moveTarget, new List<IVertex>(), true, null);
+            _MoveEdgesIntoVertex(toMoveList, moveTarget, new List<IVertex>(), true);
         }
 
-        private static void _MoveEdgesIntoVertex(IEnumerable<IEdge> toMoveList, IVertex moveTarget, IList<IVertex> vertexesToLink, bool skipLinkInfo, string storeToIncludeIdentifier)
+        private static IVertex _MoveEdgesIntoVertex_getMeta(IVertex meta, IVertex moveTarget, IList<IVertex> vertexesToLink, Dictionary<IVertex, IVertex> outsideMetaToLocalMetaDictionary)
+        {
+            bool badMeta = meta.Store.Identifier != moveTarget.Store.Identifier;
+
+            if (vertexesToLink.Count > 0 && meta.Store.Identifier == vertexesToLink[0].Store.Identifier)
+                badMeta = false;
+
+            if (badMeta) // a bit hacky                    
+            {
+                IVertex metaToUse = null;
+
+                if (outsideMetaToLocalMetaDictionary.ContainsKey(meta))
+                    metaToUse = outsideMetaToLocalMetaDictionary[meta];
+                else
+                {
+                    metaToUse = moveTarget.AddVertex(null, meta.Value);
+                    outsideMetaToLocalMetaDictionary.Add(meta, metaToUse);
+                }
+                return metaToUse;
+            }
+            return meta;
+        }
+
+        private static void _MoveEdgesIntoVertex(IEnumerable<IEdge> toMoveList, IVertex moveTarget, IList<IVertex> vertexesToLink, bool skipLinkInfo)
         {
             if (toMoveList is IVertex)
             {
@@ -93,7 +116,9 @@ namespace m0.ZeroUML.Instructions
             Dictionary<IVertex, IVertex> oldToNewVertexDictionary = new Dictionary<IVertex, IVertex>();
             List<moveTargetAndIEdge> toProcessEdges = new List<moveTargetAndIEdge>();
 
-            __MoveEdgesIntoVertex(toMoveList, moveTarget, vertexesToLink, oldToNewVertexDictionary, toProcessEdges, skipLinkInfo, storeToIncludeIdentifier);
+            Dictionary<IVertex, IVertex> outsideMetaToLocalMetaDictionary = new Dictionary<IVertex, IVertex>();
+
+            __MoveEdgesIntoVertex(toMoveList, moveTarget, vertexesToLink, oldToNewVertexDictionary, toProcessEdges, skipLinkInfo, outsideMetaToLocalMetaDictionary);
 
             foreach (moveTargetAndIEdge mtae in toProcessEdges)
             {
@@ -107,30 +132,21 @@ namespace m0.ZeroUML.Instructions
                 if (oldToNewVertexDictionary.ContainsKey(to))
                     to = oldToNewVertexDictionary[to];
 
+                meta = _MoveEdgesIntoVertex_getMeta(meta, moveTarget, vertexesToLink, outsideMetaToLocalMetaDictionary);
+                    
                 mtae.moveTarget.AddEdge(meta, to);
             }
         }        
 
-        private static void __MoveEdgesIntoVertex(IEnumerable<IEdge> toMoveList, IVertex moveTarget, IList<IVertex> vertexToLink, Dictionary<IVertex, IVertex> oldToNewVertexDictionary, List<moveTargetAndIEdge> toProcessEdges, bool skipLinkInfo, string storeToIncludeIdentifier)
+        private static void __MoveEdgesIntoVertex(IEnumerable<IEdge> toMoveList, IVertex moveTarget, IList<IVertex> vertexesToLink, Dictionary<IVertex, IVertex> oldToNewVertexDictionary, List<moveTargetAndIEdge> toProcessEdges, bool skipLinkInfo, Dictionary<IVertex, IVertex> outsideMetaToLocalMetaDictionary)
         {            
-            foreach (IEdge e in toMoveList.ToArray()) { 
-
-                bool linkRelatedSkip = false;
-
-                linkRelatedSkip = !skipLinkInfo && VertexOperations.IsLink(e);
-
-                if (e.To.Store.Identifier == storeToIncludeIdentifier)
-                    linkRelatedSkip = false;
-
+            foreach (IEdge e in toMoveList.ToArray()) {                
                 if (e.To.Store.AlwaysPresent || // LINK ONLY
                     oldToNewVertexDictionary.ContainsKey(e.To) ||
-                    vertexToLink.Contains(e.To) ||
+                    vertexesToLink.Contains(e.To) ||
                     e.To == MinusZero.Instance.root
-                    || linkRelatedSkip) 
+                    || (!skipLinkInfo && VertexOperations.IsLink(e))) 
                 {
-
-                    MinusZero.Instance.Log(-2, "LINK", e.To.Value.ToString());
-
                     moveTargetAndIEdge mtae = new moveTargetAndIEdge();
 
                     mtae.moveTarget = moveTarget;
@@ -142,22 +158,16 @@ namespace m0.ZeroUML.Instructions
                 { // FULL COPY
                     IVertex meta = e.Meta;
 
-                    foreach (IEdge ee in e.To)
-                        if (ee.To.Identifier is long && (long)ee.To.Identifier == (long)24757)
-                        {
-                            int x = 0;
-                        }
-
                     if (oldToNewVertexDictionary.ContainsKey(meta))
                         meta = oldToNewVertexDictionary[meta];
 
+                    meta = _MoveEdgesIntoVertex_getMeta(meta, moveTarget, vertexesToLink, outsideMetaToLocalMetaDictionary);
+
                     IVertex newVertex = moveTarget.AddVertex(meta, e.To.Value);
 
-                    oldToNewVertexDictionary.Add(e.To, newVertex);
+                    oldToNewVertexDictionary.Add(e.To, newVertex);                    
 
-                    MinusZero.Instance.Log(-2, "NEW", newVertex.Value.ToString() + " [" + newVertex.GetHashCode() + "]");
-
-                    vertexToLink.Add(newVertex);
+                    vertexesToLink.Add(newVertex);
 
                     foreach (IEdge edgeToETo in e.To.InEdgesRaw.ToArray())
                     {
@@ -168,18 +178,13 @@ namespace m0.ZeroUML.Instructions
                     }
 
                     foreach (IEdge edgeToETo in e.To.MetaInEdgesRaw.ToArray())
-                    {
-                        if (edgeToETo.To.Value.ToString() == "Drive")
-                        {
-                            int x = 0;
-                        }
-
+                    {                        
                         edgeToETo.From.AddEdge(newVertex, edgeToETo.To);
 
                         edgeToETo.From.DeleteEdge(edgeToETo);
                     }
 
-                    __MoveEdgesIntoVertex(e.To, newVertex, vertexToLink, oldToNewVertexDictionary, toProcessEdges, skipLinkInfo, storeToIncludeIdentifier);
+                    __MoveEdgesIntoVertex(e.To, newVertex, vertexesToLink, oldToNewVertexDictionary, toProcessEdges, skipLinkInfo, outsideMetaToLocalMetaDictionary);
                 }
             }
         }     
