@@ -826,22 +826,22 @@ namespace m0.Graph
                         GetSubGraph_Reccurent(e.To, visited);                           
         }
 
-        static public List<IVertex> GetSubGraphWithLinksAsList(IVertex iterationRoot)
+        static public List<IVertex> GetSubGraphWithLinksAsListButExcludeRoot(IVertex iterationRoot)
         {
             List<IVertex> visited = new List<IVertex>();
 
-            GetSubGraphWithLinks_Reccurent(iterationRoot, visited);
+            GetSubGraphWithLinksButExcludeRoot_Reccurent(iterationRoot, visited);
 
             return visited;
         }
 
-        static void GetSubGraphWithLinks_Reccurent(IVertex baseVertex, List<IVertex> visited)
+        static void GetSubGraphWithLinksButExcludeRoot_Reccurent(IVertex baseVertex, List<IVertex> visited)
         {
             visited.Add(baseVertex);
 
             foreach (IEdge e in baseVertex.OutEdges)
-                if (!visited.Contains(e.To))
-                    GetSubGraphWithLinks_Reccurent(e.To, visited);
+                if (!visited.Contains(e.To) && e.To!=MinusZero.Instance.root)
+                    GetSubGraphWithLinksButExcludeRoot_Reccurent(e.To, visited);
         }
 
         public static void AddHandlerIfDelegateListDoesNotContainsIt(IVertex baseVertex, VertexChange _delegate)
