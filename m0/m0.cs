@@ -3,6 +3,7 @@ using m0.Foundation;
 using m0.Graph;
 using m0.Store;
 using m0.Store.FileSystem;
+using m0.Store.Json;
 using m0.Util;
 using m0.ZeroTypes;
 using System;
@@ -32,6 +33,9 @@ namespace m0
 
         public IStore TempStore { get { return tempstore; } }
 
+        IStore emptystore;
+
+        public IStore EmptyStore { get { return emptystore; } }
 
         public IVertex root; // need this public hack for LegacySystem_m0 based generation in m0_SYSTEM_GENERATE
 
@@ -61,7 +65,7 @@ namespace m0
         IUserInteraction _DefaultUserInteraction;
 
         public IUserInteraction DefaultUserInteraction { get { return _DefaultUserInteraction; } }
-        
+
 
         public IParser _DefaultParser; // need this public hack for LegacySystem_m0 based generation in m0_SYSTEM_GENERATE
 
@@ -77,7 +81,7 @@ namespace m0
         public IVertex _DefaultFormalTextLanguage; // need this public hack for LegacySystem_m0 based generation in m0_SYSTEM_GENERATE
 
         public IVertex DefaultFormalTextLanguage { get { return _DefaultFormalTextLanguage; } }
-        
+
 
         public ICodeGenerator _DefaultCodeGenerator; // need this public hack for LegacySystem_m0 based generation in m0_SYSTEM_GENERATE
 
@@ -97,7 +101,7 @@ namespace m0
         public IVertex CreateTempVertex()
         {
             return new EasyVertex(this.tempstore);
-        }        
+        }
 
         public IEdge CreateTempEdge()
         {
@@ -123,17 +127,20 @@ namespace m0
 
             tempstore = new MemoryStore("$-0$TEMP$STORE$", this, new AccessLevelEnum[] { AccessLevelEnum.NoRestrictions }, true);
 
+            emptystore = new MemoryStore("$-0$EMPTY$STORE$", this, new AccessLevelEnum[] { AccessLevelEnum.NoRestrictions }, true);
 
-            empty = new IdentifiedVertex("$Empty", rootstore);
+            empty = new IdentifiedVertex("$Empty", emptystore);
 
             empty.Value = "$Empty";
+
+            emptystore.Root.AddEdge(null, empty);            
 
             tempRoot = CreateTempVertex();
         }
 
         void Init()
         {
-            _DefaultUserInteraction = m0Main.Instance;            
+            _DefaultUserInteraction = m0Main.Instance;
         }
 
         void Init_AfterZeroCodeDefintionCreated()
@@ -144,6 +151,16 @@ namespace m0
             _DefaultExecuter = zeroCodeEngine;
 
             _DefaultCodeGenerator = zeroCodeEngine;
+        }
+
+        void LoadRootFromM0(){
+
+            root.AddVertex(null, "System");
+
+            JsonSerializationStore rootStore = new JsonSerializationStore("system.m0", this, new AccessLevelEnum[] { });
+
+            
+
         }
        
         void InitRootVariables()
@@ -332,6 +349,8 @@ namespace m0
             Bootstrap();
 
             Init();
+
+            LoadRootFromM0();
 
             InitRootVariables();
 

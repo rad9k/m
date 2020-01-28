@@ -143,7 +143,7 @@ namespace m0
 
             tempRoot = CreateTempVertex();
 
-            MinusZero.Instance.tempRoot = tempRoot;
+            MinusZero.Instance.tempRoot = tempRoot;            
 
         }
 

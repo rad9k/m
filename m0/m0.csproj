@@ -96,9 +96,6 @@
     <Compile Include="Graph\IDictionaredVertex.cs" />
     <Compile Include="Graph\NonActingEdge.cs" />
     <Compile Include="Process\UI\NonAtomProcess.cs" />
-    <Compile Include="StartWindow.xaml.cs">
-      <DependentUpon>StartWindow.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Store\BinarySerializationStore.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -328,10 +325,6 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="ResourceDictionaryWhite.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="StartWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

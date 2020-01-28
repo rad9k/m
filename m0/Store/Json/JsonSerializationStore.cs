@@ -22,8 +22,8 @@ namespace m0.Store.Json
         {
             if (File.Exists(Identifier))
             {
-                try
-                {
+                //try
+                //{
                     StreamReader readStream = new StreamReader(Identifier);
 
                     if (readStream.EndOfStream)
@@ -48,7 +48,7 @@ namespace m0.Store.Json
 
                         Attach();
                     }
-                }catch(Exception e)
+                /*}catch(Exception e)
                 { // can not deserislize graph
                     UserInteractionUtil.ShowError("Json Deserlialisation from " + Identifier, e.ToString() + "\n\nAs json serialisation file " + Identifier +" has not been properly loaded, commit (saving) is disabled for the file. This will protect existing file content.");
 
@@ -59,7 +59,7 @@ namespace m0.Store.Json
                     __root.UsageCounter++;
 
                     _root = __root;
-                }
+                }*/
             }
             else
             { // create new
@@ -128,6 +128,12 @@ namespace m0.Store.Json
                     if (je.ToStoreId == 0)
                         ToStoreId = new StoreId(this.TypeName, this.Identifier);
                     else
+                    if(je.ToStoreId == -1)
+                    {
+                        ToStoreId = RootStore;
+                        ToId = MinusZero.Instance.root.Identifier;
+                    }
+                    else
                     {
                         if (!data.StoreIdDictionary.ContainsKey(je.ToStoreId))
                         {                            
@@ -137,13 +143,7 @@ namespace m0.Store.Json
                         }
                         else
                             ToStoreId = data.StoreIdDictionary[je.ToStoreId];
-                    }
-
-                    if ((long)ToId == -1)
-                    {
-                        ToStoreId = RootStore;
-                        ToId = MinusZero.Instance.root.Identifier;
-                    }
+                    }                    
 
                     EasyEdge e = new EasyEdge(MetaStoreId.TypeName, MetaStoreId.Identifier, MetaId,
                         ToStoreId.TypeName, ToStoreId.Identifier, ToId);
