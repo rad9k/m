@@ -6,6 +6,7 @@ using m0.Store.FileSystem;
 using m0.Store.Json;
 using m0.Util;
 using m0.ZeroTypes;
+using m0.ZeroUML.Instructions;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -159,7 +160,7 @@ namespace m0
 
             JsonSerializationStore rootStore = new JsonSerializationStore("system.m0", this, new AccessLevelEnum[] { });
 
-            
+            ZeroUMLInstructionHelpers.MoveEdgesIntoVertex_SkipLinkInfo(
 
         }
        
