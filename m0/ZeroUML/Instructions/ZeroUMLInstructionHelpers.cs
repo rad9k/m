@@ -83,6 +83,9 @@ namespace m0.ZeroUML.Instructions
 
         private static IVertex _MoveEdgesIntoVertex_getMeta(IVertex meta, IVertex moveTarget, IList<IVertex> vertexesToLink, Dictionary<IVertex, IVertex> outsideMetaToLocalMetaDictionary)
         {
+            if (meta.Store.AlwaysPresent)
+                return meta;
+
             bool badMeta = meta.Store.Identifier != moveTarget.Store.Identifier;
 
             if (vertexesToLink.Count > 0 && meta.Store.Identifier == vertexesToLink[0].Store.Identifier)

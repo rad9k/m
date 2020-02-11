@@ -156,11 +156,11 @@ namespace m0
 
         void LoadRootFromM0(){
 
-            root.AddVertex(null, "System");
+            IVertex system = root.AddVertex(null, "System");
 
             JsonSerializationStore rootStore = new JsonSerializationStore("system.m0", this, new AccessLevelEnum[] { });
 
-            ZeroUMLInstructionHelpers.MoveEdgesIntoVertex_SkipLinkInfo(
+            ZeroUMLInstructionHelpers.MoveEdgesIntoVertex_SkipLinkInfo(rootStore.Root, system);
 
         }
        
