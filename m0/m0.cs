@@ -158,9 +158,19 @@ namespace m0
 
             IVertex system = root.AddVertex(null, "System");
 
+            //
+
             JsonSerializationStore rootStore = new JsonSerializationStore("system.m0", this, new AccessLevelEnum[] { });
 
             ZeroUMLInstructionHelpers.MoveEdgesIntoVertex_SkipLinkInfo(rootStore.Root, system);
+
+            //
+
+            IVertex user = root.AddVertex(null, "System");
+
+            JsonSerializationStore userStore = new JsonSerializationStore("user.m0", this, new AccessLevelEnum[] { });
+
+            ZeroUMLInstructionHelpers.MoveEdgesIntoVertex_SkipLinkInfo(userStore.Root, user);
 
         }
        
@@ -184,7 +194,17 @@ namespace m0
 
             dolar = GraphUtil.GetQueryOutFirst(Base, null, "$");
 
-            _DefaultFormalTextLanguage = MinusZero.Instance.Root.Get(false, @"User\CurrentUser:\DefaultFormalTextLanguage:");
+            //
+
+            IVertex User = GraphUtil.GetQueryOutFirst(Root, null, "User");
+
+            IVertex CurrentUser = GraphUtil.GetQueryOutFirst(User, "CurrentUser", null);
+
+            _DefaultFormalTextLanguage = GraphUtil.GetQueryOutFirst(CurrentUser, "DefaultFormalTextLanguage", null);
+
+            //_DefaultFormalTextLanguage = MinusZero.Instance.Root.Get(false, @"User\CurrentUser:\DefaultFormalTextLanguage:");
+
+            //
 
             EdgeTarget = GraphUtil.GetQueryOutFirst(Vertex, null, "$EdgeTarget");
 
