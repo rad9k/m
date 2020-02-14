@@ -36,11 +36,13 @@ namespace m0.Util
             return Guid.NewGuid();
         }
 
-        public static IVertex CreateM0AndMoveEdgesIntoIt_SkipLinkInfo(string fileName, IVertex baseVertex)
+        public static IVertex CreateM0AndMoveEdgesIntoIt_SkipLinkInfo(string fileName, IVertex baseVertex, int vertexIdentifierCompensate)
         {
             File.Delete(fileName);
 
             JsonSerializationStore s = new JsonSerializationStore(fileName, MinusZero.Instance, new AccessLevelEnum[] { });
+
+            s.VertexIdentifierCompensate(vertexIdentifierCompensate);
 
             ZeroUML.Instructions.ZeroUMLInstructionHelpers.MoveEdgesIntoVertex_SkipLinkInfo(baseVertex, s.Root);            
 

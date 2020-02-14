@@ -72,6 +72,11 @@ namespace m0.Store.Json
             
         }
 
+        internal void VertexIdentifierCompensate(int vertexIdentifierCompensate)
+        {
+            VertexIdentifierCount += vertexIdentifierCompensate;
+        }
+
         private void ReconstructVerticesFromSerialisationData(JsonSerializationData data)
         {
             foreach(JsonVertex jv in data.Vertices)
