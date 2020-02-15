@@ -63,5 +63,7 @@ namespace m0.Foundation
         void RemoveVertexIdentifier(IVertex Vertex);
 
         IVertex GetVertexByIdentifier(object VertexIdentidier);
+
+        object GetRootIdentifier();
     }
 }

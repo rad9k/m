@@ -285,6 +285,11 @@ namespace m0.Store.FileSystem
             File_ReadDateTime.AddEdge(vEdgeTarget, sm.Get(false, @"ZeroTypes\String"));
         }
 
+        public object GetRootIdentifier()
+        {
+            throw new NotImplementedException();
+        }
+
         public FileSystemStore(string identifier, IStoreUniverse storeUniverse, AccessLevelEnum[] accessLeveList)
         {
             if (!staticVariablesInitialisationMade)

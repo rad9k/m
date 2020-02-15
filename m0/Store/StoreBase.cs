@@ -79,10 +79,7 @@ namespace m0.Store
                     if (e is IDetachableEdge)
                     {                        
                         IDetachableEdge de = (IDetachableEdge)e;
-                        if (de.DetachState == DetachStateEnum.Detached)
-                        {
-                            int x = 0;
-                        }
+                        
                         if (de.To.Store!=this||(de.Meta!=null&&de.Meta.Store!=this))
                             de.Detach();
                     }
@@ -203,6 +200,14 @@ namespace m0.Store
             }
 
             return VertexIdentifiersDictionary[VertexIdentifier]; 
+        }
+
+        public object GetRootIdentifier()
+        {
+            if(VertexIdentifiersDictionary.Count==0)
+                return null;
+
+            return VertexIdentifiersDictionary[VertexIdentifiersDictionary.Keys.ElementAt(0)].Identifier;
         }
     }
 }

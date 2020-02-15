@@ -42,7 +42,8 @@ namespace m0.Store.Json
 
                         ReconstructVerticesFromSerialisationData(data);
 
-                        _root = GetVertexByIdentifier((long)0);
+                        
+                        _root = GetVertexByIdentifier(GetRootIdentifier());
 
                         ((EasyVertex)_root).UsageCounter = 1;
 
@@ -72,8 +73,27 @@ namespace m0.Store.Json
             
         }
 
-        internal void VertexIdentifierCompensate(int vertexIdentifierCompensate)
+        internal void VertexIdentifierCompensate(long vertexIdentifierCompensate)
         {
+            IDictionary<object, IVertex> oldVertexIdentifiersDictionary = VertexIdentifiersDictionary;
+
+            VertexIdentifiersDictionary = new Dictionary<object, IVertex>();
+
+            foreach(KeyValuePair<object, IVertex> kvp in oldVertexIdentifiersDictionary)
+            {
+                if (kvp.Value.Identifier is long && kvp.Value is EasyVertex)
+                {
+                    EasyVertex ev = (EasyVertex)kvp.Value;
+
+                    ev._Identifier = (long)ev.Identifier + vertexIdentifierCompensate;
+
+                    VertexIdentifiersDictionary.Add(ev.Identifier, kvp.Value);
+                }
+                else // can not compensate
+                    VertexIdentifiersDictionary.Add(kvp.Key, kvp.Value);
+                
+            }
+
             VertexIdentifierCount += vertexIdentifierCompensate;
         }
 
