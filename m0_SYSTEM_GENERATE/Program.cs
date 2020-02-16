@@ -55,7 +55,7 @@ namespace m0_SYSTEM_GENERATE
 
             print("* saving System to \"system.m0\"");
             
-            IVertex newSystem = GeneralUtil.CreateM0AndMoveEdgesIntoIt_SkipLinkInfo(@"system.m0", System, 1);
+            IVertex newSystem = GeneralUtil.CreateM0AndMoveEdgesIntoIt_SkipLinkInfo(@"system.m0", System, 2);
 
             print("* System saved to \"system.m0\"");
 
