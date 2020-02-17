@@ -1,6 +1,6 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                    xmlns:my="clr-namespace:m0.UIWpf.Visualisers">    
+                    xmlns:my="clr-namespace:m0.UIWpf.Visualisers;assembly=m0">    
     <Color x:Key="0Foreground">#000000</Color>
     <Color x:Key="0Background">#ffffff</Color>
     <Color x:Key="0AlternatingBackground">#f0f0f0</Color>

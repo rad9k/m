@@ -113,7 +113,7 @@ namespace m0.ZeroUML.Instructions
             {
                 IVertex baseVertex = (IVertex)toMoveList;
 
-                moveTarget.Value = baseVertex.Value;
+                moveTarget.Value = baseVertex.Value;                
             }
 
             Dictionary<IVertex, IVertex> oldToNewVertexDictionary = new Dictionary<IVertex, IVertex>();
@@ -142,7 +142,18 @@ namespace m0.ZeroUML.Instructions
         }        
 
         private static void __MoveEdgesIntoVertex(IEnumerable<IEdge> toMoveList, IVertex moveTarget, IList<IVertex> vertexesToLink, Dictionary<IVertex, IVertex> oldToNewVertexDictionary, List<moveTargetAndIEdge> toProcessEdges, bool skipLinkInfo, Dictionary<IVertex, IVertex> outsideMetaToLocalMetaDictionary)
-        {            
+        {
+
+            if (toMoveList is IVertex)
+            {
+
+                if (((IVertex)toMoveList).Value.ToString() == "DotNetEndPoint")
+                {
+                    int x = 0;
+                }
+            }
+
+
             foreach (IEdge e in toMoveList.ToArray()) {                
                 if (e.To.Store.AlwaysPresent || // LINK ONLY
                     oldToNewVertexDictionary.ContainsKey(e.To) ||
@@ -161,6 +172,11 @@ namespace m0.ZeroUML.Instructions
                 { // FULL COPY
                     IVertex meta = e.Meta;
 
+                    if (e.To.Value.ToString() == "DotNetEndPoint")
+                    {
+                        int x = 0;
+                    }
+
                     if (oldToNewVertexDictionary.ContainsKey(meta))
                         meta = oldToNewVertexDictionary[meta];
 
@@ -174,7 +190,8 @@ namespace m0.ZeroUML.Instructions
 
                     foreach (IEdge edgeToETo in e.To.InEdgesRaw.ToArray())
                     {
-                        if (edgeToETo.From != moveTarget && edgeToETo.Meta != e.Meta) // allready done when creating newVertex
+                        // if (edgeToETo.From != moveTarget && edgeToETo.Meta != e.Meta) // allready done when creating newVertex
+                        if (edgeToETo.From != moveTarget || edgeToETo.Meta != meta) // allready done when creating newVertex
                             edgeToETo.From.AddEdge(edgeToETo.Meta, newVertex);
 
                         edgeToETo.From.DeleteEdge(edgeToETo);

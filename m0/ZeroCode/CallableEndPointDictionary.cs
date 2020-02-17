@@ -58,7 +58,8 @@ namespace m0.ZeroCode
                     del = (CallableEndPointDelegate)method.CreateDelegate(typeof(CallableEndPointDelegate));
                 }
 
-                DotNetEndPointDictionary.Add(_is, del);
+                if(del!=null)
+                    DotNetEndPointDictionary.Add(_is, del);
             }
 
             if (del == null)

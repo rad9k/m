@@ -363,7 +363,7 @@ namespace m0
 
             IVertex n = baseVertex.AddVertex(callableEndPoint, null);
             n.AddEdge(_is, dotNetEndPoint);
-            n.AddVertex(typeName, "m0.ZeroUML.Instructions.BaseInstructions");
+            n.AddVertex(typeName, "m0.ZeroUML.Instructions.BaseInstructions, m0, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null");
             
             n.AddVertex(methodName, _methodName);
             
