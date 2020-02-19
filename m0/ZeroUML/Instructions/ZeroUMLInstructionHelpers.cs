@@ -191,7 +191,7 @@ namespace m0.ZeroUML.Instructions
                     foreach (IEdge edgeToETo in e.To.InEdgesRaw.ToArray())
                     {
                         // if (edgeToETo.From != moveTarget && edgeToETo.Meta != e.Meta) // allready done when creating newVertex
-                        if (edgeToETo.From != moveTarget || edgeToETo.Meta != meta) // allready done when creating newVertex
+                        if (edgeToETo.From != moveTarget || edgeToETo.Meta != e.Meta) // allready done when creating newVertex
                             edgeToETo.From.AddEdge(edgeToETo.Meta, newVertex);
 
                         edgeToETo.From.DeleteEdge(edgeToETo);
