@@ -142,15 +142,12 @@ namespace m0.ZeroUML.Instructions
         }        
 
         private static void __MoveEdgesIntoVertex(IEnumerable<IEdge> toMoveList, IVertex moveTarget, IList<IVertex> vertexesToLink, Dictionary<IVertex, IVertex> oldToNewVertexDictionary, List<moveTargetAndIEdge> toProcessEdges, bool skipLinkInfo, Dictionary<IVertex, IVertex> outsideMetaToLocalMetaDictionary)
-        {
-
-            if (toMoveList is IVertex)
+        {           
+            if(toMoveList is IVertex)
             {
+                IVertex toMoveList_asVertex = (IVertex)toMoveList;
 
-                if (((IVertex)toMoveList).Value.ToString() == "DotNetEndPoint")
-                {
-                    int x = 0;
-                }
+                toMoveList = toMoveList_asVertex.OutEdgesRaw;
             }
 
 
@@ -171,12 +168,7 @@ namespace m0.ZeroUML.Instructions
                 else
                 { // FULL COPY
                     IVertex meta = e.Meta;
-
-                    if (e.To.Value.ToString() == "DotNetEndPoint")
-                    {
-                        int x = 0;
-                    }
-
+                    
                     if (oldToNewVertexDictionary.ContainsKey(meta))
                         meta = oldToNewVertexDictionary[meta];
 
@@ -184,7 +176,7 @@ namespace m0.ZeroUML.Instructions
 
                     IVertex newVertex = moveTarget.AddVertex(meta, e.To.Value);
 
-                    if (newVertex.Value.ToString() == "FileSystem")
+                    if (newVertex.Value.ToString() == "Base" && meta.Value.ToString()=="$DirectMeta")
                     {
                         int x = 0;
                     }
@@ -195,6 +187,11 @@ namespace m0.ZeroUML.Instructions
 
                     foreach (IEdge edgeToETo in e.To.InEdgesRaw.ToArray())
                     {
+                        if(edgeToETo.Meta.Value.ToString()=="$DirectMeta" && edgeToETo.To.Value.ToString() == "Base")
+                        {
+                            int x = 0;
+                        }
+
                         bool theSame = true;
 
                         if (oldToNewVertexDictionary.ContainsKey(edgeToETo.From))
@@ -223,7 +220,7 @@ namespace m0.ZeroUML.Instructions
 
                     foreach (IEdge edgeToETo in e.To.MetaInEdgesRaw.ToArray())
                     {
-                        if (edgeToETo.To.Value.ToString() == "FileSystem")
+                        if (edgeToETo.To.Value.ToString() == "Base" && newVertex.Value.ToString()=="$DirectMeta")
                         {
                             int x = 0;
                         }

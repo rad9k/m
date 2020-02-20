@@ -212,11 +212,7 @@ namespace m0
 
             IsAggregation = GraphUtil.GetQueryOutFirst(Vertex, null, "$IsAggregation");
         }        
-
-        void CreateSystemMetaStoreFileSystem()
-        {
-            FileSystemStore.FillSystemMeta();
-        }        
+   
 
         void AddDrives()
         {
@@ -376,8 +372,6 @@ namespace m0
             InitRootVariables();
 
             Init_AfterZeroCodeDefintionCreated();
-
-            FileSystemStore.FillSystemMeta();
 
             AddDrives();
 
