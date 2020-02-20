@@ -184,21 +184,50 @@ namespace m0.ZeroUML.Instructions
 
                     IVertex newVertex = moveTarget.AddVertex(meta, e.To.Value);
 
+                    if (newVertex.Value.ToString() == "FileSystem")
+                    {
+                        int x = 0;
+                    }
+
                     oldToNewVertexDictionary.Add(e.To, newVertex);                    
 
                     vertexesToLink.Add(newVertex);
 
                     foreach (IEdge edgeToETo in e.To.InEdgesRaw.ToArray())
                     {
-                        // if (edgeToETo.From != moveTarget && edgeToETo.Meta != e.Meta) // allready done when creating newVertex
-                        if (edgeToETo.From != moveTarget || edgeToETo.Meta != meta) // allready done when creating newVertex
+                        bool theSame = true;
+
+                        if (oldToNewVertexDictionary.ContainsKey(edgeToETo.From))
+                        {
+                            if(oldToNewVertexDictionary[edgeToETo.From] != moveTarget)
+                                theSame = false;
+                        }
+                        else
+                        {
+                            if (edgeToETo.From != moveTarget)
+                                theSame = false;
+                        } 
+
+                        if (edgeToETo.Meta != meta)
+                            theSame = false;
+
+                        if(!theSame)
                             edgeToETo.From.AddEdge(edgeToETo.Meta, newVertex);
+
+                        // if (edgeToETo.From != moveTarget && edgeToETo.Meta != e.Meta) // allready done when creating newVertex
+                        //if (edgeToETo.From != moveTarget || edgeToETo.Meta != meta ) // allready done when creating newVertex
+
 
                         edgeToETo.From.DeleteEdge(edgeToETo);
                     }
 
                     foreach (IEdge edgeToETo in e.To.MetaInEdgesRaw.ToArray())
-                    {                        
+                    {
+                        if (edgeToETo.To.Value.ToString() == "FileSystem")
+                        {
+                            int x = 0;
+                        }
+
                         edgeToETo.From.AddEdge(newVertex, edgeToETo.To);
 
                         edgeToETo.From.DeleteEdge(edgeToETo);
