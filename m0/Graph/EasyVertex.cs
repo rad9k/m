@@ -357,11 +357,13 @@ namespace m0.Graph
 
         public override void DeleteMetaInEdge(IEdge _edge)
         {
-            IEdge edge = null;// _edge;
+            IEdge edge = null;
 
-            //if (!MetaInEdgesRaw.Contains(edge))
+            if (MetaInEdgesRaw.Contains(_edge))
+                edge = _edge;
+            else
                 foreach (IEdge e in MetaInEdgesRaw)
-                    if (e.Meta == _edge.Meta && e.From == _edge.From)
+                    if (e.From == _edge.From && e.Meta == _edge.Meta && e.From == _edge.From)
                         edge = e;
 
             if (edge != null)
@@ -388,11 +390,13 @@ namespace m0.Graph
 
         public override void DeleteInEdge(IEdge _edge)
         {
-            IEdge edge = null;// _edge;
+            IEdge edge = null;
 
-            //if (!InEdgesRaw.Contains(edge))
+            if (InEdgesRaw.Contains(_edge))
+                edge = _edge;
+            else
                 foreach (IEdge e in InEdgesRaw)
-                  if (e.Meta == _edge.Meta && e.From == _edge.From)
+                  if (e.From == _edge.From && e.Meta == _edge.Meta && e.From == _edge.From)
                      edge = e;
 
             if (edge != null)
@@ -458,11 +462,13 @@ namespace m0.Graph
 
         public override void DeleteEdge(IEdge _edge)
         {
-            IEdge edge = _edge;
+            IEdge edge = null;
 
-            if(!OutEdgesRaw.Contains(edge))
+            if (OutEdgesRaw.Contains(_edge))
+                edge = _edge;
+            else
                 foreach (IEdge e in OutEdgesRaw)
-                    if(e.Meta==_edge.Meta && e.To==_edge.To)
+                    if(e.From == _edge.From && e.Meta ==_edge.Meta && e.To ==_edge.To)
                        edge = e;
 
             if (edge != null)
