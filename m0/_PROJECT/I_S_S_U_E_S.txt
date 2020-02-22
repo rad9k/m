@@ -10,6 +10,7 @@
 58. root export / import [8]
 64. child vertex short names support in ||{}/ X+<||{} for @@ 
 65. bootstrap.m0 [58]
+66. $Is Class in system.m0 [65]
 
 <><><> FUTURE 0.5
 
