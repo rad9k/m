@@ -209,7 +209,7 @@ namespace m0.Store.FileSystem
             IVertex sm = z.Root.Get(false, @"System\Meta");
 
             IVertex Drive = FileSystem.AddVertex(sm.Get(false, @"ZeroUML\Class"), "Drive");
-            IVertex PathSeparator = Drive.AddVertex(sm.Get(false, @"ZeroUML\Attribute"), "PathSeparator");
+            IVertex PathSeparator = Drive.AddVertex(sm.Get(false, @"ZeroUML\Class\Attribute"), "PathSeparator");
 
             Directory = FileSystem.AddVertex(sm.Get(false, @"ZeroUML\Class"), "Directory");
             File = FileSystem.AddVertex(sm.Get(false, @"ZeroUML\Class"), "File");
