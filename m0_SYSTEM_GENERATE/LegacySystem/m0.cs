@@ -255,7 +255,7 @@ namespace m0
                 LegacySystem.Graph.EasyVertex.Get(sm, false, @"Base\Vertex"));
         }
 
-
+        
         void RootVariableVertexLinksCreate()
         {
             IVertex System = GraphUtil.GetQueryOutFirst(Root, null, "System");
@@ -4406,6 +4406,10 @@ namespace m0
             EdgeTarget = LegacySystem.Graph.EasyVertex.Get(Root, false, @"System\Meta\Base\Vertex\$EdgeTarget");
             Is = LegacySystem.Graph.EasyVertex.Get(Root, false, @"System\Meta\Base\Vertex\$Is");
             IsAggregation = LegacySystem.Graph.EasyVertex.Get(Root, false, @"System\Meta\Base\Vertex\$IsAggregation");
+
+            MinusZero.Instance.EdgeTarget = EdgeTarget;
+            MinusZero.Instance.Is = Is;
+            MinusZero.Instance.IsAggregation = IsAggregation;
         }
 
         private void Initialize_PreParserReady()
