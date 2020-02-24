@@ -170,7 +170,7 @@ namespace m0
 
             JsonSerializationStore userStore = new JsonSerializationStore("user.m0", this, new AccessLevelEnum[] { });
 
-            ZeroUMLInstructionHelpers.MoveEdgesIntoVertex_SkipLinkInfo(userStore.Root, user);
+            ZeroUMLInstructionHelpers.MoveEdgesIntoVertex_NoLocalMeta(userStore.Root, user);
 
         }
        

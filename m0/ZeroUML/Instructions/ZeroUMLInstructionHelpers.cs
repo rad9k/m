@@ -68,22 +68,27 @@ namespace m0.ZeroUML.Instructions
 
         public static void MoveEdgesIntoVertex(IEnumerable<IEdge> toMoveList, IVertex moveTarget)
         {
-            _MoveEdgesIntoVertex(toMoveList, moveTarget, new List<IVertex>(), false);
+            _MoveEdgesIntoVertex(toMoveList, moveTarget, new List<IVertex>(), false, false);
         }
 
         public static void MoveEdgesIntoVertex_IncludeEverythingBesidesList(IEnumerable<IEdge> toMoveList, IVertex moveTarget, IList<IVertex> vertexesToLink)
         {
-            _MoveEdgesIntoVertex(toMoveList, moveTarget, vertexesToLink, true);
+            _MoveEdgesIntoVertex(toMoveList, moveTarget, vertexesToLink, true, false);
         }
 
         public static void MoveEdgesIntoVertex_SkipLinkInfo(IEnumerable<IEdge> toMoveList, IVertex moveTarget)
         {
-            _MoveEdgesIntoVertex(toMoveList, moveTarget, new List<IVertex>(), true);
+            _MoveEdgesIntoVertex(toMoveList, moveTarget, new List<IVertex>(), true, false);
+        }
+
+        public static void MoveEdgesIntoVertex_NoLocalMeta(IEnumerable<IEdge> toMoveList, IVertex moveTarget)
+        {
+            _MoveEdgesIntoVertex(toMoveList, moveTarget, new List<IVertex>(), true, true);
         }
 
         private static IVertex _MoveEdgesIntoVertex_getMeta(IVertex meta, IVertex moveTarget, IList<IVertex> vertexesToLink, Dictionary<IVertex, IVertex> outsideMetaToLocalMetaDictionary, List<IVertex> allToMoveSubGraphVertexes)
         {
-            if (meta.Value.ToString() == "Class")
+            if (meta.Value.ToString() == "CurrentUser")
             {
                 int x = 0;
             }
@@ -117,7 +122,7 @@ namespace m0.ZeroUML.Instructions
             return meta;
         }
 
-        private static void _MoveEdgesIntoVertex(IEnumerable<IEdge> toMoveList, IVertex moveTarget, IList<IVertex> vertexesToLink, bool skipLinkInfo)
+        private static void _MoveEdgesIntoVertex(IEnumerable<IEdge> toMoveList, IVertex moveTarget, IList<IVertex> vertexesToLink, bool skipLinkInfo, bool noLocalMeta)
         {
             List<IVertex> allToMoveSubGraphVertexes;
 
@@ -147,7 +152,7 @@ namespace m0.ZeroUML.Instructions
 
             Dictionary<IVertex, IVertex> outsideMetaToLocalMetaDictionary = new Dictionary<IVertex, IVertex>();
 
-            __MoveEdgesIntoVertex(toMoveList, moveTarget, vertexesToLink, oldToNewVertexDictionary, toProcessEdges, skipLinkInfo, outsideMetaToLocalMetaDictionary, allToMoveSubGraphVertexes);
+            __MoveEdgesIntoVertex(toMoveList, moveTarget, vertexesToLink, oldToNewVertexDictionary, toProcessEdges, skipLinkInfo, outsideMetaToLocalMetaDictionary, allToMoveSubGraphVertexes, noLocalMeta);
 
             foreach (moveTargetAndIEdge mtae in toProcessEdges)
             {
@@ -161,13 +166,14 @@ namespace m0.ZeroUML.Instructions
                 if (oldToNewVertexDictionary.ContainsKey(to))
                     to = oldToNewVertexDictionary[to];
 
-                meta = _MoveEdgesIntoVertex_getMeta(meta, moveTarget, vertexesToLink, outsideMetaToLocalMetaDictionary, allToMoveSubGraphVertexes);
+                if (!noLocalMeta)
+                    meta = _MoveEdgesIntoVertex_getMeta(meta, moveTarget, vertexesToLink, outsideMetaToLocalMetaDictionary, allToMoveSubGraphVertexes);
                     
                 mtae.moveTarget.AddEdge(meta, to);
             }
         }        
 
-        private static void __MoveEdgesIntoVertex(IEnumerable<IEdge> toMoveList, IVertex moveTarget, IList<IVertex> vertexesToLink, Dictionary<IVertex, IVertex> oldToNewVertexDictionary, List<moveTargetAndIEdge> toProcessEdges, bool skipLinkInfo, Dictionary<IVertex, IVertex> outsideMetaToLocalMetaDictionary, List<IVertex> allToMoveSubGraphVertexes)
+        private static void __MoveEdgesIntoVertex(IEnumerable<IEdge> toMoveList, IVertex moveTarget, IList<IVertex> vertexesToLink, Dictionary<IVertex, IVertex> oldToNewVertexDictionary, List<moveTargetAndIEdge> toProcessEdges, bool skipLinkInfo, Dictionary<IVertex, IVertex> outsideMetaToLocalMetaDictionary, List<IVertex> allToMoveSubGraphVertexes, bool noLocalMeta)
         {           
             if(toMoveList is IVertex)
             {
@@ -198,7 +204,8 @@ namespace m0.ZeroUML.Instructions
                     if (oldToNewVertexDictionary.ContainsKey(meta))
                         meta = oldToNewVertexDictionary[meta];
 
-                    meta = _MoveEdgesIntoVertex_getMeta(meta, moveTarget, vertexesToLink, outsideMetaToLocalMetaDictionary, allToMoveSubGraphVertexes);
+                    if(!noLocalMeta)
+                        meta = _MoveEdgesIntoVertex_getMeta(meta, moveTarget, vertexesToLink, outsideMetaToLocalMetaDictionary, allToMoveSubGraphVertexes);
 
                     IVertex newVertex = moveTarget.AddVertex(meta, e.To.Value);
 
@@ -256,7 +263,7 @@ namespace m0.ZeroUML.Instructions
                         edgeToETo.From.DeleteEdge(edgeToETo);
                     }
 
-                    __MoveEdgesIntoVertex(e.To, newVertex, vertexesToLink, oldToNewVertexDictionary, toProcessEdges, skipLinkInfo, outsideMetaToLocalMetaDictionary, allToMoveSubGraphVertexes);
+                    __MoveEdgesIntoVertex(e.To, newVertex, vertexesToLink, oldToNewVertexDictionary, toProcessEdges, skipLinkInfo, outsideMetaToLocalMetaDictionary, allToMoveSubGraphVertexes, noLocalMeta);
                 }
             }
         }     
