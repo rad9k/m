@@ -76,6 +76,11 @@ namespace m0.ZeroUML.Instructions
             _MoveEdgesIntoVertex(toMoveList, moveTarget, vertexesToLink, true, false);
         }
 
+        public static void MoveEdgesIntoVertex_IncludeEverythingBesidesList_NoLocalMeta(IEnumerable<IEdge> toMoveList, IVertex moveTarget, IList<IVertex> vertexesToLink)
+        {
+            _MoveEdgesIntoVertex(toMoveList, moveTarget, vertexesToLink, true, true);
+        }
+
         public static void MoveEdgesIntoVertex_SkipLinkInfo(IEnumerable<IEdge> toMoveList, IVertex moveTarget)
         {
             _MoveEdgesIntoVertex(toMoveList, moveTarget, new List<IVertex>(), true, false);
@@ -248,6 +253,10 @@ namespace m0.ZeroUML.Instructions
                         //if (edgeToETo.From != moveTarget || edgeToETo.Meta != meta ) // allready done when creating newVertex
 
 
+                        if (edgeToETo.To.Identifier is long && (long)edgeToETo.To.Identifier == (long)7)
+                        {
+                            int x = 0;
+                        }
                         edgeToETo.From.DeleteEdge(edgeToETo);
                     }
 
@@ -259,6 +268,12 @@ namespace m0.ZeroUML.Instructions
                         }
 
                         edgeToETo.From.AddEdge(newVertex, edgeToETo.To);
+
+
+                        if (edgeToETo.To.Identifier is long && (long)edgeToETo.To.Identifier == (long)7)
+                        {
+                            int x = 0;
+                        }
 
                         edgeToETo.From.DeleteEdge(edgeToETo);
                     }

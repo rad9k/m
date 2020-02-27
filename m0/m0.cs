@@ -170,10 +170,23 @@ namespace m0
 
             JsonSerializationStore userStore = new JsonSerializationStore("user.m0", this, new AccessLevelEnum[] { });
 
-            ZeroUMLInstructionHelpers.MoveEdgesIntoVertex_NoLocalMeta(userStore.Root, user);
+            ZeroUMLInstructionHelpers.MoveEdgesIntoVertex_IncludeEverythingBesidesList_NoLocalMeta(userStore.Root, user, GraphUtil.GetSubGraphWithLinksAsListButExcludeRoot(system));
+
+            //ZeroUMLInstructionHelpers.MoveEdgesIntoVertex_NoLocalMeta(userStore.Root, user);
+
+            //
+
+            IVertex examples = root.AddVertex(null, "System");
+
+            JsonSerializationStore examplesStore = new JsonSerializationStore("examples.m0", this, new AccessLevelEnum[] { });
+
+            ZeroUMLInstructionHelpers.MoveEdgesIntoVertex_IncludeEverythingBesidesList_NoLocalMeta(examplesStore.Root, examples, GraphUtil.GetSubGraphWithLinksAsListButExcludeRoot(system));
+
+            //ZeroUMLInstructionHelpers.MoveEdgesIntoVertex_NoLocalMeta(examplesStore.Root, examples);
+
 
         }
-       
+
         void InitRootVariables()
         {
             IVertex System = GraphUtil.GetQueryOutFirst(Root, null, "System");
@@ -376,16 +389,9 @@ namespace m0
             AddDrives();
 
 
-
             UIWpf.UIWpf.InitializeUIWpf();
 
-            IsInitialized = true;
-
-
-
-            
-
-            
+            IsInitialized = true;           
         }
     }
 }
