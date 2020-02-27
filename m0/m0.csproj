@@ -255,6 +255,7 @@
     <Compile Include="ZeroTypes\Edge.cs" />
     <Compile Include="ZeroTypes\PlatformClass.cs" />
     <Compile Include="ZeroTypes\VertexOperations.cs" />
+    <Compile Include="ZeroUML\Instructions\ZeroUMLInstructionHelpers - Copy.cs" />
     <Compile Include="ZeroUML\Instructions\ZeroUMLInstructionHelpers.cs" />
     <Compile Include="_PROJECT\Legacy Code\AutoTest.cs" />
     <Page Include="m0Main.xaml">

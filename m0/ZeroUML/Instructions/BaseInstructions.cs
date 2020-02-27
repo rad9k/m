@@ -495,9 +495,9 @@ namespace m0.ZeroUML.Instructions
             if(_leftExecuteResult.Count() > 0)
             {
                 IVertex leftExecuteFirstVertex = _leftExecuteResult.OutEdges[0].To;
-                IList<IEdge> rightExecuteResult = _rightExecuteResult.OutEdges;
+                //IList<IEdge> rightExecuteResult = _rightExecuteResult.OutEdges; XXX
 
-                ZeroUMLInstructionHelpers.MoveEdgesIntoVertex(rightExecuteResult, leftExecuteFirstVertex);                                
+                ZeroUMLInstructionHelpers.MoveEdgesIntoVertex(_rightExecuteResult, leftExecuteFirstVertex);                                
             }                       
 
             return exe.stack;
