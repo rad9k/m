@@ -75,7 +75,7 @@ namespace m0.ZeroUML.Instructions
         {
             IList<IVertex> sourceGraph_Flat = GraphUtil.GetSubGraphWithLinksAsListButExcludeRoot(source);
 
-            foreach(IVertex v in toCopy)
+            _MoveEdgesIntoVertex(source, target, sourceGraph_Flat);
         }
 
 
@@ -87,6 +87,19 @@ namespace m0.ZeroUML.Instructions
         public static void MoveEdgesIntoVertex_IncludeEverythingBesidesList(IVertex source, IVertex target, IList<IVertex> vertexesToLink)
         {
 
+        }
+
+        private static void _MoveEdgesIntoVertex(IVertex source, IVertex target, IList<IVertex> sourceGraph_Flat)
+        {
+            Dictionary<IVertex, IVertex> source2targetDictionary = new Dictionary<IVertex, IVertex>();
+            List<IEdge> toDeleteEdges = new List<IEdge>();
+
+            IVertex tempRoot = target;
+
+            foreach(IVertex v in sourceGraph_Flat)
+            {
+                IEdge e = tempRoot.AddVertex
+            }
         }
 
 
