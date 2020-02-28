@@ -60,6 +60,8 @@ namespace m0.Foundation
 
         IVertex AddVertex(IVertex metaVertex, object val);
 
+        IEdge AddVertexAndReturnEdge(IVertex metaVertex, object val);
+
         void AddMetaInEdge(IEdge edge);
 
         void DeleteMetaInEdge(IEdge edge);

@@ -12,7 +12,7 @@ namespace m0.Graph
 {
     public class List_VertexBase : List<IEdge> { } // to be used in dictionaries, to identify list of List<IEdge> :)
     [Serializable]
-    public class VertexBase: IVertex, IHasUsageCounter, IDisposable
+    public class VertexBase : IVertex, IHasUsageCounter, IDisposable
     {
         protected IDictionary<object, object> _OutEdgesByMeta;
         public IDictionary<object, object> OutEdgesByMeta { get { return _OutEdgesByMeta; } }
@@ -57,7 +57,7 @@ namespace m0.Graph
                     InEdgesDictionariesNeedsRebuild_MetaAndValue = false;
                 }
             }
-        }    
+        }
 
         protected bool InEdgesDictionariesNeedsRebuild_Edges { get; set; }
 
@@ -108,7 +108,7 @@ namespace m0.Graph
 
         public IEdge this[string meta] // XXX serveral optimisations needed!
         {
-            get {                
+            get {
                 IVertex r = this.GetAll(false, meta + ":");
 
                 if (r.Count() > 0)
@@ -140,8 +140,8 @@ namespace m0.Graph
                 // this is for Table Visualiser
                 IEdge vertexMetaVertex = m0.MinusZero.Instance.Root.GetAll(false, @"System\Meta\Base\Vertex\" + meta).FirstOrDefault();
 
-                if(vertexMetaVertex!=null)
-                   return new EasyEdge(this, vertexMetaVertex.To, null);
+                if (vertexMetaVertex != null)
+                    return new EasyEdge(this, vertexMetaVertex.To, null);
 
                 return null;
             }
@@ -159,14 +159,14 @@ namespace m0.Graph
 
         public bool CanFireChangeEvent = true;
 
-        public virtual void FireChange(VertexChangeEventArgs e){
-            if(Change!=null && CanFireChangeEvent)
-                Change(this,e);
+        public virtual void FireChange(VertexChangeEventArgs e) {
+            if (Change != null && CanFireChangeEvent)
+                Change(this, e);
         }
 
         public virtual int UsageCounter { get; set; }
 
-        public virtual object Identifier 
+        public virtual object Identifier
         {
             get
             {
@@ -177,7 +177,7 @@ namespace m0.Graph
         public virtual object Value
         {
             get
-            {                
+            {
                 throw new NotImplementedException();
             }
             set
@@ -218,6 +218,11 @@ namespace m0.Graph
 
         public virtual IVertex AddVertex(IVertex metaVertex, object val)
         {
+            return AddVertexAndReturnEdge(metaVertex, val).To;
+        }
+
+        public virtual IEdge AddVertexAndReturnEdge(IVertex metaVertex, object val)
+        {
             if (val is IVertex)
                 throw new Exception("Trying to add Vertex as Vertex value");
 
@@ -231,9 +236,7 @@ namespace m0.Graph
 
             nv.Value = val;
 
-            AddEdge(metaVertex, nv);
-
-            return nv;
+            return AddEdge(metaVertex, nv);
         }
 
         public virtual void AddMetaInEdge(IEdge edge)

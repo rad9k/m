@@ -93,11 +93,6 @@ namespace m0.ZeroUML.Instructions
 
         private static IVertex _MoveEdgesIntoVertex_getMeta(IVertex meta, IVertex moveTarget, IList<IVertex> vertexesToLink, Dictionary<IVertex, IVertex> outsideMetaToLocalMetaDictionary, List<IVertex> allToMoveSubGraphVertexes)
         {
-            if (meta.Value.ToString() == "CurrentUser")
-            {
-                int x = 0;
-            }
-
             if (meta.Store.AlwaysPresent)
                 return meta;
 
@@ -214,22 +209,12 @@ namespace m0.ZeroUML.Instructions
 
                     IVertex newVertex = moveTarget.AddVertex(meta, e.To.Value);
 
-                    if (newVertex.Value.ToString() == "Base" && meta.Value.ToString()=="$DirectMeta")
-                    {
-                        int x = 0;
-                    }
-
                     oldToNewVertexDictionary.Add(e.To, newVertex);                    
 
                     vertexesToLink.Add(newVertex);
 
                     foreach (IEdge edgeToETo in e.To.InEdgesRaw.ToArray())
                     {
-                        if(edgeToETo.Meta.Value.ToString()=="$DirectMeta" && edgeToETo.To.Value.ToString() == "Base")
-                        {
-                            int x = 0;
-                        }
-
                         bool theSame = true;
 
                         if (oldToNewVertexDictionary.ContainsKey(edgeToETo.From))
@@ -251,29 +236,13 @@ namespace m0.ZeroUML.Instructions
 
                         // if (edgeToETo.From != moveTarget && edgeToETo.Meta != e.Meta) // allready done when creating newVertex
                         //if (edgeToETo.From != moveTarget || edgeToETo.Meta != meta ) // allready done when creating newVertex
-
-
-                        if (edgeToETo.To.Identifier is long && (long)edgeToETo.To.Identifier == (long)7)
-                        {
-                            int x = 0;
-                        }
+                        
                         edgeToETo.From.DeleteEdge(edgeToETo);
                     }
 
                     foreach (IEdge edgeToETo in e.To.MetaInEdgesRaw.ToArray())
-                    {
-                        if (edgeToETo.To.Value.ToString() == "Base" && newVertex.Value.ToString()=="$DirectMeta")
-                        {
-                            int x = 0;
-                        }
-
-                        edgeToETo.From.AddEdge(newVertex, edgeToETo.To);
-
-
-                        if (edgeToETo.To.Identifier is long && (long)edgeToETo.To.Identifier == (long)7)
-                        {
-                            int x = 0;
-                        }
+                    {                        
+                        edgeToETo.From.AddEdge(newVertex, edgeToETo.To);                        
 
                         edgeToETo.From.DeleteEdge(edgeToETo);
                     }

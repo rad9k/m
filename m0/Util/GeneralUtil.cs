@@ -44,7 +44,7 @@ namespace m0.Util
 
             s.VertexIdentifierCompensate(vertexIdentifierCompensate);
 
-            ZeroUML.Instructions.ZeroUMLInstructionHelpers.MoveEdgesIntoVertex_SkipLinkInfo(baseVertex, s.Root);            
+            ZeroUML.Instructions.ZeroUMLInstructionHelpers.MoveEdgesIntoVertex_IncludeLinkedVertexes(baseVertex, s.Root);            
 
             s.Detach();
             s.CommitTransaction();
