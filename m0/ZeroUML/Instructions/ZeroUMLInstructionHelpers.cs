@@ -78,6 +78,13 @@ namespace m0.ZeroUML.Instructions
             _MoveEdgesIntoVertex(source, target, sourceGraph_Flat);
         }
 
+        static IList<IVertex> RemoveAlwaysPresent(IList<IVertex> vertexList)
+        {
+            IList<IVertex> afterRemoval = new List<IVertex>();
+
+            return afterRemoval;
+        }
+
         public static void MoveEdgesIntoVertex_IncludeEverythingBesidesList_NoLocalMeta(IVertex source, IVertex target, IList<IVertex> vertexesToLink)
         {
 
@@ -128,10 +135,14 @@ namespace m0.ZeroUML.Instructions
                     }
                 }
 
-            foreach(IVertex targetVertex in source2targetDictionary.Values)
-            {
-
-            }
+            foreach (IVertex targetVertex in source2targetDictionary.Values)
+                foreach (IEdge e in targetVertex.MetaInEdgesRaw)
+                    if (!sourceGraph_Flat.Contains(e.From))
+                    {
+                        e.From.AddVertex()
+                    }
+                        
+            
 
             foreach (IEdge e in toDeleteEdges) // delete rest
                 e.From.DeleteEdge(e);
