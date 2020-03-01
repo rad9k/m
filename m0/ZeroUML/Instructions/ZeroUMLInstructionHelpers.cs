@@ -75,12 +75,18 @@ namespace m0.ZeroUML.Instructions
         {
             IList<IVertex> sourceGraph_Flat = GraphUtil.GetSubGraphWithLinksAsListButExcludeRoot(source);
 
+            sourceGraph_Flat = RemoveAlwaysPresent(sourceGraph_Flat);
+
             _MoveEdgesIntoVertex(source, target, sourceGraph_Flat);
         }
 
         static IList<IVertex> RemoveAlwaysPresent(IList<IVertex> vertexList)
         {
             IList<IVertex> afterRemoval = new List<IVertex>();
+
+            foreach (IVertex v in vertexList)
+                if (!v.Store.AlwaysPresent)
+                    afterRemoval.Add(v);
 
             return afterRemoval;
         }
@@ -102,47 +108,58 @@ namespace m0.ZeroUML.Instructions
 
             IVertex tempRoot = target;
 
-            foreach(IVertex sourceVertex in sourceGraph_Flat) // create new vertexes (copy)
-                if (!sourceVertex.Store.AlwaysPresent)
-                {                
-                    IEdge e = tempRoot.AddVertexAndReturnEdge(null, sourceVertex.Value);
+            foreach(IVertex sourceVertex in sourceGraph_Flat) // create new vertexes (copy)               
+            {                
+                IEdge e = tempRoot.AddVertexAndReturnEdge(null, sourceVertex.Value);
 
-                    source2targetDictionary.Add(sourceVertex, e.To);
+                source2targetDictionary.Add(sourceVertex, e.To);
 
-                    toDeleteEdges.Add(e);
-                }
+                toDeleteEdges.Add(e);
+            }
 
-            foreach(IVertex sourceVertex in sourceGraph_Flat) // create new edges
-                if (!sourceVertex.Store.AlwaysPresent)
+            foreach(IVertex sourceVertex in sourceGraph_Flat) // create new edges                
+            {
+                IVertex targetFrom = source2targetDictionary[sourceVertex];
+
+                foreach(IEdge sourceEdge in sourceVertex)
                 {
-                    IVertex targetFrom = source2targetDictionary[sourceVertex];
+                    IVertex targetMeta, targetTo;
 
-                    foreach(IEdge sourceEdge in sourceVertex)
-                    {
-                        IVertex targetMeta, targetTo;
+                    if (source2targetDictionary.ContainsKey(sourceEdge.Meta))
+                        targetMeta = source2targetDictionary[sourceEdge.Meta];
+                    else
+                        targetMeta = sourceEdge.Meta;
 
-                        if (source2targetDictionary.ContainsKey(sourceEdge.Meta))
-                            targetMeta = source2targetDictionary[sourceEdge.Meta];
-                        else
-                            targetMeta = sourceEdge.Meta;
+                    if (source2targetDictionary.ContainsKey(sourceEdge.To))
+                        targetTo = source2targetDictionary[sourceEdge.To];
+                    else
+                        targetTo = sourceEdge.To;
 
-                        if (source2targetDictionary.ContainsKey(sourceEdge.To))
-                            targetTo = source2targetDictionary[sourceEdge.To];
-                        else
-                            targetTo = sourceEdge.To;
-
-                        targetFrom.AddEdge(targetMeta, targetTo);
-                    }
+                    targetFrom.AddEdge(targetMeta, targetTo);
                 }
+            }
 
             foreach (IVertex targetVertex in source2targetDictionary.Values)
-                foreach (IEdge e in targetVertex.MetaInEdgesRaw)
-                    if (!sourceGraph_Flat.Contains(e.From))
+                foreach (IEdge metaInEdge in targetVertex.MetaInEdgesRaw)
+                    if (!sourceGraph_Flat.Contains(metaInEdge.From))
                     {
-                        e.From.AddVertex()
+                        IVertex outsideFrom = metaInEdge.From;
+                        IVertex targetMeta;
+                        IVertex targetTo;
+
+                        if (source2targetDictionary.ContainsKey(metaInEdge.Meta))
+                            targetMeta = source2targetDictionary[metaInEdge.Meta];
+                        else
+                            targetMeta = metaInEdge.Meta;
+
+                        if (source2targetDictionary.ContainsKey(metaInEdge.To))
+                            targetTo = source2targetDictionary[metaInEdge.To];
+                        else
+                            targetTo = metaInEdge.To;
+
+                        outsideFrom.AddEdge(targetMeta, targetTo);
                     }
-                        
-            
+                                    
 
             foreach (IEdge e in toDeleteEdges) // delete rest
                 e.From.DeleteEdge(e);
