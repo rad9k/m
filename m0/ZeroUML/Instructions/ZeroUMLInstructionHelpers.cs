@@ -140,7 +140,7 @@ namespace m0.ZeroUML.Instructions
             }
 
             foreach (IVertex targetVertex in source2targetDictionary.Values)
-                foreach (IEdge metaInEdge in targetVertex.MetaInEdgesRaw)
+                foreach (IEdge metaInEdge in targetVertex.MetaInEdgesRaw.ToList())
                     if (!sourceGraph_Flat.Contains(metaInEdge.From))
                     {
                         IVertex outsideFrom = metaInEdge.From;
