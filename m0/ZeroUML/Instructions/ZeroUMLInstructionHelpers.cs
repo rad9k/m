@@ -175,7 +175,7 @@ namespace m0.ZeroUML.Instructions
 
             foreach (IVertex sourceVertex in sourceGraph_Flat) // META replace old edges with new vertexes
                 foreach (IEdge metaInEdge in sourceVertex.MetaInEdgesRaw.ToList())
-                    if (!source2targetDictionary.ContainsKey(metaInEdge.From)) // if the edge comes from outside
+                    if (!source2targetDictionary.ContainsKey(metaInEdge.From)) // if the edge comes from outside                        
                     {
                         IVertex sourceFrom = metaInEdge.From;
                         IVertex targetMeta, targetTo;
@@ -186,43 +186,23 @@ namespace m0.ZeroUML.Instructions
                             targetMeta = metaInEdge.Meta;
 
                         if (source2targetDictionary.ContainsKey(metaInEdge.To))
-                            targetMeta = source2targetDictionary[metaInEdge.Meta];
+                            targetTo = source2targetDictionary[metaInEdge.To];
                         else
-                            targetMeta = metaInEdge.Meta;
-
-                        IVertex targetTo = source2targetDictionary[sourceVertex];
-
+                            targetTo = metaInEdge.To;
+                        
                         if (targetMeta.ToString() == "$Empty" && targetMeta.Store.AlwaysPresent != true)
+                        {
+                            int x = 0;
+                        }
+
+                        if(targetMeta.Store.Identifier== "$-0$TEMP$STORE$" || targetTo.Store.Identifier == "$-0$TEMP$STORE$")
                         {
                             int x = 0;
                         }
 
                         sourceFrom.AddEdge(targetMeta, targetTo);
                         sourceFrom.DeleteEdge(metaInEdge);
-                    }
-
-
-            foreach (IVertex targetVertex in source2targetDictionary.Values) // Meta In !
-                foreach (IEdge metaInEdge in targetVertex.MetaInEdgesRaw.ToList())
-                    if (!sourceGraph_Flat.Contains(metaInEdge.From))
-                    {
-                        IVertex outsideFrom = metaInEdge.From;
-                        IVertex targetMeta;
-                        IVertex targetTo;
-
-                        if (source2targetDictionary.ContainsKey(metaInEdge.Meta))
-                            targetMeta = source2targetDictionary[metaInEdge.Meta];
-                        else
-                            targetMeta = metaInEdge.Meta;
-
-                        if (source2targetDictionary.ContainsKey(metaInEdge.To))
-                            targetTo = source2targetDictionary[metaInEdge.To];
-                        else
-                            targetTo = metaInEdge.To;
-
-                        outsideFrom.AddEdge(targetMeta, targetTo);                        
-                    }
-                                    
+                    }                                    
 
             foreach (IEdge e in toDeleteEdges) // delete rest
                 e.From.DeleteEdge(e);
