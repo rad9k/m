@@ -141,7 +141,7 @@ namespace m0.ZeroUML.Instructions
                     else
                         targetTo = sourceEdge.To;
 
-                    if (sourceEdge.Meta.ToString() == "$Empty" && sourceEdge.Meta.Store.AlwaysPresent!=true)
+                    if (targetMeta.Store.Identifier == "$-0$TEMP$STORE$" || targetTo.Store.Identifier == "$-0$TEMP$STORE$")
                     {
                         int x = 0;
                     }
@@ -164,7 +164,7 @@ namespace m0.ZeroUML.Instructions
 
                         IVertex targetTo = source2targetDictionary[sourceVertex];
 
-                        if (targetMeta.ToString() == "$Empty" && targetMeta.Store.AlwaysPresent != true)
+                        if (targetMeta.Store.Identifier == "$-0$TEMP$STORE$" || targetTo.Store.Identifier == "$-0$TEMP$STORE$")
                         {
                             int x = 0;
                         }
@@ -190,12 +190,7 @@ namespace m0.ZeroUML.Instructions
                         else
                             targetTo = metaInEdge.To;
                         
-                        if (targetMeta.ToString() == "$Empty" && targetMeta.Store.AlwaysPresent != true)
-                        {
-                            int x = 0;
-                        }
-
-                        if(targetMeta.Store.Identifier== "$-0$TEMP$STORE$" || targetTo.Store.Identifier == "$-0$TEMP$STORE$")
+                        if(targetMeta.Store.Identifier== "$-0$TEMP$STORE$" /*|| targetTo.Store.Identifier == "$-0$TEMP$STORE$"*/)
                         {
                             int x = 0;
                         }
