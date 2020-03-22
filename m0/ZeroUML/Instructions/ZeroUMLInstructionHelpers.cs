@@ -141,11 +141,6 @@ namespace m0.ZeroUML.Instructions
                     else
                         targetTo = sourceEdge.To;
 
-                    if (targetMeta.Store.Identifier == "$-0$TEMP$STORE$" || targetTo.Store.Identifier == "$-0$TEMP$STORE$")
-                    {
-                        int x = 0;
-                    }
-
                     targetFrom.AddEdge(targetMeta, targetTo);
                 }
             }

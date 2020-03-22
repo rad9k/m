@@ -433,7 +433,7 @@ namespace m0_SYSTEM_GENERATE
             tr.Get(false, @"TEST\Person1").AddEdge(r.Get(false, @"System\Meta?$Is"), tr.Get(false, @"TEST\Person"));
             tr.Get(false, @"TEST\Person2").AddEdge(r.Get(false, @"System\Meta?$Is"), tr.Get(false, @"TEST\Person"));
             tr.Get(false, @"TEST\Person3").AddEdge(r.Get(false, @"System\Meta?$Is"), tr.Get(false, @"TEST\Person"));
-            tr.Get(false, @"TEST\Person4").AddEdge(r.Get(false, @"System\Meta>$Is"), tr.Get(false, @"TEST\Person"));
+            tr.Get(false, @"TEST\Person4").AddEdge(r.Get(false, @"System\Meta?$Is"), tr.Get(false, @"TEST\Person"));
 
             GraphUtil.ReplaceEdge(tr.Get(false, @"TEST\Person1"), "IsPretty", tr.Get(false, @"TEST\Pretty\No"));
             GraphUtil.ReplaceEdge(tr.Get(false, @"TEST\Person2"), "IsPretty", tr.Get(false, @"TEST\Pretty\Yes"));
@@ -459,7 +459,8 @@ namespace m0_SYSTEM_GENERATE
                 tr.Get(false, @"TEST2\Person1" + x).AddEdge(r.Get(false, @"System\Meta?$Is"), tr.Get(false, @"TEST\Person"));
                 tr.Get(false, @"TEST2\Person2" + x).AddEdge(r.Get(false, @"System\Meta?$Is"), tr.Get(false, @"TEST\Person"));
                 tr.Get(false, @"TEST2\Person3" + x).AddEdge(r.Get(false, @"System\Meta?$Is"), tr.Get(false, @"TEST\Person"));
-                tr.Get(false, @"TEST2\Person4" + x).AddEdge(r.Get(false, @"System\Meta?$Is"), tr.Get(false, @"TEST\Person"));
+                tr.Get(false, @"TEST2\Person4" + x).AddEdge(r.Get(false, @"System\Meta?$Is"), tr.Get(false, @"TEST\Person"));                
+
             }
 
             for (int x = 0; x < 1; x++)
