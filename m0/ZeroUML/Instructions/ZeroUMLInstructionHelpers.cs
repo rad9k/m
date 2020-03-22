@@ -154,8 +154,23 @@ namespace m0.ZeroUML.Instructions
 
                         IVertex targetTo = source2targetDictionary[sourceVertex];                        
 
-                        sourceFrom.AddEdge(targetMeta, targetTo);
-                        sourceFrom.DeleteEdge(sourceInEdge);
+                        //sourceFrom.AddEdge(targetMeta, targetTo);
+                        //sourceFrom.DeleteEdge(sourceInEdge);
+
+                        IList<IEdge> sourceFromEdges = new List<IEdge>();
+
+                        foreach (IEdge sourceFromEdge in sourceFrom)
+                            sourceFromEdges.Add(sourceFromEdge);
+
+                        sourceFrom.DeleteEdgesList(sourceFromEdges);
+
+                        foreach(IEdge sourceFromEdgeToAdd in sourceFromEdges)
+                        {
+                            if (sourceFromEdgeToAdd == sourceInEdge)
+                                sourceFrom.AddEdge(targetMeta, targetTo);
+                            else
+                                sourceFrom.AddEdge(sourceFromEdgeToAdd.Meta, sourceFromEdgeToAdd.To);
+                        }
                     }
 
             foreach (IVertex sourceVertex in sourceGraph_Flat) // META replace old edges with new vertexes
@@ -174,9 +189,24 @@ namespace m0.ZeroUML.Instructions
                             targetTo = source2targetDictionary[metaInEdge.To];
                         else
                             targetTo = metaInEdge.To;
-                                               
-                        sourceFrom.AddEdge(targetMeta, targetTo);
-                        sourceFrom.DeleteEdge(metaInEdge);
+
+                        // sourceFrom.AddEdge(targetMeta, targetTo);
+                        // sourceFrom.DeleteEdge(metaInEdge);
+
+                        IList<IEdge> sourceFromEdges = new List<IEdge>();
+
+                        foreach (IEdge sourceFromEdge in sourceFrom)
+                            sourceFromEdges.Add(sourceFromEdge);
+
+                        sourceFrom.DeleteEdgesList(sourceFromEdges);
+
+                        foreach (IEdge sourceFromEdgeToAdd in sourceFromEdges)
+                        {
+                            if (sourceFromEdgeToAdd == metaInEdge)
+                                sourceFrom.AddEdge(targetMeta, targetTo);
+                            else
+                                sourceFrom.AddEdge(sourceFromEdgeToAdd.Meta, sourceFromEdgeToAdd.To);
+                        }
                     }                                    
 
             foreach (IEdge e in toDeleteEdges) // delete rest
