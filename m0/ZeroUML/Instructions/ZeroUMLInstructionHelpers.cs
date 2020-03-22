@@ -80,11 +80,6 @@ namespace m0.ZeroUML.Instructions
             return afterRemoval;
         }
 
-        public static void MoveEdgesIntoVertex_IncludeEverythingBesidesList_NoLocalMeta(IVertex source, IVertex target, IList<IVertex> vertexesToLink)
-        {
-
-        }
-
         public static void MoveEdgesIntoVertex_IncludeEverythingBesidesList(IVertex source, IVertex target, IList<IVertex> excludeList)
         {
             IList<IVertex> sourceGraph_Flat = GraphUtil.GetSubGraphWithLinksAsListButExcludeRoot(source);
@@ -127,7 +122,7 @@ namespace m0.ZeroUML.Instructions
             {
                 IVertex targetFrom = source2targetDictionary[sourceVertex];
 
-                foreach (IEdge sourceEdge in sourceVertex)
+                foreach (IEdge sourceEdge in sourceVertex.OutEdgesRaw)
                 {
                     IVertex targetMeta, targetTo;                    
 
@@ -146,7 +141,7 @@ namespace m0.ZeroUML.Instructions
             }
 
             foreach (IVertex sourceVertex in sourceGraph_Flat) // replace old edges with new vertexes
-                foreach (IEdge sourceInEdge in sourceVertex.InEdges.ToList())
+                foreach (IEdge sourceInEdge in sourceVertex.InEdgesRaw.ToList())
                     if(!source2targetDictionary.ContainsKey(sourceInEdge.From)) // if the edge comes from outside
                     {
                         IVertex sourceFrom = sourceInEdge.From;
@@ -157,12 +152,7 @@ namespace m0.ZeroUML.Instructions
                         else
                             targetMeta = sourceInEdge.Meta;
 
-                        IVertex targetTo = source2targetDictionary[sourceVertex];
-
-                        if (targetMeta.Store.Identifier == "$-0$TEMP$STORE$" || targetTo.Store.Identifier == "$-0$TEMP$STORE$")
-                        {
-                            int x = 0;
-                        }
+                        IVertex targetTo = source2targetDictionary[sourceVertex];                        
 
                         sourceFrom.AddEdge(targetMeta, targetTo);
                         sourceFrom.DeleteEdge(sourceInEdge);
@@ -184,12 +174,7 @@ namespace m0.ZeroUML.Instructions
                             targetTo = source2targetDictionary[metaInEdge.To];
                         else
                             targetTo = metaInEdge.To;
-                        
-                        if(targetMeta.Store.Identifier== "$-0$TEMP$STORE$" /*|| targetTo.Store.Identifier == "$-0$TEMP$STORE$"*/)
-                        {
-                            int x = 0;
-                        }
-
+                                               
                         sourceFrom.AddEdge(targetMeta, targetTo);
                         sourceFrom.DeleteEdge(metaInEdge);
                     }                                    
