@@ -55,6 +55,14 @@ namespace m0.Graph
 
     public class GraphUtil
     {    
+        public static bool CompareEdges(IEdge one, IEdge two)
+        {
+            if (one.From == two.From && one.Meta == two.Meta && one.To == two.To)
+                return true;
+
+            return false;
+        }
+
         public static IEdge CreateArtificialEdge(IVertex meta, IVertex to)
         {
             //EasyEdge e = new EasyEdge(null, meta, to);

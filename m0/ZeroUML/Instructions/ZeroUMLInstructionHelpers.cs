@@ -166,7 +166,7 @@ namespace m0.ZeroUML.Instructions
 
                         foreach(IEdge sourceFromEdgeToAdd in sourceFromEdges)
                         {
-                            if (sourceFromEdgeToAdd == sourceInEdge)
+                            if (GraphUtil.CompareEdges(sourceFromEdgeToAdd, sourceInEdge))
                                 sourceFrom.AddEdge(targetMeta, targetTo);
                             else
                                 sourceFrom.AddEdge(sourceFromEdgeToAdd.Meta, sourceFromEdgeToAdd.To);
@@ -202,7 +202,7 @@ namespace m0.ZeroUML.Instructions
 
                         foreach (IEdge sourceFromEdgeToAdd in sourceFromEdges)
                         {
-                            if (sourceFromEdgeToAdd == metaInEdge)
+                            if (GraphUtil.CompareEdges(sourceFromEdgeToAdd, metaInEdge))
                                 sourceFrom.AddEdge(targetMeta, targetTo);
                             else
                                 sourceFrom.AddEdge(sourceFromEdgeToAdd.Meta, sourceFromEdgeToAdd.To);
