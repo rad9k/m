@@ -159,7 +159,7 @@ namespace m0.ZeroUML.Instructions
 
                         IList<IEdge> sourceFromEdges = new List<IEdge>();
 
-                        foreach (IEdge sourceFromEdge in sourceFrom)
+                        foreach (IEdge sourceFromEdge in sourceFrom.OutEdgesRaw)
                             sourceFromEdges.Add(sourceFromEdge);
 
                         sourceFrom.DeleteEdgesList(sourceFromEdges);
@@ -195,7 +195,7 @@ namespace m0.ZeroUML.Instructions
 
                         IList<IEdge> sourceFromEdges = new List<IEdge>();
 
-                        foreach (IEdge sourceFromEdge in sourceFrom)
+                        foreach (IEdge sourceFromEdge in sourceFrom.OutEdgesRaw)
                             sourceFromEdges.Add(sourceFromEdge);
 
                         sourceFrom.DeleteEdgesList(sourceFromEdges);
