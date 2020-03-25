@@ -1,13 +1,10 @@
 ﻿!!!!!!!!!!!!!!!!!!!!!!!!!!!!! TO DO:
-27. key added error on exit
 33. standard base library / method / func [58]
 59. copy $Empty? [11]
 60. copy from Graph error [59]
-8. Get/GetAll switch [7]
 11. Diagram perf update [8]
 39. colors in editor
 57. editor text prev
-58. root export / import [8]
 64. child vertex short names support in ||{}/ X+<||{} for @@ 
 65. bootstrap.m0 [58]
 66. $Is Class in system.m0 [65]
@@ -98,3 +95,6 @@
 63. query bug - queryTest
 50. files rename HACK
 7. basic perf check
+27. key added error on exit
+8. Get/GetAll switch [7]
+58. root export / import [8]

@@ -152,9 +152,10 @@ namespace m0.ZeroUML.Instructions
                         else
                             targetMeta = sourceInEdge.Meta;
 
-                        IVertex targetTo = source2targetDictionary[sourceVertex];                        
+                        IVertex targetTo = source2targetDictionary[sourceVertex];
 
-                        //sourceFrom.AddEdge(targetMeta, targetTo);
+                        // this is done below but with proper order
+                        //sourceFrom.AddEdge(targetMeta, targetTo); 
                         //sourceFrom.DeleteEdge(sourceInEdge);
 
                         IList<IEdge> sourceFromEdges = new List<IEdge>();
@@ -190,6 +191,7 @@ namespace m0.ZeroUML.Instructions
                         else
                             targetTo = metaInEdge.To;
 
+                        // this is done below but with proper order
                         // sourceFrom.AddEdge(targetMeta, targetTo);
                         // sourceFrom.DeleteEdge(metaInEdge);
 
