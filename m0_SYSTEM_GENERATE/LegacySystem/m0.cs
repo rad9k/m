@@ -4412,6 +4412,11 @@ namespace m0
             MinusZero.Instance.IsAggregation = IsAggregation;
         }
 
+        private void CheckAndCorrecIsClass()
+        {
+
+        }
+
         private void Initialize_PreParserReady()
         {
             LogLevel = -2;
@@ -4488,11 +4493,13 @@ namespace m0
 
             AddIsAggregation();
 
+            CheckAndCorrecIsClass();
+
             //AddDrives(); // remove for now. do not need that
 
 
     
-            UIWpf.UIWpf.InitializeUIWpf();
+            //UIWpf.UIWpf.InitializeUIWpf();
 
             IsInitialized = true;
         }
