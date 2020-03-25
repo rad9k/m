@@ -163,8 +163,8 @@ namespace m0_SYSTEM_GENERATE
                             "\r\n\tvariable \"Test\" @String" +
                             "\r\n\tvariable \"Test2\" @String" +
                             "\r\n\tvariable \"Test3\" @String" +
-                            "\r\n\tvariable \"Magunia\" @String 5:10" +
-                            "\r\n\tvariable \"Radek\" @String 2:2" +
+                            "\r\n\tvariable \"Magunia\" @String \"5\":\"10\"" +
+                            "\r\n\tvariable \"Radek\" @String \"2\":\"2\"" +
                             "\r\n\tRadek += \"Koha\"" +
                             "\r\n\tMagunia+<Radek" +
                             "\r\n\tTest +< Magunia <+> Radek <+> Radek" +
