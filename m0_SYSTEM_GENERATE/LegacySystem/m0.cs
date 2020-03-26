@@ -4414,7 +4414,17 @@ namespace m0
 
         private void CheckAndCorrecIsClass()
         {
+            IVertex systemClasses = root.GetAll(false, "System?Class:");
 
+            IVertex Class = LegacySystem.Graph.EasyVertex.Get(Root, false, @"System\Meta\ZeroUML\Class");
+
+            foreach (IEdge classEdge in systemClasses)
+            {
+                IVertex classVertex = classEdge.To;
+
+                if (classVertex.Get(false, "$Is:Class") == null)
+                    classVertex.AddEdge(Is, Class);
+            }
         }
 
         private void Initialize_PreParserReady()

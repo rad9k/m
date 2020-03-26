@@ -79,6 +79,14 @@ namespace m0_SYSTEM_GENERATE
 
             print("* examples saved to \"examples.m0\"");
 
+            //
+
+            print("* creating \"_bootstrap.m0\"");
+
+            CreateBootstrap.Create();
+
+            //
+
             print("");
 
             print("execution succesfull finish");

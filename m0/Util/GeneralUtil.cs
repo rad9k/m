@@ -36,6 +36,13 @@ namespace m0.Util
             return Guid.NewGuid();
         }
 
+        public static void SaveStore(IStore s)
+        {
+            s.Detach();
+            s.CommitTransaction();
+            s.Attach();
+        }
+
         public static IVertex CreateM0AndMoveEdgesIntoIt_SkipLinkInfo(string fileName, IVertex baseVertex, int vertexIdentifierCompensate)
         {
             File.Delete(fileName);

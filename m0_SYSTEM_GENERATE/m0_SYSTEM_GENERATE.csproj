@@ -48,6 +48,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CreateBootstrap.cs" />
     <Compile Include="CreateExamples.cs" />
     <Compile Include="LegacySystem\FormalTextLanguage\GoldParser\GoldGenericParser.cs" />
     <Compile Include="LegacySystem\FormalTextLanguage\GoldParser\GoldGenericParser_BackEnd.cs" />
