@@ -72,6 +72,52 @@ namespace m0.Graph
             return e;
         }
 
+        public static IVertex SimpleGet(IVertex baseVertex, string query)
+        {
+            IList<string> queryParts = query.Split('\\');
+
+            int pos = 0;
+
+            IVertex cursor = baseVertex;
+
+            while (pos < queryParts.Count)
+            {
+                cursor = GraphUtil.GetQueryOutFirst(cursor, null, queryParts[pos]);
+
+                if (cursor == null)
+                    return null;
+
+                pos++;
+            } 
+
+            return cursor;
+        }
+
+        public static IVertex SimpleCreateVertexPath(IVertex baseVertex, string query)
+        {
+            IList<string> queryParts = query.Split('\\');
+
+            int pos = 0;
+
+            IVertex cursor = baseVertex;
+
+            while (pos < queryParts.Count)
+            {
+                string actualQueryPart = queryParts[pos];
+
+                IVertex possibleNewCursor = GraphUtil.GetQueryOutFirst(cursor, null, actualQueryPart);
+
+                if (possibleNewCursor == null)
+                    cursor = cursor.AddVertex(null, actualQueryPart);
+                else
+                    cursor = possibleNewCursor;
+
+                pos++;
+            }
+
+            return cursor;
+        }
+
         public static IVertex GetQueryOutFirst(IVertex baseVertex, object meta, object value)
         {
             IEdge result;

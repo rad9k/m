@@ -5,25 +5,29 @@
 11. Diagram perf update [8]
 39. colors in editor
 57. editor text prev
-64. child vertex short names support in ||{}/ X+<||{} for @@ 
-65. bootstrap.m0 [58]
-66. $Is Class in system.m0 [65]
+69. execute throught Execute in IVertex
 
 <><><> FUTURE 0.5
 
-4. escape sequences in rtq support by keywords [8] and especially '<' and '>'
+64. child vertex short names support in ||{}/ X+<||{} for @@ 
+36. ZeroUML diagramming update
+37. pre/post text processing + if/test/case/default nextout?
+46. forms for Person bug
+
+<><><> FUTURE 0.9
+
 10. <@BaseEdge :: ""> [4] [11]
 					<@From :: @kupa\TEST\TestDiagram\Item:<4>\\> ??? from where
 					<@Meta :: @> ???
 					<@To :: @TEST\Person4>
+68. $Empty in edges in parse / generate. is it ok?
+67. variables / other operators support in Query
+4. escape sequences in rtq support by keywords [8] and especially '<' and '>'
 66. reference dict.allKeywordsSubstringsDictionary in ZeroCodeCommmon 291
 32. language definition correction to support languages inheritence
 12. parse / generate check
 34. Query dialog box refactoring
-36. ZeroUML diagramming update
-37. pre/post text processing + if/test/case/default nextout?
 40. <<a..b>>
-46. forms for Person bug
 56. table optimisation
 
 <><><> FUTURE 1
@@ -98,3 +102,5 @@
 27. key added error on exit
 8. Get/GetAll switch [7]
 58. root export / import [8]
+66. $Is Class in system.m0 [65]
+65. bootstrap.m0 [58]

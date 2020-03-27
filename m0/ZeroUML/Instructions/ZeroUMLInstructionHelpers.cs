@@ -53,14 +53,9 @@ namespace m0.ZeroUML.Instructions
             }
                 
             return nv;
-        }        
+        }                
 
         public static void MoveEdgesIntoVertex(IVertex source, IVertex target)
-        {
-
-        }
-
-        public static void MoveEdgesIntoVertex_IncludeLinkedVertexes(IVertex source, IVertex target)
         {
             IList<IVertex> sourceGraph_Flat = GraphUtil.GetSubGraphWithLinksAsListButExcludeRoot(source);
 

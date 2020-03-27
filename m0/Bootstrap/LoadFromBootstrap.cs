@@ -28,16 +28,16 @@ namespace m0.Bootstrap
                 string importVertexPath = e.To.Value.ToString();
                 string importFilePath = e.To.OutEdges[0].To.Value.ToString();
 
-                IVertex importRoot = GraphUtil.GetQueryOutFirst(root, null, importVertexPath);
+                IVertex importRoot = GraphUtil.SimpleGet(root, importVertexPath);
 
                 if (importRoot == null)
-                    importRoot = root.AddVertex(null, importVertexPath);
+                    importRoot = GraphUtil.SimpleCreateVertexPath(root, importVertexPath);                        
 
                 if (isSystem)
                 {
                     JsonSerializationStore imp = new JsonSerializationStore(importFilePath, MinusZero.Instance, new AccessLevelEnum[] { });
 
-                    ZeroUMLInstructionHelpers.MoveEdgesIntoVertex_IncludeLinkedVertexes(imp.Root, importRoot);
+                    ZeroUMLInstructionHelpers.MoveEdgesIntoVertex(imp.Root, importRoot);
 
                     isSystem = false;
 

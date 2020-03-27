@@ -43,7 +43,7 @@ namespace m0.Util
             s.Attach();
         }
 
-        public static IVertex CreateM0AndMoveEdgesIntoIt_SkipLinkInfo(string fileName, IVertex baseVertex, int vertexIdentifierCompensate)
+        public static IVertex CreateM0AndMoveEdgesIntoIt(string fileName, IVertex baseVertex, int vertexIdentifierCompensate)
         {
             File.Delete(fileName);
 
@@ -51,7 +51,7 @@ namespace m0.Util
 
             s.VertexIdentifierCompensate(vertexIdentifierCompensate);
 
-            ZeroUML.Instructions.ZeroUMLInstructionHelpers.MoveEdgesIntoVertex_IncludeLinkedVertexes(baseVertex, s.Root);            
+            ZeroUML.Instructions.ZeroUMLInstructionHelpers.MoveEdgesIntoVertex(baseVertex, s.Root);            
 
             s.Detach();
             s.CommitTransaction();

@@ -58,7 +58,7 @@ namespace m0.UIWpf.Dialog
 
         private void Button_Click_1(object sender, RoutedEventArgs e)
         {
-            if (!GeneralUtil.CompareStrings(this.To.Vertex.Get(false, @"BaseEdge:\To:\To:").Value, "$Empty"))
+            //if (!GeneralUtil.CompareStrings(this.To.Vertex.Get(false, @"BaseEdge:\To:\To:").Value, "$Empty")) // can make edge to $Empty
             {
                 if (GeneralUtil.CompareStrings(this.Meta.Vertex.Get(false, @"BaseEdge:\To:\To:").Value, "$Empty"))
                     Vertex.AddEdge(null, this.To.Vertex.Get(false, @"BaseEdge:\To:\To:"));

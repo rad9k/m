@@ -7,16 +7,20 @@ using System.Threading.Tasks;
 using m0.Store.Json;
 using m0.Foundation;
 using m0.Util;
+using m0.Graph;
+using System.IO;
 
 namespace m0_SYSTEM_GENERATE
 {
     class CreateBootstrap
     {
-        public static void Create()
+        public static void Create(string fileName)
         {
-            JsonSerializationStore store = new JsonSerializationStore("_bootstrap.m0", m0.MinusZero.Instance.root.Store.StoreUniverse, new AccessLevelEnum[] { });
+            File.Delete(fileName);
 
-            IVertex r = store.Root;
+            JsonSerializationStore store = new JsonSerializationStore(fileName, m0.MinusZero.Instance.root.Store.StoreUniverse, new AccessLevelEnum[] { });
+
+            IVertex r = store.Root;            
 
             IVertex system = r.AddVertex(null, "System");
             system.AddVertex(null, "system.m0");

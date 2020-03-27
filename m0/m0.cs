@@ -163,7 +163,7 @@ namespace m0
 
             JsonSerializationStore rootStore = new JsonSerializationStore("system.m0", this, new AccessLevelEnum[] { });
 
-            ZeroUMLInstructionHelpers.MoveEdgesIntoVertex_IncludeLinkedVertexes(rootStore.Root, system);
+            ZeroUMLInstructionHelpers.MoveEdgesIntoVertex(rootStore.Root, system);
 
             //
 
