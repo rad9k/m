@@ -1,4 +1,5 @@
-﻿using m0.FormalTextLanguage;
+﻿using m0.Bootstrap;
+using m0.FormalTextLanguage;
 using m0.Foundation;
 using m0.Graph;
 using m0.Store;
@@ -380,7 +381,9 @@ namespace m0
 
             Init();
 
-            LoadRootFromM0();
+            LoadFromBootstrap.Execute();
+
+            //LoadRootFromM0();
 
             InitRootVariables();
 

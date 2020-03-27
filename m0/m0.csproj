@@ -90,6 +90,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Compile Include="Bootstrap\LoadFromBootstrap.cs" />
     <Compile Include="Foundation\INoInEdgeInOutVertexVertex.cs" />
     <Compile Include="Foundation\IPlatformClass.cs" />
     <Compile Include="Foundation\IUserInteraction.cs" />
