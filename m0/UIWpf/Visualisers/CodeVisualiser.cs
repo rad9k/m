@@ -26,10 +26,11 @@ namespace m0.UIWpf.Visualisers
 {
     public class CodeVisualiser : TextEditor, IPlatformClass, IDisposable, IHasLocalizableEdges, IOwnScrolling
     {
-    
+        IList<string> TextMemory;
+
         public CodeVisualiser()
         {
-            MinusZero mz = MinusZero.Instance;            
+            MinusZero mz = MinusZero.Instance;
 
             if (mz != null && mz.IsInitialized)
             {
@@ -51,21 +52,73 @@ namespace m0.UIWpf.Visualisers
 
                 // this.MouseEnter += dndMouseEnter;
 
+                TextMemory = new List<string>();
+
                 this.Loaded += new RoutedEventHandler(OnLoad);
 
-                this.KeyDown += CodeVisualiser_KeyDown;
+                //this.KeyDown += CodeVisualiser_KeyDown;
+
+                this.PreviewKeyDown += CodeVisualiser_KeyDown;
 
                 editSetup();
 
-                UpdateEditView();        
+                UpdateEditView();
+            }
+        }
+
+        private void ExecuteParse()
+        {
+            int TextMemoryMax = (int)GraphUtil.GetIntegerValue(Vertex.Get(false, "TextMemoryMax:"));
+
+            TextMemory.Add(Text);
+
+            MinusZero.Instance.DefaultParser.Parse(Vertex.Get(false, @"BaseEdge:\To:"), Text);
+
+            TextMemoryMax++;
+
+            Vertex.Get(false, "TextMemoryMax:").Value = TextMemoryMax;
+            Vertex.Get(false, "TextMemoryCurrent:").Value = TextMemoryMax;
+        }
+
+        private void ReferenceTextMemoryLeft()
+        {            
+            int TextMemoryCurrent = (int)GraphUtil.GetIntegerValue(Vertex.Get(false, "TextMemoryCurrent:"));
+
+            if (TextMemoryCurrent > 1)
+            {
+                TextMemoryCurrent--;
+
+                Text = TextMemory[TextMemoryCurrent - 1];
+
+                Vertex.Get(false, "TextMemoryCurrent:").Value = TextMemoryCurrent;
+            }
+        }
+
+        private void ReferenceTextMemoryRight()
+        {
+            int TextMemoryMax = (int)GraphUtil.GetIntegerValue(Vertex.Get(false, "TextMemoryMax:"));
+            int TextMemoryCurrent = (int)GraphUtil.GetIntegerValue(Vertex.Get(false, "TextMemoryCurrent:"));
+
+            if (TextMemoryCurrent < TextMemoryMax)
+            {
+                TextMemoryCurrent++;
+
+                Text = TextMemory[TextMemoryCurrent - 1];
+
+                Vertex.Get(false, "TextMemoryCurrent:").Value = TextMemoryCurrent;
             }
         }
 
         private void CodeVisualiser_KeyDown(object sender, KeyEventArgs e)
         {
-            if (e.Key == Key.Escape) 
-                MinusZero.Instance.DefaultParser.Parse(Vertex.Get(false, @"BaseEdge:\To:"), Text);
-                
+            if (e.Key == Key.Escape)
+                ExecuteParse();
+
+            if (e.Key == Key.Left && Keyboard.IsKeyDown(Key.RightAlt))
+                ReferenceTextMemoryLeft();
+
+            if (e.Key == Key.Right && Keyboard.IsKeyDown(Key.RightAlt))
+                ReferenceTextMemoryRight();
         }
 
         TabFoldingStrategy foldingStrategy;
@@ -134,6 +187,8 @@ namespace m0.UIWpf.Visualisers
             Vertex.Get(false, "ShowWhiteSpace:").Value = "False";
             Vertex.Get(false, "ShowLineNumbers:").Value = "False";
             Vertex.Get(false, "HighlightedLine:").Value = "True";
+            Vertex.Get(false, "TextMemoryCurrent:").Value = 0;
+            Vertex.Get(false, "TextMemoryMax:").Value = 0;
         }
 
         void OnLoad(object sender, RoutedEventArgs e)

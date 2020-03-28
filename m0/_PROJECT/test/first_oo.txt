@@ -1,6 +1,6 @@
 ﻿"Y"
 	class "Person"
-		attribute "Name" @String 1:1
+		attribute "Name" @String "1":"1"
 		method "setName" (@String "name")
 			Name = name
 		method "getName" @String()

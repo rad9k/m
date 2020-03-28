@@ -4,15 +4,14 @@
 60. copy from Graph error [59]
 11. Diagram perf update [8]
 39. colors in editor
-57. editor text prev
 69. execute throught Execute in IVertex
+46. forms for Person bug
 
 <><><> FUTURE 0.5
 
 64. child vertex short names support in ||{}/ X+<||{} for @@ 
 36. ZeroUML diagramming update
 37. pre/post text processing + if/test/case/default nextout?
-46. forms for Person bug
 
 <><><> FUTURE 0.9
 
@@ -21,7 +20,6 @@
 					<@Meta :: @> ???
 					<@To :: @TEST\Person4>
 68. $Empty in edges in parse / generate. is it ok?
-67. variables / other operators support in Query
 4. escape sequences in rtq support by keywords [8] and especially '<' and '>'
 66. reference dict.allKeywordsSubstringsDictionary in ZeroCodeCommmon 291
 32. language definition correction to support languages inheritence
@@ -32,6 +30,9 @@
 
 <><><> FUTURE 1
 
+70. garbage collector?
+71. csv support
+67. variables / other operators support in Query
 3. exception handling throught custom meta code
 12. execution stop / continuation / stack copy?
 19. [] / .[] / execute / () as begginning of Query
@@ -104,3 +105,4 @@
 58. root export / import [8]
 66. $Is Class in system.m0 [65]
 65. bootstrap.m0 [58]
+57. editor text prev
