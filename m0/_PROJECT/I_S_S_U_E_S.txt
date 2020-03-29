@@ -3,7 +3,6 @@
 59. copy $Empty? [11]
 60. copy from Graph error [59]
 11. Diagram perf update [8]
-39. colors in editor
 69. execute throught Execute in IVertex
 46. forms for Person bug
 
@@ -106,3 +105,4 @@
 66. $Is Class in system.m0 [65]
 65. bootstrap.m0 [58]
 57. editor text prev
+39. colors in editor
