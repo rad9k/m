@@ -296,8 +296,8 @@ namespace m0_SYSTEM_GENERATE
         "\r\n\tvariable \"C\" @Vertex" +
         "\r\n\tvariable \"D\" @Integer" +
         "\r\n\tA = execute($ \\ : X \\ )" +
-        "\r\n\tB = generate @@System\\FormalTextLanguage\\ZeroCode($ \\ : X \\ )" +
-        "\r\n\tC = parse @@System\\FormalTextLanguage\\ZeroCode(\"a+b\")" +
+        "\r\n\tB = generate @@System\\FormalTextLanguage\\ZeroCode ($ \\ : X \\ )" +
+        "\r\n\tC = parse @@System\\FormalTextLanguage\\ZeroCode (\"a+b\")" +
         "\r\n\tD = execute(parse(\"A + A\"))"
         );
 
@@ -316,11 +316,49 @@ namespace m0_SYSTEM_GENERATE
             "\r\n\ta = ($\\:x<<\"1\">>\\<+>$\\:x<<\"2\">>\\)\\" +
             "\r\n\t@@x<<\"2\">>\\b<<\"2\">>\\z3");
 
+            IVertex code12 = code.AddVertex(null, null);
+            MinusZero.Instance.DefaultParser.Parse(code12,
+        "\"Code12\"" +
+        "\r\n\tclass \"Person\"" +
+        "\r\n\t\tattribute \"Name\" @String \"1\":\"1\"" +
+        "\r\n\t\tmethod \"setName\" (@String \"name\")" +
+        "\r\n\t\t\tName = name" +
+        "\r\n\t\tmethod \"getName\" @String()" +
+        "\r\n\t\t\treturn Name" +
+    "\r\n\tvariable \"person\" @Person" +
+    "\r\n\tvariable \"name\" @String" +
+    "\r\n\tperson = new @@Person" +
+    "\r\n\tperson.setName[\"Rad9k\"]" +
+    "\r\n\tname = person.getName[]");
+
+            IVertex code13 = code.AddVertex(null, null);
+            MinusZero.Instance.DefaultParser.Parse(code13,
+            "\"Code13\"" +
+    "\r\n\tvariable \"mis\" @Boolean" +
+    "\r\n\tif (\"1\" + \"2\") == \"3\"" +
+    "\r\n\t\tmis = \"True\"" +
+    "\r\n\tfunction \"t\" @String(@String \"m\")" +
+    "\r\n\t\ttest \"4\"" +
+    "\r\n\t\t\tcase \"1\"" +
+    "\r\n\t\t\t\treturn \"raz\"" +
+    "\r\n\t\t\tcase \"2\"" +
+    "\r\n\t\t\t\treturn \"dwa\"" +
+    "\r\n\t\t\tcase \"3\"" +
+    "\r\n\t\t\t\treturn \"trzy\"" +
+    "\r\n\t\t\tfallback" +
+    "\r\n\t\t\t\treturn \"def\"" +
+    "\r\n\t\t\tcase \"4\"" +
+    "\r\n\t\t\t\tif m == \"True\"" +
+    "\r\n\t\t\t\t\treturn \"cztery\"" +
+    "\r\n\t\treturn \"kupa\"" +
+    "\r\n\tvariable \"a\" @String" +
+    "\r\n\ta = @t[mis]");
+
             //MinusZero.Instance.NewDefaultParser.Parse(code, "\"Code\"\r\n\tvariable \"Magunia\" @String 5:10\r\n\tvariable \"Radek\" @String 2:2\r\n\tRadek += \"Koha\"\r\n\tMagunia=Radek\r\n\tMagunia ~= Radek:Koha");
 
 
 
-        }
+    }
 
         public static void CreateTestData()
         {

@@ -2159,9 +2159,9 @@ namespace m0
 
             // parse
             //
-            // parse (?<language>)((?<expr>))
+            // parse (?<language>) ((?<expr>))
 
-            IVertex o_parse2 = k.AddVertex(keyword, "parse (?<language>)((?<expr>))");
+            IVertex o_parse2 = k.AddVertex(keyword, "parse (?<language>) ((?<expr>))");
 
             IVertex o_parse2_any = o_parse2.AddVertex(any, "");
 
@@ -2185,9 +2185,9 @@ namespace m0
 
             // generate
             //
-            // generate (?<language>)((?<expr>))
+            // generate (?<language>) ((?<expr>))
 
-            IVertex o_generate2 = k.AddVertex(keyword, "generate (?<language>)((?<expr>))");
+            IVertex o_generate2 = k.AddVertex(keyword, "generate (?<language>) ((?<expr>))");
 
             IVertex o_generate2_any = o_generate2.AddVertex(any, "");
 

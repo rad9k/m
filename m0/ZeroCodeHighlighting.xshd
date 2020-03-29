@@ -9,11 +9,11 @@
 
   <Color name="grey"  foreground="#999999" />
   <Color name="keyword" fontWeight="bold" foreground="#00C2CF" />
-  <Color name="Keyword" fontWeight="bold" foreground="#00C2CF" />
   <Color name="DolarKeyword" foreground="#00008F" />
   <Color name="String" fontWeight="bold" foreground="#6733D5" />
   <Color name="Operator" fontWeight="bold" foreground="#FF0000" />
   <Color name="DoubleColon" fontWeight="bold" foreground="#255867" />
+  <Color name="Monkey" foreground="#6BD1EF" />
 
   
 
@@ -35,60 +35,36 @@
 
     <Keywords color="keyword">
       <Word>import</Word>
-      <Word>import meta</Word>
-      <Word>import direct</Word>
-      <Word>import direct meta</Word>
+      <Word>meta</Word>
+      <Word>direct</Word>
+      <Word>default</Word>
       <Word>class</Word>
       <Word>attribute</Word>
+      <Word>variable</Word>
       <Word>association</Word>
       <Word>aggregation</Word>
+      <Word>method</Word>
       <Word>function</Word>
-      <Word>variable</Word>
+      <Word>return</Word>
       <Word>foreach</Word>
       <Word>while</Word>
       <Word>if</Word>
-      <Word>test</Word>      
+      <Word>test</Word>
       <Word>case</Word>
-      <Word>default</Word>
-      <Word>return</Word>
-      <Word>method</Word>
+      <Word>fallback</Word>
+      <Word>execute</Word>
+      <Word>parse</Word>
+      <Word>generate</Word>
+      <Word>new</Word>
     </Keywords>
 
-    <Keywords color="Keyword">
-      <Word>Class</Word>
-      <Word>Attribute</Word>
-      <Word>Association</Word>
-      <Word>Aggregation</Word>
-      <Word>Function</Word>
-      <Word>Variable</Word>
-      <Word>ForEach</Word>
-      <Word>While</Word>
-      <Word>Do</Word>
-      <Word>If</Word>
-      <Word>Else</Word>
-      <Word>Switch</Word>
-      <Word>Case</Word>
-      <Word>Default</Word>
-      <Word>Return</Word>
-      <Word>Method</Word>
-      <Word>Target</Word>
-      <Word>CallMessage</Word>
-      <Word>CallParameter</Word>
-      <Word>Expression</Word>
-      <Word>Type</Word>
-      <Word>InputParameter</Word>
-    </Keywords>
 
     <Rule color="DoubleColon">
       ::
     </Rule>
-
+    
     <Rule color="Operator">
-      \[|]|\{|}|\+|-|\*|/|\?|\\|:|--|\(|\)|,
-    </Rule>
-
-    <Rule color="Operator">
-      &lt;-
+      &lt;\+&gt;|&lt;-&gt;|&lt;-|\+&lt;|=|\+=|~=|-&lt;|~&lt;|&lt;-|&lt;\+&lt;|&lt;&lt;|&gt;&gt;|00|\+|-|\*|/|==|===|====|!=|!|\&amp;|\||&gt;=|&lt;=|::|:|;;|_|`|\[|\]|\(|\)|\\|\?|\{|\}|\.|,|\+&lt;
     </Rule>
 
 
@@ -98,6 +74,10 @@
 
     <Rule color="DolarKeyword">
       \$[a-zA-Z]+
+    </Rule>
+
+    <Rule color="Monkey">
+      @
     </Rule>
 
   </RuleSet>

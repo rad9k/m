@@ -29,9 +29,11 @@ namespace m0.ZeroCode
 
         public void AddStackFrame(IVertex newStackFrame)
         {            
-            newStackFrame.AddEdge(MinusZero.Instance.StackFrameInherits, stack);
+            INoInEdgeInOutVertexVertex newStackFrameINIEIOV = InstructionHelpers.Create_INoInEdgeInOutVertexVertex_FromEdgesList(newStackFrame);
+            
+            newStackFrameINIEIOV.AddEdge(MinusZero.Instance.StackFrameInherits, stack);
 
-            stack = InstructionHelpers.Create_INoInEdgeInOutVertexVertex_FromEdgesList(newStackFrame);
+            stack = newStackFrameINIEIOV;
         }
 
         public void RemoveStackFrame()
