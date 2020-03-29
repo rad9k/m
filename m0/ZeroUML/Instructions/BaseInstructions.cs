@@ -1847,8 +1847,7 @@ namespace m0.ZeroUML.Instructions
         {
             isStackFrameReturn = false;
 
-            IVertex creationTarget = exe.newVertexCreationSpace;
-            IVertex stackForNextExpression;        
+            IVertex creationTarget = exe.newVertexCreationSpace;            
 
             IVertex leftExpression = GetLeft(instructionVertex);
             IVertex rightExpression = GetRight(instructionVertex);            
@@ -2108,7 +2107,10 @@ namespace m0.ZeroUML.Instructions
 
             IVertex methodBody =  Get(false, objectIs, targetExpression);            
 
-            if (methodBody!=null && !CheckIfIsOrInherits(methodBody,"Method"))
+            if(methodBody==null) // not found
+                return CreateStack();
+
+            if (methodBody!=null && !CheckIfIsOrInherits(methodBody,"Method")) // not a method
                 return CreateStack();
 
             IList<IEdge> inputParameters = GraphUtil.GetQueryOut(methodBody, "InputParameter", null);

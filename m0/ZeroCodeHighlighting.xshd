@@ -60,7 +60,7 @@
 
 
     <Rule color="DoubleColon">
-      ::
+      ::|;;
     </Rule>
     
     <Rule color="Operator">

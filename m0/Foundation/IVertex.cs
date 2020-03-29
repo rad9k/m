@@ -45,6 +45,9 @@ namespace m0.Foundation
 
         IList<IEdge> MetaInEdgesRaw { get; } // without $Inherits
 
+
+        INoInEdgeInOutVertexVertex Execute(IExecution exe);
+
         // 2.0 BEG
 
         bool InEdgesDictionariesNeedsRebuild { get; set; }

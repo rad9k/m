@@ -10,13 +10,13 @@ using System.Threading.Tasks;
 
 namespace m0.ZeroCode
 {
-    public class ZeroCodeExecution
+    public class ZeroCodeExecution: IExecution
     {
-        public INoInEdgeInOutVertexVertex stack;
+        public INoInEdgeInOutVertexVertex stack { get; set; }
 
-        public IVertex newVertexCreationSpace;
+        public IVertex newVertexCreationSpace { get; set; }
 
-        public bool metaMode;
+        public bool metaMode { get; set; }
 
         public void AddStackFrame()
         {

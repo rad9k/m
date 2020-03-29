@@ -1,5 +1,5 @@
 ﻿0) Definitions:
- - value subgraph ("")- a subgraph, starting with one vertex, characterized by $Is:{$ExecutableEndPoint:} == 00
+ - value subgraph ("") - a subgraph, starting with one vertex, characterized by $Is:{$ExecutableEndPoint:} == 00
  - executable subgraph - a subgraph, starting with one vertex, characterized by $Is:{$ExecutableEndPoint:} != 00
    execution of it may result in a set of edges
  - code view time graph query (@) - a @ starting a query, that performs on the code graph in the code view time.

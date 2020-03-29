@@ -8,13 +8,7 @@ using m0.ZeroCode.Helpers;
 namespace m0.ZeroCode
 {
     class ZeroCodeExecuter
-    {
-        IVertex baseVertex;
-        IVertex inputVertex;
-
-        const string colon = "|";
-        const string slash = @"\ ";
-
+    {                
         IVertex dolar;
 
         private void AddDolarToStack(ZeroCodeExecution exe, IVertex expression)
