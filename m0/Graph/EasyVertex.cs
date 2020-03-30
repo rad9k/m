@@ -10,6 +10,7 @@ using m0;
 using m0.Util;
 using m0.ZeroCode;
 using System.Runtime.InteropServices;
+using m0.ZeroCode.Helpers;
 
 namespace m0.Graph
 {
@@ -800,5 +801,12 @@ namespace m0.Graph
             return MinusZero.Instance.DefaultExecuter.GetAll(metaMode, this, expression);
         }
 
+        public override INoInEdgeInOutVertexVertex Execute(IExecution exe)
+        {
+            bool dummy;
+
+            return InstructionHelpers.SequentiallyExecuteInstructions(exe, exe.stack, this, out dummy, false);
+
+        }
     }
 }

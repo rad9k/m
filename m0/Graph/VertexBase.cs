@@ -147,6 +147,11 @@ namespace m0.Graph
             }
         }
 
+        public virtual INoInEdgeInOutVertexVertex Execute(IExecution exe)
+        {
+            throw new NotImplementedException();
+        }
+
         public event VertexChange Change;
 
         public virtual Delegate[] GetChangeDelegateInvocationList()

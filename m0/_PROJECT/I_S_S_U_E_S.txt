@@ -3,7 +3,6 @@
 59. copy $Empty? [11]
 60. copy from Graph error [59]
 11. Diagram perf update [8]
-69. execute throught Execute in IVertex
 46. forms for Person bug
 
 <><><> FUTURE 0.5
@@ -106,3 +105,4 @@
 65. bootstrap.m0 [58]
 57. editor text prev
 39. colors in editor
+69. execute throught Execute in IVertex

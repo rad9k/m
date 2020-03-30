@@ -143,7 +143,7 @@ namespace m0.ZeroCode.Helpers
             return Create_INoInEdgeInOutVertexVertex_FromEdgesList(inStack);
         }
 
-        public static INoInEdgeInOutVertexVertex SequentiallyExecuteInstructions(ZeroCodeExecution exe, INoInEdgeInOutVertexVertex inStack, IVertex baseVertex, out bool isStackFrameReturn, bool montevideo)
+        public static INoInEdgeInOutVertexVertex SequentiallyExecuteInstructions(IExecution exe, INoInEdgeInOutVertexVertex inStack, IVertex baseVertex, out bool isStackFrameReturn, bool montevideo)
         {
             isStackFrameReturn = false;
 
