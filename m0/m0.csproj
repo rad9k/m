@@ -97,6 +97,7 @@
     <Compile Include="Foundation\IUserInteraction.cs" />
     <Compile Include="Graph\IDictionaredVertex.cs" />
     <Compile Include="Graph\NonActingEdge.cs" />
+    <Compile Include="Lib\Std.cs" />
     <Compile Include="Process\UI\NonAtomProcess.cs" />
     <Compile Include="Store\BinarySerializationStore.cs">
       <SubType>Code</SubType>

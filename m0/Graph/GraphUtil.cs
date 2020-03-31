@@ -54,7 +54,26 @@ namespace m0.Graph
     }
 
     public class GraphUtil
-    {    
+    {
+        public static void AddDotNetEndPoint(IVertex baseVertex, string _typeName, string _methodName)
+        {
+            IVertex r = m0.MinusZero.Instance.root;
+
+            IVertex callableEndPoint = r.Get(false, @"System\Meta\Base\Vertex\$ExecutableEndPoint");
+            IVertex dotNetEndPoint = r.Get(false, @"System\Meta\ZeroTypes\DotNetEndPoint");
+            IVertex typeName = r.Get(false, @"System\Meta\ZeroTypes\DotNetEndPoint\TypeName");
+            IVertex methodName = r.Get(false, @"System\Meta\ZeroTypes\DotNetEndPoint\MethodName");
+            IVertex _is = r.Get(false, @"System\Meta\Base\Vertex\$Is");
+
+            IVertex n = baseVertex.AddVertex(callableEndPoint, null);
+            n.AddEdge(_is, dotNetEndPoint);
+
+            n.AddVertex(typeName, _typeName);
+
+            n.AddVertex(methodName, _methodName);
+
+        }
+
         public static bool CompareEdges(IEdge one, IEdge two)
         {
             if (one.From == two.From && one.Meta == two.Meta && one.To == two.To)

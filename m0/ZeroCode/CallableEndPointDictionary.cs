@@ -42,11 +42,6 @@ namespace m0.ZeroCode
                 if (ep == null)
                     return null;
 
-                if (GraphUtil.GetQueryOutFirst(ep, "$Is", "CodeContainerEndPoint") != null)
-                {
-                    del = null; // it is allready null, but we want it explictly to be
-                }
-
                 if (GraphUtil.GetQueryOutFirst(ep, "$Is", "DotNetEndPoint") != null)
                 {
                     string typeString = (string)GraphUtil.FindOneByMeta(ep, "TypeName").Value;
