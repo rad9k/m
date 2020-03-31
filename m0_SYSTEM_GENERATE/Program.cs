@@ -69,7 +69,7 @@ namespace m0_SYSTEM_GENERATE
 
             print("* saving User to \"user.m0\"");
 
-            GeneralUtil.CreateM0AndMoveEdgesIntoIt_IncludeEverythingBesidesList("user.m0", User, , storeOverride);
+            GeneralUtil.CreateM0AndMoveEdgesIntoIt_IncludeEverythingBesidesList("user.m0", User, newSystemSubGraphWithLinks, storeOverride);
 
             print("* User saved to \"user.m0\"");
 
@@ -77,7 +77,7 @@ namespace m0_SYSTEM_GENERATE
 
             print("* saving examples to \"examples.m0\"");
 
-            GeneralUtil.CreateM0AndMoveEdgesIntoIt_IncludeEverythingBesidesList("examples.m0", examples, GraphUtil.GetSubGraphWithLinksAsListButExcludeRoot(newSystem), storeOverride);
+            GeneralUtil.CreateM0AndMoveEdgesIntoIt_IncludeEverythingBesidesList("examples.m0", examples, newSystemSubGraphWithLinks, storeOverride);
 
             print("* examples saved to \"examples.m0\"");
 
@@ -89,7 +89,7 @@ namespace m0_SYSTEM_GENERATE
 
             print("* saving Lib\\Std");
 
-            GeneralUtil.CreateM0AndMoveEdgesIntoIt_IncludeEverythingBesidesList("lib_std.m0", std, GraphUtil.GetSubGraphWithLinksAsListButExcludeRoot(newSystem), storeOverride);
+            GeneralUtil.CreateM0AndMoveEdgesIntoIt_IncludeEverythingBesidesList("lib_std.m0", std, newSystemSubGraphWithLinks, storeOverride);
 
             //
 

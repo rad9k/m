@@ -31,6 +31,9 @@ namespace m0_SYSTEM_GENERATE
             IVertex examples = r.AddVertex(null, "examples");
             examples.AddVertex(null, "examples.m0");
 
+            IVertex lib_std = r.AddVertex(null, "System\\Lib\\Std");
+            lib_std.AddVertex(null, "lib_std.m0");
+
             GeneralUtil.SaveStore(store);
         }
     }
