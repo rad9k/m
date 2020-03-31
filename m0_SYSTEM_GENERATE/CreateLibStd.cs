@@ -26,6 +26,21 @@ namespace m0_SYSTEM_GENERATE
 
         static void AddFunction(string name, string ret, IList<TypeName> pars)
         {
+            IVertex zu = m0.MinusZero.Instance.root.Get(false, "System\\Meta\\ZeroUML");
+
+            IVertex zt = m0.MinusZero.Instance.root.Get(false, "System\\Meta\\ZeroTypes");
+
+            IVertex f = std.AddVertex(zu.Get(false, "Function"), name);
+
+            if (ret != null)
+                f.AddEdge(zu.Get(false, "Function\\Output"), zt.Get(false, ret));
+
+            foreach(TypeName tn in pars)
+            {
+                IVertex ip = f.AddVertex(zu.Get(false, "Function\\InputParameter"), tn.Name);
+                ip.AddEdge(zu.Get(false, "$Edge"))
+            }
+
 
         }
 
@@ -37,7 +52,7 @@ namespace m0_SYSTEM_GENERATE
 
             std = lib.AddVertex(null, "Std");
 
-            AddFunction("StringConcat", "String", new TypeName[] { new TypeName("input", "sting") });
+            AddFunction("StringConcat", "String", new TypeName[] { new TypeName("input", "String") });
 
             return std;
         }
