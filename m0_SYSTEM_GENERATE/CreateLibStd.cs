@@ -55,7 +55,7 @@ namespace m0_SYSTEM_GENERATE
 
             std = lib.AddVertex(null, "Std");
 
-            string type = "m0.ZeroUML.Instructions.BaseInstructions, m0, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null";
+            string type = "m0.Lib.Std, m0, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null";
 
             AddFunction("Concatenate", type, "Concatenate", "String", new TypeName[] { new TypeName("input", "String") });
 

@@ -1,4 +1,6 @@
 ﻿using m0.Foundation;
+using m0.Graph;
+using m0.ZeroCode.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,6 +18,23 @@ namespace m0.Lib
 
         public static INoInEdgeInOutVertexVertex Split(IExecution exe)
         {
+            INoInEdgeInOutVertexVertex stack = exe.stack;
+
+            IVertex input = GraphUtil.GetQueryOutFirst(stack, "input", null);
+
+            if (input != null)
+            {
+                string inputString = input.Value.ToString();
+
+                INoInEdgeInOutVertexVertex newStack = InstructionHelpers.CreateStack();
+
+                for (int x = 0; x < inputString.Length; x++)
+                    newStack.AddVertex(null, inputString[x]);
+
+                return newStack;
+            }
+            
+
             return exe.stack;
         }
 

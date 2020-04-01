@@ -12,41 +12,22 @@ namespace m0.DotNetIntegration
 {
     public class CallableEndPointDictionary_INIEIOV_ZCE
     {
-        delegate INoInEdgeInOutVertexVertex CallableEndPointDelegate(ZeroCodeExecution exe);
+        delegate INoInEdgeInOutVertexVertex CallableEndPointDelegate(IExecution exe);
 
         static Dictionary<IVertex, CallableEndPointDelegate> DotNetEndPointDictionary = new Dictionary<IVertex, CallableEndPointDelegate>();
 
-        public static INoInEdgeInOutVertexVertex CallEndPoint(ZeroCodeExecution exe, IVertex inputStack, IVertex instructionVertex)
+        public static INoInEdgeInOutVertexVertex CallEndPoint(IExecution exe, IVertex callableEndPointVertex)
         {
-            bool dummy;
-
-            return CallEndPoint(exe, inputStack, instructionVertex, out dummy);
-        }
-
-        public static INoInEdgeInOutVertexVertex CallEndPoint(ZeroCodeExecution exe, IVertex inputStack, IVertex instructionVertex, out bool IsStackFrameReturn)
-        {
-            IsStackFrameReturn = false;
-
             CallableEndPointDelegate del = null;
 
-            IVertex _is = GraphUtil.FindOneByMeta(instructionVertex, "$Is");
-
-            if (_is == null)
-                return null;
-
-            if (DotNetEndPointDictionary.ContainsKey(_is))
-                del = DotNetEndPointDictionary[_is];
+            if (DotNetEndPointDictionary.ContainsKey(callableEndPointVertex))
+                del = DotNetEndPointDictionary[callableEndPointVertex];
             else
             {            
-                IVertex ep = GraphUtil.FindOneByMeta(_is, "$ExecutableEndPoint");
-
-                if (ep == null)
-                    return null;
-
-                if (GraphUtil.GetQueryOutFirst(ep, "$Is", "DotNetEndPoint") != null)
+                if (GraphUtil.GetQueryOutFirst(callableEndPointVertex, "$Is", "DotNetEndPoint") != null)
                 {
-                    string typeString = (string)GraphUtil.FindOneByMeta(ep, "TypeName").Value;
-                    string methodString = (string)GraphUtil.FindOneByMeta(ep, "MethodName").Value;
+                    string typeString = (string)GraphUtil.FindOneByMeta(callableEndPointVertex, "TypeName").Value;
+                    string methodString = (string)GraphUtil.FindOneByMeta(callableEndPointVertex, "MethodName").Value;
 
                     Type type = Type.GetType(typeString);
                     MethodInfo method = type.GetMethod(methodString);
@@ -55,7 +36,7 @@ namespace m0.DotNetIntegration
                 }
 
                 if(del!=null)
-                    DotNetEndPointDictionary.Add(_is, del);
+                    DotNetEndPointDictionary.Add(callableEndPointVertex, del);
             }
 
             if (del == null)

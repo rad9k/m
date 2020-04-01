@@ -61,7 +61,7 @@ namespace m0.ZeroCode
 
             InstructionHelpers.AddToStack(qs, baseVertex);
 
-            IVertex ret=CallableEndPointDictionary_INIEIOV_ZCE.CallEndPoint(exe, qs, expression);
+            IVertex ret= CallableEndPointDictionary_INIEIOV_ZCE_IV_IV_B.CallEndPoint(exe, qs, expression);
 
             if (ret != null)
                 return ret;

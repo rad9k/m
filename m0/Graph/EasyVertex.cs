@@ -11,6 +11,7 @@ using m0.Util;
 using m0.ZeroCode;
 using System.Runtime.InteropServices;
 using m0.ZeroCode.Helpers;
+using m0.DotNetIntegration;
 
 namespace m0.Graph
 {
@@ -810,12 +811,7 @@ namespace m0.Graph
             if(ExecutableEndPointVertex==null)
                 return InstructionHelpers.SequentiallyExecuteInstructions(exe, exe.stack, this, out dummy, false);
             else
-            {
-                //if()
-
-                return null;
-            }
-
+                return CallableEndPointDictionary_INIEIOV_ZCE.CallEndPoint(exe, ExecutableEndPointVertex);
         }
     }
 }
