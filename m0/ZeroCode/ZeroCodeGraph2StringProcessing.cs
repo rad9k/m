@@ -1430,11 +1430,13 @@ namespace m0.ZeroCode
 
             currentMatchGraphEdgeList = new List<IEdge>();
 
-            IVertex firstMatchingEdgesInGraphToCompare = graphToCompare.GetAll(false, ZeroCodeCommon.stringToPossiblyEscapedString(edgeToCheck.Meta.ToString()) + ":");
+            //IVertex firstMatchingEdgesInGraphToCompare = graphToCompare.GetAll(false, ZeroCodeCommon.stringToPossiblyEscapedString(edgeToCheck.Meta.ToString()) + ":");
+
+            IVertex firstMatchingEdgesInGraphToCompare = graphToCompare.GetAll(false, "\'"+edgeToCheck.Meta.ToString() + "\':");
 
             IEdge firstMatchEdgeInGraphToCompare = null;
 
-            foreach(IEdge e in firstMatchingEdgesInGraphToCompare)
+            foreach (IEdge e in firstMatchingEdgesInGraphToCompare)
                 if(firstMatchEdgeInGraphToCompare == null)
                 {
                     if (IsKeywordVertexWildcard(e.To))
