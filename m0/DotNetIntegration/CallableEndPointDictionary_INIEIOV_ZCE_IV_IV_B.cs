@@ -1,5 +1,6 @@
 ﻿using m0.Foundation;
 using m0.Graph;
+using m0.ZeroCode;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,9 +8,9 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace m0.ZeroCode
+namespace m0.DotNetIntegration
 {
-    public class CallableEndPointDictionary
+    public class CallableEndPointDictionary_INIEIOV_ZCE_IV_IV_B
     {
         delegate INoInEdgeInOutVertexVertex CallableEndPointDelegate(ZeroCodeExecution exe, IVertex inputStack, IVertex instructionVertex, out bool IsStackFrameReturn);
 

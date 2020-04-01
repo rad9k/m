@@ -2,11 +2,13 @@
 using m0.Graph;
 using m0.ZeroCode.Helpers;
 using m0.ZeroTypes;
+using m0.DotNetIntegration;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+
 
 namespace m0.ZeroCode
 {
@@ -69,7 +71,7 @@ namespace m0.ZeroCode
             IVertex is_v = InstructionHelpers.GetIs(instructionVertex);            
 
             if (InstructionHelpers.CheckIfHasExecutableEndPoint(is_v))  // execute if you can.....
-                return CallableEndPointDictionary.CallEndPoint(this, inputQs, instructionVertex, out isStackFrameReturn);
+                return CallableEndPointDictionary_INIEIOV_ZCE.CallEndPoint(this, inputQs, instructionVertex, out isStackFrameReturn);
 
             // ...OR...
             INoInEdgeInOutVertexVertex stack_ = InstructionHelpers.CreateStack();
@@ -86,7 +88,7 @@ namespace m0.ZeroCode
             IVertex is_v = InstructionHelpers.GetIs(instructionVertex);
 
             if (InstructionHelpers.CheckIfHasExecutableEndPoint(is_v))  // execute if you can
-                return CallableEndPointDictionary.CallEndPoint(this, inputQs, instructionVertex, out isStackFrameReturn);           
+                return CallableEndPointDictionary_INIEIOV_ZCE.CallEndPoint(this, inputQs, instructionVertex, out isStackFrameReturn);           
 
             return InstructionHelpers.Create_INoInEdgeInOutVertexVertex_FromEdgesList(inputQs);
         }

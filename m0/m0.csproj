@@ -91,6 +91,7 @@
       <SubType>Designer</SubType>
     </Page>
     <Compile Include="Bootstrap\LoadFromBootstrap.cs" />
+    <Compile Include="DotNetIntegration\CallableEndPointDictionary_INIEIOV_ZCE_IV_IV_B.cs" />
     <Compile Include="Foundation\IExecution.cs" />
     <Compile Include="Foundation\INoInEdgeInOutVertexVertex.cs" />
     <Compile Include="Foundation\IPlatformClass.cs" />
@@ -236,7 +237,7 @@
     <Compile Include="UIWpf\Visualisers\TreeVisualiser.cs" />
     <Compile Include="UIWpf\VisualiserEditWrapper.cs" />
     <Compile Include="UIWpf\VisualiserViewWrapper.cs" />
-    <Compile Include="ZeroCode\CallableEndPointDictionary.cs" />
+    <Compile Include="DotNetIntegration\CallableEndPointDictionary_INIEIOV_ZCE.cs" />
     <Compile Include="ZeroCode\Helpers\EdgeKey_FromMeta.cs" />
     <Compile Include="ZeroCode\Helpers\EdgeKey_MetaTo.cs" />
     <Compile Include="ZeroUML\ClassVertex.cs" />

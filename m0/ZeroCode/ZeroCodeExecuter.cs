@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using m0.ZeroUML.Instructions;
 using m0.ZeroCode.Helpers;
+using m0.DotNetIntegration;
 
 namespace m0.ZeroCode
 {
@@ -60,7 +61,7 @@ namespace m0.ZeroCode
 
             InstructionHelpers.AddToStack(qs, baseVertex);
 
-            IVertex ret=CallableEndPointDictionary.CallEndPoint(exe, qs, expression);
+            IVertex ret=CallableEndPointDictionary_INIEIOV_ZCE.CallEndPoint(exe, qs, expression);
 
             if (ret != null)
                 return ret;

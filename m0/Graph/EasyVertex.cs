@@ -805,7 +805,16 @@ namespace m0.Graph
         {
             bool dummy;
 
-            return InstructionHelpers.SequentiallyExecuteInstructions(exe, exe.stack, this, out dummy, false);
+            IVertex ExecutableEndPointVertex = GraphUtil.GetQueryOutFirst(this, "$ExecutableEndPoint", null);
+
+            if(ExecutableEndPointVertex==null)
+                return InstructionHelpers.SequentiallyExecuteInstructions(exe, exe.stack, this, out dummy, false);
+            else
+            {
+                //if()
+
+                return null;
+            }
 
         }
     }
