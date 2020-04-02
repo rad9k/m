@@ -48,7 +48,7 @@ namespace m0.Lib
             return exe.stack;
         }
 
-        public static INoInEdgeInOutVertexVertex Contains(IExecution exe)
+        public static INoInEdgeInOutVertexVertex IndexOf(IExecution exe)
         {
             return exe.stack;
         }

@@ -18,10 +18,28 @@ namespace m0_SYSTEM_GENERATE
 
             public string Type;
 
+            public int MinCardinality;
+
+            public int MaxCardinality;
+
             public TypeName(string _name, string _type)
             {
                 Name = _name;
                 Type = _type;
+
+                MinCardinality = 1;
+
+                MaxCardinality = 1;
+            }
+
+            public TypeName(string _name, string _type, int _MinCardinality, int _MaxCardinality)
+            {
+                Name = _name;
+                Type = _type;
+
+                MinCardinality = _MinCardinality;
+
+                MaxCardinality = _MaxCardinality;
             }
         }
 
@@ -41,7 +59,10 @@ namespace m0_SYSTEM_GENERATE
             foreach(TypeName tn in pars)
             {
                 IVertex ip = f.AddVertex(zu.Get(false, "Function\\InputParameter"), tn.Name);
+
                 ip.AddEdge(bv.Get(false, "$EdgeTarget"), zt.Get(false, tn.Type));
+                ip.AddVertex(bv.Get(false, "$MinCardinality"), tn.MinCardinality);
+                ip.AddVertex(bv.Get(false, "$MaxCardinality"), tn.MaxCardinality);
             }
 
             GraphUtil.AddDotNetEndPoint(f, typeName, methodName);
@@ -57,33 +78,30 @@ namespace m0_SYSTEM_GENERATE
 
             string type = "m0.Lib.Std, m0, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null";
 
-            AddFunction("Concatenate", type, "Concatenate", "String", new TypeName[] { new TypeName("input", "String") });
-
-
-
+            AddFunction("Concatenate", type, "Concatenate", "String", new TypeName[] { new TypeName("input", "String", 0, -1) });
             AddFunction("Split", type, "Split", "String", new TypeName[] { new TypeName("input", "String") });
-            AddFunction("SplitBy", type, "SplitBy", "String", new TypeName[] { new TypeName("input", "String") });
-            AddFunction("Replace", type, "Replace", "String", new TypeName[] { new TypeName("input", "String") });
-            AddFunction("Contains", type, "Contains", "String", new TypeName[] { new TypeName("input", "String") });
-            AddFunction("Substring", type, "Substring", "String", new TypeName[] { new TypeName("input", "String") });
+            AddFunction("SplitBy", type, "SplitBy", "String", new TypeName[] { new TypeName("input", "String"), new TypeName("by", "String") });
+            AddFunction("Replace", type, "Replace", "String", new TypeName[] { new TypeName("input", "String"), new TypeName("from", "String"), new TypeName("to", "String") });
+            AddFunction("IndexOf", type, "IndexOf", "String", new TypeName[] { new TypeName("input", "String"), new TypeName("test", "String") });
+            AddFunction("Substring", type, "Substring", "String", new TypeName[] { new TypeName("input", "String"), new TypeName("from", "Integer"), new TypeName("to", "Integer") });
 
 
-            AddFunction("Sqrt", type, "Sqrt", "Double", new TypeName[] { new TypeName("input", "Double") });
-            AddFunction("Pow", type, "Pow", "Double", new TypeName[] { new TypeName("input", "Double") });
-            AddFunction("Abs", type, "Abs", "Double", new TypeName[] { new TypeName("input", "Double") });
-            AddFunction("Celling", type, "Celling", "Double", new TypeName[] { new TypeName("input", "Double") });
-            AddFunction("Floor", type, "Floor", "Double", new TypeName[] { new TypeName("input", "Double") });
-            AddFunction("Sin", type, "Sin", "Double", new TypeName[] { new TypeName("input", "Double") });
-            AddFunction("Cos", type, "Cos", "Double", new TypeName[] { new TypeName("input", "Double") });
-            AddFunction("Exp", type, "Exp", "Double", new TypeName[] { new TypeName("input", "Double") });
-            AddFunction("Log", type, "Log", "Double", new TypeName[] { new TypeName("input", "Double") });
-            AddFunction("Log10", type, "Log10", "Double", new TypeName[] { new TypeName("input", "Double") });
-            AddFunction("Max", type, "Max", "Double", new TypeName[] { new TypeName("input", "Double") });
-            AddFunction("Min", type, "Min", "Double", new TypeName[] { new TypeName("input", "Double") });
-            AddFunction("Sign", type, "Sign", "Double", new TypeName[] { new TypeName("input", "Double") });
-            AddFunction("Tan", type, "Tan", "Double", new TypeName[] { new TypeName("input", "Double") });
-            AddFunction("Randomize", type, "Randomize", "Double", new TypeName[] { new TypeName("input", "Double") });
-            AddFunction("Random", type, "Random", "Double", new TypeName[] { new TypeName("input", "Double") });
+            AddFunction("Sqrt", type, "Sqrt", "Float", new TypeName[] { new TypeName("value", "Float") });
+            AddFunction("Pow", type, "Pow", "Float", new TypeName[] { new TypeName("value", "Float"), new TypeName("power", "Float") });
+            AddFunction("Abs", type, "Abs", "Float", new TypeName[] { new TypeName("value", "Float") });
+            AddFunction("Celling", type, "Celling", "Float", new TypeName[] { new TypeName("value", "Float") });
+            AddFunction("Floor", type, "Floor", "Float", new TypeName[] { new TypeName("value", "Float") });
+            AddFunction("Sin", type, "Sin", "Float", new TypeName[] { new TypeName("value", "Float") });
+            AddFunction("Cos", type, "Cos", "Float", new TypeName[] { new TypeName("value", "Float") });
+            AddFunction("Exp", type, "Exp", "Float", new TypeName[] { new TypeName("value", "Float") });
+            AddFunction("Log", type, "Log", "Float", new TypeName[] { new TypeName("value", "Float") });
+            AddFunction("Log10", type, "Log10", "Float", new TypeName[] { new TypeName("value", "Float") });
+            AddFunction("Max", type, "Max", "Float", new TypeName[] { new TypeName("value", "Float", 0, -1) });
+            AddFunction("Min", type, "Min", "Float", new TypeName[] { new TypeName("value", "Float", 0, -1) });
+            AddFunction("Sign", type, "Sign", "Integer", new TypeName[] { new TypeName("value", "Float") });
+            AddFunction("Tan", type, "Tan", "Float", new TypeName[] { new TypeName("value", "Float") });
+            AddFunction("Randomize", type, "Randomize", "Float", new TypeName[] { new TypeName("value", "Float") });
+            AddFunction("Random", type, "Random", "Float", new TypeName[] { });
 
             return std;
         }
