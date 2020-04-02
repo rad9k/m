@@ -5,6 +5,14 @@
 11. Diagram perf update [8]
 46. forms for Person bug
 72. import / import direct correction
+10. <@BaseEdge :: ""> [4] [11]
+					<@From :: @kupa\TEST\TestDiagram\Item:<4>\\> ??? from where
+					<@Meta :: @> ???
+					<@To :: @TEST\Person4>
+68. $Empty in edges in parse / generate. is it ok?
+4. escape sequences in rtq support by keywords [8] and especially '<' and '>'
+66. reference dict.allKeywordsSubstringsDictionary in ZeroCodeCommmon 291
+32. language definition correction to support languages inheritence
 
 <><><> FUTURE 0.5
 
@@ -14,14 +22,7 @@
 
 <><><> FUTURE 0.9
 
-10. <@BaseEdge :: ""> [4] [11]
-					<@From :: @kupa\TEST\TestDiagram\Item:<4>\\> ??? from where
-					<@Meta :: @> ???
-					<@To :: @TEST\Person4>
-68. $Empty in edges in parse / generate. is it ok?
-4. escape sequences in rtq support by keywords [8] and especially '<' and '>'
-66. reference dict.allKeywordsSubstringsDictionary in ZeroCodeCommmon 291
-32. language definition correction to support languages inheritence
+
 12. parse / generate check
 34. Query dialog box refactoring
 40. <<a..b>>
