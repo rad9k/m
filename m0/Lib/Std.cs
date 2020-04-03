@@ -161,16 +161,39 @@ namespace m0.Lib
             {
                 string inputString = e.To.Value.ToString();
 
-                string newString = inputString.Replace(from, to);
+                int finalFrom = from - 1;
+                int finalLength = to - from + 1;
 
-                newStack.AddVertex(null, newString);
+                if (finalFrom < inputString.Length)
+                {
+                    if (finalFrom + finalLength > inputString.Length)
+                        finalLength = inputString.Length - finalFrom;
+
+                    string newString = inputString.Substring(finalFrom, finalLength);
+
+                    newStack.AddVertex(null, newString);
+                }
             }
 
             return newStack;
         }
         public static INoInEdgeInOutVertexVertex Sqrt(IExecution exe)
         {
-            return exe.stack;
+            INoInEdgeInOutVertexVertex stack = exe.stack;
+
+            IList<IEdge> inputList = GraphUtil.GetQueryOut(stack, "input", null);
+
+            INoInEdgeInOutVertexVertex newStack = InstructionHelpers.CreateStack();
+
+            foreach (IEdge e in inputList)
+            {
+                double? _inputDouble = GraphUtil.GetDoubleValue(e.To);
+
+                for (int x = 0; x < inputString.Length; x++)
+                    newStack.AddVertex(null, inputString[x]);
+            }
+
+            return newStack;
         }
 
         public static INoInEdgeInOutVertexVertex Pow(IExecution exe)

@@ -1,4 +1,15 @@
-﻿"Y"
+﻿ "Y"
+	variable "s" @VertexType
+	s = @@System\Lib\Std
+	variable "out" @String
+	variable "In" @String
+	In = "r"
+	In += "dw a"
+	In += "12345"
+	out = s\:Substring[In, "1", "4"]
+
+
+"Y"
 	variable "a" @Vertex
 	a = :C\:m0\:t.m0\$Store:
 	a <+< "testA" :: "testAA"{

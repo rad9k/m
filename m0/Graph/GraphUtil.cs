@@ -612,7 +612,13 @@ namespace m0.Graph
                     return (double)Vertex.Value;
 
                 if (Vertex.Value is string)
-                    return Double.Parse((string)Vertex.Value);                
+                    return Double.Parse((string)Vertex.Value);
+
+          //      if (Vertex.Value is int)
+            //        return (double)Vertex.Value;
+
+           //     if (Vertex.Value is decimal)
+             //       return (double)Vertex.Value;
             }
             return null;
         }        
