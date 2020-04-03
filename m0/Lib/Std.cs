@@ -181,16 +181,19 @@ namespace m0.Lib
         {
             INoInEdgeInOutVertexVertex stack = exe.stack;
 
-            IList<IEdge> inputList = GraphUtil.GetQueryOut(stack, "input", null);
+            IList<IEdge> inputList = GraphUtil.GetQueryOut(stack, "value", null);
+
+            InstructionHelpers.NumericTypeEnum resType;
+
+            IList<object> numericList = InstructionHelpers.GetNumberList(inputList, out resType);
 
             INoInEdgeInOutVertexVertex newStack = InstructionHelpers.CreateStack();
 
-            foreach (IEdge e in inputList)
+            foreach (object o in numericList)
             {
-                double? _inputDouble = GraphUtil.GetDoubleValue(e.To);
+                double doubleValue = Convert.ToDouble(o);
 
-                for (int x = 0; x < inputString.Length; x++)
-                    newStack.AddVertex(null, inputString[x]);
+                newStack.AddVertex(null, Math.Sqrt(doubleValue));                
             }
 
             return newStack;

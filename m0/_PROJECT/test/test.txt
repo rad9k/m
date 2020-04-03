@@ -2,11 +2,16 @@
 	variable "s" @VertexType
 	s = @@System\Lib\Std
 	variable "out" @String
+	variable "In" @Stri "Y"
+	variable "s" @VertexType
+	s = @@System\Lib\Std
+	variable "out" @String
 	variable "In" @String
 	In = "r"
 	In += "dw a"
 	In += "12345"
 	out = s\:Substring[In, "1", "4"]
+
 
 
 "Y"

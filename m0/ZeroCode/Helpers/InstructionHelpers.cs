@@ -424,7 +424,6 @@ namespace m0.ZeroCode.Helpers
         {
             isStackFrameReturn = false;
 
-            bool local_isStackFrameReturn = false;
             INoInEdgeInOutVertexVertex possibleToReturnStack = null;
 
             exe.AddStackFrame(); // ENTER NEW STACK                                
