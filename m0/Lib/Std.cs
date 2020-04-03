@@ -149,6 +149,12 @@ namespace m0.Lib
             int? _from = GraphUtil.GetIntegerValue(fromVertex);
             int? _to = GraphUtil.GetIntegerValue(toVertex);
 
+            if (_from == null || _to == null)
+                return exe.stack;
+
+            int from = (int)_from;
+            int to = (int)_to;
+
             INoInEdgeInOutVertexVertex newStack = InstructionHelpers.CreateStack();
 
             foreach (IEdge e in inputList)
