@@ -13,49 +13,154 @@ namespace m0.Lib
     {
         public static INoInEdgeInOutVertexVertex Concatenate(IExecution exe)
         {
-            return exe.stack;
+            INoInEdgeInOutVertexVertex stack = exe.stack;
+
+            IList<IEdge> inputList = GraphUtil.GetQueryOut(stack, "input", null);
+
+            StringBuilder sb = new StringBuilder();
+
+            foreach (IEdge e in inputList)
+                sb.Append(e.To.ToString());
+
+            INoInEdgeInOutVertexVertex newStack = InstructionHelpers.CreateStack();
+
+            newStack.AddVertex(null, sb.ToString());
+
+            return newStack;
         }
 
         public static INoInEdgeInOutVertexVertex Split(IExecution exe)
         {
             INoInEdgeInOutVertexVertex stack = exe.stack;
 
-            IVertex input = GraphUtil.GetQueryOutFirst(stack, "input", null);
+            IList<IEdge> inputList = GraphUtil.GetQueryOut(stack, "input", null);
 
-            if (input != null)
+            INoInEdgeInOutVertexVertex newStack = InstructionHelpers.CreateStack();
+
+            foreach (IEdge e in inputList)
             {
-                string inputString = input.Value.ToString();
-
-                INoInEdgeInOutVertexVertex newStack = InstructionHelpers.CreateStack();
+                string inputString = e.To.Value.ToString();
 
                 for (int x = 0; x < inputString.Length; x++)
                     newStack.AddVertex(null, inputString[x]);
-
-                return newStack;
             }
-            
 
-            return exe.stack;
+            return newStack;
         }
 
         public static INoInEdgeInOutVertexVertex SplitBy(IExecution exe)
         {
-            return exe.stack;
+            INoInEdgeInOutVertexVertex stack = exe.stack;
+
+            IList<IEdge> byList = GraphUtil.GetQueryOut(stack, "by", null);
+
+            IList<string> splitByStringList = new List<string>();
+
+            foreach (IEdge e in byList)
+                splitByStringList.Add(e.To.Value.ToString());
+
+            string[] slitByStringArray = splitByStringList.ToArray();
+
+            IList<IEdge> inputList = GraphUtil.GetQueryOut(stack, "input", null);
+
+            INoInEdgeInOutVertexVertex newStack = InstructionHelpers.CreateStack();
+
+            foreach (IEdge e in inputList)
+            {
+                string inputString = e.To.Value.ToString();
+
+                string[] splitStrings = inputString.Split(slitByStringArray, StringSplitOptions.RemoveEmptyEntries);
+
+                foreach (string s in splitStrings)
+                    newStack.AddVertex(null, s);
+            }
+
+            return newStack;
         }
 
         public static INoInEdgeInOutVertexVertex Replace(IExecution exe)
         {
-            return exe.stack;
+            INoInEdgeInOutVertexVertex stack = exe.stack;
+
+            IList<IEdge> inputList = GraphUtil.GetQueryOut(stack, "input", null);
+
+            IVertex fromVertex = GraphUtil.GetQueryOutFirst(stack, "from", null);
+            IVertex toVertex = GraphUtil.GetQueryOutFirst(stack, "to", null);
+
+            if (fromVertex == null || toVertex == null)
+                return exe.stack;
+
+            string from = fromVertex.Value.ToString();
+            string to = toVertex.Value.ToString();
+
+            INoInEdgeInOutVertexVertex newStack = InstructionHelpers.CreateStack();
+
+            foreach (IEdge e in inputList)
+            {
+                string inputString = e.To.Value.ToString();
+
+                string newString = inputString.Replace(from, to);
+
+                newStack.AddVertex(null, newString);
+            }
+
+            return newStack;
         }
 
         public static INoInEdgeInOutVertexVertex IndexOf(IExecution exe)
         {
-            return exe.stack;
+            INoInEdgeInOutVertexVertex stack = exe.stack;
+
+            IList<IEdge> inputList = GraphUtil.GetQueryOut(stack, "input", null);
+
+            IVertex testVertex = GraphUtil.GetQueryOutFirst(stack, "test", null);
+
+            if (testVertex == null)
+                return exe.stack;
+
+            string test = testVertex.Value.ToString();
+
+            INoInEdgeInOutVertexVertex newStack = InstructionHelpers.CreateStack();
+
+            foreach (IEdge e in inputList)
+            {
+                string inputString = e.To.Value.ToString();
+
+                int indexOf = inputString.IndexOf(test);
+
+                newStack.AddVertex(null, indexOf);
+            }
+
+            return newStack;
         }
 
         public static INoInEdgeInOutVertexVertex Substring(IExecution exe)
         {
-            return exe.stack;
+            INoInEdgeInOutVertexVertex stack = exe.stack;
+
+            IList<IEdge> inputList = GraphUtil.GetQueryOut(stack, "input", null);
+
+            IVertex fromVertex = GraphUtil.GetQueryOutFirst(stack, "from", null);
+            IVertex toVertex = GraphUtil.GetQueryOutFirst(stack, "to", null);
+
+            if (fromVertex == null || toVertex == null)
+                return exe.stack;
+
+            int? _from = GraphUtil.GetIntegerValue(fromVertex);
+            int? _to = GraphUtil.GetIntegerValue(toVertex);
+
+            INoInEdgeInOutVertexVertex newStack = InstructionHelpers.CreateStack();
+
+            foreach (IEdge e in inputList)
+            {
+                string inputString = e.To.Value.ToString();
+
+                string newString = inputString.Replace(from, to);
+
+                newStack.AddVertex(null, newString);
+            }
+
+            return newStack;
         }
         public static INoInEdgeInOutVertexVertex Sqrt(IExecution exe)
         {

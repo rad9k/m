@@ -79,29 +79,29 @@ namespace m0_SYSTEM_GENERATE
             string type = "m0.Lib.Std, m0, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null";
 
             AddFunction("Concatenate", type, "Concatenate", "String", new TypeName[] { new TypeName("input", "String", 0, -1) });
-            AddFunction("Split", type, "Split", "String", new TypeName[] { new TypeName("input", "String") });
-            AddFunction("SplitBy", type, "SplitBy", "String", new TypeName[] { new TypeName("input", "String"), new TypeName("by", "String") });
-            AddFunction("Replace", type, "Replace", "String", new TypeName[] { new TypeName("input", "String"), new TypeName("from", "String"), new TypeName("to", "String") });
-            AddFunction("IndexOf", type, "IndexOf", "String", new TypeName[] { new TypeName("input", "String"), new TypeName("test", "String") });
-            AddFunction("Substring", type, "Substring", "String", new TypeName[] { new TypeName("input", "String"), new TypeName("from", "Integer"), new TypeName("to", "Integer") });
+            AddFunction("Split", type, "Split", "String", new TypeName[] { new TypeName("input", "String", 0, -1) });
+            AddFunction("SplitBy", type, "SplitBy", "String", new TypeName[] { new TypeName("input", "String", 0, -1), new TypeName("by", "String", 1, -1) });
+            AddFunction("Replace", type, "Replace", "String", new TypeName[] { new TypeName("input", "String", 0, -1), new TypeName("from", "String"), new TypeName("to", "String") });
+            AddFunction("IndexOf", type, "IndexOf", "String", new TypeName[] { new TypeName("input", "String", 0, -1), new TypeName("test", "String") });
+            AddFunction("Substring", type, "Substring", "String", new TypeName[] { new TypeName("input", "String", 0, -1), new TypeName("from", "Integer"), new TypeName("to", "Integer") });
 
 
-            AddFunction("Sqrt", type, "Sqrt", "Float", new TypeName[] { new TypeName("value", "Float") });
-            AddFunction("Pow", type, "Pow", "Float", new TypeName[] { new TypeName("value", "Float"), new TypeName("power", "Float") });
-            AddFunction("Abs", type, "Abs", "Float", new TypeName[] { new TypeName("value", "Float") });
-            AddFunction("Celling", type, "Celling", "Float", new TypeName[] { new TypeName("value", "Float") });
-            AddFunction("Floor", type, "Floor", "Float", new TypeName[] { new TypeName("value", "Float") });
-            AddFunction("Sin", type, "Sin", "Float", new TypeName[] { new TypeName("value", "Float") });
-            AddFunction("Cos", type, "Cos", "Float", new TypeName[] { new TypeName("value", "Float") });
-            AddFunction("Exp", type, "Exp", "Float", new TypeName[] { new TypeName("value", "Float") });
-            AddFunction("Log", type, "Log", "Float", new TypeName[] { new TypeName("value", "Float") });
-            AddFunction("Log10", type, "Log10", "Float", new TypeName[] { new TypeName("value", "Float") });
+            AddFunction("Sqrt", type, "Sqrt", "Float", new TypeName[] { new TypeName("value", "Float", 0, -1) });
+            AddFunction("Pow", type, "Pow", "Float", new TypeName[] { new TypeName("value", "Float", 0, -1), new TypeName("power", "Float") });
+            AddFunction("Abs", type, "Abs", "Float", new TypeName[] { new TypeName("value", "Float", 0, -1) });
+            AddFunction("Celling", type, "Celling", "Float", new TypeName[] { new TypeName("value", "Float", 0, -1) });
+            AddFunction("Floor", type, "Floor", "Float", new TypeName[] { new TypeName("value", "Float", 0, -1) });
+            AddFunction("Sin", type, "Sin", "Float", new TypeName[] { new TypeName("value", "Float", 0, -1) });
+            AddFunction("Cos", type, "Cos", "Float", new TypeName[] { new TypeName("value", "Float", 0, -1) });
+            AddFunction("Exp", type, "Exp", "Float", new TypeName[] { new TypeName("value", "Float", 0, -1) });
+            AddFunction("Log", type, "Log", "Float", new TypeName[] { new TypeName("value", "Float", 0, -1) });
+            AddFunction("Log10", type, "Log10", "Float", new TypeName[] { new TypeName("value", "Float", 0, -1) });
             AddFunction("Max", type, "Max", "Float", new TypeName[] { new TypeName("value", "Float", 0, -1) });
             AddFunction("Min", type, "Min", "Float", new TypeName[] { new TypeName("value", "Float", 0, -1) });
-            AddFunction("Sign", type, "Sign", "Integer", new TypeName[] { new TypeName("value", "Float") });
-            AddFunction("Tan", type, "Tan", "Float", new TypeName[] { new TypeName("value", "Float") });
+            AddFunction("Sign", type, "Sign", "Integer", new TypeName[] { new TypeName("value", "Float", 0, -1) });
+            AddFunction("Tan", type, "Tan", "Float", new TypeName[] { new TypeName("value", "Float", 0, -1) });
             AddFunction("Randomize", type, "Randomize", "Float", new TypeName[] { new TypeName("value", "Float") });
-            AddFunction("Random", type, "Random", "Float", new TypeName[] { });
+            AddFunction("Random", type, "Random", "Float", new TypeName[] { new TypeName("max", "Float", 0, -1) });
 
             return std;
         }

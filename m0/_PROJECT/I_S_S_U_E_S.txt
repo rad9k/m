@@ -32,6 +32,9 @@
 
 70. garbage collector?
 71. csv support
+73. dot net object graph integration
+74. json REST existing end-points integration
+75. exposing as json REST end-points
 67. variables / other operators support in Query
 3. exception handling throught custom meta code
 12. execution stop / continuation / stack copy?
