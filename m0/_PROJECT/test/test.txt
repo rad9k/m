@@ -1,12 +1,8 @@
-﻿ "Y"
+﻿"Y"
 	variable "s" @VertexType
 	s = @@System\Lib\Std
 	variable "out" @String
-	variable "In" @Stri "Y"
-	variable "s" @VertexType
-	s = @@System\Lib\Std
-	variable "out" @String
-	variable "In" @String
+	variable "In" @examples\Y\In\$EdgeTarget:
 	In = "r"
 	In += "dw a"
 	In += "12345"
