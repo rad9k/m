@@ -585,9 +585,16 @@ namespace m0.Graph
                         if (Int32.TryParse((string)Vertex.Value, out r))
                             return r;
 
-                        return null;
+                        return null; // optimisation
                     }                    
                 }
+
+            try
+            {
+                return Convert.ToInt32(Vertex.Value);
+            }
+            catch (Exception e) { }
+
             return null;
         }
 
@@ -598,8 +605,20 @@ namespace m0.Graph
                 if (Vertex.Value is decimal)
                     return (decimal)Vertex.Value;
 
-                if (Vertex.Value is string)
-                    return Decimal.Parse((string)Vertex.Value);                
+                if (Vertex.Value is string) {
+                    decimal r;
+
+                    if (Decimal.TryParse((string)Vertex.Value, out r))
+                        return r;
+
+                    return null; // optimisation
+                }
+
+                try
+                {
+                    return Convert.ToDecimal(Vertex.Value);
+                }
+                catch (Exception e) { }
             }
             return null;
         }
@@ -612,13 +631,19 @@ namespace m0.Graph
                     return (double)Vertex.Value;
 
                 if (Vertex.Value is string)
-                    return Double.Parse((string)Vertex.Value);
+                {
+                    double r;
+                    if (Double.TryParse((string)Vertex.Value, out r))
+                        return r;
 
-          //      if (Vertex.Value is int)
-            //        return (double)Vertex.Value;
+                    return null; // optimisation
+                }
 
-           //     if (Vertex.Value is decimal)
-             //       return (double)Vertex.Value;
+                try
+                {
+                    return Convert.ToDouble(Vertex.Value);
+                }
+                catch (Exception e) { }
             }
             return null;
         }        

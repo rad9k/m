@@ -201,77 +201,351 @@ namespace m0.Lib
 
         public static INoInEdgeInOutVertexVertex Pow(IExecution exe)
         {
-            return exe.stack;
+            INoInEdgeInOutVertexVertex stack = exe.stack;
+
+            IVertex powerVertex = GraphUtil.GetQueryOutFirst(stack, "power", null);
+
+            double? _powerValue = GraphUtil.GetDoubleValue(powerVertex);
+
+            if (_powerValue == null)
+                return null;
+
+            double powerValue = (double)_powerValue;
+
+
+            IList<IEdge> inputList = GraphUtil.GetQueryOut(stack, "value", null);
+
+            InstructionHelpers.NumericTypeEnum resType;
+
+            IList<object> numericList = InstructionHelpers.GetNumberList(inputList, out resType);
+
+
+            INoInEdgeInOutVertexVertex newStack = InstructionHelpers.CreateStack();
+
+            foreach (object o in numericList)
+            {
+                double doubleValue = Convert.ToDouble(o);
+
+                newStack.AddVertex(null, Math.Pow(doubleValue, powerValue));
+            }
+
+            return newStack;
         }
 
         public static INoInEdgeInOutVertexVertex Abs(IExecution exe)
         {
-            return exe.stack;
+            INoInEdgeInOutVertexVertex stack = exe.stack;
+
+            IList<IEdge> inputList = GraphUtil.GetQueryOut(stack, "value", null);
+
+            InstructionHelpers.NumericTypeEnum resType;
+
+            IList<object> numericList = InstructionHelpers.GetNumberList(inputList, out resType);
+
+            INoInEdgeInOutVertexVertex newStack = InstructionHelpers.CreateStack();
+
+            foreach (object o in numericList)
+            {
+                double doubleValue = Convert.ToDouble(o);
+
+                newStack.AddVertex(null, (int)Math.Abs(doubleValue));
+            }
+
+            return newStack;
         }
 
         public static INoInEdgeInOutVertexVertex Celling(IExecution exe)
         {
-            return exe.stack;
+            INoInEdgeInOutVertexVertex stack = exe.stack;
+
+            IList<IEdge> inputList = GraphUtil.GetQueryOut(stack, "value", null);
+
+            InstructionHelpers.NumericTypeEnum resType;
+
+            IList<object> numericList = InstructionHelpers.GetNumberList(inputList, out resType);
+
+            INoInEdgeInOutVertexVertex newStack = InstructionHelpers.CreateStack();
+
+            foreach (object o in numericList)
+            {
+                double doubleValue = Convert.ToDouble(o);
+
+                newStack.AddVertex(null, Math.Ceiling(doubleValue));
+            }
+
+            return newStack;
         }
 
         public static INoInEdgeInOutVertexVertex Floor(IExecution exe)
         {
-            return exe.stack;
+            INoInEdgeInOutVertexVertex stack = exe.stack;
+
+            IList<IEdge> inputList = GraphUtil.GetQueryOut(stack, "value", null);
+
+            InstructionHelpers.NumericTypeEnum resType;
+
+            IList<object> numericList = InstructionHelpers.GetNumberList(inputList, out resType);
+
+            INoInEdgeInOutVertexVertex newStack = InstructionHelpers.CreateStack();
+
+            foreach (object o in numericList)
+            {
+                double doubleValue = Convert.ToDouble(o);
+
+                newStack.AddVertex(null, Math.Floor(doubleValue));
+            }
+
+            return newStack;
         }
 
         public static INoInEdgeInOutVertexVertex Sin(IExecution exe)
         {
-            return exe.stack;
+            INoInEdgeInOutVertexVertex stack = exe.stack;
+
+            IList<IEdge> inputList = GraphUtil.GetQueryOut(stack, "value", null);
+
+            InstructionHelpers.NumericTypeEnum resType;
+
+            IList<object> numericList = InstructionHelpers.GetNumberList(inputList, out resType);
+
+            INoInEdgeInOutVertexVertex newStack = InstructionHelpers.CreateStack();
+
+            foreach (object o in numericList)
+            {
+                double doubleValue = Convert.ToDouble(o);
+
+                newStack.AddVertex(null, Math.Sin(doubleValue));
+            }
+
+            return newStack;
         }
 
         public static INoInEdgeInOutVertexVertex Cos(IExecution exe)
         {
-            return exe.stack;
+            INoInEdgeInOutVertexVertex stack = exe.stack;
+
+            IList<IEdge> inputList = GraphUtil.GetQueryOut(stack, "value", null);
+
+            InstructionHelpers.NumericTypeEnum resType;
+
+            IList<object> numericList = InstructionHelpers.GetNumberList(inputList, out resType);
+
+            INoInEdgeInOutVertexVertex newStack = InstructionHelpers.CreateStack();
+
+            foreach (object o in numericList)
+            {
+                double doubleValue = Convert.ToDouble(o);
+
+                newStack.AddVertex(null, Math.Cos(doubleValue));
+            }
+
+            return newStack;
         }
 
         public static INoInEdgeInOutVertexVertex Exp(IExecution exe)
         {
-            return exe.stack;
+            INoInEdgeInOutVertexVertex stack = exe.stack;
+
+            IList<IEdge> inputList = GraphUtil.GetQueryOut(stack, "value", null);
+
+            InstructionHelpers.NumericTypeEnum resType;
+
+            IList<object> numericList = InstructionHelpers.GetNumberList(inputList, out resType);
+
+            INoInEdgeInOutVertexVertex newStack = InstructionHelpers.CreateStack();
+
+            foreach (object o in numericList)
+            {
+                double doubleValue = Convert.ToDouble(o);
+
+                newStack.AddVertex(null, Math.Exp(doubleValue));
+            }
+
+            return newStack;
         }
 
         public static INoInEdgeInOutVertexVertex Log(IExecution exe)
         {
-            return exe.stack;
+            INoInEdgeInOutVertexVertex stack = exe.stack;
+
+            IList<IEdge> inputList = GraphUtil.GetQueryOut(stack, "value", null);
+
+            InstructionHelpers.NumericTypeEnum resType;
+
+            IList<object> numericList = InstructionHelpers.GetNumberList(inputList, out resType);
+
+            INoInEdgeInOutVertexVertex newStack = InstructionHelpers.CreateStack();
+
+            foreach (object o in numericList)
+            {
+                double doubleValue = Convert.ToDouble(o);
+
+                newStack.AddVertex(null, Math.Log(doubleValue));
+            }
+
+            return newStack;
         }
 
         public static INoInEdgeInOutVertexVertex Log10(IExecution exe)
         {
-            return exe.stack;
+            INoInEdgeInOutVertexVertex stack = exe.stack;
+
+            IList<IEdge> inputList = GraphUtil.GetQueryOut(stack, "value", null);
+
+            InstructionHelpers.NumericTypeEnum resType;
+
+            IList<object> numericList = InstructionHelpers.GetNumberList(inputList, out resType);
+
+            INoInEdgeInOutVertexVertex newStack = InstructionHelpers.CreateStack();
+
+            foreach (object o in numericList)
+            {
+                double doubleValue = Convert.ToDouble(o);
+
+                newStack.AddVertex(null, Math.Log10(doubleValue));
+            }
+
+            return newStack;
         }
 
         public static INoInEdgeInOutVertexVertex Max(IExecution exe)
         {
-            return exe.stack;
+            INoInEdgeInOutVertexVertex stack = exe.stack;
+
+            IList<IEdge> inputList = GraphUtil.GetQueryOut(stack, "value", null);
+
+            InstructionHelpers.NumericTypeEnum resType;
+
+            IList<object> numericList = InstructionHelpers.GetNumberList(inputList, out resType);
+
+            INoInEdgeInOutVertexVertex newStack = InstructionHelpers.CreateStack();
+
+            double max = Double.MinValue;
+
+            foreach (object o in numericList)
+            {
+                double doubleValue = Convert.ToDouble(o);
+
+                if (doubleValue > max)
+                    max = doubleValue;             
+            }
+
+            newStack.AddVertex(null, Math.Ceiling(max));
+
+            return newStack;
         }
 
         public static INoInEdgeInOutVertexVertex Min(IExecution exe)
         {
-            return exe.stack;
+            INoInEdgeInOutVertexVertex stack = exe.stack;
+
+            IList<IEdge> inputList = GraphUtil.GetQueryOut(stack, "value", null);
+
+            InstructionHelpers.NumericTypeEnum resType;
+
+            IList<object> numericList = InstructionHelpers.GetNumberList(inputList, out resType);
+
+            INoInEdgeInOutVertexVertex newStack = InstructionHelpers.CreateStack();
+
+            double min = Double.MaxValue;
+
+            foreach (object o in numericList)
+            {
+                double doubleValue = Convert.ToDouble(o);
+
+                if (doubleValue < min)
+                    min = doubleValue;
+            }
+
+            newStack.AddVertex(null, Math.Ceiling(min));
+
+            return newStack;
         }
 
         public static INoInEdgeInOutVertexVertex Sign(IExecution exe)
         {
-            return exe.stack;
+            INoInEdgeInOutVertexVertex stack = exe.stack;
+
+            IList<IEdge> inputList = GraphUtil.GetQueryOut(stack, "value", null);
+
+            InstructionHelpers.NumericTypeEnum resType;
+
+            IList<object> numericList = InstructionHelpers.GetNumberList(inputList, out resType);
+
+            INoInEdgeInOutVertexVertex newStack = InstructionHelpers.CreateStack();
+
+            foreach (object o in numericList)
+            {
+                double doubleValue = Convert.ToDouble(o);
+
+                newStack.AddVertex(null, Math.Sign(doubleValue));
+            }
+
+            return newStack;
         }
 
         public static INoInEdgeInOutVertexVertex Tan(IExecution exe)
         {
-            return exe.stack;
+            INoInEdgeInOutVertexVertex stack = exe.stack;
+
+            IList<IEdge> inputList = GraphUtil.GetQueryOut(stack, "value", null);
+
+            InstructionHelpers.NumericTypeEnum resType;
+
+            IList<object> numericList = InstructionHelpers.GetNumberList(inputList, out resType);
+
+            INoInEdgeInOutVertexVertex newStack = InstructionHelpers.CreateStack();
+
+            foreach (object o in numericList)
+            {
+                double doubleValue = Convert.ToDouble(o);
+
+                newStack.AddVertex(null, Math.Tan(doubleValue));
+            }
+
+            return newStack;
         }
+
+        static Random RandomObject = new System.Random();
 
         public static INoInEdgeInOutVertexVertex Randomize(IExecution exe)
         {
-            return exe.stack;
+            INoInEdgeInOutVertexVertex stack = exe.stack;
+
+            IVertex valueVertex = GraphUtil.GetQueryOutFirst(stack, "value", null);
+
+            int? _valueValue = GraphUtil.GetIntegerValue(valueVertex);
+
+            if (_valueValue == null)
+                return null;
+
+            int valueValue = (int)_valueValue;
+
+            RandomObject = new System.Random(valueValue);
+           
+            return stack;
         }
 
         public static INoInEdgeInOutVertexVertex Random(IExecution exe)
         {
-            return exe.stack;
+            INoInEdgeInOutVertexVertex stack = exe.stack;
+
+            IList<IEdge> inputList = GraphUtil.GetQueryOut(stack, "max", null);
+
+            InstructionHelpers.NumericTypeEnum resType;
+
+            IList<object> numericList = InstructionHelpers.GetNumberList(inputList, out resType);
+
+            INoInEdgeInOutVertexVertex newStack = InstructionHelpers.CreateStack();
+
+            foreach (object o in numericList)
+            {
+                double doubleValue = Convert.ToDouble(o);
+
+                newStack.AddVertex(null, RandomObject.NextDouble() * doubleValue);
+            }
+
+            return newStack;
         }
     }
 }

@@ -88,7 +88,7 @@ namespace m0_SYSTEM_GENERATE
 
             AddFunction("Sqrt", type, "Sqrt", "Float", new TypeName[] { new TypeName("value", "Float", 0, -1) });
             AddFunction("Pow", type, "Pow", "Float", new TypeName[] { new TypeName("value", "Float", 0, -1), new TypeName("power", "Float") });
-            AddFunction("Abs", type, "Abs", "Float", new TypeName[] { new TypeName("value", "Float", 0, -1) });
+            AddFunction("Abs", type, "Abs", "Integer", new TypeName[] { new TypeName("value", "Float", 0, -1) });
             AddFunction("Celling", type, "Celling", "Float", new TypeName[] { new TypeName("value", "Float", 0, -1) });
             AddFunction("Floor", type, "Floor", "Float", new TypeName[] { new TypeName("value", "Float", 0, -1) });
             AddFunction("Sin", type, "Sin", "Float", new TypeName[] { new TypeName("value", "Float", 0, -1) });
@@ -100,7 +100,7 @@ namespace m0_SYSTEM_GENERATE
             AddFunction("Min", type, "Min", "Float", new TypeName[] { new TypeName("value", "Float", 0, -1) });
             AddFunction("Sign", type, "Sign", "Integer", new TypeName[] { new TypeName("value", "Float", 0, -1) });
             AddFunction("Tan", type, "Tan", "Float", new TypeName[] { new TypeName("value", "Float", 0, -1) });
-            AddFunction("Randomize", type, "Randomize", "Float", new TypeName[] { new TypeName("value", "Float") });
+            AddFunction("Randomize", type, "Randomize", null, new TypeName[] { new TypeName("seed", "Integer") });
             AddFunction("Random", type, "Random", "Float", new TypeName[] { new TypeName("max", "Float", 0, -1) });
 
             return std;
