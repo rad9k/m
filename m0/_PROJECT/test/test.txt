@@ -2,7 +2,7 @@
 	variable "s" @VertexType
 	s = @@System\Lib\Std
 	variable "out" @String
-	variable "In" @examples\Y\In\$EdgeTarget:
+	variable "In" @VertexType
 	In = "r"
 	In += "dw a"
 	In += "12345"

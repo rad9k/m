@@ -1,15 +1,10 @@
 ﻿!!!!!!!!!!!!!!!!!!!!!!!!!!!!! TO DO:
-33. standard base library / method / func [58]
+76. "o" :: = "test"
 59. copy $Empty? [11]
 60. copy from Graph error [59]
 11. Diagram perf update [8]
 46. forms for Person bug
 72. import / import direct correction
-10. <@BaseEdge :: ""> [4] [11]
-					<@From :: @kupa\TEST\TestDiagram\Item:<4>\\> ??? from where
-					<@Meta :: @> ???
-					<@To :: @TEST\Person4>
-68. $Empty in edges in parse / generate. is it ok?
 4. escape sequences in rtq support by keywords [8] and especially '<' and '>'
 66. reference dict.allKeywordsSubstringsDictionary in ZeroCodeCommmon 291
 32. language definition correction to support languages inheritence
@@ -30,6 +25,12 @@
 
 <><><> FUTURE 1
 
+68. $Empty in edges in parse / generate. is it ok?
+10. $Empty bug
+<@BaseEdge :: ""> [4] [11]
+					<@From :: @kupa\TEST\TestDiagram\Item:<4>\\> ??? from where
+					<@Meta :: @> ???
+					<@To :: @TEST\Person4>
 70. garbage collector?
 71. csv support
 73. dot net object graph integration
@@ -111,3 +112,4 @@
 57. editor text prev
 39. colors in editor
 69. execute throught Execute in IVertex
+33. standard base library / method / func [58]
