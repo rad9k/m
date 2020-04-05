@@ -1,6 +1,7 @@
 ﻿using m0.Foundation;
 using m0.Graph;
 using m0.Util;
+using m0.ZeroCode.Helpers;
 using m0.ZeroTypes;
 using System;
 using System.Collections.Generic;
@@ -442,6 +443,8 @@ namespace m0.ZeroCode
         IList<IVertex> newVertexKeywordVertexList;
         IList<IVertex> emptyKeywordVertexList;
 
+        DictionariesForFormalTextLanguage dict;
+
         public ZeroCodeGraph2StringProcessing(IVertex formalTextLanguage)
         {
             FormalTextLanguage = formalTextLanguage;
@@ -449,6 +452,7 @@ namespace m0.ZeroCode
             newVertexKeywordVertexList = ZeroCodeUtil.getFilteredKeywordList(FormalTextLanguage, "$$NewVertexKeyword");
             emptyKeywordVertexList = ZeroCodeUtil.getFilteredKeywordList(FormalTextLanguage, "$$EmptyKeyword");
 
+            dict = DictionariesForFormalTextLanguageFactory.Get(formalTextLanguage);
         }
 
         string Tab = "\t";

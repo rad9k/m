@@ -1,6 +1,7 @@
 ﻿using m0.Foundation;
 using m0.Graph;
 using m0.Util;
+using m0.ZeroCode.Helpers;
 using m0.ZeroTypes;
 using System;
 using System.Collections.Generic;
@@ -11,14 +12,14 @@ namespace m0.ZeroCode
 {
     public class String2ZeroCodeGraphProcessing
     {
-        class TextRange
+        public class TextRange
         {
             public int begLine;
             public int endLine;
             public bool isNonParameterRange;
         }
 
-        class KeywordInfo
+        public class KeywordInfo
         {
             public bool HasLocalRoot;
             public string LocalRootKeywordsGroup;
@@ -26,7 +27,7 @@ namespace m0.ZeroCode
             public bool hasCRLF;
         }
 
-        class ParsingStack
+        public class ParsingStack
         {
             public Dictionary<IVertex, int> sameStartPosKewords = new Dictionary<IVertex, int>();
 
@@ -246,27 +247,7 @@ namespace m0.ZeroCode
 
         }
 
-        class DictionariesForFormalTextLanguage
-        {
-            public IDictionary<string, IList<IVertex>> emptyKeywordByGroupsDictionary;
-            public IDictionary<string, IList<IVertex>> newVertexKeywordByGroupsDictionary;
-            public IDictionary<string, IList<IVertex>> linkKeywordByGroupsDictionary;
-            public IDictionary<string, List<keywordTryingData>> examinedKeywords_All; // all keywords are here
-            public IDictionary<string, List<keywordTryingData>> examinedKeywords_StartInLocalRootOnly; // StartInLocalRoot only?
-            public IDictionary<char, List<string>> allKeywordsSubstringsDictionary;
-            public IDictionary<char, List<string>> allKeywordsSubstringsDictionary_witchoutAlpha;
-            public IDictionary<char, List<string>> allKeywordsSubstringsPositiveDictionary_witchoutLinkKeywordParts;
-            public Dictionary<char, List<string>> allKeywordsSubstringsNegativeDictionary_witchoutLinkKeywordParts;
 
-
-
-            public IDictionary<IVertex, KeywordInfo> keywordInfoDict;
-
-            public IVertex importList = MinusZero.Instance.CreateTempVertex();
-            public IVertex importMetaList = MinusZero.Instance.CreateTempVertex();
-            public IVertex importDirectList = MinusZero.Instance.CreateTempVertex();
-            public IVertex importDirectMetaList = MinusZero.Instance.CreateTempVertex();
-        }
 
         DictionariesForFormalTextLanguage dict;
 
@@ -323,44 +304,7 @@ namespace m0.ZeroCode
             prepareImportList_FromString();
         }
 
-        void prepareImportList_FormalTextLanguage(DictionariesForFormalTextLanguage d)
-        {
-            //IVertex formalTextLanguageDefaultImports = FormalTextLanguage.Get(false, "DefaultImports:");                
-            IVertex formalTextLanguageDefaultImports = GraphUtil.GetQueryOutFirst(FormalTextLanguage, "DefaultImports", null);
-
-            // named imports
-
-            //foreach (IEdge e in formalTextLanguageDefaultImports.GetAll(false, "$ImportMeta:"))
-            foreach (IEdge e in GraphUtil.GetQueryOut(formalTextLanguageDefaultImports, "$ImportMeta", null))
-            {
-                //IVertex v = formalTextLanguageDefaultImports.Get(false, e.To + ":");
-                IVertex v = GraphUtil.GetQueryOutFirst(formalTextLanguageDefaultImports, e.To, null);
-
-                if (v != null)
-                    d.importMetaList.AddEdge(e.To, v);
-            }
-
-            //foreach (IEdge e in formalTextLanguageDefaultImports.GetAll(false, "$Import:"))
-            foreach (IEdge e in GraphUtil.GetQueryOut(formalTextLanguageDefaultImports, "$Import", null))
-            {
-                //IVertex v = formalTextLanguageDefaultImports.Get(false, e.To + ":");
-                IVertex v = GraphUtil.GetQueryOutFirst(formalTextLanguageDefaultImports, e.To, null);
-
-                if (v != null)
-                    d.importList.AddEdge(e.To, v);
-            }
-
-            // direct imports
-
-            //foreach (IEdge e in formalTextLanguageDefaultImports.GetAll(false, "$DirectMeta:"))
-            foreach (IEdge e in GraphUtil.GetQueryOut(formalTextLanguageDefaultImports, "$DirectMeta", null))
-                d.importDirectMetaList.AddEdge(e.Meta, e.To);
-
-            //foreach (IEdge e in formalTextLanguageDefaultImports.GetAll(false, "$Direct:"))
-            foreach (IEdge e in GraphUtil.GetQueryOut(formalTextLanguageDefaultImports, "$Direct", null))
-                d.importDirectList.AddEdge(e.Meta, e.To);
-            
-        }
+        
         void prepareImportList_FromString()
         {
             // "import (?<name>) (?<link>)"
@@ -616,9 +560,9 @@ namespace m0.ZeroCode
             return new ToVertexMock(link, parent);            
         }
 
-        enum keywordTryingState { keywordCharacter, parameter, waiting, matched}
+        public enum keywordTryingState { keywordCharacter, parameter, waiting, matched}
 
-        class keywordTryingData
+        public class keywordTryingData
         {
             public String2ZeroCodeGraphProcessing parent;
             public IVertex keywordVertex;
@@ -2321,288 +2265,14 @@ namespace m0.ZeroCode
             nv.DeleteEdge(lastEdge);
         }
         
-
         int getDoubleColonPos(string s)
         {
             return s.IndexOf("::");            
-        }
-
-        private bool isSpecialKeyword(IVertex keyword)
-        {
-            //if (keyword.Get(false, "$$EmptyKeyword:") != null)
-            if (GraphUtil.GetQueryOutFirst(keyword, "$$EmptyKeyword", null) != null)
-                return true;
-
-            //if (keyword.Get(false, "$$NewVertexKeyword:") != null)
-            if (GraphUtil.GetQueryOutFirst(keyword, "$$NewVertexKeyword", null) != null)
-                return true;
-
-            //if (keyword.Get(false, "$$LinkKeyword:") != null)
-            if (GraphUtil.GetQueryOutFirst(keyword, "$$LinkKeyword", null) != null)
-                return true;
-
-            return false;
-        }
-
-        private void prepareSpecialKeywordsGroups(DictionariesForFormalTextLanguage d)
-        {
-            d.emptyKeywordByGroupsDictionary = ZeroCodeUtil.getFilteredKeywordListByGroup(FormalTextLanguage, "$$EmptyKeyword");
-
-            d.newVertexKeywordByGroupsDictionary = ZeroCodeUtil.getFilteredKeywordListByGroup(FormalTextLanguage, "$$NewVertexKeyword");
-
-            d.linkKeywordByGroupsDictionary = ZeroCodeUtil.getFilteredKeywordListByGroup(FormalTextLanguage, "$$LinkKeyword");
-        }
-
-        private void prepareDictionaries_ForFormalTextLanguage(IVertex formalTextLanguage)
-        {
-            DictionariesForFormalTextLanguage d = new DictionariesForFormalTextLanguage();
-
-            prepareImportList_FormalTextLanguage(d);
-
-            d.examinedKeywords_All = new Dictionary<string, List<keywordTryingData>>();
-
-            d.examinedKeywords_All.Add("", new List<keywordTryingData>());
-
-            d.examinedKeywords_StartInLocalRootOnly = new Dictionary<string, List<keywordTryingData>>();
-
-            d.examinedKeywords_StartInLocalRootOnly.Add("", new List<keywordTryingData>());
-
-            d.keywordInfoDict = new Dictionary<IVertex, KeywordInfo>();
-
-
-            prepareSpecialKeywordsGroups(d);
-
-
-            d.allKeywordsSubstringsDictionary = new Dictionary<char, List<string>>();
-            d.allKeywordsSubstringsDictionary_witchoutAlpha = new Dictionary<char, List<string>>();
-            d.allKeywordsSubstringsPositiveDictionary_witchoutLinkKeywordParts = new Dictionary<char, List<string>>();
-            d.allKeywordsSubstringsNegativeDictionary_witchoutLinkKeywordParts = new Dictionary<char, List<string>>();
-
-            //foreach (IEdge keyword in FormalTextLanguage.GetAll(false, @"Keywords:\$Keyword:"))
-            IVertex keywords = GraphUtil.GetQueryOutFirst(FormalTextLanguage, "Keywords", null);
-
-            foreach(IEdge keyword in GraphUtil.GetQueryOut(keywords, "$Keyword", null))
-            {
-                keywordTryingData ktd = new keywordTryingData(keyword.To, this);
-
-                if (!isSpecialKeyword(keyword.To))
-                {
-                    // examinedKeywords_All
-
-                    d.examinedKeywords_All[""].Add(ktd);
-
-                    //foreach (IEdge v in ktd.keywordVertex.GetAll(false, "$$KeywordGroup:"))
-                    foreach (IEdge v in GraphUtil.GetQueryOut(ktd.keywordVertex, "$$KeywordGroup", null))
-                    {
-                        string group = (string)v.To.Value;
-
-                        if (!d.examinedKeywords_All.ContainsKey(group))
-                            d.examinedKeywords_All.Add(group, new List<keywordTryingData>());
-
-                        d.examinedKeywords_All[group].Add(ktd);
-                    }
-
-                    // examinedKeywords_StartInLocalRootOnly
-
-                    //if (keyword.To.Get(false, @"\$$StartInLocalRoot:") != null)
-                    bool anyHasStartInLocalRoot=false;
-
-                    foreach (IEdge e in keyword.To.OutEdges)
-                        if (GraphUtil.GetQueryOutFirst(e.To, "$$StartInLocalRoot", null) != null)
-                            anyHasStartInLocalRoot = true;
-
-                    if(anyHasStartInLocalRoot)
-                    {
-                        d.examinedKeywords_StartInLocalRootOnly[""].Add(ktd);
-
-                        //foreach (IEdge v in ktd.keywordVertex.GetAll(false, "$$KeywordGroup:"))
-                        foreach (IEdge v in GraphUtil.GetQueryOut(ktd.keywordVertex, "$$KeywordGroup", null))
-                        {
-                            string group = (string)v.To.Value;
-
-                            if (!d.examinedKeywords_StartInLocalRootOnly.ContainsKey(group))
-                                d.examinedKeywords_StartInLocalRootOnly.Add(group, new List<keywordTryingData>());
-
-                            d.examinedKeywords_StartInLocalRootOnly[group].Add(ktd);
-                        }
-                    }
-
-                    //
-
-                    string keywordString = keyword.To.Value.ToString();
-
-                    if (keywordString.Length > 0)
-                        addKeywordsSubstrings(d, keywordString);
-                }
-
-                PrepareKeywordInfo(d, ktd);
-
-            }
-            
-            AddSpaceToAllKeywordsSubstringsDictionaries(d);
-
-            PrepareNegativeNegativeDictionary_witchoutLinkKeywordParts(d);
-
-            //
-
-            DictionariesForFormalTextLanguageDictionary.Add(formalTextLanguage, d);
-        }
-
-        private void AddSpaceToAllKeywordsSubstringsDictionaries(DictionariesForFormalTextLanguage d)
-        {
-            List<string> l = new List<string>();
-
-            l.Add(" ");
-
-            if (!d.allKeywordsSubstringsDictionary.ContainsKey(' '))            
-                d.allKeywordsSubstringsDictionary.Add(' ', l);
-
-            if (!d.allKeywordsSubstringsDictionary_witchoutAlpha.ContainsKey(' '))
-                d.allKeywordsSubstringsDictionary_witchoutAlpha.Add(' ', l);
-
-            if (!d.allKeywordsSubstringsPositiveDictionary_witchoutLinkKeywordParts.ContainsKey(' '))
-                d.allKeywordsSubstringsPositiveDictionary_witchoutLinkKeywordParts.Add(' ', l);            
-        }
-
-        private void PrepareNegativeNegativeDictionary_witchoutLinkKeywordParts(DictionariesForFormalTextLanguage d)
-        {
-            foreach(string s in ZeroCodeCommon.CodeViewTimeLinkKeywordParts)
-            {
-                char key = s[0];
-
-                GeneralUtil.DictionaryAdd<char, string>(d.allKeywordsSubstringsNegativeDictionary_witchoutLinkKeywordParts, key, s);
-            }
-        }
-
-        private void PrepareKeywordInfo(DictionariesForFormalTextLanguage d, keywordTryingData ktd)
-        {            
-            KeywordInfo ki = new KeywordInfo();
-
-            if (ktd.keyword.Contains("\r\n"))
-                ki.hasCRLF = true;
-
-            IVertex localRoot = GraphUtil.DeepFindOneByMeta(ktd.keywordVertex, "$$LocalRoot", false);
-
-            if (localRoot != null)
-            {
-                ki.HasLocalRoot = true;
-
-                if ((string)localRoot.Value != "")
-                    ki.LocalRootKeywordsGroup = (string)localRoot.Value;
-            }
-
-            //if (ktd.keywordVertex.Get(false, "$$NonSelfRecursiveParameters:") != null)
-            if (GraphUtil.GetQueryOutFirst(ktd.keywordVertex, "$$NonSelfRecursiveParameters", null) != null)
-                ki.NonSelfRecursiveParameters = true;
-
-            d.keywordInfoDict.Add(ktd.keywordVertex, ki);
-        }
-
-        private void addKeywordsSubstrings(DictionariesForFormalTextLanguage d, string keywordString)
-        {
-            if (keywordString == "")
-                return;
-
-            bool isInsideParameter = false;
-
-            int prevPos = 0;
-
-            int keywordPos;
-
-            for (keywordPos = 0; keywordPos < keywordString.Length; keywordPos++)
-            {
-                if (!isInsideParameter && ZeroCodeUtil.tryStringMatch(keywordString, keywordPos, "(?<"))
-                {
-                    isInsideParameter = true;
-
-                    addSubString(d, keywordString.Substring(prevPos, keywordPos - prevPos));
-                }
-
-                if (isInsideParameter && ZeroCodeUtil.tryStringMatch(keywordString, keywordPos, ">)"))
-                {
-                    isInsideParameter = false;
-                    prevPos = keywordPos + 2;
-                }
-
-                if (ZeroCodeUtil.tryStringMatch(keywordString, keywordPos, "(*"))
-                {
-                    addSubString(d, keywordString.Substring(prevPos, keywordPos - prevPos));
-
-                    prevPos = keywordPos + 2;
-                }
-
-                if (ZeroCodeUtil.tryStringMatch(keywordString, keywordPos, "*)"))
-                {
-                    addSubString(d, keywordString.Substring(prevPos, keywordPos - prevPos));
-
-                    prevPos = keywordPos + 2;
-                }
-
-                if (ZeroCodeUtil.tryStringMatch(keywordString, keywordPos, "(+"))
-                {
-                    addSubString(d, keywordString.Substring(prevPos, keywordPos - prevPos));
-
-                    prevPos = keywordPos + 2;
-                }
-
-                if (ZeroCodeUtil.tryStringMatch(keywordString, keywordPos, "+)"))
-                {
-                    addSubString(d, keywordString.Substring(prevPos, keywordPos - prevPos));
-
-                    prevPos = keywordPos + 2;
-                }
-            }
-
-            addSubString(d, keywordString.Substring(prevPos, keywordPos - prevPos));
-        }
-
-        private void addSubString(DictionariesForFormalTextLanguage d, string subString)
-        {
-            subString = subString.Trim();
-
-            if (subString.Length == 0 || subString[0] == ZeroCodeCommon.CodeGraphLinkPrefix) // XXX CodeGraphLinkPrefix hack for @@
-                return;
-
-            addSubString_dictionary(d.allKeywordsSubstringsDictionary, subString);
-
-            if (!Char.IsLetter(subString[0]))
-                addSubString_dictionary(d.allKeywordsSubstringsDictionary_witchoutAlpha, subString);
-
-            if (!ZeroCodeCommon.CodeViewTimeLinkKeywordParts.Contains(subString) && !Char.IsLetter(subString[0]))
-                addSubString_dictionary(d.allKeywordsSubstringsPositiveDictionary_witchoutLinkKeywordParts, subString);
-        }
-
-        private void addSubString_dictionary(IDictionary<char, List<string>> dict, string subString)
-        {
-            if (subString.Length == 0)
-                return;
-
-            char firstCharacter = subString[0];
-
-            if (dict.ContainsKey(firstCharacter))
-            {
-                if (!dict[firstCharacter].Contains(subString))
-                {
-                    dict[firstCharacter].Add(subString);
-
-                  //  MinusZero.Instance.Log(-1, "XX", subString);
-                }
-            }
-            else
-            {
-                List<string> kl = new List<string>();
-
-                dict.Add(firstCharacter, kl);
-
-                kl.Add(subString);
-              //  MinusZero.Instance.Log(-1, "XX", subString);
-            }
-
-        }
+        }        
 
         ///
 
-        class LineInfo
+        public class LineInfo
         {
             public int tabCount;
             public bool startsWithLineContinuation;
@@ -3082,13 +2752,7 @@ namespace m0.ZeroCode
 
             setupHelpVariables_onlyOnce();
 
-            if (DictionariesForFormalTextLanguageDictionary.ContainsKey(FormalTextLanguage))
-                dict = DictionariesForFormalTextLanguageDictionary[FormalTextLanguage];
-            else
-            {
-                prepareDictionaries_ForFormalTextLanguage(FormalTextLanguage);
-                dict = DictionariesForFormalTextLanguageDictionary[FormalTextLanguage];
-            }            
+            dict = DictionariesForFormalTextLanguageFactory.Get(formalTextLanguage);
         }
     }
 }
