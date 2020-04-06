@@ -30,7 +30,7 @@ namespace m0.ZeroCode.Helpers
 
         static private DictionariesForFormalTextLanguage prepareDictionaries_ForFormalTextLanguage(IVertex FormalTextLanguage)
         {
-            DictionariesForFormalTextLanguage d = new DictionariesForFormalTextLanguage();
+            DictionariesForFormalTextLanguage d = new DictionariesForFormalTextLanguage(FormalTextLanguage);
 
             prepareImportList_FormalTextLanguage(d, FormalTextLanguage);
 
@@ -361,5 +361,56 @@ namespace m0.ZeroCode.Helpers
         public IVertex importMetaList = MinusZero.Instance.CreateTempVertex();
         public IVertex importDirectList = MinusZero.Instance.CreateTempVertex();
         public IVertex importDirectMetaList = MinusZero.Instance.CreateTempVertex();
+
+
+        public string CRLFoperator;
+        public string MetaSeparator;
+        public string CodeGraphVertexPrefix;
+        public string CodeGraphVertexSuffix;
+        public char LineContinuationPrefix;
+        public char CodeGraphLinkPrefix;
+        public string CodeGraphLinkKeywordPrefix; // we store it here and in the textlanguage
+        public char NewVertexPrefix;
+        public char NewVertexSuffix;
+        public char EscapedSequencePrefix;
+        public char EscapedSequenceSuffix;
+        public char EscapeCharacter;
+        public string SetIndexPrefix;
+        public string SetIndexPostfix;
+
+        public static HashSet<string> CodeViewTimeLinkKeywordParts;
+
+        string get(string what)
+        {
+            IVertex v = GraphUtil.GetQueryOutFirst(FormalTextLanguage, what, null);
+
+            if (v != null)
+                return v.Value.ToString();
+
+            return null;
+        }
+
+        IVertex FormalTextLanguage;
+
+        public DictionariesForFormalTextLanguage(IVertex formalTextLanguage)
+        {
+            FormalTextLanguage = formalTextLangage;
+
+            CRLFoperator;
+            MetaSeparator;
+            CodeGraphVertexPrefix;
+            CodeGraphVertexSuffix;
+            LineContinuationPrefix;
+            CodeGraphLinkPrefix;
+            CodeGraphLinkKeywordPrefix; // we store it here and in the textlanguage
+            NewVertexPrefix;
+            NewVertexSuffix;
+            EscapedSequencePrefix;
+            EscapedSequenceSuffix;
+            EscapeCharacter;
+            SetIndexPrefix;
+            SetIndexPostfix;
+
+        }
     }
 }

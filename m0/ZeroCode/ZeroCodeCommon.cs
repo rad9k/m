@@ -30,8 +30,6 @@ namespace m0.ZeroCode
 
         public static string CRLFoperator = "{";
 
-        //public static string MetaSeparator = "|";
-
         public static string MetaSeparator = ":";
 
         public static string CodeGraphVertexPrefix = "<";
@@ -42,7 +40,7 @@ namespace m0.ZeroCode
 
         public static char CodeGraphLinkPrefix = '@';
 
-        public static string CodeGraphLinkKeyword = "@@"; // we store it here and in the textlanguage
+        public static string CodeGraphLinkKeywordPrefix = "@@"; // we store it here and in the textlanguage
 
         public static char NewVertexPrefix = '\"';
 
@@ -82,7 +80,7 @@ namespace m0.ZeroCode
 
         public static string stringFromLinkKeywordString(string s)
         {
-            return s.Substring(ZeroCodeCommon.CodeGraphLinkKeyword.ToString().Length).TrimEnd();
+            return s.Substring(ZeroCodeCommon.CodeGraphLinkKeywordPrefix.ToString().Length).TrimEnd();
         }
 
         // to be used only in ZeroCodeCommon.stringFromLinkString( , FALSE) scenario
@@ -115,11 +113,11 @@ namespace m0.ZeroCode
                     if (text[sPos] == ' ' && !isInEscape)
                         shallProceed = false;
 
-                    if (text[sPos] == '\'' && !isInEscape)
+                    if (text[sPos] == EscapedSequencePrefix && !isInEscape)
                         isInEscape = true;
 
-                    if (text[sPos] == '\'' && isInEscape
-                        && sPos > 0 && text[sPos - 1] != '\\') // if is no \'
+                    if (text[sPos] == EscapedSequenceSuffix && isInEscape
+                        && sPos > 0 && text[sPos - 1] != EscapeCharacter) // if is no \'
                         isInEscape = false;
                 }
 
@@ -182,8 +180,8 @@ namespace m0.ZeroCode
 
         public static bool isLinkKeywordString(string s, int beg)
         {
-            for (int x = 0; x < CodeGraphLinkKeyword.Length; x++)
-                if (s[beg + x] != CodeGraphLinkKeyword[x])
+            for (int x = 0; x < CodeGraphLinkKeywordPrefix.Length; x++)
+                if (s[beg + x] != CodeGraphLinkKeywordPrefix[x])
                     return false;
 
             return true;
@@ -199,11 +197,14 @@ namespace m0.ZeroCode
 
             string s=o.ToString();
 
-            if (s.IndexOf('\\') != -1)
-                s = s.Replace("\\", "\\\\");
+            if (s.IndexOf(EscapeCharacter) != -1)
+                s = s.Replace(EscapeCharacter.ToString(), EscapeCharacter.ToString() + EscapeCharacter.ToString());
 
-            if (s.IndexOf('\"') != -1)
-                s = s.Replace("\"", "\"");
+            
+            s = s.Replace(NewVertexPrefix.ToString(), EscapeCharacter.ToString() + NewVertexPrefix);
+
+            if(NewVertexPrefix!=NewVertexSuffix)
+                s = s.Replace(NewVertexSuffix.ToString(), EscapeCharacter.ToString() + NewVertexSuffix);
 
             return NewVertexPrefix + s + NewVertexSuffix;
         }
