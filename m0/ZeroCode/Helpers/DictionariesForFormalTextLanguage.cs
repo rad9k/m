@@ -390,26 +390,41 @@ namespace m0.ZeroCode.Helpers
             return null;
         }
 
+        HashSet<string> getHashSet(string what)
+        {
+            IList<IEdge> v = GraphUtil.GetQueryOut(FormalTextLanguage, what, null);
+
+            HashSet<string> set = new HashSet<string>();
+
+            foreach (IEdge e in v)
+                set.Add(e.To.Value.ToString());
+
+            return set;
+        }
+
         IVertex FormalTextLanguage;
 
         public DictionariesForFormalTextLanguage(IVertex formalTextLanguage)
         {
-            FormalTextLanguage = formalTextLangage;
+            return;
+            FormalTextLanguage = formalTextLanguage;
 
-            CRLFoperator;
-            MetaSeparator;
-            CodeGraphVertexPrefix;
-            CodeGraphVertexSuffix;
-            LineContinuationPrefix;
-            CodeGraphLinkPrefix;
-            CodeGraphLinkKeywordPrefix; // we store it here and in the textlanguage
-            NewVertexPrefix;
-            NewVertexSuffix;
-            EscapedSequencePrefix;
-            EscapedSequenceSuffix;
-            EscapeCharacter;
-            SetIndexPrefix;
-            SetIndexPostfix;
+            CRLFoperator = get("");
+            MetaSeparator = get("");
+            CodeGraphVertexPrefix = get("");
+            CodeGraphVertexSuffix = get("");
+            LineContinuationPrefix = get("").ToCharArray()[0];
+            CodeGraphLinkPrefix = get("").ToCharArray()[0];
+            CodeGraphLinkKeywordPrefix = get(""); // we store it here and in the textlanguage
+            NewVertexPrefix = get("").ToCharArray()[0];
+            NewVertexSuffix = get("").ToCharArray()[0];
+            EscapedSequencePrefix = get("").ToCharArray()[0];
+            EscapedSequenceSuffix = get("").ToCharArray()[0];
+            EscapeCharacter = get("").ToCharArray()[0];
+            SetIndexPrefix = get("");
+            SetIndexPostfix = get("");
+
+            CodeViewTimeLinkKeywordParts = getHashSet("CodeViewTimeLinkKeywordParts");
 
         }
     }
