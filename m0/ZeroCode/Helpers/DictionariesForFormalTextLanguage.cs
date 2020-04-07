@@ -250,7 +250,7 @@ namespace m0.ZeroCode.Helpers
         {
             subString = subString.Trim();
 
-            if (subString.Length == 0 || subString[0] == ZeroCodeCommon.CodeGraphLinkPrefix) // XXX CodeGraphLinkPrefix hack for @@
+            if (subString.Length == 0 || subString[0] == d.CodeGraphLinkPrefix) // XXX CodeGraphLinkPrefix hack for @@
                 return;
 
             addSubString_dictionary(d.allKeywordsSubstringsDictionary, subString);
@@ -258,7 +258,7 @@ namespace m0.ZeroCode.Helpers
             if (!Char.IsLetter(subString[0]))
                 addSubString_dictionary(d.allKeywordsSubstringsDictionary_witchoutAlpha, subString);
 
-            if (!ZeroCodeCommon.CodeViewTimeLinkKeywordParts.Contains(subString) && !Char.IsLetter(subString[0]))
+            if (!d.CodeViewTimeLinkKeywordParts.Contains(subString) && !Char.IsLetter(subString[0]))
                 addSubString_dictionary(d.allKeywordsSubstringsPositiveDictionary_witchoutLinkKeywordParts, subString);
         }
 
@@ -332,7 +332,7 @@ namespace m0.ZeroCode.Helpers
 
         static private void PrepareNegativeNegativeDictionary_witchoutLinkKeywordParts(DictionariesForFormalTextLanguage d)
         {
-            foreach (string s in ZeroCodeCommon.CodeViewTimeLinkKeywordParts)
+            foreach (string s in d.CodeViewTimeLinkKeywordParts)
             {
                 char key = s[0];
 
@@ -378,7 +378,7 @@ namespace m0.ZeroCode.Helpers
         public string SetIndexPrefix;
         public string SetIndexPostfix;
 
-        public static HashSet<string> CodeViewTimeLinkKeywordParts;
+        public HashSet<string> CodeViewTimeLinkKeywordParts;
 
         string get(string what)
         {
@@ -406,25 +406,24 @@ namespace m0.ZeroCode.Helpers
 
         public DictionariesForFormalTextLanguage(IVertex formalTextLanguage)
         {
-            return;
             FormalTextLanguage = formalTextLanguage;
 
-            CRLFoperator = get("");
-            MetaSeparator = get("");
-            CodeGraphVertexPrefix = get("");
-            CodeGraphVertexSuffix = get("");
-            LineContinuationPrefix = get("").ToCharArray()[0];
-            CodeGraphLinkPrefix = get("").ToCharArray()[0];
-            CodeGraphLinkKeywordPrefix = get(""); // we store it here and in the textlanguage
-            NewVertexPrefix = get("").ToCharArray()[0];
-            NewVertexSuffix = get("").ToCharArray()[0];
-            EscapedSequencePrefix = get("").ToCharArray()[0];
-            EscapedSequenceSuffix = get("").ToCharArray()[0];
-            EscapeCharacter = get("").ToCharArray()[0];
-            SetIndexPrefix = get("");
-            SetIndexPostfix = get("");
+            CRLFoperator = get("CRLFoperator");
+            MetaSeparator = get("MetaSeparator");
+            CodeGraphVertexPrefix = get("CodeGraphVertexPrefix");
+            CodeGraphVertexSuffix = get("CodeGraphVertexSuffix");
+            LineContinuationPrefix = get("LineContinuationPrefix").ToCharArray()[0];
+            CodeGraphLinkPrefix = get("CodeGraphLinkPrefix").ToCharArray()[0];
+            CodeGraphLinkKeywordPrefix = get("CodeGraphLinkKeywordPrefix"); // we store it here and in the textlanguage
+            NewVertexPrefix = get("NewVertexPrefix").ToCharArray()[0];
+            NewVertexSuffix = get("NewVertexSuffix").ToCharArray()[0];
+            EscapedSequencePrefix = get("EscapedSequencePrefix").ToCharArray()[0];
+            EscapedSequenceSuffix = get("EscapedSequenceSuffix").ToCharArray()[0];
+            EscapeCharacter = get("EscapeCharacter").ToCharArray()[0];
+            SetIndexPrefix = get("SetIndexPrefix");
+            SetIndexPostfix = get("SetIndexPostfix");
 
-            CodeViewTimeLinkKeywordParts = getHashSet("CodeViewTimeLinkKeywordParts");
+            CodeViewTimeLinkKeywordParts = getHashSet("CodeViewTimeLinkKeywordPart");
 
         }
     }

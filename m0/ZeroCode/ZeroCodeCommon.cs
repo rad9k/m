@@ -1,4 +1,5 @@
-﻿using System;
+﻿using m0.ZeroCode.Helpers;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -27,6 +28,7 @@ namespace m0.ZeroCode
         // core code style
         //////////////////////
 
+/* kept for the reference
         public static string CRLFoperator = "{";
 
         public static string MetaSeparator = ":";
@@ -57,34 +59,34 @@ namespace m0.ZeroCode
 
         public static HashSet<string> CodeViewTimeLinkKeywordParts = new HashSet<string>(new string[] { "\\", "{", "}", ":", "::", SetIndexPrefix, SetIndexPostfix, "," }); 
     // we store it here and in the textlanguage, but in general this is XXX. big question remins: how do you do cvtq while the code is in some different language?
-
+    */
         // Link
         ///////
 
-        public static string stringToLinkString(string s, bool hideLinkPrefix)
+        public static string stringToLinkString(DictionariesForFormalTextLanguage dict, string s, bool hideLinkPrefix)
         {
             if (hideLinkPrefix)
                 return s;
             else
-                return ZeroCodeCommon.CodeGraphLinkPrefix + s;
+                return dict.CodeGraphLinkPrefix + s;
         }
 
-        public static string stringFromLinkString(string s, bool hideLinkPrefix)
+        public static string stringFromLinkString(DictionariesForFormalTextLanguage dict, string s, bool hideLinkPrefix)
         {
             if (hideLinkPrefix)
                 return s;
             else
-                return s.Substring(ZeroCodeCommon.CodeGraphLinkPrefix.ToString().Length);
+                return s.Substring(dict.CodeGraphLinkPrefix.ToString().Length);
         }
 
-        public static string stringFromLinkKeywordString(string s)
+        public static string stringFromLinkKeywordString(DictionariesForFormalTextLanguage dict, string s)
         {
-            return s.Substring(ZeroCodeCommon.CodeGraphLinkKeywordPrefix.ToString().Length).TrimEnd();
+            return s.Substring(dict.CodeGraphLinkKeywordPrefix.ToString().Length).TrimEnd();
         }
 
         // to be used only in ZeroCodeCommon.stringFromLinkString( , FALSE) scenario
         // and that means that TO BE USED ONLY IN KEYWORDS
-        public static string tryStringFromLinkString(string text, int startPos, ref int pos, int endPos, IDictionary<char, List<string>> allKeywordsSubstringsDictionary)
+        public static string tryStringFromLinkString(DictionariesForFormalTextLanguage dict, string text, int startPos, ref int pos, int endPos, IDictionary<char, List<string>> allKeywordsSubstringsDictionary)
         {
             string newVertex = null;
 
@@ -92,7 +94,7 @@ namespace m0.ZeroCode
 
             bool shallProceed = true;
 
-            if (ZeroCodeUtil.tryStringMatch(text, startPos, ZeroCodeCommon.CodeGraphLinkPrefix.ToString()))
+            if (ZeroCodeUtil.tryStringMatch(text, startPos, dict.CodeGraphLinkPrefix.ToString()))
             {
                 bool isInEscape = false;
 
@@ -112,17 +114,17 @@ namespace m0.ZeroCode
                     if (text[sPos] == ' ' && !isInEscape)
                         shallProceed = false;
 
-                    if (text[sPos] == EscapedSequencePrefix && !isInEscape)
+                    if (text[sPos] == dict.EscapedSequencePrefix && !isInEscape)
                         isInEscape = true;
 
-                    if (text[sPos] == EscapedSequenceSuffix && isInEscape
-                        && sPos > 0 && text[sPos - 1] != EscapeCharacter) // if is no \'
+                    if (text[sPos] == dict.EscapedSequenceSuffix && isInEscape
+                        && sPos > 0 && text[sPos - 1] != dict.EscapeCharacter) // if is no \'
                         isInEscape = false;
                 }
 
                 pos = sPos;
 
-                newVertex = ZeroCodeCommon.stringFromLinkString(text.Substring(startPos, sPos - startPos), false);
+                newVertex = ZeroCodeCommon.stringFromLinkString(dict, text.Substring(startPos, sPos - startPos), false);
             }
 
             return newVertex;
@@ -169,18 +171,18 @@ namespace m0.ZeroCode
             return false;
         }
 
-        public static bool isLinkString(string s, int beg)
+        public static bool isLinkString(DictionariesForFormalTextLanguage dict, string s, int beg)
         {
-            if (s[beg] == CodeGraphLinkPrefix && s.Length>=beg && s[beg + 1] != CodeGraphLinkPrefix) // @@ support
+            if (s[beg] == dict.CodeGraphLinkPrefix && s.Length>=beg && s[beg + 1] != dict.CodeGraphLinkPrefix) // @@ support
                 return true;
 
             return false;
         }
 
-        public static bool isLinkKeywordString(string s, int beg)
+        public static bool isLinkKeywordString(DictionariesForFormalTextLanguage dict, string s, int beg)
         {
-            for (int x = 0; x < CodeGraphLinkKeywordPrefix.Length; x++)
-                if (s[beg + x] != CodeGraphLinkKeywordPrefix[x])
+            for (int x = 0; x < dict.CodeGraphLinkKeywordPrefix.Length; x++)
+                if (s[beg + x] != dict.CodeGraphLinkKeywordPrefix[x])
                     return false;
 
             return true;
@@ -189,42 +191,42 @@ namespace m0.ZeroCode
         //  NewVertexString
         ///////////////////
 
-        public static string stringToNewVertexString(object o)
+        public static string stringToNewVertexString(DictionariesForFormalTextLanguage dict, object o)
         {
             if (o == null)
                 return "";
 
             string s=o.ToString();
 
-            if (s.IndexOf(EscapeCharacter) != -1)
-                s = s.Replace(EscapeCharacter.ToString(), EscapeCharacter.ToString() + EscapeCharacter.ToString());
+            if (s.IndexOf(dict.EscapeCharacter) != -1)
+                s = s.Replace(dict.EscapeCharacter.ToString(), dict.EscapeCharacter.ToString() + dict.EscapeCharacter.ToString());
 
             
-            s = s.Replace(NewVertexPrefix.ToString(), EscapeCharacter.ToString() + NewVertexPrefix);
+            s = s.Replace(dict.NewVertexPrefix.ToString(), dict.EscapeCharacter.ToString() + dict.NewVertexPrefix);
 
-            if(NewVertexPrefix!=NewVertexSuffix)
-                s = s.Replace(NewVertexSuffix.ToString(), EscapeCharacter.ToString() + NewVertexSuffix);
+            if(dict.NewVertexPrefix != dict.NewVertexSuffix)
+                s = s.Replace(dict.NewVertexSuffix.ToString(), dict.EscapeCharacter.ToString() + dict.NewVertexSuffix);
 
-            return NewVertexPrefix + s + NewVertexSuffix;
+            return dict.NewVertexPrefix + s + dict.NewVertexSuffix;
         }
 
-        public static string stringFromNewVertexString(string s)
+        public static string stringFromNewVertexString(DictionariesForFormalTextLanguage dict, string s)
         {
             s = s.Substring(1, s.Length - 2);
 
             //s = s.Replace("\\\\", "\\");
 
-            s = s.Replace(String.Concat(ZeroCodeCommon.EscapeCharacter, ZeroCodeCommon.EscapeCharacter), ZeroCodeCommon.EscapeCharacter.ToString());
+            s = s.Replace(String.Concat(dict.EscapeCharacter, dict.EscapeCharacter), dict.EscapeCharacter.ToString());
 
             // s = s.Replace("\\\"", "\"");
 
-            s = s.Replace(String.Concat(ZeroCodeCommon.EscapeCharacter,ZeroCodeCommon.NewVertexPrefix), ZeroCodeCommon.NewVertexPrefix.ToString());
-            s = s.Replace(String.Concat(ZeroCodeCommon.EscapeCharacter, ZeroCodeCommon.NewVertexSuffix), ZeroCodeCommon.NewVertexSuffix.ToString());
+            s = s.Replace(String.Concat(dict.EscapeCharacter, dict.NewVertexPrefix), dict.NewVertexPrefix.ToString());
+            s = s.Replace(String.Concat(dict.EscapeCharacter, dict.NewVertexSuffix), dict.NewVertexSuffix.ToString());
 
             return s;
         }
 
-        public static string tryStringFromNewVertexString(string text, int startPos, ref int pos)
+        public static string tryStringFromNewVertexString(DictionariesForFormalTextLanguage dict, string text, int startPos, ref int pos)
         {
             string newVertex = null;
 
@@ -232,37 +234,37 @@ namespace m0.ZeroCode
 
             bool shallProceed = true;
 
-            if (ZeroCodeUtil.tryStringMatch(text, sPos, ZeroCodeCommon.NewVertexPrefix.ToString()))
+            if (ZeroCodeUtil.tryStringMatch(text, sPos, dict.NewVertexPrefix.ToString()))
             {
                 while (shallProceed)
                 {
                     sPos++;
 
-                    if (text[sPos] == ZeroCodeCommon.NewVertexSuffix
-                        && sPos > 0 && text[sPos - 1] != ZeroCodeCommon.EscapeCharacter) // if is no \"
+                    if (text[sPos] == dict.NewVertexSuffix
+                        && sPos > 0 && text[sPos - 1] != dict.EscapeCharacter) // if is no \"
                         shallProceed = false;
                 }
 
                 pos = sPos + 1;
 
-                newVertex = ZeroCodeCommon.stringFromNewVertexString(text.Substring(startPos, sPos - startPos + 1));
+                newVertex = ZeroCodeCommon.stringFromNewVertexString(dict, text.Substring(startPos, sPos - startPos + 1));
             }
 
             return newVertex;
         }
 
-        public static bool isNewVertexString(string s, int beg, int end)
+        public static bool isNewVertexString(DictionariesForFormalTextLanguage dict, string s, int beg, int end)
         {
-            if (s[beg] == NewVertexPrefix && s[end] == NewVertexSuffix)
+            if (s[beg] == dict.NewVertexPrefix && s[end] == dict.NewVertexSuffix)
                 return true;
 
             return false;
         }
-        public static bool isNewVertexString(string s)
+        public static bool isNewVertexString(DictionariesForFormalTextLanguage dict, string s)
         {
             if (s.Length > 0
-                && s[0] == ZeroCodeCommon.NewVertexPrefix
-                && s[s.Length - 1] == ZeroCodeCommon.NewVertexSuffix)
+                && s[0] == dict.NewVertexPrefix
+                && s[s.Length - 1] == dict.NewVertexSuffix)
                 return true;
 
             return false;
@@ -271,12 +273,12 @@ namespace m0.ZeroCode
         // Escaped
         //////////
 
-        public static string surroundWithEscape(string s)
+        public static string surroundWithEscape(DictionariesForFormalTextLanguage dict, string s)
         {
-            return EscapedSequencePrefix + s + EscapedSequenceSuffix;
+            return dict.EscapedSequencePrefix + s + dict.EscapedSequenceSuffix;
         }
 
-        public static string stringToPossiblyEscapedString(object o)
+        public static string stringToPossiblyEscapedString(DictionariesForFormalTextLanguage dict, object o)
         {
             if (o == null)
                 return "";
@@ -291,18 +293,18 @@ namespace m0.ZeroCode
             // XXX need to reference dict.allKeywordsSubstringsDictionary
 
             //if (s.IndexOf('\\') != -1)
-            if (s.IndexOf(EscapeCharacter) != -1)
+            if (s.IndexOf(dict.EscapeCharacter) != -1)
             {
                 //s = s.Replace("\\", "\\\\");
-                s = s.Replace(EscapeCharacter.ToString(), String.Concat(EscapeCharacter, EscapeCharacter));
+                s = s.Replace(dict.EscapeCharacter.ToString(), String.Concat(dict.EscapeCharacter, dict.EscapeCharacter));
                 needToSurroundWithEscape = true;
             }
 
             //if (s.IndexOf('\'') != -1)
-            if (s.IndexOf(EscapedSequencePrefix) != -1)
+            if (s.IndexOf(dict.EscapedSequencePrefix) != -1)
             {
                 //s = s.Replace("'", "\\'");
-                s = s.Replace(EscapedSequencePrefix.ToString(),String.Concat(EscapeCharacter,EscapedSequencePrefix));
+                s = s.Replace(dict.EscapedSequencePrefix.ToString(),String.Concat(dict.EscapeCharacter, dict.EscapedSequencePrefix));
                 needToSurroundWithEscape = true;
             }
 
@@ -310,17 +312,17 @@ namespace m0.ZeroCode
            //         needToSurroundWithEscape = true;
 
             if (needToSurroundWithEscape)
-                return surroundWithEscape(s);
+                return surroundWithEscape(dict, s);
             else
                 return s;
 
         }
 
-        internal static string tryEscapedLinkString(string text, ref int sPos)
+        internal static string tryEscapedLinkString(DictionariesForFormalTextLanguage dict, string text, ref int sPos)
         {
             int begSpos = sPos;
 
-            if (text[sPos] != ZeroCodeCommon.EscapedSequencePrefix)
+            if (text[sPos] != dict.EscapedSequencePrefix)
                 return null;
 
             bool canProceed=false;
@@ -330,16 +332,16 @@ namespace m0.ZeroCode
 
                 canProceed = true;
 
-                if (text.Length > sPos && text[sPos - 1] == ZeroCodeCommon.EscapeCharacter && text[sPos] == ZeroCodeCommon.EscapedSequenceSuffix)
+                if (text.Length > sPos && text[sPos - 1] == dict.EscapeCharacter && text[sPos] == dict.EscapedSequenceSuffix)
                 {
 
                 }
-                else if (text.Length <= sPos || text[sPos] == ZeroCodeCommon.EscapedSequenceSuffix || text[sPos] == '\r' || text[sPos] == '\n')
+                else if (text.Length <= sPos || text[sPos] == dict.EscapedSequenceSuffix || text[sPos] == '\r' || text[sPos] == '\n')
                     canProceed = false;
 
             } while (canProceed);
 
-            if (text[sPos] == ZeroCodeCommon.EscapedSequenceSuffix)
+            if (text[sPos] == dict.EscapedSequenceSuffix)
             {
                 sPos++;
                 return text.Substring(begSpos + 1, sPos - begSpos - 2);

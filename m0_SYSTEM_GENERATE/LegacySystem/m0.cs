@@ -2284,46 +2284,31 @@ namespace m0
             IVertex zcb = LegacySystem.Graph.EasyVertex.Get(Root, false, @"System\FormalTextLanguage").AddVertex(ftl, "ZeroCodeBase");
 
             zcb.AddVertex(LegacySystem.Graph.EasyVertex.Get(ftl, false, "CRLFoperator"), @"{");
-
-
             zcb.AddVertex(LegacySystem.Graph.EasyVertex.Get(ftl, false, "MetaSeparator"), ":");
-            public static string MetaSeparator = ":";
+            zcb.AddVertex(LegacySystem.Graph.EasyVertex.Get(ftl, false, "CodeGraphVertexPrefix"), "<");
+            zcb.AddVertex(LegacySystem.Graph.EasyVertex.Get(ftl, false, "CodeGraphVertexSuffix"), ">");
+            zcb.AddVertex(LegacySystem.Graph.EasyVertex.Get(ftl, false, "LineContinuationPrefix"), "^");
+            zcb.AddVertex(LegacySystem.Graph.EasyVertex.Get(ftl, false, "CodeGraphLinkPrefix"), "@");
+            zcb.AddVertex(LegacySystem.Graph.EasyVertex.Get(ftl, false, "CodeGraphLinkKeywordPrefix"), "@@");
+            zcb.AddVertex(LegacySystem.Graph.EasyVertex.Get(ftl, false, "NewVertexPrefix"), "\"");
+            zcb.AddVertex(LegacySystem.Graph.EasyVertex.Get(ftl, false, "NewVertexSuffix"), "\"");
+            zcb.AddVertex(LegacySystem.Graph.EasyVertex.Get(ftl, false, "EscapedSequencePrefix"), "\'");
+            zcb.AddVertex(LegacySystem.Graph.EasyVertex.Get(ftl, false, "EscapedSequenceSuffix"), "\'");
+            zcb.AddVertex(LegacySystem.Graph.EasyVertex.Get(ftl, false, "EscapeCharacter"), "\\");
+            zcb.AddVertex(LegacySystem.Graph.EasyVertex.Get(ftl, false, "SetIndexPrefix"), "<<");
+            zcb.AddVertex(LegacySystem.Graph.EasyVertex.Get(ftl, false, "SetIndexPostfix"), ">>");
 
-        zcb.AddVertex(LegacySystem.Graph.EasyVertex.Get(ftl, false, "CodeGraphVertexPrefix"), "<");
-            public static string CodeGraphVertexPrefix = "<";
+            IVertex CodeViewTimeLinkKeywordPart = LegacySystem.Graph.EasyVertex.Get(ftl, false, "CodeViewTimeLinkKeywordPart");
 
-        zcb.AddVertex(LegacySystem.Graph.EasyVertex.Get(ftl, false, "CodeGraphVertexSuffix"), ">");
-            public static string CodeGraphVertexSuffix = ">";
+            zcb.AddVertex(CodeViewTimeLinkKeywordPart, "\\");
+            zcb.AddVertex(CodeViewTimeLinkKeywordPart, "{");
+            zcb.AddVertex(CodeViewTimeLinkKeywordPart, "}");
+            zcb.AddVertex(CodeViewTimeLinkKeywordPart, ":");
+            zcb.AddVertex(CodeViewTimeLinkKeywordPart, "::");
+            zcb.AddVertex(CodeViewTimeLinkKeywordPart, "<<");
+            zcb.AddVertex(CodeViewTimeLinkKeywordPart, ">>");
+            zcb.AddVertex(CodeViewTimeLinkKeywordPart, ",");
 
-        zcb.AddVertex(LegacySystem.Graph.EasyVertex.Get(ftl, false, "LineContinuationPrefix"), "^");
-            public static char LineContinuationPrefix = '^';
-
-        zcb.AddVertex(LegacySystem.Graph.EasyVertex.Get(ftl, false, "CodeGraphLinkPrefix"), "@");
-            public static char CodeGraphLinkPrefix = '@';
-
-        zcb.AddVertex(LegacySystem.Graph.EasyVertex.Get(ftl, false, "CodeGraphLinkKeywordPrefix"), "@@");
-            public static string CodeGraphLinkKeywordPrefix = "@@"; // we store it here and in the textlanguage
-
-        zcb.AddVertex(LegacySystem.Graph.EasyVertex.Get(ftl, false, "NewVertexPrefix"), "'\"");
-            public static char NewVertexPrefix = '\"';
-
-        zcb.AddVertex(LegacySystem.Graph.EasyVertex.Get(ftl, false, "NewVertexSuffix"), "\"");
-            public static char NewVertexSuffix = '\"';
-
-        zcb.AddVertex(LegacySystem.Graph.EasyVertex.Get(ftl, false, "EscapedSequencePrefix"), "\'");
-            public static char EscapedSequencePrefix = '\'';
-
-        zcb.AddVertex(LegacySystem.Graph.EasyVertex.Get(ftl, false, "EscapedSequenceSuffix"), "\'");
-            public static char EscapedSequenceSuffix = '\'';
-
-        zcb.AddVertex(LegacySystem.Graph.EasyVertex.Get(ftl, false, "EscapeCharacter"), "\\");
-            public static char EscapeCharacter = '\\';
-
-        zcb.AddVertex(LegacySystem.Graph.EasyVertex.Get(ftl, false, "SetIndexPrefix"), "<<");
-            public static string SetIndexPrefix = "<<";
-
-        zcb.AddVertex(LegacySystem.Graph.EasyVertex.Get(ftl, false, "SetIndexPostfix"), ">>");
-            public static string SetIndexPostfix = ">>";
         }
 
         void CreateSystemFormalTextLanguageZeroCode()
@@ -2387,7 +2372,7 @@ namespace m0
         {
             IVertex sm = LegacySystem.Graph.EasyVertex.Get(Root, false, @"System\Meta");
 
-            IVertex atr = baseVertex.AddVertex(LegacySystem.Graph.EasyVertex.Get(sm, false, @"ZeroUML\Attribute"), name);
+            IVertex atr = baseVertex.AddVertex(LegacySystem.Graph.EasyVertex.Get(sm, false, @"ZeroUML\Class\Attribute"), name);
 
             atr.AddVertex(LegacySystem.Graph.EasyVertex.Get(sm, false, @"Base\Vertex\$MinCardinality"), MinCardinality);
 
@@ -2401,25 +2386,24 @@ namespace m0
 
             m0.LegacySystem.Util.GeneralUtil.ParseAndExcute(sm, sm, "{ZeroTypes{AtomType:String,AtomType:Integer,AtomType:Decimal,AtomType:Float,AtomType:Boolean,Type:VertexType,Class:Edge{Association:From{$MinCardinality:0,$MaxCardinality:1},Association:Meta{$MinCardinality:1,$MaxCardinality:1},Association:To{$MinCardinality:1,$MaxCardinality:1}},Class:DateTime{Attribute:Year{$MinCardinality:1,$MaxCardinality:1},Attribute:Month{$MinCardinality:1,$MaxCardinality:1},Attribute:Day{$MinCardinality:1,$MaxCardinality:1},Attribute:Hour{$MinCardinality:1,$MaxCardinality:1},Attribute:Minute{$MinCardinality:1,$MaxCardinality:1},Attribute:Second{$MinCardinality:1,$MaxCardinality:1},Attribute:Millisecond{$MinCardinality:0,$MaxCardinality:1}},Class:FormalTextLanguage{Aggregation:DefaultImports{$MinCardinality:0,$MaxCardinality:1},Aggregation:Keywords{$MinCardinality:0,$MaxCardinality:1}},Enum:EnumBase,Class:$PlatformClass{$PlatformClassName},Class:HasBaseEdge{Attribute:BaseEdge{$MinCardinality:1,$MaxCardinality:1}},Class:HasSelectedEdges{Attribute:SelectedEdges{$MinCardinality:1,$MaxCardinality:1,$DefaultValue:}},Class:HasFilter{Attribute:FilterQuery{$MinCardinality:0,$MaxCardinality:1}},Class:Color{Attribute:Red{MinValue:0,MaxValue:255,$MinCardinality:1,$MaxCardinality:1},Attribute:Green{MinValue:0,MaxValue:255,$MinCardinality:1,$MaxCardinality:1},Attribute:Blue{MinValue:0,MaxValue:255,$MinCardinality:1,$MaxCardinality:1},Attribute:Opacity{MinValue:0,MaxValue:255,$MinCardinality:0,$MaxCardinality:1}},Class:Exception{Attribute:Where{$MinCardinality:0,$MaxCardinality:1},Attribute:Type{$MinCardinality:0,$MaxCardinality:1},Attribute:What{$MinCardinality:1,$MaxCardinality:1}},Enum:ExceptionTypeEnum{EnumValue:Error,EnumValue:Warning,EnumValue:Info},Class:CallableEndPoint,Class:DotNetEndPoint{Attribute:TypeName,Attribute:MethodName}}}");
 
-            IVertex FormalTextLanguage = LegacySystem.Graph.EasyVertex.Get(sm, false, @"ZeroTypes\String")
+            IVertex FormalTextLanguage = LegacySystem.Graph.EasyVertex.Get(sm, false, @"ZeroTypes\FormalTextLanguage");
 
+            AddAttribute(FormalTextLanguage, "CRLFoperator", 1, 1);
+            AddAttribute(FormalTextLanguage, "MetaSeparator", 1, 1);
+            AddAttribute(FormalTextLanguage, "CodeGraphVertexPrefix", 1, 1);
+            AddAttribute(FormalTextLanguage, "CodeGraphVertexSuffix", 1, 1);
+            AddAttribute(FormalTextLanguage, "LineContinuationPrefix", 1, 1);
+            AddAttribute(FormalTextLanguage, "CodeGraphLinkPrefix", 1, 1);
+            AddAttribute(FormalTextLanguage, "CodeGraphLinkKeywordPrefix", 1, 1); 
+            AddAttribute(FormalTextLanguage, "NewVertexPrefix", 1, 1);
+            AddAttribute(FormalTextLanguage, "NewVertexSuffix", 1, 1);
+            AddAttribute(FormalTextLanguage, "EscapedSequencePrefix", 1, 1);
+            AddAttribute(FormalTextLanguage, "EscapedSequenceSuffix", 1, 1);
+            AddAttribute(FormalTextLanguage, "EscapeCharacter", 1, 1);
+            AddAttribute(FormalTextLanguage, "SetIndexPrefix", 1, 1);
+            AddAttribute(FormalTextLanguage, "SetIndexPostfix", 1, 1);
 
-        AddAttribute(FormalTextLanguage, "CRLFoperator", 1, 1);
-        AddAttribute(FormalTextLanguage, "MetaSeparator", 1, 1);
-        AddAttribute(FormalTextLanguage, "CodeGraphVertexPrefix", 1, 1);
-        AddAttribute(FormalTextLanguage, "CodeGraphVertexSuffix", 1, 1);
-        AddAttribute(FormalTextLanguage, "LineContinuationPrefix", 1, 1);
-        AddAttribute(FormalTextLanguage, "CodeGraphLinkPrefix", 1, 1);
-        AddAttribute(FormalTextLanguage, "CodeGraphLinkKeywordPrefix", 1, 1); 
-        AddAttribute(FormalTextLanguage, "NewVertexPrefix", 1, 1);
-        AddAttribute(FormalTextLanguage, "NewVertexSuffix", 1, 1);
-        AddAttribute(FormalTextLanguage, "EscapedSequencePrefix", 1, 1);
-        AddAttribute(FormalTextLanguage, "EscapedSequenceSuffix", 1, 1);
-        AddAttribute(FormalTextLanguage, "EscapeCharacter", 1, 1);
-        AddAttribute(FormalTextLanguage, "SetIndexPrefix", 1, 1);
-        AddAttribute(FormalTextLanguage, "SetIndexPostfix", 1, 1);
-
-            AddAttribute(FormalTextLanguage, "CodeViewTimeLinkKeywordParts", 0, -1);
+            AddAttribute(FormalTextLanguage, "CodeViewTimeLinkKeywordPart", 0, -1);
 
             LegacySystem.Graph.EasyVertex.Get(sm, false, @"Base\Vertex\$ExecutableEndPoint").AddEdge(
                 LegacySystem.Graph.EasyVertex.Get(sm, false, @"*$EdgeTarget"),

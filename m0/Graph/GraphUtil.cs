@@ -7,6 +7,7 @@ using m0.Foundation;
 using m0.Util;
 using m0.ZeroTypes;
 using m0.ZeroCode;
+using m0.ZeroCode.Helpers;
 
 namespace m0.Graph
 {
@@ -318,21 +319,21 @@ namespace m0.Graph
                 }
         }
 
-        public static string GetQueryStringPart_MetaMode(IVertex meta, IVertex to)
+        public static string GetQueryStringPart_MetaMode(DictionariesForFormalTextLanguage dict, IVertex meta, IVertex to)
         {
             if (GeneralUtil.CompareStrings(meta.ToString(), "$Empty"))
-                return ZeroCodeCommon.stringToPossiblyEscapedString(to.ToString());
+                return ZeroCodeCommon.stringToPossiblyEscapedString(dict, to.ToString());
             else
-                return ZeroCodeCommon.stringToPossiblyEscapedString(meta.ToString()) + ZeroCodeCommon.MetaSeparator + ZeroCodeCommon.stringToPossiblyEscapedString(to.ToString());
+                return ZeroCodeCommon.stringToPossiblyEscapedString(dict, meta.ToString()) + dict.MetaSeparator + ZeroCodeCommon.stringToPossiblyEscapedString(dict, to.ToString());
         }
 
-        public static string GetIdentyfyingQuerySubString_MetaMode(IEdge e) // this is used in String2Graph, so we need to reference ZeroCodeCommon.MetaSeparator
+        public static string GetIdentyfyingQuerySubString_MetaMode(DictionariesForFormalTextLanguage dict, IEdge e) // this is used in String2Graph, so we need to reference ZeroCodeCommon.MetaSeparator
         {
             if (VertexOperations.IsToVertexEnoughToIdentifyEdge(e.From, e.To))
-                return ZeroCodeCommon.stringToPossiblyEscapedString(e.To.ToString()+""); // there was no ToString. might cause problems. XXX why this "" as we do not have null To?
+                return ZeroCodeCommon.stringToPossiblyEscapedString(dict, e.To.ToString()+""); // there was no ToString. might cause problems. XXX why this "" as we do not have null To?
             else
                 if (VertexOperations.IsMetaAndToVertexEnoughToIdentifyEdge(e.From, e.Meta, e.To))
-                    return GetQueryStringPart_MetaMode(e.Meta, e.To);
+                    return GetQueryStringPart_MetaMode(dict, e.Meta, e.To);
                 else
                 {
                     int pos = 0;
@@ -346,7 +347,7 @@ namespace m0.Graph
                         pos++;
                     } while (tv != e.To);
 
-                    return GetQueryStringPart_MetaMode(e.Meta,e.To) + ZeroCodeCommon.SetIndexPrefix + "\"" + pos + "\"" + ZeroCodeCommon.SetIndexPostfix; 
+                    return GetQueryStringPart_MetaMode(dict, e.Meta,e.To) + dict.SetIndexPrefix + "\"" + pos + "\"" + dict.SetIndexPostfix; 
                 }
         }
 

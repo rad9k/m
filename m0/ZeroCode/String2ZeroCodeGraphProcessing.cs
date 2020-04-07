@@ -503,7 +503,7 @@ namespace m0.ZeroCode
 
             // try from local root
 
-            tryIf = queryMetaImport(baseVertex, @"$ParseRoot" + ZeroCodeCommon.MetaSeparator + @"\\" + link);
+            tryIf = queryMetaImport(baseVertex, @"$ParseRoot" + dict.MetaSeparator + @"\\" + link);
 
             if (tryIf != null)
                 return tryIf;
@@ -943,8 +943,8 @@ namespace m0.ZeroCode
             if (s.currentLineInfo.lineBeg >= text.Length)
                 return null;
 
-            if (!ZeroCodeUtil.tryStringMatch(s.currentLineNoTabs, 0, ZeroCodeCommon.CodeGraphVertexPrefix) 
-                || !ZeroCodeUtil.tryStringEndMatch(s.currentLineNoTabs, ZeroCodeCommon.CodeGraphVertexSuffix))
+            if (!ZeroCodeUtil.tryStringMatch(s.currentLineNoTabs, 0, dict.CodeGraphVertexPrefix) 
+                || !ZeroCodeUtil.tryStringEndMatch(s.currentLineNoTabs, dict.CodeGraphVertexSuffix))
             {
                 string link;
 
@@ -981,7 +981,7 @@ namespace m0.ZeroCode
 
                 case SpecialKeywordType.LinkKeyword:
                     toUseVertexList = possible_linkKeyword;
-                    value = new ToVertexMock(ZeroCodeCommon.stringFromLinkKeywordString(value.ToString()),null);
+                    value = new ToVertexMock(ZeroCodeCommon.stringFromLinkKeywordString(dict, value.ToString()),null);
                     break;
             }
 
@@ -1146,24 +1146,24 @@ namespace m0.ZeroCode
 
             int sPos_copy;
 
-            bool _isLink = ZeroCodeCommon.isLinkString(text, sPos);
+            bool _isLink = ZeroCodeCommon.isLinkString(dict, text, sPos);
 
 
             if (!ZeroCodeCommon.testIfIsKeywordSubstring(sPos, text, dict.allKeywordsSubstringsDictionary, null) || _isLink)
             {
                 if (!isTopLevelCall && _isLink) // @
                 {
-                    ZeroCodeCommon.tryStringFromLinkString(text, sPos, ref sPos, endPos_forAtomParts, dict.allKeywordsSubstringsPositiveDictionary_witchoutLinkKeywordParts);
+                    ZeroCodeCommon.tryStringFromLinkString(dict, text, sPos, ref sPos, endPos_forAtomParts, dict.allKeywordsSubstringsPositiveDictionary_witchoutLinkKeywordParts);
 
                     string foundString = text.Substring(startPos, sPos - startPos);
 
-                    tryLink = ZeroCodeCommon.stringFromLinkString(foundString, false);
+                    tryLink = ZeroCodeCommon.stringFromLinkString(dict, foundString, false);
 
                     sPos_copy = sPos;
                 }
                 else
                 {
-                    trySpecialKeyword = ZeroCodeCommon.tryStringFromNewVertexString(text, startPos, ref sPos);                    
+                    trySpecialKeyword = ZeroCodeCommon.tryStringFromNewVertexString(dict, text, startPos, ref sPos);                    
 
                     if (trySpecialKeyword != null)
                     {
@@ -1178,7 +1178,7 @@ namespace m0.ZeroCode
                         string foundString;
                         bool isLinkKeyword = false;
 
-                        foundString = ZeroCodeCommon.tryEscapedLinkString(text, ref sPos);
+                        foundString = ZeroCodeCommon.tryEscapedLinkString(dict, text, ref sPos);
 
                         if (foundString != null)
                         {
@@ -1186,7 +1186,7 @@ namespace m0.ZeroCode
 
                         }else
                         {
-                            isLinkKeyword = ZeroCodeCommon.isLinkKeywordString(text, sPos);
+                            isLinkKeyword = ZeroCodeCommon.isLinkKeywordString(dict, text, sPos);
 
                             while (shallProceed)
                             {
@@ -1444,7 +1444,7 @@ namespace m0.ZeroCode
                                 // keywordCharacter => keywordCharacer
                                 if ( ktd.currentPositionCharacter_isCharacterMatch(s, sPos) )
                                 {
-                                    if (ktd.keyword[0] == ZeroCodeCommon.CodeGraphLinkPrefix && text.Length >= sPos && text[sPos + 1] != ZeroCodeCommon.CodeGraphLinkPrefix)
+                                    if (ktd.keyword[0] == dict.CodeGraphLinkPrefix && text.Length >= sPos && text[sPos + 1] != dict.CodeGraphLinkPrefix)
                                     {
                                         // XXX
                                         // this is @ but not @@
@@ -1902,7 +1902,7 @@ namespace m0.ZeroCode
             if (parentKeyword == null || !dict.keywordInfoDict[parentKeyword].hasCRLF)
                 return sPos;
 
-            if (ZeroCodeUtil.doTextRangeContainString(text, lineInfoList[s.lineNo].lineBeg, lineInfoList[s.lineNo].lineEnd, ZeroCodeCommon.CRLFoperator))
+            if (ZeroCodeUtil.doTextRangeContainString(text, lineInfoList[s.lineNo].lineBeg, lineInfoList[s.lineNo].lineEnd, dict.CRLFoperator))
                 return sPos; // XXX bit hacky but no better idea
 
             if (examinedKeywords == null)
@@ -2347,7 +2347,7 @@ namespace m0.ZeroCode
 
                     li.lineEnd_NoTrim = lineEndWithoutTrim;
 
-                    if (text[li.lineBeg] == ZeroCodeCommon.LineContinuationPrefix)
+                    if (text[li.lineBeg] == dict.LineContinuationPrefix)
                         li.startsWithLineContinuation = true;
 
                     if (li.lineEnd < li.lineBeg)
@@ -2437,8 +2437,8 @@ namespace m0.ZeroCode
                 if (s.currentLineNoTabs.Length == 0)
                     return null;
 
-                if (s.currentLineNoTabs[0] != ZeroCodeCommon.CodeGraphVertexPrefix[0]
-                    || s.currentLineNoTabs[s.currentLineNoTabs.Length - 1] != ZeroCodeCommon.CodeGraphVertexSuffix[0])
+                if (s.currentLineNoTabs[0] != dict.CodeGraphVertexPrefix[0]
+                    || s.currentLineNoTabs[s.currentLineNoTabs.Length - 1] != dict.CodeGraphVertexSuffix[0])
                 {
                     AddError(s.lineNo, "SYNTAX ERROR");
 
@@ -2447,8 +2447,8 @@ namespace m0.ZeroCode
 
                 shallProcess = false;
 
-                string currentLineInner = s.currentLineNoTabs.Substring(ZeroCodeCommon.CodeGraphVertexPrefix.Length,
-                    s.currentLineNoTabs.Length - ZeroCodeCommon.CodeGraphVertexPrefix.Length - ZeroCodeCommon.CodeGraphVertexSuffix.Length);
+                string currentLineInner = s.currentLineNoTabs.Substring(dict.CodeGraphVertexPrefix.Length,
+                    s.currentLineNoTabs.Length - dict.CodeGraphVertexPrefix.Length - dict.CodeGraphVertexSuffix.Length);
 
                 int doubleColonPos = getDoubleColonPos(currentLineInner);
 
@@ -2456,11 +2456,11 @@ namespace m0.ZeroCode
                 {
                     string afterColon = currentLineInner.Trim();
 
-                    if (afterColon[0] == ZeroCodeCommon.NewVertexPrefix) // if is new value
-                        return AddVertex(s, _baseVertex, null, ZeroCodeCommon.stringFromNewVertexString(afterColon));
+                    if (afterColon[0] == dict.NewVertexPrefix) // if is new value
+                        return AddVertex(s, _baseVertex, null, ZeroCodeCommon.stringFromNewVertexString(dict, afterColon));
 
                     //return AddEdge(s, _baseVertex, null, processLink(ZeroCodeCommon.stringFromLinkString(afterColon, true), _baseVertex)).To;
-                    return AddEdge(s, _baseVertex, null, processLink(ZeroCodeCommon.stringFromLinkString(afterColon, false), _baseVertex)).To; // XXX we want cvtq linx in <> with @
+                    return AddEdge(s, _baseVertex, null, processLink(ZeroCodeCommon.stringFromLinkString(dict, afterColon, false), _baseVertex)).To; // XXX we want cvtq linx in <> with @
                 }
                 else
                 {
@@ -2468,13 +2468,13 @@ namespace m0.ZeroCode
 
                     string afterColon = currentLineInner.Substring(doubleColonPos + 2, currentLineInner.Length - doubleColonPos - 2).Trim();
 
-                    IVertex meta = processLink(ZeroCodeCommon.stringFromLinkString(beforeColon, false), _baseVertex);
+                    IVertex meta = processLink(ZeroCodeCommon.stringFromLinkString(dict, beforeColon, false), _baseVertex);
 
-                    if (afterColon.Length > 0 && afterColon[0] == ZeroCodeCommon.NewVertexPrefix) // if is new value
-                        return AddVertex(s, _baseVertex, meta, ZeroCodeCommon.stringFromNewVertexString(afterColon));
+                    if (afterColon.Length > 0 && afterColon[0] == dict.NewVertexPrefix) // if is new value
+                        return AddVertex(s, _baseVertex, meta, ZeroCodeCommon.stringFromNewVertexString(dict, afterColon));
 
                     //return AddEdge(s, _baseVertex, meta, processLink(ZeroCodeCommon.stringFromLinkString(afterColon, true), _baseVertex)).To;
-                    return AddEdge(s, _baseVertex, meta, processLink(ZeroCodeCommon.stringFromLinkString(afterColon, false), _baseVertex)).To; // XXX we want cvtq linx in <> with @
+                    return AddEdge(s, _baseVertex, meta, processLink(ZeroCodeCommon.stringFromLinkString(dict, afterColon, false), _baseVertex)).To; // XXX we want cvtq linx in <> with @
                 }
             }
         }
