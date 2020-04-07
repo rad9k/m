@@ -89,10 +89,10 @@ namespace m0.ZeroCode
             if (GeneralUtil.CompareStrings(v.Value, ""))
                 return;
 
-            if (GeneralUtil.CompareStrings(v.Value, "$Empty"))
-                return;
+            //if (GeneralUtil.CompareStrings(v.Value, "$Empty")) //XXX
+              //  return;
 
-            //s.Append(v.Value.ToString());
+            //s.Append(v.Value.ToString()); // XXX
             s.Append(ZeroCodeCommon.stringToPossiblyEscapedString(dict, v.Value.ToString()));
         }
 

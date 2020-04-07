@@ -933,6 +933,8 @@ namespace m0
 
         void CreateSystemFormalTextLanguegeZeroCode_Keywords()
         {
+            IVertex ftl = LegacySystem.Graph.EasyVertex.Get(Root, false, @"System\Meta\ZeroTypes\FormalTextLanguage");
+
             IVertex zc = LegacySystem.Graph.EasyVertex.Get(Root, false, @"System\FormalTextLanguage\ZeroCode");
             IVertex k = zc.AddVertex(LegacySystem.Graph.EasyVertex.Get(Root, false, @"System\Meta\ZeroTypes\FormalTextLanguage\Keywords"), "");
 
@@ -975,6 +977,8 @@ namespace m0
 
             IVertex importMeta = k.AddVertex(keyword, "import meta (?<name>) (?<link>)");
 
+            importMeta.AddVertex(LegacySystem.Graph.EasyVertex.Get(ftl, false, "$$ImportMeta"), "import[ ]+meta[ ]+\"(?<name>.*)\"[ ]+@(?<link>.*[^ ])[ ]*\\r");
+
             IVertex importMeta_name = importMeta.AddVertex(LegacySystem.Graph.EasyVertex.Get(smb, false, @"$ImportMeta"), "(?<name>)");
 
             importMeta.AddVertex(importMeta_name, "(?<link>)");
@@ -986,6 +990,8 @@ namespace m0
 
             IVertex import = k.AddVertex(keyword, "import (?<name>) (?<link>)");
 
+            import.AddVertex(LegacySystem.Graph.EasyVertex.Get(ftl, false, "$$Import"), "import[ ]+\"(?<name>.*)\"[ ]+@(?<link>.*[^ ])[ ]*\\r");
+
             IVertex import_name = import.AddVertex(LegacySystem.Graph.EasyVertex.Get(smb, false, @"$Import"), "(?<name>)");
 
             import.AddVertex(import_name, "(?<link>)");
@@ -996,6 +1002,8 @@ namespace m0
 
             IVertex importDirect = k.AddVertex(keyword, "import direct (?<link>)");
 
+            importDirect.AddVertex(LegacySystem.Graph.EasyVertex.Get(ftl, false, "$$ImportDirect"), "import[ ]+direct[ ]+@(?<link>.*[^ ])[ ]*\\r");
+
             IVertex importDirect_link = importDirect.AddVertex(LegacySystem.Graph.EasyVertex.Get(smb, false, @"$Direct"), "(?<link>)");
 
 
@@ -1004,6 +1012,8 @@ namespace m0
             // import direct meta (?<link>)
 
             IVertex importDirectMeta = k.AddVertex(keyword, "import direct meta (?<link>)");
+
+            importDirectMeta.AddVertex(LegacySystem.Graph.EasyVertex.Get(ftl, false, "$$ImportDirectMeta"), "import[ ]+direct[ ]+meta[ ]+@(?<link>.*[^ ])[ ]*\\r");
 
             IVertex importDirectMeta_link = importDirectMeta.AddVertex(LegacySystem.Graph.EasyVertex.Get(smb, false, @"$DirectMeta"), "(?<link>)");
 
@@ -2296,7 +2306,7 @@ namespace m0
             zcb.AddVertex(LegacySystem.Graph.EasyVertex.Get(ftl, false, "EscapedSequenceSuffix"), "\'");
             zcb.AddVertex(LegacySystem.Graph.EasyVertex.Get(ftl, false, "EscapeCharacter"), "\\");
             zcb.AddVertex(LegacySystem.Graph.EasyVertex.Get(ftl, false, "SetIndexPrefix"), "<<");
-            zcb.AddVertex(LegacySystem.Graph.EasyVertex.Get(ftl, false, "SetIndexPostfix"), ">>");
+            zcb.AddVertex(LegacySystem.Graph.EasyVertex.Get(ftl, false, "SetIndexPostfix"), ">>");           
 
             IVertex CodeViewTimeLinkKeywordPart = LegacySystem.Graph.EasyVertex.Get(ftl, false, "CodeViewTimeLinkKeywordPart");
 
@@ -2402,6 +2412,11 @@ namespace m0
             AddAttribute(FormalTextLanguage, "EscapeCharacter", 1, 1);
             AddAttribute(FormalTextLanguage, "SetIndexPrefix", 1, 1);
             AddAttribute(FormalTextLanguage, "SetIndexPostfix", 1, 1);
+
+            AddAttribute(FormalTextLanguage, "$$Import", 1, 1);
+            AddAttribute(FormalTextLanguage, "$$ImportDirect", 1, 1);            
+            AddAttribute(FormalTextLanguage, "$$ImportMeta", 1, 1);
+            AddAttribute(FormalTextLanguage, "$$ImportDirectMeta", 1, 1);
 
             AddAttribute(FormalTextLanguage, "CodeViewTimeLinkKeywordPart", 0, -1);
 
