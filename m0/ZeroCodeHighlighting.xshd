@@ -14,6 +14,7 @@
   <Color name="Operator" fontWeight="bold" foreground="#FF0000" />
   <Color name="DoubleColon" fontWeight="bold" foreground="#255867" />
   <Color name="Monkey" foreground="#6BD1EF" />
+  <Color name="Escape" foreground="#4BB1CF" />
 
   
 
@@ -27,6 +28,15 @@
     <Span color="String">
       <Begin>"</Begin>
       <End>"</End>
+      <RuleSet>
+        <!-- nested span for escape sequences -->
+        <Span begin="\\" end="." />
+      </RuleSet>
+    </Span>
+
+    <Span color="Escape">
+      <Begin>'</Begin>
+      <End>'</End>
       <RuleSet>
         <!-- nested span for escape sequences -->
         <Span begin="\\" end="." />

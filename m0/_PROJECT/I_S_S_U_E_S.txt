@@ -8,6 +8,7 @@
 4. escape sequences in rtq support by keywords [8] and especially '<' and '>'
 66. reference dict.allKeywordsSubstringsDictionary in ZeroCodeCommmon 291
 32. language definition correction to support languages inheritence
+76. escape string not working in @@ parsing
 
 <><><> FUTURE 0.5
 
@@ -25,6 +26,7 @@
 
 <><><> FUTURE 1
 
+77. ZeroCodeCommon.IsSpecialCharacter might relay on allKeywordsSubstringsDictionary also (now it is turned off)
 68. $Empty in edges in parse / generate. is it ok?
 10. $Empty bug
 <@BaseEdge :: ""> [4] [11]

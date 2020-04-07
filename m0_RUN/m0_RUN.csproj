@@ -97,7 +97,6 @@
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
-    <EmbeddedResource Include="ZeroCodeHighlighting.xshd" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

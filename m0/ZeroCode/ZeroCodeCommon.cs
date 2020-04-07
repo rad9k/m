@@ -63,6 +63,47 @@ namespace m0.ZeroCode
         // Link
         ///////
 
+
+        public static bool IsSpecialCharacter(DictionariesForFormalTextLanguage dict, string s, int pos)
+        {
+            if (ZeroCodeUtil.tryStringMatch(s, pos, dict.CRLFoperator))
+                return true;
+            if (ZeroCodeUtil.tryStringMatch(s, pos, dict.MetaSeparator))
+                return true;
+            if (ZeroCodeUtil.tryStringMatch(s, pos, dict.CodeGraphVertexPrefix))
+                return true; 
+            if (ZeroCodeUtil.tryStringMatch(s, pos, dict.CodeGraphVertexSuffix))
+                return true; 
+            if (ZeroCodeUtil.tryStringMatch(s, pos, dict.LineContinuationPrefix.ToString()))
+                return true; 
+            if (ZeroCodeUtil.tryStringMatch(s, pos, dict.CodeGraphLinkPrefix.ToString()))
+                return true; 
+            if (ZeroCodeUtil.tryStringMatch(s, pos, dict.CodeGraphLinkKeywordPrefix))
+                return true; 
+            if (ZeroCodeUtil.tryStringMatch(s, pos, dict.NewVertexPrefix.ToString()))
+                return true; 
+            if (ZeroCodeUtil.tryStringMatch(s, pos, dict.NewVertexSuffix.ToString()))
+                return true; 
+            if (ZeroCodeUtil.tryStringMatch(s, pos, dict.EscapedSequencePrefix.ToString()))
+                return true; 
+            if (ZeroCodeUtil.tryStringMatch(s, pos, dict.EscapedSequenceSuffix.ToString()))
+                return true; 
+            if (ZeroCodeUtil.tryStringMatch(s, pos, dict.EscapeCharacter.ToString()))
+                return true; 
+            if (ZeroCodeUtil.tryStringMatch(s, pos, dict.SetIndexPrefix))
+                return true; 
+            if (ZeroCodeUtil.tryStringMatch(s, pos, dict.SetIndexPostfix))
+                return true;
+
+            char c = s[pos];
+
+         //   if(dict.allKeywordsSubstringsDictionary.ContainsKey(c)) // XXX TURNED OFF IN SAKE OF IN
+             //   foreach (string cs in dict.allKeywordsSubstringsDictionary[c])
+                //    if (ZeroCodeUtil.tryStringMatch(s, pos, cs))
+                   //     return true;
+
+            return false;
+        }
         public static string stringToLinkString(DictionariesForFormalTextLanguage dict, string s, bool hideLinkPrefix)
         {
             if (hideLinkPrefix)
@@ -307,6 +348,10 @@ namespace m0.ZeroCode
                 s = s.Replace(dict.EscapedSequencePrefix.ToString(),String.Concat(dict.EscapeCharacter, dict.EscapedSequencePrefix));
                 needToSurroundWithEscape = true;
             }
+
+            for (int x = 0; x < s.Length; x++)
+                if (IsSpecialCharacter(dict, s, x))
+                    needToSurroundWithEscape = true;
 
         //    if (s.IndexOf('<') != -1 || s.IndexOf('>') != -1) // XXX
            //         needToSurroundWithEscape = true;

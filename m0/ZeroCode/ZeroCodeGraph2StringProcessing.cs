@@ -92,7 +92,7 @@ namespace m0.ZeroCode
             if (GeneralUtil.CompareStrings(v.Value, "$Empty"))
                 return;
 
-            //s.Append(v.Value);
+            //s.Append(v.Value.ToString());
             s.Append(ZeroCodeCommon.stringToPossiblyEscapedString(dict, v.Value.ToString()));
         }
 
