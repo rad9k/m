@@ -341,6 +341,12 @@ namespace m0.ZeroCode.Helpers
         }
     }
 
+    public class ImportInformation
+    {
+        public IVertex keywordVertex;
+        public string regexpString;
+    }
+
     public class DictionariesForFormalTextLanguage
     {
         public IDictionary<string, IList<IVertex>> emptyKeywordByGroupsDictionary;
@@ -380,6 +386,11 @@ namespace m0.ZeroCode.Helpers
 
         public HashSet<string> CodeViewTimeLinkKeywordParts;
 
+        public ImportInformation Import;
+        public ImportInformation ImportMeta;
+        public ImportInformation ImportDirect;
+        public ImportInformation ImportDirectMeta;
+
         string get(string what)
         {
             IVertex v = GraphUtil.GetQueryOutFirst(FormalTextLanguage, what, null);
@@ -400,6 +411,27 @@ namespace m0.ZeroCode.Helpers
                 set.Add(e.To.Value.ToString());
 
             return set;
+        }
+
+        ImportInformation getImportInformation(string metaIdentyfication)
+        {
+            IVertex keywords = GraphUtil.GetQueryOutFirst(FormalTextLanguage, "Keywords", null);
+
+            foreach(IEdge e in keywords)
+            {
+                IVertex importInfo = GraphUtil.GetQueryOutFirst(e.To, metaIdentyfication, null);
+
+                if (importInfo != null)
+                {
+                    ImportInformation i = new ImportInformation();
+                    i.keywordVertex = e.To;
+                    i.regexpString = importInfo.Value.ToString();
+
+                    return i;
+                }
+            }
+
+            return null;
         }
 
         IVertex FormalTextLanguage;
@@ -425,6 +457,10 @@ namespace m0.ZeroCode.Helpers
 
             CodeViewTimeLinkKeywordParts = getHashSet("CodeViewTimeLinkKeywordPart");
 
+            Import = getImportInformation("$$Import");
+            ImportMeta = getImportInformation("$$ImportMeta");
+            ImportDirect = getImportInformation("$$ImportDirect");
+            ImportDirectMeta = getImportInformation("$$ImportDirectMeta");
         }
     }
 }
