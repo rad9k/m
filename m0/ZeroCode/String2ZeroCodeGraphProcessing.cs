@@ -953,8 +953,23 @@ namespace m0.ZeroCode
                 _tryIsKeyword(s, "", s.currentLineInfo.lineBeg, s.currentLineInfo.lineBeg, 0, text.Length - 1, text.Length - 1, false, false, out examinedKeywords, out link, true, ref tryPos, false, null, null, "", false);
 
                 if (examinedKeywords.Count() > 0)
-                    return examinedKeywords;                
+                {
+                    IVertex v = examinedKeywords[0].keywordVertex; 
+                    if (GraphUtil.GetQueryOutFirst(v, "$$LinkKeyword", null) != null) //$$LinkKeyword
+                    {
+                        int x = 0;
+                    }
+                    if (examinedKeywords[0].keywordVertex.Value.ToString()[0]=='@')
+                    {
+                        int x = 0;
+                    }
 
+                    if (examinedKeywords[0].keywordVertex.Value.ToString()== "@(?<value>)")
+                    {
+                        int x = 0;
+                    }
+                    return examinedKeywords;
+                }
                 return null;
             }
             else

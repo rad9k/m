@@ -39,7 +39,7 @@ namespace m0.ZeroCode
 
         public static char LineContinuationPrefix = '^';
 
-        public static char CodeGraphLinkPrefix = '@';
+        public static char c = '@';
 
         public static string CodeGraphLinkKeywordPrefix = "@@"; // we store it here and in the textlanguage
 
