@@ -7,6 +7,7 @@ using System.Text.RegularExpressions;
 using m0.Foundation;
 using m0.Util;
 using m0.Graph;
+using m0.ZeroCode.Helpers;
 
 namespace m0.ZeroCode
 {
@@ -142,12 +143,28 @@ namespace m0.ZeroCode
             return pos;
         }
     
-        public static void getQueryFirstAndSecondPart(string query, out string firstPart, out string secondPart)
+        public static void getQueryFirstAndSecondPart(DictionariesForFormalTextLanguage dict, string query, out string firstPart, out string secondPart)
         {
             firstPart = null;
             secondPart = null;
 
-            int slashPos=query.IndexOf('\\');
+            bool isInEscape = false;
+
+            int slashPos = -1;
+
+            for (int x = 0; x < query.Length; x++)
+            {
+                if (!isInEscape && query[x] == dict.EscapedSequencePrefix)
+                {
+                    isInEscape = true;
+                }
+                else if (isInEscape && query[x] == dict.EscapedSequenceSuffix)
+                    isInEscape = false;
+
+                if (isInEscape == false && query[x] == dict.QuerySlash)
+                    slashPos = x;
+            }
+            
 
             if (slashPos == -1)
             {

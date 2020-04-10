@@ -273,12 +273,12 @@ namespace m0.ZeroCode
 
             int sPos = startPos;
 
-            bool shallProceed = true;
+            bool shallProceed = true;            
 
             if (ZeroCodeUtil.tryStringMatch(text, sPos, dict.NewVertexPrefix.ToString()))
             {
                 while (shallProceed)
-                {
+                {                    
                     sPos++;
 
                     if (text[sPos] == dict.NewVertexSuffix

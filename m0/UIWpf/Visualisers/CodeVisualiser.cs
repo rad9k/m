@@ -84,6 +84,13 @@ namespace m0.UIWpf.Visualisers
         {            
             int TextMemoryCurrent = (int)GraphUtil.GetIntegerValue(Vertex.Get(false, "TextMemoryCurrent:"));
 
+            if (TextMemoryCurrent == 1)
+            {            
+                Text = TextMemory[TextMemoryCurrent - 1];
+
+                Vertex.Get(false, "TextMemoryCurrent:").Value = TextMemoryCurrent;
+            }
+
             if (TextMemoryCurrent > 1)
             {
                 TextMemoryCurrent--;
@@ -92,6 +99,8 @@ namespace m0.UIWpf.Visualisers
 
                 Vertex.Get(false, "TextMemoryCurrent:").Value = TextMemoryCurrent;
             }
+
+            
         }
 
         private void ReferenceTextMemoryRight()

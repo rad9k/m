@@ -2304,7 +2304,8 @@ namespace m0
             zcb.AddVertex(LegacySystem.Graph.EasyVertex.Get(ftl, false, "EscapedSequenceSuffix"), "\'");
             zcb.AddVertex(LegacySystem.Graph.EasyVertex.Get(ftl, false, "EscapeCharacter"), "\\");
             zcb.AddVertex(LegacySystem.Graph.EasyVertex.Get(ftl, false, "SetIndexPrefix"), "<<");
-            zcb.AddVertex(LegacySystem.Graph.EasyVertex.Get(ftl, false, "SetIndexPostfix"), ">>");           
+            zcb.AddVertex(LegacySystem.Graph.EasyVertex.Get(ftl, false, "SetIndexPostfix"), ">>");
+            zcb.AddVertex(LegacySystem.Graph.EasyVertex.Get(ftl, false, "QuerySlash"), "\\");
 
             IVertex CodeViewTimeLinkKeywordPart = LegacySystem.Graph.EasyVertex.Get(ftl, false, "CodeViewTimeLinkKeywordPart");
 
@@ -2410,6 +2411,7 @@ namespace m0
             AddAttribute(FormalTextLanguage, "EscapeCharacter", 1, 1);
             AddAttribute(FormalTextLanguage, "SetIndexPrefix", 1, 1);
             AddAttribute(FormalTextLanguage, "SetIndexPostfix", 1, 1);
+            AddAttribute(FormalTextLanguage, "QuerySlash", 1, 1);            
 
             AddAttribute(FormalTextLanguage, "CodeViewTimeLinkKeywordPart", 0, -1);
 
