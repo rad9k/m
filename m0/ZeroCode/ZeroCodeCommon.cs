@@ -361,14 +361,10 @@ namespace m0.ZeroCode
             else
                 return s;
 
-        }
+        }        
 
-        internal static string tryEscapedLinkStringAndDeescape(DictionariesForFormalTextLanguage dict, string text, ref int sPos)
-        {
-            //s = s.Replace(dict.EscapeCharacter.ToString(), String.Concat(dict.EscapeCharacter, dict.EscapeCharacter));
-
-            //s = s.Replace(dict.EscapedSequencePrefix.ToString(), String.Concat(dict.EscapeCharacter, dict.EscapedSequencePrefix));
-
+        public static string tryEscapedLinkStringAndDeescape(DictionariesForFormalTextLanguage dict, string text, ref int sPos)
+        {         
             int begSpos = sPos;
 
             if (text[sPos] != dict.EscapedSequencePrefix)
@@ -393,7 +389,14 @@ namespace m0.ZeroCode
             if (text[sPos] == dict.EscapedSequenceSuffix)
             {
                 sPos++;
-                return text.Substring(begSpos + 1, sPos - begSpos - 2);
+
+                string descaped = text.Substring(begSpos + 1, sPos - begSpos - 2);
+
+                descaped = descaped.Replace(String.Concat(dict.EscapeCharacter, dict.EscapeCharacter), dict.EscapeCharacter.ToString());
+
+                descaped = descaped.Replace(String.Concat(dict.EscapeCharacter, dict.EscapedSequencePrefix), dict.EscapedSequencePrefix.ToString());
+
+                return descaped;
             }
 
             return null;
