@@ -363,8 +363,12 @@ namespace m0.ZeroCode
 
         }
 
-        internal static string tryEscapedLinkString(DictionariesForFormalTextLanguage dict, string text, ref int sPos)
+        internal static string tryEscapedLinkStringAndDeescape(DictionariesForFormalTextLanguage dict, string text, ref int sPos)
         {
+            //s = s.Replace(dict.EscapeCharacter.ToString(), String.Concat(dict.EscapeCharacter, dict.EscapeCharacter));
+
+            //s = s.Replace(dict.EscapedSequencePrefix.ToString(), String.Concat(dict.EscapeCharacter, dict.EscapedSequencePrefix));
+
             int begSpos = sPos;
 
             if (text[sPos] != dict.EscapedSequencePrefix)

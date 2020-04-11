@@ -1177,7 +1177,7 @@ namespace m0.ZeroCode
                         string foundString;
                         bool isLinkKeyword = false;
 
-                        foundString = ZeroCodeCommon.tryEscapedLinkString(dict, text, ref sPos);
+                        foundString = ZeroCodeCommon.tryEscapedLinkStringAndDeescape(dict, text, ref sPos);
 
                         if (foundString != null)
                         {
