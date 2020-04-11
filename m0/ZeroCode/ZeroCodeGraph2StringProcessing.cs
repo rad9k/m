@@ -90,9 +90,10 @@ namespace m0.ZeroCode
                 return;
 
             //if (GeneralUtil.CompareStrings(v.Value, "$Empty")) //XXX
-              //  return;
+            //  return;
 
             //s.Append(v.Value.ToString()); // XXX
+
             s.Append(ZeroCodeCommon.stringToPossiblyEscapedString(dict, v.Value.ToString()));
         }
 
@@ -1161,7 +1162,8 @@ namespace m0.ZeroCode
                 if(!emptyKeywordVertexList.Contains(km.KeywordDefinition))                
                     wasNewVertex = AppendVertex(e, path, false, false, false); // non emptyKeword (standard)
                 else
-                    SourceAppend(e.To.Value.ToString()); // emptyKeyword handling
+                    SourceAppend(ZeroCodeCommon.stringToPossiblyEscapedString(dict, e.To.Value.ToString())); // emptyKeyword handling
+                    //SourceAppend(e.To.Value.ToString()); // emptyKeyword handling
 
                 if (wasNewVertex && !VertexOperations.IsLink(e) /*&& e != km.BaseEdge*/)
                     wasThereNewLine = AppendSubVertices(km, e, path);

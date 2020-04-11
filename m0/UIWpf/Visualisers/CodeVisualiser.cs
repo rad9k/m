@@ -69,6 +69,7 @@ namespace m0.UIWpf.Visualisers
         private void ExecuteParse()
         {
             int TextMemoryMax = (int)GraphUtil.GetIntegerValue(Vertex.Get(false, "TextMemoryMax:"));
+            TextMemoryMax++;
 
             TextMemory.Add(Text);
 
@@ -76,7 +77,7 @@ namespace m0.UIWpf.Visualisers
 
             TextMemoryMax++;
 
-            Vertex.Get(false, "TextMemoryMax:").Value = TextMemoryMax;
+            Vertex.Get(false, "TextMemoryMax:").Value = TextMemoryMax - 1;
             Vertex.Get(false, "TextMemoryCurrent:").Value = TextMemoryMax;
         }
 
@@ -84,12 +85,12 @@ namespace m0.UIWpf.Visualisers
         {            
             int TextMemoryCurrent = (int)GraphUtil.GetIntegerValue(Vertex.Get(false, "TextMemoryCurrent:"));
 
-            if (TextMemoryCurrent == 1)
+        /*    if (TextMemoryCurrent == 1)
             {            
                 Text = TextMemory[TextMemoryCurrent - 1];
 
                 Vertex.Get(false, "TextMemoryCurrent:").Value = TextMemoryCurrent;
-            }
+            }*/
 
             if (TextMemoryCurrent > 1)
             {
@@ -108,13 +109,15 @@ namespace m0.UIWpf.Visualisers
             int TextMemoryMax = (int)GraphUtil.GetIntegerValue(Vertex.Get(false, "TextMemoryMax:"));
             int TextMemoryCurrent = (int)GraphUtil.GetIntegerValue(Vertex.Get(false, "TextMemoryCurrent:"));
 
-            if (TextMemoryCurrent < TextMemoryMax)
+            TextMemoryCurrent++;
+
+            if (TextMemoryCurrent < (TextMemoryMax - 1))
             {
                 TextMemoryCurrent++;
 
                 Text = TextMemory[TextMemoryCurrent - 1];
 
-                Vertex.Get(false, "TextMemoryCurrent:").Value = TextMemoryCurrent;
+                Vertex.Get(false, "TextMemoryCurrent:").Value = TextMemoryCurrent - 1; ;
             }
         }
 
