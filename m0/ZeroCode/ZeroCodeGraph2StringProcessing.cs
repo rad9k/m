@@ -92,9 +92,9 @@ namespace m0.ZeroCode
             //if (GeneralUtil.CompareStrings(v.Value, "$Empty")) //XXX
             //  return;
 
-            //s.Append(v.Value.ToString()); // XXX
+            s.Append(v.Value.ToString()); // XXX
 
-            s.Append(ZeroCodeCommon.stringToPossiblyEscapedString(dict, v.Value.ToString()));
+            //s.Append(ZeroCodeCommon.stringToPossiblyEscapedString(dict, v.Value.ToString()));
         }
 
         public static string GetStringFromEdgesList(DictionariesForFormalTextLanguage dict, List<IEdge> edgesList, bool isImportMeta)

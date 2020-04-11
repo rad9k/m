@@ -50,6 +50,8 @@ namespace m0.ZeroCode
         // core code style
         //////////////////////
 
+
+        public static char forbidden = '\u0007'; // bell we can use NUL also
 /* kept for the reference
         public static string CRLFoperator = "{";
 
@@ -260,13 +262,20 @@ namespace m0.ZeroCode
                 return "";
 
             string s=o.ToString();
-            
+
             s = s.Replace(dict.EscapeCharacter.ToString(), dict.EscapeCharacter.ToString() + dict.EscapeCharacter.ToString());
-            
+
+            //s = s.Replace(dict.EscapeCharacter.ToString(), forbidden.ToString() + forbidden.ToString());
+
             s = s.Replace(dict.NewVertexPrefix.ToString(), dict.EscapeCharacter.ToString() + dict.NewVertexPrefix);            
 
-            if(dict.NewVertexPrefix != dict.NewVertexSuffix)
+            //s = s.Replace(dict.NewVertexPrefix.ToString(), forbidden.ToString() + dict.NewVertexPrefix);
+
+            if (dict.NewVertexPrefix != dict.NewVertexSuffix)
                 s = s.Replace(dict.NewVertexSuffix.ToString(), dict.EscapeCharacter.ToString() + dict.NewVertexSuffix);
+                //s = s.Replace(dict.NewVertexSuffix.ToString(), forbidden.ToString() + dict.NewVertexSuffix);
+
+            s = s.Replace(forbidden, dict.EscapeCharacter);
 
             return dict.NewVertexPrefix + s + dict.NewVertexSuffix;
         }
@@ -293,21 +302,21 @@ namespace m0.ZeroCode
 
             if (ZeroCodeUtil.tryStringMatch(text, sPos, dict.NewVertexPrefix.ToString()))
             {
+                int escapeCharacterCount = 0;
+
                 while (shallProceed)
                 {                    
                     sPos++;
 
-                    bool prevCharacterIsSoleEscape = false;
+                    if (sPos>0 && text[sPos-1] == dict.EscapeCharacter)
+                        escapeCharacterCount++;
+                    else
+                        escapeCharacterCount = 0;
 
-                    if(sPos > 0 && text[sPos - 1] == dict.EscapeCharacter)
-                    {
-                        prevCharacterIsSoleEscape = true;
+                    if (escapeCharacterCount == 2)
+                        escapeCharacterCount = 0;                    
 
-                        if (sPos > 1 && text[sPos - 2] == dict.EscapeCharacter)
-                            prevCharacterIsSoleEscape = false;
-                    }
-
-                    if (text[sPos] == dict.NewVertexSuffix && !prevCharacterIsSoleEscape) 
+                    if (text[sPos] == dict.NewVertexSuffix && escapeCharacterCount!=1) 
                         shallProceed = false;
                 }
 

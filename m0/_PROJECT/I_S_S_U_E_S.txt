@@ -22,7 +22,6 @@
 
 <><><> FUTURE 1
 
-4. escape sequences in rtq support by keywords [8] and especially \"
 78."Y"
 	"A"
 	<@$Empty::@A> >> "A"
@@ -118,3 +117,4 @@
 66. reference dict.allKeywordsSubstringsDictionary in ZeroCodeCommmon 291
 32. language definition correction to support languages inheritence
 76. escape string not working in @@ parsing
+4. escape sequences in rtq support by keywords [8] and especially \"
