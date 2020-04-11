@@ -5,6 +5,28 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+
+/*
+ 
+string | NewVertexString
+"      | \"
+\      | \\
+
+    where
+    " dict.NewVertexPrefix or NewVertexPrefix
+    \ dict.EscapeCharacter
+
+string | Ecspaped
+'      | \'
+\      | \\
+
+    where
+    ' dict.EscapedSequencePrefix or EscapedSequencePrefix
+    \ dict.EscapeCharacter
+
+
+*/
+
 // string                       NewVertexString
 //      stringToNewVertexString
 //      stringFromNewVertexString
@@ -238,12 +260,10 @@ namespace m0.ZeroCode
                 return "";
 
             string s=o.ToString();
-
-            if (s.IndexOf(dict.EscapeCharacter) != -1)
-                s = s.Replace(dict.EscapeCharacter.ToString(), dict.EscapeCharacter.ToString() + dict.EscapeCharacter.ToString());
-
             
-            s = s.Replace(dict.NewVertexPrefix.ToString(), dict.EscapeCharacter.ToString() + dict.NewVertexPrefix);
+            s = s.Replace(dict.EscapeCharacter.ToString(), dict.EscapeCharacter.ToString() + dict.EscapeCharacter.ToString());
+            
+            s = s.Replace(dict.NewVertexPrefix.ToString(), dict.EscapeCharacter.ToString() + dict.NewVertexPrefix);            
 
             if(dict.NewVertexPrefix != dict.NewVertexSuffix)
                 s = s.Replace(dict.NewVertexSuffix.ToString(), dict.EscapeCharacter.ToString() + dict.NewVertexSuffix);
@@ -253,16 +273,12 @@ namespace m0.ZeroCode
 
         public static string stringFromNewVertexString(DictionariesForFormalTextLanguage dict, string s)
         {
-            s = s.Substring(1, s.Length - 2);
-
-            //s = s.Replace("\\\\", "\\");
-
-            s = s.Replace(String.Concat(dict.EscapeCharacter, dict.EscapeCharacter), dict.EscapeCharacter.ToString());
-
-            // s = s.Replace("\\\"", "\"");
+            s = s.Substring(1, s.Length - 2);                       
 
             s = s.Replace(String.Concat(dict.EscapeCharacter, dict.NewVertexPrefix), dict.NewVertexPrefix.ToString());
             s = s.Replace(String.Concat(dict.EscapeCharacter, dict.NewVertexSuffix), dict.NewVertexSuffix.ToString());
+
+            s = s.Replace(String.Concat(dict.EscapeCharacter, dict.EscapeCharacter), dict.EscapeCharacter.ToString());
 
             return s;
         }
@@ -281,8 +297,17 @@ namespace m0.ZeroCode
                 {                    
                     sPos++;
 
-                    if (text[sPos] == dict.NewVertexSuffix
-                        && sPos > 0 && text[sPos - 1] != dict.EscapeCharacter) // if is no \"
+                    bool prevCharacterIsSoleEscape = false;
+
+                    if(sPos > 0 && text[sPos - 1] == dict.EscapeCharacter)
+                    {
+                        prevCharacterIsSoleEscape = true;
+
+                        if (sPos > 1 && text[sPos - 2] == dict.EscapeCharacter)
+                            prevCharacterIsSoleEscape = false;
+                    }
+
+                    if (text[sPos] == dict.NewVertexSuffix && !prevCharacterIsSoleEscape) 
                         shallProceed = false;
                 }
 
