@@ -2138,7 +2138,7 @@ namespace m0.ZeroCode
 
                 if (doAdd)
                 {
-                    if (val.ToString() == "$Empty")
+                    if (val == MinusZero.Instance.Empty)
                         nv = AddEdge(s, baseVertex, meta, MinusZero.Instance.Empty).To;
                     else
                     {
@@ -2445,6 +2445,10 @@ namespace m0.ZeroCode
         {
             s.lastAddedVertexParent = baseVertex;
             s.lastAddedVertex = null;
+            
+            if (meta != null && GeneralUtil.CompareStrings("(?<ANY>)", meta.Value))
+                meta = MinusZero.Instance.Empty;
+
             return baseVertex.AddEdge(meta, to);
         }
 

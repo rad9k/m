@@ -39,15 +39,12 @@ namespace m0.ZeroUML.Instructions
 
                 int minCardinalityValue;
 
-                if (minCardinality != null)
-                {
-                    shouldAdd = true;
-                    minCardinalityValue = (int)GraphUtil.GetIntegerValue(minCardinality);
-                }
+                if (minCardinality != null)                
+                
+                    minCardinalityValue = (int)GraphUtil.GetIntegerValue(minCardinality);                
                 else
                     minCardinalityValue = 1;
-
-                if (shouldAdd)
+                
                     for (int x = 0; x < minCardinalityValue; x++)
                         nv.AddVertex(child.To, value);
             }
