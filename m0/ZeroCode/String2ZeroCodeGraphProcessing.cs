@@ -273,6 +273,8 @@ namespace m0.ZeroCode
 
         IVertex FormalTextLanguage;
 
+        IVertex lastAddedVertex;
+
         //
 
         IVertex errorList;
@@ -584,7 +586,7 @@ namespace m0.ZeroCode
             public keywordTryingData LocalRootNext;
 
             public object lastAddedParameter;
-            public bool isCurrentlyProcessedSubParameter;
+            public bool isCurrentlyProcessedSubParameter;            
 
             //
 
@@ -599,7 +601,7 @@ namespace m0.ZeroCode
             int multiParameterStringBegPosition = -1;
             int multiParameterStringEndPosition = -1;
 
-            bool lastCharWasSkippedSpace; // space support
+            bool lastCharWasSkippedSpace; // space support            
 
             public keywordTryingData(keywordTryingData source, String2ZeroCodeGraphProcessing _parent)
             {                
@@ -2129,6 +2131,8 @@ namespace m0.ZeroCode
                         nv = AddVertex(s, baseVertex, meta, val);
                 }else
                     nv = AddVertex(s, baseVertex, meta, val);
+
+                lastAddedVertex = nv;
             }
 
             tryLocalRootAdd(s, metaEdge, nv, ktd);
@@ -2184,6 +2188,9 @@ namespace m0.ZeroCode
 
                     if ((string)e.Meta.Value == "(?<ANY>)" && useMetaWhenANY != null)
                         meta = useMetaWhenANY;
+
+                    if ((string)e.Meta.Value == "(?<LAST>)")
+                        meta = lastAddedVertex;
 
                     if (VertexOperations.IsLink(e))
                     {

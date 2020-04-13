@@ -934,6 +934,7 @@ namespace m0
         void CreateSystemFormalTextLanguegeZeroCode_Keywords()
         {
             IVertex zc = LegacySystem.Graph.EasyVertex.Get(Root, false, @"System\FormalTextLanguage\ZeroCode");
+            IVertex zt = LegacySystem.Graph.EasyVertex.Get(Root, false, @"System\Meta\ZeroTypes");
             IVertex k = zc.AddVertex(LegacySystem.Graph.EasyVertex.Get(Root, false, @"System\Meta\ZeroTypes\FormalTextLanguage\Keywords"), "");
 
 
@@ -961,6 +962,8 @@ namespace m0
 
             IVertex any = k.AddVertex(null, "(?<ANY>)");
 
+            IVertex last = k.AddVertex(null, "(?<LAST>)");
+
             IVertex emptyKeyword = LegacySystem.Graph.EasyVertex.Get(smb, false, "$$EmptyKeyword");
             IVertex newVertexKeyword = LegacySystem.Graph.EasyVertex.Get(smb, false, "$$NewVertexKeyword");
             IVertex linkKeyword = LegacySystem.Graph.EasyVertex.Get(smb, false, "$$LinkKeyword");
@@ -973,13 +976,13 @@ namespace m0
             //
             // import meta (?<name>) (?<link>)
 
-            IVertex importMeta = k.AddVertex(keyword, "import meta (?<name>) (?<link>)");
+            IVertex importMeta = k.AddVertex(keyword, "import (?<name>) (?<link>) meta");
 
-            importMeta.AddVertex(LegacySystem.Graph.EasyVertex.Get(smb, false, "$$ImportMeta"), "import[ ]+meta[ ]+\"(?<name>.*)\"[ ]+@(?<link>.*[^ ])[ ]*\\r");
+            importMeta.AddVertex(LegacySystem.Graph.EasyVertex.Get(smb, false, "$$ImportMeta"), "import[ ]+\"(?<name>.*)\"[ ]+@(?<link>.*[^ ])[ ]+meta[ ]*\\r");
 
             IVertex importMeta_name = importMeta.AddVertex(LegacySystem.Graph.EasyVertex.Get(smb, false, @"$ImportMeta"), "(?<name>)");
 
-            importMeta.AddVertex(importMeta_name, "(?<link>)");
+            importMeta.AddVertex(last, "(?<link>)");            
 
 
             // import
@@ -992,15 +995,18 @@ namespace m0
 
             IVertex import_name = import.AddVertex(LegacySystem.Graph.EasyVertex.Get(smb, false, @"$Import"), "(?<name>)");
 
-            import.AddVertex(import_name, "(?<link>)");
+            import_name.AddEdge(LegacySystem.Graph.EasyVertex.Get(smb, false, @"Vertex\$EdgeTarget"), LegacySystem.Graph.EasyVertex.Get(zt, false, "VertexType"));
+
+            import.AddVertex(last, "(?<link>)");
+            
 
             // import direct 
             //
             // import direct  (?<link>)
 
-            IVertex importDirect = k.AddVertex(keyword, "import direct (?<link>)");
+            IVertex importDirect = k.AddVertex(keyword, "import (?<link>) direct");
 
-            importDirect.AddVertex(LegacySystem.Graph.EasyVertex.Get(smb, false, "$$ImportDirect"), "import[ ]+direct[ ]+@(?<link>.*[^ ])[ ]*\\r");
+            importDirect.AddVertex(LegacySystem.Graph.EasyVertex.Get(smb, false, "$$ImportDirect"), "import[ ]+@(?<link>.*[^ ])[ ]+direct[ ]*\\r");
 
             IVertex importDirect_link = importDirect.AddVertex(LegacySystem.Graph.EasyVertex.Get(smb, false, @"$Direct"), "(?<link>)");
 
@@ -1009,9 +1015,9 @@ namespace m0
             //
             // import direct meta (?<link>)
 
-            IVertex importDirectMeta = k.AddVertex(keyword, "import direct meta (?<link>)");
+            IVertex importDirectMeta = k.AddVertex(keyword, "import (?<link>) direct meta");
 
-            importDirectMeta.AddVertex(LegacySystem.Graph.EasyVertex.Get(smb, false, "$$ImportDirectMeta"), "import[ ]+direct[ ]+meta[ ]+@(?<link>.*[^ ])[ ]*\\r");
+            importDirectMeta.AddVertex(LegacySystem.Graph.EasyVertex.Get(smb, false, "$$ImportDirectMeta"), "import[ ]+@(?<link>.*[^ ])[ ]+direct[ ]+meta[ ]*\\r");
 
             IVertex importDirectMeta_link = importDirectMeta.AddVertex(LegacySystem.Graph.EasyVertex.Get(smb, false, @"$DirectMeta"), "(?<link>)");
 
