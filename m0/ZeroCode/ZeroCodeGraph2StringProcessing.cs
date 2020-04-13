@@ -879,7 +879,7 @@ namespace m0.ZeroCode
                 if (GraphUtil.GetValueAndCompareStrings(km.KeywordDefinition, "import (?<name>) (?<link>)"))
                     return AppendImportKeyword(keywordEdge, false);
 
-                if (GraphUtil.GetValueAndCompareStrings(km.KeywordDefinition, "import meta (?<name>) (?<link>)"))
+                if (GraphUtil.GetValueAndCompareStrings(km.KeywordDefinition, "import (?<name>) (?<link>) meta"))
                     return AppendImportKeyword(keywordEdge, true);
 
                 if (GraphUtil.GetValueAndCompareStrings(km.KeywordDefinition, "import direct (?<link>)"))
@@ -1495,7 +1495,7 @@ namespace m0.ZeroCode
                 // if this is $ImportMeta or $Import we will handle it separetly
 
                 if (GraphUtil.GetValueAndCompareStrings(graphToCompare, "import (?<name>) (?<link>)")
-                    || GraphUtil.GetValueAndCompareStrings(graphToCompare, "import meta (?<name>) (?<link>)"))
+                    || GraphUtil.GetValueAndCompareStrings(graphToCompare, "import (?<name>) (?<link>) meta"))
                     return MatchGraphs_import(edgeToCheck);
 
                 // end of $ImportMeta and $Import special handling
