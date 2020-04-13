@@ -804,12 +804,12 @@ namespace m0.ZeroCode
 
             if (isMeta)
             {
-                SourceAppend("import meta " + ZeroCodeCommon.stringToNewVertexString(dict, importEdge.To.ToString()) + " ");
+                SourceAppend("import meta " + ZeroCodeCommon.stringToNewVertexString(dict, importEdge.To.ToString()) + " @");
                 AppendAsLink_FromRoot(linkEdge.To);
             }
             else
             {
-                SourceAppend("import " + ZeroCodeCommon.stringToNewVertexString(dict, importEdge.To.ToString()) + " ");
+                SourceAppend("import " + ZeroCodeCommon.stringToNewVertexString(dict, importEdge.To.ToString()) + " @");
                 AppendAsLink_FromRoot(linkEdge.To);
             }
 
@@ -1435,6 +1435,9 @@ namespace m0.ZeroCode
 
             if (secondEdge != null)
             {
+                IEdge isLink = edgeToCheck.To.OutEdges[0];
+                currentMatchGraphEdgeList.Add(isLink);
+
                 currentMatchGraphEdgeList.Add(secondEdge);
                 return currentMatchGraphEdgeList;
             }

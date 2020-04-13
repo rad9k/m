@@ -997,7 +997,7 @@ namespace m0
 
             IVertex import_name = import.AddVertex(LegacySystem.Graph.EasyVertex.Get(smb, false, @"$Import"), "(?<name>)");
 
-            import_name.AddEdge(LegacySystem.Graph.EasyVertex.Get(smb, false, @"Vertex\$IsLink"), null);
+            import_name.AddEdge(LegacySystem.Graph.EasyVertex.Get(smb, false, @"Vertex\$IsLink"), Empty);
 
             import.AddVertex(last, "(?<link>)");
 

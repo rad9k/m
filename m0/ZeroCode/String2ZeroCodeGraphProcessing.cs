@@ -2139,11 +2139,14 @@ namespace m0.ZeroCode
                 if (doAdd)
                 {
                     if (val == MinusZero.Instance.Empty)
+                    //if (val.ToString() == "$Empty") // XXX ???
                         nv = AddEdge(s, baseVertex, meta, MinusZero.Instance.Empty).To;
                     else
                     {
                         nv = AddVertex(s, baseVertex, meta, val);
-                        lastAddedVertex = nv;
+
+                        if(val.ToString()!="$Empty")
+                            lastAddedVertex = nv;
                     }
                 }                
             }
