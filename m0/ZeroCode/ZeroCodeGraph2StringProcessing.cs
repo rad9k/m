@@ -920,7 +920,7 @@ namespace m0.ZeroCode
                             AppendSubVertices(km, be, path);
                     }
 
-                    //if(!VertexOperations.IsLink(be)) // XXX 2020
+                    if(!VertexOperations.IsLink(be)) // XXX 2020
                     foreach (IEdge e in be.To)
                         if (!km.MatchedEdges.Contains(e))
                         {

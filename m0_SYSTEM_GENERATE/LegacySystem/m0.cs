@@ -1010,7 +1010,7 @@ namespace m0
 
             IVertex importDirect = k.AddVertex(keyword, "import (?<link>) direct");
 
-          //  importDirect.AddVertex(LegacySystem.Graph.EasyVertex.Get(smb, false, "$$ImportDirect"), "import[ ]+@(?<link>.*[^ ])[ ]+direct[ ]*\\r");
+            importDirect.AddVertex(LegacySystem.Graph.EasyVertex.Get(smb, false, "$$ImportDirect"), "import[ ]+@(?<link>.*[^ ])[ ]+direct[ ]*\\r");
 
             IVertex importDirect_link = importDirect.AddVertex(LegacySystem.Graph.EasyVertex.Get(smb, false, @"$ImportDirect"), "(?<link>)");
 
