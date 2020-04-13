@@ -328,7 +328,9 @@ namespace m0.ZeroCode
 
         void prepareImportList_FromString_import()
         {
-            Regex rgx = new Regex("import[ ]+\"(?<name>.*)\"[ ]+@(?<link>.*[^ ])[ ]*\\r");
+            //Regex rgx = new Regex("import[ ]+\"(?<name>.*)\"[ ]+@(?<link>.*[^ ])[ ]*\\r");
+
+            Regex rgx = new Regex(dict.Import.regexpString);
 
             foreach (Match match in rgx.Matches(text))
             {
@@ -351,7 +353,9 @@ namespace m0.ZeroCode
 
         void prepareImportList_FromString_importMeta()
         {
-            Regex rgx = new Regex("import[ ]+meta[ ]+\"(?<name>.*)\"[ ]+@(?<link>.*[^ ])[ ]*\\r");
+            //Regex rgx = new Regex("import[ ]+meta[ ]+\"(?<name>.*)\"[ ]+@(?<link>.*[^ ])[ ]*\\r");
+
+            Regex rgx = new Regex(dict.ImportMeta.regexpString);
 
             foreach (Match match in rgx.Matches(text))
             {
@@ -398,7 +402,9 @@ namespace m0.ZeroCode
 
         void prepareImportList_FromString_importDirect()
         {
-            Regex rgx = new Regex("import[ ]+direct[ ]+@(?<link>.*[^ ])[ ]*\\r");
+            //Regex rgx = new Regex("import[ ]+direct[ ]+@(?<link>.*[^ ])[ ]*\\r");
+
+            Regex rgx = new Regex(dict.ImportDirect.regexpString);
 
             foreach (Match match in rgx.Matches(text))
             {
@@ -415,7 +421,9 @@ namespace m0.ZeroCode
 
         void prepareImportList_FromString_importDirectMeta()
         {
-            Regex rgx = new Regex("import[ ]+direct[ ]+meta[ ]+@(?<link>.*[^ ])[ ]*\\r");
+            //Regex rgx = new Regex("import[ ]+direct[ ]+meta[ ]+@(?<link>.*[^ ])[ ]*\\r");
+
+            Regex rgx = new Regex(dict.ImportDirectMeta.regexpString);
 
             foreach (Match match in rgx.Matches(text))
             {
@@ -424,9 +432,9 @@ namespace m0.ZeroCode
                 IVertex target = r.Get(false, link); // YYY huston..... we assume that this get will not go into infinite reccursion as link variable is simple run time query
 
                 if (target != null)
-                    importDirectMetaList.AddEdge(Direct, target);
+                    importDirectMetaList.AddEdge(DirectMeta, target);
                 else
-                    importDirectMetaList.AddEdge(Direct, MinusZero.Instance.Empty);
+                    importDirectMetaList.AddEdge(DirectMeta, MinusZero.Instance.Empty);
             }
         }
 
