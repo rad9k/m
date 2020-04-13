@@ -982,6 +982,8 @@ namespace m0
 
             IVertex importMeta_name = importMeta.AddVertex(LegacySystem.Graph.EasyVertex.Get(smb, false, @"$ImportMeta"), "(?<name>)");
 
+            importMeta_name.AddEdge(LegacySystem.Graph.EasyVertex.Get(smb, false, @"Vertex\$IsLink"), null);
+
             importMeta.AddVertex(last, "(?<link>)");            
 
 
@@ -995,9 +997,11 @@ namespace m0
 
             IVertex import_name = import.AddVertex(LegacySystem.Graph.EasyVertex.Get(smb, false, @"$Import"), "(?<name>)");
 
-            import_name.AddEdge(LegacySystem.Graph.EasyVertex.Get(smb, false, @"Vertex\$EdgeTarget"), LegacySystem.Graph.EasyVertex.Get(zt, false, "VertexType"));
+            import_name.AddEdge(LegacySystem.Graph.EasyVertex.Get(smb, false, @"Vertex\$IsLink"), null);
 
             import.AddVertex(last, "(?<link>)");
+
+            //import.AddVertex(last, "(?<link>)");
             
 
             // import direct 
@@ -1006,9 +1010,9 @@ namespace m0
 
             IVertex importDirect = k.AddVertex(keyword, "import (?<link>) direct");
 
-            importDirect.AddVertex(LegacySystem.Graph.EasyVertex.Get(smb, false, "$$ImportDirect"), "import[ ]+@(?<link>.*[^ ])[ ]+direct[ ]*\\r");
+          //  importDirect.AddVertex(LegacySystem.Graph.EasyVertex.Get(smb, false, "$$ImportDirect"), "import[ ]+@(?<link>.*[^ ])[ ]+direct[ ]*\\r");
 
-            IVertex importDirect_link = importDirect.AddVertex(LegacySystem.Graph.EasyVertex.Get(smb, false, @"$Direct"), "(?<link>)");
+            IVertex importDirect_link = importDirect.AddVertex(LegacySystem.Graph.EasyVertex.Get(smb, false, @"$ImportDirect"), "(?<link>)");
 
 
             // import direct meta
@@ -1019,7 +1023,7 @@ namespace m0
 
             importDirectMeta.AddVertex(LegacySystem.Graph.EasyVertex.Get(smb, false, "$$ImportDirectMeta"), "import[ ]+@(?<link>.*[^ ])[ ]+direct[ ]+meta[ ]*\\r");
 
-            IVertex importDirectMeta_link = importDirectMeta.AddVertex(LegacySystem.Graph.EasyVertex.Get(smb, false, @"$DirectMeta"), "(?<link>)");
+            IVertex importDirectMeta_link = importDirectMeta.AddVertex(LegacySystem.Graph.EasyVertex.Get(smb, false, @"$ImportDirectMeta"), "(?<link>)");
 
 
             // comment
@@ -2348,7 +2352,7 @@ namespace m0
 
             IVertex DirectMeta = VertexOperations.AddInstance(b, LegacySystem.Graph.EasyVertex.Get(Root, false, @"System\Meta\Base\$ImportMeta"));
 
-            DirectMeta.Value = "$DirectMeta";
+            DirectMeta.Value = "$ImportDirectMeta";
 
             DirectMeta.AddEdge(LegacySystem.Graph.EasyVertex.Get(Root, false, @"System\Meta\Base\Vertex\$IsLink"), Empty);
 
@@ -2366,7 +2370,7 @@ namespace m0
 
             IVertex Direct = VertexOperations.AddInstance(b, LegacySystem.Graph.EasyVertex.Get(Root, false, @"System\Meta\Base\$Import"));
 
-            Direct.Value = "$Direct";
+            Direct.Value = "$ImportDirect";
 
             Direct.AddEdge(LegacySystem.Graph.EasyVertex.Get(Root, false, @"System\Meta\Base\Vertex\$IsLink"), Empty);
 
@@ -4261,7 +4265,7 @@ namespace m0
             //cs.AddEdge(sm.Get(false, @"User\CodeSettings\Keyword"), sm.Get(false, @"ZeroUML\Keyword"));
 
             //foreach (IEdge e in Root.GetAll(false, @"System\FormalTextLanguage\ZeroCode\DefaultImports\"))
-                //if (!GraphUtil.GetValueAndCompareStrings(e.To, "$DirectMeta") && !GraphUtil.GetValueAndCompareStrings(e.To, "$Direct"))
+                //if (!GraphUtil.GetValueAndCompareStrings(e.To, "$ImportDirectMeta") && !GraphUtil.GetValueAndCompareStrings(e.To, "$ImportDirect"))
               //  cs.AddEdge(e.Meta, e.To);
               // XXX
             IVertex session = user.AddVertex(sm.Get(false, @"User\User\Session"), null);

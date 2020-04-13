@@ -191,7 +191,7 @@ namespace m0.ZeroCode
             foreach (IVertex ikv in zcg2sp.Imports.Keys)
                 foreach (IVertex iv in zcg2sp.Imports[ikv])
                     if (v == iv)
-                        if (GeneralUtil.CompareStrings(ikv.Value, "$Direct"))
+                        if (GeneralUtil.CompareStrings(ikv.Value, "$ImportDirect"))
                         {
                             if (edgesList.Count() > 0)
                             {
@@ -204,7 +204,7 @@ namespace m0.ZeroCode
                                 return;
                             }
                         }
-                        else if (GeneralUtil.CompareStrings(ikv.Value, "$DirectMeta"))
+                        else if (GeneralUtil.CompareStrings(ikv.Value, "$ImportDirectMeta"))
                         {
                             if (edgesList.Count() > 0)
                             {
@@ -920,6 +920,7 @@ namespace m0.ZeroCode
                             AppendSubVertices(km, be, path);
                     }
 
+                    //if(!VertexOperations.IsLink(be)) // XXX 2020
                     foreach (IEdge e in be.To)
                         if (!km.MatchedEdges.Contains(e))
                         {
@@ -1212,6 +1213,9 @@ namespace m0.ZeroCode
         
         bool ShouldAppendKeywordHere(IEdge e, string path)
         {
+            if (VertexOperations.IsLink(e)) // XXX should work
+                return true;
+
             if (SubGraphVerticesDictionary.ContainsKey(e.To) && SubGraphVerticesDictionary[e.To].LinkString == path)
                 return true;
             else

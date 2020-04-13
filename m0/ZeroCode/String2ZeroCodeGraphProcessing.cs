@@ -390,9 +390,9 @@ namespace m0.ZeroCode
 
                 smb = GraphUtil.GetQueryOutFirst(Meta, null, "Base");                
 
-                Direct = GraphUtil.GetQueryOutFirst(smb, null, "$Direct");
+                Direct = GraphUtil.GetQueryOutFirst(smb, null, "$ImportDirect");
 
-                DirectMeta = GraphUtil.GetQueryOutFirst(smb, null, "$DirectMeta");
+                DirectMeta = GraphUtil.GetQueryOutFirst(smb, null, "$ImportDirectMeta");
             }
         }
 
@@ -507,7 +507,7 @@ namespace m0.ZeroCode
 
             tryIf = queryMetaImport(baseVertex, @"$ParseRoot" + dict.MetaSeparator + @"\\" + link);
 
-            if (tryIf != null)
+            if (tryIf != null && !(tryIf is ToVertexMock))
                 return tryIf;
 
             // normal direct link
@@ -2124,15 +2124,28 @@ namespace m0.ZeroCode
             }
             else
             {
+
+                bool doAdd = false;
+
                 //if (metaEdge.To.Get(false, "$$LocalRoot:") != null) {
                 if (GraphUtil.GetQueryOutFirst(metaEdge.To, "$$LocalRoot", null) != null)
                 {
                     if (ktd.LocalRootNext != null)
-                        nv = AddVertex(s, baseVertex, meta, val);
-                }else
-                    nv = AddVertex(s, baseVertex, meta, val);
+                        doAdd = true;
+                }
+                else
+                    doAdd = true;
 
-                lastAddedVertex = nv;
+                if (doAdd)
+                {
+                    if (val.ToString() == "$Empty")
+                        nv = AddEdge(s, baseVertex, meta, MinusZero.Instance.Empty).To;
+                    else
+                    {
+                        nv = AddVertex(s, baseVertex, meta, val);
+                        lastAddedVertex = nv;
+                    }
+                }                
             }
 
             tryLocalRootAdd(s, metaEdge, nv, ktd);
@@ -2167,7 +2180,8 @@ namespace m0.ZeroCode
                 max_subCount = subCount;
             }
 
-            foreach (IEdge e in keywordAddingVertex) {
+            foreach (IEdge _e in keywordAddingVertex) {
+                IEdge e = _e;
                 //if (e.To.Get(false, @"$$KeywordManyRoot:") != null)
                 if (GraphUtil.GetQueryOutFirst(e.To, "$$KeywordManyRoot", null) != null)
                 {
@@ -2187,10 +2201,16 @@ namespace m0.ZeroCode
                     IVertex meta = e.Meta;
 
                     if ((string)e.Meta.Value == "(?<ANY>)" && useMetaWhenANY != null)
+                    {
                         meta = useMetaWhenANY;
+                        e = new EasyEdge(e.From, meta, e.To);                        
+                    }
 
                     if ((string)e.Meta.Value == "(?<LAST>)")
+                    {
                         meta = lastAddedVertex;
+                        e = new EasyEdge(e.From, meta, e.To);
+                    }
 
                     if (VertexOperations.IsLink(e))
                     {

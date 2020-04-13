@@ -152,12 +152,12 @@ namespace m0.ZeroCode.Helpers
 
             // direct imports
 
-            //foreach (IEdge e in formalTextLanguageDefaultImports.GetAll(false, "$DirectMeta:"))
-            foreach (IEdge e in GraphUtil.GetQueryOut(formalTextLanguageDefaultImports, "$DirectMeta", null))
+            //foreach (IEdge e in formalTextLanguageDefaultImports.GetAll(false, "$ImportDirectMeta:"))
+            foreach (IEdge e in GraphUtil.GetQueryOut(formalTextLanguageDefaultImports, "$ImportDirectMeta", null))
                 d.importDirectMetaList.AddEdge(e.Meta, e.To);
 
-            //foreach (IEdge e in formalTextLanguageDefaultImports.GetAll(false, "$Direct:"))
-            foreach (IEdge e in GraphUtil.GetQueryOut(formalTextLanguageDefaultImports, "$Direct", null))
+            //foreach (IEdge e in formalTextLanguageDefaultImports.GetAll(false, "$ImportDirect:"))
+            foreach (IEdge e in GraphUtil.GetQueryOut(formalTextLanguageDefaultImports, "$ImportDirect", null))
                 d.importDirectList.AddEdge(e.Meta, e.To);
 
         }
