@@ -815,8 +815,8 @@ namespace m0.ZeroCode
 
             return false;
         }
-
-        bool AppendImportDirectKeyword(IEdge keywordEdge, bool isMeta)
+        
+        /*bool AppendImportDirectKeyword(IEdge keywordEdge, bool isMeta)
         {
             KeywordMatch km = KeywordMatchedSubGraphEdges[keywordEdge];
 
@@ -834,8 +834,8 @@ namespace m0.ZeroCode
             }
 
             return false;
-        }
-        
+        }*/
+
         bool AppendKeyword(IEdge keywordEdge, bool isNested, bool ParentKmHasTabAddingOmmit)
         {            
             KeywordMatch km = KeywordMatchedSubGraphEdges[keywordEdge];
@@ -876,17 +876,19 @@ namespace m0.ZeroCode
                 }
 
 
-                if (GraphUtil.GetValueAndCompareStrings(km.KeywordDefinition, "import (?<name>) (?<link>)"))
+                //if (GraphUtil.GetValueAndCompareStrings(km.KeywordDefinition, "import (?<name>) (?<link>)"))
+                if(km.KeywordDefinition == dict.ImportDirect.keywordVertex)
                     return AppendImportKeyword(keywordEdge, false);
 
-                if (GraphUtil.GetValueAndCompareStrings(km.KeywordDefinition, "import (?<name>) (?<link>) meta"))
+                //if (GraphUtil.GetValueAndCompareStrings(km.KeywordDefinition, "import (?<name>) (?<link>) meta"))
+                if (km.KeywordDefinition == dict.ImportMeta.keywordVertex)
                     return AppendImportKeyword(keywordEdge, true);
 
-                if (GraphUtil.GetValueAndCompareStrings(km.KeywordDefinition, "import direct (?<link>)"))
+               /* if (GraphUtil.GetValueAndCompareStrings(km.KeywordDefinition, "import direct (?<link>)"))
                     return AppendImportDirectKeyword(keywordEdge, false);
 
                 if (GraphUtil.GetValueAndCompareStrings(km.KeywordDefinition, "import direct meta (?<link>)"))
-                    return AppendImportDirectKeyword(keywordEdge, true);
+                    return AppendImportDirectKeyword(keywordEdge, true);*/
 
 
                 int keywordManyRootBaseCount;

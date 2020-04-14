@@ -329,7 +329,7 @@ namespace m0.ZeroCode
         void prepareImportList_FromString_import()
         {
             //Regex rgx = new Regex("import[ ]+\"(?<name>.*)\"[ ]+@(?<link>.*[^ ])[ ]*\\r");
-
+            //Regex rgx = new Regex("import[]+\"(?<name>.*)\"[ ]+@(?<link>[^ ]+)[ ]*\\r");
             Regex rgx = new Regex(dict.Import.regexpString);
 
             foreach (Match match in rgx.Matches(text))
@@ -354,7 +354,7 @@ namespace m0.ZeroCode
         void prepareImportList_FromString_importMeta()
         {
             //Regex rgx = new Regex("import[ ]+meta[ ]+\"(?<name>.*)\"[ ]+@(?<link>.*[^ ])[ ]*\\r");
-
+            
             Regex rgx = new Regex(dict.ImportMeta.regexpString);
 
             foreach (Match match in rgx.Matches(text))
