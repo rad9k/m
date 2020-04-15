@@ -1,10 +1,10 @@
 ﻿!!!!!!!!!!!!!!!!!!!!!!!!!!!!! TO DO:
-76. "o" :: = "test"
-59. copy $Empty? [11]
-60. copy from Graph error [59]
 11. Diagram perf update [8]
-46. forms for Person bug
-72. import / import direct correction
+
+??????
+
+59. copy $Empty? [11] 
+60. copy from Graph error [59]
 
 <><><> FUTURE 0.5
 
@@ -25,6 +25,7 @@
 78."Y"
 	"A"
 	<@$Empty::@A> >> "A"
+79. escape sequences in import regexpes
 77. ZeroCodeCommon.IsSpecialCharacter might relay on allKeywordsSubstringsDictionary also (now it is turned off)
 68. $Empty in edges in parse / generate. is it ok?
 10. $Empty bug
@@ -118,3 +119,6 @@
 32. language definition correction to support languages inheritence
 76. escape string not working in @@ parsing
 4. escape sequences in rtq support by keywords [8] and especially \"
+72. import / import direct correction
+76. "o" :: = "test"
+46. forms for Person bug

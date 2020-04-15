@@ -230,9 +230,19 @@ namespace m0.ZeroUML.Instructions
             if (leftExpression == null || rightExpression == null)
                 return exe.stack;
 
-            INoInEdgeInOutVertexVertex leftExecuteResult = exe.ExecuteInstructionByMontevideoPrinciples(exe.stack, leftExpression);
-            //INoInEdgeInOutVertexVertex _rightExecuteResult = exe.ExecuteInstructionByMontevideoPrinciples(exe.stack, rightExpression);
+
             IVertex newVertexCreationSpace_copy = exe.newVertexCreationSpace;
+
+            // left
+
+            INoInEdgeInOutVertexVertex leftStack = CreateStack();
+            exe.newVertexCreationSpace = leftStack;
+           
+            INoInEdgeInOutVertexVertex leftExecuteResult = exe.ExecuteInstructionByMontevideoPrinciples(exe.stack, leftExpression);
+
+
+            // right
+
             exe.newVertexCreationSpace = CreateStack();
 
             INoInEdgeInOutVertexVertex _rightExecuteResult = exe.ExecuteInstructionByMontevideoPrinciples(exe.stack, rightExpression);
@@ -252,7 +262,10 @@ namespace m0.ZeroUML.Instructions
                 toAdd.From.DeleteEdgesList(localLeft.Value);
 
                 foreach (IEdge e in rightExecuteResult)
-                    toAdd.From.AddEdge(toAdd.Meta, e.To);
+                    if (exe.stack == exe.newVertexCreationSpace) // left expression was separated from exe.stack
+                        exe.stack.AddEdge(toAdd.Meta, e.To);
+                    else
+                        toAdd.From.AddEdge(toAdd.Meta, e.To);
             }
 
             return exe.stack;
@@ -1849,7 +1862,12 @@ namespace m0.ZeroUML.Instructions
         {
             isStackFrameReturn = false;
 
-            IVertex creationTarget = exe.newVertexCreationSpace;            
+            IVertex creationTarget = exe.newVertexCreationSpace;
+
+            INoInEdgeInOutVertexVertex additionalCreationStack = null;
+
+            if (exe.stack == creationTarget)
+                additionalCreationStack = CreateStack();
 
             IVertex leftExpression = GetLeft(instructionVertex);
             IVertex rightExpression = GetRight(instructionVertex);            
@@ -1881,11 +1899,17 @@ namespace m0.ZeroUML.Instructions
                 {
                     IVertex newVertex = creationTarget.AddVertex(meta, e.To.Value);
 
+                    if (additionalCreationStack != null)
+                        additionalCreationStack.AddEdge(meta, newVertex);
+
                     toReturn = NextExpressionHandle(exe, newVertex, instructionVertex);
                 }                
             }
 
-            return Create_INoInEdgeInOutVertexVertex_FromEdgesList(creationTarget);
+            if (additionalCreationStack != null)
+                return additionalCreationStack;
+            else
+                return Create_INoInEdgeInOutVertexVertex_FromEdgesList(creationTarget);
         }
 
         public static INoInEdgeInOutVertexVertex DoubleSemicolonOperator(ZeroCodeExecution exe, IVertex inputStack, IVertex instructionVertex, out bool isStackFrameReturn)

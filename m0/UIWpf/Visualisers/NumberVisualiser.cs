@@ -67,13 +67,11 @@ namespace m0.UIWpf.Visualisers
 
         protected T Parse(object val)
         {
-            T ret=new T();
-
             if (val is T)
                 return (T)val;
 
             if (val is string) {
-                if (ret is int)
+                if (typeof(T) == typeof(int?))
                 {
                     int _ret = 0;
                     int _MinValue = (int)(object)MinValue;
@@ -102,7 +100,7 @@ namespace m0.UIWpf.Visualisers
                     return (T)(object)_ret;
                 }
 
-                if (ret is decimal)
+                if (typeof(T) == typeof(decimal?))
                 {
                     decimal _ret = 0;
                     decimal _MinValue = (decimal)(object)MinValue;
@@ -131,7 +129,7 @@ namespace m0.UIWpf.Visualisers
                     return (T)(object)_ret;
                 }
 
-                if (ret is double)
+                if (typeof(T) == typeof(double?))
                 {
                     double _ret = 0;
                     double _MinValue = (double)(object)MinValue;
@@ -161,7 +159,7 @@ namespace m0.UIWpf.Visualisers
                 }
             }
 
-            return ret;            
+            return new T();            
         }
 
         protected void CreateComposite(){

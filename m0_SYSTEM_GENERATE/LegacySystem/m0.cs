@@ -984,6 +984,8 @@ namespace m0
 
             importMeta_name.AddEdge(LegacySystem.Graph.EasyVertex.Get(smb, false, @"Vertex\$IsLink"), null);
 
+            importMeta_name.AddEdge(_is, LegacySystem.Graph.EasyVertex.Get(smb, false, @"$ImportMeta"));
+
             importMeta.AddVertex(last, "(?<link>)");            
 
 
@@ -998,6 +1000,8 @@ namespace m0
             IVertex import_name = import.AddVertex(LegacySystem.Graph.EasyVertex.Get(smb, false, @"$Import"), "(?<name>)");
 
             import_name.AddEdge(LegacySystem.Graph.EasyVertex.Get(smb, false, @"Vertex\$IsLink"), Empty);
+
+            import_name.AddEdge(_is, LegacySystem.Graph.EasyVertex.Get(smb, false, @"$Import"));
 
             import.AddVertex(last, "(?<link>)");
 

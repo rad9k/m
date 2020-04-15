@@ -115,6 +115,7 @@ namespace m0.ZeroCode
                     s.Append(ZeroCodeCommon.stringToPossiblyEscapedString(dict, e.Meta.Value.ToString()));
 
                 StringBuilder toAppend = new StringBuilder();
+                string possibleMetaSeparator = "";
 
                 if (e.To != null) {
                     if (isImportMeta)
@@ -134,19 +135,23 @@ namespace m0.ZeroCode
                     {
                         if (e.Meta == null || GeneralUtil.CompareStrings(e.Meta,"$Empty"))
                         {
-                            toAppend.Append(dict.MetaSeparator);
+                            //toAppend.Append(dict.MetaSeparator);
+                            possibleMetaSeparator = dict.MetaSeparator;
+
                             Append(dict, toAppend, e.To);
                         }else {
                             if(!VertexOperations.IsToVertexEnoughToIdentifyEdge(e.From,e.To))
                                 Append(dict, toAppend, e.Meta);
 
-                            toAppend.Append(dict.MetaSeparator);
+                            //toAppend.Append(dict.MetaSeparator);
+                            possibleMetaSeparator = dict.MetaSeparator;
+
                             Append(dict, toAppend, e.To);
                         }
                     }
 
                     if(VertexOperations.IsMetaAndToVertexEnoughToIdentifyEdge(e.From, e.Meta, e.To))
-                        s.Append(ZeroCodeCommon.stringToPossiblyEscapedString(dict, toAppend.ToString()));
+                        s.Append(possibleMetaSeparator + ZeroCodeCommon.stringToPossiblyEscapedString(dict, toAppend.ToString()));
                     else
                     {
                         int pos = 0;
@@ -176,7 +181,7 @@ namespace m0.ZeroCode
                             pos++;
                         } while (tv != e.To);
 
-                        s.Append(ZeroCodeCommon.stringToPossiblyEscapedString(dict, toAppend.ToString()) + dict.SetIndexPrefix + "\"" + pos +"\"" + dict.SetIndexPostfix);
+                        s.Append(possibleMetaSeparator + ZeroCodeCommon.stringToPossiblyEscapedString(dict, toAppend.ToString()) + dict.SetIndexPrefix + "\"" + pos +"\"" + dict.SetIndexPostfix);
                     }
                 }    
 
@@ -775,12 +780,6 @@ namespace m0.ZeroCode
             return null;
         }
 
-        void AppendAsLink_FromRoot(IVertex v)
-        {
-            getLinkStringProcessing_FromRoot glsp = new getLinkStringProcessing_FromRoot();
-            SourceAppend(glsp.Process(dict, this, v));
-        }
-
         bool AppendImportKeyword(IEdge keywordEdge, bool isMeta)
         {
             KeywordMatch km = KeywordMatchedSubGraphEdges[keywordEdge];
@@ -802,16 +801,20 @@ namespace m0.ZeroCode
                 if (e.Meta == importEdge.To)
                     linkEdge = e;
 
-            if (isMeta)
-            {
-                SourceAppend("import meta " + ZeroCodeCommon.stringToNewVertexString(dict, importEdge.To.ToString()) + " @");
-                AppendAsLink_FromRoot(linkEdge.To);
-            }
-            else
-            {
-                SourceAppend("import " + ZeroCodeCommon.stringToNewVertexString(dict, importEdge.To.ToString()) + " @");
-                AppendAsLink_FromRoot(linkEdge.To);
-            }
+            string name = ZeroCodeCommon.stringToNewVertexString(dict, importEdge.To.ToString());
+
+            getLinkStringProcessing_FromRoot glsp = new getLinkStringProcessing_FromRoot();
+
+            string link = dict.CodeGraphLinkPrefix + glsp.Process(dict, this, linkEdge.To);
+
+            string keyword = km.KeywordDefinition.Value.ToString();
+
+
+            keyword = keyword.Replace("(?<name>)", name);
+
+            keyword = keyword.Replace("(?<link>)", link);
+
+            SourceAppend(keyword);
 
             return false;
         }
@@ -877,7 +880,7 @@ namespace m0.ZeroCode
 
 
                 //if (GraphUtil.GetValueAndCompareStrings(km.KeywordDefinition, "import (?<name>) (?<link>)"))
-                if(km.KeywordDefinition == dict.ImportDirect.keywordVertex)
+                if(km.KeywordDefinition == dict.Import.keywordVertex)
                     return AppendImportKeyword(keywordEdge, false);
 
                 //if (GraphUtil.GetValueAndCompareStrings(km.KeywordDefinition, "import (?<name>) (?<link>) meta"))
@@ -1437,8 +1440,11 @@ namespace m0.ZeroCode
 
             if (secondEdge != null)
             {
-                IEdge isLink = edgeToCheck.To.OutEdges[0];
-                currentMatchGraphEdgeList.Add(isLink);
+                foreach(IEdge e in edgeToCheck.To)
+                    currentMatchGraphEdgeList.Add(e);
+
+                //IEdge isLink = edgeToCheck.To.OutEdges[0];
+                //currentMatchGraphEdgeList.Add(isLink);
 
                 currentMatchGraphEdgeList.Add(secondEdge);
                 return currentMatchGraphEdgeList;
@@ -1496,9 +1502,12 @@ namespace m0.ZeroCode
 
                 // if this is $ImportMeta or $Import we will handle it separetly
 
-                if (GraphUtil.GetValueAndCompareStrings(graphToCompare, "import (?<name>) (?<link>)")
-                    || GraphUtil.GetValueAndCompareStrings(graphToCompare, "import (?<name>) (?<link>) meta"))
-                    return MatchGraphs_import(edgeToCheck);
+               // if (GraphUtil.GetValueAndCompareStrings(graphToCompare, "import (?<name>) (?<link>)")
+               //     || GraphUtil.GetValueAndCompareStrings(graphToCompare, "import (?<name>) (?<link>) meta"))
+
+                    if (graphToCompare == dict.Import.keywordVertex
+                || graphToCompare == dict.ImportMeta.keywordVertex)
+                        return MatchGraphs_import(edgeToCheck);
 
                 // end of $ImportMeta and $Import special handling
 
