@@ -22,6 +22,7 @@
 
 <><><> FUTURE 1
 
+80. proper work for UIWpf.SetWindowPosition on second monitor
 78."Y"
 	"A"
 	<@$Empty::@A> >> "A"

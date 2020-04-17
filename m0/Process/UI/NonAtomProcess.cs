@@ -15,7 +15,7 @@ namespace m0.Process.UI
 
             IVertex process = ZeroTypes.VertexOperations.AddInstance(r.Get(false, @"User\CurrentUser:\CurrentSession:"), r.Get(false, @"System\Meta\User\NonAtomProcess"), r.Get(false, @"System\Meta\User\Session\Process"));
 
-            process.AddEdge(r.Get(false, @"System\Meta\User\NonAtomProcess\StartTimeStamp"), MinusZero.Instance.Empty);
+            process.AddVertex(r.Get(false, @"System\Meta\User\NonAtomProcess\StartTimeStamp"), "");
 
             ZeroTypes.DateTime.FillDateTime(process.Get(false, "StartTimeStamp:"), DateTime.Now);
         }

@@ -305,7 +305,9 @@ namespace m0.UIWpf.Visualisers
         {
             TurnOffSelectedEdgesFireChange();
 
-            GraphUtil.RemoveAllEdges_WhereEdgeIsEdge(Vertex.Get(false, "SelectedEdges:"));
+            //GraphUtil.RemoveAllEdges_WhereEdgeIsEdge(Vertex.Get(false, "SelectedEdges:"));
+
+            GraphUtil.RemoveAllEdges(Vertex.Get(false, "SelectedEdges:")); // XXX for Diagrams
 
             TurnOnSelectedEdgesFireChange();         
 

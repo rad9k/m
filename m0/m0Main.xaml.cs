@@ -263,7 +263,6 @@ namespace m0
             a.FloatingHeight = DialogWindowHeight;            
 
             a.Float();
-            
         }
 
         public void CloseWindowByContent(object obj)

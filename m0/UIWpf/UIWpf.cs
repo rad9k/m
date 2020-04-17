@@ -129,11 +129,28 @@ namespace m0.UIWpf
             return p;
         }
 
-        public static void SetWindowPosition(Window control, Point position){
+        public static void SetWindowPosition(Window control, Point position)
+        { 
             if (position!=null)
             {
-                double screenWidth = System.Windows.SystemParameters.PrimaryScreenWidth;
-                double screenHeight = System.Windows.SystemParameters.PrimaryScreenHeight;
+                double screenWidth = 0;
+                double screenHeight = 0;
+
+                foreach (System.Windows.Forms.Screen s in System.Windows.Forms.Screen.AllScreens)
+                    if(s.WorkingArea.Left <= position.X && s.WorkingArea.Right >= position.X && // XXX why it is not working for second screen?
+                       s.WorkingArea.Top <= position.Y && s.WorkingArea.Bottom >= position.Y)
+                        {
+                            screenWidth = s.WorkingArea.Width;
+                            screenHeight = s.WorkingArea.Height;
+                        }
+
+                if(screenWidth == 0)
+                {
+                    System.Windows.Forms.Screen lastScreen = System.Windows.Forms.Screen.AllScreens[System.Windows.Forms.Screen.AllScreens.Length - 1];
+
+                    screenWidth = lastScreen.WorkingArea.Width;
+                    screenHeight = lastScreen.WorkingArea.Height;
+                }
 
                 if (position.X + control.ActualWidth > screenWidth)
                     control.Left = screenWidth - control.ActualWidth;

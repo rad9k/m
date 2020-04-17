@@ -991,7 +991,8 @@ namespace m0.UIWpf.Visualisers.Diagram
 
             TurnOffSelectedEdgesFireChange();
 
-            GraphUtil.RemoveAllEdges_WhereEdgeIsEdge(sv);
+            //GraphUtil.RemoveAllEdges_WhereEdgeIsEdge(sv); // XXX
+            GraphUtil.RemoveAllEdges(sv);
 
             TurnOnSelectedEdgesFireChange();
 
@@ -1240,7 +1241,8 @@ namespace m0.UIWpf.Visualisers.Diagram
                 if (e.Data.GetData("DragSource") is IHasSelectableEdges)
                     ((IHasSelectableEdges)e.Data.GetData("DragSource")).UnselectAllSelectedEdges();
 
-                GraphUtil.RemoveAllEdges_WhereEdgeIsEdge(dndVertex);
+                //GraphUtil.RemoveAllEdges_WhereEdgeIsEdge(dndVertex);
+                GraphUtil.RemoveAllEdges(dndVertex);
             }
         }
 
@@ -1270,6 +1272,10 @@ namespace m0.UIWpf.Visualisers.Diagram
             IVertex v = AddDiagramItem_Base(x, y, DiagramItemDefinition);
             
             GraphUtil.CreateOrReplaceEdge(v, r.Get(false, @"System\Meta\ZeroTypes\HasBaseEdge\BaseEdge"), BaseEdge);
+
+            IVertex baseedge = v.Get(false, "BaseEdge:");
+
+            EasyVertex.watchid = baseedge.Identifier;
 
             AddItem(v);            
         }

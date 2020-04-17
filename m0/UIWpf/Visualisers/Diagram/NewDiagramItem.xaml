@@ -1,7 +1,7 @@
 ﻿<Window x:Class="m0.UIWpf.Visualisers.Diagram.NewDiagramItem"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="new diagram item" Height="350" Width="350"  Background="{StaticResource 0VeryLightHighlightBrush}" Foreground="{StaticResource 0ForegroundBrush}" WindowStartupLocation="CenterOwner" WindowStyle="ToolWindow">
+        Title="new diagram item" Height="350" Width="350"  Background="{StaticResource 0VeryLightHighlightBrush}" Foreground="{StaticResource 0ForegroundBrush}"  WindowStyle="ToolWindow">
     <Grid>
         <Label Content="create diagram item for" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Foreground="{StaticResource 0ForegroundBrush}"/>
         <Label x:Name="ItemName" HorizontalAlignment="Left" Margin="140,10,0,0" VerticalAlignment="Top" FontWeight="Bold" Foreground="{StaticResource 0ForegroundBrush}"/>

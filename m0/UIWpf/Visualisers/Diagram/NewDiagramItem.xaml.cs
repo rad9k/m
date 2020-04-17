@@ -35,6 +35,8 @@ namespace m0.UIWpf.Visualisers.Diagram
         {
             InitializeComponent();
 
+          //  this.Owner = m0Main.Instance;
+
             _mousePosition = mousePos;
 
             baseedge = _baseedge;
