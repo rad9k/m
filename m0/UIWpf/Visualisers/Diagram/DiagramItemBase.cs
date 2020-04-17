@@ -838,8 +838,6 @@ namespace m0.UIWpf.Visualisers.Diagram
         }
 
 
-
-
         public void Dispose()
         {
             foreach (DiagramLineBase e in DiagramLines)

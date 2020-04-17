@@ -48,10 +48,10 @@ namespace m0.Process.UI
         {
             IVertex r = MinusZero.Instance.Root;
 
-            IVertex answer = r.Get(false, @"User\CurrentUser:\CurrentSession:\Process:\"+question.Value+":");
+            IVertex answer = r.Get(false, @"User\CurrentUser:\CurrentSession:\Process:\'"+question.Value+"':");
 
             if(answer==null)
-                answer = r.Get(false, @"User\CurrentUser:\CurrentSession:\" + question.Value + ":");
+                answer = r.Get(false, @"User\CurrentUser:\CurrentSession:\'" + question.Value + "':");
 
             return answer;
         }

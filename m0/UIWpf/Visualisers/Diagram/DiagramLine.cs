@@ -204,7 +204,7 @@ namespace m0.UIWpf.Visualisers.Diagram
         Brush HighlightFillBrush = null;
 
         private void VertexUpdated(){
-            if (Vertex.Get(false, @"Definition:Inheritence") != null) // not to display $Inherits
+            if (Vertex.Get(false, @"Definition:Inheritence") != null) // not to display "$Inherits" 
                 return;
 
             if (Vertex.Get(false, @"BaseEdge:\Meta:\$VertexTarget:")!=null
@@ -265,8 +265,6 @@ namespace m0.UIWpf.Visualisers.Diagram
 
         public override double GetMouseDistance(Point p)
         {
-            
-
             if (!isSelfRelation)
             {
                 return GetMouseDistance_Helper(p,FromX,FromY,ToX,ToY);

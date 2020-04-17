@@ -18,8 +18,6 @@ namespace m0.Graph
     [Serializable]
     public class EasyVertex: VertexBase, IDisposable
     {
-        public static object watchid;
-
         public override int UsageCounter
         {
             get
@@ -491,10 +489,6 @@ namespace m0.Graph
 
         public override void DeleteEdgeOnlyOut(IEdge edge)
         {
-            if(this.Identifier == watchid)
-            {
-                int x = 0;
-            }
             if (edge != null)
             {
                 OutEdgesRaw.Remove(edge);

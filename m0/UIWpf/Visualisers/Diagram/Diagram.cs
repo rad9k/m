@@ -233,8 +233,8 @@ namespace m0.UIWpf.Visualisers.Diagram
                                item.Vertex.DeleteEdge(e);
                                pair.DiagramLinesNumber--;
 
-                                IVertex c = m0.MinusZero.Instance.Root.Get(false, @"TEST\Counter:");
-                                c.Value=((int)c.Value)+1;
+                              //  IVertex c = m0.MinusZero.Instance.Root.Get(false, @"TEST\Counter:");
+                              //  c.Value=((int)c.Value)+1;
                            }
                        }
                }
@@ -1274,8 +1274,6 @@ namespace m0.UIWpf.Visualisers.Diagram
             GraphUtil.CreateOrReplaceEdge(v, r.Get(false, @"System\Meta\ZeroTypes\HasBaseEdge\BaseEdge"), BaseEdge);
 
             IVertex baseedge = v.Get(false, "BaseEdge:");
-
-            EasyVertex.watchid = baseedge.Identifier;
 
             AddItem(v);            
         }

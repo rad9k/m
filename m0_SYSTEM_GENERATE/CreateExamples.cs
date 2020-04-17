@@ -390,7 +390,7 @@ namespace m0_SYSTEM_GENERATE
             tr.Get(false, @"TEST3\Basket").AddEdge(r.Get(false, @"System\Meta?$Is"), r.Get(false, @"System\Meta\ZeroUML\Class"));
             tr.Get(false, @"TEST3\Item").AddEdge(r.Get(false, @"System\Meta?$Is"), r.Get(false, @"System\Meta\ZeroUML\Class"));
 
-            m0.LegacySystem.Util.GeneralUtil.ParseAndExcute(tr, r.Get(false, @"System\Meta"), "{TEST2,TEST{Class:Person{Association:Spouse{$MaxCardinality:1,$MaxTargetCardinality:1},Aggregation:Child{$MaxCardinality:3},Attribute:Name,Attribute:Surname,Attribute:Age{MinValue:0,MaxValue:40},Attribute:NoseLength{MinValue:0,MaxValue:40},Attribute:Money{MinValue:0,MaxValue:1000},Attribute:IsGood,Attribute:IsPretty,Attribute:IsPretty2,Attribute:IsPretty3},Enum:Pretty{EnumValue:Yes,EnumValue:No,EnumValue:Maybe}}}");
+            m0.LegacySystem.Util.GeneralUtil.ParseAndExcute(tr, r.Get(false, @"System\Meta"), "{TEST2,TEST22,TEST{Class:Person{Association:Spouse{$MaxCardinality:1,$MaxTargetCardinality:1},Aggregation:Child{$MaxCardinality:3},Attribute:Name,Attribute:Surname,Attribute:Age{MinValue:0,MaxValue:40},Attribute:NoseLength{MinValue:0,MaxValue:40},Attribute:Money{MinValue:0,MaxValue:1000},Attribute:IsGood,Attribute:IsPretty,Attribute:IsPretty2,Attribute:IsPretty3},Enum:Pretty{EnumValue:Yes,EnumValue:No,EnumValue:Maybe}}}");
 
             tr.Get(false, @"TEST\Pretty").AddEdge(r.Get(false, @"System\Meta?$Inherits"), r.Get(false, @"System\Meta\ZeroTypes\EnumBase"));
             tr.Get(false, @"TEST\Person").AddEdge(r.Get(false, @"System\Meta?$Is"), r.Get(false, @"System\Meta\ZeroUML\Class"));
@@ -479,7 +479,7 @@ namespace m0_SYSTEM_GENERATE
             GraphUtil.ReplaceEdge(tr.Get(false, @"TEST\Person4"), "IsPretty", tr.Get(false, @"TEST\Pretty\Yes"));
 
 
-            for (int x = 0; x < 1; x++)
+            for (int x = 0; x < 20; x++)
             {
                 m0.LegacySystem.Util.GeneralUtil.ParseAndExcute(tr.Get(false, "TEST2"), tr.Get(false, @"TEST"), "{Person:Person1" + x + "{Name:Radek,Surname:Tereszczuk,Age:34,NoseLength:\"2,3\",Money:999,IsGood:False,IsPretty:},Person:Person2" + x + "{Name:Maurycy,Surname:Tereszczuk,Age:1,NoseLength:1.1,Money:9999,IsGood:True,IsPretty:}}");
 
@@ -501,8 +501,8 @@ namespace m0_SYSTEM_GENERATE
 
             }
 
-            for (int x = 0; x < 1; x++)
-                for (int y = 0; y < 1; y++)
+            for (int x = 0; x < 10; x++)
+                for (int y = 0; y < 10; y++)
                 {
                     tr.Get(false, @"TEST2\Person1" + x).AddEdge(tr.Get(false, @"TEST\Person\Child"), tr.Get(false, @"TEST2\Person1" + y));
                     tr.Get(false, @"TEST2\Person2" + x).AddEdge(tr.Get(false, @"TEST\Person\Child"), tr.Get(false, @"TEST2\Person2" + y));
@@ -510,9 +510,9 @@ namespace m0_SYSTEM_GENERATE
                     tr.Get(false, @"TEST2\Person4" + x).AddEdge(tr.Get(false, @"TEST\Person\Child"), tr.Get(false, @"TEST2\Person4" + y));
                 }
 
-            for (int i = 1; i <= 1; i++)
+            for (int i = 1; i <= 100; i++)
             {
-                IVertex x = tr.Get(false, "TEST2").AddVertex(null, i);
+                IVertex x = tr.Get(false, "TEST22").AddVertex(null, i);
 
                 for (int ii = 1; ii <= 1; ii++)
                 {

@@ -74,8 +74,8 @@ namespace m0.UIWpf.Visualisers
                 if (typeof(T) == typeof(int?))
                 {
                     int _ret = 0;
-                    int _MinValue = (int)(object)MinValue;
-                    int _MaxValue = (int)(object)MaxValue;
+                    int? _MinValue = (int?)(object)MinValue;
+                    int? _MaxValue = (int?)(object)MaxValue;
 
                     if (Int32.TryParse((string)val, out _ret) == false)
                     {
@@ -138,7 +138,11 @@ namespace m0.UIWpf.Visualisers
                     if (Double.TryParse((string)val, out _ret) == false)
                     {
                         SetIsValid(false);
-                        return MinValue;
+
+                        if (!GraphUtil.IsNullNumber<T>(MinValue))
+                            return MinValue;
+                        else
+                            return (T)(object)new double?(0);
                     }
 
                     if (!GraphUtil.IsNullNumber<T>(MinValue) && _MinValue > _ret)

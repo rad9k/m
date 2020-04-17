@@ -76,7 +76,7 @@ namespace m0.Store.FileSystem
 
             string name = val.ToString();
 
-            while (this.Get(false, "File:" + name) != null || this.Get(false, "Directory:" + name) != null)
+            while (this.Get(false, "File:'" + name+"'") != null || this.Get(false, "Directory:'" + name+"'") != null)
                 name = FileSystemUtil.addNew(name);
 
             if (GraphUtil.GetValueAndCompareStrings(metaVertex, "Directory"))

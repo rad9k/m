@@ -251,9 +251,6 @@ namespace m0.UIWpf.Visualisers.Diagram
                     m0.Process.UI.NonAtomProcess.AddUserChoice(question, DiagramItemDefinition, !IsSet);
                 }
 
-
-                
-
                 this.Close();
             }
         }
