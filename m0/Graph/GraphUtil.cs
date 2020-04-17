@@ -800,7 +800,17 @@ namespace m0.Graph
 
             return nv;
         }
-       
+
+        static public IVertex CreateOrReplaceEdgeByValue(IVertex Vertex, IVertex metaVertex, object value)
+        {
+            IEdge toReplace = FindEdgeByMetaVertex(Vertex, metaVertex);
+
+            if (toReplace != null)
+                Vertex.DeleteEdge(toReplace);
+
+            return Vertex.AddVertex(metaVertex, value);
+        }
+
         static public bool DoIEnumerableIEdgeContainsVertex(IEnumerable<IEdge> baseVertex, IVertex doContainVertex)
         {
             foreach (IEdge e in baseVertex)

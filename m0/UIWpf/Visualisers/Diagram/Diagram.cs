@@ -1270,10 +1270,10 @@ namespace m0.UIWpf.Visualisers.Diagram
             IVertex r = m0.MinusZero.Instance.Root;
 
             IVertex v = AddDiagramItem_Base(x, y, DiagramItemDefinition);
-            
-            GraphUtil.CreateOrReplaceEdge(v, r.Get(false, @"System\Meta\ZeroTypes\HasBaseEdge\BaseEdge"), BaseEdge);
 
-            IVertex baseedge = v.Get(false, "BaseEdge:");
+            IVertex edge = GraphUtil.CreateOrReplaceEdgeByValue(v, r.Get(false, @"System\Meta\ZeroTypes\HasBaseEdge\BaseEdge"), "");
+            
+            Edge.AddEdgeEdgesByEdge(edge, BaseEdge);
 
             AddItem(v);            
         }

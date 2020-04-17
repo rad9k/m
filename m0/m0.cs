@@ -230,9 +230,13 @@ namespace m0
 
         void AddDrives()
         {
+            IVertex localComputer = root.Get(false, @"Hardware\LocalComputer:");
+
             string[] drives = System.IO.Directory.GetLogicalDrives();
 
             IVertex DriveMeta = Root.Get(false, @"System\Meta\Store\FileSystem\Drive");
+
+            IVertex ComputerDrive = Root.Get(false, @"System\Meta\Hardware\Computer\Drive");
 
             foreach (string str in drives)
             {
@@ -241,6 +245,8 @@ namespace m0
                 //fss.IncludeFileContent = true;                
 
                 Root.AddEdge(DriveMeta, fss.Root);
+
+                localComputer.AddEdge(ComputerDrive, fss.Root);
             }
         }
 
@@ -366,6 +372,17 @@ namespace m0
             return store;
         }
 
+        void AddHardware()
+        {
+            IVertex Hardware = root.AddVertex(null, "Hardware");
+
+            IVertex localComputer = VertexOperations.AddInstance(Hardware, root.Get(false, @"System\Meta\Hardware\Computer"));
+
+            localComputer.Value = "my";
+
+            Hardware.AddEdge(root.Get(false, @"System\Meta\Hardware\LocalComputer"), localComputer);
+        }
+
         public void Initialize()
         {
             if (IsInitialized)
@@ -388,6 +405,8 @@ namespace m0
             InitRootVariables();
 
             Init_AfterZeroCodeDefintionCreated();
+
+            AddHardware();
 
             AddDrives();
 

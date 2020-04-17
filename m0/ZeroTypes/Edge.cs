@@ -140,7 +140,18 @@ namespace m0.ZeroTypes
 
         static public void AddEdgeEdges(IVertex baseVertex, IVertex edgeFrom, IVertex edgeMeta, IVertex edgeTo)
         {
-            baseVertex.AddVertex(vFrom, edgeFrom);
+            baseVertex.AddEdge(vFrom, edgeFrom);
+            baseVertex.AddEdge(vMeta, edgeMeta);
+            baseVertex.AddEdge(vTo, edgeTo);
+        }
+
+        static public void AddEdgeEdgesByEdge(IVertex baseVertex, IVertex edge)
+        {
+            IVertex edgeFrom = GraphUtil.GetQueryOutFirst(edge, "From", null);
+            IVertex edgeMeta = GraphUtil.GetQueryOutFirst(edge, "Meta", null);
+            IVertex edgeTo = GraphUtil.GetQueryOutFirst(edge, "To", null);
+
+            baseVertex.AddEdge(vFrom, edgeFrom);
             baseVertex.AddEdge(vMeta, edgeMeta);
             baseVertex.AddEdge(vTo, edgeTo);
         }
