@@ -222,10 +222,12 @@ namespace m0.ZeroUML.Instructions
         // =
         public static INoInEdgeInOutVertexVertex RedirectLeftEdgesToRightVertices(ZeroCodeExecution exe, IVertex inputStack, IVertex instructionVertex, out bool isStackFrameReturn)
         {
-            isStackFrameReturn = false;
+            isStackFrameReturn = false;            
 
             IVertex leftExpression = GetLeft(instructionVertex);
             IVertex rightExpression = GetRight(instructionVertex);
+
+            bool leftPropagateToStackExpression = CheckIfIsInherits(leftExpression, "PropagateToStackExpression");
 
             if (leftExpression == null || rightExpression == null)
                 return exe.stack;
@@ -236,11 +238,11 @@ namespace m0.ZeroUML.Instructions
             // left
 
             INoInEdgeInOutVertexVertex leftStack = CreateStack();
+
             exe.newVertexCreationSpace = leftStack;
            
             INoInEdgeInOutVertexVertex leftExecuteResult = exe.ExecuteInstructionByMontevideoPrinciples(exe.stack, leftExpression);
-
-
+            
             // right
 
             exe.newVertexCreationSpace = CreateStack();
@@ -262,8 +264,8 @@ namespace m0.ZeroUML.Instructions
                 toAdd.From.DeleteEdgesList(localLeft.Value);
 
                 foreach (IEdge e in rightExecuteResult)
-                    if (exe.stack == exe.newVertexCreationSpace) // left expression was separated from exe.stack
-                        exe.stack.AddEdge(toAdd.Meta, e.To);
+                    if (leftPropagateToStackExpression && exe.stack == exe.newVertexCreationSpace) // left expression was separated from exe.stack
+                       exe.stack.AddEdge(toAdd.Meta, e.To);
                     else
                         toAdd.From.AddEdge(toAdd.Meta, e.To);
             }

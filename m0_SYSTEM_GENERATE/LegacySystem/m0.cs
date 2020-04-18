@@ -382,7 +382,7 @@ namespace m0
 
             m0.LegacySystem.Util.GeneralUtil.ParseAndExcute(smu, sm,
                 "{Link{Target{$MinCardinality:1,$MaxCardinality:1}},ExpressionAtom{NextExpression{$MinCardinality:1,$MaxCardinality:1}},Atom" +
-                ",ZeroOperator" +
+                ",PropagateToStackExpression,ZeroOperator" +
                 ",SingleOperator{Expression{$MinCardinality:1,$MaxCardinality:1}}" +                
                 ",DoubleOperator{LeftExpression{$MinCardinality:1,$MaxCardinality:1},RightExpression{$MinCardinality:1,$MaxCardinality:1}}" +                
                 ",MultiOperator{Expression{$MinCardinality:0,$MaxCardinality:-1}}" +
@@ -666,6 +666,13 @@ namespace m0
             LegacySystem.Graph.EasyVertex.Get(smu, false, @"AddRightEdgesIntoFirstLeftEdgeAndSetStoreForSubGraphAsIsInLeftVertex").AddEdge(
                 LegacySystem.Graph.EasyVertex.Get(sm, false, "*$Inherits"),
                 LegacySystem.Graph.EasyVertex.Get(smu, false, "DoubleOperator"));
+
+            LegacySystem.Graph.EasyVertex.Get(smu, false, "DoubleColon").AddEdge(
+                LegacySystem.Graph.EasyVertex.Get(sm, false, "*$Inherits"),
+                LegacySystem.Graph.EasyVertex.Get(smu, false, "PropagateToStackExpression"));
+            LegacySystem.Graph.EasyVertex.Get(smu, false, "DoubleSemicolon").AddEdge(
+                LegacySystem.Graph.EasyVertex.Get(sm, false, "*$Inherits"),
+                LegacySystem.Graph.EasyVertex.Get(smu, false, "PropagateToStackExpression"));
 
             // rest inherits
             LegacySystem.Graph.EasyVertex.Get(smu, false, @"Action").AddEdge(
