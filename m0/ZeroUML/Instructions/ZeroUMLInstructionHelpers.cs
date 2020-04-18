@@ -22,6 +22,18 @@ namespace m0.ZeroUML.Instructions
 
             foreach (IEdge child in children)
             {
+                bool canContinue = false;
+
+                IVertex _is = GraphUtil.GetQueryOutFirst(child.Meta, "$Is", null);
+
+                if (_is != null)
+                {
+                    
+                }
+
+                if (!canContinue)
+                    continue;
+
                 bool shouldAdd = false;
 
                 IVertex defaultValue = GraphUtil.GetQueryOutFirst(child.To, "$DefaultValue", null);
@@ -39,8 +51,7 @@ namespace m0.ZeroUML.Instructions
 
                 int minCardinalityValue;
 
-                if (minCardinality != null)                
-                
+                if (minCardinality != null)                              
                     minCardinalityValue = (int)GraphUtil.GetIntegerValue(minCardinality);                
                 else
                     minCardinalityValue = 1;

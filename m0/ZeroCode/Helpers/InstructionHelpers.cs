@@ -65,6 +65,22 @@ namespace m0.ZeroCode.Helpers
             return false;
         }
 
+        public static bool CheckIfIsOrInherits(IVertex baseVertex, string value)
+        {
+            IList<IEdge> allIs = InstructionHelpers.GetAllIs(baseVertex);
+
+            foreach (IEdge e in allIs)
+                if (GraphUtil.GetValueAndCompareStrings(e.To, value))
+                    return true;
+
+            foreach (IEdge e in allIs)
+                foreach (IEdge ee in InstructionHelpers.GetAllIs(e.To))
+                    if (GraphUtil.GetValueAndCompareStrings(ee.To, value))
+                        return true;
+
+            return false;
+        }
+
         public static bool CheckIfIsAtomType(IVertex is_v)
         {
             if (is_v == null)

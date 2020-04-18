@@ -1,5 +1,8 @@
 ﻿!!!!!!!!!!!!!!!!!!!!!!!!!!!!! TO DO:
 
+80. disapearing code from m0
+81. # initiates variable
+82. object\Name = "raz" moves Name to stack
 
 ??????
 
