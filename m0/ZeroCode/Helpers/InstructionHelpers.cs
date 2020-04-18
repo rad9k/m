@@ -39,9 +39,19 @@ namespace m0.ZeroCode.Helpers
             return CreateStackAndCopy(source);
         }
 
-        public static bool CheckIs(IVertex v, string i)
+        public static bool CheckIfIs(IVertex v, string i)
         {
             IVertex iv = GraphUtil.GetQueryOutFirst(v, "$Is", (object)i);
+
+            if (iv != null)
+                return true;
+
+            return false;
+        }
+
+        public static bool CheckIfInherits(IVertex v, string i)
+        {
+            IVertex iv = GraphUtil.GetQueryOutFirst(v, "$Inherits", (object)i);
 
             if (iv != null)
                 return true;
@@ -54,22 +64,6 @@ namespace m0.ZeroCode.Helpers
             IList<IEdge> allIs = InstructionHelpers.GetAllIs(baseVertex);
 
             foreach(IEdge e in allIs)
-                if (GraphUtil.GetValueAndCompareStrings(e.To, value))
-                    return true;
-
-            foreach (IEdge e in allIs)
-                foreach (IEdge ee in InstructionHelpers.GetAllIs(e.To))
-                    if (GraphUtil.GetValueAndCompareStrings(ee.To, value))
-                        return true;
-
-            return false;
-        }
-
-        public static bool CheckIfIsOrInherits(IVertex baseVertex, string value)
-        {
-            IList<IEdge> allIs = InstructionHelpers.GetAllIs(baseVertex);
-
-            foreach (IEdge e in allIs)
                 if (GraphUtil.GetValueAndCompareStrings(e.To, value))
                     return true;
 

@@ -1,5 +1,6 @@
 ﻿using m0.Foundation;
 using m0.Graph;
+using m0.ZeroCode.Helpers;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -22,16 +23,7 @@ namespace m0.ZeroUML.Instructions
 
             foreach (IEdge child in children)
             {
-                bool canContinue = false;
-
-                IVertex _is = GraphUtil.GetQueryOutFirst(child.Meta, "$Is", null);
-
-                if (_is != null)
-                {
-                    
-                }
-
-                if (!canContinue)
+                if (!InstructionHelpers.CheckIfInherits(child.Meta, "Selector"))
                     continue;
 
                 bool shouldAdd = false;

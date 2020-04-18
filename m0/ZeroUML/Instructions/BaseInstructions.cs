@@ -119,10 +119,10 @@ namespace m0.ZeroUML.Instructions
             bool isRightExpressionQuery = false;
 
             if (leftExpression != null)
-                isLeftExpressionQuery = CheckIs(leftExpression, "Query");
+                isLeftExpressionQuery = CheckIfIs(leftExpression, "Query");
 
             if (rightExpression != null)
-                isRightExpressionQuery = CheckIs(rightExpression, "Query");
+                isRightExpressionQuery = CheckIfIs(rightExpression, "Query");
 
             string leftValue = null;
             string rightValue = null;
@@ -1581,7 +1581,7 @@ namespace m0.ZeroUML.Instructions
             IVertex target = GraphUtil.GetQueryOutFirst(instructionVertex, "Target", null);
                 //instructionVertex.Get(false, "Target:");
 
-            if(!CheckIs(target, "Function"))
+            if(!CheckIfIs(target, "Function"))
             {
                 INoInEdgeInOutVertexVertex targetExpressionExecution = exe.ExecuteInstructionByMontevideoPrinciples(exe.stack, target); 
                 if (targetExpressionExecution.Count() > 0)
