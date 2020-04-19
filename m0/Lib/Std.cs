@@ -547,5 +547,90 @@ namespace m0.Lib
 
             return newStack;
         }
+
+        public static INoInEdgeInOutVertexVertex Sequence(IExecution exe)
+        {
+            INoInEdgeInOutVertexVertex stack = exe.stack;
+
+            // min
+
+            IVertex minVertex = GraphUtil.GetQueryOutFirst(stack, "min", null);
+
+            int? _minValue = GraphUtil.GetIntegerValue(minVertex);
+
+            if (_minValue == null)
+                return null;
+
+            int minValue = (int)_minValue;
+
+            // max
+
+            IVertex maxVertex = GraphUtil.GetQueryOutFirst(stack, "max", null);
+
+            int? _maxValue = GraphUtil.GetIntegerValue(maxVertex);
+
+            if (_maxValue == null)
+                return null;
+
+            int maxValue = (int)_maxValue;
+
+            //
+
+            INoInEdgeInOutVertexVertex newStack = InstructionHelpers.CreateStack();
+
+
+            for (int x = minValue; x <= maxValue; x++)
+                newStack.AddVertex(null, x);
+
+            return newStack;
+        }
+
+        public static INoInEdgeInOutVertexVertex StepSequence(IExecution exe)
+        {
+            INoInEdgeInOutVertexVertex stack = exe.stack;
+
+            // min
+
+            IVertex minVertex = GraphUtil.GetQueryOutFirst(stack, "min", null);
+
+            double? _minValue = GraphUtil.GetDoubleValue(minVertex);
+
+            if (_minValue == null)
+                return null;
+
+            double minValue = (double)_minValue;
+
+            // max
+
+            IVertex maxVertex = GraphUtil.GetQueryOutFirst(stack, "max", null);
+
+            double? _maxValue = GraphUtil.GetDoubleValue(maxVertex);
+
+            if (_maxValue == null)
+                return null;
+
+            double maxValue = (double)_maxValue;
+
+            // step
+
+            IVertex stepVertex = GraphUtil.GetQueryOutFirst(stack, "step", null);
+
+            double? _stepValue = GraphUtil.GetDoubleValue(stepVertex);
+
+            if (_stepValue == null)
+                return null;
+
+            double stepValue = (double)_stepValue;
+
+            //
+
+            INoInEdgeInOutVertexVertex newStack = InstructionHelpers.CreateStack();
+
+
+            for (double x = minValue; x <= maxValue; x+=stepValue)
+                newStack.AddVertex(null, x);
+
+            return newStack;
+        }
     }
 }

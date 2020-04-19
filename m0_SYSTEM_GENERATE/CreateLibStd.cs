@@ -103,6 +103,9 @@ namespace m0_SYSTEM_GENERATE
             AddFunction("Randomize", type, "Randomize", null, new TypeName[] { new TypeName("seed", "Integer") });
             AddFunction("Random", type, "Random", "Float", new TypeName[] { new TypeName("max", "Float", 0, -1) });
 
+            AddFunction("Sequence", type, "Sequence", "Integer", new TypeName[] { new TypeName("min", "Integer", 1, 1), new TypeName("max", "Integer", 1, 1) });
+            AddFunction("StepSequence", type, "StepSequence", "Integer", new TypeName[] { new TypeName("min", "Float", 1, 1), new TypeName("max", "Float", 1, 1), new TypeName("step", "Float", 1, 1) });
+
             return std;
         }
     }

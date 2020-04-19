@@ -79,10 +79,9 @@ namespace m0.ZeroCode.Helpers
         {
             IList<IEdge> allIs = InstructionHelpers.GetAllIs(baseVertex);            
 
-            foreach (IEdge e in allIs)
-                foreach (IEdge ee in InstructionHelpers.GetAllIs(e.To))
-                    if (GraphUtil.GetValueAndCompareStrings(ee.To, value))
-                        return true;
+            foreach (IEdge e in allIs)                
+                if(GraphUtil.GetQueryOutCount(e.To, "$Inherits", value)>0)                
+                    return true;
 
             return false;
         }

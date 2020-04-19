@@ -80,8 +80,6 @@ namespace m0.Store.FileSystem
        
         void updateOutEdges()
         {            
-
-
             AddMeta(FileSystemStore.File_Filename, FI.Name);
 
             string extension = FI.Extension;

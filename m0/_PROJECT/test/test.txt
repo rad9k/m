@@ -8,6 +8,14 @@
 	In += "12345"
 	out = s\:Substring[In, "1", "4"]
 
+"Y"
+	import @System\Meta\Store\FileSystem direct meta
+	"o" ::
+	o = Drive:C\:m0
+	o +< @@File :: "x.m0"
+	"oo" ::
+	oo = Drive:C\:m0\:'x.m0'
+
 
 
 "Y"
