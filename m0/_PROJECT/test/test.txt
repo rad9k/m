@@ -14,7 +14,8 @@
 	o = Drive:C\:m0
 	o +< @@File :: "x.m0"
 	"oo" ::
-	oo = Drive:C\:m0\:'x.m0'
+	oo = Drive:C\:m0\:'x.m0'\$Store
+	oo <- "siema"
 
 
 
