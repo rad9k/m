@@ -18,14 +18,17 @@ namespace m0.Store.Json
 
         private StoreId RootStore;
 
+        FileInfo fileInfo;
+
         void Load()
         {
             if (File.Exists(Identifier))
             {
-                //try
-                //{
-                    StreamReader readStream = new StreamReader(Identifier);
-
+                
+                using (StreamReader readStream = new StreamReader(Identifier))
+                {
+                    //try
+                    //{
                     if (readStream.EndOfStream)
                     { // create new sub graph
                         EasyVertex __root = new EasyVertex(this);
@@ -42,25 +45,27 @@ namespace m0.Store.Json
 
                         ReconstructVerticesFromSerialisationData(data);
 
-                        
+
                         _root = GetVertexByIdentifier(GetRootIdentifier());
 
                         ((EasyVertex)_root).UsageCounter = 1;
 
                         Attach();
                     }
-                /*}catch(Exception e)
-                { // can not deserislize graph
-                    UserInteractionUtil.ShowError("Json Deserlialisation from " + Identifier, e.ToString() + "\n\nAs json serialisation file " + Identifier +" has not been properly loaded, commit (saving) is disabled for the file. This will protect existing file content.");
+                    /*}catch(Exception e)
+                    { // can not deserislize graph
+                        UserInteractionUtil.ShowError("Json Deserlialisation from " + Identifier, e.ToString() + "\n\nAs json serialisation file " + Identifier +" has not been properly loaded, commit (saving) is disabled for the file. This will protect existing file content.");
 
-                    canWrite = false;
+                        canWrite = false;
 
-                    EasyVertex __root = new EasyVertex(this);
+                        EasyVertex __root = new EasyVertex(this);
 
-                    __root.UsageCounter++;
+                        __root.UsageCounter++;
 
-                    _root = __root;
-                }*/
+                        _root = __root;
+                    }*/
+                }
+
             }
             else
             { // create new
@@ -352,6 +357,6 @@ namespace m0.Store.Json
             Load();
 
             Attach();
-        }
+        }        
     }
 }

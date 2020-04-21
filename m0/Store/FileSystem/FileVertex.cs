@@ -12,7 +12,9 @@ using m0.Util;
 namespace m0.Store.FileSystem
 {
     public class FileVertex : EasyVertex
-    {        
+    {
+        //FileInfo FI;
+
         FileInfo FI;
 
         public JsonSerializationStore JsonStore;
@@ -27,6 +29,9 @@ namespace m0.Store.FileSystem
             {
                 if (value is string)
                 {
+                    if (value== null || value == "")
+                        return;
+
                     string newFileName = FileSystemUtil.getFileNamePart((string)value);
 
                     if (newFileName == "")
@@ -101,7 +106,7 @@ namespace m0.Store.FileSystem
 
             if (FI.Extension == ".m0" || FI.Extension == ".M0")
             {
-                JsonStore = new JsonSerializationStore((string)this.Identifier, MinusZero.Instance, new AccessLevelEnum[] { });
+                JsonStore = new JsonSerializationStore(Identifier.ToString(), MinusZero.Instance, new AccessLevelEnum[] { });
                 AddEdge(FileSystemStore.Store, JsonStore.Root);
             }
         }
@@ -138,7 +143,7 @@ namespace m0.Store.FileSystem
         {
             _Identifier = identifier;
 
-            UsageCounter++; // identified vertex are used for volatile stores
+            UsageCounter++; // identified vertex are used for volatile stores            
 
             FI = new FileInfo(Identifier.ToString());
 

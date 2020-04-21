@@ -92,7 +92,7 @@ namespace m0.Store.FileSystem
             {
                 FileInfo fi = new FileInfo(this.Identifier + "\\" + name);
 
-                fi.Create();
+                fi.Create().Dispose();
 
                 IVertex FileVertex = new FileVertex(this.Identifier + "\\" + name, this.Store);
 
