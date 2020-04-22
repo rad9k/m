@@ -49,6 +49,7 @@ namespace m0.ZeroCode.Helpers
 
 
             d.allKeywordsSubstringsDictionary = new Dictionary<char, List<string>>();
+            d.allKeywordsSubstringsDictionary_onlyFirstPart = new Dictionary<char, List<string>>();
             d.allKeywordsSubstringsDictionary_witchoutAlpha = new Dictionary<char, List<string>>();
             d.allKeywordsSubstringsPositiveDictionary_witchoutLinkKeywordParts = new Dictionary<char, List<string>>();
             d.allKeywordsSubstringsNegativeDictionary_witchoutLinkKeywordParts = new Dictionary<char, List<string>>();
@@ -199,13 +200,16 @@ namespace m0.ZeroCode.Helpers
 
             int keywordPos;
 
+            bool isFirstAdd = true;
+
             for (keywordPos = 0; keywordPos < keywordString.Length; keywordPos++)
             {
                 if (!isInsideParameter && ZeroCodeUtil.tryStringMatch(keywordString, keywordPos, "(?<"))
                 {
                     isInsideParameter = true;
 
-                    addSubString(d, keywordString.Substring(prevPos, keywordPos - prevPos));
+                    addSubString(d, keywordString.Substring(prevPos, keywordPos - prevPos), isFirstAdd);
+                    isFirstAdd = false;
                 }
 
                 if (isInsideParameter && ZeroCodeUtil.tryStringMatch(keywordString, keywordPos, ">)"))
@@ -216,37 +220,41 @@ namespace m0.ZeroCode.Helpers
 
                 if (ZeroCodeUtil.tryStringMatch(keywordString, keywordPos, "(*"))
                 {
-                    addSubString(d, keywordString.Substring(prevPos, keywordPos - prevPos));
+                    addSubString(d, keywordString.Substring(prevPos, keywordPos - prevPos), isFirstAdd);
+                    isFirstAdd = false;
 
                     prevPos = keywordPos + 2;
                 }
 
                 if (ZeroCodeUtil.tryStringMatch(keywordString, keywordPos, "*)"))
                 {
-                    addSubString(d, keywordString.Substring(prevPos, keywordPos - prevPos));
+                    addSubString(d, keywordString.Substring(prevPos, keywordPos - prevPos), isFirstAdd);
+                    isFirstAdd = false;
 
                     prevPos = keywordPos + 2;
                 }
 
                 if (ZeroCodeUtil.tryStringMatch(keywordString, keywordPos, "(+"))
                 {
-                    addSubString(d, keywordString.Substring(prevPos, keywordPos - prevPos));
+                    addSubString(d, keywordString.Substring(prevPos, keywordPos - prevPos), isFirstAdd);
+                    isFirstAdd = false;
 
                     prevPos = keywordPos + 2;
                 }
 
                 if (ZeroCodeUtil.tryStringMatch(keywordString, keywordPos, "+)"))
                 {
-                    addSubString(d, keywordString.Substring(prevPos, keywordPos - prevPos));
+                    addSubString(d, keywordString.Substring(prevPos, keywordPos - prevPos), isFirstAdd);
+                    isFirstAdd = false;
 
                     prevPos = keywordPos + 2;
                 }
             }
 
-            addSubString(d, keywordString.Substring(prevPos, keywordPos - prevPos));
+            addSubString(d, keywordString.Substring(prevPos, keywordPos - prevPos), isFirstAdd);
         }
 
-        static private void addSubString(DictionariesForFormalTextLanguage d, string subString)
+        static private void addSubString(DictionariesForFormalTextLanguage d, string subString, bool isFirstAdd)
         {
             subString = subString.Trim();
 
@@ -254,6 +262,9 @@ namespace m0.ZeroCode.Helpers
                 return;
 
             addSubString_dictionary(d.allKeywordsSubstringsDictionary, subString);
+
+            if(isFirstAdd)
+                addSubString_dictionary(d.allKeywordsSubstringsDictionary_onlyFirstPart, subString);
 
             if (!Char.IsLetter(subString[0]))
                 addSubString_dictionary(d.allKeywordsSubstringsDictionary_witchoutAlpha, subString);
@@ -355,6 +366,7 @@ namespace m0.ZeroCode.Helpers
         public IDictionary<string, List<keywordTryingData>> examinedKeywords_All; // all keywords are here
         public IDictionary<string, List<keywordTryingData>> examinedKeywords_StartInLocalRootOnly; // StartInLocalRoot only?
         public IDictionary<char, List<string>> allKeywordsSubstringsDictionary;
+        public IDictionary<char, List<string>> allKeywordsSubstringsDictionary_onlyFirstPart;      
         public IDictionary<char, List<string>> allKeywordsSubstringsDictionary_witchoutAlpha;
         public IDictionary<char, List<string>> allKeywordsSubstringsPositiveDictionary_witchoutLinkKeywordParts;
         public Dictionary<char, List<string>> allKeywordsSubstringsNegativeDictionary_witchoutLinkKeywordParts;

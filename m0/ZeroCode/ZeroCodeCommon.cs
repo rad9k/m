@@ -121,8 +121,8 @@ namespace m0.ZeroCode
 
             char c = s[pos];
 
-            if(dict.allKeywordsSubstringsDictionary.ContainsKey(c)) // XXX TURNED ON was: // XXX TURNED OFF IN SAKE OF IN
-                foreach (string cs in dict.allKeywordsSubstringsDictionary[c])
+            if(dict.allKeywordsSubstringsDictionary_onlyFirstPart.ContainsKey(c)) // XXX TURNED ON was: // XXX TURNED OFF IN SAKE OF IN
+                foreach (string cs in dict.allKeywordsSubstringsDictionary_onlyFirstPart[c])
                     if (ZeroCodeUtil.tryStringMatch(s, pos, cs))
                         return true;
 
