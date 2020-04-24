@@ -18,13 +18,10 @@ namespace m0.Store.Json
 
         private StoreId RootStore;
 
-        FileInfo fileInfo;
-
         void Load()
         {
             if (File.Exists(Identifier))
-            {
-                
+            {            
                 using (StreamReader readStream = new StreamReader(Identifier))
                 {
                     //try
@@ -41,7 +38,7 @@ namespace m0.Store.Json
                     { // load graph from store
                         JsonSerializationData data = JSON.Deserialize<JsonSerializationData>(readStream);
 
-                        readStream.Close();
+                        //readStream.Close();
 
                         ReconstructVerticesFromSerialisationData(data);
 

@@ -25,6 +25,7 @@
 
 <><><> FUTURE 1
 
+81. decimal support in jsonstore
 80. proper work for UIWpf.SetWindowPosition on second monitor
 78."Y"
 	"A"

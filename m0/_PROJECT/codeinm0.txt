@@ -1,0 +1,58 @@
+﻿"test"
+	class "ca"
+		method "m" @String(@String "a", @String "b")
+	class "ca"
+		method "m" @String(@String "a", @String "b")
+	class "ca"
+		method "m" @String(@String "a", @String "b")
+	class "ca"
+		method "m" @String(@String "a", @String "b")
+	class "ca"
+		method "m" @String(@String "a", @String "b")
+	class "ca"
+		method "m" @String(@String "a", @String "b")
+	class "ca"
+		method "m" @String(@String "a", @String "b")
+	class "ca"
+		method "m" @String(@String "a", @String "b")
+	class "ca"
+		method "m" @String(@String "a", @String "b")
+	class "ca"
+		method "m" @String(@String "a", @String "b")
+	class "ca"
+		method "m" @String(@String "a", @String "b")
+
+"test"
+	class "ca"
+		method "m" @String(@String "a", @String "b")
+		attribute "a" @Integer
+	class "ca"
+		method "m" @String(@String "a", @String "b")
+		attribute "a" @Integer
+	class "ca"
+		method "m" @String(@String "a", @String "b")
+		attribute "a" @Integer
+	class "ca"
+		method "m" @String(@String "a", @String "b")
+		attribute "a" @Integer
+	class "ca"
+		method "m" @String(@String "a", @String "b")
+		attribute "a" @Integer
+	class "ca"
+		method "m" @String(@String "a", @String "b")
+		attribute "a" @Integer
+	class "ca"
+		method "m" @String(@String "a", @String "b")
+		attribute "a" @Integer
+	class "ca"
+		method "m" @String(@String "a", @String "b")
+		attribute "a" @Integer
+	class "ca"
+		method "m" @String(@String "a", @String "b")
+		attribute "a" @Integer
+	class "ca"
+		method "m" @String(@String "a", @String "b")
+		attribute "a" @Integer
+	class "ca"
+		method "m" @String(@String "a", @String "b")
+		attribute "a" @Integer
