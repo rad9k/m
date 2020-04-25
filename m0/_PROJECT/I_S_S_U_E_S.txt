@@ -1,8 +1,6 @@
 ﻿!!!!!!!!!!!!!!!!!!!!!!!!!!!!! TO DO:
-
-80. disapearing code from m0
-81. # initiates variable
-82. object\Name = "raz" moves Name to stack
+82. simple garbage collection in code parser [83]
+83. IVerted.delete
 
 ??????
 
@@ -128,3 +126,6 @@
 76. "o" :: = "test"
 46. forms for Person bug
 11. Diagram perf update [8]
+81. # initiates variable
+82. object\Name = "raz" moves Name to stack
+80. disapearing code from m0

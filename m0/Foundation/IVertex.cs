@@ -48,6 +48,8 @@ namespace m0.Foundation
 
         INoInEdgeInOutVertexVertex Execute(IExecution exe);
 
+        void Destroy();
+
         // 2.0 BEG
 
         bool InEdgesDictionariesNeedsRebuild { get; set; }

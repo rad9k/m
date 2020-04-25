@@ -203,8 +203,11 @@ namespace m0.Store
         }
 
         public object GetRootIdentifier()
-        {
-            if(VertexIdentifiersDictionary.Count==0)
+        {            
+            if (VertexIdentifiersDictionary.ContainsKey((long)0))
+                return VertexIdentifiersDictionary[(long)0].Identifier;            
+
+            if (VertexIdentifiersDictionary.Count == 0)
                 return null;
 
             return VertexIdentifiersDictionary[VertexIdentifiersDictionary.Keys.ElementAt(0)].Identifier;
