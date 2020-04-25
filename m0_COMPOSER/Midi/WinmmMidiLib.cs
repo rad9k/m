@@ -1,4 +1,4 @@
-﻿// taken from https://www.codeguru.com/columns/dotnet/making-music-with-midi-and-c.html
+﻿// docs https://www.midi.org/specifications/item/table-1-summary-of-midi-message
 
 using System;
 using System.Collections.Generic;
