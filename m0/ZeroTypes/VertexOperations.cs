@@ -106,35 +106,7 @@ namespace m0.ZeroTypes
                 return;
 
             GraphUtil.DeleteEdge(source, metaVertex, toVertex);
-        }
-
-        public static void DeleteAllInOutEdges(IVertex toVertex)
-        {
-            DeleteAllOutEdges(toVertex);
-            DeleteAllInEdges(toVertex);
-        }
-
-        public static void DeleteAllOutEdges(IVertex toVertex)
-        {
-            if (toVertex == null)
-                return;
-
-            IList<IEdge> elist = GeneralUtil.CreateAndCopyList<IEdge>(toVertex.OutEdges);
-
-            foreach (IEdge e in elist)
-                e.From.DeleteEdge(e);
-        }
-
-        public static void DeleteAllInEdges(IVertex toVertex)
-        {
-            if (toVertex == null)
-                return;
-
-            IList<IEdge> elist = GeneralUtil.CreateAndCopyList<IEdge>(toVertex.InEdges);
-
-            foreach (IEdge e in elist)
-                e.From.DeleteEdge(e);
-        }
+        }        
 
         public static bool IsAtomicVertex(IVertex vertex)
         {

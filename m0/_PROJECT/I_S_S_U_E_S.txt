@@ -1,6 +1,4 @@
 ﻿!!!!!!!!!!!!!!!!!!!!!!!!!!!!! TO DO:
-82. simple garbage collection in code parser [83]
-83. IVerted.delete
 
 ??????
 
@@ -15,10 +13,9 @@
 
 <><><> FUTURE 0.9
 
-
 12. parse / generate check
 34. Query dialog box refactoring
-40. <<a..b>>
+40. <<a..b>> ??? we have Std\Sequence
 56. table optimisation
 
 <><><> FUTURE 1
@@ -129,3 +126,5 @@
 81. # initiates variable
 82. object\Name = "raz" moves Name to stack
 80. disapearing code from m0
+83. IVerted.delete
+82. simple garbage collection in code parser [83]

@@ -2729,10 +2729,14 @@ namespace m0.ZeroCode
 
         void DeleteAllEdgesFromBaseVertex()
         {
-            foreach (IEdge e in baseVertex.ToList())
-                if (!GeneralUtil.CompareStrings(e.Meta, "$ParseRoot"))
-                    baseVertex.DeleteEdge(e);
+            //foreach (IEdge e in baseVertex.ToList())
+            //  if (!GeneralUtil.CompareStrings(e.Meta, "$ParseRoot"))
+            //baseVertex.DeleteEdge(e);
 
+            foreach (IEdge e in baseVertex.ToList())
+                if (!GeneralUtil.CompareStrings(e.Meta, "$ParseRoot"))                
+                    foreach (IEdge ee in GraphUtil.GetSubGraphEdgesAsList(e))                    
+                        ee.To.Destroy();                            
         }
 
         void MoveAllParseRootEdgesToBaseVertex()

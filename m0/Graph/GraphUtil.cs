@@ -43,7 +43,7 @@ namespace m0.Graph
                 return true;
 
             return false;
-        }
+        }        
 
         public bool AddToINoInEdgeInOutVertexVertex(IEdge vertex)
         {
@@ -939,6 +939,27 @@ namespace m0.Graph
             foreach (IEdge e in baseVertex.OutEdges)
                 if (!visited.Contains(e.To) && !VertexOperations.IsLink(e))
                         GetSubGraph_Reccurent(e.To, visited);                           
+        }
+
+        static public List<IEdge> GetSubGraphEdgesAsList(IEdge iterationRoot)
+        {
+            List<IVertex> visited = new List<IVertex>();
+
+            List<IEdge> edges = new List<IEdge>();
+
+            GetSubGraphEdges_Reccurent(iterationRoot, visited, edges);
+
+            return edges;
+        }
+
+        static void GetSubGraphEdges_Reccurent(IEdge baseEdge, List<IVertex> visited, List<IEdge> edges)
+        {
+            visited.Add(baseEdge.To);
+            edges.Add(baseEdge);
+
+            foreach (IEdge e in baseEdge.To.OutEdges)
+                if (!visited.Contains(e.To) && !VertexOperations.IsLink(e))
+                    GetSubGraphEdges_Reccurent(e, visited, edges);
         }
 
         static public List<IVertex> GetSubGraphWithLinksAsListButExcludeRoot(IVertex iterationRoot)

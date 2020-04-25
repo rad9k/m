@@ -152,6 +152,11 @@ namespace m0.Graph
             throw new NotImplementedException();
         }
 
+        public virtual void Destroy()
+        {
+            throw new NotImplementedException();
+        }
+
         public event VertexChange Change;
 
         public virtual Delegate[] GetChangeDelegateInvocationList()

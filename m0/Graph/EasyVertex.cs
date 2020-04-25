@@ -813,5 +813,11 @@ namespace m0.Graph
             else
                 return CallableEndPointDictionary_INIEIOV_ZCE.CallEndPoint(exe, ExecutableEndPointVertex);
         }
+
+        public override void Destroy()
+        {
+            Dispose();
+        }
+
     }
 }
