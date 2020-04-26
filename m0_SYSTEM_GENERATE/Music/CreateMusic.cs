@@ -13,36 +13,30 @@ namespace m0_SYSTEM_GENERATE.Music
 {
     public class CreateMusic
     {
-        public static void Execute(List<IVertex> systemSubGraphWithLinks, Dictionary<string, StoreId> storeOverride)
-        {
-            print("* MUSIC subsystem generation START");
-
-            print("* creating Lib\\Music");
-
-            IVertex music = CreateLibMusic();
-
+        public static void Save(List<IVertex> systemSubGraphWithLinks, Dictionary<string, StoreId> storeOverride)
+        {            
             print("* saving Lib\\Music");
 
-            GeneralUtil.CreateM0AndMoveEdgesIntoIt_IncludeEverythingBesidesList("lib_music.m0", music, systemSubGraphWithLinks, storeOverride);            
-
-            print("* MUSIC subsystem generation FINISH");
+            GeneralUtil.CreateM0AndMoveEdgesIntoIt_IncludeEverythingBesidesList("lib_music.m0", music, systemSubGraphWithLinks, storeOverride);                        
         }
 
-        static IVertex CreateLibMusic()
+        static IVertex music;
+
+        public static void Create()
         {
+            print("* creating Lib\\Music");
+
             IVertex root = m0.MinusZero.Instance.root;
 
             IVertex lib = root.Get(false, @"System\Lib");
 
-            IVertex music = lib.AddVertex(null, "Music");
+            music = lib.AddVertex(null, "Music");
 
             string type = "m0.Lib.Std, m0_COMPOSER, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null";
 
             IVertex midiDevice = GraphUtil.AddClass(music, "MidiDevice");
 
-            IVertex midiOutput = GraphUtil.AddClass(music, "MidiOutput");
-
-            return music;
+            IVertex midiOutput = GraphUtil.AddClass(music, "MidiOutput");            
         }
     }
 }

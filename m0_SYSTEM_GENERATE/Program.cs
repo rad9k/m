@@ -43,9 +43,7 @@ namespace m0_SYSTEM_GENERATE
 
             print("* filling examples");
 
-            CreateExamples.CreateTestData();
-
-            //
+            CreateExamples.CreateTestData();            
 
             IVertex root = LegacySystem_MinusZero.Instance.Root;
             IVertex System = root.Get(false, "System");
@@ -57,9 +55,16 @@ namespace m0_SYSTEM_GENERATE
             
             IVertex system = GeneralUtil.CreateM0AndMoveEdgesIntoIt(@"system.m0", System, 1);
 
-            List<IVertex> systemSubGraphWithLinks = GraphUtil.GetSubGraphWithLinksAsListButExcludeRoot(system);
-
             print("* System saved to \"system.m0\"");
+
+            //
+
+            List<IVertex> systemSubGraphWithLinks = GraphUtil.GetSubGraphWithLinksAsListButExcludeRoot(system);
+            
+            //
+
+            Lib.CreateLib.Create();
+            Music.CreateMusic.Create();            
 
             //            
 
@@ -85,24 +90,18 @@ namespace m0_SYSTEM_GENERATE
 
             //
 
-            print("* creating Lib\\Std");
 
-            IVertex std = CreateLibStd.Create();
+            Lib.CreateLib.Save(systemSubGraphWithLinks, storeOverride);
 
-            print("* saving Lib\\Std");
-
-            GeneralUtil.CreateM0AndMoveEdgesIntoIt_IncludeEverythingBesidesList("lib_std.m0", std, systemSubGraphWithLinks, storeOverride);
+            Music.CreateMusic.Save(systemSubGraphWithLinks, storeOverride);
+                        
 
             //
 
             print("* creating \"_bootstrap.m0\"");
 
-            CreateBootstrap.Create("_bootstrap.m0");
-
-            //
-
-            Music.CreateMusic.Execute(systemSubGraphWithLinks, storeOverride);
-
+            CreateBootstrap.Create("_bootstrap.m0", true);
+                       
             //
 
             print("");

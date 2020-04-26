@@ -14,7 +14,7 @@ namespace m0_SYSTEM_GENERATE
 {
     class CreateBootstrap
     {
-        public static void Create(string fileName)
+        public static void Create(string fileName, bool music)
         {
             File.Delete(fileName);
 
@@ -34,8 +34,11 @@ namespace m0_SYSTEM_GENERATE
             IVertex lib_std = r.AddVertex(null, "System\\Lib\\Std");
             lib_std.AddVertex(null, "lib_std.m0");
 
-            IVertex lib_music = r.AddVertex(null, "System\\Lib\\Music");
-            lib_music.AddVertex(null, "lib_music.m0");
+            if (music)
+            {
+                IVertex lib_music = r.AddVertex(null, "System\\Lib\\Music");
+                lib_music.AddVertex(null, "lib_music.m0");
+            }
 
             GeneralUtil.SaveStore(store);
         }

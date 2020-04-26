@@ -50,7 +50,7 @@
   <ItemGroup>
     <Compile Include="CreateBootstrap.cs" />
     <Compile Include="CreateExamples.cs" />
-    <Compile Include="CreateLibStd.cs" />
+    <Compile Include="Lib\CreateLib.cs" />
     <Compile Include="LegacySystem\FormalTextLanguage\GoldParser\GoldGenericParser.cs" />
     <Compile Include="LegacySystem\FormalTextLanguage\GoldParser\GoldGenericParser_BackEnd.cs" />
     <Compile Include="LegacySystem\Graph\EasyVertex.cs" />

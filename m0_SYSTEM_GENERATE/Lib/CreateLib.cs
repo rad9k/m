@@ -5,12 +5,15 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using m0.Util;
 
-namespace m0_SYSTEM_GENERATE
+using static m0_SYSTEM_GENERATE.Program;
+
+namespace m0_SYSTEM_GENERATE.Lib
 {
-    public class CreateLibStd
+    public class CreateLib
     {
-        static IVertex std;
+        static IVertex LibStd;
 
         class TypeName
         {
@@ -51,7 +54,7 @@ namespace m0_SYSTEM_GENERATE
 
             IVertex bv = m0.MinusZero.Instance.root.Get(false, "System\\Meta\\Base\\Vertex");
 
-            IVertex f = std.AddVertex(zu.Get(false, "Function"), name);
+            IVertex f = LibStd.AddVertex(zu.Get(false, "Function"), name);
 
             if (ret != null)
                 f.AddEdge(zu.Get(false, "Function\\Output"), zt.Get(false, ret));
@@ -66,15 +69,17 @@ namespace m0_SYSTEM_GENERATE
             }
 
             GraphUtil.AddDotNetEndPoint(f, typeName, methodName);
-        }
+        }        
 
-        public static IVertex Create()
+        public static void Create()
         {
+            print("* creating Lib\\Std");
+
             IVertex root = m0.MinusZero.Instance.root;
 
             IVertex lib = root.Get(false, "System").AddVertex(null, "Lib");
 
-            std = lib.AddVertex(null, "Std");
+            LibStd = lib.AddVertex(null, "Std");
 
             string type = "m0.Lib.Std, m0, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null";
 
@@ -108,7 +113,15 @@ namespace m0_SYSTEM_GENERATE
 
             AddFunction("Sleep", type, "Sleep", null, new TypeName[] { new TypeName("min", "Float", 1, 1), new TypeName("miliseconds", "Integer", 1, 1) });
 
-            return std;
+            GraphUtil.AddClass(LibStd, "View");            
         }
+
+        public static void Save(List<IVertex> systemSubGraphWithLinks, Dictionary<string, StoreId> storeOverride)
+        {            
+            print("* saving Lib\\Std");
+
+            GeneralUtil.CreateM0AndMoveEdgesIntoIt_IncludeEverythingBesidesList("lib_std.m0", LibStd, systemSubGraphWithLinks, storeOverride);            
+        }
+
     }
 }
