@@ -14,7 +14,7 @@ namespace m0_COMPOSER
     {
         static void Main(string[] args)
         {
-            int numDevs = WinmmMidiLib.midiOutGetNumDevs();
+            /*int numDevs = WinmmMidiLib.midiOutGetNumDevs();
             Console.WriteLine("You have {0} midi output devices", numDevs);
 
             //
@@ -26,34 +26,40 @@ namespace m0_COMPOSER
 
                 Console.WriteLine(myCaps.szPname + " " + myCaps.vDriverVersion);
             }
-
+            */
             //
 
-            int handle = 0;
-            int deviceNumber = 0;
-            var res = WinmmMidiLib.midiOutOpen(ref handle, deviceNumber, null, 0, 0);
 
-
-            for (int x = 0; x < 127; x++)
+            /*for (int x = 0; x < 127; x++)
             {
-                byte command = 0x90;
-                byte note = (byte)x;
-                byte velocity = 0x7F;
-                int message = (velocity << 16) + (note << 8) + command;
+              WinmmMidiLib.ProgramChange(0, 0, x);
 
-                res = WinmmMidiLib.midiOutShortMsg(handle, message);
+              WinmmMidiLib.NoteOn(0, 0, 60, 127);
 
                 Thread.Sleep(100);
 
-                command = 0x80;
+              WinmmMidiLib.NoteOn(0, 0, 62, 127);
 
-                message = (velocity << 16) + (note << 8) + command;
+              Thread.Sleep(100);
 
-                //res = MidiLib.midiOutShortMsg(handle, message);
+              WinmmMidiLib.NoteOn(0, 0, 64, 127);
+
+              Thread.Sleep(200);
+          }   */
+            
+
+            for (int x = 0x4000; x > 0x0000; x-=100)
+            {
+                WinmmMidiLib.NoteOn(0, 0, 60, 127);
+
+                WinmmMidiLib.PitchBend(0, 0, x);
+
+                Thread.Sleep(100);
             }
 
-            res = WinmmMidiLib.midiOutClose(handle);
+            WinmmMidiLib.Close();
 
+            System.Console.WriteLine("END!!!!!!!!!!!!!!!");
             System.Console.In.Read();
         }
     }

@@ -1,4 +1,6 @@
 ﻿// docs https://www.midi.org/specifications/item/table-1-summary-of-midi-message
+//
+// note table https://www.codeguru.com/columns/dotnet/making-music-with-midi-and-c.html
 
 using System;
 using System.Collections.Generic;
@@ -25,7 +27,7 @@ namespace m0_COMPOSER.Midi
         public UInt16 wChannelMask;
         public UInt32 dwSupport;
     }
-    public class WinmmMidiLib
+    public class WinmmMidiLib : MidiLib
     {
         [DllImport("winmm.dll")]
         private static extern long mciSendString(string command, StringBuilder returnValue, int returnLength, IntPtr winHandle);
@@ -63,7 +65,7 @@ namespace m0_COMPOSER.Midi
                 return deviceHandles[deviceNumber];
 
             int handle = 0;            
-            var res = WinmmMidiLib.midiOutOpen(ref handle, deviceNumber, null, 0, 0);
+            var res = midiOutOpen(ref handle, deviceNumber, null, 0, 0);
 
             deviceHandles.Add(deviceNumber, handle);
 
@@ -73,12 +75,12 @@ namespace m0_COMPOSER.Midi
         public static void Close()
         {            
             foreach(int handle in deviceHandles.Values)
-                WinmmMidiLib.midiOutClose(handle);
+                midiOutClose(handle);
         }
        
         static void midiOut(int deviceNumber, int message)
         {
-            WinmmMidiLib.midiOutShortMsg(getHandle(deviceNumber), message);
+            midiOutShortMsg(getHandle(deviceNumber), message);
         }
 
         static void midiOut(int deviceNumber, int channel, int command, int note, int velocity)
@@ -88,27 +90,27 @@ namespace m0_COMPOSER.Midi
             byte _velocity = (byte) velocity;
             int message = (_velocity << 16) + (_note << 8) + _command;
 
-            WinmmMidiLib.midiOutShortMsg(getHandle(deviceNumber), message);
+            midiOutShortMsg(getHandle(deviceNumber), message);
         }
 
         public static void NoteOn(int deviceNumber, int channel, int note, int velocity)
         {
-            midiOut(getHandle(deviceNumber), channel, 0b1001, note, velocity);
+            midiOut(deviceNumber, channel, 0b1001, note, velocity);
         }
 
         public static void NoteOff(int deviceNumber, int channel, int note, int velocity)
         {
-            midiOut(getHandle(deviceNumber), channel, 0b1000, note, velocity);
+            midiOut(deviceNumber, channel, 0b1000, note, velocity);
         }
 
         public static void ControlChange(int deviceNumber, int channel, int ccNumber, int ccValue)
         {
-            midiOut(getHandle(deviceNumber), channel, 0b1011, ccNumber, ccValue);
+            midiOut(deviceNumber, channel, 0b1011, ccNumber, ccValue);
         }
 
         public static void ProgramChange(int deviceNumber, int channel, int program)
         {
-            midiOut(getHandle(deviceNumber), channel, 0b1100, program, 0);
+            midiOut(deviceNumber, channel, 0b1100, program, 0);
         }
 
         // 2000H center
@@ -117,13 +119,13 @@ namespace m0_COMPOSER.Midi
             int high = value & 0b0111111100000000;
             int low = value &  0b0000000001111111;
 
-            midiOut(getHandle(deviceNumber), channel, 0b1110, low, high);
+            midiOut(deviceNumber, channel, 0b1110, high >> 8, low);
         }
 
         public static void Silent(int deviceNumber, int channel)
         {
-            midiOut(getHandle(deviceNumber), channel, 0b1011, 120, 0); // sound off
-            midiOut(getHandle(deviceNumber), channel, 0b1011, 123, 0); // all notes off
+            midiOut(deviceNumber, channel, 0b1011, 120, 0); // sound off
+            midiOut(deviceNumber, channel, 0b1011, 123, 0); // all notes off
         }
 
         public static void Reset(int deviceNumber)
