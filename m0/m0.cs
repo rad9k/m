@@ -41,17 +41,11 @@ namespace m0
 
         public IVertex root; // need this public hack for LegacySystem_m0 based generation in m0_SYSTEM_GENERATE
 
-        public IVertex Root { get { return root; } }
+        public IVertex Root { get { return root; } }        
 
+        public IVertex Inherits;
 
-        IVertex inherits;
-
-        public IVertex Inherits { get { return inherits; } }
-
-
-        IVertex stackFrameInherits;
-
-        public IVertex StackFrameInherits { get { return stackFrameInherits; } }
+        public IVertex StackFrameInherits;
 
 
         public IVertex empty; // need this public hack for LegacySystem_m0 based generation in m0_SYSTEM_GENERATE
@@ -202,9 +196,9 @@ namespace m0
 
             empty = GraphUtil.GetQueryOutFirst(Base, null, "$Empty"); // there are some bugs related to this and old zeroscript.get ???
 
-            inherits = GraphUtil.GetQueryOutFirst(Vertex, null, "$Inherits");
+            Inherits = GraphUtil.GetQueryOutFirst(Vertex, null, "$Inherits");
 
-            stackFrameInherits = GraphUtil.GetQueryOutFirst(Vertex, null, "$StackFrameInherits");
+            StackFrameInherits = GraphUtil.GetQueryOutFirst(Vertex, null, "$StackFrameInherits");
 
             dolar = GraphUtil.GetQueryOutFirst(Base, null, "$");
 

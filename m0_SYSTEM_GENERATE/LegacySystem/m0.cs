@@ -41,13 +41,9 @@ namespace m0
 
         public IVertex Root { get { return root; } }
 
-        IVertex inherits;
+        public IVertex Inherits;
 
-        public IVertex Inherits { get { return inherits; } }
-
-        IVertex stackFrameInherits;
-
-        public IVertex StackFrameInherits { get { return stackFrameInherits; } }
+        public IVertex StackFrameInherits;
 
         IVertex empty;
 
@@ -269,9 +265,9 @@ namespace m0
 
             IVertex Vertex = GraphUtil.GetQueryOutFirst(Base, null, "Vertex");
 
-            inherits = GraphUtil.GetQueryOutFirst(Vertex, null, "$Inherits");
+            Inherits = GraphUtil.GetQueryOutFirst(Vertex, null, "$Inherits");
 
-            stackFrameInherits = GraphUtil.GetQueryOutFirst(Vertex, null, "$StackFrameInherits");
+            StackFrameInherits = GraphUtil.GetQueryOutFirst(Vertex, null, "$StackFrameInherits");
 
             dolar = GraphUtil.GetQueryOutFirst(Base, null, "$");
         }
@@ -4490,10 +4486,12 @@ namespace m0
             EdgeTarget = LegacySystem.Graph.EasyVertex.Get(Root, false, @"System\Meta\Base\Vertex\$EdgeTarget");
             Is = LegacySystem.Graph.EasyVertex.Get(Root, false, @"System\Meta\Base\Vertex\$Is");
             IsAggregation = LegacySystem.Graph.EasyVertex.Get(Root, false, @"System\Meta\Base\Vertex\$IsAggregation");
+            Inherits = LegacySystem.Graph.EasyVertex.Get(Root, false, @"System\Meta\Base\Vertex\$Inherits");
 
             MinusZero.Instance.EdgeTarget = EdgeTarget;
             MinusZero.Instance.Is = Is;
             MinusZero.Instance.IsAggregation = IsAggregation;
+            MinusZero.Instance.Inherits = Inherits;
         }
 
         private void CheckAndCorrecIsClass()

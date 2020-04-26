@@ -14,6 +14,8 @@ namespace m0_SYSTEM_GENERATE.Util
         {
             public string Name;
 
+            public IVertex TypeVertex;
+
             public string Type;
 
             public int MinCardinality;
@@ -39,6 +41,16 @@ namespace m0_SYSTEM_GENERATE.Util
 
                 MaxCardinality = _MaxCardinality;
             }
+
+            public TypeName(string _name, IVertex _typeVertex, int _MinCardinality, int _MaxCardinality)
+            {
+                Name = _name;
+                TypeVertex = _typeVertex;
+
+                MinCardinality = _MinCardinality;
+
+                MaxCardinality = _MaxCardinality;
+            }
         }
 
         public static void AddFunction(IVertex baseVertex, string name, string typeName, string methodName, string ret, IList<TypeName> pars)
@@ -58,7 +70,11 @@ namespace m0_SYSTEM_GENERATE.Util
             {
                 IVertex ip = f.AddVertex(zu.Get(false, "Function\\InputParameter"), tn.Name);
 
-                ip.AddEdge(bv.Get(false, "$EdgeTarget"), zt.Get(false, tn.Type));
+                if(tn.Type !=null)
+                    ip.AddEdge(bv.Get(false, "$EdgeTarget"), zt.Get(false, tn.Type));
+                else
+                    ip.AddEdge(bv.Get(false, "$EdgeTarget"), tn.TypeVertex);
+
                 ip.AddVertex(bv.Get(false, "$MinCardinality"), tn.MinCardinality);
                 ip.AddVertex(bv.Get(false, "$MaxCardinality"), tn.MaxCardinality);
             }
@@ -81,9 +97,13 @@ namespace m0_SYSTEM_GENERATE.Util
 
             foreach (TypeName tn in pars)
             {
-                IVertex ip = f.AddVertex(zu.Get(false, "Method\\InputParameter"), tn.Name);
+                IVertex ip = f.AddVertex(zu.Get(false, "Class\\Method\\InputParameter"), tn.Name);
 
-                ip.AddEdge(bv.Get(false, "$EdgeTarget"), zt.Get(false, tn.Type));
+                if(tn.Type !=null)
+                    ip.AddEdge(bv.Get(false, "$EdgeTarget"), zt.Get(false, tn.Type));
+                else
+                    ip.AddEdge(bv.Get(false, "$EdgeTarget"), tn.TypeVertex);
+
                 ip.AddVertex(bv.Get(false, "$MinCardinality"), tn.MinCardinality);
                 ip.AddVertex(bv.Get(false, "$MaxCardinality"), tn.MaxCardinality);
             }

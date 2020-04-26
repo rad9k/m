@@ -66,7 +66,12 @@ namespace m0.Graph
 
             return a;
         }
-        
+
+        public static void AddInherits(IVertex baseVertex, IVertex inherit)
+        {            
+            baseVertex.AddEdge(m0.MinusZero.Instance.Inherits, inherit);
+        }
+
         public static void AddAttribute(IVertex baseVertex, string attributeName, IVertex target, int MinCardinality, int MaxCardinality)
         {
             IVertex r = MinusZero.Instance.root;

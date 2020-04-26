@@ -41,6 +41,30 @@ namespace m0_SYSTEM_GENERATE.Music
 
             //
 
+            IVertex Pitch = GraphUtil.AddClass(music, "Pitch");
+
+            GraphUtil.AddAttribute(Pitch, "Octave", Integer, 1, 1);
+            GraphUtil.AddAttribute(Pitch, "Note", Integer, 1, 1);
+
+            //
+
+            IVertex Note = GraphUtil.AddClass(music, "Note");
+
+            GraphUtil.AddInherits(Note, Pitch);
+
+            GraphUtil.AddAttribute(Note, "Velocity", Integer, 1, 1);
+
+            //
+
+            IVertex NoteEvent = GraphUtil.AddClass(music, "NoteEvent");
+
+            GraphUtil.AddInherits(NoteEvent, Note);
+
+            GraphUtil.AddAttribute(NoteEvent, "OnTime", Integer, 1, 1);
+            GraphUtil.AddAttribute(NoteEvent, "OffTime", Integer, 1, 1);
+
+            //
+
             IVertex midiDevice = GraphUtil.AddClass(music, "MidiDevice");
 
             GraphUtil.AddAttribute(midiDevice, "Name", String, 1, 1);
@@ -66,42 +90,14 @@ namespace m0_SYSTEM_GENERATE.Music
 
             IVertex midiOutput = GraphUtil.AddClass(music, "MidiOutput");
             GraphUtil.AddAttribute(midiOutput, "Device", midiDevice, 1, 1);
-            GraphUtil.AddAttribute(midiDevice, "Channel", Integer, 1, 1);
+            GraphUtil.AddAttribute(midiOutput, "Channel", Integer, 1, 1);
 
-            /*public static void NoteOn(int deviceNumber, int channel, int note, int velocity)
-            {
-                midiOut(deviceNumber, channel, 0b1001, note, velocity);
-            }
-
-            public static void NoteOff(int deviceNumber, int channel, int note, int velocity)
-            {
-                midiOut(deviceNumber, channel, 0b1000, note, velocity);
-            }
-
-            public static void ControlChange(int deviceNumber, int channel, int ccNumber, int ccValue)
-            {
-                midiOut(deviceNumber, channel, 0b1011, ccNumber, ccValue);
-            }
-
-            public static void ProgramChange(int deviceNumber, int channel, int program)
-            {
-                midiOut(deviceNumber, channel, 0b1100, program, 0);
-            }
-
-            // 2000H center
-            public static void PitchBend(int deviceNumber, int channel, int value)
-            {
-                int high = value & 0b0011111110000000;
-                int low = value & 0b0000000001111111;
-
-                midiOut(deviceNumber, channel, 0b1110, low, high >> 7);
-            }
-
-            public static void Silent(int deviceNumber, int channel)
-            {
-                midiOut(deviceNumber, channel, 0b1011, 120, 0); // sound off
-                midiOut(deviceNumber, channel, 0b1011, 123, 0); // all notes off
-            }*/
+            AddMethod(midiOutput, "NoteOn", type, "NoteOn", null, new TypeName[] { new TypeName("note", Note, 1, 1) });
+            AddMethod(midiOutput, "NoteOff", type, "NoteOff", null, new TypeName[] { new TypeName("note", Note, 1, 1) });
+            AddMethod(midiOutput, "ControlChange", type, "ControlChange", null, new TypeName[] { new TypeName("ccNumber", "Integer", 1, 1), new TypeName("ccValue", "Integer", 1, 1) });
+            AddMethod(midiOutput, "ProgramChange", type, "ProgramChange", null, new TypeName[] { new TypeName("programNumber", "Integer", 1, 1) });
+            AddMethod(midiOutput, "PitchBend", type, "PitchBend", null, new TypeName[] { new TypeName("value", "Integer", 1, 1) });
+            AddMethod(midiOutput, "Silent", type, "Silent", null, new TypeName[] { });            
         }
     }
 }
