@@ -20,21 +20,12 @@ namespace m0
     {
         public StartWindow()
         {
-            InitializeComponent();
-
-       
+            InitializeComponent();            
         }
 
         private void button1_Click(object sender, RoutedEventArgs e)
-        {
-            //UIWpf.test.Window1 w = new UIWpf.test.Window1();
-
-            //w.Show();
-
-
-            m0Main m = new m0Main();
-
-            m.Show();
+        {            
+            m0_RUN.Main.Run();
 
             Close();
         }

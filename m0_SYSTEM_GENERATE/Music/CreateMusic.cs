@@ -65,39 +65,45 @@ namespace m0_SYSTEM_GENERATE.Music
 
             //
 
-            IVertex midiDevice = GraphUtil.AddClass(music, "MidiDevice");
-
-            GraphUtil.AddAttribute(midiDevice, "Name", String, 1, 1);
-
-            GraphUtil.AddAttribute(midiDevice, "Mid", String, 0, 1);
-            GraphUtil.AddAttribute(midiDevice, "Pid", String, 0, 1);
-            GraphUtil.AddAttribute(midiDevice, "DriverVersion", String, 0, 1);
-            GraphUtil.AddAttribute(midiDevice, "Technology", String, 0, 1);
-            GraphUtil.AddAttribute(midiDevice, "Voices", String, 0, 1);
-            GraphUtil.AddAttribute(midiDevice, "Notes", String, 0, 1);
-            GraphUtil.AddAttribute(midiDevice, "ChannelMask", String, 0, 1);
-            GraphUtil.AddAttribute(midiDevice, "Support", String, 0, 1);
-
-            GraphUtil.AddAttribute(midiDevice, "DeviceNumber", Integer, 0, 1);
-
-            AddMethod(midiDevice, "Reset", type, "Reset", null, new TypeName[] { });
-            AddMethod(midiDevice, "TimingClock", type, "TimingClock", null, new TypeName[] { });
-            AddMethod(midiDevice, "Start", type, "Start", null, new TypeName[] { });
-            AddMethod(midiDevice, "Continue", type, "Continue", null, new TypeName[] { });
-            AddMethod(midiDevice, "Stop", type, "Stop", null, new TypeName[] { });
+            IVertex MidiOutput = GraphUtil.AddClass(music, "MidiOutput");
 
             //
 
-            IVertex midiOutput = GraphUtil.AddClass(music, "MidiOutput");
-            GraphUtil.AddAttribute(midiOutput, "Device", midiDevice, 1, 1);
-            GraphUtil.AddAttribute(midiOutput, "Channel", Integer, 1, 1);
+            IVertex MidiDevice = GraphUtil.AddClass(music, "MidiDevice");
 
-            AddMethod(midiOutput, "NoteOn", type, "NoteOn", null, new TypeName[] { new TypeName("note", Note, 1, 1) });
-            AddMethod(midiOutput, "NoteOff", type, "NoteOff", null, new TypeName[] { new TypeName("note", Note, 1, 1) });
-            AddMethod(midiOutput, "ControlChange", type, "ControlChange", null, new TypeName[] { new TypeName("ccNumber", "Integer", 1, 1), new TypeName("ccValue", "Integer", 1, 1) });
-            AddMethod(midiOutput, "ProgramChange", type, "ProgramChange", null, new TypeName[] { new TypeName("programNumber", "Integer", 1, 1) });
-            AddMethod(midiOutput, "PitchBend", type, "PitchBend", null, new TypeName[] { new TypeName("value", "Integer", 1, 1) });
-            AddMethod(midiOutput, "Silent", type, "Silent", null, new TypeName[] { });            
+            GraphUtil.AddAttribute(MidiDevice, "Name", String, 1, 1);
+
+            GraphUtil.AddAggregation(MidiDevice, "Output", MidiOutput, 0, -1);            
+
+            GraphUtil.AddAttribute(MidiDevice, "DeviceNumber", Integer, 0, 1);
+
+            GraphUtil.AddAttribute(MidiDevice, "Mid", String, 0, 1);
+            GraphUtil.AddAttribute(MidiDevice, "Pid", String, 0, 1);
+            GraphUtil.AddAttribute(MidiDevice, "DriverVersion", String, 0, 1);
+            GraphUtil.AddAttribute(MidiDevice, "Technology", String, 0, 1);
+            GraphUtil.AddAttribute(MidiDevice, "Voices", String, 0, 1);
+            GraphUtil.AddAttribute(MidiDevice, "Notes", String, 0, 1);
+            GraphUtil.AddAttribute(MidiDevice, "ChannelMask", String, 0, 1);
+            GraphUtil.AddAttribute(MidiDevice, "Support", String, 0, 1);            
+
+            AddMethod(MidiDevice, "Reset", type, "Reset", null, new TypeName[] { });
+            AddMethod(MidiDevice, "TimingClock", type, "TimingClock", null, new TypeName[] { });
+            AddMethod(MidiDevice, "Start", type, "Start", null, new TypeName[] { });
+            AddMethod(MidiDevice, "Continue", type, "Continue", null, new TypeName[] { });
+            AddMethod(MidiDevice, "Stop", type, "Stop", null, new TypeName[] { });
+
+            //
+            
+            GraphUtil.AddAssociation(MidiOutput, "Device", MidiDevice, 1, 1);
+            GraphUtil.AddAttribute(MidiOutput, "Name", String, 1, 1);
+            GraphUtil.AddAttribute(MidiOutput, "Channel", Integer, 1, 1);
+
+            AddMethod(MidiOutput, "NoteOn", type, "NoteOn", null, new TypeName[] { new TypeName("note", Note, 1, 1) });
+            AddMethod(MidiOutput, "NoteOff", type, "NoteOff", null, new TypeName[] { new TypeName("note", Note, 1, 1) });
+            AddMethod(MidiOutput, "ControlChange", type, "ControlChange", null, new TypeName[] { new TypeName("ccNumber", "Integer", 1, 1), new TypeName("ccValue", "Integer", 1, 1) });
+            AddMethod(MidiOutput, "ProgramChange", type, "ProgramChange", null, new TypeName[] { new TypeName("programNumber", "Integer", 1, 1) });
+            AddMethod(MidiOutput, "PitchBend", type, "PitchBend", null, new TypeName[] { new TypeName("value", "Integer", 1, 1) });
+            AddMethod(MidiOutput, "Silent", type, "Silent", null, new TypeName[] { });            
         }
     }
 }

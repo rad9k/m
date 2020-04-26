@@ -1,5 +1,6 @@
 ﻿!!!!!!!!!!!!!!!!!!!!!!!!!!!!! TO DO:
 
+83. 'LocalComputer:my'
 ??????
 
 59. copy $Empty? [11] 
@@ -7,6 +8,7 @@
 
 <><><> FUTURE 0.5
 
+82. method / dedicated class form hidding support
 64. child vertex short names support in ||{}/ X+<||{} for @@ 
 36. ZeroUML diagramming update
 37. pre/post text processing + if/test/case/default nextout?

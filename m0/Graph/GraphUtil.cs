@@ -78,6 +78,38 @@ namespace m0.Graph
 
             IVertex a = baseVertex.AddVertex(r.Get(false, @"System\Meta\ZeroUML\Class\Attribute"), attributeName);
 
+            a.AddEdge(MinusZero.Instance.Is, r.Get(false, @"System\Meta\ZeroUML\Class\Attribute"));
+
+            a.AddEdge(r.Get(false, @"System\Meta\Base\Vertex\$EdgeTarget"), target);
+
+            a.AddVertex(r.Get(false, @"System\Meta\Base\Vertex\$MinCardinality"), MinCardinality);
+
+            a.AddVertex(r.Get(false, @"System\Meta\Base\Vertex\$MaxCardinality"), MaxCardinality);
+        }
+
+        public static void AddAssociation(IVertex baseVertex, string attributeName, IVertex target, int MinCardinality, int MaxCardinality)
+        {
+            IVertex r = MinusZero.Instance.root;
+
+            IVertex a = baseVertex.AddVertex(r.Get(false, @"System\Meta\ZeroUML\Class\Association"), attributeName);
+
+            a.AddEdge(MinusZero.Instance.Is, r.Get(false, @"System\Meta\ZeroUML\Class\Association"));
+
+            a.AddEdge(r.Get(false, @"System\Meta\Base\Vertex\$EdgeTarget"), target);
+
+            a.AddVertex(r.Get(false, @"System\Meta\Base\Vertex\$MinCardinality"), MinCardinality);
+
+            a.AddVertex(r.Get(false, @"System\Meta\Base\Vertex\$MaxCardinality"), MaxCardinality);
+        }
+
+        public static void AddAggregation(IVertex baseVertex, string attributeName, IVertex target, int MinCardinality, int MaxCardinality)
+        {
+            IVertex r = MinusZero.Instance.root;
+
+            IVertex a = baseVertex.AddVertex(r.Get(false, @"System\Meta\ZeroUML\Class\Aggregation"), attributeName);
+
+            a.AddEdge(MinusZero.Instance.Is, r.Get(false, @"System\Meta\ZeroUML\Class\Aggregation"));
+
             a.AddEdge(r.Get(false, @"System\Meta\Base\Vertex\$EdgeTarget"), target);
 
             a.AddVertex(r.Get(false, @"System\Meta\Base\Vertex\$MinCardinality"), MinCardinality);

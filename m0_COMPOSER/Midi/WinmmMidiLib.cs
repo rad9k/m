@@ -33,10 +33,10 @@ namespace m0_COMPOSER.Midi
         private static extern long mciSendString(string command, StringBuilder returnValue, int returnLength, IntPtr winHandle);
 
         [DllImport("winmm.dll")]
-        private static extern int midiOutGetNumDevs();
+        public static extern int midiOutGetNumDevs();
 
         [DllImport("winmm.dll")]
-        private static extern int midiOutGetDevCaps(Int32 uDeviceID, ref MidiOutCaps lpMidiOutCaps, UInt32 cbMidiOutCaps);
+        public static extern int midiOutGetDevCaps(Int32 uDeviceID, ref MidiOutCaps lpMidiOutCaps, UInt32 cbMidiOutCaps);
 
         [DllImport("winmm.dll")]
         private static extern int midiOutOpen(ref int handle, int deviceID, MidiCallBack proc, int instance, int flags);
