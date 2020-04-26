@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace m0.Lib
@@ -631,6 +632,26 @@ namespace m0.Lib
                 newStack.AddVertex(null, x);
 
             return newStack;
+        }
+
+        public static INoInEdgeInOutVertexVertex Sleep(IExecution exe)
+        {
+            INoInEdgeInOutVertexVertex stack = exe.stack;
+
+            // miliseconds
+
+            IVertex milisecondsVertex = GraphUtil.GetQueryOutFirst(stack, "miliseconds", null);
+
+            int? _milisecondsValue = GraphUtil.GetIntegerValue(milisecondsVertex);
+
+            if (_milisecondsValue == null)
+                return null;
+
+            int milisecondsValue = (int)_milisecondsValue;
+
+            Thread.Sleep(milisecondsValue);
+
+            return stack;
         }
     }
 }

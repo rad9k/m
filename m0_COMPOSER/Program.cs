@@ -46,16 +46,21 @@ namespace m0_COMPOSER
 
               Thread.Sleep(200);
           }   */
-            
 
-            for (int x = 0x4000; x > 0x0000; x-=100)
+            WinmmMidiLib.ProgramChange(0, 0, 90);
+
+            WinmmMidiLib.NoteOn(0, 0, 60, 127);
+
+            //for (int x = 0x2000; x < 0x4000; x+=100)
+            for (int x = 0; x < 127; x += 1)
             {
+                WinmmMidiLib.ControlChange(0, 0, 77, x);
+
                 WinmmMidiLib.NoteOn(0, 0, 60, 127);
 
-                WinmmMidiLib.PitchBend(0, 0, x);
-
-                Thread.Sleep(100);
+                Thread.Sleep(30);
             }
+
 
             WinmmMidiLib.Close();
 

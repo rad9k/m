@@ -116,10 +116,10 @@ namespace m0_COMPOSER.Midi
         // 2000H center
         public static void PitchBend(int deviceNumber, int channel, int value)
         {
-            int high = value & 0b0111111100000000;
+            int high = value & 0b0011111110000000;
             int low = value &  0b0000000001111111;
 
-            midiOut(deviceNumber, channel, 0b1110, high >> 8, low);
+            midiOut(deviceNumber, channel, 0b1110, low, high >> 7);
         }
 
         public static void Silent(int deviceNumber, int channel)

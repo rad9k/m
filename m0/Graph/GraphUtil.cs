@@ -56,6 +56,39 @@ namespace m0.Graph
 
     public class GraphUtil
     {
+        public static IVertex AddClass(IVertex baseVertex, string className)
+        {
+            IVertex r = MinusZero.Instance.root;
+
+            IVertex a = baseVertex.AddVertex(r.Get(false, @"System\Meta\ZeroUML\Class"), className);
+
+            a.AddEdge(MinusZero.Instance.Is, r.Get(false, @"System\Meta\ZeroUML\Class"));
+
+            return a;
+        }
+
+        public static void AddAttribute(IVertex baseVertex, string attributeName, IVertex target)
+        {
+            IVertex r = MinusZero.Instance.root;
+
+            IVertex a = baseVertex.AddVertex(r.Get(false, @"System\Meta\ZeroUML\Class\Attribute"), attributeName);
+
+            a.AddEdge(r.Get(false, @"System\Meta\Base\Vertex\$EdgeTarget"), target);
+        }
+
+        public static void AddAttribute(IVertex baseVertex, string attributeName, IVertex target, int MinCardinality, int MaxCardinality)
+        {
+            IVertex r = MinusZero.Instance.root;
+
+            IVertex a = baseVertex.AddVertex(r.Get(false, @"System\Meta\ZeroUML\Class\Attribute"), attributeName);
+
+            a.AddEdge(r.Get(false, @"System\Meta\Base\Vertex\$EdgeTarget"), target);
+
+            a.AddVertex(r.Get(false, @"System\Meta\Base\Vertex\$MinCardinality"), MinCardinality);
+
+            a.AddVertex(r.Get(false, @"System\Meta\Base\Vertex\$MaxCardinality"), MaxCardinality);
+        }
+
         public static void AddDotNetEndPoint(IVertex baseVertex, string _typeName, string _methodName)
         {
             IVertex r = m0.MinusZero.Instance.root;

@@ -4511,40 +4511,6 @@ namespace m0
             }
         }
 
-        IVertex AddClass(IVertex baseVertex, string className)
-        {
-            IVertex r = MinusZero.Instance.root;
-
-            IVertex a = baseVertex.AddVertex(r.Get(false, @"System\Meta\ZeroUML\Class"), className);
-
-            a.AddEdge(Is, r.Get(false, @"System\Meta\ZeroUML\Class"));
-
-            return a;
-        }
-
-        void AddAttribute(IVertex baseVertex, string attributeName, IVertex target)
-        {
-            IVertex r = MinusZero.Instance.root;
-
-            IVertex a = baseVertex.AddVertex(r.Get(false, @"System\Meta\ZeroUML\Class\Attribute"), attributeName);
-
-            a.AddEdge(r.Get(false, @"System\Meta\Base\Vertex\$EdgeTarget"), target);
-        }
-
-        void AddAttribute(IVertex baseVertex, string attributeName, IVertex target, int MinCardinality, int MaxCardinality)
-        {
-            IVertex r = MinusZero.Instance.root;
-
-            IVertex a = baseVertex.AddVertex(r.Get(false, @"System\Meta\ZeroUML\Class\Attribute"), attributeName);
-
-            a.AddEdge(r.Get(false, @"System\Meta\Base\Vertex\$EdgeTarget"), target);
-
-            a.AddVertex(r.Get(false, @"System\Meta\Base\Vertex\$MinCardinality"), MinCardinality);
-
-            a.AddVertex(r.Get(false, @"System\Meta\Base\Vertex\$MaxCardinality"), MaxCardinality);
-        }
-
-
         private void CreateSystemHardware()
         {
             IVertex r = MinusZero.Instance.root;
@@ -4553,9 +4519,9 @@ namespace m0
 
             IVertex Hardware = Meta.AddVertex(null, "Hardware");
 
-            IVertex Computer = AddClass(Hardware, "Computer");
+            IVertex Computer = GraphUtil.AddClass(Hardware, "Computer");
 
-            AddAttribute(Computer, "Drive", r.Get(false, @"System\Meta\Store\FileSystem\Drive"), 0, -1);
+            GraphUtil.AddAttribute(Computer, "Drive", r.Get(false, @"System\Meta\Store\FileSystem\Drive"), 0, -1);
             
 
             IVertex DefaultComputer = Hardware.AddVertex(null, "LocalComputer");

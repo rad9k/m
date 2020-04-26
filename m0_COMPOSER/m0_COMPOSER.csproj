@@ -42,6 +42,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Lib\Music.cs" />
     <Compile Include="Midi\IMidiLib.cs" />
     <Compile Include="Midi\WinmmMidiLib.cs" />
     <Compile Include="Program.cs" />

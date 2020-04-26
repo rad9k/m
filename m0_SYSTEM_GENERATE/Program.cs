@@ -15,7 +15,7 @@ namespace m0_SYSTEM_GENERATE
 {
     class Program
     {
-        static void print(string text)
+        public static void print(string text)
         {
             System.Console.Out.WriteLine(text);
         }
@@ -55,9 +55,9 @@ namespace m0_SYSTEM_GENERATE
 
             print("* saving System to \"system.m0\"");
             
-            IVertex newSystem = GeneralUtil.CreateM0AndMoveEdgesIntoIt(@"system.m0", System, 1);
+            IVertex system = GeneralUtil.CreateM0AndMoveEdgesIntoIt(@"system.m0", System, 1);
 
-            List<IVertex> newSystemSubGraphWithLinks = GraphUtil.GetSubGraphWithLinksAsListButExcludeRoot(newSystem);
+            List<IVertex> systemSubGraphWithLinks = GraphUtil.GetSubGraphWithLinksAsListButExcludeRoot(system);
 
             print("* System saved to \"system.m0\"");
 
@@ -67,9 +67,11 @@ namespace m0_SYSTEM_GENERATE
 
             storeOverride.Add("system.m0", new StoreId("m0.Store.MemoryStore, m0, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null", "$-0$ROOT$STORE$"));
 
+            //
+
             print("* saving User to \"user.m0\"");
 
-            GeneralUtil.CreateM0AndMoveEdgesIntoIt_IncludeEverythingBesidesList("user.m0", User, newSystemSubGraphWithLinks, storeOverride);
+            GeneralUtil.CreateM0AndMoveEdgesIntoIt_IncludeEverythingBesidesList("user.m0", User, systemSubGraphWithLinks, storeOverride);
 
             print("* User saved to \"user.m0\"");
 
@@ -77,7 +79,7 @@ namespace m0_SYSTEM_GENERATE
 
             print("* saving examples to \"examples.m0\"");
 
-            GeneralUtil.CreateM0AndMoveEdgesIntoIt_IncludeEverythingBesidesList("examples.m0", examples, newSystemSubGraphWithLinks, storeOverride);
+            GeneralUtil.CreateM0AndMoveEdgesIntoIt_IncludeEverythingBesidesList("examples.m0", examples, systemSubGraphWithLinks, storeOverride);
 
             print("* examples saved to \"examples.m0\"");
 
@@ -89,13 +91,17 @@ namespace m0_SYSTEM_GENERATE
 
             print("* saving Lib\\Std");
 
-            GeneralUtil.CreateM0AndMoveEdgesIntoIt_IncludeEverythingBesidesList("lib_std.m0", std, newSystemSubGraphWithLinks, storeOverride);
+            GeneralUtil.CreateM0AndMoveEdgesIntoIt_IncludeEverythingBesidesList("lib_std.m0", std, systemSubGraphWithLinks, storeOverride);
 
             //
 
             print("* creating \"_bootstrap.m0\"");
 
             CreateBootstrap.Create("_bootstrap.m0");
+
+            //
+
+            Music.CreateMusic.Execute(systemSubGraphWithLinks, storeOverride);
 
             //
 
