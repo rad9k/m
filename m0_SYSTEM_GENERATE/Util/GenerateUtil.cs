@@ -1,0 +1,94 @@
+﻿using m0.Foundation;
+using m0.Graph;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace m0_SYSTEM_GENERATE.Util
+{
+    public class GenerateUtil
+    {
+        public class TypeName
+        {
+            public string Name;
+
+            public string Type;
+
+            public int MinCardinality;
+
+            public int MaxCardinality;
+
+            public TypeName(string _name, string _type)
+            {
+                Name = _name;
+                Type = _type;
+
+                MinCardinality = 1;
+
+                MaxCardinality = 1;
+            }
+
+            public TypeName(string _name, string _type, int _MinCardinality, int _MaxCardinality)
+            {
+                Name = _name;
+                Type = _type;
+
+                MinCardinality = _MinCardinality;
+
+                MaxCardinality = _MaxCardinality;
+            }
+        }
+
+        public static void AddFunction(IVertex baseVertex, string name, string typeName, string methodName, string ret, IList<TypeName> pars)
+        {
+            IVertex zu = m0.MinusZero.Instance.root.Get(false, "System\\Meta\\ZeroUML");
+
+            IVertex zt = m0.MinusZero.Instance.root.Get(false, "System\\Meta\\ZeroTypes");
+
+            IVertex bv = m0.MinusZero.Instance.root.Get(false, "System\\Meta\\Base\\Vertex");
+
+            IVertex f = baseVertex.AddVertex(zu.Get(false, "Function"), name);
+
+            if (ret != null)
+                f.AddEdge(zu.Get(false, "Function\\Output"), zt.Get(false, ret));
+
+            foreach (TypeName tn in pars)
+            {
+                IVertex ip = f.AddVertex(zu.Get(false, "Function\\InputParameter"), tn.Name);
+
+                ip.AddEdge(bv.Get(false, "$EdgeTarget"), zt.Get(false, tn.Type));
+                ip.AddVertex(bv.Get(false, "$MinCardinality"), tn.MinCardinality);
+                ip.AddVertex(bv.Get(false, "$MaxCardinality"), tn.MaxCardinality);
+            }
+
+            GraphUtil.AddDotNetEndPoint(f, typeName, methodName);
+        }
+
+        public static void AddMethod(IVertex baseVertex, string name, string typeName, string methodName, string ret, IList<TypeName> pars)
+        {
+            IVertex zu = m0.MinusZero.Instance.root.Get(false, "System\\Meta\\ZeroUML");
+
+            IVertex zt = m0.MinusZero.Instance.root.Get(false, "System\\Meta\\ZeroTypes");
+
+            IVertex bv = m0.MinusZero.Instance.root.Get(false, "System\\Meta\\Base\\Vertex");
+
+            IVertex f = baseVertex.AddVertex(zu.Get(false, @"Class\Method"), name);
+
+            if (ret != null)
+                f.AddEdge(zu.Get(false, "Function\\Output"), zt.Get(false, ret));
+
+            foreach (TypeName tn in pars)
+            {
+                IVertex ip = f.AddVertex(zu.Get(false, "Method\\InputParameter"), tn.Name);
+
+                ip.AddEdge(bv.Get(false, "$EdgeTarget"), zt.Get(false, tn.Type));
+                ip.AddVertex(bv.Get(false, "$MinCardinality"), tn.MinCardinality);
+                ip.AddVertex(bv.Get(false, "$MaxCardinality"), tn.MaxCardinality);
+            }
+
+            GraphUtil.AddDotNetEndPoint(f, typeName, methodName);
+        }
+    }
+}

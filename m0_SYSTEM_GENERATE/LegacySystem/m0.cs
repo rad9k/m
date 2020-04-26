@@ -4485,7 +4485,7 @@ namespace m0
             return store;
         }
 
-        private void AddFastAccessVertexes()
+        public void AddFastAccessVertexes()
         {
             EdgeTarget = LegacySystem.Graph.EasyVertex.Get(Root, false, @"System\Meta\Base\Vertex\$EdgeTarget");
             Is = LegacySystem.Graph.EasyVertex.Get(Root, false, @"System\Meta\Base\Vertex\$Is");

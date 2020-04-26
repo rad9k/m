@@ -55,6 +55,12 @@ namespace m0_SYSTEM_GENERATE
             
             IVertex system = GeneralUtil.CreateM0AndMoveEdgesIntoIt(@"system.m0", System, 1);
 
+            LegacySystem_MinusZero.Instance.AddFastAccessVertexes(); // after save need to update
+
+            //
+
+
+
             print("* System saved to \"system.m0\"");
 
             //
