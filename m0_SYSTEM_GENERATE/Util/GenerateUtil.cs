@@ -63,6 +63,8 @@ namespace m0_SYSTEM_GENERATE.Util
 
             IVertex f = baseVertex.AddVertex(zu.Get(false, "Function"), name);
 
+            f.AddEdge(m0.MinusZero.Instance.Is, zu.Get(false, "Function"));
+
             if (ret != null)
                 f.AddEdge(zu.Get(false, "Function\\Output"), zt.Get(false, ret));
 
@@ -91,6 +93,8 @@ namespace m0_SYSTEM_GENERATE.Util
             IVertex bv = m0.MinusZero.Instance.root.Get(false, "System\\Meta\\Base\\Vertex");
 
             IVertex f = baseVertex.AddVertex(zu.Get(false, @"Class\Method"), name);
+
+            f.AddEdge(m0.MinusZero.Instance.Is, zu.Get(false, @"Class\Method"));
 
             if (ret != null)
                 f.AddEdge(zu.Get(false, "Function\\Output"), zt.Get(false, ret));

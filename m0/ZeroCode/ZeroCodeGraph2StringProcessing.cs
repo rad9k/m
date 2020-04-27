@@ -92,9 +92,9 @@ namespace m0.ZeroCode
             //if (GeneralUtil.CompareStrings(v.Value, "$Empty")) //XXX
             //  return;
 
-            s.Append(v.Value.ToString()); // XXX
+            //s.Append(v.Value.ToString()); // XXX
 
-            //s.Append(ZeroCodeCommon.stringToPossiblyEscapedString(dict, v.Value.ToString()));
+            s.Append(ZeroCodeCommon.stringToPossiblyEscapedString(dict, v.Value.ToString()));
         }
 
         public static string GetStringFromEdgesList(DictionariesForFormalTextLanguage dict, List<IEdge> edgesList, bool isImportMeta)
@@ -151,7 +151,8 @@ namespace m0.ZeroCode
                     }
 
                     if(VertexOperations.IsMetaAndToVertexEnoughToIdentifyEdge(e.From, e.Meta, e.To))
-                        s.Append(possibleMetaSeparator + ZeroCodeCommon.stringToPossiblyEscapedString(dict, toAppend.ToString()));
+                        //s.Append(possibleMetaSeparator + ZeroCodeCommon.stringToPossiblyEscapedString(dict, toAppend.ToString()));
+                        s.Append(possibleMetaSeparator + toAppend.ToString());
                     else
                     {
                         int pos = 0;
@@ -181,7 +182,8 @@ namespace m0.ZeroCode
                             pos++;
                         } while (tv != e.To);
 
-                        s.Append(possibleMetaSeparator + ZeroCodeCommon.stringToPossiblyEscapedString(dict, toAppend.ToString()) + dict.SetIndexPrefix + "\"" + pos +"\"" + dict.SetIndexPostfix);
+                        //s.Append(possibleMetaSeparator + ZeroCodeCommon.stringToPossiblyEscapedString(dict, toAppend.ToString()) + dict.SetIndexPrefix + "\"" + pos +"\"" + dict.SetIndexPostfix);
+                        s.Append(possibleMetaSeparator + toAppend.ToString() + dict.SetIndexPrefix + "\"" + pos + "\"" + dict.SetIndexPostfix);
                     }
                 }    
 
