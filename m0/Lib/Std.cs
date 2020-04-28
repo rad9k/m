@@ -141,7 +141,7 @@ namespace m0.Lib
 
             IList<IEdge> inputList = GraphUtil.GetQueryOut(stack, "input", null);
 
-            IVertex fromVertex = GraphUtil.GetQueryOutFirst(stack, "from", null);
+            /*IVertex fromVertex = GraphUtil.GetQueryOutFirst(stack, "from", null);
             IVertex toVertex = GraphUtil.GetQueryOutFirst(stack, "to", null);
 
             if (fromVertex == null || toVertex == null)
@@ -152,9 +152,14 @@ namespace m0.Lib
 
             if (_from == null || _to == null)
                 return exe.stack;
+                */
+            bool isNull=false;
 
-            int from = (int)_from;
-            int to = (int)_to;
+            int from = LibUtil.GetIntFromStack(stack, "from", ref isNull);
+            int to = LibUtil.GetIntFromStack(stack, "to", ref isNull);
+
+            if (isNull)
+                return exe.stack;
 
             INoInEdgeInOutVertexVertex newStack = InstructionHelpers.CreateStack();
 

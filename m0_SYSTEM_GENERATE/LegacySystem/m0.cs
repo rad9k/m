@@ -193,6 +193,14 @@ namespace m0
                 null,
                 Empty);
 
+            LegacySystem.Graph.EasyVertex.Get(sm, false, @"Base\$$ImportDirect").AddEdge(
+                LegacySystem.Graph.EasyVertex.Get(sm, false, @"Base\Vertex\$IsLink"),
+                 Empty);
+
+            LegacySystem.Graph.EasyVertex.Get(sm, false, @"Base\$$ImportDirectMeta").AddEdge(
+                LegacySystem.Graph.EasyVertex.Get(sm, false, @"Base\Vertex\$IsLink"),
+                Empty);
+
             LegacySystem.Graph.EasyVertex.Get(sm,false, @"Presentation\$Hide").AddEdge(
                 LegacySystem.Graph.EasyVertex.Get(sm,false, @"Base\Vertex\$EdgeTarget"), 
                 LegacySystem.Graph.EasyVertex.Get(sm,false, @"Base\Vertex"));

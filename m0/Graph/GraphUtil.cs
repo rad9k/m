@@ -660,6 +660,19 @@ namespace m0.Graph
             return null;
         }
 
+        static public int GetIntegerValue(IVertex Vertex, ref bool isNull)
+        {
+            int? ret = GetIntegerValue(Vertex);
+
+            if (ret == null)
+            {
+                isNull = true;
+                return 0;
+            }
+
+            return (int)ret;
+        }
+
         static public decimal? GetDecimalValue(IVertex Vertex)
         {
             if (Vertex != null && Vertex.Value != null)
@@ -684,7 +697,20 @@ namespace m0.Graph
             }
             return null;
         }
-        
+
+        static public decimal GetDecimalValue(IVertex Vertex, ref bool isNull)
+        {
+            decimal? ret = GetDecimalValue(Vertex);
+
+            if (ret == null)
+            {
+                isNull = true;
+                return 0;
+            }
+
+            return (decimal)ret;
+        }
+
         static public double? GetDoubleValue(IVertex Vertex)
         {
             if (Vertex != null && Vertex.Value != null)
@@ -708,7 +734,20 @@ namespace m0.Graph
                 catch (Exception e) { }
             }
             return null;
-        }        
+        }
+
+        static public double GetDoubleValue(IVertex Vertex, ref bool isNull)
+        {
+            double? ret = GetDoubleValue(Vertex);
+
+            if (ret == null)
+            {
+                isNull = true;
+                return 0;
+            }
+
+            return (double)ret;
+        }
 
         static public void CopyEdges(IVertex source, IVertex destination)
         {
