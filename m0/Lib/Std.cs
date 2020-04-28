@@ -155,8 +155,8 @@ namespace m0.Lib
                 */
             bool isNull=false;
 
-            int from = LibUtil.GetIntFromStack(stack, "from", ref isNull);
-            int to = LibUtil.GetIntFromStack(stack, "to", ref isNull);
+            int from = LibUtil.GetIntFromVertex(stack, "from", ref isNull);
+            int to = LibUtil.GetIntFromVertex(stack, "to", ref isNull);
 
             if (isNull)
                 return exe.stack;

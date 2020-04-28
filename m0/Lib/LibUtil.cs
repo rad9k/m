@@ -10,21 +10,21 @@ namespace m0.Lib
 {
     public class LibUtil
     {
-        public static int GetIntFromStack(IVertex baseVertex, string name, ref bool isNull)
+        public static int GetIntFromVertex(IVertex baseVertex, string name, ref bool isNull)
         {
             IVertex v = GraphUtil.GetQueryOutFirst(baseVertex, name, null);
 
             return GraphUtil.GetIntegerValue(v, ref isNull);
         }
 
-        public static decimal GetDecimalFromStack(IVertex baseVertex, string name, ref bool isNull)
+        public static decimal GetDecimalFromVertex(IVertex baseVertex, string name, ref bool isNull)
         {
             IVertex v = GraphUtil.GetQueryOutFirst(baseVertex, name, null);
 
             return GraphUtil.GetDecimalValue(v, ref isNull);
         }
 
-        public static double GetDoubleFromStack(IVertex baseVertex, string name, ref bool isNull)
+        public static double GetDoubleFromVertex(IVertex baseVertex, string name, ref bool isNull)
         {
             IVertex v = GraphUtil.GetQueryOutFirst(baseVertex, name, null);
 

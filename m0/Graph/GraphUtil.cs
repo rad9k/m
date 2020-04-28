@@ -1054,12 +1054,16 @@ namespace m0.Graph
 
         static void GetSubGraphEdges_Reccurent(IEdge baseEdge, List<IVertex> visited, List<IEdge> edges)
         {
-            visited.Add(baseEdge.To);
             edges.Add(baseEdge);
 
-            foreach (IEdge e in baseEdge.To.OutEdges)
-                if (!visited.Contains(e.To) && !VertexOperations.IsLink(e))
+            if (!visited.Contains(baseEdge.To) && !VertexOperations.IsLink(baseEdge))
+            {
+                visited.Add(baseEdge.To);
+
+                foreach (IEdge e in baseEdge.To.OutEdges)
                     GetSubGraphEdges_Reccurent(e, visited, edges);
+
+            }
         }
 
         static public List<IVertex> GetSubGraphWithLinksAsListButExcludeRoot(IVertex iterationRoot)

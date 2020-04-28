@@ -1,5 +1,6 @@
 ﻿using m0.Foundation;
 using m0.Graph;
+using m0.Lib;
 using m0.ZeroCode.Helpers;
 using System;
 using System.Collections.Generic;
@@ -15,16 +16,34 @@ namespace m0_COMPOSER.Lib
         {
             INoInEdgeInOutVertexVertex stack = exe.stack;
 
-            /*IList<IEdge> inputList = GraphUtil.GetQueryOut(stack, "input", null);
+            IVertex noteV = GraphUtil.GetQueryOutFirst(stack, "note", null);
 
-            StringBuilder sb = new StringBuilder();
+            if (noteV == null)
+                return stack;
 
-            foreach (IEdge e in inputList)
-                sb.Append(e.To.ToString());
+            bool isNull = false;
 
-            INoInEdgeInOutVertexVertex newStack = InstructionHelpers.CreateStack();
+            int channel = LibUtil.GetIntFromVertex(stack, "Channel", ref isNull);
 
-            newStack.AddVertex(null, sb.ToString());*/
+            IVertex device = GraphUtil.GetQueryOutFirst(stack, "Device", null);
+
+            if (device == null)
+                return stack;
+
+            int deviceNumber = LibUtil.GetIntFromVertex(device, "DeviceNumber", ref isNull);
+
+            int octave = LibUtil.GetIntFromVertex(noteV, "Octave", ref isNull);
+            int note = LibUtil.GetIntFromVertex(noteV, "Note", ref isNull);
+            int velocity = LibUtil.GetIntFromVertex(noteV, "Velocity", ref isNull);
+
+            if (isNull)
+                return stack;
+
+            int noteFinal = 12 + note + (octave * 12);
+
+            Midi.WinmmMidiLib.NoteOn(deviceNumber, channel, noteFinal, velocity);
+
+
 
             return stack;
         }
