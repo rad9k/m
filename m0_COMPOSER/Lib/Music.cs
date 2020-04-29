@@ -12,6 +12,11 @@ namespace m0_COMPOSER.Lib
 {
     public class Music
     {
+        static int toNoteNumber(int octave, int note)
+        {
+            return 12 + note + (octave * 12);
+        }
+
         public static INoInEdgeInOutVertexVertex NoteOn(IExecution exe)
         {
             INoInEdgeInOutVertexVertex stack = exe.stack;
@@ -39,11 +44,144 @@ namespace m0_COMPOSER.Lib
             if (isNull)
                 return stack;
 
-            int noteFinal = 12 + note + (octave * 12);
+            int noteNumber = toNoteNumber(octave, note);
 
-            Midi.WinmmMidiLib.NoteOn(deviceNumber, channel, noteFinal, velocity);
+            Midi.WinmmMidiLib.NoteOn(deviceNumber, channel, noteNumber, velocity);
+
+            return stack;
+        }
+
+        public static INoInEdgeInOutVertexVertex NoteOff(IExecution exe)
+        {
+            INoInEdgeInOutVertexVertex stack = exe.stack;
+
+            IVertex noteV = GraphUtil.GetQueryOutFirst(stack, "note", null);
+
+            if (noteV == null)
+                return stack;
+
+            bool isNull = false;
+
+            int channel = LibUtil.GetIntFromVertex(stack, "Channel", ref isNull);
+
+            IVertex device = GraphUtil.GetQueryOutFirst(stack, "Device", null);
+
+            if (device == null)
+                return stack;
+
+            int deviceNumber = LibUtil.GetIntFromVertex(device, "DeviceNumber", ref isNull);
+
+            int octave = LibUtil.GetIntFromVertex(noteV, "Octave", ref isNull);
+            int note = LibUtil.GetIntFromVertex(noteV, "Note", ref isNull);
+            int velocity = LibUtil.GetIntFromVertex(noteV, "Velocity", ref isNull);
+
+            if (isNull)
+                return stack;
+
+            int noteNumber = toNoteNumber(octave, note);
+
+            Midi.WinmmMidiLib.NoteOff(deviceNumber, channel, noteNumber, velocity);
+
+            return stack;
+        }
+
+        public static INoInEdgeInOutVertexVertex ControlChange(IExecution exe)
+        {
+            INoInEdgeInOutVertexVertex stack = exe.stack;
+
+            bool isNull = false;
+
+            int ccNumber = LibUtil.GetIntFromVertex(stack, "ccNumber", ref isNull);
+
+            int ccValue = LibUtil.GetIntFromVertex(stack, "ccValue", ref isNull);
+
+            int channel = LibUtil.GetIntFromVertex(stack, "Channel", ref isNull);
+
+            IVertex device = GraphUtil.GetQueryOutFirst(stack, "Device", null);
+
+            if (device == null)
+                return stack;
+
+            int deviceNumber = LibUtil.GetIntFromVertex(device, "DeviceNumber", ref isNull);
+
+            if (isNull)
+                return stack;
+
+            Midi.WinmmMidiLib.ControlChange(deviceNumber, channel, ccNumber, ccValue);
+
+            return stack;
+        }
+
+        public static INoInEdgeInOutVertexVertex ProgramChange(IExecution exe)
+        {
+            INoInEdgeInOutVertexVertex stack = exe.stack;            
+
+            bool isNull = false;
+
+            int programNumber = LibUtil.GetIntFromVertex(stack, "programNumber", ref isNull);
+
+            int channel = LibUtil.GetIntFromVertex(stack, "Channel", ref isNull);
+
+            IVertex device = GraphUtil.GetQueryOutFirst(stack, "Device", null);
+
+            if (device == null)
+                return stack;
+
+            int deviceNumber = LibUtil.GetIntFromVertex(device, "DeviceNumber", ref isNull);            
+
+            if (isNull)
+                return stack;            
+
+            Midi.WinmmMidiLib.ProgramChange(deviceNumber, channel, programNumber);
+
+            return stack;
+        }
+
+        public static INoInEdgeInOutVertexVertex PitchBend(IExecution exe)
+        {
+            INoInEdgeInOutVertexVertex stack = exe.stack;            
+
+            bool isNull = false;
+
+            int value = LibUtil.GetIntFromVertex(stack, "value", ref isNull);
+
+            int channel = LibUtil.GetIntFromVertex(stack, "Channel", ref isNull);
+
+            IVertex device = GraphUtil.GetQueryOutFirst(stack, "Device", null);
+
+            if (device == null)
+                return stack;
+
+            int deviceNumber = LibUtil.GetIntFromVertex(device, "DeviceNumber", ref isNull);            
+
+            if (isNull)
+                return stack;
+
+            Midi.WinmmMidiLib.PitchBend(deviceNumber, channel, value);
+
+            return stack;
+        }
+
+        public static INoInEdgeInOutVertexVertex Silent(IExecution exe)
+        {
+            INoInEdgeInOutVertexVertex stack = exe.stack;            
+
+            bool isNull = false;
+
+            int channel = LibUtil.GetIntFromVertex(stack, "Channel", ref isNull);
+
+            IVertex device = GraphUtil.GetQueryOutFirst(stack, "Device", null);
+
+            if (device == null)
+                return stack;
+
+            int deviceNumber = LibUtil.GetIntFromVertex(device, "DeviceNumber", ref isNull);            
+
+            if (isNull)
+                return stack;
 
 
+            Midi.WinmmMidiLib.Silent(deviceNumber, channel);            
 
             return stack;
         }
