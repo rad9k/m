@@ -584,9 +584,16 @@ namespace m0.Lib
 
             INoInEdgeInOutVertexVertex newStack = InstructionHelpers.CreateStack();
 
-
-            for (int x = minValue; x <= maxValue; x++)
-                newStack.AddVertex(null, x);
+            if (maxValue > minValue)
+            {
+                for (int x = minValue; x <= maxValue; x++)
+                    newStack.AddVertex(null, x);
+            }
+            else
+            {
+                for (int x = minValue; x >= maxValue; x--)
+                    newStack.AddVertex(null, x);
+            }
 
             return newStack;
         }
@@ -632,9 +639,16 @@ namespace m0.Lib
 
             INoInEdgeInOutVertexVertex newStack = InstructionHelpers.CreateStack();
 
-
-            for (double x = minValue; x <= maxValue; x+=stepValue)
-                newStack.AddVertex(null, x);
+            if (maxValue > minValue)
+            {
+                for (double x = minValue; x <= maxValue; x += stepValue)
+                    newStack.AddVertex(null, x);
+            }
+            else
+            {
+                for (double x = minValue; x >= maxValue; x -= stepValue)
+                    newStack.AddVertex(null, x);
+            }
 
             return newStack;
         }

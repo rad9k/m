@@ -2733,15 +2733,18 @@ namespace m0.ZeroCode
             //  if (!GeneralUtil.CompareStrings(e.Meta, "$ParseRoot"))
             //baseVertex.DeleteEdge(e);
 
+            IList<IVertex> toDestroyVertexList = new List<IVertex>();
+
             foreach (IEdge e in baseVertex.ToList())
                 if (!GeneralUtil.CompareStrings(e.Meta, "$ParseRoot"))
                     foreach (IEdge ee in GraphUtil.GetSubGraphEdgesAsList(e))
-                    {
                         if (VertexOperations.IsLink(ee))
                             ee.From.DeleteEdge(ee);
                         else
-                            ee.To.Destroy();
-                    }
+                            toDestroyVertexList.Add(ee.To);
+
+            foreach (IVertex v in toDestroyVertexList)
+                v.Destroy();
         }
 
         void MoveAllParseRootEdgesToBaseVertex()

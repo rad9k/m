@@ -264,8 +264,9 @@ namespace m0.ZeroUML.Instructions
                 toAdd.From.DeleteEdgesList(localLeft.Value);
 
                 foreach (IEdge e in rightExecuteResult)
-                    if (leftPropagateToStackExpression && exe.stack == exe.newVertexCreationSpace) // left expression was separated from exe.stack
-                       exe.stack.AddEdge(toAdd.Meta, e.To);
+                    //if (leftPropagateToStackExpression && exe.stack == exe.newVertexCreationSpace) // left expression was separated from exe.stack
+                    if (leftPropagateToStackExpression /*&& exe.stack == exe.newVertexCreationSpace*/) // XXX EXPERIMENTA !!!! for issue 84
+                        exe.stack.AddEdge(toAdd.Meta, e.To);
                     else
                         toAdd.From.AddEdge(toAdd.Meta, e.To);
             }

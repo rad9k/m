@@ -1,6 +1,5 @@
 ﻿!!!!!!!!!!!!!!!!!!!!!!!!!!!!! TO DO:
 
-83. 'LocalComputer:my'
 ??????
 
 59. copy $Empty? [11] 
@@ -22,6 +21,7 @@
 
 <><><> FUTURE 1
 
+83. @@.[] calls
 81. decimal support in jsonstore
 80. proper work for UIWpf.SetWindowPosition on second monitor
 78."Y"
@@ -130,3 +130,6 @@
 80. disapearing code from m0
 83. IVerted.delete
 82. simple garbage collection in code parser [83]
+83. 'LocalComputer:my'
+84. foreach "noteCount" in @@Sequence["0","11"]
+			"note" :: new @@Note
