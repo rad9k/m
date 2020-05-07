@@ -10,3 +10,9 @@
 			note\Velocity = "127"
 			midiOut.NoteOn[note]
 			@@Sleep["10"]
+
+"seqPerf"	
+	import @System\Lib\Std direct meta
+	variable "X" @VertexType
+	foreach "x" in @@Sequence["0","10000"]
+		X +< x

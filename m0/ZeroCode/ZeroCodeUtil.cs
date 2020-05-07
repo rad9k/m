@@ -72,7 +72,7 @@ namespace m0.ZeroCode
             return list;
         }
 
-        public static bool IsDolarMeta(IEdge e)
+        public static bool ShouldNotExecute(IEdge e)
         {
             if (!(e.Meta.Value is string))
                 return false;
@@ -82,7 +82,16 @@ namespace m0.ZeroCode
             if (metaValue == "$Empty")
                 return false;
 
+            if (metaValue == "Set")
+            {
+                int x = 0;
+            }
+                
+
             if (metaValue.Length >= 1 && metaValue[0] == '$')
+                return true;
+
+            if (GraphUtil.GetQueryOutCount(e.Meta, "$$NoSequentialExecution", null) > 0)
                 return true;
 
             return false;

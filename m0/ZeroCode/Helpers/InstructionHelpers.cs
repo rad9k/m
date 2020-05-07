@@ -172,7 +172,7 @@ namespace m0.ZeroCode.Helpers
 
             foreach (IEdge e in baseVertex)
                 //stack = exe.ExecuteInstruction(stack, e.To); // XXX another interesting processing approach
-                if (!ZeroCodeUtil.IsDolarMeta(e))
+                if (!ZeroCodeUtil.ShouldNotExecute(e))
                 { // XXX in some cases it might not work - instruction with meta begginning with $ will not be executed. nor its children
                     bool local_isStackFrameReturn;
 
