@@ -7,7 +7,7 @@
 
 <><><> FUTURE 0.5
 
-82. method / dedicated class form hidding support
+82. method / dedicated class form hidding support ???
 64. child vertex short names support in ||{}/ X+<||{} for @@ 
 36. ZeroUML diagramming update
 37. pre/post text processing + if/test/case/default nextout?
@@ -21,6 +21,10 @@
 
 <><><> FUTURE 1
 
+85. X +< 'in'
+84. "a"::{
+		"b":: = "X"
+	}
 83. @@.[] calls
 81. decimal support in jsonstore
 80. proper work for UIWpf.SetWindowPosition on second monitor
