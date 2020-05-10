@@ -35,6 +35,8 @@ namespace m0.UIWpf.Controls
 
             AddSeparator();
 
+            AddOpenAs();
+
             AddOpenAsSpecial();
 
             AddSeparator();
@@ -270,27 +272,30 @@ namespace m0.UIWpf.Controls
             this.Items.Add(Execute);
         }
 
-        void AddOpenAsSpecial()
+        void AddOpenAs()
         {
             MenuItem OpenVisualiser = createMenuItem("Open As");
-            
+
             this.Items.Add(OpenVisualiser);
 
             // IVertex vislist = root.GetAll(false, @"System\Meta\Visualiser\"); BaseEdge ones currently not supported
 
-            IVertex vislist = root.GetAll(false, @"System\Meta\Visualiser\Class:{$Inherits:HasBaseEdge}");
+            IVertex vislist = root.GetAll(false, @"System\Meta\Visualiser\Class:{$Inherits:HasBaseEdge,BaseEdgeTarget:Any}");
 
             foreach (IEdge vis in vislist)
             {
                 MenuItem v = createMenuItem(vis.To.Value.ToString());
-                
+
                 v.Tag = vis.To;
 
                 v.Click += OnOpenVisualiser;
-                
+
                 OpenVisualiser.Items.Add(v);
             }
+        }
 
+        void AddOpenAsSpecial()
+        { 
             MenuItem Special = createMenuItem("Open special");
 
             this.Items.Add(Special);
@@ -299,6 +304,8 @@ namespace m0.UIWpf.Controls
 
             MenuItem OpenMetaVisualiser = createMenuItem("Open Visualiser for Meta");
             Special.Items.Add(OpenMetaVisualiser);
+
+            IVertex vislist = root.GetAll(false, @"System\Meta\Visualiser\Class:{$Inherits:HasBaseEdge,BaseEdgeTarget:Any}");
 
             foreach (IEdge vis in vislist)
             {
@@ -345,7 +352,7 @@ namespace m0.UIWpf.Controls
 
             /////////////////////// selected synchronised
 
-            vislist = root.GetAll(false, @"System\Meta\Visualiser\Class:{$Inherits:HasSelectedEdges}");
+            vislist = root.GetAll(false, @"System\Meta\Visualiser\Class:{$Inherits:HasSelectedEdges,BaseEdgeTarget:Any}");
 
             MenuItem OpenVisualiserSelectedSelected = createMenuItem("Open SelectedEdges<>SelectedEdges synchronised Visualiser");
             Special.Items.Add(OpenVisualiserSelectedSelected);            

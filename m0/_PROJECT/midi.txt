@@ -16,3 +16,46 @@
 	variable "X" @VertexType
 	foreach "x" in @@Sequence["0","10000"]
 		X +< x
+
+
+		BaseEdgeTarget: Any/Dedicated
+
+ControlChange
+
+Sequence
+NoteOn
+
+MusicSpace
+
+
+HasLength
+	Length:Integer
+
+Event
+	TriggerTime:Integer
+
+CC
+
+CCEvent
+
+Note
+
+NoteEvent
+	-HasLength
+	-OnTime
+	-OffTime
+
+Sequence: HasLength
+	Event:Event
+
+Song
+	Track:Track
+
+Track
+	Name:String
+	Output:MidiOutput
+	SequenceReference:SequenceReference
+
+SequenceEvent:Event
+	Sequence:Sequence
+	

@@ -41,6 +41,10 @@ namespace m0_SYSTEM_GENERATE.Music
 
             //
 
+            IVertex MusicSpace = GraphUtil.AddClass(music, "MidiOutput");
+
+            //
+
             IVertex Pitch = GraphUtil.AddClass(music, "Pitch");
 
             GraphUtil.AddAttribute(Pitch, "Octave", Integer, 1, 1);
