@@ -7,6 +7,27 @@
 
 <><><> FUTURE 0.5
 
+86. inheritance supprort in class keyword
+93. enum keyword
+87. $IsNotLink for $EdgeTaret we want to be inplace
+88. should $EdgeTarget always generate link?
+89. two times
+	class "DotNetEndPoint"
+		attribute "TypeName" @String
+		attribute "MethodName" @String
+		<@$Inherits :: @CallableEndPoint>
+		<@$Inherits :: @CallableEndPoint>
+	class "Edge"
+		association "From" @VertexType "0":"1"
+		association "Meta" @VertexType "1":"1"
+		association "To" @VertexType "1":"1"
+		<@$DefaultViewVisualiser :: @Edge\$DefaultViewVisualiser:Edge>
+		<@$DefaultEditVisualiser :: @Edge\$DefaultViewVisualiser:Edge>
+		<@$DefaultViewVisualiser :: @Edge\$DefaultViewVisualiser:Edge>
+		<@$DefaultEditVisualiser :: @Edge\$DefaultViewVisualiser:Edge>
+90. generation / parse working for ZeroTypes (all the attributes / assoc / agreg and everything!)
+91. enum visualiser check
+92. context menu better (for example if there are multiple specyfic visualisers)
 82. method / dedicated class form hidding support ???
 64. child vertex short names support in ||{}/ X+<||{} for @@ 
 36. ZeroUML diagramming update
@@ -21,6 +42,7 @@
 
 <><><> FUTURE 1
 
+93. icons
 85. X +< 'in'
 84. "a"::{
 		"b":: = "X"
@@ -30,7 +52,7 @@
 80. proper work for UIWpf.SetWindowPosition on second monitor
 78."Y"
 	"A"
-	<@$Empty::@A> >> "A"
+	<@$Empty::@A> >> "A"/ now @Empty ????
 79. escape sequences in import regexpes
 77. ZeroCodeCommon.IsSpecialCharacter might relay on allKeywordsSubstringsDictionary also (now it is turned off)
 68. $Empty in edges in parse / generate. is it ok?

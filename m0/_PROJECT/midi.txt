@@ -18,14 +18,10 @@
 		X +< x
 
 
-		BaseEdgeTarget: Any/Dedicated
+BaseEdgeTarget: Any/Dedicated
 
 ControlChange
 
-Sequence
-NoteOn
-
-MusicSpace
 
 
 HasLength
@@ -34,28 +30,51 @@ HasLength
 Event
 	TriggerTime:Integer
 
+History
+	*Event:Event
+
 CC
+	Number
+	Value
 
 CCEvent
 
 Note
 
-NoteEvent
-	-HasLength
+NoteEvent:Note, Event
 	-OnTime
 	-OffTime
 
-Sequence: HasLength
-	Event:Event
+Sequence: HasLength, History
+	IsDrum:Boolean 0,1
+
 
 Song
-	Track:Track
+	*Track:Track
+	Input:MidiInput
+	RecordingTrack:Track 0,1
+	Tempo
+	
+	methods:
+	Record
+	Play
+	Stop
+	Pause
+	MoveTo
 
 Track
 	Name:String
 	Output:MidiOutput
-	SequenceReference:SequenceReference
+	*SequenceReference:SequenceReference
 
 SequenceEvent:Event
 	Sequence:Sequence
+
+
+MusicSpace
+	*Sequence
+	*Song
+
+SequenceOperator:Sequence
+	InputSequene:Sequence 0,-1
 	
