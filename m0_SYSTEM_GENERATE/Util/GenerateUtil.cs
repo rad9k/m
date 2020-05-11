@@ -73,12 +73,12 @@ namespace m0_SYSTEM_GENERATE.Util
                 IVertex ip = f.AddVertex(zu.Get(false, "Function\\InputParameter"), tn.Name);
 
                 if(tn.Type !=null)
-                    ip.AddEdge(bv.Get(false, "$EdgeTarget"), zt.Get(false, tn.Type));
+                    ip.AddEdge(bv.Get(false, "$VertexTarget"), zt.Get(false, tn.Type));
                 else
-                    ip.AddEdge(bv.Get(false, "$EdgeTarget"), tn.TypeVertex);
+                    ip.AddEdge(bv.Get(false, "$VertexTarget"), tn.TypeVertex);
 
-                ip.AddVertex(bv.Get(false, "$MinCardinality"), tn.MinCardinality);
-                ip.AddVertex(bv.Get(false, "$MaxCardinality"), tn.MaxCardinality);
+              //  ip.AddVertex(bv.Get(false, "$MinCardinality"), tn.MinCardinality);
+              //  ip.AddVertex(bv.Get(false, "$MaxCardinality"), tn.MaxCardinality);
             }
 
             GraphUtil.AddDotNetEndPoint(f, typeName, methodName);
@@ -104,12 +104,12 @@ namespace m0_SYSTEM_GENERATE.Util
                 IVertex ip = f.AddVertex(zu.Get(false, "Class\\Method\\InputParameter"), tn.Name);
 
                 if(tn.Type !=null)
-                    ip.AddEdge(bv.Get(false, "$EdgeTarget"), zt.Get(false, tn.Type));
+                    ip.AddEdge(bv.Get(false, "$VertexTarget"), zt.Get(false, tn.Type));
                 else
-                    ip.AddEdge(bv.Get(false, "$EdgeTarget"), tn.TypeVertex);
+                    ip.AddEdge(bv.Get(false, "$VertexTarget"), tn.TypeVertex);
 
-                ip.AddVertex(bv.Get(false, "$MinCardinality"), tn.MinCardinality);
-                ip.AddVertex(bv.Get(false, "$MaxCardinality"), tn.MaxCardinality);
+                //ip.AddVertex(bv.Get(false, "$MinCardinality"), tn.MinCardinality);
+               // ip.AddVertex(bv.Get(false, "$MaxCardinality"), tn.MaxCardinality);
             }
 
             GraphUtil.AddDotNetEndPoint(f, typeName, methodName);

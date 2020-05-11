@@ -82,6 +82,8 @@ namespace m0.Graph
 
             a.AddEdge(r.Get(false, @"System\Meta\Base\Vertex\$EdgeTarget"), target);
 
+            a.AddEdge(r.Get(false, @"System\Meta\Base\Vertex\$IsAggregation"), MinusZero.Instance.Empty);
+
             a.AddVertex(r.Get(false, @"System\Meta\Base\Vertex\$MinCardinality"), MinCardinality);
 
             a.AddVertex(r.Get(false, @"System\Meta\Base\Vertex\$MaxCardinality"), MaxCardinality);
@@ -111,6 +113,8 @@ namespace m0.Graph
             a.AddEdge(MinusZero.Instance.Is, r.Get(false, @"System\Meta\ZeroUML\Class\Aggregation"));
 
             a.AddEdge(r.Get(false, @"System\Meta\Base\Vertex\$EdgeTarget"), target);
+
+            a.AddEdge(r.Get(false, @"System\Meta\Base\Vertex\$IsAggregation"), MinusZero.Instance.Empty);
 
             a.AddVertex(r.Get(false, @"System\Meta\Base\Vertex\$MinCardinality"), MinCardinality);
 

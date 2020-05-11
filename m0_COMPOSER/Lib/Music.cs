@@ -89,11 +89,15 @@ namespace m0_COMPOSER.Lib
         {
             INoInEdgeInOutVertexVertex stack = exe.stack;
 
+            IVertex controlChange = GraphUtil.GetQueryOutFirst(stack, "controlChange", null);
+
+            if (controlChange == null)
+                return stack;
+
             bool isNull = false;
 
-            int ccNumber = LibUtil.GetIntFromVertex(stack, "ccNumber", ref isNull);
-
-            int ccValue = LibUtil.GetIntFromVertex(stack, "ccValue", ref isNull);
+            int number = LibUtil.GetIntFromVertex(controlChange, "Number", ref isNull);
+            int value = LibUtil.GetIntFromVertex(controlChange, "Value", ref isNull);
 
             int channel = LibUtil.GetIntFromVertex(stack, "Channel", ref isNull);
 
@@ -107,7 +111,7 @@ namespace m0_COMPOSER.Lib
             if (isNull)
                 return stack;
 
-            Midi.WinmmMidiLib.ControlChange(deviceNumber, channel, ccNumber, ccValue);
+            Midi.WinmmMidiLib.ControlChange(deviceNumber, channel, number, value);
 
             return stack;
         }

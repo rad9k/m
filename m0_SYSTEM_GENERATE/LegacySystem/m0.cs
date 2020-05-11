@@ -249,6 +249,14 @@ namespace m0
             LegacySystem.Graph.EasyVertex.Get(sm, false, @"Base\Vertex\$IsAggregation").AddEdge(
                 LegacySystem.Graph.EasyVertex.Get(sm, false, @"*$EdgeTarget"),
                 LegacySystem.Graph.EasyVertex.Get(sm, false, @"Base\Vertex"));
+
+            LegacySystem.Graph.EasyVertex.Get(sm, false, @"Base\Vertex\$ExecutableEndPoint").AddEdge(
+              LegacySystem.Graph.EasyVertex.Get(sm, false, @"*$EdgeTarget"),
+              LegacySystem.Graph.EasyVertex.Get(sm, false, @"ZeroTypes\CallableEndPoint"));
+
+            LegacySystem.Graph.EasyVertex.Get(sm, false, @"Base\Vertex\$ExecutableEndPoint").AddEdge(
+                LegacySystem.Graph.EasyVertex.Get(sm, false, @"*$IsAggregation"),
+                Empty);
         }
 
         
@@ -2435,10 +2443,6 @@ namespace m0
             AddAttribute(FormalTextLanguage, "QuerySlash", 1, 1);            
 
             AddAttribute(FormalTextLanguage, "CodeViewTimeLinkKeywordPart", 0, -1);
-
-            LegacySystem.Graph.EasyVertex.Get(sm, false, @"Base\Vertex\$ExecutableEndPoint").AddEdge(
-                LegacySystem.Graph.EasyVertex.Get(sm, false, @"*$EdgeTarget"),
-                LegacySystem.Graph.EasyVertex.Get(sm, false, @"ZeroTypes\CallableEndPoint"));
 
             LegacySystem.Graph.EasyVertex.Get(sm, false, @"ZeroTypes\String").AddEdge(
                 LegacySystem.Graph.EasyVertex.Get(sm, false, @"*$Is"),
