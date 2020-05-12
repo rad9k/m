@@ -271,9 +271,9 @@ namespace m0.ZeroTypes
 
             ///
 
-            //IVertex children = metaVertex.GetAll(false, "{$MinCardinality:1}"); 
+            IVertex children = metaVertex.GetAll(false, "{$MinCardinality:1}"); 
 
-            IVertex children = metaVertex; // can use VertexOperations.GetChildEdges, but $DefaultValue: should be OK
+          //  IVertex children = metaVertex; // can use VertexOperations.GetChildEdges, but $DefaultValue: should be OK
 
             foreach (IEdge child in children)
             {
@@ -281,8 +281,8 @@ namespace m0.ZeroTypes
                     //if (child.To.Get(false, "$DefaultValue:")!=null)
                     nv.AddEdge(child.To, GraphUtil.GetQueryOutFirst(child.To, "$DefaultValue", null));
                     //nv.AddEdge(child.To, child.To.Get(false, "$DefaultValue:"));
-         //       else
-           //         nv.AddVertex(child.To, null);
+                else
+                    nv.AddVertex(child.To, null);
             }
 
             return nv;
