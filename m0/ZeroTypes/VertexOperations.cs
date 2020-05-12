@@ -271,18 +271,31 @@ namespace m0.ZeroTypes
 
             ///
 
-            IVertex children = metaVertex.GetAll(false, "{$MinCardinality:1}"); 
+          //  IVertex children = metaVertex.GetAll(false, "{$MinCardinality:1}"); 
 
-          //  IVertex children = metaVertex; // can use VertexOperations.GetChildEdges, but $DefaultValue: should be OK
+            IVertex children = metaVertex; // can use VertexOperations.GetChildEdges, but $DefaultValue: should be OK
 
             foreach (IEdge child in children)
             {
-                if (GraphUtil.ExistQueryOut(child.To, "$DefaultValue", null))
-                    //if (child.To.Get(false, "$DefaultValue:")!=null)
-                    nv.AddEdge(child.To, GraphUtil.GetQueryOutFirst(child.To, "$DefaultValue", null));
-                    //nv.AddEdge(child.To, child.To.Get(false, "$DefaultValue:"));
-                else
-                    nv.AddVertex(child.To, null);
+                bool canAdd = false;
+
+                IVertex MinCardinality = GraphUtil.GetQueryOutFirst(child.To, "$MinCardinality", null);
+
+                if (MinCardinality != null)
+                {
+                    if (MinCardinality.Value is String && ((String)MinCardinality.Value) == "1")
+                        canAdd = true;
+                    if (MinCardinality.Value is int && ((int)MinCardinality.Value) == 1)
+                        canAdd = true;
+                }
+
+                if(canAdd)
+                    if (GraphUtil.ExistQueryOut(child.To, "$DefaultValue", null))
+                        //if (child.To.Get(false, "$DefaultValue:")!=null)
+                        nv.AddEdge(child.To, GraphUtil.GetQueryOutFirst(child.To, "$DefaultValue", null));
+                        //nv.AddEdge(child.To, child.To.Get(false, "$DefaultValue:"));
+                    else
+                        nv.AddVertex(child.To, null);
             }
 
             return nv;

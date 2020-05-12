@@ -370,6 +370,9 @@ namespace m0.UIWpf.Visualisers
 
                 T value = Parse(bv.Value);
 
+                if(value==null)
+                    value = (T)bv.Value;
+
                 CreateComposite();
 
                 TextBox.Text = value.ToString();

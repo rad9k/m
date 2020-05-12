@@ -42,7 +42,14 @@ namespace m0.UIWpf
 
         public static Brush GetBrushFromColorVertex(IVertex colorVertex)
         {
-            if(colorVertex.Get(false, "Opacity:")==null)
+
+            if (GraphUtil.GetIntegerValue(colorVertex.Get(false, "Red:"))==null ||
+                GraphUtil.GetIntegerValue(colorVertex.Get(false, "Green:")) == null ||
+                GraphUtil.GetIntegerValue(colorVertex.Get(false, "Blue:")) == null)
+
+                return new SolidColorBrush(Colors.Black);
+
+            if (colorVertex.Get(false, "Opacity:")==null)
                 return new SolidColorBrush(Color.FromArgb(255,(byte)GraphUtil.GetIntegerValue(colorVertex.Get(false, "Red:"))
                     ,(byte)GraphUtil.GetIntegerValue(colorVertex.Get(false, "Green:"))
                     ,(byte)GraphUtil.GetIntegerValue(colorVertex.Get(false, "Blue:"))));
