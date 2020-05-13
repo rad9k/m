@@ -282,7 +282,7 @@ namespace m0.ZeroTypes
 
             foreach (IEdge child in children)
             {
-                bool canAdd = false ;
+                bool canAdd = false;
 
                 IVertex MinCardinality = GraphUtil.GetQueryOutFirst(child.To, "$MinCardinality", null);
 

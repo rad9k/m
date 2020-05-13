@@ -1257,9 +1257,9 @@ namespace m0.UIWpf.Visualisers.Diagram
 
             GraphUtil.CreateOrReplaceEdge(v, r.Get(false, @"System\Meta\Visualiser\DiagramInternal\DiagramItemBase\Definition"), DiagramItemDefinition);
 
-            //GraphUtil.CreateOrReplaceEdge(v, r.Get(false, @"System\Meta\ZeroTypes\HasBaseEdge\BaseEdge"), null);
+            //GraphUtil.CreateOrReplaceEdge(v, r.Get(false, @"System\Meta\ZeroTypes\HasBaseEdge\BaseEdge"), null); // NO
 
-            v.AddVertex(r.Get(false, @"System\Meta\ZeroTypes\HasBaseEdge\BaseEdge"), null);
+            //v.AddVertex(r.Get(false, @"System\Meta\ZeroTypes\HasBaseEdge\BaseEdge"), null); // NO
 
             if (v.Get(false, @"Definition:\DiagramItemVertex:") != null)
                 AddEdgesFromDefintion(v, v.Get(false, @"Definition:\DiagramItemVertex:"));
