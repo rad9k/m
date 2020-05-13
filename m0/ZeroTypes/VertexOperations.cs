@@ -253,6 +253,11 @@ namespace m0.ZeroTypes
 
         public static IVertex AddInstance(IVertex baseVertex,IVertex metaVertex, IVertex edgeVertex)
         {
+            if ((String)metaVertex.Value == "Edge")
+            {
+                int x = 0;
+            }
+
             IVertex nv;
 
             if (baseVertex != null)
@@ -277,7 +282,7 @@ namespace m0.ZeroTypes
 
             foreach (IEdge child in children)
             {
-                bool canAdd = false;
+                bool canAdd = false ;
 
                 IVertex MinCardinality = GraphUtil.GetQueryOutFirst(child.To, "$MinCardinality", null);
 
@@ -292,7 +297,7 @@ namespace m0.ZeroTypes
                 if(canAdd)
                     if (GraphUtil.ExistQueryOut(child.To, "$DefaultValue", null))
                         //if (child.To.Get(false, "$DefaultValue:")!=null)
-                        nv.AddEdge(child.To, GraphUtil.GetQueryOutFirst(child.To, "$DefaultValue", null));
+                        nv.AddVertex(child.To, GraphUtil.GetQueryOutFirst(child.To, "$DefaultValue", null).Value);
                         //nv.AddEdge(child.To, child.To.Get(false, "$DefaultValue:"));
                     else
                         nv.AddVertex(child.To, null);
