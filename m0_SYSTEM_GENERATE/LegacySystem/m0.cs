@@ -4554,6 +4554,23 @@ namespace m0
             DefaultComputer.AddEdge(r.Get(false, @"System\Meta\Base\Vertex\$EdgeTarget"), Computer);
         }
 
+        public void CreateDataUXColor()
+        {
+            IVertex r = MinusZero.Instance.root;
+
+            IVertex Data = r.Get(false, @"System\Data");
+
+            IVertex UX = Data.AddVertex(null, "UX");
+
+            IVertex Colors = UX.AddVertex(null, "Colors");
+
+            ColorType.AddColor(Colors, "White", 255, 255, 255, 0);
+            ColorType.AddColor(Colors, "Black", 0, 0, 0, 0);
+            ColorType.AddColor(Colors, "Red", 255, 0, 0, 0);
+            ColorType.AddColor(Colors, "Green", 0, 255, 0, 0);
+            ColorType.AddColor(Colors, "Blue", 0, 0, 255, 0);
+        }
+
         private void Initialize_PreParserReady()
         {
             LogLevel = -2;
@@ -4624,6 +4641,8 @@ namespace m0
 
 
             CreateSystemHardware();
+
+            CreateDataUXColor();
 
 
             AddIsAttribute("Attribute");
