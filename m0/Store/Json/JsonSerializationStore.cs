@@ -110,10 +110,17 @@ namespace m0.Store.Json
                 else
                     v._Identifier = jv.IdString;
 
-                if (jv.ValueString == null)
-                    v.Value = jv.ValueDouble;
-                else
+                if (jv.ValueString != null)
                     v.Value = jv.ValueString;
+
+                if (jv.ValueInt != null)
+                    v.Value = jv.ValueInt;
+
+                if (jv.ValueDouble != null)
+                    v.Value = jv.ValueDouble;
+
+                if (jv.ValueDecimal != null)
+                    v.Value = jv.ValueDecimal;
 
                 v._Store = this;
 
@@ -224,7 +231,9 @@ namespace m0.Store.Json
                             storeId.TypeName = kvp.Value.TypeName;
                         }
 
-            JSON.Serialize<JsonSerializationData>(data, writeStream);
+            Options o = new Options(false, true, false, DateTimeFormat.MicrosoftStyleMillisecondsSinceUnixEpoch, false);                
+            
+            JSON.Serialize<JsonSerializationData>(data, writeStream, o);
             
 
             writeStream.Close();
@@ -251,10 +260,19 @@ namespace m0.Store.Json
 
                 if (v.Value != null)
                 {
-                    if (v.Value is string)
-                        jv.ValueString = (string)v.Value;
-                    else
-                        jv.ValueDouble = Convert.ToDouble(v.Value); // :)
+                    if (v.Value is string)                    
+                        jv.ValueString = (string)v.Value;                                            
+                    //else
+                    //  jv.ValueDouble = Convert.ToDouble(v.Value); // :)
+
+                    if (v.Value is double)                    
+                        jv.ValueDouble = (double)v.Value;                                            
+
+                    if (v.Value is int)                   
+                        jv.ValueInt = (int)v.Value;                                            
+
+                    if (v.Value is decimal)                    
+                        jv.ValueDecimal = (decimal)v.Value;                                            
                 }
 
                 data.Vertices.Add(jv);

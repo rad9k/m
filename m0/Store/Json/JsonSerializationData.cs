@@ -22,12 +22,19 @@ namespace m0.Store.Json
         [JilDirective(Name = "Id", IsUnion = true)]
         public long IdLong;
 
-
+        
         [JilDirective(Name = "Value", IsUnion = true)]
         public string ValueString;
 
         [JilDirective(Name = "Value", IsUnion = true)]
-        public double ValueDouble;
+        public int? ValueInt;
+
+        [JilDirective(Name = "ValueDouble")]
+        public double? ValueDouble;
+
+        [JilDirective(Name = "ValueDecimal")]
+        public decimal? ValueDecimal;
+        
 
         public List<JsonEdge> Edges;
     }
