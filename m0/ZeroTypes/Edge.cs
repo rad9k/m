@@ -105,8 +105,6 @@ namespace m0.ZeroTypes
 
         static public void AddEdge(IVertex baseVertex, IVertex edge)
         {
-            IVertex r = MinusZero.Instance.Root;
-
             baseVertex.AddEdge(vEdge, edge);          
         }
 

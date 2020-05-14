@@ -300,7 +300,7 @@ namespace m0.ZeroTypes
                         nv.AddVertex(child.To, GraphUtil.GetQueryOutFirst(child.To, "$DefaultValue", null).Value);
                         //nv.AddEdge(child.To, child.To.Get(false, "$DefaultValue:"));
                     else
-                        nv.AddVertex(child.To, null);
+                        nv.AddVertex(child.To, null); // ? XXX
             }
 
             return nv;
