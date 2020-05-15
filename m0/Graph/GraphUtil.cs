@@ -72,7 +72,7 @@ namespace m0.Graph
             baseVertex.AddEdge(m0.MinusZero.Instance.Inherits, inherit);
         }
 
-        public static void AddAttribute(IVertex baseVertex, string attributeName, IVertex target, int MinCardinality, int MaxCardinality)
+        public static IVertex AddAttribute(IVertex baseVertex, string attributeName, IVertex target, int MinCardinality, int MaxCardinality)
         {
             IVertex r = MinusZero.Instance.root;
 
@@ -87,6 +87,8 @@ namespace m0.Graph
             a.AddVertex(r.Get(false, @"System\Meta\Base\Vertex\$MinCardinality"), MinCardinality);
 
             a.AddVertex(r.Get(false, @"System\Meta\Base\Vertex\$MaxCardinality"), MaxCardinality);
+
+            return a;
         }
 
         public static void AddAssociation(IVertex baseVertex, string attributeName, IVertex target, int MinCardinality, int MaxCardinality)

@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using static m0_SYSTEM_GENERATE.Util.GenerateUtil;
 
 using static m0_SYSTEM_GENERATE.Program;
+using m0.ZeroTypes;
 
 namespace m0_SYSTEM_GENERATE.Music
 {
@@ -24,6 +25,8 @@ namespace m0_SYSTEM_GENERATE.Music
 
         static IVertex music;
 
+        static IVertex data;
+
         public static void Create()
         {
             print("* creating Lib\\Music");
@@ -33,6 +36,65 @@ namespace m0_SYSTEM_GENERATE.Music
             IVertex lib = r.Get(false, @"System\Lib");
 
             music = lib.AddVertex(null, "Music");
+
+            AddClasses();
+
+            AddData();
+        }
+
+        private static void AddData()
+        {
+            IVertex r = m0.MinusZero.Instance.root;
+
+            data = music.AddVertex(null, "Data");
+
+            AddBasePitchSet();
+
+        }
+
+        static IVertex PitchSet;
+        static IVertex VisualisedPitch;
+
+        private static void AddBasePitchSet()
+        {
+            IVertex r = m0.MinusZero.Instance.root;
+
+            IVertex b=VertexOperations.AddInstance(data, PitchSet);
+
+            b.Value = "Base";
+
+            IVertex white = r.Get(false, @"System\Data\UX\Colors\White");
+            IVertex black = r.Get(false, @"System\Data\UX\Colors\Black");
+
+            for (int x = -1; x <= 9; x++) {
+                AddPitch(b, x, 0, "C" + x.ToString(), white);
+                AddPitch(b, x, 1, "C#" + x.ToString(), black);
+                AddPitch(b, x, 2, "D" + x.ToString(), white);
+                AddPitch(b, x, 3, "D#" + x.ToString(), black);
+                AddPitch(b, x, 4, "E" + x.ToString(), white);
+                AddPitch(b, x, 5, "F" + x.ToString(), white);
+                AddPitch(b, x, 6, "F#" + x.ToString(), black);
+                AddPitch(b, x, 7, "G" + x.ToString(), white);
+                AddPitch(b, x, 8, "G#" + x.ToString(), black);
+                AddPitch(b, x, 9, "A" + x.ToString(), white);
+                AddPitch(b, x, 10, "A#" + x.ToString(), black);
+                AddPitch(b, x, 11, "B" + x.ToString(), white);
+            }
+        }
+
+        private static void AddPitch(IVertex basePitch, int octave, int note, string name, IVertex color)
+        {
+            IVertex p = VertexOperations.AddInstance(basePitch, VisualisedPitch);
+
+            p.Value = name;
+
+            GraphUtil.SetVertexValue(p, VisualisedPitch.Get(false, "Octave"), octave);
+            GraphUtil.SetVertexValue(p, VisualisedPitch.Get(false, "Note"), note);
+            GraphUtil.CreateOrReplaceEdge(p, VisualisedPitch.Get(false, "Color"), color);
+        }
+
+        private static void AddClasses() {
+            IVertex r = m0.MinusZero.Instance.root;
 
             string type = "m0_COMPOSER.Lib.Music, m0_COMPOSER, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null";
 
@@ -56,7 +118,7 @@ namespace m0_SYSTEM_GENERATE.Music
 
             IVertex Event = GraphUtil.AddClass(music, "Event");
 
-            GraphUtil.AddAttribute(Event, "TriggerTime", Integer, 1, 1);
+            GraphUtil.AddAggregation(Event, "TriggerTime", Integer, 1, 1);
 
             // HISTORY
 
@@ -87,7 +149,7 @@ namespace m0_SYSTEM_GENERATE.Music
 
             // VISULISEDPICH
 
-            IVertex VisualisedPitch = GraphUtil.AddClass(music, "VisualisedPitch");
+            VisualisedPitch = GraphUtil.AddClass(music, "VisualisedPitch");
 
             GraphUtil.AddInherits(VisualisedPitch, Pitch);
             GraphUtil.AddAttribute(VisualisedPitch, "Name", String, 1, 1);
@@ -95,9 +157,9 @@ namespace m0_SYSTEM_GENERATE.Music
 
             // PICHSET
 
-            IVertex PitchSet = GraphUtil.AddClass(music, "PitchSet");
+            PitchSet = GraphUtil.AddClass(music, "PitchSet");
 
-            GraphUtil.AddAttribute(PitchSet, "Pitch", Pitch, 0, -1);
+            GraphUtil.AddAggregation(PitchSet, "Pitch", Pitch, 0, -1);
 
             // TIMESPANLEVEL
 
@@ -105,7 +167,7 @@ namespace m0_SYSTEM_GENERATE.Music
 
             GraphUtil.AddInherits(TimeSpanLevel, HasLenth);
             GraphUtil.AddAttribute(TimeSpanLevel, "Name", String, 1, 1);
-            GraphUtil.AddAttribute(TimeSpanLevel, "SubLevel", TimeSpanLevel, 0, -1);
+            GraphUtil.AddAggregation(TimeSpanLevel, "SubLevel", TimeSpanLevel, 0, -1);
 
 
             // NOTE
@@ -132,7 +194,7 @@ namespace m0_SYSTEM_GENERATE.Music
             GraphUtil.AddInherits(Sequence, History);
 
             GraphUtil.AddAttribute(Sequence, "IsDrum", Boolean, 0, 1);
-            GraphUtil.AddAttribute(Sequence, "PitchSet", PitchSet, 0, 1);
+            GraphUtil.AddAssociation(Sequence, "PitchSet", PitchSet, 0, 1);
 
             // SEQUENCEOPERATOR
 
@@ -157,9 +219,9 @@ namespace m0_SYSTEM_GENERATE.Music
 
             IVertex Track = GraphUtil.AddClass(music, "Track");
 
-            GraphUtil.AddAttribute(Track, "Name", String, 0, 1);
+            //GraphUtil.AddAttribute(Track, "Name", String, 0, 1);
             GraphUtil.AddAttribute(Track, "Output", NoteOutput, 0, 1);
-            GraphUtil.AddAttribute(Track, "SequenceEvent", SequenceEvent, 0, -1);
+            GraphUtil.AddAssociation(Track, "SequenceEvent", SequenceEvent, 0, -1);
 
             // SONG
 
@@ -167,10 +229,10 @@ namespace m0_SYSTEM_GENERATE.Music
 
             GraphUtil.AddInherits(Song, HasLenth);
 
-            GraphUtil.AddAttribute(Song, "Name", String, 0, 1);
-            GraphUtil.AddAttribute(Song, "Track", Track, 0, -1);
+            //GraphUtil.AddAttribute(Song, "Name", String, 0, 1);
+            GraphUtil.AddAggregation(Song, "Track", Track, 0, -1);
             GraphUtil.AddAttribute(Song, "Input", NoteInput, 0, 1);
-            GraphUtil.AddAttribute(Song, "RecordingTrack", Track, 0, 1);
+            GraphUtil.AddAssociation(Song, "RecordingTrack", Track, 0, 1);
             GraphUtil.AddAttribute(Song, "Tempo", Integer, 0, 1);
 
             AddMethod(Song, "Record", type, "Record", null, new TypeName[] { });
@@ -238,8 +300,8 @@ namespace m0_SYSTEM_GENERATE.Music
 
             IVertex MusicSpace = GraphUtil.AddClass(music, "MusicSpace");
 
-            GraphUtil.AddAttribute(MusicSpace, "Sequence", Sequence, 0, -1);
-            GraphUtil.AddAttribute(MusicSpace, "Song", Song, 0, -1);
+            GraphUtil.AddAggregation(MusicSpace, "Sequence", Sequence, 0, -1);
+            GraphUtil.AddAggregation(MusicSpace, "Song", Song, 0, -1);
         }
     }
 }

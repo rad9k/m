@@ -42,7 +42,7 @@ namespace m0_COMPOSER.Runtime
 
             dev.Value = name;
 
-            GraphUtil.SetVertexValue(dev, MidiDevice.Get(false, "Name"), name);
+            //GraphUtil.SetVertexValue(dev, MidiDevice.Get(false, "Name"), name);
             
             dev.AddVertex(MidiDevice.Get(false, "DeviceNumber"), deviceNumber);
             dev.AddVertex(MidiDevice.Get(false, "Mid"), (int)caps.wMid);
@@ -71,7 +71,7 @@ namespace m0_COMPOSER.Runtime
 
                 Out.Value = name;
 
-                GraphUtil.SetVertexValue(Out, MidiOutput.Get(false, "Name"), name);
+               // GraphUtil.SetVertexValue(Out, MidiOutput.Get(false, "Name"), name);
                 GraphUtil.SetVertexValue(Out, MidiOutput.Get(false, "Channel"), channel);
                 GraphUtil.CreateOrReplaceEdge(Out, MidiOutput.Get(false, "Device"), MidiDevice);
             }
