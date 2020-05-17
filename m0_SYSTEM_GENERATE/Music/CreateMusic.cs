@@ -20,12 +20,16 @@ namespace m0_SYSTEM_GENERATE.Music
         {            
             print("* saving Lib\\Music");
 
-            GeneralUtil.CreateM0AndMoveEdgesIntoIt_IncludeEverythingBesidesList("lib_music.m0", music, systemSubGraphWithLinks, storeOverride);                        
+            GeneralUtil.CreateM0AndMoveEdgesIntoIt_IncludeEverythingBesidesList("lib_music.m0", Music, systemSubGraphWithLinks, storeOverride);                        
         }
 
-        static IVertex music;
+        static IVertex Music;
 
-        static IVertex data;
+        static IVertex Data;
+
+        static IVertex PitchSet;
+
+        static IVertex VisualisedPitch;        
 
         public static void Create()
         {
@@ -35,9 +39,11 @@ namespace m0_SYSTEM_GENERATE.Music
 
             IVertex lib = r.Get(false, @"System\Lib");
 
-            music = lib.AddVertex(null, "Music");
+            Music = lib.AddVertex(null, "Music");
 
             AddClasses();
+
+            AddMetaEdges();
 
             AddData();
         }
@@ -46,20 +52,21 @@ namespace m0_SYSTEM_GENERATE.Music
         {
             IVertex r = m0.MinusZero.Instance.root;
 
-            data = music.AddVertex(null, "Data");
+            Data = Music.AddVertex(null, "Data");
 
             AddBasePitchSet();
 
-        }
+            AddBaseTimeSpanStructure();
 
-        static IVertex PitchSet;
-        static IVertex VisualisedPitch;
+        }        
 
         private static void AddBasePitchSet()
         {
             IVertex r = m0.MinusZero.Instance.root;
 
-            IVertex b=VertexOperations.AddInstance(data, PitchSet);
+            IVertex b=VertexOperations.AddInstance(Data, PitchSet);
+
+            Data.AddEdge(Music.Get(false, "DefaultPitchSet"), b);
 
             b.Value = "Base";
 
@@ -93,6 +100,18 @@ namespace m0_SYSTEM_GENERATE.Music
             GraphUtil.CreateOrReplaceEdge(p, VisualisedPitch.Get(false, "Color"), color);
         }
 
+        private static void AddBaseTimeSpanStructure()
+        {
+
+        }
+
+        private static void AddMetaEdges()
+        {
+            GraphUtil.AddMetaEdge(Music, "DefaultPitchSet", Music.Get(false, "PitchSet"));
+
+            GraphUtil.AddMetaEdge(Music, "BaseTimeSpanLevel", Music.Get(false, "TimeSpanLevel"));
+        }
+
         private static void AddClasses() {
             IVertex r = m0.MinusZero.Instance.root;
 
@@ -105,51 +124,51 @@ namespace m0_SYSTEM_GENERATE.Music
 
             //
 
-            IVertex NoteOutput = GraphUtil.AddClass(music, "NoteOutput");
-            IVertex NoteInput = GraphUtil.AddClass(music, "NoteInput");
+            IVertex NoteOutput = GraphUtil.AddClass(Music, "NoteOutput");
+            IVertex NoteInput = GraphUtil.AddClass(Music, "NoteInput");
 
             // HAS LENGTH
 
-            IVertex HasLenth = GraphUtil.AddClass(music, "HasLength");
+            IVertex HasLenth = GraphUtil.AddClass(Music, "HasLength");
 
             GraphUtil.AddAttribute(HasLenth, "Length", Integer, 1, 1);
 
             // EVENT
 
-            IVertex Event = GraphUtil.AddClass(music, "Event");
+            IVertex Event = GraphUtil.AddClass(Music, "Event");
 
             GraphUtil.AddAggregation(Event, "TriggerTime", Integer, 1, 1);
 
             // HISTORY
 
-            IVertex History = GraphUtil.AddClass(music, "History");
+            IVertex History = GraphUtil.AddClass(Music, "History");
 
             GraphUtil.AddAttribute(History, "Event", Event, 0, -1);
 
             // CONTROLCHANGE
 
-            IVertex ControlChange = GraphUtil.AddClass(music, "ControlChange");
+            IVertex ControlChange = GraphUtil.AddClass(Music, "ControlChange");
 
             GraphUtil.AddAttribute(ControlChange, "Number", Integer, 1, 1);
             GraphUtil.AddAttribute(ControlChange, "Value", Integer, 1, 1);
 
             // CONTROLCHANGEEVENT
 
-            IVertex ControlChangeEvent = GraphUtil.AddClass(music, "ControlChangeEvent");
+            IVertex ControlChangeEvent = GraphUtil.AddClass(Music, "ControlChangeEvent");
 
             GraphUtil.AddInherits(ControlChangeEvent, ControlChange);
             GraphUtil.AddInherits(ControlChangeEvent, Event);
 
             // PICH
 
-            IVertex Pitch = GraphUtil.AddClass(music, "Pitch");
+            IVertex Pitch = GraphUtil.AddClass(Music, "Pitch");
 
             GraphUtil.AddAttribute(Pitch, "Octave", Integer, 1, 1);
             GraphUtil.AddAttribute(Pitch, "Note", Integer, 1, 1);
 
             // VISULISEDPICH
 
-            VisualisedPitch = GraphUtil.AddClass(music, "VisualisedPitch");
+            VisualisedPitch = GraphUtil.AddClass(Music, "VisualisedPitch");
 
             GraphUtil.AddInherits(VisualisedPitch, Pitch);
             GraphUtil.AddAttribute(VisualisedPitch, "Name", String, 1, 1);
@@ -157,22 +176,21 @@ namespace m0_SYSTEM_GENERATE.Music
 
             // PICHSET
 
-            PitchSet = GraphUtil.AddClass(music, "PitchSet");
+            PitchSet = GraphUtil.AddClass(Music, "PitchSet");
 
             GraphUtil.AddAggregation(PitchSet, "Pitch", Pitch, 0, -1);
 
             // TIMESPANLEVEL
 
-            IVertex TimeSpanLevel = GraphUtil.AddClass(music, "TimeSpanLevel");
+            IVertex TimeSpanLevel = GraphUtil.AddClass(Music, "TimeSpanLevel");
 
-            GraphUtil.AddInherits(TimeSpanLevel, HasLenth);
-            GraphUtil.AddAttribute(TimeSpanLevel, "Name", String, 1, 1);
+            GraphUtil.AddInherits(TimeSpanLevel, HasLenth);            
             GraphUtil.AddAggregation(TimeSpanLevel, "SubLevel", TimeSpanLevel, 0, -1);
 
 
             // NOTE
 
-            IVertex Note = GraphUtil.AddClass(music, "Note");
+            IVertex Note = GraphUtil.AddClass(Music, "Note");
 
             GraphUtil.AddInherits(Note, Pitch);
 
@@ -180,7 +198,7 @@ namespace m0_SYSTEM_GENERATE.Music
 
             // NOTEEVENT
 
-            IVertex NoteEvent = GraphUtil.AddClass(music, "NoteEvent");
+            IVertex NoteEvent = GraphUtil.AddClass(Music, "NoteEvent");
 
             GraphUtil.AddInherits(NoteEvent, Note);
             GraphUtil.AddInherits(NoteEvent, Event);
@@ -188,7 +206,7 @@ namespace m0_SYSTEM_GENERATE.Music
 
             // SEQUENCE
 
-            IVertex Sequence = GraphUtil.AddClass(music, "Sequnce");
+            IVertex Sequence = GraphUtil.AddClass(Music, "Sequnce");
 
             GraphUtil.AddInherits(Sequence, HasLenth);
             GraphUtil.AddInherits(Sequence, History);
@@ -198,26 +216,26 @@ namespace m0_SYSTEM_GENERATE.Music
 
             // SEQUENCEOPERATOR
 
-            IVertex SequenceOperator = GraphUtil.AddClass(music, "SequnceOperator");
+            IVertex SequenceOperator = GraphUtil.AddClass(Music, "SequnceOperator");
 
             GraphUtil.AddInherits(SequenceOperator, Sequence);
 
             // NOTEOUTPUTOPERATOR
 
-            IVertex NoteOutputOperator = GraphUtil.AddClass(music, "NoteOutputOperator");
+            IVertex NoteOutputOperator = GraphUtil.AddClass(Music, "NoteOutputOperator");
 
             GraphUtil.AddInherits(NoteOutputOperator, NoteOutput);
 
             // SEQUENCEEVENT
 
-            IVertex SequenceEvent = GraphUtil.AddClass(music, "SequenceEvent");
+            IVertex SequenceEvent = GraphUtil.AddClass(Music, "SequenceEvent");
 
             GraphUtil.AddInherits(SequenceEvent, Event);
             GraphUtil.AddAttribute(SequenceEvent, "Sequence", Sequence, 1, 1);
 
             // TRACK
 
-            IVertex Track = GraphUtil.AddClass(music, "Track");
+            IVertex Track = GraphUtil.AddClass(Music, "Track");
 
             //GraphUtil.AddAttribute(Track, "Name", String, 0, 1);
             GraphUtil.AddAttribute(Track, "Output", NoteOutput, 0, 1);
@@ -225,7 +243,7 @@ namespace m0_SYSTEM_GENERATE.Music
 
             // SONG
 
-            IVertex Song = GraphUtil.AddClass(music, "Song");
+            IVertex Song = GraphUtil.AddClass(Music, "Song");
 
             GraphUtil.AddInherits(Song, HasLenth);
 
@@ -251,12 +269,12 @@ namespace m0_SYSTEM_GENERATE.Music
             AddMethod(NoteOutput, "PitchBend", type, "PitchBend", null, new TypeName[] { new TypeName("value", "Integer", 1, 1) });
             AddMethod(NoteOutput, "Silent", type, "Silent", null, new TypeName[] { });
 
-            IVertex MidiOutput = GraphUtil.AddClass(music, "MidiOutput");
-            IVertex MidiInput = GraphUtil.AddClass(music, "MidiInput");
+            IVertex MidiOutput = GraphUtil.AddClass(Music, "MidiOutput");
+            IVertex MidiInput = GraphUtil.AddClass(Music, "MidiInput");
 
             //
 
-            IVertex MidiDevice = GraphUtil.AddClass(music, "MidiDevice");
+            IVertex MidiDevice = GraphUtil.AddClass(Music, "MidiDevice");
 
             GraphUtil.AddAttribute(MidiDevice, "Name", String, 1, 1);
 
@@ -298,7 +316,7 @@ namespace m0_SYSTEM_GENERATE.Music
 
             // MUSICSPACE
 
-            IVertex MusicSpace = GraphUtil.AddClass(music, "MusicSpace");
+            IVertex MusicSpace = GraphUtil.AddClass(Music, "MusicSpace");
 
             GraphUtil.AddAggregation(MusicSpace, "Sequence", Sequence, 0, -1);
             GraphUtil.AddAggregation(MusicSpace, "Song", Song, 0, -1);

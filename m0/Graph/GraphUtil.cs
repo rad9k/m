@@ -123,6 +123,17 @@ namespace m0.Graph
             a.AddVertex(r.Get(false, @"System\Meta\Base\Vertex\$MaxCardinality"), MaxCardinality);
         }
 
+        public static IVertex AddMetaEdge(IVertex baseVertex, string edgeName, IVertex target)
+        {
+            IVertex r = MinusZero.Instance.root;
+
+            IVertex a = baseVertex.AddVertex(null, edgeName);
+            
+            a.AddEdge(r.Get(false, @"System\Meta\Base\Vertex\$EdgeTarget"), target);            
+
+            return a;
+        }
+
         public static void AddDotNetEndPoint(IVertex baseVertex, string _typeName, string _methodName)
         {
             IVertex r = m0.MinusZero.Instance.root;
