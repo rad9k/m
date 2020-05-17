@@ -102,7 +102,9 @@ namespace m0_SYSTEM_GENERATE.Music
 
         private static void AddBaseTimeSpanStructure()
         {
+            IVertex MidiTick = VertexOperations.AddInstance(Data, Music.Get(false, "TimeSpanLevel"));
 
+            MidiTick.Value = "MidiTick";
         }
 
         private static void AddMetaEdges()
