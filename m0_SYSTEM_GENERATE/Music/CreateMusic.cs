@@ -29,7 +29,55 @@ namespace m0_SYSTEM_GENERATE.Music
 
         static IVertex PitchSet;
 
-        static IVertex VisualisedPitch;        
+        static IVertex VisualisedPitch;
+
+        B0 Acoustic Bass Drum
+    C1 Bass Drum 1
+    C#1     Side Stick
+    D1      Acoustic Snare
+    Eb1 Hand Clap
+E1      Electric Snare
+    F1 Low Floor Tom
+    F#1     Closed Hi Hat
+    G1      High Floor Tom
+    Ab1     Pedal Hi-Hat
+    A1      Low Tom
+    Bb1 Open Hi-Hat
+B1      Low-Mid Tom
+    C2 Hi Mid Tom
+    C#2     Crash Cymbal 1
+    D2      High Tom
+    Eb2 Ride Cymbal 1
+    E2 Chinese Cymbal
+F2      Ride Bell
+    F#2     Tambourine
+    G2      Splash Cymbal
+    Ab2 Cowbell
+    A2 Crash Cymbal 2
+    Bb2 Vibraslap
+    B2 Ride Cymbal 2 
+    C3 Hi Bongo
+C#3     Low Bongo 
+    D3 Mute Hi Conga
+    Eb3 Open Hi Conga
+    E3 Low Conga
+F3      High Timbale
+    F#3     Low Timbale 
+    G3      High Agogo
+    Ab3 Low Agogo
+A3      Cabasa
+Bb3     Maracas
+B3      Short Whistle
+    C4 Long Whistle
+C#4     Short Guiro 
+    D4 Long Guiro
+Eb4     Claves
+E4      Hi Wood Block
+F4      Low Wood Block
+F#4     Mute Cuica 
+    G4 Open Cuica
+Ab4     Mute Triangle
+    A4 Open Triangle
 
         public static void Create()
         {
@@ -56,6 +104,8 @@ namespace m0_SYSTEM_GENERATE.Music
 
             AddBasePitchSet();
 
+            AddBaseDrumSet();
+
             AddBaseTimeSpanStructure();
 
         }        
@@ -74,6 +124,36 @@ namespace m0_SYSTEM_GENERATE.Music
             IVertex black = r.Get(false, @"System\Data\UX\Colors\Black");
 
             for (int x = -1; x <= 9; x++) {
+                AddPitch(b, x, 0, "C" + x.ToString(), white);
+                AddPitch(b, x, 1, "C#" + x.ToString(), black);
+                AddPitch(b, x, 2, "D" + x.ToString(), white);
+                AddPitch(b, x, 3, "D#" + x.ToString(), black);
+                AddPitch(b, x, 4, "E" + x.ToString(), white);
+                AddPitch(b, x, 5, "F" + x.ToString(), white);
+                AddPitch(b, x, 6, "F#" + x.ToString(), black);
+                AddPitch(b, x, 7, "G" + x.ToString(), white);
+                AddPitch(b, x, 8, "G#" + x.ToString(), black);
+                AddPitch(b, x, 9, "A" + x.ToString(), white);
+                AddPitch(b, x, 10, "A#" + x.ToString(), black);
+                AddPitch(b, x, 11, "B" + x.ToString(), white);
+            }
+        }
+
+        private static void AddBaseDrumSet()
+        {
+            IVertex r = m0.MinusZero.Instance.root;
+
+            IVertex b = VertexOperations.AddInstance(Data, PitchSet);
+
+            Data.AddEdge(Music.Get(false, "DefaultDrumSet"), b);
+
+            b.Value = "Base";
+
+            IVertex white = r.Get(false, @"System\Data\UX\Colors\White");
+            IVertex black = r.Get(false, @"System\Data\UX\Colors\Black");
+
+            for (int x = -1; x <= 9; x++)
+            {
                 AddPitch(b, x, 0, "C" + x.ToString(), white);
                 AddPitch(b, x, 1, "C#" + x.ToString(), black);
                 AddPitch(b, x, 2, "D" + x.ToString(), white);
@@ -110,6 +190,8 @@ namespace m0_SYSTEM_GENERATE.Music
         private static void AddMetaEdges()
         {
             GraphUtil.AddMetaEdge(Music, "DefaultPitchSet", Music.Get(false, "PitchSet"));
+
+            GraphUtil.AddMetaEdge(Music, "DefaultDrumSet", Music.Get(false, "PitchSet"));
 
             GraphUtil.AddMetaEdge(Music, "BaseTimeSpanLevel", Music.Get(false, "TimeSpanLevel"));
         }
