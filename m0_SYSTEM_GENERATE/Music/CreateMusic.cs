@@ -31,53 +31,66 @@ namespace m0_SYSTEM_GENERATE.Music
 
         static IVertex VisualisedPitch;
 
-        B0 Acoustic Bass Drum
-    C1 Bass Drum 1
-    C#1     Side Stick
-    D1      Acoustic Snare
-    Eb1 Hand Clap
-E1      Electric Snare
-    F1 Low Floor Tom
-    F#1     Closed Hi Hat
-    G1      High Floor Tom
-    Ab1     Pedal Hi-Hat
-    A1      Low Tom
-    Bb1 Open Hi-Hat
-B1      Low-Mid Tom
-    C2 Hi Mid Tom
-    C#2     Crash Cymbal 1
-    D2      High Tom
-    Eb2 Ride Cymbal 1
-    E2 Chinese Cymbal
-F2      Ride Bell
-    F#2     Tambourine
-    G2      Splash Cymbal
-    Ab2 Cowbell
-    A2 Crash Cymbal 2
-    Bb2 Vibraslap
-    B2 Ride Cymbal 2 
-    C3 Hi Bongo
-C#3     Low Bongo 
-    D3 Mute Hi Conga
-    Eb3 Open Hi Conga
-    E3 Low Conga
-F3      High Timbale
-    F#3     Low Timbale 
-    G3      High Agogo
-    Ab3 Low Agogo
-A3      Cabasa
-Bb3     Maracas
-B3      Short Whistle
-    C4 Long Whistle
-C#4     Short Guiro 
-    D4 Long Guiro
-Eb4     Claves
-E4      Hi Wood Block
-F4      Low Wood Block
-F#4     Mute Cuica 
-    G4 Open Cuica
-Ab4     Mute Triangle
-    A4 Open Triangle
+        class _Note
+        {
+            public string Name;
+            public string Instrument;
+
+            public _Note(String _Name, string _Instrument)
+            {
+                Name = _Name;
+                Instrument = _Instrument;
+            }
+        }
+
+        static _Note[] DrumInstruments = new _Note[] {
+        new _Note("B0", "Acoustic Bass Drum"),
+        new _Note("C1", "Bass Drum 1"),
+        new _Note("C#1", "Side Stick"),
+        new _Note("D1", "Acoustic Snare"),
+        new _Note("D#1", "Hand Clap"),
+        new _Note("E1", "Electric Snare"),
+        new _Note("F1", "Low Floor Tom"),
+        new _Note("F#1", "Closed Hi Hat"),
+        new _Note("G1", "High Floor Tom"),
+        new _Note("G#1", "Pedal Hi-Hat"),
+        new _Note("A1", "Low Tom"),
+        new _Note("A#1", "Open Hi-Hat"),
+        new _Note("B1", "Low-Mid Tom"),
+        new _Note("C2", "Hi Mid Tom"),
+        new _Note("C#2", "Crash Cymbal 1"),
+        new _Note("D2", "High Tom"),
+        new _Note("D#2", "Ride Cymbal 1"),
+        new _Note("E2", "Chinese Cymbal"),
+        new _Note("F2", "Ride Bell"),
+        new _Note("F#2", "Tambourine"),
+        new _Note("G2", "Splash Cymbal"),
+        new _Note("G#2", "Cowbell"),
+        new _Note("A2", "Crash Cymbal 2"),
+        new _Note("A#2", "Vibraslap"),
+        new _Note("B2", "Ride Cymbal 2"),
+        new _Note("C3", "Hi Bongo"),
+        new _Note("C#3", "Low Bongo"),
+        new _Note("D3", "Mute Hi Conga"),
+        new _Note("D#3", "Open Hi Conga"),
+        new _Note("E3", "Low Conga"),
+        new _Note("F3", "High Timbale"),
+        new _Note("F#3", "Low Timbale"),
+        new _Note("G3", "High Agogo"),
+        new _Note("G#3", "Low Agogo"),
+        new _Note("A3", "Cabasa"),
+        new _Note("A#3", "Maracas"),
+        new _Note("B3", "Short Whistle"),
+        new _Note("C4", "Long Whistle"),
+        new _Note("C#4", "Short Guiro"),
+        new _Note("D4", "Long Guiro"),
+        new _Note("D#4", "Claves"),
+        new _Note("E4", "Hi Wood Block"),
+        new _Note("F4", "Low Wood Block"),
+        new _Note("F#4", "Mute Cuica"),
+        new _Note("G4", "Open Cuica"),
+        new _Note("G#4", "Mute Triangle"),
+        new _Note("A4", "Open Triangle") };
 
         public static void Create()
         {
@@ -135,7 +148,7 @@ Ab4     Mute Triangle
                 AddPitch(b, x, 8, "G#" + x.ToString(), black);
                 AddPitch(b, x, 9, "A" + x.ToString(), white);
                 AddPitch(b, x, 10, "A#" + x.ToString(), black);
-                AddPitch(b, x, 11, "B" + x.ToString(), white);
+                AddPitch(b, x, 11, "B" + x.ToString(), white);               
             }
         }
 
@@ -154,18 +167,18 @@ Ab4     Mute Triangle
 
             for (int x = -1; x <= 9; x++)
             {
-                AddPitch(b, x, 0, "C" + x.ToString(), white);
-                AddPitch(b, x, 1, "C#" + x.ToString(), black);
-                AddPitch(b, x, 2, "D" + x.ToString(), white);
-                AddPitch(b, x, 3, "D#" + x.ToString(), black);
-                AddPitch(b, x, 4, "E" + x.ToString(), white);
-                AddPitch(b, x, 5, "F" + x.ToString(), white);
-                AddPitch(b, x, 6, "F#" + x.ToString(), black);
-                AddPitch(b, x, 7, "G" + x.ToString(), white);
-                AddPitch(b, x, 8, "G#" + x.ToString(), black);
-                AddPitch(b, x, 9, "A" + x.ToString(), white);
-                AddPitch(b, x, 10, "A#" + x.ToString(), black);
-                AddPitch(b, x, 11, "B" + x.ToString(), white);
+                AddDrumPitch(b, x, 0, "C" + x.ToString(), white);
+                AddDrumPitch(b, x, 1, "C#" + x.ToString(), white);
+                AddDrumPitch(b, x, 2, "D" + x.ToString(), white);
+                AddDrumPitch(b, x, 3, "D#" + x.ToString(), white);
+                AddDrumPitch(b, x, 4, "E" + x.ToString(), white);
+                AddDrumPitch(b, x, 5, "F" + x.ToString(), white);
+                AddDrumPitch(b, x, 6, "F#" + x.ToString(), white);
+                AddDrumPitch(b, x, 7, "G" + x.ToString(), white);
+                AddDrumPitch(b, x, 8, "G#" + x.ToString(), white);
+                AddDrumPitch(b, x, 9, "A" + x.ToString(), white);
+                AddDrumPitch(b, x, 10, "A#" + x.ToString(), white);
+                AddDrumPitch(b, x, 11, "B" + x.ToString(), white);
             }
         }
 
@@ -180,11 +193,40 @@ Ab4     Mute Triangle
             GraphUtil.CreateOrReplaceEdge(p, VisualisedPitch.Get(false, "Color"), color);
         }
 
+        private static void AddDrumPitch(IVertex basePitch, int octave, int note, string name, IVertex color)
+        {
+            _Note matched = null;
+
+            foreach (_Note n in DrumInstruments)
+                if (n.Name == name)
+                    matched = n;
+
+            if (matched == null)
+                AddPitch(basePitch, octave, note, name, color);
+            else
+                AddPitch(basePitch, octave, note, name + " (" + matched.Instrument + ")", color);
+                
+        }
+
+        private static IVertex AddTimeSpan(IVertex _base, String name, int length)
+        {
+            IVertex v = VertexOperations.AddInstance(_base, Music.Get(false, "TimeSpanLevel"));
+
+            v.Value = name;
+
+            v.AddVertex(Music.Get(false, @"TimeSpanLevel\Length"), length);
+
+            return v;
+        }
+
         private static void AddBaseTimeSpanStructure()
         {
-            IVertex MidiTick = VertexOperations.AddInstance(Data, Music.Get(false, "TimeSpanLevel"));
+            IVertex MidiTick = AddTimeSpan(Data, "MidiTick");
 
-            MidiTick.Value = "MidiTick";
+            Data.AddEdge(Music.Get(false, "BaseTimeSpanLevel"), MidiTick);
+
+            IVertex 
+
         }
 
         private static void AddMetaEdges()
@@ -268,8 +310,8 @@ Ab4     Mute Triangle
 
             IVertex TimeSpanLevel = GraphUtil.AddClass(Music, "TimeSpanLevel");
 
-            GraphUtil.AddInherits(TimeSpanLevel, HasLenth);            
-            GraphUtil.AddAggregation(TimeSpanLevel, "SubLevel", TimeSpanLevel, 0, -1);
+            GraphUtil.AddInherits(TimeSpanLevel, HasLenth);
+            GraphUtil.AddAggregation(TimeSpanLevel, "SubLevel", TimeSpanLevel, 0, 1);
 
 
             // NOTE
