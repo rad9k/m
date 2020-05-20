@@ -160,7 +160,7 @@ namespace m0_SYSTEM_GENERATE.Music
 
             Data.AddEdge(Music.Get(false, "DefaultDrumSet"), b);
 
-            b.Value = "Base";
+            b.Value = "DrumBase";
 
             IVertex white = r.Get(false, @"System\Data\UX\Colors\White");
             IVertex black = r.Get(false, @"System\Data\UX\Colors\Black");
@@ -214,19 +214,24 @@ namespace m0_SYSTEM_GENERATE.Music
 
             v.Value = name;
 
-            v.AddVertex(Music.Get(false, @"TimeSpanLevel\Length"), length);
+            GraphUtil.SetVertexValue(v, Music.Get(false, @"TimeSpanLevel\Length"), length);
 
             return v;
         }
 
         private static void AddBaseTimeSpanStructure()
         {
-            IVertex MidiTick = AddTimeSpan(Data, "MidiTick");
+            IVertex MidiTick = AddTimeSpan(Data, "MidiTick", 1);
 
             Data.AddEdge(Music.Get(false, "BaseTimeSpanLevel"), MidiTick);
 
-            IVertex 
+            IVertex tact = AddTimeSpan(Data, "Tact", 16);
 
+            IVertex sixteen = AddTimeSpan(tact, "Sixteen", 96);
+
+            tact.AddEdge(Music.Get(false, @"TimeSpanLevel\SubLevel"), sixteen);
+
+            sixteen.AddEdge(Music.Get(false, @"TimeSpanLevel\SubLevel"), MidiTick);
         }
 
         private static void AddMetaEdges()
