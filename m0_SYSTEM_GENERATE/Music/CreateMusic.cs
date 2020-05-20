@@ -343,6 +343,9 @@ namespace m0_SYSTEM_GENERATE.Music
             GraphUtil.AddAttribute(Sequence, "IsDrum", Boolean, 0, 1);
             GraphUtil.AddAssociation(Sequence, "PitchSet", PitchSet, 0, 1);
 
+            Sequence.AddEdge(r.Get(false, @"System\Meta\Base\Vertex\$DefaultViewVisualiser"), r.Get(false, @"System\Meta\Visualiser\Sequence"));
+            Sequence.AddEdge(r.Get(false, @"System\Meta\Base\Vertex\$DefaultEditVisualiser"), r.Get(false, @"System\Meta\Visualiser\Sequence"));
+
             // SEQUENCEOPERATOR
 
             IVertex SequenceOperator = GraphUtil.AddClass(Music, "SequnceOperator");
