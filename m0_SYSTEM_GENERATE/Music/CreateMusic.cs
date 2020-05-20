@@ -208,9 +208,9 @@ namespace m0_SYSTEM_GENERATE.Music
                 
         }
 
-        private static IVertex AddTimeSpan(IVertex _base, String name, int length)
+        private static IVertex AddTimeSpan(IVertex _base, String name, int length, IVertex meta)
         {
-            IVertex v = VertexOperations.AddInstance(_base, Music.Get(false, "TimeSpanLevel"));
+            IVertex v = VertexOperations.AddInstance(_base, Music.Get(false, "TimeSpanLevel"), meta);
 
             v.Value = name;
 
@@ -221,15 +221,13 @@ namespace m0_SYSTEM_GENERATE.Music
 
         private static void AddBaseTimeSpanStructure()
         {
-            IVertex MidiTick = AddTimeSpan(Data, "MidiTick", 1);
+            IVertex MidiTick = AddTimeSpan(Data, "MidiTick", 1, Music.Get(false, "TimeSpanLevel"));
 
             Data.AddEdge(Music.Get(false, "BaseTimeSpanLevel"), MidiTick);
 
-            IVertex tact = AddTimeSpan(Data, "Tact", 16);
+            IVertex tact = AddTimeSpan(Data, "Tact", 16, Music.Get(false, @"TimeSpanLevel"));
 
-            IVertex sixteen = AddTimeSpan(tact, "Sixteen", 96);
-
-            tact.AddEdge(Music.Get(false, @"TimeSpanLevel\SubLevel"), sixteen);
+            IVertex sixteen = AddTimeSpan(tact, "Sixteen", 96, Music.Get(false, @"TimeSpanLevel\SubLevel"));
 
             sixteen.AddEdge(Music.Get(false, @"TimeSpanLevel\SubLevel"), MidiTick);
         }
