@@ -55,8 +55,13 @@
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Runtime\Initialisation.cs" />
+    <Compile Include="UIWpf\Visualisers\Controls\PitchSetView.cs" />
+    <Compile Include="UIWpf\Visualisers\Controls\TimeSpanView.cs" />
     <Compile Include="UIWpf\Visualisers\Controls\ZoomScrollViewer.xaml.cs">
       <DependentUpon>ZoomScrollViewer.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UIWpf\Visualisers\SequenceVisualiser.xaml.cs">
+      <DependentUpon>SequenceVisualiser.xaml</DependentUpon>
     </Compile>
   </ItemGroup>
   <ItemGroup>
@@ -73,6 +78,10 @@
     <Page Include="UIWpf\Visualisers\Controls\ZoomScrollViewer.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UIWpf\Visualisers\SequenceVisualiser.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

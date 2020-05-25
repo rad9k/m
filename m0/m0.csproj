@@ -194,9 +194,6 @@
     <Compile Include="UIWpf\Visualisers\FormVisualiser.cs" />
     <Compile Include="UIWpf\Visualisers\CodeVisualiser.cs" />
     <Compile Include="UIWpf\Visualisers\IOwnScrolling.cs" />
-    <Compile Include="UIWpf\Visualisers\SequenceVisualiser.xaml.cs">
-      <DependentUpon>SequenceVisualiser.xaml</DependentUpon>
-    </Compile>
     <Compile Include="UIWpf\Visualisers\TableFastVisualiser.cs" />
     <Compile Include="UIWpf\Visualisers\VertexVisualiser.cs" />
     <Compile Include="UIWpf\Visualisers\TableVisualiser.cs" />
@@ -402,10 +399,6 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="UIWpf\Visualisers\Diagram\NewDiagramItem.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="UIWpf\Visualisers\SequenceVisualiser.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

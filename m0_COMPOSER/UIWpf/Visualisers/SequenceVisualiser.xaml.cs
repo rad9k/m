@@ -1,4 +1,5 @@
-﻿using m0.Foundation;
+﻿using m0;
+using m0.Foundation;
 using m0.ZeroUML;
 using System;
 using System.Collections.Generic;
@@ -15,7 +16,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace m0.UIWpf.Visualisers
+namespace m0_COMPOSER.UIWpf.Visualisers
 {
     /// <summary>
     /// Interaction logic for SequenceVisualiser.xaml
