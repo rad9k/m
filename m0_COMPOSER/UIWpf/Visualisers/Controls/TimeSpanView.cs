@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace m0_COMPOSER.UIWpf.Visualisers.Controls
 {
-    class TimeSpanViewcc
+    class TimeSpanView
     {
     }
 }

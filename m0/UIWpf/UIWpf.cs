@@ -23,6 +23,8 @@ namespace m0.UIWpf
         public static FontWeight BoldWeight = FontWeight.FromOpenTypeWeight(550);
         public static FontWeight ValueWeight = FontWeight.FromOpenTypeWeight(550); // FontWeights.Normal;
 
+        public static double IconSize = 28;
+
         public static void InitializeUIWpf()
         {
             Dnd.MinimumHorizontalDragDistance = SystemParameters.MinimumHorizontalDragDistance * 2;

@@ -1,0 +1,189 @@
+    /*
+    Flaticon icon font: Flaticon
+    Creation date: 07/05/2018 08:47
+    */
+
+    @font-face {
+  font-family: "Flaticon";
+  src: url("./Flaticon.eot");
+  src: url("./Flaticon.eot?#iefix") format("embedded-opentype"),
+       url("./Flaticon.woff") format("woff"),
+       url("./Flaticon.ttf") format("truetype"),
+       url("./Flaticon.svg#Flaticon") format("svg");
+  font-weight: normal;
+  font-style: normal;
+}
+
+@media screen and (-webkit-min-device-pixel-ratio:0) {
+  @font-face {
+    font-family: "Flaticon";
+    src: url("./Flaticon.svg#Flaticon") format("svg");
+  }
+}
+
+    .fi:before{
+        display: inline-block;
+  font-family: "Flaticon";
+  font-style: normal;
+  font-weight: normal;
+  font-variant: normal;
+  line-height: 1;
+  text-decoration: inherit;
+  text-rendering: optimizeLegibility;
+  text-transform: none;
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-font-smoothing: antialiased;
+  font-smoothing: antialiased;
+    }
+
+    .flaticon-001-zoom-out:before { content: "\f100"; }
+.flaticon-002-zoom-in:before { content: "\f101"; }
+.flaticon-003-center-align-8:before { content: "\f102"; }
+.flaticon-004-grid-3:before { content: "\f103"; }
+.flaticon-005-center-align-7:before { content: "\f104"; }
+.flaticon-006-center-align-6:before { content: "\f105"; }
+.flaticon-007-center-align-5:before { content: "\f106"; }
+.flaticon-008-center-align-4:before { content: "\f107"; }
+.flaticon-009-object-alignment:before { content: "\f108"; }
+.flaticon-010-vector:before { content: "\f109"; }
+.flaticon-011-transform:before { content: "\f10a"; }
+.flaticon-012-left-align-4:before { content: "\f10b"; }
+.flaticon-013-right-align-4:before { content: "\f10c"; }
+.flaticon-014-text:before { content: "\f10d"; }
+.flaticon-015-spacing:before { content: "\f10e"; }
+.flaticon-016-right-align-3:before { content: "\f10f"; }
+.flaticon-017-right-align-2:before { content: "\f110"; }
+.flaticon-018-left-align-3:before { content: "\f111"; }
+.flaticon-019-left-align-2:before { content: "\f112"; }
+.flaticon-020-justification:before { content: "\f113"; }
+.flaticon-021-center-align-3:before { content: "\f114"; }
+.flaticon-022-center-align-2:before { content: "\f115"; }
+.flaticon-023-strikethrough:before { content: "\f116"; }
+.flaticon-024-layout-2:before { content: "\f117"; }
+.flaticon-025-layout-1:before { content: "\f118"; }
+.flaticon-026-layout:before { content: "\f119"; }
+.flaticon-027-selection-2:before { content: "\f11a"; }
+.flaticon-028-selection-1:before { content: "\f11b"; }
+.flaticon-029-selection:before { content: "\f11c"; }
+.flaticon-030-search:before { content: "\f11d"; }
+.flaticon-031-ruler:before { content: "\f11e"; }
+.flaticon-032-right-indent:before { content: "\f11f"; }
+.flaticon-033-pointer-2:before { content: "\f120"; }
+.flaticon-034-pointer-1:before { content: "\f121"; }
+.flaticon-035-pencil:before { content: "\f122"; }
+.flaticon-036-paint-roller:before { content: "\f123"; }
+.flaticon-037-paint-bucket:before { content: "\f124"; }
+.flaticon-038-paint-brush-1:before { content: "\f125"; }
+.flaticon-039-overlap:before { content: "\f126"; }
+.flaticon-040-list-1:before { content: "\f127"; }
+.flaticon-041-move:before { content: "\f128"; }
+.flaticon-042-reflection-1:before { content: "\f129"; }
+.flaticon-043-up-arrow:before { content: "\f12a"; }
+.flaticon-044-reflection:before { content: "\f12b"; }
+.flaticon-045-bottom:before { content: "\f12c"; }
+.flaticon-046-mouse:before { content: "\f12d"; }
+.flaticon-047-minimize:before { content: "\f12e"; }
+.flaticon-048-magnet:before { content: "\f12f"; }
+.flaticon-049-magic-wand:before { content: "\f130"; }
+.flaticon-050-left-alignment-1:before { content: "\f131"; }
+.flaticon-051-image-2:before { content: "\f132"; }
+.flaticon-052-image-1:before { content: "\f133"; }
+.flaticon-053-image:before { content: "\f134"; }
+.flaticon-054-right-align-1:before { content: "\f135"; }
+.flaticon-055-left-align-1:before { content: "\f136"; }
+.flaticon-056-right-align:before { content: "\f137"; }
+.flaticon-057-left-align:before { content: "\f138"; }
+.flaticon-058-center-align-1:before { content: "\f139"; }
+.flaticon-059-center-align:before { content: "\f13a"; }
+.flaticon-060-grid-2:before { content: "\f13b"; }
+.flaticon-061-grid-1:before { content: "\f13c"; }
+.flaticon-062-grid:before { content: "\f13d"; }
+.flaticon-063-funnel:before { content: "\f13e"; }
+.flaticon-064-eraser:before { content: "\f13f"; }
+.flaticon-065-enlarge:before { content: "\f140"; }
+.flaticon-066-dropper:before { content: "\f141"; }
+.flaticon-067-crop:before { content: "\f142"; }
+.flaticon-068-compass:before { content: "\f143"; }
+.flaticon-069-cursor:before { content: "\f144"; }
+.flaticon-070-list:before { content: "\f145"; }
+.flaticon-071-paint-brush:before { content: "\f146"; }
+.flaticon-072-right-alignment:before { content: "\f147"; }
+.flaticon-073-left-alignment:before { content: "\f148"; }
+.flaticon-074-angle:before { content: "\f149"; }
+.flaticon-075-pointer:before { content: "\f14a"; }
+    
+    $font-Flaticon-001-zoom-out: "\f100";
+    $font-Flaticon-002-zoom-in: "\f101";
+    $font-Flaticon-003-center-align-8: "\f102";
+    $font-Flaticon-004-grid-3: "\f103";
+    $font-Flaticon-005-center-align-7: "\f104";
+    $font-Flaticon-006-center-align-6: "\f105";
+    $font-Flaticon-007-center-align-5: "\f106";
+    $font-Flaticon-008-center-align-4: "\f107";
+    $font-Flaticon-009-object-alignment: "\f108";
+    $font-Flaticon-010-vector: "\f109";
+    $font-Flaticon-011-transform: "\f10a";
+    $font-Flaticon-012-left-align-4: "\f10b";
+    $font-Flaticon-013-right-align-4: "\f10c";
+    $font-Flaticon-014-text: "\f10d";
+    $font-Flaticon-015-spacing: "\f10e";
+    $font-Flaticon-016-right-align-3: "\f10f";
+    $font-Flaticon-017-right-align-2: "\f110";
+    $font-Flaticon-018-left-align-3: "\f111";
+    $font-Flaticon-019-left-align-2: "\f112";
+    $font-Flaticon-020-justification: "\f113";
+    $font-Flaticon-021-center-align-3: "\f114";
+    $font-Flaticon-022-center-align-2: "\f115";
+    $font-Flaticon-023-strikethrough: "\f116";
+    $font-Flaticon-024-layout-2: "\f117";
+    $font-Flaticon-025-layout-1: "\f118";
+    $font-Flaticon-026-layout: "\f119";
+    $font-Flaticon-027-selection-2: "\f11a";
+    $font-Flaticon-028-selection-1: "\f11b";
+    $font-Flaticon-029-selection: "\f11c";
+    $font-Flaticon-030-search: "\f11d";
+    $font-Flaticon-031-ruler: "\f11e";
+    $font-Flaticon-032-right-indent: "\f11f";
+    $font-Flaticon-033-pointer-2: "\f120";
+    $font-Flaticon-034-pointer-1: "\f121";
+    $font-Flaticon-035-pencil: "\f122";
+    $font-Flaticon-036-paint-roller: "\f123";
+    $font-Flaticon-037-paint-bucket: "\f124";
+    $font-Flaticon-038-paint-brush-1: "\f125";
+    $font-Flaticon-039-overlap: "\f126";
+    $font-Flaticon-040-list-1: "\f127";
+    $font-Flaticon-041-move: "\f128";
+    $font-Flaticon-042-reflection-1: "\f129";
+    $font-Flaticon-043-up-arrow: "\f12a";
+    $font-Flaticon-044-reflection: "\f12b";
+    $font-Flaticon-045-bottom: "\f12c";
+    $font-Flaticon-046-mouse: "\f12d";
+    $font-Flaticon-047-minimize: "\f12e";
+    $font-Flaticon-048-magnet: "\f12f";
+    $font-Flaticon-049-magic-wand: "\f130";
+    $font-Flaticon-050-left-alignment-1: "\f131";
+    $font-Flaticon-051-image-2: "\f132";
+    $font-Flaticon-052-image-1: "\f133";
+    $font-Flaticon-053-image: "\f134";
+    $font-Flaticon-054-right-align-1: "\f135";
+    $font-Flaticon-055-left-align-1: "\f136";
+    $font-Flaticon-056-right-align: "\f137";
+    $font-Flaticon-057-left-align: "\f138";
+    $font-Flaticon-058-center-align-1: "\f139";
+    $font-Flaticon-059-center-align: "\f13a";
+    $font-Flaticon-060-grid-2: "\f13b";
+    $font-Flaticon-061-grid-1: "\f13c";
+    $font-Flaticon-062-grid: "\f13d";
+    $font-Flaticon-063-funnel: "\f13e";
+    $font-Flaticon-064-eraser: "\f13f";
+    $font-Flaticon-065-enlarge: "\f140";
+    $font-Flaticon-066-dropper: "\f141";
+    $font-Flaticon-067-crop: "\f142";
+    $font-Flaticon-068-compass: "\f143";
+    $font-Flaticon-069-cursor: "\f144";
+    $font-Flaticon-070-list: "\f145";
+    $font-Flaticon-071-paint-brush: "\f146";
+    $font-Flaticon-072-right-alignment: "\f147";
+    $font-Flaticon-073-left-alignment: "\f148";
+    $font-Flaticon-074-angle: "\f149";
+    $font-Flaticon-075-pointer: "\f14a";
