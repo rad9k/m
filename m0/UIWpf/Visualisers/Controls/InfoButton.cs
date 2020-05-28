@@ -39,6 +39,8 @@ namespace m0.UIWpf.Visualisers.Controls
             i.Source = b;
             
             i.Width= UIWpf.IconSize;
+
+            RenderOptions.SetBitmapScalingMode(i, BitmapScalingMode.HighQuality);
             
             Content = i;
 
