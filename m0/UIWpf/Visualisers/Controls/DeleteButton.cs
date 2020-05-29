@@ -9,6 +9,7 @@ using m0.UIWpf.Visualisers;
 using m0.Graph;
 using m0.ZeroTypes;
 using System.Windows.Media;
+using System.Windows.Media.Imaging;
 
 namespace m0.UIWpf.Visualisers.Controls
 {
@@ -31,15 +32,22 @@ namespace m0.UIWpf.Visualisers.Controls
 
         public DeleteButton()
         {
-            Content = "X";
+            Image i = new Image();
+            BitmapImage b = new BitmapImage(new Uri(@"pack://application:,,/m0;Component/_resources/basic/delete.png", UriKind.RelativeOrAbsolute));
+            int q = b.PixelHeight; // will not load without this
+            i.Source = b;
 
-            this.Style = (Style)Application.Current.FindResource("TransparentStyle"); 
+            i.Width = UIWpf.IconSize;
+
+            RenderOptions.SetBitmapScalingMode(i, BitmapScalingMode.HighQuality);
+
+            Content = i;
+
+            this.Style = (Style)Application.Current.FindResource("TransparentStyle");
 
             BorderThickness = new Thickness(0);
             this.Margin = new Thickness(0);
             this.Padding = new Thickness(0);
-
-            Foreground = (Brush)FindResource("0DeleteBrush"); 
         }
 
         protected override void OnClick(){

@@ -59,6 +59,8 @@ namespace m0.UIWpf.Visualisers
             int q = b.PixelHeight; // will not load without this
             Image.Source = b;
 
+            RenderOptions.SetBitmapScalingMode(Image, BitmapScalingMode.HighQuality);
+
             Button.Foreground = (Brush)FindResource("0LightGrayBrush");
 
             Button.Click += Button_Click;

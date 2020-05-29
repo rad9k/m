@@ -13,20 +13,28 @@
                     <Grid x:Name="Grid" Background="{TemplateBinding Background}">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="18px"/>
                             <ColumnDefinition Width="80px"/>
+                            <ColumnDefinition Width="15px"/>
                             <ColumnDefinition Width="Auto"/>
                         </Grid.ColumnDefinitions>
                         <Grid.RowDefinitions>
                             <RowDefinition Height="*"/>
+                            <RowDefinition Height="18px"/>
                             <RowDefinition Height="80px"/>
+                            <RowDefinition Height="15px"/>
                             <RowDefinition Height="Auto"/>
                         </Grid.RowDefinitions>
-                        <Rectangle x:Name="Corner" Grid.Column="2"  Grid.Row="2"/>
+                        <Rectangle x:Name="Corner" Grid.Column="4"  Grid.Row="4"/>
                         <ScrollContentPresenter x:Name="PART_ScrollContentPresenter" CanContentScroll="{TemplateBinding CanContentScroll}" CanHorizontallyScroll="False" CanVerticallyScroll="False" ContentTemplate="{TemplateBinding ContentTemplate}" Content="{TemplateBinding Content}" Grid.Column="0" Margin="{TemplateBinding Padding}" Grid.Row="0" Grid.ColumnSpan="2" Grid.RowSpan="2"/>
-                        <ScrollBar x:Name="PART_VerticalScrollBar" AutomationProperties.AutomationId="VerticalScrollBar" Cursor="Arrow" Grid.Column="2" Maximum="{TemplateBinding ScrollableHeight}" Minimum="0" Grid.Row="0" Visibility="{TemplateBinding ComputedVerticalScrollBarVisibility}" Value="{Binding VerticalOffset, Mode=OneWay, RelativeSource={RelativeSource TemplatedParent}}" ViewportSize="{TemplateBinding ViewportHeight}"/>
-                        <ScrollBar x:Name="PART_HorizontalScrollBar" AutomationProperties.AutomationId="HorizontalScrollBar" Cursor="Arrow" Grid.Column="0" Maximum="{TemplateBinding ScrollableWidth}" Minimum="0" Orientation="Horizontal" Grid.Row="2" Visibility="{TemplateBinding ComputedHorizontalScrollBarVisibility}" Value="{Binding HorizontalOffset, Mode=OneWay, RelativeSource={RelativeSource TemplatedParent}}" ViewportSize="{TemplateBinding ViewportWidth}"/>
-                        <Slider x:Name="HorizontalSlider" Grid.Column="1" Grid.Row="2" Margin="3,0,0,0" Maximum="100" Value="50" TickFrequency="10" TickPlacement="BottomRight"/>
-                        <Slider x:Name="VerticalSlider" Grid.Column="2" Grid.Row="1" Margin="0,3,0,0" Maximum="100" Value="50" TickFrequency="10" TickPlacement="BottomRight" Orientation="Vertical"/>
+                        <ScrollBar x:Name="PART_VerticalScrollBar" AutomationProperties.AutomationId="VerticalScrollBar" Cursor="Arrow" Grid.Column="4" Maximum="{TemplateBinding ScrollableHeight}" Minimum="0" Grid.Row="0" Visibility="{TemplateBinding ComputedVerticalScrollBarVisibility}" Value="{Binding VerticalOffset, Mode=OneWay, RelativeSource={RelativeSource TemplatedParent}}" ViewportSize="{TemplateBinding ViewportHeight}"/>
+                        <ScrollBar x:Name="PART_HorizontalScrollBar"  AutomationProperties.AutomationId="HorizontalScrollBar" Cursor="Arrow" Grid.Column="0" Maximum="{TemplateBinding ScrollableWidth}" Minimum="0" Orientation="Horizontal" Grid.Row="4" Visibility="{TemplateBinding ComputedHorizontalScrollBarVisibility}" Value="{Binding HorizontalOffset, Mode=OneWay, RelativeSource={RelativeSource TemplatedParent}}" ViewportSize="{TemplateBinding ViewportWidth}"/>
+                        <Slider x:Name="HorizontalSlider" Grid.Column="2" Grid.Row="4" Maximum="100" Value="50" TickFrequency="10" TickPlacement="BottomRight"/>
+                        <Slider x:Name="VerticalSlider" Grid.Column="4" Grid.Row="2"  Maximum="100" Value="50" TickFrequency="10" TickPlacement="BottomRight" Orientation="Vertical"/>
+                        <Image Grid.Column="1" Grid.Row="4" Margin="3,0,3,0" RenderOptions.BitmapScalingMode="HighQuality" Source="pack://application:,,/m0;Component/_resources/basic/zoom-out.png"/>
+                        <Image Grid.Column="3" Grid.Row="4" Margin="3,0,0,0" RenderOptions.BitmapScalingMode="HighQuality" Source="pack://application:,,/m0;Component/_resources/basic/zoom-in.png"/>
+                        <Image Grid.Column="4" Grid.Row="1" Margin="0,3,0,3" RenderOptions.BitmapScalingMode="HighQuality" Source="pack://application:,,/m0;Component/_resources/basic/zoom-out.png"/>
+                        <Image Grid.Column="4" Grid.Row="3" Margin="0,3,0,0" RenderOptions.BitmapScalingMode="HighQuality" Source="pack://application:,,/m0;Component/_resources/basic/zoom-in.png"/>
                     </Grid>
                 </ControlTemplate>
             </ScrollViewer.Template>

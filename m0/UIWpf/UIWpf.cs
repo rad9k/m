@@ -23,7 +23,7 @@ namespace m0.UIWpf
         public static FontWeight BoldWeight = FontWeight.FromOpenTypeWeight(550);
         public static FontWeight ValueWeight = FontWeight.FromOpenTypeWeight(550); // FontWeights.Normal;
 
-        public static double IconSize = 20;
+        public static double IconSize = 15;
 
         public static void InitializeUIWpf()
         {
