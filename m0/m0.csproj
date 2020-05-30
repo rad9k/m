@@ -466,7 +466,9 @@
   <ItemGroup>
     <Resource Include="_PROJECT\midi.txt" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Resource Include="_RESOURCES\basic\extend.png" />
+  </ItemGroup>
   <ItemGroup>
     <Resource Include="_RESOURCES\basic\delete.png" />
     <Resource Include="_RESOURCES\basic\details.png" />

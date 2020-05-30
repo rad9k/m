@@ -113,7 +113,7 @@ namespace m0_SYSTEM_GENERATE.Music
         {
             IVertex r = m0.MinusZero.Instance.root;
 
-            Data = Music.AddVertex(null, "Data");
+            Data = Music.AddVertex(r.Get(false, @"System\Meta\ZeroUML\Package"), "Data");
 
             AddBasePitchSet();
 
@@ -341,6 +341,7 @@ namespace m0_SYSTEM_GENERATE.Music
             GraphUtil.AddInherits(Sequence, History);
 
             GraphUtil.AddAttribute(Sequence, "IsDrum", Boolean, 0, 1);
+            GraphUtil.AddAttribute(Sequence, "ExtendTimeSpan", Integer, 1, 1, 16*96);
             GraphUtil.AddAssociation(Sequence, "PitchSet", PitchSet, 0, 1);
 
             Sequence.AddEdge(r.Get(false, @"System\Meta\Base\Vertex\$DefaultOpenVisualiser"), r.Get(false, @"System\Meta\Visualiser\Sequence"));

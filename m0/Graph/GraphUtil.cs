@@ -91,6 +91,27 @@ namespace m0.Graph
             return a;
         }
 
+        public static IVertex AddAttribute(IVertex baseVertex, string attributeName, IVertex target, int MinCardinality, int MaxCardinality, object DefaultValue)
+        {
+            IVertex r = MinusZero.Instance.root;
+
+            IVertex a = baseVertex.AddVertex(r.Get(false, @"System\Meta\ZeroUML\Class\Attribute"), attributeName);
+
+            a.AddEdge(MinusZero.Instance.Is, r.Get(false, @"System\Meta\ZeroUML\Class\Attribute"));
+
+            a.AddEdge(r.Get(false, @"System\Meta\Base\Vertex\$EdgeTarget"), target);
+
+            a.AddEdge(r.Get(false, @"System\Meta\Base\Vertex\$IsAggregation"), MinusZero.Instance.Empty);
+
+            a.AddVertex(r.Get(false, @"System\Meta\Base\Vertex\$MinCardinality"), MinCardinality);
+
+            a.AddVertex(r.Get(false, @"System\Meta\Base\Vertex\$MaxCardinality"), MaxCardinality);
+
+            a.AddVertex(r.Get(false, @"System\Meta\Base\Vertex\$DefaultValue"), DefaultValue);
+
+            return a;
+        }
+
         public static void AddAssociation(IVertex baseVertex, string attributeName, IVertex target, int MinCardinality, int MaxCardinality)
         {
             IVertex r = MinusZero.Instance.root;

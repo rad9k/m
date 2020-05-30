@@ -9,14 +9,25 @@
     <DockPanel>
         <ToolBarTray DockPanel.Dock="Top">
             <ToolBar>
-                <Button Content="New" />
-                <Button Content="Open" />
-                <Button Content="Save" />
-            </ToolBar>
-            <ToolBar>
-                <Button Command="Cut" Content="Cut" />
-                <Button Command="Copy" Content="Copy" />
-                <Button Command="Paste" Content="Paste" />
+                <Button  ToolTip="Add new note">
+                    <StackPanel Orientation="Horizontal">
+                        <Image RenderOptions.BitmapScalingMode="HighQuality" Source="pack://application:,,/m0;Component/_resources/basic/pen.png" Width="15" Height="15"/>
+                        <TextBlock Margin="3,0,0,0">New note</TextBlock>
+                    </StackPanel>
+                </Button>
+                <Button  ToolTip="Select multiple notes">
+                    <StackPanel Orientation="Horizontal">
+                        <Image RenderOptions.BitmapScalingMode="HighQuality" Source="pack://application:,,/m0;Component/_resources/basic/selection.png" Width="15" Height="15"/>
+                        <TextBlock Margin="3,0,0,0">Select</TextBlock>
+                    </StackPanel>
+                </Button>
+                <Button  ToolTip="Extend the sequence length">
+                    <StackPanel Orientation="Horizontal">
+                        <Image RenderOptions.BitmapScalingMode="HighQuality" Source="pack://application:,,/m0;Component/_resources/basic/zoom-in.png" Width="15" Height="15"/>
+                        <TextBlock Margin="3,0,0,0">Extend sequence length</TextBlock>
+                    </StackPanel>
+                </Button>
+                
             </ToolBar>
         </ToolBarTray>
         <Controls:ZoomScrollViewer />
