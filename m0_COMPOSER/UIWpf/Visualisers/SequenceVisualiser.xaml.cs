@@ -1,5 +1,6 @@
 ﻿using m0;
 using m0.Foundation;
+using m0.UIWpf.Visualisers;
 using m0.ZeroUML;
 using System;
 using System.Collections.Generic;
@@ -21,7 +22,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
     /// <summary>
     /// Interaction logic for SequenceVisualiser.xaml
     /// </summary>
-    public partial class SequenceVisualiser : UserControl, IPlatformClass
+    public partial class SequenceVisualiser : UserControl, IPlatformClass, IOwnScrolling
     {        
         public IVertex Vertex { get; set; }
 
