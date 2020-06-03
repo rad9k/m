@@ -30,6 +30,16 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             //Vertex.Get(false, "ZoomVisualiserContent:").Value = 100;
         }
 
+        void SequenceVisualiserInit()
+        {
+            Button b = new Button();
+
+            b.Width = 1000;
+            b.Height = 1000;
+
+            ZCV.SetContent(b);
+        }
+
         public SequenceVisualiser()
         {
             InitializeComponent();
@@ -59,6 +69,8 @@ namespace m0_COMPOSER.UIWpf.Visualisers
                 ClassVertex.AddIsClassAndAllAttributesAndAssociations(Vertex.Get(false, "BaseEdge:"), mz.Root.Get(false, @"System\Meta\ZeroTypes\Edge"));
 
                 SetVertexDefaultValues();
+
+                SequenceVisualiserInit();
 
                 /*this.ContextMenu = new m0ContextMenu(this);
 

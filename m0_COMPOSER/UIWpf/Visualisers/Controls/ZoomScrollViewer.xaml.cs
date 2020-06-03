@@ -18,11 +18,26 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Controls
     /// <summary>
     /// Interaction logic for ZoomScrollViewer.xaml
     /// </summary>
-    public partial class ZoomScrollViewer : UserControl
+    public partial class ZoomScrollViewer : UserControl, IZoomScrollView
     {
         public ZoomScrollViewer()
         {
             InitializeComponent();
+        }
+
+        public void SetContent(Control control)
+        {
+            Scroll.Content = control;
+        }
+
+        public void SetHorizontalAxisDecorator(IZoomScrollViewerAxisDecorator decorator)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void SetVerticalAxisDecorator(IZoomScrollViewerAxisDecorator decorator)
+        {
+            throw new NotImplementedException();
         }
     }
 }

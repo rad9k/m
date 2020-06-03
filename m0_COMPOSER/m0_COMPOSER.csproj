@@ -55,11 +55,13 @@
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Runtime\Initialisation.cs" />
-    <Compile Include="UIWpf\Visualisers\Controls\PitchSetView.cs" />
-    <Compile Include="UIWpf\Visualisers\Controls\TimeSpanView.cs" />
+    <Compile Include="UIWpf\Visualisers\Controls\PitchSetAxisDecorator.cs" />
+    <Compile Include="UIWpf\Visualisers\Controls\TimeSpanAxisDecorator.cs" />
     <Compile Include="UIWpf\Visualisers\Controls\ZoomScrollViewer.xaml.cs">
       <DependentUpon>ZoomScrollViewer.xaml</DependentUpon>
     </Compile>
+    <Compile Include="UIWpf\Visualisers\IZoomScrollView.cs" />
+    <Compile Include="UIWpf\Visualisers\IZoomScrollViewerAxisDecorator.cs" />
     <Compile Include="UIWpf\Visualisers\SequenceVisualiser.xaml.cs">
       <DependentUpon>SequenceVisualiser.xaml</DependentUpon>
     </Compile>
@@ -73,7 +75,9 @@
       <Name>m0</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Content Include="UIWpf\Visualisers\controls.txt" />
+  </ItemGroup>
   <ItemGroup>
     <Page Include="UIWpf\Visualisers\Controls\ZoomScrollViewer.xaml">
       <SubType>Designer</SubType>

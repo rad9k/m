@@ -1,0 +1,16 @@
+﻿SequenceVisuliser / SongVisualiser : IZCVHost
+
+
+ZoomScroolView : IZCV
+
+-SetHorizontalAxisDecorator
+-SetVerticalAxisDecorator
+-SetContent
+
+hosts
+
+IZCVAxisDecorator
+
+-SetBaseVertex
+= in: BaseVertex
+= out: Width / Height
