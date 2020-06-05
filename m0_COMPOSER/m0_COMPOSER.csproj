@@ -55,6 +55,7 @@
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Runtime\Initialisation.cs" />
+    <Compile Include="UIWpf\Visualisers\Controls\LineStyle.cs" />
     <Compile Include="UIWpf\Visualisers\Controls\PitchSetAxisDecorator.cs" />
     <Compile Include="UIWpf\Visualisers\Controls\TimeSpanAxisDecorator.cs" />
     <Compile Include="UIWpf\Visualisers\Controls\ZoomScrollViewer.xaml.cs">
