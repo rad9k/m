@@ -57,16 +57,10 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Controls
             Update();
         }
 
-        protected void VertexChange(object sender, VertexChangeEventArgs e)
+        public void SetLength(double length)
         {
-            if ((sender == baseVertex) && (e.Type == VertexChangeType.EdgeAdded) && (GeneralUtil.CompareStrings(e.Edge.Meta.Value, "BaseEdge")))
-                UpdateBaseEdge();
 
-            if ((sender == baseVertex) && (e.Type == VertexChangeType.EdgeAdded) && (GeneralUtil.CompareStrings(e.Edge.Meta.Value, "BaseEdge")))
-                UpdateBaseEdge();
-
-            if ((sender == Vertex.Get(false, "BaseEdge:")) && (e.Type == VertexChangeType.EdgeAdded) && (GeneralUtil.CompareStrings(e.Edge.Meta.Value, "To")))
-                UpdateBaseEdge();
         }
+
     }
 }

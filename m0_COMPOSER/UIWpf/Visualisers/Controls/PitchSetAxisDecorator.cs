@@ -15,9 +15,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Controls
         public Size size { get; set; }
         public List<AxisSegment> segments { get; set; }
 
-        IVertex baseVertex;
-
-        IVertex pitchSet;
+        IVertex baseVertex;        
 
         double zoomFactor;
 
@@ -29,7 +27,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Controls
 
             double segmentSize = zoomFactor / 10;
 
-            foreach(IEdge e in pitchSet)
+            foreach(IEdge e in baseVertex)
             {
                 AxisSegment segment = new AxisSegment();
 
@@ -48,15 +46,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Controls
 
         public void SetBaseVertex(IVertex _baseVertex)
         {
-            IVertex r = MinusZero.Instance.Root;
-
-            baseVertex = _baseVertex;
-
-            pitchSet = baseVertex.Get(false, "PitchSet:");
-
-            if (pitchSet == null)
-                pitchSet = r.Get(false, @"System\Lib\Music\Data\DefaultPitchSet:");
-            
+            baseVertex = _baseVertex;            
 
             Update();
         }
@@ -66,6 +56,11 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Controls
             zoomFactor = _zoomFactor;
 
             Update();
+        }
+
+        public void SetLength(double length)
+        {
+
         }
     }
 }

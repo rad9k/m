@@ -1,6 +1,8 @@
 ﻿using m0;
 using m0.Foundation;
 using m0.UIWpf.Visualisers;
+using m0.Util;
+using m0.ZeroTypes;
 using m0.ZeroUML;
 using System;
 using System.Collections.Generic;
@@ -23,22 +25,31 @@ namespace m0_COMPOSER.UIWpf.Visualisers
     /// Interaction logic for SequenceVisualiser.xaml
     /// </summary>
     public partial class SequenceVisualiser : UserControl, IPlatformClass, IOwnScrolling
-    {        
-        public IVertex Vertex { get; set; }
-
+    {                
         protected void SetVertexDefaultValues()
         {
             //Vertex.Get(false, "ZoomVisualiserContent:").Value = 100;
         }
 
-        void SequenceVisualiserInit()
-        {
-            Button b = new Button();
+        Canvas Main;
 
-            b.Width = 1000;
-            b.Height = 1000;
+        IVertex pitchSet;
+        IVertex timeSpan;
 
-            ZCV.SetContent(b);
+        void VisualiserUpdate()
+        {            
+            IVertex baseVertex = Vertex.Get(false, @"BaseVertex:\To:");
+
+            if (baseVertex == null)
+                return;
+
+            IVertex r = MinusZero.Instance.Root;            
+
+            pitchSet = baseVertex.Get(false, "PitchSet:");
+
+            if (pitchSet == null)
+                pitchSet = r.Get(false, @"System\Lib\Music\Data\DefaultPitchSet:");
+            
         }
 
         public SequenceVisualiser()
@@ -69,9 +80,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
                 ClassVertex.AddIsClassAndAllAttributesAndAssociations(Vertex.Get(false, "BaseEdge:"), mz.Root.Get(false, @"System\Meta\ZeroTypes\Edge"));
 
-                SetVertexDefaultValues();
-
-                SequenceVisualiserInit();
+                SetVertexDefaultValues();         
 
                 /*this.ContextMenu = new m0ContextMenu(this);
 
@@ -80,6 +89,67 @@ namespace m0_COMPOSER.UIWpf.Visualisers
                 this.Drop += dndDrop;
 
                 this.MouseEnter += dndMouseEnter;*/
+            }
+        }
+
+
+        protected void UpdateBaseEdge()
+        {
+            IVertex bas = Vertex.Get(false, @"BaseEdge:\To:");
+
+            if (bas != null)
+                VisualiserUpdate();
+
+        }
+
+        protected void VertexChange(object sender, VertexChangeEventArgs e)
+        {
+            if ((sender == Vertex) && (e.Type == VertexChangeType.EdgeAdded) && (GeneralUtil.CompareStrings(e.Edge.Meta.Value, "BaseEdge")))
+                UpdateBaseEdge();
+
+            if ((sender == Vertex.Get(false, "BaseEdge:")) && (e.Type == VertexChangeType.EdgeAdded) && (GeneralUtil.CompareStrings(e.Edge.Meta.Value, "To")))
+                UpdateBaseEdge();
+
+            if (sender == Vertex.Get(false, @"BaseEdge:\To:") && (e.Type == VertexChangeType.EdgeAdded || e.Type == VertexChangeType.EdgeRemoved))
+                UpdateBaseEdge();
+        }
+
+        private IVertex _Vertex;
+
+        public IVertex Vertex
+        {
+            get { return _Vertex; }
+            set
+            {
+                if (_Vertex != null)
+                    PlatformClass.RemoveVertexChangeListeners(this.Vertex, new VertexChange(VertexChange));
+
+                _Vertex = value;
+
+                PlatformClass.RegisterVertexChangeListeners(this.Vertex, new VertexChange(VertexChange), new string[] { "BaseEdge", "SelectedEdges" });
+
+                UpdateBaseEdge();
+            }
+        }
+
+        bool IsDisposed = false;
+
+        public void Dispose()
+        {
+            if (IsDisposed == false)
+            {
+                IsDisposed = true;
+                MinusZero mz = MinusZero.Instance;
+
+                //GraphUtil.DeleteEdgeByToVertex(mz.Root.Get(false, @"System\Session\Visualisers"), Vertex);
+
+                /*foreach (UIElement e in Children)
+                {
+                    if (e is StackPanel)
+                        foreach (UIElement ee in ((StackPanel)e).Children)
+                            if (ee is IDisposable)
+                                ((IDisposable)ee).Dispose();
+                }*/
             }
         }
     }

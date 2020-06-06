@@ -30,14 +30,24 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Controls
             Scroll.Content = control;
         }
 
+        ScrollViewer HorizontalAxisDecorator;
+        ScrollViewer VerticalAxisDecorator;
+
+        public override void OnApplyTemplate()
+        {
+            HorizontalAxisDecorator = (ScrollViewer) Template.FindName("HorizontalAxisDecorator", this);
+
+            VerticalAxisDecorator = (ScrollViewer)Template.FindName("VerticalAxisDecorator", this);
+        }
+
         public void SetHorizontalAxisDecorator(IZoomScrollViewerAxisDecorator decorator)
         {
-            throw new NotImplementedException();
+            HorizontalAxisDecorator.Content = decorator;            
         }
 
         public void SetVerticalAxisDecorator(IZoomScrollViewerAxisDecorator decorator)
         {
-            throw new NotImplementedException();
+            VerticalAxisDecorator.Content = decorator;
         }
     }
 }

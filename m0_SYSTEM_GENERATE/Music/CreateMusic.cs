@@ -227,9 +227,11 @@ namespace m0_SYSTEM_GENERATE.Music
 
             IVertex tact = AddTimeSpan(Data, "Tact", 16, Music.Get(false, @"TimeSpanLevel"));
 
+            Data.AddEdge(Music.Get(false, "DefaultTimeSpanLevel"), tact);
+
             IVertex sixteen = AddTimeSpan(tact, "Sixteen", 96, Music.Get(false, @"TimeSpanLevel\SubLevel"));
 
-            sixteen.AddEdge(Music.Get(false, @"TimeSpanLevel\SubLevel"), MidiTick);
+            sixteen.AddEdge(Music.Get(false, @"TimeSpanLevel\SubLevel"), MidiTick);            
         }
 
         private static void AddMetaEdges()
@@ -239,6 +241,8 @@ namespace m0_SYSTEM_GENERATE.Music
             GraphUtil.AddMetaEdge(Music, "DefaultDrumSet", Music.Get(false, "PitchSet"));
 
             GraphUtil.AddMetaEdge(Music, "BaseTimeSpanLevel", Music.Get(false, "TimeSpanLevel"));
+
+            GraphUtil.AddMetaEdge(Music, "DefaultTimeSpanLevel", Music.Get(false, "TimeSpanLevel"));
         }
 
         private static void AddClasses() {
@@ -266,7 +270,7 @@ namespace m0_SYSTEM_GENERATE.Music
 
             IVertex Event = GraphUtil.AddClass(Music, "Event");
 
-            GraphUtil.AddAggregation(Event, "TriggerTime", Integer, 1, 1);
+            GraphUtil.AddAttribute(Event, "TriggerTime", Integer, 1, 1);
 
             // HISTORY
 
@@ -341,7 +345,7 @@ namespace m0_SYSTEM_GENERATE.Music
             GraphUtil.AddInherits(Sequence, History);
 
             GraphUtil.AddAttribute(Sequence, "IsDrum", Boolean, 0, 1);
-            GraphUtil.AddAttribute(Sequence, "ExtendTimeSpan", Integer, 1, 1, 16*96);
+            GraphUtil.AddAttribute(Sequence, "ExtendTimeLength", Integer, 1, 1, 16*96);
             GraphUtil.AddAssociation(Sequence, "PitchSet", PitchSet, 0, 1);
 
             Sequence.AddEdge(r.Get(false, @"System\Meta\Base\Vertex\$DefaultOpenVisualiser"), r.Get(false, @"System\Meta\Visualiser\Sequence"));
