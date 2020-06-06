@@ -877,7 +877,7 @@ namespace m0.UIWpf.Visualisers
             Vector diff = dndStartPoint - mousePos;
 
             if (hasButtonBeenDown &&
-                !UIWpf.IsMouseOverScrollbar(sender, dndStartPoint) &&
+                !UIWpfUtil.IsMouseOverScrollbar(sender, dndStartPoint) &&
                 (e.LeftButton == MouseButtonState.Pressed) & (
                 (Math.Abs(diff.X) > Dnd.MinimumHorizontalDragDistance) ||
                 (Math.Abs(diff.Y) > Dnd.MinimumVerticalDragDistance)))

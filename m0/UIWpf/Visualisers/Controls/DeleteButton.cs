@@ -37,7 +37,7 @@ namespace m0.UIWpf.Visualisers.Controls
             int q = b.PixelHeight; // will not load without this
             i.Source = b;
 
-            i.Width = UIWpf.IconSize;
+            i.Width = UIWpfUtil.IconSize;
 
             RenderOptions.SetBitmapScalingMode(i, BitmapScalingMode.HighQuality);
 

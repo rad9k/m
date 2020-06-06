@@ -24,6 +24,6 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
         void SetBaseVertex(IVertex baseVertex);
 
-        void SetZoomFactor(double zoomFactor);
+        void SetZoomFactor(double zoomFactor);        
     }
 }

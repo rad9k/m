@@ -1130,7 +1130,7 @@ namespace m0.UIWpf.Visualisers.Diagram
         {
             IVertex r = m0.MinusZero.Instance.Root;
 
-            NewDiagramItem ndi = new NewDiagramItem(vv, isSet, UIWpf.GetMousePositionDnd(e));
+            NewDiagramItem ndi = new NewDiagramItem(vv, isSet, UIWpfUtil.GetMousePositionDnd(e));
 
             if (ndi.DiagramItemDefinition != null)
             {
@@ -1153,7 +1153,7 @@ namespace m0.UIWpf.Visualisers.Diagram
                     }
 
                     if (ForceShowEditForm.HasValue == true && ForceShowEditForm == true)
-                        MinusZero.Instance.DefaultUserInteraction.EditDialog(ve.To, UIWpf.GetMousePositionDnd(e));
+                        MinusZero.Instance.DefaultUserInteraction.EditDialog(ve.To, UIWpfUtil.GetMousePositionDnd(e));
 
                   
                     AddDiagramItem(x,

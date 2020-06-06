@@ -17,7 +17,7 @@ using m0.UIWpf.Visualisers;
 
 namespace m0.UIWpf
 {
-    public class UIWpf
+    public class UIWpfUtil
     {
         public static FontWeight MetaWeight = FontWeights.Normal; // FontWeight.FromOpenTypeWeight(550);
         public static FontWeight BoldWeight = FontWeight.FromOpenTypeWeight(550);
@@ -29,6 +29,11 @@ namespace m0.UIWpf
         {
             Dnd.MinimumHorizontalDragDistance = SystemParameters.MinimumHorizontalDragDistance * 2;
             Dnd.MinimumVerticalDragDistance = SystemParameters.MinimumVerticalDragDistance * 2;
+        }
+
+        public static object FindResource(string name)
+        {
+            return m0Main.Instance.FindResource(name);
         }
 
         public static DependencyObject getParentFormVisualiser(DependencyObject e)

@@ -38,7 +38,7 @@ namespace m0.UIWpf.Visualisers.Controls
             int q = b.PixelHeight; // will not load without this
             i.Source = b;
             
-            i.Width= UIWpf.IconSize;
+            i.Width= UIWpfUtil.IconSize;
 
             RenderOptions.SetBitmapScalingMode(i, BitmapScalingMode.HighQuality);
             
@@ -56,7 +56,7 @@ namespace m0.UIWpf.Visualisers.Controls
   
 
         protected override void OnClick(){
-            FormVisualiser v=(FormVisualiser)UIWpf.getParentFormVisualiser(this);
+            FormVisualiser v=(FormVisualiser)UIWpfUtil.getParentFormVisualiser(this);
 
             if (v != null)
                 Edge.ReplaceEdgeEdges(v.Vertex.Get(false, "BaseEdge:"), BaseEdge);

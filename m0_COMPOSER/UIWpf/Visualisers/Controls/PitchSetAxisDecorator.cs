@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Controls;
 using System.Windows;
+using m0;
 
 namespace m0_COMPOSER.UIWpf.Visualisers.Controls
 {
@@ -16,19 +17,55 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Controls
 
         IVertex baseVertex;
 
-        public Size SetBaseVertex(IVertex _baseVertex)
+        IVertex pitchSet;
+
+        double zoomFactor;
+
+        private void Update()
         {
-            throw new NotImplementedException();
+            segments = new List<AxisSegment>();
+
+            int cnt = 0;
+
+            double segmentSize = zoomFactor / 10;
+
+            foreach(IEdge e in pitchSet)
+            {
+                AxisSegment segment = new AxisSegment();
+
+                segment.lineStyle = new LineStyle();
+
+                segment.SegmentStart = cnt * segmentSize;
+                segment.SegmentEnd = (cnt + 1) * segmentSize;
+
+                segment.baseVertex = e.To;
+
+                segments.Add(segment);
+
+                cnt++;
+            }
         }
 
-        public void SetZoomFactor(double zoomFactor)
+        public void SetBaseVertex(IVertex _baseVertex)
         {
-            throw new NotImplementedException();
+            IVertex r = MinusZero.Instance.Root;
+
+            baseVertex = _baseVertex;
+
+            pitchSet = baseVertex.Get(false, "PitchSet:");
+
+            if (pitchSet == null)
+                pitchSet = r.Get(false, @"System\Lib\Music\Data\DefaultPitchSet:");
+            
+
+            Update();
         }
 
-        void IZoomScrollViewerAxisDecorator.SetBaseVertex(IVertex baseVertex)
+        public void SetZoomFactor(double _zoomFactor)
         {
-            throw new NotImplementedException();
+            zoomFactor = _zoomFactor;
+
+            Update();
         }
     }
 }

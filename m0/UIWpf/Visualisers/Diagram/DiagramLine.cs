@@ -76,12 +76,12 @@ namespace m0.UIWpf.Visualisers.Diagram
         protected virtual void UpdateLineEnds()
         {
             if (Vertex.Get(false, "BackgroundColor:") != null)
-                BackgroundColor = UIWpf.GetBrushFromColorVertex(Vertex.Get(false, "BackgroundColor:"));
+                BackgroundColor = UIWpfUtil.GetBrushFromColorVertex(Vertex.Get(false, "BackgroundColor:"));
             else
                 BackgroundColor = (Brush)Line.FindResource("0BackgroundBrush");
 
             if (Vertex.Get(false, "ForegroundColor:") != null)
-                ForegroundColor = UIWpf.GetBrushFromColorVertex(Vertex.Get(false, "ForegroundColor:"));
+                ForegroundColor = UIWpfUtil.GetBrushFromColorVertex(Vertex.Get(false, "ForegroundColor:"));
             else
                 ForegroundColor = (Brush)Line.FindResource("0ForegroundBrush");
 

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using m0.UIWpf;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -13,6 +14,20 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Controls
         public double StrokeThickness;
         public Brush Stroke;
         public DoubleCollection StrokeDashArray;
+
+        public LineStyle()
+        {
+            StrokeThickness = 1;
+            Stroke = (Brush)UIWpfUtil.FindResource("0ForegroundBrush");
+            StrokeDashArray = null;
+        }
+
+        public LineStyle(double strokeThickness, Brush stroke, DoubleCollection strokeDashArray)
+        {
+            StrokeThickness = strokeThickness;
+            Stroke = stroke;
+            StrokeDashArray = strokeDashArray;
+        }
 
         public void SetStyle(Line line)
         {

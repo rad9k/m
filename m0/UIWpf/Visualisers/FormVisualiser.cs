@@ -520,7 +520,7 @@ namespace m0.UIWpf.Visualisers
                 g.BorderBrush = (Brush)FindResource("0ForegroundBrush");
 
                 TextBlock Header = new TextBlock();
-                Header.FontWeight = UIWpf.BoldWeight;
+                Header.FontWeight = UIWpfUtil.BoldWeight;
                 Header.Text = section;
                 g.Header = Header;
 
@@ -579,7 +579,7 @@ namespace m0.UIWpf.Visualisers
                 metaControl.Text = (string)meta.Value;
 
             metaControl.FontStyle = FontStyles.Italic;
-            metaControl.FontWeight = UIWpf.MetaWeight;
+            metaControl.FontWeight = UIWpfUtil.MetaWeight;
             metaControl.Foreground = (Brush)FindResource("0GrayBrush");
             metaControl.FontStyle = FontStyles.Italic;
 
