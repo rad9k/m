@@ -19,8 +19,8 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
     public interface IZoomScrollViewerAxisDecorator
     {
-        Size size { get; set; }
-        List<AxisSegment> segments { get; set; }
+        Size Size { get; set; }
+        List<AxisSegment> Segments { get; set; }
 
         void SetBaseVertex(IVertex baseVertex);
 

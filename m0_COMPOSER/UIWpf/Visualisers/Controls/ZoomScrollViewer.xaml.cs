@@ -30,24 +30,49 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Controls
             Scroll.Content = control;
         }
 
-        ScrollViewer HorizontalAxisDecorator;
-        ScrollViewer VerticalAxisDecorator;
+        ScrollViewer HorizontalAxisDecoratorScrollViewer;
+        ScrollViewer VerticalAxisDecoratorScrollViewer;
+        Slider HorizontalZoomSlider;
+        Slider VerticalZoomSlider;
 
         public override void OnApplyTemplate()
         {
-            HorizontalAxisDecorator = (ScrollViewer) Template.FindName("HorizontalAxisDecorator", this);
+            HorizontalAxisDecoratorScrollViewer = (ScrollViewer) Template.FindName("HorizontalAxisDecorator", this);
 
-            VerticalAxisDecorator = (ScrollViewer)Template.FindName("VerticalAxisDecorator", this);
+            VerticalAxisDecoratorScrollViewer = (ScrollViewer)Template.FindName("VerticalAxisDecorator", this);
+
+            HorizontalZoomSlider = (Slider)Template.FindName("HorizontalZoomSlider", this);
+
+            VerticalZoomSlider = (Slider)Template.FindName("VerticalZoomSlider", this);
         }
+
+        IZoomScrollViewerAxisDecorator HorizontalAxisDecorator;
+        IZoomScrollViewerAxisDecorator VerticalAxisDecorator;
 
         public void SetHorizontalAxisDecorator(IZoomScrollViewerAxisDecorator decorator)
         {
-            HorizontalAxisDecorator.Content = decorator;            
+            HorizontalAxisDecorator = decorator;
+            HorizontalAxisDecoratorScrollViewer.Content = decorator;
+
+            HorizontalAxisDecorator.SetZoomFactor(HorizontalZoomSlider.Value);
         }
 
         public void SetVerticalAxisDecorator(IZoomScrollViewerAxisDecorator decorator)
         {
-            VerticalAxisDecorator.Content = decorator;
+            VerticalAxisDecorator = decorator;
+            VerticalAxisDecoratorScrollViewer.Content = decorator;
+
+            VerticalAxisDecorator.SetZoomFactor(VerticalZoomSlider.Value);
+        }
+
+        private void HorizontalZoomSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            HorizontalAxisDecorator.SetZoomFactor(HorizontalZoomSlider.Value);
+        }
+
+        private void VerticalZoomSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            VerticalAxisDecorator.SetZoomFactor(VerticalZoomSlider.Value);
         }
     }
 }

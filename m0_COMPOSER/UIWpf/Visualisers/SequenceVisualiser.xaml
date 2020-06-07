@@ -30,6 +30,6 @@
                 
             </ToolBar>
         </ToolBarTray>
-        <Controls:ZoomScrollViewer x:Name="ZCV"/>
+        <Controls:ZoomScrollViewer x:Name="ZoomScroolView"/>
     </DockPanel>
 </UserControl>

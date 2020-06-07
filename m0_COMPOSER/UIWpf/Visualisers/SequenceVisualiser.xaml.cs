@@ -1,9 +1,11 @@
 ﻿using m0;
 using m0.Foundation;
+using m0.Graph;
 using m0.UIWpf.Visualisers;
 using m0.Util;
 using m0.ZeroTypes;
 using m0.ZeroUML;
+using m0_COMPOSER.UIWpf.Visualisers.Controls;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -33,25 +35,87 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
         Canvas Main;
 
-        IVertex pitchSet;
-        IVertex timeSpan;
+        IVertex baseVertex;
+        IVertex pitchSetVertex;
+        IVertex timeSpanVertex;
+
+        PitchSetAxisDecorator PitchSetAD;
+        TimeSpanAxisDecorator TimeSpanAD;
+
+        int Length;
 
         void VisualiserUpdate()
+        {
+            SetVertexes();
+
+            SetupParameters();
+
+            SetAxisDecorators();
+
+            CreateAndSetMain();
+
+            DrawMain();
+        }
+
+        void SetVertexes()
         {            
-            IVertex baseVertex = Vertex.Get(false, @"BaseVertex:\To:");
+            baseVertex = Vertex.Get(false, @"BaseVertex:\To:");
 
             if (baseVertex == null)
                 return;
 
             IVertex r = MinusZero.Instance.Root;            
 
-            pitchSet = baseVertex.Get(false, "PitchSet:");
+            pitchSetVertex = baseVertex.Get(false, "PitchSet:");
 
-            if (pitchSet == null)
-                pitchSet = r.Get(false, @"System\Lib\Music\Data\DefaultPitchSet:");
+            if (pitchSetVertex == null)
+                pitchSetVertex = r.Get(false, @"System\Lib\Music\Data\DefaultPitchSet:");
+
+            timeSpanVertex = baseVertex.Get(false, "TimeSpan:");
+
+            if (timeSpanVertex  == null)
+                timeSpanVertex = r.Get(false, @"System\Lib\Music\Data\DefaultTimeSpan:");
+
+        }
+
+        void SetupParameters()
+        {
+            if (baseVertex.Get(false, "Length:") != null)
+                Length = (int)GraphUtil.GetDoubleValue(baseVertex.Get(false, "Length:"));
+            else
+                Length = (int)GraphUtil.GetDoubleValue(baseVertex.Get(false, "ExtendTimeLength"));
+        }
+
+        void SetAxisDecorators()
+        {
+            PitchSetAD = new PitchSetAxisDecorator();
+
+            PitchSetAD.SetBaseVertex(pitchSetVertex);
 
 
-            
+            TimeSpanAD = new TimeSpanAxisDecorator();
+
+            TimeSpanAD.SetBaseVertex(timeSpanVertex);
+
+            TimeSpanAD.SetLength(Length);
+
+
+            ZoomScroolView.SetVerticalAxisDecorator(PitchSetAD);
+
+            ZoomScroolView.SetHorizontalAxisDecorator(TimeSpanAD);            
+        }
+
+        public void CreateAndSetMain()
+        {
+            Main = new Canvas();
+
+            Main.Width = TimeSpanAD.Size.Width;
+            Main.Height = PitchSetAD.Size.Height;
+        }
+
+        public void DrawMain()
+        {
+
         }
 
         public SequenceVisualiser()

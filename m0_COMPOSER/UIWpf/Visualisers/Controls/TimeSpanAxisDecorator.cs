@@ -12,8 +12,8 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Controls
 {
     class TimeSpanAxisDecorator : Canvas, IZoomScrollViewerAxisDecorator
     {
-        public Size size { get; set; }
-        public List<AxisSegment> segments { get; set; }
+        public Size Size { get; set; }
+        public List<AxisSegment> Segments { get; set; }
 
         IVertex baseVertex;
 
@@ -21,7 +21,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Controls
 
         private void Update()
         {
-            segments = new List<AxisSegment>();
+            Segments = new List<AxisSegment>();
 
             //int cnt = 0;
 
@@ -39,7 +39,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Controls
 
                 //segment.baseVertex = e.To;
 
-                segments.Add(segment);
+                Segments.Add(segment);
             }
         }
 
