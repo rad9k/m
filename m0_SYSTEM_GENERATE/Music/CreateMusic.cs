@@ -255,16 +255,19 @@ namespace m0_SYSTEM_GENERATE.Music
             IVertex Boolean = r.Get(false, @"System\Meta\ZeroTypes\Boolean");
             IVertex Color = r.Get(false, @"System\Meta\ZeroTypes\Color");
 
-            //
+            // vertex stubs
 
             IVertex NoteOutput = GraphUtil.AddClass(Music, "NoteOutput");
             IVertex NoteInput = GraphUtil.AddClass(Music, "NoteInput");
+
+            IVertex TimeSpanLevel = GraphUtil.AddClass(Music, "TimeSpanLevel");
 
             // HAS LENGTH
 
             IVertex HasLenth = GraphUtil.AddClass(Music, "HasLength");
 
             GraphUtil.AddAttribute(HasLenth, "Length", Integer, 1, 1);
+            GraphUtil.AddAssociation(HasLenth, "TimeSpan", TimeSpanLevel, 0, 1);
 
             // EVENT
 
@@ -313,9 +316,7 @@ namespace m0_SYSTEM_GENERATE.Music
 
             GraphUtil.AddAggregation(PitchSet, "Pitch", Pitch, 0, -1);
 
-            // TIMESPANLEVEL
-
-            IVertex TimeSpanLevel = GraphUtil.AddClass(Music, "TimeSpanLevel");
+            // TIMESPANLEVEL            
 
             GraphUtil.AddInherits(TimeSpanLevel, HasLenth);
             GraphUtil.AddAggregation(TimeSpanLevel, "SubLevel", TimeSpanLevel, 0, 1);

@@ -49,6 +49,8 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             if (pitchSet == null)
                 pitchSet = r.Get(false, @"System\Lib\Music\Data\DefaultPitchSet:");
+
+
             
         }
 
@@ -99,7 +101,6 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             if (bas != null)
                 VisualiserUpdate();
-
         }
 
         protected void VertexChange(object sender, VertexChangeEventArgs e)
