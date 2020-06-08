@@ -10,7 +10,7 @@ using m0.Util;
 
 namespace m0_COMPOSER.UIWpf.Visualisers.Controls
 {
-    class TimeSpanAxisDecorator : Canvas, IZoomScrollViewerAxisDecorator
+    class TimeSpanAxisDecorator : Canvas, IZoomScrollViewAxisDecorator
     {
         public Size Size { get; set; }
         public List<AxisSegment> Segments { get; set; }

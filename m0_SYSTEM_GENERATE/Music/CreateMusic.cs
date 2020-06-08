@@ -266,7 +266,7 @@ namespace m0_SYSTEM_GENERATE.Music
 
             IVertex HasLenth = GraphUtil.AddClass(Music, "HasLength");
 
-            GraphUtil.AddAttribute(HasLenth, "Length", Integer, 1, 1);
+            GraphUtil.AddAttribute(HasLenth, "Length", Integer, 0, 1);
             GraphUtil.AddAssociation(HasLenth, "TimeSpan", TimeSpanLevel, 0, 1);
 
             // EVENT
@@ -340,7 +340,7 @@ namespace m0_SYSTEM_GENERATE.Music
 
             // SEQUENCE
 
-            IVertex Sequence = GraphUtil.AddClass(Music, "Sequnce");
+            IVertex Sequence = GraphUtil.AddClass(Music, "Sequence");
 
             GraphUtil.AddInherits(Sequence, HasLenth);
             GraphUtil.AddInherits(Sequence, History);

@@ -58,11 +58,11 @@
     <Compile Include="UIWpf\Visualisers\Controls\LineStyle.cs" />
     <Compile Include="UIWpf\Visualisers\Controls\PitchSetAxisDecorator.cs" />
     <Compile Include="UIWpf\Visualisers\Controls\TimeSpanAxisDecorator.cs" />
-    <Compile Include="UIWpf\Visualisers\Controls\ZoomScrollViewer.xaml.cs">
-      <DependentUpon>ZoomScrollViewer.xaml</DependentUpon>
+    <Compile Include="UIWpf\Visualisers\Controls\ZoomScrollView.xaml.cs">
+      <DependentUpon>ZoomScrollView.xaml</DependentUpon>
     </Compile>
     <Compile Include="UIWpf\Visualisers\IZoomScrollView.cs" />
-    <Compile Include="UIWpf\Visualisers\IZoomScrollViewerAxisDecorator.cs" />
+    <Compile Include="UIWpf\Visualisers\IZoomScrollViewAxisDecorator.cs" />
     <Compile Include="UIWpf\Visualisers\IZoomScrollViewerHost.cs" />
     <Compile Include="UIWpf\Visualisers\SequenceVisualiser.xaml.cs">
       <DependentUpon>SequenceVisualiser.xaml</DependentUpon>
@@ -81,7 +81,7 @@
     <Content Include="UIWpf\Visualisers\controls.txt" />
   </ItemGroup>
   <ItemGroup>
-    <Page Include="UIWpf\Visualisers\Controls\ZoomScrollViewer.xaml">
+    <Page Include="UIWpf\Visualisers\Controls\ZoomScrollView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

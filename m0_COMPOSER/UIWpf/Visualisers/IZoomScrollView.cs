@@ -9,8 +9,12 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 {
     public interface IZoomScrollView
     {
-        void SetHorizontalAxisDecorator(IZoomScrollViewerAxisDecorator decorator);
-        void SetVerticalAxisDecorator(IZoomScrollViewerAxisDecorator decorator);
-        void SetContent(Control control);
+        void SetHorizontalAxisDecorator(IZoomScrollViewAxisDecorator decorator);
+
+        void SetVerticalAxisDecorator(IZoomScrollViewAxisDecorator decorator);
+
+        void SetContent(object control);
+
+        void SetHost(IZoomScrollViewerHost host);
     }
 }

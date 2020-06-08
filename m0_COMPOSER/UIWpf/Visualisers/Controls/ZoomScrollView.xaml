@@ -1,4 +1,4 @@
-﻿<UserControl x:Class="m0_COMPOSER.UIWpf.Visualisers.Controls.ZoomScrollViewer"
+﻿<UserControl x:Class="m0_COMPOSER.UIWpf.Visualisers.Controls.ZoomScrollView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
@@ -27,8 +27,8 @@
                             <RowDefinition Height="15px"/>
                             <RowDefinition Height="Auto"/>
                         </Grid.RowDefinitions>
-                        <ScrollViewer Grid.Row="0" Grid.Column="1" x:Name="HorizontalAxisDecoratorScrollViewer"/>
-                        <ScrollViewer Grid.Row="1" Grid.Column="0" x:Name="VerticalAxisDecoratorScrollViewer"/>
+                        <ScrollViewer Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="4" x:Name="HorizontalAxisDecoratorScrollViewer"/>
+                        <ScrollViewer Grid.Row="1" Grid.Column="0" Grid.RowSpan="4" x:Name="VerticalAxisDecoratorScrollViewer"/>
                         <Rectangle Grid.Column="5"  Grid.Row="5" x:Name="Corner"/>
                         <ScrollContentPresenter Grid.Column="1"  Grid.Row="1" Grid.ColumnSpan="4" Grid.RowSpan="4" x:Name="PART_ScrollContentPresenter" CanContentScroll="{TemplateBinding CanContentScroll}" CanHorizontallyScroll="False" CanVerticallyScroll="False" ContentTemplate="{TemplateBinding ContentTemplate}" Content="{TemplateBinding Content}"  Margin="{TemplateBinding Padding}"/>
                         <ScrollBar Grid.Row="1"  Grid.Column="5" x:Name="PART_VerticalScrollBar" AutomationProperties.AutomationId="VerticalScrollBar" Cursor="Arrow" Maximum="{TemplateBinding ScrollableHeight}" Minimum="0" Visibility="{TemplateBinding ComputedVerticalScrollBarVisibility}" Value="{Binding VerticalOffset, Mode=OneWay, RelativeSource={RelativeSource TemplatedParent}}" ViewportSize="{TemplateBinding ViewportHeight}"/>

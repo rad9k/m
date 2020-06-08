@@ -18,14 +18,14 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Controls
     /// <summary>
     /// Interaction logic for ZoomScrollViewer.xaml
     /// </summary>
-    public partial class ZoomScrollViewer : UserControl, IZoomScrollView
+    public partial class ZoomScrollView : UserControl, IZoomScrollView
     {
-        public ZoomScrollViewer()
+        public ZoomScrollView()
         {
             InitializeComponent();
         }
 
-        public void SetContent(Control control)
+        public void SetContent(object control)
         {
             Scroll.Content = control;
         }
@@ -34,22 +34,29 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Controls
         ScrollViewer VerticalAxisDecoratorScrollViewer;
         Slider HorizontalZoomSlider;
         Slider VerticalZoomSlider;
+        IZoomScrollViewerHost Host;
 
         public override void OnApplyTemplate()
         {
-            HorizontalAxisDecoratorScrollViewer = (ScrollViewer) Template.FindName("HorizontalAxisDecorator", this);
+            base.OnApplyTemplate();
 
-            VerticalAxisDecoratorScrollViewer = (ScrollViewer)Template.FindName("VerticalAxisDecorator", this);
+           /* HorizontalAxisDecoratorScrollViewer = (ScrollViewer) Scroll.Template.FindName("HorizontalAxisDecoratorScrollViewer", Scroll);
+
+            //HorizontalAxisDecoratorScrollViewer = (ScrollViewer)VisualTreeHelper. ("HorizontalAxisDecoratorScrollViewer");
+
+            HorizontalAxisDecoratorScrollViewer = (ScrollViewer)GetTemplateChild("HorizontalAxisDecoratorScrollViewer");
+
+            VerticalAxisDecoratorScrollViewer = (ScrollViewer)Template.FindName("VerticalAxisDecoratorScrollViewer", Scroll);
 
             HorizontalZoomSlider = (Slider)Template.FindName("HorizontalZoomSlider", this);
 
-            VerticalZoomSlider = (Slider)Template.FindName("VerticalZoomSlider", this);
+            VerticalZoomSlider = (Slider)Template.FindName("VerticalZoomSlider", this);*/
         }
 
-        IZoomScrollViewerAxisDecorator HorizontalAxisDecorator;
-        IZoomScrollViewerAxisDecorator VerticalAxisDecorator;
+        IZoomScrollViewAxisDecorator HorizontalAxisDecorator;
+        IZoomScrollViewAxisDecorator VerticalAxisDecorator;
 
-        public void SetHorizontalAxisDecorator(IZoomScrollViewerAxisDecorator decorator)
+        public void SetHorizontalAxisDecorator(IZoomScrollViewAxisDecorator decorator)
         {
             HorizontalAxisDecorator = decorator;
             HorizontalAxisDecoratorScrollViewer.Content = decorator;
@@ -57,12 +64,24 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Controls
             HorizontalAxisDecorator.SetZoomFactor(HorizontalZoomSlider.Value);
         }
 
-        public void SetVerticalAxisDecorator(IZoomScrollViewerAxisDecorator decorator)
+        public void SetVerticalAxisDecorator(IZoomScrollViewAxisDecorator decorator)
         {
+            HorizontalAxisDecoratorScrollViewer = (ScrollViewer)Scroll.Template.FindName("HorizontalAxisDecoratorScrollViewer", Scroll);
+
+            //HorizontalAxisDecoratorScrollViewer = (ScrollViewer)VisualTreeHelper. ("HorizontalAxisDecoratorScrollViewer");
+
+            HorizontalAxisDecoratorScrollViewer = (ScrollViewer)GetTemplateChild("HorizontalAxisDecoratorScrollViewer");
+
+
             VerticalAxisDecorator = decorator;
             VerticalAxisDecoratorScrollViewer.Content = decorator;
 
             VerticalAxisDecorator.SetZoomFactor(VerticalZoomSlider.Value);
+        }
+
+        public void SetHost(IZoomScrollViewerHost host)
+        {
+            Host = host;
         }
 
         private void HorizontalZoomSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)

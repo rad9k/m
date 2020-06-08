@@ -10,7 +10,7 @@ using m0;
 
 namespace m0_COMPOSER.UIWpf.Visualisers.Controls
 {
-    class PitchSetAxisDecorator : Canvas, IZoomScrollViewerAxisDecorator
+    class PitchSetAxisDecorator : Canvas, IZoomScrollViewAxisDecorator
     {
         public Size Size { get; set; }
         public List<AxisSegment> Segments { get; set; }

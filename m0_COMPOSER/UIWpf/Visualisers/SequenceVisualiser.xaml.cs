@@ -26,7 +26,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
     /// <summary>
     /// Interaction logic for SequenceVisualiser.xaml
     /// </summary>
-    public partial class SequenceVisualiser : UserControl, IPlatformClass, IOwnScrolling
+    public partial class SequenceVisualiser : UserControl, IPlatformClass, IOwnScrolling, IZoomScrollViewerHost
     {                
         protected void SetVertexDefaultValues()
         {
@@ -44,25 +44,39 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
         int Length;
 
+        double HorizontalZoomFactor;
+        double VerticalZoomFactor;
+
         void VisualiserUpdate()
         {
             SetVertexes();
+
+            if (baseVertex == null)
+                return;
 
             SetupParameters();
 
             SetAxisDecorators();
 
-            CreateAndSetMain();
+            CreateMain();
+
+            SetupScrollViewer();
 
             DrawMain();
         }
 
         void SetVertexes()
         {            
-            baseVertex = Vertex.Get(false, @"BaseVertex:\To:");
+            baseVertex = Vertex.Get(false, @"BaseEdge:\To:");
 
             if (baseVertex == null)
                 return;
+
+            if (baseVertex.Get(false, "$Is:Sequence") == null)
+            {
+                baseVertex = null;
+                return;
+            }
 
             IVertex r = MinusZero.Instance.Root;            
 
@@ -81,9 +95,9 @@ namespace m0_COMPOSER.UIWpf.Visualisers
         void SetupParameters()
         {
             if (baseVertex.Get(false, "Length:") != null)
-                Length = (int)GraphUtil.GetDoubleValue(baseVertex.Get(false, "Length:"));
+                Length = (int)GraphUtil.GetIntegerValue(baseVertex.Get(false, "Length:"));
             else
-                Length = (int)GraphUtil.GetDoubleValue(baseVertex.Get(false, "ExtendTimeLength"));
+                Length = (int)GraphUtil.GetIntegerValue(baseVertex.Get(false, "ExtendTimeLength:"));
         }
 
         void SetAxisDecorators()
@@ -100,12 +114,12 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             TimeSpanAD.SetLength(Length);
 
 
-            ZoomScroolView.SetVerticalAxisDecorator(PitchSetAD);
+            ZoomScrollView.SetVerticalAxisDecorator(PitchSetAD);
 
-            ZoomScroolView.SetHorizontalAxisDecorator(TimeSpanAD);            
+            ZoomScrollView.SetHorizontalAxisDecorator(TimeSpanAD);            
         }
 
-        public void CreateAndSetMain()
+        public void CreateMain()
         {
             Main = new Canvas();
 
@@ -113,9 +127,21 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             Main.Height = PitchSetAD.Size.Height;
         }
 
+        public void SetupScrollViewer()
+        {
+            ZoomScrollView.SetHost(this);
+            ZoomScrollView.SetContent(Main);
+        }
+
         public void DrawMain()
         {
 
+        }
+
+        public void SetZoomFactors(double horizontalZoomFactor, double verticalZoomFactor)
+        {
+            HorizontalZoomFactor = horizontalZoomFactor;
+            VerticalZoomFactor = verticalZoomFactor;
         }
 
         public SequenceVisualiser()
