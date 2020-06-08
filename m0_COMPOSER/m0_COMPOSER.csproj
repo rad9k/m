@@ -63,6 +63,7 @@
     </Compile>
     <Compile Include="UIWpf\Visualisers\IZoomScrollView.cs" />
     <Compile Include="UIWpf\Visualisers\IZoomScrollViewerAxisDecorator.cs" />
+    <Compile Include="UIWpf\Visualisers\IZoomScrollViewerHost.cs" />
     <Compile Include="UIWpf\Visualisers\SequenceVisualiser.xaml.cs">
       <DependentUpon>SequenceVisualiser.xaml</DependentUpon>
     </Compile>
