@@ -58,25 +58,22 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Controls
 
         public void SetHorizontalAxisDecorator(IZoomScrollViewAxisDecorator decorator)
         {
-            HorizontalAxisDecorator = decorator;
+            /*HorizontalAxisDecorator = decorator;
             HorizontalAxisDecoratorScrollViewer.Content = decorator;
 
-            HorizontalAxisDecorator.SetZoomFactor(HorizontalZoomSlider.Value);
+            HorizontalAxisDecorator.SetZoomFactor(HorizontalZoomSlider.Value);*/
         }
+
+
 
         public void SetVerticalAxisDecorator(IZoomScrollViewAxisDecorator decorator)
         {
-            HorizontalAxisDecoratorScrollViewer = (ScrollViewer)Scroll.Template.FindName("HorizontalAxisDecoratorScrollViewer", Scroll);
-
-            //HorizontalAxisDecoratorScrollViewer = (ScrollViewer)VisualTreeHelper. ("HorizontalAxisDecoratorScrollViewer");
-
-            HorizontalAxisDecoratorScrollViewer = (ScrollViewer)GetTemplateChild("HorizontalAxisDecoratorScrollViewer");
 
 
-            VerticalAxisDecorator = decorator;
+            /*VerticalAxisDecorator = decorator;
             VerticalAxisDecoratorScrollViewer.Content = decorator;
 
-            VerticalAxisDecorator.SetZoomFactor(VerticalZoomSlider.Value);
+            VerticalAxisDecorator.SetZoomFactor(VerticalZoomSlider.Value);*/
         }
 
         public void SetHost(IZoomScrollViewerHost host)
@@ -92,6 +89,16 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Controls
         private void VerticalZoomSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
             VerticalAxisDecorator.SetZoomFactor(VerticalZoomSlider.Value);
+        }
+
+        private void Scroll_Loaded(object sender, RoutedEventArgs e)
+        {
+            HorizontalAxisDecoratorScrollViewer = (ScrollViewer)Scroll.Template.FindName("HorizontalAxisDecoratorScrollViewer", Scroll);
+
+            //HorizontalAxisDecoratorScrollViewer = (ScrollViewer)VisualTreeHelper. ("HorizontalAxisDecoratorScrollViewer");
+
+            HorizontalAxisDecoratorScrollViewer = (ScrollViewer)GetTemplateChild("HorizontalAxisDecoratorScrollViewer");
+
         }
     }
 }

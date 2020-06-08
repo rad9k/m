@@ -7,7 +7,7 @@
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300">
     <Grid>
-        <ScrollViewer x:Name="Scroll"  HorizontalScrollBarVisibility="Visible" VerticalScrollBarVisibility="Visible">
+        <ScrollViewer x:Name="Scroll"  HorizontalScrollBarVisibility="Visible" VerticalScrollBarVisibility="Visible" Loaded="Scroll_Loaded">
             <ScrollViewer.Template>
                 <ControlTemplate TargetType="{x:Type ScrollViewer}">
                     <Grid x:Name="Grid" Background="{TemplateBinding Background}">
@@ -27,7 +27,7 @@
                             <RowDefinition Height="15px"/>
                             <RowDefinition Height="Auto"/>
                         </Grid.RowDefinitions>
-                        <ScrollViewer Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="4" x:Name="HorizontalAxisDecoratorScrollViewer"/>
+                        <ScrollViewer Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="4" Name="HorizontalAxisDecoratorScrollViewer"/>
                         <ScrollViewer Grid.Row="1" Grid.Column="0" Grid.RowSpan="4" x:Name="VerticalAxisDecoratorScrollViewer"/>
                         <Rectangle Grid.Column="5"  Grid.Row="5" x:Name="Corner"/>
                         <ScrollContentPresenter Grid.Column="1"  Grid.Row="1" Grid.ColumnSpan="4" Grid.RowSpan="4" x:Name="PART_ScrollContentPresenter" CanContentScroll="{TemplateBinding CanContentScroll}" CanHorizontallyScroll="False" CanVerticallyScroll="False" ContentTemplate="{TemplateBinding ContentTemplate}" Content="{TemplateBinding Content}"  Margin="{TemplateBinding Padding}"/>
