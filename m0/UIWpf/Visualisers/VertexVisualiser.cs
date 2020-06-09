@@ -82,7 +82,7 @@ namespace m0.UIWpf.Visualisers
             }
             else // open
             {
-                FormVisualiser v = (FormVisualiser)UIWpfUtil.getParentFormVisualiser(this);
+                FormVisualiser v = (FormVisualiser)WpfUtil.getParentFormVisualiser(this);
 
                 if (v != null)                    
                     Edge.CopyAndReplaceEdge(v.Vertex, "BaseEdge", Vertex.Get(false, "BaseEdge:"));
@@ -143,7 +143,7 @@ namespace m0.UIWpf.Visualisers
 
         void OnLoad(object sender, RoutedEventArgs e)
         {
-            if (!UIWpfUtil.HasParentsGotContextMenu(this))
+            if (!WpfUtil.HasParentsGotContextMenu(this))
                 this.ContextMenu = new m0ContextMenu(this);
         }
 

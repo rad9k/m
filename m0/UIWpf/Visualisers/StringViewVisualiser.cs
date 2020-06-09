@@ -46,7 +46,7 @@ namespace m0.UIWpf.Visualisers
 
         void OnLoad(object sender, RoutedEventArgs e)
         {
-            if (!UIWpfUtil.HasParentsGotContextMenu(this))
+            if (!WpfUtil.HasParentsGotContextMenu(this))
                 this.ContextMenu = new m0ContextMenu(this);
         }
 

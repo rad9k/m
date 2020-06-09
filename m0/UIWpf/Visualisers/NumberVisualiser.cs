@@ -180,9 +180,9 @@ namespace m0.UIWpf.Visualisers
                 T test=default(T);
 
                 if (test is float)
-                    col0.Width = new GridLength(UIWpfUtil.GetHorizontalSizeOfCharacterString((int)Math.Ceiling(2*Math.Log10(Math.Max((int)GraphUtil.ToInt<T>(MinValue), (int)GraphUtil.ToInt<T>(MaxValue))))));
+                    col0.Width = new GridLength(WpfUtil.GetHorizontalSizeOfCharacterString((int)Math.Ceiling(2*Math.Log10(Math.Max((int)GraphUtil.ToInt<T>(MinValue), (int)GraphUtil.ToInt<T>(MaxValue))))));
                 else
-                    col0.Width = new GridLength(UIWpfUtil.GetHorizontalSizeOfCharacterString((int)Math.Ceiling(Math.Log10(Math.Max((int)GraphUtil.ToInt<T>(MinValue), (int)GraphUtil.ToInt<T>(MaxValue))))));
+                    col0.Width = new GridLength(WpfUtil.GetHorizontalSizeOfCharacterString((int)Math.Ceiling(Math.Log10(Math.Max((int)GraphUtil.ToInt<T>(MinValue), (int)GraphUtil.ToInt<T>(MaxValue))))));
 
                 this.ColumnDefinitions.Add(col0);
 
@@ -257,7 +257,7 @@ namespace m0.UIWpf.Visualisers
 
         void OnLoad(object sender, RoutedEventArgs e)
         {
-            if (!UIWpfUtil.HasParentsGotContextMenu(this))
+            if (!WpfUtil.HasParentsGotContextMenu(this))
                 this.ContextMenu = new m0ContextMenu(this);
         }
 

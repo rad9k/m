@@ -25,7 +25,7 @@ namespace m0.UIWpf.Dialog
 
         void OnLoad(object sender, RoutedEventArgs e)
         {
-            UIWpfUtil.SetWindowPosition(this, _mousePosition);
+            WpfUtil.SetWindowPosition(this, _mousePosition);
         }
 
         public SelectWindowButton(IVertex info, IVertex options, Point? position)

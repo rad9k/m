@@ -376,7 +376,7 @@ namespace m0.UIWpf.Visualisers
 
         public IVertex GetEdgeByLocation(Point point)
         {
-            var headersPresenter = UIWpfUtil.FindVisualChild<DataGridColumnHeadersPresenter>(ThisDataGrid);
+            var headersPresenter = WpfUtil.FindVisualChild<DataGridColumnHeadersPresenter>(ThisDataGrid);
             double headerActualHeight = headersPresenter.ActualHeight;
 
             if (point.Y <= headerActualHeight) // if header
@@ -466,7 +466,7 @@ namespace m0.UIWpf.Visualisers
             Point mousePos = e.GetPosition(this);
             Vector diff = dndStartPoint - mousePos;
 
-            var headersPresenter = UIWpfUtil.FindVisualChild<DataGridColumnHeadersPresenter>(this);
+            var headersPresenter = WpfUtil.FindVisualChild<DataGridColumnHeadersPresenter>(this);
             double headerActualHeight = headersPresenter.ActualHeight;
 
             if (mousePos.Y <= headerActualHeight) // if header
@@ -476,7 +476,7 @@ namespace m0.UIWpf.Visualisers
             }
 
             if (hasButtonBeenDown && isDraggin==false &&
-                !UIWpfUtil.IsMouseOverScrollbar(sender, dndStartPoint) &&
+                !WpfUtil.IsMouseOverScrollbar(sender, dndStartPoint) &&
                 (e.LeftButton == MouseButtonState.Pressed) && (
                 (Math.Abs(diff.X) > Dnd.MinimumHorizontalDragDistance) ||
                 (Math.Abs(diff.Y) > Dnd.MinimumVerticalDragDistance)))

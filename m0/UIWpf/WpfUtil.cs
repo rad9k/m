@@ -17,7 +17,7 @@ using m0.UIWpf.Visualisers;
 
 namespace m0.UIWpf
 {
-    public class UIWpfUtil
+    public class WpfUtil
     {
         public static FontWeight MetaWeight = FontWeights.Normal; // FontWeight.FromOpenTypeWeight(550);
         public static FontWeight BoldWeight = FontWeight.FromOpenTypeWeight(550);
@@ -29,6 +29,24 @@ namespace m0.UIWpf
         {
             Dnd.MinimumHorizontalDragDistance = SystemParameters.MinimumHorizontalDragDistance * 2;
             Dnd.MinimumVerticalDragDistance = SystemParameters.MinimumVerticalDragDistance * 2;
+        }
+
+        public static void SetPosition(FrameworkElement e, double x, double y, double width, double height)
+        {
+            Canvas.SetLeft(e, x);
+            Canvas.SetTop(e, y);
+
+            e.Width = width;
+            e.Height = height;
+        }
+
+        public static void SetPositionAbsolute(FrameworkElement e, double x1, double y1, double x2, double y2)
+        {
+            Canvas.SetLeft(e, x1);
+            Canvas.SetTop(e, y1);
+
+            e.Width = x2 - x1;
+            e.Height = y2 - y1;
         }
 
         public static object FindResource(string name)
@@ -49,7 +67,6 @@ namespace m0.UIWpf
 
         public static Brush GetBrushFromColorVertex(IVertex colorVertex)
         {
-
             if (GraphUtil.GetIntegerValue(colorVertex.Get(false, "Red:"))==null ||
                 GraphUtil.GetIntegerValue(colorVertex.Get(false, "Green:")) == null ||
                 GraphUtil.GetIntegerValue(colorVertex.Get(false, "Blue:")) == null)
