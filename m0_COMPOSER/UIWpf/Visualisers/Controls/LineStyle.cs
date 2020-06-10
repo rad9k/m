@@ -18,7 +18,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Controls
         public LineStyle()
         {
             StrokeThickness = 1;
-            Stroke = (Brush)UIWpfUtil.FindResource("0ForegroundBrush");
+            Stroke = (Brush)WpfUtil.FindResource("0ForegroundBrush");
             StrokeDashArray = null;
         }
 

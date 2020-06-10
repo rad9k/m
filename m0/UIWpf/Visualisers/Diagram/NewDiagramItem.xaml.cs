@@ -28,7 +28,7 @@ namespace m0.UIWpf.Visualisers.Diagram
 
         void OnLoad(object sender, RoutedEventArgs e)
         {
-            UIWpfUtil.SetWindowPosition(this, _mousePosition);
+            WpfUtil.SetWindowPosition(this, _mousePosition);
         }
 
         public NewDiagramItem(IVertex _baseedge, bool isSet, Point mousePos)

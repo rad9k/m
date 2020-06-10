@@ -158,12 +158,12 @@ namespace m0.UIWpf.Visualisers.Diagram
             }
 
             if(Vertex.Get(false, "BackgroundColor:")!=null)
-                BackgroundColor = UIWpfUtil.GetBrushFromColorVertex(Vertex.Get(false, "BackgroundColor:"));
+                BackgroundColor = WpfUtil.GetBrushFromColorVertex(Vertex.Get(false, "BackgroundColor:"));
             else
                 BackgroundColor = (Brush)FindResource("0BackgroundBrush");
 
             if (Vertex.Get(false, "ForegroundColor:") != null)
-                ForegroundColor = UIWpfUtil.GetBrushFromColorVertex(Vertex.Get(false, "ForegroundColor:"));
+                ForegroundColor = WpfUtil.GetBrushFromColorVertex(Vertex.Get(false, "ForegroundColor:"));
             else
                 ForegroundColor = (Brush)FindResource("0ForegroundBrush");
 
@@ -249,7 +249,7 @@ namespace m0.UIWpf.Visualisers.Diagram
                 info.Value = "choose diagram line:";
 
                 
-            Point mousePosition=UIWpfUtil.GetMousePosition();
+            Point mousePosition=WpfUtil.GetMousePosition();
 
             IVertex a = MinusZero.Instance.DefaultUserInteraction.SelectDialog(info, v, mousePosition);
 

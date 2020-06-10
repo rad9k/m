@@ -147,7 +147,7 @@ namespace m0.UIWpf.Visualisers
                 ll.Padding = new Thickness(0);
 
                 ll.Foreground = (Brush)FindResource("0ForegroundBrush");
-                ll.FontWeight = UIWpfUtil.ValueWeight;
+                ll.FontWeight = WpfUtil.ValueWeight;
 
                 s.Children.Add(ll);
             }
@@ -161,7 +161,7 @@ namespace m0.UIWpf.Visualisers
 
                 l1.Foreground = (Brush)FindResource("0GrayBrush");
                 l1.FontStyle = FontStyles.Italic;
-                l1.FontWeight = UIWpfUtil.MetaWeight;
+                l1.FontWeight = WpfUtil.MetaWeight;
 
                 Label l2 = new Label();
                 
@@ -170,7 +170,7 @@ namespace m0.UIWpf.Visualisers
                 l2.Padding = new Thickness(0);
 
                 l2.Foreground = (Brush)FindResource("0ForegroundBrush");
-                l2.FontWeight = UIWpfUtil.ValueWeight;
+                l2.FontWeight = WpfUtil.ValueWeight;
 
                 s.Children.Add(l1);
                 s.Children.Add(l2);
@@ -630,7 +630,7 @@ namespace m0.UIWpf.Visualisers
             Vector diff = dndStartPoint - mousePos;
 
             if (hasButtonBeenDown&&
-                !UIWpfUtil.IsMouseOverScrollbar(sender,dndStartPoint) &&
+                !WpfUtil.IsMouseOverScrollbar(sender,dndStartPoint) &&
                 (e.LeftButton == MouseButtonState.Pressed) && (
                 (Math.Abs(diff.X) > Dnd.MinimumHorizontalDragDistance) ||
                 (Math.Abs(diff.Y) > Dnd.MinimumVerticalDragDistance)))

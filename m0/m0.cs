@@ -405,7 +405,7 @@ namespace m0
             AddDrives();
 
 
-            UIWpf.UIWpfUtil.InitializeUIWpf();
+            UIWpf.WpfUtil.InitializeUIWpf();
 
             IsInitialized = true;           
         }

@@ -1,6 +1,7 @@
 ﻿using m0;
 using m0.Foundation;
 using m0.Graph;
+using m0.UIWpf;
 using m0.UIWpf.Visualisers;
 using m0.Util;
 using m0.ZeroTypes;
@@ -46,6 +47,9 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
         double HorizontalZoomFactor;
         double VerticalZoomFactor;
+
+        double Width;
+        double Height;
 
         void VisualiserUpdate()
         {
@@ -123,8 +127,11 @@ namespace m0_COMPOSER.UIWpf.Visualisers
         {
             Main = new Canvas();
 
-            Main.Width = TimeSpanAD.Size.Width;
-            Main.Height = PitchSetAD.Size.Height;
+            Width = TimeSpanAD.Size.Width;
+            Height = PitchSetAD.Size.Height;
+
+            Main.Width = Width;
+            Main.Height = Height;
         }
 
         public void SetupScrollViewer()
@@ -134,6 +141,38 @@ namespace m0_COMPOSER.UIWpf.Visualisers
         }
 
         public void DrawMain()
+        {
+            DrawLines();
+
+            DrawNotes();
+        }
+
+        public void DrawLines()
+        {
+            foreach (AxisSegment s in PitchSetAD.Segments)
+            {
+                Line l = new Line();
+
+                WpfUtil.SetPositionAbsolute(l, 0, s.SegmentStart, Width, s.SegmentStart);
+
+                s.lineStyle.SetStyle(l);
+
+                Main.Children.Add(l);
+            }
+
+            foreach (AxisSegment s in TimeSpanAD.Segments)
+            {
+                Line l = new Line();
+
+                WpfUtil.SetPositionAbsolute(l, s.SegmentStart, 0, s.SegmentStart, Height);
+
+                s.lineStyle.SetStyle(l);
+
+                Main.Children.Add(l);
+            }
+        }
+
+        public void DrawNotes()
         {
 
         }
