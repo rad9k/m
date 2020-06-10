@@ -51,11 +51,10 @@ namespace m0_COMPOSER.UIWpf.Visualisers
         double Width;
         double Height;
 
-        void VisualiserUpdate()
-        {
-            SetVertexes();
 
-            if (baseVertex == null)
+        void VisuliserDraw()
+        {
+            if (baseVertex == null || isLoaded == false)
                 return;
 
             SetupParameters();
@@ -120,7 +119,8 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             ZoomScrollView.SetVerticalAxisDecorator(PitchSetAD);
 
-            ZoomScrollView.SetHorizontalAxisDecorator(TimeSpanAD);            
+            ZoomScrollView.SetHorizontalAxisDecorator(TimeSpanAD);   
+           
         }
 
         public void CreateMain()
@@ -132,6 +132,10 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             Main.Width = Width;
             Main.Height = Height;
+
+            Main.Background = new SolidColorBrush(Colors.Pink);
+
+            ZoomScrollView.SetContent(Main);
         }
 
         public void SetupScrollViewer()
@@ -211,7 +215,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
                 ClassVertex.AddIsClassAndAllAttributesAndAssociations(Vertex.Get(false, "BaseEdge:"), mz.Root.Get(false, @"System\Meta\ZeroTypes\Edge"));
 
-                SetVertexDefaultValues();         
+                SetVertexDefaultValues();
 
                 /*this.ContextMenu = new m0ContextMenu(this);
 
@@ -220,6 +224,8 @@ namespace m0_COMPOSER.UIWpf.Visualisers
                 this.Drop += dndDrop;
 
                 this.MouseEnter += dndMouseEnter;*/
+
+                ZoomScrollView.SetHost(this);
             }
         }
 
@@ -229,7 +235,11 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             IVertex bas = Vertex.Get(false, @"BaseEdge:\To:");
 
             if (bas != null)
-                VisualiserUpdate();
+            {
+                SetVertexes();
+
+                VisuliserDraw();
+            }
         }
 
         protected void VertexChange(object sender, VertexChangeEventArgs e)
@@ -281,6 +291,14 @@ namespace m0_COMPOSER.UIWpf.Visualisers
                                 ((IDisposable)ee).Dispose();
                 }*/
             }
+        }
+
+        bool isLoaded = false;
+        public void ChildControlsLoaded()
+        {
+            isLoaded = true;
+
+            VisuliserDraw();
         }
     }
 }

@@ -77,6 +77,8 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Controls
             VerticalAxisDecoratorScrollViewer = (ScrollViewer)Scroll.Template.FindName("VerticalAxisDecoratorScrollViewer", Scroll);
             HorizontalZoomSlider = (Slider)Scroll.Template.FindName("HorizontalZoomSlider", Scroll);
             VerticalZoomSlider = (Slider)Scroll.Template.FindName("VerticalZoomSlider", Scroll);
+
+            Host.ChildControlsLoaded();
         }
     }
 }

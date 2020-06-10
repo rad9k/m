@@ -27,6 +27,8 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Controls
 
             double segmentSize = zoomFactor / 10;
 
+            double maxHeight = 0;
+
             foreach(IEdge e in baseVertex)
             {
                 AxisSegment segment = new AxisSegment();
@@ -36,12 +38,20 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Controls
                 segment.SegmentStart = cnt * segmentSize;
                 segment.SegmentEnd = (cnt + 1) * segmentSize;
 
+                if (segment.SegmentEnd > maxHeight)
+                    maxHeight = segment.SegmentEnd;
+
                 segment.baseVertex = e.To;
 
                 Segments.Add(segment);
 
                 cnt++;
             }
+
+            Size s = new Size();
+            s.Height = maxHeight;
+
+            Size = s;
         }
 
         public void SetBaseVertex(IVertex _baseVertex)
