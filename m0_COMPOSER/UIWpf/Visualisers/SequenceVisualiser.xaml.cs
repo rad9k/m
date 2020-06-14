@@ -142,11 +142,48 @@ namespace m0_COMPOSER.UIWpf.Visualisers
         {
             ZoomScrollView.SetHost(this);
             ZoomScrollView.SetContent(Main);
+
+            this.Content = Main;
+
+            Border r = new Border();
+
+            WpfUtil.SetPosition(r, 100, 100, 200, 200);
+
+            r.Background = new SolidColorBrush(Colors.Red);
+
+
+
+            r.BorderThickness = new Thickness(100);
+
+            // Create a Canvas Panel control    
+            Canvas canvasPanel = new Canvas();
+            // Set Canvas Panel properties    
+            canvasPanel.Background = new SolidColorBrush(Colors.LightCyan);
+            // Add Child Elements to Canvas    
+            Rectangle redRectangle = new Rectangle();
+            //redRectangle.Width = 200;
+            //redRectangle.Height = 200;
+            redRectangle.Stroke = new SolidColorBrush(Colors.Black);
+            redRectangle.StrokeThickness = 10;
+            redRectangle.Fill = new SolidColorBrush(Colors.Red);
+            // Set Canvas position    
+            //Canvas.SetLeft(redRectangle, 10);
+            //Canvas.SetTop(redRectangle, 10);
+            // Add Rectangle to Canvas    
+
+            WpfUtil.SetPosition(redRectangle, 10, 10, 200, 200);
+
+            //canvasPanel.Children.Add(redRectangle);
+
+            canvasPanel.Children.Add(r);
+
+
+            this.Content = canvasPanel;
         }
 
         public void DrawMain()
         {
-            DrawLines();
+            //DrawLines();
 
             DrawNotes();
         }
@@ -157,11 +194,25 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             {
                 Line l = new Line();
 
+                Border r = new Border();
+
+                WpfUtil.SetPosition(r, 100, 100, 200,200);
+
+                r.Background = new SolidColorBrush(Colors.Red);
+
+                
+
+                r.BorderThickness = new Thickness(100);
+
+                Main.Children.Add(r);
+
                 WpfUtil.SetPositionAbsolute(l, 0, s.SegmentStart, Width, s.SegmentStart);
 
-                s.lineStyle.SetStyle(l);
+              //  s.lineStyle.SetStyle(l);
 
                 Main.Children.Add(l);
+
+                Main.UpdateLayout();
             }
 
             foreach (AxisSegment s in TimeSpanAD.Segments)
