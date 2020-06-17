@@ -13,7 +13,7 @@ using System.Windows.Input;
 using System.Windows.Controls;
 using m0.Graph;
 using m0.UIWpf.Visualisers;
-
+using System.Windows.Shapes;
 
 namespace m0.UIWpf
 {
@@ -29,6 +29,12 @@ namespace m0.UIWpf
         {
             Dnd.MinimumHorizontalDragDistance = SystemParameters.MinimumHorizontalDragDistance * 2;
             Dnd.MinimumVerticalDragDistance = SystemParameters.MinimumVerticalDragDistance * 2;
+        }
+
+        public static void SetPosition(FrameworkElement e, double x, double y)
+        {
+            Canvas.SetLeft(e, x);
+            Canvas.SetTop(e, y);            
         }
 
         public static void SetPosition(FrameworkElement e, double x, double y, double width, double height)
@@ -47,6 +53,15 @@ namespace m0.UIWpf
 
             e.Width = x2 - x1;
             e.Height = y2 - y1;
+        }
+
+        public static void SetLinePosition(Line e, double x1, double y1, double x2, double y2)
+        {
+            e.X1 = x1;
+            e.Y1 = y1;
+
+            e.X2 = x2;
+            e.Y2 = y2;
         }
 
         public static object FindResource(string name)

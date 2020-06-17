@@ -7,6 +7,9 @@ using System.Threading.Tasks;
 using System.Windows.Controls;
 using System.Windows;
 using m0;
+using System.Windows.Shapes;
+using m0.UIWpf;
+using System.Windows.Media;
 
 namespace m0_COMPOSER.UIWpf.Visualisers.Controls
 {
@@ -19,17 +22,43 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Controls
 
         double zoomFactor;
 
+        private void Draw()
+        {
+            Children.Clear();
+
+            foreach(AxisSegment s in Segments)
+            {
+                Line l = new Line();
+
+                WpfUtil.SetLinePosition(l, 0, s.SegmentStart, 100, s.SegmentStart);
+
+                s.lineStyle.SetStyle(l);
+
+                Children.Add(l);
+
+                //
+
+                TextBlock t = new TextBlock();
+                t.Text = s.baseVertex.Get(false, "Name:").Value.ToString();
+                t.Foreground = new SolidColorBrush(Colors.Black);
+
+                WpfUtil.SetPosition(t, 0, s.SegmentStart);
+
+                Children.Add(t);
+            }
+        }
+
         private void Update()
         {
             Segments = new List<AxisSegment>();
 
             int cnt = 0;
 
-            double segmentSize = zoomFactor / 10;
+            double segmentSize = zoomFactor / 3;
 
             double maxHeight = 0;
 
-            foreach(IEdge e in baseVertex)
+            foreach(IEdge e in baseVertex.GetAll(false,"VisualisedPitch:"))                
             {
                 AxisSegment segment = new AxisSegment();
 
@@ -52,6 +81,8 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Controls
             s.Height = maxHeight;
 
             Size = s;
+
+            Draw();
         }
 
         public void SetBaseVertex(IVertex _baseVertex)
