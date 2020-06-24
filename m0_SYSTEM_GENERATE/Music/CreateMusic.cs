@@ -188,6 +188,7 @@ namespace m0_SYSTEM_GENERATE.Music
 
             p.Value = name;
 
+            GraphUtil.SetVertexValue(p, VisualisedPitch.Get(false, "Name"), name);
             GraphUtil.SetVertexValue(p, VisualisedPitch.Get(false, "Octave"), octave);
             GraphUtil.SetVertexValue(p, VisualisedPitch.Get(false, "Note"), note);
             GraphUtil.CreateOrReplaceEdge(p, VisualisedPitch.Get(false, "Color"), color);

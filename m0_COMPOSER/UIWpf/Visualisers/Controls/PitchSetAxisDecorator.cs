@@ -15,6 +15,8 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Controls
 {
     class PitchSetAxisDecorator : Canvas, IZoomScrollViewAxisDecorator
     {
+        double FontSize = 100;
+
         public Size Size { get; set; }
         public List<AxisSegment> Segments { get; set; }
 
@@ -42,6 +44,8 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Controls
                 t.Text = s.baseVertex.Get(false, "Name:").Value.ToString();
                 t.Foreground = new SolidColorBrush(Colors.Black);
 
+                t.FontSize = FontSize;
+
                 WpfUtil.SetPosition(t, 0, s.SegmentStart);
 
                 Children.Add(t);
@@ -54,7 +58,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Controls
 
             int cnt = 0;
 
-            double segmentSize = zoomFactor / 3;
+            double segmentSize = FontSize * 1.5;
 
             double maxHeight = 0;
 
