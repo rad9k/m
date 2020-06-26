@@ -10,12 +10,15 @@ using m0;
 using System.Windows.Shapes;
 using m0.UIWpf;
 using System.Windows.Media;
+using m0.Graph;
 
 namespace m0_COMPOSER.UIWpf.Visualisers.Controls
 {
     class PitchSetAxisDecorator : Canvas, IZoomScrollViewAxisDecorator
     {
-        double FontSize = 120;
+        double FontSize = 12;
+
+        double segmentSize;
 
         public Size Size { get; set; }
         public List<AxisSegment> Segments { get; set; }
@@ -30,25 +33,24 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Controls
 
             double maxWidth = 0;
 
+            List<TextBlock> tbl = new List<TextBlock>();
+
             foreach (AxisSegment s in Segments)
-            {
-                Line l = new Line();
-
-                WpfUtil.SetLinePosition(l, 0, s.SegmentStart, 100, s.SegmentStart);
-
-                s.lineStyle.SetStyle(l);
-
-                Children.Add(l);
-
-                //
-
+            {                
                 TextBlock t = new TextBlock();
                 t.Text = s.baseVertex.Get(false, "Name:").Value.ToString();
-                t.Foreground = new SolidColorBrush(Colors.Black);
+
+                t.Background = new SolidColorBrush(s.Color);
+
+                t.Foreground = new SolidColorBrush(WpfUtil.GetNegativeColor(s.Color));
 
                 t.FontSize = FontSize;
 
-                WpfUtil.SetPosition(t, 0, s.SegmentStart);
+                t.Height = segmentSize;
+
+                WpfUtil.SetPosition(t, 0, s.StartPosition);
+
+                tbl.Add(t);
 
                 Children.Add(t);
 
@@ -68,6 +70,20 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Controls
 
             Width = Size.Width;
             Height = Size.Height;
+
+            foreach (TextBlock tb in tbl)
+                tb.Width = Size.Width;
+
+            foreach (AxisSegment s in Segments)
+            {
+                Line l = new Line();
+
+                WpfUtil.SetLinePosition(l, 0, s.StartPosition, Size.Width, s.StartPosition);
+
+                s.lineStyle.SetStyle(l);
+
+                Children.Add(l);                
+            }
         }
 
         private void Update()
@@ -76,23 +92,41 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Controls
 
             int cnt = 0;
 
-            double segmentSize = FontSize * 1.5;
+            segmentSize = FontSize * 1.5;
 
             double maxHeight = 0;
 
+            int prevOctave = -9;
+
             foreach(IEdge e in baseVertex.GetAll(false,"VisualisedPitch:"))                
-            {
+            {                
                 AxisSegment segment = new AxisSegment();
 
                 segment.lineStyle = new LineStyle();
 
-                segment.SegmentStart = cnt * segmentSize;
-                segment.SegmentEnd = (cnt + 1) * segmentSize;
+                segment.StartPosition = cnt * segmentSize;
+                segment.EndPosition = (cnt + 1) * segmentSize;
 
-                if (segment.SegmentEnd > maxHeight)
-                    maxHeight = segment.SegmentEnd;
+                if (segment.EndPosition > maxHeight)
+                    maxHeight = segment.EndPosition;
 
                 segment.baseVertex = e.To;
+
+                IVertex colorVertex = segment.baseVertex.Get(false, "Color:");
+
+                if (colorVertex != null)
+                    segment.Color = WpfUtil.GetColorFromColorVertex(colorVertex);
+
+
+                int? thisOctave = GraphUtil.GetIntegerValue(segment.baseVertex.Get(false, "Octave:"));
+
+                if(thisOctave != null && thisOctave != prevOctave)
+                    {
+                        prevOctave = (int)thisOctave;
+
+                        segment.lineStyle.StrokeThickness = 3;
+                    }
+
 
                 Segments.Add(segment);
 

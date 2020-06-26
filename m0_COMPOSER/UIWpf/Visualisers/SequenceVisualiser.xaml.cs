@@ -155,7 +155,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             {
                 Line l = new Line();
                 
-                WpfUtil.SetLinePosition(l, 0, s.SegmentStart, Width, s.SegmentStart);
+                WpfUtil.SetLinePosition(l, 0, s.StartPosition, Width, s.StartPosition);
 
                 s.lineStyle.SetStyle(l);
 
@@ -167,7 +167,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             {
                 Line l = new Line();
 
-                WpfUtil.SetLinePosition(l, s.SegmentStart, 0, s.SegmentStart, Height);
+                WpfUtil.SetLinePosition(l, s.StartPosition, 0, s.StartPosition, Height);
 
                 s.lineStyle.SetStyle(l);
 

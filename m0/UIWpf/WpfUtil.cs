@@ -46,6 +46,19 @@ namespace m0.UIWpf
             return new Size(formattedText.Width, formattedText.Height);
         }
 
+        public static Color GetNegativeColor(Color inColor)
+        {
+            Color c = new Color();
+
+            c.A = inColor.A;
+
+            c.R = (byte) (255 - inColor.R);
+            c.G = (byte)(255 - inColor.G);
+            c.B = (byte)(255 - inColor.B);
+
+            return c;
+        }
+
         public static void SetPosition(FrameworkElement e, double x, double y)
         {
             Canvas.SetLeft(e, x);
@@ -112,6 +125,25 @@ namespace m0.UIWpf
                     , (byte)GraphUtil.GetIntegerValue(colorVertex.Get(false, "Red:"))
                     , (byte)GraphUtil.GetIntegerValue(colorVertex.Get(false, "Green:"))
                     , (byte)GraphUtil.GetIntegerValue(colorVertex.Get(false, "Blue:"))));
+        }
+
+        public static Color GetColorFromColorVertex(IVertex colorVertex)
+        {
+            if (GraphUtil.GetIntegerValue(colorVertex.Get(false, "Red:")) == null ||
+                GraphUtil.GetIntegerValue(colorVertex.Get(false, "Green:")) == null ||
+                GraphUtil.GetIntegerValue(colorVertex.Get(false, "Blue:")) == null)
+
+                return Colors.Black;
+
+            if (colorVertex.Get(false, "Opacity:") == null)
+                return Color.FromArgb(255, (byte)GraphUtil.GetIntegerValue(colorVertex.Get(false, "Red:"))
+                    , (byte)GraphUtil.GetIntegerValue(colorVertex.Get(false, "Green:"))
+                    , (byte)GraphUtil.GetIntegerValue(colorVertex.Get(false, "Blue:")));
+            else
+                return Color.FromArgb((byte)GraphUtil.GetIntegerValue(colorVertex.Get(false, "Opacity:"))
+                    , (byte)GraphUtil.GetIntegerValue(colorVertex.Get(false, "Red:"))
+                    , (byte)GraphUtil.GetIntegerValue(colorVertex.Get(false, "Green:"))
+                    , (byte)GraphUtil.GetIntegerValue(colorVertex.Get(false, "Blue:")));
         }
 
         public static double GetHorizontalSizeOfCharacterString(int Characters)

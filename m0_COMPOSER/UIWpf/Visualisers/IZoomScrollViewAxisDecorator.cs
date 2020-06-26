@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Media;
 
 namespace m0_COMPOSER.UIWpf.Visualisers
 {
@@ -13,8 +14,9 @@ namespace m0_COMPOSER.UIWpf.Visualisers
     {
         public IVertex baseVertex;
         public LineStyle lineStyle;
-        public double SegmentStart;
-        public double SegmentEnd;
+        public double StartPosition;
+        public double EndPosition;
+        public Color Color;
     }
 
     public interface IZoomScrollViewAxisDecorator

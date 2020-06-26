@@ -44,53 +44,53 @@ namespace m0_SYSTEM_GENERATE.Music
         }
 
         static _Note[] DrumInstruments = new _Note[] {
-        new _Note("B0", "Acoustic Bass Drum"),
-        new _Note("C1", "Bass Drum 1"),
-        new _Note("C#1", "Side Stick"),
-        new _Note("D1", "Acoustic Snare"),
-        new _Note("D#1", "Hand Clap"),
-        new _Note("E1", "Electric Snare"),
-        new _Note("F1", "Low Floor Tom"),
-        new _Note("F#1", "Closed Hi Hat"),
-        new _Note("G1", "High Floor Tom"),
-        new _Note("G#1", "Pedal Hi-Hat"),
-        new _Note("A1", "Low Tom"),
-        new _Note("A#1", "Open Hi-Hat"),
-        new _Note("B1", "Low-Mid Tom"),
-        new _Note("C2", "Hi Mid Tom"),
-        new _Note("C#2", "Crash Cymbal 1"),
-        new _Note("D2", "High Tom"),
+        new _Note("B 0", "Acoustic Bass Drum"),
+        new _Note("C 1", "Bass Drum 1"),
+        new _Note("C# 1", "Side Stick"),
+        new _Note("D 1", "Acoustic Snare"),
+        new _Note("D# 1", "Hand Clap"),
+        new _Note("E 1", "Electric Snare"),
+        new _Note("F 1", "Low Floor Tom"),
+        new _Note("F# 1", "Closed Hi Hat"),
+        new _Note("G 1", "High Floor Tom"),
+        new _Note("G# 1", "Pedal Hi-Hat"),
+        new _Note("A 1", "Low Tom"),
+        new _Note("A# 1", "Open Hi-Hat"),
+        new _Note("B 1", "Low-Mid Tom"),
+        new _Note("C 2", "Hi Mid Tom"),
+        new _Note("C# 2", "Crash Cymbal 1"),
+        new _Note("D 2", "High Tom"),
         new _Note("D#2", "Ride Cymbal 1"),
-        new _Note("E2", "Chinese Cymbal"),
-        new _Note("F2", "Ride Bell"),
-        new _Note("F#2", "Tambourine"),
-        new _Note("G2", "Splash Cymbal"),
-        new _Note("G#2", "Cowbell"),
-        new _Note("A2", "Crash Cymbal 2"),
-        new _Note("A#2", "Vibraslap"),
-        new _Note("B2", "Ride Cymbal 2"),
-        new _Note("C3", "Hi Bongo"),
-        new _Note("C#3", "Low Bongo"),
-        new _Note("D3", "Mute Hi Conga"),
-        new _Note("D#3", "Open Hi Conga"),
-        new _Note("E3", "Low Conga"),
-        new _Note("F3", "High Timbale"),
-        new _Note("F#3", "Low Timbale"),
-        new _Note("G3", "High Agogo"),
-        new _Note("G#3", "Low Agogo"),
-        new _Note("A3", "Cabasa"),
-        new _Note("A#3", "Maracas"),
-        new _Note("B3", "Short Whistle"),
-        new _Note("C4", "Long Whistle"),
-        new _Note("C#4", "Short Guiro"),
-        new _Note("D4", "Long Guiro"),
-        new _Note("D#4", "Claves"),
-        new _Note("E4", "Hi Wood Block"),
-        new _Note("F4", "Low Wood Block"),
-        new _Note("F#4", "Mute Cuica"),
-        new _Note("G4", "Open Cuica"),
-        new _Note("G#4", "Mute Triangle"),
-        new _Note("A4", "Open Triangle") };
+        new _Note("E 2", "Chinese Cymbal"),
+        new _Note("F 2", "Ride Bell"),
+        new _Note("F# 2", "Tambourine"),
+        new _Note("G 2", "Splash Cymbal"),
+        new _Note("G# 2", "Cowbell"),
+        new _Note("A 2", "Crash Cymbal 2"),
+        new _Note("A# 2", "Vibraslap"),
+        new _Note("B 2", "Ride Cymbal 2"),
+        new _Note("C 3", "Hi Bongo"),
+        new _Note("C# 3", "Low Bongo"),
+        new _Note("D 3", "Mute Hi Conga"),
+        new _Note("D# 3", "Open Hi Conga"),
+        new _Note("E 3", "Low Conga"),
+        new _Note("F 3", "High Timbale"),
+        new _Note("F# 3", "Low Timbale"),
+        new _Note("G 3", "High Agogo"),
+        new _Note("G# 3", "Low Agogo"),
+        new _Note("A 3", "Cabasa"),
+        new _Note("A# 3", "Maracas"),
+        new _Note("B 3", "Short Whistle"),
+        new _Note("C 4", "Long Whistle"),
+        new _Note("C# 4", "Short Guiro"),
+        new _Note("D 4", "Long Guiro"),
+        new _Note("D# 4", "Claves"),
+        new _Note("E 4", "Hi Wood Block"),
+        new _Note("F 4", "Low Wood Block"),
+        new _Note("F# 4", "Mute Cuica"),
+        new _Note("G 4", "Open Cuica"),
+        new _Note("G# 4", "Mute Triangle"),
+        new _Note("A 4", "Open Triangle") };
 
         public static void Create()
         {
@@ -137,18 +137,18 @@ namespace m0_SYSTEM_GENERATE.Music
             IVertex black = r.Get(false, @"System\Data\UX\Colors\Black");
 
             for (int x = -1; x <= 9; x++) {
-                AddPitch(b, x, 0, "C" + x.ToString(), white);
-                AddPitch(b, x, 1, "C#" + x.ToString(), black);
-                AddPitch(b, x, 2, "D" + x.ToString(), white);
-                AddPitch(b, x, 3, "D#" + x.ToString(), black);
-                AddPitch(b, x, 4, "E" + x.ToString(), white);
-                AddPitch(b, x, 5, "F" + x.ToString(), white);
-                AddPitch(b, x, 6, "F#" + x.ToString(), black);
-                AddPitch(b, x, 7, "G" + x.ToString(), white);
-                AddPitch(b, x, 8, "G#" + x.ToString(), black);
-                AddPitch(b, x, 9, "A" + x.ToString(), white);
-                AddPitch(b, x, 10, "A#" + x.ToString(), black);
-                AddPitch(b, x, 11, "B" + x.ToString(), white);               
+                AddPitch(b, x, 0, "C " + x.ToString(), white);
+                AddPitch(b, x, 1, "C# " + x.ToString(), black);
+                AddPitch(b, x, 2, "D " + x.ToString(), white);
+                AddPitch(b, x, 3, "D# " + x.ToString(), black);
+                AddPitch(b, x, 4, "E " + x.ToString(), white);
+                AddPitch(b, x, 5, "F " + x.ToString(), white);
+                AddPitch(b, x, 6, "F# " + x.ToString(), black);
+                AddPitch(b, x, 7, "G " + x.ToString(), white);
+                AddPitch(b, x, 8, "G# " + x.ToString(), black);
+                AddPitch(b, x, 9, "A " + x.ToString(), white);
+                AddPitch(b, x, 10, "A# " + x.ToString(), black);
+                AddPitch(b, x, 11, "B " + x.ToString(), white);               
             }
         }
 
@@ -167,18 +167,18 @@ namespace m0_SYSTEM_GENERATE.Music
 
             for (int x = -1; x <= 9; x++)
             {
-                AddDrumPitch(b, x, 0, "C" + x.ToString(), white);
-                AddDrumPitch(b, x, 1, "C#" + x.ToString(), white);
-                AddDrumPitch(b, x, 2, "D" + x.ToString(), white);
-                AddDrumPitch(b, x, 3, "D#" + x.ToString(), white);
-                AddDrumPitch(b, x, 4, "E" + x.ToString(), white);
-                AddDrumPitch(b, x, 5, "F" + x.ToString(), white);
-                AddDrumPitch(b, x, 6, "F#" + x.ToString(), white);
-                AddDrumPitch(b, x, 7, "G" + x.ToString(), white);
-                AddDrumPitch(b, x, 8, "G#" + x.ToString(), white);
-                AddDrumPitch(b, x, 9, "A" + x.ToString(), white);
-                AddDrumPitch(b, x, 10, "A#" + x.ToString(), white);
-                AddDrumPitch(b, x, 11, "B" + x.ToString(), white);
+                AddDrumPitch(b, x, 0, "C " + x.ToString(), white);
+                AddDrumPitch(b, x, 1, "C# " + x.ToString(), white);
+                AddDrumPitch(b, x, 2, "D " + x.ToString(), white);
+                AddDrumPitch(b, x, 3, "D# " + x.ToString(), white);
+                AddDrumPitch(b, x, 4, "E " + x.ToString(), white);
+                AddDrumPitch(b, x, 5, "F " + x.ToString(), white);
+                AddDrumPitch(b, x, 6, "F# " + x.ToString(), white);
+                AddDrumPitch(b, x, 7, "G " + x.ToString(), white);
+                AddDrumPitch(b, x, 8, "G# " + x.ToString(), white);
+                AddDrumPitch(b, x, 9, "A " + x.ToString(), white);
+                AddDrumPitch(b, x, 10, "A# " + x.ToString(), white);
+                AddDrumPitch(b, x, 11, "B " + x.ToString(), white);
             }
         }
 

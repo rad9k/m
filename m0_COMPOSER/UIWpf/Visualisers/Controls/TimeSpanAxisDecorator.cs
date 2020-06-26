@@ -19,8 +19,18 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Controls
 
         double zoomFactor;
 
+        int timeSpanStructureDeepLevel;
+
+        private void CreateTimeSpanStructure()
+        {
+            int deepLevel = 0;
+  
+        }
+
         private void Update()
         {
+            CreateTimeSpanStructure();
+
             Segments = new List<AxisSegment>();
 
             //int cnt = 0;
@@ -36,11 +46,11 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Controls
 
                 segment.lineStyle = new LineStyle();
 
-                segment.SegmentStart = cnt * segmentSize;
-                segment.SegmentEnd = -1;
+                segment.StartPosition = cnt * segmentSize;
+                segment.EndPosition = -1;
 
-                if (maxWidth < segment.SegmentStart)
-                    maxWidth = segment.SegmentStart;
+                if (maxWidth < segment.StartPosition)
+                    maxWidth = segment.StartPosition;
 
                 //segment.baseVertex = e.To;
 

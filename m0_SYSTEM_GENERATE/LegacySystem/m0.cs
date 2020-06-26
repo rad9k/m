@@ -4571,11 +4571,11 @@ namespace m0
 
             IVertex Colors = UX.AddVertex(null, "Colors");
 
-            ColorType.AddColor(Colors, "White", 255, 255, 255, 0);
-            ColorType.AddColor(Colors, "Black", 0, 0, 0, 0);
-            ColorType.AddColor(Colors, "Red", 255, 0, 0, 0);
-            ColorType.AddColor(Colors, "Green", 0, 255, 0, 0);
-            ColorType.AddColor(Colors, "Blue", 0, 0, 255, 0);
+            ColorType.AddColor(Colors, "White", 255, 255, 255, 255);
+            ColorType.AddColor(Colors, "Black", 0, 0, 0, 255);
+            ColorType.AddColor(Colors, "Red", 255, 0, 0, 255);
+            ColorType.AddColor(Colors, "Green", 0, 255, 0, 255);
+            ColorType.AddColor(Colors, "Blue", 0, 0, 255, 255);
         }
 
         private void Initialize_PreParserReady()

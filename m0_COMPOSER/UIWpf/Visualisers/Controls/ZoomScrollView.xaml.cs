@@ -34,6 +34,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Controls
         ScrollViewer VerticalAxisDecoratorScrollViewer;
         Slider HorizontalZoomSlider;
         Slider VerticalZoomSlider;
+        Grid Grid;
 
         IZoomScrollViewerHost Host;
         
@@ -46,6 +47,8 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Controls
             HorizontalAxisDecoratorScrollViewer.Content = decorator;
 
             HorizontalAxisDecorator.SetZoomFactor(HorizontalZoomSlider.Value);
+
+            Grid.RowDefinitions[0].Height = new GridLength(decorator.Size.Height);
         }
 
         public void SetVerticalAxisDecorator(IZoomScrollViewAxisDecorator decorator)
@@ -54,6 +57,8 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Controls
             VerticalAxisDecoratorScrollViewer.Content = decorator;
 
             VerticalAxisDecorator.SetZoomFactor(VerticalZoomSlider.Value);
+
+            Grid.ColumnDefinitions[0].Width = new GridLength(decorator.Size.Width);
         }
 
         public void SetHost(IZoomScrollViewerHost host)
@@ -77,8 +82,29 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Controls
             VerticalAxisDecoratorScrollViewer = (ScrollViewer)Scroll.Template.FindName("VerticalAxisDecoratorScrollViewer", Scroll);
             HorizontalZoomSlider = (Slider)Scroll.Template.FindName("HorizontalZoomSlider", Scroll);
             VerticalZoomSlider = (Slider)Scroll.Template.FindName("VerticalZoomSlider", Scroll);
+            Grid = (Grid)Scroll.Template.FindName("Grid", Scroll);
 
             Host.ChildControlsLoaded();
+        }
+
+        double HorizontalOffset;
+        double VerticalOffset;
+
+        private void Scroll_ScrollChanged(object sender, ScrollChangedEventArgs e)
+        {
+            if (HorizontalOffset != this.Scroll.HorizontalOffset)
+            {
+                HorizontalOffset = this.Scroll.HorizontalOffset;
+
+                HorizontalAxisDecoratorScrollViewer.ScrollToHorizontalOffset(HorizontalOffset);
+            }
+
+            if (VerticalOffset != this.Scroll.VerticalOffset)
+            {
+                VerticalOffset = this.Scroll.VerticalOffset;
+
+                VerticalAxisDecoratorScrollViewer.ScrollToVerticalOffset(VerticalOffset);
+            }
         }
     }
 }

@@ -7,7 +7,7 @@
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300">
     <Grid>
-        <ScrollViewer x:Name="Scroll"  HorizontalScrollBarVisibility="Visible" VerticalScrollBarVisibility="Visible" Loaded="Scroll_Loaded">
+        <ScrollViewer x:Name="Scroll"  HorizontalScrollBarVisibility="Visible" VerticalScrollBarVisibility="Visible" Loaded="Scroll_Loaded" ScrollChanged="Scroll_ScrollChanged">
             <ScrollViewer.Template>
                 <ControlTemplate TargetType="{x:Type ScrollViewer}">
                     <Grid x:Name="Grid" Background="{TemplateBinding Background}">
