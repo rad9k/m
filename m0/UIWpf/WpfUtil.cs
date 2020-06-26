@@ -14,6 +14,7 @@ using System.Windows.Controls;
 using m0.Graph;
 using m0.UIWpf.Visualisers;
 using System.Windows.Shapes;
+using System.Globalization;
 
 namespace m0.UIWpf
 {
@@ -29,6 +30,20 @@ namespace m0.UIWpf
         {
             Dnd.MinimumHorizontalDragDistance = SystemParameters.MinimumHorizontalDragDistance * 2;
             Dnd.MinimumVerticalDragDistance = SystemParameters.MinimumVerticalDragDistance * 2;
+        }
+
+        public static Size MeasureTextBlock(TextBlock tb)
+        {
+            var formattedText = new FormattedText(
+                tb.Text,
+                CultureInfo.CurrentCulture,
+                FlowDirection.LeftToRight,
+                new Typeface(tb.FontFamily, tb.FontStyle, tb.FontWeight, tb.FontStretch),
+                tb.FontSize,
+                Brushes.Black,
+                new NumberSubstitution(), TextFormattingMode.Display);
+
+            return new Size(formattedText.Width, formattedText.Height);
         }
 
         public static void SetPosition(FrameworkElement e, double x, double y)

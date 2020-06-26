@@ -15,7 +15,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Controls
 {
     class PitchSetAxisDecorator : Canvas, IZoomScrollViewAxisDecorator
     {
-        double FontSize = 100;
+        double FontSize = 120;
 
         public Size Size { get; set; }
         public List<AxisSegment> Segments { get; set; }
@@ -28,7 +28,9 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Controls
         {
             Children.Clear();
 
-            foreach(AxisSegment s in Segments)
+            double maxWidth = 0;
+
+            foreach (AxisSegment s in Segments)
             {
                 Line l = new Line();
 
@@ -49,7 +51,23 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Controls
                 WpfUtil.SetPosition(t, 0, s.SegmentStart);
 
                 Children.Add(t);
+
+                //
+
+                Size si = WpfUtil.MeasureTextBlock(t);
+
+                if (si.Width > maxWidth)
+                    maxWidth = si.Width;
             }
+
+            Size new_si = new Size();
+            new_si.Width = maxWidth + 10;
+            new_si.Height = Size.Height;
+
+            Size = new_si;
+
+            Width = Size.Width;
+            Height = Size.Height;
         }
 
         private void Update()
