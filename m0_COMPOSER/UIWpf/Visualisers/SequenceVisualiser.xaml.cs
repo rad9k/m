@@ -91,7 +91,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             timeSpanVertex = baseVertex.Get(false, "TimeSpan:");
 
             if (timeSpanVertex  == null)
-                timeSpanVertex = r.Get(false, @"System\Lib\Music\Data\DefaultTimeSpan:");
+                timeSpanVertex = r.Get(false, @"System\Lib\Music\Data\DefaultTimeSpanLevel:");
 
         }
 

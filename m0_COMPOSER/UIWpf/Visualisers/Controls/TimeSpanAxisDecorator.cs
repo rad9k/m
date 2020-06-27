@@ -7,6 +7,7 @@ using System.Windows;
 using m0.Foundation;
 using System.Windows.Controls;
 using m0.Util;
+using m0.Graph;
 
 namespace m0_COMPOSER.UIWpf.Visualisers.Controls
 {
@@ -17,14 +18,49 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Controls
 
         IVertex baseVertex;
 
-        double zoomFactor;
+        double zoomFactor;        
+        
+        private int GetTimeSpanStructureDeepLevel_Reccurent(IVertex thisVertex, IVertex targetVertex, int deepLevel)
+        {
+            timeSpanLevel tsl = new timeSpanLevel();
 
-        int timeSpanStructureDeepLevel;
+            tsl.timeSpanLevelVertex = thisVertex;
+            tsl.length = (int)GraphUtil.GetIntegerValue(thisVertex.Get(false, "Length:"));
+
+            timeSpanStructure.Add(tsl);
+
+            if (thisVertex == targetVertex)
+                return deepLevel;
+
+            return GetTimeSpanStructureDeepLevel_Reccurent(thisVertex.Get(false, @"SubLevel:"), targetVertex, deepLevel + 1);
+        }
+
+        class timeSpanLevel
+        {
+            public int baseTimeSpanLevelCountForThisLevel;
+            public int length;
+            public IVertex timeSpanLevelVertex;
+        }
+
+        List<timeSpanLevel> timeSpanStructure;
 
         private void CreateTimeSpanStructure()
-        {
-            int deepLevel = 0;
-  
+        {            
+            timeSpanStructure = new List<timeSpanLevel>();
+
+            IVertex r = m0.MinusZero.Instance.root;
+
+            IVertex baseTimeSpanLevelVertex = r.Get(false, @"System\Lib\Music\Data\BaseTimeSpanLevel:");
+
+            GetTimeSpanStructureDeepLevel_Reccurent(baseVertex, baseTimeSpanLevelVertex, 0);
+
+            int baseTimeSpanLevelCount = 1;
+
+            for (int x = timeSpanStructure.Count - 1 ; x!=-1 ; x--)
+            {
+                baseTimeSpanLevelCount = baseTimeSpanLevelCount * timeSpanStructure[x].length;
+                timeSpanStructure[x].baseTimeSpanLevelCountForThisLevel = baseTimeSpanLevelCount;
+            }
         }
 
         private void Update()
