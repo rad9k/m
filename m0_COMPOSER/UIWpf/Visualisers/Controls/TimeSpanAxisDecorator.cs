@@ -23,7 +23,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Controls
 
         double zoomFactor;
 
-        double FontSize = 12;
+        double FontSize = 10;
 
         double timeSpanHeight;
 
@@ -37,10 +37,31 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Controls
 
             Size = s;
 
+            Width = Size.Width;
+            Height = Size.Height;
+
             //
+
+            Children.Clear();
 
             Draw_Recurent(0);
             
+        }
+
+        Brush getBrushForLevel(int level)
+        {
+            if (level == 0)
+                return (Brush)WpfUtil.FindResource("0GrayBrush");
+
+            return (Brush)WpfUtil.FindResource("0LightGrayBrush");
+        }
+
+        double getThicknessForLevel(int level)        
+        {
+            if (level == 0)
+                return 3;
+
+            return 1;
         }
 
         private void Draw_Recurent(int level)
@@ -50,31 +71,48 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Controls
 
             timeSpanLevel thisLevel = timeSpanStructure[level];
 
-            for (int cnt = 0; cnt < Length; cnt += thisLevel.baseTimeSpanLevelCountForThisLevel)
-            {
-                Line l = new Line();
+            int textCount = 1;
 
+            for (int cnt = 0; cnt < Length; cnt += thisLevel.baseTimeSpanLevelCountForThisLevel)
+            {                
                 double horizontalPosition = cnt * baseUnitSize;
 
-                WpfUtil.SetLinePosition(l, horizontalPosition, 0, horizontalPosition, Size.Height);
+                double verticalStartPosition = ((double)level / (timeSpanLevels -1)) * Size.Height;
 
-                l.StrokeThickness = level * 1.5;
+                //
+
+                TextBlock t = new TextBlock();
+
+                t.Foreground = getBrushForLevel(level);
+
+                t.Text = textCount.ToString();
+
+                t.FontSize = FontSize;
+
+                WpfUtil.SetPosition(t, horizontalPosition + 3, verticalStartPosition - 3);
+
+                Children.Add(t);
+
+                textCount++;
+
+                if (level > 0 && timeSpanStructure[level - 1].length + 1 == textCount)
+                    textCount = 1;
+
+                //
+
+                Line l = new Line();                
+
+                WpfUtil.SetLinePosition(l, horizontalPosition, verticalStartPosition, horizontalPosition, Size.Height);
+
+                l.StrokeThickness = getThicknessForLevel(level);
 
                 l.Stroke = (Brush)WpfUtil.FindResource("0ForegroundBrush");
 
-                Children.Add(l);
-
-                AxisSegment segment = new AxisSegment();
-
-                segment.lineStyle = new LineStyle();
-
-                segment.StartPosition = cnt * baseUnitSize;
-                segment.EndPosition = -1;
-                
+                Children.Add(l);                                
             }
 
 
-            //Draw_Recurent(level + 1);
+            Draw_Recurent(level + 1);
         }
         
         private int GetTimeSpanStructureDeepLevel_Reccurent(IVertex thisVertex, IVertex targetVertex, int deepLevel)
