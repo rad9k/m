@@ -110,5 +110,29 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Controls
                 VerticalAxisDecoratorScrollViewer.ScrollToVerticalOffset(VerticalOffset);
             }
         }
+
+        private void HorizontalIn(object sender, RoutedEventArgs e)
+        {
+            if(HorizontalZoomSlider.Value < HorizontalZoomSlider.Maximum)
+                HorizontalZoomSlider.Value = HorizontalZoomSlider.Value + 1;
+        }
+
+        private void HorizontalOut(object sender, RoutedEventArgs e)
+        {
+            if (HorizontalZoomSlider.Value > HorizontalZoomSlider.Minimum)
+                HorizontalZoomSlider.Value = HorizontalZoomSlider.Value - 1;
+        }
+
+        private void VerticalIn(object sender, RoutedEventArgs e)
+        {
+            if (HorizontalZoomSlider.Value < HorizontalZoomSlider.Maximum)
+                HorizontalZoomSlider.Value = HorizontalZoomSlider.Value + 1;
+        }
+
+        private void VerticalOut(object sender, RoutedEventArgs e)
+        {
+            if (HorizontalZoomSlider.Value > HorizontalZoomSlider.Minimum)
+                HorizontalZoomSlider.Value = HorizontalZoomSlider.Value - 1;
+        }
     }
 }

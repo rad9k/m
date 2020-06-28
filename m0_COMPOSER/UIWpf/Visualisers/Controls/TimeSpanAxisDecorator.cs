@@ -219,10 +219,11 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Controls
             zoomFactor = _zoomFactor;
 
 
-            if(zoomFactor > 50)
-                baseUnitSize = 0.02 + (1.0 / 5 * zoomFactor / 5);
-            else
-                baseUnitSize = 0.02 + (1.0 / 5 * zoomFactor / 10);
+            /*if(zoomFactor > 50)
+                //baseUnitSize = 0.02 + (1.0 / 5 * ((zoomFactor / 5) - 10));
+                baseUnitSize = 0.02 + (1.0 / 5 * ((zoomFactor / 5) ));
+            else*/
+                baseUnitSize = 0.02 + (1.0 / 5 * zoomFactor / 30);
 
             Update();
         }
