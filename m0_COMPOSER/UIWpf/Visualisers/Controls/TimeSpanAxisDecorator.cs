@@ -81,22 +81,26 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Controls
 
                 //
 
-                TextBlock t = new TextBlock();
+                if (level == 0 || baseUnitSize > 0.15)
+                {
 
-                t.Foreground = getBrushForLevel(level);
+                    TextBlock t = new TextBlock();
 
-                t.Text = textCount.ToString();
+                    t.Foreground = getBrushForLevel(level);
 
-                t.FontSize = FontSize;
+                    t.Text = textCount.ToString();
 
-                WpfUtil.SetPosition(t, horizontalPosition + 3, verticalStartPosition - 3);
+                    t.FontSize = FontSize;
 
-                Children.Add(t);
+                    WpfUtil.SetPosition(t, horizontalPosition + 3, verticalStartPosition - 3);
 
-                textCount++;
+                    Children.Add(t);
 
-                if (level > 0 && timeSpanStructure[level - 1].length + 1 == textCount)
-                    textCount = 1;
+                    textCount++;
+
+                    if (level > 0 && timeSpanStructure[level - 1].length + 1 == textCount)
+                        textCount = 1;
+                }
 
                 //
 
@@ -218,7 +222,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Controls
             if(zoomFactor > 50)
                 baseUnitSize = 0.02 + (1.0 / 5 * zoomFactor / 5);
             else
-                baseUnitSize = 0.02 + (1.0 / 5 * zoomFactor / 20);
+                baseUnitSize = 0.02 + (1.0 / 5 * zoomFactor / 10);
 
             Update();
         }
