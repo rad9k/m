@@ -8,6 +8,9 @@ using m0.Foundation;
 using System.Windows.Controls;
 using m0.Util;
 using m0.Graph;
+using System.Windows.Shapes;
+using m0.UIWpf;
+using System.Windows.Media;
 
 namespace m0_COMPOSER.UIWpf.Visualisers.Controls
 {
@@ -18,7 +21,61 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Controls
 
         IVertex baseVertex;
 
-        double zoomFactor;        
+        double zoomFactor;
+
+        double FontSize = 12;
+
+        double timeSpanHeight;
+
+        private void Draw()
+        {
+            timeSpanHeight = FontSize * 2;
+
+            Size s = new Size();
+            s.Width = Length * baseUnitSize;
+            s.Height = timeSpanHeight;
+
+            Size = s;
+
+            //
+
+            Draw_Recurent(0);
+            
+        }
+
+        private void Draw_Recurent(int level)
+        {
+            if (level == timeSpanLevels - 1)
+                return;
+
+            timeSpanLevel thisLevel = timeSpanStructure[level];
+
+            for (int cnt = 0; cnt < Length; cnt += thisLevel.baseTimeSpanLevelCountForThisLevel)
+            {
+                Line l = new Line();
+
+                double horizontalPosition = cnt * baseUnitSize;
+
+                WpfUtil.SetLinePosition(l, horizontalPosition, 0, horizontalPosition, Size.Height);
+
+                l.StrokeThickness = level * 1.5;
+
+                l.Stroke = (Brush)WpfUtil.FindResource("0ForegroundBrush");
+
+                Children.Add(l);
+
+                AxisSegment segment = new AxisSegment();
+
+                segment.lineStyle = new LineStyle();
+
+                segment.StartPosition = cnt * baseUnitSize;
+                segment.EndPosition = -1;
+                
+            }
+
+
+            //Draw_Recurent(level + 1);
+        }
         
         private int GetTimeSpanStructureDeepLevel_Reccurent(IVertex thisVertex, IVertex targetVertex, int deepLevel)
         {
@@ -44,6 +101,10 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Controls
 
         List<timeSpanLevel> timeSpanStructure;
 
+        int timeSpanLevels;
+
+        double baseUnitSize;
+
         private void CreateTimeSpanStructure()
         {            
             timeSpanStructure = new List<timeSpanLevel>();
@@ -54,6 +115,8 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Controls
 
             GetTimeSpanStructureDeepLevel_Reccurent(baseVertex, baseTimeSpanLevelVertex, 0);
 
+            timeSpanLevels = timeSpanStructure.Count;
+
             int baseTimeSpanLevelCount = 1;
 
             for (int x = timeSpanStructure.Count - 1 ; x!=-1 ; x--)
@@ -61,42 +124,47 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Controls
                 baseTimeSpanLevelCount = baseTimeSpanLevelCount * timeSpanStructure[x].length;
                 timeSpanStructure[x].baseTimeSpanLevelCountForThisLevel = baseTimeSpanLevelCount;
             }
+            
         }
 
         private void Update()
         {
             CreateTimeSpanStructure();
 
+            int baseUnit = timeSpanStructure[timeSpanLevels - 2].baseTimeSpanLevelCountForThisLevel;
+
+            int nextUnitBaseCountMax = timeSpanStructure[timeSpanLevels - 3].length;
+
             Segments = new List<AxisSegment>();
 
-            //int cnt = 0;
+            double baseUnitSize = 1.0 / 5 * zoomFactor / 50;
 
-            double segmentSize = zoomFactor / 10;
+            int nextUnitBaseCount = 0;
 
-            double maxWidth = 0;
-
-            //foreach (IEdge e in baseVertex)
-            for(int cnt=0; cnt < 100;cnt++)
+            for (int cnt = 0; cnt < Length; cnt += baseUnit)
             {
                 AxisSegment segment = new AxisSegment();
 
                 segment.lineStyle = new LineStyle();
 
-                segment.StartPosition = cnt * segmentSize;
+                segment.StartPosition = cnt * baseUnitSize;
                 segment.EndPosition = -1;
 
-                if (maxWidth < segment.StartPosition)
-                    maxWidth = segment.StartPosition;
+                //
 
-                //segment.baseVertex = e.To;
+                if (nextUnitBaseCount == nextUnitBaseCountMax)
+                {
+                    segment.lineStyle.StrokeThickness = 3;
+
+                    nextUnitBaseCount = 0;
+                }
+                
+                nextUnitBaseCount++;
 
                 Segments.Add(segment);
-            }
+            }            
 
-            Size s = new Size();
-            s.Width = maxWidth;
-
-            Size = s;
+            Draw();
         }
 
         public void SetBaseVertex(IVertex _baseVertex)
@@ -110,12 +178,16 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Controls
         {
             zoomFactor = _zoomFactor;
 
+            baseUnitSize = 1.0 / 5 * zoomFactor / 50;
+
             Update();
         }
 
+        double Length;
+
         public void SetLength(double length)
         {
-
+            Length = length * 10;
         }
 
     }

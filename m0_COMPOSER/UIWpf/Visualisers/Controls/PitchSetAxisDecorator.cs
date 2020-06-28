@@ -84,6 +84,18 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Controls
 
                 Children.Add(l);                
             }
+
+            //
+
+            Line lr = new Line();
+
+            WpfUtil.SetLinePosition(lr, Size.Width, 0, Size.Width, Size.Height);
+
+            lr.StrokeThickness = 5;
+
+            lr.Stroke = (Brush)WpfUtil.FindResource("0ForegroundBrush");
+
+            Children.Add(lr);
         }
 
         private void Update()
