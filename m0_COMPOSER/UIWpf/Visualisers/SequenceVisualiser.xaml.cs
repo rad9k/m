@@ -43,16 +43,13 @@ namespace m0_COMPOSER.UIWpf.Visualisers
         PitchSetAxisDecorator PitchSetAD;
         TimeSpanAxisDecorator TimeSpanAD;
 
-        int Length;
-
-        double HorizontalZoomFactor;
-        double VerticalZoomFactor;
+        int Length;        
 
         double Width;
         double Height;
 
 
-        void VisuliserDraw()
+        public void VisualiserDraw()
         {
             if (baseVertex == null || isLoaded == false)
                 return;
@@ -180,11 +177,6 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
         }
 
-        public void SetZoomFactors(double horizontalZoomFactor, double verticalZoomFactor)
-        {
-            HorizontalZoomFactor = horizontalZoomFactor;
-            VerticalZoomFactor = verticalZoomFactor;
-        }
 
         public SequenceVisualiser()
         {
@@ -237,7 +229,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             {
                 SetVertexes();
 
-                VisuliserDraw();
+                VisualiserDraw();
             }
         }
 
@@ -297,7 +289,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
         {
             isLoaded = true;
 
-            VisuliserDraw();
+            VisualiserDraw();
         }
     }
 }

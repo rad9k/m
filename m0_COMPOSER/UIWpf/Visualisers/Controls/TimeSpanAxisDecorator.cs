@@ -173,9 +173,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Controls
 
             int nextUnitBaseCountMax = timeSpanStructure[timeSpanLevels - 3].length;
 
-            Segments = new List<AxisSegment>();
-
-            double baseUnitSize = 1.0 / 5 * zoomFactor / 50;
+            Segments = new List<AxisSegment>();            
 
             int nextUnitBaseCount = 0;
 
@@ -216,7 +214,11 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Controls
         {
             zoomFactor = _zoomFactor;
 
-            baseUnitSize = 1.0 / 5 * zoomFactor / 50;
+
+            if(zoomFactor > 50)
+                baseUnitSize = 0.02 + (1.0 / 5 * zoomFactor / 5);
+            else
+                baseUnitSize = 0.02 + (1.0 / 5 * zoomFactor / 20);
 
             Update();
         }

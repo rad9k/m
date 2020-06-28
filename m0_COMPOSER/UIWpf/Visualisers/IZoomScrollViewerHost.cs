@@ -8,7 +8,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 {
     public interface IZoomScrollViewerHost
     {
-        void SetZoomFactors(double horizontalZoomFactor, double verticalZoomFactor);
+        void VisualiserDraw();
 
         void ChildControlsLoaded();
     }

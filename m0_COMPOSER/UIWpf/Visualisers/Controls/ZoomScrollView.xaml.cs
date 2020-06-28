@@ -69,11 +69,15 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Controls
         private void HorizontalZoomSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
             HorizontalAxisDecorator.SetZoomFactor(HorizontalZoomSlider.Value);
+
+            Host.VisualiserDraw();
         }
 
         private void VerticalZoomSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
             VerticalAxisDecorator.SetZoomFactor(VerticalZoomSlider.Value);
+
+            Host.VisualiserDraw();
         }
 
         private void Scroll_Loaded(object sender, RoutedEventArgs e)
