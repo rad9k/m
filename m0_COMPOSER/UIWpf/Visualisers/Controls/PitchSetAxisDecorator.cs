@@ -104,7 +104,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Controls
 
             int cnt = 0;
 
-            segmentSize = FontSize * 1.5;
+            //segmentSize = FontSize * 1.5;
 
             double maxHeight = 0;
 
@@ -163,6 +163,8 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Controls
         public void SetZoomFactor(double _zoomFactor)
         {
             zoomFactor = _zoomFactor;
+
+            segmentSize = 3 +  (15 * (zoomFactor / 40) );
 
             Update();
         }

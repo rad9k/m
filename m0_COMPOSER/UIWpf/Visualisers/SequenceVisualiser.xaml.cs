@@ -36,6 +36,8 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
         Canvas Main;
 
+        IVertex SequenceVertex;
+
         IVertex baseVertex;
         IVertex pitchSetVertex;
         IVertex timeSpanVertex;
@@ -43,11 +45,13 @@ namespace m0_COMPOSER.UIWpf.Visualisers
         PitchSetAxisDecorator PitchSetAD;
         TimeSpanAxisDecorator TimeSpanAD;
 
-        int Length;        
+        int Length;
+        int ExtendTimeLength;
 
         double Width;
         double Height;
 
+        enum CursorMode { Pen, Arrow, Eraser}
 
         public void VisualiserDraw()
         {
@@ -95,9 +99,19 @@ namespace m0_COMPOSER.UIWpf.Visualisers
         void SetupParameters()
         {
             if (baseVertex.Get(false, "Length:") != null)
+                ExtendTimeLength = (int)GraphUtil.GetIntegerValue(baseVertex.Get(false, "ExtendTimeLength:"));
+            else
+                ExtendTimeLength = 96 * 16; // default
+
+            if (baseVertex.Get(false, "Length:") != null)
                 Length = (int)GraphUtil.GetIntegerValue(baseVertex.Get(false, "Length:"));
             else
-                Length = (int)GraphUtil.GetIntegerValue(baseVertex.Get(false, "ExtendTimeLength:"));
+                Length = ExtendTimeLength;
+        }
+
+        void SaveLength()
+        {
+            GraphUtil.SetVertexValue(baseVertex, SequenceVertex.Get(false, "Length"), Length);
         }
 
         void SetAxisDecorators()
@@ -183,6 +197,8 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             InitializeComponent();
 
             MinusZero mz = MinusZero.Instance;
+
+            SequenceVertex = mz.root.Get(false, @"System\Lib\Music\Class:Sequence");
 
             this.Foreground = (Brush)FindResource("0ForegroundBrush");
             this.Background = (Brush)FindResource("0BackgroundBrush");
@@ -290,6 +306,37 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             isLoaded = true;
 
             VisualiserDraw();
+        }        
+
+        private void SnapToGridComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+
+        }
+
+        private void ExtendButton_Click(object sender, RoutedEventArgs e)
+        {
+            Length += ExtendTimeLength;            
+
+            SaveLength();
+
+            TimeSpanAD.SetLength(Length);
+
+            VisualiserDraw();
+        }
+
+        private void NewButton_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void EraseButton_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void SelectButton_Click(object sender, RoutedEventArgs e)
+        {
+
         }
     }
 }

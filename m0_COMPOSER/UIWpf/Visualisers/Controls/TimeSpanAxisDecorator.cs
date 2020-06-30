@@ -181,7 +181,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Controls
 
             int nextUnitBaseCount = 0;
 
-            for (int cnt = 0; cnt < Length; cnt += baseUnit)
+            for (int cnt = 0; cnt <= Length; cnt += baseUnit)
             {
                 AxisSegment segment = new AxisSegment();
 
@@ -192,14 +192,13 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Controls
 
                 //
 
-                if (nextUnitBaseCount == nextUnitBaseCountMax)
-                {
-                    segment.lineStyle.StrokeThickness = 3;
+                if (nextUnitBaseCount == 0)                
+                    segment.lineStyle.StrokeThickness = 3;                                                
 
-                    nextUnitBaseCount = 0;
-                }
-                
                 nextUnitBaseCount++;
+
+                if (nextUnitBaseCount == nextUnitBaseCountMax)
+                    nextUnitBaseCount = 0;
 
                 Segments.Add(segment);
             }            
@@ -219,11 +218,11 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Controls
             zoomFactor = _zoomFactor;
 
 
-            /*if(zoomFactor > 50)
+            if(zoomFactor > 50)
                 //baseUnitSize = 0.02 + (1.0 / 5 * ((zoomFactor / 5) - 10));
-                baseUnitSize = 0.02 + (1.0 / 5 * ((zoomFactor / 5) ));
-            else*/
-                baseUnitSize = 0.02 + (1.0 / 5 * zoomFactor / 30);
+                baseUnitSize = -1.73 + (1.0 / 5 * ((zoomFactor / 5) ));
+            else
+                baseUnitSize = 0.02 + (1.0 / 5 * zoomFactor / 40);
 
             Update();
         }
@@ -232,7 +231,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Controls
 
         public void SetLength(double length)
         {
-            Length = length * 10;
+            Length = length;
         }
 
     }

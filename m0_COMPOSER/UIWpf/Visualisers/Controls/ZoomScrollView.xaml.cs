@@ -125,14 +125,14 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Controls
 
         private void VerticalIn(object sender, RoutedEventArgs e)
         {
-            if (HorizontalZoomSlider.Value < HorizontalZoomSlider.Maximum)
-                HorizontalZoomSlider.Value = HorizontalZoomSlider.Value + 1;
+            if (VerticalZoomSlider.Value < VerticalZoomSlider.Maximum)
+                VerticalZoomSlider.Value = VerticalZoomSlider.Value + 1;
         }
 
         private void VerticalOut(object sender, RoutedEventArgs e)
         {
-            if (HorizontalZoomSlider.Value > HorizontalZoomSlider.Minimum)
-                HorizontalZoomSlider.Value = HorizontalZoomSlider.Value - 1;
+            if (VerticalZoomSlider.Value > VerticalZoomSlider.Minimum)
+                VerticalZoomSlider.Value = VerticalZoomSlider.Value - 1;
         }
     }
 }
