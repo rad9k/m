@@ -36,6 +36,8 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Controls
         Slider VerticalZoomSlider;
         Grid Grid;
 
+        public ScrollContentPresenter ContentPresenter;
+
         IZoomScrollViewerHost Host;
         
         IZoomScrollViewAxisDecorator HorizontalAxisDecorator;
@@ -87,6 +89,8 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Controls
             HorizontalZoomSlider = (Slider)Scroll.Template.FindName("HorizontalZoomSlider", Scroll);
             VerticalZoomSlider = (Slider)Scroll.Template.FindName("VerticalZoomSlider", Scroll);
             Grid = (Grid)Scroll.Template.FindName("Grid", Scroll);
+            ContentPresenter = (ScrollContentPresenter)Scroll.Template.FindName("PART_ScrollContentPresenter", Scroll);
+            
 
             Host.ChildControlsLoaded();
         }
@@ -133,6 +137,16 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Controls
         {
             if (VerticalZoomSlider.Value > VerticalZoomSlider.Minimum)
                 VerticalZoomSlider.Value = VerticalZoomSlider.Value - 1;
+        }
+
+        private void PART_ScrollContentPresenter_MouseEnter(object sender, MouseEventArgs e)
+        {
+            Mouse.OverrideCursor = Cursors.Help;
+        }
+
+        private void PART_ScrollContentPresenter_MouseLeave(object sender, MouseEventArgs e)
+        {
+            Mouse.OverrideCursor = Cursors.Cross;
         }
     }
 }

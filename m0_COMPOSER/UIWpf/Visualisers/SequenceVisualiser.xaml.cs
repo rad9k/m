@@ -53,6 +53,24 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
         enum CursorMode { Pen, Arrow, Eraser}
 
+        void SetCursorMode(CursorMode mode)
+        {
+            switch (mode)
+            {
+                case CursorMode.Arrow:
+                    ZoomScrollView.ContentPresenter.Cursor = Cursors.Hand;
+                    break;
+
+                case CursorMode.Pen:
+                    ZoomScrollView.Scroll.Cursor = Cursors.Hand;
+                    break;
+
+                case CursorMode.Eraser:
+                    ZoomScrollView.Scroll.Cursor = Cursors.Hand;
+                    break;
+            }
+        }
+
         public void VisualiserDraw()
         {
             if (baseVertex == null || isLoaded == false)
@@ -326,17 +344,17 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
         private void NewButton_Click(object sender, RoutedEventArgs e)
         {
-
+            SetCursorMode(CursorMode.Pen);
         }
 
         private void EraseButton_Click(object sender, RoutedEventArgs e)
         {
-
+            SetCursorMode(CursorMode.Eraser);
         }
 
         private void SelectButton_Click(object sender, RoutedEventArgs e)
         {
-
+            SetCursorMode(CursorMode.Arrow);
         }
     }
 }
