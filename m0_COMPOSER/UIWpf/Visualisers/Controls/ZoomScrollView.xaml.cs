@@ -138,15 +138,5 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Controls
             if (VerticalZoomSlider.Value > VerticalZoomSlider.Minimum)
                 VerticalZoomSlider.Value = VerticalZoomSlider.Value - 1;
         }
-
-        private void PART_ScrollContentPresenter_MouseEnter(object sender, MouseEventArgs e)
-        {
-            Mouse.OverrideCursor = Cursors.Help;
-        }
-
-        private void PART_ScrollContentPresenter_MouseLeave(object sender, MouseEventArgs e)
-        {
-            Mouse.OverrideCursor = Cursors.Cross;
-        }
     }
 }

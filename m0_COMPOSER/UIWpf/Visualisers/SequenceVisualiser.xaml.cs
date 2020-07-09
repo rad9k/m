@@ -45,6 +45,8 @@ namespace m0_COMPOSER.UIWpf.Visualisers
         PitchSetAxisDecorator PitchSetAD;
         TimeSpanAxisDecorator TimeSpanAD;
 
+        Border PresenterBackground;
+
         int Length;
         int ExtendTimeLength;
 
@@ -173,9 +175,36 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
         public void DrawMain()
         {
+            DrawBorder();
+
             DrawLines();
 
             DrawNotes();
+        }
+
+        void DrawBorder()
+        {
+            PresenterBackground = new Border();
+
+            PresenterBackground.Background = new SolidColorBrush(Colors.AliceBlue);
+
+            PresenterBackground.MouseEnter += PresenterBackground_MouseEnter;
+
+            PresenterBackground.MouseLeave += PresenterBackground_MouseLeave;
+
+            WpfUtil.SetPosition(PresenterBackground, 0, 0, Main.Width, Main.Height);
+
+            Main.Children.Add(PresenterBackground);
+        }
+
+        private void PresenterBackground_MouseLeave(object sender, MouseEventArgs e)
+        {
+            Mouse.OverrideCursor = Cursors.AppStarting;
+        }
+
+        private void PresenterBackground_MouseEnter(object sender, MouseEventArgs e)
+        {
+            Mouse.OverrideCursor = Cursors.Arrow;
         }
 
         public void DrawLines()
