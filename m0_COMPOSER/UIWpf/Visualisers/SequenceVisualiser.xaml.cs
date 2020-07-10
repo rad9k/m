@@ -55,20 +55,26 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
         enum CursorMode { Pen, Arrow, Eraser}
 
+        CursorMode currentCursorMode;
+
+        enum SnapToGrid { Bar1, Bar1_2, Bar1_4, Bar1_8, Bar1_16, Bar1_32}
+
+        SnapToGrid currentSnapToGrid;
+
         void SetCursorMode(CursorMode mode)
         {
             switch (mode)
             {
                 case CursorMode.Arrow:
-                    ZoomScrollView.ContentPresenter.Cursor = Cursors.Hand;
+                    currentCursorMode = CursorMode.Arrow;
                     break;
 
                 case CursorMode.Pen:
-                    ZoomScrollView.Scroll.Cursor = Cursors.Hand;
+                    currentCursorMode = CursorMode.Pen;
                     break;
 
                 case CursorMode.Eraser:
-                    ZoomScrollView.Scroll.Cursor = Cursors.Hand;
+                    currentCursorMode = CursorMode.Eraser;
                     break;
             }
         }
@@ -175,22 +181,37 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
         public void DrawMain()
         {
-            DrawBorder();
+            DrawBackground();
 
             DrawLines();
 
+            DrawBorder();
+
             DrawNotes();
+        }
+
+        void DrawBackground()
+        {
+            Border Background = new Border();
+
+            Background.Background = (Brush)FindResource("0LightBackgroundBrush");
+            
+            WpfUtil.SetPosition(Background, 0, 0, Main.Width, Main.Height);
+
+            Main.Children.Add(Background);
         }
 
         void DrawBorder()
         {
             PresenterBackground = new Border();
 
-            PresenterBackground.Background = new SolidColorBrush(Colors.AliceBlue);
+            PresenterBackground.Background = (Brush)FindResource("0LightBackgroundBrush");
 
             PresenterBackground.MouseEnter += PresenterBackground_MouseEnter;
 
             PresenterBackground.MouseLeave += PresenterBackground_MouseLeave;
+
+            PresenterBackground.Opacity = 0.01;
 
             WpfUtil.SetPosition(PresenterBackground, 0, 0, Main.Width, Main.Height);
 
@@ -199,12 +220,27 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
         private void PresenterBackground_MouseLeave(object sender, MouseEventArgs e)
         {
-            Mouse.OverrideCursor = Cursors.AppStarting;
+            WpfUtil.OverrideCursor(Cursors.Arrow);            
         }
 
         private void PresenterBackground_MouseEnter(object sender, MouseEventArgs e)
         {
-            Mouse.OverrideCursor = Cursors.Arrow;
+            switch (currentCursorMode)
+            {
+                case CursorMode.Arrow:
+                    WpfUtil.OverrideCursor(Cursors.Arrow);
+                    break;
+
+                case CursorMode.Eraser:
+                    WpfUtil.OverrideCursorFromResource("/m0;component/_resources/basic/eraser.cur");
+                    break;
+
+                case CursorMode.Pen:
+                    WpfUtil.OverrideCursorFromResource("/m0;component/_resources/basic/pen.cur");
+                    break;
+            }
+
+            
         }
 
         public void DrawLines()
@@ -238,6 +274,12 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
         }
 
+        void InitSequenceVisualierState()
+        {
+            SetCursorMode(CursorMode.Arrow);
+
+            currentSnapToGrid = SnapToGrid.Bar1;
+        }
 
         public SequenceVisualiser()
         {
@@ -280,6 +322,8 @@ namespace m0_COMPOSER.UIWpf.Visualisers
                 this.MouseEnter += dndMouseEnter;*/
 
                 ZoomScrollView.SetHost(this);
+
+                InitSequenceVisualierState();
             }
         }
 
@@ -357,7 +401,33 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
         private void SnapToGridComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
+            if(SnapToGridComboBox.SelectedItem != null && ((ComboBoxItem)SnapToGridComboBox.SelectedItem).Content != null)
+            switch (((ComboBoxItem)SnapToGridComboBox.SelectedItem).Content.ToString())
+            {
+                case "1 bar":
+                    currentSnapToGrid = SnapToGrid.Bar1;
+                    break;
 
+                case "1/2 bar":
+                    currentSnapToGrid = SnapToGrid.Bar1_2;
+                    break;
+
+                case "1/4 bar":
+                    currentSnapToGrid = SnapToGrid.Bar1_4;
+                    break;
+
+                case "1/8 bar":
+                    currentSnapToGrid = SnapToGrid.Bar1_8;
+                    break;
+
+                case "1/16 bar":
+                    currentSnapToGrid = SnapToGrid.Bar1_16;
+                    break;
+
+                case "1/32 bar":
+                    currentSnapToGrid = SnapToGrid.Bar1_32;
+                    break;
+            }
         }
 
         private void ExtendButton_Click(object sender, RoutedEventArgs e)

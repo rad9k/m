@@ -32,6 +32,19 @@ namespace m0.UIWpf
             Dnd.MinimumVerticalDragDistance = SystemParameters.MinimumVerticalDragDistance * 2;
         }
 
+        public static void OverrideCursorFromResource(string resourceName)
+        {
+            System.Windows.Resources.StreamResourceInfo info = Application.GetResourceStream(new Uri(resourceName, UriKind.Relative));
+
+
+            Mouse.OverrideCursor = new System.Windows.Input.Cursor(info.Stream);
+        }
+
+        public static void OverrideCursor(Cursor cursor)
+        {
+            Mouse.OverrideCursor = cursor;
+        }
+
         public static Size MeasureTextBlock(TextBlock tb)
         {
             var formattedText = new FormattedText(
