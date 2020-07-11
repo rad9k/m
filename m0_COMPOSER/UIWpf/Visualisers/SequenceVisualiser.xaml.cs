@@ -57,6 +57,8 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
         CursorMode currentCursorMode;
 
+        bool penMode_IsInTheMiddleOfDrawing = false;
+
         enum SnapToGrid { Bar1, Bar1_2, Bar1_4, Bar1_8, Bar1_16, Bar1_32}
 
         SnapToGrid currentSnapToGrid;
@@ -185,7 +187,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             DrawLines();
 
-            DrawBorder();
+            DrawPresenterBackground();
 
             DrawNotes();
         }
@@ -201,7 +203,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             Main.Children.Add(Background);
         }
 
-        void DrawBorder()
+        void DrawPresenterBackground()
         {
             PresenterBackground = new Border();
 
@@ -211,11 +213,46 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             PresenterBackground.MouseLeave += PresenterBackground_MouseLeave;
 
+            PresenterBackground.MouseDown += PresenterBackground_MouseDown;
+
             PresenterBackground.Opacity = 0.01;
 
             WpfUtil.SetPosition(PresenterBackground, 0, 0, Main.Width, Main.Height);
 
             Main.Children.Add(PresenterBackground);
+        }
+
+        private void PresenterBackground_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            switch (currentCursorMode)
+            {
+                case (CursorMode.Pen):
+                    PenDown(sender, e);
+                    break;
+
+                case (CursorMode.Eraser):
+                    EraserDown(sender, e);
+                    break;
+
+                case (CursorMode.Arrow):
+                    ArrowDown(sender, e);
+                    break;
+            }
+        }
+
+        void PenDown(object sender, MouseButtonEventArgs e)
+        {
+
+        }
+
+        void EraserDown(object sender, MouseButtonEventArgs e)
+        {
+
+        }
+
+        void ArrowDown(object sender, MouseButtonEventArgs e)
+        {
+
         }
 
         private void PresenterBackground_MouseLeave(object sender, MouseEventArgs e)
@@ -247,11 +284,23 @@ namespace m0_COMPOSER.UIWpf.Visualisers
         {
             foreach (AxisSegment s in PitchSetAD.Segments)
             {
+                if(s.UseBackgroundColor)
+                {
+                    Border b = new Border();
+
+                    b.Background = new SolidColorBrush(s.BackgroundColor);
+
+                    WpfUtil.SetPosition(b, 0, s.StartPosition, Width, s.EndPosition - s.StartPosition);
+
+                    Main.Children.Add(b);
+                }
+
+
                 Line l = new Line();
                 
                 WpfUtil.SetLinePosition(l, 0, s.StartPosition, Width, s.StartPosition);
 
-                s.lineStyle.SetStyle(l);
+                s.LineStyle.SetStyle(l);
 
                 Main.Children.Add(l);
                 
@@ -263,7 +312,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
                 WpfUtil.SetLinePosition(l, s.StartPosition, 0, s.StartPosition, Height);
 
-                s.lineStyle.SetStyle(l);
+                s.LineStyle.SetStyle(l);
 
                 Main.Children.Add(l);
             }
@@ -454,6 +503,11 @@ namespace m0_COMPOSER.UIWpf.Visualisers
         private void SelectButton_Click(object sender, RoutedEventArgs e)
         {
             SetCursorMode(CursorMode.Arrow);
+        }
+
+        public void ItemMouseDown(IItem item)
+        {
+
         }
     }
 }

@@ -12,17 +12,22 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 {
     public class AxisSegment
     {
-        public IVertex baseVertex;
-        public LineStyle lineStyle;
+        public IVertex BaseVertex;
+        public LineStyle LineStyle;
         public double StartPosition;
         public double EndPosition;
         public Color Color;
+
+        public bool UseBackgroundColor;
+        public Color BackgroundColor;
     }
 
     public interface IZoomScrollViewAxisDecorator
     {
         Size Size { get; set; }
         List<AxisSegment> Segments { get; set; }
+
+        double BaseUnitSize { get; }
 
         void SetBaseVertex(IVertex baseVertex);
 

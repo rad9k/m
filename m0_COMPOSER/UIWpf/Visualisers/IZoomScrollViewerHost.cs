@@ -11,5 +11,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
         void VisualiserDraw();
 
         void ChildControlsLoaded();
+
+        void ItemMouseDown(IItem item);
     }
 }

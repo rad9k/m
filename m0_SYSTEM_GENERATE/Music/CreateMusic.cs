@@ -120,7 +120,6 @@ namespace m0_SYSTEM_GENERATE.Music
             AddBaseDrumSet();
 
             AddBaseTimeSpanStructure();
-
         }        
 
         private static void AddBasePitchSet()
@@ -135,20 +134,21 @@ namespace m0_SYSTEM_GENERATE.Music
 
             IVertex white = r.Get(false, @"System\Data\UX\Colors\White");
             IVertex black = r.Get(false, @"System\Data\UX\Colors\Black");
+            IVertex gray = r.Get(false, @"System\Data\UX\Colors\LightGray");
 
             for (int x = -1; x <= 9; x++) {
-                AddPitch(b, x, 0, "C " + x.ToString(), white);
-                AddPitch(b, x, 1, "C# " + x.ToString(), black);
-                AddPitch(b, x, 2, "D " + x.ToString(), white);
-                AddPitch(b, x, 3, "D# " + x.ToString(), black);
-                AddPitch(b, x, 4, "E " + x.ToString(), white);
-                AddPitch(b, x, 5, "F " + x.ToString(), white);
-                AddPitch(b, x, 6, "F# " + x.ToString(), black);
-                AddPitch(b, x, 7, "G " + x.ToString(), white);
-                AddPitch(b, x, 8, "G# " + x.ToString(), black);
-                AddPitch(b, x, 9, "A " + x.ToString(), white);
-                AddPitch(b, x, 10, "A# " + x.ToString(), black);
-                AddPitch(b, x, 11, "B " + x.ToString(), white);               
+                AddPitch(b, x, 0, "C " + x.ToString(), white, null);
+                AddPitch(b, x, 1, "C# " + x.ToString(), black, gray);
+                AddPitch(b, x, 2, "D " + x.ToString(), white, null);
+                AddPitch(b, x, 3, "D# " + x.ToString(), black, gray);
+                AddPitch(b, x, 4, "E " + x.ToString(), white, null);
+                AddPitch(b, x, 5, "F " + x.ToString(), white, null);
+                AddPitch(b, x, 6, "F# " + x.ToString(), black, gray);
+                AddPitch(b, x, 7, "G " + x.ToString(), white, null);
+                AddPitch(b, x, 8, "G# " + x.ToString(), black, gray);
+                AddPitch(b, x, 9, "A " + x.ToString(), white, null);
+                AddPitch(b, x, 10, "A# " + x.ToString(), black, gray);
+                AddPitch(b, x, 11, "B " + x.ToString(), white, null);               
             }
         }
 
@@ -182,7 +182,7 @@ namespace m0_SYSTEM_GENERATE.Music
             }
         }
 
-        private static void AddPitch(IVertex basePitch, int octave, int note, string name, IVertex color)
+        private static void AddPitch(IVertex basePitch, int octave, int note, string name, IVertex color, IVertex noteBackgroundColor)
         {
             IVertex p = VertexOperations.AddInstance(basePitch, VisualisedPitch);
 
@@ -192,6 +192,9 @@ namespace m0_SYSTEM_GENERATE.Music
             GraphUtil.SetVertexValue(p, VisualisedPitch.Get(false, "Octave"), octave);
             GraphUtil.SetVertexValue(p, VisualisedPitch.Get(false, "Note"), note);
             GraphUtil.CreateOrReplaceEdge(p, VisualisedPitch.Get(false, "Color"), color);
+
+            if(noteBackgroundColor != null)
+                GraphUtil.CreateOrReplaceEdge(p, VisualisedPitch.Get(false, "NoteBackgroundColor"), noteBackgroundColor);
         }
 
         private static void AddDrumPitch(IVertex basePitch, int octave, int note, string name, IVertex color)
@@ -203,9 +206,9 @@ namespace m0_SYSTEM_GENERATE.Music
                     matched = n;
 
             if (matched == null)
-                AddPitch(basePitch, octave, note, name, color);
+                AddPitch(basePitch, octave, note, name, color, null);
             else
-                AddPitch(basePitch, octave, note, name + " (" + matched.Instrument + ")", color);
+                AddPitch(basePitch, octave, note, name + " (" + matched.Instrument + ")", color, null);
                 
         }
 
@@ -310,6 +313,7 @@ namespace m0_SYSTEM_GENERATE.Music
             GraphUtil.AddInherits(VisualisedPitch, Pitch);
             GraphUtil.AddAttribute(VisualisedPitch, "Name", String, 1, 1);
             GraphUtil.AddAttribute(VisualisedPitch, "Color", Color, 1, 1);
+            GraphUtil.AddAttribute(VisualisedPitch, "NoteBackgroundColor", Color, 0, 1);
 
             // PICHSET
 

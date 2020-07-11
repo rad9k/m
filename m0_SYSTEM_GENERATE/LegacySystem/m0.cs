@@ -4399,7 +4399,6 @@ namespace m0
             foreach (IEdge v in attributes)
                 if (v.To.Get(false, @"$Is:" + ameta) == null)
                     v.To.AddEdge(ismeta, ameta);
-
         }
 
         private void AddIsAggregation()
@@ -4573,6 +4572,8 @@ namespace m0
 
             ColorType.AddColor(Colors, "White", 255, 255, 255, 255);
             ColorType.AddColor(Colors, "Black", 0, 0, 0, 255);
+            ColorType.AddColor(Colors, "Gray", 127, 127, 127, 255);
+            ColorType.AddColor(Colors, "LightGray", 200, 200, 200, 255);
             ColorType.AddColor(Colors, "Red", 255, 0, 0, 255);
             ColorType.AddColor(Colors, "Green", 0, 255, 0, 255);
             ColorType.AddColor(Colors, "Blue", 0, 0, 255, 255);

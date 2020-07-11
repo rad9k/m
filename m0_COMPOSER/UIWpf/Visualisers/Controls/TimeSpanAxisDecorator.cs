@@ -19,6 +19,12 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Controls
         public Size Size { get; set; }
         public List<AxisSegment> Segments { get; set; }
 
+        public double BaseUnitSize {
+            get{
+                return baseUnitSize;
+            }
+        }
+
         IVertex baseVertex;
 
         double zoomFactor;
@@ -26,6 +32,23 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Controls
         double FontSize = 10;
 
         double timeSpanHeight;
+
+        class timeSpanLevel
+        {
+            public int baseTimeSpanLevelCountForThisLevel;
+            public int length;
+            public IVertex timeSpanLevelVertex;
+        }
+
+        List<timeSpanLevel> timeSpanStructure;
+
+        int timeSpanLevels;
+
+        double baseUnitSize;
+
+        double Length;
+
+        //
 
         private void Draw()
         {
@@ -134,19 +157,6 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Controls
             return GetTimeSpanStructureDeepLevel_Reccurent(thisVertex.Get(false, @"SubLevel:"), targetVertex, deepLevel + 1);
         }
 
-        class timeSpanLevel
-        {
-            public int baseTimeSpanLevelCountForThisLevel;
-            public int length;
-            public IVertex timeSpanLevelVertex;
-        }
-
-        List<timeSpanLevel> timeSpanStructure;
-
-        int timeSpanLevels;
-
-        double baseUnitSize;
-
         private void CreateTimeSpanStructure()
         {            
             timeSpanStructure = new List<timeSpanLevel>();
@@ -185,7 +195,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Controls
             {
                 AxisSegment segment = new AxisSegment();
 
-                segment.lineStyle = new LineStyle();
+                segment.LineStyle = new LineStyle();
 
                 segment.StartPosition = cnt * baseUnitSize;
                 segment.EndPosition = -1;
@@ -193,7 +203,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Controls
                 //
 
                 if (nextUnitBaseCount == 0)                
-                    segment.lineStyle.StrokeThickness = 3;                                                
+                    segment.LineStyle.StrokeThickness = 3;                                                
 
                 nextUnitBaseCount++;
 
@@ -226,8 +236,6 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Controls
 
             Update();
         }
-
-        double Length;
 
         public void SetLength(double length)
         {

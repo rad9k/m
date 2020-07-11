@@ -23,6 +23,8 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Controls
         public Size Size { get; set; }
         public List<AxisSegment> Segments { get; set; }
 
+        public double BaseUnitSize => throw new NotImplementedException();
+
         IVertex baseVertex;        
 
         double zoomFactor;
@@ -38,11 +40,14 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Controls
             foreach (AxisSegment s in Segments)
             {                
                 TextBlock t = new TextBlock();
-                t.Text = s.baseVertex.Get(false, "Name:").Value.ToString();
+                t.Text = s.BaseVertex.Get(false, "Name:").Value.ToString();
 
-                t.Background = new SolidColorBrush(s.Color);
+                if (s.Color != null)
+                {
+                    t.Background = new SolidColorBrush(s.Color);
 
-                t.Foreground = new SolidColorBrush(WpfUtil.GetNegativeColor(s.Color));
+                    t.Foreground = new SolidColorBrush(WpfUtil.GetNegativeColor(s.Color));
+                }
 
                 t.FontSize = FontSize;
 
@@ -80,7 +85,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Controls
 
                 WpfUtil.SetLinePosition(l, 0, s.StartPosition, Size.Width, s.StartPosition);
 
-                s.lineStyle.SetStyle(l);
+                s.LineStyle.SetStyle(l);
 
                 Children.Add(l);                
             }
@@ -114,7 +119,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Controls
             {                
                 AxisSegment segment = new AxisSegment();
 
-                segment.lineStyle = new LineStyle();
+                segment.LineStyle = new LineStyle();
 
                 segment.StartPosition = cnt * segmentSize;
                 segment.EndPosition = (cnt + 1) * segmentSize;
@@ -122,21 +127,33 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Controls
                 if (segment.EndPosition > maxHeight)
                     maxHeight = segment.EndPosition;
 
-                segment.baseVertex = e.To;
+                segment.BaseVertex = e.To;
 
-                IVertex colorVertex = segment.baseVertex.Get(false, "Color:");
+                //
+
+                IVertex colorVertex = segment.BaseVertex.Get(false, "Color:");
 
                 if (colorVertex != null)
                     segment.Color = WpfUtil.GetColorFromColorVertex(colorVertex);
 
+                //
 
-                int? thisOctave = GraphUtil.GetIntegerValue(segment.baseVertex.Get(false, "Octave:"));
+                IVertex noteBackgroundColorVertex = segment.BaseVertex.Get(false, "NoteBackgroundColor:");
+
+                if (noteBackgroundColorVertex != null)
+                {
+                    segment.UseBackgroundColor = true;
+                    segment.BackgroundColor = WpfUtil.GetColorFromColorVertex(noteBackgroundColorVertex);
+                }
+
+
+                int? thisOctave = GraphUtil.GetIntegerValue(segment.BaseVertex.Get(false, "Octave:"));
 
                 if(thisOctave != null && thisOctave != prevOctave)
                     {
                         prevOctave = (int)thisOctave;
 
-                        segment.lineStyle.StrokeThickness = 3;
+                        segment.LineStyle.StrokeThickness = 3;
                     }
 
 
