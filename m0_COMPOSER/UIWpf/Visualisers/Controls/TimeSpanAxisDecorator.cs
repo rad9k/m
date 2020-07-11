@@ -25,6 +25,15 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Controls
             }
         }
 
+        double barLength;
+        public double BarLength
+        {
+            get
+            {
+                return barLength;
+            }
+        }
+
         IVertex baseVertex;
 
         double zoomFactor;
@@ -176,7 +185,8 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Controls
                 baseTimeSpanLevelCount = baseTimeSpanLevelCount * timeSpanStructure[x].length;
                 timeSpanStructure[x].baseTimeSpanLevelCountForThisLevel = baseTimeSpanLevelCount;
             }
-            
+
+            barLength = timeSpanStructure[timeSpanStructure.Count - 2].length;
         }
 
         private void Update()

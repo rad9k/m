@@ -6,6 +6,7 @@ using m0.UIWpf.Visualisers;
 using m0.Util;
 using m0.ZeroTypes;
 using m0.ZeroUML;
+using m0_COMPOSER.Lib;
 using m0_COMPOSER.UIWpf.Visualisers.Controls;
 using System;
 using System.Collections.Generic;
@@ -63,13 +64,15 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
         Point mouseDownPoint;
 
-        Border NewNote;
+        Border newNoteShape;
 
-        AxisSegment NewNoteSegment;
+        AxisSegment newNoteSegment;
 
         enum SnapToGrid { Bar1, Bar1_2, Bar1_4, Bar1_8, Bar1_16, Bar1_32 }
 
         SnapToGrid currentSnapToGrid;
+
+        double currentSnapToGridValue;
 
         void SetCursorMode(CursorMode mode)
         {
@@ -225,12 +228,14 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             PresenterBackground.MouseLeave += PresenterBackground_MouseLeave;
 
             PresenterBackground.MouseDown += PresenterBackground_MouseDown;
-
+            
             PresenterBackground.MouseUp += PresenterBackground_MouseUp;
 
             PresenterBackground.MouseMove += PresenterBackground_MouseMove;
 
             PresenterBackground.Opacity = 0.01;
+
+            Panel.SetZIndex(PresenterBackground, 100);
 
             WpfUtil.SetPosition(PresenterBackground, 0, 0, Main.Width, Main.Height);
 
@@ -290,25 +295,87 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             return null;
         }
 
+        double GetSnapped(double position)
+        {
+            double positionInBars = (position / TimeSpanAD.BaseUnitSize) / TimeSpanAD.BarLength;
+
+            double reminder = positionInBars % currentSnapToGridValue;
+
+            if (reminder < (currentSnapToGridValue / 2))
+                return (positionInBars - reminder) * TimeSpanAD.BarLength * TimeSpanAD.BaseUnitSize;
+            else
+                return (positionInBars - reminder + currentSnapToGridValue) * TimeSpanAD.BarLength * TimeSpanAD.BaseUnitSize;            
+        }
+
+        AxisSegment GetPitchSegment(IVertex pitchVertex)
+        {
+            foreach (AxisSegment s in PitchSetAD.Segments)
+                if (s.BaseVertex == pitchVertex)
+                    return s;
+
+            return null;
+        }
+        
+        void AddItem(IVertex noteEventVertex)
+        {
+            IVertex pitchVertex = MusicUtil.GetNoteFromPitchSet(pitchSetVertex,
+                GraphUtil.GetIntegerValue(noteEventVertex.Get(false, "Note:")),
+                GraphUtil.GetIntegerValue(noteEventVertex.Get(false, "Octave:")));
+
+            string label = pitchVertex.Value.ToString();
+
+            NoteItem ni = new NoteItem(noteEventVertex, label, this);
+
+            AxisSegment noteSegment = GetPitchSegment(pitchVertex);
+
+            bool dummy=false;
+
+            double startPosition = GraphUtil.GetIntegerValue(noteEventVertex.Get(false, "TriggerTime:"), ref dummy) * TimeSpanAD.BaseUnitSize;
+
+            double endPosition = startPosition + (GraphUtil.GetIntegerValue(noteEventVertex.Get(false, "Length:"), ref dummy) * TimeSpanAD.BaseUnitSize);
+
+            WpfUtil.SetPositionAbsolute(ni, startPosition, noteSegment.StartPosition, endPosition, noteSegment.EndPosition);
+        }
+
+        IVertex AddNoteEventVertex(AxisSegment noteSegment, double startPosition, double endPosition)
+        {
+            IVertex r = MinusZero.Instance.Root;
+
+            IVertex noteEvent = r.Get(false, @"System\Lib\Music\NoteEvent");
+
+            IVertex noteEventVertex = baseVertex.AddVertex(noteEvent, null);
+
+            noteEventVertex.AddVertex(noteEvent.Get(false, @"Velocity"), 127);
+            noteEventVertex.AddEdge(noteEvent.Get(false, @"Octave"), noteSegment.BaseVertex.Get(false, "Octave:"));
+            noteEventVertex.AddEdge(noteEvent.Get(false, @"Note"), noteSegment.BaseVertex.Get(false, "Note:"));
+            noteEventVertex.AddVertex(noteEvent.Get(false, @"TriggerTime"), startPosition / TimeSpanAD.BaseUnitSize);
+            noteEventVertex.AddVertex(noteEvent.Get(false, @"Length"), (endPosition - startPosition) / TimeSpanAD.BaseUnitSize);
+
+            return noteEventVertex;
+        }
+
+
         void PenDown(object sender, MouseButtonEventArgs e)
         {
             currentCursorModeDetail = CursorModeDetail.PenDown;
 
             mouseDownPoint = e.GetPosition(PresenterBackground);
 
-            NewNoteSegment = FindVerticalSegment(mouseDownPoint.Y);
+            newNoteSegment = FindVerticalSegment(mouseDownPoint.Y);
 
             //
 
-            NewNote = new Border();
+            newNoteShape = new Border();
 
-            NewNote.BorderBrush = (Brush)FindResource("0HighlightBrush");
+            newNoteShape.Background = (Brush)FindResource("0HighlightBrush");
 
-            NewNote.BorderThickness = new Thickness(2);
+            newNoteShape.BorderThickness = new Thickness(0);
 
-            WpfUtil.SetPositionAbsolute(NewNote, mouseDownPoint.X, NewNoteSegment.StartPosition, mouseDownPoint.X, NewNoteSegment.EndPosition);
+            double snappedMouseX = GetSnapped(mouseDownPoint.X);
 
-            Main.Children.Add(NewNote);
+            WpfUtil.SetPositionAbsolute(newNoteShape, snappedMouseX, newNoteSegment.StartPosition, snappedMouseX, newNoteSegment.EndPosition);
+
+            Main.Children.Add(newNoteShape);
         }
 
         void PenDownMove(object sender, MouseEventArgs e)
@@ -317,23 +384,38 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             Point currentMousePosition = e.GetPosition(PresenterBackground);
 
-            if(currentMousePosition.X > mouseDownPoint.X)
+            double snappedCurrentMousePositionX = GetSnapped(currentMousePosition.X);
+
+            double snappedMouseDownPointX = GetSnapped(mouseDownPoint.X);
+
+            if(snappedCurrentMousePositionX > snappedMouseDownPointX)
             {
-                left = mouseDownPoint.X;
-                right = currentMousePosition.X;
+                left = snappedMouseDownPointX;
+                right = snappedCurrentMousePositionX;
             }
             else
             {
-                left = currentMousePosition.X;
-                right = mouseDownPoint.X;
+                left = snappedCurrentMousePositionX;
+                right = snappedMouseDownPointX;
             }
 
-            WpfUtil.SetPositionAbsolute(NewNote, left, NewNoteSegment.StartPosition, right, NewNoteSegment.EndPosition);
+            WpfUtil.SetPositionAbsolute(newNoteShape, left, newNoteSegment.StartPosition, right, newNoteSegment.EndPosition);
+        }
+
+        void PerformPenUp()
+        {
+            Main.Children.Remove(newNoteShape);
+
+            currentCursorModeDetail = CursorModeDetail.PenUp;
         }
 
         void PenUp(object sender, MouseButtonEventArgs e)
         {
-            Main.Children.Remove(NewNote);
+            PerformPenUp();
+
+            IVertex newNoteEventVertex = AddNoteEventVertex(newNoteSegment, Canvas.GetLeft(newNoteShape), Canvas.GetRight(newNoteShape));
+
+            AddItem(newNoteEventVertex);
         }
 
         void EraserDown(object sender, MouseButtonEventArgs e)
@@ -348,7 +430,14 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
         private void PresenterBackground_MouseLeave(object sender, MouseEventArgs e)
         {
-            WpfUtil.OverrideCursor(Cursors.Arrow);            
+            WpfUtil.OverrideCursor(Cursors.Arrow);
+
+            switch (currentCursorModeDetail)
+            {
+                case (CursorModeDetail.PenDown):
+                    PerformPenUp();
+                    break;
+            }
         }
 
         private void PresenterBackground_MouseEnter(object sender, MouseEventArgs e)
@@ -419,6 +508,8 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             SetCursorMode(CursorMode.Arrow);
 
             currentSnapToGrid = SnapToGrid.Bar1;
+
+            currentSnapToGridValue = 1;
         }
 
         public SequenceVisualiser()
@@ -546,26 +637,32 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             {
                 case "1 bar":
                     currentSnapToGrid = SnapToGrid.Bar1;
+                    currentSnapToGridValue = 1;
                     break;
 
                 case "1/2 bar":
                     currentSnapToGrid = SnapToGrid.Bar1_2;
+                    currentSnapToGridValue = 1.0/2;
                     break;
 
                 case "1/4 bar":
                     currentSnapToGrid = SnapToGrid.Bar1_4;
+                    currentSnapToGridValue = 1.0/4;
                     break;
 
                 case "1/8 bar":
                     currentSnapToGrid = SnapToGrid.Bar1_8;
+                    currentSnapToGridValue = 1.0/8;
                     break;
 
                 case "1/16 bar":
                     currentSnapToGrid = SnapToGrid.Bar1_16;
+                    currentSnapToGridValue = 1.0/16;
                     break;
 
                 case "1/32 bar":
                     currentSnapToGrid = SnapToGrid.Bar1_32;
+                    currentSnapToGridValue = 1.0/32;
                     break;
             }
         }

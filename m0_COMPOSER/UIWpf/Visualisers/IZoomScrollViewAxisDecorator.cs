@@ -29,6 +29,8 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
         double BaseUnitSize { get; }
 
+        double BarLength { get; }
+
         void SetBaseVertex(IVertex baseVertex);
 
         void SetZoomFactor(double zoomFactor);

@@ -51,6 +51,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Lib\Music.cs" />
+    <Compile Include="Lib\MusicUtil.cs" />
     <Compile Include="Midi\MidiLib.cs" />
     <Compile Include="Midi\WinmmMidiLib.cs" />
     <Compile Include="Program.cs" />

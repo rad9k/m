@@ -25,6 +25,8 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Controls
 
         public double BaseUnitSize => throw new NotImplementedException();
 
+        public double BarLength => throw new NotImplementedException();
+
         IVertex baseVertex;        
 
         double zoomFactor;
