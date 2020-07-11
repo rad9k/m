@@ -28,7 +28,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
     /// Interaction logic for SequenceVisualiser.xaml
     /// </summary>
     public partial class SequenceVisualiser : UserControl, IPlatformClass, IOwnScrolling, IZoomScrollViewerHost
-    {                
+    {
         protected void SetVertexDefaultValues()
         {
             //Vertex.Get(false, "ZoomVisualiserContent:").Value = 100;
@@ -53,13 +53,21 @@ namespace m0_COMPOSER.UIWpf.Visualisers
         double Width;
         double Height;
 
-        enum CursorMode { Pen, Arrow, Eraser}
+        enum CursorMode { Pen, Arrow, Eraser }
 
         CursorMode currentCursorMode;
 
-        bool penMode_IsInTheMiddleOfDrawing = false;
+        enum CursorModeDetail { PenUp, PenDown, ArrowUp, ArrowDown, ArrowLeftRight, Eraser }
 
-        enum SnapToGrid { Bar1, Bar1_2, Bar1_4, Bar1_8, Bar1_16, Bar1_32}
+        CursorModeDetail currentCursorModeDetail;
+
+        Point mouseDownPoint;
+
+        Border NewNote;
+
+        AxisSegment NewNoteSegment;
+
+        enum SnapToGrid { Bar1, Bar1_2, Bar1_4, Bar1_8, Bar1_16, Bar1_32 }
 
         SnapToGrid currentSnapToGrid;
 
@@ -69,14 +77,17 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             {
                 case CursorMode.Arrow:
                     currentCursorMode = CursorMode.Arrow;
+                    currentCursorModeDetail = CursorModeDetail.ArrowUp;
                     break;
 
                 case CursorMode.Pen:
                     currentCursorMode = CursorMode.Pen;
+                    currentCursorModeDetail = CursorModeDetail.PenUp;
                     break;
 
                 case CursorMode.Eraser:
                     currentCursorMode = CursorMode.Eraser;
+                    currentCursorModeDetail = CursorModeDetail.Eraser;
                     break;
             }
         }
@@ -98,7 +109,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
         }
 
         void SetVertexes()
-        {            
+        {
             baseVertex = Vertex.Get(false, @"BaseEdge:\To:");
 
             if (baseVertex == null)
@@ -110,7 +121,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
                 return;
             }
 
-            IVertex r = MinusZero.Instance.Root;            
+            IVertex r = MinusZero.Instance.Root;
 
             pitchSetVertex = baseVertex.Get(false, "PitchSet:");
 
@@ -119,7 +130,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             timeSpanVertex = baseVertex.Get(false, "TimeSpan:");
 
-            if (timeSpanVertex  == null)
+            if (timeSpanVertex == null)
                 timeSpanVertex = r.Get(false, @"System\Lib\Music\Data\DefaultTimeSpanLevel:");
 
         }
@@ -158,8 +169,8 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             ZoomScrollView.SetVerticalAxisDecorator(PitchSetAD);
 
-            ZoomScrollView.SetHorizontalAxisDecorator(TimeSpanAD);   
-           
+            ZoomScrollView.SetHorizontalAxisDecorator(TimeSpanAD);
+
         }
 
         public void CreateMain()
@@ -170,7 +181,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             Height = PitchSetAD.Size.Height;
 
             Main.Width = Width;
-            Main.Height = Height;            
+            Main.Height = Height;
 
             ZoomScrollView.SetContent(Main);
         }
@@ -178,7 +189,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
         public void SetupScrollViewer()
         {
             ZoomScrollView.SetHost(this);
-            ZoomScrollView.SetContent(Main);                        
+            ZoomScrollView.SetContent(Main);
         }
 
         public void DrawMain()
@@ -197,7 +208,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             Border Background = new Border();
 
             Background.Background = (Brush)FindResource("0LightBackgroundBrush");
-            
+
             WpfUtil.SetPosition(Background, 0, 0, Main.Width, Main.Height);
 
             Main.Children.Add(Background);
@@ -215,11 +226,41 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             PresenterBackground.MouseDown += PresenterBackground_MouseDown;
 
+            PresenterBackground.MouseUp += PresenterBackground_MouseUp;
+
+            PresenterBackground.MouseMove += PresenterBackground_MouseMove;
+
             PresenterBackground.Opacity = 0.01;
 
             WpfUtil.SetPosition(PresenterBackground, 0, 0, Main.Width, Main.Height);
 
             Main.Children.Add(PresenterBackground);
+        }
+
+        private void PresenterBackground_MouseMove(object sender, MouseEventArgs e)
+        {
+            switch (currentCursorModeDetail)
+            {
+                case (CursorModeDetail.PenDown):
+                    PenDownMove(sender, e);
+                    break;
+
+                default:
+                    break;
+            }
+        } 
+
+        private void PresenterBackground_MouseUp(object sender, MouseButtonEventArgs e)
+        {
+            switch (currentCursorModeDetail)
+            {
+                case (CursorModeDetail.PenDown):
+                    PenUp(sender, e);
+                    break;
+
+                default:
+                    break;
+            }
         }
 
         private void PresenterBackground_MouseDown(object sender, MouseButtonEventArgs e)
@@ -240,9 +281,59 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             }
         }
 
+        AxisSegment FindVerticalSegment(double position)
+        {
+            foreach (AxisSegment s in PitchSetAD.Segments)
+                if (s.StartPosition <= position && position <= s.EndPosition)
+                    return s;
+
+            return null;
+        }
+
         void PenDown(object sender, MouseButtonEventArgs e)
         {
+            currentCursorModeDetail = CursorModeDetail.PenDown;
 
+            mouseDownPoint = e.GetPosition(PresenterBackground);
+
+            NewNoteSegment = FindVerticalSegment(mouseDownPoint.Y);
+
+            //
+
+            NewNote = new Border();
+
+            NewNote.BorderBrush = (Brush)FindResource("0HighlightBrush");
+
+            NewNote.BorderThickness = new Thickness(2);
+
+            WpfUtil.SetPositionAbsolute(NewNote, mouseDownPoint.X, NewNoteSegment.StartPosition, mouseDownPoint.X, NewNoteSegment.EndPosition);
+
+            Main.Children.Add(NewNote);
+        }
+
+        void PenDownMove(object sender, MouseEventArgs e)
+        {
+            double left, right;
+
+            Point currentMousePosition = e.GetPosition(PresenterBackground);
+
+            if(currentMousePosition.X > mouseDownPoint.X)
+            {
+                left = mouseDownPoint.X;
+                right = currentMousePosition.X;
+            }
+            else
+            {
+                left = currentMousePosition.X;
+                right = mouseDownPoint.X;
+            }
+
+            WpfUtil.SetPositionAbsolute(NewNote, left, NewNoteSegment.StartPosition, right, NewNoteSegment.EndPosition);
+        }
+
+        void PenUp(object sender, MouseButtonEventArgs e)
+        {
+            Main.Children.Remove(NewNote);
         }
 
         void EraserDown(object sender, MouseButtonEventArgs e)
@@ -503,11 +594,6 @@ namespace m0_COMPOSER.UIWpf.Visualisers
         private void SelectButton_Click(object sender, RoutedEventArgs e)
         {
             SetCursorMode(CursorMode.Arrow);
-        }
-
-        public void ItemMouseDown(IItem item)
-        {
-
         }
     }
 }

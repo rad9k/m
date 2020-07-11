@@ -64,12 +64,6 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Controls
             Unselect();
 
             this.SizeChanged += NoteItem_SizeChanged;
-            this.MouseDown += NoteItem_MouseDown;
-        }
-
-        private void NoteItem_MouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
-        {
-            Host.ItemMouseDown(this);
         }
 
         private void NoteItem_SizeChanged(object sender, System.Windows.SizeChangedEventArgs e)
