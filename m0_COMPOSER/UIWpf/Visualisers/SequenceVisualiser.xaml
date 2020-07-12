@@ -42,6 +42,7 @@
                         <ComboBoxItem>1/8 bar</ComboBoxItem>
                         <ComboBoxItem>1/16 bar</ComboBoxItem>
                         <ComboBoxItem>1/32 bar</ComboBoxItem>
+                        <ComboBoxItem>no snap</ComboBoxItem>
                     </ComboBox>
                     <TextBlock Margin="3,0,0,0" VerticalAlignment="Center">snap to grid</TextBlock>
                 </StackPanel>

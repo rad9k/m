@@ -68,11 +68,15 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
         AxisSegment newNoteSegment;
 
-        enum SnapToGrid { Bar1, Bar1_2, Bar1_4, Bar1_8, Bar1_16, Bar1_32 }
+        enum SnapToGrid { Bar1, Bar1_2, Bar1_4, Bar1_8, Bar1_16, Bar1_32, No_Snap }
 
         SnapToGrid currentSnapToGrid;
 
         double currentSnapToGridValue;
+
+        List<UIElement> items;
+
+        bool VertexChangeOff = false;
 
         void SetCursorMode(CursorMode mode)
         {
@@ -187,6 +191,8 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             Main.Height = Height;
 
             ZoomScrollView.SetContent(Main);
+
+            items = new List<UIElement>();
         }
 
         public void SetupScrollViewer()
@@ -297,6 +303,9 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
         double GetSnapped(double position)
         {
+            if (currentSnapToGrid == SnapToGrid.No_Snap)
+                return position;
+
             double positionInBars = (position / TimeSpanAD.BaseUnitSize) / TimeSpanAD.BarLength;
 
             double reminder = positionInBars % currentSnapToGridValue;
@@ -319,8 +328,8 @@ namespace m0_COMPOSER.UIWpf.Visualisers
         void AddItem(IVertex noteEventVertex)
         {
             IVertex pitchVertex = MusicUtil.GetNoteFromPitchSet(pitchSetVertex,
-                GraphUtil.GetIntegerValue(noteEventVertex.Get(false, "Note:")),
-                GraphUtil.GetIntegerValue(noteEventVertex.Get(false, "Octave:")));
+                GraphUtil.GetIntegerValue(noteEventVertex.Get(false, "Octave:")),
+                GraphUtil.GetIntegerValue(noteEventVertex.Get(false, "Note:")));
 
             string label = pitchVertex.Value.ToString();
 
@@ -335,21 +344,31 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             double endPosition = startPosition + (GraphUtil.GetIntegerValue(noteEventVertex.Get(false, "Length:"), ref dummy) * TimeSpanAD.BaseUnitSize);
 
             WpfUtil.SetPositionAbsolute(ni, startPosition, noteSegment.StartPosition, endPosition, noteSegment.EndPosition);
+
+            items.Add(ni);
+
+            Main.Children.Add(ni);
         }
 
-        IVertex AddNoteEventVertex(AxisSegment noteSegment, double startPosition, double endPosition)
+        IVertex AddNoteEventVertex(AxisSegment noteSegment, double startPosition, double lengthPosition)
         {
             IVertex r = MinusZero.Instance.Root;
 
             IVertex noteEvent = r.Get(false, @"System\Lib\Music\NoteEvent");
 
-            IVertex noteEventVertex = baseVertex.AddVertex(noteEvent, null);
+            IEdge tempNoteEventEdge = baseVertex.AddVertexAndReturnEdge(null, null);
+
+            IVertex noteEventVertex = tempNoteEventEdge.To;
 
             noteEventVertex.AddVertex(noteEvent.Get(false, @"Velocity"), 127);
             noteEventVertex.AddEdge(noteEvent.Get(false, @"Octave"), noteSegment.BaseVertex.Get(false, "Octave:"));
             noteEventVertex.AddEdge(noteEvent.Get(false, @"Note"), noteSegment.BaseVertex.Get(false, "Note:"));
-            noteEventVertex.AddVertex(noteEvent.Get(false, @"TriggerTime"), startPosition / TimeSpanAD.BaseUnitSize);
-            noteEventVertex.AddVertex(noteEvent.Get(false, @"Length"), (endPosition - startPosition) / TimeSpanAD.BaseUnitSize);
+            noteEventVertex.AddVertex(noteEvent.Get(false, @"TriggerTime"), (int) (startPosition / TimeSpanAD.BaseUnitSize));
+            noteEventVertex.AddVertex(noteEvent.Get(false, @"Length"), (int) (lengthPosition / TimeSpanAD.BaseUnitSize));
+
+            baseVertex.AddEdge(noteEvent, noteEventVertex);
+
+            baseVertex.DeleteEdge(tempNoteEventEdge);
 
             return noteEventVertex;
         }
@@ -413,9 +432,13 @@ namespace m0_COMPOSER.UIWpf.Visualisers
         {
             PerformPenUp();
 
-            IVertex newNoteEventVertex = AddNoteEventVertex(newNoteSegment, Canvas.GetLeft(newNoteShape), Canvas.GetRight(newNoteShape));
+            VertexChangeOff = true;
+
+            IVertex newNoteEventVertex = AddNoteEventVertex(newNoteSegment, Canvas.GetLeft(newNoteShape), newNoteShape.Width);
 
             AddItem(newNoteEventVertex);
+
+            VertexChangeOff = false;
         }
 
         void EraserDown(object sender, MouseButtonEventArgs e)
@@ -500,7 +523,8 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
         public void DrawNotes()
         {
-
+            foreach (IEdge e in baseVertex.GetAll(false, "NoteEvent:"))
+                AddItem(e.To);
         }
 
         void InitSequenceVisualierState()
@@ -573,6 +597,9 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
         protected void VertexChange(object sender, VertexChangeEventArgs e)
         {
+            if (VertexChangeOff)
+                return; 
+
             if ((sender == Vertex) && (e.Type == VertexChangeType.EdgeAdded) && (GeneralUtil.CompareStrings(e.Edge.Meta.Value, "BaseEdge")))
                 UpdateBaseEdge();
 
@@ -664,7 +691,12 @@ namespace m0_COMPOSER.UIWpf.Visualisers
                     currentSnapToGrid = SnapToGrid.Bar1_32;
                     currentSnapToGridValue = 1.0/32;
                     break;
-            }
+
+                case "no snap":
+                    currentSnapToGrid = SnapToGrid.No_Snap;
+                    currentSnapToGridValue = 0;
+                    break;
+                }
         }
 
         private void ExtendButton_Click(object sender, RoutedEventArgs e)
