@@ -253,11 +253,6 @@ namespace m0.ZeroTypes
 
         public static IVertex AddInstance(IVertex baseVertex,IVertex metaVertex, IVertex edgeVertex)
         {
-            if ((String)metaVertex.Value == "Edge")
-            {
-                int x = 0;
-            }
-
             IVertex nv;
 
             if (baseVertex != null)

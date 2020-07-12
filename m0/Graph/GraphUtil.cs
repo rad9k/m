@@ -698,6 +698,22 @@ namespace m0.Graph
             return null;
         }
 
+        static public bool GetBooleanValue(IVertex Vertex, ref bool isNull)
+        {
+            if(Vertex == null || Vertex.Value == null)
+            {
+                isNull = true;
+                return false;
+            }
+
+            string val = Vertex.Value.ToString();
+
+            if (val == "True" || val == "true" || val == "1" || val == "1.0")
+                return true;
+
+            return false;
+        }
+
         static public int GetIntegerValue(IVertex Vertex, ref bool isNull)
         {
             int? ret = GetIntegerValue(Vertex);

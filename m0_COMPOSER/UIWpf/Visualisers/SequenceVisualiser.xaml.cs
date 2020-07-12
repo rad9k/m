@@ -30,11 +30,19 @@ namespace m0_COMPOSER.UIWpf.Visualisers
     /// </summary>
     public partial class SequenceVisualiser : UserControl, IPlatformClass, IOwnScrolling, IZoomScrollViewerHost
     {
-        protected void SetVertexDefaultValues()
+        protected void UpdateVertexValues()
         {
-            //Vertex.Get(false, "ZoomVisualiserContent:").Value = 100;
+            //Vertex.Get(false, "ZoomVisualiserContent:").Value = 100;            
+
+            bool dummy = false;
+
+            showLabel = GraphUtil.GetBooleanValue(Vertex.Get(false, "ShowLabel:"), ref dummy);
+            showVelocity = GraphUtil.GetBooleanValue(Vertex.Get(false, "ShowVelocity:"), ref dummy);
         }
 
+        bool showLabel;
+        bool showVelocity;
+        
         Canvas Main;
 
         IVertex SequenceVertex;
@@ -58,7 +66,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
         CursorMode currentCursorMode;
 
-        enum CursorModeDetail { PenUp, PenDown, ArrowUp, ArrowDown, ArrowLeftRight, Eraser }
+        enum CursorModeDetail { PenUp, PenDown, ArrowUp, ArrowDown, ArrowDown_Move, ArrowDown_MoveLeft, ArrowDown_MoveRight, Eraser }
 
         CursorModeDetail currentCursorModeDetail;
 
@@ -177,7 +185,6 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             ZoomScrollView.SetVerticalAxisDecorator(PitchSetAD);
 
             ZoomScrollView.SetHorizontalAxisDecorator(TimeSpanAD);
-
         }
 
         public void CreateMain()
@@ -254,6 +261,10 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             {
                 case (CursorModeDetail.PenDown):
                     PenDownMove(sender, e);
+                    break;
+
+                case (CursorModeDetail.ArrowUp):
+                    ArrowMove(sender, e);
                     break;
 
                 default:
@@ -363,8 +374,8 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             noteEventVertex.AddVertex(noteEvent.Get(false, @"Velocity"), 127);
             noteEventVertex.AddEdge(noteEvent.Get(false, @"Octave"), noteSegment.BaseVertex.Get(false, "Octave:"));
             noteEventVertex.AddEdge(noteEvent.Get(false, @"Note"), noteSegment.BaseVertex.Get(false, "Note:"));
-            noteEventVertex.AddVertex(noteEvent.Get(false, @"TriggerTime"), (int) (startPosition / TimeSpanAD.BaseUnitSize));
-            noteEventVertex.AddVertex(noteEvent.Get(false, @"Length"), (int) (lengthPosition / TimeSpanAD.BaseUnitSize));
+            noteEventVertex.AddVertex(noteEvent.Get(false, @"TriggerTime"), (int) (startPosition / TimeSpanAD.BaseUnitSize) + 0.01);
+            noteEventVertex.AddVertex(noteEvent.Get(false, @"Length"), (int) (lengthPosition / TimeSpanAD.BaseUnitSize) + 0.01);
 
             baseVertex.AddEdge(noteEvent, noteEventVertex);
 
@@ -443,12 +454,44 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
         void EraserDown(object sender, MouseButtonEventArgs e)
         {
+            Point currentMousePosition = e.GetPosition(PresenterBackground);
 
+            FrameworkElement element = WpfUtil.GetElementAtFromList_StartFromEnd(items, currentMousePosition);
+
+            if (element != null && element is IItem)
+            {
+                IItem item = (IItem)element;
+
+                IVertex eventVertex = item.BaseVertex;
+
+                VertexChangeOff = true;
+
+                GraphUtil.DeleteEdgeByToVertex(baseVertex, eventVertex);
+
+                items.Remove(element);
+
+                Main.Children.Remove(element);
+
+                VertexChangeOff = false;
+            }
         }
 
         void ArrowDown(object sender, MouseButtonEventArgs e)
         {
 
+        }
+
+        void ArrowMove(object sender, MouseEventArgs e)
+        {
+            Point currentMousePosition = e.GetPosition(PresenterBackground);
+
+            FrameworkElement element = WpfUtil.GetElementAtFromList_StartFromEnd(items, currentMousePosition);
+
+            if (element != null && element is IItem)
+            {
+
+            }else
+                WpfUtil.OverrideCursor(Cursors.Arrow);
         }
 
         private void PresenterBackground_MouseLeave(object sender, MouseEventArgs e)
@@ -566,7 +609,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
                 ClassVertex.AddIsClassAndAllAttributesAndAssociations(Vertex.Get(false, "BaseEdge:"), mz.Root.Get(false, @"System\Meta\ZeroTypes\Edge"));
 
-                SetVertexDefaultValues();
+                UpdateVertexValues();
 
                 /*this.ContextMenu = new m0ContextMenu(this);
 
@@ -589,6 +632,8 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             if (bas != null)
             {
+                UpdateVertexValues();
+
                 SetVertexes();
 
                 VisualiserDraw();
@@ -598,7 +643,10 @@ namespace m0_COMPOSER.UIWpf.Visualisers
         protected void VertexChange(object sender, VertexChangeEventArgs e)
         {
             if (VertexChangeOff)
-                return; 
+                return;
+
+            if ((sender == Vertex) && (e.Type == VertexChangeType.ValueChanged) ))
+                UpdateBaseEdge();
 
             if ((sender == Vertex) && (e.Type == VertexChangeType.EdgeAdded) && (GeneralUtil.CompareStrings(e.Edge.Meta.Value, "BaseEdge")))
                 UpdateBaseEdge();

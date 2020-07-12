@@ -32,7 +32,23 @@ namespace m0.UIWpf
             Dnd.MinimumVerticalDragDistance = SystemParameters.MinimumVerticalDragDistance * 2;
         }
 
-        public FrameworkElement GetElementAtFromList(List<FrameworkElement> list, Point point)
+        public static FrameworkElement GetElementAtFromList_StartFromEnd(List<FrameworkElement> list, Point point)
+        {
+            for(int x=list.Count - 1; x >= 0; x--)
+            {
+                FrameworkElement e = list[x];
+
+                if (Canvas.GetLeft(e) <= point.X &&
+                    point.X <= (Canvas.GetLeft(e) + e.Width) &&
+                    Canvas.GetTop(e) <= point.Y &&
+                    point.Y <= (Canvas.GetTop(e) + e.Height))
+                    return e;
+            }                         
+
+            return null;
+        }
+
+        public static FrameworkElement GetElementAtFromList(List<FrameworkElement> list, Point point)
         {
             foreach (FrameworkElement e in list)
                 if (Canvas.GetLeft(e) <= point.X &&

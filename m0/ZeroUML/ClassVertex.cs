@@ -38,7 +38,10 @@ namespace m0.ZeroUML
             IVertex AttributeVertices = ObjectVertex.GetAll(false, @"$Is:\Attribute:");
 
             foreach (IEdge e in AttributeVertices)
-                ObjectVertex.AddVertex(e.To, null);
+                if(e.To.Get(false,"$DefaultValue:") != null)
+                    ObjectVertex.AddVertex(e.To, e.To.Get(false, "$DefaultValue:").Value);
+                else
+                    ObjectVertex.AddVertex(e.To, null);
 
             IVertex AssociationVertices = ObjectVertex.GetAll(false, @"$Is:\Association:");
 
