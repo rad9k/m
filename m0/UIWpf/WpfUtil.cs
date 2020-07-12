@@ -32,6 +32,18 @@ namespace m0.UIWpf
             Dnd.MinimumVerticalDragDistance = SystemParameters.MinimumVerticalDragDistance * 2;
         }
 
+        public FrameworkElement GetElementAtFromList(List<FrameworkElement> list, Point point)
+        {
+            foreach (FrameworkElement e in list)
+                if (Canvas.GetLeft(e) <= point.X &&
+                    point.X <= (Canvas.GetLeft(e) + e.Width) &&
+                    Canvas.GetTop(e) <= point.Y &&
+                    point.Y <= (Canvas.GetTop(e) + e.Height))
+                    return e;
+
+            return null;
+        }
+
         public static void OverrideCursorFromResource(string resourceName)
         {
             System.Windows.Resources.StreamResourceInfo info = Application.GetResourceStream(new Uri(resourceName, UriKind.Relative));

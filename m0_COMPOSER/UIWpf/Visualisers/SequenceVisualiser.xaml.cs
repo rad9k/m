@@ -74,7 +74,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
         double currentSnapToGridValue;
 
-        List<UIElement> items;
+        List<FrameworkElement> items;
 
         bool VertexChangeOff = false;
 
@@ -192,7 +192,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             ZoomScrollView.SetContent(Main);
 
-            items = new List<UIElement>();
+            items = new List<FrameworkElement>();
         }
 
         public void SetupScrollViewer()

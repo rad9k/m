@@ -47,7 +47,7 @@ namespace m0.UIWpf.Visualisers
         }
     }
 
-    public class FormVisualiser: ContentControl, IPlatformClass
+    public class FormVisualiser: ContentControl, IPlatformClass, IDisposable
     {
         bool isLoaded;
 
@@ -233,6 +233,23 @@ namespace m0.UIWpf.Visualisers
                     if (contains == false)
                         PreFillFormAnalyseEdge(e.To, false);
                 }
+            }
+        }
+
+        bool IsDisposed = false;
+
+        public void Dispose()
+        {
+            if (IsDisposed == false)
+            {
+                IsDisposed = true;
+
+                DispachAllSubVisualisers();
+
+                PlatformClass.RemoveVertexChangeListeners(this.Vertex, new VertexChange(VertexChange));
+
+                if (Vertex is IDisposable)
+                    ((IDisposable)Vertex).Dispose();
             }
         }
 

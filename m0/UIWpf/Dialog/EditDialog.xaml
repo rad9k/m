@@ -6,7 +6,7 @@
              xmlns:Visualisers="clr-namespace:m0.UIWpf.Visualisers"
              xmlns:UIWpf="clr-namespace:m0.UIWpf"
              mc:Ignorable="d" 
-             d:DesignHeight="550" d:DesignWidth="500" Background="{StaticResource 0BackgroundBrush}" Foreground="{StaticResource 0ForegroundBrush}">
+             d:DesignHeight="550" d:DesignWidth="500" Background="{StaticResource 0BackgroundBrush}" Foreground="{StaticResource 0ForegroundBrush}" Unloaded="UserControl_Unloaded" >
     
    
     <Grid>

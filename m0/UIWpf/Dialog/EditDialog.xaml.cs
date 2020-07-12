@@ -34,12 +34,12 @@ namespace m0.UIWpf.Dialog
 
         void OnLoad(object sender, RoutedEventArgs e)
         {
-            FormVisuliser.Focus();
+            FormVisualiser.Focus();
 
             //UIWpf.SetWindowPosition(this, _mousePosition);
         }
 
-        FormVisualiser FormVisuliser;
+        FormVisualiser FormVisualiser;
 
         public EditDialog(IVertex _baseVertex, Point? position)
         {
@@ -47,11 +47,11 @@ namespace m0.UIWpf.Dialog
 
             InitializeComponent();
 
-            FormVisuliser = new FormVisualiser();
+            FormVisualiser = new FormVisualiser();
 
-            Wrap.SetContent(FormVisuliser);
+            Wrap.SetContent(FormVisualiser);
 
-            GraphUtil.ReplaceEdge(FormVisuliser.Vertex.Get(false, "BaseEdge:"), "To", baseVertex);
+            GraphUtil.ReplaceEdge(FormVisualiser.Vertex.Get(false, "BaseEdge:"), "To", baseVertex);
 
             this.Loaded += new RoutedEventHandler(OnLoad);
 
@@ -70,9 +70,16 @@ namespace m0.UIWpf.Dialog
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
+            FormVisualiser.Dispose();
+
             MinusZero.Instance.DefaultUserInteraction.CloseWindowByContent(this);
 
             //Close();
+        }
+
+        private void UserControl_Unloaded(object sender, RoutedEventArgs e)
+        {
+            FormVisualiser.Dispose();
         }
     }
 }
