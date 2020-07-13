@@ -46,7 +46,10 @@ namespace m0.ZeroUML
             IVertex AssociationVertices = ObjectVertex.GetAll(false, @"$Is:\Association:");
 
             foreach (IEdge e in AssociationVertices)
-                ObjectVertex.AddVertex(e.To, null);
+                if (e.To.Get(false, "$DefaultValue:") != null)
+                    ObjectVertex.AddVertex(e.To, e.To.Get(false, "$DefaultValue:").Value);
+                else
+                    ObjectVertex.AddVertex(e.To, null);
         }
 
         public static void AddIsClassAndAllAttributesAndAssociations(IVertex ObjectVertex, IVertex ClassVertex)

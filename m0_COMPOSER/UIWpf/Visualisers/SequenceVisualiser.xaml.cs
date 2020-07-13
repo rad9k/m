@@ -32,12 +32,16 @@ namespace m0_COMPOSER.UIWpf.Visualisers
     {
         protected void UpdateVertexValues()
         {
+            IVertex r = MinusZero.Instance.root;
             //Vertex.Get(false, "ZoomVisualiserContent:").Value = 100;            
 
             bool dummy = false;
 
             showLabel = GraphUtil.GetBooleanValue(Vertex.Get(false, "ShowLabel:"), ref dummy);
             showVelocity = GraphUtil.GetBooleanValue(Vertex.Get(false, "ShowVelocity:"), ref dummy);
+
+            if (Vertex.Get(false, "SnapToGrid:") == null || Vertex.Get(false, "SnapToGrid:").Value.ToString() == "")            
+                GraphUtil.SetVertexValue(Vertex, r.Get(false, @"System\Meta\Visualiser\Sequence\SnapToGrid"), r.Get(false, @"System\Meta\Visualiser\SnapToGridEnum\'1 bar'"));                            
         }
 
         bool showLabel;
