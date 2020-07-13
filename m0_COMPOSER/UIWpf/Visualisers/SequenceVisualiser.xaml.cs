@@ -344,7 +344,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             string label = pitchVertex.Value.ToString();
 
-            NoteItem ni = new NoteItem(noteEventVertex, label, this);
+            NoteItem ni = new NoteItem(noteEventVertex, label, this, showLabel, showVelocity);
 
             AxisSegment noteSegment = GetPitchSegment(pitchVertex);
 
@@ -645,7 +645,10 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             if (VertexChangeOff)
                 return;
 
-            if ((sender == Vertex) && (e.Type == VertexChangeType.ValueChanged) ))
+            if ((sender == Vertex.Get(false, "ShowLabel:")) && (e.Type == VertexChangeType.ValueChanged) )
+                UpdateBaseEdge();
+
+            if ((sender == Vertex.Get(false, "ShowVelocity:")) && (e.Type == VertexChangeType.ValueChanged))
                 UpdateBaseEdge();
 
             if ((sender == Vertex) && (e.Type == VertexChangeType.EdgeAdded) && (GeneralUtil.CompareStrings(e.Edge.Meta.Value, "BaseEdge")))

@@ -9,6 +9,7 @@ using System.Windows.Controls;
 using m0.UIWpf;
 using System.Windows.Media;
 using System.Windows;
+using m0.Graph;
 
 namespace m0_COMPOSER.UIWpf.Visualisers.Controls
 {
@@ -26,6 +27,10 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Controls
 
         bool isSelected;
 
+        bool showLabel;
+
+        bool showVelocity;
+
         public void Select()
         {
             isSelected = true;
@@ -34,9 +39,12 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Controls
 
             Background = (Brush)WpfUtil.FindResource("0BackgroundBrush");
 
-            labelControl.Foreground = (Brush)WpfUtil.FindResource("0ForegroundBrush");
+            if (showLabel)
+            {
+                labelControl.Foreground = (Brush)WpfUtil.FindResource("0ForegroundBrush");
 
-            labelControl.Background = (Brush)WpfUtil.FindResource("0BackgroundBrush");
+                labelControl.Background = (Brush)WpfUtil.FindResource("0BackgroundBrush");
+            }
         }
 
         public void Unselect()
@@ -45,16 +53,31 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Controls
 
             BorderBrush = (Brush)WpfUtil.FindResource("0ForegroundBrush");
 
-            Background = (Brush)WpfUtil.FindResource("0LightForegroundBrush");
+            Brush backColorBrush = (Brush)WpfUtil.FindResource("0LightForegroundBrush");
 
-            labelControl.Foreground = (Brush)WpfUtil.FindResource("0BackgroundBrush");
+            if (showVelocity) {
+                int? velocity = GraphUtil.GetIntegerValue(BaseVertex.Get(false, "Velocity:"));                
 
-            labelControl.Background = (Brush)WpfUtil.FindResource("0LightForegroundBrush");
+                if (velocity != null) {
+                    byte color = (byte) (255 - ((int)velocity * 2));
+
+                    backColorBrush = new SolidColorBrush(Color.FromRgb(color, color, color));
+                }
+            } 
+
+            Background = backColorBrush;
+
+            if (showLabel)
+            {
+                labelControl.Foreground = (Brush)WpfUtil.FindResource("0BackgroundBrush");
+
+                labelControl.Background = backColorBrush;
+            }
         }
 
         TextBlock labelControl;
 
-        public NoteItem(IVertex baseVertex, string label, IZoomScrollViewerHost host)
+        public NoteItem(IVertex baseVertex, string label, IZoomScrollViewerHost host, bool _showLabel, bool _showVelocity)
         {
             BaseVertex = baseVertex;
 
@@ -62,15 +85,22 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Controls
 
             Host = host;
 
+            showLabel = _showLabel;
+
+            showVelocity = _showVelocity;
+
             //
 
             BorderThickness = new System.Windows.Thickness(2);
 
-            labelControl = new TextBlock();
+            if (showLabel)
+            {
+                labelControl = new TextBlock();
 
-            labelControl.Text = " " + Label;
+                labelControl.Text = " " + Label;
 
-            this.Child = labelControl;
+                this.Child = labelControl;
+            }
 
             Unselect();
 
