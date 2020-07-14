@@ -299,54 +299,6 @@ namespace m0.UIWpf.Visualisers.Diagram
             return list;*/
         }
 
-        public void HideSelectionArea()
-        {
-            Canvas.SetLeft(SelectionArea, 0);
-            Canvas.SetTop(SelectionArea, 0);
-            SelectionArea.Width = 0;
-            SelectionArea.Height = 0;
-
-            IsSelecting = false;
-        }
-
-        public void SetSelectionArea(double left, double top, double right, double bottom) {
-            double _left, _right, _top, _bottom;
-
-            SelectionArea_RemapCordinates(left, top, right, bottom, out _left, out _right, out _top, out _bottom);
-
-            Canvas.SetLeft(SelectionArea, _left);
-            Canvas.SetTop(SelectionArea, _top);
-            SelectionArea.Width = _right - _left;
-            SelectionArea.Height = _bottom - _top;
-
-            IsSelecting = true;
-        }
-
-        private static void SelectionArea_RemapCordinates(double left, double top, double right, double bottom, out double _left, out double _right, out double _top, out double _bottom)
-        {
-            if (left > right)
-            {
-                _left = right;
-                _right = left;
-            }
-            else
-            {
-                _left = left;
-                _right = right;
-            }
-
-            if (top > bottom)
-            {
-                _top = bottom;
-                _bottom = top;
-            }
-            else
-            {
-                _top = top;
-                _bottom = bottom;
-            }
-        }
-
         private void TurnOnSelectedEdgesFireChange()
         {
             if (Vertex.Get(false, "SelectedEdges:") is VertexBase)

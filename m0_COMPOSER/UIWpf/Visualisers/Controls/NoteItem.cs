@@ -35,44 +35,18 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Controls
         {
             isSelected = true;
 
-            BorderBrush = (Brush)WpfUtil.FindResource("0ForegroundBrush");
+            BorderThickness = new Thickness(3);
 
-            Background = (Brush)WpfUtil.FindResource("0BackgroundBrush");
-
-            if (showLabel)
-            {
-                labelControl.Foreground = (Brush)WpfUtil.FindResource("0ForegroundBrush");
-
-                labelControl.Background = (Brush)WpfUtil.FindResource("0BackgroundBrush");
-            }
+            BorderBrush = (Brush)WpfUtil.FindResource("0SelectionBrush");            
         }
 
         public void Unselect()
         {
             isSelected = false;
 
+            BorderThickness = new Thickness(2);
+
             BorderBrush = (Brush)WpfUtil.FindResource("0ForegroundBrush");
-
-            Brush backColorBrush = (Brush)WpfUtil.FindResource("0LightForegroundBrush");
-
-            if (showVelocity) {
-                int? velocity = GraphUtil.GetIntegerValue(BaseVertex.Get(false, "Velocity:"));                
-
-                if (velocity != null) {
-                    byte color = (byte) (255 - ((int)velocity * 2));
-
-                    backColorBrush = new SolidColorBrush(Color.FromRgb(color, color, color));
-                }
-            } 
-
-            Background = backColorBrush;
-
-            if (showLabel)
-            {
-                labelControl.Foreground = (Brush)WpfUtil.FindResource("0BackgroundBrush");
-
-                labelControl.Background = backColorBrush;
-            }
         }
 
         TextBlock labelControl;
@@ -98,9 +72,33 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Controls
                 labelControl = new TextBlock();
 
                 labelControl.Text = " " + Label;
+                
+                labelControl.Foreground = (Brush)WpfUtil.FindResource("0BackgroundBrush");
 
                 this.Child = labelControl;
             }
+
+            Brush backColorBrush = (Brush)WpfUtil.FindResource("0LightForegroundBrush");
+
+            if (showVelocity)
+            {
+                int? velocity = GraphUtil.GetIntegerValue(BaseVertex.Get(false, "Velocity:"));
+
+                if (velocity != null)
+                {
+                    byte color = (byte)(255 - ((int)velocity * 2));
+
+                    backColorBrush = new SolidColorBrush(Color.FromRgb(color, color, color));
+
+                    if(color > 127 && showLabel)
+                        labelControl.Foreground = (Brush)WpfUtil.FindResource("0ForegroundBrush");
+                }
+            }
+
+            Background = backColorBrush;
+
+            if (showLabel)
+                labelControl.Background = backColorBrush;            
 
             Unselect();
 
@@ -109,10 +107,13 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Controls
 
         private void NoteItem_SizeChanged(object sender, System.Windows.SizeChangedEventArgs e)
         {
-            if (this.Height > 18 && this.Width > 25)
-                labelControl.Visibility = System.Windows.Visibility.Visible;
-            else
-                labelControl.Visibility = System.Windows.Visibility.Hidden;
+            if (showLabel)
+            {
+                if (this.Height > 18 && this.Width > 25)
+                    labelControl.Visibility = System.Windows.Visibility.Visible;
+                else
+                    labelControl.Visibility = System.Windows.Visibility.Hidden;
+            }
         }
 
         public void Update()

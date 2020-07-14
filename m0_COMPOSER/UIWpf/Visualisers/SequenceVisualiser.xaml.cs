@@ -39,13 +39,17 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             showLabel = GraphUtil.GetBooleanValue(Vertex.Get(false, "ShowLabel:"), ref dummy);
             showVelocity = GraphUtil.GetBooleanValue(Vertex.Get(false, "ShowVelocity:"), ref dummy);
+            defaultVelocity = GraphUtil.GetIntegerValue(Vertex.Get(false, "DefaultVelocity:"), ref dummy);
 
-            if (Vertex.Get(false, "SnapToGrid:") == null || Vertex.Get(false, "SnapToGrid:").Value.ToString() == "")            
-                GraphUtil.SetVertexValue(Vertex, r.Get(false, @"System\Meta\Visualiser\Sequence\SnapToGrid"), r.Get(false, @"System\Meta\Visualiser\SnapToGridEnum\'1 bar'"));                            
+            if (Vertex.Get(false, "SnapToGrid:") == null || Vertex.Get(false, "SnapToGrid:").Value.ToString() == "")
+                GraphUtil.ReplaceEdge(Vertex, r.Get(false, @"System\Meta\Visualiser\Sequence\SnapToGrid"), r.Get(false, @"System\Meta\Visualiser\SnapToGridEnum\'1 bar'"));
+
+            SnapToGridComboBox_SelectionChange();
         }
 
         bool showLabel;
         bool showVelocity;
+        int defaultVelocity;
         
         Canvas Main;
 
@@ -375,7 +379,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             IVertex noteEventVertex = tempNoteEventEdge.To;
 
-            noteEventVertex.AddVertex(noteEvent.Get(false, @"Velocity"), 127);
+            noteEventVertex.AddVertex(noteEvent.Get(false, @"Velocity"), defaultVelocity);
             noteEventVertex.AddEdge(noteEvent.Get(false, @"Octave"), noteSegment.BaseVertex.Get(false, "Octave:"));
             noteEventVertex.AddEdge(noteEvent.Get(false, @"Note"), noteSegment.BaseVertex.Get(false, "Note:"));
             noteEventVertex.AddVertex(noteEvent.Get(false, @"TriggerTime"), (int) (startPosition / TimeSpanAD.BaseUnitSize) + 0.01);
@@ -655,6 +659,12 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             if ((sender == Vertex.Get(false, "ShowVelocity:")) && (e.Type == VertexChangeType.ValueChanged))
                 UpdateBaseEdge();
 
+            if ((sender == Vertex.Get(false, "DefaultVelocity:")) && (e.Type == VertexChangeType.ValueChanged))
+                UpdateVertexValues();
+
+            if ((sender == Vertex) && (e.Type == VertexChangeType.EdgeAdded) && (GeneralUtil.CompareStrings(e.Edge.Meta.Value, "SnapToGrid")))                
+                UpdateVertexValues();
+
             if ((sender == Vertex) && (e.Type == VertexChangeType.EdgeAdded) && (GeneralUtil.CompareStrings(e.Edge.Meta.Value, "BaseEdge")))
                 UpdateBaseEdge();
 
@@ -712,10 +722,9 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             VisualiserDraw();
         }        
 
-        private void SnapToGridComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            if(SnapToGridComboBox.SelectedItem != null && ((ComboBoxItem)SnapToGridComboBox.SelectedItem).Content != null)
-            switch (((ComboBoxItem)SnapToGridComboBox.SelectedItem).Content.ToString())
+        private void SnapToGridComboBox_SelectionChange()
+        {            
+            switch (Vertex.Get(false, "SnapToGrid:").Value.ToString())
             {
                 case "1 bar":
                     currentSnapToGrid = SnapToGrid.Bar1;

@@ -34,18 +34,7 @@
                     </StackPanel>
                 </Button>
                 <Separator/>
-                <StackPanel Orientation="Horizontal">
-                    <ComboBox Name="SnapToGridComboBox" SelectionChanged="SnapToGridComboBox_SelectionChanged">
-                        <ComboBoxItem IsSelected="True">1 bar</ComboBoxItem>
-                        <ComboBoxItem>1/2 bar</ComboBoxItem>
-                        <ComboBoxItem>1/4 bar</ComboBoxItem>
-                        <ComboBoxItem>1/8 bar</ComboBoxItem>
-                        <ComboBoxItem>1/16 bar</ComboBoxItem>
-                        <ComboBoxItem>1/32 bar</ComboBoxItem>
-                        <ComboBoxItem>no snap</ComboBoxItem>
-                    </ComboBox>
-                    <TextBlock Margin="3,0,0,0" VerticalAlignment="Center">snap to grid</TextBlock>
-                </StackPanel>
+
             </ToolBar>
         </ToolBarTray>
         <Controls:ZoomScrollView x:Name="ZoomScrollView"/>
