@@ -15,7 +15,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Controls
 {
     public class NoteItem : Border, IItem
     {
-        public IVertex BaseVertex { get; set; }
+        public IEdge BaseEdge { get; set; }
 
         public String Label { get; set; }
 
@@ -27,6 +27,8 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Controls
 
         bool isSelected;
 
+        public bool IsSelected { get { return isSelected; } }
+
         bool showLabel;
 
         bool showVelocity;
@@ -37,7 +39,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Controls
 
             BorderThickness = new Thickness(3);
 
-            BorderBrush = (Brush)WpfUtil.FindResource("0SelectionBrush");            
+            BorderBrush = (Brush)WpfUtil.FindResource("0HighlightBrush");            
         }
 
         public void Unselect()
@@ -51,9 +53,9 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Controls
 
         TextBlock labelControl;
 
-        public NoteItem(IVertex baseVertex, string label, IZoomScrollViewerHost host, bool _showLabel, bool _showVelocity)
+        public NoteItem(IEdge baseEdge, string label, IZoomScrollViewerHost host, bool _showLabel, bool _showVelocity)
         {
-            BaseVertex = baseVertex;
+            BaseEdge = baseEdge;
 
             Label = label;
 
@@ -82,7 +84,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Controls
 
             if (showVelocity)
             {
-                int? velocity = GraphUtil.GetIntegerValue(BaseVertex.Get(false, "Velocity:"));
+                int? velocity = GraphUtil.GetIntegerValue(BaseEdge.To.Get(false, "Velocity:"));
 
                 if (velocity != null)
                 {

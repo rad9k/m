@@ -6,10 +6,11 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Controls;
 using System.Windows.Media;
+using System.Windows;
 
 namespace m0.UIWpf.Controls
 {
-    public class Selection
+    public class SelectionArea
     {
         public Rectangle Shape;
 
@@ -29,10 +30,31 @@ namespace m0.UIWpf.Controls
 
         public double Left, Right, Top, Bottom;
 
-        public void SetSelectionArea(double left, double top, double right, double bottom)
+        public Point StartPosition;
+        public Point CurrentPosition;
+
+        public void StartSelection(Point position)
         {
+            IsSelecting = true;
 
+            StartPosition = position;
 
+            WpfUtil.SetPositionAbsolute(Shape, 10, 10, 100, 100);
+
+            Shape.UpdateLayout();
+
+        //    SetSelectionArea(position.X, position.Y, position.X, position.Y);
+        }
+
+        public void MoveSelectionArea(Point position)
+        {
+            CurrentPosition = position;
+
+            SetSelectionArea(StartPosition.X, StartPosition.Y, position.X, position.Y);
+        }
+
+        private void SetSelectionArea(double left, double top, double right, double bottom)
+        {
             SelectionArea_RemapCordinates(left, top, right, bottom, out Left, out Right, out Top, out Bottom);
 
             Canvas.SetLeft(Shape, Left);
@@ -68,7 +90,7 @@ namespace m0.UIWpf.Controls
             }
         }
 
-        public Selection(Canvas _host)
+        public SelectionArea(Canvas _host)
         {
             Host = _host;
 

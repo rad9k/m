@@ -38,8 +38,6 @@ namespace m0.UIWpf.Visualisers.Diagram
     {
         public Canvas TheCanvas;
 
-        Rectangle SelectionArea;
-
         public bool IsSelecting = false;
 
         public bool IsDrawingLine = false;
@@ -48,7 +46,8 @@ namespace m0.UIWpf.Visualisers.Diagram
 
         public FrameworkElement ClickedAnchor;
 
-        int SelectionAreaLeft, SelectionAreaTop;
+
+        public SelectionArea SelectionArea;
 
         public List<DiagramItemBase> Items;
 
@@ -311,11 +310,12 @@ namespace m0.UIWpf.Visualisers.Diagram
                 ((VertexBase)Vertex.Get(false, "SelectedEdges:")).CanFireChangeEvent = false;
         }
 
-        void SelectItemsBySelectionArea(double left, double top, double right, double bottom)
+        void SelectItemsBySelectionArea()
         {
-            double _left, _right, _top, _bottom;
-
-            SelectionArea_RemapCordinates(left, top, right, bottom, out _left, out _right, out _top, out _bottom);
+            double left = SelectionArea.Left;
+            double top = SelectionArea.Top;
+            double right = SelectionArea.Right;
+            double bottom = SelectionArea.Bottom;            
 
             UnselectAllSelectedEdges();
 
@@ -329,7 +329,7 @@ namespace m0.UIWpf.Visualisers.Diagram
                 iright = ileft + (int)i.ActualWidth;
                 ibottom = itop + (int)i.ActualHeight;
 
-                if (_left <= ileft && _right >= iright && _top <= itop && _bottom >= ibottom)
+                if (left <= ileft && right >= iright && top <= itop && bottom >= ibottom)
                     i.AddToSelectedEdges();
             }
 
@@ -392,13 +392,10 @@ namespace m0.UIWpf.Visualisers.Diagram
 
                 AddLineObjects();
 
-                SelectionArea = new Rectangle(); // use old one
-                TheCanvas.Children.Add(SelectionArea);
+                SelectionArea = new SelectionArea(TheCanvas);
+                
 
-                SelectionArea.Stroke = (Brush)FindResource("0HighlightBrush");
-                SelectionArea.StrokeDashArray=new DoubleCollection(new double[]{3,3});
-
-                HideSelectionArea();
+                SelectionArea.HideSelectionArea();
 
                
 
@@ -582,8 +579,7 @@ namespace m0.UIWpf.Visualisers.Diagram
 
         protected void MouseButtonDownHandler(object sender, MouseButtonEventArgs e)
         {
-            SelectionAreaLeft = (int)e.GetPosition(TheCanvas).X;
-            SelectionAreaTop = (int)e.GetPosition(TheCanvas).Y;
+            SelectionArea.StartSelection(e.GetPosition(TheCanvas));            
 
             ClickTarget = ClickTargetEnum.Selection;
 
@@ -779,7 +775,8 @@ namespace m0.UIWpf.Visualisers.Diagram
 
                 if (ClickTarget == ClickTargetEnum.Selection) // selection
                 {
-                    SetSelectionArea(SelectionAreaLeft, SelectionAreaTop, e.GetPosition(TheCanvas).X, e.GetPosition(TheCanvas).Y);
+                    SelectionArea.MoveSelectionArea(e.GetPosition(TheCanvas));
+                    
                     //SelectItemsBySelectionArea(SelectionAreaLeft, SelectionAreaTop, e.GetPosition(TheCanvas).X, e.GetPosition(TheCanvas).Y);
                     // too slow
                 }
@@ -892,9 +889,9 @@ namespace m0.UIWpf.Visualisers.Diagram
 
             if (ClickTarget == ClickTargetEnum.Selection)
             {
-                SelectItemsBySelectionArea(SelectionAreaLeft, SelectionAreaTop, e.GetPosition(TheCanvas).X, e.GetPosition(TheCanvas).Y);
+                SelectItemsBySelectionArea();
 
-                HideSelectionArea();
+                SelectionArea.HideSelectionArea();
             }
 
             if (ClickTarget == ClickTargetEnum.AnchorRightTop_CreateDiagramLine)

@@ -10,7 +10,9 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 {
     public interface IItem
     {
-        IVertex BaseVertex { get; set; }
+        IEdge BaseEdge { get; set; }
+
+        bool IsSelected { get; }
 
         string Label { set; }
 

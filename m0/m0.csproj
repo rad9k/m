@@ -147,7 +147,7 @@
     <Compile Include="UIWpf\Controls\Fast\ArrowLineBase.cs" />
     <Compile Include="UIWpf\Controls\Fast\ArrowPolyline.cs" />
     <Compile Include="UIWpf\Controls\m0ContextMenu.cs" />
-    <Compile Include="UIWpf\Controls\Selection.cs" />
+    <Compile Include="UIWpf\Controls\SelectionArea.cs" />
     <Compile Include="UIWpf\Controls\SliderWithStopDragging.cs" />
     <Compile Include="UIWpf\Dialog\ExecuteDialog.xaml.cs">
       <DependentUpon>ExecuteDialog.xaml</DependentUpon>

@@ -2,6 +2,7 @@
 using m0.Foundation;
 using m0.Graph;
 using m0.UIWpf;
+using m0.UIWpf.Controls;
 using m0.UIWpf.Visualisers;
 using m0.Util;
 using m0.ZeroTypes;
@@ -52,6 +53,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
         int defaultVelocity;
         
         Canvas Main;
+        SelectionArea SelectionArea;
 
         IVertex SequenceVertex;
 
@@ -74,7 +76,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
         CursorMode currentCursorMode;
 
-        enum CursorModeDetail { PenUp, PenDown, ArrowUp, ArrowDown, ArrowDown_Move, ArrowDown_MoveLeft, ArrowDown_MoveRight, Eraser }
+        enum CursorModeDetail { PenUp, PenDown, ArrowUp, ArrowDown, PenDown_Move, PenDown_MoveLeft, PenDown_MoveRight, Eraser }
 
         CursorModeDetail currentCursorModeDetail;
 
@@ -207,6 +209,8 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             ZoomScrollView.SetContent(Main);
 
+            SelectionArea = new SelectionArea(Main);
+
             items = new List<FrameworkElement>();
         }
 
@@ -271,7 +275,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
                     PenDownMove(sender, e);
                     break;
 
-                case (CursorModeDetail.ArrowUp):
+                case (CursorModeDetail.ArrowDown):
                     ArrowMove(sender, e);
                     break;
 
@@ -286,6 +290,10 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             {
                 case (CursorModeDetail.PenDown):
                     PenUp(sender, e);
+                    break;
+
+                case (CursorModeDetail.ArrowDown):
+                    ArrowUp(sender, e);
                     break;
 
                 default:
@@ -344,15 +352,17 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             return null;
         }
         
-        void AddItem(IVertex noteEventVertex)
+        void AddItem(IEdge noteEventEdge)
         {
+            IVertex noteEventVertex = noteEventEdge.To;
+
             IVertex pitchVertex = MusicUtil.GetNoteFromPitchSet(pitchSetVertex,
                 GraphUtil.GetIntegerValue(noteEventVertex.Get(false, "Octave:")),
                 GraphUtil.GetIntegerValue(noteEventVertex.Get(false, "Note:")));
 
             string label = pitchVertex.Value.ToString();
 
-            NoteItem ni = new NoteItem(noteEventVertex, label, this, showLabel, showVelocity);
+            NoteItem ni = new NoteItem(noteEventEdge, label, this, showLabel, showVelocity);
 
             AxisSegment noteSegment = GetPitchSegment(pitchVertex);
 
@@ -369,7 +379,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             Main.Children.Add(ni);
         }
 
-        IVertex AddNoteEventVertex(AxisSegment noteSegment, double startPosition, double lengthPosition)
+        IEdge AddNoteEventEdge(AxisSegment noteSegment, double startPosition, double lengthPosition)
         {
             IVertex r = MinusZero.Instance.Root;
 
@@ -385,11 +395,11 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             noteEventVertex.AddVertex(noteEvent.Get(false, @"TriggerTime"), (int) (startPosition / TimeSpanAD.BaseUnitSize) + 0.01);
             noteEventVertex.AddVertex(noteEvent.Get(false, @"Length"), (int) (lengthPosition / TimeSpanAD.BaseUnitSize) + 0.01);
 
-            baseVertex.AddEdge(noteEvent, noteEventVertex);
+            IEdge finalEdge = baseVertex.AddEdge(noteEvent, noteEventVertex);
 
             baseVertex.DeleteEdge(tempNoteEventEdge);
 
-            return noteEventVertex;
+            return finalEdge;
         }
 
 
@@ -453,9 +463,9 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             VertexChangeOff = true;
 
-            IVertex newNoteEventVertex = AddNoteEventVertex(newNoteSegment, Canvas.GetLeft(newNoteShape), newNoteShape.Width);
+            IEdge newNoteEventEdge = AddNoteEventEdge(newNoteSegment, Canvas.GetLeft(newNoteShape), newNoteShape.Width);
 
-            AddItem(newNoteEventVertex);
+            AddItem(newNoteEventEdge);
 
             VertexChangeOff = false;
         }
@@ -470,11 +480,11 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             {
                 IItem item = (IItem)element;
 
-                IVertex eventVertex = item.BaseVertex;
+                IEdge eventEdge = item.BaseEdge;
 
                 VertexChangeOff = true;
 
-                GraphUtil.DeleteEdgeByToVertex(baseVertex, eventVertex);
+                GraphUtil.DeleteEdgeByToVertex(baseVertex, eventEdge.To);
 
                 items.Remove(element);
 
@@ -486,20 +496,57 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
         void ArrowDown(object sender, MouseButtonEventArgs e)
         {
+            Point currentMousePosition = e.GetPosition(PresenterBackground);
 
+            FrameworkElement elementFound = WpfUtil.GetElementAtFromList(items, currentMousePosition);
+
+            if (elementFound != null && elementFound is IItem)
+            {
+                IItem item = (IItem)elementFound;
+
+                if (item.IsSelected)
+                {
+                    item.Unselect();
+
+                    Edge.DeleteVertexByEdge(Vertex.Get(false, "SelectedEdges:"), item.BaseEdge);
+                }
+                else
+                {
+                    item.Select();
+
+                    Edge.AddEdge(Vertex.Get(false, "SelectedEdges:"), item.BaseEdge);                    
+                }
+
+            }
+            else
+            {
+                currentCursorModeDetail = CursorModeDetail.ArrowDown;
+
+                SelectionArea.StartSelection(currentMousePosition);
+            }
         }
 
         void ArrowMove(object sender, MouseEventArgs e)
         {
             Point currentMousePosition = e.GetPosition(PresenterBackground);
 
-            FrameworkElement element = WpfUtil.GetElementAtFromList_StartFromEnd(items, currentMousePosition);
+            /*FrameworkElement element = WpfUtil.GetElementAtFromList_StartFromEnd(items, currentMousePosition);
 
             if (element != null && element is IItem)
             {
 
-            }else
-                WpfUtil.OverrideCursor(Cursors.Arrow);
+            }else*/
+
+            if (currentCursorModeDetail == CursorModeDetail.ArrowDown)
+                SelectionArea.MoveSelectionArea(currentMousePosition);
+
+            WpfUtil.OverrideCursor(Cursors.Arrow);
+        }
+
+        void ArrowUp(object sender, MouseButtonEventArgs e)
+        {
+            currentCursorModeDetail = CursorModeDetail.ArrowUp;
+            SelectionArea.HideSelectionArea();
         }
 
         private void PresenterBackground_MouseLeave(object sender, MouseEventArgs e)
@@ -575,7 +622,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
         public void DrawNotes()
         {
             foreach (IEdge e in baseVertex.GetAll(false, "NoteEvent:"))
-                AddItem(e.To);
+                AddItem(e);
         }
 
         void InitSequenceVisualierState()
