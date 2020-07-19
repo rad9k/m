@@ -209,7 +209,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             ZoomScrollView.SetContent(Main);
 
-            SelectionArea = new SelectionArea(Main);
+           // SelectionArea = new SelectionArea(Main);
 
             items = new List<FrameworkElement>();
         }
@@ -224,11 +224,20 @@ namespace m0_COMPOSER.UIWpf.Visualisers
         {
             DrawBackground();
 
-            DrawLines();
+//            DrawLines();
 
             DrawPresenterBackground();
 
-            DrawNotes();
+            //          DrawNotes();
+
+            Rectangle Shape = new Rectangle();
+
+            Main.Children.Add(Shape);
+
+            Shape.Stroke = (Brush)Shape.FindResource("0HighlightBrush");
+            Shape.StrokeDashArray = new DoubleCollection(new double[] { 3, 3 });
+
+            WpfUtil.SetPositionAbsolute(Shape, 10, 10, 100, 100);
         }
 
         void DrawBackground()
