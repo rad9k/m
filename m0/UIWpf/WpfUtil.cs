@@ -60,6 +60,20 @@ namespace m0.UIWpf
             return null;
         }
 
+        public static List<FrameworkElement> GetElementsAtFromListByArea(List<FrameworkElement> list, double AreaLeft, double AreaTop, double AreaRight, double AreaDown)
+        {
+            List<FrameworkElement> match = new List<FrameworkElement>();
+
+            foreach (FrameworkElement e in list)
+                if (Canvas.GetLeft(e) >= AreaLeft &&
+                    AreaRight >= (Canvas.GetLeft(e) + e.Width) &&
+                    Canvas.GetTop(e) >= AreaTop &&
+                    AreaDown >= (Canvas.GetTop(e) + e.Height))
+                    match.Add(e);
+
+            return match;
+        }
+
         public static void OverrideCursorFromResource(string resourceName)
         {
             System.Windows.Resources.StreamResourceInfo info = Application.GetResourceStream(new Uri(resourceName, UriKind.Relative));

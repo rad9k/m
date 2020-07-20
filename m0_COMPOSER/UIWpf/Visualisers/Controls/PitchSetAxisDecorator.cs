@@ -42,13 +42,17 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Controls
             foreach (AxisSegment s in Segments)
             {                
                 TextBlock t = new TextBlock();
-                t.Text = s.BaseVertex.Get(false, "Name:").Value.ToString();
+                
+                t.Text = s.BaseVertex.Get(false, "Name:").Value.ToString();                
 
                 if (s.Color != null)
                 {
                     t.Background = new SolidColorBrush(s.Color);
 
-                    t.Foreground = new SolidColorBrush(WpfUtil.GetNegativeColor(s.Color));
+                    if (segmentSize > 13)
+                        t.Foreground = new SolidColorBrush(WpfUtil.GetNegativeColor(s.Color));
+                    else
+                        t.Foreground = new SolidColorBrush(s.Color);
                 }
 
                 t.FontSize = FontSize;

@@ -35,15 +35,11 @@ namespace m0.UIWpf.Controls
 
         public void StartSelection(Point position)
         {
-            IsSelecting = true;
+            IsSelecting = true;            
 
             StartPosition = position;
 
-            WpfUtil.SetPositionAbsolute(Shape, 10, 10, 100, 100);
-
-            Shape.UpdateLayout();
-
-        //    SetSelectionArea(position.X, position.Y, position.X, position.Y);
+            SetSelectionArea(position.X, position.Y, position.X, position.Y);
         }
 
         public void MoveSelectionArea(Point position)
@@ -100,10 +96,11 @@ namespace m0.UIWpf.Controls
 
             Shape.Stroke = (Brush)Shape.FindResource("0HighlightBrush");
             Shape.StrokeDashArray = new DoubleCollection(new double[] { 3, 3 });
+            Shape.StrokeThickness = 2;
 
-            WpfUtil.SetPositionAbsolute(Shape, 10, 10, 100, 100);
+            Canvas.SetZIndex(Shape, 1000);
 
-            //HideSelectionArea();
+            HideSelectionArea();
 
         }
     }

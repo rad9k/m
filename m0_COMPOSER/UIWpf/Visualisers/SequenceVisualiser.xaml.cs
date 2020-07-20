@@ -207,9 +207,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             Main.Width = Width;
             Main.Height = Height;
 
-            ZoomScrollView.SetContent(Main);
-
-           // SelectionArea = new SelectionArea(Main);
+            ZoomScrollView.SetContent(Main);            
 
             items = new List<FrameworkElement>();
         }
@@ -224,20 +222,13 @@ namespace m0_COMPOSER.UIWpf.Visualisers
         {
             DrawBackground();
 
-//            DrawLines();
+            DrawLines();
 
             DrawPresenterBackground();
 
-            //          DrawNotes();
+            DrawNotes();
 
-            Rectangle Shape = new Rectangle();
-
-            Main.Children.Add(Shape);
-
-            Shape.Stroke = (Brush)Shape.FindResource("0HighlightBrush");
-            Shape.StrokeDashArray = new DoubleCollection(new double[] { 3, 3 });
-
-            WpfUtil.SetPositionAbsolute(Shape, 10, 10, 100, 100);
+            SelectionArea = new SelectionArea(Main);
         }
 
         void DrawBackground()
@@ -284,6 +275,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
                     PenDownMove(sender, e);
                     break;
 
+                case (CursorModeDetail.ArrowUp):                
                 case (CursorModeDetail.ArrowDown):
                     ArrowMove(sender, e);
                     break;
@@ -299,7 +291,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             {
                 case (CursorModeDetail.PenDown):
                     PenUp(sender, e);
-                    break;
+                    break;                
 
                 case (CursorModeDetail.ArrowDown):
                     ArrowUp(sender, e);
@@ -466,6 +458,23 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             currentCursorModeDetail = CursorModeDetail.PenUp;
         }
 
+        void PerformArrowUp()
+        {
+            UnselectAllSelectedEdges();
+
+            foreach (FrameworkElement e in items)
+                if (e is IItem)
+                {
+                    IItem item = (IItem)e;
+                    
+                    item.Unselect();
+                }
+
+            currentCursorModeDetail = CursorModeDetail.ArrowUp;
+
+            SelectionArea.HideSelectionArea();
+        }
+
         void PenUp(object sender, MouseButtonEventArgs e)
         {
             PerformPenUp();
@@ -535,7 +544,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             }
         }
 
-        void ArrowMove(object sender, MouseEventArgs e)
+        void ArrowMove_ArrowUp(object sender, MouseEventArgs e)
         {
             Point currentMousePosition = e.GetPosition(PresenterBackground);
 
@@ -544,28 +553,84 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             if (element != null && element is IItem)
             {
 
-            }else*/
+            }else*/            
 
+            WpfUtil.OverrideCursor(Cursors.Arrow);
+        }
+
+        void ArrowMove(object sender, MouseEventArgs e)
+        {
             if (currentCursorModeDetail == CursorModeDetail.ArrowDown)
+            {
+                Point currentMousePosition = e.GetPosition(PresenterBackground);
+
                 SelectionArea.MoveSelectionArea(currentMousePosition);
 
+                IList<FrameworkElement> matched = WpfUtil.GetElementsAtFromListByArea(items, SelectionArea.Left, SelectionArea.Top, SelectionArea.Right, SelectionArea.Bottom);
+
+                foreach (FrameworkElement _e in items)
+                    if (_e is IItem)
+                    {
+                        IItem item = (IItem)_e;
+
+                        if (matched.Contains(_e))
+                            item.Select();
+                        else
+                            item.Unselect();
+                    }
+            }            
+                              
             WpfUtil.OverrideCursor(Cursors.Arrow);
         }
 
         void ArrowUp(object sender, MouseButtonEventArgs e)
         {
+            IList<FrameworkElement> matched = WpfUtil.GetElementsAtFromListByArea(items, SelectionArea.Left, SelectionArea.Top, SelectionArea.Right, SelectionArea.Bottom);
+
+            UnselectAllSelectedEdges();
+
+            IVertex selectedEdges = Vertex.Get(false, "SelectedEdges:");
+
+            UnselectAllSelectedEdges();
+
+            foreach (FrameworkElement _e in items)
+                if (_e is IItem)
+                {
+                    IItem item = (IItem)_e;
+
+                    if (matched.Contains(_e))
+                    {
+                        Edge.AddEdge(selectedEdges, item.BaseEdge);
+                        item.Select();
+                    }
+                    else
+                        item.Unselect();
+                }
+
             currentCursorModeDetail = CursorModeDetail.ArrowUp;
             SelectionArea.HideSelectionArea();
         }
 
         private void PresenterBackground_MouseLeave(object sender, MouseEventArgs e)
         {
+            Point currentMousePosition = e.GetPosition(PresenterBackground);
+
+            if (currentMousePosition.X >= 0 && 
+                currentMousePosition.Y >= 0 && 
+                currentMousePosition.X <= PresenterBackground.Width && 
+                currentMousePosition.Y <= PresenterBackground.Height)
+                return;
+
             WpfUtil.OverrideCursor(Cursors.Arrow);
 
             switch (currentCursorModeDetail)
             {
                 case (CursorModeDetail.PenDown):
                     PerformPenUp();
+                    break;
+
+                case (CursorModeDetail.ArrowDown):
+                    PerformArrowUp();
                     break;
             }
         }
@@ -585,10 +650,31 @@ namespace m0_COMPOSER.UIWpf.Visualisers
                 case CursorMode.Pen:
                     WpfUtil.OverrideCursorFromResource("/m0;component/_resources/basic/pen.cur");
                     break;
-            }
-
-            
+            }           
         }
+
+        private void TurnOnSelectedEdgesFireChange()
+        {
+            if (Vertex.Get(false, "SelectedEdges:") is VertexBase)
+                ((VertexBase)Vertex.Get(false, "SelectedEdges:")).CanFireChangeEvent = true;
+        }
+
+        private void TurnOffSelectedEdgesFireChange()
+        {
+            if (Vertex.Get(false, "SelectedEdges:") is VertexBase)
+                ((VertexBase)Vertex.Get(false, "SelectedEdges:")).CanFireChangeEvent = false;
+        }
+
+        public void UnselectAllSelectedEdges()
+        {
+            IVertex sv = Vertex.Get(false, "SelectedEdges:");
+
+            TurnOffSelectedEdgesFireChange();
+            
+            GraphUtil.RemoveAllEdges(sv);
+
+            TurnOnSelectedEdgesFireChange();         
+        }        
 
         public void DrawLines()
         {

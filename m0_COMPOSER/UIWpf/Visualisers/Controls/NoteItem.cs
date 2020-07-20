@@ -37,9 +37,17 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Controls
         {
             isSelected = true;
 
-            BorderThickness = new Thickness(3);
+         //   BorderThickness = new Thickness(3);
 
-            BorderBrush = (Brush)WpfUtil.FindResource("0HighlightBrush");            
+            BorderBrush = (Brush)WpfUtil.FindResource("0HighlightBrush");
+
+            if (!showVelocity)
+            {
+                Background = (Brush)WpfUtil.FindResource("0HighlightBrush");
+
+                if(showLabel)
+                    labelControl.Background = (Brush)WpfUtil.FindResource("0HighlightBrush");
+            }
         }
 
         public void Unselect()
@@ -49,6 +57,14 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Controls
             BorderThickness = new Thickness(2);
 
             BorderBrush = (Brush)WpfUtil.FindResource("0ForegroundBrush");
+
+            if (!showVelocity)
+            {
+                Background = (Brush)WpfUtil.FindResource("0LightForegroundBrush");
+
+                if (showLabel)
+                    labelControl.Background = (Brush)WpfUtil.FindResource("0LightForegroundBrush");
+            }
         }
 
         TextBlock labelControl;
@@ -67,11 +83,13 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Controls
 
             //
 
+            RenderOptions.SetEdgeMode(this, EdgeMode.Aliased);
+
             BorderThickness = new System.Windows.Thickness(2);
 
             if (showLabel)
             {
-                labelControl = new TextBlock();
+                labelControl = new TextBlock();                
 
                 labelControl.Text = " " + Label;
                 
