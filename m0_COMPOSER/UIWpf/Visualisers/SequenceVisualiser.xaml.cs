@@ -72,6 +72,8 @@ namespace m0_COMPOSER.UIWpf.Visualisers
         double Width;
         double Height;
 
+        double HorizontalNoteMoveLeftRightSpan = 10;
+
         enum CursorMode { Pen, Arrow, Eraser }
 
         CursorMode currentCursorMode;
@@ -275,9 +277,12 @@ namespace m0_COMPOSER.UIWpf.Visualisers
                     PenDownMove(sender, e);
                     break;
 
-                case (CursorModeDetail.ArrowUp):                
+                case (CursorModeDetail.ArrowUp):
+                    ArrowMove_ArrowUp(sender, e);
+                    break;
+
                 case (CursorModeDetail.ArrowDown):
-                    ArrowMove(sender, e);
+                    ArrowMove_ArrowDown(sender, e);
                     break;
 
                 default:
@@ -548,38 +553,51 @@ namespace m0_COMPOSER.UIWpf.Visualisers
         {
             Point currentMousePosition = e.GetPosition(PresenterBackground);
 
-            /*FrameworkElement element = WpfUtil.GetElementAtFromList_StartFromEnd(items, currentMousePosition);
+            FrameworkElement element = WpfUtil.GetElementAtFromList_StartFromEnd(items, currentMousePosition);
 
             if (element != null && element is IItem)
             {
+                IItem item = (IItem)element;
 
-            }else*/            
+                double e_Left = Canvas.GetLeft(element);
+
+                double e_Right = e_Left + element.Width;
+
+                if (currentMousePosition.X >= e_Left && currentMousePosition.X <= (e_Left + HorizontalNoteMoveLeftRightSpan))
+                {
+                    currentCursorModeDetail = CursorModeDetail.PenDown_MoveLeft;
+                    WpfUtil.OverrideCursor(Cursors.SizeNWSE);
+                }
+
+                if (currentMousePosition.X >= (e_Right - HorizontalNoteMoveLeftRightSpan) && currentMousePosition.X <= HorizontalNoteMoveLeftRightSpan)
+                {
+                    currentCursorModeDetail = CursorModeDetail.PenDown_MoveRight;
+                    WpfUtil.OverrideCursor(Cursors.SizeNESW);
+                }
+            }
 
             WpfUtil.OverrideCursor(Cursors.Arrow);
         }
 
-        void ArrowMove(object sender, MouseEventArgs e)
-        {
-            if (currentCursorModeDetail == CursorModeDetail.ArrowDown)
-            {
-                Point currentMousePosition = e.GetPosition(PresenterBackground);
+        void ArrowMove_ArrowDown(object sender, MouseEventArgs e)
+        {      
+            Point currentMousePosition = e.GetPosition(PresenterBackground);
 
-                SelectionArea.MoveSelectionArea(currentMousePosition);
+            SelectionArea.MoveSelectionArea(currentMousePosition);
 
-                IList<FrameworkElement> matched = WpfUtil.GetElementsAtFromListByArea(items, SelectionArea.Left, SelectionArea.Top, SelectionArea.Right, SelectionArea.Bottom);
+            IList<FrameworkElement> matched = WpfUtil.GetElementsAtFromListByArea(items, SelectionArea.Left, SelectionArea.Top, SelectionArea.Right, SelectionArea.Bottom);
 
-                foreach (FrameworkElement _e in items)
-                    if (_e is IItem)
-                    {
-                        IItem item = (IItem)_e;
+            foreach (FrameworkElement _e in items)
+                if (_e is IItem)
+                {
+                    IItem item = (IItem)_e;
 
-                        if (matched.Contains(_e))
-                            item.Select();
-                        else
-                            item.Unselect();
-                    }
-            }            
-                              
+                    if (matched.Contains(_e))
+                        item.Select();
+                    else
+                        item.Unselect();
+                }
+                             
             WpfUtil.OverrideCursor(Cursors.Arrow);
         }
 
