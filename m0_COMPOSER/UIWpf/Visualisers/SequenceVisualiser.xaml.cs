@@ -98,24 +98,57 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
         bool VertexChangeOff = false;
 
-        void SetCursorMode(CursorMode mode)
+        void SetCursorMode(CursorModeDetail modeDetail)
         {
-            switch (mode)
+            currentCursorModeDetail = modeDetail;
+
+            switch (modeDetail)
             {
-                case CursorMode.Arrow:
+                case CursorModeDetail.ArrowDown:
+                case CursorModeDetail.ArrowUp:
                     currentCursorMode = CursorMode.Arrow;
-                    currentCursorModeDetail = CursorModeDetail.ArrowUp;
                     break;
 
-                case CursorMode.Pen:
-                    currentCursorMode = CursorMode.Pen;
-                    currentCursorModeDetail = CursorModeDetail.PenUp;
-                    break;
-
-                case CursorMode.Eraser:
+                case CursorModeDetail.Eraser:
                     currentCursorMode = CursorMode.Eraser;
-                    currentCursorModeDetail = CursorModeDetail.Eraser;
                     break;
+
+                case CursorModeDetail.PenDown:
+                case CursorModeDetail.PenDown_Move:
+                case CursorModeDetail.PenDown_MoveLeft:
+                case CursorModeDetail.PenDown_MoveRight:
+                case CursorModeDetail.PenUp:
+                    currentCursorMode = CursorMode.Pen;
+                    break;
+            }
+        }
+
+        void UpdateCursorShape()
+        {
+            switch (currentCursorModeDetail)
+            {
+                case CursorModeDetail.ArrowDown:
+                case CursorModeDetail.ArrowUp:
+                    WpfUtil.OverrideCursor(Cursors.Arrow);
+                    break;
+
+                case CursorModeDetail.Eraser:
+                    WpfUtil.OverrideCursorFromResource("/m0;component/_resources/basic/eraser.cur");
+                    break;
+
+                case CursorModeDetail.PenDown:                
+                case CursorModeDetail.PenUp:
+                    WpfUtil.OverrideCursorFromResource("/m0;component/_resources/basic/pen.cur");
+                    break;
+
+                case CursorModeDetail.PenDown_Move:
+                    WpfUtil.OverrideCursor(Cursors.SizeNESW);
+                    break;
+
+                case CursorModeDetail.PenDown_MoveLeft:
+                case CursorModeDetail.PenDown_MoveRight:
+                    WpfUtil.OverrideCursor(Cursors.SizeWE);
+                    break;                
             }
         }
 
@@ -411,7 +444,8 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
         void PenDown(object sender, MouseButtonEventArgs e)
         {
-            currentCursorModeDetail = CursorModeDetail.PenDown;
+            SetCursorMode(CursorModeDetail.PenDown);
+            
 
             mouseDownPoint = e.GetPosition(PresenterBackground);
 
@@ -460,7 +494,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
         {
             Main.Children.Remove(newNoteShape);
 
-            currentCursorModeDetail = CursorModeDetail.PenUp;
+            SetCursorMode(CursorModeDetail.PenUp);            
         }
 
         void PerformArrowUp()
@@ -474,8 +508,8 @@ namespace m0_COMPOSER.UIWpf.Visualisers
                     
                     item.Unselect();
                 }
-
-            currentCursorModeDetail = CursorModeDetail.ArrowUp;
+            
+            SetCursorMode(CursorModeDetail.ArrowUp);
 
             SelectionArea.HideSelectionArea();
         }
@@ -542,8 +576,8 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             }
             else
-            {
-                currentCursorModeDetail = CursorModeDetail.ArrowDown;
+            {                
+                SetCursorMode(CursorModeDetail.ArrowDown);
 
                 SelectionArea.StartSelection(currentMousePosition);
             }
@@ -564,19 +598,22 @@ namespace m0_COMPOSER.UIWpf.Visualisers
                 double e_Right = e_Left + element.Width;
 
                 if (currentMousePosition.X >= e_Left && currentMousePosition.X <= (e_Left + HorizontalNoteMoveLeftRightSpan))
-                {
-                    currentCursorModeDetail = CursorModeDetail.PenDown_MoveLeft;
-                    WpfUtil.OverrideCursor(Cursors.SizeNWSE);
+                { 
+                    SetCursorMode(CursorModeDetail.PenDown_MoveLeft);
+                    UpdateCursorShape();
+                    return;
                 }
 
-                if (currentMousePosition.X >= (e_Right - HorizontalNoteMoveLeftRightSpan) && currentMousePosition.X <= HorizontalNoteMoveLeftRightSpan)
+                if (currentMousePosition.X >= (e_Right - HorizontalNoteMoveLeftRightSpan) && currentMousePosition.X <= e_Right)
                 {
-                    currentCursorModeDetail = CursorModeDetail.PenDown_MoveRight;
-                    WpfUtil.OverrideCursor(Cursors.SizeNESW);
+                    SetCursorMode(CursorModeDetail.PenDown_MoveRight);
+                    UpdateCursorShape();
+                    return;
                 }
             }
 
-            WpfUtil.OverrideCursor(Cursors.Arrow);
+            SetCursorMode(CursorModeDetail.ArrowUp);
+            UpdateCursorShape();            
         }
 
         void ArrowMove_ArrowDown(object sender, MouseEventArgs e)
@@ -655,20 +692,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
         private void PresenterBackground_MouseEnter(object sender, MouseEventArgs e)
         {
-            switch (currentCursorMode)
-            {
-                case CursorMode.Arrow:
-                    WpfUtil.OverrideCursor(Cursors.Arrow);
-                    break;
-
-                case CursorMode.Eraser:
-                    WpfUtil.OverrideCursorFromResource("/m0;component/_resources/basic/eraser.cur");
-                    break;
-
-                case CursorMode.Pen:
-                    WpfUtil.OverrideCursorFromResource("/m0;component/_resources/basic/pen.cur");
-                    break;
-            }           
+            UpdateCursorShape();         
         }
 
         private void TurnOnSelectedEdgesFireChange()
@@ -740,7 +764,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
         void InitSequenceVisualierState()
         {
-            SetCursorMode(CursorMode.Arrow);
+            SetCursorMode(CursorModeDetail.ArrowUp);
 
             currentSnapToGrid = SnapToGrid.Bar1;
 
@@ -936,17 +960,17 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
         private void NewButton_Click(object sender, RoutedEventArgs e)
         {
-            SetCursorMode(CursorMode.Pen);
+            SetCursorMode(CursorModeDetail.PenUp);
         }
 
         private void EraseButton_Click(object sender, RoutedEventArgs e)
         {
-            SetCursorMode(CursorMode.Eraser);
+            SetCursorMode(CursorModeDetail.Eraser);
         }
 
         private void SelectButton_Click(object sender, RoutedEventArgs e)
         {
-            SetCursorMode(CursorMode.Arrow);
+            SetCursorMode(CursorModeDetail.ArrowUp);
         }
     }
 }
