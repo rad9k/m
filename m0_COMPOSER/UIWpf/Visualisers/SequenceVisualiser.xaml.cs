@@ -74,11 +74,21 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
         double HorizontalNoteMoveLeftRightSpan = 10;
 
-        enum CursorMode { Pen, Arrow, Eraser }
+        enum CursorMode { Arrow, Pen, Eraser }
 
         CursorMode currentCursorMode;
 
-        enum CursorModeDetail { PenUp, PenDown, ArrowUp, ArrowDown, PenDown_Move, PenDown_MoveLeft, PenDown_MoveRight, Eraser }
+        enum CursorModeDetail {
+            ArrowUp,
+            ArrowDown,
+            ArrowUp_MoveLeft,
+            ArrowUp_MoveRight,
+            ArrowDown_Move,
+            ArrowDown_MoveLeft,
+            ArrowDown_MoveRight,
+            PenUp,
+            PenDown,
+            Eraser }
 
         CursorModeDetail currentCursorModeDetail;
 
@@ -106,6 +116,11 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             {
                 case CursorModeDetail.ArrowDown:
                 case CursorModeDetail.ArrowUp:
+                case CursorModeDetail.ArrowUp_MoveLeft:
+                case CursorModeDetail.ArrowUp_MoveRight:
+                case CursorModeDetail.ArrowDown_MoveLeft:
+                case CursorModeDetail.ArrowDown_MoveRight:
+                case CursorModeDetail.ArrowDown_Move:
                     currentCursorMode = CursorMode.Arrow;
                     break;
 
@@ -113,11 +128,8 @@ namespace m0_COMPOSER.UIWpf.Visualisers
                     currentCursorMode = CursorMode.Eraser;
                     break;
 
-                case CursorModeDetail.PenDown:
-                case CursorModeDetail.PenDown_Move:
-                case CursorModeDetail.PenDown_MoveLeft:
-                case CursorModeDetail.PenDown_MoveRight:
-                case CursorModeDetail.PenUp:
+                case CursorModeDetail.PenUp:                
+                case CursorModeDetail.PenDown:                
                     currentCursorMode = CursorMode.Pen;
                     break;
             }
@@ -132,6 +144,17 @@ namespace m0_COMPOSER.UIWpf.Visualisers
                     WpfUtil.OverrideCursor(Cursors.Arrow);
                     break;
 
+                case CursorModeDetail.ArrowDown_Move:
+                    WpfUtil.OverrideCursor(Cursors.SizeNESW);
+                    break;
+
+                case CursorModeDetail.ArrowUp_MoveLeft:
+                case CursorModeDetail.ArrowUp_MoveRight:
+                case CursorModeDetail.ArrowDown_MoveLeft:
+                case CursorModeDetail.ArrowDown_MoveRight:
+                    WpfUtil.OverrideCursor(Cursors.SizeWE);
+                    break;
+
                 case CursorModeDetail.Eraser:
                     WpfUtil.OverrideCursorFromResource("/m0;component/_resources/basic/eraser.cur");
                     break;
@@ -139,15 +162,6 @@ namespace m0_COMPOSER.UIWpf.Visualisers
                 case CursorModeDetail.PenDown:                
                 case CursorModeDetail.PenUp:
                     WpfUtil.OverrideCursorFromResource("/m0;component/_resources/basic/pen.cur");
-                    break;
-
-                case CursorModeDetail.PenDown_Move:
-                    WpfUtil.OverrideCursor(Cursors.SizeNESW);
-                    break;
-
-                case CursorModeDetail.PenDown_MoveLeft:
-                case CursorModeDetail.PenDown_MoveRight:
-                    WpfUtil.OverrideCursor(Cursors.SizeWE);
                     break;                
             }
         }
@@ -306,15 +320,20 @@ namespace m0_COMPOSER.UIWpf.Visualisers
         {
             switch (currentCursorModeDetail)
             {
-                case (CursorModeDetail.PenDown):
-                    PenDownMove(sender, e);
+                case CursorModeDetail.PenDown:
+                    PenMove_PenDown(sender, e);
                     break;
 
-                case (CursorModeDetail.ArrowUp):
+                case CursorModeDetail.ArrowUp:
+                case CursorModeDetail.ArrowUp_MoveLeft:
+                case CursorModeDetail.ArrowUp_MoveRight:
                     ArrowMove_ArrowUp(sender, e);
                     break;
 
-                case (CursorModeDetail.ArrowDown):
+                case CursorModeDetail.ArrowDown:
+                case CursorModeDetail.ArrowDown_Move:
+                case CursorModeDetail.ArrowDown_MoveLeft:
+                case CursorModeDetail.ArrowDown_MoveRight:
                     ArrowMove_ArrowDown(sender, e);
                     break;
 
@@ -325,13 +344,13 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
         private void PresenterBackground_MouseUp(object sender, MouseButtonEventArgs e)
         {
-            switch (currentCursorModeDetail)
+            switch (currentCursorMode)
             {
-                case (CursorModeDetail.PenDown):
+                case CursorMode.Pen:
                     PenUp(sender, e);
                     break;                
 
-                case (CursorModeDetail.ArrowDown):
+                case CursorMode.Arrow:
                     ArrowUp(sender, e);
                     break;
 
@@ -466,7 +485,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             Main.Children.Add(newNoteShape);
         }
 
-        void PenDownMove(object sender, MouseEventArgs e)
+        void PenMove_PenDown(object sender, MouseEventArgs e)
         {
             double left, right;
 
@@ -497,7 +516,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             SetCursorMode(CursorModeDetail.PenUp);            
         }
 
-        void PerformArrowUp()
+        void PerformArrowUp_FromArrowDown()
         {
             UnselectAllSelectedEdges();
 
@@ -599,14 +618,14 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
                 if (currentMousePosition.X >= e_Left && currentMousePosition.X <= (e_Left + HorizontalNoteMoveLeftRightSpan))
                 { 
-                    SetCursorMode(CursorModeDetail.PenDown_MoveLeft);
+                    SetCursorMode(CursorModeDetail.ArrowUp_MoveLeft);
                     UpdateCursorShape();
                     return;
                 }
 
                 if (currentMousePosition.X >= (e_Right - HorizontalNoteMoveLeftRightSpan) && currentMousePosition.X <= e_Right)
                 {
-                    SetCursorMode(CursorModeDetail.PenDown_MoveRight);
+                    SetCursorMode(CursorModeDetail.ArrowUp_MoveRight);
                     UpdateCursorShape();
                     return;
                 }
@@ -685,7 +704,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
                     break;
 
                 case (CursorModeDetail.ArrowDown):
-                    PerformArrowUp();
+                    PerformArrowUp_FromArrowDown();
                     break;
             }
         }
