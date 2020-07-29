@@ -296,16 +296,34 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             PresenterBackground = new Border();
 
             PresenterBackground.Background = (Brush)FindResource("0LightBackgroundBrush");
-
+            
             PresenterBackground.MouseEnter += PresenterBackground_MouseEnter;
 
             PresenterBackground.MouseLeave += PresenterBackground_MouseLeave;
 
             PresenterBackground.MouseDown += PresenterBackground_MouseDown;
-            
+
             PresenterBackground.MouseUp += PresenterBackground_MouseUp;
 
             PresenterBackground.MouseMove += PresenterBackground_MouseMove;
+            
+            //
+
+            //Main.MouseEnter += PresenterBackground_MouseEnter;
+
+            //Main.MouseLeave += PresenterBackground_MouseLeave;
+
+            /*Main.MouseDown += PresenterBackground_MouseDown;
+
+            Main.MouseUp += PresenterBackground_MouseUp;
+
+            Main.MouseMove += PresenterBackground_MouseMove;
+
+            PresenterBackground.MouseEnter += PresenterBackground_MouseEnter;
+
+            PresenterBackground.MouseLeave += PresenterBackground_MouseLeave;*/
+
+            //
 
             PresenterBackground.Opacity = 0.01;
 
