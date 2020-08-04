@@ -64,8 +64,6 @@ namespace m0_COMPOSER.UIWpf.Visualisers
         PitchSetAxisDecorator PitchSetAD;
         TimeSpanAxisDecorator TimeSpanAD;
 
-        Border PresenterBackground;
-
         int Length;
         int ExtendTimeLength;
 
@@ -110,6 +108,8 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
         void SetCursorMode(CursorModeDetail modeDetail)
         {
+            UnCheckAllCursorButtons();
+
             currentCursorModeDetail = modeDetail;
 
             switch (modeDetail)
@@ -122,15 +122,21 @@ namespace m0_COMPOSER.UIWpf.Visualisers
                 case CursorModeDetail.ArrowDown_MoveRight:
                 case CursorModeDetail.ArrowDown_Move:
                     currentCursorMode = CursorMode.Arrow;
+
+                    ArrowButton.IsChecked = true;
                     break;
 
                 case CursorModeDetail.Eraser:
                     currentCursorMode = CursorMode.Eraser;
+
+                    EraseButton.IsChecked = true;
                     break;
 
                 case CursorModeDetail.PenUp:                
                 case CursorModeDetail.PenDown:                
                     currentCursorMode = CursorMode.Pen;
+
+                    PenButton.IsChecked = true;
                     break;
             }
         }
@@ -273,9 +279,10 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             DrawLines();
 
-            DrawPresenterBackground();
+            AddEventHandlers();
 
             DrawNotes();
+
 
             SelectionArea = new SelectionArea(Main);
         }
@@ -291,50 +298,20 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             Main.Children.Add(Background);
         }
 
-        void DrawPresenterBackground()
+        void AddEventHandlers()
         {
-            PresenterBackground = new Border();
+            Main.MouseEnter += MouseEnterHandler;
 
-            PresenterBackground.Background = (Brush)FindResource("0LightBackgroundBrush");
-            
-            PresenterBackground.MouseEnter += PresenterBackground_MouseEnter;
+            Main.MouseLeave += MouseLeaveHandler;
 
-            PresenterBackground.MouseLeave += PresenterBackground_MouseLeave;
+            Main.MouseDown += MouseDownHandler;
 
-            PresenterBackground.MouseDown += PresenterBackground_MouseDown;
+            Main.MouseUp += MouseUpHandler;
 
-            PresenterBackground.MouseUp += PresenterBackground_MouseUp;
-
-            PresenterBackground.MouseMove += PresenterBackground_MouseMove;
-            
-            //
-
-            //Main.MouseEnter += PresenterBackground_MouseEnter;
-
-            //Main.MouseLeave += PresenterBackground_MouseLeave;
-
-            /*Main.MouseDown += PresenterBackground_MouseDown;
-
-            Main.MouseUp += PresenterBackground_MouseUp;
-
-            Main.MouseMove += PresenterBackground_MouseMove;
-
-            PresenterBackground.MouseEnter += PresenterBackground_MouseEnter;
-
-            PresenterBackground.MouseLeave += PresenterBackground_MouseLeave;*/
-
-            //
-
-            PresenterBackground.Opacity = 0.01;
-
-            Panel.SetZIndex(PresenterBackground, 100);
-
-            WpfUtil.SetPosition(PresenterBackground, 0, 0, Main.Width, Main.Height);
-
-            Main.Children.Add(PresenterBackground);
+            Main.MouseMove += MouseMoveHandler;
         }
 
-        private void PresenterBackground_MouseMove(object sender, MouseEventArgs e)
+        private void MouseMoveHandler(object sender, MouseEventArgs e)
         {
             switch (currentCursorModeDetail)
             {
@@ -360,7 +337,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             }
         } 
 
-        private void PresenterBackground_MouseUp(object sender, MouseButtonEventArgs e)
+        private void MouseUpHandler(object sender, MouseButtonEventArgs e)
         {
             switch (currentCursorMode)
             {
@@ -377,7 +354,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             }
         }
 
-        private void PresenterBackground_MouseDown(object sender, MouseButtonEventArgs e)
+        private void MouseDownHandler(object sender, MouseButtonEventArgs e)
         {
             switch (currentCursorMode)
             {
@@ -468,8 +445,8 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             noteEventVertex.AddVertex(noteEvent.Get(false, @"Velocity"), defaultVelocity);
             noteEventVertex.AddEdge(noteEvent.Get(false, @"Octave"), noteSegment.BaseVertex.Get(false, "Octave:"));
             noteEventVertex.AddEdge(noteEvent.Get(false, @"Note"), noteSegment.BaseVertex.Get(false, "Note:"));
-            noteEventVertex.AddVertex(noteEvent.Get(false, @"TriggerTime"), (int) (startPosition / TimeSpanAD.BaseUnitSize) + 0.01);
-            noteEventVertex.AddVertex(noteEvent.Get(false, @"Length"), (int) (lengthPosition / TimeSpanAD.BaseUnitSize) + 0.01);
+            noteEventVertex.AddVertex(noteEvent.Get(false, @"TriggerTime"), (int) ((startPosition / TimeSpanAD.BaseUnitSize) + 0.01));
+            noteEventVertex.AddVertex(noteEvent.Get(false, @"Length"), (int) ((lengthPosition / TimeSpanAD.BaseUnitSize) + 0.01));
 
             IEdge finalEdge = baseVertex.AddEdge(noteEvent, noteEventVertex);
 
@@ -478,13 +455,21 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             return finalEdge;
         }
 
+        Point GetMainContentMousePosition(MouseButtonEventArgs e)
+        {
+            return e.GetPosition(Main);
+        }
+
+        Point GetMainContentMousePosition(MouseEventArgs e)
+        {
+            return e.GetPosition(Main);
+        }
 
         void PenDown(object sender, MouseButtonEventArgs e)
         {
             SetCursorMode(CursorModeDetail.PenDown);
             
-
-            mouseDownPoint = e.GetPosition(PresenterBackground);
+            mouseDownPoint = GetMainContentMousePosition(e);
 
             newNoteSegment = FindVerticalSegment(mouseDownPoint.Y);
 
@@ -507,7 +492,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
         {
             double left, right;
 
-            Point currentMousePosition = e.GetPosition(PresenterBackground);
+            Point currentMousePosition = GetMainContentMousePosition(e);
 
             double snappedCurrentMousePositionX = GetSnapped(currentMousePosition.X);
 
@@ -566,7 +551,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
         void EraserDown(object sender, MouseButtonEventArgs e)
         {
-            Point currentMousePosition = e.GetPosition(PresenterBackground);
+            Point currentMousePosition = GetMainContentMousePosition(e);
 
             FrameworkElement element = WpfUtil.GetElementAtFromList_StartFromEnd(items, currentMousePosition);
 
@@ -590,7 +575,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
         void ArrowDown(object sender, MouseButtonEventArgs e)
         {
-            Point currentMousePosition = e.GetPosition(PresenterBackground);
+            Point currentMousePosition = GetMainContentMousePosition(e);
 
             FrameworkElement elementFound = WpfUtil.GetElementAtFromList(items, currentMousePosition);
 
@@ -622,7 +607,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
         void ArrowMove_ArrowUp(object sender, MouseEventArgs e)
         {
-            Point currentMousePosition = e.GetPosition(PresenterBackground);
+            Point currentMousePosition = GetMainContentMousePosition(e);
 
             FrameworkElement element = WpfUtil.GetElementAtFromList_StartFromEnd(items, currentMousePosition);
 
@@ -655,7 +640,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
         void ArrowMove_ArrowDown(object sender, MouseEventArgs e)
         {      
-            Point currentMousePosition = e.GetPosition(PresenterBackground);
+            Point currentMousePosition = GetMainContentMousePosition(e);
 
             SelectionArea.MoveSelectionArea(currentMousePosition);
 
@@ -703,15 +688,9 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             SelectionArea.HideSelectionArea();
         }
 
-        private void PresenterBackground_MouseLeave(object sender, MouseEventArgs e)
+        private void MouseLeaveHandler(object sender, MouseEventArgs e)
         {
-            Point currentMousePosition = e.GetPosition(PresenterBackground);
-
-            if (currentMousePosition.X >= 0 && 
-                currentMousePosition.Y >= 0 && 
-                currentMousePosition.X <= PresenterBackground.Width && 
-                currentMousePosition.Y <= PresenterBackground.Height)
-                return;
+            Point currentMousePosition = GetMainContentMousePosition(e);
 
             WpfUtil.OverrideCursor(Cursors.Arrow);
 
@@ -727,7 +706,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             }
         }
 
-        private void PresenterBackground_MouseEnter(object sender, MouseEventArgs e)
+        private void MouseEnterHandler(object sender, MouseEventArgs e)
         {
             UpdateCursorShape();         
         }
@@ -853,7 +832,6 @@ namespace m0_COMPOSER.UIWpf.Visualisers
                 InitSequenceVisualierState();
             }
         }
-
 
         protected void UpdateBaseEdge()
         {
@@ -995,7 +973,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             VisualiserDraw();
         }
 
-        private void NewButton_Click(object sender, RoutedEventArgs e)
+        private void PenButton_Click(object sender, RoutedEventArgs e)
         {
             SetCursorMode(CursorModeDetail.PenUp);
         }
@@ -1005,9 +983,16 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             SetCursorMode(CursorModeDetail.Eraser);
         }
 
-        private void SelectButton_Click(object sender, RoutedEventArgs e)
+        private void ArrowButton_Click(object sender, RoutedEventArgs e)
         {
             SetCursorMode(CursorModeDetail.ArrowUp);
+        }
+
+        void UnCheckAllCursorButtons()
+        {
+            EraseButton.IsChecked = false;
+            PenButton.IsChecked = false;
+            ArrowButton.IsChecked = false;
         }
     }
 }

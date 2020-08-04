@@ -1,4 +1,6 @@
-﻿using System;
+﻿using m0.Foundation;
+using m0.ZeroTypes;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -27,7 +29,16 @@ namespace m0
         {            
             m0_RUN.Main.Run();
 
+            ExtraRun();
+
             Close();
+        }
+
+        void ExtraRun()
+        {
+            IVertex r = MinusZero.Instance.root;
+
+            VertexOperations.AddInstance(r, r.Get(false, @"System\Lib\Music\Sequence"));
         }
     }
 }

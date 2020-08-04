@@ -9,24 +9,24 @@
     <DockPanel>
         <ToolBarTray DockPanel.Dock="Top">
             <ToolBar>
-                <Button Name="NewButton" ToolTip="Add new note" Click="NewButton_Click">
+                <ToggleButton Name="PenButton" ToolTip="Add new note" Click="PenButton_Click">
                     <StackPanel Orientation="Horizontal">
                         <Image RenderOptions.BitmapScalingMode="HighQuality" Source="pack://application:,,/m0;Component/_resources/basic/pen.png" Width="15" Height="15"/>
                         <TextBlock Margin="3,0,0,0">New</TextBlock>
                     </StackPanel>
-                </Button>
-                <Button Name="EraseButton" ToolTip="Erase note" Click="EraseButton_Click">
-                    <StackPanel Orientation="Horizontal">
-                        <Image RenderOptions.BitmapScalingMode="HighQuality" Source="pack://application:,,/m0;Component/_resources/basic/eraser.png" Width="15" Height="15"/>
-                        <TextBlock Margin="3,0,0,0">Erase</TextBlock>
-                    </StackPanel>
-                </Button>
-                <Button Name="SelectButton" ToolTip="Select multiple notes" Click="SelectButton_Click">
+                </ToggleButton>
+                <ToggleButton Name="ArrowButton" ToolTip="Select multiple notes" Click="ArrowButton_Click">
                     <StackPanel Orientation="Horizontal">
                         <Image RenderOptions.BitmapScalingMode="HighQuality" Source="pack://application:,,/m0;Component/_resources/basic/pointer.png" Width="15" Height="15"/>
                         <TextBlock Margin="3,0,0,0">Select</TextBlock>
                     </StackPanel>
-                </Button>
+                </ToggleButton>
+                <ToggleButton Name="EraseButton" ToolTip="Erase note" Click="EraseButton_Click">
+                    <StackPanel Orientation="Horizontal">
+                        <Image RenderOptions.BitmapScalingMode="HighQuality" Source="pack://application:,,/m0;Component/_resources/basic/eraser.png" Width="15" Height="15"/>
+                        <TextBlock Margin="3,0,0,0">Erase</TextBlock>
+                    </StackPanel>
+                </ToggleButton>
                 <Button Name="ExtendButton" ToolTip="Extend the sequence length" Click="ExtendButton_Click">
                     <StackPanel Orientation="Horizontal">
                         <Image RenderOptions.BitmapScalingMode="HighQuality" Source="pack://application:,,/m0;Component/_resources/basic/extend.png" Width="15" Height="15"/>
