@@ -45,8 +45,13 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Controls
             {
                 Background = (Brush)WpfUtil.FindResource("0HighlightBrush");
 
-                if(showLabel)
+                if (showLabel)
                     labelControl.Background = (Brush)WpfUtil.FindResource("0HighlightBrush");
+            }
+            else
+            {
+                if (showLabel)
+                    labelControl.Foreground = (Brush)WpfUtil.FindResource("0HighlightBrush");
             }
         }
 
@@ -64,6 +69,11 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Controls
 
                 if (showLabel)
                     labelControl.Background = (Brush)WpfUtil.FindResource("0LightForegroundBrush");
+            }
+            else
+            {
+                if (showLabel)
+                    labelControl.Foreground = (Brush)WpfUtil.FindResource("0BackgroundBrush");
             }
         }
 
