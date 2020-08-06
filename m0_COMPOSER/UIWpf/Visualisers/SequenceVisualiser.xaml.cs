@@ -115,7 +115,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
         double mouseOverItem_StartLeft;
 
-        double mouseOverItem_StartWidth;
+        double mouseOverItem_StartRight;
 
         void SetMouseOverItem(IItem item)
         {
@@ -125,7 +125,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             mouseOverItem = item;
             mouseOverItem_Element = (FrameworkElement)item;
             mouseOverItem_StartLeft = Canvas.GetLeft(mouseOverItem_Element);
-            mouseOverItem_StartWidth = mouseOverItem_Element.Width;
+            mouseOverItem_StartRight = mouseOverItem_StartLeft + mouseOverItem_Element.Width;
         }
 
         void SetCursorMode(CursorModeDetail modeDetail)
@@ -348,10 +348,16 @@ namespace m0_COMPOSER.UIWpf.Visualisers
                     break;
 
                 case CursorModeDetail.ArrowDown:
+                    ArrowMove_ArrowDown(sender, e);
+                    break;
+
                 case CursorModeDetail.ArrowDown_Move:
+                    ArrowMove_DownMove(sender, e);
+                    break;
+
                 case CursorModeDetail.ArrowDown_MoveLeft:
                 case CursorModeDetail.ArrowDown_MoveRight:
-                    ArrowMove_ArrowDown(sender, e);
+                    ArrowMove_DownMoveLeftRight(sender, e);
                     break;
 
                 default:
@@ -368,7 +374,12 @@ namespace m0_COMPOSER.UIWpf.Visualisers
                     break;                
 
                 case CursorModeDetail.ArrowDown:
-                    ArrowUp_FromArrowDown(sender, e);
+                    ArrowUp_FromDown(sender, e);
+                    break;
+
+                case CursorModeDetail.ArrowDown_MoveLeft:
+                case CursorModeDetail.ArrowDown_MoveRight:
+                    ArrowUp_FromMove(sender, e);
                     break;
 
                 default:
@@ -414,7 +425,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             newNoteShape.BorderThickness = new Thickness(0);
 
-            double snappedMouseX = GetSnapped(mouseDownPoint.X);
+            double snappedMouseX = GetSnappedItemPosition(mouseDownPoint.X);
 
             WpfUtil.SetPositionAbsolute(newNoteShape, snappedMouseX, newNoteSegment.StartPosition, snappedMouseX, newNoteSegment.EndPosition);
 
@@ -427,9 +438,9 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             Point currentMousePosition = GetMainContentMousePosition(e);
 
-            double snappedCurrentMousePositionX = GetSnapped(currentMousePosition.X);
+            double snappedCurrentMousePositionX = GetSnappedItemPosition(currentMousePosition.X);
 
-            double snappedMouseDownPointX = GetSnapped(mouseDownPoint.X);
+            double snappedMouseDownPointX = GetSnappedItemPosition(mouseDownPoint.X);
 
             if(snappedCurrentMousePositionX > snappedMouseDownPointX)
             {
@@ -535,6 +546,38 @@ namespace m0_COMPOSER.UIWpf.Visualisers
                 SetCursorMode(CursorModeDetail.ArrowDown_MoveRight);
         }
 
+        void ArrowMove_DownMoveLeftRight(object sender, MouseEventArgs e)
+        {
+            Point currentMousePosition = GetMainContentMousePosition(e);
+
+            if(currentCursorModeDetail == CursorModeDetail.ArrowDown_MoveLeft)
+            {
+                double snappedMouseX = GetSnappedItemPosition(currentMousePosition.X);
+
+                if (snappedMouseX > mouseOverItem_StartRight)
+                    snappedMouseX = mouseOverItem_StartRight;
+
+                Canvas.SetLeft(mouseOverItem_Element, snappedMouseX);
+
+                mouseOverItem_Element.Width = mouseOverItem_StartRight - snappedMouseX;
+            }
+
+            if (currentCursorModeDetail == CursorModeDetail.ArrowDown_MoveRight)
+            {
+                double snappedMouseX = GetSnappedItemPosition(currentMousePosition.X);
+
+                if (snappedMouseX < mouseOverItem_StartLeft)
+                    snappedMouseX = mouseOverItem_StartLeft;
+
+                mouseOverItem_Element.Width = snappedMouseX - mouseOverItem_StartLeft;
+            }
+        }
+
+        void ArrowMove_DownMove(object sender, MouseEventArgs e)
+        {
+
+        }
+
         void ArrowMove_ArrowUp_SetMouseCurrentItem(IItem item, CursorModeDetail cursorModeDetail)
         {
             SetCursorMode(cursorModeDetail);
@@ -572,7 +615,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
                 if (currentMousePosition.X >= (e_Right - HorizontalNoteMoveLeftRightSpan) && currentMousePosition.X <= e_Right)
                 {
-                    ArrowMove_ArrowUp_SetMouseCurrentItem(item, CursorModeDetail.ArrowUp_MoveLeft);
+                    ArrowMove_ArrowUp_SetMouseCurrentItem(item, CursorModeDetail.ArrowUp_MoveRight);
                     return;
                 }
             }
@@ -603,7 +646,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             WpfUtil.OverrideCursor(Cursors.Arrow);
         }
 
-        void ArrowUp_FromArrowDown(object sender, MouseButtonEventArgs e)
+        void ArrowUp_FromDown(object sender, MouseButtonEventArgs e)
         {
             IList<FrameworkElement> matched = WpfUtil.GetElementsAtFromListByArea(items, SelectionArea.Left, SelectionArea.Top, SelectionArea.Right, SelectionArea.Bottom);
 
@@ -629,6 +672,11 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             currentCursorModeDetail = CursorModeDetail.ArrowUp;
             SelectionArea.HideSelectionArea();
+        }
+
+        void ArrowUp_FromMove(object sender, MouseEventArgs e)
+        {
+            if(currentCursorModeDetail == )
         }
 
         void PerformArrowUp_FromArrowDown_WhileMoseLeave()
@@ -658,7 +706,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             return null;
         }
 
-        double GetSnapped(double position)
+        double GetSnappedItemPosition(double position)
         {
             if (currentSnapToGrid == SnapToGrid.No_Snap)
                 return position;
