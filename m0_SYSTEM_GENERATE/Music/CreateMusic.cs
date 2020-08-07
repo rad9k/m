@@ -130,7 +130,7 @@ namespace m0_SYSTEM_GENERATE.Music
 
             Data.AddEdge(Music.Get(false, "DefaultPitchSet"), b);
 
-            b.Value = "Base";
+            b.Value = "BasePitchSet";
 
             IVertex white = r.Get(false, @"System\Data\UX\Colors\White");
             IVertex black = r.Get(false, @"System\Data\UX\Colors\Black");
@@ -158,9 +158,9 @@ namespace m0_SYSTEM_GENERATE.Music
 
             IVertex b = VertexOperations.AddInstance(Data, PitchSet);
 
-            Data.AddEdge(Music.Get(false, "DefaultDrumSet"), b);
+            Data.AddEdge(Music.Get(false, "DefaultDrumPitchSet"), b);
 
-            b.Value = "DrumBase";
+            b.Value = "DrumBasePitchSet";
 
             IVertex white = r.Get(false, @"System\Data\UX\Colors\White");
             IVertex black = r.Get(false, @"System\Data\UX\Colors\Black");
@@ -242,7 +242,7 @@ namespace m0_SYSTEM_GENERATE.Music
         {
             GraphUtil.AddMetaEdge(Music, "DefaultPitchSet", Music.Get(false, "PitchSet"));
 
-            GraphUtil.AddMetaEdge(Music, "DefaultDrumSet", Music.Get(false, "PitchSet"));
+            GraphUtil.AddMetaEdge(Music, "DefaultDrumPitchSet", Music.Get(false, "PitchSet"));
 
             GraphUtil.AddMetaEdge(Music, "BaseTimeSpanLevel", Music.Get(false, "TimeSpanLevel"));
 

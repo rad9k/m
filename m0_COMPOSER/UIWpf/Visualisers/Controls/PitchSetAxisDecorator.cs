@@ -73,11 +73,15 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Controls
                     maxWidth = si.Width;
             }
 
-            Size new_si = new Size();
-            new_si.Width = maxWidth + 10;
-            new_si.Height = Size.Height;
+            Size newSize = new Size();
+            newSize.Width = maxWidth;
 
-            Size = new_si;
+            if (newSize.Width < 50)
+                newSize.Width += 10;
+
+            newSize.Height = Size.Height;
+
+            Size = newSize;
 
             Width = Size.Width;
             Height = Size.Height;

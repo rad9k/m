@@ -84,6 +84,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             ArrowDown,
             ArrowUp_MoveLeft,
             ArrowUp_MoveRight,
+            ArrowUp_Move,
             ArrowDown_Move,
             ArrowDown_MoveLeft,
             ArrowDown_MoveRight,
@@ -113,9 +114,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
         IItem mouseOverItem;
 
-        double mouseOverItem_StartLeft;
-
-        double mouseOverItem_StartRight;
+        double mouseOverItem_startLeft;
 
         void SetMouseOverItem(IItem item)
         {
@@ -124,8 +123,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             mouseOverItem = item;
             mouseOverItem_Element = (FrameworkElement)item;
-            mouseOverItem_StartLeft = Canvas.GetLeft(mouseOverItem_Element);
-            mouseOverItem_StartRight = mouseOverItem_StartLeft + mouseOverItem_Element.Width;
+            mouseOverItem_startLeft = Canvas.GetLeft(mouseOverItem_Element);
         }
 
         void SetCursorMode(CursorModeDetail modeDetail)
@@ -140,6 +138,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
                 case CursorModeDetail.ArrowUp:
                 case CursorModeDetail.ArrowUp_MoveLeft:
                 case CursorModeDetail.ArrowUp_MoveRight:
+                case CursorModeDetail.ArrowUp_Move:
                 case CursorModeDetail.ArrowDown_MoveLeft:
                 case CursorModeDetail.ArrowDown_MoveRight:
                 case CursorModeDetail.ArrowDown_Move:
@@ -169,11 +168,12 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             {
                 case CursorModeDetail.ArrowDown:
                 case CursorModeDetail.ArrowUp:
+                case CursorModeDetail.ArrowUp_Move:
                     WpfUtil.OverrideCursor(Cursors.Arrow);
                     break;
 
                 case CursorModeDetail.ArrowDown_Move:
-                    WpfUtil.OverrideCursor(Cursors.SizeNESW);
+                    WpfUtil.OverrideCursor(Cursors.SizeAll);
                     break;
 
                 case CursorModeDetail.ArrowUp_MoveLeft:
@@ -344,6 +344,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
                 case CursorModeDetail.ArrowUp:
                 case CursorModeDetail.ArrowUp_MoveLeft:
                 case CursorModeDetail.ArrowUp_MoveRight:
+                case CursorModeDetail.ArrowUp_Move:
                     ArrowMove_ArrowUp(sender, e);
                     break;
 
@@ -351,12 +352,9 @@ namespace m0_COMPOSER.UIWpf.Visualisers
                     ArrowMove_ArrowDown(sender, e);
                     break;
 
-                case CursorModeDetail.ArrowDown_Move:
-                    ArrowMove_DownMove(sender, e);
-                    break;
-
                 case CursorModeDetail.ArrowDown_MoveLeft:
                 case CursorModeDetail.ArrowDown_MoveRight:
+                case CursorModeDetail.ArrowDown_Move:
                     ArrowMove_DownMoveLeftRight(sender, e);
                     break;
 
@@ -379,6 +377,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
                 case CursorModeDetail.ArrowDown_MoveLeft:
                 case CursorModeDetail.ArrowDown_MoveRight:
+                case CursorModeDetail.ArrowDown_Move:
                     ArrowUp_FromMove(sender, e);
                     break;
 
@@ -391,20 +390,21 @@ namespace m0_COMPOSER.UIWpf.Visualisers
         {
             switch (currentCursorModeDetail)
             {
-                case (CursorModeDetail.PenUp):
+                case CursorModeDetail.PenUp:
                     PenDown(sender, e);
                     break;
 
-                case (CursorModeDetail.Eraser):
+                case CursorModeDetail.Eraser:
                     EraserDown(sender, e);
                     break;
 
-                case (CursorModeDetail.ArrowUp):
+                case CursorModeDetail.ArrowUp:
                     ArrowDown(sender, e);
                     break;
 
-                case (CursorModeDetail.ArrowUp_MoveLeft):
-                case (CursorModeDetail.ArrowUp_MoveRight):
+                case CursorModeDetail.ArrowUp_MoveLeft:
+                case CursorModeDetail.ArrowUp_MoveRight:
+                case CursorModeDetail.ArrowUp_Move:
                     ArrowDown_FromUpMove(sender, e);
                     break;
             }
@@ -544,37 +544,71 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             if (currentCursorModeDetail == CursorModeDetail.ArrowUp_MoveRight)
                 SetCursorMode(CursorModeDetail.ArrowDown_MoveRight);
+
+            if (currentCursorModeDetail == CursorModeDetail.ArrowUp_Move)
+            {
+                SetCursorMode(CursorModeDetail.ArrowDown_Move);
+                UpdateCursorShape();
+            }
         }
 
         void ArrowMove_DownMoveLeftRight(object sender, MouseEventArgs e)
         {
             Point currentMousePosition = GetMainContentMousePosition(e);
 
-            if(currentCursorModeDetail == CursorModeDetail.ArrowDown_MoveLeft)
+            double itemLeft = Canvas.GetLeft(mouseOverItem_Element);
+            double itemRight = itemLeft + mouseOverItem_Element.Width;
+
+            double snappedMouseX = GetSnappedItemPosition(currentMousePosition.X);
+            double toBeWidth;
+
+            switch (currentCursorModeDetail)
             {
-                double snappedMouseX = GetSnappedItemPosition(currentMousePosition.X);
+                case CursorModeDetail.ArrowDown_MoveLeft:
+                    if (snappedMouseX + getSnapMinmalWidth() > itemRight)
+                        snappedMouseX = itemRight - getSnapMinmalWidth();
 
-                if (snappedMouseX > mouseOverItem_StartRight)
-                    snappedMouseX = mouseOverItem_StartRight;
+                    Canvas.SetLeft(mouseOverItem_Element, snappedMouseX);
 
-                Canvas.SetLeft(mouseOverItem_Element, snappedMouseX);
+                    toBeWidth = itemRight - snappedMouseX;
 
-                mouseOverItem_Element.Width = mouseOverItem_StartRight - snappedMouseX;
+                    if (toBeWidth == 0)
+                        toBeWidth = getSnapMinmalWidth();
+
+                    mouseOverItem_Element.Width = toBeWidth;
+                    break;
+
+                case CursorModeDetail.ArrowDown_MoveRight:
+
+                    if (snappedMouseX < itemLeft)
+                        snappedMouseX = itemLeft;
+   
+                     toBeWidth = snappedMouseX - itemLeft;
+
+                    if (toBeWidth == 0)
+                        toBeWidth = getSnapMinmalWidth();
+
+                    mouseOverItem_Element.Width = toBeWidth;
+                    break;
+
+                case CursorModeDetail.ArrowDown_Move:
+
+                    double horizontalMouseDelta = mouseDownPoint.X - mouseOverItem_startLeft;
+
+                    double snappedCorrectedMouseX = GetSnappedItemPosition(currentMousePosition.X - horizontalMouseDelta);
+
+                    if (snappedCorrectedMouseX < 0)
+                        snappedCorrectedMouseX = 0;
+
+                    
+
+                   // if (snappedCorrectedMouseX + mouseOverItem_Element.Width > Main.Width)
+                     //   mouseOverItem_Element.Width = Main.Width - snappedCorrectedMouseX;
+
+                    Canvas.SetLeft(mouseOverItem_Element, snappedCorrectedMouseX);
+                    break;
             }
 
-            if (currentCursorModeDetail == CursorModeDetail.ArrowDown_MoveRight)
-            {
-                double snappedMouseX = GetSnappedItemPosition(currentMousePosition.X);
-
-                if (snappedMouseX < mouseOverItem_StartLeft)
-                    snappedMouseX = mouseOverItem_StartLeft;
-
-                mouseOverItem_Element.Width = snappedMouseX - mouseOverItem_StartLeft;
-            }
-        }
-
-        void ArrowMove_DownMove(object sender, MouseEventArgs e)
-        {
 
         }
 
@@ -618,6 +652,9 @@ namespace m0_COMPOSER.UIWpf.Visualisers
                     ArrowMove_ArrowUp_SetMouseCurrentItem(item, CursorModeDetail.ArrowUp_MoveRight);
                     return;
                 }
+
+                ArrowMove_ArrowUp_SetMouseCurrentItem(item, CursorModeDetail.ArrowUp_Move);
+                return;
             }
 
             SetCursorMode(CursorModeDetail.ArrowUp);
@@ -676,7 +713,19 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
         void ArrowUp_FromMove(object sender, MouseEventArgs e)
         {
-            if(currentCursorModeDetail == )
+            if(currentCursorModeDetail == CursorModeDetail.ArrowDown_MoveLeft || currentCursorModeDetail == CursorModeDetail.ArrowDown_MoveRight)
+            {
+                SetCursorMode(CursorModeDetail.ArrowUp);
+
+                UpdateItem_HorizontalPosition(mouseOverItem);
+            }
+
+            if (currentCursorModeDetail == CursorModeDetail.ArrowDown_Move)
+            {
+                SetCursorMode(CursorModeDetail.ArrowUp);
+
+                UpdateItem_HorizontalPosition(mouseOverItem);
+            }
         }
 
         void PerformArrowUp_FromArrowDown_WhileMoseLeave()
@@ -721,6 +770,14 @@ namespace m0_COMPOSER.UIWpf.Visualisers
                 return (positionInBars - reminder + currentSnapToGridValue) * TimeSpanAD.BarLength * TimeSpanAD.BaseUnitSize;
         }
 
+        double getSnapMinmalWidth()
+        {
+            if (currentSnapToGridValue == 0)
+                return 1;
+
+            return currentSnapToGridValue * TimeSpanAD.BarLength * TimeSpanAD.BaseUnitSize;
+        }
+
         AxisSegment GetPitchSegment(IVertex pitchVertex)
         {
             foreach (AxisSegment s in PitchSetAD.Segments)
@@ -757,6 +814,69 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             Main.Children.Add(ni);
         }
 
+        void UpdateItem_HorizontalPosition(IItem item)
+        {
+            IVertex r = MinusZero.Instance.root;
+            IVertex metaTriggerTime = r.Get(false, @"System\Lib\Music\Event\TriggerTime");
+            IVertex metaLength = r.Get(false, @"System\Lib\Music\HasLength\Length");
+
+            IVertex noteEventVertex = item.BaseEdge.To;
+
+            double itemLeft = Canvas.GetLeft(mouseOverItem_Element);
+            double itemWidth = mouseOverItem_Element.Width;
+
+            int TriggerTime = (int) (itemLeft / TimeSpanAD.BaseUnitSize);
+
+            int Length = (int) (itemWidth / TimeSpanAD.BaseUnitSize);
+
+            GraphUtil.SetVertexValue(noteEventVertex, metaTriggerTime, TriggerTime);
+            GraphUtil.SetVertexValue(noteEventVertex, metaLength, Length);
+        }
+         /*   GraphUtil.SetVertexValue(noteEventVertex, )
+
+            double startPosition = 
+                
+                GraphUtil.GetIntegerValue(noteEventVertex.Get(false, "TriggerTime:"), ref dummy) * TimeSpanAD.BaseUnitSize;
+
+            double endPosition = 
+                
+                startPosition + (GraphUtil.GetIntegerValue(noteEventVertex.Get(false, "Length:"), ref dummy) * TimeSpanAD.BaseUnitSize);
+
+            WpfUtil.SetPositionAbsolute(ni, startPosition, noteSegment.StartPosition, endPosition, noteSegment.EndPosition);
+
+            items.Add(ni);
+
+            Main.Children.Add(ni);
+        }
+
+        /*
+        void UpdateItem_VerticalPosition(IItem item)
+        {
+            IVertex noteEventVertex = item.BaseEdge.To;
+
+            IVertex pitchVertex = MusicUtil.GetNoteFromPitchSet(pitchSetVertex,
+                GraphUtil.GetIntegerValue(noteEventVertex.Get(false, "Octave:")),
+                GraphUtil.GetIntegerValue(noteEventVertex.Get(false, "Note:")));
+
+            string label = pitchVertex.Value.ToString();
+
+            NoteItem ni = new NoteItem(noteEventEdge, label, this, showLabel, showVelocity);
+
+            AxisSegment noteSegment = GetPitchSegment(pitchVertex);
+
+            bool dummy = false;
+
+            double startPosition = GraphUtil.GetIntegerValue(noteEventVertex.Get(false, "TriggerTime:"), ref dummy) * TimeSpanAD.BaseUnitSize;
+
+            double endPosition = startPosition + (GraphUtil.GetIntegerValue(noteEventVertex.Get(false, "Length:"), ref dummy) * TimeSpanAD.BaseUnitSize);
+
+            WpfUtil.SetPositionAbsolute(ni, startPosition, noteSegment.StartPosition, endPosition, noteSegment.EndPosition);
+
+            items.Add(ni);
+
+            Main.Children.Add(ni);
+        }
+        */
         IEdge AddNoteEventEdge(AxisSegment noteSegment, double startPosition, double lengthPosition)
         {
             IVertex r = MinusZero.Instance.Root;
@@ -789,7 +909,6 @@ namespace m0_COMPOSER.UIWpf.Visualisers
         {
             return e.GetPosition(Main);
         }
-
 
         private void MouseLeaveHandler(object sender, MouseEventArgs e)
         {
@@ -851,7 +970,6 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
                     Main.Children.Add(b);
                 }
-
 
                 Line l = new Line();
                 
