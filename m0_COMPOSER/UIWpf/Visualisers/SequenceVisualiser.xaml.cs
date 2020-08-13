@@ -96,6 +96,8 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
         Point mouseDownPoint;
 
+        Point lastProcessedMousePoint;
+
         Border newNoteShape;
 
         AxisSegment newNoteSegment;
@@ -414,6 +416,8 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             SetCursorMode(CursorModeDetail.PenDown);
             
             mouseDownPoint = GetMainContentMousePosition(e);
+
+            lastProcessedMousePoint = mouseDownPoint;
 
             newNoteSegment = FindVerticalSegment(mouseDownPoint.Y);
 
