@@ -37,11 +37,19 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Controls
 
         public double HiddenRight { get; set; }
 
-        public void SetHiddenLefrRightFromReal()
+        public double HiddenTop { get; set; }
+
+        public double HiddenBottom { get; set; }
+
+        public void SetHiddenFromReal()
         {
             HiddenLeft = Canvas.GetLeft(this);
 
             HiddenRight = HiddenLeft + this.Width;
+
+            HiddenTop = Canvas.GetTop(this);
+
+            HiddenBottom = HiddenTop + Height;
         }
 
         public void Select()

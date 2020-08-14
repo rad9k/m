@@ -32,7 +32,11 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
         double HiddenRight { get; set; }
 
-        void SetHiddenLefrRightFromReal();
+        double HiddenTop { get; set; }
+
+        double HiddenBottom { get; set; }
+
+        void SetHiddenFromReal();
         
     }
 }

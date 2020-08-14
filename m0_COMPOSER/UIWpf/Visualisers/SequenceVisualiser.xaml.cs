@@ -440,7 +440,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             newNoteShape.BorderThickness = new Thickness(0);
 
-            double snappedMouseX = GetSnappedItemPosition(mouseDownPoint.X);
+            double snappedMouseX = GetSnappedPosition(mouseDownPoint.X);
 
             WpfUtil.SetPositionAbsolute(newNoteShape, snappedMouseX, newNoteSegment.StartPosition, snappedMouseX, newNoteSegment.EndPosition);
 
@@ -453,9 +453,9 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             Point currentMousePosition = GetMainContentMousePosition(e);
 
-            double snappedCurrentMousePositionX = GetSnappedItemPosition(currentMousePosition.X);
+            double snappedCurrentMousePositionX = GetSnappedPosition(currentMousePosition.X);
 
-            double snappedMouseDownPointX = GetSnappedItemPosition(mouseDownPoint.X);
+            double snappedMouseDownPointX = GetSnappedPosition(mouseDownPoint.X);
 
             if(snappedCurrentMousePositionX > snappedMouseDownPointX)
             {
@@ -553,6 +553,16 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             return selectedItems;
         }
 
+        List<IItem> GetSelectedAndMouseOverItems()
+        {
+            List<IItem> selectedItems = GetSelectedItems();
+
+            if (!selectedItems.Contains(mouseOverItem))
+                selectedItems.Add(mouseOverItem);
+
+            return selectedItems;
+        }
+
         void InitMouseOverElementAndSelected()
         {
             List<IItem> selectedItems = GetSelectedItems();
@@ -560,7 +570,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             selectedItems.Add(mouseOverItem);
 
             foreach (IItem i in selectedItems)
-                i.SetHiddenLefrRightFromReal();
+                i.SetHiddenFromReal();
         }
 
         void ArrowDown_FromUpMove(object sender, MouseButtonEventArgs e)
@@ -584,46 +594,106 @@ namespace m0_COMPOSER.UIWpf.Visualisers
                 SetCursorMode(CursorModeDetail.ArrowDown_MoveOnItem_MouseDown);                            
         }
 
+        enum LeftRightEnum { Left, Right }
+
+        void ItemTryMoveLeftRight(IItem item, double delta, LeftRightEnum LeftRight)
+        {
+            if (!(item is FrameworkElement))
+                return;
+
+            FrameworkElement element = (FrameworkElement)item;
+
+            if (LeftRight == LeftRightEnum.Left)
+            {
+                if (delta + getSnapMinmalWidth() >= element.Width)
+                    return;
+
+                double orginalX = Canvas.GetLeft(element);
+
+                item.HiddenLeft += delta;
+
+                double newX = GetSnappedPosition(item.HiddenLeft);
+
+                if(newX != orginalX)
+                {
+                    Canvas.SetLeft(element, newX);
+
+                    element.Width = item.HiddenRight - newX; 
+                }
+            }
+            else
+            {
+                if (element.Width + delta - getSnapMinmalWidth() <= 0)
+                    return;
+
+                double orginalX = Canvas.GetLeft(element) + element.Width;
+
+                item.HiddenRight += delta;
+
+                double newX = GetSnappedPosition(item.HiddenRight);
+
+                if (newX != orginalX)
+                    element.Width = newX - Canvas.GetLeft(element);
+            }
+        }
+
+        void ItemTryMove(IItem item, double deltaX, double deltaY)
+        {
+            if (!(item is FrameworkElement))
+                return;
+
+            FrameworkElement element = (FrameworkElement)item;
+
+            // left
+
+            item.HiddenLeft += deltaX;
+
+            double newValue = GetSnappedPosition(item.HiddenLeft);
+
+            if(newValue != Canvas.GetLeft(element))
+                Canvas.SetLeft(element, newValue);
+
+            // right
+
+            item.HiddenRight += deltaX;
+
+            newValue = GetSnappedPosition(item.HiddenRight);
+
+            if (newValue != Canvas.GetLeft(element) + element.Width)
+                Canvas.SetLeft(element, newValue - element.Width);
+
+            // top / bottom
+
+            item.HiddenTop += deltaY;
+            item.HiddenBottom += deltaY;
+
+            AxisSegment newSegment = FindVerticalSegment(item.HiddenTop);
+
+            Canvas.SetTop(element, newSegment.StartPosition);
+
+        }
+
         void ArrowMove_DownMoveOnItemLeftRight(object sender, MouseEventArgs e)
         {
             Point currentMousePosition = GetMainContentMousePosition(e);
 
-            double itemLeft = Canvas.GetLeft(mouseOverItem_Element);
-            double itemRight = itemLeft + mouseOverItem_Element.Width;
-
-            double snappedMouseX = GetSnappedItemPosition(currentMousePosition.X);
-
-            double mouseX = currentMousePosition.X;
-
-            double toBeWidth;
+            double deltaX = currentMousePosition.X - previousMousePosition.X;
+            double deltaY = currentMousePosition.Y - previousMousePosition.Y;
 
             switch (currentCursorModeDetail)
             {
                 case CursorModeDetail.ArrowDown_MoveOnItem_Left:
-                    if (mouseX + getSnapMinmalWidth() > itemRight)
-                        mouseX = itemRight - getSnapMinmalWidth();
 
-                    Canvas.SetLeft(mouseOverItem_Element, snappedMouseX);
-
-                    toBeWidth = itemRight - snappedMouseX;
-
-                    if (toBeWidth == 0)
-                        toBeWidth = getSnapMinmalWidth();
-
-                    mouseOverItem_Element.Width = toBeWidth;
+                    foreach (IItem i in GetSelectedAndMouseOverItems())
+                        ItemTryMoveLeftRight(i, deltaX, LeftRightEnum.Left);
+                    
                     break;
 
                 case CursorModeDetail.ArrowDown_MoveOnItem_Right:
 
-                    if (snappedMouseX < itemLeft)
-                        snappedMouseX = itemLeft;
-   
-                     toBeWidth = snappedMouseX - itemLeft;
+                    foreach (IItem i in GetSelectedAndMouseOverItems())
+                        ItemTryMoveLeftRight(i, deltaX, LeftRightEnum.Right);
 
-                    if (toBeWidth == 0)
-                        toBeWidth = getSnapMinmalWidth();
-
-                    mouseOverItem_Element.Width = toBeWidth;
                     break;
 
                 case CursorModeDetail.ArrowDown_MoveOnItem_MouseDown:
@@ -643,18 +713,8 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
                 case CursorModeDetail.ArrowDown_MoveOnItem_MouseDownAndMove:
 
-                    double horizontalMouseDelta = mouseDownPoint.X - mouseOverItem_startLeft;
-
-                    double snappedCorrectedMouseX = GetSnappedItemPosition(currentMousePosition.X - horizontalMouseDelta);
-
-                    if (snappedCorrectedMouseX < 0)
-                        snappedCorrectedMouseX = 0;
-
-                    Canvas.SetLeft(mouseOverItem_Element, snappedCorrectedMouseX);
-
-                    AxisSegment newSegment = FindVerticalSegment(currentMousePosition.Y);
-
-                    Canvas.SetTop(mouseOverItem_Element, newSegment.StartPosition);
+                    foreach (IItem i in GetSelectedAndMouseOverItems())
+                        ItemTryMove(i, deltaX, deltaY);
 
                     break;
             }
@@ -735,7 +795,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
         void ArrowUp_FromDown(object sender, MouseButtonEventArgs e)
         {
-            IList<FrameworkElement> matched = WpfUtil.GetElementsAtFromListByArea(items, SelectionArea.Left, SelectionArea.Top, SelectionArea.Right, SelectionArea.Bottom);
+            IList<FrameworkElement> matched = WpfUtil.GetElementsAtFromListByArea(items, SelectionArea.Left - 1, SelectionArea.Top - 1, SelectionArea.Right + 1, SelectionArea.Bottom + 1);
 
             UnselectAllSelectedEdges();
 
@@ -767,7 +827,8 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             {
                 SetCursorMode(CursorModeDetail.ArrowUp);
 
-                UpdateItem_HorizontalPosition(mouseOverItem);
+                foreach(IItem i in GetSelectedAndMouseOverItems())
+                    UpdateItem_HorizontalPosition(i);
             }
 
             if (currentCursorModeDetail == CursorModeDetail.ArrowDown_MoveOnItem_MouseDownAndMove)
@@ -839,7 +900,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             return null;
         }
 
-        double GetSnappedItemPosition(double position)
+        double GetSnappedPosition(double position)
         {
             if (currentSnapToGrid == SnapToGrid.No_Snap)
                 return position;
@@ -848,7 +909,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             double reminder = positionInBars % currentSnapToGridValue;
 
-            if (reminder < (currentSnapToGridValue / 2))
+            if (reminder < (currentSnapToGridValue / 2.0))
                 return (positionInBars - reminder) * TimeSpanAD.BarLength * TimeSpanAD.BaseUnitSize;
             else
                 return (positionInBars - reminder + currentSnapToGridValue) * TimeSpanAD.BarLength * TimeSpanAD.BaseUnitSize;
@@ -969,11 +1030,11 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             IVertex noteEventVertex = tempNoteEventEdge.To;
 
-            noteEventVertex.AddVertex(noteEvent.Get(false, @"Velocity"), defaultVelocity);
-            noteEventVertex.AddEdge(noteEvent.Get(false, @"Octave"), noteSegment.BaseVertex.Get(false, "Octave:"));
-            noteEventVertex.AddEdge(noteEvent.Get(false, @"Note"), noteSegment.BaseVertex.Get(false, "Note:"));
-            noteEventVertex.AddVertex(noteEvent.Get(false, @"TriggerTime"), (int)((startPosition / TimeSpanAD.BaseUnitSize) + 0.01));
-            noteEventVertex.AddVertex(noteEvent.Get(false, @"Length"), (int)((lengthPosition / TimeSpanAD.BaseUnitSize) + 0.01));
+            noteEventVertex.AddVertex(noteEvent.Get(false, @"Attribute:Velocity"), defaultVelocity);
+            noteEventVertex.AddEdge(noteEvent.Get(false, @"Attribute:Octave"), noteSegment.BaseVertex.Get(false, "Octave:"));
+            noteEventVertex.AddEdge(noteEvent.Get(false, @"Attribute:Note"), noteSegment.BaseVertex.Get(false, "Note:"));
+            noteEventVertex.AddVertex(noteEvent.Get(false, @"Attribute:TriggerTime"), (int)((startPosition / TimeSpanAD.BaseUnitSize) + 0.01));
+            noteEventVertex.AddVertex(noteEvent.Get(false, @"Attribute:Length"), (int)((lengthPosition / TimeSpanAD.BaseUnitSize) + 0.01));
 
             IEdge finalEdge = baseVertex.AddEdge(noteEvent, noteEventVertex);
 
