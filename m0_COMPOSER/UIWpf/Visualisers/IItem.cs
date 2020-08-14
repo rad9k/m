@@ -27,5 +27,12 @@ namespace m0_COMPOSER.UIWpf.Visualisers
         void Unselect();
 
         void Update();
+
+        double HiddenLeft { get; set; }
+
+        double HiddenRight { get; set; }
+
+        void SetHiddenLefrRightFromReal();
+        
     }
 }

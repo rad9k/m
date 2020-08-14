@@ -33,6 +33,17 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Controls
 
         bool showVelocity;
 
+        public double HiddenLeft { get; set; }
+
+        public double HiddenRight { get; set; }
+
+        public void SetHiddenLefrRightFromReal()
+        {
+            HiddenLeft = Canvas.GetLeft(this);
+
+            HiddenRight = HiddenLeft + this.Width;
+        }
+
         public void Select()
         {
             isSelected = true;
