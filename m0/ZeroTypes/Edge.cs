@@ -126,7 +126,7 @@ namespace m0.ZeroTypes
                 GraphUtil.ReplaceEdge(baseVertex, "To", edge.To);
             else
                 GraphUtil.DeleteEdgeByMeta(baseVertex, "To");
-              //  GraphUtil.ReplaceEdge(baseVertex, "To", MinusZero.Instance.Empty);
+            //GraphUtil.ReplaceEdge(baseVertex, "To", MinusZero.Instance.Empty);
         }
 
         static public void AddEdgeEdges(IVertex baseVertex, IEdge edge)

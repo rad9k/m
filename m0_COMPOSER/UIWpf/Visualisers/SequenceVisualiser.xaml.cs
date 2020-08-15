@@ -55,6 +55,9 @@ namespace m0_COMPOSER.UIWpf.Visualisers
         IZoomScrollViewAxisDecorator VerticalAD;
         IZoomScrollViewAxisDecorator HorizontalAD;
 
+        double Width;
+        double Height;
+
         int Length;
         int ExtendTimeLength;        
 

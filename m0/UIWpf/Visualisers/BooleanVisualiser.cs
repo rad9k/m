@@ -34,6 +34,7 @@ namespace m0.UIWpf.Visualisers
                 ClassVertex.AddIsClassAndAllAttributesAndAssociations(Vertex, mz.Root.Get(false, @"System\Meta\Visualiser\Boolean"));
 
                 ClassVertex.AddIsClassAndAllAttributesAndAssociations(Vertex.Get(false, "BaseEdge:"), mz.Root.Get(false, @"System\Meta\ZeroTypes\Edge"));
+                
 
                 this.Loaded += new RoutedEventHandler(OnLoad);
 
@@ -87,6 +88,11 @@ namespace m0.UIWpf.Visualisers
         private void UpdateBaseEdge(){
             IVertex bv = Vertex.Get(false, @"BaseEdge:\To:");
 
+            if(Vertex.Get(false, @"BaseEdge:\Meta:IsDrum") != null)
+            {
+                int x = 9;
+            }
+
             if (bv != null && bv.Value != null)
             {
                 if (GeneralUtil.CompareStrings(bv.Value, "True"))
@@ -104,7 +110,7 @@ namespace m0.UIWpf.Visualisers
         {
             if ((sender == Vertex) && (e.Type == VertexChangeType.EdgeAdded) && (GeneralUtil.CompareStrings(e.Edge.Meta.Value, "BaseEdge"))
                  || (sender == Vertex.Get(false, "BaseEdge:") && e.Type == VertexChangeType.ValueChanged)
-                || ((sender == Vertex.Get(false, "BaseEdge:")) && (e.Type == VertexChangeType.EdgeAdded) && ((GeneralUtil.CompareStrings(e.Edge.Meta.Value, "To"))))
+                || ((sender == Vertex.Get(false, "BaseEdge:"))  && ((GeneralUtil.CompareStrings(e.Edge.Meta.Value, "To"))))
                 || (sender == Vertex.Get(false, @"BaseEdge:\To:") && e.Type == VertexChangeType.ValueChanged))
             {
                 UpdateBaseEdge();
