@@ -45,40 +45,46 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Controls
 
         public void SetHiddenFromReal()
         {
-            HiddenLeft = Canvas.GetLeft(this);
+            HiddenCenter = Center;
 
-            HiddenRight = HiddenLeft + this.Width;
+            HiddenTop = Top;
 
-            HiddenTop = Canvas.GetTop(this);
+            HiddenBottom = Bottom;
+        }
 
-            HiddenBottom = HiddenTop + Height;
+        void SetBorder(Brush b)
+        {
+            path.Stroke = b;
+        }
+
+        void SetBackground(Brush b)
+        {
+            path.Fill = b;
         }
 
         public void Select()
         {
             isSelected = true;
 
-            //   BorderThickness = new Thickness(3);
-
-            BorderBrush = (Brush)WpfUtil.FindResource("0HighlightBrush");
+            SetBorder((Brush)WpfUtil.FindResource("0HighlightBrush"));
 
             if (!showVelocity)
-                Background = (Brush)WpfUtil.FindResource("0HighlightBrush");
+                SetBackground((Brush)WpfUtil.FindResource("0HighlightBrush"));
         }
 
         public void Unselect()
         {
             isSelected = false;
 
-            BorderThickness = new Thickness(2);
-
-            BorderBrush = (Brush)WpfUtil.FindResource("0ForegroundBrush");
+            SetBorder((Brush)WpfUtil.FindResource("0ForegroundBrush"));
 
             if (!showVelocity)
-                Background = (Brush)WpfUtil.FindResource("0LightForegroundBrush");
+                SetBackground((Brush)WpfUtil.FindResource("0LightForegroundBrush"));
 
         }
-        
+
+        Path path;
+
         void AddPath()
         {
             PathGeometry pathGeometry = new PathGeometry();
@@ -126,21 +132,15 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Controls
 
 
 
-
-
-
-
-            Path path = new Path();
+            path = new Path();
 
             path.Stretch = Stretch.Fill;
 
             path.StrokeLineJoin = PenLineJoin.Round;
-
-            path.Stroke = new SolidColorBrush(Color.FromRgb(0, 0, 0));
-
-            path.Fill = new SolidColorBrush(Color.FromRgb(170, 87, 170));
+            
 
             path.StrokeThickness = 2;
+                       
 
             path.Data = pathGeometry;
 
@@ -159,9 +159,10 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Controls
 
             AddPath();
 
-            RenderOptions.SetEdgeMode(this, EdgeMode.Aliased);
+            BorderThickness = new Thickness(0);
 
-  /*          BorderThickness = new System.Windows.Thickness(2);
+
+            RenderOptions.SetEdgeMode(this, EdgeMode.Aliased);
 
             Brush backColorBrush = (Brush)WpfUtil.FindResource("0LightForegroundBrush");
 
@@ -177,17 +178,10 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Controls
                 }
             }
 
-            Background = backColorBrush;
+            SetBackground(backColorBrush);
 
-            Unselect();
-
-            this.SizeChanged += NoteItem_SizeChanged;*/
-        }
-
-        private void NoteItem_SizeChanged(object sender, System.Windows.SizeChangedEventArgs e)
-        {
-
-        }
+            Unselect();            
+        }        
 
         public void Update()
         {
@@ -198,9 +192,13 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Controls
 
         public double Right { get; set; }
 
+        double center;
         public double Center {
-            get { return Canvas.GetLeft(this) + Height / 2.0; }
-            set { Canvas.SetLeft(this, value - Height/2.0); }
+            get { return Canvas.GetLeft(this) + (Height / 2.0); }
+            set {
+                center = value;
+                Canvas.SetLeft(this, center  - (Height/2.0));
+            }
         }
 
         public double Top
@@ -212,7 +210,11 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Controls
         public double Bottom
         {
             get { return Top + Height; }
-            set { Height = value - Top; }
+            set {
+                Height = value - Top;
+                Width = Height;
+                Canvas.SetLeft(this, center - Height / 2.0);
+            }
         }
     }
 }

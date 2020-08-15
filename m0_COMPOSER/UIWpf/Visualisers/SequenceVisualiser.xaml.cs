@@ -216,6 +216,8 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             SetupLocalVariablesFromBaseVertexVertexes();
 
+            SetVertexVaribles();
+
             SetAxisDecorators();
 
             CreateMain();
@@ -225,7 +227,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             DrawMain();
         }
 
-        void SetVertexeVaribles()
+        void SetVertexVaribles()
         {
             baseVertex = Vertex.Get(false, @"BaseEdge:\To:");
 
@@ -243,7 +245,10 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             pitchSetVertex = baseVertex.Get(false, "PitchSet:");
 
             if (pitchSetVertex == null)
-                pitchSetVertex = r.Get(false, @"System\Lib\Music\Data\DefaultPitchSet:");
+                if(isDrum)
+                    pitchSetVertex = r.Get(false, @"System\Lib\Music\Data\DefaultDrumSet:");
+                else
+                    pitchSetVertex = r.Get(false, @"System\Lib\Music\Data\DefaultPitchSet:");
 
             timeSpanVertex = baseVertex.Get(false, "TimeSpan:");
 
@@ -506,7 +511,20 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             VertexChangeOff = true;
 
-            IEdge newNoteEventEdge = AddNoteEventEdge(newNoteSegment, Canvas.GetLeft(newNoteShape), newNoteShape.Width);
+            IEdge newNoteEventEdge;
+
+            if (isCurrentPenItemCenter)
+                newNoteEventEdge = AddNoteEventEdge(newNoteSegment, GetSnappedPosition(mouseDownPoint.X), 0);
+            else
+            {
+                if(newNoteShape.Width == 0)
+                {
+                    VertexChangeOff = false;
+                    return;
+                }
+
+                newNoteEventEdge = AddNoteEventEdge(newNoteSegment, Canvas.GetLeft(newNoteShape), newNoteShape.Width);
+            }
 
             AddItem(newNoteEventEdge, null);
 
@@ -667,7 +685,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
                 if (newX != orginalX)
                     element.Width = newX - item.Left;
             }
-        }
+        }        
 
         void ItemTryMove(IItem item, double deltaX, double deltaY)
         {
@@ -676,23 +694,38 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             FrameworkElement element = (FrameworkElement)item;
 
-            // left
 
-            item.HiddenLeft += deltaX;
+            if (item.IsCentered)
+            {
+                // centered
 
-            double newValue = GetSnappedPosition(item.HiddenLeft);
+                item.HiddenCenter += deltaX;
 
-            if (newValue != item.Left)
-                item.Left = newValue;                
+                double newValue = GetSnappedPosition(item.HiddenCenter);
 
-            // right
+                if (newValue != item.Center)
+                    item.Center = newValue;
+            }
+            else
+            {
+                // left
 
-            item.HiddenRight += deltaX;
+                item.HiddenLeft += deltaX;
 
-            newValue = GetSnappedPosition(item.HiddenRight);
+                double newValue = GetSnappedPosition(item.HiddenLeft);
 
-            if (newValue != item.Right)
-                item.Right = newValue;
+                if (newValue != item.Left)
+                    item.Left = newValue;
+
+                // right
+
+                item.HiddenRight += deltaX;
+
+                newValue = GetSnappedPosition(item.HiddenRight);
+
+                if (newValue != item.Right)
+                    item.Right = newValue;
+            }
 
             // top / bottom
 
@@ -778,13 +811,13 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
                 IItem item = (IItem)element;                
 
-                if (currentMousePosition.X >= item.Left && currentMousePosition.X <= (item.Left + HorizontalNoteMoveLeftRightSpan))
+                if (!isCurrentPenItemCenter && currentMousePosition.X >= item.Left && currentMousePosition.X <= (item.Left + HorizontalNoteMoveLeftRightSpan))
                 {
                     ArrowMove_ArrowUp_SetMouseCurrentItem(item, CursorModeDetail.ArrowUp_MoveOnItem_Left);
                     return;
                 }
 
-                if (currentMousePosition.X >= (item.Right - HorizontalNoteMoveLeftRightSpan) && currentMousePosition.X <= item.Right)
+                if (!isCurrentPenItemCenter && currentMousePosition.X >= (item.Right - HorizontalNoteMoveLeftRightSpan) && currentMousePosition.X <= item.Right)
                 {
                     ArrowMove_ArrowUp_SetMouseCurrentItem(item, CursorModeDetail.ArrowUp_MoveOnItem_Right);
                     return;
@@ -966,35 +999,55 @@ namespace m0_COMPOSER.UIWpf.Visualisers
         {
             IVertex noteEventVertex = noteEventEdge.To;
 
+            bool dummy = false;
+
+            int triggerTime = GraphUtil.GetIntegerValue(noteEventVertex.Get(false, "TriggerTime:"), ref dummy);
+
+            int length = GraphUtil.GetIntegerValue(noteEventVertex.Get(false, "Length:"), ref dummy);
+
             IVertex pitchVertex = MusicUtil.GetNoteFromPitchSet(pitchSetVertex,
                 GraphUtil.GetIntegerValue(noteEventVertex.Get(false, "Octave:")),
                 GraphUtil.GetIntegerValue(noteEventVertex.Get(false, "Note:")));
 
             string label = pitchVertex.Value.ToString();
 
-            FrameworkElement newItem;
-            
-            if(isDrum)
-                newItem = new DrumItem(noteEventEdge, this, showVelocity);
-            else
-                newItem = new NoteItem(noteEventEdge, label, this, showLabel, showVelocity);
+            FrameworkElement newElement;
+
+            if (isDrum)
+                newElement = new DrumItem(noteEventEdge, this, showVelocity);
+            else                            
+                newElement = new NoteItem(noteEventEdge, label, this, showLabel, showVelocity);            
+
+            IItem newItem = (IItem)newElement;
 
             if (selectedVertexes != null && selectedVertexes.Contains(noteEventVertex))
-                ((IItem)newItem).Select();
+                newItem.Select();
 
             AxisSegment noteSegment = GetPitchSegment(pitchVertex);
 
-            bool dummy = false;
 
-            double startPosition = GraphUtil.GetIntegerValue(noteEventVertex.Get(false, "TriggerTime:"), ref dummy) * TimeSpanAD.BaseUnitSize;
+            double startPosition = triggerTime * TimeSpanAD.BaseUnitSize;
 
-            double endPosition = startPosition + (GraphUtil.GetIntegerValue(noteEventVertex.Get(false, "Length:"), ref dummy) * TimeSpanAD.BaseUnitSize);
+            double endPosition = startPosition + (length * TimeSpanAD.BaseUnitSize);
 
-            WpfUtil.SetPositionAbsolute(newItem, startPosition, noteSegment.StartPosition, endPosition, noteSegment.EndPosition);
 
-            items.Add(newItem);
+            if (isDrum)
+            {
+                newItem.Center = startPosition;
+                newItem.Top = noteSegment.StartPosition;                
+                newItem.Bottom = noteSegment.EndPosition;
+            }
+            else
+            {
+                newItem.Left = startPosition;
+                newItem.Top = noteSegment.StartPosition;
+                newItem.Right = endPosition;
+                newItem.Bottom = noteSegment.EndPosition;
+            }            
 
-            Main.Children.Add(newItem);
+            items.Add(newElement);
+
+            Main.Children.Add(newElement);
         }
 
         void UpdateItem_HorizontalPosition(IItem item)
@@ -1244,7 +1297,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             {
                 UpdateVertexValues();
 
-                SetVertexeVaribles();
+                SetVertexVaribles();
 
                 VisualiserDraw();
             }
