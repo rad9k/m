@@ -40,7 +40,7 @@ namespace m0
 
             IVertex v=VertexOperations.AddInstance(r, r.Get(false, @"System\Lib\Music\Sequence"));
 
-            v.AddVertex(r.Get(false, @"System\Lib\Music\Sequence\IsDrun"), "True");
+            v.AddVertex(r.Get(false, @"System\Lib\Music\Sequence\IsDrum"), "True");
         }
     }
 }

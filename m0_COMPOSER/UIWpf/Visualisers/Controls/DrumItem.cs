@@ -9,6 +9,7 @@ using m0.UIWpf;
 using System.Windows.Media;
 using System.Windows;
 using m0.Graph;
+using System.Windows.Shapes;
 
 namespace m0_COMPOSER.UIWpf.Visualisers.Controls
 {
@@ -18,7 +19,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Controls
 
         public String Label { get; set; }
 
-        public bool CanResizeHorizontally { get { return true; } }
+        public bool CanResizeHorizontally { get { return false; } }
 
         public bool CanResizeVertically { get { return false; } }
 
@@ -28,19 +29,25 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Controls
 
         public bool IsSelected { get { return isSelected; } }
 
-        bool showLabel;
-
         bool showVelocity;
 
         public double HiddenLeft { get; set; }
 
         public double HiddenRight { get; set; }
 
-        public void SetHiddenLefrRightFromReal()
+        public double HiddenTop { get; set; }
+
+        public double HiddenBottom { get; set; }
+
+        public void SetHiddenFromReal()
         {
             HiddenLeft = Canvas.GetLeft(this);
 
             HiddenRight = HiddenLeft + this.Width;
+
+            HiddenTop = Canvas.GetTop(this);
+
+            HiddenBottom = HiddenTop + Height;
         }
 
         public void Select()
@@ -52,17 +59,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Controls
             BorderBrush = (Brush)WpfUtil.FindResource("0HighlightBrush");
 
             if (!showVelocity)
-            {
                 Background = (Brush)WpfUtil.FindResource("0HighlightBrush");
-
-                if (showLabel)
-                    labelControl.Background = (Brush)WpfUtil.FindResource("0HighlightBrush");
-            }
-            else
-            {
-                if (showLabel)
-                    labelControl.Foreground = (Brush)WpfUtil.FindResource("0HighlightBrush");
-            }
         }
 
         public void Unselect()
@@ -74,49 +71,93 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Controls
             BorderBrush = (Brush)WpfUtil.FindResource("0ForegroundBrush");
 
             if (!showVelocity)
-            {
                 Background = (Brush)WpfUtil.FindResource("0LightForegroundBrush");
 
-                if (showLabel)
-                    labelControl.Background = (Brush)WpfUtil.FindResource("0LightForegroundBrush");
-            }
-            else
-            {
-                if (showLabel)
-                    labelControl.Foreground = (Brush)WpfUtil.FindResource("0BackgroundBrush");
-            }
+        }
+        
+        void AddPath()
+        {
+            PathGeometry pathGeometry = new PathGeometry();
+
+            pathGeometry.FillRule = FillRule.Nonzero;
+
+
+
+            PathFigure pathFigure = new PathFigure();
+
+            pathFigure.StartPoint = new Point(50, 0);
+
+            pathFigure.IsClosed = true;
+
+            pathGeometry.Figures.Add(pathFigure);
+
+
+
+            LineSegment lineSegment1 = new LineSegment();
+
+            lineSegment1.Point = new Point(100, 50);
+
+            pathFigure.Segments.Add(lineSegment1);
+
+
+            LineSegment lineSegment2 = new LineSegment();
+
+            lineSegment2.Point = new Point(50, 100);
+
+            pathFigure.Segments.Add(lineSegment2);
+
+
+            LineSegment lineSegment3 = new LineSegment();
+
+            lineSegment3.Point = new Point(0, 50);
+
+            pathFigure.Segments.Add(lineSegment3);
+
+
+            LineSegment lineSegment4 = new LineSegment();
+
+            lineSegment4.Point = new Point(50, 0);
+
+            pathFigure.Segments.Add(lineSegment4);
+
+
+
+
+
+
+
+            Path path = new Path();
+
+            path.Stretch = Stretch.Fill;
+
+            path.StrokeLineJoin = PenLineJoin.Round;
+
+            path.Stroke = new SolidColorBrush(Color.FromRgb(0, 0, 0));
+
+            path.Fill = new SolidColorBrush(Color.FromRgb(170, 87, 170));
+
+            path.StrokeThickness = 2;
+
+            path.Data = pathGeometry;
+
+            this.Child = path;
         }
 
-        TextBlock labelControl;
-
-        public DrumItem(IEdge baseEdge, string label, IZoomScrollViewerHost host, bool _showLabel, bool _showVelocity)
+        public DrumItem(IEdge baseEdge, IZoomScrollViewerHost host, bool _showVelocity)
         {
             BaseEdge = baseEdge;
 
-            Label = label;
-
             Host = host;
-
-            showLabel = _showLabel;
 
             showVelocity = _showVelocity;
 
             //
 
+            AddPath();
+
             RenderOptions.SetEdgeMode(this, EdgeMode.Aliased);
 
-            BorderThickness = new System.Windows.Thickness(2);
-
-            if (showLabel)
-            {
-                labelControl = new TextBlock();
-
-                labelControl.Text = " " + Label;
-
-                labelControl.Foreground = (Brush)WpfUtil.FindResource("0BackgroundBrush");
-
-                this.Child = labelControl;
-            }
+  /*          BorderThickness = new System.Windows.Thickness(2);
 
             Brush backColorBrush = (Brush)WpfUtil.FindResource("0LightForegroundBrush");
 
@@ -129,36 +170,24 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Controls
                     byte color = (byte)(255 - ((int)velocity * 2));
 
                     backColorBrush = new SolidColorBrush(Color.FromRgb(color, color, color));
-
-                    if (color > 127 && showLabel)
-                        labelControl.Foreground = (Brush)WpfUtil.FindResource("0ForegroundBrush");
                 }
             }
 
             Background = backColorBrush;
 
-            if (showLabel)
-                labelControl.Background = backColorBrush;
-
             Unselect();
 
-            this.SizeChanged += NoteItem_SizeChanged;
+            this.SizeChanged += NoteItem_SizeChanged;*/
         }
 
         private void NoteItem_SizeChanged(object sender, System.Windows.SizeChangedEventArgs e)
         {
-            if (showLabel)
-            {
-                if (this.Height > 18 && this.Width > 25)
-                    labelControl.Visibility = System.Windows.Visibility.Visible;
-                else
-                    labelControl.Visibility = System.Windows.Visibility.Hidden;
-            }
+
         }
 
         public void Update()
         {
-            labelControl.Text = " " + Label;
+
         }
     }
 }

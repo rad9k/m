@@ -262,9 +262,10 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             else
                 Length = ExtendTimeLength;
 
-            IVertex isDrumVertex = baseVertex.Get(false, "IsDrum:");
+            
+            bool dummy = false;
 
-          //  if(isDrumVertex)
+            isDrum = GraphUtil.GetBooleanValue(baseVertex.Get(false, "IsDrum:"), ref dummy);
         }
 
         void SaveLength()
@@ -845,9 +846,12 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             {
                 SetCursorMode(CursorModeDetail.ArrowUp);
 
-                UpdateItem_HorizontalPosition(mouseOverItem);
+                foreach (IItem i in GetSelectedAndMouseOverItems())
+                {
+                    UpdateItem_HorizontalPosition(i);
 
-                UpdateItem_VerticalPosition(mouseOverItem);
+                    UpdateItem_VerticalPosition(i);
+                }
             }
         }
 
@@ -952,7 +956,12 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             string label = pitchVertex.Value.ToString();
 
-            NoteItem ni = new NoteItem(noteEventEdge, label, this, showLabel, showVelocity);
+            FrameworkElement newItem;
+            
+            if(isDrum)
+                newItem = new DrumItem(noteEventEdge, this, showVelocity);
+            else
+                newItem = new NoteItem(noteEventEdge, label, this, showLabel, showVelocity);
 
             AxisSegment noteSegment = GetPitchSegment(pitchVertex);
 
@@ -962,11 +971,11 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             double endPosition = startPosition + (GraphUtil.GetIntegerValue(noteEventVertex.Get(false, "Length:"), ref dummy) * TimeSpanAD.BaseUnitSize);
 
-            WpfUtil.SetPositionAbsolute(ni, startPosition, noteSegment.StartPosition, endPosition, noteSegment.EndPosition);
+            WpfUtil.SetPositionAbsolute(newItem, startPosition, noteSegment.StartPosition, endPosition, noteSegment.EndPosition);
 
-            items.Add(ni);
+            items.Add(newItem);
 
-            Main.Children.Add(ni);
+            Main.Children.Add(newItem);
         }
 
         void UpdateItem_HorizontalPosition(IItem item)
