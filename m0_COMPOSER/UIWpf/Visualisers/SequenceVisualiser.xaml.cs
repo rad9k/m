@@ -134,7 +134,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             mouseOverItem = item;
             mouseOverItem_Element = (FrameworkElement)item;
-            mouseOverItem_startLeft = Canvas.GetLeft(mouseOverItem_Element);
+            mouseOverItem_startLeft = item.Left;
         }
 
         void SetCursorMode(CursorModeDetail modeDetail)
@@ -497,7 +497,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             IEdge newNoteEventEdge = AddNoteEventEdge(newNoteSegment, Canvas.GetLeft(newNoteShape), newNoteShape.Width);
 
-            AddItem(newNoteEventEdge);
+            AddItem(newNoteEventEdge, null);
 
             VertexChangeOff = false;
         }
@@ -548,7 +548,17 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             }
         }
 
-        List<IItem> GetSelectedItems()
+        List<IVertex> GetSelectedVertexes()
+        {
+            List<IVertex> selectedVertexes = new List<IVertex>();
+
+            foreach (IEdge e in Vertex.GetAll(false, @"SelectedEdges:\\To:"))
+                selectedVertexes.Add(e.To);
+
+            return selectedVertexes;
+        }
+
+            List<IItem> GetSelectedItems()
         {
             List<IVertex> selectedVertexes = new List<IVertex>();
 
@@ -619,7 +629,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
                 if (delta + getSnapMinmalWidth() >= element.Width)
                     return;
 
-                double orginalX = Canvas.GetLeft(element);
+                double orginalX = item.Left;
 
                 item.HiddenLeft += delta;
 
@@ -627,7 +637,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
                 if(newX != orginalX)
                 {
-                    Canvas.SetLeft(element, newX);
+                    item.Left = newX;                    
 
                     element.Width = item.HiddenRight - newX; 
                 }
@@ -637,14 +647,14 @@ namespace m0_COMPOSER.UIWpf.Visualisers
                 if (element.Width + delta - getSnapMinmalWidth() <= 0)
                     return;
 
-                double orginalX = Canvas.GetLeft(element) + element.Width;
+                double orginalX = item.Right;
 
                 item.HiddenRight += delta;
 
                 double newX = GetSnappedPosition(item.HiddenRight);
 
                 if (newX != orginalX)
-                    element.Width = newX - Canvas.GetLeft(element);
+                    element.Width = newX - item.Left;
             }
         }
 
@@ -661,8 +671,8 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             double newValue = GetSnappedPosition(item.HiddenLeft);
 
-            if(newValue != Canvas.GetLeft(element))
-                Canvas.SetLeft(element, newValue);
+            if (newValue != item.Left)
+                item.Left = newValue;                
 
             // right
 
@@ -670,8 +680,8 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             newValue = GetSnappedPosition(item.HiddenRight);
 
-            if (newValue != Canvas.GetLeft(element) + element.Width)
-                Canvas.SetLeft(element, newValue - element.Width);
+            if (newValue != item.Right)
+                item.Right = newValue;
 
             // top / bottom
 
@@ -680,8 +690,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             AxisSegment newSegment = FindVerticalSegment(item.HiddenTop);
 
-            Canvas.SetTop(element, newSegment.StartPosition);
-
+            item.Top = newSegment.StartPosition;            
         }
 
         void ArrowMove_DownMoveOnItemLeftRight(object sender, MouseEventArgs e)
@@ -756,19 +765,15 @@ namespace m0_COMPOSER.UIWpf.Visualisers
                 if (element.Width < HorizontalNoteMoveLeftRightSpan_ItemSizeSmallBoundary)
                     HorizontalNoteMoveLeftRightSpan = 0;
 
-                IItem item = (IItem)element;
+                IItem item = (IItem)element;                
 
-                double e_Left = Canvas.GetLeft(element);
-
-                double e_Right = e_Left + element.Width;
-
-                if (currentMousePosition.X >= e_Left && currentMousePosition.X <= (e_Left + HorizontalNoteMoveLeftRightSpan))
+                if (currentMousePosition.X >= item.Left && currentMousePosition.X <= (item.Left + HorizontalNoteMoveLeftRightSpan))
                 {
                     ArrowMove_ArrowUp_SetMouseCurrentItem(item, CursorModeDetail.ArrowUp_MoveOnItem_Left);
                     return;
                 }
 
-                if (currentMousePosition.X >= (e_Right - HorizontalNoteMoveLeftRightSpan) && currentMousePosition.X <= e_Right)
+                if (currentMousePosition.X >= (item.Right - HorizontalNoteMoveLeftRightSpan) && currentMousePosition.X <= item.Right)
                 {
                     ArrowMove_ArrowUp_SetMouseCurrentItem(item, CursorModeDetail.ArrowUp_MoveOnItem_Right);
                     return;
@@ -946,7 +951,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             return null;
         }
 
-        void AddItem(IEdge noteEventEdge)
+        void AddItem(IEdge noteEventEdge, List<IVertex> selectedVertexes)
         {
             IVertex noteEventVertex = noteEventEdge.To;
 
@@ -962,6 +967,9 @@ namespace m0_COMPOSER.UIWpf.Visualisers
                 newItem = new DrumItem(noteEventEdge, this, showVelocity);
             else
                 newItem = new NoteItem(noteEventEdge, label, this, showLabel, showVelocity);
+
+            if (selectedVertexes != null && selectedVertexes.Contains(noteEventVertex))
+                ((IItem)newItem).Select();
 
             AxisSegment noteSegment = GetPitchSegment(pitchVertex);
 
@@ -993,10 +1001,9 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             IVertex noteEventVertex = item.BaseEdge.To;
 
-            double itemLeft = Canvas.GetLeft(element);
             double itemWidth = element.Width;
 
-            int TriggerTime = (int) (itemLeft / TimeSpanAD.BaseUnitSize);
+            int TriggerTime = (int) (item.Left / TimeSpanAD.BaseUnitSize);
 
             int Length = (int) (itemWidth / TimeSpanAD.BaseUnitSize);
 
@@ -1019,7 +1026,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             IVertex noteEventVertex = item.BaseEdge.To;
 
-            AxisSegment segment = FindVerticalSegment(Canvas.GetTop(element) + 1);
+            AxisSegment segment = FindVerticalSegment(item.Top + 1);
 
             IVertex octaveVertex = segment.BaseVertex.Get(false, "Octave:");
             IVertex noteVertex = segment.BaseVertex.Get(false, "Note:");
@@ -1116,7 +1123,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             GraphUtil.RemoveAllEdges(sv);
 
             TurnOnSelectedEdgesFireChange();         
-        }        
+        }
 
         public void DrawLines()
         {
@@ -1157,8 +1164,10 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
         public void DrawNotes()
         {
+            List<IVertex> selectedVertexes = GetSelectedVertexes();
+
             foreach (IEdge e in baseVertex.GetAll(false, "NoteEvent:"))
-                AddItem(e);
+                AddItem(e, selectedVertexes);
         }
 
         void InitSequenceVisualierState()

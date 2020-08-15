@@ -14,6 +14,8 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
         bool IsSelected { get; }
 
+        bool IsCentered { get; }
+
         string Label { set; }
 
         bool CanResizeHorizontally { get; }
@@ -32,11 +34,23 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
         double HiddenRight { get; set; }
 
+        double HiddenCenter { get; set; }
+
         double HiddenTop { get; set; }
 
         double HiddenBottom { get; set; }
 
         void SetHiddenFromReal();
-        
+
+        double Left { get; set; }
+
+        double Right { get; set; }
+
+        double Center { get; set; }
+
+        double Top { get; set; }
+
+        double Bottom { get; set; }
+
     }
 }

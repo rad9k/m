@@ -17,7 +17,9 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Controls
     {
         public IEdge BaseEdge { get; set; }
 
-        public String Label { get; set; }
+        public bool IsCentered { get { return false; } }
+
+        public String Label { get; set; }        
 
         public bool CanResizeHorizontally { get { return true; } }
 
@@ -36,6 +38,8 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Controls
         public double HiddenLeft { get; set; }
 
         public double HiddenRight { get; set; }
+
+        public double HiddenCenter { get; set; }
 
         public double HiddenTop { get; set; }
 
@@ -168,6 +172,30 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Controls
         public void Update()
         {
             labelControl.Text = " " + Label;
+        }
+
+        public double Left {
+            get { return Canvas.GetLeft(this); }
+            set { Canvas.SetLeft(this, value); }
+        }
+
+        public double Right {
+            get { return Left + Width; }
+            set { Width = value - Left; }
+        }
+
+        public double Center { get; set; }
+
+        public double Top
+        {
+            get { return Canvas.GetTop(this); }
+            set { Canvas.SetTop(this, value); }
+        }
+
+        public double Bottom
+        {
+            get { return Top + Height; }
+            set { Height = value - Top; }
         }
     }
 }
