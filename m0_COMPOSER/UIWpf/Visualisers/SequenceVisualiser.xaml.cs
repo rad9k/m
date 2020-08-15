@@ -39,6 +39,8 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
         //
 
+        bool isCurrentPenItemCenter;
+
         bool showLabel;
                         
         Canvas Main;
@@ -266,6 +268,9 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             bool dummy = false;
 
             isDrum = GraphUtil.GetBooleanValue(baseVertex.Get(false, "IsDrum:"), ref dummy);
+
+            if (isDrum)
+                isCurrentPenItemCenter = true;
         }
 
         void SaveLength()
@@ -445,6 +450,9 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             //
 
+            if (isCurrentPenItemCenter)
+                return;
+
             newNoteShape = new Border();
 
             newNoteShape.Background = (Brush)FindResource("0HighlightBrush");
@@ -460,6 +468,9 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
         void PenMove_PenDown(object sender, MouseEventArgs e)
         {
+            if (isCurrentPenItemCenter)
+                return;
+
             double left, right;
 
             Point currentMousePosition = GetMainContentMousePosition(e);
