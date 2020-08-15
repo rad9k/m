@@ -31,14 +31,20 @@ namespace m0_COMPOSER.UIWpf.Visualisers
     /// </summary>
     public partial class SequenceVisualiser : UserControl, IPlatformClass, IOwnScrolling, IZoomScrollViewerHost
     {
-        bool showLabel;
+        // sequencer specyfic
+
         bool showVelocity;
         int defaultVelocity;
-        
+        bool isDrum;
+
+        //
+
+        bool showLabel;
+                        
         Canvas Main;
         SelectionArea SelectionArea;
 
-        IVertex SequenceVertex;
+        IVertex BaseEdgeToVertex;
 
         IVertex baseVertex;
         IVertex pitchSetVertex;
@@ -206,7 +212,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             if (baseVertex == null || isLoaded == false)
                 return;
 
-            SetupParameters();
+            SetupLocalVariablesFromBaseVertexVertexes();
 
             SetAxisDecorators();
 
@@ -217,7 +223,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             DrawMain();
         }
 
-        void SetVertexes()
+        void SetVertexeVaribles()
         {
             baseVertex = Vertex.Get(false, @"BaseEdge:\To:");
 
@@ -244,7 +250,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
         }
 
-        void SetupParameters()
+        void SetupLocalVariablesFromBaseVertexVertexes()
         {
             if (baseVertex.Get(false, "Length:") != null)
                 ExtendTimeLength = (int)GraphUtil.GetIntegerValue(baseVertex.Get(false, "ExtendTimeLength:"));
@@ -255,11 +261,15 @@ namespace m0_COMPOSER.UIWpf.Visualisers
                 Length = (int)GraphUtil.GetIntegerValue(baseVertex.Get(false, "Length:"));
             else
                 Length = ExtendTimeLength;
+
+            IVertex isDrumVertex = baseVertex.Get(false, "IsDrum:");
+
+          //  if(isDrumVertex)
         }
 
         void SaveLength()
         {
-            GraphUtil.SetVertexValue(baseVertex, SequenceVertex.Get(false, "Length"), Length);
+            GraphUtil.SetVertexValue(baseVertex, BaseEdgeToVertex.Get(false, "Length"), Length);
         }
 
         void SetAxisDecorators()
@@ -1096,7 +1106,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             MinusZero mz = MinusZero.Instance;
 
-            SequenceVertex = mz.root.Get(false, @"System\Lib\Music\Class:Sequence");
+            BaseEdgeToVertex = mz.root.Get(false, @"System\Lib\Music\Class:Sequence");
 
             this.Foreground = (Brush)FindResource("0ForegroundBrush");
             this.Background = (Brush)FindResource("0BackgroundBrush");
@@ -1144,7 +1154,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             {
                 UpdateVertexValues();
 
-                SetVertexes();
+                SetVertexeVaribles();
 
                 VisualiserDraw();
             }

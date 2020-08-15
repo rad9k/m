@@ -38,7 +38,9 @@ namespace m0
         {
             IVertex r = MinusZero.Instance.root;
 
-            VertexOperations.AddInstance(r, r.Get(false, @"System\Lib\Music\Sequence"));
+            IVertex v=VertexOperations.AddInstance(r, r.Get(false, @"System\Lib\Music\Sequence"));
+
+            v.AddVertex(r.Get(false, @"System\Lib\Music\Sequence\IsDrun"), "True");
         }
     }
 }
