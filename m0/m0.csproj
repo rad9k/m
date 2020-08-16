@@ -138,6 +138,9 @@
     </Compile>
     <Compile Include="UIWpf\Commands\BaseCommands.cs" />
     <Compile Include="UIWpf\Commands\Dnd.cs" />
+    <Compile Include="UIWpf\Controls\AnimatedHideArea.xaml.cs">
+      <DependentUpon>AnimatedHideArea.xaml</DependentUpon>
+    </Compile>
     <Compile Include="UIWpf\Controls\ArrowEnds.cs" />
     <Compile Include="UIWpf\Controls\ArrowLine.cs" />
     <Compile Include="UIWpf\Controls\ArrowLineBase.cs" />
@@ -331,6 +334,10 @@
       <DependentUpon>m0Main.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="UIWpf\Controls\AnimatedHideArea.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="UIWpf\Dialog\ExecuteDialog.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>

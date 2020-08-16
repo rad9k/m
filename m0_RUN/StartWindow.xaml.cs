@@ -42,5 +42,11 @@ namespace m0
 
             v.AddVertex(r.Get(false, @"System\Lib\Music\Sequence\IsDrum"), "True");
         }
+
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+            m0_RUN.AltWindow w = new m0_RUN.AltWindow();
+            w.Show();
+        }
     }
 }
