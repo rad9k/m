@@ -4,9 +4,28 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:m0_RUN"
+        xmlns:m="clr-namespace:m0.UIWpf.Controls;assembly=m0"
         mc:Ignorable="d"
-        Title="AltWindow" Height="300" Width="300">
-    <Grid>
-        
+        Title="AltWindow" Height="300" Width="300" Closing="Window_Closing">
+    <Grid Name="Grid">
+        <Grid.RowDefinitions>
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="5" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+
+            <Button Height="500" Grid.Row="0">AAAA</Button>
+          
+        <GridSplitter Grid.Row="1" Height="5" HorizontalAlignment="Stretch" />
+        <m:AnimatedHideArea Grid.Row="2" >
+            <StackPanel >
+                <Button >XXX</Button>
+                <Button SizeChanged="AnimatedHideArea_SizeChanged">XXX</Button>
+                <Button>XXX</Button>
+                <Button>XXX</Button>
+                <Button>XXX</Button>
+                <Button>XXX</Button>
+            </StackPanel>
+        </m:AnimatedHideArea>
     </Grid>
 </Window>

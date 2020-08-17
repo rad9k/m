@@ -15,35 +15,43 @@ using System.Windows.Shapes;
 namespace m0_RUN
 {
     /// <summary>
-    /// Interaction logic for AltWindow.xaml
+    /// Interaction logic for AltWindow2.xaml
     /// </summary>
-    public partial class AltWindow : Window
+    public partial class AltWindow2 : Window
     {
-        public AltWindow()
+        public AltWindow2()
         {
             InitializeComponent();
         }
 
         string a = "";
 
-        //int cnt = 0;
+        FrameworkElement but;
 
-        private void AnimatedHideArea_SizeChanged(object sender, SizeChangedEventArgs e)
+        private void Button_SizeChanged(object sender, SizeChangedEventArgs e)
         {
-            //Grid.RowDefinitions[2].Height = new GridLength(e.NewSize.Height);
+            int x = 0;
 
-            //a =  a + (cnt.ToString() + " " + e.NewSize.Height + "\n");
+            //but = (FrameworkElement)sender;
+        }
 
-            a += e.NewSize.Height + "\n";
-
-            //       cnt++;
-
-        //    e.Handled = true;
+        private void Button_LayoutUpdated(object sender, EventArgs e)
+        {
+            int x = 0;
+            
+            a += but.Height + "\n";
         }
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
             int x = 0;
+        }
+
+        private void StackPanel_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            int x = 0;
+
+            but = (FrameworkElement)sender;
         }
     }
 }

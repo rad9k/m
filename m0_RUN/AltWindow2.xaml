@@ -1,0 +1,25 @@
+﻿<Window x:Class="m0_RUN.AltWindow2"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:m0_RUN"
+        mc:Ignorable="d"
+        Title="AltWindow2" Height="300" Width="300"
+        xmlns:m="clr-namespace:m0.UIWpf.Controls;assembly=m0"
+        Closing="Window_Closing"
+        >
+    <StackPanel SizeChanged="StackPanel_SizeChanged">
+        <Button>1</Button>
+        <m:AnimatedHideArea>
+            <StackPanel>
+            <Button>a</Button>
+            <Button SizeChanged="Button_SizeChanged">XXX</Button>
+            <Button>a</Button>
+            <Button>a</Button>
+            <Button>a</Button>
+            </StackPanel>
+        </m:AnimatedHideArea>
+        <Button LayoutUpdated="Button_LayoutUpdated" >2</Button>
+    </StackPanel>
+</Window>
