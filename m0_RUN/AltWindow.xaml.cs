@@ -45,5 +45,25 @@ namespace m0_RUN
         {
             int x = 0;
         }
+
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+            ((Button)sender).Height += 100;
+        }
+
+        private void GridSplitter_DragDelta(object sender, System.Windows.Controls.Primitives.DragDeltaEventArgs e)
+        {
+            double a = Grid.RowDefinitions[2].Height.Value;
+
+            l.Height = a;
+
+            Grid.RowDefinitions[2].Height = new GridLength(0, GridUnitType.Auto);
+        }
+
+        Button l;
+        private void Button_Loaded(object sender, RoutedEventArgs e)
+        {
+            l = (Button)sender;
+        }
     }
 }

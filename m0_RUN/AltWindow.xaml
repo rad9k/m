@@ -11,20 +11,15 @@
         <Grid.RowDefinitions>
                     <RowDefinition Height="*" />
                     <RowDefinition Height="5" />
-                    <RowDefinition Height="*" />
+                    <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
 
             <Button Height="500" Grid.Row="0">AAAA</Button>
           
-        <GridSplitter Grid.Row="1" Height="5" HorizontalAlignment="Stretch" />
+        <GridSplitter Grid.Row="1" Height="5" HorizontalAlignment="Stretch" DragDelta="GridSplitter_DragDelta" />
         <m:AnimatedHideArea Grid.Row="2" >
             <StackPanel >
-                <Button >XXX</Button>
-                <Button SizeChanged="AnimatedHideArea_SizeChanged">XXX</Button>
-                <Button>XXX</Button>
-                <Button>XXX</Button>
-                <Button>XXX</Button>
-                <Button>XXX</Button>
+                <Button Loaded="Button_Loaded">XXX</Button>
             </StackPanel>
         </m:AnimatedHideArea>
     </Grid>

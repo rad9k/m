@@ -9,17 +9,20 @@
         xmlns:m="clr-namespace:m0.UIWpf.Controls;assembly=m0"
         Closing="Window_Closing"
         >
-    <StackPanel SizeChanged="StackPanel_SizeChanged">
-        <Button>1</Button>
-        <m:AnimatedHideArea>
+    <DockPanel SizeChanged="StackPanel_SizeChanged" >
+        <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" DockPanel.Dock="Top">
+
+            <Button Width="300" Height="300"/>
+
+        </ScrollViewer>
+        <m:AnimatedHideArea DockPanel.Dock="Bottom">
             <StackPanel>
-            <Button>a</Button>
-            <Button SizeChanged="Button_SizeChanged">XXX</Button>
-            <Button>a</Button>
-            <Button>a</Button>
-            <Button>a</Button>
+                <Button>a</Button>
+                <Button SizeChanged="Button_SizeChanged">XXX</Button>
+                <Button>a</Button>
+                <Button>a</Button>
+                <Button>a</Button>
             </StackPanel>
         </m:AnimatedHideArea>
-        <Button LayoutUpdated="Button_LayoutUpdated" >2</Button>
-    </StackPanel>
+    </DockPanel>
 </Window>
