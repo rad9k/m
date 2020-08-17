@@ -5,7 +5,8 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:m0_COMPOSER.UIWpf.Visualisers.Controls"
              mc:Ignorable="d" 
-             d:DesignHeight="300" d:DesignWidth="300">
+             d:DesignHeight="300" d:DesignWidth="300"
+             xmlns:m="clr-namespace:m0.UIWpf.Controls;assembly=m0">
     <Grid>
         <ScrollViewer x:Name="Scroll"  HorizontalScrollBarVisibility="Visible" VerticalScrollBarVisibility="Visible" Loaded="Scroll_Loaded" ScrollChanged="Scroll_ScrollChanged">
             <ScrollViewer.Template>
@@ -25,22 +26,24 @@
                             <RowDefinition Height="18px"/>
                             <RowDefinition Height="80px"/>
                             <RowDefinition Height="15px"/>
+                            <RowDefinition Height="5px"/>
+                            <RowDefinition Height="Auto"/>
                             <RowDefinition Height="Auto"/>
                         </Grid.RowDefinitions>
                         <ScrollViewer Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="4" x:Name="HorizontalAxisDecoratorScrollViewer" HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Hidden"/>
                         <ScrollViewer Grid.Row="1" Grid.Column="0" Grid.RowSpan="4" x:Name="VerticalAxisDecoratorScrollViewer"  HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Hidden"/>
-                        <Rectangle Grid.Column="5"  Grid.Row="5" x:Name="Corner"/>
+                        <Rectangle Grid.Column="5"  Grid.Row="7" x:Name="Corner"/>
                         <ScrollContentPresenter Grid.Column="1"  Grid.Row="1" Grid.ColumnSpan="4" Grid.RowSpan="4" x:Name="PART_ScrollContentPresenter" CanContentScroll="{TemplateBinding CanContentScroll}" CanHorizontallyScroll="False" CanVerticallyScroll="False" ContentTemplate="{TemplateBinding ContentTemplate}" Content="{TemplateBinding Content}"  Margin="{TemplateBinding Padding}"/>
                         <ScrollBar Grid.Row="1"  Grid.Column="5" x:Name="PART_VerticalScrollBar" AutomationProperties.AutomationId="VerticalScrollBar" Cursor="Arrow" Maximum="{TemplateBinding ScrollableHeight}" Minimum="0" Visibility="{TemplateBinding ComputedVerticalScrollBarVisibility}" Value="{Binding VerticalOffset, Mode=OneWay, RelativeSource={RelativeSource TemplatedParent}}" ViewportSize="{TemplateBinding ViewportHeight}"/>
-                        <ScrollBar Grid.Row="5" Grid.Column="1" x:Name="PART_HorizontalScrollBar"  AutomationProperties.AutomationId="HorizontalScrollBar" Cursor="Arrow" Maximum="{TemplateBinding ScrollableWidth}" Minimum="0" Orientation="Horizontal" Visibility="{TemplateBinding ComputedHorizontalScrollBarVisibility}" Value="{Binding HorizontalOffset, Mode=OneWay, RelativeSource={RelativeSource TemplatedParent}}" ViewportSize="{TemplateBinding ViewportWidth}"/>
-                        <Slider Grid.Column="3" Grid.Row="5" x:Name="HorizontalZoomSlider" Margin="0,2,0,0" Maximum="100" Value="50" TickFrequency="10" TickPlacement="BottomRight" ValueChanged="HorizontalZoomSlider_ValueChanged" />
+                        <ScrollBar Grid.Row="7" Grid.Column="1" x:Name="PART_HorizontalScrollBar"  AutomationProperties.AutomationId="HorizontalScrollBar" Cursor="Arrow" Maximum="{TemplateBinding ScrollableWidth}" Minimum="0" Orientation="Horizontal" Visibility="{TemplateBinding ComputedHorizontalScrollBarVisibility}" Value="{Binding HorizontalOffset, Mode=OneWay, RelativeSource={RelativeSource TemplatedParent}}" ViewportSize="{TemplateBinding ViewportWidth}"/>
+                        <Slider Grid.Column="3" Grid.Row="7" x:Name="HorizontalZoomSlider" Margin="0,2,0,0" Maximum="100" Value="50" TickFrequency="10" TickPlacement="BottomRight" ValueChanged="HorizontalZoomSlider_ValueChanged" />
                         <Slider Grid.Column="5" Grid.Row="3" x:Name="VerticalZoomSlider" Margin="2,0,0,0" Maximum="100" Value="50" TickFrequency="10" TickPlacement="BottomRight" Orientation="Vertical" ValueChanged="VerticalZoomSlider_ValueChanged"/>
 
-                        <Button Grid.Column="2" Grid.Row="5" BorderThickness="0" Padding="0" Style="{StaticResource TransparentStyle}" Click="HorizontalOut">
-                            <Image Margin="3,0,3,0" RenderOptions.BitmapScalingMode="HighQuality" Source="pack://application:,,/m0;Component/_resources/basic/zoom-out.png"/>    
+                        <Button Grid.Column="2" Grid.Row="7" BorderThickness="0" Padding="0" Style="{StaticResource TransparentStyle}" Click="HorizontalOut">
+                            <Image Margin="3,0,3,0" RenderOptions.BitmapScalingMode="HighQuality" Source="pack://application:,,/m0;Component/_resources/basic/zoom-out.png"/>
                         </Button>
 
-                        <Button Grid.Column="4" Grid.Row="5" BorderThickness="0" Padding="0" Style="{StaticResource TransparentStyle}" Click="HorizontalIn">
+                        <Button Grid.Column="4" Grid.Row="7" BorderThickness="0" Padding="0" Style="{StaticResource TransparentStyle}" Click="HorizontalIn">
                             <Image Margin="3,0,0,0" RenderOptions.BitmapScalingMode="HighQuality" Source="pack://application:,,/m0;Component/_resources/basic/zoom-in.png"/>
                         </Button>
 
@@ -51,7 +54,23 @@
                         <Button Grid.Column="5" Grid.Row="2" BorderThickness="0" Padding="0" Style="{StaticResource TransparentStyle}" Click="VerticalIn">
                             <Image Margin="0,3,0,3" RenderOptions.BitmapScalingMode="HighQuality" Source="pack://application:,,/m0;Component/_resources/basic/zoom-in.png"/>
                         </Button>
-                                                                                             
+
+
+
+                        <GridSplitter  Grid.Row="5" Height="5" Grid.Column="0" Grid.ColumnSpan="5" HorizontalAlignment="Stretch" Background="Beige" ResizeDirection="Columns"/>
+
+              <!--          <StackPanel Grid.Row="5" Height="5" Grid.Column="0" Grid.ColumnSpan="5" HorizontalAlignment="Center" Orientation="Horizontal" Background="Aquamarine">
+                            <Ellipse Height="3" Width="3" Fill="Black" Margin="1,0,1,0"/>
+                            <Ellipse Height="3" Width="3" Fill="Black" Margin="1,0,1,0"/>
+                            <Ellipse Height="3" Width="3" Fill="Black" Margin="1,0,1,0"/>
+                        </StackPanel>-->
+
+                        <m:AnimatedHideArea Grid.Row="6" Grid.Column="0" Grid.ColumnSpan="5" >
+                            <StackPanel >
+                                <Button>XXX</Button>
+                            </StackPanel>
+                        </m:AnimatedHideArea>
+
                     </Grid>
                 </ControlTemplate>
             </ScrollViewer.Template>

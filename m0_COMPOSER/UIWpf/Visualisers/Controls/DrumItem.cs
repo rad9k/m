@@ -66,6 +66,8 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Controls
         {
             isSelected = true;
 
+            path.StrokeThickness = 3;
+
             SetBorder((Brush)WpfUtil.FindResource("0HighlightBrush"));
 
             if (!showVelocity)
@@ -75,6 +77,8 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Controls
         public void Unselect()
         {
             isSelected = false;
+
+            path.StrokeThickness = 2;
 
             SetBorder((Brush)WpfUtil.FindResource("0ForegroundBrush"));
 

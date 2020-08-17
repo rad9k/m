@@ -19,6 +19,8 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Controls
         public Size Size { get; set; }
         public List<AxisSegment> Segments { get; set; }
 
+        public int BoldLineCount;
+
         public double BaseUnitSize {
             get{
                 return baseUnitSize;
@@ -213,7 +215,15 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Controls
                 //
 
                 if (nextUnitBaseCount == 0)                
-                    segment.LineStyle.StrokeThickness = 3;                                                
+                    segment.LineStyle.StrokeThickness = 3;
+                else
+                {
+                    if (BoldLineCount != 0)
+                        if (nextUnitBaseCount % BoldLineCount != 0)
+                            segment.LineStyle.Stroke = (Brush)WpfUtil.FindResource("0LightForegroundBrush");
+                        else
+                            segment.LineStyle.StrokeThickness = 2;
+                }
 
                 nextUnitBaseCount++;
 

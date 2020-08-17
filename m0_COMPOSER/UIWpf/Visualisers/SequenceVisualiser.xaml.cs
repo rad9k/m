@@ -305,7 +305,10 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             VerticalAD.SetBaseVertex(pitchSetVertex);
 
 
-            HorizontalAD = new TimeSpanAxisDecorator();
+            TimeSpanAxisDecorator TimeSpanAD = new TimeSpanAxisDecorator();
+            TimeSpanAD.BoldLineCount = 4;
+
+            HorizontalAD = TimeSpanAD;
 
             HorizontalAD.SetBaseVertex(timeSpanVertex);
 
@@ -760,7 +763,8 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             AxisSegment newSegment = FindVerticalSegment(item.HiddenTop);
 
-            item.Top = newSegment.StartPosition;            
+            if(newSegment != null)
+                item.Top = newSegment.StartPosition;            
         }
 
         void ArrowMove_DownMoveOnItemLeftRight(object sender, MouseEventArgs e)

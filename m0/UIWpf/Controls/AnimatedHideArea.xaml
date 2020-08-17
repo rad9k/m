@@ -167,7 +167,7 @@
                                 <DoubleAnimation Storyboard.TargetName="Arrow"
                                                  Storyboard.TargetProperty="(Path.RenderTransform).(RotateTransform.Angle)"
                                                  To="180"
-                                                 Duration="0:0:2"/>
+                                                 Duration="0:0:0.2"/>
                             </Storyboard>
                         </BeginStoryboard>
                     </Trigger.EnterActions>
@@ -177,7 +177,7 @@
                                 <DoubleAnimation Storyboard.TargetName="Arrow"
                                                  Storyboard.TargetProperty="(Path.RenderTransform).(RotateTransform.Angle)"
                                                  To="0"
-                                                 Duration="0:0:2"/>
+                                                 Duration="0:0:0.2"/>
                             </Storyboard>
                         </BeginStoryboard>
                     </Trigger.ExitActions>
@@ -237,7 +237,7 @@
                                 <DoubleAnimation Storyboard.TargetName="ExpanderContent"
                                                  Storyboard.TargetProperty="(ContentPresenter.LayoutTransform).(ScaleTransform.ScaleY)"                                                 
                                                  To="1"
-                                                 Duration="0:0:2"/>
+                                                 Duration="0:0:0.2"/>
                             </Storyboard>
                         </BeginStoryboard>
                     </Trigger.EnterActions>
@@ -247,7 +247,7 @@
                                 <DoubleAnimation Storyboard.TargetName="ExpanderContent"
                                                  Storyboard.TargetProperty="(ContentPresenter.LayoutTransform).(ScaleTransform.ScaleY)"
                                                  To="0"
-                                                 Duration="0:0:2"/>
+                                                 Duration="0:0:0.2"/>
                             </Storyboard>
                         </BeginStoryboard>
                     </Trigger.ExitActions>
