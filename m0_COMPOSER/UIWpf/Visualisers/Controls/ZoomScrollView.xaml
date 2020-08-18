@@ -56,14 +56,13 @@
                         </Button>
 
 
-
-                        <GridSplitter  Grid.Row="5" Height="5" Grid.Column="0" Grid.ColumnSpan="5" HorizontalAlignment="Stretch" Background="Beige" ResizeDirection="Rows" ResizeBehavior="CurrentAndNext"/>
-
-              <!--          <StackPanel Grid.Row="5" Height="5" Grid.Column="0" Grid.ColumnSpan="5" HorizontalAlignment="Center" Orientation="Horizontal" Background="Aquamarine">
-                            <Ellipse Height="3" Width="3" Fill="Black" Margin="1,0,1,0"/>
-                            <Ellipse Height="3" Width="3" Fill="Black" Margin="1,0,1,0"/>
-                            <Ellipse Height="3" Width="3" Fill="Black" Margin="1,0,1,0"/>
-                        </StackPanel>-->
+                        <Border Grid.Row="5" Height="5" Grid.Column="0" Grid.ColumnSpan="5" HorizontalAlignment="Stretch" Background="Aquamarine" >
+                            <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
+                                <Ellipse Height="3" Width="3" Fill="Black" Margin="1,0,1,0"/>
+                                <Ellipse Height="3" Width="3" Fill="Black" Margin="1,0,1,0"/>
+                                <Ellipse Height="3" Width="3" Fill="Black" Margin="1,0,1,0"/>
+                            </StackPanel>
+                        </Border>
 
                         <m:AnimatedHideArea Grid.Row="6" Grid.Column="0" Grid.ColumnSpan="5" >
                             <StackPanel >
