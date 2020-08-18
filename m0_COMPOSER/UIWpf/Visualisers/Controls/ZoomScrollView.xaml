@@ -32,7 +32,7 @@
                         </Grid.RowDefinitions>
                         <ScrollViewer Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="4" x:Name="HorizontalAxisDecoratorScrollViewer" HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Hidden"/>
                         <ScrollViewer Grid.Row="1" Grid.Column="0" Grid.RowSpan="4" x:Name="VerticalAxisDecoratorScrollViewer"  HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Hidden"/>
-                        <Rectangle Grid.Column="5"  Grid.Row="7" x:Name="Corner"/>
+          
                         <ScrollContentPresenter Grid.Column="1"  Grid.Row="1" Grid.ColumnSpan="4" Grid.RowSpan="4" x:Name="PART_ScrollContentPresenter" CanContentScroll="{TemplateBinding CanContentScroll}" CanHorizontallyScroll="False" CanVerticallyScroll="False" ContentTemplate="{TemplateBinding ContentTemplate}" Content="{TemplateBinding Content}"  Margin="{TemplateBinding Padding}"/>
                         <ScrollBar Grid.Row="1"  Grid.Column="5" x:Name="PART_VerticalScrollBar" AutomationProperties.AutomationId="VerticalScrollBar" Cursor="Arrow" Maximum="{TemplateBinding ScrollableHeight}" Minimum="0" Visibility="{TemplateBinding ComputedVerticalScrollBarVisibility}" Value="{Binding VerticalOffset, Mode=OneWay, RelativeSource={RelativeSource TemplatedParent}}" ViewportSize="{TemplateBinding ViewportHeight}"/>
                         <ScrollBar Grid.Row="7" Grid.Column="1" x:Name="PART_HorizontalScrollBar"  AutomationProperties.AutomationId="HorizontalScrollBar" Cursor="Arrow" Maximum="{TemplateBinding ScrollableWidth}" Minimum="0" Orientation="Horizontal" Visibility="{TemplateBinding ComputedHorizontalScrollBarVisibility}" Value="{Binding HorizontalOffset, Mode=OneWay, RelativeSource={RelativeSource TemplatedParent}}" ViewportSize="{TemplateBinding ViewportWidth}"/>
@@ -57,7 +57,7 @@
 
 
 
-                        <GridSplitter  Grid.Row="5" Height="5" Grid.Column="0" Grid.ColumnSpan="5" HorizontalAlignment="Stretch" Background="Beige" ResizeDirection="Columns"/>
+                        <GridSplitter  Grid.Row="5" Height="5" Grid.Column="0" Grid.ColumnSpan="5" HorizontalAlignment="Stretch" Background="Beige" ResizeDirection="Rows" ResizeBehavior="CurrentAndNext"/>
 
               <!--          <StackPanel Grid.Row="5" Height="5" Grid.Column="0" Grid.ColumnSpan="5" HorizontalAlignment="Center" Orientation="Horizontal" Background="Aquamarine">
                             <Ellipse Height="3" Width="3" Fill="Black" Margin="1,0,1,0"/>

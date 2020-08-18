@@ -261,7 +261,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             if (pitchSetVertex == null)
                 if(isDrum)
-                    pitchSetVertex = r.Get(false, @"System\Lib\Music\Data\DefaultDrumSet:");
+                    pitchSetVertex = r.Get(false, @"System\Lib\Music\Data\DefaultDrumPitchSet:");
                 else
                     pitchSetVertex = r.Get(false, @"System\Lib\Music\Data\DefaultPitchSet:");
 

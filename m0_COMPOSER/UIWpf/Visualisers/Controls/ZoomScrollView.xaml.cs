@@ -1,4 +1,5 @@
-﻿using System;
+﻿using m0.UIWpf;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -137,11 +138,6 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Controls
         {
             if (VerticalZoomSlider.Value > VerticalZoomSlider.Minimum)
                 VerticalZoomSlider.Value = VerticalZoomSlider.Value - 1;
-        }
-
-        private void GridSplitter_DragDelta(object sender, System.Windows.Controls.Primitives.DragDeltaEventArgs e)
-        {
-
         }
     }
 }
