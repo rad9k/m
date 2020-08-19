@@ -30,7 +30,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Controls
         public void SetMainContent(FrameworkElement control)
         {
             Scroll.Content = control;
-        }
+        }        
 
         ScrollViewer HorizontalAxisDecoratorScrollViewer;
         ScrollViewer VerticalAxisDecoratorScrollViewer;
@@ -44,7 +44,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Controls
         IZoomScrollViewerHost Host;
         
         IZoomScrollViewAxisDecorator HorizontalAxisDecorator;
-        IZoomScrollViewAxisDecorator VerticalAxisDecorator;
+        IZoomScrollViewAxisDecorator VerticalAxisDecorator;        
 
         public void SetHorizontalAxisDecorator(IZoomScrollViewAxisDecorator decorator)
         {
@@ -95,8 +95,14 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Controls
             ContentPresenter = (ScrollContentPresenter)Scroll.Template.FindName("PART_ScrollContentPresenter", Scroll);
             DownHideArea = (AnimatedHideArea)Scroll.Template.FindName("DownHideArea", Scroll);
             
-
             Host.ChildControlsLoaded();
+
+            DownHideArea.Loaded += DownHideArea_Loaded;
+        }
+
+        private void DownHideArea_Loaded(object sender, RoutedEventArgs e)
+        {
+            DownHideArea.IsExpanded = true;
         }
 
         double HorizontalOffset;
@@ -141,6 +147,19 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Controls
         {
             if (VerticalZoomSlider.Value > VerticalZoomSlider.Minimum)
                 VerticalZoomSlider.Value = VerticalZoomSlider.Value - 1;
+        }
+
+        private void DownHideAreaGrip_MouseEnter(object sender, MouseEventArgs e)
+        {
+            if(DownHideArea.IsExpanded)
+                WpfUtil.SetCursor(Cursors.SizeNS);
+            else
+                WpfUtil.SetCursor(Cursors.Arrow);
+        }
+
+        private void DownHideAreaGrip_MouseLeave(object sender, MouseEventArgs e)
+        {
+            WpfUtil.SetCursor(Cursors.Arrow);
         }
     }
 }

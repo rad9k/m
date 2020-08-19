@@ -21,14 +21,42 @@ namespace m0.UIWpf.Controls
     /// </summary>
     public partial class AnimatedHideArea : UserControl
     {
+        Expander Expander;
+
+        public bool IsExpanded {
+            get {
+                if (Expander == null)
+                    return false;
+
+                return this.Expander.IsExpanded;
+            }
+            set
+            {
+                if (Expander == null)
+                    throw new Exception("Expander control not loaded");
+
+                this.Expander.IsExpanded = value;
+            }
+        }
+
+        public event EventHandler Expanded;
+        public event EventHandler Collapsed;
+
         public AnimatedHideArea()
         {
             InitializeComponent();
+
+            this.Loaded += AnimatedHideArea_Loaded;
         }
 
-        private void Expander_SizeChanged(object sender, SizeChangedEventArgs e)
+        private void AnimatedHideArea_Loaded(object sender, RoutedEventArgs e)
         {
-            int x = 0;
+            Expander = (Expander)this.Template.FindName("Expander", this);
+        }
+
+        private void Expander_Collapsed(object sender, RoutedEventArgs e)
+        {
+
         }
     }
 

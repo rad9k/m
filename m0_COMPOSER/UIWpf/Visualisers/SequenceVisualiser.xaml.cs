@@ -199,27 +199,27 @@ namespace m0_COMPOSER.UIWpf.Visualisers
                 case CursorMode.ArrowUp:
                 case CursorMode.ArrowUp_MoveOnItem:
                 case CursorMode.ArrowDown_MoveOnItem_MouseDown:
-                    WpfUtil.OverrideCursor(Cursors.Arrow);
+                    WpfUtil.SetCursor(Cursors.Arrow);
                     break;
 
                 case CursorMode.ArrowDown_MoveOnItem_MouseDownAndMove:
-                    WpfUtil.OverrideCursor(Cursors.SizeAll);
+                    WpfUtil.SetCursor(Cursors.SizeAll);
                     break;
 
                 case CursorMode.ArrowUp_MoveOnItem_Left:
                 case CursorMode.ArrowUp_MoveOnItem_Right:
                 case CursorMode.ArrowDown_MoveOnItem_Left:
                 case CursorMode.ArrowDown_MoveOnItem_Right:
-                    WpfUtil.OverrideCursor(Cursors.SizeWE);
+                    WpfUtil.SetCursor(Cursors.SizeWE);
                     break;
 
                 case CursorMode.Eraser:
-                    WpfUtil.OverrideCursorFromResource("/m0;component/_resources/basic/eraser.cur");
+                    WpfUtil.SetCursorFromResource("/m0;component/_resources/basic/eraser.cur");
                     break;
 
                 case CursorMode.PenDown:                
                 case CursorMode.PenUp:
-                    WpfUtil.OverrideCursorFromResource("/m0;component/_resources/basic/pen.cur");
+                    WpfUtil.SetCursorFromResource("/m0;component/_resources/basic/pen.cur");
                     break;                
             }
         }
@@ -880,7 +880,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
                         item.Unselect();
                 }
                              
-            WpfUtil.OverrideCursor(Cursors.Arrow);
+            WpfUtil.SetCursor(Cursors.Arrow);
         }
 
         void ArrowUp_FromDown(object sender, MouseButtonEventArgs e)
@@ -1188,7 +1188,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
         {
             Point currentMousePosition = GetMainContentMousePosition(e);
 
-            WpfUtil.OverrideCursor(Cursors.Arrow);
+            WpfUtil.SetCursor(Cursors.Arrow);
 
             switch (currentCursorMode)
             {

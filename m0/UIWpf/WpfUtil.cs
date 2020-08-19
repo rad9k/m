@@ -74,7 +74,7 @@ namespace m0.UIWpf
             return match;
         }
 
-        public static void OverrideCursorFromResource(string resourceName)
+        public static void SetCursorFromResource(string resourceName)
         {
             System.Windows.Resources.StreamResourceInfo info = Application.GetResourceStream(new Uri(resourceName, UriKind.Relative));
 
@@ -82,7 +82,7 @@ namespace m0.UIWpf
             Mouse.OverrideCursor = new System.Windows.Input.Cursor(info.Stream);
         }
 
-        public static void OverrideCursor(Cursor cursor)
+        public static void SetCursor(Cursor cursor)
         {
             Mouse.OverrideCursor = cursor;
         }
