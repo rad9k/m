@@ -1,4 +1,5 @@
 ﻿using m0.UIWpf;
+using m0.UIWpf.Controls;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -26,7 +27,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Controls
             InitializeComponent();
         }
 
-        public void SetContent(object control)
+        public void SetMainContent(FrameworkElement control)
         {
             Scroll.Content = control;
         }
@@ -36,6 +37,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Controls
         Slider HorizontalZoomSlider;
         Slider VerticalZoomSlider;
         Grid Grid;
+        AnimatedHideArea DownHideArea;
 
         public ScrollContentPresenter ContentPresenter;
 
@@ -91,6 +93,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Controls
             VerticalZoomSlider = (Slider)Scroll.Template.FindName("VerticalZoomSlider", Scroll);
             Grid = (Grid)Scroll.Template.FindName("Grid", Scroll);
             ContentPresenter = (ScrollContentPresenter)Scroll.Template.FindName("PART_ScrollContentPresenter", Scroll);
+            DownHideArea = (AnimatedHideArea)Scroll.Template.FindName("DownHideArea", Scroll);
             
 
             Host.ChildControlsLoaded();

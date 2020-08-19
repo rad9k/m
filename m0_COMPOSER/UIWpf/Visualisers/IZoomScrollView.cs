@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Controls;
 
 namespace m0_COMPOSER.UIWpf.Visualisers
@@ -13,7 +14,9 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
         void SetVerticalAxisDecorator(IZoomScrollViewAxisDecorator decorator);
 
-        void SetContent(object control);
+        void SetMainContent(FrameworkElement control);
+
+        //void SetDownContent(object control);
 
         void SetHost(IZoomScrollViewerHost host);
     }

@@ -330,7 +330,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             Main.Width = Width;
             Main.Height = Height;
 
-            ZoomScrollView.SetContent(Main);            
+            ZoomScrollView.SetMainContent(Main);            
 
             items = new List<FrameworkElement>();
         }
@@ -354,7 +354,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
         public void SetupScrollViewer()
         {
             ZoomScrollView.SetHost(this);
-            ZoomScrollView.SetContent(Main);
+            ZoomScrollView.SetMainContent(Main);
         }
 
         public void DrawMain()

@@ -64,10 +64,8 @@
                             </StackPanel>
                         </Border>
 
-                        <m:AnimatedHideArea Grid.Row="6" Grid.Column="0" Grid.ColumnSpan="5" >
-                            <StackPanel >
-                                <Button>XXX</Button>
-                            </StackPanel>
+                        <m:AnimatedHideArea Grid.Row="6" Grid.Column="0" Grid.ColumnSpan="5" x:Name="DownHideArea">
+
                         </m:AnimatedHideArea>
 
                     </Grid>
