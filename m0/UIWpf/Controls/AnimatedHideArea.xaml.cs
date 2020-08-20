@@ -39,9 +39,6 @@ namespace m0.UIWpf.Controls
             }
         }
 
-        public event EventHandler Expanded;
-        public event EventHandler Collapsed;
-
         public AnimatedHideArea()
         {
             InitializeComponent();
@@ -52,12 +49,7 @@ namespace m0.UIWpf.Controls
         private void AnimatedHideArea_Loaded(object sender, RoutedEventArgs e)
         {
             Expander = (Expander)this.Template.FindName("Expander", this);
-        }
-
-        private void Expander_Collapsed(object sender, RoutedEventArgs e)
-        {
-
-        }
+        }        
     }
 
     public class MultiplyConverter : IMultiValueConverter

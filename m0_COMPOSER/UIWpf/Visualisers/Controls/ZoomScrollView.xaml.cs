@@ -1,19 +1,8 @@
 ﻿using m0.UIWpf;
 using m0.UIWpf.Controls;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace m0_COMPOSER.UIWpf.Visualisers.Controls
 {
@@ -45,6 +34,12 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Controls
         
         IZoomScrollViewAxisDecorator HorizontalAxisDecorator;
         IZoomScrollViewAxisDecorator VerticalAxisDecorator;        
+
+        enum DownContentCursorStateEnum { MouseOverUp, MouseOverDown, MouseOutside}
+
+        DownContentCursorStateEnum DownCursorState;
+
+        Point prevMousePosition;
 
         public void SetHorizontalAxisDecorator(IZoomScrollViewAxisDecorator decorator)
         {
@@ -151,8 +146,11 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Controls
 
         private void DownHideAreaGrip_MouseEnter(object sender, MouseEventArgs e)
         {
-            if(DownHideArea.IsExpanded)
+            if (DownHideArea.IsExpanded)
+            {
                 WpfUtil.SetCursor(Cursors.SizeNS);
+                DownCursorState = DownContentCursorStateEnum.MouseOverUp;
+            }
             else
                 WpfUtil.SetCursor(Cursors.Arrow);
         }
@@ -160,6 +158,49 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Controls
         private void DownHideAreaGrip_MouseLeave(object sender, MouseEventArgs e)
         {
             WpfUtil.SetCursor(Cursors.Arrow);
+
+            DownCursorState = DownContentCursorStateEnum.MouseOutside;
+        }
+
+        private void DownHideAreaGrip_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            if (DownCursorState == DownContentCursorStateEnum.MouseOverUp)
+            {
+                DownCursorState = DownContentCursorStateEnum.MouseOverDown;
+
+                prevMousePosition = e.GetPosition(this);
+            }
+        }
+
+        private void DownHideAreaGrip_MouseUp(object sender, MouseButtonEventArgs e)
+        {
+            if (DownCursorState == DownContentCursorStateEnum.MouseOverDown)
+                DownCursorState = DownContentCursorStateEnum.MouseOverUp;
+        }
+
+        private void DownHideAreaGrip_MouseMove(object sender, MouseEventArgs e)
+        {
+            if (DownCursorState == DownContentCursorStateEnum.MouseOverDown)
+            {
+                Point currentMousePosition = e.GetPosition(this);
+
+                double deltaY = prevMousePosition.Y - currentMousePosition.Y;
+
+                prevMousePosition = currentMousePosition;
+
+                FrameworkElement contentElement = (FrameworkElement)DownHideArea.Content;
+
+                double contentElementHeight = contentElement.Height + deltaY;
+
+                if (contentElementHeight < 0)
+                    contentElementHeight = 0;                
+
+                contentElement.Height = contentElementHeight;
+
+                double downHideAreaHeight = contentElementHeight + 100;
+
+                Grid.RowDefinitions[6].Height = new GridLength(downHideAreaHeight);
+            }
         }
     }
 }

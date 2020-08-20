@@ -26,7 +26,7 @@
                             <RowDefinition Height="18px"/>
                             <RowDefinition Height="80px"/>
                             <RowDefinition Height="15px"/>
-                            <RowDefinition Height="5px"/>
+                            <RowDefinition Height="50px"/>
                             <RowDefinition Height="Auto"/>
                             <RowDefinition Height="Auto"/>
                         </Grid.RowDefinitions>
@@ -56,7 +56,7 @@
                         </Button>
 
 
-                        <Border Grid.Row="5" Height="5" Grid.Column="0" Grid.ColumnSpan="5" HorizontalAlignment="Stretch" Background="Aquamarine" MouseEnter="DownHideAreaGrip_MouseEnter" MouseLeave="DownHideAreaGrip_MouseLeave">
+                        <Border Grid.Row="5" Height="50" Grid.Column="0" Grid.ColumnSpan="5" HorizontalAlignment="Stretch" Background="Aquamarine" MouseEnter="DownHideAreaGrip_MouseEnter" MouseLeave="DownHideAreaGrip_MouseLeave" MouseDown="DownHideAreaGrip_MouseDown" MouseMove="DownHideAreaGrip_MouseMove" MouseUp="DownHideAreaGrip_MouseUp">
                             <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
                                 <Ellipse Height="3" Width="3" Fill="Black" Margin="1,0,1,0"/>
                                 <Ellipse Height="3" Width="3" Fill="Black" Margin="1,0,1,0"/>

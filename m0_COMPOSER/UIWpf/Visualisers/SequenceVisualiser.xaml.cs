@@ -68,7 +68,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
         double ArrowDown_MoveOnItem_MouseDown_Delta = 3;
 
-        enum CursorMode {
+        enum CursorState {
             ArrowUp,
             ArrowDown,
             ArrowUp_MoveOnItem_Left,
@@ -82,7 +82,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             PenDown,
             Eraser }
 
-        CursorMode currentCursorMode;
+        CursorState currentCursorState;
 
         Point mouseDownPoint;
 
@@ -157,34 +157,34 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             mouseOverItem_startLeft = item.Left;
         }
 
-        void SetCursorMode(CursorMode modeDetail)
+        void SetCursorMode(CursorState modeDetail)
         {
             UnCheckAllCursorButtons();
 
-            currentCursorMode = modeDetail;
+            currentCursorState = modeDetail;
 
             switch (modeDetail)
             {
-                case CursorMode.ArrowDown:
-                case CursorMode.ArrowUp:
-                case CursorMode.ArrowUp_MoveOnItem_Left:
-                case CursorMode.ArrowUp_MoveOnItem_Right:
-                case CursorMode.ArrowUp_MoveOnItem:
-                case CursorMode.ArrowDown_MoveOnItem_Left:
-                case CursorMode.ArrowDown_MoveOnItem_Right:
-                case CursorMode.ArrowDown_MoveOnItem_MouseDown:
-                case CursorMode.ArrowDown_MoveOnItem_MouseDownAndMove:
+                case CursorState.ArrowDown:
+                case CursorState.ArrowUp:
+                case CursorState.ArrowUp_MoveOnItem_Left:
+                case CursorState.ArrowUp_MoveOnItem_Right:
+                case CursorState.ArrowUp_MoveOnItem:
+                case CursorState.ArrowDown_MoveOnItem_Left:
+                case CursorState.ArrowDown_MoveOnItem_Right:
+                case CursorState.ArrowDown_MoveOnItem_MouseDown:
+                case CursorState.ArrowDown_MoveOnItem_MouseDownAndMove:
 
                     ArrowButton.IsChecked = true;
                     break;
 
-                case CursorMode.Eraser:
+                case CursorState.Eraser:
 
                     EraseButton.IsChecked = true;
                     break;
 
-                case CursorMode.PenUp:                
-                case CursorMode.PenDown:                
+                case CursorState.PenUp:                
+                case CursorState.PenDown:                
 
                     PenButton.IsChecked = true;
                     break;
@@ -193,32 +193,32 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
         void UpdateCursorShape()
         {
-            switch (currentCursorMode)
+            switch (currentCursorState)
             {
-                case CursorMode.ArrowDown:
-                case CursorMode.ArrowUp:
-                case CursorMode.ArrowUp_MoveOnItem:
-                case CursorMode.ArrowDown_MoveOnItem_MouseDown:
+                case CursorState.ArrowDown:
+                case CursorState.ArrowUp:
+                case CursorState.ArrowUp_MoveOnItem:
+                case CursorState.ArrowDown_MoveOnItem_MouseDown:
                     WpfUtil.SetCursor(Cursors.Arrow);
                     break;
 
-                case CursorMode.ArrowDown_MoveOnItem_MouseDownAndMove:
+                case CursorState.ArrowDown_MoveOnItem_MouseDownAndMove:
                     WpfUtil.SetCursor(Cursors.SizeAll);
                     break;
 
-                case CursorMode.ArrowUp_MoveOnItem_Left:
-                case CursorMode.ArrowUp_MoveOnItem_Right:
-                case CursorMode.ArrowDown_MoveOnItem_Left:
-                case CursorMode.ArrowDown_MoveOnItem_Right:
+                case CursorState.ArrowUp_MoveOnItem_Left:
+                case CursorState.ArrowUp_MoveOnItem_Right:
+                case CursorState.ArrowDown_MoveOnItem_Left:
+                case CursorState.ArrowDown_MoveOnItem_Right:
                     WpfUtil.SetCursor(Cursors.SizeWE);
                     break;
 
-                case CursorMode.Eraser:
+                case CursorState.Eraser:
                     WpfUtil.SetCursorFromResource("/m0;component/_resources/basic/eraser.cur");
                     break;
 
-                case CursorMode.PenDown:                
-                case CursorMode.PenUp:
+                case CursorState.PenDown:                
+                case CursorState.PenUp:
                     WpfUtil.SetCursorFromResource("/m0;component/_resources/basic/pen.cur");
                     break;                
             }
@@ -397,27 +397,27 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
         private void MouseMoveHandler(object sender, MouseEventArgs e)
         {
-            switch (currentCursorMode)
+            switch (currentCursorState)
             {
-                case CursorMode.PenDown:
+                case CursorState.PenDown:
                     PenMove_PenDown(sender, e);
                     break;
 
-                case CursorMode.ArrowUp:
-                case CursorMode.ArrowUp_MoveOnItem_Left:
-                case CursorMode.ArrowUp_MoveOnItem_Right:
-                case CursorMode.ArrowUp_MoveOnItem:
+                case CursorState.ArrowUp:
+                case CursorState.ArrowUp_MoveOnItem_Left:
+                case CursorState.ArrowUp_MoveOnItem_Right:
+                case CursorState.ArrowUp_MoveOnItem:
                     ArrowMove_ArrowUp(sender, e);
                     break;
 
-                case CursorMode.ArrowDown:
+                case CursorState.ArrowDown:
                     ArrowMove_ArrowDown(sender, e);
                     break;
 
-                case CursorMode.ArrowDown_MoveOnItem_Left:
-                case CursorMode.ArrowDown_MoveOnItem_Right:
-                case CursorMode.ArrowDown_MoveOnItem_MouseDown:
-                case CursorMode.ArrowDown_MoveOnItem_MouseDownAndMove:
+                case CursorState.ArrowDown_MoveOnItem_Left:
+                case CursorState.ArrowDown_MoveOnItem_Right:
+                case CursorState.ArrowDown_MoveOnItem_MouseDown:
+                case CursorState.ArrowDown_MoveOnItem_MouseDownAndMove:
                     ArrowMove_DownMoveOnItemLeftRight(sender, e);
                     break;
 
@@ -428,23 +428,23 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
         private void MouseUpHandler(object sender, MouseButtonEventArgs e)
         {
-            switch (currentCursorMode)
+            switch (currentCursorState)
             {
-                case CursorMode.PenDown:
+                case CursorState.PenDown:
                     PenUp(sender, e);
                     break;                
 
-                case CursorMode.ArrowDown:
+                case CursorState.ArrowDown:
                     ArrowUp_FromDown(sender, e);
                     break;
 
-                case CursorMode.ArrowDown_MoveOnItem_Left:
-                case CursorMode.ArrowDown_MoveOnItem_Right:
-                case CursorMode.ArrowDown_MoveOnItem_MouseDownAndMove:
+                case CursorState.ArrowDown_MoveOnItem_Left:
+                case CursorState.ArrowDown_MoveOnItem_Right:
+                case CursorState.ArrowDown_MoveOnItem_MouseDownAndMove:
                     ArrowUp_FromMove(sender, e);
                     break;
 
-                case CursorMode.ArrowDown_MoveOnItem_MouseDown:
+                case CursorState.ArrowDown_MoveOnItem_MouseDown:
                     ArrowUp_FromMoveOnItem_MouseDown(sender, e);
                     break;
 
@@ -455,23 +455,23 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
         private void MouseDownHandler(object sender, MouseButtonEventArgs e)
         {
-            switch (currentCursorMode)
+            switch (currentCursorState)
             {
-                case CursorMode.PenUp:
+                case CursorState.PenUp:
                     PenDown(sender, e);
                     break;
 
-                case CursorMode.Eraser:
+                case CursorState.Eraser:
                     EraserDown(sender, e);
                     break;
 
-                case CursorMode.ArrowUp:
+                case CursorState.ArrowUp:
                     ArrowDown(sender, e);
                     break;
 
-                case CursorMode.ArrowUp_MoveOnItem_Left:
-                case CursorMode.ArrowUp_MoveOnItem_Right:
-                case CursorMode.ArrowUp_MoveOnItem:
+                case CursorState.ArrowUp_MoveOnItem_Left:
+                case CursorState.ArrowUp_MoveOnItem_Right:
+                case CursorState.ArrowUp_MoveOnItem:
                     ArrowDown_FromUpMove(sender, e);
                     break;
             }
@@ -479,7 +479,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
         void PenDown(object sender, MouseButtonEventArgs e)
         {
-            SetCursorMode(CursorMode.PenDown);
+            SetCursorMode(CursorState.PenDown);
             
             mouseDownPoint = GetMainContentMousePosition(e);
 
@@ -536,7 +536,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
         {
             Main.Children.Remove(newItemShape);
 
-            SetCursorMode(CursorMode.PenUp);            
+            SetCursorMode(CursorState.PenUp);            
         }
         
         void PenUp(object sender, MouseButtonEventArgs e)
@@ -603,7 +603,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
                     SelectItem(item);
 
             }else{           
-                SetCursorMode(CursorMode.ArrowDown);
+                SetCursorMode(CursorState.ArrowDown);
 
                 SelectionArea.StartSelection(currentMousePosition);
             }
@@ -663,14 +663,14 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             previousMousePosition = mouseDownPoint;
 
-            if (currentCursorMode == CursorMode.ArrowUp_MoveOnItem_Left)
-                SetCursorMode(CursorMode.ArrowDown_MoveOnItem_Left);
+            if (currentCursorState == CursorState.ArrowUp_MoveOnItem_Left)
+                SetCursorMode(CursorState.ArrowDown_MoveOnItem_Left);
 
-            if (currentCursorMode == CursorMode.ArrowUp_MoveOnItem_Right)
-                SetCursorMode(CursorMode.ArrowDown_MoveOnItem_Right);
+            if (currentCursorState == CursorState.ArrowUp_MoveOnItem_Right)
+                SetCursorMode(CursorState.ArrowDown_MoveOnItem_Right);
 
-            if (currentCursorMode == CursorMode.ArrowUp_MoveOnItem)            
-                SetCursorMode(CursorMode.ArrowDown_MoveOnItem_MouseDown);                            
+            if (currentCursorState == CursorState.ArrowUp_MoveOnItem)            
+                SetCursorMode(CursorState.ArrowDown_MoveOnItem_MouseDown);                            
         }
 
         enum LeftRightEnum { Left, Right }
@@ -774,23 +774,23 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             double deltaX = currentMousePosition.X - previousMousePosition.X;
             double deltaY = currentMousePosition.Y - previousMousePosition.Y;
 
-            switch (currentCursorMode)
+            switch (currentCursorState)
             {
-                case CursorMode.ArrowDown_MoveOnItem_Left:
+                case CursorState.ArrowDown_MoveOnItem_Left:
 
                     foreach (IItem i in GetSelectedAndMouseOverItems())
                         ItemTryMoveLeftRight(i, deltaX, LeftRightEnum.Left);
                     
                     break;
 
-                case CursorMode.ArrowDown_MoveOnItem_Right:
+                case CursorState.ArrowDown_MoveOnItem_Right:
 
                     foreach (IItem i in GetSelectedAndMouseOverItems())
                         ItemTryMoveLeftRight(i, deltaX, LeftRightEnum.Right);
 
                     break;
 
-                case CursorMode.ArrowDown_MoveOnItem_MouseDown:
+                case CursorState.ArrowDown_MoveOnItem_MouseDown:
 
                     double horizontalDelta = Math.Abs(mouseDownPoint.X - currentMousePosition.X);
                     double verticalDelta = Math.Abs(mouseDownPoint.Y - currentMousePosition.Y);
@@ -799,13 +799,13 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
                     if (delta > ArrowDown_MoveOnItem_MouseDown_Delta)
                     {
-                        SetCursorMode(CursorMode.ArrowDown_MoveOnItem_MouseDownAndMove);
+                        SetCursorMode(CursorState.ArrowDown_MoveOnItem_MouseDownAndMove);
                         UpdateCursorShape();
                     }
 
                     break;
 
-                case CursorMode.ArrowDown_MoveOnItem_MouseDownAndMove:
+                case CursorState.ArrowDown_MoveOnItem_MouseDownAndMove:
 
                     foreach (IItem i in GetSelectedAndMouseOverItems())
                         ItemTryMove(i, deltaX, deltaY);
@@ -816,7 +816,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             previousMousePosition = currentMousePosition;
         }
 
-        void ArrowMove_ArrowUp_SetMouseCurrentItem(IItem item, CursorMode cursorModeDetail)
+        void ArrowMove_ArrowUp_SetMouseCurrentItem(IItem item, CursorState cursorModeDetail)
         {
             SetCursorMode(cursorModeDetail);
             SetMouseOverItem(item);
@@ -843,21 +843,21 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
                 if (!isCurrentPenItemCenter && currentMousePosition.X >= item.Left && currentMousePosition.X <= (item.Left + HorizontalItemMoveLeftRightSpan))
                 {
-                    ArrowMove_ArrowUp_SetMouseCurrentItem(item, CursorMode.ArrowUp_MoveOnItem_Left);
+                    ArrowMove_ArrowUp_SetMouseCurrentItem(item, CursorState.ArrowUp_MoveOnItem_Left);
                     return;
                 }
 
                 if (!isCurrentPenItemCenter && currentMousePosition.X >= (item.Right - HorizontalItemMoveLeftRightSpan) && currentMousePosition.X <= item.Right)
                 {
-                    ArrowMove_ArrowUp_SetMouseCurrentItem(item, CursorMode.ArrowUp_MoveOnItem_Right);
+                    ArrowMove_ArrowUp_SetMouseCurrentItem(item, CursorState.ArrowUp_MoveOnItem_Right);
                     return;
                 }
 
-                ArrowMove_ArrowUp_SetMouseCurrentItem(item, CursorMode.ArrowUp_MoveOnItem);
+                ArrowMove_ArrowUp_SetMouseCurrentItem(item, CursorState.ArrowUp_MoveOnItem);
                 return;
             }
 
-            SetCursorMode(CursorMode.ArrowUp);
+            SetCursorMode(CursorState.ArrowUp);
             UpdateCursorShape();            
         }
 
@@ -907,23 +907,23 @@ namespace m0_COMPOSER.UIWpf.Visualisers
                         item.Unselect();
                 }
 
-            currentCursorMode = CursorMode.ArrowUp;
+            currentCursorState = CursorState.ArrowUp;
             SelectionArea.HideSelectionArea();
         }
 
         void ArrowUp_FromMove(object sender, MouseEventArgs e)
         {
-            if(currentCursorMode == CursorMode.ArrowDown_MoveOnItem_Left || currentCursorMode == CursorMode.ArrowDown_MoveOnItem_Right)
+            if(currentCursorState == CursorState.ArrowDown_MoveOnItem_Left || currentCursorState == CursorState.ArrowDown_MoveOnItem_Right)
             {
-                SetCursorMode(CursorMode.ArrowUp);
+                SetCursorMode(CursorState.ArrowUp);
 
                 foreach(IItem i in GetSelectedAndMouseOverItems())
                     UpdateItem_HorizontalPosition(i);
             }
 
-            if (currentCursorMode == CursorMode.ArrowDown_MoveOnItem_MouseDownAndMove)
+            if (currentCursorState == CursorState.ArrowDown_MoveOnItem_MouseDownAndMove)
             {
-                SetCursorMode(CursorMode.ArrowUp);
+                SetCursorMode(CursorState.ArrowUp);
 
                 foreach (IItem i in GetSelectedAndMouseOverItems())
                 {
@@ -964,7 +964,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
                     SelectItem(item);
             }
 
-            SetCursorMode(CursorMode.ArrowUp);
+            SetCursorMode(CursorState.ArrowUp);
         }
 
         void PerformArrowUp_FromArrowDown_WhileMouseLeave()
@@ -979,7 +979,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
                     item.Unselect();
                 }
 
-            SetCursorMode(CursorMode.ArrowUp);
+            SetCursorMode(CursorState.ArrowUp);
 
             SelectionArea.HideSelectionArea();
         }
@@ -1190,13 +1190,13 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             WpfUtil.SetCursor(Cursors.Arrow);
 
-            switch (currentCursorMode)
+            switch (currentCursorState)
             {
-                case (CursorMode.PenDown):
+                case (CursorState.PenDown):
                     PerformPenUp();
                     break;
 
-                case (CursorMode.ArrowDown):
+                case (CursorState.ArrowDown):
                     PerformArrowUp_FromArrowDown_WhileMouseLeave();
                     break;
             }
@@ -1277,7 +1277,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
         void InitSequenceVisualierState()
         {
-            SetCursorMode(CursorMode.ArrowUp);
+            SetCursorMode(CursorState.ArrowUp);
 
             currentSnapToGrid = SnapToGrid.Bar1;
 
@@ -1472,17 +1472,17 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
         private void PenButton_Click(object sender, RoutedEventArgs e)
         {
-            SetCursorMode(CursorMode.PenUp);
+            SetCursorMode(CursorState.PenUp);
         }
 
         private void EraseButton_Click(object sender, RoutedEventArgs e)
         {
-            SetCursorMode(CursorMode.Eraser);
+            SetCursorMode(CursorState.Eraser);
         }
 
         private void ArrowButton_Click(object sender, RoutedEventArgs e)
         {
-            SetCursorMode(CursorMode.ArrowUp);
+            SetCursorMode(CursorState.ArrowUp);
         }
 
         void UnCheckAllCursorButtons()

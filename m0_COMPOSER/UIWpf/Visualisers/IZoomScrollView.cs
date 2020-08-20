@@ -18,6 +18,6 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
         //void SetDownContent(object control);
 
-        void SetHost(IZoomScrollViewerHost host);
+        void SetHost(IZoomScrollViewerHost host);       
     }
 }
