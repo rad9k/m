@@ -190,14 +190,16 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Controls
 
                 FrameworkElement contentElement = (FrameworkElement)DownHideArea.Content;
 
-                double contentElementHeight = contentElement.Height + deltaY;
+                //double contentElementHeight = contentElement.Height + deltaY;
+
+                double contentElementHeight = Grid.RowDefinitions[6].Height.Value + deltaY;
 
                 if (contentElementHeight < 0)
                     contentElementHeight = 0;                
 
-                contentElement.Height = contentElementHeight;
+                //contentElement.Height = contentElementHeight;
 
-                double downHideAreaHeight = contentElementHeight + 100;
+                double downHideAreaHeight = contentElementHeight;
 
                 Grid.RowDefinitions[6].Height = new GridLength(downHideAreaHeight);
             }
