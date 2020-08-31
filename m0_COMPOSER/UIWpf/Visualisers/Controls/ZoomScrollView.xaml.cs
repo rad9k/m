@@ -149,7 +149,9 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Controls
             if (DownHideArea.IsExpanded)
             {
                 WpfUtil.SetCursor(Cursors.SizeNS);
-                DownCursorState = DownContentCursorStateEnum.MouseOverUp;
+
+                if (DownCursorState != DownContentCursorStateEnum.MouseOverDown)
+                    DownCursorState = DownContentCursorStateEnum.MouseOverUp;
             }
             else
                 WpfUtil.SetCursor(Cursors.Arrow);
@@ -157,9 +159,13 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Controls
 
         private void DownHideAreaGrip_MouseLeave(object sender, MouseEventArgs e)
         {
-            WpfUtil.SetCursor(Cursors.Arrow);
 
-            DownCursorState = DownContentCursorStateEnum.MouseOutside;
+
+            if (DownCursorState != DownContentCursorStateEnum.MouseOverDown)
+            {
+                WpfUtil.SetCursor(Cursors.Arrow);
+                DownCursorState = DownContentCursorStateEnum.MouseOutside;
+            }
         }
 
         private void DownHideAreaGrip_MouseDown(object sender, MouseButtonEventArgs e)

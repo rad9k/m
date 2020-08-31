@@ -26,12 +26,12 @@
                             <RowDefinition Height="18px"/>
                             <RowDefinition Height="80px"/>
                             <RowDefinition Height="15px"/>
-                            <RowDefinition Height="50px"/>
+                            <RowDefinition Height="5px"/>
                             <RowDefinition Height="Auto"/>
                             <RowDefinition Height="Auto"/>
                         </Grid.RowDefinitions>
-                        <ScrollViewer Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="4" x:Name="HorizontalAxisDecoratorScrollViewer" HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Hidden"/>
-                        <ScrollViewer Grid.Row="1" Grid.Column="0" Grid.RowSpan="4" x:Name="VerticalAxisDecoratorScrollViewer"  HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Hidden"/>
+                        <ScrollViewer Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="4" x:Name="HorizontalAxisDecoratorScrollViewer" HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Hidden" />
+                        <ScrollViewer Grid.Row="1" Grid.Column="0" Grid.RowSpan="4" x:Name="VerticalAxisDecoratorScrollViewer"  HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Hidden" MouseMove="DownHideAreaGrip_MouseMove" MouseUp="DownHideAreaGrip_MouseUp"/>
           
                         <ScrollContentPresenter Grid.Column="1"  Grid.Row="1" Grid.ColumnSpan="4" Grid.RowSpan="4" x:Name="PART_ScrollContentPresenter" CanContentScroll="{TemplateBinding CanContentScroll}" CanHorizontallyScroll="False" CanVerticallyScroll="False" ContentTemplate="{TemplateBinding ContentTemplate}" Content="{TemplateBinding Content}"  Margin="{TemplateBinding Padding}"/>
                         <ScrollBar Grid.Row="1"  Grid.Column="5" x:Name="PART_VerticalScrollBar" AutomationProperties.AutomationId="VerticalScrollBar" Cursor="Arrow" Maximum="{TemplateBinding ScrollableHeight}" Minimum="0" Visibility="{TemplateBinding ComputedVerticalScrollBarVisibility}" Value="{Binding VerticalOffset, Mode=OneWay, RelativeSource={RelativeSource TemplatedParent}}" ViewportSize="{TemplateBinding ViewportHeight}"/>
@@ -56,7 +56,7 @@
                         </Button>
 
 
-                        <Border Grid.Row="5" Height="50" Grid.Column="0" Grid.ColumnSpan="5" HorizontalAlignment="Stretch" Background="Aquamarine" MouseEnter="DownHideAreaGrip_MouseEnter" MouseLeave="DownHideAreaGrip_MouseLeave" MouseDown="DownHideAreaGrip_MouseDown" MouseMove="DownHideAreaGrip_MouseMove" MouseUp="DownHideAreaGrip_MouseUp">
+                        <Border Grid.Row="5" Height="5" Grid.Column="0" Grid.ColumnSpan="5" HorizontalAlignment="Stretch" Background="Aquamarine" MouseEnter="DownHideAreaGrip_MouseEnter" MouseLeave="DownHideAreaGrip_MouseLeave" MouseDown="DownHideAreaGrip_MouseDown" MouseMove="DownHideAreaGrip_MouseMove" MouseUp="DownHideAreaGrip_MouseUp">
                             <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
                                 <Ellipse Height="3" Width="3" Fill="Black" Margin="1,0,1,0"/>
                                 <Ellipse Height="3" Width="3" Fill="Black" Margin="1,0,1,0"/>
@@ -64,7 +64,7 @@
                             </StackPanel>
                         </Border>
 
-                        <m:AnimatedHideArea Grid.Row="6" Grid.Column="0" Grid.ColumnSpan="5" x:Name="DownHideArea">
+                        <m:AnimatedHideArea Grid.Row="6" Grid.Column="0" Grid.ColumnSpan="5" x:Name="DownHideArea" MouseMove="DownHideAreaGrip_MouseMove" MouseUp="DownHideAreaGrip_MouseUp">
                             <Button Height="200">TEST</Button>
                         </m:AnimatedHideArea>
                     </Grid>
