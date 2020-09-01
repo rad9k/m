@@ -23,6 +23,9 @@ namespace m0.UIWpf.Controls
     {
         Expander Expander;
 
+        public event EventHandler Expanded;
+        public event EventHandler Collapsed;
+
         public bool IsExpanded {
             get {
                 if (Expander == null)
@@ -44,12 +47,23 @@ namespace m0.UIWpf.Controls
             InitializeComponent();
 
             this.Loaded += AnimatedHideArea_Loaded;
+
         }
 
         private void AnimatedHideArea_Loaded(object sender, RoutedEventArgs e)
         {
             Expander = (Expander)this.Template.FindName("Expander", this);
-        }        
+        }
+
+        private void Expander_Expanded(object sender, RoutedEventArgs e)
+        {
+            Expanded.Invoke(sender, e);
+        }
+
+        private void Expander_Collapsed(object sender, RoutedEventArgs e)
+        {
+            Collapsed.Invoke(sender, e);
+        }
     }
 
     public class MultiplyConverter : IMultiValueConverter

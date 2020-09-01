@@ -3,6 +3,8 @@ using m0.UIWpf.Controls;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Media;
+using System.Windows.Shapes;
 
 namespace m0_COMPOSER.UIWpf.Visualisers.Controls
 {
@@ -27,6 +29,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Controls
         Slider VerticalZoomSlider;
         Grid Grid;
         AnimatedHideArea DownHideArea;
+        Border DownGrip;
 
         public ScrollContentPresenter ContentPresenter;
 
@@ -89,7 +92,8 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Controls
             Grid = (Grid)Scroll.Template.FindName("Grid", Scroll);
             ContentPresenter = (ScrollContentPresenter)Scroll.Template.FindName("PART_ScrollContentPresenter", Scroll);
             DownHideArea = (AnimatedHideArea)Scroll.Template.FindName("DownHideArea", Scroll);
-            
+            DownGrip = (Border)Scroll.Template.FindName("DownGrip", Scroll);
+
             Host.ChildControlsLoaded();
 
             DownHideArea.Loaded += DownHideArea_Loaded;
@@ -159,13 +163,17 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Controls
 
         private void DownHideAreaGrip_MouseLeave(object sender, MouseEventArgs e)
         {
-
-
             if (DownCursorState != DownContentCursorStateEnum.MouseOverDown)
             {
                 WpfUtil.SetCursor(Cursors.Arrow);
                 DownCursorState = DownContentCursorStateEnum.MouseOutside;
             }
+        }
+
+        private void DownHideAreaGrip_MouseLeave_Hard(object sender, MouseEventArgs e)
+        {            
+            WpfUtil.SetCursor(Cursors.Arrow);
+            DownCursorState = DownContentCursorStateEnum.MouseOutside;         
         }
 
         private void DownHideAreaGrip_MouseDown(object sender, MouseButtonEventArgs e)
@@ -196,19 +204,39 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Controls
 
                 FrameworkElement contentElement = (FrameworkElement)DownHideArea.Content;
 
-                //double contentElementHeight = contentElement.Height + deltaY;
+                double contentElementHeight = contentElement.Height + deltaY;
 
-                double contentElementHeight = Grid.RowDefinitions[6].Height.Value + deltaY;
+                //double contentElementHeight = Grid.RowDefinitions[6].Height.Value + deltaY;
 
                 if (contentElementHeight < 0)
-                    contentElementHeight = 0;                
+                    contentElementHeight = 0;
 
-                //contentElement.Height = contentElementHeight;
+                if (contentElementHeight > this.ActualHeight - 200)
+                    contentElementHeight = this.ActualHeight - 200;
 
-                double downHideAreaHeight = contentElementHeight;
+                contentElement.Height = contentElementHeight;
 
-                Grid.RowDefinitions[6].Height = new GridLength(downHideAreaHeight);
+                //double downHideAreaHeight = contentElementHeight;
+
+                //Grid.RowDefinitions[6].Height = new GridLength(downHideAreaHeight);
             }
+        }
+
+        private void DownHideArea_Expanded(object sender, System.EventArgs e)
+        {
+            DownGrip.Background = (Brush)WpfUtil.FindResource("0VeryLightHighlightBrush");
+
+            foreach (Ellipse el in ((StackPanel)DownGrip.Child).Children)
+                el.Fill = (Brush)WpfUtil.FindResource("0ForegroundBrush");
+
+        }
+
+        private void DownHideArea_Collapsed(object sender, System.EventArgs e)
+        {
+            DownGrip.Background = (Brush)WpfUtil.FindResource("0BackgroundBrush");
+
+            foreach (Ellipse el in ((StackPanel)DownGrip.Child).Children)
+                el.Fill = (Brush)WpfUtil.FindResource("0LightBackgroundBrush");
         }
     }
 }

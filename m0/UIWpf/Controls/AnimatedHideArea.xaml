@@ -12,7 +12,8 @@
         <ControlTemplate TargetType="{x:Type UserControl}">
 
                 <Expander x:Name="Expander" IsExpanded="False" ExpandDirection="Down" DockPanel.Dock="Top" 
-                  Template="{DynamicResource StretchyExpanderTemp}" OverridesDefaultStyle="True" Header="">
+                  Template="{DynamicResource StretchyExpanderTemp}" OverridesDefaultStyle="True" Header="" 
+                  Expanded="Expander_Expanded" Collapsed="Expander_Collapsed">
                     <ContentPresenter/>
                 </Expander>
             
