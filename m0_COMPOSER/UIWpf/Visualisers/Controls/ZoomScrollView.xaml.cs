@@ -21,7 +21,24 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Controls
         public void SetMainContent(FrameworkElement control)
         {
             Scroll.Content = control;
-        }        
+        }
+
+        void DownWidthUpdate()
+        {
+            if(DownMain != null)
+                DownMain.Width = DownHideArea.ActualWidth - VerticalAxisDecorator.Size.Width;
+        }
+
+        public void SetDownContent(FrameworkElement downDecoratorContent, FrameworkElement downMainContent)
+        {
+            DownMain.Content = downMainContent;
+            DownDecorator.Child = downDecoratorContent;
+
+            DownMain.Height = InitialDownHeight;
+            DownDecorator.Height = InitialDownHeight;
+
+            ((FrameworkElement)DownMain.Content).Width = HorizontalAxisDecorator.Size.Width;
+        }
 
         ScrollViewer HorizontalAxisDecoratorScrollViewer;
         ScrollViewer VerticalAxisDecoratorScrollViewer;
@@ -30,6 +47,8 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Controls
         Grid Grid;
         AnimatedHideArea DownHideArea;
         Border DownGrip;
+        Border DownDecorator;
+        ScrollViewer DownMain;
 
         public ScrollContentPresenter ContentPresenter;
 
@@ -51,7 +70,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Controls
 
             HorizontalAxisDecorator.SetZoomFactor(HorizontalZoomSlider.Value);
 
-            Grid.RowDefinitions[0].Height = new GridLength(decorator.Size.Height);
+            Grid.RowDefinitions[0].Height = new GridLength(decorator.Size.Height);         
         }
 
         public void SetVerticalAxisDecorator(IZoomScrollViewAxisDecorator decorator)
@@ -61,13 +80,22 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Controls
 
             VerticalAxisDecorator.SetZoomFactor(VerticalZoomSlider.Value);
 
-            Grid.ColumnDefinitions[0].Width = new GridLength(decorator.Size.Width);
+            double width = decorator.Size.Width;
+
+            Grid.ColumnDefinitions[0].Width = new GridLength(width);
+
+            //
+
+            DownDecorator.Width = width;
+            DownWidthUpdate();
         }
 
         public void SetHost(IZoomScrollViewerHost host)
         {
             Host = host;
         }
+
+        public double InitialDownHeight { get; set; }
 
         private void HorizontalZoomSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
@@ -91,8 +119,12 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Controls
             VerticalZoomSlider = (Slider)Scroll.Template.FindName("VerticalZoomSlider", Scroll);
             Grid = (Grid)Scroll.Template.FindName("Grid", Scroll);
             ContentPresenter = (ScrollContentPresenter)Scroll.Template.FindName("PART_ScrollContentPresenter", Scroll);
+
             DownHideArea = (AnimatedHideArea)Scroll.Template.FindName("DownHideArea", Scroll);
             DownGrip = (Border)Scroll.Template.FindName("DownGrip", Scroll);
+
+            DownDecorator = (Border)((StackPanel)DownHideArea.Content).Children[0];
+            DownMain = (ScrollViewer)((StackPanel)DownHideArea.Content).Children[1];
 
             Host.ChildControlsLoaded();
 
@@ -114,6 +146,8 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Controls
                 HorizontalOffset = this.Scroll.HorizontalOffset;
 
                 HorizontalAxisDecoratorScrollViewer.ScrollToHorizontalOffset(HorizontalOffset);
+
+                DownMain.ScrollToHorizontalOffset(HorizontalOffset);
             }
 
             if (VerticalOffset != this.Scroll.VerticalOffset)
@@ -201,10 +235,9 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Controls
                 double deltaY = prevMousePosition.Y - currentMousePosition.Y;
 
                 prevMousePosition = currentMousePosition;
+                
 
-                FrameworkElement contentElement = (FrameworkElement)DownHideArea.Content;
-
-                double contentElementHeight = contentElement.Height + deltaY;
+                double contentElementHeight = DownMain.Height + deltaY;
 
                 //double contentElementHeight = Grid.RowDefinitions[6].Height.Value + deltaY;
 
@@ -214,7 +247,8 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Controls
                 if (contentElementHeight > this.ActualHeight - 200)
                     contentElementHeight = this.ActualHeight - 200;
 
-                contentElement.Height = contentElementHeight;
+                DownMain.Height = contentElementHeight;
+                DownDecorator.Height = contentElementHeight;
 
                 //double downHideAreaHeight = contentElementHeight;
 
@@ -237,6 +271,11 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Controls
 
             foreach (Ellipse el in ((StackPanel)DownGrip.Child).Children)
                 el.Fill = (Brush)WpfUtil.FindResource("0LightBackgroundBrush");
+        }
+
+        private void Scroll_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            DownWidthUpdate();
         }
     }
 }

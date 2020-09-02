@@ -16,8 +16,10 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
         void SetMainContent(FrameworkElement control);
 
-        //void SetDownContent(object control);
+        void SetDownContent(FrameworkElement downDecoratorContent, FrameworkElement downMainContent);
 
-        void SetHost(IZoomScrollViewerHost host);       
+        void SetHost(IZoomScrollViewerHost host);  
+        
+        double InitialDownHeight { get; set; }
     }
 }

@@ -8,7 +8,7 @@
              d:DesignHeight="300" d:DesignWidth="300"
              xmlns:m="clr-namespace:m0.UIWpf.Controls;assembly=m0">
     <Grid>
-        <ScrollViewer x:Name="Scroll"  HorizontalScrollBarVisibility="Visible" VerticalScrollBarVisibility="Visible" Loaded="Scroll_Loaded" ScrollChanged="Scroll_ScrollChanged" MouseLeave="DownHideAreaGrip_MouseLeave_Hard">
+        <ScrollViewer x:Name="Scroll"  HorizontalScrollBarVisibility="Visible" VerticalScrollBarVisibility="Visible" Loaded="Scroll_Loaded" ScrollChanged="Scroll_ScrollChanged" MouseLeave="DownHideAreaGrip_MouseLeave_Hard" SizeChanged="Scroll_SizeChanged">
             <ScrollViewer.Template>
                 <ControlTemplate TargetType="{x:Type ScrollViewer}">
                     <Grid x:Name="Grid" Background="{TemplateBinding Background}">
@@ -68,7 +68,10 @@
                         </Border>
 
                         <m:AnimatedHideArea Grid.Row="6" Grid.Column="0" Grid.ColumnSpan="5" x:Name="DownHideArea" MouseMove="DownHideAreaGrip_MouseMove" MouseUp="DownHideAreaGrip_MouseUp" Expanded="DownHideArea_Expanded" Collapsed="DownHideArea_Collapsed">
-                            <Button Height="200">TEST</Button>
+                            <StackPanel Orientation="Horizontal">
+                                <Border />
+                                <ScrollViewer HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Hidden"/>
+                            </StackPanel>
                         </m:AnimatedHideArea>
 
                         <Border Grid.Row="7" Grid.Column="0" MouseEnter="DownHideAreaGrip_MouseLeave_Hard"/>
