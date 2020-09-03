@@ -183,6 +183,9 @@ namespace m0_COMPOSER.UIWpf.Visualisers
                 case CursorState.ArrowDown_MoveOnItem_MouseDownAndMove:
 
                     ArrowButton.IsChecked = true;
+
+                    HideArrowLines();
+
                     break;
 
                 case CursorState.Eraser:
@@ -348,8 +351,8 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
         public void CreateArrowLines()
         {
-            HorizontalArrowLine = WpfUtil.CreateLine(1, (Brush)FindResource("0LightBackgroundBrush"));
-            VerticalArrowLine = WpfUtil.CreateLine(1, (Brush)FindResource("0LightBackgroundBrush"));            
+            HorizontalArrowLine = WpfUtil.CreateLine(1, (Brush)FindResource("0LightHighlightBrush"));
+            VerticalArrowLine = WpfUtil.CreateLine(1, (Brush)FindResource("0LightHighlightBrush"));            
         }
 
         public void CreateDown()
@@ -392,9 +395,13 @@ namespace m0_COMPOSER.UIWpf.Visualisers
         {
             DrawBackground();
 
+            DrawMainSegments();
+
             DrawMainSnapLines();
 
             DrawMainLines();
+
+            DrawArrowLines();
 
             AddEventHandlers();
 
@@ -430,7 +437,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
         private void MouseMoveHandler(object sender, MouseEventArgs e)
         {
-            UpdateArrowLines();
+            UpdateArrowLines(e);
 
             switch (currentCursorState)
             {
@@ -512,9 +519,37 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             }
         }
 
-        void UpdateArrowLines()
+        void UpdateArrowLines(MouseEventArgs e)
         {
+            if (!showArowLines || 
+                !(currentCursorState == CursorState.Eraser || 
+                currentCursorState == CursorState.PenDown || 
+                currentCursorState == CursorState.PenUp))
+            {
+                HideArrowLines();
 
+                return;
+            }
+
+            HorizontalArrowLine.Visibility = Visibility.Visible;
+            VerticalArrowLine.Visibility = Visibility.Visible;
+
+            Point currentMousePosition = GetMainContentMousePosition(e);
+
+            double x = currentMousePosition.X;
+            double y = currentMousePosition.Y;
+
+            WpfUtil.SetLinePosition(HorizontalArrowLine, 0, y, Width, y);
+            WpfUtil.SetLinePosition(VerticalArrowLine, x, 0, x, Height);
+        }
+
+        void HideArrowLines()
+        {
+            if (HorizontalArrowLine == null)
+                return;
+
+            HorizontalArrowLine.Visibility = Visibility.Hidden;
+            VerticalArrowLine.Visibility = Visibility.Hidden;
         }
 
         void PenDown(object sender, MouseButtonEventArgs e)
@@ -1226,6 +1261,8 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
         private void MouseLeaveHandler(object sender, MouseEventArgs e)
         {
+            HideArrowLines();
+
             Point currentMousePosition = GetMainContentMousePosition(e);
 
             WpfUtil.SetCursor(Cursors.Arrow);
@@ -1293,11 +1330,11 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             }
         }
 
-        public void DrawMainLines()
+        void DrawMainSegments()
         {
             foreach (AxisSegment s in VerticalAD.Segments)
             {
-                if(s.UseBackgroundColor)
+                if (s.UseBackgroundColor)
                 {
                     Border b = new Border();
 
@@ -1307,7 +1344,13 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
                     Main.Children.Add(b);
                 }
+            }
+        }
 
+        public void DrawMainLines()
+        {
+            foreach (AxisSegment s in VerticalAD.Segments)
+            {       
                 Line l = new Line();
                 
                 WpfUtil.SetLinePosition(l, 0, s.StartPosition, Width, s.StartPosition);
@@ -1328,6 +1371,12 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
                 Main.Children.Add(l);
             }
+        }
+
+        void DrawArrowLines()
+        {
+            Main.Children.Add(HorizontalArrowLine);
+            Main.Children.Add(VerticalArrowLine);
         }
 
         public void DrawItems()

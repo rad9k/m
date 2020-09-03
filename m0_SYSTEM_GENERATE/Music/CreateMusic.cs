@@ -134,7 +134,7 @@ namespace m0_SYSTEM_GENERATE.Music
 
             IVertex white = r.Get(false, @"System\Data\UX\Colors\White");
             IVertex black = r.Get(false, @"System\Data\UX\Colors\Black");
-            IVertex gray = r.Get(false, @"System\Data\UX\Colors\LightGray");
+            IVertex gray = r.Get(false, @"System\Data\UX\Colors\VeryVeryLightGray");
 
             for (int x = -1; x <= 9; x++) {
                 AddPitch(b, x, 0, "C " + x.ToString(), white, null);

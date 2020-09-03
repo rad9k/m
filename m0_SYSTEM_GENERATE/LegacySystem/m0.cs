@@ -4580,7 +4580,9 @@ namespace m0
             ColorType.AddColor(Colors, "White", 255, 255, 255, 255);
             ColorType.AddColor(Colors, "Black", 0, 0, 0, 255);
             ColorType.AddColor(Colors, "Gray", 127, 127, 127, 255);
-            ColorType.AddColor(Colors, "LightGray", 200, 200, 200, 255);
+            ColorType.AddColor(Colors, "LightGray", 160, 160, 160, 255);
+            ColorType.AddColor(Colors, "VeryLightGray", 200, 200, 200, 255);
+            ColorType.AddColor(Colors, "VeryVeryLightGray", 220, 220, 220, 255);
             ColorType.AddColor(Colors, "Red", 255, 0, 0, 255);
             ColorType.AddColor(Colors, "Green", 0, 255, 0, 255);
             ColorType.AddColor(Colors, "Blue", 0, 0, 255, 255);
