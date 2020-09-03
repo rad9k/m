@@ -34,6 +34,8 @@ namespace m0_COMPOSER.UIWpf.Visualisers
         // sequencer specyfic
 
         bool showVelocity;
+        bool showArowLines;
+        bool showSnapLines;
         int defaultVelocity;
         bool isDrum;
 
@@ -92,9 +94,9 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
         AxisSegment newItemSegment;
 
-        enum SnapToGrid { Bar1, Bar1_2, Bar1_4, Bar1_8, Bar1_16, Bar1_32, No_Snap }
+        enum SnapToGridEnum { Bar1, Bar1_2, Bar1_4, Bar1_8, Bar1_16, Bar1_32, No_Snap }
 
-        SnapToGrid currentSnapToGrid;
+        SnapToGridEnum currentSnapToGrid;
 
         double currentSnapToGridValue;
 
@@ -142,6 +144,8 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             showLabel = GraphUtil.GetBooleanValue(Vertex.Get(false, "ShowLabel:"), ref dummy);
             showVelocity = GraphUtil.GetBooleanValue(Vertex.Get(false, "ShowVelocity:"), ref dummy);
+            showArowLines = GraphUtil.GetBooleanValue(Vertex.Get(false, "ShowArrowLines:"), ref dummy);
+            showSnapLines = GraphUtil.GetBooleanValue(Vertex.Get(false, "ShowSnapLines:"), ref dummy);
             defaultVelocity = GraphUtil.GetIntegerValue(Vertex.Get(false, "DefaultVelocity:"), ref dummy);
 
             if (Vertex.Get(false, "SnapToGrid:") == null || Vertex.Get(false, "SnapToGrid:").Value.ToString() == "")
@@ -388,7 +392,9 @@ namespace m0_COMPOSER.UIWpf.Visualisers
         {
             DrawBackground();
 
-            DrawLines();
+            DrawMainSnapLines();
+
+            DrawMainLines();
 
             AddEventHandlers();
 
@@ -1029,7 +1035,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
         double GetSnappedPosition(double position)
         {
-            if (currentSnapToGrid == SnapToGrid.No_Snap)
+            if (currentSnapToGrid == SnapToGridEnum.No_Snap)
                 return position;
 
             double positionInBars = (position / HorizontalAD.BaseUnitSize) / HorizontalAD.BarLength;
@@ -1264,7 +1270,30 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             TurnOnSelectedEdgesFireChange();         
         }
 
-        public void DrawLines()
+        public void DrawMainSnapLines()
+        {
+            if (currentSnapToGrid == SnapToGridEnum.No_Snap)
+                return;
+
+            double snapWidth = getSnapMinmalWidth();
+
+            Brush lb = (Brush)FindResource("0VeryLightForegroundBrush");
+
+            for (double x = 0 ; x < Width ; x+= snapWidth)
+            {
+                Line l = new Line();
+
+                WpfUtil.SetLinePosition(l, x, 0, x, Height);
+
+                l.Stroke = lb;
+
+                l.StrokeThickness = 1;
+
+                Main.Children.Add(l);
+            }
+        }
+
+        public void DrawMainLines()
         {
             foreach (AxisSegment s in VerticalAD.Segments)
             {
@@ -1313,7 +1342,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
         {
             SetCursorMode(CursorState.ArrowUp);
 
-            currentSnapToGrid = SnapToGrid.Bar1;
+            currentSnapToGrid = SnapToGridEnum.Bar1;
 
             currentSnapToGridValue = 1;
         }
@@ -1457,40 +1486,42 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             switch (Vertex.Get(false, "SnapToGrid:").Value.ToString())
             {
                 case "1 bar":
-                    currentSnapToGrid = SnapToGrid.Bar1;
+                    currentSnapToGrid = SnapToGridEnum.Bar1;
                     currentSnapToGridValue = 1;
                     break;
 
                 case "1/2 bar":
-                    currentSnapToGrid = SnapToGrid.Bar1_2;
+                    currentSnapToGrid = SnapToGridEnum.Bar1_2;
                     currentSnapToGridValue = 1.0/2;
                     break;
 
                 case "1/4 bar":
-                    currentSnapToGrid = SnapToGrid.Bar1_4;
+                    currentSnapToGrid = SnapToGridEnum.Bar1_4;
                     currentSnapToGridValue = 1.0/4;
                     break;
 
                 case "1/8 bar":
-                    currentSnapToGrid = SnapToGrid.Bar1_8;
+                    currentSnapToGrid = SnapToGridEnum.Bar1_8;
                     currentSnapToGridValue = 1.0/8;
                     break;
 
                 case "1/16 bar":
-                    currentSnapToGrid = SnapToGrid.Bar1_16;
+                    currentSnapToGrid = SnapToGridEnum.Bar1_16;
                     currentSnapToGridValue = 1.0/16;
                     break;
 
                 case "1/32 bar":
-                    currentSnapToGrid = SnapToGrid.Bar1_32;
+                    currentSnapToGrid = SnapToGridEnum.Bar1_32;
                     currentSnapToGridValue = 1.0/32;
                     break;
 
                 case "no snap":
-                    currentSnapToGrid = SnapToGrid.No_Snap;
+                    currentSnapToGrid = SnapToGridEnum.No_Snap;
                     currentSnapToGridValue = 0;
                     break;
                 }
+
+            VisualiserDraw();
         }
 
         private void ExtendButton_Click(object sender, RoutedEventArgs e)
