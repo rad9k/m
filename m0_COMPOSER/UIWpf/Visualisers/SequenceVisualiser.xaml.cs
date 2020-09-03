@@ -112,6 +112,9 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
         double mouseOverItem_startLeft;
 
+        Line HorizontalArrowLine;
+        Line VerticalArrowLine;
+
         Dictionary<IVertex, IItem> GetItemsDictionary()
         {
             if (needToRebuildItemsDictionary)
@@ -222,7 +225,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
                     WpfUtil.SetCursorFromResource("/m0;component/_resources/basic/pen.cur");
                     break;                
             }
-        }
+        }        
 
         public void VisualiserDraw()
         {
@@ -235,7 +238,9 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             SetAxisDecorators();
 
-            CreateMain();            
+            CreateMain();
+
+            CreateArrowLines();
 
             SetupScrollViewer();
 
@@ -337,6 +342,12 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             items = new List<FrameworkElement>();
         }
 
+        public void CreateArrowLines()
+        {
+            HorizontalArrowLine = WpfUtil.CreateLine(1, (Brush)FindResource("0LightBackgroundBrush"));
+            VerticalArrowLine = WpfUtil.CreateLine(1, (Brush)FindResource("0LightBackgroundBrush"));            
+        }
+
         public void CreateDown()
         {
             ZoomScrollView.InitialDownHeight = 100;
@@ -413,6 +424,8 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
         private void MouseMoveHandler(object sender, MouseEventArgs e)
         {
+            UpdateArrowLines();
+
             switch (currentCursorState)
             {
                 case CursorState.PenDown:
@@ -491,6 +504,11 @@ namespace m0_COMPOSER.UIWpf.Visualisers
                     ArrowDown_FromUpMove(sender, e);
                     break;
             }
+        }
+
+        void UpdateArrowLines()
+        {
+
         }
 
         void PenDown(object sender, MouseButtonEventArgs e)

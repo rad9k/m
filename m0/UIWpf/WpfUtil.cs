@@ -32,6 +32,17 @@ namespace m0.UIWpf
             Dnd.MinimumVerticalDragDistance = SystemParameters.MinimumVerticalDragDistance * 2;
         }
 
+        public static Line CreateLine(double thickness, Brush stroke)
+        {
+            Line l = new Line();
+
+            l.StrokeThickness = thickness;
+
+            l.Stroke = stroke;
+
+            return l;
+        }
+
         public static FrameworkElement GetElementAtFromList_StartFromEnd(List<FrameworkElement> list, Point point)
         {
             for(int x=list.Count - 1; x >= 0; x--)
