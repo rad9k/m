@@ -59,6 +59,7 @@
     <Compile Include="LegacySystem\Util\GeneralUtil.cs" />
     <Compile Include="LegacySystem\ZeroCode\ZeroCodeEngine_OLD.cs" />
     <Compile Include="Music\CreateMusic.cs" />
+    <Compile Include="Music\DefaultCCList.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Util\GenerateUtil.cs" />

@@ -56,6 +56,11 @@ namespace m0.Graph
 
     public class GraphUtil
     {
+        public static IVertex AddEnum(IVertex baseVertex, string enumName, string[] values)
+        {
+            return null;
+        }
+
         public static IVertex AddClass(IVertex baseVertex, string className)
         {
             IVertex r = MinusZero.Instance.root;

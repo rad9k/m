@@ -259,6 +259,9 @@ namespace m0_SYSTEM_GENERATE.Music
             IVertex Boolean = r.Get(false, @"System\Meta\ZeroTypes\Boolean");
             IVertex Color = r.Get(false, @"System\Meta\ZeroTypes\Color");
 
+            // CCDescription
+
+
             // vertex stubs
 
             IVertex NoteOutput = GraphUtil.AddClass(Music, "NoteOutput");
