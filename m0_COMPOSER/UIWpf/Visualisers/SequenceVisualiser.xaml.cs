@@ -836,7 +836,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             item.HiddenTop += deltaY;
             item.HiddenBottom += deltaY;
 
-            AxisSegment newSegment = FindVerticalSegment(item.HiddenTop);
+            AxisSegment newSegment = FindVerticalSegment(item.HiddenTop + ( (item.HiddenBottom - item.HiddenTop) / 2 ));
 
             if(newSegment != null)
                 item.Top = newSegment.StartPosition;            
@@ -1062,7 +1062,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
         AxisSegment FindVerticalSegment(double position)
         {
             foreach (AxisSegment s in VerticalAD.Segments)
-                if (s.StartPosition <= position && position <= s.EndPosition)
+                if (s.StartPosition < position && position < s.EndPosition)
                     return s;
 
             return null;
