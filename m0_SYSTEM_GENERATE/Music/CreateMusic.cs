@@ -261,6 +261,7 @@ namespace m0_SYSTEM_GENERATE.Music
 
             // CCDescription
 
+            IVertex CCTypeEnum = GraphUtil.AddEnum(Music, "CCTypeEnum", new String[] { "Default", "On/Off", "MSB", "LSB" });
 
             // vertex stubs
 
