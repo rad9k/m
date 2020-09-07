@@ -31,6 +31,8 @@ namespace m0_SYSTEM_GENERATE.Music
 
         static IVertex VisualisedPitch;
 
+        static IVertex ControlChangeDescription;
+
         class _Note
         {
             public string Name;
@@ -261,7 +263,7 @@ namespace m0_SYSTEM_GENERATE.Music
 
             // CCDescription
 
-            IVertex CCTypeEnum = GraphUtil.AddEnum(Music, "CCTypeEnum", new String[] { "Default", "On/Off", "MSB", "LSB" });
+            IVertex ControlChangeDescriptionTypeEnum = GraphUtil.AddEnum(Music, "ControlChangeDescriptionTypeEnum", new String[] { "Default", "On/Off", "MSB", "LSB" });
 
             // vertex stubs
 
@@ -302,6 +304,14 @@ namespace m0_SYSTEM_GENERATE.Music
 
             GraphUtil.AddInherits(ControlChangeEvent, ControlChange);
             GraphUtil.AddInherits(ControlChangeEvent, Event);
+
+            // CONTROLCHANGEDESCRIPTION
+
+            ControlChangeDescription = GraphUtil.AddClass(Music, "ControlChangeDescription");
+
+            GraphUtil.AddAttribute(ControlChangeDescription, "Number", Integer, 1, 1);
+            GraphUtil.AddAttribute(ControlChangeDescription, "Description", String, 1, 1);
+            GraphUtil.AddAttribute(ControlChangeDescription, "Type", ControlChangeDescriptionTypeEnum, 1, 1);
 
             // PICH
 

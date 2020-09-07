@@ -10,17 +10,17 @@ namespace m0_SYSTEM_GENERATE.Music
     {
         public int Number;
         public String Description;
-        public String AdditionalInfo;
+        public String Type;
 
-        public CCDescription(int number, String description, String additionalInfo)
+        public CCDescription(int number, String description, String type)
         {
             Number = number;
             Description = description;
-            AdditionalInfo = additionalInfo;
+            Type = type;
         }
     }
 
-    class DefaultCCList
+    class DefaultControlChangeDescription
     {
         static CCDescription[] DrumInstruments = new CCDescription[] {
         new CCDescription(0, "Bank Select", "MSB"),
