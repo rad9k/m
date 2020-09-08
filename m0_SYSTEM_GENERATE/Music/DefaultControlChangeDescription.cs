@@ -20,9 +20,9 @@ namespace m0_SYSTEM_GENERATE.Music
         }
     }
 
-    class DefaultControlChangeDescription
+    public class DefaultControlChangeDescription
     {
-        static CCDescription[] DrumInstruments = new CCDescription[] {
+        public static CCDescription[] DefaultControlChangeDescriptionSet = new CCDescription[] {
         new CCDescription(0, "Bank Select", "MSB"),
         new CCDescription(1, "Modulation Wheel or Lever", "MSB"),
         new CCDescription(2, "Breath Controller", "MSB"),

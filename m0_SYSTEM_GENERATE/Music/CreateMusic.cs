@@ -33,6 +33,8 @@ namespace m0_SYSTEM_GENERATE.Music
 
         static IVertex ControlChangeDescription;
 
+        static IVertex ControlChangeDescriptionSet;
+
         class _Note
         {
             public string Name;
@@ -122,6 +124,8 @@ namespace m0_SYSTEM_GENERATE.Music
             AddBaseDrumSet();
 
             AddBaseTimeSpanStructure();
+
+            AddDefaultControlChangeDescription();
         }        
 
         private static void AddBasePitchSet()
@@ -240,6 +244,47 @@ namespace m0_SYSTEM_GENERATE.Music
             sixteen.AddEdge(Music.Get(false, @"TimeSpanLevel\SubLevel"), MidiTick);            
         }
 
+        static void AddDefaultControlChangeDescription()
+        {
+            IVertex b = VertexOperations.AddInstance(Data, ControlChangeDescriptionSet);
+
+            Data.AddEdge(Music.Get(false, "DefaultControlChangeDescriptionSet"), b);
+
+            b.Value = "BaseControlChangeDescriptionSet";
+
+            IVertex eDefault = Music.Get(false, @"ControlChangeDescriptionTypeEnum\Default");
+            IVertex eOnOff = Music.Get(false, @"ControlChangeDescriptionTypeEnum\OnOff");
+            IVertex eMSB = Music.Get(false, @"ControlChangeDescriptionTypeEnum\MSB");
+            IVertex eLSB = Music.Get(false, @"ControlChangeDescriptionTypeEnum\LSB");
+
+            foreach (CCDescription d in DefaultControlChangeDescription.DefaultControlChangeDescriptionSet){
+                IVertex desc = VertexOperations.AddInstance(b, ControlChangeDescription);
+
+                GraphUtil.SetVertexValue(desc, ControlChangeDescription.Get(false, "Number"), d.Number);
+                GraphUtil.SetVertexValue(desc, ControlChangeDescription.Get(false, "Description"), d.Description);
+
+
+                switch (d.Type)
+                {
+                    case "Default":
+                        GraphUtil.CreateOrReplaceEdge(desc, ControlChangeDescription.Get(false, "Type"), eDefault);
+                        break;
+
+                    case "OnOff":
+                        GraphUtil.CreateOrReplaceEdge(desc, ControlChangeDescription.Get(false, "Type"), eOnOff);
+                        break;
+
+                    case "MSB":
+                        GraphUtil.CreateOrReplaceEdge(desc, ControlChangeDescription.Get(false, "Type"), eMSB);
+                        break;
+
+                    case "LSB":
+                        GraphUtil.CreateOrReplaceEdge(desc, ControlChangeDescription.Get(false, "Type"), eLSB);
+                        break;
+                }
+            }
+        }
+
         private static void AddMetaEdges()
         {
             GraphUtil.AddMetaEdge(Music, "DefaultPitchSet", Music.Get(false, "PitchSet"));
@@ -249,6 +294,8 @@ namespace m0_SYSTEM_GENERATE.Music
             GraphUtil.AddMetaEdge(Music, "BaseTimeSpanLevel", Music.Get(false, "TimeSpanLevel"));
 
             GraphUtil.AddMetaEdge(Music, "DefaultTimeSpanLevel", Music.Get(false, "TimeSpanLevel"));
+
+            GraphUtil.AddMetaEdge(Music, "DefaultControlChangeDescriptionSet", Music.Get(false, "ControlChangeDescriptionSet"));
         }
 
         private static void AddClasses() {
@@ -311,7 +358,13 @@ namespace m0_SYSTEM_GENERATE.Music
 
             GraphUtil.AddAttribute(ControlChangeDescription, "Number", Integer, 1, 1);
             GraphUtil.AddAttribute(ControlChangeDescription, "Description", String, 1, 1);
-            GraphUtil.AddAttribute(ControlChangeDescription, "Type", ControlChangeDescriptionTypeEnum, 1, 1);
+            GraphUtil.AddAttribute(ControlChangeDescription, "Type", ControlChangeDescriptionTypeEnum, 0, 1);
+
+            // CONTROLCHANGEDESCRIPTIONSET
+
+            ControlChangeDescriptionSet = GraphUtil.AddClass(Music, "ControlChangeDescriptionSet");
+
+            GraphUtil.AddAggregation(ControlChangeDescriptionSet, "ControlChangeDescription", ControlChangeDescription, 0, -1);
 
             // PICH
 

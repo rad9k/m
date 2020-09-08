@@ -62,7 +62,7 @@ namespace m0.Graph
 
             IVertex a = baseVertex.AddVertex(r.Get(false, @"System\Meta\ZeroUML\Enum"), enumName);
 
-            a.AddEdge(r.Get(false, @"System\Base\Vertex\$Inherits"), r.Get(false, @"System\Meta\ZeroTypes\EnumBase"));
+            a.AddEdge(m0.MinusZero.Instance.Inherits, r.Get(false, @"System\Meta\ZeroTypes\EnumBase"));
 
             foreach (string v in values)
                 a.AddVertex(r.Get(false, @"System\Meta\ZeroUML\Enum\EnumValue"), v);
