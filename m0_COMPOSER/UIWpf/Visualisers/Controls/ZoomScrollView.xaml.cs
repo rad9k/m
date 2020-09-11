@@ -133,7 +133,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Controls
 
         private void DownHideArea_Loaded(object sender, RoutedEventArgs e)
         {
-            DownHideArea.IsExpanded = true;
+            //DownHideArea.IsExpanded = true;
         }
 
         double HorizontalOffset;

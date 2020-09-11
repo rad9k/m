@@ -67,7 +67,7 @@
                             </StackPanel>
                         </Border>
 
-                        <m:AnimatedHideArea Grid.Row="6" Grid.Column="0" Grid.ColumnSpan="5" x:Name="DownHideArea" MouseMove="DownHideAreaGrip_MouseMove" MouseUp="DownHideAreaGrip_MouseUp" Expanded="DownHideArea_Expanded" Collapsed="DownHideArea_Collapsed">
+                        <m:AnimatedHideArea Grid.Row="6" Grid.Column="0" Grid.ColumnSpan="5" x:Name="DownHideArea" MouseMove="DownHideAreaGrip_MouseMove" MouseUp="DownHideAreaGrip_MouseUp" Expanded="DownHideArea_Expanded" Collapsed="DownHideArea_Collapsed" IsExpanded="False">
                             <StackPanel Orientation="Horizontal">
                                 <Border />
                                 <ScrollViewer HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Hidden"/>

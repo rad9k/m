@@ -26,19 +26,21 @@ namespace m0.UIWpf.Controls
         public event EventHandler Expanded;
         public event EventHandler Collapsed;
 
+        bool isExpanded=true;
+
         public bool IsExpanded {
             get {
-                if (Expander == null)
-                    return false;
+                if (Expander != null)
+                    return this.Expander.IsExpanded;
 
-                return this.Expander.IsExpanded;
+                return false;
             }
             set
             {
-                if (Expander == null)
-                    throw new Exception("Expander control not loaded");
+                isExpanded = value;
 
-                this.Expander.IsExpanded = value;
+                if (Expander != null)
+                    this.Expander.IsExpanded = value;
             }
         }
 
@@ -53,6 +55,8 @@ namespace m0.UIWpf.Controls
         private void AnimatedHideArea_Loaded(object sender, RoutedEventArgs e)
         {
             Expander = (Expander)this.Template.FindName("Expander", this);
+
+            Expander.IsExpanded = isExpanded;
         }
 
         private void Expander_Expanded(object sender, RoutedEventArgs e)
