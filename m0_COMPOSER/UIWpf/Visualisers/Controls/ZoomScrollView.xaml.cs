@@ -13,6 +13,20 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Controls
     /// </summary>
     public partial class ZoomScrollView : UserControl, IZoomScrollView
     {
+
+        bool downAreaIsExpanded = true;
+
+        public bool DownAreaIsExpanded
+        {
+            get
+            {                
+                if(DownHideArea!=null)
+            }
+            set
+            {
+                
+            }
+        }
         public ZoomScrollView()
         {
             InitializeComponent();
