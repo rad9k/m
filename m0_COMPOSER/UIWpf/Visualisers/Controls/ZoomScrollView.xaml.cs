@@ -13,20 +13,54 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Controls
     /// </summary>
     public partial class ZoomScrollView : UserControl, IZoomScrollView
     {
+        bool downAreaVisible = trus;
+
+        public bool DownAreaVisible {
+            get
+            {
+                return downAreaVisible;
+            }
+            set
+            {
+                downAreaVisible = value;
+
+                UpdateDownHideAreaVisibility();
+            }
+        }
 
         bool downAreaIsExpanded = true;
 
         public bool DownAreaIsExpanded
         {
             get
-            {                
-                if(DownHideArea!=null)
+            {
+                if (DownHideArea != null)
+                    return DownHideArea.IsExpanded;
+
+                return false;
             }
             set
             {
-                
+                downAreaIsExpanded = value;
+
+                if (DownHideArea != null)
+                    DownHideArea.IsExpanded = downAreaIsExpanded;
+
             }
         }
+
+        void UpdateDownHideAreaVisibility()
+        {
+            if (downAreaVisible)
+            {
+                Grid.RowDefinitions[5].Height = new GridLength()
+            }
+            else
+            {
+
+            }
+        }
+
         public ZoomScrollView()
         {
             InitializeComponent();
@@ -125,7 +159,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Controls
             Host.VisualiserDraw();
         }
 
-        private void Scroll_Loaded(object sender, RoutedEventArgs e)
+        void InitializeLocalControlVariables()
         {
             HorizontalAxisDecoratorScrollViewer = (ScrollViewer)Scroll.Template.FindName("HorizontalAxisDecoratorScrollViewer", Scroll);
             VerticalAxisDecoratorScrollViewer = (ScrollViewer)Scroll.Template.FindName("VerticalAxisDecoratorScrollViewer", Scroll);
@@ -139,16 +173,22 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Controls
 
             DownDecorator = (Border)((StackPanel)DownHideArea.Content).Children[0];
             DownMain = (ScrollViewer)((StackPanel)DownHideArea.Content).Children[1];
+        }
+
+        void InitializeLocalControls()
+        {
+            DownHideArea.IsExpanded = downAreaIsExpanded;
+        }
+
+        private void Scroll_Loaded(object sender, RoutedEventArgs e)
+        {
+            InitializeLocalControlVariables();
 
             Host.ChildControlsLoaded();
 
-            DownHideArea.Loaded += DownHideArea_Loaded;
+            InitializeLocalControls();
         }
-
-        private void DownHideArea_Loaded(object sender, RoutedEventArgs e)
-        {
-            //DownHideArea.IsExpanded = true;
-        }
+        
 
         double HorizontalOffset;
         double VerticalOffset;
