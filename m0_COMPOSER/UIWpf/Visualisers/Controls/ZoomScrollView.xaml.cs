@@ -13,7 +13,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Controls
     /// </summary>
     public partial class ZoomScrollView : UserControl, IZoomScrollView
     {
-        bool downAreaVisible = trus;
+        bool downAreaVisible = true;
 
         public bool DownAreaVisible {
             get
@@ -51,13 +51,18 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Controls
 
         void UpdateDownHideAreaVisibility()
         {
+            if (Grid == null)
+                return;
+
             if (downAreaVisible)
             {
-                Grid.RowDefinitions[5].Height = new GridLength()
+                Grid.RowDefinitions[5].Height = new GridLength(5, GridUnitType.Pixel);
+                Grid.RowDefinitions[6].Height = new GridLength(0, GridUnitType.Auto);
             }
             else
             {
-
+                Grid.RowDefinitions[5].Height = new GridLength(0, GridUnitType.Pixel);
+                Grid.RowDefinitions[6].Height = new GridLength(0, GridUnitType.Pixel);
             }
         }
 
@@ -178,6 +183,8 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Controls
         void InitializeLocalControls()
         {
             DownHideArea.IsExpanded = downAreaIsExpanded;
+
+            UpdateDownHideAreaVisibility();
         }
 
         private void Scroll_Loaded(object sender, RoutedEventArgs e)
