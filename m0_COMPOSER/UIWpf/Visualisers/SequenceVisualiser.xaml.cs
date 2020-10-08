@@ -1308,9 +1308,9 @@ namespace m0_COMPOSER.UIWpf.Visualisers
         }
 
         public void DrawMainSnapLines()
-        {
-            if (currentSnapToGrid == SnapToGridEnum.No_Snap)
-                return;
+        {            
+            if (currentSnapToGrid == SnapToGridEnum.No_Snap || showSnapLines == false)
+                    return;
 
             double snapWidth = getSnapMinmalWidth();
 
@@ -1459,7 +1459,13 @@ namespace m0_COMPOSER.UIWpf.Visualisers
         protected void VertexChange(object sender, VertexChangeEventArgs e)
         {
             if (VertexChangeOff)
-                return;
+                return;            
+
+            if ((sender == Vertex.Get(false, "ShowArrowLines:")) && (e.Type == VertexChangeType.ValueChanged))
+                UpdateBaseEdge();
+
+            if ((sender == Vertex.Get(false, "ShowSnapLines:")) && (e.Type == VertexChangeType.ValueChanged))
+                UpdateBaseEdge();
 
             if ((sender == Vertex.Get(false, "ShowLabel:")) && (e.Type == VertexChangeType.ValueChanged) )
                 UpdateBaseEdge();

@@ -37,6 +37,6 @@
 
             </ToolBar>
         </ToolBarTray>
-        <Controls:ZoomScrollView x:Name="ZoomScrollView" DownAreaVisible="False"/>
+        <Controls:ZoomScrollView x:Name="ZoomScrollView" DownAreaVisible="True"/>
     </DockPanel>
 </UserControl>
