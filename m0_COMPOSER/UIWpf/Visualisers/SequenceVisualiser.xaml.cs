@@ -29,7 +29,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
     /// <summary>
     /// Interaction logic for SequenceVisualiser.xaml
     /// </summary>
-    public partial class SequenceVisualiser : UserControl, IPlatformClass, IOwnScrolling, IZoomScrollViewerHost
+    public partial class SequenceVisualiser : UserControl, IPlatformClass, IOwnScrolling, IZoomScrollViewerHost, IDisposable
     {
         // sequencer specyfic
 
@@ -1514,18 +1514,20 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             if (IsDisposed == false)
             {
                 IsDisposed = true;
-                MinusZero mz = MinusZero.Instance;
 
-                //GraphUtil.DeleteEdgeByToVertex(mz.Root.Get(false, @"System\Session\Visualisers"), Vertex);
+                DispachAllSubVisualisers();
 
-                /*foreach (UIElement e in Children)
-                {
-                    if (e is StackPanel)
-                        foreach (UIElement ee in ((StackPanel)e).Children)
-                            if (ee is IDisposable)
-                                ((IDisposable)ee).Dispose();
-                }*/
+                PlatformClass.RemoveVertexChangeListeners(this.Vertex, new VertexChange(VertexChange));
+
+                if (Vertex is IDisposable)
+                    ((IDisposable)Vertex).Dispose();
             }
+        }
+
+        protected void DispachAllSubVisualisers()
+        {
+            if (ZoomScrollView is IDisposable)
+                ((IDisposable)ZoomScrollView).Dispose();
         }
 
         bool isLoaded = false;
