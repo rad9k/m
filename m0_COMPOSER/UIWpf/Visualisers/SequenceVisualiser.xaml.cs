@@ -359,14 +359,13 @@ namespace m0_COMPOSER.UIWpf.Visualisers
         {
             ZoomScrollView.InitialDownHeight = 100;
 
-            Border a = new Border();
-            a.Background = new SolidColorBrush(Colors.Aqua);
+            ControlChangeDownDecorator ccdd = new ControlChangeDownDecorator();
 
             Button b = new Button();
             b.Content = "hello";
             b.Background = new SolidColorBrush(Colors.CadetBlue);
 
-            ZoomScrollView.SetDownContent(a, b);
+            ZoomScrollView.SetDownContent(ccdd, b);
         }
 
         void ItemsAdd(IItem i)
