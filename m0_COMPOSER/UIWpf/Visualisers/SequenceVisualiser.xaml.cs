@@ -33,44 +33,45 @@ namespace m0_COMPOSER.UIWpf.Visualisers
     {
         // sequencer specyfic
 
-        bool showVelocity;
+        protected bool showVelocity;
         bool showArowLines;
         bool showSnapLines;
         int defaultVelocity;
         bool isDrum;
+        int CCNumber;
 
         //
 
-        bool isCurrentPenItemCenter;
+        protected bool isCurrentPenItemCenter;
 
-        bool showLabel;
-                        
-        Canvas Main;
-        SelectionArea SelectionArea;
+        protected bool showLabel;
 
-        IVertex BaseEdgeToVertex;
+        protected Canvas Main;
+        protected SelectionArea SelectionArea;
 
-        IVertex baseVertex;
-        IVertex pitchSetVertex;
-        IVertex timeSpanVertex;
+        protected IVertex BaseEdgeToVertex;
 
-        IZoomScrollViewAxisDecorator VerticalAD;
-        IZoomScrollViewAxisDecorator HorizontalAD;
+        protected IVertex baseVertex;
+        protected IVertex pitchSetVertex;
+        protected IVertex timeSpanVertex;
 
-        double Width;
-        double Height;
+        protected IZoomScrollViewAxisDecorator VerticalAD;
+        protected IZoomScrollViewAxisDecorator HorizontalAD;
 
-        int Length;
-        int ExtendTimeLength;        
+        protected double Width;
+        protected double Height;
 
-        double HorizontalItemMoveLeftRightSpan_Big = 10;
-        double HorizontalItemMoveLeftRightSpan_ItemSizeMiddleBoundary = 20;
-        double HorizontalItemMoveLeftRightSpan_Small = 3;
-        double HorizontalItemMoveLeftRightSpan_ItemSizeSmallBoundary = 9;
+        protected int Length;
+        protected int ExtendTimeLength;
 
-        double ArrowDown_MoveOnItem_MouseDown_Delta = 3;
+        protected double HorizontalItemMoveLeftRightSpan_Big = 10;
+        protected double HorizontalItemMoveLeftRightSpan_ItemSizeMiddleBoundary = 20;
+        protected double HorizontalItemMoveLeftRightSpan_Small = 3;
+        protected double HorizontalItemMoveLeftRightSpan_ItemSizeSmallBoundary = 9;
 
-        enum CursorState {
+        protected double ArrowDown_MoveOnItem_MouseDown_Delta = 3;
+
+        protected enum CursorState {
             ArrowUp,
             ArrowDown,
             ArrowUp_MoveOnItem_Left,
@@ -84,40 +85,45 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             PenDown,
             Eraser }
 
-        CursorState currentCursorState;
+        protected CursorState currentCursorState;
 
-        Point mouseDownPoint;
+        protected Point mouseDownPoint;
 
-        Point previousMousePosition;
+        protected Point previousMousePosition;
 
-        Border newItemShape;
+        protected Border newItemShape;
 
-        AxisSegment newItemSegment;
+        protected AxisSegment newItemSegment;
 
-        enum SnapToGridEnum { Bar1, Bar1_2, Bar1_4, Bar1_8, Bar1_16, Bar1_32, No_Snap }
+        protected enum SnapToGridEnum { Bar1, Bar1_2, Bar1_4, Bar1_8, Bar1_16, Bar1_32, No_Snap }
 
-        SnapToGridEnum currentSnapToGrid;
+        protected SnapToGridEnum currentSnapToGrid;
 
-        double currentSnapToGridValue;
+        protected double currentSnapToGridValue;
 
-        List<FrameworkElement> items;
+        protected List<FrameworkElement> items;
 
-        Dictionary<IVertex, IItem> itemsDictinaryHolder = new Dictionary<IVertex, IItem>();
+        protected Dictionary<IVertex, IItem> itemsDictinaryHolder = new Dictionary<IVertex, IItem>();
 
-        bool needToRebuildItemsDictionary = true;
+        protected bool needToRebuildItemsDictionary = true;
 
-        bool VertexChangeOff = false;
+        protected bool VertexChangeOff = false;
 
-        FrameworkElement mouseOverItem_Element;
+        protected FrameworkElement mouseOverItem_Element;
 
-        IItem mouseOverItem;
+        protected IItem mouseOverItem;
 
-        double mouseOverItem_startLeft;
+        protected double mouseOverItem_startLeft;
 
-        Line HorizontalArrowLine;
-        Line VerticalArrowLine;
+        protected Line HorizontalArrowLine;
+        protected Line VerticalArrowLine;
 
-        Dictionary<IVertex, IItem> GetItemsDictionary()
+        // DOWN
+
+        protected IZoomScrollViewDownDecorator DownDecorator;
+
+
+        protected Dictionary<IVertex, IItem> GetItemsDictionary()
         {
             if (needToRebuildItemsDictionary)
                 RebuildItemsDictionary();
@@ -125,7 +131,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             return itemsDictinaryHolder;
         }
 
-        void RebuildItemsDictionary()
+        protected void RebuildItemsDictionary()
         {
             itemsDictinaryHolder.Clear();
 
@@ -154,7 +160,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             SnapToGridComboBox_SelectionChange();
         }
 
-        void SetMouseOverItem(IItem item)
+        protected void SetMouseOverItem(IItem item)
         {
             if (!(item is FrameworkElement))
                 return;
@@ -164,7 +170,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             mouseOverItem_startLeft = item.Left;
         }
 
-        void SetCursorMode(CursorState modeDetail)
+        protected void SetCursorMode(CursorState modeDetail)
         {
             UnCheckAllCursorButtons();
 
@@ -201,7 +207,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             }
         }
 
-        void UpdateCursorShape()
+        protected void UpdateCursorShape()
         {
             switch (currentCursorState)
             {
@@ -232,7 +238,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
                     WpfUtil.SetCursorFromResource("/m0;component/_resources/basic/pen.cur");
                     break;                
             }
-        }        
+        }
 
         public void VisualiserDraw()
         {
@@ -256,7 +262,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             DrawMain();
         }
 
-        void SetVertexVaribles()
+        protected void SetVertexVaribles()
         {
             baseVertex = Vertex.Get(false, @"BaseEdge:\To:");
 
@@ -286,7 +292,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
         }
 
-        void SetupLocalVariablesFromBaseVertexVertexes()
+        protected void SetupLocalVariablesFromBaseVertexVertexes()
         {
             if (baseVertex.Get(false, "Length:") != null)
                 ExtendTimeLength = (int)GraphUtil.GetIntegerValue(baseVertex.Get(false, "ExtendTimeLength:"));
@@ -307,12 +313,12 @@ namespace m0_COMPOSER.UIWpf.Visualisers
                 isCurrentPenItemCenter = true;
         }
 
-        void SaveLength()
+        protected void SaveLength()
         {
             GraphUtil.SetVertexValue(baseVertex, BaseEdgeToVertex.Get(false, "Length"), Length);
         }
 
-        void SetAxisDecorators()
+        protected void SetAxisDecorators()
         {
             VerticalAD = new PitchSetAxisDecorator();
 
@@ -334,7 +340,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             ZoomScrollView.SetHorizontalAxisDecorator(HorizontalAD);
         }
 
-        public void CreateMain()
+        protected void CreateMain()
         {
             Main = new Canvas();
 
@@ -349,26 +355,35 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             items = new List<FrameworkElement>();
         }
 
-        public void CreateArrowLines()
+        protected void CreateArrowLines()
         {
             HorizontalArrowLine = WpfUtil.CreateLine(1, (Brush)FindResource("0LightHighlightBrush"));
             VerticalArrowLine = WpfUtil.CreateLine(1, (Brush)FindResource("0LightHighlightBrush"));            
         }
 
-        public void CreateDown()
+        protected void CreateDown()
         {
             ZoomScrollView.InitialDownHeight = 100;
 
-            ControlChangeDownDecorator ccdd = new ControlChangeDownDecorator();
+            DownDecorator = new ControlChangeDownDecorator();
+
+            CCNumber = (int)DownDecorator.Selection;
+
+            DownDecorator.SelectionChanged += DownDecorator_SelectionChanged;
 
             Button b = new Button();
             b.Content = "hello";
             b.Background = new SolidColorBrush(Colors.CadetBlue);
 
-            ZoomScrollView.SetDownContent(ccdd, b);
+            ZoomScrollView.SetDownContent((FrameworkElement)DownDecorator, b);
         }
 
-        void ItemsAdd(IItem i)
+        protected void DownDecorator_SelectionChanged(object sender, EventArgs e)
+        {
+            CCNumber = (int)DownDecorator.Selection;
+        }
+
+        protected void ItemsAdd(IItem i)
         {
             needToRebuildItemsDictionary = true;
             items.Add((FrameworkElement)i);
@@ -376,7 +391,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             Main.Children.Add((FrameworkElement)i);
         }
 
-        void ItemsRemove(IItem i)
+        protected void ItemsRemove(IItem i)
         {
             needToRebuildItemsDictionary = true;
             items.Remove((FrameworkElement)i);
@@ -384,13 +399,13 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             Main.Children.Remove((FrameworkElement)i);
         }
 
-        public void SetupScrollViewer()
+        protected void SetupScrollViewer()
         {
             ZoomScrollView.SetHost(this);
             ZoomScrollView.SetMainContent(Main);
         }
 
-        public void DrawMain()
+        protected void DrawMain()
         {
             DrawBackground();
 
@@ -410,7 +425,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             SelectionArea = new SelectionArea(Main);
         }
 
-        void DrawBackground()
+        protected void DrawBackground()
         {
             Border Background = new Border();
 
@@ -421,7 +436,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             Main.Children.Add(Background);
         }
 
-        void AddEventHandlers()
+        protected void AddEventHandlers()
         {
             Main.MouseEnter += MouseEnterHandler;
 
@@ -434,7 +449,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             Main.MouseMove += MouseMoveHandler;
         }
 
-        private void MouseMoveHandler(object sender, MouseEventArgs e)
+        protected void MouseMoveHandler(object sender, MouseEventArgs e)
         {
             UpdateArrowLines(e);
 
@@ -465,9 +480,9 @@ namespace m0_COMPOSER.UIWpf.Visualisers
                 default:
                     break;
             }
-        } 
+        }
 
-        private void MouseUpHandler(object sender, MouseButtonEventArgs e)
+        protected void MouseUpHandler(object sender, MouseButtonEventArgs e)
         {
             switch (currentCursorState)
             {
@@ -494,7 +509,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             }
         }
 
-        private void MouseDownHandler(object sender, MouseButtonEventArgs e)
+        protected void MouseDownHandler(object sender, MouseButtonEventArgs e)
         {
             switch (currentCursorState)
             {
@@ -518,7 +533,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             }
         }
 
-        void UpdateArrowLines(MouseEventArgs e)
+        protected void UpdateArrowLines(MouseEventArgs e)
         {
             if (!showArowLines || 
                 !(currentCursorState == CursorState.Eraser || 
@@ -542,7 +557,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             WpfUtil.SetLinePosition(VerticalArrowLine, x, 0, x, Height);
         }
 
-        void HideArrowLines()
+        protected void HideArrowLines()
         {
             if (HorizontalArrowLine == null)
                 return;
@@ -551,7 +566,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             VerticalArrowLine.Visibility = Visibility.Hidden;
         }
 
-        void PenDown(object sender, MouseButtonEventArgs e)
+        protected void PenDown(object sender, MouseButtonEventArgs e)
         {
             SetCursorMode(CursorState.PenDown);
             
@@ -579,7 +594,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             Main.Children.Add(newItemShape);
         }
 
-        void PenMove_PenDown(object sender, MouseEventArgs e)
+        protected void PenMove_PenDown(object sender, MouseEventArgs e)
         {
             if (isCurrentPenItemCenter)
                 return;
@@ -606,14 +621,14 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             WpfUtil.SetPositionAbsolute(newItemShape, left, newItemSegment.StartPosition, right, newItemSegment.EndPosition);
         }
 
-        void PerformPenUp()
+        protected void PerformPenUp()
         {
             Main.Children.Remove(newItemShape);
 
             SetCursorMode(CursorState.PenUp);            
         }
-        
-        void PenUp(object sender, MouseButtonEventArgs e)
+
+        protected void PenUp(object sender, MouseButtonEventArgs e)
         {
             PerformPenUp();
 
@@ -639,7 +654,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             VertexChangeOff = false;
         }
 
-        void EraserDown(object sender, MouseButtonEventArgs e)
+        protected void EraserDown(object sender, MouseButtonEventArgs e)
         {
             Point currentMousePosition = GetMainContentMousePosition(e);
 
@@ -661,7 +676,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             }
         }
 
-        void ArrowDown(object sender, MouseButtonEventArgs e)
+        protected void ArrowDown(object sender, MouseButtonEventArgs e)
         {
             Point currentMousePosition = GetMainContentMousePosition(e);
 
@@ -683,7 +698,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             }
         }
 
-        List<IVertex> GetSelectedVertexes()
+        protected List<IVertex> GetSelectedVertexes()
         {
             List<IVertex> selectedVertexes = new List<IVertex>();
 
@@ -693,7 +708,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             return selectedVertexes;
         }
 
-        List<IItem> GetSelectedItems()
+        protected List<IItem> GetSelectedItems()
         {
             List<IVertex> selectedVertexes = GetSelectedVertexes();            
 
@@ -706,7 +721,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             return selectedItems;
         }
 
-        List<IItem> GetSelectedAndMouseOverItems()
+        protected List<IItem> GetSelectedAndMouseOverItems()
         {
             List<IItem> selectedItems = GetSelectedItems();
 
@@ -716,7 +731,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             return selectedItems;
         }
 
-        void InitMouseOverElementAndSelected()
+        protected void InitMouseOverElementAndSelected()
         {
             List<IItem> selectedItems = GetSelectedItems();
 
@@ -726,7 +741,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
                 i.SetHiddenFromReal();
         }
 
-        void ArrowDown_FromUpMove(object sender, MouseButtonEventArgs e)
+        protected void ArrowDown_FromUpMove(object sender, MouseButtonEventArgs e)
         {
             if (mouseOverItem == null)
                 return;
@@ -747,9 +762,9 @@ namespace m0_COMPOSER.UIWpf.Visualisers
                 SetCursorMode(CursorState.ArrowDown_MoveOnItem_MouseDown);                            
         }
 
-        enum LeftRightEnum { Left, Right }
+        protected enum LeftRightEnum { Left, Right }
 
-        void ItemTryMoveLeftRight(IItem item, double delta, LeftRightEnum LeftRight)
+        protected void ItemTryMoveLeftRight(IItem item, double delta, LeftRightEnum LeftRight)
         {
             if (!(item is FrameworkElement))
                 return;
@@ -788,9 +803,9 @@ namespace m0_COMPOSER.UIWpf.Visualisers
                 if (newX != orginalX)
                     element.Width = newX - item.Left;
             }
-        }        
+        }
 
-        void ItemTryMove(IItem item, double deltaX, double deltaY)
+        protected void ItemTryMove(IItem item, double deltaX, double deltaY)
         {
             if (!(item is FrameworkElement))
                 return;
@@ -841,7 +856,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
                 item.Top = newSegment.StartPosition;            
         }
 
-        void ArrowMove_DownMoveOnItemLeftRight(object sender, MouseEventArgs e)
+        protected void ArrowMove_DownMoveOnItemLeftRight(object sender, MouseEventArgs e)
         {
             Point currentMousePosition = GetMainContentMousePosition(e);
 
@@ -890,14 +905,14 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             previousMousePosition = currentMousePosition;
         }
 
-        void ArrowMove_ArrowUp_SetMouseCurrentItem(IItem item, CursorState cursorModeDetail)
+        protected void ArrowMove_ArrowUp_SetMouseCurrentItem(IItem item, CursorState cursorModeDetail)
         {
             SetCursorMode(cursorModeDetail);
             SetMouseOverItem(item);
             UpdateCursorShape();
         }
 
-        void ArrowMove_ArrowUp(object sender, MouseEventArgs e)
+        protected void ArrowMove_ArrowUp(object sender, MouseEventArgs e)
         {
             Point currentMousePosition = GetMainContentMousePosition(e);
 
@@ -935,7 +950,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             UpdateCursorShape();            
         }
 
-        void ArrowMove_ArrowDown(object sender, MouseEventArgs e)
+        protected void ArrowMove_ArrowDown(object sender, MouseEventArgs e)
         {      
             Point currentMousePosition = GetMainContentMousePosition(e);
 
@@ -957,7 +972,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             WpfUtil.SetCursor(Cursors.Arrow);
         }
 
-        void ArrowUp_FromDown(object sender, MouseButtonEventArgs e)
+        protected void ArrowUp_FromDown(object sender, MouseButtonEventArgs e)
         {
             IList<FrameworkElement> matched = WpfUtil.GetElementsAtFromListByArea(items, SelectionArea.Left - 1, SelectionArea.Top - 1, SelectionArea.Right + 1, SelectionArea.Bottom + 1);
 
@@ -985,7 +1000,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             SelectionArea.HideSelectionArea();
         }
 
-        void ArrowUp_FromMove(object sender, MouseEventArgs e)
+        protected void ArrowUp_FromMove(object sender, MouseEventArgs e)
         {
             if(currentCursorState == CursorState.ArrowDown_MoveOnItem_Left || currentCursorState == CursorState.ArrowDown_MoveOnItem_Right)
             {
@@ -1008,21 +1023,21 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             }
         }
 
-        void SelectItem(IItem item)
+        protected void SelectItem(IItem item)
         {
             item.Select();
 
             Edge.AddEdge(Vertex.Get(false, "SelectedEdges:"), item.BaseEdge);
         }
 
-        void UnselectItem(IItem item)
+        protected void UnselectItem(IItem item)
         {
             item.Unselect();
 
             Edge.DeleteVertexByEdge(Vertex.Get(false, "SelectedEdges:"), item.BaseEdge);
         }
 
-        void ArrowUp_FromMoveOnItem_MouseDown(object sender, MouseButtonEventArgs e)
+        protected void ArrowUp_FromMoveOnItem_MouseDown(object sender, MouseButtonEventArgs e)
         {
             Point currentMousePosition = GetMainContentMousePosition(e);
 
@@ -1041,7 +1056,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             SetCursorMode(CursorState.ArrowUp);
         }
 
-        void PerformArrowUp_FromArrowDown_WhileMouseLeave()
+        protected void PerformArrowUp_FromArrowDown_WhileMouseLeave()
         {
             UnselectAllSelectedEdges();
 
@@ -1058,7 +1073,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             SelectionArea.HideSelectionArea();
         }
 
-        AxisSegment FindVerticalSegment(double position)
+        protected AxisSegment FindVerticalSegment(double position)
         {
             foreach (AxisSegment s in VerticalAD.Segments)
                 if (s.StartPosition < position && position < s.EndPosition)
@@ -1067,7 +1082,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             return null;
         }
 
-        double GetSnappedPosition(double position)
+        protected double GetSnappedPosition(double position)
         {
             if (currentSnapToGrid == SnapToGridEnum.No_Snap)
                 return position;
@@ -1082,7 +1097,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
                 return (positionInBars - reminder + currentSnapToGridValue) * HorizontalAD.BarLength * HorizontalAD.BaseUnitSize;
         }
 
-        double getSnapMinmalWidth()
+        protected double getSnapMinmalWidth()
         {
             if (currentSnapToGridValue == 0)
                 return 1;
@@ -1090,7 +1105,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             return currentSnapToGridValue * HorizontalAD.BarLength * HorizontalAD.BaseUnitSize;
         }
 
-        AxisSegment GetPitchSegment(IVertex pitchVertex)
+        protected AxisSegment GetPitchSegment(IVertex pitchVertex)
         {
             foreach (AxisSegment s in VerticalAD.Segments)
                 if (s.BaseVertex == pitchVertex)
@@ -1099,7 +1114,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             return null;
         }
 
-        void AddItem(IEdge itemEdge, List<IVertex> selectedVertexes)
+        protected void AddItem(IEdge itemEdge, List<IVertex> selectedVertexes)
         {
             IVertex itemEventVertex = itemEdge.To;
 
@@ -1152,7 +1167,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             ItemsAdd(newItem);
         }
 
-        void UpdateItem_HorizontalPosition(IItem item)
+        protected void UpdateItem_HorizontalPosition(IItem item)
         {
             IVertex r = MinusZero.Instance.root;
             IVertex metaTriggerTime = r.Get(false, @"System\Lib\Music\Event\TriggerTime");
@@ -1190,7 +1205,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             GraphUtil.SetVertexValue(itemVertex, metaLength, Length);
         }
 
-        void UpdateItem_VerticalPosition(IItem item)
+        protected void UpdateItem_VerticalPosition(IItem item)
         {
             IVertex r = MinusZero.Instance.root;
             IVertex metaOctave = r.Get(false, @"System\Lib\Music\Pitch\Octave");
@@ -1224,41 +1239,43 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             item.Update();
         }
-        
-        IEdge AddItemEdge(AxisSegment itemSegment, double startPosition, double lengthPosition)
+
+        protected IEdge AddItemEdge(AxisSegment itemSegment, double startPosition, double lengthPosition)
         {
             IVertex r = MinusZero.Instance.Root;
 
+            IVertex Event = r.Get(false, @"System\Lib\Music\Event");
             IVertex noteEvent = r.Get(false, @"System\Lib\Music\NoteEvent");
 
             IEdge tempNoteEventEdge = baseVertex.AddVertexAndReturnEdge(null, null);
 
             IVertex noteEventVertex = tempNoteEventEdge.To;
 
+            noteEventVertex.AddEdge(MinusZero.Instance.Is, noteEvent);
             noteEventVertex.AddVertex(noteEvent.Get(false, @"Attribute:Velocity"), defaultVelocity);
             noteEventVertex.AddEdge(noteEvent.Get(false, @"Attribute:Octave"), itemSegment.BaseVertex.Get(false, "Octave:"));
             noteEventVertex.AddEdge(noteEvent.Get(false, @"Attribute:Note"), itemSegment.BaseVertex.Get(false, "Note:"));
             noteEventVertex.AddVertex(noteEvent.Get(false, @"Attribute:TriggerTime"), (int)((startPosition / HorizontalAD.BaseUnitSize) + 0.01));
             noteEventVertex.AddVertex(noteEvent.Get(false, @"Attribute:Length"), (int)((lengthPosition / HorizontalAD.BaseUnitSize) + 0.01));
 
-            IEdge finalEdge = baseVertex.AddEdge(noteEvent, noteEventVertex);
+            IEdge finalEdge = baseVertex.AddEdge(Event, noteEventVertex);
 
             baseVertex.DeleteEdge(tempNoteEventEdge);
 
             return finalEdge;
         }
 
-        Point GetMainContentMousePosition(MouseButtonEventArgs e)
+        protected Point GetMainContentMousePosition(MouseButtonEventArgs e)
         {
             return e.GetPosition(Main);
         }
 
-        Point GetMainContentMousePosition(MouseEventArgs e)
+        protected Point GetMainContentMousePosition(MouseEventArgs e)
         {
             return e.GetPosition(Main);
         }
 
-        private void MouseLeaveHandler(object sender, MouseEventArgs e)
+        protected void MouseLeaveHandler(object sender, MouseEventArgs e)
         {
             HideArrowLines();
 
@@ -1278,24 +1295,24 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             }
         }
 
-        private void MouseEnterHandler(object sender, MouseEventArgs e)
+        protected void MouseEnterHandler(object sender, MouseEventArgs e)
         {
             UpdateCursorShape();         
         }
 
-        private void TurnOnSelectedEdgesFireChange()
+        protected void TurnOnSelectedEdgesFireChange()
         {
             if (Vertex.Get(false, "SelectedEdges:") is VertexBase)
                 ((VertexBase)Vertex.Get(false, "SelectedEdges:")).CanFireChangeEvent = true;
         }
 
-        private void TurnOffSelectedEdgesFireChange()
+        protected void TurnOffSelectedEdgesFireChange()
         {
             if (Vertex.Get(false, "SelectedEdges:") is VertexBase)
                 ((VertexBase)Vertex.Get(false, "SelectedEdges:")).CanFireChangeEvent = false;
         }
 
-        public void UnselectAllSelectedEdges()
+        protected void UnselectAllSelectedEdges()
         {
             IVertex sv = Vertex.Get(false, "SelectedEdges:");
 
@@ -1306,7 +1323,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             TurnOnSelectedEdgesFireChange();         
         }
 
-        public void DrawMainSnapLines()
+        protected void DrawMainSnapLines()
         {            
             if (currentSnapToGrid == SnapToGridEnum.No_Snap || showSnapLines == false)
                     return;
@@ -1329,7 +1346,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             }
         }
 
-        void DrawMainSegments()
+        protected void DrawMainSegments()
         {
             foreach (AxisSegment s in VerticalAD.Segments)
             {
@@ -1346,7 +1363,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             }
         }
 
-        public void DrawMainLines()
+        protected void DrawMainLines()
         {
             foreach (AxisSegment s in VerticalAD.Segments)
             {       
@@ -1372,21 +1389,21 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             }
         }
 
-        void DrawArrowLines()
+        protected void DrawArrowLines()
         {
             Main.Children.Add(HorizontalArrowLine);
             Main.Children.Add(VerticalArrowLine);
         }
 
-        public void DrawItems()
+        protected void DrawItems()
         {
             List<IVertex> selectedVertexes = GetSelectedVertexes();
 
-            foreach (IEdge e in baseVertex.GetAll(false, "NoteEvent:"))
+            foreach (IEdge e in baseVertex.GetAll(false, "Event:"))
                 AddItem(e, selectedVertexes);
         }
 
-        void InitSequenceVisualierState()
+        protected void InitSequenceVisualierState()
         {
             SetCursorMode(CursorState.ArrowUp);
 
@@ -1488,7 +1505,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
                 UpdateBaseEdge();
         }
 
-        private IVertex _Vertex;
+        protected IVertex _Vertex;
 
         public IVertex Vertex
         {
@@ -1506,7 +1523,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             }
         }
 
-        bool IsDisposed = false;
+        protected bool IsDisposed = false;
 
         public void Dispose()
         {
@@ -1529,15 +1546,15 @@ namespace m0_COMPOSER.UIWpf.Visualisers
                 ((IDisposable)ZoomScrollView).Dispose();
         }
 
-        bool isLoaded = false;
+        protected bool isLoaded = false;
         public void ChildControlsLoaded()
         {
             isLoaded = true;
 
             VisualiserDraw();
-        }        
+        }
 
-        private void SnapToGridComboBox_SelectionChange()
+        protected void SnapToGridComboBox_SelectionChange()
         {            
             switch (Vertex.Get(false, "SnapToGrid:").Value.ToString())
             {
@@ -1580,7 +1597,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             VisualiserDraw();
         }
 
-        private void ExtendButton_Click(object sender, RoutedEventArgs e)
+        protected void ExtendButton_Click(object sender, RoutedEventArgs e)
         {
             Length += ExtendTimeLength;            
 
@@ -1591,29 +1608,29 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             VisualiserDraw();
         }
 
-        private void PenButton_Click(object sender, RoutedEventArgs e)
+        protected void PenButton_Click(object sender, RoutedEventArgs e)
         {
             SetCursorMode(CursorState.PenUp);
         }
 
-        private void EraseButton_Click(object sender, RoutedEventArgs e)
+        protected void EraseButton_Click(object sender, RoutedEventArgs e)
         {
             SetCursorMode(CursorState.Eraser);
         }
 
-        private void ArrowButton_Click(object sender, RoutedEventArgs e)
+        protected void ArrowButton_Click(object sender, RoutedEventArgs e)
         {
             SetCursorMode(CursorState.ArrowUp);
         }
 
-        void UnCheckAllCursorButtons()
+        protected void UnCheckAllCursorButtons()
         {
             EraseButton.IsChecked = false;
             PenButton.IsChecked = false;
             ArrowButton.IsChecked = false;
         }
 
-        private void KeyDownHandler(object sender, KeyEventArgs e)
+        protected void KeyDownHandler(object sender, KeyEventArgs e)
         {
             if (e.Key == Key.Delete)
             {                

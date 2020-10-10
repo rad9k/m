@@ -30,7 +30,12 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Controls
         {
             StringBuilder s = new StringBuilder();
 
-            s.Append(GetNumber().ToString());
+            int number = GetNumber();
+
+            if (number == -1)
+                s.Append("--");
+            else
+                s.Append(GetNumber().ToString());
 
             if (baseVertex != null)
             {
@@ -59,7 +64,9 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Controls
     }
     public class ControlChangeDownDecorator : StackPanel, IZoomScrollViewDownDecorator
     {
-        public IVertex Selection { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        int number;
+
+        public object Selection { get => number; set => throw new NotImplementedException(); }
 
         public Size Size { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
         public List<AxisSegment> Segments { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
@@ -88,7 +95,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Controls
         {
             PrepareCCDictionary();
 
-            for (int x = 0; x <= 127; x++) {
+            for (int x = -1; x <= 127; x++) {
                 CCDescription d = null;
 
                 if (CCDictionary.ContainsKey(x))
@@ -115,26 +122,54 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Controls
             throw new NotImplementedException();
         }
 
+        void SelectDefault()
+        {
+            number = -1;
+
+            foreach(object o in List.Items)
+            {
+                CCDescription d = (CCDescription)o;
+                if(d.GetNumber() == number) {
+                    List.SelectedItem = o;
+                    return;
+                }
+            }
+        }
+
         double Scale = 0.6;
 
         public ControlChangeDownDecorator()
         {
             this.Margin = new System.Windows.Thickness(4, 0, 4, 4);
-            this.LayoutTransform = new ScaleTransform(Scale, Scale);
-
+            
             List = new ComboBox();
+
+            List.LayoutTransform = new ScaleTransform(Scale, Scale);
 
             AddCCs();
 
-            Label label = new Label();
-            label.Content = " ^ select CC ^";
-            label.HorizontalAlignment = System.Windows.HorizontalAlignment.Left;
-
-            this.Children.Add(List);
-            this.Children.Add(label);
-
+            SelectDefault();
             
+            this.Children.Add(List);            
+
+            List.SelectionChanged += List_SelectionChanged;
             
+        }
+
+        private void List_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (List.SelectedItem == null)
+            {
+                Selection = 0;
+
+                return;
+            }
+
+            CCDescription d = (CCDescription)List.SelectedItem;
+
+            number = d.GetNumber();
+
+            SelectionChanged(sender, e);
         }
     }
 }

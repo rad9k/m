@@ -162,7 +162,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Controls
         {
             if (showLabel)
             {
-                if (this.Height > 18 && this.Width > 25)
+                if (this.Height > 17 && this.Width > 25)
                     labelControl.Visibility = System.Windows.Visibility.Visible;
                 else
                     labelControl.Visibility = System.Windows.Visibility.Hidden;

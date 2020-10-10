@@ -11,6 +11,6 @@ namespace m0_COMPOSER.UIWpf.Visualisers
     {
         event EventHandler SelectionChanged;
 
-        IVertex Selection { get; set; }
+        object Selection { get; set; }
     }
 }
