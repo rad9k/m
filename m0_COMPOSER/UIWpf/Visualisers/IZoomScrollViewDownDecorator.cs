@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace m0_COMPOSER.UIWpf.Visualisers
 {
-    public interface IZoomScrollViewDownDecorator
+    public interface IZoomScrollViewDownDecorator: IZoomScrollViewAxisDecorator
     {
         event EventHandler SelectionChanged;
 
