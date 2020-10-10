@@ -134,26 +134,50 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Controls
                     return;
                 }
             }
-        }
+        }        
 
-        double Scale = 0.6;
+        Canvas Scale;
+
+        void UpdateScale()
+        {
+
+        }
 
         public ControlChangeDownDecorator()
         {
-            this.Margin = new System.Windows.Thickness(4, 0, 4, 4);
+            this.Orientation = Orientation.Horizontal;            
             
-            List = new ComboBox();
+            //
 
-            List.LayoutTransform = new ScaleTransform(Scale, Scale);
+            List = new ComboBox();            
+
+            this.Margin = new System.Windows.Thickness(0, 0, 4, 0);
+
+            List.LayoutTransform = new ScaleTransform(0.6, 0.6);
 
             AddCCs();
 
             SelectDefault();
             
-            this.Children.Add(List);            
+            this.Children.Add(List);
 
             List.SelectionChanged += List_SelectionChanged;
+
+            //
+
+            Scale = new Canvas();
+
+            this.Children.Add(Scale);
+
+            this.SizeChanged += ControlChangeDownDecorator_SizeChanged;
+
+            UpdateScale();
             
+        }
+
+        private void ControlChangeDownDecorator_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            UpdateScale();
         }
 
         private void List_SelectionChanged(object sender, SelectionChangedEventArgs e)
