@@ -6,21 +6,36 @@ using System.Threading.Tasks;
 using m0.Foundation;
 using System.Windows.Controls;
 using System.Windows.Media;
+using m0.Graph;
 
 namespace m0_COMPOSER.UIWpf.Visualisers.Controls
 {
     class CCDescription
     {
         IVertex baseVertex;
+        int number;
 
         public CCDescription(IVertex _baseVertex)
         {
             baseVertex = _baseVertex;
         }
 
+        public CCDescription(int _number)
+        {
+            number = _number;
+        }
+
         public override String ToString()
         {
             return baseVertex.Get(false, "Description:").Value.ToString();
+        }
+
+        public int GetNumber()
+        {
+            if (baseVertex == null)
+                return number;
+
+            return (int)GraphUtil.GetIntegerValue(baseVertex.Get(false, "Number:"));
         }
     }
     public class ControlChangeDownDecorator : StackPanel, IZoomScrollViewDownDecorator
@@ -35,18 +50,26 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Controls
 
         void PrepareCCDictionary()
         {
+            IVertex r = m0.MinusZero.Instance.root;
+
             CCDictionary = new Dictionary<int, IVertex>();
 
             foreach (IEdge e in r.GetAll(false, @"System\Lib\Music\Data\DefaultControlChangeDescriptionSet:\ControlChangeDescription:"))
-                CCDictionary.Add(GraphUtil.)
+                CCDictionary.Add((int)GraphUtil.GetIntegerValue(e.To.Get(false, "Number:")), e.To);
         }
 
         void AddCCs()
         {
-            IVertex r = m0.MinusZero.Instance.root;
+            PrepareCCDictionary();
 
-            foreach (IEdge e in r.GetAll(false, @"System\Lib\Music\Data\DefaultControlChangeDescriptionSet:\ControlChangeDescription:"))
+            for (int x = 0; x < 127; x++) {
+                CCDescription d = null;
+
+                if (CCDictionary.ContainsKey(x))
+                    d = new CCDescription
+            }
             {
+
                 CCDescription d = new CCDescription(e.To);
                 List.Items.Add(d);
             }
