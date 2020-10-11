@@ -8,6 +8,8 @@ using System.Windows.Controls;
 using System.Windows.Media;
 using m0.Graph;
 using System.Windows;
+using System.Windows.Shapes;
+using m0.UIWpf;
 
 namespace m0_COMPOSER.UIWpf.Visualisers.Controls
 {
@@ -138,10 +140,48 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Controls
 
         Canvas Scale;
 
+        void DrawLine(double X1, double Y1, double X2, double Y2)
+        {
+            Line l = new Line();
+
+            l.StrokeThickness = 1;
+
+            WpfUtil.SetLinePosition(l, X1, Y1, X2, Y2);
+
+            Scale.Children.Add(l);
+        }
+
         void UpdateScale()
         {
+            double width = 50;
 
+            if (this.ActualWidth < width)
+                return;
+
+            listPanel.Width = this.ActualWidth - width;
+
+
+            double bigLineWidth = 30;
+
+            double smallLineWidth = 20;
+
+            double height = this.ActualHeight;
+
+            Scale.Width = width;
+            Scale.Height = height;
+
+            Scale.Children.Clear();
+
+            DrawLine(0, width, height, width);
+
+            DrawLine(width - bigLineWidth, 0, width, 0);
+
+            DrawLine(width - bigLineWidth, height, width, height);
+
+            Scale.Background = new SolidColorBrush(Colors.AliceBlue);
         }
+
+        StackPanel listPanel;
 
         public ControlChangeDownDecorator()
         {
@@ -151,15 +191,19 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Controls
 
             List = new ComboBox();            
 
-            this.Margin = new System.Windows.Thickness(0, 0, 4, 0);
+            List.Margin = new System.Windows.Thickness(0, 0, 4, 0);
 
             List.LayoutTransform = new ScaleTransform(0.6, 0.6);
 
             AddCCs();
 
             SelectDefault();
+
+            listPanel = new StackPanel();
             
-            this.Children.Add(List);
+            listPanel.Children.Add(List);
+
+            this.Children.Add(listPanel);
 
             List.SelectionChanged += List_SelectionChanged;
 
