@@ -146,6 +146,8 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Controls
 
             l.StrokeThickness = 1;
 
+            l.Stroke = new SolidColorBrush(Colors.Black);
+
             WpfUtil.SetLinePosition(l, X1, Y1, X2, Y2);
 
             Scale.Children.Add(l);
@@ -161,9 +163,9 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Controls
             listPanel.Width = this.ActualWidth - width;
 
 
-            double bigLineWidth = 30;
+            double bigLineWidth = 20;
 
-            double smallLineWidth = 20;
+            double smallLineWidth = 10;
 
             double height = this.ActualHeight;
 
@@ -172,13 +174,11 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Controls
 
             Scale.Children.Clear();
 
-            DrawLine(0, width, height, width);
+            DrawLine(width, 0, width, height);
 
             DrawLine(width - bigLineWidth, 0, width, 0);
 
-            DrawLine(width - bigLineWidth, height, width, height);
-
-            Scale.Background = new SolidColorBrush(Colors.AliceBlue);
+            DrawLine(width - bigLineWidth, height, width, height);        
         }
 
         StackPanel listPanel;
