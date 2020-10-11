@@ -153,26 +153,29 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Controls
             Scale.Children.Add(l);
         }
 
-        void DrawLine(double beg, double y)
+        void DrawLine(bool isBig, double y)
         {
-
-        }
-
-        void UpdateScale()
-        {
-            double width = 50;
-
-            if (this.ActualWidth < width)
-                return;
-
-            listPanel.Width = this.ActualWidth - width;
-
-
             double bigLineWidth = 20;
 
             double smallLineWidth = 10;
 
-            double height = this.ActualHeight;
+            double newy = (y/127) * height
+        }
+
+        double scaleWidth;
+        double height;
+
+        void UpdateScale()
+        {
+            scaleWidth = 50;
+
+            if (this.ActualWidth < scaleWidth)
+                return;
+
+            listPanel.Width = this.ActualWidth - scaleWidth;
+            
+
+            height = this.ActualHeight;
 
             Scale.Width = width;
             Scale.Height = height;
