@@ -153,6 +153,11 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Controls
             Scale.Children.Add(l);
         }
 
+        void DrawLine(double beg, double y)
+        {
+
+        }
+
         void UpdateScale()
         {
             double width = 50;
