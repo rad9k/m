@@ -82,7 +82,7 @@ namespace m0.UIWpf.Visualisers
             }
             else // open
             {
-                FormVisualiser v = (FormVisualiser)WpfUtil.getParentFormVisualiser(this);
+                FormVisualiser v = (FormVisualiser)WpfUtil.GetParentFormVisualiser(this);
 
                 if (v != null)                    
                     Edge.CopyAndReplaceEdge(v.Vertex, "BaseEdge", Vertex.Get(false, "BaseEdge:"));

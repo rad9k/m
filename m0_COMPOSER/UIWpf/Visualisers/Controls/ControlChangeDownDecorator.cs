@@ -159,7 +159,18 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Controls
 
             double smallLineWidth = 10;
 
-            double newy = (y/127) * height
+            double newy = height - ( (y / 127) * height);
+
+            double size;
+
+            if (isBig)
+                size = bigLineWidth;
+            else
+                size = smallLineWidth;
+
+            DrawLine(scaleWidth - size, newy, scaleWidth, newy);
+
+            WpfUtil.Print(Scale, y.ToString(), scaleWidth - 30, newy, null, 10.0);
         }
 
         double scaleWidth;
@@ -167,7 +178,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Controls
 
         void UpdateScale()
         {
-            scaleWidth = 50;
+            scaleWidth = 30;
 
             if (this.ActualWidth < scaleWidth)
                 return;
@@ -177,16 +188,33 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Controls
 
             height = this.ActualHeight;
 
-            Scale.Width = width;
+            Scale.Width = scaleWidth;
             Scale.Height = height;
 
             Scale.Children.Clear();
 
-            DrawLine(width, 0, width, height);
+            DrawLine(scaleWidth, 0, scaleWidth, height);
 
-            DrawLine(width - bigLineWidth, 0, width, 0);
+            DrawLine(true, 127);
 
-            DrawLine(width - bigLineWidth, height, width, height);        
+            DrawLine(true, 100);
+
+            DrawLine(true, 50);
+
+            DrawLine(true, 0);
+
+            DrawLine(false, 120);
+            DrawLine(false, 110);
+
+            DrawLine(false, 90);
+            DrawLine(false, 80);
+            DrawLine(false, 70);
+            DrawLine(false, 60);
+            
+            DrawLine(false, 40);
+            DrawLine(false, 30);
+            DrawLine(false, 20);
+            DrawLine(false, 10);
         }
 
         StackPanel listPanel;

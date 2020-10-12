@@ -56,7 +56,7 @@ namespace m0.UIWpf.Visualisers.Controls
   
 
         protected override void OnClick(){
-            FormVisualiser v=(FormVisualiser)WpfUtil.getParentFormVisualiser(this);
+            FormVisualiser v=(FormVisualiser)WpfUtil.GetParentFormVisualiser(this);
 
             if (v != null)
                 Edge.ReplaceEdgeEdges(v.Vertex.Get(false, "BaseEdge:"), BaseEdge);

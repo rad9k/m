@@ -158,12 +158,34 @@ namespace m0.UIWpf
             e.Y2 = y2;
         }
 
+        public static void Print(Canvas canvas, string text, double x, double y, string fontName, double size)
+        {
+            Label l = new Label();
+
+            l.Margin = new Thickness(0);
+
+            l.Padding = new Thickness(0);
+
+            l.VerticalAlignment = VerticalAlignment.Top;
+
+            canvas.Children.Add(l);
+
+            l.Content = text;
+
+            SetPosition(l, x, y);
+
+            l.FontSize = size;
+
+            if(fontName != null)
+                l.FontFamily = new FontFamily(fontName);
+        }
+
         public static object FindResource(string name)
         {
             return m0Main.Instance.FindResource(name);
         }
 
-        public static DependencyObject getParentFormVisualiser(DependencyObject e)
+        public static DependencyObject GetParentFormVisualiser(DependencyObject e)
         {
             if (e == null)
                 return null;
@@ -171,7 +193,7 @@ namespace m0.UIWpf
             if (e is FormVisualiser)
                 return e;
 
-            return getParentFormVisualiser(VisualTreeHelper.GetParent(e));
+            return GetParentFormVisualiser(VisualTreeHelper.GetParent(e));
         }
 
         public static Brush GetBrushFromColorVertex(IVertex colorVertex)
