@@ -122,6 +122,10 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
         protected IZoomScrollViewDownDecorator DownDecorator;
 
+        protected Canvas Down;
+
+        protected double DownHeight;
+
 
         protected Dictionary<IVertex, IItem> GetItemsDictionary()
         {
@@ -371,16 +375,82 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             DownDecorator.SelectionChanged += DownDecorator_SelectionChanged;
 
-            Button b = new Button();
-            b.Content = "hello";
-            b.Background = new SolidColorBrush(Colors.CadetBlue);
+            Down = new Canvas();
 
-            ZoomScrollView.SetDownContent((FrameworkElement)DownDecorator, b);
+            Down.SizeChanged += Down_SizeChanged;
+            Down.Loaded += Down_Loaded;
+
+            ZoomScrollView.SetDownContent((FrameworkElement)DownDecorator, Down);
+
+            DrawDown();
+        }
+
+        private void Down_Loaded(object sender, RoutedEventArgs e)
+        {
+            DownHeight = Down.ActualHeight;
+
+            DrawDown();
+        }
+
+        private void Down_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            DownHeight = Down.ActualHeight;
+
+            DrawDown();
+        }
+
+        protected void DrawDownLines()
+        {
+            foreach (AxisSegment s in DownDecorator.Segments)
+            {
+                Line l = new Line();
+
+                WpfUtil.SetLinePosition(l, 0, s.StartPosition, Width, s.StartPosition);
+
+                s.LineStyle.SetStyle(l);
+
+                Down.Children.Add(l);
+            }
+
+            foreach (AxisSegment s in HorizontalAD.Segments)
+            {
+                Line l = new Line();
+
+                WpfUtil.SetLinePosition(l, s.StartPosition, 0, s.StartPosition, DownHeight);
+
+                s.LineStyle.SetStyle(l);
+
+                Down.Children.Add(l);
+            }
+        }
+
+        protected void DrawDownBox()
+        {
+            Brush b = (Brush)WpfUtil.FindResource("0ForegroundBrush");
+
+            WpfUtil.DrawLine(Down, 0, 0, Width, 0, b);
+            WpfUtil.DrawLine(Down, 0, Height, Width, Height, b);
+            WpfUtil.DrawLine(Down, 0, 0, 0, Height, b);
+            WpfUtil.DrawLine(Down, Width, 0, Width, Height, b);
+        }
+
+        protected void DrawDown()
+        {             
+            if (DownDecorator == null)
+                return;
+
+            Down.Children.Clear();
+
+            DrawDownLines();
+
+            DrawDownBox();
         }
 
         protected void DownDecorator_SelectionChanged(object sender, EventArgs e)
         {
             CCNumber = (int)DownDecorator.Selection;
+
+            DrawDown();
         }
 
         protected void ItemsAdd(IItem i)

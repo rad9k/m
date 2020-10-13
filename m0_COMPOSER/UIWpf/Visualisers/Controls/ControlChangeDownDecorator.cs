@@ -71,7 +71,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Controls
         public object Selection { get => number; set => throw new NotImplementedException(); }
 
         public Size Size { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-        public List<AxisSegment> Segments { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        public List<AxisSegment> Segments { get; set; }
 
         public double BaseUnitSize => throw new NotImplementedException();
 
@@ -138,26 +138,16 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Controls
             }
         }        
 
-        Canvas Scale;
-
-        void DrawLine(double X1, double Y1, double X2, double Y2)
-        {
-            Line l = new Line();
-
-            l.StrokeThickness = 1;
-
-            l.Stroke = new SolidColorBrush(Colors.Black);
-
-            WpfUtil.SetLinePosition(l, X1, Y1, X2, Y2);
-
-            Scale.Children.Add(l);
-        }
+        Canvas Scale;        
 
         void DrawLine(bool isBig, double y)
         {
-            double bigLineWidth = 20;
+            if (height < 30 && !isBig)
+                return;
 
-            double smallLineWidth = 10;
+            double bigLineWidth = 10;
+
+            double smallLineWidth = 5;
 
             double newy = height - ( (y / 127) * height);
 
@@ -168,9 +158,33 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Controls
             else
                 size = smallLineWidth;
 
-            DrawLine(scaleWidth - size, newy, scaleWidth, newy);
+            Brush brush;            
 
-            WpfUtil.Print(Scale, y.ToString(), scaleWidth - 30, newy, null, 10.0);
+            if (isBig)            
+                brush = (Brush)WpfUtil.FindResource("0ForegroundBrush");                           
+            else            
+                brush = (Brush)WpfUtil.FindResource("0VeryLightForegroundBrush");
+                
+            WpfUtil.DrawLine(Scale, scaleWidth - size, newy, scaleWidth, newy, brush);
+
+            AxisSegment a = new AxisSegment();
+            
+            a.StartPosition = newy;
+            a.LineStyle = new LineStyle();
+            a.LineStyle.Stroke = brush;
+
+            Segments.Add(a);
+
+            if (height > 150 || isBig)
+            {
+                if(y == 0)
+                    WpfUtil.Print(Scale, y.ToString(), scaleWidth - 20, newy - 5, null, 10.0, brush);
+                else
+                if(y < 100)
+                    WpfUtil.Print(Scale, y.ToString(), scaleWidth - 25, newy - 5, null, 10.0, brush);
+                else
+                    WpfUtil.Print(Scale, y.ToString(), scaleWidth - 30, newy - 5, null, 10.0, brush);
+            }
         }
 
         double scaleWidth;
@@ -178,6 +192,12 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Controls
 
         void UpdateScale()
         {
+            Segments = new List<AxisSegment>();
+
+            //
+
+            Brush fb = (Brush)WpfUtil.FindResource("0ForegroundBrush");
+
             scaleWidth = 30;
 
             if (this.ActualWidth < scaleWidth)
@@ -193,7 +213,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Controls
 
             Scale.Children.Clear();
 
-            DrawLine(scaleWidth, 0, scaleWidth, height);
+            WpfUtil.DrawLine(Scale, scaleWidth, 0, scaleWidth, height, fb);
 
             DrawLine(true, 127);
 

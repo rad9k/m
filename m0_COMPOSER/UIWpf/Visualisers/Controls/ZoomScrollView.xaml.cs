@@ -308,9 +308,9 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Controls
                 if (contentElementHeight > this.ActualHeight - 200)
                     contentElementHeight = this.ActualHeight - 200;
 
-                DownMain.Height = contentElementHeight;
                 DownDecorator.Height = contentElementHeight;
-
+                DownMain.Height = contentElementHeight;
+                
                 //double downHideAreaHeight = contentElementHeight;
 
                 //Grid.RowDefinitions[6].Height = new GridLength(downHideAreaHeight);

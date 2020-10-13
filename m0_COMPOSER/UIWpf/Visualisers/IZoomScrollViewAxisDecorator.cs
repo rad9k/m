@@ -25,7 +25,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
     public interface IZoomScrollViewAxisDecorator
     {
         Size Size { get; set; }
-        List<AxisSegment> Segments { get; set; }
+        List<AxisSegment> Segments { get; }
 
         double BaseUnitSize { get; }
 

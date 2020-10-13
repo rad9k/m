@@ -158,9 +158,24 @@ namespace m0.UIWpf
             e.Y2 = y2;
         }
 
-        public static void Print(Canvas canvas, string text, double x, double y, string fontName, double size)
+        public static void DrawLine(Canvas canvas, double X1, double Y1, double X2, double Y2, Brush brush)
+        {
+            Line l = new Line();
+
+            l.StrokeThickness = 1;
+
+            l.Stroke = brush;
+
+            WpfUtil.SetLinePosition(l, X1, Y1, X2, Y2);
+
+            canvas.Children.Add(l);
+        }
+
+        public static void Print(Canvas canvas, string text, double x, double y, string fontName, double size, Brush brush)
         {
             Label l = new Label();
+
+            l.Foreground = brush;
 
             l.Margin = new Thickness(0);
 
