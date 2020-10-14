@@ -118,6 +118,9 @@ namespace m0_COMPOSER.UIWpf.Visualisers
         protected Line HorizontalArrowLine;
         protected Line VerticalArrowLine;
 
+        protected Line HorizontalArrowLine_Down;
+        protected Line VerticalArrowLine_Down;
+
         // DOWN
 
         protected IZoomScrollViewDownDecorator DownDecorator;
@@ -362,7 +365,10 @@ namespace m0_COMPOSER.UIWpf.Visualisers
         protected void CreateArrowLines()
         {
             HorizontalArrowLine = WpfUtil.CreateLine(1, (Brush)FindResource("0LightHighlightBrush"));
-            VerticalArrowLine = WpfUtil.CreateLine(1, (Brush)FindResource("0LightHighlightBrush"));            
+            VerticalArrowLine = WpfUtil.CreateLine(1, (Brush)FindResource("0LightHighlightBrush"));
+
+            HorizontalArrowLine_Down = WpfUtil.CreateLine(1, (Brush)FindResource("0LightHighlightBrush"));
+            VerticalArrowLine_Down = WpfUtil.CreateLine(1, (Brush)FindResource("0LightHighlightBrush"));
         }
 
         protected void CreateDown()
@@ -634,6 +640,9 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             HorizontalArrowLine.Visibility = Visibility.Hidden;
             VerticalArrowLine.Visibility = Visibility.Hidden;
+
+            HorizontalArrowLine_Down.Visibility = Visibility.Hidden;
+            VerticalArrowLine_Down.Visibility = Visibility.Hidden;
         }
 
         protected void PenDown(object sender, MouseButtonEventArgs e)
@@ -1463,6 +1472,9 @@ namespace m0_COMPOSER.UIWpf.Visualisers
         {
             Main.Children.Add(HorizontalArrowLine);
             Main.Children.Add(VerticalArrowLine);
+
+            Down.Children.Add(HorizontalArrowLine_Down);
+            Down.Children.Add(VerticalArrowLine_Down);
         }
 
         protected void DrawItems()
