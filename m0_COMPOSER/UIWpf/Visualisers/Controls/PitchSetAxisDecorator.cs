@@ -35,7 +35,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Controls
         {
             Children.Clear();
 
-            double maxWidth = 0;
+            double maxWidth = 60;
 
             List<TextBlock> tbl = new List<TextBlock>();
 

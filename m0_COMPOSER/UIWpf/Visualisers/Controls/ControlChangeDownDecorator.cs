@@ -71,7 +71,20 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Controls
         public object Selection { get => number; set => throw new NotImplementedException(); }
 
         public Size Size { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-        public List<AxisSegment> Segments { get; set; }
+
+        List<AxisSegment> segments;
+
+        public List<AxisSegment> Segments {
+            get
+            {
+                if (this.ActualHeight != heigtUsedForUpdateScale)
+                    UpdateScale();
+
+                return segments;
+            }
+
+            set { }
+        }
 
         public double BaseUnitSize => throw new NotImplementedException();
 
@@ -173,7 +186,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Controls
             a.LineStyle = new LineStyle();
             a.LineStyle.Stroke = brush;
 
-            Segments.Add(a);
+            segments.Add(a);
 
             if (height > 150 || isBig)
             {
@@ -189,10 +202,13 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Controls
 
         double scaleWidth;
         double height;
+        double heigtUsedForUpdateScale;
 
         void UpdateScale()
         {
-            Segments = new List<AxisSegment>();
+            segments = new List<AxisSegment>();
+
+            heigtUsedForUpdateScale = this.ActualHeight;
 
             //
 
@@ -269,16 +285,8 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Controls
 
             this.Children.Add(Scale);
 
-            this.SizeChanged += ControlChangeDownDecorator_SizeChanged;
-
             UpdateScale();
-            
-        }
-
-        private void ControlChangeDownDecorator_SizeChanged(object sender, SizeChangedEventArgs e)
-        {
-            UpdateScale();
-        }
+        }        
 
         private void List_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
