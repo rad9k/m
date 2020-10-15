@@ -95,7 +95,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
         protected AxisSegment newItemSegment;
 
-        protected enum SnapToGridEnum { Bar1, Bar1_2, Bar1_4, Bar1_8, Bar1_16, Bar1_32, No_Snap }
+        protected enum SnapToGridEnum { Bar1, Bar1_2, Bar1_4, Bar1_8, Bar1_16, Bar1_32, No_Snap }        
 
         protected SnapToGridEnum currentSnapToGrid;
 
@@ -128,6 +128,10 @@ namespace m0_COMPOSER.UIWpf.Visualisers
         protected Canvas Down;
 
         protected double DownHeight;
+
+        protected enum WhereIsMouseEnum { MouseOnMain, MouseOnDown, MouseOutside }
+
+        protected WhereIsMouseEnum WhereIsMouse;
 
 
         protected Dictionary<IVertex, IItem> GetItemsDictionary()
@@ -267,6 +271,8 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             CreateDown();
 
             DrawMain();
+
+            DrawDown();
         }
 
         protected void SetVertexVaribles()
@@ -386,9 +392,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             Down.SizeChanged += Down_SizeChanged;
             Down.Loaded += Down_Loaded;
 
-            ZoomScrollView.SetDownContent((FrameworkElement)DownDecorator, Down);
-
-            DrawDown();
+            ZoomScrollView.SetDownContent((FrameworkElement)DownDecorator, Down);            
         }
 
         private void Down_Loaded(object sender, RoutedEventArgs e)
@@ -440,6 +444,17 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             WpfUtil.DrawLine(Down, Width, 0, Width, Height, b);
         }
 
+        protected void DrawDownBackground()
+        {
+            Border Background = new Border();
+
+            Background.Background = (Brush)FindResource("0LightBackgroundBrush");
+
+            WpfUtil.SetPosition(Background, 0, 0, Main.Width, DownHeight);
+
+            Down.Children.Add(Background);
+        }       
+
         protected void DrawDown()
         {             
             if (DownDecorator == null)
@@ -447,7 +462,11 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             Down.Children.Clear();
 
+            DrawDownBackground();
+
             DrawDownLines();
+
+            DrawArrowLines_Down();
 
             DrawDownBox();
         }
@@ -516,13 +535,23 @@ namespace m0_COMPOSER.UIWpf.Visualisers
         {
             Main.MouseEnter += MouseEnterHandler;
 
-            Main.MouseLeave += MouseLeaveHandler;
+            Main.MouseLeave += MouseLeaveHandler;            
 
             Main.MouseDown += MouseDownHandler;
 
             Main.MouseUp += MouseUpHandler;
 
             Main.MouseMove += MouseMoveHandler;
+
+            //
+
+            Down.MouseEnter += MouseEnterHandler_Down;
+
+            Down.MouseLeave += MouseLeaveHandler_Down;
+
+            Down.MouseDown += M
+
+            Down.MouseMove += MouseMoveHandler_Down;
         }
 
         protected void MouseMoveHandler(object sender, MouseEventArgs e)
@@ -556,6 +585,39 @@ namespace m0_COMPOSER.UIWpf.Visualisers
                 default:
                     break;
             }
+        }
+
+        protected void MouseMoveHandler_Down(object sender, MouseEventArgs e)
+        {
+            UpdateArrowLines(e);
+
+            /*switch (currentCursorState)
+            {
+                case CursorState.PenDown:
+                    PenMove_PenDown(sender, e);
+                    break;
+
+                case CursorState.ArrowUp:
+                case CursorState.ArrowUp_MoveOnItem_Left:
+                case CursorState.ArrowUp_MoveOnItem_Right:
+                case CursorState.ArrowUp_MoveOnItem:
+                    ArrowMove_ArrowUp(sender, e);
+                    break;
+
+                case CursorState.ArrowDown:
+                    ArrowMove_ArrowDown(sender, e);
+                    break;
+
+                case CursorState.ArrowDown_MoveOnItem_Left:
+                case CursorState.ArrowDown_MoveOnItem_Right:
+                case CursorState.ArrowDown_MoveOnItem_MouseDown:
+                case CursorState.ArrowDown_MoveOnItem_MouseDownAndMove:
+                    ArrowMove_DownMoveOnItemLeftRight(sender, e);
+                    break;
+
+                default:
+                    break;
+            }*/
         }
 
         protected void MouseUpHandler(object sender, MouseButtonEventArgs e)
@@ -621,16 +683,50 @@ namespace m0_COMPOSER.UIWpf.Visualisers
                 return;
             }
 
-            HorizontalArrowLine.Visibility = Visibility.Visible;
-            VerticalArrowLine.Visibility = Visibility.Visible;
+            double x, y;
 
-            Point currentMousePosition = GetMainContentMousePosition(e);
+            switch (WhereIsMouse)
+            {
+                case WhereIsMouseEnum.MouseOnMain:
 
-            double x = currentMousePosition.X;
-            double y = currentMousePosition.Y;
+                    HorizontalArrowLine.Visibility = Visibility.Visible;
+                    HorizontalArrowLine_Down.Visibility = Visibility.Hidden;
 
-            WpfUtil.SetLinePosition(HorizontalArrowLine, 0, y, Width, y);
-            WpfUtil.SetLinePosition(VerticalArrowLine, x, 0, x, Height);
+                    VerticalArrowLine.Visibility = Visibility.Visible;
+                    VerticalArrowLine_Down.Visibility = Visibility.Visible;
+
+                    Point currentMousePosition = GetMainContentMousePosition(e);
+
+                    x = currentMousePosition.X;
+                    y = currentMousePosition.Y;
+
+                    WpfUtil.SetLinePosition(HorizontalArrowLine, 0, y, Width, y);
+                    WpfUtil.SetLinePosition(VerticalArrowLine, x, 0, x, Height);
+                    WpfUtil.SetLinePosition(VerticalArrowLine_Down, x, 0, x, DownHeight);
+
+                    break;
+
+                case WhereIsMouseEnum.MouseOnDown:
+
+                    HorizontalArrowLine.Visibility = Visibility.Hidden;
+                    HorizontalArrowLine_Down.Visibility = Visibility.Visible;
+
+                    VerticalArrowLine.Visibility = Visibility.Visible;
+                    VerticalArrowLine_Down.Visibility = Visibility.Visible;
+
+                    Point currentMousePosition2 = GetDownContentMousePosition(e);
+
+                    x = currentMousePosition2.X;
+                    y = currentMousePosition2.Y;
+
+                    WpfUtil.SetLinePosition(HorizontalArrowLine_Down, 0, y, Width, y);
+                    WpfUtil.SetLinePosition(VerticalArrowLine, x, 0, x, Height);
+                    WpfUtil.SetLinePosition(VerticalArrowLine_Down, x, 0, x, DownHeight);
+
+                    break;
+            }
+
+            
         }
 
         protected void HideArrowLines()
@@ -1354,11 +1450,19 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             return e.GetPosition(Main);
         }
 
+        protected Point GetDownContentMousePosition(MouseButtonEventArgs e)
+        {
+            return e.GetPosition(Down);
+        }
+
+        protected Point GetDownContentMousePosition(MouseEventArgs e)
+        {
+            return e.GetPosition(Down);
+        }
+
         protected void MouseLeaveHandler(object sender, MouseEventArgs e)
         {
-            HideArrowLines();
-
-            Point currentMousePosition = GetMainContentMousePosition(e);
+            HideArrowLines();            
 
             WpfUtil.SetCursor(Cursors.Arrow);
 
@@ -1372,11 +1476,43 @@ namespace m0_COMPOSER.UIWpf.Visualisers
                     PerformArrowUp_FromArrowDown_WhileMouseLeave();
                     break;
             }
+
+            WhereIsMouse = WhereIsMouseEnum.MouseOutside;
         }
 
         protected void MouseEnterHandler(object sender, MouseEventArgs e)
         {
-            UpdateCursorShape();         
+            UpdateCursorShape();
+
+            WhereIsMouse = WhereIsMouseEnum.MouseOnMain;
+        }
+
+        protected void MouseLeaveHandler_Down(object sender, MouseEventArgs e)
+        {
+            HideArrowLines();
+            
+
+            WpfUtil.SetCursor(Cursors.Arrow);
+
+            /*            switch (currentCursorState)
+                        {
+                            case (CursorState.PenDown):
+                                PerformPenUp();
+                                break;
+
+                            case (CursorState.ArrowDown):
+                                PerformArrowUp_FromArrowDown_WhileMouseLeave();
+                                break;
+                        }*/
+
+            WhereIsMouse = WhereIsMouseEnum.MouseOutside;
+        }
+
+        protected void MouseEnterHandler_Down(object sender, MouseEventArgs e)
+        {
+            UpdateCursorShape();
+
+            WhereIsMouse = WhereIsMouseEnum.MouseOnDown;
         }
 
         protected void TurnOnSelectedEdgesFireChange()
@@ -1471,8 +1607,11 @@ namespace m0_COMPOSER.UIWpf.Visualisers
         protected void DrawArrowLines()
         {
             Main.Children.Add(HorizontalArrowLine);
-            Main.Children.Add(VerticalArrowLine);
+            Main.Children.Add(VerticalArrowLine);            
+        }
 
+        protected void DrawArrowLines_Down()
+        {         
             Down.Children.Add(HorizontalArrowLine_Down);
             Down.Children.Add(VerticalArrowLine_Down);
         }
