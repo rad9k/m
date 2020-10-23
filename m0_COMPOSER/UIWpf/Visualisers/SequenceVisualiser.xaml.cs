@@ -549,7 +549,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             Down.MouseLeave += MouseLeaveHandler_Down;
 
-            Down.MouseDown += M
+            Down.MouseDown += MouseDownHandler_Down;
 
             Down.MouseMove += MouseMoveHandler_Down;
         }
@@ -1508,6 +1508,30 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             WhereIsMouse = WhereIsMouseEnum.MouseOutside;
         }
 
+        protected void MouseDownHandler_Down(object sender, MouseButtonEventArgs e)
+        {
+            /*switch (currentCursorState)
+            {
+                case CursorState.PenUp:
+                    PenDown(sender, e);
+                    break;
+
+                case CursorState.Eraser:
+                    EraserDown(sender, e);
+                    break;
+
+                case CursorState.ArrowUp:
+                    ArrowDown(sender, e);
+                    break;
+
+                case CursorState.ArrowUp_MoveOnItem_Left:
+                case CursorState.ArrowUp_MoveOnItem_Right:
+                case CursorState.ArrowUp_MoveOnItem:
+                    ArrowDown_FromUpMove(sender, e);
+                    break;
+            }*/
+        }
+
         protected void MouseEnterHandler_Down(object sender, MouseEventArgs e)
         {
             UpdateCursorShape();
@@ -1647,6 +1671,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             this.BorderThickness = new Thickness(0);
             this.Padding = new Thickness(0);
             this.AllowDrop = true;
+
 
             // THIS REDUCES PERFORMANCE ON LARGE TREES SO commented out
             //VirtualizingStackPanel.SetIsVirtualizing(this, true); 
