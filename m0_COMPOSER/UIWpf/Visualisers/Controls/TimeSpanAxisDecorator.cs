@@ -78,8 +78,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Controls
 
             Children.Clear();
 
-            Draw_Recurent(0);
-            
+            Draw_Recurent(0);        
         }
 
         Brush getBrushForLevel(int level)

@@ -127,7 +127,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
         protected Canvas Down;
 
-        protected double DownHeight;
+        protected double Height_Down;
 
         protected enum WhereIsMouseEnum { MouseOnMain, MouseOnDown, MouseOutside }
 
@@ -183,7 +183,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
         protected void SetCursorMode(CursorState modeDetail)
         {
-            UnCheckAllCursorButtons();
+            UnCheckAllCursorButtons();            
 
             currentCursorState = modeDetail;
 
@@ -273,6 +273,8 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             DrawMain();
 
             DrawDown();
+
+            DrawItems();
         }
 
         protected void SetVertexVaribles()
@@ -302,7 +304,6 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             if (timeSpanVertex == null)
                 timeSpanVertex = r.Get(false, @"System\Lib\Music\Data\DefaultTimeSpanLevel:");
-
         }
 
         protected void SetupLocalVariablesFromBaseVertexVertexes()
@@ -317,7 +318,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             else
                 Length = ExtendTimeLength;
 
-            
+          
             bool dummy = false;
 
             isDrum = GraphUtil.GetBooleanValue(baseVertex.Get(false, "IsDrum:"), ref dummy);
@@ -397,14 +398,14 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
         private void Down_Loaded(object sender, RoutedEventArgs e)
         {
-            DownHeight = Down.ActualHeight;
+            Height_Down = Down.ActualHeight;
 
             DrawDown();
         }
 
         private void Down_SizeChanged(object sender, SizeChangedEventArgs e)
         {
-            DownHeight = Down.ActualHeight;
+            Height_Down = Down.ActualHeight;
 
             DrawDown();
         }
@@ -426,22 +427,12 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             {
                 Line l = new Line();
 
-                WpfUtil.SetLinePosition(l, s.StartPosition, 0, s.StartPosition, DownHeight);
+                WpfUtil.SetLinePosition(l, s.StartPosition, 0, s.StartPosition, Height_Down);
 
                 s.LineStyle.SetStyle(l);
 
                 Down.Children.Add(l);
             }
-        }
-
-        protected void DrawDownBox()
-        {
-            Brush b = (Brush)WpfUtil.FindResource("0ForegroundBrush");
-
-            WpfUtil.DrawLine(Down, 0, 0, Width, 0, b);
-            WpfUtil.DrawLine(Down, 0, Height, Width, Height, b);
-            WpfUtil.DrawLine(Down, 0, 0, 0, Height, b);
-            WpfUtil.DrawLine(Down, Width, 0, Width, Height, b);
         }
 
         protected void DrawDownBackground()
@@ -450,7 +441,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             Background.Background = (Brush)FindResource("0LightBackgroundBrush");
 
-            WpfUtil.SetPosition(Background, 0, 0, Main.Width, DownHeight);
+            WpfUtil.SetPosition(Background, 0, 0, Main.Width, Height_Down);
 
             Down.Children.Add(Background);
         }       
@@ -466,9 +457,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             DrawDownLines();
 
-            DrawArrowLines_Down();
-
-            DrawDownBox();
+            DrawArrowLines_Down();        
         }
 
         protected void DownDecorator_SelectionChanged(object sender, EventArgs e)
@@ -512,9 +501,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             DrawArrowLines();
 
-            AddEventHandlers();
-
-            DrawItems();
+            AddEventHandlers();            
 
 
             SelectionArea = new SelectionArea(Main);
@@ -671,7 +658,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
                     WpfUtil.SetLinePosition(HorizontalArrowLine, 0, y, Width, y);
                     WpfUtil.SetLinePosition(VerticalArrowLine, x, 0, x, Height);
-                    WpfUtil.SetLinePosition(VerticalArrowLine_Down, x, 0, x, DownHeight);
+                    WpfUtil.SetLinePosition(VerticalArrowLine_Down, x, 0, x, Height_Down);
 
                     break;
 
@@ -690,7 +677,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
                     WpfUtil.SetLinePosition(HorizontalArrowLine_Down, 0, y, Width, y);
                     WpfUtil.SetLinePosition(VerticalArrowLine, x, 0, x, Height);
-                    WpfUtil.SetLinePosition(VerticalArrowLine_Down, x, 0, x, DownHeight);
+                    WpfUtil.SetLinePosition(VerticalArrowLine_Down, x, 0, x, Height_Down);
 
                     break;
             }
@@ -1391,7 +1378,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             IVertex Event = r.Get(false, @"System\Lib\Music\Event");
             IVertex noteEvent = r.Get(false, @"System\Lib\Music\NoteEvent");
 
-            IEdge tempNoteEventEdge = baseVertex.AddVertexAndReturnEdge(null, null);
+            IEdge tempNoteEventEdge = baseVertex.AddVertexAndReturnEdge(null, null);            
 
             IVertex noteEventVertex = tempNoteEventEdge.To;
 
@@ -1406,7 +1393,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             baseVertex.DeleteEdge(tempNoteEventEdge);
 
-            return finalEdge;
+            return finalEdge;            
         }
 
         protected Point GetMainContentMousePosition(MouseButtonEventArgs e)
@@ -1576,30 +1563,102 @@ namespace m0_COMPOSER.UIWpf.Visualisers
         {
             SetCursorMode(CursorState.PenDown);
 
-            mouseDownPoint = GetMainContentMousePosition(e);
+            mouseDownPoint = GetDownContentMousePosition(e);
 
             previousMousePosition = mouseDownPoint;
 
-            newItemSegment = FindVerticalSegment(mouseDownPoint.Y);
+            double mouseY = mouseDownPoint.Y;
 
-            //
+          //  VertexChangeOff = true; 
 
-            if (isCurrentPenItemCenter)
-                return;
+            IEdge newItemEventEdge = AddItemEdge_Down(mouseY, GetSnappedPosition(mouseDownPoint.X));
 
-            newItemShape = new Border();
+            //      AddItem_Down(newItemEventEdge, null);
 
-            newItemShape.Background = (Brush)FindResource("0HighlightBrush");
-
-            newItemShape.BorderThickness = new Thickness(0);
-
-            double snappedMouseX = GetSnappedPosition(mouseDownPoint.X);
-
-            WpfUtil.SetPositionAbsolute(newItemShape, snappedMouseX, newItemSegment.StartPosition, snappedMouseX, newItemSegment.EndPosition);
-
-            Main.Children.Add(newItemShape);
+            VertexChangeOff = false;
         }
 
+        protected int getValueFromMouseY_Down(double mouseY)
+        {
+            return 127 - (int)((mouseY / Height_Down) * 127);
+        }
+
+        protected IEdge AddItemEdge_Down(double mouseY, double startPosition)
+        {
+            IVertex r = MinusZero.Instance.Root;
+
+            IVertex Event = r.Get(false, @"System\Lib\Music\Event");
+            IVertex ControlChangeEvent = r.Get(false, @"System\Lib\Music\ControlChangeEvent");
+
+            IEdge tempControlChangeEventEdge = baseVertex.AddVertexAndReturnEdge(null, null);
+
+            IVertex noteEventVertex = tempControlChangeEventEdge.To;
+
+            noteEventVertex.AddEdge(MinusZero.Instance.Is, ControlChangeEvent);
+            noteEventVertex.AddVertex(ControlChangeEvent.Get(false, @"Attribute:Value"), getValueFromMouseY_Down(mouseY));
+            noteEventVertex.AddVertex(ControlChangeEvent.Get(false, @"Attribute:TriggerTime"), (int)((startPosition / HorizontalAD.BaseUnitSize) + 0.01));
+            
+
+            IEdge finalEdge = baseVertex.AddEdge(Event, noteEventVertex);
+
+            baseVertex.DeleteEdge(tempControlChangeEventEdge);
+
+            return finalEdge;
+        }
+
+        protected void AddItem_Down(IEdge itemEdge, List<IVertex> selectedVertexes)
+        {
+            return;
+            IVertex itemEventVertex = itemEdge.To;
+
+            bool dummy = false;
+
+            int triggerTime = GraphUtil.GetIntegerValue(itemEventVertex.Get(false, "TriggerTime:"), ref dummy);
+
+            int length = GraphUtil.GetIntegerValue(itemEventVertex.Get(false, "Length:"), ref dummy);
+
+            IVertex pitchVertex = MusicUtil.GetNoteFromPitchSet(pitchSetVertex,
+                GraphUtil.GetIntegerValue(itemEventVertex.Get(false, "Octave:")),
+                GraphUtil.GetIntegerValue(itemEventVertex.Get(false, "Note:")));
+
+            string label = pitchVertex.Value.ToString();
+
+            FrameworkElement newElement;
+
+            if (isDrum)
+                newElement = new DrumItem(itemEdge, this, showVelocity);
+            else
+                newElement = new NoteItem(itemEdge, label, this, showLabel, showVelocity);
+
+            IItem newItem = (IItem)newElement;
+
+            if (selectedVertexes != null && selectedVertexes.Contains(itemEventVertex))
+                newItem.Select();
+
+            AxisSegment itemSegment = GetPitchSegment(pitchVertex);
+
+
+            double startPosition = triggerTime * HorizontalAD.BaseUnitSize;
+
+            double endPosition = startPosition + (length * HorizontalAD.BaseUnitSize);
+
+
+            if (isDrum)
+            {
+                newItem.Center = startPosition;
+                newItem.Top = itemSegment.StartPosition;
+                newItem.Bottom = itemSegment.EndPosition;
+            }
+            else
+            {
+                newItem.Left = startPosition;
+                newItem.Top = itemSegment.StartPosition;
+                newItem.Right = endPosition;
+                newItem.Bottom = itemSegment.EndPosition;
+            }
+
+            ItemsAdd(newItem);
+        }        
 
         ////////////////////////////////////////////////////////////////////////////////////
         /////////////// DOWN END ///////////////////////////////////////////////////////////
@@ -1711,7 +1770,14 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             List<IVertex> selectedVertexes = GetSelectedVertexes();
 
             foreach (IEdge e in baseVertex.GetAll(false, "Event:"))
-                AddItem(e, selectedVertexes);
+            {
+                if (GraphUtil.ExistQueryOut(e.To, "$Is", "NoteEvent"))
+                    AddItem(e, selectedVertexes);
+
+                if (GraphUtil.ExistQueryOut(e.To, "$Is", "ControlChangeEvent"))
+                    AddItem_Down(e, selectedVertexes);
+            }
+            
         }
 
         protected void InitSequenceVisualierState()
@@ -1780,7 +1846,8 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
                 SetVertexVaribles();
 
-                VisualiserDraw();
+                // SnapToGridComboBox_SelectionChange(); in UpdateVertexValues() does this;
+                // VisualiserDraw(); 
             }
         }
 
