@@ -551,6 +551,8 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             Down.MouseDown += MouseDownHandler_Down;
 
+            Down.MouseUp += MouseUpHandler_Down;
+
             Down.MouseMove += MouseMoveHandler_Down;
         }
 
@@ -585,40 +587,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
                 default:
                     break;
             }
-        }
-
-        protected void MouseMoveHandler_Down(object sender, MouseEventArgs e)
-        {
-            UpdateArrowLines(e);
-
-            /*switch (currentCursorState)
-            {
-                case CursorState.PenDown:
-                    PenMove_PenDown(sender, e);
-                    break;
-
-                case CursorState.ArrowUp:
-                case CursorState.ArrowUp_MoveOnItem_Left:
-                case CursorState.ArrowUp_MoveOnItem_Right:
-                case CursorState.ArrowUp_MoveOnItem:
-                    ArrowMove_ArrowUp(sender, e);
-                    break;
-
-                case CursorState.ArrowDown:
-                    ArrowMove_ArrowDown(sender, e);
-                    break;
-
-                case CursorState.ArrowDown_MoveOnItem_Left:
-                case CursorState.ArrowDown_MoveOnItem_Right:
-                case CursorState.ArrowDown_MoveOnItem_MouseDown:
-                case CursorState.ArrowDown_MoveOnItem_MouseDownAndMove:
-                    ArrowMove_DownMoveOnItemLeftRight(sender, e);
-                    break;
-
-                default:
-                    break;
-            }*/
-        }
+        }        
 
         protected void MouseUpHandler(object sender, MouseButtonEventArgs e)
         {
@@ -1487,10 +1456,21 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             WhereIsMouse = WhereIsMouseEnum.MouseOnMain;
         }
 
+        ////////////////////////////////////////////////////////////////////////////////////
+        /////////////// DOWN START /////////////////////////////////////////////////////////
+        ////////////////////////////////////////////////////////////////////////////////////        
+
+        protected void MouseEnterHandler_Down(object sender, MouseEventArgs e)
+        {
+            UpdateCursorShape();
+
+            WhereIsMouse = WhereIsMouseEnum.MouseOnDown;
+        }
+
         protected void MouseLeaveHandler_Down(object sender, MouseEventArgs e)
         {
             HideArrowLines();
-            
+
 
             WpfUtil.SetCursor(Cursors.Arrow);
 
@@ -1510,13 +1490,13 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
         protected void MouseDownHandler_Down(object sender, MouseButtonEventArgs e)
         {
-            /*switch (currentCursorState)
+            switch (currentCursorState)
             {
                 case CursorState.PenUp:
-                    PenDown(sender, e);
+                    PenDown_Down(sender, e);
                     break;
 
-                case CursorState.Eraser:
+             /*   case CursorState.Eraser:
                     EraserDown(sender, e);
                     break;
 
@@ -1528,16 +1508,102 @@ namespace m0_COMPOSER.UIWpf.Visualisers
                 case CursorState.ArrowUp_MoveOnItem_Right:
                 case CursorState.ArrowUp_MoveOnItem:
                     ArrowDown_FromUpMove(sender, e);
+                    break;*/
+            }
+        }
+
+        protected void MouseUpHandler_Down(object sender, MouseButtonEventArgs e)
+        {
+        /*    switch (currentCursorState)
+            {
+                case CursorState.PenDown:
+                    PenUp(sender, e);
+                    break;
+
+                case CursorState.ArrowDown:
+                    ArrowUp_FromDown(sender, e);
+                    break;
+
+                case CursorState.ArrowDown_MoveOnItem_Left:
+                case CursorState.ArrowDown_MoveOnItem_Right:
+                case CursorState.ArrowDown_MoveOnItem_MouseDownAndMove:
+                    ArrowUp_FromMove(sender, e);
+                    break;
+
+                case CursorState.ArrowDown_MoveOnItem_MouseDown:
+                    ArrowUp_FromMoveOnItem_MouseDown(sender, e);
+                    break;
+
+                default:
                     break;
             }*/
         }
 
-        protected void MouseEnterHandler_Down(object sender, MouseEventArgs e)
+        protected void MouseMoveHandler_Down(object sender, MouseEventArgs e)
         {
-            UpdateCursorShape();
+            UpdateArrowLines(e);
 
-            WhereIsMouse = WhereIsMouseEnum.MouseOnDown;
+            /*switch (currentCursorState)
+            {
+                case CursorState.PenDown:
+                    PenMove_PenDown(sender, e);
+                    break;
+
+                case CursorState.ArrowUp:
+                case CursorState.ArrowUp_MoveOnItem_Left:
+                case CursorState.ArrowUp_MoveOnItem_Right:
+                case CursorState.ArrowUp_MoveOnItem:
+                    ArrowMove_ArrowUp(sender, e);
+                    break;
+
+                case CursorState.ArrowDown:
+                    ArrowMove_ArrowDown(sender, e);
+                    break;
+
+                case CursorState.ArrowDown_MoveOnItem_Left:
+                case CursorState.ArrowDown_MoveOnItem_Right:
+                case CursorState.ArrowDown_MoveOnItem_MouseDown:
+                case CursorState.ArrowDown_MoveOnItem_MouseDownAndMove:
+                    ArrowMove_DownMoveOnItemLeftRight(sender, e);
+                    break;
+
+                default:
+                    break;
+            }*/
         }
+
+        protected void PenDown_Down(object sender, MouseButtonEventArgs e)
+        {
+            SetCursorMode(CursorState.PenDown);
+
+            mouseDownPoint = GetMainContentMousePosition(e);
+
+            previousMousePosition = mouseDownPoint;
+
+            newItemSegment = FindVerticalSegment(mouseDownPoint.Y);
+
+            //
+
+            if (isCurrentPenItemCenter)
+                return;
+
+            newItemShape = new Border();
+
+            newItemShape.Background = (Brush)FindResource("0HighlightBrush");
+
+            newItemShape.BorderThickness = new Thickness(0);
+
+            double snappedMouseX = GetSnappedPosition(mouseDownPoint.X);
+
+            WpfUtil.SetPositionAbsolute(newItemShape, snappedMouseX, newItemSegment.StartPosition, snappedMouseX, newItemSegment.EndPosition);
+
+            Main.Children.Add(newItemShape);
+        }
+
+
+        ////////////////////////////////////////////////////////////////////////////////////
+        /////////////// DOWN END ///////////////////////////////////////////////////////////
+        ////////////////////////////////////////////////////////////////////////////////////        
 
         protected void TurnOnSelectedEdgesFireChange()
         {
