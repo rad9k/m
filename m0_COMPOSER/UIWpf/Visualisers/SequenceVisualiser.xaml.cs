@@ -251,30 +251,39 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             }
         }
 
+        bool VisuliseserDrraw_NeedsInitilisation = true;
+
         public void VisualiserDraw()
         {
             if (baseVertex == null || isLoaded == false)
                 return;
 
-            SetupLocalVariablesFromBaseVertexVertexes();
+            if (VisuliseserDrraw_NeedsInitilisation)
+            {
+                SetupLocalVariablesFromBaseVertexVertexes();
 
-            SetVertexVaribles();
+                SetVertexVaribles();
 
-            SetAxisDecorators();
+                SetAxisDecorators();
 
-            CreateMain();
+                CreateMain();            
 
-            CreateArrowLines();
+                CreateArrowLines();
 
-            SetupScrollViewer();
+                SetupScrollViewer();
 
-            CreateDown();
+                CreateDown();
+            }
 
             DrawMain();
 
             DrawDown();
 
+            InitialiseItems();
+
             DrawItems();
+
+            VisuliseserDrraw_NeedsInitilisation = false;
         }
 
         protected void SetVertexVaribles()
@@ -364,8 +373,11 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             Main.Width = Width;
             Main.Height = Height;
 
-            ZoomScrollView.SetMainContent(Main);            
+            ZoomScrollView.SetMainContent(Main);                        
+        }
 
+        protected void InitialiseItems()
+        {
             items = new List<FrameworkElement>();
         }
 
@@ -491,6 +503,8 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
         protected void DrawMain()
         {
+            Main.Children.Clear();
+
             DrawBackground();
 
             DrawMainSegments();
