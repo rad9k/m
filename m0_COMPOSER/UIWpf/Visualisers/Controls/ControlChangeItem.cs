@@ -1,0 +1,128 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using m0.Foundation;
+using System.Windows.Controls;
+using m0.UIWpf;
+using System.Windows.Media;
+using System.Windows;
+using m0.Graph;
+using System.Windows.Shapes;
+
+namespace m0_COMPOSER.UIWpf.Visualisers.Controls
+{
+    public class ControlChangeItem : Border, IItem
+    {
+        public IEdge BaseEdge { get; set; }
+
+        public bool IsCentered { get { return true; } }
+
+        public String Label { get; set; }
+
+        public bool CanResizeHorizontally { get { return false; } }
+
+        public bool CanResizeVertically { get { return false; } }
+
+        public IZoomScrollViewerHost Host { get; set; }
+
+        bool isSelected;
+
+        public bool IsSelected { get { return isSelected; } }
+
+        
+
+        public double HiddenLeft { get; set; }
+
+        public double HiddenRight { get; set; }
+
+        public double HiddenCenter { get; set; }
+
+        public double HiddenTop { get; set; }
+
+        public double HiddenBottom { get; set; }
+
+        public void SetHiddenFromReal()
+        {
+            HiddenCenter = Center;
+
+            HiddenTop = Top;
+
+            HiddenBottom = Bottom;
+        }
+
+        public void Select()
+        {
+            isSelected = true;
+
+            BorderThickness = new Thickness(3);
+
+            BorderBrush = (Brush)WpfUtil.FindResource("0HighlightBrush");            
+        }
+
+        public void Unselect()
+        {
+            isSelected = false;
+
+            BorderThickness = new Thickness(2);
+
+            BorderBrush = (Brush)WpfUtil.FindResource("0ForegroundBrush");
+        }
+
+        public ControlChangeItem(IEdge baseEdge, IZoomScrollViewerHost host, bool _showVelocity)
+        {
+            BaseEdge = baseEdge;
+
+            Host = host;
+
+            //
+
+            Width = 5;
+            
+
+            BorderThickness = new Thickness(0);
+
+
+            RenderOptions.SetEdgeMode(this, EdgeMode.Aliased);
+
+            Brush backColorBrush = (Brush)WpfUtil.FindResource("0LightForegroundBrush");
+
+            Background = backColorBrush;
+
+            Unselect();            
+        }        
+
+        public void Update()
+        {
+
+        }
+
+        public double Left { get; set; }
+
+        public double Right { get; set; }
+
+        double center;
+        public double Center {
+            get { return Canvas.GetLeft(this) + (Width / 2.0); }
+            set {
+                center = value;
+                Canvas.SetLeft(this, center  - (Width/2.0));
+            }
+        }
+
+        public double Top
+        {
+            get { return Canvas.GetTop(this); }
+            set { Canvas.SetTop(this, value); }
+        }
+
+        public double Bottom
+        {
+            get { return Top + Height; }
+            set {
+                Height = value - Top;                
+            }
+        }
+    }
+}

@@ -1574,20 +1574,18 @@ namespace m0_COMPOSER.UIWpf.Visualisers
         }
 
         protected void PenDown_Down(object sender, MouseButtonEventArgs e)
-        {
-            SetCursorMode(CursorState.PenDown);
-
+        {            
             mouseDownPoint = GetDownContentMousePosition(e);
 
             previousMousePosition = mouseDownPoint;
 
             double mouseY = mouseDownPoint.Y;
 
-          //  VertexChangeOff = true; 
+            VertexChangeOff = true;
 
             IEdge newItemEventEdge = AddItemEdge_Down(mouseY, GetSnappedPosition(mouseDownPoint.X));
 
-            //      AddItem_Down(newItemEventEdge, null);
+            AddItem_Down(newItemEventEdge, null);         
 
             VertexChangeOff = false;
         }
@@ -1606,14 +1604,15 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             IEdge tempControlChangeEventEdge = baseVertex.AddVertexAndReturnEdge(null, null);
 
-            IVertex noteEventVertex = tempControlChangeEventEdge.To;
+            IVertex noteControlChangeVertex = tempControlChangeEventEdge.To;
 
-            noteEventVertex.AddEdge(MinusZero.Instance.Is, ControlChangeEvent);
-            noteEventVertex.AddVertex(ControlChangeEvent.Get(false, @"Attribute:Value"), getValueFromMouseY_Down(mouseY));
-            noteEventVertex.AddVertex(ControlChangeEvent.Get(false, @"Attribute:TriggerTime"), (int)((startPosition / HorizontalAD.BaseUnitSize) + 0.01));
+            noteControlChangeVertex.AddEdge(MinusZero.Instance.Is, ControlChangeEvent);
+            noteControlChangeVertex.AddVertex(ControlChangeEvent.Get(false, @"Attribute:Number"), CCNumber);
+            noteControlChangeVertex.AddVertex(ControlChangeEvent.Get(false, @"Attribute:Value"), getValueFromMouseY_Down(mouseY));
+            noteControlChangeVertex.AddVertex(ControlChangeEvent.Get(false, @"Attribute:TriggerTime"), (int)((startPosition / HorizontalAD.BaseUnitSize) + 0.01));
             
 
-            IEdge finalEdge = baseVertex.AddEdge(Event, noteEventVertex);
+            IEdge finalEdge = baseVertex.AddEdge(Event, noteControlChangeVertex);
 
             baseVertex.DeleteEdge(tempControlChangeEventEdge);
 
