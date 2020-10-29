@@ -70,7 +70,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Controls
             BorderBrush = (Brush)WpfUtil.FindResource("0ForegroundBrush");
         }
 
-        public ControlChangeItem(IEdge baseEdge, IZoomScrollViewerHost host, bool _showVelocity)
+        public ControlChangeItem(IEdge baseEdge, IZoomScrollViewerHost host)
         {
             BaseEdge = baseEdge;
 

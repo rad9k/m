@@ -133,6 +133,12 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
         protected WhereIsMouseEnum WhereIsMouse;
 
+        protected List<FrameworkElement> items_Down;
+
+        protected Dictionary<IVertex, IItem> itemsDictinaryHolder_Down = new Dictionary<IVertex, IItem>();
+
+        protected bool needToRebuildItemsDictionary_Down = true;
+
 
         protected Dictionary<IVertex, IItem> GetItemsDictionary()
         {
@@ -379,6 +385,8 @@ namespace m0_COMPOSER.UIWpf.Visualisers
         protected void InitialiseItems()
         {
             items = new List<FrameworkElement>();
+
+            items_Down = new List<FrameworkElement>();
         }
 
         protected void CreateArrowLines()
@@ -1621,57 +1629,66 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
         protected void AddItem_Down(IEdge itemEdge, List<IVertex> selectedVertexes)
         {
-            return;
             IVertex itemEventVertex = itemEdge.To;
 
             bool dummy = false;
 
             int triggerTime = GraphUtil.GetIntegerValue(itemEventVertex.Get(false, "TriggerTime:"), ref dummy);
 
-            int length = GraphUtil.GetIntegerValue(itemEventVertex.Get(false, "Length:"), ref dummy);
+            int value = GraphUtil.GetIntegerValue(itemEventVertex.Get(false, "Value:"), ref dummy);
 
-            IVertex pitchVertex = MusicUtil.GetNoteFromPitchSet(pitchSetVertex,
-                GraphUtil.GetIntegerValue(itemEventVertex.Get(false, "Octave:")),
-                GraphUtil.GetIntegerValue(itemEventVertex.Get(false, "Note:")));
 
-            string label = pitchVertex.Value.ToString();
-
-            FrameworkElement newElement;
-
-            if (isDrum)
-                newElement = new DrumItem(itemEdge, this, showVelocity);
-            else
-                newElement = new NoteItem(itemEdge, label, this, showLabel, showVelocity);
+            ControlChangeItem newElement = new ControlChangeItem(itemEdge, this);            
 
             IItem newItem = (IItem)newElement;
 
             if (selectedVertexes != null && selectedVertexes.Contains(itemEventVertex))
-                newItem.Select();
-
-            AxisSegment itemSegment = GetPitchSegment(pitchVertex);
-
+                newItem.Select();            
 
             double startPosition = triggerTime * HorizontalAD.BaseUnitSize;
 
-            double endPosition = startPosition + (length * HorizontalAD.BaseUnitSize);
 
+            
+            newElement.Center = startPosition;
+            newElement.Top = ((double)value / 127) * Height_Down;
+            newElement.Bottom = Height_Down;
+            
+            ItemsAdd_Down(newItem);
+        }
 
-            if (isDrum)
-            {
-                newItem.Center = startPosition;
-                newItem.Top = itemSegment.StartPosition;
-                newItem.Bottom = itemSegment.EndPosition;
-            }
-            else
-            {
-                newItem.Left = startPosition;
-                newItem.Top = itemSegment.StartPosition;
-                newItem.Right = endPosition;
-                newItem.Bottom = itemSegment.EndPosition;
-            }
+        protected void ItemsAdd_Down(IItem i)
+        {
+            needToRebuildItemsDictionary_Down = true;
+            items_Down.Add((FrameworkElement)i);
 
-            ItemsAdd(newItem);
-        }        
+            Down.Children.Add((FrameworkElement)i);
+        }
+
+        protected void ItemsRemove_Down(IItem i)
+        {
+            needToRebuildItemsDictionary_Down = true;
+            items_Down.Remove((FrameworkElement)i);
+
+            Down.Children.Remove((FrameworkElement)i);
+        }
+
+        protected Dictionary<IVertex, IItem> GetItemsDictionary_Down()
+        {
+            if (needToRebuildItemsDictionary_Down)
+                RebuildItemsDictionary_Down();
+
+            return itemsDictinaryHolder_Down;
+        }
+
+        protected void RebuildItemsDictionary_Down()
+        {
+            itemsDictinaryHolder_Down.Clear();
+
+            foreach (IItem i in items_Down)
+                itemsDictinaryHolder_Down.Add(i.BaseEdge.To, i);
+
+            needToRebuildItemsDictionary_Down = false;
+        }
 
         ////////////////////////////////////////////////////////////////////////////////////
         /////////////// DOWN END ///////////////////////////////////////////////////////////
