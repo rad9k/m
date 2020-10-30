@@ -50,6 +50,8 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
         double HorizontalCenter { get; set; }
 
+        double VerticalCenter { get; set; }
+
         double Top { get; set; }
 
         double Bottom { get; set; }

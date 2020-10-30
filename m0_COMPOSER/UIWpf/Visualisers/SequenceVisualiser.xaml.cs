@@ -127,7 +127,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
         protected Canvas Down;
 
-        protected double Height_Down;
+        public double Height_Down { get; set; }
 
         protected enum WhereIsMouseEnum { MouseOnMain, MouseOnDown, MouseOutside }
 

@@ -39,6 +39,8 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Controls
 
         public double HiddenHorizontalCenter { get; set; }
 
+        public double HiddenVerticalCenter { get; set; }
+
         public double HiddenTop { get; set; }
 
         public double HiddenBottom { get; set; }
@@ -47,9 +49,11 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Controls
         {
             HiddenHorizontalCenter = HorizontalCenter;
 
-            HiddenTop = Top;
+            HiddenVerticalCenter = VerticalCenter;
 
-            HiddenBottom = Bottom;
+            //HiddenTop = Top;
+
+            //HiddenBottom = Bottom;
         }
 
         public void Select()
@@ -111,18 +115,19 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Controls
             }
         }
 
-        public double Top
+        public double VerticalCenter
         {
-            get { return Canvas.GetTop(this); }
-            set { Canvas.SetTop(this, value); }
-        }
-
-        public double Bottom
-        {
-            get { return Top + Height; }
-            set {
-                Height = value - Top;                
+            get { return Canvas.GetLeft(this) + (Width / 2.0); }
+            set
+            {
+                center = value;
+                Canvas.SetLeft(this, center - (Width / 2.0));
             }
         }
+
+        public double Top { get; set; }
+
+        public double Bottom { get; set; }
+        
     }
 }
