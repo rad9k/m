@@ -39,7 +39,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Controls
 
         public double HiddenRight { get; set; }
 
-        public double HiddenCenter { get; set; }
+        public double HiddenHorizontalCenter { get; set; }
 
         public double HiddenTop { get; set; }
 
@@ -184,7 +184,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Controls
             set { Width = value - Left; }
         }
 
-        public double Center { get; set; }
+        public double HorizontalCenter { get; set; }
 
         public double Top
         {

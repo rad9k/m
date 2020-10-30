@@ -37,7 +37,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Controls
 
         public double HiddenRight { get; set; }
 
-        public double HiddenCenter { get; set; }
+        public double HiddenHorizontalCenter { get; set; }
 
         public double HiddenTop { get; set; }
 
@@ -45,7 +45,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Controls
 
         public void SetHiddenFromReal()
         {
-            HiddenCenter = Center;
+            HiddenHorizontalCenter = HorizontalCenter;
 
             HiddenTop = Top;
 
@@ -197,7 +197,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Controls
         public double Right { get; set; }
 
         double center;
-        public double Center {
+        public double HorizontalCenter {
             get { return Canvas.GetLeft(this) + (Height / 2.0); }
             set {
                 center = value;

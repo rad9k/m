@@ -970,12 +970,12 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             {
                 // centered
 
-                item.HiddenCenter += deltaX;
+                item.HiddenHorizontalCenter += deltaX;
 
-                double newValue = GetSnappedPosition(item.HiddenCenter);
+                double newValue = GetSnappedPosition(item.HiddenHorizontalCenter);
 
-                if (newValue != item.Center)
-                    item.Center = newValue;
+                if (newValue != item.HorizontalCenter)
+                    item.HorizontalCenter = newValue;
             }
             else
             {
@@ -1305,7 +1305,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             if (isDrum)
             {
-                newItem.Center = startPosition;
+                newItem.HorizontalCenter = startPosition;
                 newItem.Top = itemSegment.StartPosition;                
                 newItem.Bottom = itemSegment.EndPosition;
             }
@@ -1343,7 +1343,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             if (item.IsCentered)
             {
-                TriggerTime = (int)(item.Center / HorizontalAD.BaseUnitSize);
+                TriggerTime = (int)(item.HorizontalCenter / HorizontalAD.BaseUnitSize);
 
                 Length = 0;
             }
@@ -1649,7 +1649,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
 
             
-            newElement.Center = startPosition;
+            newElement.HorizontalCenter = startPosition;
             newElement.Top = ((double)value / 127) * Height_Down;
             newElement.Bottom = Height_Down;
             

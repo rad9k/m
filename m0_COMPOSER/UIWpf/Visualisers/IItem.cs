@@ -34,7 +34,9 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
         double HiddenRight { get; set; }
 
-        double HiddenCenter { get; set; }
+        double HiddenHorizontalCenter { get; set; }
+
+        double HiddenVerticalCenter { get; set; }
 
         double HiddenTop { get; set; }
 
@@ -46,7 +48,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
         double Right { get; set; }
 
-        double Center { get; set; }
+        double HorizontalCenter { get; set; }
 
         double Top { get; set; }
 
