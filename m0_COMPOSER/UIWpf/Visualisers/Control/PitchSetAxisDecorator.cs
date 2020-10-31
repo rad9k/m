@@ -12,7 +12,7 @@ using m0.UIWpf;
 using System.Windows.Media;
 using m0.Graph;
 
-namespace m0_COMPOSER.UIWpf.Visualisers.Controls
+namespace m0_COMPOSER.UIWpf.Visualisers.Control
 {
     class PitchSetAxisDecorator : Canvas, IZoomScrollViewAxisDecorator
     {

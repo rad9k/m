@@ -57,14 +57,14 @@
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Runtime\Initialisation.cs" />
-    <Compile Include="UIWpf\Visualisers\Controls\ControlChangeDownDecorator.cs" />
-    <Compile Include="UIWpf\Visualisers\Controls\Items\ControlChangeItem.cs" />
-    <Compile Include="UIWpf\Visualisers\Controls\Items\DrumItem.cs" />
-    <Compile Include="UIWpf\Visualisers\Controls\LineStyle.cs" />
-    <Compile Include="UIWpf\Visualisers\Controls\Items\NoteItem.cs" />
-    <Compile Include="UIWpf\Visualisers\Controls\PitchSetAxisDecorator.cs" />
-    <Compile Include="UIWpf\Visualisers\Controls\TimeSpanAxisDecorator.cs" />
-    <Compile Include="UIWpf\Visualisers\Controls\ZoomScrollView.xaml.cs">
+    <Compile Include="UIWpf\Visualisers\Control\ControlChangeDownDecorator.cs" />
+    <Compile Include="UIWpf\Visualisers\Control\Item\ControlChangeItem.cs" />
+    <Compile Include="UIWpf\Visualisers\Control\Item\DrumItem.cs" />
+    <Compile Include="UIWpf\Visualisers\Control\LineStyle.cs" />
+    <Compile Include="UIWpf\Visualisers\Control\Item\NoteItem.cs" />
+    <Compile Include="UIWpf\Visualisers\Control\PitchSetAxisDecorator.cs" />
+    <Compile Include="UIWpf\Visualisers\Control\TimeSpanAxisDecorator.cs" />
+    <Compile Include="UIWpf\Visualisers\Control\ZoomScrollView.xaml.cs">
       <DependentUpon>ZoomScrollView.xaml</DependentUpon>
     </Compile>
     <Compile Include="UIWpf\Visualisers\IZoomScrollViewDownDecorator.cs" />
@@ -86,7 +86,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Page Include="UIWpf\Visualisers\Controls\ZoomScrollView.xaml">
+    <Page Include="UIWpf\Visualisers\Control\ZoomScrollView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

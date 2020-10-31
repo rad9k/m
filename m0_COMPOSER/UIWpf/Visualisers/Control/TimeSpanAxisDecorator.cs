@@ -12,7 +12,7 @@ using System.Windows.Shapes;
 using m0.UIWpf;
 using System.Windows.Media;
 
-namespace m0_COMPOSER.UIWpf.Visualisers.Controls
+namespace m0_COMPOSER.UIWpf.Visualisers.Control
 {
     class TimeSpanAxisDecorator : Canvas, IZoomScrollViewAxisDecorator
     {

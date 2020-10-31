@@ -6,7 +6,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Shapes;
 
-namespace m0_COMPOSER.UIWpf.Visualisers.Controls
+namespace m0_COMPOSER.UIWpf.Visualisers.Control
 {
     /// <summary>
     /// Interaction logic for ZoomScrollViewer.xaml

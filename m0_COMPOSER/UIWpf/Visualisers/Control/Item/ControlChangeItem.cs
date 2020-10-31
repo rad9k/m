@@ -11,7 +11,7 @@ using System.Windows;
 using m0.Graph;
 using System.Windows.Shapes;
 
-namespace m0_COMPOSER.UIWpf.Visualisers.Controls
+namespace m0_COMPOSER.UIWpf.Visualisers.Control.Item
 {
     public class ControlChangeItem : Border, IItem
     {

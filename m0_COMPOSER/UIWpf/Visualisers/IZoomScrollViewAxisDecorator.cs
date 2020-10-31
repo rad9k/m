@@ -1,5 +1,5 @@
 ﻿using m0.Foundation;
-using m0_COMPOSER.UIWpf.Visualisers.Controls;
+using m0_COMPOSER.UIWpf.Visualisers.Control;
 using System;
 using System.Collections.Generic;
 using System.Linq;

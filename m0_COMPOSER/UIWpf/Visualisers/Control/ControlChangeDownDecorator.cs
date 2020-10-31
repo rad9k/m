@@ -11,7 +11,7 @@ using System.Windows;
 using System.Windows.Shapes;
 using m0.UIWpf;
 
-namespace m0_COMPOSER.UIWpf.Visualisers.Controls
+namespace m0_COMPOSER.UIWpf.Visualisers.Control
 {
     class CCDescription
     {

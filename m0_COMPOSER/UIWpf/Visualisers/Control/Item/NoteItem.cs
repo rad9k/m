@@ -11,7 +11,7 @@ using System.Windows.Media;
 using System.Windows;
 using m0.Graph;
 
-namespace m0_COMPOSER.UIWpf.Visualisers.Controls
+namespace m0_COMPOSER.UIWpf.Visualisers.Control.Item
 {
     public class NoteItem : Border, IItem
     {

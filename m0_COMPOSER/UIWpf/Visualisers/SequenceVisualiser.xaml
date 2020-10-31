@@ -1,4 +1,4 @@
-﻿<UserControl xmlns:Controls="clr-namespace:m0_COMPOSER.UIWpf.Visualisers.Controls"  x:Class="m0_COMPOSER.UIWpf.Visualisers.SequenceVisualiser"
+﻿<UserControl xmlns:Controls="clr-namespace:m0_COMPOSER.UIWpf.Visualisers.Control"  x:Class="m0_COMPOSER.UIWpf.Visualisers.SequenceVisualiser"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
