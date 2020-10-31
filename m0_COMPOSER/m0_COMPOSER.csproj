@@ -58,10 +58,10 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Runtime\Initialisation.cs" />
     <Compile Include="UIWpf\Visualisers\Controls\ControlChangeDownDecorator.cs" />
-    <Compile Include="UIWpf\Visualisers\Controls\ControlChangeItem.cs" />
-    <Compile Include="UIWpf\Visualisers\Controls\DrumItem.cs" />
+    <Compile Include="UIWpf\Visualisers\Controls\Items\ControlChangeItem.cs" />
+    <Compile Include="UIWpf\Visualisers\Controls\Items\DrumItem.cs" />
     <Compile Include="UIWpf\Visualisers\Controls\LineStyle.cs" />
-    <Compile Include="UIWpf\Visualisers\Controls\NoteItem.cs" />
+    <Compile Include="UIWpf\Visualisers\Controls\Items\NoteItem.cs" />
     <Compile Include="UIWpf\Visualisers\Controls\PitchSetAxisDecorator.cs" />
     <Compile Include="UIWpf\Visualisers\Controls\TimeSpanAxisDecorator.cs" />
     <Compile Include="UIWpf\Visualisers\Controls\ZoomScrollView.xaml.cs">
