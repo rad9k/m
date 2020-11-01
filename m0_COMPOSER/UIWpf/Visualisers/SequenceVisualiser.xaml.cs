@@ -282,6 +282,8 @@ namespace m0_COMPOSER.UIWpf.Visualisers
                 CreateDown();
             }
 
+            UpdateMainSize();
+
             DrawMain();
 
             DrawDown();
@@ -372,13 +374,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
         protected void CreateMain()
         {
-            Main = new Canvas();
-
-            Width = HorizontalAD.Size.Width;
-            Height = VerticalAD.Size.Height;
-
-            Main.Width = Width;
-            Main.Height = Height;
+            Main = new Canvas();            
 
             ZoomScrollView.SetMainContent(Main);                        
         }
@@ -508,6 +504,15 @@ namespace m0_COMPOSER.UIWpf.Visualisers
         {
             ZoomScrollView.SetHost(this);
             ZoomScrollView.SetMainContent(Main);
+        }
+
+        protected void UpdateMainSize()
+        {
+            Width = HorizontalAD.Size.Width;
+            Height = VerticalAD.Size.Height;
+
+            Main.Width = Width;
+            Main.Height = Height;
         }
 
         protected void DrawMain()
