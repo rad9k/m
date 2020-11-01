@@ -106,22 +106,27 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control.Item
 
         public double Right { get; set; }
 
-        double center;
+        double horitzontalCenter;
         public double HorizontalCenter {
-            get { return Canvas.GetLeft(this) + (Width / 2.0); }
+            get { return horitzontalCenter; }
             set {
-                center = value;
-                Canvas.SetLeft(this, center  - (Width/2.0));
+                horitzontalCenter = value;
+
+                Canvas.SetLeft(this, horitzontalCenter - (Width / 2));
             }
         }
 
+        double verticalCenter;
         public double VerticalCenter
         {
-            get { return Canvas.GetLeft(this) + (Width / 2.0); }
+            get { return verticalCenter; }
             set
             {
-                center = value;
-                Canvas.SetLeft(this, center - (Width / 2.0));
+                verticalCenter = value;
+
+                Canvas.SetTop(this, verticalCenter);
+
+                Height = Host.Height_Down - verticalCenter;
             }
         }
 

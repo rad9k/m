@@ -1651,8 +1651,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             
             newElement.HorizontalCenter = startPosition;
-            newElement.Top = ((double)value / 127) * Height_Down;
-            newElement.Bottom = Height_Down;
+            newElement.VerticalCenter = Height_Down - ( ((double)value / 127) * Height_Down);            
             
             ItemsAdd_Down(newItem);
         }
