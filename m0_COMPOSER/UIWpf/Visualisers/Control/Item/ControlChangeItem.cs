@@ -71,7 +71,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control.Item
 
             BorderThickness = new Thickness(1);
 
-            BorderBrush = (Brush)WpfUtil.FindResource("0ForegroundBrush");
+            BorderBrush = (Brush)WpfUtil.FindResource("0BlackBrush");
         }
 
         public ControlChangeItem(IEdge baseEdge, IZoomScrollViewerHost host)
@@ -82,15 +82,15 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control.Item
 
             //
 
-            Width = 5;
+            Width = 6;
             
 
-            BorderThickness = new Thickness(0);
+            BorderThickness = new Thickness(1);
 
 
             RenderOptions.SetEdgeMode(this, EdgeMode.Aliased);
 
-            Brush backColorBrush = (Brush)WpfUtil.FindResource("0LightForegroundBrush");
+            Brush backColorBrush = (Brush)WpfUtil.FindResource("0BlackBrush");
 
             Background = backColorBrush;
 

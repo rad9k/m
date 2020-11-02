@@ -82,7 +82,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control.Item
 
             path.StrokeThickness = 2;
 
-            SetBorder((Brush)WpfUtil.FindResource("0ForegroundBrush"));
+            SetBorder((Brush)WpfUtil.FindResource("0BlackBrush"));
 
             if (!showVelocity)
                 SetBackground((Brush)WpfUtil.FindResource("0LightForegroundBrush"));
