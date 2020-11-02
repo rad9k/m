@@ -124,6 +124,8 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
         // DOWN
 
+        public bool HasDown;
+
         protected IZoomScrollViewDownDecorator DownDecorator;
 
         protected Canvas Down;
@@ -270,23 +272,33 @@ namespace m0_COMPOSER.UIWpf.Visualisers
                 SetupLocalVariablesFromBaseVertexVertexes();
 
                 SetVertexVaribles();
+            }
 
-                SetAxisDecorators();
+            SetAxisDecorators();
 
+            if (VisuliseserDrraw_NeedsInitilisation)  
                 CreateMain();            
 
-                CreateArrowLines();
+            CreateArrowLines();
 
+            if (VisuliseserDrraw_NeedsInitilisation)
+            {
                 SetupScrollViewer();
 
                 CreateDown();
+
+                AddEventHandlers();
+            }
+            else
+            {
+                ResetDown();
             }
 
-            UpdateMainSize();
+            UpdateMainSize();            
 
             DrawMain();
 
-            DrawDown();
+            DrawDown();            
 
             InitialiseItems();
 
@@ -397,6 +409,9 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
         protected void CreateDown()
         {
+            if (!HasDown)
+                return;
+
             ZoomScrollView.InitialDownHeight = 100;
 
             DownDecorator = new ControlChangeDownDecorator();
@@ -413,6 +428,16 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             ZoomScrollView.SetDownContent((FrameworkElement)DownDecorator, Down);            
         }
 
+        protected void ResetDown()
+        {
+            if (!HasDown)
+                return;
+
+            ZoomScrollView.InitialDownHeight = Height_Down;            
+
+            ZoomScrollView.SetDownContent((FrameworkElement)DownDecorator, Down);
+        }
+
         private void Down_Loaded(object sender, RoutedEventArgs e)
         {
             Height_Down = Down.ActualHeight;
@@ -427,7 +452,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             DrawDown();
         }
 
-        protected void DrawDownLines()
+        protected void DrawLines_Down()
         {
             foreach (AxisSegment s in DownDecorator.Segments)
             {
@@ -465,14 +490,16 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
         protected void DrawDown()
         {             
-            if (DownDecorator == null)
+            if (!HasDown || DownDecorator == null)
                 return;
 
             Down.Children.Clear();
 
             DrawDownBackground();
 
-            DrawDownLines();
+            DrawSnapLines_Down();
+
+            DrawLines_Down();
 
             DrawArrowLines_Down();        
         }
@@ -523,13 +550,11 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             DrawMainSegments();
 
-            DrawMainSnapLines();
+            DrawSnapLines();
 
             DrawMainLines();
 
-            DrawArrowLines();
-
-            AddEventHandlers();            
+            DrawArrowLines();            
 
 
             SelectionArea = new SelectionArea(Main);
@@ -560,15 +585,18 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             //
 
-            Down.MouseEnter += MouseEnterHandler_Down;
+            if (HasDown)
+            {
+                Down.MouseEnter += MouseEnterHandler_Down;
 
-            Down.MouseLeave += MouseLeaveHandler_Down;
+                Down.MouseLeave += MouseLeaveHandler_Down;
 
-            Down.MouseDown += MouseDownHandler_Down;
+                Down.MouseDown += MouseDownHandler_Down;
 
-            Down.MouseUp += MouseUpHandler_Down;
+                Down.MouseUp += MouseUpHandler_Down;
 
-            Down.MouseMove += MouseMoveHandler_Down;
+                Down.MouseMove += MouseMoveHandler_Down;
+            }
         }
 
         protected void MouseMoveHandler(object sender, MouseEventArgs e)
@@ -1722,7 +1750,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             TurnOnSelectedEdgesFireChange();         
         }
 
-        protected void DrawMainSnapLines()
+        protected void DrawSnapLines()
         {            
             if (currentSnapToGrid == SnapToGridEnum.No_Snap || showSnapLines == false)
                     return;
@@ -1741,7 +1769,30 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
                 l.StrokeThickness = 1;
 
-                Main.Children.Add(l);
+                Main.Children.Add(l);                
+            }
+        }
+
+        protected void DrawSnapLines_Down()
+        {
+            if (currentSnapToGrid == SnapToGridEnum.No_Snap || showSnapLines == false)
+                return;
+
+            double snapWidth = getSnapMinmalWidth();
+
+            Brush lb = (Brush)FindResource("0VeryLightForegroundBrush");
+
+            for (double x = 0; x < Width; x += snapWidth)
+            {                
+                Line ld = new Line();
+
+                WpfUtil.SetLinePosition(ld, x, 0, x, Height_Down);
+
+                ld.Stroke = lb;
+
+                ld.StrokeThickness = 1;
+
+                Down.Children.Add(ld);
             }
         }
 
@@ -1827,6 +1878,8 @@ namespace m0_COMPOSER.UIWpf.Visualisers
         public SequenceVisualiser()
         {
             InitializeComponent();
+
+            HasDown = true;
 
             MinusZero mz = MinusZero.Instance;
 
