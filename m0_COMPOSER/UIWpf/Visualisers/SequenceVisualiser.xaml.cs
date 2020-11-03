@@ -12,17 +12,10 @@ using m0_COMPOSER.UIWpf.Visualisers.Control;
 using m0_COMPOSER.UIWpf.Visualisers.Control.Item;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
 using System.Windows.Shapes;
 
 namespace m0_COMPOSER.UIWpf.Visualisers
@@ -39,7 +32,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
         bool showSnapLines;
         int defaultVelocity;
         bool isDrum;
-        int CCNumber;
+        int ControlChangeNumber;
 
         //
 
@@ -140,7 +133,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
         protected Dictionary<IVertex, IItem> itemsDictinaryHolder_Down = new Dictionary<IVertex, IItem>();
 
-        protected Dictionary<int, IItem> itemsDictinaryHolder_TriggerTime_Down = new Dictionary<int, IItem>();
+        protected Dictionary<int,Dictionary<int, IItem>> itemsDictinaryHolder_Number_TriggerTime_Down = new Dictionary<int,Dictionary<int, IItem>>();
 
         protected bool needToRebuildItemsDictionary_Down = true;
 
@@ -306,8 +299,6 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             DrawItems();
 
-            DrawItems_Down();
-
             VisuliseserDrraw_NeedsInitilisation = false;
         }
 
@@ -420,7 +411,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             DownDecorator = new ControlChangeDownDecorator();
 
-            CCNumber = (int)DownDecorator.Selection;
+            ControlChangeNumber = (int)DownDecorator.Selection;
 
             DownDecorator.SelectionChanged += DownDecorator_SelectionChanged;
 
@@ -512,12 +503,14 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             DrawLines_Down();
 
-            DrawArrowLines_Down();        
+            DrawArrowLines_Down();
+
+            DrawItems_Down();
         }
 
         protected void DownDecorator_SelectionChanged(object sender, EventArgs e)
         {
-            CCNumber = (int)DownDecorator.Selection;
+            ControlChangeNumber = (int)DownDecorator.Selection;
 
             DrawDown();
         }
@@ -1687,7 +1680,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             if(!isUpdate)
                 noteControlChangeVertex.AddEdge(MinusZero.Instance.Is, ControlChangeEvent);
 
-            GraphUtil.SetVertexValue(noteControlChangeVertex, ControlChangeEvent.Get(false, @"Attribute:Number"), CCNumber);
+            GraphUtil.SetVertexValue(noteControlChangeVertex, ControlChangeEvent.Get(false, @"Attribute:Number"), ControlChangeNumber);
             GraphUtil.SetVertexValue(noteControlChangeVertex, ControlChangeEvent.Get(false, @"Attribute:Value"), getValueFromMouseY_Down(mouseY));
             GraphUtil.SetVertexValue(noteControlChangeVertex, ControlChangeEvent.Get(false, @"Attribute:TriggerTime"), triggerTime);
 
@@ -1791,7 +1784,8 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             List<IVertex> selectedVertexes = GetSelectedVertexes();
 
             foreach (IEdge e in baseVertex.GetAll(false, "Event:"))            
-                if (GraphUtil.ExistQueryOut(e.To, "$Is", "ControlChangeEvent"))
+                if (GraphUtil.ExistQueryOut(e.To, "$Is", "ControlChangeEvent") 
+                    && GraphUtil.GetIntegerValue(e.To.Get(false, @"Number:")) == ControlChangeNumber )
                     AddItem_Down(e, selectedVertexes, false);            
         }
 
