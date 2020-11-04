@@ -32,7 +32,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
         bool showSnapLines;
         int defaultVelocity;
         bool isDrum;
-        int ControlChangeNumber;
+        int CurrentControlChangeNumber;
 
         //
 
@@ -411,7 +411,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             DownDecorator = new ControlChangeDownDecorator();
 
-            ControlChangeNumber = (int)DownDecorator.Selection;
+            CurrentControlChangeNumber = (int)DownDecorator.Selection;
 
             DownDecorator.SelectionChanged += DownDecorator_SelectionChanged;
 
@@ -497,6 +497,8 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             Down.Children.Clear();
 
+            items_Down = new List<FrameworkElement>();
+
             DrawDownBackground();
 
             DrawSnapLines_Down();
@@ -510,7 +512,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
         protected void DownDecorator_SelectionChanged(object sender, EventArgs e)
         {
-            ControlChangeNumber = (int)DownDecorator.Selection;
+            CurrentControlChangeNumber = (int)DownDecorator.Selection;
 
             DrawDown();
         }
@@ -1662,13 +1664,18 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             IEdge tempControlChangeEventEdge = null;
 
-            IDictionary<int, IItem> ItemTriggerTimeDictionary_Down = GetItemsDictionary_TriggerTime_Down();
+            Dictionary<int, Dictionary<int, IItem>> itemsDictinary_Number_TriggerTime_Down = GetItemsDictionary_TriggerTime_Down();
 
             int triggerTime = (int)((startPosition / HorizontalAD.BaseUnitSize) + 0.01);
 
-            if (ItemTriggerTimeDictionary_Down.ContainsKey(triggerTime))
+            Dictionary<int, IItem> itemsDictinary_TriggerTime_Down = null;
+            
+            if(itemsDictinary_Number_TriggerTime_Down.ContainsKey(CurrentControlChangeNumber))
+                itemsDictinary_TriggerTime_Down = itemsDictinary_Number_TriggerTime_Down[CurrentControlChangeNumber];
+
+            if (itemsDictinary_TriggerTime_Down != null && itemsDictinary_TriggerTime_Down.ContainsKey(triggerTime))
             {
-                tempControlChangeEventEdge = ItemTriggerTimeDictionary_Down[triggerTime].BaseEdge;
+                tempControlChangeEventEdge = itemsDictinary_TriggerTime_Down[triggerTime].BaseEdge;
 
                 isUpdate = true;
             }
@@ -1680,7 +1687,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             if(!isUpdate)
                 noteControlChangeVertex.AddEdge(MinusZero.Instance.Is, ControlChangeEvent);
 
-            GraphUtil.SetVertexValue(noteControlChangeVertex, ControlChangeEvent.Get(false, @"Attribute:Number"), ControlChangeNumber);
+            GraphUtil.SetVertexValue(noteControlChangeVertex, ControlChangeEvent.Get(false, @"Attribute:Number"), CurrentControlChangeNumber);
             GraphUtil.SetVertexValue(noteControlChangeVertex, ControlChangeEvent.Get(false, @"Attribute:Value"), getValueFromMouseY_Down(mouseY));
             GraphUtil.SetVertexValue(noteControlChangeVertex, ControlChangeEvent.Get(false, @"Attribute:TriggerTime"), triggerTime);
 
@@ -1752,26 +1759,40 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             return itemsDictinaryHolder_Down;
         }
 
-        protected Dictionary<int, IItem> GetItemsDictionary_TriggerTime_Down()
+        protected Dictionary<int, Dictionary<int, IItem>> GetItemsDictionary_TriggerTime_Down()
         {
             if (needToRebuildItemsDictionary_Down)
                 RebuildItemsDictionary_Down();
 
-            return itemsDictinaryHolder_TriggerTime_Down;
+            return itemsDictinaryHolder_Number_TriggerTime_Down;
         }
 
         protected void RebuildItemsDictionary_Down()
         {
             itemsDictinaryHolder_Down.Clear();
 
-            itemsDictinaryHolder_TriggerTime_Down.Clear();
+            itemsDictinaryHolder_Number_TriggerTime_Down.Clear();
+
 
             foreach (IItem i in items_Down)
             {
                 IVertex v = i.BaseEdge.To;
                 itemsDictinaryHolder_Down.Add(v, i);
 
+                //
+
                 int triggerTime = (int)GraphUtil.GetIntegerValue(v.Get(false, "TriggerTime:"));
+                int number = (int)GraphUtil.GetIntegerValue(v.Get(false, "Number:"));
+
+                Dictionary<int, IItem> itemsDictinaryHolder_TriggerTime_Down;
+
+                if (itemsDictinaryHolder_Number_TriggerTime_Down.ContainsKey(number))
+                    itemsDictinaryHolder_TriggerTime_Down = itemsDictinaryHolder_Number_TriggerTime_Down[number];
+                else
+                {
+                    itemsDictinaryHolder_TriggerTime_Down = new Dictionary<int, IItem>();
+                    itemsDictinaryHolder_Number_TriggerTime_Down.Add(number, itemsDictinaryHolder_TriggerTime_Down);
+                }
 
                 itemsDictinaryHolder_TriggerTime_Down.Add(triggerTime, i);
             }
@@ -1785,7 +1806,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             foreach (IEdge e in baseVertex.GetAll(false, "Event:"))            
                 if (GraphUtil.ExistQueryOut(e.To, "$Is", "ControlChangeEvent") 
-                    && GraphUtil.GetIntegerValue(e.To.Get(false, @"Number:")) == ControlChangeNumber )
+                    && GraphUtil.GetIntegerValue(e.To.Get(false, @"Number:")) == CurrentControlChangeNumber )
                     AddItem_Down(e, selectedVertexes, false);            
         }
 
