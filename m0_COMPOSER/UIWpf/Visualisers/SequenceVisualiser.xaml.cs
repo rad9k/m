@@ -438,8 +438,6 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             Height_Down = Down.ActualHeight;
 
             DrawDown();
-
-            DrawItems_Down();
         }
 
         private void Down_SizeChanged(object sender, SizeChangedEventArgs e)
@@ -448,9 +446,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             {
                 Height_Down = Down.ActualHeight;
 
-                DrawDown();
-
-                DrawItems_Down();
+                DrawDown();                
             }
         }
 
@@ -1699,6 +1695,17 @@ namespace m0_COMPOSER.UIWpf.Visualisers
                 baseVertex.DeleteEdge(tempControlChangeEventEdge);
             }
 
+            //
+
+            IVertex all = baseVertex.GetAll(false, @"{TriggerTime:" + triggerTime + ",Number:" + CurrentControlChangeNumber + "}");
+
+            if (all.OutEdges.Count != 1)
+            {
+                int x=0;
+            }
+
+            //
+
             return finalEdge;
         }
 
@@ -1737,6 +1744,12 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
         protected void ItemsAdd_Down(IItem i)
         {
+            if (items_Down.Contains((FrameworkElement)i))
+            {
+                int x = 0;
+
+            }
+
             needToRebuildItemsDictionary_Down = true;
             items_Down.Add((FrameworkElement)i);
 
