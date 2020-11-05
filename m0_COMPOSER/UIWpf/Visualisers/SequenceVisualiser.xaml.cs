@@ -1701,7 +1701,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             if (all.OutEdges.Count != 1)
             {
-                int x=0;
+                int x=0; 
             }
 
             //
