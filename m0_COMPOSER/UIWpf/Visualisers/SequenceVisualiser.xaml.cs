@@ -1541,10 +1541,10 @@ namespace m0_COMPOSER.UIWpf.Visualisers
                     PenDown_Down(sender, e);
                     break;
 
-             /*   case CursorState.Eraser:
-                    EraserDown(sender, e);
+                case CursorState.Eraser:
+                    EraserDown_Down(sender, e);
                     break;
-
+                    /*
                 case CursorState.ArrowUp:
                     ArrowDown(sender, e);
                     break;
@@ -1695,7 +1695,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
                 baseVertex.DeleteEdge(tempControlChangeEventEdge);
             }
 
-            //
+            /* there were some strange errors so I'm leaving it
 
             IVertex all = baseVertex.GetAll(false, @"{TriggerTime:" + triggerTime + ",Number:" + CurrentControlChangeNumber + "}");
 
@@ -1704,7 +1704,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
                 int x=0; 
             }
 
-            //
+            */
 
             return finalEdge;
         }
@@ -1828,6 +1828,28 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             mouseDownPoint = GetDownContentMousePosition(e);
 
             PenDown_Down_internal(sender, mouseDownPoint);
+        }
+
+        protected void EraserDown_Down(object sender, MouseButtonEventArgs e)
+        {
+            Point currentMousePosition = GetDownContentMousePosition(e);
+
+            FrameworkElement element = WpfUtil.GetElementAtFromList_StartFromEnd(items_Down, currentMousePosition);
+
+            if (element != null && element is IItem)
+            {
+                IItem item = (IItem)element;
+
+                IEdge eventEdge = item.BaseEdge;
+
+                VertexChangeOff = true;
+
+                GraphUtil.DeleteEdgeByToVertex(baseVertex, eventEdge.To);
+
+                ItemsRemove_Down(item);
+
+                VertexChangeOff = false;
+            }
         }
 
         ////////////////////////////////////////////////////////////////////////////////////

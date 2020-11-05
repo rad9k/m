@@ -159,7 +159,8 @@ namespace m0.Graph
 
             foreach(IEdge e in InEdges)
             {
-                object key = e.Meta.Value;
+                //object key = e.Meta.Value;
+                object key = e.Meta.Value.ToString();
                 IEdge value = e;
 
                 if (_InEdgesByMeta.ContainsKey(key))
@@ -192,7 +193,8 @@ namespace m0.Graph
 
             foreach (IEdge e in OutEdges)
             {
-                object key = e.Meta.Value;
+                //object key = e.Meta.Value;
+                object key = e.Meta.Value.ToString();
                 IEdge value = e;
 
                 if (_OutEdgesByMeta.ContainsKey(key))
@@ -225,7 +227,8 @@ namespace m0.Graph
 
             foreach (IEdge e in InEdges)
             {
-                object key = e.From.Value;
+                //object key = e.From.Value;
+                object key = e.From.Value.ToString();
                 IEdge value = e;
 
                 if (_InEdgesByValue.ContainsKey(key))
@@ -258,7 +261,8 @@ namespace m0.Graph
 
             foreach (IEdge e in OutEdges)
             {
-                object key = e.To.Value;
+                //object key = e.To.Value;
+                object key = e.To.Value.ToString();
                 IEdge value = e;
 
                 if (_OutEdgesByValue.ContainsKey(key))
@@ -323,7 +327,8 @@ namespace m0.Graph
 
             foreach (IEdge e in OutEdges)
             {
-                object key = GraphUtil.GetMetaAndValueObject(e.Meta.Value,e.To.Value);
+                //object key = GraphUtil.GetMetaAndValueObject(e.Meta.Value,e.To.Value);
+                object key = GraphUtil.GetMetaAndValueObject(e.Meta.Value.ToString(), e.To.Value.ToString());
                 IEdge value = e;
 
                 if (_OutEdgesByMetaAndValue.ContainsKey(key))
