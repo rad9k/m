@@ -1516,7 +1516,6 @@ namespace m0_COMPOSER.UIWpf.Visualisers
         {
             HideArrowLines();
 
-
             WpfUtil.SetCursor(Cursors.Arrow);
 
             /*            switch (currentCursorState)
