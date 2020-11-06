@@ -62,6 +62,8 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control.Item
 
             BorderThickness = new Thickness(2);
 
+            Background = (Brush)WpfUtil.FindResource("0HighlightBrush");            
+
             BorderBrush = (Brush)WpfUtil.FindResource("0HighlightBrush");            
         }
 
@@ -70,6 +72,8 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control.Item
             isSelected = false;
 
             BorderThickness = new Thickness(1);
+
+            Background = (Brush)WpfUtil.FindResource("0BlackBrush");
 
             BorderBrush = (Brush)WpfUtil.FindResource("0BlackBrush");
         }
