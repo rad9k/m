@@ -1156,7 +1156,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             SelectionArea.MoveSelectionArea(currentMousePosition);
 
-            IList<FrameworkElement> matched = WpfUtil.GetElementsAtFromListByArea(items, SelectionArea.Left, SelectionArea.Top, SelectionArea.Right, SelectionArea.Bottom);
+            IList<FrameworkElement> matched = WpfUtil.GetElementsAtFromListByArea(items, SelectionArea.Left - 1, SelectionArea.Top - 1, SelectionArea.Right + 1, SelectionArea.Bottom + 1);
 
             foreach (FrameworkElement _e in items)
                 if (_e is IItem)
@@ -1547,16 +1547,16 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             WpfUtil.SetCursor(Cursors.Arrow);
 
-            /*            switch (currentCursorState)
-                        {
-                            case (CursorState.PenDown):
-                                PerformPenUp();
-                                break;
+            switch (currentCursorState)
+            {                            
+                case (CursorStateEnum.PenDown):
+                    WpfUtil.SetCursor(Cursors.Arrow);                    
+                    break;
 
-                            case (CursorState.ArrowDown):
-                                PerformArrowUp_FromArrowDown_WhileMouseLeave();
-                                break;
-                        }*/
+                case (CursorStateEnum.ArrowDown):
+                    PerformArrowUp_FromArrowDown_WhileMouseLeave_Down();
+                    break;
+            }
 
             WhereIsMouse = WhereIsMouseEnum.MouseOutside;
         }
@@ -1576,12 +1576,10 @@ namespace m0_COMPOSER.UIWpf.Visualisers
                 case CursorStateEnum.ArrowUp:
                     ArrowDown_Down(sender, e);
                     break;
-/*
-                case CursorState.ArrowUp_MoveOnItem_Left:
-                case CursorState.ArrowUp_MoveOnItem_Right:
-                case CursorState.ArrowUp_MoveOnItem:
-                    ArrowDown_FromUpMove(sender, e);
-                    break;*/
+
+                case CursorStateEnum.ArrowUp_MoveOnItem:
+                    ArrowDown_FromUpMove_Down(sender, e);
+                    break;
             }
         }
 
@@ -1593,23 +1591,20 @@ namespace m0_COMPOSER.UIWpf.Visualisers
                     SetCursorMode(CursorStateEnum.PenUp);
                     break;
 
-        /*        case CursorState.ArrowDown:
-                    ArrowUp_FromDown(sender, e);
+                case CursorStateEnum.ArrowDown:
+                    ArrowUp_FromDown_Down(sender, e);
+                    break;
+                    
+                case CursorStateEnum.ArrowDown_MoveOnItem_MouseDownAndMove:
+                    ArrowUp_FromMove_Down(sender, e);
                     break;
 
-                case CursorState.ArrowDown_MoveOnItem_Left:
-                case CursorState.ArrowDown_MoveOnItem_Right:
-                case CursorState.ArrowDown_MoveOnItem_MouseDownAndMove:
-                    ArrowUp_FromMove(sender, e);
-                    break;
-
-                case CursorState.ArrowDown_MoveOnItem_MouseDown:
+                case CursorStateEnum.ArrowDown_MoveOnItem_MouseDown:
                     ArrowUp_FromMoveOnItem_MouseDown(sender, e);
                     break;
 
                 default:
-                    break;
-                    */
+                    break;                    
             }
         }
 
@@ -1623,24 +1618,20 @@ namespace m0_COMPOSER.UIWpf.Visualisers
                     PenMove_PenDown_Down(sender, e);
                     break;
 
-             /*   case CursorState.ArrowUp:
-                case CursorState.ArrowUp_MoveOnItem_Left:
-                case CursorState.ArrowUp_MoveOnItem_Right:
-                case CursorState.ArrowUp_MoveOnItem:
+                case CursorStateEnum.ArrowUp:                
+                case CursorStateEnum.ArrowUp_MoveOnItem:
                     ArrowMove_ArrowUp(sender, e);
                     break;
 
-                case CursorState.ArrowDown:
-                    ArrowMove_ArrowDown(sender, e);
+                case CursorStateEnum.ArrowDown:
+                    ArrowMove_ArrowDown_Down(sender, e);
                     break;
-
-                case CursorState.ArrowDown_MoveOnItem_Left:
-                case CursorState.ArrowDown_MoveOnItem_Right:
-                case CursorState.ArrowDown_MoveOnItem_MouseDown:
-                case CursorState.ArrowDown_MoveOnItem_MouseDownAndMove:
+                    
+                case CursorStateEnum.ArrowDown_MoveOnItem_MouseDown:
+                case CursorStateEnum.ArrowDown_MoveOnItem_MouseDownAndMove:
                     ArrowMove_DownMoveOnItemLeftRight(sender, e);
                     break;
-                    */
+                    
                 default:
                     break;
             }
@@ -1895,6 +1886,243 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
                 SelectionArea_Down.StartSelection(currentMousePosition);
             }
+        }
+
+        protected List<FrameworkElement> GetItemsAtFromListByCenters(List<FrameworkElement> list, double AreaLeft, double AreaTop, double AreaRight, double AreaDown)
+        {
+            List<FrameworkElement> match = new List<FrameworkElement>();
+
+            foreach (IItem i in list)
+                if (i.HorizontalCenter >= AreaLeft &&
+                    AreaRight >= i.HorizontalCenter &&
+                    i.VerticalCenter >= AreaTop &&
+                    AreaDown >= i.VerticalCenter)
+                    match.Add((FrameworkElement)i);
+
+            return match;
+        }
+
+        protected void ArrowMove_ArrowDown_Down(object sender, MouseEventArgs e)
+        {
+            Point currentMousePosition = GetDownContentMousePosition(e);
+
+            SelectionArea_Down.MoveSelectionArea(currentMousePosition);
+
+            IList<FrameworkElement> matched = GetItemsAtFromListByCenters(items_Down, 
+                SelectionArea_Down.Left - 1,
+                SelectionArea_Down.Top - 1,
+                SelectionArea_Down.Right + 1,
+                SelectionArea_Down.Bottom + 1);
+
+            foreach (FrameworkElement _e in items_Down)
+                if (_e is IItem)
+                {
+                    IItem item = (IItem)_e;
+
+                    if (matched.Contains(_e))
+                        item.Select();
+                    else
+                        item.Unselect();
+                }
+
+            WpfUtil.SetCursor(Cursors.Arrow);
+        }
+
+        protected void ArrowUp_FromDown_Down(object sender, MouseButtonEventArgs e)
+        {
+            IList<FrameworkElement> matched = GetItemsAtFromListByCenters(items_Down,
+                SelectionArea_Down.Left - 1,
+                SelectionArea_Down.Top - 1,
+                SelectionArea_Down.Right + 1,
+                SelectionArea_Down.Bottom + 1);
+
+            UnselectAllSelectedEdges();
+
+            IVertex selectedEdges = Vertex.Get(false, "SelectedEdges:");            
+
+            foreach (FrameworkElement _e in items_Down)
+                if (_e is IItem)
+                {
+                    IItem item = (IItem)_e;
+
+                    if (matched.Contains(_e))
+                    {
+                        Edge.AddEdge(selectedEdges, item.BaseEdge);
+                        item.Select();
+                    }
+                    else
+                        item.Unselect();
+                }
+
+            currentCursorState = CursorStateEnum.ArrowUp;
+            SelectionArea_Down.HideSelectionArea();
+        }
+
+        protected void PerformArrowUp_FromArrowDown_WhileMouseLeave_Down()
+        {
+            UnselectAllSelectedEdges();
+
+            foreach (FrameworkElement e in items_Down)
+                if (e is IItem)
+                {
+                    IItem item = (IItem)e;
+
+                    item.Unselect();
+                }
+
+            SetCursorMode(CursorStateEnum.ArrowUp);
+
+            SelectionArea_Down.HideSelectionArea();
+        }
+
+        protected void ArrowDown_FromUpMove_Down(object sender, MouseButtonEventArgs e)
+        {
+            if (mouseOverItem == null)
+                return;
+
+            InitMouseOverElementAndSelected();
+
+            mouseDownPoint = GetMainContentMousePosition(e);
+
+            previousMousePosition = mouseDownPoint;
+
+            if (currentCursorState == CursorStateEnum.ArrowUp_MoveOnItem_Left)
+                SetCursorMode(CursorStateEnum.ArrowDown_MoveOnItem_Left);
+
+            if (currentCursorState == CursorStateEnum.ArrowUp_MoveOnItem_Right)
+                SetCursorMode(CursorStateEnum.ArrowDown_MoveOnItem_Right);
+
+            if (currentCursorState == CursorStateEnum.ArrowUp_MoveOnItem)
+                SetCursorMode(CursorStateEnum.ArrowDown_MoveOnItem_MouseDown);
+        }
+
+        protected void ArrowUp_FromMove_Down(object sender, MouseEventArgs e)
+        {
+            if (currentCursorState == CursorStateEnum.ArrowDown_MoveOnItem_Left || currentCursorState == CursorStateEnum.ArrowDown_MoveOnItem_Right)
+            {
+                SetCursorMode(CursorStateEnum.ArrowUp);
+
+                foreach (IItem i in GetSelectedAndMouseOverItems())
+                    UpdateItem_HorizontalPosition(i);
+            }
+
+            if (currentCursorState == CursorStateEnum.ArrowDown_MoveOnItem_MouseDownAndMove)
+            {
+                SetCursorMode(CursorStateEnum.ArrowUp);
+
+                foreach (IItem i in GetSelectedAndMouseOverItems())
+                {
+                    UpdateItem_HorizontalPosition(i);
+
+                    UpdateItem_VerticalPosition(i);
+                }
+            }
+        }
+
+        protected void ArrowUp_FromMoveOnItem_MouseDown_Down(object sender, MouseButtonEventArgs e)
+        {
+            Point currentMousePosition = GetMainContentMousePosition(e);
+
+            FrameworkElement elementFound = WpfUtil.GetElementAtFromList(items, currentMousePosition);
+
+            if (elementFound != null && elementFound is IItem)
+            {
+                IItem item = (IItem)elementFound;
+
+                if (item.IsSelected)
+                    UnselectItem(item);
+                else
+                    SelectItem(item);
+            }
+
+            SetCursorMode(CursorStateEnum.ArrowUp);
+        }
+
+        protected void ArrowMove_ArrowUp_Down(object sender, MouseEventArgs e)
+        {
+            Point currentMousePosition = GetMainContentMousePosition(e);
+
+            FrameworkElement element = WpfUtil.GetElementAtFromList_StartFromEnd(items, currentMousePosition);
+
+            if (element != null && element is IItem)
+            {
+                double HorizontalItemMoveLeftRightSpan = HorizontalItemMoveLeftRightSpan_Big;
+
+                if (element.Width < HorizontalItemMoveLeftRightSpan_ItemSizeMiddleBoundary)
+                    HorizontalItemMoveLeftRightSpan = HorizontalItemMoveLeftRightSpan_Small;
+
+                if (element.Width < HorizontalItemMoveLeftRightSpan_ItemSizeSmallBoundary)
+                    HorizontalItemMoveLeftRightSpan = 0;
+
+                IItem item = (IItem)element;
+
+                if (!isCurrentPenItemCenter && currentMousePosition.X >= item.Left && currentMousePosition.X <= (item.Left + HorizontalItemMoveLeftRightSpan))
+                {
+                    ArrowMove_ArrowUp_SetMouseCurrentItem(item, CursorStateEnum.ArrowUp_MoveOnItem_Left);
+                    return;
+                }
+
+                if (!isCurrentPenItemCenter && currentMousePosition.X >= (item.Right - HorizontalItemMoveLeftRightSpan) && currentMousePosition.X <= item.Right)
+                {
+                    ArrowMove_ArrowUp_SetMouseCurrentItem(item, CursorStateEnum.ArrowUp_MoveOnItem_Right);
+                    return;
+                }
+
+                ArrowMove_ArrowUp_SetMouseCurrentItem(item, CursorStateEnum.ArrowUp_MoveOnItem);
+                return;
+            }
+
+            SetCursorMode(CursorStateEnum.ArrowUp);
+            UpdateCursorShape();
+        }
+
+        protected void ArrowMove_DownMoveOnItemLeftRight_Down(object sender, MouseEventArgs e)
+        {
+            Point currentMousePosition = GetMainContentMousePosition(e);
+
+            double deltaX = currentMousePosition.X - previousMousePosition.X;
+            double deltaY = currentMousePosition.Y - previousMousePosition.Y;
+
+            switch (currentCursorState)
+            {
+                case CursorStateEnum.ArrowDown_MoveOnItem_Left:
+
+                    foreach (IItem i in GetSelectedAndMouseOverItems())
+                        ItemTryMoveLeftRight(i, deltaX, LeftRightEnum.Left);
+
+                    break;
+
+                case CursorStateEnum.ArrowDown_MoveOnItem_Right:
+
+                    foreach (IItem i in GetSelectedAndMouseOverItems())
+                        ItemTryMoveLeftRight(i, deltaX, LeftRightEnum.Right);
+
+                    break;
+
+                case CursorStateEnum.ArrowDown_MoveOnItem_MouseDown:
+
+                    double horizontalDelta = Math.Abs(mouseDownPoint.X - currentMousePosition.X);
+                    double verticalDelta = Math.Abs(mouseDownPoint.Y - currentMousePosition.Y);
+
+                    double delta = Math.Sqrt(horizontalDelta * horizontalDelta + verticalDelta * verticalDelta);
+
+                    if (delta > ArrowDown_MoveOnItem_MouseDown_Delta)
+                    {
+                        SetCursorMode(CursorStateEnum.ArrowDown_MoveOnItem_MouseDownAndMove);
+                        UpdateCursorShape();
+                    }
+
+                    break;
+
+                case CursorStateEnum.ArrowDown_MoveOnItem_MouseDownAndMove:
+
+                    foreach (IItem i in GetSelectedAndMouseOverItems())
+                        ItemTryMove(i, deltaX, deltaY);
+
+                    break;
+            }
+
+            previousMousePosition = currentMousePosition;
         }
 
         ////////////////////////////////////////////////////////////////////////////////////
