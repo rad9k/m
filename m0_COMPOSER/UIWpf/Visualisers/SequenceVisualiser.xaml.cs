@@ -918,6 +918,10 @@ namespace m0_COMPOSER.UIWpf.Visualisers
                 if (selectedVertexes.Contains(i.BaseEdge.To))
                     selectedItems.Add(i);
 
+            foreach (IItem i in items_Down)
+                if (selectedVertexes.Contains(i.BaseEdge.To))
+                    selectedItems.Add(i);
+
             return selectedItems;
         }
 
@@ -1420,7 +1424,9 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             }
 
             GraphUtil.SetVertexValue(itemVertex, metaTriggerTime, TriggerTime);
-            GraphUtil.SetVertexValue(itemVertex, metaLength, Length);
+
+            if(Length != 0)
+                GraphUtil.SetVertexValue(itemVertex, metaLength, Length);
         }
 
         protected void UpdateItem_VerticalPosition(IItem item)
@@ -1982,30 +1988,16 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             InitMouseOverElementAndSelected();
 
-            mouseDownPoint = GetMainContentMousePosition(e);
+            mouseDownPoint = GetDownContentMousePosition(e);
 
-            previousMousePosition = mouseDownPoint;
-
-            if (currentCursorState == CursorStateEnum.ArrowUp_MoveOnItem_Left)
-                SetCursorMode(CursorStateEnum.ArrowDown_MoveOnItem_Left);
-
-            if (currentCursorState == CursorStateEnum.ArrowUp_MoveOnItem_Right)
-                SetCursorMode(CursorStateEnum.ArrowDown_MoveOnItem_Right);
+            previousMousePosition = mouseDownPoint;            
 
             if (currentCursorState == CursorStateEnum.ArrowUp_MoveOnItem)
                 SetCursorMode(CursorStateEnum.ArrowDown_MoveOnItem_MouseDown);
         }
 
         protected void ArrowUp_FromMove_Down(object sender, MouseEventArgs e)
-        {
-            if (currentCursorState == CursorStateEnum.ArrowDown_MoveOnItem_Left || currentCursorState == CursorStateEnum.ArrowDown_MoveOnItem_Right)
-            {
-                SetCursorMode(CursorStateEnum.ArrowUp);
-
-                foreach (IItem i in GetSelectedAndMouseOverItems())
-                    UpdateItem_HorizontalPosition(i);
-            }
-
+        {            
             if (currentCursorState == CursorStateEnum.ArrowDown_MoveOnItem_MouseDownAndMove)
             {
                 SetCursorMode(CursorStateEnum.ArrowUp);
@@ -2014,7 +2006,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
                 {
                     UpdateItem_HorizontalPosition(i);
 
-                    UpdateItem_VerticalPosition(i);
+                    UpdateItem_VerticalPosition_Down(i);
                 }
             }
         }
@@ -2123,6 +2115,41 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             }
 
             previousMousePosition = currentMousePosition;
+        }
+
+        protected void UpdateItem_VerticalPosition_Down(IItem item)
+        {
+            IVertex r = MinusZero.Instance.root;
+            IVertex metaOctave = r.Get(false, @"System\Lib\Music\Pitch\Octave");
+            IVertex metaNote = r.Get(false, @"System\Lib\Music\Pitch\Note");
+
+            FrameworkElement element;
+
+            if (!(item is FrameworkElement))
+                return;
+
+            element = (FrameworkElement)item;
+
+            IVertex noteEventVertex = item.BaseEdge.To;
+
+            AxisSegment segment = FindVerticalSegment(item.Top + 1);
+
+            IVertex octaveVertex = segment.BaseVertex.Get(false, "Octave:");
+            IVertex noteVertex = segment.BaseVertex.Get(false, "Note:");
+
+            GraphUtil.CreateOrReplaceEdge(noteEventVertex, metaOctave, octaveVertex);
+            GraphUtil.CreateOrReplaceEdge(noteEventVertex, metaNote, noteVertex);
+
+            int? octave = GraphUtil.GetIntegerValue(octaveVertex);
+            int? note = GraphUtil.GetIntegerValue(noteVertex);
+
+            IVertex pitchVertex = MusicUtil.GetNoteFromPitchSet(pitchSetVertex, octave, note);
+
+            string label = pitchVertex.Value.ToString();
+
+            item.Label = label;
+
+            item.Update();
         }
 
         ////////////////////////////////////////////////////////////////////////////////////

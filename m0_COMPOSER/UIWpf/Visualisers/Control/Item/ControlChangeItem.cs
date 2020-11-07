@@ -120,6 +120,11 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control.Item
             }
         }
 
+        protected void updateVertexValueByVerticalCenter(double y)
+        {
+
+        }
+
         double verticalCenter;
         public double VerticalCenter
         {
@@ -131,6 +136,8 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control.Item
                 Canvas.SetTop(this, verticalCenter);
 
                 Height = Host.Height_Down - verticalCenter;
+
+                updateVertexValueByVerticalCenter(verticalCenter);
             }
         }
 
