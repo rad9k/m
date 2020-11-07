@@ -76,11 +76,26 @@ namespace m0.UIWpf
             List<FrameworkElement> match = new List<FrameworkElement>();
 
             foreach (FrameworkElement e in list)
-                if (Canvas.GetLeft(e) >= AreaLeft &&
-                    AreaRight >= (Canvas.GetLeft(e) + e.Width) &&
-                    Canvas.GetTop(e) >= AreaTop &&
-                    AreaDown >= (Canvas.GetTop(e) + e.Height))
-                    match.Add(e);
+            {
+                if (e is ICentered)
+                {
+                    ICentered i = (ICentered)e;
+
+                    if (i.HorizontalCenter >= AreaLeft &&
+                        AreaRight >= i.HorizontalCenter &&
+                        i.VerticalCenter >= AreaTop &&
+                        AreaDown >= i.VerticalCenter)
+                            match.Add((FrameworkElement)i);
+                }
+                else
+                {
+                    if (Canvas.GetLeft(e) >= AreaLeft &&
+                        AreaRight >= (Canvas.GetLeft(e) + e.Width) &&
+                        Canvas.GetTop(e) >= AreaTop &&
+                        AreaDown >= (Canvas.GetTop(e) + e.Height))
+                        match.Add(e);
+                }
+            }
 
             return match;
         }

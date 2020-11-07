@@ -10,6 +10,7 @@ using System.Windows.Media;
 using System.Windows;
 using m0.Graph;
 using System.Windows.Shapes;
+using m0;
 
 namespace m0_COMPOSER.UIWpf.Visualisers.Control.Item
 {
@@ -110,6 +111,23 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control.Item
 
         public double Right { get; set; }
 
+        public static int getValueFromMouseY_Down(double mouseY, double Height_Down)
+        {
+            return 127 - (int)((mouseY / Height_Down) * 127);
+        }
+
+        protected void updateVertexValueByVerticalCenter(double y)
+        {
+            int newValue = getValueFromMouseY_Down(y, Host.Height_Down);
+
+            IVertex r = MinusZero.Instance.Root;
+
+            IVertex ControlChangeEvent = r.Get(false, @"System\Lib\Music\ControlChangeEvent");
+
+            GraphUtil.SetVertexValue(BaseEdge.To,
+                ControlChangeEvent.Get(false, @"Attribute:Value"), newValue);
+        }
+
         double horitzontalCenter;
         public double HorizontalCenter {
             get { return horitzontalCenter; }
@@ -118,12 +136,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control.Item
 
                 Canvas.SetLeft(this, horitzontalCenter - (Width / 2));
             }
-        }
-
-        protected void updateVertexValueByVerticalCenter(double y)
-        {
-
-        }
+        }        
 
         double verticalCenter;
         public double VerticalCenter
@@ -132,6 +145,12 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control.Item
             set
             {
                 verticalCenter = value;
+
+                if (verticalCenter < 0)
+                    verticalCenter = 0;
+
+                if (verticalCenter > Host.Height_Down)
+                    verticalCenter = Host.Height_Down;
 
                 Canvas.SetTop(this, verticalCenter);
 

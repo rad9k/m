@@ -180,6 +180,7 @@
       <DependentUpon>Transaction.xaml</DependentUpon>
     </Compile>
     <Compile Include="UIWpf\Geometry2D.cs" />
+    <Compile Include="UIWpf\ICentered.cs" />
     <Compile Include="UIWpf\Visualisers\ClassVisualiser.cs" />
     <Compile Include="UIWpf\Visualisers\Code\TabFoldingStrategy.cs" />
     <Compile Include="UIWpf\Visualisers\Controls\NewButton.cs" />

@@ -309,6 +309,8 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             DrawItems();
 
+            DrawItems_Down();
+
             VisuliseserDrraw_NeedsInitilisation = false;
         }
 
@@ -513,9 +515,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             DrawLines_Down();
 
-            DrawArrowLines_Down();
-
-            DrawItems_Down();
+            DrawArrowLines_Down();            
         }
 
         protected void DownDecorator_SelectionChanged(object sender, EventArgs e)
@@ -749,9 +749,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
                     WpfUtil.SetLinePosition(VerticalArrowLine_Down, x, 0, x, Height_Down);
 
                     break;
-            }
-
-            
+            }            
         }
 
         protected void HideArrowLines()
@@ -1023,10 +1021,12 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
                 item.HiddenHorizontalCenter += deltaX;
 
-                double newValue = GetSnappedPosition(item.HiddenHorizontalCenter);
+                double newValue_X = GetSnappedPosition(item.HiddenHorizontalCenter);
 
-                if (newValue != item.HorizontalCenter)
-                    item.HorizontalCenter = newValue;
+                if (newValue_X != item.HorizontalCenter)
+                    item.HorizontalCenter = newValue_X;                
+
+                item.VerticalCenter += deltaY; // currently only down itens are vertially centered, so we can leave this like this
             }
             else
             {
@@ -1160,7 +1160,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             SelectionArea.MoveSelectionArea(currentMousePosition);
 
-            IList<FrameworkElement> matched = WpfUtil.GetElementsAtFromListByArea(items, SelectionArea.Left - 1, SelectionArea.Top - 1, SelectionArea.Right + 1, SelectionArea.Bottom + 1);
+            IList<FrameworkElement> matched = WpfUtil.GetElementsAtFromListByArea(items, SelectionArea.Left - 2, SelectionArea.Top - 2, SelectionArea.Right + 2, SelectionArea.Bottom + 2);
 
             foreach (FrameworkElement _e in items)
                 if (_e is IItem)
@@ -1178,7 +1178,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
         protected void ArrowUp_FromDown(object sender, MouseButtonEventArgs e)
         {
-            IList<FrameworkElement> matched = WpfUtil.GetElementsAtFromListByArea(items, SelectionArea.Left - 1, SelectionArea.Top - 1, SelectionArea.Right + 1, SelectionArea.Bottom + 1);
+            IList<FrameworkElement> matched = WpfUtil.GetElementsAtFromListByArea(items, SelectionArea.Left - 2, SelectionArea.Top - 2, SelectionArea.Right + 2, SelectionArea.Bottom + 2);
 
             UnselectAllSelectedEdges();
 
@@ -1280,16 +1280,6 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
         protected void PerformArrowUp_FromArrowDown_WhileMouseLeave()
         {
-            UnselectAllSelectedEdges();
-
-            foreach (FrameworkElement e in items)
-                if (e is IItem)
-                {
-                    IItem item = (IItem)e;
-
-                    item.Unselect();
-                }
-
             SetCursorMode(CursorStateEnum.ArrowUp);
 
             SelectionArea.HideSelectionArea();
@@ -1522,6 +1512,10 @@ namespace m0_COMPOSER.UIWpf.Visualisers
                     break;
 
                 case (CursorStateEnum.ArrowDown):
+                case (CursorStateEnum.ArrowDown_MoveOnItem_Left):
+                case (CursorStateEnum.ArrowDown_MoveOnItem_MouseDown):
+                case (CursorStateEnum.ArrowDown_MoveOnItem_MouseDownAndMove):
+                case (CursorStateEnum.ArrowDown_MoveOnItem_Right):                
                     PerformArrowUp_FromArrowDown_WhileMouseLeave();
                     break;
             }
@@ -1559,7 +1553,9 @@ namespace m0_COMPOSER.UIWpf.Visualisers
                     WpfUtil.SetCursor(Cursors.Arrow);                    
                     break;
 
-                case (CursorStateEnum.ArrowDown):
+                case (CursorStateEnum.ArrowDown):                
+                case (CursorStateEnum.ArrowDown_MoveOnItem_MouseDown):
+                case (CursorStateEnum.ArrowDown_MoveOnItem_MouseDownAndMove):                
                     PerformArrowUp_FromArrowDown_WhileMouseLeave_Down();
                     break;
             }
@@ -1606,7 +1602,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
                     break;
 
                 case CursorStateEnum.ArrowDown_MoveOnItem_MouseDown:
-                    ArrowUp_FromMoveOnItem_MouseDown(sender, e);
+                    ArrowUp_FromMoveOnItem_MouseDown_Down(sender, e);
                     break;
 
                 default:
@@ -1626,7 +1622,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
                 case CursorStateEnum.ArrowUp:                
                 case CursorStateEnum.ArrowUp_MoveOnItem:
-                    ArrowMove_ArrowUp(sender, e);
+                    ArrowMove_ArrowUp_Down(sender, e);
                     break;
 
                 case CursorStateEnum.ArrowDown:
@@ -1635,7 +1631,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
                     
                 case CursorStateEnum.ArrowDown_MoveOnItem_MouseDown:
                 case CursorStateEnum.ArrowDown_MoveOnItem_MouseDownAndMove:
-                    ArrowMove_DownMoveOnItemLeftRight(sender, e);
+                    ArrowMove_DownMoveOnItemLeftRight_Down(sender, e);
                     break;
                     
                 default:
@@ -1667,12 +1663,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             AddItem_Down(newItemEventEdge, null, isUpdate);         
 
             VertexChangeOff = false;
-        }
-
-        protected int getValueFromMouseY_Down(double mouseY)
-        {
-            return 127 - (int)((mouseY / Height_Down) * 127);
-        }
+        }        
 
         protected IEdge AddItemEdge_Down(double mouseY, double startPosition, out bool isUpdate)
         {
@@ -1709,7 +1700,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
                 noteControlChangeVertex.AddEdge(MinusZero.Instance.Is, ControlChangeEvent);
 
             GraphUtil.SetVertexValue(noteControlChangeVertex, ControlChangeEvent.Get(false, @"Attribute:Number"), CurrentControlChangeNumber);
-            GraphUtil.SetVertexValue(noteControlChangeVertex, ControlChangeEvent.Get(false, @"Attribute:Value"), getValueFromMouseY_Down(mouseY));
+            GraphUtil.SetVertexValue(noteControlChangeVertex, ControlChangeEvent.Get(false, @"Attribute:Value"), ControlChangeItem.getValueFromMouseY_Down(mouseY, Height_Down));
             GraphUtil.SetVertexValue(noteControlChangeVertex, ControlChangeEvent.Get(false, @"Attribute:TriggerTime"), triggerTime);
 
             IEdge finalEdge = tempControlChangeEventEdge;
@@ -1894,27 +1885,13 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             }
         }
 
-        protected List<FrameworkElement> GetItemsAtFromListByCenters(List<FrameworkElement> list, double AreaLeft, double AreaTop, double AreaRight, double AreaDown)
-        {
-            List<FrameworkElement> match = new List<FrameworkElement>();
-
-            foreach (IItem i in list)
-                if (i.HorizontalCenter >= AreaLeft &&
-                    AreaRight >= i.HorizontalCenter &&
-                    i.VerticalCenter >= AreaTop &&
-                    AreaDown >= i.VerticalCenter)
-                    match.Add((FrameworkElement)i);
-
-            return match;
-        }
-
         protected void ArrowMove_ArrowDown_Down(object sender, MouseEventArgs e)
         {
             Point currentMousePosition = GetDownContentMousePosition(e);
 
             SelectionArea_Down.MoveSelectionArea(currentMousePosition);
 
-            IList<FrameworkElement> matched = GetItemsAtFromListByCenters(items_Down, 
+            IList<FrameworkElement> matched = WpfUtil.GetElementsAtFromListByArea(items_Down, 
                 SelectionArea_Down.Left - 1,
                 SelectionArea_Down.Top - 1,
                 SelectionArea_Down.Right + 1,
@@ -1936,7 +1913,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
         protected void ArrowUp_FromDown_Down(object sender, MouseButtonEventArgs e)
         {
-            IList<FrameworkElement> matched = GetItemsAtFromListByCenters(items_Down,
+            IList<FrameworkElement> matched = WpfUtil.GetElementsAtFromListByArea(items_Down,
                 SelectionArea_Down.Left - 1,
                 SelectionArea_Down.Top - 1,
                 SelectionArea_Down.Right + 1,
@@ -1965,17 +1942,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
         }
 
         protected void PerformArrowUp_FromArrowDown_WhileMouseLeave_Down()
-        {
-            UnselectAllSelectedEdges();
-
-            foreach (FrameworkElement e in items_Down)
-                if (e is IItem)
-                {
-                    IItem item = (IItem)e;
-
-                    item.Unselect();
-                }
-
+        {            
             SetCursorMode(CursorStateEnum.ArrowUp);
 
             SelectionArea_Down.HideSelectionArea();
@@ -2002,20 +1969,16 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             {
                 SetCursorMode(CursorStateEnum.ArrowUp);
 
-                foreach (IItem i in GetSelectedAndMouseOverItems())
-                {
-                    UpdateItem_HorizontalPosition(i);
-
-                    UpdateItem_VerticalPosition_Down(i);
-                }
+                foreach (IItem i in GetSelectedAndMouseOverItems())                
+                    UpdateItem_HorizontalPosition(i);                    
             }
         }
 
         protected void ArrowUp_FromMoveOnItem_MouseDown_Down(object sender, MouseButtonEventArgs e)
         {
-            Point currentMousePosition = GetMainContentMousePosition(e);
+            Point currentMousePosition = GetDownContentMousePosition(e);
 
-            FrameworkElement elementFound = WpfUtil.GetElementAtFromList(items, currentMousePosition);
+            FrameworkElement elementFound = WpfUtil.GetElementAtFromList(items_Down, currentMousePosition);
 
             if (elementFound != null && elementFound is IItem)
             {
@@ -2032,33 +1995,13 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
         protected void ArrowMove_ArrowUp_Down(object sender, MouseEventArgs e)
         {
-            Point currentMousePosition = GetMainContentMousePosition(e);
+            Point currentMousePosition = GetDownContentMousePosition(e);
 
-            FrameworkElement element = WpfUtil.GetElementAtFromList_StartFromEnd(items, currentMousePosition);
+            FrameworkElement element = WpfUtil.GetElementAtFromList_StartFromEnd(items_Down, currentMousePosition);
 
             if (element != null && element is IItem)
             {
-                double HorizontalItemMoveLeftRightSpan = HorizontalItemMoveLeftRightSpan_Big;
-
-                if (element.Width < HorizontalItemMoveLeftRightSpan_ItemSizeMiddleBoundary)
-                    HorizontalItemMoveLeftRightSpan = HorizontalItemMoveLeftRightSpan_Small;
-
-                if (element.Width < HorizontalItemMoveLeftRightSpan_ItemSizeSmallBoundary)
-                    HorizontalItemMoveLeftRightSpan = 0;
-
                 IItem item = (IItem)element;
-
-                if (!isCurrentPenItemCenter && currentMousePosition.X >= item.Left && currentMousePosition.X <= (item.Left + HorizontalItemMoveLeftRightSpan))
-                {
-                    ArrowMove_ArrowUp_SetMouseCurrentItem(item, CursorStateEnum.ArrowUp_MoveOnItem_Left);
-                    return;
-                }
-
-                if (!isCurrentPenItemCenter && currentMousePosition.X >= (item.Right - HorizontalItemMoveLeftRightSpan) && currentMousePosition.X <= item.Right)
-                {
-                    ArrowMove_ArrowUp_SetMouseCurrentItem(item, CursorStateEnum.ArrowUp_MoveOnItem_Right);
-                    return;
-                }
 
                 ArrowMove_ArrowUp_SetMouseCurrentItem(item, CursorStateEnum.ArrowUp_MoveOnItem);
                 return;
@@ -2070,27 +2013,13 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
         protected void ArrowMove_DownMoveOnItemLeftRight_Down(object sender, MouseEventArgs e)
         {
-            Point currentMousePosition = GetMainContentMousePosition(e);
+            Point currentMousePosition = GetDownContentMousePosition(e);
 
             double deltaX = currentMousePosition.X - previousMousePosition.X;
             double deltaY = currentMousePosition.Y - previousMousePosition.Y;
 
             switch (currentCursorState)
-            {
-                case CursorStateEnum.ArrowDown_MoveOnItem_Left:
-
-                    foreach (IItem i in GetSelectedAndMouseOverItems())
-                        ItemTryMoveLeftRight(i, deltaX, LeftRightEnum.Left);
-
-                    break;
-
-                case CursorStateEnum.ArrowDown_MoveOnItem_Right:
-
-                    foreach (IItem i in GetSelectedAndMouseOverItems())
-                        ItemTryMoveLeftRight(i, deltaX, LeftRightEnum.Right);
-
-                    break;
-
+            {                
                 case CursorStateEnum.ArrowDown_MoveOnItem_MouseDown:
 
                     double horizontalDelta = Math.Abs(mouseDownPoint.X - currentMousePosition.X);
@@ -2115,41 +2044,6 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             }
 
             previousMousePosition = currentMousePosition;
-        }
-
-        protected void UpdateItem_VerticalPosition_Down(IItem item)
-        {
-            IVertex r = MinusZero.Instance.root;
-            IVertex metaOctave = r.Get(false, @"System\Lib\Music\Pitch\Octave");
-            IVertex metaNote = r.Get(false, @"System\Lib\Music\Pitch\Note");
-
-            FrameworkElement element;
-
-            if (!(item is FrameworkElement))
-                return;
-
-            element = (FrameworkElement)item;
-
-            IVertex noteEventVertex = item.BaseEdge.To;
-
-            AxisSegment segment = FindVerticalSegment(item.Top + 1);
-
-            IVertex octaveVertex = segment.BaseVertex.Get(false, "Octave:");
-            IVertex noteVertex = segment.BaseVertex.Get(false, "Note:");
-
-            GraphUtil.CreateOrReplaceEdge(noteEventVertex, metaOctave, octaveVertex);
-            GraphUtil.CreateOrReplaceEdge(noteEventVertex, metaNote, noteVertex);
-
-            int? octave = GraphUtil.GetIntegerValue(octaveVertex);
-            int? note = GraphUtil.GetIntegerValue(noteVertex);
-
-            IVertex pitchVertex = MusicUtil.GetNoteFromPitchSet(pitchSetVertex, octave, note);
-
-            string label = pitchVertex.Value.ToString();
-
-            item.Label = label;
-
-            item.Update();
         }
 
         ////////////////////////////////////////////////////////////////////////////////////

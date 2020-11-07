@@ -194,6 +194,11 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control.Item
 
         }
 
+        protected void UpdateVerticalCenter()
+        {
+            VerticalCenter = Top + (Height / 2.0);
+        }
+
         public double Left { get; set; }
 
         public double Right { get; set; }
@@ -212,7 +217,10 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control.Item
         public double Top
         {
             get { return Canvas.GetTop(this); }
-            set { Canvas.SetTop(this, value); }
+            set {
+                Canvas.SetTop(this, value);
+                UpdateVerticalCenter();
+            }
         }
 
         public double Bottom
@@ -222,6 +230,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control.Item
                 Height = value - Top;
                 Width = Height;
                 Canvas.SetLeft(this, horizontalCenter - Height / 2.0);
+                UpdateVerticalCenter();
             }
         }
     }

@@ -1,4 +1,5 @@
 ﻿using m0.Foundation;
+using m0.UIWpf;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,7 +9,7 @@ using System.Windows;
 
 namespace m0_COMPOSER.UIWpf.Visualisers
 {
-    public interface IItem
+    public interface IItem : ICentered
     {
         IEdge BaseEdge { get; set; }
 
@@ -47,11 +48,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
         double Left { get; set; }
 
         double Right { get; set; }
-
-        double HorizontalCenter { get; set; }
-
-        double VerticalCenter { get; set; }
-
+        
         double Top { get; set; }
 
         double Bottom { get; set; }
