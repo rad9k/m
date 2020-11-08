@@ -892,6 +892,10 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             }else{           
                 SetCursorMode(CursorStateEnum.ArrowDown);
 
+                UnselectAllSelectedItems();
+
+                previousSelectedItemContext = ItemContextEnum.Main;
+
                 SelectionArea.StartSelection(currentMousePosition);
             }
         }
@@ -923,8 +927,11 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             return selectedItems;
         }
 
-        protected List<IItem> GetSelectedAndMouseOverItems()
+        protected List<IItem> GetSelectedAndMouseOverItems(ItemContextEnum actualContext)
         {
+            if (actualContext != previousSelectedItemContext)
+                UnselectAllSelectedItems();
+
             List<IItem> selectedItems = GetSelectedItems();
 
             if (!selectedItems.Contains(mouseOverItem))
@@ -1071,14 +1078,14 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             {
                 case CursorStateEnum.ArrowDown_MoveOnItem_Left:
 
-                    foreach (IItem i in GetSelectedAndMouseOverItems())
+                    foreach (IItem i in GetSelectedAndMouseOverItems(ItemContextEnum.Main))
                         ItemTryMoveLeftRight(i, deltaX, LeftRightEnum.Left);
                     
                     break;
 
                 case CursorStateEnum.ArrowDown_MoveOnItem_Right:
 
-                    foreach (IItem i in GetSelectedAndMouseOverItems())
+                    foreach (IItem i in GetSelectedAndMouseOverItems(ItemContextEnum.Main))
                         ItemTryMoveLeftRight(i, deltaX, LeftRightEnum.Right);
 
                     break;
@@ -1100,7 +1107,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
                 case CursorStateEnum.ArrowDown_MoveOnItem_MouseDownAndMove:
 
-                    foreach (IItem i in GetSelectedAndMouseOverItems())
+                    foreach (IItem i in GetSelectedAndMouseOverItems(ItemContextEnum.Main))
                         ItemTryMove(i, deltaX, deltaY);
 
                     break;
@@ -1174,17 +1181,13 @@ namespace m0_COMPOSER.UIWpf.Visualisers
                 }
                              
             WpfUtil.SetCursor(Cursors.Arrow);
-        }
+        }        
 
         protected void ArrowUp_FromDown(object sender, MouseButtonEventArgs e)
         {
             IList<FrameworkElement> matched = WpfUtil.GetElementsAtFromListByArea(items, SelectionArea.Left - 2, SelectionArea.Top - 2, SelectionArea.Right + 2, SelectionArea.Bottom + 2);
 
-            UnselectAllSelectedEdges();
-
-            IVertex selectedEdges = Vertex.Get(false, "SelectedEdges:");
-
-            //UnselectAllSelectedEdges();
+            UnselectAllSelectedEdges();           
 
             foreach (FrameworkElement _e in items)
                 if (_e is IItem)
@@ -1192,10 +1195,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
                     IItem item = (IItem)_e;
 
                     if (matched.Contains(_e))
-                    {
-                        Edge.AddEdge(selectedEdges, item.BaseEdge);
-                        item.Select();
-                    }
+                        SelectItem(item);
                     else
                         item.Unselect();
                 }
@@ -1210,7 +1210,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             {
                 SetCursorMode(CursorStateEnum.ArrowUp);
 
-                foreach(IItem i in GetSelectedAndMouseOverItems())
+                foreach(IItem i in GetSelectedAndMouseOverItems(ItemContextEnum.Main))
                     UpdateItem_HorizontalPosition(i);
             }
 
@@ -1218,7 +1218,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             {
                 SetCursorMode(CursorStateEnum.ArrowUp);
 
-                foreach (IItem i in GetSelectedAndMouseOverItems())
+                foreach (IItem i in GetSelectedAndMouseOverItems(ItemContextEnum.Main))
                 {
                     UpdateItem_HorizontalPosition(i);
 
@@ -1352,7 +1352,10 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             IItem newItem = (IItem)newElement;
 
             if (selectedVertexes != null && selectedVertexes.Contains(itemEventVertex))
+            {
                 newItem.Select();
+                previousSelectedItemContext = ItemContextEnum.Main;
+            }
 
             AxisSegment itemSegment = GetPitchSegment(pitchVertex);
 
@@ -1711,17 +1714,6 @@ namespace m0_COMPOSER.UIWpf.Visualisers
                 baseVertex.DeleteEdge(tempControlChangeEventEdge);
             }
 
-            /* there were some strange errors so I'm leaving it
-
-            IVertex all = baseVertex.GetAll(false, @"{TriggerTime:" + triggerTime + ",Number:" + CurrentControlChangeNumber + "}");
-
-            if (all.OutEdges.Count != 1)
-            {
-                int x=0; 
-            }
-
-            */
-
             return finalEdge;
         }
 
@@ -1743,10 +1735,13 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             int triggerTime = GraphUtil.GetIntegerValue(itemVertex.Get(false, "TriggerTime:"), ref dummy);
 
-            int value = GraphUtil.GetIntegerValue(itemVertex.Get(false, "Value:"), ref dummy);            
+            int value = GraphUtil.GetIntegerValue(itemVertex.Get(false, "Value:"), ref dummy);
 
             if (selectedVertexes != null && selectedVertexes.Contains(itemEventVertex))
-                item.Select();            
+            {
+                item.Select();
+                previousSelectedItemContext = ItemContextEnum.Down;
+            }
 
             double startPosition = triggerTime * HorizontalAD.BaseUnitSize;
 
@@ -1881,6 +1876,10 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             {
                 SetCursorMode(CursorStateEnum.ArrowDown);
 
+                UnselectAllSelectedItems();
+
+                previousSelectedItemContext = ItemContextEnum.Down;
+
                 SelectionArea_Down.StartSelection(currentMousePosition);
             }
         }
@@ -1928,11 +1927,8 @@ namespace m0_COMPOSER.UIWpf.Visualisers
                 {
                     IItem item = (IItem)_e;
 
-                    if (matched.Contains(_e))
-                    {
-                        Edge.AddEdge(selectedEdges, item.BaseEdge);
-                        item.Select();
-                    }
+                    if (matched.Contains(_e))                    
+                        SelectItem(item);                                            
                     else
                         item.Unselect();
                 }
@@ -1969,7 +1965,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             {
                 SetCursorMode(CursorStateEnum.ArrowUp);
 
-                foreach (IItem i in GetSelectedAndMouseOverItems())                
+                foreach (IItem i in GetSelectedAndMouseOverItems(ItemContextEnum.Down))                
                     UpdateItem_HorizontalPosition(i);                    
             }
         }
@@ -2037,7 +2033,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
                 case CursorStateEnum.ArrowDown_MoveOnItem_MouseDownAndMove:
 
-                    foreach (IItem i in GetSelectedAndMouseOverItems())
+                    foreach (IItem i in GetSelectedAndMouseOverItems(ItemContextEnum.Down))
                         ItemTryMove(i, deltaX, deltaY);
 
                     break;
