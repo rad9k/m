@@ -1976,7 +1976,7 @@ if (all.OutEdges.Count != 1)
                 SetCursorMode(CursorStateEnum.ArrowUp);
 
                 foreach (IItem i in GetSelectedAndMouseOverItems(ItemContextEnum.Down))                
-                    UpdateItem_HorizontalPosition(i);                    
+                    UpdateItem_HorizontalPosition(i);    
             }
         }
 
