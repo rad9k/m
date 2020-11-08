@@ -1751,7 +1751,12 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             int triggerTime = GraphUtil.GetIntegerValue(itemVertex.Get(false, "TriggerTime:"), ref dummy);
 
-            int value = GraphUtil.GetIntegerValue(itemVertex.Get(false, "Value:"), ref dummy);
+            int value;
+
+            if (isNoteEvent)
+                value = GraphUtil.GetIntegerValue(itemVertex.Get(false, "Velocity:"), ref dummy);
+            else
+                value = GraphUtil.GetIntegerValue(itemVertex.Get(false, "Value:"), ref dummy);
 
             if (selectedVertexes != null && selectedVertexes.Contains(itemEventVertex))
             {
