@@ -868,6 +868,8 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
                 GraphUtil.DeleteEdgeByToVertex(baseVertex, eventEdge.To);
 
+                Edge.DeleteVertexByEdgeTo(Vertex.Get(false, "SelectedEdges:"), eventEdge.To);
+
                 ItemsRemove(item);                
 
                 VertexChangeOff = false;
@@ -1668,6 +1670,21 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             VertexChangeOff = false;
         }        
 
+        protected IItem GetDownItemFromNumberTriggerTimeDictionary(int number, int triggerTime)
+        {
+            Dictionary<int, Dictionary<int, IItem>> itemsDictinary_Number_TriggerTime_Down = GetItemsDictionary_Number_TriggerTime_Down();
+
+            if (itemsDictinary_Number_TriggerTime_Down.ContainsKey(number))
+            {
+                Dictionary<int, IItem> itemsDictinary_TriggerTime_Down = itemsDictinary_Number_TriggerTime_Down[number];
+
+                if (itemsDictinary_TriggerTime_Down.ContainsKey(triggerTime))
+                    return itemsDictinary_TriggerTime_Down[triggerTime];
+            }
+
+            return null;
+        }
+
         protected IEdge AddItemEdge_Down(double mouseY, double startPosition, out bool isUpdate)
         {
             isUpdate = false;
@@ -1677,20 +1694,15 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             IVertex Event = r.Get(false, @"System\Lib\Music\Event");
             IVertex ControlChangeEvent = r.Get(false, @"System\Lib\Music\ControlChangeEvent");
 
-            IEdge tempControlChangeEventEdge = null;
-
-            Dictionary<int, Dictionary<int, IItem>> itemsDictinary_Number_TriggerTime_Down = GetItemsDictionary_TriggerTime_Down();
-
             int triggerTime = (int)((startPosition / HorizontalAD.BaseUnitSize) + 0.01);
 
-            Dictionary<int, IItem> itemsDictinary_TriggerTime_Down = null;
-            
-            if(itemsDictinary_Number_TriggerTime_Down.ContainsKey(CurrentControlChangeNumber))
-                itemsDictinary_TriggerTime_Down = itemsDictinary_Number_TriggerTime_Down[CurrentControlChangeNumber];
+            IEdge tempControlChangeEventEdge = null;
 
-            if (itemsDictinary_TriggerTime_Down != null && itemsDictinary_TriggerTime_Down.ContainsKey(triggerTime))
+            IItem existingItem = GetDownItemFromNumberTriggerTimeDictionary(CurrentControlChangeNumber, triggerTime);
+           
+            if (existingItem != null)
             {
-                tempControlChangeEventEdge = itemsDictinary_TriggerTime_Down[triggerTime].BaseEdge;
+                tempControlChangeEventEdge = existingItem.BaseEdge;
 
                 isUpdate = true;
             }
@@ -1713,16 +1725,6 @@ namespace m0_COMPOSER.UIWpf.Visualisers
                 baseVertex.AddEdge(Event, noteControlChangeVertex);
                 baseVertex.DeleteEdge(tempControlChangeEventEdge);
             }
-
-  
-
-IVertex all = baseVertex.GetAll(false, @"{TriggerTime:" + triggerTime + ",Number:" + CurrentControlChangeNumber + "}");
-
-if (all.OutEdges.Count != 1)
-{
-    int x=0; 
-}
-
 
             return finalEdge;
         }
@@ -1787,7 +1789,7 @@ if (all.OutEdges.Count != 1)
             return itemsDictinaryHolder_Down;
         }
 
-        protected Dictionary<int, Dictionary<int, IItem>> GetItemsDictionary_TriggerTime_Down()
+        protected Dictionary<int, Dictionary<int, IItem>> GetItemsDictionary_Number_TriggerTime_Down()
         {
             if (needToRebuildItemsDictionary_Down)
                 RebuildItemsDictionary_Down();
@@ -1860,6 +1862,8 @@ if (all.OutEdges.Count != 1)
                 VertexChangeOff = true;
 
                 GraphUtil.DeleteEdgeByToVertex(baseVertex, eventEdge.To);
+
+                Edge.DeleteVertexByEdgeTo(Vertex.Get(false, "SelectedEdges:"), eventEdge.To);
 
                 ItemsRemove_Down(item);
 
@@ -1999,6 +2003,30 @@ if (all.OutEdges.Count != 1)
             SetCursorMode(CursorStateEnum.ArrowUp);
         }
 
+        protected void RemoveDuplicatedDownItems_SelectedEdgesFirst()
+        {
+            Dictionary<int, Dictionary<int, IItem>> itemsDictinary_Number_TriggerTime_Down = GetItemsDictionary_Number_TriggerTime_Down();
+
+            IVertex selectedEdges = Vertex.GetAll(false, @"SelectedEdges:\");
+
+            foreach (IEdge e in selectedEdges)                
+                {
+                    IVertex v = e.To.Get(false, @"To:");
+
+                    if (v.Get(false, @"$Is:ControlChangeEvent") != null)
+                    {
+
+                        int triggerTime = (int)GraphUtil.GetIntegerValue(v.Get(false, @"TriggerTime:"));
+                        int number = (int)GraphUtil.GetIntegerValue(v.Get(false, @"Number:"));
+
+                        IItem existingItem = GetDownItemFromNumberTriggerTimeDictionary(number, triggerTime);
+
+                        //if(existingItem != null)
+                    }
+                        
+                }
+        }
+
         protected void ArrowMove_ArrowUp_Down(object sender, MouseEventArgs e)
         {
             Point currentMousePosition = GetDownContentMousePosition(e);
@@ -2015,6 +2043,8 @@ if (all.OutEdges.Count != 1)
 
             SetCursorMode(CursorStateEnum.ArrowUp);
             UpdateCursorShape();
+
+            RemoveDuplicatedDownItems_SelectedEdgesFirst();
         }
 
         protected void ArrowMove_DownMoveOnItemLeftRight_Down(object sender, MouseEventArgs e)
