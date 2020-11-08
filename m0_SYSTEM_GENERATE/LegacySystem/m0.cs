@@ -1444,11 +1444,11 @@ namespace m0
 
             //o_setCount_any_targetExpr.AddEdge(smb.Get(false, "$$LocalRoot"), kgd_ColonEmptyInner2SlashMarkIndexMethod);
 
-            // 00
+            // ~0
             //
-            // 00
+            // ~0
 
-            IVertex o_emptySet = k.AddVertex(keyword, "00");
+            IVertex o_emptySet = k.AddVertex(keyword, "~0");
 
             IVertex o_emptySet_any = o_emptySet.AddVertex(any, "");
 

@@ -299,17 +299,13 @@ namespace m0_COMPOSER.UIWpf.Visualisers
                 ResetDown();
             }
 
-            UpdateMainSize();            
-
-            DrawMain();
-
-            DrawDown();            
+            UpdateMainSize();
 
             InitialiseItems();
 
-            DrawItems();
+            DrawMain();
 
-            DrawItems_Down();
+            DrawDown();                        
 
             VisuliseserDrraw_NeedsInitilisation = false;
         }
@@ -515,7 +511,9 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             DrawLines_Down();
 
-            DrawArrowLines_Down();            
+            DrawArrowLines_Down();
+
+            DrawItems_Down();
         }
 
         protected void DownDecorator_SelectionChanged(object sender, EventArgs e)
@@ -570,7 +568,9 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             DrawMainLines();
 
-            DrawArrowLines();                        
+            DrawArrowLines();
+
+            DrawItems();
         }
 
         protected void DrawBackground()
@@ -1713,6 +1713,16 @@ namespace m0_COMPOSER.UIWpf.Visualisers
                 baseVertex.AddEdge(Event, noteControlChangeVertex);
                 baseVertex.DeleteEdge(tempControlChangeEventEdge);
             }
+
+  
+
+IVertex all = baseVertex.GetAll(false, @"{TriggerTime:" + triggerTime + ",Number:" + CurrentControlChangeNumber + "}");
+
+if (all.OutEdges.Count != 1)
+{
+    int x=0; 
+}
+
 
             return finalEdge;
         }
