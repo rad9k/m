@@ -16,7 +16,21 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control.Item
 {
     public class ControlChangeItem : Border, IItem
     {
-        public IEdge BaseEdge { get; set; }
+        public bool IsNote;
+
+        IEdge baseEdge;
+
+        public IEdge BaseEdge {
+            get {
+                return baseEdge;
+            }
+            set {
+                baseEdge = value;
+
+                if (baseEdge.To.Get(false, "$Is:NoteEvent") != null)
+                    IsNote = true;
+            }
+        }
 
         public bool IsCentered { get { return true; } }
 
@@ -122,10 +136,18 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control.Item
 
             IVertex r = MinusZero.Instance.Root;
 
-            IVertex ControlChangeEvent = r.Get(false, @"System\Lib\Music\ControlChangeEvent");
+            if (IsNote)
+            {
 
-            GraphUtil.SetVertexValue(BaseEdge.To,
-                ControlChangeEvent.Get(false, @"Attribute:Value"), newValue);
+            }
+            else
+            {
+
+                IVertex ControlChangeEvent = r.Get(false, @"System\Lib\Music\ControlChangeEvent");
+
+                GraphUtil.SetVertexValue(BaseEdge.To,
+                    ControlChangeEvent.Get(false, @"Attribute:Value"), newValue);
+            }
         }
 
         double horitzontalCenter;

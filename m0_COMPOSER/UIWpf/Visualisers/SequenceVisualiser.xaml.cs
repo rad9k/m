@@ -149,6 +149,8 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
         protected SelectionArea SelectionArea_Down;
 
+        protected bool AllowHorizontalItemMove_Down;
+
 
         protected Dictionary<IVertex, IItem> GetItemsDictionary()
         {
@@ -519,6 +521,11 @@ namespace m0_COMPOSER.UIWpf.Visualisers
         protected void DownDecorator_SelectionChanged(object sender, EventArgs e)
         {
             CurrentControlChangeNumber = (int)DownDecorator.Selection;
+
+            if (CurrentControlChangeNumber == -1)
+                AllowHorizontalItemMove_Down = false;
+            else
+                AllowHorizontalItemMove_Down = true;
 
             DrawDown();
         }
@@ -2104,8 +2111,9 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
                 case CursorStateEnum.ArrowDown_MoveOnItem_MouseDownAndMove:
 
-                    foreach (IItem i in GetSelectedAndMouseOverItems(ItemContextEnum.Down))
-                        ItemTryMove(i, deltaX, deltaY);
+                    if(AllowHorizontalItemMove_Down)
+                        foreach (IItem i in GetSelectedAndMouseOverItems(ItemContextEnum.Down))
+                            ItemTryMove(i, deltaX, deltaY);
 
                     break;
             }
