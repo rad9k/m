@@ -138,11 +138,13 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control.Item
 
             if (IsNote)
             {
+                IVertex NoteEvent = r.Get(false, @"System\Lib\Music\NoteEvent");
 
+                GraphUtil.SetVertexValue(BaseEdge.To,
+                    NoteEvent.Get(false, @"Attribute:Velocity"), newValue);
             }
             else
             {
-
                 IVertex ControlChangeEvent = r.Get(false, @"System\Lib\Music\ControlChangeEvent");
 
                 GraphUtil.SetVertexValue(BaseEdge.To,
