@@ -15,6 +15,8 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control.Item
 {
     public class DrumItem : Border, IItem
     {
+        public Canvas Canvas { get; set; }
+
         public IEdge BaseEdge { get; set; }
 
         public bool IsCentered { get { return true; } }
@@ -172,6 +174,15 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control.Item
 
             Brush backColorBrush = (Brush)WpfUtil.FindResource("0LightForegroundBrush");
 
+            Update();
+
+            SetBackground(backColorBrush);
+
+            Unselect();            
+        }        
+
+        public void Update()
+        {
             if (showVelocity)
             {
                 int? velocity = GraphUtil.GetIntegerValue(BaseEdge.To.Get(false, "Velocity:"));
@@ -183,15 +194,6 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control.Item
                     backColorBrush = new SolidColorBrush(Color.FromRgb(color, color, color));
                 }
             }
-
-            SetBackground(backColorBrush);
-
-            Unselect();            
-        }        
-
-        public void Update()
-        {
-
         }
 
         protected void UpdateVerticalCenter()

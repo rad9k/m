@@ -1698,6 +1698,9 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             IEdge newItemEventEdge = AddItemEdge_Down(mouseY, GetSnappedPosition(mouseDownPoint.X), out isUpdate, out isNoteEvent);
 
+            if (isNoteEvent)
+                GetItemsDictionary()[newItemEventEdge.To].Update();
+
             if(newItemEventEdge != null)
                 AddItem_Down(newItemEventEdge, null, isUpdate, isNoteEvent);         
 
@@ -1812,12 +1815,11 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             double startPosition = triggerTime * HorizontalAD.BaseUnitSize;
 
-            
+            if (!isUpdate)
+                ItemsAdd_Down(item); // need this as item.Canvas needs to be set for the cc top mark
+
             item.HorizontalCenter = startPosition;
             item.VerticalCenter = Height_Down - ( ((double)value / 127) * Height_Down);
-
-            if(!isUpdate)
-                ItemsAdd_Down(item);
         }
 
         protected void ItemsAdd_Down(IItem i)
@@ -1825,6 +1827,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             needToRebuildItemsDictionary_Down = true;
             items_Down.Add((FrameworkElement)i);
 
+            i.Canvas = Down;
             Down.Children.Add((FrameworkElement)i);
         }
 

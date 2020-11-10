@@ -16,6 +16,8 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control.Item
 {
     public class ControlChangeItem : Border, IItem
     {
+        public Canvas Canvas { get; set; }
+
         public bool IsNote;
 
         IEdge baseEdge;
@@ -79,7 +81,11 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control.Item
 
             Background = (Brush)WpfUtil.FindResource("0HighlightBrush");            
 
-            BorderBrush = (Brush)WpfUtil.FindResource("0HighlightBrush");            
+            BorderBrush = (Brush)WpfUtil.FindResource("0HighlightBrush");
+
+            CCTop.Background = (Brush)WpfUtil.FindResource("0HighlightBrush");
+
+            CCTop.BorderBrush = (Brush)WpfUtil.FindResource("0HighlightBrush");
         }
 
         public void Unselect()
@@ -91,7 +97,13 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control.Item
             Background = (Brush)WpfUtil.FindResource("0BlackBrush");
 
             BorderBrush = (Brush)WpfUtil.FindResource("0BlackBrush");
+
+            CCTop.Background = (Brush)WpfUtil.FindResource("0BlackBrush");
+
+            CCTop.BorderBrush = (Brush)WpfUtil.FindResource("0BlackBrush");
         }
+
+        Border CCTop = new Border();
 
         public ControlChangeItem(IEdge baseEdge, IZoomScrollViewerHost host)
         {
@@ -113,6 +125,8 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control.Item
 
             Background = backColorBrush;
 
+            CCTop.Background = backColorBrush;
+
             Unselect();            
         }        
 
@@ -124,6 +138,19 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control.Item
         public double Left { get; set; }
 
         public double Right { get; set; }
+
+        void CCTopPositionUpdate()
+        {
+            Canvas.SetLeft(CCTop, Canvas.GetLeft(this) - 2);
+            Canvas.SetTop(CCTop, Canvas.GetTop(this));
+
+            CCTop.Width = 10;
+            CCTop.Height = 2;
+
+            if (Canvas != null)
+                if (!Canvas.Children.Contains(CCTop))
+                    Canvas.Children.Add(CCTop);         
+        }
 
         public static int getValueFromMouseY_Down(double mouseY, double Height_Down)
         {
@@ -159,6 +186,8 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control.Item
                 horitzontalCenter = value;
 
                 Canvas.SetLeft(this, horitzontalCenter - (Width / 2));
+
+                CCTopPositionUpdate();
             }
         }        
 
@@ -181,6 +210,8 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control.Item
                 Height = Host.Height_Down - verticalCenter;
 
                 updateVertexValueByVerticalCenter(verticalCenter);
+
+                CCTopPositionUpdate();
             }
         }
 

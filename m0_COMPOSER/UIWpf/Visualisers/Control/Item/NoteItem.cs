@@ -15,6 +15,8 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control.Item
 {
     public class NoteItem : Border, IItem
     {
+        public Canvas Canvas { get; set; }
+
         public IEdge BaseEdge { get; set; }
 
         public bool IsCentered { get { return false; } }
@@ -135,20 +137,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control.Item
 
             Brush backColorBrush = (Brush)WpfUtil.FindResource("0LightForegroundBrush");
 
-            if (showVelocity)
-            {
-                int? velocity = GraphUtil.GetIntegerValue(BaseEdge.To.Get(false, "Velocity:"));
-
-                if (velocity != null)
-                {
-                    byte color = (byte)(255 - ((int)velocity * 2));
-
-                    backColorBrush = new SolidColorBrush(Color.FromRgb(color, color, color));
-
-                    if(color > 127 && showLabel)
-                        labelControl.Foreground = (Brush)WpfUtil.FindResource("0ForegroundBrush");
-                }
-            }
+            Update();
 
             Background = backColorBrush;
 
@@ -174,6 +163,21 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control.Item
         public void Update()
         {
             labelControl.Text = " " + Label;
+
+            if (showVelocity)
+            {
+                int? velocity = GraphUtil.GetIntegerValue(BaseEdge.To.Get(false, "Velocity:"));
+
+                if (velocity != null)
+                {
+                    byte color = (byte)(255 - ((int)velocity * 2));
+
+                    backColorBrush = new SolidColorBrush(Color.FromRgb(color, color, color));
+
+                    if (color > 127 && showLabel)
+                        labelControl.Foreground = (Brush)WpfUtil.FindResource("0ForegroundBrush");
+                }
+            }
         }
 
         public double Left {

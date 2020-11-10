@@ -6,12 +6,15 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Controls;
 
 namespace m0_COMPOSER.UIWpf.Visualisers
 {
     public interface IItem : ICentered
     {
         IEdge BaseEdge { get; set; }
+
+        Canvas Canvas { get; set; }
 
         bool IsSelected { get; }
 
