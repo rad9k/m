@@ -151,6 +151,8 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
         protected bool AllowHorizontalItemMove_Down;
 
+        protected bool MainItemsSyncedWithDown;
+
 
         protected Dictionary<IVertex, IItem> GetItemsDictionary()
         {
@@ -295,6 +297,8 @@ namespace m0_COMPOSER.UIWpf.Visualisers
                 CreateDown();
 
                 AddEventHandlers();
+
+                AddEventHandlers_Down();
             }
             else
             {
@@ -307,7 +311,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             DrawMain();
 
-            DrawDown();                        
+            Draw_Down();                        
 
             VisuliseserDrraw_NeedsInitilisation = false;
         }
@@ -412,124 +416,6 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             VerticalArrowLine_Down = WpfUtil.CreateLine(1, (Brush)FindResource("0LightHighlightBrush"));
         }
 
-        protected void CreateDown()
-        {
-            if (!HasDown)
-                return;
-
-            ZoomScrollView.InitialDownHeight = 100;
-
-            DownDecorator = new ControlChangeDownDecorator();
-
-            CurrentControlChangeNumber = (int)DownDecorator.Selection;
-
-            DownDecorator.SelectionChanged += DownDecorator_SelectionChanged;
-
-            Down = new Canvas();
-
-            Down.SizeChanged += Down_SizeChanged;
-            Down.Loaded += Down_Loaded;
-
-            ZoomScrollView.SetDownContent((FrameworkElement)DownDecorator, Down);            
-        }
-
-        protected void ResetDown()
-        {
-            if (!HasDown)
-                return;
-
-            ZoomScrollView.InitialDownHeight = Height_Down;            
-
-            ZoomScrollView.SetDownContent((FrameworkElement)DownDecorator, Down);
-        }
-
-        private void Down_Loaded(object sender, RoutedEventArgs e)
-        {
-            Height_Down = Down.ActualHeight;
-
-            DrawDown();
-        }
-
-        private void Down_SizeChanged(object sender, SizeChangedEventArgs e)
-        {
-            if (Height_Down != Down.ActualHeight)
-            {
-                Height_Down = Down.ActualHeight;
-
-                DrawDown();                
-            }
-        }
-
-        protected void DrawLines_Down()
-        {
-            foreach (AxisSegment s in DownDecorator.Segments)
-            {
-                Line l = new Line();
-
-                WpfUtil.SetLinePosition(l, 0, s.StartPosition, Width, s.StartPosition);
-
-                s.LineStyle.SetStyle(l);
-
-                Down.Children.Add(l);
-            }
-
-            foreach (AxisSegment s in HorizontalAD.Segments)
-            {
-                Line l = new Line();
-
-                WpfUtil.SetLinePosition(l, s.StartPosition, 0, s.StartPosition, Height_Down);
-
-                s.LineStyle.SetStyle(l);
-
-                Down.Children.Add(l);
-            }
-        }
-
-        protected void DrawDownBackground()
-        {
-            Border Background = new Border();
-
-            Background.Background = (Brush)FindResource("0LightBackgroundBrush");
-
-            WpfUtil.SetPosition(Background, 0, 0, Main.Width, Height_Down);
-
-            Down.Children.Add(Background);
-        }       
-
-        protected void DrawDown()
-        {             
-            if (!HasDown || DownDecorator == null)
-                return;
-
-            Down.Children.Clear();
-
-            SelectionArea_Down = new SelectionArea(Down);
-
-            items_Down = new List<FrameworkElement>();
-
-            DrawDownBackground();
-
-            DrawSnapLines_Down();
-
-            DrawLines_Down();
-
-            DrawArrowLines_Down();
-
-            DrawItems_Down();
-        }
-
-        protected void DownDecorator_SelectionChanged(object sender, EventArgs e)
-        {
-            CurrentControlChangeNumber = (int)DownDecorator.Selection;
-
-            if (CurrentControlChangeNumber == -1)
-                AllowHorizontalItemMove_Down = false;
-            else
-                AllowHorizontalItemMove_Down = true;
-
-            DrawDown();
-        }
-
         protected void ItemsAdd(IItem i)
         {
             needToRebuildItemsDictionary = true;
@@ -609,21 +495,6 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             Main.MouseUp += MouseUpHandler;
 
             Main.MouseMove += MouseMoveHandler;
-
-            //
-
-            if (HasDown)
-            {
-                Down.MouseEnter += MouseEnterHandler_Down;
-
-                Down.MouseLeave += MouseLeaveHandler_Down;
-
-                Down.MouseDown += MouseDownHandler_Down;
-
-                Down.MouseUp += MouseUpHandler_Down;
-
-                Down.MouseMove += MouseMoveHandler_Down;
-            }
         }
 
         protected void MouseMoveHandler(object sender, MouseEventArgs e)
@@ -930,6 +801,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
                 if (selectedVertexes.Contains(i.BaseEdge.To))
                     selectedItems.Add(i);
 
+            if(WhereIsMouse==WhereIsMouseEnum.MouseOnDown || !MainItemsSyncedWithDown)
             foreach (IItem i in items_Down)
                 if (selectedVertexes.Contains(i.BaseEdge.To))
                     selectedItems.Add(i);
@@ -992,7 +864,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             if (LeftRight == LeftRightEnum.Left)
             {
-                if (delta + getSnapMinmalWidth() >= element.Width)
+                if (delta + GetSnapMinmalWidth() >= element.Width)
                     return;
 
                 double orginalX = item.Left;
@@ -1010,7 +882,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             }
             else
             {
-                if (element.Width + delta - getSnapMinmalWidth() <= 0)
+                if (element.Width + delta - GetSnapMinmalWidth() <= 0)
                     return;
 
                 double orginalX = item.Right;
@@ -1235,6 +1107,9 @@ namespace m0_COMPOSER.UIWpf.Visualisers
                     UpdateItem_VerticalPosition(i);
                 }
             }
+
+            if (MainItemsSyncedWithDown)
+                Draw_Down();
         }
 
         protected ItemContextEnum GetItemContext(IItem item)
@@ -1319,7 +1194,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
                 return (positionInBars - reminder + currentSnapToGridValue) * HorizontalAD.BarLength * HorizontalAD.BaseUnitSize;
         }
 
-        protected double getSnapMinmalWidth()
+        protected double GetSnapMinmalWidth()
         {
             if (currentSnapToGridValue == 0)
                 return 1;
@@ -1390,6 +1265,9 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             }            
 
             ItemsAdd(newItem);
+
+            if (MainItemsSyncedWithDown)
+                AddItem_Down(itemEdge, selectedVertexes, false, true);
         }
 
         protected void UpdateItem_HorizontalPosition(IItem item)
@@ -1502,16 +1380,6 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             return e.GetPosition(Main);
         }
 
-        protected Point GetDownContentMousePosition(MouseButtonEventArgs e)
-        {
-            return e.GetPosition(Down);
-        }
-
-        protected Point GetDownContentMousePosition(MouseEventArgs e)
-        {
-            return e.GetPosition(Down);
-        }
-
         protected void MouseLeaveHandler(object sender, MouseEventArgs e)
         {
             HideArrowLines();            
@@ -1546,6 +1414,161 @@ namespace m0_COMPOSER.UIWpf.Visualisers
         ////////////////////////////////////////////////////////////////////////////////////
         /////////////// DOWN START /////////////////////////////////////////////////////////
         ////////////////////////////////////////////////////////////////////////////////////        
+
+        protected Point GetDownContentMousePosition(MouseButtonEventArgs e)
+        {
+            return e.GetPosition(Down);
+        }
+
+        protected Point GetDownContentMousePosition(MouseEventArgs e)
+        {
+            return e.GetPosition(Down);
+        }
+
+        protected void SetCurrentControlChangeNumber(int ccnum)
+        {
+            CurrentControlChangeNumber = ccnum;
+
+            if (CurrentControlChangeNumber == -1)
+            {
+                MainItemsSyncedWithDown = true;
+                AllowHorizontalItemMove_Down = false;
+            }
+            else
+            {
+                MainItemsSyncedWithDown = false;
+                AllowHorizontalItemMove_Down = true;
+            }
+        }
+
+        protected void AddEventHandlers_Down()
+        {
+            if (HasDown)
+            {
+                Down.MouseEnter += MouseEnterHandler_Down;
+
+                Down.MouseLeave += MouseLeaveHandler_Down;
+
+                Down.MouseDown += MouseDownHandler_Down;
+
+                Down.MouseUp += MouseUpHandler_Down;
+
+                Down.MouseMove += MouseMoveHandler_Down;
+            }
+        }
+
+        protected void CreateDown()
+        {
+            if (!HasDown)
+                return;
+
+            ZoomScrollView.InitialDownHeight = 100;
+
+            DownDecorator = new ControlChangeDownDecorator();
+
+            SetCurrentControlChangeNumber((int)DownDecorator.Selection);
+
+            DownDecorator.SelectionChanged += DownDecorator_SelectionChanged;
+
+            Down = new Canvas();
+
+            Down.SizeChanged += Down_SizeChanged;
+            Down.Loaded += Down_Loaded;
+
+            ZoomScrollView.SetDownContent((FrameworkElement)DownDecorator, Down);
+        }
+
+        protected void ResetDown()
+        {
+            if (!HasDown)
+                return;
+
+            ZoomScrollView.InitialDownHeight = Height_Down;
+
+            ZoomScrollView.SetDownContent((FrameworkElement)DownDecorator, Down);
+        }
+
+        private void Down_Loaded(object sender, RoutedEventArgs e)
+        {
+            Height_Down = Down.ActualHeight;
+
+            Draw_Down();
+        }
+
+        private void Down_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            if (Height_Down != Down.ActualHeight)
+            {
+                Height_Down = Down.ActualHeight;
+
+                Draw_Down();
+            }
+        }
+
+        protected void DrawLines_Down()
+        {
+            foreach (AxisSegment s in DownDecorator.Segments)
+            {
+                Line l = new Line();
+
+                WpfUtil.SetLinePosition(l, 0, s.StartPosition, Width, s.StartPosition);
+
+                s.LineStyle.SetStyle(l);
+
+                Down.Children.Add(l);
+            }
+
+            foreach (AxisSegment s in HorizontalAD.Segments)
+            {
+                Line l = new Line();
+
+                WpfUtil.SetLinePosition(l, s.StartPosition, 0, s.StartPosition, Height_Down);
+
+                s.LineStyle.SetStyle(l);
+
+                Down.Children.Add(l);
+            }
+        }
+
+        protected void DrawDownBackground()
+        {
+            Border Background = new Border();
+
+            Background.Background = (Brush)FindResource("0LightBackgroundBrush");
+
+            WpfUtil.SetPosition(Background, 0, 0, Main.Width, Height_Down);
+
+            Down.Children.Add(Background);
+        }
+
+        protected void Draw_Down()
+        {
+            if (!HasDown || DownDecorator == null)
+                return;
+
+            Down.Children.Clear();
+
+            SelectionArea_Down = new SelectionArea(Down);
+
+            items_Down = new List<FrameworkElement>();
+
+            DrawDownBackground();
+
+            DrawSnapLines_Down();
+
+            DrawLines_Down();
+
+            DrawArrowLines_Down();
+
+            DrawItems_Down();
+        }
+
+        protected void DownDecorator_SelectionChanged(object sender, EventArgs e)
+        {
+            SetCurrentControlChangeNumber((int)DownDecorator.Selection);
+
+            Draw_Down();
+        }
 
         protected void MouseEnterHandler_Down(object sender, MouseEventArgs e)
         {
@@ -1661,9 +1684,6 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
         protected void PenDown_Down_internal(object sender, Point mouseDownPoint)
         {
-            if (CurrentControlChangeNumber == -1)
-                return;
-
             SetCursorMode(CursorStateEnum.PenDown);
             
             previousMousePosition = mouseDownPoint;
@@ -1672,11 +1692,14 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             VertexChangeOff = true;
 
-            bool isUpdate;
+            bool isUpdate = false;
 
-            IEdge newItemEventEdge = AddItemEdge_Down(mouseY, GetSnappedPosition(mouseDownPoint.X), out isUpdate);
+            bool isNoteEvent = false;
 
-            AddItem_Down(newItemEventEdge, null, isUpdate, false);         
+            IEdge newItemEventEdge = AddItemEdge_Down(mouseY, GetSnappedPosition(mouseDownPoint.X), out isUpdate, out isNoteEvent);
+
+            if(newItemEventEdge != null)
+                AddItem_Down(newItemEventEdge, null, isUpdate, isNoteEvent);         
 
             VertexChangeOff = false;
         }        
@@ -1696,7 +1719,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             return null;
         }
 
-        protected IEdge AddItemEdge_Down(double mouseY, double startPosition, out bool isUpdate)
+        protected IEdge AddItemEdge_Down(double mouseY, double startPosition, out bool isUpdate, out bool isNoteEvent)
         {
             isUpdate = false;
 
@@ -1704,37 +1727,53 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             IVertex Event = r.Get(false, @"System\Lib\Music\Event");
             IVertex ControlChangeEvent = r.Get(false, @"System\Lib\Music\ControlChangeEvent");
+            IVertex NoteEvent = r.Get(false, @"System\Lib\Music\NoteEvent");
 
             int triggerTime = (int)((startPosition / HorizontalAD.BaseUnitSize) + 0.01);
 
-            IEdge tempControlChangeEventEdge = null;
+            IEdge tempEventEdge = null;
 
-            List<IItem> existingItem = GetDownItemFromNumberTriggerTimeDictionary(CurrentControlChangeNumber, triggerTime);
-           
-            if (existingItem != null)
+            isNoteEvent = false;
+
+            List<IItem> existingItems = GetDownItemFromNumberTriggerTimeDictionary(CurrentControlChangeNumber, triggerTime);
+
+            if (existingItems == null && MainItemsSyncedWithDown)
+                return null;
+
+            if (existingItems != null)
             {
-                tempControlChangeEventEdge = existingItem[0].BaseEdge;
+                IItem item = existingItems[0];
+
+                tempEventEdge = item.BaseEdge;
 
                 isUpdate = true;
+
+                if (tempEventEdge.To.Get(false, @"$Is:NoteEvent") != null)
+                    isNoteEvent = true;
             }
             else            
-                tempControlChangeEventEdge = baseVertex.AddVertexAndReturnEdge(null, null);                
+                tempEventEdge = baseVertex.AddVertexAndReturnEdge(null, null);
                            
-            IVertex noteControlChangeVertex = tempControlChangeEventEdge.To;
+            IVertex eventVertex = tempEventEdge.To;
 
             if(!isUpdate)
-                noteControlChangeVertex.AddEdge(MinusZero.Instance.Is, ControlChangeEvent);
+                eventVertex.AddEdge(MinusZero.Instance.Is, ControlChangeEvent);
 
-            GraphUtil.SetVertexValue(noteControlChangeVertex, ControlChangeEvent.Get(false, @"Attribute:Number"), CurrentControlChangeNumber);
-            GraphUtil.SetVertexValue(noteControlChangeVertex, ControlChangeEvent.Get(false, @"Attribute:Value"), ControlChangeItem.getValueFromMouseY_Down(mouseY, Height_Down));
-            GraphUtil.SetVertexValue(noteControlChangeVertex, ControlChangeEvent.Get(false, @"Attribute:TriggerTime"), triggerTime);
+            if (isNoteEvent)
+                GraphUtil.SetVertexValue(eventVertex, NoteEvent.Get(false, @"Attribute:Velocity"), ControlChangeItem.getValueFromMouseY_Down(mouseY, Height_Down));
+            else
+            {
+                GraphUtil.SetVertexValue(eventVertex, ControlChangeEvent.Get(false, @"Attribute:Number"), CurrentControlChangeNumber);
+                GraphUtil.SetVertexValue(eventVertex, ControlChangeEvent.Get(false, @"Attribute:Value"), ControlChangeItem.getValueFromMouseY_Down(mouseY, Height_Down));
+                GraphUtil.SetVertexValue(eventVertex, ControlChangeEvent.Get(false, @"Attribute:TriggerTime"), triggerTime);
+            }
 
-            IEdge finalEdge = tempControlChangeEventEdge;
+            IEdge finalEdge = tempEventEdge;
 
             if (!isUpdate)
             {
-                baseVertex.AddEdge(Event, noteControlChangeVertex);
-                baseVertex.DeleteEdge(tempControlChangeEventEdge);
+                baseVertex.AddEdge(Event, eventVertex);
+                baseVertex.DeleteEdge(tempEventEdge);
             }
 
             return finalEdge;
@@ -1826,7 +1865,6 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             itemsDictinaryHolder_Number_TriggerTime_Down.Clear();
 
-
             foreach (IItem i in items_Down)
             {
                 IVertex v = i.BaseEdge.To;
@@ -1835,7 +1873,12 @@ namespace m0_COMPOSER.UIWpf.Visualisers
                 //
 
                 int triggerTime = (int)GraphUtil.GetIntegerValue(v.Get(false, "TriggerTime:"));
-                int number = (int)GraphUtil.GetIntegerValue(v.Get(false, "Number:"));
+                int number;
+
+                if (MainItemsSyncedWithDown)
+                    number = -1;
+                else
+                    number = (int)GraphUtil.GetIntegerValue(v.Get(false, "Number:"));
 
                 Dictionary<int, List<IItem>> itemsDictinaryHolder_TriggerTime_Down;
 
@@ -2164,7 +2207,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             if (currentSnapToGrid == SnapToGridEnum.No_Snap || showSnapLines == false)
                     return;
 
-            double snapWidth = getSnapMinmalWidth();
+            double snapWidth = GetSnapMinmalWidth();
 
             Brush lb = (Brush)FindResource("0VeryLightForegroundBrush");
 
@@ -2187,7 +2230,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             if (currentSnapToGrid == SnapToGridEnum.No_Snap || showSnapLines == false)
                 return;
 
-            double snapWidth = getSnapMinmalWidth();
+            double snapWidth = GetSnapMinmalWidth();
 
             Brush lb = (Brush)FindResource("0VeryLightForegroundBrush");
 
