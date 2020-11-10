@@ -15,7 +15,19 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control.Item
 {
     public class DrumItem : Border, IItem
     {
-        public Canvas Canvas { get; set; }
+        Canvas Canvas;
+
+        public void Add(Canvas canvas)
+        {
+            Canvas = canvas;
+
+            Canvas.Children.Add(this);
+        }
+
+        public void Remove()
+        {
+            Canvas.Children.Remove(this);
+        }
 
         public IEdge BaseEdge { get; set; }
 
@@ -171,18 +183,16 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control.Item
 
 
             RenderOptions.SetEdgeMode(this, EdgeMode.Aliased);
-
-            Brush backColorBrush = (Brush)WpfUtil.FindResource("0LightForegroundBrush");
-
-            Update();
-
-            SetBackground(backColorBrush);
+           
+            Update();            
 
             Unselect();            
         }        
 
         public void Update()
         {
+            Brush backColorBrush = (Brush)WpfUtil.FindResource("0LightForegroundBrush");
+
             if (showVelocity)
             {
                 int? velocity = GraphUtil.GetIntegerValue(BaseEdge.To.Get(false, "Velocity:"));
@@ -194,6 +204,8 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control.Item
                     backColorBrush = new SolidColorBrush(Color.FromRgb(color, color, color));
                 }
             }
+
+            SetBackground(backColorBrush);
         }
 
         protected void UpdateVerticalCenter()

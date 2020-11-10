@@ -14,7 +14,9 @@ namespace m0_COMPOSER.UIWpf.Visualisers
     {
         IEdge BaseEdge { get; set; }
 
-        Canvas Canvas { get; set; }
+        void Add(Canvas canvas);
+
+        void Remove();
 
         bool IsSelected { get; }
 

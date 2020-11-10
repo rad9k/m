@@ -16,7 +16,23 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control.Item
 {
     public class ControlChangeItem : Border, IItem
     {
-        public Canvas Canvas { get; set; }
+        Canvas Canvas;
+
+        public void Add(Canvas canvas)
+        {
+            Canvas = canvas;
+
+            Canvas.Children.Add(this);
+
+            Canvas.Children.Add(CCTop);
+        }
+
+        public void Remove()
+        {
+            Canvas.Children.Remove(this);
+
+            Canvas.Children.Remove(CCTop);
+        }        
 
         public bool IsNote;
 

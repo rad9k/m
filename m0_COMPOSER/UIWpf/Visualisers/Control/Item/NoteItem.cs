@@ -15,7 +15,19 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control.Item
 {
     public class NoteItem : Border, IItem
     {
-        public Canvas Canvas { get; set; }
+        Canvas Canvas;
+
+        public void Add(Canvas canvas)
+        {
+            Canvas = canvas;
+
+            Canvas.Children.Add(this);            
+        }
+
+        public void Remove()
+        {
+            Canvas.Children.Remove(this);
+        }
 
         public IEdge BaseEdge { get; set; }
 
@@ -133,17 +145,10 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control.Item
                 labelControl.Foreground = (Brush)WpfUtil.FindResource("0BackgroundBrush");
 
                 this.Child = labelControl;
-            }
-
-            Brush backColorBrush = (Brush)WpfUtil.FindResource("0LightForegroundBrush");
+            }            
 
             Update();
-
-            Background = backColorBrush;
-
-            if (showLabel)
-                labelControl.Background = backColorBrush;            
-
+           
             Unselect();
 
             this.SizeChanged += NoteItem_SizeChanged;
@@ -164,6 +169,8 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control.Item
         {
             labelControl.Text = " " + Label;
 
+            Brush backColorBrush = (Brush)WpfUtil.FindResource("0LightForegroundBrush");
+
             if (showVelocity)
             {
                 int? velocity = GraphUtil.GetIntegerValue(BaseEdge.To.Get(false, "Velocity:"));
@@ -178,6 +185,11 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control.Item
                         labelControl.Foreground = (Brush)WpfUtil.FindResource("0ForegroundBrush");
                 }
             }
+
+            Background = backColorBrush;
+
+            if (showLabel)
+                labelControl.Background = backColorBrush;
         }
 
         public double Left {
