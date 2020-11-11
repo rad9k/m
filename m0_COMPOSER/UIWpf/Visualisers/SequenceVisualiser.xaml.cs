@@ -1137,7 +1137,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             if (PreviousSelectedItemContext != ic)
                 UnselectAllSelectedItems();
 
-            item.Select();
+            item.Select();            
 
             Edge.AddEdge(Vertex.Get(false, "SelectedEdges:"), item.BaseEdge);
 
@@ -2005,8 +2005,8 @@ namespace m0_COMPOSER.UIWpf.Visualisers
                 {
                     IItem item = (IItem)_e;
 
-                    if (matched.Contains(_e))
-                        item.Select();
+                    if (matched.Contains(_e))         
+                        item.Select();                                            
                     else
                         item.Unselect();
                 }
@@ -2023,6 +2023,11 @@ namespace m0_COMPOSER.UIWpf.Visualisers
                 SelectionArea_Down.Bottom + 1);
 
             UnselectAllSelectedEdges();
+
+            if (matched.Count == 0)
+            {
+                int x = 0;
+            }
 
             IVertex selectedEdges = Vertex.Get(false, "SelectedEdges:");            
 
@@ -2044,6 +2049,8 @@ namespace m0_COMPOSER.UIWpf.Visualisers
         protected void PerformArrowUp_FromArrowDown_WhileMouseLeave_Down()
         {            
             SetCursorMode(CursorStateEnum.ArrowUp);
+
+            UnselectAllSelectedEdges();
 
             SelectionArea_Down.HideSelectionArea();
         }
@@ -2203,7 +2210,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
                 i.Unselect();
 
             UnselectAllSelectedEdges();
-        }
+        }        
 
         protected void UnselectAllSelectedEdges()
         {
@@ -2563,11 +2570,30 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             {                
                 Dictionary<IVertex, IItem> itemsDictionary = GetItemsDictionary();
 
-                foreach (IVertex v in GetSelectedVertexes())
-                {
-                    IItem i = itemsDictionary[v];
+                Dictionary<IVertex, IItem> itemsDictionary_Down = GetItemsDictionary_Down();
 
-                    ItemsRemoveAndRemoveAllEdges(i);                    
+                if (GetSelectedVertexes().Count == 0)
+                {
+                    int x = 0;
+                }
+
+                foreach (IVertex v in GetSelectedVertexes())
+                {                    
+                    IItem i = null;
+
+                    if (itemsDictionary.ContainsKey(v))
+                    {
+                        i = itemsDictionary[v];
+
+                        ItemsRemoveAndRemoveAllEdges(i);
+                    }
+
+                    if (itemsDictionary_Down.ContainsKey(v))
+                    {
+                        i = itemsDictionary_Down[v];
+
+                        ItemsRemoveAndRemoveAllEdges_Down(i);
+                    }
                 }
 
                 UnselectAllSelectedEdges();
