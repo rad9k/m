@@ -77,7 +77,7 @@ namespace m0.UIWpf
 
             foreach (FrameworkElement e in list)
             {
-                if (e is ICentered)
+                if (e is ICentered && ((ICentered)e).IsCentered)
                 {
                     ICentered i = (ICentered)e;
 

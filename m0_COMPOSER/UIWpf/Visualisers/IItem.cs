@@ -18,9 +18,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
         void Remove();
 
-        bool IsSelected { get; }
-
-        bool IsCentered { get; }
+        bool IsSelected { get; }        
 
         string Label { set; }
 

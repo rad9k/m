@@ -11,5 +11,7 @@ namespace m0.UIWpf
         double HorizontalCenter { get; set; }
 
         double VerticalCenter { get; set; }
+
+        bool IsCentered { get; }
     }
 }
