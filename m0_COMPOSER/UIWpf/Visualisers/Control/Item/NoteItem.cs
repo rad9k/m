@@ -80,18 +80,11 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control.Item
 
             BorderBrush = (Brush)WpfUtil.FindResource("0HighlightBrush");
 
-            if (!showVelocity)
-            {
+            if (!showVelocity)            
                 Background = (Brush)WpfUtil.FindResource("0HighlightBrush");
 
-                if (showLabel)
-                    labelControl.Background = (Brush)WpfUtil.FindResource("0HighlightBrush");
-            }
-            else
-            {
-                if (showLabel)
-                    labelControl.Foreground = (Brush)WpfUtil.FindResource("0HighlightBrush");
-            }
+            if (showLabel)
+                labelControl.Background = (Brush)WpfUtil.FindResource("0HighlightBrush");
         }
 
         public void Unselect()
@@ -170,6 +163,9 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control.Item
             labelControl.Text = " " + Label;
 
             Brush backColorBrush = (Brush)WpfUtil.FindResource("0LightForegroundBrush");
+
+            if (showLabel)
+                labelControl.Foreground = (Brush)WpfUtil.FindResource("0BackgroundBrush");
 
             if (showVelocity)
             {

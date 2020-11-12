@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace m0_COMPOSER.Lib
 {
-    public class Music
+    public class NoteOutput
     {
         static int toNoteNumber(int octave, int note)
         {

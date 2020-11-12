@@ -50,8 +50,10 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Lib\Music.cs" />
+    <Compile Include="Lib\MidiDevice.cs" />
+    <Compile Include="Lib\NoteOutput.cs" />
     <Compile Include="Lib\MusicUtil.cs" />
+    <Compile Include="Lib\Song.cs" />
     <Compile Include="Midi\MidiLib.cs" />
     <Compile Include="Midi\WinmmMidiLib.cs" />
     <Compile Include="Program.cs" />

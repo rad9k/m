@@ -301,7 +301,9 @@ namespace m0_SYSTEM_GENERATE.Music
         private static void AddClasses() {
             IVertex r = m0.MinusZero.Instance.root;
 
-            string type = "m0_COMPOSER.Lib.Music, m0_COMPOSER, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null";
+            string NoteOutoutTypeString = "m0_COMPOSER.Lib.NoteOutput, m0_COMPOSER, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null";
+            string MidiDeviceTypeString = "m0_COMPOSER.Lib.MidiDevice, m0_COMPOSER, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null";
+            string SongTypeString = "m0_COMPOSER.Lib.Song, m0_COMPOSER, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null";
 
             IVertex String = r.Get(false, @"System\Meta\ZeroTypes\String");
             IVertex Integer = r.Get(false, @"System\Meta\ZeroTypes\Integer");
@@ -463,21 +465,21 @@ namespace m0_SYSTEM_GENERATE.Music
             GraphUtil.AddAssociation(Song, "RecordingTrack", Track, 0, 1);
             GraphUtil.AddAttribute(Song, "Tempo", Integer, 0, 1);
 
-            AddMethod(Song, "Record", type, "Record", null, new TypeName[] { });
-            AddMethod(Song, "Play", type, "Play", null, new TypeName[] { });
-            AddMethod(Song, "Stop", type, "Stop", null, new TypeName[] { });
-            AddMethod(Song, "Pause", type, "Pause", null, new TypeName[] { });
-            AddMethod(Song, "MoveTo", type, "MoveTo", null, new TypeName[] { new TypeName("position", "Integer", 1, 1) });
+            AddMethod(Song, "Record", SongTypeString, "Record", null, new TypeName[] { });
+            AddMethod(Song, "Play", SongTypeString, "Play", null, new TypeName[] { });
+            AddMethod(Song, "Stop", SongTypeString, "Stop", null, new TypeName[] { });
+            AddMethod(Song, "Pause", SongTypeString, "Pause", null, new TypeName[] { });
+            AddMethod(Song, "MoveTo", SongTypeString, "MoveTo", null, new TypeName[] { new TypeName("position", "Integer", 1, 1) });
 
 
             // NOTEOUTPUT continuation
 
-            AddMethod(NoteOutput, "NoteOn", type, "NoteOn", null, new TypeName[] { new TypeName("note", Note, 1, 1) });
-            AddMethod(NoteOutput, "NoteOff", type, "NoteOff", null, new TypeName[] { new TypeName("note", Note, 1, 1) });
-            AddMethod(NoteOutput, "ControlChange", type, "ControlChange", null, new TypeName[] { new TypeName("controlChange", ControlChange, 1, 1) });
-            AddMethod(NoteOutput, "ProgramChange", type, "ProgramChange", null, new TypeName[] { new TypeName("programNumber", "Integer", 1, 1) });
-            AddMethod(NoteOutput, "PitchBend", type, "PitchBend", null, new TypeName[] { new TypeName("value", "Integer", 1, 1) });
-            AddMethod(NoteOutput, "Silent", type, "Silent", null, new TypeName[] { });
+            AddMethod(NoteOutput, "NoteOn", NoteOutoutTypeString, "NoteOn", null, new TypeName[] { new TypeName("note", Note, 1, 1) });
+            AddMethod(NoteOutput, "NoteOff", NoteOutoutTypeString, "NoteOff", null, new TypeName[] { new TypeName("note", Note, 1, 1) });
+            AddMethod(NoteOutput, "ControlChange", NoteOutoutTypeString, "ControlChange", null, new TypeName[] { new TypeName("controlChange", ControlChange, 1, 1) });
+            AddMethod(NoteOutput, "ProgramChange", NoteOutoutTypeString, "ProgramChange", null, new TypeName[] { new TypeName("programNumber", "Integer", 1, 1) });
+            AddMethod(NoteOutput, "PitchBend", NoteOutoutTypeString, "PitchBend", null, new TypeName[] { new TypeName("value", "Integer", 1, 1) });
+            AddMethod(NoteOutput, "Silent", NoteOutoutTypeString, "Silent", null, new TypeName[] { });
 
             IVertex MidiOutput = GraphUtil.AddClass(Music, "MidiOutput");
             IVertex MidiInput = GraphUtil.AddClass(Music, "MidiInput");
@@ -501,11 +503,11 @@ namespace m0_SYSTEM_GENERATE.Music
             GraphUtil.AddAttribute(MidiDevice, "ChannelMask", String, 0, 1);
             GraphUtil.AddAttribute(MidiDevice, "Support", String, 0, 1);            
 
-            AddMethod(MidiDevice, "Reset", type, "Reset", null, new TypeName[] { });
-            AddMethod(MidiDevice, "TimingClock", type, "TimingClock", null, new TypeName[] { });
-            AddMethod(MidiDevice, "Start", type, "Start", null, new TypeName[] { });
-            AddMethod(MidiDevice, "Continue", type, "Continue", null, new TypeName[] { });
-            AddMethod(MidiDevice, "Stop", type, "Stop", null, new TypeName[] { });
+            AddMethod(MidiDevice, "Reset", MidiDeviceTypeString, "Reset", null, new TypeName[] { });
+            AddMethod(MidiDevice, "TimingClock", MidiDeviceTypeString, "TimingClock", null, new TypeName[] { });
+            AddMethod(MidiDevice, "Start", MidiDeviceTypeString, "Start", null, new TypeName[] { });
+            AddMethod(MidiDevice, "Continue", MidiDeviceTypeString, "Continue", null, new TypeName[] { });
+            AddMethod(MidiDevice, "Stop", MidiDeviceTypeString, "Stop", null, new TypeName[] { });
 
             // MIDI OUT
 

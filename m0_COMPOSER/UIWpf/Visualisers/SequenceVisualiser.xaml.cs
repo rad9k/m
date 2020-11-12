@@ -750,7 +750,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
                 {
                     IItem item_down = GetItemsDictionary_Down()[item.BaseEdge.To];
 
-                    item_down.Remove();
+                    ItemsRemoveAndRemoveAllEdges_Down(item_down);
                 }
 
                 ItemsRemoveAndRemoveAllEdges(item);
