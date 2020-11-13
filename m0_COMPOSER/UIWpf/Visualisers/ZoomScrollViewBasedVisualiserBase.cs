@@ -20,7 +20,7 @@ using System.Windows.Shapes;
 
 namespace m0_COMPOSER.UIWpf.Visualisers
 {
-    public partial class ZoomScrollViewBasedVisualiserBase : UserControl, IPlatformClass, IOwnScrolling, IZoomScrollViewerHost, IDisposable
+    public class ZoomScrollViewBasedVisualiserBase : UserControl, IPlatformClass, IOwnScrolling, IZoomScrollViewerHost, IDisposable
     {
         // sequencer specyfic
 
