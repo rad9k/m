@@ -449,7 +449,8 @@ namespace m0_SYSTEM_GENERATE.Music
 
             IVertex Track = GraphUtil.AddClass(Music, "Track");
 
-            //GraphUtil.AddAttribute(Track, "Name", String, 0, 1);
+            GraphUtil.AddAttribute(Track, "Name", String, 0, 1);
+            GraphUtil.AddAttribute(Track, "Color", Color, 0, 1);
             GraphUtil.AddAttribute(Track, "Output", NoteOutput, 0, 1);
             GraphUtil.AddAssociation(Track, "SequenceEvent", SequenceEvent, 0, -1);
 
@@ -464,6 +465,7 @@ namespace m0_SYSTEM_GENERATE.Music
             GraphUtil.AddAttribute(Song, "Input", NoteInput, 0, 1);
             GraphUtil.AddAssociation(Song, "RecordingTrack", Track, 0, 1);
             GraphUtil.AddAttribute(Song, "Tempo", Integer, 0, 1);
+            GraphUtil.AddAttribute(Song, "Position", Integer, 0, 1);
 
             AddMethod(Song, "Record", SongTypeString, "Record", null, new TypeName[] { });
             AddMethod(Song, "Play", SongTypeString, "Play", null, new TypeName[] { });
