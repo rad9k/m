@@ -2343,10 +2343,8 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             CurrentSnapToGridValue = 1;
         }
 
-        public SequenceVisualiser()
-        {
-            InitializeComponent();
-
+        public ZoomScrollViewBasedVisualiserBase()
+        {            
             HasDown = true;
 
             MinusZero mz = MinusZero.Instance;

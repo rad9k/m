@@ -1,4 +1,5 @@
-﻿<UserControl xmlns:Controls="clr-namespace:m0_COMPOSER.UIWpf.Visualisers.Control"  x:Class="m0_COMPOSER.UIWpf.Visualisers.SequenceVisualiser"
+﻿<my:ZoomScrollViewBasedVisualiserBase xmlns:Controls="clr-namespace:m0_COMPOSER.UIWpf.Visualisers.Control"  x:Class="m0_COMPOSER.UIWpf.Visualisers.SequenceVisualiser"
+             xmlns:my="clr-namespace:m0_COMPOSER.UIWpf.Visualisers"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
@@ -39,4 +40,4 @@
         </ToolBarTray>
         <Controls:ZoomScrollView x:Name="ZoomScrollView" DownAreaVisible="True"/>
     </DockPanel>
-</UserControl>
+</my:ZoomScrollViewBasedVisualiserBase>
