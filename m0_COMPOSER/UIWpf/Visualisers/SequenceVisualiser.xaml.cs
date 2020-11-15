@@ -25,6 +25,23 @@ namespace m0_COMPOSER.UIWpf.Visualisers
     /// </summary>
     public partial class SequenceVisualiser : ZoomScrollViewBasedVisualiserBase
     {
+        public void InitXAMLInstances()
+        {
+            PenButton = PenButton_Instance;
+            ArrowButton = ArrowButton_Instance;
+            EraseButton = EraseButton_Instance;
+            ExtendButton = ExtendButton_Instance;
 
+            ZoomScrollView = ZoomScrollView_Instance;
+        }
+
+        public SequenceVisualiser()
+        {
+            InitializeComponent();
+
+            InitXAMLInstances();
+
+            ZoomScrollViewBasedVisualiserBase_Init();
+        }
     }
 }

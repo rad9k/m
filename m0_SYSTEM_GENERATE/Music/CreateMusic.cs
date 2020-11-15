@@ -25,6 +25,8 @@ namespace m0_SYSTEM_GENERATE.Music
 
         static IVertex Music;
 
+        static IVertex MusicGenerator;
+
         static IVertex Data;
 
         static IVertex PitchSet;
@@ -106,7 +108,11 @@ namespace m0_SYSTEM_GENERATE.Music
 
             Music = lib.AddVertex(null, "Music");
 
-            AddClasses();
+            MusicGenerator = Music.AddVertex(null, "Generator");
+
+            AddMusicBasicClasses();
+
+            AddMusicGeneratorClasses();
 
             AddMetaEdges();
 
@@ -298,18 +304,22 @@ namespace m0_SYSTEM_GENERATE.Music
             GraphUtil.AddMetaEdge(Music, "DefaultControlChangeDescriptionSet", Music.Get(false, "ControlChangeDescriptionSet"));
         }
 
-        private static void AddClasses() {
-            IVertex r = m0.MinusZero.Instance.root;
+        static IVertex r = m0.MinusZero.Instance.root;
 
-            string NoteOutoutTypeString = "m0_COMPOSER.Lib.NoteOutput, m0_COMPOSER, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null";
-            string MidiDeviceTypeString = "m0_COMPOSER.Lib.MidiDevice, m0_COMPOSER, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null";
-            string SongTypeString = "m0_COMPOSER.Lib.Song, m0_COMPOSER, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null";
+        static string NoteOutoutTypeString = "m0_COMPOSER.Lib.NoteOutput, m0_COMPOSER, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null";
+        static string MidiDeviceTypeString = "m0_COMPOSER.Lib.MidiDevice, m0_COMPOSER, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null";
+        static string SongTypeString = "m0_COMPOSER.Lib.Song, m0_COMPOSER, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null";
 
-            IVertex String = r.Get(false, @"System\Meta\ZeroTypes\String");
-            IVertex Integer = r.Get(false, @"System\Meta\ZeroTypes\Integer");
-            IVertex Boolean = r.Get(false, @"System\Meta\ZeroTypes\Boolean");
-            IVertex Color = r.Get(false, @"System\Meta\ZeroTypes\Color");
+        static IVertex String = r.Get(false, @"System\Meta\ZeroTypes\String");
+        static IVertex Integer = r.Get(false, @"System\Meta\ZeroTypes\Integer");
+        static IVertex Boolean = r.Get(false, @"System\Meta\ZeroTypes\Boolean");
+        static IVertex Color = r.Get(false, @"System\Meta\ZeroTypes\Color");
 
+        static IVertex Pitch;
+        static IVertex ControlChange;
+        static IVertex Event;
+
+        private static void AddMusicBasicClasses() {            
             // CCDescription
 
             IVertex ControlChangeDescriptionTypeEnum = GraphUtil.AddEnum(Music, "ControlChangeDescriptionTypeEnum", new String[] { "Default", "On/Off", "MSB", "LSB" });
@@ -330,7 +340,7 @@ namespace m0_SYSTEM_GENERATE.Music
 
             // EVENT
 
-            IVertex Event = GraphUtil.AddClass(Music, "Event");
+            Event = GraphUtil.AddClass(Music, "Event");
 
             GraphUtil.AddAttribute(Event, "TriggerTime", Integer, 1, 1);
 
@@ -342,7 +352,7 @@ namespace m0_SYSTEM_GENERATE.Music
 
             // CONTROLCHANGE
 
-            IVertex ControlChange = GraphUtil.AddClass(Music, "ControlChange");
+            ControlChange = GraphUtil.AddClass(Music, "ControlChange");
 
             GraphUtil.AddAttribute(ControlChange, "Number", Integer, 1, 1);
             GraphUtil.AddAttribute(ControlChange, "Value", Integer, 1, 1);
@@ -370,9 +380,9 @@ namespace m0_SYSTEM_GENERATE.Music
 
             // PICH
 
-            IVertex Pitch = GraphUtil.AddClass(Music, "Pitch");
+            Pitch = GraphUtil.AddClass(Music, "Pitch");
 
-            GraphUtil.AddAttribute(Pitch, "Octave", Integer, 1, 1);
+            GraphUtil.AddAttribute(Pitch, "Octave", Integer, 0, 1);
             GraphUtil.AddAttribute(Pitch, "Note", Integer, 1, 1);
 
             // VISULISEDPICH
@@ -449,9 +459,10 @@ namespace m0_SYSTEM_GENERATE.Music
 
             IVertex Track = GraphUtil.AddClass(Music, "Track");
 
-            GraphUtil.AddAttribute(Track, "Name", String, 0, 1);
+            //GraphUtil.AddAttribute(Track, "Name", String, 0, 1);
             GraphUtil.AddAttribute(Track, "Color", Color, 0, 1);
             GraphUtil.AddAttribute(Track, "Output", NoteOutput, 0, 1);
+            GraphUtil.AddAttribute(Track, "Muted", Boolean, 0, 1);
             GraphUtil.AddAssociation(Track, "SequenceEvent", SequenceEvent, 0, -1);
 
             // SONG
@@ -534,6 +545,35 @@ namespace m0_SYSTEM_GENERATE.Music
 
             GraphUtil.AddAggregation(MusicSpace, "Sequence", Sequence, 0, -1);
             GraphUtil.AddAggregation(MusicSpace, "Song", Song, 0, -1);
+        }
+
+        public static void AddMusicGeneratorClasses()
+        {
+            // MELODYFLOWSTEP
+
+            IVertex MelodyFlowStep = GraphUtil.AddClass(MusicGenerator, "MelodyFlowStep");
+            GraphUtil.AddAttribute(MelodyFlowStep, "MelodyFlow", Pitch, 1, 1);
+            GraphUtil.AddAttribute(MelodyFlowStep, "Velocity", Integer, 0, 1);
+            GraphUtil.AddAggregation(MelodyFlowStep, "ControlChange", ControlChange, 0, -1);
+
+            // MELODYFLOW
+            IVertex MelodyFlow = GraphUtil.AddClass(MusicGenerator, "MelodyFlow");
+            GraphUtil.AddAggregation(MelodyFlow, "Step", MelodyFlowStep, 0, -1);
+
+            // TRIGGER
+
+            IVertex Trigger = GraphUtil.AddClass(MusicGenerator, "Trigger");
+            GraphUtil.AddInherits(Trigger, Event);            
+            GraphUtil.AddAttribute(Trigger, "Velocity", Integer, 0, 1);
+            GraphUtil.AddAggregation(Trigger, "ControlChange", ControlChange, 0, -1);
+
+            // MELODYFLOW
+            IVertex TriggerSet = GraphUtil.AddClass(MusicGenerator, "TriggerSet");
+            GraphUtil.AddAggregation(TriggerSet, "Trigger", Trigger, 0, -1);
+
+            // CHORDPROGRESSION
+            IVertex ChordProgression = GraphUtil.AddClass(MusicGenerator, "TriggerSet");
+            GraphUtil.AddAggregation(ChordProgression, "Trigger", Trigger, 0, -1);
         }
     }
 }

@@ -14,6 +14,7 @@ using System;
 using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Shapes;
@@ -30,6 +31,15 @@ namespace m0_COMPOSER.UIWpf.Visualisers
         protected int DefaultVelocity;
         protected bool IsDrum;
         protected int CurrentControlChangeNumber;
+
+        // XAML objects
+
+        protected ToggleButton PenButton;
+        protected ToggleButton ArrowButton;
+        protected ToggleButton EraseButton;
+        protected Button ExtendButton;
+
+        protected ZoomScrollView ZoomScrollView;
 
         //
 
@@ -149,7 +159,8 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
         protected bool MainItemsSyncedWithDown;
 
-
+        //
+     
         protected Dictionary<IVertex, IItem> GetItemsDictionary()
         {
             if (NeedToRebuildItemsDictionary)
@@ -2343,7 +2354,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             CurrentSnapToGridValue = 1;
         }
 
-        public ZoomScrollViewBasedVisualiserBase()
+        public void ZoomScrollViewBasedVisualiserBase_Init()
         {            
             HasDown = true;
 
