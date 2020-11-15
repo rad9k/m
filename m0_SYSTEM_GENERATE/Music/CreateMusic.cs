@@ -567,13 +567,13 @@ namespace m0_SYSTEM_GENERATE.Music
             GraphUtil.AddAttribute(Trigger, "Velocity", Integer, 0, 1);
             GraphUtil.AddAggregation(Trigger, "ControlChange", ControlChange, 0, -1);
 
-            // MELODYFLOW
+            // TROGGERSET
             IVertex TriggerSet = GraphUtil.AddClass(MusicGenerator, "TriggerSet");
             GraphUtil.AddAggregation(TriggerSet, "Trigger", Trigger, 0, -1);
 
             // CHORDPROGRESSION
-            IVertex ChordProgression = GraphUtil.AddClass(MusicGenerator, "TriggerSet");
-            GraphUtil.AddAggregation(ChordProgression, "Trigger", Trigger, 0, -1);
+            IVertex ChordProgression = GraphUtil.AddClass(MusicGenerator, "ChordProgression");
+            GraphUtil.AddAggregation(ChordProgression, "Chord", PitchSet, 0, -1);
         }
     }
 }
