@@ -574,6 +574,11 @@ namespace m0_SYSTEM_GENERATE.Music
             // CHORDPROGRESSION
             IVertex ChordProgression = GraphUtil.AddClass(MusicGenerator, "ChordProgression");
             GraphUtil.AddAggregation(ChordProgression, "Chord", PitchSet, 0, -1);
+
+            // DERIVEDPITCHSET
+            IVertex DerivedPitchSet = GraphUtil.AddClass(MusicGenerator, "DerivedPitchSet");
+            GraphUtil.AddInherits(DerivedPitchSet, PitchSet);
+            GraphUtil.AddAssociation(DerivedPitchSet, "BasedOn", PitchSet, 0, 1);
         }
     }
 }

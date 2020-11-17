@@ -59,6 +59,9 @@
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Runtime\Initialisation.cs" />
+    <Compile Include="SongVisualiser.xaml.cs">
+      <DependentUpon>SongVisualiser.xaml</DependentUpon>
+    </Compile>
     <Compile Include="UIWpf\Visualisers\Control\ControlChangeDownDecorator.cs" />
     <Compile Include="UIWpf\Visualisers\Control\Item\ControlChangeItem.cs" />
     <Compile Include="UIWpf\Visualisers\Control\Item\DrumItem.cs" />
@@ -74,6 +77,15 @@
     <Compile Include="UIWpf\Visualisers\IZoomScrollView.cs" />
     <Compile Include="UIWpf\Visualisers\IZoomScrollViewAxisDecorator.cs" />
     <Compile Include="UIWpf\Visualisers\IZoomScrollViewerHost.cs" />
+    <Compile Include="UIWpf\Visualisers\MelodyFlowVisualiser.xaml.cs">
+      <DependentUpon>MelodyFlowVisualiser.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UIWpf\Visualisers\DerivedPitchSetVisualiser.xaml.cs">
+      <DependentUpon>DerivedPitchSetVisualiser.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UIWpf\Visualisers\TriggerSetVisualiser.xaml.cs">
+      <DependentUpon>TriggerSetVisualiser.xaml</DependentUpon>
+    </Compile>
     <Compile Include="UIWpf\Visualisers\SequenceVisualiser.xaml.cs">
       <DependentUpon>SequenceVisualiser.xaml</DependentUpon>
     </Compile>
@@ -89,9 +101,25 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <Page Include="SongVisualiser.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="UIWpf\Visualisers\Control\ZoomScrollView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UIWpf\Visualisers\MelodyFlowVisualiser.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="UIWpf\Visualisers\DerivedPitchSetVisualiser.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="UIWpf\Visualisers\TriggerSetVisualiser.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="UIWpf\Visualisers\SequenceVisualiser.xaml">
       <Generator>MSBuild:Compile</Generator>
