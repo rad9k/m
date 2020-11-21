@@ -620,7 +620,9 @@ namespace m0_SYSTEM_GENERATE.Music
             
             for (int x = -11; x <= 11; x++)
             {
-                AddPitch(b, x, 0, "C " + x.ToString(), white, null);                
+                IVertex color = r.Get(false, @"System\Data\UX\Colors\White");
+
+                AddPitch(b, 0, x, x.ToString(), color, null);                
             }
         }
 
