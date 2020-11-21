@@ -40,19 +40,33 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control
             List<TextBlock> tbl = new List<TextBlock>();
 
             foreach (AxisSegment s in Segments)
-            {                
+            {
+                bool isSelected = false;
+
+                if (Selection == s)
+                    isSelected = true;
+
                 TextBlock t = new TextBlock();
                 
-                t.Text = s.BaseVertex.Get(false, "Name:").Value.ToString();                
+                t.Text = s.BaseVertex.Get(false, "Name:").Value.ToString();
 
-                if (s.Color != null)
+                Color segmentColor = s.Color;
+                Color negativeSegmentColor = WpfUtil.GetNegativeColor(segmentColor);
+
+                if (isSelected)
                 {
-                    t.Background = new SolidColorBrush(s.Color);
+                    segmentColor = (Color)WpfUtil.FindResource("0Highlight");
+                    negativeSegmentColor = (Color)WpfUtil.FindResource("0Background");
+                }
+
+                if (segmentColor != null)
+                {
+                    t.Background = new SolidColorBrush(segmentColor);
 
                     if (segmentSize > 13)
-                        t.Foreground = new SolidColorBrush(WpfUtil.GetNegativeColor(s.Color));
+                        t.Foreground = new SolidColorBrush(negativeSegmentColor);
                     else
-                        t.Foreground = new SolidColorBrush(s.Color);
+                        t.Foreground = new SolidColorBrush(segmentColor);
                 }
 
                 t.FontSize = FontSize;
@@ -200,5 +214,33 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control
         {
 
         }
+
+        public PitchSetAxisDecorator()
+        {
+            this.MouseDown += PitchSetAxisDecorator_MouseDown;
+        }
+
+        private void PitchSetAxisDecorator_MouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            Point p = e.GetPosition(this);
+
+            foreach (AxisSegment s in Segments)
+                if (s.StartPosition <= p.Y && p.Y <= s.EndPosition)
+                {
+                    if (Selection == s)
+                        Selection = null;
+                    else
+                        Selection = s;
+
+                    if(SelectionChanged!=null)
+                        SelectionChanged(sender, null);
+
+                    Draw();
+                }
+        }
+
+        public event EventHandler SelectionChanged;
+
+        public object Selection { get; set; }
     }
 }

@@ -261,5 +261,9 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control
             Length = length;
         }
 
+        public event EventHandler SelectionChanged;
+
+        public object Selection { get; set; }
+
     }
 }

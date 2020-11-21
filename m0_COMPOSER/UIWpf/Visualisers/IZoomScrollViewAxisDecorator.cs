@@ -36,5 +36,9 @@ namespace m0_COMPOSER.UIWpf.Visualisers
         void SetZoomFactor(double zoomFactor);
 
         void SetLength(double length);
+
+        event EventHandler SelectionChanged;
+
+        object Selection { get; set; }
     }
 }

@@ -64,7 +64,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control
             return (int)GraphUtil.GetIntegerValue(baseVertex.Get(false, "Number:"));
         }
     }
-    public class ControlChangeDownDecorator : StackPanel, IZoomScrollViewDownDecorator
+    public class ControlChangeDownDecorator : StackPanel, IZoomScrollViewAxisDecorator
     {
         int number;
 

@@ -496,6 +496,15 @@
     <Resource Include="_RESOURCES\basic\eraser.cur" />
     <Resource Include="_RESOURCES\basic\pen.cur" />
   </ItemGroup>
+  <ItemGroup>
+    <Resource Include="_RESOURCES\basic\back.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="_RESOURCES\basic\play.png" />
+    <Resource Include="_RESOURCES\basic\record.png" />
+    <Resource Include="_RESOURCES\basic\stop.png" />
+    <Resource Include="_RESOURCES\basic\truncate.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

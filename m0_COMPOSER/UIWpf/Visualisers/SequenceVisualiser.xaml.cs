@@ -30,6 +30,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             PenButton = PenButton_Instance;
             ArrowButton = ArrowButton_Instance;
             EraseButton = EraseButton_Instance;
+            TruncateButton = TruncateButton_Instance;
             ExtendButton = ExtendButton_Instance;
 
             ZoomScrollView = ZoomScrollView_Instance;

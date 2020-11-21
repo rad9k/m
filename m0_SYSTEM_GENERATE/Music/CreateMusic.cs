@@ -550,9 +550,9 @@ namespace m0_SYSTEM_GENERATE.Music
 
         public static void AddGenerator()
         {
-            MusicGenerator = Music.AddVertex(null, "Generator");
+            MusicGenerator = Music.AddVertex(r.Get(false, @"System\Meta\ZeroUML\Package"), "Generator");
 
-            MusicGeneratorData = MusicGenerator.AddVertex(null, "Data");
+            MusicGeneratorData = MusicGenerator.AddVertex(r.Get(false, @"System\Meta\ZeroUML\Package"), "Data");
 
             AddMusicGeneratorClasses();
 
@@ -620,7 +620,7 @@ namespace m0_SYSTEM_GENERATE.Music
             
             for (int x = -11; x <= 11; x++)
             {
-                IVertex color = r.Get(false, @"System\Data\UX\Colors\White");
+                IVertex color = r.Get(false, @"System\Data\UX\Colors\Gray"+Math.Abs(x));
 
                 AddPitch(b, 0, x, x.ToString(), color, null);                
             }

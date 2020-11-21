@@ -37,6 +37,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
         protected ToggleButton PenButton;
         protected ToggleButton ArrowButton;
         protected ToggleButton EraseButton;
+        protected Button TruncateButton;
         protected Button ExtendButton;
 
         protected ZoomScrollView ZoomScrollView;
@@ -137,7 +138,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
         public bool HasDown;
 
-        protected IZoomScrollViewDownDecorator DownDecorator;
+        protected IZoomScrollViewAxisDecorator DownDecorator;
 
         protected Canvas Down;
 
@@ -2537,6 +2538,19 @@ namespace m0_COMPOSER.UIWpf.Visualisers
                     CurrentSnapToGridValue = 0;
                     break;
             }
+
+            VisualiserDraw();
+        }
+        protected void TruncateButton_Click(object sender, RoutedEventArgs e)
+        {
+            if ((Length - ExtendTimeLength) <= 0)
+                return;
+
+            Length -= ExtendTimeLength;
+
+            SaveLength();
+
+            HorizontalAD.SetLength(Length);
 
             VisualiserDraw();
         }

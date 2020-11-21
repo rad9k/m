@@ -69,7 +69,6 @@
     <Compile Include="UIWpf\Visualisers\Control\ZoomScrollView.xaml.cs">
       <DependentUpon>ZoomScrollView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="UIWpf\Visualisers\IZoomScrollViewDownDecorator.cs" />
     <Compile Include="UIWpf\Visualisers\IItem.cs" />
     <Compile Include="UIWpf\Visualisers\IZoomScrollView.cs" />
     <Compile Include="UIWpf\Visualisers\IZoomScrollViewAxisDecorator.cs" />
