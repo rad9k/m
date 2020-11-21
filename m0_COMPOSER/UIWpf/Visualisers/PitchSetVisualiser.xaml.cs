@@ -23,7 +23,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
     /// <summary>
     /// Interaction logic for SequenceVisualiser.xaml
     /// </summary>
-    public partial class DerivedPitchSetVisualiser : ZoomScrollViewBasedVisualiserBase
+    public partial class PitchSetVisualiser : ZoomScrollViewBasedVisualiserBase
     {
         public void InitXAMLInstances()
         {
@@ -35,7 +35,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             ZoomScrollView = ZoomScrollView_Instance;
         }
 
-        public DerivedPitchSetVisualiser()
+        public PitchSetVisualiser()
         {
             InitializeComponent();
 

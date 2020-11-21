@@ -74,11 +74,14 @@
     <Compile Include="UIWpf\Visualisers\IZoomScrollView.cs" />
     <Compile Include="UIWpf\Visualisers\IZoomScrollViewAxisDecorator.cs" />
     <Compile Include="UIWpf\Visualisers\IZoomScrollViewerHost.cs" />
+    <Compile Include="UIWpf\Visualisers\DrumFlowVisualiser.xaml.cs">
+      <DependentUpon>DrumFlowVisualiser.xaml</DependentUpon>
+    </Compile>
     <Compile Include="UIWpf\Visualisers\MelodyFlowVisualiser.xaml.cs">
       <DependentUpon>MelodyFlowVisualiser.xaml</DependentUpon>
     </Compile>
-    <Compile Include="UIWpf\Visualisers\DerivedPitchSetVisualiser.xaml.cs">
-      <DependentUpon>DerivedPitchSetVisualiser.xaml</DependentUpon>
+    <Compile Include="UIWpf\Visualisers\PitchSetVisualiser.xaml.cs">
+      <DependentUpon>PitchSetVisualiser.xaml</DependentUpon>
     </Compile>
     <Compile Include="UIWpf\Visualisers\SongVisualiser.xaml.cs">
       <DependentUpon>SongVisualiser.xaml</DependentUpon>
@@ -105,11 +108,15 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="UIWpf\Visualisers\DrumFlowVisualiser.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="UIWpf\Visualisers\MelodyFlowVisualiser.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="UIWpf\Visualisers\DerivedPitchSetVisualiser.xaml">
+    <Page Include="UIWpf\Visualisers\PitchSetVisualiser.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

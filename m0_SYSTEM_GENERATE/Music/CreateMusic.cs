@@ -29,6 +29,8 @@ namespace m0_SYSTEM_GENERATE.Music
 
         static IVertex Data;
 
+        static IVertex MusicGeneratorData;
+
         static IVertex PitchSet;
 
         static IVertex VisualisedPitch;
@@ -106,13 +108,11 @@ namespace m0_SYSTEM_GENERATE.Music
 
             IVertex lib = r.Get(false, @"System\Lib");
 
-            Music = lib.AddVertex(null, "Music");
-
-            MusicGenerator = Music.AddVertex(null, "Generator");
+            Music = lib.AddVertex(null, "Music");            
 
             AddMusicBasicClasses();
 
-            AddMusicGeneratorClasses();
+            AddGenerator();
 
             AddMetaEdges();
 
@@ -318,6 +318,7 @@ namespace m0_SYSTEM_GENERATE.Music
         static IVertex Pitch;
         static IVertex ControlChange;
         static IVertex Event;
+        static IVertex HasLength;
 
         private static void AddMusicBasicClasses() {            
             // CCDescription
@@ -333,10 +334,10 @@ namespace m0_SYSTEM_GENERATE.Music
 
             // HAS LENGTH
 
-            IVertex HasLenth = GraphUtil.AddClass(Music, "HasLength");
+            IVertex HasLength = GraphUtil.AddClass(Music, "HasLength");
 
-            GraphUtil.AddAttribute(HasLenth, "Length", Integer, 0, 1);
-            GraphUtil.AddAssociation(HasLenth, "TimeSpan", TimeSpanLevel, 0, 1);
+            GraphUtil.AddAttribute(HasLength, "Length", Integer, 0, 1);
+            GraphUtil.AddAssociation(HasLength, "TimeSpan", TimeSpanLevel, 0, 1);
 
             // EVENT
 
@@ -397,12 +398,12 @@ namespace m0_SYSTEM_GENERATE.Music
             // PICHSET
 
             PitchSet = GraphUtil.AddClass(Music, "PitchSet");
-
+            GraphUtil.AddAssociation(PitchSet, "BasedOn", PitchSet, 0, 1);
             GraphUtil.AddAggregation(PitchSet, "Pitch", Pitch, 0, -1);
 
             // TIMESPANLEVEL            
 
-            GraphUtil.AddInherits(TimeSpanLevel, HasLenth);
+            GraphUtil.AddInherits(TimeSpanLevel, HasLength);
             GraphUtil.AddAggregation(TimeSpanLevel, "SubLevel", TimeSpanLevel, 0, 1);
 
 
@@ -420,13 +421,13 @@ namespace m0_SYSTEM_GENERATE.Music
 
             GraphUtil.AddInherits(NoteEvent, Note);
             GraphUtil.AddInherits(NoteEvent, Event);
-            GraphUtil.AddInherits(NoteEvent, HasLenth);
+            GraphUtil.AddInherits(NoteEvent, HasLength);
 
             // SEQUENCE
 
             IVertex Sequence = GraphUtil.AddClass(Music, "Sequence");
 
-            GraphUtil.AddInherits(Sequence, HasLenth);
+            GraphUtil.AddInherits(Sequence, HasLength);
             GraphUtil.AddInherits(Sequence, History);
 
             GraphUtil.AddAttribute(Sequence, "IsDrum", Boolean, 0, 1);
@@ -469,7 +470,7 @@ namespace m0_SYSTEM_GENERATE.Music
 
             IVertex Song = GraphUtil.AddClass(Music, "Song");
 
-            GraphUtil.AddInherits(Song, HasLenth);
+            GraphUtil.AddInherits(Song, HasLength);
 
             //GraphUtil.AddAttribute(Song, "Name", String, 0, 1);
             GraphUtil.AddAggregation(Song, "Track", Track, 0, -1);
@@ -547,6 +548,17 @@ namespace m0_SYSTEM_GENERATE.Music
             GraphUtil.AddAggregation(MusicSpace, "Song", Song, 0, -1);
         }
 
+        public static void AddGenerator()
+        {
+            MusicGenerator = Music.AddVertex(null, "Generator");
+
+            MusicGeneratorData = MusicGenerator.AddVertex(null, "Data");
+
+            AddMusicGeneratorClasses();
+
+            AddGeneratorFlowPitchSet();
+        }
+
         public static void AddMusicGeneratorClasses()
         {
             // MELODYFLOWSTEP
@@ -557,8 +569,26 @@ namespace m0_SYSTEM_GENERATE.Music
             GraphUtil.AddAggregation(MelodyFlowStep, "ControlChange", ControlChange, 0, -1);
 
             // MELODYFLOW
+
             IVertex MelodyFlow = GraphUtil.AddClass(MusicGenerator, "MelodyFlow");
             GraphUtil.AddAggregation(MelodyFlow, "Step", MelodyFlowStep, 0, -1);
+
+            // DRUMFLOWHIT
+
+            IVertex DrumFlowHit = GraphUtil.AddClass(MusicGenerator, "DrumFlowHit");
+            GraphUtil.AddAttribute(DrumFlowHit, "MelodyFlow", Pitch, 1, 1);            
+            GraphUtil.AddAttribute(DrumFlowHit, "Velocity", Integer, 0, 1);
+            GraphUtil.AddAggregation(DrumFlowHit, "ControlChange", ControlChange, 0, -1);
+
+            // DRUMFLOWSTEP
+
+            IVertex DrumFlowStep = GraphUtil.AddClass(MusicGenerator, "DrumFlowStep");
+            GraphUtil.AddAggregation(DrumFlowStep, "DrumFlowHit", DrumFlowHit, 0, -1);
+
+            // DRUMFLOW
+
+            IVertex DerivedPitchSet = GraphUtil.AddClass(MusicGenerator, "DrumFlow");            
+            GraphUtil.AddAssociation(DerivedPitchSet, "DrumFlowStep", DrumFlowStep, 0, -1);
 
             // TRIGGER
 
@@ -567,18 +597,32 @@ namespace m0_SYSTEM_GENERATE.Music
             GraphUtil.AddAttribute(Trigger, "Velocity", Integer, 0, 1);
             GraphUtil.AddAggregation(Trigger, "ControlChange", ControlChange, 0, -1);
 
-            // TROGGERSET
+            // TRIGGERSET
+
             IVertex TriggerSet = GraphUtil.AddClass(MusicGenerator, "TriggerSet");
+            GraphUtil.AddInherits(TriggerSet, HasLength);
             GraphUtil.AddAggregation(TriggerSet, "Trigger", Trigger, 0, -1);
 
             // CHORDPROGRESSION
-            IVertex ChordProgression = GraphUtil.AddClass(MusicGenerator, "ChordProgression");
-            GraphUtil.AddAggregation(ChordProgression, "Chord", PitchSet, 0, -1);
 
-            // DERIVEDPITCHSET
-            IVertex DerivedPitchSet = GraphUtil.AddClass(MusicGenerator, "DerivedPitchSet");
-            GraphUtil.AddInherits(DerivedPitchSet, PitchSet);
-            GraphUtil.AddAssociation(DerivedPitchSet, "BasedOn", PitchSet, 0, 1);
+            IVertex ChordProgression = GraphUtil.AddClass(MusicGenerator, "ChordProgression");
+            GraphUtil.AddAggregation(ChordProgression, "Chord", PitchSet, 0, -1);            
         }
+
+
+        private static void AddGeneratorFlowPitchSet()
+        {
+            IVertex r = m0.MinusZero.Instance.root;
+
+            IVertex b = VertexOperations.AddInstance(MusicGeneratorData, PitchSet);            
+
+            b.Value = "FlowPitchSet";
+            
+            for (int x = -11; x <= 11; x++)
+            {
+                AddPitch(b, x, 0, "C " + x.ToString(), white, null);                
+            }
+        }
+
     }
 }
