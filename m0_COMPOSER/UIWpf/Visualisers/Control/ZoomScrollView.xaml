@@ -8,7 +8,7 @@
              d:DesignHeight="300" d:DesignWidth="300"
              xmlns:m="clr-namespace:m0.UIWpf.Controls;assembly=m0">
     <Grid>
-        <ScrollViewer x:Name="Scroll"  HorizontalScrollBarVisibility="Visible" VerticalScrollBarVisibility="Visible" Loaded="Scroll_Loaded" ScrollChanged="Scroll_ScrollChanged" MouseLeave="DownHideAreaGrip_MouseLeave_Hard" SizeChanged="Scroll_SizeChanged">
+        <ScrollViewer x:Name="ScrollViewer"  HorizontalScrollBarVisibility="Visible" VerticalScrollBarVisibility="Visible" Loaded="ScrollViewer_Loaded" ScrollChanged="ScrollViewer_ScrollChanged" MouseLeave="DownHideAreaGrip_MouseLeave_Hard" SizeChanged="ScrollViewer_SizeChanged">
             <ScrollViewer.Template>
                 <ControlTemplate TargetType="{x:Type ScrollViewer}">
                     <Grid x:Name="Grid" Background="{TemplateBinding Background}">

@@ -73,7 +73,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control
 
         public void SetMainContent(FrameworkElement control)
         {
-            Scroll.Content = control;
+            ScrollViewer.Content = control;
         }
 
         void DownWidthUpdate()
@@ -166,15 +166,15 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control
 
         void InitializeLocalControlVariables()
         {
-            HorizontalAxisDecoratorScrollViewer = (ScrollViewer)Scroll.Template.FindName("HorizontalAxisDecoratorScrollViewer", Scroll);
-            VerticalAxisDecoratorScrollViewer = (ScrollViewer)Scroll.Template.FindName("VerticalAxisDecoratorScrollViewer", Scroll);
-            HorizontalZoomSlider = (Slider)Scroll.Template.FindName("HorizontalZoomSlider", Scroll);
-            VerticalZoomSlider = (Slider)Scroll.Template.FindName("VerticalZoomSlider", Scroll);
-            Grid = (Grid)Scroll.Template.FindName("Grid", Scroll);
-            ContentPresenter = (ScrollContentPresenter)Scroll.Template.FindName("PART_ScrollContentPresenter", Scroll);
+            HorizontalAxisDecoratorScrollViewer = (ScrollViewer)ScrollViewer.Template.FindName("HorizontalAxisDecoratorScrollViewer", ScrollViewer);
+            VerticalAxisDecoratorScrollViewer = (ScrollViewer)ScrollViewer.Template.FindName("VerticalAxisDecoratorScrollViewer", ScrollViewer);
+            HorizontalZoomSlider = (Slider)ScrollViewer.Template.FindName("HorizontalZoomSlider", ScrollViewer);
+            VerticalZoomSlider = (Slider)ScrollViewer.Template.FindName("VerticalZoomSlider", ScrollViewer);
+            Grid = (Grid)ScrollViewer.Template.FindName("Grid", ScrollViewer);
+            ContentPresenter = (ScrollContentPresenter)ScrollViewer.Template.FindName("PART_ScrollContentPresenter", ScrollViewer);
 
-            DownHideArea = (AnimatedHideArea)Scroll.Template.FindName("DownHideArea", Scroll);
-            DownGrip = (Border)Scroll.Template.FindName("DownGrip", Scroll);
+            DownHideArea = (AnimatedHideArea)ScrollViewer.Template.FindName("DownHideArea", ScrollViewer);
+            DownGrip = (Border)ScrollViewer.Template.FindName("DownGrip", ScrollViewer);
 
             DownDecorator = (Border)((StackPanel)DownHideArea.Content).Children[0];
             DownMain = (ScrollViewer)((StackPanel)DownHideArea.Content).Children[1];
@@ -187,33 +187,33 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control
             UpdateDownHideAreaVisibility();
         }
 
-        private void Scroll_Loaded(object sender, RoutedEventArgs e)
+        private void ScrollViewer_Loaded(object sender, RoutedEventArgs e)
         {
-            InitializeLocalControlVariables();
-
-            Host.ChildControlsLoaded();
+            InitializeLocalControlVariables();            
 
             InitializeLocalControls();
+
+            Host.ChildControlsLoaded();
         }
         
 
         double HorizontalOffset;
         double VerticalOffset;
 
-        private void Scroll_ScrollChanged(object sender, ScrollChangedEventArgs e)
+        private void ScrollViewer_ScrollChanged(object sender, ScrollChangedEventArgs e)
         {
-            if (HorizontalOffset != this.Scroll.HorizontalOffset)
+            if (HorizontalOffset != this.ScrollViewer.HorizontalOffset)
             {
-                HorizontalOffset = this.Scroll.HorizontalOffset;
+                HorizontalOffset = this.ScrollViewer.HorizontalOffset;
 
                 HorizontalAxisDecoratorScrollViewer.ScrollToHorizontalOffset(HorizontalOffset);
 
                 DownMain.ScrollToHorizontalOffset(HorizontalOffset);
             }
 
-            if (VerticalOffset != this.Scroll.VerticalOffset)
+            if (VerticalOffset != this.ScrollViewer.VerticalOffset)
             {
-                VerticalOffset = this.Scroll.VerticalOffset;
+                VerticalOffset = this.ScrollViewer.VerticalOffset;
 
                 VerticalAxisDecoratorScrollViewer.ScrollToVerticalOffset(VerticalOffset);
             }
@@ -334,7 +334,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control
                 el.Fill = (Brush)WpfUtil.FindResource("0LightBackgroundBrush");
         }
 
-        private void Scroll_SizeChanged(object sender, SizeChangedEventArgs e)
+        private void ScrollViewer_SizeChanged(object sender, SizeChangedEventArgs e)
         {
             DownWidthUpdate();
         }

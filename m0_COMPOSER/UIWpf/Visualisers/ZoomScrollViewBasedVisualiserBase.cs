@@ -1962,7 +1962,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             {
                 foreach (IEdge e in baseVertex.GetAll(false, "Event:"))
                     if (GraphUtil.ExistQueryOut(e.To, "$Is", "NoteEvent"))
-                        //if(ApplyFilter_Down(e.To))
+                        if(ApplyFilter_Down(e.To))
                             AddItem_Down(e, selectedVertexes, false, true);
             }
             else
