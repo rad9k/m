@@ -1592,7 +1592,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
         protected void Draw_Down()
         {
-            if (!HasDown || DownDecorator == null)
+            if (!HasDown || DownDecorator == null || Height_Down == 0)
                 return;            
             
             Down.Children.Clear();
@@ -1833,6 +1833,9 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
         protected void AddItem_Down(IEdge itemEdge, List<IVertex> selectedVertexes, bool isUpdate, bool isNoteEvent)
         {
+            if (Height_Down == 0)
+                return;
+
             IVertex itemEventVertex = itemEdge.To;
 
             bool dummy = false;
