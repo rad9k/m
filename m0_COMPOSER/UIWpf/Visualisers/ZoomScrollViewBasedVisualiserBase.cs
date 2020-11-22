@@ -464,7 +464,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
         }
 
         protected void DrawMain()
-        {
+        {            
             Main.Children.Clear();
 
             SelectionArea = new SelectionArea(Main);
@@ -1439,6 +1439,24 @@ namespace m0_COMPOSER.UIWpf.Visualisers
         /////////////// DOWN START /////////////////////////////////////////////////////////
         ////////////////////////////////////////////////////////////////////////////////////        
 
+        protected bool ApplyFilter_Down(IVertex baseVertex)
+        {
+            AxisSegment s;
+
+            if (VerticalAD.Selection == null)
+                return true;
+
+            s = (AxisSegment)VerticalAD.Selection;
+
+            IVertex noteVertex = s.BaseVertex;
+
+            if (baseVertex.Get(false, @"Note:") == noteVertex.Get(false, @"Note:")
+                && baseVertex.Get(false, @"Octave:") == noteVertex.Get(false, @"Octave:"))
+                return true;
+
+            return false;
+        }        
+
         protected Point GetDownContentMousePosition(MouseButtonEventArgs e)
         {
             return e.GetPosition(Down);
@@ -1500,6 +1518,13 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             Down.Loaded += Down_Loaded;
 
             ZoomScrollView.SetDownContent((FrameworkElement)DownDecorator, Down);
+
+            VerticalAD.SelectionChanged += VerticalAD_SelectionChanged_Down;
+        }
+
+        private void VerticalAD_SelectionChanged_Down(object sender, EventArgs e)
+        {
+            Draw_Down();
         }
 
         protected void ResetDown()
@@ -1568,8 +1593,8 @@ namespace m0_COMPOSER.UIWpf.Visualisers
         protected void Draw_Down()
         {
             if (!HasDown || DownDecorator == null)
-                return;
-
+                return;            
+            
             Down.Children.Clear();
 
             SelectionArea_Down = new SelectionArea(Down);
@@ -1937,7 +1962,8 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             {
                 foreach (IEdge e in baseVertex.GetAll(false, "Event:"))
                     if (GraphUtil.ExistQueryOut(e.To, "$Is", "NoteEvent"))
-                        AddItem_Down(e, selectedVertexes, false, true);
+                        //if(ApplyFilter_Down(e.To))
+                            AddItem_Down(e, selectedVertexes, false, true);
             }
             else
             {
