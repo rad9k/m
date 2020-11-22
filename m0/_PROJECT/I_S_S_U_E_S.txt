@@ -1,5 +1,7 @@
 ﻿!!!!!!!!!!!!!!!!!!!!!!!!!!!!! TO DO:
 
+94. initial m0 files seems to be to big and contain too much
+
 ??????
 
 59. copy $Empty? [11] 

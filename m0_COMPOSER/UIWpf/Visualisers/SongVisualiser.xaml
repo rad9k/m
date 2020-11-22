@@ -10,6 +10,37 @@
     <DockPanel>
         <ToolBarTray DockPanel.Dock="Top">
             <ToolBar>
+                <Button Name="RewindButton" ToolTip="Rewind" Click="RewindButton_Click">
+                    <StackPanel Orientation="Horizontal">
+                        <Image RenderOptions.BitmapScalingMode="HighQuality" Source="pack://application:,,/m0;Component/_resources/basic/rewind.png" Width="15" Height="15"/>
+                        <TextBlock Margin="3,0,0,0">Rewind</TextBlock>
+                    </StackPanel>
+                </Button>
+                <ToggleButton Name="PlayButton" ToolTip="Play" Click="PlayButton_Click">
+                    <StackPanel Orientation="Horizontal">
+                        <Image RenderOptions.BitmapScalingMode="HighQuality" Source="pack://application:,,/m0;Component/_resources/basic/play.png" Width="15" Height="15"/>
+                        <TextBlock Margin="3,0,0,0">Play</TextBlock>
+                    </StackPanel>
+                </ToggleButton>
+                <ToggleButton Name="RecordButton" ToolTip="Record" Click="RecordButton_Click">
+                    <StackPanel Orientation="Horizontal">
+                        <Image RenderOptions.BitmapScalingMode="HighQuality" Source="pack://application:,,/m0;Component/_resources/basic/record.png" Width="15" Height="15"/>
+                        <TextBlock Margin="3,0,0,0">Record</TextBlock>
+                    </StackPanel>
+                </ToggleButton>
+                <Button Name="StopButton" ToolTip="Stop" Click="StopButton_Click">
+                    <StackPanel Orientation="Horizontal">
+                        <Image RenderOptions.BitmapScalingMode="HighQuality" Source="pack://application:,,/m0;Component/_resources/basic/stop.png" Width="15" Height="15"/>
+                        <TextBlock Margin="3,0,0,0">Stop</TextBlock>
+                    </StackPanel>
+                </Button>
+                <ToggleButton Name="RepeatButton" ToolTip="Repeat" Click="RepeatButton_Click">
+                    <StackPanel Orientation="Horizontal">
+                        <Image RenderOptions.BitmapScalingMode="HighQuality" Source="pack://application:,,/m0;Component/_resources/basic/repeat.png" Width="15" Height="15"/>
+                        <TextBlock Margin="3,0,0,0">Repeat</TextBlock>
+                    </StackPanel>
+                </ToggleButton>
+                <Separator/>
                 <ToggleButton Name="PenButton_Instance" ToolTip="Add new note" Click="PenButton_Click">
                     <StackPanel Orientation="Horizontal">
                         <Image RenderOptions.BitmapScalingMode="HighQuality" Source="pack://application:,,/m0;Component/_resources/basic/pen.png" Width="15" Height="15"/>
@@ -28,6 +59,12 @@
                         <TextBlock Margin="3,0,0,0">Erase</TextBlock>
                     </StackPanel>
                 </ToggleButton>
+                <Button Name="TruncateButton_Instance" ToolTip="Truncate the sequence length" Click="TruncateButton_Click">
+                    <StackPanel Orientation="Horizontal">
+                        <Image RenderOptions.BitmapScalingMode="HighQuality" Source="pack://application:,,/m0;Component/_resources/basic/truncate.png" Width="15" Height="15"/>
+                        <TextBlock Margin="3,0,0,0">Truncate</TextBlock>
+                    </StackPanel>
+                </Button>
                 <Button Name="ExtendButton_Instance" ToolTip="Extend the sequence length" Click="ExtendButton_Click">
                     <StackPanel Orientation="Horizontal">
                         <Image RenderOptions.BitmapScalingMode="HighQuality" Source="pack://application:,,/m0;Component/_resources/basic/extend.png" Width="15" Height="15"/>

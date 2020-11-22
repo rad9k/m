@@ -401,6 +401,8 @@ namespace m0_SYSTEM_GENERATE.Music
             GraphUtil.AddAssociation(PitchSet, "BasedOn", PitchSet, 0, 1);
             GraphUtil.AddAggregation(PitchSet, "Pitch", Pitch, 0, -1);
 
+            PitchSet.AddEdge(r.Get(false, @"System\Meta\Base\Vertex\$DefaultOpenVisualiser"), r.Get(false, @"System\Meta\Visualiser\PitchSet"));
+
             // TIMESPANLEVEL            
 
             GraphUtil.AddInherits(TimeSpanLevel, HasLength);
@@ -484,6 +486,8 @@ namespace m0_SYSTEM_GENERATE.Music
             AddMethod(Song, "Stop", SongTypeString, "Stop", null, new TypeName[] { });
             AddMethod(Song, "Pause", SongTypeString, "Pause", null, new TypeName[] { });
             AddMethod(Song, "MoveTo", SongTypeString, "MoveTo", null, new TypeName[] { new TypeName("position", "Integer", 1, 1) });
+
+            Song.AddEdge(r.Get(false, @"System\Meta\Base\Vertex\$DefaultOpenVisualiser"), r.Get(false, @"System\Meta\Visualiser\Song"));
 
 
             // NOTEOUTPUT continuation
@@ -573,6 +577,8 @@ namespace m0_SYSTEM_GENERATE.Music
             IVertex MelodyFlow = GraphUtil.AddClass(MusicGenerator, "MelodyFlow");
             GraphUtil.AddAggregation(MelodyFlow, "Step", MelodyFlowStep, 0, -1);
 
+            MelodyFlow.AddEdge(r.Get(false, @"System\Meta\Base\Vertex\$DefaultOpenVisualiser"), r.Get(false, @"System\Meta\Visualiser\MelodyFlow"));
+
             // DRUMFLOWHIT
 
             IVertex DrumFlowHit = GraphUtil.AddClass(MusicGenerator, "DrumFlowHit");
@@ -587,8 +593,10 @@ namespace m0_SYSTEM_GENERATE.Music
 
             // DRUMFLOW
 
-            IVertex DerivedPitchSet = GraphUtil.AddClass(MusicGenerator, "DrumFlow");            
-            GraphUtil.AddAssociation(DerivedPitchSet, "DrumFlowStep", DrumFlowStep, 0, -1);
+            IVertex DrumFlow = GraphUtil.AddClass(MusicGenerator, "DrumFlow");            
+            GraphUtil.AddAssociation(DrumFlow, "DrumFlowStep", DrumFlowStep, 0, -1);
+
+            DrumFlow.AddEdge(r.Get(false, @"System\Meta\Base\Vertex\$DefaultOpenVisualiser"), r.Get(false, @"System\Meta\Visualiser\DrumFlow"));
 
             // TRIGGER
 
@@ -602,6 +610,8 @@ namespace m0_SYSTEM_GENERATE.Music
             IVertex TriggerSet = GraphUtil.AddClass(MusicGenerator, "TriggerSet");
             GraphUtil.AddInherits(TriggerSet, HasLength);
             GraphUtil.AddAggregation(TriggerSet, "Trigger", Trigger, 0, -1);
+
+            TriggerSet.AddEdge(r.Get(false, @"System\Meta\Base\Vertex\$DefaultOpenVisualiser"), r.Get(false, @"System\Meta\Visualiser\TriggerSet"));
 
             // CHORDPROGRESSION
 

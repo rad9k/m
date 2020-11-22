@@ -25,14 +25,51 @@ namespace m0_COMPOSER.UIWpf.Visualisers
     /// </summary>
     public partial class SongVisualiser : ZoomScrollViewBasedVisualiserBase
     {
-        public void InitXAMLInstances()
+        enum PlayRecordStateEnum { Stop, Play, Record}
+
+        PlayRecordStateEnum PlayRecordState;
+
+        bool isRepeat = false;
+
+        //
+        void InitXAMLInstances()
         {
             PenButton = PenButton_Instance;
             ArrowButton = ArrowButton_Instance;
             EraseButton = EraseButton_Instance;
+            TruncateButton = TruncateButton_Instance;
             ExtendButton = ExtendButton_Instance;
 
             ZoomScrollView = ZoomScrollView_Instance;
+        }
+
+        void InitSongState()
+        {
+            SetPlayRecordState(PlayRecordStateEnum.Stop);
+        }
+
+        void SetPlayRecordState(PlayRecordStateEnum toBeState)
+        {
+            switch (toBeState)
+            {
+                case PlayRecordStateEnum.Stop:
+                    PlayRecordState = PlayRecordStateEnum.Stop;
+                    PlayButton.IsChecked = false;
+                    RecordButton.IsChecked = false;
+                    break;
+
+                case PlayRecordStateEnum.Play:
+                    PlayRecordState = PlayRecordStateEnum.Play;
+                    PlayButton.IsChecked = true;
+                    RecordButton.IsChecked = false;
+                    break;
+
+                case PlayRecordStateEnum.Record:
+                    PlayRecordState = PlayRecordStateEnum.Record;
+                    PlayButton.IsChecked = false;
+                    RecordButton.IsChecked = true;
+                    break;
+            }
         }
 
         public SongVisualiser()
@@ -42,6 +79,36 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             InitXAMLInstances();
 
             ZoomScrollViewBasedVisualiserBase_Init();
+
+            InitSongState();
+        }
+
+        private void RewindButton_Click(object sender, RoutedEventArgs e)
+        {
+            SetPlayRecordState(PlayRecordStateEnum.Stop);
+        }
+
+        private void PlayButton_Click(object sender, RoutedEventArgs e)
+        {
+            SetPlayRecordState(PlayRecordStateEnum.Play);
+        }
+
+        private void RecordButton_Click(object sender, RoutedEventArgs e)
+        {
+            SetPlayRecordState(PlayRecordStateEnum.Record);
+        }
+
+        private void StopButton_Click(object sender, RoutedEventArgs e)
+        {
+            SetPlayRecordState(PlayRecordStateEnum.Stop);
+        }
+
+        private void RepeatButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (RepeatButton.IsChecked == true)
+                isRepeat = true;
+            else
+                isRepeat = false;
         }
     }
 }
