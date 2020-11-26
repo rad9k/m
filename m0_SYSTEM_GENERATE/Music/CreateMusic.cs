@@ -131,6 +131,8 @@ namespace m0_SYSTEM_GENERATE.Music
 
             AddBaseTimeSpanStructure();
 
+            AddSongTimeSpanStructure();
+
             AddDefaultControlChangeDescription();
         }        
 
@@ -250,6 +252,19 @@ namespace m0_SYSTEM_GENERATE.Music
             sixteen.AddEdge(Music.Get(false, @"TimeSpanLevel\SubLevel"), MidiTick);            
         }
 
+        private static void AddSongTimeSpanStructure()
+        {
+            IVertex second = AddTimeSpan(Data, "Second", 1, Music.Get(false, "TimeSpanLevel"));            
+
+            IVertex minute = AddTimeSpan(Data, "Tact", 16, Music.Get(false, @"TimeSpanLevel"));
+
+            Data.AddEdge(Music.Get(false, "DefaultSongTimeSpanLevel"), minute);
+
+            IVertex sixteen = AddTimeSpan(minute, "Sixteen", 96, Music.Get(false, @"TimeSpanLevel\SubLevel"));
+
+            sixteen.AddEdge(Music.Get(false, @"TimeSpanLevel\SubLevel"), second);
+        }
+
         static void AddDefaultControlChangeDescription()
         {
             IVertex b = VertexOperations.AddInstance(Data, ControlChangeDescriptionSet);
@@ -300,6 +315,8 @@ namespace m0_SYSTEM_GENERATE.Music
             GraphUtil.AddMetaEdge(Music, "BaseTimeSpanLevel", Music.Get(false, "TimeSpanLevel"));
 
             GraphUtil.AddMetaEdge(Music, "DefaultTimeSpanLevel", Music.Get(false, "TimeSpanLevel"));
+
+            GraphUtil.AddMetaEdge(Music, "DefaultSongTimeSpanLevel", Music.Get(false, "TimeSpanLevel"));
 
             GraphUtil.AddMetaEdge(Music, "DefaultControlChangeDescriptionSet", Music.Get(false, "ControlChangeDescriptionSet"));
         }

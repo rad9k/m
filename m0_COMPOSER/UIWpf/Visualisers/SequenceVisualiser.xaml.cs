@@ -42,10 +42,16 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             InitXAMLInstances();
 
+            //
+
+            HasDown = true;
+
+            //
+
             ZoomScrollViewBasedVisualiserBase_Init();
         }
 
-        protected void UpdateVertexValues()
+        protected override void UpdateVertexValues()
         {
             IVertex r = MinusZero.Instance.root;            
 

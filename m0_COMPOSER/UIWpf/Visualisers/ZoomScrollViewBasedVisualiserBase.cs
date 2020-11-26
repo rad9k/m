@@ -180,7 +180,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             NeedToRebuildItemsDictionary = false;
         }
 
-        protected void UpdateVertexValues() { }
+        protected virtual void UpdateVertexValues() { }
 
         protected void SetMouseOverItem(IItem item)
         {
@@ -370,7 +370,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             VerticalAD.SetBaseVertex(pitchSetVertex);
 
 
-            TimeSpanAxisDecorator TimeSpanAD = new TimeSpanAxisDecorator();
+            SequenceTimeSpanAxisDecorator TimeSpanAD = new SequenceTimeSpanAxisDecorator();
             TimeSpanAD.BoldLineCount = 4;
 
             HorizontalAD = TimeSpanAD;
@@ -2368,9 +2368,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
         }
 
         public void ZoomScrollViewBasedVisualiserBase_Init()
-        {            
-            HasDown = true;
-
+        {                        
             MinusZero mz = MinusZero.Instance;
 
             BaseEdgeToVertex = mz.root.Get(false, @"System\Lib\Music\Class:Sequence");
@@ -2411,6 +2409,9 @@ namespace m0_COMPOSER.UIWpf.Visualisers
                 ZoomScrollView.SetHost(this);
 
                 InitSequenceVisualierState();
+
+                if (HasDown == false)
+                    ZoomScrollView.DownAreaVisible = false;
             }
         }
 

@@ -76,9 +76,15 @@ namespace m0_COMPOSER.UIWpf.Visualisers
         {
             InitializeComponent();
 
-            InitXAMLInstances();
+            InitXAMLInstances();            
 
             ZoomScrollViewBasedVisualiserBase_Init();
+
+            //
+
+            this.HasDown = false;
+
+            //
 
             InitSongState();
         }
@@ -110,5 +116,28 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             else
                 isRepeat = false;
         }
+
+        //
+        // overrides on ZoomScrollViewBasedVisualiserBase
+        //
+        //
+
+        protected override void UpdateVertexValues()
+        {
+            IVertex r = MinusZero.Instance.root;
+
+            bool dummy = false;
+
+            ShowLabel = GraphUtil.GetBooleanValue(Vertex.Get(false, "ShowLabel:"), ref dummy);          
+            ShowArowLines = GraphUtil.GetBooleanValue(Vertex.Get(false, "ShowArrowLines:"), ref dummy);
+            ShowSnapLines = GraphUtil.GetBooleanValue(Vertex.Get(false, "ShowSnapLines:"), ref dummy);
+          
+
+            if (Vertex.Get(false, "SnapToGrid:") == null || Vertex.Get(false, "SnapToGrid:").Value.ToString() == "")
+                GraphUtil.ReplaceEdge(Vertex, r.Get(false, @"System\Meta\Visualiser\Sequence\SnapToGrid"), r.Get(false, @"System\Meta\Visualiser\SnapToGridEnum\'1 bar'"));
+
+            SnapToGridComboBox_SelectionChange();
+        }
     }
 }
+

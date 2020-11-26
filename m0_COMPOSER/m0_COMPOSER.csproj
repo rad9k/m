@@ -66,6 +66,7 @@
     <Compile Include="UIWpf\Visualisers\Control\Item\NoteItem.cs" />
     <Compile Include="UIWpf\Visualisers\Control\PitchSetAxisDecorator.cs" />
     <Compile Include="UIWpf\Visualisers\Control\TimeSpanAxisDecorator.cs" />
+    <Compile Include="UIWpf\Visualisers\Control\SequenceTimeSpanAxisDecorator.cs" />
     <Compile Include="UIWpf\Visualisers\Control\ZoomScrollView.xaml.cs">
       <DependentUpon>ZoomScrollView.xaml</DependentUpon>
     </Compile>
