@@ -1388,7 +1388,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
         {
             UpdateCursorShape();
 
-            WhereIsMouse = MainDownEnum.Undefined;
+            WhereIsMouse = MainDownEnum.Main;
         }
 
         ////////////////////////////////////////////////////////////////////////////////////

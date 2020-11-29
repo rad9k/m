@@ -154,18 +154,9 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             IVertex r = MinusZero.Instance.Root;
 
-            verticalSpanVertex = baseVertex.Get(false, "PitchSet:");
+            verticalSpanVertex = baseVertex;            
 
-            if (verticalSpanVertex == null)
-                if (IsDrum)
-                    verticalSpanVertex = r.Get(false, @"System\Lib\Music\Data\DefaultDrumPitchSet:");
-                else
-                    verticalSpanVertex = r.Get(false, @"System\Lib\Music\Data\DefaultPitchSet:");
-
-            horizontalSpanVertex = baseVertex.Get(false, "TimeSpan:");
-
-            if (horizontalSpanVertex == null)
-                horizontalSpanVertex = r.Get(false, @"System\Lib\Music\Data\DefaultTimeSpanLevel:");
+            horizontalSpanVertex = r.Get(false, @"System\Lib\Music\Data\DefaultRealTimeSpanLevel:");            
         }
     }
 }
