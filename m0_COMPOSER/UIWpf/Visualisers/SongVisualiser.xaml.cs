@@ -138,6 +138,35 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             SnapToGridComboBox_SelectionChange();
         }
+
+        protected override void UpdateVariablesFromBaseVertex()
+        {
+            baseVertex = Vertex.Get(false, @"BaseEdge:\To:");
+
+            if (baseVertex == null)
+                return;
+
+            if (baseVertex.Get(false, "$Is:Sequence") == null)
+            {
+                baseVertex = null;
+                return;
+            }
+
+            IVertex r = MinusZero.Instance.Root;
+
+            pitchSetVertex = baseVertex.Get(false, "PitchSet:");
+
+            if (pitchSetVertex == null)
+                if (IsDrum)
+                    pitchSetVertex = r.Get(false, @"System\Lib\Music\Data\DefaultDrumPitchSet:");
+                else
+                    pitchSetVertex = r.Get(false, @"System\Lib\Music\Data\DefaultPitchSet:");
+
+            timeSpanVertex = baseVertex.Get(false, "TimeSpan:");
+
+            if (timeSpanVertex == null)
+                timeSpanVertex = r.Get(false, @"System\Lib\Music\Data\DefaultTimeSpanLevel:");
+        }
     }
 }
 

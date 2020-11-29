@@ -273,7 +273,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             {
                 SetupLocalVariablesFromBaseVertexVertexes();
 
-                SetVertexVaribles();
+                UpdateVariablesFromBaseVertex();
             }
 
             SetAxisDecorators();
@@ -308,34 +308,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             VisuliseserDrraw_NeedsInitilisation = false;
         }
 
-        protected void SetVertexVaribles()
-        {
-            baseVertex = Vertex.Get(false, @"BaseEdge:\To:");
-
-            if (baseVertex == null)
-                return;
-
-            if (baseVertex.Get(false, "$Is:Sequence") == null)
-            {
-                baseVertex = null;
-                return;
-            }
-
-            IVertex r = MinusZero.Instance.Root;
-
-            pitchSetVertex = baseVertex.Get(false, "PitchSet:");
-
-            if (pitchSetVertex == null)
-                if (IsDrum)
-                    pitchSetVertex = r.Get(false, @"System\Lib\Music\Data\DefaultDrumPitchSet:");
-                else
-                    pitchSetVertex = r.Get(false, @"System\Lib\Music\Data\DefaultPitchSet:");
-
-            timeSpanVertex = baseVertex.Get(false, "TimeSpan:");
-
-            if (timeSpanVertex == null)
-                timeSpanVertex = r.Get(false, @"System\Lib\Music\Data\DefaultTimeSpanLevel:");
-        }
+        protected virtual void UpdateVariablesFromBaseVertex() { }
 
         protected void SetupLocalVariablesFromBaseVertexVertexes()
         {
@@ -2423,7 +2396,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             {
                 UpdateVertexValues();
 
-                SetVertexVaribles();
+                UpdateVariablesFromBaseVertex();
 
                 // SnapToGridComboBox_SelectionChange(); in UpdateVertexValues() does this;
                 // VisualiserDraw(); 
