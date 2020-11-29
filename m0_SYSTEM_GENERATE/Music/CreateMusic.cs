@@ -254,15 +254,13 @@ namespace m0_SYSTEM_GENERATE.Music
 
         private static void AddSongTimeSpanStructure()
         {
-            IVertex second = AddTimeSpan(Data, "Second", 1, Music.Get(false, "TimeSpanLevel"));            
+            IVertex minute = AddTimeSpan(Data, "Minute", 60, Music.Get(false, @"TimeSpanLevel"));
 
-            IVertex minute = AddTimeSpan(Data, "Tact", 16, Music.Get(false, @"TimeSpanLevel"));
+            IVertex second = AddTimeSpan(minute, "Second", 100, Music.Get(false, @"TimeSpanLevel\SubLevel"));
 
+            IVertex milisecond = AddTimeSpan(second, "MiliSecond", 1, Music.Get(false, @"TimeSpanLevel\SubLevel"));
+            
             Data.AddEdge(Music.Get(false, "DefaultSongTimeSpanLevel"), minute);
-
-            IVertex sixteen = AddTimeSpan(minute, "Sixteen", 96, Music.Get(false, @"TimeSpanLevel\SubLevel"));
-
-            sixteen.AddEdge(Music.Get(false, @"TimeSpanLevel\SubLevel"), second);
         }
 
         static void AddDefaultControlChangeDescription()
