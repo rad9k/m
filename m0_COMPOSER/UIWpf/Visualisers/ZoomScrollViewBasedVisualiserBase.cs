@@ -54,8 +54,8 @@ namespace m0_COMPOSER.UIWpf.Visualisers
         protected IVertex BaseEdgeToVertex;
 
         protected IVertex baseVertex;
-        protected IVertex pitchSetVertex;
-        protected IVertex timeSpanVertex;
+        protected IVertex verticalSpanVertex;
+        protected IVertex horizontalSpanVertex;
 
         protected IZoomScrollViewAxisDecorator VerticalAD;
         protected IZoomScrollViewAxisDecorator HorizontalAD;
@@ -340,7 +340,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
         {
             VerticalAD = new PitchSetAxisDecorator();
 
-            VerticalAD.SetBaseVertex(pitchSetVertex);
+            VerticalAD.SetBaseVertex(verticalSpanVertex);
 
 
             SequenceTimeSpanAxisDecorator TimeSpanAD = new SequenceTimeSpanAxisDecorator();
@@ -348,7 +348,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             HorizontalAD = TimeSpanAD;
 
-            HorizontalAD.SetBaseVertex(timeSpanVertex);
+            HorizontalAD.SetBaseVertex(horizontalSpanVertex);
 
             HorizontalAD.SetLength(Length);
 
@@ -1201,7 +1201,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             int length = GraphUtil.GetIntegerValue(itemEventVertex.Get(false, "Length:"), ref dummy);
 
-            IVertex pitchVertex = MusicUtil.GetNoteFromPitchSet(pitchSetVertex,
+            IVertex pitchVertex = MusicUtil.GetNoteFromPitchSet(verticalSpanVertex,
                 GraphUtil.GetIntegerValue(itemEventVertex.Get(false, "Octave:")),
                 GraphUtil.GetIntegerValue(itemEventVertex.Get(false, "Note:")));
 
@@ -1316,7 +1316,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             int? octave = GraphUtil.GetIntegerValue(octaveVertex);
             int? note = GraphUtil.GetIntegerValue(noteVertex);
 
-            IVertex pitchVertex = MusicUtil.GetNoteFromPitchSet(pitchSetVertex, octave, note);
+            IVertex pitchVertex = MusicUtil.GetNoteFromPitchSet(verticalSpanVertex, octave, note);
 
             string label = pitchVertex.Value.ToString();
 
