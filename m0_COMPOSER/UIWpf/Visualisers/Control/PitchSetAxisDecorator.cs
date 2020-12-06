@@ -43,7 +43,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control
             {
                 bool isSelected = false;
 
-                if (Selection == s)
+                if (Selection != null && ((AxisSegment)Selection).BaseVertex == s.BaseVertex)
                     isSelected = true;
 
                 TextBlock t = new TextBlock();

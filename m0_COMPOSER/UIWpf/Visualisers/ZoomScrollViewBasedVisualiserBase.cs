@@ -338,20 +338,24 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
         protected void SetAxisDecorators()
         {
-            VerticalAD = new PitchSetAxisDecorator();
+            if (VerticalAD == null)
+            {
+                VerticalAD = new PitchSetAxisDecorator();
 
-            VerticalAD.SetBaseVertex(verticalSpanVertex);
+                VerticalAD.SetBaseVertex(verticalSpanVertex);
+            }
 
+            if (HorizontalAD == null)
+            {
+                SequenceTimeSpanAxisDecorator TimeSpanAD = new SequenceTimeSpanAxisDecorator();
+                TimeSpanAD.BoldLineCount = 4;
 
-            SequenceTimeSpanAxisDecorator TimeSpanAD = new SequenceTimeSpanAxisDecorator();
-            TimeSpanAD.BoldLineCount = 4;
+                HorizontalAD = TimeSpanAD;
 
-            HorizontalAD = TimeSpanAD;
+                HorizontalAD.SetBaseVertex(horizontalSpanVertex);
 
-            HorizontalAD.SetBaseVertex(horizontalSpanVertex);
-
-            HorizontalAD.SetLength(Length);
-
+                HorizontalAD.SetLength(Length);
+            }
 
             ZoomScrollView.SetVerticalAxisDecorator(VerticalAD);
 
