@@ -159,9 +159,17 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control
 
         private void VerticalZoomSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
+            double half = (ScrollViewer.ActualHeight / 2);
+
+            double scrollBarPosAbstract = (this.ScrollViewer.VerticalOffset + half) / ((FrameworkElement)ScrollViewer.Content).Height;
+
             VerticalAxisDecorator.SetZoomFactor(VerticalZoomSlider.Value);
 
             Host.VisualiserDraw();
+
+            this.ScrollViewer.VerticalOffset = (scrollBarPosAbstract * ((FrameworkElement)ScrollViewer.Content).Height) + half;
+
+            UpdateScrollPositions();
         }
 
         void InitializeLocalControlVariables()
@@ -201,6 +209,16 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control
         double VerticalOffset;
 
         private void ScrollViewer_ScrollChanged(object sender, ScrollChangedEventArgs e)
+        {
+            UpdateScrollPositions();
+        }
+
+        private void UpdateHorizontalScroll(double newValue)
+        {
+
+        }
+
+        private void UpdateScrollPositions()
         {
             if (HorizontalOffset != this.ScrollViewer.HorizontalOffset)
             {
