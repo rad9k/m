@@ -152,14 +152,20 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control
 
         private void HorizontalZoomSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
+            double half = ScrollViewer.ActualWidth / 2;
+
+            double scrollBarPosAbstract = (this.ScrollViewer.HorizontalOffset + half) / ((FrameworkElement)ScrollViewer.Content).Width;
+
             HorizontalAxisDecorator.SetZoomFactor(HorizontalZoomSlider.Value);
 
             Host.VisualiserDraw();
+
+            SetHorizontalScrollPosition((scrollBarPosAbstract * ((FrameworkElement)ScrollViewer.Content).Width) - half);
         }
 
         private void VerticalZoomSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
-            double half = (ScrollViewer.ActualHeight / 2);
+            double half =  ScrollViewer.ActualHeight / 2;
 
             double scrollBarPosAbstract = (this.ScrollViewer.VerticalOffset + half) / ((FrameworkElement)ScrollViewer.Content).Height;
 
@@ -167,9 +173,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control
 
             Host.VisualiserDraw();
 
-            this.ScrollViewer.VerticalOffset = (scrollBarPosAbstract * ((FrameworkElement)ScrollViewer.Content).Height) + half;
-
-            UpdateScrollPositions();
+            SetVerticalScrollPosition((scrollBarPosAbstract * ((FrameworkElement)ScrollViewer.Content).Height) - half);            
         }
 
         void InitializeLocalControlVariables()
@@ -213,9 +217,18 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control
             UpdateScrollPositions();
         }
 
-        private void UpdateHorizontalScroll(double newValue)
+        private void SetHorizontalScrollPosition(double newValue)
         {
+            this.ScrollViewer.ScrollToHorizontalOffset(newValue);
 
+            HorizontalOffset = this.ScrollViewer.HorizontalOffset;
+        }
+
+        private void SetVerticalScrollPosition(double newValue)
+        {
+            this.ScrollViewer.ScrollToVerticalOffset(newValue);
+
+            VerticalOffset = this.ScrollViewer.VerticalOffset;
         }
 
         private void UpdateScrollPositions()
