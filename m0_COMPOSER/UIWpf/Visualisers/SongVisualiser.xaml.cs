@@ -8,6 +8,8 @@ using m0.Util;
 using m0.ZeroTypes;
 using m0.ZeroUML;
 using m0_COMPOSER.Lib;
+using m0_COMPOSER.Midi;
+using m0_COMPOSER.Base;
 using m0_COMPOSER.UIWpf.Visualisers.Control;
 using m0_COMPOSER.UIWpf.Visualisers.Control.Item;
 using System;
@@ -31,6 +33,10 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
         bool isRepeat = false;
 
+        int Position;
+
+        IVertex postionAttribute;
+
         //
         void InitXAMLInstances()
         {
@@ -43,9 +49,14 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             ZoomScrollView = ZoomScrollView_Instance;
         }
 
+        void SetPosition(int newPosition)
+        {
+            GraphUtil.SetVertexValue(Vertex, postionAttribute, newPosition);            
+        }
+
         void InitSongState()
         {
-            SetPlayRecordState(PlayRecordStateEnum.Stop);
+            SetPlayRecordState(PlayRecordStateEnum.Stop);            
         }
 
         void SetPlayRecordState(PlayRecordStateEnum toBeState)
@@ -72,9 +83,18 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             }
         }
 
+        void SetupHelperVariables()
+        {
+            IVertex r = MinusZero.Instance.root;
+
+            postionAttribute = r.Get(false, @"System\Lib\Music\Song\Position");            
+        }
+
         public SongVisualiser()
         {
             InitializeComponent();
+
+            SetupHelperVariables();
 
             InitXAMLInstances();            
 
@@ -117,6 +137,11 @@ namespace m0_COMPOSER.UIWpf.Visualisers
                 isRepeat = false;
         }
 
+        void InitializeSongVertex()
+        {
+            SetPosition(0);
+        }
+
         //
         // overrides on ZoomScrollViewBasedVisualiserBase
         //
@@ -137,6 +162,8 @@ namespace m0_COMPOSER.UIWpf.Visualisers
                 GraphUtil.ReplaceEdge(Vertex, r.Get(false, @"System\Meta\Visualiser\Sequence\SnapToGrid"), r.Get(false, @"System\Meta\Visualiser\SnapToGridEnum\'1 bar'"));
 
             SnapToGridComboBox_SelectionChange();
+
+            InitializeSongVertex();
         }
 
         protected override void UpdateVariablesFromBaseVertex()
@@ -157,6 +184,62 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             verticalSpanVertex = baseVertex;            
 
             horizontalSpanVertex = r.Get(false, @"System\Lib\Music\Data\DefaultRealTimeSpanLevel:");            
+        }
+
+        protected override void SetAxisDecorators()
+        {
+            if (VerticalAD == null)
+            {
+                VerticalAD = new PitchSetAxisDecorator();
+
+                VerticalAD.SetBaseVertex(verticalSpanVertex);
+            }
+
+            if (HorizontalAD == null)
+            {
+                RealTimeSpanAxisDecorator TimeSpanAD = new RealTimeSpanAxisDecorator();                
+
+                HorizontalAD = TimeSpanAD;
+
+                HorizontalAD.SetBaseVertex(horizontalSpanVertex);
+
+                HorizontalAD.SetLength(Length);
+            }
+
+            ZoomScrollView.SetVerticalAxisDecorator(VerticalAD);
+
+            ZoomScrollView.SetHorizontalAxisDecorator(HorizontalAD);
+        }
+
+        protected override void SetupLocalVariablesFromBaseVertexVertexes()
+        {
+            RealTimeTime t = new RealTimeTime();
+
+            t.Minute = 155;
+            t.Second = 44;
+            t.Milisecond = 33;
+
+            t.CombinedRealTime = 1665544;
+
+            MusicTimeTime m= t.GetMusicTimeTime(150);
+
+            if (baseVertex.Get(false, "Length:") != null)
+                ExtendTimeLength = (int)GraphUtil.GetIntegerValue(baseVertex.Get(false, "ExtendTimeLength:"));
+            else
+                ExtendTimeLength = 96 * 16; // default
+
+            if (baseVertex.Get(false, "Length:") != null)
+                Length = (int)GraphUtil.GetIntegerValue(baseVertex.Get(false, "Length:"));
+            else
+                Length = ExtendTimeLength;
+
+
+            bool dummy = false;
+
+            IsDrum = GraphUtil.GetBooleanValue(baseVertex.Get(false, "IsDrum:"), ref dummy);
+
+            if (IsDrum)
+                IsCurrentPenItemCenter = true;
         }
     }
 }

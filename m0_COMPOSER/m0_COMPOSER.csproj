@@ -55,6 +55,8 @@
     <Compile Include="Lib\MusicUtil.cs" />
     <Compile Include="Lib\Song.cs" />
     <Compile Include="Midi\MidiLib.cs" />
+    <Compile Include="Base\MusicTimeTime.cs" />
+    <Compile Include="Base\RealTimeTime.cs" />
     <Compile Include="Midi\WinmmMidiLib.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -65,8 +67,8 @@
     <Compile Include="UIWpf\Visualisers\Control\LineStyle.cs" />
     <Compile Include="UIWpf\Visualisers\Control\Item\NoteItem.cs" />
     <Compile Include="UIWpf\Visualisers\Control\PitchSetAxisDecorator.cs" />
-    <Compile Include="UIWpf\Visualisers\Control\TimeSpanAxisDecorator.cs" />
-    <Compile Include="UIWpf\Visualisers\Control\SequenceTimeSpanAxisDecorator.cs" />
+    <Compile Include="UIWpf\Visualisers\Control\RealTimeSpanAxisDecorator.cs" />
+    <Compile Include="UIWpf\Visualisers\Control\MusicTimeSpanAxisDecorator.cs" />
     <Compile Include="UIWpf\Visualisers\Control\ZoomScrollView.xaml.cs">
       <DependentUpon>ZoomScrollView.xaml</DependentUpon>
     </Compile>

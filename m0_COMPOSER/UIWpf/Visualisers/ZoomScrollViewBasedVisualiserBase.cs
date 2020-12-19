@@ -310,57 +310,14 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
         protected virtual void UpdateVariablesFromBaseVertex() { }
 
-        protected void SetupLocalVariablesFromBaseVertexVertexes()
-        {
-            if (baseVertex.Get(false, "Length:") != null)
-                ExtendTimeLength = (int)GraphUtil.GetIntegerValue(baseVertex.Get(false, "ExtendTimeLength:"));
-            else
-                ExtendTimeLength = 96 * 16; // default
-
-            if (baseVertex.Get(false, "Length:") != null)
-                Length = (int)GraphUtil.GetIntegerValue(baseVertex.Get(false, "Length:"));
-            else
-                Length = ExtendTimeLength;
-
-
-            bool dummy = false;
-
-            IsDrum = GraphUtil.GetBooleanValue(baseVertex.Get(false, "IsDrum:"), ref dummy);
-
-            if (IsDrum)
-                IsCurrentPenItemCenter = true;
-        }
+        protected virtual void SetupLocalVariablesFromBaseVertexVertexes() { }
 
         protected void SaveLength()
         {
             GraphUtil.SetVertexValue(baseVertex, BaseEdgeToVertex.Get(false, "Length"), Length);
         }
 
-        protected void SetAxisDecorators()
-        {
-            if (VerticalAD == null)
-            {
-                VerticalAD = new PitchSetAxisDecorator();
-
-                VerticalAD.SetBaseVertex(verticalSpanVertex);
-            }
-
-            if (HorizontalAD == null)
-            {
-                SequenceTimeSpanAxisDecorator TimeSpanAD = new SequenceTimeSpanAxisDecorator();
-                TimeSpanAD.BoldLineCount = 4;
-
-                HorizontalAD = TimeSpanAD;
-
-                HorizontalAD.SetBaseVertex(horizontalSpanVertex);
-
-                HorizontalAD.SetLength(Length);
-            }
-
-            ZoomScrollView.SetVerticalAxisDecorator(VerticalAD);
-
-            ZoomScrollView.SetHorizontalAxisDecorator(HorizontalAD);
-        }
+        protected virtual void SetAxisDecorators() { }        
 
         protected void CreateMain()
         {

@@ -129,9 +129,9 @@ namespace m0_SYSTEM_GENERATE.Music
 
             AddBaseDrumSet();
 
-            AddBaseTimeSpanStructure();
+            AddMusicTimeSpanStructure();
 
-            AddSongTimeSpanStructure();
+            AddRealTimeSpanStructure();
 
             AddDefaultControlChangeDescription();
         }        
@@ -237,7 +237,7 @@ namespace m0_SYSTEM_GENERATE.Music
             return v;
         }
 
-        private static void AddBaseTimeSpanStructure()
+        private static void AddMusicTimeSpanStructure()
         {
             IVertex MidiTick = AddTimeSpan(Data, "MidiTick", 1, Music.Get(false, "TimeSpanLevel"));
 
@@ -252,7 +252,7 @@ namespace m0_SYSTEM_GENERATE.Music
             sixteen.AddEdge(Music.Get(false, @"TimeSpanLevel\SubLevel"), MidiTick);            
         }
 
-        private static void AddSongTimeSpanStructure()
+        private static void AddRealTimeSpanStructure()
         {
             IVertex minute = AddTimeSpan(Data, "Minute", 60, Music.Get(false, @"TimeSpanLevel"));
 

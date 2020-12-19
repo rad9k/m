@@ -98,5 +98,51 @@ namespace m0_COMPOSER.UIWpf.Visualisers
                 horizontalSpanVertex = r.Get(false, @"System\Lib\Music\Data\DefaultMusicTimeSpanLevel:");
         }
 
+        protected override void SetAxisDecorators()
+        {
+            if (VerticalAD == null)
+            {
+                VerticalAD = new PitchSetAxisDecorator();
+
+                VerticalAD.SetBaseVertex(verticalSpanVertex);
+            }
+
+            if (HorizontalAD == null)
+            {
+                MusicTimeSpanAxisDecorator TimeSpanAD = new MusicTimeSpanAxisDecorator();
+                TimeSpanAD.BoldLineCount = 4;
+
+                HorizontalAD = TimeSpanAD;
+
+                HorizontalAD.SetBaseVertex(horizontalSpanVertex);
+
+                HorizontalAD.SetLength(Length);
+            }
+
+            ZoomScrollView.SetVerticalAxisDecorator(VerticalAD);
+
+            ZoomScrollView.SetHorizontalAxisDecorator(HorizontalAD);
+        }
+
+        protected override void SetupLocalVariablesFromBaseVertexVertexes()
+        {
+            if (baseVertex.Get(false, "Length:") != null)
+                ExtendTimeLength = (int)GraphUtil.GetIntegerValue(baseVertex.Get(false, "ExtendTimeLength:"));
+            else
+                ExtendTimeLength = 96 * 16; // default
+
+            if (baseVertex.Get(false, "Length:") != null)
+                Length = (int)GraphUtil.GetIntegerValue(baseVertex.Get(false, "Length:"));
+            else
+                Length = ExtendTimeLength;
+
+
+            bool dummy = false;
+
+            IsDrum = GraphUtil.GetBooleanValue(baseVertex.Get(false, "IsDrum:"), ref dummy);
+
+            if (IsDrum)
+                IsCurrentPenItemCenter = true;
+        }
     }
 }

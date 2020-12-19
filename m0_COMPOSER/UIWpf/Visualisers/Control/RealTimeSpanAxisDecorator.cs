@@ -14,7 +14,7 @@ using System.Windows.Media;
 
 namespace m0_COMPOSER.UIWpf.Visualisers.Control
 {
-    class TimeSpanAxisDecorator : Canvas, IZoomScrollViewAxisDecorator
+    class RealTimeSpanAxisDecorator : Canvas, IZoomScrollViewAxisDecorator
     {
         public Size Size { get; set; }
         public List<AxisSegment> Segments { get; set; }
