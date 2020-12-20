@@ -1,0 +1,34 @@
+﻿using m0.Foundation;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace m0_COMPOSER.Base
+{
+    public class MusicTime
+    {   
+        public Dictionary<IVertex, int> GetByTimeSpan(IVertex timeSpan)
+        {
+            return null;
+        }
+
+        public int Combined { get; set; }
+
+        public RealTime GetRealTime(double bpm)
+        {
+            double beats = ((double)Combined) / (Midi.Standard.MidiTicksPerSixteen * 4);
+
+            double minutes = 
+            return null;
+        }
+
+        public void SetRealTime(double bpm, RealTime realTime)
+        {
+
+        }
+
+
+    }
+}

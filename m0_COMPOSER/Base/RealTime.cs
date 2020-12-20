@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace m0_COMPOSER.Base
 {
-    public class RealTimeTime
+    public class RealTime
     {
         public int Minute { get; set; }
 
@@ -33,12 +33,31 @@ namespace m0_COMPOSER.Base
             }
         }
 
-        public MusicTimeTime GetMusicTimeTime(double bpm)
+        public double Minutes
+        {
+            get
+            {
+                return Minute + (Second / 60) + (Milisecond / (100*60));
+            }
+
+            set
+            {
+                int MilisecondsSeconds = (int)(value % (60 * 100));
+
+                Minute = (int) (value - MilisecondsSeconds) / (60 * 100);
+
+                Milisecond = MilisecondsSeconds % 100;
+
+                Second = (MilisecondsSeconds - Milisecond) / 60;
+            }
+        }
+
+        public MusicTime GetMusicTime(double bpm)
         {
             return null;
         }
 
-        public void SetMusicTimeTime(double bpm, MusicTimeTime musicTime)
+        public void SetMusicTime(double bpm, MusicTime musicTime)
         {
 
         }
