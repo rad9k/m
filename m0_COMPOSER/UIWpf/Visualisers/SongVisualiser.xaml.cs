@@ -213,15 +213,15 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
         protected override void SetupLocalVariablesFromBaseVertexVertexes()
         {
-            RealTime t = new RealTime();
+            MusicTime mt = new MusicTime();
 
-            t.Minute = 155;
-            t.Second = 44;
-            t.Milisecond = 33;
+            mt.Combined = 120 * 4 * 96;
 
-            t.CombinedRealTime = 1665544;
+            RealTime rt = mt.GetRealTime(120);
 
-            MusicTime m= t.GetMusicTimeTime(150);
+            rt.Minutes = 0.5;
+
+            rt.Minutes = 0.53;
 
             if (baseVertex.Get(false, "Length:") != null)
                 ExtendTimeLength = (int)GraphUtil.GetIntegerValue(baseVertex.Get(false, "ExtendTimeLength:"));

@@ -20,8 +20,13 @@ namespace m0_COMPOSER.Base
         {
             double beats = ((double)Combined) / (Midi.Standard.MidiTicksPerSixteen * 4);
 
-            double minutes = 
-            return null;
+            double minutes = beats / bpm;
+
+            RealTime rt = new RealTime();
+
+            rt.Minutes = minutes;
+
+            return rt;
         }
 
         public void SetRealTime(double bpm, RealTime realTime)

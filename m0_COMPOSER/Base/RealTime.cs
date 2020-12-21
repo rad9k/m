@@ -42,13 +42,19 @@ namespace m0_COMPOSER.Base
 
             set
             {
-                int MilisecondsSeconds = (int)(value % (60 * 100));
+                Minute = (int)Math.Floor(value);
 
-                Minute = (int) (value - MilisecondsSeconds) / (60 * 100);
+                double rest = value - Minute;
 
-                Milisecond = MilisecondsSeconds % 100;
+                rest = rest * 60;
 
-                Second = (MilisecondsSeconds - Milisecond) / 60;
+                Second = (int)Math.Floor(rest);
+
+                rest = rest - Second;
+
+                rest = rest * 100;
+
+                Milisecond = (int)rest;
             }
         }
 
