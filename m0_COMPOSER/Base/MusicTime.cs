@@ -16,9 +16,11 @@ namespace m0_COMPOSER.Base
 
         public int Combined { get; set; }
 
+        static int TicksPerBeat = Midi.Standard.MidiTicksPerSixteen * 4;
+
         public RealTime GetRealTime(double bpm)
         {
-            double beats = ((double)Combined) / (Midi.Standard.MidiTicksPerSixteen * 4);
+            double beats = ((double)Combined) / TicksPerBeat;
 
             double minutes = beats / bpm;
 
@@ -31,9 +33,9 @@ namespace m0_COMPOSER.Base
 
         public void SetRealTime(double bpm, RealTime realTime)
         {
+            int beats = (int) (realTime.Minutes * bpm);
 
+            Combined = beats * TicksPerBeat;
         }
-
-
     }
 }

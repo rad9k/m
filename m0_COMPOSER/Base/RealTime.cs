@@ -60,12 +60,16 @@ namespace m0_COMPOSER.Base
 
         public MusicTime GetMusicTime(double bpm)
         {
-            return null;
+            MusicTime mt = new MusicTime();
+
+            mt.Combined = (int) (bpm * Minutes);
+
+            return mt;
         }
 
         public void SetMusicTime(double bpm, MusicTime musicTime)
         {
-
+            Minutes = musicTime.Combined / bpm;
         }
 
     }

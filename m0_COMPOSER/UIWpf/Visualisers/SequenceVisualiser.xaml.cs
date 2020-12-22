@@ -129,12 +129,14 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             if (baseVertex.Get(false, "Length:") != null)
                 ExtendTimeLength = (int)GraphUtil.GetIntegerValue(baseVertex.Get(false, "ExtendTimeLength:"));
             else
-                ExtendTimeLength = 96 * 16; // default
+                ExtendTimeLength = Midi.Standard.MidiTicksPerSixteen * 16; // default
 
             if (baseVertex.Get(false, "Length:") != null)
                 Length = (int)GraphUtil.GetIntegerValue(baseVertex.Get(false, "Length:"));
             else
                 Length = ExtendTimeLength;
+
+            SaveLength();
 
 
             bool dummy = false;
