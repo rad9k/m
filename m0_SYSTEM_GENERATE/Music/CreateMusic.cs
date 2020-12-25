@@ -328,6 +328,7 @@ namespace m0_SYSTEM_GENERATE.Music
         static IVertex String = r.Get(false, @"System\Meta\ZeroTypes\String");
         static IVertex Integer = r.Get(false, @"System\Meta\ZeroTypes\Integer");
         static IVertex Boolean = r.Get(false, @"System\Meta\ZeroTypes\Boolean");
+        static IVertex Float = r.Get(false, @"System\Meta\ZeroTypes\Float");
         static IVertex Color = r.Get(false, @"System\Meta\ZeroTypes\Color");
 
         static IVertex Pitch;
@@ -489,6 +490,7 @@ namespace m0_SYSTEM_GENERATE.Music
 
             GraphUtil.AddInherits(Song, HasLength);
 
+            GraphUtil.AddAttribute(Song, "ExtendTimeLength", Float, 1, 1, 1);
             //GraphUtil.AddAttribute(Song, "Name", String, 0, 1);
             GraphUtil.AddAggregation(Song, "Track", Track, 0, -1);
             GraphUtil.AddAttribute(Song, "Input", NoteInput, 0, 1);
