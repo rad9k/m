@@ -270,6 +270,16 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             VisualiserDraw();
         }
+
+        protected void GlueButton_Click(object sender, RoutedEventArgs e)
+        {
+            SetCursorMode(CursorStateEnum.Glue);
+        }
+
+        protected void ScissorsButton_Click(object sender, RoutedEventArgs e)
+        {
+            SetCursorMode(CursorStateEnum.Scissors);
+        }
     }
 }
 

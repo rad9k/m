@@ -41,24 +41,37 @@
                     </StackPanel>
                 </ToggleButton>
                 <Separator/>
-                <ToggleButton Name="PenButton_Instance" ToolTip="Add new note" Click="PenButton_Click">
+                <ToggleButton Name="PenButton_Instance" ToolTip="Add sequence" Click="PenButton_Click">
                     <StackPanel Orientation="Horizontal">
                         <Image RenderOptions.BitmapScalingMode="HighQuality" Source="pack://application:,,/m0;Component/_resources/basic/pen.png" Width="15" Height="15"/>
                         <TextBlock Margin="3,0,0,0">New</TextBlock>
                     </StackPanel>
                 </ToggleButton>
-                <ToggleButton Name="ArrowButton_Instance" ToolTip="Select multiple notes" Click="ArrowButton_Click">
+                <ToggleButton Name="ArrowButton_Instance" ToolTip="Select multiple sequences" Click="ArrowButton_Click">
                     <StackPanel Orientation="Horizontal">
                         <Image RenderOptions.BitmapScalingMode="HighQuality" Source="pack://application:,,/m0;Component/_resources/basic/pointer.png" Width="15" Height="15"/>
                         <TextBlock Margin="3,0,0,0">Select</TextBlock>
                     </StackPanel>
                 </ToggleButton>
-                <ToggleButton Name="EraseButton_Instance" ToolTip="Erase note" Click="EraseButton_Click">
+                <ToggleButton Name="EraseButton_Instance" ToolTip="Erase sequence" Click="EraseButton_Click">
                     <StackPanel Orientation="Horizontal">
                         <Image RenderOptions.BitmapScalingMode="HighQuality" Source="pack://application:,,/m0;Component/_resources/basic/eraser.png" Width="15" Height="15"/>
                         <TextBlock Margin="3,0,0,0">Erase</TextBlock>
                     </StackPanel>
                 </ToggleButton>
+                <ToggleButton Name="GlueButton_Instance" ToolTip="Merge sequences" Click="GlueButton_Click">
+                    <StackPanel Orientation="Horizontal">
+                        <Image RenderOptions.BitmapScalingMode="HighQuality" Source="pack://application:,,/m0;Component/_resources/basic/glue.png" Width="15" Height="15"/>
+                        <TextBlock Margin="3,0,0,0">Merge</TextBlock>
+                    </StackPanel>
+                </ToggleButton>
+                <ToggleButton Name="ScissorsButton_Instance" ToolTip="Cut sequence" Click="ScissorsButton_Click">
+                    <StackPanel Orientation="Horizontal">
+                        <Image RenderOptions.BitmapScalingMode="HighQuality" Source="pack://application:,,/m0;Component/_resources/basic/scissors.png" Width="15" Height="15"/>
+                        <TextBlock Margin="3,0,0,0">Cut</TextBlock>
+                    </StackPanel>
+                </ToggleButton>
+                <Separator/>
                 <Button Name="TruncateButton_Instance" ToolTip="Truncate the sequence length" Click="TruncateButton_Click">
                     <StackPanel Orientation="Horizontal">
                         <Image RenderOptions.BitmapScalingMode="HighQuality" Source="pack://application:,,/m0;Component/_resources/basic/truncate.png" Width="15" Height="15"/>

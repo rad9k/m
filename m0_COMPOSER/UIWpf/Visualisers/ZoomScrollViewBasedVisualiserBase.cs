@@ -86,7 +86,9 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             ArrowDown_MoveOnItem_MouseDownAndMove,
             PenUp,
             PenDown,
-            Eraser
+            Eraser,
+            Glue,
+            Scissors
         }
 
         protected CursorStateEnum CurrentCursorState;
