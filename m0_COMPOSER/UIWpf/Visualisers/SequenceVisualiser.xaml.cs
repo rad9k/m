@@ -24,7 +24,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
     /// Interaction logic for SequenceVisualiser.xaml
     /// </summary>
     public partial class SequenceVisualiser : ZoomScrollViewBasedVisualiserBase
-    {
+    {        
         public void InitXAMLInstances()
         {
             PenButton = PenButton_Instance;
@@ -126,7 +126,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
         protected override void SetupLocalVariablesFromBaseVertexVertexes()
         {
-            if (baseVertex.Get(false, "Length:") != null)
+            if (baseVertex.Get(false, "ExtendTimeLength:") != null)
                 ExtendTimeLength = (int)GraphUtil.GetIntegerValue(baseVertex.Get(false, "ExtendTimeLength:"));
             else
                 ExtendTimeLength = Midi.Standard.MidiTicksPerSixteen * 16; // default
@@ -145,6 +145,6 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             if (IsDrum)
                 IsCurrentPenItemCenter = true;
-        }
+        }        
     }
 }

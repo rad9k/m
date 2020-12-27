@@ -2487,31 +2487,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             }
 
             VisualiserDraw();
-        }
-        protected void TruncateButton_Click(object sender, RoutedEventArgs e)
-        {
-            if ((Length - ExtendTimeLength) <= 0)
-                return;
-
-            Length -= ExtendTimeLength;
-
-            SaveLength();
-
-            HorizontalAD.SetLength(Length);
-
-            VisualiserDraw();
-        }
-
-        protected void ExtendButton_Click(object sender, RoutedEventArgs e)
-        {
-            Length += ExtendTimeLength;
-
-            SaveLength();
-
-            HorizontalAD.SetLength(Length);
-
-            VisualiserDraw();
-        }
+        }        
 
         protected void PenButton_Click(object sender, RoutedEventArgs e)
         {
@@ -2565,6 +2541,30 @@ namespace m0_COMPOSER.UIWpf.Visualisers
                 UnselectAllSelectedEdges();
             }
 
+        }
+        protected virtual void TruncateButton_Click(object sender, RoutedEventArgs e)
+        {
+            if ((Length - ExtendTimeLength) <= 0)
+                return;
+
+            Length -= ExtendTimeLength;
+
+            SaveLength();
+
+            HorizontalAD.SetLength(Length);
+
+            VisualiserDraw();
+        }
+
+        protected virtual void ExtendButton_Click(object sender, RoutedEventArgs e)
+        {
+            Length += ExtendTimeLength;
+
+            SaveLength();
+
+            HorizontalAD.SetLength(Length);
+
+            VisualiserDraw();
         }
     }
 }

@@ -35,6 +35,10 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
         int Position;
 
+        double Tempo;
+
+        protected double ExtendTimeLength_Song;
+
         IVertex postionAttribute;
 
         //
@@ -155,8 +159,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             ShowLabel = GraphUtil.GetBooleanValue(Vertex.Get(false, "ShowLabel:"), ref dummy);          
             ShowArowLines = GraphUtil.GetBooleanValue(Vertex.Get(false, "ShowArrowLines:"), ref dummy);
-            ShowSnapLines = GraphUtil.GetBooleanValue(Vertex.Get(false, "ShowSnapLines:"), ref dummy);
-          
+            ShowSnapLines = GraphUtil.GetBooleanValue(Vertex.Get(false, "ShowSnapLines:"), ref dummy);            
 
             if (Vertex.Get(false, "SnapToGrid:") == null || Vertex.Get(false, "SnapToGrid:").Value.ToString() == "")
                 GraphUtil.ReplaceEdge(Vertex, r.Get(false, @"System\Meta\Visualiser\Sequence\SnapToGrid"), r.Get(false, @"System\Meta\Visualiser\SnapToGridEnum\'1 bar'"));
@@ -211,26 +214,61 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             ZoomScrollView.SetHorizontalAxisDecorator(HorizontalAD);
         }
 
+        int GetMusicTimeFromRealTime(double minutes)
+        {
+            RealTime rt = new RealTime();
+            rt.Minutes = minutes;
+
+            return rt.GetMusicTime(Tempo).Combined;
+        }
+
         protected override void SetupLocalVariablesFromBaseVertexVertexes()
         {
-            if (baseVertex.Get(false, "Length:") != null)
-                ExtendTimeLength = (int)GraphUtil.GetIntegerValue(baseVertex.Get(false, "ExtendTimeLength:"));
+            bool dummy = false;
+
+            Tempo = GraphUtil.GetDoubleValue(baseVertex.Get(false, "Tempo:"), ref dummy);
+
+            if (baseVertex.Get(false, "ExtendTimeLength:") != null)
+                ExtendTimeLength_Song = (int)GraphUtil.GetIntegerValue(baseVertex.Get(false, "ExtendTimeLength:"));
             else
-                ExtendTimeLength = 96 * 16; // default
+                ExtendTimeLength_Song = 1; // default - 1 minute
 
             if (baseVertex.Get(false, "Length:") != null)
                 Length = (int)GraphUtil.GetIntegerValue(baseVertex.Get(false, "Length:"));
             else
-                Length = ExtendTimeLength;
+                Length = GetMusicTimeFromRealTime(ExtendTimeLength_Song);
 
-            SaveLength();
-
-            bool dummy = false;
+            SaveLength();            
 
             IsDrum = GraphUtil.GetBooleanValue(baseVertex.Get(false, "IsDrum:"), ref dummy);
 
             if (IsDrum)
                 IsCurrentPenItemCenter = true;
+        }
+
+        protected override void TruncateButton_Click(object sender, RoutedEventArgs e)
+        {
+            if ((Length - ExtendTimeLength) <= 0)
+                return;
+
+            Length -= GetMusicTimeFromRealTime(ExtendTimeLength_Song);
+
+            SaveLength();
+
+            HorizontalAD.SetLength(Length);
+
+            VisualiserDraw();
+        }
+
+        protected override void ExtendButton_Click(object sender, RoutedEventArgs e)
+        {
+            Length += GetMusicTimeFromRealTime(ExtendTimeLength_Song);
+
+            SaveLength();
+
+            HorizontalAD.SetLength(Length);
+
+            VisualiserDraw();
         }
     }
 }

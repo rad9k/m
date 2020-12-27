@@ -16,7 +16,7 @@ namespace m0_COMPOSER.Base
 
         public int Combined { get; set; }
 
-        static int TicksPerBeat = Midi.Standard.MidiTicksPerSixteen * 4;
+        public static int TicksPerBeat = Midi.Standard.MidiTicksPerSixteen * 4;
 
         public RealTime GetRealTime(double bpm)
         {

@@ -241,7 +241,7 @@ namespace m0_SYSTEM_GENERATE.Music
         {
             IVertex MidiTick = AddTimeSpan(Data, "MidiTick", 1, Music.Get(false, "TimeSpanLevel"));
 
-            Data.AddEdge(Music.Get(false, "BaseTimeSpanLevel"), MidiTick);
+            Data.AddEdge(Music.Get(false, "BaseMusicTimeSpanLevel"), MidiTick);
 
             IVertex tact = AddTimeSpan(Data, "Tact", 16, Music.Get(false, @"TimeSpanLevel"));
 
@@ -259,7 +259,9 @@ namespace m0_SYSTEM_GENERATE.Music
             IVertex second = AddTimeSpan(minute, "Second", 100, Music.Get(false, @"TimeSpanLevel\SubLevel"));
 
             IVertex milisecond = AddTimeSpan(second, "MiliSecond", 1, Music.Get(false, @"TimeSpanLevel\SubLevel"));
-            
+
+            Data.AddEdge(Music.Get(false, "BaseRealTimeSpanLevel"), milisecond);
+
             Data.AddEdge(Music.Get(false, "DefaultRealTimeSpanLevel"), minute);
         }
 
@@ -310,11 +312,13 @@ namespace m0_SYSTEM_GENERATE.Music
 
             GraphUtil.AddMetaEdge(Music, "DefaultDrumPitchSet", Music.Get(false, "PitchSet"));
 
-            GraphUtil.AddMetaEdge(Music, "BaseTimeSpanLevel", Music.Get(false, "TimeSpanLevel"));
+            GraphUtil.AddMetaEdge(Music, "BaseMusicTimeSpanLevel", Music.Get(false, "TimeSpanLevel"));
 
             GraphUtil.AddMetaEdge(Music, "DefaultMusicTimeSpanLevel", Music.Get(false, "TimeSpanLevel"));
 
             GraphUtil.AddMetaEdge(Music, "DefaultRealTimeSpanLevel", Music.Get(false, "TimeSpanLevel"));
+
+            GraphUtil.AddMetaEdge(Music, "BaseRealTimeSpanLevel", Music.Get(false, "TimeSpanLevel"));
 
             GraphUtil.AddMetaEdge(Music, "DefaultControlChangeDescriptionSet", Music.Get(false, "ControlChangeDescriptionSet"));
         }
@@ -495,7 +499,7 @@ namespace m0_SYSTEM_GENERATE.Music
             GraphUtil.AddAggregation(Song, "Track", Track, 0, -1);
             GraphUtil.AddAttribute(Song, "Input", NoteInput, 0, 1);
             GraphUtil.AddAssociation(Song, "RecordingTrack", Track, 0, 1);
-            GraphUtil.AddAttribute(Song, "Tempo", Integer, 0, 1);
+            GraphUtil.AddAttribute(Song, "Tempo", Float, 1, 1, (double)125.0);
             GraphUtil.AddAttribute(Song, "Position", Integer, 0, 1);
 
             AddMethod(Song, "Record", SongTypeString, "Record", null, new TypeName[] { });
