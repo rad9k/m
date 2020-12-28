@@ -47,6 +47,9 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             PenButton = PenButton_Instance;
             ArrowButton = ArrowButton_Instance;
             EraseButton = EraseButton_Instance;
+            GlueButton = GlueButton_Instance;
+            ScissorsButton = ScissorsButton_Instance;
+
             TruncateButton = TruncateButton_Instance;
             ExtendButton = ExtendButton_Instance;
 
@@ -97,6 +100,17 @@ namespace m0_COMPOSER.UIWpf.Visualisers
         public SongVisualiser()
         {
             InitializeComponent();
+
+            //
+
+            MinusZero mz = MinusZero.Instance;
+
+            VisualiserName = "SongVisuliser";
+
+            BaseEdgeToMetaVertex = mz.root.Get(false, @"System\Lib\Music\Class:Song");
+            VisualiserMetaVertex = mz.root.Get(false, @"System\Meta\Visualiser\Song");
+
+            //
 
             SetupHelperVariables();
 
@@ -162,7 +176,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             ShowSnapLines = GraphUtil.GetBooleanValue(Vertex.Get(false, "ShowSnapLines:"), ref dummy);            
 
             if (Vertex.Get(false, "SnapToGrid:") == null || Vertex.Get(false, "SnapToGrid:").Value.ToString() == "")
-                GraphUtil.ReplaceEdge(Vertex, r.Get(false, @"System\Meta\Visualiser\Sequence\SnapToGrid"), r.Get(false, @"System\Meta\Visualiser\SnapToGridEnum\'1 bar'"));
+                GraphUtil.ReplaceEdge(Vertex, r.Get(false, @"System\Meta\Visualiser\Song\SnapToGrid"), r.Get(false, @"System\Meta\Visualiser\SnapToGridEnum\'1 bar'"));
 
             SnapToGridComboBox_SelectionChange();
 

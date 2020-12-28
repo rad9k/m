@@ -40,6 +40,17 @@ namespace m0_COMPOSER.UIWpf.Visualisers
         {
             InitializeComponent();
 
+            //
+
+            MinusZero mz = MinusZero.Instance;
+
+            VisualiserName = "SequenceVisuliser";
+
+            BaseEdgeToMetaVertex = mz.root.Get(false, @"System\Lib\Music\Class:Sequence");
+            VisualiserMetaVertex = mz.root.Get(false, @"System\Meta\Visualiser\Sequence");
+
+            //
+
             InitXAMLInstances();
 
             //

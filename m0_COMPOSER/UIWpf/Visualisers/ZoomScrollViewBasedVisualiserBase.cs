@@ -53,7 +53,8 @@ namespace m0_COMPOSER.UIWpf.Visualisers
         protected Canvas Main;
         protected SelectionArea SelectionArea;
 
-        protected IVertex BaseEdgeToVertex;
+        protected IVertex BaseEdgeToMetaVertex;
+        protected IVertex VisualiserMetaVertex;
 
         protected IVertex baseVertex;
         protected IVertex verticalSpanVertex;
@@ -214,21 +215,30 @@ namespace m0_COMPOSER.UIWpf.Visualisers
                 case CursorStateEnum.ArrowDown_MoveOnItem_MouseDown:
                 case CursorStateEnum.ArrowDown_MoveOnItem_MouseDownAndMove:
 
-                    ArrowButton.IsChecked = true;
+                    SetChecked(ArrowButton, true);                    
 
                     HideArrowLines();
-
                     break;
 
                 case CursorStateEnum.Eraser:
 
-                    EraseButton.IsChecked = true;
+                    SetChecked(EraseButton, true);                    
                     break;
 
                 case CursorStateEnum.PenUp:
                 case CursorStateEnum.PenDown:
 
-                    PenButton.IsChecked = true;
+                    SetChecked(PenButton, true);                    
+                    break;
+
+                case CursorStateEnum.Glue:
+
+                    SetChecked(GlueButton, true);
+                    break;
+
+                case CursorStateEnum.Scissors:
+
+                    SetChecked(ScissorsButton, true);
                     break;
             }
         }
@@ -318,7 +328,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
         protected void SaveLength()
         {
-            GraphUtil.SetVertexValue(baseVertex, BaseEdgeToVertex.Get(false, "Length"), Length);
+            GraphUtil.SetVertexValue(baseVertex, BaseEdgeToMetaVertex.Get(false, "Length"), Length);
         }
 
         protected virtual void SetAxisDecorators() { }        
@@ -2305,12 +2315,12 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             CurrentSnapToGridValue = 1;
         }
 
+        protected string VisualiserName = "NAME";        
+
         public void ZoomScrollViewBasedVisualiserBase_Init()
         {                        
             MinusZero mz = MinusZero.Instance;
-
-            BaseEdgeToVertex = mz.root.Get(false, @"System\Lib\Music\Class:Sequence");
-
+            
             this.Foreground = (Brush)FindResource("0ForegroundBrush");
             this.Background = (Brush)FindResource("0BackgroundBrush");
 
@@ -2328,9 +2338,9 @@ namespace m0_COMPOSER.UIWpf.Visualisers
                 //Vertex = mz.Root.Get(false, @"System\Session\Visualisers").AddVertex(null, "TreeVisualiser" + this.GetHashCode());
 
                 Vertex = mz.CreateTempVertex();
-                Vertex.Value = "SequenceVisualiser" + this.GetHashCode();
+                Vertex.Value = VisualiserName + this.GetHashCode();
 
-                ClassVertex.AddIsClassAndAllAttributesAndAssociations(Vertex, mz.Root.Get(false, @"System\Meta\Visualiser\Sequence"));
+                ClassVertex.AddIsClassAndAllAttributesAndAssociations(Vertex, VisualiserMetaVertex);
 
                 ClassVertex.AddIsClassAndAllAttributesAndAssociations(Vertex.Get(false, "BaseEdge:"), mz.Root.Get(false, @"System\Meta\ZeroTypes\Edge"));
 
@@ -2510,14 +2520,17 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
         protected void SetChecked(ToggleButton button, bool state)
         {
-
+            if (button != null)
+                button.IsChecked = state;
         }
 
         protected void UnCheckAllCursorButtons()
         {
-            EraseButton.IsChecked = false;
-            PenButton.IsChecked = false;
-            ArrowButton.IsChecked = false;
+            SetChecked(EraseButton, false);
+            SetChecked(PenButton, false);
+            SetChecked(ArrowButton, false);
+            SetChecked(GlueButton, false);
+            SetChecked(ScissorsButton, false);
         }
 
         protected void KeyDownHandler(object sender, KeyEventArgs e)
