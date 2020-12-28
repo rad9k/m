@@ -37,6 +37,8 @@ namespace m0_COMPOSER.UIWpf.Visualisers
         protected ToggleButton PenButton;
         protected ToggleButton ArrowButton;
         protected ToggleButton EraseButton;
+        protected ToggleButton GlueButton;
+        protected ToggleButton ScissorsButton;
         protected Button TruncateButton;
         protected Button ExtendButton;
 
