@@ -42,6 +42,10 @@ namespace m0_COMPOSER.UIWpf.Visualisers
         IVertex postionAttribute;
 
         //
+
+        bool ShowToolbarNames;
+
+        //
         void InitXAMLInstances()
         {
             PenButton = PenButton_Instance;
@@ -173,7 +177,8 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             ShowLabel = GraphUtil.GetBooleanValue(Vertex.Get(false, "ShowLabel:"), ref dummy);          
             ShowArowLines = GraphUtil.GetBooleanValue(Vertex.Get(false, "ShowArrowLines:"), ref dummy);
-            ShowSnapLines = GraphUtil.GetBooleanValue(Vertex.Get(false, "ShowSnapLines:"), ref dummy);            
+            ShowSnapLines = GraphUtil.GetBooleanValue(Vertex.Get(false, "ShowSnapLines:"), ref dummy);
+            ShowToolbarNames = GraphUtil.GetBooleanValue(Vertex.Get(false, "ShowToolbarNames:"), ref dummy);
 
             if (Vertex.Get(false, "SnapToGrid:") == null || Vertex.Get(false, "SnapToGrid:").Value.ToString() == "")
                 GraphUtil.ReplaceEdge(Vertex, r.Get(false, @"System\Meta\Visualiser\Song\SnapToGrid"), r.Get(false, @"System\Meta\Visualiser\SnapToGridEnum\'1 bar'"));
@@ -181,6 +186,34 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             SnapToGridComboBox_SelectionChange();
 
             InitializeSongVertex();
+        }
+
+        protected void SetButtonComponentName(ContentControl c, string text)
+        {
+            StackPanel s = (StackPanel)c.Content;
+
+            TextBlock t = (TextBlock)s.Children[1];
+
+            t.Text = text;
+        }
+
+        protected override void ShowToolbarNames_SelectionChange()
+        {
+            if (ShowToolbarNames)
+            {
+                PenButton
+                ArrowButton = ArrowButton_Instance;
+                EraseButton = EraseButton_Instance;
+                GlueButton = GlueButton_Instance;
+                ScissorsButton = ScissorsButton_Instance;
+
+                TruncateButton = TruncateButton_Instance;
+                ExtendButton = ExtendButton_Instance;
+            }
+            else
+            {
+
+            }
         }
 
         protected override void UpdateVariablesFromBaseVertex()
