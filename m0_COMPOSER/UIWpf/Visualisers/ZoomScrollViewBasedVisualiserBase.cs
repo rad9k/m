@@ -2508,6 +2508,11 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             SetCursorMode(CursorStateEnum.ArrowUp);
         }
 
+        protected void SetChecked(ToggleButton button, bool state)
+        {
+
+        }
+
         protected void UnCheckAllCursorButtons()
         {
             EraseButton.IsChecked = false;
