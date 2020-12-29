@@ -1,5 +1,6 @@
 ﻿<my:ZoomScrollViewBasedVisualiserBase xmlns:Controls="clr-namespace:m0_COMPOSER.UIWpf.Visualisers.Control"  x:Class="m0_COMPOSER.UIWpf.Visualisers.SongVisualiser"
              xmlns:my="clr-namespace:m0_COMPOSER.UIWpf.Visualisers"
+             xmlns:m0="clr-namespace:m0.UIWpf;assembly=m0"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
@@ -85,7 +86,7 @@
                     </StackPanel>
                 </Button>
                 <Separator/>
-
+                <m0:VisualiserEditWrapper x:Name="TempoVisualiser" Width="150"/>
             </ToolBar>
         </ToolBarTray>
         <Controls:ZoomScrollView x:Name="ZoomScrollView_Instance" DownAreaVisible="True"/>

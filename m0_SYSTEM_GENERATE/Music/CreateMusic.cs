@@ -499,7 +499,7 @@ namespace m0_SYSTEM_GENERATE.Music
             GraphUtil.AddAggregation(Song, "Track", Track, 0, -1);
             GraphUtil.AddAttribute(Song, "Input", NoteInput, 0, 1);
             GraphUtil.AddAssociation(Song, "RecordingTrack", Track, 0, 1);
-            GraphUtil.AddAttribute(Song, "Tempo", Float, 1, 1, (double)125.0);
+            GraphUtil.AddAttribute(Song, "Tempo", Float, 1, 1, (double)125.0, (double)10.0, (double)250.0);
             GraphUtil.AddAttribute(Song, "Position", Integer, 0, 1);
 
             AddMethod(Song, "Record", SongTypeString, "Record", null, new TypeName[] { });

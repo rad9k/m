@@ -161,7 +161,5 @@ namespace m0.UIWpf.Visualisers
  	        throw new NotImplementedException();
         }
 
-
-
-}
+    }
 }

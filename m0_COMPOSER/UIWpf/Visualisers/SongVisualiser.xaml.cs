@@ -237,6 +237,11 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             }
         }
 
+        protected void InitialiseBaseVertexBasedVisualiserControls()
+        {
+            TempoVisualiser.BaseEdge = GraphUtil.GetQueryOutFirstEdge(baseVertex, "Tempo", null);                
+        }
+
         protected override void UpdateVariablesFromBaseVertex()
         {
             baseVertex = Vertex.Get(false, @"BaseEdge:\To:");
@@ -252,9 +257,11 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             IVertex r = MinusZero.Instance.Root;
 
-            verticalSpanVertex = baseVertex;            
+            verticalSpanVertex = baseVertex;             // .......!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-            horizontalSpanVertex = r.Get(false, @"System\Lib\Music\Data\DefaultRealTimeSpanLevel:");            
+            horizontalSpanVertex = r.Get(false, @"System\Lib\Music\Data\DefaultRealTimeSpanLevel:");
+
+            InitialiseBaseVertexBasedVisualiserControls();
         }
 
         protected override void SetAxisDecorators()
@@ -274,7 +281,9 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
                 HorizontalAD.SetBaseVertex(horizontalSpanVertex);
 
-                HorizontalAD.SetLength(Length);
+                double RealTimeLength = GetRealTimeFromMusicTime(Length);
+
+                HorizontalAD.SetLength(RealTimeLength);
             }
 
             ZoomScrollView.SetVerticalAxisDecorator(VerticalAD);
@@ -288,6 +297,15 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             rt.Minutes = minutes;
 
             return rt.GetMusicTime(Tempo).Combined;
+        }
+
+        double GetRealTimeFromMusicTime(int length)
+        {
+            MusicTime mt = new MusicTime();
+
+            mt.Combined = length;
+
+            return mt.GetRealTime(Tempo).Minutes;
         }
 
         protected override void SetupLocalVariablesFromBaseVertexVertexes()
