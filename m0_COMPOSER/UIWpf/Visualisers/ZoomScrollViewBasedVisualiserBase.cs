@@ -2378,7 +2378,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             }
         }
 
-        protected void VertexChange(object sender, VertexChangeEventArgs e)
+        protected virtual void VertexChange(object sender, VertexChangeEventArgs e)
         {
             if (VertexChangeOff)
                 return;

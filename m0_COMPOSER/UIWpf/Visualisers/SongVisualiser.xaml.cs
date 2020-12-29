@@ -185,6 +185,8 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             SnapToGridComboBox_SelectionChange();
 
+            ShowToolbarNames_SelectionChange();
+
             InitializeSongVertex();
         }
 
@@ -197,22 +199,41 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             t.Text = text;
         }
 
-        protected override void ShowToolbarNames_SelectionChange()
+        protected void ShowToolbarNames_SelectionChange()
         {
             if (ShowToolbarNames)
             {
-                PenButton
-                ArrowButton = ArrowButton_Instance;
-                EraseButton = EraseButton_Instance;
-                GlueButton = GlueButton_Instance;
-                ScissorsButton = ScissorsButton_Instance;
+                SetButtonComponentName(PenButton, "New");
+                SetButtonComponentName(ArrowButton, "Select");
+                SetButtonComponentName(EraseButton, "Erase");
+                SetButtonComponentName(GlueButton, "Merge");
+                SetButtonComponentName(ScissorsButton, "Cut");
 
-                TruncateButton = TruncateButton_Instance;
-                ExtendButton = ExtendButton_Instance;
+                SetButtonComponentName(RewindButton, "Rewind");
+                SetButtonComponentName(PlayButton, "Play");
+                SetButtonComponentName(RecordButton, "Record");
+                SetButtonComponentName(StopButton, "Stop");
+                SetButtonComponentName(RepeatButton, "Repeat");
+
+                SetButtonComponentName(TruncateButton, "Truncate");
+                SetButtonComponentName(ExtendButton, "Extend");                
             }
             else
             {
+                SetButtonComponentName(PenButton, "");
+                SetButtonComponentName(ArrowButton, "");
+                SetButtonComponentName(EraseButton, "");
+                SetButtonComponentName(GlueButton, "");
+                SetButtonComponentName(ScissorsButton, "");
 
+                SetButtonComponentName(RewindButton, "");
+                SetButtonComponentName(PlayButton, "");
+                SetButtonComponentName(RecordButton, "");
+                SetButtonComponentName(StopButton, "");
+                SetButtonComponentName(RepeatButton, "");
+
+                SetButtonComponentName(TruncateButton, "");
+                SetButtonComponentName(ExtendButton, "");
             }
         }
 
@@ -326,6 +347,17 @@ namespace m0_COMPOSER.UIWpf.Visualisers
         protected void ScissorsButton_Click(object sender, RoutedEventArgs e)
         {
             SetCursorMode(CursorStateEnum.Scissors);
+        }
+
+        protected override void VertexChange(object sender, VertexChangeEventArgs e)
+        {
+            if (VertexChangeOff)
+                return;
+
+            if ((sender == Vertex.Get(false, "ShowToolbarNames:")) && (e.Type == VertexChangeType.ValueChanged))
+                UpdateBaseEdge();
+
+            base.VertexChange(sender, e);
         }
     }
 }
