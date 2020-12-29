@@ -123,6 +123,47 @@ namespace m0.ZeroTypes
             }
         }
 
+        public static void RegisterVertexChangeListeners_allAttributes(IVertex PlatformClassVertex, VertexChange action, string[] watchList)
+        {
+            PlatformClassVertexChangeListener listener = new PlatformClassVertexChangeListener(watchList);
+            listener.PlatformClassVertex = PlatformClassVertex;
+            listener.Change += action;
+
+
+            PlatformClassVertex.Change += new VertexChange(listener.Listener);
+
+            IVertex AttributeVertices = PlatformClassVertex.GetAll(false, @"$Is:{$Inherits:$PlatformClass}\{$Is:{$Inherits:Selector}}");
+
+            foreach (IEdge e in AttributeVertices)
+            {
+                foreach (IEdge ee in PlatformClassVertex.GetAll(false, e.To.Value + ":"))
+                {
+                    GraphUtil.AddHandlerIfDelegateListDoesNotContainsIt(ee.To, listener.Listener);
+
+                    foreach (string metaFromWatchList in listener.WatchList)
+                        if (GeneralUtil.CompareStrings(ee.Meta.Value, metaFromWatchList))
+                            foreach (IEdge eee in ee.To)
+                                GraphUtil.AddHandlerIfDelegateListDoesNotContainsIt(eee.To, listener.Listener);
+                }
+            }
+        }
+
+        public static void RemoveVertexChangeListeners_allAttributes(IVertex PlatformClassVertex, VertexChange action)
+        {
+            RemoveVertexChangeListeners_ForVertex(PlatformClassVertex, PlatformClassVertex, action);
+
+            IVertex AttributeVertices = PlatformClassVertex.GetAll(false, @"$Is:{$Inherits:$PlatformClass}\{$Is:{$Inherits:Selector}}");
+
+            foreach (IEdge e in AttributeVertices)
+            {
+                foreach (IEdge ee in PlatformClassVertex.GetAll(false, e.To.Value + ":"))
+                    RemoveVertexChangeListeners_ForVertex(e.To, PlatformClassVertex, action);
+
+                foreach (IEdge ee in PlatformClassVertex.GetAll(false, e.To.Value + @":\"))
+                    RemoveVertexChangeListeners_ForVertex(e.To, PlatformClassVertex, action);
+            }
+        }
+
         public static void RegisterVertexChangeListeners(IVertex PlatformClassVertex, VertexChange action, string[] watchList){
             PlatformClassVertexChangeListener listener=new PlatformClassVertexChangeListener(watchList);
             listener.PlatformClassVertex = PlatformClassVertex;

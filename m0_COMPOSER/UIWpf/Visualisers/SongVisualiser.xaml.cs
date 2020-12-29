@@ -242,18 +242,31 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             TempoVisualiser.BaseEdge = GraphUtil.GetQueryOutFirstEdge(baseVertex, "Tempo", null);                
         }
 
+        IVertex previousBaseVertex;
+
         protected override void UpdateVariablesFromBaseVertex()
         {
             baseVertex = Vertex.Get(false, @"BaseEdge:\To:");
 
-            if (baseVertex == null)
-                return;
+            if (baseVertex == null || baseVertex == previousBaseVertex)
+                return;            
+
+            if (previousBaseVertex != null)
+            {
+                PlatformClass.RemoveVertexChangeListeners(previousBaseVertex, new VertexChange(VertexChange_BaseEdge));
+            }
 
             if (baseVertex.Get(false, "$Is:Song") == null)
             {
                 baseVertex = null;
                 return;
             }
+
+            previousBaseVertex = baseVertex;
+
+            PlatformClass.RegisterVertexChangeListeners(previousBaseVertex, new VertexChange(VertexChange_BaseEdge), new string[] { "Tempo" });            
+
+
 
             IVertex r = MinusZero.Instance.Root;
 
@@ -376,6 +389,13 @@ namespace m0_COMPOSER.UIWpf.Visualisers
                 UpdateBaseEdge();
 
             base.VertexChange(sender, e);
+        }
+
+        protected void VertexChange_BaseEdge(object sender, VertexChangeEventArgs e)
+        {
+            bool dummy = false;
+
+            Tempo = GraphUtil.GetDoubleValue(baseVertex.Get(false, "Tempo:"), ref dummy);
         }
     }
 }

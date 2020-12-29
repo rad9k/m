@@ -78,14 +78,14 @@ namespace m0_COMPOSER.UIWpf.Visualisers
                 GraphUtil.ReplaceEdge(Vertex, r.Get(false, @"System\Meta\Visualiser\Sequence\SnapToGrid"), r.Get(false, @"System\Meta\Visualiser\SnapToGridEnum\'1 bar'"));
 
             SnapToGridComboBox_SelectionChange();
-        }
+        }        
 
         protected override void UpdateVariablesFromBaseVertex()
         {
             baseVertex = Vertex.Get(false, @"BaseEdge:\To:");
 
             if (baseVertex == null)
-                return;
+                return;            
 
             if (baseVertex.Get(false, "$Is:Sequence") == null)
             {
