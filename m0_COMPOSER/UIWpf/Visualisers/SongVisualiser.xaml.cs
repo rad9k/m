@@ -27,7 +27,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
     /// </summary>
     public partial class SongVisualiser : ZoomScrollViewBasedVisualiserBase
     {
-        enum PlayRecordStateEnum { Stop, Play, Record}
+        enum PlayRecordStateEnum { Stop, Play, Record }
 
         PlayRecordStateEnum PlayRecordState;
 
@@ -62,12 +62,12 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
         void SetPosition(int newPosition)
         {
-            GraphUtil.SetVertexValue(Vertex, postionAttribute, newPosition);            
+            GraphUtil.SetVertexValue(Vertex, postionAttribute, newPosition);
         }
 
         void InitSongState()
         {
-            SetPlayRecordState(PlayRecordStateEnum.Stop);            
+            SetPlayRecordState(PlayRecordStateEnum.Stop);
         }
 
         void SetPlayRecordState(PlayRecordStateEnum toBeState)
@@ -98,7 +98,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
         {
             IVertex r = MinusZero.Instance.root;
 
-            postionAttribute = r.Get(false, @"System\Lib\Music\Song\Position");            
+            postionAttribute = r.Get(false, @"System\Lib\Music\Song\Position");
         }
 
         public SongVisualiser()
@@ -118,7 +118,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             SetupHelperVariables();
 
-            InitXAMLInstances();            
+            InitXAMLInstances();
 
             ZoomScrollViewBasedVisualiserBase_Init();
 
@@ -175,7 +175,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             bool dummy = false;
 
-            ShowLabel = GraphUtil.GetBooleanValue(Vertex.Get(false, "ShowLabel:"), ref dummy);          
+            ShowLabel = GraphUtil.GetBooleanValue(Vertex.Get(false, "ShowLabel:"), ref dummy);
             ShowArowLines = GraphUtil.GetBooleanValue(Vertex.Get(false, "ShowArrowLines:"), ref dummy);
             ShowSnapLines = GraphUtil.GetBooleanValue(Vertex.Get(false, "ShowSnapLines:"), ref dummy);
             ShowToolbarNames = GraphUtil.GetBooleanValue(Vertex.Get(false, "ShowToolbarNames:"), ref dummy);
@@ -216,7 +216,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
                 SetButtonComponentName(RepeatButton, "Repeat");
 
                 SetButtonComponentName(TruncateButton, "Truncate");
-                SetButtonComponentName(ExtendButton, "Extend");                
+                SetButtonComponentName(ExtendButton, "Extend");
             }
             else
             {
@@ -239,7 +239,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
         protected void InitialiseBaseVertexBasedVisualiserControls()
         {
-            TempoVisualiser.BaseEdge = GraphUtil.GetQueryOutFirstEdge(baseVertex, "Tempo", null);                
+            TempoVisualiser.BaseEdge = GraphUtil.GetQueryOutFirstEdge(baseVertex, "Tempo", null);
         }
 
         IVertex previousBaseVertex;
@@ -249,12 +249,10 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             baseVertex = Vertex.Get(false, @"BaseEdge:\To:");
 
             if (baseVertex == null || baseVertex == previousBaseVertex)
-                return;            
+                return;
 
             if (previousBaseVertex != null)
-            {
-                PlatformClass.RemoveVertexChangeListeners(previousBaseVertex, new VertexChange(VertexChange_BaseEdge));
-            }
+                PlatformClass.RemoveVertexChangeListeners_byGenericVertex(previousBaseVertex, new VertexChange(VertexChange_BaseEdge));
 
             if (baseVertex.Get(false, "$Is:Song") == null)
             {
@@ -264,7 +262,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             previousBaseVertex = baseVertex;
 
-            PlatformClass.RegisterVertexChangeListeners(previousBaseVertex, new VertexChange(VertexChange_BaseEdge), new string[] { "Tempo" });            
+            PlatformClass.RegisterVertexChangeListeners_byGenericVertex(baseVertex, new VertexChange(VertexChange_BaseEdge), new string[] { "Tempo" });
 
 
 
@@ -288,7 +286,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             if (HorizontalAD == null)
             {
-                RealTimeSpanAxisDecorator TimeSpanAD = new RealTimeSpanAxisDecorator();                
+                RealTimeSpanAxisDecorator TimeSpanAD = new RealTimeSpanAxisDecorator();
 
                 HorizontalAD = TimeSpanAD;
 
@@ -325,7 +323,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
         {
             bool dummy = false;
 
-            Tempo = GraphUtil.GetDoubleValue(baseVertex.Get(false, "Tempo:"), ref dummy);
+            UpdateTempo();
 
             if (baseVertex.Get(false, "ExtendTimeLength:") != null)
                 ExtendTimeLength_Song = (int)GraphUtil.GetIntegerValue(baseVertex.Get(false, "ExtendTimeLength:"));
@@ -337,7 +335,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             else
                 Length = GetMusicTimeFromRealTime(ExtendTimeLength_Song);
 
-            SaveLength();            
+            SaveLength();
 
             IsDrum = GraphUtil.GetBooleanValue(baseVertex.Get(false, "IsDrum:"), ref dummy);
 
@@ -392,7 +390,12 @@ namespace m0_COMPOSER.UIWpf.Visualisers
         }
 
         protected void VertexChange_BaseEdge(object sender, VertexChangeEventArgs e)
-        {
+        {            
+            if ((sender == baseVertex.Get(false, "Tempo:")) && (e.Type == VertexChangeType.ValueChanged))
+                UpdateTempo();                
+        }
+
+        protected void UpdateTempo(){
             bool dummy = false;
 
             Tempo = GraphUtil.GetDoubleValue(baseVertex.Get(false, "Tempo:"), ref dummy);
