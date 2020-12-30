@@ -482,8 +482,10 @@ namespace m0_SYSTEM_GENERATE.Music
 
             IVertex Track = GraphUtil.AddClass(Music, "Track");
 
+            GraphUtil.AddInherits(Track, r.Get(false, @"System\Meta\ZeroTypes\HasColor"));
+
             //GraphUtil.AddAttribute(Track, "Name", String, 0, 1);
-            GraphUtil.AddAttribute(Track, "Color", Color, 0, 1);
+            //GraphUtil.AddAttribute(Track, "Color", Color, 0, 1);
             GraphUtil.AddAttribute(Track, "Output", NoteOutput, 0, 1);
             GraphUtil.AddAttribute(Track, "Muted", Boolean, 0, 1);
             GraphUtil.AddAssociation(Track, "SequenceEvent", SequenceEvent, 0, -1);

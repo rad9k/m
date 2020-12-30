@@ -40,9 +40,7 @@ namespace m0_COMPOSER.Runtime
 
             string name = caps.szPname;
 
-            dev.Value = name;
-
-            //GraphUtil.SetVertexValue(dev, MidiDevice.Get(false, "Name"), name);
+            dev.Value = name;            
             
             dev.AddVertex(MidiDevice.Get(false, "DeviceNumber"), deviceNumber);
             dev.AddVertex(MidiDevice.Get(false, "Mid"), (int)caps.wMid);
@@ -67,7 +65,7 @@ namespace m0_COMPOSER.Runtime
             {
                 IVertex Out = VertexOperations.AddInstance(MidiDevice, MidiOutput, r.Get(false, @"System\Lib\Music\MidiDevice\Output"));
 
-                string name = MidiDevice.Get(false, "Name:").Value.ToString() + " [channel " + channel + "]";
+                string name = MidiDevice.Value.ToString() + " [channel " + channel + "]";
 
                 Out.Value = name;
 

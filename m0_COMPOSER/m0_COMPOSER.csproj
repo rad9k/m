@@ -67,6 +67,7 @@
     <Compile Include="UIWpf\Visualisers\Control\Item\DrumItem.cs" />
     <Compile Include="UIWpf\Visualisers\Control\LineStyle.cs" />
     <Compile Include="UIWpf\Visualisers\Control\Item\NoteItem.cs" />
+    <Compile Include="UIWpf\Visualisers\Control\TrackAxisDecorator.cs" />
     <Compile Include="UIWpf\Visualisers\Control\PitchSetAxisDecorator.cs" />
     <Compile Include="UIWpf\Visualisers\Control\RealTimeSpanAxisDecorator.cs" />
     <Compile Include="UIWpf\Visualisers\Control\MusicTimeSpanAxisDecorator.cs" />

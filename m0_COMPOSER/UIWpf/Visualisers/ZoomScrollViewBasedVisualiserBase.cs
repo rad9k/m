@@ -1485,7 +1485,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             }
         }
 
-        protected void DrawLines_Down()
+        protected void DrawMainLines_Down()
         {
             foreach (AxisSegment s in DownDecorator.Segments)
             {
@@ -1536,7 +1536,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             DrawSnapLines_Down();
 
-            DrawLines_Down();
+            DrawMainLines_Down();
 
             DrawArrowLines_Down();
 

@@ -266,9 +266,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
 
 
-            IVertex r = MinusZero.Instance.Root;
-
-            verticalSpanVertex = baseVertex;             // .......!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+            IVertex r = MinusZero.Instance.Root;            
 
             horizontalSpanVertex = r.Get(false, @"System\Lib\Music\Data\DefaultRealTimeSpanLevel:");
 
@@ -279,22 +277,22 @@ namespace m0_COMPOSER.UIWpf.Visualisers
         {
             if (VerticalAD == null)
             {
-                VerticalAD = new PitchSetAxisDecorator();
+                VerticalAD = new TrackAxisDecorator();
 
-                VerticalAD.SetBaseVertex(verticalSpanVertex);
+                VerticalAD.SetBaseVertex(baseVertex);
             }
 
             if (HorizontalAD == null)
             {
                 RealTimeSpanAxisDecorator TimeSpanAD = new RealTimeSpanAxisDecorator();
 
+                TimeSpanAD.BoldLineCount = 10;
+
                 HorizontalAD = TimeSpanAD;
 
                 HorizontalAD.SetBaseVertex(horizontalSpanVertex);
 
-                double RealTimeLength = GetRealTimeFromMusicTime(Length);
-
-                HorizontalAD.SetLength(RealTimeLength);
+                UpdateHorizontalADLength();
             }
 
             ZoomScrollView.SetVerticalAxisDecorator(VerticalAD);
@@ -323,7 +321,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
         {
             bool dummy = false;
 
-            UpdateTempo();
+            Tempo = GraphUtil.GetDoubleValue(baseVertex.Get(false, "Tempo:"), ref dummy);
 
             if (baseVertex.Get(false, "ExtendTimeLength:") != null)
                 ExtendTimeLength_Song = (int)GraphUtil.GetIntegerValue(baseVertex.Get(false, "ExtendTimeLength:"));
@@ -352,7 +350,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             SaveLength();
 
-            HorizontalAD.SetLength(Length);
+            UpdateHorizontalADLength();
 
             VisualiserDraw();
         }
@@ -363,7 +361,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             SaveLength();
 
-            HorizontalAD.SetLength(Length);
+            UpdateHorizontalADLength();
 
             VisualiserDraw();
         }
@@ -395,10 +393,24 @@ namespace m0_COMPOSER.UIWpf.Visualisers
                 UpdateTempo();                
         }
 
+        void UpdateHorizontalADLength()
+        {
+            double RealTimeLength = GetRealTimeFromMusicTime(Length);
+
+            HorizontalAD.SetLength(RealTimeLength);
+        }
+
         protected void UpdateTempo(){
             bool dummy = false;
 
             Tempo = GraphUtil.GetDoubleValue(baseVertex.Get(false, "Tempo:"), ref dummy);
+
+            if (HorizontalAD != null)
+            {
+                UpdateHorizontalADLength();
+
+                VisualiserDraw();
+            }
         }
     }
 }
