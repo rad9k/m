@@ -31,6 +31,11 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control
 
         double zoomFactor;
 
+        private void DrawAdditionalSegmentControls(AxisSegment s)
+        {
+
+        }
+
         private void Draw()
         {
             Children.Clear();
@@ -125,6 +130,16 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control
             lr.Stroke = (Brush)WpfUtil.FindResource("0ForegroundBrush");
 
             Children.Add(lr);
+
+            //
+
+            Line ld = new Line();
+
+            WpfUtil.SetLinePosition(ld, 0, Size.Height, Size.Width, Height);
+
+            ld.Stroke = (Brush)WpfUtil.FindResource("0ForegroundBrush");
+
+            Children.Add(ld);
         }
 
         private void Update()

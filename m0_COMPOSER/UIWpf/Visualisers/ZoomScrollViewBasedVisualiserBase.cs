@@ -408,6 +408,8 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             DrawMainLines();
 
+            DrawBox();
+
             DrawArrowLines();
 
             DrawItems();
@@ -2279,10 +2281,21 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
                 WpfUtil.SetLinePosition(l, s.StartPosition, 0, s.StartPosition, Height);
 
-                s.LineStyle.SetStyle(l);
+                s.LineStyle.SetStyle(l);                
 
                 Main.Children.Add(l);
             }
+        }
+
+        protected void DrawBox()
+        {
+            Rectangle r = new Rectangle();
+
+            WpfUtil.SetPosition(r, 0, 0, Width, Height);
+
+            r.Stroke = (Brush)FindResource("0ForegroundBrush");
+
+            Main.Children.Add(r);
         }
 
         protected void DrawArrowLines()
