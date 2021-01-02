@@ -43,7 +43,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control
 
             //
 
-            LitButton so = new LitButton(new SolidColorBrush(Colors.DarkKhaki), new SolidColorBrush(Colors.LightYellow), "S");
+            LitButton so = new LitButton(new SolidColorBrush(Colors.DarkKhaki), new SolidColorBrush(Colors.Yellow), "S");
 
             so.Width = 10;
 
@@ -67,49 +67,52 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control
                 if (Selection != null && ((AxisSegment)Selection).BaseVertex == s.BaseVertex)
                     isSelected = true;
 
-                TextBlock t = new TextBlock();
-                
-                t.Text = s.BaseVertex.Value.ToString();
+                Border segment = new Border();
 
-                t.Foreground = new SolidColorBrush((Color)WpfUtil.FindResource("0Foreground"));
-                t.Background = new SolidColorBrush((Color)WpfUtil.FindResource("0Background"));
+                WpfUtil.SetPosition(segment, 0, s.StartPosition, Width, s.EndPosition);
+
+                segment.Background = new SolidColorBrush((Color)WpfUtil.FindResource("0Background"));
+
+                Children.Add(segment);
+
+                TextBlock text = new TextBlock();
+                
+                text.Text = s.BaseVertex.Value.ToString();
+
+                text.Foreground = new SolidColorBrush((Color)WpfUtil.FindResource("0Foreground"));
+                text.Background = new SolidColorBrush((Color)WpfUtil.FindResource("0Background"));
 
                 Color segmentColor = (Color)WpfUtil.FindResource("0Background");
 
-                IVertex trackColor = baseVertex.Get(false, @"Color:");
+                IVertex trackColorVertex = s.BaseVertex.Get(false, @"Color:");
 
-                if(trackColor != null)
-
-
-                Color negativeSegmentColor = WpfUtil.GetNegativeColor(segmentColor);
-
-                if (isSelected)
+                if (trackColorVertex != null)
                 {
-                    segmentColor = (Color)WpfUtil.FindResource("0Highlight");
-                    negativeSegmentColor = (Color)WpfUtil.FindResource("0Background");
+                    Color trackColorVertexColor = WpfUtil.GetColorFromColorVertex(trackColorVertex);
+
+                    Brush trackColorVertexBrush = new SolidColorBrush(trackColorVertexColor);
+
+                    segment.Background = trackColorVertexBrush;
+
+                    text.Background = trackColorVertexBrush;
+
+                    text.Foreground = new SolidColorBrush(WpfUtil.GetNegativeColor(trackColorVertexColor));
                 }
 
-                if (segmentColor != null)
-                {
-                    t.Background = new SolidColorBrush(segmentColor);                    
+                if (segmentSize < 13)                        
+                    text.Foreground = segment.Background;
 
-                    if (segmentSize > 13)
-                        t.Foreground = new SolidColorBrush(negativeSegmentColor);
-                    else
-                        t.Foreground = new SolidColorBrush(segmentColor);
-                }
+                text.FontSize = FontSize;
 
-                t.FontSize = FontSize;
+                text.Height = segmentSize;
 
-                t.Height = segmentSize;
+                text.Padding = new Thickness(3, 0, 3, 0);
 
-                t.Padding = new Thickness(3, 0, 3, 0);
+                text.Width = 50;
 
-                t.Width = 50;
+                WpfUtil.SetPosition(text, 0, s.StartPosition);            
 
-                WpfUtil.SetPosition(t, 0, s.StartPosition);            
-
-                Children.Add(t);
+                Children.Add(text);
 
                 //                
 
