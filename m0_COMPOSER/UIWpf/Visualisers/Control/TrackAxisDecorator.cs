@@ -33,7 +33,8 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control
 
         private void DrawAdditionalSegmentControls(AxisSegment s)
         {
-            LitButton m = new LitButton(new SolidColorBrush(Colors.DarkRed), new SolidColorBrush(Colors.Red), "M");
+            LitButton m = new LitButton(new SolidColorBrush(Colors.DarkRed), new SolidColorBrush(Colors.Red), 
+                new SolidColorBrush(Colors.White), new SolidColorBrush(Colors.White), "M");
 
             m.Width = 10;
 
@@ -43,7 +44,8 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control
 
             //
 
-            LitButton so = new LitButton(new SolidColorBrush(Colors.DarkKhaki), new SolidColorBrush(Colors.Yellow), "S");
+            LitButton so = new LitButton(new SolidColorBrush(Colors.DarkKhaki), new SolidColorBrush(Colors.Yellow),
+                new SolidColorBrush(Colors.White), new SolidColorBrush(Colors.Black), "S");
 
             so.Width = 10;
 

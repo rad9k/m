@@ -149,11 +149,16 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             ZoomScrollView.SetLeftDownCornerControl(newTrackButton);
         }
 
+        int trackCnt = 1;
+
         private void NewTrackButton_Click(object sender, RoutedEventArgs e)
         {
             IVertex r = MinusZero.Instance.root;
 
             IVertex v = VertexOperations.AddInstance(baseVertex, r.Get(false, @"System\Lib\Music\Track"));
+
+            v.Value = "Track " + trackCnt;
+            trackCnt++;
             
             MinusZero.Instance.DefaultUserInteraction.EditDialog(v, null);            
         }

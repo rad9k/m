@@ -12,8 +12,11 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control
 {
     public class LitButton: Border
     {
-        Brush LitColor;
-        Brush DimColor;
+        Brush LitBrush;
+        Brush DimBrush;
+
+        Brush LitTextBrush = new SolidColorBrush(Colors.Black);
+        Brush DimTextBrush = new SolidColorBrush(Colors.Black);
 
         public bool Value;
 
@@ -21,22 +24,37 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control
         {
             Value = true;
 
-            Background = LitColor;
+            Background = LitBrush;
+
+            textBlock.Foreground = LitTextBrush;
         }
 
         public void Off()
         {
             Value = false;
 
-            Background = DimColor;
+            Background = DimBrush;
+
+            textBlock.Foreground = DimTextBrush;
         }
 
         TextBlock textBlock;
 
+        public LitButton(Brush dimBrush, Brush litBrush, Brush dimTextBrush, Brush litTextBrush, string text) {
+            DimTextBrush = dimTextBrush;
+            LitTextBrush = litTextBrush;
+
+            _LitButton(dimBrush, litBrush, text);
+        }
+
         public LitButton(Brush dimColor, Brush litColor, string text)
         {
-            LitColor = litColor;
-            DimColor = dimColor;
+            _LitButton(dimColor, litColor, text);
+        }
+        public void _LitButton(Brush dimColor, Brush litColor, string text)
+        {
+            LitBrush = litColor;
+            DimBrush = dimColor;
             
             textBlock = new TextBlock();
             textBlock.Text = text;
