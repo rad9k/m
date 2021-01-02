@@ -33,14 +33,30 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control
 
         private void DrawAdditionalSegmentControls(AxisSegment s)
         {
+            LitButton m = new LitButton(new SolidColorBrush(Colors.DarkRed), new SolidColorBrush(Colors.Red), "M");
 
+            m.Width = 10;
+
+            WpfUtil.SetPosition(m, Width - 14, s.StartPosition + 2);
+
+            this.Children.Add(m);
+
+            //
+
+            LitButton so = new LitButton(new SolidColorBrush(Colors.DarkKhaki), new SolidColorBrush(Colors.LightYellow), "S");
+
+            so.Width = 10;
+
+            WpfUtil.SetPosition(so, Width - 26, s.StartPosition + 2);
+
+            this.Children.Add(so);
         }
 
         private void Draw()
         {
             Children.Clear();
 
-            double maxWidth = 60;
+            Width = 80;
 
             List<TextBlock> tbl = new List<TextBlock>();
 
@@ -55,7 +71,16 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control
                 
                 t.Text = s.BaseVertex.Value.ToString();
 
-                Color segmentColor = s.Color;
+                t.Foreground = new SolidColorBrush((Color)WpfUtil.FindResource("0Foreground"));
+                t.Background = new SolidColorBrush((Color)WpfUtil.FindResource("0Background"));
+
+                Color segmentColor = (Color)WpfUtil.FindResource("0Background");
+
+                IVertex trackColor = baseVertex.Get(false, @"Color:");
+
+                if(trackColor != null)
+
+
                 Color negativeSegmentColor = WpfUtil.GetNegativeColor(segmentColor);
 
                 if (isSelected)
@@ -66,7 +91,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control
 
                 if (segmentColor != null)
                 {
-                    t.Background = new SolidColorBrush(segmentColor);
+                    t.Background = new SolidColorBrush(segmentColor);                    
 
                     if (segmentSize > 13)
                         t.Foreground = new SolidColorBrush(negativeSegmentColor);
@@ -78,68 +103,56 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control
 
                 t.Height = segmentSize;
 
-                WpfUtil.SetPosition(t, 0, s.StartPosition);
+                t.Padding = new Thickness(3, 0, 3, 0);
 
-                tbl.Add(t);
+                t.Width = 50;
+
+                WpfUtil.SetPosition(t, 0, s.StartPosition);            
 
                 Children.Add(t);
 
+                //                
+
+                Line l = new Line();
+
+                WpfUtil.SetLinePosition(l, 0, s.StartPosition, Width, s.StartPosition);
+
+                s.LineStyle.SetStyle(l);
+
+                Children.Add(l);
+
                 //
 
-                Size si = WpfUtil.MeasureTextBlock(t);
-
-                if (si.Width > maxWidth)
-                    maxWidth = si.Width;
+                DrawAdditionalSegmentControls(s);
             }
 
             Size newSize = new Size();
-            newSize.Width = maxWidth;
-
-            if (newSize.Width < 50)
-                newSize.Width += 10;
+            newSize.Width = Width;            
 
             newSize.Height = Size.Height;
 
             Size = newSize;
-
-            Width = Size.Width;
+            
             Height = Size.Height;
 
-            foreach (TextBlock tb in tbl)
-                tb.Width = Size.Width;
+            //
 
-            foreach (AxisSegment s in Segments)
+            WpfUtil.DrawLine(this, 0, 0, 0, Size.Height, 1, (Brush)WpfUtil.FindResource("0ForegroundBrush"));
+
+            WpfUtil.DrawLine(this, Size.Width, 0, Size.Width, Size.Height, 5, (Brush)WpfUtil.FindResource("0ForegroundBrush"));            
+
+            //
+
+            if(Segments.Count > 0)
             {
-                Line l = new Line();
+                Line ld = new Line();
 
-                WpfUtil.SetLinePosition(l, 0, s.StartPosition, Size.Width, s.StartPosition);
+                WpfUtil.SetLinePosition(ld, 0, Size.Height, Size.Width, Height);
 
-                s.LineStyle.SetStyle(l);
+                ld.Stroke = (Brush)WpfUtil.FindResource("0ForegroundBrush");
 
-                Children.Add(l);                
-            }
-
-            //
-
-            Line lr = new Line();
-
-            WpfUtil.SetLinePosition(lr, Size.Width, 0, Size.Width, Size.Height);
-
-            lr.StrokeThickness = 5;
-
-            lr.Stroke = (Brush)WpfUtil.FindResource("0ForegroundBrush");
-
-            Children.Add(lr);
-
-            //
-
-            Line ld = new Line();
-
-            WpfUtil.SetLinePosition(ld, 0, Size.Height, Size.Width, Height);
-
-            ld.Stroke = (Brush)WpfUtil.FindResource("0ForegroundBrush");
-
-            Children.Add(ld);
+                Children.Add(ld);
+            }            
         }
 
         private void Update()
@@ -207,10 +220,10 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control
 
         public TrackAxisDecorator()
         {
-            this.MouseDown += PitchSetAxisDecorator_MouseDown;
+            //this.MouseDown += TrackAxisDecorator_MouseDown;
         }
 
-        private void PitchSetAxisDecorator_MouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        private void TrackAxisDecorator_MouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
             Point p = e.GetPosition(this);
 

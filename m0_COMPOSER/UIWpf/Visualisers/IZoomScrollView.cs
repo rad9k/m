@@ -21,5 +21,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
         void SetHost(IZoomScrollViewerHost host);  
         
         double InitialDownHeight { get; set; }
+
+        void SetLeftDownCornerControl(FrameworkElement control);
     }
 }

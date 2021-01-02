@@ -102,6 +102,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control
         Border DownGrip;
         Border DownDecorator;
         ScrollViewer DownMain;
+        Border LeftDownCorner;
 
         public ScrollContentPresenter ContentPresenter;
 
@@ -190,6 +191,8 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control
 
             DownDecorator = (Border)((StackPanel)DownHideArea.Content).Children[0];
             DownMain = (ScrollViewer)((StackPanel)DownHideArea.Content).Children[1];
+
+            LeftDownCorner = (Border)ScrollViewer.Template.FindName("LeftDownCorner", ScrollViewer);
         }
 
         void InitializeLocalControls()
@@ -368,6 +371,11 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control
         private void ScrollViewer_SizeChanged(object sender, SizeChangedEventArgs e)
         {
             DownWidthUpdate();
+        }
+
+        public void SetLeftDownCornerControl(FrameworkElement control)
+        {            
+            LeftDownCorner.Child = control;
         }
     }
 }

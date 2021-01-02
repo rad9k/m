@@ -65,6 +65,7 @@
     <Compile Include="UIWpf\Visualisers\Control\ControlChangeDownDecorator.cs" />
     <Compile Include="UIWpf\Visualisers\Control\Item\ControlChangeItem.cs" />
     <Compile Include="UIWpf\Visualisers\Control\Item\DrumItem.cs" />
+    <Compile Include="UIWpf\Visualisers\Control\LitButton.cs" />
     <Compile Include="UIWpf\Visualisers\Control\LineStyle.cs" />
     <Compile Include="UIWpf\Visualisers\Control\Item\NoteItem.cs" />
     <Compile Include="UIWpf\Visualisers\Control\TrackAxisDecorator.cs" />

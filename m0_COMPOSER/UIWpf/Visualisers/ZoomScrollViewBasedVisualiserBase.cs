@@ -2466,7 +2466,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
         }
 
         protected bool isLoaded = false;
-        public void ChildControlsLoaded()
+        public virtual void ChildControlsLoaded()
         {
             isLoaded = true;
 

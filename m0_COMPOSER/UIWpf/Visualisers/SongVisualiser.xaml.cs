@@ -131,6 +131,43 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             InitSongState();
         }
 
+        private void CreateAddNewTrackControl() {
+            Button newTrackButton = new Button();
+
+            newTrackButton.Content = "+ new track";
+
+            newTrackButton.Foreground = (Brush)FindResource("0ForegroundBrush");
+
+            newTrackButton.Style = (Style)Application.Current.FindResource("TransparentStyle");
+
+            newTrackButton.BorderThickness = new Thickness(0);
+            newTrackButton.Margin = new Thickness(0);
+            newTrackButton.Padding = new Thickness(0);
+
+            newTrackButton.Click += NewTrackButton_Click;
+
+            ZoomScrollView.SetLeftDownCornerControl(newTrackButton);
+        }
+
+        private void NewTrackButton_Click(object sender, RoutedEventArgs e)
+        {
+            IVertex r = MinusZero.Instance.root;
+
+            IVertex v = VertexOperations.AddInstance(baseVertex, r.Get(false, @"System\Lib\Music\Track"));
+            
+            MinusZero.Instance.DefaultUserInteraction.EditDialog(v, null);            
+        }
+
+        private void UpdateTracks()
+        {
+            VerticalAD.SetBaseVertex(baseVertex);
+        }
+
+        private void CreateSongControls()
+        {
+            CreateAddNewTrackControl();
+        }
+
         private void RewindButton_Click(object sender, RoutedEventArgs e)
         {
             SetPlayRecordState(PlayRecordStateEnum.Stop);
@@ -262,8 +299,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             previousBaseVertex = baseVertex;
 
-            PlatformClass.RegisterVertexChangeListeners_byGenericVertex(baseVertex, new VertexChange(VertexChange_BaseEdge), new string[] { "Tempo" });
-
+            PlatformClass.RegisterVertexChangeListeners_byGenericVertex(baseVertex, new VertexChange(VertexChange_BaseEdge), new string[] { "Tempo", "Track" });
 
 
             IVertex r = MinusZero.Instance.Root;            
@@ -390,7 +426,10 @@ namespace m0_COMPOSER.UIWpf.Visualisers
         protected void VertexChange_BaseEdge(object sender, VertexChangeEventArgs e)
         {            
             if ((sender == baseVertex.Get(false, "Tempo:")) && (e.Type == VertexChangeType.ValueChanged))
-                UpdateTempo();                
+                UpdateTempo();
+
+            if ((sender == baseVertex.Get(false, "Track:")) && (e.Type == VertexChangeType.ValueChanged))
+                UpdateTracks();
         }
 
         void UpdateHorizontalADLength()
@@ -411,6 +450,13 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
                 VisualiserDraw();
             }
+        }
+
+        public override void ChildControlsLoaded()
+        {
+            CreateSongControls();
+
+            base.ChildControlsLoaded();
         }
     }
 }

@@ -74,7 +74,7 @@
                             </StackPanel>
                         </m:AnimatedHideArea>
 
-                        <Border Grid.Row="7" Grid.Column="0" MouseEnter="DownHideAreaGrip_MouseLeave_Hard"/>
+                        <Border Grid.Row="7" Grid.Column="0" MouseEnter="DownHideAreaGrip_MouseLeave_Hard" x:Name="LeftDownCorner"/>
                         <Border Grid.Row="5" Grid.Column="7" Grid.RowSpan="3" MouseEnter="DownHideAreaGrip_MouseLeave_Hard"/>
 
 

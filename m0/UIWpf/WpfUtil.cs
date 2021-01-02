@@ -173,7 +173,21 @@ namespace m0.UIWpf
             e.Y2 = y2;
         }
 
-        public static void DrawLine(Canvas canvas, double X1, double Y1, double X2, double Y2, Brush brush)
+
+        public static void DrawLine(Panel c, double x1, double y1, double x2, double y2, double thickness, Brush brush)
+        {
+            Line lr = new Line();
+
+            WpfUtil.SetLinePosition(lr, x1, y1, x2, y2);
+
+            lr.StrokeThickness = thickness;
+
+            lr.Stroke = brush;
+
+            c.Children.Add(lr);
+        }
+
+        public static void DrawLine(Panel canvas, double X1, double Y1, double X2, double Y2, Brush brush)
         {
             Line l = new Line();
 
