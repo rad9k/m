@@ -58,7 +58,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control
             
             textBlock = new TextBlock();
             textBlock.Text = text;
-            textBlock.FontSize = 8;
+            textBlock.FontSize = 11;
             textBlock.HorizontalAlignment = HorizontalAlignment.Center;
             textBlock.Foreground = new SolidColorBrush(Colors.White);
             this.Child = textBlock;

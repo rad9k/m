@@ -31,9 +31,9 @@
                             <RowDefinition Height="Auto"/>
                         </Grid.RowDefinitions>
                         <ScrollViewer Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="4" x:Name="HorizontalAxisDecoratorScrollViewer" HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Hidden" MouseEnter="DownHideAreaGrip_MouseLeave_Hard"/>
-                        <ScrollViewer Grid.Row="1" Grid.Column="0" Grid.RowSpan="4" x:Name="VerticalAxisDecoratorScrollViewer"  HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Hidden" MouseMove="DownHideAreaGrip_MouseMove" MouseUp="DownHideAreaGrip_MouseUp"/>
+                        <ScrollViewer VerticalAlignment="Top" Grid.Row="1" Grid.Column="0" Grid.RowSpan="4" x:Name="VerticalAxisDecoratorScrollViewer"  HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Hidden" MouseMove="DownHideAreaGrip_MouseMove" MouseUp="DownHideAreaGrip_MouseUp"/>
 
-                        <ScrollContentPresenter Panel.ZIndex="1" Grid.Column="1"  Grid.Row="1" Grid.ColumnSpan="4" Grid.RowSpan="4" x:Name="PART_ScrollContentPresenter" CanContentScroll="{TemplateBinding CanContentScroll}" CanHorizontallyScroll="False" CanVerticallyScroll="False" ContentTemplate="{TemplateBinding ContentTemplate}" Content="{TemplateBinding Content}"  Margin="{TemplateBinding Padding}" MouseMove="DownHideAreaGrip_MouseMove" MouseUp="DownHideAreaGrip_MouseUp"/>
+                        <ScrollContentPresenter VerticalAlignment="Top" Panel.ZIndex="1" Grid.Column="1"  Grid.Row="1" Grid.ColumnSpan="4" Grid.RowSpan="4" x:Name="PART_ScrollContentPresenter" CanContentScroll="{TemplateBinding CanContentScroll}" CanHorizontallyScroll="False" CanVerticallyScroll="False" ContentTemplate="{TemplateBinding ContentTemplate}" Content="{TemplateBinding Content}"  Margin="{TemplateBinding Padding}" MouseMove="DownHideAreaGrip_MouseMove" MouseUp="DownHideAreaGrip_MouseUp"/>
 
                         <Canvas Panel.ZIndex="0" Grid.Column="1"  Grid.Row="1" Grid.ColumnSpan="4" Grid.RowSpan="4" Background="{StaticResource 0BackgroundBrush}" MouseMove="DownHideAreaGrip_MouseMove" MouseUp="DownHideAreaGrip_MouseUp"/>
 

@@ -487,7 +487,8 @@ namespace m0_SYSTEM_GENERATE.Music
             //GraphUtil.AddAttribute(Track, "Name", String, 0, 1);
             //GraphUtil.AddAttribute(Track, "Color", Color, 0, 1);
             GraphUtil.AddAttribute(Track, "Output", NoteOutput, 0, 1);
-            GraphUtil.AddAttribute(Track, "Muted", Boolean, 0, 1);
+            GraphUtil.AddAttribute(Track, "IsMuted", Boolean, 0, 1);
+            GraphUtil.AddAttribute(Track, "IsSolo", Boolean, 0, 1);
             GraphUtil.AddAssociation(Track, "SequenceEvent", SequenceEvent, 0, -1);
 
             // SONG

@@ -13,6 +13,8 @@ namespace m0_COMPOSER.UIWpf.Visualisers
     public class AxisSegment
     {
         public IVertex BaseVertex;
+        public IEdge BaseEdge;
+
         public LineStyle LineStyle;
         public double StartPosition;
         public double EndPosition;

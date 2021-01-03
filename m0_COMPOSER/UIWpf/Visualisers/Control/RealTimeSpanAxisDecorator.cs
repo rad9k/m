@@ -118,7 +118,6 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control
 
                 if (level == 0 || baseUnitSize > 0.15)
                 {
-
                     TextBlock t = new TextBlock();
 
                     t.Foreground = getBrushForLevel(level);
@@ -251,9 +250,9 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control
 
             if(zoomFactor > 50)
                 //baseUnitSize = 0.02 + (1.0 / 5 * ((zoomFactor / 5) - 10));
-                baseUnitSize = -1.73 + (1.0 / 5 * ((zoomFactor / 5) ));
+                baseUnitSize = -2.427 + (zoomFactor / 20 );
             else
-                baseUnitSize = 0.02 + (1.0 / 5 * zoomFactor / 40);
+                baseUnitSize = 0.018 + (1.0 / 30 * zoomFactor / 30);
 
             Update();
         }

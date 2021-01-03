@@ -160,7 +160,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             v.Value = "Track " + trackCnt;
             trackCnt++;
             
-            MinusZero.Instance.DefaultUserInteraction.EditDialog(v, null);            
+            //MinusZero.Instance.DefaultUserInteraction.EditDialog(v, null);            
         }
 
         private void UpdateTracks()

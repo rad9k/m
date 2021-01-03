@@ -11,6 +11,7 @@ using System.Windows.Shapes;
 using m0.UIWpf;
 using System.Windows.Media;
 using m0.Graph;
+using m0.UIWpf.Visualisers.Controls;
 
 namespace m0_COMPOSER.UIWpf.Visualisers.Control
 {
@@ -36,9 +37,9 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control
             LitButton m = new LitButton(new SolidColorBrush(Colors.DarkRed), new SolidColorBrush(Colors.Red), 
                 new SolidColorBrush(Colors.White), new SolidColorBrush(Colors.White), "M");
 
-            m.Width = 10;
+            m.Width = 13;
 
-            WpfUtil.SetPosition(m, Width - 14, s.StartPosition + 2);
+            WpfUtil.SetPosition(m, Width - 17, s.StartPosition + 2);
 
             this.Children.Add(m);
 
@@ -47,18 +48,30 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control
             LitButton so = new LitButton(new SolidColorBrush(Colors.DarkKhaki), new SolidColorBrush(Colors.Yellow),
                 new SolidColorBrush(Colors.White), new SolidColorBrush(Colors.Black), "S");
 
-            so.Width = 10;
+            so.Width = 13;
 
-            WpfUtil.SetPosition(so, Width - 26, s.StartPosition + 2);
+            WpfUtil.SetPosition(so, Width - 32, s.StartPosition + 2);
 
             this.Children.Add(so);
+
+            //
+
+            InfoButton ib = new InfoButton();
+
+            ib.NewEditWindow = true;
+
+            ib.BaseEdge = s.BaseEdge;
+
+            WpfUtil.SetPosition(ib, Width - 49, s.StartPosition + 4);
+
+            this.Children.Add(ib);
         }
 
         private void Draw()
         {
             Children.Clear();
 
-            Width = 80;
+            Width = 100;
 
             List<TextBlock> tbl = new List<TextBlock>();
 
@@ -108,7 +121,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control
 
                 text.Height = segmentSize;
 
-                text.Padding = new Thickness(3, 0, 3, 0);
+                text.Padding = new Thickness(2, 0, 3, 0);
 
                 text.Width = 50;
 
@@ -181,6 +194,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control
                     maxHeight = segment.EndPosition;
 
                 segment.BaseVertex = e.To;
+                segment.BaseEdge = e;
 
                 //
 
@@ -213,7 +227,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control
         {
             zoomFactor = _zoomFactor;
 
-            segmentSize = 3 +  (35 * (zoomFactor / 40) );
+            segmentSize = 3 +  (15 * (zoomFactor / 40) );
 
             Update();
         }

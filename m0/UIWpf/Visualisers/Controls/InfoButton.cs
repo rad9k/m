@@ -53,23 +53,26 @@ namespace m0.UIWpf.Visualisers.Controls
         
         }
 
-  
+        public bool NewEditWindow = false;
 
         protected override void OnClick(){
             FormVisualiser v=(FormVisualiser)WpfUtil.GetParentFormVisualiser(this);
 
-            if (v != null)
-                Edge.ReplaceEdgeEdges(v.Vertex.Get(false, "BaseEdge:"), BaseEdge);
-            else
+            if (!NewEditWindow)
             {
-                IVertex v2 = MinusZero.Instance.CreateTempVertex();
-                Edge.AddEdgeEdges(v2, BaseEdge);
+                if (v != null)
+                    Edge.ReplaceEdgeEdges(v.Vertex.Get(false, "BaseEdge:"), BaseEdge);
+                else
+                {
+                    IVertex v2 = MinusZero.Instance.CreateTempVertex();
+                    Edge.AddEdgeEdges(v2, BaseEdge);
 
-                //BaseCommands.Open(v2,null); // want Form Visuliser always
-                BaseCommands.OpenFormVisualiser(v2);
+                    //BaseCommands.Open(v2,null); // want Form Visuliser always
+                    BaseCommands.OpenFormVisualiser(v2);
+                }
             }
-        }
-        
-        
+            else            
+                MinusZero.Instance.DefaultUserInteraction.EditDialog(BaseEdge.To, null);                       
+        }                
     }
 }
