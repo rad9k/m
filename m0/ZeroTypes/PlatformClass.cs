@@ -64,7 +64,9 @@ namespace m0.ZeroTypes
             }
 
             foreach (string metaFromWatchList in WatchList)
-                if ((sender == PlatformClassVertex.Get(false, metaFromWatchList+":")) && (e.Type == VertexChangeType.EdgeAdded) && (!GeneralUtil.CompareStrings(e.Edge.Meta.Value,"$Is")))
+                //if ((sender == PlatformClassVertex.Get(false, metaFromWatchList+":")) && (e.Type == VertexChangeType.EdgeAdded) && (!GeneralUtil.CompareStrings(e.Edge.Meta.Value,"$Is")))
+                foreach(IEdge ee in PlatformClassVertex.GetAll(false, metaFromWatchList + ":"))
+                if ((sender == ee.To) && (e.Type == VertexChangeType.EdgeAdded) && (!GeneralUtil.CompareStrings(e.Edge.Meta.Value, "$Is")))
                     GraphUtil.AddHandlerIfDelegateListDoesNotContainsIt(e.Edge.To, this.Listener);
 
             if (CheckSender(sender) && (e.Type == VertexChangeType.EdgeRemoved) && (!GeneralUtil.CompareStrings(e.Edge.Meta.Value, "$Is")))
@@ -93,7 +95,9 @@ namespace m0.ZeroTypes
 
 
             foreach (string metaFromWatchList in WatchList)
-                if ((sender == PlatformClassVertex.Get(false, metaFromWatchList + ":")) && (e.Type == VertexChangeType.EdgeRemoved) && (!GeneralUtil.CompareStrings(e.Edge.Meta.Value, "$Is")))
+            //if ((sender == PlatformClassVertex.Get(false, metaFromWatchList + ":")) && (e.Type == VertexChangeType.EdgeRemoved) && (!GeneralUtil.CompareStrings(e.Edge.Meta.Value, "$Is")))
+                foreach (IEdge ee in PlatformClassVertex.GetAll(false, metaFromWatchList + ":"))
+                    if ((sender == ee.To) && (e.Type == VertexChangeType.EdgeRemoved) && (!GeneralUtil.CompareStrings(e.Edge.Meta.Value, "$Is")))                   
                         e.Edge.To.Change -= new VertexChange(this.Listener);                                
 
             if(Change!=null)
@@ -123,20 +127,20 @@ namespace m0.ZeroTypes
             }
         }
 
-        public static void RegisterVertexChangeListeners_byGenericVertex(IVertex metaVertex, VertexChange action, string[] watchList)
+        public static void RegisterVertexChangeListeners_byGenericVertex(IVertex baseVertex, VertexChange action, string[] watchList)
         {
             PlatformClassVertexChangeListener listener = new PlatformClassVertexChangeListener(watchList);
-            listener.PlatformClassVertex = metaVertex;
+            listener.PlatformClassVertex = baseVertex;
             listener.Change += action;
 
 
-            metaVertex.Change += new VertexChange(listener.Listener);
+            baseVertex.Change += new VertexChange(listener.Listener);
 
-            IVertex AttributeVertices = metaVertex.GetAll(false, @"$Is:\{$Is:{$Inherits:Selector}}");
+            IVertex AttributeVertices = baseVertex.GetAll(false, @"$Is:\{$Is:{$Inherits:Selector}}");
 
             foreach (IEdge e in AttributeVertices)
             {
-                foreach (IEdge ee in metaVertex.GetAll(false, e.To.Value + ":"))
+                foreach (IEdge ee in baseVertex.GetAll(false, e.To.Value + ":"))
                 {
                     GraphUtil.AddHandlerIfDelegateListDoesNotContainsIt(ee.To, listener.Listener);
 

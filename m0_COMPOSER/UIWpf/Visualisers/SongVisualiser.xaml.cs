@@ -429,11 +429,14 @@ namespace m0_COMPOSER.UIWpf.Visualisers
         }
 
         protected void VertexChange_BaseEdge(object sender, VertexChangeEventArgs e)
-        {            
+        {
+            if (!(sender is IVertex))
+                return;
+
             if ((sender == baseVertex.Get(false, "Tempo:")) && (e.Type == VertexChangeType.ValueChanged))
                 UpdateTempo();
 
-            if ((sender == baseVertex.Get(false, "Track:")) && (e.Type == VertexChangeType.ValueChanged))
+            if (GraphUtil.DoEdgeListContainsVertex(baseVertex.GetAll(false, "Track:"), (IVertex)sender) && (e.Type == VertexChangeType.ValueChanged))
                 UpdateTracks();
         }
 

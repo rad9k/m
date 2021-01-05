@@ -276,14 +276,14 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             }
         }
 
-        bool VisuliseserDrraw_NeedsInitilisation = true;
+        bool VisuliseserDraw_NeedsInitilisation = true;
 
         public void VisualiserDraw()
         {
             if (baseVertex == null || isLoaded == false)
                 return;
 
-            if (VisuliseserDrraw_NeedsInitilisation)
+            if (VisuliseserDraw_NeedsInitilisation)
             {
                 SetupLocalVariablesFromBaseVertexVertexes();
 
@@ -292,7 +292,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             SetAxisDecorators();
 
-            if (VisuliseserDrraw_NeedsInitilisation)
+            if (VisuliseserDraw_NeedsInitilisation)
             {
                 CreateMain();
 
@@ -319,7 +319,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             Draw_Down();
 
-            VisuliseserDrraw_NeedsInitilisation = false;
+            VisuliseserDraw_NeedsInitilisation = false;
         }
 
         protected virtual void UpdateVariablesFromBaseVertex() { }
@@ -1437,7 +1437,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             if (!HasDown)
                 return;
 
-            ZoomScrollView.InitialDownHeight = 100;
+            ZoomScrollView.InitialDownHeight = 100;            
 
             DownDecorator = new ControlChangeDownDecorator();
 
@@ -1451,6 +1451,8 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             Down.Loaded += Down_Loaded;
 
             ZoomScrollView.SetDownContent((FrameworkElement)DownDecorator, Down);
+
+            Height_Down = ZoomScrollView.InitialDownHeight;
 
             VerticalAD.SelectionChanged += VerticalAD_SelectionChanged_Down;
         }

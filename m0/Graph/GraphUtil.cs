@@ -56,6 +56,18 @@ namespace m0.Graph
 
     public class GraphUtil
     {
+        public static bool DoEdgeListContainsVertex(IVertex list, IVertex toCheckVertex)
+        {
+            if (list == null)
+                return false;
+
+            foreach (IEdge e in list)
+                if (e.To == toCheckVertex)
+                    return true;
+
+            return false;
+        }
+
         public static IVertex AddEnum(IVertex baseVertex, string enumName, string[] values)
         {
             IVertex r = MinusZero.Instance.root;
