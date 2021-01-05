@@ -37,6 +37,8 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control
 
         private void DrawAdditionalSegmentControls(AxisSegment s)
         {
+            bool isNull = false; 
+
             LitButton m = new LitButton(new SolidColorBrush(Colors.DarkRed), new SolidColorBrush(Colors.Red), 
                 new SolidColorBrush(Colors.White), new SolidColorBrush(Colors.White), "M");
 
@@ -47,6 +49,11 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control
             this.Children.Add(m);
 
             m.Tag = s.BaseVertex;
+
+            if (GraphUtil.GetBooleanValue(s.BaseVertex.Get(false, "IsMuted:"), ref isNull))
+                m.On();
+
+            m.MouseDown += M_MouseDown;
 
             MuteButtons.Add(m);
 
@@ -62,6 +69,9 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control
             this.Children.Add(so);
 
             so.Tag = s.BaseVertex;
+
+            if (GraphUtil.GetBooleanValue(s.BaseVertex.Get(false, "IsSolo:"), ref isNull))
+                so.On();
 
             so.MouseDown += So_MouseDown;
 
@@ -90,19 +100,60 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control
             this.Children.Add(db);
         }
 
-        private void So_MouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
-        {
-            foreach (IEdge ee in baseVertex.GetAll(false, @"Track:\IsSolo:"))
-                ee.To.Value = "False";
-
-            foreach(LitButton b in SoloButtons)
-                b.
-
-
+        private void M_MouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {            
             LitButton senderButton = (LitButton)sender;
-            IVertex trackBaseVertex = (IVertex)().Tag;
+            IVertex trackBaseVertex = (IVertex)senderButton.Tag;
 
-            trackBaseVertex.Value = "True";
+            bool isNull = false;
+            bool isMuted = GraphUtil.GetBooleanValue(trackBaseVertex.Get(false, "IsMuted:"), ref isNull);
+
+            IVertex metaVertex = m0.MinusZero.Instance.root.Get(false, @"System\Lib\Music\Track\IsMuted");
+
+            if (!isMuted)
+            {
+                GraphUtil.SetVertexValue(trackBaseVertex, metaVertex, "True");
+
+                senderButton.On();
+            }
+            else
+            {
+                GraphUtil.SetVertexValue(trackBaseVertex, metaVertex, "False");
+
+                senderButton.Off();
+            }
+        }
+
+        private void So_MouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {            
+            LitButton senderButton = (LitButton)sender;
+            IVertex trackBaseVertex = (IVertex)senderButton.Tag;
+
+            bool isNull = false;
+            bool isSolo = GraphUtil.GetBooleanValue(trackBaseVertex.Get(false, "IsSolo:"), ref isNull);
+
+            IVertex metaVertex = m0.MinusZero.Instance.root.Get(false, @"System\Lib\Music\Track\IsSolo");
+
+            if (!isSolo)
+            {
+                GraphUtil.SetVertexValue(trackBaseVertex, metaVertex, "True");
+
+                senderButton.On();
+            }
+            else
+            {
+                GraphUtil.SetVertexValue(trackBaseVertex, metaVertex, "False");
+
+                senderButton.Off();
+            }
+
+            foreach (IEdge ee in baseVertex.GetAll(false, @"Track:\IsSolo:"))
+                if(ee.To != trackBaseVertex.Get(false, "IsSolo:"))
+                    ee.To.Value = "False";
+
+            foreach (LitButton b in SoloButtons)
+                if(b != senderButton)
+                    b.Off();
         }
 
         private void Draw()
