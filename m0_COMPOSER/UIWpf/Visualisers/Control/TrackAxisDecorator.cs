@@ -32,6 +32,9 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control
 
         double zoomFactor;
 
+        List<LitButton> MuteButtons;
+        List<LitButton> SoloButtons;
+
         private void DrawAdditionalSegmentControls(AxisSegment s)
         {
             LitButton m = new LitButton(new SolidColorBrush(Colors.DarkRed), new SolidColorBrush(Colors.Red), 
@@ -42,6 +45,10 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control
             WpfUtil.SetPosition(m, Width - 17, s.StartPosition + 2);
 
             this.Children.Add(m);
+
+            m.Tag = s.BaseVertex;
+
+            MuteButtons.Add(m);
 
             //
 
@@ -54,6 +61,12 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control
 
             this.Children.Add(so);
 
+            so.Tag = s.BaseVertex;
+
+            so.MouseDown += So_MouseDown;
+
+            SoloButtons.Add(so);
+
             //
 
             InfoButton ib = new InfoButton();
@@ -65,15 +78,43 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control
             WpfUtil.SetPosition(ib, Width - 49, s.StartPosition + 4);
 
             this.Children.Add(ib);
+
+            //
+
+            DeleteButton db = new DeleteButton();            
+
+            db.BaseEdge = s.BaseEdge;
+
+            WpfUtil.SetPosition(db, Width - 64, s.StartPosition + 4);
+
+            this.Children.Add(db);
+        }
+
+        private void So_MouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            foreach (IEdge ee in baseVertex.GetAll(false, @"Track:\IsSolo:"))
+                ee.To.Value = "False";
+
+            foreach(LitButton b in SoloButtons)
+                b.
+
+
+            LitButton senderButton = (LitButton)sender;
+            IVertex trackBaseVertex = (IVertex)().Tag;
+
+            trackBaseVertex.Value = "True";
         }
 
         private void Draw()
         {
             Children.Clear();
 
-            Width = 100;
+            Width = 120;
 
             List<TextBlock> tbl = new List<TextBlock>();
+
+            MuteButtons = new List<LitButton>();
+            SoloButtons = new List<LitButton>();
 
             foreach (AxisSegment s in Segments)
             {
@@ -123,7 +164,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control
 
                 text.Padding = new Thickness(2, 0, 3, 0);
 
-                text.Width = 50;
+                text.Width = 56;
 
                 WpfUtil.SetPosition(text, 0, s.StartPosition);            
 
