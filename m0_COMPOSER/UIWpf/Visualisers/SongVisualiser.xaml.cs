@@ -131,8 +131,11 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             InitSongState();
         }
 
-        private void CreateAddNewTrackControl() {
-            Button newTrackButton = new Button();
+        Button newTrackButton;
+
+        private void CreateAddNewTrackControl()
+        {
+            newTrackButton = new Button();
 
             newTrackButton.Content = "+ new track";
 
@@ -159,7 +162,9 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             v.Value = "Track " + trackCnt;
             trackCnt++;
-            
+
+            //newTrackButton.Background = (Brush)FindResource("0ForegroundBrush"); // fix to some system bug?
+
             //MinusZero.Instance.DefaultUserInteraction.EditDialog(v, null);            
         }
 
@@ -309,7 +314,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             PlatformClass.RegisterVertexChangeListeners_byGenericVertex(baseVertex, new VertexChange(VertexChange_BaseEdge), new string[] { "Tempo", "Track" });
 
 
-            IVertex r = MinusZero.Instance.Root;            
+            IVertex r = MinusZero.Instance.Root;
 
             horizontalSpanVertex = r.Get(false, @"System\Lib\Music\Data\DefaultRealTimeSpanLevel:");
 
@@ -470,10 +475,10 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             if ((sender == baseVertex.Get(false, "Tempo:")) && (e.Type == VertexChangeType.ValueChanged))
                 UpdateTempo();
 
-            if (GraphUtil.DoEdgeListContainsVertex(baseVertex.GetAll(false, "Track:"), senderVertex) && (e.Type == VertexChangeType.ValueChanged))            
-                RedrawTracks();            
+            if (GraphUtil.DoEdgeListContainsVertex(baseVertex.GetAll(false, "Track:"), senderVertex) && (e.Type == VertexChangeType.ValueChanged))
+                RedrawTracks();
 
-            if (GraphUtil.DoEdgeListContainsVertex(baseVertex.GetAll(false, "Track:"), senderVertex) && (e.Type == VertexChangeType.EdgeAdded))            
+            if (GraphUtil.DoEdgeListContainsVertex(baseVertex.GetAll(false, "Track:"), senderVertex) && (e.Type == VertexChangeType.EdgeAdded))
                 AddChangeListenersToTrack(senderVertex);
         }
 
@@ -484,7 +489,8 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             HorizontalAD.SetLength(RealTimeLength);
         }
 
-        protected void UpdateTempo(){
+        protected void UpdateTempo()
+        {
             bool dummy = false;
 
             Tempo = GraphUtil.GetDoubleValue(baseVertex.Get(false, "Tempo:"), ref dummy);
@@ -516,11 +522,77 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
                 RemoveChangeListenersToAllTracks();
 
-               // PlatformClass.RemoveVertexChangeListeners_byGenericVertex(baseVertex, new VertexChange(VertexChange_BaseEdge));
+                // PlatformClass.RemoveVertexChangeListeners_byGenericVertex(baseVertex, new VertexChange(VertexChange_BaseEdge));
 
                 if (Vertex is IDisposable)
-                    ((IDisposable)Vertex).Dispose();                
+                    ((IDisposable)Vertex).Dispose();
             }
+        }
+
+        protected override void SnapToGridComboBox_SelectionChange()
+        {
+            switch (Vertex.Get(false, "SnapToGrid:").Value.ToString())
+            {
+                case "1 bar":
+                    CurrentSnapToGrid = SnapToGridEnum.Bar1;
+                    CurrentSnapToGridValue = 1;
+                    break;
+
+                case "1/2 bar":
+                    CurrentSnapToGrid = SnapToGridEnum.Bar1_2;
+                    CurrentSnapToGridValue = 1.0 / 2;
+                    break;
+
+                case "1/4 bar":
+                    CurrentSnapToGrid = SnapToGridEnum.Bar1_4;
+                    CurrentSnapToGridValue = 1.0 / 4;
+                    break;
+
+                case "1/8 bar":
+                    CurrentSnapToGrid = SnapToGridEnum.Bar1_8;
+                    CurrentSnapToGridValue = 1.0 / 8;
+                    break;
+
+                case "1/16 bar":
+                    CurrentSnapToGrid = SnapToGridEnum.Bar1_16;
+                    CurrentSnapToGridValue = 1.0 / 16;
+                    break;
+
+                case "1/32 bar":
+                    CurrentSnapToGrid = SnapToGridEnum.Bar1_32;
+                    CurrentSnapToGridValue = 1.0 / 32;
+                    break;
+
+                case "no snap":
+                    CurrentSnapToGrid = SnapToGridEnum.No_Snap;
+                    CurrentSnapToGridValue = 0;
+                    break;
+            }
+
+            VisualiserDraw();
+        }
+
+        protected override double GetSnappedPosition(double position)
+        {
+            if (CurrentSnapToGrid == SnapToGridEnum.No_Snap)
+                return position;
+
+            double positionInBars = (position / HorizontalAD.BaseUnitSize) / HorizontalAD.SegmentLength;
+
+            double reminder = positionInBars % CurrentSnapToGridValue;
+
+            if (reminder < (CurrentSnapToGridValue / 2.0))
+                return (positionInBars - reminder) * HorizontalAD.SegmentLength * HorizontalAD.BaseUnitSize;
+            else
+                return (positionInBars - reminder + CurrentSnapToGridValue) * HorizontalAD.SegmentLength * HorizontalAD.BaseUnitSize;
+        }
+
+        protected override double GetSnapMinmalWidth()
+        {
+            if (CurrentSnapToGridValue == 0)
+                return 1;
+
+            return CurrentSnapToGridValue * HorizontalAD.SegmentLength * HorizontalAD.BaseUnitSize;
         }
     }
 }

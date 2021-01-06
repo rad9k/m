@@ -27,12 +27,12 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control
             }
         }
 
-        double barLength;
-        public double BarLength
+        double segmentLength;
+        public double SegmentLength
         {
             get
             {
-                return barLength;
+                return segmentLength;
             }
         }
 
@@ -188,7 +188,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control
                 timeSpanStructure[x].BaseMusicTimeSpanLevelCountForThisLevel = BaseMusicTimeSpanLevelCount;
             }
 
-            barLength = timeSpanStructure[timeSpanStructure.Count - 2].length;
+            segmentLength = timeSpanStructure[timeSpanStructure.Count - 2].length;
         }
 
         private void Update()

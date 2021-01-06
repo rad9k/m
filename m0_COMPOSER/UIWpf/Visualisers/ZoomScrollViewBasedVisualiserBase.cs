@@ -104,7 +104,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
         protected AxisSegment NewItemSegment;
 
-        protected enum SnapToGridEnum { Bar1, Bar1_2, Bar1_4, Bar1_8, Bar1_16, Bar1_32, No_Snap }
+        protected enum SnapToGridEnum { Bar1, Bar1_2, Bar1_4, Bar1_8, Bar1_16, Bar1_32, Bar1_64, Bar1_128, Bar1_256, Bar1_512, No_Snap }
 
         protected SnapToGridEnum CurrentSnapToGrid;
 
@@ -1136,27 +1136,27 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             return null;
         }
 
-        protected double GetSnappedPosition(double position)
+        protected virtual double GetSnappedPosition(double position)
         {
             if (CurrentSnapToGrid == SnapToGridEnum.No_Snap)
                 return position;
 
-            double positionInBars = (position / HorizontalAD.BaseUnitSize) / HorizontalAD.BarLength;
+            double positionInBars = (position / HorizontalAD.BaseUnitSize) / HorizontalAD.SegmentLength;
 
             double reminder = positionInBars % CurrentSnapToGridValue;
 
             if (reminder < (CurrentSnapToGridValue / 2.0))
-                return (positionInBars - reminder) * HorizontalAD.BarLength * HorizontalAD.BaseUnitSize;
+                return (positionInBars - reminder) * HorizontalAD.SegmentLength * HorizontalAD.BaseUnitSize;
             else
-                return (positionInBars - reminder + CurrentSnapToGridValue) * HorizontalAD.BarLength * HorizontalAD.BaseUnitSize;
+                return (positionInBars - reminder + CurrentSnapToGridValue) * HorizontalAD.SegmentLength * HorizontalAD.BaseUnitSize;
         }
 
-        protected double GetSnapMinmalWidth()
+        protected virtual double GetSnapMinmalWidth()
         {
             if (CurrentSnapToGridValue == 0)
                 return 1;
 
-            return CurrentSnapToGridValue * HorizontalAD.BarLength * HorizontalAD.BaseUnitSize;
+            return CurrentSnapToGridValue * HorizontalAD.SegmentLength * HorizontalAD.BaseUnitSize;
         }
 
         protected AxisSegment GetPitchSegment(IVertex pitchVertex)
@@ -2325,7 +2325,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
         {
             SetCursorMode(CursorStateEnum.ArrowUp);
 
-            CurrentSnapToGrid = SnapToGridEnum.Bar1;
+            CurrentSnapToGrid = SnapToGridEnum.Bar1_16;
 
             CurrentSnapToGridValue = 1;
         }
@@ -2475,37 +2475,37 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             VisualiserDraw();
         }
 
-        protected void SnapToGridComboBox_SelectionChange()
+        protected virtual void SnapToGridComboBox_SelectionChange()
         {
             switch (Vertex.Get(false, "SnapToGrid:").Value.ToString())
             {
-                case "1 bar":
-                    CurrentSnapToGrid = SnapToGridEnum.Bar1;
-                    CurrentSnapToGridValue = 1;
-                    break;
-
-                case "1/2 bar":
-                    CurrentSnapToGrid = SnapToGridEnum.Bar1_2;
-                    CurrentSnapToGridValue = 1.0 / 2;
-                    break;
-
-                case "1/4 bar":
-                    CurrentSnapToGrid = SnapToGridEnum.Bar1_4;
-                    CurrentSnapToGridValue = 1.0 / 4;
-                    break;
-
-                case "1/8 bar":
-                    CurrentSnapToGrid = SnapToGridEnum.Bar1_8;
-                    CurrentSnapToGridValue = 1.0 / 8;
-                    break;
-
                 case "1/16 bar":
                     CurrentSnapToGrid = SnapToGridEnum.Bar1_16;
-                    CurrentSnapToGridValue = 1.0 / 16;
+                    CurrentSnapToGridValue = 1;
                     break;
 
                 case "1/32 bar":
                     CurrentSnapToGrid = SnapToGridEnum.Bar1_32;
+                    CurrentSnapToGridValue = 1.0 / 2;
+                    break;
+
+                case "1/64 bar":
+                    CurrentSnapToGrid = SnapToGridEnum.Bar1_64;
+                    CurrentSnapToGridValue = 1.0 / 4;
+                    break;
+
+                case "1/128 bar":
+                    CurrentSnapToGrid = SnapToGridEnum.Bar1_128;
+                    CurrentSnapToGridValue = 1.0 / 8;
+                    break;
+
+                case "1/256 bar":
+                    CurrentSnapToGrid = SnapToGridEnum.Bar1_256;
+                    CurrentSnapToGridValue = 1.0 / 16;
+                    break;
+
+                case "1/512 bar":
+                    CurrentSnapToGrid = SnapToGridEnum.Bar1_512;
                     CurrentSnapToGridValue = 1.0 / 32;
                     break;
 

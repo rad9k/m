@@ -28,7 +28,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control
         }
 
         double barLength;
-        public double BarLength
+        public double SegmentLength
         {
             get
             {

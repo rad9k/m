@@ -31,7 +31,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
         double BaseUnitSize { get; }
 
-        double BarLength { get; }
+        double SegmentLength { get; }
 
         void SetBaseVertex(IVertex baseVertex);
 

@@ -88,7 +88,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control
 
         public double BaseUnitSize => throw new NotImplementedException();
 
-        public double BarLength => throw new NotImplementedException();
+        public double SegmentLength => throw new NotImplementedException();
 
         public event EventHandler SelectionChanged;
 
