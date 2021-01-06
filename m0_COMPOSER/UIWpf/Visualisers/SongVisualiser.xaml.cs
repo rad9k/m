@@ -163,7 +163,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             //MinusZero.Instance.DefaultUserInteraction.EditDialog(v, null);            
         }
 
-        private void UpdateTracks()
+        private void RedrawTracks()
         {
             VerticalAD.SetBaseVertex(baseVertex);
         }
@@ -312,6 +312,20 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             horizontalSpanVertex = r.Get(false, @"System\Lib\Music\Data\DefaultRealTimeSpanLevel:");
 
             InitialiseBaseVertexBasedVisualiserControls();
+
+            AddChangeListenersToAllTracks();
+        }
+
+        void AddChangeListenersToAllTracks()
+        {
+            foreach (IEdge e in baseVertex.GetAll(false, "Track:"))
+                AddChangeListenersToTrack(e.To);
+        }
+
+        void AddChangeListenersToTrack(IVertex v)
+        {
+            PlatformClass.RemoveVertexChangeListeners_byGenericVertex(v, new VertexChange(VertexChange_Track));
+            PlatformClass.RegisterVertexChangeListeners_byGenericVertex(v, new VertexChange(VertexChange_Track), new string[] { "Sequence", "Color" });
         }
 
         protected override void SetAxisDecorators()
@@ -428,16 +442,31 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             base.VertexChange(sender, e);
         }
 
+        protected void VertexChange_Track(object sender, VertexChangeEventArgs e)
+        {
+            if (!(sender is IVertex))
+                return;
+
+            //if (GraphUtil.DoEdgeListContainsVertex(baseVertex.GetAll(false, "Track:"), (IVertex)sender))
+
+            RedrawTracks();
+        }
+
         protected void VertexChange_BaseEdge(object sender, VertexChangeEventArgs e)
         {
             if (!(sender is IVertex))
                 return;
 
+            IVertex senderVertex = (IVertex)sender;
+
             if ((sender == baseVertex.Get(false, "Tempo:")) && (e.Type == VertexChangeType.ValueChanged))
                 UpdateTempo();
 
-            if (GraphUtil.DoEdgeListContainsVertex(baseVertex.GetAll(false, "Track:"), (IVertex)sender) && (e.Type == VertexChangeType.ValueChanged))
-                UpdateTracks();
+            if (GraphUtil.DoEdgeListContainsVertex(baseVertex.GetAll(false, "Track:"), senderVertex) && (e.Type == VertexChangeType.ValueChanged))            
+                RedrawTracks();            
+
+            if (GraphUtil.DoEdgeListContainsVertex(baseVertex.GetAll(false, "Track:"), senderVertex) && (e.Type == VertexChangeType.EdgeAdded))            
+                AddChangeListenersToTrack(senderVertex);
         }
 
         void UpdateHorizontalADLength()

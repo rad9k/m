@@ -154,7 +154,7 @@ namespace m0.ZeroTypes
 
         public static void RemoveVertexChangeListeners_byGenericVertex(IVertex metaVertex, VertexChange action)
         {
-            RemoveVertexChangeListeners_ForVertex(metaVertex, metaVertex, action);
+            RemoveVertexChangeListeners_ForVertex_(metaVertex, metaVertex, action);
 
             IVertex AttributeVertices = metaVertex.GetAll(false, @"$Is:\{$Is:{$Inherits:Selector}}");
 
@@ -225,7 +225,7 @@ namespace m0.ZeroTypes
                         Vertex.Change -= list.Listener;
                     }
                 }                
-            }            
-        
+        }        
+
     }
 }
