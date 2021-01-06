@@ -2446,7 +2446,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
         protected bool IsDisposed = false;
 
-        public void Dispose()
+        public virtual void Dispose()
         {
             if (IsDisposed == false)
             {

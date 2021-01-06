@@ -191,19 +191,17 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control
 
                 Color segmentColor = (Color)WpfUtil.FindResource("0Background");
 
-                IVertex trackColorVertex = s.BaseVertex.Get(false, @"Color:");
+                Color trackColor = s.Color;
 
-                if (trackColorVertex != null)
-                {
-                    Color trackColorVertexColor = WpfUtil.GetColorFromColorVertex(trackColorVertex);
+                if (s.BaseVertex.Get(false, "Color:") != null)
+                {                    
+                    Brush trackColorBrush = new SolidColorBrush(trackColor);
 
-                    Brush trackColorVertexBrush = new SolidColorBrush(trackColorVertexColor);
+                    segment.Background = trackColorBrush;                    
 
-                    segment.Background = trackColorVertexBrush;
+                    text.Background = trackColorBrush;
 
-                    text.Background = trackColorVertexBrush;
-
-                    text.Foreground = new SolidColorBrush(WpfUtil.GetNegativeColor(trackColorVertexColor));
+                    text.Foreground = new SolidColorBrush(WpfUtil.GetNegativeColorWhiteOrBlack(trackColor));
                 }
 
                 if (segmentSize < 13)                        
@@ -293,7 +291,13 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control
                 IVertex colorVertex = segment.BaseVertex.Get(false, "Color:");
 
                 if (colorVertex != null)
-                    segment.Color = WpfUtil.GetColorFromColorVertex(colorVertex);                                
+                {
+                    segment.Color = WpfUtil.GetColorFromColorVertex(colorVertex);
+
+                    //segment.UseBackgroundColor = true;
+
+                    //segment.BackgroundColor = segment.Color;
+                }
 
                 Segments.Add(segment);
 

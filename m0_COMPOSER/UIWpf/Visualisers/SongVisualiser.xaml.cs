@@ -166,6 +166,8 @@ namespace m0_COMPOSER.UIWpf.Visualisers
         private void RedrawTracks()
         {
             VerticalAD.SetBaseVertex(baseVertex);
+
+            DrawMain();
         }
 
         private void CreateSongControls()
@@ -320,6 +322,12 @@ namespace m0_COMPOSER.UIWpf.Visualisers
         {
             foreach (IEdge e in baseVertex.GetAll(false, "Track:"))
                 AddChangeListenersToTrack(e.To);
+        }
+
+        void RemoveChangeListenersToAllTracks()
+        {
+            foreach (IEdge e in baseVertex.GetAll(false, "Track:"))
+                PlatformClass.RemoveVertexChangeListeners_byGenericVertex(e.To, new VertexChange(VertexChange_Track));
         }
 
         void AddChangeListenersToTrack(IVertex v)
@@ -494,6 +502,25 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             CreateSongControls();
 
             base.ChildControlsLoaded();
+        }
+
+        public override void Dispose()
+        {
+            if (IsDisposed == false)
+            {
+                IsDisposed = true;
+
+                DispachAllSubVisualisers();
+
+                PlatformClass.RemoveVertexChangeListeners(this.Vertex, new VertexChange(VertexChange));
+
+                RemoveChangeListenersToAllTracks();
+
+               // PlatformClass.RemoveVertexChangeListeners_byGenericVertex(baseVertex, new VertexChange(VertexChange_BaseEdge));
+
+                if (Vertex is IDisposable)
+                    ((IDisposable)Vertex).Dispose();                
+            }
         }
     }
 }

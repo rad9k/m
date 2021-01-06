@@ -140,6 +140,16 @@ namespace m0.UIWpf
             return c;
         }
 
+        public static Color GetNegativeColorWhiteOrBlack(Color inColor)
+        {
+            int sum = inColor.R + inColor.G + inColor.B;
+
+            if (sum > (256 * 3.0) / 2.0)
+                return Colors.Black;
+
+            return Colors.White;            
+        }
+
         public static void SetPosition(FrameworkElement e, double x, double y)
         {
             Canvas.SetLeft(e, x);
