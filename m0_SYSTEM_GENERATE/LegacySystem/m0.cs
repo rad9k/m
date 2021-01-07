@@ -2754,6 +2754,7 @@ namespace m0
 
             sm.Get(false, @"Visualiser\GridStyleEnum").AddEdge(sm.Get(false, "?$Inherits"), sm.Get(false, @"ZeroTypes\EnumBase"));
             sm.Get(false, @"Visualiser\SnapToGridEnum").AddEdge(sm.Get(false, "?$Inherits"), sm.Get(false, @"ZeroTypes\EnumBase"));
+            sm.Get(false, @"Visualiser\SongSnapToGridEnum").AddEdge(sm.Get(false, "?$Inherits"), sm.Get(false, @"ZeroTypes\EnumBase"));
 
             sm.Get(false, @"Visualiser\Form").AddEdge(sm.Get(false, "?$Inherits"), sm.Get(false, @"ZeroTypes\$PlatformClass"));
             sm.Get(false, @"Visualiser\Form").AddEdge(sm.Get(false, "?$Inherits"), sm.Get(false, @"ZeroTypes\HasBaseEdge"));
@@ -4669,7 +4670,7 @@ namespace m0
             ColorType.AddColor(Colors, "Blue", 0, 0, 255, 255);
 
             for(int x=0;x<12;x++)
-                ColorType.AddColor(Colors, "Gray"+x, 0, x * 23, x * 23, x * 23);
+                ColorType.AddColor(Colors, "Gray"+x, x * 23, x * 23, x * 23, 255);
         }
 
         private void Initialize_PreParserReady()

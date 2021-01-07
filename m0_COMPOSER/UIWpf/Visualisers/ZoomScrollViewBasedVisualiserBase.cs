@@ -815,7 +815,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             if (LeftRight == LeftRightEnum.Left)
             {
-                if (delta + GetSnapMinmalWidth() >= element.Width)
+                if (delta + GetSnapMinimalWidth() >= element.Width)
                     return;
 
                 double orginalX = item.Left;
@@ -833,7 +833,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             }
             else
             {
-                if (element.Width + delta - GetSnapMinmalWidth() <= 0)
+                if (element.Width + delta - GetSnapMinimalWidth() <= 0)
                     return;
 
                 double orginalX = item.Right;
@@ -1151,7 +1151,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
                 return (positionInBars - reminder + CurrentSnapToGridValue) * HorizontalAD.SegmentLength * HorizontalAD.BaseUnitSize;
         }
 
-        protected virtual double GetSnapMinmalWidth()
+        protected virtual double GetSnapMinimalWidth()
         {
             if (CurrentSnapToGridValue == 0)
                 return 1;
@@ -1159,73 +1159,16 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             return CurrentSnapToGridValue * HorizontalAD.SegmentLength * HorizontalAD.BaseUnitSize;
         }
 
-        protected AxisSegment GetPitchSegment(IVertex pitchVertex)
+        protected AxisSegment GetVerticalSegment(IVertex baseVertex)
         {
             foreach (AxisSegment s in VerticalAD.Segments)
-                if (s.BaseVertex == pitchVertex)
+                if (s.BaseVertex == baseVertex)
                     return s;
 
             return null;
         }
 
-        protected void AddItem(IEdge itemEdge, List<IVertex> selectedVertexes)
-        {
-            IVertex itemEventVertex = itemEdge.To;
-
-            bool dummy = false;
-
-            int triggerTime = GraphUtil.GetIntegerValue(itemEventVertex.Get(false, "TriggerTime:"), ref dummy);
-
-            int length = GraphUtil.GetIntegerValue(itemEventVertex.Get(false, "Length:"), ref dummy);
-
-            IVertex pitchVertex = MusicUtil.GetNoteFromPitchSet(verticalSpanVertex,
-                GraphUtil.GetIntegerValue(itemEventVertex.Get(false, "Octave:")),
-                GraphUtil.GetIntegerValue(itemEventVertex.Get(false, "Note:")));
-
-            string label = pitchVertex.Value.ToString();
-
-            FrameworkElement newElement;
-
-            if (IsDrum)
-                newElement = new DrumItem(itemEdge, this, ShowVelocity);
-            else
-                newElement = new NoteItem(itemEdge, label, this, ShowLabel, ShowVelocity);
-
-            IItem newItem = (IItem)newElement;
-
-            if (selectedVertexes != null && selectedVertexes.Contains(itemEventVertex))
-            {
-                newItem.Select();
-                PreviousSelectedItemContext = MainDownEnum.Main;
-            }
-
-            AxisSegment itemSegment = GetPitchSegment(pitchVertex);
-
-
-            double startPosition = triggerTime * HorizontalAD.BaseUnitSize;
-
-            double endPosition = startPosition + (length * HorizontalAD.BaseUnitSize);
-
-
-            if (IsDrum)
-            {
-                newItem.HorizontalCenter = startPosition;
-                newItem.Top = itemSegment.StartPosition;
-                newItem.Bottom = itemSegment.EndPosition;
-            }
-            else
-            {
-                newItem.Left = startPosition;
-                newItem.Top = itemSegment.StartPosition;
-                newItem.Right = endPosition;
-                newItem.Bottom = itemSegment.EndPosition;
-            }
-
-            ItemsAdd(newItem);
-
-            if (MainItemsSyncedWithDown)
-                AddItem_Down(itemEdge, selectedVertexes, false, true);
-        }
+        protected virtual void AddItem(IEdge itemEdge, List<IVertex> selectedVertexes) { }
 
         protected void UpdateItem_HorizontalPosition(IItem item)
         {
@@ -1302,30 +1245,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             item.Update();
         }
 
-        protected IEdge AddItemEdge(AxisSegment itemSegment, double startPosition, double lengthPosition)
-        {
-            IVertex r = MinusZero.Instance.Root;
-
-            IVertex Event = r.Get(false, @"System\Lib\Music\Event");
-            IVertex noteEvent = r.Get(false, @"System\Lib\Music\NoteEvent");
-
-            IEdge tempNoteEventEdge = baseVertex.AddVertexAndReturnEdge(null, null);
-
-            IVertex noteEventVertex = tempNoteEventEdge.To;
-
-            noteEventVertex.AddEdge(MinusZero.Instance.Is, noteEvent);
-            noteEventVertex.AddVertex(noteEvent.Get(false, @"Attribute:Velocity"), DefaultVelocity);
-            noteEventVertex.AddEdge(noteEvent.Get(false, @"Attribute:Octave"), itemSegment.BaseVertex.Get(false, "Octave:"));
-            noteEventVertex.AddEdge(noteEvent.Get(false, @"Attribute:Note"), itemSegment.BaseVertex.Get(false, "Note:"));
-            noteEventVertex.AddVertex(noteEvent.Get(false, @"Attribute:TriggerTime"), (int)((startPosition / HorizontalAD.BaseUnitSize) + 0.01));
-            noteEventVertex.AddVertex(noteEvent.Get(false, @"Attribute:Length"), (int)((lengthPosition / HorizontalAD.BaseUnitSize) + 0.01));
-
-            IEdge finalEdge = baseVertex.AddEdge(Event, noteEventVertex);
-
-            baseVertex.DeleteEdge(tempNoteEventEdge);
-
-            return finalEdge;
-        }
+        protected virtual IEdge AddItemEdge(AxisSegment itemSegment, double startPosition, double lengthPosition) { return null; }
 
         protected Point GetMainContentMousePosition(MouseButtonEventArgs e)
         {
@@ -2205,7 +2125,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             if (CurrentSnapToGrid == SnapToGridEnum.No_Snap || ShowSnapLines == false)
                 return;
 
-            double snapWidth = GetSnapMinmalWidth();
+            double snapWidth = GetSnapMinimalWidth();
 
             Brush lb = (Brush)FindResource("0VeryLightForegroundBrush");
 
@@ -2228,7 +2148,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             if (CurrentSnapToGrid == SnapToGridEnum.No_Snap || ShowSnapLines == false)
                 return;
 
-            double snapWidth = GetSnapMinmalWidth();
+            double snapWidth = GetSnapMinimalWidth();
 
             Brush lb = (Brush)FindResource("0VeryLightForegroundBrush");
 

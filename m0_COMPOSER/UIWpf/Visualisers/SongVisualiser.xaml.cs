@@ -230,7 +230,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             ShowToolbarNames = GraphUtil.GetBooleanValue(Vertex.Get(false, "ShowToolbarNames:"), ref dummy);
 
             if (Vertex.Get(false, "SnapToGrid:") == null || Vertex.Get(false, "SnapToGrid:").Value.ToString() == "")
-                GraphUtil.ReplaceEdge(Vertex, r.Get(false, @"System\Meta\Visualiser\Song\SnapToGrid"), r.Get(false, @"System\Meta\Visualiser\SnapToGridEnum\'1 bar'"));
+                GraphUtil.ReplaceEdge(Vertex, r.Get(false, @"System\Meta\Visualiser\Song\SnapToGrid"), r.Get(false, @"System\Meta\Visualiser\SongSnapToGridEnum\'1 bar'"));
 
             SnapToGridComboBox_SelectionChange();
 
@@ -577,22 +577,145 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             if (CurrentSnapToGrid == SnapToGridEnum.No_Snap)
                 return position;
 
-            double positionInBars = (position / HorizontalAD.BaseUnitSize) / HorizontalAD.SegmentLength;
+            double snapMinimalWidth = GetSnapMinimalWidth();
 
-            double reminder = positionInBars % CurrentSnapToGridValue;
+            double numberOfSnaps = position / snapMinimalWidth;
 
-            if (reminder < (CurrentSnapToGridValue / 2.0))
-                return (positionInBars - reminder) * HorizontalAD.SegmentLength * HorizontalAD.BaseUnitSize;
+            double numberOfSnapsFloor = Math.Floor(numberOfSnaps);
+
+            double rest = position - (numberOfSnapsFloor * snapMinimalWidth);
+
+            if (rest < (snapMinimalWidth / 2))
+                return numberOfSnapsFloor * snapMinimalWidth;
             else
-                return (positionInBars - reminder + CurrentSnapToGridValue) * HorizontalAD.SegmentLength * HorizontalAD.BaseUnitSize;
+                return (numberOfSnapsFloor + 1) * snapMinimalWidth;
         }
 
-        protected override double GetSnapMinmalWidth()
+        protected override double GetSnapMinimalWidth()
         {
             if (CurrentSnapToGridValue == 0)
                 return 1;
 
-            return CurrentSnapToGridValue * HorizontalAD.SegmentLength * HorizontalAD.BaseUnitSize;
+            double minuteWidth = HorizontalAD.SegmentLength * HorizontalAD.BaseUnitSize;
+
+            int snapSize_Music = (int) (CurrentSnapToGridValue * Midi.Standard.MidiTicksPerSixteen * 16);
+
+            double snapSize_Real = GetRealTimeFromMusicTime(snapSize_Music);
+
+            return snapSize_Real * minuteWidth;
+        }
+
+        int GetSequenceEventTriggerTime(IVertex sequenceEventVertex)
+        {
+            bool dummy = false;
+
+            return GraphUtil.GetIntegerValue(sequenceEventVertex.Get(false, "TriggerTime:"), ref dummy);
+        }
+
+        int GetSequenceEventLength(IVertex sequenceEventVertex)
+        {
+            bool dummy = false;
+
+            return GraphUtil.GetIntegerValue(sequenceEventVertex.Get(false, @"Sequence:\Length:"), ref dummy);
+        }
+
+        public IVertex GetTrackVertexFromSequenceEventVertex(IVertex sequenceEventVertex)
+        {
+            foreach (IEdge e in baseVertex.GetAll(false, @"Track:"))
+                foreach (IEdge ee in e.To)
+                    if (ee.To == sequenceEventVertex)
+                        return e.To;
+
+            return null;
+        }
+
+        protected override void AddItem(IEdge itemEdge, List<IVertex> selectedVertexes)
+        {
+            IVertex itemEventVertex = itemEdge.To;
+
+            bool dummy = false;
+
+            int triggerTime = GetSequenceEventTriggerTime(itemEventVertex);
+
+            int length = GetSequenceEventLength(itemEventVertex);
+
+            SequenceEventItem newElement = new SequenceEventItem(itemEdge, this);            
+
+            if (selectedVertexes != null && selectedVertexes.Contains(itemEventVertex))
+            {
+                newElement.Select();
+                PreviousSelectedItemContext = MainDownEnum.Main;
+            }
+
+            IVertex trackVertex = GetTrackVertexFromSequenceEventVertex(itemEdge.To);
+
+            AxisSegment itemSegment = GetVerticalSegment(trackVertex);
+
+
+            double startPosition = MusicTimeToScreenPosition(triggerTime);
+
+            double endPosition = MusicTimeToScreenPosition(triggerTime + length);
+
+            
+            newElement.Left = startPosition;
+            newElement.Top = itemSegment.StartPosition;
+            newElement.Right = endPosition;
+            newElement.Bottom = itemSegment.EndPosition;            
+
+            ItemsAdd(newElement);            
+        }
+
+        int ScreenPositionToMusicTime(double position)
+        {
+            double minuteWidth = HorizontalAD.SegmentLength * HorizontalAD.BaseUnitSize;
+
+            double positionInMinutes = position / minuteWidth;
+
+            return GetMusicTimeFromRealTime(positionInMinutes);
+        }
+
+        double MusicTimeToScreenPosition(int musicTime)
+        {
+            double realTime = GetRealTimeFromMusicTime(musicTime);
+
+            double minuteWidth = HorizontalAD.SegmentLength * HorizontalAD.BaseUnitSize;            
+
+            return realTime * minuteWidth;
+        }
+
+        protected override IEdge AddItemEdge(AxisSegment itemSegment, double startPosition, double lengthPosition)
+        {
+            IVertex r = MinusZero.Instance.Root;
+
+
+            IVertex toAddVertex = itemSegment.BaseVertex;
+
+
+            IVertex sequenceEvent = r.Get(false, @"System\Lib\Music\SequenceEvent");
+
+            IVertex sequence = r.Get(false, @"System\Lib\Music\Sequence");
+
+
+            IEdge tempSequenceEventEdge = toAddVertex.AddVertexAndReturnEdge(null, null);
+
+            IVertex sequenceEventVertex = tempSequenceEventEdge.To;
+
+
+            sequenceEventVertex.AddEdge(MinusZero.Instance.Is, sequenceEvent);
+            
+            sequenceEventVertex.AddVertex(sequenceEvent.Get(false, @"Attribute:TriggerTime"), ScreenPositionToMusicTime(startPosition));
+
+            IVertex sequenceVertex = VertexOperations.AddInstance(sequenceEventVertex, sequence);
+
+            sequenceVertex.AddVertex(sequence.Get(false, @"Attribute:Length"), ScreenPositionToMusicTime(lengthPosition));
+
+
+            IEdge finalEdge = toAddVertex.AddEdge(sequenceEvent, sequenceEventVertex);
+
+            toAddVertex.DeleteEdge(tempSequenceEventEdge);   
+            
+
+            return finalEdge;
         }
     }
 }

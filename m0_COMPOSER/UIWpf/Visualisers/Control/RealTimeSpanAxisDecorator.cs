@@ -32,7 +32,8 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control
         {
             get
             {
-                return segmentLength;
+                return 60 * 100;
+                //return segmentLength;
             }
         }
 

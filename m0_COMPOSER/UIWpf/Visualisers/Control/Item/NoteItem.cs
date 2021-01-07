@@ -93,7 +93,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control.Item
 
             BorderThickness = new Thickness(2);
 
-            BorderBrush = (Brush)WpfUtil.FindResource("0BlackBrush");
+            BorderBrush = (Brush)WpfUtil.FindResource("0ForegroundBrush");
 
             if (!showVelocity)
             {
