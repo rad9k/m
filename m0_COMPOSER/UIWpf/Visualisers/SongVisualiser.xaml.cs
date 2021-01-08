@@ -703,7 +703,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             IVertex toAddVertex = itemSegment.BaseVertex;
 
 
-            IVertex sequenceEvent = r.Get(false, @"System\Lib\Music\SequenceEvent");
+            IVertex sequenceEvent = r.Get(false, @"System\Lib\Music\Track\SequenceEvent");
 
             IVertex sequence = r.Get(false, @"System\Lib\Music\Sequence");
 
