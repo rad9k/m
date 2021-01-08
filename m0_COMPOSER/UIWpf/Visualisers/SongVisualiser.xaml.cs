@@ -619,6 +619,18 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             return GraphUtil.GetIntegerValue(sequenceEventVertex.Get(false, @"Sequence:\Length:"), ref dummy);
         }
 
+        void SetSequenceEventTriggerTime(IVertex sequenceEventVertex, int value)
+        {
+            GraphUtil.SetVertexValue(sequenceEventVertex, MinusZero.Instance.root.Get(false, @"System\Lib\Music\SequenceEvent\TriggerTime"), value);            
+        }
+
+        void SetSequenceEventLength(IVertex sequenceEventVertex, int value)
+        {
+            IVertex sequenceVertex = sequenceEventVertex.Get(false, @"Sequence:");
+
+            GraphUtil.SetVertexValue(sequenceVertex, MinusZero.Instance.root.Get(false, @"System\Lib\Music\Sequence\Length"), value);
+        }
+
         public IVertex GetTrackVertexFromSequenceEventVertex(IVertex sequenceEventVertex)
         {
             foreach (IEdge e in baseVertex.GetAll(false, @"Track:"))
@@ -716,6 +728,62 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             
 
             return finalEdge;
+        }
+
+        protected override void DrawItems()
+        {
+            List<IVertex> selectedVertexes = GetSelectedVertexes();
+
+            foreach (IEdge e in baseVertex.GetAll(false, "Track:"))
+                foreach (IEdge ee in e.To.GetAll(false, "SequenceEvent:"))                
+                    AddItem(ee, selectedVertexes);
+        }
+
+        protected override void UpdateItem_VerticalPosition(IItem item)
+        {            
+            FrameworkElement element;
+
+            if (!(item is FrameworkElement))
+                return;
+
+            element = (FrameworkElement)item;
+
+            IVertex itemVertex = item.BaseEdge.To;
+
+            AxisSegment segment = FindVerticalSegment(item.Top + 1);
+
+            IVertex newTrack = segment.BaseVertex;
+
+            IVertex oldTrack = GetTrackVertexFromSequenceEventVertex(itemVertex);
+
+            IVertex sequnceEventMeta = MinusZero.Instance.root.Get(false, @"System\Lib\Music\Track\SequenceEvent");
+
+            newTrack.AddEdge(sequnceEventMeta, itemVertex);
+
+            GraphUtil.DeleteEdge(oldTrack, sequnceEventMeta, itemVertex);
+        }
+
+        protected override void UpdateItem_HorizontalPosition(IItem item)
+        {            
+            FrameworkElement element;
+
+            if (!(item is FrameworkElement))
+                return;
+
+            element = (FrameworkElement)item;
+
+            IVertex itemVertex = item.BaseEdge.To;
+
+            double itemWidth = element.Width;
+
+            int TriggerTime = ScreenPositionToMusicTime(item.Left);
+
+            int Length = ScreenPositionToMusicTime(itemWidth);                        
+
+            SetSequenceEventTriggerTime(itemVertex, TriggerTime);
+
+            if (Length != 0)
+                SetSequenceEventLength(itemVertex, Length);                
         }
     }
 }

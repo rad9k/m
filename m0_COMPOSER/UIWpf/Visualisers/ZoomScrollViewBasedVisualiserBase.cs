@@ -1170,80 +1170,9 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
         protected virtual void AddItem(IEdge itemEdge, List<IVertex> selectedVertexes) { }
 
-        protected void UpdateItem_HorizontalPosition(IItem item)
-        {
-            IVertex r = MinusZero.Instance.root;
-            IVertex metaTriggerTime = r.Get(false, @"System\Lib\Music\Event\TriggerTime");
-            IVertex metaLength = r.Get(false, @"System\Lib\Music\HasLength\Length");
+        protected virtual void UpdateItem_HorizontalPosition(IItem item) {}
 
-            FrameworkElement element;
-
-            if (!(item is FrameworkElement))
-                return;
-
-            element = (FrameworkElement)item;
-
-            IVertex itemVertex = item.BaseEdge.To;
-
-            double itemWidth = element.Width;
-
-            int TriggerTime;
-
-            int Length;
-
-            if (item.IsCentered)
-            {
-                TriggerTime = (int)(item.HorizontalCenter / HorizontalAD.BaseUnitSize);
-
-                Length = 0;
-            }
-            else
-            {
-                TriggerTime = (int)(item.Left / HorizontalAD.BaseUnitSize);
-
-                Length = (int)(itemWidth / HorizontalAD.BaseUnitSize);
-            }
-
-            GraphUtil.SetVertexValue(itemVertex, metaTriggerTime, TriggerTime);
-
-            if (Length != 0)
-                GraphUtil.SetVertexValue(itemVertex, metaLength, Length);
-        }
-
-        protected void UpdateItem_VerticalPosition(IItem item)
-        {
-            IVertex r = MinusZero.Instance.root;
-            IVertex metaOctave = r.Get(false, @"System\Lib\Music\Pitch\Octave");
-            IVertex metaNote = r.Get(false, @"System\Lib\Music\Pitch\Note");
-
-            FrameworkElement element;
-
-            if (!(item is FrameworkElement))
-                return;
-
-            element = (FrameworkElement)item;
-
-            IVertex noteEventVertex = item.BaseEdge.To;
-
-            AxisSegment segment = FindVerticalSegment(item.Top + 1);
-
-            IVertex octaveVertex = segment.BaseVertex.Get(false, "Octave:");
-            IVertex noteVertex = segment.BaseVertex.Get(false, "Note:");
-
-            GraphUtil.CreateOrReplaceEdge(noteEventVertex, metaOctave, octaveVertex);
-            GraphUtil.CreateOrReplaceEdge(noteEventVertex, metaNote, noteVertex);
-
-            int? octave = GraphUtil.GetIntegerValue(octaveVertex);
-            int? note = GraphUtil.GetIntegerValue(noteVertex);
-
-            IVertex pitchVertex = MusicUtil.GetNoteFromPitchSet(verticalSpanVertex, octave, note);
-
-            string label = pitchVertex.Value.ToString();
-
-            item.Label = label;
-
-            item.Update();
-        }
+        protected virtual void UpdateItem_VerticalPosition(IItem item) {}
 
         protected virtual IEdge AddItemEdge(AxisSegment itemSegment, double startPosition, double lengthPosition) { return null; }
 
@@ -2232,7 +2161,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             Down.Children.Add(VerticalArrowLine_Down);
         }
 
-        protected void DrawItems()
+        protected virtual void DrawItems()
         {
             List<IVertex> selectedVertexes = GetSelectedVertexes();
 

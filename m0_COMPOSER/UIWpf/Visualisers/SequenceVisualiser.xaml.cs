@@ -241,5 +241,89 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             return finalEdge;
         }
+
+        protected override void DrawItems()
+        {
+            List<IVertex> selectedVertexes = GetSelectedVertexes();
+
+            foreach (IEdge e in baseVertex.GetAll(false, "Event:"))
+                if (GraphUtil.ExistQueryOut(e.To, "$Is", "NoteEvent"))
+                    AddItem(e, selectedVertexes);
+        }
+
+        protected override void UpdateItem_VerticalPosition(IItem item)
+        {
+            IVertex r = MinusZero.Instance.root;
+            IVertex metaOctave = r.Get(false, @"System\Lib\Music\Pitch\Octave");
+            IVertex metaNote = r.Get(false, @"System\Lib\Music\Pitch\Note");
+
+            FrameworkElement element;
+
+            if (!(item is FrameworkElement))
+                return;
+
+            element = (FrameworkElement)item;
+
+            IVertex noteEventVertex = item.BaseEdge.To;
+
+            AxisSegment segment = FindVerticalSegment(item.Top + 1);
+
+            IVertex octaveVertex = segment.BaseVertex.Get(false, "Octave:");
+            IVertex noteVertex = segment.BaseVertex.Get(false, "Note:");
+
+            GraphUtil.CreateOrReplaceEdge(noteEventVertex, metaOctave, octaveVertex);
+            GraphUtil.CreateOrReplaceEdge(noteEventVertex, metaNote, noteVertex);
+
+            int? octave = GraphUtil.GetIntegerValue(octaveVertex);
+            int? note = GraphUtil.GetIntegerValue(noteVertex);
+
+            IVertex pitchVertex = MusicUtil.GetNoteFromPitchSet(verticalSpanVertex, octave, note);
+
+            string label = pitchVertex.Value.ToString();
+
+            item.Label = label;
+
+            item.Update();
+        }
+
+        protected override void UpdateItem_HorizontalPosition(IItem item)
+        {
+            IVertex r = MinusZero.Instance.root;
+            IVertex metaTriggerTime = r.Get(false, @"System\Lib\Music\Event\TriggerTime");
+            IVertex metaLength = r.Get(false, @"System\Lib\Music\HasLength\Length");
+
+            FrameworkElement element;
+
+            if (!(item is FrameworkElement))
+                return;
+
+            element = (FrameworkElement)item;
+
+            IVertex itemVertex = item.BaseEdge.To;
+
+            double itemWidth = element.Width;
+
+            int TriggerTime;
+
+            int Length;
+
+            if (item.IsCentered)
+            {
+                TriggerTime = (int)(item.HorizontalCenter / HorizontalAD.BaseUnitSize);
+
+                Length = 0;
+            }
+            else
+            {
+                TriggerTime = (int)(item.Left / HorizontalAD.BaseUnitSize);
+
+                Length = (int)(itemWidth / HorizontalAD.BaseUnitSize);
+            }
+
+            GraphUtil.SetVertexValue(itemVertex, metaTriggerTime, TriggerTime);
+
+            if (Length != 0)
+                GraphUtil.SetVertexValue(itemVertex, metaLength, Length);
+        }
     }
 }
