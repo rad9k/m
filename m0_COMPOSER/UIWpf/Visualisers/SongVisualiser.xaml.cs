@@ -683,7 +683,9 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             double positionInMinutes = position / minuteWidth;
 
-            return GetMusicTimeFromRealTime(positionInMinutes);
+            int beforeCorrection =  GetMusicTimeFromRealTime(positionInMinutes);
+
+            return MusicTimeSnapCorrect(beforeCorrection);
         }
 
         double MusicTimeToScreenPosition(int musicTime)
@@ -703,7 +705,9 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             IVertex toAddVertex = itemSegment.BaseVertex;
 
 
-            IVertex sequenceEvent = r.Get(false, @"System\Lib\Music\Track\SequenceEvent");
+            IVertex sequenceEventAttribute = r.Get(false, @"System\Lib\Music\Track\SequenceEvent");
+
+            IVertex sequenceEvent = r.Get(false, @"System\Lib\Music\SequenceEvent");
 
             IVertex sequence = r.Get(false, @"System\Lib\Music\Sequence");
 
@@ -722,7 +726,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             sequenceVertex.AddVertex(sequence.Get(false, @"Attribute:Length"), ScreenPositionToMusicTime(lengthPosition));
 
 
-            IEdge finalEdge = toAddVertex.AddEdge(sequenceEvent, sequenceEventVertex);
+            IEdge finalEdge = toAddVertex.AddEdge(sequenceEventAttribute, sequenceEventVertex);
 
             toAddVertex.DeleteEdge(tempSequenceEventEdge);   
             

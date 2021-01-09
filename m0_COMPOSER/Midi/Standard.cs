@@ -9,5 +9,7 @@ namespace m0_COMPOSER.Midi
     public class Standard
     {
         public static int MidiTicksPerSixteen = 96;
+
+        public static int MidiTicksPerBar = MidiTicksPerSixteen * 16;
     }
 }

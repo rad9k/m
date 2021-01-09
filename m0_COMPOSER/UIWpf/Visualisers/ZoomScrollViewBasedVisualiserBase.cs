@@ -2452,5 +2452,21 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             VisualiserDraw();
         }
+
+        protected int MusicTimeSnapCorrect(int toCorrect)
+        {
+            double snapSizeInMusicTime = CurrentSnapToGridValue * (double)Midi.Standard.MidiTicksPerBar;
+
+            double numberOfSnaps = ((double)toCorrect) / snapSizeInMusicTime;
+
+            double numberOfSnapsFloor = Math.Floor(numberOfSnaps);
+
+            double rest = ((double)toCorrect) - numberOfSnapsFloor * snapSizeInMusicTime;
+
+            if (rest < snapSizeInMusicTime / 2)
+                return (int)(numberOfSnapsFloor * snapSizeInMusicTime);
+            else
+                return (int)((numberOfSnapsFloor + 1) * snapSizeInMusicTime);
+        }
     }
 }
