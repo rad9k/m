@@ -1,4 +1,5 @@
-﻿using System;
+﻿using m0.Util;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -54,7 +55,7 @@ namespace m0_COMPOSER.Base
 
                 rest = rest * 100;
 
-                Milisecond = (int)rest;
+                Milisecond = GeneralUtil.Double2Int(rest);
             }
         }
 
@@ -62,7 +63,7 @@ namespace m0_COMPOSER.Base
         {
             MusicTime mt = new MusicTime();
 
-            mt.Combined = (int) (bpm * Minutes * MusicTime.TicksPerBeat);
+            mt.Combined = GeneralUtil.Double2Int(bpm * Minutes * MusicTime.TicksPerBeat);
 
             return mt;
         }

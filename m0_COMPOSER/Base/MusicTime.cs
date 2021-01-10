@@ -1,4 +1,5 @@
 ﻿using m0.Foundation;
+using m0.Util;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -33,7 +34,7 @@ namespace m0_COMPOSER.Base
 
         public void SetRealTime(double bpm, RealTime realTime)
         {
-            int beats = (int) (realTime.Minutes * bpm);
+            int beats = GeneralUtil.Double2Int(realTime.Minutes * bpm);
 
             Combined = beats * TicksPerBeat;
         }

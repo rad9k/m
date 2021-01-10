@@ -36,6 +36,18 @@ namespace m0.Util
             return Guid.NewGuid();
         }
 
+        public static int Double2Int(double d)
+        {
+            double floor = Math.Floor(d);
+
+            double rest = d - floor;
+
+            if (rest > 0.5)
+                return (int)(floor + 1);
+            else
+                return (int)floor;
+        }
+
         public static void SaveStore(IStore s)
         {
             s.Detach();

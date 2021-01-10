@@ -700,7 +700,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             double realTime = GetRealTimeFromMusicTime(musicTime);
 
-            double minuteWidth = HorizontalAD.SegmentLength * HorizontalAD.BaseUnitSize;            
+            double minuteWidth = HorizontalAD.SegmentLength * HorizontalAD.BaseUnitSize;
 
             return realTime * minuteWidth;
         }
