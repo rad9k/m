@@ -664,9 +664,14 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             AxisSegment itemSegment = GetVerticalSegment(trackVertex);
 
 
-            double startPosition = MusicTimeToScreenPosition(triggerTime);
+            bool performSnapCorrection = false;
 
-            double endPosition = MusicTimeToScreenPosition(triggerTime + length);
+            if (CurrentCursorState == CursorStateEnum.PenUp)
+                performSnapCorrection = true;
+
+            double startPosition = MusicTimeToScreenPosition(triggerTime, performSnapCorrection);
+
+            double endPosition = startPosition + MusicTimeToScreenPosition(length, performSnapCorrection);
 
             
             newElement.Left = startPosition;
@@ -688,8 +693,11 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             return MusicTimeSnapCorrect(beforeCorrection);
         }
 
-        double MusicTimeToScreenPosition(int musicTime)
+        double MusicTimeToScreenPosition(int musicTime, bool performSnapCorrection)
         {
+            if(performSnapCorrection)
+                musicTime = MusicTimeSnapCorrect(musicTime);
+
             double realTime = GetRealTimeFromMusicTime(musicTime);
 
             double minuteWidth = HorizontalAD.SegmentLength * HorizontalAD.BaseUnitSize;            

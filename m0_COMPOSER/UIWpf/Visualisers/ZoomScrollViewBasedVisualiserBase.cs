@@ -2455,6 +2455,9 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
         protected int MusicTimeSnapCorrect(int toCorrect)
         {
+            if (CurrentSnapToGridValue == 0)
+                return toCorrect;
+
             double snapSizeInMusicTime = CurrentSnapToGridValue * (double)Midi.Standard.MidiTicksPerBar;
 
             double numberOfSnaps = ((double)toCorrect) / snapSizeInMusicTime;
