@@ -648,14 +648,24 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
         protected void PerformPenUp()
         {
-            Main.Children.Remove(NewItemShape);
+            PerformPenUp_part1();
 
+            PerformPenUp_part2();
+        }
+
+        protected void PerformPenUp_part1()
+        {
+            Main.Children.Remove(NewItemShape);
+        }
+
+        protected void PerformPenUp_part2()
+        {
             SetCursorMode(CursorStateEnum.PenUp);
         }
 
         protected void PenUp(object sender, MouseButtonEventArgs e)
         {
-            PerformPenUp();
+            PerformPenUp_part1();
 
             VertexChangeOff = true;
 
@@ -677,6 +687,8 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             AddItem(newItemEventEdge, null);
 
             VertexChangeOff = false;
+
+            PerformPenUp_part2();
         }
 
         protected void EraserDown(object sender, MouseButtonEventArgs e)

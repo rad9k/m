@@ -666,7 +666,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             bool performSnapCorrection = false;
 
-            if (CurrentCursorState == CursorStateEnum.PenUp)
+            if (CurrentCursorState == CursorStateEnum.PenDown)
                 performSnapCorrection = true;
 
             double startPosition = MusicTimeToScreenPosition(triggerTime, performSnapCorrection);
@@ -682,15 +682,18 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             ItemsAdd(newElement);            
         }
 
-        int ScreenPositionToMusicTime(double position)
+        int ScreenPositionToMusicTime(double position, bool performSnapCorrection)
         {
             double minuteWidth = HorizontalAD.SegmentLength * HorizontalAD.BaseUnitSize;
 
             double positionInMinutes = position / minuteWidth;
+            
+            int musicTime =  GetMusicTimeFromRealTime(positionInMinutes);
 
-            int beforeCorrection =  GetMusicTimeFromRealTime(positionInMinutes);
-
-            return MusicTimeSnapCorrect(beforeCorrection);
+            if (performSnapCorrection)
+                return MusicTimeSnapCorrect(musicTime);
+            else
+                return musicTime;
         }
 
         double MusicTimeToScreenPosition(int musicTime, bool performSnapCorrection)
@@ -726,12 +729,17 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
 
             sequenceEventVertex.AddEdge(MinusZero.Instance.Is, sequenceEvent);
+
+            bool needsSnapCorrection = false;
+
+            if (CurrentCursorState == CursorStateEnum.PenDown)
+                needsSnapCorrection = true;
             
-            sequenceEventVertex.AddVertex(sequenceEvent.Get(false, @"Attribute:TriggerTime"), ScreenPositionToMusicTime(startPosition));
+            sequenceEventVertex.AddVertex(sequenceEvent.Get(false, @"Attribute:TriggerTime"), ScreenPositionToMusicTime(startPosition, needsSnapCorrection));
 
             IVertex sequenceVertex = VertexOperations.AddInstance(sequenceEventVertex, sequence);
 
-            sequenceVertex.AddVertex(sequence.Get(false, @"Attribute:Length"), ScreenPositionToMusicTime(lengthPosition));
+            sequenceVertex.AddVertex(sequence.Get(false, @"Attribute:Length"), ScreenPositionToMusicTime(lengthPosition, needsSnapCorrection));
 
 
             IEdge finalEdge = toAddVertex.AddEdge(sequenceEventAttribute, sequenceEventVertex);
@@ -788,9 +796,9 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             double itemWidth = element.Width;
 
-            int TriggerTime = ScreenPositionToMusicTime(item.Left);
+            int TriggerTime = ScreenPositionToMusicTime(item.Left, true);
 
-            int Length = ScreenPositionToMusicTime(itemWidth);                        
+            int Length = ScreenPositionToMusicTime(itemWidth, false);                        
 
             SetSequenceEventTriggerTime(itemVertex, TriggerTime);
 
