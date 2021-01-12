@@ -83,6 +83,8 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control.Item
             return new SolidColorBrush(WpfUtil.GetColorFromColorVertex(colorVertex));
         }
 
+        static int count = 0;
+
         public void Select()
         {
             isSelected = true;
@@ -92,6 +94,10 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control.Item
             BorderBrush = GetTrackBrush();
             
             Background = (Brush)WpfUtil.FindResource("0HighlightBrush");            
+
+            Remove();
+
+            Update();
         }
 
         public void Unselect()
@@ -115,7 +121,15 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control.Item
 
             RenderOptions.SetEdgeMode(this, EdgeMode.Aliased);            
            
-            Unselect();            
+            Unselect();
+
+            Label l = new System.Windows.Controls.Label();
+
+            this.Child = l;
+
+            l.Content = count;
+
+            count++;
         }        
 
         public void Update()

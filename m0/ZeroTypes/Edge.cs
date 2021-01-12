@@ -174,9 +174,9 @@ namespace m0.ZeroTypes
                 //if (e.To.Get(false, "From:") == edge.From
                   //     && e.To.Get(false, "Meta:") == edge.Meta
                     //   && e.To.Get(false, "To:") == edge.To
-                    if (GraphUtil.GetQueryInFirst(e.To, "From", null) == edge.From
-                       && GraphUtil.GetQueryInFirst(e.To, "Meta", null) == edge.Meta
-                       && GraphUtil.GetQueryInFirst(e.To, "To", null) == edge.To
+                    if (GraphUtil.GetQueryOutFirst(e.To, "From", null) == edge.From // was In and it seems to be wrong
+                       && GraphUtil.GetQueryOutFirst(e.To, "Meta", null) == edge.Meta
+                       && GraphUtil.GetQueryOutFirst(e.To, "To", null) == edge.To
                        )
                         return e;
 
@@ -187,7 +187,7 @@ namespace m0.ZeroTypes
         {
             foreach (IEdge e in baseVertex)
                 //if (e.To.Get(false, "To:") == edge.To)
-                if (GraphUtil.GetQueryInFirst(e.To, "To", null) == edge.To)
+                if (GraphUtil.GetQueryOutFirst(e.To, "To", null) == edge.To) // was In and it seems to be wrong
                     return e;
 
             return null;
