@@ -457,6 +457,9 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
         protected void VertexChange_Track(object sender, VertexChangeEventArgs e)
         {
+            if (VertexChangeOff)
+                return;
+
             if (!(sender is IVertex))
                 return;
 
@@ -467,6 +470,9 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
         protected void VertexChange_BaseEdge(object sender, VertexChangeEventArgs e)
         {
+            if (VertexChangeOff)
+                return;
+
             if (!(sender is IVertex))
                 return;
 
@@ -776,11 +782,14 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             IVertex oldTrack = GetTrackVertexFromSequenceEventVertex(itemVertex);
 
-            IVertex sequnceEventMeta = MinusZero.Instance.root.Get(false, @"System\Lib\Music\Track\SequenceEvent");
+            if (newTrack != oldTrack)
+            {
+                IVertex sequnceEventMeta = MinusZero.Instance.root.Get(false, @"System\Lib\Music\Track\SequenceEvent");
 
-            newTrack.AddEdge(sequnceEventMeta, itemVertex);
+                newTrack.AddEdge(sequnceEventMeta, itemVertex);
 
-            GraphUtil.DeleteEdge(oldTrack, sequnceEventMeta, itemVertex);
+                GraphUtil.DeleteEdge(oldTrack, sequnceEventMeta, itemVertex);
+            }
         }
 
         protected override void UpdateItem_HorizontalPosition(IItem item)

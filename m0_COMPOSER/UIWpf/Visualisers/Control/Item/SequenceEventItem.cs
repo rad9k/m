@@ -93,11 +93,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control.Item
 
             BorderBrush = GetTrackBrush();
             
-            Background = (Brush)WpfUtil.FindResource("0HighlightBrush");            
-
-            Remove();
-
-            Update();
+            Background = (Brush)WpfUtil.FindResource("0HighlightBrush");                        
         }
 
         public void Unselect()

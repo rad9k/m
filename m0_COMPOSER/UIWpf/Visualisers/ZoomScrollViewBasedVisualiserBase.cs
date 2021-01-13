@@ -311,9 +311,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
                 ResetDown();
             }
 
-            UpdateMainSize();
-
-            InitialiseItems();
+            UpdateMainSize();            
 
             DrawMain();
 
@@ -397,6 +395,8 @@ namespace m0_COMPOSER.UIWpf.Visualisers
         protected void DrawMain()
         {            
             Main.Children.Clear();
+
+            InitialiseItems();
 
             SelectionArea = new SelectionArea(Main);
 

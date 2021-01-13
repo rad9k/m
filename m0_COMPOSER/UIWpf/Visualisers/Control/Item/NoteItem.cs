@@ -156,7 +156,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control.Item
                 else
                     labelControl.Visibility = System.Windows.Visibility.Hidden;
             }
-        }
+        }        
 
         public void Update()
         {
