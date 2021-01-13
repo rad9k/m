@@ -93,9 +93,13 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control.Item
 
             BorderBrush = GetTrackBrush();
             
-            Background = (Brush)WpfUtil.FindResource("0HighlightBrush");            
+            Background = (Brush)WpfUtil.FindResource("0HighlightBrush");
 
-            Remove();
+            String a = ((String)(((Label)this.Child).Content));
+
+            a += " new ";
+
+        //    Remove();
 
             Update();
         }
@@ -127,7 +131,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control.Item
 
             this.Child = l;
 
-            l.Content = count;
+            l.Content = count.ToString();
 
             count++;
         }        
