@@ -11,6 +11,7 @@
     <Color x:Key="0Gray">#777777</Color>
     <Color x:Key="0LightGray">#bbbbbb</Color>
     <Color x:Key="0VeryLightGray">#f5f5f5</Color>
+    <Color x:Key="0HardHighlight">#FF5121</Color>
     <Color x:Key="0Highlight">#2151FF</Color>
     <Color x:Key="0HighlightForeground">#FFFFFF</Color>
     <Color x:Key="0LightHighlight">#0195FF</Color>
@@ -29,6 +30,7 @@
     <SolidColorBrush x:Key="0GrayBrush" Color="{StaticResource 0Gray}" />
     <SolidColorBrush x:Key="0LightGrayBrush" Color="{StaticResource 0LightGray}" />
     <SolidColorBrush x:Key="0VeryLightGrayBrush" Color="{StaticResource 0VeryLightGray}" />
+    <SolidColorBrush x:Key="0HardHighlightBrush" Color="{StaticResource 0HardHighlight}" />
     <SolidColorBrush x:Key="0HighlightBrush" Color="{StaticResource 0Highlight}" />
     <SolidColorBrush x:Key="0HighlightForegroundBrush" Color="{StaticResource 0HighlightForeground}" />
     <SolidColorBrush x:Key="0LightHighlightBrush" Color="{StaticResource 0LightHighlight}" />

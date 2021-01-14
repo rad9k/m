@@ -68,20 +68,42 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control.Item
             HiddenBottom = HiddenTop + Height;
         }
 
-        Brush GetTrackBrush()
-        {
-            IVertex trackVertex = ((SongVisualiser)Host).GetTrackVertexFromSequenceEventVertex(BaseEdge.To);
 
-            if(trackVertex == null)
-                return (Brush)WpfUtil.FindResource("0BackgroundBrush");
+        IVertex trackVertex;
 
-            IVertex colorVertex = trackVertex.Get(false, "Color:");
+        public IVertex TrackVertex {
+            get {
+                return trackVertex;
+            }
+            set {
+                trackVertex = value;
 
-            if(colorVertex == null)
-                return (Brush)WpfUtil.FindResource("0BackgroundBrush");
-
-            return new SolidColorBrush(WpfUtil.GetColorFromColorVertex(colorVertex));
+                if (isSelected)
+                    Select();
+                else
+                    Unselect();
+            }
         }
+
+        Brush TrackBrush
+        {
+            get
+            {
+                if (TrackVertex == null)
+                    return (Brush)WpfUtil.FindResource("0BackgroundBrush");
+
+                IVertex colorVertex = TrackVertex.Get(false, "Color:");
+
+                if (colorVertex == null)
+                    return (Brush)WpfUtil.FindResource("0BackgroundBrush");
+
+                return new SolidColorBrush(WpfUtil.GetColorFromColorVertex(colorVertex));
+            }
+            set
+            {
+
+            }
+        }        
 
         static int count = 0;
 
@@ -91,7 +113,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control.Item
 
             BorderThickness = new Thickness(3);            
 
-            BorderBrush = GetTrackBrush();
+            BorderBrush = TrackBrush;
             
             Background = (Brush)WpfUtil.FindResource("0HighlightBrush");                        
         }
@@ -104,7 +126,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control.Item
 
             BorderBrush = (Brush)WpfUtil.FindResource("0ForegroundBrush");
 
-            Background = GetTrackBrush();
+            Background = TrackBrush;
         }        
 
         public SequenceEventItem(IEdge baseEdge, IZoomScrollViewerHost host)

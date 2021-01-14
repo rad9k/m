@@ -457,15 +457,15 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
         protected void VertexChange_Track(object sender, VertexChangeEventArgs e)
         {
-            if (VertexChangeOff)
-                return;
+          //  if (VertexChangeOff)
+            //    return;
 
             if (!(sender is IVertex))
                 return;
 
-            //if (GraphUtil.DoEdgeListContainsVertex(baseVertex.GetAll(false, "Track:"), (IVertex)sender))
-
-            RedrawTracks();
+            if (GraphUtil.DoEdgeListContainsVertex(baseVertex.GetAll(false, @"Track:\Color:"), (IVertex)sender)
+                || GraphUtil.DoEdgeListContainsVertex(baseVertex.GetAll(false, @"Track:\Color:\"), (IVertex)sender))
+                RedrawTracks();
         }
 
         protected void VertexChange_BaseEdge(object sender, VertexChangeEventArgs e)
@@ -669,6 +669,8 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             AxisSegment itemSegment = GetVerticalSegment(trackVertex);
 
+            newElement.TrackVertex = trackVertex;
+
 
             bool performSnapCorrection = false;
 
@@ -765,18 +767,18 @@ namespace m0_COMPOSER.UIWpf.Visualisers
                     AddItem(ee, selectedVertexes);
         }
 
-        protected override void UpdateItem_VerticalPosition(IItem item)
-        {            
-            FrameworkElement element;
+        protected override void UpdateItem_VerticalPosition(IItem _item)
+        {
+            SequenceEventItem item;
 
-            if (!(item is FrameworkElement))
+            if (!(_item is SequenceEventItem))
                 return;
 
-            element = (FrameworkElement)item;
+            item = (SequenceEventItem)_item;
 
-            IVertex itemVertex = item.BaseEdge.To;
+            IVertex itemVertex = _item.BaseEdge.To;
 
-            AxisSegment segment = FindVerticalSegment(item.Top + 1);
+            AxisSegment segment = FindVerticalSegment(_item.Top + 1);
 
             IVertex newTrack = segment.BaseVertex;
 
@@ -789,6 +791,8 @@ namespace m0_COMPOSER.UIWpf.Visualisers
                 newTrack.AddEdge(sequnceEventMeta, itemVertex);
 
                 GraphUtil.DeleteEdge(oldTrack, sequnceEventMeta, itemVertex);
+
+                item.TrackVertex = newTrack;
             }
         }
 
@@ -813,6 +817,23 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             if (Length != 0)
                 SetSequenceEventLength(itemVertex, Length);                
+        }
+
+        protected override void ItemsRemoveAndRemoveAllEdges(IItem i)
+        {
+            IEdge eventEdge = i.BaseEdge;
+
+            IVertex trackVertex = GetTrackVertexFromSequenceEventVertex(eventEdge.To);
+
+            GraphUtil.DeleteEdgeByToVertex(trackVertex, eventEdge.To);
+
+            Edge.DeleteVertexByEdgeTo(Vertex.Get(false, "SelectedEdges:"), eventEdge.To);
+
+            NeedToRebuildItemsDictionary = true;
+
+            Items.Remove((FrameworkElement)i);
+
+            i.Remove();
         }
     }
 }
