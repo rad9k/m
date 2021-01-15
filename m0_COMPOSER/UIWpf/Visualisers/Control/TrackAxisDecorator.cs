@@ -17,6 +17,8 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control
 {
     class TrackAxisDecorator : Canvas, IZoomScrollViewAxisDecorator
     {
+        public double PositionMark { get; set; }
+
         double FontSize = 12;
 
         double segmentSize;

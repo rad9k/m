@@ -16,6 +16,8 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control
 {
     class MusicTimeSpanAxisDecorator : Canvas, IZoomScrollViewAxisDecorator
     {
+        public double PositionMark { get; set; }
+
         public Size Size { get; set; }
         public List<AxisSegment> Segments { get; set; }
 
@@ -61,6 +63,19 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control
 
         //
 
+        public MusicTimeSpanAxisDecorator()
+        {
+            PositionMark = 100;
+        }
+
+        public void DrawPositionMark()
+        {
+            if (PositionMark == -1)
+                return;
+
+            WpfUtil.DrawLine(this, PositionMark, 0, PositionMark, Height, 3, (Brush)WpfUtil.FindResource("0HardHighlightBrush"));
+        }
+
         private void Draw()
         {
             timeSpanHeight = FontSize * 2;
@@ -78,7 +93,9 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control
 
             Children.Clear();
 
-            Draw_Recurent(0);        
+            Draw_Recurent(0);
+
+            DrawPositionMark();
         }
 
         Brush getBrushForLevel(int level)

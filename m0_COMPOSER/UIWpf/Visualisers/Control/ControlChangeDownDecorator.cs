@@ -66,6 +66,8 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control
     }
     public class ControlChangeDownDecorator : StackPanel, IZoomScrollViewAxisDecorator
     {
+        public double PositionMark { get; set; }
+
         int number;
 
         public object Selection { get => number; set => throw new NotImplementedException(); }

@@ -16,6 +16,8 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control
 {
     class PitchSetAxisDecorator : Canvas, IZoomScrollViewAxisDecorator
     {
+        public double PositionMark { get; set; }
+
         double FontSize = 12;
 
         double segmentSize;

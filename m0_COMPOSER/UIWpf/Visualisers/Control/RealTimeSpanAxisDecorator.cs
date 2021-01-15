@@ -16,6 +16,8 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control
 {
     class RealTimeSpanAxisDecorator : Canvas, IZoomScrollViewAxisDecorator
     {
+        public double PositionMark { get; set; }
+
         public Size Size { get; set; }
         public List<AxisSegment> Segments { get; set; }
 

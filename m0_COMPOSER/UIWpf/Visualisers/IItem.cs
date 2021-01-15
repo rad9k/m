@@ -54,7 +54,6 @@ namespace m0_COMPOSER.UIWpf.Visualisers
         
         double Top { get; set; }
 
-        double Bottom { get; set; }
-
+        double Bottom { get; set; }        
     }
 }

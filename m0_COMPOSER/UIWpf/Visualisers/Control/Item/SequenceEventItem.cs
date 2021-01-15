@@ -15,6 +15,8 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control.Item
 {
     public class SequenceEventItem : Border, IItem
     {
+        public double PositionMark { get; set; }
+
         Canvas Canvas;
 
         public void Add(Canvas canvas)
