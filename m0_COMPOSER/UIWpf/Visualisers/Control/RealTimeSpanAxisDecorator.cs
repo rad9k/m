@@ -14,34 +14,21 @@ using System.Windows.Media;
 
 namespace m0_COMPOSER.UIWpf.Visualisers.Control
 {
-    class RealTimeSpanAxisDecorator : Canvas, IZoomScrollViewAxisDecorator
-    {
-        public double PositionMark { get; set; }
+    class RealTimeSpanAxisDecorator : AxisDecoratorBase, IZoomScrollViewAxisDecorator
+    {        
 
-        public Size Size { get; set; }
-        public List<AxisSegment> Segments { get; set; }
-
-        public int BoldLineCount;
-
-        public double BaseUnitSize {
-            get{
-                return baseUnitSize;
-            }
-        }
-
-        double segmentLength;
-        public double SegmentLength
+        public RealTimeSpanAxisDecorator() : base()
         {
-            get
-            {
-                return 60 * 100;
-                //return segmentLength;
-            }
+            segmentLength = 60 * 100;
+
+            PositionMark = -1000;
+
+            PositionMarkEnabled = true;
         }
 
-        IVertex baseVertex;
+        public int BoldLineCount;        
 
-        double zoomFactor;
+        
 
         double FontSize = 10;
 
@@ -271,6 +258,5 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control
         public event EventHandler SelectionChanged;
 
         public object Selection { get; set; }
-
     }
 }

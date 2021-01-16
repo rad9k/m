@@ -15,24 +15,12 @@ using m0.UIWpf.Visualisers.Controls;
 
 namespace m0_COMPOSER.UIWpf.Visualisers.Control
 {
-    class TrackAxisDecorator : Canvas, IZoomScrollViewAxisDecorator
-    {
-        public double PositionMark { get; set; }
-
+    class TrackAxisDecorator : AxisDecoratorBase, IZoomScrollViewAxisDecorator
+    {        
         double FontSize = 12;
 
-        double segmentSize;
-
-        public Size Size { get; set; }
-        public List<AxisSegment> Segments { get; set; }
-
-        public double BaseUnitSize => throw new NotImplementedException();
-
-        public double SegmentLength => throw new NotImplementedException();
-
-        IVertex baseVertex;        
-
-        double zoomFactor;
+        double segmentSize;        
+       
 
         List<LitButton> MuteButtons;
         List<LitButton> SoloButtons;

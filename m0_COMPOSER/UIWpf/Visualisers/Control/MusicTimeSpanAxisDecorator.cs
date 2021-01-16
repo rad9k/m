@@ -14,20 +14,15 @@ using System.Windows.Media;
 
 namespace m0_COMPOSER.UIWpf.Visualisers.Control
 {
-    class MusicTimeSpanAxisDecorator : Canvas, IZoomScrollViewAxisDecorator
+    class MusicTimeSpanAxisDecorator : AxisDecoratorBase, IZoomScrollViewAxisDecorator
     {
-        public double PositionMark { get; set; }
+        public MusicTimeSpanAxisDecorator(){
+            PositionMark = 100;
 
-        public Size Size { get; set; }
-        public List<AxisSegment> Segments { get; set; }
-
-        public int BoldLineCount;
-
-        public double BaseUnitSize {
-            get{
-                return baseUnitSize;
-            }
+            PositionMarkEnabled = true;
         }
+
+        public int BoldLineCount;        
 
         double barLength;
         public double SegmentLength
@@ -37,10 +32,6 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control
                 return barLength;
             }
         }
-
-        IVertex baseVertex;
-
-        double zoomFactor;
 
         double FontSize = 10;
 
@@ -55,26 +46,11 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control
 
         List<timeSpanLevel> timeSpanStructure;
 
-        int timeSpanLevels;
-
-        double baseUnitSize;
+        int timeSpanLevels;        
 
         double Length;
 
-        //
-
-        public MusicTimeSpanAxisDecorator()
-        {
-            PositionMark = 100;
-        }
-
-        public void DrawPositionMark()
-        {
-            if (PositionMark == -1)
-                return;
-
-            WpfUtil.DrawLine(this, PositionMark, 0, PositionMark, Height, 3, (Brush)WpfUtil.FindResource("0HardHighlightBrush"));
-        }
+        //        
 
         private void Draw()
         {
@@ -95,7 +71,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control
 
             Draw_Recurent(0);
 
-            DrawPositionMark();
+            CreateAndDrawPositionMark();
         }
 
         Brush getBrushForLevel(int level)

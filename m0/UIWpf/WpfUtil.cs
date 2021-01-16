@@ -184,7 +184,7 @@ namespace m0.UIWpf
         }
 
 
-        public static void DrawLine(Panel c, double x1, double y1, double x2, double y2, double thickness, Brush brush)
+        public static Line DrawLine(Panel c, double x1, double y1, double x2, double y2, double thickness, Brush brush)
         {
             Line lr = new Line();
 
@@ -195,9 +195,11 @@ namespace m0.UIWpf
             lr.Stroke = brush;
 
             c.Children.Add(lr);
+
+            return lr;
         }
 
-        public static void DrawLine(Panel canvas, double X1, double Y1, double X2, double Y2, Brush brush)
+        public static Line DrawLine(Panel canvas, double X1, double Y1, double X2, double Y2, Brush brush)
         {
             Line l = new Line();
 
@@ -208,6 +210,8 @@ namespace m0.UIWpf
             WpfUtil.SetLinePosition(l, X1, Y1, X2, Y2);
 
             canvas.Children.Add(l);
+
+            return l;
         }
 
         public static void Print(Canvas canvas, string text, double x, double y, string fontName, double size, Brush brush)
