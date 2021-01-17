@@ -79,5 +79,31 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control
 
         }
 
+        protected void MouseDownHandler(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            if (!PositionMarkEnabled)
+                return;
+
+            Point p = e.GetPosition(this);
+
+            PositionMark = p.X;
+
+            if (PositionMarkChanged != null)
+                PositionMarkChanged(sender, e);
+        }
+
+        protected void DrawBackground()
+        {
+            Border b = new Border();
+
+            b.Background = new SolidColorBrush(Colors.Aqua);
+
+            WpfUtil.SetPosition(b, 0, 0, Width, Height);
+
+            this.Children.Add(b);
+
+            b.PreviewMouseDown += MouseDownHandler;
+        }
+
     }
 }

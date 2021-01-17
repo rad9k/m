@@ -14,12 +14,14 @@ using System.Windows.Media;
 
 namespace m0_COMPOSER.UIWpf.Visualisers.Control
 {
-    class MusicTimeSpanAxisDecorator : AxisDecoratorBase, IZoomScrollViewAxisDecorator
+    public class MusicTimeSpanAxisDecorator : AxisDecoratorBase, IZoomScrollViewAxisDecorator
     {
         public MusicTimeSpanAxisDecorator(){
             PositionMark = 100;
 
             PositionMarkEnabled = true;
+
+
         }
 
         public int BoldLineCount;        
@@ -69,6 +71,8 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control
 
             Children.Clear();
 
+            DrawBackground();
+
             Draw_Recurent(0);
 
             CreateAndDrawPositionMark();
@@ -112,6 +116,8 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control
 
                     TextBlock t = new TextBlock();
 
+                    t.PreviewMouseDown += MouseDownHandler;
+
                     t.Foreground = getBrushForLevel(level);
 
                     t.Text = textCount.ToString();
@@ -130,7 +136,9 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control
 
                 //
 
-                Line l = new Line();                
+                Line l = new Line();
+
+                l.PreviewMouseDown += MouseDownHandler;
 
                 WpfUtil.SetLinePosition(l, horizontalPosition, verticalStartPosition, horizontalPosition, Size.Height);
 

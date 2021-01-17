@@ -22,48 +22,9 @@ namespace m0_RUN
         public AltWindow()
         {
             InitializeComponent();
+
+            this.Content = new m0_COMPOSER.UIWpf.Visualisers.Control.MusicTimeSpanAxisDecorator();
         }
-
-        string a = "";
-
-        //int cnt = 0;
-
-        private void AnimatedHideArea_SizeChanged(object sender, SizeChangedEventArgs e)
-        {
-            //Grid.RowDefinitions[2].Height = new GridLength(e.NewSize.Height);
-
-            //a =  a + (cnt.ToString() + " " + e.NewSize.Height + "\n");
-
-            a += e.NewSize.Height + "\n";
-
-            //       cnt++;
-
-        //    e.Handled = true;
-        }
-
-        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
-        {
-            int x = 0;
-        }
-
-        private void Button_Click(object sender, RoutedEventArgs e)
-        {
-            ((Button)sender).Height += 100;
-        }
-
-        private void GridSplitter_DragDelta(object sender, System.Windows.Controls.Primitives.DragDeltaEventArgs e)
-        {
-            double a = Grid.RowDefinitions[2].Height.Value;
-
-            l.Height = a;
-
-            Grid.RowDefinitions[2].Height = new GridLength(0, GridUnitType.Auto);
-        }
-
-        Button l;
-        private void Button_Loaded(object sender, RoutedEventArgs e)
-        {
-            l = (Button)sender;
-        }
+        
     }
 }
