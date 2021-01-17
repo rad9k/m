@@ -176,7 +176,8 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control
                 timeSpanStructure[x].BaseMusicTimeSpanLevelCountForThisLevel = BaseMusicTimeSpanLevelCount;
             }
 
-            segmentLength = timeSpanStructure[timeSpanStructure.Count - 2].length;
+           // segmentLength = timeSpanStructure[timeSpanStructure.Count - 2].length;
+           // we use 100 * 60 as we know the time span structure for real time
         }
 
         private void Update()
