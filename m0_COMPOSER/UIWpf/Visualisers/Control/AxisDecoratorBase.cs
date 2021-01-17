@@ -63,7 +63,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control
             if (!PositionMarkEnabled)
                 return;
 
-            PositionMarkLine = WpfUtil.DrawLine(this, PositionMark, 0, PositionMark, Height, 3, (Brush)WpfUtil.FindResource("0HardHighlightBrush"));
+            PositionMarkLine = Common.CreatePositionMark(this, positionMark, Height);
         }
 
         public void UpdatePositionMark()

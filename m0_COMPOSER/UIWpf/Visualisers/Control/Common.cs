@@ -1,0 +1,20 @@
+﻿using m0.UIWpf;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Controls;
+using System.Windows.Media;
+using System.Windows.Shapes;
+
+namespace m0_COMPOSER.UIWpf.Visualisers.Control
+{
+    class Common
+    {
+        public static Line CreatePositionMark(Canvas c, double position, double height)
+        {
+            return WpfUtil.DrawLine(c, position, 0, position, height, 3, (Brush)WpfUtil.FindResource("0HardHighlightBrush"));
+        }
+    }
+}

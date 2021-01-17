@@ -17,11 +17,9 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control
     public class MusicTimeSpanAxisDecorator : AxisDecoratorBase, IZoomScrollViewAxisDecorator
     {
         public MusicTimeSpanAxisDecorator(){
-            PositionMark = 100;
+            PositionMark = -1000;
 
             PositionMarkEnabled = true;
-
-
         }
 
         public int BoldLineCount;        

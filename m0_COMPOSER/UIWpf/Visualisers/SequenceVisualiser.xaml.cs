@@ -128,11 +128,18 @@ namespace m0_COMPOSER.UIWpf.Visualisers
                 HorizontalAD.SetBaseVertex(horizontalSpanVertex);
 
                 HorizontalAD.SetLength(Length);
+
+                HorizontalAD.PositionMarkChanged += HorizontalAD_PositionMarkChanged;
             }
 
             ZoomScrollView.SetVerticalAxisDecorator(VerticalAD);
 
             ZoomScrollView.SetHorizontalAxisDecorator(HorizontalAD);
+        }
+
+        private void HorizontalAD_PositionMarkChanged(object sender, EventArgs e)
+        {
+            throw new NotImplementedException();
         }
 
         protected override void SetupLocalVariablesFromBaseVertexVertexes()
