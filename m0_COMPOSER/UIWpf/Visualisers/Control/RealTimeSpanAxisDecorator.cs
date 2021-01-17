@@ -43,9 +43,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control
 
         List<timeSpanLevel> timeSpanStructure;
 
-        int timeSpanLevels;
-
-        double baseUnitSize;
+        int timeSpanLevels;        
 
         double Length;
 

@@ -96,7 +96,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control
         {
             Border b = new Border();
 
-            b.Background = new SolidColorBrush(Colors.Aqua);
+            b.Background = (Brush)WpfUtil.FindResource("0BackgroundBrush");
 
             WpfUtil.SetPosition(b, 0, 0, Width, Height);
 
