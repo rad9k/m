@@ -413,6 +413,8 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             DrawArrowLines();
 
             DrawItems();
+
+            CreateAndDrawPositionMark();
         }
 
         protected void DrawBackground()
@@ -2483,5 +2485,34 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             else
                 return (int)((numberOfSnapsFloor + 1) * snapSizeInMusicTime);
         }
+
+        protected void HorizontalAD_PositionMarkChanged(object sender, EventArgs e)
+        {
+            HorizontalAD.PositionMark = GetSnappedPosition(HorizontalAD.PositionMark);
+
+            UpdatePositionMark();
+        }
+
+        Line PositionMarkLine;
+
+        protected bool PositionMarkEnabled = false;
+
+        public void CreateAndDrawPositionMark()
+        {
+            if (!PositionMarkEnabled)
+                return;
+
+            double screenPosition = TimeToScreenPosition(HorizontalAD.PositionMark);
+
+            PositionMarkLine = Common.CreatePositionMark(this.Main, HorizontalAD.PositionMark, Height);
+        }
+
+        public void UpdatePositionMark()
+        {
+            if (PositionMarkEnabled)
+                WpfUtil.SetLinePosition(PositionMarkLine, HorizontalAD.PositionMark, 0, HorizontalAD.PositionMark, Height);
+        }
+
+        public virtual double TimeToScreenPosition(int time) { return 0; }
     }
 }

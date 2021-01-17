@@ -43,7 +43,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
         object Selection { get; set; }
 
-        double PositionMark { get; set; }
+        int PositionMark { get; set; }
 
         event EventHandler PositionMarkChanged;
     }

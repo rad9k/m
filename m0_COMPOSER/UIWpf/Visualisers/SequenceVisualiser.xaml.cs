@@ -42,6 +42,8 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             //
 
+            PositionMarkEnabled = true;
+
             MinusZero mz = MinusZero.Instance;
 
             VisualiserName = "SequenceVisuliser";
@@ -135,12 +137,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             ZoomScrollView.SetVerticalAxisDecorator(VerticalAD);
 
             ZoomScrollView.SetHorizontalAxisDecorator(HorizontalAD);
-        }
-
-        private void HorizontalAD_PositionMarkChanged(object sender, EventArgs e)
-        {
-            throw new NotImplementedException();
-        }
+        }        
 
         protected override void SetupLocalVariablesFromBaseVertexVertexes()
         {
