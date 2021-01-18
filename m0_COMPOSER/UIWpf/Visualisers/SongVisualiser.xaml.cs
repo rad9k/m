@@ -122,6 +122,8 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             ZoomScrollViewBasedVisualiserBase_Init();
 
+            PositionMark = -1000;
+
             //
 
             this.HasDown = false;
@@ -352,7 +354,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             if (HorizontalAD == null)
             {
-                RealTimeSpanAxisDecorator TimeSpanAD = new RealTimeSpanAxisDecorator();
+                RealTimeSpanAxisDecorator TimeSpanAD = new RealTimeSpanAxisDecorator(this);
 
                 TimeSpanAD.BoldLineCount = 10;
 
@@ -690,7 +692,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             ItemsAdd(newElement);            
         }
 
-        int ScreenPositionToMusicTime(double position, bool performSnapCorrection)
+        protected override int ScreenPositionToMusicTime(double position, bool performSnapCorrection)
         {
             double minuteWidth = HorizontalAD.SegmentLength * HorizontalAD.BaseUnitSize;
 
@@ -704,7 +706,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
                 return musicTime;
         }
 
-        double MusicTimeToScreenPosition(int musicTime, bool performSnapCorrection)
+        protected override double MusicTimeToScreenPosition(int musicTime, bool performSnapCorrection)
         {
             if(performSnapCorrection)
                 musicTime = MusicTimeSnapCorrect(musicTime);

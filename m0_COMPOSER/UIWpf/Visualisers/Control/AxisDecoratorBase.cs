@@ -14,20 +14,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control
 {
     public class AxisDecoratorBase : Canvas
     {
-        protected bool PositionMarkEnabled = false;
-
-        double positionMark;
-        public double PositionMark {
-            get {
-                return positionMark;
-            }
-            set {
-                positionMark = value;
-
-                if(PositionMarkEnabled)
-                    UpdatePositionMark();
-            }
-        }
+        protected ZoomScrollViewBasedVisualiserBase visualiser;
 
         public Size Size { get; set; }
 
@@ -60,16 +47,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control
 
         public void CreateAndDrawPositionMark()
         {
-            if (!PositionMarkEnabled)
-                return;
-
-            PositionMarkLine = Common.CreatePositionMark(this, positionMark, Height);
-        }
-
-        public void UpdatePositionMark()
-        {
-            if (PositionMarkEnabled)
-                WpfUtil.SetLinePosition(PositionMarkLine, PositionMark, 0, PositionMark, Height);
+            PositionMarkLine = Common.CreatePositionMark(this, visualiser.PositionMark_Screen, Height);
         }
 
         public event EventHandler PositionMarkChanged;
@@ -81,15 +59,11 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control
 
         protected void MouseDownHandler(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
-            if (!PositionMarkEnabled)
-                return;
-
             Point p = e.GetPosition(this);
 
-            PositionMark = p.X;
+            visualiser.PositionMark_Screen = p.X;
 
-            if (PositionMarkChanged != null)
-                PositionMarkChanged(sender, e);
+            Common.UpdatePositionMark(PositionMarkLine, visualiser.PositionMark_Screen, Height);
         }
 
         protected void DrawBackground()

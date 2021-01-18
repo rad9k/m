@@ -15,15 +15,13 @@ using System.Windows.Media;
 namespace m0_COMPOSER.UIWpf.Visualisers.Control
 {
     class RealTimeSpanAxisDecorator : AxisDecoratorBase, IZoomScrollViewAxisDecorator
-    {        
-
-        public RealTimeSpanAxisDecorator() : base()
+    {      
+        public RealTimeSpanAxisDecorator(ZoomScrollViewBasedVisualiserBase _visualiser) : base()
         {
             segmentLength = 60 * 100;
 
-            PositionMark = -1000;
 
-            PositionMarkEnabled = true;
+            visualiser = _visualiser;
         }
 
         public int BoldLineCount;        

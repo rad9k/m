@@ -42,8 +42,6 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             //
 
-            PositionMarkEnabled = true;
-
             MinusZero mz = MinusZero.Instance;
 
             VisualiserName = "SequenceVisuliser";
@@ -54,6 +52,10 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             //
 
             InitXAMLInstances();
+
+            PositionMarkEnabled = true;
+
+            PositionMark = -1000;
 
             //
 
@@ -122,7 +124,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             if (HorizontalAD == null)
             {
-                MusicTimeSpanAxisDecorator TimeSpanAD = new MusicTimeSpanAxisDecorator();
+                MusicTimeSpanAxisDecorator TimeSpanAD = new MusicTimeSpanAxisDecorator(this);
                 TimeSpanAD.BoldLineCount = 4;
 
                 HorizontalAD = TimeSpanAD;
@@ -130,8 +132,6 @@ namespace m0_COMPOSER.UIWpf.Visualisers
                 HorizontalAD.SetBaseVertex(horizontalSpanVertex);
 
                 HorizontalAD.SetLength(Length);
-
-                HorizontalAD.PositionMarkChanged += HorizontalAD_PositionMarkChanged;
             }
 
             ZoomScrollView.SetVerticalAxisDecorator(VerticalAD);
@@ -328,6 +328,27 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             if (Length != 0)
                 GraphUtil.SetVertexValue(itemVertex, metaLength, Length);
+        }
+
+        protected override int ScreenPositionToMusicTime(double position, bool performSnapCorrection)
+        {
+            int musicTime = (int) (position / HorizontalAD.BaseUnitSize);
+
+            if (performSnapCorrection)
+                return MusicTimeSnapCorrect(musicTime);
+            else
+                return musicTime;
+        }
+
+        protected override double MusicTimeToScreenPosition(int musicTime, bool performSnapCorrection)
+        {
+            if (performSnapCorrection)
+                musicTime = MusicTimeSnapCorrect(musicTime);
+
+            if (HorizontalAD == null)
+                return 0;
+
+            return musicTime * HorizontalAD.BaseUnitSize;
         }
     }
 }

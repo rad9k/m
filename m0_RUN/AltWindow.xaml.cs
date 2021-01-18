@@ -22,8 +22,6 @@ namespace m0_RUN
         public AltWindow()
         {
             InitializeComponent();
-
-            this.Content = new m0_COMPOSER.UIWpf.Visualisers.Control.MusicTimeSpanAxisDecorator();
         }
         
     }

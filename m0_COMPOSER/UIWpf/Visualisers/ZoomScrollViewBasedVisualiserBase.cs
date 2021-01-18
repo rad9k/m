@@ -2486,13 +2486,6 @@ namespace m0_COMPOSER.UIWpf.Visualisers
                 return (int)((numberOfSnapsFloor + 1) * snapSizeInMusicTime);
         }
 
-        protected void HorizontalAD_PositionMarkChanged(object sender, EventArgs e)
-        {
-            HorizontalAD.PositionMark = GetSnappedPosition(HorizontalAD.PositionMark);
-
-            UpdatePositionMark();
-        }
-
         Line PositionMarkLine;
 
         protected bool PositionMarkEnabled = false;
@@ -2502,17 +2495,54 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             if (!PositionMarkEnabled)
                 return;
 
-            double screenPosition = TimeToScreenPosition(HorizontalAD.PositionMark);
-
-            PositionMarkLine = Common.CreatePositionMark(this.Main, HorizontalAD.PositionMark, Height);
+            PositionMarkLine = Common.CreatePositionMark(this.Main, PositionMark_Screen, Height);
         }
 
         public void UpdatePositionMark()
         {
-            if (PositionMarkEnabled)
-                WpfUtil.SetLinePosition(PositionMarkLine, HorizontalAD.PositionMark, 0, HorizontalAD.PositionMark, Height);
+            if (PositionMarkEnabled && PositionMarkLine != null)
+                WpfUtil.SetLinePosition(PositionMarkLine, PositionMark_Screen, 0, PositionMark_Screen, Height);
         }
 
-        public virtual double TimeToScreenPosition(int time) { return 0; }
+        protected virtual int ScreenPositionToMusicTime(double position, bool performSnapCorrection) { return 0; }
+
+        protected virtual double MusicTimeToScreenPosition(int musicTime, bool performSnapCorrection) { return 0; }
+
+        double postionMark_Screen;
+
+        public double PositionMark_Screen
+        {
+            get
+            {
+                return postionMark_Screen;
+            }
+            set
+            {
+                postionMark_Screen = value;
+
+                positionMark = ScreenPositionToMusicTime(value, true);
+
+                UpdatePositionMark();
+            }
+        }
+
+        int positionMark;
+
+        public int PositionMark
+        {
+            get
+            {
+                return positionMark;
+            }
+
+            set
+            {
+                positionMark = value;
+
+                postionMark_Screen = MusicTimeToScreenPosition(value, true);
+
+                UpdatePositionMark();
+            }
+        }
     }
 }
