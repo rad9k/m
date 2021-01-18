@@ -14,7 +14,11 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control
     {
         public static Line CreatePositionMark(Canvas c, double position, double height)
         {
-            return WpfUtil.DrawLine(c, position, 0, position, height, 3, (Brush)WpfUtil.FindResource("0HardHighlightBrush"));
+            Line l = WpfUtil.DrawLine(c, position, 0, position, height, 3, (Brush)WpfUtil.FindResource("0HardHighlightBrush"));
+
+            Panel.SetZIndex(l, 1000);
+
+            return l;
         }
 
         public static void UpdatePositionMark(Line l, double position, double height)

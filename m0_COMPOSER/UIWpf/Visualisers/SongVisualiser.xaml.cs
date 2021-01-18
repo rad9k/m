@@ -694,6 +694,9 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
         protected override int ScreenPositionToMusicTime(double position, bool performSnapCorrection)
         {
+            if (HorizontalAD == null)
+                return 0;
+
             double minuteWidth = HorizontalAD.SegmentLength * HorizontalAD.BaseUnitSize;
 
             double positionInMinutes = position / minuteWidth;
@@ -708,6 +711,9 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
         protected override double MusicTimeToScreenPosition(int musicTime, bool performSnapCorrection)
         {
+            if (HorizontalAD == null)
+                return 0;
+
             if(performSnapCorrection)
                 musicTime = MusicTimeSnapCorrect(musicTime);
 

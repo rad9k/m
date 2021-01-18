@@ -1152,17 +1152,19 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
         protected virtual double GetSnappedPosition(double position)
         {
+            double CurrentSnapToGridValue_corrected = CurrentSnapToGridValue * 16;
+
             if (CurrentSnapToGrid == SnapToGridEnum.No_Snap)
                 return position;
 
             double positionInBars = (position / HorizontalAD.BaseUnitSize) / HorizontalAD.SegmentLength;
 
-            double reminder = positionInBars % CurrentSnapToGridValue;
+            double reminder = positionInBars % CurrentSnapToGridValue_corrected;
 
-            if (reminder < (CurrentSnapToGridValue / 2.0))
+            if (reminder < (CurrentSnapToGridValue_corrected / 2.0))
                 return (positionInBars - reminder) * HorizontalAD.SegmentLength * HorizontalAD.BaseUnitSize;
             else
-                return (positionInBars - reminder + CurrentSnapToGridValue) * HorizontalAD.SegmentLength * HorizontalAD.BaseUnitSize;
+                return (positionInBars - reminder + CurrentSnapToGridValue_corrected) * HorizontalAD.SegmentLength * HorizontalAD.BaseUnitSize;
         }
 
         protected virtual double GetSnapMinimalWidth()
@@ -1170,7 +1172,9 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             if (CurrentSnapToGridValue == 0)
                 return 1;
 
-            return CurrentSnapToGridValue * HorizontalAD.SegmentLength * HorizontalAD.BaseUnitSize;
+            double CurrentSnapToGridValue_corrected = CurrentSnapToGridValue * 16;
+
+            return CurrentSnapToGridValue_corrected * HorizontalAD.SegmentLength * HorizontalAD.BaseUnitSize;
         }
 
         protected AxisSegment GetVerticalSegment(IVertex baseVertex)
@@ -1408,6 +1412,8 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             DrawArrowLines_Down();
 
             DrawItems_Down();
+
+            CreateAndDrawPositionMark_Down();
         }
 
         protected void DownDecorator_SelectionChanged(object sender, EventArgs e)
@@ -2190,7 +2196,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             CurrentSnapToGrid = SnapToGridEnum.Bar1_16;
 
-            CurrentSnapToGridValue = 1;
+            CurrentSnapToGridValue = 1.0/16;
         }
 
         protected string VisualiserName = "NAME";        
@@ -2344,32 +2350,32 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             {
                 case "1/16 bar":
                     CurrentSnapToGrid = SnapToGridEnum.Bar1_16;
-                    CurrentSnapToGridValue = 1;
+                    CurrentSnapToGridValue = 1.0 / 16;
                     break;
 
                 case "1/32 bar":
                     CurrentSnapToGrid = SnapToGridEnum.Bar1_32;
-                    CurrentSnapToGridValue = 1.0 / 2;
+                    CurrentSnapToGridValue = 1.0 / 32;
                     break;
 
                 case "1/64 bar":
                     CurrentSnapToGrid = SnapToGridEnum.Bar1_64;
-                    CurrentSnapToGridValue = 1.0 / 4;
+                    CurrentSnapToGridValue = 1.0 / 64;
                     break;
 
                 case "1/128 bar":
                     CurrentSnapToGrid = SnapToGridEnum.Bar1_128;
-                    CurrentSnapToGridValue = 1.0 / 8;
+                    CurrentSnapToGridValue = 1.0 / 128;
                     break;
 
                 case "1/256 bar":
                     CurrentSnapToGrid = SnapToGridEnum.Bar1_256;
-                    CurrentSnapToGridValue = 1.0 / 16;
+                    CurrentSnapToGridValue = 1.0 / 256;
                     break;
 
                 case "1/512 bar":
                     CurrentSnapToGrid = SnapToGridEnum.Bar1_512;
-                    CurrentSnapToGridValue = 1.0 / 32;
+                    CurrentSnapToGridValue = 1.0 / 512;
                     break;
 
                 case "no snap":
@@ -2488,6 +2494,8 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
         Line PositionMarkLine;
 
+        Line PositionMarkLine_Down;
+
         protected bool PositionMarkEnabled = false;
 
         public void CreateAndDrawPositionMark()
@@ -2495,32 +2503,46 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             if (!PositionMarkEnabled)
                 return;
 
-            PositionMarkLine = Common.CreatePositionMark(this.Main, PositionMark_Screen, Height);
+            PositionMarkLine = Common.CreatePositionMark(this.Main, PositionMark_Screen, Height);            
+        }
+
+        public void CreateAndDrawPositionMark_Down()
+        {
+            if (!PositionMarkEnabled)
+                return;            
+
+            if (HasDown)            
+                PositionMarkLine_Down = Common.CreatePositionMark(this.Down, PositionMark_Screen, Height_Down);
         }
 
         public void UpdatePositionMark()
         {
             if (PositionMarkEnabled && PositionMarkLine != null)
-                WpfUtil.SetLinePosition(PositionMarkLine, PositionMark_Screen, 0, PositionMark_Screen, Height);
+            {
+                Common.UpdatePositionMark(PositionMarkLine, PositionMark_Screen, Height);
+
+                if (HasDown)
+                    Common.UpdatePositionMark(PositionMarkLine_Down, PositionMark_Screen, Height_Down);                
+            }
         }
 
         protected virtual int ScreenPositionToMusicTime(double position, bool performSnapCorrection) { return 0; }
 
         protected virtual double MusicTimeToScreenPosition(int musicTime, bool performSnapCorrection) { return 0; }
 
-        double postionMark_Screen;
+        double positionMark_Screen;
 
         public double PositionMark_Screen
         {
             get
             {
-                return postionMark_Screen;
+                return positionMark_Screen;
             }
             set
-            {
-                postionMark_Screen = value;
-
+            {                
                 positionMark = ScreenPositionToMusicTime(value, true);
+
+                positionMark_Screen = MusicTimeToScreenPosition(positionMark, true);
 
                 UpdatePositionMark();
             }
@@ -2536,10 +2558,10 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             }
 
             set
-            {
-                positionMark = value;
+            {                
+                positionMark_Screen = MusicTimeToScreenPosition(value, true);
 
-                postionMark_Screen = MusicTimeToScreenPosition(value, true);
+                positionMark = ScreenPositionToMusicTime(PositionMark_Screen, true);
 
                 UpdatePositionMark();
             }

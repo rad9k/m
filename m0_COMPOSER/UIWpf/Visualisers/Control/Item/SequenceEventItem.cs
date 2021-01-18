@@ -107,8 +107,6 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control.Item
             }
         }        
 
-        static int count = 0;
-
         public void Select()
         {
             isSelected = true;
@@ -141,15 +139,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control.Item
 
             RenderOptions.SetEdgeMode(this, EdgeMode.Aliased);            
            
-            Unselect();
-
-            Label l = new System.Windows.Controls.Label();
-
-            this.Child = l;
-
-            l.Content = count;
-
-            count++;
+            Unselect();            
         }        
 
         public void Update()
