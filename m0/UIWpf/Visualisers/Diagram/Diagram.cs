@@ -1165,7 +1165,7 @@ namespace m0.UIWpf.Visualisers.Diagram
                     isSet = true;
 
                 if(isSet)
-                    Process.UI.NonAtomProcess.StartNonAtomProcess();
+                    User.Process.UI.NonAtomProcess.StartNonAtomProcess();
 
 
                 VertexChangeListenOff();
@@ -1186,7 +1186,7 @@ namespace m0.UIWpf.Visualisers.Diagram
                 
 
                 if (isSet)
-                    Process.UI.NonAtomProcess.StopNonAtomProcess();
+                    User.Process.UI.NonAtomProcess.StopNonAtomProcess();
 
                 if (e.Data.GetData("DragSource") is IHasSelectableEdges)
                     ((IHasSelectableEdges)e.Data.GetData("DragSource")).UnselectAllSelectedEdges();

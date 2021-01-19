@@ -102,7 +102,7 @@
     <Compile Include="Graph\NonActingEdge.cs" />
     <Compile Include="Lib\LibUtil.cs" />
     <Compile Include="Lib\Std.cs" />
-    <Compile Include="Process\UI\NonAtomProcess.cs" />
+    <Compile Include="User\Process\UI\NonAtomProcess.cs" />
     <Compile Include="Store\BinarySerializationStore.cs">
       <SubType>Code</SubType>
     </Compile>

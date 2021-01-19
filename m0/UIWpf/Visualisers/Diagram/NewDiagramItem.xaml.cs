@@ -172,7 +172,7 @@ namespace m0.UIWpf.Visualisers.Diagram
         {
             IVertex question = GetRememberedQuestion();
 
-            IVertex answer=Process.UI.NonAtomProcess.GetUserChoice(question);
+            IVertex answer=User.Process.UI.NonAtomProcess.GetUserChoice(question);
 
             if (answer != null)
             {
@@ -248,7 +248,7 @@ namespace m0.UIWpf.Visualisers.Diagram
                 { 
                     IVertex question = GetRememberedQuestion();
                   
-                    m0.Process.UI.NonAtomProcess.AddUserChoice(question, DiagramItemDefinition, !IsSet);
+                    m0.User.Process.UI.NonAtomProcess.AddUserChoice(question, DiagramItemDefinition, !IsSet);
                 }
 
                 this.Close();
