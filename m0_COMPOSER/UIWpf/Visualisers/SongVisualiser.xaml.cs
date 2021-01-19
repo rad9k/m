@@ -51,8 +51,13 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             PenButton = PenButton_Instance;
             ArrowButton = ArrowButton_Instance;
             EraseButton = EraseButton_Instance;
+
+            CutButton = CutButton_Instance;
+            CopyButton = CopyButton_Instance;
+            PasteButton = PasteButton_Instance;
+
             GlueButton = GlueButton_Instance;
-            ScissorsButton = ScissorsButton_Instance;
+            RazorButton = RazorButton_Instance;
 
             TruncateButton = TruncateButton_Instance;
             ExtendButton = ExtendButton_Instance;
@@ -121,6 +126,8 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             InitXAMLInstances();
 
             ZoomScrollViewBasedVisualiserBase_Init();
+
+            PositionMarkEnabled = true;
 
             PositionMark = -1000;
 
@@ -258,13 +265,17 @@ namespace m0_COMPOSER.UIWpf.Visualisers
                 SetButtonComponentName(ArrowButton, "Select");
                 SetButtonComponentName(EraseButton, "Erase");
                 SetButtonComponentName(GlueButton, "Merge");
-                SetButtonComponentName(ScissorsButton, "Cut");
+                SetButtonComponentName(RazorButton, "Razor");
 
                 SetButtonComponentName(RewindButton, "Rewind");
                 SetButtonComponentName(PlayButton, "Play");
                 SetButtonComponentName(RecordButton, "Record");
                 SetButtonComponentName(StopButton, "Stop");
                 SetButtonComponentName(RepeatButton, "Repeat");
+
+                SetButtonComponentName(CutButton, "Cut");
+                SetButtonComponentName(CopyButton, "Copy");
+                SetButtonComponentName(PasteButton, "Paste");
 
                 SetButtonComponentName(TruncateButton, "Truncate");
                 SetButtonComponentName(ExtendButton, "Extend");
@@ -275,13 +286,17 @@ namespace m0_COMPOSER.UIWpf.Visualisers
                 SetButtonComponentName(ArrowButton, "");
                 SetButtonComponentName(EraseButton, "");
                 SetButtonComponentName(GlueButton, "");
-                SetButtonComponentName(ScissorsButton, "");
+                SetButtonComponentName(RazorButton, "");
 
                 SetButtonComponentName(RewindButton, "");
                 SetButtonComponentName(PlayButton, "");
                 SetButtonComponentName(RecordButton, "");
                 SetButtonComponentName(StopButton, "");
                 SetButtonComponentName(RepeatButton, "");
+
+                SetButtonComponentName(CutButton, "");
+                SetButtonComponentName(CopyButton, "");
+                SetButtonComponentName(PasteButton, "");
 
                 SetButtonComponentName(TruncateButton, "");
                 SetButtonComponentName(ExtendButton, "");
@@ -441,7 +456,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             SetCursorMode(CursorStateEnum.Glue);
         }
 
-        protected void ScissorsButton_Click(object sender, RoutedEventArgs e)
+        protected void RazorButton_Click(object sender, RoutedEventArgs e)
         {
             SetCursorMode(CursorStateEnum.Scissors);
         }

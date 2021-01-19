@@ -512,7 +512,10 @@
     <Resource Include="_RESOURCES\basic\glue.png" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="_RESOURCES\basic\scissors.png" />
+    <Resource Include="_RESOURCES\basic\copy.png" />
+    <Resource Include="_RESOURCES\basic\cut.png" />
+    <Resource Include="_RESOURCES\basic\paste.png" />
+    <Resource Include="_RESOURCES\basic\razor.jpg" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

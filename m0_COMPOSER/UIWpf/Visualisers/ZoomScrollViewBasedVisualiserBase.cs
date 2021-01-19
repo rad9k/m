@@ -38,7 +38,12 @@ namespace m0_COMPOSER.UIWpf.Visualisers
         protected ToggleButton ArrowButton;
         protected ToggleButton EraseButton;
         protected ToggleButton GlueButton;
-        protected ToggleButton ScissorsButton;
+        protected ToggleButton RazorButton;
+
+        protected ToggleButton CutButton;
+        protected ToggleButton CopyButton;
+        protected ToggleButton PasteButton;
+
         protected Button TruncateButton;
         protected Button ExtendButton;
 
@@ -238,7 +243,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
                 case CursorStateEnum.Scissors:
 
-                    SetChecked(ScissorsButton, true);
+                    SetChecked(RazorButton, true);
                     break;
             }
         }
@@ -2414,7 +2419,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             SetChecked(PenButton, false);
             SetChecked(ArrowButton, false);
             SetChecked(GlueButton, false);
-            SetChecked(ScissorsButton, false);
+            SetChecked(RazorButton, false);
         }
 
         protected void KeyDownHandler(object sender, KeyEventArgs e)
@@ -2565,6 +2570,21 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
                 UpdatePositionMark();
             }
+        }
+
+        protected void CutButton_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        protected void CopyButton_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        protected void PasteButton_Click(object sender, RoutedEventArgs e)
+        {
+
         }
     }
 }

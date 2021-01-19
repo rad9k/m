@@ -60,15 +60,40 @@
                         <TextBlock Margin="3,0,0,0"/>
                     </StackPanel>
                 </ToggleButton>
+
+                <Separator/>
+
+                <ToggleButton Name="CutButton_Instance" ToolTip="Cut sequences" Click="CutButton_Click">
+                    <StackPanel Orientation="Horizontal">
+                        <Image RenderOptions.BitmapScalingMode="HighQuality" Source="pack://application:,,/m0;Component/_resources/basic/cut.png" Width="15" Height="15"/>
+                        <TextBlock Margin="3,0,0,0">Cut</TextBlock>
+                    </StackPanel>
+                </ToggleButton>
+                <ToggleButton Name="CopyButton_Instance" ToolTip="Copy sequences" Click="CopyButton_Click">
+                    <StackPanel Orientation="Horizontal">
+                        <Image RenderOptions.BitmapScalingMode="HighQuality" Source="pack://application:,,/m0;Component/_resources/basic/copy.png" Width="15" Height="15"/>
+                        <TextBlock Margin="3,0,0,0">Copy</TextBlock>
+                    </StackPanel>
+                </ToggleButton>
+                <ToggleButton Name="PasteButton_Instance" ToolTip="Paste sequences" Click="PasteButton_Click">
+                    <StackPanel Orientation="Horizontal">
+                        <Image RenderOptions.BitmapScalingMode="HighQuality" Source="pack://application:,,/m0;Component/_resources/basic/paste.png" Width="15" Height="15"/>
+                        <TextBlock Margin="3,0,0,0">Paste</TextBlock>
+                    </StackPanel>
+                </ToggleButton>
+
+                <Separator/>
+
+
                 <ToggleButton Name="GlueButton_Instance" ToolTip="Merge sequences" Click="GlueButton_Click">
                     <StackPanel Orientation="Horizontal">
                         <Image RenderOptions.BitmapScalingMode="HighQuality" Source="pack://application:,,/m0;Component/_resources/basic/glue.png" Width="15" Height="15"/>
                         <TextBlock Margin="3,0,0,0"/>
                     </StackPanel>
                 </ToggleButton>
-                <ToggleButton Name="ScissorsButton_Instance" ToolTip="Cut sequence" Click="ScissorsButton_Click">
+                <ToggleButton Name="RazorButton_Instance" ToolTip="Cut sequence" Click="RazorButton_Click">
                     <StackPanel Orientation="Horizontal">
-                        <Image RenderOptions.BitmapScalingMode="HighQuality" Source="pack://application:,,/m0;Component/_resources/basic/scissors.png" Width="15" Height="15"/>
+                        <Image RenderOptions.BitmapScalingMode="HighQuality" Source="pack://application:,,/m0;Component/_resources/basic/razor.jpg" Width="15" Height="15"/>
                         <TextBlock Margin="3,0,0,0"/>
                     </StackPanel>
                 </ToggleButton>

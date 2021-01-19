@@ -33,6 +33,10 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             TruncateButton = TruncateButton_Instance;
             ExtendButton = ExtendButton_Instance;
 
+            CutButton = CutButton_Instance;
+            CopyButton = CopyButton_Instance;
+            PasteButton = PasteButton_Instance;
+
             ZoomScrollView = ZoomScrollView_Instance;
         }
 

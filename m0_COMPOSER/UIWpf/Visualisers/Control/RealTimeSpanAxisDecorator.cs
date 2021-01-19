@@ -66,7 +66,11 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control
 
             Children.Clear();
 
-            Draw_Recurent(0);        
+            DrawBackground();
+
+            Draw_Recurent(0);
+
+            CreateAndDrawPositionMark();
         }
 
         Brush getBrushForLevel(int level)
@@ -106,6 +110,8 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control
                 {
                     TextBlock t = new TextBlock();
 
+                    t.PreviewMouseDown += MouseDownHandler;
+
                     t.Foreground = getBrushForLevel(level);
 
                     t.Text = textCount.ToString();
@@ -124,7 +130,9 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control
 
                 //
 
-                Line l = new Line();                
+                Line l = new Line();
+
+                l.PreviewMouseDown += MouseDownHandler;
 
                 WpfUtil.SetLinePosition(l, horizontalPosition, verticalStartPosition, horizontalPosition, Size.Height);
 
@@ -255,5 +263,18 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control
         public event EventHandler SelectionChanged;
 
         public object Selection { get; set; }
+
+        protected void DrawBackground()
+        {
+            Border b = new Border();
+
+            b.Background = (Brush)WpfUtil.FindResource("0BackgroundBrush");
+
+            WpfUtil.SetPosition(b, 0, 0, Width, Height);
+
+            this.Children.Add(b);
+
+            b.PreviewMouseDown += MouseDownHandler;
+        }
     }
 }
