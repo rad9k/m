@@ -96,7 +96,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control
 
             timeSpanLevel thisLevel = timeSpanStructure[level];
 
-            int textCount = 1;
+            int textCount = 0;
 
             for (int cnt = 0; cnt < Length * MilisecondsInMinute; cnt += thisLevel.BaseMusicTimeSpanLevelCountForThisLevel)
             {                

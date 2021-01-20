@@ -31,24 +31,24 @@
                 
                 <Separator/>
 
-                <ToggleButton Name="CutButton_Instance" ToolTip="Cut notes" Click="CutButton_Click">
+                <Button Name="CutButton_Instance" ToolTip="Cut notes" Click="CutButton_Click">
                     <StackPanel Orientation="Horizontal">
                         <Image RenderOptions.BitmapScalingMode="HighQuality" Source="pack://application:,,/m0;Component/_resources/basic/cut.png" Width="15" Height="15"/>
                         <TextBlock Margin="3,0,0,0">Cut</TextBlock>
                     </StackPanel>
-                </ToggleButton>
-                <ToggleButton Name="CopyButton_Instance" ToolTip="Copy notes" Click="CopyButton_Click">
+                </Button>
+                <Button Name="CopyButton_Instance" ToolTip="Copy notes" Click="CopyButton_Click">
                     <StackPanel Orientation="Horizontal">
                         <Image RenderOptions.BitmapScalingMode="HighQuality" Source="pack://application:,,/m0;Component/_resources/basic/copy.png" Width="15" Height="15"/>
                         <TextBlock Margin="3,0,0,0">Copy</TextBlock>
                     </StackPanel>
-                </ToggleButton>
-                <ToggleButton Name="PasteButton_Instance" ToolTip="Paste notes" Click="PasteButton_Click">
+                </Button>
+                <Button Name="PasteButton_Instance" ToolTip="Paste notes" Click="PasteButton_Click">
                     <StackPanel Orientation="Horizontal">
                         <Image RenderOptions.BitmapScalingMode="HighQuality" Source="pack://application:,,/m0;Component/_resources/basic/paste.png" Width="15" Height="15"/>
                         <TextBlock Margin="3,0,0,0">Paste</TextBlock>
                     </StackPanel>
-                </ToggleButton>
+                </Button>
 
                 <Separator/>
                 

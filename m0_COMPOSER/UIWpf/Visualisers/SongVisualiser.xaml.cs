@@ -516,6 +516,8 @@ namespace m0_COMPOSER.UIWpf.Visualisers
         {
             bool dummy = false;
 
+            int PositionMark_Copy = PositionMark;
+
             Tempo = GraphUtil.GetDoubleValue(baseVertex.Get(false, "Tempo:"), ref dummy);
 
             if (HorizontalAD != null)
@@ -523,7 +525,9 @@ namespace m0_COMPOSER.UIWpf.Visualisers
                 UpdateHorizontalADLength();
 
                 VisualiserDraw();
-            }
+
+                PositionMark = PositionMark_Copy;
+            }            
         }
 
         public override void ChildControlsLoaded()
@@ -857,6 +861,41 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             Items.Remove((FrameworkElement)i);
 
             i.Remove();
+        }
+
+        protected virtual void TimeUpdate()
+        {
+            if (PositionMark <= 0)
+            {
+                Time.Text = "--:--:--";
+                return;
+            }
+
+            RealTime rt = new RealTime();
+
+            rt.Minutes = GetRealTimeFromMusicTime(PositionMark);
+
+            string seconds = null;
+            string miliseconds = null;
+
+            if (rt.Second < 10)
+                seconds = "0" + rt.Second;
+            else
+                seconds = rt.Second.ToString();
+
+            if (rt.Milisecond < 10)
+                miliseconds = "0" + rt.Milisecond;
+            else
+                miliseconds = rt.Milisecond.ToString();
+
+            Time.Text = rt.Minute + ":" + seconds + ":" + miliseconds;
+        }
+
+        public override void UpdatePositionMark()
+        {
+            TimeUpdate();
+
+            base.UpdatePositionMark();
         }
     }
 }

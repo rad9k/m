@@ -47,6 +47,8 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control
 
         public void CreateAndDrawPositionMark()
         {
+            visualiser.PositionMark = visualiser.PositionMark;
+
             PositionMarkLine = Common.CreatePositionMark(this, visualiser.PositionMark_Screen, Height);
         }
 

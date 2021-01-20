@@ -70,7 +70,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control
 
             DrawBackground();
 
-            Draw_Recurent(0);
+            Draw_Recurent(0);            
 
             CreateAndDrawPositionMark();
         }

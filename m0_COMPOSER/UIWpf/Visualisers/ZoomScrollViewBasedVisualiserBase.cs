@@ -40,9 +40,9 @@ namespace m0_COMPOSER.UIWpf.Visualisers
         protected ToggleButton GlueButton;
         protected ToggleButton RazorButton;
 
-        protected ToggleButton CutButton;
-        protected ToggleButton CopyButton;
-        protected ToggleButton PasteButton;
+        protected Button CutButton;
+        protected Button CopyButton;
+        protected Button PasteButton;
 
         protected Button TruncateButton;
         protected Button ExtendButton;
@@ -288,6 +288,8 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             if (baseVertex == null || isLoaded == false)
                 return;
 
+            int PositionMark_Copy = PositionMark;
+
             if (VisuliseserDraw_NeedsInitilisation)
             {
                 SetupLocalVariablesFromBaseVertexVertexes();
@@ -323,6 +325,8 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             Draw_Down();
 
             VisuliseserDraw_NeedsInitilisation = false;
+
+            PositionMark = PositionMark_Copy;
         }
 
         protected virtual void UpdateVariablesFromBaseVertex() { }
@@ -2520,7 +2524,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
                 PositionMarkLine_Down = Common.CreatePositionMark(this.Down, PositionMark_Screen, Height_Down);
         }
 
-        public void UpdatePositionMark()
+        public virtual void UpdatePositionMark()
         {
             if (PositionMarkEnabled && PositionMarkLine != null)
             {
