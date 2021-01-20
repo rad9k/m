@@ -102,6 +102,7 @@
     <Compile Include="Graph\NonActingEdge.cs" />
     <Compile Include="Lib\LibUtil.cs" />
     <Compile Include="Lib\Std.cs" />
+    <Compile Include="User\Clipboard.cs" />
     <Compile Include="User\Process\UI\NonAtomProcess.cs" />
     <Compile Include="Store\BinarySerializationStore.cs">
       <SubType>Code</SubType>
@@ -517,6 +518,7 @@
     <Resource Include="_RESOURCES\basic\paste.png" />
     <Resource Include="_RESOURCES\basic\razor.jpg" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

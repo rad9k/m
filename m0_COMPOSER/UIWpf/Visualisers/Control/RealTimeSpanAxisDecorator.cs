@@ -20,7 +20,6 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control
         {
             segmentLength = 60 * 100;
 
-
             visualiser = _visualiser;
         }
 
@@ -124,8 +123,8 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control
 
                     textCount++;
 
-                    if (level > 0 && timeSpanStructure[level - 1].length + 1 == textCount)
-                        textCount = 1;
+                    if (level > 0 && timeSpanStructure[level - 1].length  == textCount)
+                        textCount = 0;
                 }
 
                 //
