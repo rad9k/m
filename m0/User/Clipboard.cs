@@ -14,7 +14,12 @@ namespace m0.User
         {
             IVertex currenSession = m0.MinusZero.Instance.root.Get(false, @"User\CurrentUser:\CurrentSession:");
 
-            IEnumerable<IEdge> allClipboard = currenSession.GetAll(false, @"Clipboard:");
+            IEnumerable<IEdge> allClipboard = currenSession.GetAll(false, @"ClipboardCut:");
+
+            foreach (IEdge e in allClipboard)
+                currenSession.DeleteEdge(e);
+
+            allClipboard = currenSession.GetAll(false, @"ClipboardCopy:");
 
             foreach (IEdge e in allClipboard)
                 currenSession.DeleteEdge(e);
@@ -27,9 +32,9 @@ namespace m0.User
             IVertex clipboard = null;
 
             if(isCut)
-                clipboard = m0.MinusZero.Instance.root.Get(false, @"Systemm\Meta\User\Session\ClipboardCut");
+                clipboard = m0.MinusZero.Instance.root.Get(false, @"System\Meta\User\Session\ClipboardCut");
             else
-                clipboard = m0.MinusZero.Instance.root.Get(false, @"Systemm\Meta\User\Session\ClipboardCopy");
+                clipboard = m0.MinusZero.Instance.root.Get(false, @"System\Meta\User\Session\ClipboardCopy");
 
             foreach (IEdge e in edges)
                 currenSession.AddEdge(clipboard, e.To);
@@ -39,8 +44,15 @@ namespace m0.User
         {
             List<IEdge> ret = new List<IEdge>();
 
-            ret.AddRange(m0.MinusZero.Instance.root.Get(false, @"User\CurrentUser:\CurrentSession:\ClipboardCut:"));
-            ret.AddRange(m0.MinusZero.Instance.root.Get(false, @"User\CurrentUser:\CurrentSession:\ClipboardCopy:"));
+            IVertex cut = m0.MinusZero.Instance.root.Get(false, @"User\CurrentUser:\CurrentSession:\ClipboardCut:");
+
+            if(cut!=null)
+                ret.AddRange(cut);
+
+            IVertex copy = m0.MinusZero.Instance.root.Get(false, @"User\CurrentUser:\CurrentSession:\ClipboardCopy:");
+
+            if(copy!=null)
+                ret.AddRange(copy);
 
             return ret;
         }

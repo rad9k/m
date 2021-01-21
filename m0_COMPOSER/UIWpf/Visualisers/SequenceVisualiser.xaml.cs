@@ -237,11 +237,12 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             IVertex noteEventVertex = tempNoteEventEdge.To;
 
             noteEventVertex.AddEdge(MinusZero.Instance.Is, noteEvent);
-            noteEventVertex.AddVertex(noteEvent.Get(false, @"Attribute:Velocity"), DefaultVelocity);
+
+            noteEventVertex.AddVertex(noteEvent.Get(false, @"Attribute:TriggerTime"), (int)((startPosition / HorizontalAD.BaseUnitSize) + 0.01));
+            noteEventVertex.AddVertex(noteEvent.Get(false, @"Attribute:Length"), (int)((lengthPosition / HorizontalAD.BaseUnitSize) + 0.01));            
             noteEventVertex.AddEdge(noteEvent.Get(false, @"Attribute:Octave"), itemSegment.BaseVertex.Get(false, "Octave:"));
             noteEventVertex.AddEdge(noteEvent.Get(false, @"Attribute:Note"), itemSegment.BaseVertex.Get(false, "Note:"));
-            noteEventVertex.AddVertex(noteEvent.Get(false, @"Attribute:TriggerTime"), (int)((startPosition / HorizontalAD.BaseUnitSize) + 0.01));
-            noteEventVertex.AddVertex(noteEvent.Get(false, @"Attribute:Length"), (int)((lengthPosition / HorizontalAD.BaseUnitSize) + 0.01));
+            noteEventVertex.AddVertex(noteEvent.Get(false, @"Attribute:Velocity"), DefaultVelocity);
 
             IEdge finalEdge = baseVertex.AddEdge(Event, noteEventVertex);
 
@@ -384,21 +385,64 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             return last;
         }
 
-        protected AddNoteVertex(int octave, int note, int triggerTime, int length, int velocity)
+        protected void AddNoteVertex(IVertex octave, IVertex note, int triggerTime, int length, int velocity)
         {
+            IVertex r = MinusZero.Instance.Root;
 
+            IVertex Event = r.Get(false, @"System\Lib\Music\Event");
+            IVertex noteEvent = r.Get(false, @"System\Lib\Music\NoteEvent");
 
-            baseVertex
+            IEdge tempNoteEventEdge = baseVertex.AddVertexAndReturnEdge(null, null);
+
+            IVertex noteEventVertex = tempNoteEventEdge.To;
+
+            noteEventVertex.AddEdge(MinusZero.Instance.Is, noteEvent);
+
+            noteEventVertex.AddVertex(noteEvent.Get(false, @"Attribute:TriggerTime"), triggerTime);
+            noteEventVertex.AddVertex(noteEvent.Get(false, @"Attribute:Length"), length);
+            noteEventVertex.AddEdge(noteEvent.Get(false, @"Attribute:Octave"), octave);
+            noteEventVertex.AddEdge(noteEvent.Get(false, @"Attribute:Note"), note);            
+            noteEventVertex.AddVertex(noteEvent.Get(false, @"Attribute:Velocity"), velocity);
+
+            IEdge finalEdge = baseVertex.AddEdge(Event, noteEventVertex);
+
+            baseVertex.DeleteEdge(tempNoteEventEdge);
+        }
+
+        int GetMinimalTriggerTime(IEnumerable<IEdge> edges)
+        {
+            int min = Int32.MaxValue;
+
+            bool o = false;
+
+            foreach(IEdge e in edges)
+            {
+                int triggerTime = GraphUtil.GetIntegerValue(e.To.Get(false, "TriggerTime:"), ref o);
+
+                if (min > triggerTime)
+                    min = triggerTime;
+            }
+
+            return min;
         }
 
         protected override void PasteEdgesFromClipboard(IEnumerable<IEdge> edges)
         {
-            foreach(IEdge e in edges)
+            bool o = false;
+
+            int minTriggerTime = GetMinimalTriggerTime(edges);
+
+
+            foreach (IEdge e in edges)
             {
-                if(GeneralUtil.CompareStrings(e.Meta, "ClipboardCopy"))
-                {
-          //          AddNoteVertex
-                }
+                IVertex v = e.To;
+                if (GeneralUtil.CompareStrings(e.Meta, "ClipboardCopy"))
+                    AddNoteVertex(v.Get(false, "Octave:"),
+                        v.Get(false, "Note:"),
+                        GraphUtil.GetIntegerValue(v.Get(false, "TriggerTime:"), ref o) - minTriggerTime,
+                        GraphUtil.GetIntegerValue(v.Get(false, "Length:"), ref o),
+                        GraphUtil.GetIntegerValue(v.Get(false, "Velocity:"), ref o));
+                
             }
         }
     }
