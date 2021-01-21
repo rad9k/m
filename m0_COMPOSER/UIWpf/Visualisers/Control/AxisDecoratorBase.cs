@@ -65,6 +65,11 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control
 
             visualiser.PositionMark_Screen = p.X;
 
+            PositionMarkUpdate();
+        }
+
+        public void PositionMarkUpdate()
+        {
             Common.UpdatePositionMark(PositionMarkLine, visualiser.PositionMark_Screen, Height);
         }
 

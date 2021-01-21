@@ -15,10 +15,10 @@ using m0.Graph;
 namespace m0_COMPOSER.UIWpf.Visualisers.Control
 {
     class PitchSetAxisDecorator : AxisDecoratorBase, IZoomScrollViewAxisDecorator
-    {        
+    {
         double FontSize = 12;
 
-        double segmentSize;                
+        double segmentSize;
 
         private void Draw()
         {
@@ -36,7 +36,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control
                     isSelected = true;
 
                 TextBlock t = new TextBlock();
-                
+
                 t.Text = s.BaseVertex.Get(false, "Name:").Value.ToString();
 
                 Color segmentColor = s.Color;
@@ -100,7 +100,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control
 
                 s.LineStyle.SetStyle(l);
 
-                Children.Add(l);                
+                Children.Add(l);
             }
 
             //
@@ -128,8 +128,8 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control
 
             int prevOctave = -9;
 
-            foreach(IEdge e in baseVertex.GetAll(false,"VisualisedPitch:"))                
-            {                
+            foreach (IEdge e in baseVertex.GetAll(false, "VisualisedPitch:"))
+            {
                 AxisSegment segment = new AxisSegment();
 
                 segment.LineStyle = new LineStyle();
@@ -162,12 +162,12 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control
 
                 int? thisOctave = GraphUtil.GetIntegerValue(segment.BaseVertex.Get(false, "Octave:"));
 
-                if(thisOctave != null && thisOctave != prevOctave)
-                    {
-                        prevOctave = (int)thisOctave;
+                if (thisOctave != null && thisOctave != prevOctave)
+                {
+                    prevOctave = (int)thisOctave;
 
-                        segment.LineStyle.StrokeThickness = 3;
-                    }
+                    segment.LineStyle.StrokeThickness = 3;
+                }
 
 
                 Segments.Add(segment);
@@ -185,7 +185,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control
 
         public void SetBaseVertex(IVertex _baseVertex)
         {
-            baseVertex = _baseVertex;            
+            baseVertex = _baseVertex;
 
             Update();
         }
@@ -194,7 +194,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control
         {
             zoomFactor = _zoomFactor;
 
-            segmentSize = 3 +  (15 * (zoomFactor / 40) );
+            segmentSize = 3 + (15 * (zoomFactor / 40));
 
             Update();
         }
@@ -221,7 +221,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control
                     else
                         Selection = s;
 
-                    if(SelectionChanged!=null)
+                    if (SelectionChanged != null)
                         SelectionChanged(sender, null);
 
                     Draw();

@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace m0.User
 {
-    public class Clipboard
+    public class SessionClipboard
     {
         public static void ClearClipboard()
         {
@@ -19,11 +19,16 @@ namespace m0.User
                 currenSession.DeleteEdge(e);
         }
 
-        public static void PutToClipboard(IEnumerable<IEdge> edges)
+        public static void PutToClipboard(IEnumerable<IEdge> edges, bool isCut)
         {
             IVertex currenSession = m0.MinusZero.Instance.root.Get(false, @"User\CurrentUser:\CurrentSession:");
 
-            IVertex clipboard = m0.MinusZero.Instance.root.Get(false, @"Meta\User\Session\Clipboard");
+            IVertex clipboard = null;
+
+            if(isCut)
+                clipboard = m0.MinusZero.Instance.root.Get(false, @"Systemm\Meta\User\Session\ClipboardCut");
+            else
+                clipboard = m0.MinusZero.Instance.root.Get(false, @"Systemm\Meta\User\Session\ClipboardCopy");
 
             foreach (IEdge e in edges)
                 currenSession.AddEdge(clipboard, e.To);

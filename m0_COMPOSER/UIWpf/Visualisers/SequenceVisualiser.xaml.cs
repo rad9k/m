@@ -357,5 +357,31 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             return musicTime * HorizontalAD.BaseUnitSize;
         }
+
+        protected override int FindLastPosition(IEnumerable<IEdge> edges)
+        {
+            int last = 0;
+
+            foreach(IEdge e in edges)
+            {
+                IVertex v = e.To.Get(false, "To:");
+
+                if(v.Get(false, "$Is:NoteEvent") != null)
+                {
+                    bool o = false;
+
+                    int trigger = GraphUtil.GetIntegerValue(v.Get(false, "TriggerTime:"), ref o);
+
+                    int length = GraphUtil.GetIntegerValue(v.Get(false, "Length:"), ref o);
+
+                    int max = trigger + length;
+
+                    if (last < max)
+                        last = max;
+                }                
+            }
+
+            return last;
+        }
     }
 }

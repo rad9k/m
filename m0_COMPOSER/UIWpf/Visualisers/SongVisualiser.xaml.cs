@@ -604,7 +604,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             if (CurrentSnapToGrid == SnapToGridEnum.No_Snap)
                 return position;
 
-            double snapMinimalWidth = GetSnapMinimalWidth();
+            double snapMinimalWidth = GetSnapMinimalWidth_Screen();
 
             double numberOfSnaps = position / snapMinimalWidth;
 
@@ -618,7 +618,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
                 return (numberOfSnapsFloor + 1) * snapMinimalWidth;
         }
 
-        protected override double GetSnapMinimalWidth()
+        protected override double GetSnapMinimalWidth_Screen()
         {
             if (CurrentSnapToGridValue == 0)
                 return 1;

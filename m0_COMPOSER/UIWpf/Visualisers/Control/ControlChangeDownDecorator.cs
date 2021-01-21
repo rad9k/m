@@ -306,8 +306,6 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control
             SelectionChanged(sender, e);
         }
 
-        public void UpdatePositionMark() {}
-
-        public event EventHandler PositionMarkChanged;
+        public void PositionMarkUpdate() {}        
     }
 }

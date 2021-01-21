@@ -10,6 +10,8 @@ using m0.ZeroUML;
 using m0_COMPOSER.Lib;
 using m0_COMPOSER.UIWpf.Visualisers.Control;
 using m0_COMPOSER.UIWpf.Visualisers.Control.Item;
+using m0.User;
+
 using System;
 using System.Collections.Generic;
 using System.Windows;
@@ -838,7 +840,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             if (LeftRight == LeftRightEnum.Left)
             {
-                if (delta + GetSnapMinimalWidth() >= element.Width)
+                if (delta + GetSnapMinimalWidth_Screen() >= element.Width)
                     return;
 
                 double orginalX = item.Left;
@@ -856,7 +858,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             }
             else
             {
-                if (element.Width + delta - GetSnapMinimalWidth() <= 0)
+                if (element.Width + delta - GetSnapMinimalWidth_Screen() <= 0)
                     return;
 
                 double orginalX = item.Right;
@@ -1176,7 +1178,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
                 return (positionInBars - reminder + CurrentSnapToGridValue_corrected) * HorizontalAD.SegmentLength * HorizontalAD.BaseUnitSize;
         }
 
-        protected virtual double GetSnapMinimalWidth()
+        protected virtual double GetSnapMinimalWidth_Screen()
         {
             if (CurrentSnapToGridValue == 0)
                 return 1;
@@ -1185,6 +1187,15 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             return CurrentSnapToGridValue_corrected * HorizontalAD.SegmentLength * HorizontalAD.BaseUnitSize;
         }
+
+        protected virtual int GetSnapMinimalWidth()
+        {
+            if (CurrentSnapToGridValue == 0)
+                return 1;
+
+            return (int)(CurrentSnapToGridValue * Midi.Standard.MidiTicksPerBar);
+        }
+
 
         protected AxisSegment GetVerticalSegment(IVertex baseVertex)
         {
@@ -2083,7 +2094,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             if (CurrentSnapToGrid == SnapToGridEnum.No_Snap || ShowSnapLines == false)
                 return;
 
-            double snapWidth = GetSnapMinimalWidth();
+            double snapWidth = GetSnapMinimalWidth_Screen();
 
             Brush lb = (Brush)FindResource("0VeryLightForegroundBrush");
 
@@ -2106,7 +2117,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             if (CurrentSnapToGrid == SnapToGridEnum.No_Snap || ShowSnapLines == false)
                 return;
 
-            double snapWidth = GetSnapMinimalWidth();
+            double snapWidth = GetSnapMinimalWidth_Screen();
 
             Brush lb = (Brush)FindResource("0VeryLightForegroundBrush");
 
@@ -2429,34 +2440,43 @@ namespace m0_COMPOSER.UIWpf.Visualisers
         protected void KeyDownHandler(object sender, KeyEventArgs e)
         {
             if (e.Key == Key.Delete)
+                Delete();
+
+            if (e.Key == Key.C && Keyboard.Modifiers == ModifierKeys.Control)
+                Copy();
+
+            if (e.Key == Key.V && Keyboard.Modifiers == ModifierKeys.Control)
+                Paste();
+        }
+
+        protected void Delete()
+        {
+            Dictionary<IVertex, IItem> itemsDictionary = GetItemsDictionary();
+
+            Dictionary<IVertex, IItem> itemsDictionary_Down = GetItemsDictionary_Down();
+
+            foreach (IVertex v in GetSelectedVertexes())
             {
-                Dictionary<IVertex, IItem> itemsDictionary = GetItemsDictionary();
+                IItem i = null;
 
-                Dictionary<IVertex, IItem> itemsDictionary_Down = GetItemsDictionary_Down();
-
-                foreach (IVertex v in GetSelectedVertexes())
+                if (itemsDictionary.ContainsKey(v))
                 {
-                    IItem i = null;
+                    i = itemsDictionary[v];
 
-                    if (itemsDictionary.ContainsKey(v))
-                    {
-                        i = itemsDictionary[v];
-
-                        ItemsRemoveAndRemoveAllEdges(i);
-                    }
-
-                    if (itemsDictionary_Down.ContainsKey(v))
-                    {
-                        i = itemsDictionary_Down[v];
-
-                        ItemsRemoveAndRemoveAllEdges_Down(i);
-                    }
+                    ItemsRemoveAndRemoveAllEdges(i);
                 }
 
-                UnselectAllSelectedEdges();
+                if (itemsDictionary_Down.ContainsKey(v))
+                {
+                    i = itemsDictionary_Down[v];
+
+                    ItemsRemoveAndRemoveAllEdges_Down(i);
+                }
             }
 
+            UnselectAllSelectedEdges();
         }
+
         protected virtual void TruncateButton_Click(object sender, RoutedEventArgs e)
         {
             if ((Length - ExtendTimeLength) <= 0)
@@ -2531,7 +2551,10 @@ namespace m0_COMPOSER.UIWpf.Visualisers
                 Common.UpdatePositionMark(PositionMarkLine, PositionMark_Screen, Height);
 
                 if (HasDown)
-                    Common.UpdatePositionMark(PositionMarkLine_Down, PositionMark_Screen, Height_Down);                
+                    Common.UpdatePositionMark(PositionMarkLine_Down, PositionMark_Screen, Height_Down);
+
+                if (HorizontalAD != null)
+                    HorizontalAD.PositionMarkUpdate();
             }
         }
 
@@ -2576,19 +2599,51 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             }
         }
 
-        protected void CutButton_Click(object sender, RoutedEventArgs e)
+        protected virtual int FindLastPosition(IEnumerable<IEdge> edges)
+        {
+            return 0;
+        }
+
+        protected void Cut()
+        {
+            IEnumerable<IEdge> selectedEdges = Vertex.Get(false, "SelectedEdges:");
+
+            SessionClipboard.ClearClipboard();
+
+            SessionClipboard.PutToClipboard(selectedEdges, true);
+
+            PositionMark = FindLastPosition(selectedEdges);
+        }
+
+        protected void Copy()
+        {
+            IEnumerable<IEdge> selectedEdges = Vertex.Get(false, "SelectedEdges:");
+
+            SessionClipboard.ClearClipboard();
+
+            SessionClipboard.PutToClipboard(selectedEdges, false);
+
+            PositionMark = FindLastPosition(selectedEdges) + GetSnapMinimalWidth();
+        }
+
+        protected void Paste()
         {
 
+        }
+
+        protected void CutButton_Click(object sender, RoutedEventArgs e)
+        {
+            Cut();
         }
 
         protected void CopyButton_Click(object sender, RoutedEventArgs e)
         {
-
+            Copy();
         }
 
         protected void PasteButton_Click(object sender, RoutedEventArgs e)
         {
-
+            Paste();
         }
     }
 }
