@@ -2604,9 +2604,14 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             return 0;
         }
 
+        protected virtual IEnumerable<IEdge> GetEdgesForClipboard()
+        {
+            return Vertex.Get(false, "SelectedEdges:");
+        }
+
         protected void Cut()
         {
-            IEnumerable<IEdge> selectedEdges = Vertex.Get(false, "SelectedEdges:");
+            IEnumerable<IEdge> selectedEdges = 
 
             SessionClipboard.ClearClipboard();
 
