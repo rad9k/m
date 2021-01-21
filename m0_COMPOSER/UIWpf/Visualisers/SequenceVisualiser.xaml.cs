@@ -383,5 +383,23 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             return last;
         }
+
+        protected AddNoteVertex(int octave, int note, int triggerTime, int length, int velocity)
+        {
+
+
+            baseVertex
+        }
+
+        protected override void PasteEdgesFromClipboard(IEnumerable<IEdge> edges)
+        {
+            foreach(IEdge e in edges)
+            {
+                if(GeneralUtil.CompareStrings(e.Meta, "ClipboardCopy"))
+                {
+          //          AddNoteVertex
+                }
+            }
+        }
     }
 }

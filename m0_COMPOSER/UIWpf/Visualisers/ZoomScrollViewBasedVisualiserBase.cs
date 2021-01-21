@@ -2611,7 +2611,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
         protected void Cut()
         {
-            IEnumerable<IEdge> selectedEdges = 
+            IEnumerable<IEdge> selectedEdges = GetEdgesForClipboard();
 
             SessionClipboard.ClearClipboard();
 
@@ -2622,7 +2622,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
         protected void Copy()
         {
-            IEnumerable<IEdge> selectedEdges = Vertex.Get(false, "SelectedEdges:");
+            IEnumerable<IEdge> selectedEdges = GetEdgesForClipboard();
 
             SessionClipboard.ClearClipboard();
 
@@ -2631,9 +2631,18 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             PositionMark = FindLastPosition(selectedEdges) + GetSnapMinimalWidth();
         }
 
-        protected void Paste()
+        protected virtual void PasteEdgesFromClipboard(IEnumerable<IEdge> edges)
         {
 
+        }
+
+        protected void Paste()
+        {
+            IEnumerable<IEdge> edges = SessionClipboard.GetFromClipboard();
+
+            PasteEdgesFromClipboard(edges);
+
+            SessionClipboard.ClearClipboard();
         }
 
         protected void CutButton_Click(object sender, RoutedEventArgs e)

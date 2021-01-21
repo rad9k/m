@@ -1,4 +1,5 @@
 ﻿using m0.Foundation;
+using m0.Graph;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -36,7 +37,12 @@ namespace m0.User
 
         public static IEnumerable<IEdge> GetFromClipboard()
         {
-            return m0.MinusZero.Instance.root.Get(false, @"User\CurrentUser:\CurrentSession:\Clipboard:");
+            List<IEdge> ret = new List<IEdge>();
+
+            ret.AddRange(m0.MinusZero.Instance.root.Get(false, @"User\CurrentUser:\CurrentSession:\ClipboardCut:"));
+            ret.AddRange(m0.MinusZero.Instance.root.Get(false, @"User\CurrentUser:\CurrentSession:\ClipboardCopy:"));
+
+            return ret;
         }
 
         public static IEnumerable<IEdge> GetFromClipboard(string meta)
