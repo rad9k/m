@@ -2521,6 +2521,23 @@ namespace m0_COMPOSER.UIWpf.Visualisers
                 return (int)((numberOfSnapsFloor + 1) * snapSizeInMusicTime);
         }
 
+        protected int MusicTimeSnapCorrect_Up(int toCorrect)
+        {
+            if (CurrentSnapToGridValue == 0)
+                return toCorrect;
+
+            double snapSizeInMusicTime = CurrentSnapToGridValue * (double)Midi.Standard.MidiTicksPerBar;
+
+            double numberOfSnaps = ((double)toCorrect) / snapSizeInMusicTime;
+
+            double numberOfSnapsFloor = Math.Floor(numberOfSnaps);
+
+            double rest = ((double)toCorrect) - numberOfSnapsFloor * snapSizeInMusicTime;
+
+            
+            return (int)((numberOfSnapsFloor + 1) * snapSizeInMusicTime);
+        }
+
         Line PositionMarkLine;
 
         Line PositionMarkLine_Down;
@@ -2617,7 +2634,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             SessionClipboard.PutToClipboard(selectedEdges, true);
 
-            PositionMark = FindLastPosition(selectedEdges);
+            PositionMark = MusicTimeSnapCorrect_Up(FindLastPosition(selectedEdges));
         }
 
         protected void Copy()
@@ -2628,7 +2645,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             SessionClipboard.PutToClipboard(selectedEdges, false);
 
-            PositionMark = FindLastPosition(selectedEdges) + GetSnapMinimalWidth();
+            PositionMark = MusicTimeSnapCorrect_Up(FindLastPosition(selectedEdges));
         }
 
         protected virtual void PasteEdgesFromClipboard(IEnumerable<IEdge> edges)
