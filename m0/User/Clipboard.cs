@@ -1,5 +1,6 @@
 ﻿using m0.Foundation;
 using m0.Graph;
+using m0.ZeroTypes;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -44,17 +45,24 @@ namespace m0.User
         {
             List<IEdge> ret = new List<IEdge>();
 
-            IVertex cut = m0.MinusZero.Instance.root.Get(false, @"User\CurrentUser:\CurrentSession:\ClipboardCut:");
+            IVertex currentSession = m0.MinusZero.Instance.root.Get(false, @"User\CurrentUser:\CurrentSession:");
+
+            IVertex cut = currentSession.GetAll(false, @"ClipboardCut:");
 
             if(cut!=null)
                 ret.AddRange(cut);
 
-            IVertex copy = m0.MinusZero.Instance.root.Get(false, @"User\CurrentUser:\CurrentSession:\ClipboardCopy:");
+            IVertex copy = currentSession.GetAll(false, @"ClipboardCopy:");
 
             if(copy!=null)
                 ret.AddRange(copy);
 
-            return ret;
+            List<IEdge> retEdges = new List<IEdge>();
+
+            foreach (IEdge e in ret)
+                retEdges.Add(Edge.FindEdgeByEdgeOnlyToVertex(currentSession, e));
+
+            return retEdges;
         }
 
         public static IEnumerable<IEdge> GetFromClipboard(string meta)

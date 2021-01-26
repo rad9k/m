@@ -183,6 +183,36 @@ namespace m0.ZeroTypes
             return null;
         }
 
+        static public IEdge FindEdgeByEdgeVertex(IVertex baseVertex, IVertex edge)
+        {
+            IVertex from = GraphUtil.GetQueryOutFirst(edge, "From", null);
+            IVertex meta = GraphUtil.GetQueryOutFirst(edge, "Meta", null);
+            IVertex to = GraphUtil.GetQueryOutFirst(edge, "To", null);
+
+            if (from == null || meta == null || to == null)
+                return null;
+
+            foreach (IEdge e in baseVertex)                
+                if (e.From == from 
+                   && e.Meta == meta
+                   && e.To == to
+                   )
+                    return e;
+
+            return null;
+        }
+
+
+        static public IEdge GetEdgeByEdgeVertex(IVertex edge)
+        {            
+            IVertex baseVertex = GraphUtil.GetQueryOutFirst(edge, "From", null);
+
+            if (baseVertex == null)
+                return null;
+
+            return FindEdgeByEdgeVertex(baseVertex, edge);
+        }
+
         static public IEdge FindEdgeByEdgeOnlyToVertex(IVertex baseVertex, IEdge edge)
         {
             foreach (IEdge e in baseVertex)
@@ -226,5 +256,6 @@ namespace m0.ZeroTypes
             if (e != null)
                 baseVertex.DeleteEdge(e);
         }
+
     }
 }
