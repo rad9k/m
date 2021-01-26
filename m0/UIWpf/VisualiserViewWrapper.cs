@@ -62,12 +62,12 @@ namespace m0.UIWpf
                 pc = (IPlatformClass)PlatformClass.CreatePlatformObject(defvis);
 
                 if (defvis.Get(false, "$Inherits:HasBaseEdge") != null)
-                    Edge.ReplaceEdgeEdges(pc.Vertex.Get(false, "BaseEdge:"), e);
+                    Edge.ReplaceEdgeVertexEdges(pc.Vertex.Get(false, "BaseEdge:"), e);
             }
             else
             {
                 pc = new StringViewVisualiser();
-                Edge.ReplaceEdgeEdges(pc.Vertex.Get(false, "BaseEdge:"), e);
+                Edge.ReplaceEdgeVertexEdges(pc.Vertex.Get(false, "BaseEdge:"), e);
             }
             
             _this.Content = pc;

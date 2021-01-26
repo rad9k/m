@@ -211,7 +211,7 @@ namespace m0.UIWpf.Visualisers
 
                         VertexChangeListenOff();
 
-                        Edge.AddEdgeEdges(Vertex.Get(false, @"ToShowEdgesMeta:"), e);
+                        Edge.AddEdgeVertexEdges(Vertex.Get(false, @"ToShowEdgesMeta:"), e);
 
                         VertexChangeListenOn();
                     }

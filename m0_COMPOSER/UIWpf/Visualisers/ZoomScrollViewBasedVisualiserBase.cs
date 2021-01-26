@@ -1116,7 +1116,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             item.Select();
 
-            Edge.AddEdge(Vertex.Get(false, "SelectedEdges:"), item.BaseEdge);
+            Edge.AddEdgeVertex(Vertex.Get(false, "SelectedEdges:"), item.BaseEdge);
 
             PreviousSelectedItemContext = ic;
         }

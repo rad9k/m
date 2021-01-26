@@ -548,13 +548,13 @@ namespace m0_SYSTEM_GENERATE
 
             i1.AddEdge(r.Get(false, @"System\Meta\Visualiser\DiagramInternal\DiagramItemBase\Definition"), r.Get(false, @"System\Data\Visualiser\Diagram\Object"));
 
-            Edge.AddEdgeByToVertex(i1, r.Get(false, @"System\Meta\ZeroTypes\HasBaseEdge\BaseEdge"), tr.Get(false, @"TEST\Person1"));
+            Edge.AddEdgeVertexByToVertexByMeta(i1, r.Get(false, @"System\Meta\ZeroTypes\HasBaseEdge\BaseEdge"), tr.Get(false, @"TEST\Person1"));
 
             i2.AddEdge(r.Get(false, @"System\Meta?$Is"), r.Get(false, @"System\Meta\Visualiser\DiagramInternal\DiagramRectangleItem"));
 
             i2.AddEdge(r.Get(false, @"System\Meta\Visualiser\DiagramInternal\DiagramItemBase\Definition"), r.Get(false, @"System\Data\Visualiser\Diagram\Object"));
 
-            Edge.AddEdgeByToVertex(i2, r.Get(false, @"System\Meta\ZeroTypes\HasBaseEdge\BaseEdge"), tr.Get(false, @"TEST\Person2"));
+            Edge.AddEdgeVertexByToVertexByMeta(i2, r.Get(false, @"System\Meta\ZeroTypes\HasBaseEdge\BaseEdge"), tr.Get(false, @"TEST\Person2"));
 
 
 
@@ -572,13 +572,13 @@ namespace m0_SYSTEM_GENERATE
 
             i1.AddEdge(r.Get(false, @"System\Meta?$Is"), r.Get(false, @"System\Meta\Visualiser\DiagramInternal\DiagramRectangleItem"));
 
-            Edge.AddEdgeByToVertex(i1, r.Get(false, @"System\Meta\ZeroTypes\HasBaseEdge\BaseEdge"), tr.Get(false, @"TEST\Person3"));
+            Edge.AddEdgeVertexByToVertexByMeta(i1, r.Get(false, @"System\Meta\ZeroTypes\HasBaseEdge\BaseEdge"), tr.Get(false, @"TEST\Person3"));
 
             i2.AddEdge(r.Get(false, @"System\Meta?$Is"), r.Get(false, @"System\Meta\Visualiser\DiagramInternal\DiagramRectangleItem"));
 
             i2.AddEdge(r.Get(false, @"System\Meta\Visualiser\DiagramInternal\DiagramItemBase\Definition"), r.Get(false, @"System\Data\Visualiser\Diagram\Object"));
 
-            Edge.AddEdgeByToVertex(i2, r.Get(false, @"System\Meta\ZeroTypes\HasBaseEdge\BaseEdge"), tr.Get(false, @"TEST\Person4"));
+            Edge.AddEdgeVertexByToVertexByMeta(i2, r.Get(false, @"System\Meta\ZeroTypes\HasBaseEdge\BaseEdge"), tr.Get(false, @"TEST\Person4"));
 
             /////////////////////
 

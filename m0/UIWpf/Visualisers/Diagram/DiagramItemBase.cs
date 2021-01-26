@@ -310,7 +310,7 @@ namespace m0.UIWpf.Visualisers.Diagram
 
             GraphUtil.CreateOrReplaceEdge(l, r.Get(false, @"System\Meta\Visualiser\DiagramInternal\DiagramLineBase\Definition"), diagramLineDefinition);
             
-            Edge.CreateEdgeAndCreateOrReplaceEdgeByMeta(l, r.Get(false, @"System\Meta\ZeroTypes\HasBaseEdge\BaseEdge"), edge);
+            Edge.CreateOrReplaceEdgeVertexFromIEdgeByMeta(l, r.Get(false, @"System\Meta\ZeroTypes\HasBaseEdge\BaseEdge"), edge);
 
             AddDiagramLineObject(toItem, l);
 
@@ -613,7 +613,7 @@ namespace m0.UIWpf.Visualisers.Diagram
 
         public void AddToSelectedEdges()
         {
-            Edge.AddEdge(Diagram.Vertex.Get(false, "SelectedEdges:"), Vertex.Get(false, "BaseEdge:"));
+            Edge.AddEdgeVertexEdgeByEdgeVertex(Diagram.Vertex.Get(false, "SelectedEdges:"), Vertex.Get(false, "BaseEdge:"));
         }
 
         public void RemoveFromSelectedEdges()

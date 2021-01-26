@@ -38,7 +38,7 @@ namespace m0.UIWpf.Dialog
 
             
             IVertex SchemaEdge=MinusZero.Instance.CreateTempVertex();            
-            Edge.AddEdgeEdgesOnlyTo(SchemaEdge,MinusZero.Instance.Empty);
+            Edge.AddEdgeVertexEdgesOnlyTo(SchemaEdge,MinusZero.Instance.Empty);
             GraphUtil.ReplaceEdge(this.Schema.Vertex.Get(false, "BaseEdge:"),"To",SchemaEdge);
 
             this.Loaded += new RoutedEventHandler(OnLoad);

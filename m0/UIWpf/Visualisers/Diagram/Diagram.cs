@@ -1055,7 +1055,7 @@ namespace m0.UIWpf.Visualisers.Diagram
                 {
                     IVertex v = MinusZero.Instance.CreateTempVertex();
                     //Edge.AddEdgeEdgesOnlyTo(v, i.Vertex.Get(false, @"BaseEdge:\To:"));
-                    Edge.AddEdgeEdges(v,i.Vertex.Get(false, @"BaseEdge:\From:"),i.Vertex.Get(false, @"BaseEdge:\Meta:"), i.Vertex.Get(false, @"BaseEdge:\To:"));
+                    Edge.AddEdgeVertexEdges(v,i.Vertex.Get(false, @"BaseEdge:\From:"),i.Vertex.Get(false, @"BaseEdge:\Meta:"), i.Vertex.Get(false, @"BaseEdge:\To:"));
                     vertexByLocationToReturn = v;
                 }
             }          
@@ -1223,7 +1223,7 @@ namespace m0.UIWpf.Visualisers.Diagram
 
             IVertex edge = GraphUtil.CreateOrReplaceEdgeByValue(v, r.Get(false, @"System\Meta\ZeroTypes\HasBaseEdge\BaseEdge"), "");
             
-            Edge.AddEdgeEdgesByEdge(edge, BaseEdge);
+            Edge.AddEdgeVertexEdgesByEdgeVertex(edge, BaseEdge);
 
             AddItem(v);            
         }
@@ -1234,7 +1234,7 @@ namespace m0.UIWpf.Visualisers.Diagram
 
             IVertex be = v.Get(false, "BaseEdge:");
 
-            Edge.AddEdgeEdgesOnlyMetaTo(be, metaVertex, newVertex);
+            Edge.AddEdgeVertexEdgesOnlyMetaTo(be, metaVertex, newVertex);
 
             AddItem(v);
 

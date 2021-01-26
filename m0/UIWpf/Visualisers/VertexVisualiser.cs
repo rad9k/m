@@ -85,7 +85,7 @@ namespace m0.UIWpf.Visualisers
                 FormVisualiser v = (FormVisualiser)WpfUtil.GetParentFormVisualiser(this);
 
                 if (v != null)                    
-                    Edge.CopyAndReplaceEdge(v.Vertex, "BaseEdge", Vertex.Get(false, "BaseEdge:"));
+                    Edge.CopyAndReplaceEdgeVertexByEdgeVertex(v.Vertex, "BaseEdge", Vertex.Get(false, "BaseEdge:"));
                 else
                     //BaseCommands.Open(Vertex.Get(false, "BaseEdge:"), null); // want Form visualiser
                     BaseCommands.OpenFormVisualiser(Vertex.Get(false, "BaseEdge:"));

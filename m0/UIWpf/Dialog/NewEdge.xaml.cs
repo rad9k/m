@@ -39,14 +39,14 @@ namespace m0.UIWpf.Dialog
             
             IVertex MetaEdge=MinusZero.Instance.CreateTempVertex();   
                      
-            Edge.AddEdgeEdgesOnlyTo(MetaEdge, MinusZero.Instance.Empty);
+            Edge.AddEdgeVertexEdgesOnlyTo(MetaEdge, MinusZero.Instance.Empty);
 
             GraphUtil.ReplaceEdge(this.Meta.Vertex.Get(false, "BaseEdge:"),"To", MetaEdge);
 
 
             IVertex ToEdge = MinusZero.Instance.CreateTempVertex();
 
-            Edge.AddEdgeEdgesOnlyTo(ToEdge, MinusZero.Instance.Empty);
+            Edge.AddEdgeVertexEdgesOnlyTo(ToEdge, MinusZero.Instance.Empty);
 
             GraphUtil.ReplaceEdge(this.To.Vertex.Get(false, "BaseEdge:"), "To", ToEdge);
 

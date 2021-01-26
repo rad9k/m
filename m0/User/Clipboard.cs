@@ -60,7 +60,7 @@ namespace m0.User
             List<IEdge> retEdges = new List<IEdge>();
 
             foreach (IEdge e in ret)
-                retEdges.Add(Edge.FindEdgeByEdgeOnlyToVertex(currentSession, e));
+                retEdges.Add(Edge.FindEdgeVertexByIEdgeOnlyToVertex(currentSession, e));
 
             return retEdges;
         }

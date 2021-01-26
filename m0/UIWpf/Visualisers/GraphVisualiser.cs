@@ -645,7 +645,7 @@ namespace m0.UIWpf.Visualisers
                            {
                                kvp.Value.Select();
 
-                               Edge.AddEdgeByToVertex(sv, kvp.Key);
+                               Edge.AddEdgeVertexByToVertex(sv, kvp.Key);
                            }
                        }
                        else
@@ -656,7 +656,7 @@ namespace m0.UIWpf.Visualisers
 
                            kvp.Value.Select();
 
-                           Edge.AddEdgeByToVertex(sv, kvp.Key);                           
+                           Edge.AddEdgeVertexByToVertex(sv, kvp.Key);                           
                        }
                    }
             }
@@ -834,7 +834,7 @@ namespace m0.UIWpf.Visualisers
                 if (VisualTreeHelper.HitTest(kvp.Value, TranslatePoint(p, kvp.Value)) != null)
                 {
                     IVertex v = MinusZero.Instance.CreateTempVertex();
-                    Edge.AddEdgeEdgesOnlyTo(v, kvp.Value.baseVertex);
+                    Edge.AddEdgeVertexEdgesOnlyTo(v, kvp.Value.baseVertex);
                     vertexByLocationToReturn = v;
                 }
             }

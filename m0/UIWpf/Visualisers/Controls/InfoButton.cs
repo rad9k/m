@@ -61,11 +61,11 @@ namespace m0.UIWpf.Visualisers.Controls
             if (!NewEditWindow)
             {
                 if (v != null)
-                    Edge.ReplaceEdgeEdges(v.Vertex.Get(false, "BaseEdge:"), BaseEdge);
+                    Edge.ReplaceEdgeVertexEdges(v.Vertex.Get(false, "BaseEdge:"), BaseEdge);
                 else
                 {
                     IVertex v2 = MinusZero.Instance.CreateTempVertex();
-                    Edge.AddEdgeEdges(v2, BaseEdge);
+                    Edge.AddEdgeVertexEdges(v2, BaseEdge);
 
                     //BaseCommands.Open(v2,null); // want Form Visuliser always
                     BaseCommands.OpenFormVisualiser(v2);

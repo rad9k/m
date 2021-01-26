@@ -631,7 +631,7 @@ namespace m0.UIWpf.Visualisers
                 {
                     StringVisualiser sv = new StringVisualiser();
 
-                    Edge.ReplaceEdgeEdges(sv.Vertex.Get(false, "BaseEdge:"), Vertex.GetAll(false, @"BaseEdge:\To:").FirstOrDefault());
+                    Edge.ReplaceEdgeVertexEdges(sv.Vertex.Get(false, "BaseEdge:"), Vertex.GetAll(false, @"BaseEdge:\To:").FirstOrDefault());
 
                     dataControl = sv;
                 }
@@ -826,7 +826,7 @@ namespace m0.UIWpf.Visualisers
                 if (VisualTreeHelper.HitTest(kvp.Value.MetaControl, TranslatePoint(p, kvp.Value.MetaControl)) != null)
                 {
                     IVertex v = MinusZero.Instance.CreateTempVertex();
-                    Edge.AddEdgeEdgesOnlyTo(v, kvp.Key);
+                    Edge.AddEdgeVertexEdgesOnlyTo(v, kvp.Key);
                     return(v);
                 }
                

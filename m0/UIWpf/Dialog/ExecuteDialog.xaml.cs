@@ -54,8 +54,8 @@ namespace m0.UIWpf.Dialog
                     
                     IVertex InputStackEdgeControlBaseEdge = InputStackEdgeControl.Vertex.Get(false, @"BaseEdge:\To:");
                     GraphUtil.RemoveAllEdges(InputStackEdgeControlBaseEdge);
-                    Edge.AddEdgeEdges(InputStackEdgeControlBaseEdge, inputStackEdge);
-                    Edge.ReplaceEdgeEdges(InputStackContentControl.Vertex.Get(false, "BaseEdge:"), inputStackEdge);
+                    Edge.AddEdgeVertexEdges(InputStackEdgeControlBaseEdge, inputStackEdge);
+                    Edge.ReplaceEdgeVertexEdges(InputStackContentControl.Vertex.Get(false, "BaseEdge:"), inputStackEdge);
 
                     break;
 
@@ -76,8 +76,8 @@ namespace m0.UIWpf.Dialog
 
                     IVertex OutputStackEdgeControlBaseEdge = OutputStackEdgeControl.Vertex.Get(false, @"BaseEdge:\To:");
                     GraphUtil.RemoveAllEdges(OutputStackEdgeControlBaseEdge);
-                    Edge.AddEdgeEdges(OutputStackEdgeControlBaseEdge, outputStackEdge);
-                    Edge.ReplaceEdgeEdges(OutputStackContentControl.Vertex.Get(false, "BaseEdge:"), outputStackEdge);
+                    Edge.AddEdgeVertexEdges(OutputStackEdgeControlBaseEdge, outputStackEdge);
+                    Edge.ReplaceEdgeVertexEdges(OutputStackContentControl.Vertex.Get(false, "BaseEdge:"), outputStackEdge);
 
                     break;
             }
@@ -94,7 +94,7 @@ namespace m0.UIWpf.Dialog
                                           InputStackEdgeControl.Vertex.Get(false, @"BaseEdge:\To:\Meta:"),
                                           InputStackEdgeControl.Vertex.Get(false, @"BaseEdge:\To:\To:"));
 
-            Edge.ReplaceEdgeEdges(InputStackContentControl.Vertex.Get(false, "BaseEdge:"), inputStackEdge);
+            Edge.ReplaceEdgeVertexEdges(InputStackContentControl.Vertex.Get(false, "BaseEdge:"), inputStackEdge);
         }
 
         public ExecuteDialog(IVertex _baseVertex)

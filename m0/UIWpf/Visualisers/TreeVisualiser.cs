@@ -85,7 +85,7 @@ namespace m0.UIWpf.Visualisers
         protected override void OnMouseDown(MouseButtonEventArgs e)
         {
             if (e.ClickCount == 2)
-                BaseCommands.Open(Edge.CreateTempEdge((IEdge)Tag), null);            
+                BaseCommands.Open(Edge.CreateTempEdgeVertex((IEdge)Tag), null);            
         }
 
         protected override void OnMouseLeftButtonDown(MouseButtonEventArgs a)
@@ -255,7 +255,7 @@ namespace m0.UIWpf.Visualisers
                 TreeVisualiserViewItem ii = (TreeVisualiserViewItem)i;
 
                 
-                if (Edge.FindEdgeByEdgeOnlyToVertex(sv, (IEdge)ii.Tag)!=null)                
+                if (Edge.FindEdgeVertexByIEdgeOnlyToVertex(sv, (IEdge)ii.Tag)!=null)                
                     ii.IsSelected = true;
                 else
                     ii.IsSelected = false;
@@ -281,7 +281,7 @@ namespace m0.UIWpf.Visualisers
                 GraphUtil.RemoveAllEdges_WhereEdgeIsEdge(sv);
 
             if (item.IsSelected)
-                Edge.AddEdge(sv, e);
+                Edge.AddEdgeVertex(sv, e);
             else
                 Edge.DeleteVertexByEdgeOnlyToVertex(sv, e);                
 
@@ -362,7 +362,7 @@ namespace m0.UIWpf.Visualisers
 
             IVertex sv = Vertex.Get(false, "SelectedEdges:");
 
-            if (Edge.FindEdgeByEdge(sv, e)!=null)
+            if (Edge.FindEdgeVertexByIEdge(sv, e)!=null)
                 i.IsSelected = true;
 
             TurnOffSelectedVerticesUpdate = false;
@@ -437,7 +437,7 @@ namespace m0.UIWpf.Visualisers
                 ((VertexBase)selectedEdges).CanFireChangeEvent = false;                        
 
             foreach (IEdge ee in Vertex.Get(false, @"BaseEdge:\To:"))
-                Edge.AddEdge(selectedEdges, ee);
+                Edge.AddEdgeVertex(selectedEdges, ee);
 
             if (selectedEdges is VertexBase)
                 ((VertexBase)selectedEdges).CanFireChangeEvent = true;            
@@ -589,7 +589,7 @@ namespace m0.UIWpf.Visualisers
                 if (VisualTreeHelper.HitTest(i, TranslatePoint(p, i)) != null)
                 {
                     IVertex v = MinusZero.Instance.CreateTempVertex();
-                    Edge.AddEdgeEdges(v, (IEdge)i.Tag);
+                    Edge.AddEdgeVertexEdges(v, (IEdge)i.Tag);
                     vertexByLocationToReturn = v;
                 }
                     
