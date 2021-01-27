@@ -385,7 +385,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             return last;
         }
 
-        protected void AddNoteVertex(IVertex octave, IVertex note, int triggerTime, int length, int velocity)
+        protected IEdge AddNoteVertex(IVertex octave, IVertex note, int triggerTime, int length, int velocity)
         {
             IVertex r = MinusZero.Instance.Root;
 
@@ -407,6 +407,8 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             IEdge finalEdge = baseVertex.AddEdge(Event, noteEventVertex);
 
             baseVertex.DeleteEdge(tempNoteEventEdge);
+
+            return finalEdge;
         }
 
         int GetMinimalTriggerTime(IEnumerable<IEdge> edges)
@@ -417,7 +419,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             foreach(IEdge e in edges)
             {
-                int triggerTime = GraphUtil.GetIntegerValue(e.To.Get(false, "TriggerTime:"), ref o);
+                int triggerTime = GraphUtil.GetIntegerValue(e.To.Get(false, @"To:\TriggerTime:"), ref o);
 
                 if (min > triggerTime)
                     min = triggerTime;
@@ -432,18 +434,36 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             int minTriggerTime = GetMinimalTriggerTime(edges);
 
+            int maxTime = 0;
 
             foreach (IEdge e in edges)
             {
-                IVertex v = e.To;
+                IVertex v = e.To.Get(false, "To:");
+
                 if (GeneralUtil.CompareStrings(e.Meta, "ClipboardCopy"))
-                    AddNoteVertex(v.Get(false, "Octave:"),
+                {
+                    int triggerTime = GraphUtil.GetIntegerValue(v.Get(false, "TriggerTime:"), ref o) - minTriggerTime + PositionMark;
+                    int length = GraphUtil.GetIntegerValue(v.Get(false, "Length:"), ref o);
+
+                    IEdge noteEdge = AddNoteVertex(v.Get(false, "Octave:"),
                         v.Get(false, "Note:"),
-                        GraphUtil.GetIntegerValue(v.Get(false, "TriggerTime:"), ref o) - minTriggerTime,
-                        GraphUtil.GetIntegerValue(v.Get(false, "Length:"), ref o),
+                        triggerTime,
+                        length,
                         GraphUtil.GetIntegerValue(v.Get(false, "Velocity:"), ref o));
+
+                    AddToSelectedEdges(noteEdge);
+
+                    int endPosition = triggerTime + length;
+
+                    if (endPosition > maxTime)
+                        maxTime = endPosition;
+                }
                 
             }
+
+            PositionMark = MusicTimeSnapCorrect_Up(maxTime);
+
+            PreviousSelectedItemContext = MainDownEnum.Main;
         }
     }
 }

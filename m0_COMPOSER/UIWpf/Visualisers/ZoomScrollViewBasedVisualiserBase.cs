@@ -324,7 +324,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             DrawMain();
 
-            Draw_Down();
+            Draw_Down();            
 
             VisuliseserDraw_NeedsInitilisation = false;
 
@@ -1107,6 +1107,11 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             return MainDownEnum.Undefined; // fallback
         }
 
+        protected void AddToSelectedEdges(IEdge edge)
+        {
+            Edge.AddEdgeVertex(Vertex.Get(false, "SelectedEdges:"), edge);
+        }
+
         protected void SelectItem(IItem item)
         {
             MainDownEnum ic = GetItemContext(item);
@@ -1116,7 +1121,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             item.Select();
 
-            Edge.AddEdgeVertex(Vertex.Get(false, "SelectedEdges:"), item.BaseEdge);
+            AddToSelectedEdges(item.BaseEdge);
 
             PreviousSelectedItemContext = ic;
         }
@@ -1683,7 +1688,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             else
                 value = GraphUtil.GetIntegerValue(itemVertex.Get(false, "Value:"), ref dummy);
 
-            if (selectedVertexes != null && selectedVertexes.Contains(itemEventVertex))
+            if (selectedVertexes != null && selectedVertexes.Contains(itemEventVertex) && !isNoteEvent)
             {
                 item.Select();
                 PreviousSelectedItemContext = MainDownEnum.Down;
@@ -2657,9 +2662,15 @@ namespace m0_COMPOSER.UIWpf.Visualisers
         {
             IEnumerable<IEdge> edges = SessionClipboard.GetFromClipboard();
 
+            VertexChangeOff = true;
+
+            UnselectAllSelectedItems();
+
             PasteEdgesFromClipboard(edges);
 
-            SessionClipboard.ClearClipboard();
+            VertexChangeOff = false;
+
+            VisualiserDraw();
         }
 
         protected void CutButton_Click(object sender, RoutedEventArgs e)

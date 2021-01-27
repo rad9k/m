@@ -227,6 +227,18 @@ namespace m0.ZeroTypes
             return null;
         }
 
+        static public IEdge FindEdgeVertexByToVertex(IVertex baseVertex, IVertex toVertex)
+        {
+            foreach (IEdge e in baseVertex)
+                //if (e.To.Get(false, "To:") == edge.To)
+                if (GraphUtil.GetQueryOutFirst(e.To, "To", null) == toVertex) // was In and it seems to be wrong
+                    return e;
+
+            return null;
+        }
+
+
+
         static public void DeleteVertexByEdge(IVertex baseVertex, IEdge edge)
         {
             IEdge e = FindEdgeVertexByIEdge(baseVertex, edge);
