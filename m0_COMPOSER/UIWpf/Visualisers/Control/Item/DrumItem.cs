@@ -86,7 +86,6 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control.Item
 
             SetBorder((Brush)WpfUtil.FindResource("0HighlightBrush"));
 
-            //if (!showVelocity)
             SetBackground((Brush)WpfUtil.FindResource("0HighlightBrush"));
         }
 
@@ -98,9 +97,10 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control.Item
 
             SetBorder((Brush)WpfUtil.FindResource("0BlackBrush"));
 
-            if (!showVelocity)
+            if (showVelocity)
+                SetBackground(velocityColorBrush);
+            else
                 SetBackground((Brush)WpfUtil.FindResource("0LightForegroundBrush"));
-
         }
 
         Path path;
@@ -195,7 +195,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control.Item
         {            
             if (showVelocity)
             {
-                 = (Brush)WpfUtil.FindResource("0LightForegroundBrush");
+                velocityColorBrush = (Brush)WpfUtil.FindResource("0LightForegroundBrush");
 
                 int? velocity = GraphUtil.GetIntegerValue(BaseEdge.To.Get(false, "Velocity:"));
 
@@ -206,7 +206,8 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control.Item
                     velocityColorBrush = new SolidColorBrush(Color.FromRgb(color, color, color));
                 }
 
-                SetBackground(velocityColorBrush);
+                if(!isSelected)
+                    SetBackground(velocityColorBrush);
             }            
         }
 

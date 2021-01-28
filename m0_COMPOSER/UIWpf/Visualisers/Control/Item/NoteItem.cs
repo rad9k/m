@@ -79,9 +79,8 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control.Item
             BorderThickness = new Thickness(3);
 
             BorderBrush = (Brush)WpfUtil.FindResource("0HighlightBrush");
-
-            if (!showVelocity)            
-                Background = (Brush)WpfUtil.FindResource("0HighlightBrush");
+            
+            Background = (Brush)WpfUtil.FindResource("0HighlightBrush");
 
             if (showLabel)
                 labelControl.Background = (Brush)WpfUtil.FindResource("0HighlightBrush");
@@ -95,15 +94,17 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control.Item
 
             BorderBrush = (Brush)WpfUtil.FindResource("0ForegroundBrush");
 
-            if (!showVelocity)
+            if (showVelocity)
             {
-                Background = (Brush)WpfUtil.FindResource("0LightForegroundBrush");
+                Background = velocityColorBrush;
 
                 if (showLabel)
                     labelControl.Background = (Brush)WpfUtil.FindResource("0LightForegroundBrush");
             }
             else
             {
+                Background = (Brush)WpfUtil.FindResource("0LightForegroundBrush");
+
                 if (showLabel)
                     labelControl.Foreground = (Brush)WpfUtil.FindResource("0BackgroundBrush");
             }
@@ -156,18 +157,17 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control.Item
                 else
                     labelControl.Visibility = System.Windows.Visibility.Hidden;
             }
-        }        
+        }
+
+        Brush velocityColorBrush = (Brush)WpfUtil.FindResource("0LightForegroundBrush");
 
         public void Update()
         {
             labelControl.Text = " " + Label;            
 
-            //if (showLabel)
-              //  labelControl.Foreground = (Brush)WpfUtil.FindResource("0BackgroundBrush");
-
             if (showVelocity)
             {
-                Brush backColorBrush = (Brush)WpfUtil.FindResource("0LightForegroundBrush");
+                velocityColorBrush = (Brush)WpfUtil.FindResource("0LightForegroundBrush");
 
                 int? velocity = GraphUtil.GetIntegerValue(BaseEdge.To.Get(false, "Velocity:"));
 
@@ -175,17 +175,14 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control.Item
                 {
                     byte color = (byte)(255 - ((int)velocity * 2));
 
-                    backColorBrush = new SolidColorBrush(Color.FromRgb(color, color, color));
+                    velocityColorBrush = new SolidColorBrush(Color.FromRgb(color, color, color));
 
                     if (color > 127 && showLabel)
                         labelControl.Foreground = (Brush)WpfUtil.FindResource("0ForegroundBrush");
                 }
 
-                Background = backColorBrush;
+                Background = velocityColorBrush;
             }            
-
-            //if (showLabel)
-              //  labelControl.Background = backColorBrush;
         }
 
         public double Left {
