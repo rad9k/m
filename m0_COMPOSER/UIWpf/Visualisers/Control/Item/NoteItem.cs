@@ -129,15 +129,15 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control.Item
 
             BorderThickness = new System.Windows.Thickness(2);
 
-            if (showLabel)
-            {
-                labelControl = new TextBlock();                
+            labelControl = new TextBlock();
 
+            this.Child = labelControl;
+
+            if (showLabel)
+            {                
                 labelControl.Text = " " + Label;
                 
-                labelControl.Foreground = (Brush)WpfUtil.FindResource("0BackgroundBrush");
-
-                this.Child = labelControl;
+                labelControl.Foreground = (Brush)WpfUtil.FindResource("0BackgroundBrush");                
             }            
 
             Update();
@@ -160,15 +160,15 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control.Item
 
         public void Update()
         {
-            labelControl.Text = " " + Label;
+            labelControl.Text = " " + Label;            
 
-            Brush backColorBrush = (Brush)WpfUtil.FindResource("0LightForegroundBrush");
-
-            if (showLabel)
-                labelControl.Foreground = (Brush)WpfUtil.FindResource("0BackgroundBrush");
+            //if (showLabel)
+              //  labelControl.Foreground = (Brush)WpfUtil.FindResource("0BackgroundBrush");
 
             if (showVelocity)
             {
+                Brush backColorBrush = (Brush)WpfUtil.FindResource("0LightForegroundBrush");
+
                 int? velocity = GraphUtil.GetIntegerValue(BaseEdge.To.Get(false, "Velocity:"));
 
                 if (velocity != null)
@@ -180,12 +180,12 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control.Item
                     if (color > 127 && showLabel)
                         labelControl.Foreground = (Brush)WpfUtil.FindResource("0ForegroundBrush");
                 }
-            }
 
-            Background = backColorBrush;
+                Background = backColorBrush;
+            }            
 
-            if (showLabel)
-                labelControl.Background = backColorBrush;
+            //if (showLabel)
+              //  labelControl.Background = backColorBrush;
         }
 
         public double Left {

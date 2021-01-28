@@ -86,8 +86,8 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control.Item
 
             SetBorder((Brush)WpfUtil.FindResource("0HighlightBrush"));
 
-            if (!showVelocity)
-                SetBackground((Brush)WpfUtil.FindResource("0HighlightBrush"));
+            //if (!showVelocity)
+            SetBackground((Brush)WpfUtil.FindResource("0HighlightBrush"));
         }
 
         public void Unselect()
@@ -187,25 +187,27 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control.Item
             Update();            
 
             Unselect();            
-        }        
+        }
+
+        Brush velocityColorBrush = (Brush)WpfUtil.FindResource("0LightForegroundBrush");
 
         public void Update()
-        {
-            Brush backColorBrush = (Brush)WpfUtil.FindResource("0LightForegroundBrush");
-
+        {            
             if (showVelocity)
             {
+                 = (Brush)WpfUtil.FindResource("0LightForegroundBrush");
+
                 int? velocity = GraphUtil.GetIntegerValue(BaseEdge.To.Get(false, "Velocity:"));
 
                 if (velocity != null)
                 {
                     byte color = (byte)(255 - ((int)velocity * 2));
 
-                    backColorBrush = new SolidColorBrush(Color.FromRgb(color, color, color));
+                    velocityColorBrush = new SolidColorBrush(Color.FromRgb(color, color, color));
                 }
-            }
 
-            SetBackground(backColorBrush);
+                SetBackground(velocityColorBrush);
+            }            
         }
 
         protected void UpdateVerticalCenter()

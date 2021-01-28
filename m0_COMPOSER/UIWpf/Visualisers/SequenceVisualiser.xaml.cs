@@ -428,6 +428,14 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             return min;
         }
 
+        // copy & paste rules for SequenceVisualiser
+        //
+        // what is selected before cut / paste | what is copied | what is selected after paste
+        // ------------------------------------+----------------+---------------
+        //                               notes | notes + cc     | notes
+        //                     note velocities | notes + cc     | notes
+        //                                  cc | cc             | cc
+
         protected override void PasteEdgesFromClipboard(IEnumerable<IEdge> edges)
         {
             bool o = false;
@@ -438,32 +446,83 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             foreach (IEdge e in edges)
             {
-                IVertex v = e.To.Get(false, "To:");
+                IEdge noteEdge = Edge.GetIEdgeByEdgeVertex(e.To);
+
+                IVertex noteVertex = noteEdge.To;
+
+                bool isClipboardCopy = false;
+                bool isClipboardCut = false;
 
                 if (GeneralUtil.CompareStrings(e.Meta, "ClipboardCopy"))
+                    isClipboardCopy = true;
+
+                if (GeneralUtil.CompareStrings(e.Meta, "ClipboardCut"))
+                    isClipboardCut = true;
+
+                if(isClipboardCopy || isClipboardCut)
                 {
-                    int triggerTime = GraphUtil.GetIntegerValue(v.Get(false, "TriggerTime:"), ref o) - minTriggerTime + PositionMark;
-                    int length = GraphUtil.GetIntegerValue(v.Get(false, "Length:"), ref o);
+                    int triggerTime = GraphUtil.GetIntegerValue(noteVertex.Get(false, "TriggerTime:"), ref o) - minTriggerTime + PositionMark;
+                    int length = GraphUtil.GetIntegerValue(noteVertex.Get(false, "Length:"), ref o);
 
-                    IEdge noteEdge = AddNoteVertex(v.Get(false, "Octave:"),
-                        v.Get(false, "Note:"),
-                        triggerTime,
-                        length,
-                        GraphUtil.GetIntegerValue(v.Get(false, "Velocity:"), ref o));
+                    IEdge newNoteEdge = null; 
+                    
+                    if(isClipboardCopy)
+                        newNoteEdge = AddNoteVertex(noteVertex.Get(false, "Octave:"),
+                            noteVertex.Get(false, "Note:"),
+                            triggerTime,
+                            length,
+                            GraphUtil.GetIntegerValue(noteVertex.Get(false, "Velocity:"), ref o));
 
-                    AddToSelectedEdges(noteEdge);
+                    if (isClipboardCut) {
+                        newNoteEdge = noteEdge;
+
+                        UpdateNote(noteEdge,
+                            noteVertex.Get(false, "Octave:"),
+                            noteVertex.Get(false, "Note:"),
+                            triggerTime,
+                            length,
+                            GraphUtil.GetIntegerValue(noteVertex.Get(false, "Velocity:"), ref o));
+                    }
+                    
+
+                    AddToSelectedEdges(newNoteEdge);
 
                     int endPosition = triggerTime + length;
 
                     if (endPosition > maxTime)
                         maxTime = endPosition;
-                }
-                
+                }                
             }
 
             PositionMark = MusicTimeSnapCorrect_Up(maxTime);
 
             PreviousSelectedItemContext = MainDownEnum.Main;
+        }
+
+        private IEdge UpdateNote(IEdge noteEdge, IVertex octave, IVertex note, int triggerTime, int length, int velocity)
+        {
+            IVertex r = MinusZero.Instance.Root;
+
+            IVertex Event = r.Get(false, @"System\Lib\Music\Event");
+            IVertex noteEvent = r.Get(false, @"System\Lib\Music\NoteEvent");
+
+            IEdge tempNoteEventEdge = baseVertex.AddVertexAndReturnEdge(null, null);
+
+            IVertex noteEventVertex = tempNoteEventEdge.To;
+
+            noteEventVertex.AddEdge(MinusZero.Instance.Is, noteEvent);
+
+            noteEventVertex.AddVertex(noteEvent.Get(false, @"Attribute:TriggerTime"), triggerTime);
+            noteEventVertex.AddVertex(noteEvent.Get(false, @"Attribute:Length"), length);
+            noteEventVertex.AddEdge(noteEvent.Get(false, @"Attribute:Octave"), octave);
+            noteEventVertex.AddEdge(noteEvent.Get(false, @"Attribute:Note"), note);
+            noteEventVertex.AddVertex(noteEvent.Get(false, @"Attribute:Velocity"), velocity);
+
+            IEdge finalEdge = baseVertex.AddEdge(Event, noteEventVertex);
+
+            baseVertex.DeleteEdge(tempNoteEventEdge);
+
+            return finalEdge;
         }
     }
 }
