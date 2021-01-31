@@ -807,11 +807,14 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             foreach (IItem i in selectedItems)
                 i.SetHiddenFromReal();
         }
-
+        
         protected void ArrowDown_FromUpMove(object sender, MouseButtonEventArgs e)
         {
             if (MouseOverItem == null)
                 return;
+
+            if(!GetSelectedItems().Contains(MouseOverItem))
+                UnselectAllSelectedItems();
 
             InitMouseOverElementAndSelected();
 

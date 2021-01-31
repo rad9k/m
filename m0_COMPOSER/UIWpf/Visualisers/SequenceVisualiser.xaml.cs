@@ -484,7 +484,6 @@ namespace m0_COMPOSER.UIWpf.Visualisers
                             GraphUtil.GetIntegerValue(noteVertex.Get(false, "Velocity:"), ref o));
                     }
                     
-
                     AddToSelectedEdges(newNoteEdge);
 
                     int endPosition = triggerTime + length;
@@ -499,30 +498,22 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             PreviousSelectedItemContext = MainDownEnum.Main;
         }
 
-        private IEdge UpdateNote(IEdge noteEdge, IVertex octave, IVertex note, int triggerTime, int length, int velocity)
+        private void UpdateNote(IEdge noteEventEdge, IVertex octave, IVertex note, int triggerTime, int length, int velocity)
         {
             IVertex r = MinusZero.Instance.Root;
 
             IVertex Event = r.Get(false, @"System\Lib\Music\Event");
-            IVertex noteEvent = r.Get(false, @"System\Lib\Music\NoteEvent");
+            IVertex noteEvent = r.Get(false, @"System\Lib\Music\NoteEvent");            
 
-            IEdge tempNoteEventEdge = baseVertex.AddVertexAndReturnEdge(null, null);
-
-            IVertex noteEventVertex = tempNoteEventEdge.To;
+            IVertex noteEventVertex = noteEventEdge.To;
 
             noteEventVertex.AddEdge(MinusZero.Instance.Is, noteEvent);
 
-            noteEventVertex.AddVertex(noteEvent.Get(false, @"Attribute:TriggerTime"), triggerTime);
-            noteEventVertex.AddVertex(noteEvent.Get(false, @"Attribute:Length"), length);
-            noteEventVertex.AddEdge(noteEvent.Get(false, @"Attribute:Octave"), octave);
-            noteEventVertex.AddEdge(noteEvent.Get(false, @"Attribute:Note"), note);
-            noteEventVertex.AddVertex(noteEvent.Get(false, @"Attribute:Velocity"), velocity);
-
-            IEdge finalEdge = baseVertex.AddEdge(Event, noteEventVertex);
-
-            baseVertex.DeleteEdge(tempNoteEventEdge);
-
-            return finalEdge;
+            GraphUtil.SetVertexValue(noteEventVertex, noteEvent.Get(false, @"Attribute:TriggerTime"), triggerTime);
+            GraphUtil.SetVertexValue(noteEventVertex, noteEvent.Get(false, @"Attribute:Length"), length);
+            GraphUtil.CreateOrReplaceEdge(noteEventVertex, noteEvent.Get(false, @"Attribute:Octave"), octave);
+            GraphUtil.CreateOrReplaceEdge(noteEventVertex, noteEvent.Get(false, @"Attribute:Note"), note);
+            GraphUtil.SetVertexValue(noteEventVertex, noteEvent.Get(false, @"Attribute:Velocity"), velocity);                        
         }
     }
 }
