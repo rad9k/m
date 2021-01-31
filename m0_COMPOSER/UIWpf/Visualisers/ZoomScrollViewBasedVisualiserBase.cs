@@ -2528,6 +2528,8 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
         protected int MusicTimeSnapCorrect_Up(int toCorrect)
         {
+            toCorrect = toCorrect - 1; // hacky :)
+
             if (CurrentSnapToGridValue == 0)
                 return toCorrect;
 
