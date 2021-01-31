@@ -436,6 +436,32 @@ namespace m0_COMPOSER.UIWpf.Visualisers
         //                     note velocities | notes + cc     | notes
         //                                  cc | cc             | cc
 
+        protected enum WhatIsSelectedEnum { OnlyNotes, OnlyCC, Mix}
+
+        protected WhatIsSelectedEnum GetWhatIsSelected()
+        {
+            bool notes = false;
+
+            bool cc = false;            
+
+            foreach(IVertex v in GetSelectedVertexes())
+            {
+                if (v.Get(false, "$Is:NoteEvent") != null)
+                    notes = true;
+
+                if (v.Get(false, "$Is:ControlChangeEvent") != null)
+                    cc = true;
+            }
+
+            if (notes && !cc)
+                return WhatIsSelectedEnum.OnlyNotes;
+
+            if (!notes && cc)
+                return WhatIsSelectedEnum.OnlyCC;
+
+            return WhatIsSelectedEnum.Mix;
+        }
+
         protected override void PasteEdgesFromClipboard(IEnumerable<IEdge> edges)
         {
             bool o = false;
