@@ -379,7 +379,17 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
                     if (last < max)
                         last = max;
-                }                
+                }
+
+                if (v.Get(false, "$Is:ControlChangeEvent") != null)
+                {
+                    bool o = false;
+
+                    int trigger = GraphUtil.GetIntegerValue(v.Get(false, "TriggerTime:"), ref o);
+
+                    if (last < trigger)
+                        last = trigger;
+                }
             }
 
             return last;
