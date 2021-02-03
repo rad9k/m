@@ -563,12 +563,12 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             bool onlyCopy;
 
-            WhatIsInEdgesEnum whatIsSelected = GetWhatIsInEdges(edges, out minPosition, out maxPosition, out onlyCopy);
+            WhatIsInEdgesEnum whatIsClipboard = GetWhatIsInEdges(edges, out minPosition, out maxPosition, out onlyCopy);
 
-            if (whatIsSelected == WhatIsInEdgesEnum.Mix)
+            if (whatIsClipboard == WhatIsInEdgesEnum.Mix)
                 return;
 
-            if (whatIsSelected == WhatIsInEdgesEnum.OnlyNotes)
+            if (whatIsClipboard == WhatIsInEdgesEnum.OnlyNotes)
                 edges = AddCC(edges, minPosition, maxPosition, onlyCopy);
 
             foreach (IEdge e in edges)
@@ -614,10 +614,12 @@ namespace m0_COMPOSER.UIWpf.Visualisers
                                 GraphUtil.GetIntegerValue(v.Get(false, "Velocity:"), ref o));
                         }
 
-                    int endPosition = triggerTime + length;
+                       int endPosition = triggerTime + length;
 
-                    if (endPosition > maxTime)
-                        maxTime = endPosition;
+                       if (endPosition > maxTime)
+                          maxTime = endPosition;
+                        
+                       AddToSelectedEdges(newEdge);
                     }
 
                     if (v.Get(false, "$Is:ControlChangeEvent") != null) // CONTROLCHANGE
@@ -641,9 +643,10 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
                         if (triggerTime > maxTime)
                             maxTime = triggerTime;
-                    }
 
-                    AddToSelectedEdges(newEdge);
+                        if (whatIsClipboard == WhatIsInEdgesEnum.OnlyCC)
+                            AddToSelectedEdges(newEdge);
+                    }
                 }                
             }
 

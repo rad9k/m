@@ -1656,7 +1656,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             if (!isUpdate)
             {
-                baseVertex.AddEdge(Event, eventVertex);
+                finalEdge = baseVertex.AddEdge(Event, eventVertex);
                 baseVertex.DeleteEdge(tempEventEdge);
             }
 
@@ -2640,6 +2640,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
         {
             IEnumerable<IEdge> selectedEdges = GetEdgesForClipboard();
 
+            SessionClipboard.ClearClipboard();
             SessionClipboard.ClearClipboard();
 
             SessionClipboard.PutToClipboard(selectedEdges, true);
