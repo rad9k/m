@@ -483,6 +483,9 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             if (GraphUtil.DoEdgeListContainsVertex(baseVertex.GetAll(false, @"Track:\Color:"), (IVertex)sender)
                 || GraphUtil.DoEdgeListContainsVertex(baseVertex.GetAll(false, @"Track:\Color:\"), (IVertex)sender))
                 RedrawTracks();
+
+            if (GraphUtil.DoEdgeListContainsVertex(baseVertex.GetAll(false, @"SequenceEvent:"), (IVertex)sender))
+                RedrawTracks();
         }
 
         protected void VertexChange_BaseEdge(object sender, VertexChangeEventArgs e)
@@ -896,6 +899,170 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             TimeUpdate();
 
             base.UpdatePositionMark();
+        }
+
+        protected void GetMinMaxPostionFromSequenceEdges(IEnumerable<IEdge> edges, out int minPosition, out int maxPosition)
+        {
+            minPosition = Int32.MaxValue;
+            maxPosition = Int32.MinValue;
+
+            foreach (IEdge e in edges)
+            {
+                IEdge edge = Edge.GetIEdgeByEdgeVertex(e.To);
+
+                IVertex v = edge.To;
+
+                bool isNull = false;
+
+                if (v.Get(false, "$Is:SequenceEvent") != null)
+                {
+                    int triggerTime = GraphUtil.GetIntegerValue(v.Get(false, "TriggerTime:"), ref isNull);
+
+                    if (triggerTime > maxPosition)
+                        maxPosition = triggerTime;
+
+                    if (triggerTime < minPosition)
+                        minPosition = triggerTime;
+
+                    int triggerTimePlusLength = triggerTime + GraphUtil.GetIntegerValue(v.Get(false, @"Sequence:\Length:"), ref isNull);
+
+                    if (triggerTimePlusLength > maxPosition)
+                        maxPosition = triggerTimePlusLength;
+
+                    if (triggerTimePlusLength < minPosition)
+                        minPosition = triggerTimePlusLength;
+                }
+            }
+        }
+
+        protected override void PasteEdgesFromClipboard(IEnumerable<IEdge> edges)
+        {
+            bool o = false;            
+
+            int minPosition, maxPosition;
+
+            GetMinMaxPostionFromSequenceEdges(edges, out minPosition, out maxPosition);
+
+            foreach (IEdge e in edges)
+            {
+                IEdge edge = Edge.GetIEdgeByEdgeVertex(e.To);
+
+                IVertex v = edge.To;
+
+                bool isClipboardCopy = false;
+                bool isClipboardCut = false;
+
+                if (GeneralUtil.CompareStrings(e.Meta, "ClipboardCopy"))
+                    isClipboardCopy = true;
+
+                if (GeneralUtil.CompareStrings(e.Meta, "ClipboardCut"))
+                    isClipboardCut = true;
+
+                if (isClipboardCopy || isClipboardCut)
+                {
+                    IEdge newEdge = null;
+
+                    if (v.Get(false, "$Is:SequenceEvent") != null) // SequenceEvent
+                    {
+                        int triggerTime = GraphUtil.GetIntegerValue(v.Get(false, "TriggerTime:"), ref o) - minPosition + PositionMark;                        
+
+                        if (isClipboardCopy)
+                            newEdge = CopySequenceVertex(v, triggerTime);
+
+                        if (isClipboardCut)
+                        {
+                            newEdge = edge;
+
+                            UpdateSequenceVertex(edge, triggerTime);
+                        }
+                        
+
+                        AddToSelectedEdges(newEdge);
+                    }
+                }
+            }
+
+            PositionMark = MusicTimeSnapCorrect_Up(maxPosition);
+
+            PreviousSelectedItemContext = MainDownEnum.Main;
+        }
+
+        private void UpdateSequenceVertex(IEdge edge, int triggerTime)
+        {
+            IVertex r = MinusZero.Instance.Root;
+
+            IVertex triggerTimeAttribute = r.Get(false, @"System\Lib\Music\SequenceEvent\TriggerTime");
+
+            GraphUtil.SetVertexValue(edge.To, triggerTimeAttribute, triggerTime);
+
+            RedrawTracks();
+        }
+
+        private IEdge CopySequenceVertex(IVertex v, int triggerTime)
+        {
+            IVertex r = MinusZero.Instance.Root;
+
+            IVertex trackVertex = GetTrackVertexFromSequenceEventVertex(v);            
+
+
+            IVertex sequenceEventAttribute = r.Get(false, @"System\Lib\Music\Track\SequenceEvent");
+
+            IVertex sequenceEvent = r.Get(false, @"System\Lib\Music\SequenceEvent");
+
+            IVertex sequenceMeta = r.Get(false, @"System\Lib\Music\Sequence");
+
+
+            IEdge tempSequenceEventEdge = trackVertex.AddVertexAndReturnEdge(null, null);
+
+            IVertex sequenceEventVertex = tempSequenceEventEdge.To;
+
+
+            sequenceEventVertex.AddEdge(MinusZero.Instance.Is, sequenceEvent);
+
+            
+            sequenceEventVertex.AddVertex(sequenceEvent.Get(false, @"Attribute:TriggerTime"), triggerTime);
+            
+
+            //
+
+            IVertex sourceVertex = v.Get(false, "Sequence:");
+
+            IEdge sourceEdge = GraphUtil.FindEdge(v, sequenceMeta, sourceVertex);
+
+            GraphUtil.DeepCopy(sourceEdge, sequenceEventVertex);
+
+
+            IEdge finalEdge = trackVertex.AddEdge(sequenceEventAttribute, sequenceEventVertex);
+
+            trackVertex.DeleteEdge(tempSequenceEventEdge);
+            
+            return finalEdge;
+        }
+
+        protected override int FindLastPosition(IEnumerable<IEdge> edges)
+        {
+            int last = 0;
+
+            foreach (IEdge e in edges)
+            {
+                IVertex v = e.To.Get(false, "To:");
+
+                if (v.Get(false, "$Is:SequenceEvent") != null)
+                {
+                    bool o = false;
+
+                    int trigger = GraphUtil.GetIntegerValue(v.Get(false, "TriggerTime:"), ref o);
+
+                    int length = GraphUtil.GetIntegerValue(v.Get(false, @"Sequence:\Length:"), ref o);
+
+                    int max = trigger + length;
+
+                    if (last < max)
+                        last = max;
+                }                
+            }
+
+            return last;
         }
     }
 }

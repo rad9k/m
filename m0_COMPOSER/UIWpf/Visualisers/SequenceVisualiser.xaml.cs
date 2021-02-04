@@ -555,9 +555,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
         protected override void PasteEdgesFromClipboard(IEnumerable<IEdge> edges)
         {
-            bool o = false;
-
-            int maxTime = 0;
+            bool o = false;            
 
             int minPosition, maxPosition;
 
@@ -612,12 +610,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
                                 triggerTime,
                                 length,
                                 GraphUtil.GetIntegerValue(v.Get(false, "Velocity:"), ref o));
-                        }
-
-                       int endPosition = triggerTime + length;
-
-                       if (endPosition > maxTime)
-                          maxTime = endPosition;
+                        }                       
                         
                        AddToSelectedEdges(newEdge);
                     }
@@ -639,10 +632,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
                                 triggerTime,
                                 GraphUtil.GetIntegerValue(v.Get(false, "Number:"), ref o),
                                 GraphUtil.GetIntegerValue(v.Get(false, "Value:"), ref o));
-                        }
-
-                        if (triggerTime > maxTime)
-                            maxTime = triggerTime;
+                        }                        
 
                         if (whatIsClipboard == WhatIsInEdgesEnum.OnlyCC)
                             AddToSelectedEdges(newEdge);
@@ -650,7 +640,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
                 }                
             }
 
-            PositionMark = MusicTimeSnapCorrect_Up(maxTime);
+            PositionMark = MusicTimeSnapCorrect_Up(maxPosition);
 
             PreviousSelectedItemContext = MainDownEnum.Main;
         }
