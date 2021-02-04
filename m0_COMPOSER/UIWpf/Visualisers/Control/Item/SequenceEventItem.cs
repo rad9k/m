@@ -139,7 +139,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control.Item
 
             RenderOptions.SetEdgeMode(this, EdgeMode.Aliased);            
            
-            Unselect();            
+            Unselect();          
         }        
 
         public void Update()

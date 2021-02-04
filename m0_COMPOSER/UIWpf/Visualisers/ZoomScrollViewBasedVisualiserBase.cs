@@ -447,9 +447,16 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             Main.MouseDown += MouseDownHandler;
 
+            this.MouseDoubleClick += MouseDoubleClick;
+
             Main.MouseUp += MouseUpHandler;
 
             Main.MouseMove += MouseMoveHandler;
+        }
+
+        private void MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            throw new NotImplementedException();
         }
 
         protected void MouseMoveHandler(object sender, MouseEventArgs e)
