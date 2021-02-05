@@ -98,7 +98,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             PenDown,
             Eraser,
             Glue,
-            Scissors
+            Razor
         }
 
         protected CursorStateEnum CurrentCursorState;
@@ -243,7 +243,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
                     SetChecked(GlueButton, true);
                     break;
 
-                case CursorStateEnum.Scissors:
+                case CursorStateEnum.Razor:
 
                     SetChecked(RazorButton, true);
                     break;
@@ -279,6 +279,14 @@ namespace m0_COMPOSER.UIWpf.Visualisers
                 case CursorStateEnum.PenDown:
                 case CursorStateEnum.PenUp:
                     WpfUtil.SetCursorFromResource("/m0;component/_resources/basic/pen.cur");
+                    break;
+
+                case CursorStateEnum.Glue:                
+                    WpfUtil.SetCursorFromResource("/m0;component/_resources/basic/glue.cur");
+                    break;
+
+                case CursorStateEnum.Razor:
+                    WpfUtil.SetCursorFromResource("/m0;component/_resources/basic/razor.cur");
                     break;
             }
         }

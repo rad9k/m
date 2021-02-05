@@ -458,7 +458,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
         protected void RazorButton_Click(object sender, RoutedEventArgs e)
         {
-            SetCursorMode(CursorStateEnum.Scissors);
+            SetCursorMode(CursorStateEnum.Razor);
         }
 
         protected override void VertexChange(object sender, VertexChangeEventArgs e)
