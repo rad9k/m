@@ -487,6 +487,7 @@ namespace m0_SYSTEM_GENERATE.Music
             //GraphUtil.AddAttribute(Track, "Name", String, 0, 1);
             //GraphUtil.AddAttribute(Track, "Color", Color, 0, 1);
             GraphUtil.AddAttribute(Track, "Output", NoteOutput, 0, 1);
+            GraphUtil.AddAttribute(Track, "IsDrum", Boolean, 0, 1);
             GraphUtil.AddAttribute(Track, "IsMuted", Boolean, 0, 1);
             GraphUtil.AddAttribute(Track, "IsSolo", Boolean, 0, 1);
             GraphUtil.AddAssociation(Track, "SequenceEvent", SequenceEvent, 0, -1);
@@ -497,7 +498,7 @@ namespace m0_SYSTEM_GENERATE.Music
 
             GraphUtil.AddInherits(Song, HasLength);
 
-            GraphUtil.AddAttribute(Song, "ExtendTimeLength", Float, 1, 1, 1);
+            GraphUtil.AddAttribute(Song, "ExtendTimeLength", Float, 1, 1, 1.0);
             //GraphUtil.AddAttribute(Song, "Name", String, 0, 1);
             GraphUtil.AddAggregation(Song, "Track", Track, 0, -1);
             GraphUtil.AddAttribute(Song, "Input", NoteInput, 0, 1);

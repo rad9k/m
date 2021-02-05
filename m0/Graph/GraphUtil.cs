@@ -312,10 +312,10 @@ namespace m0.Graph
             baseVertex.QueryInEdges(meta, value, out result, out results);
 
             if (result != null)
-                return result.To;
+                return result.From;
 
             if (results != null && results.Count > 0)
-                return results.First().To;
+                return results.First().From;
 
             return null;
         }

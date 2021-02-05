@@ -234,7 +234,7 @@ namespace m0.UIWpf.Commands
             if (GeneralUtil.CompareStrings(DefaultVis.Value, "Diagram"))
                 return OpenDiagram(baseVertex, DefaultVis);
 
-            return OpenVisualiser(baseVertex,DefaultVis);
+            return OpenVisualiser(baseVertex, DefaultVis);
         }
 
         public static IVertex OpenFormVisualiser(IVertex baseVertex)

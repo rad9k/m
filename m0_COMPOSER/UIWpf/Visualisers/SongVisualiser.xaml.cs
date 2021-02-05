@@ -174,7 +174,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             //newTrackButton.Background = (Brush)FindResource("0ForegroundBrush"); // fix to some system bug?
 
-            //MinusZero.Instance.DefaultUserInteraction.EditDialog(v, null);            
+            MinusZero.Instance.DefaultUserInteraction.EditDialog(v, null);            
         }
 
         private void RedrawTracks()
@@ -663,12 +663,15 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
         public IVertex GetTrackVertexFromSequenceEventVertex(IVertex sequenceEventVertex)
         {
+            return GraphUtil.GetQueryInFirst(sequenceEventVertex, "SequenceEvent", null);
+
+            /*
             foreach (IEdge e in baseVertex.GetAll(false, @"Track:"))
                 foreach (IEdge ee in e.To)
                     if (ee.To == sequenceEventVertex)
                         return e.To;
 
-            return null;
+            return null;*/
         }
 
         protected override void AddItem(IEdge itemEdge, List<IVertex> selectedVertexes)
@@ -760,6 +763,8 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             IVertex sequence = r.Get(false, @"System\Lib\Music\Sequence");
 
+            IVertex sequenceIsDrum = r.Get(false, @"System\Lib\Music\Sequence\IsDrum");
+
 
             IEdge tempSequenceEventEdge = toAddVertex.AddVertexAndReturnEdge(null, null);
 
@@ -779,6 +784,12 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             sequenceVertex.AddVertex(sequence.Get(false, @"Attribute:Length"), ScreenPositionToMusicTime(lengthPosition, needsSnapCorrection));
 
+            bool isDrum = false;
+
+            bool isNull = false;
+
+            if (GraphUtil.GetBooleanValue(toAddVertex.Get(false, "IsDrum:"), ref isNull))
+                sequenceVertex.AddVertex(sequenceIsDrum, "True");
 
             IEdge finalEdge = toAddVertex.AddEdge(sequenceEventAttribute, sequenceEventVertex);
 

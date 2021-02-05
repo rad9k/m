@@ -60,6 +60,18 @@
                         <TextBlock Margin="3,0,0,0"/>
                     </StackPanel>
                 </ToggleButton>
+                <ToggleButton Name="RazorButton_Instance" ToolTip="Cut sequence" Click="RazorButton_Click">
+                    <StackPanel Orientation="Horizontal">
+                        <Image RenderOptions.BitmapScalingMode="HighQuality" Source="pack://application:,,/m0;Component/_resources/basic/razor.jpg" Width="15" Height="15"/>
+                        <TextBlock Margin="3,0,0,0"/>
+                    </StackPanel>
+                </ToggleButton>
+                <ToggleButton Name="GlueButton_Instance" ToolTip="Merge sequences" Click="GlueButton_Click">
+                    <StackPanel Orientation="Horizontal">
+                        <Image RenderOptions.BitmapScalingMode="HighQuality" Source="pack://application:,,/m0;Component/_resources/basic/glue.png" Width="15" Height="15"/>
+                        <TextBlock Margin="3,0,0,0"/>
+                    </StackPanel>
+                </ToggleButton>
 
                 <Separator/>
 
@@ -81,21 +93,6 @@
                         <TextBlock Margin="3,0,0,0">Paste</TextBlock>
                     </StackPanel>
                 </Button>
-
-                <Separator/>
-
-                <ToggleButton Name="RazorButton_Instance" ToolTip="Cut sequence" Click="RazorButton_Click">
-                    <StackPanel Orientation="Horizontal">
-                        <Image RenderOptions.BitmapScalingMode="HighQuality" Source="pack://application:,,/m0;Component/_resources/basic/razor.jpg" Width="15" Height="15"/>
-                        <TextBlock Margin="3,0,0,0"/>
-                    </StackPanel>
-                </ToggleButton>
-                <ToggleButton Name="GlueButton_Instance" ToolTip="Merge sequences" Click="GlueButton_Click">
-                    <StackPanel Orientation="Horizontal">
-                        <Image RenderOptions.BitmapScalingMode="HighQuality" Source="pack://application:,,/m0;Component/_resources/basic/glue.png" Width="15" Height="15"/>
-                        <TextBlock Margin="3,0,0,0"/>
-                    </StackPanel>
-                </ToggleButton>
 
                 <Separator/>
 

@@ -18,6 +18,8 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control.Item
     {
         Canvas Canvas;
 
+        public void Open() { }
+
         public void Add(Canvas canvas)
         {
             Canvas = canvas;

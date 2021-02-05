@@ -447,8 +447,6 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             Main.MouseDown += MouseDownHandler;
 
-            this.MouseDoubleClick += MouseDoubleClick;
-
             Main.MouseUp += MouseUpHandler;
 
             Main.MouseMove += MouseMoveHandler;
@@ -750,6 +748,9 @@ namespace m0_COMPOSER.UIWpf.Visualisers
                     UnselectItem(item);
                 else
                     SelectItem(item);
+
+                if (e.ClickCount == 2)
+                    item.Open();
 
             }
             else

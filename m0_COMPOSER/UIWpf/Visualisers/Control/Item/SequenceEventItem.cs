@@ -10,12 +10,23 @@ using m0.UIWpf;
 using System.Windows.Media;
 using System.Windows;
 using m0.Graph;
+using m0.ZeroTypes;
+using m0.UIWpf.Commands;
 
 namespace m0_COMPOSER.UIWpf.Visualisers.Control.Item
 {
     public class SequenceEventItem : Border, IItem
     {
         public double PositionMark { get; set; }
+
+        public void Open() {
+            if (BaseEdge == null)
+                return;
+
+            IVertex edgeVertex = Edge.CreateTempEdgeVertex(BaseEdge.To.GetAll(false, @"Sequence:").FirstOrDefault());
+
+            BaseCommands.Open(edgeVertex, null);
+        }
 
         Canvas Canvas;
 
