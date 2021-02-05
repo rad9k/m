@@ -2647,8 +2647,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
         {
             IEnumerable<IEdge> selectedEdges = GetEdgesForClipboard();
 
-            SessionClipboard.ClearClipboard();
-            SessionClipboard.ClearClipboard();
+            SessionClipboard.ClearClipboard();            
 
             SessionClipboard.PutToClipboard(selectedEdges, true);
 
