@@ -105,7 +105,7 @@ namespace m0_COMPOSER.Lib
 
                     firstSequenceEventVertex.DeleteEdge(e);
 
-                    GraphUtil.SetVertexValue(eventVertex, lengthMeta, positionInFirst - firstLength);
+                    GraphUtil.SetVertexValue(eventVertex, triggerTimeMeta, positionInFirst - firstLength);
                 }
             }
 
