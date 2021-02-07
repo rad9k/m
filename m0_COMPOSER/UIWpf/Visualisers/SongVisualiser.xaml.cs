@@ -747,9 +747,9 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             double startPosition = ScreenPositionToMusicTime(startPosition_Screen, needsSnapCorrection);
 
-            double lengthPosition = ScreenPositionToMusicTime(lengthPosition, needsSnapCorrection);
+            double lengthPosition = ScreenPositionToMusicTime(lengthPosition_Screen, needsSnapCorrection);
 
-            return Song.InsertSequenceEvent(trackVertex, startPosition, lengthPosition);
+            return Song.AddSequenceEventVertex(trackVertex, startPosition, lengthPosition);
         }
 
         protected override void DrawItems()
@@ -1043,6 +1043,8 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
                 Song.RazorCut(baseVertex, item.BaseEdge.To, cutPoint);
             }
+
+            RedrawTracks();
         }
     }
 }

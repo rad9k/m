@@ -10,16 +10,16 @@
     <DockPanel>
         <ToolBarTray DockPanel.Dock="Top">
             <ToolBar>
-                <ToggleButton Name="PenButton_Instance" ToolTip="Add new note" Click="PenButton_Click">
-                    <StackPanel Orientation="Horizontal">
-                        <Image RenderOptions.BitmapScalingMode="HighQuality" Source="pack://application:,,/m0;Component/_resources/basic/pen.png" Width="15" Height="15"/>
-                        <TextBlock Margin="3,0,0,0">New</TextBlock>
-                    </StackPanel>
-                </ToggleButton>
                 <ToggleButton Name="ArrowButton_Instance" ToolTip="Select multiple notes" Click="ArrowButton_Click">
                     <StackPanel Orientation="Horizontal">
                         <Image RenderOptions.BitmapScalingMode="HighQuality" Source="pack://application:,,/m0;Component/_resources/basic/pointer.png" Width="15" Height="15"/>
                         <TextBlock Margin="3,0,0,0">Select</TextBlock>
+                    </StackPanel>
+                </ToggleButton>
+                <ToggleButton Name="PenButton_Instance" ToolTip="Add new note" Click="PenButton_Click">
+                    <StackPanel Orientation="Horizontal">
+                        <Image RenderOptions.BitmapScalingMode="HighQuality" Source="pack://application:,,/m0;Component/_resources/basic/pen.png" Width="15" Height="15"/>
+                        <TextBlock Margin="3,0,0,0">New</TextBlock>
                     </StackPanel>
                 </ToggleButton>
                 <ToggleButton Name="EraseButton_Instance" ToolTip="Erase note" Click="EraseButton_Click">

@@ -1,6 +1,7 @@
 ﻿using m0;
 using m0.Foundation;
 using m0.Graph;
+using m0.ZeroTypes;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -24,44 +25,45 @@ namespace m0_COMPOSER.Lib
             return null;*/
         }
 
-        public static IEdge InsertSequenceEvent(IVertex trackVertex, double startPosition, double lengthPosition)
-        {
-            IVertex r = MinusZero.Instance.Root;
-            
+        static IVertex r = MinusZero.Instance.Root;
 
-            IVertex sequenceEventAttribute = r.Get(false, @"System\Lib\Music\Track\SequenceEvent");
+        static IVertex lengthMeta = r.Get(false, @"System\Lib\Music\Sequence\Length");
+        static IVertex eventMeta = r.Get(false, @"System\Lib\Music\Sequence\Event");
 
-            IVertex sequenceEvent = r.Get(false, @"System\Lib\Music\SequenceEvent");
+        static IVertex sequenceEventAttributeMeta = r.Get(false, @"System\Lib\Music\Track\SequenceEvent");
 
-            IVertex sequence = r.Get(false, @"System\Lib\Music\Sequence");
+        static IVertex sequenceEventMeta = r.Get(false, @"System\Lib\Music\SequenceEvent");
 
-            IVertex sequenceIsDrum = r.Get(false, @"System\Lib\Music\Sequence\IsDrum");
+        static IVertex sequenceMeta = r.Get(false, @"System\Lib\Music\Sequence");
 
+        static IVertex sequenceIsDrumMeta = r.Get(false, @"System\Lib\Music\Sequence\IsDrum");
 
+        public static IEdge AddSequenceEventVertex(IVertex trackVertex, double startPosition, double lengthPosition)
+        {            
             IEdge tempSequenceEventEdge = trackVertex.AddVertexAndReturnEdge(null, null);
 
             IVertex sequenceEventVertex = tempSequenceEventEdge.To;
 
 
-            sequenceEventVertex.AddEdge(MinusZero.Instance.Is, sequenceEvent);
+            sequenceEventVertex.AddEdge(MinusZero.Instance.Is, sequenceEventMeta);
 
            
-            sequenceEventVertex.AddVertex(sequenceEvent.Get(false, @"Attribute:TriggerTime"), ScreenPositionToMusicTime(startPosition, needsSnapCorrection));
+            sequenceEventVertex.AddVertex(sequenceEventMeta.Get(false, @"Attribute:TriggerTime"), startPosition);
 
-            IVertex sequenceVertex = VertexOperations.AddInstance(sequenceEventVertex, sequence);
+            IVertex sequenceVertex = VertexOperations.AddInstance(sequenceEventVertex, sequenceMeta);
 
-            sequenceVertex.AddVertex(sequence.Get(false, @"Attribute:Length"), ScreenPositionToMusicTime(lengthPosition, needsSnapCorrection));
+            sequenceVertex.AddVertex(sequenceMeta.Get(false, @"Attribute:Length"), lengthPosition);
 
             bool isDrum = false;
 
             bool isNull = false;
 
-            if (GraphUtil.GetBooleanValue(toAddVertex.Get(false, "IsDrum:"), ref isNull))
-                sequenceVertex.AddVertex(sequenceIsDrum, "True");
+            if (GraphUtil.GetBooleanValue(trackVertex.Get(false, "IsDrum:"), ref isNull))
+                sequenceVertex.AddVertex(sequenceIsDrumMeta, "True");
 
-            IEdge finalEdge = toAddVertex.AddEdge(sequenceEventAttribute, sequenceEventVertex);
+            IEdge finalEdge = trackVertex.AddEdge(sequenceEventAttributeMeta, sequenceEventVertex);
 
-            toAddVertex.DeleteEdge(tempSequenceEventEdge);
+            trackVertex.DeleteEdge(tempSequenceEventEdge);
 
 
             return finalEdge;
@@ -69,20 +71,43 @@ namespace m0_COMPOSER.Lib
 
         public static void RazorCut(IVertex songVertex, IVertex sequenceEventVertex, int cutPoint)
         {
+            IVertex r = MinusZero.Instance.Root;
             bool isNull = false;
 
+            IVertex trackVertex = GetTrackVertexFromSequenceEventVertex(sequenceEventVertex);
+
             IVertex firstSequenceEventVertex = sequenceEventVertex;
-            IVertex firstSequenceVertex = firstSequenceEventVertex.Get(false, @"Sequence:");
+            IVertex firstSequenceVertex = firstSequenceEventVertex.Get(false, @"Sequence:");            
 
             int beforeTriggerTime = GraphUtil.GetIntegerValue(firstSequenceEventVertex.Get(false, "TriggerTime:"), ref isNull);
             int beforeLength = GraphUtil.GetIntegerValue(firstSequenceVertex.Get(false, "Length:"), ref isNull);
 
             int firstTriggerTime = beforeTriggerTime;
-            int firestLength = cutPoint - beforeTriggerTime;
+            int firstLength = cutPoint - beforeTriggerTime;
 
             int secondTriggerTime = cutPoint;
-            int secondLength = beforeLength - cutPoint;
+            int secondLength = beforeLength - firstLength;            
 
+            GraphUtil.SetVertexValue(firstSequenceVertex, lengthMeta, firstLength);
+
+            IVertex secondSequenceEventVertex = AddSequenceEventVertex(trackVertex, secondTriggerTime, secondLength).To;
+            IVertex secondSequenceVertex = secondSequenceEventVertex.Get(false, @"Sequence:");
+
+            foreach(IEdge e in firstSequenceVertex.GetAll(false, "Event:"))
+            {
+                int positionInFirst = GraphUtil.GetIntegerValue(e.To.Get(false, "TriggerTime:"), ref isNull);
+
+                IVertex eventVertex = e.To;
+
+                if(positionInFirst > firstLength)
+                {
+                    secondSequenceVertex.AddEdge(eventMeta, eventVertex);
+
+                    firstSequenceEventVertex.DeleteEdge(e);
+
+                    GraphUtil.SetVertexValue(eventVertex, lengthMeta, positionInFirst - firstLength);
+                }
+            }
 
 
         }

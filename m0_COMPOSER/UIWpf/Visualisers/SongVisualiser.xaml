@@ -41,16 +41,18 @@
                         <TextBlock Margin="3,0,0,0"/>
                     </StackPanel>
                 </ToggleButton>
+                
                 <Separator/>
-                <ToggleButton Name="PenButton_Instance" ToolTip="Add sequence" Click="PenButton_Click">
-                    <StackPanel Orientation="Horizontal">
-                        <Image RenderOptions.BitmapScalingMode="HighQuality" Source="pack://application:,,/m0;Component/_resources/basic/pen.png" Width="15" Height="15"/>
-                        <TextBlock Margin="3,0,0,0"/>
-                    </StackPanel>
-                </ToggleButton>
+                                
                 <ToggleButton Name="ArrowButton_Instance" ToolTip="Select multiple sequences" Click="ArrowButton_Click">
                     <StackPanel Orientation="Horizontal">
                         <Image RenderOptions.BitmapScalingMode="HighQuality" Source="pack://application:,,/m0;Component/_resources/basic/pointer.png" Width="15" Height="15"/>
+                        <TextBlock Margin="3,0,0,0"/>
+                    </StackPanel>
+                </ToggleButton>
+                <ToggleButton Name="PenButton_Instance" ToolTip="Add sequence" Click="PenButton_Click">
+                    <StackPanel Orientation="Horizontal">
+                        <Image RenderOptions.BitmapScalingMode="HighQuality" Source="pack://application:,,/m0;Component/_resources/basic/pen.png" Width="15" Height="15"/>
                         <TextBlock Margin="3,0,0,0"/>
                     </StackPanel>
                 </ToggleButton>
