@@ -546,6 +546,14 @@ namespace m0_COMPOSER.UIWpf.Visualisers
                 case CursorStateEnum.ArrowUp_MoveOnItem:
                     ArrowDown_FromUpMove(sender, e);
                     break;
+
+                case CursorStateEnum.Razor:
+                    RazorDown(sender, e);
+                    break;
+
+                case CursorStateEnum.Glue:
+                    GlueDown(sender, e);
+                    break;
             }
         }
 
@@ -1114,6 +1122,11 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             if (MainItemsSyncedWithDown)
                 Draw_Down();
         }
+
+        protected virtual void RazorDown(object sender, MouseButtonEventArgs e) { }
+
+        protected virtual void GlueDown(object sender, MouseButtonEventArgs e) { }
+
 
         protected MainDownEnum GetItemContext(IItem item)
         {

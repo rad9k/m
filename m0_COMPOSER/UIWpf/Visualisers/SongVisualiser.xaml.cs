@@ -661,19 +661,6 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             GraphUtil.SetVertexValue(sequenceVertex, MinusZero.Instance.root.Get(false, @"System\Lib\Music\Sequence\Length"), value);
         }
 
-        public IVertex GetTrackVertexFromSequenceEventVertex(IVertex sequenceEventVertex)
-        {
-            return GraphUtil.GetQueryInFirst(sequenceEventVertex, "SequenceEvent", null);
-
-            /*
-            foreach (IEdge e in baseVertex.GetAll(false, @"Track:"))
-                foreach (IEdge ee in e.To)
-                    if (ee.To == sequenceEventVertex)
-                        return e.To;
-
-            return null;*/
-        }
-
         protected override void AddItem(IEdge itemEdge, List<IVertex> selectedVertexes)
         {
             IVertex itemEventVertex = itemEdge.To;
@@ -692,7 +679,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
                 PreviousSelectedItemContext = MainDownEnum.Main;
             }
 
-            IVertex trackVertex = GetTrackVertexFromSequenceEventVertex(itemEdge.To);
+            IVertex trackVertex = Song.GetTrackVertexFromSequenceEventVertex(itemEdge.To);
 
             AxisSegment itemSegment = GetVerticalSegment(trackVertex);
 
@@ -749,54 +736,20 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             return realTime * minuteWidth;
         }
 
-        protected override IEdge AddItemEdge(AxisSegment itemSegment, double startPosition, double lengthPosition)
+        protected override IEdge AddItemEdge(AxisSegment itemSegment, double startPosition_Screen, double lengthPosition_Screen)
         {
-            IVertex r = MinusZero.Instance.Root;
-
-
-            IVertex toAddVertex = itemSegment.BaseVertex;
-
-
-            IVertex sequenceEventAttribute = r.Get(false, @"System\Lib\Music\Track\SequenceEvent");
-
-            IVertex sequenceEvent = r.Get(false, @"System\Lib\Music\SequenceEvent");
-
-            IVertex sequence = r.Get(false, @"System\Lib\Music\Sequence");
-
-            IVertex sequenceIsDrum = r.Get(false, @"System\Lib\Music\Sequence\IsDrum");
-
-
-            IEdge tempSequenceEventEdge = toAddVertex.AddVertexAndReturnEdge(null, null);
-
-            IVertex sequenceEventVertex = tempSequenceEventEdge.To;
-
-
-            sequenceEventVertex.AddEdge(MinusZero.Instance.Is, sequenceEvent);
+            IVertex trackVertex = itemSegment.BaseVertex;
 
             bool needsSnapCorrection = false;
 
             if (CurrentCursorState == CursorStateEnum.PenDown)
                 needsSnapCorrection = true;
-            
-            sequenceEventVertex.AddVertex(sequenceEvent.Get(false, @"Attribute:TriggerTime"), ScreenPositionToMusicTime(startPosition, needsSnapCorrection));
 
-            IVertex sequenceVertex = VertexOperations.AddInstance(sequenceEventVertex, sequence);
+            double startPosition = ScreenPositionToMusicTime(startPosition_Screen, needsSnapCorrection);
 
-            sequenceVertex.AddVertex(sequence.Get(false, @"Attribute:Length"), ScreenPositionToMusicTime(lengthPosition, needsSnapCorrection));
+            double lengthPosition = ScreenPositionToMusicTime(lengthPosition, needsSnapCorrection);
 
-            bool isDrum = false;
-
-            bool isNull = false;
-
-            if (GraphUtil.GetBooleanValue(toAddVertex.Get(false, "IsDrum:"), ref isNull))
-                sequenceVertex.AddVertex(sequenceIsDrum, "True");
-
-            IEdge finalEdge = toAddVertex.AddEdge(sequenceEventAttribute, sequenceEventVertex);
-
-            toAddVertex.DeleteEdge(tempSequenceEventEdge);   
-            
-
-            return finalEdge;
+            return Song.InsertSequenceEvent(trackVertex, startPosition, lengthPosition);
         }
 
         protected override void DrawItems()
@@ -823,7 +776,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             IVertex newTrack = segment.BaseVertex;
 
-            IVertex oldTrack = GetTrackVertexFromSequenceEventVertex(itemVertex);
+            IVertex oldTrack = Song.GetTrackVertexFromSequenceEventVertex(itemVertex);
 
             if (newTrack != oldTrack)
             {
@@ -864,7 +817,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
         {
             IEdge eventEdge = i.BaseEdge;
 
-            IVertex trackVertex = GetTrackVertexFromSequenceEventVertex(eventEdge.To);
+            IVertex trackVertex = Song.GetTrackVertexFromSequenceEventVertex(eventEdge.To);
 
             GraphUtil.DeleteEdgeByToVertex(trackVertex, eventEdge.To);
 
@@ -1013,7 +966,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
         {
             IVertex r = MinusZero.Instance.Root;
 
-            IVertex trackVertex = GetTrackVertexFromSequenceEventVertex(v);            
+            IVertex trackVertex = Song.GetTrackVertexFromSequenceEventVertex(v);            
 
 
             IVertex sequenceEventAttribute = r.Get(false, @"System\Lib\Music\Track\SequenceEvent");
@@ -1074,6 +1027,22 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             }
 
             return last;
+        }
+
+        protected override void RazorDown(object sender, MouseButtonEventArgs e)
+        {
+            Point currentMousePosition = GetMainContentMousePosition(e);
+
+            FrameworkElement element = WpfUtil.GetElementAtFromList_StartFromEnd(Items, currentMousePosition);
+
+            if (element != null && element is IItem)
+            {
+                IItem item = (IItem)element;
+
+                int cutPoint = ScreenPositionToMusicTime(currentMousePosition.X, true);
+
+                Song.RazorCut(baseVertex, item.BaseEdge.To, cutPoint);
+            }
         }
     }
 }
