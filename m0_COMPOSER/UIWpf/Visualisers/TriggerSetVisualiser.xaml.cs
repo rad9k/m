@@ -48,10 +48,10 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             MinusZero mz = MinusZero.Instance;
 
-            VisualiserName = "SequenceVisuliser";
+            VisualiserName = "TriggerSetVisuliser";
 
-            BaseEdgeToMetaVertex = mz.root.Get(false, @"System\Lib\Music\Class:Sequence");
-            VisualiserMetaVertex = mz.root.Get(false, @"System\Meta\Visualiser\Sequence");
+            BaseEdgeToMetaVertex = mz.root.Get(false, @"System\Lib\Music\Generator\Class:TriggerSet");
+            VisualiserMetaVertex = mz.root.Get(false, @"System\Meta\Visualiser\TriggerSet");
 
             //
 
@@ -77,8 +77,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             bool dummy = false;
 
             ShowLabel = GraphUtil.GetBooleanValue(Vertex.Get(false, "ShowLabel:"), ref dummy);
-            ShowVelocity = GraphUtil.GetBooleanValue(Vertex.Get(false, "ShowVelocity:"), ref dummy);
-            ShowArowLines = GraphUtil.GetBooleanValue(Vertex.Get(false, "ShowArrowLines:"), ref dummy);
+            ShowVelocity = GraphUtil.GetBooleanValue(Vertex.Get(false, "ShowVelocity:"), ref dummy);            
             ShowSnapLines = GraphUtil.GetBooleanValue(Vertex.Get(false, "ShowSnapLines:"), ref dummy);
             DefaultVelocity = GraphUtil.GetIntegerValue(Vertex.Get(false, "DefaultVelocity:"), ref dummy);
 
@@ -95,22 +94,14 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             if (baseVertex == null)
                 return;            
 
-            if (baseVertex.Get(false, "$Is:Sequence") == null)
+            if (baseVertex.Get(false, "$Is:TriggerSet") == null)
             {
                 baseVertex = null;
                 return;
             }
 
             IVertex r = MinusZero.Instance.Root;
-
-            verticalSpanVertex = baseVertex.Get(false, "PitchSet:");
-
-            if (verticalSpanVertex == null)
-                if (IsDrum)
-                    verticalSpanVertex = r.Get(false, @"System\Lib\Music\Data\DefaultDrumPitchSet:");
-                else
-                    verticalSpanVertex = r.Get(false, @"System\Lib\Music\Data\DefaultPitchSet:");
-
+            
             horizontalSpanVertex = baseVertex.Get(false, "TimeSpan:");
 
             if (horizontalSpanVertex == null)
@@ -121,9 +112,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
         {
             if (VerticalAD == null)
             {
-                VerticalAD = new PitchSetAxisDecorator();
-
-                VerticalAD.SetBaseVertex(verticalSpanVertex);
+                VerticalAD = new OneSegmentAxisDecorator();
             }
 
             if (HorizontalAD == null)
@@ -176,18 +165,14 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             int length = GraphUtil.GetIntegerValue(itemEventVertex.Get(false, "Length:"), ref dummy);
 
-            IVertex pitchVertex = MusicUtil.GetNoteFromPitchSet(verticalSpanVertex,
-                GraphUtil.GetIntegerValue(itemEventVertex.Get(false, "Octave:")),
-                GraphUtil.GetIntegerValue(itemEventVertex.Get(false, "Note:")));
-
-            string label = pitchVertex.Value.ToString();
+                       
 
             FrameworkElement newElement;
 
             if (IsDrum)
                 newElement = new DrumItem(itemEdge, this, ShowVelocity);
             else
-                newElement = new NoteItem(itemEdge, label, this, ShowLabel, ShowVelocity);
+                newElement = new NoteItem(itemEdge, null, this, ShowLabel, ShowVelocity);
 
             IItem newItem = (IItem)newElement;
 

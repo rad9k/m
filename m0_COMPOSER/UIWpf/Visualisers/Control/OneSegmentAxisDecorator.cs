@@ -17,9 +17,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control
 {
     class OneSegmentAxisDecorator : AxisDecoratorBase, IZoomScrollViewAxisDecorator
     {        
-        double FontSize = 12;
-
-        double SegmentHeight = 20;
+        double FontSize = 12;        
 
         double segmentSize;        
        
@@ -30,7 +28,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control
 
             Width = 0;
 
-            Height = 20;
+            Height = segmentSize;
             
             Size newSize = new Size();
             newSize.Width = Width;            
@@ -49,7 +47,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control
             segment.LineStyle = new LineStyle();
 
             segment.StartPosition = 0;
-            segment.EndPosition = SegmentHeight;
+            segment.EndPosition = segmentSize;
                         
             Segments.Add(segment);
 
@@ -72,34 +70,9 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control
             Update();
         }
 
-        public void SetLength(double length)
-        {
+        public void SetLength(double length) { }
 
-        }
-
-        public OneSegmentAxisDecorator()
-        {
-            //this.MouseDown += TrackAxisDecorator_MouseDown;
-        }
-
-        private void TrackAxisDecorator_MouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
-        {
-            Point p = e.GetPosition(this);
-
-            foreach (AxisSegment s in Segments)
-                if (s.StartPosition <= p.Y && p.Y <= s.EndPosition)
-                {
-                    if (Selection == s)
-                        Selection = null;
-                    else
-                        Selection = s;
-
-                    if(SelectionChanged!=null)
-                        SelectionChanged(sender, null);
-
-                    Draw();
-                }
-        }
+        public OneSegmentAxisDecorator() { }        
 
         public event EventHandler SelectionChanged;
 
