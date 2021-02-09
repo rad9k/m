@@ -635,6 +635,7 @@ namespace m0_SYSTEM_GENERATE.Music
 
             IVertex TriggerSet = GraphUtil.AddClass(MusicGenerator, "TriggerSet");
             GraphUtil.AddInherits(TriggerSet, HasLength);
+            GraphUtil.AddAttribute(TriggerSet, "IsDrum", Boolean, 0, 1);
             GraphUtil.AddAggregation(TriggerSet, "Trigger", Trigger, 0, -1);
 
             TriggerSet.AddEdge(r.Get(false, @"System\Meta\Base\Vertex\$DefaultOpenVisualiser"), r.Get(false, @"System\Meta\Visualiser\TriggerSet"));
