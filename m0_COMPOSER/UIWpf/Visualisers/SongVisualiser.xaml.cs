@@ -1046,6 +1046,24 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             RedrawTracks();
         }
+
+        protected override void GlueDown(object sender, MouseButtonEventArgs e)
+        {
+            Point currentMousePosition = GetMainContentMousePosition(e);
+
+            FrameworkElement element = WpfUtil.GetElementAtFromList_StartFromEnd(Items, currentMousePosition);
+
+            if (element != null && element is IItem)
+            {
+                IItem item = (IItem)element;
+
+                int gluePoint = ScreenPositionToMusicTime(currentMousePosition.X, true);
+
+                Song.Glue(baseVertex, item.BaseEdge, gluePoint);
+            }
+
+            RedrawTracks();
+        }
     }
 }
 

@@ -34,6 +34,8 @@ namespace m0_COMPOSER.Lib
 
         static IVertex sequenceEventMeta = r.Get(false, @"System\Lib\Music\SequenceEvent");
 
+        static IVertex triggerTimeMeta = r.Get(false, @"System\Lib\Music\SequenceEvent\TriggerTime");
+
         static IVertex sequenceMeta = r.Get(false, @"System\Lib\Music\Sequence");
 
         static IVertex sequenceIsDrumMeta = r.Get(false, @"System\Lib\Music\Sequence\IsDrum");
@@ -103,13 +105,152 @@ namespace m0_COMPOSER.Lib
                 {
                     secondSequenceVertex.AddEdge(eventMeta, eventVertex);
 
-                    firstSequenceEventVertex.DeleteEdge(e);
+                    firstSequenceVertex.DeleteEdge(e);
 
                     GraphUtil.SetVertexValue(eventVertex, triggerTimeMeta, positionInFirst - firstLength);
                 }
             }
+        }
 
+        public static int SequenceEventTriggerTimeCompare(IEdge sequenceEventEdgeA, IEdge sequenceEventEdgeB)
+        {
+            bool isNull = false;
 
+            int triggerTimeA = GraphUtil.GetIntegerValue(sequenceEventEdgeA.To.Get(false, "TriggerTime:"), ref isNull);
+            int triggerTimeB = GraphUtil.GetIntegerValue(sequenceEventEdgeB.To.Get(false, "TriggerTime:"), ref isNull);
+
+            if (triggerTimeA < triggerTimeB)
+                return -1;
+
+            if (triggerTimeA == triggerTimeB)
+                return 0;
+
+            return 1;
+        }
+
+        public static IList<IEdge> SortSequenceEventsInTrack(IVertex trackVertex)
+        {
+            List<IEdge> list = new List<IEdge>();
+
+            foreach (IEdge e in trackVertex.GetAll(false, "SequenceEvent:"))
+                list.Add(e);
+
+            list.Sort(SequenceEventTriggerTimeCompare);
+
+            return list;
+        }
+
+        public static IEdge GetSequenceOntheLeftOrRight(IVertex sequenceEventVertex, bool isRight)
+        {
+            IVertex ret = null;
+
+            IVertex trackVertex = GetTrackVertexFromSequenceEventVertex(sequenceEventVertex);
+
+            IList<IEdge> sorted = SortSequenceEventsInTrack(trackVertex);
+
+            IEdge sequenceEventEdge = GraphUtil.FindEdge(trackVertex, sequenceEventAttributeMeta, sequenceEventVertex);
+
+            int indexOfSequence = sorted.IndexOf(sequenceEventEdge);
+
+            if (isRight)
+            {
+                if (indexOfSequence == sorted.Count - 1)
+                    return null;
+
+                return sorted[indexOfSequence + 1];
+            }
+            else
+            {
+                if (indexOfSequence == 0)
+                    return null;
+
+                return sorted[indexOfSequence - 1];
+            }
+        }
+
+        public static void Glue(IVertex songVertex, IEdge sequenceEventEdge, int gluePoint)
+        {
+            IVertex r = MinusZero.Instance.Root;
+            bool isNull = false;
+
+            IVertex sequenceEventVertex = sequenceEventEdge.To;
+
+            IVertex trackVertex = GetTrackVertexFromSequenceEventVertex(sequenceEventVertex);
+
+            IVertex sequenceVertex = sequenceEventVertex.Get(false, @"Sequence:");
+
+            int triggerTime = GraphUtil.GetIntegerValue(sequenceEventVertex.Get(false, "TriggerTime:"), ref isNull);
+            int length = GraphUtil.GetIntegerValue(sequenceVertex.Get(false, "Length:"), ref isNull);
+
+            int localPosition = gluePoint - triggerTime;
+
+            if(localPosition > (length / 2))
+            {
+                IEdge sibilingSequenceEvent = GetSequenceOntheLeftOrRight(sequenceEventVertex, true);
+
+                if (sibilingSequenceEvent != null)
+                    Glue(sequenceEventEdge, sibilingSequenceEvent);
+                else
+                {
+                    sibilingSequenceEvent = GetSequenceOntheLeftOrRight(sequenceEventVertex, false);
+
+                    if (sibilingSequenceEvent != null)
+                        Glue(sibilingSequenceEvent, sequenceEventEdge);
+                }
+            }
+            else
+            {
+                IEdge sibilingSequenceEvent = GetSequenceOntheLeftOrRight(sequenceEventVertex, false);
+
+                if (sibilingSequenceEvent != null)
+                    Glue(sibilingSequenceEvent, sequenceEventEdge);
+                else
+                {
+                    sibilingSequenceEvent = GetSequenceOntheLeftOrRight(sequenceEventVertex, true);
+
+                    if (sibilingSequenceEvent != null)
+                        Glue(sequenceEventEdge, sibilingSequenceEvent);
+                }
+            }
+        }
+
+        public static void Glue(IEdge sequenceEventEdge_Final, IEdge sequenceEventEdge_Delete)
+        {
+            bool isNull = false;
+
+            IVertex sequenceEventVertex_Final = sequenceEventEdge_Final.To;
+            IVertex sequenceEventVertex_Delete = sequenceEventEdge_Delete.To;
+
+            IVertex trackVertex = GetTrackVertexFromSequenceEventVertex(sequenceEventVertex_Final);
+
+            IVertex sequenceVertex_Final = sequenceEventVertex_Final.Get(false, @"Sequence:");
+            IVertex sequenceVertex_Delete = sequenceEventVertex_Delete.Get(false, @"Sequence:");
+
+            int triggerTime_Final = GraphUtil.GetIntegerValue(sequenceEventVertex_Final.Get(false, "TriggerTime:"), ref isNull);
+            int triggerTime_Delete = GraphUtil.GetIntegerValue(sequenceEventVertex_Delete.Get(false, "TriggerTime:"), ref isNull);
+
+            int length_Delete = GraphUtil.GetIntegerValue(sequenceVertex_Delete.Get(false, "Length:"), ref isNull);
+
+            int delta = triggerTime_Delete - triggerTime_Final;
+
+            foreach(IEdge e in sequenceVertex_Delete.GetAll(false, "Event:"))
+            {
+                IVertex eventVertex = e.To;
+
+                sequenceVertex_Final.AddEdge(eventMeta, eventVertex);
+
+                int eventTriggerTime = GraphUtil.GetIntegerValue(eventVertex.Get(false, "TriggerTime:"), ref isNull);
+
+                GraphUtil.SetVertexValue(eventVertex, triggerTimeMeta, eventTriggerTime + delta);
+
+                sequenceEventVertex_Delete.DeleteEdge(e);
+            }
+
+            int newLength_Final = delta + length_Delete;
+
+            GraphUtil.SetVertexValue(sequenceVertex_Final, lengthMeta, newLength_Final);
+
+            trackVertex.DeleteEdge(sequenceEventEdge_Delete);
         }
     }
 }
