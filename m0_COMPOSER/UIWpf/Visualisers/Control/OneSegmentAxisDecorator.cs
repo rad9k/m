@@ -15,7 +15,7 @@ using m0.UIWpf.Visualisers.Controls;
 
 namespace m0_COMPOSER.UIWpf.Visualisers.Control
 {
-    class OneSegmentDecorator : AxisDecoratorBase, IZoomScrollViewAxisDecorator
+    class OneSegmentAxisDecorator : AxisDecoratorBase, IZoomScrollViewAxisDecorator
     {        
         double FontSize = 12;
 
@@ -49,31 +49,9 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control
             segment.LineStyle = new LineStyle();
 
             segment.StartPosition = 0;
-            segment.EndPosition = (cnt + 1) * segmentSize;
+            segment.EndPosition = SegmentHeight;
                         
-
-                //
-
-                IVertex colorVertex = segment.BaseVertex.Get(false, "Color:");
-
-                if (colorVertex != null)
-                {
-                    segment.Color = WpfUtil.GetColorFromColorVertex(colorVertex);
-
-                    //segment.UseBackgroundColor = true;
-
-                    //segment.BackgroundColor = segment.Color;
-                }
-
-                Segments.Add(segment);
-
-                cnt++;
-            }
-
-            Size s = new Size();
-            s.Height = maxHeight;
-
-            Size = s;
+            Segments.Add(segment);
 
             Draw();
         }
@@ -99,7 +77,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control
 
         }
 
-        public TrackAxisDecorator()
+        public OneSegmentAxisDecorator()
         {
             //this.MouseDown += TrackAxisDecorator_MouseDown;
         }
