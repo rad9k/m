@@ -45,6 +45,8 @@ namespace m0
             IVertex v2 = VertexOperations.AddInstance(r, r.Get(false, @"System\Lib\Music\Song"));
 
             //v2.AddVertex(r.Get(false, @"System\Lib\Music\Sequence\IsDrum"), "True");
+
+            IVertex v3 = VertexOperations.AddInstance(r, r.Get(false, @"System\Lib\Music\Generator\TriggerSet"));
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)

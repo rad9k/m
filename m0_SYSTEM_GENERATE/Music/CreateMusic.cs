@@ -354,7 +354,7 @@ namespace m0_SYSTEM_GENERATE.Music
 
             // HAS LENGTH
 
-            IVertex HasLength = GraphUtil.AddClass(Music, "HasLength");
+            HasLength = GraphUtil.AddClass(Music, "HasLength");
 
             GraphUtil.AddAttribute(HasLength, "Length", Integer, 0, 1);
             GraphUtil.AddAssociation(HasLength, "TimeSpan", TimeSpanLevel, 0, 1);
@@ -626,7 +626,8 @@ namespace m0_SYSTEM_GENERATE.Music
             // TRIGGER
 
             IVertex Trigger = GraphUtil.AddClass(MusicGenerator, "Trigger");
-            GraphUtil.AddInherits(Trigger, Event);            
+            GraphUtil.AddInherits(Trigger, Event);
+            GraphUtil.AddInherits(Trigger, HasLength);
             GraphUtil.AddAttribute(Trigger, "Velocity", Integer, 0, 1);
             GraphUtil.AddAggregation(Trigger, "ControlChange", ControlChange, 0, -1);
 

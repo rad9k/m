@@ -91,11 +91,11 @@
     <Compile Include="UIWpf\Visualisers\PitchSetVisualiser.xaml.cs">
       <DependentUpon>PitchSetVisualiser.xaml</DependentUpon>
     </Compile>
-    <Compile Include="UIWpf\Visualisers\SongVisualiser.xaml.cs">
-      <DependentUpon>SongVisualiser.xaml</DependentUpon>
-    </Compile>
     <Compile Include="UIWpf\Visualisers\TriggerSetVisualiser.xaml.cs">
       <DependentUpon>TriggerSetVisualiser.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UIWpf\Visualisers\SongVisualiser.xaml.cs">
+      <DependentUpon>SongVisualiser.xaml</DependentUpon>
     </Compile>
     <Compile Include="UIWpf\Visualisers\SequenceVisualiser.xaml.cs">
       <DependentUpon>SequenceVisualiser.xaml</DependentUpon>
@@ -128,11 +128,11 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="UIWpf\Visualisers\SongVisualiser.xaml">
+    <Page Include="UIWpf\Visualisers\TriggerSetVisualiser.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="UIWpf\Visualisers\TriggerSetVisualiser.xaml">
+    <Page Include="UIWpf\Visualisers\SongVisualiser.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
