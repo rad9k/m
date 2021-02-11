@@ -82,7 +82,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             DefaultVelocity = GraphUtil.GetIntegerValue(Vertex.Get(false, "DefaultVelocity:"), ref dummy);
 
             if (Vertex.Get(false, "SnapToGrid:") == null || Vertex.Get(false, "SnapToGrid:").Value.ToString() == "")
-                GraphUtil.ReplaceEdge(Vertex, r.Get(false, @"System\Meta\Visualiser\Sequence\SnapToGrid"), r.Get(false, @"System\Meta\Visualiser\SnapToGridEnum\'1/16 bar'"));
+                GraphUtil.ReplaceEdge(Vertex, r.Get(false, @"System\Meta\Visualiser\TriggerSet\SnapToGrid"), r.Get(false, @"System\Meta\Visualiser\SnapToGridEnum\'1/16 bar'"));
 
             SnapToGridComboBox_SelectionChange();
         }        
@@ -182,7 +182,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
                 PreviousSelectedItemContext = MainDownEnum.Main;
             }
 
-            AxisSegment itemSegment = GetVerticalSegment(pitchVertex);
+            AxisSegment itemSegment = VerticalAD.Segments[0];
 
 
             double startPosition = triggerTime * HorizontalAD.BaseUnitSize;
@@ -213,23 +213,20 @@ namespace m0_COMPOSER.UIWpf.Visualisers
         protected override IEdge AddItemEdge(AxisSegment itemSegment, double startPosition, double lengthPosition)
         {
             IVertex r = MinusZero.Instance.Root;
-
-            IVertex Event = r.Get(false, @"System\Lib\Music\Event");
-            IVertex noteEvent = r.Get(false, @"System\Lib\Music\NoteEvent");
+           
+            IVertex triggerMeta = r.Get(false, @"System\Lib\Music\Generator\Trigger");
 
             IEdge tempNoteEventEdge = baseVertex.AddVertexAndReturnEdge(null, null);
 
             IVertex noteEventVertex = tempNoteEventEdge.To;
 
-            noteEventVertex.AddEdge(MinusZero.Instance.Is, noteEvent);
+            noteEventVertex.AddEdge(MinusZero.Instance.Is, triggerMeta);
 
-            noteEventVertex.AddVertex(noteEvent.Get(false, @"Attribute:TriggerTime"), (int)((startPosition / HorizontalAD.BaseUnitSize) + 0.01));
-            noteEventVertex.AddVertex(noteEvent.Get(false, @"Attribute:Length"), (int)((lengthPosition / HorizontalAD.BaseUnitSize) + 0.01));            
-            noteEventVertex.AddEdge(noteEvent.Get(false, @"Attribute:Octave"), itemSegment.BaseVertex.Get(false, "Octave:"));
-            noteEventVertex.AddEdge(noteEvent.Get(false, @"Attribute:Note"), itemSegment.BaseVertex.Get(false, "Note:"));
-            noteEventVertex.AddVertex(noteEvent.Get(false, @"Attribute:Velocity"), DefaultVelocity);
+            noteEventVertex.AddVertex(triggerMeta.Get(false, @"Attribute:TriggerTime"), (int)((startPosition / HorizontalAD.BaseUnitSize) + 0.01));
+            noteEventVertex.AddVertex(triggerMeta.Get(false, @"Attribute:Length"), (int)((lengthPosition / HorizontalAD.BaseUnitSize) + 0.01));                        
+            noteEventVertex.AddVertex(triggerMeta.Get(false, @"Attribute:Velocity"), DefaultVelocity);
 
-            IEdge finalEdge = baseVertex.AddEdge(Event, noteEventVertex);
+            IEdge finalEdge = baseVertex.AddEdge(triggerMeta, noteEventVertex);
 
             baseVertex.DeleteEdge(tempNoteEventEdge);
 
@@ -240,44 +237,14 @@ namespace m0_COMPOSER.UIWpf.Visualisers
         {
             List<IVertex> selectedVertexes = GetSelectedVertexes();
 
-            foreach (IEdge e in baseVertex.GetAll(false, "Event:"))
-                if (GraphUtil.ExistQueryOut(e.To, "$Is", "NoteEvent"))
+            foreach (IEdge e in baseVertex.GetAll(false, "Trigger:"))
+                //if (GraphUtil.ExistQueryOut(e.To, "$Is", "Trigger"))
                     AddItem(e, selectedVertexes);
         }
 
         protected override void UpdateItem_VerticalPosition(IItem item)
         {
-            IVertex r = MinusZero.Instance.root;
-            IVertex metaOctave = r.Get(false, @"System\Lib\Music\Pitch\Octave");
-            IVertex metaNote = r.Get(false, @"System\Lib\Music\Pitch\Note");
-
-            FrameworkElement element;
-
-            if (!(item is FrameworkElement))
-                return;
-
-            element = (FrameworkElement)item;
-
-            IVertex noteEventVertex = item.BaseEdge.To;
-
-            AxisSegment segment = FindVerticalSegment(item.Top + 1);
-
-            IVertex octaveVertex = segment.BaseVertex.Get(false, "Octave:");
-            IVertex noteVertex = segment.BaseVertex.Get(false, "Note:");
-
-            GraphUtil.CreateOrReplaceEdge(noteEventVertex, metaOctave, octaveVertex);
-            GraphUtil.CreateOrReplaceEdge(noteEventVertex, metaNote, noteVertex);
-
-            int? octave = GraphUtil.GetIntegerValue(octaveVertex);
-            int? note = GraphUtil.GetIntegerValue(noteVertex);
-
-            IVertex pitchVertex = MusicUtil.GetNoteFromPitchSet(verticalSpanVertex, octave, note);
-
-            string label = pitchVertex.Value.ToString();
-
-            item.Label = label;
-
-            item.Update();
+            
         }
 
         protected override void UpdateItem_HorizontalPosition(IItem item)
@@ -352,7 +319,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             {
                 IVertex v = e.To.Get(false, "To:");
 
-                if(v.Get(false, "$Is:NoteEvent") != null)
+                if(v.Get(false, "$Is:Trigger") != null)
                 {
                     bool o = false;
 
@@ -364,42 +331,29 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
                     if (last < max)
                         last = max;
-                }
-
-                if (v.Get(false, "$Is:ControlChangeEvent") != null)
-                {
-                    bool o = false;
-
-                    int trigger = GraphUtil.GetIntegerValue(v.Get(false, "TriggerTime:"), ref o);
-
-                    if (last < trigger)
-                        last = trigger;
-                }
+                }                
             }
 
             return last;
         }
 
-        protected IEdge AddNoteVertex(IVertex octave, IVertex note, int triggerTime, int length, int velocity)
+        protected IEdge AddTriggerVertex(int triggerTime, int length, int velocity)
         {
             IVertex r = MinusZero.Instance.Root;
-
-            IVertex Event = r.Get(false, @"System\Lib\Music\Event");
-            IVertex noteEvent = r.Get(false, @"System\Lib\Music\NoteEvent");
+            
+            IVertex triggerMeta = r.Get(false, @"System\Lib\Music\Generator\Trigger");
 
             IEdge tempNoteEventEdge = baseVertex.AddVertexAndReturnEdge(null, null);
 
             IVertex noteEventVertex = tempNoteEventEdge.To;
 
-            noteEventVertex.AddEdge(MinusZero.Instance.Is, noteEvent);
+            noteEventVertex.AddEdge(MinusZero.Instance.Is, triggerMeta);
 
-            noteEventVertex.AddVertex(noteEvent.Get(false, @"Attribute:TriggerTime"), triggerTime);
-            noteEventVertex.AddVertex(noteEvent.Get(false, @"Attribute:Length"), length);
-            noteEventVertex.AddEdge(noteEvent.Get(false, @"Attribute:Octave"), octave);
-            noteEventVertex.AddEdge(noteEvent.Get(false, @"Attribute:Note"), note);            
-            noteEventVertex.AddVertex(noteEvent.Get(false, @"Attribute:Velocity"), velocity);
+            noteEventVertex.AddVertex(triggerMeta.Get(false, @"Attribute:TriggerTime"), triggerTime);
+            noteEventVertex.AddVertex(triggerMeta.Get(false, @"Attribute:Length"), length);            
+            noteEventVertex.AddVertex(triggerMeta.Get(false, @"Attribute:Velocity"), velocity);
 
-            IEdge finalEdge = baseVertex.AddEdge(Event, noteEventVertex);
+            IEdge finalEdge = baseVertex.AddEdge(triggerMeta, noteEventVertex);
 
             baseVertex.DeleteEdge(tempNoteEventEdge);
 
@@ -438,7 +392,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
                 bool isNull = false;
 
-                if (v.Get(false, "$Is:NoteEvent") != null)
+                if (v.Get(false, "$Is:Trigger") != null)
                 {
                     notes = true;
 
@@ -458,86 +412,11 @@ namespace m0_COMPOSER.UIWpf.Visualisers
                     if (triggerTimePlusLength < minPosition)
                         minPosition = triggerTimePlusLength;
                 }
+            }            
 
-                if (v.Get(false, "$Is:ControlChangeEvent") != null)
-                {
-                    cc = true;
-
-                    int triggerTime = GraphUtil.GetIntegerValue(v.Get(false, "TriggerTime:"), ref isNull);
-
-                    if (triggerTime > maxPosition)
-                        maxPosition = triggerTime;
-
-                    if (triggerTime < minPosition)
-                        minPosition = triggerTime;
-                }
-            }
-
-            if (notes && !cc)
-                return WhatIsInEdgesEnum.OnlyNotes;
-
-            if (!notes && cc)
-                return WhatIsInEdgesEnum.OnlyCC;
-
-            return WhatIsInEdgesEnum.Mix;
+            return WhatIsInEdgesEnum.OnlyNotes;
         }
-
-        protected IEnumerable<IEdge> AddCC(IEnumerable<IEdge> edgesIn, int minPosition, int maxPosition, bool onlyCopy)
-        {
-            IVertex clipboardMeta;
-
-            if (onlyCopy)
-                clipboardMeta = m0.MinusZero.Instance.root.Get(false, @"System\Meta\User\Session\ClipboardCopy");
-            else
-                clipboardMeta = m0.MinusZero.Instance.root.Get(false, @"System\Meta\User\Session\ClipboardCut");
-
-            bool isNull = false;
-
-            List<IEdge> edgesOut = new List<IEdge>();
-
-            edgesOut.AddRange(edgesIn);
-
-            foreach (IEdge e in baseVertex.GetAll(false, @"Event:{$Is:ControlChangeEvent}"))
-            {
-                int triggerTime = GraphUtil.GetIntegerValue(e.To.Get(false, "TriggerTime:"), ref isNull);
-
-                if (triggerTime >= minPosition && triggerTime <= maxPosition)
-                {
-                    IVertex edgeVertex = Edge.CreateTempEdgeVertex(e);
-
-                    IEdge newEdge = new EasyEdge(null, clipboardMeta, edgeVertex);
-
-                    edgesOut.Add(newEdge);
-                }
-            }
-
-            return edgesOut;
-        }
-
-        protected IEdge AddCCVertex(int triggerTime, int number, int value)
-        {
-            IVertex r = MinusZero.Instance.Root;
-
-            IVertex Event = r.Get(false, @"System\Lib\Music\Event");
-            IVertex controlChangeEvent = r.Get(false, @"System\Lib\Music\ControlChangeEvent");
-
-            IEdge tempNoteEventEdge = baseVertex.AddVertexAndReturnEdge(null, null);
-
-            IVertex noteEventVertex = tempNoteEventEdge.To;
-
-            noteEventVertex.AddEdge(MinusZero.Instance.Is, controlChangeEvent);
-
-            noteEventVertex.AddVertex(controlChangeEvent.Get(false, @"Attribute:Number"), number);
-            noteEventVertex.AddVertex(controlChangeEvent.Get(false, @"Attribute:Value"), value);
-            noteEventVertex.AddVertex(controlChangeEvent.Get(false, @"Attribute:TriggerTime"), triggerTime);
-
-            IEdge finalEdge = baseVertex.AddEdge(Event, noteEventVertex);
-
-            baseVertex.DeleteEdge(tempNoteEventEdge);
-
-            return finalEdge;
-        }
-
+        
         protected override void PasteEdgesFromClipboard(IEnumerable<IEdge> edges)
         {
             bool o = false;            
@@ -549,10 +428,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             WhatIsInEdgesEnum whatIsClipboard = GetWhatIsInEdges(edges, out minPosition, out maxPosition, out onlyCopy);
 
             if (whatIsClipboard == WhatIsInEdgesEnum.Mix)
-                return;
-
-            if (whatIsClipboard == WhatIsInEdgesEnum.OnlyNotes)
-                edges = AddCC(edges, minPosition, maxPosition, onlyCopy);
+                return;            
 
             foreach (IEdge e in edges)
             {
@@ -573,15 +449,13 @@ namespace m0_COMPOSER.UIWpf.Visualisers
                 {
                     IEdge newEdge = null;
 
-                    if (v.Get(false, "$Is:NoteEvent") != null) // NOTE
+                    if (v.Get(false, "$Is:Trigger") != null) 
                     {
                         int triggerTime = GraphUtil.GetIntegerValue(v.Get(false, "TriggerTime:"), ref o) - minPosition + PositionMark;
                         int length = GraphUtil.GetIntegerValue(v.Get(false, "Length:"), ref o);
 
                         if (isClipboardCopy)
-                            newEdge = AddNoteVertex(v.Get(false, "Octave:"),
-                                v.Get(false, "Note:"),
-                                triggerTime,
+                            newEdge = AddTriggerVertex(triggerTime,
                                 length,
                                 GraphUtil.GetIntegerValue(v.Get(false, "Velocity:"), ref o));
 
@@ -589,39 +463,14 @@ namespace m0_COMPOSER.UIWpf.Visualisers
                         {
                             newEdge = edge;
 
-                            UpdateNoteVertex(edge,
-                                v.Get(false, "Octave:"),
-                                v.Get(false, "Note:"),
+                            UpdateTriggerVertex(edge,                                
                                 triggerTime,
                                 length,
                                 GraphUtil.GetIntegerValue(v.Get(false, "Velocity:"), ref o));
                         }                       
                         
                        AddToSelectedEdges(newEdge);
-                    }
-
-                    if (v.Get(false, "$Is:ControlChangeEvent") != null) // CONTROLCHANGE
-                    {
-                        int triggerTime = GraphUtil.GetIntegerValue(v.Get(false, "TriggerTime:"), ref o) - minPosition + PositionMark;
-
-                        if (isClipboardCopy)
-                            newEdge = AddCCVertex(triggerTime,
-                                GraphUtil.GetIntegerValue(v.Get(false, "Number:"), ref o),
-                                GraphUtil.GetIntegerValue(v.Get(false, "Value:"), ref o));
-
-                        if (isClipboardCut)
-                        {
-                            newEdge = edge;
-
-                            UpdateCCVertex(edge,
-                                triggerTime,
-                                GraphUtil.GetIntegerValue(v.Get(false, "Number:"), ref o),
-                                GraphUtil.GetIntegerValue(v.Get(false, "Value:"), ref o));
-                        }                        
-
-                        if (whatIsClipboard == WhatIsInEdgesEnum.OnlyCC)
-                            AddToSelectedEdges(newEdge);
-                    }
+                    }                    
                 }                
             }
 
@@ -630,38 +479,19 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             PreviousSelectedItemContext = MainDownEnum.Main;
         }
 
-        private void UpdateNoteVertex(IEdge noteEventEdge, IVertex octave, IVertex note, int triggerTime, int length, int velocity)
+        private void UpdateTriggerVertex(IEdge noteEventEdge, int triggerTime, int length, int velocity)
         {
             IVertex r = MinusZero.Instance.Root;
-
-            IVertex Event = r.Get(false, @"System\Lib\Music\Event");
-            IVertex noteEvent = r.Get(false, @"System\Lib\Music\NoteEvent");            
+            
+            IVertex triggerMeta = r.Get(false, @"System\Lib\Music\Generator\Trigger");            
 
             IVertex noteEventVertex = noteEventEdge.To;
 
-            noteEventVertex.AddEdge(MinusZero.Instance.Is, noteEvent);
+            noteEventVertex.AddEdge(MinusZero.Instance.Is, triggerMeta);
 
-            GraphUtil.SetVertexValue(noteEventVertex, noteEvent.Get(false, @"Attribute:TriggerTime"), triggerTime);
-            GraphUtil.SetVertexValue(noteEventVertex, noteEvent.Get(false, @"Attribute:Length"), length);
-            GraphUtil.CreateOrReplaceEdge(noteEventVertex, noteEvent.Get(false, @"Attribute:Octave"), octave);
-            GraphUtil.CreateOrReplaceEdge(noteEventVertex, noteEvent.Get(false, @"Attribute:Note"), note);
-            GraphUtil.SetVertexValue(noteEventVertex, noteEvent.Get(false, @"Attribute:Velocity"), velocity);                        
-        }
-
-        private void UpdateCCVertex(IEdge ccEventEdge, int triggerTime, int number, int value)
-        {
-            IVertex r = MinusZero.Instance.Root;
-
-            IVertex Event = r.Get(false, @"System\Lib\Music\Event");
-            IVertex noteEvent = r.Get(false, @"System\Lib\Music\ControlChangeEvent");
-
-            IVertex noteEventVertex = ccEventEdge.To;
-
-            noteEventVertex.AddEdge(MinusZero.Instance.Is, noteEvent);
-
-            GraphUtil.SetVertexValue(noteEventVertex, noteEvent.Get(false, @"Attribute:Number"), number);
-            GraphUtil.SetVertexValue(noteEventVertex, noteEvent.Get(false, @"Attribute:Value"), value);
-            GraphUtil.SetVertexValue(noteEventVertex, noteEvent.Get(false, @"Attribute:TriggerTime"), triggerTime);
-        }
+            GraphUtil.SetVertexValue(noteEventVertex, triggerMeta.Get(false, @"Attribute:TriggerTime"), triggerTime);
+            GraphUtil.SetVertexValue(noteEventVertex, triggerMeta.Get(false, @"Attribute:Length"), length);            
+            GraphUtil.SetVertexValue(noteEventVertex, triggerMeta.Get(false, @"Attribute:Velocity"), velocity);                        
+        }        
     }
 }

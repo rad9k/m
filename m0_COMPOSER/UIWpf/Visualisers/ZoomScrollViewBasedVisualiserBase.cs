@@ -1049,6 +1049,11 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             UpdateCursorShape();
         }
 
+        protected IList<FrameworkElement> GetElementsAtFromListByArea(List<FrameworkElement> Items, double left, double top, double right)
+        {
+
+        }
+
         protected void ArrowMove_ArrowDown(object sender, MouseEventArgs e)
         {
             Point currentMousePosition = GetMainContentMousePosition(e);
@@ -1232,7 +1237,6 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             return (int)(CurrentSnapToGridValue * Midi.Standard.MidiTicksPerBar);
         }
-
 
         protected AxisSegment GetVerticalSegment(IVertex baseVertex)
         {
