@@ -163,9 +163,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             int triggerTime = GraphUtil.GetIntegerValue(itemEventVertex.Get(false, "TriggerTime:"), ref dummy);
 
-            int length = GraphUtil.GetIntegerValue(itemEventVertex.Get(false, "Length:"), ref dummy);
-
-                       
+            int length = GraphUtil.GetIntegerValue(itemEventVertex.Get(false, "Length:"), ref dummy);                     
 
             FrameworkElement newElement;
 
@@ -454,6 +452,12 @@ namespace m0_COMPOSER.UIWpf.Visualisers
                         int triggerTime = GraphUtil.GetIntegerValue(v.Get(false, "TriggerTime:"), ref o) - minPosition + PositionMark;
                         int length = GraphUtil.GetIntegerValue(v.Get(false, "Length:"), ref o);
 
+                        if (triggerTime > maxPosition)
+                            maxPosition = triggerTime;
+
+                        if ((length + triggerTime) > maxPosition)
+                            maxPosition = length + triggerTime;
+
                         if (isClipboardCopy)
                             newEdge = AddTriggerVertex(triggerTime,
                                 length,
@@ -492,6 +496,86 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             GraphUtil.SetVertexValue(noteEventVertex, triggerMeta.Get(false, @"Attribute:TriggerTime"), triggerTime);
             GraphUtil.SetVertexValue(noteEventVertex, triggerMeta.Get(false, @"Attribute:Length"), length);            
             GraphUtil.SetVertexValue(noteEventVertex, triggerMeta.Get(false, @"Attribute:Velocity"), velocity);                        
-        }        
+        }
+
+        //// TRIGGERSET SPECYFIC
+
+        protected override IList<FrameworkElement> GetElementsAtFromListByArea(List<FrameworkElement> Items, double left, double top, double right, double bottom)
+        {
+            return WpfUtil.GetElementsAtFromListByArea_OnlyHorizontal(Items, left, top, right, bottom);
+        }
+
+        protected override void DrawItems_Down()
+        {
+            List<IVertex> selectedVertexes = GetSelectedVertexes();
+
+            if (CurrentControlChangeNumber == -1)
+            {
+                foreach (IEdge e in baseVertex.GetAll(false, "Trigger:"))
+                    //if (GraphUtil.ExistQueryOut(e.To, "$Is", "NoteEvent"))
+                        //if (ApplyFilter_Down(e.To))
+                            AddItem_Down(e, selectedVertexes, false, true);
+            }         
+        }
+
+        protected override IEdge AddItemEdge_Down(double mouseY, double startPosition, out bool isUpdate, out bool isNoteEvent)
+        {            
+            isUpdate = false;
+
+            IVertex r = MinusZero.Instance.Root;
+
+            IVertex Event = r.Get(false, @"System\Lib\Music\Event");
+            IVertex ControlChangeEvent = r.Get(false, @"System\Lib\Music\ControlChangeEvent");
+            IVertex NoteEvent = r.Get(false, @"System\Lib\Music\NoteEvent");
+
+            int triggerTime = (int)((startPosition / HorizontalAD.BaseUnitSize) + 0.01);
+
+            IEdge tempEventEdge = null;
+
+            isNoteEvent = false;
+
+            List<IItem> existingItems = GetDownItemFromNumberTriggerTimeDictionary(CurrentControlChangeNumber, triggerTime);
+
+            if (existingItems == null && MainItemsSyncedWithDown)
+                return null;
+
+            if (existingItems != null)
+            {
+                IItem item = existingItems[0];
+
+                tempEventEdge = item.BaseEdge;
+
+                isUpdate = true;
+
+                //if (tempEventEdge.To.Get(false, @"$Is:NoteEvent") != null)
+                    isNoteEvent = true;
+            }
+            else
+                tempEventEdge = baseVertex.AddVertexAndReturnEdge(null, null);
+
+            IVertex eventVertex = tempEventEdge.To;
+
+            if (!isUpdate)
+                eventVertex.AddEdge(MinusZero.Instance.Is, ControlChangeEvent);
+
+            if (isNoteEvent)
+                GraphUtil.SetVertexValue(eventVertex, NoteEvent.Get(false, @"Attribute:Velocity"), ControlChangeItem.getValueFromMouseY_Down(mouseY, Height_Down));
+            else
+            {
+                GraphUtil.SetVertexValue(eventVertex, ControlChangeEvent.Get(false, @"Attribute:Number"), CurrentControlChangeNumber);
+                GraphUtil.SetVertexValue(eventVertex, ControlChangeEvent.Get(false, @"Attribute:Value"), ControlChangeItem.getValueFromMouseY_Down(mouseY, Height_Down));
+                GraphUtil.SetVertexValue(eventVertex, ControlChangeEvent.Get(false, @"Attribute:TriggerTime"), triggerTime);
+            }
+
+            IEdge finalEdge = tempEventEdge;
+
+            if (!isUpdate)
+            {
+                finalEdge = baseVertex.AddEdge(Event, eventVertex);
+                baseVertex.DeleteEdge(tempEventEdge);
+            }
+
+            return finalEdge;
+        }
     }
 }

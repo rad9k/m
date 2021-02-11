@@ -100,6 +100,31 @@ namespace m0.UIWpf
             return match;
         }
 
+        public static List<FrameworkElement> GetElementsAtFromListByArea_OnlyHorizontal(List<FrameworkElement> list, double AreaLeft, double AreaTop, double AreaRight, double AreaDown)
+        {
+            List<FrameworkElement> match = new List<FrameworkElement>();
+
+            foreach (FrameworkElement e in list)
+            {
+                if (e is ICentered && ((ICentered)e).IsCentered)
+                {
+                    ICentered i = (ICentered)e;
+
+                    if (i.HorizontalCenter >= AreaLeft &&
+                        AreaRight >= i.HorizontalCenter)
+                        match.Add((FrameworkElement)i);
+                }
+                else
+                {
+                    if (Canvas.GetLeft(e) >= AreaLeft &&
+                        AreaRight >= (Canvas.GetLeft(e) + e.Width))
+                        match.Add(e);
+                }
+            }
+
+            return match;
+        }
+
         public static void SetCursorFromResource(string resourceName)
         {
             System.Windows.Resources.StreamResourceInfo info = Application.GetResourceStream(new Uri(resourceName, UriKind.Relative));

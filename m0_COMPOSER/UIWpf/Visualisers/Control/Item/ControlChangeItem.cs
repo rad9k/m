@@ -36,7 +36,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control.Item
             Canvas.Children.Remove(CCTop);
         }        
 
-        public bool IsNote;
+        public bool IsNoteOrTrigger;
 
         IEdge baseEdge;
 
@@ -47,8 +47,8 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control.Item
             set {
                 baseEdge = value;
 
-                if (baseEdge.To.Get(false, "$Is:NoteEvent") != null)
-                    IsNote = true;
+                if ((baseEdge.To.Get(false, "$Is:NoteEvent") != null) || (baseEdge.To.Get(false, "$Is:Trigger") != null) )
+                    IsNoteOrTrigger = true;
             }
         }
 
@@ -181,7 +181,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control.Item
 
             IVertex r = MinusZero.Instance.Root;
 
-            if (IsNote)
+            if (IsNoteOrTrigger)
             {
                 IVertex NoteEvent = r.Get(false, @"System\Lib\Music\NoteEvent");
 

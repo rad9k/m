@@ -1049,9 +1049,9 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             UpdateCursorShape();
         }
 
-        protected IList<FrameworkElement> GetElementsAtFromListByArea(List<FrameworkElement> Items, double left, double top, double right)
+        protected virtual IList<FrameworkElement> GetElementsAtFromListByArea(List<FrameworkElement> Items, double left, double top, double right, double bottom)
         {
-
+            return WpfUtil.GetElementsAtFromListByArea(Items, left, top, right, bottom);
         }
 
         protected void ArrowMove_ArrowDown(object sender, MouseEventArgs e)
@@ -1060,7 +1060,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             SelectionArea.MoveSelectionArea(currentMousePosition);
 
-            IList<FrameworkElement> matched = WpfUtil.GetElementsAtFromListByArea(Items, SelectionArea.Left - 2, SelectionArea.Top - 2, SelectionArea.Right + 2, SelectionArea.Bottom + 2);
+            IList<FrameworkElement> matched = GetElementsAtFromListByArea(Items, SelectionArea.Left - 2, SelectionArea.Top - 2, SelectionArea.Right + 2, SelectionArea.Bottom + 2);
 
             foreach (FrameworkElement _e in Items)
                 if (_e is IItem)
@@ -1078,7 +1078,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
         protected void SaveSelectionArea()
         {
-            IList<FrameworkElement> matched = WpfUtil.GetElementsAtFromListByArea(Items, SelectionArea.Left - 2, SelectionArea.Top - 2, SelectionArea.Right + 2, SelectionArea.Bottom + 2);
+            IList<FrameworkElement> matched = GetElementsAtFromListByArea(Items, SelectionArea.Left - 2, SelectionArea.Top - 2, SelectionArea.Right + 2, SelectionArea.Bottom + 2);
 
             UnselectAllSelectedEdges();
 
@@ -1636,7 +1636,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             return null;
         }
 
-        protected IEdge AddItemEdge_Down(double mouseY, double startPosition, out bool isUpdate, out bool isNoteEvent)
+        protected virtual IEdge AddItemEdge_Down(double mouseY, double startPosition, out bool isUpdate, out bool isNoteEvent)
         {
             isUpdate = false;
 
@@ -1822,25 +1822,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             NeedToRebuildItemsDictionary_Down = false;
         }
 
-        protected void DrawItems_Down()
-        {
-            List<IVertex> selectedVertexes = GetSelectedVertexes();
-
-            if (CurrentControlChangeNumber == -1)
-            {
-                foreach (IEdge e in baseVertex.GetAll(false, "Event:"))
-                    if (GraphUtil.ExistQueryOut(e.To, "$Is", "NoteEvent"))
-                        if(ApplyFilter_Down(e.To))
-                            AddItem_Down(e, selectedVertexes, false, true);
-            }
-            else
-            {
-                foreach (IEdge e in baseVertex.GetAll(false, "Event:"))
-                    if (GraphUtil.ExistQueryOut(e.To, "$Is", "ControlChangeEvent")
-                        && GraphUtil.GetIntegerValue(e.To.Get(false, @"Number:")) == CurrentControlChangeNumber)
-                        AddItem_Down(e, selectedVertexes, false, false);
-            }
-        }
+        protected virtual void DrawItems_Down() { }
 
         private void PenMove_PenDown_Down(object sender, MouseEventArgs e)
         {
@@ -1905,7 +1887,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             SelectionArea_Down.MoveSelectionArea(currentMousePosition);
 
-            IList<FrameworkElement> matched = WpfUtil.GetElementsAtFromListByArea(Items_Down,
+            IList<FrameworkElement> matched = GetElementsAtFromListByArea(Items_Down,
                 SelectionArea_Down.Left - 2,
                 SelectionArea_Down.Top - 2,
                 SelectionArea_Down.Right + 2,
@@ -1927,7 +1909,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
         protected void SaveSelectionArea_Down()
         {
-            IList<FrameworkElement> matched = WpfUtil.GetElementsAtFromListByArea(Items_Down,
+            IList<FrameworkElement> matched = GetElementsAtFromListByArea(Items_Down,
                 SelectionArea_Down.Left - 2,
                 SelectionArea_Down.Top - 2,
                 SelectionArea_Down.Right + 2,

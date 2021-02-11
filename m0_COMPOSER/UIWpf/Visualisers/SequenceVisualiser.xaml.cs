@@ -593,6 +593,12 @@ namespace m0_COMPOSER.UIWpf.Visualisers
                         int triggerTime = GraphUtil.GetIntegerValue(v.Get(false, "TriggerTime:"), ref o) - minPosition + PositionMark;
                         int length = GraphUtil.GetIntegerValue(v.Get(false, "Length:"), ref o);
 
+                        if (triggerTime > maxPosition)
+                            maxPosition = triggerTime;
+
+                        if ((length + triggerTime) > maxPosition)
+                            maxPosition = length + triggerTime;
+
                         if (isClipboardCopy)
                             newEdge = AddNoteVertex(v.Get(false, "Octave:"),
                                 v.Get(false, "Note:"),
@@ -677,6 +683,26 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             GraphUtil.SetVertexValue(noteEventVertex, noteEvent.Get(false, @"Attribute:Number"), number);
             GraphUtil.SetVertexValue(noteEventVertex, noteEvent.Get(false, @"Attribute:Value"), value);
             GraphUtil.SetVertexValue(noteEventVertex, noteEvent.Get(false, @"Attribute:TriggerTime"), triggerTime);
+        }
+
+        protected override void DrawItems_Down()
+        {
+            List<IVertex> selectedVertexes = GetSelectedVertexes();
+
+            if (CurrentControlChangeNumber == -1)
+            {
+                foreach (IEdge e in baseVertex.GetAll(false, "Event:"))
+                    if (GraphUtil.ExistQueryOut(e.To, "$Is", "NoteEvent"))
+                        if (ApplyFilter_Down(e.To))
+                            AddItem_Down(e, selectedVertexes, false, true);
+            }
+            else
+            {
+                foreach (IEdge e in baseVertex.GetAll(false, "Event:"))
+                    if (GraphUtil.ExistQueryOut(e.To, "$Is", "ControlChangeEvent")
+                        && GraphUtil.GetIntegerValue(e.To.Get(false, @"Number:")) == CurrentControlChangeNumber)
+                        AddItem_Down(e, selectedVertexes, false, false);
+            }
         }
     }
 }

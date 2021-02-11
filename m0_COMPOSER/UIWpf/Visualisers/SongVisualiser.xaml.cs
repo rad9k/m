@@ -928,7 +928,16 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
                     if (v.Get(false, "$Is:SequenceEvent") != null) // SequenceEvent
                     {
-                        int triggerTime = GraphUtil.GetIntegerValue(v.Get(false, "TriggerTime:"), ref o) - minPosition + PositionMark;                        
+                        int triggerTime = GraphUtil.GetIntegerValue(v.Get(false, "TriggerTime:"), ref o) - minPosition + PositionMark;
+
+                        int length = GraphUtil.GetIntegerValue(v.Get(false, @"Sequence:\Length:"), ref o);
+
+
+                        if (triggerTime > maxPosition)
+                            maxPosition = triggerTime;
+
+                        if ((length + triggerTime) > maxPosition)
+                            maxPosition = length + triggerTime;
 
                         if (isClipboardCopy)
                             newEdge = CopySequenceVertex(v, triggerTime);
