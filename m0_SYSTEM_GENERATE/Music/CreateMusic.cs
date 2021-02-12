@@ -593,6 +593,7 @@ namespace m0_SYSTEM_GENERATE.Music
             // MELODYFLOWSTEP
 
             IVertex MelodyFlowStep = GraphUtil.AddClass(MusicGenerator, "MelodyFlowStep");
+            GraphUtil.AddInherits(MelodyFlowStep, Event);
             GraphUtil.AddAttribute(MelodyFlowStep, "MelodyFlow", Pitch, 1, 1);
             GraphUtil.AddAttribute(MelodyFlowStep, "Velocity", Integer, 0, 1);
             GraphUtil.AddAggregation(MelodyFlowStep, "ControlChange", ControlChange, 0, -1);
@@ -607,6 +608,7 @@ namespace m0_SYSTEM_GENERATE.Music
             // DRUMFLOWHIT
 
             IVertex DrumFlowHit = GraphUtil.AddClass(MusicGenerator, "DrumFlowHit");
+            GraphUtil.AddInherits(DrumFlowHit, Event);
             GraphUtil.AddAttribute(DrumFlowHit, "MelodyFlow", Pitch, 1, 1);            
             GraphUtil.AddAttribute(DrumFlowHit, "Velocity", Integer, 0, 1);
             GraphUtil.AddAggregation(DrumFlowHit, "ControlChange", ControlChange, 0, -1);
