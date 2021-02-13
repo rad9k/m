@@ -335,6 +335,7 @@ namespace m0_SYSTEM_GENERATE.Music
         static IVertex Float = r.Get(false, @"System\Meta\ZeroTypes\Float");
         static IVertex Color = r.Get(false, @"System\Meta\ZeroTypes\Color");
 
+        static IVertex Note;
         static IVertex Pitch;
         static IVertex ControlChange;
         static IVertex Event;
@@ -431,11 +432,11 @@ namespace m0_SYSTEM_GENERATE.Music
 
             // NOTE
 
-            IVertex Note = GraphUtil.AddClass(Music, "Note");
+            Note = GraphUtil.AddClass(Music, "Note");
 
             GraphUtil.AddInherits(Note, Pitch);
 
-            GraphUtil.AddAttribute(Note, "Velocity", Integer, 1, 1);
+            GraphUtil.AddAttribute(Note, "Velocity", Integer, 0, 1);
 
             // NOTEEVENT
 
@@ -590,12 +591,19 @@ namespace m0_SYSTEM_GENERATE.Music
 
         public static void AddMusicGeneratorClasses()
         {
+            IVertex MelodyFlowQuantTypeEnum = GraphUtil.AddEnum(MusicGenerator, "MelodyFlowQuantTypeEnum", new String[] { "Note", "ChordIndex" });
+
+
+            // MELODYFLOWQUANT
+
+            IVertex MelodyFlowQuant = GraphUtil.AddClass(MusicGenerator, "MelodyFlowQuant");
+            GraphUtil.AddInherits(MelodyFlowQuant, Note);            
+            GraphUtil.AddAttribute(MelodyFlowQuant, "Velocity", Integer, 0, 1);
+
+
             // MELODYFLOWSTEP
 
             IVertex MelodyFlowStep = GraphUtil.AddClass(MusicGenerator, "MelodyFlowStep");
-            GraphUtil.AddInherits(MelodyFlowStep, Event);
-            GraphUtil.AddAttribute(MelodyFlowStep, "MelodyFlow", Pitch, 1, 1);
-            GraphUtil.AddAttribute(MelodyFlowStep, "Velocity", Integer, 0, 1);
             GraphUtil.AddAggregation(MelodyFlowStep, "ControlChange", ControlChange, 0, -1);
 
             // MELODYFLOW
@@ -603,27 +611,7 @@ namespace m0_SYSTEM_GENERATE.Music
             IVertex MelodyFlow = GraphUtil.AddClass(MusicGenerator, "MelodyFlow");
             GraphUtil.AddAggregation(MelodyFlow, "Step", MelodyFlowStep, 0, -1);
 
-            MelodyFlow.AddEdge(r.Get(false, @"System\Meta\Base\Vertex\$DefaultOpenVisualiser"), r.Get(false, @"System\Meta\Visualiser\MelodyFlow"));
-
-            // DRUMFLOWHIT
-
-            IVertex DrumFlowHit = GraphUtil.AddClass(MusicGenerator, "DrumFlowHit");
-            GraphUtil.AddInherits(DrumFlowHit, Event);
-            GraphUtil.AddAttribute(DrumFlowHit, "MelodyFlow", Pitch, 1, 1);            
-            GraphUtil.AddAttribute(DrumFlowHit, "Velocity", Integer, 0, 1);
-            GraphUtil.AddAggregation(DrumFlowHit, "ControlChange", ControlChange, 0, -1);
-
-            // DRUMFLOWSTEP
-
-            IVertex DrumFlowStep = GraphUtil.AddClass(MusicGenerator, "DrumFlowStep");
-            GraphUtil.AddAggregation(DrumFlowStep, "DrumFlowHit", DrumFlowHit, 0, -1);
-
-            // DRUMFLOW
-
-            IVertex DrumFlow = GraphUtil.AddClass(MusicGenerator, "DrumFlow");            
-            GraphUtil.AddAssociation(DrumFlow, "DrumFlowStep", DrumFlowStep, 0, -1);
-
-            DrumFlow.AddEdge(r.Get(false, @"System\Meta\Base\Vertex\$DefaultOpenVisualiser"), r.Get(false, @"System\Meta\Visualiser\DrumFlow"));
+            MelodyFlow.AddEdge(r.Get(false, @"System\Meta\Base\Vertex\$DefaultOpenVisualiser"), r.Get(false, @"System\Meta\Visualiser\MelodyFlow"));                        
 
             // TRIGGER
 
