@@ -106,7 +106,7 @@ namespace m0_COMPOSER.Lib
             set
             {
                 if(value == MelodyFlowQuantTypeEnum.Note)
-                    GraphUtil.CreateOrReplaceEdge(QuantVertex, quantTypeMeta, )
+                    GraphUtil.CreateOrReplaceEdge(QuantVertex, quantTypeMeta, noteEnumValue)
                     (QuantVertex, octaveMeta, value);
             }
         }
