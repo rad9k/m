@@ -53,7 +53,7 @@ namespace m0_COMPOSER.Lib
         static IVertex quantTypeMeta = r.Get(false, @"System\Lib\Music\Generator\MelodyFlowQuant\QuantType");
 
         static IVertex noteEnumMeta = r.Get(false, @"System\Lib\Music\Generator\MelodyFlowQuantType\Note");
-        static IVertex chordIndexEnumMeta = r.Get(false, @"System\Lib\Music\Generator\MelodyFlowQuantType\Note");
+        static IVertex chordIndexEnumMeta = r.Get(false, @"System\Lib\Music\Generator\MelodyFlowQuantType\ChordIndex");
 
 
         public int Octave
