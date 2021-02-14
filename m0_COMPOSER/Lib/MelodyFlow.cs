@@ -2,6 +2,7 @@
 using m0.Foundation;
 using m0.Graph;
 using m0.Util;
+using m0.ZeroTypes;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -40,7 +41,9 @@ namespace m0_COMPOSER.Lib
 
     public class MelodyFlowQuant
     {        
-        public IVertex QuantVertex;        
+        public IVertex QuantVertex;
+
+        bool isAttached = false;
 
         public MelodyFlow MelodyFlow;
 
@@ -56,72 +59,109 @@ namespace m0_COMPOSER.Lib
         static IVertex chordIndexEnumValue = r.Get(false, @"System\Lib\Music\Generator\MelodyFlowQuantType\ChordIndex");
 
 
+        int octave;
         public int Octave
         {
             get
             {
-                return GraphUtil.GetIntegerValueOr0(QuantVertex.Get(false, "Octave:"));
+                if (QuantVertex == null)
+                    return octave;
+                else
+                    return GraphUtil.GetIntegerValueOr0(QuantVertex.Get(false, "Octave:"));
             }
             set
-            {                
-                GraphUtil.SetVertexValue(QuantVertex, octaveMeta, value);
+            {
+                if (QuantVertex == null)
+                    octave = value;
+                else
+                    GraphUtil.SetVertexValue(QuantVertex, octaveMeta, value);
             }
         }
 
+        int note;
         public int Note
         {
             get
             {
-                return GraphUtil.GetIntegerValueOr0(QuantVertex.Get(false, "Note:"));
+                if (QuantVertex == null)
+                    return note;
+                else
+                    return GraphUtil.GetIntegerValueOr0(QuantVertex.Get(false, "Note:"));
             }
             set
             {
-                GraphUtil.SetVertexValue(QuantVertex, noteMeta, value);
+                if (QuantVertex == null)
+                    note = value;
+                else
+                    GraphUtil.SetVertexValue(QuantVertex, noteMeta, value);
             }
         }
 
+        int velocity;
         public int Velocity
         {
             get
             {
-                return GraphUtil.GetIntegerValueOr0(QuantVertex.Get(false, "Velocity:"));
+                if (QuantVertex == null)
+                    return velocity;
+                else
+                    return GraphUtil.GetIntegerValueOr0(QuantVertex.Get(false, "Velocity:"));
             }
             set
             {
-                GraphUtil.SetVertexValue(QuantVertex, velocityMeta, value);
+                if (QuantVertex == null)
+                    octave = value;
+                else
+                    GraphUtil.SetVertexValue(QuantVertex, velocityMeta, value);
             }
         }
 
+        MelodyFlowQuantTypeEnum quantType;
         public MelodyFlowQuantTypeEnum QuantType
         {
             get
             {
-                IVertex quantTypeVertex = QuantVertex.Get(false, "QuantType:");
+                if (QuantVertex == null)
+                    return quantType;
+                else
+                {
+                    IVertex quantTypeVertex = QuantVertex.Get(false, "QuantType:");
 
-                if (quantTypeVertex != null && GeneralUtil.CompareStrings(quantTypeVertex.Value, "ChordIndex"))
-                    return MelodyFlowQuantTypeEnum.ChordIndex;
+                    if (quantTypeVertex != null && GeneralUtil.CompareStrings(quantTypeVertex.Value, "ChordIndex"))
+                        return MelodyFlowQuantTypeEnum.ChordIndex;
 
-                return MelodyFlowQuantTypeEnum.Note;
+                    return MelodyFlowQuantTypeEnum.Note;
+                }
             }
             set
             {
-                if (value == MelodyFlowQuantTypeEnum.Note)
-                    GraphUtil.CreateOrReplaceEdge(QuantVertex, quantTypeMeta, noteEnumValue);
+                if (QuantVertex == null)
+                    quantType = value;
+                else
+                {
+                    if (value == MelodyFlowQuantTypeEnum.Note)
+                        GraphUtil.CreateOrReplaceEdge(QuantVertex, quantTypeMeta, noteEnumValue);
 
-                if (value == MelodyFlowQuantTypeEnum.ChordIndex)
-                    GraphUtil.CreateOrReplaceEdge(QuantVertex, quantTypeMeta, chordIndexEnumValue);
+                    if (value == MelodyFlowQuantTypeEnum.ChordIndex)
+                        GraphUtil.CreateOrReplaceEdge(QuantVertex, quantTypeMeta, chordIndexEnumValue);
+                }
             }
         }
 
         public MelodyFlowQuant(MelodyFlow _MelodyFlow, IVertex _QuantVertex)
         {
             MelodyFlow = _MelodyFlow;
-            QuantVertex = _QuantVertex;            
+            QuantVertex = _QuantVertex;
+
+            if(GetParentStepVertex() != null)
+                isAttached = true;
         }
 
         public MelodyFlowQuant(MelodyFlow _MelodyFlow)
         {
-            MelodyFlow = _MelodyFlow;                        
+            MelodyFlow = _MelodyFlow;
+
+            isAttached = false;
         }
 
         IVertex GetParentStepVertex()
@@ -131,18 +171,34 @@ namespace m0_COMPOSER.Lib
 
         public void Remove()
         {
-            IVertex stepVertex = GetParentStepVertex();
+            if (isAttached)
+            {
+                IVertex stepVertex = GetParentStepVertex();
 
-            IEdge quantEdge = GraphUtil.FindEdge(stepVertex, quantMeta, QuantVertex);
+                IEdge quantEdge = GraphUtil.FindEdge(stepVertex, quantMeta, QuantVertex);
 
-            stepVertex.DeleteEdge(quantEdge);
+                stepVertex.DeleteEdge(quantEdge);
+
+                isAttached = false;
+            }
         }
 
-        public void MoveToStep(int stepPosition)
+        public void PutOrMoveToStep(int stepPosition)
         {
             Remove();
 
             IVertex toStepVertex = MelodyFlow.GetStep(stepPosition).StepVertex;
+
+            bool sameQuantTypeExists = false;
+
+            if (toStepVertex.Get(false, "QuantType:" + QuantType.ToString()) != null)
+                sameQuantTypeExists = true;
+
+            if (sameQuantTypeExists)
+            {
+                MelodyFlow.InsertStepAt(stepPosition);
+                toStepVertex = MelodyFlow.GetStep(stepPosition).StepVertex;
+            }
 
             toStepVertex.AddEdge(quantMeta, QuantVertex);            
         }               
@@ -153,6 +209,10 @@ namespace m0_COMPOSER.Lib
         IVertex baseVertex;
 
         public bool IsDrum;
+
+        static IVertex r = MinusZero.Instance.Root;
+
+        static IVertex stepMeta = r.Get(false, @"System\Lib\Music\Generator\MelodyFlow\Step");
 
         public MelodyFlow(IVertex _baseVertex)
         {
@@ -170,11 +230,26 @@ namespace m0_COMPOSER.Lib
         public MelodyFlowStep GetStep(int stepPosition)
         {
             return new MelodyFlowStep(this, baseVertex.Get(false, "Step:<<"+stepPosition+">>"));
-        }
-        
-        public MelodyFlowStep InsertStepAt(int stepPosition)
+        }                       
+
+        public void InsertStepAt(int stepPosition)
         {
-            return null;
+            List<IEdge> edgesToDelete = new List<IEdge>();
+
+            foreach (IEdge e in baseVertex.GetAll(false, "Step:"))
+                edgesToDelete.Add(e);
+
+            foreach (IEdge e in edgesToDelete)
+                baseVertex.DeleteEdge(e);
+
+            int cnt = 0;
+            foreach (IEdge e in edgesToDelete)
+            {
+                if (cnt == stepPosition)
+                    VertexOperations.AddInstance(baseVertex, stepMeta);
+
+                baseVertex.AddEdge(stepMeta, e.To);
+            }                
         }
     }
 }
