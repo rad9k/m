@@ -765,6 +765,19 @@ namespace m0.Graph
             return false;
         }
 
+        static public bool GetBooleanValueOrFalse(IVertex Vertex)
+        {
+            if (Vertex == null || Vertex.Value == null)                            
+                return false;            
+
+            string val = Vertex.Value.ToString();
+
+            if (val == "True" || val == "true" || val == "1" || val == "1.0")
+                return true;
+
+            return false;
+        }
+
         static public int GetIntegerValue(IVertex Vertex, ref bool isNull)
         {
             int? ret = GetIntegerValue(Vertex);
@@ -774,6 +787,16 @@ namespace m0.Graph
                 isNull = true;
                 return 0;
             }
+
+            return (int)ret;
+        }
+
+        static public int GetIntegerValueOr0(IVertex Vertex)
+        {
+            int? ret = GetIntegerValue(Vertex);
+
+            if (ret == null)                            
+                return 0;            
 
             return (int)ret;
         }
@@ -816,6 +839,16 @@ namespace m0.Graph
             return (decimal)ret;
         }
 
+        static public decimal GetDecimalValueOr0(IVertex Vertex)
+        {
+            decimal? ret = GetDecimalValue(Vertex);
+
+            if (ret == null)                            
+                return 0;            
+
+            return (decimal)ret;
+        }
+
         static public double? GetDoubleValue(IVertex Vertex)
         {
             if (Vertex != null && Vertex.Value != null)
@@ -850,6 +883,16 @@ namespace m0.Graph
                 isNull = true;
                 return 0;
             }
+
+            return (double)ret;
+        }
+
+        static public double GetDoubleValueOr0(IVertex Vertex)
+        {
+            double? ret = GetDoubleValue(Vertex);
+
+            if (ret == null)                            
+                return 0;            
 
             return (double)ret;
         }

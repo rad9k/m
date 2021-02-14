@@ -599,16 +599,19 @@ namespace m0_SYSTEM_GENERATE.Music
             IVertex MelodyFlowQuant = GraphUtil.AddClass(MusicGenerator, "MelodyFlowQuant");
             GraphUtil.AddInherits(MelodyFlowQuant, Note);            
             GraphUtil.AddAttribute(MelodyFlowQuant, "Velocity", Integer, 0, 1);
+            GraphUtil.AddAttribute(MelodyFlowQuant, "QuantType", MelodyFlowQuantTypeEnum, 1, 1);
 
 
             // MELODYFLOWSTEP
 
             IVertex MelodyFlowStep = GraphUtil.AddClass(MusicGenerator, "MelodyFlowStep");
+            GraphUtil.AddAggregation(MelodyFlowStep, "Quant", MelodyFlowQuant, 0, -1);
             GraphUtil.AddAggregation(MelodyFlowStep, "ControlChange", ControlChange, 0, -1);
 
             // MELODYFLOW
 
             IVertex MelodyFlow = GraphUtil.AddClass(MusicGenerator, "MelodyFlow");
+            GraphUtil.AddAttribute(MelodyFlow, "IsDrum", Boolean, 0, 1);
             GraphUtil.AddAggregation(MelodyFlow, "Step", MelodyFlowStep, 0, -1);
 
             MelodyFlow.AddEdge(r.Get(false, @"System\Meta\Base\Vertex\$DefaultOpenVisualiser"), r.Get(false, @"System\Meta\Visualiser\MelodyFlow"));                        

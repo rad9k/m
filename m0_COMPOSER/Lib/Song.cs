@@ -31,13 +31,9 @@ namespace m0_COMPOSER.Lib
         static IVertex eventMeta = r.Get(false, @"System\Lib\Music\Sequence\Event");
 
         static IVertex sequenceEventAttributeMeta = r.Get(false, @"System\Lib\Music\Track\SequenceEvent");
-
         static IVertex sequenceEventMeta = r.Get(false, @"System\Lib\Music\SequenceEvent");
-
         static IVertex triggerTimeMeta = r.Get(false, @"System\Lib\Music\SequenceEvent\TriggerTime");
-
         static IVertex sequenceMeta = r.Get(false, @"System\Lib\Music\Sequence");
-
         static IVertex sequenceIsDrumMeta = r.Get(false, @"System\Lib\Music\Sequence\IsDrum");
 
         public static IEdge AddSequenceEventVertex(IVertex trackVertex, double startPosition, double lengthPosition)

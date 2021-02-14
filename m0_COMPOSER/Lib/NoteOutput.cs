@@ -12,7 +12,7 @@ namespace m0_COMPOSER.Lib
 {
     public class NoteOutput
     {
-        static int toNoteNumber(int octave, int note)
+        static int ToNoteNumber(int octave, int note)
         {
             return 12 + note + (octave * 12);
         }
@@ -44,7 +44,7 @@ namespace m0_COMPOSER.Lib
             if (isNull)
                 return stack;
 
-            int noteNumber = toNoteNumber(octave, note);
+            int noteNumber = ToNoteNumber(octave, note);
 
             Midi.WinmmMidiLib.NoteOn(deviceNumber, channel, noteNumber, velocity);
 
@@ -78,7 +78,7 @@ namespace m0_COMPOSER.Lib
             if (isNull)
                 return stack;
 
-            int noteNumber = toNoteNumber(octave, note);
+            int noteNumber = ToNoteNumber(octave, note);
 
             Midi.WinmmMidiLib.NoteOff(deviceNumber, channel, noteNumber, velocity);
 
