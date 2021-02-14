@@ -52,8 +52,8 @@ namespace m0_COMPOSER.Lib
         static IVertex velocityMeta = r.Get(false, @"System\Lib\Music\Generator\MelodyFlowQuant\Velocity");
         static IVertex quantTypeMeta = r.Get(false, @"System\Lib\Music\Generator\MelodyFlowQuant\QuantType");
 
-        static IVertex noteEnumMeta = r.Get(false, @"System\Lib\Music\Generator\MelodyFlowQuantType\Note");
-        static IVertex chordIndexEnumMeta = r.Get(false, @"System\Lib\Music\Generator\MelodyFlowQuantType\ChordIndex");
+        static IVertex noteEnumValue = r.Get(false, @"System\Lib\Music\Generator\MelodyFlowQuantType\Note");
+        static IVertex chordIndexEnumValue = r.Get(false, @"System\Lib\Music\Generator\MelodyFlowQuantType\ChordIndex");
 
 
         public int Octave
@@ -105,9 +105,11 @@ namespace m0_COMPOSER.Lib
             }
             set
             {
-                if(value == MelodyFlowQuantTypeEnum.Note)
-                    GraphUtil.CreateOrReplaceEdge(QuantVertex, quantTypeMeta, noteEnumValue)
-                    (QuantVertex, octaveMeta, value);
+                if (value == MelodyFlowQuantTypeEnum.Note)
+                    GraphUtil.CreateOrReplaceEdge(QuantVertex, quantTypeMeta, noteEnumValue);
+
+                if (value == MelodyFlowQuantTypeEnum.ChordIndex)
+                    GraphUtil.CreateOrReplaceEdge(QuantVertex, quantTypeMeta, chordIndexEnumValue);
             }
         }
 
@@ -119,9 +121,7 @@ namespace m0_COMPOSER.Lib
 
         public MelodyFlowQuant(MelodyFlow _MelodyFlow)
         {
-            MelodyFlow = _MelodyFlow;            
-
-            IsAttached = true;
+            MelodyFlow = _MelodyFlow;                        
         }
 
         IVertex GetParentStepVertex()
@@ -152,9 +152,14 @@ namespace m0_COMPOSER.Lib
     {
         IVertex baseVertex;
 
+        public bool IsDrum;
+
         public MelodyFlow(IVertex _baseVertex)
         {
             baseVertex = _baseVertex;
+
+            if (GraphUtil.GetBooleanValueOrFalse(baseVertex.Get(false, "IsDrum:")))
+                IsDrum = true;
         }
 
         public int GetNumberOfSteps()
