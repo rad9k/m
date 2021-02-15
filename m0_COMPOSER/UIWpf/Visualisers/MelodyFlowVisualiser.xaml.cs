@@ -89,7 +89,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             if (baseVertex == null)
                 return;            
 
-            if (baseVertex.Get(false, "$Is:Sequence") == null)
+            if (baseVertex.Get(false, "$Is:MelodyFlow") == null)
             {
                 baseVertex = null;
                 return;
@@ -97,13 +97,11 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             IVertex r = MinusZero.Instance.Root;
 
-            verticalSpanVertex = baseVertex.Get(false, "PitchSet:");
-
-            if (verticalSpanVertex == null)
-                if (IsDrum)
-                    verticalSpanVertex = r.Get(false, @"System\Lib\Music\Data\DefaultDrumPitchSet:");
-                else
-                    verticalSpanVertex = r.Get(false, @"System\Lib\Music\Data\DefaultPitchSet:");
+            
+            if (IsDrum)
+                verticalSpanVertex = r.Get(false, @"System\Lib\Music\Data\DefaultDrumPitchSet:");
+            else
+                verticalSpanVertex = r.Get(false, @"System\Lib\Music\Generator\Data\FlowPitchSet");
 
             horizontalSpanVertex = baseVertex.Get(false, "TimeSpan:");
 
@@ -138,23 +136,8 @@ namespace m0_COMPOSER.UIWpf.Visualisers
         }        
 
         protected override void SetupLocalVariablesFromBaseVertexVertexes()
-        {
-            if (baseVertex.Get(false, "ExtendTimeLength:") != null)
-                ExtendTimeLength = (int)GraphUtil.GetIntegerValue(baseVertex.Get(false, "ExtendTimeLength:"));
-            else
-                ExtendTimeLength = Midi.Standard.MidiTicksPerSixteen * 16; // default
-
-            if (baseVertex.Get(false, "Length:") != null)
-                Length = (int)GraphUtil.GetIntegerValue(baseVertex.Get(false, "Length:"));
-            else
-                Length = ExtendTimeLength;
-
-            SaveLength();
-
-
-            bool dummy = false;
-
-            IsDrum = GraphUtil.GetBooleanValue(baseVertex.Get(false, "IsDrum:"), ref dummy);
+        {            
+            IsDrum = GraphUtil.GetBooleanValueOrFalse(baseVertex.Get(false, "IsDrum:"));
 
             if (IsDrum)
                 IsCurrentPenItemCenter = true;

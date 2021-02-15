@@ -133,6 +133,8 @@ namespace m0_SYSTEM_GENERATE.Music
 
             AddRealTimeSpanStructure();
 
+            AddNumberSpanStructure();
+
             AddDefaultControlChangeDescription();
         }        
 
@@ -265,6 +267,16 @@ namespace m0_SYSTEM_GENERATE.Music
             Data.AddEdge(Music.Get(false, "DefaultRealTimeSpanLevel"), minute);
         }
 
+        private static void AddNumberSpanStructure()
+        {
+            IVertex minute = AddTimeSpan(Data, "Ten", 10, Music.Get(false, @"TimeSpanLevel"));
+
+            IVertex second = AddTimeSpan(minute, "One", 1, Music.Get(false, @"TimeSpanLevel\SubLevel"));                        
+
+            Data.AddEdge(Music.Get(false, "DefaultNumberSpanLevel"), minute);
+        }
+
+
         static void AddDefaultControlChangeDescription()
         {
             IVertex b = VertexOperations.AddInstance(Data, ControlChangeDescriptionSet);
@@ -319,6 +331,8 @@ namespace m0_SYSTEM_GENERATE.Music
             GraphUtil.AddMetaEdge(Music, "DefaultRealTimeSpanLevel", Music.Get(false, "TimeSpanLevel"));
 
             GraphUtil.AddMetaEdge(Music, "BaseRealTimeSpanLevel", Music.Get(false, "TimeSpanLevel"));
+
+            GraphUtil.AddMetaEdge(Music, "NumberSpanLevel", Music.Get(false, "TimeSpanLevel"));
 
             GraphUtil.AddMetaEdge(Music, "DefaultControlChangeDescriptionSet", Music.Get(false, "ControlChangeDescriptionSet"));
         }
@@ -648,7 +662,7 @@ namespace m0_SYSTEM_GENERATE.Music
 
             b.Value = "FlowPitchSet";
             
-            for (int x = -11; x <= 11; x++)
+            for (int x = 11; x >= -11; x--)
             {
                 IVertex color = r.Get(false, @"System\Data\UX\Colors\Gray"+Math.Abs(x));
 
