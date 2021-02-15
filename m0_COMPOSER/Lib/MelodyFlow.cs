@@ -191,7 +191,7 @@ namespace m0_COMPOSER.Lib
 
             bool sameQuantTypeExists = false;
 
-            if (toStepVertex.Get(false, "QuantType:" + QuantType.ToString()) != null)
+            if (!MelodyFlow.IsDrum && toStepVertex.Get(false, "QuantType:" + QuantType.ToString()) != null)
                 sameQuantTypeExists = true;
 
             if (sameQuantTypeExists)
