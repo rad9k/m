@@ -96,7 +96,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control
             timeSpanLevel thisLevel = timeSpanStructure[level];
 
             int textCount = 0;
-
+            Length = 100;
             for (int cnt = 0; cnt < Length; cnt += thisLevel.BaseMusicTimeSpanLevelCountForThisLevel)
             {                
                 double horizontalPosition = cnt * baseUnitSize;
@@ -243,7 +243,6 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control
 
 
             if(zoomFactor > 50)
-                //baseUnitSize = 0.02 + (1.0 / 5 * ((zoomFactor / 5) - 10));
                 baseUnitSize = -2.427 + (zoomFactor / 20 );
             else
                 baseUnitSize = 0.018 + (1.0 / 30 * zoomFactor / 30);

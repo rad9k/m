@@ -664,7 +664,7 @@ namespace m0_SYSTEM_GENERATE.Music
             
             for (int x = 11; x >= -11; x--)
             {
-                IVertex color = r.Get(false, @"System\Data\UX\Colors\Gray"+Math.Abs(x));
+                IVertex color = r.Get(false, @"System\Data\UX\Colors\Gray"+(11 - Math.Abs(x)));
 
                 AddPitch(b, 0, x, x.ToString(), color, null);                
             }
