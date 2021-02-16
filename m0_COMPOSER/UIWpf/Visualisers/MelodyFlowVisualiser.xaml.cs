@@ -106,7 +106,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             horizontalSpanVertex = baseVertex.Get(false, "TimeSpan:");
 
             if (horizontalSpanVertex == null)
-                horizontalSpanVertex = r.Get(false, @"System\Lib\Music\Data\DefaultMusicTimeSpanLevel:");
+                horizontalSpanVertex = r.Get(false, @"System\Lib\Music\Data\DefaultNumberSpanLevel:");
         }
 
         protected override void SetAxisDecorators()
@@ -120,8 +120,9 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             if (HorizontalAD == null)
             {
-                MusicTimeSpanAxisDecorator TimeSpanAD = new MusicTimeSpanAxisDecorator(this);
-                TimeSpanAD.BoldLineCount = 4;
+                NumberSpanAxisDecorator TimeSpanAD = new NumberSpanAxisDecorator(this);
+
+                TimeSpanAD.BoldLineCount = 10;
 
                 HorizontalAD = TimeSpanAD;
 

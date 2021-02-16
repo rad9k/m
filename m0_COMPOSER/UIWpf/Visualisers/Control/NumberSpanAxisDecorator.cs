@@ -18,11 +18,11 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control
     {      
         public NumberSpanAxisDecorator(ZoomScrollViewBasedVisualiserBase _visualiser) : base()
         {
-            segmentLength = 60 * 100;
+            segmentLength = 1;
 
             visualiser = _visualiser;
 
-            Length = 100;
+            Length = 200;
         }
 
         public int BoldLineCount;        
@@ -96,7 +96,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control
             timeSpanLevel thisLevel = timeSpanStructure[level];
 
             int textCount = 0;
-            Length = 100;
+            Length = 200;
             for (int cnt = 0; cnt < Length; cnt += thisLevel.BaseMusicTimeSpanLevelCountForThisLevel)
             {                
                 double horizontalPosition = cnt * baseUnitSize;
@@ -167,7 +167,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control
 
             IVertex r = m0.MinusZero.Instance.root;
 
-            IVertex BaseMusicTimeSpanLevelVertex = r.Get(false, @"System\Lib\Music\Data\DefaultNumberSpanLevel:");
+            IVertex BaseMusicTimeSpanLevelVertex = r.Get(false, @"System\Lib\Music\Data\BaseNumberSpanLevel:");
 
             GetTimeSpanStructureDeepLevel_Reccurent(baseVertex, BaseMusicTimeSpanLevelVertex, 0);
 
@@ -191,12 +191,12 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control
 
             int baseUnit = timeSpanStructure[timeSpanLevels - 2].BaseMusicTimeSpanLevelCountForThisLevel;
 
-            int nextUnitBaseCountMax = timeSpanStructure[timeSpanLevels - 3].length;
+            int nextUnitBaseCountMax = timeSpanStructure[timeSpanLevels - 2].length;
 
             Segments = new List<AxisSegment>();            
 
             int nextUnitBaseCount = 0;
-            Length = 100;
+            Length = 200;
             for (int cnt = 0; cnt <= Length ; cnt += baseUnit)
             {
                 AxisSegment segment = new AxisSegment();
@@ -246,6 +246,8 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control
                 baseUnitSize = -2.427 + (zoomFactor / 20 );
             else
                 baseUnitSize = 0.018 + (1.0 / 30 * zoomFactor / 30);
+
+            baseUnitSize = baseUnitSize * 500;
 
             Update();
         }

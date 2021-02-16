@@ -369,7 +369,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             if (HorizontalAD == null)
             {
-                NumberSpanAxisDecorator TimeSpanAD = new NumberSpanAxisDecorator(this);
+                RealTimeSpanAxisDecorator TimeSpanAD = new RealTimeSpanAxisDecorator(this);
 
                 TimeSpanAD.BoldLineCount = 10;
 

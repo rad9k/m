@@ -269,11 +269,15 @@ namespace m0_SYSTEM_GENERATE.Music
 
         private static void AddNumberSpanStructure()
         {
-            IVertex minute = AddTimeSpan(Data, "Ten", 10, Music.Get(false, @"TimeSpanLevel"));
+            IVertex ten = AddTimeSpan(Data, "Ten", 10, Music.Get(false, @"TimeSpanLevel"));
 
-            IVertex second = AddTimeSpan(minute, "One", 1, Music.Get(false, @"TimeSpanLevel\SubLevel"));                        
+            IVertex one = AddTimeSpan(ten, "One", 1, Music.Get(false, @"TimeSpanLevel\SubLevel"));
 
-            Data.AddEdge(Music.Get(false, "DefaultNumberSpanLevel"), minute);
+            IVertex _base = AddTimeSpan(one, "Base", 1, Music.Get(false, @"TimeSpanLevel\SubLevel"));
+
+            Data.AddEdge(Music.Get(false, "DefaultNumberSpanLevel"), ten);
+
+            Data.AddEdge(Music.Get(false, "BaseNumberSpanLevel"), _base);
         }
 
 
@@ -332,7 +336,9 @@ namespace m0_SYSTEM_GENERATE.Music
 
             GraphUtil.AddMetaEdge(Music, "BaseRealTimeSpanLevel", Music.Get(false, "TimeSpanLevel"));
 
-            GraphUtil.AddMetaEdge(Music, "NumberSpanLevel", Music.Get(false, "TimeSpanLevel"));
+            GraphUtil.AddMetaEdge(Music, "DefaultNumberSpanLevel", Music.Get(false, "TimeSpanLevel"));
+
+            GraphUtil.AddMetaEdge(Music, "BaseNumberSpanLevel", Music.Get(false, "TimeSpanLevel"));
 
             GraphUtil.AddMetaEdge(Music, "DefaultControlChangeDescriptionSet", Music.Get(false, "ControlChangeDescriptionSet"));
         }

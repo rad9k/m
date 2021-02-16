@@ -40,7 +40,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control
                 t.Text = s.BaseVertex.Get(false, "Name:").Value.ToString();
 
                 Color segmentColor = s.Color;
-                Color negativeSegmentColor = WpfUtil.GetNegativeColor(segmentColor);
+                Color negativeSegmentColor = WpfUtil.GetNegativeColorWhiteOrBlack(segmentColor);
 
                 if (isSelected)
                 {
