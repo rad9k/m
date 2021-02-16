@@ -191,7 +191,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control
 
             int baseUnit = timeSpanStructure[timeSpanLevels - 2].BaseMusicTimeSpanLevelCountForThisLevel;
 
-            int nextUnitBaseCountMax = timeSpanStructure[timeSpanLevels - 2].length;
+            int nextUnitBaseCountMax = 10;
 
             Segments = new List<AxisSegment>();            
 

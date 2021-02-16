@@ -122,7 +122,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             {
                 NumberSpanAxisDecorator TimeSpanAD = new NumberSpanAxisDecorator(this);
 
-                TimeSpanAD.BoldLineCount = 10;
+                TimeSpanAD.BoldLineCount = 5;
 
                 HorizontalAD = TimeSpanAD;
 
