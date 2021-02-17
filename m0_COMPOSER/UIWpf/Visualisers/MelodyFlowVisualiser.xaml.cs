@@ -24,7 +24,9 @@ namespace m0_COMPOSER.UIWpf.Visualisers
     /// Interaction logic for SequenceVisualiser.xaml
     /// </summary>
     public partial class MelodyFlowVisualiser : ZoomScrollViewBasedVisualiserBase
-    {        
+    {
+        MelodyFlow MelodyFlow;
+
         public void InitXAMLInstances()
         {
             PenButton = PenButton_Instance;
@@ -96,6 +98,8 @@ namespace m0_COMPOSER.UIWpf.Visualisers
                 baseVertex = null;
                 return;
             }
+
+            MelodyFlow = new MelodyFlow(baseVertex);
 
             IVertex r = MinusZero.Instance.Root;
 
@@ -207,6 +211,10 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
         protected override IEdge AddItemEdge(AxisSegment itemSegment, double startPosition, double lengthPosition)
         {
+            MelodyFlowQuant quant = new MelodyFlowQuant(MelodyFlow);
+
+            //quant.Note = itemSegment.BaseVertex.Get(false, "Octave:");
+
             IVertex r = MinusZero.Instance.Root;
 
             IVertex Event = r.Get(false, @"System\Lib\Music\Event");
