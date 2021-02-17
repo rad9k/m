@@ -240,8 +240,8 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             noteEventVertex.AddVertex(noteEvent.Get(false, @"Attribute:TriggerTime"), (int)((startPosition / HorizontalAD.BaseUnitSize) + 0.01));
             noteEventVertex.AddVertex(noteEvent.Get(false, @"Attribute:Length"), (int)((lengthPosition / HorizontalAD.BaseUnitSize) + 0.01));            
-            noteEventVertex.AddEdge(noteEvent.Get(false, @"Attribute:Octave"), itemSegment.BaseVertex.Get(false, "Octave:"));
-            noteEventVertex.AddEdge(noteEvent.Get(false, @"Attribute:Note"), itemSegment.BaseVertex.Get(false, "Note:"));
+            noteEventVertex.AddVertex(noteEvent.Get(false, @"Attribute:Octave"), itemSegment.BaseVertex.Get(false, "Octave:").Value);
+            noteEventVertex.AddVertex(noteEvent.Get(false, @"Attribute:Note"), itemSegment.BaseVertex.Get(false, "Note:").Value);
             noteEventVertex.AddVertex(noteEvent.Get(false, @"Attribute:Velocity"), DefaultVelocity);
 
             IEdge finalEdge = baseVertex.AddEdge(Event, noteEventVertex);
@@ -611,8 +611,8 @@ namespace m0_COMPOSER.UIWpf.Visualisers
                             newEdge = edge;
 
                             UpdateNoteVertex(edge,
-                                v.Get(false, "Octave:"),
-                                v.Get(false, "Note:"),
+                                v.Get(false, "Octave:").Value,
+                                v.Get(false, "Note:").Value,
                                 triggerTime,
                                 length,
                                 GraphUtil.GetIntegerValue(v.Get(false, "Velocity:"), ref o));
@@ -651,7 +651,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             PreviousSelectedItemContext = MainDownEnum.Main;
         }
 
-        private void UpdateNoteVertex(IEdge noteEventEdge, IVertex octave, IVertex note, int triggerTime, int length, int velocity)
+        private void UpdateNoteVertex(IEdge noteEventEdge, object octave, object note, int triggerTime, int length, int velocity)
         {
             IVertex r = MinusZero.Instance.Root;
 
@@ -664,8 +664,8 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             GraphUtil.SetVertexValue(noteEventVertex, noteEvent.Get(false, @"Attribute:TriggerTime"), triggerTime);
             GraphUtil.SetVertexValue(noteEventVertex, noteEvent.Get(false, @"Attribute:Length"), length);
-            GraphUtil.CreateOrReplaceEdge(noteEventVertex, noteEvent.Get(false, @"Attribute:Octave"), octave);
-            GraphUtil.CreateOrReplaceEdge(noteEventVertex, noteEvent.Get(false, @"Attribute:Note"), note);
+            GraphUtil.SetVertexValue(noteEventVertex, noteEvent.Get(false, @"Attribute:Octave"), octave);
+            GraphUtil.SetVertexValue(noteEventVertex, noteEvent.Get(false, @"Attribute:Note"), note);
             GraphUtil.SetVertexValue(noteEventVertex, noteEvent.Get(false, @"Attribute:Velocity"), velocity);                        
         }
 

@@ -213,30 +213,13 @@ namespace m0_COMPOSER.UIWpf.Visualisers
         {
             MelodyFlowQuant quant = new MelodyFlowQuant(MelodyFlow);
 
-            //quant.Note = itemSegment.BaseVertex.Get(false, "Octave:");
+            quant.Note = GraphUtil.GetIntegerValueOr0(itemSegment.BaseVertex.Get(false, "Note:"));
+            quant.Octave = GraphUtil.GetIntegerValueOr0(itemSegment.BaseVertex.Get(false, "Octave:"));
+            quant.Velocity = DefaultVelocity;
 
-            IVertex r = MinusZero.Instance.Root;
+            int step = ScreenPositionToMusicTime(startPosition, true);
 
-            IVertex Event = r.Get(false, @"System\Lib\Music\Event");
-            IVertex noteEvent = r.Get(false, @"System\Lib\Music\NoteEvent");
-
-            IEdge tempNoteEventEdge = baseVertex.AddVertexAndReturnEdge(null, null);
-
-            IVertex noteEventVertex = tempNoteEventEdge.To;
-
-            noteEventVertex.AddEdge(MinusZero.Instance.Is, noteEvent);
-
-            noteEventVertex.AddVertex(noteEvent.Get(false, @"Attribute:TriggerTime"), (int)((startPosition / HorizontalAD.BaseUnitSize) + 0.01));
-            noteEventVertex.AddVertex(noteEvent.Get(false, @"Attribute:Length"), (int)((lengthPosition / HorizontalAD.BaseUnitSize) + 0.01));            
-            noteEventVertex.AddEdge(noteEvent.Get(false, @"Attribute:Octave"), itemSegment.BaseVertex.Get(false, "Octave:"));
-            noteEventVertex.AddEdge(noteEvent.Get(false, @"Attribute:Note"), itemSegment.BaseVertex.Get(false, "Note:"));
-            noteEventVertex.AddVertex(noteEvent.Get(false, @"Attribute:Velocity"), DefaultVelocity);
-
-            IEdge finalEdge = baseVertex.AddEdge(Event, noteEventVertex);
-
-            baseVertex.DeleteEdge(tempNoteEventEdge);
-
-            return finalEdge;
+            return quant.PutOrMoveToStep(step);                       
         }
 
         protected override void DrawItems()
