@@ -150,7 +150,9 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
         public bool HasDown;
 
-        protected IZoomScrollViewAxisDecorator DownDecorator;
+        protected ControlChangeDownDecorator DownDecorator;
+
+        public bool ShowCCList = true;
 
         protected Canvas Down;
 
@@ -1368,6 +1370,11 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             ZoomScrollView.InitialDownHeight = 100;            
 
             DownDecorator = new ControlChangeDownDecorator();
+
+            if (ShowCCList)
+                DownDecorator.ShowCCList = true;
+            else
+                DownDecorator.ShowCCList = false;
 
             SetCurrentControlChangeNumber((int)DownDecorator.Selection);
 
