@@ -2525,7 +2525,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             VisualiserDraw();
         }
 
-        protected int MusicTimeSnapCorrect(int toCorrect)
+        protected override int MusicTimeSnapCorrect(int toCorrect)
         {
             if (CurrentSnapToGridValue == 0)
                 return toCorrect;

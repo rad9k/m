@@ -318,19 +318,20 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             if (HorizontalAD == null)
                 return 0;
 
-            int musicTime = (int) (position / HorizontalAD.BaseUnitSize);
+            double musicTime_double = (double) (position / HorizontalAD.BaseUnitSize);
 
-            if (performSnapCorrection)
-                return MusicTimeSnapCorrect(musicTime);
+            int floor = (int) Math.Floor(musicTime_double);
+
+            double rest = Math.Abs( floor - musicTime_double );
+
+            if (rest > 0.5)
+                return floor + 1;
             else
-                return musicTime;
+                return floor;
         }
 
         protected override double MusicTimeToScreenPosition(int musicTime, bool performSnapCorrection)
-        {
-            if (performSnapCorrection)
-                musicTime = MusicTimeSnapCorrect(musicTime);
-
+        {            
             if (HorizontalAD == null)
                 return 0;
 
