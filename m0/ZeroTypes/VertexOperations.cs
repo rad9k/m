@@ -249,16 +249,24 @@ namespace m0.ZeroTypes
             {
                 return baseVertex.AddEdge(metaVertex, toVertex); ;
             }
-        }        
+        }
 
-        public static IVertex AddInstance(IVertex baseVertex,IVertex metaVertex, IVertex edgeVertex)
+        public static IVertex AddInstance(IVertex baseVertex, IVertex metaVertex, IVertex edgeVertex)
         {
+            return AddInstanceAndReturnEdge(baseVertex, metaVertex, edgeVertex).To;
+        }
+
+        public static IEdge AddInstanceAndReturnEdge(IVertex baseVertex,IVertex metaVertex, IVertex edgeVertex)
+        {
+            IEdge ne = null;
             IVertex nv;
 
             if (baseVertex != null)
-                nv = baseVertex.AddVertex(edgeVertex, null);
+                ne = baseVertex.AddVertexAndReturnEdge(edgeVertex, null);
             else
-                nv = MinusZero.Instance.CreateTempVertex();
+                ne = MinusZero.Instance.CreateTempEdge();
+
+            nv = ne.To;
 
             if (MinusZero.Instance.Root.Store.DetachState == DetachStateEnum.Attached) // XXX WTF?????
                 nv.AddEdge(MinusZero.Instance.Is, metaVertex);
@@ -298,16 +306,7 @@ namespace m0.ZeroTypes
                         nv.AddVertex(child.To, null); // ? XXX
             }
 
-            return nv;
-        }
-
-        public static IEdge AddInstanceAndReturnEdge(IVertex baseVertex, IVertex metaVertex, IVertex edgeVertex)
-        {
-            IVertex v = AddInstance(baseVertex, metaVertex, edgeVertex);
-
-            IEdge edge = GraphUtil.FindEdge(baseVertex, metaVertex, v);
-
-            return edge;
+            return ne;
         }
 
         public static IVertex AddInstance(IVertex baseVertex, IVertex metaVertex)

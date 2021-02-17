@@ -152,13 +152,10 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
         protected override void AddItem(IEdge itemEdge, List<IVertex> selectedVertexes)
         {
-            IVertex itemEventVertex = itemEdge.To;
+            IVertex quantVertex = itemEdge.To;
 
-            bool dummy = false;
-
-            int triggerTime = GraphUtil.GetIntegerValue(itemEventVertex.Get(false, "TriggerTime:"), ref dummy);
-
-            int length = GraphUtil.GetIntegerValue(itemEventVertex.Get(false, "Length:"), ref dummy);
+            int step = MelodyFlow.GetStepFromQuantVertex(quantVertex);
+            
 
             IVertex pitchVertex = MusicUtil.GetNoteFromPitchSet(verticalSpanVertex,
                 GraphUtil.GetIntegerValue(itemEventVertex.Get(false, "Octave:")),

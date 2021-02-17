@@ -146,7 +146,7 @@ namespace m0_COMPOSER.Lib
                         GraphUtil.CreateOrReplaceEdge(QuantVertex, quantTypeMeta, chordIndexEnumValue);
                 }
             }
-        }
+        }        
 
         public MelodyFlowQuant(MelodyFlow _MelodyFlow, IVertex _QuantVertex)
         {
@@ -183,7 +183,7 @@ namespace m0_COMPOSER.Lib
             }
         }
 
-        public void PutOrMoveToStep(int stepPosition)
+        public IEdge PutOrMoveToStep(int stepPosition)
         {
             Remove();
 
@@ -200,7 +200,27 @@ namespace m0_COMPOSER.Lib
                 toStepVertex = MelodyFlow.GetStep(stepPosition).StepVertex;
             }
 
-            toStepVertex.AddEdge(quantMeta, QuantVertex);            
+            IEdge newEdge = null;
+
+            if (QuantVertex == null)
+            {
+                newEdge = VertexOperations.AddInstanceAndReturnEdge(toStepVertex, quantMeta);
+
+                QuantVertex = newEdge.To;
+
+                Note = note;
+                Octave = octave;
+                Velocity = velocity;
+            }
+            else
+            {
+                newEdge = toStepVertex.AddEdge(quantMeta, QuantVertex);
+                
+            }
+
+            isAttached = true;
+
+            return newEdge;
         }               
     }
 
@@ -220,6 +240,9 @@ namespace m0_COMPOSER.Lib
 
             if (GraphUtil.GetBooleanValueOrFalse(baseVertex.Get(false, "IsDrum:")))
                 IsDrum = true;
+
+            if (baseVertex.GetAll(false, "Step:").Count() == 0)
+                VertexOperations.AddInstance(baseVertex, stepMeta);
         }
 
         public int GetNumberOfSteps()
@@ -229,7 +252,9 @@ namespace m0_COMPOSER.Lib
 
         public MelodyFlowStep GetStep(int stepPosition)
         {
-            return new MelodyFlowStep(this, baseVertex.Get(false, "Step:<<"+stepPosition+">>"));
+            int stepPosition_zeroScript = stepPosition + 1;
+
+            return new MelodyFlowStep(this, baseVertex.Get(false, "Step:<<\""+stepPosition_zeroScript+"\">>"));
         }                       
 
         public void InsertStepAt(int stepPosition)
@@ -250,6 +275,17 @@ namespace m0_COMPOSER.Lib
 
                 baseVertex.AddEdge(stepMeta, e.To);
             }                
+        }
+
+        public int GetStepFromQuantVertex(IVertex quantVertex)
+        {
+            int cnt = 0;
+            foreach(IEdge stepEdge in baseVertex.GetAll(false, "Step:"))            
+                foreach (IEdge quantEdge in stepEdge.To)
+                    if (quantEdge.To == quantVertex)
+                        return cnt;            
+
+            return -1;
         }
     }
 }
