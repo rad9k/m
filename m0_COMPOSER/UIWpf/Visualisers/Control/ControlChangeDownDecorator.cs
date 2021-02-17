@@ -64,9 +64,25 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control
             return (int)GraphUtil.GetIntegerValue(baseVertex.Get(false, "Number:"));
         }
     }
+
     public class ControlChangeDownDecorator : StackPanel, IZoomScrollViewAxisDecorator
     {
         public double PositionMark { get; set; }
+
+        bool showCCList;
+        public bool ShowCCList
+        {
+            get
+            {
+                return showCCList;
+            }
+
+            set {
+                showCCList = value;
+
+                ControlInitialize();
+            }
+        }
 
         int number;
 
@@ -259,6 +275,11 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control
 
         public ControlChangeDownDecorator()
         {
+            ControlInitialize();
+        }
+
+        public void ControlInitialize()
+        {
             this.Orientation = Orientation.Horizontal;            
             
             //
@@ -275,7 +296,8 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control
 
             listPanel = new StackPanel();
             
-            listPanel.Children.Add(List);
+            if(ShowCCList)
+                listPanel.Children.Add(List);
 
             this.Children.Add(listPanel);
 

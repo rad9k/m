@@ -243,9 +243,9 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control
 
 
             if(zoomFactor > 50)
-                baseUnitSize = -2.427 + (zoomFactor / 20 );
+                baseUnitSize = -0.08 + (zoomFactor / 300 );
             else
-                baseUnitSize = 0.018 + (1.0 / 30 * zoomFactor / 30);
+                baseUnitSize = 0.005 + (1.0 / 20 * zoomFactor / 30);
 
             baseUnitSize = baseUnitSize * 500;
 

@@ -66,6 +66,8 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             //
 
             ZoomScrollViewBasedVisualiserBase_Init();
+
+            ShowCCList = false;
         }
 
         protected override void UpdateVertexValues()
