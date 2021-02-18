@@ -110,7 +110,7 @@ namespace m0_COMPOSER.Lib
             set
             {
                 if (QuantVertex == null)
-                    octave = value;
+                    velocity = value;
                 else
                     GraphUtil.SetVertexValue(QuantVertex, velocityMeta, value);
             }
@@ -277,15 +277,30 @@ namespace m0_COMPOSER.Lib
             }                
         }
 
-        public int GetStepFromQuantVertex(IVertex quantVertex)
+        public MelodyFlowQuant GetQuantAndStepFromQuantVertex(IVertex quantVertex, out int step, out MelodyFlowStep stepObject)
         {
-            int cnt = 0;
-            foreach(IEdge stepEdge in baseVertex.GetAll(false, "Step:"))            
-                foreach (IEdge quantEdge in stepEdge.To)
-                    if (quantEdge.To == quantVertex)
-                        return cnt;            
+            step = -1;
+            stepObject = null;
 
-            return -1;
+            int cntStep = 0;
+            foreach (IEdge stepEdge in baseVertex.GetAll(false, "Step:")) {
+                
+                int cntQuant = 0;
+
+                foreach (IEdge quantEdge in stepEdge.To.GetAll(false, "Quant:")) {
+                    if (quantEdge.To == quantVertex)
+                    {
+                        stepObject = new MelodyFlowStep(this, stepEdge.To);
+                        step = cntStep;
+                        return stepObject.Quants[cntQuant];
+                    }
+                    cntQuant++;
+                }
+
+                cntStep++;
+            }
+
+            return null;
         }
     }
 }

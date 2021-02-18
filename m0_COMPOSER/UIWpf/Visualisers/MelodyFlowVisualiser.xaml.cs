@@ -154,12 +154,14 @@ namespace m0_COMPOSER.UIWpf.Visualisers
         {
             IVertex quantVertex = itemEdge.To;
 
-            int step = MelodyFlow.GetStepFromQuantVertex(quantVertex);
+            MelodyFlowStep step;
+            int stepCount;
+            MelodyFlowQuant quant = MelodyFlow.GetQuantAndStepFromQuantVertex(quantVertex, out stepCount, out step);
             
 
             IVertex pitchVertex = MusicUtil.GetNoteFromPitchSet(verticalSpanVertex,
-                GraphUtil.GetIntegerValue(itemEventVertex.Get(false, "Octave:")),
-                GraphUtil.GetIntegerValue(itemEventVertex.Get(false, "Note:")));
+                quant.Octave,
+                quant.Note);
 
             string label = pitchVertex.Value.ToString();
 
@@ -172,7 +174,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             IItem newItem = (IItem)newElement;
 
-            if (selectedVertexes != null && selectedVertexes.Contains(itemEventVertex))
+            if (selectedVertexes != null && selectedVertexes.Contains(quantVertex))
             {
                 newItem.Select();
                 PreviousSelectedItemContext = MainDownEnum.Main;
@@ -181,9 +183,9 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             AxisSegment itemSegment = GetVerticalSegment(pitchVertex);
 
 
-            double startPosition = triggerTime * HorizontalAD.BaseUnitSize;
+            double startPosition = stepCount * HorizontalAD.BaseUnitSize;
 
-            double endPosition = startPosition + (length * HorizontalAD.BaseUnitSize);
+            double endPosition = startPosition + HorizontalAD.BaseUnitSize;
 
 
             if (IsDrum)
