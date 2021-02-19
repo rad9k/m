@@ -207,9 +207,6 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             }
 
             ItemsAdd(newItem);
-
-            if (MainItemsSyncedWithDown)
-                AddItem_Down(itemEdge, selectedVertexes, false, true);
         }
 
         protected override IEdge AddItemEdge(AxisSegment itemSegment, double startPosition, double lengthPosition)
@@ -222,7 +219,20 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             int step = ScreenPositionToMusicTime(startPosition, true);
 
-            return quant.PutOrMoveToStep(step);                       
+            int numberOfSteps = MelodyFlow.GetNumberOfSteps();
+
+            IEdge newEdge = quant.PutOrMoveToStep(step);
+
+            int newNumberOfSteps = MelodyFlow.GetNumberOfSteps();
+
+            if(numberOfSteps != newNumberOfSteps)
+            {
+                HorizontalAD.SetLength(newNumberOfSteps);
+
+                VisualiserDraw();
+            }
+
+            return newEdge;
         }
 
         protected override void DrawItems()
@@ -322,12 +332,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             int floor = (int) Math.Floor(musicTime_double);
 
-            double rest = Math.Abs( floor - musicTime_double );
-
-            if (rest > 0.5)
-                return floor + 1;
-            else
-                return floor;
+            return floor;
         }
 
         protected override double MusicTimeToScreenPosition(int musicTime, bool performSnapCorrection)
@@ -664,24 +669,18 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             GraphUtil.SetVertexValue(noteEventVertex, noteEvent.Get(false, @"Attribute:TriggerTime"), triggerTime);
         }
 
-        protected override void DrawItems_Down()
+        protected override double GetSnappedPosition(double position)
         {
-            List<IVertex> selectedVertexes = GetSelectedVertexes();
+            double CurrentSnapToGridValue_corrected = CurrentSnapToGridValue * 16;
 
-            if (CurrentControlChangeNumber == -1)
-            {
-                foreach (IEdge e in baseVertex.GetAll(false, "Event:"))
-                    if (GraphUtil.ExistQueryOut(e.To, "$Is", "NoteEvent"))
-                        if (ApplyFilter_Down(e.To))
-                            AddItem_Down(e, selectedVertexes, false, true);
-            }
-            else
-            {
-                foreach (IEdge e in baseVertex.GetAll(false, "Event:"))
-                    if (GraphUtil.ExistQueryOut(e.To, "$Is", "ControlChangeEvent")
-                        && GraphUtil.GetIntegerValue(e.To.Get(false, @"Number:")) == CurrentControlChangeNumber)
-                        AddItem_Down(e, selectedVertexes, false, false);
-            }
+            if (CurrentSnapToGrid == SnapToGridEnum.No_Snap)
+                return position;
+
+            double positionInBars = (position / HorizontalAD.BaseUnitSize) / HorizontalAD.SegmentLength;
+
+            double reminder = positionInBars % CurrentSnapToGridValue_corrected;
+
+            return (positionInBars - reminder) * HorizontalAD.SegmentLength * HorizontalAD.BaseUnitSize;
         }
     }
 }

@@ -56,8 +56,8 @@ namespace m0_COMPOSER.Lib
         static IVertex velocityMeta = r.Get(false, @"System\Lib\Music\Generator\MelodyFlowQuant\Velocity");
         static IVertex quantTypeMeta = r.Get(false, @"System\Lib\Music\Generator\MelodyFlowQuant\QuantType");
 
-        static IVertex noteEnumValue = r.Get(false, @"System\Lib\Music\Generator\MelodyFlowQuantType\Note");
-        static IVertex chordIndexEnumValue = r.Get(false, @"System\Lib\Music\Generator\MelodyFlowQuantType\ChordIndex");
+        static IVertex noteEnumValue = r.Get(false, @"System\Lib\Music\Generator\MelodyFlowQuantTypeEnum\Note");
+        static IVertex chordIndexEnumValue = r.Get(false, @"System\Lib\Music\Generator\MelodyFlowQuantTypeEnum\ChordIndex");
 
 
         int octave;
@@ -193,7 +193,7 @@ namespace m0_COMPOSER.Lib
 
             bool sameQuantTypeExists = false;
 
-            if (!MelodyFlow.IsDrum && toStepVertex.Get(false, "QuantType:" + QuantType.ToString()) != null)
+            if (!MelodyFlow.IsDrum && toStepVertex.Get(false, @"\QuantType:" + QuantType.ToString()) != null)
                 sameQuantTypeExists = true;
 
             if (sameQuantTypeExists)
@@ -214,6 +214,7 @@ namespace m0_COMPOSER.Lib
                 Note = note;
                 Octave = octave;
                 Velocity = velocity;
+                QuantType = quantType;
             }
             else
                 newEdge = toStepVertex.AddEdge(quantMeta, QuantVertex);
@@ -259,21 +260,23 @@ namespace m0_COMPOSER.Lib
 
         public void InsertStepAt(int stepPosition)
         {
-            List<IEdge> edgesToDelete = new List<IEdge>();
+            List<IEdge> edges = new List<IEdge>();
 
             foreach (IEdge e in baseVertex.GetAll(false, "Step:"))
-                edgesToDelete.Add(e);
+                edges.Add(e);
 
-            foreach (IEdge e in edgesToDelete)
+            foreach (IEdge e in edges)
                 baseVertex.DeleteEdge(e);
 
             int cnt = 0;
-            foreach (IEdge e in edgesToDelete)
+            foreach (IEdge e in edges)
             {
                 if (cnt == stepPosition)
                     VertexOperations.AddInstance(baseVertex, stepMeta);
 
                 baseVertex.AddEdge(stepMeta, e.To);
+
+                cnt++;
             }                
         }
 
