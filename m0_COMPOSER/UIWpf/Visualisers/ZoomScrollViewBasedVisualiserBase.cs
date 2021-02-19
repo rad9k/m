@@ -34,6 +34,10 @@ namespace m0_COMPOSER.UIWpf.Visualisers
         protected bool IsDrum;
         protected int CurrentControlChangeNumber;
 
+        // behavior
+
+        public bool NewItemWidthOneSnapLimit = false;
+
         // XAML objects
 
         protected ToggleButton PenButton;
@@ -639,7 +643,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             //
 
-            if (IsCurrentPenItemCenter)
+            if (IsCurrentPenItemCenter || NewItemWidthOneSnapLimit)
                 return;
 
             NewItemShape = new Border();
@@ -657,7 +661,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
         protected void PenMove_PenDown(object sender, MouseEventArgs e)
         {
-            if (IsCurrentPenItemCenter)
+            if (IsCurrentPenItemCenter || NewItemWidthOneSnapLimit)
                 return;
 
             double left, right;
@@ -709,6 +713,8 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             if (IsCurrentPenItemCenter)
                 newItemEventEdge = AddItemEdge(NewItemSegment, GetSnappedPosition(MouseDownPoint.X), 0);
+            else if (NewItemWidthOneSnapLimit)
+                newItemEventEdge = AddItemEdge(NewItemSegment, GetSnappedPosition(MouseDownPoint.X), GetSnapMinimalWidth());
             else
             {
                 if (NewItemShape.Width == 0)

@@ -32,7 +32,7 @@ namespace m0_COMPOSER.Lib
                 List<MelodyFlowQuant> ql = new List<MelodyFlowQuant>();
 
                 foreach (IEdge e in StepVertex.GetAll(false, "Quant:"))
-                    ql.Add(new MelodyFlowQuant(MelodyFlow, e.To));
+                    ql.Add(new MelodyFlowQuant(MelodyFlow, e));
 
                 return ql;
             }
@@ -42,6 +42,7 @@ namespace m0_COMPOSER.Lib
     public class MelodyFlowQuant
     {        
         public IVertex QuantVertex;
+        public IEdge QuantEdge;
 
         bool isAttached = false;
 
@@ -148,10 +149,11 @@ namespace m0_COMPOSER.Lib
             }
         }        
 
-        public MelodyFlowQuant(MelodyFlow _MelodyFlow, IVertex _QuantVertex)
+        public MelodyFlowQuant(MelodyFlow _MelodyFlow, IEdge _QuantEdge)
         {
             MelodyFlow = _MelodyFlow;
-            QuantVertex = _QuantVertex;
+            QuantEdge = _QuantEdge;
+            QuantVertex = _QuantEdge.To;
 
             if(GetParentStepVertex() != null)
                 isAttached = true;
@@ -207,16 +209,14 @@ namespace m0_COMPOSER.Lib
                 newEdge = VertexOperations.AddInstanceAndReturnEdge(toStepVertex, quantMeta);
 
                 QuantVertex = newEdge.To;
+                QuantEdge = newEdge;
 
                 Note = note;
                 Octave = octave;
                 Velocity = velocity;
             }
             else
-            {
                 newEdge = toStepVertex.AddEdge(quantMeta, QuantVertex);
-                
-            }
 
             isAttached = true;
 

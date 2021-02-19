@@ -70,6 +70,8 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             ZoomScrollViewBasedVisualiserBase_Init();
 
             ShowCCList = false;
+
+            NewItemWidthOneSnapLimit = true;
         }
 
         protected override void UpdateVertexValues()
@@ -100,6 +102,8 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             }
 
             MelodyFlow = new MelodyFlow(baseVertex);
+
+            Length = MelodyFlow.GetNumberOfSteps();
 
             IVertex r = MinusZero.Instance.Root;
 
@@ -225,9 +229,13 @@ namespace m0_COMPOSER.UIWpf.Visualisers
         {
             List<IVertex> selectedVertexes = GetSelectedVertexes();
 
-            foreach (IEdge e in baseVertex.GetAll(false, "Event:"))
-                if (GraphUtil.ExistQueryOut(e.To, "$Is", "NoteEvent"))
-                    AddItem(e, selectedVertexes);
+            for (int stepCnt = 0; stepCnt < MelodyFlow.GetNumberOfSteps(); stepCnt++)
+            {
+                MelodyFlowStep step = MelodyFlow.GetStep(stepCnt);
+
+                foreach (MelodyFlowQuant quant in step.Quants)
+                    AddItem(quant.QuantEdge, selectedVertexes);
+            }
         }
 
         protected override void UpdateItem_VerticalPosition(IItem item)

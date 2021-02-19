@@ -21,8 +21,6 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control
             segmentLength = 1;
 
             visualiser = _visualiser;
-
-            Length = 200;
         }
 
         public int BoldLineCount;        
@@ -96,7 +94,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control
             timeSpanLevel thisLevel = timeSpanStructure[level];
 
             int textCount = 0;
-            Length = 200;
+
             for (int cnt = 0; cnt < Length; cnt += thisLevel.BaseMusicTimeSpanLevelCountForThisLevel)
             {                
                 double horizontalPosition = cnt * baseUnitSize;
@@ -196,7 +194,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control
             Segments = new List<AxisSegment>();            
 
             int nextUnitBaseCount = 0;
-            Length = 200;
+
             for (int cnt = 0; cnt <= Length ; cnt += baseUnit)
             {
                 AxisSegment segment = new AxisSegment();
