@@ -311,58 +311,9 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             //
 
-            int step = ScreenPositionToMusicTime(item.Left, true;)
+            int step = ScreenPositionToMusicTime(item.Left, true);
 
-            IVertex r = MinusZero.Instance.root;
-            IVertex metaTriggerTime = r.Get(false, @"System\Lib\Music\Event\TriggerTime");
-            IVertex metaLength = r.Get(false, @"System\Lib\Music\HasLength\Length");
-
-            FrameworkElement element;
-
-            if (!(item is FrameworkElement))
-                return;
-
-            element = (FrameworkElement)item;
-
-            IVertex itemVertex = item.BaseEdge.To;
-
-            double itemWidth = element.Width;
-
-            int TriggerTime;
-
-            int Length;
-
-            if (item.IsCentered)
-            {
-                TriggerTime = (int)(item.HorizontalCenter / HorizontalAD.BaseUnitSize);
-
-                Length = 0;
-            }
-            else
-            {
-                TriggerTime = (int)(item.Left / HorizontalAD.BaseUnitSize);
-
-                Length = (int)(itemWidth / HorizontalAD.BaseUnitSize);
-            }
-
-            int step = 
-
-            GraphUtil.SetVertexValue(itemVertex, metaTriggerTime, TriggerTime);
-
-            if (Length != 0)
-                GraphUtil.SetVertexValue(itemVertex, metaLength, Length);
-        }
-
-        protected override int ScreenPositionToMusicTime(double position, bool performSnapCorrection)
-        {
-            if (HorizontalAD == null)
-                return 0;
-
-            double musicTime_double = (double) (position / HorizontalAD.BaseUnitSize);
-
-            int floor = (int) Math.Floor(musicTime_double);
-
-            return floor;
+            quant.PutOrMoveToStep(step);            
         }
 
         protected override double MusicTimeToScreenPosition(int musicTime, bool performSnapCorrection)
@@ -381,7 +332,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             {
                 IVertex v = e.To.Get(false, "To:");
 
-                if(v.Get(false, "$Is:NoteEvent") != null)
+                if(v.Get(false, "$Is:Quant") != null)
                 {
                     bool o = false;
 
@@ -393,16 +344,6 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
                     if (last < max)
                         last = max;
-                }
-
-                if (v.Get(false, "$Is:ControlChangeEvent") != null)
-                {
-                    bool o = false;
-
-                    int trigger = GraphUtil.GetIntegerValue(v.Get(false, "TriggerTime:"), ref o);
-
-                    if (last < trigger)
-                        last = trigger;
                 }
             }
 
