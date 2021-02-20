@@ -153,6 +153,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             if (IsDrum)
                 IsCurrentPenItemCenter = true;
         }
+        
 
         protected override void AddItem(IEdge itemEdge, List<IVertex> selectedVertexes)
         {
@@ -187,9 +188,9 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             AxisSegment itemSegment = GetVerticalSegment(pitchVertex);
 
 
-            double startPosition = stepCount * HorizontalAD.BaseUnitSize;
+            double startPosition = MusicTimeToScreenPosition(stepCount, true);
 
-            double endPosition = startPosition + HorizontalAD.BaseUnitSize;
+            double endPosition = MusicTimeToScreenPosition(stepCount + 1, true);
 
 
             if (IsDrum)
@@ -207,6 +208,9 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             }
 
             ItemsAdd(newItem);
+
+            if (MainItemsSyncedWithDown)
+                AddItem_Down(itemEdge, selectedVertexes, false, true);
         }
 
         protected override IEdge AddItemEdge(AxisSegment itemSegment, double startPosition, double lengthPosition)
@@ -249,11 +253,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
         }
 
         protected override void UpdateItem_VerticalPosition(IItem item)
-        {
-            IVertex r = MinusZero.Instance.root;
-            IVertex metaOctave = r.Get(false, @"System\Lib\Music\Pitch\Octave");
-            IVertex metaNote = r.Get(false, @"System\Lib\Music\Pitch\Note");
-
+        {            
             FrameworkElement element;
 
             if (!(item is FrameworkElement))
@@ -261,18 +261,27 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             element = (FrameworkElement)item;
 
-            IVertex noteEventVertex = item.BaseEdge.To;
+            MelodyFlowQuant quant = null;
 
+            if (element.Tag is MelodyFlowQuant)
+                quant = (MelodyFlowQuant)element.Tag;
+
+            if (quant == null)
+                return;
+
+            //
+            
             AxisSegment segment = FindVerticalSegment(item.Top + 1);
 
             IVertex octaveVertex = segment.BaseVertex.Get(false, "Octave:");
-            IVertex noteVertex = segment.BaseVertex.Get(false, "Note:");
+            IVertex noteVertex = segment.BaseVertex.Get(false, "Note:");                        
 
-            GraphUtil.CreateOrReplaceEdge(noteEventVertex, metaOctave, octaveVertex);
-            GraphUtil.CreateOrReplaceEdge(noteEventVertex, metaNote, noteVertex);
+            int octave = GraphUtil.GetIntegerValueOr0(octaveVertex);
+            int note = GraphUtil.GetIntegerValueOr0(noteVertex);
 
-            int? octave = GraphUtil.GetIntegerValue(octaveVertex);
-            int? note = GraphUtil.GetIntegerValue(noteVertex);
+            quant.Octave = octave;
+            quant.Note = note;
+            
 
             IVertex pitchVertex = MusicUtil.GetNoteFromPitchSet(verticalSpanVertex, octave, note);
 
@@ -285,6 +294,25 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
         protected override void UpdateItem_HorizontalPosition(IItem item)
         {
+            FrameworkElement element;
+
+            if (!(item is FrameworkElement))
+                return;
+
+            element = (FrameworkElement)item;
+
+            MelodyFlowQuant quant = null;
+
+            if (element.Tag is MelodyFlowQuant)
+                quant = (MelodyFlowQuant)element.Tag;
+
+            if (quant == null)
+                return;
+
+            //
+
+            int step = ScreenPositionToMusicTime(item.Left, true;)
+
             IVertex r = MinusZero.Instance.root;
             IVertex metaTriggerTime = r.Get(false, @"System\Lib\Music\Event\TriggerTime");
             IVertex metaLength = r.Get(false, @"System\Lib\Music\HasLength\Length");
@@ -316,6 +344,8 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
                 Length = (int)(itemWidth / HorizontalAD.BaseUnitSize);
             }
+
+            int step = 
 
             GraphUtil.SetVertexValue(itemVertex, metaTriggerTime, TriggerTime);
 
