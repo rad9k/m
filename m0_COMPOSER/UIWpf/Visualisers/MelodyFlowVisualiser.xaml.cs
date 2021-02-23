@@ -1,22 +1,14 @@
 ﻿using m0;
 using m0.Foundation;
 using m0.Graph;
-using m0.UIWpf;
-using m0.UIWpf.Controls;
-using m0.UIWpf.Visualisers;
 using m0.Util;
 using m0.ZeroTypes;
-using m0.ZeroUML;
 using m0_COMPOSER.Lib;
 using m0_COMPOSER.UIWpf.Visualisers.Control;
 using m0_COMPOSER.UIWpf.Visualisers.Control.Item;
 using System;
 using System.Collections.Generic;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Shapes;
 
 namespace m0_COMPOSER.UIWpf.Visualisers
 {
@@ -215,23 +207,35 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
         protected override IEdge AddItemEdge(AxisSegment itemSegment, double startPosition, double lengthPosition)
         {
-            MelodyFlowQuant quant = new MelodyFlowQuant(MelodyFlow);
-
-            quant.Note = GraphUtil.GetIntegerValueOr0(itemSegment.BaseVertex.Get(false, "Note:"));
-            quant.Octave = GraphUtil.GetIntegerValueOr0(itemSegment.BaseVertex.Get(false, "Octave:"));
-            quant.Velocity = DefaultVelocity;
+            int note = GraphUtil.GetIntegerValueOr0(itemSegment.BaseVertex.Get(false, "Note:"));
+            int octave = GraphUtil.GetIntegerValueOr0(itemSegment.BaseVertex.Get(false, "Octave:"));            
 
             int step = ScreenPositionToMusicTime(startPosition, true);
+            
+            return AddQuantEdge(note, octave, step, -1);
+        }
+
+        IEdge AddQuantEdge(int note, int octave, int step, int velocity)
+        {
+            MelodyFlowQuant quant = new MelodyFlowQuant(MelodyFlow);
+
+            quant.Note = note;
+            quant.Octave = octave;
+
+            if(velocity == -1)
+                quant.Velocity = DefaultVelocity;            
+            else
+                quant.Velocity = velocity;
 
             int numberOfSteps = MelodyFlow.GetNumberOfSteps();
 
             IEdge newEdge = quant.PutOrMoveToStep(step);
 
-            int newNumberOfSteps = MelodyFlow.GetNumberOfSteps();
+            int newNumberOfSteps = MelodyFlow.GetNumberOfSteps();            
 
-            if(numberOfSteps != newNumberOfSteps)
+            if (numberOfSteps != newNumberOfSteps || newNumberOfSteps == 1)
             {
-                HorizontalAD.SetLength(newNumberOfSteps);
+                HorizontalAD.SetLength(newNumberOfSteps + 1);
 
                 VisualiserDraw();
             }
@@ -334,47 +338,19 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
                 if(v.Get(false, "$Is:Quant") != null)
                 {
-                    bool o = false;
+                    int step;
 
-                    int trigger = GraphUtil.GetIntegerValue(v.Get(false, "TriggerTime:"), ref o);
+                    MelodyFlowStep so;
 
-                    int length = GraphUtil.GetIntegerValue(v.Get(false, "Length:"), ref o);
+                    MelodyFlow.GetQuantAndStepFromQuantVertex(v, out step, out so);                    
 
-                    int max = trigger + length;
-
-                    if (last < max)
-                        last = max;
+                    if (last < step)
+                        last = step;
                 }
             }
 
             return last;
-        }
-
-        protected IEdge AddNoteVertex(IVertex octave, IVertex note, int triggerTime, int length, int velocity)
-        {
-            IVertex r = MinusZero.Instance.Root;
-
-            IVertex Event = r.Get(false, @"System\Lib\Music\Event");
-            IVertex noteEvent = r.Get(false, @"System\Lib\Music\NoteEvent");
-
-            IEdge tempNoteEventEdge = baseVertex.AddVertexAndReturnEdge(null, null);
-
-            IVertex noteEventVertex = tempNoteEventEdge.To;
-
-            noteEventVertex.AddEdge(MinusZero.Instance.Is, noteEvent);
-
-            noteEventVertex.AddVertex(noteEvent.Get(false, @"Attribute:TriggerTime"), triggerTime);
-            noteEventVertex.AddVertex(noteEvent.Get(false, @"Attribute:Length"), length);
-            noteEventVertex.AddEdge(noteEvent.Get(false, @"Attribute:Octave"), octave);
-            noteEventVertex.AddEdge(noteEvent.Get(false, @"Attribute:Note"), note);            
-            noteEventVertex.AddVertex(noteEvent.Get(false, @"Attribute:Velocity"), velocity);
-
-            IEdge finalEdge = baseVertex.AddEdge(Event, noteEventVertex);
-
-            baseVertex.DeleteEdge(tempNoteEventEdge);
-
-            return finalEdge;
-        }
+        }        
 
         // copy & paste rules for SequenceVisualiser
         //
@@ -389,11 +365,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
         protected WhatIsInEdgesEnum GetWhatIsInEdges(IEnumerable<IEdge> edges, out int minPosition, out int maxPosition, out bool onlyCopy)
         {
             minPosition = Int32.MaxValue;
-            maxPosition = Int32.MinValue;
-
-            bool notes = false;
-
-            bool cc = false;
+            maxPosition = Int32.MinValue;            
 
             onlyCopy = true;
 
@@ -404,109 +376,26 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
                 IEdge edge = Edge.GetIEdgeByEdgeVertex(e.To);
 
-                IVertex v = edge.To;
-
-                bool isNull = false;
-
-                if (v.Get(false, "$Is:NoteEvent") != null)
+                IVertex v = edge.To;                
+                
+                if (v.Get(false, "$Is:Quant") != null)
                 {
-                    notes = true;
+                    int step;
 
-                    int triggerTime = GraphUtil.GetIntegerValue(v.Get(false, "TriggerTime:"), ref isNull);
+                    MelodyFlowStep so;
 
-                    if (triggerTime > maxPosition)
-                        maxPosition = triggerTime;
+                    MelodyFlow.GetQuantAndStepFromQuantVertex(v, out step, out so);                    
 
-                    if (triggerTime < minPosition)
-                        minPosition = triggerTime;
+                    if (step > maxPosition)
+                        maxPosition = step;
 
-                    int triggerTimePlusLength = triggerTime + GraphUtil.GetIntegerValue(v.Get(false, "Length:"), ref isNull);
-
-                    if (triggerTimePlusLength > maxPosition)
-                        maxPosition = triggerTimePlusLength;
-
-                    if (triggerTimePlusLength < minPosition)
-                        minPosition = triggerTimePlusLength;
-                }
-
-                if (v.Get(false, "$Is:ControlChangeEvent") != null)
-                {
-                    cc = true;
-
-                    int triggerTime = GraphUtil.GetIntegerValue(v.Get(false, "TriggerTime:"), ref isNull);
-
-                    if (triggerTime > maxPosition)
-                        maxPosition = triggerTime;
-
-                    if (triggerTime < minPosition)
-                        minPosition = triggerTime;
+                    if (step < minPosition)
+                        minPosition = step;
                 }
             }
-
-            if (notes && !cc)
-                return WhatIsInEdgesEnum.OnlyNotes;
-
-            if (!notes && cc)
-                return WhatIsInEdgesEnum.OnlyCC;
 
             return WhatIsInEdgesEnum.Mix;
-        }
-
-        protected IEnumerable<IEdge> AddCC(IEnumerable<IEdge> edgesIn, int minPosition, int maxPosition, bool onlyCopy)
-        {
-            IVertex clipboardMeta;
-
-            if (onlyCopy)
-                clipboardMeta = m0.MinusZero.Instance.root.Get(false, @"System\Meta\User\Session\ClipboardCopy");
-            else
-                clipboardMeta = m0.MinusZero.Instance.root.Get(false, @"System\Meta\User\Session\ClipboardCut");
-
-            bool isNull = false;
-
-            List<IEdge> edgesOut = new List<IEdge>();
-
-            edgesOut.AddRange(edgesIn);
-
-            foreach (IEdge e in baseVertex.GetAll(false, @"Event:{$Is:ControlChangeEvent}"))
-            {
-                int triggerTime = GraphUtil.GetIntegerValue(e.To.Get(false, "TriggerTime:"), ref isNull);
-
-                if (triggerTime >= minPosition && triggerTime <= maxPosition)
-                {
-                    IVertex edgeVertex = Edge.CreateTempEdgeVertex(e);
-
-                    IEdge newEdge = new EasyEdge(null, clipboardMeta, edgeVertex);
-
-                    edgesOut.Add(newEdge);
-                }
-            }
-
-            return edgesOut;
-        }
-
-        protected IEdge AddCCVertex(int triggerTime, int number, int value)
-        {
-            IVertex r = MinusZero.Instance.Root;
-
-            IVertex Event = r.Get(false, @"System\Lib\Music\Event");
-            IVertex controlChangeEvent = r.Get(false, @"System\Lib\Music\ControlChangeEvent");
-
-            IEdge tempNoteEventEdge = baseVertex.AddVertexAndReturnEdge(null, null);
-
-            IVertex noteEventVertex = tempNoteEventEdge.To;
-
-            noteEventVertex.AddEdge(MinusZero.Instance.Is, controlChangeEvent);
-
-            noteEventVertex.AddVertex(controlChangeEvent.Get(false, @"Attribute:Number"), number);
-            noteEventVertex.AddVertex(controlChangeEvent.Get(false, @"Attribute:Value"), value);
-            noteEventVertex.AddVertex(controlChangeEvent.Get(false, @"Attribute:TriggerTime"), triggerTime);
-
-            IEdge finalEdge = baseVertex.AddEdge(Event, noteEventVertex);
-
-            baseVertex.DeleteEdge(tempNoteEventEdge);
-
-            return finalEdge;
-        }
+        }        
 
         protected override void PasteEdgesFromClipboard(IEnumerable<IEdge> edges)
         {
@@ -517,13 +406,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             bool onlyCopy;
 
             WhatIsInEdgesEnum whatIsClipboard = GetWhatIsInEdges(edges, out minPosition, out maxPosition, out onlyCopy);
-
-            if (whatIsClipboard == WhatIsInEdgesEnum.Mix)
-                return;
-
-            if (whatIsClipboard == WhatIsInEdgesEnum.OnlyNotes)
-                edges = AddCC(edges, minPosition, maxPosition, onlyCopy);
-
+        
             foreach (IEdge e in edges)
             {
                 IEdge edge = Edge.GetIEdgeByEdgeVertex(e.To);
@@ -543,60 +426,37 @@ namespace m0_COMPOSER.UIWpf.Visualisers
                 {
                     IEdge newEdge = null;
 
-                    if (v.Get(false, "$Is:NoteEvent") != null) // NOTE
+                    if (v.Get(false, "$Is:Quant") != null) // NOTE
                     {
-                        int triggerTime = GraphUtil.GetIntegerValue(v.Get(false, "TriggerTime:"), ref o) - minPosition + PositionMark;
-                        int length = GraphUtil.GetIntegerValue(v.Get(false, "Length:"), ref o);
+                        int step;
 
-                        if (triggerTime > maxPosition)
-                            maxPosition = triggerTime;
+                        MelodyFlowStep so;
 
-                        if ((length + triggerTime) > maxPosition)
-                            maxPosition = length + triggerTime;
+                        MelodyFlow.GetQuantAndStepFromQuantVertex(v, out step, out so);
+
+                        int newStep = step - minPosition + PositionMark;                        
+
+                        if (newStep > maxPosition)
+                            maxPosition = newStep;                        
 
                         if (isClipboardCopy)
-                            newEdge = AddNoteVertex(v.Get(false, "Octave:"),
-                                v.Get(false, "Note:"),
-                                triggerTime,
-                                length,
-                                GraphUtil.GetIntegerValue(v.Get(false, "Velocity:"), ref o));
+                            newEdge = AddQuantEdge(GraphUtil.GetIntegerValueOr0(v.Get(false, "Note:")),
+                                GraphUtil.GetIntegerValueOr0(v.Get(false, "Octave:")),
+                                newStep,                                
+                                GraphUtil.GetIntegerValueOr0(v.Get(false, "Velocity:")));
 
                         if (isClipboardCut)
                         {
                             newEdge = edge;
 
-                            UpdateNoteVertex(edge,
-                                v.Get(false, "Octave:"),
-                                v.Get(false, "Note:"),
-                                triggerTime,
-                                length,
-                                GraphUtil.GetIntegerValue(v.Get(false, "Velocity:"), ref o));
+                            UpdateQuantVertex(edge,
+                                GraphUtil.GetIntegerValueOr0(v.Get(false, "Octave:")),
+                                GraphUtil.GetIntegerValueOr0(v.Get(false, "Note:")),
+                                newStep,                               
+                                GraphUtil.GetIntegerValueOr0(v.Get(false, "Velocity:")));
                         }                       
                         
                        AddToSelectedEdges(newEdge);
-                    }
-
-                    if (v.Get(false, "$Is:ControlChangeEvent") != null) // CONTROLCHANGE
-                    {
-                        int triggerTime = GraphUtil.GetIntegerValue(v.Get(false, "TriggerTime:"), ref o) - minPosition + PositionMark;
-
-                        if (isClipboardCopy)
-                            newEdge = AddCCVertex(triggerTime,
-                                GraphUtil.GetIntegerValue(v.Get(false, "Number:"), ref o),
-                                GraphUtil.GetIntegerValue(v.Get(false, "Value:"), ref o));
-
-                        if (isClipboardCut)
-                        {
-                            newEdge = edge;
-
-                            UpdateCCVertex(edge,
-                                triggerTime,
-                                GraphUtil.GetIntegerValue(v.Get(false, "Number:"), ref o),
-                                GraphUtil.GetIntegerValue(v.Get(false, "Value:"), ref o));
-                        }                        
-
-                        if (whatIsClipboard == WhatIsInEdgesEnum.OnlyCC)
-                            AddToSelectedEdges(newEdge);
                     }
                 }                
             }
@@ -606,39 +466,28 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             PreviousSelectedItemContext = MainDownEnum.Main;
         }
 
-        private void UpdateNoteVertex(IEdge noteEventEdge, IVertex octave, IVertex note, int triggerTime, int length, int velocity)
+        private void UpdateQuantVertex(IEdge quantEdge, int octave, int note, int triggerTime, int velocity)
         {
-            IVertex r = MinusZero.Instance.Root;
+            int step;
 
-            IVertex Event = r.Get(false, @"System\Lib\Music\Event");
-            IVertex noteEvent = r.Get(false, @"System\Lib\Music\NoteEvent");            
+            MelodyFlowStep so;
 
-            IVertex noteEventVertex = noteEventEdge.To;
+            MelodyFlowQuant quant = MelodyFlow.GetQuantAndStepFromQuantVertex(quantEdge.To, out step, out so);
+            
+            quant.Note = note;
+            quant.Octave = octave;
+            
+            quant.Velocity = velocity;
 
-            noteEventVertex.AddEdge(MinusZero.Instance.Is, noteEvent);
+            int numberOfSteps = MelodyFlow.GetNumberOfSteps();
 
-            GraphUtil.SetVertexValue(noteEventVertex, noteEvent.Get(false, @"Attribute:TriggerTime"), triggerTime);
-            GraphUtil.SetVertexValue(noteEventVertex, noteEvent.Get(false, @"Attribute:Length"), length);
-            GraphUtil.CreateOrReplaceEdge(noteEventVertex, noteEvent.Get(false, @"Attribute:Octave"), octave);
-            GraphUtil.CreateOrReplaceEdge(noteEventVertex, noteEvent.Get(false, @"Attribute:Note"), note);
-            GraphUtil.SetVertexValue(noteEventVertex, noteEvent.Get(false, @"Attribute:Velocity"), velocity);                        
-        }
+            IEdge newEdge = quant.PutOrMoveToStep(step);
 
-        private void UpdateCCVertex(IEdge ccEventEdge, int triggerTime, int number, int value)
-        {
-            IVertex r = MinusZero.Instance.Root;
+            int newNumberOfSteps = MelodyFlow.GetNumberOfSteps();
 
-            IVertex Event = r.Get(false, @"System\Lib\Music\Event");
-            IVertex noteEvent = r.Get(false, @"System\Lib\Music\ControlChangeEvent");
-
-            IVertex noteEventVertex = ccEventEdge.To;
-
-            noteEventVertex.AddEdge(MinusZero.Instance.Is, noteEvent);
-
-            GraphUtil.SetVertexValue(noteEventVertex, noteEvent.Get(false, @"Attribute:Number"), number);
-            GraphUtil.SetVertexValue(noteEventVertex, noteEvent.Get(false, @"Attribute:Value"), value);
-            GraphUtil.SetVertexValue(noteEventVertex, noteEvent.Get(false, @"Attribute:TriggerTime"), triggerTime);
-        }
+            if (numberOfSteps != newNumberOfSteps)
+                HorizontalAD.SetLength(newNumberOfSteps + 1);                        
+        }        
 
         protected override double GetSnappedPosition(double position)
         {
