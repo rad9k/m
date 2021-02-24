@@ -1649,7 +1649,15 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             return null;
         }
 
-        protected virtual IEdge AddItemEdge_Down(double mouseY, double startPosition, out bool isUpdate, out bool isNoteEvent)
+        protected virtual bool IsVelocityHavingVertgex(IVertex v)
+        {
+            if (v.Get(false, @"$Is:NoteEvent") != null)
+                return true;
+
+            return false;
+        }
+
+        protected virtual IEdge AddItemEdge_Down(double mouseY, double startPosition, out bool isUpdate, out bool isVelocityHavingEvent)
         {
             isUpdate = false;
 
@@ -1663,7 +1671,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             IEdge tempEventEdge = null;
 
-            isNoteEvent = false;
+            isVelocityHavingEvent = false;
 
             List<IItem> existingItems = GetDownItemFromNumberTriggerTimeDictionary(CurrentControlChangeNumber, triggerTime);
 
@@ -1678,8 +1686,8 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
                 isUpdate = true;
 
-                if (tempEventEdge.To.Get(false, @"$Is:NoteEvent") != null)
-                    isNoteEvent = true;
+                if (IsVelocityHavingVertgex(tempEventEdge.To))
+                    isVelocityHavingEvent = true;
             }
             else
                 tempEventEdge = baseVertex.AddVertexAndReturnEdge(null, null);
@@ -1689,7 +1697,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             if (!isUpdate)
                 eventVertex.AddEdge(MinusZero.Instance.Is, ControlChangeEvent);
 
-            if (isNoteEvent)
+            if (isVelocityHavingEvent)
                 GraphUtil.SetVertexValue(eventVertex, NoteEvent.Get(false, @"Attribute:Velocity"), ControlChangeItem.getValueFromMouseY_Down(mouseY, Height_Down));
             else
             {
@@ -1791,7 +1799,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             return ItemsDictinaryHolder_Number_TriggerTime_Down;
         }
 
-        protected void RebuildItemsDictionary_Down()
+        protected virtual void RebuildItemsDictionary_Down()
         {
             ItemsDictinaryHolder_Down.Clear();
 

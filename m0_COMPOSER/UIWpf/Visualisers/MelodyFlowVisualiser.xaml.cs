@@ -328,6 +328,17 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             return musicTime * HorizontalAD.BaseUnitSize;
         }
 
+        int GetStepFromVertex(IVertex v)
+        {
+            int step;
+
+            MelodyFlowStep so;
+
+            MelodyFlow.GetQuantAndStepFromQuantVertex(v, out step, out so);
+
+            return step;
+        }
+
         protected override int FindLastPosition(IEnumerable<IEdge> edges)
         {
             int last = 0;
@@ -338,11 +349,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
                 if(v.Get(false, "$Is:Quant") != null)
                 {
-                    int step;
-
-                    MelodyFlowStep so;
-
-                    MelodyFlow.GetQuantAndStepFromQuantVertex(v, out step, out so);                    
+                    int step = GetStepFromVertex(v);
 
                     if (last < step)
                         last = step;
@@ -380,11 +387,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
                 
                 if (v.Get(false, "$Is:Quant") != null)
                 {
-                    int step;
-
-                    MelodyFlowStep so;
-
-                    MelodyFlow.GetQuantAndStepFromQuantVertex(v, out step, out so);                    
+                    int step = GetStepFromVertex(v);
 
                     if (step > maxPosition)
                         maxPosition = step;
@@ -428,11 +431,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
                     if (v.Get(false, "$Is:Quant") != null) // NOTE
                     {
-                        int step;
-
-                        MelodyFlowStep so;
-
-                        MelodyFlow.GetQuantAndStepFromQuantVertex(v, out step, out so);
+                        int step = GetStepFromVertex(v);
 
                         int newStep = step - minPosition + PositionMark;                        
 
@@ -501,6 +500,53 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             double reminder = positionInBars % CurrentSnapToGridValue_corrected;
 
             return (positionInBars - reminder) * HorizontalAD.SegmentLength * HorizontalAD.BaseUnitSize;
+        }
+
+        protected override void RebuildItemsDictionary_Down()
+        {
+            ItemsDictinaryHolder_Down.Clear();
+
+            ItemsDictinaryHolder_Number_TriggerTime_Down.Clear();
+
+            foreach (IItem i in Items_Down)
+            {
+                IVertex v = i.BaseEdge.To;
+                ItemsDictinaryHolder_Down.Add(v, i);
+
+                //
+
+                int step = GetStepFromVertex(v);
+                int number = -1;
+                
+                Dictionary<int, List<IItem>> itemsDictinaryHolder_TriggerTime_Down;
+
+                if (ItemsDictinaryHolder_Number_TriggerTime_Down.ContainsKey(number))
+                    itemsDictinaryHolder_TriggerTime_Down = ItemsDictinaryHolder_Number_TriggerTime_Down[number];
+                else
+                {
+                    itemsDictinaryHolder_TriggerTime_Down = new Dictionary<int, List<IItem>>();
+                    ItemsDictinaryHolder_Number_TriggerTime_Down.Add(number, itemsDictinaryHolder_TriggerTime_Down);
+                }
+
+                if (itemsDictinaryHolder_TriggerTime_Down.ContainsKey(step))
+                    itemsDictinaryHolder_TriggerTime_Down[step].Add(i);
+                else
+                {
+                    List<IItem> list = new List<IItem>();
+                    list.Add(i);
+                    itemsDictinaryHolder_TriggerTime_Down.Add(step, list);
+                }
+            }
+
+            NeedToRebuildItemsDictionary_Down = false;
+        }
+
+        protected override bool IsVelocityHavingVertgex(IVertex v)
+        {
+            if (v.Get(false, @"$Is:Quant") != null)
+                return true;
+
+            return false;
         }
     }
 }
