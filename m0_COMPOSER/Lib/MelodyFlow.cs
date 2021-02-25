@@ -199,7 +199,7 @@ namespace m0_COMPOSER.Lib
             if (sameQuantTypeExists)
             {
                 MelodyFlow.InsertStepAt(stepPosition);
-                toStepVertex = MelodyFlow.GetStep(stepPosition + 1).StepVertex;
+                toStepVertex = MelodyFlow.GetStep(stepPosition).StepVertex;
             }
 
             IEdge newEdge = null;
@@ -251,9 +251,20 @@ namespace m0_COMPOSER.Lib
             return baseVertex.GetAll(false, "Step:").Count();
         }
 
+        public void AddStepAtEnd()
+        {
+            VertexOperations.AddInstance(baseVertex, stepMeta);
+        }
+
         public MelodyFlowStep GetStep(int stepPosition)
         {
+            int actualNumberOfSteps = GetNumberOfSteps();
+
             int stepPosition_zeroScript = stepPosition + 1;
+
+            if(stepPosition_zeroScript > actualNumberOfSteps)
+                for (int x = actualNumberOfSteps; x < stepPosition_zeroScript; x++)
+                    AddStepAtEnd();
 
             return new MelodyFlowStep(this, baseVertex.Get(false, "Step:<<\""+stepPosition_zeroScript+"\">>"));
         }                       
@@ -271,10 +282,10 @@ namespace m0_COMPOSER.Lib
             int cnt = 0;
             foreach (IEdge e in edges)
             {                
-                baseVertex.AddEdge(stepMeta, e.To);
-
                 if (cnt == stepPosition)
                     VertexOperations.AddInstance(baseVertex, stepMeta);
+
+                baseVertex.AddEdge(stepMeta, e.To);
 
                 cnt++;
             }                

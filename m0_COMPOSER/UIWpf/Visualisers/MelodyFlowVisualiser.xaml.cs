@@ -1,6 +1,7 @@
 ﻿using m0;
 using m0.Foundation;
 using m0.Graph;
+using m0.UIWpf;
 using m0.Util;
 using m0.ZeroTypes;
 using m0_COMPOSER.Lib;
@@ -9,6 +10,7 @@ using m0_COMPOSER.UIWpf.Visualisers.Control.Item;
 using System;
 using System.Collections.Generic;
 using System.Windows;
+using System.Windows.Input;
 
 namespace m0_COMPOSER.UIWpf.Visualisers
 {
@@ -630,6 +632,24 @@ namespace m0_COMPOSER.UIWpf.Visualisers
                 foreach (MelodyFlowQuant quant in step.Quants)                    
                     AddItem_Down(quant.QuantEdge, selectedVertexes, false, false);
             }
+        }
+
+        protected override void ArrowMove_ArrowUp(object sender, MouseEventArgs e)
+        {
+            Point currentMousePosition = GetMainContentMousePosition(e);
+
+            FrameworkElement element = WpfUtil.GetElementAtFromList_StartFromEnd(Items, currentMousePosition);
+
+            if (element != null && element is IItem)
+            {
+                IItem item = (IItem)element;
+
+                ArrowMove_ArrowUp_SetMouseCurrentItem(item, CursorStateEnum.ArrowUp_MoveOnItem);
+                return;
+            }
+
+            SetCursorMode(CursorStateEnum.ArrowUp);
+            UpdateCursorShape();
         }
     }
 }

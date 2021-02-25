@@ -1019,7 +1019,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             UpdateCursorShape();
         }
 
-        protected void ArrowMove_ArrowUp(object sender, MouseEventArgs e)
+        protected virtual void ArrowMove_ArrowUp(object sender, MouseEventArgs e)
         {
             Point currentMousePosition = GetMainContentMousePosition(e);
 
