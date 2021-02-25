@@ -144,8 +144,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             if (IsDrum)
                 IsCurrentPenItemCenter = true;
-        }
-        
+        }        
 
         protected override void AddItem(IEdge itemEdge, List<IVertex> selectedVertexes)
         {
@@ -225,21 +224,10 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             if(velocity == -1)
                 quant.Velocity = DefaultVelocity;            
             else
-                quant.Velocity = velocity;
-
-            int numberOfSteps = MelodyFlow.GetNumberOfSteps();
+                quant.Velocity = velocity;            
 
             IEdge newEdge = quant.PutOrMoveToStep(step);
-
-            int newNumberOfSteps = MelodyFlow.GetNumberOfSteps();            
-
-            if (numberOfSteps != newNumberOfSteps || newNumberOfSteps == 1)
-            {
-                HorizontalAD.SetLength(newNumberOfSteps + 1);
-
-                VisualiserDraw();
-            }
-
+            
             return newEdge;
         }
 
@@ -318,6 +306,16 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             int step = ScreenPositionToMusicTime(item.Left, true);
 
             quant.PutOrMoveToStep(step);            
+        }
+
+        protected override int ScreenPositionToMusicTime(double position, bool performSnapCorrection)
+        {
+            if (HorizontalAD == null)
+                return 0;
+
+            int musicTime = (int)(position / HorizontalAD.BaseUnitSize);
+
+            return musicTime;
         }
 
         protected override double MusicTimeToScreenPosition(int musicTime, bool performSnapCorrection)
@@ -541,12 +539,97 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             NeedToRebuildItemsDictionary_Down = false;
         }
 
-        protected override bool IsVelocityHavingVertgex(IVertex v)
+        protected override bool IsVelocityHavingVertex(IVertex v)
         {
             if (v.Get(false, @"$Is:Quant") != null)
                 return true;
 
             return false;
+        }
+
+        int numberOfStepsBefore;
+
+        void GetNumberOfStepsBefore()
+        {
+            numberOfStepsBefore = MelodyFlow.GetNumberOfSteps();
+        }
+
+        void CheckNumberOfStepsAfter()
+        {
+            int numberOfStepsAfter = MelodyFlow.GetNumberOfSteps();
+
+            if (numberOfStepsBefore != numberOfStepsAfter || numberOfStepsBefore == 1)
+            {
+                HorizontalAD.SetLength(numberOfStepsAfter + 1);
+
+                VisualiserDraw();
+            }
+        }
+
+        protected override void PerformPenUp_part1()
+        {
+            Main.Children.Remove(NewItemShape);
+
+            GetNumberOfStepsBefore();
+        }
+
+        protected override void PerformPenUp_part2()
+        {
+            SetCursorMode(CursorStateEnum.PenUp);
+
+            CheckNumberOfStepsAfter();
+        }
+
+        protected override void AddItem_Down(IEdge itemEdge, List<IVertex> selectedVertexes, bool isUpdate, bool isNoteEvent)
+        {
+            if (Height_Down == 0)
+                return;
+
+            IVertex itemEventVertex = itemEdge.To;            
+
+
+
+            ControlChangeItem item = null;
+
+            if (isUpdate)
+                item = (ControlChangeItem)GetItemsDictionary_Down()[itemEdge.To];
+            else
+                item = new ControlChangeItem(itemEdge, this);
+
+            IVertex itemVertex = item.BaseEdge.To;
+
+            int step = GetStepFromVertex(itemVertex);
+            
+            int value;
+            
+            value = GraphUtil.GetIntegerValueOr0(itemVertex.Get(false, "Velocity:"));            
+
+            if (selectedVertexes != null && selectedVertexes.Contains(itemEventVertex) && !isNoteEvent)
+            {
+                item.Select();
+                PreviousSelectedItemContext = MainDownEnum.Down;
+            }
+
+            double startPosition = MusicTimeToScreenPosition(step, true);
+
+            if (!isUpdate)
+                ItemsAdd_Down(item); // need this as item.Canvas needs to be set for the cc top mark
+
+            item.HorizontalCenter = startPosition;
+            item.VerticalCenter = Height_Down - (((double)value / 127) * Height_Down);
+        }
+
+        protected override void DrawItems_Down()
+        {
+            List<IVertex> selectedVertexes = GetSelectedVertexes();
+
+            for (int stepCnt = 0; stepCnt < MelodyFlow.GetNumberOfSteps(); stepCnt++)
+            {
+                MelodyFlowStep step = MelodyFlow.GetStep(stepCnt);
+
+                foreach (MelodyFlowQuant quant in step.Quants)                    
+                    AddItem_Down(quant.QuantEdge, selectedVertexes, false, false);
+            }
         }
     }
 }

@@ -693,17 +693,17 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             PerformPenUp_part2();
         }
 
-        protected void PerformPenUp_part1()
+        protected virtual void PerformPenUp_part1()
         {
             Main.Children.Remove(NewItemShape);
         }
 
-        protected void PerformPenUp_part2()
+        protected virtual void PerformPenUp_part2()
         {
             SetCursorMode(CursorStateEnum.PenUp);
         }
 
-        protected void PenUp(object sender, MouseButtonEventArgs e)
+        protected virtual void PenUp(object sender, MouseButtonEventArgs e)
         {
             PerformPenUp_part1();
 
@@ -725,7 +725,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
                 newItemEventEdge = AddItemEdge(NewItemSegment, Canvas.GetLeft(NewItemShape), NewItemShape.Width);
             }
-
+            
             AddItem(newItemEventEdge, null);
 
             VertexChangeOff = false;
@@ -1649,7 +1649,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             return null;
         }
 
-        protected virtual bool IsVelocityHavingVertgex(IVertex v)
+        protected virtual bool IsVelocityHavingVertex(IVertex v)
         {
             if (v.Get(false, @"$Is:NoteEvent") != null)
                 return true;
@@ -1686,7 +1686,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
                 isUpdate = true;
 
-                if (IsVelocityHavingVertgex(tempEventEdge.To))
+                if (IsVelocityHavingVertex(tempEventEdge.To))
                     isVelocityHavingEvent = true;
             }
             else
@@ -1717,7 +1717,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             return finalEdge;
         }
 
-        protected void AddItem_Down(IEdge itemEdge, List<IVertex> selectedVertexes, bool isUpdate, bool isNoteEvent)
+        protected virtual void AddItem_Down(IEdge itemEdge, List<IVertex> selectedVertexes, bool isUpdate, bool isNoteEvent)
         {
             if (Height_Down == 0)
                 return;
