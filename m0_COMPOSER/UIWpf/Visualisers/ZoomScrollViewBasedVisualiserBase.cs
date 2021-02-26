@@ -1126,9 +1126,9 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
                 foreach (IItem i in GetSelectedAndMouseOverItems(MainDownEnum.Main))
                 {
-                    UpdateItem_HorizontalPosition(i);
-
                     UpdateItem_VerticalPosition(i);
+
+                    UpdateItem_HorizontalPosition(i);                 
                 }
             }
 

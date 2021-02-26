@@ -170,6 +170,8 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             else
                 newElement = new NoteItem(itemEdge, label, this, ShowLabel, ShowVelocity);
 
+            newElement.Tag = quant;
+
             IItem newItem = (IItem)newElement;
 
             if (selectedVertexes != null && selectedVertexes.Contains(quantVertex))
@@ -305,9 +307,26 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             //
 
-            int step = ScreenPositionToMusicTime(item.Left, true);
+            int oldStep = GetStepFromVertex(quant.QuantVertex);
 
-            quant.PutOrMoveToStep(step);            
+            int newStep = ScreenPositionToMusicTime(item.Left, true);
+
+            if (oldStep != newStep)
+            {
+                int beforeOldStep = MelodyFlow.GetStep(oldStep).Quants.Count;
+
+                quant.PutOrMoveToStep(newStep);
+
+                int afterOldStep = MelodyFlow.GetStep(oldStep).Quants.Count;
+
+                //   if (newStep < oldStep)
+                //   oldStep++; // corection for delete
+
+                if (MelodyFlow.GetStep(oldStep).Quants.Count == 0)
+                    MelodyFlow.RemoveStep(oldStep);                
+            }
+
+            VisualiserDraw();
         }
 
         protected override int ScreenPositionToMusicTime(double position, bool performSnapCorrection)
@@ -563,6 +582,8 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             if (numberOfStepsBefore != numberOfStepsAfter || numberOfStepsBefore == 1)
             {
                 HorizontalAD.SetLength(numberOfStepsAfter + 1);
+
+                MelodyFlow.AddStepAtEnd();
 
                 VisualiserDraw();
             }

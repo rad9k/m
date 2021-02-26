@@ -191,12 +191,15 @@ namespace m0_COMPOSER.Lib
 
             IVertex toStepVertex = MelodyFlow.GetStep(stepPosition).StepVertex;
 
-            bool sameQuantTypeExists = false;
+            bool needToInsert = false;
 
-            if (!MelodyFlow.IsDrum && toStepVertex.Get(false, @"\QuantType:" + QuantType.ToString()) != null)
-                sameQuantTypeExists = true;
+            if ((stepPosition + 1) == MelodyFlow.GetNumberOfSteps())
+                needToInsert = true;
+            else
+                if (!MelodyFlow.IsDrum && toStepVertex.Get(false, @"\QuantType:" + QuantType.ToString()) != null)
+                    needToInsert = true;
 
-            if (sameQuantTypeExists)
+            if (needToInsert)
             {
                 MelodyFlow.InsertStepAt(stepPosition);
                 toStepVertex = MelodyFlow.GetStep(stepPosition).StepVertex;
@@ -291,6 +294,15 @@ namespace m0_COMPOSER.Lib
             }                
         }
 
+        public void RemoveStep(int stepPosition)
+        {
+            IList<IEdge> steps = GraphUtil.GetQueryOut(baseVertex, "Step", null);
+
+            IEdge toDeleteEdge = steps[stepPosition];
+
+            baseVertex.DeleteEdge(toDeleteEdge);
+        }
+
         public MelodyFlowQuant GetQuantAndStepFromQuantVertex(IVertex quantVertex, out int step, out MelodyFlowStep stepObject)
         {
             step = -1;
@@ -315,6 +327,6 @@ namespace m0_COMPOSER.Lib
             }
 
             return null;
-        }
+        }        
     }
 }
