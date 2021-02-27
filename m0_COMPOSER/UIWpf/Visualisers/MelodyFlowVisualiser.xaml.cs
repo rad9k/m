@@ -369,7 +369,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             {
                 IVertex v = e.To.Get(false, "To:");
 
-                if(v.Get(false, "$Is:Quant") != null)
+                if(v.Get(false, "$Is:MelodyFlowQuant") != null)
                 {
                     int step = GetStepFromVertex(v);
 
@@ -378,7 +378,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
                 }
             }
 
-            return last;
+            return last + 1;
         }        
 
         // copy & paste rules for SequenceVisualiser
@@ -407,7 +407,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
                 IVertex v = edge.To;                
                 
-                if (v.Get(false, "$Is:Quant") != null)
+                if (v.Get(false, "$Is:MelodyFlowQuant") != null)
                 {
                     int step = GetStepFromVertex(v);
 
@@ -451,7 +451,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
                 {
                     IEdge newEdge = null;
 
-                    if (v.Get(false, "$Is:Quant") != null) // NOTE
+                    if (v.Get(false, "$Is:MelodyFlowQuant") != null)
                     {
                         int step = GetStepFromVertex(v);
 
@@ -485,9 +485,11 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             PositionMark = MusicTimeSnapCorrect_Up(maxPosition);
 
             PreviousSelectedItemContext = MainDownEnum.Main;
+
+            DoCleanUp();
         }
 
-        private void UpdateQuantVertex(IEdge quantEdge, int octave, int note, int triggerTime, int velocity)
+        private void UpdateQuantVertex(IEdge quantEdge, int octave, int note, int newStep, int velocity)
         {
             int step;
 
@@ -502,12 +504,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             int numberOfSteps = MelodyFlow.GetNumberOfSteps();
 
-            IEdge newEdge = quant.PutOrMoveToStep(step);
-
-            int newNumberOfSteps = MelodyFlow.GetNumberOfSteps();
-
-            if (numberOfSteps != newNumberOfSteps)
-                HorizontalAD.SetLength(newNumberOfSteps + 1);                        
+            IEdge newEdge = quant.PutOrMoveToStep(newStep);                     
         }             
 
         protected override void RebuildItemsDictionary_Down()
@@ -551,19 +548,24 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
         protected override bool IsVelocityHavingVertex(IVertex v)
         {
-            if (v.Get(false, @"$Is:Quant") != null)
+            if (v.Get(false, @"$Is:MelodyFlowQuant") != null)
                 return true;
 
             return false;
         }                        
 
-        void DoCleanUpAndVisualiserDraw()
+        void DoCleanUp()
         {
             int newNumberOfSteps;
 
             MelodyFlow.GetNumberOfStepsAndCleanUp(out newNumberOfSteps);
-            
+
             HorizontalAD.SetLength(newNumberOfSteps);
+        }
+
+        void DoCleanUpAndVisualiserDraw()
+        {
+            DoCleanUp();
 
             VisualiserDraw();            
         }
@@ -658,6 +660,11 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             
             return (positionInBars - reminder) * HorizontalAD.SegmentLength * HorizontalAD.BaseUnitSize;            
+        }
+
+        protected override int MusicTimeSnapCorrect_Up(int toCorrect)
+        {
+            return toCorrect;
         }
     }
 }

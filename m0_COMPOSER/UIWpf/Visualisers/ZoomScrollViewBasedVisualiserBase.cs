@@ -777,12 +777,17 @@ namespace m0_COMPOSER.UIWpf.Visualisers
                 IItem item = (IItem)elementFound;
 
                 if (NoControlKeyPressed())
+                {
                     UnselectAllSelectedItems();
-
-                if (item.IsSelected)
-                    UnselectItem(item);
-                else
                     SelectItem(item);
+                }
+                else
+                {
+                    if (item.IsSelected)
+                        UnselectItem(item);
+                    else
+                        SelectItem(item);
+                }
 
                 if (e.ClickCount == 2 && NoControlKeyPressed())
                     item.Open();
@@ -1903,10 +1908,18 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             {
                 IItem item = (IItem)elementFound;
 
-                if (item.IsSelected)
-                    UnselectItem(item);
-                else
+                if (NoControlKeyPressed())
+                {
+                    UnselectAllSelectedItems();
                     SelectItem(item);
+                }
+                else
+                {
+                    if (item.IsSelected)
+                        UnselectItem(item);
+                    else
+                        SelectItem(item);
+                }
             }
             else
             {
@@ -2021,10 +2034,18 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             {
                 IItem item = (IItem)elementFound;
 
-                if (item.IsSelected)
-                    UnselectItem(item);
-                else
+                if (NoControlKeyPressed())
+                {
+                    UnselectAllSelectedItems();
                     SelectItem(item);
+                }
+                else
+                {
+                    if (item.IsSelected)
+                        UnselectItem(item);
+                    else
+                        SelectItem(item);
+                }
             }
 
             SetCursorMode(CursorStateEnum.ArrowUp);
@@ -2583,7 +2604,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
                 return (int)((numberOfSnapsFloor + 1) * snapSizeInMusicTime);
         }
 
-        protected int MusicTimeSnapCorrect_Up(int toCorrect)
+        protected virtual int MusicTimeSnapCorrect_Up(int toCorrect)
         {
             toCorrect = toCorrect - 1; // hacky :)
 
