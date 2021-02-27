@@ -50,6 +50,7 @@ namespace m0_COMPOSER.Lib
 
         static IVertex r = MinusZero.Instance.Root;
 
+        static IVertex melodyFlowQuantMeta = r.Get(false, @"System\Lib\Music\Generator\MelodyFlowQuant");
         static IVertex quantMeta = r.Get(false, @"System\Lib\Music\Generator\MelodyFlowStep\Quant");
         static IVertex octaveMeta = r.Get(false, @"System\Lib\Music\Generator\MelodyFlowQuant\Octave");
         static IVertex noteMeta = r.Get(false, @"System\Lib\Music\Generator\MelodyFlowQuant\Note");
@@ -193,11 +194,8 @@ namespace m0_COMPOSER.Lib
 
             bool needToInsert = false;
 
-            if ((stepPosition + 1) == MelodyFlow.GetNumberOfSteps())
+            if (!MelodyFlow.IsDrum && toStepVertex.Get(false, @"\QuantType:" + QuantType.ToString()) != null)
                 needToInsert = true;
-            else
-                if (!MelodyFlow.IsDrum && toStepVertex.Get(false, @"\QuantType:" + QuantType.ToString()) != null)
-                    needToInsert = true;
 
             if (needToInsert)
             {
@@ -209,10 +207,9 @@ namespace m0_COMPOSER.Lib
 
             if (QuantVertex == null)
             {
-                newEdge = VertexOperations.AddInstanceAndReturnEdge(toStepVertex, quantMeta);
+                QuantEdge = VertexOperations.AddInstanceAndReturnEdge(toStepVertex, melodyFlowQuantMeta, quantMeta);
 
-                QuantVertex = newEdge.To;
-                QuantEdge = newEdge;
+                QuantVertex = QuantEdge.To;                 
 
                 Note = note;
                 Octave = octave;
@@ -232,10 +229,11 @@ namespace m0_COMPOSER.Lib
     {
         IVertex baseVertex;
 
-        public bool IsDrum;
+        public bool IsDrum;        
 
         static IVertex r = MinusZero.Instance.Root;
 
+        static IVertex melodyFlowStepMeta = r.Get(false, @"System\Lib\Music\Generator\MelodyFlowStep");
         static IVertex stepMeta = r.Get(false, @"System\Lib\Music\Generator\MelodyFlow\Step");
 
         public MelodyFlow(IVertex _baseVertex)
@@ -246,7 +244,7 @@ namespace m0_COMPOSER.Lib
                 IsDrum = true;
 
             if (baseVertex.GetAll(false, "Step:").Count() == 0)
-                VertexOperations.AddInstance(baseVertex, stepMeta);
+                VertexOperations.AddInstance(baseVertex, melodyFlowStepMeta, stepMeta);
         }
 
         public int GetNumberOfSteps()
@@ -256,7 +254,7 @@ namespace m0_COMPOSER.Lib
 
         public void AddStepAtEnd()
         {
-            VertexOperations.AddInstance(baseVertex, stepMeta);
+            VertexOperations.AddInstance(baseVertex, melodyFlowStepMeta, stepMeta);
         }
 
         public MelodyFlowStep GetStep(int stepPosition)
@@ -286,7 +284,7 @@ namespace m0_COMPOSER.Lib
             foreach (IEdge e in edges)
             {                
                 if (cnt == stepPosition)
-                    VertexOperations.AddInstance(baseVertex, stepMeta);
+                    VertexOperations.AddInstance(baseVertex, melodyFlowStepMeta, stepMeta);
 
                 baseVertex.AddEdge(stepMeta, e.To);
 
@@ -328,5 +326,24 @@ namespace m0_COMPOSER.Lib
 
             return null;
         }        
+
+        public bool GetNumberOfStepsAndCleanUp(out int newNumberOfSteps)
+        {
+            int numberOfSteps = GetNumberOfSteps(); // check if last step is empty, if not, add empty step
+
+            IVertex stepVertex = GetStep(numberOfSteps - 1).StepVertex;
+            
+            if (stepVertex.Get(false, @"Quant:") != null)
+            {
+                AddStepAtEnd();
+                newNumberOfSteps = numberOfSteps + 1;
+
+                return true;
+            }
+
+            newNumberOfSteps = numberOfSteps;
+
+            return false;
+        }
     }
 }

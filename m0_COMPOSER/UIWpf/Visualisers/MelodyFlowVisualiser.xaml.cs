@@ -305,7 +305,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             if (quant == null)
                 return;
 
-            //
+            //             
 
             int oldStep = GetStepFromVertex(quant.QuantVertex);
 
@@ -322,11 +322,15 @@ namespace m0_COMPOSER.UIWpf.Visualisers
                 //   if (newStep < oldStep)
                 //   oldStep++; // corection for delete
 
-                if (MelodyFlow.GetStep(oldStep).Quants.Count == 0)
-                    MelodyFlow.RemoveStep(oldStep);                
-            }
+                //if (MelodyFlow.GetStep(oldStep).Quants.Count == 0)
+                  //  MelodyFlow.RemoveStep(oldStep);                
+            }            
+
+            HorizontalAD.SetLength(MelodyFlow.GetNumberOfSteps());
 
             VisualiserDraw();
+
+            //DoCleanUpAndVisualiserDraw();
         }
 
         protected override int ScreenPositionToMusicTime(double position, bool performSnapCorrection)
@@ -566,41 +570,24 @@ namespace m0_COMPOSER.UIWpf.Visualisers
                 return true;
 
             return false;
-        }
+        }                        
 
-        int numberOfStepsBefore;
-
-        void GetNumberOfStepsBefore()
+        void DoCleanUpAndVisualiserDraw()
         {
-            numberOfStepsBefore = MelodyFlow.GetNumberOfSteps();
-        }
+            int newNumberOfSteps;
 
-        void CheckNumberOfStepsAfter()
-        {
-            int numberOfStepsAfter = MelodyFlow.GetNumberOfSteps();
+            MelodyFlow.GetNumberOfStepsAndCleanUp(out newNumberOfSteps);
+            
+            HorizontalAD.SetLength(newNumberOfSteps);
 
-            if (numberOfStepsBefore != numberOfStepsAfter || numberOfStepsBefore == 1)
-            {
-                HorizontalAD.SetLength(numberOfStepsAfter + 1);
-
-                MelodyFlow.AddStepAtEnd();
-
-                VisualiserDraw();
-            }
-        }
-
-        protected override void PerformPenUp_part1()
-        {
-            Main.Children.Remove(NewItemShape);
-
-            GetNumberOfStepsBefore();
+            VisualiserDraw();            
         }
 
         protected override void PerformPenUp_part2()
         {
             SetCursorMode(CursorStateEnum.PenUp);
 
-            CheckNumberOfStepsAfter();
+            DoCleanUpAndVisualiserDraw();
         }
 
         protected override void AddItem_Down(IEdge itemEdge, List<IVertex> selectedVertexes, bool isUpdate, bool isNoteEvent)
