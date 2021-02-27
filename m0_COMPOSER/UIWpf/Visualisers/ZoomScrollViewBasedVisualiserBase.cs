@@ -773,7 +773,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
                 else
                     SelectItem(item);
 
-                if (e.ClickCount == 2)
+                if (e.ClickCount == 2 && (!Keyboard.IsKeyDown(Key.LeftCtrl))
                     item.Open();
 
             }

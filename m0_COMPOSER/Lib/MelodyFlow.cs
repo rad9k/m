@@ -169,7 +169,7 @@ namespace m0_COMPOSER.Lib
 
         IVertex GetParentStepVertex()
         {
-            return GraphUtil.GetQueryInFirst(QuantVertex, "Step", null);
+            return GraphUtil.GetQueryInFirst(QuantVertex, "Quant", null);
         }
 
         public void Remove()
@@ -201,9 +201,7 @@ namespace m0_COMPOSER.Lib
             {
                 MelodyFlow.InsertStepAt(stepPosition);
                 toStepVertex = MelodyFlow.GetStep(stepPosition).StepVertex;
-            }
-
-            IEdge newEdge = null;
+            }            
 
             if (QuantVertex == null)
             {
@@ -217,11 +215,11 @@ namespace m0_COMPOSER.Lib
                 QuantType = quantType;
             }
             else
-                newEdge = toStepVertex.AddEdge(quantMeta, QuantVertex);
+                QuantEdge = toStepVertex.AddEdge(quantMeta, QuantVertex);
 
             isAttached = true;
 
-            return newEdge;
+            return QuantEdge;
         }               
     }
 

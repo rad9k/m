@@ -313,24 +313,23 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             if (oldStep != newStep)
             {
-                int beforeOldStep = MelodyFlow.GetStep(oldStep).Quants.Count;
+                VertexChangeOff = true;
 
-                quant.PutOrMoveToStep(newStep);
+                if (newStep > oldStep)
+                    newStep++;
 
-                int afterOldStep = MelodyFlow.GetStep(oldStep).Quants.Count;
+                quant.PutOrMoveToStep(newStep);                
 
-                //   if (newStep < oldStep)
-                //   oldStep++; // corection for delete
+                if (newStep < oldStep)
+                   oldStep++; // corection for delete
 
-                //if (MelodyFlow.GetStep(oldStep).Quants.Count == 0)
-                  //  MelodyFlow.RemoveStep(oldStep);                
-            }            
+                if (MelodyFlow.GetStep(oldStep).Quants.Count == 0)
+                  MelodyFlow.RemoveStep(oldStep);                
 
-            HorizontalAD.SetLength(MelodyFlow.GetNumberOfSteps());
+                VertexChangeOff = false;
+            }                        
 
-            VisualiserDraw();
-
-            //DoCleanUpAndVisualiserDraw();
+            DoCleanUpAndVisualiserDraw();
         }
 
         protected override int ScreenPositionToMusicTime(double position, bool performSnapCorrection)
@@ -509,21 +508,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             if (numberOfSteps != newNumberOfSteps)
                 HorizontalAD.SetLength(newNumberOfSteps + 1);                        
-        }        
-
-        protected override double GetSnappedPosition(double position)
-        {
-            double CurrentSnapToGridValue_corrected = CurrentSnapToGridValue * 16;
-
-            if (CurrentSnapToGrid == SnapToGridEnum.No_Snap)
-                return position;
-
-            double positionInBars = (position / HorizontalAD.BaseUnitSize) / HorizontalAD.SegmentLength;
-
-            double reminder = positionInBars % CurrentSnapToGridValue_corrected;
-
-            return (positionInBars - reminder) * HorizontalAD.SegmentLength * HorizontalAD.BaseUnitSize;
-        }
+        }             
 
         protected override void RebuildItemsDictionary_Down()
         {
@@ -658,6 +643,21 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             SetCursorMode(CursorStateEnum.ArrowUp);
             UpdateCursorShape();
+        }
+
+        protected override double GetSnappedPosition(double position)
+        {
+            double CurrentSnapToGridValue_corrected = CurrentSnapToGridValue * 16;
+
+            if (CurrentSnapToGrid == SnapToGridEnum.No_Snap)
+                return position;
+
+            double positionInBars = (position / HorizontalAD.BaseUnitSize) / HorizontalAD.SegmentLength;
+
+            double reminder = positionInBars % CurrentSnapToGridValue_corrected;
+
+            
+            return (positionInBars - reminder) * HorizontalAD.SegmentLength * HorizontalAD.BaseUnitSize;            
         }
     }
 }
