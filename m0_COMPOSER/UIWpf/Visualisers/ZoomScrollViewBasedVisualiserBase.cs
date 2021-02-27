@@ -758,6 +758,14 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             }
         }
 
+        bool NoControlKeyPressed()
+        {
+            if (!Keyboard.IsKeyDown(Key.LeftCtrl) && !Keyboard.IsKeyDown(Key.RightCtrl))
+                return true;
+
+            return false;
+        }
+
         protected void ArrowDown(object sender, MouseButtonEventArgs e)
         {
             Point currentMousePosition = GetMainContentMousePosition(e);
@@ -768,14 +776,16 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             {
                 IItem item = (IItem)elementFound;
 
+                if (NoControlKeyPressed())
+                    UnselectAllSelectedItems();
+
                 if (item.IsSelected)
                     UnselectItem(item);
                 else
                     SelectItem(item);
 
-                if (e.ClickCount == 2 && (!Keyboard.IsKeyDown(Key.LeftCtrl))
+                if (e.ClickCount == 2 && NoControlKeyPressed())
                     item.Open();
-
             }
             else
             {
@@ -845,7 +855,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             if (MouseOverItem == null)
                 return;
 
-            if(!GetSelectedItems().Contains(MouseOverItem))
+            if(!GetSelectedItems().Contains(MouseOverItem) && NoControlKeyPressed())
                 UnselectAllSelectedItems();
 
             InitMouseOverElementAndSelected();
@@ -1188,10 +1198,18 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             {
                 IItem item = (IItem)elementFound;
 
-                if (item.IsSelected)
-                    UnselectItem(item);
+                if (NoControlKeyPressed())
+                {                    
+                    UnselectAllSelectedItems();
+                    SelectItem(item);                    
+                }
                 else
-                    SelectItem(item);
+                {
+                    if (item.IsSelected)
+                        UnselectItem(item);
+                    else
+                        SelectItem(item);
+                }
             }
 
             SetCursorMode(CursorStateEnum.ArrowUp);
