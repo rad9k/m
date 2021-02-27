@@ -299,6 +299,14 @@ namespace m0_COMPOSER.Lib
             baseVertex.DeleteEdge(toDeleteEdge);
         }
 
+        public MelodyFlowQuant GetQuantFromVertex(IVertex quantVertex)
+        {
+            int step;
+            MelodyFlowStep stepObject;
+
+            return GetQuantAndStepFromQuantVertex(quantVertex, out step, out stepObject);
+        }
+
         public MelodyFlowQuant GetQuantAndStepFromQuantVertex(IVertex quantVertex, out int step, out MelodyFlowStep stepObject)
         {
             step = -1;

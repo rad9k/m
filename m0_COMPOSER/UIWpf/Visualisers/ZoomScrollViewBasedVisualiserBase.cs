@@ -832,7 +832,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             return selectedItems;
         }
 
-        protected List<IItem> GetSelectedAndMouseOverItems(MainDownEnum actualContext)
+        protected virtual List<IItem> GetSelectedAndMouseOverItems(MainDownEnum actualContext)
         {
             if (actualContext != PreviousSelectedItemContext)
                 UnselectAllSelectedItems();

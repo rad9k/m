@@ -403,9 +403,11 @@ namespace m0_COMPOSER.UIWpf.Visualisers
                 if (GeneralUtil.CompareStrings(e.Meta, "ClipboardCut"))
                     onlyCopy = false;
 
-                IEdge edge = Edge.GetIEdgeByEdgeVertex(e.To);
+                //IEdge edge = Edge.GetIEdgeByEdgeVertex(e.To);
 
-                IVertex v = edge.To;                
+                //IVertex v = edge.To;                
+
+                IVertex v = e.To.Get(false, "To:");
                 
                 if (v.Get(false, "$Is:MelodyFlowQuant") != null)
                 {
@@ -431,7 +433,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             bool onlyCopy;
 
             WhatIsInEdgesEnum whatIsClipboard = GetWhatIsInEdges(edges, out minPosition, out maxPosition, out onlyCopy);
-        
+
             foreach (IEdge e in edges)
             {
                 IEdge edge = Edge.GetIEdgeByEdgeVertex(e.To);
@@ -456,10 +458,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
                         int step = GetStepFromVertex(v);
 
                         int newStep = step - minPosition + PositionMark;                        
-
-                        if (newStep > maxPosition)
-                            maxPosition = newStep;                        
-
+                        
                         if (isClipboardCopy)
                             newEdge = AddQuantEdge(GraphUtil.GetIntegerValueOr0(v.Get(false, "Note:")),
                                 GraphUtil.GetIntegerValueOr0(v.Get(false, "Octave:")),
@@ -475,14 +474,19 @@ namespace m0_COMPOSER.UIWpf.Visualisers
                                 GraphUtil.GetIntegerValueOr0(v.Get(false, "Note:")),
                                 newStep,                               
                                 GraphUtil.GetIntegerValueOr0(v.Get(false, "Velocity:")));
-                        }                       
-                        
-                       AddToSelectedEdges(newEdge);
+
+                            newStep = GetStepFromVertex(newEdge.To);
+                        }
+
+                        if (newStep > maxPosition)
+                            maxPosition = newStep;
+
+                        AddToSelectedEdges(newEdge);
                     }
                 }                
             }
 
-            PositionMark = MusicTimeSnapCorrect_Up(maxPosition);
+            PositionMark = MusicTimeSnapCorrect_Up(maxPosition) + 1;
 
             PreviousSelectedItemContext = MainDownEnum.Main;
 
@@ -500,9 +504,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             quant.Note = note;
             quant.Octave = octave;
             
-            quant.Velocity = velocity;
-
-            int numberOfSteps = MelodyFlow.GetNumberOfSteps();
+            quant.Velocity = velocity;            
 
             IEdge newEdge = quant.PutOrMoveToStep(newStep);                     
         }             
@@ -665,6 +667,38 @@ namespace m0_COMPOSER.UIWpf.Visualisers
         protected override int MusicTimeSnapCorrect_Up(int toCorrect)
         {
             return toCorrect;
+        }
+
+        protected override void ItemsRemoveAndRemoveAllEdges(IItem i)
+        {
+            IEdge eventEdge = i.BaseEdge;
+
+            GraphUtil.DeleteEdgeByToVertex(baseVertex, eventEdge.To);
+
+            MelodyFlowQuant quant = MelodyFlow.GetQuantFromVertex(eventEdge.To);
+
+            quant.Remove();
+
+            Edge.DeleteVertexByEdgeTo(Vertex.Get(false, "SelectedEdges:"), eventEdge.To);
+
+            NeedToRebuildItemsDictionary = true;
+
+            Items.Remove((FrameworkElement)i);
+
+            i.Remove();
+        }
+
+        protected override List<IItem> GetSelectedAndMouseOverItems(MainDownEnum actualContext)
+        {
+            //if (actualContext != PreviousSelectedItemContext)
+              //  UnselectAllSelectedItems();
+
+            List<IItem> selectedItems = GetSelectedItems();
+
+            if (!selectedItems.Contains(MouseOverItem))
+                selectedItems.Add(MouseOverItem);
+
+            return selectedItems;
         }
     }
 }
