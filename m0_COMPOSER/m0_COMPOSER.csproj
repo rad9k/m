@@ -50,6 +50,7 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Lib\IFlow.cs" />
     <Compile Include="Lib\MelodyFlow.cs" />
     <Compile Include="Lib\MidiDevice.cs" />
     <Compile Include="Lib\NoteOutput.cs" />

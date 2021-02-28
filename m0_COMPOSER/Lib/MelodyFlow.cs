@@ -10,12 +10,10 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace m0_COMPOSER.Lib
-{
-    public enum MelodyFlowQuantTypeEnum { Note, ChordIndex }
-
-    public class MelodyFlowStep
+{    
+    public class MelodyFlowStep: IFlowStep
     {
-        public IVertex StepVertex;
+        public IVertex StepVertex { get; set; }
 
         MelodyFlow MelodyFlow;
 
@@ -25,11 +23,11 @@ namespace m0_COMPOSER.Lib
             StepVertex = _StepVertex;
         }
 
-        public List<MelodyFlowQuant> Quants
+        public List<IFlowQuant> Quants
         {
             get
             {
-                List<MelodyFlowQuant> ql = new List<MelodyFlowQuant>();
+                List<IFlowQuant> ql = new List<IFlowQuant>();
 
                 foreach (IEdge e in StepVertex.GetAll(false, "Quant:"))
                     ql.Add(new MelodyFlowQuant(MelodyFlow, e));
@@ -39,10 +37,11 @@ namespace m0_COMPOSER.Lib
         }               
     }
 
-    public class MelodyFlowQuant
-    {        
-        public IVertex QuantVertex;
-        public IEdge QuantEdge;
+    public class MelodyFlowQuant : IFlowQuant
+    {
+        public IVertex QuantVertex { get; set; }
+        public IEdge QuantEdge { get; set; }
+
 
         bool isAttached = false;
 
@@ -118,8 +117,8 @@ namespace m0_COMPOSER.Lib
             }
         }
 
-        MelodyFlowQuantTypeEnum quantType;
-        public MelodyFlowQuantTypeEnum QuantType
+        FlowQuantTypeEnum quantType;
+        public FlowQuantTypeEnum QuantType
         {
             get
             {
@@ -130,9 +129,9 @@ namespace m0_COMPOSER.Lib
                     IVertex quantTypeVertex = QuantVertex.Get(false, "QuantType:");
 
                     if (quantTypeVertex != null && GeneralUtil.CompareStrings(quantTypeVertex.Value, "ChordIndex"))
-                        return MelodyFlowQuantTypeEnum.ChordIndex;
+                        return FlowQuantTypeEnum.ChordIndex;
 
-                    return MelodyFlowQuantTypeEnum.Note;
+                    return FlowQuantTypeEnum.Note;
                 }
             }
             set
@@ -141,18 +140,18 @@ namespace m0_COMPOSER.Lib
                     quantType = value;
                 else
                 {
-                    if (value == MelodyFlowQuantTypeEnum.Note)
+                    if (value == FlowQuantTypeEnum.Note)
                         GraphUtil.CreateOrReplaceEdge(QuantVertex, quantTypeMeta, noteEnumValue);
 
-                    if (value == MelodyFlowQuantTypeEnum.ChordIndex)
+                    if (value == FlowQuantTypeEnum.ChordIndex)
                         GraphUtil.CreateOrReplaceEdge(QuantVertex, quantTypeMeta, chordIndexEnumValue);
                 }
             }
         }        
 
-        public MelodyFlowQuant(MelodyFlow _MelodyFlow, IEdge _QuantEdge)
+        public MelodyFlowQuant(IFlow _MelodyFlow, IEdge _QuantEdge)
         {
-            MelodyFlow = _MelodyFlow;
+            MelodyFlow = (MelodyFlow)_MelodyFlow;
             QuantEdge = _QuantEdge;
             QuantVertex = _QuantEdge.To;
 
@@ -160,9 +159,9 @@ namespace m0_COMPOSER.Lib
                 isAttached = true;
         }
 
-        public MelodyFlowQuant(MelodyFlow _MelodyFlow)
+        public MelodyFlowQuant(IFlow _MelodyFlow)
         {
-            MelodyFlow = _MelodyFlow;
+            MelodyFlow = (MelodyFlow)_MelodyFlow;
 
             isAttached = false;
         }
@@ -223,8 +222,12 @@ namespace m0_COMPOSER.Lib
         }               
     }
 
-    public class MelodyFlow
+    public class MelodyFlow: IFlow
     {
+        public String IsQuantMeta { get { return "$Is:MelodyFlowQuant"; } }
+
+        public String StepToQuantMeta { get { return "Quant"; } }
+
         IVertex baseVertex;
 
         public bool IsDrum;        
@@ -255,7 +258,7 @@ namespace m0_COMPOSER.Lib
             VertexOperations.AddInstance(baseVertex, melodyFlowStepMeta, stepMeta);
         }
 
-        public MelodyFlowStep GetStep(int stepPosition)
+        public IFlowStep GetStep(int stepPosition)
         {
             int actualNumberOfSteps = GetNumberOfSteps();
 
@@ -299,15 +302,15 @@ namespace m0_COMPOSER.Lib
             baseVertex.DeleteEdge(toDeleteEdge);
         }
 
-        public MelodyFlowQuant GetQuantFromVertex(IVertex quantVertex)
+        public IFlowQuant GetQuantFromVertex(IVertex quantVertex)
         {
             int step;
-            MelodyFlowStep stepObject;
+            IFlowStep stepObject;
 
             return GetQuantAndStepFromQuantVertex(quantVertex, out step, out stepObject);
         }
 
-        public MelodyFlowQuant GetQuantAndStepFromQuantVertex(IVertex quantVertex, out int step, out MelodyFlowStep stepObject)
+        public IFlowQuant GetQuantAndStepFromQuantVertex(IVertex quantVertex, out int step, out IFlowStep stepObject)
         {
             step = -1;
             stepObject = null;

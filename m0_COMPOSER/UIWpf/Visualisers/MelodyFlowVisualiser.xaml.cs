@@ -14,12 +14,9 @@ using System.Windows.Input;
 
 namespace m0_COMPOSER.UIWpf.Visualisers
 {
-    /// <summary>
-    /// Interaction logic for SequenceVisualiser.xaml
-    /// </summary>
     public partial class MelodyFlowVisualiser : ZoomScrollViewBasedVisualiserBase
     {
-        MelodyFlow MelodyFlow;
+        IFlow MelodyFlow;
 
         public void InitXAMLInstances()
         {
@@ -152,9 +149,9 @@ namespace m0_COMPOSER.UIWpf.Visualisers
         {
             IVertex quantVertex = itemEdge.To;
 
-            MelodyFlowStep step;
+            IFlowStep step;
             int stepCount;
-            MelodyFlowQuant quant = MelodyFlow.GetQuantAndStepFromQuantVertex(quantVertex, out stepCount, out step);
+            IFlowQuant quant = MelodyFlow.GetQuantAndStepFromQuantVertex(quantVertex, out stepCount, out step);
             
 
             IVertex pitchVertex = MusicUtil.GetNoteFromPitchSet(verticalSpanVertex,
@@ -220,7 +217,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
         IEdge AddQuantEdge(int note, int octave, int step, int velocity)
         {
-            MelodyFlowQuant quant = new MelodyFlowQuant(MelodyFlow);
+            IFlowQuant quant = new MelodyFlowQuant(MelodyFlow);
 
             quant.Note = note;
             quant.Octave = octave;
@@ -241,9 +238,9 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             for (int stepCnt = 0; stepCnt < MelodyFlow.GetNumberOfSteps(); stepCnt++)
             {
-                MelodyFlowStep step = MelodyFlow.GetStep(stepCnt);
+                IFlowStep step = MelodyFlow.GetStep(stepCnt);
 
-                foreach (MelodyFlowQuant quant in step.Quants)
+                foreach (IFlowQuant quant in step.Quants)
                     AddItem(quant.QuantEdge, selectedVertexes);
             }
         }
@@ -257,10 +254,10 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             element = (FrameworkElement)item;
 
-            MelodyFlowQuant quant = null;
+            IFlowQuant quant = null;
 
-            if (element.Tag is MelodyFlowQuant)
-                quant = (MelodyFlowQuant)element.Tag;
+            if (element.Tag is IFlowQuant)
+                quant = (IFlowQuant)element.Tag;
 
             if (quant == null)
                 return;
@@ -297,10 +294,10 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             element = (FrameworkElement)item;
 
-            MelodyFlowQuant quant = null;
+            IFlowQuant quant = null;
 
-            if (element.Tag is MelodyFlowQuant)
-                quant = (MelodyFlowQuant)element.Tag;
+            if (element.Tag is IFlowQuant)
+                quant = (IFlowQuant)element.Tag;
 
             if (quant == null)
                 return;
@@ -359,7 +356,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
         {
             int step;
 
-            MelodyFlowStep so;
+            IFlowStep so;
 
             MelodyFlow.GetQuantAndStepFromQuantVertex(v, out step, out so);
 
@@ -374,7 +371,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             {
                 IVertex v = e.To.Get(false, "To:");
 
-                if(v.Get(false, "$Is:MelodyFlowQuant") != null)
+                if(v.Get(false, MelodyFlow.IsQuantMeta) != null)
                 {
                     int step = GetStepFromVertex(v);
 
@@ -414,7 +411,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
                 IVertex v = e.To.Get(false, "To:");
                 
-                if (v.Get(false, "$Is:MelodyFlowQuant") != null)
+                if (v.Get(false, MelodyFlow.IsQuantMeta) != null)
                 {
                     int step = GetStepFromVertex(v);
 
@@ -441,9 +438,11 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             foreach (IEdge e in edges)
             {
-                IEdge edge = Edge.GetIEdgeByEdgeVertex(e.To);
+                //IEdge edge = Edge.GetIEdgeByEdgeVertex(e.To);
 
-                IVertex v = edge.To;
+                //IVertex v = edge.To;
+
+                IVertex sourceQuantVertex = e.To.Get(false, "To:");
 
                 bool isClipboardCopy = false;
                 bool isClipboardCut = false;
@@ -455,38 +454,41 @@ namespace m0_COMPOSER.UIWpf.Visualisers
                     isClipboardCut = true;
 
                 if (isClipboardCopy || isClipboardCut)
-                {
-                    IEdge newEdge = null;
-
-                    if (v.Get(false, "$Is:MelodyFlowQuant") != null)
+                {                 
+                    if (sourceQuantVertex.Get(false, MelodyFlow.IsQuantMeta) != null)
                     {
-                        int step = GetStepFromVertex(v);
+                        IVertex newQuantVertex = null;
+                        IEdge newStepToQuantEdge = null; 
+
+                        int step = GetStepFromVertex(sourceQuantVertex);
 
                         int newStep = step - minPosition + PositionMark;                        
                         
                         if (isClipboardCopy)
-                            newEdge = AddQuantEdge(GraphUtil.GetIntegerValueOr0(v.Get(false, "Note:")),
-                                GraphUtil.GetIntegerValueOr0(v.Get(false, "Octave:")),
+                            newStepToQuantEdge = AddQuantEdge(GraphUtil.GetIntegerValueOr0(sourceQuantVertex.Get(false, "Note:")),
+                                GraphUtil.GetIntegerValueOr0(sourceQuantVertex.Get(false, "Octave:")),
                                 newStep,                                
-                                GraphUtil.GetIntegerValueOr0(v.Get(false, "Velocity:")));
+                                GraphUtil.GetIntegerValueOr0(sourceQuantVertex.Get(false, "Velocity:")));
 
                         if (isClipboardCut)
                         {
-                            newEdge = edge;
+                            newQuantVertex = sourceQuantVertex;
 
-                            UpdateQuantVertex(edge,
-                                GraphUtil.GetIntegerValueOr0(v.Get(false, "Octave:")),
-                                GraphUtil.GetIntegerValueOr0(v.Get(false, "Note:")),
+                            UpdateQuantVertex(sourceQuantVertex,
+                                GraphUtil.GetIntegerValueOr0(sourceQuantVertex.Get(false, "Octave:")),
+                                GraphUtil.GetIntegerValueOr0(sourceQuantVertex.Get(false, "Note:")),
                                 newStep,                               
-                                GraphUtil.GetIntegerValueOr0(v.Get(false, "Velocity:")));
+                                GraphUtil.GetIntegerValueOr0(sourceQuantVertex.Get(false, "Velocity:")));
 
-                            newStep = GetStepFromVertex(newEdge.To);
+                            newStepToQuantEdge = GetStepToQuantEdgeFromQuantVertes(newQuantVertex);
+
+                            newStep = GetStepFromVertex(newStepToQuantEdge.To);
                         }
 
                         if (newStep > maxPosition)
-                            maxPosition = newStep;
+                            maxPosition = newStep;                                                    
 
-                        AddToSelectedEdges(newEdge);
+                        AddToSelectedEdges(newStepToQuantEdge);
                     }
                 }                
             }
@@ -498,13 +500,18 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             DoCleanUp();
         }
 
-        private void UpdateQuantVertex(IEdge quantEdge, int octave, int note, int newStep, int velocity)
+        private IEdge GetStepToQuantEdgeFromQuantVertes(IVertex quantVertex)
+        {
+            return GraphUtil.GetQueryInFirstEdge(quantVertex, MelodyFlow.StepToQuantMeta, null);
+        }
+
+        private void UpdateQuantVertex(IVertex quantVertex, int octave, int note, int newStep, int velocity)
         {
             int step;
 
-            MelodyFlowStep so;
+            IFlowStep so;
 
-            MelodyFlowQuant quant = MelodyFlow.GetQuantAndStepFromQuantVertex(quantEdge.To, out step, out so);
+            IFlowQuant quant = MelodyFlow.GetQuantAndStepFromQuantVertex(quantVertex, out step, out so);
             
             quant.Note = note;
             quant.Octave = octave;
@@ -555,7 +562,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
         protected override bool IsVelocityHavingVertex(IVertex v)
         {
-            if (v.Get(false, @"$Is:MelodyFlowQuant") != null)
+            if (v.Get(false, MelodyFlow.IsQuantMeta) != null)
                 return true;
 
             return false;
@@ -629,7 +636,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             for (int stepCnt = 0; stepCnt < MelodyFlow.GetNumberOfSteps(); stepCnt++)
             {
-                MelodyFlowStep step = MelodyFlow.GetStep(stepCnt);
+                IFlowStep step = MelodyFlow.GetStep(stepCnt);
 
                 foreach (MelodyFlowQuant quant in step.Quants)
                     if (ApplyFilter_Down(quant.QuantVertex))
@@ -681,7 +688,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             GraphUtil.DeleteEdgeByToVertex(baseVertex, eventEdge.To);
 
-            MelodyFlowQuant quant = MelodyFlow.GetQuantFromVertex(eventEdge.To);
+            IFlowQuant quant = MelodyFlow.GetQuantFromVertex(eventEdge.To);
 
             quant.Remove();
 
