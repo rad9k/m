@@ -36,7 +36,12 @@ namespace m0_COMPOSER.Lib
         static IVertex sequenceMeta = r.Get(false, @"System\Lib\Music\Sequence");
         static IVertex sequenceIsDrumMeta = r.Get(false, @"System\Lib\Music\Sequence\IsDrum");
 
-        public static IEdge AddSequenceEventVertex(IVertex trackVertex, double startPosition, double lengthPosition)
+        public string GetNameForNewSequenceEvent(IVertex trackVertex)
+        {
+            return "XXX";
+        }
+
+        public static IEdge AddSequenceEventVertex(IVertex trackVertex, int startPosition, int lengthPosition)
         {            
             IEdge tempSequenceEventEdge = trackVertex.AddVertexAndReturnEdge(null, null);
 
@@ -49,6 +54,8 @@ namespace m0_COMPOSER.Lib
             sequenceEventVertex.AddVertex(sequenceEventMeta.Get(false, @"Attribute:TriggerTime"), startPosition);
 
             IVertex sequenceVertex = VertexOperations.AddInstance(sequenceEventVertex, sequenceMeta);
+
+            sequenceVertex.Value = GetTrackVertexFromSequenceEventVertex(trackVertex);
 
             sequenceVertex.AddVertex(sequenceMeta.Get(false, @"Attribute:Length"), lengthPosition);
 

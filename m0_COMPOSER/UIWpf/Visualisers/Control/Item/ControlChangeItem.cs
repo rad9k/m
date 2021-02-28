@@ -11,6 +11,8 @@ using System.Windows;
 using m0.Graph;
 using System.Windows.Shapes;
 using m0;
+using m0.ZeroTypes;
+using m0.UIWpf.Commands;
 
 namespace m0_COMPOSER.UIWpf.Visualisers.Control.Item
 {
@@ -18,7 +20,18 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control.Item
     {
         Canvas Canvas;
 
-        public void Open() { }
+        public void OpenDefaultVisualiser() {
+            OpenFormVisualiser();
+        }
+
+        public void OpenFormVisualiser() {
+            if (BaseEdge == null)
+                return;
+
+            IVertex edgeVertex = Edge.CreateTempEdgeVertex(BaseEdge);
+
+            BaseCommands.OpenFormVisualiser(edgeVertex);
+        }
 
         public void Add(Canvas canvas)
         {

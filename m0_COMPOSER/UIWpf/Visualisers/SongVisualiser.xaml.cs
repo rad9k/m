@@ -745,9 +745,9 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             if (CurrentCursorState == CursorStateEnum.PenDown)
                 needsSnapCorrection = true;
 
-            double startPosition = ScreenPositionToMusicTime(startPosition_Screen, needsSnapCorrection);
+            int startPosition = ScreenPositionToMusicTime(startPosition_Screen, needsSnapCorrection);
 
-            double lengthPosition = ScreenPositionToMusicTime(lengthPosition_Screen, needsSnapCorrection);
+            int lengthPosition = ScreenPositionToMusicTime(lengthPosition_Screen, needsSnapCorrection);
 
             return Song.AddSequenceEventVertex(trackVertex, startPosition, lengthPosition);
         }

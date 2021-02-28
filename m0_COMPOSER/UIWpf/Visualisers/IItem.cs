@@ -28,7 +28,9 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
         IZoomScrollViewerHost Host { get; set; }
 
-        void Open();
+        void OpenDefaultVisualiser();
+
+        void OpenFormVisualiser();
 
         void Select();
 

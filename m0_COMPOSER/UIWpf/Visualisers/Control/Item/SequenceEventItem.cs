@@ -19,13 +19,23 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control.Item
     {
         public double PositionMark { get; set; }
 
-        public void Open() {
+        public void OpenDefaultVisualiser() {
             if (BaseEdge == null)
                 return;
 
             IVertex edgeVertex = Edge.CreateTempEdgeVertex(BaseEdge.To.GetAll(false, @"Sequence:").FirstOrDefault());
 
             BaseCommands.Open(edgeVertex, null);
+        }
+
+        public void OpenFormVisualiser()
+        {
+            if (BaseEdge == null)
+                return;
+
+            IVertex edgeVertex = Edge.CreateTempEdgeVertex(BaseEdge.To.GetAll(false, @"Sequence:").FirstOrDefault());
+
+            BaseCommands.OpenFormVisualiser(edgeVertex);
         }
 
         Canvas Canvas;
@@ -140,7 +150,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control.Item
             Background = TrackBrush;
         }        
 
-        public SequenceEventItem(IEdge baseEdge, IZoomScrollViewerHost host)
+        public SequenceEventItem(IEdge baseEdge, IZoomScrollViewerHost host, bool _showLabel)
         {
             BaseEdge = baseEdge;            
 

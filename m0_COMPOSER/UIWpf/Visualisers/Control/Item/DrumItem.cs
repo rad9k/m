@@ -10,14 +10,29 @@ using System.Windows.Media;
 using System.Windows;
 using m0.Graph;
 using System.Windows.Shapes;
+using m0.ZeroTypes;
+using m0.UIWpf.Commands;
 
 namespace m0_COMPOSER.UIWpf.Visualisers.Control.Item
 {
     public class DrumItem : Border, IItem
     {
         Canvas Canvas;
+        public void OpenDefaultVisualiser()
+        {
+            OpenFormVisualiser();
+        }
 
-        public void Open() { }
+        public void OpenFormVisualiser()
+        {
+            if (BaseEdge == null)
+                return;
+
+            IVertex edgeVertex = Edge.CreateTempEdgeVertex(BaseEdge);
+
+            BaseCommands.OpenFormVisualiser(edgeVertex);
+        }
+
 
         public void Add(Canvas canvas)
         {

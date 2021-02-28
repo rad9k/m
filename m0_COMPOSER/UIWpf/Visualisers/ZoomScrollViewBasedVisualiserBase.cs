@@ -776,21 +776,29 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             {
                 IItem item = (IItem)elementFound;
 
-                if (NoControlKeyPressed())
+                if (e.ClickCount == 2 && NoControlKeyPressed())
                 {
-                    UnselectAllSelectedItems();
-                    SelectItem(item);
+                    if (e.RightButton == MouseButtonState.Pressed)
+                        item.OpenFormVisualiser();
+                    else
+                        item.OpenDefaultVisualiser();
                 }
                 else
                 {
-                    if (item.IsSelected)
-                        UnselectItem(item);
-                    else
+                    if (NoControlKeyPressed())
+                    {
+                        UnselectAllSelectedItems();
                         SelectItem(item);
+                    }
+                    else
+                    {
+                        if (item.IsSelected)
+                            UnselectItem(item);
+                        else
+                            SelectItem(item);
+                    }
                 }
-
-                if (e.ClickCount == 2 && NoControlKeyPressed())
-                    item.Open();
+                
             }
             else
             {
@@ -1908,17 +1916,27 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             {
                 IItem item = (IItem)elementFound;
 
-                if (NoControlKeyPressed())
+                if (e.ClickCount == 2 && NoControlKeyPressed())
                 {
-                    UnselectAllSelectedItems();
-                    SelectItem(item);
+                    if (e.RightButton == MouseButtonState.Pressed)
+                        item.OpenFormVisualiser();
+                    else
+                        item.OpenDefaultVisualiser();
                 }
                 else
                 {
-                    if (item.IsSelected)
-                        UnselectItem(item);
-                    else
+                    if (NoControlKeyPressed())
+                    {
+                        UnselectAllSelectedItems();
                         SelectItem(item);
+                    }
+                    else
+                    {
+                        if (item.IsSelected)
+                            UnselectItem(item);
+                        else
+                            SelectItem(item);
+                    }
                 }
             }
             else
