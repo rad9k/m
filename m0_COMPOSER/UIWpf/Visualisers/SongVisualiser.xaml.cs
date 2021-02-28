@@ -671,7 +671,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             int length = GetSequenceEventLength(itemEventVertex);
 
-            SequenceEventItem newElement = new SequenceEventItem(itemEdge, this);            
+            SequenceEventItem newElement = new SequenceEventItem(itemEdge, this, ShowLabel);            
 
             if (selectedVertexes != null && selectedVertexes.Contains(itemEventVertex))
             {

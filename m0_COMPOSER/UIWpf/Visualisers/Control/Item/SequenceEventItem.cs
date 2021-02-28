@@ -108,11 +108,15 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control.Item
             }
         }
 
+        Color TrackColor;
+
         Brush TrackBrush
         {
             get
-            {
-                if (TrackVertex == null)
+            {              
+                TrackColor = (Color)WpfUtil.FindResource("0Background");
+
+                if (TrackVertex == null) 
                     return (Brush)WpfUtil.FindResource("0BackgroundBrush");
 
                 IVertex colorVertex = TrackVertex.Get(false, "Color:");
@@ -120,7 +124,9 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control.Item
                 if (colorVertex == null)
                     return (Brush)WpfUtil.FindResource("0BackgroundBrush");
 
-                return new SolidColorBrush(WpfUtil.GetColorFromColorVertex(colorVertex));
+                TrackColor = WpfUtil.GetColorFromColorVertex(colorVertex);
+
+                return new SolidColorBrush(TrackColor);
             }
             set
             {
@@ -136,7 +142,9 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control.Item
 
             BorderBrush = TrackBrush;
             
-            Background = (Brush)WpfUtil.FindResource("0HighlightBrush");                        
+            Background = (Brush)WpfUtil.FindResource("0HighlightBrush");
+
+            Update();
         }
 
         public void Unselect()
@@ -148,24 +156,46 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control.Item
             BorderBrush = (Brush)WpfUtil.FindResource("0ForegroundBrush");
 
             Background = TrackBrush;
-        }        
+
+            Update();
+        }
+
+        bool showLabel;
+
+        TextBlock labelControl;
 
         public SequenceEventItem(IEdge baseEdge, IZoomScrollViewerHost host, bool _showLabel)
         {
-            BaseEdge = baseEdge;            
+            BaseEdge = baseEdge;
+
+            showLabel = _showLabel;
 
             Host = host;
-           
+
             //
+
+            labelControl = new TextBlock();
+
+            this.Child = labelControl;            
 
             RenderOptions.SetEdgeMode(this, EdgeMode.Aliased);            
            
-            Unselect();          
+            Unselect();
+
+            if (showLabel)            
+                Update();                            
         }        
 
         public void Update()
         {
-            
+            IVertex sequenceVertex = BaseEdge.To.Get(false, "Sequence:");
+
+            if (sequenceVertex != null && sequenceVertex.Value != null)
+                Label = sequenceVertex.Value.ToString();
+
+            labelControl.Text = " " + Label;
+
+            labelControl.Foreground = new SolidColorBrush(WpfUtil.GetNegativeColorWhiteOrBlack(TrackColor));
         }
 
         public double Left {

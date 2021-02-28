@@ -36,9 +36,22 @@ namespace m0_COMPOSER.Lib
         static IVertex sequenceMeta = r.Get(false, @"System\Lib\Music\Sequence");
         static IVertex sequenceIsDrumMeta = r.Get(false, @"System\Lib\Music\Sequence\IsDrum");
 
-        public string GetNameForNewSequenceEvent(IVertex trackVertex)
+        public static string GetNameForNewSequenceEvent(IVertex trackVertex)
         {
-            return "XXX";
+            int max = 1;
+
+            foreach(IEdge e in trackVertex.GetAll(false, @"SequenceEvent:\Sequence:"))
+            {
+                string seqName = e.To.Value.ToString();
+
+                int tryMax;
+
+                if (Int32.TryParse(seqName, out tryMax))
+                    if (tryMax > max)
+                        max = tryMax;
+            }
+
+            return 
         }
 
         public static IEdge AddSequenceEventVertex(IVertex trackVertex, int startPosition, int lengthPosition)
@@ -55,8 +68,8 @@ namespace m0_COMPOSER.Lib
 
             IVertex sequenceVertex = VertexOperations.AddInstance(sequenceEventVertex, sequenceMeta);
 
-            sequenceVertex.Value = GetTrackVertexFromSequenceEventVertex(trackVertex);
-
+            sequenceVertex.Value = GetNameForNewSequenceEvent(trackVertex);
+            
             sequenceVertex.AddVertex(sequenceMeta.Get(false, @"Attribute:Length"), lengthPosition);
 
             bool isDrum = false;
