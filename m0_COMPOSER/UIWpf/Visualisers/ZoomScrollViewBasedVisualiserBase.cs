@@ -1342,8 +1342,8 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             IVertex noteVertex = s.BaseVertex;
 
-            if (baseVertex.Get(false, @"Note:") == noteVertex.Get(false, @"Note:")
-                && baseVertex.Get(false, @"Octave:") == noteVertex.Get(false, @"Octave:"))
+            if (GraphUtil.GetIntegerValueOr0(baseVertex.Get(false, @"Note:")) == GraphUtil.GetIntegerValueOr0(noteVertex.Get(false, @"Note:"))
+                && GraphUtil.GetIntegerValueOr0(baseVertex.Get(false, @"Octave:")) == GraphUtil.GetIntegerValueOr0(noteVertex.Get(false, @"Octave:")))
                 return true;
 
             return false;

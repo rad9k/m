@@ -309,7 +309,12 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             int oldStep = GetStepFromVertex(quant.QuantVertex);
 
-            int newStep = ScreenPositionToMusicTime(item.Left, true);
+            int newStep;
+
+            if (item is NoteItem)
+                newStep = ScreenPositionToMusicTime(item.Left, true);
+            else
+                newStep = ScreenPositionToMusicTime(item.HorizontalCenter, true);
 
             if (oldStep != newStep)
             {
@@ -626,8 +631,9 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             {
                 MelodyFlowStep step = MelodyFlow.GetStep(stepCnt);
 
-                foreach (MelodyFlowQuant quant in step.Quants)                    
-                    AddItem_Down(quant.QuantEdge, selectedVertexes, false, false);
+                foreach (MelodyFlowQuant quant in step.Quants)
+                    if (ApplyFilter_Down(quant.QuantVertex))
+                        AddItem_Down(quant.QuantEdge, selectedVertexes, false, false);
             }
         }
 
