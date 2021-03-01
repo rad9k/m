@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace m0_COMPOSER.Lib
 {
-    public enum FlowQuantTypeEnum { Note, ChordIndex }
+    public enum FlowQuantTypeEnum { Note, ChordIndex, Pitch }
 
     public interface IFlowStep
     {
@@ -55,5 +55,7 @@ namespace m0_COMPOSER.Lib
         IFlowQuant GetQuantAndStepFromQuantVertex(IVertex quantVertex, out int step, out IFlowStep stepObject);
 
         bool GetNumberOfStepsAndCleanUp(out int newNumberOfSteps);
+
+        IFlowQuant CreateQuant();
     }
 }

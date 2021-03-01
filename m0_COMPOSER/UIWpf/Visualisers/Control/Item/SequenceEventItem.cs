@@ -188,14 +188,17 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control.Item
 
         public void Update()
         {
-            IVertex sequenceVertex = BaseEdge.To.Get(false, "Sequence:");
+            if (showLabel)
+            {
+                IVertex sequenceVertex = BaseEdge.To.Get(false, "Sequence:");
 
-            if (sequenceVertex != null && sequenceVertex.Value != null)
-                Label = sequenceVertex.Value.ToString();
+                if (sequenceVertex != null && sequenceVertex.Value != null)
+                    Label = sequenceVertex.Value.ToString();
 
-            labelControl.Text = " " + Label;
+                labelControl.Text = " " + Label;
 
-            labelControl.Foreground = new SolidColorBrush(WpfUtil.GetNegativeColorWhiteOrBlack(TrackColor));
+                labelControl.Foreground = new SolidColorBrush(WpfUtil.GetNegativeColorWhiteOrBlack(TrackColor));
+            }
         }
 
         public double Left {

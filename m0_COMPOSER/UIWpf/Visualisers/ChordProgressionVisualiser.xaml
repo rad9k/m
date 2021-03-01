@@ -1,4 +1,4 @@
-﻿<my:MelodyFlowVisualiserBase xmlns:Controls="clr-namespace:m0_COMPOSER.UIWpf.Visualisers.Control"  x:Class="m0_COMPOSER.UIWpf.Visualisers.MelodyFlowVisualiser"
+﻿<my:MelodyFlowVisualiserBase xmlns:Controls="clr-namespace:m0_COMPOSER.UIWpf.Visualisers.Control"  x:Class="m0_COMPOSER.UIWpf.Visualisers.ChordProgressionVisualiser"
              xmlns:my="clr-namespace:m0_COMPOSER.UIWpf.Visualisers"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"

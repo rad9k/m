@@ -49,6 +49,8 @@ namespace m0
             VertexOperations.AddInstance(r, r.Get(false, @"System\Lib\Music\Generator\TriggerSet"));
 
             VertexOperations.AddInstance(r, r.Get(false, @"System\Lib\Music\Generator\MelodyFlow"));
+
+            VertexOperations.AddInstance(r, r.Get(false, @"System\Lib\Music\Generator\ChordProgression"));
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)

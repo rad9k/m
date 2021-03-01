@@ -51,6 +51,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Lib\IFlow.cs" />
+    <Compile Include="Lib\ChordProgression.cs" />
     <Compile Include="Lib\MelodyFlow.cs" />
     <Compile Include="Lib\MidiDevice.cs" />
     <Compile Include="Lib\NoteOutput.cs" />
@@ -86,12 +87,13 @@
     <Compile Include="UIWpf\Visualisers\IZoomScrollView.cs" />
     <Compile Include="UIWpf\Visualisers\IZoomScrollViewAxisDecorator.cs" />
     <Compile Include="UIWpf\Visualisers\IZoomScrollViewerHost.cs" />
-    <Compile Include="UIWpf\Visualisers\PitchSetVisualiser.xaml.cs">
-      <DependentUpon>PitchSetVisualiser.xaml</DependentUpon>
+    <Compile Include="UIWpf\Visualisers\ChordProgressionVisualiser.xaml.cs">
+      <DependentUpon>ChordProgressionVisualiser.xaml</DependentUpon>
     </Compile>
     <Compile Include="UIWpf\Visualisers\MelodyFlowVisualiser.xaml.cs">
       <DependentUpon>MelodyFlowVisualiser.xaml</DependentUpon>
     </Compile>
+    <Compile Include="UIWpf\Visualisers\MelodyFlowVisualiserBase.cs" />
     <Compile Include="UIWpf\Visualisers\TriggerSetVisualiser.xaml.cs">
       <DependentUpon>TriggerSetVisualiser.xaml</DependentUpon>
     </Compile>
@@ -117,7 +119,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="UIWpf\Visualisers\PitchSetVisualiser.xaml">
+    <Page Include="UIWpf\Visualisers\ChordProgressionVisualiser.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

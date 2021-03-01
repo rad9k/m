@@ -38,11 +38,13 @@ namespace m0_COMPOSER.Lib
 
         public static string GetNameForNewSequenceEvent(IVertex trackVertex)
         {
-            int max = 1;
+            int max = 0;
 
             foreach(IEdge e in trackVertex.GetAll(false, @"SequenceEvent:\Sequence:"))
             {
                 string seqName = e.To.Value.ToString();
+
+                seqName = seqName.Split(' ')[0];
 
                 int tryMax;
 
@@ -51,7 +53,9 @@ namespace m0_COMPOSER.Lib
                         max = tryMax;
             }
 
-            return 
+            max++;
+
+            return max + " [" + trackVertex.Value+"]";
         }
 
         public static IEdge AddSequenceEventVertex(IVertex trackVertex, int startPosition, int lengthPosition)
