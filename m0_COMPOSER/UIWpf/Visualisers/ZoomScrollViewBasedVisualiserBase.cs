@@ -728,9 +728,11 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             
             AddItem(newItemEventEdge, null);
 
-            VertexChangeOff = false;
+            
 
             PerformPenUp_part2();
+
+            VertexChangeOff = false;
         }
 
         protected void EraserDown(object sender, MouseButtonEventArgs e)
