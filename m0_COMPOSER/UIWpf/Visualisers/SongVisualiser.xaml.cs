@@ -907,6 +907,8 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             GetMinMaxPostionFromSequenceEdges(edges, out minPosition, out maxPosition);
 
+            maxPosition = 0;
+
             foreach (IEdge e in edges)
             {
                 IEdge edge = Edge.GetIEdgeByEdgeVertex(e.To);

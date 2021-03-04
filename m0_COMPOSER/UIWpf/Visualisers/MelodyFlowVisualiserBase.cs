@@ -167,10 +167,10 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             int step = ScreenPositionToMusicTime(startPosition, true);
 
-            return AddQuantEdge(note, octave, step, -1);
+            return AddQuantEdge(note, octave, step, -1, true);
         }
 
-        IEdge AddQuantEdge(int note, int octave, int step, int velocity)
+        IEdge AddQuantEdge(int note, int octave, int step, int velocity, bool insertAfter)
         {
             //IFlowQuant quant = new MelodyFlowQuant(Flow);
             IFlowQuant quant = Flow.CreateQuant();
@@ -273,16 +273,16 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             if (oldStep != newStep)
             {            
-                if (newStep > oldStep)
-                    newStep++;
+             //   if (newStep > oldStep)
+             //       newStep++;
 
                 quant.PutOrMoveToStep(newStep);
 
-                if (newStep < oldStep)
-                    oldStep++; // corection for delete
+            //    if (newStep < oldStep)
+           //         oldStep++; // corection for delete
 
-                if (Flow.GetStep(oldStep).Quants.Count == 0)
-                    Flow.RemoveStep(oldStep);                
+              //  if (Flow.GetStep(oldStep).Quants.Count == 0)
+                //    Flow.RemoveStep(oldStep);                
             }
 
             DoCleanUpAndVisualiserDraw();
@@ -392,12 +392,10 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             WhatIsInEdgesEnum whatIsClipboard = GetWhatIsInEdges(edges, out minPosition, out maxPosition, out onlyCopy);
 
+            maxPosition = 0;
+
             foreach (IEdge e in edges)
-            {
-                //IEdge edge = Edge.GetIEdgeByEdgeVertex(e.To);
-
-                //IVertex v = edge.To;
-
+            {                
                 IVertex sourceQuantVertex = e.To.Get(false, "To:");
 
                 bool isClipboardCopy = false;
@@ -421,10 +419,14 @@ namespace m0_COMPOSER.UIWpf.Visualisers
                         int newStep = step - minPosition + PositionMark;
 
                         if (isClipboardCopy)
+                        {
                             newStepToQuantEdge = AddQuantEdge(GraphUtil.GetIntegerValueOr0(sourceQuantVertex.Get(false, "Note:")),
                                 GraphUtil.GetIntegerValueOr0(sourceQuantVertex.Get(false, "Octave:")),
                                 newStep,
-                                GraphUtil.GetIntegerValueOr0(sourceQuantVertex.Get(false, "Velocity:")));
+                                GraphUtil.GetIntegerValueOr0(sourceQuantVertex.Get(false, "Velocity:")), false);
+
+                            newStep = GetStepFromVertex(newStepToQuantEdge.To);
+                        }
 
                         if (isClipboardCut)
                         {
@@ -553,7 +555,6 @@ namespace m0_COMPOSER.UIWpf.Visualisers
                 return;
 
             IVertex itemEventVertex = itemEdge.To;
-
 
 
             ControlChangeItem item = null;

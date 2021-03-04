@@ -569,6 +569,8 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             if (whatIsClipboard == WhatIsInEdgesEnum.OnlyNotes)
                 edges = AddCC(edges, minPosition, maxPosition, onlyCopy);
 
+            maxPosition = 0;
+
             foreach (IEdge e in edges)
             {
                 IEdge edge = Edge.GetIEdgeByEdgeVertex(e.To);

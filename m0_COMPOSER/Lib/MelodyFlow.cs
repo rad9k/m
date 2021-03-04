@@ -197,8 +197,9 @@ namespace m0_COMPOSER.Lib
                 needToInsert = true;
 
             if (needToInsert)
-            {
-                MelodyFlow.InsertStepAt(stepPosition);
+            {                                                
+                MelodyFlow.InsertStepAt(stepPosition);                
+                
                 toStepVertex = MelodyFlow.GetStep(stepPosition).StepVertex;
             }            
 
@@ -283,12 +284,12 @@ namespace m0_COMPOSER.Lib
 
             int cnt = 0;
             foreach (IEdge e in edges)
-            {                
+            {
                 if (cnt == stepPosition)
                     VertexOperations.AddInstance(baseVertex, melodyFlowStepMeta, stepMeta);
 
                 baseVertex.AddEdge(stepMeta, e.To);
-
+                
                 cnt++;
             }                
         }
