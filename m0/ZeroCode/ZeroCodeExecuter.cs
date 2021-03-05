@@ -22,13 +22,13 @@ namespace m0.ZeroCode
             exe.stack.AddEdge(MinusZero.Instance.StackFrameInherits, MinusZero.Instance.Root);
         }
 
-        public IVertex Execute(IVertex baseVertex, IVertex expression)
+        public IVertex Execute(IVertex toBeStackVertex, IVertex expression)
         {
             ZeroCodeExecution exe = new ZeroCodeExecution();
 
             exe.metaMode = true;
 
-            exe.stack = InstructionHelpers.Create_INoInEdgeInOutVertexVertex_FromEdgesList(baseVertex);
+            exe.stack = InstructionHelpers.Create_INoInEdgeInOutVertexVertex_FromEdgesList(toBeStackVertex);
 
             exe.newVertexCreationSpace = exe.stack;
 

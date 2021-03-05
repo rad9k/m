@@ -1,6 +1,7 @@
 ﻿using m0;
 using m0.Foundation;
 using m0.Graph;
+using m0.Lib;
 using m0.ZeroTypes;
 using System;
 using System.Collections.Generic;
@@ -12,6 +13,75 @@ namespace m0_COMPOSER.Lib
 {
     public class Song
     {
+        public static INoInEdgeInOutVertexVertex Record(IExecution exe)
+        {
+            return null;
+        }
+
+        public static INoInEdgeInOutVertexVertex Play(IExecution exe)
+        {
+            INoInEdgeInOutVertexVertex stack = exe.stack;
+
+            bool isNull = false;
+
+            int tempo = LibUtil.GetIntFromVertex(stack, "Tempo", ref isNull);
+
+            return stack;
+        }
+
+        public static INoInEdgeInOutVertexVertex Stop(IExecution exe)
+        {
+            return null;
+        }
+
+        public static INoInEdgeInOutVertexVertex Pause(IExecution exe)
+        {
+            return null;
+        }
+
+        public static INoInEdgeInOutVertexVertex MoveTo(IExecution exe)
+        {
+            return null;
+        }
+
+        
+
+        public static INoInEdgeInOutVertexVertex NoteOn(IExecution exe)
+        {
+            INoInEdgeInOutVertexVertex stack = exe.stack;
+
+            IVertex noteV = GraphUtil.GetQueryOutFirst(stack, "note", null);
+
+            if (noteV == null)
+                return stack;
+
+            bool isNull = false;
+
+            int channel = LibUtil.GetIntFromVertex(stack, "Channel", ref isNull);
+
+            IVertex device = GraphUtil.GetQueryOutFirst(stack, "Device", null);
+
+            if (device == null)
+                return stack;
+
+            int deviceNumber = LibUtil.GetIntFromVertex(device, "DeviceNumber", ref isNull);
+
+            int octave = LibUtil.GetIntFromVertex(noteV, "Octave", ref isNull);
+            int note = LibUtil.GetIntFromVertex(noteV, "Note", ref isNull);
+            int velocity = LibUtil.GetIntFromVertex(noteV, "Velocity", ref isNull);
+
+            if (isNull)
+                return stack;
+
+            
+
+            //Midi.WinmmMidiLib.NoteOn(deviceNumber, channel, noteNumber, velocity);
+
+            return stack;
+        }
+
+        //
+
         public static IVertex GetTrackVertexFromSequenceEventVertex(IVertex sequenceEventVertex)
         {
             return GraphUtil.GetQueryInFirst(sequenceEventVertex, "SequenceEvent", null);
