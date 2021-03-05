@@ -60,6 +60,7 @@
     <Compile Include="Midi\MidiLib.cs" />
     <Compile Include="Base\MusicTime.cs" />
     <Compile Include="Base\RealTime.cs" />
+    <Compile Include="Midi\MultimediaTimer.cs" />
     <Compile Include="Midi\Standard.cs" />
     <Compile Include="Midi\WinmmMidiLib.cs" />
     <Compile Include="Program.cs" />
