@@ -272,5 +272,7 @@ namespace m0_COMPOSER.Lib
 
             trackVertex.DeleteEdge(sequenceEventEdge_Delete);
         }
+
+
     }
 }

@@ -138,6 +138,35 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             //
 
             InitSongState();
+
+            StartPositionWatcher();
+        }
+
+        MultimediaTimer PositionWatchTimer;
+
+        void StartPositionWatcher()
+        {
+            PositionWatchTimer = new MultimediaTimer() { Interval = 200 };
+
+            PositionWatchTimer.Elapsed += PositionWatcherTick;
+
+            PositionWatchTimer.Start();
+        }
+
+        void PositionWatcherTick(object sender, EventArgs e)
+        {
+            if (baseVertex != null) {
+                int SongPosition = GraphUtil.GetIntegerValueOr0(baseVertex.Get(false, "Position:"));
+
+                this.Dispatcher.Invoke(() => {
+                    PositionMark = SongPosition;
+                });
+            }
+        }
+
+        void StopPositionWatcher()
+        {
+            PositionWatchTimer.Stop();
         }
 
         Button newTrackButton;
@@ -556,6 +585,8 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
                 if (Vertex is IDisposable)
                     ((IDisposable)Vertex).Dispose();
+
+                StopPositionWatcher();
             }
         }
 
