@@ -250,6 +250,7 @@
     <Compile Include="ZeroCode\Helpers\DictionariesForFormalTextLanguage.cs" />
     <Compile Include="ZeroCode\Helpers\EdgeKey_FromMeta.cs" />
     <Compile Include="ZeroCode\Helpers\EdgeKey_MetaTo.cs" />
+    <Compile Include="ZeroCode\ZeroCodeExecuterUtil.cs" />
     <Compile Include="ZeroTypes\ColorType.cs" />
     <Compile Include="ZeroUML\ClassVertex.cs" />
     <Compile Include="Util\GeneralUtil.cs">

@@ -80,12 +80,7 @@ namespace m0.ZeroCode
             string metaValue = (string)e.Meta.Value;
 
             if (metaValue == "$Empty")
-                return false;
-
-            if (metaValue == "Set")
-            {
-                int x = 0;
-            }
+                return false;            
                 
 
             if (metaValue.Length >= 1 && metaValue[0] == '$')

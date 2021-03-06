@@ -19,6 +19,7 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Shapes;
+using m0.ZeroCode;
 
 namespace m0_COMPOSER.UIWpf.Visualisers
 {
@@ -226,6 +227,10 @@ namespace m0_COMPOSER.UIWpf.Visualisers
         private void PlayButton_Click(object sender, RoutedEventArgs e)
         {
             SetPlayRecordState(PlayRecordStateEnum.Play);
+
+            IVertex playMethod = baseVertex.Get(false, @"$Is:\Method:Play");
+
+            ZeroCodeExecuterUtil.CreateStackAndVertexExecute(playMethod, baseVertex);
         }
 
         private void RecordButton_Click(object sender, RoutedEventArgs e)

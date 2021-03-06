@@ -17,7 +17,7 @@ namespace m0.ZeroCode
             exe.stack.AddEdge(dolar, expression);   
         }
 
-        private void AddRootToStack(ZeroCodeExecution exe)
+        public static void AddRootToStack(ZeroCodeExecution exe)
         {
             exe.stack.AddEdge(MinusZero.Instance.StackFrameInherits, MinusZero.Instance.Root);
         }

@@ -18,13 +18,18 @@ namespace m0_COMPOSER.Lib
             return null;
         }
 
+        protected static double GetMidiTicksPerMilisecond(int tempo)
+        {
+            int ticksInMinute = tempo * 16 *
+        }
+
         public static INoInEdgeInOutVertexVertex Play(IExecution exe)
         {
             INoInEdgeInOutVertexVertex stack = exe.stack;
 
             bool isNull = false;
 
-            int tempo = LibUtil.GetIntFromVertex(stack, "Tempo", ref isNull);
+            int tempo = LibUtil.GetIntFromVertex(stack, "Tempo", ref isNull);            
 
             return stack;
         }
