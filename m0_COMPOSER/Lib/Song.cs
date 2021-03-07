@@ -11,8 +11,15 @@ using System.Threading.Tasks;
 
 namespace m0_COMPOSER.Lib
 {
+    class SongEvent { }
+
     public class Song
     {
+        bool needToRebuildEventDictionary = true;
+        bool needToRebuildOutDictionary = true;
+
+        IList<IVertex> NoteOutputDictionary = new List<IVertex>();
+
         public static INoInEdgeInOutVertexVertex Record(IExecution exe)
         {
             return null;
@@ -20,7 +27,11 @@ namespace m0_COMPOSER.Lib
 
         protected static double GetMidiTicksPerMilisecond(int tempo)
         {
-            int ticksInMinute = tempo * 16 *
+            double ticksInMinute = tempo * Midi.Standard.MidiTicksPerBeat;
+
+            double ticksPerMilisecond = ticksInMinute / (60 * 1000);
+
+            return ticksPerMilisecond;
         }
 
         public static INoInEdgeInOutVertexVertex Play(IExecution exe)
@@ -29,7 +40,9 @@ namespace m0_COMPOSER.Lib
 
             bool isNull = false;
 
-            int tempo = LibUtil.GetIntFromVertex(stack, "Tempo", ref isNull);            
+            int tempo = LibUtil.GetIntFromVertex(stack, "Tempo", ref isNull);
+
+            double ticksPerMilisecond = GetMidiTicksPerMilisecond(tempo);
 
             return stack;
         }
