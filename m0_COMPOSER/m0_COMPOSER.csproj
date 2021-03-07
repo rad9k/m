@@ -57,6 +57,7 @@
     <Compile Include="Lib\NoteOutput.cs" />
     <Compile Include="Lib\MusicUtil.cs" />
     <Compile Include="Lib\Song.cs" />
+    <Compile Include="Lib\SongDictionary.cs" />
     <Compile Include="Midi\MidiLib.cs" />
     <Compile Include="Base\MusicTime.cs" />
     <Compile Include="Base\RealTime.cs" />

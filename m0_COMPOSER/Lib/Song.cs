@@ -10,9 +10,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace m0_COMPOSER.Lib
-{
-    class SongEvent { }
-
+{    
     public class Song
     {
         bool needToRebuildEventDictionary = true;
