@@ -18,14 +18,14 @@ namespace m0_COMPOSER.Lib
         int velocity;
     }
 
-    class NoteOffEvent
+    class NoteOffEvent : SongEvent
     {     
         int octave;
         int note;
         int velocity;
     }
 
-    class ControlChangeEvent
+    class ControlChangeEvent : SongEvent
     {
         int number;
         int value;
