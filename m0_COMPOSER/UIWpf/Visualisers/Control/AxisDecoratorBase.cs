@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Shapes;
 
@@ -43,13 +44,24 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control
 
         protected double zoomFactor;
 
+        public bool PositionMarkPrimEnabled { get; set; }
+
         Line PositionMarkLine;
+
+        Line PositionMarkPrimLine_Beg;
+        Line PositionMarkPrimLine_End;
 
         public void CreateAndDrawPositionMark()
         {
             visualiser.PositionMark = visualiser.PositionMark;
 
             PositionMarkLine = Common.CreatePositionMark(this, visualiser.PositionMark_Screen, Height);
+
+            if (PositionMarkPrimEnabled)
+            {
+                PositionMarkPrimLine_Beg = Common.CreatePositionMarkPrim(this, visualiser.PositionMarkPrim_Beg_Screen, Height);
+                PositionMarkPrimLine_End = Common.CreatePositionMarkPrim(this, visualiser.PositionMarkPrim_End_Screen, Height);
+            }                
         }
 
         public event EventHandler PositionMarkChanged;
@@ -63,7 +75,14 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control
         {
             Point p = e.GetPosition(this);
 
-            visualiser.PositionMark_Screen = p.X;
+            if(Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl)){
+                if (e.RightButton == System.Windows.Input.MouseButtonState.Pressed)
+                    visualiser.PositionMarkPrim_End_Screen = p.X;
+                else
+                    visualiser.PositionMarkPrim_Beg_Screen = p.X;
+            }
+            else
+                visualiser.PositionMark_Screen = p.X;                            
 
             PositionMarkUpdate();
         }
@@ -71,6 +90,12 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control
         public void PositionMarkUpdate()
         {
             Common.UpdatePositionMark(PositionMarkLine, visualiser.PositionMark_Screen, Height);
+
+            if (PositionMarkPrimEnabled)
+            {
+                Common.UpdatePositionMark(PositionMarkPrimLine_Beg, visualiser.PositionMarkPrim_Beg_Screen, Height);
+                Common.UpdatePositionMark(PositionMarkPrimLine_End, visualiser.PositionMarkPrim_End_Screen, Height);
+            }                        
         }
 
         protected void DrawBackground()

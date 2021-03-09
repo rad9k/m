@@ -619,7 +619,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             UpdateCursorShape();
         }
 
-        protected override double GetSnappedPosition(double position)
+        public override double GetSnappedPosition(double position)
         {
             double CurrentSnapToGridValue_corrected = CurrentSnapToGridValue * 16;
 

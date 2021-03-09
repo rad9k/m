@@ -328,6 +328,8 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control
             SelectionChanged(sender, e);
         }
 
-        public void PositionMarkUpdate() {}        
+        public void PositionMarkUpdate() {}
+
+        public bool PositionMarkPrimEnabled { get; set; }
     }
 }

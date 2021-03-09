@@ -44,5 +44,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
         object Selection { get; set; }
 
         void PositionMarkUpdate();
+
+        bool PositionMarkPrimEnabled { get; set; }
     }
 }

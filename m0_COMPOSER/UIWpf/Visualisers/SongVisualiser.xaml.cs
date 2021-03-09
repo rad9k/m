@@ -130,6 +130,8 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             PositionMarkEnabled = true;
 
+            PositionMarkPrimEnabled = true;
+
             PositionMark = -1000;
 
             //
@@ -407,6 +409,8 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
                 TimeSpanAD.BoldLineCount = 10;
 
+                TimeSpanAD.PositionMarkPrimEnabled = PositionMarkPrimEnabled;
+
                 HorizontalAD = TimeSpanAD;
 
                 HorizontalAD.SetBaseVertex(horizontalSpanVertex);
@@ -638,7 +642,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             VisualiserDraw();
         }
 
-        protected override double GetSnappedPosition(double position)
+        public override double GetSnappedPosition(double position)
         {
             if (CurrentSnapToGrid == SnapToGridEnum.No_Snap)
                 return position;

@@ -1244,7 +1244,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             return null;
         }
 
-        protected virtual double GetSnappedPosition(double position)
+        public virtual double GetSnappedPosition(double position)
         {
             double CurrentSnapToGridValue_corrected = CurrentSnapToGridValue * 16;
 
@@ -2647,9 +2647,13 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
         Line PositionMarkLine_Down;
 
-        PrimLines PositionMarkPrimLines;
+        Line PositionMarkPrimLine_Beg;
 
-        PrimLines PositionMarkPrimLines_Down;
+        Line PositionMarkPrimLine_End;
+
+        Line PositionMarkPrimLine_Beg_Down;
+
+        Line PositionMarkPrimLine_End_Down;
 
         protected bool PositionMarkEnabled = false;
 
@@ -2659,22 +2663,33 @@ namespace m0_COMPOSER.UIWpf.Visualisers
         {
             if (PositionMarkEnabled)
                 PositionMarkLine = Common.CreatePositionMark(this.Main, PositionMark_Screen, Height);
-            
-         //   if(PositionMarkPrimEnabled)
-            //    PositionMarkPrimLines = new PrimLines(this.Main, )
+
+            if (PositionMarkPrimEnabled)
+            {
+                PositionMarkPrimLine_Beg = Common.CreatePositionMarkPrim(this.Main, PositionMarkPrim_Beg_Screen, Height);
+                PositionMarkPrimLine_End = Common.CreatePositionMarkPrim(this.Main, PositionMarkPrim_End_Screen, Height);
+            }
         }
 
         public void CreateAndDrawPositionMark_Down()
         {
-            if (!PositionMarkEnabled)
-                return;            
+            if (!HasDown)
+                return;
 
-            if (HasDown)            
+            if (PositionMarkEnabled)                
                 PositionMarkLine_Down = Common.CreatePositionMark(this.Down, PositionMark_Screen, Height_Down);
+
+            if (PositionMarkPrimEnabled)
+            {
+                PositionMarkPrimLine_Beg_Down = Common.CreatePositionMarkPrim(this.Main, PositionMarkPrim_Beg_Screen, Height);
+                PositionMarkPrimLine_End_Down = Common.CreatePositionMarkPrim(this.Main, PositionMarkPrim_End_Screen, Height);
+            }
         }
 
         public virtual void UpdatePositionMark()
         {
+            bool needToPerformHorizontalADPositionMarkUpdate = false;
+
             if (PositionMarkEnabled && PositionMarkLine != null)
             {
                 Common.UpdatePositionMark(PositionMarkLine, PositionMark_Screen, Height);
@@ -2682,20 +2697,25 @@ namespace m0_COMPOSER.UIWpf.Visualisers
                 if (HasDown)
                     Common.UpdatePositionMark(PositionMarkLine_Down, PositionMark_Screen, Height_Down);
 
-                if (HorizontalAD != null)
-                    HorizontalAD.PositionMarkUpdate();
+                needToPerformHorizontalADPositionMarkUpdate = true;
             }
 
-            if (PositionMarkPrimEnabled && PositionMarkPrimLines != null)
+            if (PositionMarkPrimEnabled && PositionMarkPrimLine_Beg != null)
             {
-                PositionMarkPrimLines.Update();
+                Common.UpdatePositionMark(PositionMarkPrimLine_Beg, PositionMarkPrim_Beg_Screen, Height);
+                Common.UpdatePositionMark(PositionMarkPrimLine_End, PositionMarkPrim_End_Screen, Height);
 
                 if (HasDown)
-                    PositionMarkPrimLines_Down.Update();
+                {
+                    Common.UpdatePositionMark(PositionMarkPrimLine_Beg, PositionMarkPrim_Beg_Screen, Height_Down);
+                    Common.UpdatePositionMark(PositionMarkPrimLine_End, PositionMarkPrim_End_Screen, Height_Down);
+                }
 
-                if (HorizontalAD != null)
-                    HorizontalAD.PositionMarkUpdate();
+                needToPerformHorizontalADPositionMarkUpdate = true;
             }
+
+            if (needToPerformHorizontalADPositionMarkUpdate)
+                HorizontalAD.PositionMarkUpdate();
         }
 
         protected virtual int ScreenPositionToMusicTime(double position, bool performSnapCorrection) { return 0; }
@@ -2739,43 +2759,80 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             }
         }
 
-        int loopBeg;
+        double positionMarkPrim_Beg_Screen;
 
-        public int LoopBeg
+        public double PositionMarkPrim_Beg_Screen
         {
             get
             {
-                return loopBeg;
+                return positionMarkPrim_Beg_Screen;
             }
-
             set
             {
-                PositionMarkPrimLines.BegPosition = MusicTimeToScreenPosition(value, true);
+                positionMarkPrim_Beg = ScreenPositionToMusicTime(value, true);
 
-                loopBeg = ScreenPositionToMusicTime(PositionMarkPrimLines.BegPosition, true);
+                positionMarkPrim_Beg_Screen = MusicTimeToScreenPosition(positionMarkPrim_Beg, true);
 
                 UpdatePositionMark();
             }
         }
 
-        int loopEnd;
+        int positionMarkPrim_Beg;
 
-        public int LoopEnd
+        public int PositionMarkPrim_Beg
         {
             get
             {
-                return loopEnd;
+                return positionMarkPrim_Beg;
             }
 
             set
             {
-                PositionMarkPrimLines.EndPosition = MusicTimeToScreenPosition(value, true);
+                positionMarkPrim_Beg_Screen = MusicTimeToScreenPosition(value, true);
 
-                loopEnd = ScreenPositionToMusicTime(PositionMarkPrimLines.BegPosition, true);
+                positionMarkPrim_Beg = ScreenPositionToMusicTime(PositionMarkPrim_Beg_Screen, true);
 
                 UpdatePositionMark();
             }
         }
+
+        double positionMarkPrim_End_Screen;
+
+        public double PositionMarkPrim_End_Screen
+        {
+            get
+            {
+                return positionMarkPrim_End_Screen;
+            }
+            set
+            {
+                positionMarkPrim_End = ScreenPositionToMusicTime(value, true);
+
+                positionMarkPrim_End_Screen = MusicTimeToScreenPosition(positionMarkPrim_End, true);
+
+                UpdatePositionMark();
+            }
+        }
+
+        int positionMarkPrim_End;
+
+        public int PositionMarkPrim_End
+        {
+            get
+            {
+                return positionMarkPrim_End;
+            }
+
+            set
+            {
+                positionMarkPrim_End_Screen = MusicTimeToScreenPosition(value, true);
+
+                positionMarkPrim_End = ScreenPositionToMusicTime(PositionMarkPrim_End_Screen, true);
+
+                UpdatePositionMark();
+            }
+        }
+
 
         protected virtual int FindLastPosition(IEnumerable<IEdge> edges)
         {
