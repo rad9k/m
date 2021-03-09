@@ -16,25 +16,61 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control
         public Line LineBeg;
         public Line LineEnd;
 
-        public double LineBegPosition;
-        public double LineEndPosition;
+        public double BegPosition;
+        public double EndPosition;
+
+        double Height;
 
         public PrimLines(Canvas c, double position1, double position2, double height)
-        {         
-            LineBeg = WpfUtil.DrawLine(c, position1, 0, position1, height, 3, (Brush)WpfUtil.FindResource("0HardHighlightPrimBrush"));
+        {
+            Height = height;
 
-            LineEnd = WpfUtil.DrawLine(c, position2, 0, position2, height, 3, (Brush)WpfUtil.FindResource("0HardHighlightPrimBrush"));
+            if (position1 > position2)
+            {
+                BegPosition = position2;
+
+                EndPosition = position1;
+            }
+            else
+            {
+                BegPosition = position1;
+
+                EndPosition = position2;
+            }
+
+            LineBeg = WpfUtil.DrawLine(c, BegPosition, 0, BegPosition, height, 3, (Brush)WpfUtil.FindResource("0HardHighlightPrimBrush"));
+
+            LineEnd = WpfUtil.DrawLine(c, EndPosition, 0, EndPosition, height, 3, (Brush)WpfUtil.FindResource("0HardHighlightPrimBrush"));
 
             Panel.SetZIndex(LineBeg, 1000);
 
-            Panel.SetZIndex(LineEnd, 1000);            
+            Panel.SetZIndex(LineEnd, 1000);
         }
 
-        public static void UpdatePositionMarkPrim(PrimLines pl, double position, double height)
+        public void CopyFrom(PrimLines source)
         {
-            WpfUtil.SetLinePosition(l, position, 0, position, height);
+            BegPosition = source.BegPosition;
+            EndPosition = source.EndPosition;
+
+            Update();
         }
 
+        public void SetOneOfPositions(double position)
+        {
+            if (position <= BegPosition)
+                BegPosition = position;
+            else
+                EndPosition = position;
+
+            Update();
+        }
+
+        public void Update()
+        {
+            WpfUtil.SetLinePosition(LineBeg, BegPosition, 0, BegPosition, Height);
+
+            WpfUtil.SetLinePosition(LineBeg, BegPosition, 0, BegPosition, Height);
+        }
     }
 
     class Common
@@ -46,6 +82,11 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control
             Panel.SetZIndex(l, 1000);
 
             return l;
-        }        
+        }
+
+        public static void UpdatePositionMark(Line l, double position, double height)
+        {
+            WpfUtil.SetLinePosition(l, position, 0, position, height);
+        }
     }
 }

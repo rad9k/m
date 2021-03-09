@@ -2647,14 +2647,21 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
         Line PositionMarkLine_Down;
 
+        PrimLines PositionMarkPrimLines;
+
+        PrimLines PositionMarkPrimLines_Down;
+
         protected bool PositionMarkEnabled = false;
+
+        protected bool PositionMarkPrimEnabled = false;
 
         public void CreateAndDrawPositionMark()
         {
-            if (!PositionMarkEnabled)
-                return;
-
-            PositionMarkLine = Common.CreatePositionMark(this.Main, PositionMark_Screen, Height);            
+            if (PositionMarkEnabled)
+                PositionMarkLine = Common.CreatePositionMark(this.Main, PositionMark_Screen, Height);
+            
+         //   if(PositionMarkPrimEnabled)
+            //    PositionMarkPrimLines = new PrimLines(this.Main, )
         }
 
         public void CreateAndDrawPositionMark_Down()
@@ -2674,6 +2681,17 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
                 if (HasDown)
                     Common.UpdatePositionMark(PositionMarkLine_Down, PositionMark_Screen, Height_Down);
+
+                if (HorizontalAD != null)
+                    HorizontalAD.PositionMarkUpdate();
+            }
+
+            if (PositionMarkPrimEnabled && PositionMarkPrimLines != null)
+            {
+                PositionMarkPrimLines.Update();
+
+                if (HasDown)
+                    PositionMarkPrimLines_Down.Update();
 
                 if (HorizontalAD != null)
                     HorizontalAD.PositionMarkUpdate();
@@ -2716,6 +2734,44 @@ namespace m0_COMPOSER.UIWpf.Visualisers
                 positionMark_Screen = MusicTimeToScreenPosition(value, true);
 
                 positionMark = ScreenPositionToMusicTime(PositionMark_Screen, true);
+
+                UpdatePositionMark();
+            }
+        }
+
+        int loopBeg;
+
+        public int LoopBeg
+        {
+            get
+            {
+                return loopBeg;
+            }
+
+            set
+            {
+                PositionMarkPrimLines.BegPosition = MusicTimeToScreenPosition(value, true);
+
+                loopBeg = ScreenPositionToMusicTime(PositionMarkPrimLines.BegPosition, true);
+
+                UpdatePositionMark();
+            }
+        }
+
+        int loopEnd;
+
+        public int LoopEnd
+        {
+            get
+            {
+                return loopEnd;
+            }
+
+            set
+            {
+                PositionMarkPrimLines.EndPosition = MusicTimeToScreenPosition(value, true);
+
+                loopEnd = ScreenPositionToMusicTime(PositionMarkPrimLines.BegPosition, true);
 
                 UpdatePositionMark();
             }

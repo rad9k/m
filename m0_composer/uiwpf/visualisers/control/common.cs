@@ -19,20 +19,44 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control
         public double LineBegPosition;
         public double LineEndPosition;
 
-        public PrimLines(Canvas c, double position1, double position2, double height)
-        {         
-            LineBeg = WpfUtil.DrawLine(c, position1, 0, position1, height, 3, (Brush)WpfUtil.FindResource("0HardHighlightPrimBrush"));
+        double Height;
 
-            LineEnd = WpfUtil.DrawLine(c, position2, 0, position2, height, 3, (Brush)WpfUtil.FindResource("0HardHighlightPrimBrush"));
+        public PrimLines(Canvas c, double position1, double position2, double height)
+        {
+            Height = height;
+
+            if (position1 > position2)
+            {
+                LineBegPosition = position2;
+
+                LineEndPosition = position1;
+            }
+            else
+            {
+                LineBegPosition = position1;
+
+                LineEndPosition = position2;
+            }
+
+            LineBeg = WpfUtil.DrawLine(c, LineBegPosition, 0, LineBegPosition, height, 3, (Brush)WpfUtil.FindResource("0HardHighlightPrimBrush"));
+
+            LineEnd = WpfUtil.DrawLine(c, LineEndPosition, 0, LineEndPosition, height, 3, (Brush)WpfUtil.FindResource("0HardHighlightPrimBrush"));
 
             Panel.SetZIndex(LineBeg, 1000);
 
-            Panel.SetZIndex(LineEnd, 1000);            
+            Panel.SetZIndex(LineEnd, 1000);
         }
 
-        public static void UpdatePositionMarkPrim(PrimLines pl, double position, double height)
+        public void UpdatePositionMarkPrim(double position)
         {
-            WpfUtil.SetLinePosition(l, position, 0, position, height);
+            if (position <= LineBegPosition)
+                LineBegPosition = position;
+            else
+                LineEndPosition = position;
+
+            WpfUtil.SetLinePosition(LineBeg, LineBegPosition, 0, LineBegPosition, Height);
+
+            WpfUtil.SetLinePosition(LineBeg, LineBegPosition, 0, LineBegPosition, Height);
         }
 
     }
