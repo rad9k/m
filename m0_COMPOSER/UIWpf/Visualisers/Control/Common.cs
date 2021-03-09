@@ -27,9 +27,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control
 
             Panel.SetZIndex(LineBeg, 1000);
 
-            Panel.SetZIndex(LineEnd, 1000);
-
-            return pl;
+            Panel.SetZIndex(LineEnd, 1000);            
         }
 
         public static void UpdatePositionMarkPrim(PrimLines pl, double position, double height)
