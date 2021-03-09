@@ -47,13 +47,26 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control
             Panel.SetZIndex(LineEnd, 1000);
         }
 
-        public void UpdatePositionMarkPrim(double position)
+        public void CopyFrom(PrimLines source)
+        {
+            LineBegPosition = source.LineBegPosition;
+            LineEndPosition = source.LineEndPosition;
+
+            SetLinePositions();
+        }
+
+        public void Update(double position)
         {
             if (position <= LineBegPosition)
                 LineBegPosition = position;
             else
                 LineEndPosition = position;
 
+            SetLinePositions();
+        }
+
+        void SetLinePositions()
+        {
             WpfUtil.SetLinePosition(LineBeg, LineBegPosition, 0, LineBegPosition, Height);
 
             WpfUtil.SetLinePosition(LineBeg, LineBegPosition, 0, LineBegPosition, Height);
@@ -70,6 +83,11 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control
             Panel.SetZIndex(l, 1000);
 
             return l;
-        }        
+        }
+
+        public static void UpdatePositionMark(Line l, double position, double height)
+        {
+            WpfUtil.SetLinePosition(l, position, 0, position, height);
+        }
     }
 }

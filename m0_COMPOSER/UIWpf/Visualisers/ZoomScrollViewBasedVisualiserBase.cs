@@ -2647,14 +2647,22 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
         Line PositionMarkLine_Down;
 
+        PrimLines PositionMarkPrimLines;
+
+        PrimLines PositionMarkPrimLines_Down;
+
         protected bool PositionMarkEnabled = false;
+
+        protected bool PositionMarkPrimEnabled = false;
 
         public void CreateAndDrawPositionMark()
         {
             if (!PositionMarkEnabled)
                 return;
 
-            PositionMarkLine = Common.CreatePositionMark(this.Main, PositionMark_Screen, Height);            
+            PositionMarkLine = Common.CreatePositionMark(this.Main, PositionMark_Screen, Height);
+
+            
         }
 
         public void CreateAndDrawPositionMark_Down()
