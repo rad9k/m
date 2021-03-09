@@ -16,8 +16,8 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control
         public Line LineBeg;
         public Line LineEnd;
 
-        public double LineBegPosition;
-        public double LineEndPosition;
+        public double BegPosition;
+        public double EndPosition;
 
         double Height;
 
@@ -27,20 +27,20 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control
 
             if (position1 > position2)
             {
-                LineBegPosition = position2;
+                BegPosition = position2;
 
-                LineEndPosition = position1;
+                EndPosition = position1;
             }
             else
             {
-                LineBegPosition = position1;
+                BegPosition = position1;
 
-                LineEndPosition = position2;
+                EndPosition = position2;
             }
 
-            LineBeg = WpfUtil.DrawLine(c, LineBegPosition, 0, LineBegPosition, height, 3, (Brush)WpfUtil.FindResource("0HardHighlightPrimBrush"));
+            LineBeg = WpfUtil.DrawLine(c, BegPosition, 0, BegPosition, height, 3, (Brush)WpfUtil.FindResource("0HardHighlightPrimBrush"));
 
-            LineEnd = WpfUtil.DrawLine(c, LineEndPosition, 0, LineEndPosition, height, 3, (Brush)WpfUtil.FindResource("0HardHighlightPrimBrush"));
+            LineEnd = WpfUtil.DrawLine(c, EndPosition, 0, EndPosition, height, 3, (Brush)WpfUtil.FindResource("0HardHighlightPrimBrush"));
 
             Panel.SetZIndex(LineBeg, 1000);
 
@@ -49,29 +49,28 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control
 
         public void CopyFrom(PrimLines source)
         {
-            LineBegPosition = source.LineBegPosition;
-            LineEndPosition = source.LineEndPosition;
+            BegPosition = source.BegPosition;
+            EndPosition = source.EndPosition;
 
-            SetLinePositions();
+            Update();
         }
 
-        public void Update(double position)
+        public void SetOneOfPositions(double position)
         {
-            if (position <= LineBegPosition)
-                LineBegPosition = position;
+            if (position <= BegPosition)
+                BegPosition = position;
             else
-                LineEndPosition = position;
+                EndPosition = position;
 
-            SetLinePositions();
+            Update();
         }
 
-        void SetLinePositions()
+        public void Update()
         {
-            WpfUtil.SetLinePosition(LineBeg, LineBegPosition, 0, LineBegPosition, Height);
+            WpfUtil.SetLinePosition(LineBeg, BegPosition, 0, BegPosition, Height);
 
-            WpfUtil.SetLinePosition(LineBeg, LineBegPosition, 0, LineBegPosition, Height);
+            WpfUtil.SetLinePosition(LineBeg, BegPosition, 0, BegPosition, Height);
         }
-
     }
 
     class Common
