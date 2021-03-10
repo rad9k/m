@@ -53,7 +53,7 @@ namespace m0_COMPOSER.Lib
         {
             outputDictionary = new List<IVertex>();
 
-            foreach(IEdge e in baseVertex.GetAll(false, @"Track:"))
+            foreach (IEdge e in baseVertex.GetAll(false, @"Track:"))
             {
                 IVertex noteOutputVeretx = e.To.Get(false, "Output:");
 
@@ -72,9 +72,21 @@ namespace m0_COMPOSER.Lib
             return outputDictionary;
         }
 
-        void BuildEventDicionary()
+        void AddSequenceEvent(IVertex sequenceEventVertex)
         {
 
+        }
+
+        void AddTrack(IVertex trackVertex)
+        {
+
+        }
+
+        void BuildEventDicionary()
+        {
+            IDictionary<int, SongEvent> dict = new Dictionary<int, SongEvent>();
+
+            eventDictionary = new Dictionary<int, SongEvent>();
         }
 
         public IDictionary<int, SongEvent> GetEventDicionary()
