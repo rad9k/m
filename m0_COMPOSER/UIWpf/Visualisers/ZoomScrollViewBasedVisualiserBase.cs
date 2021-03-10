@@ -2759,6 +2759,12 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             }
         }
 
+        static IVertex r = MinusZero.Instance.Root;
+
+        static IVertex loopBegMeta = r.Get(false, @"System\Lib\Music\Song\LoopBeg");
+        static IVertex loopEndMeta = r.Get(false, @"System\Lib\Music\Song\LoopEnd");
+
+
         double positionMarkPrim_Beg_Screen;
 
         public double PositionMarkPrim_Beg_Screen
@@ -2770,6 +2776,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             set
             {
                 positionMarkPrim_Beg = ScreenPositionToMusicTime(value, true);
+                GraphUtil.SetVertexValue(baseVertex, loopBegMeta, positionMarkPrim_Beg);
 
                 positionMarkPrim_Beg_Screen = MusicTimeToScreenPosition(positionMarkPrim_Beg, true);
 
@@ -2791,6 +2798,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
                 positionMarkPrim_Beg_Screen = MusicTimeToScreenPosition(value, true);
 
                 positionMarkPrim_Beg = ScreenPositionToMusicTime(PositionMarkPrim_Beg_Screen, true);
+                GraphUtil.SetVertexValue(baseVertex, loopBegMeta, positionMarkPrim_Beg);
 
                 UpdatePositionMark();
             }
@@ -2807,6 +2815,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             set
             {
                 positionMarkPrim_End = ScreenPositionToMusicTime(value, true);
+                GraphUtil.SetVertexValue(baseVertex, loopEndMeta, positionMarkPrim_End);
 
                 positionMarkPrim_End_Screen = MusicTimeToScreenPosition(positionMarkPrim_End, true);
 
@@ -2828,6 +2837,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
                 positionMarkPrim_End_Screen = MusicTimeToScreenPosition(value, true);
 
                 positionMarkPrim_End = ScreenPositionToMusicTime(PositionMarkPrim_End_Screen, true);
+                GraphUtil.SetVertexValue(baseVertex, loopEndMeta, positionMarkPrim_End);
 
                 UpdatePositionMark();
             }

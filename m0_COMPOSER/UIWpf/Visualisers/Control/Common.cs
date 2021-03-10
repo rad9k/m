@@ -16,7 +16,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control
         {
             Line l = WpfUtil.DrawLine(c, position, 0, position, height, 3, (Brush)WpfUtil.FindResource("0HardHighlightBrush"));
 
-            Panel.SetZIndex(l, 1000);
+            Panel.SetZIndex(l, 1001);
 
             return l;
         }
