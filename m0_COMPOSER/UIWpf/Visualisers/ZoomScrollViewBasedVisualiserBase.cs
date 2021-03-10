@@ -2765,12 +2765,15 @@ namespace m0_COMPOSER.UIWpf.Visualisers
         static IVertex loopEndMeta = r.Get(false, @"System\Lib\Music\Song\LoopEnd");
 
 
-        double positionMarkPrim_Beg_Screen;
+        double positionMarkPrim_Beg_Screen = -1;
 
         public double PositionMarkPrim_Beg_Screen
         {
             get
             {
+                if(positionMarkPrim_Beg_Screen == -1 || HorizontalAD != null)
+                    positionMarkPrim_Beg_Screen = MusicTimeToScreenPosition(positionMarkPrim_Beg, true);
+
                 return positionMarkPrim_Beg_Screen;
             }
             set
@@ -2784,7 +2787,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             }
         }
 
-        int positionMarkPrim_Beg;
+        protected int positionMarkPrim_Beg;
 
         public int PositionMarkPrim_Beg
         {
@@ -2810,6 +2813,9 @@ namespace m0_COMPOSER.UIWpf.Visualisers
         {
             get
             {
+                if (positionMarkPrim_End_Screen == -1 || HorizontalAD != null)
+                    positionMarkPrim_End_Screen = MusicTimeToScreenPosition(positionMarkPrim_End, true);
+
                 return positionMarkPrim_End_Screen;
             }
             set
@@ -2823,7 +2829,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             }
         }
 
-        int positionMarkPrim_End;
+        protected int positionMarkPrim_End;
 
         public int PositionMarkPrim_End
         {

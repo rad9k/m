@@ -597,6 +597,9 @@ namespace m0.Graph
 
         public static IVertex SetVertexValue(IVertex vertex, IVertex metaVertex, object value)
         {
+            if (vertex == null || metaVertex == null)
+                return null;
+
             //IVertex getByMeta=vertex.Get(false, metaVertex.Value + ":");
             IVertex getByMeta = GetQueryOutFirst(vertex, metaVertex.Value, null);                
 

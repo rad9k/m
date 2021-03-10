@@ -267,7 +267,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
         {
             IVertex r = MinusZero.Instance.root;
 
-            bool dummy = false;
+            bool dummy = false;            
 
             ShowLabel = GraphUtil.GetBooleanValue(Vertex.Get(false, "ShowLabel:"), ref dummy);
             ShowArowLines = GraphUtil.GetBooleanValue(Vertex.Get(false, "ShowArrowLines:"), ref dummy);
@@ -372,6 +372,9 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             horizontalSpanVertex = r.Get(false, @"System\Lib\Music\Data\DefaultRealTimeSpanLevel:");
 
             InitialiseBaseVertexBasedVisualiserControls();
+
+            positionMarkPrim_Beg = GraphUtil.GetIntegerValueOr0(baseVertex.Get(false, "LoopBeg:"));
+            positionMarkPrim_End = GraphUtil.GetIntegerValueOr0(baseVertex.Get(false, "LoopEnd:"));
 
             AddChangeListenersToAllTracks();
         }
