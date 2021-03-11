@@ -3,6 +3,7 @@ using m0.Foundation;
 using m0.Graph;
 using m0.Lib;
 using m0.ZeroTypes;
+using m0_COMPOSER.Midi;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,13 +12,22 @@ using System.Threading.Tasks;
 
 namespace m0_COMPOSER.Lib
 {    
+    public class PlaySong
+    {
+        public SongDictionary SongDictionary;
+        public IDictionary<int, IList<SongEvent>> EventDictionary;
+        public IList<IVertex> OutputDictionary;
+
+        public MultimediaTimer Timer;
+
+        public void Tick()
+        {
+
+        }
+    }
+
     public class Song
     {
-        bool needToRebuildEventDictionary = true;
-        bool needToRebuildOutDictionary = true;
-
-        IList<IVertex> NoteOutputDictionary = new List<IVertex>();
-
         public static INoInEdgeInOutVertexVertex Record(IExecution exe)
         {
             return null;
@@ -32,6 +42,8 @@ namespace m0_COMPOSER.Lib
             return ticksPerMilisecond;
         }
 
+        public IDictionary<IVertex, PlaySong> SongPlaySongDictionary = new Dictionary<IVertex, PlaySong>();
+
         public static INoInEdgeInOutVertexVertex Play(IExecution exe)
         {
             INoInEdgeInOutVertexVertex stack = exe.stack;
@@ -41,6 +53,16 @@ namespace m0_COMPOSER.Lib
             int tempo = LibUtil.GetIntFromVertex(stack, "Tempo", ref isNull);
 
             double ticksPerMilisecond = GetMidiTicksPerMilisecond(tempo);
+
+            PlaySong ps = new PlaySong();
+
+            ps.SongDictionary = new SongDictionary(stack);
+
+            ps.OutputDictionary = ps.SongDictionary.GetOutputDicionary();
+
+            ps.EventDictionary = ps.SongDictionary.GetEventDicionary();
+
+            ps.Timer = new MultimediaTimer() { Interval = 1, Resolution = 0 };
 
             return stack;
         }
@@ -60,42 +82,7 @@ namespace m0_COMPOSER.Lib
             return null;
         }
 
-        
-
-        public static INoInEdgeInOutVertexVertex NoteOn(IExecution exe)
-        {
-            INoInEdgeInOutVertexVertex stack = exe.stack;
-
-            IVertex noteV = GraphUtil.GetQueryOutFirst(stack, "note", null);
-
-            if (noteV == null)
-                return stack;
-
-            bool isNull = false;
-
-            int channel = LibUtil.GetIntFromVertex(stack, "Channel", ref isNull);
-
-            IVertex device = GraphUtil.GetQueryOutFirst(stack, "Device", null);
-
-            if (device == null)
-                return stack;
-
-            int deviceNumber = LibUtil.GetIntFromVertex(device, "DeviceNumber", ref isNull);
-
-            int octave = LibUtil.GetIntFromVertex(noteV, "Octave", ref isNull);
-            int note = LibUtil.GetIntFromVertex(noteV, "Note", ref isNull);
-            int velocity = LibUtil.GetIntFromVertex(noteV, "Velocity", ref isNull);
-
-            if (isNull)
-                return stack;
-
-            
-
-            //Midi.WinmmMidiLib.NoteOn(deviceNumber, channel, noteNumber, velocity);
-
-            return stack;
-        }
-
+             
         //
 
         public static IVertex GetTrackVertexFromSequenceEventVertex(IVertex sequenceEventVertex)
