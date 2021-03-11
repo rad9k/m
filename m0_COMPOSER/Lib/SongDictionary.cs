@@ -1,4 +1,5 @@
 ﻿using m0.Foundation;
+using m0.Graph;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -74,17 +75,25 @@ namespace m0_COMPOSER.Lib
 
         void AddSequenceEvent(IVertex sequenceEventVertex)
         {
+            int triggerTime = GraphUtil.GetIntegerValueOr0(sequenceEventVertex.Get(false, "TriggerTime:"));
 
+            foreach (IEdge e in sequenceEventVertex.GetAll(false, "Event:"))
+                AddEvent(triggerTime, e.To);
         }
-
-        void AddTrack(IVertex trackVertex)
+        
+        void AddEvent(int triggerTime, IVertex eventVertex)
         {
 
         }
+
+        IDictionary<int, SongEvent> tempDict;
 
         void BuildEventDicionary()
         {
-            IDictionary<int, SongEvent> dict = new Dictionary<int, SongEvent>();
+            tempDict = new Dictionary<int, SongEvent>();
+
+            foreach (IEdge e in baseVertex.GetAll(false, @"Track:\SequenceEvent:"))
+                AddSequenceEvent(e.To);
 
             eventDictionary = new Dictionary<int, SongEvent>();
         }
