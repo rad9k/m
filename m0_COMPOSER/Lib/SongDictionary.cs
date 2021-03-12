@@ -9,25 +9,25 @@ using System.Threading.Tasks;
 
 namespace m0_COMPOSER.Lib
 {
-    class SongEvent {
+    public class SongEvent {
         public int trackNumber;
     }
 
-    class NoteOnEvent : SongEvent
+    public class NoteOnEvent : SongEvent
     {
         public int octave;
         public int note;
         public int velocity;
     }
 
-    class NoteOffEvent : SongEvent
+    public class NoteOffEvent : SongEvent
     {
         public int octave;
         public int note;
         public int velocity;
     }
 
-    class ControlChangeEvent : SongEvent
+    public class ControlChangeEvent : SongEvent
     {
         public int number;
         public int value;

@@ -2,10 +2,12 @@
 using m0.Foundation;
 using m0.Graph;
 using m0.Lib;
+using m0.ZeroCode;
 using m0.ZeroTypes;
 using m0_COMPOSER.Midi;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -14,13 +16,99 @@ namespace m0_COMPOSER.Lib
 {    
     public class PlaySong
     {
+        public IVertex SongVertex;
         public SongDictionary SongDictionary;
         public IDictionary<int, IList<SongEvent>> EventDictionary;
+        public IList<KeyValuePair<int, IList<SongEvent>>> EventList;
         public IList<IVertex> OutputDictionary;
 
         public MultimediaTimer Timer;
 
-        public void Tick()
+        public Stopwatch Watch;
+
+        int prevEventIndex = 0;
+
+        public PlaySong(IVertex songVertex)
+        {
+            SongVertex = songVertex;
+
+            SongDictionary = new SongDictionary(songVertex);
+
+            OutputDictionary = SongDictionary.GetOutputDicionary();
+
+            EventDictionary = SongDictionary.GetEventDicionary();
+
+            EventList = EventDictionary.ToList();
+
+            Watch = new Stopwatch();
+
+            //
+
+            Timer = new MultimediaTimer() { Interval = 1, Resolution = 0 };
+
+            Timer.Elapsed += Tick;
+        }
+
+        public void Start()
+        {
+            Watch.Start();
+
+            Timer.Start();
+        }
+
+        public void Tick(object sender, EventArgs e)
+        {
+            long now = Watch.ElapsedMilliseconds;
+
+            int currentEventIndex = prevEventIndex;
+
+            bool shouldContinue = true;
+
+            while(shouldContinue){
+                if (EventList[currentEventIndex].Key > now
+                    || currentEventIndex >= EventList.Count)
+                    shouldContinue = false;
+                else
+                {
+                    MidiOut(EventList[currentEventIndex].Value);
+
+                    currentEventIndex++;
+                }
+            }
+
+            prevEventIndex = currentEventIndex;
+        }
+
+        public void MidiOut(IList<SongEvent> el)
+        {
+            foreach (SongEvent e in el)
+            {
+                if (e is NoteOnEvent)
+                    NoteOnEvent((NoteOnEvent)e);
+
+                if (e is NoteOffEvent)
+                    NoteOffEvent((NoteOffEvent)e);
+
+                if (e is ControlChangeEvent)
+                    ControlChangeEvent((ControlChangeEvent)e);
+            }
+        }
+
+        public void NoteOnEvent(NoteOnEvent e)
+        {
+            IVertex outputVertex = OutputDictionary[e.trackNumber];
+
+            IVertex playMethod = outputVertex.Get(false, @"$Is:\Method:NoteOn");
+
+         //   ZeroCodeExecuterUtil.CreateStackAndVertexExecute(playMethod, //baseVertex);
+        }
+
+        public void NoteOffEvent(NoteOffEvent e)
+        {
+
+        }
+
+        public void ControlChangeEvent(ControlChangeEvent e)
         {
 
         }
@@ -48,21 +136,17 @@ namespace m0_COMPOSER.Lib
         {
             INoInEdgeInOutVertexVertex stack = exe.stack;
 
+
+
             bool isNull = false;
 
             int tempo = LibUtil.GetIntFromVertex(stack, "Tempo", ref isNull);
 
             double ticksPerMilisecond = GetMidiTicksPerMilisecond(tempo);
 
-            PlaySong ps = new PlaySong();
+            PlaySong ps = new PlaySong(stack);
 
-            ps.SongDictionary = new SongDictionary(stack);
-
-            ps.OutputDictionary = ps.SongDictionary.GetOutputDicionary();
-
-            ps.EventDictionary = ps.SongDictionary.GetEventDicionary();
-
-            ps.Timer = new MultimediaTimer() { Interval = 1, Resolution = 0 };
+            ps.Start();
 
             return stack;
         }
