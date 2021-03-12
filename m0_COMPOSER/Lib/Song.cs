@@ -22,15 +22,18 @@ namespace m0_COMPOSER.Lib
         public IList<KeyValuePair<int, IList<SongEvent>>> EventList;
         public IList<IVertex> OutputDictionary;
 
+        public double TicksPerMilisecond;
         public MultimediaTimer Timer;
 
         public Stopwatch Watch;
 
         int prevEventIndex = 0;
 
-        public PlaySong(IVertex songVertex)
+        public PlaySong(IVertex songVertex, double ticksPerMilisecond)
         {
             SongVertex = songVertex;
+
+            TicksPerMilisecond = ticksPerMilisecond;
 
             SongDictionary = new SongDictionary(songVertex);
 
@@ -56,16 +59,23 @@ namespace m0_COMPOSER.Lib
             Timer.Start();
         }
 
+        public void Destroy()
+        {
+            Timer.Stop();
+        }
+
         public void Tick(object sender, EventArgs e)
         {
             long now = Watch.ElapsedMilliseconds;
+
+            long nowInTicks = (long) (now * TicksPerMilisecond);
 
             int currentEventIndex = prevEventIndex;
 
             bool shouldContinue = true;
 
             while(shouldContinue){
-                if (EventList[currentEventIndex].Key > now
+                if (EventList[currentEventIndex].Key > nowInTicks
                     || currentEventIndex >= EventList.Count)
                     shouldContinue = false;
                 else
@@ -130,25 +140,35 @@ namespace m0_COMPOSER.Lib
             return ticksPerMilisecond;
         }
 
-        public IDictionary<IVertex, PlaySong> SongPlaySongDictionary = new Dictionary<IVertex, PlaySong>();
+        public static IDictionary<IVertex, PlaySong> SongPlaySongDictionary = new Dictionary<IVertex, PlaySong>();
 
         public static INoInEdgeInOutVertexVertex Play(IExecution exe)
         {
-            INoInEdgeInOutVertexVertex stack = exe.stack;
+            INoInEdgeInOutVertexVertex o = exe.stack;
 
 
+            if (SongPlaySongDictionary.ContainsKey(o))
+            {
+                PlaySong oldPlaySong = SongPlaySongDictionary[o];
+
+                oldPlaySong.Destroy();
+
+                SongPlaySongDictionary.Remove(o);
+            }
 
             bool isNull = false;
 
-            int tempo = LibUtil.GetIntFromVertex(stack, "Tempo", ref isNull);
+            int tempo = LibUtil.GetIntFromVertex(o, "Tempo", ref isNull);
 
             double ticksPerMilisecond = GetMidiTicksPerMilisecond(tempo);
 
-            PlaySong ps = new PlaySong(stack);
+            PlaySong ps = new PlaySong(o, ticksPerMilisecond);
+
+            SongPlaySongDictionary.Add(o, ps);
 
             ps.Start();
 
-            return stack;
+            return o;
         }
 
         public static INoInEdgeInOutVertexVertex Stop(IExecution exe)
