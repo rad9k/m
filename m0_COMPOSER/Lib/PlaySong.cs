@@ -25,6 +25,7 @@ namespace m0_COMPOSER.Lib
         public IList<IVertex> OutputDictionary;
 
         public double TicksPerMilisecond;
+        
         public MultimediaTimer Timer;
 
         public Stopwatch Watch;
@@ -40,14 +41,22 @@ namespace m0_COMPOSER.Lib
         static IVertex noteOffNoteMeta = r.Get(false, @"System\Lib\Music\NoteOutput\NoteOff\note");
         static IVertex controlChangeControlChangeMeta = r.Get(false, @"System\Lib\Music\NoteOutput\ControlChange\controlChange");
 
+        protected double GetMidiTicksPerMilisecond(int tempo)
+        {
+            double ticksInMinute = tempo * Midi.Standard.MidiTicksPerBeat;
 
-        public SongPlay(IExecution _exe, IVertex songVertex, double ticksPerMilisecond)
+            double ticksPerMilisecond = ticksInMinute / (60 * 1000);
+
+            return ticksPerMilisecond;
+        }
+
+        public SongPlay(IExecution _exe, IVertex songVertex, int Tempo)
         {
             exe = _exe;
 
             SongVertex = songVertex;
 
-            TicksPerMilisecond = ticksPerMilisecond;
+            TicksPerMilisecond = GetMidiTicksPerMilisecond(Tempo);
 
             SongDictionary = new SongEventsDictionary(songVertex);
 
@@ -76,7 +85,7 @@ namespace m0_COMPOSER.Lib
         public void Destroy()
         {
             if (Timer.IsRunning)
-            {
+            {                
                 Watch.Stop();
                 Timer.Stop();
             }
@@ -85,7 +94,10 @@ namespace m0_COMPOSER.Lib
         public void Tick(object sender, EventArgs e)
         {
             if (EventList.Count == 0)
+            {
+                PositionStop();
                 return;
+            }
 
             long now = Watch.ElapsedMilliseconds;
 
@@ -108,13 +120,8 @@ namespace m0_COMPOSER.Lib
                 }
             }
 
-            if (currentEventIndex >= EventList.Count) // stop
-            {
-                GraphUtil.SetVertexValue(SongVertex, songPositionMeta, -1);
-
-                Watch.Stop();
-                Timer.Stop();
-            }
+            if (currentEventIndex >= EventList.Count) // stop            
+                PositionStop();            
             else
             {
                 prevEventIndex = currentEventIndex;
@@ -124,6 +131,15 @@ namespace m0_COMPOSER.Lib
         }
 
         int prevNowInTicksReduced = 0;
+
+        public void PositionStop()
+        {
+            Destroy();
+
+            m0Main.Instance.Dispatcher.Invoke(() => {
+                GraphUtil.SetVertexValue(SongVertex, songPositionMeta, -1);
+            });            
+        }
         
         void PositionUpdate(int nowInTicks)
         {
@@ -131,7 +147,9 @@ namespace m0_COMPOSER.Lib
 
             if (nowInTicksReduced > prevNowInTicksReduced)
             {
-                GraphUtil.SetVertexValue(SongVertex, songPositionMeta, nowInTicks);
+                m0Main.Instance.Dispatcher.Invoke(() => {
+                    GraphUtil.SetVertexValue(SongVertex, songPositionMeta, nowInTicks);
+                });
                 prevNowInTicksReduced = nowInTicksReduced;
             }
         }

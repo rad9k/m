@@ -161,6 +161,18 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             if (baseVertex != null) {
                 int SongPosition = GraphUtil.GetIntegerValueOr0(baseVertex.Get(false, "Position:"));
 
+                if(SongPosition == -1)
+                {
+                    IVertex r = MinusZero.Instance.Root;
+
+                    this.Dispatcher.Invoke(() =>
+                    {
+                        GraphUtil.SetVertexValue(baseVertex, r.Get(false, @"System\Lib\Music\Song\Position"), 0);
+
+                        StopButton_Click(null, null);
+                    });
+                }
+
                 this.Dispatcher.Invoke(() => {
                     PositionMark = SongPosition;
                 });
@@ -238,6 +250,8 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
                 ZeroCodeExecutonUtil.CreateExecutionAndVertexExecute(playMethod, baseVertex);
             }
+            else
+                StopButton_Click(null, null);
         }
 
         private void RecordButton_Click(object sender, RoutedEventArgs e)
@@ -247,6 +261,17 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
         private void StopButton_Click(object sender, RoutedEventArgs e)
         {
+            if (baseVertex.Get(false, "Track:") != null)
+            {
+                SongVertexDictionary.SetSongVisualiser(baseVertex, this);
+
+                SetPlayRecordState(PlayRecordStateEnum.Play);
+
+                IVertex playMethod = baseVertex.Get(false, @"$Is:\Method:Stop");
+
+                ZeroCodeExecutonUtil.CreateExecutionAndVertexExecute(playMethod, baseVertex);
+            }
+
             SetPlayRecordState(PlayRecordStateEnum.Stop);
         }
 

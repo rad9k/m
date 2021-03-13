@@ -22,39 +22,17 @@ namespace m0_COMPOSER.Lib
             return null;
         }
 
-        protected static double GetMidiTicksPerMilisecond(int tempo)
-        {
-            double ticksInMinute = tempo * Midi.Standard.MidiTicksPerBeat;
-
-            double ticksPerMilisecond = ticksInMinute / (60 * 1000);
-
-            return ticksPerMilisecond;
-        }
-
         public static IDictionary<IVertex, SongPlay> SongPlaySongDictionary = new Dictionary<IVertex, SongPlay>();
 
         public static INoInEdgeInOutVertexVertex Play(IExecution exe)
         {
-            INoInEdgeInOutVertexVertex o = exe.stack;
-
-            
-
-            if (SongPlaySongDictionary.ContainsKey(o))
-            {
-                SongPlay oldPlaySong = SongPlaySongDictionary[o];
-
-                oldPlaySong.Destroy();
-
-                SongPlaySongDictionary.Remove(o);
-            }
+            INoInEdgeInOutVertexVertex o = exe.stack;                       
 
             bool isNull = false;
 
-            int tempo = LibUtil.GetIntFromVertex(o, "Tempo", ref isNull);
+            int tempo = LibUtil.GetIntFromVertex(o, "Tempo", ref isNull);            
 
-            double ticksPerMilisecond = GetMidiTicksPerMilisecond(tempo);
-
-            SongPlay sp = new SongPlay(exe, o, ticksPerMilisecond);
+            SongPlay sp = new SongPlay(exe, o, tempo);
 
             SongVertexDictionary.SetSongPlay(o, sp);
 
@@ -65,7 +43,13 @@ namespace m0_COMPOSER.Lib
 
         public static INoInEdgeInOutVertexVertex Stop(IExecution exe)
         {
-            return null;
+            INoInEdgeInOutVertexVertex o = exe.stack;            
+
+            SongPlay sp = SongVertexDictionary.GetSongPlay(o);
+
+            sp.Destroy();
+
+            return o;
         }
 
         public static INoInEdgeInOutVertexVertex Pause(IExecution exe)
