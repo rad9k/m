@@ -13,7 +13,7 @@ namespace m0.ZeroCode
 {
     public class ZeroCodeUtil
     {       
-        public static IDictionary<string, IList<IVertex>> getFilteredKeywordListByGroup(IVertex FormalTextLanguage,string metaFilter)
+        public static IDictionary<string, IList<IVertex>> GetFilteredKeywordListByGroup(IVertex FormalTextLanguage,string metaFilter)
         {
             IList<IEdge> keywordList = new List<IEdge>();
 
@@ -55,7 +55,7 @@ namespace m0.ZeroCode
             return list;
         }
 
-        public static IList<IVertex> getFilteredKeywordList(IVertex FormalTextLanguage, string metaFilter)
+        public static IList<IVertex> GetFilteredKeywordList(IVertex FormalTextLanguage, string metaFilter)
         {
             IList<IVertex> list = new List<IVertex>();
 
@@ -105,7 +105,7 @@ namespace m0.ZeroCode
             return false;
         }
 
-        public static int getNextCRLF(string s, int pos)
+        public static int GetNextCRLF(string s, int pos)
         {
             bool shallProcess=true;
 
@@ -114,7 +114,7 @@ namespace m0.ZeroCode
                 if (pos >= s.Length)
                     return -1;
 
-                if (isCRLF(s[pos]))
+                if (IsCRLF(s[pos]))
                     return pos;
 
                 pos++;
@@ -123,7 +123,7 @@ namespace m0.ZeroCode
             return -1; // no hit @here
         }
 
-        public static bool isCRLF(char c)
+        public static bool IsCRLF(char c)
         {
             if (c == '\r' || c == '\n')
                 return true;
@@ -131,7 +131,7 @@ namespace m0.ZeroCode
             return false;
         }
 
-        public static int trimRight(string s, int pos)
+        public static int TrimRight(string s, int pos)
         {
             while (s[pos] == ' ')
                 pos++;
@@ -139,7 +139,7 @@ namespace m0.ZeroCode
             return pos;
         }
 
-        public static int trimLeft(string s, int pos)
+        public static int TrimLeft(string s, int pos)
         {
             while (s[pos] == ' ')
                 pos--;
@@ -147,7 +147,7 @@ namespace m0.ZeroCode
             return pos;
         }
     
-        public static void getQueryFirstAndSecondPart(DictionariesForFormalTextLanguage dict, string query, out string firstPart, out string secondPart)
+        public static void GetQueryFirstAndSecondPart(DictionariesForFormalTextLanguage dict, string query, out string firstPart, out string secondPart)
         {
             firstPart = null;
             secondPart = null;
@@ -182,7 +182,7 @@ namespace m0.ZeroCode
             firstPart = query.Substring(0, slashPos);
         }
 
-        public static bool tryStringMatch(string s, int pos, string toMatch)
+        public static bool TryStringMatch(string s, int pos, string toMatch)
         {
             int toMatchLength = toMatch.Length;
 
@@ -196,7 +196,7 @@ namespace m0.ZeroCode
             return true;
         }
 
-        public static bool tabRemove_tryStringMatch(string s, int pos, string toMatch, int toRemoveTabs)
+        public static bool TabRemove_tryStringMatch(string s, int pos, string toMatch, int toRemoveTabs)
         {
             int toMatchLength = toMatch.Length;
 
@@ -223,18 +223,18 @@ namespace m0.ZeroCode
             return true;
         }
 
-        public static bool doTextRangeContainString(string s, int beg, int end, string toMatch)
+        public static bool DoTextRangeContainString(string s, int beg, int end, string toMatch)
         {
             int cnt;
 
             for (cnt = beg; cnt + toMatch.Length -1 <= end;cnt++)
-                if (tryStringMatch(s, cnt, toMatch))
+                if (TryStringMatch(s, cnt, toMatch))
                     return true;
 
             return false;
         }
 
-        public static bool tryStringEndMatch(string s, string toMatch)
+        public static bool TryStringEndMatch(string s, string toMatch)
         {
             int sLength = s.Length;
 
@@ -250,13 +250,13 @@ namespace m0.ZeroCode
             return true;
         }
 
-        public static int getNextMatch(string s, int startFrom, string toMatch)
+        public static int GetNextMatch(string s, int startFrom, string toMatch)
         {
             int pos = startFrom;
 
             while ( (pos+toMatch.Length) <= s.Length)
             {
-                if (tryStringMatch(s, pos, toMatch))
+                if (TryStringMatch(s, pos, toMatch))
                     return pos;
 
                 pos++;
@@ -265,7 +265,7 @@ namespace m0.ZeroCode
             return -1;
         }
 
-        public static int getNextMatch_twoAtOnce(string s, int startFrom, string toMatch1, string toMatch2, out int whatMatch)
+        public static int GetNextMatch_twoAtOnce(string s, int startFrom, string toMatch1, string toMatch2, out int whatMatch)
         {
             whatMatch = 0;
 
@@ -282,13 +282,13 @@ namespace m0.ZeroCode
                     shallProcess = false;
                 else
                 {
-                    if (canCheck1 && tryStringMatch(s, pos, toMatch1) && toMatch1.Length > 0)
+                    if (canCheck1 && TryStringMatch(s, pos, toMatch1) && toMatch1.Length > 0)
                     {
                         whatMatch = 1;
                         return pos;
                     }
 
-                    if (canCheck2 && tryStringMatch(s, pos, toMatch2) && toMatch2.Length > 0)
+                    if (canCheck2 && TryStringMatch(s, pos, toMatch2) && toMatch2.Length > 0)
                     {
                         whatMatch = 2;
                         return pos;
@@ -301,11 +301,11 @@ namespace m0.ZeroCode
             return -1;
         }
 
-        public static char getFirstCharacterFromKeyword(string keyword)
+        public static char GetFirstCharacterFromKeyword(string keyword)
         {
-            if (ZeroCodeUtil.tryStringMatch(keyword, 0, "(?<"))
+            if (ZeroCodeUtil.TryStringMatch(keyword, 0, "(?<"))
             {
-                int pos = ZeroCodeUtil.getNextMatch(keyword, 3, ">)");
+                int pos = ZeroCodeUtil.GetNextMatch(keyword, 3, ">)");
 
                 return keyword[pos + 2];
             }
@@ -313,14 +313,14 @@ namespace m0.ZeroCode
                 return keyword[0];
         }
 
-        public static string getNextCharacterPartFromKeyword_startingFromNonParameter(string keyword, int startFrom)
+        public static string GetNextCharacterPartFromKeyword_startingFromNonParameter(string keyword, int startFrom)
         {
             for (int x = startFrom; x < keyword.Length; x++)
             {
-                if (ZeroCodeUtil.tryStringMatch(keyword, x, "(?<"))
+                if (ZeroCodeUtil.TryStringMatch(keyword, x, "(?<"))
                     return keyword.Substring(startFrom, x - startFrom);
 
-                if (ZeroCodeUtil.tryStringMatch(keyword, x, "(*")) // needs some clever tests ideas, if this is valid????
+                if (ZeroCodeUtil.TryStringMatch(keyword, x, "(*")) // needs some clever tests ideas, if this is valid????
                     return keyword.Substring(startFrom, x - startFrom);
             }
 
@@ -342,7 +342,7 @@ namespace m0.ZeroCode
             return keyword.Substring(startFrom, Math.Min(firstTryPos,secondTryPos) - startFrom);*/
         }
 
-        public static bool isStringOnlyWhiteSpaces(string s)
+        public static bool IsStringOnlyWhiteSpaces(string s)
         {
             bool onlyWhite = true;
 
@@ -357,7 +357,7 @@ namespace m0.ZeroCode
 
         }
 
-        public static List<string> tokenizeKeyword(string k, bool doNotCareAboutSub)
+        public static List<string> TokenizeKeyword(string k, bool doNotCareAboutSub)
         {
             List<string> l = new List<string>();
 
@@ -365,7 +365,7 @@ namespace m0.ZeroCode
 
             for (int x = 0; x < k.Length; x++)
             {
-                if (tryStringMatch(k, x, "(*"))
+                if (TryStringMatch(k, x, "(*"))
                 {
                     x += 1;
 
@@ -378,7 +378,7 @@ namespace m0.ZeroCode
                     l.Add("(*");
                 }
                 else
-                if (tryStringMatch(k, x, "*)"))
+                if (TryStringMatch(k, x, "*)"))
                 {
                     x += 1;
 
@@ -391,7 +391,7 @@ namespace m0.ZeroCode
                     l.Add("*)");
                 }
                 else
-                if (tryStringMatch(k, x, "(+"))
+                if (TryStringMatch(k, x, "(+"))
                 {
                     x += 1;
 
@@ -404,7 +404,7 @@ namespace m0.ZeroCode
                     l.Add("(+");
                 }
                 else
-                if (tryStringMatch(k, x, "+)"))
+                if (TryStringMatch(k, x, "+)"))
                 {
                     x += 1;
 
@@ -417,14 +417,14 @@ namespace m0.ZeroCode
                     l.Add("+)");
                 }
                 else
-                if (tryStringMatch(k, x, "(?<SUB>)"))
+                if (TryStringMatch(k, x, "(?<SUB>)"))
                 {
                     x += 7;
 
                     current += "(?<SUB>)";
                 }
                 else
-                if (tryStringMatch(k, x, "(?<"))
+                if (TryStringMatch(k, x, "(?<"))
                 {
                     x += 2;
 
@@ -437,7 +437,7 @@ namespace m0.ZeroCode
                     l.Add("(?<");
                 }
                 else
-                if (tryStringMatch(k, x, ">)"))
+                if (TryStringMatch(k, x, ">)"))
                 {
                     x += 1;
 

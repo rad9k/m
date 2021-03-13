@@ -11,27 +11,14 @@ namespace m0_COMPOSER.Lib
 {
     public class SongEvent {
         public int trackNumber;
+        public IVertex eventVertex;
     }
 
-    public class NoteOnEvent : SongEvent
-    {
-        public int octave;
-        public int note;
-        public int velocity;
-    }
+    public class NoteOnEvent : SongEvent {}
 
-    public class NoteOffEvent : SongEvent
-    {
-        public int octave;
-        public int note;
-        public int velocity;
-    }
+    public class NoteOffEvent : SongEvent {}
 
-    public class ControlChangeEvent : SongEvent
-    {
-        public int number;
-        public int value;
-    }
+    public class ControlChangeEvent : SongEvent {}
 
     public class SongDictionary
     {
@@ -104,9 +91,7 @@ namespace m0_COMPOSER.Lib
 
             one.trackNumber = trackNumber;
 
-            one.note = GraphUtil.GetIntegerValueOr0(eventVertex.Get(false, "Note:"));
-            one.octave = GraphUtil.GetIntegerValueOr0(eventVertex.Get(false, "Octave:"));
-            one.velocity = GraphUtil.GetIntegerValueOr0(eventVertex.Get(false, "Velocity:"));
+            one.eventVertex = eventVertex;            
 
             tempDictAdd(baseTriggerTime + triggerTime, one);
 
@@ -116,9 +101,7 @@ namespace m0_COMPOSER.Lib
 
             offe.trackNumber = trackNumber;
 
-            offe.note = GraphUtil.GetIntegerValueOr0(eventVertex.Get(false, "Note:"));
-            offe.octave = GraphUtil.GetIntegerValueOr0(eventVertex.Get(false, "Octave:"));
-            offe.velocity = GraphUtil.GetIntegerValueOr0(eventVertex.Get(false, "Velocity:"));
+            offe.eventVertex = eventVertex;
 
             tempDictAdd(baseTriggerTime + triggerTime + length, offe);
         }
@@ -130,8 +113,7 @@ namespace m0_COMPOSER.Lib
 
             cce.trackNumber = trackNumber;
 
-            cce.number = GraphUtil.GetIntegerValueOr0(eventVertex.Get(false, "Number:"));
-            cce.value = GraphUtil.GetIntegerValueOr0(eventVertex.Get(false, "Value:"));            
+            cce.eventVertex = eventVertex;            
 
             tempDictAdd(baseTriggerTime + triggerTime, cce);
         }

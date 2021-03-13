@@ -232,7 +232,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             IVertex playMethod = baseVertex.Get(false, @"$Is:\Method:Play");
 
-            ZeroCodeExecuterUtil.CreateStackAndVertexExecute(playMethod, baseVertex);
+            ZeroCodeExecutonUtil.CreateExecutionAndVertexExecute(playMethod, baseVertex);
         }
 
         private void RecordButton_Click(object sender, RoutedEventArgs e)

@@ -465,8 +465,8 @@ namespace m0.ZeroCode
         {
             FormalTextLanguage = formalTextLanguage;
 
-            newVertexKeywordVertexList = ZeroCodeUtil.getFilteredKeywordList(FormalTextLanguage, "$$NewVertexKeyword");
-            emptyKeywordVertexList = ZeroCodeUtil.getFilteredKeywordList(FormalTextLanguage, "$$EmptyKeyword");
+            newVertexKeywordVertexList = ZeroCodeUtil.GetFilteredKeywordList(FormalTextLanguage, "$$NewVertexKeyword");
+            emptyKeywordVertexList = ZeroCodeUtil.GetFilteredKeywordList(FormalTextLanguage, "$$EmptyKeyword");
 
             dict = DictionariesForFormalTextLanguageFactory.Get(formalTextLanguage);
         }

@@ -165,11 +165,11 @@ namespace m0.ZeroCode.Helpers
 
         static private void prepareSpecialKeywordsGroups(DictionariesForFormalTextLanguage d, IVertex FormalTextLanguage)
         {
-            d.emptyKeywordByGroupsDictionary = ZeroCodeUtil.getFilteredKeywordListByGroup(FormalTextLanguage, "$$EmptyKeyword");
+            d.emptyKeywordByGroupsDictionary = ZeroCodeUtil.GetFilteredKeywordListByGroup(FormalTextLanguage, "$$EmptyKeyword");
 
-            d.newVertexKeywordByGroupsDictionary = ZeroCodeUtil.getFilteredKeywordListByGroup(FormalTextLanguage, "$$NewVertexKeyword");
+            d.newVertexKeywordByGroupsDictionary = ZeroCodeUtil.GetFilteredKeywordListByGroup(FormalTextLanguage, "$$NewVertexKeyword");
 
-            d.linkKeywordByGroupsDictionary = ZeroCodeUtil.getFilteredKeywordListByGroup(FormalTextLanguage, "$$LinkKeyword");
+            d.linkKeywordByGroupsDictionary = ZeroCodeUtil.GetFilteredKeywordListByGroup(FormalTextLanguage, "$$LinkKeyword");
         }
 
         static private bool isSpecialKeyword(IVertex keyword)
@@ -204,7 +204,7 @@ namespace m0.ZeroCode.Helpers
 
             for (keywordPos = 0; keywordPos < keywordString.Length; keywordPos++)
             {
-                if (!isInsideParameter && ZeroCodeUtil.tryStringMatch(keywordString, keywordPos, "(?<"))
+                if (!isInsideParameter && ZeroCodeUtil.TryStringMatch(keywordString, keywordPos, "(?<"))
                 {
                     isInsideParameter = true;
 
@@ -212,13 +212,13 @@ namespace m0.ZeroCode.Helpers
                     isFirstAdd = false;
                 }
 
-                if (isInsideParameter && ZeroCodeUtil.tryStringMatch(keywordString, keywordPos, ">)"))
+                if (isInsideParameter && ZeroCodeUtil.TryStringMatch(keywordString, keywordPos, ">)"))
                 {
                     isInsideParameter = false;
                     prevPos = keywordPos + 2;
                 }
 
-                if (ZeroCodeUtil.tryStringMatch(keywordString, keywordPos, "(*"))
+                if (ZeroCodeUtil.TryStringMatch(keywordString, keywordPos, "(*"))
                 {
                     addSubString(d, keywordString.Substring(prevPos, keywordPos - prevPos), isFirstAdd);
                     isFirstAdd = false;
@@ -226,7 +226,7 @@ namespace m0.ZeroCode.Helpers
                     prevPos = keywordPos + 2;
                 }
 
-                if (ZeroCodeUtil.tryStringMatch(keywordString, keywordPos, "*)"))
+                if (ZeroCodeUtil.TryStringMatch(keywordString, keywordPos, "*)"))
                 {
                     addSubString(d, keywordString.Substring(prevPos, keywordPos - prevPos), isFirstAdd);
                     isFirstAdd = false;
@@ -234,7 +234,7 @@ namespace m0.ZeroCode.Helpers
                     prevPos = keywordPos + 2;
                 }
 
-                if (ZeroCodeUtil.tryStringMatch(keywordString, keywordPos, "(+"))
+                if (ZeroCodeUtil.TryStringMatch(keywordString, keywordPos, "(+"))
                 {
                     addSubString(d, keywordString.Substring(prevPos, keywordPos - prevPos), isFirstAdd);
                     isFirstAdd = false;
@@ -242,7 +242,7 @@ namespace m0.ZeroCode.Helpers
                     prevPos = keywordPos + 2;
                 }
 
-                if (ZeroCodeUtil.tryStringMatch(keywordString, keywordPos, "+)"))
+                if (ZeroCodeUtil.TryStringMatch(keywordString, keywordPos, "+)"))
                 {
                     addSubString(d, keywordString.Substring(prevPos, keywordPos - prevPos), isFirstAdd);
                     isFirstAdd = false;

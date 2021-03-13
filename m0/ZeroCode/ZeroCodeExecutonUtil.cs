@@ -8,11 +8,11 @@ using System.Threading.Tasks;
 
 namespace m0.ZeroCode
 {
-    public class ZeroCodeExecuterUtil
+    public class ZeroCodeExecutonUtil
     {
-        public static void CreateStackAndVertexExecute(IVertex endPoint, IVertex toBeStackVertex)
+        public static void CreateExecutionAndVertexExecute(IVertex endPoint, IVertex toBeStackVertex)
         {
-            ZeroCodeExecution exe = new ZeroCodeExecution();
+            IExecution exe = new ZeroCodeExecution();
 
             exe.metaMode = true;
 
@@ -30,6 +30,17 @@ namespace m0.ZeroCode
             ZeroCodeExecuter.AddRootToStack(exe);
 
             endPoint.Execute(exe);            
+        }
+
+        public static void MethodCallFromHost(IExecution exe, IVertex endPoint, IVertex theObject, IVertex paramtersStack)
+        {
+            exe.AddStackFrame(theObject); // ENTER NEW STACK
+            exe.AddStackFrame(paramtersStack);
+
+            endPoint.Execute(exe);
+
+            exe.RemoveStackFrame();
+            exe.RemoveStackFrame(); // LEAVE NEW STACK
         }
     }
 }

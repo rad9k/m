@@ -56,6 +56,7 @@
     <Compile Include="Lib\MidiDevice.cs" />
     <Compile Include="Lib\NoteOutput.cs" />
     <Compile Include="Lib\MusicUtil.cs" />
+    <Compile Include="Lib\PlaySong.cs" />
     <Compile Include="Lib\Song.cs" />
     <Compile Include="Lib\SongDictionary.cs" />
     <Compile Include="Midi\MidiLib.cs" />

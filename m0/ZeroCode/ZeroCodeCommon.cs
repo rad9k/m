@@ -90,40 +90,40 @@ namespace m0.ZeroCode
 
         public static bool IsSpecialCharacter(DictionariesForFormalTextLanguage dict, string s, int pos)
         {
-            if (ZeroCodeUtil.tryStringMatch(s, pos, dict.CRLFoperator))
+            if (ZeroCodeUtil.TryStringMatch(s, pos, dict.CRLFoperator))
                 return true;
-            if (ZeroCodeUtil.tryStringMatch(s, pos, dict.MetaSeparator))
+            if (ZeroCodeUtil.TryStringMatch(s, pos, dict.MetaSeparator))
                 return true;
-            if (ZeroCodeUtil.tryStringMatch(s, pos, dict.CodeGraphVertexPrefix))
+            if (ZeroCodeUtil.TryStringMatch(s, pos, dict.CodeGraphVertexPrefix))
                 return true; 
-            if (ZeroCodeUtil.tryStringMatch(s, pos, dict.CodeGraphVertexSuffix))
+            if (ZeroCodeUtil.TryStringMatch(s, pos, dict.CodeGraphVertexSuffix))
                 return true; 
-            if (ZeroCodeUtil.tryStringMatch(s, pos, dict.LineContinuationPrefix.ToString()))
+            if (ZeroCodeUtil.TryStringMatch(s, pos, dict.LineContinuationPrefix.ToString()))
                 return true; 
-            if (ZeroCodeUtil.tryStringMatch(s, pos, dict.CodeGraphLinkPrefix.ToString()))
+            if (ZeroCodeUtil.TryStringMatch(s, pos, dict.CodeGraphLinkPrefix.ToString()))
                 return true; 
-            if (ZeroCodeUtil.tryStringMatch(s, pos, dict.CodeGraphLinkKeywordPrefix))
+            if (ZeroCodeUtil.TryStringMatch(s, pos, dict.CodeGraphLinkKeywordPrefix))
                 return true; 
-            if (ZeroCodeUtil.tryStringMatch(s, pos, dict.NewVertexPrefix.ToString()))
+            if (ZeroCodeUtil.TryStringMatch(s, pos, dict.NewVertexPrefix.ToString()))
                 return true; 
-            if (ZeroCodeUtil.tryStringMatch(s, pos, dict.NewVertexSuffix.ToString()))
+            if (ZeroCodeUtil.TryStringMatch(s, pos, dict.NewVertexSuffix.ToString()))
                 return true; 
-            if (ZeroCodeUtil.tryStringMatch(s, pos, dict.EscapedSequencePrefix.ToString()))
+            if (ZeroCodeUtil.TryStringMatch(s, pos, dict.EscapedSequencePrefix.ToString()))
                 return true; 
-            if (ZeroCodeUtil.tryStringMatch(s, pos, dict.EscapedSequenceSuffix.ToString()))
+            if (ZeroCodeUtil.TryStringMatch(s, pos, dict.EscapedSequenceSuffix.ToString()))
                 return true; 
-            if (ZeroCodeUtil.tryStringMatch(s, pos, dict.EscapeCharacter.ToString()))
+            if (ZeroCodeUtil.TryStringMatch(s, pos, dict.EscapeCharacter.ToString()))
                 return true; 
-            if (ZeroCodeUtil.tryStringMatch(s, pos, dict.SetIndexPrefix))
+            if (ZeroCodeUtil.TryStringMatch(s, pos, dict.SetIndexPrefix))
                 return true; 
-            if (ZeroCodeUtil.tryStringMatch(s, pos, dict.SetIndexPostfix))
+            if (ZeroCodeUtil.TryStringMatch(s, pos, dict.SetIndexPostfix))
                 return true;
 
             char c = s[pos];
 
             if(dict.allKeywordsSubstringsDictionary_onlyFirstPart.ContainsKey(c)) // XXX TURNED ON was: // XXX TURNED OFF IN SAKE OF IN
                 foreach (string cs in dict.allKeywordsSubstringsDictionary_onlyFirstPart[c])
-                    if (ZeroCodeUtil.tryStringMatch(s, pos, cs))
+                    if (ZeroCodeUtil.TryStringMatch(s, pos, cs))
                         return true;
 
             return false;
@@ -159,7 +159,7 @@ namespace m0.ZeroCode
 
             bool shallProceed = true;
 
-            if (ZeroCodeUtil.tryStringMatch(text, startPos, dict.CodeGraphLinkPrefix.ToString()))
+            if (ZeroCodeUtil.TryStringMatch(text, startPos, dict.CodeGraphLinkPrefix.ToString()))
             {
                 bool isInEscape = false;
 
@@ -205,7 +205,7 @@ namespace m0.ZeroCode
             List<string> l = keywordsSubstringsPositiveDictionary[charAtPos];
 
             foreach (string s in l)
-                if (ZeroCodeUtil.tryStringMatch(text, startPos, s))
+                if (ZeroCodeUtil.TryStringMatch(text, startPos, s))
                 {
                     if (keywordsSubstringsNegativeDictionary == null)
                         return true;
@@ -220,7 +220,7 @@ namespace m0.ZeroCode
                             foreach (string ss in negList)
                                 for (int back = 0; back < ss.Length; back++)
                                 {
-                                    if (startPos-back > 0 && ZeroCodeUtil.tryStringMatch(text, startPos - back, ss))
+                                    if (startPos-back > 0 && ZeroCodeUtil.TryStringMatch(text, startPos - back, ss))
                                         notFound = false;
                                 }
                             
@@ -300,7 +300,7 @@ namespace m0.ZeroCode
 
             bool shallProceed = true;            
 
-            if (ZeroCodeUtil.tryStringMatch(text, sPos, dict.NewVertexPrefix.ToString()))
+            if (ZeroCodeUtil.TryStringMatch(text, sPos, dict.NewVertexPrefix.ToString()))
             {
                 int escapeCharacterCount = 0;
 

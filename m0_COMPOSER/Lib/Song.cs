@@ -3,6 +3,7 @@ using m0.Foundation;
 using m0.Graph;
 using m0.Lib;
 using m0.ZeroCode;
+using m0.ZeroCode.Helpers;
 using m0.ZeroTypes;
 using m0_COMPOSER.Midi;
 using System;
@@ -13,117 +14,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace m0_COMPOSER.Lib
-{    
-    public class PlaySong
-    {
-        public IVertex SongVertex;
-        public SongDictionary SongDictionary;
-        public IDictionary<int, IList<SongEvent>> EventDictionary;
-        public IList<KeyValuePair<int, IList<SongEvent>>> EventList;
-        public IList<IVertex> OutputDictionary;
-
-        public double TicksPerMilisecond;
-        public MultimediaTimer Timer;
-
-        public Stopwatch Watch;
-
-        int prevEventIndex = 0;
-
-        public PlaySong(IVertex songVertex, double ticksPerMilisecond)
-        {
-            SongVertex = songVertex;
-
-            TicksPerMilisecond = ticksPerMilisecond;
-
-            SongDictionary = new SongDictionary(songVertex);
-
-            OutputDictionary = SongDictionary.GetOutputDicionary();
-
-            EventDictionary = SongDictionary.GetEventDicionary();
-
-            EventList = EventDictionary.ToList();
-
-            Watch = new Stopwatch();
-
-            //
-
-            Timer = new MultimediaTimer() { Interval = 1, Resolution = 0 };
-
-            Timer.Elapsed += Tick;
-        }
-
-        public void Start()
-        {
-            Watch.Start();
-
-            Timer.Start();
-        }
-
-        public void Destroy()
-        {
-            Timer.Stop();
-        }
-
-        public void Tick(object sender, EventArgs e)
-        {
-            long now = Watch.ElapsedMilliseconds;
-
-            long nowInTicks = (long) (now * TicksPerMilisecond);
-
-            int currentEventIndex = prevEventIndex;
-
-            bool shouldContinue = true;
-
-            while(shouldContinue){
-                if (EventList[currentEventIndex].Key > nowInTicks
-                    || currentEventIndex >= EventList.Count)
-                    shouldContinue = false;
-                else
-                {
-                    MidiOut(EventList[currentEventIndex].Value);
-
-                    currentEventIndex++;
-                }
-            }
-
-            prevEventIndex = currentEventIndex;
-        }
-
-        public void MidiOut(IList<SongEvent> el)
-        {
-            foreach (SongEvent e in el)
-            {
-                if (e is NoteOnEvent)
-                    NoteOnEvent((NoteOnEvent)e);
-
-                if (e is NoteOffEvent)
-                    NoteOffEvent((NoteOffEvent)e);
-
-                if (e is ControlChangeEvent)
-                    ControlChangeEvent((ControlChangeEvent)e);
-            }
-        }
-
-        public void NoteOnEvent(NoteOnEvent e)
-        {
-            IVertex outputVertex = OutputDictionary[e.trackNumber];
-
-            IVertex playMethod = outputVertex.Get(false, @"$Is:\Method:NoteOn");
-
-         //   ZeroCodeExecuterUtil.CreateStackAndVertexExecute(playMethod, //baseVertex);
-        }
-
-        public void NoteOffEvent(NoteOffEvent e)
-        {
-
-        }
-
-        public void ControlChangeEvent(ControlChangeEvent e)
-        {
-
-        }
-    }
-
+{        
     public class Song
     {
         public static INoInEdgeInOutVertexVertex Record(IExecution exe)
@@ -140,7 +31,7 @@ namespace m0_COMPOSER.Lib
             return ticksPerMilisecond;
         }
 
-        public static IDictionary<IVertex, PlaySong> SongPlaySongDictionary = new Dictionary<IVertex, PlaySong>();
+        public static IDictionary<IVertex, SongPlay> SongPlaySongDictionary = new Dictionary<IVertex, SongPlay>();
 
         public static INoInEdgeInOutVertexVertex Play(IExecution exe)
         {
@@ -149,7 +40,7 @@ namespace m0_COMPOSER.Lib
 
             if (SongPlaySongDictionary.ContainsKey(o))
             {
-                PlaySong oldPlaySong = SongPlaySongDictionary[o];
+                SongPlay oldPlaySong = SongPlaySongDictionary[o];
 
                 oldPlaySong.Destroy();
 
@@ -162,7 +53,7 @@ namespace m0_COMPOSER.Lib
 
             double ticksPerMilisecond = GetMidiTicksPerMilisecond(tempo);
 
-            PlaySong ps = new PlaySong(o, ticksPerMilisecond);
+            SongPlay ps = new SongPlay(exe, o, ticksPerMilisecond);
 
             SongPlaySongDictionary.Add(o, ps);
 
@@ -338,9 +229,7 @@ namespace m0_COMPOSER.Lib
         }
 
         public static IEdge GetSequenceOntheLeftOrRight(IVertex sequenceEventVertex, bool isRight)
-        {
-            IVertex ret = null;
-
+        {            
             IVertex trackVertex = GetTrackVertexFromSequenceEventVertex(sequenceEventVertex);
 
             IList<IEdge> sorted = SortSequenceEventsInTrack(trackVertex);
