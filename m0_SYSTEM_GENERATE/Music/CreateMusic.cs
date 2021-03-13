@@ -560,7 +560,7 @@ namespace m0_SYSTEM_GENERATE.Music
             GraphUtil.AddAttribute(Song, "Input", NoteInput, 0, 1);
             GraphUtil.AddAssociation(Song, "RecordingTrack", Track, 0, 1);
             GraphUtil.AddAttribute(Song, "Tempo", Float, 1, 1, (double)125.0, (double)10.0, (double)250.0);
-            GraphUtil.AddAttribute(Song, "Position", Integer, 0, 1);
+            GraphUtil.AddAttribute(Song, "Position", Integer, 1, 1, 0);
             GraphUtil.AddAttribute(Song, "LoopBeg", Integer, 0, 1);
             GraphUtil.AddAttribute(Song, "LoopEnd", Integer, 0, 1);
 

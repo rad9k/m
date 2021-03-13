@@ -1,6 +1,7 @@
 ﻿!!!!!!!!!!!!!!!!!!!!!!!!!!!!! TO DO:
 
 94. initial m0 files seems to be to big and contain too much
+95. access to object in its methods. current  exe.AddStackFrame(theObject); // ENTER NEW STACK does not support adding new edges
 
 ??????
 

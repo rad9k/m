@@ -20,7 +20,7 @@ namespace m0_COMPOSER.Lib
 
     public class ControlChangeEvent : SongEvent {}
 
-    public class SongDictionary
+    public class SongEventsDictionary
     {
         public IVertex baseVertex;
 
@@ -30,7 +30,7 @@ namespace m0_COMPOSER.Lib
         IList<IVertex> outputDictionary;
         IDictionary<int, IList<SongEvent>> eventDictionary;
 
-        public SongDictionary(IVertex _baseVertex)
+        public SongEventsDictionary(IVertex _baseVertex)
         {
             baseVertex = _baseVertex;
 

@@ -58,7 +58,8 @@
     <Compile Include="Lib\MusicUtil.cs" />
     <Compile Include="Lib\PlaySong.cs" />
     <Compile Include="Lib\Song.cs" />
-    <Compile Include="Lib\SongDictionary.cs" />
+    <Compile Include="Lib\SongEventsDictionary.cs" />
+    <Compile Include="Lib\SongVertexDictionary.cs" />
     <Compile Include="Midi\MidiLib.cs" />
     <Compile Include="Base\MusicTime.cs" />
     <Compile Include="Base\RealTime.cs" />

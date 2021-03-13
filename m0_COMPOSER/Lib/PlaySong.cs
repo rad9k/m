@@ -19,7 +19,7 @@ namespace m0_COMPOSER.Lib
     {
         public IExecution exe;
         public IVertex SongVertex;
-        public SongDictionary SongDictionary;
+        public SongEventsDictionary SongDictionary;
         public IDictionary<int, IList<SongEvent>> EventDictionary;
         public IList<KeyValuePair<int, IList<SongEvent>>> EventList;
         public IList<IVertex> OutputDictionary;
@@ -49,7 +49,7 @@ namespace m0_COMPOSER.Lib
 
             TicksPerMilisecond = ticksPerMilisecond;
 
-            SongDictionary = new SongDictionary(songVertex);
+            SongDictionary = new SongEventsDictionary(songVertex);
 
             OutputDictionary = SongDictionary.GetOutputDicionary();
 
