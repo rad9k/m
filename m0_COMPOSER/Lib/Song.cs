@@ -25,7 +25,7 @@ namespace m0_COMPOSER.Lib
         public static IDictionary<IVertex, SongPlay> SongPlaySongDictionary = new Dictionary<IVertex, SongPlay>();
 
         public static INoInEdgeInOutVertexVertex Play(IExecution exe)
-        {
+        {            
             INoInEdgeInOutVertexVertex o = exe.stack;                       
 
             bool isNull = false;

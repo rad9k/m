@@ -1148,6 +1148,28 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             RedrawTracks();
         }
+
+        static IVertex r = MinusZero.Instance.Root;
+
+        static IVertex positionMeta = r.Get(false, @"System\Lib\Music\Song\Position");
+
+        public override double PositionMark_Screen
+        {
+            get
+            {
+                return positionMark_Screen;
+            }
+            set
+            {
+                positionMark = ScreenPositionToMusicTime(value, true);
+
+                GraphUtil.SetVertexValue(baseVertex, positionMeta, positionMark);
+
+                positionMark_Screen = MusicTimeToScreenPosition(positionMark, true);
+
+                UpdatePositionMark();
+            }
+        }
     }
 }
 

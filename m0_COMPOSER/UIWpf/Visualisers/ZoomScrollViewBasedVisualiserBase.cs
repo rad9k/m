@@ -2722,9 +2722,9 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
         protected virtual double MusicTimeToScreenPosition(int musicTime, bool performSnapCorrection) { return 0; }
 
-        double positionMark_Screen;
+        protected double positionMark_Screen;
 
-        public double PositionMark_Screen
+        public virtual double PositionMark_Screen
         {
             get
             {
@@ -2740,7 +2740,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             }
         }
 
-        int positionMark;
+        protected int positionMark;
 
         public int PositionMark
         {

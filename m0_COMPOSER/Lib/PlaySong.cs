@@ -70,7 +70,9 @@ namespace m0_COMPOSER.Lib
 
             //
 
-            Timer = new MultimediaTimer() { Interval = 1, Resolution = 0 };
+            //Timer = new MultimediaTimer() { Interval = 1, Resolution = 0 };
+
+            Timer = new MultimediaTimer() { Interval = 1000};
 
             Timer.Elapsed += Tick;
         }
@@ -88,11 +90,14 @@ namespace m0_COMPOSER.Lib
             {                
                 Watch.Stop();
                 Timer.Stop();
+                Timer.Dispose();
             }
         }
 
         public void Tick(object sender, EventArgs e)
         {
+            return;
+
             if (EventList.Count == 0)
             {
                 PositionStop();
