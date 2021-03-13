@@ -228,11 +228,16 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
         private void PlayButton_Click(object sender, RoutedEventArgs e)
         {
-            SetPlayRecordState(PlayRecordStateEnum.Play);
+            if (baseVertex.Get(false, "Track:") != null)
+            {
+                SongVertexDictionary.SetSongVisualiser(baseVertex, this);
 
-            IVertex playMethod = baseVertex.Get(false, @"$Is:\Method:Play");
+                SetPlayRecordState(PlayRecordStateEnum.Play);
 
-            ZeroCodeExecutonUtil.CreateExecutionAndVertexExecute(playMethod, baseVertex);
+                IVertex playMethod = baseVertex.Get(false, @"$Is:\Method:Play");
+
+                ZeroCodeExecutonUtil.CreateExecutionAndVertexExecute(playMethod, baseVertex);
+            }
         }
 
         private void RecordButton_Click(object sender, RoutedEventArgs e)

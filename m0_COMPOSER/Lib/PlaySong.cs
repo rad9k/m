@@ -68,14 +68,18 @@ namespace m0_COMPOSER.Lib
 
         public void Start()
         {
-            Watch.Start();
+            Watch.Restart();            
 
             Timer.Start();
         }
 
         public void Destroy()
         {
-            Timer.Stop();
+            if (Timer.IsRunning)
+            {
+                Watch.Stop();
+                Timer.Stop();
+            }
         }
 
         public void Tick(object sender, EventArgs e)
@@ -104,13 +108,23 @@ namespace m0_COMPOSER.Lib
                 }
             }
 
-            prevEventIndex = currentEventIndex;
+            if (currentEventIndex >= EventList.Count) // stop
+            {
+                GraphUtil.SetVertexValue(SongVertex, songPositionMeta, -1);
 
-            PositionUpdate((int)nowInTicks);
+                Watch.Stop();
+                Timer.Stop();
+            }
+            else
+            {
+                prevEventIndex = currentEventIndex;
+
+                PositionUpdate((int)nowInTicks);
+            }
         }
 
         int prevNowInTicksReduced = 0;
-
+        
         void PositionUpdate(int nowInTicks)
         {
             int nowInTicksReduced = nowInTicks / 100;

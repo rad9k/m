@@ -37,6 +37,7 @@ namespace m0_COMPOSER.Lib
         {
             INoInEdgeInOutVertexVertex o = exe.stack;
 
+            
 
             if (SongPlaySongDictionary.ContainsKey(o))
             {
@@ -53,11 +54,11 @@ namespace m0_COMPOSER.Lib
 
             double ticksPerMilisecond = GetMidiTicksPerMilisecond(tempo);
 
-            SongPlay ps = new SongPlay(exe, o, ticksPerMilisecond);
+            SongPlay sp = new SongPlay(exe, o, ticksPerMilisecond);
 
-            SongPlaySongDictionary.Add(o, ps);
+            SongVertexDictionary.SetSongPlay(o, sp);
 
-            ps.Start();
+            sp.Start();
 
             return o;
         }
