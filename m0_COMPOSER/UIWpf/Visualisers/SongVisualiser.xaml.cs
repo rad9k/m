@@ -269,7 +269,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
                 IVertex playMethod = baseVertex.Get(false, @"$Is:\Method:Stop");
 
-                ZeroCodeExecutonUtil.CreateExecutionAndVertexExecute(playMethod, baseVertex);
+                ZeroCodeExecutonUtil.CreateExecutionAndVertexExecute2(playMethod, baseVertex);
             }
 
             SetPlayRecordState(PlayRecordStateEnum.Stop);
