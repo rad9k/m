@@ -2,6 +2,15 @@
 
 94. initial m0 files seems to be to big and contain too much
 95. access to object in its methods. current  exe.AddStackFrame(theObject); // ENTER NEW STACK does not support adding new edges
+96. do the exe.stack = InstructionHelpers.Create_INoInEdgeInOutVertexVertex_FromEdgesList(_toBeStackVertex);
+
+            exe.newVertexCreationSpace = exe.stack;
+
+            ZeroCodeExecuter.AddRootToStack(exe);
+
+TWO times and you have the if (de.To.Store!=this||(de.Meta!=null&&de.Meta.Store!=this))
+
+remove ZeroCodeExecuter.AddRootToStack(exe); and ther is no. can be checked by "ZeroCodeExecuter.AddRootToStack(exe); error" commit 2021-03-14
 
 ??????
 

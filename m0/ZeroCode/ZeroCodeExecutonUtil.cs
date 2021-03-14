@@ -21,7 +21,7 @@ namespace m0.ZeroCode
             if (toBeStackVertex == null)
                 _toBeStackVertex = new List<IEdge>();
             else
-                _toBeStackVertex = toBeStackVertex;
+                _toBeStackVertex = toBeStackVertex;                        
 
             exe.stack = InstructionHelpers.Create_INoInEdgeInOutVertexVertex_FromEdgesList(_toBeStackVertex);
 
