@@ -114,8 +114,19 @@
                         <TextBlock Margin="3,0,0,0"/>
                     </StackPanel>
                 </Button>
+                
                 <Separator/>
+                
                 <m0:VisualiserEditWrapper x:Name="TempoVisualiser" Width="150"/>
+
+                <Separator/>
+
+                <Button Name="MuteSpeakerButton_Instance" ToolTip="Silence on all MIDI devices" Click="MuteSpeakerButton_Click">
+                    <StackPanel Orientation="Horizontal">
+                        <Image RenderOptions.BitmapScalingMode="HighQuality" Source="pack://application:,,/m0;Component/_resources/basic/mute-speaker.png" Width="15" Height="15"/>
+                        <TextBlock Margin="3,0,0,0"/>
+                    </StackPanel>
+                </Button>
             </ToolBar>
         </ToolBarTray>
         <Controls:ZoomScrollView x:Name="ZoomScrollView_Instance" DownAreaVisible="True"/>

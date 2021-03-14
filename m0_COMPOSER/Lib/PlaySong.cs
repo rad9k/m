@@ -43,8 +43,15 @@ namespace m0_COMPOSER.Lib
 
         static IVertex songPositionMeta = r.Get(false, @"System\Lib\Music\Song\Position");
         static IVertex noteOnNoteMeta = r.Get(false, @"System\Lib\Music\NoteOutput\NoteOn\note");
-        static IVertex noteOffNoteMeta = r.Get(false, @"System\Lib\Music\NoteOutput\NoteOff\note");
+        static IVertex noteOffNoteMeta = r.Get(false, @"System\Lib\Music\NoteOutput\NoteOff\note");        
+
         static IVertex controlChangeControlChangeMeta = r.Get(false, @"System\Lib\Music\NoteOutput\ControlChange\controlChange");
+        static IVertex controlChangeEventValueMeta = r.Get(false, @"System\Lib\Music\ControlChangeEvent\Value");
+        static IVertex controlChangeEventNumberMeta = r.Get(false, @"System\Lib\Music\ControlChangeEvent\Number");
+
+        static IVertex programChangeProgramNumberMeta = r.Get(false, @"System\Lib\Music\NoteOutput\ProgramChange\programNumber");
+
+
 
         protected double GetMidiTicksPerMilisecond(int tempo)
         {
@@ -86,7 +93,63 @@ namespace m0_COMPOSER.Lib
 
         void EmitBankProgramChanges()
         {
+            int cnt = 0;
+            foreach(IEdge e in SongVertex.GetAll(false, "Track:"))
+            {
+                IVertex trackVertex = e.To;
 
+                bool isProgramChangeNull = false, isBankSelectNull = false;
+
+                int ProgramChangeValue = GraphUtil.GetIntegerValue(trackVertex.Get(false, "ProgramChange:"), ref isProgramChangeNull);
+
+                int BankSelectValue = GraphUtil.GetIntegerValue(trackVertex.Get(false, "BankSelect:"), ref isBankSelectNull);
+
+                if (!isProgramChangeNull)
+                    ProgramChange(cnt, ProgramChangeValue);
+
+                if (!isBankSelectNull)
+                    BankSelect(cnt, BankSelectValue);
+
+                cnt++;
+            }
+        }
+
+        void ProgramChange(int track, int value)
+        {
+            IVertex outputVertex = OutputDictionary[track];
+
+            if (outputVertex != null)
+            {
+                IVertex playMethod = outputVertex.Get(false, @"$Is:\Method:ProgramChange");
+
+                IVertex parameters = InstructionHelpers.CreateStack();                
+
+                parameters.AddVertex(programChangeProgramNumberMeta, value);
+
+                ZeroCodeExecutonUtil.MethodCallFromHost(exe, playMethod, outputVertex, parameters);
+            }
+        }
+
+        void BankSelect(int track, int value)
+        {
+            IVertex outputVertex = OutputDictionary[track];
+
+            if (outputVertex != null)
+            {
+                IVertex playMethod = outputVertex.Get(false, @"$Is:\Method:ControlChange");
+
+                IVertex parameters = InstructionHelpers.CreateStack();
+
+                IVertex controlChangeVertex = MinusZero.Instance.CreateTempVertex();
+
+                controlChangeVertex.AddVertex(controlChangeEventNumberMeta, 0);
+
+                controlChangeVertex.AddVertex(controlChangeEventValueMeta, value);
+
+                parameters.AddEdge(controlChangeControlChangeMeta, controlChangeVertex);
+
+                ZeroCodeExecutonUtil.MethodCallFromHost(exe, playMethod, outputVertex, parameters);
+            }
         }
 
         void SetupPositionRelated()
@@ -166,11 +229,7 @@ namespace m0_COMPOSER.Lib
         }
 
         public void Tick(object sender, EventArgs e)
-        {
-            //Timer.Stop();
-            //Timer.Dispose();
-            //return;
-
+        {            
             if (EventList.Count == 0)
             {
                 PositionStop();
@@ -211,7 +270,7 @@ namespace m0_COMPOSER.Lib
                     shouldContinue = false;
                 else
                 {
-              //      MidiOut(EventList[currentEventIndex].Value);
+                    MidiOut(EventList[currentEventIndex].Value);
 
                     currentEventIndex++;
                 }
@@ -230,20 +289,16 @@ namespace m0_COMPOSER.Lib
         int prevNowInTicksReduced = 0;
 
         public void PositionStop()
-        {
-           // return; 
-            //Destroy();
+        {           
+            Destroy();
 
-            m0Main.Instance.Dispatcher.Invoke(() => {
-                //GraphUtil.SetVertexValue(SongVertex, songPositionMeta, -1);
-                GraphUtil.SetVertexValue(SongVertex, songPositionMeta, -1);
-                //GraphUtil.SetVertexValue(SongVertex, null, -1);
+            m0Main.Instance.Dispatcher.Invoke(() => {                
+                GraphUtil.SetVertexValue(SongVertex, songPositionMeta, -1);                
             });            
         }
         
         void PositionUpdate(int nowInTicks, bool doReduce)
         {
-            return;
             int nowInTicksReduced = nowInTicks / 100;
 
             if (!doReduce || nowInTicksReduced > prevNowInTicksReduced)

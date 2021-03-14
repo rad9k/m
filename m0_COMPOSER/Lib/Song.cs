@@ -42,8 +42,7 @@ namespace m0_COMPOSER.Lib
         }
 
         public static INoInEdgeInOutVertexVertex Stop(IExecution exe)
-        {
-            return null;
+        {            
             INoInEdgeInOutVertexVertex o = exe.stack;            
 
             SongPlay sp = SongVertexDictionary.GetSongPlay(o);

@@ -523,6 +523,9 @@
     <Resource Include="_RESOURCES\basic\glue.cur" />
     <Resource Include="_RESOURCES\basic\razor.cur" />
   </ItemGroup>
+  <ItemGroup>
+    <Resource Include="_RESOURCES\basic\mute-speaker.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

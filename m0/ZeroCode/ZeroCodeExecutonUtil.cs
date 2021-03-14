@@ -9,30 +9,7 @@ using System.Threading.Tasks;
 namespace m0.ZeroCode
 {
     public class ZeroCodeExecutonUtil
-    {
-        public static void CreateExecutionAndVertexExecute2(IVertex endPoint, IVertex toBeStackVertex)
-        {
-            IExecution exe = new ZeroCodeExecution();
-
-            exe.metaMode = true;
-
-            IEnumerable<IEdge> _toBeStackVertex;
-
-            if (toBeStackVertex == null)
-                _toBeStackVertex = new List<IEdge>();
-            else
-                _toBeStackVertex = toBeStackVertex;                        
-
-            exe.stack = InstructionHelpers.Create_INoInEdgeInOutVertexVertex_FromEdgesList(_toBeStackVertex);
-
-            exe.newVertexCreationSpace = exe.stack;
-
-            ZeroCodeExecuter.AddRootToStack(exe);
-
-            endPoint.Execute(exe);
-        }
-
-
+    {        
         public static void CreateExecutionAndVertexExecute(IVertex endPoint, IVertex toBeStackVertex)
         {
             IExecution exe = new ZeroCodeExecution();

@@ -154,19 +154,19 @@ namespace m0_SYSTEM_GENERATE.Music
             IVertex black = r.Get(false, @"System\Data\UX\Colors\Black");
             IVertex gray = r.Get(false, @"System\Data\UX\Colors\VeryVeryLightGray");
 
-            for (int x = -1; x <= 9; x++) {
-                AddPitch(b, x, 0, "C " + x.ToString(), white, null);
-                AddPitch(b, x, 1, "C# " + x.ToString(), black, gray);
-                AddPitch(b, x, 2, "D " + x.ToString(), white, null);
-                AddPitch(b, x, 3, "D# " + x.ToString(), black, gray);
-                AddPitch(b, x, 4, "E " + x.ToString(), white, null);
-                AddPitch(b, x, 5, "F " + x.ToString(), white, null);
-                AddPitch(b, x, 6, "F# " + x.ToString(), black, gray);
-                AddPitch(b, x, 7, "G " + x.ToString(), white, null);
-                AddPitch(b, x, 8, "G# " + x.ToString(), black, gray);
-                AddPitch(b, x, 9, "A " + x.ToString(), white, null);
-                AddPitch(b, x, 10, "A# " + x.ToString(), black, gray);
+            for (int x = 9; x >= -1; x--) {                
                 AddPitch(b, x, 11, "B " + x.ToString(), white, null);
+                AddPitch(b, x, 10, "A# " + x.ToString(), black, gray);
+                AddPitch(b, x, 9, "A " + x.ToString(), white, null);
+                AddPitch(b, x, 8, "G# " + x.ToString(), black, gray);
+                AddPitch(b, x, 7, "G " + x.ToString(), white, null);
+                AddPitch(b, x, 6, "F# " + x.ToString(), black, gray);
+                AddPitch(b, x, 5, "F " + x.ToString(), white, null);
+                AddPitch(b, x, 4, "E " + x.ToString(), white, null);
+                AddPitch(b, x, 3, "D# " + x.ToString(), black, gray);
+                AddPitch(b, x, 2, "D " + x.ToString(), white, null);
+                AddPitch(b, x, 1, "C# " + x.ToString(), black, gray);
+                AddPitch(b, x, 0, "C " + x.ToString(), white, null);
             }
         }
 
@@ -183,25 +183,25 @@ namespace m0_SYSTEM_GENERATE.Music
             IVertex white = r.Get(false, @"System\Data\UX\Colors\White");
             IVertex black = r.Get(false, @"System\Data\UX\Colors\Black");
 
-            for (int x = -1; x <= 9; x++)
-            {
-                AddDrumPitch(b, x, 0, "C " + x.ToString(), white);
-                AddDrumPitch(b, x, 1, "C# " + x.ToString(), white);
-                AddDrumPitch(b, x, 2, "D " + x.ToString(), white);
-                AddDrumPitch(b, x, 3, "D# " + x.ToString(), white);
-                AddDrumPitch(b, x, 4, "E " + x.ToString(), white);
-                AddDrumPitch(b, x, 5, "F " + x.ToString(), white);
-                AddDrumPitch(b, x, 6, "F# " + x.ToString(), white);
-                AddDrumPitch(b, x, 7, "G " + x.ToString(), white);
-                AddDrumPitch(b, x, 8, "G# " + x.ToString(), white);
-                AddDrumPitch(b, x, 9, "A " + x.ToString(), white);
-                AddDrumPitch(b, x, 10, "A# " + x.ToString(), white);
+            for (int x = 9; x >= -1; x--)
+            {                
                 AddDrumPitch(b, x, 11, "B " + x.ToString(), white);
+                AddDrumPitch(b, x, 10, "A# " + x.ToString(), white);
+                AddDrumPitch(b, x, 9, "A " + x.ToString(), white);
+                AddDrumPitch(b, x, 8, "G# " + x.ToString(), white);
+                AddDrumPitch(b, x, 7, "G " + x.ToString(), white);
+                AddDrumPitch(b, x, 6, "F# " + x.ToString(), white);
+                AddDrumPitch(b, x, 5, "F " + x.ToString(), white);
+                AddDrumPitch(b, x, 4, "E " + x.ToString(), white);
+                AddDrumPitch(b, x, 3, "D# " + x.ToString(), white);
+                AddDrumPitch(b, x, 2, "D " + x.ToString(), white);
+                AddDrumPitch(b, x, 1, "C# " + x.ToString(), white);
+                AddDrumPitch(b, x, 0, "C " + x.ToString(), white);
             }
         }
 
         
-            private static void AddBaseOneOctavePitchSet()
+        private static void AddBaseOneOctavePitchSet()
         {
             IVertex r = m0.MinusZero.Instance.root;
 

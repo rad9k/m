@@ -68,7 +68,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
         void SetPosition(int newPosition)
         {
-            GraphUtil.SetVertexValue(Vertex, postionAttribute, newPosition);
+            GraphUtil.SetVertexValue(baseVertex, postionAttribute, newPosition);
         }
 
         void InitSongState()
@@ -235,6 +235,8 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
         private void RewindButton_Click(object sender, RoutedEventArgs e)
         {
+            SetPosition(0);
+
             SetPlayRecordState(PlayRecordStateEnum.Stop);
         }
 
@@ -269,7 +271,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
                 IVertex playMethod = baseVertex.Get(false, @"$Is:\Method:Stop");
 
-                ZeroCodeExecutonUtil.CreateExecutionAndVertexExecute2(playMethod, baseVertex);
+                ZeroCodeExecutonUtil.CreateExecutionAndVertexExecute(playMethod, baseVertex);
             }
 
             SetPlayRecordState(PlayRecordStateEnum.Stop);
@@ -281,6 +283,18 @@ namespace m0_COMPOSER.UIWpf.Visualisers
                 RepeatOn = true;
             else
                 RepeatOn = false;
+        }
+
+        private void MuteSpeakerButton_Click(object sender, RoutedEventArgs e)
+        {
+            foreach(IEdge outputEdge in baseVertex.GetAll(false, @"Track:\Output:"))
+            {
+                IVertex outputVertex = outputEdge.To;
+
+                IVertex silentMethod = outputVertex.Get(false, @"$Is:\Method:Silent");
+
+                ZeroCodeExecutonUtil.CreateExecutionAndVertexExecute(silentMethod, outputVertex);
+            }
         }
 
         void InitializeSongVertex()
