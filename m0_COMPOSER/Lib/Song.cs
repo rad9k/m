@@ -45,18 +45,12 @@ namespace m0_COMPOSER.Lib
         {
             INoInEdgeInOutVertexVertex o = exe.stack;            
 
-            SongPlay sp = SongVertexDictionary.GetSongPlay(o);
+            //SongPlay sp = SongVertexDictionary.GetSongPlay(o);
 
-            sp.Destroy();
+            //sp.Destroy();
 
             return o;
-        }
-
-        public static INoInEdgeInOutVertexVertex MoveTo(IExecution exe)
-        {
-            return null;
-        }
-
+        }        
              
         //
 

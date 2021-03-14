@@ -546,6 +546,8 @@ namespace m0_SYSTEM_GENERATE.Music
             GraphUtil.AddAttribute(Track, "IsDrum", Boolean, 0, 1);
             GraphUtil.AddAttribute(Track, "IsMuted", Boolean, 0, 1);
             GraphUtil.AddAttribute(Track, "IsSolo", Boolean, 0, 1);
+            GraphUtil.AddAttribute(Track, "ProgramChange", Integer, 0, 1, 0, 0, 127);
+            GraphUtil.AddAttribute(Track, "BankSelect", Integer, 0, 1, 0, 0, 127);
             GraphUtil.AddAssociation(Track, "SequenceEvent", SequenceEvent, 0, -1);
 
             // SONG
@@ -566,8 +568,7 @@ namespace m0_SYSTEM_GENERATE.Music
 
             AddMethod(Song, "Record", SongTypeString, "Record", null, new TypeName[] { });
             AddMethod(Song, "Play", SongTypeString, "Play", null, new TypeName[] { });
-            AddMethod(Song, "Stop", SongTypeString, "Stop", null, new TypeName[] { });            
-            AddMethod(Song, "MoveTo", SongTypeString, "MoveTo", null, new TypeName[] { new TypeName("position", "Integer", 1, 1) });
+            AddMethod(Song, "Stop", SongTypeString, "Stop", null, new TypeName[] { });                        
 
             Song.AddEdge(r.Get(false, @"System\Meta\Base\Vertex\$DefaultOpenVisualiser"), r.Get(false, @"System\Meta\Visualiser\Song"));
 

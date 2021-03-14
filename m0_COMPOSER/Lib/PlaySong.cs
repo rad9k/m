@@ -56,7 +56,7 @@ namespace m0_COMPOSER.Lib
         }
 
         public SongPlay(IExecution _exe, IVertex songVertex, int Tempo)
-        {
+        {            
             exe = _exe;
 
             SongVertex = songVertex;
@@ -82,6 +82,11 @@ namespace m0_COMPOSER.Lib
             Timer.Elapsed += Tick;
 
             SetupPositionRelated();
+        }
+
+        void EmitBankProgramChanges()
+        {
+
         }
 
         void SetupPositionRelated()
@@ -143,6 +148,8 @@ namespace m0_COMPOSER.Lib
 
         public void Start()
         {
+            EmitBankProgramChanges();
+
             Watch.Restart();            
 
             Timer.Start();
@@ -159,7 +166,11 @@ namespace m0_COMPOSER.Lib
         }
 
         public void Tick(object sender, EventArgs e)
-        {            
+        {
+            //Timer.Stop();
+            //Timer.Dispose();
+            //return;
+
             if (EventList.Count == 0)
             {
                 PositionStop();
@@ -200,7 +211,7 @@ namespace m0_COMPOSER.Lib
                     shouldContinue = false;
                 else
                 {
-                    MidiOut(EventList[currentEventIndex].Value);
+              //      MidiOut(EventList[currentEventIndex].Value);
 
                     currentEventIndex++;
                 }
@@ -220,15 +231,19 @@ namespace m0_COMPOSER.Lib
 
         public void PositionStop()
         {
-            Destroy();
+           // return; 
+            //Destroy();
 
             m0Main.Instance.Dispatcher.Invoke(() => {
+                //GraphUtil.SetVertexValue(SongVertex, songPositionMeta, -1);
                 GraphUtil.SetVertexValue(SongVertex, songPositionMeta, -1);
+                //GraphUtil.SetVertexValue(SongVertex, null, -1);
             });            
         }
         
         void PositionUpdate(int nowInTicks, bool doReduce)
         {
+            return;
             int nowInTicksReduced = nowInTicks / 100;
 
             if (!doReduce || nowInTicksReduced > prevNowInTicksReduced)
