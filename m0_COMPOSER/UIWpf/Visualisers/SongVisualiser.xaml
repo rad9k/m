@@ -26,7 +26,7 @@
                 <ToggleButton Name="RecordButton" ToolTip="Record" Click="RecordButton_Click">
                     <StackPanel Orientation="Horizontal">
                         <Image RenderOptions.BitmapScalingMode="HighQuality" Source="pack://application:,,/m0;Component/_resources/basic/record.png" Width="15" Height="15"/>
-                        <TextBlock Margin="3,0,0,0"/> 
+                        <TextBlock Margin="3,0,0,0"/>
                     </StackPanel>
                 </ToggleButton>
                 <Button Name="StopButton" ToolTip="Stop" Click="StopButton_Click">
@@ -41,9 +41,9 @@
                         <TextBlock Margin="3,0,0,0"/>
                     </StackPanel>
                 </ToggleButton>
-                
-                <Separator/>
-                                
+
+            </ToolBar>
+            <ToolBar>
                 <ToggleButton Name="ArrowButton_Instance" ToolTip="Select multiple sequences" Click="ArrowButton_Click">
                     <StackPanel Orientation="Horizontal">
                         <Image RenderOptions.BitmapScalingMode="HighQuality" Source="pack://application:,,/m0;Component/_resources/basic/pointer.png" Width="15" Height="15"/>
@@ -75,7 +75,8 @@
                     </StackPanel>
                 </ToggleButton>
 
-                <Separator/>
+            </ToolBar>
+            <ToolBar>
 
                 <Button Name="CutButton_Instance" ToolTip="Cut sequences" Click="CutButton_Click">
                     <StackPanel Orientation="Horizontal">
@@ -96,7 +97,8 @@
                     </StackPanel>
                 </Button>
 
-                <Separator/>
+            </ToolBar>
+            <ToolBar>
 
                 <TextBlock Name="Time" FontFamily="Consolas" FontSize="17"></TextBlock>
 

@@ -216,19 +216,19 @@ namespace m0_SYSTEM_GENERATE.Music
             IVertex gray = r.Get(false, @"System\Data\UX\Colors\VeryVeryLightGray");
 
             int x = 0;
-
-            AddPitch(b, x, 0, "C", white, null);
-            AddPitch(b, x, 1, "C#", black, gray);
-            AddPitch(b, x, 2, "D", white, null);
-            AddPitch(b, x, 3, "D#", black, gray);
-            AddPitch(b, x, 4, "E", white, null);
-            AddPitch(b, x, 5, "F", white, null);
-            AddPitch(b, x, 6, "F#", black, gray);
-            AddPitch(b, x, 7, "G", white, null);
-            AddPitch(b, x, 8, "G#", black, gray);
-            AddPitch(b, x, 9, "A", white, null);
+            
+            AddPitch(b, x, 11, "B", white, null);
             AddPitch(b, x, 10, "A#", black, gray);
-            AddPitch(b, x, 11, "B", white, null);                        
+            AddPitch(b, x, 9, "A", white, null);
+            AddPitch(b, x, 8, "G#", black, gray);
+            AddPitch(b, x, 7, "G", white, null);
+            AddPitch(b, x, 6, "F#", black, gray);
+            AddPitch(b, x, 5, "F", white, null);
+            AddPitch(b, x, 4, "E", white, null);
+            AddPitch(b, x, 3, "D#", black, gray);
+            AddPitch(b, x, 2, "D", white, null);
+            AddPitch(b, x, 1, "C#", black, gray);
+            AddPitch(b, x, 0, "C", white, null);
         }
 
         private static void AddPitch(IVertex basePitch, int octave, int note, string name, IVertex color, IVertex noteBackgroundColor)

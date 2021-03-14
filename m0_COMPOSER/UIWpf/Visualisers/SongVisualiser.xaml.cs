@@ -47,6 +47,10 @@ namespace m0_COMPOSER.UIWpf.Visualisers
         bool ShowToolbarNames;
 
         //
+
+        protected Button MuteSpeakerButton;
+
+        //
         void InitXAMLInstances()
         {
             PenButton = PenButton_Instance;
@@ -64,6 +68,8 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             ExtendButton = ExtendButton_Instance;
 
             ZoomScrollView = ZoomScrollView_Instance;
+
+            MuteSpeakerButton = MuteSpeakerButton_Instance;
         }
 
         void SetPosition(int newPosition)
@@ -359,6 +365,8 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
                 SetButtonComponentName(TruncateButton, "Truncate");
                 SetButtonComponentName(ExtendButton, "Extend");
+
+                SetButtonComponentName(MuteSpeakerButton, "Silence");
             }
             else
             {
@@ -380,6 +388,8 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
                 SetButtonComponentName(TruncateButton, "");
                 SetButtonComponentName(ExtendButton, "");
+
+                SetButtonComponentName(MuteSpeakerButton, "");
             }
         }
 
@@ -1180,6 +1190,25 @@ namespace m0_COMPOSER.UIWpf.Visualisers
                 GraphUtil.SetVertexValue(baseVertex, positionMeta, positionMark);
 
                 positionMark_Screen = MusicTimeToScreenPosition(positionMark, true);
+
+                UpdatePositionMark();
+            }
+        }
+
+        public override int PositionMark
+        {
+            get
+            {
+                return positionMark;
+            }
+
+            set
+            {
+                positionMark_Screen = MusicTimeToScreenPosition(value, true);
+
+                positionMark = ScreenPositionToMusicTime(PositionMark_Screen, true);
+
+                GraphUtil.SetVertexValue(baseVertex, positionMeta, positionMark);
 
                 UpdatePositionMark();
             }

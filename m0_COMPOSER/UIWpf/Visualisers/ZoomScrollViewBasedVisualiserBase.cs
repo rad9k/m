@@ -2742,7 +2742,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
         protected int positionMark;
 
-        public int PositionMark
+        public virtual int PositionMark
         {
             get
             {
