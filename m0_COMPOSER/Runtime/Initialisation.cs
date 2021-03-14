@@ -61,7 +61,7 @@ namespace m0_COMPOSER.Runtime
 
             IVertex MidiOutput = r.Get(false, @"System\Lib\Music\MidiOutput");
 
-            for (int channel = 0; channel <= 15; channel++)
+            for (int channel = 1; channel <= 16; channel++)
             {
                 IVertex Out = VertexOperations.AddInstance(MidiDevice, MidiOutput, r.Get(false, @"System\Lib\Music\MidiDevice\Output"));
 

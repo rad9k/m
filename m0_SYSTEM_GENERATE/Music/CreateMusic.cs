@@ -566,8 +566,7 @@ namespace m0_SYSTEM_GENERATE.Music
 
             AddMethod(Song, "Record", SongTypeString, "Record", null, new TypeName[] { });
             AddMethod(Song, "Play", SongTypeString, "Play", null, new TypeName[] { });
-            AddMethod(Song, "Stop", SongTypeString, "Stop", null, new TypeName[] { });
-            AddMethod(Song, "Pause", SongTypeString, "Pause", null, new TypeName[] { });
+            AddMethod(Song, "Stop", SongTypeString, "Stop", null, new TypeName[] { });            
             AddMethod(Song, "MoveTo", SongTypeString, "MoveTo", null, new TypeName[] { new TypeName("position", "Integer", 1, 1) });
 
             Song.AddEdge(r.Get(false, @"System\Meta\Base\Vertex\$DefaultOpenVisualiser"), r.Get(false, @"System\Meta\Visualiser\Song"));

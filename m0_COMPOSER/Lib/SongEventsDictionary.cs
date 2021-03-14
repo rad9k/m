@@ -20,6 +20,8 @@ namespace m0_COMPOSER.Lib
 
     public class ControlChangeEvent : SongEvent {}
 
+    public class EOSEvent : SongEvent { }
+
     public class SongEventsDictionary
     {
         public IVertex baseVertex;
@@ -42,11 +44,30 @@ namespace m0_COMPOSER.Lib
         {
             outputDictionary = new List<IVertex>();
 
+            bool thereIsSolo = false;
+
+            if (baseVertex.Get(false, @"Track:\IsSolo:True") != null)
+                thereIsSolo = true;
+
             foreach (IEdge e in baseVertex.GetAll(false, @"Track:"))
             {
                 IVertex noteOutputVeretx = e.To.Get(false, "Output:");
 
-                if (noteOutputVeretx != null)
+                bool canPlay = true;
+
+                bool isMuted = GraphUtil.GetBooleanValueOrFalse(e.To.Get(false, "IsMuted:"));
+
+                bool isSolo = GraphUtil.GetBooleanValueOrFalse(e.To.Get(false, "IsSolo:"));
+
+                if (thereIsSolo && !isSolo)
+                    canPlay = false;
+                else
+                {
+                    if (!isSolo && isMuted)
+                        canPlay = false;
+                }
+
+                if (noteOutputVeretx != null && canPlay)
                     outputDictionary.Add(noteOutputVeretx);
                 else
                     outputDictionary.Add(null);
@@ -138,11 +159,36 @@ namespace m0_COMPOSER.Lib
         {
             tempDict = new Dictionary<int, IList<SongEvent>>();
 
+            int maxPosition = 0;
+
             int cnt = 0;
-            foreach (IEdge e in baseVertex.GetAll(false, @"Track:\SequenceEvent:"))
-                AddSequenceEvent(cnt++, e.To);
+            foreach (IEdge e in baseVertex.GetAll(false, @"Track:"))
+            {
+                foreach (IEdge ee in e.To.GetAll(false, @"SequenceEvent:")) {
+                    IVertex sequenceEventVertex = ee.To;
+
+                    AddSequenceEvent(cnt, sequenceEventVertex);
+
+                    int sequenceEventTrigger = GraphUtil.GetIntegerValueOr0(sequenceEventVertex.Get(false, "TriggerTime:"));
+                    int sequenceLength = GraphUtil.GetIntegerValueOr0(sequenceEventVertex.Get(false, @"Sequence:\Length:"));
+
+                    int currentMax = sequenceEventTrigger + sequenceLength;
+
+                    if (currentMax > maxPosition)
+                        maxPosition = currentMax;
+                }
+
+                cnt++;
+            }
+
+            AddEOSEvent(maxPosition);
 
             eventDictionary = new SortedDictionary<int, IList<SongEvent>>(tempDict);
+        }
+
+        void AddEOSEvent(int triggerTime)
+        {
+            tempDictAdd(triggerTime, new EOSEvent());
         }
 
         public IDictionary<int, IList<SongEvent>> GetEventDicionary()

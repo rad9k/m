@@ -52,11 +52,6 @@ namespace m0_COMPOSER.Lib
             return o;
         }
 
-        public static INoInEdgeInOutVertexVertex Pause(IExecution exe)
-        {
-            return null;
-        }
-
         public static INoInEdgeInOutVertexVertex MoveTo(IExecution exe)
         {
             return null;

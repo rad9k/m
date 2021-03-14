@@ -28,7 +28,7 @@ namespace m0_COMPOSER.Lib
 
             bool isNull = false;
 
-            int channel = LibUtil.GetIntFromVertex(stack, "Channel", ref isNull);
+            int channel = LibUtil.GetIntFromVertex(stack, "Channel", ref isNull);                        
 
             IVertex device = GraphUtil.GetQueryOutFirst(stack, "Device", null);
 
@@ -45,6 +45,9 @@ namespace m0_COMPOSER.Lib
                 return stack;
 
             int noteNumber = ToNoteNumber(octave, note);
+
+            if (channel == 1)
+                Midi.WinmmMidiLib.ProgramChange(deviceNumber, 1, 10);
 
             Midi.WinmmMidiLib.NoteOn(deviceNumber, channel, noteNumber, velocity);
 

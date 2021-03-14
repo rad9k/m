@@ -6,6 +6,7 @@ using m0.ZeroCode;
 using m0.ZeroCode.Helpers;
 using m0.ZeroTypes;
 using m0_COMPOSER.Midi;
+using m0_COMPOSER.UIWpf.Visualisers;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -29,8 +30,12 @@ namespace m0_COMPOSER.Lib
         public MultimediaTimer Timer;
 
         public Stopwatch Watch;
+        public long WatchAddElapsedMiliseconds = 0;
 
         int prevEventIndex = 0;
+        int loopBeg = 0;
+        int loopBegEventIndex = 0;
+        int loopEnd = 0;
 
         //
 
@@ -70,11 +75,70 @@ namespace m0_COMPOSER.Lib
 
             //
 
-            //Timer = new MultimediaTimer() { Interval = 1, Resolution = 0 };
+            Timer = new MultimediaTimer() { Interval = 1, Resolution = 0 };
 
-            Timer = new MultimediaTimer() { Interval = 1000};
+            //Timer = new MultimediaTimer() { Interval = 1000};
 
             Timer.Elapsed += Tick;
+
+            SetupPositionRelated();
+        }
+
+        void SetupPositionRelated()
+        {
+            if (EventList.Count == 0)
+                return;
+
+            int position = GraphUtil.GetIntegerValueOr0(SongVertex.Get(false, "Position:"));
+
+            if (position > 0)
+                WatchAddElapsedMiliseconds = (long)(position / TicksPerMilisecond);
+
+            prevEventIndex = SearchForEventIndex(position);
+
+            //
+
+            SongVisualiser sv = SongVertexDictionary.GetSongVisualiser(SongVertex);
+
+            if (sv.RepeatOn)
+            {
+                loopBeg = GraphUtil.GetIntegerValueOr0(SongVertex.Get(false, "LoopBeg:"));
+                loopEnd = GraphUtil.GetIntegerValueOr0(SongVertex.Get(false, "LoopEnd:"));
+
+                loopBegEventIndex = SearchForEventIndex(loopBeg);
+            }
+        }
+
+        private int SearchForEventIndex(int position)
+        {
+            int currentEventIndex = 0;
+
+            int indexFound = 0;
+
+            bool shouldContinue = true;
+
+            while (shouldContinue)
+            {
+                if (currentEventIndex >= EventList.Count)
+                { // stop            
+                    shouldContinue = false;
+                    break;
+                }
+
+                if (EventList[currentEventIndex].Key >= position)
+                {
+                    indexFound = currentEventIndex;
+
+                    if (indexFound > 0)
+                        indexFound--;
+
+                    shouldContinue = false;
+                }                
+
+                currentEventIndex++;
+            }
+
+            return indexFound;
         }
 
         public void Start()
@@ -95,18 +159,35 @@ namespace m0_COMPOSER.Lib
         }
 
         public void Tick(object sender, EventArgs e)
-        {
-            return;
-
+        {            
             if (EventList.Count == 0)
             {
                 PositionStop();
                 return;
             }
 
-            long now = Watch.ElapsedMilliseconds;
+            long now = Watch.ElapsedMilliseconds + WatchAddElapsedMiliseconds;
 
             long nowInTicks = (long)(now * TicksPerMilisecond);
+
+            //
+
+            if(loopEnd > 0 && nowInTicks > loopEnd)
+            {
+                PositionUpdate(loopBeg, false);
+
+                Watch.Restart();
+
+                WatchAddElapsedMiliseconds = (long)(loopBeg / TicksPerMilisecond);
+
+                now = Watch.ElapsedMilliseconds + WatchAddElapsedMiliseconds;
+
+                nowInTicks = (long)(now * TicksPerMilisecond);
+
+                prevEventIndex = loopBegEventIndex;
+            }
+
+            //
 
             int currentEventIndex = prevEventIndex;
 
@@ -125,13 +206,13 @@ namespace m0_COMPOSER.Lib
                 }
             }
 
-            if (currentEventIndex >= EventList.Count) // stop            
+            if (currentEventIndex >= EventList.Count && loopEnd == 0) // stop            
                 PositionStop();            
             else
             {
                 prevEventIndex = currentEventIndex;
 
-                PositionUpdate((int)nowInTicks);
+                PositionUpdate((int)nowInTicks, true);
             }
         }
 
@@ -146,11 +227,11 @@ namespace m0_COMPOSER.Lib
             });            
         }
         
-        void PositionUpdate(int nowInTicks)
+        void PositionUpdate(int nowInTicks, bool doReduce)
         {
             int nowInTicksReduced = nowInTicks / 100;
 
-            if (nowInTicksReduced > prevNowInTicksReduced)
+            if (!doReduce || nowInTicksReduced > prevNowInTicksReduced)
             {
                 m0Main.Instance.Dispatcher.Invoke(() => {
                     GraphUtil.SetVertexValue(SongVertex, songPositionMeta, nowInTicks);
@@ -200,7 +281,7 @@ namespace m0_COMPOSER.Lib
 
                 IVertex parameters = InstructionHelpers.CreateStack();
 
-                parameters.AddEdge(noteOnNoteMeta, e.eventVertex);
+                parameters.AddEdge(noteOffNoteMeta, e.eventVertex);
 
                 ZeroCodeExecutonUtil.MethodCallFromHost(exe, playMethod, outputVertex, parameters);
             }
@@ -216,7 +297,7 @@ namespace m0_COMPOSER.Lib
 
                 IVertex parameters = InstructionHelpers.CreateStack();
 
-                parameters.AddEdge(noteOnNoteMeta, e.eventVertex);
+                parameters.AddEdge(controlChangeControlChangeMeta, e.eventVertex);
 
                 ZeroCodeExecutonUtil.MethodCallFromHost(exe, playMethod, outputVertex, parameters);
             }

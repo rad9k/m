@@ -14,44 +14,53 @@ namespace m0_COMPOSER.Lib
 
         static IDictionary<IVertex, SongPlay> SongPlayDictionary = new Dictionary<IVertex, SongPlay>();
 
-        public static void SetSongVisualiser(IVertex songVertex, SongVisualiser visualiser)
+        static IVertex MakeSongVertexUnique(IVertex songVertex)
         {
+            return songVertex.Get(false, "Track:"); // we can not use songVertex becouse it will be stack version of the vertex that is not the same as main IVertex
+        }
+
+        public static void SetSongVisualiser(IVertex _songVertex, SongVisualiser visualiser)
+        {
+            IVertex songVertex = MakeSongVertexUnique(_songVertex);
+
             if (SongVisusliserDictionary.ContainsKey(songVertex))
                 SongVisusliserDictionary.Remove(songVertex);
 
             SongVisusliserDictionary.Add(songVertex, visualiser);
         }
 
-        public static SongVisualiser GetSongVisualiser(IVertex songVertex)
+        public static SongVisualiser GetSongVisualiser(IVertex _songVertex)
         {
+            IVertex songVertex = MakeSongVertexUnique(_songVertex);
+
             if (SongVisusliserDictionary.ContainsKey(songVertex))
                 return SongVisusliserDictionary[songVertex];
 
             return null;
         }
 
-        public static void SetSongPlay(IVertex songVertex, SongPlay play)
-        {
-            IVertex firstTrackVertex = songVertex.Get(false, "Track:"); // we can not use songVertex becouse it will be stack version of the vertex that is not the same as main IVertex
+        public static void SetSongPlay(IVertex _songVertex, SongPlay play)
+        {            
+            IVertex songVertex = MakeSongVertexUnique(_songVertex);
 
-            if (SongPlayDictionary.ContainsKey(firstTrackVertex))
+            if (SongPlayDictionary.ContainsKey(songVertex))
             {
-                SongPlay oldPlaySong = SongPlayDictionary[firstTrackVertex];
+                SongPlay oldPlaySong = SongPlayDictionary[songVertex];
 
                 oldPlaySong.Destroy();
 
-                SongPlayDictionary.Remove(firstTrackVertex);
+                SongPlayDictionary.Remove(songVertex);
             }            
 
-            SongPlayDictionary.Add(firstTrackVertex, play);
+            SongPlayDictionary.Add(songVertex, play);
         }
 
-        public static SongPlay GetSongPlay(IVertex songVertex)
+        public static SongPlay GetSongPlay(IVertex _songVertex)
         {
-            IVertex firstTrackVertex = songVertex.Get(false, "Track:"); // we can not use songVertex becouse it will be stack version of the vertex that is not the same as main IVertex
+            IVertex songVertex = MakeSongVertexUnique(_songVertex);            
 
-            if (SongPlayDictionary.ContainsKey(firstTrackVertex))
-                return SongPlayDictionary[firstTrackVertex];
+            if (SongPlayDictionary.ContainsKey(songVertex))
+                return SongPlayDictionary[songVertex];
 
             return null;
         }

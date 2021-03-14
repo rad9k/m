@@ -32,7 +32,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
         PlayRecordStateEnum PlayRecordState;
 
-        bool isRepeat = false;
+        public bool RepeatOn = false;
 
         int Position;
 
@@ -278,9 +278,9 @@ namespace m0_COMPOSER.UIWpf.Visualisers
         private void RepeatButton_Click(object sender, RoutedEventArgs e)
         {
             if (RepeatButton.IsChecked == true)
-                isRepeat = true;
+                RepeatOn = true;
             else
-                isRepeat = false;
+                RepeatOn = false;
         }
 
         void InitializeSongVertex()
