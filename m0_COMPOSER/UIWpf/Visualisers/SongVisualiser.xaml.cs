@@ -146,48 +146,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             //
 
-            InitSongState();
-
-            StartPositionWatcher();
-        }
-
-        MultimediaTimer PositionWatchTimer;
-
-        void StartPositionWatcher()
-        {
-            PositionWatchTimer = new MultimediaTimer() { Interval = 200 };
-
-            PositionWatchTimer.Elapsed += PositionWatcherTick;
-
-            PositionWatchTimer.Start();
-        }
-
-        void PositionWatcherTick(object sender, EventArgs e)
-        {
-            if (baseVertex != null) {
-                int SongPosition = GraphUtil.GetIntegerValueOr0(baseVertex.Get(false, "Position:"));
-
-                if(SongPosition == -1)
-                {
-                    IVertex r = MinusZero.Instance.Root;
-
-                    this.Dispatcher.Invoke(() =>
-                    {
-                        GraphUtil.SetVertexValue(baseVertex, r.Get(false, @"System\Lib\Music\Song\Position"), 0);
-
-                        StopButton_Click(null, null);
-                    });
-                }
-
-                this.Dispatcher.Invoke(() => {
-                    PositionMark = SongPosition;
-                });
-            }
-        }
-
-        void StopPositionWatcher()
-        {
-            PositionWatchTimer.Stop();
+            InitSongState();            
         }
 
         Button newTrackButton;
@@ -430,19 +389,23 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             positionMarkPrim_Beg = GraphUtil.GetIntegerValueOr0(baseVertex.Get(false, "LoopBeg:"));
             positionMarkPrim_End = GraphUtil.GetIntegerValueOr0(baseVertex.Get(false, "LoopEnd:"));
 
-            AddChangeListenersToAllTracks();
+            AddChangeListenersToAllTracksAndSong();
         }
 
-        void AddChangeListenersToAllTracks()
+        void AddChangeListenersToAllTracksAndSong()
         {
             foreach (IEdge e in baseVertex.GetAll(false, "Track:"))
                 AddChangeListenersToTrack(e.To);
+
+            PlatformClass.RegisterVertexChangeListeners_byGenericVertex(baseVertex, new VertexChange(BaseVertexChange), new string[] {});
         }
 
-        void RemoveChangeListenersToAllTracks()
+        void RemoveChangeListenersToAllTracksAndSong()
         {
             foreach (IEdge e in baseVertex.GetAll(false, "Track:"))
                 PlatformClass.RemoveVertexChangeListeners_byGenericVertex(e.To, new VertexChange(VertexChange_Track));
+
+            PlatformClass.RemoveVertexChangeListeners_byGenericVertex(baseVertex, new VertexChange(BaseVertexChange));
         }
 
         void AddChangeListenersToTrack(IVertex v)
@@ -556,8 +519,44 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             SetCursorMode(CursorStateEnum.Razor);
         }
 
-        protected override void VertexChange(object sender, VertexChangeEventArgs e)
+        protected void BaseVertexChange(object sender, VertexChangeEventArgs e)
         {
+            if (sender == baseVertex.Get(false, "Position:"))
+                PositionUpdate();
+
+            if (VertexChangeOff)
+                return;
+        }
+
+        bool doNotUpdatePositionVertex = false;
+
+        void PositionUpdate()
+        {
+            if (baseVertex != null)
+            {
+                int SongPosition = GraphUtil.GetIntegerValueOr0(baseVertex.Get(false, "Position:"));
+
+                if (SongPosition == -1)
+                {
+                    IVertex r = MinusZero.Instance.Root;
+
+                    this.Dispatcher.Invoke(() =>
+                    {
+                        GraphUtil.SetVertexValue(baseVertex, r.Get(false, @"System\Lib\Music\Song\Position"), 0);
+
+                        StopButton_Click(null, null);
+                    });
+                }
+
+                this.Dispatcher.Invoke(() => {
+                    doNotUpdatePositionVertex = true;
+                    PositionMark = SongPosition;
+                });
+            }
+        }
+
+        protected override void VertexChange(object sender, VertexChangeEventArgs e)
+        {            
             if (VertexChangeOff)
                 return;
 
@@ -645,14 +644,12 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
                 PlatformClass.RemoveVertexChangeListeners(this.Vertex, new VertexChange(VertexChange));
 
-                RemoveChangeListenersToAllTracks();
+                RemoveChangeListenersToAllTracksAndSong();
 
                 // PlatformClass.RemoveVertexChangeListeners_byGenericVertex(baseVertex, new VertexChange(VertexChange_BaseEdge));
 
                 if (Vertex is IDisposable)
-                    ((IDisposable)Vertex).Dispose();
-
-                StopPositionWatcher();
+                    ((IDisposable)Vertex).Dispose();                
             }
         }
 
@@ -1187,7 +1184,10 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             {
                 positionMark = ScreenPositionToMusicTime(value, true);
 
-                GraphUtil.SetVertexValue(baseVertex, positionMeta, positionMark);
+                if(!doNotUpdatePositionVertex)
+                    GraphUtil.SetVertexValue(baseVertex, positionMeta, positionMark);
+
+                doNotUpdatePositionVertex = false;
 
                 positionMark_Screen = MusicTimeToScreenPosition(positionMark, true);
 
@@ -1208,7 +1208,10 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
                 positionMark = ScreenPositionToMusicTime(PositionMark_Screen, true);
 
-                GraphUtil.SetVertexValue(baseVertex, positionMeta, positionMark);
+                if (!doNotUpdatePositionVertex)
+                    GraphUtil.SetVertexValue(baseVertex, positionMeta, positionMark);
+
+                doNotUpdatePositionVertex = false;
 
                 UpdatePositionMark();
             }

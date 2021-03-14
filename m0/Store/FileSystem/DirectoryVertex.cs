@@ -67,10 +67,10 @@ namespace m0.Store.FileSystem
 
         public override IEdge AddEdge(IVertex metaVertex, IVertex destVertex)
         {
-            return AddFileDirectoryEdge(metaVertex, destVertex.Value);
+            return AddVertexAndReturnEdge(metaVertex, destVertex.Value);
         }
 
-        private IEdge AddFileDirectoryEdge(IVertex metaVertex, object val)
+        public override IEdge AddVertexAndReturnEdge(IVertex metaVertex, object val)
         {
             if (val == null) val = "name";
 
@@ -178,7 +178,7 @@ namespace m0.Store.FileSystem
 
         public override IVertex AddVertex(IVertex metaVertex, object val)
         {
-            return AddFileDirectoryEdge(metaVertex, val).To;
+            return AddVertexAndReturnEdge(metaVertex, val).To;
         }
 
         public override void DeleteEdge(IEdge edge)
