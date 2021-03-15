@@ -16,9 +16,17 @@ namespace m0.ZeroCode.Helpers
             return new NoInEdgeInOutVertexVertex(MinusZero.Instance.TempStore);
         }
 
+        public static void AddToStack_BAD_BEHAVIOR_IEdge_MANY_TIMES(INoInEdgeInOutVertexVertex destination, IEnumerable<IEdge> source)
+        {
+            foreach (IEdge e in source)
+                destination.AddEdgeForNoInEdgeInOutVertexVertex_BAD_BEHAVIOR_IEdge_MANY_TIMES(e);
+                //destination.AddEdgeForNoInEdgeInOutVertexVertex(e);
+        }
+
         public static void AddToStack(INoInEdgeInOutVertexVertex destination, IEnumerable<IEdge> source)
         {
             foreach (IEdge e in source)
+                //destination.AddEdgeForNoInEdgeInOutVertexVertex_BAD_BEHAVIOR_IEdge_MANY_TIMES(e);
                 destination.AddEdgeForNoInEdgeInOutVertexVertex(e);
         }
 
@@ -26,6 +34,7 @@ namespace m0.ZeroCode.Helpers
         {
             INoInEdgeInOutVertexVertex newStack = CreateStack();
 
+            //AddToStack_BAD_BEHAVIOR_IEdge_MANY_TIMES(newStack, source);
             AddToStack(newStack, source);
 
             return newStack;

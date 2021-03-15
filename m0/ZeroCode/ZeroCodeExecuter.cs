@@ -59,7 +59,7 @@ namespace m0.ZeroCode
 
             INoInEdgeInOutVertexVertex qs = InstructionHelpers.CreateStack();
 
-            InstructionHelpers.AddToStack(qs, baseVertex);
+            InstructionHelpers.AddToStack_BAD_BEHAVIOR_IEdge_MANY_TIMES(qs, baseVertex);
 
             IVertex ret= CallableEndPointDictionary_INIEIOV_ZCE_IV_IV_B.CallEndPoint(exe, qs, expression);
 

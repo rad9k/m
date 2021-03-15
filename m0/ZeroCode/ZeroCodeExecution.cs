@@ -76,7 +76,7 @@ namespace m0.ZeroCode
             // ...OR...
             INoInEdgeInOutVertexVertex stack_ = InstructionHelpers.CreateStack();
 
-            stack_.AddEdgeForNoInEdgeInOutVertexVertex(GraphUtil.CreateArtificialEdge(null, instructionVertex)); // create stack and put reference
+            stack_.AddEdgeForNoInEdgeInOutVertexVertex_BAD_BEHAVIOR_IEdge_MANY_TIMES(GraphUtil.CreateArtificialEdge(null, instructionVertex)); // create stack and put reference
 
             return stack_;
         }

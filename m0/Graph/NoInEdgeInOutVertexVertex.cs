@@ -46,8 +46,23 @@ namespace m0.Graph
             return ne;
         }
 
-        public void AddEdgeForNoInEdgeInOutVertexVertex(IEdge e){
-            OutEdgesRaw.Add(e);
+        public void AddEdgeForNoInEdgeInOutVertexVertex_BAD_BEHAVIOR_IEdge_MANY_TIMES(IEdge e){
+            //IEdge ne = new NoInEdgeInOutVertexEdge(e.From, e.Meta, e.To); // INoInEdgeInOutVertexVertex DIFF
+            // but can it work that way?
+            // before that there was jus a simple
+             OutEdgesRaw.Add(e);
+
+            //OutEdgesRaw.Add(ne); //eat this!
+        }
+
+        public void AddEdgeForNoInEdgeInOutVertexVertex(IEdge e)
+        {
+            IEdge ne = new NoInEdgeInOutVertexEdge(e.From, e.Meta, e.To); // INoInEdgeInOutVertexVertex DIFF
+                                                                          // but can it work that way?
+                                                                          // before that there was jus a simple
+            //OutEdgesRaw.Add(e);
+
+            OutEdgesRaw.Add(ne); //eat this!
         }
 
         public override void DeleteEdge(IEdge _edge)

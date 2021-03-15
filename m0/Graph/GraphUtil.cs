@@ -48,7 +48,7 @@ namespace m0.Graph
         public bool AddToINoInEdgeInOutVertexVertex(IEdge vertex)
         {
             if (valueAsINoInEdgeInOutVertexVertex != null)
-                valueAsINoInEdgeInOutVertexVertex.AddEdgeForNoInEdgeInOutVertexVertex(vertex);            
+                valueAsINoInEdgeInOutVertexVertex.AddEdgeForNoInEdgeInOutVertexVertex_BAD_BEHAVIOR_IEdge_MANY_TIMES(vertex);            
 
             return true;
         }        

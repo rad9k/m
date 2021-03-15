@@ -19,7 +19,7 @@ namespace m0
 {
     public class MinusZero : IStoreUniverse, IDisposable
     {
-        public bool AllowBug = false;
+        public bool AllowBug = true;
 
         public static MinusZero Instance = new MinusZero();
 

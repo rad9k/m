@@ -68,6 +68,8 @@ namespace m0.Store
             if(DetachState!=DetachStateEnum.Attached)
                 throw new Exception("Store not Attached");
 
+            //            
+
             _DetachState = DetachStateEnum.Detaching;
             int cnt = 0;
             foreach (IVertex v in VertexIdentifiersDictionary.Values)
@@ -80,7 +82,11 @@ namespace m0.Store
                     {                        
                         IDetachableEdge de = (IDetachableEdge)e;
 
-                        if (MinusZero.Instance.AllowBug)
+                        
+                         if (de.To.Store != this || (de.Meta != null && de.Meta.Store != this))
+                            de.Detach();
+
+                        /*if (MinusZero.Instance.AllowBug)
                         {
                             if (de.To.Store != this || (de.Meta != null && de.Meta.Store != this))
                                 de.Detach();
@@ -90,7 +96,7 @@ namespace m0.Store
                             if (de.DetachState != DetachStateEnum.Detached)
                                 if (de.To.Store != this || (de.Meta != null && de.Meta.Store != this))
                                     de.Detach();
-                        }
+                        }*/
                     }
             }
 

@@ -162,7 +162,7 @@ namespace m0.LegacySystem.ZeroCode
 
             foreach (IEdge e in baseVertex)
                 //currentSet.AddEdge(e.Meta, e.To);
-                currentSet.AddEdgeForNoInEdgeInOutVertexVertex(e);
+                currentSet.AddEdgeForNoInEdgeInOutVertexVertex_BAD_BEHAVIOR_IEdge_MANY_TIMES(e);
                        
 
             if (expression.OutEdges.Count() == 0)
@@ -184,7 +184,7 @@ namespace m0.LegacySystem.ZeroCode
                         donocopy = true;
 
                 if (!donocopy)
-                    outVertex.AddEdgeForNoInEdgeInOutVertexVertex(e);
+                    outVertex.AddEdgeForNoInEdgeInOutVertexVertex_BAD_BEHAVIOR_IEdge_MANY_TIMES(e);
             }
 
             return outVertex;
@@ -229,7 +229,7 @@ namespace m0.LegacySystem.ZeroCode
             foreach (IEdge e in currentSet)
                 foreach (IEdge ee in e.To)
                     //newSet.AddEdge(ee.Meta, ee.To);
-                    newSet.AddEdgeForNoInEdgeInOutVertexVertex(ee);
+                    newSet.AddEdgeForNoInEdgeInOutVertexVertex_BAD_BEHAVIOR_IEdge_MANY_TIMES(ee);
 
             return newSet;
         }
@@ -239,7 +239,7 @@ namespace m0.LegacySystem.ZeroCode
             foreach(IEdge e in iterateSet)
                 if(GraphUtil.DoIEnumerableIEdgeContainsVertex(currentSet,e.To)==false){
                     //currentSet.AddEdge(e.Meta, e.To);
-                    currentSet.AddEdgeForNoInEdgeInOutVertexVertex(e);
+                    currentSet.AddEdgeForNoInEdgeInOutVertexVertex_BAD_BEHAVIOR_IEdge_MANY_TIMES(e);
                     GetlAll_AllLevelsDeeper(currentSet,e.To);
                 }            
         }
@@ -328,12 +328,12 @@ namespace m0.LegacySystem.ZeroCode
                 {
                     if (EdgeExpressionEdgeCompare(ee, expressionEdge))
                         //newSet.AddEdge(ee.Meta, ee.To);
-                        newSet.AddEdgeForNoInEdgeInOutVertexVertex(ee);
+                        newSet.AddEdgeForNoInEdgeInOutVertexVertex_BAD_BEHAVIOR_IEdge_MANY_TIMES(ee);
                 }else
                     if (EdgeExpressionEdgeCompare(ee, expressionEdge)
                         &&GetAll_Filter_nextTerminal(ee.To,nextTerminal))
                         //newSet.AddEdge(ee.Meta, ee.To);                                
-                        newSet.AddEdgeForNoInEdgeInOutVertexVertex(ee);
+                        newSet.AddEdgeForNoInEdgeInOutVertexVertex_BAD_BEHAVIOR_IEdge_MANY_TIMES(ee);
 
             return newSet;
         }

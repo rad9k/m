@@ -46,10 +46,10 @@ namespace m0.ZeroUML.Instructions
                 inputQs.QueryOutEdges(null, value, out e, out eList);
 
             if (e != null)
-                newQs.AddEdgeForNoInEdgeInOutVertexVertex(e);
+                newQs.AddEdgeForNoInEdgeInOutVertexVertex_BAD_BEHAVIOR_IEdge_MANY_TIMES(e);
 
             if (eList != null)
-                AddToStack(newQs, eList);
+                AddToStack_BAD_BEHAVIOR_IEdge_MANY_TIMES(newQs, eList);
 
             return NextExpressionHandle(exe, newQs, instructionVertex);
         }
@@ -74,7 +74,7 @@ namespace m0.ZeroUML.Instructions
                     IVertex outQs = exe.ExecuteInstructionByMontevideoPrinciples(e.To, expression.To);
 
                     if (outQs.OutEdges.Count() > 0)
-                        newQs.AddEdgeForNoInEdgeInOutVertexVertex(e);
+                        newQs.AddEdgeForNoInEdgeInOutVertexVertex_BAD_BEHAVIOR_IEdge_MANY_TIMES(e);
                 }
 
                 oldQs = newQs;
@@ -103,7 +103,7 @@ namespace m0.ZeroUML.Instructions
 
             foreach (IEdge e in inputQs)
                 foreach (IEdge ee in e.To)
-                    newQs.AddEdgeForNoInEdgeInOutVertexVertex(ee);
+                    newQs.AddEdgeForNoInEdgeInOutVertexVertex_BAD_BEHAVIOR_IEdge_MANY_TIMES(ee);
 
             return NextExpressionHandle(exe, newQs, instructionVertex);
         }
@@ -151,13 +151,13 @@ namespace m0.ZeroUML.Instructions
                 inputQs.QueryOutEdges(metaQueryString, toQueryString, out e, out eList);
 
                 if (e != null)
-                    newQs.AddEdgeForNoInEdgeInOutVertexVertex(e);
+                    newQs.AddEdgeForNoInEdgeInOutVertexVertex_BAD_BEHAVIOR_IEdge_MANY_TIMES(e);
 
                 if (eList != null)
-                    AddToStack(newQs, eList);
+                    AddToStack_BAD_BEHAVIOR_IEdge_MANY_TIMES(newQs, eList);
             }
             else
-                AddToStack(newQs, inputQs);
+                AddToStack_BAD_BEHAVIOR_IEdge_MANY_TIMES(newQs, inputQs);
 
             if (leftExpression != null)
             {
@@ -191,7 +191,7 @@ namespace m0.ZeroUML.Instructions
             foreach (IEdge e in inQs)
                 if (!metaDict.ContainsKey(e.Meta))
                 {
-                    localQs.AddEdgeForNoInEdgeInOutVertexVertex(GraphUtil.CreateArtificialEdge(null, e.Meta));
+                    localQs.AddEdgeForNoInEdgeInOutVertexVertex_BAD_BEHAVIOR_IEdge_MANY_TIMES(GraphUtil.CreateArtificialEdge(null, e.Meta));
                     metaDict.Add(e.Meta, false);
                 }
 
@@ -204,7 +204,7 @@ namespace m0.ZeroUML.Instructions
 
             foreach (IEdge e in inQs)
                 if (metaDict[e.Meta] == true)
-                    newQs.AddEdgeForNoInEdgeInOutVertexVertex(e);
+                    newQs.AddEdgeForNoInEdgeInOutVertexVertex_BAD_BEHAVIOR_IEdge_MANY_TIMES(e);
 
             return newQs;
         }
@@ -596,7 +596,7 @@ namespace m0.ZeroUML.Instructions
                 int? index=GraphUtil.GetIntegerValue(e.To);
 
                 if (index != null && index >=1 && index <= inputStack.OutEdges.Count())
-                    localStack.AddEdgeForNoInEdgeInOutVertexVertex(inputStack.OutEdges[(int)index - 1]);
+                    localStack.AddEdgeForNoInEdgeInOutVertexVertex_BAD_BEHAVIOR_IEdge_MANY_TIMES(inputStack.OutEdges[(int)index - 1]);
             }
             
             return NextExpressionHandle(exe, localStack, instructionVertex);
@@ -1663,7 +1663,7 @@ namespace m0.ZeroUML.Instructions
 
                     IEdge variableEdge = GraphUtil.CreateArtificialEdge(variable, setEdge.To);                    
 
-                    exe.stack.AddEdgeForNoInEdgeInOutVertexVertex(variableEdge);
+                    exe.stack.AddEdgeForNoInEdgeInOutVertexVertex_BAD_BEHAVIOR_IEdge_MANY_TIMES(variableEdge);
 
                     possibleToReturnStack = SequentiallyExecuteInstructions(exe, exe.stack, instructionVertex, out local_isStackFrameReturn, false);
 
@@ -2026,7 +2026,7 @@ namespace m0.ZeroUML.Instructions
                 INoInEdgeInOutVertexVertex nestedExpressionResult = exe.ExecuteInstructionByMontevideoPrinciples(inputStack, e.To);
 
                 foreach (IEdge ee in nestedExpressionResult)
-                    newStack.AddEdgeForNoInEdgeInOutVertexVertex(ee);
+                    newStack.AddEdgeForNoInEdgeInOutVertexVertex_BAD_BEHAVIOR_IEdge_MANY_TIMES(ee);
             }
 
             return newStack;
@@ -2124,7 +2124,7 @@ namespace m0.ZeroUML.Instructions
                 INoInEdgeInOutVertexVertex returnedStack = MethodCallForOneObject(objectEdge.To, exe, targetExpression, parameterExpressions);
 
                 foreach (IEdge e in returnedStack)
-                    newStack.AddEdgeForNoInEdgeInOutVertexVertex(e);
+                    newStack.AddEdgeForNoInEdgeInOutVertexVertex_BAD_BEHAVIOR_IEdge_MANY_TIMES(e);
             }
 
             return newStack;
