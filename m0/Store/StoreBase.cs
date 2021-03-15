@@ -79,9 +79,18 @@ namespace m0.Store
                     if (e is IDetachableEdge)
                     {                        
                         IDetachableEdge de = (IDetachableEdge)e;
-                        
-                        if (de.To.Store!=this||(de.Meta!=null&&de.Meta.Store!=this))
-                            de.Detach();
+
+                        if (MinusZero.Instance.AllowBug)
+                        {
+                            if (de.To.Store != this || (de.Meta != null && de.Meta.Store != this))
+                                de.Detach();
+                        }
+                        else
+                        {
+                            if (de.DetachState != DetachStateEnum.Detached)
+                                if (de.To.Store != this || (de.Meta != null && de.Meta.Store != this))
+                                    de.Detach();
+                        }
                     }
             }
 

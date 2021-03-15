@@ -355,7 +355,13 @@ namespace m0.Store.Json
                     {
                         IDetachableEdge de = (IDetachableEdge)e;
 
-                        de.Detach();
+                        if(MinusZero.Instance.AllowBug)
+                            de.Detach();
+                        else
+                        {
+                            if(de.DetachState!=DetachStateEnum.Detached)
+                                de.Detach();
+                        }
                     }
             }
 
