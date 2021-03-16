@@ -542,7 +542,7 @@ namespace m0_SYSTEM_GENERATE.Music
             SequenceEvent = GraphUtil.AddClass(Music, "SequenceEvent");
 
             GraphUtil.AddInherits(SequenceEvent, Event);
-            GraphUtil.AddAttribute(SequenceEvent, "Sequence", Sequence, 1, 1);
+            GraphUtil.AddAssociation(SequenceEvent, "Sequence", Sequence, 1, 1);
 
             // TRACK
 
@@ -552,13 +552,13 @@ namespace m0_SYSTEM_GENERATE.Music
 
             //GraphUtil.AddAttribute(Track, "Name", String, 0, 1);
             //GraphUtil.AddAttribute(Track, "Color", Color, 0, 1);
-            GraphUtil.AddAttribute(Track, "Output", NoteOutput, 0, 1);
+            GraphUtil.AddAssociation(Track, "Output", NoteOutput, 0, 1);
             GraphUtil.AddAttribute(Track, "IsDrum", Boolean, 0, 1);
             GraphUtil.AddAttribute(Track, "IsMuted", Boolean, 0, 1);
             GraphUtil.AddAttribute(Track, "IsSolo", Boolean, 0, 1);
             GraphUtil.AddAttribute(Track, "ProgramChange", Integer, 0, 1, 0, 0, 127);
             GraphUtil.AddAttribute(Track, "BankSelect", Integer, 0, 1, 0, 0, 127);
-            GraphUtil.AddAssociation(Track, "SequenceEvent", SequenceEvent, 0, -1);
+            GraphUtil.AddAggregation(Track, "SequenceEvent", SequenceEvent, 0, -1);
 
             // SONG
 
@@ -635,14 +635,6 @@ namespace m0_SYSTEM_GENERATE.Music
             GraphUtil.AddAssociation(MidiInput, "Device", MidiDevice, 1, 1);
             GraphUtil.AddAttribute(MidiInput, "Name", String, 1, 1);
             GraphUtil.AddAttribute(MidiInput, "Channel", Integer, 1, 1);
-
-
-            // MUSICSPACE
-
-            IVertex MusicSpace = GraphUtil.AddClass(Music, "MusicSpace");
-
-            GraphUtil.AddAggregation(MusicSpace, "Sequence", Sequence, 0, -1);
-            GraphUtil.AddAggregation(MusicSpace, "Song", Song, 0, -1);
         }
 
         public static void AddGenerator()
