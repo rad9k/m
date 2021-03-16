@@ -118,6 +118,9 @@ namespace m0.ZeroTypes
 
         public static IVertex GetChildEdges(IVertex metaVertex)
         {
+            if (GraphUtil.GetQueryOutCount(metaVertex, "$Is", "Class") > 0)
+                return metaVertex.GetAll(false, "{$Inherits:Selector}:");
+
             IVertex edgeTarget = GraphUtil.GetQueryOutFirst(metaVertex, "$EdgeTarget", null);
             //IVertex edgeTarget = metaVertex.Get(false, "$EdgeTarget:");
 
@@ -284,6 +287,7 @@ namespace m0.ZeroTypes
             IVertex children = metaVertex; // can use VertexOperations.GetChildEdges, but $DefaultValue: should be OK
 
             foreach (IEdge child in children)
+            //foreach (IEdge child in children.GetAll(false, "$Is:{$Is:Selector}"))
             {
                 bool canAdd = false;
 

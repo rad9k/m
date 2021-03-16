@@ -102,6 +102,7 @@
     <Compile Include="Graph\NonActingEdge.cs" />
     <Compile Include="Lib\LibUtil.cs" />
     <Compile Include="Lib\Std.cs" />
+    <Compile Include="UIWpf\Commands\ExtraCommandHook.cs" />
     <Compile Include="User\Clipboard.cs" />
     <Compile Include="User\Process\UI\NonAtomProcess.cs" />
     <Compile Include="Store\BinarySerializationStore.cs">

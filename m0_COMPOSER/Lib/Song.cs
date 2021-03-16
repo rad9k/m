@@ -75,6 +75,7 @@ namespace m0_COMPOSER.Lib
         static IVertex sequenceEventAttributeMeta = r.Get(false, @"System\Lib\Music\Track\SequenceEvent");
         static IVertex sequenceEventMeta = r.Get(false, @"System\Lib\Music\SequenceEvent");
         static IVertex triggerTimeMeta = r.Get(false, @"System\Lib\Music\SequenceEvent\TriggerTime");
+        static IVertex sequenceAttributeMeta = r.Get(false, @"System\Lib\Music\SequenceEvent\Sequence");
         static IVertex sequenceMeta = r.Get(false, @"System\Lib\Music\Sequence");
         static IVertex sequenceIsDrumMeta = r.Get(false, @"System\Lib\Music\Sequence\IsDrum");
 
@@ -112,7 +113,7 @@ namespace m0_COMPOSER.Lib
            
             sequenceEventVertex.AddVertex(sequenceEventMeta.Get(false, @"Attribute:TriggerTime"), startPosition);
 
-            IVertex sequenceVertex = VertexOperations.AddInstance(sequenceEventVertex, sequenceMeta);
+            IVertex sequenceVertex = VertexOperations.AddInstance(sequenceEventVertex, sequenceMeta, sequenceAttributeMeta);
 
             sequenceVertex.Value = GetNameForNewSequenceEvent(trackVertex);
             

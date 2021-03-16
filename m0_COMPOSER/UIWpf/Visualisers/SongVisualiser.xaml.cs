@@ -24,7 +24,7 @@ using m0.ZeroCode;
 namespace m0_COMPOSER.UIWpf.Visualisers
 {
     /// <summary>
-    /// Interaction logic for SequenceVisualiser.xaml
+    /// Interaction logic for SongVisualiser.xaml
     /// </summary>
     public partial class SongVisualiser : ZoomScrollViewBasedVisualiserBase
     {
@@ -176,7 +176,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
         {
             IVertex r = MinusZero.Instance.root;
 
-            IVertex v = VertexOperations.AddInstance(baseVertex, r.Get(false, @"System\Lib\Music\Track"));
+            IVertex v = VertexOperations.AddInstance(baseVertex, r.Get(false, @"System\Lib\Music\Track"), r.Get(false, @"System\Lib\Music\Song\Track"));
 
             v.Value = "Track " + trackCnt;
             trackCnt++;
