@@ -117,6 +117,8 @@ namespace m0_SYSTEM_GENERATE.Music
             AddMetaEdges();
 
             AddData();
+
+            AddMusicSpace();
         }
 
         private static void AddData()
@@ -313,7 +315,6 @@ namespace m0_SYSTEM_GENERATE.Music
             Data.AddEdge(Music.Get(false, "BaseNumberSpanLevel"), _base);
         }
 
-
         static void AddDefaultControlChangeDescription()
         {
             IVertex b = VertexOperations.AddInstance(Data, ControlChangeDescriptionSet);
@@ -395,6 +396,15 @@ namespace m0_SYSTEM_GENERATE.Music
         static IVertex ControlChange;
         static IVertex Event;
         static IVertex HasLength;
+
+        static IVertex Song;
+        static IVertex Track;
+        static IVertex SequenceEvent;
+        static IVertex Sequence;
+
+        static IVertex MelodyFlow;
+        static IVertex TriggerSet;
+        static IVertex ChordProgression;
 
         private static void AddMusicBasicClasses() {            
             // CCDescription
@@ -503,7 +513,7 @@ namespace m0_SYSTEM_GENERATE.Music
 
             // SEQUENCE
 
-            IVertex Sequence = GraphUtil.AddClass(Music, "Sequence");
+            Sequence = GraphUtil.AddClass(Music, "Sequence");
 
             GraphUtil.AddInherits(Sequence, HasLength);
             GraphUtil.AddInherits(Sequence, History);
@@ -529,14 +539,14 @@ namespace m0_SYSTEM_GENERATE.Music
 
             // SEQUENCEEVENT
 
-            IVertex SequenceEvent = GraphUtil.AddClass(Music, "SequenceEvent");
+            SequenceEvent = GraphUtil.AddClass(Music, "SequenceEvent");
 
             GraphUtil.AddInherits(SequenceEvent, Event);
             GraphUtil.AddAttribute(SequenceEvent, "Sequence", Sequence, 1, 1);
 
             // TRACK
 
-            IVertex Track = GraphUtil.AddClass(Music, "Track");
+            Track = GraphUtil.AddClass(Music, "Track");
 
             GraphUtil.AddInherits(Track, r.Get(false, @"System\Meta\ZeroTypes\HasColor"));
 
@@ -552,7 +562,7 @@ namespace m0_SYSTEM_GENERATE.Music
 
             // SONG
 
-            IVertex Song = GraphUtil.AddClass(Music, "Song");
+            Song = GraphUtil.AddClass(Music, "Song");
 
             GraphUtil.AddInherits(Song, HasLength);
 
@@ -667,7 +677,7 @@ namespace m0_SYSTEM_GENERATE.Music
 
             // MELODYFLOW
 
-            IVertex MelodyFlow = GraphUtil.AddClass(MusicGenerator, "MelodyFlow");
+            MelodyFlow = GraphUtil.AddClass(MusicGenerator, "MelodyFlow");
             GraphUtil.AddAttribute(MelodyFlow, "IsDrum", Boolean, 0, 1);
             GraphUtil.AddAggregation(MelodyFlow, "Step", MelodyFlowStep, 0, -1);
 
@@ -683,7 +693,7 @@ namespace m0_SYSTEM_GENERATE.Music
 
             // TRIGGERSET
 
-            IVertex TriggerSet = GraphUtil.AddClass(MusicGenerator, "TriggerSet");
+            TriggerSet = GraphUtil.AddClass(MusicGenerator, "TriggerSet");
             GraphUtil.AddInherits(TriggerSet, HasLength);
             GraphUtil.AddAttribute(TriggerSet, "IsDrum", Boolean, 0, 1);
             GraphUtil.AddAggregation(TriggerSet, "Trigger", Trigger, 0, -1);
@@ -692,12 +702,11 @@ namespace m0_SYSTEM_GENERATE.Music
 
             // CHORDPROGRESSION
 
-            IVertex ChordProgression = GraphUtil.AddClass(MusicGenerator, "ChordProgression");
+            ChordProgression = GraphUtil.AddClass(MusicGenerator, "ChordProgression");
             GraphUtil.AddAggregation(ChordProgression, "Chord", PitchSet, 0, -1);
 
             ChordProgression.AddEdge(r.Get(false, @"System\Meta\Base\Vertex\$DefaultOpenVisualiser"), r.Get(false, @"System\Meta\Visualiser\ChordProgression"));
         }
-
 
         private static void AddGeneratorFlowPitchSet()
         {
@@ -713,6 +722,19 @@ namespace m0_SYSTEM_GENERATE.Music
 
                 AddPitch(b, 0, x, x.ToString(), color, null);                
             }
+        }
+
+        public static void AddMusicSpace()
+        {
+            IVertex MusicSpace = GraphUtil.AddClass(Music, "MusicSpace");
+
+            GraphUtil.AddAggregation(MusicSpace, "Song", Song, 0, -1);
+            GraphUtil.AddAggregation(MusicSpace, "Track", Track, 0, -1);
+            GraphUtil.AddAggregation(MusicSpace, "SequenceEvent", SequenceEvent, 0, -1);
+            GraphUtil.AddAggregation(MusicSpace, "Sequence", Sequence, 0, -1);
+            GraphUtil.AddAggregation(MusicSpace, "MelodyFlow", MelodyFlow, 0, -1);
+            GraphUtil.AddAggregation(MusicSpace, "TriggerSet", TriggerSet, 0, -1);
+            GraphUtil.AddAggregation(MusicSpace, "ChordProgression", ChordProgression, 0, -1);
         }
 
     }
