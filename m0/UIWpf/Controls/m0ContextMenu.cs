@@ -17,21 +17,26 @@ namespace m0.UIWpf.Controls
     {
         IPlatformClass PlatformClass;
         IVertex root;
-        IVertex Edge;
+        IVertex EdgeVertex;
 
         public m0ContextMenu(IPlatformClass pc)
         {
             root = MinusZero.Instance.Root;
 
-            PlatformClass = pc;
+            PlatformClass = pc;                        
 
+            this.Opened += m0ContextMenu_Opened;
+        }
+
+        void AddStandardMenuItems()
+        {
             AddOpen();
 
             AddExecute();
 
             AddSeparator();
 
-            AddOpenFormCode();            
+            AddOpenFormCode();
 
             AddSeparator();
 
@@ -49,36 +54,41 @@ namespace m0.UIWpf.Controls
 
             AddSeparator();
 
-            AddQuery();            
+            AddQuery();
 
             AddSeparator();
 
             AddCutCopyPasteItems();
-
-            this.Opened += m0ContextMenu_Opened;
         }
 
         void m0ContextMenu_Opened(object sender, System.Windows.RoutedEventArgs e)
         {
-            Edge=null;
+            EdgeVertex=null;
 
             if (PlatformClass is IHasLocalizableEdges && PlatformClass is IInputElement)
             {
                 Point p = Mouse.GetPosition((IInputElement)PlatformClass);
-                Edge = ((IHasLocalizableEdges)PlatformClass).GetEdgeByLocation(p);
+                EdgeVertex = ((IHasLocalizableEdges)PlatformClass).GetEdgeByLocation(p);
+                
 
-                if (Edge == null)
+                //EnableMenuItems();
+
+                this.Items.Clear();
+
+                ExtraCommandHook.CheckAndAddExtraCommand(this.EdgeVertex, this);
+
+                AddStandardMenuItems();
+
+                if (EdgeVertex == null)
                 {
                     DisableMenuItems();
                     return;
                 }
 
-                EnableMenuItems();            
-
                 FillNewVertexAndEdgeBySchemaMenu();
             }
 
-            if (Edge == null)
+            if (EdgeVertex == null)
             {
                 DisableMenuItems();
                 return;
@@ -87,12 +97,12 @@ namespace m0.UIWpf.Controls
 
         private void FillNewVertexAndEdgeBySchemaMenu()
         {
-            IVertex baseVertex = Edge.Get(false, @"To:");
+            IVertex baseVertex = EdgeVertex.Get(false, @"To:");
 
             IVertex r = baseVertex.GetAll(false, @"$Is:");
 
             if (r.Count() == 0)
-                r = Edge.GetAll(false, @"Meta:"); ;
+                r = EdgeVertex.GetAll(false, @"Meta:"); ;
 
             if (r.Count() == 0 || r.FirstOrDefault().To.Value==null || GeneralUtil.CompareStrings(r.FirstOrDefault().To.Value, "$Empty"))
             {
@@ -381,35 +391,35 @@ namespace m0.UIWpf.Controls
 
         void OnNewVertex(object sender, System.Windows.RoutedEventArgs e)
         {           
-            BaseCommands.NewVertex(this.Edge, null);
+            BaseCommands.NewVertex(this.EdgeVertex, null);
         }
         
         void OnNewVertexBySchema(object sender, System.Windows.RoutedEventArgs e)
         {
             if (sender is MenuItem)
-                BaseCommands.NewVertexBySchema(this.Edge, (IVertex)((MenuItem)sender).Tag);            
+                BaseCommands.NewVertexBySchema(this.EdgeVertex, (IVertex)((MenuItem)sender).Tag);            
         }
 
         void OnNewEdgeBySchema(object sender, System.Windows.RoutedEventArgs e)
         {
             if (sender is MenuItem)
-                BaseCommands.NewEdgeBySchema(this.Edge, (IVertex)((MenuItem)sender).Tag);
+                BaseCommands.NewEdgeBySchema(this.EdgeVertex, (IVertex)((MenuItem)sender).Tag);
         }
 
         void OnNewEdge(object sender, System.Windows.RoutedEventArgs e)
         {
-            BaseCommands.NewEdge(this.Edge, null);
+            BaseCommands.NewEdge(this.EdgeVertex, null);
         }
 
         void OnNewDiagram(object sender, System.Windows.RoutedEventArgs e)
         {
-            BaseCommands.NewDiagram(this.Edge, null);
+            BaseCommands.NewDiagram(this.EdgeVertex, null);
         }
 
 
         void OnCut(object sender, System.Windows.RoutedEventArgs e)
         {
-            BaseCommands.Cut(this.Edge, PlatformClass.Vertex);
+            BaseCommands.Cut(this.EdgeVertex, PlatformClass.Vertex);
 
             FromCopyPlatformClass = PlatformClass;
         }
@@ -419,14 +429,14 @@ namespace m0.UIWpf.Controls
 
         void OnCopy(object sender, System.Windows.RoutedEventArgs e)
         {
-            BaseCommands.Copy(this.Edge, PlatformClass.Vertex);
+            BaseCommands.Copy(this.EdgeVertex, PlatformClass.Vertex);
 
             FromCopyPlatformClass = PlatformClass;
         }
 
         void OnPaste(object sender, System.Windows.RoutedEventArgs e)
         {
-            BaseCommands.Paste(this.Edge, PlatformClass.Vertex);
+            BaseCommands.Paste(this.EdgeVertex, PlatformClass.Vertex);
 
             if (FromCopyPlatformClass is IHasSelectableEdges)
                 ((IHasSelectableEdges)FromCopyPlatformClass).UnselectAllSelectedEdges();
@@ -434,7 +444,7 @@ namespace m0.UIWpf.Controls
 
         void OnDelete(object sender, System.Windows.RoutedEventArgs e)
         {
-            BaseCommands.Delete(this.Edge, PlatformClass.Vertex);
+            BaseCommands.Delete(this.EdgeVertex, PlatformClass.Vertex);
 
             if (PlatformClass is IHasSelectableEdges)
                 ((IHasSelectableEdges)PlatformClass).UnselectAllSelectedEdges();
@@ -442,32 +452,32 @@ namespace m0.UIWpf.Controls
 
         void OnQuery(object sender, System.Windows.RoutedEventArgs e)
         {            
-            BaseCommands.Query(this.Edge, null);
+            BaseCommands.Query(this.EdgeVertex, null);
         }  
 
         void OnOpen(object sender, System.Windows.RoutedEventArgs e)
         {
-            BaseCommands.Open(this.Edge, null);
+            BaseCommands.Open(this.EdgeVertex, null);
         }
 
         void OnExecute(object sender, System.Windows.RoutedEventArgs e)
         {
-            BaseCommands.Execute(this.Edge, null);
+            BaseCommands.Execute(this.EdgeVertex, null);
         }
 
         void OnOpenVisualiser(object sender, System.Windows.RoutedEventArgs e)
         {            
-            BaseCommands.OpenVisualiser(this.Edge, ((IVertex)((MenuItem)sender).Tag));
+            BaseCommands.OpenVisualiser(this.EdgeVertex, ((IVertex)((MenuItem)sender).Tag));
         }
 
         void OnOpenMetaVisualiser(object sender, System.Windows.RoutedEventArgs e)
         {
-            BaseCommands.OpenMetaVisualiser(this.Edge, ((IVertex)((MenuItem)sender).Tag));
+            BaseCommands.OpenMetaVisualiser(this.EdgeVertex, ((IVertex)((MenuItem)sender).Tag));
         }
 
         void OnOpenVisualiserFloating(object sender, System.Windows.RoutedEventArgs e)
         {
-            BaseCommands.OpenVisualiserFloating(this.Edge, ((IVertex)((MenuItem)sender).Tag));
+            BaseCommands.OpenVisualiserFloating(this.EdgeVertex, ((IVertex)((MenuItem)sender).Tag));
         }
 
         void OnOpenVisualiserSelectedBase(object sender, System.Windows.RoutedEventArgs e)
@@ -479,7 +489,7 @@ namespace m0.UIWpf.Controls
             input.AddEdge(root.Get(false, @"System\Meta\Commands\VisualiserClass"), ((IVertex)((MenuItem)sender).Tag));
             input.AddEdge(root.Get(false, @"System\Meta\Commands\SynchronisedVisualiser"), PlatformClass.Vertex);
 
-            BaseCommands.OpenVisualiserSelectedBase(this.Edge, input);
+            BaseCommands.OpenVisualiserSelectedBase(this.EdgeVertex, input);
         }
 
         void OnOpenVisualiserSelectedSelected(object sender, System.Windows.RoutedEventArgs e)
@@ -491,7 +501,7 @@ namespace m0.UIWpf.Controls
             input.AddEdge(root.Get(false, @"System\Meta\Commands\VisualiserClass"), ((IVertex)((MenuItem)sender).Tag));
             input.AddEdge(root.Get(false, @"System\Meta\Commands\SynchronisedVisualiser"), PlatformClass.Vertex);
 
-            BaseCommands.OpenVisualiserSelectedSelected(this.Edge, input);
+            BaseCommands.OpenVisualiserSelectedSelected(this.EdgeVertex, input);
         }
 
     }

@@ -1,4 +1,5 @@
 ﻿using m0.Foundation;
+using m0.Util;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,7 +13,16 @@ namespace m0.UIWpf.Commands
     {
         public static void CheckAndAddExtraCommand(IVertex baseVertex, ContextMenu menu)
         {
+            if (baseVertex == null)
+                return;
 
+            IVertex metaVertex = baseVertex.Get(false, "Meta:");
+
+            if(GeneralUtil.CompareStrings(metaVertex.Value, "Directory"))
+            {
+
+                menu.Items.Add()
+            }
         }
     }
 }
