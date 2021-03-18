@@ -17,7 +17,7 @@ namespace m0.UIWpf.Controls
     {
         IPlatformClass PlatformClass;
         IVertex root;
-        IVertex EdgeVertex;
+        public IVertex EdgeVertex;
 
         public m0ContextMenu(IPlatformClass pc)
         {
@@ -75,7 +75,9 @@ namespace m0.UIWpf.Controls
 
                 this.Items.Clear();
 
-                ExtraCommandHook.CheckAndAddExtraCommand(this.EdgeVertex, this);
+                ExtraCommandHook ech = new ExtraCommandHook(this);
+
+                ech.CheckAndAddExtraCommand();
 
                 AddStandardMenuItems();
 
@@ -178,14 +180,14 @@ namespace m0.UIWpf.Controls
             
         }
 
-        private MenuItem createMenuItem(string header)
+        public static MenuItem createMenuItem(string header)
         {
             MenuItem m = new MenuItem();
             m.Header = header;
             return m;
         }
 
-        private void AddSeparator(){
+        public void AddSeparator(){
             this.Items.Add(new Separator());
         }
 

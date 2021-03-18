@@ -1,4 +1,5 @@
 ﻿using m0.Foundation;
+using m0.Graph;
 using m0.ZeroTypes;
 using System;
 using System.Collections.Generic;
@@ -10,6 +11,22 @@ namespace m0.Util
 {
     public class UserInteractionUtil
     {
+        public static string Ask(string question)
+        {
+            IVertex v = m0.MinusZero.Instance.CreateTempVertex();
+
+            IVertex c = GraphUtil.AddClass(v, "temp");
+
+            GraphUtil.AddAttribute(c, question, MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\String"), 1, 1);
+
+            IVertex o = VertexOperations.AddInstance(v, c);
+
+            MinusZero.Instance.DefaultUserInteraction.EditDialog(o, null);
+
+            return o.Get(false, @"\").Value.ToString();
+
+        }
+
         public static void ShowError(object where, string what)
         {
             MinusZero.Instance.DefaultUserInteraction.ShowException(
