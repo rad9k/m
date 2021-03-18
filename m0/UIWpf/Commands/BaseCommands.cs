@@ -82,7 +82,7 @@ namespace m0.UIWpf.Commands
             IVertex v = VertexOperations.AddInstance(Vertex, MetaVertex);
 
             if (VertexOperations.GetChildEdges(MetaVertex).Count() > 0)
-                MinusZero.Instance.DefaultUserInteraction.EditDialog(v, null);
+                MinusZero.Instance.DefaultUserInteraction.Edit(v, null);
             else
             {
                 NewVertexBySchema d = new NewVertexBySchema(v, MetaVertex);
@@ -117,7 +117,7 @@ namespace m0.UIWpf.Commands
 
             GraphUtil.CreateOrReplaceEdge(dv, MinusZero.Instance.Root.Get(false, @"System\Meta\Visualiser\Class:Diagram\CreationPool"), baseVertex.Get(false, "To:"));
 
-            MinusZero.Instance.DefaultUserInteraction.EditDialog(dv, null);           
+            MinusZero.Instance.DefaultUserInteraction.Edit(dv, null);           
 
             return null;
         }

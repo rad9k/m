@@ -183,7 +183,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             //newTrackButton.Background = (Brush)FindResource("0ForegroundBrush"); // fix to some system bug?
 
-            MinusZero.Instance.DefaultUserInteraction.EditDialog(v, null);            
+            MinusZero.Instance.DefaultUserInteraction.Edit(v, null);            
         }
 
         private void RedrawTracks()

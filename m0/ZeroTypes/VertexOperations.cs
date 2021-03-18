@@ -244,7 +244,7 @@ namespace m0.ZeroTypes
                 n.AddEdge(MinusZero.Instance.EdgeTarget, toVertex);
 
                 if(ForceShowEditForm.HasValue==false || ForceShowEditForm==true)
-                    MinusZero.Instance.DefaultUserInteraction.EditDialog(e.To, position);
+                    MinusZero.Instance.DefaultUserInteraction.Edit(e.To, position);
 
                 return e;
             }

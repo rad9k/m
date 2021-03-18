@@ -13,17 +13,19 @@ namespace m0.Util
     {
         public static string Ask(string question)
         {
-            IVertex v = m0.MinusZero.Instance.CreateTempVertex();
+            /*IVertex v = m0.MinusZero.Instance.CreateTempVertex();
 
-            IVertex c = GraphUtil.AddClass(v, "temp");
+            IVertex c = GraphUtil.AddClass(v, question);
 
-            GraphUtil.AddAttribute(c, question, MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\String"), 1, 1);
+            IVertex a=GraphUtil.AddAttribute(c, question+"2", MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\String"), 1, 1);
 
-            IVertex o = VertexOperations.AddInstance(v, c);
+            a.AddVertex(MinusZero.Instance.root.Get(false, @"System\Meta\Presentation\$Hide"), null);
 
-            MinusZero.Instance.DefaultUserInteraction.EditDialog(o, null);
+            IVertex o = VertexOperations.AddInstance(v, c);*/            
 
-            return o.Get(false, @"\").Value.ToString();
+            //return o.Get(false, @"\").Value.ToString();
+
+            return MinusZero.Instance.DefaultUserInteraction.StringQuestionDialog(question, null);
 
         }
 

@@ -308,9 +308,14 @@ namespace m0
             return d.SelectedOption;
         }
 
-        public void EditDialog(IVertex baseVertex, Point? position)
+        public void Edit(IVertex baseVertex, Point? position)
         {
-            ShowContentFloating_withSize( new EditDialog(baseVertex, position),500,550);
+            ShowContentFloating_withSize( new Edit(baseVertex, position),500,550);
+        }
+
+        public string StringQuestionDialog(String question, Point? position)
+        {
+            return new StringQuestionWindow(question, position).Answer;
         }
 
         private void Window_Closed(object sender, EventArgs e)

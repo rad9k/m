@@ -22,6 +22,8 @@ namespace m0.Foundation
 
         IVertex SelectDialogButton(IVertex info, IVertex options, Point? position);
 
-        void EditDialog(IVertex baseVertex, Point? position);
+        void Edit(IVertex baseVertex, Point? position);
+
+        string StringQuestionDialog(string question, Point? position);
     }
 }

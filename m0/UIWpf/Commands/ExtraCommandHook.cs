@@ -30,7 +30,8 @@ namespace m0.UIWpf.Commands
 
             IVertex metaVertex = baseVertex.Get(false, "Meta:");
 
-            if(GeneralUtil.CompareStrings(metaVertex.Value, "Directory"))
+            if (GeneralUtil.CompareStrings(metaVertex.Value, "Directory") ||
+                GeneralUtil.CompareStrings(metaVertex.Value, "Drive"))
             {
                 MenuItem newStoreMenuItem = m0ContextMenu.createMenuItem("New music space store");
 
@@ -52,14 +53,14 @@ namespace m0.UIWpf.Commands
 
         void OnNewMusicSpaceStore(object sender, System.Windows.RoutedEventArgs e)
         {
-            string storeName = UserInteractionUtil.Ask("music space store name");
+            string storeName = UserInteractionUtil.Ask("please enter new music space store name");
 
            // BaseCommands.Open(this.EdgeVertex, null);
         }
 
         void OnNewStore(object sender, System.Windows.RoutedEventArgs e)
         {
-            string storeName = UserInteractionUtil.Ask("store name");
+            string storeName = UserInteractionUtil.Ask("please enter new store name");
         }
     }
 }

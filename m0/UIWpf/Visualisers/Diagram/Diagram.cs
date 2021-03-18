@@ -1102,7 +1102,7 @@ namespace m0.UIWpf.Visualisers.Diagram
                     }
 
                     if (ForceShowEditForm.HasValue == true && ForceShowEditForm == true)
-                        MinusZero.Instance.DefaultUserInteraction.EditDialog(ve.To, WpfUtil.GetMousePositionDnd(e));
+                        MinusZero.Instance.DefaultUserInteraction.Edit(ve.To, WpfUtil.GetMousePositionDnd(e));
 
                   
                     AddDiagramItem(x,

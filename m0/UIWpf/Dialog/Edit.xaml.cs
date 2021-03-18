@@ -16,13 +16,11 @@ using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 
 namespace m0.UIWpf.Dialog
-{
-    enum EditDialogEnum {NoEdit, Edit, EditWithName};
-
+{    
     /// <summary>
     /// Interaction logic for EditDialog.xaml
     /// </summary>
-    public partial class EditDialog : UserControl
+    public partial class Edit : UserControl
     {
         IVertex baseVertex;
         Point _mousePosition;
@@ -41,7 +39,7 @@ namespace m0.UIWpf.Dialog
 
         FormVisualiser FormVisualiser;
 
-        public EditDialog(IVertex _baseVertex, Point? position)
+        public Edit(IVertex _baseVertex, Point? position)
         {
             baseVertex = _baseVertex;
 

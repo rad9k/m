@@ -103,6 +103,9 @@
     <Compile Include="Lib\LibUtil.cs" />
     <Compile Include="Lib\Std.cs" />
     <Compile Include="UIWpf\Commands\ExtraCommandHook.cs" />
+    <Compile Include="UIWpf\Dialog\StringQuestionWindow.xaml.cs">
+      <DependentUpon>StringQuestionWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="User\Clipboard.cs" />
     <Compile Include="User\Process\UI\NonAtomProcess.cs" />
     <Compile Include="Store\BinarySerializationStore.cs">
@@ -157,8 +160,8 @@
     <Compile Include="UIWpf\Dialog\ExecuteDialog.xaml.cs">
       <DependentUpon>ExecuteDialog.xaml</DependentUpon>
     </Compile>
-    <Compile Include="UIWpf\Dialog\EditDialog.xaml.cs">
-      <DependentUpon>EditDialog.xaml</DependentUpon>
+    <Compile Include="UIWpf\Dialog\Edit.xaml.cs">
+      <DependentUpon>Edit.xaml</DependentUpon>
     </Compile>
     <Compile Include="UIWpf\Dialog\InfoWindow.xaml.cs">
       <DependentUpon>InfoWindow.xaml</DependentUpon>
@@ -342,11 +345,15 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="UIWpf\Dialog\StringQuestionWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="UIWpf\Dialog\ExecuteDialog.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="UIWpf\Dialog\EditDialog.xaml">
+    <Page Include="UIWpf\Dialog\Edit.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
