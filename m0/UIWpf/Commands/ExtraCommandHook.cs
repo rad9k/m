@@ -12,14 +12,16 @@ namespace m0.UIWpf.Commands
 {
     public class ExtraCommandHook
     {
+        static IVertex r = MinusZero.Instance.Root;
+
+        static IVertex fileMeta = r.Get(false, @"System\Meta\Store\FileSystem\Directory\File");
+
         m0ContextMenu contextMenu;
 
         public ExtraCommandHook(m0ContextMenu _contextMenu)
         {
             contextMenu = _contextMenu;
         }
-
-
 
         public void CheckAndAddExtraCommand()
         {
@@ -54,6 +56,13 @@ namespace m0.UIWpf.Commands
         void OnNewMusicSpaceStore(object sender, System.Windows.RoutedEventArgs e)
         {
             string storeName = UserInteractionUtil.Ask("please enter new music space store name");
+
+            if (!storeName.EndsWith(".m0"))
+                storeName += ".m0";
+
+            IVertex baseVertex = contextMenu.EdgeVertex.Get(false, "To:");
+
+            baseVertex.AddVertex(fileMeta, storeName);
 
            // BaseCommands.Open(this.EdgeVertex, null);
         }
