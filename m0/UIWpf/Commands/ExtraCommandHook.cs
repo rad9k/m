@@ -8,6 +8,9 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Controls;
 
+using m0_COMPOSER.Lib;
+using m0.ZeroTypes;
+
 namespace m0.UIWpf.Commands
 {
     public class ExtraCommandHook
@@ -62,8 +65,11 @@ namespace m0.UIWpf.Commands
 
             IVertex baseVertex = contextMenu.EdgeVertex.Get(false, "To:");
 
-            baseVertex.AddVertex(fileMeta, storeName);
+            IVertex fileVertex = baseVertex.AddVertex(fileMeta, storeName);
+
+            IVertex store
         
+            NewMusicSpaceStore()
         }
 
         void OnNewStore(object sender, System.Windows.RoutedEventArgs e)
@@ -76,6 +82,25 @@ namespace m0.UIWpf.Commands
             IVertex baseVertex = contextMenu.EdgeVertex.Get(false, "To:");
 
             baseVertex.AddVertex(fileMeta, storeName);
+        }        
+
+        static IVertex musicSpaceMeta = r.Get(false, @"System\Lib\Music\MusicSpace");
+        static IVertex songMeta = r.Get(false, @"System\Lib\Music\Song");
+        static IVertex diagramMeta = r.Get(false, @"System\Meta\ZeroTypes\Diagram");
+
+        public static void NewMusicSpaceStore(IVertex baseVertex)
+        {
+            IVertex ms = VertexOperations.AddInstance(baseVertex, musicSpaceMeta);
+
+            ms.Value = "New Music Space";
+
+            IVertex diagram = VertexOperations.AddInstance(ms, diagramMeta);
+
+            diagram.Value = "Mew Music Space Diagram";
+
+            IVertex song = VertexOperations.AddInstance(ms, songMeta);
+
+            song.Value = "New Song";
         }
     }
 }
