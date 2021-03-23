@@ -54,6 +54,7 @@
     <Compile Include="Lib\ChordProgression.cs" />
     <Compile Include="Lib\MelodyFlow.cs" />
     <Compile Include="Lib\MidiDevice.cs" />
+    <Compile Include="Lib\MusicSpace.cs" />
     <Compile Include="Lib\NoteOutput.cs" />
     <Compile Include="Lib\MusicUtil.cs" />
     <Compile Include="Lib\PlaySong.cs" />

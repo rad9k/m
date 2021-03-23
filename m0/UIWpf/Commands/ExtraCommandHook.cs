@@ -63,13 +63,19 @@ namespace m0.UIWpf.Commands
             IVertex baseVertex = contextMenu.EdgeVertex.Get(false, "To:");
 
             baseVertex.AddVertex(fileMeta, storeName);
-
-           // BaseCommands.Open(this.EdgeVertex, null);
+        
         }
 
         void OnNewStore(object sender, System.Windows.RoutedEventArgs e)
         {
             string storeName = UserInteractionUtil.Ask("please enter new store name");
+
+            if (!storeName.EndsWith(".m0"))
+                storeName += ".m0";
+
+            IVertex baseVertex = contextMenu.EdgeVertex.Get(false, "To:");
+
+            baseVertex.AddVertex(fileMeta, storeName);
         }
     }
 }
