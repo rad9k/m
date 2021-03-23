@@ -8,8 +8,8 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Controls;
 
-using m0_COMPOSER.Lib;
 using m0.ZeroTypes;
+using m0.Graph;
 
 namespace m0.UIWpf.Commands
 {
@@ -60,43 +60,72 @@ namespace m0.UIWpf.Commands
         {
             string storeName = UserInteractionUtil.Ask("please enter new music space store name");
 
-            if (!storeName.EndsWith(".m0"))
-                storeName += ".m0";
+            if (storeName != "")
+            {
+                if (!storeName.EndsWith(".m0"))
+                    storeName += ".m0";
 
-            IVertex baseVertex = contextMenu.EdgeVertex.Get(false, "To:");
+                IVertex baseVertex = contextMenu.EdgeVertex.Get(false, "To:");
 
-            IVertex fileVertex = baseVertex.AddVertex(fileMeta, storeName);
+                IVertex fileVertex = baseVertex.AddVertex(fileMeta, storeName);
 
-            IVertex store
-        
-            NewMusicSpaceStore()
+                IVertex store = fileVertex.Get(false, "$Store:");
+
+                NewMusicSpaceStore(store);
+            }
         }
 
         void OnNewStore(object sender, System.Windows.RoutedEventArgs e)
         {
             string storeName = UserInteractionUtil.Ask("please enter new store name");
 
-            if (!storeName.EndsWith(".m0"))
-                storeName += ".m0";
+            if (storeName != "")
+            {
+                if (!storeName.EndsWith(".m0"))
+                    storeName += ".m0";
 
-            IVertex baseVertex = contextMenu.EdgeVertex.Get(false, "To:");
+                IVertex baseVertex = contextMenu.EdgeVertex.Get(false, "To:");
 
-            baseVertex.AddVertex(fileMeta, storeName);
+                baseVertex.AddVertex(fileMeta, storeName);
+            }
         }        
 
         static IVertex musicSpaceMeta = r.Get(false, @"System\Lib\Music\MusicSpace");
         static IVertex songMeta = r.Get(false, @"System\Lib\Music\Song");
-        static IVertex diagramMeta = r.Get(false, @"System\Meta\ZeroTypes\Diagram");
+        static IVertex diagramMeta = r.Get(false, @"System\Meta\Visualiser\Diagram");
+        static IVertex creationPoolMeta = r.Get(false, @"System\Meta\Visualiser\Diagram\CreationPool");
+
+        static IVertex classMeta = r.Get(false, @"System\Meta\ZeroUML\Class");
+
+        static IVertex trackMeta = r.Get(false, @"System\Lib\Music\Track");
+        static IVertex sequenceEventMeta = r.Get(false, @"System\Lib\Music\SequenceEvent");
+        static IVertex sequenceMeta = r.Get(false, @"System\Lib\Music\Sequence");
+        static IVertex melodyFlowMeta = r.Get(false, @"System\Lib\Music\Generator\MelodyFlow");
+        static IVertex triggerSetMeta = r.Get(false, @"System\Lib\Music\Generator\TriggerSet");
+        static IVertex chordProgressionMeta = r.Get(false, @"System\Lib\Music\Generator\ChordProgression");
 
         public static void NewMusicSpaceStore(IVertex baseVertex)
         {
             IVertex ms = VertexOperations.AddInstance(baseVertex, musicSpaceMeta);
 
             ms.Value = "New Music Space";
+            
 
             IVertex diagram = VertexOperations.AddInstance(ms, diagramMeta);
 
             diagram.Value = "Mew Music Space Diagram";
+
+
+            ms.AddEdge(classMeta, songMeta);
+            ms.AddEdge(classMeta, trackMeta);
+            ms.AddEdge(classMeta, sequenceEventMeta);
+            ms.AddEdge(classMeta, sequenceMeta);
+            ms.AddEdge(classMeta, melodyFlowMeta);
+            ms.AddEdge(classMeta, triggerSetMeta);
+            ms.AddEdge(classMeta, chordProgressionMeta);
+
+
+            GraphUtil.CreateOrReplaceEdge(diagram, creationPoolMeta, ms);
 
             IVertex song = VertexOperations.AddInstance(ms, songMeta);
 

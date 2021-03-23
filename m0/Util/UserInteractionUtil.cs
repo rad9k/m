@@ -69,11 +69,9 @@ namespace m0.Util
 
             IVertex error = VertexOperations.AddInstance(null, _exception);
 
-            error.AddVertex(_where, where);
-
-            error.AddEdge(_type, _error);
-
-            error.AddVertex(_what, what);
+            GraphUtil.SetVertexValue(error, _where, where);
+            GraphUtil.CreateOrReplaceEdge(error, _type, _error);
+            GraphUtil.SetVertexValue(error, _what, what);            
 
             return error;
         }

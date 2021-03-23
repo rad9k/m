@@ -226,6 +226,9 @@ namespace m0.UIWpf.Commands
                 DefaultVis=baseVertex.Get(false, @"To:\$Is:\$Is:\$DefaultOpenVisualiser:"); // yes. bad but it is
 
             if (DefaultVis == null)
+                DefaultVis = baseVertex.Get(false, @"Meta:\$EdgeTarget:\$DefaultOpenVisualiser:");
+
+            if (DefaultVis == null)
                 DefaultVis = baseVertex.Get(false, @"Meta:\$EdgeTarget:\$DefaultEditVisualiser:");
 
             if (DefaultVis == null)

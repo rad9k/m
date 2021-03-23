@@ -170,7 +170,38 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             ZoomScrollView.SetLeftDownCornerControl(newTrackButton);
         }
 
-        int trackCnt = 1;
+        public string GetNameForNewTrack()
+        {
+            int max = 0;
+
+            foreach (IEdge e in baseVertex.GetAll(false, @"Track:"))
+            {
+                string seqName = e.To.Value.ToString();
+
+                string[] seqNameSplit = seqName.Split(' ');
+
+                seqName = seqNameSplit[0];
+
+                int tryMax;
+
+                if (Int32.TryParse(seqName, out tryMax))
+                    if (tryMax > max)
+                        max = tryMax;
+
+                if (seqNameSplit.Length > 1)
+                {
+                    seqName = seqNameSplit[1];
+
+                    if (Int32.TryParse(seqName, out tryMax))
+                        if (tryMax > max)
+                            max = tryMax;
+                }
+            }
+
+            max++;
+
+            return "Track " + max;
+        }
 
         private void NewTrackButton_Click(object sender, RoutedEventArgs e)
         {
@@ -178,8 +209,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             IVertex v = VertexOperations.AddInstance(baseVertex, r.Get(false, @"System\Lib\Music\Track"), r.Get(false, @"System\Lib\Music\Song\Track"));
 
-            v.Value = "Track " + trackCnt;
-            trackCnt++;
+            v.Value = GetNameForNewTrack();            
 
             //newTrackButton.Background = (Brush)FindResource("0ForegroundBrush"); // fix to some system bug?
 
