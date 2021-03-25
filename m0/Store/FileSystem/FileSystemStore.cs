@@ -310,5 +310,9 @@ namespace m0.Store.FileSystem
            // if (rvv[rvv.Length - 1] == '\\') // problems with queries where vertex value has last character =="\\"
              //   _Root.Value = rvv.Substring(0, rvv.Length - 1);            
         }
+
+        public void UpdateDetachStateData() { }
+
+        public void Backup() { }
     }
 }

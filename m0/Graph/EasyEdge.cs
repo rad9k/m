@@ -37,17 +37,14 @@ namespace m0.Graph
 
         public DetachStateEnum DetachState { get { return _DetachState; } }
 
-        public void Detach()
-        {
+        public void UpdateDetachStateData() {
             ToStoreIdentifier = To.Store.Identifier;
 
             ToStoreTypeName = To.Store.TypeName;
 
             ToIdentifier = To.Identifier;
 
-            To.DeleteInEdgeOnlyIn(this);
-
-            _to = null;
+            //
 
             if (Meta != null)
             {
@@ -57,6 +54,17 @@ namespace m0.Graph
 
                 MetaIdentifier = Meta.Identifier;
             }
+        }
+
+        public void Detach()
+        {
+            UpdateDetachStateData();
+
+            To.DeleteInEdgeOnlyIn(this);
+
+            _to = null;
+
+            
 
             _meta = null;
 

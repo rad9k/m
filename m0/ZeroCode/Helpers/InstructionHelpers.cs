@@ -68,7 +68,7 @@ namespace m0.ZeroCode.Helpers
             return false;
         }
 
-        public static bool CheckIfIsOrInherits(IVertex baseVertex, string value)
+        public static bool CheckIfIsOrInherits_I_WOULD_SAY_THAT_THIS_WAS_WRONG(IVertex baseVertex, string value)
         {
             IList<IEdge> allIs = InstructionHelpers.GetAllIs(baseVertex);
 
@@ -76,12 +76,12 @@ namespace m0.ZeroCode.Helpers
                 if (GraphUtil.GetValueAndCompareStrings(e.To, value))
                     return true;
 
-            foreach (IEdge e in allIs)
+            /*foreach (IEdge e in allIs) // I WOULD SAY THAT THIS IS WRONG. This is another meta level!!!!!! XXX
                 foreach (IEdge ee in InstructionHelpers.GetAllIs(e.To))
                     if (GraphUtil.GetValueAndCompareStrings(ee.To, value))
-                        return true;
+                        return true;*/
 
-            return false;
+            return CheckIfIsInherits(baseVertex, value);            
         }
 
         public static bool CheckIfIsInherits(IVertex baseVertex, string value)
@@ -100,7 +100,7 @@ namespace m0.ZeroCode.Helpers
             if (is_v == null)
                 return true;
 
-            return CheckIfIsOrInherits(is_v, "AtomType");
+            return CheckIfIsOrInherits_I_WOULD_SAY_THAT_THIS_WAS_WRONG(is_v, "AtomType");
         }
 
         public static void CopyVertex(IEdge edgeToCopy, IVertex copyTo)

@@ -15,6 +15,8 @@ namespace m0.Foundation
         
         void Attach();
 
+        void UpdateDetachStateData();
+
         DetachStateEnum DetachState { get; }
 
         string ToStoreIdentifier { get; }

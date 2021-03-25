@@ -43,6 +43,8 @@ namespace m0.Foundation
                
         bool AlwaysPresent { get; } // if AlwaysPresent, do not have to move its vertexes in the ZeroUMLInstructionHelper.MoveEdgesIntoVertex
 
+        void UpdateDetachStateData();
+
         void Detach();
 
         // Deletes all incoming edges that has e.store==InDetachStore
@@ -65,5 +67,7 @@ namespace m0.Foundation
         IVertex GetVertexByIdentifier(object VertexIdentidier);
 
         object GetRootIdentifier();
+
+        void Backup();
     }
 }

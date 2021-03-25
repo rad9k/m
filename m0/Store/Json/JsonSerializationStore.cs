@@ -9,6 +9,7 @@ using m0.Foundation;
 using m0.Graph;
 using Jil;
 using m0.Util;
+using m0.Store.FileSystem;
 
 namespace m0.Store.Json
 {
@@ -209,13 +210,18 @@ namespace m0.Store.Json
 
         public override void CommitTransaction()
         {
+            CommitTransaction(Identifier, true);
+        }
+
+        public void CommitTransaction(string fileName, bool checkIfIsDetached)
+        {
             if (!canWrite)
             {
                 UserInteractionUtil.ShowError("Json Serlialisation to " + Identifier, "As json serialisation file " + Identifier + " has not been properly loaded, commit(saving) is disabled for the file. This will protect existing file content.");
                 return;
             }
 
-            if (DetachState != DetachStateEnum.Detached)
+            if (checkIfIsDetached && DetachState != DetachStateEnum.Detached)
                 throw new Exception("Store not Detached");
 
             StreamWriter writeStream = new StreamWriter(Identifier);
@@ -340,6 +346,21 @@ namespace m0.Store.Json
             base.RollbackTransaction();
         }
 
+        public override void UpdateDetachStateData()
+        {                        
+            foreach (IVertex v in VertexIdentifiersDictionary.Values.ToList())
+            {
+                //foreach (IEdge e in v.OutEdges)
+                foreach (IEdge e in v.OutEdgesRaw)
+                    if (e is IDetachableEdge)
+                    {
+                        IDetachableEdge de = (IDetachableEdge)e;
+
+                        de.Detach();                        
+                    }
+            }         
+        }
+
         public override void Detach()
         {
             if (DetachState != DetachStateEnum.Attached)
@@ -369,6 +390,7 @@ namespace m0.Store.Json
 
             _DetachState = DetachStateEnum.Detached;
         }
+
         public JsonSerializationStore(String identifier, IStoreUniverse storeUniverse, AccessLevelEnum[] accessLeveList)
             : base(identifier, storeUniverse, accessLeveList)
         {
@@ -380,6 +402,17 @@ namespace m0.Store.Json
             Load();
 
             Attach();
-        }        
+        }
+
+        public override void Backup()
+        {
+            UpdateDetachStateData();
+
+            string fileNamePart = FileSystemUtil.getFileNamePart(fileName);
+
+
+
+            CommitTransaction("backup of " + Identifier, true);
+        }
     }
 }

@@ -63,6 +63,21 @@ namespace m0.Store
 
         public virtual void CommitTransaction() { }
 
+        public virtual void UpdateDetachStateData()
+        {            
+            foreach (IVertex v in VertexIdentifiersDictionary.Values)
+            {         
+                foreach (IEdge e in v.OutEdgesRaw) 
+                    if (e is IDetachableEdge)
+                    {
+                        IDetachableEdge de = (IDetachableEdge)e;
+
+                        if (de.To.Store != this || (de.Meta != null && de.Meta.Store != this)) // WHY NOT ALL ????????
+                            de.Detach();                        
+                    }
+            }
+        }
+
         public virtual void Detach()
         {
             if(DetachState!=DetachStateEnum.Attached)
@@ -83,7 +98,7 @@ namespace m0.Store
                         IDetachableEdge de = (IDetachableEdge)e;
 
                         
-                         if (de.To.Store != this || (de.Meta != null && de.Meta.Store != this))
+                         if (de.To.Store != this || (de.Meta != null && de.Meta.Store != this)) // WHY NOT ALL ????????
                             de.Detach();
 
                         /*if (MinusZero.Instance.AllowBug)
@@ -227,5 +242,7 @@ namespace m0.Store
 
             return VertexIdentifiersDictionary[VertexIdentifiersDictionary.Keys.ElementAt(0)].Identifier;
         }
+
+        public virtual void Backup() { }
     }
 }

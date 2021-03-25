@@ -22,7 +22,11 @@ namespace m0
     {
         public StartWindow()
         {
-            InitializeComponent();            
+            InitializeComponent();
+
+            m0_RUN.Main.Run();
+
+            Close();            
         }
 
         private void button1_Click(object sender, RoutedEventArgs e)

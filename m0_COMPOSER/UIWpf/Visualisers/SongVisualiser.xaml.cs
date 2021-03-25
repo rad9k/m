@@ -28,6 +28,9 @@ namespace m0_COMPOSER.UIWpf.Visualisers
     /// </summary>
     public partial class SongVisualiser : ZoomScrollViewBasedVisualiserBase
     {
+        public int AutoBackupMinutes = 1;
+        MultimediaTimer AutoBackupTimer;        
+
         enum PlayRecordStateEnum { Stop, Play, Record }
 
         PlayRecordStateEnum PlayRecordState;
@@ -51,6 +54,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
         protected Button MuteSpeakerButton;
 
         //
+
         void InitXAMLInstances()
         {
             PenButton = PenButton_Instance;
@@ -389,12 +393,21 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
         IVertex previousBaseVertex;
 
+        void baseVertexIsEmpty()
+        {
+            StopAutoBackup();
+        }
+
         protected override void UpdateVariablesFromBaseVertex()
         {
             baseVertex = Vertex.Get(false, @"BaseEdge:\To:");
 
             if (baseVertex == null || baseVertex == previousBaseVertex)
+            {
+                baseVertexIsEmpty();
                 return;
+            }
+                
 
             if (previousBaseVertex != null)
                 PlatformClass.RemoveVertexChangeListeners_byGenericVertex(previousBaseVertex, new VertexChange(VertexChange_BaseEdge));
@@ -402,6 +415,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             if (baseVertex.Get(false, "$Is:Song") == null)
             {
                 baseVertex = null;
+                baseVertexIsEmpty();
                 return;
             }
 
@@ -420,6 +434,37 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             positionMarkPrim_End = GraphUtil.GetIntegerValueOr0(baseVertex.Get(false, "LoopEnd:"));
 
             AddChangeListenersToAllTracksAndSong();
+
+            CheckOrStartAutoBackup();
+        }
+
+        void CheckOrStartAutoBackup()
+        {
+            if (AutoBackupTimer == null)
+            {
+                AutoBackupTimer = new MultimediaTimer() { Interval = 10/* * 60 * AutoBackupMinutes*/ };
+
+                AutoBackupTimer.Elapsed += AutoBackupTimer_Elapsed;
+            }
+
+            if(!AutoBackupTimer.IsRunning)
+                AutoBackupTimer.Start();
+        }
+
+        private void AutoBackupTimer_Elapsed(object sender, EventArgs e)
+        {
+            if(baseVertex != null)
+            {
+                IStore store = baseVertex.Store;
+
+                store.Backup();
+            }
+        }
+
+        void StopAutoBackup()
+        {
+            if(AutoBackupTimer != null && AutoBackupTimer.IsRunning)
+            AutoBackupTimer.Stop();
         }
 
         void AddChangeListenersToAllTracksAndSong()

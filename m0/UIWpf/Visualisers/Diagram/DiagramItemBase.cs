@@ -2,6 +2,7 @@
 using m0.Graph;
 using m0.UIWpf.Dialog;
 using m0.Util;
+using m0.ZeroCode.Helpers;
 using m0.ZeroTypes;
 using System;
 using System.Collections.Generic;
@@ -220,15 +221,33 @@ namespace m0.UIWpf.Visualisers.Diagram
                     if (def.To.Get(false, "ToDiagramItemTestQuery:") != null && toItem.Vertex.Get(false, (string)def.To.Get(false, "ToDiagramItemTestQuery:").Value) == null)
                         canAdd = false;
 
-                    if (e.To.Get(false, @"$EdgeTarget:") != null 
-                        && !GeneralUtil.CompareStrings(e.To.Get(false, @"$EdgeTarget:").Value,"Vertex") // Vertices do not have $Is:Vertex
-                        && toEdge.Get(false, @"To:\$Is:" + (string)e.To.Get(false, @"$EdgeTarget:").Value) == null)
-                        canAdd = false;
+                    bool isOrInherits = false;
 
-                    if (CreateEdgeOnly==false 
-                        && e.To.Get(false, @"$VertexTarget:") != null 
-                        && toEdge.Get(false, @"To:\$Is:" + (string)e.To.Get(false, @"$VertexTarget:").Value) == null)
-                        canAdd = false;
+                    IVertex toTest_baseVertex = toEdge.Get(false, @"To:");
+
+                    
+
+                    if (e.To.Get(false, @"$EdgeTarget:") != null
+                        && !GeneralUtil.CompareStrings(e.To.Get(false, @"$EdgeTarget:").Value, "Vertex") // Vertices do not have $Is:Vertex
+                       //&& toEdge.Get(false, @"To:\$Is:" + (string)e.To.Get(false, @"$EdgeTarget:").Value) == null                        
+                        )
+                    {
+                        string toTest_class = (string)e.To.Get(false, @"$EdgeTarget:").Value;
+                        
+                        if(!InstructionHelpers.CheckIfIsOrInherits_I_WOULD_SAY_THAT_THIS_WAS_WRONG(toTest_baseVertex, toTest_class))
+                            canAdd = false;
+                    }
+
+                    if (CreateEdgeOnly == false
+                        && e.To.Get(false, @"$VertexTarget:") != null
+                        //&& toEdge.Get(false, @"To:\$Is:" + (string)e.To.Get(false, @"$VertexTarget:").Value) == null                        
+                        )
+                    {
+                        string toTest_class = (string)e.To.Get(false, @"$VertexTarget:").Value;
+
+                        if(!InstructionHelpers.CheckIfIsOrInherits_I_WOULD_SAY_THAT_THIS_WAS_WRONG(toTest_baseVertex, toTest_class))    
+                            canAdd = false;
+                    }
 
                     if (canAdd)
                         AddNewLineOption(v, def, e);

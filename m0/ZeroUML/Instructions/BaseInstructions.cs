@@ -2139,7 +2139,7 @@ namespace m0.ZeroUML.Instructions
             if(methodBody==null) // not found
                 return CreateStack();
 
-            if (methodBody!=null && !CheckIfIsOrInherits(methodBody,"Method")) // not a method
+            if (methodBody!=null && !CheckIfIsOrInherits_I_WOULD_SAY_THAT_THIS_WAS_WRONG(methodBody,"Method")) // not a method
                 return CreateStack();
 
             IList<IEdge> inputParameters = GraphUtil.GetQueryOut(methodBody, "InputParameter", null);
@@ -2189,7 +2189,7 @@ namespace m0.ZeroUML.Instructions
             INoInEdgeInOutVertexVertex localStack = CreateStack();
 
             foreach(IEdge e in expressionExecution)            
-                if(CheckIfIsOrInherits(e.To,"Class"))
+                if(CheckIfIsOrInherits_I_WOULD_SAY_THAT_THIS_WAS_WRONG(e.To,"Class"))
                     ZeroUMLInstructionHelpers.AddInstance(localStack, e.To);
                         
             return localStack;
