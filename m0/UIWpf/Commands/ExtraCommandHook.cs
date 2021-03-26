@@ -116,13 +116,15 @@ namespace m0.UIWpf.Commands
             diagram.Value = "Mew Music Space Diagram";
 
 
-            ms.AddEdge(classMeta, songMeta);
-            ms.AddEdge(classMeta, trackMeta);
-            ms.AddEdge(classMeta, sequenceEventMeta);
-            ms.AddEdge(classMeta, sequenceMeta);
-            ms.AddEdge(classMeta, melodyFlowMeta);
-            ms.AddEdge(classMeta, triggerSetMeta);
-            ms.AddEdge(classMeta, chordProgressionMeta);
+            IVertex msm = ms.AddVertex(null, "Meta");
+
+            msm.AddEdge(classMeta, songMeta);
+            msm.AddEdge(classMeta, trackMeta);
+            msm.AddEdge(classMeta, sequenceEventMeta);
+            msm.AddEdge(classMeta, sequenceMeta);
+            msm.AddEdge(classMeta, melodyFlowMeta);
+            msm.AddEdge(classMeta, triggerSetMeta);
+            msm.AddEdge(classMeta, chordProgressionMeta);
 
 
             GraphUtil.CreateOrReplaceEdge(diagram, creationPoolMeta, ms);

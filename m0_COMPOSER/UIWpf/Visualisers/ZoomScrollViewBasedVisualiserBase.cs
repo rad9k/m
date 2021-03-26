@@ -749,9 +749,15 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
                 if (MainItemsSyncedWithDown)
                 {
-                    IItem item_down = GetItemsDictionary_Down()[item.BaseEdge.To];
+                    var dict_down = GetItemsDictionary_Down();
 
-                    ItemsRemoveAndRemoveAllEdges_Down(item_down);
+                    IItem item_down = null;
+                    
+                    if(dict_down.ContainsKey(item.BaseEdge.To))
+                        item_down = dict_down[item.BaseEdge.To];
+
+                    if (item_down != null)                                        
+                        ItemsRemoveAndRemoveAllEdges_Down(item_down);                    
                 }
 
                 ItemsRemoveAndRemoveAllEdges(item);

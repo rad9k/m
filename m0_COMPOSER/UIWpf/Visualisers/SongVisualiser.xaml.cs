@@ -30,7 +30,9 @@ namespace m0_COMPOSER.UIWpf.Visualisers
     public partial class SongVisualiser : ZoomScrollViewBasedVisualiserBase
     {
         public int AutoBackupMinutes = 1;
-        DispatcherTimer AutoBackupTimer;        
+        DispatcherTimer AutoBackupTimer;
+
+        static List<IVertex> AutoBackupVertexList = new List<IVertex>();
 
         enum PlayRecordStateEnum { Stop, Play, Record }
 
@@ -443,15 +445,20 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
         void CheckOrStartAutoBackup()
         {
-            if (AutoBackupTimer == null)
-            {
-                AutoBackupTimer = new DispatcherTimer();             
-                AutoBackupTimer.Tick += AutoBackupTimer_Elapsed;
-                AutoBackupTimer.Interval = new TimeSpan(0, AutoBackupMinutes, 0);                
-            }
+            if (!AutoBackupVertexList.Contains(baseVertex))
+            {                
+                if (AutoBackupTimer == null)
+                {
+                    AutoBackupTimer = new DispatcherTimer();
+                    AutoBackupTimer.Tick += AutoBackupTimer_Elapsed;
+                    AutoBackupTimer.Interval = new TimeSpan(0, AutoBackupMinutes, 0);
+                }
 
-            if(!AutoBackupTimer.IsEnabled)
-                AutoBackupTimer.Start();
+                if (!AutoBackupTimer.IsEnabled)
+                    AutoBackupTimer.Start();
+
+                AutoBackupVertexList.Add(baseVertex);
+            }
         }
 
         private void AutoBackupTimer_Elapsed(object sender, EventArgs e)
@@ -466,8 +473,13 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
         void StopAutoBackup()
         {
-            if(AutoBackupTimer != null && AutoBackupTimer.IsEnabled)
+            if (AutoBackupTimer != null && AutoBackupTimer.IsEnabled)
+            {
                 AutoBackupTimer.Stop();
+
+                if (AutoBackupVertexList.Contains(baseVertex))
+                    AutoBackupVertexList.Remove(baseVertex);
+            }
         }
 
         void AddChangeListenersToAllTracksAndSong()

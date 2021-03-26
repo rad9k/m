@@ -101,6 +101,9 @@ namespace m0.UIWpf.Controls
         {
             IVertex baseVertex = EdgeVertex.Get(false, @"To:");
 
+            if (baseVertex == null)
+                return;
+
             IVertex r = baseVertex.GetAll(false, @"$Is:");
 
             if (r.Count() == 0)
