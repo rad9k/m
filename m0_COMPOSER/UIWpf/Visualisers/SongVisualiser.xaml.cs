@@ -20,6 +20,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Shapes;
 using m0.ZeroCode;
+using System.Windows.Threading;
 
 namespace m0_COMPOSER.UIWpf.Visualisers
 {
@@ -29,7 +30,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
     public partial class SongVisualiser : ZoomScrollViewBasedVisualiserBase
     {
         public int AutoBackupMinutes = 1;
-        MultimediaTimer AutoBackupTimer;        
+        DispatcherTimer AutoBackupTimer;        
 
         enum PlayRecordStateEnum { Stop, Play, Record }
 
@@ -402,13 +403,15 @@ namespace m0_COMPOSER.UIWpf.Visualisers
         {
             baseVertex = Vertex.Get(false, @"BaseEdge:\To:");
 
-            if (baseVertex == null || baseVertex == previousBaseVertex)
+            if (baseVertex == previousBaseVertex)
+                return;
+
+            if (baseVertex == null)
             {
                 baseVertexIsEmpty();
                 return;
             }
                 
-
             if (previousBaseVertex != null)
                 PlatformClass.RemoveVertexChangeListeners_byGenericVertex(previousBaseVertex, new VertexChange(VertexChange_BaseEdge));
 
@@ -442,12 +445,12 @@ namespace m0_COMPOSER.UIWpf.Visualisers
         {
             if (AutoBackupTimer == null)
             {
-                AutoBackupTimer = new MultimediaTimer() { Interval = 10/* * 60 * AutoBackupMinutes*/ };
-
-                AutoBackupTimer.Elapsed += AutoBackupTimer_Elapsed;
+                AutoBackupTimer = new DispatcherTimer();             
+                AutoBackupTimer.Tick += AutoBackupTimer_Elapsed;
+                AutoBackupTimer.Interval = new TimeSpan(0, AutoBackupMinutes, 0);                
             }
 
-            if(!AutoBackupTimer.IsRunning)
+            if(!AutoBackupTimer.IsEnabled)
                 AutoBackupTimer.Start();
         }
 
@@ -457,14 +460,14 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             {
                 IStore store = baseVertex.Store;
 
-                store.Backup();
+               store.Backup();
             }
         }
 
         void StopAutoBackup()
         {
-            if(AutoBackupTimer != null && AutoBackupTimer.IsRunning)
-            AutoBackupTimer.Stop();
+            if(AutoBackupTimer != null && AutoBackupTimer.IsEnabled)
+                AutoBackupTimer.Stop();
         }
 
         void AddChangeListenersToAllTracksAndSong()
@@ -714,6 +717,8 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             if (IsDisposed == false)
             {
                 IsDisposed = true;
+
+                StopAutoBackup();
 
                 DispachAllSubVisualisers();
 
@@ -1001,7 +1006,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
         protected virtual void TimeUpdate()
         {
-            if (PositionMark <= 0)
+            if (PositionMark < 0)
             {
                 Time.Text = "--:--:--";
                 return;
@@ -1155,6 +1160,8 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             IVertex sequenceMeta = r.Get(false, @"System\Lib\Music\Sequence");
 
+            IVertex sequenceEventSequenceMeta = r.Get(false, @"System\Lib\Music\SequenceEvent\Sequence");
+
 
             IEdge tempSequenceEventEdge = trackVertex.AddVertexAndReturnEdge(null, null);
 
@@ -1171,7 +1178,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             IVertex sourceVertex = v.Get(false, "Sequence:");
 
-            IEdge sourceEdge = GraphUtil.FindEdge(v, sequenceMeta, sourceVertex);
+            IEdge sourceEdge = GraphUtil.FindEdge(v, sequenceEventSequenceMeta, sourceVertex);
 
             GraphUtil.DeepCopy(sourceEdge, sequenceEventVertex);
 

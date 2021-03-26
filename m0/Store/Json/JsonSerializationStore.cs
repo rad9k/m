@@ -217,14 +217,14 @@ namespace m0.Store.Json
         {
             if (!canWrite)
             {
-                UserInteractionUtil.ShowError("Json Serlialisation to " + Identifier, "As json serialisation file " + Identifier + " has not been properly loaded, commit(saving) is disabled for the file. This will protect existing file content.");
+                UserInteractionUtil.ShowError("Json Serlialisation to " + fileName, "As json serialisation file " + fileName + " has not been properly loaded, commit(saving) is disabled for the file. This will protect existing file content.");
                 return;
             }
 
             if (checkIfIsDetached && DetachState != DetachStateEnum.Detached)
                 throw new Exception("Store not Detached");
 
-            StreamWriter writeStream = new StreamWriter(Identifier);
+            StreamWriter writeStream = new StreamWriter(fileName);
 
             JsonSerializationData data = GetJsonSerializationData();
 
@@ -356,7 +356,7 @@ namespace m0.Store.Json
                     {
                         IDetachableEdge de = (IDetachableEdge)e;
 
-                        de.Detach();                        
+                        de.UpdateDetachStateData();                
                     }
             }         
         }
@@ -406,13 +406,22 @@ namespace m0.Store.Json
 
         public override void Backup()
         {
-            UpdateDetachStateData();
+            if (DetachState == DetachStateEnum.Attached)
+            {
+                UpdateDetachStateData();
 
-            string fileNamePart = FileSystemUtil.getFileNamePart(fileName);
+
+                string fileName = FileSystemUtil.getFileName(Identifier);
+
+                string extension = FileSystemUtil.getExtension(Identifier);
+
+                string pathPart = FileSystemUtil.getPathPart(Identifier);
+
+                string backupFileName = pathPart + fileName + "_backup." + extension;
 
 
-
-            CommitTransaction("backup of " + Identifier, true);
+                CommitTransaction(backupFileName, false);
+            }
         }
     }
 }
