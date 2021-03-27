@@ -467,7 +467,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             {
                 IStore store = baseVertex.Store;
 
-               store.Backup();
+                store.Backup();
             }
         }
 

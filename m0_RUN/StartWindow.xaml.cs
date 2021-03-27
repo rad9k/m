@@ -24,9 +24,9 @@ namespace m0
         {
             InitializeComponent();
 
-            m0_RUN.Main.Run();
+           // m0_RUN.Main.Run();
 
-            Close();            
+          //  Close();            
         }
 
         private void button1_Click(object sender, RoutedEventArgs e)
