@@ -127,5 +127,14 @@ namespace m0.UIWpf.Dialog
             
             SetState(StateEnum.AfterExecution);
         }
+
+        private void UserControl_Unloaded(object sender, RoutedEventArgs e)
+        {
+            InputStackContentControl.Dispose();
+            InputStackEdgeControl.Dispose();
+
+            OutputStackContentControl.Dispose();
+            OutputStackEdgeControl.Dispose();
+        }
     }
 }

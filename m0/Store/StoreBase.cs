@@ -218,6 +218,7 @@ namespace m0.Store
         public virtual void RemoveVertexIdentifier(IVertex Vertex)
         {
             VertexIdentifiersDictionary.Remove(Vertex.Identifier);
+            // THIS IS ONLY A TEST
         }
 
         public virtual IVertex GetVertexByIdentifier(object VertexIdentifier)

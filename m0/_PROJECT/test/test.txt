@@ -9,6 +9,16 @@
 	out = s\:Substring[In, "1", "4"]
 
 "Y"
+	variable "s" @VertexType
+	import @System\Lib\Std direct meta
+	variable "out" @String
+	variable "In" @VertexType
+	In = "r"
+	In += "dw a"
+	In += "12345"
+	out = @@Substring[In, "1", "4"]
+
+"Y"
 	import @System\Meta\Store\FileSystem direct meta
 	"o" ::
 	o = Drive:C\:m0
@@ -16,6 +26,18 @@
 	"oo" ::
 	oo = Drive:C\:m0\:'x.m0'\$Store
 	oo <- "siema"
+
+"Y"
+	import @System\Lib\Std direct meta
+	import @System\Meta\Store\FileSystem direct meta
+	"o" ::
+	o = Drive:C\:m0
+	o +< @@File :: "x.m0"
+	"oo" ::
+	oo = Drive:C\:m0\:'x.m0'\$Store
+	oo <- "siema"{
+		foreach "x" in @@Sequence["1", "10"]
+	}
 
 
 
@@ -27,6 +49,28 @@
 		"C" :: "CC"{
 			"D" :: "DD"
 		}
+	}
+
+"Y"
+	import @System\Lib\Std direct meta
+	import @System\Meta\Store\FileSystem direct meta
+	"o" ::
+	o = Drive:C\:m0
+	o +< @@File :: "x.m0"
+	"oo" ::
+	oo = Drive:C\:m0\:'x.m0'\$Store
+	oo <+< :: "siemaX"{
+		foreach "x" in @@Sequence["1", "10"]
+			:: x{
+				foreach "y" in @@Sequence["1", "10"]
+					:: y{
+						foreach "z" in @@Sequence["1", "10"]
+							:: z{
+								foreach "v" in @@Sequence["1", "10"]
+									@@System\Meta :: v
+							}
+					}
+			}
 	}
 
 "Y"
