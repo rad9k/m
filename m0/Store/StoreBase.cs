@@ -73,7 +73,7 @@ namespace m0.Store
                         IDetachableEdge de = (IDetachableEdge)e;
 
                         if (de.To.Store != this || (de.Meta != null && de.Meta.Store != this)) // WHY NOT ALL ????????
-                            de.Detach();                        
+                            de.UpdateDetachStateData();
                     }
             }
         }

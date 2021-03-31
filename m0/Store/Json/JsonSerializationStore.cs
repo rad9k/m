@@ -349,8 +349,7 @@ namespace m0.Store.Json
         public override void UpdateDetachStateData()
         {                        
             foreach (IVertex v in VertexIdentifiersDictionary.Values.ToList())
-            {
-                //foreach (IEdge e in v.OutEdges)
+            {                
                 foreach (IEdge e in v.OutEdgesRaw)
                     if (e is IDetachableEdge)
                     {
