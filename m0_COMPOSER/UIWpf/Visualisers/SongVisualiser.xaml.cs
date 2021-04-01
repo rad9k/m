@@ -97,6 +97,9 @@ namespace m0_COMPOSER.UIWpf.Visualisers
                     PlayRecordState = PlayRecordStateEnum.Stop;
                     PlayButton.IsChecked = false;
                     RecordButton.IsChecked = false;
+
+                    MuteAllOutput();
+
                     break;
 
                 case PlayRecordStateEnum.Play:
@@ -287,9 +290,9 @@ namespace m0_COMPOSER.UIWpf.Visualisers
                 RepeatOn = false;
         }
 
-        private void MuteSpeakerButton_Click(object sender, RoutedEventArgs e)
+        void MuteAllOutput()
         {
-            foreach(IEdge outputEdge in baseVertex.GetAll(false, @"Track:\Output:"))
+            foreach (IEdge outputEdge in baseVertex.GetAll(false, @"Track:\Output:"))
             {
                 IVertex outputVertex = outputEdge.To;
 
@@ -297,6 +300,11 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
                 ZeroCodeExecutonUtil.CreateExecutionAndVertexExecute(silentMethod, outputVertex);
             }
+        }
+
+        private void MuteSpeakerButton_Click(object sender, RoutedEventArgs e)
+        {
+            MuteAllOutput();
         }
 
         void InitializeSongVertex()
