@@ -243,6 +243,60 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             SetPosition(0);
 
             SetPlayRecordState(PlayRecordStateEnum.Stop);
+
+            //
+
+            IVertex r = MinusZero.Instance.root;
+
+            IVertex note = r.Get(false, @"System\Lib\Music\Data\BasePitchSet\VisualisedPitch:");
+
+            IVertex ou = r.Get(false, @"Hardware\my\MidiDevice:\Output:");
+
+            IVertex to = r.Get(false, @"System\Lib\Music\Track\Output");
+
+            for (int x = 0; x < 10; x++)
+            {
+
+                IVertex v = VertexOperations.AddInstance(baseVertex, r.Get(false, @"System\Lib\Music\Track"), r.Get(false, @"System\Lib\Music\Song\Track"));
+
+                v.Value = GetNameForNewTrack();
+
+                GraphUtil.CreateOrReplaceEdge(v, to, ou);
+
+                AxisSegment s = VerticalAD.Segments[x];
+
+                IEdge ee = AddItemEdge(s, 100, 200);
+
+                for (int y = 0; y < 10; y++)
+                    AddNoteVertex(ee.To.Get(false, "Sequence:"), note.Get(false, "Octave:"), note.Get(false, "Note:") , 100, 200, 200);
+
+            }
+        }
+
+        protected IEdge AddNoteVertex(IVertex b, IVertex octave, IVertex note, int triggerTime, int length, int velocity)
+        {
+            IVertex r = MinusZero.Instance.Root;
+
+            IVertex Event = r.Get(false, @"System\Lib\Music\Event");
+            IVertex noteEvent = r.Get(false, @"System\Lib\Music\NoteEvent");
+
+            IEdge tempNoteEventEdge = b.AddVertexAndReturnEdge(null, null);
+
+            IVertex noteEventVertex = tempNoteEventEdge.To;
+
+            noteEventVertex.AddEdge(MinusZero.Instance.Is, noteEvent);
+
+            noteEventVertex.AddVertex(noteEvent.Get(false, @"Attribute:TriggerTime"), triggerTime);
+            noteEventVertex.AddVertex(noteEvent.Get(false, @"Attribute:Length"), length);
+            noteEventVertex.AddEdge(noteEvent.Get(false, @"Attribute:Octave"), octave);
+            noteEventVertex.AddEdge(noteEvent.Get(false, @"Attribute:Note"), note);
+            noteEventVertex.AddVertex(noteEvent.Get(false, @"Attribute:Velocity"), velocity);
+
+            IEdge finalEdge = b.AddEdge(Event, noteEventVertex);
+
+            b.DeleteEdge(tempNoteEventEdge);
+
+            return finalEdge;
         }
 
         private void PlayButton_Click(object sender, RoutedEventArgs e)
@@ -292,6 +346,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
         void MuteAllOutput()
         {
+            if(baseVertex!=null)
             foreach (IEdge outputEdge in baseVertex.GetAll(false, @"Track:\Output:"))
             {
                 IVertex outputVertex = outputEdge.To;
