@@ -1094,6 +1094,12 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             string seconds = null;
             string miliseconds = null;
 
+            if(rt.Second < 0)
+            {
+                Time.Text = "--:--:--";
+                return;
+            }
+
             if (rt.Second < 10)
                 seconds = "0" + rt.Second;
             else
