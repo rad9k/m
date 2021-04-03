@@ -309,11 +309,16 @@ namespace m0.Store.Json
                         else
                             je.ToIdLong = (long)de.ToIdentifier; // :)
 
-                        IVertex toVertex = GetVertexByIdentifier(je.ToIdLong);
+                        ///// TEST START XXX
 
-                        if (je.MetaIdLong == (long)4218 && (int)toVertex.Value == 127)
+                        if (je.ToIdLong != 0)
                         {
-                            int x = 0;
+                            IVertex toVertex = GetVertexByIdentifier(je.ToIdLong);
+
+                            if (je.MetaIdLong == (long)4218 && toVertex.Value is int && (int)toVertex.Value == 127)
+                            {
+                                int x = 0;
+                            }
                         }
 
                         jv.Edges.Add(je);
