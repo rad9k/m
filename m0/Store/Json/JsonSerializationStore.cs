@@ -311,7 +311,7 @@ namespace m0.Store.Json
 
                         ///// TEST START XXX
 
-                        if (je.ToIdLong != 0)
+                        if (je.ToIdLong != 0 && je.ToStoreId == 0)
                         {
                             IVertex toVertex = GetVertexByIdentifier(je.ToIdLong);
 
