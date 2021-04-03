@@ -1,6 +1,7 @@
 ﻿using m0.Foundation;
 using m0.Graph;
 using m0.Util;
+using m0.ZeroCode.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -51,7 +52,7 @@ namespace m0_COMPOSER.Lib
 
             foreach (IEdge e in baseVertex.GetAll(false, @"Track:"))
             {
-                IVertex noteOutputVeretx = e.To.Get(false, "Output:");
+                IVertex noteOutputVeretx = e.To.Get(false, @"Output:");
 
                 bool canPlay = true;
 
@@ -67,7 +68,7 @@ namespace m0_COMPOSER.Lib
                         canPlay = false;
                 }
 
-                if (noteOutputVeretx != null && canPlay)
+                if (noteOutputVeretx != null && canPlay && InstructionHelpers.CheckIfIsOrInherits_I_WOULD_SAY_THAT_THIS_WAS_WRONG(noteOutputVeretx, "NoteOutput"))
                     outputDictionary.Add(noteOutputVeretx);
                 else
                     outputDictionary.Add(null);
