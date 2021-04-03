@@ -57,11 +57,11 @@ namespace m0.Graph
 
             ///// TEST START XXX
 
-            IVertex toVertex = To.Store.GetVertexByIdentifier(ToIdentifier);
-            if (MetaIdentifier is long && (long)MetaIdentifier == (long)4218 && toVertex.Value is int && (int)toVertex.Value == 127)
-            {
-                int x = 0;
-            }
+         //   IVertex toVertex = To.Store.GetVertexByIdentifier(ToIdentifier);
+          //  if (MetaIdentifier is long && (long)MetaIdentifier == (long)4218 && toVertex.Value is int && (int)toVertex.Value == 127)
+          //  {
+          //      int x = 0;
+          //  }
         }
 
         public void Detach()
