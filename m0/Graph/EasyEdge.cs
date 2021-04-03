@@ -54,6 +54,12 @@ namespace m0.Graph
 
                 MetaIdentifier = Meta.Identifier;
             }
+
+            IVertex toVertex = To.Store.GetVertexByIdentifier(ToIdentifier);
+            if ((long)MetaIdentifier == (long)4218 && (int)toVertex.Value == 127)
+            {
+                int x = 0;
+            }
         }
 
         public void Detach()

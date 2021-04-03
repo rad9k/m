@@ -309,6 +309,12 @@ namespace m0.Store.Json
                         else
                             je.ToIdLong = (long)de.ToIdentifier; // :)
 
+                        IVertex toVertex = GetVertexByIdentifier(je.ToIdLong);
+
+                        if (je.MetaIdLong == (long)4218 && (int)toVertex.Value == 127)
+                        {
+                            int x = 0;
+                        }
 
                         jv.Edges.Add(je);
                     }
