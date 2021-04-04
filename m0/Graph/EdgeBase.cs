@@ -50,7 +50,7 @@ namespace m0.Graph
 
             //// TEST XXX
 
-            if (Meta != null && Meta.Identifier is long && (long)Meta.Identifier == (long)4218 && To.Value is int && (int)To.Value == 127) {
+            if (Meta != null && Meta.Identifier is long && (long)Meta.Identifier == (long)4218 && To.Value is int /*&& (int)To.Value == 127*/) {
                 int x = 0;
             }
 

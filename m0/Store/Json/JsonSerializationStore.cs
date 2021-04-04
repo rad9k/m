@@ -315,7 +315,7 @@ namespace m0.Store.Json
                         {
                             IVertex toVertex = GetVertexByIdentifier(je.ToIdLong);
 
-                            if (je.MetaIdLong == (long)4218 && toVertex.Value is int && (int)toVertex.Value == 127)
+                            if (je.MetaIdLong == (long)4218 && toVertex.Value is int /*&& (int)toVertex.Value == 127*/)
                             {
                                 int x = 0;
                             }
