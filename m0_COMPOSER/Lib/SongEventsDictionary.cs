@@ -12,10 +12,12 @@ namespace m0_COMPOSER.Lib
 {
     public class SongEvent {
         public int trackNumber;
-        public IVertex eventVertex;
+        public IVertex eventVertex;        
     }
 
-    public class NoteOnEvent : SongEvent {}
+    public class NoteOnEvent : SongEvent {
+        public bool isDrum;
+    }
 
     public class NoteOffEvent : SongEvent {}
 
@@ -117,15 +119,20 @@ namespace m0_COMPOSER.Lib
 
             tempDictAdd(baseTriggerTime + triggerTime, one);
 
-            // NoteOff
+            if (length == 0)
+                one.isDrum = true;
+            else
+            {                
+                // NoteOff
 
-            NoteOffEvent offe = new NoteOffEvent();
+                NoteOffEvent offe = new NoteOffEvent();
 
-            offe.trackNumber = trackNumber;
+                offe.trackNumber = trackNumber;
 
-            offe.eventVertex = eventVertex;
+                offe.eventVertex = eventVertex;
 
-            tempDictAdd(baseTriggerTime + triggerTime + length, offe);
+                tempDictAdd(baseTriggerTime + triggerTime + length, offe);
+            }
         }
 
         void AddControlChangeEvent(int trackNumber, int baseTriggerTime, IVertex eventVertex)

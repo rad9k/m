@@ -17,8 +17,18 @@ using System.Threading.Tasks;
 
 namespace m0_COMPOSER.Lib
 {
+    class DrumHitHighlight
+    {
+        public IVertex eventVertex;
+        public int ticksLeft;
+    }
+
     public class SongPlay
     {
+        public int drumHitHighlightTicks = 200;
+
+        IList<DrumHitHighlight> drumHitHighlightList = new List<DrumHitHighlight>();
+
         public IExecution exe;
         public IVertex SongVertex;
         public SongEventsDictionary SongDictionary;
@@ -83,9 +93,7 @@ namespace m0_COMPOSER.Lib
 
             //
 
-            Timer = new MultimediaTimer() { Interval = 1, Resolution = 0 };
-
-            //Timer = new MultimediaTimer() { Interval = 1000};
+            Timer = new MultimediaTimer() { Interval = 1, Resolution = 0 };            
 
             Timer.Elapsed += Tick;
 
@@ -285,6 +293,23 @@ namespace m0_COMPOSER.Lib
 
                 PositionUpdate((int)nowInTicks, true);
             }
+
+            DrumHitTicks();
+        }
+
+        void DrumHitTicks()
+        {
+            foreach(DrumHitHighlight dh in drumHitHighlightList.ToList())
+            {
+                dh.ticksLeft--;
+
+                if(dh.ticksLeft == 0)
+                {
+                    drumHitHighlightList.Remove(dh);
+                    DoItemHighlight(dh.eventVertex, HighlightType.Stop);
+                }
+
+            }
         }
 
         int prevNowInTicksReduced = 0;
@@ -326,7 +351,9 @@ namespace m0_COMPOSER.Lib
             }
         }
 
-        void PlayOrStopHighlight(IVertex eventVertex, bool isStop)
+        enum HighlightType { Play, Stop, DrumHit}
+
+        void DoItemHighlight(IVertex eventVertex, HighlightType type)
         {
             IList<IItem> items = ItemDictionary.Get(eventVertex);
 
@@ -335,10 +362,26 @@ namespace m0_COMPOSER.Lib
 
             foreach (IItem i in items.ToList())
                 m0Main.Instance.Dispatcher.Invoke(() => {
-                    if(!isStop)                        
-                        i.PlayHighlight();
-                    else
-                        i.StopHighlight();
+                    switch (type)
+                    {
+                        case HighlightType.Play:
+                            i.PlayHighlight();
+                            break;
+
+                        case HighlightType.Stop:
+                            i.StopHighlight();
+                            break;
+
+                        case HighlightType.DrumHit:
+                            i.PlayHighlight();
+
+                            DrumHitHighlight dh = new DrumHitHighlight();
+                            dh.ticksLeft = drumHitHighlightTicks;
+                            dh.eventVertex = eventVertex;
+
+                            drumHitHighlightList.Add(dh);
+                            break;
+                    }                    
                 });
         }
 
@@ -357,7 +400,10 @@ namespace m0_COMPOSER.Lib
                 ZeroCodeExecutonUtil.MethodCallFromHost(exe, playMethod, outputVertex, parameters);                
             }
 
-            PlayOrStopHighlight(e.eventVertex, false);
+            if(e.isDrum)
+                DoItemHighlight(e.eventVertex, HighlightType.DrumHit);
+            else
+                DoItemHighlight(e.eventVertex, HighlightType.Play);
         }
 
         public void NoteOffEvent(NoteOffEvent e)
@@ -375,7 +421,7 @@ namespace m0_COMPOSER.Lib
                 ZeroCodeExecutonUtil.MethodCallFromHost(exe, playMethod, outputVertex, parameters);                
             }
 
-            PlayOrStopHighlight(e.eventVertex, true);
+            DoItemHighlight(e.eventVertex, HighlightType.Stop);
         }
 
         public void ControlChangeEvent(ControlChangeEvent e)
