@@ -102,12 +102,19 @@ namespace m0.Store.Json
 
         private void ReconstructVerticesFromSerialisationData(JsonSerializationData data)
         {
-            foreach(JsonVertex jv in data.Vertices)
+            long maxVertexIdentifierCount = 0;
+
+            foreach (JsonVertex jv in data.Vertices)
             {                
                 EasyVertex v = new EasyVertex(this);
 
                 if (jv.IdString == null)
+                {
                     v._Identifier = jv.IdLong;
+
+                    if ((long)v.Identifier > maxVertexIdentifierCount)
+                        maxVertexIdentifierCount = (long)v.Identifier;
+                }
                 else
                     v._Identifier = jv.IdString;
 
@@ -190,6 +197,9 @@ namespace m0.Store.Json
                     v.OutEdgesRaw.Add(e);
                 }
             }
+
+            if (maxVertexIdentifierCount > 0)
+                VertexIdentifierCount = maxVertexIdentifierCount + 1;
         }
 
         public override void Refresh()
@@ -315,7 +325,8 @@ namespace m0.Store.Json
                         {
                             IVertex toVertex = GetVertexByIdentifier(je.ToIdLong);
 
-                            if (je.MetaIdLong == (long)4218 && toVertex.Value is int /*&& (int)toVertex.Value == 127*/)
+                            if ((je.MetaIdLong == (long)4218 || je.MetaIdLong == (long)4127)                                
+                                && toVertex.Value is int /*&& (int)toVertex.Value == 127*/)
                             {
                                 int x = 0;
                             }
@@ -427,7 +438,7 @@ namespace m0.Store.Json
 
                 string pathPart = FileSystemUtil.getPathPart(Identifier);
 
-                string backupFileName = pathPart + fileName + "_backup." + extension;
+                string backupFileName = pathPart + fileName + "." + extension + ".backup";
 
 
                 CommitTransaction(backupFileName, false);

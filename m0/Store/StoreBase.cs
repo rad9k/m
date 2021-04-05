@@ -213,6 +213,14 @@ namespace m0.Store
         {            
             if (!VertexIdentifiersDictionary.ContainsKey(Vertex.Identifier))
                 VertexIdentifiersDictionary.Add(Vertex.Identifier,Vertex);
+            else // XXX
+            {
+                if (VertexIdentifiersDictionary[Vertex.Identifier] != Vertex)
+                {
+                    int x = 0;
+                }
+            }
+
         }
 
         public virtual void RemoveVertexIdentifier(IVertex Vertex)

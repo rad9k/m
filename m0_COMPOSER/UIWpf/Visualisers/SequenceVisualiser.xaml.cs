@@ -410,8 +410,8 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             noteEventVertex.AddVertex(noteEvent.Get(false, @"Attribute:TriggerTime"), triggerTime);
             noteEventVertex.AddVertex(noteEvent.Get(false, @"Attribute:Length"), length);
-            noteEventVertex.AddEdge(noteEvent.Get(false, @"Attribute:Octave"), octave);
-            noteEventVertex.AddEdge(noteEvent.Get(false, @"Attribute:Note"), note);            
+            noteEventVertex.AddVertex(noteEvent.Get(false, @"Attribute:Octave"), octave.Value);
+            noteEventVertex.AddVertex(noteEvent.Get(false, @"Attribute:Note"), note.Value);            
             noteEventVertex.AddVertex(noteEvent.Get(false, @"Attribute:Velocity"), velocity);
 
             IEdge finalEdge = baseVertex.AddEdge(Event, noteEventVertex);
@@ -660,9 +660,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             IVertex Event = r.Get(false, @"System\Lib\Music\Event");
             IVertex noteEvent = r.Get(false, @"System\Lib\Music\NoteEvent");            
 
-            IVertex noteEventVertex = noteEventEdge.To;
-
-            noteEventVertex.AddEdge(MinusZero.Instance.Is, noteEvent);
+            IVertex noteEventVertex = noteEventEdge.To;            
 
             GraphUtil.SetVertexValue(noteEventVertex, noteEvent.Get(false, @"Attribute:TriggerTime"), triggerTime);
             GraphUtil.SetVertexValue(noteEventVertex, noteEvent.Get(false, @"Attribute:Length"), length);
@@ -678,9 +676,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             IVertex Event = r.Get(false, @"System\Lib\Music\Event");
             IVertex noteEvent = r.Get(false, @"System\Lib\Music\ControlChangeEvent");
 
-            IVertex noteEventVertex = ccEventEdge.To;
-
-            noteEventVertex.AddEdge(MinusZero.Instance.Is, noteEvent);
+            IVertex noteEventVertex = ccEventEdge.To;            
 
             GraphUtil.SetVertexValue(noteEventVertex, noteEvent.Get(false, @"Attribute:Number"), number);
             GraphUtil.SetVertexValue(noteEventVertex, noteEvent.Get(false, @"Attribute:Value"), value);
