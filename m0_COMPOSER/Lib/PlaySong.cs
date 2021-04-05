@@ -25,7 +25,7 @@ namespace m0_COMPOSER.Lib
 
     public class SongPlay
     {
-        public int drumHitHighlightTicks = 200;
+        public int hitHighlightTicks = 200;
 
         IList<HitHighlight> hitHighlightList = new List<HitHighlight>();
 
@@ -351,7 +351,7 @@ namespace m0_COMPOSER.Lib
             }
         }
 
-        enum HighlightType { Play, Stop, DrumHit}
+        enum HighlightType { Play, Stop, Hit}
 
         void DoItemHighlight(IVertex eventVertex, HighlightType type)
         {
@@ -372,11 +372,11 @@ namespace m0_COMPOSER.Lib
                             i.StopHighlight();
                             break;
 
-                        case HighlightType.DrumHit:
+                        case HighlightType.Hit:
                             i.PlayHighlight();
 
                             HitHighlight dh = new HitHighlight();
-                            dh.ticksLeft = drumHitHighlightTicks;
+                            dh.ticksLeft = hitHighlightTicks;
                             dh.eventVertex = eventVertex;
 
                             hitHighlightList.Add(dh);
@@ -401,7 +401,7 @@ namespace m0_COMPOSER.Lib
             }
 
             if(e.isDrum)
-                DoItemHighlight(e.eventVertex, HighlightType.DrumHit);
+                DoItemHighlight(e.eventVertex, HighlightType.Hit);
             else
                 DoItemHighlight(e.eventVertex, HighlightType.Play);
         }
@@ -438,6 +438,8 @@ namespace m0_COMPOSER.Lib
 
                 ZeroCodeExecutonUtil.MethodCallFromHost(exe, playMethod, outputVertex, parameters);
             }
+
+            DoItemHighlight(e.eventVertex, HighlightType.Hit);
         }
     }
 }

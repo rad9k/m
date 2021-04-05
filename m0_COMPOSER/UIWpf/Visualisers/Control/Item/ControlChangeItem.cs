@@ -110,9 +110,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control.Item
             //HiddenBottom = Bottom;
         }
 
-        public void PlayHighlight() {
-            isSelected = true;
-
+        public void PlayHighlight() {            
             BorderThickness = new Thickness(1);
 
             Background = (Brush)WpfUtil.FindResource("0HardHighlightBrush");

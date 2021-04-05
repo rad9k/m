@@ -242,35 +242,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
         {
             SetPosition(0);
 
-            SetPlayRecordState(PlayRecordStateEnum.Stop);
-
-            //
-
-            IVertex r = MinusZero.Instance.root;
-
-            IVertex note = r.Get(false, @"System\Lib\Music\Data\BasePitchSet\VisualisedPitch:");
-
-            IVertex ou = r.Get(false, @"Hardware\my\MidiDevice:\Output:");
-
-            IVertex to = r.Get(false, @"System\Lib\Music\Track\Output");
-
-            for (int x = 0; x < 10; x++)
-            {
-
-                IVertex v = VertexOperations.AddInstance(baseVertex, r.Get(false, @"System\Lib\Music\Track"), r.Get(false, @"System\Lib\Music\Song\Track"));
-
-                v.Value = GetNameForNewTrack();
-
-                GraphUtil.CreateOrReplaceEdge(v, to, ou);
-
-                AxisSegment s = VerticalAD.Segments[x];
-
-                IEdge ee = AddItemEdge(s, 100, 200);
-
-                for (int y = 0; y < 10; y++)
-                    AddNoteVertex(ee.To.Get(false, "Sequence:"), note.Get(false, "Octave:"), note.Get(false, "Note:") , 100, 200, 200);
-
-            }
+            SetPlayRecordState(PlayRecordStateEnum.Stop);            
         }
 
         protected IEdge AddNoteVertex(IVertex b, IVertex octave, IVertex note, int triggerTime, int length, int velocity)
