@@ -17,7 +17,7 @@ using System.Threading.Tasks;
 
 namespace m0_COMPOSER.Lib
 {
-    class DrumHitHighlight
+    class HitHighlight
     {
         public IVertex eventVertex;
         public int ticksLeft;
@@ -27,7 +27,7 @@ namespace m0_COMPOSER.Lib
     {
         public int drumHitHighlightTicks = 200;
 
-        IList<DrumHitHighlight> drumHitHighlightList = new List<DrumHitHighlight>();
+        IList<HitHighlight> hitHighlightList = new List<HitHighlight>();
 
         public IExecution exe;
         public IVertex SongVertex;
@@ -299,13 +299,13 @@ namespace m0_COMPOSER.Lib
 
         void DrumHitTicks()
         {
-            foreach(DrumHitHighlight dh in drumHitHighlightList.ToList())
+            foreach(HitHighlight dh in hitHighlightList.ToList())
             {
                 dh.ticksLeft--;
 
                 if(dh.ticksLeft == 0)
                 {
-                    drumHitHighlightList.Remove(dh);
+                    hitHighlightList.Remove(dh);
                     DoItemHighlight(dh.eventVertex, HighlightType.Stop);
                 }
 
@@ -375,11 +375,11 @@ namespace m0_COMPOSER.Lib
                         case HighlightType.DrumHit:
                             i.PlayHighlight();
 
-                            DrumHitHighlight dh = new DrumHitHighlight();
+                            HitHighlight dh = new HitHighlight();
                             dh.ticksLeft = drumHitHighlightTicks;
                             dh.eventVertex = eventVertex;
 
-                            drumHitHighlightList.Add(dh);
+                            hitHighlightList.Add(dh);
                             break;
                     }                    
                 });
