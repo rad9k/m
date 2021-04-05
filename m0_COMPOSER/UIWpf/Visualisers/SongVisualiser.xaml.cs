@@ -505,8 +505,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             CheckOrStartAutoBackup();
         }
-
-        int ct = 0;
+        
         void CheckOrStartAutoBackup()
         {
             if (!AutoBackupVertexList.Contains(baseVertex))
@@ -515,9 +514,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
                 {
                     AutoBackupTimer = new DispatcherTimer();
                     AutoBackupTimer.Tick += AutoBackupTimer_Elapsed;
-                    AutoBackupTimer.Interval = new TimeSpan(0, 0, 10);//AutoBackupMinutes, 0);
-
-                    ct = 0;
+                    AutoBackupTimer.Interval = new TimeSpan(0, AutoBackupMinutes, 0);
                 }
 
                 if (!AutoBackupTimer.IsEnabled)
@@ -533,11 +530,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             {
                 IStore store = baseVertex.Store;
 
-                store.Backup();
-
-                ct++;
-
-                cnt.Content = ct;
+                store.Backup();                
             }
         }
 
@@ -931,7 +924,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             if (selectedVertexes != null && selectedVertexes.Contains(itemEventVertex))
             {
-                newElement.Select();
+                newElement.SelectHighlight();
                 PreviousSelectedItemContext = MainDownEnum.Main;
             }
 

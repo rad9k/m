@@ -176,7 +176,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             if (selectedVertexes != null && selectedVertexes.Contains(itemEventVertex))
             {
-                newItem.Select();
+                newItem.SelectHighlight();
                 PreviousSelectedItemContext = MainDownEnum.Main;
             }
 

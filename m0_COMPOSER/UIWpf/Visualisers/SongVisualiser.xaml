@@ -11,7 +11,6 @@
     <DockPanel>
         <ToolBarTray DockPanel.Dock="Top">
             <ToolBar>
-                <Label Name="cnt"/>
                 <Button Name="RewindButton" ToolTip="Rewind" Click="RewindButton_Click">
                     <StackPanel Orientation="Horizontal">
                         <Image RenderOptions.BitmapScalingMode="HighQuality" Source="pack://application:,,/m0;Component/_resources/basic/rewind.png" Width="15" Height="15"/>

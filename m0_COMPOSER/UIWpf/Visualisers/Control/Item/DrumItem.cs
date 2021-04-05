@@ -39,11 +39,17 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control.Item
             Canvas = canvas;
 
             Canvas.Children.Add(this);
+
+
+            ItemDictionary.Add(this);
         }
 
         public void Remove()
         {
             Canvas.Children.Remove(this);
+
+
+            ItemDictionary.Remove(this);
         }
 
         public IEdge BaseEdge { get; set; }
@@ -95,7 +101,24 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control.Item
             path.Fill = b;
         }
 
-        public void Select()
+        public void PlayHighlight()
+        {            
+            path.StrokeThickness = 2;
+
+            SetBorder((Brush)WpfUtil.FindResource("0HardHighlightBrush"));
+
+            SetBackground((Brush)WpfUtil.FindResource("0HardHighlightBrush"));
+        }
+
+        public void StopHighlight()
+        {
+            if (isSelected)
+                SelectHighlight();
+            else
+                NoHighlight();
+        }
+
+        public void SelectHighlight()
         {
             isSelected = true;
 
@@ -106,7 +129,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control.Item
             SetBackground((Brush)WpfUtil.FindResource("0HighlightBrush"));
         }
 
-        public void Unselect()
+        public void NoHighlight()
         {
             isSelected = false;
 
@@ -203,7 +226,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control.Item
            
             Update();            
 
-            Unselect();            
+            NoHighlight();            
         }
 
         Brush velocityColorBrush = (Brush)WpfUtil.FindResource("0LightForegroundBrush");

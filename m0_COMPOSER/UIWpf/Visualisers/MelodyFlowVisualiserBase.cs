@@ -128,7 +128,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             if (selectedVertexes != null && selectedVertexes.Contains(quantVertex))
             {
-                newItem.Select();
+                newItem.SelectHighlight();
                 PreviousSelectedItemContext = MainDownEnum.Main;
             }
 
@@ -574,7 +574,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             if (selectedVertexes != null && selectedVertexes.Contains(itemEventVertex) && !isNoteEvent)
             {
-                item.Select();
+                item.SelectHighlight();
                 PreviousSelectedItemContext = MainDownEnum.Down;
             }
 

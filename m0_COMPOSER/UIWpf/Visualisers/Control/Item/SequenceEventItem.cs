@@ -102,9 +102,9 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control.Item
                 trackVertex = value;
 
                 if (isSelected)
-                    Select();
+                    SelectHighlight();
                 else
-                    Unselect();
+                    NoHighlight();
             }
         }
 
@@ -132,9 +132,13 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control.Item
             {
 
             }
-        }        
+        }
 
-        public void Select()
+        public void PlayHighlight() { }
+
+        public void StopHighlight() { }
+
+        public void SelectHighlight()
         {
             isSelected = true;
 
@@ -147,7 +151,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control.Item
             Update();
         }
 
-        public void Unselect()
+        public void NoHighlight()
         {
             isSelected = false;
 
@@ -180,7 +184,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control.Item
 
             RenderOptions.SetEdgeMode(this, EdgeMode.Aliased);            
            
-            Unselect();
+            NoHighlight();
 
             if (showLabel)            
                 Update();                            

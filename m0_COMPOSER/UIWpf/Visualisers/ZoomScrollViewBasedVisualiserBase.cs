@@ -1107,9 +1107,9 @@ namespace m0_COMPOSER.UIWpf.Visualisers
                     IItem item = (IItem)_e;
 
                     if (matched.Contains(_e))
-                        item.Select();
+                        item.SelectHighlight();
                     else
-                        item.Unselect();
+                        item.NoHighlight();
                 }
 
             WpfUtil.SetCursor(Cursors.Arrow);
@@ -1129,7 +1129,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
                     if (matched.Contains(_e))
                         SelectItem(item);
                     else
-                        item.Unselect();
+                        item.NoHighlight();
                 }
 
             CurrentCursorState = CursorStateEnum.ArrowUp;
@@ -1195,7 +1195,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             if (PreviousSelectedItemContext != ic)
                 UnselectAllSelectedItems();
 
-            item.Select();
+            item.SelectHighlight();
 
             AddToSelectedEdges(item.BaseEdge);
 
@@ -1204,7 +1204,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
         protected void UnselectItem(IItem item)
         {
-            item.Unselect();
+            item.NoHighlight();
 
             Edge.DeleteVertexByEdge(Vertex.Get(false, "SelectedEdges:"), item.BaseEdge);
         }
@@ -1786,7 +1786,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             if (selectedVertexes != null && selectedVertexes.Contains(itemEventVertex) && !isNoteEvent)
             {
-                item.Select();
+                item.SelectHighlight();
                 PreviousSelectedItemContext = MainDownEnum.Down;
             }
 
@@ -1977,9 +1977,9 @@ namespace m0_COMPOSER.UIWpf.Visualisers
                     IItem item = (IItem)_e;
 
                     if (matched.Contains(_e))
-                        item.Select();
+                        item.SelectHighlight();
                     else
-                        item.Unselect();
+                        item.NoHighlight();
                 }
 
             WpfUtil.SetCursor(Cursors.Arrow);
@@ -2005,7 +2005,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
                     if (matched.Contains(_e))
                         SelectItem(item);
                     else
-                        item.Unselect();
+                        item.NoHighlight();
                 }
 
             CurrentCursorState = CursorStateEnum.ArrowUp;
@@ -2179,10 +2179,10 @@ namespace m0_COMPOSER.UIWpf.Visualisers
         protected void UnselectAllSelectedItems()
         {
             foreach (IItem i in Items)
-                i.Unselect();
+                i.NoHighlight();
 
             foreach (IItem i in Items_Down)
-                i.Unselect();
+                i.NoHighlight();
 
             UnselectAllSelectedEdges();
         }

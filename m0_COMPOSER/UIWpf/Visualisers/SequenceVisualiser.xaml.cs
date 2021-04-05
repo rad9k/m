@@ -193,7 +193,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             if (selectedVertexes != null && selectedVertexes.Contains(itemEventVertex))
             {
-                newItem.Select();
+                newItem.SelectHighlight();
                 PreviousSelectedItemContext = MainDownEnum.Main;
             }
 
@@ -253,6 +253,8 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
         protected override void DrawItems()
         {
+            ItemDictionary.RemoveAllByHost(this);
+
             List<IVertex> selectedVertexes = GetSelectedVertexes();
 
             foreach (IEdge e in baseVertex.GetAll(false, "Event:"))
@@ -700,6 +702,23 @@ namespace m0_COMPOSER.UIWpf.Visualisers
                     if (GraphUtil.ExistQueryOut(e.To, "$Is", "ControlChangeEvent")
                         && GraphUtil.GetIntegerValue(e.To.Get(false, @"Number:")) == CurrentControlChangeNumber)
                         AddItem_Down(e, selectedVertexes, false, false);
+            }
+        }
+
+        public override void Dispose()
+        {
+            if (IsDisposed == false)
+            {
+                IsDisposed = true;
+
+                DispachAllSubVisualisers();
+
+                ItemDictionary.RemoveAllByHost(this);
+
+                PlatformClass.RemoveVertexChangeListeners(this.Vertex, new VertexChange(VertexChange));
+
+                if (Vertex is IDisposable)
+                    ((IDisposable)Vertex).Dispose();
             }
         }
     }

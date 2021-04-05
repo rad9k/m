@@ -39,12 +39,18 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control.Item
         {
             Canvas = canvas;
 
-            Canvas.Children.Add(this);            
+            Canvas.Children.Add(this);
+
+
+            ItemDictionary.Add(this);
         }
 
         public void Remove()
         {
             Canvas.Children.Remove(this);
+
+
+            ItemDictionary.Remove(this);
         }
 
         public IEdge BaseEdge { get; set; }
@@ -90,7 +96,35 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control.Item
             HiddenBottom = HiddenTop + Height;
         }
 
-        public void Select()
+        public void PlayHighlight()
+        {            
+            BorderThickness = new Thickness(2);
+
+            BorderBrush = (Brush)WpfUtil.FindResource("0HardHighlightBrush");
+
+            Background = (Brush)WpfUtil.FindResource("0HardHighlightBrush");
+
+            if (showLabel)
+            {
+                labelControl.Background = (Brush)WpfUtil.FindResource("0HardHighlightBrush");
+
+                labelControl.Foreground = (Brush)WpfUtil.FindResource("0BackgroundBrush");
+
+                labelControl.Visibility = System.Windows.Visibility.Visible;
+            }
+            else
+                labelControl.Visibility = System.Windows.Visibility.Hidden;
+        }
+
+        public void StopHighlight()
+        {
+            if (isSelected)
+                SelectHighlight();
+            else
+                NoHighlight();
+        }
+
+        public void SelectHighlight()
         {
             isSelected = true;
 
@@ -112,7 +146,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control.Item
                 labelControl.Visibility = System.Windows.Visibility.Hidden;                        
         }
 
-        public void Unselect()
+        public void NoHighlight()
         {
             isSelected = false;
 
@@ -181,7 +215,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control.Item
 
             Update();
            
-            Unselect();
+            NoHighlight();
 
             this.SizeChanged += NoteItem_SizeChanged;
         }

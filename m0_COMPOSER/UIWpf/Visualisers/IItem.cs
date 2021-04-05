@@ -32,9 +32,13 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
         void OpenFormVisualiser();
 
-        void Select();
+        void PlayHighlight();
 
-        void Unselect();
+        void StopHighlight();
+
+        void SelectHighlight();
+
+        void NoHighlight();
 
         void Update();
 

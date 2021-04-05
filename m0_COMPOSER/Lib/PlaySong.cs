@@ -7,6 +7,7 @@ using m0.ZeroCode.Helpers;
 using m0.ZeroTypes;
 using m0_COMPOSER.Midi;
 using m0_COMPOSER.UIWpf.Visualisers;
+using m0_COMPOSER.UIWpf.Visualisers.Control.Item;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -325,6 +326,22 @@ namespace m0_COMPOSER.Lib
             }
         }
 
+        void PlayOrStopHighlight(IVertex eventVertex, bool isStop)
+        {
+            IList<IItem> items = ItemDictionary.Get(eventVertex);
+
+            if (items == null)
+                return;
+
+            foreach (IItem i in items.ToList())
+                m0Main.Instance.Dispatcher.Invoke(() => {
+                    if(!isStop)                        
+                        i.PlayHighlight();
+                    else
+                        i.StopHighlight();
+                });
+        }
+
         public void NoteOnEvent(NoteOnEvent e)
         {
             IVertex outputVertex = OutputDictionary[e.trackNumber];
@@ -337,8 +354,10 @@ namespace m0_COMPOSER.Lib
 
                 parameters.AddEdge(noteOnNoteMeta, e.eventVertex);
 
-                ZeroCodeExecutonUtil.MethodCallFromHost(exe, playMethod, outputVertex, parameters);
+                ZeroCodeExecutonUtil.MethodCallFromHost(exe, playMethod, outputVertex, parameters);                
             }
+
+            PlayOrStopHighlight(e.eventVertex, false);
         }
 
         public void NoteOffEvent(NoteOffEvent e)
@@ -353,8 +372,10 @@ namespace m0_COMPOSER.Lib
 
                 parameters.AddEdge(noteOffNoteMeta, e.eventVertex);
 
-                ZeroCodeExecutonUtil.MethodCallFromHost(exe, playMethod, outputVertex, parameters);
+                ZeroCodeExecutonUtil.MethodCallFromHost(exe, playMethod, outputVertex, parameters);                
             }
+
+            PlayOrStopHighlight(e.eventVertex, true);
         }
 
         public void ControlChangeEvent(ControlChangeEvent e)

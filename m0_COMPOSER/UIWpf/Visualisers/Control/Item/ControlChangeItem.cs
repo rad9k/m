@@ -40,6 +40,9 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control.Item
             Canvas.Children.Add(this);
 
             Canvas.Children.Add(CCTop);
+
+
+            ItemDictionary.Add(this);
         }
 
         public void Remove()
@@ -47,6 +50,9 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control.Item
             Canvas.Children.Remove(this);
 
             Canvas.Children.Remove(CCTop);
+
+
+            ItemDictionary.Remove(this);
         }        
 
         public bool BaseEdgeHasVelocity;
@@ -104,7 +110,29 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control.Item
             //HiddenBottom = Bottom;
         }
 
-        public void Select()
+        public void PlayHighlight() {
+            isSelected = true;
+
+            BorderThickness = new Thickness(1);
+
+            Background = (Brush)WpfUtil.FindResource("0HardHighlightBrush");
+
+            BorderBrush = (Brush)WpfUtil.FindResource("0HardHighlightBrush");
+
+            CCTop.Background = (Brush)WpfUtil.FindResource("0HardHighlightBrush");
+
+            CCTop.BorderBrush = (Brush)WpfUtil.FindResource("0HardHighlightBrush");
+        }
+
+        public void StopHighlight()
+        {
+            if (isSelected)
+                SelectHighlight();
+            else
+                NoHighlight();
+        }
+
+        public void SelectHighlight()
         {
             isSelected = true;
 
@@ -119,7 +147,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control.Item
             CCTop.BorderBrush = (Brush)WpfUtil.FindResource("0HighlightBrush");
         }
 
-        public void Unselect()
+        public void NoHighlight()
         {
             isSelected = false;
 
@@ -158,7 +186,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control.Item
 
             CCTop.Background = backColorBrush;
 
-            Unselect();            
+            NoHighlight();            
         }        
 
         public void Update()
