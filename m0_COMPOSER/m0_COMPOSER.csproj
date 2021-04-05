@@ -75,6 +75,7 @@
     <Compile Include="UIWpf\Visualisers\Control\AxisDecoratorBase.cs" />
     <Compile Include="UIWpf\Visualisers\Control\Item\ControlChangeItem.cs" />
     <Compile Include="UIWpf\Visualisers\Control\Item\DrumItem.cs" />
+    <Compile Include="UIWpf\Visualisers\Control\Item\ItemDictionary.cs" />
     <Compile Include="UIWpf\Visualisers\Control\Item\SequenceEventItem.cs" />
     <Compile Include="UIWpf\Visualisers\Control\LitButton.cs" />
     <Compile Include="UIWpf\Visualisers\Control\LineStyle.cs" />
