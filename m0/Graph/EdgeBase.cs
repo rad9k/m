@@ -46,16 +46,7 @@ namespace m0.Graph
                 _meta.AddMetaInEdge(this);
 
             if (_to!=null) // edge.To==null used for visualizing not existing edges (possible to be filled by user)
-                _to.AddInEdge(this);
-
-            //// TEST XXX
-
-            if (Meta != null && Meta.Identifier is long && To != null
-                && ((long)Meta.Identifier == (long)4218  || (long)Meta.Identifier == (long)4127)
-                && To.Value is int /*&& (int)To.Value == 127*/) {
-                int x = 0;
-            }
-
+                _to.AddInEdge(this);            
         }
 
         public EdgeBase()

@@ -317,20 +317,7 @@ namespace m0.Store.Json
                         if (de.ToIdentifier is string)
                             je.ToIdString = (string)de.ToIdentifier;
                         else
-                            je.ToIdLong = (long)de.ToIdentifier; // :)
-
-                        ///// TEST START XXX
-
-                        if (je.ToIdLong != 0 && je.ToStoreId == 0)
-                        {
-                            IVertex toVertex = GetVertexByIdentifier(je.ToIdLong);
-
-                            if ((je.MetaIdLong == (long)4218 || je.MetaIdLong == (long)4127)                                
-                                && toVertex.Value is int /*&& (int)toVertex.Value == 127*/)
-                            {
-                                int x = 0;
-                            }
-                        }
+                            je.ToIdLong = (long)de.ToIdentifier; // :)                        
 
                         jv.Edges.Add(je);
                     }
