@@ -235,7 +235,7 @@ namespace m0_COMPOSER.Lib
 
             foreach(IEdge trackEdge in SongVertex.GetAll(false, "Track:"))
             {
-                PlatformClass.RegisterVertexChangeListeners_byGenericVertex(trackEdge.To, new VertexChange(SongVertexChange), new string[] { });
+                PlatformClass.RegisterVertexChangeListeners_byGenericVertex(trackEdge.To, new VertexChange(SongVertexChange), new string[] { "Output" });
 
                 foreach(IEdge sequenceEdge in trackEdge.To.GetAll(false, @"SequenceEvent:\Sequence:"))
                     PlatformClass.RegisterVertexChangeListeners_byGenericVertex(sequenceEdge.To, new VertexChange(SongVertexChange), new string[] { });
@@ -270,12 +270,26 @@ namespace m0_COMPOSER.Lib
 
         protected void SongVertexChange(object sender, VertexChangeEventArgs e)
         {
+
+        }
+
+        protected void SongVertexChange(object sender, VertexChangeEventArgs e)
+        {
             StopSongVertexChangeTracking();
             StartSongVertexChangeTracking(); // add new sub vertexes to listen to
+
+            //
+
+            SongDictionary.NeedToRebuildEventDictionary = true;
+            SongDictionary.NeedToRebuildOutputDictionary = true;
 
             IDictionary<int, IList<SongEvent>> newEventDictionary = SongDictionary.GetEventDicionary();
 
             IList<KeyValuePair<int, IList<SongEvent>>> newEventList = newEventDictionary.ToList();
+
+            IList<IVertex> newOutputDictionary = SongDictionary.GetOutputDicionary();
+
+            //
 
             long now = Watch.ElapsedMilliseconds + WatchAddElapsedMiliseconds;
 
@@ -283,8 +297,11 @@ namespace m0_COMPOSER.Lib
 
             prevEventIndex = prevEventIndex = SearchForEventIndex(EventList, (int)nowInTicks);
 
+            //
+
+            OutputDictionary = newOutputDictionary;
             EventDictionary = newEventDictionary;
-            EventList = newEventList;
+            EventList = newEventList;            
         }
 
         public void Tick(object sender, EventArgs e)
