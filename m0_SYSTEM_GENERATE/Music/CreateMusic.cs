@@ -575,6 +575,7 @@ namespace m0_SYSTEM_GENERATE.Music
             GraphUtil.AddAttribute(Song, "Position", Integer, 1, 1, 0);
             GraphUtil.AddAttribute(Song, "LoopBeg", Integer, 0, 1);
             GraphUtil.AddAttribute(Song, "LoopEnd", Integer, 0, 1);
+            GraphUtil.AddAttribute(Song, "IsRepeat", Boolean, 0, 1);
 
             AddMethod(Song, "Record", SongTypeString, "Record", null, new TypeName[] { });
             AddMethod(Song, "Play", SongTypeString, "Play", null, new TypeName[] { });

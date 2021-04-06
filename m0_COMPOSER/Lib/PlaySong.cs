@@ -177,7 +177,7 @@ namespace m0_COMPOSER.Lib
 
             SongVisualiser sv = SongVertexDictionary.GetSongVisualiser(SongVertex);
 
-            if (sv.RepeatOn)
+            if (sv.IsRepeat)
             {
                 loopBeg = GraphUtil.GetIntegerValueOr0(SongVertex.Get(false, "LoopBeg:"));
                 loopEnd = GraphUtil.GetIntegerValueOr0(SongVertex.Get(false, "LoopEnd:"));

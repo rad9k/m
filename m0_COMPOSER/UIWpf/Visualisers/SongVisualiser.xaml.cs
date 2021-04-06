@@ -38,7 +38,9 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
         PlayRecordStateEnum PlayRecordState;
 
-        public bool RepeatOn = false;
+        public bool IsRepeat = false;
+
+        static IVertex isRepeatMeta = r.Get(false, @"System\Lib\Music\Song\IsRepeat");
 
         int Position;
 
@@ -311,9 +313,19 @@ namespace m0_COMPOSER.UIWpf.Visualisers
         private void RepeatButton_Click(object sender, RoutedEventArgs e)
         {
             if (RepeatButton.IsChecked == true)
-                RepeatOn = true;
+                IsRepeat = true;
             else
-                RepeatOn = false;
+                IsRepeat = false;
+
+            GraphUtil.SetVertexValue(baseVertex, isRepeatMeta, IsRepeat);
+        }
+
+        void UpdateRepeatButton()
+        {
+            if (IsRepeat)
+                RepeatButton.IsChecked = true;
+            else
+                RepeatButton.IsChecked = false;
         }
 
         void MuteAllOutput()
@@ -472,6 +484,10 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             positionMarkPrim_Beg = GraphUtil.GetIntegerValueOr0(baseVertex.Get(false, "LoopBeg:"));
             positionMarkPrim_End = GraphUtil.GetIntegerValueOr0(baseVertex.Get(false, "LoopEnd:"));
+
+            //IsRepeat = GraphUtil.GetBooleanValueOrFalse(baseVertex.Get(false, "IsRepeat:"));
+
+            //UpdateRepeatButton();
 
             AddChangeListenersToAllTracksAndSong();
 
