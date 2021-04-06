@@ -171,7 +171,7 @@ namespace m0_COMPOSER.Lib
             if (position > 0)
                 WatchAddElapsedMiliseconds = (long)(position / TicksPerMilisecond);
 
-            prevEventIndex = SearchForEventIndex(position);
+            prevEventIndex = SearchForEventIndex(EventList, position);
 
             //
 
@@ -182,11 +182,11 @@ namespace m0_COMPOSER.Lib
                 loopBeg = GraphUtil.GetIntegerValueOr0(SongVertex.Get(false, "LoopBeg:"));
                 loopEnd = GraphUtil.GetIntegerValueOr0(SongVertex.Get(false, "LoopEnd:"));
 
-                loopBegEventIndex = SearchForEventIndex(loopBeg);
+                loopBegEventIndex = SearchForEventIndex(EventList, loopBeg);
             }
         }
 
-        private int SearchForEventIndex(int position)
+        private int SearchForEventIndex(IList<KeyValuePair<int, IList<SongEvent>>> EventListToUse, int position)
         {
             int currentEventIndex = 0;
 
@@ -196,13 +196,13 @@ namespace m0_COMPOSER.Lib
 
             while (shouldContinue)
             {
-                if (currentEventIndex >= EventList.Count)
+                if (currentEventIndex >= EventListToUse.Count)
                 { // stop            
                     shouldContinue = false;
                     break;
                 }
 
-                if (EventList[currentEventIndex].Key >= position)
+                if (EventListToUse[currentEventIndex].Key >= position)
                 {
                     indexFound = currentEventIndex;
 
@@ -220,11 +220,27 @@ namespace m0_COMPOSER.Lib
 
         public void Start()
         {
+            StartSongVertexChangeTracking();
+
             EmitBankProgramChanges();
 
             Watch.Restart();            
 
             Timer.Start();
+        }
+
+        void StartSongVertexChangeTracking()
+        {
+            PlatformClass.RegisterVertexChangeListeners_byGenericVertex(SongVertex, new VertexChange(SongVertexChange), new string[] {});
+
+            foreach(IEdge trackEdge in SongVertex.GetAll(false, "Track:"))
+            {
+                PlatformClass.RegisterVertexChangeListeners_byGenericVertex(trackEdge.To, new VertexChange(SongVertexChange), new string[] { });
+
+                foreach(IEdge sequenceEdge in trackEdge.To.GetAll(false, @"SequenceEvent:\Sequence:"))
+                    PlatformClass.RegisterVertexChangeListeners_byGenericVertex(sequenceEdge.To, new VertexChange(SongVertexChange), new string[] { });
+            }
+
         }
 
         public void Destroy()
@@ -235,6 +251,40 @@ namespace m0_COMPOSER.Lib
                 Timer.Stop();
                 Timer.Dispose();
             }
+
+            StopSongVertexChangeTracking();
+        }
+
+        void StopSongVertexChangeTracking()
+        {
+            PlatformClass.RemoveVertexChangeListeners_byGenericVertex(SongVertex, new VertexChange(SongVertexChange));
+
+            foreach (IEdge trackEdge in SongVertex.GetAll(false, "Track:"))
+            {
+                PlatformClass.RemoveVertexChangeListeners_byGenericVertex(trackEdge.To, new VertexChange(SongVertexChange));
+
+                foreach (IEdge sequenceEdge in trackEdge.To.GetAll(false, @"SequenceEvent:\Sequence:"))
+                    PlatformClass.RemoveVertexChangeListeners_byGenericVertex(sequenceEdge.To, new VertexChange(SongVertexChange));
+            }
+        }
+
+        protected void SongVertexChange(object sender, VertexChangeEventArgs e)
+        {
+            StopSongVertexChangeTracking();
+            StartSongVertexChangeTracking(); // add new sub vertexes to listen to
+
+            IDictionary<int, IList<SongEvent>> newEventDictionary = SongDictionary.GetEventDicionary();
+
+            IList<KeyValuePair<int, IList<SongEvent>>> newEventList = newEventDictionary.ToList();
+
+            long now = Watch.ElapsedMilliseconds + WatchAddElapsedMiliseconds;
+
+            long nowInTicks = (long)(now * TicksPerMilisecond);
+
+            prevEventIndex = prevEventIndex = SearchForEventIndex(EventList, (int)nowInTicks);
+
+            EventDictionary = newEventDictionary;
+            EventList = newEventList;
         }
 
         public void Tick(object sender, EventArgs e)

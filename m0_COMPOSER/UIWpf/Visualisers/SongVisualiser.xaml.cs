@@ -40,6 +40,10 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
         public bool IsRepeat = false;
 
+        static IVertex r = MinusZero.Instance.Root;
+
+        static IVertex positionMeta = r.Get(false, @"System\Lib\Music\Song\Position");
+
         static IVertex isRepeatMeta = r.Get(false, @"System\Lib\Music\Song\IsRepeat");
 
         int Position;
@@ -485,9 +489,9 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             positionMarkPrim_Beg = GraphUtil.GetIntegerValueOr0(baseVertex.Get(false, "LoopBeg:"));
             positionMarkPrim_End = GraphUtil.GetIntegerValueOr0(baseVertex.Get(false, "LoopEnd:"));
 
-            //IsRepeat = GraphUtil.GetBooleanValueOrFalse(baseVertex.Get(false, "IsRepeat:"));
+            IsRepeat = GraphUtil.GetBooleanValueOrFalse(baseVertex.Get(false, "IsRepeat:"));
 
-            //UpdateRepeatButton();
+            UpdateRepeatButton();
 
             AddChangeListenersToAllTracksAndSong();
 
@@ -1320,10 +1324,6 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             RedrawTracks();
         }
-
-        static IVertex r = MinusZero.Instance.Root;
-
-        static IVertex positionMeta = r.Get(false, @"System\Lib\Music\Song\Position");
 
         public override double PositionMark_Screen
         {
