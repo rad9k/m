@@ -2,6 +2,7 @@
 using m0.Foundation;
 using m0.Graph;
 using m0.Lib;
+using m0.Util;
 using m0.ZeroCode;
 using m0.ZeroCode.Helpers;
 using m0.ZeroTypes;
@@ -77,7 +78,7 @@ namespace m0_COMPOSER.Lib
         {            
             exe = _exe;
 
-            SongVertex = songVertex;
+            SongVertex = SongVertexDictionary.GetRealSongVertex(songVertex);
 
             TicksPerMilisecond = GetMidiTicksPerMilisecond(Tempo);
 
@@ -233,13 +234,14 @@ namespace m0_COMPOSER.Lib
         {
             PlatformClass.RegisterVertexChangeListeners_byGenericVertex(SongVertex, new VertexChange(SongVertexChange), new string[] {});
 
-            foreach(IEdge trackEdge in SongVertex.GetAll(false, "Track:"))
+          /*  foreach(IEdge trackEdge in SongVertex.GetAll(false, "Track:"))
             {
-                PlatformClass.RegisterVertexChangeListeners_byGenericVertex(trackEdge.To, new VertexChange(SongVertexChange), new string[] { "Output" });
+                PlatformClass.RegisterVertexChangeListeners_byGenericVertex(trackEdge.To, new VertexChange(TrackSequenceNoteVertexChange), new string[] { });
+                //PlatformClass.RegisterVertexChangeListeners_byGenericVertex(trackEdge.To, new VertexChange(TrackSequenceNoteVertexChange), new string[] { "Output" });
 
-                foreach(IEdge sequenceEdge in trackEdge.To.GetAll(false, @"SequenceEvent:\Sequence:"))
-                    PlatformClass.RegisterVertexChangeListeners_byGenericVertex(sequenceEdge.To, new VertexChange(SongVertexChange), new string[] { });
-            }
+                foreach (IEdge sequenceEdge in trackEdge.To.GetAll(false, @"SequenceEvent:\Sequence:"))
+                    PlatformClass.RegisterVertexChangeListeners_byGenericVertex(sequenceEdge.To, new VertexChange(TrackSequenceNoteVertexChange), new string[] { });
+            }*/
 
         }
 
@@ -260,23 +262,60 @@ namespace m0_COMPOSER.Lib
             PlatformClass.RemoveVertexChangeListeners_byGenericVertex(SongVertex, new VertexChange(SongVertexChange));
 
             foreach (IEdge trackEdge in SongVertex.GetAll(false, "Track:"))
-            {
-                PlatformClass.RemoveVertexChangeListeners_byGenericVertex(trackEdge.To, new VertexChange(SongVertexChange));
+                AddTrackListeners(trackEdge.To);
+        }
 
-                foreach (IEdge sequenceEdge in trackEdge.To.GetAll(false, @"SequenceEvent:\Sequence:"))
-                    PlatformClass.RemoveVertexChangeListeners_byGenericVertex(sequenceEdge.To, new VertexChange(SongVertexChange));
+        void AddTrackListeners(IVertex trackVertex)
+        {
+            PlatformClass.RemoveVertexChangeListeners_byGenericVertex(trackVertex, new VertexChange(TrackVertexChange));
+
+            foreach (IEdge sequenceEdge in trackVertex.GetAll(false, @"SequenceEvent:\Sequence:"))
+                AddSequenceListener(sequenceEdge.To);
+        }
+
+        void AddSequenceListener(IVertex sequenceEventVertex)
+        {
+            PlatformClass.RemoveVertexChangeListeners_byGenericVertex(sequenceEventVertex, new VertexChange(SequenceNoteVertexChange));
+        }
+
+        protected void SongVertexChange(object sender, VertexChangeEventArgs e)
+        {
+            if (sender == SongVertex.Get(false, "Position:"))
+                return;
+
+            IVertex loopBeg = SongVertex.Get(false, "LoopBeg:");
+            IVertex loopEnd = SongVertex.Get(false, "LoopEnd:");
+
+            if (loopBeg != null && sender == loopBeg)
+                UpdateEventDictionaries();
+
+            if (loopEnd != null && sender == loopEnd)
+                UpdateEventDictionaries();
+
+            if (e.Type == VertexChangeType.EdgeAdded && GeneralUtil.CompareStrings(e.Edge.Meta, "Track")){
+                AddTrackListeners(e.Edge.To);
+                UpdateEventDictionaries();
             }
         }
 
-        protected void SongVertexChange(object sender, VertexChangeEventArgs e)
+        protected void TrackVertexChange(object sender, VertexChangeEventArgs e)
         {
-
+            if (e.Type == VertexChangeType.EdgeAdded && GeneralUtil.CompareStrings(e.Edge.Meta, "SequenceEvent"))
+            {
+                AddSequenceListener(e.Edge.To);
+                UpdateEventDictionaries();
+            }            
         }
 
-        protected void SongVertexChange(object sender, VertexChangeEventArgs e)
+        protected void SequenceNoteVertexChange(object sender, VertexChangeEventArgs e)
         {
-            StopSongVertexChangeTracking();
-            StartSongVertexChangeTracking(); // add new sub vertexes to listen to
+            UpdateEventDictionaries();
+        }
+
+        protected void UpdateEventDictionaries()
+        {
+            //StopSongVertexChangeTracking();
+            //StartSongVertexChangeTracking(); // add new sub vertexes to listen to
 
             //
 

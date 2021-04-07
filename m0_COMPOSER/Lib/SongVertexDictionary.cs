@@ -29,7 +29,17 @@ namespace m0_COMPOSER.Lib
             SongVisusliserDictionary.Add(songVertex, visualiser);
         }
 
-        public static SongVisualiser GetSongVisualiser(IVertex _songVertex)
+        public static IVertex GetRealSongVertex(IVertex _songVertex) // this assumes we have song visualiser running, if no, we are getting the fake songVertex (NoInEdgeInOutVertexVertex)
+        {
+            IVertex songVertex = MakeSongVertexUnique(_songVertex);
+
+            if (SongVisusliserDictionary.ContainsKey(songVertex))
+                return SongVisusliserDictionary[songVertex].SongVertex;
+
+            return _songVertex;
+        }
+
+    public static SongVisualiser GetSongVisualiser(IVertex _songVertex)
         {
             IVertex songVertex = MakeSongVertexUnique(_songVertex);
 

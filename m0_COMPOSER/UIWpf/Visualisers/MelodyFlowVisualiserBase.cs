@@ -34,19 +34,19 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
         protected virtual void CreateFlow()
         {
-            Flow = new MelodyFlow(baseVertex);
+            Flow = new MelodyFlow(SongVertex);
         }
 
         protected override void UpdateVariablesFromBaseVertex()
         {
-            baseVertex = Vertex.Get(false, @"BaseEdge:\To:");
+            SongVertex = Vertex.Get(false, @"BaseEdge:\To:");
 
-            if (baseVertex == null)
+            if (SongVertex == null)
                 return;
 
-            if (baseVertex.Get(false, "$Is:MelodyFlow") == null)
+            if (SongVertex.Get(false, "$Is:MelodyFlow") == null)
             {
-                baseVertex = null;
+                SongVertex = null;
                 return;
             }
 
@@ -94,7 +94,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
         protected override void SetupLocalVariablesFromBaseVertexVertexes()
         {
-            IsDrum = GraphUtil.GetBooleanValueOrFalse(baseVertex.Get(false, "IsDrum:"));
+            IsDrum = GraphUtil.GetBooleanValueOrFalse(SongVertex.Get(false, "IsDrum:"));
 
             if (IsDrum)
                 IsCurrentPenItemCenter = true;
@@ -643,7 +643,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
         {
             IEdge eventEdge = i.BaseEdge;
 
-            GraphUtil.DeleteEdgeByToVertex(baseVertex, eventEdge.To);
+            GraphUtil.DeleteEdgeByToVertex(SongVertex, eventEdge.To);
 
             IFlowQuant quant = Flow.GetQuantFromVertex(eventEdge.To);
 
