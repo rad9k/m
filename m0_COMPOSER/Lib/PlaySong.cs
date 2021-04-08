@@ -24,6 +24,14 @@ namespace m0_COMPOSER.Lib
         public int ticksLeft;
     }
 
+    class PlayState
+    {
+        public int prevEventIndex = 0;
+        public int loopBeg = 0;
+        public int loopBegEventIndex = 0;
+        public int loopEnd = 0;
+    }
+
     public class SongPlay
     {
         public int hitHighlightTicks = 200;
@@ -44,10 +52,7 @@ namespace m0_COMPOSER.Lib
         public Stopwatch Watch;
         public long WatchAddElapsedMiliseconds = 0;
 
-        int prevEventIndex = 0;
-        int loopBeg = 0;
-        int loopBegEventIndex = 0;
-        int loopEnd = 0;
+        PlayState CurrentPlayState;
 
         //
 
@@ -98,7 +103,9 @@ namespace m0_COMPOSER.Lib
 
             Timer.Elapsed += Tick;
 
-            SetupPositionRelated();
+            CurrentPlayState = new PlayState();
+
+            SetupPositionRelated(CurrentPlayState, );
         }
 
         void EmitBankProgramChanges()
@@ -162,7 +169,7 @@ namespace m0_COMPOSER.Lib
             }
         }
 
-        void SetupPositionRelated()
+        void FillPositionRelated(PlayState steteToFill, int positionToUse)
         {
             if (EventList.Count == 0)
                 return;
@@ -172,7 +179,7 @@ namespace m0_COMPOSER.Lib
             if (position > 0)
                 WatchAddElapsedMiliseconds = (long)(position / TicksPerMilisecond);
 
-            prevEventIndex = SearchForEventIndex(EventList, position);
+            steteToFill.prevEventIndex = SearchForEventIndex(EventList, positionToUse);
 
             //
 
@@ -180,10 +187,10 @@ namespace m0_COMPOSER.Lib
 
             if (sv.IsRepeat)
             {
-                loopBeg = GraphUtil.GetIntegerValueOr0(SongVertex.Get(false, "LoopBeg:"));
-                loopEnd = GraphUtil.GetIntegerValueOr0(SongVertex.Get(false, "LoopEnd:"));
+                steteToFill.loopBeg = GraphUtil.GetIntegerValueOr0(SongVertex.Get(false, "LoopBeg:"));
+                steteToFill.loopEnd = GraphUtil.GetIntegerValueOr0(SongVertex.Get(false, "LoopEnd:"));
 
-                loopBegEventIndex = SearchForEventIndex(EventList, loopBeg);
+                steteToFill.loopBegEventIndex = SearchForEventIndex(EventList, steteToFill.loopBeg);
             }
         }
 
