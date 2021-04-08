@@ -30,6 +30,9 @@ namespace m0_COMPOSER.Lib
         public int loopBeg = 0;
         public int loopBegEventIndex = 0;
         public int loopEnd = 0;
+
+        public IList<KeyValuePair<int, IList<SongEvent>>> EventList;
+        public IList<IVertex> OutputDictionary;
     }
 
     public class SongPlay
@@ -40,10 +43,8 @@ namespace m0_COMPOSER.Lib
 
         public IExecution exe;
         public IVertex SongVertex;
-        public SongEventsDictionary SongDictionary;
-        public IDictionary<int, IList<SongEvent>> EventDictionary;
-        public IList<KeyValuePair<int, IList<SongEvent>>> EventList;
-        public IList<IVertex> OutputDictionary;
+        public SongEventsDictionary SongDictionary;        
+        
 
         public double TicksPerMilisecond;
         
@@ -52,7 +53,8 @@ namespace m0_COMPOSER.Lib
         public Stopwatch Watch;
         public long WatchAddElapsedMiliseconds = 0;
 
-        PlayState CurrentPlayState;
+        PlayState CurrentPlayState = new PlayState();
+        PlayState NewPlayState = new PlayState();
 
         //
 
@@ -88,13 +90,7 @@ namespace m0_COMPOSER.Lib
             TicksPerMilisecond = GetMidiTicksPerMilisecond(Tempo);
 
             SongDictionary = new SongEventsDictionary(songVertex);
-
-            OutputDictionary = SongDictionary.GetOutputDicionary();
-
-            EventDictionary = SongDictionary.GetEventDicionary();
-
-            EventList = EventDictionary.ToList();
-
+            
             Watch = new Stopwatch();
 
             //
@@ -103,9 +99,40 @@ namespace m0_COMPOSER.Lib
 
             Timer.Elapsed += Tick;
 
-            CurrentPlayState = new PlayState();
+            int position = GraphUtil.GetIntegerValueOr0(SongVertex.Get(false, "Position:"));
 
-            SetupPositionRelated(CurrentPlayState, );
+            FillPositionRelated(CurrentPlayState, position);
+        }
+
+        void FillPositionRelated(PlayState stateToFill, int positionToUse)
+        {
+            SongDictionary.NeedToRebuildEventDictionary = true;
+            SongDictionary.NeedToRebuildOutputDictionary = true;
+
+            stateToFill.EventList = SongDictionary.GetEventDicionary();
+
+            stateToFill.OutputDictionary = SongDictionary.GetOutputDicionary();
+
+
+            if (stateToFill.EventList.Count == 0)
+                return;            
+
+            if (positionToUse > 0)
+                WatchAddElapsedMiliseconds = (long)(positionToUse / TicksPerMilisecond);
+
+            stateToFill.prevEventIndex = SearchForEventIndex(stateToFill.EventList, positionToUse);
+
+            //
+
+            SongVisualiser sv = SongVertexDictionary.GetSongVisualiser(SongVertex);
+
+            if (sv.IsRepeat)
+            {
+                stateToFill.loopBeg = GraphUtil.GetIntegerValueOr0(SongVertex.Get(false, "LoopBeg:"));
+                stateToFill.loopEnd = GraphUtil.GetIntegerValueOr0(SongVertex.Get(false, "LoopEnd:"));
+
+                stateToFill.loopBegEventIndex = SearchForEventIndex(stateToFill.EventList, stateToFill.loopBeg);
+            }
         }
 
         void EmitBankProgramChanges()
@@ -133,7 +160,7 @@ namespace m0_COMPOSER.Lib
 
         void ProgramChange(int track, int value)
         {
-            IVertex outputVertex = OutputDictionary[track];
+            IVertex outputVertex = CurrentPlayState.OutputDictionary[track];
 
             if (outputVertex != null)
             {
@@ -149,7 +176,7 @@ namespace m0_COMPOSER.Lib
 
         void BankSelect(int track, int value)
         {
-            IVertex outputVertex = OutputDictionary[track];
+            IVertex outputVertex = CurrentPlayState.OutputDictionary[track];
 
             if (outputVertex != null)
             {
@@ -167,32 +194,7 @@ namespace m0_COMPOSER.Lib
 
                 ZeroCodeExecutonUtil.MethodCallFromHost(exe, playMethod, outputVertex, parameters);
             }
-        }
-
-        void FillPositionRelated(PlayState steteToFill, int positionToUse)
-        {
-            if (EventList.Count == 0)
-                return;
-
-            int position = GraphUtil.GetIntegerValueOr0(SongVertex.Get(false, "Position:"));
-
-            if (position > 0)
-                WatchAddElapsedMiliseconds = (long)(position / TicksPerMilisecond);
-
-            steteToFill.prevEventIndex = SearchForEventIndex(EventList, positionToUse);
-
-            //
-
-            SongVisualiser sv = SongVertexDictionary.GetSongVisualiser(SongVertex);
-
-            if (sv.IsRepeat)
-            {
-                steteToFill.loopBeg = GraphUtil.GetIntegerValueOr0(SongVertex.Get(false, "LoopBeg:"));
-                steteToFill.loopEnd = GraphUtil.GetIntegerValueOr0(SongVertex.Get(false, "LoopEnd:"));
-
-                steteToFill.loopBegEventIndex = SearchForEventIndex(EventList, steteToFill.loopBeg);
-            }
-        }
+        }        
 
         private int SearchForEventIndex(IList<KeyValuePair<int, IList<SongEvent>>> EventListToUse, int position)
         {
@@ -324,35 +326,21 @@ namespace m0_COMPOSER.Lib
             //StopSongVertexChangeTracking();
             //StartSongVertexChangeTracking(); // add new sub vertexes to listen to
 
-            //
-
-            SongDictionary.NeedToRebuildEventDictionary = true;
-            SongDictionary.NeedToRebuildOutputDictionary = true;
-
-            IDictionary<int, IList<SongEvent>> newEventDictionary = SongDictionary.GetEventDicionary();
-
-            IList<KeyValuePair<int, IList<SongEvent>>> newEventList = newEventDictionary.ToList();
-
-            IList<IVertex> newOutputDictionary = SongDictionary.GetOutputDicionary();
-
-            //
-
             long now = Watch.ElapsedMilliseconds + WatchAddElapsedMiliseconds;
 
             long nowInTicks = (long)(now * TicksPerMilisecond);
+            
 
-            prevEventIndex = prevEventIndex = SearchForEventIndex(EventList, (int)nowInTicks);
+            FillPositionRelated(NewPlayState, (int)nowInTicks);
 
             //
 
-            OutputDictionary = newOutputDictionary;
-            EventDictionary = newEventDictionary;
-            EventList = newEventList;            
+            CurrentPlayState = NewPlayState;
         }
 
         public void Tick(object sender, EventArgs e)
         {            
-            if (EventList.Count == 0)
+            if (CurrentPlayState.EventList.Count == 0)
             {
                 PositionStop();
                 return;
@@ -364,45 +352,45 @@ namespace m0_COMPOSER.Lib
 
             //
 
-            if(loopEnd > 0 && nowInTicks > loopEnd)
+            if(CurrentPlayState.loopEnd > 0 && nowInTicks > CurrentPlayState.loopEnd)
             {
-                PositionUpdate(loopBeg, false);
+                PositionUpdate(CurrentPlayState.loopBeg, false);
 
                 Watch.Restart();
 
-                WatchAddElapsedMiliseconds = (long)(loopBeg / TicksPerMilisecond);
+                WatchAddElapsedMiliseconds = (long)(CurrentPlayState.loopBeg / TicksPerMilisecond);
 
                 now = Watch.ElapsedMilliseconds + WatchAddElapsedMiliseconds;
 
                 nowInTicks = (long)(now * TicksPerMilisecond);
 
-                prevEventIndex = loopBegEventIndex;
+                CurrentPlayState.prevEventIndex = CurrentPlayState.loopBegEventIndex;
             }
 
             //
 
-            int currentEventIndex = prevEventIndex;
+            int currentEventIndex = CurrentPlayState.prevEventIndex;
 
             bool shouldContinue = true;
 
             while (shouldContinue)
             {
-                if (currentEventIndex >= EventList.Count
-                    || EventList[currentEventIndex].Key > nowInTicks)
+                if (currentEventIndex >= CurrentPlayState.EventList.Count
+                    || CurrentPlayState.EventList[currentEventIndex].Key > nowInTicks)
                     shouldContinue = false;
                 else
                 {
-                    MidiOut(EventList[currentEventIndex].Value);
+                    MidiOut(CurrentPlayState.EventList[currentEventIndex].Value);
 
                     currentEventIndex++;
                 }
             }
 
-            if (currentEventIndex >= EventList.Count && loopEnd == 0) // stop            
+            if (currentEventIndex >= CurrentPlayState.EventList.Count && CurrentPlayState.loopEnd == 0) // stop            
                 PositionStop();            
             else
             {
-                prevEventIndex = currentEventIndex;
+                CurrentPlayState.prevEventIndex = currentEventIndex;
 
                 PositionUpdate((int)nowInTicks, true);
             }
@@ -500,7 +488,7 @@ namespace m0_COMPOSER.Lib
 
         public void NoteOnEvent(NoteOnEvent e)
         {
-            IVertex outputVertex = OutputDictionary[e.trackNumber];
+            IVertex outputVertex = CurrentPlayState.OutputDictionary[e.trackNumber];
 
             if (outputVertex != null)
             {
@@ -521,7 +509,7 @@ namespace m0_COMPOSER.Lib
 
         public void NoteOffEvent(NoteOffEvent e)
         {
-            IVertex outputVertex = OutputDictionary[e.trackNumber];
+            IVertex outputVertex = CurrentPlayState.OutputDictionary[e.trackNumber];
 
             if (outputVertex != null)
             {
@@ -539,7 +527,7 @@ namespace m0_COMPOSER.Lib
 
         public void ControlChangeEvent(ControlChangeEvent e)
         {
-            IVertex outputVertex = OutputDictionary[e.trackNumber];
+            IVertex outputVertex = CurrentPlayState.OutputDictionary[e.trackNumber];
 
             if (outputVertex != null)
             {

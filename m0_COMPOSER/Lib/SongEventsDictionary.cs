@@ -199,12 +199,12 @@ namespace m0_COMPOSER.Lib
             tempDictAdd(triggerTime, new EOSEvent());
         }
 
-        public IDictionary<int, IList<SongEvent>> GetEventDicionary()
+        public IList<KeyValuePair<int, IList<SongEvent>>> GetEventDicionary()
         {
             if (NeedToRebuildEventDictionary)
                 BuildEventDicionary();
 
-            return eventDictionary;
+            return eventDictionary.ToList();
         }
     }
 }
