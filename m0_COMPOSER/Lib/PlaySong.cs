@@ -274,6 +274,7 @@ namespace m0_COMPOSER.Lib
 
         void AddTrackListeners(IVertex trackVertex)
         {
+            PlatformClass.RemoveVertexChangeListeners_byGenericVertex(trackVertex, new VertexChange(TrackVertexChange));
             PlatformClass.RegisterVertexChangeListeners_byGenericVertex(trackVertex, new VertexChange(TrackVertexChange), new string[] { });
             //PlatformClass.RegisterVertexChangeListeners_byGenericVertex(trackEdge.To, new VertexChange(TrackSequenceNoteVertexChange), new string[] { "Output" });
 
@@ -311,7 +312,7 @@ namespace m0_COMPOSER.Lib
             if (e.Type == VertexChangeType.EdgeAdded && GeneralUtil.CompareStrings(e.Edge.Meta, "SequenceEvent"))
             {
                 AddSequenceListener(e.Edge.To);
-                UpdateEventDictionaries();
+             //   UpdateEventDictionaries();
             }            
         }
 
