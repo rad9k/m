@@ -107,6 +107,8 @@ namespace m0.ZeroTypes
 
     public class PlatformClass
     {
+        static Dictionary<string, List<Delegate>> ListenerGroupDictionary = new Dictionary<string, List<Delegate>>();
+
         public static IPlatformClass CreatePlatformObject(IVertex Vertex)
         {
             if (Vertex.Get(false, "$Is:Class") != null)
@@ -129,12 +131,24 @@ namespace m0.ZeroTypes
 
         public static void RegisterVertexChangeListeners_byGenericVertex(IVertex baseVertex, VertexChange action, string[] watchList)
         {
+            RegisterVertexChangeListeners_byGenericVertex(baseVertex, action, watchList, null);
+        }
+
+        public static void RegisterVertexChangeListeners_byGenericVertex(IVertex baseVertex, VertexChange action, string[] watchList, string listenerGroup)
+        {
             PlatformClassVertexChangeListener listener = new PlatformClassVertexChangeListener(watchList);
             listener.PlatformClassVertex = baseVertex;
             listener.Change += action;
 
+            VertexChange listenerDelegate = new VertexChange(listener.Listener);
 
-            baseVertex.Change += new VertexChange(listener.Listener);
+            baseVertex.Change += listenerDelegate;
+
+            if (listenerGroup != null)
+            {
+                GeneralUtil.DictionaryAdd<string, Delegate>(ListenerGroupDictionary, listenerGroup, action);
+                GeneralUtil.DictionaryAdd<string, Delegate>(ListenerGroupDictionary, listenerGroup, listenerDelegate);
+            }            
 
             IVertex AttributeVertices = baseVertex.GetAll(false, @"$Is:\{$Is:{$Inherits:Selector}}");
 
@@ -154,17 +168,22 @@ namespace m0.ZeroTypes
 
         public static void RemoveVertexChangeListeners_byGenericVertex(IVertex metaVertex, VertexChange action)
         {
-            RemoveVertexChangeListeners_ForVertex(metaVertex, metaVertex, action);
+            RemoveVertexChangeListeners_byGenericVertex(metaVertex, action);
+        }
+
+        public static void RemoveVertexChangeListeners_byGenericVertex(IVertex metaVertex, VertexChange action, string listenerGroup)
+        {
+            RemoveVertexChangeListeners_ForVertex(metaVertex, metaVertex, action, listenerGroup);
 
             IVertex AttributeVertices = metaVertex.GetAll(false, @"$Is:\{$Is:{$Inherits:Selector}}");
 
             foreach (IEdge e in AttributeVertices)
             {
                 foreach (IEdge ee in metaVertex.GetAll(false, e.To.Value + ":"))
-                    RemoveVertexChangeListeners_ForVertex(e.To, metaVertex, action);
+                    RemoveVertexChangeListeners_ForVertex(e.To, metaVertex, action, listenerGroup);
 
                 foreach (IEdge ee in metaVertex.GetAll(false, e.To.Value + @":\"))
-                    RemoveVertexChangeListeners_ForVertex(e.To, metaVertex, action);
+                    RemoveVertexChangeListeners_ForVertex(e.To, metaVertex, action, listenerGroup);
             }
         }
 
@@ -194,21 +213,21 @@ namespace m0.ZeroTypes
 
         public static void RemoveVertexChangeListeners(IVertex PlatformClassVertex, VertexChange action)
         {
-            RemoveVertexChangeListeners_ForVertex(PlatformClassVertex,PlatformClassVertex, action);
+            RemoveVertexChangeListeners_ForVertex(PlatformClassVertex,PlatformClassVertex, action, null);
 
             IVertex AttributeVertices = PlatformClassVertex.GetAll(false, @"$Is:{$Inherits:$PlatformClass}\{$Is:{$Inherits:Selector}}");
 
             foreach (IEdge e in AttributeVertices)
             {
                 foreach (IEdge ee in PlatformClassVertex.GetAll(false, e.To.Value + ":"))                    
-                    RemoveVertexChangeListeners_ForVertex(e.To, PlatformClassVertex,action);
+                    RemoveVertexChangeListeners_ForVertex(e.To, PlatformClassVertex, action, null);
 
                 foreach (IEdge ee in PlatformClassVertex.GetAll(false, e.To.Value + @":\"))
-                    RemoveVertexChangeListeners_ForVertex(e.To, PlatformClassVertex, action);
+                    RemoveVertexChangeListeners_ForVertex(e.To, PlatformClassVertex, action, null);
             }
         }
 
-        private static void RemoveVertexChangeListeners_ForVertex(IVertex Vertex, IVertex PlatformClassVertex, VertexChange action)
+        private static void RemoveVertexChangeListeners_ForVertex(IVertex Vertex, IVertex PlatformClassVertex, VertexChange action, string listenerGroup)
         {
             Delegate[] delegates=Vertex.GetChangeDelegateInvocationList();            
 
@@ -218,8 +237,20 @@ namespace m0.ZeroTypes
                 {
                     PlatformClassVertexChangeListener list = (PlatformClassVertexChangeListener)d.Target;
 
-                    if (list.PlatformClassVertex == PlatformClassVertex)
-                    {
+                    bool can = true;
+
+                    if(listenerGroup != null && ListenerGroupDictionary.ContainsKey(listenerGroup))
+                        {
+                            if (!GeneralUtil.DictionaryContains<string, Delegate>(ListenerGroupDictionary, listenerGroup, d))
+                                can = false;
+                        }
+                    
+
+                    if (list.PlatformClassVertex == PlatformClassVertex && can
+                            //&& action.Target == d.Target // XXX THIS CAUSES UNKNOWN PROBLEMS IN SongVisualiser Track at last
+                            //&& action.Method == d.Method // XXX THIS ALSO
+                            )
+                        {
                         list.Change -= action;
 
                         Vertex.Change -= list.Listener;

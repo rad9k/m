@@ -87,7 +87,7 @@ namespace m0.Util
             s.Attach();
         }
 
-        public static void DictionaryAdd<key,value>(Dictionary<key,List<value>> dict, key _key, value _value)
+        public static void DictionaryAdd<key,value>(Dictionary<key, List<value>> dict, key _key, value _value)
         {
             if (dict.ContainsKey(_key))
                 dict[_key].Add(_value);
@@ -96,6 +96,28 @@ namespace m0.Util
                 List<value> l = new List<value>();
                 l.Add(_value);
                 dict.Add(_key, l);
+            }
+        }
+
+        public static void DictionaryRemove<key, value>(Dictionary<key, List<value>> dict, key _key, value _value)
+        {
+            if (dict.ContainsKey(_key))
+                return;
+            else
+            {
+                List<value> l = dict[_key];
+                l.Remove(_value);
+            }
+        }
+
+        public static bool DictionaryContains<key, value>(Dictionary<key, List<value>> dict, key _key, value _value)
+        {
+            if (dict.ContainsKey(_key))
+                return false;
+            else
+            {
+                List<value> l = dict[_key];
+                return l.Contains(_value);
             }
         }
 
