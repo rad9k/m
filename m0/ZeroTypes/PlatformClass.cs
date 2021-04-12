@@ -240,7 +240,7 @@ namespace m0.ZeroTypes
                     bool can = true;
 
                     if(listenerGroup != null && ListenerGroupDictionary.ContainsKey(listenerGroup))
-                            if(ListenerGroupDictionary.Contains(listenerGroup, d))
+                            if(!ListenerGroupDictionary.Contains(listenerGroup, d))
                                 can = false;
                     
                     if (list.PlatformClassVertex == PlatformClassVertex && can
