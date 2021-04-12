@@ -245,7 +245,7 @@ namespace m0.ZeroTypes
                     
                     if (list.PlatformClassVertex == PlatformClassVertex && can
                             //&& action.Target == d.Target // XXX THIS CAUSES UNKNOWN PROBLEMS IN SongVisualiser Track at last
-                            //&& action.Method == d.Method // XXX THIS ALSO
+                            //&& action.Method == d.Method // XXX THIS ALSO 
                             )
                         {
                         list.Change -= action;
