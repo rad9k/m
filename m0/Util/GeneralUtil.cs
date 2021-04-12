@@ -99,28 +99,6 @@ namespace m0.Util
             }
         }
 
-        public static void DictionaryRemove<key, value>(Dictionary<key, List<value>> dict, key _key, value _value)
-        {
-            if (dict.ContainsKey(_key))
-                return;
-            else
-            {
-                List<value> l = dict[_key];
-                l.Remove(_value);
-            }
-        }
-
-        public static bool DictionaryContains<key, value>(Dictionary<key, List<value>> dict, key _key, value _value)
-        {
-            if (dict.ContainsKey(_key))
-                return false;
-            else
-            {
-                List<value> l = dict[_key];
-                return l.Contains(_value);
-            }
-        }
-
         public static string GetRegexpEXTRACT(string s, string r)
         {
             Regex rgx = new Regex(r);

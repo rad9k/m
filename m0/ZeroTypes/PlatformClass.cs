@@ -107,7 +107,7 @@ namespace m0.ZeroTypes
 
     public class PlatformClass
     {
-        static Dictionary<string, List<Delegate>> ListenerGroupDictionary = new Dictionary<string, List<Delegate>>();
+        static DictionaryList<string, Delegate> ListenerGroupDictionary = new DictionaryList<string, Delegate>();
 
         public static IPlatformClass CreatePlatformObject(IVertex Vertex)
         {
@@ -146,9 +146,9 @@ namespace m0.ZeroTypes
 
             if (listenerGroup != null)
             {
-                GeneralUtil.DictionaryAdd<string, Delegate>(ListenerGroupDictionary, listenerGroup, action);
-                GeneralUtil.DictionaryAdd<string, Delegate>(ListenerGroupDictionary, listenerGroup, listenerDelegate);
-            }            
+                ListenerGroupDictionary.Add(listenerGroup, action);
+                ListenerGroupDictionary.Add(listenerGroup, listenerDelegate);
+           }            
 
             IVertex AttributeVertices = baseVertex.GetAll(false, @"$Is:\{$Is:{$Inherits:Selector}}");
 
@@ -240,12 +240,9 @@ namespace m0.ZeroTypes
                     bool can = true;
 
                     if(listenerGroup != null && ListenerGroupDictionary.ContainsKey(listenerGroup))
-                        {
-                            if (!GeneralUtil.DictionaryContains<string, Delegate>(ListenerGroupDictionary, listenerGroup, d))
+                            if(ListenerGroupDictionary.Contains(listenerGroup, d))
                                 can = false;
-                        }
                     
-
                     if (list.PlatformClassVertex == PlatformClassVertex && can
                             //&& action.Target == d.Target // XXX THIS CAUSES UNKNOWN PROBLEMS IN SongVisualiser Track at last
                             //&& action.Method == d.Method // XXX THIS ALSO

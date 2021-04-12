@@ -466,7 +466,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             }
                 
             if (previousBaseVertex != null)
-                PlatformClass.RemoveVertexChangeListeners_byGenericVertex(previousBaseVertex, new VertexChange(VertexChange_BaseEdge));
+                PlatformClass.RemoveVertexChangeListeners_byGenericVertex(previousBaseVertex, new VertexChange(VertexChange_BaseEdge), "SongVisualiser");
 
             if (SongVertex.Get(false, "$Is:Song") == null)
             {
@@ -477,7 +477,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             previousBaseVertex = SongVertex;
 
-            PlatformClass.RegisterVertexChangeListeners_byGenericVertex(SongVertex, new VertexChange(VertexChange_BaseEdge), new string[] { "Tempo", "Track" });
+            PlatformClass.RegisterVertexChangeListeners_byGenericVertex(SongVertex, new VertexChange(VertexChange_BaseEdge), new string[] { "Tempo", "Track" }, "SongVisualiser");
 
 
             IVertex r = MinusZero.Instance.Root;
@@ -542,21 +542,21 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             foreach (IEdge e in SongVertex.GetAll(false, "Track:"))
                 AddChangeListenersToTrack(e.To);
 
-            PlatformClass.RegisterVertexChangeListeners_byGenericVertex(SongVertex, new VertexChange(BaseVertexChange), new string[] {});
+            PlatformClass.RegisterVertexChangeListeners_byGenericVertex(SongVertex, new VertexChange(BaseVertexChange), new string[] {}, "SongVisualiser");
         }
 
         void RemoveChangeListenersToAllTracksAndSong()
         {
             foreach (IEdge e in SongVertex.GetAll(false, "Track:"))
-                PlatformClass.RemoveVertexChangeListeners_byGenericVertex(e.To, new VertexChange(VertexChange_Track));
+                PlatformClass.RemoveVertexChangeListeners_byGenericVertex(e.To, new VertexChange(VertexChange_Track), "SongVisualiser");
 
-            PlatformClass.RemoveVertexChangeListeners_byGenericVertex(SongVertex, new VertexChange(BaseVertexChange));
+            PlatformClass.RemoveVertexChangeListeners_byGenericVertex(SongVertex, new VertexChange(BaseVertexChange), "SongVisualiser");
         }
 
         void AddChangeListenersToTrack(IVertex v)
         {
-            PlatformClass.RemoveVertexChangeListeners_byGenericVertex(v, new VertexChange(VertexChange_Track));
-            PlatformClass.RegisterVertexChangeListeners_byGenericVertex(v, new VertexChange(VertexChange_Track), new string[] { "Sequence", "Color" });
+            PlatformClass.RemoveVertexChangeListeners_byGenericVertex(v, new VertexChange(VertexChange_Track), "SongVisualiser");
+            PlatformClass.RegisterVertexChangeListeners_byGenericVertex(v, new VertexChange(VertexChange_Track), new string[] { "Sequence", "Color" }, "SongVisualiser");
         }
 
         protected override void SetAxisDecorators()
