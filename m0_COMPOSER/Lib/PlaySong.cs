@@ -81,15 +81,15 @@ namespace m0_COMPOSER.Lib
             return ticksPerMilisecond;
         }
 
-        public SongPlay(IExecution _exe, IVertex songVertex, int Tempo)
+        public SongPlay(IExecution _exe, IVertex fakeSongVertex, int Tempo)
         {            
             exe = _exe;
 
-            SongVertex = SongVertexDictionary.GetRealSongVertex(songVertex);
+            SongVertex = SongVertexDictionary.GetRealSongVertex(fakeSongVertex);
 
             TicksPerMilisecond = GetMidiTicksPerMilisecond(Tempo);
 
-            SongDictionary = new SongEventsDictionary(songVertex);
+            SongDictionary = new SongEventsDictionary(SongVertex);
             
             Watch = new Stopwatch();
 
@@ -260,9 +260,7 @@ namespace m0_COMPOSER.Lib
         }
 
         void StopSongVertexChangeTracking()
-        {
-          //  return;
-
+        {         
             PlatformClass.RemoveVertexChangeListeners_byGenericVertex(SongVertex, new VertexChange(SongVertexChange), "PlaySong");
 
             foreach (IEdge trackEdge in SongVertex.GetAll(false, "Track:"))
@@ -275,10 +273,9 @@ namespace m0_COMPOSER.Lib
         }
 
         void AddTrackListeners(IVertex trackVertex)
-        {
-            // PlatformClass.RemoveVertexChangeListeners_byGenericVertex(trackVertex, new VertexChange(TrackVertexChange), "PlaySong");
+        {            
             PlatformClass.RegisterVertexChangeListeners_byGenericVertex(trackVertex, new VertexChange(TrackVertexChange), new string[] { }, "PlaySong");
-            //PlatformClass.RegisterVertexChangeListeners_byGenericVertex(trackEdge.To, new VertexChange(TrackSequenceNoteVertexChange), new string[] { "Output" }, "PlaySong");
+           // PlatformClass.RegisterVertexChangeListeners_byGenericVertex(trackVertex, new VertexChange(TrackVertexChange), new string[] { "Output" }, "PlaySong");
 
             foreach (IEdge sequenceEdge in trackVertex.GetAll(false, @"SequenceEvent:\Sequence:"))
                 AddSequenceListener(sequenceEdge.To);
@@ -319,7 +316,10 @@ namespace m0_COMPOSER.Lib
                     AddSequenceListener(sequenceVertex);
                     UpdateEventDictionaries();
                 }
-            }            
+            }
+
+            if (e.Type == VertexChangeType.EdgeAdded && GeneralUtil.CompareStrings(e.Edge.Meta, "Output"))
+                UpdateEventDictionaries();
         }
 
         protected void SequenceNoteVertexChange(object sender, VertexChangeEventArgs e)
@@ -328,10 +328,7 @@ namespace m0_COMPOSER.Lib
         }
 
         protected void UpdateEventDictionaries()
-        {
-            //StopSongVertexChangeTracking();
-            //StartSongVertexChangeTracking(); // add new sub vertexes to listen to
-
+        {            
             long now = Watch.ElapsedMilliseconds + WatchAddElapsedMiliseconds;
 
             long nowInTicks = (long)(now * TicksPerMilisecond);
