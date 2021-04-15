@@ -268,7 +268,12 @@ namespace m0_COMPOSER.Lib
                 PlatformClass.RemoveVertexChangeListeners_byGenericVertex(trackEdge.To, new VertexChange(TrackVertexChange), "PlaySong");
 
                 foreach (IEdge sequenceEdge in trackEdge.To.GetAll(false, @"SequenceEvent:\Sequence:"))
-                    PlatformClass.RemoveVertexChangeListeners_byGenericVertex(sequenceEdge.To, new VertexChange(SequenceNoteVertexChange), "PlaySong");
+                {
+                    PlatformClass.RemoveVertexChangeListeners_byGenericVertex(sequenceEdge.To, new VertexChange(SequenceVertexChange), "PlaySong");
+
+                    foreach(IEdge eventEdge in sequenceEdge.To.GetAll(false, @"Event:"))
+                        PlatformClass.RemoveVertexChangeListeners_byGenericVertex(eventEdge.To, new VertexChange(SequenceVertexChange), "PlaySong");
+                }
             }
         }
 
@@ -283,7 +288,15 @@ namespace m0_COMPOSER.Lib
 
         void AddSequenceListener(IVertex sequenceEventVertex)
         {
-            PlatformClass.RegisterVertexChangeListeners_byGenericVertex(sequenceEventVertex, new VertexChange(SequenceNoteVertexChange), new string[] { }, "PlaySong");            
+            PlatformClass.RegisterVertexChangeListeners_byGenericVertex(sequenceEventVertex, new VertexChange(SequenceVertexChange), new string[] { }, "PlaySong");
+
+            foreach (IEdge eventEdge in sequenceEventVertex.GetAll(false, @"Event:"))
+                AddEventListener(eventEdge.To);
+        }
+
+        void AddEventListener(IVertex eventVertex)
+        {
+            PlatformClass.RegisterVertexChangeListeners_byGenericVertex(eventVertex, new VertexChange(SequenceVertexChange), new string[] { }, "PlaySong");
         }
 
         protected void SongVertexChange(object sender, VertexChangeEventArgs e)
@@ -327,9 +340,19 @@ namespace m0_COMPOSER.Lib
                 UpdateEventDictionaries();
         }
 
-        protected void SequenceNoteVertexChange(object sender, VertexChangeEventArgs e)
+        protected void SequenceVertexChange(object sender, VertexChangeEventArgs e)
         {
-            UpdateEventDictionaries();
+            if (e.Type == VertexChangeType.EdgeAdded && GeneralUtil.CompareStrings(e.Edge.Meta, "Event"))
+            {
+                AddEventListener(e.Edge.To);
+                UpdateEventDictionaries();
+            }
+
+            if (e.Type == VertexChangeType.EdgeRemoved && GeneralUtil.CompareStrings(e.Edge.Meta, "Event"))
+                UpdateEventDictionaries();
+
+            if (e.Type == VertexChangeType.EdgeAdded && GeneralUtil.CompareStrings(e.Edge.Meta, "Octave"))
+                UpdateEventDictionaries();
         }
 
         protected void UpdateEventDictionaries()

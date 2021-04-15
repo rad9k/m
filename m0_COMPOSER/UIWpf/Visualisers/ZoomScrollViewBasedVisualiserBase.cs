@@ -351,7 +351,8 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
         protected void SaveLength()
         {
-            GraphUtil.SetVertexValue(SongVertex, BaseEdgeToMetaVertex.Get(false, "Length"), Length);
+            if(GraphUtil.GetIntegerValueOr0(SongVertex.Get(false, "Length:")) != Length)
+                GraphUtil.SetVertexValue(SongVertex, BaseEdgeToMetaVertex.Get(false, "Length"), Length);
         }
 
         protected virtual void SetAxisDecorators() { }        
