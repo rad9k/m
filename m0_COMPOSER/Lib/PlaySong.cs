@@ -353,6 +353,8 @@ namespace m0_COMPOSER.Lib
 
             if (e.Type == VertexChangeType.EdgeAdded && GeneralUtil.CompareStrings(e.Edge.Meta, "Octave"))
                 UpdateEventDictionaries();
+
+            if(sender is IVertex)
         }
 
         protected void UpdateEventDictionaries()
