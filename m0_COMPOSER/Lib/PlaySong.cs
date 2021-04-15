@@ -318,7 +318,12 @@ namespace m0_COMPOSER.Lib
                 }
             }
 
-            if (e.Type == VertexChangeType.EdgeAdded && GeneralUtil.CompareStrings(e.Edge.Meta, "Output"))
+            if (e.Type == VertexChangeType.EdgeAdded && 
+                (GeneralUtil.CompareStrings(e.Edge.Meta, "Output") || GeneralUtil.CompareStrings(e.Edge.Meta, "IsMuted") || GeneralUtil.CompareStrings(e.Edge.Meta, "IsSolo")))
+                UpdateEventDictionaries();
+
+            if (e.Type == VertexChangeType.ValueChanged &&
+                (GraphUtil.DoIEnumerableIEdgeContainsVertex(SongVertex.GetAll(false, @"Track:\IsMuted:"), (IVertex)sender) || GraphUtil.DoIEnumerableIEdgeContainsVertex(SongVertex.GetAll(false, @"Track:\IsSolo:"), (IVertex)sender)))
                 UpdateEventDictionaries();
         }
 
