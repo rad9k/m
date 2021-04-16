@@ -70,6 +70,9 @@ namespace m0_COMPOSER.Lib
 
         static IVertex programChangeProgramNumberMeta = r.Get(false, @"System\Lib\Music\NoteOutput\ProgramChange\programNumber");
 
+        static IVertex octaveMeta = r.Get(false, @"System\Lib\Music\NoteEvent\Octave");
+        static IVertex octaveMeta = r.Get(false, @"System\Lib\Music\NoteEvent\Octave");
+
 
 
         protected double GetMidiTicksPerMilisecond(int tempo)
@@ -340,21 +343,34 @@ namespace m0_COMPOSER.Lib
                 UpdateEventDictionaries();
         }
 
+
+
         protected void SequenceVertexChange(object sender, VertexChangeEventArgs e)
         {
             if (e.Type == VertexChangeType.EdgeAdded && GeneralUtil.CompareStrings(e.Edge.Meta, "Event"))
             {
                 AddEventListener(e.Edge.To);
                 UpdateEventDictionaries();
+                return;
             }
 
             if (e.Type == VertexChangeType.EdgeRemoved && GeneralUtil.CompareStrings(e.Edge.Meta, "Event"))
+            {
                 UpdateEventDictionaries();
+                return;
+            }
 
             if (e.Type == VertexChangeType.EdgeAdded && GeneralUtil.CompareStrings(e.Edge.Meta, "Octave"))
+            {
                 UpdateEventDictionaries();
+                return;
+            }
 
-            if(sender is IVertex)
+            if(sender is IVertex) {
+                IVertex senderVertex = (IVertex)sender;
+
+                if(GraphUtil.GetQueryInFirst(senderVertex, ))
+            }
         }
 
         protected void UpdateEventDictionaries()
