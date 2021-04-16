@@ -69,11 +69,7 @@ namespace m0_COMPOSER.Lib
         static IVertex controlChangeEventNumberMeta = r.Get(false, @"System\Lib\Music\ControlChangeEvent\Number");
 
         static IVertex programChangeProgramNumberMeta = r.Get(false, @"System\Lib\Music\NoteOutput\ProgramChange\programNumber");
-
-        static IVertex octaveMeta = r.Get(false, @"System\Lib\Music\NoteEvent\Octave");
-        static IVertex octaveMeta = r.Get(false, @"System\Lib\Music\NoteEvent\Octave");
-
-
+        
 
         protected double GetMidiTicksPerMilisecond(int tempo)
         {
@@ -358,18 +354,14 @@ namespace m0_COMPOSER.Lib
             {
                 UpdateEventDictionaries();
                 return;
-            }
-
-            if (e.Type == VertexChangeType.EdgeAdded && GeneralUtil.CompareStrings(e.Edge.Meta, "Octave"))
-            {
-                UpdateEventDictionaries();
-                return;
-            }
+            }            
 
             if(sender is IVertex) {
                 IVertex senderVertex = (IVertex)sender;
 
-                if(GraphUtil.GetQueryInFirst(senderVertex, ))
+                if(GraphUtil.GetQueryInFirst(senderVertex, "Velocity", null) != null
+                    || GraphUtil.GetQueryInFirst(senderVertex, "TriggerTime", null) != null)
+                    UpdateEventDictionaries();                
             }
         }
 

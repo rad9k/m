@@ -224,15 +224,15 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control.Item
             {
                 IVertex NoteEvent = r.Get(false, @"System\Lib\Music\NoteEvent");
 
-                GraphUtil.SetVertexValue(BaseEdge.To,
-                    NoteEvent.Get(false, @"Attribute:Velocity"), newValue);
+                if(GraphUtil.GetIntegerValueOr0(BaseEdge.To.Get(false, "Velocity:")) != newValue)
+                    GraphUtil.SetVertexValue(BaseEdge.To, NoteEvent.Get(false, @"Attribute:Velocity"), newValue);
             }
             else
             {
                 IVertex ControlChangeEvent = r.Get(false, @"System\Lib\Music\ControlChangeEvent");
 
-                GraphUtil.SetVertexValue(BaseEdge.To,
-                    ControlChangeEvent.Get(false, @"Attribute:Value"), newValue);
+                if (GraphUtil.GetIntegerValueOr0(BaseEdge.To.Get(false, "Value:")) != newValue)
+                    GraphUtil.SetVertexValue(BaseEdge.To, ControlChangeEvent.Get(false, @"Attribute:Value"), newValue);
             }
         }
 
