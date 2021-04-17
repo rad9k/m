@@ -479,7 +479,7 @@ namespace m0_SYSTEM_GENERATE.Music
             GraphUtil.AddInherits(VisualisedPitch, Pitch);
             GraphUtil.AddAttribute(VisualisedPitch, "Name", String, 1, 1);
             GraphUtil.AddAssociation(VisualisedPitch, "Color", Color, 1, 1);
-            GraphUtil.AddAttribute(VisualisedPitch, "NoteBackgroundColor", Color, 0, 1);
+            GraphUtil.AddAssociation(VisualisedPitch, "NoteBackgroundColor", Color, 0, 1);
 
             // PICHSET
 
