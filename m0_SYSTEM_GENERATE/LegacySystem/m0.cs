@@ -4639,6 +4639,19 @@ namespace m0
             DefaultComputer.AddEdge(r.Get(false, @"System\Meta\Base\Vertex\$EdgeTarget"), Computer);
         }
 
+        int Max255Mul(int inputValue, double Value)
+        {
+            if (inputValue == 0)
+                inputValue = 60;
+
+            int o = (int)((double)inputValue * Value);
+
+            if (o > 255)
+                return 255;
+
+            return o;
+        }
+
         public void CreateDataUXColor()
         {
             IVertex r = MinusZero.Instance.root;
@@ -4654,13 +4667,44 @@ namespace m0
             ColorType.AddColor(Colors, "Gray", 127, 127, 127, 255);
             ColorType.AddColor(Colors, "LightGray", 160, 160, 160, 255);
             ColorType.AddColor(Colors, "VeryLightGray", 200, 200, 200, 255);
-            ColorType.AddColor(Colors, "VeryVeryLightGray", 220, 220, 220, 255);
-            ColorType.AddColor(Colors, "Red", 255, 0, 0, 255);
-            ColorType.AddColor(Colors, "Green", 0, 255, 0, 255);
-            ColorType.AddColor(Colors, "Blue", 0, 0, 255, 255);
+            ColorType.AddColor(Colors, "VeryVeryLightGray", 220, 220, 220, 255);            
 
-            for(int x=0;x<12;x++)
-                ColorType.AddColor(Colors, "Gray"+x, x * 23, x * 23, x * 23, 255);
+            for (int x = 0; x < 12; x++)
+                ColorType.AddColor(Colors, "Gray" + x, x * 23, x * 23, x * 23, 255);
+
+            var baseColors = new Dictionary<string, int[]> {
+                ["Red"] = new int[] {255, 0, 0},
+                ["Green"] = new int[] { 0, 255, 0 },
+                ["Blue"] = new int[] { 0, 0, 255 },
+                ["Orange"] = new int[] {255, 106, 0},
+                ["Yellow"] = new int[] {255, 255, 0},
+                ["Citron"] = new int[] {255, 216, 0},
+                ["LimeGreen"] = new int[] {182, 255, 0},
+                ["YellowGreen"] = new int[] {76, 255, 0},
+                ["CentralGreen"] = new int[] {0, 255, 33},
+                ["BlueGreen"] = new int[] {0, 255, 144},
+                ["Cyan"] = new int[] {0, 255, 255},
+                ["Azure"] = new int[] {0, 148, 255},
+                ["CentralBlue"] = new int[] {0, 38, 255},
+                ["VioletBlue"] = new int[] {72, 0, 255},
+                ["Violet"] = new int[] {178, 0, 255},
+                ["Pink"] = new int[] {255, 0, 220},
+                ["Magenta"] = new int[] {255, 0, 255},
+                ["Rose"] = new int[] {255, 0, 110}
+            };
+
+            foreach (var de in baseColors)
+                ColorType.AddColor(Colors, de.Key, de.Value[0], de.Value[1], de.Value[2], 255);
+
+            foreach (var de in baseColors)
+                ColorType.AddColor(Colors, "Ligth"+de.Key, Max255Mul(de.Value[0], 1.8), Max255Mul(de.Value[1], 1.8), Max255Mul(de.Value[2], 1.8), 255);
+
+            foreach (var de in baseColors)
+                ColorType.AddColor(Colors, "VeryLight"+de.Key, Max255Mul(de.Value[0], 2.7), Max255Mul(de.Value[1], 2.7), Max255Mul(de.Value[2], 2.7), 255);
+
+            foreach (var de in baseColors)
+                ColorType.AddColor(Colors, "VeryVeryLight"+de.Key, Max255Mul(de.Value[0], 3.6), Max255Mul(de.Value[1], 3.6), Max255Mul(de.Value[2], 3.6), 255);
+
         }
 
         private void Initialize_PreParserReady()
