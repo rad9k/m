@@ -4639,12 +4639,15 @@ namespace m0
             DefaultComputer.AddEdge(r.Get(false, @"System\Meta\Base\Vertex\$EdgeTarget"), Computer);
         }
 
-        int Max255Mul(int inputValue, double Value)
+        int ScaleUp(int inputValue, double Value)
         {
             if (inputValue == 0)
-                inputValue = 60;
+                inputValue = 30;
 
-            int o = (int)((double)inputValue * Value);
+            double toAddSpace = 255 - inputValue;
+
+
+            int o = (int)((toAddSpace * Value) + inputValue);
 
             if (o > 255)
                 return 255;
@@ -4697,13 +4700,13 @@ namespace m0
                 ColorType.AddColor(Colors, de.Key, de.Value[0], de.Value[1], de.Value[2], 255);
 
             foreach (var de in baseColors)
-                ColorType.AddColor(Colors, "Ligth"+de.Key, Max255Mul(de.Value[0], 1.8), Max255Mul(de.Value[1], 1.8), Max255Mul(de.Value[2], 1.8), 255);
+                ColorType.AddColor(Colors, "Ligth"+de.Key, ScaleUp(de.Value[0], 0.3), ScaleUp(de.Value[1], 0.3), ScaleUp(de.Value[2], 0.3), 255);
 
             foreach (var de in baseColors)
-                ColorType.AddColor(Colors, "VeryLight"+de.Key, Max255Mul(de.Value[0], 2.7), Max255Mul(de.Value[1], 2.7), Max255Mul(de.Value[2], 2.7), 255);
+                ColorType.AddColor(Colors, "VeryLight"+de.Key, ScaleUp(de.Value[0], 0.6), ScaleUp(de.Value[1], 0.6), ScaleUp(de.Value[2], 0.6), 255);
 
             foreach (var de in baseColors)
-                ColorType.AddColor(Colors, "VeryVeryLight"+de.Key, Max255Mul(de.Value[0], 3.6), Max255Mul(de.Value[1], 3.6), Max255Mul(de.Value[2], 3.6), 255);
+                ColorType.AddColor(Colors, "VeryVeryLight"+de.Key, ScaleUp(de.Value[0], 0.8), ScaleUp(de.Value[1], 0.8), ScaleUp(de.Value[2], 0.8), 255);
 
         }
 
