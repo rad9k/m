@@ -285,11 +285,16 @@ namespace m0_COMPOSER.Lib
                 AddSequenceListener(sequenceEdge.To);
         }
 
-        void AddSequenceListener(IVertex sequenceEventVertex)
+        void AddSequenceEventListener(IVertex sequenceEventVertex)
         {
-            PlatformClass.RegisterVertexChangeListeners_byGenericVertex(sequenceEventVertex, new VertexChange(SequenceVertexChange), new string[] { }, "PlaySong");
+            PlatformClass.RegisterVertexChangeListeners_byGenericVertex(sequenceEventVertex, new VertexChange(SequenceEventVertexChange), new string[] { }, "PlaySong");
+        }
 
-            foreach (IEdge eventEdge in sequenceEventVertex.GetAll(false, @"Event:"))
+        void AddSequenceListener(IVertex sequenceVertex)
+        {
+            PlatformClass.RegisterVertexChangeListeners_byGenericVertex(sequenceVertex, new VertexChange(SequenceVertexChange), new string[] { }, "PlaySong");
+
+            foreach (IEdge eventEdge in sequenceVertex.GetAll(false, @"Event:"))
                 AddEventListener(eventEdge.To);
         }
 
@@ -312,7 +317,8 @@ namespace m0_COMPOSER.Lib
             if (loopEnd != null && sender == loopEnd)
                 UpdateEventDictionaries();
 
-            if (e.Type == VertexChangeType.EdgeAdded && GeneralUtil.CompareStrings(e.Edge.Meta, "Track")){
+            if ((e.Type == VertexChangeType.EdgeAdded || e.Type == VertexChangeType.EdgeRemoved)
+                && GeneralUtil.CompareStrings(e.Edge.Meta, "Track")){
                 AddTrackListeners(e.Edge.To);
                 UpdateEventDictionaries();
             }
@@ -322,6 +328,8 @@ namespace m0_COMPOSER.Lib
         {
             if (e.Type == VertexChangeType.EdgeAdded && GeneralUtil.CompareStrings(e.Edge.Meta, "SequenceEvent"))
             {
+                AddSequenceEventListener(e.Edge.To);
+
                 IVertex sequenceVertex = e.Edge.To.Get(false, @"Sequence:");
                 if (sequenceVertex != null)
                 {
@@ -329,6 +337,9 @@ namespace m0_COMPOSER.Lib
                     UpdateEventDictionaries();
                 }
             }
+
+            if (e.Type == VertexChangeType.EdgeRemoved && GeneralUtil.CompareStrings(e.Edge.Meta, "SequenceEvent"))   
+                UpdateEventDictionaries();
 
             if (e.Type == VertexChangeType.EdgeAdded && 
                 (GeneralUtil.CompareStrings(e.Edge.Meta, "Output") || GeneralUtil.CompareStrings(e.Edge.Meta, "IsMuted") || GeneralUtil.CompareStrings(e.Edge.Meta, "IsSolo")))
@@ -339,7 +350,12 @@ namespace m0_COMPOSER.Lib
                 UpdateEventDictionaries();
         }
 
-
+        protected void SequenceEventVertexChange(object sender, VertexChangeEventArgs e)
+        {
+            if (e.Type == VertexChangeType.ValueChanged && sender is IVertex
+                && GraphUtil.GetQueryInFirst((IVertex)sender, "TriggerTime", null) != null)
+                UpdateEventDictionaries();
+        }
 
         protected void SequenceVertexChange(object sender, VertexChangeEventArgs e)
         {
