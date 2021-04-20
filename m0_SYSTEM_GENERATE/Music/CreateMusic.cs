@@ -586,6 +586,8 @@ namespace m0_SYSTEM_GENERATE.Music
 
             // NOTEOUTPUT continuation
 
+            GraphUtil.AddAssociation(NoteOutput, "PitchSet", PitchSet, 0, 1);
+
             AddMethod(NoteOutput, "NoteOn", NoteOutoutTypeString, "NoteOn", null, new TypeName[] { new TypeName("note", Note, 1, 1) });
             AddMethod(NoteOutput, "NoteOff", NoteOutoutTypeString, "NoteOff", null, new TypeName[] { new TypeName("note", Note, 1, 1) });
             AddMethod(NoteOutput, "ControlChange", NoteOutoutTypeString, "ControlChange", null, new TypeName[] { new TypeName("controlChange", ControlChange, 1, 1) });

@@ -80,6 +80,7 @@ namespace m0_COMPOSER.Lib
         static IVertex sequenceAttributeMeta = r.Get(false, @"System\Lib\Music\SequenceEvent\Sequence");
         static IVertex sequenceMeta = r.Get(false, @"System\Lib\Music\Sequence");
         static IVertex sequenceIsDrumMeta = r.Get(false, @"System\Lib\Music\Sequence\IsDrum");
+        static IVertex pitchSetMeta = r.Get(false, @"System\Lib\Music\Sequence\PitchSet");
 
         public static string GetNameForNewSequenceEvent(IVertex trackVertex)
         {
@@ -131,6 +132,18 @@ namespace m0_COMPOSER.Lib
             IEdge finalEdge = trackVertex.AddEdge(sequenceEventAttributeMeta, sequenceEventVertex);
 
             trackVertex.DeleteEdge(tempSequenceEventEdge);
+
+            // pitchset
+
+            IVertex trackOutput = trackVertex.Get(false, "Output:");
+
+            if(trackOutput != null)
+            {
+                IVertex outputPitchSet = trackOutput.Get(false, "PitchSet:");
+
+                if (outputPitchSet != null)
+                    GraphUtil.CreateOrReplaceEdge(sequenceVertex, pitchSetMeta, outputPitchSet);
+            }
 
 
             return finalEdge;
