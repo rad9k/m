@@ -4700,7 +4700,7 @@ namespace m0
                 ColorType.AddColor(Colors, de.Key, de.Value[0], de.Value[1], de.Value[2], 255);
 
             foreach (var de in baseColors)
-                ColorType.AddColor(Colors, "Ligth"+de.Key, ScaleUp(de.Value[0], 0.3), ScaleUp(de.Value[1], 0.3), ScaleUp(de.Value[2], 0.3), 255);
+                ColorType.AddColor(Colors, "Light"+de.Key, ScaleUp(de.Value[0], 0.3), ScaleUp(de.Value[1], 0.3), ScaleUp(de.Value[2], 0.3), 255);
 
             foreach (var de in baseColors)
                 ColorType.AddColor(Colors, "VeryLight"+de.Key, ScaleUp(de.Value[0], 0.6), ScaleUp(de.Value[1], 0.6), ScaleUp(de.Value[2], 0.6), 255);

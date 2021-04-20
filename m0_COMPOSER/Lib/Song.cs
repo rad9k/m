@@ -49,6 +49,8 @@ namespace m0_COMPOSER.Lib
 
             sp.Destroy();
 
+            SongVertexDictionary.RemoveSongPlay(exe.stack);
+
             return o;
         }        
              

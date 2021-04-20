@@ -17,6 +17,15 @@ remove ZeroCodeExecuter.AddRootToStack(exe); and ther is no. can be checked by "
 59. copy $Empty? [11] 
 60. copy from Graph error [59]
 97. removevertex listeners in tree.dispose for each leaf
+98. links in string2graph when having more than one meaning are made shorter in wrong way, for example:
+"X09PitchSet"
+	<@$Is :: @PitchSet>
+	<@System\Lib\Music\VisualisedPitch :: "C 2">
+		<@$Is :: @VisualisedPitch>
+		<@Name :: "C 1">
+		<@Note :: "1">
+		<@Octave :: "2">
+		<@Color :: @System\Data\UX\Colors\LightRose>
 
 <><><> FUTURE 0.5
 

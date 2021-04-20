@@ -266,12 +266,21 @@ namespace m0_COMPOSER.Lib
             {
                 PlatformClass.RemoveVertexChangeListeners_byGenericVertex(trackEdge.To, new VertexChange(TrackVertexChange), "PlaySong");
 
-                foreach (IEdge sequenceEdge in trackEdge.To.GetAll(false, @"SequenceEvent:\Sequence:"))
+                foreach (IEdge sequenceEventEdge in trackEdge.To.GetAll(false, @"SequenceEvent:"))
                 {
-                    PlatformClass.RemoveVertexChangeListeners_byGenericVertex(sequenceEdge.To, new VertexChange(SequenceVertexChange), "PlaySong");
+                    IVertex sequenceEventVertex = sequenceEventEdge.To;
 
-                    foreach(IEdge eventEdge in sequenceEdge.To.GetAll(false, @"Event:"))
-                        PlatformClass.RemoveVertexChangeListeners_byGenericVertex(eventEdge.To, new VertexChange(SequenceVertexChange), "PlaySong");
+                    PlatformClass.RemoveVertexChangeListeners_byGenericVertex(sequenceEventEdge.To, new VertexChange(SequenceEventVertexChange), "PlaySong");                    
+
+                    IVertex sequenceVertex = sequenceEventVertex.Get(false, "Sequence:");
+
+                    if (sequenceVertex != null)
+                    {                        
+                        PlatformClass.RemoveVertexChangeListeners_byGenericVertex(sequenceVertex, new VertexChange(SequenceVertexChange), "PlaySong");
+
+                        foreach (IEdge eventEdge in sequenceVertex.GetAll(false, @"Event:"))
+                            PlatformClass.RemoveVertexChangeListeners_byGenericVertex(eventEdge.To, new VertexChange(SequenceVertexChange), "PlaySong");
+                    }
                 }
             }
         }
@@ -279,10 +288,19 @@ namespace m0_COMPOSER.Lib
         void AddTrackListeners(IVertex trackVertex)
         {            
             PlatformClass.RegisterVertexChangeListeners_byGenericVertex(trackVertex, new VertexChange(TrackVertexChange), new string[] { }, "PlaySong");
-           // PlatformClass.RegisterVertexChangeListeners_byGenericVertex(trackVertex, new VertexChange(TrackVertexChange), new string[] { "Output" }, "PlaySong");
+            // PlatformClass.RegisterVertexChangeListeners_byGenericVertex(trackVertex, new VertexChange(TrackVertexChange), new string[] { "Output" }, "PlaySong");
 
-            foreach (IEdge sequenceEdge in trackVertex.GetAll(false, @"SequenceEvent:\Sequence:"))
-                AddSequenceListener(sequenceEdge.To);
+            foreach (IEdge sequenceEventEdge in trackVertex.GetAll(false, @"SequenceEvent:"))
+            {
+                IVertex sequenceEventVertex = sequenceEventEdge.To;
+
+                AddSequenceEventListener(sequenceEventEdge.To);
+
+                IVertex sequenceVertex = sequenceEventVertex.Get(false, "Sequence:");
+
+                if(sequenceVertex != null)
+                    AddSequenceListener(sequenceVertex);
+            }
         }
 
         void AddSequenceEventListener(IVertex sequenceEventVertex)

@@ -242,7 +242,7 @@ namespace m0_SYSTEM_GENERATE.Music
             GraphUtil.SetVertexValue(p, VisualisedPitch.Get(false, "Name"), name);
             GraphUtil.SetVertexValue(p, VisualisedPitch.Get(false, "Octave"), octave);
             GraphUtil.SetVertexValue(p, VisualisedPitch.Get(false, "Note"), note);
-            GraphUtil.CreateOrReplaceEdge(p, VisualisedPitch.Get(false, "Color"), color);
+            GraphUtil.CreateOrReplaceEdge(p, VisualisedPitch.Get(false, "PitchColor"), color);
 
             if(noteBackgroundColor != null)
                 GraphUtil.CreateOrReplaceEdge(p, VisualisedPitch.Get(false, "NoteBackgroundColor"), noteBackgroundColor);
@@ -478,7 +478,7 @@ namespace m0_SYSTEM_GENERATE.Music
 
             GraphUtil.AddInherits(VisualisedPitch, Pitch);
             GraphUtil.AddAttribute(VisualisedPitch, "Name", String, 1, 1);
-            GraphUtil.AddAssociation(VisualisedPitch, "Color", Color, 1, 1);
+            GraphUtil.AddAssociation(VisualisedPitch, "PitchColor", Color, 1, 1);
             GraphUtil.AddAssociation(VisualisedPitch, "NoteBackgroundColor", Color, 0, 1);
 
             // PICHSET

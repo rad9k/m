@@ -45,7 +45,7 @@ namespace m0.Util
 
         public bool Contains(key _key, value _value)
         {
-            if (dict.ContainsKey(_key))
+            if (!dict.ContainsKey(_key))
                 return false;
             else
             {

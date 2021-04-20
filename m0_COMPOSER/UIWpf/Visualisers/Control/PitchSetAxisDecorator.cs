@@ -144,7 +144,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control
 
                 //
 
-                IVertex colorVertex = segment.BaseVertex.Get(false, "Color:");
+                IVertex colorVertex = segment.BaseVertex.Get(false, "PitchColor:");
 
                 if (colorVertex != null)
                     segment.Color = WpfUtil.GetColorFromColorVertex(colorVertex);

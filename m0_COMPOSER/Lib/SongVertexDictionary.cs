@@ -39,7 +39,7 @@ namespace m0_COMPOSER.Lib
             return _songVertex;
         }
 
-    public static SongVisualiser GetSongVisualiser(IVertex _songVertex)
+        public static SongVisualiser GetSongVisualiser(IVertex _songVertex)
         {
             IVertex songVertex = MakeSongVertexUnique(_songVertex);
 
@@ -63,6 +63,14 @@ namespace m0_COMPOSER.Lib
             }            
 
             SongPlayDictionary.Add(songVertex, play);
+        }
+
+        public static void RemoveSongPlay(IVertex _songVertex)
+        {
+            IVertex songVertex = MakeSongVertexUnique(_songVertex);
+
+            if (SongPlayDictionary.ContainsKey(songVertex))
+                SongPlayDictionary.Remove(songVertex);                
         }
 
         public static SongPlay GetSongPlay(IVertex _songVertex)
