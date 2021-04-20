@@ -288,7 +288,13 @@ namespace m0.Store.Json
                         jv.ValueInt = (int)v.Value;                                            
 
                     if (v.Value is decimal)                    
-                        jv.ValueDecimal = (decimal)v.Value;                                            
+                        jv.ValueDecimal = (decimal)v.Value;
+
+                    if (v.Value is bool)
+                        if ((bool)v.Value)
+                            jv.ValueString = "True";
+                        else
+                            jv.ValueString = "False";
                 }
 
                 data.Vertices.Add(jv);
