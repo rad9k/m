@@ -528,17 +528,20 @@ namespace m0_COMPOSER.Lib
 
         public void MidiOut(IList<SongEvent> el)
         {
-            foreach (SongEvent e in el)
+            m0Main.Instance.Dispatcher.Invoke(() => // XXX ????????????? performance down
             {
-                if (e is NoteOnEvent)
-                    NoteOnEvent((NoteOnEvent)e);
+                foreach (SongEvent e in el)
+                {
+                    if (e is NoteOnEvent)
+                        NoteOnEvent((NoteOnEvent)e);
 
-                if (e is NoteOffEvent)
-                    NoteOffEvent((NoteOffEvent)e);
+                    if (e is NoteOffEvent)
+                        NoteOffEvent((NoteOffEvent)e);
 
-                if (e is ControlChangeEvent)
-                    ControlChangeEvent((ControlChangeEvent)e);
-            }
+                    if (e is ControlChangeEvent)
+                        ControlChangeEvent((ControlChangeEvent)e);
+                }
+            });
         }
 
         enum HighlightType { Play, Stop, Hit}

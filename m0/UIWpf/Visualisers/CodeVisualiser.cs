@@ -89,9 +89,10 @@ namespace m0.UIWpf.Visualisers
                 Vertex.Get(false, "TextMemoryCurrent:").Value = TextMemoryCurrent;
             }*/
 
-            if (TextMemoryCurrent > 1)
+            if (TextMemoryCurrent > 0)
             {
-                TextMemoryCurrent--;
+                if (TextMemoryCurrent > 1)
+                    TextMemoryCurrent--;
 
                 Text = TextMemory[TextMemoryCurrent - 1];
 
