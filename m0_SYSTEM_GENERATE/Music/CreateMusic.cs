@@ -469,7 +469,7 @@ namespace m0_SYSTEM_GENERATE.Music
 
             Pitch = GraphUtil.AddClass(Music, "Pitch");
 
-            GraphUtil.AddAttribute(Pitch, "Octave", Integer, 0, 1);
+            GraphUtil.AddAttribute(Pitch, "Octave", Integer, 1, 1);
             GraphUtil.AddAttribute(Pitch, "Note", Integer, 1, 1);
 
             // VISULISEDPICH
@@ -501,7 +501,7 @@ namespace m0_SYSTEM_GENERATE.Music
 
             GraphUtil.AddInherits(Note, Pitch);
 
-            GraphUtil.AddAttribute(Note, "Velocity", Integer, 0, 1);
+            GraphUtil.AddAttribute(Note, "Velocity", Integer, 1, 1);
 
             // NOTEEVENT
 
