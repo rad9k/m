@@ -80,13 +80,20 @@ namespace m0_COMPOSER.Lib
             return ticksPerMilisecond;
         }
 
-        public SongPlay(IExecution _exe, IVertex fakeSongVertex, int Tempo)
+        private void UpdateTempo()
+        {
+            int tempo = GraphUtil.GetIntegerValueOr0(SongVertex.Get(false, "Tempo:"));
+
+            TicksPerMilisecond = GetMidiTicksPerMilisecond(tempo);
+        }
+
+        public SongPlay(IExecution _exe, IVertex fakeSongVertex)
         {            
             exe = _exe;
 
             SongVertex = SongVertexDictionary.GetRealSongVertex(fakeSongVertex);
 
-            TicksPerMilisecond = GetMidiTicksPerMilisecond(Tempo);
+            UpdateTempo();
 
             SongDictionary = new SongEventsDictionary(SongVertex);
             
@@ -338,6 +345,13 @@ namespace m0_COMPOSER.Lib
             if ((e.Type == VertexChangeType.EdgeAdded || e.Type == VertexChangeType.EdgeRemoved)
                 && GeneralUtil.CompareStrings(e.Edge.Meta, "Track")){
                 AddTrackListeners(e.Edge.To);
+                UpdateEventDictionaries();
+            }
+
+            if (e.Type == VertexChangeType.ValueChanged && sender is IVertex
+                && GraphUtil.GetQueryInFirst((IVertex)sender, "Tempo", null) != null)
+            {
+                UpdateTempo();
                 UpdateEventDictionaries();
             }
         }

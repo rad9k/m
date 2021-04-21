@@ -28,11 +28,9 @@ namespace m0_COMPOSER.Lib
         {            
             INoInEdgeInOutVertexVertex o = exe.stack;                       
 
-            bool isNull = false;
+            bool isNull = false;       
 
-            int tempo = LibUtil.GetIntFromVertex(o, "Tempo", ref isNull);            
-
-            SongPlay sp = new SongPlay(exe, o, tempo);
+            SongPlay sp = new SongPlay(exe, o);
 
             SongVertexDictionary.SetSongPlay(o, sp);
 
