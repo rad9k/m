@@ -95,6 +95,9 @@ namespace m0.Graph
                 throw new Exception(MetaStoreIdentifier + " store not found");
 
             _meta = store.GetVertexByIdentifier(MetaIdentifier);
+
+            if (_meta != null)
+                _meta.AddMetaInEdge(this);
             
 
             _DetachState = DetachStateEnum.Attached;

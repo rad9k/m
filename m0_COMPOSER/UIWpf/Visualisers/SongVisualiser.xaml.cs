@@ -300,7 +300,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
         private void StopButton_Click(object sender, RoutedEventArgs e)
         {
-            if (SongVertex.Get(false, "Track:") != null)
+            if (PlayRecordState == PlayRecordStateEnum.Play && SongVertex.Get(false, "Track:") != null)
             {
                 SongVertexDictionary.SetSongVisualiser(SongVertex, this);
 

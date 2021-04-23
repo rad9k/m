@@ -286,20 +286,15 @@ namespace m0.ZeroTypes
 
             IVertex children = metaVertex; // can use VertexOperations.GetChildEdges, but $DefaultValue: should be OK
 
-            foreach (IEdge child in children)
-            //foreach (IEdge child in children.GetAll(false, "$Is:{$Is:Selector}"))
+            //foreach (IEdge child in children)
+            foreach (IEdge child in children.GetAll(false, @"{$Inherits:Selector}:"))
             {
-                bool canAdd = false;
+                bool canAdd = true;
 
                 IVertex MinCardinality = GraphUtil.GetQueryOutFirst(child.To, "$MinCardinality", null);
 
-                if (MinCardinality != null)
-                {
-                    if (MinCardinality.Value is String && ((String)MinCardinality.Value) == "1")
-                        canAdd = true;
-                    if (MinCardinality.Value is int && ((int)MinCardinality.Value) == 1)
-                        canAdd = true;
-                }
+                if (MinCardinality != null && GraphUtil.GetIntegerValueOr0(MinCardinality) == 0)
+                    canAdd = false;
 
                 if(canAdd)
                     if (GraphUtil.ExistQueryOut(child.To, "$DefaultValue", null))

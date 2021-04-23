@@ -2703,6 +2703,15 @@ namespace m0.ZeroCode
                     e.From.DeleteEdge(e);
                     e.From.AddEdge(e.Meta, parsedVertex);
                 }
+
+            IList<IEdge> MetaInEdgesRaw = existing.MetaInEdgesRaw.ToList();
+
+            foreach (IEdge e in MetaInEdgesRaw)
+                if (!SubGraphPreProcessing.Contains(e.From))
+                {
+                    e.From.DeleteEdge(e);
+                    e.From.AddEdge(parsedVertex, e.To);
+                }
         }
 
         void AddError(int lineNumber, string value)
