@@ -286,9 +286,16 @@ namespace m0.ZeroTypes
 
             IVertex children = metaVertex; // can use VertexOperations.GetChildEdges, but $DefaultValue: should be OK
 
-            //foreach (IEdge child in children)
-            foreach (IEdge child in children.GetAll(false, @"{$Inherits:Selector}:"))
+            foreach (IEdge child in children)
+            //foreach (IEdge child in children.GetAll(false, @"{$Inherits:Selector}:"))
             {
+                IVertex childMetaVertex = child.Meta;
+
+                InstructionHelpers.
+
+                if(ZeroCode.ZeroCodeUtil.)
+
+
                 bool canAdd = true;
 
                 IVertex MinCardinality = GraphUtil.GetQueryOutFirst(child.To, "$MinCardinality", null);
