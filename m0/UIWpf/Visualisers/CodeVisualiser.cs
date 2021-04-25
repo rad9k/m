@@ -80,14 +80,7 @@ namespace m0.UIWpf.Visualisers
 
         private void ReferenceTextMemoryLeft()
         {            
-            int TextMemoryCurrent = (int)GraphUtil.GetIntegerValue(Vertex.Get(false, "TextMemoryCurrent:"));
-
-        /*    if (TextMemoryCurrent == 1)
-            {            
-                Text = TextMemory[TextMemoryCurrent - 1];
-
-                Vertex.Get(false, "TextMemoryCurrent:").Value = TextMemoryCurrent;
-            }*/
+            int TextMemoryCurrent = (int)GraphUtil.GetIntegerValue(Vertex.Get(false, "TextMemoryCurrent:"));        
 
             if (TextMemoryCurrent > 0)
             {

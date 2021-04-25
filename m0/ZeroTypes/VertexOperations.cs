@@ -1,6 +1,7 @@
 ﻿using m0.Foundation;
 using m0.Graph;
 using m0.Util;
+using m0.ZeroCode.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -289,19 +290,24 @@ namespace m0.ZeroTypes
             foreach (IEdge child in children)
             //foreach (IEdge child in children.GetAll(false, @"{$Inherits:Selector}:"))
             {
+                bool canAdd = false;
+
                 IVertex childMetaVertex = child.Meta;
-
-                InstructionHelpers.
-
-                if(ZeroCode.ZeroCodeUtil.)
-
-
-                bool canAdd = true;
 
                 IVertex MinCardinality = GraphUtil.GetQueryOutFirst(child.To, "$MinCardinality", null);
 
-                if (MinCardinality != null && GraphUtil.GetIntegerValueOr0(MinCardinality) == 0)
-                    canAdd = false;
+                if (InstructionHelpers.CheckIfInherits(childMetaVertex, "Selector"))
+                {
+                    if (MinCardinality != null && GraphUtil.GetIntegerValueOr0(MinCardinality) == 1)
+                        canAdd = true;
+                    else
+                        canAdd = false;
+                }
+                else
+                {                    
+                    if (MinCardinality != null && GraphUtil.GetIntegerValueOr0(MinCardinality) == 1)
+                        canAdd = true;
+                }
 
                 if(canAdd)
                     if (GraphUtil.ExistQueryOut(child.To, "$DefaultValue", null))
