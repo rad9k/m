@@ -62,10 +62,12 @@ namespace m0.Graph
 
             To.DeleteInEdgeOnlyIn(this);
 
+            if (_meta != null)
+                Meta.DeleteMetaInEdge(this);
+
+
             _to = null;
-
-            
-
+           
             _meta = null;
 
             _DetachState = DetachStateEnum.Detached;
@@ -96,9 +98,10 @@ namespace m0.Graph
 
             _meta = store.GetVertexByIdentifier(MetaIdentifier);
 
-            if (_meta != null)
-                _meta.AddMetaInEdge(this);
-            
+            if (Meta != null)
+                Meta.AddMetaInEdge(this);
+
+            From.AttachEdge(this);
 
             _DetachState = DetachStateEnum.Attached;
         }      

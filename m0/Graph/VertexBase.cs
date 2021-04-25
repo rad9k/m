@@ -279,6 +279,11 @@ namespace m0.Graph
             throw new NotImplementedException();
         }
 
+        public virtual void AttachEdge(IEdge edge)
+        {
+            throw new NotImplementedException();
+        }
+
         public virtual void AddEdgesList(IEnumerable<IEdge> edges)
         {
             throw new NotImplementedException();

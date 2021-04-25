@@ -86,10 +86,9 @@ namespace m0.Store
             //            
 
             _DetachState = DetachStateEnum.Detaching;
-            int cnt = 0;
+            
             foreach (IVertex v in VertexIdentifiersDictionary.Values)
-            {
-                cnt++;
+            {                
                 //foreach (IEdge e in v.OutEdges)
                 foreach (IEdge e in v.OutEdgesRaw) // ToList was bit beeded
                     //foreach (IEdge e in v.OutEdgesRaw.ToList()) // ToList was bit beeded
@@ -100,18 +99,6 @@ namespace m0.Store
                         
                          if (de.To.Store != this || (de.Meta != null && de.Meta.Store != this)) // WHY NOT ALL ????????
                             de.Detach();
-
-                        /*if (MinusZero.Instance.AllowBug)
-                        {
-                            if (de.To.Store != this || (de.Meta != null && de.Meta.Store != this))
-                                de.Detach();
-                        }
-                        else
-                        {
-                            if (de.DetachState != DetachStateEnum.Detached)
-                                if (de.To.Store != this || (de.Meta != null && de.Meta.Store != this))
-                                    de.Detach();
-                        }*/
                     }
             }
 

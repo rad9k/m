@@ -434,6 +434,13 @@ namespace m0.Graph
             // not needed as for now
         }
 
+        public void AddOutEdgesRaw(IEdge e)
+        {
+            OutEdgesRaw.Add(e);
+
+            UsageCounter++;
+        }
+
         public override IEdge AddEdge(IVertex metaVertex, IVertex destVertex)
         {
             if (destVertex == null)
@@ -441,24 +448,27 @@ namespace m0.Graph
 
             EdgeBase ne = new EasyEdge(this, metaVertex, destVertex);
 
-            OutEdgesRaw.Add(ne);
+            AddOutEdgesRaw(ne);
 
-            UsageCounter++;
+            AttachEdge(ne);
 
+            FireChange(new VertexChangeEventArgs(VertexChangeType.EdgeAdded, ne));
+
+            return ne;
+        }
+
+        public override void AttachEdge(IEdge edge)
+        {            
             OutEdgesDictionariesNeedsRebuild = true;
 
             InheritChildsDictionariesNeedsRebuild(false);
 
-            if (GeneralUtil.CompareStrings(ne.Meta.Value, "$Inherits"))
+            if (GeneralUtil.CompareStrings(edge.Meta.Value, "$Inherits"))
             {
                 InheritanceCount++;
 
                 HasInheritance = true;
             }
-
-            FireChange(new VertexChangeEventArgs(VertexChangeType.EdgeAdded, ne));
-
-            return ne;
         }
 
         public override void AddEdgesList(IEnumerable<IEdge> edges)

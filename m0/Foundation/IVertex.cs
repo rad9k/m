@@ -79,6 +79,8 @@ namespace m0.Foundation
 
         IEdge AddEdge(IVertex metaVertex, IVertex destVertex);
 
+        void AttachEdge(IEdge edge);
+
         void AddEdgesList(IEnumerable<IEdge> edges);
 
         void DeleteEdge(IEdge edge);
