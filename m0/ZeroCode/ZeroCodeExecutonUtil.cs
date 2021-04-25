@@ -61,7 +61,7 @@ namespace m0.ZeroCode
         {
             exe.AddStackFrame(theObject); // ENTER NEW STACK
             exe.AddStackFrame(paramtersStack);
-            exe.stack.AddEdge(thisMeta, InstructionHelpers.Create_INoInEdgeInOutVertexVertex_FromEdgesList(theObject)); //?????
+            exe.stack.AddEdge(thisMeta, theObject);
 
             endPoint.Execute(exe);
 
