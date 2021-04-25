@@ -8,7 +8,7 @@
     <Grid>
 
 
-        <TextBox  Name="Content" FontFamily="Consolas"  Margin="10,94,10,0" Height="20" VerticalAlignment="Top">
+        <TextBox  Name="Content" FontFamily="Consolas"  Margin="10,94,10,0" Height="20" VerticalAlignment="Top" KeyDown="Content_KeyDown">
         </TextBox>
 
 

@@ -16,7 +16,7 @@
 
         <Button Content="OK" Margin="0,0,10,10.4" HorizontalAlignment="Right" Width="107" Height="33" VerticalAlignment="Bottom" Click="Button_Click"/>
         <Label Name="Question" HorizontalAlignment="Left" Height="47" Margin="10,26,0,0" VerticalAlignment="Top" Width="274"/>
-        <TextBox Name="AnswerBox" Height="22" Margin="10,94,9.6,0" TextWrapping="Wrap"  VerticalAlignment="Top"/>
+        <TextBox Name="AnswerBox" Height="22" Margin="10,94,9.6,0" TextWrapping="Wrap"  VerticalAlignment="Top" KeyDown="AnswerBox_KeyDown"/>
 
     </Grid>
 </Window>

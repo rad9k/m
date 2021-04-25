@@ -51,11 +51,22 @@ namespace m0.UIWpf.Dialog
             ShowDialog();
         }
 
-        private void Button_Click(object sender, RoutedEventArgs e)
+        void FinishDialog()
         {
             Answer = AnswerBox.Text;
-           
+
             Close();
-        }        
+        }
+
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+            FinishDialog();
+        }
+
+        private void AnswerBox_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Enter)
+                FinishDialog();
+        }
     }
 }

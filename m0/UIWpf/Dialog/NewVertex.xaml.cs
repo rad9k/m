@@ -50,7 +50,7 @@ namespace m0.UIWpf.Dialog
             Content.Focus();
         }
 
-        private void Button_Click_1(object sender, RoutedEventArgs e)
+        void FinishDialog()
         {
             MinusZero.Instance.DefaultUserInteraction.CloseWindowByContent(this);
 
@@ -62,13 +62,23 @@ namespace m0.UIWpf.Dialog
 
                 IVertex meta = this.Schema.Vertex.Get(false, @"BaseEdge:\To:\To:");
 
-                IVertex v=VertexOperations.AddInstance(Vertex, meta);
+                IVertex v = VertexOperations.AddInstance(Vertex, meta);
 
                 v.Value = this.Content.Text;
 
-                if(VertexOperations.GetChildEdges(meta).Count()>0)
+                if (VertexOperations.GetChildEdges(meta).Count() > 0)
                     MinusZero.Instance.DefaultUserInteraction.Edit(v, null);
-            }             
+            }
+        }
+
+        private void Button_Click_1(object sender, RoutedEventArgs e)
+        {
+            FinishDialog();
+        }
+
+        private void Content_KeyDown(object sender, KeyEventArgs e)
+        {
+            FinishDialog();
         }
     }
 }
