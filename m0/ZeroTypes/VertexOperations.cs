@@ -298,10 +298,15 @@ namespace m0.ZeroTypes
 
                 if (InstructionHelpers.CheckIfInherits(childMetaVertex, "Selector"))
                 {
-                    if (MinCardinality != null && GraphUtil.GetIntegerValueOr0(MinCardinality) == 1)
-                        canAdd = true;
+                    if (MinCardinality != null)
+                    {
+                        if (GraphUtil.GetIntegerValueOr0(MinCardinality) == 1)
+                            canAdd = true;
+                        else
+                            canAdd = false;
+                    }
                     else
-                        canAdd = false;
+                        canAdd = true;
                 }
                 else
                 {                    

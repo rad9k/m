@@ -25,7 +25,8 @@ remove ZeroCodeExecuter.AddRootToStack(exe); and ther is no. can be checked by "
 		<@Name :: "C 1">
 		<@Note :: "1">
 		<@Octave :: "2">
-		<@Color :: @System\Data\UX\Colors\LightRose>
+		<@Color[HERE] :: @System\Data\UX\Colors\LightRose>
+99. $Inherits in code visualier when poiting to outside vertex will populate the vertex in the code view
 
 <><><> FUTURE 0.5
 

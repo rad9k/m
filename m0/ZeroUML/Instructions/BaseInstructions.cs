@@ -15,6 +15,11 @@ namespace m0.ZeroUML.Instructions
 {
     public class BaseInstructions
     {
+        static IVertex r = MinusZero.Instance.Root;
+
+        static IVertex thisMeta = r.Get(false, @"System\Meta\ZeroUML\this");
+
+
         ////////////////////////////////////////////////////////////////
         //
         // query 
@@ -2148,6 +2153,8 @@ namespace m0.ZeroUML.Instructions
 
             exe.AddStackFrame(theObject); // ENTER NEW STACK
             exe.AddStackFrame();
+
+            exe.stack.AddEdge(thisMeta, theObject);
 
             for (int x = 0; x < minParameters; x++)
             {

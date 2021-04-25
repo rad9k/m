@@ -411,6 +411,7 @@ namespace m0
                 ",If{Test{$$NoSequentialExecution:,$MinCardinality:1,$MaxCardinality:1}},Test{Expression{$$NoSequentialExecution:,$MinCardinality:1,$MaxCardinality:1}},Case{Test{$$NoSequentialExecution:,$MinCardinality:1,$MaxCardinality:1}},Fallback" +
                 ",EmptySet,Constant" +
                 ",Execute,Parse,ParseWithLanguage{FormalTextLanguage{$MinCardinality:0,$MaxCardinality:1}},Generate,GenerateWithLanguage{FormalTextLanguage{$MinCardinality:0,$MaxCardinality:1}}" +
+                ",this" +
                 "}");            
 
             // Link
