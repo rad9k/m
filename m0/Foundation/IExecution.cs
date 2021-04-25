@@ -18,7 +18,9 @@ namespace m0.Foundation
 
         void AddStackFrame(IVertex newStackFrame);
 
-        void RemoveStackFrame();        
+        void RemoveStackFrame();
+
+        void CreateEmptyStack();
 
         INoInEdgeInOutVertexVertex ExecuteInstructionByMontevideoPrinciples(IVertex inputQs, IVertex instructionVertex, out bool isStackFrameReturn);
 

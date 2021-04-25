@@ -287,7 +287,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
                 IVertex playMethod = SongVertex.Get(false, @"$Is:\Method:Play");
 
-                ZeroCodeExecutonUtil.CreateExecutionAndVertexExecute(playMethod, SongVertex);
+                ZeroCodeExecutonUtil.CreateExecutionAndVertexMethodExecute(playMethod, SongVertex);
             }
             else
                 StopButton_Click(null, null);
@@ -308,7 +308,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
                 IVertex playMethod = SongVertex.Get(false, @"$Is:\Method:Stop");
 
-                ZeroCodeExecutonUtil.CreateExecutionAndVertexExecute(playMethod, SongVertex);
+                ZeroCodeExecutonUtil.CreateExecutionAndVertexMethodExecute(playMethod, SongVertex);
             }
 
             SetPlayRecordState(PlayRecordStateEnum.Stop);
@@ -341,7 +341,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
                 IVertex silentMethod = outputVertex.Get(false, @"$Is:\Method:Silent");
 
-                ZeroCodeExecutonUtil.CreateExecutionAndVertexExecute(silentMethod, outputVertex);
+                ZeroCodeExecutonUtil.CreateExecutionAndVertexMethodExecute(silentMethod, outputVertex);
             }
         }
 

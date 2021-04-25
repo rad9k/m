@@ -20,6 +20,11 @@ namespace m0.ZeroCode
 
         public bool metaMode { get; set; }
 
+        public void CreateEmptyStack()
+        {
+            stack = InstructionHelpers.CreateStack();
+        }
+
         public void AddStackFrame()
         {
             INoInEdgeInOutVertexVertex newStackFrame = InstructionHelpers.CreateStack();

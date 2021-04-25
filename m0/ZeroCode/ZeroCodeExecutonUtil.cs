@@ -9,7 +9,32 @@ using System.Threading.Tasks;
 namespace m0.ZeroCode
 {
     public class ZeroCodeExecutonUtil
-    {        
+    {
+        static IVertex r = MinusZero.Instance.Root;
+
+        static IVertex thisMeta = r.Get(false, @"System\Meta\ZeroUML\this");
+
+        public static void CreateExecutionAndVertexMethodExecute(IVertex endPoint, IVertex theObject)
+        {
+            IExecution exe = new ZeroCodeExecution();
+
+            exe.metaMode = true;
+
+            exe.CreateEmptyStack();
+
+            exe.newVertexCreationSpace = exe.stack;
+
+            ZeroCodeExecuter.AddRootToStack(exe);
+
+            exe.AddStackFrame(theObject);
+            
+            exe.AddStackFrame();
+
+            exe.stack.AddEdge(thisMeta, theObject);
+            
+            endPoint.Execute(exe);            
+        }
+
         public static void CreateExecutionAndVertexExecute(IVertex endPoint, IVertex toBeStackVertex)
         {
             IExecution exe = new ZeroCodeExecution();
@@ -36,6 +61,7 @@ namespace m0.ZeroCode
         {
             exe.AddStackFrame(theObject); // ENTER NEW STACK
             exe.AddStackFrame(paramtersStack);
+            exe.stack.AddEdge(thisMeta, InstructionHelpers.Create_INoInEdgeInOutVertexVertex_FromEdgesList(theObject)); //?????
 
             endPoint.Execute(exe);
 
