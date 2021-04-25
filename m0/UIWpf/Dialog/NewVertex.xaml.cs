@@ -78,7 +78,8 @@ namespace m0.UIWpf.Dialog
 
         private void Content_KeyDown(object sender, KeyEventArgs e)
         {
-            FinishDialog();
+            if (e.Key == Key.Enter)
+                FinishDialog();
         }
     }
 }
