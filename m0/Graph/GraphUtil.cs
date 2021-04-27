@@ -1014,10 +1014,17 @@ namespace m0.Graph
         {
             IEdge toReplace = FindEdgeByMetaVertex(Vertex, metaVertex);
 
+            /*if (toReplace != null)
+                Vertex.DeleteEdge(toReplace);
+
+            return Vertex.AddEdge(metaVertex, NewEdgeToVertex);*/            
+
+            IEdge e =  Vertex.AddEdge(metaVertex, NewEdgeToVertex);
+
             if (toReplace != null)
                 Vertex.DeleteEdge(toReplace);
 
-            return Vertex.AddEdge(metaVertex, NewEdgeToVertex);
+            return e;
         }
 
         static public IEdge ReplaceEdge(IVertex Vertex, IVertex metaVertex, IVertex NewEdgeToVertex)

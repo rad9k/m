@@ -232,13 +232,7 @@ namespace m0.Graph
         }
 
         public virtual IEdge AddVertexAndReturnEdge(IVertex metaVertex, object val)
-        {
-            if (metaVertex != null && GeneralUtil.CompareStrings(metaVertex.Value, "Output"))
-            {
-                int x = 0;
-            }
-
-
+        {            
             if (val is IVertex)
                 throw new Exception("Trying to add Vertex as Vertex value");
 

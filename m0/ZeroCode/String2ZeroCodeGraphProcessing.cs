@@ -2709,8 +2709,12 @@ namespace m0.ZeroCode
             foreach (IEdge e in MetaInEdgesRaw)
                 if (!SubGraphPreProcessing.Contains(e.From))
                 {
-                    e.From.DeleteEdge(e);
-                    e.From.AddEdge(parsedVertex, e.To);
+                    foreach (IEdge ee in e.From)
+                        if (ee.Meta == e.Meta && ee.To == e.To) // no to create non exising edge XXX
+                        {
+                            e.From.DeleteEdge(e);
+                            e.From.AddEdge(parsedVertex, e.To);
+                        }
                 }
         }
 
