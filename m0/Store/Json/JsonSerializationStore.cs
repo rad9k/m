@@ -132,7 +132,7 @@ namespace m0.Store.Json
 
                 v._Store = this;
 
-                VertexIdentifiersDictionary.Add(v.Identifier, v);
+                //VertexIdentifiersDictionary.Add(v.Identifier, v); // allready added
 
                 foreach(JsonEdge je in jv.Edges)
                 {
