@@ -612,11 +612,13 @@ namespace m0.Graph
 
                     if (InheritanceCount == 0)
                         HasInheritance = false;
-                }
+                }                
 
-                FireChange(new VertexChangeEventArgs(VertexChangeType.EdgeRemoved, edge));
+                edge.Meta.DeleteMetaInEdge(edge); // XXX I think that this is 
 
                 edge.To.DeleteInEdgeOnlyIn(edge);
+
+                FireChange(new VertexChangeEventArgs(VertexChangeType.EdgeRemoved, edge)); // moved from before edge.Meta.DeleteMetaInEdge(edge); XXX !!!
             }
 
             OutEdgesDictionariesNeedsRebuild = true;
