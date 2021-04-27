@@ -26,8 +26,8 @@ namespace m0.Graph
             }
             set
             {
-                if (base.UsageCounter < value && UsageCounter == 0 && Store.DetachState == DetachStateEnum.Attached)
-                        Store.StoreVertexIdentifier(this);
+             //   if (base.UsageCounter < value && UsageCounter == 0 && Store.DetachState == DetachStateEnum.Attached)
+               //         Store.StoreVertexIdentifier(this);
 
              //   if (base.UsageCounter > value && UsageCounter == 1 && Store.DetachState == DetachStateEnum.Attached)
              //           Store.RemoveVertexIdentifier(this); // EAT THIS!!!
