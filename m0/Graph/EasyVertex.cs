@@ -356,7 +356,12 @@ namespace m0.Graph
         }
 
         public override void AddMetaInEdge(IEdge edge)
-        {            
+        {
+            if (GeneralUtil.CompareStrings(edge.Meta.Value, "Output"))
+            {
+                int x = 0;
+            }
+
             MetaInEdgesRaw.Add(edge);
 
             UsageCounter++;         
@@ -364,6 +369,10 @@ namespace m0.Graph
 
         public override void DeleteMetaInEdge(IEdge _edge)
         {
+            if (GeneralUtil.CompareStrings(_edge.Meta.Value, "Output"))
+            {
+                int x = 0;
+            }
             IEdge edge = null;
 
             if (MetaInEdgesRaw.Contains(_edge))
@@ -443,6 +452,12 @@ namespace m0.Graph
 
         public override IEdge AddEdge(IVertex metaVertex, IVertex destVertex)
         {
+            if(metaVertex != null && GeneralUtil.CompareStrings(metaVertex.Value, "Output"))
+            {
+                int x = 0;
+            }
+            //
+
             if (destVertex == null)
                 destVertex = MinusZero.Instance.Empty; // can be    
 
