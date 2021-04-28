@@ -55,7 +55,7 @@ namespace m0.Graph
 
         public bool AllowInheritance = true;
 
-        protected int InheritanceCount = 0;
+        public int InheritanceCount = 0;
 
         public override IList<IEdge> InEdgesRaw { get { return ed.In; } }
 
@@ -378,15 +378,7 @@ namespace m0.Graph
 
             if (edge != null)
             {
-                OutEdgesRaw.Remove(edge);
-
-                if (GeneralUtil.CompareStrings(edge.Meta.Value, "$Inherits"))
-                {
-                    InheritanceCount--;
-
-                    if (InheritanceCount == 0)
-                        HasInheritance = false;
-                }
+                OutEdgesRaw.Remove(edge);                
 
                 FireChange(new VertexChangeEventArgs(VertexChangeType.EdgeRemoved, edge));
             }
@@ -430,50 +422,18 @@ namespace m0.Graph
         }
 
         public void DeleteAllInEdges()
-        {
-            //foreach(IEdge edge in InEdgesRaw) // constant "collection modified during enumeration" exceptions
-            foreach (IEdge edge in InEdgesRaw.ToList()) 
-            {
-                InEdgesRaw.Remove(edge);
-
-
-
-                edge.From.DeleteEdgeOnlyOut(edge);
-
-                //FireChange(new VertexChangeEventArgs(VertexChangeType.InEdgeRemoved, edge));
-                // not needed as for now
-            }
-
-            InEdgesDictionariesNeedsRebuild = true;
-
-            InheritChildsDictionariesNeedsRebuild(true);
+        {            
+            foreach (IEdge edge in InEdgesRaw.ToList())          
+                InEdgesRaw.Remove(edge);                        
         }
 
         private void DeleteAllEdges()
         {
-            foreach (IEdge edge in InEdgesRaw)
-            {
-                OutEdgesRaw.Remove(edge);
-
-                UsageCounter--;
-
-                if (GeneralUtil.CompareStrings(edge.Meta.Value, "$Inherits"))
-                {
-                    InheritanceCount--;
-
-                    if (InheritanceCount == 0)
-                        HasInheritance = false;
-                }                
-
-                edge.Meta.DeleteMetaInEdge(edge); // XXX I think that this is 
-
-                edge.To.DeleteInEdgeOnlyIn(edge);
+            foreach (IEdge edge in InEdgesRaw) {             
+                OutEdgesRaw.Remove(edge);                
 
                 FireChange(new VertexChangeEventArgs(VertexChangeType.EdgeRemoved, edge)); // moved from before edge.Meta.DeleteMetaInEdge(edge); XXX !!!
-            }
-
-            OutEdgesDictionariesNeedsRebuild = true;
-            InheritChildsDictionariesNeedsRebuild(false);
+            }            
         }
 
         public void InheritChildsDictionariesNeedsRebuild(bool inDictiories)

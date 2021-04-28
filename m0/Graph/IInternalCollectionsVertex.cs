@@ -10,5 +10,7 @@ namespace m0.Graph
     public interface IInternalCollectionsVertex : IVertex
     {
         void InheritChildsDictionariesNeedsRebuild(bool inDictiories);
+
+        int InheritanceCount;
     }
 }

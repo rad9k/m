@@ -192,7 +192,7 @@ namespace m0.Store.Json
 
                     e._DetachState = DetachStateEnum.Detached;
 
-                    e._From = v;
+                    e._from = v;
 
                     v.OutEdgesRaw.Add(e);                    
                 }

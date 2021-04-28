@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace m0.Graph.Internal
 {
-    public class OutList : ExtandableList<IEdge>
+    public class OutList : ExtandableHashSetAsList<IEdge>
     {
         EdgeDictionaries ed;
 
@@ -52,6 +52,18 @@ namespace m0.Graph.Internal
 
             ed.v.OutEdgesDictionariesNeedsRebuild = true;
             ed.v.InheritChildsDictionariesNeedsRebuild(false);
+
+
+            if(item.Meta != null)
+            {
+                if (GeneralUtil.CompareStrings(item.Meta.Value, "$Inherits"))
+                {
+                    ed.v.InheritanceCount--;
+
+                    if (InheritanceCount == 0)
+                        HasInheritance = false;
+                }
+            }
 
             //
 
