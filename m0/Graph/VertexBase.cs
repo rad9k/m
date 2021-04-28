@@ -308,9 +308,7 @@ namespace m0.Graph
         }
 
         public VertexBase(IStore _Store)
-        {
-            UsageCounter = 0;
-
+        {            
             this._Store = _Store;
             _AccessLevel = GeneralUtil.CreateAndCopyList<AccessLevelEnum>(this._Store.AccessLevel);            
         }

@@ -51,11 +51,11 @@ namespace m0.Graph
                 e.To.InEdgesDictionariesNeedsRebuild = true;
         }
 
-        protected bool HasInheritance = false;
+        public bool HasInheritance { get; set; }
 
         public bool AllowInheritance = true;
 
-        public int InheritanceCount = 0;
+        public int InheritanceCount { get; set; }
 
         public override IList<IEdge> InEdgesRaw { get { return ed.In; } }
 
@@ -393,6 +393,8 @@ namespace m0.Graph
         public EasyVertex(IStore _store):base(_store)
         {
             ed = new EdgeDictionaries(this);
+
+            InheritanceCount = 0;
 
             _Identifier = Store.VertexIdentifierCount++;            
 

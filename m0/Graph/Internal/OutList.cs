@@ -60,8 +60,8 @@ namespace m0.Graph.Internal
                 {
                     ed.v.InheritanceCount--;
 
-                    if (InheritanceCount == 0)
-                        HasInheritance = false;
+                    if (ed.v.InheritanceCount == 0)
+                        ed.v.HasInheritance = false;
                 }
             }
 

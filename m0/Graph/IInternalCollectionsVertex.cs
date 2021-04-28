@@ -11,6 +11,7 @@ namespace m0.Graph
     {
         void InheritChildsDictionariesNeedsRebuild(bool inDictiories);
 
-        int InheritanceCount;
+        int InheritanceCount { get; set; }
+        bool HasInheritance { get; set; }
     }
 }
