@@ -54,16 +54,7 @@ namespace m0.Store.FileSystem
                 }
             }
         }        
-
-        public override void AddInEdge(IEdge edge)
-        {
-            
-        }
-
-        public override void DeleteInEdge(IEdge edge)
-        {
-            
-        }
+        
 
         public override IEdge AddEdge(IVertex metaVertex, IVertex destVertex)
         {
@@ -218,8 +209,6 @@ namespace m0.Store.FileSystem
             : base(store)
         {
             _Identifier = identifier;
-
-            UsageCounter++; // identified vertex are used for volatile stores            
 
             DI = new DirectoryInfo(Identifier.ToString());
 

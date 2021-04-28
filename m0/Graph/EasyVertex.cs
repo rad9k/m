@@ -19,7 +19,7 @@ namespace m0.Graph
     [Serializable]
     public class EasyVertex: VertexBase, IDisposable, IInternalCollectionsVertex
     {
-        EdgeDictionaries ed;
+        protected EdgeDictionaries ed;
 
         public object _Identifier;
         

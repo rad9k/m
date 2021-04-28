@@ -12,39 +12,14 @@ namespace m0.Graph
         public NoInEdgeInOutVertexVertex(IStore _Store): base(_Store)
         {
             AllowInheritance = false;
+            ed.NoInEdgeInOutVertexVertexMode = true;
         }
 
         protected override IVertex CreateVertexInstance()
         {
             return new EasyVertex(this.Store);                
         }
-
-        public override IEdge AddEdge(Foundation.IVertex metaVertex, Foundation.IVertex destVertex)
-        {           
-            if (destVertex == null)
-                destVertex = MinusZero.Instance.Empty; // can be
-
-            IEdge ne = new NoInEdgeInOutVertexEdge(this, metaVertex, destVertex); // INoInEdgeInOutVertexVertex DIFF
-
-            OutEdgesRaw.Add(ne);
-
-            UsageCounter++;
-
-            OutEdgesDictionariesNeedsRebuild = true;
-
-            InheritChildsDictionariesNeedsRebuild(false);
-
-            if (GeneralUtil.CompareStrings(ne.Meta.Value, "$Inherits"))
-            {
-                InheritanceCount++;
-
-                HasInheritance = true;
-            }
-
-            FireChange(new VertexChangeEventArgs(VertexChangeType.EdgeAdded, ne));
-
-            return ne;
-        }
+        
 
         public void AddEdgeForNoInEdgeInOutVertexVertex_BAD_BEHAVIOR_IEdge_MANY_TIMES(IEdge e){
             //IEdge ne = new NoInEdgeInOutVertexEdge(e.From, e.Meta, e.To); // INoInEdgeInOutVertexVertex DIFF
@@ -57,44 +32,14 @@ namespace m0.Graph
 
         public void AddEdgeForNoInEdgeInOutVertexVertex(IEdge e)
         {
-            IEdge ne = new NoInEdgeInOutVertexEdge(e.From, e.Meta, e.To); // INoInEdgeInOutVertexVertex DIFF
+            IEdge ne = new EdgeBase(e.From, e.Meta, e.To); // INoInEdgeInOutVertexVertex DIFF
                                                                           // but can it work that way?
                                                                           // before that there was jus a simple
             //OutEdgesRaw.Add(e);
 
             OutEdgesRaw.Add(ne); //eat this!
         }
-
-        public override void DeleteEdge(IEdge _edge)
-        {
-            IEdge edge = _edge;
-
-            if (!OutEdgesRaw.Contains(edge))
-                foreach (IEdge e in OutEdgesRaw)
-                    if (e.Meta == _edge.Meta && e.To == _edge.To)
-                        edge = e;
-
-            if (edge != null)
-            {
-                OutEdgesRaw.Remove(edge);
-
-                UsageCounter--;
-
-                OutEdgesDictionariesNeedsRebuild = true;
-                InheritChildsDictionariesNeedsRebuild(false);
-
-                if (GeneralUtil.CompareStrings(edge.Meta.Value, "$Inherits"))
-                {
-                    InheritanceCount--;
-
-                    if (InheritanceCount == 0)
-                        HasInheritance = false;
-                }
-
-                FireChange(new VertexChangeEventArgs(VertexChangeType.EdgeRemoved, edge));
-            }
-        }
-
+        
         public override void QueryOutEdges(object meta, object from, out IEdge result, out IList<IEdge> results)
         {
             result = null;

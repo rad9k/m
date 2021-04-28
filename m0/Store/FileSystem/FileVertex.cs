@@ -64,16 +64,6 @@ namespace m0.Store.FileSystem
             }
         }        
 
-        public override void AddInEdge(IEdge edge)
-        {
-
-        }
-
-        public override void DeleteInEdge(IEdge edge)
-        {
-
-        }
-
         public override IVertex AddVertex(IVertex metaVertex, object val)
         {
             UserInteractionUtil.ShowError("FileVertex.AddVertex", Identifier + " : can not create vertex here");
@@ -141,9 +131,7 @@ namespace m0.Store.FileSystem
         public FileVertex(string identifier, IStore store)
             : base(store)
         {
-            _Identifier = identifier;
-
-            UsageCounter++; // identified vertex are used for volatile stores            
+            _Identifier = identifier;            
 
             FI = new FileInfo(Identifier.ToString());
 

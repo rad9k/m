@@ -34,7 +34,7 @@ namespace m0.Graph.Internal
             if(item.Meta != null)
                 item.Meta.MetaInEdgesRaw.Add(item);
 
-            if(item.To!=null)
+            if(!ed.NoInEdgeInOutVertexVertexMode &&  item.To!=null)
                 item.To.InEdgesRaw.Add(item);
 
             ed.v.OutEdgesDictionariesNeedsRebuild = true;
@@ -47,7 +47,7 @@ namespace m0.Graph.Internal
             if(item.Meta != null)
                 item.Meta.MetaInEdgesRaw.Remove(item);
 
-            if(item.To != null)
+            if(!ed.NoInEdgeInOutVertexVertexMode && item.To != null)
                 item.To.InEdgesRaw.Remove(item);
 
             ed.v.OutEdgesDictionariesNeedsRebuild = true;

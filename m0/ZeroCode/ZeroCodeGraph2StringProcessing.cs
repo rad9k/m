@@ -232,7 +232,7 @@ namespace m0.ZeroCode
                             if (ikv.Get(false, @"$Is:$ImportMeta") != null)
                                 isMeta = true;
 
-                            IEdge ee = new NonActingEdge(null, ikv, null);
+                            IEdge ee = new EdgeBase(null, ikv, null);
                             edgesList.Add(ee);
                             string s = GetStringFromEdgesList(dict, edgesList, isMeta);
                             edgesList.RemoveAt(edgesList.Count - 1);
@@ -250,7 +250,7 @@ namespace m0.ZeroCode
             foreach (IEdge e in v.InEdgesRaw.ToList()) // XXX toList added
                 if (!linkBeenList.Contains(e.From))
                 {
-                    IEdge ee = new NonActingEdge(e.From, e.Meta, e.To);
+                    IEdge ee = new EdgeBase(e.From, e.Meta, e.To);
 
                     edgesList.Add(ee);
 
@@ -725,9 +725,9 @@ namespace m0.ZeroCode
 
             getKeywordManyRootBaseCount = 0;
 
-            NonActingEdge defAsEdge = new NonActingEdge(null, null, def);
+            EdgeBase defAsEdge = new EdgeBase(null, null, def);
 
-            IEdge kmrEdge = GetKeywordManyRoot_reccurent("",defAsEdge, out queryString);
+            IEdge kmrEdge = GetKeywordManyRoot_reccurent("", defAsEdge, out queryString);
 
             keywordManyRootQueryString = queryString;
 

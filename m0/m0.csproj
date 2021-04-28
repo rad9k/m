@@ -105,7 +105,6 @@
     <Compile Include="Graph\Internal\OutList.cs" />
     <Compile Include="Graph\OLD\EasyEdge - Copy.cs" />
     <Compile Include="Graph\OLD\EasyVertex - OldVersion.cs" />
-    <Compile Include="Graph\NonActingEdge.cs" />
     <Compile Include="Lib\LibUtil.cs" />
     <Compile Include="Lib\Std.cs" />
     <Compile Include="UIWpf\Commands\ExtraCommandHook.cs" />
@@ -304,9 +303,6 @@
     <Compile Include="Foundation\IEdge.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Foundation\IHasUsageCounter.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="Foundation\IStore.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -332,9 +328,6 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Graph\IdentifiedVertex.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Graph\NoInEdgeInOutVertexEdge.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Graph\NoInEdgeInOutVertexVertex.cs">

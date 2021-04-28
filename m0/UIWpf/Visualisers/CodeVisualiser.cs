@@ -202,7 +202,7 @@ namespace m0.UIWpf.Visualisers
 
             if (bv != null /*&& bv.Value != null && ((String)bv.Value)!="$Empty"*/)
             {
-                NonActingEdge ee = new NonActingEdge(Vertex.Get(false, @"BaseEdge:\From:"), Vertex.Get(false, @"BaseEdge:\Meta:"), Vertex.Get(false, @"BaseEdge:\To:"));
+                EdgeBase ee = new EdgeBase(Vertex.Get(false, @"BaseEdge:\From:"), Vertex.Get(false, @"BaseEdge:\Meta:"), Vertex.Get(false, @"BaseEdge:\To:"));
                 this.Text = this.Text = MinusZero.Instance.DefaultCodeGenerator.Generate(ee);
             }
             else

@@ -10,6 +10,8 @@ namespace m0.Graph.Internal
 {
     public class EdgeDictionaries
     {
+        public bool NoInEdgeInOutVertexVertexMode = false;
+
         public OutList Out;
         public ExtandableList<IEdge> In;
         public ExtandableList<IEdge> MetaIn;

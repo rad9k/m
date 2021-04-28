@@ -12,7 +12,7 @@ namespace m0.Graph
 {
     public class List_VertexBase : List<IEdge> { } // to be used in dictionaries, to identify list of List<IEdge> :)
     [Serializable]
-    public class VertexBase : IVertex, IHasUsageCounter, IDisposable
+    public class VertexBase : IVertex, IDisposable
     {
         protected IDictionary<object, object> _OutEdgesByMeta;
         public IDictionary<object, object> OutEdgesByMeta { get { return _OutEdgesByMeta; } }

@@ -13,8 +13,6 @@ namespace m0.Graph
             : base(store)
         {
             _Identifier = identifier;
-
-            UsageCounter++; // identified vertex are used for volatile stores
         }
     }
 }

@@ -31,8 +31,6 @@ namespace m0.Store.Json
                     { // create new sub graph
                         EasyVertex __root = new EasyVertex(this);
 
-                        __root.UsageCounter++;
-
                         _root = __root;
                     }
                     else
@@ -45,8 +43,7 @@ namespace m0.Store.Json
 
 
                         _root = GetVertexByIdentifier(GetRootIdentifier());
-
-                        ((EasyVertex)_root).UsageCounter = 1;
+                        
 
                         Attach();
                     }
@@ -67,9 +64,7 @@ namespace m0.Store.Json
             }
             else
             { // create new
-                EasyVertex __root = new EasyVertex(this);
-
-                __root.UsageCounter++;
+                EasyVertex __root = new EasyVertex(this);                
 
                 _root = __root;
             }
