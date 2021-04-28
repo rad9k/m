@@ -1,4 +1,4 @@
-﻿using System;
+﻿/*using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -60,10 +60,10 @@ namespace m0.Graph
         {
             UpdateDetachStateData();
 
-            To.InEdgesRaw.Remove(this);
+            To.DeleteInEdgeOnlyIn(this);
 
             if (_meta != null)
-                Meta.MetaInEdgesRaw.Remove(this);
+                Meta.DeleteMetaInEdge(this);
 
 
             _to = null;
@@ -87,8 +87,7 @@ namespace m0.Graph
 
             _to = store.GetVertexByIdentifier(ToIdentifier);
 
-            if(To !=null)
-                To.InEdgesRaw.Add(this);
+            To.AddInEdge(this);
 
             // meta
 
@@ -100,7 +99,7 @@ namespace m0.Graph
             _meta = store.GetVertexByIdentifier(MetaIdentifier);
 
             if (Meta != null)
-                Meta.MetaInEdgesRaw.Add(this);
+                Meta.AddMetaInEdge(this);
 
             From.AttachEdge(this);
 
@@ -109,3 +108,4 @@ namespace m0.Graph
 
     }
 }
+*/

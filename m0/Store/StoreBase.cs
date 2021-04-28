@@ -114,11 +114,11 @@ namespace m0.Store
                 //foreach (IEdge e in v.InEdges)
                 foreach (IEdge e in v.InEdgesRaw)
                     if (e.From.Store == InDetachStore)
-                        v.DeleteInEdge(e);
+                        v.InEdgesRaw.Remove(e);
 
                 foreach (IEdge e in v.MetaInEdgesRaw) // XXX ??? I do not know what this function does but I think that there should be also this part :)
                     if (e.From.Store == InDetachStore)
-                        v.DeleteMetaInEdge(e);
+                        v.MetaInEdgesRaw.Remove(e);
             }
 
             _DetachState = DetachStateEnum.InDetached;

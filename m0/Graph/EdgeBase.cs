@@ -40,13 +40,7 @@ namespace m0.Graph
             if (Meta != null)            
                 _meta = Meta;                        
             else
-                _meta = MinusZero.Instance.Empty;
-
-            if (_meta != null)
-                _meta.AddMetaInEdge(this);
-
-            if (_to!=null) // edge.To==null used for visualizing not existing edges (possible to be filled by user)
-                _to.AddInEdge(this);            
+                _meta = MinusZero.Instance.Empty;          
         }
 
         public EdgeBase()

@@ -174,8 +174,6 @@ namespace m0.Graph
                 Change(this, e);
         }
 
-        public virtual int UsageCounter { get; set; }
-
         public virtual object Identifier
         {
             get
@@ -249,31 +247,6 @@ namespace m0.Graph
             return AddEdge(metaVertex, nv);
         }
 
-        public virtual void AddMetaInEdge(IEdge edge)
-        {
-            throw new NotImplementedException();
-        }
-
-        public virtual void DeleteMetaInEdge(IEdge edge)
-        {
-            throw new NotImplementedException();
-        }
-
-        public virtual void AddInEdge(IEdge edge)
-        {
-            throw new NotImplementedException();
-        }
-
-        public virtual void DeleteInEdge(IEdge edge)
-        {
-            throw new NotImplementedException();
-        }
-
-        public virtual void DeleteInEdgeOnlyIn(IEdge edge)
-        {
-            throw new NotImplementedException();
-        }
-
         public virtual IEdge AddEdge(IVertex metaVertex, IVertex destVertex)
         {
             throw new NotImplementedException();
@@ -290,11 +263,6 @@ namespace m0.Graph
         }
 
         public virtual void DeleteEdge(IEdge edge)
-        {
-            throw new NotImplementedException();
-        }
-
-        public virtual void DeleteEdgeOnlyOut(IEdge edge)
         {
             throw new NotImplementedException();
         }
