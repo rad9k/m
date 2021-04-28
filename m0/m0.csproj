@@ -98,7 +98,13 @@
     <Compile Include="Foundation\INoInEdgeInOutVertexVertex.cs" />
     <Compile Include="Foundation\IPlatformClass.cs" />
     <Compile Include="Foundation\IUserInteraction.cs" />
-    <Compile Include="Graph\IDictionaredVertex.cs" />
+    <Compile Include="Graph\IInternalCollectionsVertex.cs" />
+    <Compile Include="Graph\Internal\EdgeDictionaries.cs" />
+    <Compile Include="Graph\Internal\MetaInList.cs" />
+    <Compile Include="Graph\Internal\InList.cs" />
+    <Compile Include="Graph\Internal\OutList.cs" />
+    <Compile Include="Graph\OLD\EasyEdge - Copy.cs" />
+    <Compile Include="Graph\OLD\EasyVertex - OldVersion.cs" />
     <Compile Include="Graph\NonActingEdge.cs" />
     <Compile Include="Lib\LibUtil.cs" />
     <Compile Include="Lib\Std.cs" />
@@ -252,6 +258,7 @@
     <Compile Include="UIWpf\VisualiserViewWrapper.cs" />
     <Compile Include="DotNetIntegration\CallableEndPointDictionary_INIEIOV_ZCE.cs" />
     <Compile Include="Util\DictionaryList.cs" />
+    <Compile Include="Util\ExtandableList.cs" />
     <Compile Include="ZeroCode\Helpers\DictionariesForFormalTextLanguage.cs" />
     <Compile Include="ZeroCode\Helpers\EdgeKey_FromMeta.cs" />
     <Compile Include="ZeroCode\Helpers\EdgeKey_MetaTo.cs" />
@@ -535,6 +542,7 @@
   <ItemGroup>
     <Resource Include="_RESOURCES\basic\mute-speaker.png" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

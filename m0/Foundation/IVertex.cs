@@ -67,16 +67,6 @@ namespace m0.Foundation
 
         IEdge AddVertexAndReturnEdge(IVertex metaVertex, object val);
 
-        void AddMetaInEdge(IEdge edge);
-
-        void DeleteMetaInEdge(IEdge edge);
-
-        void AddInEdge(IEdge edge);
-
-        void DeleteInEdge(IEdge edge);
-
-        void DeleteInEdgeOnlyIn(IEdge edge);
-
         IEdge AddEdge(IVertex metaVertex, IVertex destVertex);
 
         void AttachEdge(IEdge edge);
@@ -84,8 +74,6 @@ namespace m0.Foundation
         void AddEdgesList(IEnumerable<IEdge> edges);
 
         void DeleteEdge(IEdge edge);
-
-        void DeleteEdgeOnlyOut(IEdge edge);
 
         void DeleteEdgesList(IEnumerable<IEdge> edges);
 

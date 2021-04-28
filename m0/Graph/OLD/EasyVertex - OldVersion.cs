@@ -1,4 +1,4 @@
-﻿using System;
+﻿/*using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -12,14 +12,29 @@ using m0.ZeroCode;
 using System.Runtime.InteropServices;
 using m0.ZeroCode.Helpers;
 using m0.DotNetIntegration;
-using m0.Graph.Internal;
 
-namespace m0.Graph
+namespace m0.Graph.OLD
 {
     [Serializable]
-    public class EasyVertex: VertexBase, IDisposable, IInternalCollectionsVertex
+    public class EasyVertex: VertexBase, IDisposable
     {
-        EdgeDictionaries ed;
+        public override int UsageCounter
+        {
+            get
+            {            
+                return base.UsageCounter;
+            }
+            set
+            {
+             //   if (base.UsageCounter < value && UsageCounter == 0 && Store.DetachState == DetachStateEnum.Attached)
+               //         Store.StoreVertexIdentifier(this);
+
+             //   if (base.UsageCounter > value && UsageCounter == 1 && Store.DetachState == DetachStateEnum.Attached)
+             //           Store.RemoveVertexIdentifier(this); // EAT THIS!!!
+
+                base.UsageCounter = value;
+            }
+        }
 
         public object _Identifier;
         
@@ -57,7 +72,9 @@ namespace m0.Graph
 
         protected int InheritanceCount = 0;
 
-        public override IList<IEdge> InEdgesRaw { get { return ed.In; } }
+        protected IList<IEdge> _InEdgesRaw;
+
+        public override IList<IEdge> InEdgesRaw { get { return _InEdgesRaw; } }
 
         private IList<IEdge> _InEdges;
 
@@ -93,7 +110,9 @@ namespace m0.Graph
                 _InEdges = InEdgesRaw;
         }
 
-        public override IList<IEdge> OutEdgesRaw { get { return ed.Out; } }
+        protected IList<IEdge> _OutEdgesRaw;
+
+        public override IList<IEdge> OutEdgesRaw { get { return _OutEdgesRaw; } }
 
         private IList<IEdge> _OutEdges;
 
@@ -111,7 +130,9 @@ namespace m0.Graph
             }
         }
 
-        public override IList<IEdge> MetaInEdgesRaw { get { return ed.MetaIn; } }
+        protected IList<IEdge> _MetaInEdgesRaw;
+
+        public override IList<IEdge> MetaInEdgesRaw { get { return _MetaInEdgesRaw; } }
 
         private void OutEdgesDictionariesRebuild_Edges()
         {
@@ -334,17 +355,100 @@ namespace m0.Graph
             OutEdgesDictionariesNeedsRebuild_MetaAndValue = false;
         }
 
-        public override IEdge AddEdge(IVertex metaVertex, IVertex destVertex)
-        {
-            if (hasBeenDisposed)
-                throw new Exception("Vertex disposed");
+        public override void AddMetaInEdge(IEdge edge)
+        {            
+            MetaInEdgesRaw.Add(edge);
 
+            UsageCounter++;         
+        }
+
+        public override void DeleteMetaInEdge(IEdge _edge)
+        {            
+            IEdge edge = null;
+
+            if (MetaInEdgesRaw.Contains(_edge))
+                edge = _edge;
+            else
+                foreach (IEdge e in MetaInEdgesRaw)
+                    if (e.From == _edge.From && e.Meta == _edge.Meta && e.From == _edge.From)
+                        edge = e;
+
+            if (edge != null)
+            {
+                MetaInEdgesRaw.Remove(edge);
+
+                UsageCounter--;
+            }
+        }
+
+        public override void AddInEdge(IEdge edge)
+        {            
+            InEdgesRaw.Add(edge);
+
+            UsageCounter++;
+
+            InEdgesDictionariesNeedsRebuild = true;
+
+            InheritChildsDictionariesNeedsRebuild(true);
+
+            //FireChange(new VertexChangeEventArgs(VertexChangeType.InEdgeAdded,edge));
+            // not needed as for now
+        }
+
+        public override void DeleteInEdge(IEdge _edge)
+        {
+            IEdge edge = null;
+
+            if (InEdgesRaw.Contains(_edge))
+                edge = _edge;
+            else
+                foreach (IEdge e in InEdgesRaw)
+                  if (e.From == _edge.From && e.Meta == _edge.Meta && e.From == _edge.From)
+                     edge = e;
+
+            if (edge != null)
+            {
+                DeleteInEdgeOnlyIn(edge);
+
+                edge.From.DeleteEdgeOnlyOut(edge);
+            }
+
+            //FireChange(new VertexChangeEventArgs(VertexChangeType.InEdgeRemoved, edge));
+            // not needed as for now
+        }
+
+        public override void DeleteInEdgeOnlyIn(IEdge edge)
+        {
+            if (edge != null)
+            {
+                InEdgesRaw.Remove(edge);
+
+                UsageCounter--;
+
+                InEdgesDictionariesNeedsRebuild = true;
+
+                InheritChildsDictionariesNeedsRebuild(true);
+            }
+
+            //FireChange(new VertexChangeEventArgs(VertexChangeType.InEdgeRemoved, edge));
+            // not needed as for now
+        }
+
+        public void AddOutEdgesRaw(IEdge e)
+        {
+            OutEdgesRaw.Add(e);
+
+            UsageCounter++;
+        }
+
+        public override IEdge AddEdge(IVertex metaVertex, IVertex destVertex)
+        {             
             if (destVertex == null)
                 destVertex = MinusZero.Instance.Empty; // can be    
 
             EdgeBase ne = new EasyEdge(this, metaVertex, destVertex);
 
-            OutEdgesRaw.Add(ne);
+            AddOutEdgesRaw(ne);
 
             AttachEdge(ne);
 
@@ -355,6 +459,10 @@ namespace m0.Graph
 
         public override void AttachEdge(IEdge edge)
         {            
+            OutEdgesDictionariesNeedsRebuild = true;
+
+            InheritChildsDictionariesNeedsRebuild(false);
+
             if (GeneralUtil.CompareStrings(edge.Meta.Value, "$Inherits"))
             {
                 InheritanceCount++;
@@ -371,14 +479,39 @@ namespace m0.Graph
 
         public override void DeleteEdge(IEdge _edge)
         {
-            if (hasBeenDisposed)
-                throw new Exception("Vertex disposed");
+            IEdge edge = null;
 
-            IEdge edge = ed.Out.Get(_edge);
+            if (OutEdgesRaw.Contains(_edge))
+                edge = _edge;
+            else
+                foreach (IEdge e in OutEdgesRaw)
+                    if(e.From == _edge.From && e.Meta ==_edge.Meta && e.To ==_edge.To)
+                       edge = e;
 
             if (edge != null)
             {
+                DeleteEdgeOnlyOut(edge);
+
+                // FireChange(new VertexChangeEventArgs(VertexChangeType.EdgeRemoved, edge)); // it is in DeleteEdgeOnlyOut 
+
+                edge.Meta.DeleteMetaInEdge(edge); // XXX I think that this is ok            
+
+                edge.To.DeleteInEdgeOnlyIn(edge);
+            }
+            //else // becouse of inheritance this may happen
+                //throw new Exception(_edge.Meta + " : " + _edge.To + " edge does not exist in given Vertex");
+        }
+
+        public override void DeleteEdgeOnlyOut(IEdge edge)
+        {
+            if (edge != null)
+            {
                 OutEdgesRaw.Remove(edge);
+
+                UsageCounter--;
+
+                OutEdgesDictionariesNeedsRebuild = true;
+                InheritChildsDictionariesNeedsRebuild(false);
 
                 if (GeneralUtil.CompareStrings(edge.Meta.Value, "$Inherits"))
                 {
@@ -390,6 +523,8 @@ namespace m0.Graph
 
                 FireChange(new VertexChangeEventArgs(VertexChangeType.EdgeRemoved, edge));
             }
+            //else // becouse of inheritance this may happen
+            //throw new Exception(_edge.Meta + " : " + _edge.To + " edge does not exist in given Vertex");
         }
 
         public override void DeleteEdgesList(IEnumerable<IEdge> edges)
@@ -400,7 +535,10 @@ namespace m0.Graph
 
         public EasyVertex(IStore _store):base(_store)
         {
-            ed = new EdgeDictionaries(this);
+            _InEdgesRaw = new List<IEdge>();
+            _OutEdgesRaw = new List<IEdge>();
+            _MetaInEdgesRaw = new List<IEdge>();
+
 
             _Identifier = Store.VertexIdentifierCount++;            
 
@@ -423,8 +561,6 @@ namespace m0.Graph
                 DeleteAllInEdges();
                 DeleteAllEdges();
 
-                Store.RemoveVertexIdentifier(this);
-
                 hasBeenDisposed = true;
             }
         }
@@ -436,7 +572,7 @@ namespace m0.Graph
             {
                 InEdgesRaw.Remove(edge);
 
-
+                UsageCounter--;
 
                 edge.From.DeleteEdgeOnlyOut(edge);
 
@@ -476,7 +612,7 @@ namespace m0.Graph
             InheritChildsDictionariesNeedsRebuild(false);
         }
 
-        public void InheritChildsDictionariesNeedsRebuild(bool inDictiories)
+        protected void InheritChildsDictionariesNeedsRebuild(bool inDictiories)
         {
             HashSet<IVertex> inheritsSet = GraphUtil.GetInheritChilds_RawEnumerate(this);
 
@@ -704,3 +840,6 @@ namespace m0.Graph
 
     }
 }
+
+
+*/

@@ -194,7 +194,7 @@ namespace m0.Store.Json
 
                     e._From = v;
 
-                    v.AddOutEdgesRaw(e);                    
+                    v.OutEdgesRaw.Add(e);                    
                 }
             }
 
