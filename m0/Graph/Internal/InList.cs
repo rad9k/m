@@ -38,6 +38,19 @@ namespace m0.Graph.Internal
 
         public override void OnRemove(IEdge item)
         {
+            if (item.From.Store.TypeName.Contains("File"))
+            {
+                int x = 0;
+            }
+
+            if (item.From != null && item.From.OutEdgesRaw.Contains(item))
+                item.From.OutEdgesRaw.Remove(item);
+
+            if (item.Meta != null && item.Meta.MetaInEdgesRaw.Contains(item))
+                item.Meta.MetaInEdgesRaw.Remove(item);            
+
+            //
+
             ed.v.InEdgesDictionariesNeedsRebuild = true;
 
             ed.v.InheritChildsDictionariesNeedsRebuild(true);

@@ -403,10 +403,6 @@ namespace m0.Graph
 
                 hasBeenDisposed = true;
 
-                object i = this.Identifier;
-
-                foreach(IVertex v in Store)
-
                 Store.RemoveVertexIdentifier(this);                
             }
         }

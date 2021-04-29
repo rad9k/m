@@ -91,8 +91,8 @@ namespace m0.Store
             {                
                 if(!(v is NoInEdgeInOutVertexVertex))
                 //foreach (IEdge e in v.OutEdges)
-                foreach (IEdge e in v.OutEdgesRaw) // ToList was bit beeded
-                    //foreach (IEdge e in v.OutEdgesRaw.ToList()) // ToList was bit beeded
+                //foreach (IEdge e in v.OutEdgesRaw) // ToList was bit beeded
+                foreach (IEdge e in v.OutEdgesRaw.ToList()) // ToList was bit beeded
                     if (e is IDetachableEdge)
                     {                        
                         IDetachableEdge de = (IDetachableEdge)e;
@@ -198,22 +198,7 @@ namespace m0.Store
         }
 
         public virtual void RemoveVertexIdentifier(IVertex Vertex)
-        {
-            if(Vertex.Store.Identifier == "$-0$TEMP$STORE$")
-            {
-                if (!((EasyVertex)Vertex).hasBeenDisposed)
-                {
-                    int x = 0;
-                }
-            }
-            if (Vertex.Identifier is long) {
-                long i = (long)Vertex.Identifier; ;
-                if(i == 4881 || i== 4883 || i==4891 || i==5378)
-                {
-                    int x = 0;
-                }
-            }
-
+        {            
             VertexIdentifiersDictionary.Remove(Vertex.Identifier);            
         }
 

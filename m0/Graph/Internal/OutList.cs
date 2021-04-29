@@ -31,7 +31,12 @@ namespace m0.Graph.Internal
 
         public override void OnAdd(IEdge item)
         {
-            if(item.Meta != null)
+            if (item.From.Store.TypeName.Contains("File"))
+            {
+                int x = 0;
+            }
+
+            if (item.Meta != null)
                 item.Meta.MetaInEdgesRaw.Add(item);
 
             if(!ed.NoInEdgeInOutVertexVertexMode &&  item.To!=null)
@@ -44,10 +49,15 @@ namespace m0.Graph.Internal
 
         public override void OnRemove(IEdge item)
         {
-            if(item.Meta != null)
+            if (item.From.Store.TypeName.Contains("Json"))
+            {
+                int x = 0;
+            }
+
+            if(item.Meta != null && item.Meta.MetaInEdgesRaw.Contains(item))
                 item.Meta.MetaInEdgesRaw.Remove(item);
 
-            if(!ed.NoInEdgeInOutVertexVertexMode && item.To != null)
+            if(!ed.NoInEdgeInOutVertexVertexMode && item.To != null && item.To.InEdgesRaw.Contains(item))
                 item.To.InEdgesRaw.Remove(item);
 
             ed.v.OutEdgesDictionariesNeedsRebuild = true;

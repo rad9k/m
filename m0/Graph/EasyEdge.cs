@@ -8,7 +8,7 @@ using m0.Foundation;
 namespace m0.Graph
 {
     [Serializable]
-    public class EasyEdge:EdgeBase, IDetachableEdge
+    public class EasyEdge : EdgeBase, IDetachableEdge
     {
         public EasyEdge(IVertex From, IVertex Meta, IVertex To)
             : base(From, Meta, To)
@@ -43,8 +43,6 @@ namespace m0.Graph
             ToStoreTypeName = To.Store.TypeName;
 
             ToIdentifier = To.Identifier;
-
-            //
 
             if (Meta != null)
             {

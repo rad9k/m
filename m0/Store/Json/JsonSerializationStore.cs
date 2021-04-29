@@ -384,7 +384,7 @@ namespace m0.Store.Json
             foreach (IVertex v in VertexIdentifiersDictionary.Values)
             {
                 //foreach (IEdge e in v.OutEdges)
-                foreach (IEdge e in v.OutEdgesRaw)
+                foreach (IEdge e in v.OutEdgesRaw.ToList())
                     if (e is IDetachableEdge)
                     {
                         IDetachableEdge de = (IDetachableEdge)e;
