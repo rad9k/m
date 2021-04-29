@@ -38,6 +38,8 @@ namespace m0.Store
                 alwaysPresent = true;
 
             _root = new EasyVertex(this);
+
+            _root.IsRoot = true;
         }
 
      //   public override void StoreVertexIdentifier(IVertex Vertex)

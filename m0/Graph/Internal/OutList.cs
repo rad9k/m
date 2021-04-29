@@ -72,7 +72,9 @@ namespace m0.Graph.Internal
             cumulativeEdgesCount += ed.In.Count;
             cumulativeEdgesCount += ed.MetaIn.Count;
 
-            if (cumulativeEdgesCount == 0)
+            if (cumulativeEdgesCount == 0
+                && ed.v.Store.DetachState == DetachStateEnum.Attached
+                && !ed.v.IsRoot)
                 ed.v.Dispose();
         }
     }

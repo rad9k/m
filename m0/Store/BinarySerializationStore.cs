@@ -51,6 +51,7 @@ namespace m0.Store
             else
             {
                 _root = new EasyVertex(this);
+                _root.IsRoot = true;
             }
             
         }

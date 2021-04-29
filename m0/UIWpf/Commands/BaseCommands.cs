@@ -190,7 +190,7 @@ namespace m0.UIWpf.Commands
             if (inputVertex.Get(false, "SelectedEdges:").Count() == 0)
                 if (allEdgesDelete)
                     //VertexOperations.DeleteAllInOutEdges(baseVertex.Get(false, "To:"));
-                    baseVertex.Get(false, "To:").Destroy();
+                    baseVertex.Get(false, "To:").Dispose();
                 else
                     VertexOperations.DeleteOneEdge(baseVertex.Get(false, "From:"), baseVertex.Get(false, "Meta:"), baseVertex.Get(false, "To:"));
             else
@@ -199,7 +199,7 @@ namespace m0.UIWpf.Commands
                 foreach (IEdge v in selected)
                     if (allEdgesDelete)
                         //VertexOperations.DeleteAllInOutEdges(v.To.Get(false, "To:"));
-                        v.To.Get(false, "To:").Destroy();
+                        v.To.Get(false, "To:").Dispose();
                     else
                         VertexOperations.DeleteOneEdge(v.To.Get(false, "From:"), v.To.Get(false, "Meta:"), v.To.Get(false, "To:"));
             }

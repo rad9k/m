@@ -526,7 +526,7 @@ namespace m0.UIWpf.Visualisers.Diagram
                         GraphUtil.DeleteEdgeByToVertex(Vertex, i.Vertex);
                         RemoveItem(i);
                         //VertexOperations.DeleteAllInOutEdges(i.Vertex.Get(false, @"BaseEdge:\To:"));
-                        i.Vertex.Get(false, @"BaseEdge:\To:").Destroy();
+                        i.Vertex.Get(false, @"BaseEdge:\To:").Dispose();
                     }
 
                 }

@@ -27,6 +27,8 @@ namespace m0.Foundation
     // - IStore param
     public interface IVertex : IEnumerable<IEdge>, IDisposable
     {
+        bool IsRoot { get; set; }
+
         event VertexChange Change;
 
         Delegate[] GetChangeDelegateInvocationList();
@@ -47,8 +49,6 @@ namespace m0.Foundation
 
 
         INoInEdgeInOutVertexVertex Execute(IExecution exe);
-
-        void Destroy();
 
         // 2.0 BEG
 

@@ -38,14 +38,6 @@ namespace m0.Graph.Internal
 
         public override void OnRemove(IEdge item)
         {
-            if (item.From != null)
-                item.From.OutEdgesRaw.Remove(item);
-
-            if (item.Meta != null)
-                item.Meta.MetaInEdgesRaw.Remove(item);
-
-            //
-
             ed.v.InEdgesDictionariesNeedsRebuild = true;
 
             ed.v.InheritChildsDictionariesNeedsRebuild(true);
@@ -57,7 +49,9 @@ namespace m0.Graph.Internal
             cumulativeEdgesCount += ed.In.Count;
             cumulativeEdgesCount += ed.MetaIn.Count;
 
-            if (cumulativeEdgesCount == 0)
+            if (cumulativeEdgesCount == 0
+                && ed.v.Store.DetachState == DetachStateEnum.Attached
+                && !ed.v.IsRoot)
                 ed.v.Dispose();
         }
     }

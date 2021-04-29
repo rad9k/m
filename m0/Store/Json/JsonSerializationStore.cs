@@ -32,6 +32,8 @@ namespace m0.Store.Json
                         EasyVertex __root = new EasyVertex(this);
 
                         _root = __root;
+
+                        _root.IsRoot = true;
                     }
                     else
                     { // load graph from store
@@ -43,6 +45,8 @@ namespace m0.Store.Json
 
 
                         _root = GetVertexByIdentifier(GetRootIdentifier());
+
+                        _root.IsRoot = true;
                         
 
                         Attach();
@@ -100,18 +104,20 @@ namespace m0.Store.Json
             long maxVertexIdentifierCount = 0;
 
             foreach (JsonVertex jv in data.Vertices)
-            {                
-                EasyVertex v = new EasyVertex(this);
+            {
+                object toBeIdentifier;
 
                 if (jv.IdString == null)
                 {
-                    v._Identifier = jv.IdLong;
+                    toBeIdentifier = jv.IdLong;
 
-                    if ((long)v.Identifier > maxVertexIdentifierCount)
-                        maxVertexIdentifierCount = (long)v.Identifier;
+                    if ((long)toBeIdentifier > maxVertexIdentifierCount)
+                        maxVertexIdentifierCount = (long)toBeIdentifier;
                 }
                 else
-                    v._Identifier = jv.IdString;
+                    toBeIdentifier = jv.IdString;
+
+                EasyVertex v = new EasyVertex(this, toBeIdentifier);
 
                 if (jv.ValueString != null)
                     v.Value = jv.ValueString;

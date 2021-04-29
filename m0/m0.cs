@@ -98,12 +98,12 @@ namespace m0
 
         public IVertex CreateTempVertex()
         {
-            return new EasyVertex(this.tempstore);
+            return CreateTempEdge().To;
         }
 
         public IEdge CreateTempEdge()
         {
-            return new EasyEdge(tempRoot, empty, CreateTempVertex());
+            return TempStore.Root.AddVertexAndReturnEdge(empty, null);
         }
 
         void PreBootstrap()
@@ -131,9 +131,9 @@ namespace m0
 
             empty.Value = "$Empty";
 
-            emptystore.Root.AddEdge(null, empty);            
+            emptystore.Root.AddEdge(null, empty);
 
-            tempRoot = CreateTempVertex();
+            tempRoot = TempStore.Root;
         }
 
         void Init()

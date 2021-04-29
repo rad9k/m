@@ -2757,7 +2757,7 @@ namespace m0.ZeroCode
                             toDestroyVertexList.Add(ee.To);
 
             foreach (IVertex v in toDestroyVertexList)
-                v.Destroy();
+                v.Dispose();
         }
 
         void MoveAllParseRootEdgesToBaseVertex()

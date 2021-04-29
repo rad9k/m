@@ -388,34 +388,7 @@ namespace m0.Graph
         {
             foreach (IEdge e in edges) // possibly not optimal implementation
                 DeleteEdge(e); // Meta/To check to be performed
-        }
-
-        protected void VertexInit_First()
-        {
-            ed = new EdgeDictionaries(this);
-
-            InheritanceCount = 0;
-
-
-            InEdgesDictionariesNeedsRebuild = true;
-            OutEdgesDictionariesNeedsRebuild = true;
-
-            Value = "";
-        }
-
-        protected virtual void VertexInit()
-        {
-            VertexInit_First();
-
-            _Identifier = Store.VertexIdentifierCount++;
-
-            Store.StoreVertexIdentifier(this);
-        }
-
-        public EasyVertex(IStore _store):base(_store)
-        {
-            VertexInit();
-        }        
+        }       
 
         private static IDictionary<String, IVertex> QueryParseChache = new Dictionary<String, IVertex>();
         private static IDictionary<String, IVertex> QueryParseChache_metaMode = new Dictionary<String, IVertex>();        
@@ -670,9 +643,47 @@ namespace m0.Graph
                 return CallableEndPointDictionary_INIEIOV_ZCE.CallEndPoint(exe, ExecutableEndPointVertex);
         }
 
-        public override void Destroy()
+        protected void VertexInit_First()
         {
-            Dispose();
+            ed = new EdgeDictionaries(this);
+
+            InheritanceCount = 0;
+
+            InEdgesDictionariesNeedsRebuild = true;
+            OutEdgesDictionariesNeedsRebuild = true;
+
+            Value = "";
+        }
+
+        protected virtual void VertexInit()
+        {
+            VertexInit_First();
+
+            _Identifier = Store.VertexIdentifierCount++;
+
+            Store.StoreVertexIdentifier(this);
+        }
+
+        public EasyVertex(IStore _store) : base(_store)
+        {
+            VertexInit();
+        }
+
+        public EasyVertex(IStore _store, object toBeIdentifier) : base(_store)
+        {
+            VertexInit_First();
+
+            _Identifier = toBeIdentifier;
+
+            if (toBeIdentifier is int)
+            {
+                int val = (int)toBeIdentifier + 1;
+
+                if (val > Store.VertexIdentifierCount)
+                    Store.VertexIdentifierCount = val;
+            }
+
+            Store.StoreVertexIdentifier(this);
         }
 
     }

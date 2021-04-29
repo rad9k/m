@@ -181,19 +181,6 @@ namespace m0.Store
             get { return alwaysPresent; }
         }
 
-        public StoreBase(string identifier, IStoreUniverse storeUniverse, AccessLevelEnum[] accessLeveList)
-        {
-            _Identifier = identifier;
-
-            _StoreUniverse = storeUniverse;
-            
-            VertexIdentifiersDictionary = new Dictionary<object, IVertex>();
-
-            _AcessLevel = GeneralUtil.CreateAndCopyList<AccessLevelEnum>(accessLeveList);
-
-            storeUniverse.Stores.Add(this);
-        }
-
         protected Dictionary<object, IVertex> VertexIdentifiersDictionary;
        
         public virtual void StoreVertexIdentifier(IVertex Vertex)
@@ -240,5 +227,18 @@ namespace m0.Store
         }
 
         public virtual void Backup() { }
+
+        public StoreBase(string identifier, IStoreUniverse storeUniverse, AccessLevelEnum[] accessLeveList)
+        {
+            _Identifier = identifier;
+
+            _StoreUniverse = storeUniverse;
+
+            VertexIdentifiersDictionary = new Dictionary<object, IVertex>();
+
+            _AcessLevel = GeneralUtil.CreateAndCopyList<AccessLevelEnum>(accessLeveList);
+
+            storeUniverse.Stores.Add(this);
+        }
     }
 }
