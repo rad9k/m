@@ -390,20 +390,31 @@ namespace m0.Graph
                 DeleteEdge(e); // Meta/To check to be performed
         }
 
-        public EasyVertex(IStore _store):base(_store)
+        protected void VertexInit_First()
         {
             ed = new EdgeDictionaries(this);
 
             InheritanceCount = 0;
 
-            _Identifier = Store.VertexIdentifierCount++;            
 
             InEdgesDictionariesNeedsRebuild = true;
             OutEdgesDictionariesNeedsRebuild = true;
 
             Value = "";
+        }
+
+        protected virtual void VertexInit()
+        {
+            VertexInit_First();
+
+            _Identifier = Store.VertexIdentifierCount++;
 
             Store.StoreVertexIdentifier(this);
+        }
+
+        public EasyVertex(IStore _store):base(_store)
+        {
+            VertexInit();
         }        
 
         private static IDictionary<String, IVertex> QueryParseChache = new Dictionary<String, IVertex>();

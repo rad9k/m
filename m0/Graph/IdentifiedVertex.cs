@@ -9,10 +9,18 @@ namespace m0.Graph
 {
     public class IdentifiedVertex:EasyVertex
     {
-        public IdentifiedVertex(string identifier,IStore store)
-            : base(store)
+        protected override void VertexInit()
         {
+            VertexInit_First();
+        }
+
+        public IdentifiedVertex(string identifier,IStore store):base(store)
+        {
+            VertexInit();
+
             _Identifier = identifier;
+
+            Store.StoreVertexIdentifier(this);
         }
     }
 }
