@@ -194,7 +194,6 @@ namespace m0.Store
                     int x = 0;
                 }
             }
-
         }
 
         public virtual void RemoveVertexIdentifier(IVertex Vertex)
