@@ -6,6 +6,37 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+/*
+ 
+    From >----Meta-----> To
+               +
+               +
+               --------> Meta
+
+
+From:                 To
+OutEdges              InEdges
+
+                      Meta
+	                  InMetaEdges
+
+
+>From.AddEdge:
+
+	+From.OutEdges
+	+To.InEdges
+	+Meta.InMetaEdges
+
+
+>From.DeleteEdge
+
+	-From.OutEdges
+	-To.InEdges
+	-Meta.InMetaEdges
+     
+*/
+
+
 namespace m0.Graph.Internal
 {
     public class EdgeDictionaries
@@ -13,8 +44,8 @@ namespace m0.Graph.Internal
         public bool NoInEdgeInOutVertexVertexMode = false;
 
         public OutList Out;
-        public ExtandableList<IEdge> In;
-        public ExtandableList<IEdge> MetaIn;
+        public MetaInList MetaIn;
+        public InList In;
 
         public IInternalCollectionsVertex v;
 
@@ -22,6 +53,9 @@ namespace m0.Graph.Internal
         {
             v = _v;
 
+            Out = new OutList(this);
+            MetaIn = new MetaInList(this);
+            In = new InList(this);
 
         }
     }

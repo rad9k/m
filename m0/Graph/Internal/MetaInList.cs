@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace m0.Graph.Internal
 {
-    public class MetaInList : ExtandableHashSetAsList<IEdge>
+    public class MetaInList : ExtandableList<IEdge>
     {
         EdgeDictionaries ed;
 
@@ -36,15 +36,6 @@ namespace m0.Graph.Internal
 
         public override void OnRemove(IEdge item)
         {
-            if (item.From != null)
-                item.From.OutEdgesRaw.Remove(item);
-
-            if (item.To != null)
-                item.To.InEdgesRaw.Remove(item);
-
-            //
-            //
-
             int cumulativeEdgesCount = 0;
 
             cumulativeEdgesCount += ed.In.Count;

@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace m0.Graph.Internal
 {
-    public class InList : ExtandableHashSetAsList<IEdge>
+    public class InList : ExtandableList<IEdge>
     {
         EdgeDictionaries ed;
 
