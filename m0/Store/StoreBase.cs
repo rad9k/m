@@ -89,6 +89,7 @@ namespace m0.Store
             
             foreach (IVertex v in VertexIdentifiersDictionary.Values)
             {                
+                if(!(v is NoInEdgeInOutVertexVertex))
                 //foreach (IEdge e in v.OutEdges)
                 foreach (IEdge e in v.OutEdgesRaw) // ToList was bit beeded
                     //foreach (IEdge e in v.OutEdgesRaw.ToList()) // ToList was bit beeded
@@ -135,10 +136,10 @@ namespace m0.Store
                 _DetachState = DetachStateEnum.Attaching;
 
             foreach (IVertex v in VertexIdentifiersDictionary.Values)
-            {                
-
-               //foreach (IEdge e in v.OutEdges)
-               foreach (IEdge e in v.OutEdgesRaw)
+            {
+                if (!(v is NoInEdgeInOutVertexVertex))
+                    //foreach (IEdge e in v.OutEdges)
+                foreach (IEdge e in v.OutEdgesRaw)
                     if (e is IDetachableEdge)
                     {                                                
                         IDetachableEdge de = (IDetachableEdge)e;

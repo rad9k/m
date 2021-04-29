@@ -65,11 +65,6 @@ namespace m0.Graph
             if (_meta != null)
                 Meta.MetaInEdgesRaw.Remove(this);
 
-            if(ToIdentifier is long && (long)ToIdentifier == 1)
-            {
-                int x = 0;
-            }
-
             _to = null;
            
             _meta = null;

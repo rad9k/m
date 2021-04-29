@@ -39,7 +39,7 @@ namespace m0.Graph.Internal
 
             ed.v.OutEdgesDictionariesNeedsRebuild = true;
 
-            ed.v.InheritChildsDictionariesNeedsRebuild(false);
+            ed.v.InheritChildsDictionariesNeedsRebuild(false);            
         }
 
         public override void OnRemove(IEdge item)
