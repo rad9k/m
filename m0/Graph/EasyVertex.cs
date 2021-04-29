@@ -393,7 +393,7 @@ namespace m0.Graph
         private static IDictionary<String, IVertex> QueryParseChache = new Dictionary<String, IVertex>();
         private static IDictionary<String, IVertex> QueryParseChache_metaMode = new Dictionary<String, IVertex>();        
 
-        bool hasBeenDisposed = false;
+        public bool hasBeenDisposed = false;
         public void Dispose()
         {
             if (!hasBeenDisposed)
@@ -401,9 +401,13 @@ namespace m0.Graph
                 DeleteAllInEdges();
                 DeleteAllEdges();
 
-                Store.RemoveVertexIdentifier(this);
-
                 hasBeenDisposed = true;
+
+                object i = this.Identifier;
+
+                foreach(IVertex v in Store)
+
+                Store.RemoveVertexIdentifier(this);                
             }
         }
 
@@ -415,7 +419,7 @@ namespace m0.Graph
 
         private void DeleteAllEdges()
         {
-            foreach (IEdge edge in InEdgesRaw) {             
+            foreach (IEdge edge in OutEdgesRaw.ToList()) {             
                 OutEdgesRaw.Remove(edge);                
 
                 FireChange(new VertexChangeEventArgs(VertexChangeType.EdgeRemoved, edge)); // moved from before edge.Meta.DeleteMetaInEdge(edge); XXX !!!

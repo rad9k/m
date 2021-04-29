@@ -182,7 +182,7 @@ namespace m0.Store
             get { return alwaysPresent; }
         }
 
-        protected Dictionary<object, IVertex> VertexIdentifiersDictionary;
+        public Dictionary<object, IVertex> VertexIdentifiersDictionary; // XXX was protected
        
         public virtual void StoreVertexIdentifier(IVertex Vertex)
         {            
@@ -199,8 +199,22 @@ namespace m0.Store
 
         public virtual void RemoveVertexIdentifier(IVertex Vertex)
         {
-            VertexIdentifiersDictionary.Remove(Vertex.Identifier);
-            // XXX ????? need to test this
+            if(Vertex.Store.Identifier == "$-0$TEMP$STORE$")
+            {
+                if (!((EasyVertex)Vertex).hasBeenDisposed)
+                {
+                    int x = 0;
+                }
+            }
+            if (Vertex.Identifier is long) {
+                long i = (long)Vertex.Identifier; ;
+                if(i == 4881 || i== 4883 || i==4891 || i==5378)
+                {
+                    int x = 0;
+                }
+            }
+
+            VertexIdentifiersDictionary.Remove(Vertex.Identifier);            
         }
 
         public virtual IVertex GetVertexByIdentifier(object VertexIdentifier)
