@@ -1003,9 +1003,11 @@ namespace m0.Graph
             if (toReplace == null)
                 throw new Exception("Vertex does not have \"" + MetaValue + "\" edge");
 
-            Vertex.DeleteEdge(toReplace);                       
+            IEdge ret = Vertex.AddEdge(toReplace.Meta, NewEdgeToVertex);
 
-            return Vertex.AddEdge(toReplace.Meta,NewEdgeToVertex);            
+            Vertex.DeleteEdge(toReplace);
+
+            return ret;
         }
 
         static public IEdge CreateOrReplaceEdge(IVertex Vertex, IVertex metaVertex, IVertex NewEdgeToVertex)
@@ -1032,16 +1034,20 @@ namespace m0.Graph
             if (toReplace == null)
                 throw new Exception("Vertex does not have edge of supplied Meta Vertex");
 
+            IEdge ret = Vertex.AddEdge(toReplace.Meta, NewEdgeToVertex);
+
             Vertex.DeleteEdge(toReplace);
 
-            return Vertex.AddEdge(toReplace.Meta, NewEdgeToVertex);
+            return ret;
         }
 
         static public IEdge ReplaceEdge(IVertex Vertex, IEdge toReplace, IVertex NewEdgeToVertex)
         {
+            IEdge ret = Vertex.AddEdge(toReplace.Meta, NewEdgeToVertex);
+
             Vertex.DeleteEdge(toReplace);
 
-            return Vertex.AddEdge(toReplace.Meta, NewEdgeToVertex);
+            return ret; 
         }
 
         static public IVertex ReplaceEdgeByValue(IVertex Vertex, string MetaValue, object VertexValue){
@@ -1050,9 +1056,9 @@ namespace m0.Graph
             if (toReplace == null)
                 throw new Exception("Vertex does not have \"" + MetaValue + "\" edge");
 
-            Vertex.DeleteEdge(toReplace);   
+            IVertex nv=Vertex.AddVertex(toReplace.Meta, VertexValue);
 
-            IVertex nv=Vertex.AddVertex(toReplace.Meta, VertexValue);            
+            Vertex.DeleteEdge(toReplace);
 
             return nv;
         }
@@ -1061,10 +1067,12 @@ namespace m0.Graph
         {
             IEdge toReplace = FindEdgeByMetaVertex(Vertex, metaVertex);
 
+            IVertex ret = Vertex.AddVertex(metaVertex, value);
+
             if (toReplace != null)
                 Vertex.DeleteEdge(toReplace);
 
-            return Vertex.AddVertex(metaVertex, value);
+            return ret;
         }
 
         static public bool DoIEnumerableIEdgeContainsVertex(IEnumerable<IEdge> baseVertex, IVertex doContainVertex)

@@ -36,6 +36,9 @@ namespace m0.Graph.Internal
 
         public override void OnRemove(IEdge item)
         {
+            if (item.To.Store.DetachState != DetachStateEnum.Attached)
+                return;
+
             int cumulativeEdgesCount = 0;
 
             cumulativeEdgesCount += ed.In.Count;

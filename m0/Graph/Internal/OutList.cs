@@ -31,11 +31,6 @@ namespace m0.Graph.Internal
 
         public override void OnAdd(IEdge item)
         {
-            if (item.From.Store.TypeName.Contains("File"))
-            {
-                int x = 0;
-            }
-
             if (item.Meta != null)
                 item.Meta.MetaInEdgesRaw.Add(item);
 
@@ -49,7 +44,7 @@ namespace m0.Graph.Internal
 
         public override void OnRemove(IEdge item)
         {
-            if (item.From.Store.TypeName.Contains("Json"))
+            if (item.From.Store.Identifier.Contains("xxx"))
             {
                 int x = 0;
             }
