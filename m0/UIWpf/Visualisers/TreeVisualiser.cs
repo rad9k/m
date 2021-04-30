@@ -490,9 +490,18 @@ namespace m0.UIWpf.Visualisers
                 this.MouseEnter += dndMouseEnter;
             }
         }
+
+        int x = 0;
         
         protected void VertexChange(object sender, VertexChangeEventArgs e)
         {
+            x++;
+
+            if (x == 17)
+            {
+                int z = 0;
+            }
+
             if ((sender == Vertex) && (e.Type == VertexChangeType.EdgeAdded) && (GeneralUtil.CompareStrings(e.Edge.Meta.Value, "BaseEdge"))
                 ||((sender==Vertex.Get(false, "BaseEdge:"))&&(e.Type==VertexChangeType.EdgeAdded)&&((GeneralUtil.CompareStrings(e.Edge.Meta.Value, "To")))))
             {
