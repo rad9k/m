@@ -84,7 +84,7 @@ namespace m0.FormalTextLanguage.GoldParser
                         {
                             IEdge previousEdge = v.OutEdges.Last();
 
-                            v.DeleteEdge(previousEdge);
+                            v.DeleteEdge(previousEdge); // XXX ?
 
                             current = v.AddVertex(def, leaf);
 

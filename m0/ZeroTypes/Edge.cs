@@ -24,9 +24,9 @@ namespace m0.ZeroTypes
             if (toReplace == null)
                 throw new Exception("Vertex does not have \"" + MetaValue + "\" edge");
 
-            baseVertex.DeleteEdge(toReplace);
-
             IVertex edge = baseVertex.AddVertex(toReplace.Meta,null);
+
+            baseVertex.DeleteEdge(toReplace);
 
             edge.AddEdge(vFrom, EdgeVertex.Get(false, "From:"));
             edge.AddEdge(vMeta, EdgeVertex.Get(false, "Meta:"));
@@ -43,9 +43,9 @@ namespace m0.ZeroTypes
                 edge = baseVertex.AddVertex(metaVertex, null);
             else
             {
-                baseVertex.DeleteEdge(toReplace);
-
                 edge = baseVertex.AddVertex(toReplace.Meta, null);
+
+                baseVertex.DeleteEdge(toReplace);
             }
 
             IVertex r = MinusZero.Instance.Root;

@@ -380,8 +380,8 @@ namespace m0.ZeroUML.Instructions
                 foreach (IEdge rightEdge in rightResultToSet)
                     if (leftEdge.To == rightEdge.To && !usedEdges.Contains(rightEdge))
                     {
-                        leftEdge.From.DeleteEdge(leftEdge);
                         usedEdges.Add(rightEdge);
+                        leftEdge.From.DeleteEdge(leftEdge);
                     }
             }
 
@@ -452,8 +452,8 @@ namespace m0.ZeroUML.Instructions
                     foreach (IEdge rightEdge in rightResultToSet)
                         if (intoLeftEdge.To == rightEdge.To && !usedEdges.Contains(rightEdge))
                         {
-                            intoLeftEdge.From.DeleteEdge(intoLeftEdge);
                             usedEdges.Add(rightEdge);
+                            intoLeftEdge.From.DeleteEdge(intoLeftEdge);
                         }
                 }
 

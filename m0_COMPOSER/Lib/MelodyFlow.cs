@@ -279,9 +279,6 @@ namespace m0_COMPOSER.Lib
             foreach (IEdge e in baseVertex.GetAll(false, "Step:"))
                 edges.Add(e);
 
-            foreach (IEdge e in edges)
-                baseVertex.DeleteEdge(e);
-
             int cnt = 0;
             foreach (IEdge e in edges)
             {
@@ -291,7 +288,10 @@ namespace m0_COMPOSER.Lib
                 baseVertex.AddEdge(stepMeta, e.To);
                 
                 cnt++;
-            }                
+            }
+
+            foreach (IEdge e in edges)
+                baseVertex.DeleteEdge(e);
         }
 
         public void RemoveStep(int stepPosition)
