@@ -24,7 +24,12 @@ namespace m0.ZeroTypes
             if (toReplace == null)
                 throw new Exception("Vertex does not have \"" + MetaValue + "\" edge");
 
-            IVertex edge = baseVertex.AddVertex(toReplace.Meta,null);
+            IVertex meta = toReplace.Meta;
+
+            if (toReplace is IDetachableEdge)
+                GraphUtil.PreDeleteEdge(baseVertex, (IDetachableEdge)toReplace);
+
+            IVertex edge = baseVertex.AddVertex(meta, null);
 
             baseVertex.DeleteEdge(toReplace);
 
@@ -43,7 +48,12 @@ namespace m0.ZeroTypes
                 edge = baseVertex.AddVertex(metaVertex, null);
             else
             {
-                edge = baseVertex.AddVertex(toReplace.Meta, null);
+                IVertex meta = toReplace.Meta;
+
+                if (toReplace is IDetachableEdge)
+                    GraphUtil.PreDeleteEdge(baseVertex, (IDetachableEdge)toReplace);
+
+                edge = baseVertex.AddVertex(meta, null);
 
                 baseVertex.DeleteEdge(toReplace);
             }

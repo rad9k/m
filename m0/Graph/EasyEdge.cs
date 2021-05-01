@@ -26,6 +26,31 @@ namespace m0.Graph
             MetaIdentifier = _MetaIdentifier;
         }
 
+        bool isHidden;
+
+        public bool IsHidden { get { return isHidden; } }
+
+        public void ForceEmptyMeta()
+        {
+            isHidden = true;
+
+            _meta = MinusZero.Instance.Empty;
+
+            if (_from is IInternalCollectionsVertex)
+            {
+                IInternalCollectionsVertex icv_from = (IInternalCollectionsVertex)_from;
+                icv_from.OutEdgesDictionariesNeedsRebuild = true;
+                icv_from.InheritChildsDictionariesNeedsRebuild(false);
+            }
+
+            if (_to is IInternalCollectionsVertex)
+            {
+                IInternalCollectionsVertex icv_from = (IInternalCollectionsVertex)_from;
+                icv_from.InEdgesDictionariesNeedsRebuild = true;
+                icv_from.InheritChildsDictionariesNeedsRebuild(true);
+            }
+        }
+
         public string ToStoreIdentifier { get; set; }
         public string ToStoreTypeName { get; set; }
         public object ToIdentifier { get; set; }

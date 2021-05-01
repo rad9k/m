@@ -11,6 +11,8 @@ namespace m0.Foundation
     // we are introducing IDetachableEdge – interface separate from IEdge
     public interface IDetachableEdge:IEdge
     {
+        void ForceEmptyMeta();
+
         void Detach();
         
         void Attach();

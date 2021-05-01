@@ -401,9 +401,17 @@ namespace m0.Graph
                 DeleteAllInEdges();
                 DeleteAllEdges();
 
-                hasBeenDisposed = true;
+                Store.RemoveVertexIdentifier(this);
 
-                Store.RemoveVertexIdentifier(this);                
+                if (this.Identifier is long && (
+                    ((long)this.Identifier == 19618)
+                    || ((long)this.Identifier == 23515)
+                    ))
+                {
+                    int x = 0;
+                }
+
+                hasBeenDisposed = true;
             }
         }
 

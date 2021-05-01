@@ -72,7 +72,7 @@ namespace m0.Graph
             if (_to != null)
             {
                 if (_meta != null)
-                    return _meta.ToString() + ":" + _to.ToString();
+                    return _meta.ToString() + " : " + _to.ToString();
 
                 return _to.ToString();
             }

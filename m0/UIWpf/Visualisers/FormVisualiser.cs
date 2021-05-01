@@ -613,11 +613,11 @@ namespace m0.UIWpf.Visualisers
                 // need to remove and add to have "transaction"
                 GraphUtil.CreateOrReplaceEdge(tv.Vertex.Get(false, "ToShowEdgesMeta:"), r.Get(false, @"System\Meta\ZeroTypes\Edge\Meta"), meta);
 
-                IVertex v = tv.Vertex.Get(false, "ToShowEdgesMeta:");
-
-                GraphUtil.DeleteEdgeByMeta(tv.Vertex, "ToShowEdgesMeta");
+                IVertex v = tv.Vertex.Get(false, "ToShowEdgesMeta:"); /////////////// this ToShowEdgesMeta is a trash bin XXX
 
                 tv.Vertex.AddEdge(MinusZero.Instance.Root.Get(false, @"System\Meta\Visualiser\Table\ToShowEdgesMeta"), v);
+
+                GraphUtil.DeleteEdgeByMeta(tv.Vertex, "ToShowEdgesMeta");
 
                 //GraphUtil.CreateOrReplaceEdge(tv.Vertex.Get(false, "ToShowEdgesMeta:"), r.Get(false, @"System\Meta\ZeroTypes\Edge\To"), e.To); // do not need
 

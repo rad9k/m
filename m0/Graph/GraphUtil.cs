@@ -56,6 +56,11 @@ namespace m0.Graph
 
     public class GraphUtil
     {
+        public static void PreDeleteEdge(IVertex baseVertex, IDetachableEdge edge)
+        {
+            edge.ForceEmptyMeta();
+        }
+
         public static bool DoEdgeListContainsVertex(IVertex list, IVertex toCheckVertex)
         {
             if (list == null)
@@ -1003,7 +1008,12 @@ namespace m0.Graph
             if (toReplace == null)
                 throw new Exception("Vertex does not have \"" + MetaValue + "\" edge");
 
-            IEdge ret = Vertex.AddEdge(toReplace.Meta, NewEdgeToVertex);
+            IVertex meta = toReplace.Meta;
+
+            if (toReplace is IDetachableEdge)
+                PreDeleteEdge(Vertex, (IDetachableEdge)toReplace);
+
+            IEdge ret = Vertex.AddEdge(meta, NewEdgeToVertex);
 
             Vertex.DeleteEdge(toReplace);
 
@@ -1017,7 +1027,10 @@ namespace m0.Graph
             /*if (toReplace != null)
                 Vertex.DeleteEdge(toReplace);
 
-            return Vertex.AddEdge(metaVertex, NewEdgeToVertex);*/            
+            return Vertex.AddEdge(metaVertex, NewEdgeToVertex);*/
+
+            if (toReplace != null && toReplace is IDetachableEdge)
+                PreDeleteEdge(Vertex, (IDetachableEdge)toReplace);
 
             IEdge e =  Vertex.AddEdge(metaVertex, NewEdgeToVertex);
 
@@ -1034,7 +1047,10 @@ namespace m0.Graph
             if (toReplace == null)
                 throw new Exception("Vertex does not have edge of supplied Meta Vertex");
 
-            IEdge ret = Vertex.AddEdge(toReplace.Meta, NewEdgeToVertex);
+            if (toReplace is IDetachableEdge)
+                PreDeleteEdge(Vertex, (IDetachableEdge)toReplace);
+
+            IEdge ret = Vertex.AddEdge(metaVertex, NewEdgeToVertex);
 
             Vertex.DeleteEdge(toReplace);
 
@@ -1043,7 +1059,12 @@ namespace m0.Graph
 
         static public IEdge ReplaceEdge(IVertex Vertex, IEdge toReplace, IVertex NewEdgeToVertex)
         {
-            IEdge ret = Vertex.AddEdge(toReplace.Meta, NewEdgeToVertex);
+            IVertex meta = toReplace.Meta;
+
+            if (toReplace is IDetachableEdge)
+                PreDeleteEdge(Vertex, (IDetachableEdge)toReplace);
+
+            IEdge ret = Vertex.AddEdge(meta, NewEdgeToVertex);
 
             Vertex.DeleteEdge(toReplace);
 
@@ -1056,7 +1077,12 @@ namespace m0.Graph
             if (toReplace == null)
                 throw new Exception("Vertex does not have \"" + MetaValue + "\" edge");
 
-            IVertex nv=Vertex.AddVertex(toReplace.Meta, VertexValue);
+            IVertex meta = toReplace.Meta;
+
+            if (toReplace is IDetachableEdge)
+                PreDeleteEdge(Vertex, (IDetachableEdge)toReplace);
+
+            IVertex nv=Vertex.AddVertex(meta, VertexValue);
 
             Vertex.DeleteEdge(toReplace);
 
@@ -1066,6 +1092,9 @@ namespace m0.Graph
         static public IVertex CreateOrReplaceEdgeByValue(IVertex Vertex, IVertex metaVertex, object value)
         {
             IEdge toReplace = FindEdgeByMetaVertex(Vertex, metaVertex);
+
+            if (toReplace !=null && toReplace is IDetachableEdge)
+                PreDeleteEdge(Vertex, (IDetachableEdge)toReplace);
 
             IVertex ret = Vertex.AddVertex(metaVertex, value);
 
