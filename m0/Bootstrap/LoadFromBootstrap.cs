@@ -28,7 +28,7 @@ namespace m0.Bootstrap
                 string importVertexPath = e.To.Value.ToString();
                 string importFilePath = e.To.OutEdges[0].To.Value.ToString();
 
-                IVertex importRoot = GraphUtil.SimpleGet(root, importVertexPath);
+                IVertex importRoot = GraphUtil.DivideQueryAndGetByPart(root, importVertexPath);
 
                 if (importRoot == null)
                     importRoot = GraphUtil.SimpleCreateVertexPath(root, importVertexPath);                        

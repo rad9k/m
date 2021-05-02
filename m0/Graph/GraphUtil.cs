@@ -245,7 +245,7 @@ namespace m0.Graph
             return e;
         }
 
-        public static IVertex SimpleGet(IVertex baseVertex, string query)
+        public static IVertex DivideQueryAndGetByPart(IVertex baseVertex, string query)
         {
             IList<string> queryParts = query.Split('\\');
 

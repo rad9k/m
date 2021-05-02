@@ -145,8 +145,8 @@ namespace m0.UIWpf.Commands
                     {
                         if (ee.To.Get(false, "To:") != baseVertex) // do not want to cut and paste to itself
                         {
-                            GraphUtil.DeleteEdge(ee.To.Get(false, "From:"), ee.To.Get(false, "Meta:"), ee.To.Get(false, "To:"));
                             baseVertex.AddEdge(ee.To.Get(false, "Meta:"), ee.To.Get(false, "To:"));
+                            GraphUtil.DeleteEdge(ee.To.Get(false, "From:"), ee.To.Get(false, "Meta:"), ee.To.Get(false, "To:")); // YYY
                         }
                     }                        
 
