@@ -26,7 +26,7 @@ namespace m0.Graph.Internal
                     if (e.From == toCheckEdge.From && e.Meta == toCheckEdge.Meta && e.To == toCheckEdge.To)
                         return e;
 
-            return null;
+            return null; 
         }
 
         public override void OnAdd(IEdge item)
