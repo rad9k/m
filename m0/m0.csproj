@@ -257,6 +257,7 @@
     <Compile Include="UIWpf\VisualiserViewWrapper.cs" />
     <Compile Include="DotNetIntegration\CallableEndPointDictionary_INIEIOV_ZCE.cs" />
     <Compile Include="Util\DictionaryList.cs" />
+    <Compile Include="Util\ExtandableDictionaryListAsList.cs" />
     <Compile Include="Util\ExtandableHashSetAsList.cs" />
     <Compile Include="Util\ExtandableList.cs" />
     <Compile Include="ZeroCode\Helpers\DictionariesForFormalTextLanguage.cs" />

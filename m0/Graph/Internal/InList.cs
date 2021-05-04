@@ -41,11 +41,6 @@ namespace m0.Graph.Internal
             if (item.To.Store.DetachState != DetachStateEnum.Attached)
                 return;
 
-            if (item.From.Value is String && ((String)item.From.Value).StartsWith("TableVisualiser"))
-            {
-                int x = 0;
-            }
-
             if (item.From != null && item.From.OutEdgesRaw.Contains(item))
                 item.From.OutEdgesRaw.Remove(item);
 

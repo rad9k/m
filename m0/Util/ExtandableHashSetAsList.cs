@@ -8,9 +8,7 @@ using System.Threading.Tasks;
 namespace m0.Util
 {
     public class ExtandableHashSetAsList<T> : IList<T>
-    {
-        //private List<T> l = new List<T>();
-
+    {        
         private HashSet<T> hs = new HashSet<T>();
 
         public virtual void OnAdd(T item) { }

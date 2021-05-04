@@ -158,7 +158,7 @@ namespace m0.ZeroUML.Instructions
                         foreach (IEdge sourceFromEdge in sourceFrom.OutEdgesRaw)
                             sourceFromEdges.Add(sourceFromEdge);
 
-                        sourceFrom.DeleteEdgesList(sourceFromEdges);
+                        //sourceFrom.DeleteEdgesList(sourceFromEdges);
 
                         foreach(IEdge sourceFromEdgeToAdd in sourceFromEdges)
                         {
@@ -167,6 +167,8 @@ namespace m0.ZeroUML.Instructions
                             else
                                 sourceFrom.AddEdge(sourceFromEdgeToAdd.Meta, sourceFromEdgeToAdd.To);
                         }
+
+                        sourceFrom.DeleteEdgesList(sourceFromEdges); // MOVED
                     }
 
             foreach (IVertex sourceVertex in sourceGraph_Flat) // META replace old edges with new vertexes
@@ -195,7 +197,7 @@ namespace m0.ZeroUML.Instructions
                         foreach (IEdge sourceFromEdge in sourceFrom.OutEdgesRaw)
                             sourceFromEdges.Add(sourceFromEdge);
 
-                        sourceFrom.DeleteEdgesList(sourceFromEdges);
+                        //sourceFrom.DeleteEdgesList(sourceFromEdges);
 
                         foreach (IEdge sourceFromEdgeToAdd in sourceFromEdges)
                         {
@@ -204,6 +206,8 @@ namespace m0.ZeroUML.Instructions
                             else
                                 sourceFrom.AddEdge(sourceFromEdgeToAdd.Meta, sourceFromEdgeToAdd.To);
                         }
+
+                        sourceFrom.DeleteEdgesList(sourceFromEdges); // MOVED
                     }                                    
 
             foreach (IEdge e in toDeleteEdges) // delete rest

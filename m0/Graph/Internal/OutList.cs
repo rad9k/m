@@ -44,11 +44,6 @@ namespace m0.Graph.Internal
 
         public override void OnRemove(IEdge item)
         {
-            if (item.From.Store.Identifier.Contains("xxx"))
-            {
-                int x = 0;
-            }
-
             if(item.Meta != null && item.Meta.MetaInEdgesRaw.Contains(item))
                 item.Meta.MetaInEdgesRaw.Remove(item);
 

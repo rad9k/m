@@ -404,7 +404,7 @@ namespace m0.Graph
                 Store.RemoveVertexIdentifier(this);
 
                 if (this.Identifier is long && (
-                    ((long)this.Identifier == 19618)
+                    ((long)this.Identifier == 4360)
                     //|| ((long)this.Identifier == 23515)
                     ))
                 {
@@ -416,13 +416,19 @@ namespace m0.Graph
         }
 
         public void DeleteAllInEdges()
-        {            
+        {
+            if (hasBeenDisposed)
+                throw new Exception("Vertex disposed");
+
             foreach (IEdge edge in InEdgesRaw.ToList())          
                 InEdgesRaw.Remove(edge);                        
         }
 
         private void DeleteAllEdges()
         {
+            if (hasBeenDisposed)
+                throw new Exception("Vertex disposed");
+
             foreach (IEdge edge in OutEdgesRaw.ToList()) {             
                 OutEdgesRaw.Remove(edge);                
 
