@@ -44,10 +44,12 @@ namespace m0.Graph.Internal
 
         public override void OnRemove(IEdge item)
         {
-            if(item.Meta != null && item.Meta.MetaInEdgesRaw.Contains(item))
+            item.RemovedFromFromAndMeta = true;
+
+            if(item.Meta != null)
                 item.Meta.MetaInEdgesRaw.Remove(item);
 
-            if(!ed.NoInEdgeInOutVertexVertexMode && item.To != null && item.To.InEdgesRaw.Contains(item))
+            if(!ed.NoInEdgeInOutVertexVertexMode)
                 item.To.InEdgesRaw.Remove(item);
 
             ed.v.OutEdgesDictionariesNeedsRebuild = true;

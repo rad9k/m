@@ -9,7 +9,7 @@ using m0.Foundation;
 namespace m0.Graph
 {
     [Serializable]
-    public class EdgeBase:IEdge
+    public class EdgeBase : IEdge
     {
         public IVertex _from;
         
@@ -31,6 +31,8 @@ namespace m0.Graph
         {
             get { return _to; }            
         }
+
+        public bool RemovedFromFromAndMeta { get; set; }
 
         public EdgeBase(IVertex From, IVertex Meta, IVertex To)
         {

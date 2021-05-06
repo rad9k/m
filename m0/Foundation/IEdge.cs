@@ -8,6 +8,8 @@ namespace m0.Foundation
 {
     public interface IEdge
     {
+        bool RemovedFromFromAndMeta { get; set; }
+
         IVertex From { get; }
         IVertex Meta { get; }
         IVertex To { get; }
