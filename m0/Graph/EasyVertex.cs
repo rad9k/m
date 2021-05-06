@@ -368,7 +368,8 @@ namespace m0.Graph
             foreach (IEdge e in edges) // possibly not optimal implementation
                 AddEdge(e.Meta, e.To);
         }
-
+        public static int removecounter = 0;
+        public static int edgescounter = 0;
         public override void DeleteEdge(IEdge _edge)
         {
             if (hasBeenDisposed)
@@ -378,8 +379,9 @@ namespace m0.Graph
 
             if (edge != null)
             {
-                OutEdgesRaw.Remove(edge);                
-
+                edgescounter += OutEdgesRaw.Count;
+                OutEdgesRaw.Remove(edge);
+                removecounter++;
                 FireChange(new VertexChangeEventArgs(VertexChangeType.EdgeRemoved, edge));
             }
         }
@@ -398,8 +400,8 @@ namespace m0.Graph
         {
             if (!hasBeenDisposed)
             {
-                DeleteAllInEdges();
-                DeleteAllEdges();
+               // DeleteAllInEdges();
+                //DeleteAllEdges();
 
                 Store.RemoveVertexIdentifier(this);
 
@@ -411,7 +413,7 @@ namespace m0.Graph
                     int x = 0;
                 }
 
-                hasBeenDisposed = true;
+           //     hasBeenDisposed = true;
             }
         }
 

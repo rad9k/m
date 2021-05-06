@@ -113,8 +113,9 @@ namespace m0_SYSTEM_GENERATE
             print("");
 
             print("execution succesfull finish");
-            
-            //System.Console.ReadKey();
+            print(EasyVertex.removecounter.ToString());
+            print(EasyVertex.edgescounter.ToString());
+            Console.In.ReadLine();
         }
     }
 }

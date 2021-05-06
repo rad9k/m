@@ -98,7 +98,7 @@ namespace m0
 
         public IVertex CreateTempVertex()
         {
-            return CreateTempEdge().To;
+            return new EasyVertex(TempStore);
         }
 
         public IEdge CreateTempEdge()
