@@ -60,7 +60,7 @@ namespace m0.Util
 
         public static void EmitDB()
         {
-            string d = @" /t ";
+            string d = " /t ";
 
             using (StreamWriter outputFile = new StreamWriter("DebugDB.txt"))
             {
