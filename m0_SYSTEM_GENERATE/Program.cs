@@ -63,6 +63,9 @@ namespace m0_SYSTEM_GENERATE
 
             print("* System saved to \"system.m0\"");
 
+            DebugDB.EmitDB();
+            return;
+
             //
 
             List<IVertex> systemSubGraphWithLinks = GraphUtil.GetSubGraphWithLinksAsListButExcludeRoot(system);
@@ -112,10 +115,7 @@ namespace m0_SYSTEM_GENERATE
 
             print("");
 
-            print("execution succesfull finish");
-            print(EasyVertex.removecounter.ToString());
-            print(EasyVertex.edgescounter.ToString());
-            Console.In.ReadLine();
+            print("execution succesfull finish");            
         }
     }
 }

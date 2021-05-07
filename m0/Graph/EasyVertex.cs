@@ -335,7 +335,7 @@ namespace m0.Graph
         }
 
         public override IEdge AddEdge(IVertex metaVertex, IVertex destVertex)
-        {
+        {            
             if (hasBeenDisposed)
                 throw new Exception("Vertex disposed");
 
@@ -347,6 +347,8 @@ namespace m0.Graph
             OutEdgesRaw.Add(ne);
 
             AttachEdge(ne);
+
+            DebugDB.Add(EntryType.Add, this, ne);
 
             FireChange(new VertexChangeEventArgs(VertexChangeType.EdgeAdded, ne));
 
@@ -365,29 +367,33 @@ namespace m0.Graph
 
         public override void AddEdgesList(IEnumerable<IEdge> edges)
         {
+            DebugDB.Add(EntryType.AddList, this, null, edges.Count());
+
             foreach (IEdge e in edges) // possibly not optimal implementation
                 AddEdge(e.Meta, e.To);
         }
-        public static int removecounter = 0;
-        public static int edgescounter = 0;
+        
         public override void DeleteEdge(IEdge _edge)
         {
+            DebugDB.Add(EntryType.Remove, this, _edge);
+
             if (hasBeenDisposed)
                 throw new Exception("Vertex disposed");
 
             IEdge edge = ed.Out.Get(_edge);
 
             if (edge != null)
-            {
-                edgescounter += OutEdgesRaw.Count;
+            {                
                 OutEdgesRaw.Remove(edge);
-                removecounter++;
+                
                 FireChange(new VertexChangeEventArgs(VertexChangeType.EdgeRemoved, edge));
             }
         }
 
         public override void DeleteEdgesList(IEnumerable<IEdge> edges)
         {
+            DebugDB.Add(EntryType.RemoveList, this, null, edges.Count());
+
             foreach (IEdge e in edges) // possibly not optimal implementation
                 DeleteEdge(e); // Meta/To check to be performed
         }       
@@ -400,20 +406,20 @@ namespace m0.Graph
         {
             if (!hasBeenDisposed)
             {
-               // DeleteAllInEdges();
-                //DeleteAllEdges();
+                DeleteAllInEdges();
+                DeleteAllEdges();
 
                 Store.RemoveVertexIdentifier(this);
 
-                if (this.Identifier is long && (
+             /*   if (this.Identifier is long && (
                     ((long)this.Identifier == 4360)
                     //|| ((long)this.Identifier == 23515)
                     ))
                 {
                     int x = 0;
-                }
+                }*/
 
-           //     hasBeenDisposed = true;
+                hasBeenDisposed = true;
             }
         }
 
