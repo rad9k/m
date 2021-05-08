@@ -256,7 +256,7 @@
     <Compile Include="UIWpf\VisualiserEditWrapper.cs" />
     <Compile Include="UIWpf\VisualiserViewWrapper.cs" />
     <Compile Include="DotNetIntegration\CallableEndPointDictionary_INIEIOV_ZCE.cs" />
-    <Compile Include="Util\DebugDB.cs" />
+    <Compile Include="Util\VertexDebugDB.cs" />
     <Compile Include="Util\DictionaryList.cs" />
     <Compile Include="Util\ExtandableDictionaryListAsList.cs" />
     <Compile Include="Util\ExtandableHashSetAsList.cs" />

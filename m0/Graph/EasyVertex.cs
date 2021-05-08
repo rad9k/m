@@ -348,7 +348,7 @@ namespace m0.Graph
 
             AttachEdge(ne);
 
-            DebugDB.Add(EntryType.Add, this, ne);
+            VertexDebugDB.Add(VertexDebugType.Add, this, ne);
 
             FireChange(new VertexChangeEventArgs(VertexChangeType.EdgeAdded, ne));
 
@@ -367,7 +367,7 @@ namespace m0.Graph
 
         public override void AddEdgesList(IEnumerable<IEdge> edges)
         {
-            DebugDB.Add(EntryType.AddList, this, null, edges.Count());
+            VertexDebugDB.Add(VertexDebugType.AddList, this, null, edges.Count());
 
             foreach (IEdge e in edges) // possibly not optimal implementation
                 AddEdge(e.Meta, e.To);
@@ -375,7 +375,7 @@ namespace m0.Graph
         
         public override void DeleteEdge(IEdge _edge)
         {
-            DebugDB.Add(EntryType.Remove, this, _edge);
+            VertexDebugDB.Add(VertexDebugType.Remove, this, _edge);
 
             if (hasBeenDisposed)
                 throw new Exception("Vertex disposed");
@@ -392,7 +392,7 @@ namespace m0.Graph
 
         public override void DeleteEdgesList(IEnumerable<IEdge> edges)
         {
-            DebugDB.Add(EntryType.RemoveList, this, null, edges.Count());
+            VertexDebugDB.Add(VertexDebugType.RemoveList, this, null, edges.Count());
 
             foreach (IEdge e in edges) // possibly not optimal implementation
                 DeleteEdge(e); // Meta/To check to be performed

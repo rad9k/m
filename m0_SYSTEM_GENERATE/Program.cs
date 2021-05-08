@@ -63,7 +63,7 @@ namespace m0_SYSTEM_GENERATE
 
             print("* System saved to \"system.m0\"");
 
-            DebugDB.EmitDB();
+            VertexDebugDB.EmitDB();
             return;
 
             //
