@@ -1,6 +1,5 @@
 ﻿!!!!!!!!!!!!!!!!!!!!!!!!!!!!! TO DO:
 
-94. initial m0 files seems to be to big and contain too much
 95. access to object in its methods. current  exe.AddStackFrame(theObject); // ENTER NEW STACK does not support adding new edges
 96. do the exe.stack = InstructionHelpers.Create_INoInEdgeInOutVertexVertex_FromEdgesList(_toBeStackVertex);
 
@@ -181,3 +180,4 @@ remove ZeroCodeExecuter.AddRootToStack(exe); and ther is no. can be checked by "
 84. foreach "noteCount" in @@Sequence["0","11"]
 			"note" :: new @@Note
 81. decimal support in jsonstore
+94. initial m0 files seems to be to big and contain too much
