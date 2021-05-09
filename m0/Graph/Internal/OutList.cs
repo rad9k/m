@@ -31,24 +31,22 @@ namespace m0.Graph.Internal
 
         public override void OnAdd(IEdge item)
         {
-            if (item.Meta != null)
-                item.Meta.MetaInEdgesRaw.Add(item);
+            if (!ed.NoInEdgeInOutVertexVertexMode)
+            {
+                if (item.Meta != null)
+                    item.Meta.MetaInEdgesRaw.Add(item);
 
-            if(!ed.NoInEdgeInOutVertexVertexMode &&  item.To!=null)
-                item.To.InEdgesRaw.Add(item);
+                if (item.To != null)
+                    item.To.InEdgesRaw.Add(item);
+            }
 
             ed.v.OutEdgesDictionariesNeedsRebuild = true;
 
-            ed.v.InheritChildsDictionariesNeedsRebuild(false);            
+            ed.v.InheritChildsDictionariesNeedsRebuild(false);
         }
 
         public override void OnRemove(IEdge item)
         {
-            if(item.From.Value is string && ((string)item.From.Value) == "Std")
-            {
-                int x = 0;
-            }
-
             item.RemovedFromFromAndMeta = true;
 
             if(item.Meta != null)
