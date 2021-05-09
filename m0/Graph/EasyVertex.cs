@@ -400,7 +400,7 @@ namespace m0.Graph
 
         private static IDictionary<String, IVertex> QueryParseChache = new Dictionary<String, IVertex>();
         private static IDictionary<String, IVertex> QueryParseChache_metaMode = new Dictionary<String, IVertex>();        
-
+        
         public bool hasBeenDisposed = false;
         public void Dispose()
         {

@@ -63,8 +63,8 @@ namespace m0_SYSTEM_GENERATE
 
             print("* System saved to \"system.m0\"");
 
-            VertexDebugDB.EmitDB();
-            return;
+            //VertexDebugDB.EmitDB();
+            //return;
 
             //
 
@@ -72,8 +72,8 @@ namespace m0_SYSTEM_GENERATE
             
             //
 
-            Lib.CreateLib.Create();
-            Music.CreateMusic.Create();            
+            //Lib.CreateLib.Create();
+            //Music.CreateMusic.Create();            
 
             //            
 
@@ -83,9 +83,9 @@ namespace m0_SYSTEM_GENERATE
 
             //
 
-            print("* saving User to \"user.m0\"");
+            print("* saving User to \"user.m0\"");            
 
-            GeneralUtil.CreateM0AndMoveEdgesIntoIt_IncludeEverythingBesidesList("user.m0", User, systemSubGraphWithLinks, storeOverride);
+            GeneralUtil.CreateM0AndMoveEdgesIntoIt_IncludeEverythingBesidesList("user.m0", User, systemSubGraphWithLinks, storeOverride);            
 
             print("* User saved to \"user.m0\"");
 
@@ -98,6 +98,9 @@ namespace m0_SYSTEM_GENERATE
             print("* examples saved to \"examples.m0\"");
 
             //
+
+            Lib.CreateLib.Create();
+            Music.CreateMusic.Create();
 
 
             Lib.CreateLib.Save(systemSubGraphWithLinks, storeOverride);

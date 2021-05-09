@@ -38,7 +38,7 @@ namespace m0.Graph.Internal
 
         public override void OnRemove(IEdge item)
         {
-            if (item.To.Store.DetachState != DetachStateEnum.Attached)
+            if (item.From.Store.DetachState != DetachStateEnum.Attached)
                 return;
 
             if (!item.RemovedFromFromAndMeta)

@@ -382,7 +382,7 @@ namespace m0.Store.Json
             _DetachState = DetachStateEnum.Detaching;
 
             foreach (IVertex v in VertexIdentifiersDictionary.Values)
-            {
+            {                
                 //foreach (IEdge e in v.OutEdges)
                 foreach (IEdge e in v.OutEdgesRaw.ToList())
                     if (e is IDetachableEdge)

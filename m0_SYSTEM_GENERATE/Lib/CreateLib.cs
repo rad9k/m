@@ -15,7 +15,7 @@ namespace m0_SYSTEM_GENERATE.Lib
 {
     public class CreateLib
     {
-        static IVertex LibStd;        
+        public static IVertex LibStd;        
 
         public static void Create()
         {
