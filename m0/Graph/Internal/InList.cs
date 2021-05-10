@@ -41,7 +41,7 @@ namespace m0.Graph.Internal
             if (item.From.Store.DetachState != DetachStateEnum.Attached)
                 return;
 
-            if (!item.RemovedFromFromAndMeta)
+            if (!item.RemovedByOutEdgesRawRemove)
             {
                 if (item.From != null)
                     item.From.OutEdgesRaw.Remove(item);

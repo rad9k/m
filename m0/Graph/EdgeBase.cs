@@ -32,7 +32,7 @@ namespace m0.Graph
             get { return _to; }            
         }
 
-        public bool RemovedFromFromAndMeta { get; set; }
+        public bool RemovedByOutEdgesRawRemove { get; set; }
 
         public EdgeBase(IVertex From, IVertex Meta, IVertex To)
         {

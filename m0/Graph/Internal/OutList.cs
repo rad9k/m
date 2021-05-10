@@ -47,7 +47,7 @@ namespace m0.Graph.Internal
 
         public override void OnRemove(IEdge item)
         {
-            item.RemovedFromFromAndMeta = true;
+            item.RemovedByOutEdgesRawRemove = true;
 
             if(item.Meta != null)
                 item.Meta.MetaInEdgesRaw.Remove(item);

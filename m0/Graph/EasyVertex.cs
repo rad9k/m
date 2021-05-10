@@ -335,8 +335,8 @@ namespace m0.Graph
         }
 
         public override IEdge AddEdge(IVertex metaVertex, IVertex destVertex)
-        {            
-            if (hasBeenDisposed)
+        {
+            if (DisposedState == DisposeStateEnum.Disposed)
                 throw new Exception("Vertex disposed");
 
             if (destVertex == null)
@@ -377,7 +377,7 @@ namespace m0.Graph
         {
             VertexDebugDB.Add(VertexDebugType.Remove, this, _edge);
 
-            if (hasBeenDisposed)
+            if (DisposedState == DisposeStateEnum.Disposed)
                 throw new Exception("Vertex disposed");
 
             IEdge edge = ed.Out.Get(_edge);
@@ -401,40 +401,46 @@ namespace m0.Graph
         private static IDictionary<String, IVertex> QueryParseChache = new Dictionary<String, IVertex>();
         private static IDictionary<String, IVertex> QueryParseChache_metaMode = new Dictionary<String, IVertex>();        
         
-        public bool hasBeenDisposed = false;
+        public enum DisposeStateEnum { Live, Disposing, Disposed}
+
+        public DisposeStateEnum DisposedState = DisposeStateEnum.Live;
         public void Dispose()
         {
-            if (!hasBeenDisposed)
+            if (DisposedState == DisposeStateEnum.Live)
             {
+                DisposedState = DisposeStateEnum.Disposing;
+
                 DeleteAllInEdges();
+                DeleteAllMetaInEdges();
                 DeleteAllEdges();
 
                 Store.RemoveVertexIdentifier(this);
 
-             /*   if (this.Identifier is long && (
-                    ((long)this.Identifier == 4360)
-                    //|| ((long)this.Identifier == 23515)
-                    ))
-                {
-                    int x = 0;
-                }*/
-
-                hasBeenDisposed = true;
+                DisposedState = DisposeStateEnum.Disposed;
             }
         }
 
         public void DeleteAllInEdges()
         {
-            if (hasBeenDisposed)
-                throw new Exception("Vertex disposed");
+            if (DisposedState == DisposeStateEnum.Disposed)
+                throw new Exception("Vertex disposed");            
 
             foreach (IEdge edge in InEdgesRaw.ToList())          
                 InEdgesRaw.Remove(edge);                        
         }
 
+        public void DeleteAllMetaInEdges()
+        {
+            if (DisposedState == DisposeStateEnum.Disposed)
+                throw new Exception("Vertex disposed");
+
+            foreach (IEdge edge in MetaInEdgesRaw.ToList())
+                MetaInEdgesRaw.Remove(edge);
+        }
+
         private void DeleteAllEdges()
         {
-            if (hasBeenDisposed)
+            if (DisposedState == DisposeStateEnum.Disposed)
                 throw new Exception("Vertex disposed");
 
             foreach (IEdge edge in OutEdgesRaw.ToList()) {             
