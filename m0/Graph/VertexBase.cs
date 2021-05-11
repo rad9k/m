@@ -14,6 +14,8 @@ namespace m0.Graph
     [Serializable]
     public class VertexBase : IVertex, IDisposable
     {
+        public DisposeStateEnum DisposedState { get; set; }
+
         public bool IsRoot { get; set; }
 
         protected IDictionary<object, object> _OutEdgesByMeta;

@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static m0.Graph.EasyVertex;
+using static m0.Graph.EdgeBase;
 
 namespace m0.Foundation
 {
@@ -22,11 +24,14 @@ namespace m0.Foundation
         }
     }
 
+    public enum DisposeStateEnum { Live, Disposing, Disposed }
 
     // IVertex has to have constructor with:
     // - IStore param
     public interface IVertex : IEnumerable<IEdge>, IDisposable
     {
+        DisposeStateEnum DisposedState { get; set; }
+
         bool IsRoot { get; set; }
 
         event VertexChange Change;

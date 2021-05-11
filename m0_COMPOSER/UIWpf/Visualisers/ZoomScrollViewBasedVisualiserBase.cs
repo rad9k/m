@@ -2352,7 +2352,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
                 //Vertex = mz.Root.Get(false, @"System\Session\Visualisers").AddVertex(null, "TreeVisualiser" + this.GetHashCode());
 
                 Vertex = mz.CreateTempVertex();
-                Vertex.Value = VisualiserName + this.GetHashCode();
+                Vertex.Value = VisualiserName;//+ this.GetHashCode();
 
                 ClassVertex.AddIsClassAndAllAttributesAndAssociations(Vertex, VisualiserMetaVertex);
 

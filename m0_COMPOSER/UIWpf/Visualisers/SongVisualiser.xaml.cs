@@ -137,7 +137,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             MinusZero mz = MinusZero.Instance;
 
-            VisualiserName = "SongVisuliser";
+            VisualiserName = "SongVisualiser";
 
             BaseEdgeToMetaVertex = mz.root.Get(false, @"System\Lib\Music\Class:Song");
             VisualiserMetaVertex = mz.root.Get(false, @"System\Meta\Visualiser\Song");

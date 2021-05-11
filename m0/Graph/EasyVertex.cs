@@ -400,12 +400,15 @@ namespace m0.Graph
 
         private static IDictionary<String, IVertex> QueryParseChache = new Dictionary<String, IVertex>();
         private static IDictionary<String, IVertex> QueryParseChache_metaMode = new Dictionary<String, IVertex>();        
-        
-        public enum DisposeStateEnum { Live, Disposing, Disposed}
 
-        public DisposeStateEnum DisposedState = DisposeStateEnum.Live;
         public void Dispose()
         {
+            if(Identifier is long && ((long)Identifier) == (long)18158)
+            {
+                int x = 0;
+            }
+
+
             if (DisposedState == DisposeStateEnum.Live)
             {
                 DisposedState = DisposeStateEnum.Disposing;
@@ -639,7 +642,7 @@ namespace m0.Graph
 
                 parseError = MinusZero.Instance.DefaultParser.Parse(queryVertex, query);
 
-                if (parseError == null || parseError.Count() == 0)
+                if (parseError == null || parseError.Count() == 0 || !chache.ContainsKey(query)) // it happens to exist there so need to check again
                     chache.Add(query, queryVertex);
             }
 
@@ -699,6 +702,8 @@ namespace m0.Graph
 
         public EasyVertex(IStore _store, object toBeIdentifier) : base(_store)
         {
+            DisposedState = DisposeStateEnum.Live;
+ 
             VertexInit_First();
 
             _Identifier = toBeIdentifier;

@@ -172,6 +172,9 @@ namespace m0.UIWpf.Visualisers
         
         public void VertexChange(object sender, VertexChangeEventArgs e)
         {
+            if (baseVertex.DisposedState != DisposeStateEnum.Live)
+                return;
+
             if(e.Type!=VertexChangeType.ValueChanged&&ParentVisualiser.IsPaiting==false) //ValueChanged is handled by FastMode
                 ParentVisualiser.PaintGraph();
         }
@@ -351,7 +354,7 @@ namespace m0.UIWpf.Visualisers
 
                 //GraphUtil.RemoveAllEdges(Vertex.Get(false, "DisplayedEdges:"));
                 
-                Width = ((int)GraphUtil.GetIntegerValue(Vertex.Get(false, "NumberOfCircles:")))*((int)GraphUtil.GetIntegerValue(Vertex.Get(false, "VisualiserCircleSize:")))*2;
+                Width = ((int)GraphUtil.GetIntegerValue(Vertex.Get(false, "NumberOfCircles:")))*(GraphUtil.GetIntegerValueOr0(Vertex.Get(false, "VisualiserCircleSize:")))*2;
                 Height = Width;                
                              
                 AddCircle(0,null);
