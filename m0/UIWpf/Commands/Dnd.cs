@@ -78,7 +78,7 @@ namespace m0.UIWpf.Commands
                 if (ee != null)
                 {
                     IVertex toMeta = r.Get(false, @"System\Meta\ZeroTypes\Edge\To");
-                //    GraphUtil.CreateOrReplaceEdge(baseEdge, toMeta, ee.To.Get(false, "To:")); // this is needed for some update scenarios ??? YYY
+                    GraphUtil.CreateOrReplaceEdge(baseEdge, toMeta, ee.To.Get(false, "To:")); // this is needed for some update scenarios ??? YYY
                     GraphUtil.CreateOrReplaceEdge(baseEdge.Get(false, "From:"), baseEdge.Get(false, "Meta:"), ee.To.Get(false, "To:"));
                     
                 }

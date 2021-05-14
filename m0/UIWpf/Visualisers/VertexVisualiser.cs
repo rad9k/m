@@ -174,13 +174,15 @@ namespace m0.UIWpf.Visualisers
 
         protected void VertexChange(object sender, VertexChangeEventArgs e)
         {
-            if ((sender == Vertex) && (e.Type == VertexChangeType.EdgeAdded) && (GeneralUtil.CompareStrings(e.Edge.Meta.Value, "BaseEdge")))
+            UpdateBaseEdge();
+
+            /*if ((sender == Vertex) && (e.Type == VertexChangeType.EdgeAdded) && (GeneralUtil.CompareStrings(e.Edge.Meta.Value, "BaseEdge")))
                 UpdateBaseEdge();
 
             if ((sender == Vertex.Get(false, "BaseEdge:")) && (e.Type == VertexChangeType.EdgeAdded) && (GeneralUtil.CompareStrings(e.Edge.Meta.Value, "To"))
                 || (sender == Vertex.Get(false, "BaseEdge:")) && (e.Type == VertexChangeType.EdgeRemoved) && (GeneralUtil.CompareStrings(e.Edge.Meta.Value, "To"))
                 || (sender == Vertex.Get(false, @"BaseEdge:\To:") && e.Type == VertexChangeType.ValueChanged))
-                UpdateBaseEdge();
+                UpdateBaseEdge();*/
         }
 
         private IVertex _Vertex;
