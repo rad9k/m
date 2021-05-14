@@ -403,12 +403,6 @@ namespace m0.Graph
 
         public void Dispose()
         {
-            if(Identifier is long && ((long)Identifier) == (long)18158)
-            {
-                int x = 0;
-            }
-
-
             if (DisposedState == DisposeStateEnum.Live)
             {
                 DisposedState = DisposeStateEnum.Disposing;
