@@ -17,7 +17,7 @@ namespace m0.Graph.Internal
             ed = _ed;
         }
 
-        public IEdge Get(IEdge toCheckEdge)
+        public override IEdge Get(IEdge toCheckEdge)
         {
             if (Contains(toCheckEdge))
                 return toCheckEdge;

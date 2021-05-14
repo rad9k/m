@@ -346,9 +346,7 @@ namespace m0.Graph
 
             OutEdgesRaw.Add(ne);
 
-            AttachEdge(ne);
-
-            VertexDebugDB.Add(VertexDebugType.Add, this, ne);
+            AttachEdge(ne);            
 
             FireChange(new VertexChangeEventArgs(VertexChangeType.EdgeAdded, ne));
 
@@ -366,17 +364,13 @@ namespace m0.Graph
         }
 
         public override void AddEdgesList(IEnumerable<IEdge> edges)
-        {
-            VertexDebugDB.Add(VertexDebugType.AddList, this, null, edges.Count());
-
+        {            
             foreach (IEdge e in edges) // possibly not optimal implementation
                 AddEdge(e.Meta, e.To);
         }
         
         public override void DeleteEdge(IEdge _edge)
-        {
-            VertexDebugDB.Add(VertexDebugType.Remove, this, _edge);
-
+        {            
             if (DisposedState == DisposeStateEnum.Disposed)
                 throw new Exception("Vertex disposed");
 
@@ -391,9 +385,7 @@ namespace m0.Graph
         }
 
         public override void DeleteEdgesList(IEnumerable<IEdge> edges)
-        {
-            VertexDebugDB.Add(VertexDebugType.RemoveList, this, null, edges.Count());
-
+        {            
             foreach (IEdge e in edges) // possibly not optimal implementation
                 DeleteEdge(e); // Meta/To check to be performed
         }       
@@ -403,6 +395,11 @@ namespace m0.Graph
 
         public void Dispose()
         {
+            if(Value is string && ((String)Value).StartsWith("Tree"))
+            {
+                int x = 0;
+            }
+
             if (DisposedState == DisposeStateEnum.Live)
             {
                 DisposedState = DisposeStateEnum.Disposing;

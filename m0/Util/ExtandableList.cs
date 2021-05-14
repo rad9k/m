@@ -1,4 +1,5 @@
-﻿using System;
+﻿using m0.Foundation;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,6 +10,8 @@ namespace m0.Util
 {
     public class ExtandableList<T> : IList<T>
     {
+        public virtual T Get(T toCheckEdge) { return default(T); }
+
         private List<T> l = new List<T>();
 
         public virtual void OnAdd(T item) { }
@@ -62,8 +65,18 @@ namespace m0.Util
         {
             bool ret = ((IList<T>)l).Remove(item);
 
-            OnRemove(item);
+            if (!ret)
+            {
+                item = Get(item);
 
+                if (item != null)
+                {
+                    ret = ((IList<T>)l).Remove(item);
+                    OnRemove(item);
+                }
+            }else
+                OnRemove(item);
+            
             return ret;
         }
 
