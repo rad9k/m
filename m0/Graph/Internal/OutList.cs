@@ -47,13 +47,16 @@ namespace m0.Graph.Internal
 
         public override void OnRemove(IEdge item)
         {
-            item.RemovedByOutEdgesRawRemove = true;
+            if (item.EdgeRemovalStarted == false)
+            {
+                item.EdgeRemovalStarted = true;
 
-            if(item.Meta != null)
-                item.Meta.MetaInEdgesRaw.Remove(item);
+                if (item.Meta != null)
+                    item.Meta.MetaInEdgesRaw.Remove(item);
 
-            if(!ed.NoInEdgeInOutVertexVertexMode)
-                item.To.InEdgesRaw.Remove(item);
+                if (!ed.NoInEdgeInOutVertexVertexMode)
+                    item.To.InEdgesRaw.Remove(item);
+            }
 
             ed.v.OutEdgesDictionariesNeedsRebuild = true;
             ed.v.InheritChildsDictionariesNeedsRebuild(false);

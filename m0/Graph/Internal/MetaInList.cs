@@ -39,8 +39,10 @@ namespace m0.Graph.Internal
             if (item.From.Store.DetachState != DetachStateEnum.Attached)
                 return;
 
-            if (!item.RemovedByOutEdgesRawRemove)
+            if (!item.EdgeRemovalStarted)
             {
+                item.EdgeRemovalStarted = true;
+
                 if (item.From != null)
                     item.From.OutEdgesRaw.Remove(item);
 
