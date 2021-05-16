@@ -391,7 +391,7 @@ namespace m0.Graph
         private static IDictionary<String, IVertex> QueryParseChache = new Dictionary<String, IVertex>();
         private static IDictionary<String, IVertex> QueryParseChache_metaMode = new Dictionary<String, IVertex>();        
 
-        public void Dispose()
+        public override void Dispose()
         {
             if(Value is string && ((String)Value).StartsWith("Tree"))
             {

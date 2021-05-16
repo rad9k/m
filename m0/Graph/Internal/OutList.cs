@@ -23,7 +23,7 @@ namespace m0.Graph.Internal
                 return toCheckEdge;
             else
                 foreach (IEdge e in this)
-                    if (e.From == toCheckEdge.From && e.Meta == toCheckEdge.Meta && e.To == toCheckEdge.To)
+                    if (/*e.From == toCheckEdge.From &&*/ e.Meta == toCheckEdge.Meta && e.To == toCheckEdge.To)
                         return e;
 
             return null; 
@@ -49,14 +49,16 @@ namespace m0.Graph.Internal
 
         public override void OnRemove(IEdge item)
         {
-            if (item.EdgeRemovalStarted == false && !ed.NoInEdgeInOutVertexVertexMode)
+            if (item.EdgeRemovalExecuting == false && !ed.NoInEdgeInOutVertexVertexMode)
             {
-                item.EdgeRemovalStarted = true;
+                item.EdgeRemovalExecuting = true;
 
                 if (item.Meta != null)
                     item.Meta.MetaInEdgesRaw.Remove(item);
                 
                 item.To.InEdgesRaw.Remove(item);
+
+                item.EdgeRemovalExecuting = false;
             }
 
             ed.v.OutEdgesDictionariesNeedsRebuild = true;
@@ -76,7 +78,7 @@ namespace m0.Graph.Internal
 
             //
 
-            int cumulativeEdgesCount = 0;
+            /*int cumulativeEdgesCount = 0;
 
             cumulativeEdgesCount += ed.In.Count;
             cumulativeEdgesCount += ed.MetaIn.Count;
@@ -84,7 +86,7 @@ namespace m0.Graph.Internal
             if (cumulativeEdgesCount == 0
                 && ed.v.Store.DetachState == DetachStateEnum.Attached
                 && !ed.v.IsRoot)
-                ed.v.Dispose();
+                ed.v.Dispose();*/ // this does not metter
 
             ed.v.FireChange(new VertexChangeEventArgs(VertexChangeType.EdgeRemoved, item));
         }

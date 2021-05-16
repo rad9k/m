@@ -23,7 +23,7 @@ namespace m0.Graph.Internal
                 return toCheckEdge;
             else
                 foreach (IEdge e in this)
-                    if (e.From == toCheckEdge.From && e.Meta == toCheckEdge.Meta && e.To == toCheckEdge.To)
+                    if (/*e.From == toCheckEdge.From &&*/ e.Meta == toCheckEdge.Meta && e.To == toCheckEdge.To)
                         return e;
 
             return null;
@@ -39,15 +39,17 @@ namespace m0.Graph.Internal
             if (item.From.Store.DetachState != DetachStateEnum.Attached)
                 return;
 
-            if (!item.EdgeRemovalStarted)
+            if (!item.EdgeRemovalExecuting)
             {
-                item.EdgeRemovalStarted = true;
+                item.EdgeRemovalExecuting = true;
 
                 if (item.From != null)
                     item.From.OutEdgesRaw.Remove(item);
 
                 if (item.To != null)
                     item.To.InEdgesRaw.Remove(item);
+
+                item.EdgeRemovalExecuting = false;
             }
 
             int cumulativeEdgesCount = 0;

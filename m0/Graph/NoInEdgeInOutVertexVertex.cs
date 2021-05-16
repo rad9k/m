@@ -19,7 +19,10 @@ namespace m0.Graph
         {
             return new EasyVertex(this.Store);                
         }
-        
+
+        public override void Dispose() { }
+
+
 
         public void AddEdgeForNoInEdgeInOutVertexVertex_BAD_BEHAVIOR_IEdge_MANY_TIMES(IEdge e){
             //IEdge ne = new NoInEdgeInOutVertexEdge(e.From, e.Meta, e.To); // INoInEdgeInOutVertexVertex DIFF
