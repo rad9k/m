@@ -36,16 +36,16 @@ namespace m0.Graph
 
             _meta = MinusZero.Instance.Empty;
 
-            if (_from is IInternalCollectionsVertex)
+            if (_from is IImplementedVertex)
             {
-                IInternalCollectionsVertex icv_from = (IInternalCollectionsVertex)_from;
+                IImplementedVertex icv_from = (IImplementedVertex)_from;
                 icv_from.OutEdgesDictionariesNeedsRebuild = true;
                 icv_from.InheritChildsDictionariesNeedsRebuild(false);
             }
 
-            if (_to is IInternalCollectionsVertex)
+            if (_to is IImplementedVertex)
             {
-                IInternalCollectionsVertex icv_from = (IInternalCollectionsVertex)_from;
+                IImplementedVertex icv_from = (IImplementedVertex)_from;
                 icv_from.InEdgesDictionariesNeedsRebuild = true;
                 icv_from.InheritChildsDictionariesNeedsRebuild(true);
             }

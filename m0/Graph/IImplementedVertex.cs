@@ -7,11 +7,13 @@ using System.Threading.Tasks;
 
 namespace m0.Graph
 {
-    public interface IInternalCollectionsVertex : IVertex
+    public interface IImplementedVertex : IVertex
     {
         void InheritChildsDictionariesNeedsRebuild(bool inDictiories);
 
         int InheritanceCount { get; set; }
         bool HasInheritance { get; set; }
+
+        void FireChange(VertexChangeEventArgs e);
     }
 }

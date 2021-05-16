@@ -17,7 +17,7 @@ using m0.Graph.Internal;
 namespace m0.Graph
 {
     [Serializable]
-    public class EasyVertex: VertexBase, IDisposable, IInternalCollectionsVertex
+    public class EasyVertex: VertexBase, IDisposable, IImplementedVertex
     {
         protected EdgeDictionaries ed;
 
@@ -346,9 +346,7 @@ namespace m0.Graph
 
             OutEdgesRaw.Add(ne);
 
-            AttachEdge(ne);            
-
-            FireChange(new VertexChangeEventArgs(VertexChangeType.EdgeAdded, ne));
+            AttachEdge(ne);                       
 
             return ne;
         }
@@ -380,7 +378,7 @@ namespace m0.Graph
             {                
                 OutEdgesRaw.Remove(edge);
                 
-                FireChange(new VertexChangeEventArgs(VertexChangeType.EdgeRemoved, edge));
+               
             }
         }
 

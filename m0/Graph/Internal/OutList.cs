@@ -43,6 +43,8 @@ namespace m0.Graph.Internal
             ed.v.OutEdgesDictionariesNeedsRebuild = true;
 
             ed.v.InheritChildsDictionariesNeedsRebuild(false);
+
+            ed.v.FireChange(new VertexChangeEventArgs(VertexChangeType.EdgeAdded, item));
         }
 
         public override void OnRemove(IEdge item)
@@ -83,6 +85,8 @@ namespace m0.Graph.Internal
                 && ed.v.Store.DetachState == DetachStateEnum.Attached
                 && !ed.v.IsRoot)
                 ed.v.Dispose();
+
+            ed.v.FireChange(new VertexChangeEventArgs(VertexChangeType.EdgeRemoved, item));
         }
     }
 }
