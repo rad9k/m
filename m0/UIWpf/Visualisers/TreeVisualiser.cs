@@ -181,6 +181,9 @@ namespace m0.UIWpf.Visualisers
 
         public void VertexChange(object sender, VertexChangeEventArgs e)
         {
+            if (TreeParent.IsDisposed)
+                return;
+
             //if (sender != ((IEdge)this.Tag).To)
               //  throw new Exception("TreeVisualiserViewItem attached to some other Vertex Change");
 
@@ -549,7 +552,7 @@ namespace m0.UIWpf.Visualisers
             }
         }
 
-        protected bool IsDisposed = false;
+        public bool IsDisposed = false;
 
         public void Dispose()
         {

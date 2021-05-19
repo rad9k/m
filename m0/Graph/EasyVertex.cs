@@ -398,14 +398,11 @@ namespace m0.Graph
 
         public override void Dispose()
         {
-            if(Value is string && ((String)Value).StartsWith("Tree"))
-            {
-                int x = 0;
-            }
-
             if (DisposedState == DisposeStateEnum.Live)
             {
                 DisposedState = DisposeStateEnum.Disposing;
+
+                ChangeRemoveAllHandlers();
 
                 DeleteAllInEdges();
                 DeleteAllMetaInEdges();
