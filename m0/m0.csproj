@@ -98,7 +98,7 @@
     <Compile Include="Foundation\INoInEdgeInOutVertexVertex.cs" />
     <Compile Include="Foundation\IPlatformClass.cs" />
     <Compile Include="Foundation\IUserInteraction.cs" />
-    <Compile Include="Graph\IInternalCollectionsVertex.cs" />
+    <Compile Include="Graph\IImplementedVertex.cs" />
     <Compile Include="Graph\Internal\EdgeDictionaries.cs" />
     <Compile Include="Graph\Internal\MetaInList.cs" />
     <Compile Include="Graph\Internal\InList.cs" />

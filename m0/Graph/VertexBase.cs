@@ -345,7 +345,7 @@ namespace m0.Graph
             throw new NotImplementedException();
         }
         
-        public void Dispose()
+        public virtual void Dispose()
         {
             throw new NotImplementedException();
         }

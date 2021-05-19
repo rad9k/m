@@ -47,9 +47,9 @@ namespace m0.Graph.Internal
         public MetaInList MetaIn;
         public InList In;
 
-        public IInternalCollectionsVertex v;
+        public IImplementedVertex v;
 
-        public EdgeDictionaries(IInternalCollectionsVertex _v)
+        public EdgeDictionaries(IImplementedVertex _v)
         {
             v = _v;
 

@@ -17,13 +17,13 @@ namespace m0.Graph.Internal
             ed = _ed;
         }
 
-        public IEdge Get(IEdge toCheckEdge)
+        public override IEdge Get(IEdge toCheckEdge)
         {
             if (Contains(toCheckEdge))
                 return toCheckEdge;
             else
                 foreach (IEdge e in this)
-                    if (e.From == toCheckEdge.From && e.Meta == toCheckEdge.Meta && e.To == toCheckEdge.To)
+                    if (/*e.From == toCheckEdge.From &&*/ e.Meta == toCheckEdge.Meta && e.To == toCheckEdge.To)
                         return e;
 
             return null;
@@ -41,13 +41,17 @@ namespace m0.Graph.Internal
             if (item.From.Store.DetachState != DetachStateEnum.Attached)
                 return;
 
-            if (!item.RemovedByOutEdgesRawRemove)
+            if (!item.EdgeRemovalExecuting)
             {
+                item.EdgeRemovalExecuting = true;
+
                 if (item.From != null)
                     item.From.OutEdgesRaw.Remove(item);
 
                 if (item.Meta != null)
                     item.Meta.MetaInEdgesRaw.Remove(item);
+
+                item.EdgeRemovalExecuting = false;
             }
 
             //

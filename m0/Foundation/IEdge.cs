@@ -8,7 +8,7 @@ namespace m0.Foundation
 {
     public interface IEdge
     {
-        bool RemovedByOutEdgesRawRemove { get; set; }
+        bool EdgeRemovalExecuting { get; set; }
 
         IVertex From { get; }
         IVertex Meta { get; }
