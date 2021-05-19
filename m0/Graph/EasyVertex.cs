@@ -368,7 +368,12 @@ namespace m0.Graph
         }
         
         public override void DeleteEdge(IEdge _edge)
-        {            
+        {
+            if (Value is string && ((String)Value).StartsWith("Tree"))
+            {
+                int x = 0;
+            }
+
             if (DisposedState == DisposeStateEnum.Disposed)
                 throw new Exception("Vertex disposed");
 
