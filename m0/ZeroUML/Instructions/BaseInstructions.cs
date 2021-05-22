@@ -2139,6 +2139,9 @@ namespace m0.ZeroUML.Instructions
         {
             IVertex objectIs = GetIs(theObject);
 
+            if (objectIs == null)
+                return CreateStack();
+
             IVertex methodBody =  Get(false, objectIs, targetExpression);            
 
             if(methodBody==null) // not found
