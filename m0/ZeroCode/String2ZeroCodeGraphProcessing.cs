@@ -2178,6 +2178,23 @@ namespace m0.ZeroCode
             return AddEdge(s, baseVertex, meta, to);
         }
 
+        bool IsVertexKeywordManyRoot(IVertex v)
+        {
+            if (GraphUtil.GetQueryOutFirst(v, "$$KeywordManyRoot", null) != null)
+                return true;
+
+            return false;
+        }
+
+        bool IsVertexParentKeywordManyRoot(IVertex v)
+        {
+            foreach (IEdge e in v.InEdges)
+                if (GraphUtil.GetQueryOutFirst(e.From, "$$KeywordManyRoot", null) != null)
+                    return true;
+
+            return false;
+        }
+         
         IVertex _AddKeywordVertex(ParsingStack s, IVertex parent, keywordTryingData ktd, IVertex keywordAddingVertex, IVertex useMetaWhenANY, int subCount, IEdge parentMetaEdge)
         {
             IVertex nv=null;
@@ -2194,12 +2211,19 @@ namespace m0.ZeroCode
             foreach (IEdge _e in keywordAddingVertex) {
                 IEdge e = _e;
                 //if (e.To.Get(false, @"$$KeywordManyRoot:") != null)
-                if (GraphUtil.GetQueryOutFirst(e.To, "$$KeywordManyRoot", null) != null)
+                //if (GraphUtil.GetQueryOutFirst(e.To, "$$KeywordManyRoot", null) != null)
+                if(IsVertexKeywordManyRoot(e.To))
                 {
                     min_subCount = 0;
                     max_subCount = ktd.multiParameterCount - 1;
                 }
-                else {
+                else if (IsVertexParentKeywordManyRoot(e.To))
+                {
+                    min_subCount = subCount; // XXX
+                    max_subCount = subCount;
+                }
+                else
+                {
                     min_subCount = 0; // XXX
                     max_subCount = 0;
                 }
