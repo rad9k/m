@@ -3040,7 +3040,26 @@ namespace m0
             sm.Get(false, @"Visualiser\Song\SnapToGrid").AddEdge(sm.Get(false, @"?$EdgeTarget"), sm.Get(false, @"Visualiser\SongSnapToGridEnum"));            
         }
 
-        void CreateSystemData()
+        void CreateSystemMetaMethodVisualiser()
+        {
+            IVertex sm = Root.Get(false, @"System\Meta");
+
+            IVertex smv = Root.Get(false, @"System\Meta\Visualiser");
+
+            IVertex smvm = smv.AddVertex(null, "Method");
+
+            m0.LegacySystem.Util.GeneralUtil.ParseAndExcute(smvm, sm, "{" +
+                "Class:VoidVoidMethod{Attribute:ExecutableEdge{$MinCardinality:1,$MaxCardinality:1}}," +            
+                "}");            
+
+            sm.Get(false, @"Visualiser\Method\VoidVoidMethod").AddEdge(sm.Get(false, "?$Inherits"), sm.Get(false, @"ZeroTypes\$PlatformClass"));
+            sm.Get(false, @"Visualiser\Method\VoidVoidMethod").AddEdge(sm.Get(false, "?$Inherits"), sm.Get(false, @"ZeroTypes\HasBaseEdge"));
+            sm.Get(false, @"Visualiser\Method\VoidVoidMethod").AddVertex(sm.Get(false, "?$PlatformClassName"), @"m0.UIWpf.Visualisers.Method.VoidVoidMethod, m0, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null");
+            sm.Get(false, @"Visualiser\Method\VoidVoidMethod").AddEdge(sm.Get(false, @"?$Is"), sm.Get(false, @"ZeroUML\Class"));
+            sm.Get(false, @"Visualiser\Method\VoidVoidMethod\ExecutableEdge").AddEdge(sm.Get(false, @"?$EdgeTarget"), sm.Get(false, @"ZeroTypes\Edge"));            
+        }
+
+            void CreateSystemData()
         {
             IVertex sm = Root.Get(false, @"System\Meta");
 
@@ -4762,6 +4781,8 @@ namespace m0
             CreateSystemMetaVisualiserDiagram();
 
             CreateSystemMetaVisualiser();
+
+            CreateSystemMetaMethodVisualiser();
 
             CreateSystemData();
 

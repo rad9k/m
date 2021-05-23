@@ -12,6 +12,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
+using m0.UIWpf.Visualisers.Method;
 
 namespace m0.UIWpf.Visualisers
 {
@@ -200,9 +201,9 @@ namespace m0.UIWpf.Visualisers
             return list;
         }
 
-        private bool IsExecutableEdge(IEdge e)
+        private bool IsVoidVoidExecutableVertex(IVertex v)
         {
-            if (GeneralUtil.CompareStrings(e.Meta, "Method"))
+            if (GeneralUtil.CompareStrings(v.Value, "Method"))
                 return true;
 
             return false;
@@ -673,8 +674,14 @@ namespace m0.UIWpf.Visualisers
                     dataControl = sv;
                 }
                 else
-                if
+                if (IsVoidVoidExecutableVertex(meta))
+                {
+                    VoidVoidMethodVisualiser vvv = new VoidVoidMethodVisualiser();
 
+                    //GraphUtil.CreateOrReplaceEdge(vvv.Vertex,)
+
+                    dataControl = vvv;
+                }else
                 {
                     VisualiserEditWrapper w = new VisualiserEditWrapper();
 

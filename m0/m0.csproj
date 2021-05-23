@@ -111,6 +111,7 @@
     <Compile Include="UIWpf\Dialog\StringQuestionWindow.xaml.cs">
       <DependentUpon>StringQuestionWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="UIWpf\Visualisers\Method\VoidVoidMethodVisualiser.cs" />
     <Compile Include="User\Clipboard.cs" />
     <Compile Include="User\Process\UI\NonAtomProcess.cs" />
     <Compile Include="Store\BinarySerializationStore.cs">
