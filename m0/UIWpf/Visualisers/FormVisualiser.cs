@@ -47,7 +47,7 @@ namespace m0.UIWpf.Visualisers
         }
     }
 
-    public class FormVisualiser: ContentControl, IPlatformClass, IDisposable
+    public class FormVisualiser : ContentControl, IPlatformClass, IDisposable
     {
         bool isLoaded;
 
@@ -76,7 +76,7 @@ namespace m0.UIWpf.Visualisers
         {
             if (HasTabs)
             {
-                TabItem i = TabControlSelectedItem;                
+                TabItem i = TabControlSelectedItem;
 
                 foreach (TabInfo tie in TabList.Values)
                     if (tie.TabItem.Header == i.Header)
@@ -90,13 +90,13 @@ namespace m0.UIWpf.Visualisers
 
         private IVertex getMetaForForm()
         {
-            if(Vertex.Get(false, @"BaseEdge:\Meta:") == null/* || Vertex.Get(false, @"BaseEdge:\Meta:").Count() == 0*/)
+            if (Vertex.Get(false, @"BaseEdge:\Meta:") == null/* || Vertex.Get(false, @"BaseEdge:\Meta:").Count() == 0*/)
                 return null;
 
-            IVertex v=GraphUtil.GetMostInheritedMeta(Vertex.Get(false, @"BaseEdge:\To:"),Vertex.Get(false, @"BaseEdge:\Meta:"));
+            IVertex v = GraphUtil.GetMostInheritedMeta(Vertex.Get(false, @"BaseEdge:\To:"), Vertex.Get(false, @"BaseEdge:\Meta:"));
             // XXX there is error in GetMostInheritedMeta - see it 
 
-            if (v!=null && v.Get(false, @"$EdgeTarget:") != null)
+            if (v != null && v.Get(false, @"$EdgeTarget:") != null)
                 return v.Get(false, @"$EdgeTarget:");
             else
                 return v;
@@ -104,14 +104,14 @@ namespace m0.UIWpf.Visualisers
 
         private string getGroup(IVertex meta)
         {
-            if (SectionsAsTabs){
+            if (SectionsAsTabs) {
                 if (meta == null)
                     return " | ";
 
-                string _section = (string)GraphUtil.GetValue(meta.Get(false, "$Section:")); 
+                string _section = (string)GraphUtil.GetValue(meta.Get(false, "$Section:"));
                 string _group = (string)GraphUtil.GetValue(meta.Get(false, "$Group:"));
 
-                if(_group==null && _section==null)
+                if (_group == null && _section == null)
                     return "";
 
                 if (_group == null)
@@ -127,7 +127,7 @@ namespace m0.UIWpf.Visualisers
                 if (meta == null)
                     return "";
 
-                string _group=(string)GraphUtil.GetValue(meta.Get(false, "$Group:"));
+                string _group = (string)GraphUtil.GetValue(meta.Get(false, "$Group:"));
 
                 if (_group == null)
                     return "";
@@ -144,7 +144,7 @@ namespace m0.UIWpf.Visualisers
             if (SectionsAsTabs)
                 return null;
             else
-                return (string)GraphUtil.GetValue(meta.Get(false, "$Section:")); 
+                return (string)GraphUtil.GetValue(meta.Get(false, "$Section:"));
         }
 
         bool BaseVertexEdgeAdded_PreFill = false;
@@ -159,7 +159,7 @@ namespace m0.UIWpf.Visualisers
             }
 
             string group = getGroup(meta);
-            string section = getSection(meta);      
+            string section = getSection(meta);
 
             TabInfo t;
 
@@ -175,8 +175,37 @@ namespace m0.UIWpf.Visualisers
             }
 
             //if(isSet==false)
-                t.TotalNumberOfControls++;
+            t.TotalNumberOfControls++;
 
+        }
+
+        private bool IsOfExecutableMeta(IVertex metaForForm)
+        {
+            if (metaForForm == null || metaForForm.Count() == 0)
+                return false;
+
+            if (GraphUtil.GetQueryOutCount(metaForForm, "$Is", "Class") > 0)
+                return true;
+
+            return false;
+        }
+
+        private IList<IEdge> GetExecutableEdges(IVertex metaForForm)
+        {
+            IList<IEdge> list = new List<IEdge>();
+
+            foreach (IEdge e in GraphUtil.GetQueryOut(metaForForm, "Method", null))
+                list.Add(e);
+
+            return list;
+        }
+
+        private bool IsExecutableEdge(IEdge e)
+        {
+            if (GeneralUtil.CompareStrings(e.Meta, "Method"))
+                return true;
+
+            return false;
         }
 
         private void PreFillForm()
@@ -187,7 +216,7 @@ namespace m0.UIWpf.Visualisers
 
             IVertex metaForForm = getMetaForForm();
 
-            List<IEdge> childs = new List<IEdge>();
+            List<IEdge> childs = new List<IEdge>();            
 
             if (metaForForm == null || metaForForm.Count() == 0) // if Form is not typed
             {
@@ -234,6 +263,10 @@ namespace m0.UIWpf.Visualisers
                         PreFillFormAnalyseEdge(e.To, false);
                 }
             }
+
+            if (IsOfExecutableMeta(metaForForm))
+                foreach(IEdge e in GetExecutableEdges(metaForForm))
+                    PreFillFormAnalyseEdge(e.To, false);
         }
 
         bool IsDisposed = false;
@@ -356,6 +389,10 @@ namespace m0.UIWpf.Visualisers
                             AddEdge(e.To, false);
                     }
                 }
+
+                if (IsOfExecutableMeta(metaForForm))
+                    foreach (IEdge e in GetExecutableEdges(metaForForm))
+                        AddEdge(e.To, false);
 
                 if (MetaOnLeft){
                     if (!HasTabs)
@@ -636,6 +673,8 @@ namespace m0.UIWpf.Visualisers
                     dataControl = sv;
                 }
                 else
+                if
+
                 {
                     VisualiserEditWrapper w = new VisualiserEditWrapper();
 

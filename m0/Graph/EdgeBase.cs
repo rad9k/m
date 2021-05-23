@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 using m0.Foundation;
+using m0.Util;
 
 namespace m0.Graph
 {
@@ -73,7 +74,7 @@ namespace m0.Graph
         {
             if (_to != null)
             {
-                if (_meta != null)
+                if (_meta != null && !GeneralUtil.CompareStrings(_meta, "$Empty"))
                     return _meta.ToString() + " : " + _to.ToString();
 
                 return _to.ToString();
