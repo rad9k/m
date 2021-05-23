@@ -2155,9 +2155,7 @@ namespace m0.ZeroUML.Instructions
             int minParameters = Math.Min(parameterExpressions.Count(), inputParameters.Count());
 
             exe.AddStackFrame(theObject); // ENTER NEW STACK
-            exe.AddStackFrame();
-
-            exe.stack.AddEdge(thisMeta, theObject);
+            exe.AddStackFrame();            
 
             for (int x = 0; x < minParameters; x++)
             {
@@ -2169,6 +2167,8 @@ namespace m0.ZeroUML.Instructions
                 foreach (IEdge e in expressionExecution)
                     exe.stack.AddEdge(inputParameter, e.To);
             }
+
+            exe.stack.AddEdge(thisMeta, theObject);
 
             //bool local_isStackFrameReturn;
             //INoInEdgeInOutVertexVertex possibleToReturnStack = SequentiallyExecuteInstructions(exe, exe.stack, methodBody, out local_isStackFrameReturn, false);
