@@ -369,11 +369,6 @@ namespace m0.Graph
         
         public override void DeleteEdge(IEdge _edge)
         {
-            if (Value is string && ((String)Value).StartsWith("Tree"))
-            {
-                int x = 0;
-            }
-
             if (DisposedState == DisposeStateEnum.Disposed)
                 throw new Exception("Vertex disposed");
 
@@ -660,7 +655,7 @@ namespace m0.Graph
             IVertex ExecutableEndPointVertex = GraphUtil.GetQueryOutFirst(this, "$ExecutableEndPoint", null);
 
             if(ExecutableEndPointVertex==null)
-                return InstructionHelpers.SequentiallyExecuteInstructions(exe, exe.stack, this, out dummy, false);
+                return InstructionHelpers.SequentiallyExecuteInstructions(exe, exe.Stack, this, out dummy, false);
             else
                 return CallableEndPointDictionary_INIEIOV_ZCE.CallEndPoint(exe, ExecutableEndPointVertex);
         }

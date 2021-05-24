@@ -14,51 +14,51 @@ namespace m0.ZeroCode
 {
     public class ZeroCodeExecution: IExecution
     {
-        public INoInEdgeInOutVertexVertex stack { get; set; }
+        public INoInEdgeInOutVertexVertex Stack { get; set; }
 
-        public IVertex newVertexCreationSpace { get; set; }
+        public IVertex NewVertexCreationSpace { get; set; }
 
         public bool metaMode { get; set; }
 
         public void CreateEmptyStack()
         {
-            stack = InstructionHelpers.CreateStack();
+            Stack = InstructionHelpers.CreateStack();
         }
 
         public void AddStackFrame()
         {
             INoInEdgeInOutVertexVertex newStackFrame = InstructionHelpers.CreateStack();
 
-            newStackFrame.AddEdge(MinusZero.Instance.StackFrameInherits, stack);
+            newStackFrame.AddEdge(MinusZero.Instance.StackFrameInherits, Stack);
 
-            stack = newStackFrame;            
+            Stack = newStackFrame;            
         }
 
         public void AddStackFrame(IVertex newStackFrame)
         {            
             INoInEdgeInOutVertexVertex newStackFrameINIEIOV = InstructionHelpers.Create_INoInEdgeInOutVertexVertex_FromEdgesList(newStackFrame);
             
-            newStackFrameINIEIOV.AddEdge(MinusZero.Instance.StackFrameInherits, stack);
+            newStackFrameINIEIOV.AddEdge(MinusZero.Instance.StackFrameInherits, Stack);
 
-            stack = newStackFrameINIEIOV;
+            Stack = newStackFrameINIEIOV;
         }
 
         public void RemoveStackFrame()
         {
-            IEdge stackFrameInheritsEdge = GraphUtil.GetQueryOutFirstEdge(stack, "$StackFrameInherits", null);
+            IEdge stackFrameInheritsEdge = GraphUtil.GetQueryOutFirstEdge(Stack, "$StackFrameInherits", null);
 
             if (stackFrameInheritsEdge == null)
                 throw new Exception("Can not remove stack frame. No $StackFrameInherits");
 
             IVertex _prevStackFrame = stackFrameInheritsEdge.To;
 
-            stack.DeleteEdge(stackFrameInheritsEdge);
+            Stack.DeleteEdge(stackFrameInheritsEdge);
 
             if(_prevStackFrame != null && _prevStackFrame is INoInEdgeInOutVertexVertex)
             {
                 INoInEdgeInOutVertexVertex prevStackFrame = (INoInEdgeInOutVertexVertex)_prevStackFrame;
 
-                stack = prevStackFrame;                
+                Stack = prevStackFrame;                
             }
         }
 

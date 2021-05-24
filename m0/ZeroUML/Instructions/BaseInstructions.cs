@@ -235,26 +235,26 @@ namespace m0.ZeroUML.Instructions
             bool leftPropagateToStackExpression = CheckIfIsInherits(leftExpression, "PropagateToStackExpression");
 
             if (leftExpression == null || rightExpression == null)
-                return exe.stack;
+                return exe.Stack;
 
 
-            IVertex newVertexCreationSpace_copy = exe.newVertexCreationSpace;
+            IVertex newVertexCreationSpace_copy = exe.NewVertexCreationSpace;
 
             // left
 
             INoInEdgeInOutVertexVertex leftStack = CreateStack();
 
-            exe.newVertexCreationSpace = leftStack;
+            exe.NewVertexCreationSpace = leftStack;
            
-            INoInEdgeInOutVertexVertex leftExecuteResult = exe.ExecuteInstructionByMontevideoPrinciples(exe.stack, leftExpression);
+            INoInEdgeInOutVertexVertex leftExecuteResult = exe.ExecuteInstructionByMontevideoPrinciples(exe.Stack, leftExpression);
             
             // right
 
-            exe.newVertexCreationSpace = CreateStack();
+            exe.NewVertexCreationSpace = CreateStack();
 
-            INoInEdgeInOutVertexVertex _rightExecuteResult = exe.ExecuteInstructionByMontevideoPrinciples(exe.stack, rightExpression);
+            INoInEdgeInOutVertexVertex _rightExecuteResult = exe.ExecuteInstructionByMontevideoPrinciples(exe.Stack, rightExpression);
 
-            exe.newVertexCreationSpace = newVertexCreationSpace_copy;
+            exe.NewVertexCreationSpace = newVertexCreationSpace_copy;
             // NEW
 
 
@@ -271,12 +271,12 @@ namespace m0.ZeroUML.Instructions
                 foreach (IEdge e in rightExecuteResult)
                     //if (leftPropagateToStackExpression && exe.stack == exe.newVertexCreationSpace) // left expression was separated from exe.stack
                     if (leftPropagateToStackExpression /*&& exe.stack == exe.newVertexCreationSpace*/) // XXX EXPERIMENTA !!!! for issue 84
-                        exe.stack.AddEdge(toAdd.Meta, e.To);
+                        exe.Stack.AddEdge(toAdd.Meta, e.To);
                     else
                         toAdd.From.AddEdge(toAdd.Meta, e.To);
             }
 
-            return exe.stack;
+            return exe.Stack;
         }
 
         // +=
@@ -288,18 +288,18 @@ namespace m0.ZeroUML.Instructions
             IVertex rightExpression = GetRight(instructionVertex);
 
             if (leftExpression == null || rightExpression == null)
-                return exe.stack;
+                return exe.Stack;
 
-            INoInEdgeInOutVertexVertex leftExecuteResult = exe.ExecuteInstructionByMontevideoPrinciples(exe.stack, leftExpression);
+            INoInEdgeInOutVertexVertex leftExecuteResult = exe.ExecuteInstructionByMontevideoPrinciples(exe.Stack, leftExpression);
 
             //INoInEdgeInOutVertexVertex _rightExecuteResult = exe.ExecuteInstructionByMontevideoPrinciples(exe.stack, rightExpression);
 
-            IVertex newVertexCreationSpace_copy = exe.newVertexCreationSpace;
-            exe.newVertexCreationSpace = CreateStack();
+            IVertex newVertexCreationSpace_copy = exe.NewVertexCreationSpace;
+            exe.NewVertexCreationSpace = CreateStack();
 
-            INoInEdgeInOutVertexVertex _rightExecuteResult = exe.ExecuteInstructionByMontevideoPrinciples(exe.stack, rightExpression);
+            INoInEdgeInOutVertexVertex _rightExecuteResult = exe.ExecuteInstructionByMontevideoPrinciples(exe.Stack, rightExpression);
 
-            exe.newVertexCreationSpace = newVertexCreationSpace_copy;
+            exe.NewVertexCreationSpace = newVertexCreationSpace_copy;
             // NEW
 
             IList<IEdge> rightExecuteResult = _rightExecuteResult.OutEdges;
@@ -314,7 +314,7 @@ namespace m0.ZeroUML.Instructions
                     toAdd.From.AddEdge(toAdd.Meta, e.To);
             }
 
-            return exe.stack;
+            return exe.Stack;
         }
 
         // +<
@@ -326,16 +326,16 @@ namespace m0.ZeroUML.Instructions
             IVertex rightExpression = GetRight(instructionVertex);
 
             if (leftExpression == null || rightExpression == null)
-                return exe.stack;
+                return exe.Stack;
 
-            INoInEdgeInOutVertexVertex _leftExecuteResult = exe.ExecuteInstructionByMontevideoPrinciples(exe.stack, leftExpression);
+            INoInEdgeInOutVertexVertex _leftExecuteResult = exe.ExecuteInstructionByMontevideoPrinciples(exe.Stack, leftExpression);
 
-            IVertex newVertexCreationSpace_copy = exe.newVertexCreationSpace;
-            exe.newVertexCreationSpace = CreateStack();
+            IVertex newVertexCreationSpace_copy = exe.NewVertexCreationSpace;
+            exe.NewVertexCreationSpace = CreateStack();
 
-            INoInEdgeInOutVertexVertex _rightExecuteResult = exe.ExecuteInstructionByMontevideoPrinciples(exe.stack, rightExpression);
+            INoInEdgeInOutVertexVertex _rightExecuteResult = exe.ExecuteInstructionByMontevideoPrinciples(exe.Stack, rightExpression);
 
-            exe.newVertexCreationSpace = newVertexCreationSpace_copy;
+            exe.NewVertexCreationSpace = newVertexCreationSpace_copy;
 
             IList<IEdge> leftExecuteResult = _leftExecuteResult.OutEdges;
             IList<IEdge> rightExecuteResult = _rightExecuteResult.OutEdges;
@@ -344,7 +344,7 @@ namespace m0.ZeroUML.Instructions
                 foreach (IEdge rightEdge in rightExecuteResult)
                     leftEdge.To.AddEdge(rightEdge.Meta, rightEdge.To);
                         
-            return exe.stack;
+            return exe.Stack;
         }
 
         // ~=
@@ -356,17 +356,17 @@ namespace m0.ZeroUML.Instructions
             IVertex rightExpression = GetRight(instructionVertex);
 
             if (leftExpression == null || rightExpression == null)
-                return exe.stack;
+                return exe.Stack;
 
-            INoInEdgeInOutVertexVertex _leftExecuteResult = exe.ExecuteInstructionByMontevideoPrinciples(exe.stack, leftExpression);
+            INoInEdgeInOutVertexVertex _leftExecuteResult = exe.ExecuteInstructionByMontevideoPrinciples(exe.Stack, leftExpression);
             //INoInEdgeInOutVertexVertex _rightExecuteResult = exe.ExecuteInstructionByMontevideoPrinciples(exe.stack, rightExpression);
 
-            IVertex newVertexCreationSpace_copy = exe.newVertexCreationSpace;
-            exe.newVertexCreationSpace = CreateStack();
+            IVertex newVertexCreationSpace_copy = exe.NewVertexCreationSpace;
+            exe.NewVertexCreationSpace = CreateStack();
 
-            INoInEdgeInOutVertexVertex _rightExecuteResult = exe.ExecuteInstructionByMontevideoPrinciples(exe.stack, rightExpression);
+            INoInEdgeInOutVertexVertex _rightExecuteResult = exe.ExecuteInstructionByMontevideoPrinciples(exe.Stack, rightExpression);
 
-            exe.newVertexCreationSpace = newVertexCreationSpace_copy;
+            exe.NewVertexCreationSpace = newVertexCreationSpace_copy;
             // NEW
 
             IList<IEdge> leftExecuteResult = _leftExecuteResult.OutEdges;
@@ -385,7 +385,7 @@ namespace m0.ZeroUML.Instructions
                     }
             }
 
-            return exe.stack;
+            return exe.Stack;
         }
 
         // -<
@@ -397,16 +397,16 @@ namespace m0.ZeroUML.Instructions
             IVertex rightExpression = GetRight(instructionVertex);
 
             if (leftExpression == null || rightExpression == null)
-                return exe.stack;
+                return exe.Stack;
 
-            INoInEdgeInOutVertexVertex _leftExecuteResult = exe.ExecuteInstructionByMontevideoPrinciples(exe.stack, leftExpression);
+            INoInEdgeInOutVertexVertex _leftExecuteResult = exe.ExecuteInstructionByMontevideoPrinciples(exe.Stack, leftExpression);
             //INoInEdgeInOutVertexVertex _rightExecuteResult = exe.ExecuteInstructionByMontevideoPrinciples(exe.stack, rightExpression);
-            IVertex newVertexCreationSpace_copy = exe.newVertexCreationSpace;
-            exe.newVertexCreationSpace = CreateStack();
+            IVertex newVertexCreationSpace_copy = exe.NewVertexCreationSpace;
+            exe.NewVertexCreationSpace = CreateStack();
 
-            INoInEdgeInOutVertexVertex _rightExecuteResult = exe.ExecuteInstructionByMontevideoPrinciples(exe.stack, rightExpression);
+            INoInEdgeInOutVertexVertex _rightExecuteResult = exe.ExecuteInstructionByMontevideoPrinciples(exe.Stack, rightExpression);
 
-            exe.newVertexCreationSpace = newVertexCreationSpace_copy;
+            exe.NewVertexCreationSpace = newVertexCreationSpace_copy;
             // NEW
 
             IList<IEdge> leftExecuteResult = _leftExecuteResult.OutEdges;
@@ -416,7 +416,7 @@ namespace m0.ZeroUML.Instructions
             foreach (IEdge leftEdge in leftExecuteResult)
                 leftEdge.To.DeleteEdgesList(rightResultMetaToEdgesList);
 
-            return exe.stack;
+            return exe.Stack;
         }
 
         // ~<
@@ -428,16 +428,16 @@ namespace m0.ZeroUML.Instructions
             IVertex rightExpression = GetRight(instructionVertex);
 
             if (leftExpression == null || rightExpression == null)
-                return exe.stack;
+                return exe.Stack;
 
-            INoInEdgeInOutVertexVertex _leftExecuteResult = exe.ExecuteInstructionByMontevideoPrinciples(exe.stack, leftExpression);
+            INoInEdgeInOutVertexVertex _leftExecuteResult = exe.ExecuteInstructionByMontevideoPrinciples(exe.Stack, leftExpression);
             //INoInEdgeInOutVertexVertex _rightExecuteResult = exe.ExecuteInstructionByMontevideoPrinciples(exe.stack, rightExpression);
-            IVertex newVertexCreationSpace_copy = exe.newVertexCreationSpace;
-            exe.newVertexCreationSpace = CreateStack();
+            IVertex newVertexCreationSpace_copy = exe.NewVertexCreationSpace;
+            exe.NewVertexCreationSpace = CreateStack();
 
-            INoInEdgeInOutVertexVertex _rightExecuteResult = exe.ExecuteInstructionByMontevideoPrinciples(exe.stack, rightExpression);
+            INoInEdgeInOutVertexVertex _rightExecuteResult = exe.ExecuteInstructionByMontevideoPrinciples(exe.Stack, rightExpression);
 
-            exe.newVertexCreationSpace = newVertexCreationSpace_copy;
+            exe.NewVertexCreationSpace = newVertexCreationSpace_copy;
             // NEW
 
             IList<IEdge> leftExecuteResult = _leftExecuteResult.OutEdges;
@@ -457,7 +457,7 @@ namespace m0.ZeroUML.Instructions
                         }
                 }
 
-            return exe.stack;
+            return exe.Stack;
         }
 
         // :=
@@ -469,16 +469,16 @@ namespace m0.ZeroUML.Instructions
             IVertex rightExpression = GetRight(instructionVertex);
 
             if (leftExpression == null || rightExpression == null)
-                return exe.stack;
+                return exe.Stack;
 
-            INoInEdgeInOutVertexVertex leftExecuteResult = exe.ExecuteInstructionByMontevideoPrinciples(exe.stack, leftExpression);
+            INoInEdgeInOutVertexVertex leftExecuteResult = exe.ExecuteInstructionByMontevideoPrinciples(exe.Stack, leftExpression);
             //INoInEdgeInOutVertexVertex _rightExecuteResult = exe.ExecuteInstructionByMontevideoPrinciples(exe.stack, rightExpression);
-            IVertex newVertexCreationSpace_copy = exe.newVertexCreationSpace;
-            exe.newVertexCreationSpace = CreateStack();
+            IVertex newVertexCreationSpace_copy = exe.NewVertexCreationSpace;
+            exe.NewVertexCreationSpace = CreateStack();
 
-            INoInEdgeInOutVertexVertex _rightExecuteResult = exe.ExecuteInstructionByMontevideoPrinciples(exe.stack, rightExpression);            
+            INoInEdgeInOutVertexVertex _rightExecuteResult = exe.ExecuteInstructionByMontevideoPrinciples(exe.Stack, rightExpression);            
 
-            exe.newVertexCreationSpace = newVertexCreationSpace_copy;
+            exe.NewVertexCreationSpace = newVertexCreationSpace_copy;
             // NEW
 
             if (_rightExecuteResult.OutEdges.Count > 0)
@@ -489,7 +489,7 @@ namespace m0.ZeroUML.Instructions
                     e.To.Value = FirstRightVertex.Value;
             }                
 
-            return exe.stack;
+            return exe.Stack;
         }
 
         // <+<
@@ -501,17 +501,17 @@ namespace m0.ZeroUML.Instructions
             IVertex rightExpression = GetRight(instructionVertex);
 
             if (leftExpression == null || rightExpression == null)
-                return exe.stack;
+                return exe.Stack;
 
-            INoInEdgeInOutVertexVertex _leftExecuteResult = exe.ExecuteInstructionByMontevideoPrinciples(exe.stack, leftExpression);
+            INoInEdgeInOutVertexVertex _leftExecuteResult = exe.ExecuteInstructionByMontevideoPrinciples(exe.Stack, leftExpression);
 
 
-            IVertex newVertexCreationSpace_copy = exe.newVertexCreationSpace;
-            exe.newVertexCreationSpace = CreateStack();
+            IVertex newVertexCreationSpace_copy = exe.NewVertexCreationSpace;
+            exe.NewVertexCreationSpace = CreateStack();
 
-            INoInEdgeInOutVertexVertex _rightExecuteResult = exe.ExecuteInstructionByMontevideoPrinciples(exe.stack, rightExpression);
+            INoInEdgeInOutVertexVertex _rightExecuteResult = exe.ExecuteInstructionByMontevideoPrinciples(exe.Stack, rightExpression);
 
-            exe.newVertexCreationSpace = newVertexCreationSpace_copy;
+            exe.NewVertexCreationSpace = newVertexCreationSpace_copy;
 
             if(_leftExecuteResult.Count() > 0)
             {
@@ -521,7 +521,7 @@ namespace m0.ZeroUML.Instructions
                 ZeroUMLInstructionHelpers.MoveEdgesIntoVertex(_rightExecuteResult, leftExecuteFirstVertex);                                
             }                       
 
-            return exe.stack;
+            return exe.Stack;
         }
 
         #endregion
@@ -542,10 +542,10 @@ namespace m0.ZeroUML.Instructions
             IVertex rightExpression = GetRight(instructionVertex);
 
             if (leftExpression == null || rightExpression == null)
-                return exe.stack;
+                return exe.Stack;
 
-            INoInEdgeInOutVertexVertex _leftExecuteResult = exe.ExecuteInstructionByMontevideoPrinciples(exe.stack, leftExpression);
-            INoInEdgeInOutVertexVertex _rightExecuteResult = exe.ExecuteInstructionByMontevideoPrinciples(exe.stack, rightExpression);
+            INoInEdgeInOutVertexVertex _leftExecuteResult = exe.ExecuteInstructionByMontevideoPrinciples(exe.Stack, leftExpression);
+            INoInEdgeInOutVertexVertex _rightExecuteResult = exe.ExecuteInstructionByMontevideoPrinciples(exe.Stack, rightExpression);
 
             IList<IEdge> leftExecuteResult = _leftExecuteResult.OutEdges;
             IList<IEdge> rightExecuteResult = _rightExecuteResult.OutEdges;
@@ -569,10 +569,10 @@ namespace m0.ZeroUML.Instructions
             IVertex rightExpression = GetRight(instructionVertex);
 
             if (leftExpression == null || rightExpression == null)
-                return exe.stack;
+                return exe.Stack;
 
-            INoInEdgeInOutVertexVertex leftExecuteResult = exe.ExecuteInstructionByMontevideoPrinciples(exe.stack, leftExpression);
-            INoInEdgeInOutVertexVertex _rightExecuteResult = exe.ExecuteInstructionByMontevideoPrinciples(exe.stack, rightExpression);
+            INoInEdgeInOutVertexVertex leftExecuteResult = exe.ExecuteInstructionByMontevideoPrinciples(exe.Stack, leftExpression);
+            INoInEdgeInOutVertexVertex _rightExecuteResult = exe.ExecuteInstructionByMontevideoPrinciples(exe.Stack, rightExpression);
 
             IList<IEdge> rightExecuteResult = _rightExecuteResult.OutEdges;
 
@@ -592,7 +592,7 @@ namespace m0.ZeroUML.Instructions
             if (expression == null)
                 return Create_INoInEdgeInOutVertexVertex_FromEdgesList(inputStack);
 
-            INoInEdgeInOutVertexVertex executeResult = exe.ExecuteInstructionByMontevideoPrinciples(exe.stack, expression);
+            INoInEdgeInOutVertexVertex executeResult = exe.ExecuteInstructionByMontevideoPrinciples(exe.Stack, expression);
 
             INoInEdgeInOutVertexVertex localStack = CreateStack();
 
@@ -645,7 +645,7 @@ namespace m0.ZeroUML.Instructions
             IVertex rightExpression = GetRight(instructionVertex);
 
             if (leftExpression == null || rightExpression == null)
-                return exe.stack;
+                return exe.Stack;
 
             INoInEdgeInOutVertexVertex _leftExecuteResult = exe.ExecuteInstructionByMontevideoPrinciples(inputStack, leftExpression);
             INoInEdgeInOutVertexVertex _rightExecuteResult = exe.ExecuteInstructionByMontevideoPrinciples(inputStack, rightExpression);
@@ -770,7 +770,7 @@ namespace m0.ZeroUML.Instructions
             IVertex rightExpression = GetRight(instructionVertex);
 
             if (leftExpression == null || rightExpression == null)
-                return exe.stack;
+                return exe.Stack;
 
             INoInEdgeInOutVertexVertex _leftExecuteResult = exe.ExecuteInstructionByMontevideoPrinciples(inputStack, leftExpression);
             INoInEdgeInOutVertexVertex _rightExecuteResult = exe.ExecuteInstructionByMontevideoPrinciples(inputStack, rightExpression);
@@ -894,7 +894,7 @@ namespace m0.ZeroUML.Instructions
             IVertex rightExpression = GetRight(instructionVertex);
 
             if (leftExpression == null || rightExpression == null)
-                return exe.stack;
+                return exe.Stack;
 
             INoInEdgeInOutVertexVertex _leftExecuteResult = exe.ExecuteInstructionByMontevideoPrinciples(inputStack, leftExpression);
             INoInEdgeInOutVertexVertex _rightExecuteResult = exe.ExecuteInstructionByMontevideoPrinciples(inputStack, rightExpression);
@@ -1019,7 +1019,7 @@ namespace m0.ZeroUML.Instructions
             IVertex rightExpression = GetRight(instructionVertex);
 
             if (leftExpression == null || rightExpression == null)
-                return exe.stack;
+                return exe.Stack;
 
             INoInEdgeInOutVertexVertex _leftExecuteResult = exe.ExecuteInstructionByMontevideoPrinciples(inputStack, leftExpression);
             INoInEdgeInOutVertexVertex _rightExecuteResult = exe.ExecuteInstructionByMontevideoPrinciples(inputStack, rightExpression);
@@ -1152,7 +1152,7 @@ namespace m0.ZeroUML.Instructions
             IVertex rightExpression = GetRight(instructionVertex);
 
             if (leftExpression == null || rightExpression == null)
-                return exe.stack;
+                return exe.Stack;
 
             INoInEdgeInOutVertexVertex _leftExecuteResult = exe.ExecuteInstructionByMontevideoPrinciples(inputStack, leftExpression);
             INoInEdgeInOutVertexVertex _rightExecuteResult = exe.ExecuteInstructionByMontevideoPrinciples(inputStack, rightExpression);
@@ -1382,7 +1382,7 @@ namespace m0.ZeroUML.Instructions
             IVertex expression = GetExpression(instructionVertex);
 
             if (expression == null)
-                return exe.stack;
+                return exe.Stack;
 
             INoInEdgeInOutVertexVertex _executeResult = exe.ExecuteInstructionByMontevideoPrinciples(inputStack, expression);
 
@@ -1591,13 +1591,13 @@ namespace m0.ZeroUML.Instructions
 
             if(!CheckIfIs(target, "Function"))
             {
-                INoInEdgeInOutVertexVertex targetExpressionExecution = exe.ExecuteInstructionByMontevideoPrinciples(exe.stack, target); 
+                INoInEdgeInOutVertexVertex targetExpressionExecution = exe.ExecuteInstructionByMontevideoPrinciples(exe.Stack, target); 
                 if (targetExpressionExecution.Count() > 0)
                     target = targetExpressionExecution.OutEdges[0].To;
             }
 
             if (target == null)
-                return exe.stack;
+                return exe.Stack;
 
             exe.AddStackFrame(); // ENTER NEW STACK
 
@@ -1613,10 +1613,10 @@ namespace m0.ZeroUML.Instructions
                 IVertex expression = expressions[x].To;
                 IVertex inputParameter = inputParameters[x].To;
 
-                INoInEdgeInOutVertexVertex expressionExecution = exe.ExecuteInstructionByMontevideoPrinciples(exe.stack, expression);
+                INoInEdgeInOutVertexVertex expressionExecution = exe.ExecuteInstructionByMontevideoPrinciples(exe.Stack, expression);
 
                 foreach (IEdge e in expressionExecution)
-                    exe.stack.AddEdge(inputParameter, e.To);
+                    exe.Stack.AddEdge(inputParameter, e.To);
             }
 
             //bool local_isStackFrameReturn;
@@ -1657,7 +1657,7 @@ namespace m0.ZeroUML.Instructions
 
             if (variable!=null && set != null)
             {
-                INoInEdgeInOutVertexVertex setExecution = exe.ExecuteInstructionByMontevideoPrinciples(exe.stack, set);
+                INoInEdgeInOutVertexVertex setExecution = exe.ExecuteInstructionByMontevideoPrinciples(exe.Stack, set);
 
                 bool local_isStackFrameReturn = false;
                 INoInEdgeInOutVertexVertex possibleToReturnStack = null;
@@ -1668,9 +1668,9 @@ namespace m0.ZeroUML.Instructions
 
                     IEdge variableEdge = GraphUtil.CreateArtificialEdge(variable, setEdge.To);                    
 
-                    exe.stack.AddEdgeForNoInEdgeInOutVertexVertex_BAD_BEHAVIOR_IEdge_MANY_TIMES(variableEdge);
+                    exe.Stack.AddEdgeForNoInEdgeInOutVertexVertex_BAD_BEHAVIOR_IEdge_MANY_TIMES(variableEdge);
 
-                    possibleToReturnStack = SequentiallyExecuteInstructions(exe, exe.stack, instructionVertex, out local_isStackFrameReturn, false);
+                    possibleToReturnStack = SequentiallyExecuteInstructions(exe, exe.Stack, instructionVertex, out local_isStackFrameReturn, false);
 
                     if (local_isStackFrameReturn)
                         break;                    
@@ -1698,19 +1698,19 @@ namespace m0.ZeroUML.Instructions
                 bool local_isStackFrameReturn = false;
                 INoInEdgeInOutVertexVertex possibleToReturnStack = null;
 
-                INoInEdgeInOutVertexVertex testResult = exe.ExecuteInstructionByMontevideoPrinciples(exe.stack, test);
+                INoInEdgeInOutVertexVertex testResult = exe.ExecuteInstructionByMontevideoPrinciples(exe.Stack, test);
 
                 while (IsTrue_Stack(testResult))
                 {
                     exe.AddStackFrame(); // ENTER NEW STACK
 
-                    possibleToReturnStack = SequentiallyExecuteInstructions(exe, exe.stack, instructionVertex, out local_isStackFrameReturn, false);
+                    possibleToReturnStack = SequentiallyExecuteInstructions(exe, exe.Stack, instructionVertex, out local_isStackFrameReturn, false);
 
                     if (local_isStackFrameReturn)
                         break;
 
 
-                    testResult = exe.ExecuteInstructionByMontevideoPrinciples(exe.stack, test);
+                    testResult = exe.ExecuteInstructionByMontevideoPrinciples(exe.Stack, test);
 
                     exe.RemoveStackFrame(); // LEAVE NEW STACK
                 }
@@ -1745,7 +1745,7 @@ namespace m0.ZeroUML.Instructions
             if(test==null)
                 return Create_INoInEdgeInOutVertexVertex_FromEdgesList(inputStack);
 
-            INoInEdgeInOutVertexVertex testExecution = exe.ExecuteInstructionByMontevideoPrinciples(exe.stack, test);
+            INoInEdgeInOutVertexVertex testExecution = exe.ExecuteInstructionByMontevideoPrinciples(exe.Stack, test);
 
             if(IsTrue_Stack(testExecution))            
                 return SequenciallyExecuteIntructionsWithNewStackAndIsStackFrameReturnSupport(exe, inputStack, instructionVertex, out isStackFrameReturn);            
@@ -1762,7 +1762,7 @@ namespace m0.ZeroUML.Instructions
             if (expression == null)
                 return Create_INoInEdgeInOutVertexVertex_FromEdgesList(inputStack);
 
-            INoInEdgeInOutVertexVertex expressionExecution = exe.ExecuteInstructionByMontevideoPrinciples(exe.stack, expression);
+            INoInEdgeInOutVertexVertex expressionExecution = exe.ExecuteInstructionByMontevideoPrinciples(exe.Stack, expression);
 
             if(expressionExecution.OutEdges.Count==0)
                 return Create_INoInEdgeInOutVertexVertex_FromEdgesList(inputStack);
@@ -1802,7 +1802,7 @@ namespace m0.ZeroUML.Instructions
         {
             isStackFrameReturn = false;
 
-            INoInEdgeInOutVertexVertex stack = exe.stack;
+            INoInEdgeInOutVertexVertex stack = exe.Stack;
 
             int? minCardinality = GraphUtil.GetIntegerValue(instructionVertex.Get(false, "$MinCardinality:"));
 
@@ -1832,7 +1832,7 @@ namespace m0.ZeroUML.Instructions
             IVertex expression = GetExpression(instructionVertex);
 
             if (expression == null)
-                return exe.stack;
+                return exe.Stack;
 
             INoInEdgeInOutVertexVertex expressionResult = exe.ExecuteInstructionByMontevideoPrinciples(inputStack, expression);
 
@@ -1853,7 +1853,7 @@ namespace m0.ZeroUML.Instructions
             IVertex expression = GetExpression(instructionVertex);
 
             if (expression == null)
-                return exe.stack;
+                return exe.Stack;
 
             INoInEdgeInOutVertexVertex expressionResult = exe.ExecuteInstructionByMontevideoPrinciples(inputStack, expression);
 
@@ -1870,11 +1870,11 @@ namespace m0.ZeroUML.Instructions
         {
             isStackFrameReturn = false;
 
-            IVertex creationTarget = exe.newVertexCreationSpace;
+            IVertex creationTarget = exe.NewVertexCreationSpace;
 
             INoInEdgeInOutVertexVertex additionalCreationStack = null;
 
-            if (exe.stack == creationTarget)
+            if (exe.Stack == creationTarget)
                 additionalCreationStack = CreateStack();
 
             IVertex leftExpression = GetLeft(instructionVertex);
@@ -1929,7 +1929,7 @@ namespace m0.ZeroUML.Instructions
             //  if (exe.stack == exe.newVertexCreationSpace)
             //     isExeStackSameAsExeNewVertexCreationSpace = true;
 
-            IVertex creationTarget = exe.newVertexCreationSpace;
+            IVertex creationTarget = exe.NewVertexCreationSpace;
             //IVertex stackForNextExpression;
 
             // if (isExeStackSameAsExeNewVertexCreationSpace)
@@ -1988,14 +1988,14 @@ namespace m0.ZeroUML.Instructions
             bool local_isStackFrameReturn = false;
             INoInEdgeInOutVertexVertex possibleToReturnStack = null;
 
-            IVertex newVertexCreationSpace_copy = exe.newVertexCreationSpace;
+            IVertex newVertexCreationSpace_copy = exe.NewVertexCreationSpace;
             
-            exe.newVertexCreationSpace = inputStack;
+            exe.NewVertexCreationSpace = inputStack;
 
             possibleToReturnStack = SequentiallyExecuteInstructions(exe, 
-                    exe.stack, instructionVertex, out local_isStackFrameReturn, false);
+                    exe.Stack, instructionVertex, out local_isStackFrameReturn, false);
 
-            exe.newVertexCreationSpace = newVertexCreationSpace_copy;
+            exe.NewVertexCreationSpace = newVertexCreationSpace_copy;
 
             if (local_isStackFrameReturn)
                 return possibleToReturnStack;
@@ -2020,7 +2020,7 @@ namespace m0.ZeroUML.Instructions
             IVertex expression = GetExpression(instructionVertex);
 
             if (expression == null)
-                return exe.stack;
+                return exe.Stack;
 
             INoInEdgeInOutVertexVertex expressionResult = exe.ExecuteInstructionByMontevideoPrinciples(inputStack, expression);
 
@@ -2044,7 +2044,7 @@ namespace m0.ZeroUML.Instructions
             IVertex expression = GetExpression(instructionVertex);
 
             if (expression == null)
-                return exe.stack;
+                return exe.Stack;
 
             IVertex language;
 
@@ -2076,7 +2076,7 @@ namespace m0.ZeroUML.Instructions
             IVertex expression = GetExpression(instructionVertex);
 
             if (expression == null)
-                return exe.stack;
+                return exe.Stack;
 
             IVertex language;
 
@@ -2118,7 +2118,7 @@ namespace m0.ZeroUML.Instructions
             IVertex targetExpression = GraphUtil.GetQueryOutFirst(instructionVertex, "Target", null);            
 
             if (targetExpression == null)
-                return exe.stack;
+                return exe.Stack;
             
             IList<IEdge> parameterExpressions = GraphUtil.GetQueryOut(instructionVertex, "Expression", null);
             
@@ -2162,13 +2162,13 @@ namespace m0.ZeroUML.Instructions
                 IVertex expression = parameterExpressions[x].To;
                 IVertex inputParameter = inputParameters[x].To;
 
-                INoInEdgeInOutVertexVertex expressionExecution = exe.ExecuteInstructionByMontevideoPrinciples(exe.stack, expression);
+                INoInEdgeInOutVertexVertex expressionExecution = exe.ExecuteInstructionByMontevideoPrinciples(exe.Stack, expression);
 
                 foreach (IEdge e in expressionExecution)
-                    exe.stack.AddEdge(inputParameter, e.To);
+                    exe.Stack.AddEdge(inputParameter, e.To);
             }
 
-            exe.stack.AddEdge(thisMeta, theObject);
+            exe.Stack.AddEdge(thisMeta, theObject);
 
             //bool local_isStackFrameReturn;
             //INoInEdgeInOutVertexVertex possibleToReturnStack = SequentiallyExecuteInstructions(exe, exe.stack, methodBody, out local_isStackFrameReturn, false);

@@ -14,7 +14,7 @@ namespace m0.Lib
     {
         public static INoInEdgeInOutVertexVertex Concatenate(IExecution exe)
         {
-            INoInEdgeInOutVertexVertex stack = exe.stack;
+            INoInEdgeInOutVertexVertex stack = exe.Stack;
 
             IList<IEdge> inputList = GraphUtil.GetQueryOut(stack, "input", null);
 
@@ -32,7 +32,7 @@ namespace m0.Lib
 
         public static INoInEdgeInOutVertexVertex Split(IExecution exe)
         {
-            INoInEdgeInOutVertexVertex stack = exe.stack;
+            INoInEdgeInOutVertexVertex stack = exe.Stack;
 
             IList<IEdge> inputList = GraphUtil.GetQueryOut(stack, "input", null);
 
@@ -51,7 +51,7 @@ namespace m0.Lib
 
         public static INoInEdgeInOutVertexVertex SplitBy(IExecution exe)
         {
-            INoInEdgeInOutVertexVertex stack = exe.stack;
+            INoInEdgeInOutVertexVertex stack = exe.Stack;
 
             IList<IEdge> byList = GraphUtil.GetQueryOut(stack, "by", null);
 
@@ -81,7 +81,7 @@ namespace m0.Lib
 
         public static INoInEdgeInOutVertexVertex Replace(IExecution exe)
         {
-            INoInEdgeInOutVertexVertex stack = exe.stack;
+            INoInEdgeInOutVertexVertex stack = exe.Stack;
 
             IList<IEdge> inputList = GraphUtil.GetQueryOut(stack, "input", null);
 
@@ -89,7 +89,7 @@ namespace m0.Lib
             IVertex toVertex = GraphUtil.GetQueryOutFirst(stack, "to", null);
 
             if (fromVertex == null || toVertex == null)
-                return exe.stack;
+                return exe.Stack;
 
             string from = fromVertex.Value.ToString();
             string to = toVertex.Value.ToString();
@@ -110,14 +110,14 @@ namespace m0.Lib
 
         public static INoInEdgeInOutVertexVertex IndexOf(IExecution exe)
         {
-            INoInEdgeInOutVertexVertex stack = exe.stack;
+            INoInEdgeInOutVertexVertex stack = exe.Stack;
 
             IList<IEdge> inputList = GraphUtil.GetQueryOut(stack, "input", null);
 
             IVertex testVertex = GraphUtil.GetQueryOutFirst(stack, "test", null);
 
             if (testVertex == null)
-                return exe.stack;
+                return exe.Stack;
 
             string test = testVertex.Value.ToString();
 
@@ -137,7 +137,7 @@ namespace m0.Lib
 
         public static INoInEdgeInOutVertexVertex Substring(IExecution exe)
         {
-            INoInEdgeInOutVertexVertex stack = exe.stack;
+            INoInEdgeInOutVertexVertex stack = exe.Stack;
 
             IList<IEdge> inputList = GraphUtil.GetQueryOut(stack, "input", null);
 
@@ -159,7 +159,7 @@ namespace m0.Lib
             int to = LibUtil.GetIntFromVertex(stack, "to", ref isNull);
 
             if (isNull)
-                return exe.stack;
+                return exe.Stack;
 
             INoInEdgeInOutVertexVertex newStack = InstructionHelpers.CreateStack();
 
@@ -185,7 +185,7 @@ namespace m0.Lib
         }
         public static INoInEdgeInOutVertexVertex Sqrt(IExecution exe)
         {
-            INoInEdgeInOutVertexVertex stack = exe.stack;
+            INoInEdgeInOutVertexVertex stack = exe.Stack;
 
             IList<IEdge> inputList = GraphUtil.GetQueryOut(stack, "value", null);
 
@@ -207,7 +207,7 @@ namespace m0.Lib
 
         public static INoInEdgeInOutVertexVertex Pow(IExecution exe)
         {
-            INoInEdgeInOutVertexVertex stack = exe.stack;
+            INoInEdgeInOutVertexVertex stack = exe.Stack;
 
             IVertex powerVertex = GraphUtil.GetQueryOutFirst(stack, "power", null);
 
@@ -240,7 +240,7 @@ namespace m0.Lib
 
         public static INoInEdgeInOutVertexVertex Abs(IExecution exe)
         {
-            INoInEdgeInOutVertexVertex stack = exe.stack;
+            INoInEdgeInOutVertexVertex stack = exe.Stack;
 
             IList<IEdge> inputList = GraphUtil.GetQueryOut(stack, "value", null);
 
@@ -262,7 +262,7 @@ namespace m0.Lib
 
         public static INoInEdgeInOutVertexVertex Celling(IExecution exe)
         {
-            INoInEdgeInOutVertexVertex stack = exe.stack;
+            INoInEdgeInOutVertexVertex stack = exe.Stack;
 
             IList<IEdge> inputList = GraphUtil.GetQueryOut(stack, "value", null);
 
@@ -284,7 +284,7 @@ namespace m0.Lib
 
         public static INoInEdgeInOutVertexVertex Floor(IExecution exe)
         {
-            INoInEdgeInOutVertexVertex stack = exe.stack;
+            INoInEdgeInOutVertexVertex stack = exe.Stack;
 
             IList<IEdge> inputList = GraphUtil.GetQueryOut(stack, "value", null);
 
@@ -306,7 +306,7 @@ namespace m0.Lib
 
         public static INoInEdgeInOutVertexVertex Sin(IExecution exe)
         {
-            INoInEdgeInOutVertexVertex stack = exe.stack;
+            INoInEdgeInOutVertexVertex stack = exe.Stack;
 
             IList<IEdge> inputList = GraphUtil.GetQueryOut(stack, "value", null);
 
@@ -328,7 +328,7 @@ namespace m0.Lib
 
         public static INoInEdgeInOutVertexVertex Cos(IExecution exe)
         {
-            INoInEdgeInOutVertexVertex stack = exe.stack;
+            INoInEdgeInOutVertexVertex stack = exe.Stack;
 
             IList<IEdge> inputList = GraphUtil.GetQueryOut(stack, "value", null);
 
@@ -350,7 +350,7 @@ namespace m0.Lib
 
         public static INoInEdgeInOutVertexVertex Exp(IExecution exe)
         {
-            INoInEdgeInOutVertexVertex stack = exe.stack;
+            INoInEdgeInOutVertexVertex stack = exe.Stack;
 
             IList<IEdge> inputList = GraphUtil.GetQueryOut(stack, "value", null);
 
@@ -372,7 +372,7 @@ namespace m0.Lib
 
         public static INoInEdgeInOutVertexVertex Log(IExecution exe)
         {
-            INoInEdgeInOutVertexVertex stack = exe.stack;
+            INoInEdgeInOutVertexVertex stack = exe.Stack;
 
             IList<IEdge> inputList = GraphUtil.GetQueryOut(stack, "value", null);
 
@@ -394,7 +394,7 @@ namespace m0.Lib
 
         public static INoInEdgeInOutVertexVertex Log10(IExecution exe)
         {
-            INoInEdgeInOutVertexVertex stack = exe.stack;
+            INoInEdgeInOutVertexVertex stack = exe.Stack;
 
             IList<IEdge> inputList = GraphUtil.GetQueryOut(stack, "value", null);
 
@@ -416,7 +416,7 @@ namespace m0.Lib
 
         public static INoInEdgeInOutVertexVertex Max(IExecution exe)
         {
-            INoInEdgeInOutVertexVertex stack = exe.stack;
+            INoInEdgeInOutVertexVertex stack = exe.Stack;
 
             IList<IEdge> inputList = GraphUtil.GetQueryOut(stack, "value", null);
 
@@ -443,7 +443,7 @@ namespace m0.Lib
 
         public static INoInEdgeInOutVertexVertex Min(IExecution exe)
         {
-            INoInEdgeInOutVertexVertex stack = exe.stack;
+            INoInEdgeInOutVertexVertex stack = exe.Stack;
 
             IList<IEdge> inputList = GraphUtil.GetQueryOut(stack, "value", null);
 
@@ -470,7 +470,7 @@ namespace m0.Lib
 
         public static INoInEdgeInOutVertexVertex Sign(IExecution exe)
         {
-            INoInEdgeInOutVertexVertex stack = exe.stack;
+            INoInEdgeInOutVertexVertex stack = exe.Stack;
 
             IList<IEdge> inputList = GraphUtil.GetQueryOut(stack, "value", null);
 
@@ -492,7 +492,7 @@ namespace m0.Lib
 
         public static INoInEdgeInOutVertexVertex Tan(IExecution exe)
         {
-            INoInEdgeInOutVertexVertex stack = exe.stack;
+            INoInEdgeInOutVertexVertex stack = exe.Stack;
 
             IList<IEdge> inputList = GraphUtil.GetQueryOut(stack, "value", null);
 
@@ -516,7 +516,7 @@ namespace m0.Lib
 
         public static INoInEdgeInOutVertexVertex Randomize(IExecution exe)
         {
-            INoInEdgeInOutVertexVertex stack = exe.stack;
+            INoInEdgeInOutVertexVertex stack = exe.Stack;
 
             IVertex valueVertex = GraphUtil.GetQueryOutFirst(stack, "value", null);
 
@@ -534,7 +534,7 @@ namespace m0.Lib
 
         public static INoInEdgeInOutVertexVertex Random(IExecution exe)
         {
-            INoInEdgeInOutVertexVertex stack = exe.stack;
+            INoInEdgeInOutVertexVertex stack = exe.Stack;
 
             IList<IEdge> inputList = GraphUtil.GetQueryOut(stack, "max", null);
 
@@ -556,7 +556,7 @@ namespace m0.Lib
 
         public static INoInEdgeInOutVertexVertex Sequence(IExecution exe)
         {
-            INoInEdgeInOutVertexVertex stack = exe.stack;
+            INoInEdgeInOutVertexVertex stack = exe.Stack;
 
             // min
 
@@ -600,7 +600,7 @@ namespace m0.Lib
 
         public static INoInEdgeInOutVertexVertex StepSequence(IExecution exe)
         {
-            INoInEdgeInOutVertexVertex stack = exe.stack;
+            INoInEdgeInOutVertexVertex stack = exe.Stack;
 
             // min
 
@@ -655,7 +655,7 @@ namespace m0.Lib
 
         public static INoInEdgeInOutVertexVertex Sleep(IExecution exe)
         {
-            INoInEdgeInOutVertexVertex stack = exe.stack;
+            INoInEdgeInOutVertexVertex stack = exe.Stack;
 
             // miliseconds
 

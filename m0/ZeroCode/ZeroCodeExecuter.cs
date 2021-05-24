@@ -14,12 +14,12 @@ namespace m0.ZeroCode
 
         private void AddDolarToStack(ZeroCodeExecution exe, IVertex expression)
         {
-            exe.stack.AddEdge(dolar, expression);   
+            exe.Stack.AddEdge(dolar, expression);   
         }
 
         public static void AddRootToStack(IExecution exe)
         {
-            exe.stack.AddEdge(MinusZero.Instance.StackFrameInherits, MinusZero.Instance.Root);
+            exe.Stack.AddEdge(MinusZero.Instance.StackFrameInherits, MinusZero.Instance.Root);
         }
 
         public IVertex Execute(IVertex toBeStackVertex, IVertex expression)
@@ -28,9 +28,9 @@ namespace m0.ZeroCode
 
             exe.metaMode = true;
 
-            exe.stack = InstructionHelpers.Create_INoInEdgeInOutVertexVertex_FromEdgesList(toBeStackVertex);
+            exe.Stack = InstructionHelpers.Create_INoInEdgeInOutVertexVertex_FromEdgesList(toBeStackVertex);
 
-            exe.newVertexCreationSpace = exe.stack;
+            exe.NewVertexCreationSpace = exe.Stack;
 
             AddRootToStack(exe);
 
@@ -38,7 +38,7 @@ namespace m0.ZeroCode
 
             bool local_isStackFrameReturn;
 
-            return InstructionHelpers.SequentiallyExecuteInstructions(exe, exe.stack, expression, out local_isStackFrameReturn, false);            
+            return InstructionHelpers.SequentiallyExecuteInstructions(exe, exe.Stack, expression, out local_isStackFrameReturn, false);            
         }
 
         public IVertex Get(bool metaMode, IVertex baseVertex, IVertex expression)

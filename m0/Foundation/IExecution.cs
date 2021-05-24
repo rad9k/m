@@ -8,9 +8,9 @@ namespace m0.Foundation
 {
     public interface IExecution
     {
-        INoInEdgeInOutVertexVertex stack { get; set; }
+        INoInEdgeInOutVertexVertex Stack { get; set; }
 
-        IVertex newVertexCreationSpace { get; set; }
+        IVertex NewVertexCreationSpace { get; set; }
 
         bool metaMode { get; set; }
 

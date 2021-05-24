@@ -26,7 +26,7 @@ namespace m0_COMPOSER.Lib
 
         public static INoInEdgeInOutVertexVertex Play(IExecution exe)
         {            
-            INoInEdgeInOutVertexVertex o = exe.stack;                       
+            INoInEdgeInOutVertexVertex o = exe.Stack;                       
 
             bool isNull = false;       
 
@@ -41,13 +41,13 @@ namespace m0_COMPOSER.Lib
 
         public static INoInEdgeInOutVertexVertex Stop(IExecution exe)
         {            
-            INoInEdgeInOutVertexVertex o = exe.stack;            
+            INoInEdgeInOutVertexVertex o = exe.Stack;            
 
             SongPlay sp = SongVertexDictionary.GetSongPlay(o);
 
             sp.Destroy();
 
-            SongVertexDictionary.RemoveSongPlay(exe.stack);
+            SongVertexDictionary.RemoveSongPlay(exe.Stack);
 
             return o;
         }        

@@ -22,7 +22,7 @@ namespace m0.ZeroCode
 
             exe.CreateEmptyStack();
 
-            exe.newVertexCreationSpace = exe.stack;
+            exe.NewVertexCreationSpace = exe.Stack;
 
             ZeroCodeExecuter.AddRootToStack(exe);
 
@@ -30,7 +30,7 @@ namespace m0.ZeroCode
             
             exe.AddStackFrame();
 
-            exe.stack.AddEdge(thisMeta, theObject);
+            exe.Stack.AddEdge(thisMeta, theObject);
             
             endPoint.Execute(exe);            
         }
@@ -48,9 +48,9 @@ namespace m0.ZeroCode
             else
                 _toBeStackVertex = toBeStackVertex;
 
-            exe.stack = InstructionHelpers.Create_INoInEdgeInOutVertexVertex_FromEdgesList(_toBeStackVertex);
+            exe.Stack = InstructionHelpers.Create_INoInEdgeInOutVertexVertex_FromEdgesList(_toBeStackVertex);
 
-            exe.newVertexCreationSpace = exe.stack;
+            exe.NewVertexCreationSpace = exe.Stack;
 
             ZeroCodeExecuter.AddRootToStack(exe);
 
@@ -61,7 +61,7 @@ namespace m0.ZeroCode
         {
             exe.AddStackFrame(theObject); // ENTER NEW STACK
             exe.AddStackFrame(paramtersStack);
-            exe.stack.AddEdge(thisMeta, theObject);
+            exe.Stack.AddEdge(thisMeta, theObject);
 
             endPoint.Execute(exe);
 

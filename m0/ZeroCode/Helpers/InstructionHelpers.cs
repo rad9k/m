@@ -447,7 +447,7 @@ namespace m0.ZeroCode.Helpers
         
         public static IEdge GetFirstExecutionEdge(ZeroCodeExecution exe, IVertex instructionVertex)
         {
-             return exe.ExecuteInstructionByMontevideoPrinciples(exe.stack, instructionVertex).FirstOrDefault();
+             return exe.ExecuteInstructionByMontevideoPrinciples(exe.Stack, instructionVertex).FirstOrDefault();
         }
 
         public static INoInEdgeInOutVertexVertex SequenciallyExecuteIntructionsWithNewStackAndIsStackFrameReturnSupport(ZeroCodeExecution exe, IVertex inputStack, IVertex instructionVertex, out bool isStackFrameReturn)
@@ -458,7 +458,7 @@ namespace m0.ZeroCode.Helpers
 
             exe.AddStackFrame(); // ENTER NEW STACK                                
 
-            possibleToReturnStack = InstructionHelpers.SequentiallyExecuteInstructions(exe, exe.stack, instructionVertex, out isStackFrameReturn, false);
+            possibleToReturnStack = InstructionHelpers.SequentiallyExecuteInstructions(exe, exe.Stack, instructionVertex, out isStackFrameReturn, false);
 
             exe.RemoveStackFrame();  // LEAVE NEW STACK                
 

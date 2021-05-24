@@ -19,7 +19,7 @@ namespace m0_COMPOSER.Lib
 
         public static INoInEdgeInOutVertexVertex NoteOn(IExecution exe)
         {
-            INoInEdgeInOutVertexVertex stack = exe.stack;
+            INoInEdgeInOutVertexVertex stack = exe.Stack;
 
             IVertex noteV = GraphUtil.GetQueryOutFirst(stack, "note", null);
 
@@ -56,7 +56,7 @@ namespace m0_COMPOSER.Lib
 
         public static INoInEdgeInOutVertexVertex NoteOff(IExecution exe)
         {
-            INoInEdgeInOutVertexVertex stack = exe.stack;
+            INoInEdgeInOutVertexVertex stack = exe.Stack;
 
             IVertex noteV = GraphUtil.GetQueryOutFirst(stack, "note", null);
 
@@ -90,7 +90,7 @@ namespace m0_COMPOSER.Lib
 
         public static INoInEdgeInOutVertexVertex ControlChange(IExecution exe)
         {
-            INoInEdgeInOutVertexVertex stack = exe.stack;
+            INoInEdgeInOutVertexVertex stack = exe.Stack;
 
             IVertex controlChange = GraphUtil.GetQueryOutFirst(stack, "controlChange", null);
 
@@ -121,7 +121,7 @@ namespace m0_COMPOSER.Lib
 
         public static INoInEdgeInOutVertexVertex ProgramChange(IExecution exe)
         {
-            INoInEdgeInOutVertexVertex stack = exe.stack;            
+            INoInEdgeInOutVertexVertex stack = exe.Stack;            
 
             bool isNull = false;
 
@@ -146,7 +146,7 @@ namespace m0_COMPOSER.Lib
 
         public static INoInEdgeInOutVertexVertex PitchBend(IExecution exe)
         {
-            INoInEdgeInOutVertexVertex stack = exe.stack;            
+            INoInEdgeInOutVertexVertex stack = exe.Stack;            
 
             bool isNull = false;
 
@@ -171,7 +171,7 @@ namespace m0_COMPOSER.Lib
 
         public static INoInEdgeInOutVertexVertex Silent(IExecution exe)
         {
-            INoInEdgeInOutVertexVertex stack = exe.stack;            
+            INoInEdgeInOutVertexVertex stack = exe.Stack;            
 
             bool isNull = false;
 
