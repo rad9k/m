@@ -180,35 +180,6 @@ namespace m0.UIWpf.Visualisers
 
         }
 
-        private bool IsOfExecutableMeta(IVertex metaForForm)
-        {
-            if (metaForForm == null || metaForForm.Count() == 0)
-                return false;
-
-            if (GraphUtil.GetQueryOutCount(metaForForm, "$Is", "Class") > 0)
-                return true;
-
-            return false;
-        }
-
-        private IList<IEdge> GetExecutableEdges(IVertex metaForForm)
-        {
-            IList<IEdge> list = new List<IEdge>();
-
-            foreach (IEdge e in GraphUtil.GetQueryOut(metaForForm, "Method", null))
-                list.Add(e);
-
-            return list;
-        }
-
-        private bool IsVoidVoidExecutableVertex(IVertex v)
-        {
-            if (GeneralUtil.CompareStrings(v.Value, "Method"))
-                return true;
-
-            return false;
-        }
-
         private void PreFillForm()
         {
             TabList = new Dictionary<string, TabInfo>();
@@ -265,8 +236,8 @@ namespace m0.UIWpf.Visualisers
                 }
             }
 
-            if (IsOfExecutableMeta(metaForForm))
-                foreach(IEdge e in GetExecutableEdges(metaForForm))
+            if (ExecutableVisualiserFactory.IsOfExecutableMeta(metaForForm))
+                foreach(IEdge e in ExecutableVisualiserFactory.GetExecutableEdges(metaForForm))
                     PreFillFormAnalyseEdge(e.To, false);
         }
 
@@ -391,8 +362,8 @@ namespace m0.UIWpf.Visualisers
                     }
                 }
 
-                if (IsOfExecutableMeta(metaForForm))
-                    foreach (IEdge e in GetExecutableEdges(metaForForm))
+                if (ExecutableVisualiserFactory.IsOfExecutableMeta(metaForForm))
+                    foreach (IEdge e in ExecutableVisualiserFactory.GetExecutableEdges(metaForForm))
                         AddEdge(e.To, false);
 
                 if (MetaOnLeft){
@@ -674,14 +645,9 @@ namespace m0.UIWpf.Visualisers
                     dataControl = sv;
                 }
                 else
-                if (IsVoidVoidExecutableVertex(meta))
-                {
-                    VoidVoidMethodVisualiser vvv = new VoidVoidMethodVisualiser();
-
-                    //GraphUtil.CreateOrReplaceEdge(vvv.Vertex,)
-
-                    dataControl = vvv;
-                }else
+                if (ExecutableVisualiserFactory.IsExecutableVertex(meta))
+                    dataControl = ExecutableVisualiserFactory.CreateExecutableVisualiser(Vertex.Get(false, @"BaseEdge:"), meta);
+                else
                 {
                     VisualiserEditWrapper w = new VisualiserEditWrapper();
 
