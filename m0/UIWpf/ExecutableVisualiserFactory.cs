@@ -2,6 +2,7 @@
 using m0.Graph;
 using m0.UIWpf.Visualisers.Method;
 using m0.Util;
+using m0.ZeroTypes;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -37,18 +38,25 @@ namespace m0.UIWpf
         public static bool IsExecutableVertex(IVertex v)
         {
             if (GraphUtil.GetQueryOutCount(v, "$Is", "Method") > 0  
-                 && GraphUtil)
+                 && GraphUtil.GetQueryOutCount(v, "InputParameter", null) == 0
+                 && GraphUtil.GetQueryOutCount(v, "Output", null) == 0)
                 return true;
             
 
             return false;
         }
 
-        public static FrameworkElement CreateExecutableVisualiser(IVertex baseEdge, IVertex executableVertex)
+        static IVertex root = MinusZero.Instance.Root;
+
+        static IVertex executableVertexMeta = root.Get(false, @"System\Meta\ZeroTypes\HasExecutableVertex\ExecutableVertex");
+
+        public static FrameworkElement CreateExecutableVisualiser(IEdge baseEdge, IVertex executableVertex)
         {
             VoidVoidMethodVisualiser vvv = new VoidVoidMethodVisualiser();
 
-            //GraphUtil.CreateOrReplaceEdge(vvv.Vertex,)
+            Edge.ReplaceEdgeVertexEdges(vvv.Vertex.Get(false, "BaseEdge:"), baseEdge);
+
+            GraphUtil.CreateOrReplaceEdge(vvv.Vertex, executableVertexMeta, executableVertex);
 
             return vvv;
         }

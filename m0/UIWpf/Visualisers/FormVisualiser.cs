@@ -646,7 +646,7 @@ namespace m0.UIWpf.Visualisers
                 }
                 else
                 if (ExecutableVisualiserFactory.IsExecutableVertex(meta))
-                    dataControl = ExecutableVisualiserFactory.CreateExecutableVisualiser(Vertex.Get(false, @"BaseEdge:"), meta);
+                    dataControl = ExecutableVisualiserFactory.CreateExecutableVisualiser(Vertex.GetAll(false, @"BaseEdge:").FirstOrDefault(), meta);
                 else
                 {
                     VisualiserEditWrapper w = new VisualiserEditWrapper();

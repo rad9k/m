@@ -27,9 +27,9 @@ namespace m0.UIWpf.Visualisers.Method
             {
                 Vertex = mz.CreateTempVertex();
 
-                Vertex.Value = "StringViewVisualiser" + this.GetHashCode();
+                Vertex.Value = "VoidVoidMethod" + this.GetHashCode();
 
-                ClassVertex.AddIsClassAndAllAttributesAndAssociations(Vertex, mz.Root.Get(false, @"System\Meta\Visualiser\StringView"));
+                ClassVertex.AddIsClassAndAllAttributesAndAssociations(Vertex, mz.Root.Get(false, @"System\Meta\Visualiser\Method\VoidVoidMethod"));
 
                 ClassVertex.AddIsClassAndAllAttributesAndAssociations(Vertex.Get(false, "BaseEdge:"), mz.Root.Get(false, @"System\Meta\ZeroTypes\Edge"));         
 
