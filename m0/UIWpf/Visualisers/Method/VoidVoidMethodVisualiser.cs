@@ -17,7 +17,7 @@ using System.Windows;
 
 namespace m0.UIWpf.Visualisers.Method
 {
-    public class VoidVoidMethodVisualiser : TextBlock, IPlatformClass, IDisposable, IHasLocalizableEdges
+    public class VoidVoidMethodVisualiser : Button, IPlatformClass, IDisposable, IHasLocalizableEdges
     {
         public VoidVoidMethodVisualiser()
         {
@@ -33,14 +33,14 @@ namespace m0.UIWpf.Visualisers.Method
 
                 ClassVertex.AddIsClassAndAllAttributesAndAssociations(Vertex.Get(false, "BaseEdge:"), mz.Root.Get(false, @"System\Meta\ZeroTypes\Edge"));         
 
-                this.PreviewMouseLeftButtonDown += dndPreviewMouseLeftButtonDown;
-                this.PreviewMouseMove += dndPreviewMouseMove;
-                this.Drop+=dndDrop;
-                this.AllowDrop = true;
+              //  this.PreviewMouseLeftButtonDown += dndPreviewMouseLeftButtonDown;
+             //   this.PreviewMouseMove += dndPreviewMouseMove;
+             //   this.Drop+=dndDrop;
+                this.AllowDrop = false;
 
-                this.MouseEnter += dndMouseEnter;
+             //   this.MouseEnter += dndMouseEnter;
 
-                this.Loaded += new RoutedEventHandler(OnLoad);
+              //  this.Loaded += new RoutedEventHandler(OnLoad);
             }
         }
 
