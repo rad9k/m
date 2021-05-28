@@ -30,7 +30,9 @@ namespace m0.UIWpf
             IList<IEdge> list = new List<IEdge>();
 
             foreach (IEdge e in GraphUtil.GetQueryOut(metaForForm, "Method", null))
-                list.Add(e);
+                if(GraphUtil.GetQueryOutCount(e.To, "InputParameter", null) == 0
+                 && GraphUtil.GetQueryOutCount(e.To, "Output", null) == 0)
+                    list.Add(e);
 
             return list;
         }

@@ -14,6 +14,7 @@ using m0.UIWpf.Foundation;
 using m0.UIWpf.Controls;
 using m0.UIWpf.Commands;
 using System.Windows;
+using m0.ZeroCode;
 
 namespace m0.UIWpf.Visualisers.Method
 {
@@ -33,49 +34,28 @@ namespace m0.UIWpf.Visualisers.Method
 
                 ClassVertex.AddIsClassAndAllAttributesAndAssociations(Vertex.Get(false, "BaseEdge:"), mz.Root.Get(false, @"System\Meta\ZeroTypes\Edge"));         
 
-              //  this.PreviewMouseLeftButtonDown += dndPreviewMouseLeftButtonDown;
-             //   this.PreviewMouseMove += dndPreviewMouseMove;
-             //   this.Drop+=dndDrop;
+
                 this.AllowDrop = false;
 
-             //   this.MouseEnter += dndMouseEnter;
+                this.Content = "run";
 
-              //  this.Loaded += new RoutedEventHandler(OnLoad);
+                this.Click += VoidVoidMethodVisualiser_Click;
             }
         }
 
-        void OnLoad(object sender, RoutedEventArgs e)
+        private void VoidVoidMethodVisualiser_Click(object sender, RoutedEventArgs e)
         {
-            if (!WpfUtil.HasParentsGotContextMenu(this))
-                this.ContextMenu = new m0ContextMenu(this);
-        }
+            IVertex baseVertex = Vertex.Get(false, @"BaseEdge:\To:");
 
-        private void UpdateBaseEdge()
-        {
-            IVertex bv = Vertex.Get(false, @"BaseEdge:\To:");
+            IVertex methodVertex = Vertex.Get(false, @"ExecutableVertex:");
 
-            if (bv != null && bv.Value != null /*&& ((String)bv.Value)!="$Empty"*/)
-            {
-                this.Text = bv.Value.ToString();
-                return;
-            }
-            else
-            {
-                this.Text = "Ø";
-                return;
-            }
-
-          
+            if(baseVertex != null && methodVertex != null)
+                ZeroCodeExecutonUtil.CreateExecutionAndVertexMethodExecute(methodVertex, baseVertex);
         }
 
         protected void VertexChange(object sender, VertexChangeEventArgs e)
         {
-            if ((sender == Vertex) && (e.Type == VertexChangeType.EdgeAdded) && (GeneralUtil.CompareStrings(e.Edge.Meta.Value, "BaseEdge")))
-                UpdateBaseEdge();                        
-
-            if ((sender == Vertex.Get(false, "BaseEdge:")) && (e.Type == VertexChangeType.EdgeAdded) && (GeneralUtil.CompareStrings(e.Edge.Meta.Value, "To"))
-                || (sender == Vertex.Get(false, @"BaseEdge:\To:") && e.Type == VertexChangeType.ValueChanged))            
-                UpdateBaseEdge();            
+        
         }        
 
         private IVertex _Vertex;
@@ -91,8 +71,6 @@ namespace m0.UIWpf.Visualisers.Method
                 _Vertex = value;
 
                 PlatformClass.RegisterVertexChangeListeners(this.Vertex, new VertexChange(VertexChange), new string[] { "BaseEdge", "SelectedEdges" });
-
-                UpdateBaseEdge();
             }
         }
 
@@ -123,59 +101,6 @@ namespace m0.UIWpf.Visualisers.Method
         public System.Windows.FrameworkElement GetVisualElementByEdge(IVertex vertex)
         {
             throw new NotImplementedException();
-        }
-
-        ///// DRAG AND DROP
-
-        Point dndStartPoint;        
-
-        private void dndPreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
-        {
-            dndStartPoint = e.GetPosition(this);
-
-            MinusZero.Instance.IsGUIDragging = false;
-
-            hasButtonBeenDown = true;
-        }
-
-        bool isDraggin = false;
-        bool hasButtonBeenDown;
-
-        private void dndPreviewMouseMove(object sender, MouseEventArgs e)
-        {
-            Point mousePos = e.GetPosition(this);
-            Vector diff = dndStartPoint - mousePos;
-
-            if (hasButtonBeenDown && isDraggin == false && (e.LeftButton == MouseButtonState.Pressed) && (
-                (Math.Abs(diff.X) > Dnd.MinimumHorizontalDragDistance) ||
-                (Math.Abs(diff.Y) > Dnd.MinimumVerticalDragDistance)))
-            {
-                if (Vertex.Get(false, @"BaseEdge:\To:") != null)
-                {
-                    isDraggin = true;
-
-                    IVertex dndVertex = MinusZero.Instance.CreateTempVertex();
-                 
-                    dndVertex.AddEdge(null, Vertex.Get(false, @"BaseEdge:"));
-
-                    DataObject dragData = new DataObject("Vertex", dndVertex);
-                    dragData.SetData("DragSource", this);
-
-                    Dnd.DoDragDrop(this, dragData);
-
-                    isDraggin = false;
-                }
-            }           
-        }
-
-        private void dndDrop(object sender, DragEventArgs e)
-        {
-            Dnd.DoDrop(this,Vertex.Get(false, @"BaseEdge:\To:"), e);
-        }
-
-        private void dndMouseEnter(object sender, MouseEventArgs e)
-        {
-            hasButtonBeenDown = false;
         }
     }
 }
