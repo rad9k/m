@@ -112,7 +112,8 @@ namespace m0_SYSTEM_GENERATE.Util
                // ip.AddVertex(bv.Get(false, "$MaxCardinality"), tn.MaxCardinality);
             }
 
-            GraphUtil.AddDotNetEndPoint(f, typeName, methodName);
+            if(typeName != null)
+                GraphUtil.AddDotNetEndPoint(f, typeName, methodName);
         }
     }
 }

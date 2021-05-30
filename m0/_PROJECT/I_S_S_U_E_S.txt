@@ -31,6 +31,15 @@ remove ZeroCodeExecuter.AddRootToStack(exe); and ther is no. can be checked by "
 		<@Octave :: "2">
 		<@Color[HERE] :: @System\Data\UX\Colors\LightRose>
 99. $Inherits in code visualier when poiting to outside vertex will populate the vertex in the code view
+100. "STORE"
+	import @System\Lib\Music direct meta
+	class "SimpleTransformer"
+		association "Input" @Sequence "0":"1"
+		association "Output" @Sequence "0":"1"
+		method "Process" ()
+			Output +< "dupa"
+
+a lot of "dupa" here :(
 
 <><><> FUTURE 0.5
 

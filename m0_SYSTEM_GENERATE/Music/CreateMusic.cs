@@ -525,18 +525,6 @@ namespace m0_SYSTEM_GENERATE.Music
             Sequence.AddEdge(r.Get(false, @"System\Meta\Base\Vertex\$DefaultOpenVisualiser"), r.Get(false, @"System\Meta\Visualiser\Sequence"));
            
 
-            // SEQUENCEOPERATOR
-
-            IVertex SequenceOperator = GraphUtil.AddClass(Music, "SequnceOperator");
-
-            GraphUtil.AddInherits(SequenceOperator, Sequence);
-
-            // NOTEOUTPUTOPERATOR
-
-            IVertex NoteOutputOperator = GraphUtil.AddClass(Music, "NoteOutputOperator");
-
-            GraphUtil.AddInherits(NoteOutputOperator, NoteOutput);
-
             // SEQUENCEEVENT
 
             SequenceEvent = GraphUtil.AddClass(Music, "SequenceEvent");
@@ -701,6 +689,13 @@ namespace m0_SYSTEM_GENERATE.Music
             GraphUtil.AddAggregation(ChordProgression, "Chord", PitchSet, 0, -1);
 
             ChordProgression.AddEdge(r.Get(false, @"System\Meta\Base\Vertex\$DefaultOpenVisualiser"), r.Get(false, @"System\Meta\Visualiser\ChordProgression"));
+
+            // SEQUENCETRANSFORMER
+
+            IVertex SequenceTransformer = GraphUtil.AddClass(MusicGenerator, "SequenceTransformer");
+            GraphUtil.AddAssociation(SequenceTransformer, "Input", Sequence, 1, 1);
+            GraphUtil.AddAssociation(SequenceTransformer, "Output", Sequence, 1, 1);
+            AddMethod(SequenceTransformer, "Process", null, null, null, new TypeName[] { });
         }
 
         private static void AddGeneratorFlowPitchSet()

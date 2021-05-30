@@ -1146,7 +1146,7 @@ namespace m0.ZeroUML.Instructions
 
 #region LogicOperators
 
-        private static INoInEdgeInOutVertexVertex LogicDoubleOperator(LogicDoubleOpertorEnum opetationType, ZeroCodeExecution exe, IVertex inputStack, IVertex instructionVertex, String leftAndRightResultsEmptyOperatorResult)
+        private static INoInEdgeInOutVertexVertex LogicDoubleOperator(LogicDoubleOpertorEnum operationType, ZeroCodeExecution exe, IVertex inputStack, IVertex instructionVertex, String leftAndRightResultsEmptyOperatorResult)
         {
             IVertex leftExpression = GetLeft(instructionVertex);
             IVertex rightExpression = GetRight(instructionVertex);
@@ -1161,6 +1161,13 @@ namespace m0.ZeroUML.Instructions
             IList<IEdge> rightExecuteResult = _rightExecuteResult.OutEdges;
 
             int toBeProcessedCount;
+
+            if(operationType == LogicDoubleOpertorEnum.ExactEqual &&
+                leftExecuteResult.Count != rightExecuteResult.Count)
+            {
+                localStack.AddVertex(null, "False");
+                return localStack;
+            }
 
             if (leftExecuteResult.Count > rightExecuteResult.Count)
                 toBeProcessedCount = rightExecuteResult.Count;
@@ -1182,7 +1189,7 @@ namespace m0.ZeroUML.Instructions
                     IVertex leftVertex = leftExecuteResult[x].To;
                     IVertex rightVertex = rightExecuteResult[x].To;
 
-                    logicalResult = LogicDoubleOperator_VertexLevel(leftVertex, rightVertex, opetationType);
+                    logicalResult = LogicDoubleOperator_VertexLevel(leftVertex, rightVertex, operationType);
 
                     if (logicalResult)
                         localStack.AddVertex(null, "True");
