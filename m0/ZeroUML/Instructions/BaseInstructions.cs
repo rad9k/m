@@ -1162,7 +1162,9 @@ namespace m0.ZeroUML.Instructions
 
             int toBeProcessedCount;
 
-            if(operationType == LogicDoubleOpertorEnum.ExactEqual &&
+            INoInEdgeInOutVertexVertex localStack = CreateStack();
+
+            if (operationType == LogicDoubleOpertorEnum.ExactEqual &&
                 leftExecuteResult.Count != rightExecuteResult.Count)
             {
                 localStack.AddVertex(null, "False");
@@ -1172,9 +1174,7 @@ namespace m0.ZeroUML.Instructions
             if (leftExecuteResult.Count > rightExecuteResult.Count)
                 toBeProcessedCount = rightExecuteResult.Count;
             else
-                toBeProcessedCount = leftExecuteResult.Count;
-
-            INoInEdgeInOutVertexVertex localStack = CreateStack();
+                toBeProcessedCount = leftExecuteResult.Count;            
 
             if (toBeProcessedCount == 0) // left and right empty
             {

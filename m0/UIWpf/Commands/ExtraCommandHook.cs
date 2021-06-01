@@ -79,7 +79,7 @@ namespace m0.UIWpf.Commands
         {
             string storeName = UserInteractionUtil.Ask("please enter new store name");
 
-            if (storeName != "")
+            if (storeName != null && storeName != "")
             {
                 if (!storeName.EndsWith(".m0"))
                     storeName += ".m0";
