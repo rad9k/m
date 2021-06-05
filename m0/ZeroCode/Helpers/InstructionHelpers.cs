@@ -179,7 +179,8 @@ namespace m0.ZeroCode.Helpers
 
             INoInEdgeInOutVertexVertex stack = inStack;
 
-            foreach (IEdge e in baseVertex)
+            foreach (IEdge e in baseVertex.ToList())
+            //foreach (IEdge e in baseVertex) // XXX
                 //stack = exe.ExecuteInstruction(stack, e.To); // XXX another interesting processing approach
                 if (!ZeroCodeUtil.ShouldNotExecute(e))
                 { // XXX in some cases it might not work - instruction with meta begginning with $ will not be executed. nor its children
