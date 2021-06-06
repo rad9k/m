@@ -33,7 +33,7 @@ namespace m0.Store.Json
 
                         _root = __root;
 
-                        _root.IsRoot = true;
+                        _root.IsRoot = true;                        
                     }
                     else
                     { // load graph from store
@@ -71,6 +71,8 @@ namespace m0.Store.Json
                 EasyVertex __root = new EasyVertex(this);                
 
                 _root = __root;
+
+                _root.IsRoot = true;                
             }
             
         }
@@ -197,8 +199,8 @@ namespace m0.Store.Json
                 }
             }
 
-            if (maxVertexIdentifierCount > 0)
-                VertexIdentifierCount = maxVertexIdentifierCount + 1;
+            //if (maxVertexIdentifierCount > 0)
+            VertexIdentifierCount = maxVertexIdentifierCount + 1;
         }
 
         public override void Refresh()

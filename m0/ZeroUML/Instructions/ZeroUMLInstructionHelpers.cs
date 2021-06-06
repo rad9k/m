@@ -64,6 +64,16 @@ namespace m0.ZeroUML.Instructions
             _MoveEdgesIntoVertex(source, target, sourceGraph_Flat);
         }
 
+        public static void MoveEdgesIntoVertex_NoLinks(IVertex source, IVertex target)
+        {
+            IList<IVertex> sourceGraph_Flat = GraphUtil.GetSubGraphAsList(source);
+
+            sourceGraph_Flat = RemoveAlwaysPresent(sourceGraph_Flat);
+
+            _MoveEdgesIntoVertex(source, target, sourceGraph_Flat);
+        }
+
+
         static IList<IVertex> RemoveAlwaysPresent(IList<IVertex> vertexList)
         {
             IList<IVertex> afterRemoval = new List<IVertex>();
