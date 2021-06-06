@@ -41,6 +41,8 @@ namespace m0.UIWpf.Visualisers
                 this.MouseEnter += dndMouseEnter;
 
                 this.Loaded += new RoutedEventHandler(OnLoad);
+
+                this.FontFamily = new FontFamily("Consolas");
             }
         }
 
@@ -50,19 +52,60 @@ namespace m0.UIWpf.Visualisers
                 this.ContextMenu = new m0ContextMenu(this);
         }
 
+        string GetEdgeString(IVertex meta, IVertex to)
+        {
+            string ret = "";
 
+            if (meta != null && meta.Value != null)
+                ret += meta.Value.ToString();
+
+            ret += " :: ";
+
+            if (to != null && to.Value != null)
+                ret += to.Value.ToString();
+
+            ret += " [";
+
+            if (meta != null)
+                ret += meta.Store.Identifier + " " + meta.Identifier;
+                    
+            ret += " :: ";
+
+            ret += to.Store.Identifier + " " + to.Identifier + "]";
+
+            return ret;
+        }
 
         private void UpdateBaseEdge()
         {
+            IVertex mv = Vertex.Get(false, @"BaseEdge:\Meta:");
             IVertex bv = Vertex.Get(false, @"BaseEdge:\To:");
 
-            if (bv != null && bv.Value != null /*&& ((String)bv.Value)!="$Empty"*/)
-            {
-                this.Text = 
-
+            if (bv != null)
+            {                
                 StringBuilder sb = new StringBuilder();
 
-                sb.Append = bv.Value.ToString();
+                sb.AppendLine(GetEdgeString(mv, bv));
+
+                sb.AppendLine();
+
+                sb.AppendLine("INPUT EDGES RAW [" + bv.InEdgesRaw.Count + "]:");
+
+                sb.AppendLine();
+
+                foreach (IEdge e in bv.InEdgesRaw)
+                    sb.AppendLine(GetEdgeString(e.Meta, e.From));
+
+                sb.AppendLine();
+
+                sb.AppendLine("OUTPUT EDGES RAW [" + bv.OutEdgesRaw.Count + "]:");
+
+                sb.AppendLine();
+
+                foreach (IEdge e in bv.OutEdgesRaw)
+                    sb.AppendLine(GetEdgeString(e.Meta, e.To));
+
+                this.Text = sb.ToString();
 
                 return;
             }
