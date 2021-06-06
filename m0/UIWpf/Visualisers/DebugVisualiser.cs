@@ -50,13 +50,20 @@ namespace m0.UIWpf.Visualisers
                 this.ContextMenu = new m0ContextMenu(this);
         }
 
+
+
         private void UpdateBaseEdge()
         {
             IVertex bv = Vertex.Get(false, @"BaseEdge:\To:");
 
             if (bv != null && bv.Value != null /*&& ((String)bv.Value)!="$Empty"*/)
             {
-                this.Text = bv.Value.ToString();
+                this.Text = 
+
+                StringBuilder sb = new StringBuilder();
+
+                sb.Append = bv.Value.ToString();
+
                 return;
             }
             else
