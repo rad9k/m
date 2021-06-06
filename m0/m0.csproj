@@ -113,6 +113,7 @@
     </Compile>
     <Compile Include="UIWpf\ExecutableVisualiserFactory.cs" />
     <Compile Include="UIWpf\Visualisers\Method\VoidVoidMethodVisualiser.cs" />
+    <Compile Include="UIWpf\Visualisers\DebugVisualiser.cs" />
     <Compile Include="User\Clipboard.cs" />
     <Compile Include="User\Process\UI\NonAtomProcess.cs" />
     <Compile Include="Store\BinarySerializationStore.cs">
