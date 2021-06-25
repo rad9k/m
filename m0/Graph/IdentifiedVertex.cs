@@ -16,7 +16,7 @@ namespace m0.Graph
 
         public IdentifiedVertex(string identifier,IStore store):base(store)
         {
-            VertexInit();
+             VertexInit();
 
             _Identifier = identifier;
 

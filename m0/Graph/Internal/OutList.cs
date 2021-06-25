@@ -23,7 +23,7 @@ namespace m0.Graph.Internal
                 return toCheckEdge;
             else
                 foreach (IEdge e in this)
-                    if (/*e.From == toCheckEdge.From &&*/ e.Meta == toCheckEdge.Meta && e.To == toCheckEdge.To)
+                    if (e.From == toCheckEdge.From && e.Meta == toCheckEdge.Meta && e.To == toCheckEdge.To)
                         return e;
 
             return null; 
@@ -49,7 +49,12 @@ namespace m0.Graph.Internal
 
         public override void OnRemove(IEdge item)
         {
-            if (item.EdgeRemovalExecuting == false && !ed.NoInEdgeInOutVertexVertexMode)
+            if (GeneralUtil.CompareStrings(item.To.Identifier, "$Empty"))
+            {
+                int x = 0;
+            }
+
+                if (item.EdgeRemovalExecuting == false && !ed.NoInEdgeInOutVertexVertexMode)
             {
                 item.EdgeRemovalExecuting = true;
 

@@ -393,6 +393,11 @@ namespace m0.Graph
 
         public override void Dispose()
         {
+            if (GeneralUtil.CompareStrings(Identifier,"$Empty"))
+            {
+                int x = 9;
+            }
+
             if (DisposedState == DisposeStateEnum.Live)
             {
                 DisposedState = DisposeStateEnum.Disposing;
