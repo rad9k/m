@@ -392,12 +392,7 @@ namespace m0.Graph
         private static IDictionary<String, IVertex> QueryParseChache_metaMode = new Dictionary<String, IVertex>();        
 
         public override void Dispose()
-        {
-            if (GeneralUtil.CompareStrings(Identifier,"$Empty"))
-            {
-                int x = 9;
-            }
-
+        {            
             if (DisposedState == DisposeStateEnum.Live)
             {
                 DisposedState = DisposeStateEnum.Disposing;

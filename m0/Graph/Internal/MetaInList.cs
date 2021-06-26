@@ -22,9 +22,18 @@ namespace m0.Graph.Internal
             if (Contains(toCheckEdge))
                 return toCheckEdge;
             else
-                foreach (IEdge e in this)
-                    if (e.From == toCheckEdge.From && e.Meta == toCheckEdge.Meta && e.To == toCheckEdge.To)
-                        return e;
+                if (ed.NoInEdgeInOutVertexVertexMode)
+                {
+                    foreach (IEdge e in this)
+                        if (e.Meta == toCheckEdge.Meta && e.To == toCheckEdge.To)
+                            return e;
+                }
+                else
+                {
+                    foreach (IEdge e in this)
+                        if (e.From == toCheckEdge.From && e.Meta == toCheckEdge.Meta && e.To == toCheckEdge.To)
+                            return e;
+                }
 
             return null;
         }

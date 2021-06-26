@@ -56,7 +56,6 @@ namespace m0.Graph.Internal
             Out = new OutList(this);
             MetaIn = new MetaInList(this);
             In = new InList(this);
-
         }
     }
 }
