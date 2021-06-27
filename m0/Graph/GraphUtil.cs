@@ -1216,36 +1216,36 @@ namespace m0.Graph
                     newVertex.AddEdge(e.Meta, e.To);                      
         }
 
-        static public List<IVertex> GetSubGraphAsList(IVertex iterationRoot)
+        static public List<IVertex> GetSubGraphWithoutLinksAsList(IVertex iterationRoot)
         {
             List<IVertex> visited = new List<IVertex>();            
 
-            GetSubGraph_Reccurent(iterationRoot, visited);
+            GetSubGraphWithoutLinks_Reccurent(iterationRoot, visited);
 
             return visited;
         }
 
-        static void GetSubGraph_Reccurent(IVertex baseVertex, List<IVertex> visited)
+        static void GetSubGraphWithoutLinks_Reccurent(IVertex baseVertex, IList<IVertex> visited)
         {
             visited.Add(baseVertex);
 
             foreach (IEdge e in baseVertex.OutEdges)
                 if (!visited.Contains(e.To) && !VertexOperations.IsLink(e))
-                        GetSubGraph_Reccurent(e.To, visited);                           
+                        GetSubGraphWithoutLinks_Reccurent(e.To, visited);                           
         }
 
-        static public List<IEdge> GetSubGraphEdgesAsList(IEdge iterationRoot)
+        static public List<IEdge> GetSubGraphWithoutLinksEdgesAsList(IEdge iterationRoot)
         {
             List<IVertex> visited = new List<IVertex>();
 
             List<IEdge> edges = new List<IEdge>();
 
-            GetSubGraphEdges_Reccurent(iterationRoot, visited, edges);
+            GetSubGraphWithoutLinksEdges_Reccurent(iterationRoot, visited, edges);
 
             return edges;
         }
 
-        static void GetSubGraphEdges_Reccurent(IEdge baseEdge, List<IVertex> visited, List<IEdge> edges)
+        static void GetSubGraphWithoutLinksEdges_Reccurent(IEdge baseEdge, List<IVertex> visited, List<IEdge> edges)
         {
             edges.Add(baseEdge);
 
@@ -1254,7 +1254,7 @@ namespace m0.Graph
                 visited.Add(baseEdge.To);
 
                 foreach (IEdge e in baseEdge.To.OutEdges)
-                    GetSubGraphEdges_Reccurent(e, visited, edges);
+                    GetSubGraphWithoutLinksEdges_Reccurent(e, visited, edges);
 
             }
         }
@@ -1276,6 +1276,44 @@ namespace m0.Graph
                 if (!visited.Contains(e.To) && e.To!=MinusZero.Instance.root)
                     GetSubGraphWithLinksButExcludeRoot_Reccurent(e.To, visited);
         }
+
+        static public List<IVertex> GetSubGraphWithLinksAsListButExcludeList(IVertex iterationRoot, IList<IVertex> excludeList)
+        {
+            List<IVertex> visited = new List<IVertex>();
+
+            GetSubGraph_Reccurent_ExcludeList(iterationRoot, visited, excludeList);
+
+            return visited;
+        }
+
+        static void GetSubGraph_Reccurent_ExcludeList(IVertex baseVertex, IList<IVertex> visited, IList<IVertex> excludeList)
+        {
+            visited.Add(baseVertex);
+
+            foreach (IEdge e in baseVertex.OutEdges)
+                if (!visited.Contains(e.To) && !excludeList.Contains(e.To))
+                    GetSubGraph_Reccurent_ExcludeList(e.To, visited, excludeList);
+        }
+        
+
+        static public List<IVertex> GetSubGraphWithoutLinksAsListButExcludeList(IVertex iterationRoot, IList<IVertex> excludeList)
+        {
+            List<IVertex> visited = new List<IVertex>();
+
+            GetSubGraphWithoutLinks_Reccurent_ExcludeList(iterationRoot, visited, excludeList);
+
+            return visited;
+        }
+
+        static void GetSubGraphWithoutLinks_Reccurent_ExcludeList(IVertex baseVertex, IList<IVertex> visited, IList<IVertex> excludeList)
+        {
+            visited.Add(baseVertex);
+
+            foreach (IEdge e in baseVertex.OutEdges)
+                if (!visited.Contains(e.To) && !excludeList.Contains(e.To) && !VertexOperations.IsLink(e))
+                    GetSubGraphWithoutLinks_Reccurent_ExcludeList(e.To, visited, excludeList);
+        }
+
 
         public static void AddHandlerIfDelegateListDoesNotContainsIt(IVertex baseVertex, VertexChange _delegate)
         {

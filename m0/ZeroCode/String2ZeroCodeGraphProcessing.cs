@@ -2666,7 +2666,7 @@ namespace m0.ZeroCode
 
         void GestSubGraphPreProcessing()
         {
-            SubGraphPreProcessing = GraphUtil.GetSubGraphAsList(baseVertex);
+            SubGraphPreProcessing = GraphUtil.GetSubGraphWithoutLinksAsList(baseVertex);
         }
 
         void MoveInEdgesComingFromOutsideOfSubGraphToParseRoot()
@@ -2774,7 +2774,7 @@ namespace m0.ZeroCode
 
             foreach (IEdge e in baseVertex.ToList())
                 if (!GeneralUtil.CompareStrings(e.Meta, "$ParseRoot"))
-                    foreach (IEdge ee in GraphUtil.GetSubGraphEdgesAsList(e))
+                    foreach (IEdge ee in GraphUtil.GetSubGraphWithoutLinksEdgesAsList(e))
                         if (VertexOperations.IsLink(ee))
                             ee.From.DeleteEdge(ee);
                         else

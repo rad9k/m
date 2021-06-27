@@ -64,9 +64,27 @@ namespace m0.ZeroUML.Instructions
             _MoveEdgesIntoVertex(source, target, sourceGraph_Flat);
         }
 
+        public static void MoveEdgesIntoVertex_NoBootstrap(IVertex source, IVertex target)
+        {
+            IList<IVertex> sourceGraph_Flat = GraphUtil.GetSubGraphWithLinksAsListButExcludeList(source, MinusZero.Instance.BootstrapVertexes);
+
+            sourceGraph_Flat = RemoveAlwaysPresent(sourceGraph_Flat);
+
+            _MoveEdgesIntoVertex(source, target, sourceGraph_Flat);
+        }
+
         public static void MoveEdgesIntoVertex_NoLinks(IVertex source, IVertex target)
         {
-            IList<IVertex> sourceGraph_Flat = GraphUtil.GetSubGraphAsList(source);
+            IList<IVertex> sourceGraph_Flat = GraphUtil.GetSubGraphWithoutLinksAsList(source);
+
+            sourceGraph_Flat = RemoveAlwaysPresent(sourceGraph_Flat);
+
+            _MoveEdgesIntoVertex(source, target, sourceGraph_Flat);
+        }
+
+        public static void MoveEdgesIntoVertex_NoLinksNoBootstrap(IVertex source, IVertex target)
+        {
+            IList<IVertex> sourceGraph_Flat = GraphUtil.GetSubGraphWithoutLinksAsListButExcludeList(source, MinusZero.Instance.BootstrapVertexes);
 
             sourceGraph_Flat = RemoveAlwaysPresent(sourceGraph_Flat);
 

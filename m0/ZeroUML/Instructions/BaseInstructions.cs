@@ -518,8 +518,40 @@ namespace m0.ZeroUML.Instructions
                 IVertex leftExecuteFirstVertex = _leftExecuteResult.OutEdges[0].To;
                 //IList<IEdge> rightExecuteResult = _rightExecuteResult.OutEdges; XXX
 
-                ZeroUMLInstructionHelpers.MoveEdgesIntoVertex_NoLinks(_rightExecuteResult, leftExecuteFirstVertex);                                
+                ZeroUMLInstructionHelpers.MoveEdgesIntoVertex_NoLinksNoBootstrap(_rightExecuteResult, leftExecuteFirstVertex);                                
             }                       
+
+            return exe.Stack;
+        }
+
+        // <<<
+        public static INoInEdgeInOutVertexVertex AddRightEdgesIntoFirstLeftEdgeAndSetStoreForSubGraphIncludingLinksAsIsInLeftVertex(ZeroCodeExecution exe, IVertex inputStack, IVertex instructionVertex, out bool isStackFrameReturn)
+        {
+            isStackFrameReturn = false;
+
+            IVertex leftExpression = GetLeft(instructionVertex);
+            IVertex rightExpression = GetRight(instructionVertex);
+
+            if (leftExpression == null || rightExpression == null)
+                return exe.Stack;
+
+            INoInEdgeInOutVertexVertex _leftExecuteResult = exe.ExecuteInstructionByMontevideoPrinciples(exe.Stack, leftExpression);
+
+
+            IVertex newVertexCreationSpace_copy = exe.NewVertexCreationSpace;
+            exe.NewVertexCreationSpace = CreateStack();
+
+            INoInEdgeInOutVertexVertex _rightExecuteResult = exe.ExecuteInstructionByMontevideoPrinciples(exe.Stack, rightExpression);
+
+            exe.NewVertexCreationSpace = newVertexCreationSpace_copy;
+
+            if (_leftExecuteResult.Count() > 0)
+            {
+                IVertex leftExecuteFirstVertex = _leftExecuteResult.OutEdges[0].To;
+                //IList<IEdge> rightExecuteResult = _rightExecuteResult.OutEdges; XXX
+                
+                ZeroUMLInstructionHelpers.MoveEdgesIntoVertex_NoBootstrap(_rightExecuteResult, leftExecuteFirstVertex);
+            }
 
             return exe.Stack;
         }

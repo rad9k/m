@@ -19,6 +19,8 @@ namespace m0
 {
     public class MinusZero : IStoreUniverse, IDisposable
     {
+        public IList<IVertex> BootstrapVertexes;
+
         public bool AllowBug = true;
 
         public static MinusZero Instance = new MinusZero();
@@ -369,6 +371,11 @@ namespace m0
             return store;
         }
 
+        void FillBootstrapVertexes()
+        {
+            BootstrapVertexes = GraphUtil.GetSubGraphWithoutLinksAsList(root);
+        }
+
         void AddHardware()
         {
             IVertex Hardware = root.AddVertex(null, "Hardware");
@@ -402,6 +409,8 @@ namespace m0
             InitRootVariables();
 
             Init_AfterZeroCodeDefintionCreated();
+
+            FillBootstrapVertexes();
 
             AddHardware();
 

@@ -1,4 +1,14 @@
 ﻿"Y"
+	variable "ap" @Vertex
+	variable "b" @Vertex
+	variable "c" @Vertex
+	ap = Drive:C\:m0\:'a.m0'\$Store\:per
+	b = Drive:C\:m0\:'b.m0'\$Store
+	c = Drive:C\:m0\:'c.m0'\$Store
+	c <<< ap
+
+
+"Y"
 	variable "s" @VertexType
 	s = @@System\Lib\Std
 	variable "out" @String

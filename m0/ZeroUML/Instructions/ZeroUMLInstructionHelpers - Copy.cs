@@ -133,7 +133,7 @@ namespace m0.ZeroUML.Instructions
 
                 moveTarget.Value = baseVertex.Value;
 
-                allToMoveSubGraphVertexes = GraphUtil.GetSubGraphAsList(baseVertex);
+                allToMoveSubGraphVertexes = GraphUtil.GetSubGraphWithoutLinksAsList(baseVertex);
             }
             else
             {
@@ -141,7 +141,7 @@ namespace m0.ZeroUML.Instructions
 
                 foreach (IEdge e in toMoveList)
                 {
-                    List<IVertex> localList = GraphUtil.GetSubGraphAsList(e.To);
+                    List<IVertex> localList = GraphUtil.GetSubGraphWithoutLinksAsList(e.To);
 
                     allToMoveSubGraphVertexes.AddRange(localList);
                 }
