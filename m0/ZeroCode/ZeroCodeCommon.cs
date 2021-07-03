@@ -358,7 +358,7 @@ namespace m0.ZeroCode
             if (o == null)
                 return "";
 
-            string s=o.ToString();
+            string s = o.ToString();
 
             bool needToSurroundWithEscape = false;
 
@@ -372,6 +372,7 @@ namespace m0.ZeroCode
             {
                 //s = s.Replace("\\", "\\\\");
                 s = s.Replace(dict.EscapeCharacter.ToString(), String.Concat(dict.EscapeCharacter, dict.EscapeCharacter));
+                
                 needToSurroundWithEscape = true;
             }
 
@@ -426,7 +427,7 @@ namespace m0.ZeroCode
 
                 string descaped = text.Substring(begSpos + 1, sPos - begSpos - 2);
 
-                descaped = descaped.Replace(String.Concat(dict.EscapeCharacter, dict.EscapeCharacter), dict.EscapeCharacter.ToString());
+                descaped = descaped.Replace(String.Concat(dict.EscapeCharacter, dict.EscapeCharacter), dict.EscapeCharacter.ToString());                
 
                 descaped = descaped.Replace(String.Concat(dict.EscapeCharacter, dict.EscapedSequencePrefix), dict.EscapedSequencePrefix.ToString());
 

@@ -1,4 +1,5 @@
 ﻿using m0.Foundation;
+using m0.Graph;
 using m0.ZeroTypes;
 using System;
 using System.Collections.Generic;
@@ -55,6 +56,14 @@ namespace m0
             VertexOperations.AddInstance(r, r.Get(false, @"System\Lib\Music\Generator\MelodyFlow"));
 
             VertexOperations.AddInstance(r, r.Get(false, @"System\Lib\Music\Generator\ChordProgression"));
+
+            //
+
+            IStore rs=null;
+
+            foreach (IStore s in MinusZero.Instance.stores)
+                if (s.Identifier == "$-0$ROOT$STORE$")
+                    rs = s;
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)

@@ -395,7 +395,7 @@ namespace m0.ZeroCode.Helpers
         public char EscapeCharacter;
         public string SetIndexPrefix;
         public string SetIndexPostfix;
-        public char QuerySlash;
+        public char QuerySlash;        
 
         public HashSet<string> CodeViewTimeLinkKeywordParts;
 
@@ -467,7 +467,7 @@ namespace m0.ZeroCode.Helpers
             EscapeCharacter = get("EscapeCharacter").ToCharArray()[0];
             SetIndexPrefix = get("SetIndexPrefix");
             SetIndexPostfix = get("SetIndexPostfix");
-            QuerySlash = get("QuerySlash").ToCharArray()[0]; ;
+            QuerySlash = get("QuerySlash").ToCharArray()[0];            
 
             CodeViewTimeLinkKeywordParts = getHashSet("CodeViewTimeLinkKeywordPart");
 

@@ -42,21 +42,79 @@ namespace m0.ZeroUML.Instructions
 
             INoInEdgeInOutVertexVertex newQs = CreateStack();
 
-            IEdge e;
-            IList<IEdge> eList;
+            IEdge e = null;
+            IList<IEdge> eList = null;
 
-            if (exe.metaMode)
-                inputQs.QueryOutEdges(value, null, out e, out eList);
-            else
-                inputQs.QueryOutEdges(null, value, out e, out eList);
+            bool isInEdge;
 
-            if (e != null)
-                newQs.AddEdgeForNoInEdgeInOutVertexVertex_BAD_BEHAVIOR_IEdge_MANY_TIMES(e);
+            IList<string> processedValueList = processQueryValue(exe, value, out isInEdge);
 
-            if (eList != null)
-                AddToStack_BAD_BEHAVIOR_IEdge_MANY_TIMES(newQs, eList);
+
+            foreach (string processedValue in processedValueList)
+            {
+                if (isInEdge)
+                {
+                    foreach (IEdge inputQsEdge in inputQs)
+                        if (exe.metaMode)                        
+                            inputQsEdge.From.QueryInEdges(processedValue, null, out e, out eList);
+                        else
+                            inputQsEdge.From.QueryInEdges(null, processedValue, out e, out eList);
+                }
+                else
+                {
+                    if (exe.metaMode)
+                        inputQs.QueryOutEdges(processedValue, null, out e, out eList);
+                    else
+                        inputQs.QueryOutEdges(null, processedValue, out e, out eList);
+
+                    if (e != null)
+                        newQs.AddEdgeForNoInEdgeInOutVertexVertex_BAD_BEHAVIOR_IEdge_MANY_TIMES(e);
+
+                    if (eList != null)
+                        AddToStack_BAD_BEHAVIOR_IEdge_MANY_TIMES(newQs, eList);
+                }
+
+                
+            }
 
             return NextExpressionHandle(exe, newQs, instructionVertex);
+        }
+
+        private static List<string> processQueryValue(ZeroCodeExecution exe, string value, out bool isInEdge)
+        {
+            isInEdge = false;
+
+            List<string> retList = new List<string>();
+
+            if (value == null)
+                return retList;
+
+            if (value == "")
+            {
+                retList.Add("");
+                return retList;
+            }  
+                
+            if(value[0] == '~')
+            {
+                value = value.Substring(1);
+                isInEdge = true;
+            }
+
+            if (value.Length > 2 && value[0] == '{' && value[value.Length - 1] == '}')
+            {
+                string expression = value.Substring(1, value.Length - 3);
+
+                IEnumerable<IEdge> stackQueryResult = exe.Stack.GetAll(exe.metaMode, expression);
+
+                foreach (IEdge e in stackQueryResult)
+                    if(e.To.Value != null)
+                        retList.Add(e.To.Value.ToString());
+            }
+            else
+                retList.Add(value);
+
+            return retList;
         }
 
         public static INoInEdgeInOutVertexVertex InnerOperator(ZeroCodeExecution exe, IVertex inputQs, IVertex instructionVertex, out bool isStackFrameReturn)
