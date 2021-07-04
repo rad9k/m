@@ -42,8 +42,8 @@ namespace m0.ZeroUML.Instructions
 
             INoInEdgeInOutVertexVertex newQs = CreateStack();
 
-            IEdge e = null;
-            IList<IEdge> eList = null;
+            IEdge e;
+            IList<IEdge> eList;
 
             bool isInEdge;
 
@@ -54,11 +54,24 @@ namespace m0.ZeroUML.Instructions
             {
                 if (isInEdge)
                 {
-                    foreach (IEdge inputQsEdge in inputQs)
-                        if (exe.metaMode)                        
-                            inputQsEdge.From.QueryInEdges(processedValue, null, out e, out eList);
+                    foreach (IVertex fromVertex in getFromVertexListFromStack(inputQs))
+                    {
+                        if (exe.metaMode)
+                            fromVertex.QueryInEdges(processedValue, null, out e, out eList);                            
                         else
-                            inputQsEdge.From.QueryInEdges(null, processedValue, out e, out eList);
+                            fromVertex.QueryInEdges(null, processedValue, out e, out eList);
+
+                        IEdge e_reverse;
+                        IList<IEdge> eList_reverse;
+
+                        createReverseEdges(e, eList, out e_reverse, out eList_reverse);
+
+                        if (e != null)
+                            newQs.AddEdgeForNoInEdgeInOutVertexVertex_BAD_BEHAVIOR_IEdge_MANY_TIMES(e_reverse);
+
+                        if (eList != null)
+                            AddToStack_BAD_BEHAVIOR_IEdge_MANY_TIMES(newQs, eList_reverse);
+                    }
                 }
                 else
                 {
@@ -78,6 +91,35 @@ namespace m0.ZeroUML.Instructions
             }
 
             return NextExpressionHandle(exe, newQs, instructionVertex);
+        }
+
+        private static void createReverseEdges(IEdge e, IList<IEdge> eList, out IEdge e_reverse, out IList<IEdge> eList_reverse)
+        {
+            e_reverse = null;
+            eList_reverse = null;
+
+            if (e != null)
+                e_reverse = GraphUtil.CreateArtificialEdge(e.Meta, e.From);
+
+            if (eList != null) {
+                eList_reverse = new List<IEdge>();
+
+                foreach (IEdge _e in eList)
+                    eList_reverse.Add(GraphUtil.CreateArtificialEdge(_e.Meta, _e.From));
+            }
+
+            
+        }
+
+        private static IList<IVertex> getFromVertexListFromStack(IVertex stack)
+        {
+            IList<IVertex> fromVertexList = new List<IVertex>();
+
+            foreach (IEdge e in stack)
+                if (!fromVertexList.Contains(e.From))
+                    fromVertexList.Add(e.From);
+
+            return fromVertexList;
         }
 
         private static List<string> processQueryValue(ZeroCodeExecution exe, string value, out bool isInEdge)
