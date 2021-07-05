@@ -396,7 +396,7 @@ namespace m0
                 ",FunctionCall{Target{$MinCardinality:1,$MaxCardinality:1}}" +
                 ",MethodCall{Target{$MinCardinality:1,$MaxCardinality:1}},New" +
                 ",SetIndex,SetCount" +
-                ",\"{}\",InnerCreation,EdgeSetAdd,EdgeSetSubstract,+,-,Mul,/,?,\"\\ \",Colon,DoubleColon,DoubleSemicolon,CopySet,MetaToTo,()"+
+                ",\"{}\",InnerCreation,EdgeSetAdd,EdgeSetSubstract,+,-,Mul,/,?,\"\\ \",InEdgesSlash,Colon,DoubleColon,DoubleSemicolon,CopySet,MetaToTo,()"+
                 ",RedirectLeftEdgesToRightVertices,AddLeftEdgesToRightVertices,AddRightEdgesIntoLeftEdges,DeleteRightVertices,DeleteRightEdgesFromLeftEdges,DeleteRightVerticesFromLeftEdges" +
                 ",SetLeftVertexesToFirstRightVertexValue,AddRightEdgesIntoFirstLeftEdgeAndSetStoreForSubGraphAsIsInLeftVertex,AddRightEdgesIntoFirstLeftEdgeAndSetStoreForSubGraphIncludingLinksAsIsInLeftVertex" +
                 ",Equal,ExactEqual,VertexEqual,NotEqual,Negation,And,Or,MoreThan,LessThan,MoreOrEqualThan,LessOrEqualThan" +
@@ -424,6 +424,7 @@ namespace m0
             AddDotNetEndPoint(LegacySystem.Graph.EasyVertex.Get(smu, false, "\"{}\""), "InnerOperator");
             AddDotNetEndPoint(LegacySystem.Graph.EasyVertex.Get(smu, false, "?"), "QuestionMarkOperator");
             AddDotNetEndPoint(LegacySystem.Graph.EasyVertex.Get(smu, false, "\"\\ \""), "SlashOperator");
+            AddDotNetEndPoint(LegacySystem.Graph.EasyVertex.Get(smu, false, "InEdgesSlash"), "InEdgesSlashOperator");
             AddDotNetEndPoint(LegacySystem.Graph.EasyVertex.Get(smu, false, "\"Colon\""), "ColonOperator");            
 
             // edge operators
@@ -1991,7 +1992,34 @@ namespace m0
             IVertex o_Slash_any_targetExpr = o_Slash_any.AddVertex(LegacySystem.Graph.EasyVertex.Get(smu, false, @"ExpressionAtom\NextExpression"), "");
 
             o_Slash_any_targetExpr.AddEdge(LegacySystem.Graph.EasyVertex.Get(smb, false, "$$LocalRoot"), kgd_ColonEmptyInner2SlashMarkIndexMethod);
-            
+
+            // ~
+            //
+            // ~                         
+
+            IVertex o_InSlash = k.AddVertex(keyword, @"~");
+
+            o_InSlash.AddEdge(keywordGroup, kgd_SlashMarkIndexMethod);
+
+            o_InSlash.AddEdge(keywordGroup, kgd_SlashMarkIndexMethodInner2);
+
+            o_InSlash.AddEdge(keywordGroup, kgd_ColonEmptyInner2SlashMarkIndexMethod);
+
+            o_InSlash.AddEdge(keywordGroup, kgd_ColonEmptyInner2SlashMarkIndexMethodNewLink);
+
+            o_InSlash.AddEdge(keywordGroup, kgd_ColonEmptyInner2SlashMarkIndexMethodNewLinkBracketCopy);
+
+            IVertex o_InSlash_any = o_InSlash.AddVertex(any, "");
+
+            o_InSlash_any.AddVertex(LegacySystem.Graph.EasyVertex.Get(smb, false, "$$StartInLocalRoot"), "");
+
+            o_InSlash_any.AddEdge(LegacySystem.Graph.EasyVertex.Get(smb, false, @"Vertex\$Is"),
+                LegacySystem.Graph.EasyVertex.Get(smu, false, "InEdgesSlash"));
+
+            IVertex o_InSlash_any_targetExpr = o_InSlash_any.AddVertex(LegacySystem.Graph.EasyVertex.Get(smu, false, @"ExpressionAtom\NextExpression"), "");
+
+            o_InSlash_any_targetExpr.AddEdge(LegacySystem.Graph.EasyVertex.Get(smb, false, "$$LocalRoot"), kgd_ColonEmptyInner2SlashMarkIndexMethod);
+
             // ?
             //
             // ?                         

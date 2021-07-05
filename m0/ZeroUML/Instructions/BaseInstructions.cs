@@ -51,64 +51,31 @@ namespace m0.ZeroUML.Instructions
 
 
             foreach (string processedValue in processedValueList)
-            {
-                if (isInEdge)
-                {
-                    foreach (IVertex fromVertex in getFromVertexListFromStack(inputQs))
-                    {
-                        if (exe.metaMode)
-                            fromVertex.QueryInEdges(processedValue, null, out e, out eList);                            
-                        else
-                            fromVertex.QueryInEdges(null, processedValue, out e, out eList);
-
-                        IEdge e_reverse;
-                        IList<IEdge> eList_reverse;
-
-                        createReverseEdges(e, eList, out e_reverse, out eList_reverse);
-
-                        if (e != null)
-                            newQs.AddEdgeForNoInEdgeInOutVertexVertex_BAD_BEHAVIOR_IEdge_MANY_TIMES(e_reverse);
-
-                        if (eList != null)
-                            AddToStack_BAD_BEHAVIOR_IEdge_MANY_TIMES(newQs, eList_reverse);
-                    }
-                }
+            {            
+                if (exe.metaMode)
+                    inputQs.QueryOutEdges(processedValue, null, out e, out eList);
                 else
-                {
-                    if (exe.metaMode)
-                        inputQs.QueryOutEdges(processedValue, null, out e, out eList);
-                    else
-                        inputQs.QueryOutEdges(null, processedValue, out e, out eList);
+                    inputQs.QueryOutEdges(null, processedValue, out e, out eList);
 
-                    if (e != null)
-                        newQs.AddEdgeForNoInEdgeInOutVertexVertex_BAD_BEHAVIOR_IEdge_MANY_TIMES(e);
+                if (e != null)
+                    newQs.AddEdgeForNoInEdgeInOutVertexVertex_BAD_BEHAVIOR_IEdge_MANY_TIMES(e);
 
-                    if (eList != null)
-                        AddToStack_BAD_BEHAVIOR_IEdge_MANY_TIMES(newQs, eList);
-                }
-
-                
+                if (eList != null)
+                    AddToStack_BAD_BEHAVIOR_IEdge_MANY_TIMES(newQs, eList);                
             }
 
             return NextExpressionHandle(exe, newQs, instructionVertex);
         }
 
-        private static void createReverseEdges(IEdge e, IList<IEdge> eList, out IEdge e_reverse, out IList<IEdge> eList_reverse)
-        {
-            e_reverse = null;
-            eList_reverse = null;
+        private static IList<IEdge> createReverseEdges(IList<IEdge> eList)
+        {                        
+            IList<IEdge> reverseEdges = new List<IEdge>();
 
-            if (e != null)
-                e_reverse = GraphUtil.CreateArtificialEdge(e.Meta, e.From);
+            foreach (IEdge e in eList)
+                reverseEdges.Add(GraphUtil.CreateArtificialEdge(e.Meta, e.From));
 
-            if (eList != null) {
-                eList_reverse = new List<IEdge>();
 
-                foreach (IEdge _e in eList)
-                    eList_reverse.Add(GraphUtil.CreateArtificialEdge(_e.Meta, _e.From));
-            }
-
-            
+            return reverseEdges;
         }
 
         private static IList<IVertex> getFromVertexListFromStack(IVertex stack)
@@ -209,6 +176,19 @@ namespace m0.ZeroUML.Instructions
             foreach (IEdge e in inputQs)
                 foreach (IEdge ee in e.To)
                     newQs.AddEdgeForNoInEdgeInOutVertexVertex_BAD_BEHAVIOR_IEdge_MANY_TIMES(ee);
+
+            return NextExpressionHandle(exe, newQs, instructionVertex);
+        }
+
+        public static INoInEdgeInOutVertexVertex InEdgesSlashOperator(ZeroCodeExecution exe, IVertex inputQs, IVertex instructionVertex, out bool isStackFrameReturn)
+        {
+            isStackFrameReturn = false;
+
+            INoInEdgeInOutVertexVertex newQs = CreateStack();
+
+            foreach (IEdge e in inputQs)
+                foreach (IEdge ee in e.From.InEdges)
+                    newQs.AddEdgeForNoInEdgeInOutVertexVertex_BAD_BEHAVIOR_IEdge_MANY_TIMES(GraphUtil.CreateArtificialEdge(ee.Meta, ee.From));
 
             return NextExpressionHandle(exe, newQs, instructionVertex);
         }
