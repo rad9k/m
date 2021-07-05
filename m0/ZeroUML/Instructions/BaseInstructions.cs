@@ -137,11 +137,11 @@ namespace m0.ZeroUML.Instructions
                 return retList;
             }  
                 
-            if(value[0] == '~')
+            /*if(value[0] == '~')
             {
                 value = value.Substring(1);
                 isInEdge = true;
-            }
+            }*/
 
             if (value.Length > 2 && value[0] == '{' && value[value.Length - 1] == '}')
             {
