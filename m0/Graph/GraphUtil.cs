@@ -375,6 +375,26 @@ namespace m0.Graph
             return new List<IEdge>();
         }
 
+        public static IList<IEdge> GetQueryIn(IVertex baseVertex, object meta, object value)
+        {
+            IEdge result;
+            IList<IEdge> results;
+
+            baseVertex.QueryInEdges(meta, value, out result, out results);
+
+            if (result != null)
+            {
+                results = new List<IEdge>();
+                results.Add(result);
+                return results;
+            }
+
+            if (results != null && results.Count > 0)
+                return results;
+
+            return new List<IEdge>();
+        }
+
         public static int GetQueryOutCount(IVertex baseVertex, object meta, object value)
         {
             IEdge result;

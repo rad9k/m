@@ -162,10 +162,23 @@ namespace m0.Util
 
         public static bool CompareStrings(object o, object o2)
         {
-            if (o == null||o2==null)
+            if (o == null || o2 == null)
                 return false;
             else
                 return o.ToString() == o2.ToString();
+        }
+
+        public static bool CompareStrings(object o, string[] o2)
+        {
+            if (o != null && o2 != null) {
+                string os = o.ToString();
+
+                foreach (string s in o2)
+                    if (o.ToString() == o2.ToString())
+                        return true;
+            }
+
+            return false;
         }
 
         public static IVertex GetVertexByStoreIdAndId(string storeIdentifier, object identifier)

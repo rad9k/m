@@ -186,9 +186,34 @@ namespace m0.ZeroUML.Instructions
 
             INoInEdgeInOutVertexVertex newQs = CreateStack();
 
+            IList<IVertex> fromVertexList = new List<IVertex>();
+
+            bool isFirstOperatorInExpression = true;
+
+            foreach (IEdge e in instructionVertex.InEdges)
+            {
+                IList<IEdge> metaIsValuesList = GraphUtil.GetQueryOut(e.From, "$Is", null);
+
+                foreach(IEdge ee in metaIsValuesList)
+                    if (GeneralUtil.CompareStrings(ee.To, new string[] { "Query", "{}", "Colon", "\\ " }))
+                        isFirstOperatorInExpression = false;
+            }
+
+
+
+                
+
             foreach (IEdge e in inputQs)
-                foreach (IEdge ee in e.From.InEdges)
+                if (!fromVertexList.Contains(e.From))
+                    fromVertexList.Add(e.From);
+
+            foreach (IVertex e in fromVertexList)
+                foreach (IEdge ee in e.InEdges)
                     newQs.AddEdgeForNoInEdgeInOutVertexVertex_BAD_BEHAVIOR_IEdge_MANY_TIMES(GraphUtil.CreateArtificialEdge(ee.Meta, ee.From));
+
+           // foreach (IEdge e in inputQs)
+            //    foreach (IEdge ee in e.From.InEdges)
+              //      newQs.AddEdgeForNoInEdgeInOutVertexVertex_BAD_BEHAVIOR_IEdge_MANY_TIMES(GraphUtil.CreateArtificialEdge(ee.Meta, ee.From));
 
             return NextExpressionHandle(exe, newQs, instructionVertex);
         }
