@@ -176,7 +176,7 @@ namespace m0.Util
                 foreach (string s in o2)
                     if (o.ToString() == o2.ToString())
                         return true;
-            }
+            } 
 
             return false;
         }
