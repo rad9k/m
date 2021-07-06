@@ -195,7 +195,7 @@ namespace m0.ZeroUML.Instructions
                 IList<IEdge> metaIsValuesList = GraphUtil.GetQueryOut(e.From, "$Is", null);
 
                 foreach(IEdge ee in metaIsValuesList)
-                    if (GeneralUtil.CompareStrings(ee.To, new string[] { "Query", "{}", "Colon", "\\ " }))
+                    if (GeneralUtil.CompareStrings(ee.To, new string[] { "Query", "{}", "Colon", "\\ ", "?" }))
                         isFirstOperatorInExpression = false;
             }
 

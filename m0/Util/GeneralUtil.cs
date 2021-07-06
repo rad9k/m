@@ -174,7 +174,7 @@ namespace m0.Util
                 string os = o.ToString();
 
                 foreach (string s in o2)
-                    if (o.ToString() == o2.ToString())
+                    if (os == s.ToString())
                         return true;
             } 
              
