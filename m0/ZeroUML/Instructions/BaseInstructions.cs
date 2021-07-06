@@ -199,21 +199,26 @@ namespace m0.ZeroUML.Instructions
                         isFirstOperatorInExpression = false;
             }
 
+            if (isFirstOperatorInExpression)
+            {                
+                foreach (IEdge e in inputQs)
+                    if (!fromVertexList.Contains(e.From))
+                        fromVertexList.Add(e.From);
 
+                foreach (IVertex e in fromVertexList)
+                    foreach (IEdge ee in e.InEdges)
+                        newQs.AddEdgeForNoInEdgeInOutVertexVertex_BAD_BEHAVIOR_IEdge_MANY_TIMES(GraphUtil.CreateArtificialEdge(ee.Meta, ee.From));
+            }
+            else
+            {
+                foreach (IEdge e in inputQs)
+                    if (!fromVertexList.Contains(e.From))
+                        fromVertexList.Add(e.From);
 
-                
-
-            foreach (IEdge e in inputQs)
-                if (!fromVertexList.Contains(e.From))
-                    fromVertexList.Add(e.From);
-
-            foreach (IVertex e in fromVertexList)
-                foreach (IEdge ee in e.InEdges)
-                    newQs.AddEdgeForNoInEdgeInOutVertexVertex_BAD_BEHAVIOR_IEdge_MANY_TIMES(GraphUtil.CreateArtificialEdge(ee.Meta, ee.From));
-
-           // foreach (IEdge e in inputQs)
-            //    foreach (IEdge ee in e.From.InEdges)
-              //      newQs.AddEdgeForNoInEdgeInOutVertexVertex_BAD_BEHAVIOR_IEdge_MANY_TIMES(GraphUtil.CreateArtificialEdge(ee.Meta, ee.From));
+                foreach (IVertex e in fromVertexList)
+                    foreach (IEdge ee in e.InEdges)
+                        newQs.AddEdgeForNoInEdgeInOutVertexVertex_BAD_BEHAVIOR_IEdge_MANY_TIMES(GraphUtil.CreateArtificialEdge(ee.Meta, ee.From));
+            }           
 
             return NextExpressionHandle(exe, newQs, instructionVertex);
         }
