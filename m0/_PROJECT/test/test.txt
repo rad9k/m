@@ -1,4 +1,23 @@
 ﻿"Y"
+	variable "a" @Vertex
+	variable "b" @String
+	variable "c" @Vertex
+	a = @@System
+	b = "Class"
+	b += "AtomType"
+	c = a\:Meta\:ZeroTypes\'{b}'
+
+"Y"
+	variable "a" @Vertex
+	variable "b" @String
+	variable "c" @Vertex
+	a = @@System
+	b = "HasFilter"
+	b += "HasColor"
+	c = a\:Meta\:ZeroTypes\Class:'{b}'
+
+
+"Y"
 	variable "ap" @Vertex
 	variable "b" @Vertex
 	variable "c" @Vertex

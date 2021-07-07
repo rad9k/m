@@ -45,9 +45,7 @@ namespace m0.ZeroUML.Instructions
             IEdge e;
             IList<IEdge> eList;
 
-            bool isInEdge;
-
-            IList<string> processedValueList = processQueryValue(exe, value, out isInEdge);
+            IList<string> processedValueList = processQueryValue(exe, value);
 
 
             foreach (string processedValue in processedValueList)
@@ -67,32 +65,8 @@ namespace m0.ZeroUML.Instructions
             return NextExpressionHandle(exe, newQs, instructionVertex);
         }
 
-        private static IList<IEdge> createReverseEdges(IList<IEdge> eList)
-        {                        
-            IList<IEdge> reverseEdges = new List<IEdge>();
-
-            foreach (IEdge e in eList)
-                reverseEdges.Add(GraphUtil.CreateArtificialEdge(e.Meta, e.From));
-
-
-            return reverseEdges;
-        }
-
-        private static IList<IVertex> getFromVertexListFromStack(IVertex stack)
+        private static List<string> processQueryValue(ZeroCodeExecution exe, string value)
         {
-            IList<IVertex> fromVertexList = new List<IVertex>();
-
-            foreach (IEdge e in stack)
-                if (!fromVertexList.Contains(e.From))
-                    fromVertexList.Add(e.From);
-
-            return fromVertexList;
-        }
-
-        private static List<string> processQueryValue(ZeroCodeExecution exe, string value, out bool isInEdge)
-        {
-            isInEdge = false;
-
             List<string> retList = new List<string>();
 
             if (value == null)
@@ -104,12 +78,6 @@ namespace m0.ZeroUML.Instructions
                 return retList;
             }  
                 
-            /*if(value[0] == '~')
-            {
-                value = value.Substring(1);
-                isInEdge = true;
-            }*/
-
             if (value.Length > 2 && value[0] == '{' && value[value.Length - 1] == '}')
             {
                 string expression = value.Substring(1, value.Length - 3);
@@ -245,12 +213,30 @@ namespace m0.ZeroUML.Instructions
                 rightValue = GraphUtil.GetStringValue(rightExpression);
 
             string metaQueryString = null, toQueryString = null;
+            IList<string> processedMetaQueryStrings = null, processedToQueryStrings = null;
+
 
             if (leftValue != null && leftValue != "")
+            {
                 metaQueryString = leftValue;
+                processedMetaQueryStrings = processQueryValue(exe, metaQueryString);
+            }
+            else
+            {
+                processedMetaQueryStrings = new List<string>();
+                processedMetaQueryStrings.Add(null);
+            }
 
             if (rightValue != null && rightValue != "")
+            {
                 toQueryString = rightValue;
+                processedToQueryStrings = processQueryValue(exe, toQueryString);
+            }
+            else
+            {
+                processedToQueryStrings = new List<string>();
+                processedToQueryStrings.Add(null);
+            }
 
             INoInEdgeInOutVertexVertex newQs = CreateStack();
 
@@ -259,13 +245,17 @@ namespace m0.ZeroUML.Instructions
                 IEdge e;
                 IList<IEdge> eList;
 
-                inputQs.QueryOutEdges(metaQueryString, toQueryString, out e, out eList);
+                foreach (string processedToString in processedToQueryStrings)
+                    foreach (string processedMetaString in processedMetaQueryStrings)
+                    {
+                        inputQs.QueryOutEdges(processedMetaString, processedToString, out e, out eList);
 
-                if (e != null)
-                    newQs.AddEdgeForNoInEdgeInOutVertexVertex_BAD_BEHAVIOR_IEdge_MANY_TIMES(e);
+                        if (e != null)
+                            newQs.AddEdgeForNoInEdgeInOutVertexVertex_BAD_BEHAVIOR_IEdge_MANY_TIMES(e);
 
-                if (eList != null)
-                    AddToStack_BAD_BEHAVIOR_IEdge_MANY_TIMES(newQs, eList);
+                        if (eList != null)
+                            AddToStack_BAD_BEHAVIOR_IEdge_MANY_TIMES(newQs, eList);
+                    }
             }
             else
                 AddToStack_BAD_BEHAVIOR_IEdge_MANY_TIMES(newQs, inputQs);
