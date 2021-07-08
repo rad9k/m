@@ -20,10 +20,6 @@
 
   <!-- This is the main ruleset. -->
   <RuleSet>
-    
-      <Rule color="grey">
-      \# (.)?
-    </Rule>
 
     <Span color="String">
       <Begin>"</Begin>
@@ -76,7 +72,7 @@
     </Rule>
     
     <Rule color="Operator">
-      &lt;&gt;|&lt;\+&gt;|&lt;-&gt;|&lt;-|\+&lt;|=|\+=|~=|-&lt;|~&lt;|&lt;-|&lt;\+&lt;|&lt;&lt;&lt;|&lt;&lt;|&gt;&gt;|~00|\+|-|\*|/|==|===|====|!=|!|\&amp;|\||&gt;=|&lt;=|::|:|;;|_|`|\[|\]|\(|\)|\\|\?|\{|\}|\.|,|\+&lt;
+      #|&lt;&gt;|&lt;\+&gt;|&lt;-&gt;|&lt;-|\+&lt;|=|\+=|~=|-&lt;|~&lt;|&lt;-|&lt;\+&lt;|&lt;&lt;&lt;|&lt;&lt;|&gt;&gt;|~00|\+|-|\*|/|==|===|====|!=|!|\&amp;|\||&gt;=|&lt;=|::|:|;;|_|`|\[|\]|\(|\)|\\|\?|\{|\}|\.|,|\+&lt;
     </Rule>
 
 

@@ -1052,13 +1052,14 @@ namespace m0
             IVertex importDirectMeta_link = importDirectMeta.AddVertex(LegacySystem.Graph.EasyVertex.Get(smb, false, @"$ImportDirectMeta"), "(?<link>)");
 
 
-            // comment
+          /*  // comment
             //
             // # (?<text>)
 
-            IVertex comment = k.AddVertex(keyword, "# (?<text>)");
+            IVertex comment = k.AddVertex(keyword, "REM (?<text>)");
 
             comment.AddVertex(LegacySystem.Graph.EasyVertex.Get(smb, false, @"Vertex\$Description"), "(?<text>)");
+            */
 
             // default
             //
@@ -1993,11 +1994,11 @@ namespace m0
 
             o_Slash_any_targetExpr.AddEdge(LegacySystem.Graph.EasyVertex.Get(smb, false, "$$LocalRoot"), kgd_ColonEmptyInner2SlashMarkIndexMethod);
 
-            // ~
+            // #
             //
-            // ~                         
+            // #                         
 
-            IVertex o_InSlash = k.AddVertex(keyword, @"~");
+            IVertex o_InSlash = k.AddVertex(keyword, @"#");
 
             o_InSlash.AddEdge(keywordGroup, kgd_SlashMarkIndexMethod);
 

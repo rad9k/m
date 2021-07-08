@@ -556,7 +556,7 @@ namespace m0.ZeroUML.Instructions
             return exe.Stack;
         }
 
-        // :=
+        // <-
         public static INoInEdgeInOutVertexVertex SetLeftVertexesToFirstRightVertexValue(ZeroCodeExecution exe, IVertex inputStack, IVertex instructionVertex, out bool isStackFrameReturn)
         {
             isStackFrameReturn = false;
