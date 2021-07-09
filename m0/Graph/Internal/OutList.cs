@@ -28,13 +28,14 @@ namespace m0.Graph.Internal
                         if (e.Meta == toCheckEdge.Meta && e.To == toCheckEdge.To)
                             return e;
                 }
-                else
-                {
+                else                
                     foreach (IEdge e in this)
-                        if (e.From == toCheckEdge.From && e.Meta == toCheckEdge.Meta && e.To == toCheckEdge.To)
+                    {                        
+                        if ( (toCheckEdge.From is INoInEdgeInOutVertexVertex && e.Meta == toCheckEdge.Meta && e.To == toCheckEdge.To) ||
+                        (e.From == toCheckEdge.From && e.Meta == toCheckEdge.Meta && e.To == toCheckEdge.To) )
                             return e;
-                }
-
+                    }
+                
             return null; 
         }
 

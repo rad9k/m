@@ -5,7 +5,7 @@ class "X"
 	attribute "a" @String
 	method "x"()
 		a = "val"
-		... = a  << will not return val becouse stack holds reference to old a edge. need to use this.a instead. also vertex not found by identifier might be connected with it
+		... = a  << will not return val becouse stack holds reference to old a edge. need to use this\a instead. also vertex not found by identifier might be connected with it
 96. do the exe.stack = InstructionHelpers.Create_INoInEdgeInOutVertexVertex_FromEdgesList(_toBeStackVertex);
 
             exe.newVertexCreationSpace = exe.stack;

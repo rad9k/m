@@ -541,17 +541,17 @@ namespace m0.ZeroUML.Instructions
             ISet<IEdge> rightResultToSet = CreateEdgeKey_ToSet(_rightExecuteResult);
 
             foreach (IEdge leftEdge in leftExecuteResult)
-                foreach (IEdge intoLeftEdge in leftEdge.To.ToList<IEdge>())
-                {
-                    HashSet<IEdge> usedEdges = new HashSet<IEdge>();
+            {
+                HashSet<IEdge> usedEdges = new HashSet<IEdge>();
 
+                foreach (IEdge intoLeftEdge in leftEdge.To.ToList<IEdge>())
                     foreach (IEdge rightEdge in rightResultToSet)
                         if (intoLeftEdge.To == rightEdge.To && !usedEdges.Contains(rightEdge))
                         {
                             usedEdges.Add(rightEdge);
                             intoLeftEdge.From.DeleteEdge(intoLeftEdge);
-                        }
-                }
+                        }                
+            }
 
             return exe.Stack;
         }
