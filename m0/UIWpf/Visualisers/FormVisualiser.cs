@@ -238,7 +238,8 @@ namespace m0.UIWpf.Visualisers
 
             if (ExecutableVisualiserFactory.IsOfExecutableMeta(metaForForm))
                 foreach(IEdge e in ExecutableVisualiserFactory.GetExecutableEdges(metaForForm))
-                    PreFillFormAnalyseEdge(e.To, false);
+                    if (e.To.Get(false, "$Hide:") == null)
+                        PreFillFormAnalyseEdge(e.To, false);
         }
 
         bool IsDisposed = false;
@@ -364,7 +365,8 @@ namespace m0.UIWpf.Visualisers
 
                 if (ExecutableVisualiserFactory.IsOfExecutableMeta(metaForForm))
                     foreach (IEdge e in ExecutableVisualiserFactory.GetExecutableEdges(metaForForm))
-                        AddEdge(e.To, false);
+                        if (e.To.Get(false, "$Hide:") == null)
+                            AddEdge(e.To, false);
 
                 if (MetaOnLeft){
                     if (!HasTabs)

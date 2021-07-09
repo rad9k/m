@@ -33,4 +33,4 @@ this\tst -< this\Output x
 
 this\tst ~< @@Sequence ;; this\Output -
 this\tst ~< @@Sequence :: this\Output x
-this\tst ~< this\Output x
+this\tst ~< this\Output -
