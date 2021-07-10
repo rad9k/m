@@ -229,7 +229,8 @@ namespace m0_COMPOSER.UIWpf.Visualisers
         {
             IVertex r = MinusZero.Instance.Root;
 
-            IVertex Event = r.Get(false, @"System\Lib\Music\Event");
+            //IVertex Event = r.Get(false, @"System\Lib\Music\Event");
+            IVertex Event = r.Get(false, @"System\Lib\Music\Sequence\Event");
             IVertex noteEvent = r.Get(false, @"System\Lib\Music\NoteEvent");
 
             IEdge tempNoteEventEdge = SongVertex.AddVertexAndReturnEdge(null, null);
