@@ -40,6 +40,50 @@ remove ZeroCodeExecuter.AddRootToStack(exe); and ther is no. can be checked by "
 			Output +< "dupa"
 
 a lot of "dupa" here :(
+101. remove tab in the end of string line
+102. variable octave proper parsing, wrong graph2string
+"STORE"
+	import @System\Lib\Music direct meta
+	class "SimpleTransformer"
+		association "Input" @Sequence "0":"1"
+		association "Output" @Sequence "0":"1"
+		attribute "OctaveShift" @Integer "0":"1" <<"-8":"8">>
+		method "CopyAtomAttributes" ()
+			<@System\Meta\Presentation\$Hide :: @$Empty>
+			Output\ExtendTimeLength = _Input\ExtendTimeLength
+			if Output\Length === ~00
+				Output +< @@HasLength\Length :: _"0"
+			Output\Length = _Input\Length
+			if Output\IsDrum === ~00
+				Output +< @@Sequence\IsDrum :: _"False"
+			if Input\IsDrum<> == "1"
+				Output\IsDrum = _Input\IsDrum
+		method "DoOctaveShift" (@Vertex "octave")
+			return "5"
+		method "CopyEvents" ()
+			<@System\Meta\Presentation\$Hide :: @$Empty>
+			Output -< Output\Event:
+			foreach e in Input\Event:
+				Output +< @@History\Event :: e{
+					variable "octave" @Integer
+					octave = this.'DoOctaveShift'[e\Octave]
+					@@$Is :: @@NoteEvent
+					@@Event\TriggerTime :: _e\TriggerTime
+					@@HasLength\Length :: _e\Length
+					@@Pitch\Note :: _e\Note
+					@@Pitch\Octave :: octave
+					@@Note\Velocity :: _e\Velocity
+				}
+		method "PutIntoStore" ()
+			<@System\Meta\Presentation\$Hide :: @$Empty>
+			variable "parentVertex" @Vertex
+			parentVertex = Output#Sequence:
+			parentVertex <+< @@Sequence ;; Output
+			parentVertex -< @@Sequence ;; this\Output
+		method "Process" ()
+			this.CopyAtomAttributes[]
+			this.CopyEvents[]
+			this.PutIntoStore[]
 
 <><><> FUTURE 0.5
 

@@ -179,10 +179,15 @@ namespace m0.UIWpf.Visualisers
 
                 T test=default(T);
 
+                int additionalCharacterBecouseOfCanBeNegative = 0;
+
+                if ((int)GraphUtil.ToInt<T>(MinValue) < 0)
+                    additionalCharacterBecouseOfCanBeNegative = 1;
+
                 if (test is float)
-                    col0.Width = new GridLength(WpfUtil.GetHorizontalSizeOfCharacterString((int)Math.Ceiling(2*Math.Log10(Math.Max((int)GraphUtil.ToInt<T>(MinValue), (int)GraphUtil.ToInt<T>(MaxValue))))));
+                    col0.Width = new GridLength(WpfUtil.GetHorizontalSizeOfCharacterString(additionalCharacterBecouseOfCanBeNegative + (int)Math.Ceiling(2*Math.Log10(Math.Max((int)GraphUtil.ToInt<T>(MinValue), (int)GraphUtil.ToInt<T>(MaxValue))))));
                 else
-                    col0.Width = new GridLength(WpfUtil.GetHorizontalSizeOfCharacterString((int)Math.Ceiling(Math.Log10(Math.Max((int)GraphUtil.ToInt<T>(MinValue), (int)GraphUtil.ToInt<T>(MaxValue))))));
+                    col0.Width = new GridLength(WpfUtil.GetHorizontalSizeOfCharacterString(additionalCharacterBecouseOfCanBeNegative + (int)Math.Ceiling(Math.Log10(Math.Max((int)GraphUtil.ToInt<T>(MinValue), (int)GraphUtil.ToInt<T>(MaxValue))))));
 
                 this.ColumnDefinitions.Add(col0);
 
