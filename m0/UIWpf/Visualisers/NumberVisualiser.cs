@@ -32,6 +32,7 @@ namespace m0.UIWpf.Visualisers
     }
 
     public class NumberVisualiser<T> : Grid, IPlatformClass, IDisposable, IHasLocalizableEdges where T : new()    {
+        bool isContinous = false;
         bool IsRanged = false;
         T MinValue, MaxValue;
         TextBox TextBox;
@@ -175,16 +176,14 @@ namespace m0.UIWpf.Visualisers
 
                 ColumnDefinitions.Clear();
 
-                ColumnDefinition col0 = new ColumnDefinition();
-
-                T test=default(T);
+                ColumnDefinition col0 = new ColumnDefinition();                
 
                 int additionalCharacterBecouseOfCanBeNegative = 0;
 
                 if ((int)GraphUtil.ToInt<T>(MinValue) < 0)
                     additionalCharacterBecouseOfCanBeNegative = 1;
 
-                if (test is float)
+                if (isContinous)
                     col0.Width = new GridLength(WpfUtil.GetHorizontalSizeOfCharacterString(additionalCharacterBecouseOfCanBeNegative + (int)Math.Ceiling(2*Math.Log10(Math.Max((int)GraphUtil.ToInt<T>(MinValue), (int)GraphUtil.ToInt<T>(MaxValue))))));
                 else
                     col0.Width = new GridLength(WpfUtil.GetHorizontalSizeOfCharacterString(additionalCharacterBecouseOfCanBeNegative + (int)Math.Ceiling(Math.Log10(Math.Max((int)GraphUtil.ToInt<T>(MinValue), (int)GraphUtil.ToInt<T>(MaxValue))))));
@@ -210,7 +209,12 @@ namespace m0.UIWpf.Visualisers
                 if(MinValue != null && MaxValue!=null)
                 Slider.Minimum = (double)GraphUtil.ToDouble<T>(MinValue);
                 Slider.Maximum = (double)GraphUtil.ToDouble<T>(MaxValue);
-                Slider.IsSnapToTickEnabled = true;
+
+                if(isContinous)
+                    Slider.IsSnapToTickEnabled = false;
+                else
+                    Slider.IsSnapToTickEnabled = true;
+
                 Slider.Foreground = (Brush)FindResource("0GrayBrush");
                 Slider.TickFrequency = 1;
                 Slider.TickPlacement = TickPlacement.BottomRight;
@@ -257,6 +261,9 @@ namespace m0.UIWpf.Visualisers
                 this.AllowDrop = true;
 
                 this.MouseEnter += dndMouseEnter;
+
+                if (typeof(T) == typeof(double?))
+                    isContinous = true;
             }            
         }
 
