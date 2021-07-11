@@ -49,12 +49,20 @@ namespace m0.UIWpf.Visualisers.Method
 
             IVertex methodVertex = Vertex.Get(false, @"ExecutableVertex:");
 
-            this.IsEnabled = false;
+            this.Opacity = 0.2;
+
+            this.Visibility = Visibility.Hidden;
+
+            UpdateLayout();
 
             if(baseVertex != null && methodVertex != null)
                 ZeroCodeExecutonUtil.CreateExecutionAndVertexMethodExecute(methodVertex, baseVertex);
 
-            this.IsEnabled = true;
+            this.Opacity = 1;
+
+            this.Visibility = Visibility.Visible;
+
+            UpdateLayout();
         }
 
         protected void VertexChange(object sender, VertexChangeEventArgs e)
