@@ -49,8 +49,12 @@ namespace m0.UIWpf.Visualisers.Method
 
             IVertex methodVertex = Vertex.Get(false, @"ExecutableVertex:");
 
+            this.IsEnabled = false;
+
             if(baseVertex != null && methodVertex != null)
                 ZeroCodeExecutonUtil.CreateExecutionAndVertexMethodExecute(methodVertex, baseVertex);
+
+            this.IsEnabled = true;
         }
 
         protected void VertexChange(object sender, VertexChangeEventArgs e)

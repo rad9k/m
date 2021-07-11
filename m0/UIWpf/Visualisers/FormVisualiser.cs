@@ -761,7 +761,7 @@ namespace m0.UIWpf.Visualisers
             Vertex.Get(false, "ZoomVisualiserContent:").Value = 100;
             Vertex.Get(false, "ColumnNumber:").Value = 1;
             Vertex.Get(false, "SectionsAsTabs:").Value = "False";
-            Vertex.Get(false, "MetaOnLeft:").Value = "False";  
+            Vertex.Get(false, "MetaOnLeft:").Value = "False";            
         }
 
         void OnLoad(object sender, RoutedEventArgs e)
