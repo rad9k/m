@@ -15,6 +15,8 @@ using m0.UIWpf.Controls;
 using m0.UIWpf.Commands;
 using System.Windows;
 using m0.ZeroCode;
+using System.Threading;
+using System.Windows.Threading;
 
 namespace m0.UIWpf.Visualisers.Method
 {
@@ -43,26 +45,40 @@ namespace m0.UIWpf.Visualisers.Method
             }
         }
 
+        void ButtonVisualChange(bool isActive)
+        {
+            Thread thread = new Thread(new ThreadStart(delegate ()
+            {
+                Thread.Sleep(200); // this is important ...
+                try
+                {
+                    this.Dispatcher.BeginInvoke(DispatcherPriority.Send,
+                        new Action(delegate ()
+                        {
+                            if (isActive)
+                                this.IsEnabled = true;
+                            else
+                                this.IsEnabled = false;
+                        }));
+                }
+                catch { }
+            }));
+            thread.Name = "ThreadName";
+            thread.Start();
+        }
+
         private void VoidVoidMethodVisualiser_Click(object sender, RoutedEventArgs e)
         {
             IVertex baseVertex = Vertex.Get(false, @"BaseEdge:\To:");
 
             IVertex methodVertex = Vertex.Get(false, @"ExecutableVertex:");
 
-            this.Opacity = 0.2;
-
-            this.Visibility = Visibility.Hidden;
-
-            UpdateLayout();
+            ButtonVisualChange(false);
 
             if(baseVertex != null && methodVertex != null)
                 ZeroCodeExecutonUtil.CreateExecutionAndVertexMethodExecute(methodVertex, baseVertex);
 
-            this.Opacity = 1;
-
-            this.Visibility = Visibility.Visible;
-
-            UpdateLayout();
+            ButtonVisualChange(true);
         }
 
         protected void VertexChange(object sender, VertexChangeEventArgs e)

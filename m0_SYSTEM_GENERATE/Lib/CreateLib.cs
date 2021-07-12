@@ -40,6 +40,7 @@ namespace m0_SYSTEM_GENERATE.Lib
             AddFunction(LibStd, "Sqrt", type, "Sqrt", "Float", new TypeName[] { new TypeName("value", "Float", 0, -1) });
             AddFunction(LibStd, "Pow", type, "Pow", "Float", new TypeName[] { new TypeName("value", "Float", 0, -1), new TypeName("power", "Float") });
             AddFunction(LibStd, "Abs", type, "Abs", "Integer", new TypeName[] { new TypeName("value", "Float", 0, -1) });
+            AddFunction(LibStd, "Truncate", type, "Truncate", "Float", new TypeName[] { new TypeName("value", "Float", 0, -1) });
             AddFunction(LibStd, "Celling", type, "Celling", "Float", new TypeName[] { new TypeName("value", "Float", 0, -1) });
             AddFunction(LibStd, "Floor", type, "Floor", "Float", new TypeName[] { new TypeName("value", "Float", 0, -1) });
             AddFunction(LibStd, "Sin", type, "Sin", "Float", new TypeName[] { new TypeName("value", "Float", 0, -1) });

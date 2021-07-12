@@ -260,6 +260,28 @@ namespace m0.Lib
             return newStack;
         }
 
+        public static INoInEdgeInOutVertexVertex Truncate(IExecution exe)
+        {
+            INoInEdgeInOutVertexVertex stack = exe.Stack;
+
+            IList<IEdge> inputList = GraphUtil.GetQueryOut(stack, "value", null);
+
+            InstructionHelpers.NumericTypeEnum resType;
+
+            IList<object> numericList = InstructionHelpers.GetNumberList(inputList, out resType);
+
+            INoInEdgeInOutVertexVertex newStack = InstructionHelpers.CreateStack();
+
+            foreach (object o in numericList)
+            {
+                double doubleValue = Convert.ToDouble(o);
+
+                newStack.AddVertex(null, Math.Truncate(doubleValue));
+            }
+
+            return newStack;
+        }
+
         public static INoInEdgeInOutVertexVertex Celling(IExecution exe)
         {
             INoInEdgeInOutVertexVertex stack = exe.Stack;
