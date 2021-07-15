@@ -457,7 +457,7 @@ namespace m0_SYSTEM_GENERATE.Music
 
             GraphUtil.AddAttribute(ControlChangeDescription, "Number", Integer, 1, 1);
             GraphUtil.AddAttribute(ControlChangeDescription, "Description", String, 1, 1);
-            GraphUtil.AddAttribute(ControlChangeDescription, "Type", ControlChangeDescriptionTypeEnum, 0, 1);
+            GraphUtil.AddAssociation(ControlChangeDescription, "Type", ControlChangeDescriptionTypeEnum, 0, 1);
 
             // CONTROLCHANGEDESCRIPTIONSET
 
