@@ -70,6 +70,8 @@ namespace m0_COMPOSER.UIWpf.Visualisers
         public IVertex SongVertex;
         protected IVertex verticalSpanVertex;
         protected IVertex horizontalSpanVertex;
+        protected IVertex verticalSpanVertex_Down;
+
 
         protected IZoomScrollViewAxisDecorator VerticalAD;
         protected IZoomScrollViewAxisDecorator HorizontalAD;
@@ -1418,7 +1420,10 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             DownDecorator = new ControlChangeDownDecorator();
 
             if (ShowCCList)
+            {
                 DownDecorator.ShowCCList = true;
+                DownDecorator.SetBaseVertex(verticalSpanVertex_Down);
+            }
             else
                 DownDecorator.ShowCCList = false;
 

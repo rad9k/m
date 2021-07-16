@@ -251,32 +251,6 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             SetPlayRecordState(PlayRecordStateEnum.Stop);            
         }
 
-        protected IEdge AddNoteVertex(IVertex b, IVertex octave, IVertex note, int triggerTime, int length, int velocity)
-        {
-            IVertex r = MinusZero.Instance.Root;
-
-            IVertex Event = r.Get(false, @"System\Lib\Music\Event");
-            IVertex noteEvent = r.Get(false, @"System\Lib\Music\NoteEvent");
-
-            IEdge tempNoteEventEdge = b.AddVertexAndReturnEdge(null, null);
-
-            IVertex noteEventVertex = tempNoteEventEdge.To;
-
-            noteEventVertex.AddEdge(MinusZero.Instance.Is, noteEvent);
-
-            noteEventVertex.AddVertex(noteEvent.Get(false, @"Attribute:TriggerTime"), triggerTime);
-            noteEventVertex.AddVertex(noteEvent.Get(false, @"Attribute:Length"), length);
-            noteEventVertex.AddEdge(noteEvent.Get(false, @"Attribute:Octave"), octave);
-            noteEventVertex.AddEdge(noteEvent.Get(false, @"Attribute:Note"), note);
-            noteEventVertex.AddVertex(noteEvent.Get(false, @"Attribute:Velocity"), velocity);
-
-            IEdge finalEdge = b.AddEdge(Event, noteEventVertex);
-
-            b.DeleteEdge(tempNoteEventEdge);
-
-            return finalEdge;
-        }
-
         private void PlayButton_Click(object sender, RoutedEventArgs e)
         {
             if (SongVertex.Get(false, "Track:") != null)

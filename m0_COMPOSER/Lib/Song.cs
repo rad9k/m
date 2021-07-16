@@ -79,6 +79,7 @@ namespace m0_COMPOSER.Lib
         static IVertex sequenceMeta = r.Get(false, @"System\Lib\Music\Sequence");
         static IVertex sequenceIsDrumMeta = r.Get(false, @"System\Lib\Music\Sequence\IsDrum");
         static IVertex pitchSetMeta = r.Get(false, @"System\Lib\Music\Sequence\PitchSet");
+        static IVertex controlChangeDescriptionSetMeta = r.Get(false, @"System\Lib\Music\Sequence\ControlChangeDescriptionSet");
 
         public static string GetNameForNewSequenceEvent(IVertex trackVertex)
         {
@@ -131,7 +132,7 @@ namespace m0_COMPOSER.Lib
 
             trackVertex.DeleteEdge(tempSequenceEventEdge);
 
-            // pitchset
+            // pitchset and ControlChangeDescription
 
             IVertex trackOutput = trackVertex.Get(false, "Output:");
 
@@ -141,6 +142,11 @@ namespace m0_COMPOSER.Lib
 
                 if (outputPitchSet != null)
                     GraphUtil.CreateOrReplaceEdge(sequenceVertex, pitchSetMeta, outputPitchSet);
+
+                IVertex controlChangeDescriptionSet = trackOutput.Get(false, "ControlChangeDescriptionSet:");
+
+                if (controlChangeDescriptionSet != null)
+                    GraphUtil.CreateOrReplaceEdge(sequenceVertex, controlChangeDescriptionSetMeta, controlChangeDescriptionSet);
             }
 
 

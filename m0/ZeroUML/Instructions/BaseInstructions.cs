@@ -343,6 +343,11 @@ namespace m0.ZeroUML.Instructions
             exe.NewVertexCreationSpace = leftStack;
            
             INoInEdgeInOutVertexVertex leftExecuteResult = exe.ExecuteInstructionByMontevideoPrinciples(exe.Stack, leftExpression);
+
+            if(GeneralUtil.CompareStrings(leftExpression.Value, "val"))
+            {
+                int x = 0;
+            }
             
             // right
 

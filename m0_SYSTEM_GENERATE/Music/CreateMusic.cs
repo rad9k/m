@@ -521,6 +521,7 @@ namespace m0_SYSTEM_GENERATE.Music
             GraphUtil.AddAttribute(Sequence, "IsDrum", Boolean, 0, 1);
             GraphUtil.AddAttribute(Sequence, "ExtendTimeLength", Integer, 1, 1, 16 * m0_COMPOSER.Midi.Standard.MidiTicksPerSixteen);
             GraphUtil.AddAssociation(Sequence, "PitchSet", PitchSet, 0, 1);
+            GraphUtil.AddAssociation(Sequence, "ControlChangeDescriptionSet", ControlChangeDescriptionSet, 0, 1);
 
             Sequence.AddEdge(r.Get(false, @"System\Meta\Base\Vertex\$DefaultOpenVisualiser"), r.Get(false, @"System\Meta\Visualiser\Sequence"));
            
@@ -575,6 +576,7 @@ namespace m0_SYSTEM_GENERATE.Music
             // NOTEOUTPUT continuation
 
             GraphUtil.AddAssociation(NoteOutput, "PitchSet", PitchSet, 0, 1);
+            GraphUtil.AddAssociation(NoteOutput, "ControlChangeDescriptionSet", ControlChangeDescriptionSet, 0, 1);
 
             AddMethod(NoteOutput, "NoteOn", NoteOutoutTypeString, "NoteOn", null, new TypeName[] { new TypeName("note", Note, 1, 1) });
             AddMethod(NoteOutput, "NoteOff", NoteOutoutTypeString, "NoteOff", null, new TypeName[] { new TypeName("note", Note, 1, 1) });

@@ -111,6 +111,8 @@ namespace m0_COMPOSER.UIWpf.Visualisers
                 else
                     verticalSpanVertex = r.Get(false, @"System\Lib\Music\Data\DefaultPitchSet:");
 
+            verticalSpanVertex_Down = SongVertex.Get(false, "ControlChangeDescriptionSet:");
+
             horizontalSpanVertex = SongVertex.Get(false, "TimeSpan:");
 
             if (horizontalSpanVertex == null)

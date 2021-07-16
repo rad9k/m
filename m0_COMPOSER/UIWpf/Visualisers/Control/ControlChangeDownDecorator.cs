@@ -69,6 +69,8 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control
     {
         public double PositionMark { get; set; }
 
+        IVertex baseVertex;
+
         bool showCCList;
         public bool ShowCCList
         {
@@ -86,7 +88,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control
 
         int number;
 
-        public object Selection { get => number; set => throw new NotImplementedException(); }
+        public object Selection { get => number; set => number = (int)value; }
 
         public Size Size { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 
@@ -120,13 +122,22 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control
 
             CCDictionary = new Dictionary<int, IVertex>();
 
-            foreach (IEdge e in r.GetAll(false, @"System\Lib\Music\Data\DefaultControlChangeDescriptionSet:\ControlChangeDescription:"))
+            IVertex ControlChangeDescriptionSetToUse;
+
+            if (baseVertex != null)
+                ControlChangeDescriptionSetToUse = baseVertex;
+            else
+                ControlChangeDescriptionSetToUse = r.Get(false, @"System\Lib\Music\Data\DefaultControlChangeDescriptionSet:");
+
+            foreach (IEdge e in ControlChangeDescriptionSetToUse.GetAll(false, @"ControlChangeDescription:"))
                 CCDictionary.Add((int)GraphUtil.GetIntegerValue(e.To.Get(false, "Number:")), e.To);
         }
 
         void AddCCs()
         {
             PrepareCCDictionary();
+
+            List.Items.Clear();
 
             for (int x = -1; x <= 127; x++) {
                 CCDescription d = null;
@@ -140,9 +151,13 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control
             }                        
         }
 
-        public void SetBaseVertex(IVertex baseVertex)
+        public void SetBaseVertex(IVertex _baseVertex)
         {
-            throw new NotImplementedException();
+            if (_baseVertex != null)
+            {
+                baseVertex = _baseVertex;
+                AddCCs();
+            }
         }
 
         public void SetZoomFactor(double zoomFactor)
