@@ -34,19 +34,19 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
         protected virtual void CreateFlow()
         {
-            Flow = new MelodyFlow(SongVertex);
+            Flow = new MelodyFlow(VisualizedVertex);
         }
 
         protected override void UpdateVariablesFromBaseVertex()
         {
-            SongVertex = Vertex.Get(false, @"BaseEdge:\To:");
+            VisualizedVertex = Vertex.Get(false, @"BaseEdge:\To:");
 
-            if (SongVertex == null)
+            if (VisualizedVertex == null)
                 return;
 
-            if (SongVertex.Get(false, "$Is:MelodyFlow") == null)
+            if (VisualizedVertex.Get(false, "$Is:MelodyFlow") == null)
             {
-                SongVertex = null;
+                VisualizedVertex = null;
                 return;
             }
 
@@ -58,7 +58,14 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
 
             if (IsDrum)
-                verticalSpanVertex = r.Get(false, @"System\Lib\Music\Data\DefaultDrumPitchSet:");
+            {
+                IVertex pitchSetVertex = VisualizedVertex.Get(false, "PitchSet:");
+
+                if (pitchSetVertex != null)
+                    verticalSpanVertex = pitchSetVertex;
+                else
+                    verticalSpanVertex = r.Get(false, @"System\Lib\Music\Data\DefaultDrumPitchSet:");
+            }
             else
                 verticalSpanVertex = r.Get(false, @"System\Lib\Music\Generator\Data\FlowPitchSet");
          
@@ -94,7 +101,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
         protected override void SetupLocalVariablesFromBaseVertexVertexes()
         {
-            IsDrum = GraphUtil.GetBooleanValueOrFalse(SongVertex.Get(false, "IsDrum:"));
+            IsDrum = GraphUtil.GetBooleanValueOrFalse(VisualizedVertex.Get(false, "IsDrum:"));
 
             if (IsDrum)
                 IsCurrentPenItemCenter = true;
@@ -643,7 +650,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
         {
             IEdge eventEdge = i.BaseEdge;
 
-            GraphUtil.DeleteEdgeByToVertex(SongVertex, eventEdge.To);
+            GraphUtil.DeleteEdgeByToVertex(VisualizedVertex, eventEdge.To);
 
             IFlowQuant quant = Flow.GetQuantFromVertex(eventEdge.To);
 

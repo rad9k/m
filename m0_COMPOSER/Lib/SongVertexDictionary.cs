@@ -34,7 +34,7 @@ namespace m0_COMPOSER.Lib
             IVertex songVertex = MakeSongVertexUnique(_songVertex);
 
             if (SongVisusliserDictionary.ContainsKey(songVertex))
-                return SongVisusliserDictionary[songVertex].SongVertex;
+                return SongVisusliserDictionary[songVertex].VisualizedVertex;
 
             return _songVertex;
         }

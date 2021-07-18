@@ -78,19 +78,19 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
         protected override void CreateFlow()
         {
-            Flow = new ChordProgressionFlow(SongVertex);
+            Flow = new ChordProgressionFlow(VisualizedVertex);
         }
 
         protected override void UpdateVariablesFromBaseVertex()
         {
-            SongVertex = Vertex.Get(false, @"BaseEdge:\To:");
+            VisualizedVertex = Vertex.Get(false, @"BaseEdge:\To:");
 
-            if (SongVertex == null)
+            if (VisualizedVertex == null)
                 return;
 
-            if (SongVertex.Get(false, "$Is:ChordProgression") == null)
+            if (VisualizedVertex.Get(false, "$Is:ChordProgression") == null)
             {
-                SongVertex = null;
+                VisualizedVertex = null;
                 return;
             }
 

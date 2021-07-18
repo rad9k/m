@@ -67,7 +67,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
         protected IVertex BaseEdgeToMetaVertex;
         protected IVertex VisualiserMetaVertex;
 
-        public IVertex SongVertex;
+        public IVertex VisualizedVertex;
         protected IVertex verticalSpanVertex;
         protected IVertex horizontalSpanVertex;
         protected IVertex verticalSpanVertex_Down;
@@ -303,7 +303,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
         public void VisualiserDraw()
         {
-            if (SongVertex == null || isLoaded == false)
+            if (VisualizedVertex == null || isLoaded == false)
                 return;
 
             int PositionMark_Copy = PositionMark;
@@ -353,8 +353,8 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
         protected void SaveLength()
         {
-            if(GraphUtil.GetIntegerValueOr0(SongVertex.Get(false, "Length:")) != Length)
-                GraphUtil.SetVertexValue(SongVertex, BaseEdgeToMetaVertex.Get(false, "Length"), Length);
+            if(GraphUtil.GetIntegerValueOr0(VisualizedVertex.Get(false, "Length:")) != Length)
+                GraphUtil.SetVertexValue(VisualizedVertex, BaseEdgeToMetaVertex.Get(false, "Length"), Length);
         }
 
         protected virtual void SetAxisDecorators() { }        
@@ -394,7 +394,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
         {
             IEdge eventEdge = i.BaseEdge;
 
-            GraphUtil.DeleteEdgeByToVertex(SongVertex, eventEdge.To);
+            GraphUtil.DeleteEdgeByToVertex(VisualizedVertex, eventEdge.To);
 
             Edge.DeleteVertexByEdgeTo(Vertex.Get(false, "SelectedEdges:"), eventEdge.To);
 
@@ -1735,7 +1735,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
                     isVelocityHavingEvent = true;
             }
             else
-                tempEventEdge = SongVertex.AddVertexAndReturnEdge(null, null);
+                tempEventEdge = VisualizedVertex.AddVertexAndReturnEdge(null, null);
 
             IVertex eventVertex = tempEventEdge.To;
 
@@ -1755,8 +1755,8 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             if (!isUpdate)
             {
-                finalEdge = SongVertex.AddEdge(Event, eventVertex);
-                SongVertex.DeleteEdge(tempEventEdge);
+                finalEdge = VisualizedVertex.AddEdge(Event, eventVertex);
+                VisualizedVertex.DeleteEdge(tempEventEdge);
             }
 
             return finalEdge;
@@ -1817,7 +1817,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
         {
             IEdge eventEdge = i.BaseEdge;
 
-            GraphUtil.DeleteEdgeByToVertex(SongVertex, eventEdge.To);
+            GraphUtil.DeleteEdgeByToVertex(VisualizedVertex, eventEdge.To);
 
             Edge.DeleteVertexByEdgeTo(Vertex.Get(false, "SelectedEdges:"), eventEdge.To);
 
@@ -2320,7 +2320,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
         {
             List<IVertex> selectedVertexes = GetSelectedVertexes();
 
-            foreach (IEdge e in SongVertex.GetAll(false, "Event:"))
+            foreach (IEdge e in VisualizedVertex.GetAll(false, "Event:"))
                 if (GraphUtil.ExistQueryOut(e.To, "$Is", "NoteEvent"))
                     AddItem(e, selectedVertexes);
         }
@@ -2791,7 +2791,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             set
             {
                 positionMarkPrim_Beg = ScreenPositionToMusicTime(value, true);
-                GraphUtil.SetVertexValue(SongVertex, loopBegMeta, positionMarkPrim_Beg);
+                GraphUtil.SetVertexValue(VisualizedVertex, loopBegMeta, positionMarkPrim_Beg);
 
                 positionMarkPrim_Beg_Screen = MusicTimeToScreenPosition(positionMarkPrim_Beg, true);
 
@@ -2813,7 +2813,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
                 positionMarkPrim_Beg_Screen = MusicTimeToScreenPosition(value, true);
 
                 positionMarkPrim_Beg = ScreenPositionToMusicTime(PositionMarkPrim_Beg_Screen, true);
-                GraphUtil.SetVertexValue(SongVertex, loopBegMeta, positionMarkPrim_Beg);
+                GraphUtil.SetVertexValue(VisualizedVertex, loopBegMeta, positionMarkPrim_Beg);
 
                 UpdatePositionMark();
             }
@@ -2833,7 +2833,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             set
             {
                 positionMarkPrim_End = ScreenPositionToMusicTime(value, true);
-                GraphUtil.SetVertexValue(SongVertex, loopEndMeta, positionMarkPrim_End);
+                GraphUtil.SetVertexValue(VisualizedVertex, loopEndMeta, positionMarkPrim_End);
 
                 positionMarkPrim_End_Screen = MusicTimeToScreenPosition(positionMarkPrim_End, true);
 
@@ -2855,7 +2855,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
                 positionMarkPrim_End_Screen = MusicTimeToScreenPosition(value, true);
 
                 positionMarkPrim_End = ScreenPositionToMusicTime(PositionMarkPrim_End_Screen, true);
-                GraphUtil.SetVertexValue(SongVertex, loopEndMeta, positionMarkPrim_End);
+                GraphUtil.SetVertexValue(VisualizedVertex, loopEndMeta, positionMarkPrim_End);
 
                 UpdatePositionMark();
             }

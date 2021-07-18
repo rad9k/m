@@ -292,7 +292,7 @@ namespace m0.UIWpf.Visualisers
                 IList<IEdge> ItemsSourceValueNoHide = new List<IEdge>();
 
                 foreach (IEdge e in ItemsSourceValue)
-                    if (GraphUtil.GetQueryOutCount(e.To, "$Hide", null) == 0)
+                    if (GraphUtil.GetQueryOutCount(e.Meta, "$Hide", null) == 0)
                         ItemsSourceValueNoHide.Add(e);
 
                 ThisDataGrid.ItemsSource = ItemsSourceValueNoHide;

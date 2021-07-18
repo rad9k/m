@@ -668,7 +668,8 @@ namespace m0_SYSTEM_GENERATE.Music
 
             MelodyFlow = GraphUtil.AddClass(MusicGenerator, "MelodyFlow");
             GraphUtil.AddAttribute(MelodyFlow, "IsDrum", Boolean, 0, 1);
-            GraphUtil.AddAggregation(MelodyFlow, "Step", MelodyFlowStep, 0, -1);
+            GraphUtil.AddAssociation(MelodyFlow, "PitchSet", PitchSet, 0, 1);
+            GraphUtil.AddAggregation(MelodyFlow, "Step", MelodyFlowStep, 0, -1);            
 
             MelodyFlow.AddEdge(r.Get(false, @"System\Meta\Base\Vertex\$DefaultOpenVisualiser"), r.Get(false, @"System\Meta\Visualiser\MelodyFlow"));                        
 

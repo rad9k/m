@@ -87,7 +87,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
         void SetPosition(int newPosition)
         {
-            GraphUtil.SetVertexValue(SongVertex, postionAttribute, newPosition);
+            GraphUtil.SetVertexValue(VisualizedVertex, postionAttribute, newPosition);
         }
 
         void InitSongState()
@@ -190,7 +190,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
         {
             int max = 0;
 
-            foreach (IEdge e in SongVertex.GetAll(false, @"Track:"))
+            foreach (IEdge e in VisualizedVertex.GetAll(false, @"Track:"))
             {
                 string seqName = e.To.Value.ToString();
 
@@ -223,7 +223,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
         {
             IVertex r = MinusZero.Instance.root;
 
-            IVertex v = VertexOperations.AddInstance(SongVertex, r.Get(false, @"System\Lib\Music\Track"), r.Get(false, @"System\Lib\Music\Song\Track"));
+            IVertex v = VertexOperations.AddInstance(VisualizedVertex, r.Get(false, @"System\Lib\Music\Track"), r.Get(false, @"System\Lib\Music\Song\Track"));
 
             v.Value = GetNameForNewTrack();            
 
@@ -234,7 +234,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
         private void RedrawTracks()
         {
-            VerticalAD.SetBaseVertex(SongVertex);
+            VerticalAD.SetBaseVertex(VisualizedVertex);
 
             DrawMain();
         }
@@ -253,15 +253,15 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
         private void PlayButton_Click(object sender, RoutedEventArgs e)
         {
-            if (SongVertex.Get(false, "Track:") != null)
+            if (VisualizedVertex.Get(false, "Track:") != null)
             {
-                SongVertexDictionary.SetSongVisualiser(SongVertex, this);
+                SongVertexDictionary.SetSongVisualiser(VisualizedVertex, this);
 
                 SetPlayRecordState(PlayRecordStateEnum.Play);
 
-                IVertex playMethod = SongVertex.Get(false, @"$Is:\Method:Play");
+                IVertex playMethod = VisualizedVertex.Get(false, @"$Is:\Method:Play");
 
-                ZeroCodeExecutonUtil.CreateExecutionAndVertexMethodExecute(playMethod, SongVertex);
+                ZeroCodeExecutonUtil.CreateExecutionAndVertexMethodExecute(playMethod, VisualizedVertex);
             }
             else
                 StopButton_Click(null, null);
@@ -274,15 +274,15 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
         private void StopButton_Click(object sender, RoutedEventArgs e)
         {
-            if (PlayRecordState == PlayRecordStateEnum.Play && SongVertex.Get(false, "Track:") != null)
+            if (PlayRecordState == PlayRecordStateEnum.Play && VisualizedVertex.Get(false, "Track:") != null)
             {
-                SongVertexDictionary.SetSongVisualiser(SongVertex, this);
+                SongVertexDictionary.SetSongVisualiser(VisualizedVertex, this);
 
                 SetPlayRecordState(PlayRecordStateEnum.Play);
 
-                IVertex playMethod = SongVertex.Get(false, @"$Is:\Method:Stop");
+                IVertex playMethod = VisualizedVertex.Get(false, @"$Is:\Method:Stop");
 
-                ZeroCodeExecutonUtil.CreateExecutionAndVertexMethodExecute(playMethod, SongVertex);
+                ZeroCodeExecutonUtil.CreateExecutionAndVertexMethodExecute(playMethod, VisualizedVertex);
             }
 
             SetPlayRecordState(PlayRecordStateEnum.Stop);
@@ -295,7 +295,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             else
                 IsRepeat = false;
 
-            GraphUtil.SetVertexValue(SongVertex, isRepeatMeta, IsRepeat);
+            GraphUtil.SetVertexValue(VisualizedVertex, isRepeatMeta, IsRepeat);
         }
 
         void UpdateRepeatButton()
@@ -308,8 +308,8 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
         void MuteAllOutput()
         {
-            if(SongVertex!=null)
-            foreach (IEdge outputEdge in SongVertex.GetAll(false, @"Track:\Output:"))
+            if(VisualizedVertex!=null)
+            foreach (IEdge outputEdge in VisualizedVertex.GetAll(false, @"Track:\Output:"))
             {
                 IVertex outputVertex = outputEdge.To;
 
@@ -416,7 +416,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
         protected void InitialiseBaseVertexBasedVisualiserControls()
         {
-            TempoVisualiser.BaseEdge = GraphUtil.GetQueryOutFirstEdge(SongVertex, "Tempo", null);
+            TempoVisualiser.BaseEdge = GraphUtil.GetQueryOutFirstEdge(VisualizedVertex, "Tempo", null);
         }
 
         IVertex previousBaseVertex;
@@ -428,12 +428,12 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
         protected override void UpdateVariablesFromBaseVertex()
         {
-            SongVertex = Vertex.Get(false, @"BaseEdge:\To:");
+            VisualizedVertex = Vertex.Get(false, @"BaseEdge:\To:");
 
-            if (SongVertex == previousBaseVertex)
+            if (VisualizedVertex == previousBaseVertex)
                 return;
 
-            if (SongVertex == null)
+            if (VisualizedVertex == null)
             {
                 baseVertexIsEmpty();
                 return;
@@ -442,16 +442,16 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             if (previousBaseVertex != null)
                 PlatformClass.RemoveVertexChangeListeners_byGenericVertex(previousBaseVertex, new VertexChange(VertexChange_BaseEdge), "SongVisualiser");
 
-            if (SongVertex.Get(false, "$Is:Song") == null)
+            if (VisualizedVertex.Get(false, "$Is:Song") == null)
             {
-                SongVertex = null;
+                VisualizedVertex = null;
                 baseVertexIsEmpty();
                 return;
             }
 
-            previousBaseVertex = SongVertex;
+            previousBaseVertex = VisualizedVertex;
 
-            PlatformClass.RegisterVertexChangeListeners_byGenericVertex(SongVertex, new VertexChange(VertexChange_BaseEdge), new string[] { "Tempo", "Track" }, "SongVisualiser");
+            PlatformClass.RegisterVertexChangeListeners_byGenericVertex(VisualizedVertex, new VertexChange(VertexChange_BaseEdge), new string[] { "Tempo", "Track" }, "SongVisualiser");
 
 
             IVertex r = MinusZero.Instance.Root;
@@ -460,10 +460,10 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             InitialiseBaseVertexBasedVisualiserControls();
 
-            positionMarkPrim_Beg = GraphUtil.GetIntegerValueOr0(SongVertex.Get(false, "LoopBeg:"));
-            positionMarkPrim_End = GraphUtil.GetIntegerValueOr0(SongVertex.Get(false, "LoopEnd:"));
+            positionMarkPrim_Beg = GraphUtil.GetIntegerValueOr0(VisualizedVertex.Get(false, "LoopBeg:"));
+            positionMarkPrim_End = GraphUtil.GetIntegerValueOr0(VisualizedVertex.Get(false, "LoopEnd:"));
 
-            IsRepeat = GraphUtil.GetBooleanValueOrFalse(SongVertex.Get(false, "IsRepeat:"));
+            IsRepeat = GraphUtil.GetBooleanValueOrFalse(VisualizedVertex.Get(false, "IsRepeat:"));
 
             UpdateRepeatButton();
 
@@ -474,7 +474,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
         
         void CheckOrStartAutoBackup()
         {
-            if (!AutoBackupVertexList.Contains(SongVertex))
+            if (!AutoBackupVertexList.Contains(VisualizedVertex))
             {                
                 if (AutoBackupTimer == null)
                 {
@@ -486,15 +486,15 @@ namespace m0_COMPOSER.UIWpf.Visualisers
                 if (!AutoBackupTimer.IsEnabled)
                     AutoBackupTimer.Start();
 
-                AutoBackupVertexList.Add(SongVertex);
+                AutoBackupVertexList.Add(VisualizedVertex);
             }
         }
 
         private void AutoBackupTimer_Elapsed(object sender, EventArgs e)
         {
-            if(SongVertex != null)
+            if(VisualizedVertex != null)
             {
-                IStore store = SongVertex.Store;
+                IStore store = VisualizedVertex.Store;
 
                 store.Backup();                
             }
@@ -506,25 +506,25 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             {
                 AutoBackupTimer.Stop();
 
-                if (AutoBackupVertexList.Contains(SongVertex))
-                    AutoBackupVertexList.Remove(SongVertex);
+                if (AutoBackupVertexList.Contains(VisualizedVertex))
+                    AutoBackupVertexList.Remove(VisualizedVertex);
             }
         }
 
         void AddChangeListenersToAllTracksAndSong()
         {
-            foreach (IEdge e in SongVertex.GetAll(false, "Track:"))
+            foreach (IEdge e in VisualizedVertex.GetAll(false, "Track:"))
                 AddChangeListenersToTrack(e.To);
 
-            PlatformClass.RegisterVertexChangeListeners_byGenericVertex(SongVertex, new VertexChange(BaseVertexChange), new string[] {}, "SongVisualiser");
+            PlatformClass.RegisterVertexChangeListeners_byGenericVertex(VisualizedVertex, new VertexChange(BaseVertexChange), new string[] {}, "SongVisualiser");
         }
 
         void RemoveChangeListenersToAllTracksAndSong()
         {
-            foreach (IEdge e in SongVertex.GetAll(false, "Track:"))
+            foreach (IEdge e in VisualizedVertex.GetAll(false, "Track:"))
                 PlatformClass.RemoveVertexChangeListeners_byGenericVertex(e.To, new VertexChange(VertexChange_Track), "SongVisualiser");
 
-            PlatformClass.RemoveVertexChangeListeners_byGenericVertex(SongVertex, new VertexChange(BaseVertexChange), "SongVisualiser");
+            PlatformClass.RemoveVertexChangeListeners_byGenericVertex(VisualizedVertex, new VertexChange(BaseVertexChange), "SongVisualiser");
         }
 
         void AddChangeListenersToTrack(IVertex v)
@@ -539,7 +539,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             {
                 VerticalAD = new TrackAxisDecorator();
 
-                VerticalAD.SetBaseVertex(SongVertex);
+                VerticalAD.SetBaseVertex(VisualizedVertex);
             }
 
             if (HorizontalAD == null)
@@ -583,21 +583,21 @@ namespace m0_COMPOSER.UIWpf.Visualisers
         {
             bool dummy = false;
 
-            Tempo = GraphUtil.GetDoubleValue(SongVertex.Get(false, "Tempo:"), ref dummy);
+            Tempo = GraphUtil.GetDoubleValue(VisualizedVertex.Get(false, "Tempo:"), ref dummy);
 
-            if (SongVertex.Get(false, "ExtendTimeLength:") != null)
-                ExtendTimeLength_Song = (int)GraphUtil.GetIntegerValue(SongVertex.Get(false, "ExtendTimeLength:"));
+            if (VisualizedVertex.Get(false, "ExtendTimeLength:") != null)
+                ExtendTimeLength_Song = (int)GraphUtil.GetIntegerValue(VisualizedVertex.Get(false, "ExtendTimeLength:"));
             else
                 ExtendTimeLength_Song = 1; // default - 1 minute
 
-            if (SongVertex.Get(false, "Length:") != null)
-                Length = (int)GraphUtil.GetIntegerValue(SongVertex.Get(false, "Length:"));
+            if (VisualizedVertex.Get(false, "Length:") != null)
+                Length = (int)GraphUtil.GetIntegerValue(VisualizedVertex.Get(false, "Length:"));
             else
                 Length = GetMusicTimeFromRealTime(ExtendTimeLength_Song);
 
             SaveLength();
 
-            IsDrum = GraphUtil.GetBooleanValue(SongVertex.Get(false, "IsDrum:"), ref dummy);
+            IsDrum = GraphUtil.GetBooleanValue(VisualizedVertex.Get(false, "IsDrum:"), ref dummy);
 
             if (IsDrum)
                 IsCurrentPenItemCenter = true;
@@ -640,7 +640,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
         protected void BaseVertexChange(object sender, VertexChangeEventArgs e)
         {
-            if (sender == SongVertex.Get(false, "Position:"))
+            if (sender == VisualizedVertex.Get(false, "Position:"))
                 PositionUpdate();
 
             if (VertexChangeOff)
@@ -651,9 +651,9 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
         void PositionUpdate()
         {
-            if (SongVertex != null)
+            if (VisualizedVertex != null)
             {
-                int SongPosition = GraphUtil.GetIntegerValueOr0(SongVertex.Get(false, "Position:"));
+                int SongPosition = GraphUtil.GetIntegerValueOr0(VisualizedVertex.Get(false, "Position:"));
 
                 if (SongPosition == -1)
                 {
@@ -661,7 +661,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
                     this.Dispatcher.Invoke(() =>
                     {
-                        GraphUtil.SetVertexValue(SongVertex, r.Get(false, @"System\Lib\Music\Song\Position"), 0);
+                        GraphUtil.SetVertexValue(VisualizedVertex, r.Get(false, @"System\Lib\Music\Song\Position"), 0);
 
                         StopButton_Click(null, null);
                     });
@@ -693,11 +693,11 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             if (!(sender is IVertex))
                 return;
 
-            if (GraphUtil.DoEdgeListContainsVertex(SongVertex.GetAll(false, @"Track:\Color:"), (IVertex)sender)
-                || GraphUtil.DoEdgeListContainsVertex(SongVertex.GetAll(false, @"Track:\Color:\"), (IVertex)sender))
+            if (GraphUtil.DoEdgeListContainsVertex(VisualizedVertex.GetAll(false, @"Track:\Color:"), (IVertex)sender)
+                || GraphUtil.DoEdgeListContainsVertex(VisualizedVertex.GetAll(false, @"Track:\Color:\"), (IVertex)sender))
                 RedrawTracks();
 
-            if (GraphUtil.DoEdgeListContainsVertex(SongVertex.GetAll(false, @"SequenceEvent:"), (IVertex)sender))
+            if (GraphUtil.DoEdgeListContainsVertex(VisualizedVertex.GetAll(false, @"SequenceEvent:"), (IVertex)sender))
                 RedrawTracks();
         }
 
@@ -711,13 +711,13 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             IVertex senderVertex = (IVertex)sender;
 
-            if ((sender == SongVertex.Get(false, "Tempo:")) && (e.Type == VertexChangeType.ValueChanged))
+            if ((sender == VisualizedVertex.Get(false, "Tempo:")) && (e.Type == VertexChangeType.ValueChanged))
                 UpdateTempo();
 
-            if (GraphUtil.DoEdgeListContainsVertex(SongVertex.GetAll(false, "Track:"), senderVertex) && (e.Type == VertexChangeType.ValueChanged))
+            if (GraphUtil.DoEdgeListContainsVertex(VisualizedVertex.GetAll(false, "Track:"), senderVertex) && (e.Type == VertexChangeType.ValueChanged))
                 RedrawTracks();
 
-            if (GraphUtil.DoEdgeListContainsVertex(SongVertex.GetAll(false, "Track:"), senderVertex) && (e.Type == VertexChangeType.EdgeAdded))
+            if (GraphUtil.DoEdgeListContainsVertex(VisualizedVertex.GetAll(false, "Track:"), senderVertex) && (e.Type == VertexChangeType.EdgeAdded))
                 AddChangeListenersToTrack(senderVertex);
         }
 
@@ -734,7 +734,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             int PositionMark_Copy = PositionMark;
 
-            Tempo = GraphUtil.GetDoubleValue(SongVertex.Get(false, "Tempo:"), ref dummy);
+            Tempo = GraphUtil.GetDoubleValue(VisualizedVertex.Get(false, "Tempo:"), ref dummy);
 
             if (HorizontalAD != null)
             {
@@ -971,7 +971,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
         {
             List<IVertex> selectedVertexes = GetSelectedVertexes();
 
-            foreach (IEdge e in SongVertex.GetAll(false, "Track:"))
+            foreach (IEdge e in VisualizedVertex.GetAll(false, "Track:"))
                 foreach (IEdge ee in e.To.GetAll(false, "SequenceEvent:"))                
                     AddItem(ee, selectedVertexes);
         }
@@ -1275,7 +1275,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
                 int cutPoint = ScreenPositionToMusicTime(currentMousePosition.X, true);
 
-                Song.RazorCut(SongVertex, item.BaseEdge.To, cutPoint);
+                Song.RazorCut(VisualizedVertex, item.BaseEdge.To, cutPoint);
             }
 
             RedrawTracks();
@@ -1293,7 +1293,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
                 int gluePoint = ScreenPositionToMusicTime(currentMousePosition.X, true);
 
-                Song.Glue(SongVertex, item.BaseEdge, gluePoint);
+                Song.Glue(VisualizedVertex, item.BaseEdge, gluePoint);
             }
 
             RedrawTracks();
@@ -1310,7 +1310,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
                 positionMark = ScreenPositionToMusicTime(value, true);
 
                 if(!doNotUpdatePositionVertex)
-                    GraphUtil.SetVertexValue(SongVertex, positionMeta, positionMark);
+                    GraphUtil.SetVertexValue(VisualizedVertex, positionMeta, positionMark);
 
                 doNotUpdatePositionVertex = false;
 
@@ -1334,7 +1334,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
                 positionMark = ScreenPositionToMusicTime(PositionMark_Screen, true);
 
                 if (!doNotUpdatePositionVertex)
-                    GraphUtil.SetVertexValue(SongVertex, positionMeta, positionMark);
+                    GraphUtil.SetVertexValue(VisualizedVertex, positionMeta, positionMark);
 
                 doNotUpdatePositionVertex = false;
 
