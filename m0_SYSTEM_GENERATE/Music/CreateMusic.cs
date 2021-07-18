@@ -237,6 +237,8 @@ namespace m0_SYSTEM_GENERATE.Music
 
         private static void AddPitch(IVertex basePitch, int octave, int note, string name, IVertex color, IVertex noteBackgroundColor)
         {
+            octave = octave + 1;
+
             IVertex p = VertexOperations.AddInstance(basePitch, VisualisedPitch);
 
             p.Value = name;
@@ -252,6 +254,8 @@ namespace m0_SYSTEM_GENERATE.Music
 
         private static void AddDrumPitch(IVertex basePitch, int octave, int note, string name, IVertex color)
         {
+            octave = octave + 1;
+
             _Note matched = null;
 
             foreach (_Note n in DrumInstruments)

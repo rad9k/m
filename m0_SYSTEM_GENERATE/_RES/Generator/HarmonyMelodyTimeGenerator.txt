@@ -22,7 +22,7 @@
 				Output +< @@Sequence\IsDrum :: _"False"
 			if MelodyFlow\IsDrum<> == "1"
 				Output\IsDrum = _MelodyFlow\IsDrum
-		method "CreateEvents" ()
+		method "CreateEventsNoDrum" ()
 			<@System\Meta\Presentation\$Hide :: @$Empty>
 			variable "note" @Integer
 			variable "counter" @Integer
@@ -41,6 +41,22 @@
 					@@Note\Velocity :: _t\Velocity
 					counter = counter + "1"
 				}
+		method "CreateEventsDrum" ()
+			<@System\Meta\Presentation\$Hide :: @$Empty>
+			variable "counter" @Integer
+			Output -< Output\Event:
+			counter = "1"
+			foreach t in TriggerSet\Trigger:
+				foreach quant in MelodyFlow\Step<<counter>>\Quant
+					Output +< @@History\Event :: t{
+						@@$Is ;; @@NoteEvent
+						@@Event\TriggerTime :: _t\TriggerTime
+						@@HasLength\Length :: -"0"
+						@@Pitch\Octave :: _quant\Octave
+						@@Pitch\Note :: _quant\Note
+						@@Note\Velocity :: _t\Velocity
+					}
+				counter = counter + "1"
 		method "PutIntoStore" ()
 			<@System\Meta\Presentation\$Hide :: @$Empty>
 			variable "parentVertex" @Vertex
@@ -50,7 +66,15 @@
 		method "Dispose" ()
 			<@System\Meta\Presentation\$Hide :: @$Empty>
 		method "Process" ()
+			variable "IsDrum" @Boolean
+			IsDrum = "False"
 			this.CopyAtomAttributes[]
-			this.CreateEvents[]
+			if TriggerSet\IsDrum<> == "1"
+				if TriggerSet\IsDrum == "True"
+					IsDrum = "True"
+			if !IsDrum
+				this.CreateEventsNoDrum[]
+			if IsDrum == "True"
+				this.CreateEventsDrum[]
 			this.PutIntoStore[]
 			this.Dispose[]
