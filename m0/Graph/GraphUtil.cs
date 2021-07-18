@@ -56,6 +56,26 @@ namespace m0.Graph
 
     public class GraphUtil
     {
+        public static void LoadAndParse(string fileName, IVertex baseVertex)
+        {
+            string text = System.IO.File.ReadAllText(fileName);
+
+            MinusZero.Instance.DefaultParser.Parse(baseVertex, text);
+        }
+
+        public static void LoadParseAndMove(string fileName, IVertex baseVertex, string vertexName)
+        {
+            IEdge tmp = baseVertex.AddVertexAndReturnEdge(null, null);
+
+            LoadAndParse(fileName, tmp.To);
+
+            IEdge e = tmp.To.GetAll(false, vertexName).First();
+
+            baseVertex.AddEdge(e.Meta, e.To);
+
+            baseVertex.DeleteEdge(tmp);
+        }
+
         public static void PreDeleteEdge(IVertex baseVertex, IDetachableEdge edge)
         {
             edge.ForceEmptyMeta();

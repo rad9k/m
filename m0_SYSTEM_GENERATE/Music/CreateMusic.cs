@@ -119,6 +119,8 @@ namespace m0_SYSTEM_GENERATE.Music
             AddData();
 
             AddMusicSpace();
+
+            AddFromFiles();
         }
 
         private static void AddData()
@@ -729,5 +731,18 @@ namespace m0_SYSTEM_GENERATE.Music
             GraphUtil.AddAggregation(MusicSpace, "ChordProgression", ChordProgression, 0, -1);
         }
 
+        public static void AddFromFiles()
+        {
+            GraphUtil.LoadParseAndMove(@"_RES\Generator\HarmonyMelodyTimeGenerator.txt", MusicGenerator, "'HarmonyMelodyTimeGenerator'");
+            GraphUtil.LoadParseAndMove(@"_RES\Generator\SimpleTransformer.txt", MusicGenerator, "'SimpleTransformer'");
+
+            IVertex Instrument = Music.AddVertex(null, "Instrument");
+
+            IVertex X09 = Instrument.AddVertex(null, "XBase09");
+
+            GraphUtil.LoadParseAndMove(@"_RES\Instrument\X09\X09_CC.txt", X09, "'XBase09_ControlChangeDescriptionSet'");
+            GraphUtil.LoadParseAndMove(@"_RES\Instrument\X09\X09_mode_1_PitchSet.txt", X09, "'XBase09_mode_1_PitchSet'");
+            GraphUtil.LoadParseAndMove(@"_RES\Instrument\X09\X09_mode_2_PitchSet.txt", X09, "'XBase09_mode_2_PitchSet'");
+        }
     }
 }
