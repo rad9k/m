@@ -41,29 +41,17 @@ namespace m0
 
         void ExtraRun()
         {
+
+            return;
+
             IVertex r = MinusZero.Instance.root;
 
-            IVertex v=VertexOperations.AddInstance(r, r.Get(false, @"System\Lib\Music\Sequence"));
+            IVertex v = r.AddVertex(null, "XXX");
 
-            v.AddVertex(r.Get(false, @"System\Lib\Music\Sequence\IsDrum"), "True");
+            GraphUtil.LoadParseAndMove("xxx.txt", v, "'SimpleTransformer'");
+                
 
-            IVertex v2 = VertexOperations.AddInstance(r, r.Get(false, @"System\Lib\Music\Song"));
-
-            //v2.AddVertex(r.Get(false, @"System\Lib\Music\Sequence\IsDrum"), "True");
-
-            VertexOperations.AddInstance(r, r.Get(false, @"System\Lib\Music\Generator\TriggerSet"));
-
-            VertexOperations.AddInstance(r, r.Get(false, @"System\Lib\Music\Generator\MelodyFlow"));
-
-            VertexOperations.AddInstance(r, r.Get(false, @"System\Lib\Music\Generator\ChordProgression"));
-
-            //
-
-            IStore rs=null;
-
-            foreach (IStore s in MinusZero.Instance.stores)
-                if (s.Identifier == "$-0$ROOT$STORE$")
-                    rs = s;
+            
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)

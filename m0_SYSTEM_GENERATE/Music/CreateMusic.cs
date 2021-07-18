@@ -437,7 +437,9 @@ namespace m0_SYSTEM_GENERATE.Music
 
             IVertex History = GraphUtil.AddClass(Music, "History");
 
-            GraphUtil.AddAttribute(History, "Event", Event, 0, -1);
+            IVertex History_Event = GraphUtil.AddAttribute(History, "Event", Event, 0, -1);
+
+            History_Event.AddVertex(m0.MinusZero.Instance.root.Get(false, @"System\Meta\Presentation\$Hide"), null);
 
             // CONTROLCHANGE
 
@@ -736,9 +738,9 @@ namespace m0_SYSTEM_GENERATE.Music
             GraphUtil.LoadParseAndMove(@"_RES\Generator\HarmonyMelodyTimeGenerator.txt", MusicGenerator, "'HarmonyMelodyTimeGenerator'");
             GraphUtil.LoadParseAndMove(@"_RES\Generator\SimpleTransformer.txt", MusicGenerator, "'SimpleTransformer'");
 
-            IVertex Instrument = Music.AddVertex(null, "Instrument");
+            IVertex Instrument = Music.AddVertex(r.Get(false, @"System\Meta\ZeroUML\Package"), "Instrument");
 
-            IVertex X09 = Instrument.AddVertex(null, "XBase09");
+            IVertex X09 = Instrument.AddVertex(r.Get(false, @"System\Meta\ZeroUML\Package"), "XBase09");
 
             GraphUtil.LoadParseAndMove(@"_RES\Instrument\X09\X09_CC.txt", X09, "'XBase09_ControlChangeDescriptionSet'");
             GraphUtil.LoadParseAndMove(@"_RES\Instrument\X09\X09_mode_1_PitchSet.txt", X09, "'XBase09_mode_1_PitchSet'");

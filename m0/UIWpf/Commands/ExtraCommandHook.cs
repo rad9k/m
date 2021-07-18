@@ -126,6 +126,9 @@ namespace m0.UIWpf.Commands
             msm.AddEdge(classMeta, triggerSetMeta);
             msm.AddEdge(classMeta, chordProgressionMeta);
 
+            IVertex zm = ms.AddVertex(null, "ZeroMachines");
+            msm.AddEdge(classMeta, m0.MinusZero.Instance.root.Get(false, @"System\"))
+
 
             GraphUtil.CreateOrReplaceEdge(diagram, creationPoolMeta, ms);
 

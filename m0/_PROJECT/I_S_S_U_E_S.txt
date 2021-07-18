@@ -84,6 +84,8 @@ a lot of "dupa" here :(
 			this.CopyAtomAttributes[]
 			this.CopyEvents[]
 			this.PutIntoStore[]
+103. SimpleTransformer referns to anther ZeroUML in root store, with ids > 4000. this is becouse of parsing in the m0_generate
+
 
 <><><> FUTURE 0.5
 
