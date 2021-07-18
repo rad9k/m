@@ -127,7 +127,8 @@ namespace m0.UIWpf.Commands
             msm.AddEdge(classMeta, chordProgressionMeta);
 
             IVertex zm = ms.AddVertex(null, "ZeroMachines");
-            msm.AddEdge(classMeta, m0.MinusZero.Instance.root.Get(false, @"System\"))
+            zm.AddEdge(classMeta, m0.MinusZero.Instance.root.Get(false, @"System\Lib\Music\Generator\'HarmonyMelodyTimeGenerator'"));
+            zm.AddEdge(classMeta, m0.MinusZero.Instance.root.Get(false, @"System\Lib\Music\Generator\'SimpleTransformer'"));
 
 
             GraphUtil.CreateOrReplaceEdge(diagram, creationPoolMeta, ms);

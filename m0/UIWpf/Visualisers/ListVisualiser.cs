@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections;
 using System.Linq;
 using System.Text;
 using System.Windows.Controls;
@@ -269,7 +270,9 @@ namespace m0.UIWpf.Visualisers
         }
 
         protected virtual void UpdateBaseEdge(){
-            IVertex _bas = Vertex.Get(false, @"BaseEdge:\To:");            
+            IVertex _bas = Vertex.Get(false, @"BaseEdge:\To:");
+
+            IEnumerable ItemsSourceValue = null;
 
             if (_bas != null)
             {
@@ -280,20 +283,19 @@ namespace m0.UIWpf.Visualisers
                     IVertex data = VertexOperations.DoFilter(_bas, Vertex.Get(false, @"FilterQuery:"));
 
                     if (data != null)
-                        ThisDataGrid.ItemsSource = data.ToList();
-                    else
-                        ThisDataGrid.ItemsSource = null;
+                        ItemsSourceValue = data.ToList();                    
                 }
-                else
-                {
-                    IList<IEdge> bas = new List<IEdge>();
+                else                
+                    ItemsSourceValue = _bas.ToList(); // if there is no .ToList DataGrid can not edit
+                
 
-                    foreach (IEdge e in _bas)
-                        if (GraphUtil.GetQueryOutCount(e.To, "$Hide", null) == 0)
-                            bas.Add(e);
+                IList<IEdge> ItemsSourceValueNoHide = new List<IEdge>();
 
-                    ThisDataGrid.ItemsSource = bas.ToList(); // if there is no .ToList DataGrid can not edit
-                }
+                foreach (IEdge e in ItemsSourceValue)
+                    if (GraphUtil.GetQueryOutCount(e.To, "$Hide", null) == 0)
+                        ItemsSourceValueNoHide.Add(e);
+
+                ThisDataGrid.ItemsSource = ItemsSourceValueNoHide;
             }           
         }
 
