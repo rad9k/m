@@ -29,6 +29,9 @@ namespace m0_SYSTEM_GENERATE.Lib
 
             string type = "m0.Lib.Std, m0, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null";
 
+            AddFunction(LibStd, "AlphabeticalSort", type, "AlphabeticalSort", "Vertex", new TypeName[] { new TypeName("toSortVertex", "Vertex", 0, -1), new TypeName("sortVertexQueryString", "String", 0, -1) });
+            AddFunction(LibStd, "NumericSort", type, "NumericSort", "Vertex", new TypeName[] { new TypeName("toSortVertex", "Vertex", 0, -1), new TypeName("sortVertexQueryString", "String", 0, -1) });
+
             AddFunction(LibStd, "Concatenate", type, "Concatenate", "String", new TypeName[] { new TypeName("input", "String", 0, -1) });
             AddFunction(LibStd, "Split", type, "Split", "String", new TypeName[] { new TypeName("input", "String", 0, -1) });
             AddFunction(LibStd, "SplitBy", type, "SplitBy", "String", new TypeName[] { new TypeName("input", "String", 0, -1), new TypeName("by", "String", 1, -1) });
@@ -58,9 +61,7 @@ namespace m0_SYSTEM_GENERATE.Lib
             AddFunction(LibStd, "Sequence", type, "Sequence", "Integer", new TypeName[] { new TypeName("min", "Integer", 1, 1), new TypeName("max", "Integer", 1, 1) });
             AddFunction(LibStd, "StepSequence", type, "StepSequence", "Integer", new TypeName[] { new TypeName("min", "Float", 1, 1), new TypeName("max", "Float", 1, 1), new TypeName("step", "Float", 1, 1) });
 
-            AddFunction(LibStd, "Sleep", type, "Sleep", null, new TypeName[] {new TypeName("miliseconds", "Integer", 1, 1) });
-
-            GraphUtil.AddClass(LibStd, "View");            
+            AddFunction(LibStd, "Sleep", type, "Sleep", null, new TypeName[] {new TypeName("miliseconds", "Integer", 1, 1) });            
         }
 
         public static void Save(List<IVertex> systemSubGraphWithLinks, Dictionary<string, StoreId> storeOverride)

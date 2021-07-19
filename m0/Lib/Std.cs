@@ -3,6 +3,7 @@ using m0.Graph;
 using m0.ZeroCode.Helpers;
 using System;
 using System.Collections.Generic;
+using System.Collections;
 using System.Linq;
 using System.Text;
 using System.Threading;
@@ -10,8 +11,62 @@ using System.Threading.Tasks;
 
 namespace m0.Lib
 {
+    public class QueryStringEdgeComparer : IComparer<IEdge>, IComparer
+    {
+        string queryString;
+        bool isAlphabetical;
+
+        public int Compare(IEdge x, IEdge y) {
+            return 0;
+            //object
+        }
+
+        public int Compare(object x, object y)
+        {
+            throw new NotImplementedException();
+        }
+
+        public QueryStringEdgeComparer(string _queryString, bool _isAlphabetical)
+        {
+            queryString = _queryString;
+            isAlphabetical = _isAlphabetical;
+        }
+    }
+
     public class Std
     {
+        public static INoInEdgeInOutVertexVertex AlphabeticalSort(IExecution exe)
+        {
+            INoInEdgeInOutVertexVertex stack = exe.Stack;            
+
+            IVertex toSortVertex = GraphUtil.GetQueryOutFirst(stack, "toSortVertex", null);
+
+            IVertex sortVertexQueryString = GraphUtil.GetQueryOutFirst(stack, "sortVertexQueryString", null);
+
+            if (toSortVertex == null || sortVertexQueryString == null)
+                return exe.Stack;
+
+            string queryString = sortVertexQueryString.Value.ToString();
+
+            QueryStringEdgeComparer qsec = new QueryStringEdgeComparer(queryString, true);
+
+            List<IEdge> list = toSortVertex.OutEdges.ToList<IEdge>();
+            List<IEdge> sorted = list.Sort(new QueryStringEdgeComparer(queryString, true));
+
+            INoInEdgeInOutVertexVertex newStack = InstructionHelpers.CreateStack();
+
+            /*foreach (IEdge e in inputList)
+            {
+                string inputString = e.To.Value.ToString();
+
+                int indexOf = inputString.IndexOf(test);
+
+                newStack.AddVertex(null, indexOf);
+            }*/
+
+            return newStack;
+        }
+
         public static INoInEdgeInOutVertexVertex Concatenate(IExecution exe)
         {
             INoInEdgeInOutVertexVertex stack = exe.Stack;
