@@ -3,7 +3,6 @@ using m0.Graph;
 using m0.ZeroCode.Helpers;
 using System;
 using System.Collections.Generic;
-using System.Collections;
 using System.Linq;
 using System.Text;
 using System.Threading;
@@ -11,20 +10,44 @@ using System.Threading.Tasks;
 
 namespace m0.Lib
 {
-    public class QueryStringEdgeComparer : IComparer<IEdge>, IComparer
+    public class QueryStringEdgeComparer : IComparer<IEdge>
     {
         string queryString;
         bool isAlphabetical;
 
         public int Compare(IEdge x, IEdge y) {
-            return 0;
-            //object
-        }
+            if (x == null || y == null || x.To == null || y.To == null)
+                return 0;
 
-        public int Compare(object x, object y)
-        {
-            throw new NotImplementedException();
-        }
+            IVertex xv = x.To.Get(false, queryString);
+            IVertex yv = y.To.Get(false, queryString);
+
+            if (isAlphabetical)
+            {
+                string xs = xv.Value.ToString();
+                string ys = yv.Value.ToString();
+
+                return xs.CompareTo(ys);
+            }
+            else
+            {
+                bool isXnull=false, isYnull=false;
+
+                double xValue = GraphUtil.GetDoubleValue(xv, ref isXnull);
+                double yValue = GraphUtil.GetDoubleValue(yv, ref isYnull);
+
+                if (isXnull || isYnull)
+                    return 0;
+
+                if (xValue == yValue)
+                    return 0;
+
+                if (yValue > xValue)
+                    return 1;
+
+                return -1;
+            }            
+        }        
 
         public QueryStringEdgeComparer(string _queryString, bool _isAlphabetical)
         {
@@ -50,19 +73,39 @@ namespace m0.Lib
 
             QueryStringEdgeComparer qsec = new QueryStringEdgeComparer(queryString, true);
 
-            List<IEdge> list = toSortVertex.OutEdges.ToList<IEdge>();
-            List<IEdge> sorted = list.Sort(new QueryStringEdgeComparer(queryString, true));
+            List<IEdge> edgesList = toSortVertex.OutEdges.ToList<IEdge>();
+            edgesList.Sort(qsec);
 
             INoInEdgeInOutVertexVertex newStack = InstructionHelpers.CreateStack();
 
-            /*foreach (IEdge e in inputList)
-            {
-                string inputString = e.To.Value.ToString();
+            foreach (IEdge e in edgesList)            
+                newStack.AddEdge(e.Meta, e.To);            
 
-                int indexOf = inputString.IndexOf(test);
+            return newStack;
+        }
 
-                newStack.AddVertex(null, indexOf);
-            }*/
+        public static INoInEdgeInOutVertexVertex NumericalSort(IExecution exe)
+        {
+            INoInEdgeInOutVertexVertex stack = exe.Stack;
+
+            IVertex toSortVertex = GraphUtil.GetQueryOutFirst(stack, "toSortVertex", null);
+
+            IVertex sortVertexQueryString = GraphUtil.GetQueryOutFirst(stack, "sortVertexQueryString", null);
+
+            if (toSortVertex == null || sortVertexQueryString == null)
+                return exe.Stack;
+
+            string queryString = sortVertexQueryString.Value.ToString();
+
+            QueryStringEdgeComparer qsec = new QueryStringEdgeComparer(queryString, false);
+
+            List<IEdge> edgesList = toSortVertex.OutEdges.ToList<IEdge>();
+            edgesList.Sort(qsec);
+
+            INoInEdgeInOutVertexVertex newStack = InstructionHelpers.CreateStack();
+
+            foreach (IEdge e in edgesList)
+                newStack.AddEdge(e.Meta, e.To);
 
             return newStack;
         }
