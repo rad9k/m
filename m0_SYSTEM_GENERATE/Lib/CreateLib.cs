@@ -29,8 +29,10 @@ namespace m0_SYSTEM_GENERATE.Lib
 
             string type = "m0.Lib.Std, m0, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null";
 
-            AddFunction(LibStd, "AlphabeticalSort", type, "AlphabeticalSort", "Vertex", new TypeName[] { new TypeName("toSortVertex", "Vertex", 0, -1), new TypeName("sortVertexQueryString", "String", 0, -1) });
-            AddFunction(LibStd, "NumericSort", type, "NumericSort", "Vertex", new TypeName[] { new TypeName("toSortVertex", "Vertex", 0, -1), new TypeName("sortVertexQueryString", "String", 0, -1) });
+            AddFunction(LibStd, "AlphabeticalSortByQuery", type, "AlphabeticalSortByQuery", "Vertex", new TypeName[] { new TypeName("toSortVertex", "Vertex", 0, -1), new TypeName("sortVertexQueryString", "String", 0, -1) });
+            AddFunction(LibStd, "NumericSortByQuery", type, "NumericSortByQuery", "Vertex", new TypeName[] { new TypeName("toSortVertex", "Vertex", 0, -1), new TypeName("sortVertexQueryString", "String", 0, -1) });
+            AddFunction(LibStd, "AlphabeticalSort", type, "AlphabeticalSort", "Vertex", new TypeName[] { new TypeName("toSortVertex", "Vertex", 0, -1) });
+            AddFunction(LibStd, "NumericSort", type, "NumericSort", "Vertex", new TypeName[] { new TypeName("toSortVertex", "Vertex", 0, -1) });
 
             AddFunction(LibStd, "Concatenate", type, "Concatenate", "String", new TypeName[] { new TypeName("input", "String", 0, -1) });
             AddFunction(LibStd, "Split", type, "Split", "String", new TypeName[] { new TypeName("input", "String", 0, -1) });

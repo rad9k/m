@@ -22,6 +22,9 @@ namespace m0.Lib
             IVertex xv = x.To.Get(false, queryString);
             IVertex yv = y.To.Get(false, queryString);
 
+            if (xv == null || yv == null)
+                return 0;
+
             if (isAlphabetical)
             {
                 string xs = xv.Value.ToString();
@@ -42,7 +45,7 @@ namespace m0.Lib
                 if (xValue == yValue)
                     return 0;
 
-                if (yValue > xValue)
+                if (yValue < xValue)
                     return 1;
 
                 return -1;
@@ -56,24 +59,72 @@ namespace m0.Lib
         }
     }
 
+    public class EdgeComparer : IComparer<IEdge>
+    {
+        bool isAlphabetical;
+
+        public int Compare(IEdge x, IEdge y)
+        {
+            if (x == null || y == null)
+                return 0;
+
+            IVertex xv = x.To;
+            IVertex yv = y.To;
+
+            if (xv == null || yv == null)
+                return 0;
+
+            if (isAlphabetical)
+            {
+                string xs = xv.Value.ToString();
+                string ys = yv.Value.ToString();
+
+                return xs.CompareTo(ys);
+            }
+            else
+            {
+                bool isXnull = false, isYnull = false;
+
+                double xValue = GraphUtil.GetDoubleValue(xv, ref isXnull);
+                double yValue = GraphUtil.GetDoubleValue(yv, ref isYnull);
+
+                if (isXnull || isYnull)
+                    return 0;
+
+                if (xValue == yValue)
+                    return 0;
+
+                if (yValue < xValue)
+                    return 1;
+
+                return -1;
+            }
+        }
+
+        public EdgeComparer(bool _isAlphabetical)
+        {
+            isAlphabetical = _isAlphabetical;
+        }
+    }
+
     public class Std
     {
-        public static INoInEdgeInOutVertexVertex AlphabeticalSort(IExecution exe)
+        public static INoInEdgeInOutVertexVertex AlphabeticalSortByQuery(IExecution exe)
         {
-            INoInEdgeInOutVertexVertex stack = exe.Stack;            
+            INoInEdgeInOutVertexVertex stack = exe.Stack;
 
-            IVertex toSortVertex = GraphUtil.GetQueryOutFirst(stack, "toSortVertex", null);
+            IList<IEdge> toSortList = GraphUtil.GetQueryOut(stack, "toSortVertex", null);
 
             IVertex sortVertexQueryString = GraphUtil.GetQueryOutFirst(stack, "sortVertexQueryString", null);
 
-            if (toSortVertex == null || sortVertexQueryString == null)
+            if (toSortList == null || sortVertexQueryString == null)
                 return exe.Stack;
 
             string queryString = sortVertexQueryString.Value.ToString();
 
             QueryStringEdgeComparer qsec = new QueryStringEdgeComparer(queryString, true);
 
-            List<IEdge> edgesList = toSortVertex.OutEdges.ToList<IEdge>();
+            List<IEdge> edgesList = toSortList.ToList<IEdge>();
             edgesList.Sort(qsec);
 
             INoInEdgeInOutVertexVertex newStack = InstructionHelpers.CreateStack();
@@ -84,23 +135,67 @@ namespace m0.Lib
             return newStack;
         }
 
-        public static INoInEdgeInOutVertexVertex NumericalSort(IExecution exe)
+        public static INoInEdgeInOutVertexVertex NumericSortByQuery(IExecution exe)
         {
             INoInEdgeInOutVertexVertex stack = exe.Stack;
 
-            IVertex toSortVertex = GraphUtil.GetQueryOutFirst(stack, "toSortVertex", null);
+            IList<IEdge> toSortList = GraphUtil.GetQueryOut(stack, "toSortVertex", null);
 
             IVertex sortVertexQueryString = GraphUtil.GetQueryOutFirst(stack, "sortVertexQueryString", null);
 
-            if (toSortVertex == null || sortVertexQueryString == null)
+            if (toSortList == null || sortVertexQueryString == null)
                 return exe.Stack;
 
             string queryString = sortVertexQueryString.Value.ToString();
 
             QueryStringEdgeComparer qsec = new QueryStringEdgeComparer(queryString, false);
 
-            List<IEdge> edgesList = toSortVertex.OutEdges.ToList<IEdge>();
+            List<IEdge> edgesList = toSortList.ToList<IEdge>();
             edgesList.Sort(qsec);
+
+            INoInEdgeInOutVertexVertex newStack = InstructionHelpers.CreateStack();
+
+            foreach (IEdge e in edgesList)
+                newStack.AddEdge(e.Meta, e.To);
+
+            return newStack;
+        }
+
+        public static INoInEdgeInOutVertexVertex AlphabeticalSort(IExecution exe)
+        {
+            INoInEdgeInOutVertexVertex stack = exe.Stack;
+
+            IList<IEdge> toSortList = GraphUtil.GetQueryOut(stack, "toSortVertex", null);
+
+            if (toSortList == null)
+                return exe.Stack;
+
+            EdgeComparer ec = new EdgeComparer(true);
+
+            List<IEdge> edgesList = toSortList.ToList<IEdge>();
+            edgesList.Sort(ec);
+
+            INoInEdgeInOutVertexVertex newStack = InstructionHelpers.CreateStack();
+
+            foreach (IEdge e in edgesList)
+                newStack.AddEdge(e.Meta, e.To);
+
+            return newStack;
+        }
+
+        public static INoInEdgeInOutVertexVertex NumericSort(IExecution exe)
+        {
+            INoInEdgeInOutVertexVertex stack = exe.Stack;
+
+            IList<IEdge> toSortList = GraphUtil.GetQueryOut(stack, "toSortVertex", null);
+
+            if (toSortList == null)
+                return exe.Stack;
+
+            EdgeComparer ec = new EdgeComparer(false);
+
+            List<IEdge> edgesList = toSortList.ToList<IEdge>();
+            edgesList.Sort(ec);
 
             INoInEdgeInOutVertexVertex newStack = InstructionHelpers.CreateStack();
 
