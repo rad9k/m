@@ -132,6 +132,8 @@ namespace m0.UIWpf.Commands
 
             ms.AddEdge(null, MinusZero.Instance.root.Get(false, @"System\Lib\Music\Instrument"));
 
+            ms.AddEdge(null, MinusZero.Instance.root.Get(false, @"System\Lib\Music\Chord"));
+
 
             GraphUtil.CreateOrReplaceEdge(diagram, creationPoolMeta, ms);
 

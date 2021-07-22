@@ -750,6 +750,16 @@ namespace m0_SYSTEM_GENERATE.Music
             GraphUtil.LoadParseAndMove(@"_RES\Instrument\X09\X09_CC.txt", X09, "'XBase09_ControlChangeDescriptionSet'");
             GraphUtil.LoadParseAndMove(@"_RES\Instrument\X09\X09_mode_1_PitchSet.txt", X09, "'XBase09_mode_1_PitchSet'");
             GraphUtil.LoadParseAndMove(@"_RES\Instrument\X09\X09_mode_2_PitchSet.txt", X09, "'XBase09_mode_2_PitchSet'");
+
+            IVertex Chord = Music.AddVertex(r.Get(false, @"System\Meta\ZeroUML\Package"), "Chord");
+
+            GraphUtil.LoadAndParse(@"_RES\Chord\BasicChords.txt", Chord);
+
+            IEdge toDelete1 = Chord.OutEdges[0];
+            IEdge toDelete2 = Chord.OutEdges[1];
+
+            Chord.DeleteEdge(toDelete1);
+            Chord.DeleteEdge(toDelete2);
         }
     }
 }
