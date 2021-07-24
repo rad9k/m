@@ -156,7 +156,8 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control
             if (_baseVertex != null)
             {
                 baseVertex = _baseVertex;
-                AddCCs();
+
+                UpdateCCList();
             }
         }
 
@@ -293,6 +294,13 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control
             ControlInitialize();
         }
 
+        public void UpdateCCList()
+        {
+            AddCCs();
+
+            SelectDefault();
+        }
+
         public void ControlInitialize()
         {
             this.Orientation = Orientation.Horizontal;            
@@ -305,9 +313,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control
 
             List.LayoutTransform = new ScaleTransform(0.6, 0.6);
 
-            AddCCs();
-
-            SelectDefault();
+            UpdateCCList();
 
             listPanel = new StackPanel();
             
@@ -340,7 +346,8 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control
 
             number = d.GetNumber();
 
-            SelectionChanged(sender, e);
+            if(SelectionChanged != null)
+                SelectionChanged(sender, e);
         }
 
         public void PositionMarkUpdate() {}
