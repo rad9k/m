@@ -147,11 +147,11 @@
 			<@PitchColor :: @White>
 	<@PitchSet :: "Cmin">
 		<@$Is :: @PitchSet>
-		<@VisualisedPitch :: "1">
+		<@VisualisedPitch :: "3">
 			<@$Is :: @VisualisedPitch>
-			<@Name :: "P1">
+			<@Name :: "P5">
 			<@Octave :: "3">
-			<@Note\Note :: "0">
+			<@Note\Note :: "7">
 			<@PitchColor :: @White>
 		<@VisualisedPitch :: "2">
 			<@$Is :: @VisualisedPitch>
@@ -159,11 +159,11 @@
 			<@Octave :: "3">
 			<@Note\Note :: "3">
 			<@PitchColor :: @White>
-		<@VisualisedPitch :: "3">
+		<@VisualisedPitch :: "1">
 			<@$Is :: @VisualisedPitch>
-			<@Name :: "P5">
+			<@Name :: "P1">
 			<@Octave :: "3">
-			<@Note\Note :: "7">
+			<@Note\Note :: "0">
 			<@PitchColor :: @White>
 	<@PitchSet :: "Cmin6">
 		<@$Is :: @PitchSet>
