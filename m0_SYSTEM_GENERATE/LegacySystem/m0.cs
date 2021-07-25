@@ -357,12 +357,12 @@ namespace m0
                 LegacySystem.Graph.EasyVertex.Get(sm, false, @"ZeroUML\AtomType"));
         }
 
-        void AddDotNetEndPoint(IVertex baseVertex, string _methodName)
+        void AddDotNetStaticMethod(IVertex baseVertex, string _methodName)
         {
             IVertex callableEndPoint = LegacySystem.Graph.EasyVertex.Get(Root, false, @"System\Meta\Base\Vertex\$ExecutableEndPoint");
-            IVertex dotNetEndPoint = LegacySystem.Graph.EasyVertex.Get(Root, false, @"System\Meta\ZeroTypes\DotNetEndPoint");
-            IVertex typeName = LegacySystem.Graph.EasyVertex.Get(Root, false, @"System\Meta\ZeroTypes\DotNetEndPoint\TypeName");
-            IVertex methodName = LegacySystem.Graph.EasyVertex.Get(Root, false, @"System\Meta\ZeroTypes\DotNetEndPoint\MethodName");
+            IVertex dotNetEndPoint = LegacySystem.Graph.EasyVertex.Get(Root, false, @"System\Meta\ZeroTypes\DotNetStaticMethod");
+            IVertex typeName = LegacySystem.Graph.EasyVertex.Get(Root, false, @"System\Meta\ZeroTypes\DotNetStaticMethod\DotNetTypeName");
+            IVertex methodName = LegacySystem.Graph.EasyVertex.Get(Root, false, @"System\Meta\ZeroTypes\DotNetStaticMethod\DotNetMethodName");
             IVertex _is = LegacySystem.Graph.EasyVertex.Get(Root, false, @"System\Meta\Base\Vertex\$Is");
 
             IVertex n = baseVertex.AddVertex(callableEndPoint, null);
@@ -416,92 +416,92 @@ namespace m0
 
             // Link
 
-            AddDotNetEndPoint(LegacySystem.Graph.EasyVertex.Get(smu, false, "Link"), "Link");
+            AddDotNetStaticMethod(LegacySystem.Graph.EasyVertex.Get(smu, false, "Link"), "Link");
 
             // query
 
-            AddDotNetEndPoint(LegacySystem.Graph.EasyVertex.Get(smu, false, "Query"), "QueryOperator");
-            AddDotNetEndPoint(LegacySystem.Graph.EasyVertex.Get(smu, false, "\"{}\""), "InnerOperator");
-            AddDotNetEndPoint(LegacySystem.Graph.EasyVertex.Get(smu, false, "?"), "QuestionMarkOperator");
-            AddDotNetEndPoint(LegacySystem.Graph.EasyVertex.Get(smu, false, "\"\\ \""), "SlashOperator");
-            AddDotNetEndPoint(LegacySystem.Graph.EasyVertex.Get(smu, false, "InEdgesSlash"), "InEdgesSlashOperator");
-            AddDotNetEndPoint(LegacySystem.Graph.EasyVertex.Get(smu, false, "\"Colon\""), "ColonOperator");            
+            AddDotNetStaticMethod(LegacySystem.Graph.EasyVertex.Get(smu, false, "Query"), "QueryOperator");
+            AddDotNetStaticMethod(LegacySystem.Graph.EasyVertex.Get(smu, false, "\"{}\""), "InnerOperator");
+            AddDotNetStaticMethod(LegacySystem.Graph.EasyVertex.Get(smu, false, "?"), "QuestionMarkOperator");
+            AddDotNetStaticMethod(LegacySystem.Graph.EasyVertex.Get(smu, false, "\"\\ \""), "SlashOperator");
+            AddDotNetStaticMethod(LegacySystem.Graph.EasyVertex.Get(smu, false, "InEdgesSlash"), "InEdgesSlashOperator");
+            AddDotNetStaticMethod(LegacySystem.Graph.EasyVertex.Get(smu, false, "\"Colon\""), "ColonOperator");            
 
             // edge operators
             
-            AddDotNetEndPoint(LegacySystem.Graph.EasyVertex.Get(smu, false, "RedirectLeftEdgesToRightVertices"), "RedirectLeftEdgesToRightVertices");
-            AddDotNetEndPoint(LegacySystem.Graph.EasyVertex.Get(smu, false, "AddLeftEdgesToRightVertices"), "AddLeftEdgesToRightVertices");
-            AddDotNetEndPoint(LegacySystem.Graph.EasyVertex.Get(smu, false, "AddRightEdgesIntoLeftEdges"), "AddRightEdgesIntoLeftEdges");
-            AddDotNetEndPoint(LegacySystem.Graph.EasyVertex.Get(smu, false, "DeleteRightVertices"), "DeleteRightVertices");
-            AddDotNetEndPoint(LegacySystem.Graph.EasyVertex.Get(smu, false, "DeleteRightEdgesFromLeftEdges"), "DeleteRightEdgesFromLeftEdges");
-            AddDotNetEndPoint(LegacySystem.Graph.EasyVertex.Get(smu, false, "DeleteRightVerticesFromLeftEdges"), "DeleteRightVerticesFromLeftEdges");
-            AddDotNetEndPoint(LegacySystem.Graph.EasyVertex.Get(smu, false, "SetLeftVertexesToFirstRightVertexValue"), "SetLeftVertexesToFirstRightVertexValue");
-            AddDotNetEndPoint(LegacySystem.Graph.EasyVertex.Get(smu, false, "AddRightEdgesIntoFirstLeftEdgeAndSetStoreForSubGraphAsIsInLeftVertex"), "AddRightEdgesIntoFirstLeftEdgeAndSetStoreForSubGraphAsIsInLeftVertex");
-            AddDotNetEndPoint(LegacySystem.Graph.EasyVertex.Get(smu, false, "AddRightEdgesIntoFirstLeftEdgeAndSetStoreForSubGraphIncludingLinksAsIsInLeftVertex"), "AddRightEdgesIntoFirstLeftEdgeAndSetStoreForSubGraphIncludingLinksAsIsInLeftVertex");
+            AddDotNetStaticMethod(LegacySystem.Graph.EasyVertex.Get(smu, false, "RedirectLeftEdgesToRightVertices"), "RedirectLeftEdgesToRightVertices");
+            AddDotNetStaticMethod(LegacySystem.Graph.EasyVertex.Get(smu, false, "AddLeftEdgesToRightVertices"), "AddLeftEdgesToRightVertices");
+            AddDotNetStaticMethod(LegacySystem.Graph.EasyVertex.Get(smu, false, "AddRightEdgesIntoLeftEdges"), "AddRightEdgesIntoLeftEdges");
+            AddDotNetStaticMethod(LegacySystem.Graph.EasyVertex.Get(smu, false, "DeleteRightVertices"), "DeleteRightVertices");
+            AddDotNetStaticMethod(LegacySystem.Graph.EasyVertex.Get(smu, false, "DeleteRightEdgesFromLeftEdges"), "DeleteRightEdgesFromLeftEdges");
+            AddDotNetStaticMethod(LegacySystem.Graph.EasyVertex.Get(smu, false, "DeleteRightVerticesFromLeftEdges"), "DeleteRightVerticesFromLeftEdges");
+            AddDotNetStaticMethod(LegacySystem.Graph.EasyVertex.Get(smu, false, "SetLeftVertexesToFirstRightVertexValue"), "SetLeftVertexesToFirstRightVertexValue");
+            AddDotNetStaticMethod(LegacySystem.Graph.EasyVertex.Get(smu, false, "AddRightEdgesIntoFirstLeftEdgeAndSetStoreForSubGraphAsIsInLeftVertex"), "AddRightEdgesIntoFirstLeftEdgeAndSetStoreForSubGraphAsIsInLeftVertex");
+            AddDotNetStaticMethod(LegacySystem.Graph.EasyVertex.Get(smu, false, "AddRightEdgesIntoFirstLeftEdgeAndSetStoreForSubGraphIncludingLinksAsIsInLeftVertex"), "AddRightEdgesIntoFirstLeftEdgeAndSetStoreForSubGraphIncludingLinksAsIsInLeftVertex");
 
             // edge set operators
 
-            AddDotNetEndPoint(LegacySystem.Graph.EasyVertex.Get(smu, false, "EdgeSetAdd"), "EdgeSetAdd");
-            AddDotNetEndPoint(LegacySystem.Graph.EasyVertex.Get(smu, false, "EdgeSetSubstract"), "EdgeSetSubstract");
-            AddDotNetEndPoint(LegacySystem.Graph.EasyVertex.Get(smu, false, "SetIndex"), "SetIndex");
-            AddDotNetEndPoint(LegacySystem.Graph.EasyVertex.Get(smu, false, "SetCount"), "SetCount");
-            AddDotNetEndPoint(LegacySystem.Graph.EasyVertex.Get(smu, false, "EmptySet"), "EmptySet");
+            AddDotNetStaticMethod(LegacySystem.Graph.EasyVertex.Get(smu, false, "EdgeSetAdd"), "EdgeSetAdd");
+            AddDotNetStaticMethod(LegacySystem.Graph.EasyVertex.Get(smu, false, "EdgeSetSubstract"), "EdgeSetSubstract");
+            AddDotNetStaticMethod(LegacySystem.Graph.EasyVertex.Get(smu, false, "SetIndex"), "SetIndex");
+            AddDotNetStaticMethod(LegacySystem.Graph.EasyVertex.Get(smu, false, "SetCount"), "SetCount");
+            AddDotNetStaticMethod(LegacySystem.Graph.EasyVertex.Get(smu, false, "EmptySet"), "EmptySet");
 
             // number algebra operators
 
-            AddDotNetEndPoint(LegacySystem.Graph.EasyVertex.Get(smu, false, "+"), "Add");
-            AddDotNetEndPoint(LegacySystem.Graph.EasyVertex.Get(smu, false, "-"), "Substract");
-            AddDotNetEndPoint(LegacySystem.Graph.EasyVertex.Get(smu, false, "Mul"), "Multiply");
-            AddDotNetEndPoint(LegacySystem.Graph.EasyVertex.Get(smu, false, "/"), "Divide");
+            AddDotNetStaticMethod(LegacySystem.Graph.EasyVertex.Get(smu, false, "+"), "Add");
+            AddDotNetStaticMethod(LegacySystem.Graph.EasyVertex.Get(smu, false, "-"), "Substract");
+            AddDotNetStaticMethod(LegacySystem.Graph.EasyVertex.Get(smu, false, "Mul"), "Multiply");
+            AddDotNetStaticMethod(LegacySystem.Graph.EasyVertex.Get(smu, false, "/"), "Divide");
 
             // logic operators
 
-            AddDotNetEndPoint(LegacySystem.Graph.EasyVertex.Get(smu, false, "Equal"), "Equal");
-            AddDotNetEndPoint(LegacySystem.Graph.EasyVertex.Get(smu, false, "ExactEqual"), "ExactEqual");
-            AddDotNetEndPoint(LegacySystem.Graph.EasyVertex.Get(smu, false, "VertexEqual"), "VertexEqual");
-            AddDotNetEndPoint(LegacySystem.Graph.EasyVertex.Get(smu, false, "NotEqual"), "NotEqual");
-            AddDotNetEndPoint(LegacySystem.Graph.EasyVertex.Get(smu, false, "Negation"), "Negation");
-            AddDotNetEndPoint(LegacySystem.Graph.EasyVertex.Get(smu, false, "And"), "And");
-            AddDotNetEndPoint(LegacySystem.Graph.EasyVertex.Get(smu, false, "Or"), "Or");
-            AddDotNetEndPoint(LegacySystem.Graph.EasyVertex.Get(smu, false, "MoreThan"), "MoreThan");
-            AddDotNetEndPoint(LegacySystem.Graph.EasyVertex.Get(smu, false, "LessThan"), "LessThan");
-            AddDotNetEndPoint(LegacySystem.Graph.EasyVertex.Get(smu, false, "MoreOrEqualThan"), "MoreOrEqualThan");
-            AddDotNetEndPoint(LegacySystem.Graph.EasyVertex.Get(smu, false, "LessOrEqualThan"), "LessOrEqualThan");
+            AddDotNetStaticMethod(LegacySystem.Graph.EasyVertex.Get(smu, false, "Equal"), "Equal");
+            AddDotNetStaticMethod(LegacySystem.Graph.EasyVertex.Get(smu, false, "ExactEqual"), "ExactEqual");
+            AddDotNetStaticMethod(LegacySystem.Graph.EasyVertex.Get(smu, false, "VertexEqual"), "VertexEqual");
+            AddDotNetStaticMethod(LegacySystem.Graph.EasyVertex.Get(smu, false, "NotEqual"), "NotEqual");
+            AddDotNetStaticMethod(LegacySystem.Graph.EasyVertex.Get(smu, false, "Negation"), "Negation");
+            AddDotNetStaticMethod(LegacySystem.Graph.EasyVertex.Get(smu, false, "And"), "And");
+            AddDotNetStaticMethod(LegacySystem.Graph.EasyVertex.Get(smu, false, "Or"), "Or");
+            AddDotNetStaticMethod(LegacySystem.Graph.EasyVertex.Get(smu, false, "MoreThan"), "MoreThan");
+            AddDotNetStaticMethod(LegacySystem.Graph.EasyVertex.Get(smu, false, "LessThan"), "LessThan");
+            AddDotNetStaticMethod(LegacySystem.Graph.EasyVertex.Get(smu, false, "MoreOrEqualThan"), "MoreOrEqualThan");
+            AddDotNetStaticMethod(LegacySystem.Graph.EasyVertex.Get(smu, false, "LessOrEqualThan"), "LessOrEqualThan");
 
             // general operators
 
-            AddDotNetEndPoint(LegacySystem.Graph.EasyVertex.Get(smu, false, "()"), "Bracket");
-            AddDotNetEndPoint(LegacySystem.Graph.EasyVertex.Get(smu, false, "FunctionCall"), "FunctionCall");
-            AddDotNetEndPoint(LegacySystem.Graph.EasyVertex.Get(smu, false, "Return"), "Return");
-            AddDotNetEndPoint(LegacySystem.Graph.EasyVertex.Get(smu, false, "ForEach"), "ForEach");
-            AddDotNetEndPoint(LegacySystem.Graph.EasyVertex.Get(smu, false, "While"), "While");
-            AddDotNetEndPoint(LegacySystem.Graph.EasyVertex.Get(smu, false, "If"), "If");
-            AddDotNetEndPoint(LegacySystem.Graph.EasyVertex.Get(smu, false, "Test"), "Test");
+            AddDotNetStaticMethod(LegacySystem.Graph.EasyVertex.Get(smu, false, "()"), "Bracket");
+            AddDotNetStaticMethod(LegacySystem.Graph.EasyVertex.Get(smu, false, "FunctionCall"), "FunctionCall");
+            AddDotNetStaticMethod(LegacySystem.Graph.EasyVertex.Get(smu, false, "Return"), "Return");
+            AddDotNetStaticMethod(LegacySystem.Graph.EasyVertex.Get(smu, false, "ForEach"), "ForEach");
+            AddDotNetStaticMethod(LegacySystem.Graph.EasyVertex.Get(smu, false, "While"), "While");
+            AddDotNetStaticMethod(LegacySystem.Graph.EasyVertex.Get(smu, false, "If"), "If");
+            AddDotNetStaticMethod(LegacySystem.Graph.EasyVertex.Get(smu, false, "Test"), "Test");
 
             // oo operators
 
-            AddDotNetEndPoint(LegacySystem.Graph.EasyVertex.Get(smu, false, "MethodCall"), "MethodCall");
-            AddDotNetEndPoint(LegacySystem.Graph.EasyVertex.Get(smu, false, "New"), "New");
+            AddDotNetStaticMethod(LegacySystem.Graph.EasyVertex.Get(smu, false, "MethodCall"), "MethodCall");
+            AddDotNetStaticMethod(LegacySystem.Graph.EasyVertex.Get(smu, false, "New"), "New");
 
             // stack operators
 
-            AddDotNetEndPoint(LegacySystem.Graph.EasyVertex.Get(smu, false, @"StackFrameCreator\Variable"), "CreateStackEdge");
+            AddDotNetStaticMethod(LegacySystem.Graph.EasyVertex.Get(smu, false, @"StackFrameCreator\Variable"), "CreateStackEdge");
 
             // vertex creation operators
 
-            AddDotNetEndPoint(LegacySystem.Graph.EasyVertex.Get(smu, false, "DoubleColon"), "DoubleColonOperator");
-            AddDotNetEndPoint(LegacySystem.Graph.EasyVertex.Get(smu, false, "DoubleSemicolon"), "DoubleSemicolonOperator");
-            AddDotNetEndPoint(LegacySystem.Graph.EasyVertex.Get(smu, false, "InnerCreation"), "InnerCreation");
-            AddDotNetEndPoint(LegacySystem.Graph.EasyVertex.Get(smu, false, "CopySet"), "CopySet");
-            AddDotNetEndPoint(LegacySystem.Graph.EasyVertex.Get(smu, false, "MetaToTo"), "MetaToTo");
+            AddDotNetStaticMethod(LegacySystem.Graph.EasyVertex.Get(smu, false, "DoubleColon"), "DoubleColonOperator");
+            AddDotNetStaticMethod(LegacySystem.Graph.EasyVertex.Get(smu, false, "DoubleSemicolon"), "DoubleSemicolonOperator");
+            AddDotNetStaticMethod(LegacySystem.Graph.EasyVertex.Get(smu, false, "InnerCreation"), "InnerCreation");
+            AddDotNetStaticMethod(LegacySystem.Graph.EasyVertex.Get(smu, false, "CopySet"), "CopySet");
+            AddDotNetStaticMethod(LegacySystem.Graph.EasyVertex.Get(smu, false, "MetaToTo"), "MetaToTo");
 
             // meta
 
-            AddDotNetEndPoint(LegacySystem.Graph.EasyVertex.Get(smu, false, "Execute"), "Execute");
-            AddDotNetEndPoint(LegacySystem.Graph.EasyVertex.Get(smu, false, "Parse"), "Parse");
-            AddDotNetEndPoint(LegacySystem.Graph.EasyVertex.Get(smu, false, "Generate"), "Generate");
-            AddDotNetEndPoint(LegacySystem.Graph.EasyVertex.Get(smu, false, "ParseWithLanguage"), "Parse");
-            AddDotNetEndPoint(LegacySystem.Graph.EasyVertex.Get(smu,false, "GenerateWithLanguage"), "Generate");
+            AddDotNetStaticMethod(LegacySystem.Graph.EasyVertex.Get(smu, false, "Execute"), "Execute");
+            AddDotNetStaticMethod(LegacySystem.Graph.EasyVertex.Get(smu, false, "Parse"), "Parse");
+            AddDotNetStaticMethod(LegacySystem.Graph.EasyVertex.Get(smu, false, "Generate"), "Generate");
+            AddDotNetStaticMethod(LegacySystem.Graph.EasyVertex.Get(smu, false, "ParseWithLanguage"), "Parse");
+            AddDotNetStaticMethod(LegacySystem.Graph.EasyVertex.Get(smu,false, "GenerateWithLanguage"), "Generate");
 
 
 
@@ -2464,7 +2464,7 @@ namespace m0
             IVertex sm = LegacySystem.Graph.EasyVertex.Get(Root, false, @"System\Meta");
 
 
-            m0.LegacySystem.Util.GeneralUtil.ParseAndExcute(sm, sm, "{ZeroTypes{AtomType:String,AtomType:Integer,AtomType:Decimal,AtomType:Float,AtomType:Boolean,Type:VertexType,Class:Edge{Association:From{$MinCardinality:0,$MaxCardinality:1},Association:Meta{$MinCardinality:1,$MaxCardinality:1},Association:To{$MinCardinality:1,$MaxCardinality:1}},Class:DateTime{Attribute:Year{$MinCardinality:1,$MaxCardinality:1},Attribute:Month{$MinCardinality:1,$MaxCardinality:1},Attribute:Day{$MinCardinality:1,$MaxCardinality:1},Attribute:Hour{$MinCardinality:1,$MaxCardinality:1},Attribute:Minute{$MinCardinality:1,$MaxCardinality:1},Attribute:Second{$MinCardinality:1,$MaxCardinality:1},Attribute:Millisecond{$MinCardinality:0,$MaxCardinality:1}},Class:FormalTextLanguage{Aggregation:DefaultImports{$MinCardinality:0,$MaxCardinality:1},Aggregation:Keywords{$MinCardinality:0,$MaxCardinality:1}},Enum:EnumBase,Class:$PlatformClass{$PlatformClassName},Class:HasBaseEdge{Attribute:BaseEdge{$MinCardinality:1,$MaxCardinality:1}},Class:HasSelectedEdges{Attribute:SelectedEdges{$MinCardinality:1,$MaxCardinality:1,$DefaultValue:}},Class:HasFilter{Attribute:FilterQuery{$MinCardinality:0,$MaxCardinality:1}},Class:HasExecutableVertex{Attribute:ExecutableVertex{$MinCardinality:1,$MaxCardinality:1}},Class:HasColor{Attribute:Color{$MinCardinality:0,$MaxCardinality:1}},Class:Color{Attribute:Red{MinValue:0,MaxValue:255,$DefaultValue:0,$MinCardinality:1,$MaxCardinality:1},Attribute:Green{MinValue:0,MaxValue:255,$DefaultValue:0,$MinCardinality:1,$MaxCardinality:1},Attribute:Blue{MinValue:0,MaxValue:255,$DefaultValue:0,$MinCardinality:1,$MaxCardinality:1},Attribute:Opacity{MinValue:0,MaxValue:255,$MinCardinality:0,$MaxCardinality:1}},Class:Exception{Attribute:Where{$MinCardinality:0,$MaxCardinality:1},Attribute:Type{$MinCardinality:0,$MaxCardinality:1},Attribute:What{$MinCardinality:1,$MaxCardinality:1}},Enum:ExceptionTypeEnum{EnumValue:Error,EnumValue:Warning,EnumValue:Info},Class:CallableEndPoint,Class:DotNetEndPoint{Attribute:TypeName,Attribute:MethodName}}}");
+            m0.LegacySystem.Util.GeneralUtil.ParseAndExcute(sm, sm, "{ZeroTypes{AtomType:String,AtomType:Integer,AtomType:Decimal,AtomType:Float,AtomType:Boolean,Type:VertexType,Class:Edge{Association:From{$MinCardinality:0,$MaxCardinality:1},Association:Meta{$MinCardinality:1,$MaxCardinality:1},Association:To{$MinCardinality:1,$MaxCardinality:1}},Class:DateTime{Attribute:Year{$MinCardinality:1,$MaxCardinality:1},Attribute:Month{$MinCardinality:1,$MaxCardinality:1},Attribute:Day{$MinCardinality:1,$MaxCardinality:1},Attribute:Hour{$MinCardinality:1,$MaxCardinality:1},Attribute:Minute{$MinCardinality:1,$MaxCardinality:1},Attribute:Second{$MinCardinality:1,$MaxCardinality:1},Attribute:Millisecond{$MinCardinality:0,$MaxCardinality:1}},Class:FormalTextLanguage{Aggregation:DefaultImports{$MinCardinality:0,$MaxCardinality:1},Aggregation:Keywords{$MinCardinality:0,$MaxCardinality:1}},Enum:EnumBase,Class:$PlatformClass{$PlatformClassName},Class:HasBaseEdge{Attribute:BaseEdge{$MinCardinality:1,$MaxCardinality:1}},Class:HasSelectedEdges{Attribute:SelectedEdges{$MinCardinality:1,$MaxCardinality:1,$DefaultValue:}},Class:HasFilter{Attribute:FilterQuery{$MinCardinality:0,$MaxCardinality:1}},Class:HasExecutableVertex{Attribute:ExecutableVertex{$MinCardinality:1,$MaxCardinality:1}},Class:HasColor{Attribute:Color{$MinCardinality:0,$MaxCardinality:1}},Class:Color{Attribute:Red{MinValue:0,MaxValue:255,$DefaultValue:0,$MinCardinality:1,$MaxCardinality:1},Attribute:Green{MinValue:0,MaxValue:255,$DefaultValue:0,$MinCardinality:1,$MaxCardinality:1},Attribute:Blue{MinValue:0,MaxValue:255,$DefaultValue:0,$MinCardinality:1,$MaxCardinality:1},Attribute:Opacity{MinValue:0,MaxValue:255,$MinCardinality:0,$MaxCardinality:1}},Class:Exception{Attribute:Where{$MinCardinality:0,$MaxCardinality:1},Attribute:Type{$MinCardinality:0,$MaxCardinality:1},Attribute:What{$MinCardinality:1,$MaxCardinality:1}},Enum:ExceptionTypeEnum{EnumValue:Error,EnumValue:Warning,EnumValue:Info},Class:CallableEndPoint,Class:DotNetStaticMethod{Attribute:DotNetTypeName,Attribute:DotNetMethodName}}}");
 
             IVertex FormalTextLanguage = LegacySystem.Graph.EasyVertex.Get(sm, false, @"ZeroTypes\FormalTextLanguage");
 
@@ -2640,14 +2640,14 @@ namespace m0
                 LegacySystem.Graph.EasyVertex.Get(sm, false, @"*$EdgeTarget"), 
                 LegacySystem.Graph.EasyVertex.Get(sm, false, @"ZeroTypes\String"));
             
-            LegacySystem.Graph.EasyVertex.Get(sm, false, @"ZeroTypes\DotNetEndPoint").AddEdge(
+            LegacySystem.Graph.EasyVertex.Get(sm, false, @"ZeroTypes\DotNetStaticMethod").AddEdge(
                 LegacySystem.Graph.EasyVertex.Get(sm, false, "*$Inherits"),
                 LegacySystem.Graph.EasyVertex.Get(sm, false, @"ZeroTypes\CallableEndPoint"));
 
-            LegacySystem.Graph.EasyVertex.Get(sm, false, @"ZeroTypes\DotNetEndPoint\TypeName").AddEdge(
+            LegacySystem.Graph.EasyVertex.Get(sm, false, @"ZeroTypes\DotNetStaticMethod\DotNetTypeName").AddEdge(
                 LegacySystem.Graph.EasyVertex.Get(sm, false, @"*$EdgeTarget"),
                 LegacySystem.Graph.EasyVertex.Get(sm, false, @"ZeroTypes\String"));
-            LegacySystem.Graph.EasyVertex.Get(sm, false, @"ZeroTypes\DotNetEndPoint\MethodName").AddEdge(
+            LegacySystem.Graph.EasyVertex.Get(sm, false, @"ZeroTypes\DotNetStaticMethod\DotNetMethodName").AddEdge(
                 LegacySystem.Graph.EasyVertex.Get(sm, false, @"*$EdgeTarget"),
                 LegacySystem.Graph.EasyVertex.Get(sm, false, @"ZeroTypes\String"));
 
@@ -4643,10 +4643,10 @@ namespace m0
 
         }
 
-        public void BeginTransaction()
+        public void StartTransaction()
         {
             foreach (ITransactionRoot r in Stores)
-                r.BeginTransaction();
+                r.StartTransaction();
         }
 
         public void RollbackTransaction()

@@ -236,9 +236,9 @@ namespace m0.Graph
             IVertex r = m0.MinusZero.Instance.root;
 
             IVertex callableEndPoint = r.Get(false, @"System\Meta\Base\Vertex\$ExecutableEndPoint");
-            IVertex dotNetEndPoint = r.Get(false, @"System\Meta\ZeroTypes\DotNetEndPoint");
-            IVertex typeName = r.Get(false, @"System\Meta\ZeroTypes\DotNetEndPoint\TypeName");
-            IVertex methodName = r.Get(false, @"System\Meta\ZeroTypes\DotNetEndPoint\MethodName");
+            IVertex dotNetEndPoint = r.Get(false, @"System\Meta\ZeroTypes\DotNetStaticMethod");
+            IVertex typeName = r.Get(false, @"System\Meta\ZeroTypes\DotNetStaticMethod\DotNetTypeName");
+            IVertex methodName = r.Get(false, @"System\Meta\ZeroTypes\DotNetStaticMethod\DotNetMethodName");
             IVertex _is = r.Get(false, @"System\Meta\Base\Vertex\$Is");
 
             IVertex n = baseVertex.AddVertex(callableEndPoint, null);

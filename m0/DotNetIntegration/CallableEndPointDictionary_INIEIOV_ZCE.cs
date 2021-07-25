@@ -24,10 +24,10 @@ namespace m0.DotNetIntegration
                 del = DotNetEndPointDictionary[callableEndPointVertex];
             else
             {            
-                if (GraphUtil.GetQueryOutFirst(callableEndPointVertex, "$Is", "DotNetEndPoint") != null)
+                if (GraphUtil.GetQueryOutFirst(callableEndPointVertex, "$Is", "DotNetStaticMethod") != null)
                 {
-                    string typeString = (string)GraphUtil.FindOneByMeta(callableEndPointVertex, "TypeName").Value;
-                    string methodString = (string)GraphUtil.FindOneByMeta(callableEndPointVertex, "MethodName").Value;
+                    string typeString = (string)GraphUtil.FindOneByMeta(callableEndPointVertex, "DotNetTypeName").Value;
+                    string methodString = (string)GraphUtil.FindOneByMeta(callableEndPointVertex, "DotNetMethodName").Value;
 
                     Type type = Type.GetType(typeString);
                     MethodInfo method = type.GetMethod(methodString);

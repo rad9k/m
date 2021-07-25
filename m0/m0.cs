@@ -326,10 +326,10 @@ namespace m0
 
         }
 
-        public void BeginTransaction()
+        public void StartTransaction()
         {
             foreach (ITransactionRoot r in Stores)
-                r.BeginTransaction();
+                r.StartTransaction();
         }
 
         public void RollbackTransaction()

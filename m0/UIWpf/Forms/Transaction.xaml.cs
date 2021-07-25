@@ -51,7 +51,7 @@ namespace m0.UIWpf.Forms
 
         private void Universe_start_Click(object sender, RoutedEventArgs e)
         {
-            instance.BeginTransaction();
+            instance.StartTransaction();
         }
 
         private void Universe_commit_Click(object sender, RoutedEventArgs e)
@@ -97,7 +97,7 @@ namespace m0.UIWpf.Forms
         private void Store_begin_Click(object sender, RoutedEventArgs e)
         {
             if (selectedStore != null)
-                selectedStore.BeginTransaction();
+                selectedStore.StartTransaction();
         }
 
         private void Store_commit_Click(object sender, RoutedEventArgs e)

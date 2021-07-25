@@ -122,7 +122,7 @@ namespace m0.Store.FileSystem
             //throw new NotImplementedException();
         }
 
-        public void BeginTransaction()
+        public void StartTransaction()
         {
             //throw new NotImplementedException();
         }

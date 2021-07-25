@@ -93,7 +93,7 @@ a lot of "dupa" here :(
 88. enum keyword
 87. $IsAggregation for $EdgeTaret we want to be inplace
 89. two times
-	class "DotNetEndPoint"
+	class "DotNetStaticMethod"
 		attribute "TypeName" @String
 		attribute "MethodName" @String
 		<@$Inherits :: @CallableEndPoint>

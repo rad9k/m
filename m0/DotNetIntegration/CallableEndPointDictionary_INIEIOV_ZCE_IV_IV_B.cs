@@ -43,10 +43,10 @@ namespace m0.DotNetIntegration
                 if (ep == null)
                     return null;
 
-                if (GraphUtil.GetQueryOutFirst(ep, "$Is", "DotNetEndPoint") != null)
+                if (GraphUtil.GetQueryOutFirst(ep, "$Is", "DotNetStaticMethod") != null)
                 {
-                    string typeString = (string)GraphUtil.FindOneByMeta(ep, "TypeName").Value;
-                    string methodString = (string)GraphUtil.FindOneByMeta(ep, "MethodName").Value;
+                    string typeString = (string)GraphUtil.FindOneByMeta(ep, "DotNetTypeName").Value;
+                    string methodString = (string)GraphUtil.FindOneByMeta(ep, "DotNetMethodName").Value;
 
                     Type type = Type.GetType(typeString);
                     MethodInfo method = type.GetMethod(methodString);

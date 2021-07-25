@@ -57,7 +57,7 @@ namespace m0.Store
 
         public virtual void Refresh() { }
 
-        public virtual void BeginTransaction() { }
+        public virtual void StartTransaction() { }
 
         public virtual void RollbackTransaction() { }
 

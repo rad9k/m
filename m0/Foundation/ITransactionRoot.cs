@@ -12,7 +12,7 @@ namespace m0.Foundation
 
         void Refresh();
 
-        void BeginTransaction();
+        void StartTransaction();
 
         void RollbackTransaction();
 
