@@ -656,13 +656,6 @@ namespace m0.Graph
                 return CallableEndPointDictionary_INIEIOV_ZCE.CallEndPoint(exe, this);
             else
                 return InstructionHelpers.SequentiallyExecuteInstructions(exe, exe.Stack, this, out dummy, false);
-
-            IVertex ExecutableEndPointVertex = GraphUtil.GetQueryOutFirst(this, "$ExecutableEndPoint", null);
-
-            if(ExecutableEndPointVertex==null)
-                return InstructionHelpers.SequentiallyExecuteInstructions(exe, exe.Stack, this, out dummy, false);
-            else
-                return CallableEndPointDictionary_INIEIOV_ZCE.CallEndPoint(exe, ExecutableEndPointVertex);
         }
 
         protected void VertexInit_First()
