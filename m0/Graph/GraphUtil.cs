@@ -231,22 +231,21 @@ namespace m0.Graph
             return a;
         }
 
-        public static void AddDotNetEndPoint(IVertex baseVertex, string _typeName, string _methodName)
+        public static void AddDotNetStaticMethod(IVertex baseVertex, string _typeName, string _methodName)
         {
             IVertex r = m0.MinusZero.Instance.root;
 
-            IVertex callableEndPoint = r.Get(false, @"System\Meta\Base\Vertex\$ExecutableEndPoint");
             IVertex dotNetEndPoint = r.Get(false, @"System\Meta\ZeroTypes\DotNetStaticMethod");
             IVertex typeName = r.Get(false, @"System\Meta\ZeroTypes\DotNetStaticMethod\DotNetTypeName");
             IVertex methodName = r.Get(false, @"System\Meta\ZeroTypes\DotNetStaticMethod\DotNetMethodName");
             IVertex _is = r.Get(false, @"System\Meta\Base\Vertex\$Is");
 
-            IVertex n = baseVertex.AddVertex(callableEndPoint, null);
-            n.AddEdge(_is, dotNetEndPoint);
+         
+            baseVertex.AddEdge(_is, dotNetEndPoint);
 
-            n.AddVertex(typeName, _typeName);
+            baseVertex.AddVertex(typeName, _typeName);
 
-            n.AddVertex(methodName, _methodName);
+            baseVertex.AddVertex(methodName, _methodName);
 
         }
 

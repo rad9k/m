@@ -10,6 +10,13 @@ using System.Threading.Tasks;
 
 namespace m0.DotNetIntegration
 {
+    // EasyVertex.Get/GetAll > ZeroCodeExecuter
+    // ZeroCodeExecution.ExecuteInstructionByMontevideoPrinciples
+    // ZeroCodeExecution.ExecuteInstruction
+    //
+    // CallEndPoint(ZeroCodeExecution exe, IVertex inputStack, IVertex instructionVertex)
+    // CallEndPoint(ZeroCodeExecution exe, IVertex inputStack, IVertex instructionVertex, out bool IsStackFrameReturn)
+
     public class CallableEndPointDictionary_INIEIOV_ZCE_IV_IV_B
     {
         delegate INoInEdgeInOutVertexVertex CallableEndPointDelegate(ZeroCodeExecution exe, IVertex inputStack, IVertex instructionVertex, out bool IsStackFrameReturn);

@@ -10,6 +10,10 @@ using System.Threading.Tasks;
 
 namespace m0.DotNetIntegration
 {
+    // EasyVertex.Execute
+    //
+    // INoInEdgeInOutVertexVertex CallEndPoint(IExecution exe, IVertex callableEndPointVertex)
+
     public class CallableEndPointDictionary_INIEIOV_ZCE
     {
         delegate INoInEdgeInOutVertexVertex CallableEndPointDelegate(IExecution exe);
