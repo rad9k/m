@@ -13,6 +13,7 @@ using System.Runtime.InteropServices;
 using m0.ZeroCode.Helpers;
 using m0.DotNetIntegration;
 using m0.Graph.Internal;
+using m0.Graph.Event;
 
 namespace m0.Graph
 {
@@ -650,7 +651,7 @@ namespace m0.Graph
 
         public override INoInEdgeInOutVertexVertex Execute(IExecution exe)
         {
-
+            return EventHelper.Execute(this, exe);
         }
 
         protected void VertexInit_First()

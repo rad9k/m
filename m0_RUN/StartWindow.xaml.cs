@@ -16,20 +16,6 @@ using System.Windows.Shapes;
 
 namespace m0
 {
-    public class testClass
-    {
-        INoInEdgeInOutVertexVertex m(IExecution exe)
-        {
-            return null;
-        }
-
-        public void a(IVertex v)
-        {
-            GraphUtil.AddDotNetDelegate(v, m);
-        }
-    }
-
-
     /// <summary>
     /// Interaction logic for StartWindow.xaml
     /// </summary>
@@ -61,9 +47,11 @@ namespace m0
 
             IVertex v = r.AddVertex(null, "V");
 
-            testClass o = new testClass();
+            GraphUtil.LoadAndParse("x.txt", v);
 
-            o.a(v);
+            IVertex n = VertexOperations.AddInstance(r, v.Get(false, @"Class:"));
+
+            GraphUtil.AddDelegate(v, n, v.Get(false, @"Class:\Method:"));
 
             v.Execute(null);
 

@@ -248,9 +248,9 @@ namespace m0.Graph
             baseVertex.AddVertex(methodName, _methodName);
         }
 
-        public delegate INoInEdgeInOutVertexVertex dotNetDelegate(IExecution exe);
+        public delegate INoInEdgeInOutVertexVertex DotNetDelegate(IExecution exe);
 
-        public static void AddDotNetDelegate(IVertex baseVertex, dotNetDelegate _delegate)
+        public static void AddDotNetDelegate(IVertex baseVertex, DotNetDelegate _delegate)
         {
             IVertex r = m0.MinusZero.Instance.root;
 
@@ -264,7 +264,7 @@ namespace m0.Graph
             baseVertex.AddVertex(dotNetDelegatePointer, _delegate);
         }
 
-        public static void AddDelegate(IVertex baseVertex, string _object, string _method)
+        public static void AddDelegate(IVertex baseVertex, IVertex _object, IVertex _method)
         {
             IVertex r = m0.MinusZero.Instance.root;
 
@@ -276,9 +276,9 @@ namespace m0.Graph
 
             baseVertex.AddEdge(_is, _delegate);
 
-            baseVertex.AddVertex(objectMeta, _object);
+            baseVertex.AddEdge(objectMeta, _object);
 
-            baseVertex.AddVertex(methodMeta, _method);
+            baseVertex.AddEdge(methodMeta, _method);
         }
 
         public static bool CompareEdges(IEdge one, IEdge two)
