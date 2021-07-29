@@ -16,6 +16,15 @@ using System.Windows.Shapes;
 
 namespace m0
 {
+    public class testClass
+    {
+        INoInEdgeInOutVertexVertex m(IExecution exe)
+        {
+            return null;
+        }
+    }
+
+
     /// <summary>
     /// Interaction logic for StartWindow.xaml
     /// </summary>
@@ -39,12 +48,19 @@ namespace m0
             Close();
         }
 
+        
+
         void ExtraRun()
         {
+            IVertex r = MinusZero.Instance.root;
+
+            IVertex v = r.AddVertex(null, "V");
+
+            GraphUtil.AddDotNetDelegate(v)
 
             return;
 
-            IVertex r = MinusZero.Instance.root;
+            
 
             IVertex v = r.AddVertex(null, "XXX");
 

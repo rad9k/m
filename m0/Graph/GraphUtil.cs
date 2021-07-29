@@ -246,7 +246,39 @@ namespace m0.Graph
             baseVertex.AddVertex(typeName, _typeName);
 
             baseVertex.AddVertex(methodName, _methodName);
+        }
 
+        public delegate INoInEdgeInOutVertexVertex dotNetDelegate(IExecution exe);
+
+        public static void AddDotNetDelegate(IVertex baseVertex, dotNetDelegate _delegate)
+        {
+            IVertex r = m0.MinusZero.Instance.root;
+
+            IVertex dotNetDelegate = r.Get(false, @"System\Meta\ZeroTypes\DotNetDelegate");
+            IVertex dotNetDelegatePointer = r.Get(false, @"System\Meta\ZeroTypes\DotNetDelegate\DotNetDelegatePointer");
+            IVertex _is = r.Get(false, @"System\Meta\Base\Vertex\$Is");
+
+
+            baseVertex.AddEdge(_is, dotNetDelegate);
+
+            baseVertex.AddVertex(dotNetDelegatePointer, _delegate);
+        }
+
+        public static void AddDelegate(IVertex baseVertex, string _object, string _method)
+        {
+            IVertex r = m0.MinusZero.Instance.root;
+
+            IVertex _delegate = r.Get(false, @"System\Meta\ZeroTypes\Delegate");
+            IVertex objectMeta = r.Get(false, @"System\Meta\ZeroTypes\Delegate\Object");
+            IVertex methodMeta = r.Get(false, @"System\Meta\ZeroTypes\Delegate\Method");
+            IVertex _is = r.Get(false, @"System\Meta\Base\Vertex\$Is");
+
+
+            baseVertex.AddEdge(_is, _delegate);
+
+            baseVertex.AddVertex(objectMeta, _object);
+
+            baseVertex.AddVertex(methodMeta, _method);
         }
 
         public static bool CompareEdges(IEdge one, IEdge two)
