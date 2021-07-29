@@ -99,6 +99,7 @@
     <Compile Include="Foundation\IPlatformClass.cs" />
     <Compile Include="Foundation\IUserInteraction.cs" />
     <Compile Include="Graph\Event\Event.cs" />
+    <Compile Include="Graph\Event\EventHelper.cs" />
     <Compile Include="Graph\IImplementedVertex.cs" />
     <Compile Include="Graph\Internal\EdgeDictionaries.cs" />
     <Compile Include="Graph\Internal\MetaInList.cs" />

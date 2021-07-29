@@ -650,12 +650,7 @@ namespace m0.Graph
 
         public override INoInEdgeInOutVertexVertex Execute(IExecution exe)
         {
-            bool dummy;
 
-            if(InstructionHelpers.CheckIfIsInherits(this, "Executable"))
-                return CallableEndPointDictionary_INIEIOV_ZCE.CallEndPoint(exe, this);
-            else
-                return InstructionHelpers.SequentiallyExecuteInstructions(exe, exe.Stack, this, out dummy, false);
         }
 
         protected void VertexInit_First()

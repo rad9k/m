@@ -22,6 +22,11 @@ namespace m0
         {
             return null;
         }
+
+        public void a(IVertex v)
+        {
+            GraphUtil.AddDotNetDelegate(v, m);
+        }
     }
 
 
@@ -56,18 +61,12 @@ namespace m0
 
             IVertex v = r.AddVertex(null, "V");
 
-            GraphUtil.AddDotNetDelegate(v)
+            testClass o = new testClass();
 
-            return;
+            o.a(v);
 
-            
+            v.Execute(null);
 
-            IVertex v = r.AddVertex(null, "XXX");
-
-            GraphUtil.LoadParseAndMove("xxx.txt", v, "'SimpleTransformer'");
-                
-
-            
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)
