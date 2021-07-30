@@ -1,6 +1,7 @@
 ﻿using m0.DotNetIntegration;
 using m0.Foundation;
 using m0.ZeroCode.Helpers;
+using m0.ZeroUML.Instructions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -28,7 +29,19 @@ namespace m0.Graph.Event
 
         public static INoInEdgeInOutVertexVertex ExecuteDelegate(IVertex baseVertex, IExecution exe)
         {
-            //IVertex dotNetDelegate
+            IVertex _object = GraphUtil.GetQueryOutFirst(baseVertex, "Object", null);
+            IVertex method = GraphUtil.GetQueryOutFirst(baseVertex, "Method", null);
+
+            if(_object != null && method != null)
+            {
+                exe.AddStackFrame(_object); // this is WRONG XXX as we have method call parameters allready on stack
+                // this means that _object edges will potentially overwrite call paramaters
+                // no way to do it otherwise althought
+
+                method.Execute(exe);
+
+                exe.RemoveStackFrame();
+            }
 
             return null;
         }

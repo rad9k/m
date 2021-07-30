@@ -20,6 +20,62 @@ namespace m0.ZeroCode
 
         public bool metaMode { get; set; }
 
+        static IVertex dolar = MinusZero.Instance.Dolar;
+
+        public ZeroCodeExecution()
+        {
+            metaMode = true;
+
+            CreateEmptyStack();
+
+            NewVertexCreationSpace = Stack;
+
+            AddRootToStack();
+        }
+
+        public ZeroCodeExecution(IVertex expression)
+        {
+            metaMode = true;
+
+            CreateEmptyStack();
+
+            NewVertexCreationSpace = Stack;
+
+            AddRootToStack();
+
+            AddDolarToStack(expression);
+        }
+
+        public ZeroCodeExecution(IVertex toBeStackVertex, IVertex expression)
+        {
+            metaMode = true;
+
+            IEnumerable<IEdge> _toBeStackVertex;
+
+            if (toBeStackVertex == null)
+                _toBeStackVertex = new List<IEdge>();
+            else
+                _toBeStackVertex = toBeStackVertex;
+
+            Stack = InstructionHelpers.Create_INoInEdgeInOutVertexVertex_FromEdgesList(_toBeStackVertex);
+
+            NewVertexCreationSpace = Stack;
+
+            AddRootToStack();
+
+            AddDolarToStack(expression);
+        }
+
+        private void AddDolarToStack(IVertex expression)
+        {
+            Stack.AddEdge(dolar, expression);
+        }
+
+        public void AddRootToStack()
+        {
+            Stack.AddEdge(MinusZero.Instance.StackFrameInherits, MinusZero.Instance.Root);
+        }
+
         public void CreateEmptyStack()
         {
             Stack = InstructionHelpers.CreateStack();

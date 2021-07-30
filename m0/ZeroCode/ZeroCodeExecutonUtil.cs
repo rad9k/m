@@ -18,14 +18,6 @@ namespace m0.ZeroCode
         {
             IExecution exe = new ZeroCodeExecution();
 
-            exe.metaMode = true;
-
-            exe.CreateEmptyStack();
-
-            exe.NewVertexCreationSpace = exe.Stack;
-
-            ZeroCodeExecuter.AddRootToStack(exe);
-
             exe.AddStackFrame(theObject);
             
             exe.AddStackFrame();
@@ -37,22 +29,7 @@ namespace m0.ZeroCode
 
         public static void CreateExecutionAndVertexExecute(IVertex endPoint, IVertex toBeStackVertex)
         {
-            IExecution exe = new ZeroCodeExecution();
-
-            exe.metaMode = true;
-
-            IEnumerable<IEdge> _toBeStackVertex;
-
-            if (toBeStackVertex == null)
-                _toBeStackVertex = new List<IEdge>();
-            else
-                _toBeStackVertex = toBeStackVertex;
-
-            exe.Stack = InstructionHelpers.Create_INoInEdgeInOutVertexVertex_FromEdgesList(_toBeStackVertex);
-
-            exe.NewVertexCreationSpace = exe.Stack;
-
-            ZeroCodeExecuter.AddRootToStack(exe);
+            IExecution exe = new ZeroCodeExecution(toBeStackVertex);
 
             endPoint.Execute(exe);            
         }

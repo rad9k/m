@@ -1,5 +1,6 @@
 ﻿using m0.Foundation;
 using m0.Graph;
+using m0.ZeroCode;
 using m0.ZeroTypes;
 using System;
 using System.Collections.Generic;
@@ -53,7 +54,7 @@ namespace m0
 
             GraphUtil.AddDelegate(v, n, v.Get(false, @"Class:\Method:"));
 
-            v.Execute(null);
+            v.Execute(new ZeroCodeExecution());
 
         }
 
