@@ -2649,7 +2649,11 @@ namespace m0
 
             IVertex smz = LegacySystem.Graph.EasyVertex.Get(Root, false, @"System\Meta\ZeroTypes");
 
-            m0.LegacySystem.Util.GeneralUtil.ParseAndExcute(smz, sm, "{ExecutionFlow{Enum:GraphChangeEnum{EnumValue:ValueChange,EnumValue:OutputEdgeAdded,EnumValue:OutputEdgeRemoved,EnumValue:InputEdgeAdded,EnumValue:InputEdgeRemoved}"
+            IVertex smze = smz.AddVertex(LegacySystem.Graph.EasyVertex.Get(Root, false, @"System\Meta\ZeroUML\Package"),
+                "ExecutionFlow");
+
+
+            m0.LegacySystem.Util.GeneralUtil.ParseAndExcute(smze, sm, "{Enum:GraphChangeEnum{EnumValue:ValueChange,EnumValue:OutputEdgeAdded,EnumValue:OutputEdgeRemoved,EnumValue:InputEdgeAdded,EnumValue:InputEdgeRemoved}"
                 + ",Class:EventTrigger{Method:Fire,Attribute:Listener}"
                 + ",Class:Event{Association:Trigger,Association:Source}"
                 + ",Class:$GraphChangeTrigger{Attribute:ScopeQuery}"
@@ -2658,7 +2662,7 @@ namespace m0
                 + ",Class:Delegate{Attribute:Object{$MinCardinality:1,$MaxCardinality:1},Attribute:Method{$MinCardinality:1,$MaxCardinality:1}}"
                 + ",Class:DotNetStaticMethod{Attribute:DotNetTypeName{$MinCardinality:1,$MaxCardinality:1},Attribute:DotNetMethodName{$MinCardinality:1,$MaxCardinality:1}}"
                 + ",Class:DotNetDelegate{Attribute:DotNetDelegatePointer{$MinCardinality:1,$MaxCardinality:1}}"
-                + "}}");
+                + "}");
 
 
             LegacySystem.Graph.EasyVertex.Get(smz, false, @"ExecutionFlow\EventTrigger\Fire").AddVertex(
@@ -4930,9 +4934,9 @@ namespace m0
 
             CreateSystemMetaZeroTypes();
 
-            CreateSystemMetaZeroTypesExecutionFlow();
-
             CreateSystemMetaZeroUML_ZeroCode_part();
+
+            //CreateSystemMetaZeroTypesExecutionFlow();
 
             CreateSystemFormalTextLanguageZeroCodeBase();
 
