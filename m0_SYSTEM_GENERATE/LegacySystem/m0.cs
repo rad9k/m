@@ -2671,14 +2671,18 @@ namespace m0
                 LegacySystem.Graph.EasyVertex.Get(sm, false, @"ZeroTypes\Vertex"));
         }
 
-        void CreateSystemMetaZeroTypesEvents()
+        void CreateSystemMetaZeroTypesEvent()
         {
             IVertex sm = LegacySystem.Graph.EasyVertex.Get(Root, false, @"System\Meta");
+
+            IVertex smz = LegacySystem.Graph.EasyVertex.Get(Root, false, @"System\Meta\ZeroTypes");
+
+            m0.LegacySystem.Util.GeneralUtil.ParseAndExcute(smz, sm, "{Event{Enum:GraphChangeEnum{EnumValue:ValueChange,EnumValue:OutputEdgeAdded,EnumValue:OutputEdgeRemoved,EnumValue:InputEdgeAdded,EnumValue:InputEdgeRemoved}"
+                + ",Class:EventTrigger{Method:Fire,Attribute:Listener}}}");
+
         }
 
-
-
-            void CreateSystemMetaVisualiserDiagram()
+        void CreateSystemMetaVisualiserDiagram()
         {
             IVertex sm = Root.Get(false, @"System\Meta");
 
