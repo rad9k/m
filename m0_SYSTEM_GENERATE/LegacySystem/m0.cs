@@ -360,9 +360,9 @@ namespace m0
         void AddDotNetStaticMethodAsExecutableEndpoint(IVertex baseVertex, string _methodName)
         {
             IVertex callableEndPoint = LegacySystem.Graph.EasyVertex.Get(Root, false, @"System\Meta\Base\Vertex\$ExecutableEndPoint");
-            IVertex dotNetEndPoint = LegacySystem.Graph.EasyVertex.Get(Root, false, @"System\Meta\ZeroTypes\DotNetStaticMethod");
-            IVertex typeName = LegacySystem.Graph.EasyVertex.Get(Root, false, @"System\Meta\ZeroTypes\DotNetStaticMethod\DotNetTypeName");
-            IVertex methodName = LegacySystem.Graph.EasyVertex.Get(Root, false, @"System\Meta\ZeroTypes\DotNetStaticMethod\DotNetMethodName");
+            IVertex dotNetEndPoint = LegacySystem.Graph.EasyVertex.Get(Root, false, @"System\Meta\ZeroTypes\ExecutionFlow\DotNetStaticMethod");
+            IVertex typeName = LegacySystem.Graph.EasyVertex.Get(Root, false, @"System\Meta\ZeroTypes\ExecutionFlow\DotNetStaticMethod\DotNetTypeName");
+            IVertex methodName = LegacySystem.Graph.EasyVertex.Get(Root, false, @"System\Meta\ZeroTypes\ExecutionFlow\DotNetStaticMethod\DotNetMethodName");
             IVertex _is = LegacySystem.Graph.EasyVertex.Get(Root, false, @"System\Meta\Base\Vertex\$Is");
 
             IVertex n = baseVertex.AddVertex(callableEndPoint, null);
@@ -2464,7 +2464,7 @@ namespace m0
             IVertex sm = LegacySystem.Graph.EasyVertex.Get(Root, false, @"System\Meta");
 
 
-            m0.LegacySystem.Util.GeneralUtil.ParseAndExcute(sm, sm, "{ZeroTypes{AtomType:String,AtomType:Integer,AtomType:Decimal,AtomType:Float,AtomType:Boolean,Type:VertexType,Class:Edge{Association:From{$MinCardinality:0,$MaxCardinality:1},Association:Meta{$MinCardinality:1,$MaxCardinality:1},Association:To{$MinCardinality:1,$MaxCardinality:1}},Class:DateTime{Attribute:Year{$MinCardinality:1,$MaxCardinality:1},Attribute:Month{$MinCardinality:1,$MaxCardinality:1},Attribute:Day{$MinCardinality:1,$MaxCardinality:1},Attribute:Hour{$MinCardinality:1,$MaxCardinality:1},Attribute:Minute{$MinCardinality:1,$MaxCardinality:1},Attribute:Second{$MinCardinality:1,$MaxCardinality:1},Attribute:Millisecond{$MinCardinality:0,$MaxCardinality:1}},Class:FormalTextLanguage{Aggregation:DefaultImports{$MinCardinality:0,$MaxCardinality:1},Aggregation:Keywords{$MinCardinality:0,$MaxCardinality:1}},Enum:EnumBase,Class:$PlatformClass{$PlatformClassName},Class:HasBaseEdge{Attribute:BaseEdge{$MinCardinality:1,$MaxCardinality:1}},Class:HasSelectedEdges{Attribute:SelectedEdges{$MinCardinality:1,$MaxCardinality:1,$DefaultValue:}},Class:HasFilter{Attribute:FilterQuery{$MinCardinality:0,$MaxCardinality:1}},Class:HasExecutableVertex{Attribute:ExecutableVertex{$MinCardinality:1,$MaxCardinality:1}},Class:HasColor{Attribute:Color{$MinCardinality:0,$MaxCardinality:1}},Class:Color{Attribute:Red{MinValue:0,MaxValue:255,$DefaultValue:0,$MinCardinality:1,$MaxCardinality:1},Attribute:Green{MinValue:0,MaxValue:255,$DefaultValue:0,$MinCardinality:1,$MaxCardinality:1},Attribute:Blue{MinValue:0,MaxValue:255,$DefaultValue:0,$MinCardinality:1,$MaxCardinality:1},Attribute:Opacity{MinValue:0,MaxValue:255,$MinCardinality:0,$MaxCardinality:1}},Class:Exception{Attribute:Where{$MinCardinality:0,$MaxCardinality:1},Attribute:Type{$MinCardinality:0,$MaxCardinality:1},Attribute:What{$MinCardinality:1,$MaxCardinality:1}},Enum:ExceptionTypeEnum{EnumValue:Error,EnumValue:Warning,EnumValue:Info},Class:Executable,Class:Delegate{Attribute:Object{$MinCardinality:1,$MaxCardinality:1},Attribute:Method{$MinCardinality:1,$MaxCardinality:1}},Class:DotNetStaticMethod{Attribute:DotNetTypeName{$MinCardinality:1,$MaxCardinality:1},Attribute:DotNetMethodName{$MinCardinality:1,$MaxCardinality:1}},Class:DotNetDelegate{Attribute:DotNetDelegatePointer{$MinCardinality:1,$MaxCardinality:1}}}}");
+            m0.LegacySystem.Util.GeneralUtil.ParseAndExcute(sm, sm, "{ZeroTypes{AtomType:String,AtomType:Integer,AtomType:Decimal,AtomType:Float,AtomType:Boolean,Type:VertexType,Class:Edge{Association:From{$MinCardinality:0,$MaxCardinality:1},Association:Meta{$MinCardinality:1,$MaxCardinality:1},Association:To{$MinCardinality:1,$MaxCardinality:1}},Class:DateTime{Attribute:Year{$MinCardinality:1,$MaxCardinality:1},Attribute:Month{$MinCardinality:1,$MaxCardinality:1},Attribute:Day{$MinCardinality:1,$MaxCardinality:1},Attribute:Hour{$MinCardinality:1,$MaxCardinality:1},Attribute:Minute{$MinCardinality:1,$MaxCardinality:1},Attribute:Second{$MinCardinality:1,$MaxCardinality:1},Attribute:Millisecond{$MinCardinality:0,$MaxCardinality:1}},Class:FormalTextLanguage{Aggregation:DefaultImports{$MinCardinality:0,$MaxCardinality:1},Aggregation:Keywords{$MinCardinality:0,$MaxCardinality:1}},Enum:EnumBase,Class:$PlatformClass{$PlatformClassName},Class:HasBaseEdge{Attribute:BaseEdge{$MinCardinality:1,$MaxCardinality:1}},Class:HasSelectedEdges{Attribute:SelectedEdges{$MinCardinality:1,$MaxCardinality:1,$DefaultValue:}},Class:HasFilter{Attribute:FilterQuery{$MinCardinality:0,$MaxCardinality:1}},Class:HasExecutableVertex{Attribute:ExecutableVertex{$MinCardinality:1,$MaxCardinality:1}},Class:HasColor{Attribute:Color{$MinCardinality:0,$MaxCardinality:1}},Class:Color{Attribute:Red{MinValue:0,MaxValue:255,$DefaultValue:0,$MinCardinality:1,$MaxCardinality:1},Attribute:Green{MinValue:0,MaxValue:255,$DefaultValue:0,$MinCardinality:1,$MaxCardinality:1},Attribute:Blue{MinValue:0,MaxValue:255,$DefaultValue:0,$MinCardinality:1,$MaxCardinality:1},Attribute:Opacity{MinValue:0,MaxValue:255,$MinCardinality:0,$MaxCardinality:1}},Class:Exception{Attribute:Where{$MinCardinality:0,$MaxCardinality:1},Attribute:Type{$MinCardinality:0,$MaxCardinality:1},Attribute:What{$MinCardinality:1,$MaxCardinality:1}},Enum:ExceptionTypeEnum{EnumValue:Error,EnumValue:Warning,EnumValue:Info}}}");
 
             IVertex FormalTextLanguage = LegacySystem.Graph.EasyVertex.Get(sm, false, @"ZeroTypes\FormalTextLanguage");
 
@@ -2639,47 +2639,110 @@ namespace m0
             LegacySystem.Graph.EasyVertex.Get(sm, false, @"ZeroTypes\Exception\What").AddEdge(
                 LegacySystem.Graph.EasyVertex.Get(sm, false, @"*$EdgeTarget"), 
                 LegacySystem.Graph.EasyVertex.Get(sm, false, @"ZeroTypes\String"));
-
-            LegacySystem.Graph.EasyVertex.Get(sm, false, @"ZeroTypes\Delegate").AddEdge(
-                 LegacySystem.Graph.EasyVertex.Get(sm, false, "*$Inherits"),
-                  LegacySystem.Graph.EasyVertex.Get(sm, false, @"ZeroTypes\Executable"));
-
-            LegacySystem.Graph.EasyVertex.Get(sm, false, @"ZeroTypes\Delegate\Object").AddEdge(
-                LegacySystem.Graph.EasyVertex.Get(sm, false, @"*$EdgeTarget"),
-                LegacySystem.Graph.EasyVertex.Get(sm, false, @"ZeroTypes\Vertex"));
-            LegacySystem.Graph.EasyVertex.Get(sm, false, @"ZeroTypes\Delegate\Method").AddEdge(
-                LegacySystem.Graph.EasyVertex.Get(sm, false, @"*$EdgeTarget"),
-                LegacySystem.Graph.EasyVertex.Get(sm, false, @"ZeroTypes\String"));
-
-            LegacySystem.Graph.EasyVertex.Get(sm, false, @"ZeroTypes\DotNetStaticMethod").AddEdge(
-                LegacySystem.Graph.EasyVertex.Get(sm, false, "*$Inherits"),
-                LegacySystem.Graph.EasyVertex.Get(sm, false, @"ZeroTypes\Executable"));
-
-            LegacySystem.Graph.EasyVertex.Get(sm, false, @"ZeroTypes\DotNetStaticMethod\DotNetTypeName").AddEdge(
-                LegacySystem.Graph.EasyVertex.Get(sm, false, @"*$EdgeTarget"),
-                LegacySystem.Graph.EasyVertex.Get(sm, false, @"ZeroTypes\String"));
-            LegacySystem.Graph.EasyVertex.Get(sm, false, @"ZeroTypes\DotNetStaticMethod\DotNetMethodName").AddEdge(
-                LegacySystem.Graph.EasyVertex.Get(sm, false, @"*$EdgeTarget"),
-                LegacySystem.Graph.EasyVertex.Get(sm, false, @"ZeroTypes\String"));
-
-            LegacySystem.Graph.EasyVertex.Get(sm, false, @"ZeroTypes\DotNetDelegate").AddEdge(
-                  LegacySystem.Graph.EasyVertex.Get(sm, false, "*$Inherits"),
-                  LegacySystem.Graph.EasyVertex.Get(sm, false, @"ZeroTypes\Executable"));
-
-            LegacySystem.Graph.EasyVertex.Get(sm, false, @"ZeroTypes\DotNetDelegate\DotNetDelegatePointer").AddEdge(
-                LegacySystem.Graph.EasyVertex.Get(sm, false, @"*$EdgeTarget"),
-                LegacySystem.Graph.EasyVertex.Get(sm, false, @"ZeroTypes\Vertex"));
         }
 
-        void CreateSystemMetaZeroTypesEvent()
+        void CreateSystemMetaZeroTypesExecutionFlow()
         {
             IVertex sm = LegacySystem.Graph.EasyVertex.Get(Root, false, @"System\Meta");
 
+            IVertex smuml = LegacySystem.Graph.EasyVertex.Get(Root, false, @"System\Meta\ZeroUML");
+
             IVertex smz = LegacySystem.Graph.EasyVertex.Get(Root, false, @"System\Meta\ZeroTypes");
 
-            m0.LegacySystem.Util.GeneralUtil.ParseAndExcute(smz, sm, "{Event{Enum:GraphChangeEnum{EnumValue:ValueChange,EnumValue:OutputEdgeAdded,EnumValue:OutputEdgeRemoved,EnumValue:InputEdgeAdded,EnumValue:InputEdgeRemoved}"
-                + ",Class:EventTrigger{Method:Fire,Attribute:Listener}}}");
+            m0.LegacySystem.Util.GeneralUtil.ParseAndExcute(smz, sm, "{ExecutionFlow{Enum:GraphChangeEnum{EnumValue:ValueChange,EnumValue:OutputEdgeAdded,EnumValue:OutputEdgeRemoved,EnumValue:InputEdgeAdded,EnumValue:InputEdgeRemoved}"
+                + ",Class:EventTrigger{Method:Fire,Attribute:Listener}"
+                + ",Class:Event{Association:Trigger,Association:Source}"
+                + ",Class:$GraphChangeTrigger{Attribute:ScopeQuery}"
+                + ",Class:GraphChangeEvent{Attribute:ChangedVertex,Attribute:Type,Attribute:OldValue,Attribute:NewValue,Attribute:Edge}"
+                + ",Class:Executable"
+                + ",Class:Delegate{Attribute:Object{$MinCardinality:1,$MaxCardinality:1},Attribute:Method{$MinCardinality:1,$MaxCardinality:1}}"
+                + ",Class:DotNetStaticMethod{Attribute:DotNetTypeName{$MinCardinality:1,$MaxCardinality:1},Attribute:DotNetMethodName{$MinCardinality:1,$MaxCardinality:1}}"
+                + ",Class:DotNetDelegate{Attribute:DotNetDelegatePointer{$MinCardinality:1,$MaxCardinality:1}}"
+                + "}}");
 
+
+            LegacySystem.Graph.EasyVertex.Get(smz, false, @"ExecutionFlow\EventTrigger\Fire").AddVertex(
+              LegacySystem.Graph.EasyVertex.Get(smuml, false, @"Class\Method\InputParameter"),
+              "event");
+
+            LegacySystem.Graph.EasyVertex.Get(smz, false, @"ExecutionFlow\EventTrigger\Fire\event").AddEdge(
+              LegacySystem.Graph.EasyVertex.Get(smz, false, "*$EdgeTarget"),
+              LegacySystem.Graph.EasyVertex.Get(smz, false, @"ExecutionFlow\Event"));
+
+            LegacySystem.Graph.EasyVertex.Get(smz, false, @"ExecutionFlow\EventTrigger\Listener").AddEdge(
+              LegacySystem.Graph.EasyVertex.Get(smz, false, "*$EdgeTarget"),
+              LegacySystem.Graph.EasyVertex.Get(smz, false, @"ExecutionFlow\Execution"));
+
+            LegacySystem.Graph.EasyVertex.Get(smz, false, @"ExecutionFlow\Event\Trigger").AddEdge(
+             LegacySystem.Graph.EasyVertex.Get(smz, false, "*$EdgeTarget"),
+             LegacySystem.Graph.EasyVertex.Get(smz, false, @"ExecutionFlow\EventTrigger"));
+
+            LegacySystem.Graph.EasyVertex.Get(smz, false, @"ExecutionFlow\Event\Source").AddEdge(
+                 LegacySystem.Graph.EasyVertex.Get(smz, false, "*$EdgeTarget"),
+                LegacySystem.Graph.EasyVertex.Get(smz, false, @"Vertex"));
+
+            LegacySystem.Graph.EasyVertex.Get(smz, false, @"ExecutionFlow\$GraphChangeTrigger").AddEdge(
+             LegacySystem.Graph.EasyVertex.Get(smz, false, "*$Inherits"),
+             LegacySystem.Graph.EasyVertex.Get(smz, false, @"ExecutionFlow\EventTrigger"));
+
+            LegacySystem.Graph.EasyVertex.Get(smz, false, @"ExecutionFlow\$GraphChangeTrigger\ScopeQuery").AddEdge(
+                 LegacySystem.Graph.EasyVertex.Get(smz, false, "*$EdgeTarget"),
+                LegacySystem.Graph.EasyVertex.Get(smz, false, @"String"));
+
+            LegacySystem.Graph.EasyVertex.Get(smz, false, @"ExecutionFlow\GraphChangeEvent").AddEdge(
+              LegacySystem.Graph.EasyVertex.Get(smz, false, "*$Inherits"),
+              LegacySystem.Graph.EasyVertex.Get(smz, false, @"ExecutionFlow\Event"));
+
+            LegacySystem.Graph.EasyVertex.Get(smz, false, @"ExecutionFlow\GraphChangeEvent\ChangedVertex").AddEdge(
+                 LegacySystem.Graph.EasyVertex.Get(smz, false, "*$EdgeTarget"),
+                 LegacySystem.Graph.EasyVertex.Get(smz, false, @"Vertex"));
+
+            LegacySystem.Graph.EasyVertex.Get(smz, false, @"ExecutionFlow\GraphChangeEvent\Type").AddEdge(
+                 LegacySystem.Graph.EasyVertex.Get(smz, false, "*$EdgeTarget"),
+                 LegacySystem.Graph.EasyVertex.Get(smz, false, @"ExecutionFlow\GraphChangeEnum"));
+
+            LegacySystem.Graph.EasyVertex.Get(smz, false, @"ExecutionFlow\GraphChangeEvent\OldValue").AddEdge(
+                 LegacySystem.Graph.EasyVertex.Get(smz, false, "*$EdgeTarget"),
+                 LegacySystem.Graph.EasyVertex.Get(smz, false, @"Vertex"));
+
+            LegacySystem.Graph.EasyVertex.Get(smz, false, @"ExecutionFlow\GraphChangeEvent\NewValue").AddEdge(
+                 LegacySystem.Graph.EasyVertex.Get(smz, false, "*$EdgeTarget"),
+                 LegacySystem.Graph.EasyVertex.Get(smz, false, @"Vertex"));
+
+            LegacySystem.Graph.EasyVertex.Get(smz, false, @"ExecutionFlow\GraphChangeEvent\Edge").AddEdge(
+                 LegacySystem.Graph.EasyVertex.Get(smz, false, "*$EdgeTarget"),
+                 LegacySystem.Graph.EasyVertex.Get(smz, false, @"Edge"));
+
+            LegacySystem.Graph.EasyVertex.Get(smz, false, @"ExecutionFlow\Delegate").AddEdge(
+                  LegacySystem.Graph.EasyVertex.Get(smz, false, "*$Inherits"),
+                 LegacySystem.Graph.EasyVertex.Get(smz, false, @"ExecutionFlow\Executable"));
+
+            LegacySystem.Graph.EasyVertex.Get(smz, false, @"ExecutionFlow\Delegate\Object").AddEdge(
+                LegacySystem.Graph.EasyVertex.Get(smz, false, @"*$EdgeTarget"),
+                LegacySystem.Graph.EasyVertex.Get(smz, false, @"Vertex"));
+
+            LegacySystem.Graph.EasyVertex.Get(smz, false, @"ExecutionFlow\Delegate\Method").AddEdge(
+                LegacySystem.Graph.EasyVertex.Get(smz, false, @"*$EdgeTarget"),
+                LegacySystem.Graph.EasyVertex.Get(smz, false, @"String"));
+
+            LegacySystem.Graph.EasyVertex.Get(smz, false, @"ExecutionFlow\DotNetStaticMethod").AddEdge(
+                LegacySystem.Graph.EasyVertex.Get(smz, false, "*$Inherits"),
+                LegacySystem.Graph.EasyVertex.Get(smz, false, @"ExecutionFlow\Executable"));
+
+            LegacySystem.Graph.EasyVertex.Get(smz, false, @"ExecutionFlow\DotNetStaticMethod\DotNetTypeName").AddEdge(
+                LegacySystem.Graph.EasyVertex.Get(smz, false, @"*$EdgeTarget"),
+                LegacySystem.Graph.EasyVertex.Get(smz, false, @"ExecutionFlow\String"));
+            LegacySystem.Graph.EasyVertex.Get(smz, false, @"ExecutionFlow\DotNetStaticMethod\DotNetMethodName").AddEdge(
+                LegacySystem.Graph.EasyVertex.Get(smz, false, @"*$EdgeTarget"),
+                LegacySystem.Graph.EasyVertex.Get(smz, false, @"String"));
+
+            LegacySystem.Graph.EasyVertex.Get(smz, false, @"ExecutionFlow\DotNetDelegate").AddEdge(
+                  LegacySystem.Graph.EasyVertex.Get(smz, false, "*$Inherits"),
+                  LegacySystem.Graph.EasyVertex.Get(smz, false, @"ExecutionFlow\Executable"));
+
+            LegacySystem.Graph.EasyVertex.Get(smz, false, @"ExecutionFlow\DotNetDelegate\DotNetDelegatePointer").AddEdge(
+                LegacySystem.Graph.EasyVertex.Get(smz, false, @"*$EdgeTarget"),
+                LegacySystem.Graph.EasyVertex.Get(smz, false, @"Vertex"));
         }
 
         void CreateSystemMetaVisualiserDiagram()
@@ -4867,7 +4930,7 @@ namespace m0
 
             CreateSystemMetaZeroTypes();
 
-            CreateSystemMetaZeroTypesEvent();
+            CreateSystemMetaZeroTypesExecutionFlow();
 
             CreateSystemMetaZeroUML_ZeroCode_part();
 

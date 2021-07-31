@@ -235,9 +235,9 @@ namespace m0.Graph
         {
             IVertex r = m0.MinusZero.Instance.root;
 
-            IVertex dotNetEndPoint = r.Get(false, @"System\Meta\ZeroTypes\DotNetStaticMethod");
-            IVertex typeName = r.Get(false, @"System\Meta\ZeroTypes\DotNetStaticMethod\DotNetTypeName");
-            IVertex methodName = r.Get(false, @"System\Meta\ZeroTypes\DotNetStaticMethod\DotNetMethodName");
+            IVertex dotNetEndPoint = r.Get(false, @"System\Meta\ZeroTypes\ExecutionFlow\DotNetStaticMethod");
+            IVertex typeName = r.Get(false, @"System\Meta\ZeroTypes\ExecutionFlow\DotNetStaticMethod\DotNetTypeName");
+            IVertex methodName = r.Get(false, @"System\Meta\ZeroTypes\ExecutionFlow\DotNetStaticMethod\DotNetMethodName");
             IVertex _is = r.Get(false, @"System\Meta\Base\Vertex\$Is");
 
          
@@ -254,8 +254,8 @@ namespace m0.Graph
         {
             IVertex r = m0.MinusZero.Instance.root;
 
-            IVertex dotNetDelegate = r.Get(false, @"System\Meta\ZeroTypes\DotNetDelegate");
-            IVertex dotNetDelegatePointer = r.Get(false, @"System\Meta\ZeroTypes\DotNetDelegate\DotNetDelegatePointer");
+            IVertex dotNetDelegate = r.Get(false, @"System\Meta\ZeroTypes\ExecutionFlow\DotNetDelegate");
+            IVertex dotNetDelegatePointer = r.Get(false, @"System\Meta\ZeroTypes\ExecutionFlow\DotNetDelegate\DotNetDelegatePointer");
             IVertex _is = r.Get(false, @"System\Meta\Base\Vertex\$Is");
 
 
@@ -268,9 +268,9 @@ namespace m0.Graph
         {
             IVertex r = m0.MinusZero.Instance.root;
 
-            IVertex _delegate = r.Get(false, @"System\Meta\ZeroTypes\Delegate");
-            IVertex objectMeta = r.Get(false, @"System\Meta\ZeroTypes\Delegate\Object");
-            IVertex methodMeta = r.Get(false, @"System\Meta\ZeroTypes\Delegate\Method");
+            IVertex _delegate = r.Get(false, @"System\Meta\ZeroTypes\ExecutionFlow\Delegate");
+            IVertex objectMeta = r.Get(false, @"System\Meta\ZeroTypes\ExecutionFlow\Delegate\Object");
+            IVertex methodMeta = r.Get(false, @"System\Meta\ZeroTypes\ExecutionFlow\Delegate\Method");
             IVertex _is = r.Get(false, @"System\Meta\Base\Vertex\$Is");
 
 

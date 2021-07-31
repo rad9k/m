@@ -34,6 +34,9 @@ namespace m0_SYSTEM_GENERATE
             IVertex lib_std = r.AddVertex(null, "System\\Lib\\Std");
             lib_std.AddVertex(null, "lib_std.m0");
 
+            IVertex lib_sys = r.AddVertex(null, "System\\Lib\\Sys");
+            lib_sys.AddVertex(null, "lib_sys.m0");
+
             if (music)
             {
                 IVertex lib_music = r.AddVertex(null, "System\\Lib\\Music");

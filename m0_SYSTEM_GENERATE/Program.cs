@@ -99,7 +99,8 @@ namespace m0_SYSTEM_GENERATE
 
             //
 
-            Lib.CreateLib.Create();
+            Lib.CreateLib.CreateLibStd();
+            Lib.CreateLib.CreateLibSys();
             Music.CreateMusic.Create();
 
 

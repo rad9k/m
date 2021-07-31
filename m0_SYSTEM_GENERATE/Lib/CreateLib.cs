@@ -15,9 +15,10 @@ namespace m0_SYSTEM_GENERATE.Lib
 {
     public class CreateLib
     {
-        public static IVertex LibStd;        
+        public static IVertex LibStd;
+        public static IVertex LibSys;
 
-        public static void Create()
+        public static void CreateLibStd()
         {
             print("* creating Lib\\Std");
 
@@ -66,11 +67,32 @@ namespace m0_SYSTEM_GENERATE.Lib
             AddFunction(LibStd, "Sleep", type, "Sleep", null, new TypeName[] {new TypeName("miliseconds", "Integer", 1, 1) });            
         }
 
-        public static void Save(List<IVertex> systemSubGraphWithLinks, Dictionary<string, StoreId> storeOverride)
+        public static void CreateLibSys()
+        {
+            print("* creating Lib\\Sys");
+
+            IVertex root = m0.MinusZero.Instance.root;
+
+            IVertex lib = root.Get(false, "System").AddVertex(null, "Lib");
+
+            LibSys = lib.AddVertex(null, "Sys");
+
+            string type = "m0.Lib.Sys, m0, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null";
+
+            AddFunction(LibSys, "StartTransaction", type, "StartTransaction", null, new TypeName[] { });
+            AddFunction(LibSys, "CommitTransaction", type, "CommitTransaction", null, new TypeName[] { });
+            AddFunction(LibSys, "RollbackTransaction", type, "RollbackTransaction", null, new TypeName[] { });
+        }
+
+            public static void Save(List<IVertex> systemSubGraphWithLinks, Dictionary<string, StoreId> storeOverride)
         {            
             print("* saving Lib\\Std");
 
-            GeneralUtil.CreateM0AndMoveEdgesIntoIt_IncludeEverythingBesidesList("lib_std.m0", LibStd, systemSubGraphWithLinks, storeOverride);            
+            GeneralUtil.CreateM0AndMoveEdgesIntoIt_IncludeEverythingBesidesList("lib_std.m0", LibStd, systemSubGraphWithLinks, storeOverride);
+
+            print("* saving Lib\\Sys");
+
+            GeneralUtil.CreateM0AndMoveEdgesIntoIt_IncludeEverythingBesidesList("lib_sys.m0", LibSys, systemSubGraphWithLinks, storeOverride);
         }
 
     }
