@@ -2671,7 +2671,14 @@ namespace m0
                 LegacySystem.Graph.EasyVertex.Get(sm, false, @"ZeroTypes\Vertex"));
         }
 
-        void CreateSystemMetaVisualiserDiagram()
+        void CreateSystemMetaZeroTypesEvents()
+        {
+            IVertex sm = LegacySystem.Graph.EasyVertex.Get(Root, false, @"System\Meta");
+        }
+
+
+
+            void CreateSystemMetaVisualiserDiagram()
         {
             IVertex sm = Root.Get(false, @"System\Meta");
 
@@ -4855,6 +4862,8 @@ namespace m0
             CreateSystemMetaZeroUML();
 
             CreateSystemMetaZeroTypes();
+
+            CreateSystemMetaZeroTypesEvent();
 
             CreateSystemMetaZeroUML_ZeroCode_part();
 
