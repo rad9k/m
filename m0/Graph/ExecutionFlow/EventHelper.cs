@@ -9,7 +9,7 @@ using System.Text;
 using System.Threading.Tasks;
 using static m0.Graph.GraphUtil;
 
-namespace m0.Graph.Event
+namespace m0.Graph.ExecutionFlow
 {
     public class EventHelper
     {

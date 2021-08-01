@@ -4,9 +4,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace m0.Graph.Event
+namespace m0.Foundation
 {
-    class Event
+    public interface ITransactionAtom
     {
+        void Commit();
+
+        void Rollback();
     }
 }
