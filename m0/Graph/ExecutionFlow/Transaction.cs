@@ -1,4 +1,5 @@
 ﻿using m0.Foundation;
+using m0.Util;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,20 +10,55 @@ namespace m0.Graph.ExecutionFlow
 {
     public class Transaction : ITransaction
     {
-        public TransactionStateEnum State { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        TransactionStateEnum state;
+        public TransactionStateEnum State { get => state; }
 
-        public IList<ITransactionAtom> Atoms => throw new NotImplementedException();
+        IList<ITransactionAtom> atoms = new List<ITransactionAtom>();
 
-        public ITransaction Previous => throw new NotImplementedException();
+        Dictionary<IVertex, List<GraphChangeTransactionAtom>> graphChangeTransactionAtoms = new Dictionary<IVertex, List<GraphChangeTransactionAtom>>();
+
+        ITransaction previous;
+        public ITransaction Previous { get => previous; }
+
+        public void Start()
+        {
+            state = TransactionStateEnum.Started;
+        }
 
         public void Commit()
         {
-            throw new NotImplementedException();
+            foreach (ITransactionAtom a in atoms)
+                a.Commit();
+
+            foreach (List<GraphChangeTransactionAtom> al in graphChangeTransactionAtoms.Keys)
+                foreach (GraphChangeTransactionAtom a in al)
+                    a.Commit();
         }
 
         public void Rollback()
         {
-            throw new NotImplementedException();
+            foreach (ITransactionAtom a in atoms)
+                a.Rollback();
+
+            foreach (List<GraphChangeTransactionAtom> al in graphChangeTransactionAtoms.Keys)
+                foreach (GraphChangeTransactionAtom a in al)
+                    a.Rollback();
+        }
+
+        public Transaction(ITransaction prevTransaction)
+        {
+            previous = prevTransaction;
+
+            state = TransactionStateEnum.NotStarted;
+        }
+
+        public void AddAtom(ITransactionAtom atom)
+        {
+            if (atom is GraphChangeTransactionAtom) {
+                GraphChangeTransactionAtom gcta = (GraphChangeTransactionAtom)atom;
+                GeneralUtil.DictionaryAdd<IVertex, GraphChangeTransactionAtom>(graphChangeTransactionAtoms, gcta.ChangedVertex, gcta);
+            } else
+                atoms.Add(atom);
         }
     }
 }

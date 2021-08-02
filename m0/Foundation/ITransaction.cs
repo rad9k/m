@@ -10,13 +10,15 @@ namespace m0.Foundation
 
     public interface ITransaction
     {
-        TransactionStateEnum State { get; set; }
+        TransactionStateEnum State { get; }
+
+        void Start();
 
         void Commit();
 
         void Rollback();
 
-        IList<ITransactionAtom> Atoms { get; }
+        void AddAtom(ITransactionAtom atom);
 
         ITransaction Previous { get; }
     }

@@ -100,7 +100,8 @@
     <Compile Include="Foundation\ITransaction.cs" />
     <Compile Include="Foundation\ITransactionAtom.cs" />
     <Compile Include="Foundation\IUserInteraction.cs" />
-    <Compile Include="Graph\ExecutionFlow\EventHelper.cs" />
+    <Compile Include="Graph\ExecutionFlow\ExecutionFlowHelper.cs" />
+    <Compile Include="Graph\ExecutionFlow\GraphChangeTransactionAtom.cs" />
     <Compile Include="Graph\ExecutionFlow\TransacionAtom.cs" />
     <Compile Include="Graph\ExecutionFlow\Transaction.cs" />
     <Compile Include="Graph\IImplementedVertex.cs" />

@@ -11,8 +11,23 @@ using static m0.Graph.GraphUtil;
 
 namespace m0.Graph.ExecutionFlow
 {
-    public class EventHelper
+    public class ExecutionFlowHelper
     {
+        public static void StartTransaction()
+        {
+            Lib.Sys.StartTransaction(null);
+        }
+
+        public static void RollbackTransaction()
+        {
+            Lib.Sys.RollbackTransaction(null);
+        }
+
+        public static void CommitTransaction()
+        {
+            Lib.Sys.CommitTransaction(null);
+        }
+
         public static INoInEdgeInOutVertexVertex ExecuteDotNetDelegate(IVertex baseVertex, IExecution exe)
         {
             IVertex dotNetDelegatePointer = GraphUtil.GetQueryOutFirst(baseVertex, "DotNetDelegatePointer", null);

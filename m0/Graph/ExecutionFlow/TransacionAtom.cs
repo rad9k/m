@@ -7,6 +7,8 @@ using System.Threading.Tasks;
 
 namespace m0.Graph.ExecutionFlow
 {
+    public enum GraphChangeEnum {ValueChange, OutputEdgeAdded, OutputEdgeRemoved, InputEdgeAdded, InputEdgeRemoved};
+
     public class TransacionAtom : ITransactionAtom
     {
         public void Commit()

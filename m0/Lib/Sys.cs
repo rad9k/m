@@ -1,4 +1,5 @@
 ﻿using m0.Foundation;
+using m0.Graph.ExecutionFlow;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,16 +12,40 @@ namespace m0.Lib
     {
         public static INoInEdgeInOutVertexVertex StartTransaction(IExecution exe)
         {
+            ITransaction prevTransaction = MinusZero.Instance.GetTopTransaction();
+
+            ITransaction newTransaction = new Transaction(prevTransaction);
+
+            newTransaction.Start();
+
+            MinusZero.Instance.SetTopTransaction(newTransaction);
+
             return null;
         }
 
         public static INoInEdgeInOutVertexVertex CommitTransaction(IExecution exe)
         {
+            ITransaction currentTransaction = MinusZero.Instance.GetTopTransaction();
+
+            ITransaction prevTransaction = currentTransaction.Previous;
+
+            currentTransaction.Commit();
+
+            MinusZero.Instance.SetTopTransaction(prevTransaction);
+
             return null;
         }
 
         public static INoInEdgeInOutVertexVertex RollbackTransaction(IExecution exe)
         {
+            ITransaction currentTransaction = MinusZero.Instance.GetTopTransaction();
+
+            ITransaction prevTransaction = currentTransaction.Previous;
+
+            currentTransaction.Rollback();
+
+            MinusZero.Instance.SetTopTransaction(prevTransaction);
+
             return null;
         }
     }

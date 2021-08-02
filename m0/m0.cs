@@ -98,6 +98,18 @@ namespace m0
 
         //
 
+        private ITransaction transactionStackTop = null;
+
+        public ITransaction GetTopTransaction()
+        {
+            return transactionStackTop;
+        }
+
+        public void SetTopTransaction(ITransaction transaction)
+        {
+            transactionStackTop = transaction;
+        }
+
         public IVertex CreateTempVertex()
         {
             //return new EasyVertex(TempStore);
