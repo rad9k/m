@@ -1,6 +1,7 @@
 ﻿using m0.DotNetIntegration;
 using m0.Foundation;
 using m0.ZeroCode.Helpers;
+using m0.ZeroTypes;
 using m0.ZeroUML.Instructions;
 using System;
 using System.Collections.Generic;
@@ -13,6 +14,43 @@ namespace m0.Graph.ExecutionFlow
 {
     public class ExecutionFlowHelper
     {
+        static IVertex graphChangeTrigger_meta;
+        static IVertex scopeQuery_meta;
+
+        static IVertex _is_meta;
+
+        static IVertex dotNetEndPoint_meta;
+        static IVertex typeName_meta;
+        static IVertex methodName_meta;
+
+        static IVertex dotNetDelegate_meta;
+        static IVertex dotNetDelegatePointer_meta;
+
+        static IVertex _delegate_meta;
+        static IVertex objectMeta;
+        static IVertex methodMeta;
+
+
+        public static void ExecutionHelperInitialize()
+        {
+            IVertex r = m0.MinusZero.Instance.root;
+
+            graphChangeTrigger_meta = r.Get(false, @"System\Meta\ZeroTypes\ExecutionFlow\$GraphChangeTrigger");
+            scopeQuery_meta = r.Get(false, @"System\Meta\ZeroTypes\ExecutionFlow\$GraphChangeTrigger\ScopeQuery");
+
+            dotNetEndPoint_meta = r.Get(false, @"System\Meta\ZeroTypes\ExecutionFlow\DotNetStaticMethod");
+            typeName_meta = r.Get(false, @"System\Meta\ZeroTypes\ExecutionFlow\DotNetStaticMethod\DotNetTypeName");
+            methodName_meta = r.Get(false, @"System\Meta\ZeroTypes\ExecutionFlow\DotNetStaticMethod\DotNetMethodName");
+            _is_meta = r.Get(false, @"System\Meta\Base\Vertex\$Is");
+
+            dotNetDelegate_meta = r.Get(false, @"System\Meta\ZeroTypes\ExecutionFlow\DotNetDelegate");
+            dotNetDelegatePointer_meta = r.Get(false, @"System\Meta\ZeroTypes\ExecutionFlow\DotNetDelegate\DotNetDelegatePointer");
+
+            _delegate_meta = r.Get(false, @"System\Meta\ZeroTypes\ExecutionFlow\Delegate");
+            objectMeta = r.Get(false, @"System\Meta\ZeroTypes\ExecutionFlow\Delegate\Object");
+            methodMeta = r.Get(false, @"System\Meta\ZeroTypes\ExecutionFlow\Delegate\Method");
+        }
+
         public static void StartTransaction()
         {
             Lib.Sys.StartTransaction(null);
@@ -34,6 +72,45 @@ namespace m0.Graph.ExecutionFlow
 
             currentTransaction.AddAtom(atom);
         }
+
+        public static IVertex AddGraphChangeTrigger(IVertex baseVertex, string scopeQuery)
+        {
+            IVertex trigger = VertexOperations.AddInstance(baseVertex, graphChangeTrigger_meta);
+
+            if (scopeQuery != null)
+                trigger.AddVertex(scopeQuery_meta, scopeQuery);
+
+            return trigger;
+        }
+
+
+        public static void AddDotNetStaticMethod(IVertex baseVertex, string _typeName, string _methodName)
+        {
+            baseVertex.AddEdge(_is_meta, dotNetEndPoint_meta);
+
+            baseVertex.AddVertex(typeName_meta, _typeName);
+
+            baseVertex.AddVertex(methodName_meta, _methodName);
+        }
+
+        public delegate INoInEdgeInOutVertexVertex DotNetDelegate(IExecution exe);
+
+        public static void AddDotNetDelegate(IVertex baseVertex, DotNetDelegate _delegate)
+        {
+            baseVertex.AddEdge(_is_meta, dotNetDelegate_meta);
+
+            baseVertex.AddVertex(dotNetDelegatePointer_meta, _delegate);
+        }
+
+        public static void AddDelegate(IVertex baseVertex, IVertex _object, IVertex _method)
+        {
+            baseVertex.AddEdge(_is_meta, _delegate_meta);
+
+            baseVertex.AddEdge(objectMeta, _object);
+
+            baseVertex.AddEdge(methodMeta, _method);
+        }
+
 
         public static INoInEdgeInOutVertexVertex ExecuteDotNetDelegate(IVertex baseVertex, IExecution exe)
         {

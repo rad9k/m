@@ -2,6 +2,7 @@
 using m0.FormalTextLanguage;
 using m0.Foundation;
 using m0.Graph;
+using m0.Graph.ExecutionFlow;
 using m0.Store;
 using m0.Store.FileSystem;
 using m0.Store.Json;
@@ -399,6 +400,11 @@ namespace m0
             Hardware.AddEdge(root.Get(false, @"System\Meta\Hardware\LocalComputer"), localComputer);
         }
 
+        void CreateRootTransaction()
+        {
+            ExecutionFlowHelper.StartTransaction();
+        }
+
         public void Initialize()
         {
             if (IsInitialized)
@@ -409,6 +415,8 @@ namespace m0
             InitializeLog();
 
             PreBootstrap();
+
+            CreateRootTransaction();
 
             Bootstrap();
 
@@ -430,6 +438,8 @@ namespace m0
 
 
             UIWpf.WpfUtil.InitializeUIWpf();
+
+            ExecutionFlowHelper.ExecutionHelperInitialize();
 
             IsInitialized = true;           
         }

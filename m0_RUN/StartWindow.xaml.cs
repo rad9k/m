@@ -1,5 +1,6 @@
 ﻿using m0.Foundation;
 using m0.Graph;
+using m0.Graph.ExecutionFlow;
 using m0.ZeroCode;
 using m0.ZeroTypes;
 using System;
@@ -17,6 +18,15 @@ using System.Windows.Shapes;
 
 namespace m0
 {
+    class test
+    {
+        public INoInEdgeInOutVertexVertex xxx(IExecution exe)
+        {
+            return null;
+        }
+    }
+
+
     /// <summary>
     /// Interaction logic for StartWindow.xaml
     /// </summary>
@@ -48,14 +58,11 @@ namespace m0
 
             IVertex v = r.AddVertex(null, "V");
 
-            GraphUtil.LoadAndParse("x.txt", v);
+            IVertex trigger = ExecutionFlowHelper.AddGraphChangeTrigger(v, "scope query");
 
-            IVertex n = VertexOperations.AddInstance(r, v.Get(false, @"Class:"));
+            test t = new test();
 
-            GraphUtil.AddDelegate(v, n, v.Get(false, @"Class:\Method:"));
-
-            v.Execute(new ZeroCodeExecution());
-
+            ExecutionFlowHelper.AddDotNetDelegate(trigger, t.xxx);
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)

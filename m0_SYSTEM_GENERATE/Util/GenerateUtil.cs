@@ -1,5 +1,6 @@
 ﻿using m0.Foundation;
 using m0.Graph;
+using m0.Graph.ExecutionFlow;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -81,7 +82,7 @@ namespace m0_SYSTEM_GENERATE.Util
               //  ip.AddVertex(bv.Get(false, "$MaxCardinality"), tn.MaxCardinality);
             }
 
-            GraphUtil.AddDotNetStaticMethod(f, typeName, methodName);
+            ExecutionFlowHelper.AddDotNetStaticMethod(f, typeName, methodName);
         }
 
         public static void AddMethod(IVertex baseVertex, string name, string typeName, string methodName, string ret, IList<TypeName> pars)
@@ -113,7 +114,7 @@ namespace m0_SYSTEM_GENERATE.Util
             }
 
             if(typeName != null)
-                GraphUtil.AddDotNetStaticMethod(f, typeName, methodName);
+                ExecutionFlowHelper.AddDotNetStaticMethod(f, typeName, methodName);
         }
     }
 }

@@ -231,56 +231,6 @@ namespace m0.Graph
             return a;
         }
 
-        public static void AddDotNetStaticMethod(IVertex baseVertex, string _typeName, string _methodName)
-        {
-            IVertex r = m0.MinusZero.Instance.root;
-
-            IVertex dotNetEndPoint = r.Get(false, @"System\Meta\ZeroTypes\ExecutionFlow\DotNetStaticMethod");
-            IVertex typeName = r.Get(false, @"System\Meta\ZeroTypes\ExecutionFlow\DotNetStaticMethod\DotNetTypeName");
-            IVertex methodName = r.Get(false, @"System\Meta\ZeroTypes\ExecutionFlow\DotNetStaticMethod\DotNetMethodName");
-            IVertex _is = r.Get(false, @"System\Meta\Base\Vertex\$Is");
-
-         
-            baseVertex.AddEdge(_is, dotNetEndPoint);
-
-            baseVertex.AddVertex(typeName, _typeName);
-
-            baseVertex.AddVertex(methodName, _methodName);
-        }
-
-        public delegate INoInEdgeInOutVertexVertex DotNetDelegate(IExecution exe);
-
-        public static void AddDotNetDelegate(IVertex baseVertex, DotNetDelegate _delegate)
-        {
-            IVertex r = m0.MinusZero.Instance.root;
-
-            IVertex dotNetDelegate = r.Get(false, @"System\Meta\ZeroTypes\ExecutionFlow\DotNetDelegate");
-            IVertex dotNetDelegatePointer = r.Get(false, @"System\Meta\ZeroTypes\ExecutionFlow\DotNetDelegate\DotNetDelegatePointer");
-            IVertex _is = r.Get(false, @"System\Meta\Base\Vertex\$Is");
-
-
-            baseVertex.AddEdge(_is, dotNetDelegate);
-
-            baseVertex.AddVertex(dotNetDelegatePointer, _delegate);
-        }
-
-        public static void AddDelegate(IVertex baseVertex, IVertex _object, IVertex _method)
-        {
-            IVertex r = m0.MinusZero.Instance.root;
-
-            IVertex _delegate = r.Get(false, @"System\Meta\ZeroTypes\ExecutionFlow\Delegate");
-            IVertex objectMeta = r.Get(false, @"System\Meta\ZeroTypes\ExecutionFlow\Delegate\Object");
-            IVertex methodMeta = r.Get(false, @"System\Meta\ZeroTypes\ExecutionFlow\Delegate\Method");
-            IVertex _is = r.Get(false, @"System\Meta\Base\Vertex\$Is");
-
-
-            baseVertex.AddEdge(_is, _delegate);
-
-            baseVertex.AddEdge(objectMeta, _object);
-
-            baseVertex.AddEdge(methodMeta, _method);
-        }
-
         public static bool CompareEdges(IEdge one, IEdge two)
         {
             if (one.From == two.From && one.Meta == two.Meta && one.To == two.To)
