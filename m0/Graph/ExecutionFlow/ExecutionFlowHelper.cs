@@ -27,8 +27,10 @@ namespace m0.Graph.ExecutionFlow
         static IVertex dotNetDelegatePointer_meta;
 
         static IVertex _delegate_meta;
-        static IVertex objectMeta;
-        static IVertex methodMeta;
+        static IVertex object_meta;
+        static IVertex method_meta;
+
+        static IVertex listener_meta;
 
 
         public static void ExecutionHelperInitialize()
@@ -47,8 +49,10 @@ namespace m0.Graph.ExecutionFlow
             dotNetDelegatePointer_meta = r.Get(false, @"System\Meta\ZeroTypes\ExecutionFlow\DotNetDelegate\DotNetDelegatePointer");
 
             _delegate_meta = r.Get(false, @"System\Meta\ZeroTypes\ExecutionFlow\Delegate");
-            objectMeta = r.Get(false, @"System\Meta\ZeroTypes\ExecutionFlow\Delegate\Object");
-            methodMeta = r.Get(false, @"System\Meta\ZeroTypes\ExecutionFlow\Delegate\Method");
+            object_meta = r.Get(false, @"System\Meta\ZeroTypes\ExecutionFlow\Delegate\Object");
+            method_meta = r.Get(false, @"System\Meta\ZeroTypes\ExecutionFlow\Delegate\Method");
+
+            listener_meta = r.Get(false, @"System\Meta\ZeroTypes\ExecutionFlow\EventTrigger\Listener");
         }
 
         public static void StartTransaction()
@@ -84,7 +88,28 @@ namespace m0.Graph.ExecutionFlow
         }
 
 
-        public static void AddDotNetStaticMethod(IVertex baseVertex, string _typeName, string _methodName)
+        public static void AddListener_DotNetStaticMethod(IVertex baseVertex, string _typeName, string _methodName)
+        {
+            IVertex listener = baseVertex.AddVertex(listener_meta, "");
+
+            DecorateWithDotNetStaticMethod(listener, _typeName, _methodName);
+        }
+
+        public static void AddListener_DotNetDelegate(IVertex baseVertex, DotNetDelegate _delegate)
+        {
+            IVertex listener = baseVertex.AddVertex(listener_meta, "");
+
+            DecorateWithDotNetDelegate(listener, _delegate);
+        }
+
+        public static void AddListener_Delegate(IVertex baseVertex, IVertex _object, IVertex _method)
+        {
+            IVertex listener = baseVertex.AddVertex(listener_meta, "");
+
+            DecorateWithDelegate(listener, _object, _method);
+        }
+
+        public static void DecorateWithDotNetStaticMethod(IVertex baseVertex, string _typeName, string _methodName)
         {
             baseVertex.AddEdge(_is_meta, dotNetEndPoint_meta);
 
@@ -95,20 +120,20 @@ namespace m0.Graph.ExecutionFlow
 
         public delegate INoInEdgeInOutVertexVertex DotNetDelegate(IExecution exe);
 
-        public static void AddDotNetDelegate(IVertex baseVertex, DotNetDelegate _delegate)
+        public static void DecorateWithDotNetDelegate(IVertex baseVertex, DotNetDelegate _delegate)
         {
             baseVertex.AddEdge(_is_meta, dotNetDelegate_meta);
 
             baseVertex.AddVertex(dotNetDelegatePointer_meta, _delegate);
         }
 
-        public static void AddDelegate(IVertex baseVertex, IVertex _object, IVertex _method)
+        public static void DecorateWithDelegate(IVertex baseVertex, IVertex _object, IVertex _method)
         {
             baseVertex.AddEdge(_is_meta, _delegate_meta);
 
-            baseVertex.AddEdge(objectMeta, _object);
+            baseVertex.AddEdge(object_meta, _object);
 
-            baseVertex.AddEdge(methodMeta, _method);
+            baseVertex.AddEdge(method_meta, _method);
         }
 
 

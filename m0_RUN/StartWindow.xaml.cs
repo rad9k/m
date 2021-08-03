@@ -62,7 +62,11 @@ namespace m0
 
             test t = new test();
 
-            ExecutionFlowHelper.AddDotNetDelegate(trigger, t.xxx);
+            ExecutionFlowHelper.AddListener_DotNetDelegate(trigger, t.xxx);
+
+            ExecutionFlowHelper.StartTransaction();
+
+            ExecutionFlowHelper.CommitTransaction();
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)

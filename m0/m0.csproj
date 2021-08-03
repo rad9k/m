@@ -102,6 +102,7 @@
     <Compile Include="Foundation\IUserInteraction.cs" />
     <Compile Include="Graph\ExecutionFlow\ExecutionFlowHelper.cs" />
     <Compile Include="Graph\ExecutionFlow\GraphChangeTransactionAtom.cs" />
+    <Compile Include="Graph\ExecutionFlow\GraphChangeTriggerWatcher.cs" />
     <Compile Include="Graph\ExecutionFlow\TransacionAtom.cs" />
     <Compile Include="Graph\ExecutionFlow\Transaction.cs" />
     <Compile Include="Graph\IImplementedVertex.cs" />
