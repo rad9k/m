@@ -34,11 +34,20 @@ namespace m0.Graph
                 return _Value;
             }
             set{
+                object oldValue = _Value;
+
                 _Value = value;
 
                 ValueChanged();
 
                 FireChange(new VertexChangeEventArgs(VertexChangeType.ValueChanged, null));
+
+                ExecutionFlowHelper.AddTransactionAtom(new GraphChangeTransactionAtom(
+                    this,
+                    GraphChangeEnum.ValueChange,
+                    oldValue,
+                    _Value,
+                    null));
             }
         }
 
@@ -347,7 +356,14 @@ namespace m0.Graph
 
             OutEdgesRaw.Add(ne);
 
-            AttachEdge(ne);                       
+            AttachEdge(ne);
+
+            ExecutionFlowHelper.AddTransactionAtom(new GraphChangeTransactionAtom(
+                this,
+                GraphChangeEnum.EdgeAdded,
+                null,
+                null,
+                ne));
 
             return ne;
         }
@@ -378,8 +394,13 @@ namespace m0.Graph
             if (edge != null)
             {                
                 OutEdgesRaw.Remove(edge);
-                
-               
+
+                ExecutionFlowHelper.AddTransactionAtom(new GraphChangeTransactionAtom(
+                    this,
+                    GraphChangeEnum.EdgeRemoved,
+                    null,
+                    null,
+                    edge));
             }
         }
 

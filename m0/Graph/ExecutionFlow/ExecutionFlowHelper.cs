@@ -28,6 +28,13 @@ namespace m0.Graph.ExecutionFlow
             Lib.Sys.CommitTransaction(null);
         }
 
+        public static void AddTransactionAtom(ITransactionAtom atom)
+        {
+            ITransaction currentTransaction = MinusZero.Instance.GetTopTransaction();
+
+            currentTransaction.AddAtom(atom);
+        }
+
         public static INoInEdgeInOutVertexVertex ExecuteDotNetDelegate(IVertex baseVertex, IExecution exe)
         {
             IVertex dotNetDelegatePointer = GraphUtil.GetQueryOutFirst(baseVertex, "DotNetDelegatePointer", null);

@@ -67,9 +67,9 @@ namespace m0.Graph.Internal
             cumulativeEdgesCount += ed.MetaIn.Count;
 
             if (cumulativeEdgesCount == 0
-                && ed.v.Store.DetachState == DetachStateEnum.Attached
-                && !ed.v.IsRoot)
-                ed.v.Dispose();
+                && ed.vertex.Store.DetachState == DetachStateEnum.Attached
+                && !ed.vertex.IsRoot)
+                ed.vertex.Dispose();
         }
     }
 }

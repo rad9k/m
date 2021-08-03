@@ -7,13 +7,15 @@ using System.Threading.Tasks;
 
 namespace m0.Graph.ExecutionFlow
 {
+    public enum GraphChangeEnum { ValueChange, EdgeAdded, EdgeRemoved };
+
     public class GraphChangeTransactionAtom : TransacionAtom
     {
         public IVertex ChangedVertex;
-        private GraphChangeEnum Type;
-        private object OldValue;
-        private object NewValue;
-        private IEdge Edge;
+        public GraphChangeEnum Type;
+        public object OldValue;
+        public object NewValue;
+        public IEdge Edge;
         
         public GraphChangeTransactionAtom(
             IVertex _ChangedVertex,
@@ -27,6 +29,44 @@ namespace m0.Graph.ExecutionFlow
             OldValue = _OldValue;
             NewValue = _NewValue;
             Edge = _Edge;
+        }
+
+        public override void Commit()
+        {
+            
+        }
+
+        public override void Rollback()
+        {
+            switch (Type)
+            {
+                case GraphChangeEnum.EdgeAdded:
+                    Rollback_EdgeAdded();
+                    break;
+
+                case GraphChangeEnum.EdgeRemoved:
+                    Rollback_EdgeRemoved();
+                    break;
+
+                case GraphChangeEnum.ValueChange:
+                    Rollback_ValueChange();
+                    break;
+            }
+        }
+
+        void Rollback_EdgeAdded()
+        {
+            Edge.From.DeleteEdge(Edge);
+        }
+
+        void Rollback_EdgeRemoved()
+        {
+            Edge.From.AddEdge(Edge.Meta, Edge.To);
+        }
+                      
+        void Rollback_ValueChange()
+        {
+            ChangedVertex.Value = OldValue;
         }
     }
 }

@@ -50,11 +50,11 @@ namespace m0.Graph.Internal
                     item.To.InEdgesRaw.Add(item);
             }
 
-            ed.v.OutEdgesDictionariesNeedsRebuild = true;
+            ed.vertex.OutEdgesDictionariesNeedsRebuild = true;
 
-            ed.v.InheritChildsDictionariesNeedsRebuild(false);
+            ed.vertex.InheritChildsDictionariesNeedsRebuild(false);
 
-            ed.v.FireChange(new VertexChangeEventArgs(VertexChangeType.EdgeAdded, item));
+            ed.vertex.FireChange(new VertexChangeEventArgs(VertexChangeType.EdgeAdded, item));
         }
 
         public override void OnRemove(IEdge item)
@@ -71,34 +71,24 @@ namespace m0.Graph.Internal
                 item.EdgeRemovalExecuting = false;
             }
 
-            ed.v.OutEdgesDictionariesNeedsRebuild = true;
-            ed.v.InheritChildsDictionariesNeedsRebuild(false);
+            ed.vertex.OutEdgesDictionariesNeedsRebuild = true;
+            ed.vertex.InheritChildsDictionariesNeedsRebuild(false);
 
 
             if(item.Meta != null)
             {
                 if (GeneralUtil.CompareStrings(item.Meta.Value, "$Inherits"))
                 {
-                    ed.v.InheritanceCount--;
+                    ed.vertex.InheritanceCount--;
 
-                    if (ed.v.InheritanceCount == 0)
-                        ed.v.HasInheritance = false;
+                    if (ed.vertex.InheritanceCount == 0)
+                        ed.vertex.HasInheritance = false;
                 }
             }
 
             //
 
-            /*int cumulativeEdgesCount = 0;
-
-            cumulativeEdgesCount += ed.In.Count;
-            cumulativeEdgesCount += ed.MetaIn.Count;
-
-            if (cumulativeEdgesCount == 0
-                && ed.v.Store.DetachState == DetachStateEnum.Attached
-                && !ed.v.IsRoot)
-                ed.v.Dispose();*/ // this does not metter
-
-            ed.v.FireChange(new VertexChangeEventArgs(VertexChangeType.EdgeRemoved, item));
+            ed.vertex.FireChange(new VertexChangeEventArgs(VertexChangeType.EdgeRemoved, item));
         }
     }
 }

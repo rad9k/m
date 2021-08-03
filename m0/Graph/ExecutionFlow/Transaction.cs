@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 
 namespace m0.Graph.ExecutionFlow
 {
+    // This ITransaction implementation supports GraphChangeTransactionAtom support
     public class Transaction : ITransaction
     {
         TransactionStateEnum state;
@@ -15,7 +16,8 @@ namespace m0.Graph.ExecutionFlow
 
         IList<ITransactionAtom> atoms = new List<ITransactionAtom>();
 
-        Dictionary<IVertex, List<GraphChangeTransactionAtom>> graphChangeTransactionAtoms = new Dictionary<IVertex, List<GraphChangeTransactionAtom>>();
+        Dictionary<IVertex, List<GraphChangeTransactionAtom>> graphChangeTransactionAtoms_OutEdgeValueChange = new Dictionary<IVertex, List<GraphChangeTransactionAtom>>();
+        Dictionary<IVertex, List<GraphChangeTransactionAtom>> graphChangeTransactionAtoms_InEdge = new Dictionary<IVertex, List<GraphChangeTransactionAtom>>();
 
         ITransaction previous;
         public ITransaction Previous { get => previous; }
@@ -30,7 +32,7 @@ namespace m0.Graph.ExecutionFlow
             foreach (ITransactionAtom a in atoms)
                 a.Commit();
 
-            foreach (List<GraphChangeTransactionAtom> al in graphChangeTransactionAtoms.Keys)
+            foreach (List<GraphChangeTransactionAtom> al in graphChangeTransactionAtoms_OutEdgeValueChange.Keys)
                 foreach (GraphChangeTransactionAtom a in al)
                     a.Commit();
         }
@@ -40,9 +42,11 @@ namespace m0.Graph.ExecutionFlow
             foreach (ITransactionAtom a in atoms)
                 a.Rollback();
 
-            foreach (List<GraphChangeTransactionAtom> al in graphChangeTransactionAtoms.Keys)
+            foreach (List<GraphChangeTransactionAtom> al in graphChangeTransactionAtoms_OutEdgeValueChange.Keys)
                 foreach (GraphChangeTransactionAtom a in al)
                     a.Rollback();
+
+            // no need to rollback graphChangeTransactionAtoms_InEdge
         }
 
         public Transaction(ITransaction prevTransaction)
@@ -56,7 +60,11 @@ namespace m0.Graph.ExecutionFlow
         {
             if (atom is GraphChangeTransactionAtom) {
                 GraphChangeTransactionAtom gcta = (GraphChangeTransactionAtom)atom;
-                GeneralUtil.DictionaryAdd<IVertex, GraphChangeTransactionAtom>(graphChangeTransactionAtoms, gcta.ChangedVertex, gcta);
+
+                GeneralUtil.DictionaryAdd<IVertex, GraphChangeTransactionAtom>(graphChangeTransactionAtoms_OutEdgeValueChange, gcta.ChangedVertex, gcta);
+
+                if(gcta.Type == GraphChangeEnum.EdgeAdded || gcta.Type == GraphChangeEnum.EdgeRemoved)
+                    GeneralUtil.DictionaryAdd<IVertex, GraphChangeTransactionAtom>(graphChangeTransactionAtoms_InEdge, gcta.Edge.To, gcta);
             } else
                 atoms.Add(atom);
         }

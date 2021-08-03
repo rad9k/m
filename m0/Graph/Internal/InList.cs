@@ -40,9 +40,9 @@ namespace m0.Graph.Internal
 
         public override void OnAdd(IEdge item)
         {
-            ed.v.InEdgesDictionariesNeedsRebuild = true;
+            ed.vertex.InEdgesDictionariesNeedsRebuild = true;
 
-            ed.v.InheritChildsDictionariesNeedsRebuild(true);
+            ed.vertex.InheritChildsDictionariesNeedsRebuild(true);
         }
 
         public override void OnRemove(IEdge item)
@@ -65,9 +65,9 @@ namespace m0.Graph.Internal
 
             //
 
-            ed.v.InEdgesDictionariesNeedsRebuild = true;
+            ed.vertex.InEdgesDictionariesNeedsRebuild = true;
 
-            ed.v.InheritChildsDictionariesNeedsRebuild(true);
+            ed.vertex.InheritChildsDictionariesNeedsRebuild(true);
 
             //
 
@@ -77,9 +77,9 @@ namespace m0.Graph.Internal
             cumulativeEdgesCount += ed.MetaIn.Count;
 
             if (cumulativeEdgesCount == 0
-                && ed.v.Store.DetachState == DetachStateEnum.Attached
-                && !ed.v.IsRoot)
-                ed.v.Dispose();
+                && ed.vertex.Store.DetachState == DetachStateEnum.Attached
+                && !ed.vertex.IsRoot)
+                ed.vertex.Dispose();
         }
     }
 }
