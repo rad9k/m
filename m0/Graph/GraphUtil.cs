@@ -56,6 +56,16 @@ namespace m0.Graph
 
     public class GraphUtil
     {
+        public static IList<IVertex> GetVertexListFromEdgeEnumerable(IEnumerable<IEdge> edges)
+        {
+            IList<IVertex> vList = new List<IVertex>();
+
+            foreach (IEdge e in edges)
+                vList.Add(e.To);
+
+            return vList;
+        }
+
         public static void LoadAndParse(string fileName, IVertex baseVertex)
         {
             string text = System.IO.File.ReadAllText(fileName);

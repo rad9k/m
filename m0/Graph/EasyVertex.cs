@@ -376,6 +376,9 @@ namespace m0.Graph
 
                 HasInheritance = true;
             }
+
+            if (GeneralUtil.CompareStrings(edge.Meta.Value, "$GraphChangeTrigger"))
+                GraphChangeTriggerWatcher.AddGraphChangeTrigger(edge);
         }
 
         public override void AddEdgesList(IEnumerable<IEdge> edges)

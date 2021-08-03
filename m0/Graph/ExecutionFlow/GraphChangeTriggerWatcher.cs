@@ -7,34 +7,69 @@ using System.Threading.Tasks;
 
 namespace m0.Graph.ExecutionFlow
 {
-    class WatcherEntry
+    public class WatcherEntry
     {
         public IVertex baseVertex;
         public IVertex listenerVertex;
         public string scopeQuery;
+        public IList<IVertex> vertexInScope;
     }
 
     public class GraphChangeTriggerWatcher
     {
-        static Dictionary<IVertex, WatcherEntry> triggers = new Dictionary<IVertex, WatcherEntry>();
+        static HashSet<IEdge> triggerEdgeList = new HashSet<IEdge>();
+        
+        static Dictionary<IVertex, WatcherEntry> watcherEntryDict;
 
         public static void AddGraphChangeTrigger(IEdge triggerEdge)
         {
-            WatcherEntry en = new WatcherEntry();
-            en.baseVertex = triggerEdge.From;
-            en.listenerVertex = triggerEdge.To;
+            triggerEdgeList.Add(triggerEdge);
+        }
 
-            IVertex scopeQuery = triggerEdge.To.Get(false, "ScopeQuery");
+        static void UpdateWatcherEntryList()
+        {
+            watcherEntryDict = new Dictionary<IVertex, WatcherEntry>();
 
-            if (scopeQuery != null)
-                en.scopeQuery = scopeQuery.Value.ToString();
+            foreach(IEdge e in triggerEdgeList)
+            {
+                WatcherEntry en = new WatcherEntry();
+                en.baseVertex = e.From;
+                en.listenerVertex = e.To;
 
-            triggers.Add(en.listenerVertex, en);
+                IVertex scopeQuery = e.To.Get(false, "ScopeQuery:");
+
+                if (scopeQuery != null)
+                    en.scopeQuery = scopeQuery.Value.ToString();
+
+                watcherEntryDict.Add(en.listenerVertex, en);
+            }
+        }
+
+        static void UpdateWatchedEdges()
+        {
+            foreach(WatcherEntry en in watcherEntryDict.Values)
+            {
+                if (en.scopeQuery != null)
+                    en.vertexInScope = GraphUtil.GetVertexListFromEdgeEnumerable(en.baseVertex.GetAll(false, en.scopeQuery));
+                else {
+                    en.vertexInScope = new List<IVertex>();
+                    en.vertexInScope.Add(en.baseVertex);
+                }
+            }
+        }
+
+        public static Dictionary<IVertex, WatcherEntry> GetWatchedEdges()
+        {
+            UpdateWatcherEntryList();
+
+            UpdateWatchedEdges();
+
+            return watcherEntryDict;
         }
 
         public static void RemoveGraphChangeTrigger(IEdge triggerEdge)
         {
-            triggers.Remove(triggerEdge.To);
+            triggerEdgeList.Remove(triggerEdge);
         }
     }
 }

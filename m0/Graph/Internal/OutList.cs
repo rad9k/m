@@ -1,4 +1,5 @@
 ﻿using m0.Foundation;
+using m0.Graph.ExecutionFlow;
 using m0.Util;
 using System;
 using System.Collections.Generic;
@@ -84,6 +85,9 @@ namespace m0.Graph.Internal
                     if (ed.vertex.InheritanceCount == 0)
                         ed.vertex.HasInheritance = false;
                 }
+
+                if (GeneralUtil.CompareStrings(item.Meta.Value, "$GraphChangeTrigger"))
+                    GraphChangeTriggerWatcher.RemoveGraphChangeTrigger(item);
             }
 
             //
