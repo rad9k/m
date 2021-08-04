@@ -75,20 +75,7 @@ namespace m0.Graph.Internal
             ed.vertex.OutEdgesDictionariesNeedsRebuild = true;
             ed.vertex.InheritChildsDictionariesNeedsRebuild(false);
 
-
-            if(item.Meta != null)
-            {
-                if (GeneralUtil.CompareStrings(item.Meta.Value, "$Inherits"))
-                {
-                    ed.vertex.InheritanceCount--;
-
-                    if (ed.vertex.InheritanceCount == 0)
-                        ed.vertex.HasInheritance = false;
-                }
-
-                if (GeneralUtil.CompareStrings(item.Meta.Value, "$GraphChangeTrigger"))
-                    GraphChangeTriggerWatcher.RemoveGraphChangeTrigger(item);
-            }
+            ed.vertex.DettachEdge(item);
 
             //
 

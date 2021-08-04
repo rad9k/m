@@ -381,6 +381,23 @@ namespace m0.Graph
                 GraphChangeTriggerWatcher.AddGraphChangeTrigger(edge);
         }
 
+        public override void DettachEdge(IEdge edge)
+        {
+            if (edge.Meta != null)
+            {
+                if (GeneralUtil.CompareStrings(edge.Meta.Value, "$Inherits"))
+                {
+                    ed.vertex.InheritanceCount--;
+
+                    if (ed.vertex.InheritanceCount == 0)
+                        ed.vertex.HasInheritance = false;
+                }
+
+                if (GeneralUtil.CompareStrings(edge.Meta.Value, "$GraphChangeTrigger"))
+                    GraphChangeTriggerWatcher.RemoveGraphChangeTrigger(edge);
+            }
+        }
+
         public override void AddEdgesList(IEnumerable<IEdge> edges)
         {            
             foreach (IEdge e in edges) // possibly not optimal implementation

@@ -76,6 +76,8 @@ namespace m0.Foundation
 
         void AttachEdge(IEdge edge);
 
+        void DettachEdge(IEdge edge);
+
         void AddEdgesList(IEnumerable<IEdge> edges);
 
         void DeleteEdge(IEdge edge);
