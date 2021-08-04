@@ -18,5 +18,10 @@ namespace m0.Graph.ExecutionFlow
         {
             throw new NotImplementedException();
         }
+
+        public virtual IVertex CreateEventVertex(IVertex triggerVertex, IVertex sourceVertex)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

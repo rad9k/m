@@ -11,6 +11,16 @@ namespace m0.Graph.ExecutionFlow
 
     public class GraphChangeTransactionAtom : TransacionAtom
     {
+        static IVertex r = m0.MinusZero.Instance.root;
+
+        static IVertex GraphChangeEvent_Trigger_meta = r.Get(false, @"System\Meta\ZeroTypes\ExecutionFlow\GraphChangeEvent\Trigger");
+        static IVertex GraphChangeEvent_Source_meta = r.Get(false, @"System\Meta\ZeroTypes\ExecutionFlow\GraphChangeEvent\Source");
+        static IVertex GraphChangeEvent_ChangedVertex_meta = r.Get(false, @"System\Meta\ZeroTypes\ExecutionFlow\GraphChangeEvent\ChangedVertex");
+        static IVertex GraphChangeEvent_Type_meta = r.Get(false, @"System\Meta\ZeroTypes\ExecutionFlow\GraphChangeEvent\Type");
+        static IVertex GraphChangeEvent_OldValue_meta = r.Get(false, @"System\Meta\ZeroTypes\ExecutionFlow\GraphChangeEvent\OldValue");
+        static IVertex GraphChangeEvent_NewValue_meta = r.Get(false, @"System\Meta\ZeroTypes\ExecutionFlow\GraphChangeEvent\NewValue");
+        static IVertex GraphChangeEvent_Edge_meta = r.Get(false, @"System\Meta\ZeroTypes\ExecutionFlow\GraphChangeEvent\Edge");
+
         public IVertex ChangedVertex;
         public GraphChangeEnum Type;
         public object OldValue;
@@ -67,6 +77,27 @@ namespace m0.Graph.ExecutionFlow
         void Rollback_ValueChange()
         {
             ChangedVertex.Value = OldValue;
+        }
+
+        public override IVertex CreateEventVertex(IVertex triggerVertex, IVertex sourceVertex)
+        {
+            throw new NotImplementedException();
+        }
+
+        public IVertex CreateEventVertex_GraphChange(IVertex triggerVertex, IVertex sourceVertex, bool isInEdge)
+        {
+            IVertex eventVertex = MinusZero.Instance.CreateTempVertex();
+
+            eventVertex.AddEdge(GraphChangeEvent_Trigger_meta, triggerVertex);
+            eventVertex.AddEdge(GraphChangeEvent_Source_meta, sourceVertex);
+
+            switch (Type)
+            {
+                case GraphChangeEnum.EdgeAdded:
+                    break;
+            }
+
+            return eventVertex;
         }
     }
 }

@@ -11,5 +11,7 @@ namespace m0.Foundation
         void Commit();
 
         void Rollback();
+
+        IVertex CreateEventVertex(IVertex triggerVertex, IVertex sourceVertex);
     }
 }

@@ -2,13 +2,7 @@
 using m0.Foundation;
 using m0.ZeroCode.Helpers;
 using m0.ZeroTypes;
-using m0.ZeroUML.Instructions;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using static m0.Graph.GraphUtil;
 
 namespace m0.Graph.ExecutionFlow
 {
@@ -78,12 +72,13 @@ namespace m0.Graph.ExecutionFlow
                 currentTransaction.AddAtom(atom);
         }
 
-        public static IVertex AddGraphChangeTrigger(IVertex baseVertex, string scopeQuery)
+        public static IVertex AddGraphChangeTrigger(IVertex baseVertex, IList<string> scopeQueries)
         {
             IVertex trigger = VertexOperations.AddInstance(baseVertex, graphChangeTrigger_meta);
 
-            if (scopeQuery != null)
-                trigger.AddVertex(scopeQuery_meta, scopeQuery);
+            if (scopeQueries != null)
+                foreach(string s in scopeQueries)
+                trigger.AddVertex(scopeQuery_meta, s);
 
             return trigger;
         }

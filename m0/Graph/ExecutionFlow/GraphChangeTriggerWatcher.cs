@@ -12,7 +12,7 @@ namespace m0.Graph.ExecutionFlow
     {
         public IVertex baseVertex;
         public IVertex listenerVertex;
-        public string scopeQuery;
+        public IList<string> scopeQuery;
         public IList<IVertex> vertexInScope;
     }
 
@@ -37,10 +37,11 @@ namespace m0.Graph.ExecutionFlow
                 en.baseVertex = e.From;
                 en.listenerVertex = e.To;
 
-                IVertex scopeQuery = e.To.Get(false, "ScopeQuery:");
+                IVertex scopeQueryEdges = e.To.GetAll(false, "ScopeQuery:");
 
-                if (scopeQuery != null)
-                    en.scopeQuery = scopeQuery.Value.ToString();
+                if (scopeQueryEdges.OutEdges.Count > 0)
+                    foreach(IEdge e in scopeQueryEdges)
+                        en.scopeQuery.Add(e.To.Value.ToString());
 
                 watcherEntryList.Add(en);
             }

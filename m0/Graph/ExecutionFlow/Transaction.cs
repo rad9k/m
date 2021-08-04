@@ -27,7 +27,7 @@ namespace m0.Graph.ExecutionFlow
             state = TransactionStateEnum.Started;
         }
 
-        public void CommitAtoms()
+        private void CommitAtoms()
         {
             foreach (ITransactionAtom a in atoms)
                 a.Commit();
@@ -37,11 +37,48 @@ namespace m0.Graph.ExecutionFlow
                     a.Commit();
         }
 
-        public void SendGrahChangeEvents()
+        private Dictionary<IVertex, IVertex> getTriggerEventDictionary_byWatchedVertexDictionary(Dictionary<IVertex, List<WatcherEntry>> watchedVertexDictionary)
         {
-            Dictionary<IVertex, List<WatcherEntry>> wvd = GraphChangeTriggerWatcher.GetWatchedVertexDictionary();
+            Dictionary<IVertex, IVertex> triggerEventDictionary = new Dictionary<IVertex, IVertex>();
 
-            //foreach(
+            foreach(IVertex v in watchedVertexDictionary.Keys)
+            {
+                if(graphChangeTransactionAtoms_OutEdgeValueChange.ContainsKey(v))
+                    foreach(GraphChangeTransactionAtom a in graphChangeTransactionAtoms_OutEdgeValueChange[v])
+            }
+               
+
+            return triggerEventDictionary;
+        }
+
+        private Dictionary<IVertex, IVertex> getTriggerEventDictionary_byGraphChangeTransactionAtoms()
+        {
+            Dictionary<IVertex, IVertex> triggerEventDictionary = new Dictionary<IVertex, IVertex>();
+
+            return triggerEventDictionary;
+        }
+
+        private void SendGrahChangeEvents(Dictionary<IVertex, IVertex> triggerEventDictionary)
+        {
+
+        }
+
+        private void SendGrahChangeEvents()
+        {
+            Dictionary<IVertex, IVertex> triggerEventDictionary;
+
+            Dictionary<IVertex, List<WatcherEntry>> watchedVertexDictionary = GraphChangeTriggerWatcher.GetWatchedVertexDictionary();
+
+            int graphChangeTransactionAtoms_TotalCount =
+                graphChangeTransactionAtoms_OutEdgeValueChange.Keys.Count +
+                graphChangeTransactionAtoms_InEdge.Keys.Count;
+
+            if (graphChangeTransactionAtoms_TotalCount < watchedVertexDictionary.Count)
+                triggerEventDictionary = getTriggerEventDictionary_byWatchedVertexDictionary(watchedVertexDictionary);
+            else
+                triggerEventDictionary = getTriggerEventDictionary_byGraphChangeTransactionAtoms();
+
+            SendGrahChangeEvents(triggerEventDictionary);
         }
 
         public void Commit()
@@ -51,7 +88,7 @@ namespace m0.Graph.ExecutionFlow
             SendGrahChangeEvents();
         }
 
-        public void RollbackAtoms()
+        private void RollbackAtoms()
         {
             foreach (ITransactionAtom a in atoms)
                 a.Rollback();
