@@ -26,7 +26,6 @@ namespace m0
         }
     }
 
-
     /// <summary>
     /// Interaction logic for StartWindow.xaml
     /// </summary>
@@ -48,9 +47,7 @@ namespace m0
             ExtraRun();
 
             Close();
-        }
-
-        
+        }       
 
         void ExtraRun()
         {
@@ -58,7 +55,7 @@ namespace m0
 
             IVertex v = r.AddVertex(null, "V");
 
-            IVertex trigger = ExecutionFlowHelper.AddGraphChangeTrigger(v, "scope query");
+            IVertex trigger = ExecutionFlowHelper.AddGraphChangeTrigger(v, null);
 
             test t = new test();
 

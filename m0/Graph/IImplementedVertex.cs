@@ -15,5 +15,7 @@ namespace m0.Graph
         bool HasInheritance { get; set; }
 
         void FireChange(VertexChangeEventArgs e);
+
+
     }
 }
