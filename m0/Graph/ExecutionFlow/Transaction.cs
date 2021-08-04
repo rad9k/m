@@ -27,7 +27,7 @@ namespace m0.Graph.ExecutionFlow
             state = TransactionStateEnum.Started;
         }
 
-        public void Commit()
+        public void CommitAtoms()
         {
             foreach (ITransactionAtom a in atoms)
                 a.Commit();
@@ -37,7 +37,21 @@ namespace m0.Graph.ExecutionFlow
                     a.Commit();
         }
 
-        public void Rollback()
+        public void SendGrahChangeEvents()
+        {
+            Dictionary<IVertex, List<WatcherEntry>> wvd = GraphChangeTriggerWatcher.GetWatchedVertexDictionary();
+
+            //foreach(
+        }
+
+        public void Commit()
+        {
+            CommitAtoms();
+
+            SendGrahChangeEvents();
+        }
+
+        public void RollbackAtoms()
         {
             foreach (ITransactionAtom a in atoms)
                 a.Rollback();
@@ -47,6 +61,11 @@ namespace m0.Graph.ExecutionFlow
                     a.Rollback();
 
             // no need to rollback graphChangeTransactionAtoms_InEdge
+        }
+
+        public void Rollback()
+        {
+            RollbackAtoms();
         }
 
         public Transaction(ITransaction prevTransaction)

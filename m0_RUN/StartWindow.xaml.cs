@@ -63,6 +63,8 @@ namespace m0
 
             ExecutionFlowHelper.StartTransaction();
 
+            v.Value = "kupa";
+
             ExecutionFlowHelper.CommitTransaction();
         }
 

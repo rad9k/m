@@ -59,7 +59,7 @@ namespace m0.Graph.ExecutionFlow
             }
         }
 
-        public static Dictionary<IVertex, List<WatcherEntry>> GetWatcherDictionary()
+        public static Dictionary<IVertex, List<WatcherEntry>> GetWatchedVertexDictionary()
         {
             CreateWatcherEntryList();
 

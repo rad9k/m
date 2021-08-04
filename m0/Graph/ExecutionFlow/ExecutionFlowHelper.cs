@@ -74,7 +74,8 @@ namespace m0.Graph.ExecutionFlow
         {
             ITransaction currentTransaction = MinusZero.Instance.GetTopTransaction();
 
-            currentTransaction.AddAtom(atom);
+            if(currentTransaction != null)
+                currentTransaction.AddAtom(atom);
         }
 
         public static IVertex AddGraphChangeTrigger(IVertex baseVertex, string scopeQuery)
