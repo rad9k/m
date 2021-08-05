@@ -29,7 +29,7 @@ namespace m0.Lib
 
             ITransaction prevTransaction = currentTransaction.Previous;
 
-            currentTransaction.Commit();
+            currentTransaction.Commit(exe);
 
             MinusZero.Instance.SetTopTransaction(prevTransaction);
 
@@ -42,7 +42,7 @@ namespace m0.Lib
 
             ITransaction prevTransaction = currentTransaction.Previous;
 
-            currentTransaction.Rollback();
+            currentTransaction.Rollback(exe);
 
             MinusZero.Instance.SetTopTransaction(prevTransaction);
 

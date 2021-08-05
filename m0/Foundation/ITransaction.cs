@@ -14,9 +14,9 @@ namespace m0.Foundation
 
         void Start();
 
-        void Commit();
+        void Commit(IExecution exe);
 
-        void Rollback();
+        void Rollback(IExecution exe);
 
         void AddAtom(ITransactionAtom atom);
 

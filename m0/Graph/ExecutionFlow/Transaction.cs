@@ -57,32 +57,39 @@ namespace m0.Graph.ExecutionFlow
             return triggerEventDictionary;
         }
 
-        private Dictionary<IVertex, IVertex> getTriggerEventDictionary_byGraphChangeTransactionAtoms()
+        private Dictionary<IVertex, IVertex> getTriggerEventDictionary_byGraphChangeTransactionAtoms(Dictionary<IVertex, List<WatcherEntry>> watchedVertexDictionary)
         {
             Dictionary<IVertex, IVertex> triggerEventDictionary = new Dictionary<IVertex, IVertex>();
 
-            foreach (KeyValuePair<IVertex, List<WatcherEntry>> kvp in watchedVertexDictionary)
-            {
-                if (graphChangeTransactionAtoms_OutEdgeValueChange.ContainsKey(kvp.Key))
-                    foreach (GraphChangeTransactionAtom a in graphChangeTransactionAtoms_OutEdgeValueChange[kvp.Key])
-                        foreach (WatcherEntry we in kvp.Value)
+            foreach (KeyValuePair<IVertex, List<GraphChangeTransactionAtom>> kvp in graphChangeTransactionAtoms_OutEdgeValueChange)
+                if (watchedVertexDictionary.ContainsKey(kvp.Key))
+                    foreach (WatcherEntry we in watchedVertexDictionary[kvp.Key])
+                        foreach (GraphChangeTransactionAtom a in kvp.Value)
                             triggerEventDictionary.Add(we.triggerVertex, a.CreateEventVertex_GraphChange(we.triggerVertex, we.sourceVertex, false));
 
-                if (graphChangeTransactionAtoms_OutEdgeValueChange.ContainsKey(kvp.Key))
-                    foreach (GraphChangeTransactionAtom a in graphChangeTransactionAtoms_InEdge[kvp.Key])
-                        foreach (WatcherEntry we in kvp.Value)
+            foreach (KeyValuePair<IVertex, List<GraphChangeTransactionAtom>> kvp in graphChangeTransactionAtoms_InEdge)
+                if (watchedVertexDictionary.ContainsKey(kvp.Key))
+                    foreach (WatcherEntry we in watchedVertexDictionary[kvp.Key])
+                        foreach (GraphChangeTransactionAtom a in kvp.Value)
                             triggerEventDictionary.Add(we.triggerVertex, a.CreateEventVertex_GraphChange(we.triggerVertex, we.sourceVertex, true));
-            }
 
             return triggerEventDictionary;
         }
 
-        private void SendGrahChangeEvents(Dictionary<IVertex, IVertex> triggerEventDictionary)
+        private void SendGrahChangeEvents(IExecution exe, Dictionary<IVertex, IVertex> triggerEventDictionary)
         {
+            foreach(KeyValuePair<IVertex, IVertex> kvp in triggerEventDictionary)
+            {
+                IVertex triggerVertex = kvp.Key;
 
+                foreach(IEdge e in triggerVertex.GetAll(false, @"Listener:\"))
+                {
+                   // e.To.Execute()
+                }
+            }
         }
 
-        private void SendGrahChangeEvents()
+        private void SendGrahChangeEvents(IExecution exe)
         {
             Dictionary<IVertex, IVertex> triggerEventDictionary;
 
@@ -95,16 +102,16 @@ namespace m0.Graph.ExecutionFlow
             if (graphChangeTransactionAtoms_TotalCount < watchedVertexDictionary.Count)
                 triggerEventDictionary = getTriggerEventDictionary_byWatchedVertexDictionary(watchedVertexDictionary);
             else
-                triggerEventDictionary = getTriggerEventDictionary_byGraphChangeTransactionAtoms();
+                triggerEventDictionary = getTriggerEventDictionary_byGraphChangeTransactionAtoms(watchedVertexDictionary);
 
-            SendGrahChangeEvents(triggerEventDictionary);
+            SendGrahChangeEvents(exe, triggerEventDictionary);
         }
 
-        public void Commit()
+        public void Commit(IExecution exe)
         {
             CommitAtoms();
 
-            SendGrahChangeEvents();
+            SendGrahChangeEvents(exe);
         }
 
         private void RollbackAtoms()
@@ -119,7 +126,7 @@ namespace m0.Graph.ExecutionFlow
             // no need to rollback graphChangeTransactionAtoms_InEdge
         }
 
-        public void Rollback()
+        public void Rollback(IExecution exe)
         {
             RollbackAtoms();
         }
