@@ -18,13 +18,13 @@ namespace m0.ZeroCode
 
         public IVertex NewVertexCreationSpace { get; set; }
 
-        public bool metaMode { get; set; }
+        public bool MetaMode { get; set; }
 
         static IVertex dolar = MinusZero.Instance.Dolar;
 
         public ZeroCodeExecution()
         {
-            metaMode = true;
+            MetaMode = true;
 
             CreateEmptyStack();
 
@@ -35,7 +35,7 @@ namespace m0.ZeroCode
 
         public ZeroCodeExecution(IVertex expression)
         {
-            metaMode = true;
+            MetaMode = true;
 
             CreateEmptyStack();
 
@@ -48,7 +48,7 @@ namespace m0.ZeroCode
 
         public ZeroCodeExecution(IVertex toBeStackVertex, IVertex expression)
         {
-            metaMode = true;
+            MetaMode = true;
 
             IEnumerable<IEdge> _toBeStackVertex;
 

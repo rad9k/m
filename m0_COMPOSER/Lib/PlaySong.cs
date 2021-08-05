@@ -176,7 +176,7 @@ namespace m0_COMPOSER.Lib
 
                 parameters.AddVertex(programChangeProgramNumberMeta, value);
 
-                ZeroCodeExecutonUtil.MethodCallFromHost(exe, playMethod, outputVertex, parameters);
+                ZeroCodeExecutonUtil.MethodCall(exe, playMethod, outputVertex, parameters);
             }
         }
 
@@ -198,7 +198,7 @@ namespace m0_COMPOSER.Lib
 
                 parameters.AddEdge(controlChangeControlChangeMeta, controlChangeVertex);
 
-                ZeroCodeExecutonUtil.MethodCallFromHost(exe, playMethod, outputVertex, parameters);
+                ZeroCodeExecutonUtil.MethodCall(exe, playMethod, outputVertex, parameters);
             }
         }        
 
@@ -590,7 +590,7 @@ namespace m0_COMPOSER.Lib
 
                 parameters.AddEdge(noteOnNoteMeta, e.eventVertex);
 
-                ZeroCodeExecutonUtil.MethodCallFromHost(exe, playMethod, outputVertex, parameters);                
+                ZeroCodeExecutonUtil.MethodCall(exe, playMethod, outputVertex, parameters);                
             }
 
             if(e.isDrum)
@@ -611,7 +611,7 @@ namespace m0_COMPOSER.Lib
 
                 parameters.AddEdge(noteOffNoteMeta, e.eventVertex);
 
-                ZeroCodeExecutonUtil.MethodCallFromHost(exe, playMethod, outputVertex, parameters);                
+                ZeroCodeExecutonUtil.MethodCall(exe, playMethod, outputVertex, parameters);                
             }
 
             DoItemHighlight(e.eventVertex, HighlightType.Stop);
@@ -629,7 +629,7 @@ namespace m0_COMPOSER.Lib
 
                 parameters.AddEdge(controlChangeControlChangeMeta, e.eventVertex);
 
-                ZeroCodeExecutonUtil.MethodCallFromHost(exe, playMethod, outputVertex, parameters);
+                ZeroCodeExecutonUtil.MethodCall(exe, playMethod, outputVertex, parameters);
             }
 
             DoItemHighlight(e.eventVertex, HighlightType.Hit);

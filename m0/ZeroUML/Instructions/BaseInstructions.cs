@@ -50,7 +50,7 @@ namespace m0.ZeroUML.Instructions
 
             foreach (string processedValue in processedValueList)
             {            
-                if (exe.metaMode)
+                if (exe.MetaMode)
                     inputQs.QueryOutEdges(processedValue, null, out e, out eList);
                 else
                     inputQs.QueryOutEdges(null, processedValue, out e, out eList);
@@ -82,7 +82,7 @@ namespace m0.ZeroUML.Instructions
             {
                 string expression = value.Substring(1, value.Length - 3);
 
-                IEnumerable<IEdge> stackQueryResult = exe.Stack.GetAll(exe.metaMode, expression);
+                IEnumerable<IEdge> stackQueryResult = exe.Stack.GetAll(exe.MetaMode, expression);
 
                 foreach (IEdge e in stackQueryResult)
                     if(e.To.Value != null)

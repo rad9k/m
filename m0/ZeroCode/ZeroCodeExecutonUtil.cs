@@ -34,7 +34,7 @@ namespace m0.ZeroCode
             endPoint.Execute(exe);            
         }
 
-        public static void MethodCallFromHost(IExecution exe, IVertex endPoint, IVertex theObject, IVertex paramtersStack)
+        public static void MethodCall(IExecution exe, IVertex endPoint, IVertex theObject, IVertex paramtersStack)
         {
             exe.AddStackFrame(theObject); // ENTER NEW STACK
             exe.AddStackFrame(paramtersStack);
@@ -43,6 +43,15 @@ namespace m0.ZeroCode
             endPoint.Execute(exe);
 
             exe.RemoveStackFrame();
+            exe.RemoveStackFrame(); // LEAVE NEW STACK
+        }
+
+        public static void FuncionCall(IExecution exe, IVertex endPoint, IVertex paramtersStack)
+        { 
+            exe.AddStackFrame(paramtersStack); // ENTER NEW STACK
+
+            endPoint.Execute(exe);
+
             exe.RemoveStackFrame(); // LEAVE NEW STACK
         }
     }

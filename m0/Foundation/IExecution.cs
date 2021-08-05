@@ -12,7 +12,7 @@ namespace m0.Foundation
 
         IVertex NewVertexCreationSpace { get; set; }
 
-        bool metaMode { get; set; }
+        bool MetaMode { get; set; }
 
         void AddStackFrame();
 
