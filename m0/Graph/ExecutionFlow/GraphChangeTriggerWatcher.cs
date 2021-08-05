@@ -12,7 +12,6 @@ namespace m0.Graph.ExecutionFlow
     {
         public IVertex sourceVertex;
         public IVertex triggerVertex;
-        public IList<IVertex> triggersList;
         public IList<string> scopeQuery;
         public IList<IVertex> vertexInScope;
     }
@@ -38,8 +37,6 @@ namespace m0.Graph.ExecutionFlow
                 en.sourceVertex = e.From;
                 en.triggerVertex = e.To;
                 
-                //
-                //
 
                 IVertex scopeQueryEdges = e.To.GetAll(false, "ScopeQuery:");
 
