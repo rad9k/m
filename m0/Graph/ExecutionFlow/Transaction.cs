@@ -41,10 +41,12 @@ namespace m0.Graph.ExecutionFlow
         {
             Dictionary<IVertex, IVertex> triggerEventDictionary = new Dictionary<IVertex, IVertex>();
 
-            foreach(IVertex v in watchedVertexDictionary.Keys)
-            {
-              //  if(graphChangeTransactionAtoms_OutEdgeValueChange.ContainsKey(v))
-             //       foreach(GraphChangeTransactionAtom a in graphChangeTransactionAtoms_OutEdgeValueChange[v])
+            foreach(KeyValuePair<IVertex, List<WatcherEntry>> kvp in watchedVertexDictionary)
+            {   
+                if(graphChangeTransactionAtoms_OutEdgeValueChange.ContainsKey(kvp.Key))
+                    foreach(GraphChangeTransactionAtom a in graphChangeTransactionAtoms_OutEdgeValueChange[kvp.Key])
+                        foreach(WatcherEntry we in kvp.Value)
+                            triggerEventDictionary.Add(we.triggerVertex, a.CreateEventVertex_GraphChange(we.sourceVertex, a.)
             }
                
 

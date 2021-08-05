@@ -10,8 +10,9 @@ namespace m0.Graph.ExecutionFlow
 {
     public class WatcherEntry
     {
-        public IVertex baseVertex;
-        public IVertex listenerVertex;
+        public IVertex sourceVertex;
+        public IVertex triggerVertex;
+        public IList<IVertex> triggersList;
         public IList<string> scopeQuery;
         public IList<IVertex> vertexInScope;
     }
@@ -27,15 +28,18 @@ namespace m0.Graph.ExecutionFlow
             triggerEdgeList.Add(triggerEdge);
         }
 
-        static void CreateWatcherEntryList()
+        private static void CreateWatcherEntryList()
         {
             watcherEntryList = new List<WatcherEntry>();
 
             foreach(IEdge e in triggerEdgeList)
             {
                 WatcherEntry en = new WatcherEntry();
-                en.baseVertex = e.From;
-                en.listenerVertex = e.To;
+                en.sourceVertex = e.From;
+                en.triggerVertex = e.To;
+                
+                //
+                //
 
                 IVertex scopeQueryEdges = e.To.GetAll(false, "ScopeQuery:");
 
@@ -47,16 +51,16 @@ namespace m0.Graph.ExecutionFlow
             }
         }
 
-        static void FillVertexInScope()
+        private static void FillVertexInScope()
         {
             foreach(WatcherEntry en in watcherEntryList)
             {
                 if (en.scopeQuery != null)
                     foreach(string s in en.scopeQuery)
-                        en.vertexInScope = GraphUtil.GetVertexListFromEdgeEnumerable(en.baseVertex.GetAll(false, s));
+                        en.vertexInScope = GraphUtil.GetVertexListFromEdgeEnumerable(en.sourceVertex.GetAll(false, s));
                 else {
                     en.vertexInScope = new List<IVertex>();
-                    en.vertexInScope.Add(en.baseVertex);
+                    en.vertexInScope.Add(en.sourceVertex);
                 }
             }
         }
