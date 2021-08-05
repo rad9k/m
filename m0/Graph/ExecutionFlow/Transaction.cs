@@ -43,8 +43,8 @@ namespace m0.Graph.ExecutionFlow
 
             foreach(IVertex v in watchedVertexDictionary.Keys)
             {
-                if(graphChangeTransactionAtoms_OutEdgeValueChange.ContainsKey(v))
-                    foreach(GraphChangeTransactionAtom a in graphChangeTransactionAtoms_OutEdgeValueChange[v])
+              //  if(graphChangeTransactionAtoms_OutEdgeValueChange.ContainsKey(v))
+             //       foreach(GraphChangeTransactionAtom a in graphChangeTransactionAtoms_OutEdgeValueChange[v])
             }
                
 

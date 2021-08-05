@@ -40,8 +40,8 @@ namespace m0.Graph.ExecutionFlow
                 IVertex scopeQueryEdges = e.To.GetAll(false, "ScopeQuery:");
 
                 if (scopeQueryEdges.OutEdges.Count > 0)
-                    foreach(IEdge e in scopeQueryEdges)
-                        en.scopeQuery.Add(e.To.Value.ToString());
+                    foreach(IEdge ee in scopeQueryEdges)
+                        en.scopeQuery.Add(ee.To.Value.ToString());
 
                 watcherEntryList.Add(en);
             }
@@ -52,7 +52,8 @@ namespace m0.Graph.ExecutionFlow
             foreach(WatcherEntry en in watcherEntryList)
             {
                 if (en.scopeQuery != null)
-                    en.vertexInScope = GraphUtil.GetVertexListFromEdgeEnumerable(en.baseVertex.GetAll(false, en.scopeQuery));
+                    foreach(string s in en.scopeQuery)
+                        en.vertexInScope = GraphUtil.GetVertexListFromEdgeEnumerable(en.baseVertex.GetAll(false, s));
                 else {
                     en.vertexInScope = new List<IVertex>();
                     en.vertexInScope.Add(en.baseVertex);

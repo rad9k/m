@@ -21,6 +21,12 @@ namespace m0.Graph.ExecutionFlow
         static IVertex GraphChangeEvent_NewValue_meta = r.Get(false, @"System\Meta\ZeroTypes\ExecutionFlow\GraphChangeEvent\NewValue");
         static IVertex GraphChangeEvent_Edge_meta = r.Get(false, @"System\Meta\ZeroTypes\ExecutionFlow\GraphChangeEvent\Edge");
 
+        static IVertex GraphChangeEnum_ValueChange_meta = r.Get(false, @"System\Meta\ZeroTypes\ExecutionFlow\GraphChangeEnum\ValueChange");
+        static IVertex GraphChangeEnum_OutputEdgeAdded_meta = r.Get(false, @"System\Meta\ZeroTypes\ExecutionFlow\GraphChangeEnum\OutputEdgeAdded");
+        static IVertex GraphChangeEnum_OutputEdgeRemoved_meta = r.Get(false, @"System\Meta\ZeroTypes\ExecutionFlow\GraphChangeEnum\OutputEdgeRemoved");
+        static IVertex GraphChangeEnum_InputEdgeAdded_meta = r.Get(false, @"System\Meta\ZeroTypes\ExecutionFlow\GraphChangeEnum\InputEdgeAdded");
+        static IVertex GraphChangeEnum_InputEdgeRemoved_meta = r.Get(false, @"System\Meta\ZeroTypes\ExecutionFlow\GraphChangeEnum\InputEdgeRemoved");
+
         public IVertex ChangedVertex;
         public GraphChangeEnum Type;
         public object OldValue;
@@ -93,7 +99,46 @@ namespace m0.Graph.ExecutionFlow
 
             switch (Type)
             {
+                case GraphChangeEnum.ValueChange:
+                    eventVertex.AddEdge(GraphChangeEvent_ChangedVertex_meta, ChangedVertex);
+                    eventVertex.AddEdge(GraphChangeEvent_Type_meta, GraphChangeEnum_ValueChange_meta);
+                    eventVertex.AddVertex(GraphChangeEvent_OldValue_meta, NewValue);
+                    eventVertex.AddVertex(GraphChangeEvent_NewValue_meta, NewValue);
+                    break;
+
                 case GraphChangeEnum.EdgeAdded:
+                    IVertex edgeVertex = ZeroTypes.Edge.CreateTempEdgeVertex(Edge);
+                        
+                    if (isInEdge)
+                    {
+                        eventVertex.AddEdge(GraphChangeEvent_ChangedVertex_meta, Edge.To);
+                        eventVertex.AddEdge(GraphChangeEvent_Type_meta, GraphChangeEnum_InputEdgeAdded_meta);
+                        eventVertex.AddEdge(GraphChangeEvent_Edge_meta, edgeVertex);
+                    }
+                    else
+                    {
+                        eventVertex.AddEdge(GraphChangeEvent_ChangedVertex_meta, ChangedVertex);
+                        eventVertex.AddEdge(GraphChangeEvent_Type_meta, GraphChangeEnum_OutputEdgeAdded_meta);
+                        eventVertex.AddEdge(GraphChangeEvent_Edge_meta, edgeVertex);
+                    }
+                    break;
+
+                case GraphChangeEnum.EdgeRemoved:
+                    IVertex edgeVertex2 = ZeroTypes.Edge.CreateTempEdgeVertex(Edge);
+
+                    if (isInEdge)
+                    {
+                        eventVertex.AddEdge(GraphChangeEvent_ChangedVertex_meta, Edge.To);
+                        eventVertex.AddEdge(GraphChangeEvent_Type_meta, GraphChangeEnum_InputEdgeRemoved_meta);
+                        eventVertex.AddEdge(GraphChangeEvent_Edge_meta, edgeVertex2);
+                    }
+                    else
+                    {
+                        eventVertex.AddEdge(GraphChangeEvent_ChangedVertex_meta, ChangedVertex);
+                        eventVertex.AddEdge(GraphChangeEvent_Type_meta, GraphChangeEnum_OutputEdgeRemoved_meta);
+                        eventVertex.AddEdge(GraphChangeEvent_Edge_meta, edgeVertex2);
+                    }
+
                     break;
             }
 
