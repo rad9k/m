@@ -97,6 +97,7 @@
     <Compile Include="Foundation\IExecution.cs" />
     <Compile Include="Foundation\INoInEdgeInOutVertexVertex.cs" />
     <Compile Include="Foundation\IPlatformClass.cs" />
+    <Compile Include="Foundation\ISecondStageCommit.cs" />
     <Compile Include="Foundation\ITransaction.cs" />
     <Compile Include="Foundation\ITransactionAtom.cs" />
     <Compile Include="Foundation\IUserInteraction.cs" />

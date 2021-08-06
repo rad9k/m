@@ -18,7 +18,7 @@ using m0.Graph.ExecutionFlow;
 namespace m0.Graph
 {
     [Serializable]
-    public class EasyVertex: VertexBase, IDisposable, IImplementedVertex
+    public class EasyVertex: VertexBase, IDisposable, IImplementedVertex, ISecondStageCommitAction
     {
         protected EdgeDictionaries ed;
 
@@ -434,21 +434,8 @@ namespace m0.Graph
         private static IDictionary<String, IVertex> QueryParseChache_metaMode = new Dictionary<String, IVertex>();        
 
         public override void Dispose()
-        {            
-            if (DisposedState == DisposeStateEnum.Live)
-            {
-                DisposedState = DisposeStateEnum.Disposing;
-
-                ChangeRemoveAllHandlers();
-
-                DeleteAllInEdges();
-                DeleteAllMetaInEdges();
-                DeleteAllEdges();
-
-                Store.RemoveVertexIdentifier(this);
-
-                DisposedState = DisposeStateEnum.Disposed;
-            }
+        {
+            ExecutionFlowHelper.AddSecondStageCommitAction(this);
         }
 
         public void DeleteAllInEdges()
@@ -714,6 +701,34 @@ namespace m0.Graph
             _Identifier = Store.VertexIdentifierCount++;
 
             Store.StoreVertexIdentifier(this);
+        }
+
+        public void ExecuteSecondStageCommitAction()
+        {
+            if (DisposedState != DisposeStateEnum.Live)
+                return;
+
+            int cumulativeEdgesCount = 0;
+
+            cumulativeEdgesCount += ed.In.Count;
+            cumulativeEdgesCount += ed.MetaIn.Count;
+
+            if (cumulativeEdgesCount == 0
+                && ed.vertex.Store.DetachState == DetachStateEnum.Attached
+                && !ed.vertex.IsRoot)
+                {
+                    DisposedState = DisposeStateEnum.Disposing;
+
+                    ChangeRemoveAllHandlers();
+
+                    DeleteAllInEdges();
+                    DeleteAllMetaInEdges();
+                    DeleteAllEdges();
+
+                    Store.RemoveVertexIdentifier(this);
+
+                    DisposedState = DisposeStateEnum.Disposed;
+                }
         }
 
         public EasyVertex(IStore _store) : base(_store)

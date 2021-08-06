@@ -27,6 +27,8 @@ namespace m0.Graph.ExecutionFlow
         Dictionary<IVertex, List<GraphChangeTransactionAtom>> graphChangeTransactionAtoms_OutEdgeValueChange = new Dictionary<IVertex, List<GraphChangeTransactionAtom>>();
         Dictionary<IVertex, List<GraphChangeTransactionAtom>> graphChangeTransactionAtoms_InEdge = new Dictionary<IVertex, List<GraphChangeTransactionAtom>>();
 
+        IList<ISecondStageCommitAction> secondStageCommitActionList = new List<ISecondStageCommitAction>();
+
         ITransaction previous;
         public ITransaction Previous { get => previous; }
 
@@ -129,13 +131,33 @@ namespace m0.Graph.ExecutionFlow
             GraphChangeWatch = true;
         }
 
+        public void Commit_SecondStage()
+        {
+            foreach (ISecondStageCommitAction a in secondStageCommitActionList)
+                a.ExecuteSecondStageCommitAction();
+        }
+
         public void Commit(IExecution exe)
         {
+            state = TransactionStateEnum.Commiting;
+
             CommitAtoms();
 
             SendGrahChangeEvents(exe);
 
-            state = TransactionStateEnum.Commited;
+            if (state == TransactionStateEnum.Commiting)
+            {
+                Commit_SecondStage();
+
+                state = TransactionStateEnum.Commited;
+
+                return;
+            }
+
+            if(state == TransactionStateEnum.Rolledback)
+            {
+                return;
+            }
         }
 
         private void RollbackAtoms()
@@ -152,9 +174,14 @@ namespace m0.Graph.ExecutionFlow
 
         public void Rollback(IExecution exe)
         {
+            if(state == TransactionStateEnum.Commiting)
+                state = TransactionStateEnum.RollingbackWhileCommiting;
+            else
+                state = TransactionStateEnum.Rollingback;
+
             RollbackAtoms();
 
-            state = TransactionStateEnum.RolledBack;
+            state = TransactionStateEnum.Rolledback;
         }
 
         public Transaction(ITransaction prevTransaction)
@@ -175,6 +202,11 @@ namespace m0.Graph.ExecutionFlow
                     GeneralUtil.DictionaryAdd<IVertex, GraphChangeTransactionAtom>(graphChangeTransactionAtoms_InEdge, gcta.Edge.To, gcta);
             } else
                 atoms.Add(atom);
+        }
+
+        public void AddSecondStageCommitAction(ISecondStageCommitAction commitAction)
+        {
+            secondStageCommitActionList.Add(commitAction);
         }
     }
 }

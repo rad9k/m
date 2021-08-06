@@ -28,7 +28,7 @@ namespace m0.Foundation
 
     // IVertex has to have constructor with:
     // - IStore param
-    public interface IVertex : IEnumerable<IEdge>, IDisposable
+    public interface IVertex : IEnumerable<IEdge>, IDisposable, ISecondStageCommitAction
     {
         DisposeStateEnum DisposedState { get; set; }
 

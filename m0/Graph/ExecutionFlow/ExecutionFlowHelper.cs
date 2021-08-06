@@ -79,13 +79,21 @@ namespace m0.Graph.ExecutionFlow
                 currentTransaction.AddAtom(atom);
         }
 
+        public static void AddSecondStageCommitAction(ISecondStageCommitAction commitAction)
+        {
+            ITransaction currentTransaction = MinusZero.Instance.GetTopTransaction();
+
+            if (currentTransaction != null)
+                currentTransaction.AddSecondStageCommitAction(commitAction);
+        }
+
         public static IVertex AddGraphChangeTrigger(IVertex baseVertex, IList<string> scopeQueries)
         {
             IVertex trigger = VertexOperations.AddInstance(baseVertex, graphChangeTrigger_meta);
 
             if (scopeQueries != null)
                 foreach(string s in scopeQueries)
-                trigger.AddVertex(scopeQuery_meta, s);
+                    trigger.AddVertex(scopeQuery_meta, s);
 
             return trigger;
         }
@@ -138,7 +146,6 @@ namespace m0.Graph.ExecutionFlow
 
             baseVertex.AddEdge(method_meta, _method);
         }
-
 
         public static INoInEdgeInOutVertexVertex ExecuteDotNetDelegate(IVertex baseVertex, IExecution exe)
         {

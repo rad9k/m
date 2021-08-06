@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace m0.Foundation
 {
-    public enum TransactionStateEnum { NotStarted, Started, Commited, RolledBack}
+    public enum TransactionStateEnum { NotStarted, Started, Commiting, Commited, Rollingback, RollingbackWhileCommiting, Rolledback}
 
     public interface ITransaction
     {
@@ -19,6 +19,8 @@ namespace m0.Foundation
         void Rollback(IExecution exe);
 
         void AddAtom(ITransactionAtom atom);
+
+        void AddSecondStageCommitAction(ISecondStageCommitAction commitAction);
 
         ITransaction Previous { get; }
     }

@@ -363,5 +363,10 @@ namespace m0.Graph
         {
             throw new NotImplementedException();
         }
+
+        public void ExecuteSecondStageCommitAction()
+        {
+            throw new NotImplementedException();
+        }
     }
 }

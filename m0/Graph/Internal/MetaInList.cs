@@ -1,4 +1,5 @@
 ﻿using m0.Foundation;
+using m0.Graph.ExecutionFlow;
 using m0.Util;
 using System;
 using System.Collections.Generic;
@@ -69,7 +70,7 @@ namespace m0.Graph.Internal
             if (cumulativeEdgesCount == 0
                 && ed.vertex.Store.DetachState == DetachStateEnum.Attached
                 && !ed.vertex.IsRoot)
-                ed.vertex.Dispose();
+                ExecutionFlowHelper.AddSecondStageCommitAction(ed.vertex);
         }
     }
 }
