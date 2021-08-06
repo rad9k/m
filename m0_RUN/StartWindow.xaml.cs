@@ -55,7 +55,11 @@ namespace m0
 
             IVertex v = r.AddVertex(null, "V");
 
-            IVertex trigger = ExecutionFlowHelper.AddGraphChangeTrigger(v, null);
+            List<string> scopelist = new List<string>();
+
+            scopelist.Add("dupa2");
+
+            IVertex trigger = ExecutionFlowHelper.AddGraphChangeTrigger(v, scopelist);
 
             test t = new test();
 
@@ -64,6 +68,15 @@ namespace m0
             ExecutionFlowHelper.StartTransaction();
 
             v.Value = "kupa";
+
+            v.AddVertex(null, "dupa1");
+            IVertex d2 = v.AddVertex(null, "dupa2");
+
+            d2.AddVertex(null, "dupa22");
+
+            IEdge e = r.GetAll(false, @"kupa\dupa2\dupa22").FirstOrDefault();
+
+            v.DeleteEdge(e);
 
             ExecutionFlowHelper.CommitTransaction();
         }

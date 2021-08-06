@@ -703,7 +703,7 @@ namespace m0.Graph
             Store.StoreVertexIdentifier(this);
         }
 
-        public void ExecuteSecondStageCommitAction()
+        public override void ExecuteSecondStageCommitAction()
         {
             if (DisposedState != DisposeStateEnum.Live)
                 return;
@@ -754,6 +754,5 @@ namespace m0.Graph
 
             Store.StoreVertexIdentifier(this);
         }
-
     }
 }

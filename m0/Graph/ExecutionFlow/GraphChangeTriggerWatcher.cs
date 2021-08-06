@@ -41,8 +41,12 @@ namespace m0.Graph.ExecutionFlow
                 IVertex scopeQueryEdges = e.To.GetAll(false, "ScopeQuery:");
 
                 if (scopeQueryEdges.OutEdges.Count > 0)
-                    foreach(IEdge ee in scopeQueryEdges)
+                {
+                    en.scopeQuery = new List<string>();
+
+                    foreach (IEdge ee in scopeQueryEdges)
                         en.scopeQuery.Add(ee.To.Value.ToString());
+                }
 
                 watcherEntryList.Add(en);
             }

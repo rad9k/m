@@ -97,15 +97,15 @@ namespace m0.Graph.ExecutionFlow
             {
                 IVertex triggerVertex = kvp.Key;
 
-                foreach(IEdge e in triggerVertex.GetAll(false, @"Listener:"))
-                    foreach(IVertex eventVertex in kvp.Value)
-                    {
-                        IVertex parameters = InstructionHelpers.CreateStack();
+                foreach (IEdge e in triggerVertex.GetAll(false, @"Listener:"))
+                {
+                    IVertex parameters = InstructionHelpers.CreateStack();
 
+                    foreach (IVertex eventVertex in kvp.Value)
                         parameters.AddEdge(GenericEventHandler_event_meta, eventVertex);
 
-                        ZeroCodeExecutonUtil.FuncionCall(exe, e.To, parameters);   
-                    }
+                    ZeroCodeExecutonUtil.FuncionCall(exe, e.To, parameters);
+                }
             }
         }
 
