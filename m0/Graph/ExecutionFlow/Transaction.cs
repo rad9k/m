@@ -13,9 +13,11 @@ namespace m0.Graph.ExecutionFlow
     // This ITransaction implementation supports GraphChangeTransactionAtom support
     public class Transaction : ITransaction
     {
+        static bool GraphChangeWatch = true;
+
         static IVertex r = m0.MinusZero.Instance.root;
 
-       // static IVertex GraphChangeEvent_Trigger_meta = r.Get(false, @"System\Meta\ZeroTypes\ExecutionFlow\GraphChangeEvent\Trigger");
+        static IVertex GenericEventHandler_event_meta;
 
         TransactionStateEnum state;
         public TransactionStateEnum State { get => state; }
@@ -28,6 +30,11 @@ namespace m0.Graph.ExecutionFlow
         ITransaction previous;
         public ITransaction Previous { get => previous; }
 
+        public static void Initialize()
+        {
+            GenericEventHandler_event_meta = r.Get(false, @"System\Meta\ZeroTypes\ExecutionFlow\GenericEventHandler\event");
+        }
+
         public void Start()
         {
             state = TransactionStateEnum.Started;
@@ -38,7 +45,7 @@ namespace m0.Graph.ExecutionFlow
             foreach (ITransactionAtom a in atoms)
                 a.Commit();
 
-            foreach (List<GraphChangeTransactionAtom> al in graphChangeTransactionAtoms_OutEdgeValueChange.Keys)
+            foreach (List<GraphChangeTransactionAtom> al in graphChangeTransactionAtoms_OutEdgeValueChange.Values)
                 foreach (GraphChangeTransactionAtom a in al)
                     a.Commit();
         }
@@ -93,7 +100,7 @@ namespace m0.Graph.ExecutionFlow
                     {
                         IVertex parameters = InstructionHelpers.CreateStack();
 
-                      //  parameters.AddEdge(eventVertex);
+                        parameters.AddEdge(GenericEventHandler_event_meta, eventVertex);
 
                         ZeroCodeExecutonUtil.FuncionCall(exe, e.To, parameters);   
                     }
@@ -102,6 +109,8 @@ namespace m0.Graph.ExecutionFlow
 
         private void SendGrahChangeEvents(IExecution exe)
         {
+            GraphChangeWatch = false;
+
             Dictionary<IVertex, List<IVertex>> triggerEventDictionary;
 
             Dictionary<IVertex, List<WatcherEntry>> watchedVertexDictionary = GraphChangeTriggerWatcher.GetWatchedVertexDictionary();
@@ -116,6 +125,8 @@ namespace m0.Graph.ExecutionFlow
                 triggerEventDictionary = getTriggerEventDictionary_byGraphChangeTransactionAtoms(watchedVertexDictionary);
 
             SendGrahChangeEvents(exe, triggerEventDictionary);
+
+            GraphChangeWatch = true;
         }
 
         public void Commit(IExecution exe)
@@ -132,7 +143,7 @@ namespace m0.Graph.ExecutionFlow
             foreach (ITransactionAtom a in atoms)
                 a.Rollback();
 
-            foreach (List<GraphChangeTransactionAtom> al in graphChangeTransactionAtoms_OutEdgeValueChange.Keys)
+            foreach (List<GraphChangeTransactionAtom> al in graphChangeTransactionAtoms_OutEdgeValueChange.Values)
                 foreach (GraphChangeTransactionAtom a in al)
                     a.Rollback();
 
@@ -155,7 +166,7 @@ namespace m0.Graph.ExecutionFlow
 
         public void AddAtom(ITransactionAtom atom)
         {
-            if (atom is GraphChangeTransactionAtom) {
+            if (atom is GraphChangeTransactionAtom && GraphChangeWatch) {
                 GraphChangeTransactionAtom gcta = (GraphChangeTransactionAtom)atom;
 
                 GeneralUtil.DictionaryAdd<IVertex, GraphChangeTransactionAtom>(graphChangeTransactionAtoms_OutEdgeValueChange, gcta.ChangedVertex, gcta);

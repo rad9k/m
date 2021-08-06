@@ -13,19 +13,19 @@ namespace m0.Graph.ExecutionFlow
     {
         static IVertex r = m0.MinusZero.Instance.root;
 
-        static IVertex GraphChangeEvent_Trigger_meta = r.Get(false, @"System\Meta\ZeroTypes\ExecutionFlow\GraphChangeEvent\Trigger");
-        static IVertex GraphChangeEvent_Source_meta = r.Get(false, @"System\Meta\ZeroTypes\ExecutionFlow\GraphChangeEvent\Source");
-        static IVertex GraphChangeEvent_ChangedVertex_meta = r.Get(false, @"System\Meta\ZeroTypes\ExecutionFlow\GraphChangeEvent\ChangedVertex");
-        static IVertex GraphChangeEvent_Type_meta = r.Get(false, @"System\Meta\ZeroTypes\ExecutionFlow\GraphChangeEvent\Type");
-        static IVertex GraphChangeEvent_OldValue_meta = r.Get(false, @"System\Meta\ZeroTypes\ExecutionFlow\GraphChangeEvent\OldValue");
-        static IVertex GraphChangeEvent_NewValue_meta = r.Get(false, @"System\Meta\ZeroTypes\ExecutionFlow\GraphChangeEvent\NewValue");
-        static IVertex GraphChangeEvent_Edge_meta = r.Get(false, @"System\Meta\ZeroTypes\ExecutionFlow\GraphChangeEvent\Edge");
+        static IVertex GraphChangeEvent_Trigger_meta;
+        static IVertex GraphChangeEvent_Source_meta;
+        static IVertex GraphChangeEvent_ChangedVertex_meta;
+        static IVertex GraphChangeEvent_Type_meta;
+        static IVertex GraphChangeEvent_OldValue_meta;
+        static IVertex GraphChangeEvent_NewValue_meta;
+        static IVertex GraphChangeEvent_Edge_meta;
 
-        static IVertex GraphChangeEnum_ValueChange_meta = r.Get(false, @"System\Meta\ZeroTypes\ExecutionFlow\GraphChangeEnum\ValueChange");
-        static IVertex GraphChangeEnum_OutputEdgeAdded_meta = r.Get(false, @"System\Meta\ZeroTypes\ExecutionFlow\GraphChangeEnum\OutputEdgeAdded");
-        static IVertex GraphChangeEnum_OutputEdgeRemoved_meta = r.Get(false, @"System\Meta\ZeroTypes\ExecutionFlow\GraphChangeEnum\OutputEdgeRemoved");
-        static IVertex GraphChangeEnum_InputEdgeAdded_meta = r.Get(false, @"System\Meta\ZeroTypes\ExecutionFlow\GraphChangeEnum\InputEdgeAdded");
-        static IVertex GraphChangeEnum_InputEdgeRemoved_meta = r.Get(false, @"System\Meta\ZeroTypes\ExecutionFlow\GraphChangeEnum\InputEdgeRemoved");
+        static IVertex GraphChangeEnum_ValueChange_meta;
+        static IVertex GraphChangeEnum_OutputEdgeAdded_meta;
+        static IVertex GraphChangeEnum_OutputEdgeRemoved_meta;
+        static IVertex GraphChangeEnum_InputEdgeAdded_meta;
+        static IVertex GraphChangeEnum_InputEdgeRemoved_meta;
 
         public IVertex ChangedVertex;
         public GraphChangeEnum Type;
@@ -45,6 +45,25 @@ namespace m0.Graph.ExecutionFlow
             OldValue = _OldValue;
             NewValue = _NewValue;
             Edge = _Edge;
+        }
+
+        public static void Initialize()
+        {
+            IVertex r = m0.MinusZero.Instance.root;
+
+            GraphChangeEvent_Trigger_meta = r.Get(false, @"System\Meta\ZeroTypes\ExecutionFlow\GraphChangeEvent\Trigger");
+            GraphChangeEvent_Source_meta = r.Get(false, @"System\Meta\ZeroTypes\ExecutionFlow\GraphChangeEvent\Source");
+            GraphChangeEvent_ChangedVertex_meta = r.Get(false, @"System\Meta\ZeroTypes\ExecutionFlow\GraphChangeEvent\ChangedVertex");
+            GraphChangeEvent_Type_meta = r.Get(false, @"System\Meta\ZeroTypes\ExecutionFlow\GraphChangeEvent\Type");
+            GraphChangeEvent_OldValue_meta = r.Get(false, @"System\Meta\ZeroTypes\ExecutionFlow\GraphChangeEvent\OldValue");
+            GraphChangeEvent_NewValue_meta = r.Get(false, @"System\Meta\ZeroTypes\ExecutionFlow\GraphChangeEvent\NewValue");
+            GraphChangeEvent_Edge_meta = r.Get(false, @"System\Meta\ZeroTypes\ExecutionFlow\GraphChangeEvent\Edge");
+
+            GraphChangeEnum_ValueChange_meta = r.Get(false, @"System\Meta\ZeroTypes\ExecutionFlow\GraphChangeEnum\ValueChange");
+            GraphChangeEnum_OutputEdgeAdded_meta = r.Get(false, @"System\Meta\ZeroTypes\ExecutionFlow\GraphChangeEnum\OutputEdgeAdded");
+            GraphChangeEnum_OutputEdgeRemoved_meta = r.Get(false, @"System\Meta\ZeroTypes\ExecutionFlow\GraphChangeEnum\OutputEdgeRemoved");
+            GraphChangeEnum_InputEdgeAdded_meta = r.Get(false, @"System\Meta\ZeroTypes\ExecutionFlow\GraphChangeEnum\InputEdgeAdded");
+            GraphChangeEnum_InputEdgeRemoved_meta = r.Get(false, @"System\Meta\ZeroTypes\ExecutionFlow\GraphChangeEnum\InputEdgeRemoved");
         }
 
         public override void Commit()
@@ -102,7 +121,7 @@ namespace m0.Graph.ExecutionFlow
                 case GraphChangeEnum.ValueChange:
                     eventVertex.AddEdge(GraphChangeEvent_ChangedVertex_meta, ChangedVertex);
                     eventVertex.AddEdge(GraphChangeEvent_Type_meta, GraphChangeEnum_ValueChange_meta);
-                    eventVertex.AddVertex(GraphChangeEvent_OldValue_meta, NewValue);
+                    eventVertex.AddVertex(GraphChangeEvent_OldValue_meta, OldValue);
                     eventVertex.AddVertex(GraphChangeEvent_NewValue_meta, NewValue);
                     break;
 

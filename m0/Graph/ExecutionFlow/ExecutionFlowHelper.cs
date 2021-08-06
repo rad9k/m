@@ -1,5 +1,6 @@
 ﻿using m0.DotNetIntegration;
 using m0.Foundation;
+using m0.ZeroCode;
 using m0.ZeroCode.Helpers;
 using m0.ZeroTypes;
 using System.Collections.Generic;
@@ -27,7 +28,7 @@ namespace m0.Graph.ExecutionFlow
         static IVertex listener_meta;
 
 
-        public static void ExecutionHelperInitialize()
+        public static void Initialize()
         {
             IVertex r = m0.MinusZero.Instance.root;
 
@@ -51,17 +52,23 @@ namespace m0.Graph.ExecutionFlow
 
         public static void StartTransaction()
         {
-            Lib.Sys.StartTransaction(null);
+            IExecution exe = new ZeroCodeExecution();
+
+            Lib.Sys.StartTransaction(exe);
         }
 
         public static void RollbackTransaction()
         {
-            Lib.Sys.RollbackTransaction(null);
+            IExecution exe = new ZeroCodeExecution();
+
+            Lib.Sys.RollbackTransaction(exe);
         }
 
         public static void CommitTransaction()
         {
-            Lib.Sys.CommitTransaction(null);
+            IExecution exe = new ZeroCodeExecution();
+
+            Lib.Sys.CommitTransaction(exe);
         }
 
         public static void AddTransactionAtom(ITransactionAtom atom)

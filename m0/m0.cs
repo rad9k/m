@@ -405,6 +405,13 @@ namespace m0
             ExecutionFlowHelper.StartTransaction();
         }
 
+        public void ExecutionFlowInitialize()
+        {
+            ExecutionFlowHelper.Initialize();
+            GraphChangeTransactionAtom.Initialize();
+            Transaction.Initialize();
+        }
+
         public void Initialize()
         {
             if (IsInitialized)
@@ -416,9 +423,13 @@ namespace m0
 
             PreBootstrap();
 
-            CreateRootTransaction();
+            
 
             Bootstrap();
+
+
+            CreateRootTransaction();
+
 
             Init();
 
@@ -439,7 +450,7 @@ namespace m0
 
             UIWpf.WpfUtil.InitializeUIWpf();
 
-            ExecutionFlowHelper.ExecutionHelperInitialize();
+            ExecutionFlowInitialize();
 
             IsInitialized = true;           
         }
