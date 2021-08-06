@@ -56,13 +56,15 @@ namespace m0.Graph.ExecutionFlow
         {
             foreach(WatcherEntry en in watcherEntryList)
             {
+                en.vertexInScope = new List<IVertex>();
+
                 if (en.scopeQuery != null)
                     foreach(string s in en.scopeQuery)
-                        en.vertexInScope = GraphUtil.GetVertexListFromEdgeEnumerable(en.sourceVertex.GetAll(false, s));
-                else {
-                    en.vertexInScope = new List<IVertex>();
+                        foreach(IEdge e in en.sourceVertex.GetAll(false, s))
+                            en.vertexInScope.Add(e.To);
+                else     
                     en.vertexInScope.Add(en.sourceVertex);
-                }
+                
             }
         }
 

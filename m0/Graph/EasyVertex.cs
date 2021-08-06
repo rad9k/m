@@ -20,6 +20,8 @@ namespace m0.Graph
     [Serializable]
     public class EasyVertex: VertexBase, IDisposable, IImplementedVertex, ISecondStageCommitAction
     {
+        protected bool CanEmitGraphChangeEvents = true;
+
         protected EdgeDictionaries ed;
 
         public object _Identifier;
@@ -42,12 +44,13 @@ namespace m0.Graph
 
                 FireChange(new VertexChangeEventArgs(VertexChangeType.ValueChanged, null));
 
-                ExecutionFlowHelper.AddTransactionAtom(new GraphChangeTransactionAtom(
-                    this,
-                    GraphChangeEnum.ValueChange,
-                    oldValue,
-                    _Value,
-                    null));
+                if (CanEmitGraphChangeEvents)
+                    ExecutionFlowHelper.AddTransactionAtom(new GraphChangeTransactionAtom(
+                        this,
+                        GraphChangeEnum.ValueChange,
+                        oldValue,
+                        _Value,
+                        null));
             }
         }
 
@@ -358,12 +361,13 @@ namespace m0.Graph
 
             AttachEdge(ne);
 
-            ExecutionFlowHelper.AddTransactionAtom(new GraphChangeTransactionAtom(
-                this,
-                GraphChangeEnum.EdgeAdded,
-                null,
-                null,
-                ne));
+            if (CanEmitGraphChangeEvents)
+                ExecutionFlowHelper.AddTransactionAtom(new GraphChangeTransactionAtom(
+                    this,
+                    GraphChangeEnum.EdgeAdded,
+                    null,
+                    null,
+                    ne));
 
             return ne;
         }
@@ -415,12 +419,13 @@ namespace m0.Graph
             {                
                 OutEdgesRaw.Remove(edge);
 
-                ExecutionFlowHelper.AddTransactionAtom(new GraphChangeTransactionAtom(
-                    this,
-                    GraphChangeEnum.EdgeRemoved,
-                    null,
-                    null,
-                    edge));
+                if(CanEmitGraphChangeEvents)
+                    ExecutionFlowHelper.AddTransactionAtom(new GraphChangeTransactionAtom(
+                        this,
+                        GraphChangeEnum.EdgeRemoved,
+                        null,
+                        null,
+                        edge));
             }
         }
 
@@ -691,7 +696,13 @@ namespace m0.Graph
             InEdgesDictionariesNeedsRebuild = true;
             OutEdgesDictionariesNeedsRebuild = true;
 
+            bool tempCanEmitGraphChangeEvents = CanEmitGraphChangeEvents;
+
+            CanEmitGraphChangeEvents = false;
+
             Value = "";
+
+            CanEmitGraphChangeEvents = tempCanEmitGraphChangeEvents;
         }
 
         protected virtual void VertexInit()

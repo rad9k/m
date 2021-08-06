@@ -12,6 +12,7 @@ namespace m0.Graph
         public NoInEdgeInOutVertexVertex(IStore _Store): base(_Store)
         {
             AllowInheritance = false;
+            CanEmitGraphChangeEvents = false;
             ed.NoInEdgeInOutVertexVertexMode = true;
         }
 
@@ -21,8 +22,6 @@ namespace m0.Graph
         }
 
         public override void Dispose() { }
-
-
 
         public void AddEdgeForNoInEdgeInOutVertexVertex_BAD_BEHAVIOR_IEdge_MANY_TIMES(IEdge e){
             //IEdge ne = new NoInEdgeInOutVertexEdge(e.From, e.Meta, e.To); // INoInEdgeInOutVertexVertex DIFF
