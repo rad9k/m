@@ -133,8 +133,17 @@ namespace m0.Graph.ExecutionFlow
 
         public void Commit_SecondStage()
         {
-            foreach (ISecondStageCommitAction a in secondStageCommitActionList)
-                a.ExecuteSecondStageCommitAction();
+            IList<ISecondStageCommitAction> secondStageCommitActionList_copy;
+
+            while(secondStageCommitActionList.Count() > 0)
+            {
+                secondStageCommitActionList_copy = secondStageCommitActionList.ToList();
+
+                secondStageCommitActionList.Clear();
+
+                foreach (ISecondStageCommitAction a in secondStageCommitActionList_copy)
+                    a.ExecuteSecondStageCommitAction();
+            }
         }
 
         public void Commit(IExecution exe)
