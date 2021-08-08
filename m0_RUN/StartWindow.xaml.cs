@@ -57,7 +57,7 @@ namespace m0
 
             List<string> scopelist = new List<string>();
 
-           // scopelist.Add("dupa2");
+//            scopelist.Add(@"dupa2\dupa22");
 
             IVertex trigger = ExecutionFlowHelper.AddGraphChangeTrigger(v, scopelist);
 
@@ -65,20 +65,30 @@ namespace m0
 
             ExecutionFlowHelper.AddListener_DotNetDelegate(trigger, t.xxx);
 
-            ExecutionFlowHelper.StartTransaction();
+            
 
             v.Value = "kupa";
 
+            
+
             v.AddVertex(null, "dupa1");
-         /*   IVertex d2 = v.AddVertex(null, "dupa2");
+            IVertex d2 = v.AddVertex(null, "dupa2");
 
-            d2.AddVertex(null, "dupa22");
+            IVertex d22 = d2.AddVertex(null, "dupa22");
 
-            IEdge e = r.GetAll(false, @"kupa\dupa2\dupa22").FirstOrDefault();
+            d22.AddVertex(null, "test");
 
-            v.DeleteEdge(e);*/
+            ExecutionFlowHelper.StartTransaction();
 
-            ExecutionFlowHelper.CommitTransaction();
+            IEdge e = v.OutEdges[2];
+
+            v.DeleteEdge(e);
+
+    
+
+            //ExecutionFlowHelper.CommitTransaction();
+
+            ExecutionFlowHelper.RollbackTransaction();
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)

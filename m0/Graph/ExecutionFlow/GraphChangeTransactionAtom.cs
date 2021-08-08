@@ -47,6 +47,15 @@ namespace m0.Graph.ExecutionFlow
             Edge = _Edge;
         }
 
+        public GraphChangeTransactionAtom(GraphChangeTransactionAtom a)
+        {
+            ChangedVertex = a.ChangedVertex;
+            Type = a.Type;
+            OldValue = a.OldValue;
+            NewValue = a.NewValue;
+            Edge = a.Edge;
+        }
+
         public static void Initialize()
         {
             IVertex r = m0.MinusZero.Instance.root;

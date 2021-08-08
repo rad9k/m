@@ -148,6 +148,9 @@ namespace m0.Graph.ExecutionFlow
 
         public void Commit(IExecution exe)
         {
+            if (state != TransactionStateEnum.Started)
+                throw new Exception("Transaction Commit while transaction not started.");
+
             state = TransactionStateEnum.Commiting;
 
             CommitAtoms();
@@ -171,6 +174,8 @@ namespace m0.Graph.ExecutionFlow
 
         private void RollbackAtoms()
         {
+            GraphChangeWatch = false;
+
             foreach (ITransactionAtom a in atoms)
                 a.Rollback();
 
@@ -179,10 +184,15 @@ namespace m0.Graph.ExecutionFlow
                     a.Rollback();
 
             // no need to rollback graphChangeTransactionAtoms_InEdge
+
+            GraphChangeWatch = true;
         }
 
         public void Rollback(IExecution exe)
         {
+            if (state != TransactionStateEnum.Started && state != TransactionStateEnum.Commiting)
+                throw new Exception("Transaction Rollingback while not transaction started or not commiting");
+
             if(state == TransactionStateEnum.Commiting)
                 state = TransactionStateEnum.RollingbackWhileCommiting;
             else
@@ -205,10 +215,21 @@ namespace m0.Graph.ExecutionFlow
             if (atom is GraphChangeTransactionAtom && GraphChangeWatch) {
                 GraphChangeTransactionAtom gcta = (GraphChangeTransactionAtom)atom;
 
-                GeneralUtil.DictionaryAdd<IVertex, GraphChangeTransactionAtom>(graphChangeTransactionAtoms_OutEdgeValueChange, gcta.ChangedVertex, gcta);
+                GeneralUtil.DictionaryAdd<IVertex, GraphChangeTransactionAtom>(
+                    graphChangeTransactionAtoms_OutEdgeValueChange, 
+                    gcta.ChangedVertex, 
+                    gcta);
 
-                if(gcta.Type == GraphChangeEnum.EdgeAdded || gcta.Type == GraphChangeEnum.EdgeRemoved)
-                    GeneralUtil.DictionaryAdd<IVertex, GraphChangeTransactionAtom>(graphChangeTransactionAtoms_InEdge, gcta.Edge.To, gcta);
+                if (gcta.Type == GraphChangeEnum.EdgeAdded || gcta.Type == GraphChangeEnum.EdgeRemoved)
+                {
+                    GraphChangeTransactionAtom gcta_inEdge = new GraphChangeTransactionAtom(gcta);
+                    gcta_inEdge.ChangedVertex = gcta.Edge.To;
+
+                    GeneralUtil.DictionaryAdd<IVertex, GraphChangeTransactionAtom>(
+                        graphChangeTransactionAtoms_InEdge, 
+                        gcta_inEdge.ChangedVertex, 
+                        gcta_inEdge);
+                }
             } else
                 atoms.Add(atom);
         }
