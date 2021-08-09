@@ -65,7 +65,7 @@ namespace m0
 
             ExecutionFlowHelper.AddListener_DotNetDelegate(trigger, t.xxx);
 
-            
+            ExecutionFlowHelper.StartTransaction();
 
             v.Value = "kupa";
 
@@ -78,7 +78,7 @@ namespace m0
 
             d22.AddVertex(null, "test");
 
-            ExecutionFlowHelper.StartTransaction();
+            
 
             IEdge e = v.OutEdges[2];
 
@@ -86,9 +86,9 @@ namespace m0
 
     
 
-            //ExecutionFlowHelper.CommitTransaction();
+            ExecutionFlowHelper.CommitTransaction();
 
-            ExecutionFlowHelper.RollbackTransaction();
+            //ExecutionFlowHelper.RollbackTransaction();
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)

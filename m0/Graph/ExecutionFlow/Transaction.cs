@@ -63,7 +63,7 @@ namespace m0.Graph.ExecutionFlow
                         foreach (WatcherEntry we in kvp.Value)
                             GeneralUtil.DictionaryAdd<IVertex, IVertex>(triggerEventDictionary, we.triggerVertex, a.CreateEventVertex_GraphChange(we.triggerVertex, we.sourceVertex, false));
 
-                if (graphChangeTransactionAtoms_OutEdgeValueChange.ContainsKey(kvp.Key))
+                if (graphChangeTransactionAtoms_InEdge.ContainsKey(kvp.Key))
                     foreach (GraphChangeTransactionAtom a in graphChangeTransactionAtoms_InEdge[kvp.Key])
                         foreach (WatcherEntry we in kvp.Value)
                             GeneralUtil.DictionaryAdd<IVertex, IVertex>(triggerEventDictionary, we.triggerVertex, a.CreateEventVertex_GraphChange(we.triggerVertex, we.sourceVertex, true));
