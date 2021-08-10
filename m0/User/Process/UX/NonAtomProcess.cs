@@ -5,7 +5,7 @@ using System.Text;
 
 using m0.Foundation;
 
-namespace m0.User.Process.UI
+namespace m0.User.Process.UX
 {
     public class NonAtomProcess
     {
