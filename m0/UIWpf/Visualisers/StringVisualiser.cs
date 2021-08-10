@@ -14,6 +14,8 @@ using System.Windows.Media;
 using m0.UIWpf.Controls;
 using m0.UIWpf.Foundation;
 using m0.UIWpf.Commands;
+using m0.Graph.ExecutionFlow;
+using m0.User.Process.UX;
 
 namespace m0.UIWpf.Visualisers
 {
@@ -27,6 +29,10 @@ namespace m0.UIWpf.Visualisers
             {                
                 this.AcceptsReturn = true;
 
+                ///////////////////////////////////////
+                ExecutionFlowHelper.StartTransaction();
+                ///////////////////////////////////////
+
                 Vertex = mz.CreateTempVertex();
                 
                 Vertex.Value="StringVisualiser" + this.GetHashCode();
@@ -34,6 +40,10 @@ namespace m0.UIWpf.Visualisers
                 ClassVertex.AddIsClassAndAllAttributesAndAssociations(Vertex, mz.Root.Get(false, @"System\Meta\Visualiser\String"));
 
                 ClassVertex.AddIsClassAndAllAttributesAndAssociations(Vertex.Get(false, "BaseEdge:"), mz.Root.Get(false, @"System\Meta\ZeroTypes\Edge"));
+
+                ////////////////////////////////////////
+                ExecutionFlowHelper.CommitTransaction();
+                ////////////////////////////////////////
 
                 this.Loaded += new RoutedEventHandler(OnLoad);
 
@@ -68,16 +78,24 @@ namespace m0.UIWpf.Visualisers
 
             IVertex bv = Vertex.Get(false, @"BaseEdge:\To:");
 
+            ////////////////////////////////////////
+            Interaction.BeginInteractionWithGraph();
+            ////////////////////////////////////////
+            
             if (bv == null)
             {
-                IVertex from= Vertex.Get(false, @"BaseEdge:\From:");
-                IVertex meta= Vertex.Get(false, @"BaseEdge:\Meta:");
+                IVertex from = Vertex.Get(false, @"BaseEdge:\From:");
+                IVertex meta = Vertex.Get(false, @"BaseEdge:\Meta:");
 
-                GraphUtil.SetVertexValue(from,meta, this.Text);
+                GraphUtil.SetVertexValue(from, meta, this.Text);
 
                 IsNull = false;
             }else            
                 bv.Value = this.Text;
+
+            //////////////////////////////////////
+            Interaction.EndInteractionWithGraph();
+            //////////////////////////////////////
         }
 
         bool _IsNull;
@@ -108,7 +126,14 @@ namespace m0.UIWpf.Visualisers
                 IsNull = true;
         }
 
-        protected void VertexChange(object sender, VertexChangeEventArgs e)
+        protected INoInEdgeInOutVertexVertex VertexChange(IExecution exe)
+        {
+            UpdateBaseEdge();
+
+            return exe.Stack;
+        }
+
+        /*protected void VertexChange(object sender, VertexChangeEventArgs e)
         {
             if ((sender == Vertex) && (e.Type == VertexChangeType.EdgeAdded) && (GeneralUtil.CompareStrings(e.Edge.Meta.Value, "BaseEdge")))
                 UpdateBaseEdge();                        
@@ -117,7 +142,9 @@ namespace m0.UIWpf.Visualisers
                 || (sender == Vertex.Get(false, @"BaseEdge:\To:") && e.Type==VertexChangeType.ValueChanged) )            
                 UpdateBaseEdge();
             
-        }
+        }*/
+
+        IEdge graphChangeTriggerEdge;
 
         private IVertex _Vertex;
 
@@ -127,11 +154,15 @@ namespace m0.UIWpf.Visualisers
             set
             {
                 if (_Vertex != null)
-                    PlatformClass.RemoveVertexChangeListeners(this.Vertex, new VertexChange(VertexChange));
+                    ExecutionFlowHelper.RemoveGraphChangeTrigger(graphChangeTriggerEdge);
+                //PlatformClass.RemoveVertexChangeListeners(this.Vertex, new VertexChange(VertexChange));
 
                 _Vertex = value;
 
-                PlatformClass.RegisterVertexChangeListeners(this.Vertex, new VertexChange(VertexChange), new string[] { "BaseEdge", "SelectedEdges" });
+                graphChangeTriggerEdge = ExecutionFlowHelper.AddGraphChangeTrigger(_Vertex, new List<string> { "", "BaseEdge:", "SelectedEdges:" });
+                ExecutionFlowHelper.AddListener_DotNetDelegate(graphChangeTriggerEdge.To, VertexChange);
+
+                //PlatformClass.RegisterVertexChangeListeners(this.Vertex, new VertexChange(VertexChange), new string[] { "BaseEdge", "SelectedEdges" });
 
                 UpdateBaseEdge();
             }
@@ -144,7 +175,10 @@ namespace m0.UIWpf.Visualisers
             if (IsDisposed == false)
             {
                 IsDisposed = true;
-                PlatformClass.RemoveVertexChangeListeners(this.Vertex, new VertexChange(VertexChange));
+
+                ExecutionFlowHelper.RemoveGraphChangeTrigger(graphChangeTriggerEdge);
+
+                //PlatformClass.RemoveVertexChangeListeners(this.Vertex, new VertexChange(VertexChange));
 
                 if (Vertex is IDisposable)
                     ((IDisposable)Vertex).Dispose();

@@ -87,15 +87,20 @@ namespace m0.Graph.ExecutionFlow
                 currentTransaction.AddSecondStageCommitAction(commitAction);
         }
 
-        public static IVertex AddGraphChangeTrigger(IVertex baseVertex, IList<string> scopeQueries)
+        public static IEdge AddGraphChangeTrigger(IVertex baseVertex, IList<string> scopeQueries)
         {
-            IVertex trigger = VertexOperations.AddInstance(baseVertex, graphChangeTrigger_meta);
+            IEdge triggerEdge = VertexOperations.AddInstanceAndReturnEdge(baseVertex, graphChangeTrigger_meta);
 
             if (scopeQueries != null)
                 foreach(string s in scopeQueries)
-                    trigger.AddVertex(scopeQuery_meta, s);
+                    triggerEdge.To.AddVertex(scopeQuery_meta, s);
 
-            return trigger;
+            return triggerEdge;
+        }
+
+        public static void RemoveGraphChangeTrigger(IEdge triggerVertex)
+        {
+            triggerVertex.From.DeleteEdge(triggerVertex);
         }
 
 

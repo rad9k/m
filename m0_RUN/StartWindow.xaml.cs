@@ -59,7 +59,7 @@ namespace m0
 
 //            scopelist.Add(@"dupa2\dupa22");
 
-            IVertex trigger = ExecutionFlowHelper.AddGraphChangeTrigger(v, scopelist);
+            IVertex trigger = ExecutionFlowHelper.AddGraphChangeTrigger(v, scopelist).To;
 
             test t = new test();
 
