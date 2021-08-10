@@ -19,9 +19,9 @@ using m0.User.Process.UX;
 
 namespace m0.UIWpf.Visualisers
 {
-    public class StringVisualiser : TextBox, IPlatformClass, IDisposable, IHasLocalizableEdges
+    public class TestVisualiser : TextBox, IPlatformClass, IDisposable, IHasLocalizableEdges
     {
-        public StringVisualiser()
+        public TestVisualiser()
         {
             MinusZero mz = MinusZero.Instance;            
 
@@ -35,7 +35,7 @@ namespace m0.UIWpf.Visualisers
 
                 Vertex = mz.CreateTempVertex();
                 
-                Vertex.Value="StringVisualiser" + this.GetHashCode();
+                Vertex.Value= "TestVisualiser" + this.GetHashCode();
 
                 ClassVertex.AddIsClassAndAllAttributesAndAssociations(Vertex, mz.Root.Get(false, @"System\Meta\Visualiser\String"));
 
@@ -160,9 +160,9 @@ namespace m0.UIWpf.Visualisers
 
                 _Vertex = value;
 
-                graphChangeTriggerEdge = ExecutionFlowHelper.AddGraphChangeTrigger(_Vertex, new List<string> {});
+                //graphChangeTriggerEdge = ExecutionFlowHelper.AddGraphChangeTrigger(_Vertex, new List<string> {});
 
-//                graphChangeTriggerEdge = ExecutionFlowHelper.AddGraphChangeTrigger(_Vertex, new List<string> { "", "BaseEdge:", "SelectedEdges:" });
+                graphChangeTriggerEdge = ExecutionFlowHelper.AddGraphChangeTrigger(_Vertex, new List<string> { "", "BaseEdge:", "SelectedEdges:" });
                 ExecutionFlowHelper.AddListener_DotNetDelegate(graphChangeTriggerEdge.To, VertexChange);
 
                 //PlatformClass.RegisterVertexChangeListeners(this.Vertex, new VertexChange(VertexChange), new string[] { "BaseEdge", "SelectedEdges" });

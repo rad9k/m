@@ -2956,7 +2956,7 @@ namespace m0
                 "Class:TriggerSet{Attribute:SnapToGrid{$MinCardinality:1,$MaxCardinality:1},Attribute:ShowVelocity{$MinCardinality:1,$MaxCardinality:1,$DefaultValue:False},Attribute:ShowSnapLines{$MinCardinality:1,$MaxCardinality:1,$DefaultValue:True},Attribute:DefaultVelocity{$MinCardinality:1,$MaxCardinality:1,$DefaultValue:127,MinValue:-1,MaxValue:127}}," +
                 "Class:ChordProgression{Attribute:ShowLabel{$MinCardinality:1,$MaxCardinality:1,$DefaultValue:True},Attribute:ShowArrowLines{$MinCardinality:1,$MaxCardinality:1,$DefaultValue:True}}," +
                 "Class:Song{Attribute:SnapToGrid{$MinCardinality:1,$MaxCardinality:1},Attribute:ShowLabel{$MinCardinality:1,$MaxCardinality:1,$DefaultValue:True},Attribute:ShowArrowLines{$MinCardinality:1,$MaxCardinality:1,$DefaultValue:True},Attribute:ShowSnapLines{$MinCardinality:1,$MaxCardinality:1,$DefaultValue:True},Attribute:ShowToolbarNames{$MinCardinality:1,$MaxCardinality:1,$DefaultValue:False}}" +
-                "}");
+                ",Class:Test}");
 
             sm.Get(false, @"Visualiser\GridStyleEnum").AddEdge(sm.Get(false, "?$Inherits"), sm.Get(false, @"ZeroTypes\EnumBase"));
             sm.Get(false, @"Visualiser\SnapToGridEnum").AddEdge(sm.Get(false, "?$Inherits"), sm.Get(false, @"ZeroTypes\EnumBase"));
@@ -3248,7 +3248,14 @@ namespace m0
             sm.Get(false, @"Visualiser\Song\ShowArrowLines").AddEdge(sm.Get(false, @"?$EdgeTarget"), sm.Get(false, @"?Boolean"));
             sm.Get(false, @"Visualiser\Song\ShowSnapLines").AddEdge(sm.Get(false, @"?$EdgeTarget"), sm.Get(false, @"?Boolean"));
             sm.Get(false, @"Visualiser\Song\ShowToolbarNames").AddEdge(sm.Get(false, @"?$EdgeTarget"), sm.Get(false, @"?Boolean"));
-            sm.Get(false, @"Visualiser\Song\SnapToGrid").AddEdge(sm.Get(false, @"?$EdgeTarget"), sm.Get(false, @"Visualiser\SongSnapToGridEnum"));            
+            sm.Get(false, @"Visualiser\Song\SnapToGrid").AddEdge(sm.Get(false, @"?$EdgeTarget"), sm.Get(false, @"Visualiser\SongSnapToGridEnum"));
+
+            sm.Get(false, @"Visualiser\Test").AddEdge(sm.Get(false, "?$Inherits"), sm.Get(false, @"ZeroTypes\$PlatformClass"));
+            sm.Get(false, @"Visualiser\Test").AddEdge(sm.Get(false, "?$Inherits"), sm.Get(false, @"ZeroTypes\HasBaseEdge"));
+            sm.Get(false, @"Visualiser\Test").AddVertex(sm.Get(false, "?$PlatformClassName"), @"m0.UIWpf.Visualisers.TestVisualiser, m0, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null");
+            sm.Get(false, @"Visualiser\Test").AddEdge(sm.Get(false, @"?$Is"), sm.Get(false, @"ZeroUML\Class"));
+            sm.Get(false, @"Visualiser\Test").AddEdge(sm.Get(false, @"Visualiser\BaseEdgeTarget"), sm.Get(false, @"Visualiser\BaseEdgeTarget\Any"));
+
         }
 
         void CreateSystemMetaMethodVisualiser()

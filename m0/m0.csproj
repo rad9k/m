@@ -123,6 +123,7 @@
     <Compile Include="UIWpf\ExecutableVisualiserFactory.cs" />
     <Compile Include="UIWpf\Visualisers\Method\VoidVoidMethodVisualiser.cs" />
     <Compile Include="UIWpf\Visualisers\DebugVisualiser.cs" />
+    <Compile Include="UIWpf\Visualisers\TestVisualiser.cs" />
     <Compile Include="User\Clipboard.cs" />
     <Compile Include="User\Process\UX\Interaction.cs" />
     <Compile Include="User\Process\UX\NonAtomProcess.cs" />

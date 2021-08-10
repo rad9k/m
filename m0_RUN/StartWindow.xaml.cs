@@ -57,7 +57,7 @@ namespace m0
 
             List<string> scopelist = new List<string>();
 
-//            scopelist.Add(@"dupa2\dupa22");
+            scopelist.Add(@"");
 
             IVertex trigger = ExecutionFlowHelper.AddGraphChangeTrigger(v, scopelist).To;
 
@@ -72,6 +72,7 @@ namespace m0
             
 
             v.AddVertex(null, "dupa1");
+
             IVertex d2 = v.AddVertex(null, "dupa2");
 
             IVertex d22 = d2.AddVertex(null, "dupa22");
@@ -82,7 +83,7 @@ namespace m0
 
             IEdge e = v.OutEdges[2];
 
-            v.DeleteEdge(e);
+            //v.DeleteEdge(e);
 
     
 

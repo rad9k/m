@@ -58,12 +58,14 @@ namespace m0.Graph.ExecutionFlow
             {
                 en.vertexInScope = new List<IVertex>();
 
+                en.vertexInScope.Add(en.sourceVertex); // so adding it here. in future might be limited with filters
+
                 if (en.scopeQuery != null)
                     foreach(string s in en.scopeQuery)
                         foreach(IEdge e in en.sourceVertex.GetAll(false, s))
                             en.vertexInScope.Add(e.To);
-                else     
-                    en.vertexInScope.Add(en.sourceVertex);
+                //else      
+                //    en.vertexInScope.Add(en.sourceVertex);
                 
             }
         }
