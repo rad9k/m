@@ -11,11 +11,11 @@ namespace m0.Graph.Internal
 {
     public class InList : ExtandableList<IEdge>
     {
-        EdgeDictionaries ed;
+        EdgeDictionaries edgeDictionaries;
 
         public InList(EdgeDictionaries _ed)
         {
-            ed = _ed;
+            edgeDictionaries = _ed;
         }
 
         public override IEdge Get(IEdge toCheckEdge)
@@ -23,7 +23,7 @@ namespace m0.Graph.Internal
             if (Contains(toCheckEdge))
                 return toCheckEdge;
             else
-                if (ed.NoInEdgeInOutVertexVertexMode)
+                if (edgeDictionaries.NoInEdgeInOutVertexVertexMode)
                 {
                     foreach (IEdge e in this)
                         if (e.Meta == toCheckEdge.Meta && e.To == toCheckEdge.To)
@@ -41,9 +41,9 @@ namespace m0.Graph.Internal
 
         public override void OnAdd(IEdge item)
         {
-            ed.vertex.InEdgesDictionariesNeedsRebuild = true;
+            edgeDictionaries.vertex.InEdgesDictionariesNeedsRebuild = true;
 
-            ed.vertex.InheritChildsDictionariesNeedsRebuild(true);
+            edgeDictionaries.vertex.InheritChildsDictionariesNeedsRebuild(true);
         }
 
         public override void OnRemove(IEdge item)
@@ -66,21 +66,21 @@ namespace m0.Graph.Internal
 
             //
 
-            ed.vertex.InEdgesDictionariesNeedsRebuild = true;
+            edgeDictionaries.vertex.InEdgesDictionariesNeedsRebuild = true;
 
-            ed.vertex.InheritChildsDictionariesNeedsRebuild(true);
+            edgeDictionaries.vertex.InheritChildsDictionariesNeedsRebuild(true);
 
             //
 
             int cumulativeEdgesCount = 0;
 
-            cumulativeEdgesCount += ed.In.Count;
-            cumulativeEdgesCount += ed.MetaIn.Count;
+            cumulativeEdgesCount += edgeDictionaries.In.Count;
+            cumulativeEdgesCount += edgeDictionaries.MetaIn.Count;
 
             if (cumulativeEdgesCount == 0
-                && ed.vertex.Store.DetachState == DetachStateEnum.Attached
-                && !ed.vertex.IsRoot)
-                ExecutionFlowHelper.AddSecondStageCommitAction(ed.vertex);
+                && edgeDictionaries.vertex.Store.DetachState == DetachStateEnum.Attached
+                && !edgeDictionaries.vertex.IsRoot)
+                ExecutionFlowHelper.AddSecondStageCommitAction(edgeDictionaries.vertex);
         }
     }
 }

@@ -11,11 +11,11 @@ namespace m0.Graph.Internal
 {
     public class MetaInList : ExtandableList<IEdge>
     {
-        EdgeDictionaries ed;
+        EdgeDictionaries edgeDictionaries;
 
         public MetaInList(EdgeDictionaries _ed)
         {
-            ed = _ed;
+            edgeDictionaries = _ed;
         }
 
         public override IEdge Get(IEdge toCheckEdge)
@@ -23,7 +23,7 @@ namespace m0.Graph.Internal
             if (Contains(toCheckEdge))
                 return toCheckEdge;
             else
-                if (ed.NoInEdgeInOutVertexVertexMode)
+                if (edgeDictionaries.NoInEdgeInOutVertexVertexMode)
                 {
                     foreach (IEdge e in this)
                         if (e.Meta == toCheckEdge.Meta && e.To == toCheckEdge.To)
@@ -64,13 +64,13 @@ namespace m0.Graph.Internal
 
             int cumulativeEdgesCount = 0;
 
-            cumulativeEdgesCount += ed.In.Count;
-            cumulativeEdgesCount += ed.MetaIn.Count;
+            cumulativeEdgesCount += edgeDictionaries.In.Count;
+            cumulativeEdgesCount += edgeDictionaries.MetaIn.Count;
 
             if (cumulativeEdgesCount == 0
-                && ed.vertex.Store.DetachState == DetachStateEnum.Attached
-                && !ed.vertex.IsRoot)
-                ExecutionFlowHelper.AddSecondStageCommitAction(ed.vertex);
+                && edgeDictionaries.vertex.Store.DetachState == DetachStateEnum.Attached
+                && !edgeDictionaries.vertex.IsRoot)
+                ExecutionFlowHelper.AddSecondStageCommitAction(edgeDictionaries.vertex);
         }
     }
 }

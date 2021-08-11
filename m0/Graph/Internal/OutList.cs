@@ -11,11 +11,11 @@ namespace m0.Graph.Internal
 {
     public class OutList : ExtandableList<IEdge>
     {
-        EdgeDictionaries ed;
+        EdgeDictionaries edgeDictionaries;
 
         public OutList(EdgeDictionaries _ed)
         {
-            ed = _ed;
+            edgeDictionaries = _ed;
         }
 
         public override IEdge Get(IEdge toCheckEdge)
@@ -23,7 +23,7 @@ namespace m0.Graph.Internal
             if (Contains(toCheckEdge))
                 return toCheckEdge;
             else
-                if (ed.NoInEdgeInOutVertexVertexMode)
+                if (edgeDictionaries.NoInEdgeInOutVertexVertexMode)
                 {
                     foreach (IEdge e in this)
                         if (e.Meta == toCheckEdge.Meta && e.To == toCheckEdge.To)
@@ -42,7 +42,7 @@ namespace m0.Graph.Internal
 
         public override void OnAdd(IEdge item)
         {
-            if (!ed.NoInEdgeInOutVertexVertexMode)
+            if (!edgeDictionaries.NoInEdgeInOutVertexVertexMode)
             {
                 if (item.Meta != null)
                     item.Meta.MetaInEdgesRaw.Add(item);
@@ -51,16 +51,16 @@ namespace m0.Graph.Internal
                     item.To.InEdgesRaw.Add(item);
             }
 
-            ed.vertex.OutEdgesDictionariesNeedsRebuild = true;
+            edgeDictionaries.vertex.OutEdgesDictionariesNeedsRebuild = true;
 
-            ed.vertex.InheritChildsDictionariesNeedsRebuild(false);
+            edgeDictionaries.vertex.InheritChildsDictionariesNeedsRebuild(false);
 
-            ed.vertex.FireChange(new VertexChangeEventArgs(VertexChangeType.EdgeAdded, item));
+            edgeDictionaries.vertex.FireChange(new VertexChangeEventArgs(VertexChangeType.EdgeAdded, item));
         }
 
         public override void OnRemove(IEdge item)
         {
-            if (item.EdgeRemovalExecuting == false && !ed.NoInEdgeInOutVertexVertexMode)
+            if (item.EdgeRemovalExecuting == false && !edgeDictionaries.NoInEdgeInOutVertexVertexMode)
             {
                 item.EdgeRemovalExecuting = true;
 
@@ -72,14 +72,14 @@ namespace m0.Graph.Internal
                 item.EdgeRemovalExecuting = false;
             }
 
-            ed.vertex.OutEdgesDictionariesNeedsRebuild = true;
-            ed.vertex.InheritChildsDictionariesNeedsRebuild(false);
+            edgeDictionaries.vertex.OutEdgesDictionariesNeedsRebuild = true;
+            edgeDictionaries.vertex.InheritChildsDictionariesNeedsRebuild(false);
 
-            ed.vertex.DettachEdge(item);
+            edgeDictionaries.vertex.DettachEdge(item);
 
             //
 
-            ed.vertex.FireChange(new VertexChangeEventArgs(VertexChangeType.EdgeRemoved, item));
+            edgeDictionaries.vertex.FireChange(new VertexChangeEventArgs(VertexChangeType.EdgeRemoved, item));
         }
     }
 }
