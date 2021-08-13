@@ -75,7 +75,7 @@ namespace m0.Graph.ExecutionFlow
         {
             ITransaction currentTransaction = MinusZero.Instance.GetTopTransaction();
 
-            if(currentTransaction != null)
+            if (currentTransaction != null)
                 currentTransaction.AddAtom(atom);
         }
 
@@ -89,40 +89,89 @@ namespace m0.Graph.ExecutionFlow
 
         public static IEdge AddGraphChangeTrigger(IVertex baseVertex, IList<string> scopeQueries)
         {
-            IEdge triggerEdge = VertexOperations.AddInstanceAndReturnEdge(baseVertex, graphChangeTrigger_meta);
+            return AddGraphChangeTrigger(baseVertex, scopeQueries, null);
+        }
+
+        public static IEdge AddGraphChangeTrigger(IVertex baseVertex, IList<string> scopeQueries, string triggerVertexName)
+        {
+            IEdge triggerEdge = null;
+
+            if (triggerVertexName != null)
+            {
+                IVertex existingTriggers = baseVertex.GetAll(false, "$GraphChangeTrigger:" + triggerVertexName);
+
+                if (existingTriggers.OutEdges.Count == 1)
+                    triggerEdge = existingTriggers.OutEdges[0];
+            }
+
+            if (triggerEdge == null)
+            {
+                triggerEdge = VertexOperations.AddInstanceAndReturnEdge(baseVertex, graphChangeTrigger_meta);
+                triggerEdge.To.Value = triggerVertexName;
+            }
 
             if (scopeQueries != null)
-                foreach(string s in scopeQueries)
+                foreach (string s in scopeQueries)
                     triggerEdge.To.AddVertex(scopeQuery_meta, s);
 
             return triggerEdge;
         }
 
-        public static void RemoveGraphChangeTrigger(IEdge triggerVertex)
+        public static void RemoveGraphChangeListener(IEdge listenerEdge)
         {
-            triggerVertex.From.DeleteEdge(triggerVertex);
+            IVertex triggerVertex = listenerEdge.From;
+
+            triggerVertex.DeleteEdge(listenerEdge);
+
+            if(GraphUtil.GetQueryOutCount(triggerVertex, "Listener", null) == 0)
+            {
+                IEdge triggerSourceEdge = GraphUtil.GetQueryInFirstEdge(triggerVertex, "$GraphChangeTrigger", null);
+
+                if(triggerSourceEdge != null)
+                    triggerSourceEdge.From.DeleteEdge(triggerSourceEdge);
+            }
         }
 
-
-        public static void AddListener_DotNetStaticMethod(IVertex baseVertex, string _typeName, string _methodName)
+        public static IEdge AddListener_DotNetStaticMethod(IVertex baseVertex, string _typeName, string _methodName)
         {
-            IVertex listener = baseVertex.AddVertex(listener_meta, "");
-
-            DecorateWithDotNetStaticMethod(listener, _typeName, _methodName);
+            return AddListener_DotNetStaticMethod(baseVertex, _typeName, _methodName, "");
         }
 
-        public static void AddListener_DotNetDelegate(IVertex baseVertex, DotNetDelegate _delegate)
+        public static IEdge AddListener_DotNetStaticMethod(IVertex baseVertex, string _typeName, string _methodName, string listenerName)
         {
-            IVertex listener = baseVertex.AddVertex(listener_meta, "");
+            IEdge listenerEdge = baseVertex.AddVertexAndReturnEdge(listener_meta, listenerName);
 
-            DecorateWithDotNetDelegate(listener, _delegate);
+            DecorateWithDotNetStaticMethod(listenerEdge.To, _typeName, _methodName);
+
+            return listenerEdge;
         }
 
-        public static void AddListener_Delegate(IVertex baseVertex, IVertex _object, IVertex _method)
+        public static IEdge AddListener_DotNetDelegate(IVertex baseVertex, DotNetDelegate _delegate)
         {
-            IVertex listener = baseVertex.AddVertex(listener_meta, "");
+            return AddListener_DotNetDelegate(baseVertex, _delegate, "");
+        }
 
-            DecorateWithDelegate(listener, _object, _method);
+        public static IEdge AddListener_DotNetDelegate(IVertex baseVertex, DotNetDelegate _delegate, string listenerName)
+        {
+            IEdge listenerEdge = baseVertex.AddVertexAndReturnEdge(listener_meta, listenerName);
+
+            DecorateWithDotNetDelegate(listenerEdge.To, _delegate);
+
+            return listenerEdge;
+        }
+
+        public static IEdge AddListener_Delegate(IVertex baseVertex, IVertex _object, IVertex _method)
+        {
+            return AddListener_Delegate(baseVertex, _object, _method, "");
+        }
+
+        public static IEdge AddListener_Delegate(IVertex baseVertex, IVertex _object, IVertex _method, string listenerName)
+        {
+            IEdge listenerEdge = baseVertex.AddVertexAndReturnEdge(listener_meta, listenerName);
+
+            DecorateWithDelegate(listenerEdge.To, _object, _method);
+
+            return listenerEdge;
         }
 
         public static void DecorateWithDotNetStaticMethod(IVertex baseVertex, string _typeName, string _methodName)

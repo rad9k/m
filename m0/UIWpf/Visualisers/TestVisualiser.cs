@@ -21,9 +21,13 @@ namespace m0.UIWpf.Visualisers
 {
     public class TestVisualiser : TextBox, IPlatformClass, IDisposable, IHasLocalizableEdges
     {
+        public string VisualiserName;
+
         public TestVisualiser()
         {
-            MinusZero mz = MinusZero.Instance;            
+            MinusZero mz = MinusZero.Instance;
+
+            VisualiserName = "TestVisualiser" + this.GetHashCode();
 
             if (mz != null && mz.IsInitialized)
             {                
@@ -34,8 +38,8 @@ namespace m0.UIWpf.Visualisers
                 ///////////////////////////////////////
 
                 Vertex = mz.CreateTempVertex();
-                
-                Vertex.Value= "TestVisualiser" + this.GetHashCode();
+
+                Vertex.Value = VisualiserName;
 
                 ClassVertex.AddIsClassAndAllAttributesAndAssociations(Vertex, mz.Root.Get(false, @"System\Meta\Visualiser\String"));
 
@@ -144,7 +148,7 @@ namespace m0.UIWpf.Visualisers
             
         }*/
 
-        IEdge graphChangeTriggerEdge;
+        IEdge graphChangeListenerEdge;
 
         private IVertex _Vertex;
 
@@ -154,16 +158,16 @@ namespace m0.UIWpf.Visualisers
             set
             {
                 if (_Vertex != null)
-                    ExecutionFlowHelper.RemoveGraphChangeTrigger(graphChangeTriggerEdge);
+                    ExecutionFlowHelper.RemoveGraphChangeListener(graphChangeListenerEdge);
                 
                 //PlatformClass.RemoveVertexChangeListeners(this.Vertex, new VertexChange(VertexChange));
 
                 _Vertex = value;
 
-                graphChangeTriggerEdge = ExecutionFlowHelper.AddGraphChangeTrigger(_Vertex, new List<string> {});
+                IEdge graphChangeTriggerEdge = ExecutionFlowHelper.AddGraphChangeTrigger(_Vertex, new List<string> {}, "GenericVisualiser");
 
                 //graphChangeTriggerEdge = ExecutionFlowHelper.AddGraphChangeTrigger(_Vertex, new List<string> { "", "BaseEdge:", "SelectedEdges:" });
-                ExecutionFlowHelper.AddListener_DotNetDelegate(graphChangeTriggerEdge.To, VertexChange);
+                graphChangeListenerEdge = ExecutionFlowHelper.AddListener_DotNetDelegate(graphChangeTriggerEdge.To, VertexChange, VisualiserName);
 
                 //PlatformClass.RegisterVertexChangeListeners(this.Vertex, new VertexChange(VertexChange), new string[] { "BaseEdge", "SelectedEdges" });
 
@@ -179,7 +183,7 @@ namespace m0.UIWpf.Visualisers
             {
                 IsDisposed = true;
 
-                ExecutionFlowHelper.RemoveGraphChangeTrigger(graphChangeTriggerEdge);
+                ExecutionFlowHelper.RemoveGraphChangeListener(graphChangeListenerEdge);
 
                 //PlatformClass.RemoveVertexChangeListeners(this.Vertex, new VertexChange(VertexChange));
 

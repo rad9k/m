@@ -144,7 +144,7 @@ namespace m0.UIWpf.Visualisers
             
         }*/
 
-        IEdge graphChangeTriggerEdge;
+
 
         private IVertex _Vertex;
 
@@ -153,17 +153,17 @@ namespace m0.UIWpf.Visualisers
             get { return _Vertex; }
             set
             {
-                if (_Vertex != null)
-                    ExecutionFlowHelper.RemoveGraphChangeTrigger(graphChangeTriggerEdge);
+             //   if (_Vertex != null)
+              //      ExecutionFlowHelper.RemoveGraphChangeTrigger(graphChangeTriggerEdge);
                 
                 //PlatformClass.RemoveVertexChangeListeners(this.Vertex, new VertexChange(VertexChange));
 
                 _Vertex = value;
 
-                graphChangeTriggerEdge = ExecutionFlowHelper.AddGraphChangeTrigger(_Vertex, new List<string> {});
+             //   graphChangeTriggerEdge = ExecutionFlowHelper.AddGraphChangeTrigger(_Vertex, new List<string> {});
 
 //                graphChangeTriggerEdge = ExecutionFlowHelper.AddGraphChangeTrigger(_Vertex, new List<string> { "", "BaseEdge:", "SelectedEdges:" });
-                ExecutionFlowHelper.AddListener_DotNetDelegate(graphChangeTriggerEdge.To, VertexChange);
+              //  ExecutionFlowHelper.AddListener_DotNetDelegate(graphChangeTriggerEdge.To, VertexChange);
 
                 //PlatformClass.RegisterVertexChangeListeners(this.Vertex, new VertexChange(VertexChange), new string[] { "BaseEdge", "SelectedEdges" });
 
@@ -179,7 +179,7 @@ namespace m0.UIWpf.Visualisers
             {
                 IsDisposed = true;
 
-                ExecutionFlowHelper.RemoveGraphChangeTrigger(graphChangeTriggerEdge);
+                //ExecutionFlowHelper.RemoveGraphChangeTrigger(graphChangeTriggerEdge);
 
                 //PlatformClass.RemoveVertexChangeListeners(this.Vertex, new VertexChange(VertexChange));
 
