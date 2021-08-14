@@ -9,6 +9,7 @@ using m0.UIWpf.Visualisers;
 using m0.Graph;
 using m0.ZeroTypes;
 using m0.Util;
+using m0.Graph.ExecutionFlow;
 
 namespace m0.UIWpf
 {
@@ -55,6 +56,10 @@ namespace m0.UIWpf
             if (defvis == null && e.To!=null)
                 defvis = e.To.Get(false, @"$Is:\$DefaultEditVisualiser:");
 
+            ///////////////////////////////////////
+            ExecutionFlowHelper.StartTransaction();
+            ///////////////////////////////////////
+
             if (defvis != null)
             {
                 pc = (IPlatformClass)PlatformClass.CreatePlatformObject(defvis);
@@ -67,6 +72,10 @@ namespace m0.UIWpf
                 pc = new StringVisualiser();
                 Edge.ReplaceEdgeVertexEdges(pc.Vertex.Get(false, "BaseEdge:"), e);                                                    
             }
+
+            ////////////////////////////////////////
+            ExecutionFlowHelper.CommitTransaction();
+            ////////////////////////////////////////
 
             _this.Content = pc;            
         }

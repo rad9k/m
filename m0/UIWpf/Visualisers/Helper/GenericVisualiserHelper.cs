@@ -41,10 +41,6 @@ namespace m0.UIWpf.Visualisers.Helper
 
             if (mz != null && mz.IsInitialized)
             {
-                ///////////////////////////////////////
-                ExecutionFlowHelper.StartTransaction();
-                ///////////////////////////////////////
-
                 visualiser.Vertex = mz.CreateTempVertex();
 
                 visualiser.Vertex.Value = visualiserName;
@@ -53,9 +49,6 @@ namespace m0.UIWpf.Visualisers.Helper
 
                 ClassVertex.AddIsClassAndAllAttributesAndAssociations(visualiser.Vertex.Get(false, "BaseEdge:"), mz.Root.Get(false, @"System\Meta\ZeroTypes\Edge"));
 
-                ////////////////////////////////////////
-                ExecutionFlowHelper.CommitTransaction();
-                ////////////////////////////////////////
 
                 visualiserAsFrameworkElement.Loaded += new RoutedEventHandler(visualiser.OnLoad);
 
