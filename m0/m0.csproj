@@ -121,6 +121,8 @@
       <DependentUpon>StringQuestionWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="UIWpf\ExecutableVisualiserFactory.cs" />
+    <Compile Include="UIWpf\Visualisers\Helper\GenericVisualiserHelper.cs" />
+    <Compile Include="UIWpf\Visualisers\Helper\IVisualiser.cs" />
     <Compile Include="UIWpf\Visualisers\Method\VoidVoidMethodVisualiser.cs" />
     <Compile Include="UIWpf\Visualisers\DebugVisualiser.cs" />
     <Compile Include="UIWpf\Visualisers\TestVisualiser.cs" />

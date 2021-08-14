@@ -248,14 +248,12 @@ namespace m0.Graph
                 throw new Exception("Trying to add Vertex as Vertex value");
 
             if (val is IEdge)
-                throw new Exception("Trying to add Edge as Vertex value");
-
-            if (val == null)
-                val = "";
+                throw new Exception("Trying to add Edge as Vertex value");            
 
             IVertex nv = CreateVertexInstance();
 
-            nv.Value = val;
+            if (val != null)
+                nv.Value = val;
 
             return AddEdge(metaVertex, nv);
         }
