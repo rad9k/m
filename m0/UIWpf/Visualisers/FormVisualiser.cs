@@ -50,8 +50,6 @@ namespace m0.UIWpf.Visualisers
 
     public class FormVisualiser : ContentControl, IPlatformClass, IDisposable
     {
-        bool isLoaded;
-
         bool DisplayBaseVertex = true; /////////////////////////////////////////
 
         bool SectionsAsTabs;
@@ -766,9 +764,7 @@ namespace m0.UIWpf.Visualisers
 
         void OnLoad(object sender, RoutedEventArgs e)
         {
-            isLoaded = true;
 
-            //Vertex.Get(false, "ColumnNumber:").Value = (int)this.ActualWidth/300;
         }   
 
 

@@ -24,16 +24,32 @@ namespace m0.UIWpf.Visualisers.Helper
     {
         IVisualiser visualiser;
         FrameworkElement visualiserAsFrameworkElement;
+        IList<string> scopeQueries;
+        string scopeQueriesName;
 
         public string visualiserName;
 
+        bool dndSupport;
+
         public GenericVisualiserHelper(IVisualiser _visualiser, string _visualiserName, FrameworkElement _visualiserAsFrameworkElement)
+            :this(_visualiser, _visualiserName, _visualiserAsFrameworkElement, true, new List<string> { @"BaseEdge:\To:" }, "AtomVisualiser")
+        {
+            
+        }
+
+        public GenericVisualiserHelper(IVisualiser _visualiser, string _visualiserName, FrameworkElement _visualiserAsFrameworkElement, bool _dndSupport, IList<string> _scopeQueries, string _scopeQueriesName)
         {
             visualiser = _visualiser;
 
             visualiserAsFrameworkElement = _visualiserAsFrameworkElement;
 
-            visualiser.GVHelper = this;
+            dndSupport = _dndSupport;
+
+            scopeQueries = _scopeQueries;
+
+            scopeQueriesName = _scopeQueriesName;
+
+            visualiser.VisualiserHelper = this;
 
             MinusZero mz = MinusZero.Instance;
 
@@ -52,14 +68,24 @@ namespace m0.UIWpf.Visualisers.Helper
 
                 visualiserAsFrameworkElement.Loaded += new RoutedEventHandler(visualiser.OnLoad);
 
-                visualiserAsFrameworkElement.PreviewMouseLeftButtonDown += dndPreviewMouseLeftButtonDown;
-                visualiserAsFrameworkElement.PreviewMouseMove += dndPreviewMouseMove;
-                visualiserAsFrameworkElement.Drop += dndDrop;
-                visualiserAsFrameworkElement.AllowDrop = true;
+                if (dndSupport)
+                {
+                    visualiserAsFrameworkElement.PreviewMouseLeftButtonDown += dndPreviewMouseLeftButtonDown;
+                    visualiserAsFrameworkElement.PreviewMouseMove += dndPreviewMouseMove;
+                    visualiserAsFrameworkElement.Drop += dndDrop;
+                    visualiserAsFrameworkElement.AllowDrop = true;
 
-                visualiserAsFrameworkElement.MouseEnter += dndMouseEnter;
+                    visualiserAsFrameworkElement.MouseEnter += dndMouseEnter;
+                }else
+                    visualiserAsFrameworkElement.AllowDrop = false;
             }
 
+        }
+
+        public void AddContextMenu()
+        {
+            if (!WpfUtil.HasParentsGotContextMenu(visualiserAsFrameworkElement))
+                visualiserAsFrameworkElement.ContextMenu = new m0ContextMenu(visualiser);
         }
 
         protected INoInEdgeInOutVertexVertex VertexChange(IExecution exe)
@@ -80,7 +106,7 @@ namespace m0.UIWpf.Visualisers.Helper
 
             _Vertex = value;
 
-            IEdge graphChangeTriggerEdge = ExecutionFlowHelper.AddGraphChangeTrigger(_Vertex, new List<string> { @"BaseEdge:\To:" }, "GenericVisualiser");
+            IEdge graphChangeTriggerEdge = ExecutionFlowHelper.AddGraphChangeTrigger(_Vertex, scopeQueries, scopeQueriesName);
 
             graphChangeListenerEdge = ExecutionFlowHelper.AddListener_DotNetDelegate(graphChangeTriggerEdge.To, VertexChange, visualiserName);            
 

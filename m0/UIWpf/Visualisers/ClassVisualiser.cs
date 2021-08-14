@@ -14,42 +14,24 @@ using m0.UIWpf.Foundation;
 using m0.UIWpf.Controls;
 using m0.UIWpf.Commands;
 using System.Windows;
-
+using m0.UIWpf.Visualisers.Helper;
 
 namespace m0.UIWpf.Visualisers
 {
-    class ClassVisualiser : TextBlock, IPlatformClass, IDisposable, IHasLocalizableEdges
+    class ClassVisualiser : TextBlock, IVisualiser
     {
+        public GenericVisualiserHelper VisualiserHelper { get; set; }
+
         List<IVertex> manuallyAddedVertexChangeListeners = new List<IVertex>();
 
         public ClassVisualiser()
         {
-            MinusZero mz = MinusZero.Instance;            
-
-            if (mz != null && mz.IsInitialized)
-            {
-                Padding = new Thickness(3);
-
-                Vertex = mz.CreateTempVertex();
-
-                Vertex.Value = "ClassVisualiser" + this.GetHashCode();
-
-                ClassVertex.AddIsClassAndAllAttributesAndAssociations(Vertex, mz.Root.Get(false, @"System\Meta\Visualiser\Class"));
-
-                ClassVertex.AddIsClassAndAllAttributesAndAssociations(Vertex.Get(false, "BaseEdge:"), mz.Root.Get(false, @"System\Meta\ZeroTypes\Edge"));         
-
-                
-                this.AllowDrop = false;
-                
-
-                this.Loaded += new RoutedEventHandler(OnLoad);
-            }
+            new GenericVisualiserHelper(this, "TestVisualiser", this, false, new List<string> { @"BaseEdge:\To:", @"BaseEdge:\To:\", @"SelectedEdges:" }, "ListVisualiser");
         }
 
         void OnLoad(object sender, RoutedEventArgs e)
         {
-            if (!WpfUtil.HasParentsGotContextMenu(this))
-                this.ContextMenu = new m0ContextMenu(this);
+            VisualiserHelper.AddContextMenu();
         }
 
         private void UpdateBaseEdge()
@@ -113,41 +95,17 @@ namespace m0.UIWpf.Visualisers
             foreach (IEdge ee in Vertex.GetAll(false, @"BaseEdge:\To:\"))
                 if (sender == ee.To) // all events
                     UpdateBaseEdge();
-        }        
-
-        private IVertex _Vertex;
+        }
 
         public IVertex Vertex
         {
-            get { return _Vertex; }
-            set
-            {
-                if (_Vertex != null)
-                    PlatformClass.RemoveVertexChangeListeners(this.Vertex, new VertexChange(VertexChange));
-
-                _Vertex = value;
-
-                PlatformClass.RegisterVertexChangeListeners(this.Vertex, new VertexChange(VertexChange), new string[] { "BaseEdge", "SelectedEdges" });
-
-                UpdateBaseEdge();
-            }
+            get { return VisualiserHelper._Vertex; }
+            set { VisualiserHelper.SetVertex(value); }
         }
-
-        bool IsDisposed = false;
 
         public void Dispose()
         {
-            if (IsDisposed == false)
-            {
-                IsDisposed = true;
-                PlatformClass.RemoveVertexChangeListeners(this.Vertex, new VertexChange(VertexChange));
-
-                if (Vertex is IDisposable)
-                    ((IDisposable)Vertex).Dispose();
-
-                foreach (IVertex v in manuallyAddedVertexChangeListeners)
-                    v.Change -= new VertexChange(VertexChange);
-            }
+            VisualiserHelper.Dispose();
         }
 
         public IVertex GetEdgeByLocation(System.Windows.Point point)

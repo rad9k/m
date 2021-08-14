@@ -11,7 +11,7 @@ namespace m0.UIWpf.Visualisers.Helper
 {
     public interface IVisualiser : IHasLocalizableEdges, IPlatformClass, IDisposable
     {
-        GenericVisualiserHelper GVHelper { get; set; }
+        GenericVisualiserHelper VisualiserHelper { get; set; }
 
         void OnLoad(object sender, RoutedEventArgs e);
 

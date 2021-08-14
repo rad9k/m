@@ -23,7 +23,7 @@ namespace m0.UIWpf.Visualisers
 {
     public class TestVisualiser : TextBox, IVisualiser
     {
-        public GenericVisualiserHelper GVHelper { get; set; }        
+        public GenericVisualiserHelper VisualiserHelper { get; set; }        
         
         public TestVisualiser()
         {
@@ -104,13 +104,13 @@ namespace m0.UIWpf.Visualisers
 
         public IVertex Vertex
         {
-            get { return GVHelper._Vertex; }
-            set { GVHelper.SetVertex(value); }
+            get { return VisualiserHelper._Vertex; }
+            set { VisualiserHelper.SetVertex(value); }
         }
         
         public void Dispose()
         {
-            GVHelper.Dispose();
+            VisualiserHelper.Dispose();
         }
 
         public IVertex GetEdgeByLocation(Point point)
