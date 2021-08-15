@@ -20,6 +20,10 @@ namespace m0.UIWpf.Visualisers
 {
     public class FloatVisualiser : NumberVisualiser<double?>
     {
+        public FloatVisualiser() : base()
+        {
+            visualiserName = "FloatVisualiser";
+        }
     }
 }
 

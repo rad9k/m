@@ -7,5 +7,9 @@ namespace m0.UIWpf.Visualisers
 {
     public class IntegerVisualiser: NumberVisualiser<int?>
     {
+        public IntegerVisualiser() : base()
+        {
+            visualiserName = "IntegerVisualiser";
+        }
     }
 }

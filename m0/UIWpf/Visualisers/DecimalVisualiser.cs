@@ -20,6 +20,10 @@ namespace m0.UIWpf.Visualisers
 {
     public class DecimalVisualiser : NumberVisualiser<decimal?>
     {
+        public DecimalVisualiser() : base()
+        {
+            visualiserName = "DecimalVisualiser";
+        }
     }
 }
 

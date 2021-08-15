@@ -105,6 +105,7 @@ namespace m0.UIWpf.Visualisers
             Interaction.BeginInteractionWithGraph();
             ////////////////////////////////////////
 
+            GraphUtil.ReplaceEdge(Vertex.Get(false, @"BaseEdge:"), Edge.MetaMeta, MinusZero.Instance.Empty);
             GraphUtil.ReplaceEdge(Vertex.Get(false, @"BaseEdge:"), Edge.ToMeta, v);
 
             ////////////////////////////////////////
