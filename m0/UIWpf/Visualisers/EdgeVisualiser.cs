@@ -14,36 +14,19 @@ using m0.UIWpf.Foundation;
 using m0.UIWpf.Controls;
 using m0.UIWpf.Commands;
 using System.Windows;
+using m0.UIWpf.Visualisers.Helper;
 
 namespace m0.UIWpf.Visualisers
 {
-    public class EdgeVisualiser : TextBlock, IPlatformClass, IDisposable, IHasLocalizableEdges
+    public class EdgeVisualiser : TextBlock, IVisualiser
     {
+        public GenericVisualiserHelper VisualiserHelper { get; set; }
+
         public EdgeVisualiser()
         {
-            MinusZero mz = MinusZero.Instance;
+            this.Background = (Brush)FindResource("0LightGrayBrush");
 
-            if (mz != null && mz.IsInitialized)
-            {
-                Vertex = mz.CreateTempVertex();
-
-                Vertex.Value = "EdgeVisualiser" + this.GetHashCode();
-
-                ClassVertex.AddIsClassAndAllAttributesAndAssociations(Vertex, mz.Root.Get(false, @"System\Meta\Visualiser\Edge"));
-
-                ClassVertex.AddIsClassAndAllAttributesAndAssociations(Vertex.Get(false, "BaseEdge:"), mz.Root.Get(false, @"System\Meta\ZeroTypes\Edge"));
-
-                this.Background = (Brush)FindResource("0LightGrayBrush");
-
-                this.Loaded += new RoutedEventHandler(OnLoad);
-
-                this.PreviewMouseLeftButtonDown += dndPreviewMouseLeftButtonDown;
-                this.PreviewMouseMove += dndPreviewMouseMove;
-                this.Drop += dndDrop;
-                this.AllowDrop = true;
-
-                this.MouseEnter += dndMouseEnter;
-            }
+            new GenericVisualiserHelper(this, "EdgeVisualiser", this);
         }
 
         void OnLoad(object sender, RoutedEventArgs e)
