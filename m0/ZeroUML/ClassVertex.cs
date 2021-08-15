@@ -20,7 +20,7 @@ namespace m0.ZeroUML
             return GraphUtil.GetIntegerValue(value).ToString();
         }
 
-        public static string GetStringCardinalities(IVertex baseVertex)
+        public static string GetCardinalitiesString(IVertex baseVertex)
         {
             string min = GetStringCardinality(baseVertex.Get(false, "$MinCardinality:"));
             string max = GetStringCardinality(baseVertex.Get(false, "$MaxCardinality:"));

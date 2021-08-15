@@ -18,6 +18,7 @@ using m0.UIWpf.Foundation;
 using m0.UIWpf.Commands;
 using m0.UIWpf.Visualisers;
 using m0.UIWpf.Dialog;
+using m0.Graph.ExecutionFlow;
 
 namespace m0.UIWpf.Visualisers.Diagram
 {
@@ -384,8 +385,16 @@ namespace m0.UIWpf.Visualisers.Diagram
 
                 Background = new SolidColorBrush(Color.FromRgb(255, 200, 200));
 
+                ///////////////////////////////////////
+                ExecutionFlowHelper.StartTransaction();
+                ///////////////////////////////////////
+
                 foreach (IEdge ie in Vertex.GetAll(false, "Item:"))
                     AddItem(ie.To);
+
+                ////////////////////////////////////////
+                ExecutionFlowHelper.CommitTransaction();
+                ////////////////////////////////////////
 
                 UpdateLayout(); // here
 
@@ -1170,12 +1179,20 @@ namespace m0.UIWpf.Visualisers.Diagram
 
                 VertexChangeListenOff();
 
+                ///////////////////////////////////////
+                ExecutionFlowHelper.StartTransaction();
+                ///////////////////////////////////////
+
                 foreach (IEdge eee in dndVertex)
                 {
                     AddDiagramItemDialog(x,y, eee.To,isSet,e);
                     x += 25;
                     y += 25;
                 }
+
+                ////////////////////////////////////////
+                ExecutionFlowHelper.CommitTransaction();
+                ////////////////////////////////////////
 
                 CheckAndUpdateDiagramLines();
 

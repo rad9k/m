@@ -26,15 +26,17 @@ namespace m0.UIWpf.Visualisers
 
         public ClassVisualiser()
         {
-            new GenericVisualiserHelper(this, "TestVisualiser", this, false, new List<string> { @"BaseEdge:\To:", @"BaseEdge:\To:\", @"SelectedEdges:" }, "ListVisualiser");
+           this.Padding = new Thickness(2);
+
+            new GenericVisualiserHelper(this, "TestVisualiser", this, false, new List<string> { @"BaseEdge:", @"BaseEdge:\", @"BaseEdge:\To:\", @"SelectedEdges:" }, "ListVisualiser");
         }
 
-        void OnLoad(object sender, RoutedEventArgs e)
+        public void OnLoad(object sender, RoutedEventArgs e)
         {
             VisualiserHelper.AddContextMenu();
         }
 
-        private void UpdateBaseEdge()
+        public void UpdateBaseEdge()
         {
             IVertex bv = Vertex.Get(false, @"BaseEdge:\To:");
 
@@ -54,7 +56,7 @@ namespace m0.UIWpf.Visualisers
                     if (e.To.Get(false, "$EdgeTarget:") != null)
                         sb.Append(" : " + e.To.Get(false, @"$EdgeTarget:"));
 
-                    string cardinalites = ClassVertex.GetStringCardinalities(e.To);
+                    string cardinalites = ClassVertex.GetCardinalitiesString(e.To);
 
                     if(cardinalites!="")
                         sb.Append(" "+cardinalites);
@@ -65,38 +67,7 @@ namespace m0.UIWpf.Visualisers
             else
                 this.Text = "Ø";
         }
-
-        protected void VertexChange(object sender, VertexChangeEventArgs e)
-        {
-            if ((sender == Vertex) && (e.Type == VertexChangeType.EdgeAdded) && (GeneralUtil.CompareStrings(e.Edge.Meta.Value, "BaseEdge")))
-                UpdateBaseEdge();                        
-
-            if ((sender == Vertex.Get(false, "BaseEdge:")) && (e.Type == VertexChangeType.EdgeAdded) && (GeneralUtil.CompareStrings(e.Edge.Meta.Value, "To"))
-                || (sender == Vertex.Get(false, @"BaseEdge:\To:") && e.Type == VertexChangeType.ValueChanged))            
-                UpdateBaseEdge();
-
-            if(sender == Vertex.Get(false, @"BaseEdge:\To:") && e.Type == VertexChangeType.EdgeAdded){
-                e.Edge.To.Change += new VertexChange(VertexChange);
-
-                manuallyAddedVertexChangeListeners.Add(e.Edge.To);
-
-                UpdateBaseEdge();
-            }
-
-            if (sender == Vertex.Get(false, @"BaseEdge:\To:") && e.Type == VertexChangeType.EdgeRemoved)
-            {
-                e.Edge.To.Change -= new VertexChange(VertexChange);
-
-                manuallyAddedVertexChangeListeners.Remove(e.Edge.To);
-
-                UpdateBaseEdge();
-            }
-
-            foreach (IEdge ee in Vertex.GetAll(false, @"BaseEdge:\To:\"))
-                if (sender == ee.To) // all events
-                    UpdateBaseEdge();
-        }
-
+        
         public IVertex Vertex
         {
             get { return VisualiserHelper._Vertex; }

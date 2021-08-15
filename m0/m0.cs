@@ -113,13 +113,14 @@ namespace m0
 
         public IVertex CreateTempVertex()
         {
-            //return new EasyVertex(TempStore);
-            return CreateTempEdge().To;
+            IEdge edge = TempStore.Root.AddVertexAndReturnEdge(empty, null);
+            TempStore.Root.DeleteEdge(edge);
+            return edge.To;
         }
 
         public IEdge CreateTempEdge()
         {
-            return TempStore.Root.AddVertexAndReturnEdge(empty, null);
+            return CreateTempVertex().AddVertexAndReturnEdge(empty, null);            
         }
 
         void PreBootstrap()
