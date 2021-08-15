@@ -65,6 +65,8 @@ namespace m0.UIWpf.Visualisers.Helper
 
                 ClassVertex.AddIsClassAndAllAttributesAndAssociations(visualiser.Vertex.Get(false, "BaseEdge:"), mz.Root.Get(false, @"System\Meta\ZeroTypes\Edge"));
 
+                mz.Root.Get(false, @"User\CurrentUser:\Session:\Visualisers:").AddEdge(mz.Root.Get(false, @"Meta\User\VisualiserList\Visualiser"), visualiser.Vertex);
+
 
                 visualiserAsFrameworkElement.Loaded += new RoutedEventHandler(visualiser.OnLoad);
 
