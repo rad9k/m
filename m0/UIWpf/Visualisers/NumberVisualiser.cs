@@ -245,7 +245,16 @@ namespace m0.UIWpf.Visualisers
 
         public NumberVisualiser()
         {
-            new GenericVisualiserHelper(this, visualiserName, this);
+            new GenericVisualiserHelper(this, visualiserName, this, false, new List<string> { @"BaseEdge:\To:" }, "AtomVisualiser");
+
+            // need custom dnd becouse of slider / mouse move
+            this.PreviewMouseLeftButtonDown += dndPreviewMouseLeftButtonDown;
+            this.PreviewMouseMove += dndPreviewMouseMove;
+            
+            this.Drop += dndDrop;
+            this.AllowDrop = true;
+
+            this.MouseEnter += dndMouseEnter;
 
             if (typeof(T) == typeof(double?))
                 isContinous = true;
@@ -420,6 +429,83 @@ namespace m0.UIWpf.Visualisers
         public FrameworkElement GetVisualElementByEdge(IVertex vertex)
         {
             throw new NotImplementedException();
+        }
+
+        ///// DRAG AND DROP
+
+        Point dndStartPoint;
+        bool isValidPreDragStart;
+
+        private bool IsMouseOnSlider(MouseEventArgs e)
+        {
+            if (!IsRanged)
+                return false;
+
+            if (VisualTreeHelper.HitTest(Slider, e.GetPosition(Slider)) == null)
+                return false;
+
+            return true;
+        }
+
+        private void dndPreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            if (!IsMouseOnSlider(e))
+            {
+                dndStartPoint = e.GetPosition(this);
+                isValidPreDragStart = true;
+            }
+            else
+                isValidPreDragStart = false;
+
+            MinusZero.Instance.IsGUIDragging = false;
+
+            hasButtonBeenDown = true;
+        }
+
+        bool isDraggin = false;
+        bool hasButtonBeenDown;
+
+        private void dndPreviewMouseMove(object sender, MouseEventArgs e)
+        {
+            Point mousePos = e.GetPosition(this);
+            Vector diff = dndStartPoint - mousePos;
+
+            if (hasButtonBeenDown && isDraggin == false && (e.LeftButton == MouseButtonState.Pressed) &&
+                isValidPreDragStart &&
+                !IsMouseOnSlider(e) && (
+                (Math.Abs(diff.X) > Dnd.MinimumHorizontalDragDistance) ||
+                (Math.Abs(diff.Y) > Dnd.MinimumVerticalDragDistance)))
+            {
+                if (Vertex.Get(false, @"BaseEdge:\To:") != null)
+                {
+                    isDraggin = true;
+
+                    IVertex dndVertex = MinusZero.Instance.CreateTempVertex();
+
+                    dndVertex.AddEdge(null, Vertex.Get(false, @"BaseEdge:"));
+
+                    DataObject dragData = new DataObject("Vertex", dndVertex);
+                    dragData.SetData("DragSource", this);
+
+                    Dnd.DoDragDrop(this, dragData);
+
+                    isDraggin = false;
+
+                    e.Handled = true;
+                }
+            }
+
+
+        }
+
+        private void dndDrop(object sender, DragEventArgs e)
+        {
+            Dnd.DoDrop(this, Vertex.Get(false, @"BaseEdge:\To:"), e);
+        }
+
+        private void dndMouseEnter(object sender, MouseEventArgs e)
+        {
+            hasButtonBeenDown = false;
         }
     }
 }
