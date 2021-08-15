@@ -1,6 +1,7 @@
 ﻿using m0.Foundation;
 using m0.Graph;
 using m0.UIWpf.Visualisers;
+using m0.User.Process.UX;
 using m0.Util;
 using m0.ZeroTypes;
 using System;
@@ -121,10 +122,18 @@ namespace m0.UIWpf.Dialog
         {
             SetState(StateEnum.Executing);
 
+            ////////////////////////////////////////
+            Interaction.BeginInteractionWithGraph();
+            ////////////////////////////////////////
+
             IVertex outputStackVertex = m0.MinusZero.Instance.DefaultExecuter.Execute(inputStackEdge.To, baseVertex.Get(false, "To:"));
 
             outputStackEdge = GraphUtil.CreateArtificialEdge(null, outputStackVertex);
-            
+
+            //////////////////////////////////////
+            Interaction.EndInteractionWithGraph();
+            //////////////////////////////////////
+
             SetState(StateEnum.AfterExecution);
         }
 

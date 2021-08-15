@@ -64,6 +64,8 @@ namespace m0.UIWpf
 
         object Content;
 
+        WrapVisualiser topRow;
+
         public void SetContent(IPlatformClass pc){
             Content = pc;
 
@@ -77,13 +79,13 @@ namespace m0.UIWpf
 
             DockPanel.SetDock(fe, Dock.Bottom);
 
-            WrapVisualiser w = new WrapVisualiser();
+            topRow = new WrapVisualiser();
 
-            w.Scale = 0.6;            
+            topRow.Scale = 0.6;            
 
-            GraphUtil.ReplaceEdge(w.Vertex.Get(false, "BaseEdge:"), "To", pc.Vertex);
+            GraphUtil.ReplaceEdge(topRow.Vertex.Get(false, "BaseEdge:"), "To", pc.Vertex);
            
-            this.expander.Content = w;
+            this.expander.Content = topRow;
         }
     }
 

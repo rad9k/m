@@ -12,6 +12,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using m0.Foundation;
+using m0.User.Process.UX;
 using m0.ZeroTypes;
 
 namespace m0.UIWpf.Dialog
@@ -42,8 +43,16 @@ namespace m0.UIWpf.Dialog
        
 
         private void Button_Click_1(object sender, RoutedEventArgs e)
-        {            
+        {
+            ////////////////////////////////////////
+            Interaction.BeginInteractionWithGraph();
+            ////////////////////////////////////////
+
             Vertex.AddEdge(MetaVertex, this.To.Vertex.Get(false, @"BaseEdge:\To:\To:"));
+
+            ////////////////////////////////////////
+            Interaction.EndInteractionWithGraph();
+            ////////////////////////////////////////
 
             MinusZero.Instance.DefaultUserInteraction.CloseWindowByContent(this);
         }

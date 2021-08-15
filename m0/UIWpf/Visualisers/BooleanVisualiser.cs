@@ -14,6 +14,7 @@ using m0.UIWpf.Controls;
 using System.Windows;
 using m0.UIWpf.Commands;
 using m0.UIWpf.Visualisers.Helper;
+using m0.User.Process.UX;
 
 namespace m0.UIWpf.Visualisers
 {
@@ -37,6 +38,10 @@ namespace m0.UIWpf.Visualisers
         {
             base.OnToggle();
 
+            ////////////////////////////////////////
+            Interaction.BeginInteractionWithGraph();
+            ////////////////////////////////////////
+
             if (IsNull)
             {
                 IVertex r = MinusZero.Instance.Root;
@@ -47,9 +52,6 @@ namespace m0.UIWpf.Visualisers
 
                 if (from != null && meta != null)
                 {
-                    //GraphUtil.ReplaceEdge(Vertex.Get(false, "BaseEdge:"), "To", GraphUtil.SetVertexValue(from, meta, "True")); // NOT
-                    //GraphUtil.SetVertexValue(Vertex.Get(false, "BaseEdge:"), toMeta, GraphUtil.SetVertexValue(from, meta, "True")); // NOT!!!!
-
                     GraphUtil.CreateOrReplaceEdge(Vertex.Get(false, "BaseEdge:"), toMeta, GraphUtil.SetVertexValue(from, meta, "True"));
 
                     IsNull = false;
@@ -63,6 +65,10 @@ namespace m0.UIWpf.Visualisers
                 else
                     Vertex.Get(false, @"BaseEdge:\To:").Value = "False";
             }
+
+            //////////////////////////////////////
+            Interaction.EndInteractionWithGraph();
+            //////////////////////////////////////
         }
 
         public void UpdateBaseEdge(){

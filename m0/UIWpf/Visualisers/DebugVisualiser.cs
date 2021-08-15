@@ -14,42 +14,23 @@ using m0.UIWpf.Foundation;
 using m0.UIWpf.Controls;
 using m0.UIWpf.Commands;
 using System.Windows;
+using m0.UIWpf.Visualisers.Helper;
+using m0.User.Process.UX;
 
 namespace m0.UIWpf.Visualisers
 {
-    public class DebugVisualiser : TextBlock, IPlatformClass, IDisposable, IHasLocalizableEdges
+    public class DebugVisualiser : StackPanel, IVisualiser
     {
+        public GenericVisualiserHelper VisualiserHelper { get; set; }
+
         public DebugVisualiser()
-        {
-            MinusZero mz = MinusZero.Instance;            
-
-            if (mz != null && mz.IsInitialized)
-            {
-                Vertex = mz.CreateTempVertex();
-
-                Vertex.Value = "StringViewVisualiser" + this.GetHashCode();
-
-                ClassVertex.AddIsClassAndAllAttributesAndAssociations(Vertex, mz.Root.Get(false, @"System\Meta\Visualiser\StringView"));
-
-                ClassVertex.AddIsClassAndAllAttributesAndAssociations(Vertex.Get(false, "BaseEdge:"), mz.Root.Get(false, @"System\Meta\ZeroTypes\Edge"));         
-
-                this.PreviewMouseLeftButtonDown += dndPreviewMouseLeftButtonDown;
-                this.PreviewMouseMove += dndPreviewMouseMove;
-                this.Drop+=dndDrop;
-                this.AllowDrop = true;
-
-                this.MouseEnter += dndMouseEnter;
-
-                this.Loaded += new RoutedEventHandler(OnLoad);
-
-                this.FontFamily = new FontFamily("Consolas");
-            }
+        {            
+            new GenericVisualiserHelper(this, "DebugVisualiser", this, false, new List<string> { @"BaseEdge:", @"BaseEdge:\To:", @"BaseEdge:\To:\", @"SelectedEdges:" }, "ListVisualiser");
         }
 
-        void OnLoad(object sender, RoutedEventArgs e)
+        public void OnLoad(object sender, RoutedEventArgs e)
         {
-            if (!WpfUtil.HasParentsGotContextMenu(this))
-                this.ContextMenu = new m0ContextMenu(this);
+            VisualiserHelper.AddContextMenu();
         }
 
         string GetEdgeString(IVertex meta, IVertex to)
@@ -76,13 +57,70 @@ namespace m0.UIWpf.Visualisers
             return ret;
         }
 
-        private void UpdateBaseEdge()
+        private void AddLine(StringBuilder sb)
+        {
+            TextBlock tb = new TextBlock();
+                
+            tb.FontFamily = new FontFamily("Consolas");
+
+            tb.Text = sb.ToString();
+
+            this.Children.Add(tb);
+        }
+
+        private void AddVertexLine(string s, IVertex v)
+        {
+            StackPanel sp = new StackPanel();
+
+            TextBlock tb = new TextBlock();
+
+            tb.FontFamily = new FontFamily("Consolas");
+
+            tb.Text = " " + s;
+
+            Button b = new Button();
+
+            b.Tag = v;
+
+            b.Width = 10;
+            b.Height = 10;
+
+            b.Content = "go";
+
+            b.Click += GoEvent;
+
+            sp.Orientation = Orientation.Horizontal;
+
+            sp.Children.Add(b);
+            sp.Children.Add(tb);
+
+            this.Children.Add(sp);
+        }        
+
+        private void GoEvent(object sender, RoutedEventArgs e)
+        {
+            IVertex v = (IVertex)((Button)e.Source).Tag;
+
+            ////////////////////////////////////////
+            Interaction.BeginInteractionWithGraph();
+            ////////////////////////////////////////
+
+            GraphUtil.ReplaceEdge(Vertex.Get(false, @"BaseEdge:"), Edge.ToMeta, v);
+
+            ////////////////////////////////////////
+            Interaction.EndInteractionWithGraph();
+            ////////////////////////////////////////
+        }
+
+        public void UpdateBaseEdge()
         {
             IVertex mv = Vertex.Get(false, @"BaseEdge:\Meta:");
             IVertex bv = Vertex.Get(false, @"BaseEdge:\To:");
 
             if (bv != null)
-            {                
+            {
+                this.Children.Clear();
+
                 StringBuilder sb = new StringBuilder();
 
                 sb.AppendLine(GetEdgeString(mv, bv));
@@ -91,73 +129,46 @@ namespace m0.UIWpf.Visualisers
 
                 sb.AppendLine("INPUT EDGES RAW [" + bv.InEdgesRaw.Count + "]:");
 
-                sb.AppendLine();
+                //sb.AppendLine();
+
+                AddLine(sb);
 
                 foreach (IEdge e in bv.InEdgesRaw)
-                    sb.AppendLine(GetEdgeString(e.Meta, e.From));
+                    AddVertexLine(GetEdgeString(e.Meta, e.From), e.From);
+                
+
+                sb.Clear();
 
                 sb.AppendLine();
 
                 sb.AppendLine("OUTPUT EDGES RAW [" + bv.OutEdgesRaw.Count + "]:");
 
-                sb.AppendLine();
+                //sb.AppendLine();
+
+                AddLine(sb);
 
                 foreach (IEdge e in bv.OutEdgesRaw)
-                    sb.AppendLine(GetEdgeString(e.Meta, e.To));
-
-                this.Text = sb.ToString();
+                    AddVertexLine(GetEdgeString(e.Meta, e.To), e.To);                       
 
                 return;
             }
             else
             {
-                this.Text = "Ø";
+                this.Children.Clear();
+
                 return;
-            }
-
-          
+            }        
         }
-
-        protected void VertexChange(object sender, VertexChangeEventArgs e)
-        {
-            if ((sender == Vertex) && (e.Type == VertexChangeType.EdgeAdded) && (GeneralUtil.CompareStrings(e.Edge.Meta.Value, "BaseEdge")))
-                UpdateBaseEdge();                        
-
-            if ((sender == Vertex.Get(false, "BaseEdge:")) && (e.Type == VertexChangeType.EdgeAdded) && (GeneralUtil.CompareStrings(e.Edge.Meta.Value, "To"))
-                || (sender == Vertex.Get(false, @"BaseEdge:\To:") && e.Type == VertexChangeType.ValueChanged))            
-                UpdateBaseEdge();            
-        }        
-
-        private IVertex _Vertex;
 
         public IVertex Vertex
         {
-            get { return _Vertex; }
-            set
-            {
-                if (_Vertex != null)
-                    PlatformClass.RemoveVertexChangeListeners(this.Vertex, new VertexChange(VertexChange));
-
-                _Vertex = value;
-
-                PlatformClass.RegisterVertexChangeListeners(this.Vertex, new VertexChange(VertexChange), new string[] { "BaseEdge", "SelectedEdges" });
-
-                UpdateBaseEdge();
-            }
+            get { return VisualiserHelper._Vertex; }
+            set { VisualiserHelper.SetVertex(value); }
         }
-
-        bool IsDisposed = false;
 
         public void Dispose()
         {
-            if (IsDisposed == false)
-            {
-                IsDisposed = true;
-                PlatformClass.RemoveVertexChangeListeners(this.Vertex, new VertexChange(VertexChange));
-
-                if (Vertex is IDisposable)
-                    ((IDisposable)Vertex).Dispose();
-            }
+            VisualiserHelper.Dispose();
         }
 
         public IVertex GetEdgeByLocation(System.Windows.Point point)
@@ -173,59 +184,6 @@ namespace m0.UIWpf.Visualisers
         public System.Windows.FrameworkElement GetVisualElementByEdge(IVertex vertex)
         {
             throw new NotImplementedException();
-        }
-
-        ///// DRAG AND DROP
-
-        Point dndStartPoint;        
-
-        private void dndPreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
-        {
-            dndStartPoint = e.GetPosition(this);
-
-            MinusZero.Instance.IsGUIDragging = false;
-
-            hasButtonBeenDown = true;
-        }
-
-        bool isDraggin = false;
-        bool hasButtonBeenDown;
-
-        private void dndPreviewMouseMove(object sender, MouseEventArgs e)
-        {
-            Point mousePos = e.GetPosition(this);
-            Vector diff = dndStartPoint - mousePos;
-
-            if (hasButtonBeenDown && isDraggin == false && (e.LeftButton == MouseButtonState.Pressed) && (
-                (Math.Abs(diff.X) > Dnd.MinimumHorizontalDragDistance) ||
-                (Math.Abs(diff.Y) > Dnd.MinimumVerticalDragDistance)))
-            {
-                if (Vertex.Get(false, @"BaseEdge:\To:") != null)
-                {
-                    isDraggin = true;
-
-                    IVertex dndVertex = MinusZero.Instance.CreateTempVertex();
-                 
-                    dndVertex.AddEdge(null, Vertex.Get(false, @"BaseEdge:"));
-
-                    DataObject dragData = new DataObject("Vertex", dndVertex);
-                    dragData.SetData("DragSource", this);
-
-                    Dnd.DoDragDrop(this, dragData);
-
-                    isDraggin = false;
-                }
-            }           
-        }
-
-        private void dndDrop(object sender, DragEventArgs e)
-        {
-            Dnd.DoDrop(this,Vertex.Get(false, @"BaseEdge:\To:"), e);
-        }
-
-        private void dndMouseEnter(object sender, MouseEventArgs e)
-        {
-            hasButtonBeenDown = false;
         }
     }
 }

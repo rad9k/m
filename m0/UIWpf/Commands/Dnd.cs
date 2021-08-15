@@ -1,6 +1,7 @@
 ﻿using m0.Foundation;
 using m0.Graph;
 using m0.UIWpf.Foundation;
+using m0.User.Process.UX;
 using m0.Util;
 using m0.ZeroTypes;
 using System;
@@ -42,11 +43,15 @@ namespace m0.UIWpf.Commands
 
                 IEdge ee = dndVertex.FirstOrDefault();
 
+                ////////////////////////////////////////
+                Interaction.BeginInteractionWithGraph();
+                ////////////////////////////////////////
+
                 if (ee != null)
                 {
                     GraphUtil.CreateOrReplaceEdge(baseEdge.Get(false, "To:"), r.Get(false, @"System\Meta\ZeroTypes\Edge\Meta"), ee.To.Get(false, "Meta:"));
-                    GraphUtil.CreateOrReplaceEdge(baseEdge.Get(false, "To:"), r.Get(false, @"System\Meta\ZeroTypes\Edge\To"), ee.To.Get(false, "To:"));                    
-
+                    GraphUtil.CreateOrReplaceEdge(baseEdge.Get(false, "To:"), r.Get(false, @"System\Meta\ZeroTypes\Edge\To"), ee.To.Get(false, "To:"));
+                 
                     //GraphUtil.ReplaceEdge(baseEdge.Get(false, "To:"), "Meta", ee.To.Get(false, "Meta:"));
                     //GraphUtil.ReplaceEdge(baseEdge.Get(false, "To:"), "To", ee.To.Get(false, "To:"));
                 }
@@ -55,6 +60,11 @@ namespace m0.UIWpf.Commands
                     ((IHasSelectableEdges)sender).UnselectAllSelectedEdges();
 
                 GraphUtil.RemoveAllEdges_WhereEdgeIsEdge(dndVertex);
+
+                ////////////////////////////////////////
+                Interaction.EndInteractionWithGraph();
+                ////////////////////////////////////////
+
             }
 
             MinusZero.Instance.IsGUIDragging = false;
@@ -67,11 +77,15 @@ namespace m0.UIWpf.Commands
             object sender = e.Data.GetData("DragSource");
 
             if (sender == null || orgin == sender)
-                return;
+                return;                    
 
             if (e.Data.GetDataPresent("Vertex"))
             {
                 IVertex dndVertex = e.Data.GetData("Vertex") as IVertex;
+
+                ////////////////////////////////////////
+                Interaction.BeginInteractionWithGraph();
+                ////////////////////////////////////////
 
                 IEdge ee = dndVertex.FirstOrDefault();
 
@@ -88,6 +102,10 @@ namespace m0.UIWpf.Commands
                     ((IHasSelectableEdges)sender).UnselectAllSelectedEdges();
 
                 GraphUtil.RemoveAllEdges_WhereEdgeIsEdge(dndVertex);
+
+                ////////////////////////////////////////
+                Interaction.EndInteractionWithGraph();
+                ////////////////////////////////////////
             }
 
             MinusZero.Instance.IsGUIDragging = false;
@@ -102,6 +120,10 @@ namespace m0.UIWpf.Commands
 
             if (e.Data.GetDataPresent("Vertex"))
             {
+                ////////////////////////////////////////
+                Interaction.BeginInteractionWithGraph();
+                ////////////////////////////////////////
+                
                 IVertex dndVertex = e.Data.GetData("Vertex") as IVertex;
 
                 IVertex maxCardinality = metaVertex.Get(false, "$MaxCardinality:");
@@ -117,6 +139,10 @@ namespace m0.UIWpf.Commands
                     ((IHasSelectableEdges)sender).UnselectAllSelectedEdges();
 
                 GraphUtil.RemoveAllEdges_WhereEdgeIsEdge(dndVertex);
+
+                ////////////////////////////////////////
+                Interaction.EndInteractionWithGraph();
+                ////////////////////////////////////////
             }
 
             MinusZero.Instance.IsGUIDragging = false;
@@ -139,6 +165,10 @@ namespace m0.UIWpf.Commands
             {
                 IVertex dndVertex = e.Data.GetData("Vertex") as IVertex;
 
+                ////////////////////////////////////////
+                Interaction.BeginInteractionWithGraph();
+                ////////////////////////////////////////
+
                 foreach (IEdge ee in dndVertex)
                     if (doCopy)
                         baseVertex.AddEdge(ee.To.Get(false, "Meta:"), ee.To.Get(false, "To:"));
@@ -155,6 +185,10 @@ namespace m0.UIWpf.Commands
                     ((IHasSelectableEdges)sender).UnselectAllSelectedEdges();
 
                 GraphUtil.RemoveAllEdges_WhereEdgeIsEdge(dndVertex);
+
+                ////////////////////////////////////////
+                Interaction.EndInteractionWithGraph();
+                ////////////////////////////////////////
             }
 
             MinusZero.Instance.IsGUIDragging = false;

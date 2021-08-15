@@ -15,6 +15,7 @@ using m0.Foundation;
 using m0.ZeroTypes;
 using m0.Graph;
 using m0.Util;
+using m0.User.Process.UX;
 
 namespace m0.UIWpf.Dialog
 {
@@ -36,8 +37,11 @@ namespace m0.UIWpf.Dialog
 
             Vertex = _Vertex;
 
-            
-            IVertex MetaEdge=MinusZero.Instance.CreateTempVertex();   
+            ////////////////////////////////////////
+            Interaction.BeginInteractionWithGraph();
+            ////////////////////////////////////////
+
+            IVertex MetaEdge =MinusZero.Instance.CreateTempVertex();   
                      
             Edge.AddEdgeVertexEdgesOnlyTo(MetaEdge, MinusZero.Instance.Empty);
 
@@ -50,20 +54,30 @@ namespace m0.UIWpf.Dialog
 
             GraphUtil.ReplaceEdge(this.To.Vertex.Get(false, "BaseEdge:"), "To", ToEdge);
 
-
+            //////////////////////////////////////
+            Interaction.EndInteractionWithGraph();
+            //////////////////////////////////////
 
         }
 
-    
+
 
         private void Button_Click_1(object sender, RoutedEventArgs e)
         {
             //if (!GeneralUtil.CompareStrings(this.To.Vertex.Get(false, @"BaseEdge:\To:\To:").Value, "$Empty")) // can make edge to $Empty
             {
+                ////////////////////////////////////////
+                Interaction.BeginInteractionWithGraph();
+                ////////////////////////////////////////
+                
                 if (GeneralUtil.CompareStrings(this.Meta.Vertex.Get(false, @"BaseEdge:\To:\To:").Value, "$Empty"))
                     Vertex.AddEdge(null, this.To.Vertex.Get(false, @"BaseEdge:\To:\To:"));
                 else
                     Vertex.AddEdge(this.Meta.Vertex.Get(false, @"BaseEdge:\To:\To:"), this.To.Vertex.Get(false, @"BaseEdge:\To:\To:"));
+
+                //////////////////////////////////////
+                Interaction.EndInteractionWithGraph();
+                //////////////////////////////////////
 
                 To.Dispose(); // TO BE ADDED TO ALL DIALOGS !!!!!!!
 

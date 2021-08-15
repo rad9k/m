@@ -128,12 +128,20 @@ namespace m0.UIWpf.Visualisers.Helper
             {
                 IsDisposed = true;
 
+                ////////////////////////////////////////
+                Interaction.BeginInteractionWithGraph();
+                ////////////////////////////////////////
+
                 visualiserVertexEdge.From.DeleteEdge(visualiserVertexEdge);
 
                 ExecutionFlowHelper.RemoveGraphChangeListener(graphChangeListenerEdge);                
 
                 if (_Vertex is IDisposable)
                     ((IDisposable)_Vertex).Dispose();
+
+                ////////////////////////////////////////
+                Interaction.EndInteractionWithGraph();
+                ////////////////////////////////////////
             }
         }
 

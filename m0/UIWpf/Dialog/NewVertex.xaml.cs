@@ -15,6 +15,7 @@ using m0.Foundation;
 using m0.ZeroTypes;
 using m0.Graph;
 using m0.Util;
+using m0.User.Process.UX;
 
 namespace m0.UIWpf.Dialog
 {
@@ -54,6 +55,10 @@ namespace m0.UIWpf.Dialog
         {
             MinusZero.Instance.DefaultUserInteraction.CloseWindowByContent(this);
 
+            ////////////////////////////////////////
+            Interaction.BeginInteractionWithGraph();
+            ////////////////////////////////////////
+
             if (GeneralUtil.CompareStrings(this.Schema.Vertex.Get(false, @"BaseEdge:\To:\To:").Value, "$Empty"))
                 Vertex.AddVertex(null, this.Content.Text);
             else
@@ -69,6 +74,10 @@ namespace m0.UIWpf.Dialog
                 if (VertexOperations.GetChildEdges(meta).Count() > 0)
                     MinusZero.Instance.DefaultUserInteraction.Edit(v, null);
             }
+
+            ////////////////////////////////////////
+            Interaction.EndInteractionWithGraph();
+            ////////////////////////////////////////
         }
 
         private void Button_Click_1(object sender, RoutedEventArgs e)

@@ -8,6 +8,7 @@ using m0.Graph;
 using m0.ZeroTypes;
 using m0.Util;
 using m0.UIWpf.Dialog;
+using m0.User.Process.UX;
 
 namespace m0.UIWpf.Commands
 {
@@ -79,6 +80,10 @@ namespace m0.UIWpf.Commands
             IVertex Vertex = baseVertex.Get(false, "To:");
             IVertex MetaVertex = inputVertex;
 
+            ////////////////////////////////////////
+            Interaction.BeginInteractionWithGraph();
+            ////////////////////////////////////////
+
             IVertex v = VertexOperations.AddInstance(Vertex, MetaVertex);
 
             if (VertexOperations.GetChildEdges(MetaVertex).Count() > 0)
@@ -89,6 +94,10 @@ namespace m0.UIWpf.Commands
 
                 MinusZero.Instance.DefaultUserInteraction.ShowContentFloating(d, FloatingWindowSize.Micro);
             }
+
+            ////////////////////////////////////////
+            Interaction.EndInteractionWithGraph();
+            ////////////////////////////////////////
 
             return null;
         }

@@ -80,16 +80,22 @@ namespace m0.UIWpf.Visualisers
 
         protected void UpdateBaseEdge()
         {
-            IVertex bas = Vertex.Get(false, @"BaseEdge:\To:");
+            IVertex baseEdgeTo = Vertex.Get(false, @"BaseEdge:\To:");
 
-            if (bas != null)
+            IVertex meta = Vertex.Get(false, @"BaseEdge:\To:\$Is:");
+
+  
+            if (baseEdgeTo != null && meta != null)
             {
                 Children.Clear();
 
-                foreach (IEdge e in bas)
+                foreach (IEdge e in VertexOperations.GetChildEdges(meta))
                 {
-                    if(e.Meta.Get(false, "$Hide:")==null)
-                        AddEdge(e);
+                    IEdge ee = GraphUtil.GetQueryOutFirstEdge(baseEdgeTo, e.To.Value, null);
+                    
+                    if(ee != null)
+                        if(ee.Meta.Get(false, "$Hide:") == null)
+                            AddEdge(ee);
                 }
             }
             
