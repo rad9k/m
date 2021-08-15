@@ -243,8 +243,6 @@ namespace m0.UIWpf.Visualisers
             
         }
 
-        
-
         public NumberVisualiser()
         {
             new GenericVisualiserHelper(this, visualiserName, this);
@@ -373,7 +371,7 @@ namespace m0.UIWpf.Visualisers
             else
             //if (bv != null && bv.Value != null)
             {
-                IsNull = false;
+                //IsNull = false;
 
                 ValueChangeing = true;
 
@@ -385,8 +383,9 @@ namespace m0.UIWpf.Visualisers
 
                 if(value==null)
                     value = (T)bv.Value;
-
+                
                 CreateComposite();
+                IsNull = false;
 
                 TextBox.Text = value.ToString();
 
