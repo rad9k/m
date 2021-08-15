@@ -24,6 +24,9 @@ namespace m0.UIWpf.Visualisers.Helper
     {
         IVisualiser visualiser;
         FrameworkElement visualiserAsFrameworkElement;
+
+        IEdge visualiserVertexEdge;
+
         IList<string> scopeQueries;
         string scopeQueriesName;
 
@@ -56,16 +59,18 @@ namespace m0.UIWpf.Visualisers.Helper
             visualiserName = _visualiserName + this.GetHashCode();
 
             if (mz != null && mz.IsInitialized)
-            {
+            {                
                 visualiser.Vertex = mz.CreateTempVertex();
 
                 visualiser.Vertex.Value = visualiserName;
 
                 ClassVertex.AddIsClassAndAllAttributesAndAssociations(visualiser.Vertex, mz.Root.Get(false, @"System\Meta\Visualiser\String"));
 
-                ClassVertex.AddIsClassAndAllAttributesAndAssociations(visualiser.Vertex.Get(false, "BaseEdge:"), mz.Root.Get(false, @"System\Meta\ZeroTypes\Edge"));
+                ClassVertex.AddIsClassAndAllAttributesAndAssociations(visualiser.Vertex.Get(false, "BaseEdge:"), 
+                    mz.Root.Get(false, @"System\Meta\ZeroTypes\Edge"));
 
-                mz.Root.Get(false, @"User\CurrentUser:\Session:\Visualisers:").AddEdge(mz.Root.Get(false, @"Meta\User\VisualiserList\Visualiser"), visualiser.Vertex);
+                visualiserVertexEdge = mz.Root.Get(false, @"User\CurrentUser:\Session:\Visualisers:").
+                    AddEdge(mz.Root.Get(false, @"Meta\User\VisualiserList\Visualiser"), visualiser.Vertex);
 
 
                 visualiserAsFrameworkElement.Loaded += new RoutedEventHandler(visualiser.OnLoad);
@@ -122,6 +127,8 @@ namespace m0.UIWpf.Visualisers.Helper
             if (IsDisposed == false)
             {
                 IsDisposed = true;
+
+                visualiserVertexEdge.From.DeleteEdge(visualiserVertexEdge);
 
                 ExecutionFlowHelper.RemoveGraphChangeListener(graphChangeListenerEdge);                
 

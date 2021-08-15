@@ -29,7 +29,7 @@ namespace m0.UIWpf.Visualisers
         {
             this.AcceptsReturn = true;
 
-            new GenericVisualiserHelper(this, "TestVisualiser", this);
+            new GenericVisualiserHelper(this, "StringVisualiser", this);
         }
 
         public void OnLoad(object sender, RoutedEventArgs e)

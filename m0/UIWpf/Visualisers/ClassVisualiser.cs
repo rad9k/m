@@ -28,7 +28,7 @@ namespace m0.UIWpf.Visualisers
         {
            this.Padding = new Thickness(2);
 
-            new GenericVisualiserHelper(this, "TestVisualiser", this, false, new List<string> { @"BaseEdge:", @"BaseEdge:\", @"BaseEdge:\To:\", @"SelectedEdges:" }, "ListVisualiser");
+            new GenericVisualiserHelper(this, "ClassVisualiser", this, false, new List<string> { @"BaseEdge:", @"BaseEdge:\", @"BaseEdge:\To:\", @"SelectedEdges:" }, "ListVisualiser");
         }
 
         public void OnLoad(object sender, RoutedEventArgs e)
