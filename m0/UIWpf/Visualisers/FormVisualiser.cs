@@ -265,7 +265,7 @@ namespace m0.UIWpf.Visualisers
 
         public void UpdateBaseEdge()
         {
-            DispachAllSubVisualisers();
+            DispachAllSubVisualisers();            
 
             BaseVertexEdgeAdded_PreFill = false;
             BaseVertexEdgeAdded = false;
@@ -301,6 +301,8 @@ namespace m0.UIWpf.Visualisers
                 IVertex metaForForm = getMetaForForm();
 
                 PreFillForm();
+
+                return;
 
                 InitializeControlContent();
 
