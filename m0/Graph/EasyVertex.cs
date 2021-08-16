@@ -38,6 +38,9 @@ namespace m0.Graph
             set{
                 object oldValue = _Value;
 
+                if (value == null)
+                    return;
+
                 _Value = value;
 
                 ValueChanged();
@@ -451,14 +454,6 @@ namespace m0.Graph
             Store.RemoveVertexIdentifier(this);
 
             DisposedState = DisposeStateEnum.Disposed;
-
-            if (CanEmitGraphChangeEvents)
-                ExecutionFlowHelper.AddTransactionAtom(new GraphChangeTransactionAtom(
-                    this,
-                    GraphChangeEnum.VertexDisposed,
-                    Value,
-                    null,
-                    null));
         }
 
         public void DeleteAllInEdges()

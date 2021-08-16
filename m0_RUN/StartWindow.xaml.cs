@@ -57,7 +57,7 @@ namespace m0
 
             List<string> scopelist = new List<string>();
 
-            scopelist.Add("kupa");
+          //  scopelist.Add("kupa");
 
             IVertex trigger = ExecutionFlowHelper.AddGraphChangeTrigger(v, scopelist).To;
 
