@@ -26,13 +26,16 @@ namespace m0.UIWpf.Visualisers
 
         public BooleanVisualiser()
         {
-            new GenericVisualiserHelper(this, "BooleanVisualiser", this);
+            new GenericVisualiserHelper(MinusZero.Instance.Root.Get(false, @"System\Meta\Visualiser\Boolean"),
+                this, "BooleanVisualiser", this);
         }
 
         public void OnLoad(object sender, RoutedEventArgs e)
         {
             VisualiserHelper.AddContextMenu();
         }
+
+        public void ZoomVisualiserContentChange() { }
 
         protected override void OnToggle()
         {

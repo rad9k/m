@@ -166,7 +166,7 @@ namespace m0.UIWpf.Visualisers
             }
         }
 
-        protected void ChangeZoomVisualiserContent()
+        protected void ZoomVisualiserContentChange()
         {
             double scale = ((double)GraphUtil.GetIntegerValue(Vertex.Get(false, "ZoomVisualiserContent:")))/100;
 
@@ -326,7 +326,7 @@ namespace m0.UIWpf.Visualisers
                 ResetView();
 
             if (sender == Vertex.Get(false, "ZoomVisualiserContent:") && e.Type == VertexChangeType.ValueChanged)
-                ChangeZoomVisualiserContent();
+                ZoomVisualiserContentChange();
 
             if (sender == Vertex.Get(false, "FilterQuery:") && e.Type == VertexChangeType.ValueChanged)
                 UpdateBaseEdge();

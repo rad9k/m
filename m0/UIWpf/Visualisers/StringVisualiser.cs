@@ -29,13 +29,16 @@ namespace m0.UIWpf.Visualisers
         {
             this.AcceptsReturn = true;
 
-            new GenericVisualiserHelper(this, "StringVisualiser", this);
+            new GenericVisualiserHelper(MinusZero.Instance.Root.Get(false, @"System\Meta\Visualiser\String"), 
+                this, "StringVisualiser", this);
         }
 
         public void OnLoad(object sender, RoutedEventArgs e)
         {
             VisualiserHelper.AddContextMenu();
         }
+
+        public void ZoomVisualiserContentChange() { }
 
         protected override void OnDragEnter(DragEventArgs e) { } // Do not want standard base implemention, that prevents allow drop
 

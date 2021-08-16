@@ -25,13 +25,16 @@ namespace m0.UIWpf.Visualisers
 
         public DebugVisualiser()
         {            
-            new GenericVisualiserHelper(this, "DebugVisualiser", this, false, new List<string> { @"BaseEdge:", @"BaseEdge:\To:", @"BaseEdge:\To:\", @"SelectedEdges:" }, "ListVisualiser");
+            new GenericVisualiserHelper(MinusZero.Instance.Root.Get(false, @"System\Meta\Visualiser\Debug"), 
+                this, "DebugVisualiser", this, false, new List<string> { @"", @"BaseEdge:\", @"BaseEdge:\To:\" }, "ListVisualiser");
         }
 
         public void OnLoad(object sender, RoutedEventArgs e)
         {
             VisualiserHelper.AddContextMenu();
         }
+
+        public void ZoomVisualiserContentChange() { }
 
         string GetEdgeString(IVertex meta, IVertex to)
         {

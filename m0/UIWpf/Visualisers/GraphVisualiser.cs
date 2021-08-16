@@ -573,7 +573,7 @@ namespace m0.UIWpf.Visualisers
             }
         }
 
-        protected void ChangeZoomVisualiserContent()
+        public void ZoomVisualiserContentChange()
         {
             double scale = ((double)GraphUtil.GetIntegerValue(Vertex.Get(false, "ZoomVisualiserContent:"))) / 100;
 
@@ -762,7 +762,7 @@ namespace m0.UIWpf.Visualisers
                 { SelectedVerticesUpdated(); return; }
 
             if (sender == Vertex.Get(false, "ZoomVisualiserContent:") && e.Type == VertexChangeType.ValueChanged)
-                { ChangeZoomVisualiserContent(); return; }
+                { ZoomVisualiserContentChange(); return; }
 
             if (sender == Vertex.Get(false, "VisualiserCircleSize:") && e.Type == VertexChangeType.ValueChanged)
                 { PaintGraph(); return; }

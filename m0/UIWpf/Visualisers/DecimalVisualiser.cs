@@ -20,9 +20,15 @@ namespace m0.UIWpf.Visualisers
 {
     public class DecimalVisualiser : NumberVisualiser<decimal?>
     {
+        protected new string visualiserName { get { return "IntegerVisualiser"; } set { } }
+
+        protected new IVertex visualiserMetaVertex { get { return MinusZero.Instance.Root.Get(false, @"System\Meta\Visualiser\Integer"); } set { } }
+
         public DecimalVisualiser() : base()
         {
             visualiserName = "DecimalVisualiser";
+
+            visualiserMetaVertex = MinusZero.Instance.Root.Get(false, @"System\Meta\Visualiser\Decimal");
         }
     }
 }

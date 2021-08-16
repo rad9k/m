@@ -26,7 +26,8 @@ namespace m0.UIWpf.Visualisers
         {
             this.Background = (Brush)FindResource("0LightGrayBrush");
 
-            new GenericVisualiserHelper(this, "EdgeVisualiser", this, false, new List<string> { @"BaseEdge:\To:" }, "AtomVisualiser");
+            new GenericVisualiserHelper(MinusZero.Instance.Root.Get(false, @"System\Meta\Visualiser\Edge"), 
+                this, "EdgeVisualiser", this, false, new List<string> { @"BaseEdge:\To:" }, "AtomVisualiser");
 
             this.PreviewMouseLeftButtonDown += dndPreviewMouseLeftButtonDown;
             this.PreviewMouseMove += dndPreviewMouseMove;
@@ -40,6 +41,8 @@ namespace m0.UIWpf.Visualisers
         {
             VisualiserHelper.AddContextMenu();
         }
+
+        public void ZoomVisualiserContentChange() { }
 
         public void UpdateBaseEdge()
         {

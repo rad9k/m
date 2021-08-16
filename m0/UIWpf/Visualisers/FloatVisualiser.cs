@@ -23,6 +23,8 @@ namespace m0.UIWpf.Visualisers
         public FloatVisualiser() : base()
         {
             visualiserName = "FloatVisualiser";
+
+            visualiserMetaVertex = MinusZero.Instance.Root.Get(false, @"System\Meta\Visualiser\Float");
         }
     }
 }

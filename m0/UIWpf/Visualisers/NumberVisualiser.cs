@@ -35,7 +35,8 @@ namespace m0.UIWpf.Visualisers
 
     public class NumberVisualiser<T> : Grid, IVisualiser where T : new()    {
 
-        protected string visualiserName;
+        protected string visualiserName { get; set; }
+        protected IVertex visualiserMetaVertex { get; set; }
 
         public GenericVisualiserHelper VisualiserHelper { get; set; }
 
@@ -245,7 +246,7 @@ namespace m0.UIWpf.Visualisers
 
         public NumberVisualiser()
         {
-            new GenericVisualiserHelper(this, visualiserName, this, false, new List<string> { @"BaseEdge:\To:" }, "AtomVisualiser");
+            new GenericVisualiserHelper(visualiserMetaVertex, this, visualiserName, this, false, new List<string> { @"BaseEdge:\To:" }, "AtomVisualiser");
 
             // need custom dnd becouse of slider / mouse move
             this.PreviewMouseLeftButtonDown += dndPreviewMouseLeftButtonDown;
@@ -264,6 +265,8 @@ namespace m0.UIWpf.Visualisers
         {
             VisualiserHelper.AddContextMenu();
         }
+
+        public void ZoomVisualiserContentChange() { }
 
         protected void OnBoxTextChanged(object sender, TextChangedEventArgs e)
         {

@@ -209,7 +209,7 @@ namespace m0.UIWpf.Visualisers
                 this.Text = "Ø";
         }
 
-        protected void ChangeZoomVisualiserContent()
+        protected void ZoomVisualiserContentChange()
         {
             double scale = ((double)GraphUtil.GetDoubleValue(Vertex.Get(false, "ZoomVisualiserContent:")));
 
@@ -227,7 +227,7 @@ namespace m0.UIWpf.Visualisers
                 UpdateBaseEdge();
 
             if (sender == Vertex.Get(false, "ZoomVisualiserContent:") && e.Type == VertexChangeType.ValueChanged)
-                ChangeZoomVisualiserContent();
+                ZoomVisualiserContentChange();
 
             if (sender == Vertex.Get(false, "ShowWhiteSpace:") && e.Type == VertexChangeType.ValueChanged)
                 UpdateEditView();

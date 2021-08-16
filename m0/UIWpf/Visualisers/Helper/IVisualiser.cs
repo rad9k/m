@@ -16,5 +16,7 @@ namespace m0.UIWpf.Visualisers.Helper
         void OnLoad(object sender, RoutedEventArgs e);
 
         void UpdateBaseEdge();
+
+        void ZoomVisualiserContentChange();
     }
 }

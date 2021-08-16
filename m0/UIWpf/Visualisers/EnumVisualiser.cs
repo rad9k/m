@@ -24,13 +24,16 @@ namespace m0.UIWpf.Visualisers
 
         public EnumVisualiser()
         {
-            new GenericVisualiserHelper(this, "EnumVisualiser", this);
+            new GenericVisualiserHelper(MinusZero.Instance.Root.Get(false, @"System\Meta\Visualiser\Enum"),
+                this, "EnumVisualiser", this);
         }
 
         public void OnLoad(object sender, RoutedEventArgs e)
         {
             VisualiserHelper.AddContextMenu();
         }
+
+        public void ZoomVisualiserContentChange() { }
 
         bool DoingSelectionChanged = false;
 

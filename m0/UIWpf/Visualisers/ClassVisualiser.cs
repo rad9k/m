@@ -28,13 +28,16 @@ namespace m0.UIWpf.Visualisers
         {
            this.Padding = new Thickness(2);
 
-           new GenericVisualiserHelper(this, "ClassVisualiser", this, false, new List<string> { @"BaseEdge:", @"BaseEdge:\", @"BaseEdge:\To:\", @"SelectedEdges:" }, "ListVisualiser");
+           new GenericVisualiserHelper(MinusZero.Instance.Root.Get(false, @"System\Meta\Visualiser\Class"), 
+               this, "ClassVisualiser", this, false, new List<string> { @"", @"BaseEdge:\", @"BaseEdge:\To:\"}, "ListVisualiser");
         }
 
         public void OnLoad(object sender, RoutedEventArgs e)
         {
             VisualiserHelper.AddContextMenu();
         }
+
+        public void ZoomVisualiserContentChange() { }
 
         public void UpdateBaseEdge()
         {

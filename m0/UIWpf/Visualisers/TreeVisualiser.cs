@@ -415,7 +415,7 @@ namespace m0.UIWpf.Visualisers
                     Items.Add(GetTreeViewItem(e, true));            
         }
 
-        protected void ChangeZoomVisualiserContent()
+        protected void ZoomVisualiserContentChange()
         {
             double scale = ((double)GraphUtil.GetIntegerValue(Vertex.Get(false, "ZoomVisualiserContent:"))) / 100;
 
@@ -518,7 +518,7 @@ namespace m0.UIWpf.Visualisers
                 SelectedVerticesUpdated();
 
             if (sender == Vertex.Get(false, "ZoomVisualiserContent:") && e.Type == VertexChangeType.ValueChanged)
-                ChangeZoomVisualiserContent();                       
+                ZoomVisualiserContentChange();                       
         }
 
         private void EdgeRemoved(VertexChangeEventArgs e)

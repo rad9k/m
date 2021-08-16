@@ -717,35 +717,11 @@ namespace m0.UIWpf.Visualisers
             place.Children.Add(b);
         }
 
-        public FormVisualiser(){
+        public FormVisualiser() {             
+            new GenericVisualiserHelper(MinusZero.Instance.Root.Get(false, @"System\Meta\Visualiser\Form"),
+                this, "FormVisualiser", this, false, new List<string> { @"", @"BaseEdge:\", @"BaseEdge:\To:\" }, "ListVisualiser");
+
             SetVertexDefaultValues();
-
-            new GenericVisualiserHelper(this, "FormVisualiser", this, false, new List<string> { @"BaseEdge:\To:" }, "ListVisualiser");
-
-            MinusZero mz = MinusZero.Instance;
-
-            if (mz != null && mz.IsInitialized)
-            {
-                Vertex = mz.CreateTempVertex();
-
-                Vertex.Value = "FormVisualiser" + this.GetHashCode();
-
-                ClassVertex.AddIsClassAndAllAttributesAndAssociations(Vertex, mz.Root.Get(false, @"System\Meta\Visualiser\Form"));
-
-                ClassVertex.AddIsClassAndAllAttributesAndAssociations(Vertex.Get(false, "BaseEdge:"), mz.Root.Get(false, @"System\Meta\ZeroTypes\Edge"));
-
-                
-
-                this.Loaded += new RoutedEventHandler(OnLoad);
-
-               
-                // this.ContextMenu = new m0ContextMenu(this);
-
-                
-               // this.Drop += dndDrop; // only drop. no drag start from here
-               // this.AllowDrop = true;                    
-            }
-
         }
 
         protected virtual void SetVertexDefaultValues()
@@ -761,8 +737,7 @@ namespace m0.UIWpf.Visualisers
             // DO NOT WANT CONTEXTMENU HERE
         }
 
-
-        protected void ChangeZoomVisualiserContent()
+        public void ZoomVisualiserContentChange()
         {
             double scale = ((double)GraphUtil.GetIntegerValue(Vertex.Get(false, "ZoomVisualiserContent:"))) / 100;
 
@@ -770,54 +745,12 @@ namespace m0.UIWpf.Visualisers
                 this.LayoutTransform = new ScaleTransform(scale, scale);
             else
                 this.LayoutTransform = null;
-        }   
-
-        protected void VertexChange(object sender, VertexChangeEventArgs e)
-        {
-            if ((sender == Vertex) && (e.Type == VertexChangeType.EdgeAdded) && (GeneralUtil.CompareStrings(e.Edge.Meta.Value, "BaseEdge"))
-                || ((sender == Vertex.Get(false, "BaseEdge:")) && (e.Type == VertexChangeType.EdgeAdded) && ((GeneralUtil.CompareStrings(e.Edge.Meta.Value, "To")))))
-            {
-                UpdateBaseEdge();
-            }
-
-            if ((sender == Vertex) && (e.Type == VertexChangeType.EdgeAdded) && (GeneralUtil.CompareStrings(e.Edge.Meta.Value, "BaseEdge")))
-                UpdateBaseEdge();
-
-          //  if (sender == Vertex.Get(false, @"BaseEdge:\To:") && (e.Type == VertexChangeType.EdgeAdded || e.Type == VertexChangeType.EdgeRemoved))
-            //    UpdateBaseEdge();
-
-            if (sender == Vertex.Get(false, @"ColumnNumber:") && (e.Type == VertexChangeType.ValueChanged))
-                UpdateBaseEdge();
-
-            if (sender == Vertex.Get(false, @"SectionsAsTabs:") && (e.Type == VertexChangeType.ValueChanged))
-                UpdateBaseEdge();
-
-            if (sender == Vertex.Get(false, @"MetaOnLeft:") && (e.Type == VertexChangeType.ValueChanged))
-                UpdateBaseEdge();
-
-            if (sender == Vertex.Get(false, @"ExpertMode:") && (e.Type == VertexChangeType.ValueChanged))
-                UpdateBaseEdge();
-
-            if (sender == Vertex.Get(false, "ZoomVisualiserContent:") && e.Type == VertexChangeType.ValueChanged)
-                ChangeZoomVisualiserContent();
         }
-
-        private IVertex _Vertex;
 
         public IVertex Vertex
         {
-            get { return _Vertex; }
-            set
-            {
-                if (_Vertex != null)
-                    PlatformClass.RemoveVertexChangeListeners(this.Vertex, new VertexChange(VertexChange));
-
-                _Vertex = value;
-
-                PlatformClass.RegisterVertexChangeListeners(this.Vertex, new VertexChange(VertexChange), new string[]{"BaseEdge","SelectedEdges"});
-
-                UpdateBaseEdge();
-            }
+            get { return VisualiserHelper._Vertex; }
+            set { VisualiserHelper.SetVertex(value); }
         }
 
         // LOCATION STUFF

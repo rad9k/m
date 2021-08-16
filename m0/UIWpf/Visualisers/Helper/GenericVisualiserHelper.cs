@@ -34,13 +34,13 @@ namespace m0.UIWpf.Visualisers.Helper
 
         bool dndSupport;
 
-        public GenericVisualiserHelper(IVisualiser _visualiser, string _visualiserName, FrameworkElement _visualiserAsFrameworkElement)
-            :this(_visualiser, _visualiserName, _visualiserAsFrameworkElement, true, new List<string> { @"BaseEdge:\To:" }, "AtomVisualiser")
+        public GenericVisualiserHelper(IVertex _visualiserMetaVertex, IVisualiser _visualiser, string _visualiserName, FrameworkElement _visualiserAsFrameworkElement)
+            :this(_visualiserMetaVertex, _visualiser, _visualiserName, _visualiserAsFrameworkElement, true, new List<string> { @"BaseEdge:\To:" }, "AtomVisualiser")
         {
             
         }
 
-        public GenericVisualiserHelper(IVisualiser _visualiser, string _visualiserName, FrameworkElement _visualiserAsFrameworkElement, bool _dndSupport, IList<string> _scopeQueries, string _scopeQueriesName)
+        public GenericVisualiserHelper(IVertex visualiserMetaVertex, IVisualiser _visualiser, string _visualiserName, FrameworkElement _visualiserAsFrameworkElement, bool _dndSupport, IList<string> _scopeQueries, string _scopeQueriesName)
         {
             visualiser = _visualiser;
 
@@ -64,7 +64,7 @@ namespace m0.UIWpf.Visualisers.Helper
 
                 visualiser.Vertex.Value = visualiserName;
 
-                ClassVertex.AddIsClassAndAllAttributesAndAssociations(visualiser.Vertex, mz.Root.Get(false, @"System\Meta\Visualiser\String"));
+                ClassVertex.AddIsClassAndAllAttributesAndAssociations(visualiser.Vertex, visualiserMetaVertex);
 
                 ClassVertex.AddIsClassAndAllAttributesAndAssociations(visualiser.Vertex.Get(false, "BaseEdge:"), 
                     mz.Root.Get(false, @"System\Meta\ZeroTypes\Edge"));

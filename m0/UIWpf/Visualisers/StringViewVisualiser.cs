@@ -24,13 +24,15 @@ namespace m0.UIWpf.Visualisers
 
         public StringViewVisualiser()
         {            
-            new GenericVisualiserHelper(this, "StringViewVisualiser", this);
+            new GenericVisualiserHelper(MinusZero.Instance.Root.Get(false, @"System\Meta\Visualiser\StringView"), this, "StringViewVisualiser", this);
         }
 
         public void OnLoad(object sender, RoutedEventArgs e)
         {
             VisualiserHelper.AddContextMenu();
         }
+
+        public void ZoomVisualiserContentChange() { }
 
         public void UpdateBaseEdge()
         {
