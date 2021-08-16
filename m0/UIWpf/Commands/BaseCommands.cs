@@ -196,6 +196,10 @@ namespace m0.UIWpf.Commands
             if (GeneralUtil.CompareStrings(option.Value, "Remove from repository"))
                 allEdgesDelete = true;
 
+            ////////////////////////////////////////
+            Interaction.BeginInteractionWithGraph();
+            ////////////////////////////////////////
+
             if (inputVertex.Get(false, "SelectedEdges:").Count() == 0)
                 if (allEdgesDelete)
                     //VertexOperations.DeleteAllInOutEdges(baseVertex.Get(false, "To:"));
@@ -212,6 +216,10 @@ namespace m0.UIWpf.Commands
                     else
                         VertexOperations.DeleteOneEdge(v.To.Get(false, "From:"), v.To.Get(false, "Meta:"), v.To.Get(false, "To:"));
             }
+
+            ////////////////////////////////////////
+            Interaction.EndInteractionWithGraph();
+            ////////////////////////////////////////
 
             return null;
         }

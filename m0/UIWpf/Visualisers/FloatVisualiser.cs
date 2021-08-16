@@ -20,12 +20,9 @@ namespace m0.UIWpf.Visualisers
 {
     public class FloatVisualiser : NumberVisualiser<double?>
     {
-        public FloatVisualiser() : base()
-        {
-            visualiserName = "FloatVisualiser";
+        protected override string visualiserName { get { return "FloatVisualiser"; } set { } }
 
-            visualiserMetaVertex = MinusZero.Instance.Root.Get(false, @"System\Meta\Visualiser\Float");
-        }
+        protected override IVertex visualiserMetaVertex { get { return MinusZero.Instance.Root.Get(false, @"System\Meta\Visualiser\Float"); } set { } }        
     }
 }
 

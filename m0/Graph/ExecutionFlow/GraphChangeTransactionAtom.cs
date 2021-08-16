@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace m0.Graph.ExecutionFlow
 {
-    public enum GraphChangeEnum { ValueChange, EdgeAdded, EdgeRemoved };
+    public enum GraphChangeEnum { ValueChange, EdgeAdded, EdgeRemoved, VertexDisposed };
 
     public class GraphChangeTransactionAtom : TransacionAtom
     {
@@ -26,6 +26,7 @@ namespace m0.Graph.ExecutionFlow
         static IVertex GraphChangeEnum_OutputEdgeRemoved_meta;
         static IVertex GraphChangeEnum_InputEdgeAdded_meta;
         static IVertex GraphChangeEnum_InputEdgeRemoved_meta;
+        static IVertex GraphChangeEnum_VertexDisposed_meta;
 
         public IVertex ChangedVertex;
         public GraphChangeEnum Type;
@@ -68,11 +69,13 @@ namespace m0.Graph.ExecutionFlow
             GraphChangeEvent_NewValue_meta = r.Get(false, @"System\Meta\ZeroTypes\ExecutionFlow\GraphChangeEvent\NewValue");
             GraphChangeEvent_Edge_meta = r.Get(false, @"System\Meta\ZeroTypes\ExecutionFlow\GraphChangeEvent\Edge");
 
+
             GraphChangeEnum_ValueChange_meta = r.Get(false, @"System\Meta\ZeroTypes\ExecutionFlow\GraphChangeEnum\ValueChange");
             GraphChangeEnum_OutputEdgeAdded_meta = r.Get(false, @"System\Meta\ZeroTypes\ExecutionFlow\GraphChangeEnum\OutputEdgeAdded");
             GraphChangeEnum_OutputEdgeRemoved_meta = r.Get(false, @"System\Meta\ZeroTypes\ExecutionFlow\GraphChangeEnum\OutputEdgeRemoved");
             GraphChangeEnum_InputEdgeAdded_meta = r.Get(false, @"System\Meta\ZeroTypes\ExecutionFlow\GraphChangeEnum\InputEdgeAdded");
             GraphChangeEnum_InputEdgeRemoved_meta = r.Get(false, @"System\Meta\ZeroTypes\ExecutionFlow\GraphChangeEnum\InputEdgeRemoved");
+            GraphChangeEnum_VertexDisposed_meta = r.Get(false, @"System\Meta\ZeroTypes\ExecutionFlow\GraphChangeEnum\VertexDisposed");            
         }
 
         public override void Commit()
@@ -120,6 +123,9 @@ namespace m0.Graph.ExecutionFlow
 
         public IVertex CreateEventVertex_GraphChange(IVertex triggerVertex, IVertex sourceVertex, bool isInEdge)
         {
+            if (ChangedVertex.DisposedState != DisposeStateEnum.Live && Type != GraphChangeEnum.VertexDisposed)
+                return null;
+
             IVertex eventVertex = MinusZero.Instance.CreateTempVertex();
 
             eventVertex.AddEdge(GraphChangeEvent_Trigger_meta, triggerVertex);
@@ -167,6 +173,11 @@ namespace m0.Graph.ExecutionFlow
                         eventVertex.AddEdge(GraphChangeEvent_Edge_meta, edgeVertex2);
                     }
 
+                    break;
+
+                case GraphChangeEnum.VertexDisposed:                    
+                    eventVertex.AddEdge(GraphChangeEvent_Type_meta, GraphChangeEnum_VertexDisposed_meta);
+                    eventVertex.AddVertex(GraphChangeEvent_OldValue_meta, OldValue);                    
                     break;
             }
 

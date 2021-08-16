@@ -35,8 +35,8 @@ namespace m0.UIWpf.Visualisers
 
     public class NumberVisualiser<T> : Grid, IVisualiser where T : new()    {
 
-        protected string visualiserName { get; set; }
-        protected IVertex visualiserMetaVertex { get; set; }
+        protected virtual string visualiserName { get; set; }
+        protected virtual IVertex visualiserMetaVertex { get; set; }
 
         public GenericVisualiserHelper VisualiserHelper { get; set; }
 

@@ -440,7 +440,25 @@ namespace m0.Graph
 
         public override void Dispose()
         {
-            ExecutionFlowHelper.AddSecondStageCommitAction(this);
+            DisposedState = DisposeStateEnum.Disposing;
+
+            ChangeRemoveAllHandlers();
+
+            DeleteAllInEdges();
+            DeleteAllMetaInEdges();
+            DeleteAllEdges();
+
+            Store.RemoveVertexIdentifier(this);
+
+            DisposedState = DisposeStateEnum.Disposed;
+
+            if (CanEmitGraphChangeEvents)
+                ExecutionFlowHelper.AddTransactionAtom(new GraphChangeTransactionAtom(
+                    this,
+                    GraphChangeEnum.VertexDisposed,
+                    Value,
+                    null,
+                    null));
         }
 
         public void DeleteAllInEdges()
@@ -726,20 +744,8 @@ namespace m0.Graph
 
             if (cumulativeEdgesCount == 0
                 && ed.vertex.Store.DetachState == DetachStateEnum.Attached
-                && !ed.vertex.IsRoot)
-                {
-                    DisposedState = DisposeStateEnum.Disposing;
-
-                    ChangeRemoveAllHandlers();
-
-                    DeleteAllInEdges();
-                    DeleteAllMetaInEdges();
-                    DeleteAllEdges();
-
-                    Store.RemoveVertexIdentifier(this);
-
-                    DisposedState = DisposeStateEnum.Disposed;
-                }
+                && !ed.vertex.IsRoot)                
+                Dispose();                
         }
 
         public EasyVertex(IStore _store) : base(_store)

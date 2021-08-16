@@ -61,12 +61,21 @@ namespace m0.Graph.ExecutionFlow
                 if (graphChangeTransactionAtoms_OutEdgeValueChange.ContainsKey(kvp.Key))
                     foreach (GraphChangeTransactionAtom a in graphChangeTransactionAtoms_OutEdgeValueChange[kvp.Key])
                         foreach (WatcherEntry we in kvp.Value)
-                            GeneralUtil.DictionaryAdd<IVertex, IVertex>(triggerEventDictionary, we.triggerVertex, a.CreateEventVertex_GraphChange(we.triggerVertex, we.sourceVertex, false));
+                        {
+                            IVertex eventVertex = a.CreateEventVertex_GraphChange(we.triggerVertex, we.sourceVertex, false);
+                            if(eventVertex != null)
+                                GeneralUtil.DictionaryAdd<IVertex, IVertex>(triggerEventDictionary, we.triggerVertex, eventVertex);
+                        }                            
 
                 if (graphChangeTransactionAtoms_InEdge.ContainsKey(kvp.Key))
                     foreach (GraphChangeTransactionAtom a in graphChangeTransactionAtoms_InEdge[kvp.Key])
                         foreach (WatcherEntry we in kvp.Value)
-                            GeneralUtil.DictionaryAdd<IVertex, IVertex>(triggerEventDictionary, we.triggerVertex, a.CreateEventVertex_GraphChange(we.triggerVertex, we.sourceVertex, true));
+                        {
+                            IVertex eventVertex = a.CreateEventVertex_GraphChange(we.triggerVertex, we.sourceVertex, true);
+                            if(eventVertex != null)
+                                GeneralUtil.DictionaryAdd<IVertex, IVertex>(triggerEventDictionary, we.triggerVertex, eventVertex);
+                        }
+                            
             }
                
             return triggerEventDictionary;
@@ -80,13 +89,21 @@ namespace m0.Graph.ExecutionFlow
                 if (watchedVertexDictionary.ContainsKey(kvp.Key))
                     foreach (WatcherEntry we in watchedVertexDictionary[kvp.Key])
                         foreach (GraphChangeTransactionAtom a in kvp.Value)
-                            GeneralUtil.DictionaryAdd<IVertex, IVertex>(triggerEventDictionary, we.triggerVertex, a.CreateEventVertex_GraphChange(we.triggerVertex, we.sourceVertex, false));
+                        {
+                            IVertex eventVertex = a.CreateEventVertex_GraphChange(we.triggerVertex, we.sourceVertex, false);
+                            if(eventVertex != null)
+                                GeneralUtil.DictionaryAdd<IVertex, IVertex>(triggerEventDictionary, we.triggerVertex, eventVertex);
+                        }                            
 
             foreach (KeyValuePair<IVertex, List<GraphChangeTransactionAtom>> kvp in graphChangeTransactionAtoms_InEdge)
                 if (watchedVertexDictionary.ContainsKey(kvp.Key))
                     foreach (WatcherEntry we in watchedVertexDictionary[kvp.Key])
                         foreach (GraphChangeTransactionAtom a in kvp.Value)
-                            GeneralUtil.DictionaryAdd<IVertex, IVertex>(triggerEventDictionary, we.triggerVertex, a.CreateEventVertex_GraphChange(we.triggerVertex, we.sourceVertex, true));
+                        {
+                            IVertex eventVertex = a.CreateEventVertex_GraphChange(we.triggerVertex, we.sourceVertex, true);
+                            if(eventVertex != null)
+                                GeneralUtil.DictionaryAdd<IVertex, IVertex>(triggerEventDictionary, we.triggerVertex, eventVertex);
+                        }                            
 
             return triggerEventDictionary;
         }

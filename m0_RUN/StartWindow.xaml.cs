@@ -44,7 +44,7 @@ namespace m0
         {            
             m0_RUN.Main.Run();
 
-          //  ExtraRun();
+            ExtraRun();
 
             Close();
         }       
@@ -57,13 +57,19 @@ namespace m0
 
             List<string> scopelist = new List<string>();
 
-            scopelist.Add("kupa:");
+            scopelist.Add("kupa");
 
             IVertex trigger = ExecutionFlowHelper.AddGraphChangeTrigger(v, scopelist).To;
+
+            //IVertex trigger = ExecutionFlowHelper.AddGraphChangeTrigger(MinusZero.Instance.root.Get(false, "Hardware"), scopelist).To;
 
             test t = new test();
 
             ExecutionFlowHelper.AddListener_DotNetDelegate(trigger, t.xxx);
+
+            v.AddVertex(null, "kupa");
+
+            return;
 
             ExecutionFlowHelper.StartTransaction();
 
