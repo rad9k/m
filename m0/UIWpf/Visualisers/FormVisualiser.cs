@@ -767,7 +767,6 @@ namespace m0.UIWpf.Visualisers
                     return(v);
                 }
                
-
             return null;
         }
 
@@ -780,21 +779,5 @@ namespace m0.UIWpf.Visualisers
         {
             throw new NotImplementedException();
         }
-
-        ///// DRAG AND DROP
-
-        
-
-        private void dndDrop(object sender, DragEventArgs e)
-        {
-            IVertex v = GetEdgeByLocation(e.GetPosition(this));
-
-            if (v != null)
-                Dnd.DoFormDrop(null, Vertex.Get(false, @"BaseEdge:\To:"), v.Get(false, "To:"), e);
-
-            e.Handled = true;
-        }        
-
-
     }
 }

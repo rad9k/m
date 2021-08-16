@@ -75,6 +75,9 @@ namespace m0.UIWpf.Visualisers
 
             p.Children.Add(w);
 
+            if (GraphUtil.GetQueryOutCount(e.Meta, "$DisplayLarger", null) > 0)
+                p.Width = 100;
+
             Children.Add(p);
         }
 
