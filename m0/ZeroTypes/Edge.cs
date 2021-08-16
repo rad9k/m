@@ -131,6 +131,15 @@ namespace m0.ZeroTypes
             return ev;
         }
 
+        static public IVertex CreateTempEdgeVertex(IVertex from, IVertex meta, IVertex to)
+        {
+            IVertex ev = MinusZero.Instance.CreateTempVertex();
+
+            AddEdgeVertexEdges(ev, from, meta, to);
+
+            return ev;
+        }
+
         static public void ReplaceEdgeVertexEdges(IVertex baseVertex, IEdge edge)
         {
             GraphUtil.ReplaceEdge(baseVertex, "From", edge.From);

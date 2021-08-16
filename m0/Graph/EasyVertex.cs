@@ -459,10 +459,20 @@ namespace m0.Graph
         public void DeleteAllInEdges()
         {
             if (DisposedState == DisposeStateEnum.Disposed)
-                throw new Exception("Vertex disposed");            
+                throw new Exception("Vertex disposed");
 
-            foreach (IEdge edge in InEdgesRaw.ToList())          
-                InEdgesRaw.Remove(edge);                        
+            foreach (IEdge edge in InEdgesRaw.ToList())
+            {
+                InEdgesRaw.Remove(edge);                
+
+                if (CanEmitGraphChangeEvents)
+                    ExecutionFlowHelper.AddTransactionAtom(new GraphChangeTransactionAtom(
+                        edge.From,
+                        GraphChangeEnum.OutputEdgeDisposed,
+                        null,
+                        null,
+                        edge));
+            }
         }
 
         public void DeleteAllMetaInEdges()
