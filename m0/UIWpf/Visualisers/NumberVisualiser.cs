@@ -494,8 +494,6 @@ namespace m0.UIWpf.Visualisers
                     e.Handled = true;
                 }
             }
-
-
         }
 
         private void dndDrop(object sender, DragEventArgs e)

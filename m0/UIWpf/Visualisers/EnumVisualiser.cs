@@ -13,40 +13,23 @@ using m0.UIWpf.Foundation;
 using System.Windows;
 using m0.UIWpf.Commands;
 using m0.UIWpf.Controls;
+using m0.UIWpf.Visualisers.Helper;
+using m0.User.Process.UX;
 
 namespace m0.UIWpf.Visualisers
 {
-    public class EnumVisualiser : ComboBox, IPlatformClass, IDisposable
+    public class EnumVisualiser : ComboBox, IVisualiser
     {
+        public GenericVisualiserHelper VisualiserHelper { get; set; }
+
         public EnumVisualiser()
         {
-            MinusZero mz = MinusZero.Instance;
-
-            if (mz != null && mz.IsInitialized)
-            {
-                Vertex = mz.CreateTempVertex();
-
-                Vertex.Value = "EnumVisualiser" + this.GetHashCode();
-
-                ClassVertex.AddIsClassAndAllAttributesAndAssociations(Vertex, mz.Root.Get(false, @"System\Meta\Visualiser\Enum"));
-
-                ClassVertex.AddIsClassAndAllAttributesAndAssociations(Vertex.Get(false, "BaseEdge:"), mz.Root.Get(false, @"System\Meta\ZeroTypes\Edge"));
-
-                this.Loaded += new RoutedEventHandler(OnLoad);
-
-                this.PreviewMouseLeftButtonDown += dndPreviewMouseLeftButtonDown;
-                this.PreviewMouseMove += dndPreviewMouseMove;
-                this.Drop += dndDrop;
-                this.AllowDrop = true;
-
-                this.MouseEnter += dndMouseEnter;
-            }
+            new GenericVisualiserHelper(this, "EnumVisualiser", this);
         }
 
-        void OnLoad(object sender, RoutedEventArgs e)
+        public void OnLoad(object sender, RoutedEventArgs e)
         {
-            if (!WpfUtil.HasParentsGotContextMenu(this))
-                this.ContextMenu = new m0ContextMenu(this);
+            VisualiserHelper.AddContextMenu();
         }
 
         bool DoingSelectionChanged = false;
@@ -56,6 +39,10 @@ namespace m0.UIWpf.Visualisers
             if (DoingSelectionChanged == false)
             {
                 DoingSelectionChanged = true;
+
+                ////////////////////////////////////////
+                Interaction.BeginInteractionWithGraph();
+                ////////////////////////////////////////
 
                 if (this.SelectedItem != null && ((ComboBoxItem)this.SelectedItem).Tag is IVertex)
                 {
@@ -80,13 +67,17 @@ namespace m0.UIWpf.Visualisers
                     }                    
                 }
 
+                ////////////////////////////////////////
+                Interaction.EndInteractionWithGraph();
+                ////////////////////////////////////////
+
                 DoingSelectionChanged = false;
             }
 
             base.OnSelectionChanged(_e);
         }
 
-        private void UpdateBaseEdge()
+        public void UpdateBaseEdge()
         {
             IVertex bev = Vertex.Get(false, "BaseEdge:");
 
@@ -119,100 +110,30 @@ namespace m0.UIWpf.Visualisers
 
         }
 
-        protected void VertexChange(object sender, VertexChangeEventArgs e)
-        {
-            if ((sender == Vertex) && (e.Type == VertexChangeType.EdgeAdded) && (GeneralUtil.CompareStrings(e.Edge.Meta.Value, "BaseEdge"))
-                 || (sender == Vertex.Get(false, "BaseEdge:") && e.Type == VertexChangeType.EdgeAdded)
-                || (sender == Vertex.Get(false, @"BaseEdge:\To:") && e.Type == VertexChangeType.ValueChanged)
-                || sender == Vertex.Get(false, @"BaseEdge:\Meta:"))
-            {
-                UpdateBaseEdge();
-            }
-        }
-
-        private IVertex _Vertex;
-
         public IVertex Vertex
         {
-            get { return _Vertex; }
-            set
-            {
-                if (_Vertex != null)
-                    PlatformClass.RemoveVertexChangeListeners(this.Vertex, new VertexChange(VertexChange));
-
-                _Vertex = value;
-
-                PlatformClass.RegisterVertexChangeListeners(this.Vertex, new VertexChange(VertexChange), new string[] { "BaseEdge"/*, "SelectedEdges" */});
-
-                UpdateBaseEdge();
-            }
+            get { return VisualiserHelper._Vertex; }
+            set { VisualiserHelper.SetVertex(value); }
         }
-
-        bool IsDisposed = false;
 
         public void Dispose()
         {
-            if (IsDisposed == false)
-            {
-                IsDisposed = true;
-                PlatformClass.RemoveVertexChangeListeners(this.Vertex, new VertexChange(VertexChange));
-
-                if (Vertex is IDisposable)
-                    ((IDisposable)Vertex).Dispose();
-            }
+            VisualiserHelper.Dispose();
         }
 
-        ///// DRAG AND DROP
-
-        Point dndStartPoint;
-
-        private void dndPreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        public IVertex GetEdgeByLocation(Point point)
         {
-            dndStartPoint = e.GetPosition(this);
-
-            MinusZero.Instance.IsGUIDragging = false;
-
-            hasButtonBeenDown = true;
+            return Vertex.Get(false, @"BaseEdge:");
         }
 
-        bool isDraggin = false;
-        bool hasButtonBeenDown;
-
-        private void dndPreviewMouseMove(object sender, MouseEventArgs e)
+        public IVertex GetEdgeByVisualElement(FrameworkElement visualElement)
         {
-            Point mousePos = e.GetPosition(this);
-            Vector diff = dndStartPoint - mousePos;
-
-            if (hasButtonBeenDown && isDraggin == false && (e.LeftButton == MouseButtonState.Pressed) && (
-                (Math.Abs(diff.X) > Dnd.MinimumHorizontalDragDistance) ||
-                (Math.Abs(diff.Y) > Dnd.MinimumVerticalDragDistance)))
-            {
-                if (Vertex.Get(false, @"BaseEdge:\To:") != null)
-                {
-                    isDraggin = true;
-
-                    IVertex dndVertex = MinusZero.Instance.CreateTempVertex();
-
-                    dndVertex.AddEdge(null, Vertex.Get(false, @"BaseEdge:"));
-
-                    DataObject dragData = new DataObject("Vertex", dndVertex);
-                    dragData.SetData("DragSource", this);
-
-                    Dnd.DoDragDrop(this, dragData);
-
-                    isDraggin = false;
-                }
-            }
+            throw new NotImplementedException();
         }
 
-        private void dndDrop(object sender, DragEventArgs e)
+        public FrameworkElement GetVisualElementByEdge(IVertex edge)
         {
-            Dnd.DoDrop(this, Vertex.Get(false, @"BaseEdge:\To:"), e);
-        }
-
-        private void dndMouseEnter(object sender, MouseEventArgs e)
-        {
-            hasButtonBeenDown = false;
+            throw new NotImplementedException();
         }
     }
 

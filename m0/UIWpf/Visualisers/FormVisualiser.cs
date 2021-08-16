@@ -13,6 +13,7 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using m0.UIWpf.Visualisers.Method;
+using m0.UIWpf.Visualisers.Helper;
 
 namespace m0.UIWpf.Visualisers
 {
@@ -48,8 +49,10 @@ namespace m0.UIWpf.Visualisers
         }
     }
 
-    public class FormVisualiser : ContentControl, IPlatformClass, IDisposable
+    public class FormVisualiser : ContentControl, IVisualiser
     {
+        public GenericVisualiserHelper VisualiserHelper { get; set; }
+
         bool DisplayBaseVertex = true; /////////////////////////////////////////
 
         bool SectionsAsTabs;
@@ -239,22 +242,13 @@ namespace m0.UIWpf.Visualisers
                     if (e.To.Get(false, "$Hide:") == null)
                         PreFillFormAnalyseEdge(e.To, false);
         }
-
-        bool IsDisposed = false;
-
+       
         public void Dispose()
         {
-            if (IsDisposed == false)
-            {
-                IsDisposed = true;
-
+            if (VisualiserHelper.IsDisposed == false)                            
                 DispachAllSubVisualisers();
 
-                PlatformClass.RemoveVertexChangeListeners(this.Vertex, new VertexChange(VertexChange));
-
-                if (Vertex is IDisposable)
-                    ((IDisposable)Vertex).Dispose();
-            }
+            VisualiserHelper.Dispose();
         }
 
         protected void DispachAllSubVisualisers()
@@ -265,7 +259,6 @@ namespace m0.UIWpf.Visualisers
                 {
                     ((IDisposable)ci.DataControl).Dispose();
                 }
-
         }
 
         IVertex BaseVertexEdge = null;
@@ -422,10 +415,7 @@ namespace m0.UIWpf.Visualisers
                         ci.Value.GapControl.Width = 0;
                         ci.Value.DataControl.Width = oneColumnWidth - maxMetaWidthInColumn[ci.Value.Column] - metaVsDataSeparator - sectionControlBorderWidth;
                     }
-
                 }
-
-            
         }
 
         protected object CreateColumnedContent()
@@ -728,6 +718,10 @@ namespace m0.UIWpf.Visualisers
         }
 
         public FormVisualiser(){
+            SetVertexDefaultValues();
+
+            new GenericVisualiserHelper(this, "FormVisualiser", this, false, new List<string> { @"BaseEdge:\To:" }, "ListVisualiser");
+
             MinusZero mz = MinusZero.Instance;
 
             if (mz != null && mz.IsInitialized)
@@ -740,11 +734,11 @@ namespace m0.UIWpf.Visualisers
 
                 ClassVertex.AddIsClassAndAllAttributesAndAssociations(Vertex.Get(false, "BaseEdge:"), mz.Root.Get(false, @"System\Meta\ZeroTypes\Edge"));
 
-                SetVertexDefaultValues();
+                
 
                 this.Loaded += new RoutedEventHandler(OnLoad);
 
-                // DO NOT WANT CONTEXTMENU HERE
+               
                 // this.ContextMenu = new m0ContextMenu(this);
 
                 
@@ -762,10 +756,10 @@ namespace m0.UIWpf.Visualisers
             Vertex.Get(false, "MetaOnLeft:").Value = "False";            
         }
 
-        void OnLoad(object sender, RoutedEventArgs e)
+        public void OnLoad(object sender, RoutedEventArgs e)
         {
-
-        }   
+            // DO NOT WANT CONTEXTMENU HERE
+        }
 
 
         protected void ChangeZoomVisualiserContent()

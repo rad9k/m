@@ -120,7 +120,7 @@ namespace m0.UIWpf.Visualisers.Helper
             visualiser.UpdateBaseEdge();
         }
 
-        bool IsDisposed = false;
+        public bool IsDisposed = false;
 
         public void Dispose()
         {
