@@ -302,9 +302,8 @@ namespace m0.UIWpf.Visualisers
 
                 PreFillForm();
 
-                return;
-
                 InitializeControlContent();
+
 
                 List<IEdge> childs = new List<IEdge>();
 
@@ -315,11 +314,11 @@ namespace m0.UIWpf.Visualisers
                     foreach (IEdge e in basTo)
                     {
                         childs.Add(e);
-
+                       
                         if (!visited.Contains(e.Meta)&&e.Meta.Get(false, "$Hide:") == null)
                             if (basTo.GetAll(false, e.Meta + ":").Count() > 1)
                             {
-                                AddEdge(e.Meta, true);
+                                AddEdge(e.Meta, true); 
                                 visited.Add(e.Meta);
                             }
                             else
@@ -331,7 +330,7 @@ namespace m0.UIWpf.Visualisers
                     foreach (IEdge e in VertexOperations.GetChildEdges(metaForForm))
                     {
                         childs.Add(e);
-
+                        
                         if (e.To.Get(false, "$Hide:") == null)
                             if (GraphUtil.GetIntegerValue(e.To.Get(false, "$MaxCardinality:")) > 1 || GraphUtil.GetIntegerValue(e.To.Get(false, "$MaxCardinality:")) == -1)
                                 AddEdge(e.To, true);
@@ -340,7 +339,7 @@ namespace m0.UIWpf.Visualisers
 
                     }
                 }
-
+               
                 if (ExpertMode)
                 {
                     foreach (IEdge e in MinusZero.Instance.Root.Get(false, @"System\Meta\Base\Vertex"))
@@ -602,8 +601,8 @@ namespace m0.UIWpf.Visualisers
             metaControl.FontStyle = FontStyles.Italic;
 
             System.Windows.FrameworkElement dataControl = null;
-                       
-            if(isSet)
+            
+            if (isSet)
             {
                 TableVisualiser tv = new TableVisualiser();
 
@@ -624,7 +623,7 @@ namespace m0.UIWpf.Visualisers
 
                 GraphUtil.ReplaceEdge(tv.Vertex.Get(false, "BaseEdge:"), "To", Vertex.Get(false, @"BaseEdge:\To:"));
 
-                dataControl = tv;
+                dataControl = tv; 
             }
             else
             {
@@ -678,7 +677,7 @@ namespace m0.UIWpf.Visualisers
                 else
                     TabList[group].ControlInfos.Add(meta, ci);
             }
-
+            
             Panel place = GetUIPlace(group,section,ci);
 
             if (MetaOnLeft)
