@@ -574,13 +574,13 @@ namespace m0.UIWpf.Visualisers
         bool BaseVertexEdgeAdded = false;
 
         protected void AddEdge(IVertex meta, bool isSet)
-        {
+        {            
             if (DisplayBaseVertex && BaseVertexEdgeAdded == false) { 
                 BaseVertexEdge = getMetaForForm();
                 BaseVertexEdgeAdded = true;
                 AddEdge(BaseVertexEdge, false);
             }
-
+            
             string group = getGroup(meta);
             string section = getSection(meta);  
 
@@ -604,7 +604,7 @@ namespace m0.UIWpf.Visualisers
             
             if (isSet)
             {
-                TableVisualiser tv = new TableVisualiser();
+            /*    TableVisualiser tv = new TableVisualiser();
 
                 if (ExpertMode)
                     GraphUtil.SetVertexValue(tv.Vertex, MinusZero.Instance.Root.Get(false, @"System\Meta\Visualiser\Table\ExpertMode"), "True");
@@ -623,11 +623,11 @@ namespace m0.UIWpf.Visualisers
 
                 GraphUtil.ReplaceEdge(tv.Vertex.Get(false, "BaseEdge:"), "To", Vertex.Get(false, @"BaseEdge:\To:"));
 
-                dataControl = tv; 
+                dataControl = tv; */
             }
             else
             {
-                if (meta == BaseVertexEdge)
+             /*   if (meta == BaseVertexEdge)
                 {
                     StringVisualiser sv = new StringVisualiser();
 
@@ -635,10 +635,10 @@ namespace m0.UIWpf.Visualisers
 
                     dataControl = sv;
                 }
-                else
-                if (ExecutableVisualiserFactory.IsExecutableVertex(meta))
-                    dataControl = ExecutableVisualiserFactory.CreateExecutableVisualiser(Vertex.GetAll(false, @"BaseEdge:\To:").FirstOrDefault(), meta);
-                else
+                else*/
+                //if (ExecutableVisualiserFactory.IsExecutableVertex(meta))
+                  //  dataControl = ExecutableVisualiserFactory.CreateExecutableVisualiser(Vertex.GetAll(false, @"BaseEdge:\To:").FirstOrDefault(), meta);
+                //else
                 {
                     VisualiserEditWrapper w = new VisualiserEditWrapper();
 
@@ -656,10 +656,10 @@ namespace m0.UIWpf.Visualisers
                     dataControl = w;
                 }
 
-                
+           
             }
 
-            ControlInfo ci = new ControlInfo();
+            /*ControlInfo ci = new ControlInfo();
 
             ci.MetaControl = metaControl;
             ci.DataControl = dataControl;
@@ -708,14 +708,14 @@ namespace m0.UIWpf.Visualisers
                 place.Children.Add(metaControl);
 
                 place.Children.Add(dataControl);
-            }
+            }*/
 
 
             Border b = new Border();
 
             b.BorderThickness = new System.Windows.Thickness(0, controlLineVsControlLineSeparator, 0, 0);
 
-            place.Children.Add(b);
+            //place.Children.Add(b);
         }
 
         public FormVisualiser() {             
