@@ -627,7 +627,7 @@ namespace m0.UIWpf.Visualisers
             }
             else
             {
-             /*   if (meta == BaseVertexEdge)
+                if (meta == BaseVertexEdge)
                 {
                     StringVisualiser sv = new StringVisualiser();
 
@@ -635,10 +635,10 @@ namespace m0.UIWpf.Visualisers
 
                     dataControl = sv;
                 }
-                else*/
-                //if (ExecutableVisualiserFactory.IsExecutableVertex(meta))
-                  //  dataControl = ExecutableVisualiserFactory.CreateExecutableVisualiser(Vertex.GetAll(false, @"BaseEdge:\To:").FirstOrDefault(), meta);
-                //else
+                else
+                if (ExecutableVisualiserFactory.IsExecutableVertex(meta))
+                    dataControl = ExecutableVisualiserFactory.CreateExecutableVisualiser(Vertex.GetAll(false, @"BaseEdge:\To:").FirstOrDefault(), meta);
+                else
                 {
                     VisualiserEditWrapper w = new VisualiserEditWrapper();
 
@@ -659,7 +659,7 @@ namespace m0.UIWpf.Visualisers
            
             }
 
-            /*ControlInfo ci = new ControlInfo();
+            ControlInfo ci = new ControlInfo();
 
             ci.MetaControl = metaControl;
             ci.DataControl = dataControl;
@@ -708,7 +708,7 @@ namespace m0.UIWpf.Visualisers
                 place.Children.Add(metaControl);
 
                 place.Children.Add(dataControl);
-            }*/
+            }
 
 
             Border b = new Border();
