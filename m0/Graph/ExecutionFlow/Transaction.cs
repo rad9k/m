@@ -229,7 +229,8 @@ namespace m0.Graph.ExecutionFlow
 
         public void AddAtom(ITransactionAtom atom)
         {
-            if (atom is GraphChangeTransactionAtom && GraphChangeWatch) {
+            if (atom is GraphChangeTransactionAtom)
+                if(GraphChangeWatch) {
                 GraphChangeTransactionAtom gcta = (GraphChangeTransactionAtom)atom;
 
                 GeneralUtil.DictionaryAdd<IVertex, GraphChangeTransactionAtom>(

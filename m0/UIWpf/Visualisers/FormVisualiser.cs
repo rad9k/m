@@ -263,8 +263,15 @@ namespace m0.UIWpf.Visualisers
 
         IVertex BaseVertexEdge = null;
 
+        bool handlingUpdateBaseEdge = false;
+
         public void UpdateBaseEdge()
         {
+            if (handlingUpdateBaseEdge)
+                return;
+
+            handlingUpdateBaseEdge = true;
+
             DispachAllSubVisualisers();            
 
             BaseVertexEdgeAdded_PreFill = false;
@@ -365,6 +372,8 @@ namespace m0.UIWpf.Visualisers
                         CorrectWidth(TabList[""]);
                 }
             }
+
+            handlingUpdateBaseEdge = false;
         }
 
         protected void CorrectWidth(TabInfo i)
@@ -604,7 +613,7 @@ namespace m0.UIWpf.Visualisers
             
             if (isSet)
             {
-            /*    TableVisualiser tv = new TableVisualiser();
+                TableVisualiser tv = new TableVisualiser();
 
                 if (ExpertMode)
                     GraphUtil.SetVertexValue(tv.Vertex, MinusZero.Instance.Root.Get(false, @"System\Meta\Visualiser\Table\ExpertMode"), "True");
@@ -623,7 +632,7 @@ namespace m0.UIWpf.Visualisers
 
                 GraphUtil.ReplaceEdge(tv.Vertex.Get(false, "BaseEdge:"), "To", Vertex.Get(false, @"BaseEdge:\To:"));
 
-                dataControl = tv; */
+                dataControl = tv; 
             }
             else
             {
@@ -655,7 +664,7 @@ namespace m0.UIWpf.Visualisers
 
                     dataControl = w;
                 }
-
+                
            
             }
 
@@ -715,7 +724,7 @@ namespace m0.UIWpf.Visualisers
 
             b.BorderThickness = new System.Windows.Thickness(0, controlLineVsControlLineSeparator, 0, 0);
 
-            //place.Children.Add(b);
+            place.Children.Add(b);
         }
 
         public FormVisualiser() {             

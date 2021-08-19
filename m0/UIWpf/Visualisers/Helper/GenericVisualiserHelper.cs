@@ -95,9 +95,18 @@ namespace m0.UIWpf.Visualisers.Helper
                 visualiserAsFrameworkElement.ContextMenu = new m0ContextMenu(visualiser);
         }
 
+        bool isBaseEdgeUpdating = false;
+
         protected INoInEdgeInOutVertexVertex VertexChange(IExecution exe)
         {
+            if (isBaseEdgeUpdating)
+                return exe.Stack;
+
+            isBaseEdgeUpdating = true;
+
             visualiser.UpdateBaseEdge();
+
+            isBaseEdgeUpdating = false;
 
             return exe.Stack;
         }
