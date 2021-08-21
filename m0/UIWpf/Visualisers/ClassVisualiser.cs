@@ -20,7 +20,7 @@ namespace m0.UIWpf.Visualisers
 {
     class ClassVisualiser : TextBlock, IVisualiser
     {
-        public GenericVisualiserHelper VisualiserHelper { get; set; }
+        public AtomVisualiserHelper VisualiserHelper { get; set; }
 
         List<IVertex> manuallyAddedVertexChangeListeners = new List<IVertex>();
 
@@ -28,7 +28,7 @@ namespace m0.UIWpf.Visualisers
         {
            this.Padding = new Thickness(2);
 
-           new GenericVisualiserHelper(MinusZero.Instance.Root.Get(false, @"System\Meta\Visualiser\Class"), 
+           new AtomVisualiserHelper(MinusZero.Instance.Root.Get(false, @"System\Meta\Visualiser\Class"), 
                this, "ClassVisualiser", this, false, new List<string> { @"", @"BaseEdge:\", @"BaseEdge:\To:\"}, "ListVisualiser");
         }
 

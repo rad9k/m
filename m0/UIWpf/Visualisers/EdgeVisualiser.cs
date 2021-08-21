@@ -20,13 +20,13 @@ namespace m0.UIWpf.Visualisers
 {
     public class EdgeVisualiser : TextBlock, IVisualiser
     {
-        public GenericVisualiserHelper VisualiserHelper { get; set; }
+        public AtomVisualiserHelper VisualiserHelper { get; set; }
 
         public EdgeVisualiser()
         {
             this.Background = (Brush)FindResource("0LightGrayBrush");
 
-            new GenericVisualiserHelper(MinusZero.Instance.Root.Get(false, @"System\Meta\Visualiser\Edge"), 
+            new AtomVisualiserHelper(MinusZero.Instance.Root.Get(false, @"System\Meta\Visualiser\Edge"), 
                 this, "EdgeVisualiser", this, false, new List<string> { @"BaseEdge:\To:" }, "AtomVisualiser");
 
             this.PreviewMouseLeftButtonDown += dndPreviewMouseLeftButtonDown;

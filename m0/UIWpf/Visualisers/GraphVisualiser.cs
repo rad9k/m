@@ -188,9 +188,9 @@ namespace m0.UIWpf.Visualisers
         }        
     }
 
-    public class GraphVisualiser: Canvas, IPlatformClass, IDisposable, IHasLocalizableEdges, IHasSelectableEdges
+    public class GraphVisualiser: Canvas, IVisualiser, IHasSelectableEdges
     {
-        public GenericVisualiserHelper VisualiserHelper { get; set; }
+        public AtomVisualiserHelper VisualiserHelper { get; set; }
 
         SimpleVisualiserWrapper Highlighted;
 
@@ -198,37 +198,31 @@ namespace m0.UIWpf.Visualisers
 
         public GraphVisualiser()
         {
-
-            MinusZero mz = MinusZero.Instance;
-
             DisplayedVerticesUIElements = new Dictionary<IVertex, SimpleVisualiserWrapper>();
 
             this.Background = (Brush)FindResource("0BackgroundBrush");
 
+            new AtomVisualiserHelper(MinusZero.Instance.Root.Get(false, @"System\Meta\Visualiser\Graph"),
+              this, "GraphVisualiser", this, false, new List<string> {"", @"BaseEdge:\To:" }, "AtomVisualiserFull");
+
+            this.PreviewMouseLeftButtonDown += dndPreviewMouseLeftButtonDown;
+            this.PreviewMouseMove += dndPreviewMouseMove;
+            this.Drop += dndDrop;
             this.AllowDrop = true;
 
-            if (mz != null && mz.IsInitialized)
-            {
-                //Vertex = mz.Root.Get(false, @"System\Session\Visualisers").AddVertex(null, "GraphVisualiser" + this.GetHashCode()); 
+            this.MouseEnter += dndMouseEnter;
 
-                Vertex = mz.CreateTempVertex();
-                Vertex.Value = "GraphVisualiser" + this.GetHashCode();
+            SetVertexDefaultValues();
+        }
 
-                ClassVertex.AddIsClassAndAllAttributesAndAssociations(Vertex, mz.Root.Get(false, @"System\Meta\Visualiser\Graph"));
+        public void OnLoad(object sender, RoutedEventArgs e)
+        {
+            VisualiserHelper.AddContextMenu();
 
-                ClassVertex.AddIsClassAndAllAttributesAndAssociations(Vertex.Get(false, "BaseEdge:"), mz.Root.Get(false, @"System\Meta\ZeroTypes\Edge"));
+            PaintGraph();
 
-                SetVertexDefaultValues();
-
-                this.ContextMenu = new m0.UIWpf.Controls.m0ContextMenu(this);
-
-                this.PreviewMouseLeftButtonDown += dndPreviewMouseLeftButtonDown;
-                this.PreviewMouseMove += dndPreviewMouseMove;
-                this.Drop += dndDrop;
-                this.MouseEnter += dndMouseEnter;
-            }
-
-            this.Loaded += new RoutedEventHandler(OnLoad);
+            if (IsFirstPainted)
+                this.Loaded -= OnLoad;
         }
 
         protected SimpleVisualiserWrapper Add(double x, double y, FrameworkElement _e, IVertex baseVertex)
@@ -566,15 +560,7 @@ namespace m0.UIWpf.Visualisers
                             }
                 }
             }
-        }
-
-        void OnLoad(object sender, RoutedEventArgs e)
-        {            
-            PaintGraph();
-            
-            if(IsFirstPainted)
-                this.Loaded -= OnLoad;
-        }
+        }        
 
         protected void SetVertexDefaultValues()
         {
@@ -586,7 +572,7 @@ namespace m0.UIWpf.Visualisers
             Vertex.Get(false, "ShowOutEdges:").Value = "True";
         }        
 
-        private void UpdateBaseEdge(){
+        public void UpdateBaseEdge(){
             IVertex bv = Vertex.Get(false, @"BaseEdge:\To:");
 
             if (bv != null)
@@ -763,86 +749,18 @@ namespace m0.UIWpf.Visualisers
                     DisplayedVerticesUIElements[e.To.Get(false, "To:")].Select();
             }
         }
-        
-        public void VertexChange(object sender, VertexChangeEventArgs e)
-        {
-            if ((sender == Vertex) && (e.Type == VertexChangeType.EdgeAdded) && (GeneralUtil.CompareStrings(e.Edge.Meta.Value, "BaseEdge"))
-                || (sender == Vertex.Get(false, "BaseEdge:") && e.Type == VertexChangeType.ValueChanged)
-               || ((sender == Vertex.Get(false, "BaseEdge:")) && (e.Type == VertexChangeType.EdgeAdded) && ((GeneralUtil.CompareStrings(e.Edge.Meta.Value, "To")))))
-                { UpdateBaseEdge(); return; }
 
-            if (sender == Vertex.Get(false, @"BaseEdge:\To:") && (e.Type == VertexChangeType.EdgeAdded || e.Type == VertexChangeType.EdgeRemoved))
-                { UpdateBaseEdge(); return; }
 
-            if ((sender == Vertex) && (e.Type == VertexChangeType.EdgeAdded) && (GeneralUtil.CompareStrings(e.Edge.Meta.Value, "SelectedEdges")))
-                { SelectedVerticesUpdated(); return; }
-
-            if ((sender == Vertex.Get(false, "SelectedEdges:")) && ((e.Type == VertexChangeType.EdgeAdded) || (e.Type == VertexChangeType.EdgeRemoved)))
-                { SelectedVerticesUpdated(); return; }
-
-            if (sender is IVertex && GraphUtil.FindEdgeByToVertex(Vertex.GetAll(false, @"SelectedEdges:\"), (IVertex)sender) != null)
-                { SelectedVerticesUpdated(); return; }
-
-            if (sender == Vertex.Get(false, "ZoomVisualiserContent:") && e.Type == VertexChangeType.ValueChanged)
-                { ZoomVisualiserContentChange(); return; }
-
-            if (sender == Vertex.Get(false, "VisualiserCircleSize:") && e.Type == VertexChangeType.ValueChanged)
-                { PaintGraph(); return; }
-
-            if (sender == Vertex.Get(false, "NumberOfCircles:") && e.Type == VertexChangeType.ValueChanged)
-                { PaintGraph(); return; }
-
-            if (sender == Vertex.Get(false, "FastMode:") && e.Type == VertexChangeType.ValueChanged)
-                { PaintGraph(); return; }
-
-            if (sender == Vertex.Get(false, "MetaLabels:") && e.Type == VertexChangeType.ValueChanged)
-                { PaintGraph(); return; }
-
-            if (sender == Vertex.Get(false, "ShowOutEdges:") && e.Type == VertexChangeType.ValueChanged)
-                { PaintGraph(); return; }
-
-            if (sender == Vertex.Get(false, "ShowInEdges:") && e.Type == VertexChangeType.ValueChanged)
-                { PaintGraph(); return; }     
-        }        
-
-        private IVertex _Vertex;
 
         public IVertex Vertex
         {
-            get { return _Vertex; }
-            set
-            {
-                if (_Vertex != null)
-                    PlatformClass.RemoveVertexChangeListeners(this.Vertex, new VertexChange(VertexChange));
-
-                _Vertex = value;
-
-                PlatformClass.RegisterVertexChangeListeners(this.Vertex, new VertexChange(VertexChange), new string[] { "BaseEdge", "SelectedEdges" });
-
-                UpdateBaseEdge();
-            }
+            get { return VisualiserHelper._Vertex; }
+            set { VisualiserHelper.SetVertex(value); }
         }
-
-        bool IsDisposed = false;
 
         public void Dispose()
         {
-            if (IsDisposed == false)
-            {
-                IsDisposed = true;
-                MinusZero mz = MinusZero.Instance;
-
-                //GraphUtil.DeleteEdgeByToVertex(mz.Root.Get(false, @"System\Session\Visualisers"), Vertex);
-
-                foreach (UIElement e in DisplayedVerticesUIElements.Values)
-                    if (e is IDisposable)
-                        ((IDisposable)e).Dispose();
-
-                PlatformClass.RemoveVertexChangeListeners(this.Vertex, new VertexChange(VertexChange));
-
-                if (Vertex is IDisposable)
-                    ((IDisposable)Vertex).Dispose();
-            }
+            VisualiserHelper.Dispose();
         }
 
 

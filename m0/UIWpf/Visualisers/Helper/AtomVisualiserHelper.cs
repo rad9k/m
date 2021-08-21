@@ -20,27 +20,42 @@ using m0.User.Process.UX;
 
 namespace m0.UIWpf.Visualisers.Helper
 {
-    public class GenericVisualiserHelper
+    public class AtomVisualiserHelper
     {
-        IVisualiser visualiser;
-        FrameworkElement visualiserAsFrameworkElement;
+        protected IVisualiser visualiser;
+        protected FrameworkElement visualiserAsFrameworkElement;
 
-        IEdge visualiserVertexEdge;
+        protected IEdge visualiserVertexEdge;
 
-        IList<string> scopeQueries;
-        string scopeQueriesName;
+        protected IList<string> scopeQueries;
+        protected string scopeQueriesName;
 
         public string visualiserName;
 
-        bool dndSupport;
+        protected bool dndSupport;
 
-        public GenericVisualiserHelper(IVertex _visualiserMetaVertex, IVisualiser _visualiser, string _visualiserName, FrameworkElement _visualiserAsFrameworkElement)
-            :this(_visualiserMetaVertex, _visualiser, _visualiserName, _visualiserAsFrameworkElement, true, new List<string> { @"BaseEdge:\To:" }, "AtomVisualiser")
+        public AtomVisualiserHelper(IVertex _visualiserMetaVertex, 
+            IVisualiser _visualiser, 
+            string _visualiserName, 
+            FrameworkElement _visualiserAsFrameworkElement)
+            :this(_visualiserMetaVertex, 
+                 _visualiser, 
+                 _visualiserName, 
+                 _visualiserAsFrameworkElement, 
+                 true, 
+                 new List<string> { @"BaseEdge:\To:" }, 
+                 "AtomVisualiser")
         {
             
         }
 
-        public GenericVisualiserHelper(IVertex visualiserMetaVertex, IVisualiser _visualiser, string _visualiserName, FrameworkElement _visualiserAsFrameworkElement, bool _dndSupport, IList<string> _scopeQueries, string _scopeQueriesName)
+        public AtomVisualiserHelper(IVertex visualiserMetaVertex, 
+            IVisualiser _visualiser, 
+            string _visualiserName, 
+            FrameworkElement _visualiserAsFrameworkElement, 
+            bool _dndSupport, 
+            IList<string> _scopeQueries, 
+            string _scopeQueriesName)
         {
             visualiser = _visualiser;
 

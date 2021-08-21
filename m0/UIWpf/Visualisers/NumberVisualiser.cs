@@ -38,7 +38,7 @@ namespace m0.UIWpf.Visualisers
         protected virtual string visualiserName { get; set; }
         protected virtual IVertex visualiserMetaVertex { get; set; }
 
-        public GenericVisualiserHelper VisualiserHelper { get; set; }
+        public AtomVisualiserHelper VisualiserHelper { get; set; }
 
         bool isContinous = false;
         bool IsRanged = false;
@@ -246,7 +246,7 @@ namespace m0.UIWpf.Visualisers
 
         public NumberVisualiser()
         {
-            new GenericVisualiserHelper(visualiserMetaVertex, this, visualiserName, this, false, new List<string> { @"BaseEdge:\To:" }, "AtomVisualiser");
+            new AtomVisualiserHelper(visualiserMetaVertex, this, visualiserName, this, false, new List<string> { @"BaseEdge:\To:" }, "AtomVisualiser");
 
             // need custom dnd becouse of slider / mouse move
             this.PreviewMouseLeftButtonDown += dndPreviewMouseLeftButtonDown;

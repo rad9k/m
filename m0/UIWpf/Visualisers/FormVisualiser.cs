@@ -51,7 +51,7 @@ namespace m0.UIWpf.Visualisers
 
     public class FormVisualiser : ContentControl, IVisualiser
     {
-        public GenericVisualiserHelper VisualiserHelper { get; set; }
+        public AtomVisualiserHelper VisualiserHelper { get; set; }
 
         bool DisplayBaseVertex = true; /////////////////////////////////////////
 
@@ -77,12 +77,16 @@ namespace m0.UIWpf.Visualisers
 
         public FormVisualiser()
         {
-            new GenericVisualiserHelper(MinusZero.Instance.Root.Get(false, @"System\Meta\Visualiser\Form"),
+            new AtomVisualiserHelper(MinusZero.Instance.Root.Get(false, @"System\Meta\Visualiser\Form"),
                 this, "FormVisualiser", this, false, new List<string> { @""}, "AtomVisualiserFull");
 
             SetVertexDefaultValues();
         }
 
+        public void OnLoad(object sender, RoutedEventArgs e)
+        {
+            // DO NOT WANT CONTEXTMENU HERE
+        }
 
         private TabInfo getActiveTabInfo()
         {
@@ -743,12 +747,7 @@ namespace m0.UIWpf.Visualisers
             Vertex.Get(false, "ColumnNumber:").Value = 1;
             Vertex.Get(false, "SectionsAsTabs:").Value = "False";
             Vertex.Get(false, "MetaOnLeft:").Value = "False";            
-        }
-
-        public void OnLoad(object sender, RoutedEventArgs e)
-        {
-            // DO NOT WANT CONTEXTMENU HERE
-        }
+        }        
 
         public void ZoomVisualiserContentChange()
         {

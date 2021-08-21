@@ -23,13 +23,13 @@ namespace m0.UIWpf.Visualisers
 {
     public class TestVisualiser : TextBox, IVisualiser
     {
-        public GenericVisualiserHelper VisualiserHelper { get; set; }        
+        public AtomVisualiserHelper VisualiserHelper { get; set; }        
         
         public TestVisualiser()
         {
             this.AcceptsReturn = true;
 
-            new GenericVisualiserHelper(MinusZero.Instance.Root.Get(false, @"System\Meta\Visualiser\Test"), this, "TestVisualiser", this);
+            new AtomVisualiserHelper(MinusZero.Instance.Root.Get(false, @"System\Meta\Visualiser\Test"), this, "TestVisualiser", this);
         }
 
         public void OnLoad(object sender, RoutedEventArgs e)

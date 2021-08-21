@@ -20,13 +20,13 @@ namespace m0.UIWpf.Visualisers
 {
     public class BooleanVisualiser : CheckBox, IVisualiser
     {
-        public GenericVisualiserHelper VisualiserHelper { get; set; }
+        public AtomVisualiserHelper VisualiserHelper { get; set; }
 
         bool IsNull { get; set; }
 
         public BooleanVisualiser()
         {
-            new GenericVisualiserHelper(MinusZero.Instance.Root.Get(false, @"System\Meta\Visualiser\Boolean"),
+            new AtomVisualiserHelper(MinusZero.Instance.Root.Get(false, @"System\Meta\Visualiser\Boolean"),
                 this, "BooleanVisualiser", this);
         }
 

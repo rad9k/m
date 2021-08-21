@@ -21,11 +21,11 @@ namespace m0.UIWpf.Visualisers
 {
     public class DebugVisualiser : StackPanel, IVisualiser
     {
-        public GenericVisualiserHelper VisualiserHelper { get; set; }
+        public AtomVisualiserHelper VisualiserHelper { get; set; }
 
         public DebugVisualiser()
         {            
-            new GenericVisualiserHelper(MinusZero.Instance.Root.Get(false, @"System\Meta\Visualiser\Debug"), 
+            new AtomVisualiserHelper(MinusZero.Instance.Root.Get(false, @"System\Meta\Visualiser\Debug"), 
                 this, "DebugVisualiser", this, false, new List<string> { @"", @"BaseEdge:\", @"BaseEdge:\To:\" }, "ListVisualiser");
         }
 

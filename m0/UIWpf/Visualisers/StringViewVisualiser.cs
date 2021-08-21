@@ -20,11 +20,11 @@ namespace m0.UIWpf.Visualisers
 {
     public class StringViewVisualiser : TextBlock, IVisualiser
     {
-        public GenericVisualiserHelper VisualiserHelper { get; set; }
+        public AtomVisualiserHelper VisualiserHelper { get; set; }
 
         public StringViewVisualiser()
         {            
-            new GenericVisualiserHelper(MinusZero.Instance.Root.Get(false, @"System\Meta\Visualiser\StringView"), this, "StringViewVisualiser", this);
+            new AtomVisualiserHelper(MinusZero.Instance.Root.Get(false, @"System\Meta\Visualiser\StringView"), this, "StringViewVisualiser", this);
         }
 
         public void OnLoad(object sender, RoutedEventArgs e)

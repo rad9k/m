@@ -20,11 +20,11 @@ namespace m0.UIWpf.Visualisers
 {
     public class EnumVisualiser : ComboBox, IVisualiser
     {
-        public GenericVisualiserHelper VisualiserHelper { get; set; }
+        public AtomVisualiserHelper VisualiserHelper { get; set; }
 
         public EnumVisualiser()
         {
-            new GenericVisualiserHelper(MinusZero.Instance.Root.Get(false, @"System\Meta\Visualiser\Enum"),
+            new AtomVisualiserHelper(MinusZero.Instance.Root.Get(false, @"System\Meta\Visualiser\Enum"),
                 this, "EnumVisualiser", this);
         }
 

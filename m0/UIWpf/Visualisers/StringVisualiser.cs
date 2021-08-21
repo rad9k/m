@@ -23,13 +23,13 @@ namespace m0.UIWpf.Visualisers
 {
     public class StringVisualiser : TextBox, IVisualiser
     {
-        public GenericVisualiserHelper VisualiserHelper { get; set; }
+        public AtomVisualiserHelper VisualiserHelper { get; set; }
 
         public StringVisualiser()
         {
             this.AcceptsReturn = true;
 
-            new GenericVisualiserHelper(MinusZero.Instance.Root.Get(false, @"System\Meta\Visualiser\String"), 
+            new AtomVisualiserHelper(MinusZero.Instance.Root.Get(false, @"System\Meta\Visualiser\String"), 
                 this, "StringVisualiser", this);
         }
 
