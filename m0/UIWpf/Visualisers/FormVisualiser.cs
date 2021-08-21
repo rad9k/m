@@ -74,6 +74,16 @@ namespace m0.UIWpf.Visualisers
 
         TabItem TabControlSelectedItem;
 
+
+        public FormVisualiser()
+        {
+            new GenericVisualiserHelper(MinusZero.Instance.Root.Get(false, @"System\Meta\Visualiser\Form"),
+                this, "FormVisualiser", this, false, new List<string> { @""}, "AtomVisualiserFull");
+
+            SetVertexDefaultValues();
+        }
+
+
         private TabInfo getActiveTabInfo()
         {
             if (HasTabs)
@@ -267,8 +277,8 @@ namespace m0.UIWpf.Visualisers
 
         public void UpdateBaseEdge()
         {
-            if (handlingUpdateBaseEdge)
-                return;
+          //  if (handlingUpdateBaseEdge)
+           //     return;
 
             handlingUpdateBaseEdge = true;
 
@@ -725,13 +735,6 @@ namespace m0.UIWpf.Visualisers
             b.BorderThickness = new System.Windows.Thickness(0, controlLineVsControlLineSeparator, 0, 0);
 
             place.Children.Add(b);
-        }
-
-        public FormVisualiser() {             
-            new GenericVisualiserHelper(MinusZero.Instance.Root.Get(false, @"System\Meta\Visualiser\Form"),
-                this, "FormVisualiser", this, false, new List<string> { @"", @"BaseEdge:\", @"BaseEdge:\To:\" }, "ListVisualiser");
-
-            SetVertexDefaultValues();
         }
 
         protected virtual void SetVertexDefaultValues()
