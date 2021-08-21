@@ -87,6 +87,13 @@ namespace m0.Graph.ExecutionFlow
                 currentTransaction.AddSecondStageCommitAction(commitAction);
         }
 
+        public static IEdge AddEventTriggerAndListener(IVertex baseVertex, IList<string> scopeQueries, string triggerVertexName, DotNetDelegate _delegate, string listenerName)
+        {
+            IEdge graphChangeTriggerEdge = ExecutionFlowHelper.AddGraphChangeTrigger(baseVertex, scopeQueries, triggerVertexName);
+            
+            return ExecutionFlowHelper.AddListener_DotNetDelegate(graphChangeTriggerEdge.To, _delegate, listenerName);
+        }
+
         public static IEdge AddGraphChangeTrigger(IVertex baseVertex, IList<string> scopeQueries)
         {
             return AddGraphChangeTrigger(baseVertex, scopeQueries, null);

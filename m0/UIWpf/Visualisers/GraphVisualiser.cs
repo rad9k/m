@@ -16,6 +16,8 @@ using System.Windows.Input;
 using System.Diagnostics;
 using m0.UIWpf.Foundation;
 using m0.UIWpf.Commands;
+using m0.Graph.ExecutionFlow;
+using m0.UIWpf.Visualisers.Helper;
 
 namespace m0.UIWpf.Visualisers
 {
@@ -35,6 +37,8 @@ namespace m0.UIWpf.Visualisers
         public List<Shape> Lines=new List<Shape>();
 
         public bool IsSelected;
+
+        IEdge listenerEdge;
 
         public void Select()
         {
@@ -157,8 +161,21 @@ namespace m0.UIWpf.Visualisers
 
             this.Padding = new Thickness(1);
 
-            if(baseVertex!=null)
-                PlatformClass.RegisterVertexChangeListeners(baseVertex, new VertexChange(VertexChange), new string[] { "BaseEdge", "SelectedEdges" });
+            if (baseVertex != null)
+                listenerEdge = ExecutionFlowHelper.AddEventTriggerAndListener(baseVertex, new List<string> { }, "BasicTrigger", VertexChange, "GraphVisualiserItem");                           
+        }
+
+        protected INoInEdgeInOutVertexVertex VertexChange(IExecution exe)
+        {
+            if (baseVertex.DisposedState == DisposeStateEnum.Live)
+            {
+                IVertex valueChange = exe.Stack.Get(false, @"event:\Type:ValueChange");
+
+                if(valueChange == null)
+                    ParentVisualiser.PaintGraph();
+            }
+
+            return exe.Stack;
         }
 
         public void Dispose()
@@ -167,24 +184,52 @@ namespace m0.UIWpf.Visualisers
                 ((IDisposable)(this.Child)).Dispose();
 
             if (baseVertex != null)
-                PlatformClass.RemoveVertexChangeListeners(baseVertex, new VertexChange(VertexChange));
-        }
-        
-        public void VertexChange(object sender, VertexChangeEventArgs e)
-        {
-            if (baseVertex.DisposedState != DisposeStateEnum.Live)
-                return;
-
-            if(e.Type!=VertexChangeType.ValueChanged&&ParentVisualiser.IsPaiting==false) //ValueChanged is handled by FastMode
-                ParentVisualiser.PaintGraph();
-        }
+                ExecutionFlowHelper.RemoveGraphChangeListener(listenerEdge);                
+        }        
     }
 
     public class GraphVisualiser: Canvas, IPlatformClass, IDisposable, IHasLocalizableEdges, IHasSelectableEdges
     {
+        public GenericVisualiserHelper VisualiserHelper { get; set; }
+
         SimpleVisualiserWrapper Highlighted;
 
         public bool IsPaiting=false;
+
+        public GraphVisualiser()
+        {
+
+            MinusZero mz = MinusZero.Instance;
+
+            DisplayedVerticesUIElements = new Dictionary<IVertex, SimpleVisualiserWrapper>();
+
+            this.Background = (Brush)FindResource("0BackgroundBrush");
+
+            this.AllowDrop = true;
+
+            if (mz != null && mz.IsInitialized)
+            {
+                //Vertex = mz.Root.Get(false, @"System\Session\Visualisers").AddVertex(null, "GraphVisualiser" + this.GetHashCode()); 
+
+                Vertex = mz.CreateTempVertex();
+                Vertex.Value = "GraphVisualiser" + this.GetHashCode();
+
+                ClassVertex.AddIsClassAndAllAttributesAndAssociations(Vertex, mz.Root.Get(false, @"System\Meta\Visualiser\Graph"));
+
+                ClassVertex.AddIsClassAndAllAttributesAndAssociations(Vertex.Get(false, "BaseEdge:"), mz.Root.Get(false, @"System\Meta\ZeroTypes\Edge"));
+
+                SetVertexDefaultValues();
+
+                this.ContextMenu = new m0.UIWpf.Controls.m0ContextMenu(this);
+
+                this.PreviewMouseLeftButtonDown += dndPreviewMouseLeftButtonDown;
+                this.PreviewMouseMove += dndPreviewMouseMove;
+                this.Drop += dndDrop;
+                this.MouseEnter += dndMouseEnter;
+            }
+
+            this.Loaded += new RoutedEventHandler(OnLoad);
+        }
 
         protected SimpleVisualiserWrapper Add(double x, double y, FrameworkElement _e, IVertex baseVertex)
         {
@@ -375,6 +420,14 @@ namespace m0.UIWpf.Visualisers
 
         Dictionary<IVertex, SimpleVisualiserWrapper> DisplayedVerticesUIElements;
 
+        bool CanAddEdge(IEdge e)
+        {
+            if (GeneralUtil.CompareStrings(e.Meta, "$GraphChangeTrigger"))
+                return false;
+
+            return true;
+        }
+
         protected void AddCircle(int level, IList<IVertex> InnerCircleVertices)
         {
             //MinusZero.Instance.Log(1,"AddCircle", level.ToString());
@@ -439,14 +492,17 @@ namespace m0.UIWpf.Visualisers
                     foreach (IEdge e in v)
                         if (!DisplayedVerticesUIElements.ContainsKey(e.To) || DisplayedVerticesUIElements[e.To] == dummyPointOut)
                         {
-                            double x = (this.Width / 2) + Math.Cos(cnt / OutAndInEdgesCount * Math.PI * 2) * CircleSize * level;
-                            double y = (this.Height / 2) + Math.Sin(cnt / OutAndInEdgesCount * Math.PI * 2) * CircleSize * level;
+                            if (CanAddEdge(e))
+                            {
+                                double x = (this.Width / 2) + Math.Cos(cnt / OutAndInEdgesCount * Math.PI * 2) * CircleSize * level;
+                                double y = (this.Height / 2) + Math.Sin(cnt / OutAndInEdgesCount * Math.PI * 2) * CircleSize * level;
 
-                            SimpleVisualiserWrapper toWrapper =  Add(x, y, (FrameworkElement)GetVisualiser(e.To), e.To);                            
+                                SimpleVisualiserWrapper toWrapper = Add(x, y, (FrameworkElement)GetVisualiser(e.To), e.To);
 
-                            CircleVertices.Add(e.To);                            
-                        
-                            AddLine(vPoint, toWrapper, e.Meta);
+                                CircleVertices.Add(e.To);
+
+                                AddLine(vPoint, toWrapper, e.Meta);
+                            }
 
                             cnt++;
                         }
@@ -461,14 +517,17 @@ namespace m0.UIWpf.Visualisers
                     foreach (IEdge e in v.InEdges)
                         if (!DisplayedVerticesUIElements.ContainsKey(e.From) || DisplayedVerticesUIElements[e.From] == dummyPointIn)
                         {
-                            double x = (this.Width / 2) + Math.Cos(cnt / OutAndInEdgesCount * Math.PI * 2) * CircleSize * level;
-                            double y = (this.Height / 2) + Math.Sin(cnt / OutAndInEdgesCount * Math.PI * 2) * CircleSize * level;                            
+                            if (CanAddEdge(e))
+                            {
+                                double x = (this.Width / 2) + Math.Cos(cnt / OutAndInEdgesCount * Math.PI * 2) * CircleSize * level;
+                                double y = (this.Height / 2) + Math.Sin(cnt / OutAndInEdgesCount * Math.PI * 2) * CircleSize * level;
 
-                            SimpleVisualiserWrapper fromWrapper = Add(x, y, (FrameworkElement)GetVisualiser(e.From), e.From);
+                                SimpleVisualiserWrapper fromWrapper = Add(x, y, (FrameworkElement)GetVisualiser(e.From), e.From);
 
-                            CircleVertices.Add(e.From);
+                                CircleVertices.Add(e.From);
 
-                            AddLine(fromWrapper, vPoint, e.Meta);
+                                AddLine(fromWrapper, vPoint, e.Meta);
+                            }                            
 
                             cnt++;
                         }
@@ -478,8 +537,6 @@ namespace m0.UIWpf.Visualisers
 
                             AddLine(eFromPoint, vPoint, e.Meta);
                         }
-
-
                 }
 
             if (level < GraphUtil.GetIntegerValue(Vertex.Get(false, "NumberOfCircles:")))
@@ -507,7 +564,6 @@ namespace m0.UIWpf.Visualisers
 
                                 AddLine(eFromPoint, vPoint, e.Meta);
                             }
-
                 }
             }
         }
@@ -528,41 +584,7 @@ namespace m0.UIWpf.Visualisers
             Vertex.Get(false, "FastMode:").Value = "True";
             Vertex.Get(false, "MetaLabels:").Value = "True";
             Vertex.Get(false, "ShowOutEdges:").Value = "True";
-        }
-   
-        public GraphVisualiser()
-        {
-            MinusZero mz = MinusZero.Instance;            
-
-            DisplayedVerticesUIElements = new Dictionary<IVertex, SimpleVisualiserWrapper>();
-
-            this.Background = (Brush)FindResource("0BackgroundBrush");
-
-            this.AllowDrop = true;
-
-            if (mz != null && mz.IsInitialized)
-            {
-                //Vertex = mz.Root.Get(false, @"System\Session\Visualisers").AddVertex(null, "GraphVisualiser" + this.GetHashCode()); 
-
-                Vertex = mz.CreateTempVertex();
-                Vertex.Value = "GraphVisualiser" + this.GetHashCode();
-
-                ClassVertex.AddIsClassAndAllAttributesAndAssociations(Vertex, mz.Root.Get(false, @"System\Meta\Visualiser\Graph"));
-
-                ClassVertex.AddIsClassAndAllAttributesAndAssociations(Vertex.Get(false, "BaseEdge:"), mz.Root.Get(false, @"System\Meta\ZeroTypes\Edge"));
-
-                SetVertexDefaultValues();
-                
-                this.ContextMenu = new m0.UIWpf.Controls.m0ContextMenu(this);
-
-                this.PreviewMouseLeftButtonDown += dndPreviewMouseLeftButtonDown;
-                this.PreviewMouseMove += dndPreviewMouseMove;                
-                this.Drop += dndDrop;
-                this.MouseEnter += dndMouseEnter;
-            }            
-
-            this.Loaded+=new RoutedEventHandler(OnLoad);
-        }
+        }        
 
         private void UpdateBaseEdge(){
             IVertex bv = Vertex.Get(false, @"BaseEdge:\To:");
