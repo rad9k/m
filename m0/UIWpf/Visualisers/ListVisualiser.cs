@@ -18,16 +18,64 @@ using m0.UIWpf.Foundation;
 using System.Windows.Input;
 using m0.UIWpf.Commands;
 using System.Windows.Controls.Primitives;
+using m0.UIWpf.Visualisers.Helper;
 
 namespace m0.UIWpf.Visualisers
 {
     public class ListVisualiser : StackPanel,  IPlatformClass, IDisposable, IHasLocalizableEdges, IHasSelectableEdges
     {
+        public AtomVisualiserHelper VisualiserHelper { get; set; }
+
         protected DataGrid ThisDataGrid;
 
         protected bool TurnOffSelectedItemsUpdate = false;
 
         protected bool TurnOffSelectedVerticesUpdate = false;
+
+        public ListVisualiser()
+        {
+            ThisDataGrid = new DataGrid();
+
+            this.Children.Add(ThisDataGrid);
+
+            AddFooter();
+
+
+
+            ThisDataGrid.AllowDrop = true;
+
+            ThisDataGrid.AutoGenerateColumns = false;
+
+            ThisDataGrid.RowBackground = (Brush)FindResource("0BackgroundBrush");
+            ThisDataGrid.Background = (Brush)FindResource("0BackgroundBrush");
+            ThisDataGrid.HorizontalGridLinesBrush = (Brush)FindResource("0ForegroundBrush");
+            ThisDataGrid.VerticalGridLinesBrush = (Brush)FindResource("0ForegroundBrush");
+
+            ThisDataGrid.HeadersVisibility = DataGridHeadersVisibility.Column;
+
+            ThisDataGrid.SelectedValuePath = "To";
+            VirtualizingStackPanel.SetIsVirtualizing(ThisDataGrid, false);
+            MinusZero mz = MinusZero.Instance;
+
+            if (mz != null && mz.IsInitialized)
+            {
+                PlatformClassInitialize();
+
+                SetVertexDefaultValues();
+
+                CreateView();
+
+                ThisDataGrid.ContextMenu = new m0ContextMenu(this);
+
+                ThisDataGrid.PreviewMouseLeftButtonDown += dndPreviewMouseLeftButtonDown;
+                ThisDataGrid.MouseMove += dndPreviewMouseMove; // !!!!!!!!!!!!!!!!!! otherwise sliders do not work
+                ThisDataGrid.Drop += dndDrop;
+
+                ThisDataGrid.MouseEnter += dndMouseEnter;
+
+                ThisDataGrid.SelectionChanged += _OnSelectionChanged;
+            }
+        }
 
         public void UnselectAllSelectedEdges(){
             IVertex sv = Vertex.Get(false, "SelectedEdges:");
@@ -221,53 +269,7 @@ namespace m0.UIWpf.Visualisers
             ClassVertex.AddIsClassAndAllAttributesAndAssociations(Vertex.Get(false, "BaseEdge:"), mz.Root.Get(false, @"System\Meta\ZeroTypes\Edge"));
            
         
-        }
-
-        
-        public ListVisualiser()
-        {
-            ThisDataGrid = new DataGrid();
-
-            this.Children.Add(ThisDataGrid); 
-            
-            AddFooter();
-
-            
-
-            ThisDataGrid.AllowDrop = true;
-
-            ThisDataGrid.AutoGenerateColumns = false;
-
-            ThisDataGrid.RowBackground = (Brush)FindResource("0BackgroundBrush");
-            ThisDataGrid.Background = (Brush)FindResource("0BackgroundBrush");
-            ThisDataGrid.HorizontalGridLinesBrush = (Brush)FindResource("0ForegroundBrush");
-            ThisDataGrid.VerticalGridLinesBrush = (Brush)FindResource("0ForegroundBrush");
-
-            ThisDataGrid.HeadersVisibility = DataGridHeadersVisibility.Column;
-
-            ThisDataGrid.SelectedValuePath = "To";
-            VirtualizingStackPanel.SetIsVirtualizing(ThisDataGrid, false); 
-            MinusZero mz=MinusZero.Instance;
-
-            if (mz != null&&mz.IsInitialized)
-            {
-                PlatformClassInitialize();
-
-                SetVertexDefaultValues();
-
-                CreateView();
-
-                ThisDataGrid.ContextMenu = new m0ContextMenu(this);
-
-                ThisDataGrid.PreviewMouseLeftButtonDown += dndPreviewMouseLeftButtonDown;
-                ThisDataGrid.MouseMove += dndPreviewMouseMove; // !!!!!!!!!!!!!!!!!! otherwise sliders do not work
-                ThisDataGrid.Drop += dndDrop;
-
-                ThisDataGrid.MouseEnter += dndMouseEnter;
-
-                ThisDataGrid.SelectionChanged += _OnSelectionChanged;
-            }
-        }
+        }        
 
         protected virtual void UpdateBaseEdge(){
             IVertex _bas = Vertex.Get(false, @"BaseEdge:\To:");

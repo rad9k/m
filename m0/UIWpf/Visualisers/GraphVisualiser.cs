@@ -858,6 +858,8 @@ namespace m0.UIWpf.Visualisers
 
             if (v != null)
                 Dnd.DoDrop(null, v.Get(false, "To:"), e);
+
+            e.Handled = true;
         }
 
         private void dndMouseEnter(object sender, MouseEventArgs e)
