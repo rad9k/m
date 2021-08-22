@@ -16,6 +16,8 @@ using m0.UIWpf.Foundation;
 using m0.UIWpf.Commands;
 using m0.Graph.ExecutionFlow;
 using m0.User.Process.UX;
+using System.Windows.Controls.Primitives;
+using m0.UIWpf.Visualisers.Helper;
 
 namespace m0.UIWpf.Visualisers.Helper
 {
@@ -127,6 +129,19 @@ namespace m0.UIWpf.Visualisers.Helper
         {
             Point mousePos = e.GetPosition(visualiserAsFrameworkElement);
             Vector diff = dndStartPoint - mousePos;
+
+            var headersPresenter = m0.UIWpf.WpfUtil.FindVisualChild<DataGridColumnHeadersPresenter>(visualiserAsFrameworkElement);
+
+            if (headersPresenter != null)
+            {
+                double headerActualHeight = headersPresenter.ActualHeight;
+
+                if (mousePos.Y <= headerActualHeight) // if header
+                {
+                    e.Handled = false;
+                    return;
+                }
+            }
 
             if (hasButtonBeenDown && isDraggin == false &&
                 !WpfUtil.IsMouseOverScrollbar(sender, dndStartPoint) &&
