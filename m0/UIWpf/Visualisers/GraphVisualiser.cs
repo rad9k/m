@@ -203,7 +203,14 @@ namespace m0.UIWpf.Visualisers
             this.Background = (Brush)FindResource("0BackgroundBrush");
 
             new ListVisualiserHelper(MinusZero.Instance.Root.Get(false, @"System\Meta\Visualiser\Graph"),
-              this, "GraphVisualiser", this, true, new List<string> {"", @"BaseEdge:\To:" }, "AtomVisualiserFull");            
+              this, "GraphVisualiser", this, false, new List<string> {"", @"BaseEdge:\To:" }, "AtomVisualiserFull");
+
+            this.PreviewMouseLeftButtonDown += dndPreviewMouseLeftButtonDown;
+            this.PreviewMouseMove += dndPreviewMouseMove;
+            this.Drop += dndDrop;
+            this.AllowDrop = true;
+
+            this.MouseEnter += dndMouseEnter;
 
             SetVertexDefaultValues();
         }
@@ -790,6 +797,72 @@ namespace m0.UIWpf.Visualisers
         public FrameworkElement GetVisualElementByEdge(IVertex vertex)
         {
             throw new NotImplementedException();
-        }        
+        }
+
+        ///// DRAG AND DROP
+
+        Point dndStartPoint;
+        bool hasButtonBeenDown;
+
+        private void dndPreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            dndStartPoint = e.GetPosition(this);
+            hasButtonBeenDown = true;
+
+            CopySelectedVerticesToTemp();
+
+            MinusZero.Instance.IsGUIDragging = false;
+        }
+
+        private void dndPreviewMouseMove(object sender, MouseEventArgs e)
+        {
+            Point mousePos = e.GetPosition(this);
+            Vector diff = dndStartPoint - mousePos;
+
+            if (hasButtonBeenDown &&
+                !WpfUtil.IsMouseOverScrollbar(sender, dndStartPoint) &&
+                (e.LeftButton == MouseButtonState.Pressed) & (
+                (Math.Abs(diff.X) > Dnd.MinimumHorizontalDragDistance) ||
+                (Math.Abs(diff.Y) > Dnd.MinimumVerticalDragDistance)))
+            {
+                RestoreSelectedVertices();
+
+                IVertex dndVertex = MinusZero.Instance.CreateTempVertex();
+
+                if (Vertex.Get(false, @"SelectedEdges:\") != null)
+                    foreach (IEdge ee in Vertex.GetAll(false, @"SelectedEdges:\"))
+                        dndVertex.AddEdge(null, ee.To);
+                else
+                {
+                    IVertex v = GetEdgeByLocation(dndStartPoint);
+                    if (v != null)
+                        dndVertex.AddEdge(null, v);
+                }
+
+                if (dndVertex.Count() > 0)
+                {
+                    DataObject dragData = new DataObject("Vertex", dndVertex);
+                    dragData.SetData("DragSource", this);
+
+                    Dnd.DoDragDrop(this, dragData);
+                }
+            }
+        }
+
+        private void dndDrop(object sender, DragEventArgs e)
+        {
+            IVertex v = GetEdgeByLocation(e.GetPosition(this));
+
+            if (v == null && GeneralUtil.CompareStrings(MinusZero.Instance.Root.Get(false, @"User\CurrentUser:\Settings:\AllowBlankAreaDragAndDrop:").Value, "OnlyEnd"))
+                v = Vertex.Get(false, "BaseEdge:");
+
+            if (v != null)
+                Dnd.DoDrop(null, v.Get(false, "To:"), e);
+        }
+
+        private void dndMouseEnter(object sender, MouseEventArgs e)
+        {
+            hasButtonBeenDown = false;
+        }
     }
 }
