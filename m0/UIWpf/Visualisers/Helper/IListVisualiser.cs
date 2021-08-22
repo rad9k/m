@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace m0.UIWpf.Visualisers.Helper
 {
-    public interface IListVisualiser
+    public interface IListVisualiser : IVisualiser
     {
         void SelectedVerticesUpdated();
 

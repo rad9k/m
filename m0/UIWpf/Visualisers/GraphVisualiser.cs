@@ -188,7 +188,7 @@ namespace m0.UIWpf.Visualisers
         }        
     }
 
-    public class GraphVisualiser: Canvas, IVisualiser, IHasSelectableEdges
+    public class GraphVisualiser: Canvas, IListVisualiser, IHasSelectableEdges
     {
         public AtomVisualiserHelper VisualiserHelper { get; set; }
 
@@ -202,7 +202,7 @@ namespace m0.UIWpf.Visualisers
 
             this.Background = (Brush)FindResource("0BackgroundBrush");
 
-            new AtomVisualiserHelper(MinusZero.Instance.Root.Get(false, @"System\Meta\Visualiser\Graph"),
+            new ListVisualiserHelper(MinusZero.Instance.Root.Get(false, @"System\Meta\Visualiser\Graph"),
               this, "GraphVisualiser", this, false, new List<string> {"", @"BaseEdge:\To:" }, "AtomVisualiserFull");
 
             this.PreviewMouseLeftButtonDown += dndPreviewMouseLeftButtonDown;
@@ -357,7 +357,7 @@ namespace m0.UIWpf.Visualisers
 
                 // turn off Vertex.Change listener
 
-                PlatformClass.RemoveVertexChangeListeners(this.Vertex, new VertexChange(VertexChange));
+                //PlatformClass.RemoveVertexChangeListeners(this.Vertex, new VertexChange(VertexChange));
 
                 //                                
 
@@ -406,7 +406,7 @@ namespace m0.UIWpf.Visualisers
 
                 // turn on Vertex.Change listener
 
-                PlatformClass.RegisterVertexChangeListeners(this.Vertex, new VertexChange(VertexChange), new string[] { "BaseEdge", "SelectedEdges" });
+                //PlatformClass.RegisterVertexChangeListeners(this.Vertex, new VertexChange(VertexChange), new string[] { "BaseEdge", "SelectedEdges" });
 
                 //
             }
@@ -729,7 +729,7 @@ namespace m0.UIWpf.Visualisers
             GraphUtil.RemoveAllEdges_WhereEdgeIsEdge(sv);
         }
         
-        protected void SelectedVerticesUpdated()
+        public void SelectedVerticesUpdated()
         {
             if (IsFirstPainted)
             {

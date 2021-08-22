@@ -14,6 +14,10 @@ namespace m0.Graph
             VertexInit_First();
         }
 
+        public IdentifiedVertex(IStore store) : base(store) {
+            _Identifier = this.GetHashCode().ToString();
+        }
+
         public IdentifiedVertex(string identifier,IStore store):base(store)
         {
              VertexInit();
