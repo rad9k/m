@@ -80,5 +80,98 @@ namespace m0.UIWpf.Visualisers.Helper
 
             return exe.Stack;
         }
+
+        // DRAG AND DROP
+
+        IVertex tempSelectedVertices;
+
+        protected void CopySelectedVerticesToTemp()
+        {
+            tempSelectedVertices = MinusZero.Instance.CreateTempVertex();
+
+            GraphUtil.CopyEdges(_Vertex.Get(false, "SelectedEdges:"), tempSelectedVertices);
+        }
+
+        protected void RestoreSelectedVertices()
+        {
+            IVertex sv = _Vertex.Get(false, "SelectedEdges:");
+
+            if (tempSelectedVertices != null)
+            {
+                GraphUtil.RemoveAllEdges_WhereEdgeIsEdge(sv);
+
+                GraphUtil.CopyEdges(tempSelectedVertices, sv);
+            }
+        }
+
+        private void dndPreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            dndStartPoint = e.GetPosition(visualiserAsFrameworkElement);
+            hasButtonBeenDown = true;
+
+            CopySelectedVerticesToTemp();
+
+            MinusZero.Instance.IsGUIDragging = false;
+        }
+
+        protected override void dndPreviewMouseMove(object sender, MouseEventArgs e)
+        {
+            Point mousePos = e.GetPosition(visualiserAsFrameworkElement);
+            Vector diff = dndStartPoint - mousePos;
+
+
+            if (hasButtonBeenDown && isDraggin == false &&
+                !WpfUtil.IsMouseOverScrollbar(sender, dndStartPoint) &&
+                (e.LeftButton == MouseButtonState.Pressed) && (
+                (Math.Abs(diff.X) > Dnd.MinimumHorizontalDragDistance) ||
+                (Math.Abs(diff.Y) > Dnd.MinimumVerticalDragDistance)))
+            {
+                isDraggin = true;
+
+                RestoreSelectedVertices();
+
+                IVertex dndVertex = MinusZero.Instance.CreateTempVertex();
+
+                if (_Vertex.Get(false, @"SelectedEdges:\") != null)
+                    foreach (IEdge ee in _Vertex.GetAll(false, @"SelectedEdges:\"))
+                        dndVertex.AddEdge(null, ee.To);
+                else
+                {
+                    IVertex v = visualiser.GetEdgeByLocation(dndStartPoint);
+                    if (v != null)
+                        dndVertex.AddEdge(null, v);
+                }
+
+                if (dndVertex.Count() > 0)
+                {
+                    DataObject dragData = new DataObject("Vertex", dndVertex);
+                    dragData.SetData("DragSource", visualiserAsFrameworkElement);
+
+                    Dnd.DoDragDrop(visualiserAsFrameworkElement, dragData);
+
+                    e.Handled = true;
+                }
+
+                isDraggin = false;
+            }
+        }
+
+        private void dndDrop(object sender, DragEventArgs e)
+        {
+            IVertex v = visualiser.GetEdgeByLocation(e.GetPosition(visualiserAsFrameworkElement));
+
+            if (v == null && GeneralUtil.CompareStrings(MinusZero.Instance.Root.Get(false, @"User\CurrentUser:\Settings:\AllowBlankAreaDragAndDrop:").Value, "OnlyEnd"))
+                v = _Vertex.Get(false, "BaseEdge:");
+
+            if (v != null)
+                Dnd.DoDrop(null, v.Get(false, "To:"), e);
+
+            e.Handled = true;
+        }
+
+        private void dndMouseEnter(object sender, MouseEventArgs e)
+        {
+            hasButtonBeenDown = false;
+        }
     }
 }

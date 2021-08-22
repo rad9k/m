@@ -171,9 +171,9 @@ namespace m0.UIWpf.Visualisers.Helper
 
         ///// DRAG AND DROP
 
-        Point dndStartPoint;
+        protected Point dndStartPoint;
 
-        private void dndPreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        protected virtual void dndPreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             dndStartPoint = e.GetPosition(visualiserAsFrameworkElement);
 
@@ -182,10 +182,10 @@ namespace m0.UIWpf.Visualisers.Helper
             hasButtonBeenDown = true;
         }
 
-        bool isDraggin = false;
-        bool hasButtonBeenDown;
+        protected bool isDraggin = false;
+        protected bool hasButtonBeenDown;
 
-        private void dndPreviewMouseMove(object sender, MouseEventArgs e)
+        protected virtual void dndPreviewMouseMove(object sender, MouseEventArgs e)
         {
             Point mousePos = e.GetPosition(visualiserAsFrameworkElement);
             Vector diff = dndStartPoint - mousePos;
@@ -212,12 +212,12 @@ namespace m0.UIWpf.Visualisers.Helper
             }
         }
 
-        private void dndDrop(object sender, System.Windows.DragEventArgs e)
+        protected virtual void dndDrop(object sender, System.Windows.DragEventArgs e)
         {
             Dnd.DoDrop(visualiser, _Vertex.Get(false, @"BaseEdge:\To:"), e);
         }
 
-        private void dndMouseEnter(object sender, MouseEventArgs e)
+        protected virtual void dndMouseEnter(object sender, MouseEventArgs e)
         {
             hasButtonBeenDown = false;
         }
