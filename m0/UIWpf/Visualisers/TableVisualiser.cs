@@ -187,7 +187,7 @@ namespace m0.UIWpf.Visualisers
 
         IVertex ToShowEdgesMeta;
 
-        protected override void UpdateBaseEdge(){
+        public override void UpdateBaseEdge(){
             IVertex bas = Vertex.Get(false, @"BaseEdge:\To:");
 
             if (Vertex.Get(false, @"ToShowEdgesMeta:\Meta:") == null) // check if we are in the middle of ToShowEdgesMeta sub Vertices switching
@@ -249,7 +249,7 @@ namespace m0.UIWpf.Visualisers
         }
 
 
-        protected override void VertexChange(object sender, VertexChangeEventArgs e)
+        protected  void VertexChange(object sender, VertexChangeEventArgs e)
         {
             if ((sender == Vertex) && (e.Type == VertexChangeType.EdgeAdded) && (GeneralUtil.CompareStrings(e.Edge.Meta.Value, "BaseEdge"))
                  || (sender == Vertex.Get(false, "BaseEdge:") && e.Type == VertexChangeType.ValueChanged)

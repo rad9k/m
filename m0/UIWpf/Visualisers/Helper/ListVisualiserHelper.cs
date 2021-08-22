@@ -56,8 +56,15 @@ namespace m0.UIWpf.Visualisers.Helper
             listVisualiser = (IListVisualiser)_visualiser;
         }
 
+        //bool isBaseEdgeUpdating = false;
+
         protected override INoInEdgeInOutVertexVertex VertexChange(IExecution exe)
         {
+          //  if (isBaseEdgeUpdating)
+            //    return exe.Stack;
+
+            //isBaseEdgeUpdating = true;
+
             IVertex changedVertex = exe.Stack.Get(false, @"event:\ChangedVertex:");
 
             if (changedVertex != null)
@@ -77,6 +84,8 @@ namespace m0.UIWpf.Visualisers.Helper
             }
 
             visualiser.UpdateBaseEdge();
+
+            //isBaseEdgeUpdating = false;
 
             return exe.Stack;
         }
