@@ -17,6 +17,7 @@ using m0.UIWpf.Foundation;
 using System.Windows.Input;
 using m0.UIWpf.Commands;
 using System.Windows.Controls.Primitives;
+using m0.UIWpf.Visualisers.Helper;
 
 namespace m0.UIWpf.Visualisers
 {
@@ -155,33 +156,22 @@ namespace m0.UIWpf.Visualisers
         }
 
         protected override void PlatformClassInitialize(){
-            MinusZero mz = MinusZero.Instance;
-
-            //Vertex = mz.Root.Get(false, @"System\Session\Visualisers").AddVertex(null, "ListVisualiser" + this.GetHashCode());
-
-            Vertex = mz.CreateTempVertex();
-            Vertex.Value = "TableVisualiser" + this.GetHashCode();
-
-            ClassVertex.AddIsClassAndAllAttributesAndAssociations(Vertex, mz.Root.Get(false, @"System\Meta\Visualiser\Table"));
-
-            ClassVertex.AddIsClassAndAllAttributesAndAssociations(Vertex.Get(false, "BaseEdge:"), mz.Root.Get(false, @"System\Meta\ZeroTypes\Edge"));
-
-            //ClassVertex.AddIsClassAndAllAttributes(Vertex.Get(false, "ToShowEdgesMeta:"), mz.Root.Get(false, @"System\Meta\ZeroTypes\Edge"));            
-
+            new ListVisualiserHelper(MinusZero.Instance.Root.Get(false, @"System\Meta\Visualiser\Table"),
+                         this, "TableVisualiser", this, false, new List<string> { @"" }, "AtomVisualiserFull");
         }
 
         private void VertexChangeListenOff()
         {
-            ((EasyVertex)Vertex).CanFireChangeEvent = false;
+            //((EasyVertex)Vertex).CanFireChangeEvent = false;
 
-            PlatformClass.RemoveVertexChangeListeners(this.Vertex, new VertexChange(VertexChange));
+            //PlatformClass.RemoveVertexChangeListeners(this.Vertex, new VertexChange(VertexChange));
         }
 
         private void VertexChangeListenOn()
         {
-            ((EasyVertex)Vertex).CanFireChangeEvent = true;
+            //((EasyVertex)Vertex).CanFireChangeEvent = true;
 
-            PlatformClass.RegisterVertexChangeListeners(this.Vertex, new VertexChange(VertexChange), new string[] { "BaseEdge", "SelectedEdges" });
+            //PlatformClass.RegisterVertexChangeListeners(this.Vertex, new VertexChange(VertexChange), new string[] { "BaseEdge", "SelectedEdges" });
         }
 
 
@@ -247,63 +237,5 @@ namespace m0.UIWpf.Visualisers
                 ResetView();
             }           
         }
-
-
-        protected  void VertexChange(object sender, VertexChangeEventArgs e)
-        {
-            if ((sender == Vertex) && (e.Type == VertexChangeType.EdgeAdded) && (GeneralUtil.CompareStrings(e.Edge.Meta.Value, "BaseEdge"))
-                 || (sender == Vertex.Get(false, "BaseEdge:") && e.Type == VertexChangeType.ValueChanged)
-                || ((sender == Vertex.Get(false, "BaseEdge:")) && (e.Type == VertexChangeType.EdgeAdded) && ((GeneralUtil.CompareStrings(e.Edge.Meta.Value, "To")))))
-                UpdateBaseEdge();
-
-            if (sender == Vertex.Get(false, @"BaseEdge:\To:") && (e.Type == VertexChangeType.EdgeAdded || e.Type == VertexChangeType.EdgeRemoved))
-                UpdateBaseEdge();
-
-            if ((sender == Vertex) && (e.Type == VertexChangeType.EdgeAdded) && (GeneralUtil.CompareStrings(e.Edge.Meta.Value, "ToShowEdgesMeta")))         
-                UpdateBaseEdge();
-
-            if (sender == Vertex.Get(false, @"ToShowEdgesMeta:") && (e.Type == VertexChangeType.EdgeAdded || e.Type == VertexChangeType.EdgeRemoved))
-                UpdateBaseEdge();
-              // there WAS is update loop with this, so commenting out and leaving only what is above
-
-            if ((sender == Vertex) && (e.Type == VertexChangeType.EdgeAdded) && (GeneralUtil.CompareStrings(e.Edge.Meta.Value, "SelectedEdges")))
-                SelectedVerticesUpdated();
-
-            if ((sender == Vertex.Get(false, "SelectedEdges:")) && ((e.Type == VertexChangeType.EdgeAdded)||(e.Type == VertexChangeType.EdgeRemoved)))
-                SelectedVerticesUpdated();
-
-            if (sender is IVertex && GraphUtil.FindEdgeByToVertex(Vertex.GetAll(false, @"SelectedEdges:\"), (IVertex)sender) != null)
-                SelectedVerticesUpdated();
-
-            if (sender == Vertex.Get(false, "IsMetaRightAlign:") && e.Type == VertexChangeType.ValueChanged) 
-                ResetView();
-
-            if (sender == Vertex.Get(false, "IsAllVisualisersEdit:") && e.Type == VertexChangeType.ValueChanged)
-                ResetView();
-
-            if (sender == Vertex.Get(false, "ZoomVisualiserContent:") && e.Type == VertexChangeType.ValueChanged)
-                ZoomVisualiserContentChange();
-
-            if (sender == Vertex.Get(false, "FilterQuery:") && e.Type == VertexChangeType.ValueChanged)
-                UpdateBaseEdge();
-
-            if (sender == Vertex.Get(false, "ExpertMode:") && e.Type == VertexChangeType.ValueChanged)
-                UpdateBaseEdge();
-
-            if ((sender == Vertex) && (e.Type == VertexChangeType.EdgeAdded) && (GeneralUtil.CompareStrings(e.Edge.Meta.Value, "FilterQuery")))
-                UpdateBaseEdge();
-
-            if (sender == Vertex.Get(false, "ShowHeader:") && e.Type == VertexChangeType.ValueChanged)
-                ResetView();
-
-            if (sender == Vertex.Get(false, "AlternatingRows:") && e.Type == VertexChangeType.ValueChanged)
-                ResetView();
-
-            if ((sender == Vertex) && (e.Type == VertexChangeType.EdgeAdded) && (GeneralUtil.CompareStrings(e.Edge.Meta.Value, "ShowHeader")))
-                ResetView();
-
-        }       
-
-        
     }
 }
