@@ -56,22 +56,25 @@ namespace m0.UIWpf.Visualisers.Helper
             listVisualiser = (IListVisualiser)_visualiser;
         }
 
-        protected new INoInEdgeInOutVertexVertex VertexChange(IExecution exe)
+        protected override INoInEdgeInOutVertexVertex VertexChange(IExecution exe)
         {
-            IVertex sourceVertex = exe.Stack.Get(false, @"event:\Source:");
+            IVertex changedVertex = exe.Stack.Get(false, @"event:\ChangedVertex:");
 
-            if (GraphUtil.ExistQueryIn(sourceVertex, "ZoomVisualiserContent", null))
+            if (changedVertex != null)
             {
-                listVisualiser.ZoomVisualiserContentChange();
-                return exe.Stack;
+                if (GraphUtil.ExistQueryIn(changedVertex, "ZoomVisualiserContent", null))
+                {
+                    listVisualiser.ZoomVisualiserContentChange();
+                    return exe.Stack;
+                }
+
+                if (GraphUtil.ExistQueryIn(changedVertex, "SelectedEdges", null))
+                {
+                    listVisualiser.SelectedVerticesUpdated();
+
+                    return exe.Stack;
+                }
             }
-
-            if (GraphUtil.ExistQueryIn(sourceVertex, "SelectedEdges", null))
-            {
-                listVisualiser.SelectedVerticesUpdated();
-
-                return exe.Stack;
-            }                
 
             visualiser.UpdateBaseEdge();
 

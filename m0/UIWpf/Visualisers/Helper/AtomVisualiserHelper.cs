@@ -112,7 +112,7 @@ namespace m0.UIWpf.Visualisers.Helper
 
         //bool isBaseEdgeUpdating = false;
 
-        protected INoInEdgeInOutVertexVertex VertexChange(IExecution exe)
+        protected virtual INoInEdgeInOutVertexVertex VertexChange(IExecution exe)
         {
           //  if (isBaseEdgeUpdating)
             //    return exe.Stack;
