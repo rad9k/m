@@ -22,7 +22,7 @@ using m0.UIWpf.Visualisers.Helper;
 
 namespace m0.UIWpf.Visualisers
 {
-    public class ListVisualiser : StackPanel,  IPlatformClass, IDisposable, IHasLocalizableEdges, IHasSelectableEdges
+    public class ListVisualiser : StackPanel,  IListVisualiser
     {
         public AtomVisualiserHelper VisualiserHelper { get; set; }
 
@@ -39,8 +39,6 @@ namespace m0.UIWpf.Visualisers
             this.Children.Add(ThisDataGrid);
 
             AddFooter();
-
-
 
             ThisDataGrid.AllowDrop = true;
 
@@ -65,19 +63,19 @@ namespace m0.UIWpf.Visualisers
 
                 CreateView();
 
-                ThisDataGrid.ContextMenu = new m0ContextMenu(this);
-
-                ThisDataGrid.PreviewMouseLeftButtonDown += dndPreviewMouseLeftButtonDown;
-                ThisDataGrid.MouseMove += dndPreviewMouseMove; // !!!!!!!!!!!!!!!!!! otherwise sliders do not work
-                ThisDataGrid.Drop += dndDrop;
-
-                ThisDataGrid.MouseEnter += dndMouseEnter;
+                
 
                 ThisDataGrid.SelectionChanged += _OnSelectionChanged;
             }
         }
 
-        public void UnselectAllSelectedEdges(){
+        public void OnLoad(object sender, RoutedEventArgs e)
+        {
+            VisualiserHelper.AddContextMenu();
+        }
+
+        public void UnselectAllSelectedEdges()
+        {
             IVertex sv = Vertex.Get(false, "SelectedEdges:");
 
             GraphUtil.RemoveAllEdges_WhereEdgeIsEdge(sv);
@@ -214,7 +212,7 @@ namespace m0.UIWpf.Visualisers
             }
         }
 
-        protected void ZoomVisualiserContentChange()
+        public void ZoomVisualiserContentChange()
         {
             double scale = ((double)GraphUtil.GetIntegerValue(Vertex.Get(false, "ZoomVisualiserContent:")))/100;
 
@@ -224,7 +222,7 @@ namespace m0.UIWpf.Visualisers
                 this.LayoutTransform = null;
         }        
 
-        protected void SelectedVerticesUpdated(){
+        public void SelectedVerticesUpdated(){
             if (TurnOffSelectedItemsUpdate)
                 return;
 
@@ -267,11 +265,12 @@ namespace m0.UIWpf.Visualisers
             ClassVertex.AddIsClassAndAllAttributesAndAssociations(Vertex, mz.Root.Get(false, @"System\Meta\Visualiser\List"));
 
             ClassVertex.AddIsClassAndAllAttributesAndAssociations(Vertex.Get(false, "BaseEdge:"), mz.Root.Get(false, @"System\Meta\ZeroTypes\Edge"));
-           
-        
+
+            new ListVisualiserHelper(MinusZero.Instance.Root.Get(false, @"System\Meta\Visualiser\Graph"),
+             this, "GraphVisualiser", this, false, new List<string> { "", @"BaseEdge:\To:" }, "AtomVisualiserFull");
         }        
 
-        protected virtual void UpdateBaseEdge(){
+        public virtual void UpdateBaseEdge(){
             IVertex _bas = Vertex.Get(false, @"BaseEdge:\To:");
 
             IEnumerable ItemsSourceValue = null;
@@ -431,118 +430,7 @@ namespace m0.UIWpf.Visualisers
         public FrameworkElement GetVisualElementByEdge(IVertex vertex)
         {
             throw new NotImplementedException();
-        }
-
-        ///// DRAG AND DROP
-
-        IVertex tempSelectedVertices;
-
-        protected void CopySelectedVerticesToTemp()
-        {
-            tempSelectedVertices = MinusZero.Instance.CreateTempVertex();
-
-            GraphUtil.CopyEdges(Vertex.Get(false, "SelectedEdges:"), tempSelectedVertices);
-        }
-
-        protected void RestoreSelectedVertices()
-        {
-            IVertex sv = Vertex.Get(false, "SelectedEdges:");
-
-            if (tempSelectedVertices != null)
-            {
-                GraphUtil.RemoveAllEdges_WhereEdgeIsEdge(sv);
-
-                GraphUtil.CopyEdges(tempSelectedVertices, sv);
-            }
-        }
-
-       //
-        
-        Point dndStartPoint;
-        bool hasButtonBeenDown;
-
-        private void dndPreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
-        {
-            dndStartPoint = e.GetPosition(this);
-            hasButtonBeenDown = true;
-
-            CopySelectedVerticesToTemp();
-
-            MinusZero.Instance.IsGUIDragging = false;
-        }
-
-        bool isDraggin = false;
-
-        private void dndPreviewMouseMove(object sender, MouseEventArgs e)
-        {
-            Point mousePos = e.GetPosition(this);
-            Vector diff = dndStartPoint - mousePos;
-
-            var headersPresenter = WpfUtil.FindVisualChild<DataGridColumnHeadersPresenter>(this);
-            double headerActualHeight = headersPresenter.ActualHeight;
-
-            if (mousePos.Y <= headerActualHeight) // if header
-            {
-                e.Handled = false;
-                return;
-            }
-
-            if (hasButtonBeenDown && isDraggin==false &&
-                !WpfUtil.IsMouseOverScrollbar(sender, dndStartPoint) &&
-                (e.LeftButton == MouseButtonState.Pressed) && (
-                (Math.Abs(diff.X) > Dnd.MinimumHorizontalDragDistance) ||
-                (Math.Abs(diff.Y) > Dnd.MinimumVerticalDragDistance)))
-            {
-                isDraggin = true;
-
-                RestoreSelectedVertices();
-
-                IVertex dndVertex = MinusZero.Instance.CreateTempVertex();
-
-                if (Vertex.Get(false, @"SelectedEdges:\") != null)
-                    foreach (IEdge ee in Vertex.GetAll(false, @"SelectedEdges:\"))
-                        dndVertex.AddEdge(null, ee.To);
-                else
-                {
-                    IVertex v = GetEdgeByLocation(dndStartPoint);
-                    if (v != null)
-                        dndVertex.AddEdge(null, v);
-                }
-
-                if (dndVertex.Count() > 0)
-                {
-                    DataObject dragData = new DataObject("Vertex", dndVertex);
-                    dragData.SetData("DragSource", this);
-
-                    Dnd.DoDragDrop(this, dragData);
-
-                    e.Handled = true;
-                }
-
-                isDraggin = false;
-            }
-
-           // e.Handled = true;
-        }
-
-        private void dndDrop(object sender, DragEventArgs e)
-        {
-            IVertex v = GetEdgeByLocation(e.GetPosition(this));
-
-            if (v == null && GeneralUtil.CompareStrings(MinusZero.Instance.Root.Get(false, @"User\CurrentUser:\Settings:\AllowBlankAreaDragAndDrop:").Value, "OnlyEnd"))
-                v = Vertex.Get(false, "BaseEdge:");
-
-            if (v != null)
-                Dnd.DoDrop(null, v.Get(false, "To:"), e);
-
-            e.Handled = true;
-        }
-
-        private void dndMouseEnter(object sender, MouseEventArgs e)
-        {
-            hasButtonBeenDown = false;
-        }
-
+        }                
     }
 }
 

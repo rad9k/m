@@ -119,7 +119,6 @@ namespace m0.UIWpf.Visualisers.Helper
             Point mousePos = e.GetPosition(visualiserAsFrameworkElement);
             Vector diff = dndStartPoint - mousePos;
 
-
             if (hasButtonBeenDown && isDraggin == false &&
                 !WpfUtil.IsMouseOverScrollbar(sender, dndStartPoint) &&
                 (e.LeftButton == MouseButtonState.Pressed) && (
