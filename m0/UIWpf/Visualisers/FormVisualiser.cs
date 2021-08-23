@@ -78,7 +78,7 @@ namespace m0.UIWpf.Visualisers
         public FormVisualiser()
         {
             new AtomVisualiserHelper(MinusZero.Instance.Root.Get(false, @"System\Meta\Visualiser\Form"),
-                this, "FormVisualiser", this, false, new List<string> { @""}, "AtomVisualiserFull");
+                this, "FormVisualiser", this, false, new List<string> { @"", /*@"BaseEdge:\To:"*/}, "AtomVisualiserFull");
 
             SetVertexDefaultValues();
         }
