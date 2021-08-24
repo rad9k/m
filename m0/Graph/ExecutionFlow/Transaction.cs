@@ -54,14 +54,17 @@ namespace m0.Graph.ExecutionFlow
                     a.Commit();
         }
 
-        private Dictionary<IVertex, List<IVertex>> getTriggerEventDictionary_byWatchedVertexDictionary(Dictionary<IVertex, List<WatcherEntry>> watchedVertexDictionary)
+        private Dictionary<IVertex, List<IVertex>> getTriggerEventDictionary_byWatchedVertexDictionary(
+            Dictionary<IVertex, List<WatcherEntry>> watchedVertexDictionary,
+            Dictionary<IVertex, List<GraphChangeTransactionAtom>> graphChangeTransactionAtoms_OutEdgeValueChange_copy,
+            Dictionary<IVertex, List<GraphChangeTransactionAtom>> graphChangeTransactionAtoms_InEdge_copy)
         {
             Dictionary<IVertex, List<IVertex>> triggerEventDictionary = new Dictionary<IVertex, List<IVertex>>();
 
             foreach(KeyValuePair<IVertex, List<WatcherEntry>> kvp in watchedVertexDictionary)
             {
-                if (graphChangeTransactionAtoms_OutEdgeValueChange.ContainsKey(kvp.Key))
-                    foreach (GraphChangeTransactionAtom a in graphChangeTransactionAtoms_OutEdgeValueChange[kvp.Key])
+                if (graphChangeTransactionAtoms_OutEdgeValueChange_copy.ContainsKey(kvp.Key))
+                    foreach (GraphChangeTransactionAtom a in graphChangeTransactionAtoms_OutEdgeValueChange_copy[kvp.Key])
                         foreach (WatcherEntry we in kvp.Value)
                         {
                             IVertex eventVertex = a.CreateEventVertex_GraphChange(we.triggerVertex, we.sourceVertex, false);
@@ -69,25 +72,27 @@ namespace m0.Graph.ExecutionFlow
                                 GeneralUtil.DictionaryAdd<IVertex, IVertex>(triggerEventDictionary, we.triggerVertex, eventVertex);
                         }                            
 
-                if (graphChangeTransactionAtoms_InEdge.ContainsKey(kvp.Key))
-                    foreach (GraphChangeTransactionAtom a in graphChangeTransactionAtoms_InEdge[kvp.Key])
+                if (graphChangeTransactionAtoms_InEdge_copy.ContainsKey(kvp.Key))
+                    foreach (GraphChangeTransactionAtom a in graphChangeTransactionAtoms_InEdge_copy[kvp.Key])
                         foreach (WatcherEntry we in kvp.Value)
                         {
                             IVertex eventVertex = a.CreateEventVertex_GraphChange(we.triggerVertex, we.sourceVertex, true);
                             if(eventVertex != null)
                                 GeneralUtil.DictionaryAdd<IVertex, IVertex>(triggerEventDictionary, we.triggerVertex, eventVertex);
-                        }
-                            
+                        }                            
             }
                
             return triggerEventDictionary;
         }
 
-        private Dictionary<IVertex, List<IVertex>> getTriggerEventDictionary_byGraphChangeTransactionAtoms(Dictionary<IVertex, List<WatcherEntry>> watchedVertexDictionary)
+        private Dictionary<IVertex, List<IVertex>> getTriggerEventDictionary_byGraphChangeTransactionAtoms(
+            Dictionary<IVertex, List<WatcherEntry>> watchedVertexDictionary,
+            Dictionary<IVertex, List<GraphChangeTransactionAtom>> graphChangeTransactionAtoms_OutEdgeValueChange_copy,
+            Dictionary<IVertex, List<GraphChangeTransactionAtom>> graphChangeTransactionAtoms_InEdge_copy)
         {
             Dictionary<IVertex, List<IVertex>> triggerEventDictionary = new Dictionary<IVertex, List<IVertex>>();
 
-            foreach (KeyValuePair<IVertex, List<GraphChangeTransactionAtom>> kvp in graphChangeTransactionAtoms_OutEdgeValueChange)
+            foreach (KeyValuePair<IVertex, List<GraphChangeTransactionAtom>> kvp in graphChangeTransactionAtoms_OutEdgeValueChange_copy)
                 if (watchedVertexDictionary.ContainsKey(kvp.Key))
                     foreach (WatcherEntry we in watchedVertexDictionary[kvp.Key])
                         foreach (GraphChangeTransactionAtom a in kvp.Value)
@@ -97,7 +102,7 @@ namespace m0.Graph.ExecutionFlow
                                 GeneralUtil.DictionaryAdd<IVertex, IVertex>(triggerEventDictionary, we.triggerVertex, eventVertex);
                         }                            
 
-            foreach (KeyValuePair<IVertex, List<GraphChangeTransactionAtom>> kvp in graphChangeTransactionAtoms_InEdge)
+            foreach (KeyValuePair<IVertex, List<GraphChangeTransactionAtom>> kvp in graphChangeTransactionAtoms_InEdge_copy)
                 if (watchedVertexDictionary.ContainsKey(kvp.Key))
                     foreach (WatcherEntry we in watchedVertexDictionary[kvp.Key])
                         foreach (GraphChangeTransactionAtom a in kvp.Value)
@@ -128,26 +133,56 @@ namespace m0.Graph.ExecutionFlow
             }
         }
 
-        private void SendGrahChangeEvents(IExecution exe)
+        private void PrepareAndSendGrahChangeEvents_Loop(IExecution exe)
+        {
+            Dictionary<IVertex, List<WatcherEntry>> watchedVertexDictionary = GraphChangeTriggerWatcher.GetWatchedVertexDictionary();
+
+            Dictionary<IVertex, List<GraphChangeTransactionAtom>> graphChangeTransactionAtoms_OutEdgeValueChange_copy;
+            Dictionary<IVertex, List<GraphChangeTransactionAtom>> graphChangeTransactionAtoms_InEdge_copy;
+
+            while (graphChangeTransactionAtoms_OutEdgeValueChange.Count() > 0 ||
+                graphChangeTransactionAtoms_InEdge.Count() > 0)
+            {
+                graphChangeTransactionAtoms_OutEdgeValueChange_copy =
+                    new Dictionary<IVertex, List<GraphChangeTransactionAtom>>(graphChangeTransactionAtoms_OutEdgeValueChange);
+                graphChangeTransactionAtoms_InEdge_copy =
+                    new Dictionary<IVertex, List<GraphChangeTransactionAtom>>(graphChangeTransactionAtoms_InEdge);
+
+                graphChangeTransactionAtoms_OutEdgeValueChange.Clear();
+                graphChangeTransactionAtoms_InEdge.Clear();
+
+                PrepareAndSendGrahChangeEvents(exe, 
+                    watchedVertexDictionary,
+                    graphChangeTransactionAtoms_OutEdgeValueChange_copy,
+                    graphChangeTransactionAtoms_InEdge_copy);
+            }
+        }
+
+        private void PrepareAndSendGrahChangeEvents(IExecution exe, 
+            Dictionary<IVertex, List<WatcherEntry>> watchedVertexDictionary,
+            Dictionary<IVertex, List<GraphChangeTransactionAtom>> graphChangeTransactionAtoms_OutEdgeValueChange_copy,
+            Dictionary<IVertex, List<GraphChangeTransactionAtom>> graphChangeTransactionAtoms_InEdge_copy)
         {
             GraphChangeWatch = false;
 
-            Dictionary<IVertex, List<IVertex>> triggerEventDictionary;
-
-            Dictionary<IVertex, List<WatcherEntry>> watchedVertexDictionary = GraphChangeTriggerWatcher.GetWatchedVertexDictionary();
+            Dictionary<IVertex, List<IVertex>> triggerEventDictionary;            
 
             int graphChangeTransactionAtoms_TotalCount =
-                graphChangeTransactionAtoms_OutEdgeValueChange.Keys.Count +
-                graphChangeTransactionAtoms_InEdge.Keys.Count;
+                graphChangeTransactionAtoms_OutEdgeValueChange_copy.Keys.Count +
+                graphChangeTransactionAtoms_InEdge_copy.Keys.Count;
 
             if (graphChangeTransactionAtoms_TotalCount < watchedVertexDictionary.Count)
-                triggerEventDictionary = getTriggerEventDictionary_byWatchedVertexDictionary(watchedVertexDictionary);
+                triggerEventDictionary = getTriggerEventDictionary_byWatchedVertexDictionary(watchedVertexDictionary,
+                    graphChangeTransactionAtoms_OutEdgeValueChange_copy,
+                    graphChangeTransactionAtoms_InEdge_copy);
             else
-                triggerEventDictionary = getTriggerEventDictionary_byGraphChangeTransactionAtoms(watchedVertexDictionary);
-
-            SendGrahChangeEvents(exe, triggerEventDictionary);
+                triggerEventDictionary = getTriggerEventDictionary_byGraphChangeTransactionAtoms(watchedVertexDictionary,
+                    graphChangeTransactionAtoms_OutEdgeValueChange_copy,
+                    graphChangeTransactionAtoms_InEdge_copy);
 
             GraphChangeWatch = true;
+
+            SendGrahChangeEvents(exe, triggerEventDictionary);
         }
 
         public void Commit_SecondStage()
@@ -174,7 +209,7 @@ namespace m0.Graph.ExecutionFlow
 
             CommitAtoms();
 
-            SendGrahChangeEvents(exe);
+            PrepareAndSendGrahChangeEvents_Loop(exe);
 
             if (state == TransactionStateEnum.Commiting)
             {

@@ -22,6 +22,12 @@ namespace m0
     {
         public INoInEdgeInOutVertexVertex xxx(IExecution exe)
         {
+            MinusZero.Instance.root.Get(false, @"V\kupa").AddVertex(null, "XX");
+            return null;
+        }
+
+        public INoInEdgeInOutVertexVertex yyy(IExecution exe) {                        
+
             return null;
         }
     }
@@ -44,7 +50,7 @@ namespace m0
         {            
             m0_RUN.Main.Run();
 
-         //   ExtraRun();
+            ExtraRun();
 
             Close();
         }       
@@ -67,11 +73,17 @@ namespace m0
 
             ExecutionFlowHelper.AddListener_DotNetDelegate(trigger, t.xxx);
 
-            v.AddVertex(null, "kupa");
+            ExecutionFlowHelper.StartTransaction();
+
+            IVertex k = v.AddVertex(null, "kupa");
+
+            ExecutionFlowHelper.AddEventTriggerAndListener(k, new List<string> { }, "t", t.yyy, "l");
+
+            ExecutionFlowHelper.CommitTransaction();
 
             return;
 
-            ExecutionFlowHelper.StartTransaction();
+            
 
             v.Value = "kupa";
 
@@ -93,7 +105,7 @@ namespace m0
 
     
 
-            ExecutionFlowHelper.CommitTransaction();
+            
 
             //ExecutionFlowHelper.RollbackTransaction();
         }
