@@ -316,6 +316,8 @@ namespace m0
         void Finalize()
         {
             CommitTransaction();
+
+            ExecutionFlowHelper.CommitTransaction();
         }
 
         public void Refresh()

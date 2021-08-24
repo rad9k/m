@@ -9,14 +9,22 @@ namespace m0.User.Process.UX
 {
     public class Interaction
     {
+        static int InteractionControlReccurection = 0;
+
         public static void BeginInteractionWithGraph()
         {
-            ExecutionFlowHelper.StartTransaction();
+            if(InteractionControlReccurection == 0)
+                ExecutionFlowHelper.StartTransaction();
+
+            InteractionControlReccurection++;
         }
 
         public static void EndInteractionWithGraph()
         {
-            ExecutionFlowHelper.CommitTransaction();
+            if (InteractionControlReccurection == 1)
+                ExecutionFlowHelper.CommitTransaction();
+
+            InteractionControlReccurection--;
         }
     }
 }

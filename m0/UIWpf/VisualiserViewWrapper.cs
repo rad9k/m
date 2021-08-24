@@ -59,7 +59,7 @@ namespace m0.UIWpf
                 defvis = e.To.Get(false, @"$Is:\$DefaultViewVisualiser:");
 
             ///////////////////////////////////////
-            ExecutionFlowHelper.StartTransaction();
+            //ExecutionFlowHelper.StartTransaction();
             ///////////////////////////////////////
 
             if (defvis != null)
@@ -78,7 +78,7 @@ namespace m0.UIWpf
             _this.Content = pc;
 
             ////////////////////////////////////////
-            ExecutionFlowHelper.CommitTransaction();
+            //ExecutionFlowHelper.CommitTransaction();
             ////////////////////////////////////////
 
         }

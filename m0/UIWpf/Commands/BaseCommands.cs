@@ -277,7 +277,6 @@ namespace m0.UIWpf.Commands
         {
             IPlatformClass sv = (IPlatformClass)PlatformClass.CreatePlatformObject(inputVertex);
             
-            //GraphUtil.ReplaceEdge(sv.Vertex, "BaseEdge", baseVertex); very wrong, will not work with GraphVisualiser becouse of changing its BaseEdge
             Edge.CopyAndReplaceEdgeVertexByEdgeVertex(sv.Vertex, "BaseEdge", baseVertex);
 
             MinusZero.Instance.DefaultUserInteraction.ShowContent(sv);

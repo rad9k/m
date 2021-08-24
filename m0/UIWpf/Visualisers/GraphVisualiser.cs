@@ -203,7 +203,7 @@ namespace m0.UIWpf.Visualisers
             this.Background = (Brush)FindResource("0BackgroundBrush");
 
             new ListVisualiserHelper(MinusZero.Instance.Root.Get(false, @"System\Meta\Visualiser\Graph"),
-              this, "GraphVisualiser", this, false, new List<string> {"", @"BaseEdge:\To:" }, "AtomVisualiserFull");
+              this, "GraphVisualiser", this, false, new List<string> {""/*, @"BaseEdge:\To:"*/ }, "AtomVisualiserFull");
 
             this.PreviewMouseLeftButtonDown += dndPreviewMouseLeftButtonDown;
             this.PreviewMouseMove += dndPreviewMouseMove;
@@ -679,7 +679,6 @@ namespace m0.UIWpf.Visualisers
 
         protected override void OnMouseUp(MouseButtonEventArgs e)
         {
-
             base.OnMouseUp(e);
         }
 

@@ -13,7 +13,9 @@ namespace m0.Graph.ExecutionFlow
     // This ITransaction implementation supports GraphChangeTransactionAtom support
     public class Transaction : ITransaction
     {
-        static bool GraphChangeWatch = true;
+        static bool _GraphChangeWatch = true;
+
+        public bool GraphChangeWatch { get { return _GraphChangeWatch; } set { _GraphChangeWatch = value; } }
 
         static IVertex r = m0.MinusZero.Instance.root;
 
@@ -240,6 +242,17 @@ namespace m0.Graph.ExecutionFlow
 
                         if(GraphUtil.ExistQueryIn(gcta.Edge.From, "$GraphChangeTrigger", null))
                             return;                        
+                    }
+                    if(gcta.Edge != null && 
+                        (GeneralUtil.CompareStrings(gcta.Edge.From, "Sleep") || GeneralUtil.CompareStrings(gcta.Edge.To, "Sleep")))
+                    {
+                        int x = 0;
+                        return;
+                    }
+                    if(gcta.ChangedVertex != null && GeneralUtil.CompareStrings(gcta.ChangedVertex.Value, "Sleep"))
+                    {
+                        int x = 0;
+                        return;
                     }
                         
                     GeneralUtil.DictionaryAdd<IVertex, GraphChangeTransactionAtom>(

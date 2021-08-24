@@ -77,11 +77,6 @@ namespace m0.UIWpf.Visualisers
         public void UpdateBaseEdge(){
             IVertex bv = Vertex.Get(false, @"BaseEdge:\To:");
 
-            if(Vertex.Get(false, @"BaseEdge:\Meta:IsDrum") != null)
-            {
-                int x = 9;
-            }
-
             if (bv != null && bv.Value != null)
             {
                 if (GeneralUtil.CompareStrings(bv.Value, "True"))
