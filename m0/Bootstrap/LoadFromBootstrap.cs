@@ -50,7 +50,6 @@ namespace m0.Bootstrap
                     ZeroUMLInstructionHelpers.MoveEdgesIntoVertex_IncludeEverythingBesidesList(imp.Root, importRoot, system);
                 }
             }
-
         }
     }
 }

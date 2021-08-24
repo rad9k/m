@@ -403,11 +403,6 @@ namespace m0
             Hardware.AddEdge(root.Get(false, @"System\Meta\Hardware\LocalComputer"), localComputer);
         }
 
-        void CreateRootTransaction()
-        {
-            ExecutionFlowHelper.StartTransaction();
-        }
-
         public void ExecutionFlowInitialize()
         {
             ExecutionFlowHelper.Initialize();
@@ -430,8 +425,7 @@ namespace m0
 
             Bootstrap();
 
-
-            CreateRootTransaction();
+            ExecutionFlowHelper.StartTransaction();            
 
 
             Init();
@@ -455,7 +449,11 @@ namespace m0
 
             ExecutionFlowInitialize();
 
-            IsInitialized = true;           
+            ExecutionFlowHelper.CommitTransaction();
+
+            IsInitialized = true;
+
+            ExecutionFlowHelper.StartTransaction();
         }
     }
 }
