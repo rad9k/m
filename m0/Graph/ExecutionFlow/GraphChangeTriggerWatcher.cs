@@ -60,18 +60,39 @@ namespace m0.Graph.ExecutionFlow
                     {
                         string value = ee.To.ToString();
 
-                        switch(value)
-                    }
-                        en.changeTypeFilterEdges.Add(ee.To.Value.ToString());
+                        switch (value)
+                        {
+                            case "NoBaseVertex":
+                                en.NoBaseVertex = true;                                
+                                break;
+
+                            case "ValueChange":
+                                en.graphChangeFilter.Add(GraphChangeFilterEnum.ValueChange);
+                                break;
+
+                            case "InputEdgeAdded":
+                                en.graphChangeFilter.Add(GraphChangeFilterEnum.InputEdgeAdded);
+                                break;
+
+                            case "InputEdgeRemoved":
+                                en.graphChangeFilter.Add(GraphChangeFilterEnum.InputEdgeRemoved);
+                                break;
+
+                            case "OutputEdgeAdded":
+                                en.graphChangeFilter.Add(GraphChangeFilterEnum.OutputEdgeAdded);
+                                break;
+
+                            case "OutputEdgeRemoved":
+                                en.graphChangeFilter.Add(GraphChangeFilterEnum.OutputEdgeRemoved);
+                                break;
+
+                            case "OutputEdgeDisposed":
+                                en.graphChangeFilter.Add(GraphChangeFilterEnum.OutputEdgeDisposed);
+                                break;
+                        }
+                    }                    
                 }
-
-                // if(e.To.Get(false, "ChangeTypeFilter:No"), ;
-
-
-
-
-
-
+                
                 watcherEntryList.Add(en);
             }
         }
@@ -81,16 +102,14 @@ namespace m0.Graph.ExecutionFlow
             foreach(WatcherEntry en in watcherEntryList)
             {
                 en.vertexInScope = new List<IVertex>();
-
-                en.vertexInScope.Add(en.sourceVertex); // so adding it here. in future might be limited with filters
+                
+                if(!en.NoBaseVertex)
+                    en.vertexInScope.Add(en.sourceVertex); 
 
                 if (en.scopeQuery != null)
                     foreach(string s in en.scopeQuery)
                         foreach(IEdge e in en.sourceVertex.GetAll(false, s))
-                            en.vertexInScope.Add(e.To);
-                //else      
-                //    en.vertexInScope.Add(en.sourceVertex);
-                
+                            en.vertexInScope.Add(e.To);                
             }
         }
 
