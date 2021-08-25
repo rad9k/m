@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace m0.Graph.ExecutionFlow
 {
-    public enum GraphChangeEnum { ValueChange, EdgeAdded, EdgeRemoved, OutputEdgeDisposed};
+    public enum AtomGraphChangeTypeEnum { ValueChange, EdgeAdded, EdgeRemoved, OutputEdgeDisposed};
 
     public class GraphChangeTransactionAtom : TransacionAtom
     {
@@ -29,14 +29,14 @@ namespace m0.Graph.ExecutionFlow
         static IVertex GraphChangeEnum_OutputEdgeDisposed_meta;
 
         public IVertex ChangedVertex;
-        public GraphChangeEnum Type;
+        public AtomGraphChangeTypeEnum Type;
         public object OldValue;
         public object NewValue;
         public IEdge Edge;
         
         public GraphChangeTransactionAtom(
             IVertex _ChangedVertex,
-            GraphChangeEnum _Type,
+            AtomGraphChangeTypeEnum _Type,
             object _OldValue,
             object _NewValue,
             IEdge _Edge)
@@ -87,15 +87,15 @@ namespace m0.Graph.ExecutionFlow
         {
             switch (Type)
             {
-                case GraphChangeEnum.EdgeAdded:
+                case AtomGraphChangeTypeEnum.EdgeAdded:
                     Rollback_EdgeAdded();
                     break;
 
-                case GraphChangeEnum.EdgeRemoved:
+                case AtomGraphChangeTypeEnum.EdgeRemoved:
                     Rollback_EdgeRemoved();
                     break;
 
-                case GraphChangeEnum.ValueChange:
+                case AtomGraphChangeTypeEnum.ValueChange:
                     Rollback_ValueChange();
                     break;
             }
@@ -130,14 +130,14 @@ namespace m0.Graph.ExecutionFlow
 
             switch (Type)
             {
-                case GraphChangeEnum.ValueChange:
+                case AtomGraphChangeTypeEnum.ValueChange:
                     eventVertex.AddEdge(GraphChangeEvent_ChangedVertex_meta, ChangedVertex);
                     eventVertex.AddEdge(GraphChangeEvent_Type_meta, GraphChangeEnum_ValueChange_meta);
                     eventVertex.AddVertex(GraphChangeEvent_OldValue_meta, OldValue);
                     eventVertex.AddVertex(GraphChangeEvent_NewValue_meta, NewValue);
                     break;
 
-                case GraphChangeEnum.EdgeAdded:
+                case AtomGraphChangeTypeEnum.EdgeAdded:
                     IVertex edgeVertex = ZeroTypes.Edge.CreateTempEdgeVertex(Edge);
                         
                     if (isInEdge)
@@ -154,7 +154,7 @@ namespace m0.Graph.ExecutionFlow
                     }
                     break;
 
-                case GraphChangeEnum.EdgeRemoved:
+                case AtomGraphChangeTypeEnum.EdgeRemoved:
                     IVertex edgeVertex2 = ZeroTypes.Edge.CreateTempEdgeVertex(Edge);
 
                     if (isInEdge)
@@ -171,7 +171,7 @@ namespace m0.Graph.ExecutionFlow
                     }
                     break;
 
-                case GraphChangeEnum.OutputEdgeDisposed:
+                case AtomGraphChangeTypeEnum.OutputEdgeDisposed:
                     IVertex edgeVertex3 = ZeroTypes.Edge.CreateTempEdgeVertex(Edge.From, Edge.Meta, null);
                     
                     eventVertex.AddEdge(GraphChangeEvent_ChangedVertex_meta, ChangedVertex);

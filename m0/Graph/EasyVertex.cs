@@ -50,7 +50,7 @@ namespace m0.Graph
                 if (CanEmitGraphChangeEvents)
                     ExecutionFlowHelper.AddTransactionAtom(new GraphChangeTransactionAtom(
                         this,
-                        GraphChangeEnum.ValueChange,
+                        AtomGraphChangeTypeEnum.ValueChange,
                         oldValue,
                         _Value,
                         null));
@@ -367,7 +367,7 @@ namespace m0.Graph
             if (CanEmitGraphChangeEvents)
                 ExecutionFlowHelper.AddTransactionAtom(new GraphChangeTransactionAtom(
                     this,
-                    GraphChangeEnum.EdgeAdded,
+                    AtomGraphChangeTypeEnum.EdgeAdded,
                     null,
                     null,
                     ne));
@@ -425,7 +425,7 @@ namespace m0.Graph
                 if(CanEmitGraphChangeEvents)
                     ExecutionFlowHelper.AddTransactionAtom(new GraphChangeTransactionAtom(
                         this,
-                        GraphChangeEnum.EdgeRemoved,
+                        AtomGraphChangeTypeEnum.EdgeRemoved,
                         null,
                         null,
                         edge));
@@ -468,7 +468,7 @@ namespace m0.Graph
                 if (CanEmitGraphChangeEvents)
                     ExecutionFlowHelper.AddTransactionAtom(new GraphChangeTransactionAtom(
                         edge.From,
-                        GraphChangeEnum.OutputEdgeDisposed,
+                        AtomGraphChangeTypeEnum.OutputEdgeDisposed,
                         null,
                         null,
                         edge));

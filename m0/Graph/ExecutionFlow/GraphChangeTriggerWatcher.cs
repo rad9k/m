@@ -8,6 +8,8 @@ using System.Threading.Tasks;
 
 namespace m0.Graph.ExecutionFlow
 {
+    //public enum GraphChangeTypeEnum { ValueChange, OutputEdgeAdded, OutputEdgeRemoved, InputEdgeAdded, InputEdgeRemoved, OutputEdgeDisposed };
+
     public class WatcherEntry
     {
         public IVertex sourceVertex;

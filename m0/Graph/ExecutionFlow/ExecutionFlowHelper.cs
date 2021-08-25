@@ -9,9 +9,6 @@ namespace m0.Graph.ExecutionFlow
 {
     public class ExecutionFlowHelper
     {
-        static IVertex graphChangeTrigger_meta;
-        static IVertex scopeQuery_meta;
-
         static IVertex _is_meta;
 
         static IVertex dotNetEndPoint_meta;
@@ -31,9 +28,6 @@ namespace m0.Graph.ExecutionFlow
         public static void Initialize()
         {
             IVertex r = m0.MinusZero.Instance.root;
-
-            graphChangeTrigger_meta = r.Get(false, @"System\Meta\ZeroTypes\ExecutionFlow\$GraphChangeTrigger");
-            scopeQuery_meta = r.Get(false, @"System\Meta\ZeroTypes\ExecutionFlow\$GraphChangeTrigger\ScopeQuery");
 
             dotNetEndPoint_meta = r.Get(false, @"System\Meta\ZeroTypes\ExecutionFlow\DotNetStaticMethod");
             typeName_meta = r.Get(false, @"System\Meta\ZeroTypes\ExecutionFlow\DotNetStaticMethod\DotNetTypeName");
@@ -85,58 +79,6 @@ namespace m0.Graph.ExecutionFlow
 
             if (currentTransaction != null)
                 currentTransaction.AddSecondStageCommitAction(commitAction);
-        }
-
-        public static IEdge AddEventTriggerAndListener(IVertex baseVertex, IList<string> scopeQueries, string triggerVertexName, DotNetDelegate _delegate, string listenerName)
-        {
-            IEdge graphChangeTriggerEdge = ExecutionFlowHelper.AddGraphChangeTrigger(baseVertex, scopeQueries, triggerVertexName);
-            
-            return ExecutionFlowHelper.AddListener_DotNetDelegate(graphChangeTriggerEdge.To, _delegate, listenerName);
-        }
-
-        public static IEdge AddGraphChangeTrigger(IVertex baseVertex, IList<string> scopeQueries)
-        {
-            return AddGraphChangeTrigger(baseVertex, scopeQueries, null);
-        }
-
-        public static IEdge AddGraphChangeTrigger(IVertex baseVertex, IList<string> scopeQueries, string triggerVertexName)
-        {
-            IEdge triggerEdge = null;
-
-            if (triggerVertexName != null)
-            {
-                IVertex existingTriggers = baseVertex.GetAll(false, "$GraphChangeTrigger:" + triggerVertexName);
-
-                if (existingTriggers.OutEdges.Count == 1)
-                    triggerEdge = existingTriggers.OutEdges[0];
-            }
-
-            if (triggerEdge == null)
-            {
-                triggerEdge = VertexOperations.AddInstanceAndReturnEdge(baseVertex, graphChangeTrigger_meta);
-                triggerEdge.To.Value = triggerVertexName;
-            }
-
-            if (scopeQueries != null)
-                foreach (string s in scopeQueries)
-                    triggerEdge.To.AddVertex(scopeQuery_meta, s);
-
-            return triggerEdge;
-        }
-
-        public static void RemoveGraphChangeListener(IEdge listenerEdge)
-        {
-            IVertex triggerVertex = listenerEdge.From;
-
-            triggerVertex.DeleteEdge(listenerEdge);
-
-            if(GraphUtil.GetQueryOutCount(triggerVertex, "Listener", null) == 0)
-            {
-                IEdge triggerSourceEdge = GraphUtil.GetQueryInFirstEdge(triggerVertex, "$GraphChangeTrigger", null);
-
-                if(triggerSourceEdge != null)
-                    triggerSourceEdge.From.DeleteEdge(triggerSourceEdge);
-            }
         }
 
         public static IEdge AddListener_DotNetStaticMethod(IVertex baseVertex, string _typeName, string _methodName)

@@ -65,7 +65,7 @@ namespace m0
 
           //  scopelist.Add("kupa");
 
-            IVertex trigger = ExecutionFlowHelper.AddGraphChangeTrigger(v, scopelist).To;
+            IVertex trigger = GraphChangeTrigger.AddGraphChangeTrigger(v, scopelist, null).To;
 
             //IVertex trigger = ExecutionFlowHelper.AddGraphChangeTrigger(MinusZero.Instance.root.Get(false, "Hardware"), scopelist).To;
 
@@ -77,7 +77,7 @@ namespace m0
 
             IVertex k = v.AddVertex(null, "kupa");
 
-            ExecutionFlowHelper.AddEventTriggerAndListener(k, new List<string> { }, "t", t.yyy, "l");
+            GraphChangeTrigger.AddEventTriggerAndListener(k, new List<string> { }, null, "t", t.yyy, "l");
 
             ExecutionFlowHelper.CommitTransaction();
 

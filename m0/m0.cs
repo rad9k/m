@@ -405,6 +405,7 @@ namespace m0
 
         public void ExecutionFlowInitialize()
         {
+            GraphChangeTrigger.Initialize();
             ExecutionFlowHelper.Initialize();
             GraphChangeTransactionAtom.Initialize();
             Transaction.Initialize();

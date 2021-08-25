@@ -162,7 +162,15 @@ namespace m0.UIWpf.Visualisers
             this.Padding = new Thickness(1);
 
             if (baseVertex != null)
-                listenerEdge = ExecutionFlowHelper.AddEventTriggerAndListener(baseVertex, new List<string> { }, "BasicTrigger", VertexChange, "GraphVisualiserItem");                           
+                listenerEdge = GraphChangeTrigger.AddEventTriggerAndListener(baseVertex, 
+                    new List<string> { },
+                    new List<GraphChangeTypeEnum> {GraphChangeTypeEnum.ValueChange,
+                     GraphChangeTypeEnum.OutputEdgeAdded,
+                     GraphChangeTypeEnum.OutputEdgeRemoved,
+                     GraphChangeTypeEnum.OutputEdgeDisposed},
+                    "BasicTrigger", 
+                    VertexChange, 
+                    "GraphVisualiserItem");                           
         }
 
         protected INoInEdgeInOutVertexVertex VertexChange(IExecution exe)
@@ -184,7 +192,7 @@ namespace m0.UIWpf.Visualisers
                 ((IDisposable)(this.Child)).Dispose();
 
             if (baseVertex != null)
-                ExecutionFlowHelper.RemoveGraphChangeListener(listenerEdge);                
+                GraphChangeTrigger.RemoveGraphChangeListener(listenerEdge);                
         }        
     }
 

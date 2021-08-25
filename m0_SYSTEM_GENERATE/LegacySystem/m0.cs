@@ -2657,7 +2657,7 @@ namespace m0
             m0.LegacySystem.Util.GeneralUtil.ParseAndExcute(smze, sm, "{Enum:GraphChangeEnum{EnumValue:ValueChange,EnumValue:OutputEdgeAdded,EnumValue:OutputEdgeRemoved,EnumValue:InputEdgeAdded,EnumValue:InputEdgeRemoved,EnumValue:OutputEdgeDisposed}"
                 + ",Class:EventTrigger{Association:Listener{$MinCardinality:0,$MaxCardinality:-1}}"
                 + ",Class:Event{Association:Trigger{$MinCardinality:1,$MaxCardinality:1},Association:Source{$MinCardinality:0,$MaxCardinality:1}}"
-                + ",Class:$GraphChangeTrigger{Attribute:ScopeQuery{$MinCardinality:0,$MaxCardinality:-1}}"
+                + ",Class:$GraphChangeTrigger{Attribute:ScopeQuery{$MinCardinality:0,$MaxCardinality:-1},Attribute:ChangeTypeFilter{$MinCardinality:0,$MaxCardinality:-1}}"
                 + ",Class:GraphChangeEvent{Attribute:ChangedVertex{$MinCardinality:1,$MaxCardinality:1},Attribute:Type{$MinCardinality:1,$MaxCardinality:1},Attribute:OldValue{$MinCardinality:0,$MaxCardinality:1},Attribute:NewValue{$MinCardinality:0,$MaxCardinality:1},Attribute:Edge{$MinCardinality:0,$MaxCardinality:1}}"
                 + ",Class:Executable"
                 + ",Class:Delegate{Attribute:Object{$MinCardinality:1,$MaxCardinality:1},Attribute:Method{$MinCardinality:1,$MaxCardinality:1}}"
@@ -2685,6 +2685,10 @@ namespace m0
             LegacySystem.Graph.EasyVertex.Get(smz, false, @"ExecutionFlow\$GraphChangeTrigger\ScopeQuery").AddEdge(
                  LegacySystem.Graph.EasyVertex.Get(smz, false, "*$EdgeTarget"),
                 LegacySystem.Graph.EasyVertex.Get(smz, false, @"String"));
+
+            LegacySystem.Graph.EasyVertex.Get(smz, false, @"ExecutionFlow\$GraphChangeTrigger\ChangeTypeFilter").AddEdge(
+                LegacySystem.Graph.EasyVertex.Get(smz, false, "*$EdgeTarget"),
+                LegacySystem.Graph.EasyVertex.Get(smz, false, @"ExecutionFlow\GraphChangeEnum"));
 
             LegacySystem.Graph.EasyVertex.Get(smz, false, @"ExecutionFlow\GraphChangeEvent").AddEdge(
               LegacySystem.Graph.EasyVertex.Get(smz, false, "*$Inherits"),

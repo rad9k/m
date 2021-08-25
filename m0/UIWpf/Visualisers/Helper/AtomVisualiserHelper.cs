@@ -28,6 +28,7 @@ namespace m0.UIWpf.Visualisers.Helper
         protected IEdge visualiserVertexEdge;
 
         protected IList<string> scopeQueries;
+        protected IList<GraphChangeTypeEnum> changeTypeFilter;
         protected string scopeQueriesName;
 
         public string visualiserName;
@@ -43,7 +44,7 @@ namespace m0.UIWpf.Visualisers.Helper
                  _visualiserName, 
                  _visualiserAsFrameworkElement, 
                  true, 
-                 new List<string> { @"BaseEdge:\To:" }, 
+                 new List<string> { @"BaseEdge:\To:" },
                  "AtomVisualiser")
         {
             
@@ -54,7 +55,7 @@ namespace m0.UIWpf.Visualisers.Helper
             string _visualiserName, 
             FrameworkElement _visualiserAsFrameworkElement, 
             bool _dndSupport, 
-            IList<string> _scopeQueries, 
+            IList<string> _scopeQueries,
             string _scopeQueriesName)
         {
             visualiser = _visualiser;
@@ -64,6 +65,11 @@ namespace m0.UIWpf.Visualisers.Helper
             dndSupport = _dndSupport;
 
             scopeQueries = _scopeQueries;
+
+            changeTypeFilter = new List<GraphChangeTypeEnum> {GraphChangeTypeEnum.ValueChange,
+                     GraphChangeTypeEnum.OutputEdgeAdded,
+                     GraphChangeTypeEnum.OutputEdgeRemoved,
+                     GraphChangeTypeEnum.OutputEdgeDisposed};
 
             scopeQueriesName = _scopeQueriesName;
 
@@ -133,11 +139,14 @@ namespace m0.UIWpf.Visualisers.Helper
         public void SetVertex(IVertex value)
         {
             if (_Vertex != null)
-                ExecutionFlowHelper.RemoveGraphChangeListener(graphChangeListenerEdge);            
+                GraphChangeTrigger.RemoveGraphChangeListener(graphChangeListenerEdge);            
 
             _Vertex = value;
 
-            IEdge graphChangeTriggerEdge = ExecutionFlowHelper.AddGraphChangeTrigger(_Vertex, scopeQueries, scopeQueriesName);
+            IEdge graphChangeTriggerEdge = GraphChangeTrigger.AddGraphChangeTrigger(_Vertex, 
+                scopeQueries, 
+                changeTypeFilter,
+                scopeQueriesName);
 
             graphChangeListenerEdge = ExecutionFlowHelper.AddListener_DotNetDelegate(graphChangeTriggerEdge.To, VertexChange, visualiserName);            
 
@@ -158,7 +167,7 @@ namespace m0.UIWpf.Visualisers.Helper
 
                 visualiserVertexEdge.From.DeleteEdge(visualiserVertexEdge);
 
-                ExecutionFlowHelper.RemoveGraphChangeListener(graphChangeListenerEdge);                
+                GraphChangeTrigger.RemoveGraphChangeListener(graphChangeListenerEdge);                
 
                 if (_Vertex is IDisposable)
                     ((IDisposable)_Vertex).Dispose();
