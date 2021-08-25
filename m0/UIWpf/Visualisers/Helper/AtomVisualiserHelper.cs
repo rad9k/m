@@ -28,7 +28,7 @@ namespace m0.UIWpf.Visualisers.Helper
         protected IEdge visualiserVertexEdge;
 
         protected IList<string> scopeQueries;
-        protected IList<GraphChangeTypeEnum> changeTypeFilter;
+        protected IList<GraphChangeFilterEnum> changeTypeFilter;
         protected string scopeQueriesName;
 
         public string visualiserName;
@@ -66,10 +66,10 @@ namespace m0.UIWpf.Visualisers.Helper
 
             scopeQueries = _scopeQueries;
 
-            changeTypeFilter = new List<GraphChangeTypeEnum> {GraphChangeTypeEnum.ValueChange,
-                     GraphChangeTypeEnum.OutputEdgeAdded,
-                     GraphChangeTypeEnum.OutputEdgeRemoved,
-                     GraphChangeTypeEnum.OutputEdgeDisposed};
+            changeTypeFilter = new List<GraphChangeFilterEnum> {GraphChangeFilterEnum.ValueChange,
+                     GraphChangeFilterEnum.OutputEdgeAdded,
+                     GraphChangeFilterEnum.OutputEdgeRemoved,
+                     GraphChangeFilterEnum.OutputEdgeDisposed};
 
             scopeQueriesName = _scopeQueriesName;
 

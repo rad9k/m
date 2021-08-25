@@ -2655,6 +2655,7 @@ namespace m0
 
 
             m0.LegacySystem.Util.GeneralUtil.ParseAndExcute(smze, sm, "{Enum:GraphChangeEnum{EnumValue:ValueChange,EnumValue:OutputEdgeAdded,EnumValue:OutputEdgeRemoved,EnumValue:InputEdgeAdded,EnumValue:InputEdgeRemoved,EnumValue:OutputEdgeDisposed}"
+                + ",Enum:GraphChangeFilterEnum{EnumValue:NoBaseVertex}"
                 + ",Class:EventTrigger{Association:Listener{$MinCardinality:0,$MaxCardinality:-1}}"
                 + ",Class:Event{Association:Trigger{$MinCardinality:1,$MaxCardinality:1},Association:Source{$MinCardinality:0,$MaxCardinality:1}}"
                 + ",Class:$GraphChangeTrigger{Attribute:ScopeQuery{$MinCardinality:0,$MaxCardinality:-1},Attribute:ChangeTypeFilter{$MinCardinality:0,$MaxCardinality:-1}}"
@@ -2665,6 +2666,13 @@ namespace m0
                 + ",Class:DotNetDelegate{Attribute:DotNetDelegatePointer{$MinCardinality:1,$MaxCardinality:1}}"
                 + "}");
 
+            LegacySystem.Graph.EasyVertex.Get(smz, false, @"ExecutionFlow\GraphChangeEnum").AddEdge(
+                 LegacySystem.Graph.EasyVertex.Get(smz, false, "*$Inherits"),
+                 LegacySystem.Graph.EasyVertex.Get(smz, false, @"EnumBase"));
+
+            LegacySystem.Graph.EasyVertex.Get(smz, false, @"ExecutionFlow\GraphChangeFilterEnum").AddEdge(
+             LegacySystem.Graph.EasyVertex.Get(smz, false, "*$Inherits"),
+             LegacySystem.Graph.EasyVertex.Get(smz, false, @"ExecutionFlow\GraphChangeEnum"));
 
             LegacySystem.Graph.EasyVertex.Get(smz, false, @"ExecutionFlow\EventTrigger\Listener").AddEdge(
               LegacySystem.Graph.EasyVertex.Get(smz, false, "*$EdgeTarget"),
@@ -2688,7 +2696,7 @@ namespace m0
 
             LegacySystem.Graph.EasyVertex.Get(smz, false, @"ExecutionFlow\$GraphChangeTrigger\ChangeTypeFilter").AddEdge(
                 LegacySystem.Graph.EasyVertex.Get(smz, false, "*$EdgeTarget"),
-                LegacySystem.Graph.EasyVertex.Get(smz, false, @"ExecutionFlow\GraphChangeEnum"));
+                LegacySystem.Graph.EasyVertex.Get(smz, false, @"ExecutionFlow\GraphChangeFilterEnum"));
 
             LegacySystem.Graph.EasyVertex.Get(smz, false, @"ExecutionFlow\GraphChangeEvent").AddEdge(
               LegacySystem.Graph.EasyVertex.Get(smz, false, "*$Inherits"),
@@ -2964,6 +2972,7 @@ namespace m0
                 "Class:AbstractVisualiser,"+
                 "Class:Test}");
 
+            sm.Get(false, @"Visualiser\BaseEdgeTarget").AddEdge(sm.Get(false, "?$Inherits"), sm.Get(false, @"ZeroTypes\EnumBase"));
             sm.Get(false, @"Visualiser\GridStyleEnum").AddEdge(sm.Get(false, "?$Inherits"), sm.Get(false, @"ZeroTypes\EnumBase"));
             sm.Get(false, @"Visualiser\SnapToGridEnum").AddEdge(sm.Get(false, "?$Inherits"), sm.Get(false, @"ZeroTypes\EnumBase"));
             sm.Get(false, @"Visualiser\SongSnapToGridEnum").AddEdge(sm.Get(false, "?$Inherits"), sm.Get(false, @"ZeroTypes\EnumBase"));

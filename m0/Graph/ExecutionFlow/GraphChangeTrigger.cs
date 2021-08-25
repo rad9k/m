@@ -7,13 +7,14 @@ using System.Collections.Generic;
 
 namespace m0.Graph.ExecutionFlow
 {
-    public enum GraphChangeTypeEnum { ValueChange, OutputEdgeAdded, OutputEdgeRemoved, InputEdgeAdded, InputEdgeRemoved, OutputEdgeDisposed };
+    public enum GraphChangeFilterEnum { NoBaseVertex, ValueChange, OutputEdgeAdded, OutputEdgeRemoved, InputEdgeAdded, InputEdgeRemoved, OutputEdgeDisposed };
 
     public class GraphChangeTrigger
     {
         static IVertex graphChangeTrigger_meta;
         static IVertex scopeQuery_meta;
         static IVertex changeTypeFilter_meta;
+        static IVertex graphChangeEnum_NoBaseVertex_meta;
         static IVertex graphChangeEnum_ValueChange_meta;
         static IVertex graphChangeEnum_OutputEdgeAdded_meta;
         static IVertex graphChangeEnum_OutputEdgeRemoved_meta;
@@ -28,6 +29,9 @@ namespace m0.Graph.ExecutionFlow
             graphChangeTrigger_meta = r.Get(false, @"System\Meta\ZeroTypes\ExecutionFlow\$GraphChangeTrigger");
             scopeQuery_meta = r.Get(false, @"System\Meta\ZeroTypes\ExecutionFlow\$GraphChangeTrigger\ScopeQuery");
             changeTypeFilter_meta = r.Get(false, @"System\Meta\ZeroTypes\ExecutionFlow\$GraphChangeTrigger\ChangeTypeFilter");
+
+            graphChangeEnum_NoBaseVertex_meta = r.Get(false, @"System\Meta\ZeroTypes\ExecutionFlow\GraphChangeEnum\NoBaseVertex");
+            graphChangeEnum_ValueChange_meta = r.Get(false, @"System\Meta\ZeroTypes\ExecutionFlow\GraphChangeEnum\ValueChange");
             graphChangeEnum_OutputEdgeAdded_meta = r.Get(false, @"System\Meta\ZeroTypes\ExecutionFlow\GraphChangeEnum\OutputEdgeAdded");
             graphChangeEnum_OutputEdgeRemoved_meta = r.Get(false, @"System\Meta\ZeroTypes\ExecutionFlow\GraphChangeEnum\OutputEdgeRemoved");
             graphChangeEnum_InputEdgeAdded_meta = r.Get(false, @"System\Meta\ZeroTypes\ExecutionFlow\GraphChangeEnum\InputEdgeAdded");
@@ -37,7 +41,7 @@ namespace m0.Graph.ExecutionFlow
 
         public static IEdge AddEventTriggerAndListener(IVertex baseVertex, 
             IList<string> scopeQueries,
-            IList<GraphChangeTypeEnum> changeTypeFilter,
+            IList<GraphChangeFilterEnum> changeTypeFilter,
             string triggerVertexName, 
             ExecutionFlowHelper.DotNetDelegate _delegate, 
             string listenerName)
@@ -52,14 +56,14 @@ namespace m0.Graph.ExecutionFlow
 
         public static IEdge AddGraphChangeTrigger(IVertex baseVertex, 
             IList<string> scopeQueries, 
-            IList<GraphChangeTypeEnum> changeTypeFilter)
+            IList<GraphChangeFilterEnum> changeTypeFilter)
         {
             return AddGraphChangeTrigger(baseVertex, scopeQueries, changeTypeFilter, null);
         }
 
         public static IEdge AddGraphChangeTrigger(IVertex baseVertex, 
             IList<string> scopeQueries,
-            IList<GraphChangeTypeEnum> changeTypeFilter,
+            IList<GraphChangeFilterEnum> changeTypeFilter,
             string triggerVertexName)
         {
             IEdge triggerEdge = null;
@@ -83,31 +87,35 @@ namespace m0.Graph.ExecutionFlow
                     triggerEdge.To.AddVertex(scopeQuery_meta, s);
 
             if(changeTypeFilter != null)
-                foreach(GraphChangeTypeEnum ct in changeTypeFilter)
+                foreach(GraphChangeFilterEnum ct in changeTypeFilter)
                 {
                     switch (ct)
                     {
-                        case GraphChangeTypeEnum.ValueChange:
-                            triggerEdge.To.AddVertex(changeTypeFilter_meta, graphChangeEnum_ValueChange_meta);
+                        case GraphChangeFilterEnum.NoBaseVertex:
+                            triggerEdge.To.AddEdge(changeTypeFilter_meta, graphChangeEnum_NoBaseVertex_meta);
                             break;
 
-                        case GraphChangeTypeEnum.InputEdgeAdded:
-                            triggerEdge.To.AddVertex(changeTypeFilter_meta, graphChangeEnum_InputEdgeAdded_meta);
+                        case GraphChangeFilterEnum.ValueChange:
+                            triggerEdge.To.AddEdge(changeTypeFilter_meta, graphChangeEnum_ValueChange_meta);
                             break;
 
-                        case GraphChangeTypeEnum.InputEdgeRemoved:
-                            triggerEdge.To.AddVertex(changeTypeFilter_meta, graphChangeEnum_InputEdgeRemoved_meta);
+                        case GraphChangeFilterEnum.InputEdgeAdded:
+                            triggerEdge.To.AddEdge(changeTypeFilter_meta, graphChangeEnum_InputEdgeAdded_meta);
                             break;
 
-                        case GraphChangeTypeEnum.OutputEdgeAdded:
-                            triggerEdge.To.AddVertex(changeTypeFilter_meta, graphChangeEnum_OutputEdgeAdded_meta);
+                        case GraphChangeFilterEnum.InputEdgeRemoved:
+                            triggerEdge.To.AddEdge(changeTypeFilter_meta, graphChangeEnum_InputEdgeRemoved_meta);
                             break;
 
-                        case GraphChangeTypeEnum.OutputEdgeRemoved:
-                            triggerEdge.To.AddVertex(changeTypeFilter_meta, graphChangeEnum_OutputEdgeRemoved_meta);
+                        case GraphChangeFilterEnum.OutputEdgeAdded:
+                            triggerEdge.To.AddEdge(changeTypeFilter_meta, graphChangeEnum_OutputEdgeAdded_meta);
                             break;
 
-                        case GraphChangeTypeEnum.OutputEdgeDisposed:
+                        case GraphChangeFilterEnum.OutputEdgeRemoved:
+                            triggerEdge.To.AddEdge(changeTypeFilter_meta, graphChangeEnum_OutputEdgeRemoved_meta);
+                            break;
+
+                        case GraphChangeFilterEnum.OutputEdgeDisposed:
                             triggerEdge.To.AddVertex(changeTypeFilter_meta, graphChangeEnum_OutputEdgeDisposed_meta);
                             break;
                     }

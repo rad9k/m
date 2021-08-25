@@ -22,7 +22,7 @@ namespace m0
     {
         public INoInEdgeInOutVertexVertex xxx(IExecution exe)
         {
-            MinusZero.Instance.root.Get(false, @"V\kupa").AddVertex(null, "XX");
+           // MinusZero.Instance.root.Get(false, @"V\kupa").AddVertex(null, "XX");
             return null;
         }
 
@@ -50,7 +50,7 @@ namespace m0
         {            
             m0_RUN.Main.Run();
 
-            //ExtraRun();
+            ExtraRun();
 
             Close();
         }       
@@ -63,10 +63,13 @@ namespace m0
 
             List<string> scopelist = new List<string>();
 
-          //  scopelist.Add("kupa");
+            scopelist.Add("kupa");
 
-            IVertex trigger = GraphChangeTrigger.AddGraphChangeTrigger(v, scopelist, null).To;
-
+            IVertex trigger = GraphChangeTrigger.AddGraphChangeTrigger(v, scopelist, new List<GraphChangeFilterEnum> {
+                GraphChangeFilterEnum.ValueChange,
+                GraphChangeFilterEnum.InputEdgeAdded,
+                GraphChangeFilterEnum.NoBaseVertex}).To;
+            
             //IVertex trigger = ExecutionFlowHelper.AddGraphChangeTrigger(MinusZero.Instance.root.Get(false, "Hardware"), scopelist).To;
 
             test t = new test();

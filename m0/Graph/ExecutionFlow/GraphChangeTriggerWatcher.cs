@@ -7,15 +7,15 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace m0.Graph.ExecutionFlow
-{
-    //public enum GraphChangeTypeEnum { ValueChange, OutputEdgeAdded, OutputEdgeRemoved, InputEdgeAdded, InputEdgeRemoved, OutputEdgeDisposed };
-
+{ 
     public class WatcherEntry
     {
         public IVertex sourceVertex;
         public IVertex triggerVertex;
         public IList<string> scopeQuery;
-        public IList<IVertex> vertexInScope;
+        public bool NoBaseVertex = false;
+        public IList<GraphChangeFilterEnum> graphChangeFilter;
+        public IList<IVertex> vertexInScope;      
     }
 
     public class GraphChangeTriggerWatcher
@@ -49,6 +49,28 @@ namespace m0.Graph.ExecutionFlow
                     foreach (IEdge ee in scopeQueryEdges)
                         en.scopeQuery.Add(ee.To.Value.ToString());
                 }
+
+                IVertex changeTypeFilterEdges = e.To.GetAll(false, "ChangeTypeFilter:");
+
+                if (changeTypeFilterEdges.OutEdges.Count > 0)
+                {
+                    en.graphChangeFilter = new List<GraphChangeFilterEnum>();
+
+                    foreach (IEdge ee in changeTypeFilterEdges)
+                    {
+                        string value = ee.To.ToString();
+
+                        switch(value)
+                    }
+                        en.changeTypeFilterEdges.Add(ee.To.Value.ToString());
+                }
+
+                // if(e.To.Get(false, "ChangeTypeFilter:No"), ;
+
+
+
+
+
 
                 watcherEntryList.Add(en);
             }

@@ -164,10 +164,10 @@ namespace m0.UIWpf.Visualisers
             if (baseVertex != null)
                 listenerEdge = GraphChangeTrigger.AddEventTriggerAndListener(baseVertex, 
                     new List<string> { },
-                    new List<GraphChangeTypeEnum> {GraphChangeTypeEnum.ValueChange,
-                     GraphChangeTypeEnum.OutputEdgeAdded,
-                     GraphChangeTypeEnum.OutputEdgeRemoved,
-                     GraphChangeTypeEnum.OutputEdgeDisposed},
+                    new List<GraphChangeFilterEnum> {GraphChangeFilterEnum.ValueChange,
+                     GraphChangeFilterEnum.OutputEdgeAdded,
+                     GraphChangeFilterEnum.OutputEdgeRemoved,
+                     GraphChangeFilterEnum.OutputEdgeDisposed},
                     "BasicTrigger", 
                     VertexChange, 
                     "GraphVisualiserItem");                           
