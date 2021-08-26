@@ -116,7 +116,7 @@ namespace m0.Graph.ExecutionFlow
                             break;
 
                         case GraphChangeFilterEnum.OutputEdgeDisposed:
-                            triggerEdge.To.AddVertex(changeTypeFilter_meta, graphChangeFilterEnum_OutputEdgeDisposed_meta);
+                            triggerEdge.To.AddEdge(changeTypeFilter_meta, graphChangeFilterEnum_OutputEdgeDisposed_meta);
                             break;
                     }
                 }
