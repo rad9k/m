@@ -122,9 +122,17 @@ namespace m0.UIWpf.Commands
 
         public static IVertex NewDiagram(IVertex baseVertex, IVertex inputVertex)
         {
+            ////////////////////////////////////////
+            Interaction.BeginInteractionWithGraph();
+            ////////////////////////////////////////
+            
             IVertex dv = VertexOperations.AddInstance(baseVertex.Get(false, "To:"), MinusZero.Instance.Root.Get(false, @"System\Meta\Visualiser\Class:Diagram"));
 
             GraphUtil.CreateOrReplaceEdge(dv, MinusZero.Instance.Root.Get(false, @"System\Meta\Visualiser\Class:Diagram\CreationPool"), baseVertex.Get(false, "To:"));
+
+            ////////////////////////////////////////
+            Interaction.EndInteractionWithGraph();
+            ////////////////////////////////////////
 
             MinusZero.Instance.DefaultUserInteraction.Edit(dv, null);           
 
@@ -148,6 +156,10 @@ namespace m0.UIWpf.Commands
         {
             DoCut = false;
 
+            ////////////////////////////////////////
+            Interaction.BeginInteractionWithGraph();
+            ////////////////////////////////////////
+            
             CutPasteStore.Clear();
 
             if (inputVertex.Get(false, "SelectedEdges:")==null || inputVertex.Get(false, "SelectedEdges:").Count() == 0)
@@ -156,11 +168,19 @@ namespace m0.UIWpf.Commands
                 foreach (IEdge e in inputVertex.Get(false, "SelectedEdges:"))
                     CutPasteStore.Add(e.To);
 
+            ////////////////////////////////////////
+            Interaction.EndInteractionWithGraph();
+            ////////////////////////////////////////
+
             return null;
         }
 
         public static IVertex Paste(IVertex baseVertex, IVertex inputVertex)
         {
+            ////////////////////////////////////////
+            Interaction.BeginInteractionWithGraph();
+            ////////////////////////////////////////
+            
             foreach (IVertex v in CutPasteStore)
             {
                 if(DoCut)
@@ -168,6 +188,10 @@ namespace m0.UIWpf.Commands
 
                 baseVertex.Get(false, "To:").AddEdge(v.Get(false, "Meta:"), v.Get(false, "To:"));
             }
+
+            ////////////////////////////////////////
+            Interaction.EndInteractionWithGraph();
+            ////////////////////////////////////////
 
             return null;
         }
@@ -251,52 +275,104 @@ namespace m0.UIWpf.Commands
             if (DefaultVis == null)
                 DefaultVis = MinusZero.Instance.Root.Get(false, @"System\Meta\Visualiser\Form");
 
-            if (GeneralUtil.CompareStrings(DefaultVis.Value, "Diagram"))
-                return OpenDiagram(baseVertex, DefaultVis);
+            ////////////////////////////////////////
+            Interaction.BeginInteractionWithGraph();
+            ////////////////////////////////////////
 
-            return OpenVisualiser(baseVertex, DefaultVis);
+            IVertex toReturn = null; 
+
+            if (GeneralUtil.CompareStrings(DefaultVis.Value, "Diagram"))
+                toReturn =  OpenDiagram(baseVertex, DefaultVis);
+            else
+                toReturn =  OpenVisualiser(baseVertex, DefaultVis);
+
+            ////////////////////////////////////////
+            Interaction.EndInteractionWithGraph();
+            ////////////////////////////////////////
+
+            return toReturn;
         }
 
         public static IVertex OpenFormVisualiser(IVertex baseVertex)
-        {            
-            return OpenVisualiser(baseVertex, MinusZero.Instance.Root.Get(false, @"System\Meta\Visualiser\Form"));
+        {
+            IVertex toReturn;
+
+            ////////////////////////////////////////
+            Interaction.BeginInteractionWithGraph();
+            ////////////////////////////////////////
+
+            toReturn = OpenVisualiser(baseVertex, MinusZero.Instance.Root.Get(false, @"System\Meta\Visualiser\Form"));
+
+            ////////////////////////////////////////
+            Interaction.EndInteractionWithGraph();
+            ////////////////////////////////////////
+
+            return toReturn;
         }
 
         public static IVertex OpenDiagram(IVertex baseVertex, IVertex inputVertex)
         {
+            ////////////////////////////////////////
+            Interaction.BeginInteractionWithGraph();
+            ////////////////////////////////////////
+            
             IPlatformClass sv = (IPlatformClass)PlatformClass.CreatePlatformObject(baseVertex.Get(false, "To:"));
 
             //GraphUtil.ReplaceEdge(sv.Vertex, "BaseEdge", baseVertex);
 
             MinusZero.Instance.DefaultUserInteraction.ShowContent(sv);
 
+            ////////////////////////////////////////
+            Interaction.EndInteractionWithGraph();
+            ////////////////////////////////////////
+
             return null;
         }
 
         public static IVertex OpenVisualiser(IVertex baseVertex, IVertex inputVertex)
         {
+            ////////////////////////////////////////
+            Interaction.BeginInteractionWithGraph();
+            ////////////////////////////////////////
+            
             IPlatformClass sv = (IPlatformClass)PlatformClass.CreatePlatformObject(inputVertex);
             
             Edge.CopyAndReplaceEdgeVertexByEdgeVertex(sv.Vertex, "BaseEdge", baseVertex);
 
             MinusZero.Instance.DefaultUserInteraction.ShowContent(sv);
 
+            ////////////////////////////////////////
+            Interaction.EndInteractionWithGraph();
+            ////////////////////////////////////////
+
             return null;            
         }
 
         public static IVertex OpenMetaVisualiser(IVertex baseVertex, IVertex inputVertex)
         {
+            ////////////////////////////////////////
+            Interaction.BeginInteractionWithGraph();
+            ////////////////////////////////////////
+            
             IPlatformClass sv = (IPlatformClass)PlatformClass.CreatePlatformObject(inputVertex);
 
             GraphUtil.ReplaceEdge(sv.Vertex.Get(false, "BaseEdge:"), "To", baseVertex.Get(false, "Meta:"));            
 
             MinusZero.Instance.DefaultUserInteraction.ShowContent(sv);
 
+            ////////////////////////////////////////
+            Interaction.EndInteractionWithGraph();
+            ////////////////////////////////////////
+
             return null;
         }
 
         public static IVertex OpenVisualiserFloating(IVertex baseVertex, IVertex inputVertex)
         {
+            ////////////////////////////////////////
+            Interaction.BeginInteractionWithGraph();
+            ////////////////////////////////////////
+            
             IPlatformClass pc = (IPlatformClass)PlatformClass.CreatePlatformObject(inputVertex);
 
             //GraphUtil.ReplaceEdge(pc.Vertex, "BaseEdge", baseVertex);
@@ -304,6 +380,10 @@ namespace m0.UIWpf.Commands
             Edge.CopyAndReplaceEdgeVertexByEdgeVertex(pc.Vertex, "BaseEdge", baseVertex);
 
             MinusZero.Instance.DefaultUserInteraction.ShowContentFloating(pc, FloatingWindowSize.Medium);
+
+            ////////////////////////////////////////
+            Interaction.EndInteractionWithGraph();
+            ////////////////////////////////////////
 
             return null;
         }

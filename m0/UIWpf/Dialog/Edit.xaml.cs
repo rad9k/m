@@ -1,6 +1,7 @@
 ﻿using m0.Foundation;
 using m0.Graph;
 using m0.UIWpf.Visualisers;
+using m0.User.Process.UX;
 using m0.ZeroTypes;
 using System;
 using System.Collections.Generic;
@@ -45,11 +46,19 @@ namespace m0.UIWpf.Dialog
 
             InitializeComponent();
 
+            ////////////////////////////////////////
+            Interaction.BeginInteractionWithGraph();
+            ////////////////////////////////////////
+           
             FormVisualiser = new FormVisualiser();
 
             Wrap.SetContent(FormVisualiser);
 
             GraphUtil.ReplaceEdge(FormVisualiser.Vertex.Get(false, "BaseEdge:"), "To", baseVertex);
+
+            ////////////////////////////////////////
+            Interaction.EndInteractionWithGraph();
+            ////////////////////////////////////////
 
             this.Loaded += new RoutedEventHandler(OnLoad);
 

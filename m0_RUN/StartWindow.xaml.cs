@@ -50,7 +50,7 @@ namespace m0
         {            
             m0_RUN.Main.Run();
 
-            ExtraRun();
+           // ExtraRun();
 
             Close();
         }       
