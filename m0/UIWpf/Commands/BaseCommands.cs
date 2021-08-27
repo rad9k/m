@@ -275,20 +275,12 @@ namespace m0.UIWpf.Commands
             if (DefaultVis == null)
                 DefaultVis = MinusZero.Instance.Root.Get(false, @"System\Meta\Visualiser\Form");
 
-            ////////////////////////////////////////
-            Interaction.BeginInteractionWithGraph();
-            ////////////////////////////////////////
-
             IVertex toReturn = null; 
 
             if (GeneralUtil.CompareStrings(DefaultVis.Value, "Diagram"))
                 toReturn =  OpenDiagram(baseVertex, DefaultVis);
             else
                 toReturn =  OpenVisualiser(baseVertex, DefaultVis);
-
-            ////////////////////////////////////////
-            Interaction.EndInteractionWithGraph();
-            ////////////////////////////////////////
 
             return toReturn;
         }
