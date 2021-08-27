@@ -17,6 +17,7 @@ using System.Globalization;
 using m0.UIWpf.Visualisers;
 using m0.Graph;
 using Xceed.Wpf.AvalonDock.Layout;
+using m0.User.Process.UX;
 
 namespace m0.UIWpf
 {
@@ -55,11 +56,19 @@ namespace m0.UIWpf
 
         private void CloseContent()
         {
+            ////////////////////////////////////////
+            Interaction.BeginInteractionWithGraph();
+            ////////////////////////////////////////
+            
             if (Content is IDisposable)
                 ((IDisposable)Content).Dispose();
 
             if (this.expander.Content is IDisposable)
                 ((IDisposable)this.expander.Content).Dispose();
+
+            ////////////////////////////////////////
+            Interaction.EndInteractionWithGraph();
+            ////////////////////////////////////////
         }
 
         object Content;

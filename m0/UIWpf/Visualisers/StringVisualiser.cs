@@ -25,6 +25,8 @@ namespace m0.UIWpf.Visualisers
     {
         public AtomVisualiserHelper VisualiserHelper { get; set; }
 
+        public List<IDisposable> SubVisualisers { get; set; }
+
         public StringVisualiser()
         {
             this.AcceptsReturn = true;

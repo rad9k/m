@@ -22,12 +22,14 @@ namespace m0.UIWpf.Visualisers
     {
         public AtomVisualiserHelper VisualiserHelper { get; set; }
 
+        public List<IDisposable> SubVisualisers { get; set; }
+
         public EdgeVisualiser()
         {
             this.Background = (Brush)FindResource("0LightGrayBrush");
 
             new AtomVisualiserHelper(MinusZero.Instance.Root.Get(false, @"System\Meta\Visualiser\Edge"), 
-                this, "EdgeVisualiser", this, false, new List<string> { @"BaseEdge:\To:" }, "AtomVisualiser");
+                this, "EdgeVisualiser", this, false, new List<string> { @"", @"\", @"\\", }, "AtomVisualiser");
 
             this.PreviewMouseLeftButtonDown += dndPreviewMouseLeftButtonDown;
             this.PreviewMouseMove += dndPreviewMouseMove;

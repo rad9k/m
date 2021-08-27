@@ -26,6 +26,8 @@ namespace m0.UIWpf.Visualisers
     {
         public AtomVisualiserHelper VisualiserHelper { get; set; }
 
+        public List<IDisposable> SubVisualisers { get; set; }
+
         protected DataGrid ThisDataGrid;
 
         protected bool TurnOffSelectedItemsUpdate = false;
@@ -70,7 +72,7 @@ namespace m0.UIWpf.Visualisers
         protected virtual void PlatformClassInitialize()
         {
             new ListVisualiserHelper(MinusZero.Instance.Root.Get(false, @"System\Meta\Visualiser\List"),
-             this, "ListVisualiser", this, false, new List<string> { @"", @"BaseEdge:", @"BaseEdge:\To:" }, "AtomVisualiserFull");
+             this, "ListVisualiser", this, false, new List<string> { @"", @"BaseEdge:\To:" }, "AtomVisualiserFull");
         }
 
         public void OnLoad(object sender, RoutedEventArgs e)

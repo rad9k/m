@@ -23,6 +23,8 @@ namespace m0.UIWpf.Visualisers
     {
         public AtomVisualiserHelper VisualiserHelper { get; set; }
 
+        public List<IDisposable> SubVisualisers { get; set; }
+
         public DebugVisualiser()
         {            
             new AtomVisualiserHelper(MinusZero.Instance.Root.Get(false, @"System\Meta\Visualiser\Debug"), 

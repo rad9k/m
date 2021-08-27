@@ -22,6 +22,8 @@ namespace m0.UIWpf.Visualisers
     {
         public AtomVisualiserHelper VisualiserHelper { get; set; }
 
+        public List<IDisposable> SubVisualisers { get; set; }
+
         List<IVertex> manuallyAddedVertexChangeListeners = new List<IVertex>();
 
         public ClassVisualiser()

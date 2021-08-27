@@ -77,7 +77,7 @@ namespace m0.UIWpf.Visualisers.Helper
 
             MinusZero mz = MinusZero.Instance;
 
-            visualiserName = _visualiserName + this.GetHashCode();
+            visualiserName = _visualiserName + visualiser.GetHashCode();
 
             if (mz != null && mz.IsInitialized)
             {                
@@ -161,10 +161,6 @@ namespace m0.UIWpf.Visualisers.Helper
             {
                 IsDisposed = true;
 
-                ////////////////////////////////////////
-                Interaction.BeginInteractionWithGraph();
-                ////////////////////////////////////////
-
                 visualiserVertexEdge.From.DeleteEdge(visualiserVertexEdge);
 
                 GraphChangeTrigger.RemoveGraphChangeListener(graphChangeListenerEdge);                
@@ -172,9 +168,9 @@ namespace m0.UIWpf.Visualisers.Helper
                 if (_Vertex is IDisposable)
                     ((IDisposable)_Vertex).Dispose();
 
-                ////////////////////////////////////////
-                Interaction.EndInteractionWithGraph();
-                ////////////////////////////////////////
+                if (visualiser.SubVisualisers != null)
+                    foreach (IDisposable d in visualiser.SubVisualisers)
+                        d.Dispose();
             }
         }
 

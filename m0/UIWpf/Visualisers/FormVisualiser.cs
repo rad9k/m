@@ -53,6 +53,8 @@ namespace m0.UIWpf.Visualisers
     {
         public AtomVisualiserHelper VisualiserHelper { get; set; }
 
+        public List<IDisposable> SubVisualisers { get; set; }
+
         bool DisplayBaseVertex = true; /////////////////////////////////////////
 
         bool SectionsAsTabs;

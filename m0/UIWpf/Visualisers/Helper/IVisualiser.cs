@@ -13,6 +13,8 @@ namespace m0.UIWpf.Visualisers.Helper
     {
         AtomVisualiserHelper VisualiserHelper { get; set; }
 
+        List<IDisposable> SubVisualisers { get; set; }
+
         void OnLoad(object sender, RoutedEventArgs e);
 
         void UpdateBaseEdge();

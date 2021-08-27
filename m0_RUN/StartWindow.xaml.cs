@@ -50,7 +50,7 @@ namespace m0
         {            
             m0_RUN.Main.Run();
 
-           // ExtraRun();
+            //ExtraRun();
 
             Close();
         }       
@@ -63,12 +63,15 @@ namespace m0
 
             List<string> scopelist = new List<string>();
 
-            scopelist.Add("kupa");
+            scopelist.Add("");
+            scopelist.Add(@"\");
 
-            IVertex trigger = GraphChangeTrigger.AddGraphChangeTrigger(v, scopelist, new List<GraphChangeFilterEnum> {
-                GraphChangeFilterEnum.ValueChange}).To;
+            IVertex trigger = GraphChangeTrigger.AddGraphChangeTrigger(v, scopelist, new List<GraphChangeFilterEnum> {GraphChangeFilterEnum.ValueChange,
+                     GraphChangeFilterEnum.OutputEdgeAdded,
+                     GraphChangeFilterEnum.OutputEdgeRemoved,
+                     GraphChangeFilterEnum.OutputEdgeDisposed}).To;
             
-            //IVertex trigger = ExecutionFlowHelper.AddGraphChangeTrigger(MinusZero.Instance.root.Get(false, "Hardware"), scopelist).To;
+
 
             test t = new test();
 
@@ -77,6 +80,8 @@ namespace m0
             ExecutionFlowHelper.StartTransaction();
 
             IVertex k = v.AddVertex(null, "kupa");
+
+            k.AddVertex(null, "duza").AddVertex(null, "bardzo");
 
            // GraphChangeTrigger.AddEventTriggerAndListener(k, new List<string> { }, null, "t", t.yyy, "l");
 
