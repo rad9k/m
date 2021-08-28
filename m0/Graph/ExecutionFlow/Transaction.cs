@@ -191,7 +191,7 @@ namespace m0.Graph.ExecutionFlow
 
         private void PrepareAndSendGrahChangeEvents_Loop(IExecution exe)
         {
-            Dictionary<IVertex, List<WatcherEntry>> watchedVertexDictionary = GraphChangeTriggerWatcher.GetWatchedVertexDictionary();
+            Dictionary<IVertex, List<WatcherEntry>> watchedVertexDictionary;
 
             Dictionary<IVertex, List<GraphChangeTransactionAtom>> graphChangeTransactionAtoms_OutEdgeValueChange_copy;
             Dictionary<IVertex, List<GraphChangeTransactionAtom>> graphChangeTransactionAtoms_InEdge_copy;
@@ -199,6 +199,8 @@ namespace m0.Graph.ExecutionFlow
             while (graphChangeTransactionAtoms_OutEdgeValueChange.Count() > 0 ||
                 graphChangeTransactionAtoms_InEdge.Count() > 0)
             {
+                watchedVertexDictionary = GraphChangeTriggerWatcher.GetWatchedVertexDictionary();
+
                 graphChangeTransactionAtoms_OutEdgeValueChange_copy =
                     new Dictionary<IVertex, List<GraphChangeTransactionAtom>>(graphChangeTransactionAtoms_OutEdgeValueChange);
                 graphChangeTransactionAtoms_InEdge_copy =
@@ -227,7 +229,7 @@ namespace m0.Graph.ExecutionFlow
                 graphChangeTransactionAtoms_OutEdgeValueChange_copy.Keys.Count +
                 graphChangeTransactionAtoms_InEdge_copy.Keys.Count;
 
-            if (graphChangeTransactionAtoms_TotalCount < watchedVertexDictionary.Count)
+            if (graphChangeTransactionAtoms_TotalCount > watchedVertexDictionary.Count)
                 triggerEventDictionary = getTriggerEventDictionary_byWatchedVertexDictionary(watchedVertexDictionary,
                     graphChangeTransactionAtoms_OutEdgeValueChange_copy,
                     graphChangeTransactionAtoms_InEdge_copy);

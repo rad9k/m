@@ -20,6 +20,8 @@ namespace m0.Graph.ExecutionFlow
 
     public class GraphChangeTriggerWatcher
     {
+        static bool triggerListChanged = false;
+
         static HashSet<IEdge> triggerEdgeList = new HashSet<IEdge>();
         
         static IList<WatcherEntry> watcherEntryList;
@@ -27,6 +29,15 @@ namespace m0.Graph.ExecutionFlow
         public static void AddGraphChangeTrigger(IEdge triggerEdge)
         {
             triggerEdgeList.Add(triggerEdge);
+
+            triggerListChanged = true;
+        }
+
+        public static void RemoveGraphChangeTrigger(IEdge triggerEdge)
+        {
+            triggerEdgeList.Remove(triggerEdge);
+
+            triggerListChanged = true;
         }
 
         private static void CreateWatcherEntryList()
@@ -113,8 +124,13 @@ namespace m0.Graph.ExecutionFlow
             }
         }
 
+        static Dictionary<IVertex, List<WatcherEntry>> watchedVertexDictionary;
+
         public static Dictionary<IVertex, List<WatcherEntry>> GetWatchedVertexDictionary()
         {
+            if (triggerListChanged != false && watchedVertexDictionary != null)
+                return watchedVertexDictionary;
+
             CreateWatcherEntryList();
 
             FillVertexInScope();
@@ -125,12 +141,9 @@ namespace m0.Graph.ExecutionFlow
                 foreach(IVertex v in en.vertexInScope)
                     GeneralUtil.DictionaryAdd<IVertex, WatcherEntry>(dict, v, en);
 
-            return dict;
-        }
+            triggerListChanged = false;
 
-        public static void RemoveGraphChangeTrigger(IEdge triggerEdge)
-        {
-            triggerEdgeList.Remove(triggerEdge);
-        }
+            return dict;
+        }        
     }
 }
