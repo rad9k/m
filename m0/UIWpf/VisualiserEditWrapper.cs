@@ -15,6 +15,8 @@ namespace m0.UIWpf
 {
     public class VisualiserEditWrapper:ContentControl, IDisposable
     {
+        public bool TriggerNewTransaction = false;
+
         public VisualiserEditWrapper()        
         {
             //this.VerticalContentAlignment = VerticalAlignment.Center;

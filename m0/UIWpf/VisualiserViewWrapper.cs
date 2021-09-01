@@ -15,6 +15,8 @@ namespace m0.UIWpf
 {
     public class VisualiserViewWrapper : ContentControl, IDisposable
     {
+        public bool TriggerNewTransaction = false;
+
         public VisualiserViewWrapper()        
         {
             //this.VerticalContentAlignment = VerticalAlignment.Center;
@@ -59,7 +61,8 @@ namespace m0.UIWpf
                 defvis = e.To.Get(false, @"$Is:\$DefaultViewVisualiser:");
 
             ///////////////////////////////////////
-            //ExecutionFlowHelper.StartTransaction();
+            if(_this.TriggerNewTransaction)
+                ExecutionFlowHelper.StartTransaction();
             ///////////////////////////////////////
 
             if (defvis != null)
@@ -78,7 +81,8 @@ namespace m0.UIWpf
             _this.Content = pc;
 
             ////////////////////////////////////////
-            //ExecutionFlowHelper.CommitTransaction();
+            if(_this.TriggerNewTransaction)
+                ExecutionFlowHelper.CommitTransaction();
             ////////////////////////////////////////
 
         }
