@@ -18,6 +18,7 @@ using System.Windows.Input;
 using m0.UIWpf.Commands;
 using System.Windows.Controls.Primitives;
 using m0.UIWpf.Visualisers.Helper;
+using m0.Graph.ExecutionFlow;
 
 namespace m0.UIWpf.Visualisers
 {
@@ -72,8 +73,6 @@ namespace m0.UIWpf.Visualisers
                     }
                 }
             }
-
-
         }
 
         protected virtual void AddDeleteTemplateButton()
@@ -118,6 +117,7 @@ namespace m0.UIWpf.Visualisers
             {
                 valueColumn.CellTemplate = new DataTemplate();
                 FrameworkElementFactory factory = new FrameworkElementFactory(typeof(VisualiserEditWrapper));
+                //FrameworkElementFactory factory = new FrameworkElementFactory(typeof(VisualiserTransactedEditWrapper));
                 factory.SetBinding(VisualiserEditWrapper.BaseEdgeProperty, new Binding(bindingString));
                 valueColumn.CellTemplate.VisualTree = factory;
             }
@@ -125,6 +125,7 @@ namespace m0.UIWpf.Visualisers
             {
                 valueColumn.CellTemplate = new DataTemplate();
                 FrameworkElementFactory factory = new FrameworkElementFactory(typeof(VisualiserViewWrapper));
+                //FrameworkElementFactory factory = new FrameworkElementFactory(typeof(VisualiserTransactedViewWrapper));
                 factory.SetBinding(VisualiserViewWrapper.BaseEdgeProperty, new Binding(bindingString));
                 valueColumn.CellTemplate.VisualTree = factory;
             }
@@ -134,6 +135,7 @@ namespace m0.UIWpf.Visualisers
             //
             valueColumn.CellEditingTemplate = new DataTemplate();
             FrameworkElementFactory EditFactory = new FrameworkElementFactory(typeof(VisualiserEditWrapper));
+            //FrameworkElementFactory EditFactory = new FrameworkElementFactory(typeof(VisualiserTransactedEditWrapper));
             EditFactory.SetBinding(VisualiserEditWrapper.BaseEdgeProperty, new Binding(bindingString));
             valueColumn.CellEditingTemplate.VisualTree = EditFactory;
 
@@ -160,21 +162,6 @@ namespace m0.UIWpf.Visualisers
                          this, "TableVisualiser", this, false, new List<string> { @"" }, "AtomVisualiserFull");
         }
 
-        private void VertexChangeListenOff()
-        {
-            //((EasyVertex)Vertex).CanFireChangeEvent = false;
-
-            //PlatformClass.RemoveVertexChangeListeners(this.Vertex, new VertexChange(VertexChange));
-        }
-
-        private void VertexChangeListenOn()
-        {
-            //((EasyVertex)Vertex).CanFireChangeEvent = true;
-
-            //PlatformClass.RegisterVertexChangeListeners(this.Vertex, new VertexChange(VertexChange), new string[] { "BaseEdge", "SelectedEdges" });
-        }
-
-
         IVertex ToShowEdgesMeta;
 
         public override void UpdateBaseEdge(){
@@ -199,21 +186,21 @@ namespace m0.UIWpf.Visualisers
                     {
                         ToShowEdgesMeta = e.Meta;
 
-                        VertexChangeListenOff();
+                        ExecutionFlowHelper.GraphChangeWatchOff();
 
                         Edge.AddEdgeVertexEdges(Vertex.Get(false, @"ToShowEdgesMeta:"), e);
 
-                        VertexChangeListenOn();
+                        ExecutionFlowHelper.GraphChangeWatchOn();
                     }
                 }
 
                 if (ToShowEdgesMeta != null)
                 {
-                    ((EasyVertex)Vertex.Get(false, @"FilterQuery:")).CanFireChangeEvent = false;
+                    ExecutionFlowHelper.GraphChangeWatchOff();
 
                     Vertex.Get(false, @"FilterQuery:").Value = ToShowEdgesMeta.Value+":";
 
-                    ((EasyVertex)Vertex.Get(false, @"FilterQuery:")).CanFireChangeEvent = true;
+                    ExecutionFlowHelper.GraphChangeWatchOn();
                 }
 
 

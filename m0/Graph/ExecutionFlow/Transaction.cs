@@ -336,7 +336,7 @@ namespace m0.Graph.ExecutionFlow
                         if(GraphUtil.ExistQueryIn(gcta.Edge.From, "$GraphChangeTrigger", null))
                             return;                        
                     }
-                    if(gcta.Edge != null && 
+                    /*if(gcta.Edge != null && 
                         (GeneralUtil.CompareStrings(gcta.Edge.From, "Sleep") || GeneralUtil.CompareStrings(gcta.Edge.To, "Sleep")))
                     {
                         int x = 0;
@@ -346,7 +346,7 @@ namespace m0.Graph.ExecutionFlow
                     {
                         int x = 0;
                         return;
-                    }
+                    }*/
                         
                     GeneralUtil.DictionaryAdd<IVertex, GraphChangeTransactionAtom>(
                         graphChangeTransactionAtoms_OutEdgeValueChange, 

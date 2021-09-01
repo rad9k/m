@@ -65,6 +65,20 @@ namespace m0.Graph.ExecutionFlow
             Lib.Sys.CommitTransaction(exe);
         }
 
+        public static void GraphChangeWatchOff()
+        {
+            ITransaction currentTransaction = MinusZero.Instance.GetTopTransaction();
+
+            currentTransaction.GraphChangeWatch = false;
+        }
+
+        public static void GraphChangeWatchOn()
+        {
+            ITransaction currentTransaction = MinusZero.Instance.GetTopTransaction();
+
+            currentTransaction.GraphChangeWatch = true;
+        }
+
         public static void AddTransactionAtom(ITransactionAtom atom)
         {
             ITransaction currentTransaction = MinusZero.Instance.GetTopTransaction();

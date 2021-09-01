@@ -49,7 +49,7 @@ namespace m0.UIWpf.Visualisers
         }
     }
 
-    public class FormVisualiser : ContentControl, IVisualiser
+    public class FormVisualiser : ContentControl, IListVisualiser
     {
         public AtomVisualiserHelper VisualiserHelper { get; set; }
 
@@ -79,8 +79,8 @@ namespace m0.UIWpf.Visualisers
 
         public FormVisualiser()
         {
-            new AtomVisualiserHelper(MinusZero.Instance.Root.Get(false, @"System\Meta\Visualiser\Form"),
-                this, "FormVisualiser", this, false, new List<string> { @"", /*@"BaseEdge:\To:"*/}, "AtomVisualiserFull");
+            new ListVisualiserHelper(MinusZero.Instance.Root.Get(false, @"System\Meta\Visualiser\Form"),
+                this, "FormVisualiser", this, false, new List<string> { @""/*, @"BaseEdge:\To:"*/}, "AtomVisualiserFull");            
 
             SetVertexDefaultValues();
         }
@@ -89,6 +89,8 @@ namespace m0.UIWpf.Visualisers
         {
             // DO NOT WANT CONTEXTMENU HERE
         }
+
+        public void SelectedVerticesUpdated() { }
 
         private TabInfo getActiveTabInfo()
         {
