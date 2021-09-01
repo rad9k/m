@@ -44,7 +44,7 @@ namespace m0.UIWpf.Visualisers.Helper
                  _visualiserName, 
                  _visualiserAsFrameworkElement, 
                  true, 
-                 new List<string> { @"BaseEdge:\To:" },
+                 new List<string> { "", @"BaseEdge:\To:" },
                  "AtomVisualiser")
         {
             
