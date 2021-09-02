@@ -46,8 +46,13 @@ namespace m0.UIWpf.Visualisers
 
         protected override void OnDragOver(DragEventArgs e) { } // Do not want standard base implemention, that prevents allow drop        
 
+        protected bool CanProceedUIUpdateEvent = true;
+
         protected override void OnTextChanged(TextChangedEventArgs e)
         {
+            if (!CanProceedUIUpdateEvent)
+                return;
+
             base.OnTextChanged(e);
 
             IVertex bv = Vertex.Get(false, @"BaseEdge:\To:");
@@ -95,7 +100,12 @@ namespace m0.UIWpf.Visualisers
 
             if (bv != null && bv.Value != null /*&& ((String)bv.Value) != "$Empty"*/)
             {
+                CanProceedUIUpdateEvent = false;
+
                 this.Text = bv.Value.ToString();
+
+                CanProceedUIUpdateEvent = true;
+
                 IsNull = false;
             }
             else

@@ -39,8 +39,13 @@ namespace m0.UIWpf.Visualisers
 
         public void ZoomVisualiserContentChange() { }
 
+        protected bool CanProceedUIUpdateEvent = true;
+
         protected override void OnToggle()
         {
+            if (!CanProceedUIUpdateEvent)
+                return;
+
             base.OnToggle();
 
             ////////////////////////////////////////
@@ -81,10 +86,14 @@ namespace m0.UIWpf.Visualisers
 
             if (bv != null && bv.Value != null)
             {
+                CanProceedUIUpdateEvent = false;
+
                 if (GeneralUtil.CompareStrings(bv.Value, "True"))
                     this.IsChecked = true;
                 else
                     this.IsChecked = false;
+
+                CanProceedUIUpdateEvent = true;
 
                 IsNull = false;
             }

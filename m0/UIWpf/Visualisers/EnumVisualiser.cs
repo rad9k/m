@@ -39,8 +39,13 @@ namespace m0.UIWpf.Visualisers
 
         bool DoingSelectionChanged = false;
 
+        protected bool CanProceedUIUpdateEvent = true;
+
         protected override void OnSelectionChanged(SelectionChangedEventArgs _e)
         {
+            if (!CanProceedUIUpdateEvent)
+                return;
+
             if (DoingSelectionChanged == false)
             {
                 DoingSelectionChanged = true;
@@ -109,7 +114,11 @@ namespace m0.UIWpf.Visualisers
                         SelectedItem = i;
                 }
 
+                CanProceedUIUpdateEvent = false;
+
                 this.SelectedItem = SelectedItem;
+
+                CanProceedUIUpdateEvent = true;
 
             }
 

@@ -325,16 +325,18 @@ namespace m0.Graph.ExecutionFlow
         public void AddAtom(ITransactionAtom atom)
         {
             if (atom is GraphChangeTransactionAtom)
-                if(GraphChangeWatch) {
+            {
+                if (GraphChangeWatch)
+                {
                     GraphChangeTransactionAtom gcta = (GraphChangeTransactionAtom)atom;
 
                     if (gcta.Type == AtomGraphChangeTypeEnum.EdgeAdded)
                     {
-                        if(GeneralUtil.CompareStrings(gcta.Edge.Meta, "$GraphChangeTrigger"))
+                        if (GeneralUtil.CompareStrings(gcta.Edge.Meta, "$GraphChangeTrigger"))
                             return;
 
-                        if(GraphUtil.ExistQueryIn(gcta.Edge.From, "$GraphChangeTrigger", null))
-                            return;                        
+                        if (GraphUtil.ExistQueryIn(gcta.Edge.From, "$GraphChangeTrigger", null))
+                            return;
                     }
                     /*if(gcta.Edge != null && 
                         (GeneralUtil.CompareStrings(gcta.Edge.From, "Sleep") || GeneralUtil.CompareStrings(gcta.Edge.To, "Sleep")))
@@ -347,10 +349,10 @@ namespace m0.Graph.ExecutionFlow
                         int x = 0;
                         return;
                     }*/
-                        
+
                     GeneralUtil.DictionaryAdd<IVertex, GraphChangeTransactionAtom>(
-                        graphChangeTransactionAtoms_OutEdgeValueChange, 
-                        gcta.ChangedVertex, 
+                        graphChangeTransactionAtoms_OutEdgeValueChange,
+                        gcta.ChangedVertex,
                         gcta);
 
                     if (gcta.Type == AtomGraphChangeTypeEnum.EdgeAdded || gcta.Type == AtomGraphChangeTypeEnum.EdgeRemoved)
@@ -359,11 +361,13 @@ namespace m0.Graph.ExecutionFlow
                         gcta_inEdge.ChangedVertex = gcta.Edge.To;
 
                         GeneralUtil.DictionaryAdd<IVertex, GraphChangeTransactionAtom>(
-                            graphChangeTransactionAtoms_InEdge, 
-                            gcta_inEdge.ChangedVertex, 
+                            graphChangeTransactionAtoms_InEdge,
+                            gcta_inEdge.ChangedVertex,
                             gcta_inEdge);
                     }
-            } else
+                }
+            }
+            else
                 atoms.Add(atom);
         }
 
