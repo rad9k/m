@@ -53,7 +53,8 @@ namespace m0.UIWpf.Visualisers.Helper
                   _visualiserAsFrameworkElement,
                   _dndSupport,
                   _scopeQueries,
-                  _scopeQueriesName)
+                  _scopeQueriesName,
+                  null)
         {
             listVisualiser = (IListVisualiser)_visualiser;
         }

@@ -41,7 +41,13 @@ namespace m0.UIWpf.Visualisers
             SubVisualisers = new List<IDisposable>();
 
             new AtomVisualiserHelper(MinusZero.Instance.Root.Get(false, @"System\Meta\Visualiser\Wrap"),
-                this, "WrapVisualiser", this, false, new List<string> { @"BaseEdge:\To:" }, "Visualiser");
+                this, 
+                "WrapVisualiser", 
+                this, 
+                false, 
+                new List<string> { @"BaseEdge:\To:" }, 
+                "Visualiser",
+                null);
         }
 
         public void OnLoad(object sender, RoutedEventArgs e)

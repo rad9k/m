@@ -6,6 +6,7 @@ using m0.Graph.ExecutionFlow;
 using m0.Store;
 using m0.Store.FileSystem;
 using m0.Store.Json;
+using m0.UIWpf.Visualisers.Helper;
 using m0.Util;
 using m0.ZeroTypes;
 using m0.ZeroUML.Instructions;
@@ -403,12 +404,13 @@ namespace m0
             Hardware.AddEdge(root.Get(false, @"System\Meta\Hardware\LocalComputer"), localComputer);
         }
 
-        public void ExecutionFlowInitialize()
+        public void StaticMetaInitialize()
         {
             GraphChangeTrigger.Initialize();
             ExecutionFlowHelper.Initialize();
             GraphChangeTransactionAtom.Initialize();
             Transaction.Initialize();
+            AtomVisualiserHelper.Initialize();
         }
 
         public void Initialize()
@@ -448,7 +450,7 @@ namespace m0
 
             UIWpf.WpfUtil.InitializeUIWpf();
 
-            ExecutionFlowInitialize();
+            StaticMetaInitialize();
 
             ExecutionFlowHelper.CommitTransaction();
 

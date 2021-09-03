@@ -10,6 +10,7 @@ using m0.Graph;
 using m0.ZeroTypes;
 using m0.Util;
 using m0.Graph.ExecutionFlow;
+using m0.UIWpf.Visualisers.Helper;
 
 namespace m0.UIWpf
 {
@@ -61,8 +62,8 @@ namespace m0.UIWpf
                 defvis = e.To.Get(false, @"$Is:\$DefaultViewVisualiser:");
 
             ///////////////////////////////////////
-            if(_this.TriggerNewTransaction)
-                ExecutionFlowHelper.StartTransaction();
+            //if(_this.TriggerNewTransaction)
+            //    ExecutionFlowHelper.StartTransaction();
             ///////////////////////////////////////
 
             if (defvis != null)
@@ -74,15 +75,23 @@ namespace m0.UIWpf
             }
             else
             {
-                pc = new StringViewVisualiser();
-                Edge.ReplaceEdgeVertexEdges(pc.Vertex.Get(false, "BaseEdge:"), e);
+                pc = new StringViewVisualiser(Edge.CreateTempEdgeVertex(e));
+               // Edge.ReplaceEdgeVertexEdges(pc.Vertex.Get(false, "BaseEdge:"), e);
             }
             
             _this.Content = pc;
 
+            if(pc is FrameworkElement)
+            {
+                IVisualiser vis = WpfUtil.GetParentVisualiser((FrameworkElement)pc);
+
+                if (vis != null)
+                    vis.SubVisualisers.Add((IDisposable)pc);
+            }
+
             ////////////////////////////////////////
-            if(_this.TriggerNewTransaction)
-                ExecutionFlowHelper.CommitTransaction();
+            //if(_this.TriggerNewTransaction)
+            //    ExecutionFlowHelper.CommitTransaction();
             ////////////////////////////////////////
 
         }

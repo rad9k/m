@@ -29,7 +29,13 @@ namespace m0.UIWpf.Visualisers
             this.Background = (Brush)FindResource("0LightGrayBrush");
 
             new AtomVisualiserHelper(MinusZero.Instance.Root.Get(false, @"System\Meta\Visualiser\Edge"), 
-                this, "EdgeVisualiser", this, false, new List<string> { @"BaseEdge:\To:"}, "AtomVisualiser");
+                this, 
+                "EdgeVisualiser", 
+                this, 
+                false, 
+                new List<string> { @"BaseEdge:\To:"}, 
+                "AtomVisualiser",
+                null);
 
             this.PreviewMouseLeftButtonDown += dndPreviewMouseLeftButtonDown;
             this.PreviewMouseMove += dndPreviewMouseMove;

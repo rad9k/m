@@ -28,7 +28,13 @@ namespace m0.UIWpf.Visualisers
         public DebugVisualiser()
         {            
             new AtomVisualiserHelper(MinusZero.Instance.Root.Get(false, @"System\Meta\Visualiser\Debug"), 
-                this, "DebugVisualiser", this, false, new List<string> { @"", @"BaseEdge:\", @"BaseEdge:\To:\" }, "ListVisualiser");
+                this, 
+                "DebugVisualiser", 
+                this, 
+                false, 
+                new List<string> { @"", @"BaseEdge:\", @"BaseEdge:\To:\" }, 
+                "ListVisualiser",
+                null);
         }
 
         public void OnLoad(object sender, RoutedEventArgs e)

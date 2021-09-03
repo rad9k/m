@@ -15,6 +15,7 @@ using m0.Graph;
 using m0.UIWpf.Visualisers;
 using System.Windows.Shapes;
 using System.Globalization;
+using m0.UIWpf.Visualisers.Helper;
 
 namespace m0.UIWpf
 {
@@ -208,7 +209,6 @@ namespace m0.UIWpf
             e.Y2 = y2;
         }
 
-
         public static Line DrawLine(Panel c, double x1, double y1, double x2, double y2, double thickness, Brush brush)
         {
             Line lr = new Line();
@@ -344,6 +344,25 @@ namespace m0.UIWpf
                 else
                     return false;
         }
+
+        public static IVisualiser GetParentVisualiser(FrameworkElement e)
+        {
+            object Parent = VisualTreeHelper.GetParent(e);
+
+            if (Parent == null)
+                Parent = e.Parent;
+
+            if (Parent == null)
+                return null;
+
+            if (Parent is IVisualiser)
+                return (IVisualiser)Parent;
+
+            if (Parent is FrameworkElement)
+                return GetParentVisualiser((FrameworkElement)Parent);
+           
+            return null;
+        } 
 
         public static T FindVisualChild<T>(DependencyObject current) where T : DependencyObject
         {

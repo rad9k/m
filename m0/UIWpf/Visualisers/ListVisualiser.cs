@@ -19,6 +19,7 @@ using System.Windows.Input;
 using m0.UIWpf.Commands;
 using System.Windows.Controls.Primitives;
 using m0.UIWpf.Visualisers.Helper;
+using m0.Graph.ExecutionFlow;
 
 namespace m0.UIWpf.Visualisers
 {
@@ -36,6 +37,8 @@ namespace m0.UIWpf.Visualisers
 
         public ListVisualiser()
         {
+            SubVisualisers = new List<IDisposable>();
+
             ThisDataGrid = new DataGrid();
 
             this.Children.Add(ThisDataGrid);
@@ -279,7 +282,7 @@ namespace m0.UIWpf.Visualisers
                     if (GraphUtil.GetQueryOutCount(e.Meta, "$Hide", null) == 0)
                         ItemsSourceValueNoHide.Add(e);
 
-                ThisDataGrid.ItemsSource = ItemsSourceValueNoHide;
+                ThisDataGrid.ItemsSource = ItemsSourceValueNoHide;             
             }           
         }
 

@@ -35,6 +35,32 @@ namespace m0.UIWpf.Visualisers.Helper
 
         protected bool dndSupport;
 
+        static IVertex baseEdge_meta;
+
+        public static void Initialize()
+        {
+            IVertex r = m0.MinusZero.Instance.root;
+
+            baseEdge_meta = r.Get(false, @"System\Meta\ZeroTypes\HasBaseEdge\BaseEdge");
+        }
+
+        public AtomVisualiserHelper(IVertex _visualiserMetaVertex,
+            IVisualiser _visualiser,
+            string _visualiserName,
+            FrameworkElement _visualiserAsFrameworkElement,
+            IVertex baseEdgeVertex)
+            : this(_visualiserMetaVertex,
+                 _visualiser,
+                 _visualiserName,
+                 _visualiserAsFrameworkElement,
+                 true,
+                 new List<string> { "", @"BaseEdge:\To:" },
+                 "AtomVisualiser",
+                 baseEdgeVertex)
+        {
+
+        }
+
         public AtomVisualiserHelper(IVertex _visualiserMetaVertex, 
             IVisualiser _visualiser, 
             string _visualiserName, 
@@ -45,7 +71,8 @@ namespace m0.UIWpf.Visualisers.Helper
                  _visualiserAsFrameworkElement, 
                  true, 
                  new List<string> { "", @"BaseEdge:\To:" },
-                 "AtomVisualiser")
+                 "AtomVisualiser",
+                 null)
         {
             
         }
@@ -56,7 +83,8 @@ namespace m0.UIWpf.Visualisers.Helper
             FrameworkElement _visualiserAsFrameworkElement, 
             bool _dndSupport, 
             IList<string> _scopeQueries,
-            string _scopeQueriesName)
+            string _scopeQueriesName,
+            IVertex baseEdgeVertex)
         {
             visualiser = _visualiser;
 
@@ -81,17 +109,24 @@ namespace m0.UIWpf.Visualisers.Helper
 
             if (mz != null && mz.IsInitialized)
             {                
-                visualiser.Vertex = mz.CreateTempVertex();
+                IVertex vVertex = mz.CreateTempVertex();
 
-                visualiser.Vertex.Value = visualiserName;
+               
+                ClassVertex.AddIsClassAndAllAttributesAndAssociations(vVertex, visualiserMetaVertex);
 
-                ClassVertex.AddIsClassAndAllAttributesAndAssociations(visualiser.Vertex, visualiserMetaVertex);
-
-                ClassVertex.AddIsClassAndAllAttributesAndAssociations(visualiser.Vertex.Get(false, "BaseEdge:"), 
-                    mz.Root.Get(false, @"System\Meta\ZeroTypes\Edge"));
+                if (baseEdgeVertex != null)
+                    GraphUtil.ReplaceEdge(vVertex, baseEdge_meta, baseEdgeVertex);
+                else
+                    ClassVertex.AddIsClassAndAllAttributesAndAssociations(vVertex.Get(false, "BaseEdge:"), 
+                        mz.Root.Get(false, @"System\Meta\ZeroTypes\Edge"));
 
                 visualiserVertexEdge = mz.Root.Get(false, @"User\CurrentUser:\Session:\Visualisers:").
-                    AddEdge(mz.Root.Get(false, @"Meta\User\VisualiserList\Visualiser"), visualiser.Vertex);
+                    AddEdge(mz.Root.Get(false, @"Meta\User\VisualiserList\Visualiser"), vVertex);
+
+
+                visualiser.Vertex = vVertex;
+
+                visualiser.Vertex.Value = visualiserName;
 
 
                 visualiserAsFrameworkElement.Loaded += new RoutedEventHandler(visualiser.OnLoad);
