@@ -171,7 +171,7 @@ namespace m0.UIWpf.Visualisers
                 if (Vertex.Get(false, @"ToShowEdgesMeta:\To:") != null)
                     return;
 
-                    if (bas != null)
+            if (bas != null)
             {                
                 ToShowEdgesMeta = null;
 

@@ -59,26 +59,26 @@ namespace m0.UIWpf
                 defvis = e.To.Get(false, @"$Is:\$DefaultEditVisualiser:");
 
             ///////////////////////////////////////
-            if(_this.TriggerNewTransaction)
-                ExecutionFlowHelper.StartTransaction();
+            //if(_this.TriggerNewTransaction)
+            //    ExecutionFlowHelper.StartTransaction();
             ///////////////////////////////////////
 
             if (defvis != null)
             {
-                pc = (IPlatformClass)PlatformClass.CreatePlatformObject(defvis);
+                pc = (IPlatformClass)PlatformClass.CreatePlatformObject(defvis, e);
                 
                 if (defvis.Get(false, "$Inherits:HasBaseEdge") != null)                
                     Edge.ReplaceEdgeVertexEdges(pc.Vertex.Get(false, "BaseEdge:"), e);                                    
             }
             else
             {
-                pc = new StringVisualiser();
-                Edge.ReplaceEdgeVertexEdges(pc.Vertex.Get(false, "BaseEdge:"), e);                                                    
+                pc = new StringVisualiser(Edge.CreateTempEdgeVertex(e));
+                //Edge.ReplaceEdgeVertexEdges(pc.Vertex.Get(false, "BaseEdge:"), e);                                                    
             }
 
             ////////////////////////////////////////
-            if (_this.TriggerNewTransaction)
-                ExecutionFlowHelper.CommitTransaction();
+            //if (_this.TriggerNewTransaction)
+            //    ExecutionFlowHelper.CommitTransaction();
             ////////////////////////////////////////
 
             _this.Content = pc;            

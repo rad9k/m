@@ -150,14 +150,14 @@ namespace m0.UIWpf.Visualisers
             if (GeneralUtil.CompareStrings(Vertex.Get(false, "IsAllVisualisersEdit:").Value, "True"))
             {
                 valueColumn.CellTemplate = new DataTemplate();
-                FrameworkElementFactory factory = new FrameworkElementFactory(typeof(VisualiserTransactedEditWrapper));
+                FrameworkElementFactory factory = new FrameworkElementFactory(typeof(VisualiserEditWrapper));
                 factory.SetBinding(VisualiserEditWrapper.BaseEdgeProperty, new Binding(""));                
                 valueColumn.CellTemplate.VisualTree = factory;
             }
             else
             {
                 valueColumn.CellTemplate = new DataTemplate();
-                FrameworkElementFactory factory = new FrameworkElementFactory(typeof(VisualiserTransactedViewWrapper));
+                FrameworkElementFactory factory = new FrameworkElementFactory(typeof(VisualiserViewWrapper));
                 factory.SetBinding(VisualiserViewWrapper.BaseEdgeProperty, new Binding(""));
                 valueColumn.CellTemplate.VisualTree = factory;
             }
@@ -166,7 +166,7 @@ namespace m0.UIWpf.Visualisers
             // EDIT TEMPLATE
             //
             valueColumn.CellEditingTemplate = new DataTemplate();
-            FrameworkElementFactory EditFactory = new FrameworkElementFactory(typeof(VisualiserTransactedEditWrapper));
+            FrameworkElementFactory EditFactory = new FrameworkElementFactory(typeof(VisualiserEditWrapper));
             EditFactory.SetBinding(VisualiserEditWrapper.BaseEdgeProperty, new Binding(""));
             valueColumn.CellEditingTemplate.VisualTree = EditFactory;
 

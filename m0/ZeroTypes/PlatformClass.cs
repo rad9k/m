@@ -109,7 +109,12 @@ namespace m0.ZeroTypes
     {
         static DictionaryList<string, Delegate> ListenerGroupDictionary = new DictionaryList<string, Delegate>();
 
-        public static IPlatformClass CreatePlatformObject(IVertex Vertex)
+        public static IPlatformClass CreatePlatformObject(IVertex Vertex, IEdge baseEdge)
+        {
+            CreatePlatformObject(Vertex, Edge.CreateTempEdgeVertex(baseEdge));
+        }
+
+        public static IPlatformClass CreatePlatformObject(IVertex Vertex, IVertex baseEdgeVertex)
         {
             if (Vertex.Get(false, "$Is:Class") != null)
             {
