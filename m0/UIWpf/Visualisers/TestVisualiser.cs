@@ -27,11 +27,15 @@ namespace m0.UIWpf.Visualisers
 
         public List<IDisposable> SubVisualisers { get; set; }
 
-        public TestVisualiser()
+        public TestVisualiser(IVertex baseEdgeVertex)
         {
             this.AcceptsReturn = true;
 
-            new AtomVisualiserHelper(MinusZero.Instance.Root.Get(false, @"System\Meta\Visualiser\Test"), this, "TestVisualiser", this);
+            new AtomVisualiserHelper(MinusZero.Instance.Root.Get(false, @"System\Meta\Visualiser\Test"), 
+                this, 
+                "TestVisualiser", 
+                this,
+                baseEdgeVertex);
         }
 
         public void OnLoad(object sender, RoutedEventArgs e)

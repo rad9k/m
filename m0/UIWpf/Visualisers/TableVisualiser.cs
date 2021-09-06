@@ -157,9 +157,16 @@ namespace m0.UIWpf.Visualisers
             GraphUtil.ReplaceEdge(Vertex, "GridStyle", MinusZero.Instance.Root.Get(false, @"System\Meta\Visualiser\GridStyleEnum\Round"));
         }
 
-        protected override void PlatformClassInitialize(){
+        protected override void PlatformClassInitialize(IVertex baseEdgeVertex)
+        {
             new ListVisualiserHelper(MinusZero.Instance.Root.Get(false, @"System\Meta\Visualiser\Table"),
-                         this, "TableVisualiser", this, false, new List<string> { @"" }, "AtomVisualiserFull");
+                         this, 
+                         "TableVisualiser", 
+                         this, 
+                         false, 
+                         new List<string> { @"" }, 
+                         "AtomVisualiserFull",
+                         baseEdgeVertex);
         }
 
         IVertex ToShowEdgesMeta;

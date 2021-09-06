@@ -26,10 +26,13 @@ namespace m0.UIWpf.Visualisers
 
         bool IsNull { get; set; }
 
-        public BooleanVisualiser()
+        public BooleanVisualiser(IVertex baseEdgeVertex)
         {
             new AtomVisualiserHelper(MinusZero.Instance.Root.Get(false, @"System\Meta\Visualiser\Boolean"),
-                this, "BooleanVisualiser", this);
+                this, 
+                "BooleanVisualiser", 
+                this,
+                baseEdgeVertex);
         }
 
         public void OnLoad(object sender, RoutedEventArgs e)

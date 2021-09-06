@@ -49,12 +49,14 @@ namespace m0.UIWpf.Dialog
             ////////////////////////////////////////
             Interaction.BeginInteractionWithGraph();
             ////////////////////////////////////////
-           
-            FormVisualiser = new FormVisualiser();
+
+            IVertex baseEdgeVertex = Edge.CreateTempEdgeVertex(null, null, baseVertex);
+
+            FormVisualiser = new FormVisualiser(baseEdgeVertex);
 
             Wrap.SetContent(FormVisualiser);
 
-            GraphUtil.ReplaceEdge(FormVisualiser.Vertex.Get(false, "BaseEdge:"), "To", baseVertex);
+            //GraphUtil.ReplaceEdge(FormVisualiser.Vertex.Get(false, "BaseEdge:"), "To", baseVertex);
 
             ////////////////////////////////////////
             Interaction.EndInteractionWithGraph();

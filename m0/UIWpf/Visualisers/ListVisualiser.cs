@@ -35,7 +35,7 @@ namespace m0.UIWpf.Visualisers
 
         protected bool TurnOffSelectedVerticesUpdate = false;
 
-        public ListVisualiser()
+        public ListVisualiser(IVertex baseEdgeVertex)
         {
             SubVisualisers = new List<IDisposable>();
 
@@ -62,7 +62,7 @@ namespace m0.UIWpf.Visualisers
 
             if (mz != null && mz.IsInitialized)
             {
-                PlatformClassInitialize();
+                PlatformClassInitialize(baseEdgeVertex);
 
                 SetVertexDefaultValues();
 
@@ -72,10 +72,16 @@ namespace m0.UIWpf.Visualisers
             }
         }
 
-        protected virtual void PlatformClassInitialize()
+        protected virtual void PlatformClassInitialize(IVertex baseEdgeVertex)
         {
             new ListVisualiserHelper(MinusZero.Instance.Root.Get(false, @"System\Meta\Visualiser\List"),
-             this, "ListVisualiser", this, false, new List<string> { @"", @"BaseEdge:\To:" }, "AtomVisualiserFull");
+             this, 
+             "ListVisualiser", 
+             this, 
+             false, 
+             new List<string> { @"", @"BaseEdge:\To:" }, 
+             "AtomVisualiserFull",
+             baseEdgeVertex);
         }
 
         public void OnLoad(object sender, RoutedEventArgs e)

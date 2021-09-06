@@ -246,7 +246,7 @@ namespace m0.UIWpf.Visualisers
             
         }
 
-        public NumberVisualiser()
+        public NumberVisualiser(IVertex baseEdgeVertex)
         {
             new AtomVisualiserHelper(visualiserMetaVertex, 
                 this, 
@@ -255,7 +255,7 @@ namespace m0.UIWpf.Visualisers
                 false, 
                 new List<string> { @"BaseEdge:\To:" }, 
                 "AtomVisualiser",
-                null);
+                baseEdgeVertex);
 
             // need custom dnd becouse of slider / mouse move
             this.PreviewMouseLeftButtonDown += dndPreviewMouseLeftButtonDown;

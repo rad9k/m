@@ -22,10 +22,6 @@ namespace m0.UIWpf.Visualisers
 {
     public class TableFastVisualiser : TableVisualiser
     {
-       
-
-       
-
         protected override void AddColumn(string columnName, string bindingString)
         {
             DataGridTemplateColumn valueColumn = new DataGridTemplateColumn();

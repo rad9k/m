@@ -88,11 +88,13 @@ namespace m0.UIWpf
 
             DockPanel.SetDock(fe, Dock.Bottom);
 
-            topRow = new WrapVisualiser();
+            IVertex baseEdgeVertex = Edge.CreateTempEdgeVertex(null, null, pc.Vertex);
+
+            topRow = new WrapVisualiser(baseEdgeVertex);
 
             topRow.Scale = 0.6;            
 
-            GraphUtil.ReplaceEdge(topRow.Vertex.Get(false, "BaseEdge:"), "To", pc.Vertex);
+            //GraphUtil.ReplaceEdge(topRow.Vertex.Get(false, "BaseEdge:"), "To", pc.Vertex);
            
             this.expander.Content = topRow;
         }

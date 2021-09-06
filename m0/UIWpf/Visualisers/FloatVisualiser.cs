@@ -22,7 +22,12 @@ namespace m0.UIWpf.Visualisers
     {
         protected override string visualiserName { get { return "FloatVisualiser"; } set { } }
 
-        protected override IVertex visualiserMetaVertex { get { return MinusZero.Instance.Root.Get(false, @"System\Meta\Visualiser\Float"); } set { } }        
+        protected override IVertex visualiserMetaVertex { get { return MinusZero.Instance.Root.Get(false, @"System\Meta\Visualiser\Float"); } set { } }
+
+        public FloatVisualiser(IVertex baseEdgeVertex) : base(baseEdgeVertex)
+        {
+
+        }
     }
 }
 

@@ -24,10 +24,13 @@ namespace m0.UIWpf.Visualisers
 
         public List<IDisposable> SubVisualisers { get; set; }
 
-        public EnumVisualiser()
+        public EnumVisualiser(IVertex baseEdgeVertex)
         {
             new AtomVisualiserHelper(MinusZero.Instance.Root.Get(false, @"System\Meta\Visualiser\Enum"),
-                this, "EnumVisualiser", this);
+                this, 
+                "EnumVisualiser", 
+                this,
+                baseEdgeVertex);
         }
 
         public void OnLoad(object sender, RoutedEventArgs e)

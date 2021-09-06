@@ -28,14 +28,16 @@ namespace m0.UIWpf.Visualisers.Helper
         public ListVisualiserHelper(IVertex _visualiserMetaVertex,
             IVisualiser _visualiser,
             string _visualiserName,
-            FrameworkElement _visualiserAsFrameworkElement)
+            FrameworkElement _visualiserAsFrameworkElement,
+            IVertex baseEdgeVertex)
             : this(_visualiserMetaVertex,
                   _visualiser,
                   _visualiserName,
                   _visualiserAsFrameworkElement,
                   true,
                   new List<string> { @"", @"BaseEdge:\", @"BaseEdge:\To:\" },
-                  "ListVisualiser")
+                  "ListVisualiser",
+                  baseEdgeVertex)
         {
 
         }
@@ -46,7 +48,8 @@ namespace m0.UIWpf.Visualisers.Helper
             FrameworkElement _visualiserAsFrameworkElement,
             bool _dndSupport,
             IList<string> _scopeQueries,
-            string _scopeQueriesName)
+            string _scopeQueriesName,
+            IVertex baseEdgeVertex)
             : base(visualiserMetaVertex,
                   _visualiser,
                   _visualiserName,
@@ -54,7 +57,7 @@ namespace m0.UIWpf.Visualisers.Helper
                   _dndSupport,
                   _scopeQueries,
                   _scopeQueriesName,
-                  null)
+                  baseEdgeVertex)
         {
             listVisualiser = (IListVisualiser)_visualiser;
         }

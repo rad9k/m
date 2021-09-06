@@ -24,7 +24,7 @@ namespace m0.UIWpf.Visualisers
 
         public List<IDisposable> SubVisualisers { get; set; }
 
-        public EdgeVisualiser()
+        public EdgeVisualiser(IVertex baseEdgeVertex)
         {
             this.Background = (Brush)FindResource("0LightGrayBrush");
 
@@ -35,7 +35,7 @@ namespace m0.UIWpf.Visualisers
                 false, 
                 new List<string> { @"BaseEdge:\To:"}, 
                 "AtomVisualiser",
-                null);
+                baseEdgeVertex);
 
             this.PreviewMouseLeftButtonDown += dndPreviewMouseLeftButtonDown;
             this.PreviewMouseMove += dndPreviewMouseMove;

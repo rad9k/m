@@ -77,10 +77,16 @@ namespace m0.UIWpf.Visualisers
         TabItem TabControlSelectedItem;
 
 
-        public FormVisualiser()
+        public FormVisualiser(IVertex baseEdgeVertex)
         {
             new ListVisualiserHelper(MinusZero.Instance.Root.Get(false, @"System\Meta\Visualiser\Form"),
-                this, "FormVisualiser", this, false, new List<string> { @""/*, @"BaseEdge:\To:"*/}, "AtomVisualiserFull");            
+                this, 
+                "FormVisualiser", 
+                this, 
+                false, 
+                new List<string> { @""/*, @"BaseEdge:\To:"*/}, 
+                "AtomVisualiserFull",
+                baseEdgeVertex);            
 
             SetVertexDefaultValues();
         }

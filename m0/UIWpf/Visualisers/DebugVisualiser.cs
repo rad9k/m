@@ -25,7 +25,7 @@ namespace m0.UIWpf.Visualisers
 
         public List<IDisposable> SubVisualisers { get; set; }
 
-        public DebugVisualiser()
+        public DebugVisualiser(IVertex baseEdgeVertex)
         {            
             new AtomVisualiserHelper(MinusZero.Instance.Root.Get(false, @"System\Meta\Visualiser\Debug"), 
                 this, 
@@ -34,7 +34,7 @@ namespace m0.UIWpf.Visualisers
                 false, 
                 new List<string> { @"", @"BaseEdge:\", @"BaseEdge:\To:\" }, 
                 "ListVisualiser",
-                null);
+                baseEdgeVertex);
         }
 
         public void OnLoad(object sender, RoutedEventArgs e)

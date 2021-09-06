@@ -206,14 +206,20 @@ namespace m0.UIWpf.Visualisers
 
         public bool IsPaiting=false;
 
-        public GraphVisualiser()
+        public GraphVisualiser(IVertex baseEdgeVertex)
         {
             DisplayedVerticesUIElements = new Dictionary<IVertex, SimpleVisualiserWrapper>();
 
             this.Background = (Brush)FindResource("0BackgroundBrush");
 
             new ListVisualiserHelper(MinusZero.Instance.Root.Get(false, @"System\Meta\Visualiser\Graph"),
-              this, "GraphVisualiser", this, false, new List<string> {""/*, @"BaseEdge:\To:"*/ }, "AtomVisualiserFull");
+              this, 
+              "GraphVisualiser", 
+              this, 
+              false, 
+              new List<string> {""/*, @"BaseEdge:\To:"*/ }, 
+              "AtomVisualiserFull",
+              baseEdgeVertex);
 
             this.PreviewMouseLeftButtonDown += dndPreviewMouseLeftButtonDown;
             this.PreviewMouseMove += dndPreviewMouseMove;
