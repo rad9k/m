@@ -52,7 +52,9 @@ namespace m0.UIWpf.Dialog
                     this.OutputStackContentControl.IsEnabled = false;
 
                     CreateInputStack();
-                    
+
+                    EdgeVisualiser InputStackEdgeControl
+
                     IVertex InputStackEdgeControlBaseEdge = InputStackEdgeControl.Vertex.Get(false, @"BaseEdge:\To:");
                     GraphUtil.RemoveAllEdges(InputStackEdgeControlBaseEdge);
                     Edge.AddEdgeVertexEdges(InputStackEdgeControlBaseEdge, inputStackEdge);

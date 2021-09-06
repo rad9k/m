@@ -22,6 +22,11 @@ namespace m0.UIWpf.Visualisers
 {
     public class TableFastVisualiser : TableVisualiser
     {
+        public TableFastVisualiser(IVertex baseEdgeVertex) : base(baseEdgeVertex)
+        {
+
+        }
+
         protected override void AddColumn(string columnName, string bindingString)
         {
             DataGridTemplateColumn valueColumn = new DataGridTemplateColumn();

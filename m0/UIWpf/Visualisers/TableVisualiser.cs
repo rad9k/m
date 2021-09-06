@@ -24,6 +24,11 @@ namespace m0.UIWpf.Visualisers
 {
     public class TableVisualiser : ListVisualiser
     {
+        public TableVisualiser(IVertex baseEdgeVertex) : base(baseEdgeVertex)
+        {
+
+        }
+
         protected override void AddFooter()
         {
             m0.UIWpf.Visualisers.Controls.NewButton button = new m0.UIWpf.Visualisers.Controls.NewButton();

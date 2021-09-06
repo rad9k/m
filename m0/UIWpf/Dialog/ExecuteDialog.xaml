@@ -19,9 +19,9 @@
             
             <Grid Grid.Column="0">
                 <TextBlock HorizontalAlignment="Left" Height="22" Margin="10,10,0,0" TextWrapping="Wrap" Text="Input Stack Vertex" VerticalAlignment="Top"/>
-                <Border BorderThickness="1" BorderBrush="{StaticResource 0ForegroundBrush}" Margin="10,32,10,0" Height="20" VerticalAlignment="Top">
-                    <Visualisers:EdgeVisualiser x:Name="InputStackEdgeControl"    />
-                </Border>
+                <Border BorderThickness="1" BorderBrush="{StaticResource 0ForegroundBrush}" Margin="10,32,10,0" Height="20" VerticalAlignment="Top" x:Name="InputStackEdgeControl_Border"/>
+
+
 
                 <TextBlock Margin="10,76,0,0" Text="Input Stack Content" VerticalAlignment="Top" HorizontalAlignment="Left"  Height="22"  Width="97" TextWrapping="Wrap"/>
                 <Border BorderThickness="1" BorderBrush="{StaticResource 0ForegroundBrush}" Margin="10,94,10,10">

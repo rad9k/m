@@ -637,7 +637,9 @@ namespace m0.UIWpf.Visualisers
             
             if (isSet)
             {
-                TableVisualiser tv = new TableVisualiser();
+                IVertex baseEdgeVertex = Edge.CreateTempEdgeVertex(null, null, Vertex.Get(false, @"BaseEdge:\To:"));
+
+                TableVisualiser tv = new TableVisualiser(baseEdgeVertex);
 
                 if (ExpertMode)
                     GraphUtil.SetVertexValue(tv.Vertex, MinusZero.Instance.Root.Get(false, @"System\Meta\Visualiser\Table\ExpertMode"), "True");
@@ -654,7 +656,7 @@ namespace m0.UIWpf.Visualisers
 
                 //GraphUtil.CreateOrReplaceEdge(tv.Vertex.Get(false, "ToShowEdgesMeta:"), r.Get(false, @"System\Meta\ZeroTypes\Edge\To"), e.To); // do not need
 
-                GraphUtil.ReplaceEdge(tv.Vertex.Get(false, "BaseEdge:"), "To", Vertex.Get(false, @"BaseEdge:\To:"));
+                //GraphUtil.ReplaceEdge(tv.Vertex.Get(false, "BaseEdge:"), "To", Vertex.Get(false, @"BaseEdge:\To:"));
 
                 dataControl = tv; 
             }
