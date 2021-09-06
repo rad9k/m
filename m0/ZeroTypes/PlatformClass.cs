@@ -111,27 +111,32 @@ namespace m0.ZeroTypes
 
         public static IPlatformClass CreatePlatformObject(IVertex Vertex, IEdge baseEdge)
         {
-            CreatePlatformObject(Vertex, Edge.CreateTempEdgeVertex(baseEdge));
+            if (baseEdge == null)
+                return CreatePlatformObject(Vertex, null as IVertex);
+            else
+                return CreatePlatformObject(Vertex, Edge.CreateTempEdgeVertex(baseEdge));
         }
 
         public static IPlatformClass CreatePlatformObject(IVertex Vertex, IVertex baseEdgeVertex)
         {
+            IPlatformClass pc;
+
             if (Vertex.Get(false, "$Is:Class") != null)
             {
                 String classname = (string)Vertex.Get(false, "$PlatformClassName:").Value;
 
-                return (IPlatformClass)Activator.CreateInstance(Type.GetType(classname), null);
+                pc = (IPlatformClass)Activator.CreateInstance(Type.GetType(classname), new object[] { baseEdgeVertex });
             }
             else
             {
                 String classname = (string)Vertex.Get(false, @"$Is:{$Inherits:$PlatformClass}\$PlatformClassName:").Value;
 
-                IPlatformClass pc=(IPlatformClass)Activator.CreateInstance(Type.GetType(classname), null);
+                pc = (IPlatformClass)Activator.CreateInstance(Type.GetType(classname), new object[] { baseEdgeVertex });
 
                 pc.Vertex = Vertex;
-
-                return pc;
             }
+
+            return pc;
         }
 
         public static void RegisterVertexChangeListeners_byGenericVertex(IVertex baseVertex, VertexChange action, string[] watchList)

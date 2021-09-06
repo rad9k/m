@@ -68,10 +68,10 @@ namespace m0.UIWpf
 
             if (defvis != null)
             {
-                pc = (IPlatformClass)PlatformClass.CreatePlatformObject(defvis);
+                pc = (IPlatformClass)PlatformClass.CreatePlatformObject(defvis, e);
 
-                if (defvis.Get(false, "$Inherits:HasBaseEdge") != null)
-                    Edge.ReplaceEdgeVertexEdges(pc.Vertex.Get(false, "BaseEdge:"), e);
+               // if (defvis.Get(false, "$Inherits:HasBaseEdge") != null)
+                //    Edge.ReplaceEdgeVertexEdges(pc.Vertex.Get(false, "BaseEdge:"), e);
             }
             else
             {

@@ -338,7 +338,7 @@ namespace m0.UIWpf.Visualisers.Diagram
 
         public void AddDiagramLineObject(DiagramItemBase toItem, IVertex l)
         {
-            DiagramLineBase newline = (DiagramLineBase)PlatformClass.CreatePlatformObject(l);
+            DiagramLineBase newline = (DiagramLineBase)PlatformClass.CreatePlatformObject(l, null as IVertex); // ??? ZZZ
 
             newline.Diagram = this.Diagram;
 

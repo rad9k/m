@@ -39,9 +39,9 @@ namespace m0.UIWpf.Visualisers.Diagram
         {
             if (Vertex.Get(false, "VisualiserClass:") != null)
             {
-                ContentVisualiser = PlatformClass.CreatePlatformObject(Vertex.Get(false, "VisualiserClass:"));
+                ContentVisualiser = PlatformClass.CreatePlatformObject(Vertex.Get(false, "VisualiserClass:"), Vertex.Get(false, "BaseEdge:"));
 
-                GraphUtil.ReplaceEdge(ContentVisualiser.Vertex, "BaseEdge", Vertex.Get(false, "BaseEdge:"));
+                //GraphUtil.ReplaceEdge(ContentVisualiser.Vertex, "BaseEdge", Vertex.Get(false, "BaseEdge:"));
 
                 Grid.SetRow((UIElement)ContentVisualiser, 2);
 

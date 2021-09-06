@@ -161,7 +161,7 @@ namespace m0.UIWpf.Visualisers.Diagram
         }
 
         protected void AddItem(IVertex ItemVertex){
-            IPlatformClass pc = (IPlatformClass)PlatformClass.CreatePlatformObject(ItemVertex);
+            IPlatformClass pc = (IPlatformClass)PlatformClass.CreatePlatformObject(ItemVertex, null as IEdge);
 
             if (pc is DiagramItemBase)
             {

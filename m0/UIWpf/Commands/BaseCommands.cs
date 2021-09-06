@@ -308,7 +308,7 @@ namespace m0.UIWpf.Commands
             Interaction.BeginInteractionWithGraph();
             ////////////////////////////////////////
             
-            IPlatformClass sv = (IPlatformClass)PlatformClass.CreatePlatformObject(baseVertex.Get(false, "To:"));
+            IPlatformClass sv = (IPlatformClass)PlatformClass.CreatePlatformObject(baseVertex.Get(false, "To:"), baseVertex);
 
             //GraphUtil.ReplaceEdge(sv.Vertex, "BaseEdge", baseVertex);
 
@@ -327,9 +327,9 @@ namespace m0.UIWpf.Commands
             Interaction.BeginInteractionWithGraph();
             ////////////////////////////////////////
             
-            IPlatformClass sv = (IPlatformClass)PlatformClass.CreatePlatformObject(inputVertex);
+            IPlatformClass sv = (IPlatformClass)PlatformClass.CreatePlatformObject(inputVertex, baseVertex);
             
-            Edge.CopyAndReplaceEdgeVertexByEdgeVertex(sv.Vertex, "BaseEdge", baseVertex);
+            //Edge.CopyAndReplaceEdgeVertexByEdgeVertex(sv.Vertex, "BaseEdge", baseVertex);
 
             MinusZero.Instance.DefaultUserInteraction.ShowContent(sv);
 
@@ -345,10 +345,12 @@ namespace m0.UIWpf.Commands
             ////////////////////////////////////////
             Interaction.BeginInteractionWithGraph();
             ////////////////////////////////////////
-            
-            IPlatformClass sv = (IPlatformClass)PlatformClass.CreatePlatformObject(inputVertex);
 
-            GraphUtil.ReplaceEdge(sv.Vertex.Get(false, "BaseEdge:"), "To", baseVertex.Get(false, "Meta:"));            
+            IEdge edge = new EasyEdge(null, null, baseVertex.Get(false, "Meta:"));
+
+            IPlatformClass sv = (IPlatformClass)PlatformClass.CreatePlatformObject(inputVertex, edge);
+
+            //GraphUtil.ReplaceEdge(sv.Vertex.Get(false, "BaseEdge:"), "To", baseVertex.Get(false, "Meta:"));            
 
             MinusZero.Instance.DefaultUserInteraction.ShowContent(sv);
 
@@ -365,11 +367,11 @@ namespace m0.UIWpf.Commands
             Interaction.BeginInteractionWithGraph();
             ////////////////////////////////////////
             
-            IPlatformClass pc = (IPlatformClass)PlatformClass.CreatePlatformObject(inputVertex);
+            IPlatformClass pc = (IPlatformClass)PlatformClass.CreatePlatformObject(inputVertex, baseVertex);
 
             //GraphUtil.ReplaceEdge(pc.Vertex, "BaseEdge", baseVertex);
 
-            Edge.CopyAndReplaceEdgeVertexByEdgeVertex(pc.Vertex, "BaseEdge", baseVertex);
+            //Edge.CopyAndReplaceEdgeVertexByEdgeVertex(pc.Vertex, "BaseEdge", baseVertex);
 
             MinusZero.Instance.DefaultUserInteraction.ShowContentFloating(pc, FloatingWindowSize.Medium);
 
@@ -382,11 +384,13 @@ namespace m0.UIWpf.Commands
 
         public static IVertex OpenVisualiserSelectedBase(IVertex baseVertex, IVertex inputVertex)
         {
-            IPlatformClass pc = (IPlatformClass)PlatformClass.CreatePlatformObject(inputVertex.Get(false, "VisualiserClass:"));
+            IVertex baseEdgeVertex = Edge.CreateTempEdgeVertex(null, baseVertex.Get(false, "Meta:"), baseVertex.Get(false, "To:"));
 
-            GraphUtil.ReplaceEdge(pc.Vertex.Get(false, "BaseEdge:"),"Meta", baseVertex.Get(false, "Meta:"));
+            IPlatformClass pc = (IPlatformClass)PlatformClass.CreatePlatformObject(inputVertex.Get(false, "VisualiserClass:"), baseEdgeVertex);
 
-            GraphUtil.ReplaceEdge(pc.Vertex.Get(false, "BaseEdge:"), "To", baseVertex.Get(false, "To:"));
+            //GraphUtil.ReplaceEdge(pc.Vertex.Get(false, "BaseEdge:"),"Meta", baseVertex.Get(false, "Meta:"));
+
+            //GraphUtil.ReplaceEdge(pc.Vertex.Get(false, "BaseEdge:"), "To", baseVertex.Get(false, "To:"));
 
             IVertex synchronisedVisualiser = inputVertex.Get(false, "SynchronisedVisualiser:");
 
@@ -406,9 +410,9 @@ namespace m0.UIWpf.Commands
 
         public static IVertex OpenVisualiserSelectedSelected(IVertex baseVertex, IVertex inputVertex)
         {
-            IPlatformClass pc = (IPlatformClass)PlatformClass.CreatePlatformObject(inputVertex.Get(false, "VisualiserClass:"));
+            IPlatformClass pc = (IPlatformClass)PlatformClass.CreatePlatformObject(inputVertex.Get(false, "VisualiserClass:"), baseVertex);
 
-            GraphUtil.ReplaceEdge(pc.Vertex, "BaseEdge", baseVertex);
+            //GraphUtil.ReplaceEdge(pc.Vertex, "BaseEdge", baseVertex);
 
             GraphUtil.ReplaceEdge(pc.Vertex, "SelectedEdges", inputVertex.Get(false, @"SynchronisedVisualiser:\SelectedEdges:"));
 
