@@ -24,6 +24,8 @@ namespace m0.UIWpf.Dialog
     /// </summary>
     public partial class ExecuteDialog : UserControl
     {
+        EdgeVisualiser InputStackEdgeControl;
+
         IVertex baseVertex;
 
         IEdge inputStackEdge;
@@ -53,12 +55,19 @@ namespace m0.UIWpf.Dialog
 
                     CreateInputStack();
 
-                    EdgeVisualiser InputStackEdgeControl
+                    IVertex inputStackEdgeVertex = //Edge.CreateTempEdgeVertex(
+                                                   //null,
+                                                   //null,
+                        Edge.CreateTempEdgeVertex(inputStackEdge);//); // ??
 
-                    IVertex InputStackEdgeControlBaseEdge = InputStackEdgeControl.Vertex.Get(false, @"BaseEdge:\To:");
-                    GraphUtil.RemoveAllEdges(InputStackEdgeControlBaseEdge);
-                    Edge.AddEdgeVertexEdges(InputStackEdgeControlBaseEdge, inputStackEdge);
-                    Edge.ReplaceEdgeVertexEdges(InputStackContentControl.Vertex.Get(false, "BaseEdge:"), inputStackEdge);
+                    InputStackEdgeControl = new EdgeVisualiser(inputStackEdgeVertex);
+
+                    InputStackEdgeControl_Border.Child = InputStackEdgeControl;
+
+                    //IVertex InputStackEdgeControlBaseEdge = InputStackEdgeControl.Vertex.Get(false, @"BaseEdge:\To:");
+                    //GraphUtil.RemoveAllEdges(InputStackEdgeControlBaseEdge);
+                    //Edge.AddEdgeVertexEdges(InputStackEdgeControlBaseEdge, inputStackEdge);
+                    //Edge.ReplaceEdgeVertexEdges(InputStackContentControl.Vertex.Get(false, "BaseEdge:"), inputStackEdge); // ?
 
                     break;
 
