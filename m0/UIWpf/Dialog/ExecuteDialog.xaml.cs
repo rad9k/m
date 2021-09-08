@@ -25,6 +25,7 @@ namespace m0.UIWpf.Dialog
     public partial class ExecuteDialog : UserControl
     {
         EdgeVisualiser InputStackEdgeControl;
+        EdgeVisualiser OutputStackEdgeControl;
 
         IVertex baseVertex;
 
@@ -47,13 +48,6 @@ namespace m0.UIWpf.Dialog
             switch (State)
             {
                 case StateEnum.NotStarted:
-                    this.ExecuteButton.IsEnabled = true;
-                    this.InputStackEdgeControl.IsEnabled = true;
-                    this.InputStackContentControl.IsEnabled = true;
-                    this.OutputStackEdgeControl.IsEnabled = false;
-                    this.OutputStackContentControl.IsEnabled = false;
-
-                    CreateInputStack();
 
                     IVertex inputStackEdgeVertex = //Edge.CreateTempEdgeVertex(
                                                    //null,
@@ -62,6 +56,16 @@ namespace m0.UIWpf.Dialog
 
                     InputStackEdgeControl = new EdgeVisualiser(inputStackEdgeVertex);
 
+                    OutputStackEdgeControl = new EdgeVisualiser(null);
+
+                    this.ExecuteButton.IsEnabled = true;
+                    this.InputStackEdgeControl.IsEnabled = true;
+                    this.InputStackContentControl.IsEnabled = true;
+                    this.OutputStackEdgeControl.IsEnabled = false;
+                    this.OutputStackContentControl.IsEnabled = false;
+
+                    CreateInputStack();
+                 
                     InputStackEdgeControl_Border.Child = InputStackEdgeControl;
 
                     //IVertex InputStackEdgeControlBaseEdge = InputStackEdgeControl.Vertex.Get(false, @"BaseEdge:\To:");

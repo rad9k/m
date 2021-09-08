@@ -31,9 +31,7 @@
 
             <Grid Grid.Column="1">
                 <TextBlock HorizontalAlignment="Left" Height="22" Margin="10,10,0,0" TextWrapping="Wrap" Text="Output Stack Vertex" VerticalAlignment="Top"/>
-                <Border BorderThickness="1" BorderBrush="{StaticResource 0ForegroundBrush}" Margin="10,32,10,0" Height="20" VerticalAlignment="Top">
-                    <Visualisers:EdgeVisualiser x:Name="OutputStackEdgeControl"    />
-                </Border>
+                <Border BorderThickness="1" BorderBrush="{StaticResource 0ForegroundBrush}" Margin="10,32,10,0" Height="20" VerticalAlignment="Top" x:Name="OutputStackEdgeControl_Border"/>
 
                 <TextBlock Margin="10,76,0,0" Text="Output Stack Content" VerticalAlignment="Top" HorizontalAlignment="Left"  Height="22"  Width="97" TextWrapping="Wrap"/>
                 <Border BorderThickness="1" BorderBrush="{StaticResource 0ForegroundBrush}" Margin="10,94,10,10">
