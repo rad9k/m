@@ -7,11 +7,9 @@
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300" Background="{StaticResource 0BackgroundBrush}" Foreground="{StaticResource 0ForegroundBrush}">
     <Grid>
-            
 
-        <Border BorderThickness="1" BorderBrush="{StaticResource 0ForegroundBrush}" Margin="10,35,10,0" Height="20" VerticalAlignment="Top">
-            <Visualisers:EdgeVisualiser x:Name="To"   />
-        </Border>
+
+        <Border BorderThickness="1" BorderBrush="{StaticResource 0ForegroundBrush}" Margin="10,35,10,0" Height="20" VerticalAlignment="Top" x:Name="To_Border"/>
 
 
         <Button x:Name="NewButton" Click="Button_Click_1" Content="New Edge" Margin="113,0,10,10" Height="34" VerticalAlignment="Bottom"/>

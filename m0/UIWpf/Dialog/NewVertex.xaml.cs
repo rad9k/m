@@ -16,6 +16,7 @@ using m0.ZeroTypes;
 using m0.Graph;
 using m0.Util;
 using m0.User.Process.UX;
+using m0.UIWpf.Visualisers;
 
 namespace m0.UIWpf.Dialog
 {
@@ -24,6 +25,8 @@ namespace m0.UIWpf.Dialog
     /// </summary>
     public partial class NewVertex : UserControl
     {
+        EdgeVisualiser Schema;
+
         public override string ToString()
         {
             return "New Vertex";
@@ -37,10 +40,20 @@ namespace m0.UIWpf.Dialog
 
             Vertex = _Vertex;
 
-            
-            IVertex SchemaEdge=MinusZero.Instance.CreateTempVertex();            
-            Edge.AddEdgeVertexEdgesOnlyTo(SchemaEdge,MinusZero.Instance.Empty);
-            GraphUtil.ReplaceEdge(this.Schema.Vertex.Get(false, "BaseEdge:"),"To",SchemaEdge);
+            IVertex schemaBaseEdgeVertex = Edge.CreateTempEdgeVertex(
+                               null,
+                               null,
+                               Edge.CreateTempEdgeVertex(null,
+                                    null,
+                                    MinusZero.Instance.Empty));
+
+            Schema = new EdgeVisualiser(schemaBaseEdgeVertex);
+
+            Schema_Border.Child = Schema;
+
+            //IVertex SchemaEdge=MinusZero.Instance.CreateTempVertex();            
+            //Edge.AddEdgeVertexEdgesOnlyTo(SchemaEdge,MinusZero.Instance.Empty);
+            //GraphUtil.ReplaceEdge(this.Schema.Vertex.Get(false, "BaseEdge:"),"To",SchemaEdge);
 
             this.Loaded += new RoutedEventHandler(OnLoad);
         }

@@ -12,6 +12,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using m0.Foundation;
+using m0.UIWpf.Visualisers;
 using m0.User.Process.UX;
 using m0.ZeroTypes;
 
@@ -22,6 +23,8 @@ namespace m0.UIWpf.Dialog
     /// </summary>
     public partial class NewEdgeBySchema : UserControl
     {
+        EdgeVisualiser To;
+
         public override string ToString()
         {
             return "New Vertex by Schema";
@@ -38,6 +41,9 @@ namespace m0.UIWpf.Dialog
             MetaVertex = _MetaVertex;
 
             NewButton.Content = "New " + MetaVertex.Value + " Edge";
+
+            To = new EdgeVisualiser(null);
+            To_Border.Child = To;
         }
 
        

@@ -16,6 +16,7 @@ using m0.ZeroTypes;
 using m0.Graph;
 using m0.Util;
 using m0.User.Process.UX;
+using m0.UIWpf.Visualisers;
 
 namespace m0.UIWpf.Dialog
 {
@@ -24,6 +25,10 @@ namespace m0.UIWpf.Dialog
     /// </summary>
     public partial class NewEdge : UserControl
     {
+        EdgeVisualiser Meta;
+        EdgeVisualiser To;
+
+
         public override string ToString()
         {
             return "New Edge";
@@ -41,18 +46,39 @@ namespace m0.UIWpf.Dialog
             Interaction.BeginInteractionWithGraph();
             ////////////////////////////////////////
 
-            IVertex MetaEdge =MinusZero.Instance.CreateTempVertex();   
-                     
-            Edge.AddEdgeVertexEdgesOnlyTo(MetaEdge, MinusZero.Instance.Empty);
+            IVertex metaBaseEdgeVertex = Edge.CreateTempEdgeVertex(
+                                           null,
+                                           null,
+                                           Edge.CreateTempEdgeVertex(null,
+                                                null,
+                                                MinusZero.Instance.Empty));
 
-            GraphUtil.ReplaceEdge(this.Meta.Vertex.Get(false, "BaseEdge:"),"To", MetaEdge);
+            Meta = new EdgeVisualiser(metaBaseEdgeVertex);
 
+            Meta_Border.Child = Meta;
 
-            IVertex ToEdge = MinusZero.Instance.CreateTempVertex();
+            //IVertex MetaEdge =MinusZero.Instance.CreateTempVertex();   
 
-            Edge.AddEdgeVertexEdgesOnlyTo(ToEdge, MinusZero.Instance.Empty);
+            //Edge.AddEdgeVertexEdgesOnlyTo(MetaEdge, MinusZero.Instance.Empty);
 
-            GraphUtil.ReplaceEdge(this.To.Vertex.Get(false, "BaseEdge:"), "To", ToEdge);
+            //GraphUtil.ReplaceEdge(this.Meta.Vertex.Get(false, "BaseEdge:"),"To", MetaEdge);
+
+            IVertex toBaseEdgeVertex = Edge.CreateTempEdgeVertex(
+                                           null,
+                                           null,
+                                           Edge.CreateTempEdgeVertex(null,
+                                                null,
+                                                MinusZero.Instance.Empty));
+
+            To = new EdgeVisualiser(toBaseEdgeVertex);
+
+            To_Border.Child = To;
+
+            //IVertex ToEdge = MinusZero.Instance.CreateTempVertex();
+
+            //Edge.AddEdgeVertexEdgesOnlyTo(ToEdge, MinusZero.Instance.Empty);
+
+            //GraphUtil.ReplaceEdge(this.To.Vertex.Get(false, "BaseEdge:"), "To", ToEdge);
 
             //////////////////////////////////////
             Interaction.EndInteractionWithGraph();

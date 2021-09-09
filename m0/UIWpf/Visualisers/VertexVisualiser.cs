@@ -104,7 +104,7 @@ namespace m0.UIWpf.Visualisers
             this.ColumnDefinitions.Add(cdd2);
         }
 
-        public VertexVisualiser()
+        public VertexVisualiser(IVertex baseEdgeVertex)
         {
             SetUpGrid();
 
