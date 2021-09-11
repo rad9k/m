@@ -330,7 +330,7 @@ namespace m0.Graph.ExecutionFlow
                 {
                     GraphChangeTransactionAtom gcta = (GraphChangeTransactionAtom)atom;
 
-                    if (gcta.Type == AtomGraphChangeTypeEnum.EdgeAdded)
+                    if (gcta.Type == AtomGraphChangeTypeEnum.EdgeAdded || gcta.Type == AtomGraphChangeTypeEnum.EdgeRemoved)
                     {
                         if (GeneralUtil.CompareStrings(gcta.Edge.Meta, "$GraphChangeTrigger"))
                             return;
@@ -338,6 +338,11 @@ namespace m0.Graph.ExecutionFlow
                         if (GraphUtil.ExistQueryIn(gcta.Edge.From, "$GraphChangeTrigger", null))
                             return;
                     }
+
+                    if (gcta.Type == AtomGraphChangeTypeEnum.ValueChange)
+                        if (GraphUtil.ExistQueryIn(gcta.ChangedVertex, "$GraphChangeTrigger", null))
+                            return;
+
                     /*if(gcta.Edge != null && 
                         (GeneralUtil.CompareStrings(gcta.Edge.From, "Sleep") || GeneralUtil.CompareStrings(gcta.Edge.To, "Sleep")))
                     {

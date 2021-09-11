@@ -153,8 +153,15 @@ namespace m0.UIWpf.Visualisers.Helper
 
         //bool isBaseEdgeUpdating = false;
 
+        bool VertexChange_firstCall = true; 
+
         protected virtual INoInEdgeInOutVertexVertex VertexChange(IExecution exe)
         {
+            if (VertexChange_firstCall)
+            {
+                VertexChange_firstCall = false;
+                return exe.Stack;
+            }
           //  if (isBaseEdgeUpdating)
             //    return exe.Stack;
 
