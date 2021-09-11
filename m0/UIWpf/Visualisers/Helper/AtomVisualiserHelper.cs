@@ -153,22 +153,16 @@ namespace m0.UIWpf.Visualisers.Helper
 
         //bool isBaseEdgeUpdating = false;
 
-        enum VertexChangeFirstCallStateEnum { FirstCall, SecondCall, Rest}
-
-        VertexChangeFirstCallStateEnum VertexChangeFirstCallState = VertexChangeFirstCallStateEnum.FirstCall;
+        bool firstVertexChangeExecuted = false;
 
         protected virtual INoInEdgeInOutVertexVertex VertexChange(IExecution exe)
         {
-            switch (VertexChangeFirstCallState)
+            if (!firstVertexChangeExecuted)
             {
-                case VertexChangeFirstCallStateEnum.FirstCall:
-                    VertexChangeFirstCallState = VertexChangeFirstCallStateEnum.SecondCall;
-                    break;
-
-                case VertexChangeFirstCallStateEnum.SecondCall:
-                    VertexChangeFirstCallState = VertexChangeFirstCallStateEnum.Rest;
-                    return exe.Stack;
+                firstVertexChangeExecuted = true;
+                return exe.Stack;
             }
+
 
           //  if (isBaseEdgeUpdating)
             //    return exe.Stack;
