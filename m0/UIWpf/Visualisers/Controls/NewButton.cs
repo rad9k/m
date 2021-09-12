@@ -11,6 +11,7 @@ using m0.ZeroTypes;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using m0.UIWpf.Commands;
+using m0.User.Process.UX;
 
 namespace m0.UIWpf.Visualisers.Controls
 {
@@ -48,9 +49,16 @@ namespace m0.UIWpf.Visualisers.Controls
                 IVertex baseVertex=v.Vertex.Get(false, @"BaseEdge:\To:");
                 IVertex toShowEdgesMeta = v.Vertex.Get(false, @"ToShowEdgesMeta:\Meta:");
 
+                ////////////////////////////////////////
+                Interaction.BeginInteractionWithGraph();
+                ////////////////////////////////////////
+
                 //VertexOperations.AddInstance(baseVertex, toShowEdgesMeta);
                 VertexOperations.AddInstanceByEdgeVertex(baseVertex, toShowEdgesMeta);
 
+                ////////////////////////////////////////
+                Interaction.EndInteractionWithGraph();
+                ////////////////////////////////////////
             }
         }
         

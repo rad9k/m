@@ -272,7 +272,7 @@ namespace m0.ZeroTypes
 
             nv = ne.To;
 
-            if (MinusZero.Instance.Root.Store.DetachState == DetachStateEnum.Attached) // XXX WTF?????
+            if (MinusZero.Instance.Root.Store.DetachState == DetachStateEnum.Attached && !GeneralUtil.CompareStrings(metaVertex.Value, "$Empty")) // XXX WTF?????
                 nv.AddEdge(MinusZero.Instance.Is, metaVertex);
 
             ///

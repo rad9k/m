@@ -29,6 +29,19 @@ namespace m0.UIWpf.Visualisers
 
         }
 
+        protected override void PlatformClassInitialize(IVertex baseEdgeVertex)
+        {
+            new ListVisualiserHelper(MinusZero.Instance.Root.Get(false, @"System\Meta\Visualiser\Table"),
+                         this,
+                         "TableVisualiser",
+                         this,
+                         false,
+                         new List<string> { @"", @"BaseEdge:\To:" },
+                         "AtomVisualiserFull",
+                         baseEdgeVertex,
+                         UpdateBaseEdgeCallSchemeEnum.OmmitFirst);
+        }
+
         protected override void AddFooter()
         {
             m0.UIWpf.Visualisers.Controls.NewButton button = new m0.UIWpf.Visualisers.Controls.NewButton();
@@ -160,20 +173,7 @@ namespace m0.UIWpf.Visualisers
             Vertex.Get(false, "ZoomVisualiserContent:").Value = 100;
 
             GraphUtil.ReplaceEdge(Vertex, "GridStyle", MinusZero.Instance.Root.Get(false, @"System\Meta\Visualiser\GridStyleEnum\Round"));
-        }
-
-        protected override void PlatformClassInitialize(IVertex baseEdgeVertex)
-        {
-            new ListVisualiserHelper(MinusZero.Instance.Root.Get(false, @"System\Meta\Visualiser\Table"),
-                         this, 
-                         "TableVisualiser", 
-                         this, 
-                         false, 
-                         new List<string> { @"" }, 
-                         "AtomVisualiserFull",
-                         baseEdgeVertex,
-                         UpdateBaseEdgeCallSchemeEnum.OmmitFirst);
-        }
+        }        
 
         IVertex ToShowEdgesMeta;
 

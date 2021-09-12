@@ -10,6 +10,7 @@ using m0.Graph;
 using m0.ZeroTypes;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using m0.User.Process.UX;
 
 namespace m0.UIWpf.Visualisers.Controls
 {
@@ -51,9 +52,17 @@ namespace m0.UIWpf.Visualisers.Controls
         }
 
         protected override void OnClick(){
+            ////////////////////////////////////////
+            Interaction.BeginInteractionWithGraph();
+            ////////////////////////////////////////
+
             VertexOperations.DeleteOneEdge(BaseEdge.From, BaseEdge.Meta, BaseEdge.To);
+
+            ////////////////////////////////////////
+            Interaction.EndInteractionWithGraph();
+            ////////////////////////////////////////
         }
-        
-        
+
+
     }
 }

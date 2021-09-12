@@ -11,6 +11,7 @@ using m0.ZeroTypes;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using m0.UIWpf.Commands;
+using m0.User.Process.UX;
 
 namespace m0.UIWpf.Visualisers.Controls
 {
@@ -61,7 +62,17 @@ namespace m0.UIWpf.Visualisers.Controls
             if (!NewEditWindow)
             {
                 if (v != null)
+                {
+                    ////////////////////////////////////////
+                    Interaction.BeginInteractionWithGraph();
+                    ////////////////////////////////////////
+                    
                     Edge.ReplaceEdgeVertexEdges(v.Vertex.Get(false, "BaseEdge:"), BaseEdge);
+
+                    ////////////////////////////////////////
+                    Interaction.EndInteractionWithGraph();
+                    ////////////////////////////////////////
+                }
                 else
                 {
                     IVertex v2 = MinusZero.Instance.CreateTempVertex();
