@@ -37,7 +37,8 @@ namespace m0.UIWpf.Visualisers.Helper
                   true,
                   new List<string> { @"", @"BaseEdge:\", @"BaseEdge:\To:\" },
                   "ListVisualiser",
-                  baseEdgeVertex)
+                  baseEdgeVertex,
+                  UpdateBaseEdgeCallSchemeEnum.OmmitFirst)
         {
 
         }
@@ -49,7 +50,8 @@ namespace m0.UIWpf.Visualisers.Helper
             bool _dndSupport,
             IList<string> _scopeQueries,
             string _scopeQueriesName,
-            IVertex baseEdgeVertex)
+            IVertex baseEdgeVertex,
+            UpdateBaseEdgeCallSchemeEnum _updateBaseEdgeCallScheme)
             : base(visualiserMetaVertex,
                   _visualiser,
                   _visualiserName,
@@ -57,7 +59,8 @@ namespace m0.UIWpf.Visualisers.Helper
                   _dndSupport,
                   _scopeQueries,
                   _scopeQueriesName,
-                  baseEdgeVertex)
+                  baseEdgeVertex,
+                  _updateBaseEdgeCallScheme)
         {
             listVisualiser = (IListVisualiser)_visualiser;
         }

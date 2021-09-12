@@ -90,9 +90,7 @@ namespace m0.UIWpf
 
             IVertex baseEdgeVertex = Edge.CreateTempEdgeVertex(null, null, pc.Vertex);
 
-            topRow = new WrapVisualiser(baseEdgeVertex);
-
-            topRow.Scale = 0.6;            
+            topRow = new WrapVisualiser(baseEdgeVertex, 0.6);            
 
             //GraphUtil.ReplaceEdge(topRow.Vertex.Get(false, "BaseEdge:"), "To", pc.Vertex);
            

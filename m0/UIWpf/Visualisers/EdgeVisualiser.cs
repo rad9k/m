@@ -35,7 +35,8 @@ namespace m0.UIWpf.Visualisers
                 false, 
                 new List<string> { @"BaseEdge:\To:"}, 
                 "AtomVisualiser",
-                baseEdgeVertex);
+                baseEdgeVertex,
+                UpdateBaseEdgeCallSchemeEnum.OmmitSecond);
 
             this.PreviewMouseLeftButtonDown += dndPreviewMouseLeftButtonDown;
             this.PreviewMouseMove += dndPreviewMouseMove;

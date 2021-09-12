@@ -48,6 +48,40 @@ namespace m0.UIWpf.Visualisers
         TextBox TextBox;
         MySlider Slider;
 
+
+        public NumberVisualiser(IVertex baseEdgeVertex)
+        {
+            new AtomVisualiserHelper(visualiserMetaVertex,
+                this,
+                visualiserName,
+                this,
+                false,
+                new List<string> { @"BaseEdge:\To:" },
+                "AtomVisualiser",
+                baseEdgeVertex,
+                UpdateBaseEdgeCallSchemeEnum.OmmitSecond);
+
+            // need custom dnd becouse of slider / mouse move
+            this.PreviewMouseLeftButtonDown += dndPreviewMouseLeftButtonDown;
+            this.PreviewMouseMove += dndPreviewMouseMove;
+
+            this.Drop += dndDrop;
+            this.AllowDrop = true;
+
+            this.MouseEnter += dndMouseEnter;
+
+            if (typeof(T) == typeof(double?))
+                isContinous = true;
+        }
+
+        public void OnLoad(object sender, RoutedEventArgs e)
+        {
+            VisualiserHelper.AddContextMenu();
+        }
+
+        public void ZoomVisualiserContentChange() { }
+
+
         bool _IsNull;
 
         bool IsNull
@@ -246,37 +280,6 @@ namespace m0.UIWpf.Visualisers
             
         }
 
-        public NumberVisualiser(IVertex baseEdgeVertex)
-        {
-            new AtomVisualiserHelper(visualiserMetaVertex, 
-                this, 
-                visualiserName, 
-                this, 
-                false, 
-                new List<string> { @"BaseEdge:\To:" }, 
-                "AtomVisualiser",
-                baseEdgeVertex);
-
-            // need custom dnd becouse of slider / mouse move
-            this.PreviewMouseLeftButtonDown += dndPreviewMouseLeftButtonDown;
-            this.PreviewMouseMove += dndPreviewMouseMove;
-            
-            this.Drop += dndDrop;
-            this.AllowDrop = true;
-
-            this.MouseEnter += dndMouseEnter;
-
-            if (typeof(T) == typeof(double?))
-                isContinous = true;
-        }
-
-        public void OnLoad(object sender, RoutedEventArgs e)
-        {
-            VisualiserHelper.AddContextMenu();
-        }
-
-        public void ZoomVisualiserContentChange() { }
-
         protected void OnBoxTextChanged(object sender, TextChangedEventArgs e)
         {
             if (ValueChangeing == false)
@@ -377,7 +380,7 @@ namespace m0.UIWpf.Visualisers
                 return;
 
             if (bv == null) { }
-            else if (bv.Value == null || bv.Value =="")
+            else if (bv.Value == null || (bv.Value is String && (String)bv.Value == ""))
             {
                 T _minValue = GraphUtil.GetNumberValue<T>(bmv.Get(false, "MinValue:"));
                 T _maxValue = GraphUtil.GetNumberValue<T>(bmv.Get(false, "MaxValue:"));

@@ -31,7 +31,14 @@ namespace m0.UIWpf.Visualisers
            this.Padding = new Thickness(2);
 
            new AtomVisualiserHelper(MinusZero.Instance.Root.Get(false, @"System\Meta\Visualiser\Class"), 
-               this, "ClassVisualiser", this, false, new List<string> { @"", @"BaseEdge:\", @"BaseEdge:\To:\"}, "ListVisualiser", null);
+               this, 
+               "ClassVisualiser", 
+               this, 
+               false, 
+               new List<string> { @"", @"BaseEdge:\", @"BaseEdge:\To:\"}, 
+               "ListVisualiser", 
+               null,
+               UpdateBaseEdgeCallSchemeEnum.OmmitSecond);
         }
 
         public void OnLoad(object sender, RoutedEventArgs e)

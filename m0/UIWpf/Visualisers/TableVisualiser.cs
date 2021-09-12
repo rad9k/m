@@ -171,7 +171,8 @@ namespace m0.UIWpf.Visualisers
                          false, 
                          new List<string> { @"" }, 
                          "AtomVisualiserFull",
-                         baseEdgeVertex);
+                         baseEdgeVertex,
+                         UpdateBaseEdgeCallSchemeEnum.OmmitFirst);
         }
 
         IVertex ToShowEdgesMeta;

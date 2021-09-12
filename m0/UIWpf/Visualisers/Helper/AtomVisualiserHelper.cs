@@ -20,6 +20,8 @@ using m0.User.Process.UX;
 
 namespace m0.UIWpf.Visualisers.Helper
 {
+    public enum UpdateBaseEdgeCallSchemeEnum { OmmitFirst, OmmitSecond, NoOmmit};
+
     public class AtomVisualiserHelper
     {
         protected IVisualiser visualiser;
@@ -34,6 +36,8 @@ namespace m0.UIWpf.Visualisers.Helper
         public string visualiserName;
 
         protected bool dndSupport;
+
+        protected UpdateBaseEdgeCallSchemeEnum updateBaseEdgeCallSchema;
 
         static IVertex baseEdge_meta;
 
@@ -56,25 +60,11 @@ namespace m0.UIWpf.Visualisers.Helper
                  true,
                  new List<string> { "", @"BaseEdge:\To:" },
                  "AtomVisualiser",
-                 baseEdgeVertex)
+                 baseEdgeVertex,
+                 UpdateBaseEdgeCallSchemeEnum.OmmitSecond
+                 )
         {
 
-        }
-
-        public AtomVisualiserHelper(IVertex _visualiserMetaVertex, 
-            IVisualiser _visualiser, 
-            string _visualiserName, 
-            FrameworkElement _visualiserAsFrameworkElement)
-            :this(_visualiserMetaVertex, 
-                 _visualiser, 
-                 _visualiserName, 
-                 _visualiserAsFrameworkElement, 
-                 true, 
-                 new List<string> { "", @"BaseEdge:\To:" },
-                 "AtomVisualiser",
-                 null)
-        {
-            
         }
 
         public AtomVisualiserHelper(IVertex visualiserMetaVertex, 
@@ -84,7 +74,8 @@ namespace m0.UIWpf.Visualisers.Helper
             bool _dndSupport, 
             IList<string> _scopeQueries,
             string _scopeQueriesName,
-            IVertex baseEdgeVertex)
+            IVertex baseEdgeVertex,
+            UpdateBaseEdgeCallSchemeEnum _updateBaseEdgeCallSchema)
         {
             visualiser = _visualiser;
 
@@ -93,6 +84,8 @@ namespace m0.UIWpf.Visualisers.Helper
             dndSupport = _dndSupport;
 
             scopeQueries = _scopeQueries;
+
+            updateBaseEdgeCallSchema = _updateBaseEdgeCallSchema;
 
             changeTypeFilter = new List<GraphChangeFilterEnum> {GraphChangeFilterEnum.ValueChange,
                      GraphChangeFilterEnum.OutputEdgeAdded,
@@ -157,7 +150,7 @@ namespace m0.UIWpf.Visualisers.Helper
 
         protected virtual INoInEdgeInOutVertexVertex VertexChange(IExecution exe)
         {
-            if (!firstVertexChangeExecuted)
+            if (!firstVertexChangeExecuted && updateBaseEdgeCallSchema == UpdateBaseEdgeCallSchemeEnum.OmmitSecond)
             {
                 firstVertexChangeExecuted = true;
                 return exe.Stack;
@@ -194,7 +187,8 @@ namespace m0.UIWpf.Visualisers.Helper
 
             graphChangeListenerEdge = ExecutionFlowHelper.AddListener_DotNetDelegate(graphChangeTriggerEdge.To, VertexChange, visualiserName);            
 
-            visualiser.UpdateBaseEdge();
+            if(updateBaseEdgeCallSchema != UpdateBaseEdgeCallSchemeEnum.OmmitFirst)
+                visualiser.UpdateBaseEdge();
         }
 
         public bool IsDisposed = false;

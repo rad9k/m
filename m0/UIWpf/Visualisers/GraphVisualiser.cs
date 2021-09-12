@@ -219,7 +219,8 @@ namespace m0.UIWpf.Visualisers
               false, 
               new List<string> {""/*, @"BaseEdge:\To:"*/ }, 
               "AtomVisualiserFull",
-              baseEdgeVertex);
+              baseEdgeVertex,
+              UpdateBaseEdgeCallSchemeEnum.OmmitFirst);
 
             this.PreviewMouseLeftButtonDown += dndPreviewMouseLeftButtonDown;
             this.PreviewMouseMove += dndPreviewMouseMove;
@@ -337,9 +338,11 @@ namespace m0.UIWpf.Visualisers
         {
             if (!FastMode)
             {
-                StringViewVisualiser s = new StringViewVisualiser();
+                IVertex baseEdgeVertex = Edge.CreateTempEdgeVertex(null, null, v);
 
-                GraphUtil.ReplaceEdge(s.Vertex.Get(false, "BaseEdge:"), "To", v);
+                StringViewVisualiser s = new StringViewVisualiser(baseEdgeVertex);
+
+                //GraphUtil.ReplaceEdge(s.Vertex.Get(false, "BaseEdge:"), "To", v);
 
                 s.ContextMenu = null; // no contextmenu, as there is gloal one for whole GraphVisualiser
 
@@ -728,7 +731,6 @@ namespace m0.UIWpf.Visualisers
 
                 GraphUtil.RemoveAllEdges_WhereEdgeIsEdge(tempSelectedVertices); // 11.10.2018 ADDED. should cause no problems
             }
-
         }
 
         protected void UnselectAll()
@@ -764,7 +766,6 @@ namespace m0.UIWpf.Visualisers
                     DisplayedVerticesUIElements[e.To.Get(false, "To:")].Select();
             }
         }
-
 
 
         public IVertex Vertex

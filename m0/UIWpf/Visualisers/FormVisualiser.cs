@@ -86,7 +86,8 @@ namespace m0.UIWpf.Visualisers
                 false, 
                 new List<string> { @""/*, @"BaseEdge:\To:"*/}, 
                 "AtomVisualiserFull",
-                baseEdgeVertex);            
+                baseEdgeVertex,
+                UpdateBaseEdgeCallSchemeEnum.OmmitFirst);            
 
             SetVertexDefaultValues();
         }

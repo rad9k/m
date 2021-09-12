@@ -32,12 +32,7 @@ namespace m0.UIWpf.Visualisers
                 "StringViewVisualiser", 
                 this,
                 baseEdgeVertex);
-        }
-
-        public StringViewVisualiser()
-        {            
-            new AtomVisualiserHelper(MinusZero.Instance.Root.Get(false, @"System\Meta\Visualiser\StringView"), this, "StringViewVisualiser", this);
-        }
+        }        
 
         public void OnLoad(object sender, RoutedEventArgs e)
         {
