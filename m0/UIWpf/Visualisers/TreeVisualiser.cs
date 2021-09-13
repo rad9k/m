@@ -16,6 +16,7 @@ using m0.UIWpf.Controls;
 using m0.UIWpf.Foundation;
 using System.Collections;
 using m0.UIWpf.Commands;
+using m0.UIWpf.Visualisers.Helper;
 
 namespace m0.UIWpf.Visualisers
 {
@@ -230,11 +231,67 @@ namespace m0.UIWpf.Visualisers
         }
     }
 
-    public class TreeVisualiser: TreeView, IPlatformClass, IDisposable, IHasLocalizableEdges, IHasSelectableEdges
-    {              
+    public class TreeVisualiser: TreeView, IVisualiser, IHasSelectableEdges
+    {
+        public AtomVisualiserHelper VisualiserHelper { get; set; }
+
+        public List<IDisposable> SubVisualisers { get; set; }
+
+
         protected bool TurnOffSelectedItemsUpdate = false;
 
         protected bool TurnOffSelectedVerticesUpdate = false;
+
+
+        public TreeVisualiser(IVertex baseEdgeVertex)
+        {
+            MinusZero mz = MinusZero.Instance;
+
+            this.Foreground = (Brush)FindResource("0ForegroundBrush");
+            this.Background = (Brush)FindResource("0BackgroundBrush");
+
+            this.BorderThickness = new Thickness(0);
+            this.Padding = new Thickness(0);
+            this.AllowDrop = true;
+
+            // THIS REDUCES PERFORMANCE ON LARGE TREES SO commented out
+            //VirtualizingStackPanel.SetIsVirtualizing(this, true); 
+            //VirtualizingStackPanel.SetVirtualizationMode(this, VirtualizationMode.Recycling);
+
+            if (mz != null && mz.IsInitialized)
+            {
+                new ListVisualiserHelper(MinusZero.Instance.Root.Get(false, @"System\Meta\Visualiser\List"),
+                    this,
+                    "ListVisualiser",
+                    this,
+                    false,
+                    new List<string> { @"", @"BaseEdge:\To:" },
+                    "AtomVisualiserFull",
+                    baseEdgeVertex,
+                    UpdateBaseEdgeCallSchemeEnum.OmmitFirst);
+
+
+                //Vertex = mz.Root.Get(false, @"System\Session\Visualisers").AddVertex(null, "TreeVisualiser" + this.GetHashCode());
+
+                Vertex = mz.CreateTempVertex();
+                Vertex.Value = "TreeVisualiser" + this.GetHashCode();
+
+                ClassVertex.AddIsClassAndAllAttributesAndAssociations(Vertex, mz.Root.Get(false, @"System\Meta\Visualiser\Tree"));
+
+                ClassVertex.AddIsClassAndAllAttributesAndAssociations(Vertex.Get(false, "BaseEdge:"), mz.Root.Get(false, @"System\Meta\ZeroTypes\Edge"));
+
+                SetVertexDefaultValues();
+
+                this.ContextMenu = new m0ContextMenu(this);
+
+                this.PreviewMouseLeftButtonDown += dndPreviewMouseLeftButtonDown;
+                this.PreviewMouseMove += dndPreviewMouseMove;
+                this.Drop += dndDrop;
+
+                this.MouseEnter += dndMouseEnter;
+            }
+        }
+
 
         public void SelectedVerticesUpdated()
         {
@@ -456,44 +513,6 @@ namespace m0.UIWpf.Visualisers
             
         }
 
-        public TreeVisualiser()
-        {
-            MinusZero mz = MinusZero.Instance;
-
-            this.Foreground = (Brush)FindResource("0ForegroundBrush");
-            this.Background = (Brush)FindResource("0BackgroundBrush");
-            
-            this.BorderThickness = new Thickness(0);
-            this.Padding = new Thickness(0);
-            this.AllowDrop = true;
-
-            // THIS REDUCES PERFORMANCE ON LARGE TREES SO commented out
-            //VirtualizingStackPanel.SetIsVirtualizing(this, true); 
-            //VirtualizingStackPanel.SetVirtualizationMode(this, VirtualizationMode.Recycling);
-
-            if (mz != null && mz.IsInitialized)
-            {                
-                //Vertex = mz.Root.Get(false, @"System\Session\Visualisers").AddVertex(null, "TreeVisualiser" + this.GetHashCode());
-
-                Vertex = mz.CreateTempVertex();
-                Vertex.Value = "TreeVisualiser" + this.GetHashCode();
-
-                ClassVertex.AddIsClassAndAllAttributesAndAssociations(Vertex, mz.Root.Get(false, @"System\Meta\Visualiser\Tree"));
-
-                ClassVertex.AddIsClassAndAllAttributesAndAssociations(Vertex.Get(false, "BaseEdge:"), mz.Root.Get(false, @"System\Meta\ZeroTypes\Edge"));
-
-                SetVertexDefaultValues();          
-
-                this.ContextMenu = new m0ContextMenu(this);
-
-                this.PreviewMouseLeftButtonDown += dndPreviewMouseLeftButtonDown;
-                this.PreviewMouseMove += dndPreviewMouseMove;
-                this.Drop+=dndDrop;
-
-                this.MouseEnter += dndMouseEnter;
-            }
-        }
-
         protected void VertexChange(object sender, VertexChangeEventArgs e)
         {
             if ((sender == Vertex) && (e.Type == VertexChangeType.EdgeAdded) && (GeneralUtil.CompareStrings(e.Edge.Meta.Value, "BaseEdge"))
@@ -610,76 +629,6 @@ namespace m0.UIWpf.Visualisers
         public FrameworkElement GetVisualElementByEdge(IVertex vertex)
         {
             throw new NotImplementedException();
-        }
-
-        ///// DRAG AND DROP
-
-        Point dndStartPoint;
-        bool hasButtonBeenDown;
-
-        private void dndPreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
-        {
-            dndStartPoint = e.GetPosition(this);
-            hasButtonBeenDown = true;
-
-            MinusZero.Instance.IsGUIDragging = false;
-        }
-
-        bool isDraggin = false;
-
-        private void dndPreviewMouseMove(object sender, MouseEventArgs e)
-        {
-            Point mousePos = e.GetPosition(this);
-            Vector diff = dndStartPoint - mousePos;
-
-            if (hasButtonBeenDown&&
-                !WpfUtil.IsMouseOverScrollbar(sender,dndStartPoint) &&
-                (e.LeftButton == MouseButtonState.Pressed) && (
-                (Math.Abs(diff.X) > Dnd.MinimumHorizontalDragDistance) ||
-                (Math.Abs(diff.Y) > Dnd.MinimumVerticalDragDistance)))
-            {
-                isDraggin = true;
-
-                IVertex dndVertex = MinusZero.Instance.CreateTempVertex();
-
-                if (Vertex.Get(false, @"SelectedEdges:\") != null)
-                    foreach (IEdge ee in Vertex.GetAll(false, @"SelectedEdges:\"))
-                        dndVertex.AddEdge(null, ee.To);
-                else
-                {
-                    IVertex v=GetEdgeByLocation(dndStartPoint);
-                    if(v!=null)
-                        dndVertex.AddEdge(null, v);
-                }
-
-                if (dndVertex.Count() > 0)
-                {
-                    DataObject dragData = new DataObject("Vertex", dndVertex);
-                    dragData.SetData("DragSource", this);
-
-                    Dnd.DoDragDrop(this, dragData);
-                }
-
-                isDraggin = false;
-            }
-        }
-
-        private void dndDrop(object sender, DragEventArgs e)
-        {
-            IVertex v = GetEdgeByLocation(e.GetPosition(this));
-
-            if (v == null && GeneralUtil.CompareStrings(MinusZero.Instance.Root.Get(false, @"User\CurrentUser:\Settings:\AllowBlankAreaDragAndDrop:").Value, "OnlyEnd"))            
-                v = Vertex.Get(false, "BaseEdge:");
-
-            if(v!=null)
-                Dnd.DoDrop(null, v.Get(false, "To:"), e);
-
-            e.Handled = true;
-        }
-
-        private void dndMouseEnter(object sender, MouseEventArgs e)
-        {
-            hasButtonBeenDown = false;
         }
     }
 }
