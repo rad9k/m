@@ -182,7 +182,7 @@ namespace m0.UIWpf.Visualisers
 
         public void VertexChange(object sender, VertexChangeEventArgs e)
         {
-            if (TreeParent.IsDisposed)
+            if (TreeParent.VisualiserHelper.IsDisposed)
                 return;
 
             //if (sender != ((IEdge)this.Tag).To)
@@ -321,6 +321,27 @@ namespace m0.UIWpf.Visualisers
                     return;
                 }
             }
+
+            IVertex edge = exe.Stack.Get(false, @"event:\Edge:");            
+
+            if (edge != null) {
+                IVertex edgeFrom = exe.Stack.Get(false, @"event:\Edge:\From:");
+
+
+                && edgeFrom == VisualiserHelper.Vertex.Get(false, @"BaseEdge:\To:"))
+            {
+                    IVertex eventType = exe.Stack.Get(false, @"event:\Type:");
+
+                    if (eventType != null) {
+                        if (GraphUtil.GetValueAndCompareStrings(eventType, "OutputEdgeAdded"))
+                            EdgeAdded()
+                    }
+
+                }
+            }
+            
+
+
 
             UpdateBaseEdge();
         }
@@ -567,38 +588,14 @@ namespace m0.UIWpf.Visualisers
 
         public IVertex Vertex
         {
-            get { return _Vertex; }
-            set
-            {
-                if (_Vertex != null)
-                    PlatformClass.RemoveVertexChangeListeners(this.Vertex, new VertexChange(VertexChange));
-
-                _Vertex = value;
-
-                PlatformClass.RegisterVertexChangeListeners(this.Vertex, new VertexChange(VertexChange), new string[] { "BaseEdge", "SelectedEdges" });
-
-                UpdateBaseEdge();
-            }
+            get { return VisualiserHelper.Vertex; }
+            set { VisualiserHelper.SetVertex(value); }
         }
-
-        public bool IsDisposed = false;
 
         public void Dispose()
         {
-            if (IsDisposed == false)
-            {
-                IsDisposed = true;
-                MinusZero mz = MinusZero.Instance;
-
-                //GraphUtil.DeleteEdgeByToVertex(mz.Root.Get(false, @"System\Session\Visualisers"), Vertex);
-
-                PlatformClass.RemoveVertexChangeListeners(this.Vertex, new VertexChange(VertexChange));
-
-                if (Vertex is IDisposable)
-                    ((IDisposable)Vertex).Dispose();
-            }
+            VisualiserHelper.Dispose();
         }
-
 
         private IVertex vertexByLocationToReturn;
 

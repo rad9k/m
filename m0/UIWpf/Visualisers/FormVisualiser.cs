@@ -776,7 +776,7 @@ namespace m0.UIWpf.Visualisers
 
         public IVertex Vertex
         {
-            get { return VisualiserHelper._Vertex; }
+            get { return VisualiserHelper.Vertex; }
             set { VisualiserHelper.SetVertex(value); }
         }
 

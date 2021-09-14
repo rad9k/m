@@ -118,12 +118,12 @@ namespace m0.UIWpf.Visualisers.Helper
         {
             tempSelectedVertices = MinusZero.Instance.CreateTempVertex();
 
-            GraphUtil.CopyEdges(_Vertex.Get(false, "SelectedEdges:"), tempSelectedVertices);
+            GraphUtil.CopyEdges(Vertex.Get(false, "SelectedEdges:"), tempSelectedVertices);
         }
 
         protected void RestoreSelectedVertices()
         {
-            IVertex sv = _Vertex.Get(false, "SelectedEdges:");
+            IVertex sv = Vertex.Get(false, "SelectedEdges:");
 
             if (tempSelectedVertices != null)
             {
@@ -173,8 +173,8 @@ namespace m0.UIWpf.Visualisers.Helper
 
                 IVertex dndVertex = MinusZero.Instance.CreateTempVertex();
 
-                if (_Vertex.Get(false, @"SelectedEdges:\") != null)
-                    foreach (IEdge ee in _Vertex.GetAll(false, @"SelectedEdges:\"))
+                if (Vertex.Get(false, @"SelectedEdges:\") != null)
+                    foreach (IEdge ee in Vertex.GetAll(false, @"SelectedEdges:\"))
                         dndVertex.AddEdge(null, ee.To);
                 else
                 {
@@ -202,7 +202,7 @@ namespace m0.UIWpf.Visualisers.Helper
             IVertex v = visualiser.GetEdgeByLocation(e.GetPosition(visualiserAsFrameworkElement));
 
             if (v == null && GeneralUtil.CompareStrings(MinusZero.Instance.Root.Get(false, @"User\CurrentUser:\Settings:\AllowBlankAreaDragAndDrop:").Value, "OnlyEnd"))
-                v = _Vertex.Get(false, "BaseEdge:");
+                v = Vertex.Get(false, "BaseEdge:");
 
             if (v != null)
                 Dnd.DoDrop(null, v.Get(false, "To:"), e);

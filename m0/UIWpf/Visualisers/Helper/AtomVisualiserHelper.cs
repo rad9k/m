@@ -171,16 +171,16 @@ namespace m0.UIWpf.Visualisers.Helper
 
         IEdge graphChangeListenerEdge;
 
-        public IVertex _Vertex;
+        public IVertex Vertex;
 
         public void SetVertex(IVertex value)
         {
-            if (_Vertex != null)
+            if (Vertex != null)
                 GraphChangeTrigger.RemoveGraphChangeListener(graphChangeListenerEdge);            
 
-            _Vertex = value;
+            Vertex = value;
 
-            IEdge graphChangeTriggerEdge = GraphChangeTrigger.AddGraphChangeTrigger(_Vertex, 
+            IEdge graphChangeTriggerEdge = GraphChangeTrigger.AddGraphChangeTrigger(Vertex, 
                 scopeQueries, 
                 changeTypeFilter,
                 scopeQueriesName);
@@ -203,8 +203,8 @@ namespace m0.UIWpf.Visualisers.Helper
 
                 GraphChangeTrigger.RemoveGraphChangeListener(graphChangeListenerEdge);                
 
-                if (_Vertex is IDisposable)
-                    ((IDisposable)_Vertex).Dispose();
+                if (Vertex is IDisposable)
+                    ((IDisposable)Vertex).Dispose();
 
                 if (visualiser.SubVisualisers != null)
                     foreach (IDisposable d in visualiser.SubVisualisers)
@@ -237,13 +237,13 @@ namespace m0.UIWpf.Visualisers.Helper
                 (Math.Abs(diff.X) > Dnd.MinimumHorizontalDragDistance) ||
                 (Math.Abs(diff.Y) > Dnd.MinimumVerticalDragDistance)))
             {
-                if (_Vertex.Get(false, @"BaseEdge:\To:") != null)
+                if (Vertex.Get(false, @"BaseEdge:\To:") != null)
                 {
                     isDraggin = true;
 
                     IVertex dndVertex = MinusZero.Instance.CreateTempVertex();
 
-                    dndVertex.AddEdge(null, _Vertex.Get(false, @"BaseEdge:"));
+                    dndVertex.AddEdge(null, Vertex.Get(false, @"BaseEdge:"));
 
                     DataObject dragData = new DataObject("Vertex", dndVertex);
                     dragData.SetData("DragSource", visualiser);
@@ -257,7 +257,7 @@ namespace m0.UIWpf.Visualisers.Helper
 
         protected virtual void dndDrop(object sender, System.Windows.DragEventArgs e)
         {
-            Dnd.DoDrop(visualiser, _Vertex.Get(false, @"BaseEdge:\To:"), e);
+            Dnd.DoDrop(visualiser, Vertex.Get(false, @"BaseEdge:\To:"), e);
         }
 
         protected virtual void dndMouseEnter(object sender, MouseEventArgs e)
