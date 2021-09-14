@@ -264,34 +264,20 @@ namespace m0.UIWpf.Visualisers
                     this,
                     "ListVisualiser",
                     this,
-                    false,
+                    true,
                     new List<string> { @"", @"BaseEdge:\To:" },
                     "AtomVisualiserFull",
                     baseEdgeVertex,
                     UpdateBaseEdgeCallSchemeEnum.OmmitFirst);
 
-
-                //Vertex = mz.Root.Get(false, @"System\Session\Visualisers").AddVertex(null, "TreeVisualiser" + this.GetHashCode());
-
-                Vertex = mz.CreateTempVertex();
-                Vertex.Value = "TreeVisualiser" + this.GetHashCode();
-
-                ClassVertex.AddIsClassAndAllAttributesAndAssociations(Vertex, mz.Root.Get(false, @"System\Meta\Visualiser\Tree"));
-
-                ClassVertex.AddIsClassAndAllAttributesAndAssociations(Vertex.Get(false, "BaseEdge:"), mz.Root.Get(false, @"System\Meta\ZeroTypes\Edge"));
-
                 SetVertexDefaultValues();
-
-                this.ContextMenu = new m0ContextMenu(this);
-
-                this.PreviewMouseLeftButtonDown += dndPreviewMouseLeftButtonDown;
-                this.PreviewMouseMove += dndPreviewMouseMove;
-                this.Drop += dndDrop;
-
-                this.MouseEnter += dndMouseEnter;
             }
         }
 
+        public void OnLoad(object sender, RoutedEventArgs e)
+        {
+            VisualiserHelper.AddContextMenu();
+        }
 
         public void SelectedVerticesUpdated()
         {
@@ -461,7 +447,7 @@ namespace m0.UIWpf.Visualisers
         }
 
 
-        private void UpdateBaseEdge()
+        public void UpdateBaseEdge()
         {
             ClearAllItems();
 
@@ -472,7 +458,7 @@ namespace m0.UIWpf.Visualisers
                     Items.Add(GetTreeViewItem(e, true));            
         }
 
-        protected void ZoomVisualiserContentChange()
+        public void ZoomVisualiserContentChange()
         {
             double scale = ((double)GraphUtil.GetIntegerValue(Vertex.Get(false, "ZoomVisualiserContent:"))) / 100;
 
