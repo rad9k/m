@@ -67,12 +67,23 @@ namespace m0.UIWpf.Visualisers.Helper
 
         //bool isBaseEdgeUpdating = false;
 
+        public delegate void CustomVertexChangeHandler(IExecution exe);
+
+        public event CustomVertexChangeHandler CustomVertexChangeEvent;
+
         protected override INoInEdgeInOutVertexVertex VertexChange(IExecution exe)
         {
-          //  if (isBaseEdgeUpdating)
+            //  if (isBaseEdgeUpdating)
             //    return exe.Stack;
 
             //isBaseEdgeUpdating = true;
+
+            if (CustomVertexChangeEvent != null)
+            {
+                CustomVertexChangeEvent(exe);
+
+                return exe.Stack;
+            }
 
             IVertex changedVertex = exe.Stack.Get(false, @"event:\ChangedVertex:");
 

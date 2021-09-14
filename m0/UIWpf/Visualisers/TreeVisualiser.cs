@@ -270,6 +270,8 @@ namespace m0.UIWpf.Visualisers
                     baseEdgeVertex,
                     UpdateBaseEdgeCallSchemeEnum.OmmitFirst);
 
+                ((ListVisualiserHelper)VisualiserHelper).CustomVertexChangeEvent += CustomVertexChange;
+
                 SetVertexDefaultValues();
             }
         }
@@ -277,6 +279,50 @@ namespace m0.UIWpf.Visualisers
         public void OnLoad(object sender, RoutedEventArgs e)
         {
             VisualiserHelper.AddContextMenu();
+        }
+
+        public void UpdateBaseEdge()
+        {
+            ClearAllItems();
+
+            IVertex bas = Vertex.Get(false, @"BaseEdge:\To:");
+
+            if (bas != null)
+                foreach (IEdge e in bas)
+                    Items.Add(GetTreeViewItem(e, true));
+        }
+
+        public void ZoomVisualiserContentChange()
+        {
+            double scale = ((double)GraphUtil.GetIntegerValue(Vertex.Get(false, "ZoomVisualiserContent:"))) / 100;
+
+            if (scale != 1.0)
+                this.LayoutTransform = new ScaleTransform(scale, scale);
+            else
+                this.LayoutTransform = null;
+        }
+
+        protected void CustomVertexChange(IExecution exe)
+        {
+            IVertex changedVertex = exe.Stack.Get(false, @"event:\ChangedVertex:");
+
+            if (changedVertex != null)
+            {
+                if (GraphUtil.ExistQueryIn(changedVertex, "ZoomVisualiserContent", null))
+                {
+                    ZoomVisualiserContentChange();
+                    return;
+                }
+
+                if (GraphUtil.ExistQueryIn(changedVertex, "SelectedEdges", null))
+                {
+                    SelectedVerticesUpdated();
+
+                    return;
+                }
+            }
+
+            UpdateBaseEdge();
         }
 
         public void SelectedVerticesUpdated()
@@ -444,28 +490,6 @@ namespace m0.UIWpf.Visualisers
             }
 
             c.Items.Clear();
-        }
-
-
-        public void UpdateBaseEdge()
-        {
-            ClearAllItems();
-
-            IVertex bas = Vertex.Get(false, @"BaseEdge:\To:");            
-
-            if (bas != null)            
-                foreach (IEdge e in bas)
-                    Items.Add(GetTreeViewItem(e, true));            
-        }
-
-        public void ZoomVisualiserContentChange()
-        {
-            double scale = ((double)GraphUtil.GetIntegerValue(Vertex.Get(false, "ZoomVisualiserContent:"))) / 100;
-
-            if (scale != 1.0)
-                this.LayoutTransform = new ScaleTransform(scale, scale);
-            else
-                this.LayoutTransform = null;
         }
 
         protected void SetVertexDefaultValues()
