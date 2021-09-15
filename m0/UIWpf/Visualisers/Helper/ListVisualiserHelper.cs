@@ -65,26 +65,12 @@ namespace m0.UIWpf.Visualisers.Helper
             listVisualiser = (IListVisualiser)_visualiser;
         }
 
-        //bool isBaseEdgeUpdating = false;
-
         public delegate void CustomVertexChangeHandler(IExecution exe);
 
         public event CustomVertexChangeHandler CustomVertexChangeEvent;
 
         protected override INoInEdgeInOutVertexVertex VertexChange(IExecution exe)
         {
-            //  if (isBaseEdgeUpdating)
-            //    return exe.Stack;
-
-            //isBaseEdgeUpdating = true;
-
-            if (CustomVertexChangeEvent != null)
-            {
-                CustomVertexChangeEvent(exe);
-
-                return exe.Stack;
-            }
-
             IVertex changedVertex = exe.Stack.Get(false, @"event:\ChangedVertex:");
 
             if (changedVertex != null)
@@ -98,14 +84,24 @@ namespace m0.UIWpf.Visualisers.Helper
                 if (GraphUtil.ExistQueryIn(changedVertex, "SelectedEdges", null))
                 {
                     listVisualiser.SelectedVerticesUpdated();
-
                     return exe.Stack;
                 }
             }
 
-            visualiser.UpdateBaseEdge();
+            IVertex edgeVertex = exe.Stack.Get(false, @"event:\Edge:");
 
-            //isBaseEdgeUpdating = false;
+            if (edgeVertex != null)
+            {
+                IVertex edgeFrom = edgeVertex.Get(false, @"From:");
+
+                if (edgeFrom == Vertex.Get(false, @"SelectedEdges:"))
+                {
+                    listVisualiser.SelectedVerticesUpdated();
+                    return exe.Stack;
+                }              
+            }
+
+            listVisualiser.UpdateBaseEdge();
 
             return exe.Stack;
         }

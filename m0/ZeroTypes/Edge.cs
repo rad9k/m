@@ -191,7 +191,7 @@ namespace m0.ZeroTypes
             baseVertex.AddEdge(ToMeta, toVertex);
         }
 
-        static public IEdge FindEdgeVertexByIEdge(IVertex baseVertex, IEdge edge)
+        static public IEdge FindIEdgeVertexByIEdge(IVertex baseVertex, IEdge edge)
         {
             foreach (IEdge e in baseVertex)
                 //if (e.To.Get(false, "From:") == edge.From
@@ -256,11 +256,9 @@ namespace m0.ZeroTypes
             return null;
         }
 
-
-
         static public void DeleteVertexByEdge(IVertex baseVertex, IEdge edge)
         {
-            IEdge e = FindEdgeVertexByIEdge(baseVertex, edge);
+            IEdge e = FindIEdgeVertexByIEdge(baseVertex, edge);
 
             if (e != null)
                 baseVertex.DeleteEdge(e);            
@@ -268,29 +266,35 @@ namespace m0.ZeroTypes
 
         static public void DeleteVertexByEdgeOnlyToVertex(IVertex baseVertex, IEdge edge)
         {
-            IEdge e = FindEdgeVertexByIEdgeOnlyToVertex(baseVertex, edge);
+            IEdge e = FindEdgeVertexByToVertex(baseVertex, edge.To);
 
             if (e != null)
                 baseVertex.DeleteEdge(e);
         }      
 
-        static public IEdge FindEdgeVertexByEdgeTo(IVertex baseVertex, IVertex to)
-        {
-            foreach (IEdge e in baseVertex)
-                // if (e.To.Get(false, "To:") == to)
-                if (GraphUtil.GetQueryOutFirst(e.To, "To", null) == to)
-                    return e;
-
-            return null;
-        }
-
         static public void DeleteVertexByEdgeTo(IVertex baseVertex, IVertex to)
         {
-            IEdge e = FindEdgeVertexByEdgeTo(baseVertex, to);
+            IEdge e = FindEdgeVertexByToVertex(baseVertex, to);
 
             if (e != null)
                 baseVertex.DeleteEdge(e);
         }
 
+        static public bool CompareIEdges(IEdge edge_A, IEdge edge_B)
+        {
+            if (edge_A.From == edge_B.From
+                && edge_A.Meta == edge_B.Meta
+                && edge_A.To == edge_B.To)
+                return true;
+
+            return false;
+        }
+
+        static public IEdge CreateIEdgeFromEdgeVertex(IVertex edgeVertex)
+        {
+            return new EasyEdge(edgeVertex.Get(false, "From:"),
+                edgeVertex.Get(false, "Meta:"),
+                edgeVertex.Get(false, "To:"));
+        }
     }
 }

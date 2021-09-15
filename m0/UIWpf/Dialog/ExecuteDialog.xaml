@@ -24,9 +24,9 @@
 
 
                 <TextBlock Margin="10,76,0,0" Text="Input Stack Content" VerticalAlignment="Top" HorizontalAlignment="Left"  Height="22"  Width="97" TextWrapping="Wrap"/>
-                <Border BorderThickness="1" BorderBrush="{StaticResource 0ForegroundBrush}" Margin="10,94,10,10">
-                    <Visualisers:TreeVisualiser x:Name="InputStackContentControl"   />
-                </Border>
+                <Border BorderThickness="1" BorderBrush="{StaticResource 0ForegroundBrush}" Margin="10,94,10,10" x:Name="InputStackContentControl_Border"/>
+               
+
             </Grid>
 
             <Grid Grid.Column="1">
@@ -34,9 +34,8 @@
                 <Border BorderThickness="1" BorderBrush="{StaticResource 0ForegroundBrush}" Margin="10,32,10,0" Height="20" VerticalAlignment="Top" x:Name="OutputStackEdgeControl_Border"/>
 
                 <TextBlock Margin="10,76,0,0" Text="Output Stack Content" VerticalAlignment="Top" HorizontalAlignment="Left"  Height="22"  Width="97" TextWrapping="Wrap"/>
-                <Border BorderThickness="1" BorderBrush="{StaticResource 0ForegroundBrush}" Margin="10,94,10,10">
-                    <Visualisers:TreeVisualiser x:Name="OutputStackContentControl"   />
-                </Border>
+                <Border BorderThickness="1" BorderBrush="{StaticResource 0ForegroundBrush}" Margin="10,94,10,10" x:Name="OutputStackContentControl_Border" />
+
             </Grid>
 
         </Grid>

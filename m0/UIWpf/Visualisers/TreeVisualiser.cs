@@ -231,7 +231,7 @@ namespace m0.UIWpf.Visualisers
         }
     }
 
-    public class TreeVisualiser: TreeView, IVisualiser, IHasSelectableEdges
+    public class TreeVisualiser: TreeView, IListVisualiser, IHasSelectableEdges
     {
         public AtomVisualiserHelper VisualiserHelper { get; set; }
 
@@ -242,6 +242,7 @@ namespace m0.UIWpf.Visualisers
 
         protected bool TurnOffSelectedVerticesUpdate = false;
 
+        public TreeVisualiser() : this(null) { }
 
         public TreeVisualiser(IVertex baseEdgeVertex)
         {
@@ -260,15 +261,15 @@ namespace m0.UIWpf.Visualisers
 
             if (mz != null && mz.IsInitialized)
             {
-                new ListVisualiserHelper(MinusZero.Instance.Root.Get(false, @"System\Meta\Visualiser\List"),
+                new ListVisualiserHelper(MinusZero.Instance.Root.Get(false, @"System\Meta\Visualiser\Tree"),
                     this,
-                    "ListVisualiser",
+                    "TreeVisualiser",
                     this,
                     true,
                     new List<string> { @"", @"BaseEdge:\To:" },
                     "AtomVisualiserFull",
                     baseEdgeVertex,
-                    UpdateBaseEdgeCallSchemeEnum.OmmitFirst);
+                    UpdateBaseEdgeCallSchemeEnum.OmmitSecond);
 
                 ((ListVisualiserHelper)VisualiserHelper).CustomVertexChangeEvent += CustomVertexChange;
 
@@ -322,27 +323,38 @@ namespace m0.UIWpf.Visualisers
                 }
             }
 
-            IVertex edge = exe.Stack.Get(false, @"event:\Edge:");            
+            IVertex edgeVertex = exe.Stack.Get(false, @"event:\Edge:");
 
-            if (edge != null) {
-                IVertex edgeFrom = exe.Stack.Get(false, @"event:\Edge:\From:");
+            if (edgeVertex != null) {
+                IVertex edgeFrom = edgeVertex.Get(false, @"From:");
 
-
-                && edgeFrom == VisualiserHelper.Vertex.Get(false, @"BaseEdge:\To:"))
-            {
+                if (edgeFrom == VisualiserHelper.Vertex.Get(false, @"BaseEdge:\To:"))
+                {
                     IVertex eventType = exe.Stack.Get(false, @"event:\Type:");
 
-                    if (eventType != null) {
+                    if (eventType != null)
+                    {
                         if (GraphUtil.GetValueAndCompareStrings(eventType, "OutputEdgeAdded"))
-                            EdgeAdded()
-                    }
+                        {
+                            EdgeAdded(Edge.CreateIEdgeFromEdgeVertex(edgeVertex));
+                            return;
+                        }
 
+                        if (GraphUtil.GetValueAndCompareStrings(eventType, "OutputEdgeRemoved"))
+                        {
+                            EdgeRemoved(Edge.CreateIEdgeFromEdgeVertex(edgeVertex));
+                            return;
+                        }
+
+                        if (GraphUtil.GetValueAndCompareStrings(eventType, "OutputEdgeDisposed"))
+                        {
+                            EdgeRemoved(Edge.CreateIEdgeFromEdgeVertex(edgeVertex));
+                            return;
+                        }
+                    }
                 }
             }
-            
-
-
-
+           
             UpdateBaseEdge();
         }
 
@@ -368,7 +380,7 @@ namespace m0.UIWpf.Visualisers
                 TreeVisualiserViewItem ii = (TreeVisualiserViewItem)i;
 
                 
-                if (Edge.FindEdgeVertexByIEdgeOnlyToVertex(sv, (IEdge)ii.Tag)!=null)                
+                if (Edge.FindEdgeVertexByToVertex(sv, ((IEdge)ii.Tag).To)!=null)                
                     ii.IsSelected = true;
                 else
                     ii.IsSelected = false;
@@ -475,7 +487,7 @@ namespace m0.UIWpf.Visualisers
 
             IVertex sv = Vertex.Get(false, "SelectedEdges:");
 
-            if (Edge.FindEdgeVertexByIEdge(sv, e)!=null)
+            if (Edge.FindIEdgeVertexByIEdge(sv, e)!=null)
                 i.IsSelected = true;
 
             TurnOffSelectedVerticesUpdate = false;
@@ -544,44 +556,17 @@ namespace m0.UIWpf.Visualisers
             
         }
 
-        protected void VertexChange(object sender, VertexChangeEventArgs e)
-        {
-            if ((sender == Vertex) && (e.Type == VertexChangeType.EdgeAdded) && (GeneralUtil.CompareStrings(e.Edge.Meta.Value, "BaseEdge"))
-                ||((sender==Vertex.Get(false, "BaseEdge:"))&&(e.Type==VertexChangeType.EdgeAdded)&&((GeneralUtil.CompareStrings(e.Edge.Meta.Value, "To")))))
-            {
-                UpdateBaseEdge();                
-            }
-
-            if (sender == Vertex.Get(false, @"BaseEdge:\To:") && (e.Type == VertexChangeType.EdgeAdded))
-                EdgeAdded(e);
-
-            if (sender == Vertex.Get(false, @"BaseEdge:\To:") &&  (e.Type == VertexChangeType.EdgeRemoved))
-                EdgeRemoved(e);
-
-            if ((sender == Vertex) && (e.Type == VertexChangeType.EdgeAdded) && (GeneralUtil.CompareStrings(e.Edge.Meta.Value, "SelectedEdges")))
-                SelectedVerticesUpdated();
-
-            if ((sender == Vertex.Get(false, "SelectedEdges:")) && ((e.Type == VertexChangeType.EdgeAdded) || (e.Type == VertexChangeType.EdgeRemoved)))
-                SelectedVerticesUpdated();
-
-            if(sender is IVertex && GraphUtil.FindEdgeByToVertex(Vertex.GetAll(false, @"SelectedEdges:\"),(IVertex)sender)!=null)
-                SelectedVerticesUpdated();
-
-            if (sender == Vertex.Get(false, "ZoomVisualiserContent:") && e.Type == VertexChangeType.ValueChanged)
-                ZoomVisualiserContentChange();                       
-        }
-
-        private void EdgeRemoved(VertexChangeEventArgs e)
+        private void EdgeRemoved(IEdge edge)
         {            
                 IList l = GeneralUtil.CreateAndCopyList(Items);
                 foreach (TreeVisualiserViewItem i in l)
-                    if (((IEdge)i.Tag) == e.Edge)
+                    if (((IEdge)i.Tag) == edge)
                         Items.Remove(i);            
         }
 
-        private void EdgeAdded(VertexChangeEventArgs e)
+        private void EdgeAdded(IEdge edge)
         {         
-                Items.Add(GetTreeViewItem(e.Edge, true));
+                Items.Add(GetTreeViewItem(edge, true));
         }
 
         private IVertex _Vertex;

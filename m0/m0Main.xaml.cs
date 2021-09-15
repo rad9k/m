@@ -48,11 +48,11 @@ namespace m0
             MinusZero.Instance.Initialize();
 
 
-            
+            IVertex baseEdgeVertex = Edge.CreateTempEdgeVertex(null, null, MinusZero.Instance.Root);
 
-            TreeVisualiser stv = new TreeVisualiser();
+            TreeVisualiser stv = new TreeVisualiser(baseEdgeVertex);
 
-            GraphUtil.ReplaceEdge(stv.Vertex.Get(false, "BaseEdge:"), "To", MinusZero.Instance.Root);                                    
+            //GraphUtil.ReplaceEdge(stv.Vertex.Get(false, "BaseEdge:"), "To", MinusZero.Instance.Root);                                    
             
             this.root.Content=stv;
 

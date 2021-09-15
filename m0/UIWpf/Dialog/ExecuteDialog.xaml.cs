@@ -1,5 +1,6 @@
 ﻿using m0.Foundation;
 using m0.Graph;
+using m0.Graph.ExecutionFlow;
 using m0.UIWpf.Visualisers;
 using m0.User.Process.UX;
 using m0.Util;
@@ -26,6 +27,9 @@ namespace m0.UIWpf.Dialog
     {
         EdgeVisualiser InputStackEdgeControl;
         EdgeVisualiser OutputStackEdgeControl;
+
+        TreeVisualiser InputStackContentControl;
+        TreeVisualiser OutputStackContentControl;
 
         IVertex baseVertex;
 
@@ -57,6 +61,9 @@ namespace m0.UIWpf.Dialog
                     InputStackEdgeControl = new EdgeVisualiser(inputStackEdgeVertex);
 
                     OutputStackEdgeControl = new EdgeVisualiser(null);
+
+                    InputStackContentControl = new TreeVisualiser(null);
+                    OutputStackContentControl = new TreeVisualiser(null);
 
                     this.ExecuteButton.IsEnabled = true;
                     this.InputStackEdgeControl.IsEnabled = true;
@@ -121,7 +128,16 @@ namespace m0.UIWpf.Dialog
 
             SetState(StateEnum.NotStarted);
 
-            PlatformClass.RegisterVertexChangeListeners(InputStackEdgeControl.Vertex, new VertexChange(inputStackEdgeControl_VertexChange), new string[] { "BaseEdge" });
+            ExecutionFlowHelper.AddListener_DotNetDelegate(InputStackEdgeControl.Vertex, inputStackEdgeControl_VertexChange);
+
+           // PlatformClass.RegisterVertexChangeListeners(InputStackEdgeControl.Vertex, new VertexChange(inputStackEdgeControl_VertexChange), new string[] { "BaseEdge" });
+        }
+
+        protected virtual INoInEdgeInOutVertexVertex inputStackEdgeControl_VertexChange(IExecution exe)
+        {
+            updateStackEdgeFromInputStackEdgeControl();
+
+            return exe.Stack;
         }
 
         protected void inputStackEdgeControl_VertexChange(object sender, VertexChangeEventArgs e)
