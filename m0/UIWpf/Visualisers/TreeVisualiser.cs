@@ -17,11 +17,14 @@ using m0.UIWpf.Foundation;
 using System.Collections;
 using m0.UIWpf.Commands;
 using m0.UIWpf.Visualisers.Helper;
+using m0.Graph.ExecutionFlow;
 
 namespace m0.UIWpf.Visualisers
 {
     public class TreeVisualiserViewItem : TreeViewItem, IDisposable
-    {        
+    {
+        public IEdge vertexChangeListenerEdge;
+
         public static bool HideMetaNameIfEmpty = true;
 
         public bool IsFilled;        
@@ -180,42 +183,63 @@ namespace m0.UIWpf.Visualisers
             Header = s;
         }        
 
-        public void VertexChange(object sender, VertexChangeEventArgs e)
+        public INoInEdgeInOutVertexVertex VertexChange(IExecution exe)
         {
             if (TreeParent.VisualiserHelper.IsDisposed)
-                return;
+                return exe.Stack;
 
-            //if (sender != ((IEdge)this.Tag).To)
-              //  throw new Exception("TreeVisualiserViewItem attached to some other Vertex Change");
+            IVertex edgeVertex = exe.Stack.Get(false, @"event:\Edge:");
 
-            if (e.Type == VertexChangeType.ValueChanged)
-                UpdateHeader();
+            if (edgeVertex != null)
+            {           
+                IVertex eventType = exe.Stack.Get(false, @"event:\Type:");
 
-            if (e.Type == VertexChangeType.EdgeAdded)
-                EdgeAdded(e);
+                if (eventType != null)
+                {
+                    if (GraphUtil.GetValueAndCompareStrings(eventType, "OutputEdgeAdded"))
+                    {
+                        EdgeAdded(Edge.CreateIEdgeFromEdgeVertex(edgeVertex));
+                        return exe.Stack;
+                    }
 
-            if (e.Type == VertexChangeType.EdgeRemoved)
-                EdgeRemoved(e);
+                    if (GraphUtil.GetValueAndCompareStrings(eventType, "OutputEdgeRemoved"))
+                    {
+                        EdgeRemoved(Edge.CreateIEdgeFromEdgeVertex(edgeVertex));
+                        return exe.Stack;
+                    }
+
+                    if (GraphUtil.GetValueAndCompareStrings(eventType, "OutputEdgeDisposed"))
+                    {
+                        EdgeRemoved(Edge.CreateIEdgeFromEdgeVertex(edgeVertex));
+                        return exe.Stack;
+                    }
+                    
+                }
+            }
+
+            UpdateHeader();
+
+            return exe.Stack;
         }
 
-        private void EdgeRemoved(VertexChangeEventArgs e)
+        private void EdgeRemoved(IEdge edge)
         {
             if (IsFilled){
                 IList l=GeneralUtil.CreateAndCopyList(Items);
                 foreach (TreeVisualiserViewItem i in l)
-                    if (((IEdge)i.Tag) == e.Edge)
+                    if (((IEdge)i.Tag) == edge)
                         Items.Remove(i);
                 }
         }
 
-        private void EdgeAdded(VertexChangeEventArgs e)
+        private void EdgeAdded(IEdge edge)
         {
             if (!IsFilled)
             {            
                 TreeVisualiser.ClearAllItems_Reccurent(this);
             }
 
-            Items.Add(TreeParent.GetTreeViewItem(e.Edge, true));
+            Items.Add(TreeParent.GetTreeViewItem(edge, true));
         }
 
 
@@ -225,7 +249,8 @@ namespace m0.UIWpf.Visualisers
         {
             if (!IsDisposed)
             {
-                ((IEdge)Tag).To.Change -= VertexChange;
+                ExecutionFlowHelper.RemoveGraphChangeListener(vertexChangeListenerEdge);
+
                 IsDisposed = true;
             }
         }
@@ -497,9 +522,9 @@ namespace m0.UIWpf.Visualisers
                 {
                     TreeViewItem tvi = new TreeViewItem();
                     i.Items.Add(tvi);
-                }                
+                }
 
-            e.To.Change += i.VertexChange;
+            i.vertexChangeListenerEdge = ExecutionFlowHelper.AddListener_DotNetDelegate(e.To, i.VertexChange);
 
             return i;
         }

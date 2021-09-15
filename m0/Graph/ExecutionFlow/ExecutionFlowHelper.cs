@@ -137,6 +137,11 @@ namespace m0.Graph.ExecutionFlow
             return listenerEdge;
         }
 
+        public static void RemoveGraphChangeListener(IEdge graphChangeListenerEdge)
+        {
+            GraphChangeTrigger.RemoveGraphChangeListener(graphChangeListenerEdge);
+        }
+
         public static void DecorateWithDotNetStaticMethod(IVertex baseVertex, string _typeName, string _methodName)
         {
             baseVertex.AddEdge(_is_meta, dotNetEndPoint_meta);
