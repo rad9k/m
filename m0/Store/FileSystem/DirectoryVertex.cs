@@ -90,7 +90,7 @@ namespace m0.Store.FileSystem
                 return base.AddEdge(metaVertex, FileVertex);
             }
 
-            UserInteractionUtil.ShowError("FileVertex.AddVertex", Identifier + " : can not create vertex here");
+            //UserInteractionUtil.ShowError("FileVertex.AddVertex", Identifier + " : can not create vertex here");
 
             return null;
         }
@@ -176,7 +176,7 @@ namespace m0.Store.FileSystem
         {
             if (GeneralUtil.CompareStrings(edge.Meta.Value,"File"))
             {
-                UserInteractionUtil.ShowError(Identifier + " file", "tried to delete");
+                UserInteractionUtil.ShowError(Identifier + " file", "tried to delete file");
                 return;// not sure if there will be not unwanted file deletion
 
                 FileInfo fi= new FileInfo(Identifier + "\\" + edge.To.Value);
@@ -186,7 +186,7 @@ namespace m0.Store.FileSystem
 
             if (GeneralUtil.CompareStrings(edge.Meta.Value, "Directory"))
             {
-                UserInteractionUtil.ShowError(Identifier + " directory", "tried to delete");
+                UserInteractionUtil.ShowError(Identifier + " directory", "tried to delete directory");
                 return;// not sure if there will be not unwanted file deletion
 
                 DirectoryInfo di = new DirectoryInfo(Identifier + "\\" + edge.To.Value);

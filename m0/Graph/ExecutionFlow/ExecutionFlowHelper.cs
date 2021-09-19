@@ -104,7 +104,8 @@ namespace m0.Graph.ExecutionFlow
         {
             IEdge listenerEdge = baseVertex.AddVertexAndReturnEdge(listener_meta, listenerName);
 
-            DecorateWithDotNetStaticMethod(listenerEdge.To, _typeName, _methodName);
+            if (listenerEdge != null)
+                DecorateWithDotNetStaticMethod(listenerEdge.To, _typeName, _methodName);
 
             return listenerEdge;
         }
@@ -118,7 +119,8 @@ namespace m0.Graph.ExecutionFlow
         {
             IEdge listenerEdge = baseVertex.AddVertexAndReturnEdge(listener_meta, listenerName);
 
-            DecorateWithDotNetDelegate(listenerEdge.To, _delegate);
+            if (listenerEdge != null)
+                DecorateWithDotNetDelegate(listenerEdge.To, _delegate);
 
             return listenerEdge;
         }
@@ -132,7 +134,8 @@ namespace m0.Graph.ExecutionFlow
         {
             IEdge listenerEdge = baseVertex.AddVertexAndReturnEdge(listener_meta, listenerName);
 
-            DecorateWithDelegate(listenerEdge.To, _object, _method);
+            if (listenerEdge != null)
+                DecorateWithDelegate(listenerEdge.To, _object, _method);
 
             return listenerEdge;
         }
