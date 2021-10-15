@@ -189,7 +189,13 @@ namespace m0.Graph
             foreach (IEdge e in OutEdges)
             {
                 //object key = e.Meta.Value;
-                object key = e.Meta.Value.ToString();
+                object key;
+
+                if (e.Meta == null)
+                    key = "";
+                else
+                    key = e.Meta.Value.ToString();
+
                 IEdge value = e;
 
                 if (_OutEdgesByMeta.ContainsKey(key))
