@@ -23,6 +23,8 @@ namespace m0.UIWpf.Visualisers
 {
     public class TreeVisualiserViewItem : TreeViewItem, IDisposable
     {
+        public bool doNotTrackGraphChanges = false;
+
         public IEdge vertexChangeListenerEdge;
 
         public static bool HideMetaNameIfEmpty = true;
@@ -126,7 +128,7 @@ namespace m0.UIWpf.Visualisers
                 TreeVisualiser.ClearAllItems_Reccurent(this);                
 
                 foreach (IEdge ee in ((IEdge)Tag).To)
-                    Items.Add(TreeParent.GetTreeViewItem(ee, true));                
+                    Items.Add(TreeParent.CreateTreeViewItem(ee, true, this));                
             }
 
             IsFilled = true;
@@ -239,7 +241,7 @@ namespace m0.UIWpf.Visualisers
                 TreeVisualiser.ClearAllItems_Reccurent(this);
             }
 
-            Items.Add(TreeParent.GetTreeViewItem(edge, true));
+            Items.Add(TreeParent.CreateTreeViewItem(edge, true, this));
         }
 
 
@@ -315,7 +317,7 @@ namespace m0.UIWpf.Visualisers
 
             if (bas != null)
                 foreach (IEdge e in bas)
-                    Items.Add(GetTreeViewItem(e, true));
+                    Items.Add(CreateTreeViewItem(e, true, null));
         }
 
         public void ZoomVisualiserContentChange()
@@ -497,8 +499,19 @@ namespace m0.UIWpf.Visualisers
                 ClearAllSelectedItems_Reccurent(ii);
         }
 
-        public TreeViewItem GetTreeViewItem(IEdge e, bool generateDeeperLevel){
+        public TreeViewItem CreateTreeViewItem(IEdge e, bool generateDeeperLevel, TreeViewItem parent){
             TreeVisualiserViewItem i = new TreeVisualiserViewItem();
+
+            if(parent is TreeVisualiserViewItem)
+            {
+                TreeVisualiserViewItem parent_tvvi = (TreeVisualiserViewItem)parent;
+
+                if (parent_tvvi.doNotTrackGraphChanges)
+                    i.doNotTrackGraphChanges = true;
+            }
+
+            if (GeneralUtil.CompareStrings(e.To.Value, "$GraphChangeTrigger"))
+                i.doNotTrackGraphChanges = true;
 
             i.TreeParent = this;
 
@@ -524,7 +537,8 @@ namespace m0.UIWpf.Visualisers
                     i.Items.Add(tvi);
                 }
 
-            i.vertexChangeListenerEdge = ExecutionFlowHelper.AddListener_DotNetDelegate(e.To, i.VertexChange);
+            if(!i.doNotTrackGraphChanges)
+                i.vertexChangeListenerEdge = ExecutionFlowHelper.AddListener_DotNetDelegate(e.To, i.VertexChange);
 
             return i;
         }
@@ -591,7 +605,7 @@ namespace m0.UIWpf.Visualisers
 
         private void EdgeAdded(IEdge edge)
         {         
-                Items.Add(GetTreeViewItem(edge, true));
+                Items.Add(CreateTreeViewItem(edge, true, null));
         }
 
         private IVertex _Vertex;
