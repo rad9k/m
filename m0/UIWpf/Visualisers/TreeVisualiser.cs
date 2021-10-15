@@ -125,7 +125,7 @@ namespace m0.UIWpf.Visualisers
         {
             TreeVisualiser.ClearAllItems_Reccurent(this);
 
-            IEnumerable<IEdge> filteredList = VisualiserHelper.FilterEdges(((IEdge)Tag).To, ParentVisualiser.Vertex);
+            IEnumerable<IEdge> filteredList = VisualiserUtil.FilterEdges(((IEdge)Tag).To, ParentVisualiser.Vertex);
 
             foreach (IEdge ee in filteredList)
                 Items.Add(ParentVisualiser.CreateTreeViewItem(ee, true, this));
@@ -320,8 +320,12 @@ namespace m0.UIWpf.Visualisers
             IVertex bas = Vertex.Get(false, @"BaseEdge:\To:");
 
             if (bas != null)
-                foreach (IEdge e in bas)
+            {
+                IEnumerable<IEdge> filteredList = VisualiserUtil.FilterEdges(bas, Vertex);
+
+                foreach (IEdge e in filteredList)
                     Items.Add(CreateTreeViewItem(e, true, null));
+            }
         }
 
         public void ZoomVisualiserContentChange()

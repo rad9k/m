@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace m0.UIWpf.Visualisers.Helper
 {
-    public class VisualiserHelper
+    public class VisualiserUtil
     {
         public static IEnumerable<IEdge> FilterEdges(IEnumerable<IEdge> toFilterEdges, IVertex visualiserVertex)
         {
