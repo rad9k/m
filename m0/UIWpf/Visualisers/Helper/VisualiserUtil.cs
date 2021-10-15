@@ -23,11 +23,11 @@ namespace m0.UIWpf.Visualisers.Helper
 
         public static bool FilterEdge(IEdge toFilterEdge, IVertex visualiserVertex)
         {
-            if (GraphUtil.ExistQueryOut(toFilterEdge.Meta, "$Hide", null))
-                return false;
+           // if (GraphUtil.ExistQueryOut(toFilterEdge.Meta, "$Hide", null))
+           //     return false;
 
-            if (GraphUtil.ExistQueryOut(toFilterEdge.To, "$Hide", null))
-                return false;
+           // if (GraphUtil.ExistQueryOut(toFilterEdge.To, "$Hide", null))
+           //     return false;
 
             return true;
         }
