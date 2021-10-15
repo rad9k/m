@@ -43,16 +43,18 @@ namespace m0.Graph.ExecutionFlow
             IList<string> scopeQueries,
             IList<GraphChangeFilterEnum> changeTypeFilter,
             string triggerVertexName, 
-            ExecutionFlowHelper.DotNetDelegate _delegate, 
-            string listenerName)
+            ExecutionFlowHelper.DotNetDelegate _delegate)
         {
             IEdge graphChangeTriggerEdge = GraphChangeTrigger.AddGraphChangeTrigger(baseVertex, 
                 scopeQueries, 
                 changeTypeFilter, 
                 triggerVertexName);
 
-            return ExecutionFlowHelper.AddListener_DotNetDelegate(graphChangeTriggerEdge.To, _delegate, listenerName);
-        }
+            if (graphChangeTriggerEdge == null)
+                return null;
+
+            return ExecutionFlowHelper.AddListener_DotNetDelegate(graphChangeTriggerEdge.To, _delegate, "Listener");
+        }        
 
         public static IEdge AddGraphChangeTrigger(IVertex baseVertex, 
             IList<string> scopeQueries, 
@@ -79,6 +81,10 @@ namespace m0.Graph.ExecutionFlow
             if (triggerEdge == null)
             {
                 triggerEdge = VertexOperations.AddInstanceAndReturnEdge(baseVertex, graphChangeTrigger_meta);
+
+                if (triggerEdge == null)
+                    return null;
+
                 triggerEdge.To.Value = triggerVertexName;
             }
 

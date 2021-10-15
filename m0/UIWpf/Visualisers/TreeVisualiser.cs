@@ -35,14 +35,14 @@ namespace m0.UIWpf.Visualisers
         {
             IsSelected = true;
 
-            TreeParent.UpdateSelectedVertices(IsCtrl, this);
+            ParentVisualiser.UpdateSelectedVertices(IsCtrl, this);
         }
 
         private void Unselect(bool IsCtrl)
         {
             IsSelected = false;
 
-            TreeParent.UpdateSelectedVertices(IsCtrl, this);
+            ParentVisualiser.UpdateSelectedVertices(IsCtrl, this);
         }
 
         private bool _IsSelected;
@@ -86,7 +86,7 @@ namespace m0.UIWpf.Visualisers
              }                        
         }
 
-        public TreeVisualiser TreeParent {get; set;}
+        public TreeVisualiser ParentVisualiser {get; set;}
 
         protected override void OnMouseDown(MouseButtonEventArgs e)
         {
@@ -109,7 +109,7 @@ namespace m0.UIWpf.Visualisers
             bool WasSelected = IsSelected;            
 
             if (!IsCtrl)            
-                TreeParent.ClearAllSelectedItems();
+                ParentVisualiser.ClearAllSelectedItems();
 
             if (WasSelected)
                 Unselect(IsCtrl);
@@ -121,19 +121,22 @@ namespace m0.UIWpf.Visualisers
             //base.OnMouseLeftButtonDown(a);
         }        
 
+        void Fill()
+        {
+            TreeVisualiser.ClearAllItems_Reccurent(this);
+
+            IEnumerable<IEdge> filteredList = VisualiserHelper.FilterEdges(((IEdge)Tag).To, ParentVisualiser.Vertex);
+
+            foreach (IEdge ee in filteredList)
+                Items.Add(ParentVisualiser.CreateTreeViewItem(ee, true, this));
+        }
+
         protected override void OnExpanded(RoutedEventArgs ea)
-        {         
-            if(IsFilled==false)            
-            {
-                TreeVisualiser.ClearAllItems_Reccurent(this);                
+        {
+            if (IsFilled == false)
+                Fill();
 
-                foreach (IEdge ee in ((IEdge)Tag).To)
-                    Items.Add(TreeParent.CreateTreeViewItem(ee, true, this));                
-            }
-
-            IsFilled = true;
-            
-            //base.OnExpanded(ea);
+            IsFilled = true;                        
         }
 
         public void UpdateHeader(){
@@ -187,7 +190,7 @@ namespace m0.UIWpf.Visualisers
 
         public INoInEdgeInOutVertexVertex VertexChange(IExecution exe)
         {
-            if (TreeParent.VisualiserHelper.IsDisposed)
+            if (ParentVisualiser.VisualiserHelper.IsDisposed)
                 return exe.Stack;
 
             IVertex edgeVertex = exe.Stack.Get(false, @"event:\Edge:");
@@ -212,7 +215,8 @@ namespace m0.UIWpf.Visualisers
 
                     if (GraphUtil.GetValueAndCompareStrings(eventType, "OutputEdgeDisposed"))
                     {
-                        EdgeRemoved(Edge.CreateIEdgeFromEdgeVertex(edgeVertex));
+                        //EdgeDisposed(Edge.CreateIEdgeFromEdgeVertex(edgeVertex));
+                        Fill(); 
                         return exe.Stack;
                     }
                     
@@ -226,22 +230,21 @@ namespace m0.UIWpf.Visualisers
 
         private void EdgeRemoved(IEdge edge)
         {
-            if (IsFilled){
-                IList l=GeneralUtil.CreateAndCopyList(Items);
+            if (IsFilled)
+            {
+                IList l = GeneralUtil.CreateAndCopyList(Items);
                 foreach (TreeVisualiserViewItem i in l)
-                    if (((IEdge)i.Tag) == edge)
+                    if (Edge.CompareIEdges(((IEdge)i.Tag), edge))
                         Items.Remove(i);
-                }
+            }
         }
 
         private void EdgeAdded(IEdge edge)
         {
-            if (!IsFilled)
-            {            
-                TreeVisualiser.ClearAllItems_Reccurent(this);
-            }
+            if (!IsFilled)                        
+                TreeVisualiser.ClearAllItems_Reccurent(this);            
 
-            Items.Add(TreeParent.CreateTreeViewItem(edge, true, this));
+            Items.Add(ParentVisualiser.CreateTreeViewItem(edge, true, this));
         }
 
 
@@ -251,7 +254,8 @@ namespace m0.UIWpf.Visualisers
         {
             if (!IsDisposed)
             {
-                ExecutionFlowHelper.RemoveGraphChangeListener(vertexChangeListenerEdge);
+                if(vertexChangeListenerEdge != null)
+                    ExecutionFlowHelper.RemoveGraphChangeListener(vertexChangeListenerEdge);
 
                 IsDisposed = true;
             }
@@ -510,10 +514,10 @@ namespace m0.UIWpf.Visualisers
                     i.doNotTrackGraphChanges = true;
             }
 
-            if (GeneralUtil.CompareStrings(e.To.Value, "$GraphChangeTrigger"))
+            if (e.Meta != null && GeneralUtil.CompareStrings(e.Meta.Value, "$GraphChangeTrigger"))
                 i.doNotTrackGraphChanges = true;
 
-            i.TreeParent = this;
+            i.ParentVisualiser = this;
 
             i.Tag = e;
 
@@ -537,8 +541,16 @@ namespace m0.UIWpf.Visualisers
                     i.Items.Add(tvi);
                 }
 
-            if(!i.doNotTrackGraphChanges)
-                i.vertexChangeListenerEdge = ExecutionFlowHelper.AddListener_DotNetDelegate(e.To, i.VertexChange);
+            if (!i.doNotTrackGraphChanges)
+                i.vertexChangeListenerEdge = GraphChangeTrigger.AddEventTriggerAndListener(e.To,
+                    new List<string> { },
+                    new List<GraphChangeFilterEnum> {GraphChangeFilterEnum.ValueChange,
+                     GraphChangeFilterEnum.OutputEdgeAdded,
+                     GraphChangeFilterEnum.OutputEdgeRemoved,
+                     GraphChangeFilterEnum.OutputEdgeDisposed},
+                     "TreeViewItem",
+                     i.VertexChange);
+                //i.vertexChangeListenerEdge = ExecutionFlowHelper.AddListener_DotNetDelegate(e.To, i.VertexChange);
 
             return i;
         }

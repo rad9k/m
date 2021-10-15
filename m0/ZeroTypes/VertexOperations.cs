@@ -270,6 +270,9 @@ namespace m0.ZeroTypes
             else
                 ne = MinusZero.Instance.CreateTempEdge();
 
+            if (ne == null)
+                return null;
+
             nv = ne.To;
 
             if (MinusZero.Instance.Root.Store.DetachState == DetachStateEnum.Attached && !GeneralUtil.CompareStrings(metaVertex.Value, "$Empty")) // XXX WTF?????

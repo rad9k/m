@@ -169,8 +169,7 @@ namespace m0.UIWpf.Visualisers
                      GraphChangeFilterEnum.OutputEdgeRemoved,
                      GraphChangeFilterEnum.OutputEdgeDisposed},
                     "BasicTrigger", 
-                    VertexChange, 
-                    "GraphVisualiserItem");                           
+                    VertexChange);                           
         }
 
         protected INoInEdgeInOutVertexVertex VertexChange(IExecution exe)
