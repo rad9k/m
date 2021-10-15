@@ -448,7 +448,7 @@ namespace m0.Graph
         private static IDictionary<String, IVertex> QueryParseChache_metaMode = new Dictionary<String, IVertex>();        
 
         public override void Dispose()
-        {
+        {            
             DisposedState = DisposeStateEnum.Disposing;
 
             ChangeRemoveAllHandlers();
@@ -738,7 +738,7 @@ namespace m0.Graph
         {
             VertexInit_First();
 
-            _Identifier = Store.VertexIdentifierCount++;
+            _Identifier = Store.VertexIdentifierCount++;            
 
             Store.StoreVertexIdentifier(this);
         }

@@ -68,6 +68,7 @@ namespace m0.Graph
             ToStoreTypeName = To.Store.TypeName;
 
             ToIdentifier = To.Identifier;
+            
 
             if (Meta != null)
             {

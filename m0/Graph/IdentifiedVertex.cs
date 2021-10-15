@@ -15,7 +15,11 @@ namespace m0.Graph
         }
 
         public IdentifiedVertex(IStore store) : base(store) {
-            _Identifier = this.GetHashCode().ToString();
+            VertexInit();
+
+            _Identifier = this.GetHashCode().ToString();            
+
+            Store.StoreVertexIdentifier(this);
         }
 
         public IdentifiedVertex(string identifier,IStore store):base(store)
