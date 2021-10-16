@@ -203,13 +203,15 @@ namespace m0.UIWpf.Visualisers
                 {
                     if (GraphUtil.GetValueAndCompareStrings(eventType, "OutputEdgeAdded"))
                     {
-                        EdgeAdded(Edge.CreateIEdgeFromEdgeVertex(edgeVertex));
+                        //EdgeAdded(Edge.CreateIEdgeFromEdgeVertex(edgeVertex));
+                        Fill();
                         return exe.Stack;
                     }
 
                     if (GraphUtil.GetValueAndCompareStrings(eventType, "OutputEdgeRemoved"))
                     {
-                        EdgeRemoved(Edge.CreateIEdgeFromEdgeVertex(edgeVertex));
+                        //EdgeRemoved(Edge.CreateIEdgeFromEdgeVertex(edgeVertex));
+                        Fill();
                         return exe.Stack;
                     }
 
