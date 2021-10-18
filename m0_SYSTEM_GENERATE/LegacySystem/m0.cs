@@ -2664,6 +2664,7 @@ namespace m0
                 + ",Class:Delegate{Attribute:Object{$MinCardinality:1,$MaxCardinality:1},Attribute:Method{$MinCardinality:1,$MaxCardinality:1}}"
                 + ",Class:DotNetStaticMethod{Attribute:DotNetTypeName{$MinCardinality:1,$MaxCardinality:1},Attribute:DotNetMethodName{$MinCardinality:1,$MaxCardinality:1}}"
                 + ",Class:DotNetDelegate{Attribute:DotNetDelegatePointer{$MinCardinality:1,$MaxCardinality:1}}"
+                + ",Class:$VertexEval"
                 + "}");
 
             LegacySystem.Graph.EasyVertex.Get(smz, false, @"ExecutionFlow\GraphChangeEnum").AddEdge(
@@ -2772,14 +2773,6 @@ namespace m0
               LegacySystem.Graph.EasyVertex.Get(smz, false, "*$EdgeTarget"),
               LegacySystem.Graph.EasyVertex.Get(smz, false, @"ExecutionFlow\Event"));
 
-            LegacySystem.Graph.EasyVertex.Get(smz, false, @"ExecutionFlow\EventTrigger\Fire\event").AddVertex(
-              LegacySystem.Graph.EasyVertex.Get(smz, false, "*$MinCardinality"),
-              "0");
-
-            LegacySystem.Graph.EasyVertex.Get(smz, false, @"ExecutionFlow\EventTrigger\Fire\event").AddVertex(
-              LegacySystem.Graph.EasyVertex.Get(smz, false, "*$MaxCardinality"),
-              "-1");
-
             LegacySystem.Graph.EasyVertex.Get(smz, false, @"ExecutionFlow").AddVertex(
                  LegacySystem.Graph.EasyVertex.Get(smuml, false, @"Function"),
                  "GenericEventHandler");
@@ -2799,6 +2792,126 @@ namespace m0
             LegacySystem.Graph.EasyVertex.Get(smz, false, @"ExecutionFlow\GenericEventHandler\event").AddVertex(
               LegacySystem.Graph.EasyVertex.Get(smz, false, "*$MaxCardinality"),
               "-1");
+
+            // object GetValue
+
+            LegacySystem.Graph.EasyVertex.Get(smz, false, @"ExecutionFlow\$VertexEval").AddVertex(
+                LegacySystem.Graph.EasyVertex.Get(smuml, false, @"Class\Method"),
+                "GetValue");
+
+            LegacySystem.Graph.EasyVertex.Get(smz, false, @"ExecutionFlow\$VertexEval\GetValue").AddVertex(
+                LegacySystem.Graph.EasyVertex.Get(smuml, false, @"Class\Method\Output"),
+                "");
+
+            LegacySystem.Graph.EasyVertex.Get(smz, false, @"ExecutionFlow\$VertexEval\GetValue\Output:").AddEdge(
+              LegacySystem.Graph.EasyVertex.Get(smz, false, "*$VertexTarget"),
+              LegacySystem.Graph.EasyVertex.Get(smz, false, @"VertexType"));
+
+            // SetValue(object value)
+
+            LegacySystem.Graph.EasyVertex.Get(smz, false, @"ExecutionFlow\$VertexEval").AddVertex(
+                LegacySystem.Graph.EasyVertex.Get(smuml, false, @"Class\Method"),
+                "SetValue");
+
+            LegacySystem.Graph.EasyVertex.Get(smz, false, @"ExecutionFlow\$VertexEval\SetValue").AddVertex(
+                LegacySystem.Graph.EasyVertex.Get(smuml, false, @"Class\Method\InputParameter"),
+                "value");
+
+            LegacySystem.Graph.EasyVertex.Get(smz, false, @"ExecutionFlow\$VertexEval\SetValue\value").AddEdge(
+              LegacySystem.Graph.EasyVertex.Get(smz, false, "*$EdgeTarget"),
+              LegacySystem.Graph.EasyVertex.Get(smz, false, @"VertexType"));
+
+            // IList<IEdge> GetOutEdges
+
+            LegacySystem.Graph.EasyVertex.Get(smz, false, @"ExecutionFlow\$VertexEval").AddVertex(
+                LegacySystem.Graph.EasyVertex.Get(smuml, false, @"Class\Method"),
+                "GetOutEdges");
+
+            LegacySystem.Graph.EasyVertex.Get(smz, false, @"ExecutionFlow\$VertexEval\GetOutEdges").AddVertex(
+                LegacySystem.Graph.EasyVertex.Get(smuml, false, @"Class\Method\Output"),
+                "");
+
+            LegacySystem.Graph.EasyVertex.Get(smz, false, @"ExecutionFlow\$VertexEval\GetOutEdges\Output:").AddEdge(
+              LegacySystem.Graph.EasyVertex.Get(smz, false, "*$VertexTarget"),
+              LegacySystem.Graph.EasyVertex.Get(smz, false, @"VertexType"));
+
+            // IList<IEdge> GetInEdges
+
+            LegacySystem.Graph.EasyVertex.Get(smz, false, @"ExecutionFlow\$VertexEval").AddVertex(
+                LegacySystem.Graph.EasyVertex.Get(smuml, false, @"Class\Method"),
+                "GetInEdges");
+
+            LegacySystem.Graph.EasyVertex.Get(smz, false, @"ExecutionFlow\$VertexEval\GetInEdges").AddVertex(
+                LegacySystem.Graph.EasyVertex.Get(smuml, false, @"Class\Method\Output"),
+                "");
+
+            LegacySystem.Graph.EasyVertex.Get(smz, false, @"ExecutionFlow\$VertexEval\GetInEdges\Output:").AddEdge(
+              LegacySystem.Graph.EasyVertex.Get(smz, false, "*$VertexTarget"),
+              LegacySystem.Graph.EasyVertex.Get(smz, false, @"VertexType"));
+
+            // IEdge AddVertexAndReturnEdge(IVertex metaVertex, object val)
+
+            LegacySystem.Graph.EasyVertex.Get(smz, false, @"ExecutionFlow\$VertexEval").AddVertex(
+                LegacySystem.Graph.EasyVertex.Get(smuml, false, @"Class\Method"),
+                "AddVertexAndReturnEdge");
+
+            LegacySystem.Graph.EasyVertex.Get(smz, false, @"ExecutionFlow\$VertexEval\AddVertexAndReturnEdge").AddVertex(
+                LegacySystem.Graph.EasyVertex.Get(smuml, false, @"Class\Method\InputParameter"),
+                "metaVertex");
+
+            LegacySystem.Graph.EasyVertex.Get(smz, false, @"ExecutionFlow\$VertexEval\AddVertexAndReturnEdge\metaVertex").AddEdge(
+              LegacySystem.Graph.EasyVertex.Get(smz, false, "*$EdgeTarget"),
+              LegacySystem.Graph.EasyVertex.Get(smz, false, @"VertexType"));
+
+            LegacySystem.Graph.EasyVertex.Get(smz, false, @"ExecutionFlow\$VertexEval\AddVertexAndReturnEdge").AddVertex(
+                LegacySystem.Graph.EasyVertex.Get(smuml, false, @"Class\Method\InputParameter"),
+                "val");
+
+            LegacySystem.Graph.EasyVertex.Get(smz, false, @"ExecutionFlow\$VertexEval\AddVertexAndReturnEdge\val").AddEdge(
+              LegacySystem.Graph.EasyVertex.Get(smz, false, "*$EdgeTarget"),
+              LegacySystem.Graph.EasyVertex.Get(smz, false, @"VertexType"));
+
+            // IEdge AddEdge(IVertex metaVertex, IVertex destVertex)
+
+            LegacySystem.Graph.EasyVertex.Get(smz, false, @"ExecutionFlow\$VertexEval").AddVertex(
+                LegacySystem.Graph.EasyVertex.Get(smuml, false, @"Class\Method"),
+                "AddEdge");
+
+            LegacySystem.Graph.EasyVertex.Get(smz, false, @"ExecutionFlow\$VertexEval\AddEdge").AddVertex(
+                LegacySystem.Graph.EasyVertex.Get(smuml, false, @"Class\Method\InputParameter"),
+                "metaVertex");
+
+            LegacySystem.Graph.EasyVertex.Get(smz, false, @"ExecutionFlow\$VertexEval\AddEdge\metaVertex").AddEdge(
+              LegacySystem.Graph.EasyVertex.Get(smz, false, "*$EdgeTarget"),
+              LegacySystem.Graph.EasyVertex.Get(smz, false, @"VertexType"));
+
+            LegacySystem.Graph.EasyVertex.Get(smz, false, @"ExecutionFlow\$VertexEval\AddEdge").AddVertex(
+                LegacySystem.Graph.EasyVertex.Get(smuml, false, @"Class\Method\InputParameter"),
+                "destVertex");
+
+            LegacySystem.Graph.EasyVertex.Get(smz, false, @"ExecutionFlow\$VertexEval\AddEdge\destVertex").AddEdge(
+              LegacySystem.Graph.EasyVertex.Get(smz, false, "*$EdgeTarget"),
+              LegacySystem.Graph.EasyVertex.Get(smz, false, @"VertexType"));
+
+            // void DeleteEdge(IEdge edge)
+
+            LegacySystem.Graph.EasyVertex.Get(smz, false, @"ExecutionFlow\$VertexEval").AddVertex(
+                LegacySystem.Graph.EasyVertex.Get(smuml, false, @"Class\Method"),
+                "DeleteEdge");
+
+            LegacySystem.Graph.EasyVertex.Get(smz, false, @"ExecutionFlow\$VertexEval\DeleteEdge").AddVertex(
+                LegacySystem.Graph.EasyVertex.Get(smuml, false, @"Class\Method\InputParameter"),
+                "edge");
+
+            LegacySystem.Graph.EasyVertex.Get(smz, false, @"ExecutionFlow\$VertexEval\DeleteEdge\edge").AddEdge(
+              LegacySystem.Graph.EasyVertex.Get(smz, false, "*$EdgeTarget"),
+              LegacySystem.Graph.EasyVertex.Get(smz, false, @"VertexType"));
+
+            // Execute()
+
+            LegacySystem.Graph.EasyVertex.Get(smz, false, @"ExecutionFlow\$VertexEval").AddVertex(
+                LegacySystem.Graph.EasyVertex.Get(smuml, false, @"Class\Method"),
+                "Execute");
         }
 
         void CreateSystemMetaVisualiserDiagram()
