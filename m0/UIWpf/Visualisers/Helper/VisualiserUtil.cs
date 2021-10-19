@@ -26,9 +26,6 @@ namespace m0.UIWpf.Visualisers.Helper
             if (GraphUtil.ExistQueryOut(toFilterEdge.Meta, "$Hide", null))
                 return false;
 
-            if (GraphUtil.ExistQueryOut(toFilterEdge.To, "$Hide", null))
-                return false;
-
             return true;
         }
     }
