@@ -1,5 +1,6 @@
 ﻿using m0.Foundation;
 using m0.Graph;
+using m0.Util;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -23,6 +24,9 @@ namespace m0.UIWpf.Visualisers.Helper
 
         public static bool FilterEdge(IEdge toFilterEdge, IVertex visualiserVertex)
         {
+            if (GeneralUtil.CompareStrings(toFilterEdge.Meta, "$Is")) // HACK!
+                return true;
+
             if (GraphUtil.ExistQueryOut(toFilterEdge.Meta, "$Hide", null))
                 return false;
 

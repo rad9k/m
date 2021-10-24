@@ -15,11 +15,16 @@ using m0.UIWpf.Controls;
 using m0.UIWpf.Commands;
 using System.Windows;
 using System.Windows.Media.Imaging;
+using m0.UIWpf.Visualisers.Helper;
 
 namespace m0.UIWpf.Visualisers
 {
-    public class VertexVisualiser : Grid, IPlatformClass, IDisposable, IHasLocalizableEdges
+    public class VertexVisualiser : Grid, IVisualiser
     {
+        public AtomVisualiserHelper VisualiserHelper { get; set; }
+
+        public List<IDisposable> SubVisualisers { get; set; }
+
         TextBlock TextBlock;
 
         Button Button;
@@ -118,36 +123,34 @@ namespace m0.UIWpf.Visualisers
 
             ButtonSetUp();
 
-            if (mz != null && mz.IsInitialized)
-            {
-                Vertex = mz.CreateTempVertex();
+            new AtomVisualiserHelper(MinusZero.Instance.Root.Get(false, @"System\Meta\Visualiser\Vertex"),
+                this,
+                "VertexVisualiser",
+                this,
+                false,
+                new List<string> { @"BaseEdge:\To:" },
+                "Visualiser",
+                baseEdgeVertex,
+                UpdateBaseEdgeCallSchemeEnum.OmmitSecond);
 
-                Vertex.Value = "VertexVisualiser" + this.GetHashCode();
+            TextBlock.PreviewMouseLeftButtonDown += dndPreviewMouseLeftButtonDown;
+            TextBlock.PreviewMouseMove += dndPreviewMouseMove;
+            TextBlock.Drop += dndDrop;
+            TextBlock.AllowDrop = true;
 
-                ClassVertex.AddIsClassAndAllAttributesAndAssociations(Vertex, mz.Root.Get(false, @"System\Meta\Visualiser\Vertex"));
+            TextBlock.MouseEnter += dndMouseEnter;
 
-                ClassVertex.AddIsClassAndAllAttributesAndAssociations(Vertex.Get(false, "BaseEdge:"), mz.Root.Get(false, @"System\Meta\ZeroTypes\Edge"));
-
-                TextBlock.Background = (Brush)FindResource("0LightGrayBrush");
-
-                TextBlock.Loaded += new RoutedEventHandler(OnLoad);
-
-                TextBlock.PreviewMouseLeftButtonDown += dndPreviewMouseLeftButtonDown;
-                TextBlock.PreviewMouseMove += dndPreviewMouseMove;
-                TextBlock.Drop += dndDrop;
-                TextBlock.AllowDrop = true;
-
-                TextBlock.MouseEnter += dndMouseEnter;
-            }
+            TextBlock.Background = (Brush)FindResource("0LightGrayBrush");            
         }
 
-        void OnLoad(object sender, RoutedEventArgs e)
+        public void OnLoad(object sender, RoutedEventArgs e)
         {
-            if (!WpfUtil.HasParentsGotContextMenu(this))
-                this.ContextMenu = new m0ContextMenu(this);
+            VisualiserHelper.AddContextMenu();
         }
 
-        private void UpdateBaseEdge()
+        public void ZoomVisualiserContentChange() { }
+
+        public void UpdateBaseEdge()
         {
             IVertex bv = Vertex.Get(false, @"BaseEdge:\To:");
 
@@ -172,49 +175,15 @@ namespace m0.UIWpf.Visualisers
                 }
         }
 
-        protected void VertexChange(object sender, VertexChangeEventArgs e)
-        {
-            UpdateBaseEdge();
-
-            /*if ((sender == Vertex) && (e.Type == VertexChangeType.EdgeAdded) && (GeneralUtil.CompareStrings(e.Edge.Meta.Value, "BaseEdge")))
-                UpdateBaseEdge();
-
-            if ((sender == Vertex.Get(false, "BaseEdge:")) && (e.Type == VertexChangeType.EdgeAdded) && (GeneralUtil.CompareStrings(e.Edge.Meta.Value, "To"))
-                || (sender == Vertex.Get(false, "BaseEdge:")) && (e.Type == VertexChangeType.EdgeRemoved) && (GeneralUtil.CompareStrings(e.Edge.Meta.Value, "To"))
-                || (sender == Vertex.Get(false, @"BaseEdge:\To:") && e.Type == VertexChangeType.ValueChanged))
-                UpdateBaseEdge();*/
-        }
-
-        private IVertex _Vertex;
-
         public IVertex Vertex
         {
-            get { return _Vertex; }
-            set
-            {
-                if (_Vertex != null)
-                    PlatformClass.RemoveVertexChangeListeners(this.Vertex, new VertexChange(VertexChange));
-
-                _Vertex = value;
-
-                PlatformClass.RegisterVertexChangeListeners(this.Vertex, new VertexChange(VertexChange), new string[] { "BaseEdge", "SelectedEdges" });
-
-                UpdateBaseEdge();
-            }
+            get { return VisualiserHelper.Vertex; }
+            set { VisualiserHelper.SetVertex(value); }
         }
-
-        bool IsDisposed = false;
 
         public void Dispose()
         {
-            if (IsDisposed == false)
-            {
-                IsDisposed = true;
-                PlatformClass.RemoveVertexChangeListeners(this.Vertex, new VertexChange(VertexChange));
-
-                if (Vertex is IDisposable)
-                    ((IDisposable)Vertex).Dispose();
-            }
+            VisualiserHelper.Dispose();
         }
 
         public IVertex GetEdgeByLocation(System.Windows.Point point)

@@ -10,6 +10,7 @@ using m0.Graph;
 using m0.ZeroTypes;
 using m0.Util;
 using m0.Graph.ExecutionFlow;
+using m0.UIWpf.Visualisers.Helper;
 
 namespace m0.UIWpf
 {
@@ -81,7 +82,15 @@ namespace m0.UIWpf
             //    ExecutionFlowHelper.CommitTransaction();
             ////////////////////////////////////////
 
-            _this.Content = pc;            
+            _this.Content = pc;
+
+            if (pc is FrameworkElement)
+            {
+                IVisualiser vis = WpfUtil.GetParentVisualiser((FrameworkElement)pc);
+
+                if (vis != null)
+                    vis.SubVisualisers.Add((IDisposable)pc);
+            }
         }
 
         bool IsDisposed = false;

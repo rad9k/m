@@ -12,6 +12,7 @@ namespace m0.Graph.ExecutionFlow
     public class GraphChangeTrigger
     {
         static IVertex graphChangeTrigger_meta;
+        static IVertex graphChangeTrigger_type;
         static IVertex scopeQuery_meta;
         static IVertex changeTypeFilter_meta;
         static IVertex graphChangeFilterEnum_NoBaseVertex_meta;
@@ -26,9 +27,10 @@ namespace m0.Graph.ExecutionFlow
         {
             IVertex r = m0.MinusZero.Instance.root;
 
-            graphChangeTrigger_meta = r.Get(false, @"System\Meta\ZeroTypes\ExecutionFlow\$GraphChangeTrigger");
-            scopeQuery_meta = r.Get(false, @"System\Meta\ZeroTypes\ExecutionFlow\$GraphChangeTrigger\ScopeQuery");
-            changeTypeFilter_meta = r.Get(false, @"System\Meta\ZeroTypes\ExecutionFlow\$GraphChangeTrigger\ChangeTypeFilter");
+            graphChangeTrigger_meta = r.Get(false, @"System\Meta\Base\Vertex\$GraphChangeTrigger");
+            graphChangeTrigger_type = r.Get(false, @"System\Meta\ZeroTypes\ExecutionFlow\GraphChangeTrigger");
+            scopeQuery_meta = r.Get(false, @"System\Meta\ZeroTypes\ExecutionFlow\GraphChangeTrigger\ScopeQuery");
+            changeTypeFilter_meta = r.Get(false, @"System\Meta\ZeroTypes\ExecutionFlow\GraphChangeTrigger\ChangeTypeFilter");
 
             graphChangeFilterEnum_NoBaseVertex_meta = r.Get(false, @"System\Meta\ZeroTypes\ExecutionFlow\GraphChangeFilterEnum\NoBaseVertex");
             graphChangeFilterEnum_ValueChange_meta = r.Get(false, @"System\Meta\ZeroTypes\ExecutionFlow\GraphChangeFilterEnum\ValueChange");
@@ -80,7 +82,7 @@ namespace m0.Graph.ExecutionFlow
 
             if (triggerEdge == null)
             {
-                triggerEdge = VertexOperations.AddInstanceAndReturnEdge(baseVertex, graphChangeTrigger_meta);
+                triggerEdge = VertexOperations.AddInstanceAndReturnEdge(baseVertex, graphChangeTrigger_type, graphChangeTrigger_meta);
 
                 if (triggerEdge == null)
                     return null;
