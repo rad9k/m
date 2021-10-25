@@ -65,12 +65,15 @@ namespace m0.UIWpf.Visualisers.Helper
             listVisualiser = (IListVisualiser)_visualiser;
         }
 
-        public delegate void CustomVertexChangeHandler(IExecution exe);
+        public delegate INoInEdgeInOutVertexVertex CustomVertexChangeHandler(IExecution exe);
 
         public event CustomVertexChangeHandler CustomVertexChangeEvent;
 
         protected override INoInEdgeInOutVertexVertex VertexChange(IExecution exe)
         {
+            if (CustomVertexChangeEvent != null)
+                return CustomVertexChangeEvent(exe);
+
             IVertex changedVertex = exe.Stack.Get(false, @"event:\ChangedVertex:");
 
             if (changedVertex != null)

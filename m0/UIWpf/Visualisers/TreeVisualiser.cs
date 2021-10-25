@@ -340,7 +340,7 @@ namespace m0.UIWpf.Visualisers
                 this.LayoutTransform = null;
         }
 
-        protected void CustomVertexChange(IExecution exe)
+        protected INoInEdgeInOutVertexVertex CustomVertexChange(IExecution exe)
         {
             IVertex changedVertex = exe.Stack.Get(false, @"event:\ChangedVertex:");
 
@@ -349,14 +349,14 @@ namespace m0.UIWpf.Visualisers
                 if (GraphUtil.ExistQueryIn(changedVertex, "ZoomVisualiserContent", null))
                 {
                     ZoomVisualiserContentChange();
-                    return;
+                    return exe.Stack;
                 }
 
                 if (GraphUtil.ExistQueryIn(changedVertex, "SelectedEdges", null))
                 {
                     SelectedVerticesUpdated();
 
-                    return;
+                    return exe.Stack;
                 }
             }
 
@@ -374,25 +374,27 @@ namespace m0.UIWpf.Visualisers
                         if (GraphUtil.GetValueAndCompareStrings(eventType, "OutputEdgeAdded"))
                         {
                             EdgeAdded(Edge.CreateIEdgeFromEdgeVertex(edgeVertex));
-                            return;
+                            return exe.Stack;
                         }
 
                         if (GraphUtil.GetValueAndCompareStrings(eventType, "OutputEdgeRemoved"))
                         {
                             EdgeRemoved(Edge.CreateIEdgeFromEdgeVertex(edgeVertex));
-                            return;
+                            return exe.Stack;
                         }
 
                         if (GraphUtil.GetValueAndCompareStrings(eventType, "OutputEdgeDisposed"))
                         {
                             EdgeRemoved(Edge.CreateIEdgeFromEdgeVertex(edgeVertex));
-                            return;
+                            return exe.Stack;
                         }
                     }
                 }
             }
            
             UpdateBaseEdge();
+
+            return exe.Stack;
         }
 
         public void SelectedVerticesUpdated()

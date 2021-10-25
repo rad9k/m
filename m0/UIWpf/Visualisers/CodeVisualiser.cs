@@ -21,50 +21,49 @@ using System.Windows.Threading;
 using ICSharpCode.AvalonEdit.Highlighting;
 using System.IO;
 using System.Xml;
+using m0.UIWpf.Visualisers.Helper;
 
 namespace m0.UIWpf.Visualisers
 {
-    public class CodeVisualiser : TextEditor, IPlatformClass, IDisposable, IHasLocalizableEdges, IOwnScrolling
+    public class CodeVisualiser : TextEditor, IListVisualiser, IOwnScrolling
     {
+        public AtomVisualiserHelper VisualiserHelper { get; set; }
+
+        public List<IDisposable> SubVisualisers { get; set; }
+
         IList<string> TextMemory;
 
-        public CodeVisualiser()
+        public CodeVisualiser(IVertex baseEdgeVertex)
         {
-            MinusZero mz = MinusZero.Instance;
+            new ListVisualiserHelper(MinusZero.Instance.Root.Get(false, @"System\Meta\Visualiser\Code"),
+                this,
+                "CodeVisualiser",
+                this,
+                false,
+                new List<string> { @"", @"BaseEdge:\To:" },
+                "AtomVisualiserFull",
+                baseEdgeVertex,
+                UpdateBaseEdgeCallSchemeEnum.OmmitSecond);
 
-            if (mz != null && mz.IsInitialized)
-            {
-                Vertex = mz.CreateTempVertex();
+            ((ListVisualiserHelper)VisualiserHelper).CustomVertexChangeEvent += CustomVertexChange;
 
-                Vertex.Value = "CodeVisualiser" + this.GetHashCode();
+            SetVertexDefaultValues();
 
-                ClassVertex.AddIsClassAndAllAttributesAndAssociations(Vertex, mz.Root.Get(false, @"System\Meta\Visualiser\Code"));
+            TextMemory = new List<string>();
 
-                ClassVertex.AddIsClassAndAllAttributesAndAssociations(Vertex.Get(false, "BaseEdge:"), mz.Root.Get(false, @"System\Meta\ZeroTypes\Edge"));
+            EditSetup();
 
-                SetVertexDefaultValues();
+            UpdateEditView();
 
-                // no dnd here
-                // this.PreviewMouseLeftButtonDown += dndPreviewMouseLeftButtonDown;
-                // this.PreviewMouseMove += dndPreviewMouseMove;
-                //this.Drop+=dndDrop;
-                // this.AllowDrop = true;
-
-                // this.MouseEnter += dndMouseEnter;
-
-                TextMemory = new List<string>();
-
-                this.Loaded += new RoutedEventHandler(OnLoad);
-
-                //this.KeyDown += CodeVisualiser_KeyDown;
-
-                this.PreviewKeyDown += CodeVisualiser_KeyDown;
-
-                editSetup();
-
-                UpdateEditView();
-            }
+            this.PreviewKeyDown += CodeVisualiser_KeyDown;
         }
+
+        public void OnLoad(object sender, RoutedEventArgs e)
+        {
+            //VisualiserHelper.AddContextMenu();
+        }
+
+        public void SelectedVerticesUpdated() { }
 
         private void ExecuteParse()
         {            
@@ -140,7 +139,7 @@ namespace m0.UIWpf.Visualisers
             else
                 Options.HighlightCurrentLine = false;
         }
-        void editSetup()
+        void EditSetup()
         {
             UpdateEditView();
 
@@ -190,13 +189,7 @@ namespace m0.UIWpf.Visualisers
             Vertex.Get(false, "TextMemoryMax:").Value = 0;
         }
 
-        void OnLoad(object sender, RoutedEventArgs e)
-        {
-            if (!WpfUtil.HasParentsGotContextMenu(this))
-                this.ContextMenu = new m0ContextMenu(this);
-        }
-
-        private void UpdateBaseEdge()
+        public void UpdateBaseEdge()
         {
             IVertex bv = Vertex.Get(false, @"BaseEdge:\To:");
 
@@ -209,11 +202,37 @@ namespace m0.UIWpf.Visualisers
                 this.Text = "Ø";
         }
 
-        protected void ZoomVisualiserContentChange()
+        public void ZoomVisualiserContentChange()
         {
             double scale = ((double)GraphUtil.GetDoubleValue(Vertex.Get(false, "ZoomVisualiserContent:")));
 
             this.FontSize = scale;
+        }
+
+        protected INoInEdgeInOutVertexVertex CustomVertexChange(IExecution exe)
+        {
+            IVertex changedVertex = exe.Stack.Get(false, @"event:\ChangedVertex:");
+
+            if (changedVertex != null)
+            {
+                if (GraphUtil.ExistQueryIn(changedVertex, "ZoomVisualiserContent", null))
+                {
+                    ZoomVisualiserContentChange();
+                    return exe.Stack;
+                }
+
+                if (GraphUtil.ExistQueryIn(changedVertex, "ShowWhiteSpace", null) 
+                    || GraphUtil.ExistQueryIn(changedVertex, "ShowLineNumbers", null)
+                    || GraphUtil.ExistQueryIn(changedVertex, "HighlightedLine", null))
+                {
+                    UpdateEditView();
+                    return exe.Stack;
+                }                
+            }            
+
+            UpdateBaseEdge();
+
+            return exe.Stack;
         }
 
 
@@ -237,39 +256,18 @@ namespace m0.UIWpf.Visualisers
 
             if (sender == Vertex.Get(false, "HighlightedLine:") && e.Type == VertexChangeType.ValueChanged)
                 UpdateEditView();
-        }        
-
-        private IVertex _Vertex;
+        }
 
         public IVertex Vertex
         {
-            get { return _Vertex; }
-            set
-            {
-                if (_Vertex != null)
-                    PlatformClass.RemoveVertexChangeListeners(this.Vertex, new VertexChange(VertexChange));
-
-                _Vertex = value;
-
-                PlatformClass.RegisterVertexChangeListeners(this.Vertex, new VertexChange(VertexChange), new string[] { "BaseEdge", "SelectedEdges" });
-
-                UpdateBaseEdge();
-            }
+            get { return VisualiserHelper.Vertex; }
+            set { VisualiserHelper.SetVertex(value); }
         }
-
-        bool IsDisposed = false;
 
         public void Dispose()
         {
-            if (IsDisposed == false)
-            {
-                IsDisposed = true;
-                PlatformClass.RemoveVertexChangeListeners(this.Vertex, new VertexChange(VertexChange));
-
-                if (Vertex is IDisposable)
-                    ((IDisposable)Vertex).Dispose();
-            }
-        }
+            VisualiserHelper.Dispose();
+        }      
 
         public IVertex GetEdgeByLocation(System.Windows.Point point)
         {
@@ -284,59 +282,6 @@ namespace m0.UIWpf.Visualisers
         public System.Windows.FrameworkElement GetVisualElementByEdge(IVertex vertex)
         {
             throw new NotImplementedException();
-        }
-
-        ///// DRAG AND DROP
-
-        Point dndStartPoint;        
-
-        private void dndPreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
-        {
-            dndStartPoint = e.GetPosition(this);
-
-            MinusZero.Instance.IsGUIDragging = false;
-
-            hasButtonBeenDown = true;
-        }
-
-        bool isDraggin = false;
-        bool hasButtonBeenDown;
-
-        private void dndPreviewMouseMove(object sender, MouseEventArgs e)
-        {
-            Point mousePos = e.GetPosition(this);
-            Vector diff = dndStartPoint - mousePos;
-
-            if (hasButtonBeenDown && isDraggin == false && (e.LeftButton == MouseButtonState.Pressed) && (
-                (Math.Abs(diff.X) > Dnd.MinimumHorizontalDragDistance) ||
-                (Math.Abs(diff.Y) > Dnd.MinimumVerticalDragDistance)))
-            {
-                if (Vertex.Get(false, @"BaseEdge:\To:") != null)
-                {
-                    isDraggin = true;
-
-                    IVertex dndVertex = MinusZero.Instance.CreateTempVertex();
-                 
-                    dndVertex.AddEdge(null, Vertex.Get(false, @"BaseEdge:"));
-
-                    DataObject dragData = new DataObject("Vertex", dndVertex);
-                    dragData.SetData("DragSource", this);
-
-                    Dnd.DoDragDrop(this, dragData);
-
-                    isDraggin = false;
-                }
-            }           
-        }
-
-        private void dndDrop(object sender, DragEventArgs e)
-        {
-            Dnd.DoDrop(this,Vertex.Get(false, @"BaseEdge:\To:"), e);
-        }
-
-        private void dndMouseEnter(object sender, MouseEventArgs e)
-        {
-            hasButtonBeenDown = false;
         }
     }
 }
