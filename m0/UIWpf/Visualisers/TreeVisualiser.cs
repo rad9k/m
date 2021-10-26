@@ -385,7 +385,7 @@ namespace m0.UIWpf.Visualisers
 
                         if (GraphUtil.GetValueAndCompareStrings(eventType, "OutputEdgeDisposed"))
                         {
-                            EdgeRemoved(Edge.CreateIEdgeFromEdgeVertex(edgeVertex));
+                            UpdateBaseEdge();
                             return exe.Stack;
                         }
                     }
@@ -619,7 +619,7 @@ namespace m0.UIWpf.Visualisers
         {            
                 IList l = GeneralUtil.CreateAndCopyList(Items);
                 foreach (TreeVisualiserViewItem i in l)
-                    if (((IEdge)i.Tag) == edge)
+                if (Edge.CompareIEdges(((IEdge)i.Tag), edge))                    
                         Items.Remove(i);            
         }
 

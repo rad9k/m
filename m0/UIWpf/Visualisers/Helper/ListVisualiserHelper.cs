@@ -73,11 +73,11 @@ namespace m0.UIWpf.Visualisers.Helper
 
         protected override INoInEdgeInOutVertexVertex VertexChange(IExecution exe)
         {
-          /*  if (!firstVertexChangeExecuted && updateBaseEdgeCallSchema == UpdateBaseEdgeCallSchemeEnum.OmmitSecond)
+            if (!firstVertexChangeExecuted && updateBaseEdgeCallSchema == UpdateBaseEdgeCallSchemeEnum.OmmitSecond)
             {
                 firstVertexChangeExecuted = true;
                 return exe.Stack;
-            }*/
+            }
 
             if (CustomVertexChangeEvent != null)
                 return CustomVertexChangeEvent(exe);
