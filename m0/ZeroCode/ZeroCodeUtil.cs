@@ -12,7 +12,15 @@ using m0.ZeroCode.Helpers;
 namespace m0.ZeroCode
 {
     public class ZeroCodeUtil
-    {       
+    {
+        public static bool FilterEdge(IEdge toFilterEdge)
+        {
+            if (GeneralUtil.CompareStrings(toFilterEdge.Meta, "$GraphChangeTrigger")) 
+                return false;            
+
+            return true;
+        }
+
         public static IDictionary<string, IList<IVertex>> GetFilteredKeywordListByGroup(IVertex FormalTextLanguage,string metaFilter)
         {
             IList<IEdge> keywordList = new List<IEdge>();

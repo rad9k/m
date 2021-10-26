@@ -49,6 +49,8 @@ namespace m0.UIWpf.Visualisers
 
             SetVertexDefaultValues();
 
+            ZoomVisualiserContentChange();
+
             TextMemory = new List<string>();
 
             EditSetup();
@@ -233,29 +235,6 @@ namespace m0.UIWpf.Visualisers
             UpdateBaseEdge();
 
             return exe.Stack;
-        }
-
-
-        protected void VertexChange(object sender, VertexChangeEventArgs e)
-        {
-            if ((sender == Vertex) && (e.Type == VertexChangeType.EdgeAdded) && (GeneralUtil.CompareStrings(e.Edge.Meta.Value, "BaseEdge")))
-                UpdateBaseEdge();                        
-
-            if ((sender == Vertex.Get(false, "BaseEdge:")) && (e.Type == VertexChangeType.EdgeAdded) && (GeneralUtil.CompareStrings(e.Edge.Meta.Value, "To"))
-                || (sender == Vertex.Get(false, @"BaseEdge:\To:") && e.Type == VertexChangeType.ValueChanged))            
-                UpdateBaseEdge();
-
-            if (sender == Vertex.Get(false, "ZoomVisualiserContent:") && e.Type == VertexChangeType.ValueChanged)
-                ZoomVisualiserContentChange();
-
-            if (sender == Vertex.Get(false, "ShowWhiteSpace:") && e.Type == VertexChangeType.ValueChanged)
-                UpdateEditView();
-
-            if (sender == Vertex.Get(false, "ShowLineNumbers:") && e.Type == VertexChangeType.ValueChanged)
-                UpdateEditView();
-
-            if (sender == Vertex.Get(false, "HighlightedLine:") && e.Type == VertexChangeType.ValueChanged)
-                UpdateEditView();
         }
 
         public IVertex Vertex

@@ -69,8 +69,16 @@ namespace m0.UIWpf.Visualisers.Helper
 
         public event CustomVertexChangeHandler CustomVertexChangeEvent;
 
+        bool firstVertexChangeExecuted = false;
+
         protected override INoInEdgeInOutVertexVertex VertexChange(IExecution exe)
         {
+          /*  if (!firstVertexChangeExecuted && updateBaseEdgeCallSchema == UpdateBaseEdgeCallSchemeEnum.OmmitSecond)
+            {
+                firstVertexChangeExecuted = true;
+                return exe.Stack;
+            }*/
+
             if (CustomVertexChangeEvent != null)
                 return CustomVertexChangeEvent(exe);
 

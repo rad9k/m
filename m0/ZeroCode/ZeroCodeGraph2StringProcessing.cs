@@ -1713,11 +1713,14 @@ namespace m0.ZeroCode
             SourceAppend(dict.CodeGraphVertexSuffix);
         }
 
-        int levelCorrection = 0;
+        int levelCorrection = 0;        
 
         void ZeroCodeGraph2String_Reccurent(IEdge baseEdge, int level, IEdge parent, string path)
         { 
             if (BeenList.Contains(baseEdge))
+                return;
+
+            if (!ZeroCodeUtil.FilterEdge(baseEdge))
                 return;
 
             tabTimes = level;         
