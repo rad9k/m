@@ -18,6 +18,7 @@ using System.Collections;
 using m0.UIWpf.Commands;
 using m0.UIWpf.Visualisers.Helper;
 using m0.Graph.ExecutionFlow;
+using static m0.Graph.ExecutionFlow.ExecutionFlowHelper;
 
 namespace m0.UIWpf.Visualisers
 {
@@ -342,23 +343,12 @@ namespace m0.UIWpf.Visualisers
 
         protected INoInEdgeInOutVertexVertex CustomVertexChange(IExecution exe)
         {
-            IVertex changedVertex = exe.Stack.Get(false, @"event:\ChangedVertex:");
+            if (IsVertexOrEdgeChangeByMeta(exe.Stack, "ZoomVisualiserContent"))
+                ZoomVisualiserContentChange();
 
-            if (changedVertex != null)
-            {
-                if (GraphUtil.ExistQueryIn(changedVertex, "ZoomVisualiserContent", null))
-                {
-                    ZoomVisualiserContentChange();
-                    return exe.Stack;
-                }
-
-                if (GraphUtil.ExistQueryIn(changedVertex, "SelectedEdges", null))
-                {
-                    SelectedVerticesUpdated();
-
-                    return exe.Stack;
-                }
-            }
+            if (IsVertexOrEdgeChangeByMeta(exe.Stack, "ZoomVisualiserContent")
+                || IsEdgeAddedOrRemovedToFrom(exe.Stack, Vertex.Get(false, @"SelectedEdges:")))
+                SelectedVerticesUpdated();
 
             IVertex edgeVertex = exe.Stack.Get(false, @"event:\Edge:");
 

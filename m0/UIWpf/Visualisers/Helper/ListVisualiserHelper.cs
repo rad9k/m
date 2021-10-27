@@ -86,7 +86,7 @@ namespace m0.UIWpf.Visualisers.Helper
             if (IsVertexOrEdgeChangeByMeta(exe.Stack, "ZoomVisualiserContent"))
                 listVisualiser.ZoomVisualiserContentChange();
 
-            if (IsVertexOrEdgeChangeByMeta(exe.Stack, "ZoomVisualiserContent")
+            if (IsVertexOrEdgeChangeByMeta(exe.Stack, "SelectedEdges")
                 || IsEdgeAddedOrRemovedToFrom(exe.Stack, Vertex.Get(false, @"SelectedEdges:")))
                 listVisualiser.SelectedVerticesUpdated();            
 
