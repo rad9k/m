@@ -219,8 +219,10 @@ namespace m0.UIWpf.Visualisers.Diagram
                     return exe.Stack;
                 }
             }
-             
-            return base.VertexChange(exe);
+
+            return exe.Stack;
+
+            //return base.VertexChange(exe);
         }
     }
 }

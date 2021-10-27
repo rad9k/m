@@ -611,8 +611,7 @@ namespace m0.UIWpf.Visualisers
                 {
                     TreeVisualiserViewItem ii = (TreeVisualiserViewItem)i;
                     ii.IsSelected = true;
-                }
-            
+                }      
         }
 
         private void EdgeRemoved(IEdge edge)

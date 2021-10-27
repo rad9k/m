@@ -225,5 +225,26 @@ namespace m0.Graph.ExecutionFlow
             else
                 return InstructionHelpers.SequentiallyExecuteInstructions(exe, exe.Stack, baseVertex, out dummy, false);
         }
+
+        public static bool IsVertexOrEdgeChangeByMeta(IVertex stack, string meta)
+        {
+            foreach(IEdge e in stack.GetAll(false, @"event:\ChangedVertex:"))
+                if (GraphUtil.ExistQueryIn(e.To, meta, null))
+                    return true;
+
+            if (stack.Get(false, @"event:\Edge:\Meta:" + meta) != null)
+                return true;
+
+            return false;
+        }
+
+        public static bool IsEdgeAddedOrRemovedToFrom(IVertex stack, IVertex toFrom)
+        {
+            foreach (IEdge e in stack.GetAll(false, @"event:\Edge:\From:"))
+                if (e.To == toFrom)
+                    return true;
+
+            return false;
+        }
     }
 }

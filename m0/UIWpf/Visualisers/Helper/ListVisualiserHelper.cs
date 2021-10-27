@@ -18,6 +18,7 @@ using m0.Graph.ExecutionFlow;
 using m0.User.Process.UX;
 using System.Windows.Controls.Primitives;
 using m0.UIWpf.Visualisers.Helper;
+using static m0.Graph.ExecutionFlow.ExecutionFlowHelper;
 
 namespace m0.UIWpf.Visualisers.Helper
 {
@@ -82,35 +83,12 @@ namespace m0.UIWpf.Visualisers.Helper
             if (CustomVertexChangeEvent != null)
                 return CustomVertexChangeEvent(exe);
 
-            IVertex changedVertex = exe.Stack.Get(false, @"event:\ChangedVertex:");
+            if (IsVertexOrEdgeChangeByMeta(exe.Stack, "ZoomVisualiserContent"))
+                listVisualiser.ZoomVisualiserContentChange();
 
-            if (changedVertex != null)
-            {
-                if (GraphUtil.ExistQueryIn(changedVertex, "ZoomVisualiserContent", null))
-                {
-                    listVisualiser.ZoomVisualiserContentChange();
-                    return exe.Stack;
-                }
-
-                if (GraphUtil.ExistQueryIn(changedVertex, "SelectedEdges", null))
-                {
-                    listVisualiser.SelectedVerticesUpdated();
-                    return exe.Stack;
-                }
-            }
-
-            IVertex edgeVertex = exe.Stack.Get(false, @"event:\Edge:");
-
-            if (edgeVertex != null)
-            {
-                IVertex edgeFrom = edgeVertex.Get(false, @"From:");
-
-                if (edgeFrom == Vertex.Get(false, @"SelectedEdges:"))
-                {
-                    listVisualiser.SelectedVerticesUpdated();
-                    return exe.Stack;
-                }              
-            }
+            if (IsVertexOrEdgeChangeByMeta(exe.Stack, "ZoomVisualiserContent")
+                || IsEdgeAddedOrRemovedToFrom(exe.Stack, Vertex.Get(false, @"SelectedEdges:")))
+                listVisualiser.SelectedVerticesUpdated();            
 
             listVisualiser.UpdateBaseEdge();
 

@@ -23,15 +23,41 @@ namespace m0.UIWpf.Visualisers.Diagram
 
                 VertexUpdated();
 
-                PlatformClass.RegisterVertexChangeListeners(Vertex, new VertexChange(VertexChange), new string[] { "BaseEdge", "SelectedEdges", "ForegroundColor", "BackgroundColor" });
+                //PlatformClass.RegisterVertexChangeListeners(Vertex, new VertexChange(VertexChange), new string[] { "BaseEdge", "SelectedEdges", "ForegroundColor", "BackgroundColor" });
             }
         }
 
-        private void VertexChange(object sender, VertexChangeEventArgs e)
+        protected virtual INoInEdgeInOutVertexVertex VertexChange(IExecution exe)
         {
-            if ((sender == Vertex.Get(false, @"BaseEdge:\To:") || sender == Vertex.Get(false, @"BaseEdge:\Meta:"))
-                && e.Type == VertexChangeType.ValueChanged)
-                VertexUpdated();
+            return exe.Stack;
+        }
+        /*
+            IVertex changedVertex = exe.Stack.Get(false, @"event:\ChangedVertex:");
+
+            if (changedVertex != null)
+            {
+                if ((changedVertex == Vertex.Get(false, @"BaseEdge:\To:") || changedVertex == Vertex.Get(false, @"BaseEdge:\Meta:"))
+                {
+                    VertexUpdated();
+                    return exe.Stack;
+                }
+
+                if (GraphUtil.ExistQueryIn(changedVertex, "IsDashed", null)
+                    || GraphUtil.ExistQueryIn(changedVertex, "LineWidth", null))
+                {
+                    UpdateLine();
+                    return exe.Stack;
+                }
+
+                if (GraphUtil.ExistQueryIn(changedVertex, "RoundEdgeSize", null))
+                {
+                    VisualiserUpdate();
+                    return exe.Stack;
+                }
+            }
+
+
+            
 
             if ((e.Type == VertexChangeType.EdgeAdded && (GeneralUtil.CompareStrings(e.Edge.Meta.Value,"IsDashed")||GeneralUtil.CompareStrings(e.Edge.Meta.Value,"LineWidth")))
                 || (e.Type == VertexChangeType.ValueChanged && (sender == Vertex.Get(false, @"IsDashed:")||sender == Vertex.Get(false, @"LineWidth:"))))
@@ -53,7 +79,7 @@ namespace m0.UIWpf.Visualisers.Diagram
             {
                 UpdateLineEnds();
             }
-        }
+        }*/
 
         protected virtual void UpdateLine()
         {

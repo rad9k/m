@@ -142,9 +142,7 @@ namespace m0.UIWpf.Visualisers.Helper
         {
             if (!WpfUtil.HasParentsGotContextMenu(visualiserAsFrameworkElement))
                 visualiserAsFrameworkElement.ContextMenu = new m0ContextMenu(visualiser);
-        }
-
-        //bool isBaseEdgeUpdating = false;
+        }        
 
         bool firstVertexChangeExecuted = false;
 
@@ -155,16 +153,8 @@ namespace m0.UIWpf.Visualisers.Helper
                 firstVertexChangeExecuted = true;
                 return exe.Stack;
             }
-
-
-          //  if (isBaseEdgeUpdating)
-            //    return exe.Stack;
-
-            //isBaseEdgeUpdating = true;
-
-            visualiser.UpdateBaseEdge();
-
-            //isBaseEdgeUpdating = false;
+          
+            visualiser.UpdateBaseEdge();          
 
             return exe.Stack;
         }
