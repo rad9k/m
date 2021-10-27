@@ -207,12 +207,20 @@ namespace m0.UIWpf.Visualisers.Diagram
             base.Unhighlight();
         }
 
-        public override void VertexChange(object sender, VertexChangeEventArgs e)
+        protected virtual INoInEdgeInOutVertexVertex VertexChange(IExecution exe)        
         {
-            if (sender == Vertex.Get(false, @"RoundEdgeSize:"))
-                VisualiserUpdate();
+            IVertex changedVertex = exe.Stack.Get(false, @"event:\ChangedVertex:");
 
-            base.VertexChange(sender, e);
+            if (changedVertex != null)
+            {
+                if (GraphUtil.ExistQueryIn(changedVertex, "RoundEdgeSize", null))
+                {
+                    VisualiserUpdate();
+                    return exe.Stack;
+                }
+            }
+             
+            return base.VertexChange(exe);
         }
     }
 }
