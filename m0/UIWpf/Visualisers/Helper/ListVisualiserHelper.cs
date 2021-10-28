@@ -73,7 +73,7 @@ namespace m0.UIWpf.Visualisers.Helper
         bool firstVertexChangeExecuted = false;
 
         protected override INoInEdgeInOutVertexVertex VertexChange(IExecution exe)
-        {
+        {            
             if (!firstVertexChangeExecuted && updateBaseEdgeCallSchema == UpdateBaseEdgeCallSchemeEnum.OmmitSecond)
             {
                 firstVertexChangeExecuted = true;
@@ -81,16 +81,18 @@ namespace m0.UIWpf.Visualisers.Helper
             }
 
             if (CustomVertexChangeEvent != null)
-                return CustomVertexChangeEvent(exe);
+                return CustomVertexChangeEvent(exe);            
 
-            if (IsVertexOrEdgeChangeByMeta(exe.Stack, "ZoomVisualiserContent"))
+            if (IsVertexChangeOrEdgeAddedRemovedDisposedByMeta(exe.Stack, "ZoomVisualiserContent"))            
                 listVisualiser.ZoomVisualiserContentChange();
+                
+            if (IsVertexChangeOrEdgeAddedRemovedDisposedByMeta(exe.Stack, "SelectedEdges")
+                || IsEdgeAddedRemovedDiscardedFrom(exe.Stack, Vertex.Get(false, @"SelectedEdges:")))            
+                listVisualiser.SelectedVerticesUpdated();                
 
-            if (IsVertexOrEdgeChangeByMeta(exe.Stack, "SelectedEdges")
-                || IsEdgeAddedOrRemovedToFrom(exe.Stack, Vertex.Get(false, @"SelectedEdges:")))
-                listVisualiser.SelectedVerticesUpdated();            
-
-            listVisualiser.UpdateBaseEdge();
+            if(IsVertexChageOrEdgeAddedRemovedDisposedFrom(exe.Stack, Vertex.Get(false, @"BaseEdge:"))
+                || IsVertexChageOrEdgeAddedRemovedDisposedFrom(exe.Stack, Vertex.Get(false, @"BaseEdge:\To:")))
+                listVisualiser.UpdateBaseEdge();
 
             return exe.Stack;
         }

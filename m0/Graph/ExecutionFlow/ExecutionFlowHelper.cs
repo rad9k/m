@@ -226,7 +226,7 @@ namespace m0.Graph.ExecutionFlow
                 return InstructionHelpers.SequentiallyExecuteInstructions(exe, exe.Stack, baseVertex, out dummy, false);
         }
 
-        public static bool IsVertexOrEdgeChangeByMeta(IVertex stack, string meta)
+        public static bool IsVertexChangeOrEdgeAddedRemovedDisposedByMeta(IVertex stack, string meta)
         {
             foreach(IEdge e in stack.GetAll(false, @"event:\ChangedVertex:"))
                 if (GraphUtil.ExistQueryIn(e.To, meta, null))
@@ -238,11 +238,78 @@ namespace m0.Graph.ExecutionFlow
             return false;
         }
 
-        public static bool IsEdgeAddedOrRemovedToFrom(IVertex stack, IVertex toFrom)
+        public static bool IsVertexChageOrEdgeAddedRemovedDisposedFrom(IVertex stack, IVertex toFrom)
+        {
+            foreach (IEdge e in stack.GetAll(false, @"event:\ChangedVertex:"))
+                if (e.To == toFrom)
+                    return true;
+
+            foreach (IEdge e in stack.GetAll(false, @"event:\Edge:\From:"))
+                if (e.To == toFrom)
+                    return true;            
+
+            return false;
+        }
+
+        public static bool IsEdgeAddedRemovedDiscardedFrom(IVertex stack, IVertex toFrom)
         {
             foreach (IEdge e in stack.GetAll(false, @"event:\Edge:\From:"))
                 if (e.To == toFrom)
                     return true;
+
+            return false;
+        }
+
+        public static bool IsEdgeAddedTo(IVertex stack, IVertex toFrom)
+        {
+            foreach (IEdge eventEdge in stack.GetAll(false, @"event:"))
+            {
+                IVertex eventFrom = eventEdge.To.Get(false, @"Edge:\From:");
+
+                if(eventFrom == toFrom)
+                {
+                    IVertex eventType = eventEdge.To.Get(false, @"Type:");
+
+                    if (eventType != null && GraphUtil.GetValueAndCompareStrings(eventType, "OutputEdgeAdded"))
+                        return true;
+                }
+            }
+
+            return false;
+        }
+
+        public static bool IsEdgeRemovedFrom(IVertex stack, IVertex toFrom)
+        {
+            foreach (IEdge eventEdge in stack.GetAll(false, @"event:"))
+            {
+                IVertex eventFrom = eventEdge.To.Get(false, @"Edge:\From:");
+
+                if (eventFrom == toFrom)
+                {
+                    IVertex eventType = eventEdge.To.Get(false, @"Type:");
+
+                    if (eventType != null && GraphUtil.GetValueAndCompareStrings(eventType, "OutputEdgeRemoved"))
+                        return true;
+                }
+            }
+
+            return false;
+        }
+
+        public static bool IsEdgeDisposedFrom(IVertex stack, IVertex toFrom)
+        {
+            foreach (IEdge eventEdge in stack.GetAll(false, @"event:"))
+            {
+                IVertex eventFrom = eventEdge.To.Get(false, @"Edge:\From:");
+
+                if (eventFrom == toFrom)
+                {
+                    IVertex eventType = eventEdge.To.Get(false, @"Type:");
+
+                    if (eventType != null && GraphUtil.GetValueAndCompareStrings(eventType, "OutputEdgeDisposed"))
+                        return true;
+                }
+            }
 
             return false;
         }

@@ -343,43 +343,38 @@ namespace m0.UIWpf.Visualisers
 
         protected INoInEdgeInOutVertexVertex CustomVertexChange(IExecution exe)
         {
-            if (IsVertexOrEdgeChangeByMeta(exe.Stack, "ZoomVisualiserContent"))
+            if (IsVertexChangeOrEdgeAddedRemovedDisposedByMeta(exe.Stack, "ZoomVisualiserContent"))
+            {
                 ZoomVisualiserContentChange();
+                return exe.Stack;
+            }
 
-            if (IsVertexOrEdgeChangeByMeta(exe.Stack, "ZoomVisualiserContent")
-                || IsEdgeAddedOrRemovedToFrom(exe.Stack, Vertex.Get(false, @"SelectedEdges:")))
+            if (IsVertexChangeOrEdgeAddedRemovedDisposedByMeta(exe.Stack, "ZoomVisualiserContent")
+                || IsEdgeAddedRemovedDiscardedFrom(exe.Stack, Vertex.Get(false, @"SelectedEdges:")))
+            {
                 SelectedVerticesUpdated();
+            }
+
+            IVertex baseEdgeTo = VisualiserHelper.Vertex.Get(false, @"BaseEdge:\To:");
 
             IVertex edgeVertex = exe.Stack.Get(false, @"event:\Edge:");
 
-            if (edgeVertex != null) {
-                IVertex edgeFrom = edgeVertex.Get(false, @"From:");
+            if (IsEdgeAddedTo(exe.Stack, baseEdgeTo))
+            {
+                EdgeAdded(Edge.CreateIEdgeFromEdgeVertex(edgeVertex));
+                return exe.Stack;
+            }
 
-                if (edgeFrom == VisualiserHelper.Vertex.Get(false, @"BaseEdge:\To:"))
-                {
-                    IVertex eventType = exe.Stack.Get(false, @"event:\Type:");
+            if (IsEdgeRemovedFrom(exe.Stack, baseEdgeTo))
+            {
+                EdgeRemoved(Edge.CreateIEdgeFromEdgeVertex(edgeVertex));
+                return exe.Stack;
+            }
 
-                    if (eventType != null)
-                    {
-                        if (GraphUtil.GetValueAndCompareStrings(eventType, "OutputEdgeAdded"))
-                        {
-                            EdgeAdded(Edge.CreateIEdgeFromEdgeVertex(edgeVertex));
-                            return exe.Stack;
-                        }
-
-                        if (GraphUtil.GetValueAndCompareStrings(eventType, "OutputEdgeRemoved"))
-                        {
-                            EdgeRemoved(Edge.CreateIEdgeFromEdgeVertex(edgeVertex));
-                            return exe.Stack;
-                        }
-
-                        if (GraphUtil.GetValueAndCompareStrings(eventType, "OutputEdgeDisposed"))
-                        {
-                            UpdateBaseEdge();
-                            return exe.Stack;
-                        }
-                    }
-                }
+            if (IsEdgeDisposedFrom(exe.Stack, baseEdgeTo))
+            {
+                UpdateBaseEdge();
+                return exe.Stack;
             }
            
             UpdateBaseEdge();
