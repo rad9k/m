@@ -35,6 +35,9 @@ namespace m0.UIWpf.Visualisers
 
         protected bool TurnOffSelectedVerticesUpdate = false;
 
+        static string[] _MetaTriggeringBaseEdgeUpdate = new string[] { "IsMetaRightAlign", "IsAllVisualisersEdit", "ShowMeta", "GridStyle", "FilterQuery" };
+        public virtual string[] MetaTriggeringBaseEdgeUpdate { get { return _MetaTriggeringBaseEdgeUpdate; } }
+
         public ListVisualiser(IVertex baseEdgeVertex)
         {
             SubVisualisers = new List<IDisposable>();

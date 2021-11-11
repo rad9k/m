@@ -205,6 +205,10 @@ namespace m0.UIWpf.Visualisers
 
         public bool IsPaiting=false;
 
+
+        static string[] _MetaTriggeringBaseEdgeUpdate = new string[] { "IsMetaRightAlign", "IsAllVisualiserEdit", "ShowMeta", "GridStyle", "FilterQuery" };
+        public string[] MetaTriggeringBaseEdgeUpdate { get { return _MetaTriggeringBaseEdgeUpdate; } }
+
         public GraphVisualiser(IVertex baseEdgeVertex)
         {
             DisplayedVerticesUIElements = new Dictionary<IVertex, SimpleVisualiserWrapper>();

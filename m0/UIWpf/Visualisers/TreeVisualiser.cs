@@ -278,6 +278,10 @@ namespace m0.UIWpf.Visualisers
 
         public TreeVisualiser() : this(null) { }
 
+
+        static string[] _MetaTriggeringBaseEdgeUpdate = new string[] {  };
+        public string[] MetaTriggeringBaseEdgeUpdate { get { return _MetaTriggeringBaseEdgeUpdate; } }
+
         public TreeVisualiser(IVertex baseEdgeVertex)
         {
             MinusZero mz = MinusZero.Instance;

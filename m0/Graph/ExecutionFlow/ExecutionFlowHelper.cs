@@ -238,7 +238,7 @@ namespace m0.Graph.ExecutionFlow
             return false;
         }
 
-        public static bool IsVertexChageOrEdgeAddedRemovedDisposedFrom(IVertex stack, IVertex toFrom)
+        public static bool IsVertexChageOrEdgeAddedRemovedDisposedFromTo(IVertex stack, IVertex toFrom)
         {
             foreach (IEdge e in stack.GetAll(false, @"event:\ChangedVertex:"))
                 if (e.To == toFrom)
@@ -246,7 +246,11 @@ namespace m0.Graph.ExecutionFlow
 
             foreach (IEdge e in stack.GetAll(false, @"event:\Edge:\From:"))
                 if (e.To == toFrom)
-                    return true;            
+                    return true;
+
+            foreach (IEdge e in stack.GetAll(false, @"event:\Edge:\To:"))
+                if (e.To == toFrom)
+                    return true;
 
             return false;
         }

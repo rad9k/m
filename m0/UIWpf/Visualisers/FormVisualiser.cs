@@ -77,6 +77,10 @@ namespace m0.UIWpf.Visualisers
         TabItem TabControlSelectedItem;
 
 
+        static string[] _MetaTriggeringBaseEdgeUpdate = new string[] { "IsMetaRightAlign", "IsAllVisualiserEdit", "ShowMeta", "GridStyle", "FilterQuery" };
+        public string[] MetaTriggeringBaseEdgeUpdate { get { return _MetaTriggeringBaseEdgeUpdate; } }
+
+
         public FormVisualiser(IVertex baseEdgeVertex)
         {
             new ListVisualiserHelper(MinusZero.Instance.Root.Get(false, @"System\Meta\Visualiser\Form"),

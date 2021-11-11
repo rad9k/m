@@ -33,6 +33,10 @@ namespace m0.UIWpf.Visualisers
 
         IList<string> TextMemory;
 
+        static string[] _MetaTriggeringBaseEdgeUpdate = new string[] { "IsMetaRightAlign", "IsAllVisualiserEdit", "ShowMeta", "GridStyle", "FilterQuery" };
+        public string[] MetaTriggeringBaseEdgeUpdate { get { return _MetaTriggeringBaseEdgeUpdate; } }
+
+
         public CodeVisualiser(IVertex baseEdgeVertex)
         {
             new ListVisualiserHelper(MinusZero.Instance.Root.Get(false, @"System\Meta\Visualiser\Code"),

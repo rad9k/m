@@ -90,9 +90,20 @@ namespace m0.UIWpf.Visualisers.Helper
                 || IsEdgeAddedRemovedDiscardedFrom(exe.Stack, Vertex.Get(false, @"SelectedEdges:")))            
                 listVisualiser.SelectedVerticesUpdated();                
 
-            if(IsVertexChageOrEdgeAddedRemovedDisposedFrom(exe.Stack, Vertex.Get(false, @"BaseEdge:"))
-                || IsVertexChageOrEdgeAddedRemovedDisposedFrom(exe.Stack, Vertex.Get(false, @"BaseEdge:\To:")))
+            if(IsVertexChageOrEdgeAddedRemovedDisposedFromTo(exe.Stack, Vertex.Get(false, @"BaseEdge:"))
+                || IsVertexChageOrEdgeAddedRemovedDisposedFromTo(exe.Stack, Vertex.Get(false, @"BaseEdge:\To:")))
                 listVisualiser.UpdateBaseEdge();
+            else
+            {
+                bool needToUpdateBaseEdge = false;
+
+                foreach (string meta in listVisualiser.MetaTriggeringBaseEdgeUpdate)
+                    if (IsVertexChangeOrEdgeAddedRemovedDisposedByMeta(exe.Stack, meta))
+                        needToUpdateBaseEdge = true;
+
+                if(needToUpdateBaseEdge)
+                    listVisualiser.UpdateBaseEdge();
+            }
 
             return exe.Stack;
         }

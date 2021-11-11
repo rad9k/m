@@ -24,6 +24,10 @@ namespace m0.UIWpf.Visualisers
 {
     public class TableVisualiser : ListVisualiser
     {
+
+        static string[] _MetaTriggeringBaseEdgeUpdate = new string[] { "IsMetaRightAlign", "IsAllVisualiserEdit", "ShowMeta", "GridStyle", "FilterQuery" };
+        public override string[] MetaTriggeringBaseEdgeUpdate { get { return _MetaTriggeringBaseEdgeUpdate; } }
+
         public TableVisualiser(IVertex baseEdgeVertex) : base(baseEdgeVertex)
         {
 

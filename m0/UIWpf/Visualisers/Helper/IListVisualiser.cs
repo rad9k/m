@@ -11,5 +11,7 @@ namespace m0.UIWpf.Visualisers.Helper
         void SelectedVerticesUpdated();
 
         void ZoomVisualiserContentChange();
+
+        string[] MetaTriggeringBaseEdgeUpdate { get; }
     }
 }
