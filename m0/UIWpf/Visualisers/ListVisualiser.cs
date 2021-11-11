@@ -35,8 +35,13 @@ namespace m0.UIWpf.Visualisers
 
         protected bool TurnOffSelectedVerticesUpdate = false;
 
-        static string[] _MetaTriggeringBaseEdgeUpdate = new string[] { "IsMetaRightAlign", "IsAllVisualisersEdit", "ShowMeta", "GridStyle", "FilterQuery" };
-        public virtual string[] MetaTriggeringBaseEdgeUpdate { get { return _MetaTriggeringBaseEdgeUpdate; } }
+        static string[] _MetaTriggeringBaseEdgeUpdate = new string[] { };
+        public virtual string[] MetaTriggeringUpdateBaseEdge { get { return _MetaTriggeringBaseEdgeUpdate; } }
+
+        static string[] _MetaTriggeringUpdateViewSettings = new string[] { "IsMetaRightAlign", "IsAllVisualisersEdit", "ShowMeta", "GridStyle", "FilterQuery" };
+        public virtual string[] MetaTriggeringUpdateView { get { return _MetaTriggeringUpdateViewSettings; } }
+
+        public virtual void UpdateView() { ResetView(); }
 
         public ListVisualiser(IVertex baseEdgeVertex)
         {

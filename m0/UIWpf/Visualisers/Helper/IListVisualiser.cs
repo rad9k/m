@@ -12,6 +12,10 @@ namespace m0.UIWpf.Visualisers.Helper
 
         void ZoomVisualiserContentChange();
 
-        string[] MetaTriggeringBaseEdgeUpdate { get; }
+        void UpdateView();
+
+        string[] MetaTriggeringUpdateBaseEdge { get; }
+
+        string[] MetaTriggeringUpdateView { get; }
     }
 }

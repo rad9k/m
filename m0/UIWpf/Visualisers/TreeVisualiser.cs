@@ -280,7 +280,12 @@ namespace m0.UIWpf.Visualisers
 
 
         static string[] _MetaTriggeringBaseEdgeUpdate = new string[] {  };
-        public string[] MetaTriggeringBaseEdgeUpdate { get { return _MetaTriggeringBaseEdgeUpdate; } }
+        public string[] MetaTriggeringUpdateBaseEdge { get { return _MetaTriggeringBaseEdgeUpdate; } }
+
+        static string[] _MetaTriggeringUpdateViewSettings = new string[] { };
+        public string[] MetaTriggeringUpdateView { get { return _MetaTriggeringUpdateViewSettings; } }
+
+        public void UpdateView() { }
 
         public TreeVisualiser(IVertex baseEdgeVertex)
         {
