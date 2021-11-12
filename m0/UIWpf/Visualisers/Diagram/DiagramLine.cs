@@ -11,6 +11,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Shapes;
+using static m0.Graph.ExecutionFlow.ExecutionFlowHelper;
 
 namespace m0.UIWpf.Visualisers.Diagram
 {
@@ -29,34 +30,36 @@ namespace m0.UIWpf.Visualisers.Diagram
 
         protected virtual INoInEdgeInOutVertexVertex VertexChange(IExecution exe)
         {
+            if (IsVertexChangeOrEdgeAddedRemovedDisposedByMeta(exe.Stack, "IsDashed")
+                || IsVertexChangeOrEdgeAddedRemovedDisposedByMeta(exe.Stack, "LineWidth"))
+                UpdateLine();
+
+            bool needToUpdateLineEnds = false;
+
+            if (IsVertexChangeOrEdgeAddedRemovedDisposedByMeta(exe.Stack, "StartAnchor")
+                || IsVertexChangeOrEdgeAddedRemovedDisposedByMeta(exe.Stack, "EndAnchor"))
+                needToUpdateLineEnds = true;
+
+            if (IsVertexChangeOrEdgeAddedRemovedDisposedByMeta(exe.Stack, "BackgroundColor")
+                || IsVertexChangeOrEdgeAddedRemovedDisposedByMeta(exe.Stack, "ForegroundColor"))
+                needToUpdateLineEnds = true;
+
+            if(IsVertexChangeOrEdgeAddedRemovedDisposedByMeta(exe.Stack, "Red") 
+                || IsVertexChangeOrEdgeAddedRemovedDisposedByMeta(exe.Stack, "Green")
+                || IsVertexChangeOrEdgeAddedRemovedDisposedByMeta(exe.Stack, "Blue")
+                || IsVertexChangeOrEdgeAddedRemovedDisposedByMeta(exe.Stack, "Opacity"))
+                needToUpdateLineEnds = true;
+
+            if (needToUpdateLineEnds)
+                UpdateLineEnds();
+
+            if (IsVertexChageOrEdgeAddedRemovedDisposedFromTo(exe.Stack, Vertex.Get(false, @"BaseEdge:"))
+                 || IsVertexChageOrEdgeAddedRemovedDisposedFromTo(exe.Stack, Vertex.Get(false, @"BaseEdge:\To:")))
+                VertexUpdated();
+            
             return exe.Stack;
         }
         /*
-            IVertex changedVertex = exe.Stack.Get(false, @"event:\ChangedVertex:");
-
-            if (changedVertex != null)
-            {
-                if ((changedVertex == Vertex.Get(false, @"BaseEdge:\To:") || changedVertex == Vertex.Get(false, @"BaseEdge:\Meta:"))
-                {
-                    VertexUpdated();
-                    return exe.Stack;
-                }
-
-                if (GraphUtil.ExistQueryIn(changedVertex, "IsDashed", null)
-                    || GraphUtil.ExistQueryIn(changedVertex, "LineWidth", null))
-                {
-                    UpdateLine();
-                    return exe.Stack;
-                }
-
-                if (GraphUtil.ExistQueryIn(changedVertex, "RoundEdgeSize", null))
-                {
-                    VisualiserUpdate();
-                    return exe.Stack;
-                }
-            }
-
-
             
 
             if ((e.Type == VertexChangeType.EdgeAdded && (GeneralUtil.CompareStrings(e.Edge.Meta.Value,"IsDashed")||GeneralUtil.CompareStrings(e.Edge.Meta.Value,"LineWidth")))
@@ -252,8 +255,6 @@ namespace m0.UIWpf.Visualisers.Diagram
         protected ArrowPolyline Line = new ArrowPolyline();
 
         protected TextBlock Label = new TextBlock();
-
-       
 
         public override void SetPosition(double _FromX, double _FromY, double _ToX, double _ToY, bool _isSelfRelation, double selfRelationX, double selfRelationY)
         {

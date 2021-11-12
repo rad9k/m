@@ -18,7 +18,6 @@ namespace m0.UIWpf.Visualisers.Diagram
         }
 
         public override void VisualiserUpdate() {
-
             base.VisualiserUpdate();
 
             double? width = GraphUtil.GetDoubleValue(Vertex.Get(false, @"SizeX:"));

@@ -24,7 +24,6 @@ namespace m0.UIWpf.Visualisers.Diagram
             InitializeComponent();
         }
 
-
         public override void SetBackAndForeground()
         {
             this.Text.Foreground = ForegroundColor;

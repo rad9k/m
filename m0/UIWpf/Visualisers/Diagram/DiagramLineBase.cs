@@ -39,7 +39,6 @@ namespace m0.UIWpf.Visualisers.Diagram
             return 0;
         }
         
-
         public virtual void UpdateMetaPosition()
         { 
         }
@@ -59,7 +58,5 @@ namespace m0.UIWpf.Visualisers.Diagram
         public virtual void Unhighlight()
         {
         }
-
-
     }
 }

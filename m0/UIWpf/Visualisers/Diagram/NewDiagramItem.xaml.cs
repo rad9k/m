@@ -56,7 +56,7 @@ namespace m0.UIWpf.Visualisers.Diagram
 
             ItemName.Content = baseedge.Get(false, "To:").Value;
 
-            if (!CheckIfThereIChoiceRemembered())
+            if (!CheckIfThereIsChoiceRemembered())
             {
                 BaseEdgeSet();
 
@@ -153,9 +153,7 @@ namespace m0.UIWpf.Visualisers.Diagram
                 if(InstanceRadio.IsChecked==true)
                     NameControlsShow();
                 else
-                    NameControlsHide();
-
-                
+                    NameControlsHide();               
             }
             else
             {
@@ -168,7 +166,7 @@ namespace m0.UIWpf.Visualisers.Diagram
             }
         }
 
-        private bool CheckIfThereIChoiceRemembered()
+        private bool CheckIfThereIsChoiceRemembered()
         {
             IVertex question = GetRememberedQuestion();
 

@@ -143,9 +143,7 @@ namespace m0.UIWpf.Visualisers.Diagram
                     this.TheGrid.RowDefinitions[1].Height = new GridLength(LineWidth);
                 }
             }
-        }
-
-      
+        } 
 
         public DiagramRectangleItem()
         {
