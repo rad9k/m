@@ -206,7 +206,7 @@ namespace m0.UIWpf.Visualisers
         public bool IsPaiting=false;
 
 
-        static string[] _MetaTriggeringBaseEdgeUpdate = new string[] { "IsMetaRightAlign", "IsAllVisualiserEdit", "ShowMeta", "GridStyle", "FilterQuery" };
+        static string[] _MetaTriggeringBaseEdgeUpdate = new string[] { "VisualiserCircleSize", "NumberOfCircles", "ShowOutEdges", "ShowInEdges", "FastMode", "MetaLabels" };
         public string[] MetaTriggeringUpdateBaseEdge { get { return _MetaTriggeringBaseEdgeUpdate; } }
 
         static string[] _MetaTriggeringUpdateViewSettings = new string[] { };

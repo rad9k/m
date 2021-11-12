@@ -27,10 +27,6 @@ namespace m0.UIWpf.Visualisers
 
         }
 
-
-        static string[] _MetaTriggeringBaseEdgeUpdate = new string[] { "IsMetaRightAlign", "IsAllVisualiserEdit", "ShowMeta", "GridStyle", "FilterQuery" };
-        public override string[] MetaTriggeringUpdateBaseEdge { get { return _MetaTriggeringBaseEdgeUpdate; } }
-
         protected override void AddColumn(string columnName, string bindingString)
         {
             DataGridTemplateColumn valueColumn = new DataGridTemplateColumn();

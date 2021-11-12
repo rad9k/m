@@ -33,13 +33,13 @@ namespace m0.UIWpf.Visualisers
 
         IList<string> TextMemory;
 
-        static string[] _MetaTriggeringBaseEdgeUpdate = new string[] { "IsMetaRightAlign", "IsAllVisualiserEdit", "ShowMeta", "GridStyle", "FilterQuery" };
+        static string[] _MetaTriggeringBaseEdgeUpdate = new string[] { };
         public string[] MetaTriggeringUpdateBaseEdge { get { return _MetaTriggeringBaseEdgeUpdate; } }
 
-        static string[] _MetaTriggeringUpdateViewSettings = new string[] {  };
+        static string[] _MetaTriggeringUpdateViewSettings = new string[] {"ShowWhiteSpace", "ShowLineNumbers", "HighlightedLine"  };
         public string[] MetaTriggeringUpdateView { get { return _MetaTriggeringUpdateViewSettings; } }
 
-        public void UpdateView() { }
+        public void UpdateView() { UpdateEditView(); }
 
 
         public CodeVisualiser(IVertex baseEdgeVertex)
@@ -54,7 +54,7 @@ namespace m0.UIWpf.Visualisers
                 baseEdgeVertex,
                 UpdateBaseEdgeCallSchemeEnum.OmmitSecond);
 
-            ((ListVisualiserHelper)VisualiserHelper).CustomVertexChangeEvent += CustomVertexChange;
+            //((ListVisualiserHelper)VisualiserHelper).CustomVertexChangeEvent += CustomVertexChange;
 
             SetVertexDefaultValues();
 

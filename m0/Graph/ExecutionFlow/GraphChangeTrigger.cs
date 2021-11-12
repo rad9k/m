@@ -134,6 +134,9 @@ namespace m0.Graph.ExecutionFlow
 
         public static void RemoveGraphChangeListener(IEdge listenerEdge)
         {
+            if (listenerEdge == null)
+                return;
+
             IVertex triggerVertex = listenerEdge.From;
 
             triggerVertex.DeleteEdge(listenerEdge);

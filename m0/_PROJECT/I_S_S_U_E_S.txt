@@ -165,10 +165,10 @@ a lot of "dupa" here :(
 44. & / | > and or [49]
 49. double keywords definition - required spaces / generated spaces
 50. views
-51. transactions
 55. "2a"||@@System{} (have to use ||(@@){} instead)
 61. Form reset after ".m0" for File:
 62. _ not displaying in tree view
+104. FastMode in GraphView hangs
 
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!! ISSUES KNOWN:
 
@@ -241,3 +241,4 @@ a lot of "dupa" here :(
 			"note" :: new @@Note
 81. decimal support in jsonstore
 94. initial m0 files seems to be to big and contain too much
+51. transactions
