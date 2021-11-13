@@ -14,6 +14,7 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Shapes;
+using static m0.Graph.ExecutionFlow.ExecutionFlowHelper;
 
 namespace m0.UIWpf.Visualisers.Diagram
 {
@@ -51,7 +52,7 @@ namespace m0.UIWpf.Visualisers.Diagram
                          GraphChangeFilterEnum.OutputEdgeAdded,
                          GraphChangeFilterEnum.OutputEdgeRemoved,
                         GraphChangeFilterEnum.OutputEdgeDisposed},
-                    "DiagramLine",
+                    "DiagramItem",
                     VertexChange);
             }
                // PlatformClass.RegisterVertexChangeListeners(Vertex, new VertexChange(VertexChange), new string[] { "BaseEdge", "SelectedEdges", "ForegroundColor", "BackgroundColor" });
@@ -65,7 +66,16 @@ namespace m0.UIWpf.Visualisers.Diagram
 
         public virtual void VertexSetedUp()
         {
-            PlatformClass.RegisterVertexChangeListeners(Vertex, new VertexChange(VertexChange), new string[] { "BaseEdge", "SelectedEdges", "ForegroundColor", "BackgroundColor" });
+            graphChangeListenerEdge = GraphChangeTrigger.AddTriggerAndListener(Vertex,
+                new List<string> { },
+                new List<GraphChangeFilterEnum> {GraphChangeFilterEnum.ValueChange,
+                         GraphChangeFilterEnum.OutputEdgeAdded,
+                         GraphChangeFilterEnum.OutputEdgeRemoved,
+                         GraphChangeFilterEnum.OutputEdgeDisposed},
+                "DiagramItem",
+                VertexChange);
+
+            //PlatformClass.RegisterVertexChangeListeners(Vertex, new VertexChange(VertexChange), new string[] { "BaseEdge", "SelectedEdges", "ForegroundColor", "BackgroundColor" });
 
             VisualiserUpdate();
         } // to be called after Vertex is setted up
@@ -76,8 +86,75 @@ namespace m0.UIWpf.Visualisers.Diagram
                 if (e is IDisposable)
                     ((IDisposable)e).Dispose();
 
-            PlatformClass.RemoveVertexChangeListeners(this.Vertex, new VertexChange(VertexChange));
+            GraphChangeTrigger.RemoveListener(graphChangeListenerEdge);
+            //PlatformClass.RemoveVertexChangeListeners(this.Vertex, new VertexChange(VertexChange));
         }
+
+        protected virtual INoInEdgeInOutVertexVertex VertexChange(IExecution exe)
+        {
+            IVertex baseEdgeTo = Vertex.Get(false, @"BaseEdge:\To:");
+
+            if (IsVertexChange(exe.Stack, baseEdgeTo))
+                VertexContentChange();
+
+            foreach(IVertex edgeVertex in GetEdgesRemovedFrom(exe.Stack, baseEdgeTo))
+            {
+                DiagramLineBase toRemove = null;
+
+                foreach (DiagramLineBase l in DiagramLines)
+                    if (l.Vertex.Get(false, @"BaseEdge:\Meta:") == edgeVertex.Get(false, "Meta:") &&
+                        l.Vertex.Get(false, @"BaseEdge:\To:") == edgeVertex.Get(false, "To:"))
+                        toRemove = l;
+
+                if (toRemove != null)
+                    RemoveDiagramLine(toRemove);
+            }
+
+            if(IsEdgeAddedTo(exe.Stack, baseEdgeTo) && CanAutomaticallyAddEdges)
+                Diagram.CheckAndUpdateDiagramLinesForItem(this);
+
+            if (IsVertexChangeOrEdgeAddedRemovedDisposedByMeta(exe.Stack, "BackgroundColor")
+                || IsVertexChangeOrEdgeAddedRemovedDisposedByMeta(exe.Stack, "ForegroundColor")
+                || IsVertexChangeOrEdgeAddedRemovedDisposedByMeta(exe.Stack, "Red")
+                || IsVertexChangeOrEdgeAddedRemovedDisposedByMeta(exe.Stack, "Green")
+                || IsVertexChangeOrEdgeAddedRemovedDisposedByMeta(exe.Stack, "Blue")
+                || IsVertexChangeOrEdgeAddedRemovedDisposedByMeta(exe.Stack, "Opacity"))
+                VisualiserUpdate();
+
+            if (IsEdgeAddedTo(exe.Stack, Vertex))
+                VisualiserUpdate();
+
+            return exe.Stack;
+        }
+
+            /*if (sender == Vertex.Get(false, @"BaseEdge:\To:") && e.Type == VertexChangeType.EdgeRemoved)
+            {
+                DiagramLineBase toRemove = null;
+
+                foreach (DiagramLineBase l in DiagramLines)
+                    if (l.Vertex.Get(false, @"BaseEdge:\Meta:") == e.Edge.Meta &&
+                        l.Vertex.Get(false, @"BaseEdge:\To:") == e.Edge.To)
+                        toRemove = l;
+
+                if (toRemove != null)
+                    RemoveDiagramLine(toRemove);
+            }*/
+
+            //if (sender == Vertex.Get(false, @"BaseEdge:\To:") && e.Type == VertexChangeType.ValueChanged)
+            //    VertexContentChange();
+
+           // if (sender == Vertex.Get(false, @"BaseEdge:\To:") && e.Type == VertexChangeType.EdgeAdded && CanAutomaticallyAddEdges)
+           // {
+           //     Diagram.CheckAndUpdateDiagramLinesForItem(this);
+           // }
+
+          /*  if (sender == Vertex.Get(false, @"LineWidth:") ||
+                sender == Vertex.Get(false, @"BackgroundColor:") || sender == Vertex.Get(false, @"BackgroundColor:\Red:") || sender == Vertex.Get(false, @"BackgroundColor:\Green:") || sender == Vertex.Get(false, @"BackgroundColor:\Blue:") || sender == Vertex.Get(false, @"BackgroundColor:\Opacity:") ||
+                sender == Vertex.Get(false, @"ForegroundColor:") || sender == Vertex.Get(false, @"ForegroundColor:\Red:") || sender == Vertex.Get(false, @"ForegroundColor:\Green:") || sender == Vertex.Get(false, @"ForegroundColor:\Blue:") || sender == Vertex.Get(false, @"ForegroundColor:\Opacity:"))
+                VisualiserUpdate();*/
+
+         /*   if (sender == Vertex || e.Type == VertexChangeType.EdgeAdded)
+                VisualiserUpdate();*/
 
         // OPTIMISATION START
 
@@ -616,42 +693,6 @@ namespace m0.UIWpf.Visualisers.Diagram
         public virtual void VertexContentChange()
         {
             VisualiserUpdate();
-        }
-
-        protected virtual INoInEdgeInOutVertexVertex VertexChange(IExecution exe)
-        {
-            return exe.Stack;
-        }
-        void x()
-        {
-            if (sender == Vertex.Get(false, @"BaseEdge:\To:") && e.Type == VertexChangeType.EdgeRemoved)
-            {
-                DiagramLineBase toRemove=null;
-
-                foreach (DiagramLineBase l in DiagramLines)
-                    if (l.Vertex.Get(false, @"BaseEdge:\Meta:") == e.Edge.Meta &&
-                        l.Vertex.Get(false, @"BaseEdge:\To:") == e.Edge.To)
-                        toRemove = l;
-
-                if(toRemove!=null)
-                    RemoveDiagramLine(toRemove);
-            }
-
-            if (sender == Vertex.Get(false, @"BaseEdge:\To:") && e.Type == VertexChangeType.ValueChanged)
-                VertexContentChange();
-
-            if (sender == Vertex.Get(false, @"BaseEdge:\To:") && e.Type == VertexChangeType.EdgeAdded && CanAutomaticallyAddEdges)
-            {
-                Diagram.CheckAndUpdateDiagramLinesForItem(this); 
-            }
-
-            if (sender == Vertex.Get(false, @"LineWidth:") ||
-                sender == Vertex.Get(false, @"BackgroundColor:") || sender == Vertex.Get(false, @"BackgroundColor:\Red:") || sender == Vertex.Get(false, @"BackgroundColor:\Green:") || sender == Vertex.Get(false, @"BackgroundColor:\Blue:") || sender == Vertex.Get(false, @"BackgroundColor:\Opacity:") ||
-                sender == Vertex.Get(false, @"ForegroundColor:") || sender == Vertex.Get(false, @"ForegroundColor:\Red:") || sender == Vertex.Get(false, @"ForegroundColor:\Green:") || sender == Vertex.Get(false, @"ForegroundColor:\Blue:") || sender == Vertex.Get(false, @"ForegroundColor:\Opacity:"))
-                    VisualiserUpdate();
-
-            if (sender == Vertex || e.Type == VertexChangeType.EdgeAdded)
-                    VisualiserUpdate();
         }
 
         public void AddToSelectedEdges()

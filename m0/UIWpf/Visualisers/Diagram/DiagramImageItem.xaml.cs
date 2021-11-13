@@ -42,9 +42,7 @@ namespace m0.UIWpf.Visualisers.Diagram
         public DiagramImageItem()
         {
             InitializeComponent();
-        }
-
-        
+        }        
 
         public override void Select()
         {
