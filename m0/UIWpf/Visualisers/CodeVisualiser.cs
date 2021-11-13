@@ -41,6 +41,7 @@ namespace m0.UIWpf.Visualisers
 
         public void UpdateView() { UpdateEditView(); }
 
+        public void UnselectAllSelectedEdges() { }
 
         public CodeVisualiser(IVertex baseEdgeVertex)
         {

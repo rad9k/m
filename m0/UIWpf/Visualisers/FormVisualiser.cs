@@ -85,6 +85,8 @@ namespace m0.UIWpf.Visualisers
 
         public void UpdateView() { }
 
+        public void UnselectAllSelectedEdges() { }
+
         public FormVisualiser(IVertex baseEdgeVertex)
         {
             new ListVisualiserHelper(MinusZero.Instance.Root.Get(false, @"System\Meta\Visualiser\Form"),

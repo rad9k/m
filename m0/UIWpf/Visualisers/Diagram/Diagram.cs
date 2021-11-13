@@ -19,6 +19,7 @@ using m0.UIWpf.Commands;
 using m0.UIWpf.Visualisers;
 using m0.UIWpf.Dialog;
 using m0.Graph.ExecutionFlow;
+using m0.UIWpf.Visualisers.Helper;
 
 namespace m0.UIWpf.Visualisers.Diagram
 {
@@ -35,8 +36,23 @@ namespace m0.UIWpf.Visualisers.Diagram
         public int EdgesNumber;
     }
 
-    public class Diagram : Border, IPlatformClass, IDisposable, IHasLocalizableEdges, IHasSelectableEdges
+    public class Diagram : Border, IListVisualiser
     {
+        public AtomVisualiserHelper VisualiserHelper { get; set; }
+
+        public List<IDisposable> SubVisualisers {
+            get {
+                List<IDisposable> list = new List<IDisposable>();
+
+                foreach (DiagramItemBase i in Items)
+                    list.Add(i);
+
+                return list;
+            }
+            set { }
+        }
+
+
         public Canvas TheCanvas;
 
         public bool IsSelecting = false;
@@ -68,6 +84,53 @@ namespace m0.UIWpf.Visualisers.Diagram
 
         bool IsFirstPainted = false;
 
+        static string[] _MetaTriggeringBaseEdgeUpdate = new string[] { };
+        public virtual string[] MetaTriggeringUpdateBaseEdge { get { return _MetaTriggeringBaseEdgeUpdate; } }
+
+        static string[] _MetaTriggeringUpdateViewSettings = new string[] { "IsMetaRightAlign", "IsAllVisualisersEdit", "ShowMeta", "GridStyle", "FilterQuery" };
+        public virtual string[] MetaTriggeringUpdateView { get { return _MetaTriggeringUpdateViewSettings; } }
+
+        public virtual void UpdateView() { }
+
+        public Diagram(IVertex baseEdgeVertex)
+        {
+            Items = new List<DiagramItemBase>();
+
+            TheCanvas = new Canvas();
+
+            TheCanvas.Background = (Brush)FindResource("0BackgroundBrush");
+
+            this.Child = TheCanvas;
+
+            this.BorderThickness = new Thickness(1);
+
+            this.BorderBrush = (Brush)FindResource("0LightGrayBrush");
+
+
+            this.AllowDrop = true;
+
+            new ListVisualiserHelper(MinusZero.Instance.Root.Get(false, @"System\Meta\Visualiser\List"),
+                 this,
+                "DiagramVisualiser",
+                this,
+                false,
+                new List<string> { @"", @"BaseEdge:\To:" },
+                "AtomVisualiserFull",
+                baseEdgeVertex,
+                UpdateBaseEdgeCallSchemeEnum.OmmitFirst);
+
+            this.Loaded += new RoutedEventHandler(OnLoad);
+            this.MouseMove += MouseMoveHandler;
+            this.MouseLeave += MouseLeaveHandler;
+            this.MouseLeftButtonDown += MouseButtonDownHandler;
+            this.MouseLeftButtonUp += MouseButtonUpHandler;
+            this.Drop += dndDrop;
+
+            this.KeyDown += Diagram_KeyDown;
+        }
+
+        public virtual void UpdateBaseEdge() { PaintDiagram(); }
+        
 
         // OPTIMISATION START
 
@@ -434,7 +497,7 @@ namespace m0.UIWpf.Visualisers.Diagram
             Keyboard.Focus(this);
         }
 
-        void OnLoad(object sender, RoutedEventArgs e)
+        public void OnLoad(object sender, RoutedEventArgs e)
         {
             SetFocus();
 
@@ -442,41 +505,9 @@ namespace m0.UIWpf.Visualisers.Diagram
 
             if (IsFirstPainted)
                 this.Loaded -= OnLoad;
-        }        
 
-        public Diagram()
-        {
-            MinusZero mz = MinusZero.Instance;
-
-            Items = new List<DiagramItemBase>();
-
-            TheCanvas = new Canvas();
-
-            TheCanvas.Background = (Brush)FindResource("0BackgroundBrush");
-
-            this.Child = TheCanvas;
-
-            this.BorderThickness = new Thickness(1);
-
-            this.BorderBrush = (Brush)FindResource("0LightGrayBrush");
-
-
-            this.AllowDrop = true;
-
-            if (mz != null && mz.IsInitialized)
-            {                       
-                this.ContextMenu = new m0ContextMenu(this);
-            }
-
-            this.Loaded += new RoutedEventHandler(OnLoad);
-            this.MouseMove += MouseMoveHandler;
-            this.MouseLeave+=MouseLeaveHandler;
-            this.MouseLeftButtonDown += MouseButtonDownHandler;
-            this.MouseLeftButtonUp+=MouseButtonUpHandler;
-            this.Drop += dndDrop;
-
-            this.KeyDown += Diagram_KeyDown;                      
-        }
+            VisualiserHelper.AddContextMenu();
+        }             
 
         bool IsLineSelected = false;  
 
@@ -923,7 +954,7 @@ namespace m0.UIWpf.Visualisers.Diagram
             ClickTarget = ClickTargetEnum.MouseUpOrLeave;
         }
 
-        protected void ZoomVisualiserContentChange()
+        public void ZoomVisualiserContentChange()
         {
             double scale = ((double)GraphUtil.GetIntegerValue(Vertex.Get(false, "ZoomVisualiserContent:"))) / 100;
 
@@ -958,7 +989,7 @@ namespace m0.UIWpf.Visualisers.Diagram
             SelectedVerticesUpdated();
         }
 
-        protected void SelectedVerticesUpdated()
+        public void SelectedVerticesUpdated()
         {
             if (IsFirstPainted)
             {
@@ -999,7 +1030,18 @@ namespace m0.UIWpf.Visualisers.Diagram
             { PaintDiagram(); return; }   
         }
 
-        private IVertex _Vertex;
+        public IVertex Vertex
+        {
+            get { return VisualiserHelper.Vertex; }
+            set { VisualiserHelper.SetVertex(value); }
+        }
+
+        public void Dispose()
+        {
+            VisualiserHelper.Dispose();
+        }
+
+        /*private IVertex _Vertex;
 
         public IVertex Vertex
         {
@@ -1047,7 +1089,7 @@ namespace m0.UIWpf.Visualisers.Diagram
                  //   ((IDisposable)Vertex).Dispose();
                 
             }
-        }
+        }*/
 
 
         // IHasLocalizableEdges
