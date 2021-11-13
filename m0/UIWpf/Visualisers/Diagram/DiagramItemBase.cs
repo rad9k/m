@@ -1,5 +1,6 @@
 ﻿using m0.Foundation;
 using m0.Graph;
+using m0.Graph.ExecutionFlow;
 using m0.UIWpf.Dialog;
 using m0.Util;
 using m0.ZeroCode.Helpers;
@@ -35,6 +36,48 @@ namespace m0.UIWpf.Visualisers.Diagram
         protected List<DiagramLineBase> DiagramToLines = new List<DiagramLineBase>();
 
         protected List<DiagramLineBase> DiagramToAsMetaLines = new List<DiagramLineBase>();
+
+        IEdge graphChangeListenerEdge;
+
+        public DiagramItemBase()
+        {
+            Anchors = new List<FrameworkElement>();
+
+            if (Vertex != null)
+            {
+                graphChangeListenerEdge = GraphChangeTrigger.AddTriggerAndListener(Vertex,
+                    new List<string> { },
+                    new List<GraphChangeFilterEnum> {GraphChangeFilterEnum.ValueChange,
+                         GraphChangeFilterEnum.OutputEdgeAdded,
+                         GraphChangeFilterEnum.OutputEdgeRemoved,
+                        GraphChangeFilterEnum.OutputEdgeDisposed},
+                    "DiagramLine",
+                    VertexChange);
+            }
+               // PlatformClass.RegisterVertexChangeListeners(Vertex, new VertexChange(VertexChange), new string[] { "BaseEdge", "SelectedEdges", "ForegroundColor", "BackgroundColor" });
+
+            this.SizeChanged += DiagramItemBase_SizeChanged;
+
+            this.MouseEnter += DiagramItemBase_MouseEnter;
+
+            this.MouseLeave += DiagramItemBase_MouseLeave;
+        }
+
+        public virtual void VertexSetedUp()
+        {
+            PlatformClass.RegisterVertexChangeListeners(Vertex, new VertexChange(VertexChange), new string[] { "BaseEdge", "SelectedEdges", "ForegroundColor", "BackgroundColor" });
+
+            VisualiserUpdate();
+        } // to be called after Vertex is setted up
+
+        public void Dispose()
+        {
+            foreach (DiagramLineBase e in DiagramLines)
+                if (e is IDisposable)
+                    ((IDisposable)e).Dispose();
+
+            PlatformClass.RemoveVertexChangeListeners(this.Vertex, new VertexChange(VertexChange));
+        }
 
         // OPTIMISATION START
 
@@ -135,17 +178,10 @@ namespace m0.UIWpf.Visualisers.Diagram
                 l.RemoveFromCanvas();
         }
 
-
         public void AddAsToMetaLine(DiagramLineBase line)
         {
             DiagramToAsMetaLines.Add(line);
         }
-
-        public virtual void VertexSetedUp() {
-            PlatformClass.RegisterVertexChangeListeners(Vertex, new VertexChange(VertexChange), new string[] { "BaseEdge", "SelectedEdges", "ForegroundColor", "BackgroundColor" });
-
-            VisualiserUpdate();            
-        } // to be called after Vertex is setted up
 
         public virtual void VisualiserUpdate()       {
 
@@ -302,9 +338,7 @@ namespace m0.UIWpf.Visualisers.Diagram
                     }
                     else
                         UserInteractionUtil.ShowError(Diagram.Vertex.Value+" Diagram", "Adding new diagram line  \"" + a.Value + "\" is not possible.\n\n" + test.Value);
-                }
-                 
-            
+                }         
         }
 
         private static void AddNewLineOption(IVertex v, IEdge def, IEdge e)
@@ -560,20 +594,6 @@ namespace m0.UIWpf.Visualisers.Diagram
             }
         }
 
-        public DiagramItemBase() 
-        {
-            Anchors = new List<FrameworkElement>();
-
-            if (Vertex != null)
-                PlatformClass.RegisterVertexChangeListeners(Vertex, new VertexChange(VertexChange), new string[] { "BaseEdge", "SelectedEdges","ForegroundColor","BackgroundColor" });
-
-            this.SizeChanged+=DiagramItemBase_SizeChanged; 
-
-            this.MouseEnter+=DiagramItemBase_MouseEnter;
-
-            this.MouseLeave+=DiagramItemBase_MouseLeave;
-        }
-
         private void DiagramItemBase_MouseLeave(object sender, MouseEventArgs e)
         {
             if (Diagram.IsDrawingLine==false&&Diagram.IsSelecting==false)
@@ -598,7 +618,11 @@ namespace m0.UIWpf.Visualisers.Diagram
             VisualiserUpdate();
         }
 
-        public virtual void VertexChange(object sender, VertexChangeEventArgs e)
+        protected virtual INoInEdgeInOutVertexVertex VertexChange(IExecution exe)
+        {
+            return exe.Stack;
+        }
+        void x()
         {
             if (sender == Vertex.Get(false, @"BaseEdge:\To:") && e.Type == VertexChangeType.EdgeRemoved)
             {
@@ -854,16 +878,6 @@ namespace m0.UIWpf.Visualisers.Diagram
             UpdateAnchor(ClickTargetEnum.AnchorLeftBottom, left - AnchorSize, bottom);
             UpdateAnchor(ClickTargetEnum.AnchorMiddleBottom, left - AnchorSize / 2 + width / 2, bottom);
             UpdateAnchor(ClickTargetEnum.AnchorRightBottom, right, bottom);
-        }
-
-
-        public void Dispose()
-        {
-            foreach (DiagramLineBase e in DiagramLines)
-                if (e is IDisposable)
-                    ((IDisposable)e).Dispose();
-
-            PlatformClass.RemoveVertexChangeListeners(this.Vertex, new VertexChange(VertexChange));
         }
     }
 }

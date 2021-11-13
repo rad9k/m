@@ -8,7 +8,7 @@ using System.Windows.Media;
 
 namespace m0.UIWpf.Visualisers.Diagram
 {
-    public class DiagramLineBase
+    public class DiagramLineBase : IDisposable
     {
         public Diagram Diagram;
 
@@ -57,6 +57,11 @@ namespace m0.UIWpf.Visualisers.Diagram
 
         public virtual void Unhighlight()
         {
+        }
+
+        public virtual void Dispose()
+        {
+            throw new NotImplementedException();
         }
     }
 }

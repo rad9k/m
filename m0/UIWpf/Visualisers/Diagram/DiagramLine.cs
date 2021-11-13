@@ -1,5 +1,6 @@
 ﻿using m0.Foundation;
 using m0.Graph;
+using m0.Graph.ExecutionFlow;
 using m0.UIWpf.Controls;
 using m0.Util;
 using m0.ZeroTypes;
@@ -17,6 +18,8 @@ namespace m0.UIWpf.Visualisers.Diagram
 {
     public class DiagramLine: DiagramLineBase, IPlatformClass
     {
+        IEdge graphChangeListenerEdge;
+
         private IVertex _Vertex;
         public override IVertex Vertex { get { return _Vertex; }
             set {
@@ -24,8 +27,20 @@ namespace m0.UIWpf.Visualisers.Diagram
 
                 VertexUpdated();
 
-                //PlatformClass.RegisterVertexChangeListeners(Vertex, new VertexChange(VertexChange), new string[] { "BaseEdge", "SelectedEdges", "ForegroundColor", "BackgroundColor" });
+                graphChangeListenerEdge = GraphChangeTrigger.AddTriggerAndListener(_Vertex,
+                     new List<string> { },
+                     new List<GraphChangeFilterEnum> {GraphChangeFilterEnum.ValueChange,
+                         GraphChangeFilterEnum.OutputEdgeAdded,
+                         GraphChangeFilterEnum.OutputEdgeRemoved,
+                        GraphChangeFilterEnum.OutputEdgeDisposed},
+                    "DiagramLine",
+                    VertexChange);
             }
+        }
+
+        public override void Dispose()
+        {
+            GraphChangeTrigger.RemoveListener(graphChangeListenerEdge);
         }
 
         protected virtual INoInEdgeInOutVertexVertex VertexChange(IExecution exe)

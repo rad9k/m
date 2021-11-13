@@ -162,7 +162,7 @@ namespace m0.UIWpf.Visualisers
             this.Padding = new Thickness(1);
 
             if (baseVertex != null)
-                listenerEdge = GraphChangeTrigger.AddEventTriggerAndListener(baseVertex, 
+                listenerEdge = GraphChangeTrigger.AddTriggerAndListener(baseVertex, 
                     new List<string> { },
                     new List<GraphChangeFilterEnum> {GraphChangeFilterEnum.ValueChange,
                      GraphChangeFilterEnum.OutputEdgeAdded,
@@ -191,7 +191,7 @@ namespace m0.UIWpf.Visualisers
                 ((IDisposable)(this.Child)).Dispose();
 
             if (baseVertex != null)
-                GraphChangeTrigger.RemoveGraphChangeListener(listenerEdge);                
+                GraphChangeTrigger.RemoveListener(listenerEdge);                
         }        
     }
 

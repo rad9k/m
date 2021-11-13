@@ -142,7 +142,7 @@ namespace m0.Graph.ExecutionFlow
 
         public static void RemoveGraphChangeListener(IEdge graphChangeListenerEdge)
         {
-            GraphChangeTrigger.RemoveGraphChangeListener(graphChangeListenerEdge);
+            GraphChangeTrigger.RemoveListener(graphChangeListenerEdge);
         }
 
         public static void DecorateWithDotNetStaticMethod(IVertex baseVertex, string _typeName, string _methodName)

@@ -166,11 +166,11 @@ namespace m0.UIWpf.Visualisers.Helper
         public void SetVertex(IVertex value)
         {
             if (Vertex != null)
-                GraphChangeTrigger.RemoveGraphChangeListener(graphChangeListenerEdge);            
+                GraphChangeTrigger.RemoveListener(graphChangeListenerEdge);            
 
             Vertex = value;
 
-            IEdge graphChangeTriggerEdge = GraphChangeTrigger.AddGraphChangeTrigger(Vertex, 
+            IEdge graphChangeTriggerEdge = GraphChangeTrigger.AddTrigger(Vertex, 
                 scopeQueries, 
                 changeTypeFilter,
                 scopeQueriesName);
@@ -191,7 +191,7 @@ namespace m0.UIWpf.Visualisers.Helper
 
                 visualiserVertexEdge.From.DeleteEdge(visualiserVertexEdge);
 
-                GraphChangeTrigger.RemoveGraphChangeListener(graphChangeListenerEdge);                
+                GraphChangeTrigger.RemoveListener(graphChangeListenerEdge);                
 
                 if (Vertex is IDisposable)
                     ((IDisposable)Vertex).Dispose();

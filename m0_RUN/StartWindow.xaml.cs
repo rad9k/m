@@ -66,7 +66,7 @@ namespace m0
             scopelist.Add("");
             scopelist.Add(@"\");
 
-            IVertex trigger = GraphChangeTrigger.AddGraphChangeTrigger(v, scopelist, new List<GraphChangeFilterEnum> {GraphChangeFilterEnum.ValueChange,
+            IVertex trigger = GraphChangeTrigger.AddTrigger(v, scopelist, new List<GraphChangeFilterEnum> {GraphChangeFilterEnum.ValueChange,
                      GraphChangeFilterEnum.OutputEdgeAdded,
                      GraphChangeFilterEnum.OutputEdgeRemoved,
                      GraphChangeFilterEnum.OutputEdgeDisposed}).To;

@@ -41,13 +41,13 @@ namespace m0.Graph.ExecutionFlow
             graphChangeFilterEnum_OutputEdgeDisposed_meta = r.Get(false, @"System\Meta\ZeroTypes\ExecutionFlow\GraphChangeFilterEnum\OutputEdgeDisposed");
         }
 
-        public static IEdge AddEventTriggerAndListener(IVertex baseVertex, 
+        public static IEdge AddTriggerAndListener(IVertex baseVertex, 
             IList<string> scopeQueries,
             IList<GraphChangeFilterEnum> changeTypeFilter,
             string triggerVertexName, 
             ExecutionFlowHelper.DotNetDelegate _delegate)
         {
-            IEdge graphChangeTriggerEdge = GraphChangeTrigger.AddGraphChangeTrigger(baseVertex, 
+            IEdge graphChangeTriggerEdge = GraphChangeTrigger.AddTrigger(baseVertex, 
                 scopeQueries, 
                 changeTypeFilter, 
                 triggerVertexName);
@@ -58,14 +58,14 @@ namespace m0.Graph.ExecutionFlow
             return ExecutionFlowHelper.AddListener_DotNetDelegate(graphChangeTriggerEdge.To, _delegate, "Listener");
         }        
 
-        public static IEdge AddGraphChangeTrigger(IVertex baseVertex, 
+        public static IEdge AddTrigger(IVertex baseVertex, 
             IList<string> scopeQueries, 
             IList<GraphChangeFilterEnum> changeTypeFilter)
         {
-            return AddGraphChangeTrigger(baseVertex, scopeQueries, changeTypeFilter, null);
+            return AddTrigger(baseVertex, scopeQueries, changeTypeFilter, null);
         }
 
-        public static IEdge AddGraphChangeTrigger(IVertex baseVertex, 
+        public static IEdge AddTrigger(IVertex baseVertex, 
             IList<string> scopeQueries,
             IList<GraphChangeFilterEnum> changeTypeFilter,
             string triggerVertexName)
@@ -132,7 +132,7 @@ namespace m0.Graph.ExecutionFlow
             return triggerEdge;
         }
 
-        public static void RemoveGraphChangeListener(IEdge listenerEdge)
+        public static void RemoveListener(IEdge listenerEdge)
         {
             if (listenerEdge == null)
                 return;

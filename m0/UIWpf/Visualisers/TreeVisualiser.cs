@@ -544,7 +544,7 @@ namespace m0.UIWpf.Visualisers
                 }
 
             if (!i.doNotTrackGraphChanges)
-                i.vertexChangeListenerEdge = GraphChangeTrigger.AddEventTriggerAndListener(e.To,
+                i.vertexChangeListenerEdge = GraphChangeTrigger.AddTriggerAndListener(e.To,
                     new List<string> { },
                     new List<GraphChangeFilterEnum> {GraphChangeFilterEnum.ValueChange,
                      GraphChangeFilterEnum.OutputEdgeAdded,
