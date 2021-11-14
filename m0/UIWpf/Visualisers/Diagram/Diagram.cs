@@ -84,13 +84,15 @@ namespace m0.UIWpf.Visualisers.Diagram
 
         bool IsFirstPainted = false;
 
-        static string[] _MetaTriggeringBaseEdgeUpdate = new string[] { };
+        static string[] _MetaTriggeringBaseEdgeUpdate = new string[] { "SizeX", "SizeY"};
         public virtual string[] MetaTriggeringUpdateBaseEdge { get { return _MetaTriggeringBaseEdgeUpdate; } }
 
-        static string[] _MetaTriggeringUpdateViewSettings = new string[] { "IsMetaRightAlign", "IsAllVisualisersEdit", "ShowMeta", "GridStyle", "FilterQuery" };
+        static string[] _MetaTriggeringUpdateViewSettings = new string[] { };
         public virtual string[] MetaTriggeringUpdateView { get { return _MetaTriggeringUpdateViewSettings; } }
 
         public virtual void UpdateView() { }
+
+        public virtual void UpdateBaseEdge() { PaintDiagram(); }
 
         public Diagram(IVertex baseEdgeVertex)
         {
@@ -129,8 +131,19 @@ namespace m0.UIWpf.Visualisers.Diagram
             this.KeyDown += Diagram_KeyDown;
         }
 
-        public virtual void UpdateBaseEdge() { PaintDiagram(); }
-        
+        private void VertexChangeListenOff()
+        {
+          //  ((EasyVertex)Vertex).CanFireChangeEvent = false;
+
+          //  PlatformClass.RemoveVertexChangeListeners(this.Vertex, new VertexChange(VertexChange));
+        }
+
+        private void VertexChangeListenOn()
+        {
+          //  ((EasyVertex)Vertex).CanFireChangeEvent = true;
+
+          //  PlatformClass.RegisterVertexChangeListeners(this.Vertex, new VertexChange(VertexChange), new string[] { "BaseEdge", "SelectedEdges" });
+        }
 
         // OPTIMISATION START
 
@@ -400,20 +413,6 @@ namespace m0.UIWpf.Visualisers.Diagram
             TurnOnSelectedEdgesFireChange();
 
             SelectedVerticesUpdated();
-        }
-
-        private void VertexChangeListenOff()
-        {
-           ((EasyVertex)Vertex).CanFireChangeEvent = false;
-
-            PlatformClass.RemoveVertexChangeListeners(this.Vertex, new VertexChange(VertexChange));            
-        }
-
-        private void VertexChangeListenOn()
-        {
-            ((EasyVertex)Vertex).CanFireChangeEvent = true;
-
-            PlatformClass.RegisterVertexChangeListeners(this.Vertex, new VertexChange(VertexChange), new string[] { "BaseEdge", "SelectedEdges" });            
         }
 
         public void PaintDiagram()
@@ -1012,7 +1011,7 @@ namespace m0.UIWpf.Visualisers.Diagram
                 i.Select();    */
         }
 
-        public void VertexChange(object sender, VertexChangeEventArgs e)
+      /*  public void VertexChange(object sender, VertexChangeEventArgs e)
         {            
             if ((sender == Vertex) && (e.Type == VertexChangeType.EdgeAdded) && (GeneralUtil.CompareStrings(e.Edge.Meta.Value, "SelectedEdges")))
             { SelectedVerticesUpdated(); return; }
@@ -1028,7 +1027,7 @@ namespace m0.UIWpf.Visualisers.Diagram
 
             if ((sender == Vertex.Get(false, "SizeX:") || sender == Vertex.Get(false, "SizeY:")) && e.Type == VertexChangeType.ValueChanged)
             { PaintDiagram(); return; }   
-        }
+        }*/
 
         public IVertex Vertex
         {
