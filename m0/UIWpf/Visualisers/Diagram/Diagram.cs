@@ -108,9 +108,6 @@ namespace m0.UIWpf.Visualisers.Diagram
 
             this.BorderBrush = (Brush)FindResource("0LightGrayBrush");
 
-
-            this.AllowDrop = true;
-
             new ListVisualiserHelper(MinusZero.Instance.Root.Get(false, @"System\Meta\Visualiser\List"),
                  this,
                 "DiagramVisualiser",
@@ -121,6 +118,7 @@ namespace m0.UIWpf.Visualisers.Diagram
                 baseEdgeVertex,
                 UpdateBaseEdgeCallSchemeEnum.OmmitFirst);
 
+            this.AllowDrop = true;
             this.Loaded += new RoutedEventHandler(OnLoad);
             this.MouseMove += MouseMoveHandler;
             this.MouseLeave += MouseLeaveHandler;
