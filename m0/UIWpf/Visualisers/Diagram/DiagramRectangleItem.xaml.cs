@@ -35,6 +35,8 @@ namespace m0.UIWpf.Visualisers.Diagram
             }
         }
 
+        public DiagramRectangleItem(IVertex baseVertex) : base(baseVertex) { }
+
         public override void VertexSetedUp()
         {
             if (Vertex.Get(false, "VisualiserClass:") != null)

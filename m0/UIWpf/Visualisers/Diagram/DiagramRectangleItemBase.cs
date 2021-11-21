@@ -12,6 +12,8 @@ namespace m0.UIWpf.Visualisers.Diagram
 {
     public class DiagramRectangleItemBase: DiagramItemBase
     {
+        public DiagramRectangleItemBase(IVertex baseVertex) : base(baseVertex) { }
+
         public DiagramRectangleItemBase()
         {
             this.MouseLeftButtonDown += MouseLeftButtonDownHandler;                        

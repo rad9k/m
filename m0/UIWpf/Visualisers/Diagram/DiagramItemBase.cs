@@ -40,6 +40,13 @@ namespace m0.UIWpf.Visualisers.Diagram
 
         IEdge graphChangeListenerEdge;
 
+        IVertex baseEdge;
+
+        public DiagramItemBase(IVertex _baseEdge)
+        {
+            baseEdge = _baseEdge;
+        }
+
         public DiagramItemBase()
         {
             Anchors = new List<FrameworkElement>();
