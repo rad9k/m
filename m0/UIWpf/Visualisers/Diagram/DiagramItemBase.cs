@@ -40,30 +40,10 @@ namespace m0.UIWpf.Visualisers.Diagram
 
         IEdge graphChangeListenerEdge;
 
-        IVertex baseEdge;
-
-        public DiagramItemBase(IVertex _baseEdge)
-        {
-            baseEdge = _baseEdge;
-        }
-
-        public DiagramItemBase()
+        public DiagramItemBase(IVertex _baseEdgeVertex)
         {
             Anchors = new List<FrameworkElement>();
-
-            if (Vertex != null)
-            {
-                graphChangeListenerEdge = GraphChangeTrigger.AddTriggerAndListener(Vertex,
-                    new List<string> { },
-                    new List<GraphChangeFilterEnum> {GraphChangeFilterEnum.ValueChange,
-                         GraphChangeFilterEnum.OutputEdgeAdded,
-                         GraphChangeFilterEnum.OutputEdgeRemoved,
-                        GraphChangeFilterEnum.OutputEdgeDisposed},
-                    "DiagramItem",
-                    VertexChange);
-            }
-               // PlatformClass.RegisterVertexChangeListeners(Vertex, new VertexChange(VertexChange), new string[] { "BaseEdge", "SelectedEdges", "ForegroundColor", "BackgroundColor" });
-
+            
             this.SizeChanged += DiagramItemBase_SizeChanged;
 
             this.MouseEnter += DiagramItemBase_MouseEnter;
@@ -102,7 +82,7 @@ namespace m0.UIWpf.Visualisers.Diagram
             IVertex baseEdgeTo = Vertex.Get(false, @"BaseEdge:\To:");
 
             if (IsVertexChange(exe.Stack, baseEdgeTo))
-                VertexContentChange();
+                VisualiserUpdate();
 
             foreach(IVertex edgeVertex in GetEdgesRemovedFrom(exe.Stack, baseEdgeTo))
             {
@@ -697,11 +677,6 @@ namespace m0.UIWpf.Visualisers.Diagram
 
         private bool CanAutomaticallyAddEdges = true;
 
-        public virtual void VertexContentChange()
-        {
-            VisualiserUpdate();
-        }
-
         public void AddToSelectedEdges()
         {
             Edge.AddEdgeVertexEdgeByEdgeVertex(Diagram.Vertex.Get(false, "SelectedEdges:"), Vertex.Get(false, "BaseEdge:"));
@@ -721,9 +696,7 @@ namespace m0.UIWpf.Visualisers.Diagram
 
             Diagram.ClickTarget = ClickTargetEnum.Item;
             Diagram.ClickedItem = this;
-
-            IVertex selectedEdges = Vertex.Get(false, "SelectedEdges:");
-
+            
             if (Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl))
             {
                 if (IsSelected)

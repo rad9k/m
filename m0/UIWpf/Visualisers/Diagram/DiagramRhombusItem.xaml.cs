@@ -1,4 +1,5 @@
-﻿using System;
+﻿using m0.Foundation;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -42,7 +43,7 @@ namespace m0.UIWpf.Visualisers.Diagram
                 this.Rhombus.StrokeThickness = LineWidth;
         }
 
-        public DiagramRhombusItem()
+        public DiagramRhombusItem(IVertex baseEdgeVertex) : base(baseEdgeVertex)
         {
             InitializeComponent();
         }        

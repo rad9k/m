@@ -125,17 +125,16 @@ namespace m0.UIWpf.Visualisers.Helper
         {
             tempSelectedVertices = MinusZero.Instance.CreateTempVertex();
 
-            GraphUtil.CopyEdges(Vertex.Get(false, "SelectedEdges:"), tempSelectedVertices);
+            GraphUtil.CopyEdges(Vertex.GetAll(false, @"SelectedEdges:\{$Is:Edge}"), tempSelectedVertices);
         }
 
         protected void RestoreSelectedVertices()
-        {
-            IVertex sv = Vertex.Get(false, "SelectedEdges:");
-
+        {            
             if (tempSelectedVertices != null)
             {
-                GraphUtil.RemoveAllEdges_WhereEdgeIsEdge(sv);
+                VisualiserUtil.RemoveAllSelectedEdges(visualiser);
 
+                IVertex sv = Vertex.Get(false, "SelectedEdges:");
                 GraphUtil.CopyEdges(tempSelectedVertices, sv);
             }
         }

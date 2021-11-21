@@ -11,6 +11,14 @@ namespace m0.UIWpf.Visualisers.Helper
 {
     public class VisualiserUtil
     {
+        public static void RemoveAllSelectedEdges(IVisualiser visualiser)
+        {
+            IVertex selectedEdges = visualiser.Vertex.Get(false, "SelectedEdges:");
+
+            foreach (IEdge e in selectedEdges.GetAll(false, @"\{$Is:Edge}"))
+                selectedEdges.DeleteEdge(e);
+        }
+
         public static IEnumerable<IEdge> FilterEdges(IEnumerable<IEdge> toFilterEdges, IVertex visualiserVertex)
         {
             IList<IEdge> list = new List<IEdge>();

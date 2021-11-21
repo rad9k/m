@@ -1,4 +1,5 @@
-﻿using System;
+﻿using m0.Foundation;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -39,7 +40,7 @@ namespace m0.UIWpf.Visualisers.Diagram
             this.Background = null;
         }        
 
-        public DiagramImageItem()
+        public DiagramImageItem(IVertex baseEdgeVertex) : base(baseEdgeVertex)
         {
             InitializeComponent();
         }        

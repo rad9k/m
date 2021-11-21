@@ -143,6 +143,18 @@ namespace m0.UIWpf.Visualisers.Diagram
           //  PlatformClass.RegisterVertexChangeListeners(this.Vertex, new VertexChange(VertexChange), new string[] { "BaseEdge", "SelectedEdges" });
         }
 
+        private void TurnOnSelectedEdgesFireChange()
+        {
+         //   if (Vertex.Get(false, "SelectedEdges:") is VertexBase)
+          //      ((VertexBase)Vertex.Get(false, "SelectedEdges:")).CanFireChangeEvent = true;
+        }
+
+        private void TurnOffSelectedEdgesFireChange()
+        {
+           // if (Vertex.Get(false, "SelectedEdges:") is VertexBase)
+           //     ((VertexBase)Vertex.Get(false, "SelectedEdges:")).CanFireChangeEvent = false;
+        }
+
         // OPTIMISATION START
 
         Dictionary<IVertex, List<DiagramItemBase>> ItemsDictionary = new Dictionary<IVertex, List<DiagramItemBase>>();
@@ -373,18 +385,6 @@ namespace m0.UIWpf.Visualisers.Diagram
             return list;*/
         }
 
-        private void TurnOnSelectedEdgesFireChange()
-        {
-            if (Vertex.Get(false, "SelectedEdges:") is VertexBase)
-                ((VertexBase)Vertex.Get(false, "SelectedEdges:")).CanFireChangeEvent = true;
-        }
-
-        private void TurnOffSelectedEdgesFireChange()
-        {
-            if (Vertex.Get(false, "SelectedEdges:") is VertexBase)
-                ((VertexBase)Vertex.Get(false, "SelectedEdges:")).CanFireChangeEvent = false;
-        }
-
         void SelectItemsBySelectionArea()
         {
             double left = SelectionArea.Left;
@@ -519,7 +519,7 @@ namespace m0.UIWpf.Visualisers.Diagram
 
         private void DeleteSelectedItems()
         {
-            if (Vertex.GetAll(false, @"SelectedEdges:\").Count() == 0)
+            if (Vertex.GetAll(false, @"SelectedEdges:\{$Is:Edge}").Count() == 0)
                 return;
 
             IVertex info = m0.MinusZero.Instance.CreateTempVertex();
@@ -537,7 +537,7 @@ namespace m0.UIWpf.Visualisers.Diagram
             if (option == null || option == optionCancel)
                 return;
 
-            IList<IEdge> selectedEdges = GeneralUtil.CreateAndCopyList<IEdge>(Vertex.GetAll(false, @"SelectedEdges:\"));
+            IList<IEdge> selectedEdges = GeneralUtil.CreateAndCopyList<IEdge>(Vertex.GetAll(false, @"SelectedEdges:\{$Is:Edge}"));
 
             UnselectAllSelectedEdges();
 
@@ -683,7 +683,7 @@ namespace m0.UIWpf.Visualisers.Diagram
 
                 MovingSprites.Clear();
 
-                foreach (IEdge ed in Vertex.GetAll(false, @"SelectedEdges:\"))
+                foreach (IEdge ed in Vertex.GetAll(false, @"SelectedEdges:\{$Is:Edge}"))
                     foreach (DiagramItemBase item in GetItemsByBaseEdge(ed.To))
                     {
                         double rx = Canvas.GetLeft(item);
@@ -727,7 +727,7 @@ namespace m0.UIWpf.Visualisers.Diagram
             foreach (Rectangle r in MovingSprites)
                 TheCanvas.Children.Remove(r);
 
-            foreach (IEdge ed in Vertex.GetAll(false, @"SelectedEdges:\"))
+            foreach (IEdge ed in Vertex.GetAll(false, @"SelectedEdges:\{$Is:Edge}"))
                 foreach (DiagramItemBase item in GetItemsByBaseEdge(ed.To))
                 {
                     double? positionX = GraphUtil.GetDoubleValue(item.Vertex.Get(false, "PositionX:"));
@@ -820,8 +820,10 @@ namespace m0.UIWpf.Visualisers.Diagram
 
                 if (ClickTarget == ClickTargetEnum.Item) // item move
                 {
-                    if ((Vertex.GetAll(false, @"SelectedEdges:\").Count() > 0 && ClickedItem.IsSelected == false) ||
-                        Vertex.GetAll(false, @"SelectedEdges:\").Count() > 1)
+                    int selectedEdgesCount = Vertex.GetAll(false, @"SelectedEdges:\{$Is:Edge}").Count();
+
+                    if (( selectedEdgesCount > 0 && ClickedItem.IsSelected == false) ||
+                        selectedEdgesCount > 1)
                     {
                         if (ClickedItem.IsSelected == false)
                             ClickedItem.AddToSelectedEdges();
@@ -904,7 +906,6 @@ namespace m0.UIWpf.Visualisers.Diagram
 
                     prevSelected = null;
                 }
-
         }
 
         protected void MouseLeaveHandler(object sender, MouseEventArgs e)
@@ -974,7 +975,7 @@ namespace m0.UIWpf.Visualisers.Diagram
 
         public void UnselectAllSelectedEdges()
         {
-            IVertex sv = Vertex.Get(false, "SelectedEdges:");
+            IVertex sv = Vertex.GetAll(false, @"SelectedEdges:\{$Is:Edge}");
 
             TurnOffSelectedEdgesFireChange();
 
@@ -998,12 +999,12 @@ namespace m0.UIWpf.Visualisers.Diagram
 
         protected void SelectWrappersForSelectedVertices()
         {
-            IVertex sv = Vertex.Get(false, "SelectedEdges:");
+            IVertex sv = Vertex.GetAll(false, @"SelectedEdges:\{$Is:Edge}");
 
-            foreach (IEdge e in sv)
+            foreach (IEdge e in sv)                
                 if(GetItemsDictionary().ContainsKey(e.To.Get(false, "To:")))
-                foreach (DiagramItemBase i in GetItemsDictionary()[e.To.Get(false, "To:")])
-                    i.Select();
+                    foreach (DiagramItemBase i in GetItemsDictionary()[e.To.Get(false, "To:")])
+                        i.Select();
 
             /*if (i.Vertex.Get(false, @"BaseEdge:\To:") == e.To.Get(false, "To:"))
                 i.Select();    */
@@ -1348,7 +1349,6 @@ namespace m0.UIWpf.Visualisers.Diagram
                             if (canAdd)
                                 item.AddDiagramLineVertex(e, lineDef, toDiagramItem);
                         }
-
                     }
                 }           
             }

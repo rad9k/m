@@ -35,8 +35,10 @@ namespace m0.UIWpf.Visualisers.Diagram
             }
         }
 
-        public DiagramRectangleItem(IVertex baseVertex) : base(baseVertex) { }
-
+        public DiagramRectangleItem(IVertex baseEdgeVertex) : base(baseEdgeVertex)  {
+            InitializeComponent();
+        }
+        
         public override void VertexSetedUp()
         {
             if (Vertex.Get(false, "VisualiserClass:") != null)
@@ -145,12 +147,7 @@ namespace m0.UIWpf.Visualisers.Diagram
                     this.TheGrid.RowDefinitions[1].Height = new GridLength(LineWidth);
                 }
             }
-        } 
-
-        public DiagramRectangleItem()
-        {
-            InitializeComponent();
-        }
+        }         
 
         public override void Select()
         {

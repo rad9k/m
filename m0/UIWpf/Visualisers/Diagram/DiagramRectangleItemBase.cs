@@ -12,12 +12,9 @@ namespace m0.UIWpf.Visualisers.Diagram
 {
     public class DiagramRectangleItemBase: DiagramItemBase
     {
-        public DiagramRectangleItemBase(IVertex baseVertex) : base(baseVertex) { }
-
-        public DiagramRectangleItemBase()
-        {
-            this.MouseLeftButtonDown += MouseLeftButtonDownHandler;                        
-        }
+        public DiagramRectangleItemBase(IVertex baseEdgeVertex) : base(baseEdgeVertex) {
+            this.MouseLeftButtonDown += MouseLeftButtonDownHandler;
+        }        
 
         public override void VisualiserUpdate() {
             base.VisualiserUpdate();
