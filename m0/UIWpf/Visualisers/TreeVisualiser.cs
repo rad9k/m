@@ -19,6 +19,7 @@ using m0.UIWpf.Commands;
 using m0.UIWpf.Visualisers.Helper;
 using m0.Graph.ExecutionFlow;
 using static m0.Graph.ExecutionFlow.ExecutionFlowHelper;
+using m0.User.Process.UX;
 
 namespace m0.UIWpf.Visualisers
 {
@@ -434,6 +435,9 @@ namespace m0.UIWpf.Visualisers
 
             IEdge e=(IEdge)item.Tag;
 
+            ////////////////////////////////////////
+            Interaction.BeginInteractionWithGraph();
+            ////////////////////////////////////////
 
             if (!IsCtrl)
                 GraphUtil.RemoveAllEdges_WhereEdgeIsEdge(sv);
@@ -441,7 +445,11 @@ namespace m0.UIWpf.Visualisers
             if (item.IsSelected)
                 Edge.AddEdgeVertex(sv, e);
             else
-                Edge.DeleteVertexByEdgeOnlyToVertex(sv, e);                
+                Edge.DeleteVertexByEdgeOnlyToVertex(sv, e);
+
+            ////////////////////////////////////////
+            Interaction.EndInteractionWithGraph();
+            ////////////////////////////////////////
 
             // LEGACY
             //
@@ -474,14 +482,14 @@ namespace m0.UIWpf.Visualisers
 
         private void TurnOnSelectedEdgesFireChange()
         {
-            if (Vertex.Get(false, "SelectedEdges:") is VertexBase)
-                ((VertexBase)Vertex.Get(false, "SelectedEdges:")).CanFireChangeEvent = true;
+            ///if (Vertex.Get(false, "SelectedEdges:") is VertexBase)
+               // ((VertexBase)Vertex.Get(false, "SelectedEdges:")).CanFireChangeEvent = true;
         }
 
         private void TurnOffSelectedEdgesFireChange()
         {
-            if (Vertex.Get(false, "SelectedEdges:") is VertexBase)
-                ((VertexBase)Vertex.Get(false, "SelectedEdges:")).CanFireChangeEvent = false;
+            //if (Vertex.Get(false, "SelectedEdges:") is VertexBase)
+              //  ((VertexBase)Vertex.Get(false, "SelectedEdges:")).CanFireChangeEvent = false;
         }
 
         public void ClearAllSelectedItems()
@@ -589,14 +597,14 @@ namespace m0.UIWpf.Visualisers
 
             IVertex selectedEdges = Vertex.Get(false, "SelectedEdges:");
 
-            if (selectedEdges is VertexBase)
-                ((VertexBase)selectedEdges).CanFireChangeEvent = false;                        
+            //if (selectedEdges is VertexBase)
+              //  ((VertexBase)selectedEdges).CanFireChangeEvent = false;                        
 
             foreach (IEdge ee in Vertex.Get(false, @"BaseEdge:\To:"))
                 Edge.AddEdgeVertex(selectedEdges, ee);
 
-            if (selectedEdges is VertexBase)
-                ((VertexBase)selectedEdges).CanFireChangeEvent = true;            
+            //if (selectedEdges is VertexBase)
+              //  ((VertexBase)selectedEdges).CanFireChangeEvent = true;            
 
             TurnOffSelectedItemsUpdate = false;
 
