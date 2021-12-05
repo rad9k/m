@@ -399,7 +399,7 @@ namespace m0.UIWpf.Visualisers
 
             TurnOffSelectedVerticesUpdate = true;
 
-            IVertex sv = Vertex.Get(false, "SelectedEdges:");
+            IVertex sv = Vertex.GetAll(false, @"SelectedEdges:\{$Is:Edge}");
 
             foreach (TreeViewItem i in Items)
                 SelectedVerticesUpdated_Reccurent(i,sv);
@@ -431,7 +431,7 @@ namespace m0.UIWpf.Visualisers
 
             TurnOffSelectedItemsUpdate = true;
 
-            IVertex sv = Vertex.Get(false, "SelectedEdges:");
+            IVertex sv = Vertex.GetAll(false, @"SelectedEdges:\{$Is:Edge}");
 
             IEdge e=(IEdge)item.Tag;
 
@@ -469,28 +469,16 @@ namespace m0.UIWpf.Visualisers
 
         public void UnselectAllSelectedEdges()
         {
-            TurnOffSelectedEdgesFireChange();
+            bool valueOfTurnOffSelectedVerticesUpdate = TurnOffSelectedItemsUpdate;
 
-            //GraphUtil.RemoveAllEdges_WhereEdgeIsEdge(Vertex.Get(false, "SelectedEdges:"));
+            TurnOffSelectedVerticesUpdate = true;
 
-            GraphUtil.RemoveAllEdges(Vertex.Get(false, "SelectedEdges:")); // XXX for Diagrams
+            VisualiserUtil.RemoveAllSelectedEdges(this);
 
-            TurnOnSelectedEdgesFireChange();         
+            TurnOffSelectedItemsUpdate = valueOfTurnOffSelectedVerticesUpdate;
 
             ClearAllSelectedItems();
-        }
-
-        private void TurnOnSelectedEdgesFireChange()
-        {
-            ///if (Vertex.Get(false, "SelectedEdges:") is VertexBase)
-               // ((VertexBase)Vertex.Get(false, "SelectedEdges:")).CanFireChangeEvent = true;
-        }
-
-        private void TurnOffSelectedEdgesFireChange()
-        {
-            //if (Vertex.Get(false, "SelectedEdges:") is VertexBase)
-              //  ((VertexBase)Vertex.Get(false, "SelectedEdges:")).CanFireChangeEvent = false;
-        }
+        }        
 
         public void ClearAllSelectedItems()
         {
@@ -537,7 +525,7 @@ namespace m0.UIWpf.Visualisers
 
             TurnOffSelectedVerticesUpdate = true;
 
-            IVertex sv = Vertex.Get(false, "SelectedEdges:");
+            IVertex sv = Vertex.GetAll(false, @"SelectedEdges:\{$Is:Edge}");
 
             if (Edge.FindIEdgeVertexByIEdge(sv, e)!=null)
                 i.IsSelected = true;
@@ -595,7 +583,7 @@ namespace m0.UIWpf.Visualisers
         {
             TurnOffSelectedItemsUpdate=true;
 
-            IVertex selectedEdges = Vertex.Get(false, "SelectedEdges:");
+            IVertex selectedEdges = Vertex.GetAll(false, @"SelectedEdges:\{$Is:Edge}");
 
             //if (selectedEdges is VertexBase)
               //  ((VertexBase)selectedEdges).CanFireChangeEvent = false;                        
