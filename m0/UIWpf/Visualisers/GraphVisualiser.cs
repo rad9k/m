@@ -473,7 +473,7 @@ namespace m0.UIWpf.Visualisers
 
             int OutAndInEdgesCount = 0;
 
-            SimpleVisualiserWrapper dummyPointIn = new SimpleVisualiserWrapper(null,null,this);
+            SimpleVisualiserWrapper dummyPointIn = new SimpleVisualiserWrapper(null, null, this);
             SimpleVisualiserWrapper dummyPointOut = new SimpleVisualiserWrapper(null, null, this);
 
             foreach (IVertex v in InnerCircleVertices)
