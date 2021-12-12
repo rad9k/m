@@ -26,12 +26,11 @@ namespace m0.ZeroTypes
 
             IVertex meta = toReplace.Meta;
 
-            if (toReplace is IDetachableEdge)
-                GraphUtil.PreDeleteEdge(baseVertex, (IDetachableEdge)toReplace);
+            baseVertex.DeleteEdge(toReplace);
 
             IVertex edge = baseVertex.AddVertex(meta, null);
 
-            baseVertex.DeleteEdge(toReplace);
+            edge.AddEdge(vIs, EdgeMeta);
 
             edge.AddEdge(FromMeta, EdgeVertex.Get(false, "From:"));
             edge.AddEdge(MetaMeta, EdgeVertex.Get(false, "Meta:"));
@@ -50,15 +49,12 @@ namespace m0.ZeroTypes
             {
                 IVertex meta = toReplace.Meta;
 
-                if (toReplace is IDetachableEdge)
-                    GraphUtil.PreDeleteEdge(baseVertex, (IDetachableEdge)toReplace);
+                baseVertex.DeleteEdge(toReplace);
 
                 edge = baseVertex.AddVertex(meta, null);
+            }            
 
-                baseVertex.DeleteEdge(toReplace);
-            }
-
-            IVertex r = MinusZero.Instance.Root;
+            edge.AddEdge(vIs, EdgeMeta);
 
             edge.AddEdge(FromMeta, Edge.From);
             edge.AddEdge(MetaMeta, Edge.Meta);
@@ -70,6 +66,8 @@ namespace m0.ZeroTypes
             IVertex r = MinusZero.Instance.Root;
 
             IVertex ev = baseVertex.AddVertex(EdgeMeta, null);
+
+            ev.AddEdge(vIs, EdgeMeta);
 
             ev.AddVertex(FromMeta, null);
             ev.AddEdge(MetaMeta,MinusZero.Instance.Empty);
@@ -83,6 +81,8 @@ namespace m0.ZeroTypes
             IVertex r = MinusZero.Instance.Root;
 
             IVertex ev = baseVertex.AddVertex(MetaEdge, null);
+
+            ev.AddEdge(vIs, EdgeMeta);
 
             ev.AddVertex(FromMeta, null);
             ev.AddEdge(MetaMeta, MinusZero.Instance.Empty);
@@ -154,6 +154,8 @@ namespace m0.ZeroTypes
 
         static public void AddEdgeVertexEdges(IVertex baseVertex, IEdge edge)
         {
+            baseVertex.AddEdge(vIs, EdgeMeta);
+
             baseVertex.AddEdge(FromMeta, edge.From);
             baseVertex.AddEdge(MetaMeta, edge.Meta);
             baseVertex.AddEdge(ToMeta, edge.To);
@@ -161,6 +163,8 @@ namespace m0.ZeroTypes
 
         static public void AddEdgeVertexEdges(IVertex baseVertex, IVertex edgeFrom, IVertex edgeMeta, IVertex edgeTo)
         {
+            baseVertex.AddEdge(vIs, EdgeMeta);
+
             baseVertex.AddEdge(FromMeta, edgeFrom);
             baseVertex.AddEdge(MetaMeta, edgeMeta);
             baseVertex.AddEdge(ToMeta, edgeTo);
@@ -172,6 +176,8 @@ namespace m0.ZeroTypes
             IVertex edgeMeta = GraphUtil.GetQueryOutFirst(edge, "Meta", null);
             IVertex edgeTo = GraphUtil.GetQueryOutFirst(edge, "To", null);
 
+            baseVertex.AddEdge(vIs, EdgeMeta);
+
             baseVertex.AddEdge(FromMeta, edgeFrom);
             baseVertex.AddEdge(MetaMeta, edgeMeta);
             baseVertex.AddEdge(ToMeta, edgeTo);
@@ -179,6 +185,8 @@ namespace m0.ZeroTypes
 
         static public void AddEdgeVertexEdgesOnlyMetaTo(IVertex baseVertex, IVertex edgeMeta, IVertex edgeTo)
         {
+            baseVertex.AddEdge(vIs, EdgeMeta);
+
             baseVertex.AddVertex(FromMeta, null);
             baseVertex.AddEdge(MetaMeta, edgeMeta);
             baseVertex.AddEdge(ToMeta, edgeTo);
@@ -186,6 +194,8 @@ namespace m0.ZeroTypes
 
         static public void AddEdgeVertexEdgesOnlyTo(IVertex baseVertex, IVertex toVertex)
         {
+            baseVertex.AddEdge(vIs, EdgeMeta);
+
             baseVertex.AddVertex(FromMeta, null);
             baseVertex.AddEdge(MetaMeta, MinusZero.Instance.Empty);
             baseVertex.AddEdge(ToMeta, toVertex);
@@ -224,7 +234,6 @@ namespace m0.ZeroTypes
 
             return null;
         }
-
 
         static public IEdge GetIEdgeByEdgeVertex(IVertex edge)
         {            

@@ -30,27 +30,6 @@ namespace m0.Graph
 
         public bool IsHidden { get { return isHidden; } }
 
-        public void ForceEmptyMeta()
-        {
-            isHidden = true;
-
-            _meta = MinusZero.Instance.Empty;
-
-            if (_from is IImplementedVertex)
-            {
-                IImplementedVertex icv_from = (IImplementedVertex)_from;
-                icv_from.OutEdgesDictionariesNeedsRebuild = true;
-                icv_from.InheritChildsDictionariesNeedsRebuild(false);
-            }
-
-            if (_to is IImplementedVertex)
-            {
-                IImplementedVertex icv_from = (IImplementedVertex)_from;
-                icv_from.InEdgesDictionariesNeedsRebuild = true;
-                icv_from.InheritChildsDictionariesNeedsRebuild(true);
-            }
-        }
-
         public string ToStoreIdentifier { get; set; }
         public string ToStoreTypeName { get; set; }
         public object ToIdentifier { get; set; }
