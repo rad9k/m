@@ -66,8 +66,13 @@ namespace m0.Store.FileSystem
 
         public override IVertex AddVertex(IVertex metaVertex, object val)
         {
-            //UserInteractionUtil.ShowError("FileVertex.AddVertex", Identifier + " : can not create vertex here");
+            
 
+            return null;
+        }
+
+        public override IEdge AddVertexAndReturnEdge(IVertex metaVertex, object val)
+        {
             return null;
         }
 

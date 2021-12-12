@@ -431,13 +431,15 @@ namespace m0.UIWpf.Visualisers
 
             TurnOffSelectedItemsUpdate = true;
 
-            IVertex sv = Vertex.Get(false, @"SelectedEdges:");
+            IVertex sv = Vertex.Get(false, @"SelectedEdges:");            
 
             IEdge e=(IEdge)item.Tag;
 
             ////////////////////////////////////////
             Interaction.BeginInteractionWithGraph();
             ////////////////////////////////////////
+
+            sv.AddVertex(null, "KAL");
 
             if (!IsCtrl)
                 GraphUtil.RemoveAllEdges_WhereEdgeIsEdge(sv);

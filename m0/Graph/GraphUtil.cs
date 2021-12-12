@@ -971,11 +971,12 @@ namespace m0.Graph
             IList<IEdge> el = GeneralUtil.CreateAndCopyList<IEdge>(v);
 
             foreach (IEdge e in el)
-            {
-                RemoveAllEdges(e.To);
+                if(GraphUtil.GetQueryOutCount(e.To, "$Is", "Edge") > 0)
+                {
+                    RemoveAllEdges(e.To);
 
-                v.DeleteEdge(e);
-            }
+                    v.DeleteEdge(e);
+                }
         }
 
         static public void DeleteEdgeByToVertex(IVertex source, IVertex toVertex)
