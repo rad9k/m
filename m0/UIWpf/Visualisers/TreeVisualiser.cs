@@ -431,7 +431,7 @@ namespace m0.UIWpf.Visualisers
 
             TurnOffSelectedItemsUpdate = true;
 
-            IVertex sv = Vertex.GetAll(false, @"SelectedEdges:\{$Is:Edge}");
+            IVertex sv = Vertex.Get(false, @"SelectedEdges:");
 
             IEdge e=(IEdge)item.Tag;
 
@@ -583,7 +583,7 @@ namespace m0.UIWpf.Visualisers
         {
             TurnOffSelectedItemsUpdate=true;
 
-            IVertex selectedEdges = Vertex.GetAll(false, @"SelectedEdges:\{$Is:Edge}");
+            IVertex selectedEdges = Vertex.Get(false, @"SelectedEdges:");
 
             //if (selectedEdges is VertexBase)
               //  ((VertexBase)selectedEdges).CanFireChangeEvent = false;                        
