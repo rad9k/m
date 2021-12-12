@@ -387,7 +387,7 @@ namespace m0.UIWpf.Visualisers
                 return exe.Stack;
             }
            
-            UpdateBaseEdge();
+            //UpdateBaseEdge();
 
             return exe.Stack;
         }
@@ -437,9 +437,7 @@ namespace m0.UIWpf.Visualisers
 
             ////////////////////////////////////////
             Interaction.BeginInteractionWithGraph();
-            ////////////////////////////////////////
-
-            sv.AddVertex(null, "KAL");
+            ////////////////////////////////////////            
 
             if (!IsCtrl)
                 GraphUtil.RemoveAllEdges_WhereEdgeIsEdge(sv);
