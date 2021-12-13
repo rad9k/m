@@ -711,7 +711,7 @@ namespace m0.UIWpf.Visualisers
 
         protected void UnselectAllSelected()
         {
-            IVertex sv = Vertex.Get(false, "SelectedEdges:");
+            IVertex sv = Vertex.GetAll(false, @"SelectedEdges:\{$Is:Edge}");
 
             foreach (IEdge v in sv)
                 if (v.To.Get(false, "To:") != null && DisplayedVerticesUIElements.ContainsKey(v.To.Get(false, "To:")))
@@ -724,7 +724,7 @@ namespace m0.UIWpf.Visualisers
         {
             tempSelectedVertices = MinusZero.Instance.CreateTempVertex();
 
-            GraphUtil.CopyEdges(Vertex.Get(false, "SelectedEdges:"), tempSelectedVertices);
+            GraphUtil.CopyEdges(Vertex.GetAll(false, @"SelectedEdges:\{$Is:Edge}"), tempSelectedVertices);
         }
 
         protected void RestoreSelectedVertices()
