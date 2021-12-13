@@ -378,7 +378,10 @@ namespace m0.UIWpf.Visualisers
         bool IsFirstPainted = false;
 
         public void PaintGraph()
-        {            
+        {
+            if (Vertex.DisposedState != DisposeStateEnum.Live)
+                return;
+
             if (ActualHeight != 0)
             {
                 //MinusZero.Instance.Log(1, "PaintGraph", "");
@@ -703,7 +706,7 @@ namespace m0.UIWpf.Visualisers
                        }
 
                        ////////////////////////////////////////
-                       Interaction.BeginInteractionWithGraph();
+                       Interaction.EndInteractionWithGraph();
                        //////////////////////////////////////// 
                 }
             }
