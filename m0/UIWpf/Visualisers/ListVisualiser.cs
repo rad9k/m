@@ -20,6 +20,7 @@ using m0.UIWpf.Commands;
 using System.Windows.Controls.Primitives;
 using m0.UIWpf.Visualisers.Helper;
 using m0.Graph.ExecutionFlow;
+using m0.User.Process.UX;
 
 namespace m0.UIWpf.Visualisers
 {
@@ -100,9 +101,17 @@ namespace m0.UIWpf.Visualisers
 
         public void UnselectAllSelectedEdges()
         {
+            ////////////////////////////////////////
+            Interaction.BeginInteractionWithGraph();
+            //////////////////////////////////////// 
+           
             IVertex sv = Vertex.Get(false, "SelectedEdges:");
 
             GraphUtil.RemoveAllEdges_WhereEdgeIsEdge(sv);
+
+            ////////////////////////////////////////
+            Interaction.EndInteractionWithGraph();
+            //////////////////////////////////////// 
         }
 
         protected void _OnSelectionChanged(object sender, SelectionChangedEventArgs e){
@@ -112,13 +121,21 @@ namespace m0.UIWpf.Visualisers
                 
                 IVertex sv = Vertex.Get(false, "SelectedEdges:");
 
+                ////////////////////////////////////////
+                Interaction.BeginInteractionWithGraph();
+                //////////////////////////////////////// 
+
                 UnselectAllSelectedEdges();
 
                 IVertex baseVertex = Vertex.Get(false, @"BaseEdge:\To:");
 
                 foreach (IEdge ee in ThisDataGrid.SelectedItems)
                     Edge.AddEdgeVertex(sv, baseVertex, ee.Meta, ee.To); // becouse of possible FilterQuery
-                   // Edge.AddEdge(sv, ee);
+                                                                        // Edge.AddEdge(sv, ee);
+
+                ////////////////////////////////////////
+                Interaction.EndInteractionWithGraph();
+                //////////////////////////////////////// 
 
                 TurnOffSelectedItemsUpdate = false;
             }            
