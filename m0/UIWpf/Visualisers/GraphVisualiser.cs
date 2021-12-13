@@ -18,6 +18,7 @@ using m0.UIWpf.Foundation;
 using m0.UIWpf.Commands;
 using m0.Graph.ExecutionFlow;
 using m0.UIWpf.Visualisers.Helper;
+using m0.User.Process.UX;
 
 namespace m0.UIWpf.Visualisers
 {
@@ -660,6 +661,10 @@ namespace m0.UIWpf.Visualisers
 
                    if (kvp.Key != null)
                    {
+                       ////////////////////////////////////////
+                       Interaction.BeginInteractionWithGraph();
+                       //////////////////////////////////////// 
+                    
                        CopySelectedVerticesToTemp();                           
 
                        bool IsCtrl = false;
@@ -696,7 +701,11 @@ namespace m0.UIWpf.Visualisers
 
                            Edge.AddEdgeVertexByToVertex(sv, kvp.Key);                           
                        }
-                   }
+
+                       ////////////////////////////////////////
+                       Interaction.BeginInteractionWithGraph();
+                       //////////////////////////////////////// 
+                }
             }
             
             e.Handled = true;
@@ -749,11 +758,19 @@ namespace m0.UIWpf.Visualisers
 
         public void UnselectAllSelectedEdges()
         {
+            ////////////////////////////////////////
+            Interaction.BeginInteractionWithGraph();
+            //////////////////////////////////////// 
+            
             IVertex sv = Vertex.Get(false, "SelectedEdges:");
 
             GraphUtil.RemoveAllEdges_WhereEdgeIsEdge(sv);
+
+            ////////////////////////////////////////
+            Interaction.EndInteractionWithGraph();
+            //////////////////////////////////////// 
         }
-        
+
         public void SelectedVerticesUpdated()
         {
             if (IsFirstPainted)

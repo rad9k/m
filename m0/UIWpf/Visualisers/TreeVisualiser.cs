@@ -469,27 +469,23 @@ namespace m0.UIWpf.Visualisers
 
         public void UnselectAllSelectedEdges()
         {
-            bool valueOfTurnOffSelectedVerticesUpdate = TurnOffSelectedItemsUpdate;
+            ////////////////////////////////////////
+            Interaction.BeginInteractionWithGraph();
+            //////////////////////////////////////// 
 
-            TurnOffSelectedVerticesUpdate = true;
-
-            VisualiserUtil.RemoveAllSelectedEdges(this);
-
-            TurnOffSelectedItemsUpdate = valueOfTurnOffSelectedVerticesUpdate;
+            VisualiserUtil.RemoveAllSelectedEdges(this);            
 
             ClearAllSelectedItems();
-        }        
+
+            ////////////////////////////////////////
+            Interaction.EndInteractionWithGraph();
+            //////////////////////////////////////// 
+        }
 
         public void ClearAllSelectedItems()
-        {
-            bool bef = TurnOffSelectedVerticesUpdate;
-
-            TurnOffSelectedVerticesUpdate = true;
-
+        {            
             foreach (TreeViewItem i in Items)
-                ClearAllSelectedItems_Reccurent(i);
-
-            TurnOffSelectedVerticesUpdate = bef;
+                ClearAllSelectedItems_Reccurent(i);            
         }
 
         private void ClearAllSelectedItems_Reccurent(TreeViewItem i)

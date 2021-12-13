@@ -118,6 +118,9 @@ namespace m0.Util
 
         public static bool SetPropertyIfPresent(object o, string propertyname, object value)
         {
+            if (o == null)
+                return false;
+
             PropertyInfo p = o.GetType().GetProperties().Where(x => x.Name == propertyname).FirstOrDefault();
 
             if (p != null)
