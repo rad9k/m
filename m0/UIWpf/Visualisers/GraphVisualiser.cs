@@ -766,7 +766,7 @@ namespace m0.UIWpf.Visualisers
 
         protected void SelectWrappersForSelectedVertices()
         {
-            IVertex sv = Vertex.Get(false, "SelectedEdges:");
+            IVertex sv = Vertex.GetAll(false, @"SelectedEdges:\{$Is:Edge}");
 
             foreach (IEdge e in sv)
             {
@@ -853,8 +853,8 @@ namespace m0.UIWpf.Visualisers
 
                 IVertex dndVertex = MinusZero.Instance.CreateTempVertex();
 
-                if (Vertex.Get(false, @"SelectedEdges:\") != null)
-                    foreach (IEdge ee in Vertex.GetAll(false, @"SelectedEdges:\"))
+                if (Vertex.Get(false, @"SelectedEdges:\{$Is:Edge}") != null)
+                    foreach (IEdge ee in Vertex.GetAll(false, @"SelectedEdges:\{$Is:Edge}"))
                         dndVertex.AddEdge(null, ee.To);
                 else
                 {
