@@ -2,6 +2,7 @@
 using m0.Graph;
 using m0.Graph.ExecutionFlow;
 using m0.UIWpf.Dialog;
+using m0.User.Process.UX;
 using m0.Util;
 using m0.ZeroCode.Helpers;
 using m0.ZeroTypes;
@@ -679,12 +680,28 @@ namespace m0.UIWpf.Visualisers.Diagram
 
         public void AddToSelectedEdges()
         {
+            ////////////////////////////////////////
+            Interaction.BeginInteractionWithGraph();
+            //////////////////////////////////////// 
+            
             Edge.AddEdgeVertexEdgeByEdgeVertex(Diagram.Vertex.Get(false, "SelectedEdges:"), Vertex.Get(false, "BaseEdge:"));
+
+            ////////////////////////////////////////
+            Interaction.EndInteractionWithGraph();
+            //////////////////////////////////////// 
         }
 
         public void RemoveFromSelectedEdges()
         {
+            ////////////////////////////////////////
+            Interaction.BeginInteractionWithGraph();
+            //////////////////////////////////////// 
+            
             GraphUtil.DeleteEdgeByToVertex(Diagram.Vertex.Get(false, "SelectedEdges:"), Vertex.Get(false, "BaseEdge:"));
+
+            ////////////////////////////////////////
+            Interaction.EndInteractionWithGraph();
+            //////////////////////////////////////// 
         }
 
         protected void MouseLeftButtonDownHandler(object sender, MouseButtonEventArgs e)

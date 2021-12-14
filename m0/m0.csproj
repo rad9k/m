@@ -122,7 +122,6 @@
       <DependentUpon>StringQuestionWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="UIWpf\ExecutableVisualiserFactory.cs" />
-    <Compile Include="UIWpf\VisualiserEditTransactedWrapper.cs" />
     <Compile Include="UIWpf\Visualisers\Helper\AtomVisualiserHelper.cs" />
     <Compile Include="UIWpf\Visualisers\Helper\IListVisualiser.cs" />
     <Compile Include="UIWpf\Visualisers\Helper\IVisualiser.cs" />
@@ -131,7 +130,6 @@
     <Compile Include="UIWpf\Visualisers\Method\VoidVoidMethodVisualiser.cs" />
     <Compile Include="UIWpf\Visualisers\DebugVisualiser.cs" />
     <Compile Include="UIWpf\Visualisers\TestVisualiser.cs" />
-    <Compile Include="UIWpf\VisualiserViewTransactedWrapper.cs" />
     <Compile Include="User\Clipboard.cs" />
     <Compile Include="User\Process\UX\Interaction.cs" />
     <Compile Include="User\Process\UX\NonAtomProcess.cs" />

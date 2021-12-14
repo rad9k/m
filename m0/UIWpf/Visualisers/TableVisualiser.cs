@@ -151,8 +151,8 @@ namespace m0.UIWpf.Visualisers
             else
             {
                 valueColumn.CellTemplate = new DataTemplate();
-                //FrameworkElementFactory factory = new FrameworkElementFactory(typeof(VisualiserViewWrapper));
-                FrameworkElementFactory factory = new FrameworkElementFactory(typeof(VisualiserTransactedViewWrapper));
+                FrameworkElementFactory factory = new FrameworkElementFactory(typeof(VisualiserViewWrapper));
+                //FrameworkElementFactory factory = new FrameworkElementFactory(typeof(VisualiserTransactedViewWrapper));
                 factory.SetBinding(VisualiserViewWrapper.BaseEdgeProperty, new Binding(bindingString));
                 valueColumn.CellTemplate.VisualTree = factory;
             }

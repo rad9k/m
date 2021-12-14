@@ -20,6 +20,7 @@ using m0.UIWpf.Visualisers;
 using m0.UIWpf.Dialog;
 using m0.Graph.ExecutionFlow;
 using m0.UIWpf.Visualisers.Helper;
+using m0.User.Process.UX;
 
 namespace m0.UIWpf.Visualisers.Diagram
 {
@@ -315,7 +316,7 @@ namespace m0.UIWpf.Visualisers.Diagram
                foreach(MetaToPair pair in metatopairs){ // delete DiagramLines for edges that been deleted
                    if(pair.DiagramLinesNumber>pair.EdgesNumber)
                        foreach(IEdge e in item.Vertex.GetAll(false, "DiagramLine:")){
-                           if(pair.Meta == e.To.Get(false, @"BaseEdge:\Meta:") && pair.To == e.To.Get(false, @"BaseEdge:\To:") && pair.DiagramLinesNumber>pair.EdgesNumber){
+                           if(pair.Meta == e.To.Get(false, @"BaseEdge:\Meta:") && pair.To == e.To.Get(false, @"BaseEdge:\To:") && pair.DiagramLinesNumber > pair.EdgesNumber){
                                item.Vertex.DeleteEdge(e);
                                pair.DiagramLinesNumber--;
 
@@ -445,16 +446,13 @@ namespace m0.UIWpf.Visualisers.Diagram
 
                 Background = new SolidColorBrush(Color.FromRgb(255, 200, 200));
 
-                ///////////////////////////////////////
-                ExecutionFlowHelper.StartTransaction();
-                ///////////////////////////////////////
+                ////////////////////////////////////////
+                Interaction.BeginInteractionWithGraph();
+                //////////////////////////////////////// 
 
                 foreach (IEdge ie in Vertex.GetAll(false, "Item:"))
                     AddItem(ie.To);
 
-                ////////////////////////////////////////
-                ExecutionFlowHelper.CommitTransaction();
-                ////////////////////////////////////////
 
                 UpdateLayout(); // here
 
@@ -475,6 +473,10 @@ namespace m0.UIWpf.Visualisers.Diagram
                 IsPaiting = false;
 
                 CheckAndUpdateDiagramLines();
+
+                ////////////////////////////////////////
+                Interaction.EndInteractionWithGraph();
+                //////////////////////////////////////// 
 
                 // turn on Vertex.Change listener
 
@@ -519,7 +521,8 @@ namespace m0.UIWpf.Visualisers.Diagram
 
         private void DeleteSelectedItems()
         {
-            if (Vertex.GetAll(false, @"SelectedEdges:\{$Is:Edge}").Count() == 0)
+            IVertex selectedEdges = Vertex.GetAll(false, @"SelectedEdges:\{$Is:Edge}");
+            if (selectedEdges.Count() == 0)
                 return;
 
             IVertex info = m0.MinusZero.Instance.CreateTempVertex();
@@ -537,11 +540,15 @@ namespace m0.UIWpf.Visualisers.Diagram
             if (option == null || option == optionCancel)
                 return;
 
-            IList<IEdge> selectedEdges = GeneralUtil.CreateAndCopyList<IEdge>(Vertex.GetAll(false, @"SelectedEdges:\{$Is:Edge}"));
+            IList<IEdge> selectedEdges_copy = GeneralUtil.CreateAndCopyList<IEdge>(selectedEdges);
+
+            ////////////////////////////////////////
+            Interaction.BeginInteractionWithGraph();
+            //////////////////////////////////////// 
 
             UnselectAllSelectedEdges();
 
-            foreach (IEdge e in selectedEdges)
+            foreach (IEdge e in selectedEdges_copy)
                 foreach (DiagramItemBase i in GetItemsDictionary()[e.To.Get(false, "To:")])
                 {  // what about multiple items for same BaseEdge:\To: ?
 
@@ -567,6 +574,10 @@ namespace m0.UIWpf.Visualisers.Diagram
                     }
 
                 }
+
+            ////////////////////////////////////////
+            Interaction.EndInteractionWithGraph();
+            //////////////////////////////////////// 
         }
 
         private void DeleteLine()
@@ -979,9 +990,17 @@ namespace m0.UIWpf.Visualisers.Diagram
 
             TurnOffSelectedEdgesFireChange();
 
-            //GraphUtil.RemoveAllEdges_WhereEdgeIsEdge(sv); // XXX
-            GraphUtil.RemoveAllEdges(sv);
+            ////////////////////////////////////////
+            Interaction.BeginInteractionWithGraph();
+            //////////////////////////////////////// 
 
+            GraphUtil.RemoveAllEdges_WhereEdgeIsEdge(sv); // XXX
+                                                          //GraphUtil.RemoveAllEdges(sv);
+
+            ////////////////////////////////////////
+            Interaction.EndInteractionWithGraph();
+            //////////////////////////////////////// 
+            
             TurnOnSelectedEdgesFireChange();
 
             SelectedVerticesUpdated();
@@ -1219,9 +1238,9 @@ namespace m0.UIWpf.Visualisers.Diagram
 
                 VertexChangeListenOff();
 
-                ///////////////////////////////////////
-                ExecutionFlowHelper.StartTransaction();
-                ///////////////////////////////////////
+                ////////////////////////////////////////
+                Interaction.BeginInteractionWithGraph();
+                //////////////////////////////////////// 
 
                 foreach (IEdge eee in dndVertex)
                 {
@@ -1231,8 +1250,8 @@ namespace m0.UIWpf.Visualisers.Diagram
                 }
 
                 ////////////////////////////////////////
-                ExecutionFlowHelper.CommitTransaction();
-                ////////////////////////////////////////
+                Interaction.EndInteractionWithGraph();
+                //////////////////////////////////////// 
 
                 CheckAndUpdateDiagramLines();
 
