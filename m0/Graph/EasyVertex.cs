@@ -289,6 +289,7 @@ namespace m0.Graph
 
             OutEdgesDictionariesNeedsRebuild_Value = false;
         }
+
         private void InEdgesDictionariesRebuild_MetaAndValue()
         {
             _InEdgesByMetaAndValue = new Dictionary<object, object>();
@@ -359,7 +360,7 @@ namespace m0.Graph
         public override IEdge AddEdge(IVertex metaVertex, IVertex destVertex)
         {
             if (DisposedState == DisposeStateEnum.Disposed)
-                throw new Exception("Vertex disposed");
+                throw new Exception("Vertex not live");
 
             if (destVertex == null)
                 destVertex = MinusZero.Instance.Empty; // can be    
@@ -420,7 +421,7 @@ namespace m0.Graph
         public override void DeleteEdge(IEdge _edge)
         {
             if (DisposedState == DisposeStateEnum.Disposed)
-                throw new Exception("Vertex disposed");
+                throw new Exception("Vertex not live");
 
             IEdge edge = ed.Out.Get(_edge);
 
@@ -451,6 +452,11 @@ namespace m0.Graph
         {            
             DisposedState = DisposeStateEnum.Disposing;
 
+            if(this.Identifier is long && ((long)this.Identifier) == 8122)
+            {
+                int x = 0;
+            }
+
             ChangeRemoveAllHandlers();
 
             DeleteAllInEdges();
@@ -465,7 +471,7 @@ namespace m0.Graph
         public void DeleteAllInEdges()
         {
             if (DisposedState == DisposeStateEnum.Disposed)
-                throw new Exception("Vertex disposed");
+                throw new Exception("Vertex not live");
 
             foreach (IEdge edge in InEdgesRaw.ToList())
             {
@@ -484,7 +490,7 @@ namespace m0.Graph
         public void DeleteAllMetaInEdges()
         {
             if (DisposedState == DisposeStateEnum.Disposed)
-                throw new Exception("Vertex disposed");
+                throw new Exception("Vertex not live");
 
             foreach (IEdge edge in MetaInEdgesRaw.ToList())
                 MetaInEdgesRaw.Remove(edge);
@@ -493,7 +499,7 @@ namespace m0.Graph
         private void DeleteAllEdges()
         {
             if (DisposedState == DisposeStateEnum.Disposed)
-                throw new Exception("Vertex disposed");
+                throw new Exception("Vertex not live");
 
             foreach (IEdge edge in OutEdgesRaw.ToList()) {             
                 OutEdgesRaw.Remove(edge);                

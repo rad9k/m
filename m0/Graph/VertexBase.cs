@@ -243,7 +243,10 @@ namespace m0.Graph
         }
 
         public virtual IEdge AddVertexAndReturnEdge(IVertex metaVertex, object val)
-        {            
+        {
+            if (DisposedState == DisposeStateEnum.Disposed)
+                throw new Exception("Vertex not live");
+
             if (val is IVertex)
                 throw new Exception("Trying to add Vertex as Vertex value");
 

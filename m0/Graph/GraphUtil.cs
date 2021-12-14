@@ -56,6 +56,14 @@ namespace m0.Graph
 
     public class GraphUtil
     {
+        public static void Debug(IVertex v, long l)
+        {
+            if (v.Identifier is long && ((long)v.Identifier) == l)
+            {
+                int x = 0;
+            }
+        }
+
         public static IList<IVertex> GetVertexListFromEdgeEnumerable(IEnumerable<IEdge> edges)
         {
             IList<IVertex> vList = new List<IVertex>();
