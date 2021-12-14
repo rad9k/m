@@ -452,10 +452,7 @@ namespace m0.Graph
         {            
             DisposedState = DisposeStateEnum.Disposing;
 
-            if(this.Identifier is long && ((long)this.Identifier) == 8122)
-            {
-                int x = 0;
-            }
+            GraphUtil.Debug(this);
 
             ChangeRemoveAllHandlers();
 
@@ -744,7 +741,9 @@ namespace m0.Graph
         {
             VertexInit_First();
 
-            _Identifier = Store.VertexIdentifierCount++;            
+            _Identifier = Store.VertexIdentifierCount++;
+
+            GraphUtil.Debug(this);
 
             Store.StoreVertexIdentifier(this);
         }

@@ -500,6 +500,8 @@ namespace m0.UIWpf.Visualisers
         public TreeViewItem CreateTreeViewItem(IEdge e, bool generateDeeperLevel, TreeViewItem parent){
             TreeVisualiserViewItem i = new TreeVisualiserViewItem();
 
+            GraphUtil.Debug(e.To);
+
             if(parent is TreeVisualiserViewItem)
             {
                 TreeVisualiserViewItem parent_tvvi = (TreeVisualiserViewItem)parent;

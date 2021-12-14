@@ -56,11 +56,21 @@ namespace m0.Graph
 
     public class GraphUtil
     {
+        static long[] DebugVertex = { 8422 };
+
+        public static void Debug(IVertex v)
+        {
+            if (v.Identifier is long && DebugVertex.Contains((long)v.Identifier))
+            {
+                int x = 0;
+            }
+        }
+
         public static void Debug(IVertex v, long l)
         {
             if (v.Identifier is long && ((long)v.Identifier) == l)
             {
-                int x = 0;
+                throw new Exception("DING DONG!");
             }
         }
 
