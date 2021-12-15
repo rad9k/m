@@ -45,12 +45,7 @@ namespace m0.Graph.ExecutionFlow
             Type = _Type;
             OldValue = _OldValue;
             NewValue = _NewValue;
-            Edge = _Edge;
-
-            if(_NewValue != null && NewValue.ToString().Length > 1 && NewValue.ToString()[0]=='X')
-            {
-                int x = 0;
-            }
+            Edge = _Edge;           
         }
 
         public GraphChangeTransactionAtom(GraphChangeTransactionAtom a)

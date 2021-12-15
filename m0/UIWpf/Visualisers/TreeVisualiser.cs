@@ -93,12 +93,17 @@ namespace m0.UIWpf.Visualisers
         protected override void OnMouseDown(MouseButtonEventArgs e)
         {
             if (e.ClickCount == 2)
-                BaseCommands.Open(Edge.CreateTempEdgeVertex((IEdge)Tag), null);            
+                BaseCommands.Open(Edge.CreateTempEdgeVertex(GetEdge()), null);            
         }
 
         protected override void OnMouseLeftButtonDown(MouseButtonEventArgs a)
         {
             a.Handled = true;
+        }
+
+        IEdge GetEdge()
+        {
+            return (IEdge)Tag;
         }
 
         protected override void OnMouseLeftButtonUp(MouseButtonEventArgs a)
@@ -193,6 +198,9 @@ namespace m0.UIWpf.Visualisers
         public INoInEdgeInOutVertexVertex VertexChange(IExecution exe)
         {
             if (ParentVisualiser.VisualiserHelper.IsDisposed)
+                return exe.Stack;
+
+            if (GetEdge().To.DisposedState != DisposeStateEnum.Live)
                 return exe.Stack;
 
             IVertex edgeVertex = exe.Stack.Get(false, @"event:\Edge:");
@@ -498,9 +506,7 @@ namespace m0.UIWpf.Visualisers
         }
 
         public TreeViewItem CreateTreeViewItem(IEdge e, bool generateDeeperLevel, TreeViewItem parent){
-            TreeVisualiserViewItem i = new TreeVisualiserViewItem();
-
-            GraphUtil.Debug(e.To);
+            TreeVisualiserViewItem i = new TreeVisualiserViewItem();            
 
             if(parent is TreeVisualiserViewItem)
             {

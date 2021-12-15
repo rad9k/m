@@ -80,9 +80,7 @@ namespace m0.Graph.Internal
             if (cumulativeEdgesCount == 0
                 && edgeDictionaries.vertex.Store.DetachState == DetachStateEnum.Attached
                 && !edgeDictionaries.vertex.IsRoot)
-            {
-                GraphUtil.Debug(edgeDictionaries.vertex);
-
+            {                
                 ExecutionFlowHelper.AddSecondStageCommitAction(edgeDictionaries.vertex);
             }
         }

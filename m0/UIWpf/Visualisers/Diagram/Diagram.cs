@@ -482,9 +482,7 @@ namespace m0.UIWpf.Visualisers.Diagram
 
                 VertexChangeListenOn();
 
-                //
-
-             
+                //          
             }
         }
 
@@ -986,7 +984,7 @@ namespace m0.UIWpf.Visualisers.Diagram
 
         public void UnselectAllSelectedEdges()
         {
-            IVertex sv = Vertex.GetAll(false, @"SelectedEdges:\{$Is:Edge}");
+            IVertex sv = Vertex.Get(false, @"SelectedEdges:");
 
             TurnOffSelectedEdgesFireChange();
 

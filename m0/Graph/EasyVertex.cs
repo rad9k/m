@@ -14,6 +14,7 @@ using m0.ZeroCode.Helpers;
 using m0.DotNetIntegration;
 using m0.Graph.Internal;
 using m0.Graph.ExecutionFlow;
+using static m0.Graph.GraphUtil;
 
 namespace m0.Graph
 {
@@ -452,7 +453,7 @@ namespace m0.Graph
         {            
             DisposedState = DisposeStateEnum.Disposing;
 
-            GraphUtil.Debug(this);
+            GraphUtil.Debug(this, DebugOperationEnum.Dispose);
 
             ChangeRemoveAllHandlers();
 
@@ -743,7 +744,7 @@ namespace m0.Graph
 
             _Identifier = Store.VertexIdentifierCount++;
 
-            GraphUtil.Debug(this);
+            GraphUtil.Debug(this, DebugOperationEnum.Init);
 
             Store.StoreVertexIdentifier(this);
         }

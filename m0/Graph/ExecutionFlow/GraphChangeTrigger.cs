@@ -139,6 +139,9 @@ namespace m0.Graph.ExecutionFlow
 
             IVertex triggerVertex = listenerEdge.From;
 
+            if (triggerVertex.DisposedState != DisposeStateEnum.Live)
+                return;
+
             triggerVertex.DeleteEdge(listenerEdge);
 
             if (GraphUtil.GetQueryOutCount(triggerVertex, "Listener", null) == 0)

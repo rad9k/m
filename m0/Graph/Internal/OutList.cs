@@ -70,6 +70,8 @@ namespace m0.Graph.Internal
                 item.To.InEdgesRaw.Remove(item);
 
                 item.EdgeRemovalExecuting = false;
+
+                GraphUtil.Debug(item.From, GraphUtil.DebugOperationEnum.Remove);
             }
 
             edgeDictionaries.vertex.OutEdgesDictionariesNeedsRebuild = true;

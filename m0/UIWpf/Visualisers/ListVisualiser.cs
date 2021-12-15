@@ -267,7 +267,7 @@ namespace m0.UIWpf.Visualisers
 
             IVertex b=Vertex.Get(false, @"BaseEdge:\To:");
 
-            if(b!=null)
+            if (b!=null)
             foreach(IEdge e in Vertex.Get(false, "SelectedEdges:")){
                 IEdge ee = GraphUtil.FindEdgeByToVertex(b, e.To.Get(false, "To:"));
                 if (ee != null)

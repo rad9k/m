@@ -56,14 +56,18 @@ namespace m0.Graph
 
     public class GraphUtil
     {
-        static string DebugStore = "$-0$ROOT$STORE$";
-        static long[] DebugVertex = { 8122 };
+        public enum DebugOperationEnum { Init, Add, Remove, Dispose, Value}
 
-        public static void Debug(IVertex v)
+        static string DebugStore = "$-0$ROOT$STORE$";
+        static long[] DebugVertex = { 8395, 8392 };
+        static DebugOperationEnum[] DebugOperation = { DebugOperationEnum.Remove };
+
+        public static void Debug(IVertex v, DebugOperationEnum Operation)
         {
             if (v.Identifier is long 
                 && DebugVertex.Contains((long)v.Identifier) 
-                && v.Store.Identifier == DebugStore)
+                && v.Store.Identifier == DebugStore
+                && DebugOperation.Contains(Operation))
             {
                 int x = 0;
             }
