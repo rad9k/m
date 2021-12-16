@@ -60,7 +60,7 @@ namespace m0.Graph
 
         static string DebugStore = "$-0$ROOT$STORE$";
         static long[] DebugVertex = { 8395, 8392 };
-        static DebugOperationEnum[] DebugOperation = { DebugOperationEnum.Remove };
+        static DebugOperationEnum[] DebugOperation = { DebugOperationEnum.Remove, DebugOperationEnum.Init, DebugOperationEnum.Add };
 
         public static void Debug(IVertex v, DebugOperationEnum Operation)
         {

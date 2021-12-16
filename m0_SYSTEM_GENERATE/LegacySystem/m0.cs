@@ -201,7 +201,7 @@ namespace m0
             RootVariableVertexLinksCreate();
 
 
-            LegacySystem.Graph.EasyVertex.Get(sm, false, @"Base\Vertex\$Is").AddEdge(LegacySystem.Graph.EasyVertex.Get(sm, false, @"Presentation\$Hide"), empty);
+            LegacySystem.Graph.EasyVertex.Get(sm, false, @"Base\Vertex\$Is").AddVertex(LegacySystem.Graph.EasyVertex.Get(sm, false, @"Presentation\$Hide"), "0");
 
 
 
@@ -279,9 +279,9 @@ namespace m0
                 LegacySystem.Graph.EasyVertex.Get(sm, false, @"*$EdgeTarget"),
                 LegacySystem.Graph.EasyVertex.Get(sm, false, @"ZeroTypes\ExecutionFlow\GraphChangeTrigger"));
 
-            LegacySystem.Graph.EasyVertex.Get(sm, false, @"Base\Vertex\$GraphChangeTrigger").AddEdge(
+            LegacySystem.Graph.EasyVertex.Get(sm, false, @"Base\Vertex\$GraphChangeTrigger").AddVertex(
                 LegacySystem.Graph.EasyVertex.Get(sm, false, @"Presentation\$Hide"),
-                Empty);
+                "1");
 
             LegacySystem.Graph.EasyVertex.Get(sm, false, @"Base\Vertex\$VertexEval").AddEdge(
               LegacySystem.Graph.EasyVertex.Get(sm, false, @"*$EdgeTarget"),
@@ -2685,7 +2685,7 @@ namespace m0
                 + ",Enum:GraphChangeFilterEnum{EnumValue:NoBaseVertex}"
                 + ",Class:EventTrigger{Association:Listener{$MinCardinality:0,$MaxCardinality:-1}}"
                 + ",Class:Event{Association:Trigger{$MinCardinality:1,$MaxCardinality:1},Association:Source{$MinCardinality:0,$MaxCardinality:1}}"
-                + ",Class:GraphChangeTrigger{$Hide:,Attribute:ScopeQuery{$MinCardinality:0,$MaxCardinality:-1},Attribute:ChangeTypeFilter{$MinCardinality:0,$MaxCardinality:-1}}"
+                + ",Class:GraphChangeTrigger{$Hide:1,Attribute:ScopeQuery{$MinCardinality:0,$MaxCardinality:-1},Attribute:ChangeTypeFilter{$MinCardinality:0,$MaxCardinality:-1}}"
                 + ",Class:GraphChangeEvent{Attribute:ChangedVertex{$MinCardinality:1,$MaxCardinality:1},Attribute:Type{$MinCardinality:1,$MaxCardinality:1},Attribute:OldValue{$MinCardinality:0,$MaxCardinality:1},Attribute:NewValue{$MinCardinality:0,$MaxCardinality:1},Attribute:Edge{$MinCardinality:0,$MaxCardinality:1}}"
                 + ",Class:Executable"
                 + ",Class:Delegate{Attribute:Object{$MinCardinality:1,$MaxCardinality:1},Attribute:Method{$MinCardinality:1,$MaxCardinality:1}}"
@@ -3101,7 +3101,7 @@ namespace m0
                 "Class:Tree{Attribute:ZoomVisualiserContent{$MinCardinality:1,$MaxCardinality:1,$DisplayLarger:}}," +
                 "Class:Graph{Attribute:ZoomVisualiserContent{$MinCardinality:1,$MaxCardinality:1,$DisplayLarger:},Attribute:VisualiserCircleSize{$MinCardinality:1,$MaxCardinality:1},Attribute:NumberOfCircles{$MinCardinality:1,$MaxCardinality:1,$UpdateAfterInteractionEnd:},Attribute:ShowOutEdges{$MinCardinality:1,$MaxCardinality:1,$DefaultValue:True},Attribute:ShowInEdges{$MinCardinality:1,$MaxCardinality:1},Attribute:FastMode{$MinCardinality:1,$MaxCardinality:1},Attribute:MetaLabels{$MinCardinality:1,$MaxCardinality:1}}," +
                 "Class:Class,Class:String,Class:StringView,Class:Vertex,Class:Edge,Class:Integer,Class:Decimal,Class:Float,Class:Boolean,Class:Enum,Class:Debug," +
-                "Class:Diagram{Attribute:ZoomVisualiserContent{$MinCardinality:1,$MaxCardinality:1,MinValue:0,MaxValue:200,$DefaultValue:100,$DisplayLarger:},Attribute:SizeX{$MinCardinality:1,$MaxCardinality:1,$UpdateAfterInteractionEnd:},Attribute:SizeY{$MinCardinality:1,$MaxCardinality:1,$UpdateAfterInteractionEnd},Attribute:Item{$MinCardinality:0,$MaxCardinality:-1,$Hide:},Association:CreationPool{$MinCardinality:1,$MaxCardinality:1}}," +
+                "Class:Diagram{Attribute:ZoomVisualiserContent{$MinCardinality:1,$MaxCardinality:1,MinValue:0,MaxValue:200,$DefaultValue:100,$DisplayLarger:},Attribute:SizeX{$MinCardinality:1,$MaxCardinality:1,$UpdateAfterInteractionEnd:},Attribute:SizeY{$MinCardinality:1,$MaxCardinality:1,$UpdateAfterInteractionEnd},Attribute:Item{$MinCardinality:0,$MaxCardinality:-1,$Hide:0},Association:CreationPool{$MinCardinality:1,$MaxCardinality:1}}," +
                 "Class:Wrap,"+
                 "Class:List{Attribute:ZoomVisualiserContent{$MinCardinality:1,$MaxCardinality:1,$DisplayLarger:},Attribute:IsMetaRightAlign{$MinCardinality:1,$MaxCardinality:1},Attribute:IsAllVisualisersEdit{$MinCardinality:1,$MaxCardinality:1},Attribute:ShowMeta{$MinCardinality:1,$MaxCardinality:1,$DefaultValue:True},Association:GridStyle{$MinCardinality:1,$MaxCardinality:1}}," +
                 "Class:Sequence{Attribute:SnapToGrid{$MinCardinality:1,$MaxCardinality:1},Attribute:ShowVelocity{$MinCardinality:1,$MaxCardinality:1,$DefaultValue:False},Attribute:ShowLabel{$MinCardinality:1,$MaxCardinality:1,$DefaultValue:True},Attribute:ShowArrowLines{$MinCardinality:1,$MaxCardinality:1,$DefaultValue:True},Attribute:ShowSnapLines{$MinCardinality:1,$MaxCardinality:1,$DefaultValue:True},Attribute:DefaultVelocity{$MinCardinality:1,$MaxCardinality:1,$DefaultValue:127,MinValue:0,MaxValue:127}}," +

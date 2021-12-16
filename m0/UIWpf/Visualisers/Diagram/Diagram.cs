@@ -109,7 +109,7 @@ namespace m0.UIWpf.Visualisers.Diagram
 
             this.BorderBrush = (Brush)FindResource("0LightGrayBrush");
 
-            new ListVisualiserHelper(MinusZero.Instance.Root.Get(false, @"System\Meta\Visualiser\List"),
+            new ListVisualiserHelper(MinusZero.Instance.Root.Get(false, @"System\Meta\Visualiser\Diagram"),
                  this,
                 "DiagramVisualiser",
                 this,
