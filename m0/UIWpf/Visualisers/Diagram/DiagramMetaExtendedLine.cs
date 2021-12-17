@@ -83,7 +83,7 @@ namespace m0.UIWpf.Visualisers.Diagram
             
         }
 
-        public DiagramMetaExtendedLine(IVertex baseEdgeVertex)
+        public DiagramMetaExtendedLine(IVertex baseEdgeVertex) : base(baseEdgeVertex)
         {
             MetaLine.IsEndings = false;
             MetaLine.StrokeThickness = 1;

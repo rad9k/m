@@ -38,6 +38,28 @@ namespace m0.UIWpf.Visualisers.Diagram
             }
         }
 
+        public DiagramLine(IVertex baseEdgeVertex)
+        {
+            ForegroundColor = (Brush)Line.FindResource("0ForegroundBrush");
+            BackgroundColor = (Brush)Line.FindResource("0BackgroundBrush");
+
+            LineEndings.IsEndings = true;
+            LineEndings.StrokeThickness = 1;
+            LineEndings.Stroke = (Brush)LineEndings.FindResource("0ForegroundBrush");
+
+            LineEndings.ArrowLength = 15;
+            LineEndings.ArrowAngle = 60;
+
+            Line.IsEndings = false;
+            Line.StrokeThickness = 1;
+            Line.Stroke = (Brush)LineEndings.FindResource("0ForegroundBrush");
+
+            Line.ArrowLength = 15;
+            Line.ArrowAngle = 60;
+
+            Label.Foreground = (Brush)LineEndings.FindResource("0ForegroundBrush");
+        }
+
         public override void Dispose()
         {
             GraphChangeTrigger.RemoveListener(graphChangeListenerEdge);
@@ -390,28 +412,6 @@ namespace m0.UIWpf.Visualisers.Diagram
 
             Panel.SetZIndex(LineEndings, 0);
             Panel.SetZIndex(Label, 0); 
-        }
-
-        public DiagramLine(IVertex baseEdgeVertex)
-        {
-            ForegroundColor = (Brush)Line.FindResource("0ForegroundBrush");
-            BackgroundColor = (Brush)Line.FindResource("0BackgroundBrush");
-
-            LineEndings.IsEndings = true;
-            LineEndings.StrokeThickness = 1;
-            LineEndings.Stroke = (Brush)LineEndings.FindResource("0ForegroundBrush");
-
-            LineEndings.ArrowLength = 15;
-            LineEndings.ArrowAngle = 60;
-
-            Line.IsEndings = false;
-            Line.StrokeThickness = 1;
-            Line.Stroke = (Brush)LineEndings.FindResource("0ForegroundBrush");
-
-            Line.ArrowLength = 15;
-            Line.ArrowAngle = 60;
-
-            Label.Foreground = (Brush)LineEndings.FindResource("0ForegroundBrush");
         }
     }
 }

@@ -59,7 +59,7 @@ namespace m0.Graph
         public enum DebugOperationEnum { Init, Add, Remove, Dispose, Value}
 
         static string DebugStore = "$-0$ROOT$STORE$";
-        static long[] DebugVertex = { 8395, 8400 };
+        static long[] DebugVertex = { 8100, 8103 };
         static DebugOperationEnum[] DebugOperation = { DebugOperationEnum.Remove, DebugOperationEnum.Init, DebugOperationEnum.Add };
 
         public static void Debug(IVertex v, DebugOperationEnum Operation)
@@ -988,7 +988,7 @@ namespace m0.Graph
             foreach (IEdge e in el)
                 if(GraphUtil.GetQueryOutCount(e.To, "$Is", "Edge") > 0)
                 {
-                    // RemoveAllEdges(e.To); // it took almoust a week
+                    //RemoveAllEdges(e.To); // it took almoust a week
 
                     v.DeleteEdge(e);
                 }
