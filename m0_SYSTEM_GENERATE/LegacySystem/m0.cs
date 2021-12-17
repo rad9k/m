@@ -281,6 +281,10 @@ namespace m0
 
             LegacySystem.Graph.EasyVertex.Get(sm, false, @"Base\Vertex\$GraphChangeTrigger").AddVertex(
                 LegacySystem.Graph.EasyVertex.Get(sm, false, @"Presentation\$Hide"),
+                "0");
+
+            LegacySystem.Graph.EasyVertex.Get(sm, false, @"Base\Vertex\$GraphChangeTrigger").AddVertex(
+                LegacySystem.Graph.EasyVertex.Get(sm, false, @"Presentation\$Hide"),
                 "1");
 
             LegacySystem.Graph.EasyVertex.Get(sm, false, @"Base\Vertex\$VertexEval").AddEdge(
@@ -2685,7 +2689,7 @@ namespace m0
                 + ",Enum:GraphChangeFilterEnum{EnumValue:NoBaseVertex}"
                 + ",Class:EventTrigger{Association:Listener{$MinCardinality:0,$MaxCardinality:-1}}"
                 + ",Class:Event{Association:Trigger{$MinCardinality:1,$MaxCardinality:1},Association:Source{$MinCardinality:0,$MaxCardinality:1}}"
-                + ",Class:GraphChangeTrigger{$Hide:1,Attribute:ScopeQuery{$MinCardinality:0,$MaxCardinality:-1},Attribute:ChangeTypeFilter{$MinCardinality:0,$MaxCardinality:-1}}"
+                + ",Class:GraphChangeTrigger{$Hide:0,$Hide:1,Attribute:ScopeQuery{$MinCardinality:0,$MaxCardinality:-1},Attribute:ChangeTypeFilter{$MinCardinality:0,$MaxCardinality:-1}}"
                 + ",Class:GraphChangeEvent{Attribute:ChangedVertex{$MinCardinality:1,$MaxCardinality:1},Attribute:Type{$MinCardinality:1,$MaxCardinality:1},Attribute:OldValue{$MinCardinality:0,$MaxCardinality:1},Attribute:NewValue{$MinCardinality:0,$MaxCardinality:1},Attribute:Edge{$MinCardinality:0,$MaxCardinality:1}}"
                 + ",Class:Executable"
                 + ",Class:Delegate{Attribute:Object{$MinCardinality:1,$MaxCardinality:1},Attribute:Method{$MinCardinality:1,$MaxCardinality:1}}"

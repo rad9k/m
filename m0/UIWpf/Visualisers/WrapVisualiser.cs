@@ -108,8 +108,9 @@ namespace m0.UIWpf.Visualisers
                 {
                     IEdge ee = GraphUtil.GetQueryOutFirstEdge(baseEdgeTo, e.To.Value, null);
                     
-                    if(ee != null)
-                        if(ee.Meta.Get(false, "$Hide:") == null)
+                    if(ee != null)                        
+                        if(VisualiserUtil.FilterEdge(ee, this.Vertex))
+                        //if(ee.Meta.Get(false, "$Hide:") == null)
                             AddEdge(ee);
                 }
             }           

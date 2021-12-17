@@ -19,12 +19,23 @@ namespace m0.UIWpf.Visualisers.Helper
                 selectedEdges.DeleteEdge(e);
         }
 
+        static int GetVisualiserLevel(IVertex visualiserVertex)
+        {
+            if (GraphUtil.GetQueryOutCount(visualiserVertex, "$Is", "Wrap") == 1)
+                return 0;
+
+            return 1;
+        }
+
         public static IEnumerable<IEdge> FilterEdges(IEnumerable<IEdge> toFilterEdges, IVertex visualiserVertex)
         {
             IList<IEdge> list = new List<IEdge>();
 
+            int visualiserLevel = GetVisualiserLevel(visualiserVertex);
+
             foreach (IEdge e in toFilterEdges)
-                if (FilterEdge(e, visualiserVertex))
+                if ( (visualiserLevel == 0 && FilterEdge_0(e))
+                    || (visualiserLevel == 1 && FilterEdge_1(e)))
                     list.Add(e);
 
             return list;
@@ -32,10 +43,26 @@ namespace m0.UIWpf.Visualisers.Helper
 
         public static bool FilterEdge(IEdge toFilterEdge, IVertex visualiserVertex)
         {
-            if (GeneralUtil.CompareStrings(toFilterEdge.Meta, "$Is")) // HACK!
+            int visualiserLevel = GetVisualiserLevel(visualiserVertex);
+
+            if ((visualiserLevel == 0 && FilterEdge_0(toFilterEdge))
+                    || (visualiserLevel == 1 && FilterEdge_1(toFilterEdge)))
                 return true;
 
-            if (GraphUtil.ExistQueryOut(toFilterEdge.Meta, "$Hide", null))
+            return false;
+        }
+
+        public static bool FilterEdge_0(IEdge toFilterEdge)
+        {            
+            if (GraphUtil.ExistQueryOut(toFilterEdge.Meta, "$Hide", "0"))
+                return false;
+
+            return true;
+        }
+
+        public static bool FilterEdge_1(IEdge toFilterEdge)
+        {
+            if (GraphUtil.ExistQueryOut(toFilterEdge.Meta, "$Hide", "1"))
                 return false;
 
             return true;
