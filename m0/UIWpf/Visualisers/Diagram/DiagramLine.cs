@@ -392,7 +392,8 @@ namespace m0.UIWpf.Visualisers.Diagram
             Panel.SetZIndex(Label, 0); 
         }
 
-        public DiagramLine(){
+        public DiagramLine(IVertex baseEdgeVertex)
+        {
             ForegroundColor = (Brush)Line.FindResource("0ForegroundBrush");
             BackgroundColor = (Brush)Line.FindResource("0BackgroundBrush");
 

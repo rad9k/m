@@ -1,4 +1,5 @@
-﻿using m0.UIWpf.Controls;
+﻿using m0.Foundation;
+using m0.UIWpf.Controls;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -82,7 +83,7 @@ namespace m0.UIWpf.Visualisers.Diagram
             
         }
 
-        public DiagramMetaExtendedLine()
+        public DiagramMetaExtendedLine(IVertex baseEdgeVertex)
         {
             MetaLine.IsEndings = false;
             MetaLine.StrokeThickness = 1;

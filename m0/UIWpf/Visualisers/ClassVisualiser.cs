@@ -26,7 +26,7 @@ namespace m0.UIWpf.Visualisers
 
         List<IVertex> manuallyAddedVertexChangeListeners = new List<IVertex>();
 
-        public ClassVisualiser()
+        public ClassVisualiser(IVertex baseEdgeVertex)
         {
            this.Padding = new Thickness(2);
 
@@ -36,8 +36,8 @@ namespace m0.UIWpf.Visualisers
                this, 
                false, 
                new List<string> { @"", @"BaseEdge:\", @"BaseEdge:\To:\"}, 
-               "ListVisualiser", 
-               null,
+               "ListVisualiser",
+               baseEdgeVertex,
                UpdateBaseEdgeCallSchemeEnum.OmmitSecond);
         }
 
