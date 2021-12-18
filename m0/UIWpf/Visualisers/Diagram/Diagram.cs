@@ -1051,9 +1051,25 @@ namespace m0.UIWpf.Visualisers.Diagram
             set { VisualiserHelper.SetVertex(value); }
         }
 
+        public bool IsDisposed = false;
+
         public void Dispose()
         {
-            VisualiserHelper.Dispose();
+            if (IsDisposed == false)
+            {
+                IsDisposed = true;
+
+           /*     visualiserVertexEdge.From.DeleteEdge(visualiserVertexEdge);
+
+                GraphChangeTrigger.RemoveListener(graphChangeListenerEdge);
+
+                if (Vertex is IDisposable)
+                    ((IDisposable)Vertex).Dispose();
+
+                if (visualiser.SubVisualisers != null)
+                    foreach (IDisposable d in visualiser.SubVisualisers)
+                        d.Dispose();*/
+            }
         }
 
         /*private IVertex _Vertex;
