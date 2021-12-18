@@ -524,7 +524,7 @@ namespace m0.UIWpf.Visualisers.Diagram
                 return;
 
             IVertex info = m0.MinusZero.Instance.CreateTempVertex();
-            info.Value = "DELETE diagram item / vertex";
+            info.Value = "DELETE diagram item / vertex?";
 
             IVertex options = m0.MinusZero.Instance.CreateTempVertex();
 
@@ -588,9 +588,9 @@ namespace m0.UIWpf.Visualisers.Diagram
             IVertex info = m0.MinusZero.Instance.CreateTempVertex();
 
             if (onlyEdge)
-                info.Value = "DELETE line's edge";
+                info.Value = "DELETE line's edge?";
             else
-                info.Value = "DELETE line's vertex";
+                info.Value = "DELETE line's vertex?";
 
             IVertex options = m0.MinusZero.Instance.CreateTempVertex();
 

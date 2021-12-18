@@ -418,9 +418,13 @@ namespace m0.UIWpf.Visualisers.Diagram
 
         public void AddDiagramLineVertex(IEdge edge, IVertex diagramLineDefinition, DiagramItemBase toItem)
         {
+            ////////////////////////////////////////
+            Interaction.BeginInteractionWithGraph();
+            //////////////////////////////////////// 
+            
             IVertex r = MinusZero.Instance.Root;
 
-            ((EasyVertex)Vertex).CanFireChangeEvent = false;
+            //((EasyVertex)Vertex).CanFireChangeEvent = false;
 
             IVertex l = VertexOperations.AddInstance(Vertex, diagramLineDefinition.Get(false, "DiagramLineClass:"), r.Get(false, @"System\Meta\Visualiser\DiagramInternal\DiagramItemBase\DiagramLine"));
 
@@ -432,7 +436,11 @@ namespace m0.UIWpf.Visualisers.Diagram
 
             AddDiagramLineObject(toItem, l);
 
-            ((EasyVertex)Vertex).CanFireChangeEvent = true;
+            //((EasyVertex)Vertex).CanFireChangeEvent = true;
+
+            ////////////////////////////////////////
+            Interaction.EndInteractionWithGraph();
+            //////////////////////////////////////// 
         }
 
         public void AddDiagramLineObject(DiagramItemBase toItem, IVertex l)

@@ -28,7 +28,7 @@ namespace m0.UIWpf.Visualisers.Diagram
                 VertexUpdated();
 
                 graphChangeListenerEdge = GraphChangeTrigger.AddTriggerAndListener(_Vertex,
-                     new List<string> { },
+                     new List<string> { "", @"BaseEdge:\To:" },
                      new List<GraphChangeFilterEnum> {GraphChangeFilterEnum.ValueChange,
                          GraphChangeFilterEnum.OutputEdgeAdded,
                          GraphChangeFilterEnum.OutputEdgeRemoved,
