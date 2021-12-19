@@ -87,11 +87,11 @@ namespace m0.UIWpf.Visualisers.Helper
                  _visualiser,
                  _visualiserName,
                  _visualiserAsFrameworkElement,
-                 true,
-                 new List<string> { "", @"BaseEdge:\To:" },
-                 "AtomVisualiser",
+                 _dndSupport,
+                 _scopeQueries,
+                 _scopeQueriesName,
                  baseEdgeVertex,
-                 UpdateBaseEdgeCallSchemeEnum.OmmitSecond,
+                 _updateBaseEdgeCallSchema,
                  false
                  )
         {
