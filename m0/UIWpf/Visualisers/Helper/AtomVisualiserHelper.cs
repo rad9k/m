@@ -29,7 +29,7 @@ namespace m0.UIWpf.Visualisers.Helper
         protected IVisualiser visualiser;
         protected FrameworkElement visualiserAsFrameworkElement;
 
-        protected IEdge visualiserVertexEdge;
+        public IEdge VisualiserVertexEdge;
 
         protected IList<string> scopeQueries;
         protected IList<GraphChangeFilterEnum> changeTypeFilter;
@@ -40,6 +40,10 @@ namespace m0.UIWpf.Visualisers.Helper
         protected bool dndSupport;
 
         protected UpdateBaseEdgeCallSchemeEnum updateBaseEdgeCallSchema;
+
+        public IEdge graphChangeListenerEdge;
+
+        public IVertex Vertex;
 
         static IVertex baseEdge_meta;
 
@@ -153,7 +157,7 @@ namespace m0.UIWpf.Visualisers.Helper
                     visualiser.Vertex.Value = visualiserName;
                 }
 
-                visualiserVertexEdge = mz.Root.Get(false, @"User\CurrentUser:\Session:\Visualisers:").
+                VisualiserVertexEdge = mz.Root.Get(false, @"User\CurrentUser:\Session:\Visualisers:").
                         AddEdge(mz.Root.Get(false, @"Meta\User\VisualiserList\Visualiser"), vVertex);
 
 
@@ -192,11 +196,7 @@ namespace m0.UIWpf.Visualisers.Helper
             visualiser.UpdateBaseEdge();          
 
             return exe.Stack;
-        }
-
-        IEdge graphChangeListenerEdge;
-
-        public IVertex Vertex;
+        }        
 
         public void SetVertex(IVertex value)
         {
@@ -224,7 +224,7 @@ namespace m0.UIWpf.Visualisers.Helper
             {
                 IsDisposed = true;
 
-                visualiserVertexEdge.From.DeleteEdge(visualiserVertexEdge);
+                VisualiserVertexEdge.From.DeleteEdge(VisualiserVertexEdge);
 
                 GraphChangeTrigger.RemoveListener(graphChangeListenerEdge);                
 

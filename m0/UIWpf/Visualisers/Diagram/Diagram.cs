@@ -1060,15 +1060,12 @@ namespace m0.UIWpf.Visualisers.Diagram
             {
                 IsDisposed = true;
 
-                visualiserVertexEdge.From.DeleteEdge(visualiserVertexEdge);
+                VisualiserHelper.VisualiserVertexEdge.From.DeleteEdge(VisualiserHelper.VisualiserVertexEdge);
 
-                GraphChangeTrigger.RemoveListener(graphChangeListenerEdge);
+                GraphChangeTrigger.RemoveListener(VisualiserHelper.graphChangeListenerEdge);                
 
-                if (Vertex is IDisposable)
-                    ((IDisposable)Vertex).Dispose();
-
-                if (visualiser.SubVisualisers != null)
-                    foreach (IDisposable d in visualiser.SubVisualisers)
+                if (SubVisualisers != null)
+                    foreach (IDisposable d in SubVisualisers)
                         d.Dispose();
             }
         }
