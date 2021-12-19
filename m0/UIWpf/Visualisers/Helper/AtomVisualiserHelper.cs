@@ -25,7 +25,6 @@ namespace m0.UIWpf.Visualisers.Helper
     public class AtomVisualiserHelper
     {
         protected bool VisualiserAsBaseEdge = false;
-        public IEdge VisualiesrInVisualiserListEdge;
 
         protected IVisualiser visualiser;
         protected FrameworkElement visualiserAsFrameworkElement;
