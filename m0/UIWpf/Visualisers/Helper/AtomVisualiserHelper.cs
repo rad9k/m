@@ -24,6 +24,9 @@ namespace m0.UIWpf.Visualisers.Helper
 
     public class AtomVisualiserHelper
     {
+        protected bool VisualiserAsBaseEdge = false;
+        public IEdge VisualiesrInVisualiserListEdge;
+
         protected IVisualiser visualiser;
         protected FrameworkElement visualiserAsFrameworkElement;
 
@@ -61,7 +64,32 @@ namespace m0.UIWpf.Visualisers.Helper
                  new List<string> { "", @"BaseEdge:\To:" },
                  "AtomVisualiser",
                  baseEdgeVertex,
-                 UpdateBaseEdgeCallSchemeEnum.OmmitSecond
+                 UpdateBaseEdgeCallSchemeEnum.OmmitSecond,
+                 false
+                 )
+        {
+
+        }
+
+        public AtomVisualiserHelper(IVertex _visualiserMetaVertex,
+            IVisualiser _visualiser,
+            string _visualiserName,
+            FrameworkElement _visualiserAsFrameworkElement,
+            bool _dndSupport,
+            IList<string> _scopeQueries,
+            string _scopeQueriesName,
+            IVertex baseEdgeVertex,
+            UpdateBaseEdgeCallSchemeEnum _updateBaseEdgeCallSchema):
+            this(_visualiserMetaVertex,
+                 _visualiser,
+                 _visualiserName,
+                 _visualiserAsFrameworkElement,
+                 true,
+                 new List<string> { "", @"BaseEdge:\To:" },
+                 "AtomVisualiser",
+                 baseEdgeVertex,
+                 UpdateBaseEdgeCallSchemeEnum.OmmitSecond,
+                 false
                  )
         {
 
@@ -75,11 +103,14 @@ namespace m0.UIWpf.Visualisers.Helper
             IList<string> _scopeQueries,
             string _scopeQueriesName,
             IVertex baseEdgeVertex,
-            UpdateBaseEdgeCallSchemeEnum _updateBaseEdgeCallSchema)
+            UpdateBaseEdgeCallSchemeEnum _updateBaseEdgeCallSchema,
+            bool _visualiserAsBaseEdge)
         {
             visualiser = _visualiser;
 
             visualiserAsFrameworkElement = _visualiserAsFrameworkElement;
+
+            VisualiserAsBaseEdge = _visualiserAsBaseEdge;
 
             dndSupport = _dndSupport;
 
@@ -101,25 +132,30 @@ namespace m0.UIWpf.Visualisers.Helper
             visualiserName = _visualiserName + visualiser.GetHashCode();
 
             if (mz != null && mz.IsInitialized)
-            {                
-                IVertex vVertex = mz.CreateTempVertex();
+            {
+                IVertex vVertex;
 
-               
-                ClassVertex.AddIsClassAndAllAttributesAndAssociations(vVertex, visualiserMetaVertex);
-
-                if (baseEdgeVertex != null)
-                    GraphUtil.ReplaceEdge(vVertex, baseEdge_meta, baseEdgeVertex);
+                if (VisualiserAsBaseEdge)
+                    vVertex = baseEdgeVertex;
                 else
-                    ClassVertex.AddIsClassAndAllAttributesAndAssociations(vVertex.Get(false, "BaseEdge:"), 
-                        mz.Root.Get(false, @"System\Meta\ZeroTypes\Edge"));
+                {
+                    vVertex = mz.CreateTempVertex();
+
+                    ClassVertex.AddIsClassAndAllAttributesAndAssociations(vVertex, visualiserMetaVertex);
+
+                    if (baseEdgeVertex != null)
+                        GraphUtil.ReplaceEdge(vVertex, baseEdge_meta, baseEdgeVertex);
+                    else
+                        ClassVertex.AddIsClassAndAllAttributesAndAssociations(vVertex.Get(false, "BaseEdge:"),
+                            mz.Root.Get(false, @"System\Meta\ZeroTypes\Edge"));
+
+                    visualiser.Vertex = vVertex;
+
+                    visualiser.Vertex.Value = visualiserName;
+                }
 
                 visualiserVertexEdge = mz.Root.Get(false, @"User\CurrentUser:\Session:\Visualisers:").
-                    AddEdge(mz.Root.Get(false, @"Meta\User\VisualiserList\Visualiser"), vVertex);
-
-
-                visualiser.Vertex = vVertex;
-
-                visualiser.Vertex.Value = visualiserName;
+                        AddEdge(mz.Root.Get(false, @"Meta\User\VisualiserList\Visualiser"), vVertex);
 
 
                 visualiserAsFrameworkElement.Loaded += new RoutedEventHandler(visualiser.OnLoad);

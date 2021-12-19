@@ -117,7 +117,8 @@ namespace m0.UIWpf.Visualisers.Diagram
                 new List<string> { @"", @"BaseEdge:\To:" },
                 "AtomVisualiserFull",
                 baseEdgeVertex,
-                UpdateBaseEdgeCallSchemeEnum.OmmitFirst);
+                UpdateBaseEdgeCallSchemeEnum.OmmitFirst,
+                true);
 
             this.AllowDrop = true;
             this.Loaded += new RoutedEventHandler(OnLoad);
@@ -1059,7 +1060,7 @@ namespace m0.UIWpf.Visualisers.Diagram
             {
                 IsDisposed = true;
 
-           /*     visualiserVertexEdge.From.DeleteEdge(visualiserVertexEdge);
+                visualiserVertexEdge.From.DeleteEdge(visualiserVertexEdge);
 
                 GraphChangeTrigger.RemoveListener(graphChangeListenerEdge);
 
@@ -1068,7 +1069,7 @@ namespace m0.UIWpf.Visualisers.Diagram
 
                 if (visualiser.SubVisualisers != null)
                     foreach (IDisposable d in visualiser.SubVisualisers)
-                        d.Dispose();*/
+                        d.Dispose();
             }
         }
 

@@ -39,7 +39,8 @@ namespace m0.UIWpf.Visualisers.Helper
                   new List<string> { @"", @"BaseEdge:\", @"BaseEdge:\To:\" },
                   "ListVisualiser",
                   baseEdgeVertex,
-                  UpdateBaseEdgeCallSchemeEnum.OmmitFirst)
+                  UpdateBaseEdgeCallSchemeEnum.OmmitFirst,
+                  false)
         {
 
         }
@@ -52,7 +53,32 @@ namespace m0.UIWpf.Visualisers.Helper
             IList<string> _scopeQueries,
             string _scopeQueriesName,
             IVertex baseEdgeVertex,
-            UpdateBaseEdgeCallSchemeEnum _updateBaseEdgeCallScheme)
+            UpdateBaseEdgeCallSchemeEnum _updateBaseEdgeCallScheme            
+            )
+            :this(visualiserMetaVertex,
+                  _visualiser,
+                  _visualiserName,
+                  _visualiserAsFrameworkElement,
+                  _dndSupport,
+                  _scopeQueries,
+                  _scopeQueriesName,
+                  baseEdgeVertex,
+                  _updateBaseEdgeCallScheme,
+                  false)
+        {
+        }
+
+            public ListVisualiserHelper(IVertex visualiserMetaVertex,
+            IVisualiser _visualiser,
+            string _visualiserName,
+            FrameworkElement _visualiserAsFrameworkElement,
+            bool _dndSupport,
+            IList<string> _scopeQueries,
+            string _scopeQueriesName,
+            IVertex baseEdgeVertex,
+            UpdateBaseEdgeCallSchemeEnum _updateBaseEdgeCallScheme,
+            bool _visualiserAsBaseEdge
+            )
             : base(visualiserMetaVertex,
                   _visualiser,
                   _visualiserName,
@@ -61,7 +87,8 @@ namespace m0.UIWpf.Visualisers.Helper
                   _scopeQueries,
                   _scopeQueriesName,
                   baseEdgeVertex,
-                  _updateBaseEdgeCallScheme)
+                  _updateBaseEdgeCallScheme,
+                  _visualiserAsBaseEdge)
         {
             listVisualiser = (IListVisualiser)_visualiser;
         }

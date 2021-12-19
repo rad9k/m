@@ -307,8 +307,11 @@ namespace m0.UIWpf.Commands
             ////////////////////////////////////////
             Interaction.BeginInteractionWithGraph();
             ////////////////////////////////////////
-            
-            IPlatformClass sv = (IPlatformClass)PlatformClass.CreatePlatformObject(baseVertex.Get(false, "To:"), baseVertex);
+
+            IVertex visualiserVertex = baseVertex.Get(false, "To:");
+
+
+            IPlatformClass sv = (IPlatformClass)PlatformClass.CreatePlatformObject(visualiserVertex, visualiserVertex);
 
             //GraphUtil.ReplaceEdge(sv.Vertex, "BaseEdge", baseVertex);
 
