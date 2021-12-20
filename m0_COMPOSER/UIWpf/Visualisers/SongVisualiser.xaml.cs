@@ -880,8 +880,6 @@ namespace m0_COMPOSER.UIWpf.Visualisers
         {
             IVertex itemEventVertex = itemEdge.To;
 
-            bool dummy = false;
-
             int triggerTime = GetSequenceEventTriggerTime(itemEventVertex);
 
             int length = GetSequenceEventLength(itemEventVertex);

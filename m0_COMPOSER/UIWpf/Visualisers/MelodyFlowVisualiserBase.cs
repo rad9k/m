@@ -390,9 +390,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
         }
 
         protected override void PasteEdgesFromClipboard(IEnumerable<IEdge> edges)
-        {
-            bool o = false;
-
+        {            
             int minPosition, maxPosition;
 
             bool onlyCopy;
