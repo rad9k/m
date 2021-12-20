@@ -10,6 +10,7 @@ using System.Windows.Controls;
 
 using m0.ZeroTypes;
 using m0.Graph;
+using m0.User.Process.UX;
 
 namespace m0.UIWpf.Commands
 {
@@ -67,11 +68,19 @@ namespace m0.UIWpf.Commands
 
                 IVertex baseVertex = contextMenu.EdgeVertex.Get(false, "To:");
 
+                ////////////////////////////////////////
+                Interaction.BeginInteractionWithGraph();
+                ////////////////////////////////////////
+
                 IVertex fileVertex = baseVertex.AddVertex(fileMeta, storeName);
 
                 IVertex store = fileVertex.Get(false, "$Store:");
 
                 NewMusicSpaceStore(store);
+
+                ////////////////////////////////////////
+                Interaction.EndInteractionWithGraph();
+                ////////////////////////////////////////
             }
         }
 
@@ -84,9 +93,17 @@ namespace m0.UIWpf.Commands
                 if (!storeName.EndsWith(".m0"))
                     storeName += ".m0";
 
+                ////////////////////////////////////////
+                Interaction.BeginInteractionWithGraph();
+                ////////////////////////////////////////
+
                 IVertex baseVertex = contextMenu.EdgeVertex.Get(false, "To:");
 
                 baseVertex.AddVertex(fileMeta, storeName);
+
+                ////////////////////////////////////////
+                Interaction.EndInteractionWithGraph();
+                ////////////////////////////////////////
             }
         }        
 
