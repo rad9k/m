@@ -8,11 +8,14 @@ using System.IO;
 using m0.Store.Json;
 using m0.ZeroTypes;
 using m0.Util;
+using m0.Graph.ExecutionFlow;
 
 namespace m0.Store.FileSystem
 {
     public class FileVertex : EasyVertex
     {
+        bool IsNormalEasyVertex = false;
+
         EasyVertex FileSystemVertex;
 
         FileInfo FI;
@@ -23,14 +26,20 @@ namespace m0.Store.FileSystem
         {
             get
             {
+                if (IsNormalEasyVertex)
+                    return _Value;
                 return FI.Name;
             }
             set
             {
-                if (value is string)
+                object oldValue;
+
+                if (!IsNormalEasyVertex && value is string)
                 {
-                    if (value== null || value == "")
+                    if (value== null || (string)value == "")
                         return;
+
+                    oldValue = _Value;
 
                     string newFileName = FileSystemUtil.getFileNamePart((string)value);
 
@@ -58,7 +67,32 @@ namespace m0.Store.FileSystem
                             UpdateFileSystemVertex();
                         }
 
-                        FireChange(new VertexChangeEventArgs(VertexChangeType.ValueChanged, null));
+                        if (CanEmitGraphChangeEvents)
+                            ExecutionFlowHelper.AddTransactionAtom(new GraphChangeTransactionAtom(
+                                this,
+                                AtomGraphChangeTypeEnum.ValueChange,
+                                oldValue,
+                                _Value,
+                                null));
+                    }
+                    else
+                    {
+                        oldValue = _Value;
+
+                        if (value == null)
+                            return;
+
+                        _Value = value;
+
+                        ValueChanged();                        
+
+                        if (CanEmitGraphChangeEvents)
+                            ExecutionFlowHelper.AddTransactionAtom(new GraphChangeTransactionAtom(
+                                this,
+                                AtomGraphChangeTypeEnum.ValueChange,
+                                oldValue,
+                                _Value,
+                                null));
                     }
                 }
             }
@@ -105,7 +139,7 @@ namespace m0.Store.FileSystem
         {            
             get
             {
-                if (!FileSystemVertexFilled)
+                if (!FileSystemVertexFilled && !IsNormalEasyVertex)
                 {
                     UpdateFileSystemVertex();
                     FileSystemVertexFilled = true;
@@ -157,6 +191,18 @@ namespace m0.Store.FileSystem
             FileSystemStore.FileVertexDictionary.Add(identifier, this);
 
             FileSystemVertex = new EasyVertex(store);
+        }
+
+        public FileVertex(IStore store)
+            : base(store)
+        {            
+            FI = new FileInfo(Identifier.ToString());            
+
+            FileSystemVertex = new EasyVertex(store);
+
+            IsNormalEasyVertex = true;
+
+            _Value = "";
         }
     }
 }
