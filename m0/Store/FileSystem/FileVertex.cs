@@ -13,7 +13,7 @@ namespace m0.Store.FileSystem
 {
     public class FileVertex : EasyVertex
     {
-        //FileInfo FI;
+        EasyVertex FileSystemVertex;
 
         FileInfo FI;
 
@@ -55,7 +55,7 @@ namespace m0.Store.FileSystem
                         {
                             GraphUtil.RemoveAllEdges(this);
 
-                            updateOutEdges();
+                            UpdateFileSystemVertex();
                         }
 
                         FireChange(new VertexChangeEventArgs(VertexChangeType.ValueChanged, null));
@@ -64,37 +64,27 @@ namespace m0.Store.FileSystem
             }
         }        
 
-        public override IVertex AddVertex(IVertex metaVertex, object val)
-        {
-            
-
-            return null;
-        }
-
-        public override IEdge AddVertexAndReturnEdge(IVertex metaVertex, object val)
-        {
-            return null;
-        }
-
-        bool OutEdgesFilled = false;
+        bool FileSystemVertexFilled = false;
        
-        void updateOutEdges()
-        {            
-            AddMeta(FileSystemStore.File_Filename, FI.Name);
+        void UpdateFileSystemVertex()
+        {
+            GraphUtil.RemoveAllEdges(FileSystemVertex);
+
+            AddVertexToFileSystemVertex(FileSystemStore.File_Filename, FI.Name);
 
             string extension = FI.Extension;
 
             if (extension.Length > 1)
                 extension = extension.Substring(1);
 
-            AddMeta(FileSystemStore.File_Extension, extension);
+            AddVertexToFileSystemVertex(FileSystemStore.File_Extension, extension);
 
-            AddMeta(FileSystemStore.File_FullFilename, FI.FullName);
-            AddMeta(FileSystemStore.File_Size, FI.Length.ToString());
-            AddMeta(FileSystemStore.File_FileAttribute, FI.Attributes.ToString());
-            AddMeta(FileSystemStore.File_CreationDateTime, FI.CreationTime.ToString());
-            AddMeta(FileSystemStore.File_UpdateDateTime, FI.LastWriteTime.ToString());
-            AddMeta(FileSystemStore.File_ReadDateTime, FI.LastAccessTime.ToString());                        
+            AddVertexToFileSystemVertex(FileSystemStore.File_FullFilename, FI.FullName);
+            AddVertexToFileSystemVertex(FileSystemStore.File_Size, FI.Length.ToString());
+            AddVertexToFileSystemVertex(FileSystemStore.File_FileAttribute, FI.Attributes.ToString());
+            AddVertexToFileSystemVertex(FileSystemStore.File_CreationDateTime, FI.CreationTime.ToString());
+            AddVertexToFileSystemVertex(FileSystemStore.File_UpdateDateTime, FI.LastWriteTime.ToString());
+            AddVertexToFileSystemVertex(FileSystemStore.File_ReadDateTime, FI.LastAccessTime.ToString());                        
 
             if (((FileSystemStore)this.Store).IncludeFileContent)
                 AddEdge(FileSystemStore.File_Content, new FileContentVertex(FI.FullName, this.Store));
@@ -106,31 +96,55 @@ namespace m0.Store.FileSystem
             }
         }
 
-        void AddMeta(IVertex metaVertex, string value)
+        void AddVertexToFileSystemVertex(IVertex metaVertex, string value)
         {
-            IVertex v = new EasyVertex(MinusZero.Instance.TempStore); // XXX
-
-            v.Value = value;
-
-            AddEdge(metaVertex, v);
+            FileSystemVertex.AddVertex(metaVertex, value);
         }
 
         public override IList<IEdge> OutEdges
-        {
+        {            
             get
             {
-                if (OutEdgesFilled)
-                    return OutEdgesRaw;
+                if (!FileSystemVertexFilled)
+                {
+                    UpdateFileSystemVertex();
+                    FileSystemVertexFilled = true;
+                }
 
-                CanFireChangeEvent = false;
-
-                updateOutEdges();
-
-                CanFireChangeEvent = true;
-                OutEdgesFilled = true;
-
-                return OutEdgesRaw;
+                if (OutEdgesDictionariesNeedsRebuild_Edges)
+                {
+                    OutEdgesDictionariesRebuild_Edges();
+                    return _OutEdges;
+                }
+                else
+                    return _OutEdges;
             }
+        }
+
+        protected override void OutEdgesDictionariesRebuild_Edges()
+        {
+            if (HasInheritance && AllowInheritance)
+            {
+                List<IEdge> FullEdges = OutEdgesRaw.ToList();
+
+                HashSet<IVertex> parents = GraphUtil.GetInheritParents_RawEnumerate(this);
+
+                foreach (IVertex v in parents)
+                    FullEdges.AddRange(v.OutEdgesRaw);
+
+                _OutEdges = FullEdges;
+            }
+            else
+                _OutEdges = OutEdgesRaw;
+
+            List<IEdge> FileSystemExtendedOutEdges = new List<IEdge>();
+
+            FileSystemExtendedOutEdges.AddRange(_OutEdges);
+            FileSystemExtendedOutEdges.AddRange(FileSystemVertex.OutEdges);
+
+            _OutEdges = FileSystemExtendedOutEdges;
+
+            OutEdgesDictionariesNeedsRebuild_Edges = false;
         }
 
         public FileVertex(string identifier, IStore store)
@@ -141,6 +155,8 @@ namespace m0.Store.FileSystem
             FI = new FileInfo(Identifier.ToString());
 
             FileSystemStore.FileVertexDictionary.Add(identifier, this);
+
+            FileSystemVertex = new EasyVertex(store);
         }
     }
 }

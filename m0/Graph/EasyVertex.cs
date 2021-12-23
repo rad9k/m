@@ -112,7 +112,7 @@ namespace m0.Graph
 
         public override IList<IEdge> OutEdgesRaw { get { return ed.Out; } }
 
-        private IList<IEdge> _OutEdges;
+        protected IList<IEdge> _OutEdges;
 
         public override IList<IEdge> OutEdges
         {
@@ -130,7 +130,7 @@ namespace m0.Graph
 
         public override IList<IEdge> MetaInEdgesRaw { get { return ed.MetaIn; } }
 
-        private void OutEdgesDictionariesRebuild_Edges()
+        protected virtual void OutEdgesDictionariesRebuild_Edges()
         {
             if (HasInheritance && AllowInheritance)
             {

@@ -9,7 +9,7 @@ using m0.Util;
 
 namespace m0.Store.FileSystem
 {
-    public class DirectoryVertex:EasyVertex
+    public class DirectoryVertex: EasyVertex
     {        
         DirectoryInfo DI;
 
