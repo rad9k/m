@@ -6,11 +6,16 @@ using m0.Foundation;
 using m0.Graph;
 using System.IO;
 using m0.Util;
+using m0.Graph.ExecutionFlow;
 
 namespace m0.Store.FileSystem
 {
     public class DirectoryVertex: EasyVertex
-    {        
+    {
+        EasyVertex FileSystemVertex;
+
+        bool FileSystemVertexFilled = false;
+
         DirectoryInfo DI;
 
         public override object Value         
@@ -24,8 +29,12 @@ namespace m0.Store.FileSystem
             }
             set
             {
+                object oldValue;
+
                 if (value is string)
                 {
+                    oldValue = _Value;
+
                     string newFileName = FileSystemUtil.getFileNamePart((string)value);
 
                     if (newFileName == "")
@@ -49,12 +58,22 @@ namespace m0.Store.FileSystem
 
                         DI = new DirectoryInfo(newFileName);
 
-                        FireChange(new VertexChangeEventArgs(VertexChangeType.ValueChanged, null));
+                        if (CanEmitGraphChangeEvents)
+                            ExecutionFlowHelper.AddTransactionAtom(new GraphChangeTransactionAtom(
+                                this,
+                                AtomGraphChangeTypeEnum.ValueChange,
+                                oldValue,
+                                _Value,
+                                null));
                     }
                 }
             }
-        }        
-        
+        }
+
+        protected override IVertex CreateVertexInstance()
+        {
+            return MinusZero.Instance.CreateTempVertex();
+        }
 
         public override IEdge AddEdge(IVertex metaVertex, IVertex destVertex)
         {

@@ -13,10 +13,10 @@ using m0.Graph.ExecutionFlow;
 namespace m0.Store.FileSystem
 {
     public class FileVertex : EasyVertex
-    {
-        bool IsNormalEasyVertex = false;
-
+    {     
         EasyVertex FileSystemVertex;
+
+        bool FileSystemVertexFilled = false;
 
         FileInfo FI;
 
@@ -25,16 +25,14 @@ namespace m0.Store.FileSystem
         public override object Value
         {
             get
-            {
-                if (IsNormalEasyVertex)
-                    return _Value;
+            {               
                 return FI.Name;
             }
             set
             {
                 object oldValue;
 
-                if (!IsNormalEasyVertex && value is string)
+                if (value is string)
                 {
                     if (value== null || (string)value == "")
                         return;
@@ -96,10 +94,13 @@ namespace m0.Store.FileSystem
                     }
                 }
             }
-        }        
+        }                
 
-        bool FileSystemVertexFilled = false;
-       
+        protected override IVertex CreateVertexInstance()
+        {
+            return MinusZero.Instance.CreateTempVertex();
+        }
+
         void UpdateFileSystemVertex()
         {
             GraphUtil.RemoveAllEdges(FileSystemVertex);
@@ -139,7 +140,7 @@ namespace m0.Store.FileSystem
         {            
             get
             {
-                if (!FileSystemVertexFilled && !IsNormalEasyVertex)
+                if (!FileSystemVertexFilled)
                 {
                     UpdateFileSystemVertex();
                     FileSystemVertexFilled = true;
@@ -191,18 +192,6 @@ namespace m0.Store.FileSystem
             FileSystemStore.FileVertexDictionary.Add(identifier, this);
 
             FileSystemVertex = new EasyVertex(store);
-        }
-
-        public FileVertex(IStore store)
-            : base(store)
-        {            
-            FI = new FileInfo(Identifier.ToString());            
-
-            FileSystemVertex = new EasyVertex(store);
-
-            IsNormalEasyVertex = true;
-
-            _Value = "";
         }
     }
 }

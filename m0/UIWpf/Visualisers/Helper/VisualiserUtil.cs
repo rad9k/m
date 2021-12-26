@@ -54,16 +54,16 @@ namespace m0.UIWpf.Visualisers.Helper
 
         public static bool FilterEdge_0(IEdge toFilterEdge)
         {            
-            if (GraphUtil.ExistQueryOut(toFilterEdge.Meta, "$Hide", "0"))
-                return false;
+           // if (GraphUtil.ExistQueryOut(toFilterEdge.Meta, "$Hide", "0"))
+           //     return false;
 
             return true;
         }
 
         public static bool FilterEdge_1(IEdge toFilterEdge)
         {
-            if (GraphUtil.ExistQueryOut(toFilterEdge.Meta, "$Hide", "1"))
-                return false;
+            //if (GraphUtil.ExistQueryOut(toFilterEdge.Meta, "$Hide", "1"))
+             //   return false;
 
             return true;
         }
