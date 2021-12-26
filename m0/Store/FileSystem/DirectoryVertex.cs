@@ -74,7 +74,36 @@ namespace m0.Store.FileSystem
         {
             return MinusZero.Instance.CreateTempVertex();
         }
-        
+
+        void UpdateFileSystemVertex()
+        {
+
+        }
+
+        public override IList<IEdge> OutEdges
+        {
+            get
+            {
+                if (!FileSystemVertexFilled)
+                {
+                    UpdateFileSystemVertex();
+                    FileSystemVertexFilled = true;
+                }
+
+                if (OutEdgesDictionariesNeedsRebuild_Edges)
+                {
+                    OutEdgesDictionariesRebuild_Edges();
+                    return _OutEdges;
+                }
+                else
+                    return _OutEdges;
+            }
+        }
+
+        void AddVertexToFileSystemVertex(IVertex metaVertex, string value)
+        {
+            FileSystemVertex.AddVertex(metaVertex, value);
+        }
 
         public override IEdge AddVertexAndReturnEdge(IVertex metaVertex, object val)
         {
@@ -112,18 +141,7 @@ namespace m0.Store.FileSystem
             return null;
         }
 
-        bool OutEdgesFilled = false;
-
-        void AddVertexToFileSystemVertex(IVertex metaVertex, string value)
-        {
-            //IVertex v = new EasyVertex(this.Store);
-
-            IVertex v = new EasyVertex(MinusZero.Instance.TempStore);
-
-            v.Value = value;
-
-            base.AddEdge(metaVertex, v);
-        }
+        bool OutEdgesFilled = false;        
 
         public override IList<IEdge> OutEdges
         {
