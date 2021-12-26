@@ -74,14 +74,14 @@ namespace m0.Store.FileSystem
         {
             return MinusZero.Instance.CreateTempVertex();
         }
-
-        public override IEdge AddEdge(IVertex metaVertex, IVertex destVertex)
-        {
-            return AddVertexAndReturnEdge(metaVertex, destVertex.Value);
-        }
+        
 
         public override IEdge AddVertexAndReturnEdge(IVertex metaVertex, object val)
         {
+            if(!GraphUtil.GetValueAndCompareStrings(metaVertex, "Directory") 
+                && !GraphUtil.GetValueAndCompareStrings(metaVertex, "File"))
+                return base.AddVertexAndReturnEdge(metaVertex, val);
+
             if (val == null) val = "name";
 
             string name = val.ToString();
@@ -109,14 +109,12 @@ namespace m0.Store.FileSystem
                 return base.AddEdge(metaVertex, FileVertex);
             }
 
-            //UserInteractionUtil.ShowError("FileVertex.AddVertex", Identifier + " : can not create vertex here");
-
             return null;
         }
 
         bool OutEdgesFilled = false;
 
-        void AddMeta(IVertex metaVertex, string value)
+        void AddVertexToFileSystemVertex(IVertex metaVertex, string value)
         {
             //IVertex v = new EasyVertex(this.Store);
 
@@ -136,20 +134,20 @@ namespace m0.Store.FileSystem
 
                 CanFireChangeEvent = false;                
 
-                AddMeta(FileSystemStore.Directory_Filename, DI.Name);
+                AddVertexToFileSystemVertex(FileSystemStore.Directory_Filename, DI.Name);
 
                 string extension = DI.Extension;
 
                 if (extension.Length > 1)
                     extension = extension.Substring(1);
 
-                AddMeta(FileSystemStore.Directory_Extension, extension);
+                AddVertexToFileSystemVertex(FileSystemStore.Directory_Extension, extension);
                 
-                AddMeta(FileSystemStore.Directory_FullFilename, DI.FullName);
-                AddMeta(FileSystemStore.Directory_FileAttribute, DI.Attributes.ToString());
-                AddMeta(FileSystemStore.Directory_CreationDateTime, DI.CreationTime.ToString());
-                AddMeta(FileSystemStore.Directory_UpdateDateTime, DI.LastWriteTime.ToString());
-                AddMeta(FileSystemStore.Directory_ReadDateTime, DI.LastAccessTime.ToString());
+                AddVertexToFileSystemVertex(FileSystemStore.Directory_FullFilename, DI.FullName);
+                AddVertexToFileSystemVertex(FileSystemStore.Directory_FileAttribute, DI.Attributes.ToString());
+                AddVertexToFileSystemVertex(FileSystemStore.Directory_CreationDateTime, DI.CreationTime.ToString());
+                AddVertexToFileSystemVertex(FileSystemStore.Directory_UpdateDateTime, DI.LastWriteTime.ToString());
+                AddVertexToFileSystemVertex(FileSystemStore.Directory_ReadDateTime, DI.LastAccessTime.ToString());
                 
 
                 IVertex FileMetaVertex= FileSystemStore.Directory_File;
