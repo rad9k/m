@@ -94,7 +94,7 @@ namespace m0.Store.FileSystem
 
                     if (fsi is DirectoryInfo)
                     {
-                        IVertex DirectoryVertex = new DirectoryVertex(fsi.FullName, this.Store);
+                        IVertex DirectoryVertex = new DirectoryVertex(this.Store, fsi.FullName);
 
                         //base.AddEdge(DirectoryMetaVertex, DirectoryVertex);
                         AddVertexToFileSystemVertex(DirectoryMetaVertex, DirectoryVertex);
@@ -102,7 +102,7 @@ namespace m0.Store.FileSystem
 
                     if (fsi is FileInfo)
                     {
-                        IVertex FileVertex = new FileVertex(fsi.FullName, this.Store);
+                        IVertex FileVertex = new FileVertex(this.Store, fsi.FullName);
 
                         //base.AddEdge(FileMetaVertex, FileVertex);
                         AddVertexToFileSystemVertex(FileMetaVertex, FileVertex);
@@ -130,7 +130,7 @@ namespace m0.Store.FileSystem
             {
                 DI.CreateSubdirectory(name);
 
-                IVertex DirectoryVertex = new DirectoryVertex(this.Identifier + "\\" + name, this.Store);
+                IVertex DirectoryVertex = new DirectoryVertex(this.Store, this.Identifier + "\\" + name);
 
                 return base.AddEdge(metaVertex, DirectoryVertex);
             }
@@ -141,7 +141,7 @@ namespace m0.Store.FileSystem
 
                 fi.Create().Dispose();
 
-                IVertex FileVertex = new FileVertex(this.Identifier + "\\" + name, this.Store);
+                IVertex FileVertex = new FileVertex(this.Store, this.Identifier + "\\" + name);
 
                 return base.AddEdge(metaVertex, FileVertex);
             }
@@ -183,8 +183,8 @@ namespace m0.Store.FileSystem
             return name;
         }
 
-        public DirectoryVertex(string identifier,IStore store)
-            : base(identifier, store)
+        public DirectoryVertex(IStore store, string identifier)
+            : base(store, identifier)
         {
             _Identifier = identifier;
 

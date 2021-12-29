@@ -773,10 +773,10 @@ namespace m0.Graph
         public EasyVertex(IStore _store, object toBeIdentifier) : base(_store)
         {
             DisposedState = DisposeStateEnum.Live;
- 
-            VertexInit_First();
 
             _Identifier = toBeIdentifier;
+
+            VertexInit_First();            
 
             if (toBeIdentifier is int)
             {

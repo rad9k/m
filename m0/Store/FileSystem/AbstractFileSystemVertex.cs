@@ -25,7 +25,7 @@ namespace m0.Store.FileSystem
             {
                 if (!FileSystemVertexFilled)
                 {
-                    UpdateFileSystemVertex();
+                 //   UpdateFileSystemVertex();
                     FileSystemVertexFilled = true;
                 }
 
@@ -82,10 +82,10 @@ namespace m0.Store.FileSystem
             OutEdgesDictionariesNeedsRebuild_Edges = false;
         }
 
-        public AbstractFileSystemVertex(string identifier, IStore store)
-            : base(store)
+        public AbstractFileSystemVertex(IStore store, string identifier)
+            : base(store, identifier)
         {
-            FileSystemVertex = new EasyVertex(store);
+            FileSystemVertex = new EasyVertex(MinusZero.Instance.TempStore);
         }
     }
 }

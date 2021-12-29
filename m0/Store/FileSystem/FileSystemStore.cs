@@ -79,6 +79,10 @@ namespace m0.Store.FileSystem
 
         public void StoreVertexIdentifier(IVertex Vertex)
         {
+            if (!(Vertex.Identifier is string))
+            {
+                throw new Exception("Not a string vertex identifier in file system store");                
+            }
             //throw new NotImplementedException();
         }
 
@@ -102,7 +106,7 @@ namespace m0.Store.FileSystem
                 if (FileVertexDictionary.ContainsKey(fileName))
                     return FileVertexDictionary[fileName];
 
-                return new FileVertex(fileName, this);
+                return new FileVertex(this, fileName);
             }
 
             if (System.IO.Directory.Exists(fileName) || (fileName.Length == 3 && fileName[1] == ':' && fileName[2] == '\\'))
@@ -110,7 +114,7 @@ namespace m0.Store.FileSystem
                 if (DirectoryVertexDictionary.ContainsKey(fileName))
                     return DirectoryVertexDictionary[fileName];
 
-                return new DirectoryVertex(fileName, this);
+                return new DirectoryVertex(this, fileName);
             }
 
             UserInteractionUtil.ShowError("trying to create FileSystemStore vertex from identifier " + fileName + "in the " + Identifier + " store", "file or directory not found");
@@ -303,7 +307,7 @@ namespace m0.Store.FileSystem
             
             storeUniverse.Stores.Add(this);
 
-            _Root = new DirectoryVertex(identifier, this);
+            _Root = new DirectoryVertex(this, identifier);
 
             _Root.IsRoot = true;
 

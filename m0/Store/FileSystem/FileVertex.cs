@@ -122,8 +122,8 @@ namespace m0.Store.FileSystem
             }
         }        
 
-        public FileVertex(string identifier, IStore store)
-            : base(identifier, store)
+        public FileVertex(IStore store, string identifier)
+            : base(store, identifier)
         {
             _Identifier = identifier;            
 
