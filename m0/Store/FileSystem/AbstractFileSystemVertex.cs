@@ -1,0 +1,84 @@
+﻿using m0.Foundation;
+using m0.Graph;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace m0.Store.FileSystem
+{
+    public class AbstractFileSystemVertex : EasyVertex
+    {
+        protected EasyVertex FileSystemVertex;
+
+        bool FileSystemVertexFilled = false;
+
+        protected override IVertex CreateVertexInstance()
+        {
+            return MinusZero.Instance.CreateTempVertex();
+        }
+
+        public override IList<IEdge> OutEdges
+        {
+            get
+            {
+                if (!FileSystemVertexFilled)
+                {
+                    UpdateFileSystemVertex();
+                    FileSystemVertexFilled = true;
+                }
+
+                if (OutEdgesDictionariesNeedsRebuild_Edges)
+                {
+                    OutEdgesDictionariesRebuild_Edges();
+                    return _OutEdges;
+                }
+                else
+                    return _OutEdges;
+            }
+        }
+
+        protected virtual void UpdateFileSystemVertex() { }
+
+        public override IVertex AddVertex(IVertex metaVertex, object val)
+        {
+            return AddVertexAndReturnEdge(metaVertex, val).To;
+        }
+
+        protected void AddVertexToFileSystemVertex(IVertex metaVertex, string value)
+        {
+            FileSystemVertex.AddVertex(metaVertex, value);
+        }
+
+        protected override void OutEdgesDictionariesRebuild_Edges()
+        {
+            if (HasInheritance && AllowInheritance)
+            {
+                List<IEdge> FullEdges = OutEdgesRaw.ToList();
+
+                HashSet<IVertex> parents = GraphUtil.GetInheritParents_RawEnumerate(this);
+
+                foreach (IVertex v in parents)
+                    FullEdges.AddRange(v.OutEdgesRaw);
+
+                _OutEdges = FullEdges;
+            }
+            else
+                _OutEdges = OutEdgesRaw;
+
+            List<IEdge> FileSystemExtendedOutEdges = new List<IEdge>();
+
+            FileSystemExtendedOutEdges.AddRange(_OutEdges);
+            FileSystemExtendedOutEdges.AddRange(FileSystemVertex.OutEdges);
+
+            _OutEdges = FileSystemExtendedOutEdges;
+
+            OutEdgesDictionariesNeedsRebuild_Edges = false;
+        }
+
+        public AbstractFileSystemVertex(string identifier, IStore store)
+            : base(store)
+        {  }
+    }
+}

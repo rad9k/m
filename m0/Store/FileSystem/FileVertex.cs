@@ -12,12 +12,8 @@ using m0.Graph.ExecutionFlow;
 
 namespace m0.Store.FileSystem
 {
-    public class FileVertex : EasyVertex
-    {     
-        EasyVertex FileSystemVertex;
-
-        bool FileSystemVertexFilled = false;
-
+    public class FileVertex : AbstractFileSystemVertex
+    {             
         FileInfo FI;
 
         public JsonSerializationStore JsonStore;
@@ -94,14 +90,9 @@ namespace m0.Store.FileSystem
                     }
                 }
             }
-        }                
+        }                        
 
-        protected override IVertex CreateVertexInstance()
-        {
-            return MinusZero.Instance.CreateTempVertex();
-        }
-
-        void UpdateFileSystemVertex()
+        protected override void UpdateFileSystemVertex()
         {
             GraphUtil.RemoveAllEdges(FileSystemVertex);
 
@@ -129,61 +120,10 @@ namespace m0.Store.FileSystem
                 JsonStore = new JsonSerializationStore(Identifier.ToString(), MinusZero.Instance, new AccessLevelEnum[] { });
                 AddEdge(FileSystemStore.Store, JsonStore.Root);
             }
-        }
-
-        void AddVertexToFileSystemVertex(IVertex metaVertex, string value)
-        {
-            FileSystemVertex.AddVertex(metaVertex, value);
-        }
-
-        public override IList<IEdge> OutEdges
-        {            
-            get
-            {
-                if (!FileSystemVertexFilled)
-                {
-                    UpdateFileSystemVertex();
-                    FileSystemVertexFilled = true;
-                }
-
-                if (OutEdgesDictionariesNeedsRebuild_Edges)
-                {
-                    OutEdgesDictionariesRebuild_Edges();
-                    return _OutEdges;
-                }
-                else
-                    return _OutEdges;
-            }
-        }
-
-        protected override void OutEdgesDictionariesRebuild_Edges()
-        {
-            if (HasInheritance && AllowInheritance)
-            {
-                List<IEdge> FullEdges = OutEdgesRaw.ToList();
-
-                HashSet<IVertex> parents = GraphUtil.GetInheritParents_RawEnumerate(this);
-
-                foreach (IVertex v in parents)
-                    FullEdges.AddRange(v.OutEdgesRaw);
-
-                _OutEdges = FullEdges;
-            }
-            else
-                _OutEdges = OutEdgesRaw;
-
-            List<IEdge> FileSystemExtendedOutEdges = new List<IEdge>();
-
-            FileSystemExtendedOutEdges.AddRange(_OutEdges);
-            FileSystemExtendedOutEdges.AddRange(FileSystemVertex.OutEdges);
-
-            _OutEdges = FileSystemExtendedOutEdges;
-
-            OutEdgesDictionariesNeedsRebuild_Edges = false;
-        }
+        }        
 
         public FileVertex(string identifier, IStore store)
-            : base(store)
+            : base(identifier, store)
         {
             _Identifier = identifier;            
 

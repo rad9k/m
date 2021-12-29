@@ -117,6 +117,7 @@
     <Compile Include="Lib\LibUtil.cs" />
     <Compile Include="Lib\Std.cs" />
     <Compile Include="Lib\Sys.cs" />
+    <Compile Include="Store\FileSystem\AbstractFileSystemVertex.cs" />
     <Compile Include="UIWpf\Commands\ExtraCommandHook.cs" />
     <Compile Include="UIWpf\Dialog\StringQuestionWindow.xaml.cs">
       <DependentUpon>StringQuestionWindow.xaml</DependentUpon>

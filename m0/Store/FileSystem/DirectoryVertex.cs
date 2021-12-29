@@ -10,12 +10,8 @@ using m0.Graph.ExecutionFlow;
 
 namespace m0.Store.FileSystem
 {
-    public class DirectoryVertex: EasyVertex
-    {
-        EasyVertex FileSystemVertex;
-
-        bool FileSystemVertexFilled = false;
-
+    public class DirectoryVertex: AbstractFileSystemVertex
+    {        
         DirectoryInfo DI;
 
         public override object Value         
@@ -70,39 +66,50 @@ namespace m0.Store.FileSystem
             }
         }
 
-        protected override IVertex CreateVertexInstance()
-        {
-            return MinusZero.Instance.CreateTempVertex();
-        }
+        protected override void UpdateFileSystemVertex()
+        {            
+            AddVertexToFileSystemVertex(FileSystemStore.Directory_Filename, DI.Name);
 
-        void UpdateFileSystemVertex()
-        {
+            string extension = DI.Extension;
 
-        }
+            if (extension.Length > 1)
+                extension = extension.Substring(1);
 
-        public override IList<IEdge> OutEdges
-        {
-            get
+            AddVertexToFileSystemVertex(FileSystemStore.Directory_Extension, extension);
+
+            AddVertexToFileSystemVertex(FileSystemStore.Directory_FullFilename, DI.FullName);
+            AddVertexToFileSystemVertex(FileSystemStore.Directory_FileAttribute, DI.Attributes.ToString());
+            AddVertexToFileSystemVertex(FileSystemStore.Directory_CreationDateTime, DI.CreationTime.ToString());
+            AddVertexToFileSystemVertex(FileSystemStore.Directory_UpdateDateTime, DI.LastWriteTime.ToString());
+            AddVertexToFileSystemVertex(FileSystemStore.Directory_ReadDateTime, DI.LastAccessTime.ToString());
+
+
+            IVertex FileMetaVertex = FileSystemStore.Directory_File;
+
+            IVertex DirectoryMetaVertex = FileSystemStore.Directory;
+
+            try
             {
-                if (!FileSystemVertexFilled)
+                foreach (FileSystemInfo fsi in DI.EnumerateFileSystemInfos())
                 {
-                    UpdateFileSystemVertex();
-                    FileSystemVertexFilled = true;
-                }
 
-                if (OutEdgesDictionariesNeedsRebuild_Edges)
-                {
-                    OutEdgesDictionariesRebuild_Edges();
-                    return _OutEdges;
+                    if (fsi is DirectoryInfo)
+                    {
+                        IVertex DirectoryVertex = new DirectoryVertex(fsi.FullName, this.Store);
+
+                        base.AddEdge(DirectoryMetaVertex, DirectoryVertex);
+                    }
+
+                    if (fsi is FileInfo)
+                    {
+                        IVertex FileVertex = new FileVertex(fsi.FullName, this.Store);
+
+                        base.AddEdge(FileMetaVertex, FileVertex);
+                    }
+
                 }
-                else
-                    return _OutEdges;
             }
-        }
-
-        void AddVertexToFileSystemVertex(IVertex metaVertex, string value)
-        {
-            FileSystemVertex.AddVertex(metaVertex, value);
+            catch (Exception e) { } // no access
         }
 
         public override IEdge AddVertexAndReturnEdge(IVertex metaVertex, object val)
@@ -139,73 +146,8 @@ namespace m0.Store.FileSystem
             }
 
             return null;
-        }
+        }        
 
-        bool OutEdgesFilled = false;        
-
-        public override IList<IEdge> OutEdges
-        {
-            get
-            {
-                if (OutEdgesFilled)
-                    return OutEdgesRaw;
-
-                CanFireChangeEvent = false;                
-
-                AddVertexToFileSystemVertex(FileSystemStore.Directory_Filename, DI.Name);
-
-                string extension = DI.Extension;
-
-                if (extension.Length > 1)
-                    extension = extension.Substring(1);
-
-                AddVertexToFileSystemVertex(FileSystemStore.Directory_Extension, extension);
-                
-                AddVertexToFileSystemVertex(FileSystemStore.Directory_FullFilename, DI.FullName);
-                AddVertexToFileSystemVertex(FileSystemStore.Directory_FileAttribute, DI.Attributes.ToString());
-                AddVertexToFileSystemVertex(FileSystemStore.Directory_CreationDateTime, DI.CreationTime.ToString());
-                AddVertexToFileSystemVertex(FileSystemStore.Directory_UpdateDateTime, DI.LastWriteTime.ToString());
-                AddVertexToFileSystemVertex(FileSystemStore.Directory_ReadDateTime, DI.LastAccessTime.ToString());
-                
-
-                IVertex FileMetaVertex= FileSystemStore.Directory_File;
-
-                IVertex DirectoryMetaVertex= FileSystemStore.Directory;
-
-                try{
-                    foreach (FileSystemInfo fsi in DI.EnumerateFileSystemInfos())                
-                    {
-                    
-                        if (fsi is DirectoryInfo)
-                        {
-                            IVertex DirectoryVertex = new DirectoryVertex(fsi.FullName, this.Store);
-
-                            base.AddEdge(DirectoryMetaVertex, DirectoryVertex);
-                        }
-
-                        if (fsi is FileInfo)
-                        {
-                            IVertex FileVertex = new FileVertex(fsi.FullName, this.Store);
-
-                            base.AddEdge(FileMetaVertex, FileVertex);
-                        }
-                   
-                    }
-                }
-                catch (Exception e) { } // no access
-
-
-                CanFireChangeEvent = true;                
-                OutEdgesFilled = true;
-
-                return OutEdgesRaw;
-            }
-        }
-
-        public override IVertex AddVertex(IVertex metaVertex, object val)
-        {
-            return AddVertexAndReturnEdge(metaVertex, val).To;
-        }
 
         public override void DeleteEdge(IEdge edge)
         {
@@ -241,13 +183,15 @@ namespace m0.Store.FileSystem
         }
 
         public DirectoryVertex(string identifier,IStore store)
-            : base(store)
+            : base(identifier, store)
         {
             _Identifier = identifier;
 
             DI = new DirectoryInfo(Identifier.ToString());
 
             FileSystemStore.DirectoryVertexDictionary.Add(identifier, this);
+
+            FileSystemVertex = new EasyVertex(store);
         }
     }
 }
