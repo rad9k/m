@@ -190,9 +190,7 @@ namespace m0.Store.FileSystem
 
             DI = new DirectoryInfo(Identifier.ToString());
 
-            FileSystemStore.DirectoryVertexDictionary.Add(identifier, this);
-
-            FileSystemVertex = new EasyVertex(store);
+            FileSystemStore.DirectoryVertexDictionary.Add(identifier, this);            
         }
     }
 }

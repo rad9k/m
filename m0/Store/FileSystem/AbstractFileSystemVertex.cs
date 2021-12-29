@@ -84,6 +84,8 @@ namespace m0.Store.FileSystem
 
         public AbstractFileSystemVertex(string identifier, IStore store)
             : base(store)
-        {  }
+        {
+            FileSystemVertex = new EasyVertex(store);
+        }
     }
 }

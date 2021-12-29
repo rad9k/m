@@ -93,8 +93,7 @@ namespace m0.Store.FileSystem
         }                        
 
         protected override void UpdateFileSystemVertex()
-        {
-            return;
+        {         
             GraphUtil.RemoveAllEdges(FileSystemVertex);
 
             AddVertexToFileSystemVertex(FileSystemStore.File_Filename, FI.Name);
@@ -130,9 +129,7 @@ namespace m0.Store.FileSystem
 
             FI = new FileInfo(Identifier.ToString());
 
-            FileSystemStore.FileVertexDictionary.Add(identifier, this);
-
-            FileSystemVertex = new EasyVertex(store);
+            FileSystemStore.FileVertexDictionary.Add(identifier, this);            
         }
     }
 }
