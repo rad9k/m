@@ -25,7 +25,7 @@ namespace m0.Store.FileSystem
             {
                 if (!FileSystemVertexFilled)
                 {
-                 //   UpdateFileSystemVertex();
+                    UpdateFileSystemVertex();
                     FileSystemVertexFilled = true;
                 }
 
