@@ -51,6 +51,11 @@ namespace m0.Store.FileSystem
             FileSystemVertex.AddVertex(metaVertex, value);
         }
 
+        protected void AddVertexToFileSystemVertex(IVertex metaVertex, IVertex vertex)
+        {
+            FileSystemVertex.AddEdge(metaVertex, vertex);
+        }
+
         protected override void OutEdgesDictionariesRebuild_Edges()
         {
             if (HasInheritance && AllowInheritance)

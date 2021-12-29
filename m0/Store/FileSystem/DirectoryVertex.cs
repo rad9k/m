@@ -67,7 +67,7 @@ namespace m0.Store.FileSystem
         }
 
         protected override void UpdateFileSystemVertex()
-        {            
+        {           
             AddVertexToFileSystemVertex(FileSystemStore.Directory_Filename, DI.Name);
 
             string extension = DI.Extension;
@@ -81,8 +81,7 @@ namespace m0.Store.FileSystem
             AddVertexToFileSystemVertex(FileSystemStore.Directory_FileAttribute, DI.Attributes.ToString());
             AddVertexToFileSystemVertex(FileSystemStore.Directory_CreationDateTime, DI.CreationTime.ToString());
             AddVertexToFileSystemVertex(FileSystemStore.Directory_UpdateDateTime, DI.LastWriteTime.ToString());
-            AddVertexToFileSystemVertex(FileSystemStore.Directory_ReadDateTime, DI.LastAccessTime.ToString());
-
+            AddVertexToFileSystemVertex(FileSystemStore.Directory_ReadDateTime, DI.LastAccessTime.ToString());            
 
             IVertex FileMetaVertex = FileSystemStore.Directory_File;
 
@@ -97,14 +96,16 @@ namespace m0.Store.FileSystem
                     {
                         IVertex DirectoryVertex = new DirectoryVertex(fsi.FullName, this.Store);
 
-                        base.AddEdge(DirectoryMetaVertex, DirectoryVertex);
+                        //base.AddEdge(DirectoryMetaVertex, DirectoryVertex);
+                        AddVertexToFileSystemVertex(DirectoryMetaVertex, DirectoryVertex);
                     }
 
                     if (fsi is FileInfo)
                     {
                         IVertex FileVertex = new FileVertex(fsi.FullName, this.Store);
 
-                        base.AddEdge(FileMetaVertex, FileVertex);
+                        //base.AddEdge(FileMetaVertex, FileVertex);
+                        AddVertexToFileSystemVertex(FileMetaVertex, FileVertex);
                     }
 
                 }

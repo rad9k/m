@@ -94,6 +94,7 @@ namespace m0.Store.FileSystem
 
         protected override void UpdateFileSystemVertex()
         {
+            return;
             GraphUtil.RemoveAllEdges(FileSystemVertex);
 
             AddVertexToFileSystemVertex(FileSystemStore.File_Filename, FI.Name);
