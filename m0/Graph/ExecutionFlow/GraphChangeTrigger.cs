@@ -88,46 +88,47 @@ namespace m0.Graph.ExecutionFlow
                     return null;
 
                 triggerEdge.To.Value = triggerVertexName;
-            }
 
-            if (scopeQueries != null)
-                foreach (string s in scopeQueries)
-                    triggerEdge.To.AddVertex(scopeQuery_meta, s);
 
-            if(changeTypeFilter != null)
-                foreach(GraphChangeFilterEnum ct in changeTypeFilter)
-                {
-                    switch (ct)
+                if (scopeQueries != null)
+                    foreach (string s in scopeQueries)
+                        triggerEdge.To.AddVertex(scopeQuery_meta, s);
+
+                if (changeTypeFilter != null)
+                    foreach (GraphChangeFilterEnum ct in changeTypeFilter)
                     {
-                        case GraphChangeFilterEnum.NoBaseVertex:
-                            triggerEdge.To.AddEdge(changeTypeFilter_meta, graphChangeFilterEnum_NoBaseVertex_meta);
-                            break;
+                        switch (ct)
+                        {
+                            case GraphChangeFilterEnum.NoBaseVertex:
+                                triggerEdge.To.AddEdge(changeTypeFilter_meta, graphChangeFilterEnum_NoBaseVertex_meta);
+                                break;
 
-                        case GraphChangeFilterEnum.ValueChange:
-                            triggerEdge.To.AddEdge(changeTypeFilter_meta, graphChangeFilterEnum_ValueChange_meta);
-                            break;
+                            case GraphChangeFilterEnum.ValueChange:
+                                triggerEdge.To.AddEdge(changeTypeFilter_meta, graphChangeFilterEnum_ValueChange_meta);
+                                break;
 
-                        case GraphChangeFilterEnum.InputEdgeAdded:
-                            triggerEdge.To.AddEdge(changeTypeFilter_meta, graphChangeFilterEnum_InputEdgeAdded_meta);
-                            break;
+                            case GraphChangeFilterEnum.InputEdgeAdded:
+                                triggerEdge.To.AddEdge(changeTypeFilter_meta, graphChangeFilterEnum_InputEdgeAdded_meta);
+                                break;
 
-                        case GraphChangeFilterEnum.InputEdgeRemoved:
-                            triggerEdge.To.AddEdge(changeTypeFilter_meta, graphChangeFilterEnum_InputEdgeRemoved_meta);
-                            break;
+                            case GraphChangeFilterEnum.InputEdgeRemoved:
+                                triggerEdge.To.AddEdge(changeTypeFilter_meta, graphChangeFilterEnum_InputEdgeRemoved_meta);
+                                break;
 
-                        case GraphChangeFilterEnum.OutputEdgeAdded:
-                            triggerEdge.To.AddEdge(changeTypeFilter_meta, graphChangeFilterEnum_OutputEdgeAdded_meta);
-                            break;
+                            case GraphChangeFilterEnum.OutputEdgeAdded:
+                                triggerEdge.To.AddEdge(changeTypeFilter_meta, graphChangeFilterEnum_OutputEdgeAdded_meta);
+                                break;
 
-                        case GraphChangeFilterEnum.OutputEdgeRemoved:
-                            triggerEdge.To.AddEdge(changeTypeFilter_meta, graphChangeFilterEnum_OutputEdgeRemoved_meta);
-                            break;
+                            case GraphChangeFilterEnum.OutputEdgeRemoved:
+                                triggerEdge.To.AddEdge(changeTypeFilter_meta, graphChangeFilterEnum_OutputEdgeRemoved_meta);
+                                break;
 
-                        case GraphChangeFilterEnum.OutputEdgeDisposed:
-                            triggerEdge.To.AddEdge(changeTypeFilter_meta, graphChangeFilterEnum_OutputEdgeDisposed_meta);
-                            break;
+                            case GraphChangeFilterEnum.OutputEdgeDisposed:
+                                triggerEdge.To.AddEdge(changeTypeFilter_meta, graphChangeFilterEnum_OutputEdgeDisposed_meta);
+                                break;
+                        }
                     }
-                }
+            }
 
             return triggerEdge;
         }

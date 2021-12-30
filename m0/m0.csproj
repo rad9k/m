@@ -127,6 +127,7 @@
     <Compile Include="UIWpf\Visualisers\Helper\IListVisualiser.cs" />
     <Compile Include="UIWpf\Visualisers\Helper\IVisualiser.cs" />
     <Compile Include="UIWpf\Visualisers\Helper\ListVisualiserHelper.cs" />
+    <Compile Include="UIWpf\Visualisers\Helper\VisualisersList.cs" />
     <Compile Include="UIWpf\Visualisers\Helper\VisualiserUtil.cs" />
     <Compile Include="UIWpf\Visualisers\Method\VoidVoidMethodVisualiser.cs" />
     <Compile Include="UIWpf\Visualisers\DebugVisualiser.cs" />
