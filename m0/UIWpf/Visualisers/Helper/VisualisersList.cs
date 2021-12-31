@@ -9,11 +9,16 @@ namespace m0.UIWpf.Visualisers.Helper
 {
     public class VisualisersList
     {
-        static Dictionary<IVertex, IVisualiser> Visualisers = new Dictionary<IVertex, IVisualiser>();
+        static Dictionary<IVisualiser> Visualisers = new Dictionary<IVertex, IVisualiser>();
 
-        public static void AddVisualiser(IVisualiser visuliser)
+        public static void AddVisualiser(IVisualiser visualiser)
         {
-            Visualisers.Add(visuliser.Vertex, visuliser);
+            MinusZero mz = MinusZero.Instance;
+
+            Visualisers.Add(visualiser.Vertex, visualiser);
+
+            visualiser.VisualiserVertexEdge = mz.Root.Get(false, @"User\CurrentUser:\Session:\Visualisers:").
+                        AddEdge(mz.Root.Get(false, @"Meta\User\VisualiserList\Visualiser"), vVertex);
         }
 
         public static void RemoveVisualiser(IVisualiser visualiser)
