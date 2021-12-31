@@ -316,6 +316,8 @@ namespace m0
 
         void Finalize()
         {
+            VisualisersList.RemoveAllVisualisers();
+
             CommitTransaction();
 
             ExecutionFlowHelper.CommitTransaction();
