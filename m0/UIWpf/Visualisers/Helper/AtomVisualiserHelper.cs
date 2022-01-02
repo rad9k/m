@@ -157,7 +157,7 @@ namespace m0.UIWpf.Visualisers.Helper
                     visualiser.Vertex.Value = visualiserName;
                 }
 
-                VisualisersList.AddVisualiser(visualiser);                
+                VisualisersList.AddVisualiser(visualiser, null);                
 
 
                 visualiserAsFrameworkElement.Loaded += new RoutedEventHandler(visualiser.OnLoad);

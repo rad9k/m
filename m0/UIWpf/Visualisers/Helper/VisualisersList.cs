@@ -9,21 +9,30 @@ namespace m0.UIWpf.Visualisers.Helper
 {
     public class VisualisersList
     {
-        static Dictionary<IVisualiser> Visualisers = new Dictionary<IVertex, IVisualiser>();
+        static Dictionary<IVisualiser, IEdge> Visualisers = new Dictionary<IVisualiser, IEdge>();
 
-        public static void AddVisualiser(IVisualiser visualiser)
+        public static void AddVisualiser(IVisualiser visualiser, IVisualiser parent)
         {
             MinusZero mz = MinusZero.Instance;
 
-            Visualisers.Add(visualiser.Vertex, visualiser);
+            IEdge visualiserVertexEdge = mz.Root.Get(false, @"User\CurrentUser:\Session:\Visualisers:").
+                        AddEdge(mz.Root.Get(false, @"Meta\User\VisualiserList\Visualiser"), visualiser.Vertex);
 
-            visualiser.VisualiserVertexEdge = mz.Root.Get(false, @"User\CurrentUser:\Session:\Visualisers:").
-                        AddEdge(mz.Root.Get(false, @"Meta\User\VisualiserList\Visualiser"), vVertex);
+            Visualisers.Add(visualiser, visualiserVertexEdge);
+
+            
         }
 
         public static void RemoveVisualiser(IVisualiser visualiser)
         {
-            Visualisers.Remove(visualiser.Vertex);
+            if (!Visualisers.ContainsKey(visualiser))
+                return;
+
+            IEdge visualiserVertexEdge = Visualisers[visualiser];
+
+            visualiserVertexEdge.From.DeleteEdge(visualiserVertexEdge);
+
+            Visualisers.Remove(visualiser);
         }
 
         public static void RemoveAllVisualisers()
