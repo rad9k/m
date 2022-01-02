@@ -139,7 +139,7 @@ namespace m0.Graph
                 HashSet<IVertex> parents = GraphUtil.GetInheritParents_RawEnumerate(this);
 
                 foreach (IVertex v in parents)
-                    FullEdges.AddRange(v.OutEdgesRaw);    
+                    GraphUtil.AddRange_NoNoInherit(FullEdges, v.OutEdgesRaw);                    
 
                 _OutEdges = FullEdges;
             }

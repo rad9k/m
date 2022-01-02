@@ -542,6 +542,13 @@ namespace m0.Graph
                 }
         }
 
+        public static void AddRange_NoNoInherit(IList<IEdge> to, IList<IEdge> from)
+        {
+            foreach (IEdge e in from)
+                if (!GraphUtil.ExistQueryOut(e.Meta, "$NoInherit", null))
+                    to.Add(e);
+        }
+
         public static string GetQueryStringPart_MetaMode(DictionariesForFormalTextLanguage dict, IVertex meta, IVertex to)
         {
             if (GeneralUtil.CompareStrings(meta.ToString(), "$Empty"))

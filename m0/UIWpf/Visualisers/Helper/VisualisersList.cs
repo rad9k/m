@@ -7,20 +7,31 @@ using System.Threading.Tasks;
 
 namespace m0.UIWpf.Visualisers.Helper
 {
+    class VisualiserData
+    {
+        public IVisualiser Visualiser;
+        public IEdge VisualiserVertexEdge;
+    }
+
     public class VisualisersList
     {
-        static Dictionary<IVisualiser, IEdge> Visualisers = new Dictionary<IVisualiser, IEdge>();
+        static Dictionary<IVertex, VisualiserData> Visualisers = new Dictionary<IVertex, VisualiserData>();
 
         public static void AddVisualiser(IVisualiser visualiser, IVisualiser parent)
         {
             MinusZero mz = MinusZero.Instance;
 
-            IEdge visualiserVertexEdge = mz.Root.Get(false, @"User\CurrentUser:\Session:\Visualisers:").
+            IEdge visualiserVertexEdge;
+
+            if(parent == null)
+                visualiserVertexEdge = mz.Root.Get(false, @"User\CurrentUser:\Session:\Visualisers:").
+                        AddEdge(mz.Root.Get(false, @"Meta\User\VisualiserList\Visualiser"), visualiser.Vertex);
+            else
+                visualiserVertexEdge = parent.Vertex.
                         AddEdge(mz.Root.Get(false, @"Meta\User\VisualiserList\Visualiser"), visualiser.Vertex);
 
-            Visualisers.Add(visualiser, visualiserVertexEdge);
 
-            
+
         }
 
         public static void RemoveVisualiser(IVisualiser visualiser)
@@ -37,8 +48,8 @@ namespace m0.UIWpf.Visualisers.Helper
 
         public static void RemoveAllVisualisers()
         {
-            foreach (IVisualiser visualiser in Visualisers.Values)
-                RemoveVisualiser(visualiser);
+            foreach (IVisualiser visualiser in Visualisers.Keys.ToList())
+                visualiser.Dispose();                
         }
 
     }

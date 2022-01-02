@@ -188,7 +188,7 @@ namespace m0
         {
             IVertex sm = LegacySystem.Graph.EasyVertex.Get(Root, false, @"System\Meta");
 
-            m0.LegacySystem.Util.GeneralUtil.ParseAndExcute(sm, null, "{Base{$,Vertex{$IsLink,$Inherits,$StackFrameInherits,$Is,$EdgeTarget,$VertexTarget,$IsAggregation,$MinCardinality,$MaxCardinality,$DefaultValue,$DefaultViewVisualiser,$DefaultEditVisualiser,$DefaultOpenVisualiser,$Group,$Section,$Description,$ExecutableEndPoint,$GraphChangeTrigger,$VertexEval,Author,Dependency},$Import,$ImportMeta,$Keyword,$KeywordGroupDefinition,$$KeywordGroup,$$KeywordManyRoot,$$LocalRoot,$$StartInLocalRoot,$$EmptyKeyword,$$NewVertexKeyword,$$LinkKeyword,$$NonSelfRecursiveParameters,$$Import,$$ImportDirect,$$ImportMeta,$$ImportDirectMeta,$$NoSequentialExecution,$NewLine,$ParseRoot,$ParseArtefacts}}");
+            m0.LegacySystem.Util.GeneralUtil.ParseAndExcute(sm, null, "{Base{$,Vertex{$IsLink,$Inherits,$NoInherit,$StackFrameInherits,$Is,$EdgeTarget,$VertexTarget,$IsAggregation,$MinCardinality,$MaxCardinality,$DefaultValue,$DefaultViewVisualiser,$DefaultEditVisualiser,$DefaultOpenVisualiser,$Group,$Section,$Description,$ExecutableEndPoint,$GraphChangeTrigger,$VertexEval,Author,Dependency},$Import,$ImportMeta,$Keyword,$KeywordGroupDefinition,$$KeywordGroup,$$KeywordManyRoot,$$LocalRoot,$$StartInLocalRoot,$$EmptyKeyword,$$NewVertexKeyword,$$LinkKeyword,$$NonSelfRecursiveParameters,$$Import,$$ImportDirect,$$ImportMeta,$$ImportDirectMeta,$$NoSequentialExecution,$NewLine,$ParseRoot,$ParseArtefacts}}");
 
             LegacySystem.Graph.EasyVertex.Get(sm, false, @"Base").AddEdge(
                 null,
@@ -220,6 +220,10 @@ namespace m0
             LegacySystem.Graph.EasyVertex.Get(sm, false, @"Base\Vertex\$Inherits").AddEdge(
                 LegacySystem.Graph.EasyVertex.Get(sm, false, @"*$EdgeTarget"),
                 LegacySystem.Graph.EasyVertex.Get(sm, false, @"Base\Vertex"));
+
+            LegacySystem.Graph.EasyVertex.Get(sm, false, @"Base\Vertex\$Inherits").AddEdge(
+                LegacySystem.Graph.EasyVertex.Get(sm, false, @"Base\Vertex\$NoInherit"),
+                Empty);
 
             LegacySystem.Graph.EasyVertex.Get(sm, false, @"Base\Vertex\$Is").AddEdge(
                 LegacySystem.Graph.EasyVertex.Get(sm, false, @"*$EdgeTarget"),
@@ -278,6 +282,10 @@ namespace m0
             LegacySystem.Graph.EasyVertex.Get(sm, false, @"Base\Vertex\$GraphChangeTrigger").AddEdge(
                 LegacySystem.Graph.EasyVertex.Get(sm, false, @"*$EdgeTarget"),
                 LegacySystem.Graph.EasyVertex.Get(sm, false, @"ZeroTypes\ExecutionFlow\GraphChangeTrigger"));
+
+            LegacySystem.Graph.EasyVertex.Get(sm, false, @"Base\Vertex\$GraphChangeTrigger").AddEdge(
+                LegacySystem.Graph.EasyVertex.Get(sm, false, @"Base\Vertex\$NoInherit"),
+                Empty);
 
             LegacySystem.Graph.EasyVertex.Get(sm, false, @"Base\Vertex\$GraphChangeTrigger").AddVertex(
                 LegacySystem.Graph.EasyVertex.Get(sm, false, @"Presentation\$Hide"),
@@ -3113,7 +3121,7 @@ namespace m0
                 "Class:TriggerSet{Attribute:SnapToGrid{$MinCardinality:1,$MaxCardinality:1},Attribute:ShowVelocity{$MinCardinality:1,$MaxCardinality:1,$DefaultValue:False},Attribute:ShowSnapLines{$MinCardinality:1,$MaxCardinality:1,$DefaultValue:True},Attribute:DefaultVelocity{$MinCardinality:1,$MaxCardinality:1,$DefaultValue:127,MinValue:-1,MaxValue:127}}," +
                 "Class:ChordProgression{Attribute:ShowLabel{$MinCardinality:1,$MaxCardinality:1,$DefaultValue:True},Attribute:ShowArrowLines{$MinCardinality:1,$MaxCardinality:1,$DefaultValue:True}}," +
                 "Class:Song{Attribute:SnapToGrid{$MinCardinality:1,$MaxCardinality:1},Attribute:ShowLabel{$MinCardinality:1,$MaxCardinality:1,$DefaultValue:True},Attribute:ShowArrowLines{$MinCardinality:1,$MaxCardinality:1,$DefaultValue:True},Attribute:ShowSnapLines{$MinCardinality:1,$MaxCardinality:1,$DefaultValue:True},Attribute:ShowToolbarNames{$MinCardinality:1,$MaxCardinality:1,$DefaultValue:False}}," +
-                "Class:AbstractVisualiser,"+
+                "Class:AbstractVisualiser{Aggregation:SubVisualiser}," +
                 "Class:Test}");
 
             sm.Get(false, @"Visualiser\BaseEdgeTarget").AddEdge(sm.Get(false, "?$Inherits"), sm.Get(false, @"ZeroTypes\EnumBase"));
@@ -3123,6 +3131,7 @@ namespace m0
 
             sm.Get(false, @"Visualiser\AbstractVisualiser").AddEdge(sm.Get(false, "?$Inherits"), sm.Get(false, @"ZeroTypes\$PlatformClass"));
             sm.Get(false, @"Visualiser\AbstractVisualiser").AddEdge(sm.Get(false, "?$Inherits"), sm.Get(false, @"ZeroTypes\HasBaseEdge"));
+            sm.Get(false, @"Visualiser\AbstractVisualiser\SubVisualiser").AddEdge(sm.Get(false, @"?$EdgeTarget"), sm.Get(false, @"Visualiser\AbstractVisualiser"));
 
             sm.Get(false, @"Visualiser\Form").AddEdge(sm.Get(false, "?$Inherits"), sm.Get(false, @"Visualiser\AbstractVisualiser"));            
             sm.Get(false, @"Visualiser\Form").AddVertex(sm.Get(false, "?$PlatformClassName"), @"m0.UIWpf.Visualisers.FormVisualiser, m0, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null");
