@@ -2910,6 +2910,14 @@ namespace m0
               LegacySystem.Graph.EasyVertex.Get(smz, false, "*$EdgeTarget"),
               LegacySystem.Graph.EasyVertex.Get(smz, false, @"VertexType"));
 
+            LegacySystem.Graph.EasyVertex.Get(smz, false, @"ExecutionFlow\VertexEval\AddVertexAndReturnEdge").AddVertex(
+                LegacySystem.Graph.EasyVertex.Get(smuml, false, @"Class\Method\Output"),
+                 "");
+
+            LegacySystem.Graph.EasyVertex.Get(smz, false, @"ExecutionFlow\VertexEval\AddVertexAndReturnEdge\Output:").AddEdge(
+              LegacySystem.Graph.EasyVertex.Get(smz, false, "*$VertexTarget"),
+              LegacySystem.Graph.EasyVertex.Get(smz, false, @"Edge"));
+
             // IEdge AddEdge(IVertex metaVertex, IVertex destVertex)
 
             LegacySystem.Graph.EasyVertex.Get(smz, false, @"ExecutionFlow\VertexEval").AddVertex(

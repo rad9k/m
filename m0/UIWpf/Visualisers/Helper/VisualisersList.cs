@@ -25,31 +25,35 @@ namespace m0.UIWpf.Visualisers.Helper
 
             if(parent == null)
                 visualiserVertexEdge = mz.Root.Get(false, @"User\CurrentUser:\Session:\Visualisers:").
-                        AddEdge(mz.Root.Get(false, @"Meta\User\VisualiserList\Visualiser"), visualiser.Vertex);
+                        AddEdge(mz.Root.Get(false, @"System\Meta\Visualiser\AbstractVisualiser"), visualiser.Vertex);
             else
                 visualiserVertexEdge = parent.Vertex.
-                        AddEdge(mz.Root.Get(false, @"Meta\User\VisualiserList\Visualiser"), visualiser.Vertex);
+                        AddEdge(mz.Root.Get(false, @"System\Meta\Visualiser\AbstractVisualiser\SubVisualiser"), visualiser.Vertex);
 
 
+            VisualiserData vd = new VisualiserData();
+            vd.Visualiser = visualiser;
+            vd.VisualiserVertexEdge = visualiserVertexEdge;
 
+            Visualisers.Add(visualiser.Vertex, vd);
         }
 
         public static void RemoveVisualiser(IVisualiser visualiser)
         {
-            if (!Visualisers.ContainsKey(visualiser))
+            if (!Visualisers.ContainsKey(visualiser.Vertex))
                 return;
 
-            IEdge visualiserVertexEdge = Visualisers[visualiser];
+            IEdge visualiserVertexEdge = Visualisers[visualiser.Vertex].VisualiserVertexEdge;
 
             visualiserVertexEdge.From.DeleteEdge(visualiserVertexEdge);
 
-            Visualisers.Remove(visualiser);
+            Visualisers.Remove(visualiser.Vertex);
         }
 
         public static void RemoveAllVisualisers()
         {
-            foreach (IVisualiser visualiser in Visualisers.Keys.ToList())
-                visualiser.Dispose();                
+            foreach (VisualiserData vd in Visualisers.Values.ToList())
+                vd.Visualiser.Dispose();                
         }
 
     }
