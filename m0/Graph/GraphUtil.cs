@@ -58,9 +58,9 @@ namespace m0.Graph
     {
         public enum DebugOperationEnum { Init, Add, Remove, Dispose, Value}
 
-        static string DebugStore = "$-0$ROOT$STORE$";
-        static long[] DebugVertex = { 8100, 8103 };
-        static DebugOperationEnum[] DebugOperation = { DebugOperationEnum.Remove, DebugOperationEnum.Init, DebugOperationEnum.Add };
+        static string DebugStore = "$-0$TEMP$STORE$";
+        static long[] DebugVertex = { 8100, 3121 };
+        static DebugOperationEnum[] DebugOperation = { DebugOperationEnum.Remove, DebugOperationEnum.Init, DebugOperationEnum.Add, DebugOperationEnum.Value };
 
         public static void Debug(IVertex v, DebugOperationEnum Operation)
         {
