@@ -1060,7 +1060,7 @@ namespace m0.UIWpf.Visualisers.Diagram
             {
                 IsDisposed = true;
 
-                VisualiserHelper.VisualiserVertexEdge.From.DeleteEdge(VisualiserHelper.VisualiserVertexEdge);
+                VisualisersList.RemoveVisualiser(this);
 
                 GraphChangeTrigger.RemoveListener(VisualiserHelper.graphChangeListenerEdge);                
 

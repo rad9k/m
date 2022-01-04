@@ -29,8 +29,6 @@ namespace m0.UIWpf.Visualisers.Helper
         protected IVisualiser visualiser;
         protected FrameworkElement visualiserAsFrameworkElement;
 
-        public IEdge VisualiserVertexEdge;
-
         protected IList<string> scopeQueries;
         protected IList<GraphChangeFilterEnum> changeTypeFilter;
         protected string scopeQueriesName;
@@ -223,7 +221,7 @@ namespace m0.UIWpf.Visualisers.Helper
             {
                 IsDisposed = true;
 
-                VisualiserVertexEdge.From.DeleteEdge(VisualiserVertexEdge);
+                VisualisersList.RemoveVisualiser(visualiser);
 
                 GraphChangeTrigger.RemoveListener(graphChangeListenerEdge);                
 
