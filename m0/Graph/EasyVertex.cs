@@ -55,6 +55,8 @@ namespace m0.Graph
                         oldValue,
                         _Value,
                         null));
+
+                GraphUtil.Debug(this, DebugOperationEnum.Value);
             }
         }
 

@@ -56,6 +56,9 @@ namespace m0.Graph.Internal
             edgeDictionaries.vertex.InheritChildsDictionariesNeedsRebuild(false);
 
             edgeDictionaries.vertex.FireChange(new VertexChangeEventArgs(VertexChangeType.EdgeAdded, item));
+
+            GraphUtil.Debug(item.From, GraphUtil.DebugOperationEnum.OutEdgeAdd);
+            GraphUtil.Debug(item.To, GraphUtil.DebugOperationEnum.InEdgeAdd);
         }
 
         public override void OnRemove(IEdge item)
@@ -71,7 +74,8 @@ namespace m0.Graph.Internal
 
                 item.EdgeRemovalExecuting = false;
 
-                GraphUtil.Debug(item.From, GraphUtil.DebugOperationEnum.Remove);
+                GraphUtil.Debug(item.From, GraphUtil.DebugOperationEnum.OutEdgeRemove);
+                GraphUtil.Debug(item.To, GraphUtil.DebugOperationEnum.InEdgeRemove);
             }
 
             edgeDictionaries.vertex.OutEdgesDictionariesNeedsRebuild = true;

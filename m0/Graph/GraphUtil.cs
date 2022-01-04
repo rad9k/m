@@ -56,11 +56,11 @@ namespace m0.Graph
 
     public class GraphUtil
     {
-        public enum DebugOperationEnum { Init, Add, Remove, Dispose, Value}
+        public enum DebugOperationEnum { Init, OutEdgeAdd, OutEdgeRemove, InEdgeAdd, InEdgeRemove, Dispose, Value}
 
         static string DebugStore = "$-0$TEMP$STORE$";
-        static long[] DebugVertex = { 8100, 3121 };
-        static DebugOperationEnum[] DebugOperation = { DebugOperationEnum.Remove, DebugOperationEnum.Init, DebugOperationEnum.Add, DebugOperationEnum.Value };
+        static long[] DebugVertex = { 8100, 4454 };
+        static DebugOperationEnum[] DebugOperation = { DebugOperationEnum.InEdgeRemove, DebugOperationEnum.Init, DebugOperationEnum.InEdgeAdd, DebugOperationEnum.Value };
 
         public static void Debug(IVertex v, DebugOperationEnum Operation)
         {
