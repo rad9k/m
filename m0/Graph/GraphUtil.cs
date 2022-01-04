@@ -64,7 +64,8 @@ namespace m0.Graph
 
         public static void Debug(IVertex v, DebugOperationEnum Operation)
         {
-            if (v.Identifier is long 
+            if (v.Identifier != null 
+                && v.Identifier is long 
                 && DebugVertex.Contains((long)v.Identifier) 
                 && v.Store.Identifier == DebugStore
                 && DebugOperation.Contains(Operation))
