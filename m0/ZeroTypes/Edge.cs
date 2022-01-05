@@ -156,9 +156,20 @@ namespace m0.ZeroTypes
         {
             baseVertex.AddEdge(vIs, EdgeMeta);
 
-            baseVertex.AddEdge(FromMeta, edge.From);
-            baseVertex.AddEdge(MetaMeta, edge.Meta);
-            baseVertex.AddEdge(ToMeta, edge.To);
+            if(edge.From.DisposedState == DisposeStateEnum.Live)
+                baseVertex.AddEdge(FromMeta, edge.From);
+            else
+                baseVertex.AddEdge(FromMeta, MinusZero.Instance.Empty);
+
+            if (edge.Meta.DisposedState == DisposeStateEnum.Live)
+                baseVertex.AddEdge(MetaMeta, edge.Meta);
+            else
+                baseVertex.AddEdge(MetaMeta, MinusZero.Instance.Empty);
+
+            if (edge.To.DisposedState == DisposeStateEnum.Live)
+                baseVertex.AddEdge(ToMeta, edge.To);
+            else
+                baseVertex.AddEdge(ToMeta, MinusZero.Instance.Empty);
         }
 
         static public void AddEdgeVertexEdges(IVertex baseVertex, IVertex edgeFrom, IVertex edgeMeta, IVertex edgeTo)

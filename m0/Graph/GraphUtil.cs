@@ -8,6 +8,7 @@ using m0.Util;
 using m0.ZeroTypes;
 using m0.ZeroCode;
 using m0.ZeroCode.Helpers;
+using m0.Store;
 
 namespace m0.Graph
 {
@@ -60,7 +61,13 @@ namespace m0.Graph
 
         static string DebugStore = "$-0$TEMP$STORE$";
         static long[] DebugVertex = { 8100, 4454 };
-        static DebugOperationEnum[] DebugOperation = { DebugOperationEnum.InEdgeRemove, DebugOperationEnum.Init, DebugOperationEnum.InEdgeAdd, DebugOperationEnum.Value };
+        static DebugOperationEnum[] DebugOperation = {
+            DebugOperationEnum.InEdgeRemove,
+            DebugOperationEnum.Init,
+            DebugOperationEnum.InEdgeAdd,
+            DebugOperationEnum.Value,
+            DebugOperationEnum.Dispose
+        };
 
         public static void Debug(IVertex v, DebugOperationEnum Operation)
         {
@@ -71,15 +78,7 @@ namespace m0.Graph
                 && v.Store.Identifier == DebugStore
                 && DebugOperation.Contains(Operation))
             {
-                int x = 0;
-            }
-        }
-
-        public static void Debug(IVertex v, long l)
-        {
-            if (v.Identifier is long && ((long)v.Identifier) == l)
-            {
-                int x = 0;
+                int x = 0;                
             }
         }
 
@@ -1364,6 +1363,16 @@ namespace m0.Graph
         {
             if (baseVertex!=null&& !GeneralUtil.DoDelegateListContainDelegate(baseVertex.GetChangeDelegateInvocationList(), _delegate))
                 baseVertex.Change += _delegate;
+        }
+
+        public static IVertex GetVertex(string storeName, long id)
+        {
+            MemoryStore store = (MemoryStore) MinusZero.Instance.GetStore(storeName);
+
+            if (store.VertexIdentifiersDictionary.ContainsKey(id))
+                return store.GetVertexByIdentifier(id);
+            else
+                return null;
         }
         
     }

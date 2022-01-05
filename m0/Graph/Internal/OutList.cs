@@ -45,10 +45,10 @@ namespace m0.Graph.Internal
             if (!edgeDictionaries.NoInEdgeInOutVertexVertexMode)
             {
                 if (item.Meta != null)
-                    item.Meta.MetaInEdgesRaw.Add(item);
+                    item.Meta.MetaInEdgesRaw.Add(item);                
 
                 if (item.To != null)
-                    item.To.InEdgesRaw.Add(item);
+                    item.To.InEdgesRaw.Add(item);                
             }
 
             edgeDictionaries.vertex.OutEdgesDictionariesNeedsRebuild = true;

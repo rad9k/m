@@ -368,6 +368,10 @@ namespace m0.Graph
             if (destVertex == null)
                 destVertex = MinusZero.Instance.Empty; // can be    
 
+            if (destVertex.DisposedState == DisposeStateEnum.Disposed)
+                throw new Exception("Vertex not live");
+
+
             EdgeBase ne = new EasyEdge(this, metaVertex, destVertex);
 
             OutEdgesRaw.Add(ne);

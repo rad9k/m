@@ -390,6 +390,16 @@ namespace m0
             return store;
         }
 
+        public IStore GetStore(string StoreIdentifier)
+        {
+            IStore store = Stores.Where(s => s.Identifier == StoreIdentifier).FirstOrDefault();
+
+            if (store != null)
+                return store;
+
+            return null;
+        }
+
         void FillBootstrapVertexes()
         {
             BootstrapVertexes = GraphUtil.GetSubGraphWithoutLinksAsList(root);
