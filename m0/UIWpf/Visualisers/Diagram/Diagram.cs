@@ -95,7 +95,7 @@ namespace m0.UIWpf.Visualisers.Diagram
 
         public virtual void UpdateBaseEdge() { PaintDiagram(); }
 
-        public Diagram(IVertex baseEdgeVertex)
+        public Diagram(IVertex baseEdgeVertex, IVertex parentVisualiser)
         {
             Items = new List<DiagramItemBase>();
 
@@ -109,7 +109,8 @@ namespace m0.UIWpf.Visualisers.Diagram
 
             this.BorderBrush = (Brush)FindResource("0LightGrayBrush");
 
-            new ListVisualiserHelper(MinusZero.Instance.Root.Get(false, @"System\Meta\Visualiser\Diagram"),
+            new ListVisualiserHelper(parentVisualiser,
+                MinusZero.Instance.Root.Get(false, @"System\Meta\Visualiser\Diagram"),
                  this,
                 "DiagramVisualiser",
                 this,
@@ -1062,11 +1063,10 @@ namespace m0.UIWpf.Visualisers.Diagram
 
                 VisualisersList.RemoveVisualiser(this);
 
-                GraphChangeTrigger.RemoveListener(VisualiserHelper.graphChangeListenerEdge);                
+                GraphChangeTrigger.RemoveListener(VisualiserHelper.graphChangeListenerEdge);
 
-                if (SubVisualisers != null)
-                    foreach (IDisposable d in SubVisualisers)
-                        d.Dispose();
+                foreach (DiagramItemBase i in Items)
+                    i.Dispose();
             }
         }
 

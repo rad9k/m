@@ -237,11 +237,7 @@ namespace m0.UIWpf.Visualisers.Helper
                     ((IDisposable)Vertex).Dispose();
 
                 foreach (IEdge e in visualiser.Vertex.GetAll(false, "SubVisualiser:"))
-                    VisualisersList.GetVisualiser(e.To).Dispose();
-
-                if (visualiser.SubVisualisers != null)
-                    foreach (IDisposable d in visualiser.SubVisualisers)
-                        d.Dispose();
+                    VisualisersList.GetVisualiser(e.To).Dispose();                
             }
         }
 
