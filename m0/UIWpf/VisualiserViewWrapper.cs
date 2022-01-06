@@ -60,22 +60,23 @@ namespace m0.UIWpf
 
             if (defvis == null && e.To != null)
                 defvis = e.To.Get(false, @"$Is:\$DefaultViewVisualiser:");
-            
 
-            if (defvis != null)            
-                pc = (IPlatformClass)PlatformClass.CreatePlatformObject(defvis, e, _this.parentVisualiser);                           
-            else            
-                pc = new StringViewVisualiser(Edge.CreateTempEdgeVertex(e), _this.parentVisualiser);                           
+            IVertex parentVisualiser = _this.parentVisualiser;
+
+            if (parentVisualiser == null)
+            {
+                IVisualiser parentIVisualiser = WpfUtil.GetParentVisualiser(_this);
+
+                if (parentIVisualiser != null)
+                    parentVisualiser = parentIVisualiser.Vertex;
+            }
+
+            if (defvis != null)
+                pc = (IPlatformClass)PlatformClass.CreatePlatformObject(defvis, e, parentVisualiser);
+            else
+                pc = new StringViewVisualiser(Edge.CreateTempEdgeVertex(e), parentVisualiser);
             
             _this.Content = pc;
-
-            if(pc is FrameworkElement)
-            {
-                IVisualiser vis = WpfUtil.GetParentVisualiser((FrameworkElement)pc);
-
-                if (vis != null)
-                    vis.SubVisualisers.Add((IDisposable)pc);
-            }
         }
 
         bool IsDisposed = false;
