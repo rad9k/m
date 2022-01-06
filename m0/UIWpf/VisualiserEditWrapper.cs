@@ -14,7 +14,7 @@ using m0.UIWpf.Visualisers.Helper;
 
 namespace m0.UIWpf
 {
-    public class VisualiserEditWrapper:ContentControl, IDisposable
+    public class VisualiserEditWrapper: ContentControl, IDisposable
     {
         public bool TriggerNewTransaction = false;
 
@@ -63,22 +63,24 @@ namespace m0.UIWpf
                 defvis = e.Meta.Get(false, @"$VertexTarget:\$Is:\$DefaultEditVisualiser:");
 
             if (defvis == null && e.To!=null)
-                defvis = e.To.Get(false, @"$Is:\$DefaultEditVisualiser:");            
+                defvis = e.To.Get(false, @"$Is:\$DefaultEditVisualiser:");
+
+            IVertex parentVisualiser = _this.parentVisualiser;
+
+            if (parentVisualiser == null)
+            {
+                IVisualiser parentIVisualiser = WpfUtil.GetParentVisualiser(_this);
+
+                if (parentIVisualiser != null)
+                    parentVisualiser = parentIVisualiser.Vertex;
+            }                            
 
             if (defvis != null)            
-                pc = (IPlatformClass)PlatformClass.CreatePlatformObject(defvis, e, _this.parentVisualiser);                                           
+                pc = (IPlatformClass)PlatformClass.CreatePlatformObject(defvis, e, parentVisualiser);
             else            
-                pc = new StringVisualiser(Edge.CreateTempEdgeVertex(e));                
+                pc = new StringVisualiser(Edge.CreateTempEdgeVertex(e), parentVisualiser);                
 
-            _this.Content = pc;
-
-            if (pc is FrameworkElement)
-            {
-                IVisualiser vis = WpfUtil.GetParentVisualiser((FrameworkElement)pc);
-
-                if (vis != null)
-                    vis.SubVisualisers.Add((IDisposable)pc);
-            }
+            _this.Content = pc;            
         }
 
         bool IsDisposed = false;
