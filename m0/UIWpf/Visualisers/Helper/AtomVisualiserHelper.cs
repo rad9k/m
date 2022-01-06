@@ -223,6 +223,12 @@ namespace m0.UIWpf.Visualisers.Helper
 
         public bool IsDisposed = false;
 
+        public void DisposeAllChildVisualisers()
+        {
+            foreach (IEdge e in visualiser.Vertex.GetAll(false, "ChildVisualiser:"))
+                VisualisersList.GetVisualiser(e.To).Dispose();
+        }
+
         public void Dispose()
         {
             if (IsDisposed == false)
@@ -236,8 +242,7 @@ namespace m0.UIWpf.Visualisers.Helper
                 if (Vertex is IDisposable)
                     ((IDisposable)Vertex).Dispose();
 
-                foreach (IEdge e in visualiser.Vertex.GetAll(false, "SubVisualiser:"))
-                    VisualisersList.GetVisualiser(e.To).Dispose();                
+                DisposeAllChildVisualisers();                                
             }
         }
 

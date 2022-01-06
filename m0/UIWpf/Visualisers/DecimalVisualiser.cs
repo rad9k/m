@@ -24,7 +24,7 @@ namespace m0.UIWpf.Visualisers
 
         protected override IVertex visualiserMetaVertex { get { return MinusZero.Instance.Root.Get(false, @"System\Meta\Visualiser\Decimal"); } set { } }
 
-        public DecimalVisualiser(IVertex baseEdgeVertex) : base(baseEdgeVertex)
+        public DecimalVisualiser(IVertex baseEdgeVertex, IVertex parentVisualiser) : base(baseEdgeVertex, parentVisualiser)
         {
 
         }

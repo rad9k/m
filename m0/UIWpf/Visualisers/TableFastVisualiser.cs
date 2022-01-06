@@ -22,7 +22,7 @@ namespace m0.UIWpf.Visualisers
 {
     public class TableFastVisualiser : TableVisualiser
     {
-        public TableFastVisualiser(IVertex baseEdgeVertex) : base(baseEdgeVertex)
+        public TableFastVisualiser(IVertex baseEdgeVertex, IVertex parentVisualiser) : base(baseEdgeVertex, parentVisualiser)
         {
 
         }

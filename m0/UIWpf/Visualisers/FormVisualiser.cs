@@ -280,12 +280,12 @@ namespace m0.UIWpf.Visualisers
         public void Dispose()
         {
             if (VisualiserHelper.IsDisposed == false)                            
-                DispachAllSubVisualisers();
+                DispachAllChildVisualisers();
 
             VisualiserHelper.Dispose();
         }
 
-        protected void DispachAllSubVisualisers()
+        protected void DispachAllChildVisualisers()
         {
             if(TabList!=null)
             foreach(TabInfo i in TabList.Values)
@@ -306,7 +306,7 @@ namespace m0.UIWpf.Visualisers
 
             handlingUpdateBaseEdge = true;
 
-            DispachAllSubVisualisers();            
+            DispachAllChildVisualisers();            
 
             BaseVertexEdgeAdded_PreFill = false;
             BaseVertexEdgeAdded = false;
@@ -649,7 +649,7 @@ namespace m0.UIWpf.Visualisers
             {
                 IVertex baseEdgeVertex = Edge.CreateTempEdgeVertex(null, null, Vertex.Get(false, @"BaseEdge:\To:"));
 
-                TableVisualiser tv = new TableVisualiser(baseEdgeVertex);
+                TableVisualiser tv = new TableVisualiser(baseEdgeVertex, null);
 
                 if (ExpertMode)
                     GraphUtil.SetVertexValue(tv.Vertex, MinusZero.Instance.Root.Get(false, @"System\Meta\Visualiser\Table\ExpertMode"), "True");
@@ -676,7 +676,7 @@ namespace m0.UIWpf.Visualisers
                 {
                     IVertex baseEdgeVertex = Edge.CreateTempEdgeVertex(Vertex.GetAll(false, @"BaseEdge:\To:").FirstOrDefault());
 
-                    StringVisualiser sv = new StringVisualiser(baseEdgeVertex);
+                    StringVisualiser sv = new StringVisualiser(baseEdgeVertex, null);
 
                     //Edge.ReplaceEdgeVertexEdges(sv.Vertex.Get(false, "BaseEdge:"), Vertex.GetAll(false, @"BaseEdge:\To:").FirstOrDefault());
 

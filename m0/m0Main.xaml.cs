@@ -50,7 +50,7 @@ namespace m0
 
             IVertex baseEdgeVertex = Edge.CreateTempEdgeVertex(null, null, MinusZero.Instance.Root);
 
-            TreeVisualiser stv = new TreeVisualiser(baseEdgeVertex);
+            TreeVisualiser stv = new TreeVisualiser(baseEdgeVertex, null);
 
             //GraphUtil.ReplaceEdge(stv.Vertex.Get(false, "BaseEdge:"), "To", MinusZero.Instance.Root);                                    
             

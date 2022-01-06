@@ -2456,7 +2456,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             {
                 IsDisposed = true;
 
-                DispachAllSubVisualisers();
+                DispachAllChildVisualisers();
 
                 PlatformClass.RemoveVertexChangeListeners(this.Vertex, new VertexChange(VertexChange));
 
@@ -2465,7 +2465,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             }
         }
 
-        protected void DispachAllSubVisualisers()
+        protected void DispachAllChildVisualisers()
         {
             if (ZoomScrollView is IDisposable)
                 ((IDisposable)ZoomScrollView).Dispose();

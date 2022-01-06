@@ -3129,7 +3129,7 @@ namespace m0
                 "Class:TriggerSet{Attribute:SnapToGrid{$MinCardinality:1,$MaxCardinality:1},Attribute:ShowVelocity{$MinCardinality:1,$MaxCardinality:1,$DefaultValue:False},Attribute:ShowSnapLines{$MinCardinality:1,$MaxCardinality:1,$DefaultValue:True},Attribute:DefaultVelocity{$MinCardinality:1,$MaxCardinality:1,$DefaultValue:127,MinValue:-1,MaxValue:127}}," +
                 "Class:ChordProgression{Attribute:ShowLabel{$MinCardinality:1,$MaxCardinality:1,$DefaultValue:True},Attribute:ShowArrowLines{$MinCardinality:1,$MaxCardinality:1,$DefaultValue:True}}," +
                 "Class:Song{Attribute:SnapToGrid{$MinCardinality:1,$MaxCardinality:1},Attribute:ShowLabel{$MinCardinality:1,$MaxCardinality:1,$DefaultValue:True},Attribute:ShowArrowLines{$MinCardinality:1,$MaxCardinality:1,$DefaultValue:True},Attribute:ShowSnapLines{$MinCardinality:1,$MaxCardinality:1,$DefaultValue:True},Attribute:ShowToolbarNames{$MinCardinality:1,$MaxCardinality:1,$DefaultValue:False}}," +
-                "Class:AbstractVisualiser{Aggregation:SubVisualiser}," +
+                "Class:AbstractVisualiser{Aggregation:ChildVisualiser}," +
                 "Class:Test}");
 
             sm.Get(false, @"Visualiser\BaseEdgeTarget").AddEdge(sm.Get(false, "?$Inherits"), sm.Get(false, @"ZeroTypes\EnumBase"));
@@ -3139,7 +3139,7 @@ namespace m0
 
             sm.Get(false, @"Visualiser\AbstractVisualiser").AddEdge(sm.Get(false, "?$Inherits"), sm.Get(false, @"ZeroTypes\$PlatformClass"));
             sm.Get(false, @"Visualiser\AbstractVisualiser").AddEdge(sm.Get(false, "?$Inherits"), sm.Get(false, @"ZeroTypes\HasBaseEdge"));
-            sm.Get(false, @"Visualiser\AbstractVisualiser\SubVisualiser").AddEdge(sm.Get(false, @"?$EdgeTarget"), sm.Get(false, @"Visualiser\AbstractVisualiser"));
+            sm.Get(false, @"Visualiser\AbstractVisualiser\ChildVisualiser").AddEdge(sm.Get(false, @"?$EdgeTarget"), sm.Get(false, @"Visualiser\AbstractVisualiser"));
 
             sm.Get(false, @"Visualiser\Form").AddEdge(sm.Get(false, "?$Inherits"), sm.Get(false, @"Visualiser\AbstractVisualiser"));            
             sm.Get(false, @"Visualiser\Form").AddVertex(sm.Get(false, "?$PlatformClassName"), @"m0.UIWpf.Visualisers.FormVisualiser, m0, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null");

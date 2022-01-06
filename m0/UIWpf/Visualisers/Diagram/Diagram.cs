@@ -41,7 +41,7 @@ namespace m0.UIWpf.Visualisers.Diagram
     {
         public AtomVisualiserHelper VisualiserHelper { get; set; }
 
-        public List<IDisposable> SubVisualisers {
+        public List<IDisposable> ChildVisualisers {
             get {
                 List<IDisposable> list = new List<IDisposable>();
 

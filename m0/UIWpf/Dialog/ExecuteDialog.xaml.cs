@@ -58,12 +58,12 @@ namespace m0.UIWpf.Dialog
                                                    //null,
                         Edge.CreateTempEdgeVertex(inputStackEdge);//); // ??
 
-                    InputStackEdgeControl = new EdgeVisualiser(inputStackEdgeVertex);
+                    InputStackEdgeControl = new EdgeVisualiser(inputStackEdgeVertex, null);
 
-                    OutputStackEdgeControl = new EdgeVisualiser(null);
+                    OutputStackEdgeControl = new EdgeVisualiser(null, null);
 
-                    InputStackContentControl = new TreeVisualiser(null);
-                    OutputStackContentControl = new TreeVisualiser(null);
+                    InputStackContentControl = new TreeVisualiser(null, null);
+                    OutputStackContentControl = new TreeVisualiser(null, null);
 
                     this.ExecuteButton.IsEnabled = true;
                     this.InputStackEdgeControl.IsEnabled = true;

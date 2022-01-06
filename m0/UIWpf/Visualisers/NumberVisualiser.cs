@@ -56,8 +56,7 @@ namespace m0.UIWpf.Visualisers
                 new List<string> { @"BaseEdge:\To:" },
                 "AtomVisualiser",
                 baseEdgeVertex,
-                UpdateBaseEdgeCallSchemeEnum.OmmitSecond,
-                null);
+                UpdateBaseEdgeCallSchemeEnum.OmmitSecond);
 
             // need custom dnd becouse of slider / mouse move
             this.PreviewMouseLeftButtonDown += dndPreviewMouseLeftButtonDown;

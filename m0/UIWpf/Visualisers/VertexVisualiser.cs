@@ -52,8 +52,7 @@ namespace m0.UIWpf.Visualisers
                 new List<string> { @"BaseEdge:\To:" },
                 "Visualiser",
                 baseEdgeVertex,
-                UpdateBaseEdgeCallSchemeEnum.OmmitSecond,
-                null);
+                UpdateBaseEdgeCallSchemeEnum.OmmitSecond);
 
             TextBlock.PreviewMouseLeftButtonDown += dndPreviewMouseLeftButtonDown;
             TextBlock.PreviewMouseMove += dndPreviewMouseMove;

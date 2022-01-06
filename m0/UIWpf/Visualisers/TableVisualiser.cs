@@ -33,14 +33,17 @@ namespace m0.UIWpf.Visualisers
 
         public override void UpdateView() { ResetView(); }
 
-        public TableVisualiser(IVertex baseEdgeVertex, IVertex parentVisualiser) : base(baseEdgeVertex, parentVisualiser)
-        {
+        IVertex parentVisualiser;
 
+        public TableVisualiser(IVertex baseEdgeVertex, IVertex _parentVisualiser) : base(baseEdgeVertex, _parentVisualiser)
+        {
+            parentVisualiser = _parentVisualiser;
         }
 
         protected override void PlatformClassInitialize(IVertex baseEdgeVertex)
         {
-            new ListVisualiserHelper(MinusZero.Instance.Root.Get(false, @"System\Meta\Visualiser\Table"),
+            new ListVisualiserHelper(parentVisualiser,
+                         MinusZero.Instance.Root.Get(false, @"System\Meta\Visualiser\Table"),
                          this,
                          "TableVisualiser",
                          this,

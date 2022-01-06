@@ -283,7 +283,7 @@ namespace m0.UIWpf.Visualisers
 
         protected bool TurnOffSelectedVerticesUpdate = false;
 
-        public TreeVisualiser() : this(null) { }
+        public TreeVisualiser() : this(null, null) { }
 
 
         static string[] _MetaTriggeringBaseEdgeUpdate = new string[] {  };

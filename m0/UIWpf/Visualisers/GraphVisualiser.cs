@@ -348,7 +348,7 @@ namespace m0.UIWpf.Visualisers
             {
                 IVertex baseEdgeVertex = Edge.CreateTempEdgeVertex(null, null, v);
 
-                StringViewVisualiser s = new StringViewVisualiser(baseEdgeVertex);
+                StringViewVisualiser s = new StringViewVisualiser(baseEdgeVertex, null);
 
                 //GraphUtil.ReplaceEdge(s.Vertex.Get(false, "BaseEdge:"), "To", v);
 

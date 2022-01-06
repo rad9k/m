@@ -28,7 +28,7 @@ namespace m0.UIWpf.Visualisers.Helper
                         AddEdge(mz.Root.Get(false, @"System\Meta\Visualiser\AbstractVisualiser"), visualiser.Vertex);
             else
                 visualiserVertexEdge = parentVisualiserVertex.
-                        AddEdge(mz.Root.Get(false, @"System\Meta\Visualiser\AbstractVisualiser\SubVisualiser"), visualiser.Vertex);
+                        AddEdge(mz.Root.Get(false, @"System\Meta\Visualiser\AbstractVisualiser\ChildVisualiser"), visualiser.Vertex);
 
 
             VisualiserData vd = new VisualiserData();

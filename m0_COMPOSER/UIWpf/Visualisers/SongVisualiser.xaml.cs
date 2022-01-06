@@ -761,7 +761,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
                 StopAutoBackup();
 
-                DispachAllSubVisualisers();
+                DispachAllChildVisualisers();
 
                 PlatformClass.RemoveVertexChangeListeners(this.Vertex, new VertexChange(VertexChange));
 

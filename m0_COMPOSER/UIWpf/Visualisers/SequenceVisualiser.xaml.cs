@@ -714,7 +714,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             {
                 IsDisposed = true;
 
-                DispachAllSubVisualisers();
+                DispachAllChildVisualisers();
 
                 ItemDictionary.RemoveAllByHost(this);
 

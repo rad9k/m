@@ -72,15 +72,13 @@ namespace m0.UIWpf.Visualisers
                 p.Children.Add(label);
             }
 
-            VisualiserEditWrapper w = new VisualiserEditWrapper();
+            VisualiserEditWrapper w = new VisualiserEditWrapper(this.Vertex);
 
             w.LayoutTransform = new ScaleTransform(Scale, Scale);
 
             w.BaseEdge = e;
 
-            p.Children.Add(w);
-
-            SubVisualisers.Add(w);
+            p.Children.Add(w);            
 
             if (GraphUtil.GetQueryOutCount(e.Meta, "$DisplayLarger", null) > 0)
                 p.Width = 100;
@@ -99,7 +97,7 @@ namespace m0.UIWpf.Visualisers
             {
                 Children.Clear();
 
-                SubVisualisers.Clear();
+                VisualiserHelper.DisposeAllChildVisualisers();                
 
                 foreach (IEdge e in VertexOperations.GetChildEdges(meta))
                 {
