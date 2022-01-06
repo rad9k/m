@@ -38,7 +38,8 @@ namespace m0.UIWpf.Visualisers
                new List<string> { @"", @"BaseEdge:\", @"BaseEdge:\To:\"}, 
                "ListVisualiser",
                baseEdgeVertex,
-               UpdateBaseEdgeCallSchemeEnum.OmmitSecond);
+               UpdateBaseEdgeCallSchemeEnum.OmmitSecond,
+               null);
         }
 
         public void OnLoad(object sender, RoutedEventArgs e)

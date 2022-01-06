@@ -18,6 +18,7 @@ using m0.UIWpf.Visualisers;
 using m0.Graph;
 using Xceed.Wpf.AvalonDock.Layout;
 using m0.User.Process.UX;
+using m0.UIWpf.Visualisers.Helper;
 
 namespace m0.UIWpf
 {
@@ -90,7 +91,7 @@ namespace m0.UIWpf
 
             IVertex baseEdgeVertex = Edge.CreateTempEdgeVertex(null, null, pc.Vertex);
 
-            topRow = new WrapVisualiser(baseEdgeVertex, 0.6);            
+            topRow = new WrapVisualiser(baseEdgeVertex, 0.6, pc.Vertex);            
 
             //GraphUtil.ReplaceEdge(topRow.Vertex.Get(false, "BaseEdge:"), "To", pc.Vertex);
            

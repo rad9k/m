@@ -66,6 +66,7 @@ namespace m0.UIWpf.Visualisers.Helper
                  "AtomVisualiser",
                  baseEdgeVertex,
                  UpdateBaseEdgeCallSchemeEnum.OmmitSecond,
+                 null,
                  false
                  )
         {
@@ -80,7 +81,8 @@ namespace m0.UIWpf.Visualisers.Helper
             IList<string> _scopeQueries,
             string _scopeQueriesName,
             IVertex baseEdgeVertex,
-            UpdateBaseEdgeCallSchemeEnum _updateBaseEdgeCallSchema):
+            UpdateBaseEdgeCallSchemeEnum _updateBaseEdgeCallSchema,
+            IVertex parentVisualiser):
             this(_visualiserMetaVertex,
                  _visualiser,
                  _visualiserName,
@@ -90,6 +92,7 @@ namespace m0.UIWpf.Visualisers.Helper
                  _scopeQueriesName,
                  baseEdgeVertex,
                  _updateBaseEdgeCallSchema,
+                 parentVisualiser,
                  false
                  )
         {
@@ -105,6 +108,7 @@ namespace m0.UIWpf.Visualisers.Helper
             string _scopeQueriesName,
             IVertex baseEdgeVertex,
             UpdateBaseEdgeCallSchemeEnum _updateBaseEdgeCallSchema,
+            IVertex parentVisualiser,
             bool _visualiserAsBaseEdge)
         {
             visualiser = _visualiser;
@@ -155,7 +159,7 @@ namespace m0.UIWpf.Visualisers.Helper
                     visualiser.Vertex.Value = visualiserName;
                 }
 
-                VisualisersList.AddVisualiser(visualiser, null);                
+                VisualisersList.AddVisualiser(visualiser, parentVisualiser);                
 
 
                 visualiserAsFrameworkElement.Loaded += new RoutedEventHandler(visualiser.OnLoad);
@@ -227,6 +231,9 @@ namespace m0.UIWpf.Visualisers.Helper
 
                 if (Vertex is IDisposable)
                     ((IDisposable)Vertex).Dispose();
+
+                foreach (IEdge e in visualiser.Vertex.GetAll(false, "SubVisualiser:"))
+                    VisualisersList.GetVisualiser(e.To).Dispose();
 
                 if (visualiser.SubVisualisers != null)
                     foreach (IDisposable d in visualiser.SubVisualisers)

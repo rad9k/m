@@ -28,9 +28,9 @@ namespace m0.UIWpf.Visualisers
 
         public double Margin { get; set; } // do not want to expose those as PlatformClass.Vertex 
 
-        public WrapVisualiser(IVertex baseEdgeVertex) : this(baseEdgeVertex, 1.0) { }
+        public WrapVisualiser(IVertex baseEdgeVertex) : this(baseEdgeVertex, 1.0, null) { }
          
-        public WrapVisualiser(IVertex baseEdgeVertex, double _scale)
+        public WrapVisualiser(IVertex baseEdgeVertex, double _scale, IVertex parentVertex)
         {
             Scale = _scale;
 
@@ -50,7 +50,8 @@ namespace m0.UIWpf.Visualisers
                 new List<string> { @"BaseEdge:\To:" }, 
                 "Visualiser",
                 baseEdgeVertex,
-                UpdateBaseEdgeCallSchemeEnum.OmmitSecond);
+                UpdateBaseEdgeCallSchemeEnum.OmmitSecond,
+                parentVertex);
         }
 
         public void OnLoad(object sender, RoutedEventArgs e)

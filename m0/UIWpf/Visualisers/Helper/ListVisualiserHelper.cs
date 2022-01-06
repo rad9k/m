@@ -88,6 +88,7 @@ namespace m0.UIWpf.Visualisers.Helper
                   _scopeQueriesName,
                   baseEdgeVertex,
                   _updateBaseEdgeCallScheme,
+                  null,
                   _visualiserAsBaseEdge)
         {
             listVisualiser = (IListVisualiser)_visualiser;
