@@ -26,11 +26,13 @@ namespace m0.UIWpf.Visualisers
 
         List<IVertex> manuallyAddedVertexChangeListeners = new List<IVertex>();
 
-        public ClassVisualiser(IVertex baseEdgeVertex)
+        public ClassVisualiser(IVertex baseEdgeVertex, IVertex parentVisualiser)
         {
            this.Padding = new Thickness(2);
 
-           new AtomVisualiserHelper(MinusZero.Instance.Root.Get(false, @"System\Meta\Visualiser\Class"), 
+           new AtomVisualiserHelper(
+               parentVisualiser,
+               MinusZero.Instance.Root.Get(false, @"System\Meta\Visualiser\Class"), 
                this, 
                "ClassVisualiser", 
                this, 

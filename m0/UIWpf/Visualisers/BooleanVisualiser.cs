@@ -26,9 +26,10 @@ namespace m0.UIWpf.Visualisers
 
         bool IsNull { get; set; }
 
-        public BooleanVisualiser(IVertex baseEdgeVertex)
+        public BooleanVisualiser(IVertex baseEdgeVertex, IVertex parentVisualiser)
         {
-            new AtomVisualiserHelper(MinusZero.Instance.Root.Get(false, @"System\Meta\Visualiser\Boolean"),
+            new AtomVisualiserHelper(parentVisualiser,
+                MinusZero.Instance.Root.Get(false, @"System\Meta\Visualiser\Boolean"),
                 this, 
                 "BooleanVisualiser", 
                 this,
