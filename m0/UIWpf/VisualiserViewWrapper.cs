@@ -15,11 +15,15 @@ using m0.UIWpf.Visualisers.Helper;
 namespace m0.UIWpf
 {
     public class VisualiserViewWrapper : ContentControl, IDisposable
-    {
-        public bool TriggerNewTransaction = false;
+    {        
+        IVertex parentVisualiser;
 
-        public VisualiserViewWrapper()        
+        public VisualiserViewWrapper(): this(null) { }
+
+        public VisualiserViewWrapper(IVertex _parentVisualiser)        
         {
+            parentVisualiser = _parentVisualiser;
+
             //this.VerticalContentAlignment = VerticalAlignment.Center;
             this.VerticalAlignment = VerticalAlignment.Center;            
         }
@@ -34,11 +38,7 @@ namespace m0.UIWpf
             DependencyProperty.Register("BaseEdge", typeof(IEdge), typeof(VisualiserViewWrapper), new UIPropertyMetadata(BaseEdgeChangedCallback));
 
         public static void BaseEdgeChangedCallback(DependencyObject d, DependencyPropertyChangedEventArgs _e)
-        {
-            //int counter = (int)MinusZero.Instance.Root.Get(false, @"TEST\Counter:").Value;
-            //counter++;
-            //MinusZero.Instance.Root.Get(false, @"TEST\Counter:").Value = counter;
-
+        {            
             VisualiserViewWrapper _this = (VisualiserViewWrapper)d;
             IEdge e = (IEdge)_e.NewValue;
 
@@ -60,24 +60,12 @@ namespace m0.UIWpf
 
             if (defvis == null && e.To != null)
                 defvis = e.To.Get(false, @"$Is:\$DefaultViewVisualiser:");
+            
 
-            ///////////////////////////////////////
-            //if(_this.TriggerNewTransaction)
-            //    ExecutionFlowHelper.StartTransaction();
-            ///////////////////////////////////////
-
-            if (defvis != null)
-            {
-                pc = (IPlatformClass)PlatformClass.CreatePlatformObject(defvis, e);
-
-               // if (defvis.Get(false, "$Inherits:HasBaseEdge") != null)
-                //    Edge.ReplaceEdgeVertexEdges(pc.Vertex.Get(false, "BaseEdge:"), e);
-            }
-            else
-            {
-                pc = new StringViewVisualiser(Edge.CreateTempEdgeVertex(e));
-               // Edge.ReplaceEdgeVertexEdges(pc.Vertex.Get(false, "BaseEdge:"), e);
-            }
+            if (defvis != null)            
+                pc = (IPlatformClass)PlatformClass.CreatePlatformObject(defvis, e, _this.parentVisualiser);                           
+            else            
+                pc = new StringViewVisualiser(Edge.CreateTempEdgeVertex(e), _this.parentVisualiser);                           
             
             _this.Content = pc;
 
@@ -88,12 +76,6 @@ namespace m0.UIWpf
                 if (vis != null)
                     vis.SubVisualisers.Add((IDisposable)pc);
             }
-
-            ////////////////////////////////////////
-            //if(_this.TriggerNewTransaction)
-            //    ExecutionFlowHelper.CommitTransaction();
-            ////////////////////////////////////////
-
         }
 
         bool IsDisposed = false;

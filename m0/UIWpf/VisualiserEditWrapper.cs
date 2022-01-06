@@ -20,8 +20,12 @@ namespace m0.UIWpf
 
         IVertex parentVisualiser;
 
+        public VisualiserEditWrapper() : this(null) { }
+
         public VisualiserEditWrapper(IVertex _parentVisualiser)        
         {
+            parentVisualiser = _parentVisualiser;
+
             //this.VerticalContentAlignment = VerticalAlignment.Center;
             this.VerticalAlignment = VerticalAlignment.Center;
         }
@@ -59,30 +63,12 @@ namespace m0.UIWpf
                 defvis = e.Meta.Get(false, @"$VertexTarget:\$Is:\$DefaultEditVisualiser:");
 
             if (defvis == null && e.To!=null)
-                defvis = e.To.Get(false, @"$Is:\$DefaultEditVisualiser:");
+                defvis = e.To.Get(false, @"$Is:\$DefaultEditVisualiser:");            
 
-            ///////////////////////////////////////
-            //if(_this.TriggerNewTransaction)
-            //    ExecutionFlowHelper.StartTransaction();
-            ///////////////////////////////////////
-
-            if (defvis != null)
-            {
-                pc = (IPlatformClass)PlatformClass.CreatePlatformObject(defvis, e);
-                
-               // if (defvis.Get(false, "$Inherits:HasBaseEdge") != null)                
-               //     Edge.ReplaceEdgeVertexEdges(pc.Vertex.Get(false, "BaseEdge:"), e);                                    
-            }
-            else
-            {
-                pc = new StringVisualiser(Edge.CreateTempEdgeVertex(e));
-                //Edge.ReplaceEdgeVertexEdges(pc.Vertex.Get(false, "BaseEdge:"), e);                                                    
-            }
-
-            ////////////////////////////////////////
-            //if (_this.TriggerNewTransaction)
-            //    ExecutionFlowHelper.CommitTransaction();
-            ////////////////////////////////////////
+            if (defvis != null)            
+                pc = (IPlatformClass)PlatformClass.CreatePlatformObject(defvis, e, _this.parentVisualiser);                                           
+            else            
+                pc = new StringVisualiser(Edge.CreateTempEdgeVertex(e));                
 
             _this.Content = pc;
 

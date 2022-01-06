@@ -111,13 +111,23 @@ namespace m0.ZeroTypes
 
         public static IPlatformClass CreatePlatformObject(IVertex Vertex, IEdge baseEdge)
         {
+            return CreatePlatformObject(Vertex, baseEdge, null);
+        }
+
+        public static IPlatformClass CreatePlatformObject(IVertex Vertex, IEdge baseEdge, IVertex _parentVisualiser)
+        {
             if (baseEdge == null)
-                return CreatePlatformObject(Vertex, null as IVertex);
+                return CreatePlatformObject(Vertex, null as IVertex, _parentVisualiser);
             else
-                return CreatePlatformObject(Vertex, Edge.CreateTempEdgeVertex(baseEdge));
+                return CreatePlatformObject(Vertex, Edge.CreateTempEdgeVertex(baseEdge), _parentVisualiser);
         }
 
         public static IPlatformClass CreatePlatformObject(IVertex Vertex, IVertex baseEdgeVertex)
+        {
+            return CreatePlatformObject(Vertex, baseEdgeVertex, null);
+        }
+
+        public static IPlatformClass CreatePlatformObject(IVertex Vertex, IVertex baseEdgeVertex, IVertex _parentVisualiser)
         {
             IPlatformClass pc;
 
@@ -125,13 +135,13 @@ namespace m0.ZeroTypes
             {
                 String classname = (string)Vertex.Get(false, "$PlatformClassName:").Value;
 
-                pc = (IPlatformClass)Activator.CreateInstance(Type.GetType(classname), new object[] { baseEdgeVertex });
+                pc = (IPlatformClass)Activator.CreateInstance(Type.GetType(classname), new object[] { baseEdgeVertex, _parentVisualiser});
             }
             else
             {
                 String classname = (string)Vertex.Get(false, @"$Is:{$Inherits:$PlatformClass}\$PlatformClassName:").Value;
 
-                pc = (IPlatformClass)Activator.CreateInstance(Type.GetType(classname), new object[] { baseEdgeVertex });
+                pc = (IPlatformClass)Activator.CreateInstance(Type.GetType(classname), new object[] { baseEdgeVertex, _parentVisualiser});
 
                 pc.Vertex = Vertex;
             }
