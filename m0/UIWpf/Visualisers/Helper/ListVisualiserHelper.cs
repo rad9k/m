@@ -26,12 +26,15 @@ namespace m0.UIWpf.Visualisers.Helper
     {
         IListVisualiser listVisualiser;
 
-        public ListVisualiserHelper(IVertex _visualiserMetaVertex,
+        public ListVisualiserHelper(
+            IVertex parentVisualiser,
+            IVertex _visualiserMetaVertex,
             IVisualiser _visualiser,
             string _visualiserName,
             FrameworkElement _visualiserAsFrameworkElement,
             IVertex baseEdgeVertex)
-            : this(_visualiserMetaVertex,
+            : this(parentVisualiser,
+                  _visualiserMetaVertex,
                   _visualiser,
                   _visualiserName,
                   _visualiserAsFrameworkElement,
@@ -45,7 +48,9 @@ namespace m0.UIWpf.Visualisers.Helper
 
         }
 
-        public ListVisualiserHelper(IVertex visualiserMetaVertex,
+        public ListVisualiserHelper(
+            IVertex parentVisualiser,
+            IVertex visualiserMetaVertex,
             IVisualiser _visualiser,
             string _visualiserName,
             FrameworkElement _visualiserAsFrameworkElement,
@@ -55,7 +60,9 @@ namespace m0.UIWpf.Visualisers.Helper
             IVertex baseEdgeVertex,
             UpdateBaseEdgeCallSchemeEnum _updateBaseEdgeCallScheme            
             )
-            :this(visualiserMetaVertex,
+            :this(
+                  parentVisualiser,
+                  visualiserMetaVertex,
                   _visualiser,
                   _visualiserName,
                   _visualiserAsFrameworkElement,
@@ -68,18 +75,21 @@ namespace m0.UIWpf.Visualisers.Helper
         {
         }
 
-            public ListVisualiserHelper(IVertex visualiserMetaVertex,
-            IVisualiser _visualiser,
-            string _visualiserName,
-            FrameworkElement _visualiserAsFrameworkElement,
-            bool _dndSupport,
-            IList<string> _scopeQueries,
-            string _scopeQueriesName,
-            IVertex baseEdgeVertex,
-            UpdateBaseEdgeCallSchemeEnum _updateBaseEdgeCallScheme,
-            bool _visualiserAsBaseEdge
+            public ListVisualiserHelper(
+                IVertex parentVisualiser,
+                IVertex visualiserMetaVertex,
+                IVisualiser _visualiser,
+                string _visualiserName,
+                FrameworkElement _visualiserAsFrameworkElement,
+                bool _dndSupport,
+                IList<string> _scopeQueries,
+                string _scopeQueriesName,
+                IVertex baseEdgeVertex,
+                UpdateBaseEdgeCallSchemeEnum _updateBaseEdgeCallScheme,
+                bool _visualiserAsBaseEdge
             )
-            : base(visualiserMetaVertex,
+            : base(parentVisualiser,
+                  visualiserMetaVertex,
                   _visualiser,
                   _visualiserName,
                   _visualiserAsFrameworkElement,
@@ -87,8 +97,7 @@ namespace m0.UIWpf.Visualisers.Helper
                   _scopeQueries,
                   _scopeQueriesName,
                   baseEdgeVertex,
-                  _updateBaseEdgeCallScheme,
-                  null,
+                  _updateBaseEdgeCallScheme,                  
                   _visualiserAsBaseEdge)
         {
             listVisualiser = (IListVisualiser)_visualiser;

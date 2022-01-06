@@ -52,12 +52,15 @@ namespace m0.UIWpf.Visualisers.Helper
             baseEdge_meta = r.Get(false, @"System\Meta\ZeroTypes\HasBaseEdge\BaseEdge");
         }
 
-        public AtomVisualiserHelper(IVertex _visualiserMetaVertex,
+        public AtomVisualiserHelper(
+            IVertex parentVisualiser,
+            IVertex _visualiserMetaVertex,
             IVisualiser _visualiser,
             string _visualiserName,
             FrameworkElement _visualiserAsFrameworkElement,
             IVertex baseEdgeVertex)
-            : this(_visualiserMetaVertex,
+            : this(parentVisualiser,
+                 _visualiserMetaVertex,
                  _visualiser,
                  _visualiserName,
                  _visualiserAsFrameworkElement,
@@ -65,15 +68,16 @@ namespace m0.UIWpf.Visualisers.Helper
                  new List<string> { "", @"BaseEdge:\To:" },
                  "AtomVisualiser",
                  baseEdgeVertex,
-                 UpdateBaseEdgeCallSchemeEnum.OmmitSecond,
-                 null,
+                 UpdateBaseEdgeCallSchemeEnum.OmmitSecond,                 
                  false
                  )
         {
 
         }
 
-        public AtomVisualiserHelper(IVertex _visualiserMetaVertex,
+        public AtomVisualiserHelper(
+            IVertex parentVisualiser,
+            IVertex _visualiserMetaVertex,
             IVisualiser _visualiser,
             string _visualiserName,
             FrameworkElement _visualiserAsFrameworkElement,
@@ -81,9 +85,9 @@ namespace m0.UIWpf.Visualisers.Helper
             IList<string> _scopeQueries,
             string _scopeQueriesName,
             IVertex baseEdgeVertex,
-            UpdateBaseEdgeCallSchemeEnum _updateBaseEdgeCallSchema,
-            IVertex parentVisualiser):
-            this(_visualiserMetaVertex,
+            UpdateBaseEdgeCallSchemeEnum _updateBaseEdgeCallSchema):
+            this(parentVisualiser,
+                 _visualiserMetaVertex,
                  _visualiser,
                  _visualiserName,
                  _visualiserAsFrameworkElement,
@@ -91,15 +95,16 @@ namespace m0.UIWpf.Visualisers.Helper
                  _scopeQueries,
                  _scopeQueriesName,
                  baseEdgeVertex,
-                 _updateBaseEdgeCallSchema,
-                 parentVisualiser,
+                 _updateBaseEdgeCallSchema,                 
                  false
                  )
         {
 
         }
 
-        public AtomVisualiserHelper(IVertex visualiserMetaVertex, 
+        public AtomVisualiserHelper(
+            IVertex parentVisualiser,
+            IVertex visualiserMetaVertex, 
             IVisualiser _visualiser, 
             string _visualiserName, 
             FrameworkElement _visualiserAsFrameworkElement, 
@@ -107,8 +112,7 @@ namespace m0.UIWpf.Visualisers.Helper
             IList<string> _scopeQueries,
             string _scopeQueriesName,
             IVertex baseEdgeVertex,
-            UpdateBaseEdgeCallSchemeEnum _updateBaseEdgeCallSchema,
-            IVertex parentVisualiser,
+            UpdateBaseEdgeCallSchemeEnum _updateBaseEdgeCallSchema,            
             bool _visualiserAsBaseEdge)
         {
             visualiser = _visualiser;

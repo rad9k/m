@@ -18,7 +18,9 @@ namespace m0.UIWpf
     {
         public bool TriggerNewTransaction = false;
 
-        public VisualiserEditWrapper()        
+        IVertex parentVisualiser;
+
+        public VisualiserEditWrapper(IVertex _parentVisualiser)        
         {
             //this.VerticalContentAlignment = VerticalAlignment.Center;
             this.VerticalAlignment = VerticalAlignment.Center;

@@ -688,7 +688,7 @@ namespace m0.UIWpf.Visualisers
                     dataControl = ExecutableVisualiserFactory.CreateExecutableVisualiser(Vertex.GetAll(false, @"BaseEdge:\To:").FirstOrDefault(), meta);
                 else
                 {
-                    VisualiserEditWrapper w = new VisualiserEditWrapper();
+                    VisualiserEditWrapper w = new VisualiserEditWrapper(Vertex);
 
                     IEdge e;
 
