@@ -23,15 +23,14 @@ namespace m0.UIWpf.Visualisers
 {
     public class StringVisualiser : TextBox, IVisualiser
     {
-        public AtomVisualiserHelper VisualiserHelper { get; set; }
+        public AtomVisualiserHelper VisualiserHelper { get; set; }        
 
-        public List<IDisposable> SubVisualisers { get; set; }
-
-        public StringVisualiser(IVertex baseEdgeVertex)
+        public StringVisualiser(IVertex baseEdgeVertex, IVertex parentVisualiser)
         {
             this.AcceptsReturn = true;
 
-            new AtomVisualiserHelper(MinusZero.Instance.Root.Get(false, @"System\Meta\Visualiser\String"), 
+            new AtomVisualiserHelper(parentVisualiser,
+                MinusZero.Instance.Root.Get(false, @"System\Meta\Visualiser\String"), 
                 this, 
                 "StringVisualiser", 
                 this,

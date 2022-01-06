@@ -20,9 +20,7 @@ namespace m0.UIWpf.Visualisers
 {
     public class WrapVisualiser : WrapPanel, IVisualiser
     {
-        public AtomVisualiserHelper VisualiserHelper { get; set; }
-
-        public List<IDisposable> SubVisualisers { get; set; }
+        public AtomVisualiserHelper VisualiserHelper { get; set; }        
 
         public double Scale { get; set; } // do not want to expose those as PlatformClass.Vertex
 
@@ -38,11 +36,10 @@ namespace m0.UIWpf.Visualisers
         
             this.Background = (Brush)FindResource("0BackgroundBrush");
 
-            this.Orientation = Orientation.Horizontal;
+            this.Orientation = Orientation.Horizontal;            
 
-            SubVisualisers = new List<IDisposable>();
-
-            new AtomVisualiserHelper(MinusZero.Instance.Root.Get(false, @"System\Meta\Visualiser\Wrap"),
+            new AtomVisualiserHelper(parentVertex,
+                MinusZero.Instance.Root.Get(false, @"System\Meta\Visualiser\Wrap"),
                 this, 
                 "WrapVisualiser", 
                 this, 
@@ -50,8 +47,7 @@ namespace m0.UIWpf.Visualisers
                 new List<string> { @"BaseEdge:\To:" }, 
                 "Visualiser",
                 baseEdgeVertex,
-                UpdateBaseEdgeCallSchemeEnum.OmmitSecond,
-                parentVertex);
+                UpdateBaseEdgeCallSchemeEnum.OmmitSecond);
         }
 
         public void OnLoad(object sender, RoutedEventArgs e)

@@ -20,13 +20,12 @@ namespace m0.UIWpf.Visualisers
 {
     public class EnumVisualiser : ComboBox, IVisualiser
     {
-        public AtomVisualiserHelper VisualiserHelper { get; set; }
+        public AtomVisualiserHelper VisualiserHelper { get; set; }        
 
-        public List<IDisposable> SubVisualisers { get; set; }
-
-        public EnumVisualiser(IVertex baseEdgeVertex)
+        public EnumVisualiser(IVertex baseEdgeVertex, IVertex parentVisualiser)
         {
-            new AtomVisualiserHelper(MinusZero.Instance.Root.Get(false, @"System\Meta\Visualiser\Enum"),
+            new AtomVisualiserHelper(parentVisualiser,
+                MinusZero.Instance.Root.Get(false, @"System\Meta\Visualiser\Enum"),
                 this, 
                 "EnumVisualiser", 
                 this,

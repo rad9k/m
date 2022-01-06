@@ -276,9 +276,7 @@ namespace m0.UIWpf.Visualisers
 
     public class TreeVisualiser: TreeView, IListVisualiser, IHasSelectableEdges
     {
-        public AtomVisualiserHelper VisualiserHelper { get; set; }
-
-        public List<IDisposable> SubVisualisers { get; set; }
+        public AtomVisualiserHelper VisualiserHelper { get; set; }        
 
 
         protected bool TurnOffSelectedItemsUpdate = false;
@@ -296,7 +294,7 @@ namespace m0.UIWpf.Visualisers
 
         public void UpdateView() { }
 
-        public TreeVisualiser(IVertex baseEdgeVertex)
+        public TreeVisualiser(IVertex baseEdgeVertex, IVertex parentVisualiser)
         {
             MinusZero mz = MinusZero.Instance;
 
@@ -313,7 +311,8 @@ namespace m0.UIWpf.Visualisers
 
             if (mz != null && mz.IsInitialized)
             {
-                new ListVisualiserHelper(MinusZero.Instance.Root.Get(false, @"System\Meta\Visualiser\Tree"),
+                new ListVisualiserHelper(parentVisualiser,
+                    MinusZero.Instance.Root.Get(false, @"System\Meta\Visualiser\Tree"),
                     this,
                     "TreeVisualiser",
                     this,

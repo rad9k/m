@@ -26,9 +26,7 @@ namespace m0.UIWpf.Visualisers
 {
     public class ListVisualiser : StackPanel,  IListVisualiser
     {
-        public AtomVisualiserHelper VisualiserHelper { get; set; }
-
-        public List<IDisposable> SubVisualisers { get; set; }
+        public AtomVisualiserHelper VisualiserHelper { get; set; }        
 
         protected DataGrid ThisDataGrid;
 
@@ -44,9 +42,11 @@ namespace m0.UIWpf.Visualisers
 
         public virtual void UpdateView() { ResetView(); }
 
-        public ListVisualiser(IVertex baseEdgeVertex)
+        IVertex parentVisualiser;
+
+        public ListVisualiser(IVertex baseEdgeVertex, IVertex _parentVisualiser)
         {
-            SubVisualisers = new List<IDisposable>();
+            parentVisualiser = _parentVisualiser;
 
             ThisDataGrid = new DataGrid();
 
@@ -83,7 +83,8 @@ namespace m0.UIWpf.Visualisers
 
         protected virtual void PlatformClassInitialize(IVertex baseEdgeVertex)
         {
-            new ListVisualiserHelper(MinusZero.Instance.Root.Get(false, @"System\Meta\Visualiser\List"),
+            new ListVisualiserHelper(parentVisualiser,
+             MinusZero.Instance.Root.Get(false, @"System\Meta\Visualiser\List"),
              this, 
              "ListVisualiser", 
              this, 

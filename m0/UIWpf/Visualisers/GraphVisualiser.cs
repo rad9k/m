@@ -198,9 +198,7 @@ namespace m0.UIWpf.Visualisers
 
     public class GraphVisualiser: Canvas, IListVisualiser, IHasSelectableEdges
     {
-        public AtomVisualiserHelper VisualiserHelper { get; set; }
-
-        public List<IDisposable> SubVisualisers { get; set; }
+        public AtomVisualiserHelper VisualiserHelper { get; set; }        
 
         SimpleVisualiserWrapper Highlighted;
 
@@ -215,13 +213,14 @@ namespace m0.UIWpf.Visualisers
 
         public void UpdateView() { }
 
-        public GraphVisualiser(IVertex baseEdgeVertex)
+        public GraphVisualiser(IVertex baseEdgeVertex, IVertex parentVisualiser)
         {
             DisplayedVerticesUIElements = new Dictionary<IVertex, SimpleVisualiserWrapper>();
 
             this.Background = (Brush)FindResource("0BackgroundBrush");
 
-            new ListVisualiserHelper(MinusZero.Instance.Root.Get(false, @"System\Meta\Visualiser\Graph"),
+            new ListVisualiserHelper(parentVisualiser,
+              MinusZero.Instance.Root.Get(false, @"System\Meta\Visualiser\Graph"),
               this, 
               "GraphVisualiser", 
               this, 

@@ -20,9 +20,7 @@ namespace m0.UIWpf.Visualisers
 {
     public class BooleanVisualiser : CheckBox, IVisualiser
     {
-        public AtomVisualiserHelper VisualiserHelper { get; set; }
-
-        public List<IDisposable> SubVisualisers { get; set; }
+        public AtomVisualiserHelper VisualiserHelper { get; set; }    
 
         bool IsNull { get; set; }
 

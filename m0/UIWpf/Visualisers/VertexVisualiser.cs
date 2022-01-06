@@ -21,15 +21,49 @@ namespace m0.UIWpf.Visualisers
 {
     public class VertexVisualiser : Grid, IVisualiser
     {
-        public AtomVisualiserHelper VisualiserHelper { get; set; }
-
-        public List<IDisposable> SubVisualisers { get; set; }
+        public AtomVisualiserHelper VisualiserHelper { get; set; }        
 
         TextBlock TextBlock;
 
         Button Button;
 
         bool buttonStateIsNew;
+
+        public VertexVisualiser(IVertex baseEdgeVertex, IVertex parentVisualiser)
+        {
+            SetUpGrid();
+
+            MinusZero mz = MinusZero.Instance;
+
+            TextBlock = new TextBlock();
+
+            Grid.SetColumn(TextBlock, 0);
+
+            this.Children.Add(TextBlock);
+
+            ButtonSetUp();
+
+            new AtomVisualiserHelper(parentVisualiser,
+                MinusZero.Instance.Root.Get(false, @"System\Meta\Visualiser\Vertex"),
+                this,
+                "VertexVisualiser",
+                this,
+                false,
+                new List<string> { @"BaseEdge:\To:" },
+                "Visualiser",
+                baseEdgeVertex,
+                UpdateBaseEdgeCallSchemeEnum.OmmitSecond,
+                null);
+
+            TextBlock.PreviewMouseLeftButtonDown += dndPreviewMouseLeftButtonDown;
+            TextBlock.PreviewMouseMove += dndPreviewMouseMove;
+            TextBlock.Drop += dndDrop;
+            TextBlock.AllowDrop = true;
+
+            TextBlock.MouseEnter += dndMouseEnter;
+
+            TextBlock.Background = (Brush)FindResource("0LightGrayBrush");
+        }
 
         void ButtonSetNew()
         {
@@ -107,42 +141,7 @@ namespace m0.UIWpf.Visualisers
             ColumnDefinition cdd2 = new ColumnDefinition();
             cdd2.Width = new GridLength(12, GridUnitType.Pixel);
             this.ColumnDefinitions.Add(cdd2);
-        }
-
-        public VertexVisualiser(IVertex baseEdgeVertex)
-        {
-            SetUpGrid();
-
-            MinusZero mz = MinusZero.Instance;
-
-            TextBlock = new TextBlock();
-
-            Grid.SetColumn(TextBlock, 0);
-
-            this.Children.Add(TextBlock);
-
-            ButtonSetUp();
-
-            new AtomVisualiserHelper(MinusZero.Instance.Root.Get(false, @"System\Meta\Visualiser\Vertex"),
-                this,
-                "VertexVisualiser",
-                this,
-                false,
-                new List<string> { @"BaseEdge:\To:" },
-                "Visualiser",
-                baseEdgeVertex,
-                UpdateBaseEdgeCallSchemeEnum.OmmitSecond,
-                null);
-
-            TextBlock.PreviewMouseLeftButtonDown += dndPreviewMouseLeftButtonDown;
-            TextBlock.PreviewMouseMove += dndPreviewMouseMove;
-            TextBlock.Drop += dndDrop;
-            TextBlock.AllowDrop = true;
-
-            TextBlock.MouseEnter += dndMouseEnter;
-
-            TextBlock.Background = (Brush)FindResource("0LightGrayBrush");            
-        }
+        }        
 
         public void OnLoad(object sender, RoutedEventArgs e)
         {

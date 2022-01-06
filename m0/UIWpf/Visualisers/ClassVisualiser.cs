@@ -20,9 +20,7 @@ namespace m0.UIWpf.Visualisers
 {
     class ClassVisualiser : TextBlock, IVisualiser
     {
-        public AtomVisualiserHelper VisualiserHelper { get; set; }
-
-        public List<IDisposable> SubVisualisers { get; set; }
+        public AtomVisualiserHelper VisualiserHelper { get; set; }        
 
         List<IVertex> manuallyAddedVertexChangeListeners = new List<IVertex>();
 

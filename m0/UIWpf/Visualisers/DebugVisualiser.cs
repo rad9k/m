@@ -21,13 +21,12 @@ namespace m0.UIWpf.Visualisers
 {
     public class DebugVisualiser : StackPanel, IVisualiser
     {
-        public AtomVisualiserHelper VisualiserHelper { get; set; }
+        public AtomVisualiserHelper VisualiserHelper { get; set; }        
 
-        public List<IDisposable> SubVisualisers { get; set; }
-
-        public DebugVisualiser(IVertex baseEdgeVertex)
+        public DebugVisualiser(IVertex baseEdgeVertex, IVertex parentVisualiser)
         {            
-            new AtomVisualiserHelper(MinusZero.Instance.Root.Get(false, @"System\Meta\Visualiser\Debug"), 
+            new AtomVisualiserHelper(parentVisualiser,
+                MinusZero.Instance.Root.Get(false, @"System\Meta\Visualiser\Debug"), 
                 this, 
                 "DebugVisualiser", 
                 this, 

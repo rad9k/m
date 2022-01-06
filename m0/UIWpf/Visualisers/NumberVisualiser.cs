@@ -34,13 +34,10 @@ namespace m0.UIWpf.Visualisers
     }
 
     public class NumberVisualiser<T> : Grid, IVisualiser where T : new()    {
-
         protected virtual string visualiserName { get; set; }
         protected virtual IVertex visualiserMetaVertex { get; set; }
 
-        public AtomVisualiserHelper VisualiserHelper { get; set; }
-
-        public List<IDisposable> SubVisualisers { get; set; }
+        public AtomVisualiserHelper VisualiserHelper { get; set; }        
 
         bool isContinous = false;
         bool IsRanged = false;
@@ -48,10 +45,10 @@ namespace m0.UIWpf.Visualisers
         TextBox TextBox;
         MySlider Slider;
 
-
-        public NumberVisualiser(IVertex baseEdgeVertex)
+        public NumberVisualiser(IVertex baseEdgeVertex, IVertex parentVisualiser)
         {
-            new AtomVisualiserHelper(visualiserMetaVertex,
+            new AtomVisualiserHelper(parentVisualiser,
+                visualiserMetaVertex,
                 this,
                 visualiserName,
                 this,

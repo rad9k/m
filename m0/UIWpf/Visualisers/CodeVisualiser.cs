@@ -27,9 +27,7 @@ namespace m0.UIWpf.Visualisers
 {
     public class CodeVisualiser : TextEditor, IListVisualiser, IOwnScrolling
     {
-        public AtomVisualiserHelper VisualiserHelper { get; set; }
-
-        public List<IDisposable> SubVisualisers { get; set; }
+        public AtomVisualiserHelper VisualiserHelper { get; set; }        
 
         IList<string> TextMemory;
 
@@ -43,9 +41,10 @@ namespace m0.UIWpf.Visualisers
 
         public void UnselectAllSelectedEdges() { }
 
-        public CodeVisualiser(IVertex baseEdgeVertex)
+        public CodeVisualiser(IVertex baseEdgeVertex, IVertex parentVisualiser)
         {
-            new ListVisualiserHelper(MinusZero.Instance.Root.Get(false, @"System\Meta\Visualiser\Code"),
+            new ListVisualiserHelper(parentVisualiser,
+                MinusZero.Instance.Root.Get(false, @"System\Meta\Visualiser\Code"),
                 this,
                 "CodeVisualiser",
                 this,

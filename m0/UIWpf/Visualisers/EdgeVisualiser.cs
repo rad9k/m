@@ -20,15 +20,14 @@ namespace m0.UIWpf.Visualisers
 {
     public class EdgeVisualiser : TextBlock, IVisualiser
     {
-        public AtomVisualiserHelper VisualiserHelper { get; set; }
+        public AtomVisualiserHelper VisualiserHelper { get; set; }        
 
-        public List<IDisposable> SubVisualisers { get; set; }
-
-        public EdgeVisualiser(IVertex baseEdgeVertex)
+        public EdgeVisualiser(IVertex baseEdgeVertex, IVertex parentVisualiser)
         {
             this.Background = (Brush)FindResource("0LightGrayBrush");
 
-            new AtomVisualiserHelper(MinusZero.Instance.Root.Get(false, @"System\Meta\Visualiser\Edge"), 
+            new AtomVisualiserHelper(parentVisualiser,
+                MinusZero.Instance.Root.Get(false, @"System\Meta\Visualiser\Edge"), 
                 this, 
                 "EdgeVisualiser", 
                 this, 

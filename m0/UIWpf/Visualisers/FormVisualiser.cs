@@ -51,9 +51,7 @@ namespace m0.UIWpf.Visualisers
 
     public class FormVisualiser : ContentControl, IListVisualiser
     {
-        public AtomVisualiserHelper VisualiserHelper { get; set; }
-
-        public List<IDisposable> SubVisualisers { get; set; }
+        public AtomVisualiserHelper VisualiserHelper { get; set; }        
 
         bool DisplayBaseVertex = true; /////////////////////////////////////////
 
@@ -87,9 +85,10 @@ namespace m0.UIWpf.Visualisers
 
         public void UnselectAllSelectedEdges() { }
 
-        public FormVisualiser(IVertex baseEdgeVertex)
+        public FormVisualiser(IVertex baseEdgeVertex, IVertex parentVisualiser)
         {
-            new ListVisualiserHelper(MinusZero.Instance.Root.Get(false, @"System\Meta\Visualiser\Form"),
+            new ListVisualiserHelper(parentVisualiser,
+                MinusZero.Instance.Root.Get(false, @"System\Meta\Visualiser\Form"),
                 this, 
                 "FormVisualiser", 
                 this, 
