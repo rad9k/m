@@ -45,7 +45,8 @@ namespace m0.UIWpf.Visualisers.Helper
 
             IEdge visualiserVertexEdge = Visualisers[visualiser.Vertex].VisualiserVertexEdge;
 
-            visualiserVertexEdge.From.DeleteEdge(visualiserVertexEdge);
+            if(visualiserVertexEdge.From.DisposedState == DisposeStateEnum.Live)
+                visualiserVertexEdge.From.DeleteEdge(visualiserVertexEdge);
 
             Visualisers.Remove(visualiser.Vertex);
         }
