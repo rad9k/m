@@ -31,9 +31,7 @@ namespace m0.UIWpf.Visualisers
         static string[] _MetaTriggeringUpdateViewSettings = new string[] {"IsAllVisualisersEdit", "ShowHeader", "GridStyle", "AlternatingRows" };
         public override string[] MetaTriggeringUpdateView { get { return _MetaTriggeringUpdateViewSettings; } }
 
-        public override void UpdateView() { ResetView(); }
-
-        IVertex parentVisualiser;
+        public override void UpdateView() { ResetView(); }        
 
         public TableVisualiser(IVertex baseEdgeVertex, IVertex _parentVisualiser) : base(baseEdgeVertex, _parentVisualiser)
         {

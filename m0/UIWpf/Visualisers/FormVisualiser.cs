@@ -649,7 +649,7 @@ namespace m0.UIWpf.Visualisers
             {
                 IVertex baseEdgeVertex = Edge.CreateTempEdgeVertex(null, null, Vertex.Get(false, @"BaseEdge:\To:"));
 
-                TableVisualiser tv = new TableVisualiser(baseEdgeVertex, null);
+                TableVisualiser tv = new TableVisualiser(baseEdgeVertex, Vertex);
 
                 if (ExpertMode)
                     GraphUtil.SetVertexValue(tv.Vertex, MinusZero.Instance.Root.Get(false, @"System\Meta\Visualiser\Table\ExpertMode"), "True");
