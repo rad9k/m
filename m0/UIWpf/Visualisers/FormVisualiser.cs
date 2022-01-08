@@ -76,6 +76,7 @@ namespace m0.UIWpf.Visualisers
 
 
         static string[] _MetaTriggeringBaseEdgeUpdate = new string[] { "ExpertMode", "ColumnNumber", "MetaOnLeft", "SectionsAsTabs" };
+        //"ExpertMode", "ColumnNumber", "MetaOnLeft", "SectionsAsTabs" };
         public string[] MetaTriggeringUpdateBaseEdge { get { return _MetaTriggeringBaseEdgeUpdate; } }
 
         static string[] _MetaTriggeringUpdateViewSettings = new string[] { };
