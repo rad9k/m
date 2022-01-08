@@ -14,6 +14,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using m0.UIWpf.Visualisers.Method;
 using m0.UIWpf.Visualisers.Helper;
+using m0.Graph.ExecutionFlow;
 
 namespace m0.UIWpf.Visualisers
 {
@@ -94,16 +95,16 @@ namespace m0.UIWpf.Visualisers
                 "FormVisualiser", 
                 this, 
                 false, 
-                new List<string> { @""/*, @"BaseEdge:\To:"*/}, 
+                new List<string> { @""/*, @"BaseEdge:\To:"*/}, // currently the form does not need BaseEdge:\To:
                 "AtomVisualiserFull",
                 baseEdgeVertex,
                 UpdateBaseEdgeCallSchemeEnum.OmmitFirst);            
 
             SetVertexDefaultValues();
         }
-
+        
         public void OnLoad(object sender, RoutedEventArgs e)
-        {
+        {            
             // DO NOT WANT CONTEXTMENU HERE
         }
 
@@ -290,14 +291,12 @@ namespace m0.UIWpf.Visualisers
         {
             VisualiserHelper.ForceVertexChangeOff = true;
 
+            //ExecutionFlowHelper.
+
             VisualiserHelper.DisposeAllChildVisualisers();
 
             BaseVertexEdgeAdded_PreFill = false;
             BaseVertexEdgeAdded = false;
-
-
-            //  if (!isLoaded)
-            //    return;
 
             IVertex basTo = Vertex.Get(false, @"BaseEdge:\To:");            
 
@@ -636,8 +635,7 @@ namespace m0.UIWpf.Visualisers
                 TableVisualiser tv = new TableVisualiser(baseEdgeVertex, Vertex);
 
                 if (ExpertMode)
-                    GraphUtil.SetVertexValue(tv.Vertex, MinusZero.Instance.Root.Get(false, @"System\Meta\Visualiser\Table\ExpertMode"), "True");
-                
+                    GraphUtil.SetVertexValue(tv.Vertex, MinusZero.Instance.Root.Get(false, @"System\Meta\Visualiser\Table\ExpertMode"), "True");               
 
                 // need to remove and add to have "transaction"
                 GraphUtil.CreateOrReplaceEdge(tv.Vertex.Get(false, "ToShowEdgesMeta:"), r.Get(false, @"System\Meta\ZeroTypes\Edge\Meta"), meta);
@@ -646,11 +644,7 @@ namespace m0.UIWpf.Visualisers
 
                 tv.Vertex.AddEdge(MinusZero.Instance.Root.Get(false, @"System\Meta\Visualiser\Table\ToShowEdgesMeta"), v);
 
-                GraphUtil.DeleteEdgeByMeta(tv.Vertex, "ToShowEdgesMeta");
-
-                //GraphUtil.CreateOrReplaceEdge(tv.Vertex.Get(false, "ToShowEdgesMeta:"), r.Get(false, @"System\Meta\ZeroTypes\Edge\To"), e.To); // do not need
-
-                //GraphUtil.ReplaceEdge(tv.Vertex.Get(false, "BaseEdge:"), "To", Vertex.Get(false, @"BaseEdge:\To:"));
+                GraphUtil.DeleteEdgeByMeta(tv.Vertex, "ToShowEdgesMeta");                
 
                 dataControl = tv; 
             }
@@ -738,7 +732,7 @@ namespace m0.UIWpf.Visualisers
             {
                 place.Children.Add(metaControl);
 
-                place.Children.Add(dataControl);
+             //   place.Children.Add(dataControl);
             }
 
 
