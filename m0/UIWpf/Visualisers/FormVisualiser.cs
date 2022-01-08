@@ -75,9 +75,7 @@ namespace m0.UIWpf.Visualisers
         TabItem TabControlSelectedItem;
 
 
-        static string[] _MetaTriggeringBaseEdgeUpdate = new string[] { };
-        
-        //"ExpertMode", "ColumnNumber", "MetaOnLeft", "SectionsAsTabs" };
+        static string[] _MetaTriggeringBaseEdgeUpdate = new string[] { "ExpertMode", "ColumnNumber", "MetaOnLeft", "SectionsAsTabs" };
         public string[] MetaTriggeringUpdateBaseEdge { get { return _MetaTriggeringBaseEdgeUpdate; } }
 
         static string[] _MetaTriggeringUpdateViewSettings = new string[] { };
