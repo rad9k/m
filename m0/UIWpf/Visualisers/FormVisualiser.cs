@@ -280,35 +280,18 @@ namespace m0.UIWpf.Visualisers
         }
        
         public void Dispose()
-        {
-            if (VisualiserHelper.IsDisposed == false)                            
-                DispachAllChildVisualisers();
-
+        {         
             VisualiserHelper.Dispose();
-        }
-
-        protected void DispachAllChildVisualisers()
-        {
-            if(TabList!=null)
-            foreach(TabInfo i in TabList.Values)
-                foreach(ControlInfo ci in i.ControlInfos.Values)
-                {
-                    ((IDisposable)ci.DataControl).Dispose();
-                }
-        }
+        }        
 
         IVertex BaseVertexEdge = null;
-
-        bool handlingUpdateBaseEdge = false;
+        
 
         public void UpdateBaseEdge()
         {
-          //  if (handlingUpdateBaseEdge)
-           //     return;
+            VisualiserHelper.ForceVertexChangeOff = true;
 
-            handlingUpdateBaseEdge = true;
-
-            DispachAllChildVisualisers();            
+            VisualiserHelper.DisposeAllChildVisualisers();
 
             BaseVertexEdgeAdded_PreFill = false;
             BaseVertexEdgeAdded = false;
@@ -409,7 +392,7 @@ namespace m0.UIWpf.Visualisers
                 }
             }
 
-            handlingUpdateBaseEdge = false;
+            VisualiserHelper.ForceVertexChangeOff = false;
         }
 
         protected void CorrectWidth(TabInfo i)

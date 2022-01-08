@@ -24,6 +24,8 @@ namespace m0.UIWpf.Visualisers.Helper
 
     public class AtomVisualiserHelper
     {
+        public bool ForceVertexChangeOff = false;
+
         protected bool VisualiserAsBaseEdge = false;
 
         protected IVisualiser visualiser;
@@ -192,6 +194,9 @@ namespace m0.UIWpf.Visualisers.Helper
 
         protected virtual INoInEdgeInOutVertexVertex VertexChange(IExecution exe)
         {
+            if (ForceVertexChangeOff)
+                return exe.Stack;
+
             if (!firstVertexChangeExecuted && updateBaseEdgeCallSchema == UpdateBaseEdgeCallSchemeEnum.OmmitSecond)
             {
                 firstVertexChangeExecuted = true;
