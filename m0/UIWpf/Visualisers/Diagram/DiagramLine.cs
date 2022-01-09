@@ -67,24 +67,24 @@ namespace m0.UIWpf.Visualisers.Diagram
 
         protected virtual INoInEdgeInOutVertexVertex VertexChange(IExecution exe)
         {
-            if (IsVertexChangeOrEdgeAddedRemovedDisposedByMeta(exe.Stack, "IsDashed")
-                || IsVertexChangeOrEdgeAddedRemovedDisposedByMeta(exe.Stack, "LineWidth"))
+            if (IsVertexChangeOrEdgeAddedRemovedDisposedByMetaAndFrom(exe.Stack, Vertex, "IsDashed")
+                || IsVertexChangeOrEdgeAddedRemovedDisposedByMetaAndFrom(exe.Stack, Vertex, "LineWidth"))
                 UpdateLine();
 
             bool needToUpdateLineEnds = false;
 
-            if (IsVertexChangeOrEdgeAddedRemovedDisposedByMeta(exe.Stack, "StartAnchor")
-                || IsVertexChangeOrEdgeAddedRemovedDisposedByMeta(exe.Stack, "EndAnchor"))
+            if (IsVertexChangeOrEdgeAddedRemovedDisposedByMetaAndFrom(exe.Stack, Vertex, "StartAnchor")
+                || IsVertexChangeOrEdgeAddedRemovedDisposedByMetaAndFrom(exe.Stack, Vertex, "EndAnchor"))
                 needToUpdateLineEnds = true;
 
-            if (IsVertexChangeOrEdgeAddedRemovedDisposedByMeta(exe.Stack, "BackgroundColor")
-                || IsVertexChangeOrEdgeAddedRemovedDisposedByMeta(exe.Stack, "ForegroundColor"))
+            if (IsVertexChangeOrEdgeAddedRemovedDisposedByMetaAndFrom(exe.Stack, Vertex, "BackgroundColor")
+                || IsVertexChangeOrEdgeAddedRemovedDisposedByMetaAndFrom(exe.Stack, Vertex, "ForegroundColor"))
                 needToUpdateLineEnds = true;
 
-            if(IsVertexChangeOrEdgeAddedRemovedDisposedByMeta(exe.Stack, "Red") 
-                || IsVertexChangeOrEdgeAddedRemovedDisposedByMeta(exe.Stack, "Green")
-                || IsVertexChangeOrEdgeAddedRemovedDisposedByMeta(exe.Stack, "Blue")
-                || IsVertexChangeOrEdgeAddedRemovedDisposedByMeta(exe.Stack, "Opacity"))
+            if(IsVertexChangeOrEdgeAddedRemovedDisposedByMetaAndFrom(exe.Stack, Vertex, "Red") 
+                || IsVertexChangeOrEdgeAddedRemovedDisposedByMetaAndFrom(exe.Stack, Vertex, "Green")
+                || IsVertexChangeOrEdgeAddedRemovedDisposedByMetaAndFrom(exe.Stack, Vertex, "Blue")
+                || IsVertexChangeOrEdgeAddedRemovedDisposedByMetaAndFrom(exe.Stack, Vertex, "Opacity"))
                 needToUpdateLineEnds = true;
 
             if (needToUpdateLineEnds)

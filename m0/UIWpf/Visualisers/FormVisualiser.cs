@@ -733,8 +733,7 @@ namespace m0.UIWpf.Visualisers
             else
             {
                 place.Children.Add(metaControl);
-
-                if(dataControl!=null) //TEMP FOR TEST ONLY
+                
                 place.Children.Add(dataControl);
             }
 

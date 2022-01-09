@@ -123,10 +123,10 @@ namespace m0.UIWpf.Visualisers.Helper
             if (CustomVertexChangeEvent != null)
                 return CustomVertexChangeEvent(exe);            
 
-            if (IsVertexChangeOrEdgeAddedRemovedDisposedByMeta(exe.Stack, "ZoomVisualiserContent"))            
+            if (IsVertexChangeOrEdgeAddedRemovedDisposedByMetaAndFrom(exe.Stack, visualiser.Vertex, "ZoomVisualiserContent"))            
                 listVisualiser.ZoomVisualiserContentChange();
                 
-            if (IsVertexChangeOrEdgeAddedRemovedDisposedByMeta(exe.Stack, "SelectedEdges")
+            if (IsVertexChangeOrEdgeAddedRemovedDisposedByMetaAndFrom(exe.Stack, visualiser.Vertex, "SelectedEdges")
                 || IsEdgeAddedRemovedDiscardedFrom(exe.Stack, Vertex.Get(false, @"SelectedEdges:")))            
                 listVisualiser.SelectedVerticesUpdated();                
 
@@ -138,7 +138,7 @@ namespace m0.UIWpf.Visualisers.Helper
                 bool needToUpdateBaseEdge = false;
 
                 foreach (string meta in listVisualiser.MetaTriggeringUpdateBaseEdge)
-                    if (IsVertexChangeOrEdgeAddedRemovedDisposedByMeta(exe.Stack, meta))
+                    if (IsVertexChangeOrEdgeAddedRemovedDisposedByMetaAndFrom(exe.Stack, visualiser.Vertex, meta))
                         needToUpdateBaseEdge = true;
 
                 if(needToUpdateBaseEdge)
@@ -147,7 +147,7 @@ namespace m0.UIWpf.Visualisers.Helper
                 bool needToUpdateView = false;
 
                 foreach (string meta in listVisualiser.MetaTriggeringUpdateView)
-                    if (IsVertexChangeOrEdgeAddedRemovedDisposedByMeta(exe.Stack, meta))
+                    if (IsVertexChangeOrEdgeAddedRemovedDisposedByMetaAndFrom(exe.Stack, visualiser.Vertex, meta))
                         needToUpdateView = true;
 
                 if (needToUpdateView)

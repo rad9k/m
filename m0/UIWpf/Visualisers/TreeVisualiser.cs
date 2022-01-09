@@ -360,13 +360,13 @@ namespace m0.UIWpf.Visualisers
 
         protected INoInEdgeInOutVertexVertex CustomVertexChange(IExecution exe)
         {
-            if (IsVertexChangeOrEdgeAddedRemovedDisposedByMeta(exe.Stack, "ZoomVisualiserContent"))
+            if (IsVertexChangeOrEdgeAddedRemovedDisposedByMetaAndFrom(exe.Stack, Vertex, "ZoomVisualiserContent"))
             {
                 ZoomVisualiserContentChange();
                 return exe.Stack;
             }
 
-            if (IsVertexChangeOrEdgeAddedRemovedDisposedByMeta(exe.Stack, "ZoomVisualiserContent")
+            if (IsVertexChangeOrEdgeAddedRemovedDisposedByMetaAndFrom(exe.Stack, Vertex, "ZoomVisualiserContent")
                 || IsEdgeAddedRemovedDiscardedFrom(exe.Stack, Vertex.Get(false, @"SelectedEdges:")))
             {
                 SelectedVerticesUpdated();

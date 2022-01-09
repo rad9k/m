@@ -101,12 +101,12 @@ namespace m0.UIWpf.Visualisers.Diagram
             if(IsEdgeAddedTo(exe.Stack, baseEdgeTo) && CanAutomaticallyAddEdges)
                 Diagram.CheckAndUpdateDiagramLinesForItem(this);
 
-            if (IsVertexChangeOrEdgeAddedRemovedDisposedByMeta(exe.Stack, "BackgroundColor")
-                || IsVertexChangeOrEdgeAddedRemovedDisposedByMeta(exe.Stack, "ForegroundColor")
-                || IsVertexChangeOrEdgeAddedRemovedDisposedByMeta(exe.Stack, "Red")
-                || IsVertexChangeOrEdgeAddedRemovedDisposedByMeta(exe.Stack, "Green")
-                || IsVertexChangeOrEdgeAddedRemovedDisposedByMeta(exe.Stack, "Blue")
-                || IsVertexChangeOrEdgeAddedRemovedDisposedByMeta(exe.Stack, "Opacity"))
+            if (IsVertexChangeOrEdgeAddedRemovedDisposedByMetaAndFrom(exe.Stack, Vertex, "BackgroundColor")
+                || IsVertexChangeOrEdgeAddedRemovedDisposedByMetaAndFrom(exe.Stack, Vertex, "ForegroundColor")
+                || IsVertexChangeOrEdgeAddedRemovedDisposedByMetaAndFrom(exe.Stack, Vertex, "Red")
+                || IsVertexChangeOrEdgeAddedRemovedDisposedByMetaAndFrom(exe.Stack, Vertex, "Green")
+                || IsVertexChangeOrEdgeAddedRemovedDisposedByMetaAndFrom(exe.Stack, Vertex, "Blue")
+                || IsVertexChangeOrEdgeAddedRemovedDisposedByMetaAndFrom(exe.Stack, Vertex, "Opacity"))
                 VisualiserUpdate();
 
             if (IsEdgeAddedTo(exe.Stack, Vertex))

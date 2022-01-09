@@ -226,14 +226,20 @@ namespace m0.Graph.ExecutionFlow
                 return InstructionHelpers.SequentiallyExecuteInstructions(exe, exe.Stack, baseVertex, out dummy, false);
         }
 
-        public static bool IsVertexChangeOrEdgeAddedRemovedDisposedByMeta(IVertex stack, string meta)
+        public static bool IsVertexChangeOrEdgeAddedRemovedDisposedByMetaAndFrom(IVertex stack, IVertex from, string meta)
         {
             foreach(IEdge e in stack.GetAll(false, @"event:\ChangedVertex:"))
                 if (GraphUtil.ExistQueryIn(e.To, meta, null))
                     return true;
 
-            if (stack.Get(false, @"event:\Edge:\Meta:" + meta) != null)
-                return true;
+            IVertex sameMetaEdges = stack.GetAll(false, @"event:\Edge:{Meta:" + meta+"}");
+
+            foreach (IEdge e in sameMetaEdges)
+                if (GraphUtil.GetQueryOutFirst(e.To, "From", null) == from)
+                    return true;
+
+          //  if (stack.Get(false, @"event:\Edge:\Meta:" + meta) != null)
+            //    return true;
 
             return false;
         }
