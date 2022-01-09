@@ -16,6 +16,7 @@ using m0.UIWpf.Commands;
 using System.Windows;
 using System.Windows.Media.Imaging;
 using m0.UIWpf.Visualisers.Helper;
+using m0.User.Process.UX;
 
 namespace m0.UIWpf.Visualisers
 {
@@ -122,8 +123,18 @@ namespace m0.UIWpf.Visualisers
             {
                 FormVisualiser v = (FormVisualiser)WpfUtil.GetParentFormVisualiser(this);
 
-                if (v != null)                    
+                if (v != null)
+                {
+                    ////////////////////////////////////////
+                    Interaction.BeginInteractionWithGraph();
+                    ////////////////////////////////////////
+                    
                     Edge.CopyAndReplaceEdgeVertexByEdgeVertex(v.Vertex, "BaseEdge", Vertex.Get(false, "BaseEdge:"));
+
+                    ////////////////////////////////////////
+                    Interaction.EndInteractionWithGraph();
+                    ////////////////////////////////////////
+                }
                 else
                     //BaseCommands.Open(Vertex.Get(false, "BaseEdge:"), null); // want Form visualiser
                     BaseCommands.OpenFormVisualiser(Vertex.Get(false, "BaseEdge:"));
