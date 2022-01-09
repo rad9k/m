@@ -141,8 +141,8 @@ namespace m0.UIWpf.Visualisers.Helper
                     if (IsVertexChangeOrEdgeAddedRemovedDisposedByMeta(exe.Stack, meta))
                         needToUpdateBaseEdge = true;
 
-                //if(needToUpdateBaseEdge)
-                 //   listVisualiser.UpdateBaseEdge();
+                if(needToUpdateBaseEdge)
+                    listVisualiser.UpdateBaseEdge();
 
                 bool needToUpdateView = false;
 

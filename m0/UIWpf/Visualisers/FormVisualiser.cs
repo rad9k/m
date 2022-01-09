@@ -632,21 +632,23 @@ namespace m0.UIWpf.Visualisers
             {
                 IVertex baseEdgeVertex = Edge.CreateTempEdgeVertex(null, null, Vertex.Get(false, @"BaseEdge:\To:"));
 
-                TableVisualiser tv = new TableVisualiser(baseEdgeVertex, Vertex);
+                TableVisualiser tableVisualiser = new TableVisualiser(baseEdgeVertex, Vertex);
 
                 if (ExpertMode)
-                    GraphUtil.SetVertexValue(tv.Vertex, MinusZero.Instance.Root.Get(false, @"System\Meta\Visualiser\Table\ExpertMode"), "True");               
+                    GraphUtil.SetVertexValue(tableVisualiser.Vertex, MinusZero.Instance.Root.Get(false, @"System\Meta\Visualiser\Table\ExpertMode"), "True");               
 
                 // need to remove and add to have "transaction"
-                GraphUtil.CreateOrReplaceEdge(tv.Vertex.Get(false, "ToShowEdgesMeta:"), r.Get(false, @"System\Meta\ZeroTypes\Edge\Meta"), meta);
+                GraphUtil.CreateOrReplaceEdge(tableVisualiser.Vertex.Get(false, "ToShowEdgesMeta:"), r.Get(false, @"System\Meta\ZeroTypes\Edge\Meta"), meta);
 
-                IVertex v = tv.Vertex.Get(false, "ToShowEdgesMeta:"); /////////////// this ToShowEdgesMeta is a trash bin XXX
+               // IVertex v = tableVisualiser.Vertex.Get(false, "ToShowEdgesMeta:"); /////////////// this ToShowEdgesMeta is a trash bin XXX
 
-                tv.Vertex.AddEdge(MinusZero.Instance.Root.Get(false, @"System\Meta\Visualiser\Table\ToShowEdgesMeta"), v);
+                //tableVisualiser.Vertex.AddEdge(MinusZero.Instance.Root.Get(false, @"System\Meta\Visualiser\Table\ToShowEdgesMeta"), v);
 
-                GraphUtil.DeleteEdgeByMeta(tv.Vertex, "ToShowEdgesMeta");                
+                //GraphUtil.DeleteEdgeByMeta(tableVisualiser.Vertex, "ToShowEdgesMeta");                
 
-                dataControl = tv; 
+                // no need for this
+
+                dataControl = tableVisualiser; 
             }
             else
             {
@@ -732,7 +734,8 @@ namespace m0.UIWpf.Visualisers
             {
                 place.Children.Add(metaControl);
 
-             //   place.Children.Add(dataControl);
+                if(dataControl!=null) //TEMP FOR TEST ONLY
+                place.Children.Add(dataControl);
             }
 
 
