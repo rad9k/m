@@ -63,7 +63,7 @@ namespace m0.UIWpf.Visualisers
             Interaction.BeginInteractionWithGraph();
             ////////////////////////////////////////
 
-            if (bv == null)
+            if (bv == null || bv == MinusZero.Instance.Empty)
             {
                 IVertex from = Vertex.Get(false, @"BaseEdge:\From:");
                 IVertex meta = Vertex.Get(false, @"BaseEdge:\Meta:");
@@ -100,7 +100,7 @@ namespace m0.UIWpf.Visualisers
         {
             IVertex bv = Vertex.Get(false, @"BaseEdge:\To:");
 
-            if (bv != null && bv.Value != null /*&& ((String)bv.Value) != "$Empty"*/)
+            if (bv != null && bv.Value != null && bv != MinusZero.Instance.Empty /*&& ((String)bv.Value) != "$Empty"*/)
             {
                 CanProceedUIUpdateEvent = false;
 

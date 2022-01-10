@@ -289,7 +289,7 @@ namespace m0.UIWpf.Visualisers
 
                 IVertex bv = Vertex.Get(false, @"BaseEdge:\To:");
 
-                if (bv == null || bv.Value == null)
+                if (bv == null || bv.Value == null || bv == MinusZero.Instance.Empty)
                 {
                     IVertex r = MinusZero.Instance.Root;
 
@@ -334,7 +334,7 @@ namespace m0.UIWpf.Visualisers
 
                 IVertex bv = Vertex.Get(false, @"BaseEdge:\To:");
 
-                if (bv == null || bv.Value == null)
+                if (bv == null || bv.Value == null || bv == MinusZero.Instance.Empty)
                 {
                     IVertex r = MinusZero.Instance.Root;
 
