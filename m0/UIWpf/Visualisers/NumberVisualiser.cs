@@ -106,7 +106,6 @@ namespace m0.UIWpf.Visualisers
             }
         }
 
-
         protected T Parse(object val)
         {
             if (val is T)
@@ -377,7 +376,7 @@ namespace m0.UIWpf.Visualisers
                 return;
 
             if (bv == null) { }
-            else if (bv.Value == null || (bv.Value is String && (String)bv.Value == ""))
+            else if (bv.Value == null || (bv.Value is String && (String)bv.Value == "") || bv == MinusZero.Instance.Empty)
             {
                 T _minValue = GraphUtil.GetNumberValue<T>(bmv.Get(false, "MinValue:"));
                 T _maxValue = GraphUtil.GetNumberValue<T>(bmv.Get(false, "MaxValue:"));

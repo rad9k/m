@@ -86,7 +86,7 @@ namespace m0.UIWpf.Visualisers
         public void UpdateBaseEdge(){
             IVertex bv = Vertex.Get(false, @"BaseEdge:\To:");
 
-            if (bv != null && bv.Value != null)
+            if (bv != null && bv.Value != null && bv != MinusZero.Instance.Empty)
             {
                 CanProceedUIUpdateEvent = false;
 
