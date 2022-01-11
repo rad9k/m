@@ -122,15 +122,10 @@ namespace m0.Graph.ExecutionFlow
                         foreach(IEdge e in en.sourceVertex.GetAll(false, s))
                             en.vertexInScope.Add(e.To);                
             }
-        }
-
-        static Dictionary<IVertex, List<WatcherEntry>> watchedVertexDictionary;
+        }        
 
         public static Dictionary<IVertex, List<WatcherEntry>> GetWatchedVertexDictionary()
-        {
-            if (triggerListChanged != false && watchedVertexDictionary != null)
-                return watchedVertexDictionary;
-
+        {            
             CreateWatcherEntryList();
 
             FillVertexInScope();
@@ -141,7 +136,7 @@ namespace m0.Graph.ExecutionFlow
                 foreach(IVertex v in en.vertexInScope)
                     GeneralUtil.DictionaryAdd<IVertex, WatcherEntry>(dict, v, en);
 
-            triggerListChanged = false;
+            triggerListChanged = false;            
 
             return dict;
         }        

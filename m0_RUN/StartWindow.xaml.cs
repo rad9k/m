@@ -50,7 +50,7 @@ namespace m0
         {            
             m0_RUN.Main.Run();
 
-            //ExtraRun();
+           // ExtraRun();
 
             Close();
         }       
@@ -63,10 +63,11 @@ namespace m0
 
             List<string> scopelist = new List<string>();
 
-            scopelist.Add("");
-            scopelist.Add(@"\");
+            scopelist.Add("child");
+            
 
             IVertex trigger = GraphChangeTrigger.AddTrigger(v, scopelist, new List<GraphChangeFilterEnum> {GraphChangeFilterEnum.ValueChange,
+                     GraphChangeFilterEnum.NoBaseVertex,
                      GraphChangeFilterEnum.OutputEdgeAdded,
                      GraphChangeFilterEnum.OutputEdgeRemoved,
                      GraphChangeFilterEnum.OutputEdgeDisposed}).To;
@@ -79,9 +80,15 @@ namespace m0
 
             ExecutionFlowHelper.StartTransaction();
 
-            IVertex k = v.AddVertex(null, "kupa");
+            v.AddVertex(null, "test");
 
-            k.AddVertex(null, "duza").AddVertex(null, "bardzo");
+            ExecutionFlowHelper.CommitTransaction();
+
+            ExecutionFlowHelper.StartTransaction();
+
+            IVertex c = v.AddVertex(null, "child");
+
+            c.AddVertex(null, "new");
 
            // GraphChangeTrigger.AddEventTriggerAndListener(k, new List<string> { }, null, "t", t.yyy, "l");
 
