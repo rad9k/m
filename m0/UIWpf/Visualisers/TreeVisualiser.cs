@@ -132,7 +132,7 @@ namespace m0.UIWpf.Visualisers
         {
             TreeVisualiser.ClearAllItems_Reccurent(this);
 
-            IEnumerable<IEdge> filteredList = VisualiserUtil.FilterEdges(((IEdge)Tag).To, ParentVisualiser.Vertex);
+            IEnumerable<IEdge> filteredList = VisualiserUtil.FilterEdges(GetEdge().To, ParentVisualiser.Vertex);
 
             foreach (IEdge ee in filteredList)
                 Items.Add(ParentVisualiser.CreateTreeViewItem(ee, true, this));
@@ -149,7 +149,7 @@ namespace m0.UIWpf.Visualisers
         public void UpdateHeader(){
             StackPanel s = new StackPanel();
 
-            IEdge e = (IEdge)Tag;
+            IEdge e = GetEdge();
 
             if ((GeneralUtil.CompareStrings(e.Meta.Value, "$Empty") && HideMetaNameIfEmpty)||e.Meta.Value==null)
             {
@@ -265,7 +265,7 @@ namespace m0.UIWpf.Visualisers
         public void Dispose()
         {
             if (!IsDisposed)
-            {
+            {                
                 if(vertexChangeListenerEdge != null)
                     ExecutionFlowHelper.RemoveGraphChangeListener(vertexChangeListenerEdge);
 
@@ -618,9 +618,7 @@ namespace m0.UIWpf.Visualisers
         private void EdgeAdded(IEdge edge)
         {         
                 Items.Add(CreateTreeViewItem(edge, true, null));
-        }
-
-        private IVertex _Vertex;
+        }        
 
         public IVertex Vertex
         {
@@ -628,9 +626,22 @@ namespace m0.UIWpf.Visualisers
             set { VisualiserHelper.SetVertex(value); }
         }
 
+        void DisposeTreeViewItems(ItemCollection list)
+        {
+            foreach (TreeViewItem i in list)
+            {
+                DisposeTreeViewItems(i.Items);
+
+                if (i is IDisposable)
+                    ((IDisposable)i).Dispose();
+            }
+        }
+
         public void Dispose()
         {
             VisualiserHelper.Dispose();
+
+           DisposeTreeViewItems(this.Items);              
         }
 
         private IVertex vertexByLocationToReturn;

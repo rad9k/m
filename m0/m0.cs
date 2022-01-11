@@ -316,11 +316,11 @@ namespace m0
 
         void Finalize()
         {
-            VisualisersList.RemoveAllVisualisers();
-
-            CommitTransaction();
+            VisualisersList.RemoveAllVisualisers();            
 
             ExecutionFlowHelper.CommitTransaction();
+
+            CommitTransaction();
         }
 
         public void Refresh()
