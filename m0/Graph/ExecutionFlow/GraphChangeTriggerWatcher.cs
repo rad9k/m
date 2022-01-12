@@ -35,9 +35,17 @@ namespace m0.Graph.ExecutionFlow
 
         public static void RemoveGraphChangeTrigger(IEdge triggerEdge)
         {
-            triggerEdgeList.Remove(triggerEdge);
+            triggerEdge.To.Dispose();
+
+            //triggerEdgeList.Remove(triggerEdge);
 
             triggerListChanged = true;
+        }
+
+        public static void RemoveAllGraphChangeTriggers()
+        {
+            foreach (IEdge e in triggerEdgeList)
+                RemoveGraphChangeTrigger(e);
         }
 
         private static void CreateWatcherEntryList()

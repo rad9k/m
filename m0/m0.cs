@@ -316,7 +316,9 @@ namespace m0
 
         void Finalize()
         {
-            VisualisersList.RemoveAllVisualisers();            
+            VisualisersList.RemoveAllVisualisers();
+
+            GraphChangeTriggerWatcher.RemoveAllGraphChangeTriggers();
 
             ExecutionFlowHelper.CommitTransaction();
 
