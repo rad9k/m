@@ -551,7 +551,6 @@ namespace m0.UIWpf.Visualisers
                      GraphChangeFilterEnum.OutputEdgeDisposed},
                      "TreeViewItem",
                      i.VertexChange);
-                //i.vertexChangeListenerEdge = ExecutionFlowHelper.AddListener_DotNetDelegate(e.To, i.VertexChange);
 
             return i;
         }
@@ -641,7 +640,7 @@ namespace m0.UIWpf.Visualisers
         {
             VisualiserHelper.Dispose();
 
-           DisposeTreeViewItems(this.Items);              
+            DisposeTreeViewItems(this.Items);              
         }
 
         private IVertex vertexByLocationToReturn;
