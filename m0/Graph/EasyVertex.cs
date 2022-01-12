@@ -463,6 +463,11 @@ namespace m0.Graph
 
             ChangeRemoveAllHandlers();
 
+            if(GraphUtil.ExistQueryOut(this, null, "xxx"))
+            {
+                int x = 0;
+            }
+
             DeleteAllInEdges();
             DeleteAllMetaInEdges();
             DeleteAllEdges();
