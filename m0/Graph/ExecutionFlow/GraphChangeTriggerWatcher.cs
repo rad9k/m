@@ -142,7 +142,8 @@ namespace m0.Graph.ExecutionFlow
 
             foreach(WatcherEntry en in watcherEntryList)
                 foreach(IVertex v in en.vertexInScope)
-                    GeneralUtil.DictionaryAdd<IVertex, WatcherEntry>(dict, v, en);
+                    if(en.triggerVertex.DisposedState == DisposeStateEnum.Live)
+                        GeneralUtil.DictionaryAdd<IVertex, WatcherEntry>(dict, v, en);
 
             triggerListChanged = false;            
 
