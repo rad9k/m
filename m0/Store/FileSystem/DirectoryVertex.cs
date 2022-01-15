@@ -102,7 +102,7 @@ namespace m0.Store.FileSystem
 
                     if (fsi is FileInfo)
                     {
-                        IVertex FileVertex = new FileVertex(this.Store, fsi.FullName);
+                        IVertex FileVertex = new FileVertex(this.Store, fsi.FullName);                        
 
                         //base.AddEdge(FileMetaVertex, FileVertex);
                         AddVertexToFileSystemVertex(FileMetaVertex, FileVertex);

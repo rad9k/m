@@ -96,7 +96,7 @@ namespace m0.Store.FileSystem
         {         
             GraphUtil.RemoveAllEdges(FileSystemVertex);
 
-            AddVertexToFileSystemVertex(FileSystemStore.File_Filename, FI.Name);
+            AddVertexToFileSystemVertex(FileSystemStore.File_Filename, FI.Name);            
 
             string extension = FI.Extension;
 
@@ -117,7 +117,10 @@ namespace m0.Store.FileSystem
 
             if (FI.Extension == ".m0" || FI.Extension == ".M0")
             {
-                JsonStore = new JsonSerializationStore(Identifier.ToString(), MinusZero.Instance, new AccessLevelEnum[] { });
+                //JsonStore = new JsonSerializationStore(Identifier.ToString(), MinusZero.Instance, new AccessLevelEnum[] { });
+
+                JsonStore = (JsonSerializationStore)Store.StoreUniverse.GetStore("m0.Store.Json.JsonSerializationStore, m0, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null", Identifier.ToString());
+
                 AddEdge(FileSystemStore.Store, JsonStore.Root);
             }
         }        

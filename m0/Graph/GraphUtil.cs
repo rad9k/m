@@ -59,8 +59,8 @@ namespace m0.Graph
     {
         public enum DebugOperationEnum { Init, OutEdgeAdd, OutEdgeRemove, InEdgeAdd, InEdgeRemove, Dispose, Value}
 
-        static string DebugStore = "$-0$TEMP$STORE$";
-        static long[] DebugVertex = { 8100, 4454 };
+        static string DebugStore = "C:\\m0\\b.m0";
+        static long[] DebugVertex = { 11 };
         static DebugOperationEnum[] DebugOperation = {
             DebugOperationEnum.InEdgeRemove,
             DebugOperationEnum.Init,
