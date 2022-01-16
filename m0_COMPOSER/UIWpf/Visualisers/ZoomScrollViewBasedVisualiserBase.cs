@@ -20,11 +20,20 @@ using System.Windows.Controls.Primitives;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Shapes;
+using m0.UIWpf.Visualisers.Helper;
 
 namespace m0_COMPOSER.UIWpf.Visualisers
 {
-    public class ZoomScrollViewBasedVisualiserBase : UserControl, IPlatformClass, IOwnScrolling, IZoomScrollViewerHost, IDisposable
+    public class ZoomScrollViewBasedVisualiserBase : UserControl, IListVisualiser, IOwnScrolling, IZoomScrollViewerHost        
     {
+        public AtomVisualiserHelper VisualiserHelper { get; set; }
+
+        static string[] _MetaTriggeringBaseEdgeUpdate = new string[] { };
+        public virtual string[] MetaTriggeringUpdateBaseEdge { get { return _MetaTriggeringBaseEdgeUpdate; } }
+
+        static string[] _MetaTriggeringUpdateViewSettings = new string[] { "IsMetaRightAlign", "IsAllVisualisersEdit", "ShowMeta", "GridStyle", "FilterQuery" };
+        public virtual string[] MetaTriggeringUpdateView { get { return _MetaTriggeringUpdateViewSettings; } }
+
         // sequencer specyfic
 
         protected bool ShowVelocity;
@@ -181,7 +190,11 @@ namespace m0_COMPOSER.UIWpf.Visualisers
         protected bool MainItemsSyncedWithDown;
 
         //
-     
+
+        public virtual void UpdateView() {  }
+
+        //
+
         protected Dictionary<IVertex, IItem> GetItemsDictionary()
         {
             if (NeedToRebuildItemsDictionary)
