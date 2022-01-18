@@ -40,7 +40,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             ZoomScrollView = ZoomScrollView_Instance;
         }
 
-        public TriggerSetVisualiser()
+        public TriggerSetVisualiser(IVertex baseEdgeVertex, IVertex parentVisualiser)
         {
             InitializeComponent();
 
@@ -67,7 +67,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             //
 
-            ZoomScrollViewBasedVisualiserBase_Init();
+            ZoomScrollViewBasedVisualiserBase_Init(baseEdgeVertex, parentVisualiser);
         }
 
         protected override void UpdateVertexValues()

@@ -129,7 +129,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             postionAttribute = r.Get(false, @"System\Lib\Music\Song\Position");
         }
 
-        public SongVisualiser()
+        public SongVisualiser(IVertex baseEdgeVertex, IVertex parentVisualiser)
         {
             InitializeComponent();
 
@@ -148,7 +148,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             InitXAMLInstances();
 
-            ZoomScrollViewBasedVisualiserBase_Init();
+            ZoomScrollViewBasedVisualiserBase_Init(baseEdgeVertex, parentVisualiser);
 
             PositionMarkEnabled = true;
 

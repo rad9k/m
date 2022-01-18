@@ -193,6 +193,53 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
         public virtual void UpdateView() {  }
 
+        protected string VisualiserName = "NAME";
+
+        public void ZoomScrollViewBasedVisualiserBase_Init(IVertex baseEdgeVertex, IVertex parentVisualiser)
+        {
+            MinusZero mz = MinusZero.Instance;
+
+            this.Foreground = (Brush)FindResource("0ForegroundBrush");
+            this.Background = (Brush)FindResource("0BackgroundBrush");
+
+            this.BorderThickness = new Thickness(0);
+            this.Padding = new Thickness(0);
+            this.AllowDrop = true;
+
+
+            if (mz != null && mz.IsInitialized)
+            {
+                new ListVisualiserHelper(parentVisualiser,
+                    MinusZero.Instance.Root.Get(false, @"System\Meta\Visualiser\List"),
+                    this,
+                    "ListVisualiser",
+                    this,
+                    false,
+                    new List<string> { @"", @"BaseEdge:\To:" },
+                    "AtomVisualiserFull",
+                    baseEdgeVertex,
+                    UpdateBaseEdgeCallSchemeEnum.OmmitFirst);
+
+                //Vertex = mz.Root.Get(false, @"System\Session\Visualisers").AddVertex(null, "TreeVisualiser" + this.GetHashCode());
+
+                Vertex = mz.CreateTempVertex();
+                Vertex.Value = VisualiserName;//+ this.GetHashCode();
+
+                ClassVertex.AddIsClassAndAllAttributesAndAssociations(Vertex, VisualiserMetaVertex);
+
+                ClassVertex.AddIsClassAndAllAttributesAndAssociations(Vertex.Get(false, "BaseEdge:"), mz.Root.Get(false, @"System\Meta\ZeroTypes\Edge"));
+
+                UpdateVertexValues();
+
+                ZoomScrollView.SetHost(this);
+
+                InitSequenceVisualierState();
+
+                if (HasDown == false)
+                    ZoomScrollView.DownAreaVisible = false;
+            }
+        }
+
         //
 
         protected Dictionary<IVertex, IItem> GetItemsDictionary()
@@ -480,12 +527,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             Main.MouseUp += MouseUpHandler;
 
             Main.MouseMove += MouseMoveHandler;
-        }
-
-        private void MouseDoubleClick(object sender, MouseButtonEventArgs e)
-        {
-            throw new NotImplementedException();
-        }
+        }        
 
         protected void MouseMoveHandler(object sender, MouseEventArgs e)
         {
@@ -1186,7 +1228,6 @@ namespace m0_COMPOSER.UIWpf.Visualisers
         protected virtual void RazorDown(object sender, MouseButtonEventArgs e) { }
 
         protected virtual void GlueDown(object sender, MouseButtonEventArgs e) { }
-
 
         protected MainDownEnum GetItemContext(IItem item)
         {
@@ -2345,55 +2386,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             CurrentSnapToGrid = SnapToGridEnum.Bar1_16;
 
             CurrentSnapToGridValue = 1.0/16;
-        }
-
-        protected string VisualiserName = "NAME";        
-
-        public void ZoomScrollViewBasedVisualiserBase_Init()
-        {                        
-            MinusZero mz = MinusZero.Instance;
-            
-            this.Foreground = (Brush)FindResource("0ForegroundBrush");
-            this.Background = (Brush)FindResource("0BackgroundBrush");
-
-            this.BorderThickness = new Thickness(0);
-            this.Padding = new Thickness(0);
-            this.AllowDrop = true;
-
-
-            // THIS REDUCES PERFORMANCE ON LARGE TREES SO commented out
-            //VirtualizingStackPanel.SetIsVirtualizing(this, true); 
-            //VirtualizingStackPanel.SetVirtualizationMode(this, VirtualizationMode.Recycling);
-
-            if (mz != null && mz.IsInitialized)
-            {
-                //Vertex = mz.Root.Get(false, @"System\Session\Visualisers").AddVertex(null, "TreeVisualiser" + this.GetHashCode());
-
-                Vertex = mz.CreateTempVertex();
-                Vertex.Value = VisualiserName;//+ this.GetHashCode();
-
-                ClassVertex.AddIsClassAndAllAttributesAndAssociations(Vertex, VisualiserMetaVertex);
-
-                ClassVertex.AddIsClassAndAllAttributesAndAssociations(Vertex.Get(false, "BaseEdge:"), mz.Root.Get(false, @"System\Meta\ZeroTypes\Edge"));
-
-                UpdateVertexValues();
-
-                /*this.ContextMenu = new m0ContextMenu(this);
-
-                this.PreviewMouseLeftButtonDown += dndPreviewMouseLeftButtonDown;
-                this.PreviewMouseMove += dndPreviewMouseMove;
-                this.Drop += dndDrop;
-
-                this.MouseEnter += dndMouseEnter;*/
-
-                ZoomScrollView.SetHost(this);
-
-                InitSequenceVisualierState();
-
-                if (HasDown == false)
-                    ZoomScrollView.DownAreaVisible = false;
-            }
-        }
+        }        
 
         protected void UpdateBaseEdge()
         {
