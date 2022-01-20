@@ -21,6 +21,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Shapes;
 using m0.UIWpf.Visualisers.Helper;
+using m0.User.Process.UX;
 
 namespace m0_COMPOSER.UIWpf.Visualisers
 {
@@ -75,6 +76,8 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
         protected IVertex BaseEdgeToMetaVertex;
         protected IVertex VisualiserMetaVertex;
+
+        protected IList<string> listenerScopeQueries = new List<string> { @"", @"BaseEdge:\To:" };
 
         public IVertex VisualizedVertex;
         protected IVertex verticalSpanVertex;
@@ -193,6 +196,8 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
         public virtual void UpdateView() {  }
 
+        public void OnLoad(object sender, RoutedEventArgs e) {  }
+
         protected string VisualiserName = "NAME";
 
         public void ZoomScrollViewBasedVisualiserBase_Init(IVertex baseEdgeVertex, IVertex parentVisualiser)
@@ -210,25 +215,25 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             if (mz != null && mz.IsInitialized)
             {
                 new ListVisualiserHelper(parentVisualiser,
-                    MinusZero.Instance.Root.Get(false, @"System\Meta\Visualiser\List"),
+                    MinusZero.Instance.Root.Get(false, VisualiserMetaVertex),
                     this,
-                    "ListVisualiser",
+                    VisualiserName,
                     this,
                     false,
-                    new List<string> { @"", @"BaseEdge:\To:" },
-                    "AtomVisualiserFull",
+                    listenerScopeQueries,
+                    VisualiserName,
                     baseEdgeVertex,
                     UpdateBaseEdgeCallSchemeEnum.OmmitFirst);
 
-                //Vertex = mz.Root.Get(false, @"System\Session\Visualisers").AddVertex(null, "TreeVisualiser" + this.GetHashCode());
+                
 
-                Vertex = mz.CreateTempVertex();
+                /*ertex = mz.CreateTempVertex();
                 Vertex.Value = VisualiserName;//+ this.GetHashCode();
 
                 ClassVertex.AddIsClassAndAllAttributesAndAssociations(Vertex, VisualiserMetaVertex);
 
                 ClassVertex.AddIsClassAndAllAttributesAndAssociations(Vertex.Get(false, "BaseEdge:"), mz.Root.Get(false, @"System\Meta\ZeroTypes\Edge"));
-
+                */
                 UpdateVertexValues();
 
                 ZoomScrollView.SetHost(this);
@@ -2247,13 +2252,22 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             UnselectAllSelectedEdges();
         }
 
-        protected void UnselectAllSelectedEdges()
+        public void UnselectAllSelectedEdges()
         {
             IVertex sv = Vertex.Get(false, "SelectedEdges:");
 
             TurnOffSelectedEdgesFireChange();
 
-            GraphUtil.RemoveAllEdges(sv);
+            ////////////////////////////////////////
+            Interaction.BeginInteractionWithGraph();
+            ////////////////////////////////////////
+
+            GraphUtil.RemoveAllEdges_WhereEdgeIsEdge(sv);
+            //GraphUtil.RemoveAllEdges(sv);
+
+            ////////////////////////////////////////
+            Interaction.EndInteractionWithGraph();
+            ////////////////////////////////////////
 
             TurnOnSelectedEdgesFireChange();
         }
