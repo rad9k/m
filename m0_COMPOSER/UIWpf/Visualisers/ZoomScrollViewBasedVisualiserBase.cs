@@ -194,9 +194,19 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
         //
 
-        public virtual void UpdateView() {  }
+        public virtual void UpdateView() { }
+
+        public void ZoomVisualiserContentChange() { }
+
+        public void SelectedVerticesUpdated() { }        
 
         public void OnLoad(object sender, RoutedEventArgs e) {  }
+
+        public IVertex GetEdgeByLocation(Point point) { return null; }
+
+        public IVertex GetEdgeByVisualElement(FrameworkElement visualElement) { return null; }
+
+        public FrameworkElement GetVisualElementByEdge(IVertex edge) { return null; }
 
         protected string VisualiserName = "NAME";
 
@@ -2402,7 +2412,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             CurrentSnapToGridValue = 1.0/16;
         }        
 
-        protected void UpdateBaseEdge()
+        public void UpdateBaseEdge()
         {
             IVertex bas = Vertex.Get(false, @"BaseEdge:\To:");
 
@@ -2450,25 +2460,31 @@ namespace m0_COMPOSER.UIWpf.Visualisers
                 UpdateBaseEdge();
         }
 
-        protected IVertex _Vertex;
+        /* protected IVertex _Vertex;
+
+         public IVertex Vertex
+         {
+             get { return _Vertex; }
+             set
+             {
+                 if (_Vertex != null)
+                     PlatformClass.RemoveVertexChangeListeners(this.Vertex, new VertexChange(VertexChange));
+
+                 _Vertex = value;
+
+                 PlatformClass.RegisterVertexChangeListeners(this.Vertex, new VertexChange(VertexChange), new string[] { "BaseEdge", "SelectedEdges" });
+
+                 UpdateBaseEdge();
+             }
+         }*/
 
         public IVertex Vertex
         {
-            get { return _Vertex; }
-            set
-            {
-                if (_Vertex != null)
-                    PlatformClass.RemoveVertexChangeListeners(this.Vertex, new VertexChange(VertexChange));
-
-                _Vertex = value;
-
-                PlatformClass.RegisterVertexChangeListeners(this.Vertex, new VertexChange(VertexChange), new string[] { "BaseEdge", "SelectedEdges" });
-
-                UpdateBaseEdge();
-            }
+            get { return VisualiserHelper.Vertex; }
+            set { VisualiserHelper.SetVertex(value); }
         }
 
-        protected bool IsDisposed = false;
+        /*protected bool IsDisposed = false;
 
         public virtual void Dispose()
         {
@@ -2476,16 +2492,23 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             {
                 IsDisposed = true;
 
-                DispachAllChildVisualisers();
+                DispachSubControls();
 
                 PlatformClass.RemoveVertexChangeListeners(this.Vertex, new VertexChange(VertexChange));
 
                 if (Vertex is IDisposable)
                     ((IDisposable)Vertex).Dispose();
             }
+        }*/
+
+        public virtual void Dispose()
+        {
+            VisualiserHelper.Dispose();
+
+            DispachSubControls();
         }
 
-        protected void DispachAllChildVisualisers()
+        protected void DispachSubControls()
         {
             if (ZoomScrollView is IDisposable)
                 ((IDisposable)ZoomScrollView).Dispose();

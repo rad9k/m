@@ -753,6 +753,8 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             base.ChildControlsLoaded();
         }
 
+        protected bool IsDisposed = false;
+
         public override void Dispose()
         {
             if (IsDisposed == false)
@@ -761,7 +763,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
                 StopAutoBackup();
 
-                DispachAllChildVisualisers();
+                DispachSubControls();
 
                 PlatformClass.RemoveVertexChangeListeners(this.Vertex, new VertexChange(VertexChange));
 

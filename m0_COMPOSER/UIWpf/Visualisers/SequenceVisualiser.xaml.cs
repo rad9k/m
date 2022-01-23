@@ -708,13 +708,15 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             }
         }
 
+        protected bool IsDisposed = false;
+
         public override void Dispose()
         {
             if (IsDisposed == false)
             {
                 IsDisposed = true;
 
-                DispachAllChildVisualisers();
+                DispachSubControls();
 
                 ItemDictionary.RemoveAllByHost(this);
 

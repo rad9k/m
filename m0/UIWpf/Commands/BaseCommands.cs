@@ -84,7 +84,14 @@ namespace m0.UIWpf.Commands
             Interaction.BeginInteractionWithGraph();
             ////////////////////////////////////////
 
-            IVertex v = VertexOperations.AddInstance(Vertex, MetaVertex);
+            IVertex v;
+
+            IVertex targetVertex = GraphUtil.GetQueryOutFirst(MetaVertex, "$EdgeTarget", null);
+
+            if(targetVertex != null)            
+                v = VertexOperations.AddInstance(Vertex, targetVertex, MetaVertex);
+            else
+                v = VertexOperations.AddInstance(Vertex, MetaVertex);
 
             if (VertexOperations.GetChildEdges(MetaVertex).Count() > 0)
                 MinusZero.Instance.DefaultUserInteraction.Edit(v, null);
