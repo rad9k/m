@@ -208,7 +208,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
                 AddItem_Down(itemEdge, selectedVertexes, false, true);
         }
 
-        protected override IEdge AddItemEdge(AxisSegment itemSegment, double startPosition, double lengthPosition)
+        protected override IEdge AddItemVertex(AxisSegment itemSegment, double startPosition, double lengthPosition)
         {
             IVertex r = MinusZero.Instance.Root;
            

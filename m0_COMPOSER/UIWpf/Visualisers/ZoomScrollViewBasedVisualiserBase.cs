@@ -225,7 +225,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             if (mz != null && mz.IsInitialized)
             {
                 new ListVisualiserHelper(parentVisualiser,
-                    MinusZero.Instance.Root.Get(false, VisualiserMetaVertex),
+                    VisualiserMetaVertex,
                     this,
                     VisualiserName,
                     this,
@@ -785,9 +785,9 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             IEdge newItemEventEdge;
 
             if (IsCurrentPenItemCenter)
-                newItemEventEdge = AddItemEdge(NewItemSegment, GetSnappedPosition(MouseDownPoint.X), 0);
+                newItemEventEdge = AddItemVertex(NewItemSegment, GetSnappedPosition(MouseDownPoint.X), 0);
             else if (NewItemWidthOneSnapLimit)
-                newItemEventEdge = AddItemEdge(NewItemSegment, GetSnappedPosition(MouseDownPoint.X), GetSnapMinimalWidth());
+                newItemEventEdge = AddItemVertex(NewItemSegment, GetSnappedPosition(MouseDownPoint.X), GetSnapMinimalWidth());
             else
             {
                 if (NewItemShape.Width == 0)
@@ -796,7 +796,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
                     return;
                 }
 
-                newItemEventEdge = AddItemEdge(NewItemSegment, Canvas.GetLeft(NewItemShape), NewItemShape.Width);
+                newItemEventEdge = AddItemVertex(NewItemSegment, Canvas.GetLeft(NewItemShape), NewItemShape.Width);
             }
             
             AddItem(newItemEventEdge, null);
@@ -1372,7 +1372,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
         protected virtual void UpdateItem_VerticalPosition(IItem item) {}
 
-        protected virtual IEdge AddItemEdge(AxisSegment itemSegment, double startPosition, double lengthPosition) { return null; }
+        protected virtual IEdge AddItemVertex(AxisSegment itemSegment, double startPosition, double lengthPosition) { return null; }
 
         protected Point GetMainContentMousePosition(MouseButtonEventArgs e)
         {

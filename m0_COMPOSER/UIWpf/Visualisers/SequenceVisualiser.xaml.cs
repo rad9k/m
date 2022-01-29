@@ -227,7 +227,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
                 AddItem_Down(itemEdge, selectedVertexes, false, true);
         }
 
-        protected override IEdge AddItemEdge(AxisSegment itemSegment, double startPosition, double lengthPosition)
+        protected override IEdge AddItemVertex(AxisSegment itemSegment, double startPosition, double lengthPosition)
         {
             IVertex r = MinusZero.Instance.Root;
 
@@ -502,7 +502,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             return WhatIsInEdgesEnum.Mix;
         }
 
-        protected IEnumerable<IEdge> AddCC(IEnumerable<IEdge> edgesIn, int minPosition, int maxPosition, bool onlyCopy)
+        protected IEnumerable<IEdge> GetCCEdges(IEnumerable<IEdge> edgesIn, int minPosition, int maxPosition, bool onlyCopy)
         {
             IVertex clipboardMeta;
 
@@ -572,7 +572,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
                 return;
 
             if (whatIsClipboard == WhatIsInEdgesEnum.OnlyNotes)
-                edges = AddCC(edges, minPosition, maxPosition, onlyCopy);
+                edges = GetCCEdges(edges, minPosition, maxPosition, onlyCopy);
 
             maxPosition = 0;
 

@@ -951,7 +951,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             return realTime * minuteWidth;
         }
 
-        protected override IEdge AddItemEdge(AxisSegment itemSegment, double startPosition_Screen, double lengthPosition_Screen)
+        protected override IEdge AddItemVertex(AxisSegment itemSegment, double startPosition_Screen, double lengthPosition_Screen)
         {
             IVertex trackVertex = itemSegment.BaseVertex;
 
