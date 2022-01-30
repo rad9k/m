@@ -236,7 +236,15 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
         protected override void RemoveItem(IEdge itemEdge)
         {
+            IItem item = ItemsDictinaryHolder[itemEdge.To];
 
+            if(item != null)
+                ItemsRemoveAndRemoveAllEdges(item);
+
+            IItem item_Down = ItemsDictinaryHolder_Down[itemEdge.To];
+
+            if (item_Down != null)
+                ItemsRemoveAndRemoveAllEdges_Down(item);            
         }
 
         protected override IEdge AddItemVertex(AxisSegment itemSegment, double startPosition, double lengthPosition)
@@ -247,9 +255,9 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             IVertex Event = r.Get(false, @"System\Lib\Music\Sequence\Event");
             IVertex noteEvent = r.Get(false, @"System\Lib\Music\NoteEvent");
 
-            IEdge tempNoteEventEdge = VisualizedVertex.AddVertexAndReturnEdge(null, null);
+            IEdge noteEventEdge = VisualizedVertex.AddVertexAndReturnEdge(Event, null);            
 
-            IVertex noteEventVertex = tempNoteEventEdge.To;
+            IVertex noteEventVertex = noteEventEdge.To;
 
             noteEventVertex.AddEdge(MinusZero.Instance.Is, noteEvent);
 
@@ -258,12 +266,9 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             noteEventVertex.AddVertex(noteEvent.Get(false, @"Attribute:Octave"), itemSegment.BaseVertex.Get(false, "Octave:").Value);
             noteEventVertex.AddVertex(noteEvent.Get(false, @"Attribute:Note"), itemSegment.BaseVertex.Get(false, "Note:").Value);
             noteEventVertex.AddVertex(noteEvent.Get(false, @"Attribute:Velocity"), DefaultVelocity);
+                       
 
-            IEdge finalEdge = VisualizedVertex.AddEdge(Event, noteEventVertex);
-
-            VisualizedVertex.DeleteEdge(tempNoteEventEdge);
-
-            return finalEdge;
+            return noteEventEdge;
         }
 
         protected override void DrawItems()

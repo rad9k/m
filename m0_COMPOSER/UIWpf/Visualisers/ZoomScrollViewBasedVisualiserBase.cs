@@ -2441,9 +2441,13 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             }
         }
 
+        bool needToCallDictionaryRebuild = false;
+
         protected virtual INoInEdgeInOutVertexVertex CheckBaseEdgeChange(IExecution exe)        
         {
             IVertex baseEdgeTo = VisualiserHelper.Vertex.Get(false, @"BaseEdge:\To:");
+
+            needToCallDictionaryRebuild = true;
 
             ExecutionFlowHelper.RunAddRemoveDisposeHandlers(exe.Stack, new List<EdgeAddRemoveDisposeHandlers>()
             { new EdgeAddRemoveDisposeHandlers(
@@ -2458,6 +2462,14 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
         private void EdgeRemoved(IEdge edge)
         {
+            if (needToCallDictionaryRebuild)
+            {
+                RebuildItemsDictionary();
+                RebuildItemsDictionary_Down();
+
+                needToCallDictionaryRebuild = false;
+            }
+
             RemoveItem(edge);
         }
 
