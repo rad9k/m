@@ -276,7 +276,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             else
                 newStep = ScreenPositionToMusicTime(item.HorizontalCenter, true);
 
-            VertexChangeOff = true;
+            //VertexChangeOff = true;
 
             if (oldStep != newStep)
             {            
@@ -294,7 +294,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             DoCleanUpAndVisualiserDraw();
 
-            VertexChangeOff = false;
+            //VertexChangeOff = false;
         }
 
         protected override int ScreenPositionToMusicTime(double position, bool performSnapCorrection)

@@ -109,7 +109,7 @@ namespace m0.UIWpf.Visualisers.Helper
 
         bool firstVertexChangeExecuted = false;
 
-        protected override INoInEdgeInOutVertexVertex VertexChange(IExecution exe)
+        public override INoInEdgeInOutVertexVertex VertexChange(IExecution exe)
         {
             if (ForceVertexChangeOff)
                 return exe.Stack;

@@ -1,6 +1,7 @@
 ﻿using m0;
 using m0.Foundation;
 using m0.Graph;
+using m0.Graph.ExecutionFlow;
 using m0.UIWpf;
 using m0.UIWpf.Controls;
 using m0.UIWpf.Visualisers;
@@ -24,7 +25,13 @@ namespace m0_COMPOSER.UIWpf.Visualisers
     /// Interaction logic for SequenceVisualiser.xaml
     /// </summary>
     public partial class SequenceVisualiser : ZoomScrollViewBasedVisualiserBase
-    {        
+    {
+        static string[] _MetaTriggeringUpdateVertex = new string[] { "ShowArrowLines:", "ShowSnapLines:", "ShowLabel:", "ShowVelocity:", "DefaultVelocity:", "SnapToGrid" };
+        public override string[] MetaTriggeringUpdateVertex { get { return _MetaTriggeringUpdateVertex; } }
+
+        static string[] _MetaTriggeringUpdateView = new string[] { };
+        public override string[] MetaTriggeringUpdateView { get { return _MetaTriggeringUpdateView; } }
+
         public void InitXAMLInstances()
         {
             PenButton = PenButton_Instance;
@@ -68,6 +75,36 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             //
 
             ZoomScrollViewBasedVisualiserBase_Init(baseEdgeVertex, parentVisualiser);
+        }
+
+        protected override INoInEdgeInOutVertexVertex CheckBaseEdgeChange(IExecution exe)
+        {
+            IVertex baseEdgeTo = VisualiserHelper.Vertex.Get(false, @"BaseEdge:\To:");
+
+            ExecutionFlowHelper.RunAddRemoveDisposeHandlers(exe.Stack, new List<EdgeAddRemoveDisposeHandlers>()
+            { new EdgeAddRemoveDisposeHandlers(
+                baseEdgeTo,
+                EdgeAdded,
+                EdgeRemoved,
+                EdgeDisposed)
+            });
+
+            return exe.Stack;
+        }
+
+        private void EdgeRemoved(IEdge edge)
+        {
+            
+        }
+
+        private void EdgeAdded(IEdge edge)
+        {
+            
+        }
+
+        private void EdgeDisposed(IEdge edge)
+        {
+            
         }
 
         protected override void UpdateVertexValues()

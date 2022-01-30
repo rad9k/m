@@ -25,8 +25,8 @@ namespace m0.UIWpf.Visualisers
     public class TableVisualiser : ListVisualiser
     {
 
-        static string[] _MetaTriggeringUpdateBaseEdge = new string[] { "ExpertMode" };
-        public override string[] MetaTriggeringUpdateVertex { get { return _MetaTriggeringUpdateBaseEdge; } }
+        static string[] _MetaTriggeringUpdateVertex = new string[] { "ExpertMode" };
+        public override string[] MetaTriggeringUpdateVertex { get { return _MetaTriggeringUpdateVertex; } }
 
         static string[] _MetaTriggeringUpdateView = new string[] {"IsAllVisualisersEdit", "ShowHeader", "GridStyle", "AlternatingRows" };
         public override string[] MetaTriggeringUpdateView { get { return _MetaTriggeringUpdateView; } }

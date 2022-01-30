@@ -29,6 +29,12 @@ namespace m0_COMPOSER.UIWpf.Visualisers
     /// </summary>
     public partial class SongVisualiser : ZoomScrollViewBasedVisualiserBase
     {
+        static string[] _MetaTriggeringUpdateVertex = new string[] { "ShowArrowLines:", "ShowSnapLines:", "ShowLabel:", "ShowVelocity:", "DefaultVelocity:", "SnapToGrid" };
+        public override string[] MetaTriggeringUpdateVertex { get { return _MetaTriggeringUpdateVertex; } }
+
+        static string[] _MetaTriggeringUpdateView = new string[] { };
+        public override string[] MetaTriggeringUpdateView { get { return _MetaTriggeringUpdateView; } }
+
         public int AutoBackupMinutes = 1;
         DispatcherTimer AutoBackupTimer;
 
@@ -676,8 +682,8 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
         protected override void VertexChange(object sender, VertexChangeEventArgs e)
         {            
-            if (VertexChangeOff)
-                return;
+           // if (VertexChangeOff)
+           //     return;
 
             if ((sender == Vertex.Get(false, "ShowToolbarNames:")) && (e.Type == VertexChangeType.ValueChanged))
                 UpdateVertex();

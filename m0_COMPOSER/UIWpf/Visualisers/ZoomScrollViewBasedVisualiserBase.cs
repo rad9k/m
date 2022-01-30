@@ -32,7 +32,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
         static string[] _MetaTriggeringUpdateVertex = new string[] { };
         public virtual string[] MetaTriggeringUpdateVertex { get { return _MetaTriggeringUpdateVertex; } }
 
-        static string[] _MetaTriggeringUpdateView = new string[] { "IsMetaRightAlign", "IsAllVisualisersEdit", "ShowMeta", "GridStyle", "FilterQuery" };
+        static string[] _MetaTriggeringUpdateView = new string[] {  };
         public virtual string[] MetaTriggeringUpdateView { get { return _MetaTriggeringUpdateView; } }
 
         // sequencer specyfic
@@ -2434,12 +2434,12 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
         protected virtual INoInEdgeInOutVertexVertex CustomVertexChange(IExecution exe)
         {
-
+            ((ListVisualiserHelper)VisualiserHelper).VertexChange(exe);
 
             return CheckBaseEdgeChange(exe);
         }
 
-        protected virtual void VertexChange(object sender, VertexChangeEventArgs e)
+        /*protected virtual void VertexChange(object sender, VertexChangeEventArgs e)
         {
             // if (VertexChangeOff)
             //    return;
@@ -2473,7 +2473,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             if (sender == Vertex.Get(false, @"BaseEdge:\To:") && (e.Type == VertexChangeType.EdgeAdded || e.Type == VertexChangeType.EdgeRemoved))
                 UpdateVertex();
-        }
+        }*/
 
         /* protected IVertex _Vertex;
 
