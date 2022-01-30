@@ -287,7 +287,7 @@ namespace m0.UIWpf.Visualisers
         IVertex BaseVertexEdge = null;
         
 
-        public void UpdateBaseEdge()
+        public void UpdateVertex()
         {
             VisualiserHelper.ForceVertexChangeOff = true;
 

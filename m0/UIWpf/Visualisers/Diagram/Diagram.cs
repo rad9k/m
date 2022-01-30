@@ -93,7 +93,7 @@ namespace m0.UIWpf.Visualisers.Diagram
 
         public virtual void UpdateView() { }
 
-        public virtual void UpdateBaseEdge() { PaintDiagram(); }
+        public virtual void UpdateVertex() { PaintDiagram(); }
 
         public Diagram(IVertex baseEdgeVertex, IVertex parentVisualiser)
         {

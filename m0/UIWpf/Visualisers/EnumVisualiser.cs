@@ -89,7 +89,7 @@ namespace m0.UIWpf.Visualisers
             base.OnSelectionChanged(_e);
         }
 
-        public void UpdateBaseEdge()
+        public void UpdateVertex()
         {
             IVertex bev = Vertex.Get(false, "BaseEdge:");
 

@@ -169,7 +169,7 @@ namespace m0.UIWpf.Visualisers
 
         public void ZoomVisualiserContentChange() { }
 
-        public void UpdateBaseEdge()
+        public void UpdateVertex()
         {
             IVertex bv = Vertex.Get(false, @"BaseEdge:\To:");
 
@@ -267,7 +267,7 @@ namespace m0.UIWpf.Visualisers
         {
             Dnd.DoDropForVertexVisualiser(this, Vertex.Get(false, @"BaseEdge:"), e);
 
-            UpdateBaseEdge();
+            UpdateVertex();
         }
 
         private void dndMouseEnter(object sender, MouseEventArgs e)

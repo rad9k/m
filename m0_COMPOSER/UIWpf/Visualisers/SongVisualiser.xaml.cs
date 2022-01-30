@@ -680,7 +680,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
                 return;
 
             if ((sender == Vertex.Get(false, "ShowToolbarNames:")) && (e.Type == VertexChangeType.ValueChanged))
-                UpdateBaseEdge();
+                UpdateVertex();
 
             base.VertexChange(sender, e);
         }

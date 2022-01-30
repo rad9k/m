@@ -200,7 +200,7 @@ namespace m0.UIWpf.Visualisers
             Vertex.Get(false, "TextMemoryMax:").Value = 0;
         }
 
-        public void UpdateBaseEdge()
+        public void UpdateVertex()
         {
             IVertex bv = Vertex.Get(false, @"BaseEdge:\To:");
 
@@ -241,7 +241,7 @@ namespace m0.UIWpf.Visualisers
                 }                
             }            
 
-            UpdateBaseEdge();
+            UpdateVertex();
 
             return exe.Stack;
         }

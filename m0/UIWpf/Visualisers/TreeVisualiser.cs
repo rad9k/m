@@ -333,7 +333,7 @@ namespace m0.UIWpf.Visualisers
             VisualiserHelper.AddContextMenu();
         }
 
-        public void UpdateBaseEdge()
+        public void UpdateVertex()
         {
             ClearAllItems();
 
@@ -390,7 +390,7 @@ namespace m0.UIWpf.Visualisers
 
             if (IsEdgeDisposedFrom(exe.Stack, baseEdgeTo))
             {
-                UpdateBaseEdge();
+                UpdateVertex();
                 return exe.Stack;
             }
            

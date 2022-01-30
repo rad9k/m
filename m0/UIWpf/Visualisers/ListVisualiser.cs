@@ -289,7 +289,7 @@ namespace m0.UIWpf.Visualisers
 
         protected virtual void AddFooter() { }       
 
-        public virtual void UpdateBaseEdge(){
+        public virtual void UpdateVertex(){
             IVertex _bas = Vertex.Get(false, @"BaseEdge:\To:");
 
             IEnumerable ItemsSourceValue = null;

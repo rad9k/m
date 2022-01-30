@@ -150,7 +150,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
         protected bool NeedToRebuildItemsDictionary = true;
 
-        protected bool VertexChangeOff = false;
+        //protected bool VertexChangeOff = false;
 
         protected FrameworkElement MuseOverItem_Element;
 
@@ -235,7 +235,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
                     baseEdgeVertex,
                     UpdateBaseEdgeCallSchemeEnum.OmmitFirst);
 
-                
+                ((ListVisualiserHelper)VisualiserHelper).CustomVertexChangeEvent += CustomVertexChange;
 
                 /*ertex = mz.CreateTempVertex();
                 Vertex.Value = VisualiserName;//+ this.GetHashCode();
@@ -780,7 +780,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
         {
             PerformPenUp_part1();
 
-            VertexChangeOff = true;
+            //VertexChangeOff = true;
 
             IEdge newItemEventEdge;
 
@@ -792,7 +792,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             {
                 if (NewItemShape.Width == 0)
                 {
-                    VertexChangeOff = false;
+                    //VertexChangeOff = false;
                     return;
                 }
 
@@ -805,7 +805,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             PerformPenUp_part2();
 
-            VertexChangeOff = false;
+            //VertexChangeOff = false;
         }
 
         protected void EraserDown(object sender, MouseButtonEventArgs e)
@@ -818,7 +818,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             {
                 IItem item = (IItem)element;
 
-                VertexChangeOff = true;
+                //VertexChangeOff = true;
 
                 if (MainItemsSyncedWithDown)
                 {
@@ -835,7 +835,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
                 ItemsRemoveAndRemoveAllEdges(item);
 
-                VertexChangeOff = false;
+                //VertexChangeOff = false;
             }
         }
 
@@ -1731,7 +1731,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             double mouseY = mouseDownPoint.Y;
 
-            VertexChangeOff = true;
+            //VertexChangeOff = true;
 
             bool isUpdate = false;
 
@@ -1745,7 +1745,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             if (newItemEventEdge != null)
                 AddItem_Down(newItemEventEdge, null, isUpdate, isNoteEvent);
 
-            VertexChangeOff = false;
+            //VertexChangeOff = false;
         }
 
         protected List<IItem> GetDownItemFromNumberTriggerTimeDictionary(int number, int triggerTime)
@@ -1981,11 +1981,11 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
                 IEdge eventEdge = item.BaseEdge;
 
-                VertexChangeOff = true;
+                //VertexChangeOff = true;
 
                 ItemsRemoveAndRemoveAllEdges_Down(item);
 
-                VertexChangeOff = false;
+                //VertexChangeOff = false;
             }
         }
 
@@ -2156,7 +2156,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
         {
             IVertex selectedEdges = Vertex.GetAll(false, @"SelectedEdges:\");
 
-            VertexChangeOff = true;
+            //VertexChangeOff = true;
 
             foreach (IEdge e in selectedEdges)
             {
@@ -2176,7 +2176,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
                 }
             }
 
-            VertexChangeOff = false;
+            //VertexChangeOff = false;
         }
 
         protected void ArrowMove_ArrowUp_Down(object sender, MouseEventArgs e)
@@ -2412,7 +2412,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             CurrentSnapToGridValue = 1.0/16;
         }        
 
-        public void UpdateBaseEdge()
+        public void UpdateVertex()
         {
             IVertex bas = Vertex.Get(false, @"BaseEdge:\To:");
 
@@ -2427,22 +2427,34 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             }
         }
 
+        protected virtual INoInEdgeInOutVertexVertex CheckBaseEdgeChange(IExecution exe)
+        {
+            return null;
+        }
+
+        protected virtual INoInEdgeInOutVertexVertex CustomVertexChange(IExecution exe)
+        {
+
+
+            return CheckBaseEdgeChange(exe);
+        }
+
         protected virtual void VertexChange(object sender, VertexChangeEventArgs e)
         {
-            if (VertexChangeOff)
-                return;
+           // if (VertexChangeOff)
+            //    return;
 
             if ((sender == Vertex.Get(false, "ShowArrowLines:")) && (e.Type == VertexChangeType.ValueChanged))
-                UpdateBaseEdge();
+                UpdateVertex();
 
             if ((sender == Vertex.Get(false, "ShowSnapLines:")) && (e.Type == VertexChangeType.ValueChanged))
-                UpdateBaseEdge();
+                UpdateVertex();
 
             if ((sender == Vertex.Get(false, "ShowLabel:")) && (e.Type == VertexChangeType.ValueChanged))
-                UpdateBaseEdge();
+                UpdateVertex();
 
             if ((sender == Vertex.Get(false, "ShowVelocity:")) && (e.Type == VertexChangeType.ValueChanged))
-                UpdateBaseEdge();
+                UpdateVertex();
 
             if ((sender == Vertex.Get(false, "DefaultVelocity:")) && (e.Type == VertexChangeType.ValueChanged))
                 UpdateVertexValues();
@@ -2451,13 +2463,13 @@ namespace m0_COMPOSER.UIWpf.Visualisers
                 UpdateVertexValues();
 
             if ((sender == Vertex) && (e.Type == VertexChangeType.EdgeAdded) && (GeneralUtil.CompareStrings(e.Edge.Meta.Value, "BaseEdge")))
-                UpdateBaseEdge();
+                UpdateVertex();
 
             if ((sender == Vertex.Get(false, "BaseEdge:")) && (e.Type == VertexChangeType.EdgeAdded) && (GeneralUtil.CompareStrings(e.Edge.Meta.Value, "To")))
-                UpdateBaseEdge();
+                UpdateVertex();
 
             if (sender == Vertex.Get(false, @"BaseEdge:\To:") && (e.Type == VertexChangeType.EdgeAdded || e.Type == VertexChangeType.EdgeRemoved))
-                UpdateBaseEdge();
+                UpdateVertex();
         }
 
         /* protected IVertex _Vertex;
@@ -2946,13 +2958,13 @@ namespace m0_COMPOSER.UIWpf.Visualisers
         {
             IEnumerable<IEdge> edges = SessionClipboard.GetFromClipboard();
 
-            VertexChangeOff = true;
+            //VertexChangeOff = true;
 
             UnselectAllSelectedItems();
 
             PasteEdgesFromClipboard(edges);
 
-            VertexChangeOff = false;
+            //VertexChangeOff = false;
 
             VisualiserDraw();
         }

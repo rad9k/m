@@ -86,7 +86,7 @@ namespace m0.UIWpf.Visualisers
             Children.Add(p);
         }
 
-        public void UpdateBaseEdge()
+        public void UpdateVertex()
         {
             IVertex baseEdgeTo = Vertex.Get(false, @"BaseEdge:\To:");
 

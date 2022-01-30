@@ -602,7 +602,7 @@ namespace m0.UIWpf.Visualisers
             Vertex.Get(false, "ShowOutEdges:").Value = "True";
         }        
 
-        public void UpdateBaseEdge(){
+        public void UpdateVertex(){
             IVertex bv = Vertex.Get(false, @"BaseEdge:\To:");
 
             if (bv != null)
