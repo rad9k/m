@@ -34,11 +34,11 @@ namespace m0.UIWpf.Visualisers
 
         protected bool TurnOffSelectedVerticesUpdate = false;
 
-        static string[] _MetaTriggeringBaseEdgeUpdate = new string[] { };
-        public virtual string[] MetaTriggeringUpdateBaseEdge { get { return _MetaTriggeringBaseEdgeUpdate; } }
+        static string[] _MetaTriggeringUpdateVertex = new string[] { };
+        public virtual string[] MetaTriggeringUpdateVertex { get { return _MetaTriggeringUpdateVertex; } }
 
-        static string[] _MetaTriggeringUpdateViewSettings = new string[] { "IsMetaRightAlign", "IsAllVisualisersEdit", "ShowMeta", "GridStyle", "FilterQuery" };
-        public virtual string[] MetaTriggeringUpdateView { get { return _MetaTriggeringUpdateViewSettings; } }
+        static string[] _MetaTriggeringUpdateView = new string[] { "IsMetaRightAlign", "IsAllVisualisersEdit", "ShowMeta", "GridStyle", "FilterQuery" };
+        public virtual string[] MetaTriggeringUpdateView { get { return _MetaTriggeringUpdateView; } }
 
         public virtual void UpdateView() { ResetView(); }
 

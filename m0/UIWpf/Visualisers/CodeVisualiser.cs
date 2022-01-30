@@ -31,11 +31,11 @@ namespace m0.UIWpf.Visualisers
 
         IList<string> TextMemory;
 
-        static string[] _MetaTriggeringBaseEdgeUpdate = new string[] { };
-        public string[] MetaTriggeringUpdateBaseEdge { get { return _MetaTriggeringBaseEdgeUpdate; } }
+        static string[] _MetaTriggeringUpdateVertex = new string[] { };
+        public string[] MetaTriggeringUpdateVertex { get { return _MetaTriggeringUpdateVertex; } }
 
-        static string[] _MetaTriggeringUpdateViewSettings = new string[] {"ShowWhiteSpace", "ShowLineNumbers", "HighlightedLine"  };
-        public string[] MetaTriggeringUpdateView { get { return _MetaTriggeringUpdateViewSettings; } }
+        static string[] _MetaTriggeringUpdateView = new string[] {"ShowWhiteSpace", "ShowLineNumbers", "HighlightedLine"  };
+        public string[] MetaTriggeringUpdateView { get { return _MetaTriggeringUpdateView; } }
 
         public void UpdateView() { UpdateEditView(); }
 

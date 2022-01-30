@@ -7,6 +7,27 @@ using System.Collections.Generic;
 
 namespace m0.Graph.ExecutionFlow
 {
+    public delegate void EdgeHandler(IEdge edge);
+
+    public class EdgeAddRemoveDisposeHandlers
+    {
+        public IVertex fromVertex;
+        public EdgeHandler AddHandler;
+        public EdgeHandler RemoveHandler;
+        public EdgeHandler DisposeHandler;
+
+        public EdgeAddRemoveDisposeHandlers(IVertex _fromVertex, 
+            EdgeHandler _AddHandler, 
+            EdgeHandler _RemoveHandler,
+            EdgeHandler _DisposeHandler)
+        {
+            fromVertex = _fromVertex;
+            AddHandler = _AddHandler;
+            RemoveHandler = _RemoveHandler;
+            DisposeHandler = _DisposeHandler;
+        }
+    }
+
     public class ExecutionFlowHelper
     {
         static IVertex _is_meta;
@@ -403,6 +424,37 @@ namespace m0.Graph.ExecutionFlow
             }
 
             return edgesList;
+        }
+
+        public static void RunAddRemoveDisposeHandlers(IVertex stack, List<EdgeAddRemoveDisposeHandlers> handlers)
+        {
+            foreach (IEdge _event in stack.GetAll(false, @"event:"))
+            {
+                IVertex eventEdge = GraphUtil.GetQueryOutFirst(_event.To, "Edge", null);
+                IVertex eventEdgeFrom = GraphUtil.GetQueryOutFirst(eventEdge, "From", null);                
+
+                foreach(EdgeAddRemoveDisposeHandlers h in handlers)
+                    if (eventEdgeFrom == h.fromVertex)
+                    {
+                        IVertex eventType = _event.To.Get(false, @"Type:");
+
+                        if(eventType != null)
+                            switch (eventType.Value)
+                            {
+                                case "OutputEdgeAdded":
+                                    h.AddHandler(Edge.CreateIEdgeFromEdgeVertex(eventEdge));
+                                    break;
+
+                                case "OutputEdgeRemoved":
+                                    h.RemoveHandler(Edge.CreateIEdgeFromEdgeVertex(eventEdge));
+                                    break;
+
+                                case "OutputEdgeDisposed":
+                                    h.DisposeHandler(Edge.CreateIEdgeFromEdgeVertex(eventEdge));
+                                    break;
+                            }                     
+                    }
+            }
         }
     }
 }

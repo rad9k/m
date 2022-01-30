@@ -137,7 +137,7 @@ namespace m0.UIWpf.Visualisers.Helper
             {
                 bool needToUpdateBaseEdge = false;
 
-                foreach (string meta in listVisualiser.MetaTriggeringUpdateBaseEdge)
+                foreach (string meta in listVisualiser.MetaTriggeringUpdateVertex)
                     if (IsVertexChangeOrEdgeAddedRemovedDisposedByMetaAndFrom(exe.Stack, visualiser.Vertex, meta))
                         needToUpdateBaseEdge = true;
 

@@ -15,7 +15,7 @@ namespace m0.UIWpf.Visualisers.Helper
 
         void UpdateView();
 
-        string[] MetaTriggeringUpdateBaseEdge { get; }
+        string[] MetaTriggeringUpdateVertex { get; }
 
         string[] MetaTriggeringUpdateView { get; }
     }

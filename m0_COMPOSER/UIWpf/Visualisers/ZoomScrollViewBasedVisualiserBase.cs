@@ -29,11 +29,11 @@ namespace m0_COMPOSER.UIWpf.Visualisers
     {
         public AtomVisualiserHelper VisualiserHelper { get; set; }
 
-        static string[] _MetaTriggeringBaseEdgeUpdate = new string[] { };
-        public virtual string[] MetaTriggeringUpdateBaseEdge { get { return _MetaTriggeringBaseEdgeUpdate; } }
+        static string[] _MetaTriggeringUpdateVertex = new string[] { };
+        public virtual string[] MetaTriggeringUpdateVertex { get { return _MetaTriggeringUpdateVertex; } }
 
-        static string[] _MetaTriggeringUpdateViewSettings = new string[] { "IsMetaRightAlign", "IsAllVisualisersEdit", "ShowMeta", "GridStyle", "FilterQuery" };
-        public virtual string[] MetaTriggeringUpdateView { get { return _MetaTriggeringUpdateViewSettings; } }
+        static string[] _MetaTriggeringUpdateView = new string[] { "IsMetaRightAlign", "IsAllVisualisersEdit", "ShowMeta", "GridStyle", "FilterQuery" };
+        public virtual string[] MetaTriggeringUpdateView { get { return _MetaTriggeringUpdateView; } }
 
         // sequencer specyfic
 
@@ -2441,8 +2441,11 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
         protected virtual void VertexChange(object sender, VertexChangeEventArgs e)
         {
-           // if (VertexChangeOff)
+            // if (VertexChangeOff)
             //    return;
+
+            new string[] { "ShowArrowLines:", "ShowSnapLines:", "ShowLabel:", "ShowVelocity:", "DefaultVelocity:", "SnapToGrid" };
+
 
             if ((sender == Vertex.Get(false, "ShowArrowLines:")) && (e.Type == VertexChangeType.ValueChanged))
                 UpdateVertex();

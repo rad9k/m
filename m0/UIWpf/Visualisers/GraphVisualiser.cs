@@ -205,11 +205,11 @@ namespace m0.UIWpf.Visualisers
         public bool IsPaiting=false;
 
 
-        static string[] _MetaTriggeringBaseEdgeUpdate = new string[] { "VisualiserCircleSize", "NumberOfCircles", "ShowOutEdges", "ShowInEdges", "FastMode", "MetaLabels" };
-        public string[] MetaTriggeringUpdateBaseEdge { get { return _MetaTriggeringBaseEdgeUpdate; } }
+        static string[] _MetaTriggeringUpdateVertex = new string[] { "VisualiserCircleSize", "NumberOfCircles", "ShowOutEdges", "ShowInEdges", "FastMode", "MetaLabels" };
+        public string[] MetaTriggeringUpdateVertex { get { return _MetaTriggeringUpdateVertex; } }
 
-        static string[] _MetaTriggeringUpdateViewSettings = new string[] { };
-        public string[] MetaTriggeringUpdateView { get { return _MetaTriggeringUpdateViewSettings; } }
+        static string[] _MetaTriggeringUpdateView = new string[] { };
+        public string[] MetaTriggeringUpdateView { get { return _MetaTriggeringUpdateView; } }
 
         public void UpdateView() { }
 

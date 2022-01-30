@@ -286,11 +286,11 @@ namespace m0.UIWpf.Visualisers
         public TreeVisualiser() : this(null, null) { }
 
 
-        static string[] _MetaTriggeringBaseEdgeUpdate = new string[] {  };
-        public string[] MetaTriggeringUpdateBaseEdge { get { return _MetaTriggeringBaseEdgeUpdate; } }
+        static string[] _MetaTriggeringUpdateVertex = new string[] {  };
+        public string[] MetaTriggeringUpdateVertex { get { return _MetaTriggeringUpdateVertex; } }
 
-        static string[] _MetaTriggeringUpdateViewSettings = new string[] { };
-        public string[] MetaTriggeringUpdateView { get { return _MetaTriggeringUpdateViewSettings; } }
+        static string[] _MetaTriggeringUpdateView = new string[] { };
+        public string[] MetaTriggeringUpdateView { get { return _MetaTriggeringUpdateView; } }
 
         public void UpdateView() { }
 
@@ -360,43 +360,41 @@ namespace m0.UIWpf.Visualisers
 
         protected INoInEdgeInOutVertexVertex CustomVertexChange(IExecution exe)
         {
-            if (IsVertexChangeOrEdgeAddedRemovedDisposedByMetaAndFrom(exe.Stack, Vertex, "ZoomVisualiserContent"))
-            {
-                ZoomVisualiserContentChange();
-                return exe.Stack;
-            }
+            if (IsVertexChangeOrEdgeAddedRemovedDisposedByMetaAndFrom(exe.Stack, Vertex, "ZoomVisualiserContent"))            
+                ZoomVisualiserContentChange();                
 
-            if (IsVertexChangeOrEdgeAddedRemovedDisposedByMetaAndFrom(exe.Stack, Vertex, "ZoomVisualiserContent")
-                || IsEdgeAddedRemovedDiscardedFrom(exe.Stack, Vertex.Get(false, @"SelectedEdges:")))
-            {
+            if (IsEdgeAddedRemovedDiscardedFrom(exe.Stack, Vertex.Get(false, @"SelectedEdges:")))            
                 SelectedVerticesUpdated();
-            }
 
             IVertex baseEdgeTo = VisualiserHelper.Vertex.Get(false, @"BaseEdge:\To:");
 
-            IVertex edgeVertex = exe.Stack.Get(false, @"event:\Edge:");
-
-            if (IsEdgeAddedTo(exe.Stack, baseEdgeTo))
-            {
-                EdgeAdded(Edge.CreateIEdgeFromEdgeVertex(edgeVertex));
-                return exe.Stack;
-            }
-
-            if (IsEdgeRemovedFrom(exe.Stack, baseEdgeTo))
-            {
-                EdgeRemoved(Edge.CreateIEdgeFromEdgeVertex(edgeVertex));
-                return exe.Stack;
-            }
-
-            if (IsEdgeDisposedFrom(exe.Stack, baseEdgeTo))
-            {
-                UpdateVertex();
-                return exe.Stack;
-            }
-           
-            //UpdateBaseEdge();
+            RunAddRemoveDisposeHandlers(exe.Stack, new List<EdgeAddRemoveDisposeHandlers>()
+            { new EdgeAddRemoveDisposeHandlers(
+                baseEdgeTo,
+                EdgeAdded,
+                EdgeRemoved,
+                EdgeDisposed)
+            });
 
             return exe.Stack;
+        }
+
+        private void EdgeRemoved(IEdge edge)
+        {
+            IList l = GeneralUtil.CreateAndCopyList(Items);
+            foreach (TreeVisualiserViewItem i in l)
+                if (Edge.CompareIEdges(((IEdge)i.Tag), edge))
+                    Items.Remove(i);
+        }
+
+        private void EdgeAdded(IEdge edge)
+        {
+            Items.Add(CreateTreeViewItem(edge, true, null));
+        }
+
+        private void EdgeDisposed(IEdge edge)
+        {
+            UpdateVertex();
         }
 
         public void SelectedVerticesUpdated()
@@ -605,19 +603,6 @@ namespace m0.UIWpf.Visualisers
                     ii.IsSelected = true;
                 }      
         }
-
-        private void EdgeRemoved(IEdge edge)
-        {            
-                IList l = GeneralUtil.CreateAndCopyList(Items);
-                foreach (TreeVisualiserViewItem i in l)
-                if (Edge.CompareIEdges(((IEdge)i.Tag), edge))                    
-                        Items.Remove(i);            
-        }
-
-        private void EdgeAdded(IEdge edge)
-        {         
-                Items.Add(CreateTreeViewItem(edge, true, null));
-        }        
 
         public IVertex Vertex
         {

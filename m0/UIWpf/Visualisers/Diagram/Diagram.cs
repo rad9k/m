@@ -85,11 +85,11 @@ namespace m0.UIWpf.Visualisers.Diagram
 
         bool IsFirstPainted = false;
 
-        static string[] _MetaTriggeringBaseEdgeUpdate = new string[] { "SizeX", "SizeY"};
-        public virtual string[] MetaTriggeringUpdateBaseEdge { get { return _MetaTriggeringBaseEdgeUpdate; } }
+        static string[] _MetaTriggeringUpdateVertex = new string[] { "SizeX", "SizeY"};
+        public virtual string[] MetaTriggeringUpdateVertex { get { return _MetaTriggeringUpdateVertex; } }
 
-        static string[] _MetaTriggeringUpdateViewSettings = new string[] { };
-        public virtual string[] MetaTriggeringUpdateView { get { return _MetaTriggeringUpdateViewSettings; } }
+        static string[] _MetaTriggeringUpdateView = new string[] { };
+        public virtual string[] MetaTriggeringUpdateView { get { return _MetaTriggeringUpdateView; } }
 
         public virtual void UpdateView() { }
 

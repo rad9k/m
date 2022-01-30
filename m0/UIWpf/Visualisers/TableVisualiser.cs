@@ -26,10 +26,10 @@ namespace m0.UIWpf.Visualisers
     {
 
         static string[] _MetaTriggeringUpdateBaseEdge = new string[] { "ExpertMode" };
-        public override string[] MetaTriggeringUpdateBaseEdge { get { return _MetaTriggeringUpdateBaseEdge; } }
+        public override string[] MetaTriggeringUpdateVertex { get { return _MetaTriggeringUpdateBaseEdge; } }
 
-        static string[] _MetaTriggeringUpdateViewSettings = new string[] {"IsAllVisualisersEdit", "ShowHeader", "GridStyle", "AlternatingRows" };
-        public override string[] MetaTriggeringUpdateView { get { return _MetaTriggeringUpdateViewSettings; } }
+        static string[] _MetaTriggeringUpdateView = new string[] {"IsAllVisualisersEdit", "ShowHeader", "GridStyle", "AlternatingRows" };
+        public override string[] MetaTriggeringUpdateView { get { return _MetaTriggeringUpdateView; } }
 
         public override void UpdateView() { ResetView(); }        
 
