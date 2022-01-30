@@ -22,6 +22,7 @@ using System.Windows.Media;
 using System.Windows.Shapes;
 using m0.UIWpf.Visualisers.Helper;
 using m0.User.Process.UX;
+using m0.Graph.ExecutionFlow;
 
 namespace m0_COMPOSER.UIWpf.Visualisers
 {
@@ -236,6 +237,8 @@ namespace m0_COMPOSER.UIWpf.Visualisers
                     UpdateBaseEdgeCallSchemeEnum.OmmitFirst);
 
                 ((ListVisualiserHelper)VisualiserHelper).CustomVertexChangeEvent += CustomVertexChange;
+
+                ((ListVisualiserHelper)VisualiserHelper).BaseEdgeToEventTriggeringUpdateVertex = false;
 
                 /*ertex = mz.CreateTempVertex();
                 Vertex.Value = VisualiserName;//+ this.GetHashCode();
@@ -804,7 +807,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             }
             
             //AddItem(newItemEventEdge, null);
-            // to be done automatically
+            // to be done automatically by events
 
             
 
@@ -1376,6 +1379,8 @@ namespace m0_COMPOSER.UIWpf.Visualisers
         }
 
         protected virtual void AddItem(IEdge itemEdge, List<IVertex> selectedVertexes) { }
+
+        protected virtual void RemoveItem(IEdge itemEdge) { }
 
         protected virtual void UpdateItem_HorizontalPosition(IItem item) {}
 
@@ -2436,9 +2441,34 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             }
         }
 
-        protected virtual INoInEdgeInOutVertexVertex CheckBaseEdgeChange(IExecution exe)
+        protected virtual INoInEdgeInOutVertexVertex CheckBaseEdgeChange(IExecution exe)        
         {
-            return null;
+            IVertex baseEdgeTo = VisualiserHelper.Vertex.Get(false, @"BaseEdge:\To:");
+
+            ExecutionFlowHelper.RunAddRemoveDisposeHandlers(exe.Stack, new List<EdgeAddRemoveDisposeHandlers>()
+            { new EdgeAddRemoveDisposeHandlers(
+                baseEdgeTo,
+                EdgeAdded,
+                EdgeRemoved,
+                EdgeDisposed)
+            });
+
+            return exe.Stack;
+        }
+
+        private void EdgeRemoved(IEdge edge)
+        {
+            RemoveItem(edge);
+        }
+
+        private void EdgeAdded(IEdge edge)
+        {
+            AddItem(edge, null);
+        }
+
+        private void EdgeDisposed(IEdge edge)
+        {
+            UpdateVertex();
         }
 
         protected virtual INoInEdgeInOutVertexVertex CustomVertexChange(IExecution exe)

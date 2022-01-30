@@ -75,37 +75,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             //
 
             ZoomScrollViewBasedVisualiserBase_Init(baseEdgeVertex, parentVisualiser);
-        }
-
-        protected override INoInEdgeInOutVertexVertex CheckBaseEdgeChange(IExecution exe)
-        {
-            IVertex baseEdgeTo = VisualiserHelper.Vertex.Get(false, @"BaseEdge:\To:");
-
-            ExecutionFlowHelper.RunAddRemoveDisposeHandlers(exe.Stack, new List<EdgeAddRemoveDisposeHandlers>()
-            { new EdgeAddRemoveDisposeHandlers(
-                baseEdgeTo,
-                EdgeAdded,
-                EdgeRemoved,
-                EdgeDisposed)
-            });
-
-            return exe.Stack;
-        }
-
-        private void EdgeRemoved(IEdge edge)
-        {
-            
-        }
-
-        private void EdgeAdded(IEdge edge)
-        {
-            
-        }
-
-        private void EdgeDisposed(IEdge edge)
-        {
-            
-        }
+        }        
 
         protected override void UpdateVertexValues()
         {
@@ -262,6 +232,11 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             if (MainItemsSyncedWithDown)
                 AddItem_Down(itemEdge, selectedVertexes, false, true);
+        }
+
+        protected override void RemoveItem(IEdge itemEdge)
+        {
+
         }
 
         protected override IEdge AddItemVertex(AxisSegment itemSegment, double startPosition, double lengthPosition)
@@ -743,9 +718,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
                         && GraphUtil.GetIntegerValue(e.To.Get(false, @"Number:")) == CurrentControlChangeNumber)
                         AddItem_Down(e, selectedVertexes, false, false);
             }
-        }
-
-        protected bool IsDisposed = false;       
+        }        
 
         public override void Dispose()
             {

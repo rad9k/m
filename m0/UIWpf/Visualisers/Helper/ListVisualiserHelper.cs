@@ -24,6 +24,8 @@ namespace m0.UIWpf.Visualisers.Helper
 {
     public class ListVisualiserHelper : AtomVisualiserHelper
     {
+        public bool BaseEdgeToEventTriggeringUpdateVertex = true;
+
         IListVisualiser listVisualiser;
 
         public ListVisualiserHelper(
@@ -135,8 +137,9 @@ namespace m0.UIWpf.Visualisers.Helper
                 || IsEdgeAddedRemovedDiscardedFrom(exe.Stack, Vertex.Get(false, @"SelectedEdges:")))
                 listVisualiser.SelectedVerticesUpdated();
 
-            if (IsVertexChageOrEdgeAddedRemovedDisposedFromTo(exe.Stack, Vertex.Get(false, @"BaseEdge:"))
-                || IsVertexChageOrEdgeAddedRemovedDisposedFromTo(exe.Stack, Vertex.Get(false, @"BaseEdge:\To:")))
+            if (BaseEdgeToEventTriggeringUpdateVertex && (
+                IsVertexChageOrEdgeAddedRemovedDisposedFromTo(exe.Stack, Vertex.Get(false, @"BaseEdge:"))
+                || IsVertexChageOrEdgeAddedRemovedDisposedFromTo(exe.Stack, Vertex.Get(false, @"BaseEdge:\To:"))))
                 listVisualiser.UpdateVertex();
             else
             {
