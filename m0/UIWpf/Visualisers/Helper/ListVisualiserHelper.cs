@@ -109,7 +109,7 @@ namespace m0.UIWpf.Visualisers.Helper
 
         bool firstVertexChangeExecuted = false;
 
-        public override INoInEdgeInOutVertexVertex VertexChange(IExecution exe)
+        protected override INoInEdgeInOutVertexVertex VertexChange(IExecution exe)
         {
             if (ForceVertexChangeOff)
                 return exe.Stack;
@@ -121,16 +121,21 @@ namespace m0.UIWpf.Visualisers.Helper
             }
 
             if (CustomVertexChangeEvent != null)
-                return CustomVertexChangeEvent(exe);            
+                return CustomVertexChangeEvent(exe);
 
-            if (IsVertexChangeOrEdgeAddedRemovedDisposedByMetaAndFrom(exe.Stack, visualiser.Vertex, "ZoomVisualiserContent"))            
+            return VertexChangeLogic(exe);
+        }
+
+        public INoInEdgeInOutVertexVertex VertexChangeLogic(IExecution exe)
+        {
+            if (IsVertexChangeOrEdgeAddedRemovedDisposedByMetaAndFrom(exe.Stack, visualiser.Vertex, "ZoomVisualiserContent"))
                 listVisualiser.ZoomVisualiserContentChange();
-                
-            if (IsVertexChangeOrEdgeAddedRemovedDisposedByMetaAndFrom(exe.Stack, visualiser.Vertex, "SelectedEdges")
-                || IsEdgeAddedRemovedDiscardedFrom(exe.Stack, Vertex.Get(false, @"SelectedEdges:")))            
-                listVisualiser.SelectedVerticesUpdated();                
 
-            if(IsVertexChageOrEdgeAddedRemovedDisposedFromTo(exe.Stack, Vertex.Get(false, @"BaseEdge:"))
+            if (IsVertexChangeOrEdgeAddedRemovedDisposedByMetaAndFrom(exe.Stack, visualiser.Vertex, "SelectedEdges")
+                || IsEdgeAddedRemovedDiscardedFrom(exe.Stack, Vertex.Get(false, @"SelectedEdges:")))
+                listVisualiser.SelectedVerticesUpdated();
+
+            if (IsVertexChageOrEdgeAddedRemovedDisposedFromTo(exe.Stack, Vertex.Get(false, @"BaseEdge:"))
                 || IsVertexChageOrEdgeAddedRemovedDisposedFromTo(exe.Stack, Vertex.Get(false, @"BaseEdge:\To:")))
                 listVisualiser.UpdateVertex();
             else
@@ -141,7 +146,7 @@ namespace m0.UIWpf.Visualisers.Helper
                     if (IsVertexChangeOrEdgeAddedRemovedDisposedByMetaAndFrom(exe.Stack, visualiser.Vertex, meta))
                         needToUpdateBaseEdge = true;
 
-                if(needToUpdateBaseEdge)
+                if (needToUpdateBaseEdge)
                     listVisualiser.UpdateVertex();
 
                 bool needToUpdateView = false;

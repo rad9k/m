@@ -431,6 +431,10 @@ namespace m0.Graph.ExecutionFlow
             foreach (IEdge _event in stack.GetAll(false, @"event:"))
             {
                 IVertex eventEdge = GraphUtil.GetQueryOutFirst(_event.To, "Edge", null);
+
+                if (eventEdge == null)
+                    continue;
+
                 IVertex eventEdgeFrom = GraphUtil.GetQueryOutFirst(eventEdge, "From", null);                
 
                 foreach(EdgeAddRemoveDisposeHandlers h in handlers)

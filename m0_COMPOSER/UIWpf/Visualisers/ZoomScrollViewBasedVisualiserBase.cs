@@ -778,6 +778,10 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
         protected virtual void PenUp(object sender, MouseButtonEventArgs e)
         {
+            ////////////////////////////////////////
+            Interaction.BeginInteractionWithGraph();
+            ////////////////////////////////////////
+            
             PerformPenUp_part1();
 
             //VertexChangeOff = true;
@@ -799,13 +803,18 @@ namespace m0_COMPOSER.UIWpf.Visualisers
                 newItemEventEdge = AddItemVertex(NewItemSegment, Canvas.GetLeft(NewItemShape), NewItemShape.Width);
             }
             
-            AddItem(newItemEventEdge, null);
+            //AddItem(newItemEventEdge, null);
+            // to be done automatically
 
             
 
             PerformPenUp_part2();
 
             //VertexChangeOff = false;
+
+            ////////////////////////////////////////
+            Interaction.EndInteractionWithGraph();
+            ////////////////////////////////////////
         }
 
         protected void EraserDown(object sender, MouseButtonEventArgs e)
@@ -2434,7 +2443,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
         protected virtual INoInEdgeInOutVertexVertex CustomVertexChange(IExecution exe)
         {
-            ((ListVisualiserHelper)VisualiserHelper).VertexChange(exe);
+            ((ListVisualiserHelper)VisualiserHelper).VertexChangeLogic(exe);
 
             return CheckBaseEdgeChange(exe);
         }
@@ -2516,11 +2525,18 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             }
         }*/
 
+        protected bool IsDisposed = false;
+
         public virtual void Dispose()
         {
-            VisualiserHelper.Dispose();
+            if (!IsDisposed)
+            {
+                VisualiserHelper.Dispose();
 
-            DispachSubControls();
+                DispachSubControls();
+
+                IsDisposed = true;
+            }
         }
 
         protected void DispachSubControls()

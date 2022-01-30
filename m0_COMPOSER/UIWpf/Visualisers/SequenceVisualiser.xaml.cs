@@ -745,23 +745,20 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             }
         }
 
-        protected bool IsDisposed = false;
+        protected bool IsDisposed = false;       
 
         public override void Dispose()
-        {
-            if (IsDisposed == false)
             {
-                IsDisposed = true;
+                if (!IsDisposed)
+                {
+                    VisualiserHelper.Dispose();
 
-                DispachSubControls();
+                    DispachSubControls();
 
-                ItemDictionary.RemoveAllByHost(this);
+                    ItemDictionary.RemoveAllByHost(this);
 
-                PlatformClass.RemoveVertexChangeListeners(this.Vertex, new VertexChange(VertexChange));
-
-                if (Vertex is IDisposable)
-                    ((IDisposable)Vertex).Dispose();
+                    IsDisposed = true;
+                }            
             }
         }
-    }
 }

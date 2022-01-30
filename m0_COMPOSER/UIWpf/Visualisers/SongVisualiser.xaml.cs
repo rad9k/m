@@ -649,8 +649,8 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             if (sender == VisualizedVertex.Get(false, "Position:"))
                 PositionUpdate();
 
-            if (VertexChangeOff)
-                return;
+            //if (VertexChangeOff)
+              //  return;
         }
 
         bool doNotUpdatePositionVertex = false;
@@ -680,7 +680,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             }
         }
 
-        protected override void VertexChange(object sender, VertexChangeEventArgs e)
+        /*protected override void VertexChange(object sender, VertexChangeEventArgs e)
         {            
            // if (VertexChangeOff)
            //     return;
@@ -689,7 +689,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
                 UpdateVertex();
 
             base.VertexChange(sender, e);
-        }
+        }*/
 
         protected void VertexChange_Track(object sender, VertexChangeEventArgs e)
         {
@@ -709,8 +709,8 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
         protected void VertexChange_BaseEdge(object sender, VertexChangeEventArgs e)
         {
-            if (VertexChangeOff)
-                return;
+            //if (VertexChangeOff)
+                //return;
 
             if (!(sender is IVertex))
                 return;
@@ -771,7 +771,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
                 DispachSubControls();
 
-                PlatformClass.RemoveVertexChangeListeners(this.Vertex, new VertexChange(VertexChange));
+                //PlatformClass.RemoveVertexChangeListeners(this.Vertex, new VertexChange(VertexChange));
 
                 RemoveChangeListenersToAllTracksAndSong();
 
