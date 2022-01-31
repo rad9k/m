@@ -1241,20 +1241,36 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             {
                 SetCursorMode(CursorStateEnum.ArrowUp);
 
+                ////////////////////////////////////////
+                Interaction.BeginInteractionWithGraph();
+                ////////////////////////////////////////
+
                 foreach (IItem i in GetSelectedAndMouseOverItems(MainDownEnum.Main))
                     UpdateItem_HorizontalPosition(i);
+
+                ////////////////////////////////////////
+                Interaction.EndInteractionWithGraph();
+                ////////////////////////////////////////
             }
 
             if (CurrentCursorState == CursorStateEnum.ArrowDown_MoveOnItem_MouseDownAndMove)
             {
                 SetCursorMode(CursorStateEnum.ArrowUp);
 
+                ////////////////////////////////////////
+                Interaction.BeginInteractionWithGraph();
+                ////////////////////////////////////////
+                
                 foreach (IItem i in GetSelectedAndMouseOverItems(MainDownEnum.Main))
                 {
                     UpdateItem_VerticalPosition(i);
 
                     UpdateItem_HorizontalPosition(i);                 
                 }
+
+                ////////////////////////////////////////
+                Interaction.EndInteractionWithGraph();
+                ////////////////////////////////////////
             }
 
             if (MainItemsSyncedWithDown)
