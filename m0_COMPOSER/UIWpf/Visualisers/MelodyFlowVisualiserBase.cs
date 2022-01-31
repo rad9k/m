@@ -644,7 +644,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             return toCorrect;
         }
 
-        protected override void ItemsRemoveAndRemoveAllEdges(IItem i)
+        protected override void RemoveItemVertex(IItem i)
         {
             IEdge eventEdge = i.BaseEdge;
 

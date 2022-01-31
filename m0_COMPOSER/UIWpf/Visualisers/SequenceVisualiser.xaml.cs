@@ -234,19 +234,6 @@ namespace m0_COMPOSER.UIWpf.Visualisers
                 AddItem_Down(itemEdge, selectedVertexes, false, true);
         }
 
-        protected override void RemoveItem(IEdge itemEdge)
-        {
-            IItem item = ItemsDictinaryHolder[itemEdge.To];
-
-            if(item != null)
-                ItemsRemoveAndRemoveAllEdges(item);
-
-            IItem item_Down = ItemsDictinaryHolder_Down[itemEdge.To];
-
-            if (item_Down != null)
-                ItemsRemoveAndRemoveAllEdges_Down(item);            
-        }
-
         protected override IEdge AddItemVertex(AxisSegment itemSegment, double startPosition, double lengthPosition)
         {
             IVertex r = MinusZero.Instance.Root;

@@ -40,14 +40,12 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control.Item
 
             Canvas.Children.Add(this);
 
-
             ItemDictionary.Add(this);
         }
 
         public void Remove()
         {
             Canvas.Children.Remove(this);
-
 
             ItemDictionary.Remove(this);
         }

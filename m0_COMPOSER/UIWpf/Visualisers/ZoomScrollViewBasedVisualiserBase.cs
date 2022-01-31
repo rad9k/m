@@ -468,19 +468,20 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             i.Add(Main);
         }
 
-        protected virtual void ItemsRemoveAndRemoveAllEdges(IItem i)
+        protected void ItemsRemove(IItem i)
+        {
+            Items.Remove((FrameworkElement)i);
+
+            i.Remove();
+        }
+
+        protected virtual void RemoveItemVertex(IItem i)
         {
             IEdge eventEdge = i.BaseEdge;
 
             GraphUtil.DeleteEdgeByToVertex(VisualizedVertex, eventEdge.To);
 
-            Edge.DeleteVertexByEdgeTo(Vertex.Get(false, "SelectedEdges:"), eventEdge.To);
-
-            NeedToRebuildItemsDictionary = true;
-
-            Items.Remove((FrameworkElement)i);
-
-            i.Remove();
+            Edge.DeleteVertexByEdgeTo(Vertex.Get(false, "SelectedEdges:"), eventEdge.To);            
         }
 
         protected void SetupScrollViewer()
@@ -828,11 +829,15 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             if (element != null && element is IItem)
             {
+                ////////////////////////////////////////
+                Interaction.BeginInteractionWithGraph();
+                ////////////////////////////////////////
+                
                 IItem item = (IItem)element;
 
                 //VertexChangeOff = true;
 
-                if (MainItemsSyncedWithDown)
+                /*if (MainItemsSyncedWithDown)
                 {
                     var dict_down = GetItemsDictionary_Down();
 
@@ -843,11 +848,15 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
                     if (item_down != null)                                        
                         ItemsRemoveAndRemoveAllEdges_Down(item_down);                    
-                }
+                }*/
 
-                ItemsRemoveAndRemoveAllEdges(item);
+                RemoveItemVertex(item);
 
                 //VertexChangeOff = false;
+
+                ////////////////////////////////////////
+                Interaction.EndInteractionWithGraph();
+                ////////////////////////////////////////
             }
         }
 
@@ -1380,7 +1389,20 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
         protected virtual void AddItem(IEdge itemEdge, List<IVertex> selectedVertexes) { }
 
-        protected virtual void RemoveItem(IEdge itemEdge) { }
+        protected virtual void RemoveItem(IEdge itemEdge) {
+            Dictionary<IVertex, IItem> ItemsDictinary = GetItemsDictionary();
+            Dictionary<IVertex, IItem> ItemsDictinary_Down = GetItemsDictionary_Down();
+
+            IItem item = ItemsDictinary[itemEdge.To];
+
+            if (item != null)
+                ItemsRemove(item);
+
+            IItem item_Down = ItemsDictinary_Down[itemEdge.To];
+
+            if (item_Down != null)
+                ItemsRemove_Down(item_Down);
+        }
 
         protected virtual void UpdateItem_HorizontalPosition(IItem item) {}
 
@@ -1896,6 +1918,13 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             i.Add(Down);
         }
 
+        protected void ItemsRemove_Down(IItem i)
+        {
+            Items_Down.Remove((FrameworkElement)i);
+
+            i.Remove();
+        }
+
         protected void ItemsRemoveAndRemoveAllEdges_Down(IItem i)
         {
             IEdge eventEdge = i.BaseEdge;
@@ -1904,7 +1933,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             Edge.DeleteVertexByEdgeTo(Vertex.Get(false, "SelectedEdges:"), eventEdge.To);
 
-            NeedToRebuildItemsDictionary_Down = true;
+            //NeedToRebuildItemsDictionary_Down = true;
 
             Items_Down.Remove((FrameworkElement)i);
 
@@ -2439,15 +2468,11 @@ namespace m0_COMPOSER.UIWpf.Visualisers
                 // SnapToGridComboBox_SelectionChange(); in UpdateVertexValues() does this;
                 // VisualiserDraw(); 
             }
-        }
-
-        bool needToCallDictionaryRebuild = false;
+        }        
 
         protected virtual INoInEdgeInOutVertexVertex CheckBaseEdgeChange(IExecution exe)        
         {
-            IVertex baseEdgeTo = VisualiserHelper.Vertex.Get(false, @"BaseEdge:\To:");
-
-            needToCallDictionaryRebuild = true;
+            IVertex baseEdgeTo = VisualiserHelper.Vertex.Get(false, @"BaseEdge:\To:");         
 
             ExecutionFlowHelper.RunAddRemoveDisposeHandlers(exe.Stack, new List<EdgeAddRemoveDisposeHandlers>()
             { new EdgeAddRemoveDisposeHandlers(
@@ -2461,15 +2486,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
         }
 
         private void EdgeRemoved(IEdge edge)
-        {
-            if (needToCallDictionaryRebuild)
-            {
-                RebuildItemsDictionary();
-                RebuildItemsDictionary_Down();
-
-                needToCallDictionaryRebuild = false;
-            }
-
+        {            
             RemoveItem(edge);
         }
 
@@ -2694,7 +2711,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
                 {
                     i = itemsDictionary[v];
 
-                    ItemsRemoveAndRemoveAllEdges(i);
+                    RemoveItemVertex(i);
                 }
 
                 if (itemsDictionary_Down.ContainsKey(v))

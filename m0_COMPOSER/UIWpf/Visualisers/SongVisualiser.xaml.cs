@@ -1034,7 +1034,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
                 SetSequenceEventLength(itemVertex, Length);                
         }
 
-        protected override void ItemsRemoveAndRemoveAllEdges(IItem i)
+        protected override void RemoveItemVertex(IItem i)
         {
             IEdge eventEdge = i.BaseEdge;
 
