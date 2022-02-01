@@ -52,7 +52,7 @@ namespace m0.UIWpf.Visualisers
 
             this.Orientation = Orientation.Horizontal;            
 
-            new AtomVisualiserHelper(parentVertex,
+            new ListVisualiserHelper(parentVertex,
                 MinusZero.Instance.Root.Get(false, @"System\Meta\Visualiser\Wrap"),
                 this, 
                 "WrapVisualiser", 
@@ -62,11 +62,13 @@ namespace m0.UIWpf.Visualisers
                 "Visualiser",
                 baseEdgeVertex,
                 UpdateBaseEdgeCallSchemeEnum.OmmitSecond);
+
+            ((ListVisualiserHelper)VisualiserHelper).CustomVertexChangeEvent += CustomVertexChange;
         }
 
         bool firstVertexChangeExecuted = false;
 
-        protected virtual INoInEdgeInOutVertexVertex VertexChange(IExecution exe)
+        protected virtual INoInEdgeInOutVertexVertex CustomVertexChange(IExecution exe)
         {         
             if (!firstVertexChangeExecuted)
             {

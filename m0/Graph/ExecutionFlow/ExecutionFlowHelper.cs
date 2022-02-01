@@ -460,5 +460,21 @@ namespace m0.Graph.ExecutionFlow
                     }
             }
         }
+
+        public static bool AllEventsSubVisualiser(IVertex stack)
+        {
+            foreach (IEdge _event in stack.GetAll(false, @"event:"))
+            {
+                IVertex eventEdge = GraphUtil.GetQueryOutFirst(_event.To, "Edge", null);
+
+                if (eventEdge == null)
+                    return false;
+
+                IVertex eventEdgeFrom = GraphUtil.GetQueryOutFirst(eventEdge, "From", null);
+
+            }
+
+            return true;
+        }
     }
 }
