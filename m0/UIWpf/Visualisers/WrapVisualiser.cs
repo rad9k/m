@@ -15,6 +15,7 @@ using System.Windows;
 using m0.UIWpf.Foundation;
 using m0.UIWpf.Controls;
 using m0.UIWpf.Visualisers.Helper;
+using m0.Graph.ExecutionFlow;
 
 namespace m0.UIWpf.Visualisers
 {
@@ -64,17 +65,12 @@ namespace m0.UIWpf.Visualisers
                 UpdateBaseEdgeCallSchemeEnum.OmmitSecond);
 
             ((ListVisualiserHelper)VisualiserHelper).CustomVertexChangeEvent += CustomVertexChange;
-        }
-
-        bool firstVertexChangeExecuted = false;
+        }        
 
         protected virtual INoInEdgeInOutVertexVertex CustomVertexChange(IExecution exe)
-        {         
-            if (!firstVertexChangeExecuted)
-            {
-                firstVertexChangeExecuted = true;
+        {                     
+            if (ExecutionFlowHelper.AllEventsSubVisualiser(exe.Stack))
                 return exe.Stack;
-            }
 
             UpdateVertex();
 

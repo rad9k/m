@@ -470,8 +470,8 @@ namespace m0.Graph.ExecutionFlow
                 if (eventEdge == null)
                     return false;
 
-                IVertex eventEdgeFrom = GraphUtil.GetQueryOutFirst(eventEdge, "From", null);
-
+                if (GraphUtil.GetQueryOutCount(eventEdge, "Meta", "SubVisualiser") == 0)
+                    return false;                
             }
 
             return true;
