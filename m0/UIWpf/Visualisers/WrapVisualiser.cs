@@ -18,13 +18,27 @@ using m0.UIWpf.Visualisers.Helper;
 
 namespace m0.UIWpf.Visualisers
 {
-    public class WrapVisualiser : WrapPanel, IVisualiser
+    public class WrapVisualiser : WrapPanel, IListVisualiser
     {
         public AtomVisualiserHelper VisualiserHelper { get; set; }        
 
         public double Scale { get; set; } // do not want to expose those as PlatformClass.Vertex
 
         public double Margin { get; set; } // do not want to expose those as PlatformClass.Vertex 
+
+        //
+
+        public void UnselectAllSelectedEdges() { }
+
+        public void SelectedVerticesUpdated() { }
+
+        public void ZoomVisualiserContentChange() { }
+
+        public void UpdateView() { }
+
+        public string[] MetaTriggeringUpdateVertex { get; }
+
+        public string[] MetaTriggeringUpdateView { get; }
 
         public WrapVisualiser(IVertex baseEdgeVertex) : this(baseEdgeVertex, 1.0, null) { }
          
@@ -50,12 +64,25 @@ namespace m0.UIWpf.Visualisers
                 UpdateBaseEdgeCallSchemeEnum.OmmitSecond);
         }
 
+        bool firstVertexChangeExecuted = false;
+
+        protected virtual INoInEdgeInOutVertexVertex VertexChange(IExecution exe)
+        {         
+            if (!firstVertexChangeExecuted)
+            {
+                firstVertexChangeExecuted = true;
+                return exe.Stack;
+            }
+
+            UpdateVertex();
+
+            return exe.Stack;
+        }
+
         public void OnLoad(object sender, RoutedEventArgs e)
         {
             VisualiserHelper.AddContextMenu();
-        }
-
-        public void ZoomVisualiserContentChange() { }
+        }        
 
         protected void AddEdge(IEdge e)
         {

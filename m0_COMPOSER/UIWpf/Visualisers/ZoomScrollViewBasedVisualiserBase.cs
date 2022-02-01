@@ -1607,15 +1607,17 @@ namespace m0_COMPOSER.UIWpf.Visualisers
                 s.LineStyle.SetStyle(l);
 
                 Down.Children.Add(l);
-            }
+            }            
 
             foreach (AxisSegment s in HorizontalAD.Segments)
             {
-                Line l = new Line();
+                Line l = new Line();                
 
                 WpfUtil.SetLinePosition(l, s.StartPosition, 0, s.StartPosition, Height_Down);
 
                 s.LineStyle.SetStyle(l);
+
+                l.Stroke = (Brush)FindResource("0VeryLightForegroundBrush");                 
 
                 Down.Children.Add(l);
             }
@@ -2371,7 +2373,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             double snapWidth = GetSnapMinimalWidth_Screen();
 
-            Brush lb = (Brush)FindResource("0VeryLightForegroundBrush");
+            Brush lb = (Brush)FindResource("0VeryVeryLightForegroundBrush");
 
             for (double x = 0; x < Width; x += snapWidth)
             {

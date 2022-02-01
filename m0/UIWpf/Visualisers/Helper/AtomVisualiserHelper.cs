@@ -47,6 +47,10 @@ namespace m0.UIWpf.Visualisers.Helper
 
         static IVertex baseEdge_meta;
 
+        public delegate INoInEdgeInOutVertexVertex CustomVertexChangeHandler(IExecution exe);
+
+        public event CustomVertexChangeHandler CustomVertexChangeEvent;
+
         public static void Initialize()
         {
             IVertex r = m0.MinusZero.Instance.root;

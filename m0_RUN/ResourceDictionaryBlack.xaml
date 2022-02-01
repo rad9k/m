@@ -5,6 +5,7 @@
     <Color x:Key="0Foreground">#ffffff</Color>
     <Color x:Key="0LightForeground">#f0f0f0</Color>
     <Color x:Key="0VeryLightForeground">#404040</Color>
+    <Color x:Key="0VeryLightForeground">#303030</Color>
     <Color x:Key="0Background">#000000</Color>
     <Color x:Key="0LightBackground">#505050</Color>
     <Color x:Key="0AlternatingBackground">#3f3f3f</Color>
@@ -25,6 +26,7 @@
     <SolidColorBrush x:Key="0ForegroundBrush" Color="{StaticResource 0Foreground}" />
     <SolidColorBrush x:Key="0LightForegroundBrush" Color="{StaticResource 0LightForeground}" />
     <SolidColorBrush x:Key="0VeryLightForegroundBrush" Color="{StaticResource 0VeryLightForeground}" />
+    <SolidColorBrush x:Key="0VeryVeryLightForegroundBrush" Color="{StaticResource 0VeryVeryLightForeground}" />
     <SolidColorBrush x:Key="0BackgroundBrush" Color="{StaticResource 0Background}" />
     <SolidColorBrush x:Key="0LightBackgroundBrush" Color="{StaticResource 0LightBackground}" />
     <SolidColorBrush x:Key="0AlternatingBackgroundBrush" Color="{StaticResource 0AlternatingBackground}" />
