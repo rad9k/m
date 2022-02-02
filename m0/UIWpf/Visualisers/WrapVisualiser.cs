@@ -69,7 +69,7 @@ namespace m0.UIWpf.Visualisers
 
         protected virtual INoInEdgeInOutVertexVertex CustomVertexChange(IExecution exe)
         {                     
-            if (ExecutionFlowHelper.AllEventsSubVisualiser(exe.Stack))
+            if (ExecutionFlowHelper.AllEventChildVisualiser(exe.Stack))
                 return exe.Stack;
 
             UpdateVertex();

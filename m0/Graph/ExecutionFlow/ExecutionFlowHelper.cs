@@ -461,7 +461,7 @@ namespace m0.Graph.ExecutionFlow
             }
         }
 
-        public static bool AllEventsSubVisualiser(IVertex stack)
+        public static bool AllEventChildVisualiser(IVertex stack)
         {
             foreach (IEdge _event in stack.GetAll(false, @"event:"))
             {
@@ -470,7 +470,7 @@ namespace m0.Graph.ExecutionFlow
                 if (eventEdge == null)
                     return false;
 
-                if (GraphUtil.GetQueryOutCount(eventEdge, "Meta", "SubVisualiser") == 0)
+                if (GraphUtil.GetQueryOutCount(eventEdge, "Meta", "ChildVisualiser") == 0)
                     return false;                
             }
 

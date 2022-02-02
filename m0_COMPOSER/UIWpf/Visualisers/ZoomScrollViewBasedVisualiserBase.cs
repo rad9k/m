@@ -2488,32 +2488,19 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             }
         }        
 
-        protected virtual INoInEdgeInOutVertexVertex CheckBaseEdgeChange(IExecution exe)        
-        {
-            IVertex baseEdgeTo = VisualiserHelper.Vertex.Get(false, @"BaseEdge:\To:");         
+        protected virtual INoInEdgeInOutVertexVertex CheckBaseEdgeChange(IExecution exe) { return null; }
 
-            ExecutionFlowHelper.RunAddRemoveDisposeHandlers(exe.Stack, new List<EdgeAddRemoveDisposeHandlers>()
-            { new EdgeAddRemoveDisposeHandlers(
-                baseEdgeTo,
-                EdgeAdded,
-                EdgeRemoved,
-                EdgeDisposed)
-            });
-
-            return exe.Stack;
-        }
-
-        private void EdgeRemoved(IEdge edge)
+        protected void EdgeRemoved(IEdge edge)
         {            
             RemoveItem(edge);
         }
 
-        private void EdgeAdded(IEdge edge)
+        protected void EdgeAdded(IEdge edge)
         {
             AddItem(edge, null);
         }
 
-        private void EdgeDisposed(IEdge edge)
+        protected void EdgeDisposed(IEdge edge)
         {
             UpdateVertex();
         }

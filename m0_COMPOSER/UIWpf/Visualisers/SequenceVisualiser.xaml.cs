@@ -11,6 +11,7 @@ using m0.ZeroUML;
 using m0_COMPOSER.Lib;
 using m0_COMPOSER.UIWpf.Visualisers.Control;
 using m0_COMPOSER.UIWpf.Visualisers.Control.Item;
+using m0.User.Process.UX;
 using System;
 using System.Collections.Generic;
 using System.Windows;
@@ -75,7 +76,22 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             //
 
             ZoomScrollViewBasedVisualiserBase_Init(baseEdgeVertex, parentVisualiser);
-        }        
+        }
+
+        protected override INoInEdgeInOutVertexVertex CheckBaseEdgeChange(IExecution exe)
+        {
+            IVertex baseEdgeTo = VisualiserHelper.Vertex.Get(false, @"BaseEdge:\To:");
+
+            ExecutionFlowHelper.RunAddRemoveDisposeHandlers(exe.Stack, new List<EdgeAddRemoveDisposeHandlers>()
+            { new EdgeAddRemoveDisposeHandlers(
+                baseEdgeTo,
+                EdgeAdded,
+                EdgeRemoved,
+                EdgeDisposed)
+            });
+
+            return exe.Stack;
+        }
 
         protected override void UpdateVertexValues()
         {
@@ -289,8 +305,21 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             IVertex octaveVertex = segment.BaseVertex.Get(false, "Octave:");
             IVertex noteVertex = segment.BaseVertex.Get(false, "Note:");
 
+            ////////////////////////////////////////
+            Interaction.BeginInteractionWithGraph();
+            ////////////////////////////////////////
+
+            bool ForceVertexChangeOff_history = VisualiserHelper.ForceVertexChangeOff;
+            VisualiserHelper.ForceVertexChangeOff = true;
+
             GraphUtil.CreateOrReplaceEdge(noteEventVertex, metaOctave, octaveVertex);
             GraphUtil.CreateOrReplaceEdge(noteEventVertex, metaNote, noteVertex);
+
+            ////////////////////////////////////////
+            Interaction.EndInteractionWithGraph();
+            ////////////////////////////////////////
+            
+            VisualiserHelper.ForceVertexChangeOff = ForceVertexChangeOff_history;
 
             int? octave = GraphUtil.GetIntegerValue(octaveVertex);
             int? note = GraphUtil.GetIntegerValue(noteVertex);
@@ -338,10 +367,21 @@ namespace m0_COMPOSER.UIWpf.Visualisers
                 Length = (int)(itemWidth / HorizontalAD.BaseUnitSize);
             }
 
+            ////////////////////////////////////////
+            Interaction.BeginInteractionWithGraph();
+            ////////////////////////////////////////
+
+            bool ForceVertexChangeOff_history = VisualiserHelper.ForceVertexChangeOff;
+            VisualiserHelper.ForceVertexChangeOff = true;
+
             GraphUtil.SetVertexValue(itemVertex, metaTriggerTime, TriggerTime);
 
             if (Length != 0)
                 GraphUtil.SetVertexValue(itemVertex, metaLength, Length);
+
+            ////////////////////////////////////////
+            Interaction.EndInteractionWithGraph();
+            ////////////////////////////////////////
         }
 
         protected override int ScreenPositionToMusicTime(double position, bool performSnapCorrection)
