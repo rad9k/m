@@ -87,10 +87,19 @@ namespace m0_COMPOSER.UIWpf.Visualisers
                 baseEdgeTo,
                 EdgeAdded,
                 EdgeRemoved,
-                EdgeDisposed)
+                EdgeDisposed,
+                new string[] {"Octave", "Note", "Length", "TriggerTime"},
+                ValueChanged
+                )
             });
 
             return exe.Stack;
+        }
+
+        protected void ValueChanged(IEdge edge)
+        {
+
+            AddItem(edge, null);
         }
 
         protected override void UpdateVertexValues()
