@@ -11,20 +11,39 @@ namespace m0.Graph.ExecutionFlow
 
     public class EdgeAddRemoveDisposeHandlers
     {
-        public IVertex fromVertex;
+        public IVertex FromVertex;
         public EdgeHandler AddHandler;
         public EdgeHandler RemoveHandler;
         public EdgeHandler DisposeHandler;
+
+        public string[] ValueChangeMeta;
+        public EdgeHandler ValueChangeHandler;
 
         public EdgeAddRemoveDisposeHandlers(IVertex _fromVertex, 
             EdgeHandler _AddHandler, 
             EdgeHandler _RemoveHandler,
             EdgeHandler _DisposeHandler)
         {
-            fromVertex = _fromVertex;
+            FromVertex = _fromVertex;
             AddHandler = _AddHandler;
             RemoveHandler = _RemoveHandler;
             DisposeHandler = _DisposeHandler;
+        }
+
+        public EdgeAddRemoveDisposeHandlers(IVertex _fromVertex,
+            EdgeHandler _AddHandler,
+            EdgeHandler _RemoveHandler,
+            EdgeHandler _DisposeHandler,
+            string[] _ValueChangeMeta,
+            EdgeHandler _ValueChngeHandler
+            )
+        {
+            FromVertex = _fromVertex;
+            AddHandler = _AddHandler;
+            RemoveHandler = _RemoveHandler;
+            DisposeHandler = _DisposeHandler;
+            ValueChangeMeta = _ValueChangeMeta;
+            ValueChangeHandler = _ValueChngeHandler;
         }
     }
 
@@ -426,24 +445,21 @@ namespace m0.Graph.ExecutionFlow
             return edgesList;
         }
 
-        public static void RunAddRemoveDisposeHandlers(IVertex stack, List<EdgeAddRemoveDisposeHandlers> handlers)
+        public static void DoAddRemoveDisposeUpdateHandlers(IVertex stack, List<EdgeAddRemoveDisposeHandlers> handlers)
         {
             foreach (IEdge _event in stack.GetAll(false, @"event:"))
             {
+                IVertex eventType = _event.To.Get(false, @"Type:");
                 IVertex eventEdge = GraphUtil.GetQueryOutFirst(_event.To, "Edge", null);
 
-                if (eventEdge == null)
-                    continue;
 
-                IVertex eventEdgeFrom = GraphUtil.GetQueryOutFirst(eventEdge, "From", null);                
+                if (eventEdge != null)
+                {
+                    IVertex eventEdgeFrom = GraphUtil.GetQueryOutFirst(eventEdge, "From", null);
 
-                foreach(EdgeAddRemoveDisposeHandlers h in handlers)
-                    if (eventEdgeFrom == h.fromVertex)
-                    {
-                        IVertex eventType = _event.To.Get(false, @"Type:");
-
-                        if(eventType != null)
-                            switch (eventType.Value)
+                    foreach (EdgeAddRemoveDisposeHandlers h in handlers)
+                        if (eventEdgeFrom == h.FromVertex)
+                            switch (eventType.Value.ToString())
                             {
                                 case "OutputEdgeAdded":
                                     h.AddHandler(Edge.CreateIEdgeFromEdgeVertex(eventEdge));
@@ -456,7 +472,22 @@ namespace m0.Graph.ExecutionFlow
                                 case "OutputEdgeDisposed":
                                     h.DisposeHandler(Edge.CreateIEdgeFromEdgeVertex(eventEdge));
                                     break;
-                            }                     
+                            }
+
+                }
+                else
+                    if (eventType.Value.ToString() == "ValueChange")
+                    {
+                        IVertex EventChangedVertex = GraphUtil.GetQueryOutFirst(_event.To, "ChangedVertex", null);
+
+                        foreach (EdgeAddRemoveDisposeHandlers h in handlers)
+                            foreach (string meta in h.ValueChangeMeta)
+                            {
+                                IEdge edgeWithMeta = GraphUtil.GetQueryInFirstEdge(EventChangedVertex, meta, null);
+
+                                if (edgeWithMeta != null)
+                                    h.ValueChangeHandler(edgeWithMeta);
+                            }
                     }
             }
         }
