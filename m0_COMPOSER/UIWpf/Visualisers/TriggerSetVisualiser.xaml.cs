@@ -170,7 +170,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             if (IsDrum)
                 newElement = new DrumItem(itemEdge, this, ShowVelocity);
             else
-                newElement = new NoteItem(itemEdge, null, this, ShowLabel, ShowVelocity);
+                newElement = new NoteItem(itemEdge, this, ShowLabel, ShowVelocity);
 
             IItem newItem = (IItem)newElement;
 

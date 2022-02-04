@@ -127,7 +127,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             if (IsDrum)
                 newElement = new DrumItem(itemEdge, this, ShowVelocity);
             else
-                newElement = new NoteItem(itemEdge, label, this, ShowLabel, ShowVelocity);
+                newElement = new NoteItem(itemEdge, this, ShowLabel, ShowVelocity);
 
             newElement.Tag = quant;
 
@@ -159,7 +159,11 @@ namespace m0_COMPOSER.UIWpf.Visualisers
                 newItem.Top = itemSegment.StartPosition;
                 newItem.Right = endPosition;
                 newItem.Bottom = itemSegment.EndPosition;
+
+                ((NoteItem)newItem).Label = label;
             }
+
+            newItem.Update();
 
             ItemsAdd(newItem);
 
