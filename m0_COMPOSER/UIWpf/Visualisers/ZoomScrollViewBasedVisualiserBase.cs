@@ -1403,7 +1403,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             return null;
         }
 
-        protected virtual void AddItem(IEdge itemEdge, List<IVertex> selectedVertexes) { }
+        protected virtual void AddItemByEdge(IEdge itemEdge, List<IVertex> selectedVertexes) { }
 
         protected virtual void RemoveItem(IEdge itemEdge) {
             Dictionary<IVertex, IItem> ItemsDictinary = GetItemsDictionary();
@@ -1797,7 +1797,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
                 GetItemsDictionary()[newItemEventEdge.To].Update();
 
             if (newItemEventEdge != null)
-                AddItem_Down(newItemEventEdge, null, isUpdate, isNoteEvent);
+                AddItemByEdge_Down(newItemEventEdge, null, isUpdate, isNoteEvent);
 
             //VertexChangeOff = false;
         }
@@ -1885,48 +1885,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             return finalEdge;
         }
 
-        protected virtual void AddItem_Down(IEdge itemEdge, List<IVertex> selectedVertexes, bool isUpdate, bool isNoteEvent)
-        {
-            if (Height_Down == 0)
-                return;
-
-            IVertex itemEventVertex = itemEdge.To;
-
-            bool dummy = false;
-
-
-            ControlChangeItem item = null;
-
-            if (isUpdate)
-                item = (ControlChangeItem)GetItemsDictionary_Down()[itemEdge.To];
-            else
-                item = new ControlChangeItem(itemEdge, this);
-
-            IVertex itemVertex = item.BaseEdge.To;
-
-            int triggerTime = GraphUtil.GetIntegerValue(itemVertex.Get(false, "TriggerTime:"), ref dummy);
-
-            int value;
-
-            if (isNoteEvent)
-                value = GraphUtil.GetIntegerValue(itemVertex.Get(false, "Velocity:"), ref dummy);
-            else
-                value = GraphUtil.GetIntegerValue(itemVertex.Get(false, "Value:"), ref dummy);
-
-            if (selectedVertexes != null && selectedVertexes.Contains(itemEventVertex) && !isNoteEvent)
-            {
-                item.SelectHighlight();
-                PreviousSelectedItemContext = MainDownEnum.Down;
-            }
-
-            double startPosition = triggerTime * HorizontalAD.BaseUnitSize;
-
-            if (!isUpdate)
-                ItemsAdd_Down(item); // need this as item.Canvas needs to be set for the cc top mark
-
-            item.HorizontalCenter = startPosition;
-            item.VerticalCenter = Height_Down - (((double)value / 127) * Height_Down);
-        }
+        protected virtual void AddItemByEdge_Down(IEdge itemEdge, List<IVertex> selectedVertexes, bool isUpdate, bool isNoteEvent) { }        
 
         protected void ItemsAdd_Down(IItem i)
         {
@@ -2461,7 +2420,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             foreach (IEdge e in VisualizedVertex.GetAll(false, "Event:"))
                 if (GraphUtil.ExistQueryOut(e.To, "$Is", "NoteEvent"))
-                    AddItem(e, selectedVertexes);
+                    AddItemByEdge(e, selectedVertexes);
         }
 
         protected void InitSequenceVisualierState()
@@ -2497,7 +2456,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
         protected void EdgeAdded(IEdge edge)
         {
-            AddItem(edge, null);
+            AddItemByEdge(edge, null);
         }
 
         protected void EdgeDisposed(IEdge edge)

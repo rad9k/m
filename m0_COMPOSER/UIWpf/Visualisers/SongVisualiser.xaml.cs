@@ -884,7 +884,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             GraphUtil.SetVertexValue(sequenceVertex, MinusZero.Instance.root.Get(false, @"System\Lib\Music\Sequence\Length"), value);
         }
 
-        protected override void AddItem(IEdge itemEdge, List<IVertex> selectedVertexes)
+        protected override void AddItemByEdge(IEdge itemEdge, List<IVertex> selectedVertexes)
         {
             IVertex itemEventVertex = itemEdge.To;
 
@@ -979,7 +979,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             foreach (IEdge e in VisualizedVertex.GetAll(false, "Track:"))
                 foreach (IEdge ee in e.To.GetAll(false, "SequenceEvent:"))                
-                    AddItem(ee, selectedVertexes);
+                    AddItemByEdge(ee, selectedVertexes);
         }
 
         protected override void UpdateItem_VerticalPosition(IItem _item)

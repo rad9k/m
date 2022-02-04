@@ -107,7 +107,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
                 IsCurrentPenItemCenter = true;
         }
 
-        protected override void AddItem(IEdge itemEdge, List<IVertex> selectedVertexes)
+        protected override void AddItemByEdge(IEdge itemEdge, List<IVertex> selectedVertexes)
         {
             IVertex quantVertex = itemEdge.To;
 
@@ -164,7 +164,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             ItemsAdd(newItem);
 
             if (MainItemsSyncedWithDown)
-                AddItem_Down(itemEdge, selectedVertexes, false, true);
+                AddItemByEdge_Down(itemEdge, selectedVertexes, false, true);
         }
 
         protected override IEdge AddItemVertex(AxisSegment itemSegment, double startPosition, double lengthPosition)
@@ -204,7 +204,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
                 IFlowStep step = Flow.GetStep(stepCnt);
 
                 foreach (IFlowQuant quant in step.Quants)
-                    AddItem(quant.QuantEdge, selectedVertexes);
+                    AddItemByEdge(quant.QuantEdge, selectedVertexes);
             }
         }
 
@@ -554,7 +554,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             DoCleanUpAndVisualiserDraw();
         }
 
-        protected override void AddItem_Down(IEdge itemEdge, List<IVertex> selectedVertexes, bool isUpdate, bool isNoteEvent)
+        protected override void AddItemByEdge_Down(IEdge itemEdge, List<IVertex> selectedVertexes, bool isUpdate, bool isNoteEvent)
         {
             if (Height_Down == 0)
                 return;
@@ -602,7 +602,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
                 foreach (MelodyFlowQuant quant in step.Quants)
                     if (ApplyFilter_Down(quant.QuantVertex))
-                        AddItem_Down(quant.QuantEdge, selectedVertexes, false, false);
+                        AddItemByEdge_Down(quant.QuantEdge, selectedVertexes, false, false);
             }
         }
 

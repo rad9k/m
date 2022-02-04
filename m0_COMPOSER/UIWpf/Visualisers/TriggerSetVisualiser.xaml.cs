@@ -155,7 +155,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
                 IsCurrentPenItemCenter = true;
         }
 
-        protected override void AddItem(IEdge itemEdge, List<IVertex> selectedVertexes)
+        protected override void AddItemByEdge(IEdge itemEdge, List<IVertex> selectedVertexes)
         {
             IVertex itemEventVertex = itemEdge.To;
 
@@ -205,7 +205,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             ItemsAdd(newItem);
 
             if (MainItemsSyncedWithDown)
-                AddItem_Down(itemEdge, selectedVertexes, false, true);
+                AddItemByEdge_Down(itemEdge, selectedVertexes, false, true);
         }
 
         protected override IEdge AddItemVertex(AxisSegment itemSegment, double startPosition, double lengthPosition)
@@ -237,7 +237,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             foreach (IEdge e in VisualizedVertex.GetAll(false, "Trigger:"))
                 //if (GraphUtil.ExistQueryOut(e.To, "$Is", "Trigger"))
-                    AddItem(e, selectedVertexes);
+                    AddItemByEdge(e, selectedVertexes);
         }
 
         protected override void UpdateItem_VerticalPosition(IItem item)
@@ -514,7 +514,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
                 foreach (IEdge e in VisualizedVertex.GetAll(false, "Trigger:"))
                     //if (GraphUtil.ExistQueryOut(e.To, "$Is", "NoteEvent"))
                         //if (ApplyFilter_Down(e.To))
-                            AddItem_Down(e, selectedVertexes, false, true);
+                            AddItemByEdge_Down(e, selectedVertexes, false, true);
             }         
         }
 

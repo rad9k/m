@@ -98,8 +98,9 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
         protected void ValueChanged(IEdge edge)
         {
+            UpdateItem(edge, GetItemsDictionary()[edge.To]);
 
-            AddItem(edge, null);
+            UpdateItem_Down(edge, GetItemsDictionary_Down()[edge.To]);
         }
 
         protected override void UpdateVertexValues()
@@ -200,7 +201,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
                 IsCurrentPenItemCenter = true;
         }
 
-        protected override void AddItem(IEdge itemEdge, List<IVertex> selectedVertexes)
+        protected void UpdateItem(IEdge itemEdge, IItem item)
         {
             IVertex itemEventVertex = itemEdge.To;
 
@@ -216,20 +217,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             string label = pitchVertex.Value.ToString();
 
-            FrameworkElement newElement;
-
-            if (IsDrum)
-                newElement = new DrumItem(itemEdge, this, ShowVelocity);
-            else
-                newElement = new NoteItem(itemEdge, label, this, ShowLabel, ShowVelocity);
-
-            IItem newItem = (IItem)newElement;
-
-            if (selectedVertexes != null && selectedVertexes.Contains(itemEventVertex))
-            {
-                newItem.SelectHighlight();
-                PreviousSelectedItemContext = MainDownEnum.Main;
-            }
+            FrameworkElement newElement = (FrameworkElement)item;                        
 
             AxisSegment itemSegment = GetVerticalSegment(pitchVertex);
 
@@ -241,22 +229,129 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             if (IsDrum)
             {
-                newItem.HorizontalCenter = startPosition;
-                newItem.Top = itemSegment.StartPosition;
-                newItem.Bottom = itemSegment.EndPosition;
+                item.HorizontalCenter = startPosition;
+                item.Top = itemSegment.StartPosition;
+                item.Bottom = itemSegment.EndPosition;
             }
             else
             {
-                newItem.Left = startPosition;
-                newItem.Top = itemSegment.StartPosition;
-                newItem.Right = endPosition;
-                newItem.Bottom = itemSegment.EndPosition;
+                item.Left = startPosition;
+                item.Top = itemSegment.StartPosition;
+                item.Right = endPosition;
+                item.Bottom = itemSegment.EndPosition;
+
+                ((NoteItem)item).Label = label;
             }
+
+            item.Update();
+        }
+
+        protected override void AddItemByEdge(IEdge itemEdge, List<IVertex> selectedVertexes)
+        {            
+            FrameworkElement newElement;
+
+            if (IsDrum)
+                newElement = new DrumItem(itemEdge, this, ShowVelocity);
+            else
+                newElement = new NoteItem(itemEdge, this, ShowLabel, ShowVelocity);
+
+            IItem newItem = (IItem)newElement;
+
+            UpdateItem(itemEdge, newItem);
+
+            IVertex itemEventVertex = itemEdge.To;
+
+            if (selectedVertexes != null && selectedVertexes.Contains(itemEventVertex))
+            {
+                newItem.SelectHighlight();
+                PreviousSelectedItemContext = MainDownEnum.Main;
+            }            
 
             ItemsAdd(newItem);
 
             if (MainItemsSyncedWithDown)
-                AddItem_Down(itemEdge, selectedVertexes, false, true);
+                AddItemByEdge_Down(itemEdge, selectedVertexes, false, true);
+        }
+
+        protected void UpdateItem_Down(IEdge itemEdge, IItem _item)
+        {
+            if (Height_Down == 0)
+                return;
+
+            IVertex itemEventVertex = itemEdge.To;
+
+            bool dummy = false;
+
+
+            ControlChangeItem item = (ControlChangeItem) _item;            
+
+            IVertex itemVertex = item.BaseEdge.To;
+
+            int triggerTime = GraphUtil.GetIntegerValue(itemVertex.Get(false, "TriggerTime:"), ref dummy);
+
+            int value;
+
+            if (isNoteEvent)
+                value = GraphUtil.GetIntegerValue(itemVertex.Get(false, "Velocity:"), ref dummy);
+            else
+                value = GraphUtil.GetIntegerValue(itemVertex.Get(false, "Value:"), ref dummy);
+
+            if (selectedVertexes != null && selectedVertexes.Contains(itemEventVertex) && !isNoteEvent)
+            {
+                item.SelectHighlight();
+                PreviousSelectedItemContext = MainDownEnum.Down;
+            }
+
+            double startPosition = triggerTime * HorizontalAD.BaseUnitSize;
+
+            if (!isUpdate)
+                ItemsAdd_Down(item); // need this as item.Canvas needs to be set for the cc top mark
+
+            item.HorizontalCenter = startPosition;
+            item.VerticalCenter = Height_Down - (((double)value / 127) * Height_Down);
+        }
+
+        protected override void AddItemByEdge_Down(IEdge itemEdge, List<IVertex> selectedVertexes, bool isUpdate, bool isNoteEvent)
+        {
+            if (Height_Down == 0)
+                return;
+
+            IVertex itemEventVertex = itemEdge.To;
+
+            bool dummy = false;
+
+
+            ControlChangeItem item = null;
+
+            if (isUpdate)
+                item = (ControlChangeItem)GetItemsDictionary_Down()[itemEdge.To];
+            else
+                item = new ControlChangeItem(itemEdge, this);
+
+            IVertex itemVertex = item.BaseEdge.To;
+
+            int triggerTime = GraphUtil.GetIntegerValue(itemVertex.Get(false, "TriggerTime:"), ref dummy);
+
+            int value;
+
+            if (isNoteEvent)
+                value = GraphUtil.GetIntegerValue(itemVertex.Get(false, "Velocity:"), ref dummy);
+            else
+                value = GraphUtil.GetIntegerValue(itemVertex.Get(false, "Value:"), ref dummy);
+
+            if (selectedVertexes != null && selectedVertexes.Contains(itemEventVertex) && !isNoteEvent)
+            {
+                item.SelectHighlight();
+                PreviousSelectedItemContext = MainDownEnum.Down;
+            }
+
+            double startPosition = triggerTime * HorizontalAD.BaseUnitSize;
+
+            if (!isUpdate)
+                ItemsAdd_Down(item); // need this as item.Canvas needs to be set for the cc top mark
+
+            item.HorizontalCenter = startPosition;
+            item.VerticalCenter = Height_Down - (((double)value / 127) * Height_Down);
         }
 
         protected override IEdge AddItemVertex(AxisSegment itemSegment, double startPosition, double lengthPosition)
@@ -291,7 +386,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             foreach (IEdge e in VisualizedVertex.GetAll(false, "Event:"))
                 if (GraphUtil.ExistQueryOut(e.To, "$Is", "NoteEvent"))
-                    AddItem(e, selectedVertexes);
+                    AddItemByEdge(e, selectedVertexes);
         }
 
         protected override void UpdateItem_VerticalPosition(IItem item)
@@ -750,14 +845,14 @@ namespace m0_COMPOSER.UIWpf.Visualisers
                 foreach (IEdge e in VisualizedVertex.GetAll(false, "Event:"))
                     if (GraphUtil.ExistQueryOut(e.To, "$Is", "NoteEvent"))
                         if (ApplyFilter_Down(e.To))
-                            AddItem_Down(e, selectedVertexes, false, true);
+                            AddItemByEdge_Down(e, selectedVertexes, false, true);
             }
             else
             {
                 foreach (IEdge e in VisualizedVertex.GetAll(false, "Event:"))
                     if (GraphUtil.ExistQueryOut(e.To, "$Is", "ControlChangeEvent")
                         && GraphUtil.GetIntegerValue(e.To.Get(false, @"Number:")) == CurrentControlChangeNumber)
-                        AddItem_Down(e, selectedVertexes, false, false);
+                        AddItemByEdge_Down(e, selectedVertexes, false, false);
             }
         }        
 

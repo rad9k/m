@@ -182,13 +182,11 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control.Item
             }
         }
 
-        TextBlock labelControl;
+        TextBlock labelControl;        
 
-        public NoteItem(IEdge baseEdge, string label, IZoomScrollViewerHost host, bool _showLabel, bool _showVelocity)
+        public NoteItem(IEdge baseEdge, IZoomScrollViewerHost host, bool _showLabel, bool _showVelocity)
         {
-            BaseEdge = baseEdge;
-
-            Label = label;
+            BaseEdge = baseEdge;            
 
             Host = host;
 
@@ -204,16 +202,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control.Item
 
             labelControl = new TextBlock();
 
-            this.Child = labelControl;
-
-            if (showLabel)
-            {                
-                labelControl.Text = " " + Label;
-
-                labelControl.Foreground = velocityBrush_Foreground;                 
-            }            
-
-            Update();
+            this.Child = labelControl;                        
            
             NoHighlight();
 
