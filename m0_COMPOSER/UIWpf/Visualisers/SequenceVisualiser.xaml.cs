@@ -280,8 +280,14 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             IVertex itemEventVertex = itemEdge.To;
 
-            bool dummy = false;
 
+            bool isNoteEvent = false;
+
+            if (GraphUtil.ExistQueryOut(itemEventVertex, "$Is", "NoteEvent"))
+                isNoteEvent = true;
+
+
+            bool dummy = false;
 
             ControlChangeItem item = (ControlChangeItem) _item;            
 
@@ -296,16 +302,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             else
                 value = GraphUtil.GetIntegerValue(itemVertex.Get(false, "Value:"), ref dummy);
 
-            if (selectedVertexes != null && selectedVertexes.Contains(itemEventVertex) && !isNoteEvent)
-            {
-                item.SelectHighlight();
-                PreviousSelectedItemContext = MainDownEnum.Down;
-            }
-
-            double startPosition = triggerTime * HorizontalAD.BaseUnitSize;
-
-            if (!isUpdate)
-                ItemsAdd_Down(item); // need this as item.Canvas needs to be set for the cc top mark
+            double startPosition = triggerTime * HorizontalAD.BaseUnitSize;            
 
             item.HorizontalCenter = startPosition;
             item.VerticalCenter = Height_Down - (((double)value / 127) * Height_Down);
@@ -324,20 +321,13 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             ControlChangeItem item = null;
 
             if (isUpdate)
-                item = (ControlChangeItem)GetItemsDictionary_Down()[itemEdge.To];
+                item = (ControlChangeItem)GetItemsDictionary_Down()[itemEventVertex];
             else
                 item = new ControlChangeItem(itemEdge, this);
 
-            IVertex itemVertex = item.BaseEdge.To;
 
-            int triggerTime = GraphUtil.GetIntegerValue(itemVertex.Get(false, "TriggerTime:"), ref dummy);
+            UpdateItem_Down(itemEdge, item);
 
-            int value;
-
-            if (isNoteEvent)
-                value = GraphUtil.GetIntegerValue(itemVertex.Get(false, "Velocity:"), ref dummy);
-            else
-                value = GraphUtil.GetIntegerValue(itemVertex.Get(false, "Value:"), ref dummy);
 
             if (selectedVertexes != null && selectedVertexes.Contains(itemEventVertex) && !isNoteEvent)
             {
@@ -345,13 +335,9 @@ namespace m0_COMPOSER.UIWpf.Visualisers
                 PreviousSelectedItemContext = MainDownEnum.Down;
             }
 
-            double startPosition = triggerTime * HorizontalAD.BaseUnitSize;
 
             if (!isUpdate)
                 ItemsAdd_Down(item); // need this as item.Canvas needs to be set for the cc top mark
-
-            item.HorizontalCenter = startPosition;
-            item.VerticalCenter = Height_Down - (((double)value / 127) * Height_Down);
         }
 
         protected override IEdge AddItemVertex(AxisSegment itemSegment, double startPosition, double lengthPosition)
