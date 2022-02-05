@@ -1801,13 +1801,21 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             bool isNoteEvent = false;
 
-            IEdge newItemEventEdge = AddItemEdge_Down(mouseY, GetSnappedPosition(mouseDownPoint.X), out isUpdate, out isNoteEvent);
+            ////////////////////////////////////////
+            Interaction.BeginInteractionWithGraph();
+            ////////////////////////////////////////
 
-            if (isNoteEvent)
+            IEdge newItemEventEdge = AddItemVertex_Down(mouseY, GetSnappedPosition(mouseDownPoint.X), out isUpdate, out isNoteEvent);
+
+            ////////////////////////////////////////
+            Interaction.EndInteractionWithGraph();
+            ////////////////////////////////////////
+
+            /*if (isNoteEvent)
                 GetItemsDictionary()[newItemEventEdge.To].Update();
 
             if (newItemEventEdge != null)
-                AddItemByEdge_Down(newItemEventEdge, null, isUpdate, isNoteEvent);
+                AddItemByEdge_Down(newItemEventEdge, null, isUpdate, isNoteEvent);*/
 
             //VertexChangeOff = false;
         }
@@ -1835,66 +1843,12 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             return false;
         }
 
-        protected virtual IEdge AddItemEdge_Down(double mouseY, double startPosition, out bool isUpdate, out bool isVelocityHavingEvent)
-        {
+        protected virtual IEdge AddItemVertex_Down(double mouseY, double startPosition, out bool isUpdate, out bool isVelocityHavingEvent) {
             isUpdate = false;
-
-            IVertex r = MinusZero.Instance.Root;
-
-            IVertex Event = r.Get(false, @"System\Lib\Music\Event");
-            IVertex ControlChangeEvent = r.Get(false, @"System\Lib\Music\ControlChangeEvent");
-            IVertex NoteEvent = r.Get(false, @"System\Lib\Music\NoteEvent");
-
-            int triggerTime = (int)((startPosition / HorizontalAD.BaseUnitSize) + 0.01);
-
-            IEdge tempEventEdge = null;
-
             isVelocityHavingEvent = false;
-
-            List<IItem> existingItems = GetDownItemFromNumberTriggerTimeDictionary(CurrentControlChangeNumber, triggerTime);
-
-            if (existingItems == null && MainItemsSyncedWithDown)
-                return null;
-
-            if (existingItems != null)
-            {
-                IItem item = existingItems[0];
-
-                tempEventEdge = item.BaseEdge;
-
-                isUpdate = true;
-
-                if (IsVelocityHavingVertex(tempEventEdge.To))
-                    isVelocityHavingEvent = true;
-            }
-            else
-                tempEventEdge = VisualizedVertex.AddVertexAndReturnEdge(null, null);
-
-            IVertex eventVertex = tempEventEdge.To;
-
-            if (!isUpdate)
-                eventVertex.AddEdge(MinusZero.Instance.Is, ControlChangeEvent);
-
-            if (isVelocityHavingEvent)
-                GraphUtil.SetVertexValue(eventVertex, NoteEvent.Get(false, @"Attribute:Velocity"), ControlChangeItem.getValueFromMouseY_Down(mouseY, Height_Down));
-            else
-            {
-                GraphUtil.SetVertexValue(eventVertex, ControlChangeEvent.Get(false, @"Attribute:Number"), CurrentControlChangeNumber);
-                GraphUtil.SetVertexValue(eventVertex, ControlChangeEvent.Get(false, @"Attribute:Value"), ControlChangeItem.getValueFromMouseY_Down(mouseY, Height_Down));
-                GraphUtil.SetVertexValue(eventVertex, ControlChangeEvent.Get(false, @"Attribute:TriggerTime"), triggerTime);
-            }
-
-            IEdge finalEdge = tempEventEdge;
-
-            if (!isUpdate)
-            {
-                finalEdge = VisualizedVertex.AddEdge(Event, eventVertex);
-                VisualizedVertex.DeleteEdge(tempEventEdge);
-            }
-
-            return finalEdge;
+            return null;
         }
-
+        
         protected virtual void AddItemByEdge_Down(IEdge itemEdge, List<IVertex> selectedVertexes, bool isUpdate, bool isNoteEvent) { }        
 
         protected void ItemsAdd_Down(IItem i)

@@ -518,7 +518,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             }         
         }
 
-        protected override IEdge AddItemEdge_Down(double mouseY, double startPosition, out bool isUpdate, out bool isNoteEvent)
+        protected override IEdge AddItemVertex_Down(double mouseY, double startPosition, out bool isUpdate, out bool isNoteEvent)
         {            
             isUpdate = false;
 

@@ -445,8 +445,40 @@ namespace m0.Graph.ExecutionFlow
             return edgesList;
         }
 
+        public enum HandlerTypeEnum { AddEdgeHandler, RemoveEdgeHandler, DisposeEdgeHandler, AddEdgeByMetaHandler }        
+
+        public class ToExecuteHandler
+        {
+            public HandlerTypeEnum HandlerType;
+
+            public EdgeAddRemoveDisposeHandlers Handlers;
+
+            public ToExecuteHandler(HandlerTypeEnum _HandlerType, EdgeAddRemoveDisposeHandlers _Handlers)
+            {
+                HandlerType = _HandlerType;
+                Handlers = _Handlers;
+            }
+        }
+
+        public static void AddToExecuteList(List<ToExecuteHandler> toExecute,
+            HandlerTypeEnum HandlerType, 
+            EdgeAddRemoveDisposeHandlers Handlers)
+        {
+            bool exist = false;
+
+            foreach (ToExecuteHandler teh in toExecute)
+                if (teh.HandlerType == HandlerType &&
+                    teh.Handlers == Handlers)
+                    exist = true;
+
+            if (!exist)
+                toExecute.Add(new ToExecuteHandler(HandlerType, Handlers));
+        }
+
         public static void DoAddRemoveDisposeUpdateHandlers(IVertex stack, List<EdgeAddRemoveDisposeHandlers> handlers)
         {
+            List<ToExecuteHandler> toExecute = new List<ToExecuteHandler>();
+
             foreach (IEdge _event in stack.GetAll(false, @"event:"))
             {
                 IVertex eventType = _event.To.Get(false, @"Type:");
@@ -463,6 +495,7 @@ namespace m0.Graph.ExecutionFlow
                             switch (eventType.Value.ToString())
                             {
                                 case "OutputEdgeAdded":
+                                    AddToExecuteList(toExecute, HandlerTypeEnum.AddEdgeHandler)
                                     h.AddEdgeHandler(Edge.CreateIEdgeFromEdgeVertex(eventEdge));
                                     break;
 
