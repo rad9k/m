@@ -12,12 +12,12 @@ namespace m0.Graph.ExecutionFlow
     public class EdgeAddRemoveDisposeHandlers
     {
         public IVertex FromVertex;
-        public EdgeHandler AddHandler;
-        public EdgeHandler RemoveHandler;
-        public EdgeHandler DisposeHandler;
+        public EdgeHandler AddEdgeHandler;
+        public EdgeHandler RemoveEdgeHandler;
+        public EdgeHandler DisposeEdgeHandler;
 
-        public string[] ValueChangeMeta;
-        public EdgeHandler ValueChangeHandler;
+        public string[] AddEdgeByMeta;
+        public EdgeHandler AddEdgeByMetaHandler;
 
         public EdgeAddRemoveDisposeHandlers(IVertex _fromVertex, 
             EdgeHandler _AddHandler, 
@@ -25,25 +25,25 @@ namespace m0.Graph.ExecutionFlow
             EdgeHandler _DisposeHandler)
         {
             FromVertex = _fromVertex;
-            AddHandler = _AddHandler;
-            RemoveHandler = _RemoveHandler;
-            DisposeHandler = _DisposeHandler;
+            AddEdgeHandler = _AddHandler;
+            RemoveEdgeHandler = _RemoveHandler;
+            DisposeEdgeHandler = _DisposeHandler;
         }
 
         public EdgeAddRemoveDisposeHandlers(IVertex _fromVertex,
             EdgeHandler _AddHandler,
             EdgeHandler _RemoveHandler,
             EdgeHandler _DisposeHandler,
-            string[] _ValueChangeMeta,
-            EdgeHandler _ValueChngeHandler
+            string[] _AddEdgeByMeta,
+            EdgeHandler _AddEdgeByMetaHandler
             )
         {
             FromVertex = _fromVertex;
-            AddHandler = _AddHandler;
-            RemoveHandler = _RemoveHandler;
-            DisposeHandler = _DisposeHandler;
-            ValueChangeMeta = _ValueChangeMeta;
-            ValueChangeHandler = _ValueChngeHandler;
+            AddEdgeHandler = _AddHandler;
+            RemoveEdgeHandler = _RemoveHandler;
+            DisposeEdgeHandler = _DisposeHandler;
+            AddEdgeByMeta = _AddEdgeByMeta;
+            AddEdgeByMetaHandler = _AddEdgeByMetaHandler;
         }
     }
 
@@ -456,39 +456,46 @@ namespace m0.Graph.ExecutionFlow
                 if (eventEdge != null)
                 {
                     IVertex eventEdgeFrom = GraphUtil.GetQueryOutFirst(eventEdge, "From", null);
+                    IVertex eventEdgeMeta = GraphUtil.GetQueryOutFirst(eventEdge, "Meta", null);
 
                     foreach (EdgeAddRemoveDisposeHandlers h in handlers)
                         if (eventEdgeFrom == h.FromVertex)
                             switch (eventType.Value.ToString())
                             {
                                 case "OutputEdgeAdded":
-                                    h.AddHandler(Edge.CreateIEdgeFromEdgeVertex(eventEdge));
+                                    h.AddEdgeHandler(Edge.CreateIEdgeFromEdgeVertex(eventEdge));
                                     break;
 
                                 case "OutputEdgeRemoved":
-                                    h.RemoveHandler(Edge.CreateIEdgeFromEdgeVertex(eventEdge));
+                                    h.RemoveEdgeHandler(Edge.CreateIEdgeFromEdgeVertex(eventEdge));
                                     break;
 
                                 case "OutputEdgeDisposed":
-                                    h.DisposeHandler(Edge.CreateIEdgeFromEdgeVertex(eventEdge));
+                                    h.DisposeEdgeHandler(Edge.CreateIEdgeFromEdgeVertex(eventEdge));
                                     break;
                             }
+                        else
+                            if(h.AddEdgeByMeta != null)                        
+                                foreach (string meta in h.AddEdgeByMeta)                            
+                                    if (eventEdgeMeta.Value.ToString() == meta)
+                                        h.AddEdgeByMetaHandler(Edge.CreateIEdgeFromEdgeVertex(eventEdge));                            
+                        
 
                 }
-                else
+               /* else // to be used in valuechange handlers, need to use different pair than addedgebymeta/handler
                     if (eventType.Value.ToString() == "ValueChange")
                     {
                         IVertex EventChangedVertex = GraphUtil.GetQueryOutFirst(_event.To, "ChangedVertex", null);
 
                         foreach (EdgeAddRemoveDisposeHandlers h in handlers)
-                            foreach (string meta in h.ValueChangeMeta)
+                            foreach (string meta in h.AddEdgeByMeta)
                             {
                                 IEdge edgeWithMeta = GraphUtil.GetQueryInFirstEdge(EventChangedVertex, meta, null);
 
                                 if (edgeWithMeta != null)
-                                    h.ValueChangeHandler(edgeWithMeta);
+                                    h.AddEdgeByMetaHandler(edgeWithMeta);
                             }
-                    }
+                    }*/
             }
         }
 

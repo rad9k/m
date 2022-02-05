@@ -78,7 +78,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
         protected IVertex BaseEdgeToMetaVertex;
         protected IVertex VisualiserMetaVertex;
 
-        protected IList<string> listenerScopeQueries = new List<string> { @"", @"BaseEdge:\To:" };
+        protected IList<string> listenerScopeQueries = new List<string> { @"", @"BaseEdge:\To:", @"BaseEdge:\To:\" };
 
         public IVertex VisualizedVertex;
         protected IVertex verticalSpanVertex;
@@ -1241,6 +1241,9 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             {
                 SetCursorMode(CursorStateEnum.ArrowUp);
 
+                bool ForceVertexChangeOff_history = VisualiserHelper.ForceVertexChangeOff;
+                VisualiserHelper.ForceVertexChangeOff = true;
+
                 ////////////////////////////////////////
                 Interaction.BeginInteractionWithGraph();
                 ////////////////////////////////////////
@@ -1251,11 +1254,16 @@ namespace m0_COMPOSER.UIWpf.Visualisers
                 ////////////////////////////////////////
                 Interaction.EndInteractionWithGraph();
                 ////////////////////////////////////////
+                
+                VisualiserHelper.ForceVertexChangeOff = ForceVertexChangeOff_history;
             }
 
             if (CurrentCursorState == CursorStateEnum.ArrowDown_MoveOnItem_MouseDownAndMove)
             {
                 SetCursorMode(CursorStateEnum.ArrowUp);
+
+                bool ForceVertexChangeOff_history = VisualiserHelper.ForceVertexChangeOff;
+                VisualiserHelper.ForceVertexChangeOff = true;
 
                 ////////////////////////////////////////
                 Interaction.BeginInteractionWithGraph();
@@ -1271,6 +1279,8 @@ namespace m0_COMPOSER.UIWpf.Visualisers
                 ////////////////////////////////////////
                 Interaction.EndInteractionWithGraph();
                 ////////////////////////////////////////
+                
+                VisualiserHelper.ForceVertexChangeOff = ForceVertexChangeOff_history;
             }
 
             if (MainItemsSyncedWithDown)
@@ -2136,10 +2146,23 @@ namespace m0_COMPOSER.UIWpf.Visualisers
         {
             if (CurrentCursorState == CursorStateEnum.ArrowDown_MoveOnItem_MouseDownAndMove)
             {
-                SetCursorMode(CursorStateEnum.ArrowUp);
+                SetCursorMode(CursorStateEnum.ArrowUp);                
+
+                bool ForceVertexChangeOff_history = VisualiserHelper.ForceVertexChangeOff;
+                VisualiserHelper.ForceVertexChangeOff = true;
+
+                ////////////////////////////////////////
+                Interaction.BeginInteractionWithGraph();
+                ////////////////////////////////////////
 
                 foreach (IItem i in GetSelectedAndMouseOverItems(MainDownEnum.Down))
                     UpdateItem_HorizontalPosition(i);
+
+                ////////////////////////////////////////
+                Interaction.EndInteractionWithGraph();
+                ////////////////////////////////////////
+
+                VisualiserHelper.ForceVertexChangeOff = ForceVertexChangeOff_history;
             }
 
             RemoveDuplicatedDownItems_SelectedEdgesFirst();

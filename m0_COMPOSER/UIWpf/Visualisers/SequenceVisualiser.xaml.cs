@@ -88,19 +88,30 @@ namespace m0_COMPOSER.UIWpf.Visualisers
                 EdgeAdded,
                 EdgeRemoved,
                 EdgeDisposed,
-                new string[] {"Octave", "Note", "Length", "TriggerTime"},
-                ValueChanged
+                new string[] {"Octave", "Note", "Length", "TriggerTime", "Velocity"},
+                EdgeAddedByMetaHandler
                 )
             });
 
             return exe.Stack;
         }
 
-        protected void ValueChanged(IEdge edge)
+        protected void EdgeAddedByMetaHandler(IEdge parameterEdge)
         {
-            UpdateItem(edge, GetItemsDictionary()[edge.To]);
+            IEdge eventEdge = GraphUtil.GetQueryInFirstEdge(parameterEdge.From, "Event", null);
 
-            UpdateItem_Down(edge, GetItemsDictionary_Down()[edge.To]);
+            if (eventEdge == null)
+                return;
+
+            IItem item = GetItemsDictionary()[eventEdge.To];
+
+            if(item != null)
+                UpdateItem(eventEdge, item);
+
+            IItem item_Down = GetItemsDictionary_Down()[eventEdge.To];
+
+            if (item != null)
+                UpdateItem(eventEdge, item);            
         }
 
         protected override void UpdateVertexValues()
@@ -393,23 +404,11 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             AxisSegment segment = FindVerticalSegment(item.Top + 1);
 
             IVertex octaveVertex = segment.BaseVertex.Get(false, "Octave:");
-            IVertex noteVertex = segment.BaseVertex.Get(false, "Note:");
-
-            ////////////////////////////////////////
-            Interaction.BeginInteractionWithGraph();
-            ////////////////////////////////////////
-
-            bool ForceVertexChangeOff_history = VisualiserHelper.ForceVertexChangeOff;
-            VisualiserHelper.ForceVertexChangeOff = true;
+            IVertex noteVertex = segment.BaseVertex.Get(false, "Note:");             
 
             GraphUtil.CreateOrReplaceEdge(noteEventVertex, metaOctave, octaveVertex);
             GraphUtil.CreateOrReplaceEdge(noteEventVertex, metaNote, noteVertex);
-
-            ////////////////////////////////////////
-            Interaction.EndInteractionWithGraph();
-            ////////////////////////////////////////
-            
-            VisualiserHelper.ForceVertexChangeOff = ForceVertexChangeOff_history;
+                      
 
             int? octave = GraphUtil.GetIntegerValue(octaveVertex);
             int? note = GraphUtil.GetIntegerValue(noteVertex);
@@ -455,23 +454,12 @@ namespace m0_COMPOSER.UIWpf.Visualisers
                 TriggerTime = (int)(item.Left / HorizontalAD.BaseUnitSize);
 
                 Length = (int)(itemWidth / HorizontalAD.BaseUnitSize);
-            }
-
-            ////////////////////////////////////////
-            Interaction.BeginInteractionWithGraph();
-            ////////////////////////////////////////
-
-            bool ForceVertexChangeOff_history = VisualiserHelper.ForceVertexChangeOff;
-            VisualiserHelper.ForceVertexChangeOff = true;
-
+            }            
+            
             GraphUtil.SetVertexValue(itemVertex, metaTriggerTime, TriggerTime);
 
             if (Length != 0)
-                GraphUtil.SetVertexValue(itemVertex, metaLength, Length);
-
-            ////////////////////////////////////////
-            Interaction.EndInteractionWithGraph();
-            ////////////////////////////////////////
+                GraphUtil.SetVertexValue(itemVertex, metaLength, Length);            
         }
 
         protected override int ScreenPositionToMusicTime(double position, bool performSnapCorrection)
