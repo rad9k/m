@@ -82,12 +82,13 @@ namespace m0_COMPOSER.UIWpf.Visualisers
         {
             IVertex baseEdgeTo = VisualiserHelper.Vertex.Get(false, @"BaseEdge:\To:");
 
-            ExecutionFlowHelper.DoAddRemoveDisposeUpdateHandlers(exe.Stack, new List<EdgeAddRemoveDisposeHandlers>()
-            { new EdgeAddRemoveDisposeHandlers(
+            ExecutionFlowHelper.DoAddRemoveDisposeUpdateHandlers(exe.Stack, new List<EventHandlers>()
+            { new EventHandlers(
                 baseEdgeTo,
                 EdgeAdded,
                 EdgeRemoved,
                 EdgeDisposed,
+                true,
                 new string[] {"Octave", "Note", "Length", "TriggerTime", "Velocity"},
                 EdgeAddedByMetaHandler
                 )
