@@ -111,7 +111,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             IItem item_Down = GetItemsDictionary_Down()[eventEdge.To];
 
             if (item != null)
-                UpdateItem(eventEdge, item);            
+                UpdateItem_Down(eventEdge, item);            
         }
 
         protected override void UpdateVertexValues()
