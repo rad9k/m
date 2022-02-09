@@ -89,15 +89,16 @@ namespace m0_COMPOSER.UIWpf.Visualisers
                 EdgeRemoved,
                 EdgeDisposed,
                 true,
-                new string[] {"Octave", "Note", "Length", "TriggerTime", "Velocity"},
-                EdgeAddedByMetaHandler
+                new string[] {"Octave", "Note", "TriggerTime"},
+                new string[] {"Length", "Velocity"},
+                EdgeAddedByMetaValueChangeHandler
                 )
             });
 
             return exe.Stack;
         }
 
-        protected void EdgeAddedByMetaHandler(IEdge parameterEdge)
+        protected void EdgeAddedByMetaValueChangeHandler(IEdge parameterEdge)
         {
             IEdge eventEdge = GraphUtil.GetQueryInFirstEdge(parameterEdge.From, "Event", null);
 
