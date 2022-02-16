@@ -96,6 +96,15 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             });
 
             return exe.Stack;
+        }        
+
+        protected override void EdgeAdded(IEdge edge)
+        {
+            if (GraphUtil.ExistQueryOut(edge.To, "$Is", "NoteEvent"))
+                AddItemByEdge(edge, null);
+            else
+                if(GraphUtil.GetIntegerValue(edge.To.Get(false, @"Number:")) == CurrentControlChangeNumber)
+                    AddItemByEdge_Down(edge, null, false, false);
         }
 
         protected void AddEdgeByMetaOrValueChangeHandler(IEdge parameterEdge)
@@ -105,13 +114,25 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             if (eventEdge == null)
                 return;
 
-            IItem item = GetItemsDictionary()[eventEdge.To];
+            Dictionary<IVertex, IItem> ItemsDictionary = GetItemsDictionary();
+
+            IItem item = null;
+
+            if(ItemsDictionary.ContainsKey(eventEdge.To))
+                item = GetItemsDictionary()[eventEdge.To];
 
             if(item != null)
                 UpdateItem(eventEdge, item);
 
-            IItem item_Down = GetItemsDictionary_Down()[eventEdge.To];
+            //
 
+            Dictionary<IVertex, IItem> ItemsDictionary_Down = GetItemsDictionary_Down();
+
+            IItem item_Down = null;
+
+            if (ItemsDictionary_Down.ContainsKey(eventEdge.To))
+                item_Down = GetItemsDictionary_Down()[eventEdge.To];
+           
             if (item_Down != null)
                 UpdateItem_Down(eventEdge, item_Down);            
         }
@@ -326,9 +347,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             if (Height_Down == 0)
                 return;
 
-            IVertex itemEventVertex = itemEdge.To;
-
-            bool dummy = false;
+            IVertex itemEventVertex = itemEdge.To;            
 
 
             ControlChangeItem item = null;

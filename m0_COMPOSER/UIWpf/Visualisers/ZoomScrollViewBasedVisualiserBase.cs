@@ -2426,17 +2426,17 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
         protected virtual INoInEdgeInOutVertexVertex CheckBaseEdgeChange(IExecution exe) { return null; }
 
-        protected void EdgeRemoved(IEdge edge)
+        protected virtual void EdgeRemoved(IEdge edge)
         {            
             RemoveItemByEdge(edge);
         }
 
-        protected void EdgeAdded(IEdge edge)
+        protected virtual void EdgeAdded(IEdge edge)
         {
             AddItemByEdge(edge, null);
         }
 
-        protected void EdgeDisposed(IEdge edge)
+        protected virtual void EdgeDisposed(IEdge edge)
         {
             UpdateVertex();
         }
