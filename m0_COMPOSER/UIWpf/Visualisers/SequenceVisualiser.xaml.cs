@@ -89,8 +89,8 @@ namespace m0_COMPOSER.UIWpf.Visualisers
                 EdgeRemoved,
                 EdgeDisposed,
                 true,
-                new string[] {"Octave", "Note", "TriggerTime"},
-                new string[] {"Length", "Velocity"},
+                new string[] {"Octave", "Note"},
+                new string[] {"TriggerTime", "Length", "Velocity"},
                 AddEdgeByMetaOrValueChangeHandler
                 )
             });

@@ -49,6 +49,7 @@ namespace m0.Graph.ExecutionFlow
             AddEdgeCancelsAddEdgeByMeta = _AddEdgeCancelsAddEdgeByMeta;
 
             AddEdgeMeta = _AddEdgeMeta;
+            ValueChangeMeta = _ValueChangeMeta;
             AddEdgeByMetaOrValueChangeHandler = _AddEdgeByMetaOrValueChangeHandler;
         }
     }
@@ -527,8 +528,8 @@ namespace m0.Graph.ExecutionFlow
                          IVertex EventChangedVertex = GraphUtil.GetQueryOutFirst(_event.To, "ChangedVertex", null);
 
                          foreach (EventHandlers h in handlers)
-                            if(h.AddEdgeMeta != null)
-                                 foreach (string meta in h.AddEdgeMeta)
+                            if (h.ValueChangeMeta != null)
+                                 foreach (string meta in h.ValueChangeMeta)
                                  {
                                      IEdge edgeWithMeta = GraphUtil.GetQueryInFirstEdge(EventChangedVertex, meta, null);
 
