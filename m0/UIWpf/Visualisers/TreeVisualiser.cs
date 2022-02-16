@@ -368,7 +368,7 @@ namespace m0.UIWpf.Visualisers
 
             IVertex baseEdgeTo = VisualiserHelper.Vertex.Get(false, @"BaseEdge:\To:");
 
-            DoAddRemoveDisposeUpdateHandlers(exe.Stack, new List<EventHandlers>()
+            DoAddRemoveDisposeAddEdgeByMetaOrValueChangeHandlers(exe.Stack, new List<EventHandlers>()
             { new EventHandlers(
                 baseEdgeTo,
                 EdgeAdded,

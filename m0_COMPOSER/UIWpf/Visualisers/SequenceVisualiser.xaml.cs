@@ -82,7 +82,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
         {
             IVertex baseEdgeTo = VisualiserHelper.Vertex.Get(false, @"BaseEdge:\To:");
 
-            ExecutionFlowHelper.DoAddRemoveDisposeUpdateHandlers(exe.Stack, new List<EventHandlers>()
+            ExecutionFlowHelper.DoAddRemoveDisposeAddEdgeByMetaOrValueChangeHandlers(exe.Stack, new List<EventHandlers>()
             { new EventHandlers(
                 baseEdgeTo,
                 EdgeAdded,
@@ -91,14 +91,14 @@ namespace m0_COMPOSER.UIWpf.Visualisers
                 true,
                 new string[] {"Octave", "Note", "TriggerTime"},
                 new string[] {"Length", "Velocity"},
-                EdgeAddedByMetaValueChangeHandler
+                AddEdgeByMetaOrValueChangeHandler
                 )
             });
 
             return exe.Stack;
         }
 
-        protected void EdgeAddedByMetaValueChangeHandler(IEdge parameterEdge)
+        protected void AddEdgeByMetaOrValueChangeHandler(IEdge parameterEdge)
         {
             IEdge eventEdge = GraphUtil.GetQueryInFirstEdge(parameterEdge.From, "Event", null);
 
@@ -112,8 +112,8 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             IItem item_Down = GetItemsDictionary_Down()[eventEdge.To];
 
-            if (item != null)
-                UpdateItem_Down(eventEdge, item);            
+            if (item_Down != null)
+                UpdateItem_Down(eventEdge, item_Down);            
         }
 
         protected override void UpdateVertexValues()

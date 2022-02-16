@@ -78,7 +78,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
         protected IVertex BaseEdgeToMetaVertex;
         protected IVertex VisualiserMetaVertex;
 
-        protected IList<string> listenerScopeQueries = new List<string> { @"", @"BaseEdge:\To:", @"BaseEdge:\To:\" };
+        protected IList<string> listenerScopeQueries = new List<string> { @"", @"BaseEdge:\To:", @"BaseEdge:\To:\", @"BaseEdge:\To:\\" };
 
         public IVertex VisualizedVertex;
         protected IVertex verticalSpanVertex;
@@ -1415,7 +1415,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
         protected virtual void AddItemByEdge(IEdge itemEdge, List<IVertex> selectedVertexes) { }
 
-        protected virtual void RemoveItem(IEdge itemEdge) {
+        protected virtual void RemoveItemByEdge(IEdge itemEdge) {
             Dictionary<IVertex, IItem> ItemsDictinary = GetItemsDictionary();
             Dictionary<IVertex, IItem> ItemsDictinary_Down = GetItemsDictionary_Down();
 
@@ -2428,7 +2428,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
         protected void EdgeRemoved(IEdge edge)
         {            
-            RemoveItem(edge);
+            RemoveItemByEdge(edge);
         }
 
         protected void EdgeAdded(IEdge edge)
