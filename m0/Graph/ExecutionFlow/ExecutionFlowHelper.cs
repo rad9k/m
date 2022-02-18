@@ -14,8 +14,7 @@ namespace m0.Graph.ExecutionFlow
         public IVertex FromVertex;
         public EdgeHandler AddEdgeHandler;
         public EdgeHandler RemoveEdgeHandler;
-        public EdgeHandler DisposeEdgeHandler;
-        public bool AddEdgeCancelsAddEdgeByMeta = false;
+        public EdgeHandler DisposeEdgeHandler;        
 
         public string[] AddEdgeMeta;
         public string[] ValueChangeMeta;
@@ -35,8 +34,7 @@ namespace m0.Graph.ExecutionFlow
         public EventHandlers(IVertex _fromVertex,
             EdgeHandler _AddHandler,
             EdgeHandler _RemoveHandler,
-            EdgeHandler _DisposeHandler,
-            bool _AddEdgeCancelsAddEdgeByMeta,
+            EdgeHandler _DisposeHandler,            
             string[] _AddEdgeMeta,
             string[] _ValueChangeMeta,
             EdgeHandler _AddEdgeByMetaOrValueChangeHandler
@@ -45,8 +43,7 @@ namespace m0.Graph.ExecutionFlow
             FromVertex = _fromVertex;
             AddEdgeHandler = _AddHandler;
             RemoveEdgeHandler = _RemoveHandler;
-            DisposeEdgeHandler = _DisposeHandler;
-            AddEdgeCancelsAddEdgeByMeta = _AddEdgeCancelsAddEdgeByMeta;
+            DisposeEdgeHandler = _DisposeHandler;            
 
             AddEdgeMeta = _AddEdgeMeta;
             ValueChangeMeta = _ValueChangeMeta;
@@ -460,31 +457,31 @@ namespace m0.Graph.ExecutionFlow
 
             public EventHandlers Handlers;
 
-            public IEdge eventEdge;
+            public IEdge EventEdge;
 
             public ToExecuteHandler(HandlerTypeEnum _HandlerType, EventHandlers _Handlers, IEdge _eventEdge)
             {
                 HandlerType = _HandlerType;
                 Handlers = _Handlers;
-                eventEdge = _eventEdge;
+                EventEdge = _eventEdge;
             }
         }
 
         public static void AddToExecuteList(List<ToExecuteHandler> toExecute,
             HandlerTypeEnum HandlerType, 
             EventHandlers Handlers,
-            IEdge eventEdge)
+            IEdge EventEdge)
         {
-            bool exist = false;
+            /*bool exist = false;
 
             foreach (ToExecuteHandler teh in toExecute)
                 if ((teh.HandlerType == HandlerType 
                         || (teh.HandlerType == HandlerTypeEnum.AddEdgeHandler && teh.Handlers.AddEdgeCancelsAddEdgeByMeta) )
-                        && teh.Handlers == Handlers)
+                        && teh.Handlers == Handlers/* && teh.EventEdge == EventEdge)
                     exist = true;
 
-            if (!exist)
-                toExecute.Add(new ToExecuteHandler(HandlerType, Handlers, eventEdge));
+            if (!exist)*/
+                toExecute.Add(new ToExecuteHandler(HandlerType, Handlers, EventEdge));
         }
 
         public static void DoAddRemoveDisposeAddEdgeByMetaOrValueChangeHandlers(IVertex stack, List<EventHandlers> handlers)
@@ -543,19 +540,19 @@ namespace m0.Graph.ExecutionFlow
                 switch (teh.HandlerType)
                 {
                     case HandlerTypeEnum.AddEdgeHandler:
-                        teh.Handlers.AddEdgeHandler(teh.eventEdge);
+                        teh.Handlers.AddEdgeHandler(teh.EventEdge);
                         break;
 
                     case HandlerTypeEnum.DisposeEdgeHandler:
-                        teh.Handlers.DisposeEdgeHandler(teh.eventEdge);
+                        teh.Handlers.DisposeEdgeHandler(teh.EventEdge);
                         break;
 
                     case HandlerTypeEnum.RemoveEdgeHandler:
-                        teh.Handlers.RemoveEdgeHandler(teh.eventEdge);
+                        teh.Handlers.RemoveEdgeHandler(teh.EventEdge);
                         break;
 
                     case HandlerTypeEnum.AddEdgeByMetaOrValueChangeHandler:
-                        teh.Handlers.AddEdgeByMetaOrValueChangeHandler(teh.eventEdge);
+                        teh.Handlers.AddEdgeByMetaOrValueChangeHandler(teh.EventEdge);
                         break;
                 }
         }

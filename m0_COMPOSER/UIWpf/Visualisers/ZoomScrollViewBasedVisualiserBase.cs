@@ -2979,9 +2979,17 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             //VertexChangeOff = true;
 
+            ////////////////////////////////////////
+            Interaction.BeginInteractionWithGraph();
+            ////////////////////////////////////////
+
             UnselectAllSelectedItems();
 
             PasteEdgesFromClipboard(edges);
+
+            ////////////////////////////////////////
+            Interaction.EndInteractionWithGraph();
+            ////////////////////////////////////////
 
             //VertexChangeOff = false;
 
