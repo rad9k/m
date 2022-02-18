@@ -760,7 +760,8 @@ namespace m0_COMPOSER.UIWpf.Visualisers
                 right = snappedMouseDownPointX;
             }
 
-            WpfUtil.SetPositionAbsolute(NewItemShape, left, NewItemSegment.StartPosition, right, NewItemSegment.EndPosition);
+            if(NewItemShape != null)
+                WpfUtil.SetPositionAbsolute(NewItemShape, left, NewItemSegment.StartPosition, right, NewItemSegment.EndPosition);
         }
 
         protected void PerformPenUp()
