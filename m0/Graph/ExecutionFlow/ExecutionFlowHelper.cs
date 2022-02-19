@@ -478,7 +478,7 @@ namespace m0.Graph.ExecutionFlow
             bool exist = false;
 
             if (Handlers.ItemMeta != null &&
-                    (HandlerType == HandlerTypeEnum.AddEdgeByMetaOrValueChangeHandler || HandlerType == HandlerTypeEnum.VertexChange))
+                (HandlerType == HandlerTypeEnum.AddEdgeByMetaOrValueChangeHandler || HandlerType == HandlerTypeEnum.VertexChange))
                 EventEdge = GraphUtil.GetQueryInFirstEdge(EventEdge.From, Handlers.ItemMeta, null);
 
             foreach (ToExecuteHandler teh in toExecute)
