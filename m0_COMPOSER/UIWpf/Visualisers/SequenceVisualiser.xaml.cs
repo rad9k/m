@@ -90,6 +90,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
                 EdgeDisposed,                
                 new string[] {"Octave", "Note"},
                 new string[] {"TriggerTime", "Length", "Velocity"},
+                "Event",
                 AddEdgeByMetaOrValueChangeHandler
                 )
             });
@@ -106,13 +107,8 @@ namespace m0_COMPOSER.UIWpf.Visualisers
                     AddItemByEdge_Down(edge, null, false, false);
         }
 
-        protected void AddEdgeByMetaOrValueChangeHandler(IEdge parameterEdge)
-        {
-            IEdge eventEdge = GraphUtil.GetQueryInFirstEdge(parameterEdge.From, "Event", null);
-
-            if (eventEdge == null)
-                return;
-
+        protected void AddEdgeByMetaOrValueChangeHandler(IEdge eventEdge)
+        {            
             Dictionary<IVertex, IItem> ItemsDictionary = GetItemsDictionary();
 
             IItem item = null;

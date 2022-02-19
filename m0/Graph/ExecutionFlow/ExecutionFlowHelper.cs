@@ -18,6 +18,7 @@ namespace m0.Graph.ExecutionFlow
 
         public string[] AddEdgeMeta;
         public string[] ValueChangeMeta;
+        public string ItemMeta;
         public EdgeHandler AddEdgeByMetaOrValueChangeHandler;
 
         public EventHandlers(IVertex _fromVertex, 
@@ -37,6 +38,7 @@ namespace m0.Graph.ExecutionFlow
             EdgeHandler _DisposeHandler,            
             string[] _AddEdgeMeta,
             string[] _ValueChangeMeta,
+            string _ItemMeta,
             EdgeHandler _AddEdgeByMetaOrValueChangeHandler
             )
         {
@@ -47,6 +49,7 @@ namespace m0.Graph.ExecutionFlow
 
             AddEdgeMeta = _AddEdgeMeta;
             ValueChangeMeta = _ValueChangeMeta;
+            ItemMeta = _ItemMeta;
             AddEdgeByMetaOrValueChangeHandler = _AddEdgeByMetaOrValueChangeHandler;
         }
     }
@@ -472,16 +475,21 @@ namespace m0.Graph.ExecutionFlow
             EventHandlers Handlers,
             IEdge EventEdge)
         {
-            /*bool exist = false;
+            bool exist = false;
+
+            if (Handlers.ItemMeta != null &&
+                    (HandlerType == HandlerTypeEnum.AddEdgeByMetaOrValueChangeHandler || HandlerType == HandlerTypeEnum.VertexChange))
+                EventEdge = GraphUtil.GetQueryInFirstEdge(EventEdge.From, Handlers.ItemMeta, null);
 
             foreach (ToExecuteHandler teh in toExecute)
-                if ((teh.HandlerType == HandlerType 
-                        || (teh.HandlerType == HandlerTypeEnum.AddEdgeHandler && teh.Handlers.AddEdgeCancelsAddEdgeByMeta) )
-                        && teh.Handlers == Handlers/* && teh.EventEdge == EventEdge)
+                if (/*(teh.HandlerType == HandlerType 
+                        || (teh.HandlerType == HandlerTypeEnum.AddEdgeHandler) )
+                        &&*/ teh.Handlers == Handlers && teh.EventEdge == EventEdge)
                     exist = true;
 
-            if (!exist)*/
+            if (!exist && EventEdge != null)
                 toExecute.Add(new ToExecuteHandler(HandlerType, Handlers, EventEdge));
+            
         }
 
         public static void DoAddRemoveDisposeAddEdgeByMetaOrValueChangeHandlers(IVertex stack, List<EventHandlers> handlers)

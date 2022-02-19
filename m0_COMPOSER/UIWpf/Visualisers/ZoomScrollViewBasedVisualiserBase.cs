@@ -799,7 +799,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
                 newItemEventEdge = AddItemVertex(NewItemSegment, GetSnappedPosition(MouseDownPoint.X), GetSnapMinimalWidth());
             else
             {
-                if (NewItemShape.Width == 0)
+                if (NewItemShape != null && NewItemShape.Width == 0)
                 {
                     //VertexChangeOff = false;
                     return;
