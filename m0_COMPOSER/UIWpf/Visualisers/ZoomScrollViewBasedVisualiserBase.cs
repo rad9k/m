@@ -456,8 +456,14 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             HorizontalArrowLine = WpfUtil.CreateLine(1, (Brush)FindResource("0LightHighlightBrush"));
             VerticalArrowLine = WpfUtil.CreateLine(1, (Brush)FindResource("0LightHighlightBrush"));
 
+            Canvas.SetZIndex(HorizontalArrowLine, 999);
+            Canvas.SetZIndex(VerticalArrowLine, 999);
+
             HorizontalArrowLine_Down = WpfUtil.CreateLine(1, (Brush)FindResource("0LightHighlightBrush"));
             VerticalArrowLine_Down = WpfUtil.CreateLine(1, (Brush)FindResource("0LightHighlightBrush"));
+
+            Canvas.SetZIndex(HorizontalArrowLine_Down, 999);
+            Canvas.SetZIndex(VerticalArrowLine_Down, 999);
         }
 
         protected void ItemsAdd(IItem i)
@@ -517,9 +523,10 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             DrawBox();
 
-            DrawArrowLines();
-
             DrawItems();
+
+            DrawArrowLines();
+            
 
             CreateAndDrawPositionMark();
         }
@@ -802,6 +809,11 @@ namespace m0_COMPOSER.UIWpf.Visualisers
                 if (NewItemShape != null && NewItemShape.Width == 0)
                 {
                     //VertexChangeOff = false;
+
+                    ////////////////////////////////////////
+                    Interaction.EndInteractionWithGraph();
+                    ////////////////////////////////////////
+                    
                     return;
                 }
 

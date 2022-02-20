@@ -484,7 +484,7 @@ namespace m0.Graph.ExecutionFlow
             foreach (ToExecuteHandler teh in toExecute)
                 if (/*(teh.HandlerType == HandlerType 
                         || (teh.HandlerType == HandlerTypeEnum.AddEdgeHandler) )
-                        &&*/ teh.Handlers == Handlers && teh.EventEdge == EventEdge)
+                        &&*/ teh.Handlers == Handlers && Edge.CompareIEdges(teh.EventEdge,EventEdge))
                     exist = true;
 
             if (!exist && EventEdge != null)
