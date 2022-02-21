@@ -16,7 +16,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 {
     public partial class ChordProgressionVisualiser : MelodyFlowVisualiserBase
     {
-        static string[] _MetaTriggeringUpdateVertex = new string[] { "ShowArrowLines:", "ShowSnapLines:", "ShowLabel:", "ShowVelocity:", "DefaultVelocity:", "SnapToGrid" };
+        static string[] _MetaTriggeringUpdateVertex = new string[] { "ShowArrowLines:", "ShowSnapLines:", "ShowLabel:"};
         public override string[] MetaTriggeringUpdateVertex { get { return _MetaTriggeringUpdateVertex; } }
 
         static string[] _MetaTriggeringUpdateView = new string[] { };

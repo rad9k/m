@@ -1,6 +1,7 @@
 ﻿using m0;
 using m0.Foundation;
 using m0.Graph;
+using m0.Graph.ExecutionFlow;
 using m0.UIWpf;
 using m0.UIWpf.Controls;
 using m0.UIWpf.Visualisers;
@@ -24,7 +25,13 @@ namespace m0_COMPOSER.UIWpf.Visualisers
     /// Interaction logic for SequenceVisualiser.xaml
     /// </summary>
     public partial class TriggerSetVisualiser : ZoomScrollViewBasedVisualiserBase
-    {        
+    {
+        static string[] _MetaTriggeringUpdateVertex = new string[] { "ShowSnapLines:", "ShowLabel:", "ShowVelocity:", "DefaultVelocity:", "SnapToGrid" };
+        public override string[] MetaTriggeringUpdateVertex { get { return _MetaTriggeringUpdateVertex; } }
+
+        static string[] _MetaTriggeringUpdateView = new string[] { };
+        public override string[] MetaTriggeringUpdateView { get { return _MetaTriggeringUpdateView; } }
+
         public void InitXAMLInstances()
         {
             PenButton = PenButton_Instance;
@@ -68,6 +75,51 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             //
 
             ZoomScrollViewBasedVisualiserBase_Init(baseEdgeVertex, parentVisualiser);
+        }
+
+        protected override INoInEdgeInOutVertexVertex CheckBaseEdgeChange(IExecution exe)
+        {
+            IVertex baseEdgeTo = VisualiserHelper.Vertex.Get(false, @"BaseEdge:\To:");
+
+            ExecutionFlowHelper.DoAddRemoveDisposeAddEdgeByMetaOrValueChangeHandlers(exe.Stack, new List<EventHandlers>()
+            { new EventHandlers(
+                baseEdgeTo,
+                EdgeAdded,
+                EdgeRemoved,
+                EdgeDisposed,
+                new string[] { },
+                new string[] {"TriggerTime", "Length", "Velocity"},
+                "Trigger",
+                AddEdgeByMetaOrValueChangeHandler
+                )
+            });
+
+            return exe.Stack;
+        }
+
+        protected void AddEdgeByMetaOrValueChangeHandler(IEdge eventEdge)
+        {
+          /*  Dictionary<IVertex, IItem> ItemsDictionary = GetItemsDictionary();
+
+            IItem item = null;
+
+            if (ItemsDictionary.ContainsKey(eventEdge.To))
+                item = GetItemsDictionary()[eventEdge.To];
+
+            if (item != null)
+                UpdateItem(eventEdge, item);
+
+            //
+
+            Dictionary<IVertex, IItem> ItemsDictionary_Down = GetItemsDictionary_Down();
+
+            IItem item_Down = null;
+
+            if (ItemsDictionary_Down.ContainsKey(eventEdge.To))
+                item_Down = GetItemsDictionary_Down()[eventEdge.To];
+
+            if (item_Down != null)
+                UpdateItem_Down(eventEdge, item_Down);*/
         }
 
         protected override void UpdateVertexValues()
