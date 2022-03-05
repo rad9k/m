@@ -18,7 +18,7 @@ namespace m0.Graph.ExecutionFlow
 
         public string[] AddEdgeMeta;
         public string[] ValueChangeMeta;
-        public string ItemMeta;
+        public string[] ItemMeta;
         public EdgeHandler AddEdgeByMetaOrValueChangeHandler;
 
         public EventHandlers(IVertex _fromVertex, 
@@ -38,7 +38,7 @@ namespace m0.Graph.ExecutionFlow
             EdgeHandler _DisposeHandler,            
             string[] _AddEdgeMeta,
             string[] _ValueChangeMeta,
-            string _ItemMeta,
+            string[] _ItemMeta,
             EdgeHandler _AddEdgeByMetaOrValueChangeHandler
             )
         {
@@ -479,7 +479,13 @@ namespace m0.Graph.ExecutionFlow
 
             if (Handlers.ItemMeta != null &&
                 (HandlerType == HandlerTypeEnum.AddEdgeByMetaOrValueChangeHandler || HandlerType == HandlerTypeEnum.VertexChange))
-                EventEdge = GraphUtil.GetQueryInFirstEdge(EventEdge.From, Handlers.ItemMeta, null);
+                foreach(string itemMeta in Handlers.ItemMeta)
+                {
+                    IEdge possibleEventEdge = GraphUtil.GetQueryInFirstEdge(EventEdge.From, itemMeta, null);
+
+                    if (possibleEventEdge != null)
+                        EventEdge = possibleEventEdge;
+                }
 
             foreach (ToExecuteHandler teh in toExecute)
                 if (/*(teh.HandlerType == HandlerType 

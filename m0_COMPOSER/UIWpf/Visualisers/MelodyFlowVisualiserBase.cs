@@ -107,7 +107,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
                 IsCurrentPenItemCenter = true;
         }
 
-        protected override void AddItemByEdge(IEdge itemEdge, List<IVertex> selectedVertexes)
+        protected void UpdateItem(IEdge itemEdge, IItem item)
         {
             IVertex quantVertex = itemEdge.To;
 
@@ -122,22 +122,9 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             string label = pitchVertex.Value.ToString();
 
-            FrameworkElement newElement;
-
-            if (IsDrum)
-                newElement = new DrumItem(itemEdge, this, ShowVelocity);
-            else
-                newElement = new NoteItem(itemEdge, this, ShowLabel, ShowVelocity);
+            FrameworkElement newElement = (FrameworkElement)item;
 
             newElement.Tag = quant;
-
-            IItem newItem = (IItem)newElement;
-
-            if (selectedVertexes != null && selectedVertexes.Contains(quantVertex))
-            {
-                newItem.SelectHighlight();
-                PreviousSelectedItemContext = MainDownEnum.Main;
-            }
 
             AxisSegment itemSegment = GetVerticalSegment(pitchVertex);
 
@@ -149,21 +136,43 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             if (IsDrum)
             {
-                newItem.HorizontalCenter = startPosition;
-                newItem.Top = itemSegment.StartPosition;
-                newItem.Bottom = itemSegment.EndPosition;
+                item.HorizontalCenter = startPosition;
+                item.Top = itemSegment.StartPosition;
+                item.Bottom = itemSegment.EndPosition;
             }
             else
             {
-                newItem.Left = startPosition;
-                newItem.Top = itemSegment.StartPosition;
-                newItem.Right = endPosition;
-                newItem.Bottom = itemSegment.EndPosition;
+                item.Left = startPosition;
+                item.Top = itemSegment.StartPosition;
+                item.Right = endPosition;
+                item.Bottom = itemSegment.EndPosition;
 
-                ((NoteItem)newItem).Label = label;
+                ((NoteItem)item).Label = label;
             }
 
-            newItem.Update();
+            item.Update();
+        }
+
+        protected override void AddItemByEdge(IEdge itemEdge, List<IVertex> selectedVertexes)
+        {
+            IVertex quantVertex = itemEdge.To;
+
+            FrameworkElement newElement;
+
+            if (IsDrum)
+                newElement = new DrumItem(itemEdge, this, ShowVelocity);
+            else
+                newElement = new NoteItem(itemEdge, this, ShowLabel, ShowVelocity);
+
+            IItem newItem = (IItem)newElement;
+
+            UpdateItem(itemEdge, newItem);
+
+            if (selectedVertexes != null && selectedVertexes.Contains(quantVertex))
+            {
+                newItem.SelectHighlight();
+                PreviousSelectedItemContext = MainDownEnum.Main;
+            }
 
             ItemsAdd(newItem);
 

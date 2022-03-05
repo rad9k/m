@@ -89,7 +89,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
                 EdgeDisposed,
                 new string[] { },
                 new string[] {"TriggerTime", "Length", "Velocity"},
-                "Trigger",
+                new string[] {"Trigger" },
                 AddEdgeByMetaOrValueChangeHandler
                 )
             });
@@ -99,27 +99,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
         protected void AddEdgeByMetaOrValueChangeHandler(IEdge eventEdge)
         {
-          /*  Dictionary<IVertex, IItem> ItemsDictionary = GetItemsDictionary();
-
-            IItem item = null;
-
-            if (ItemsDictionary.ContainsKey(eventEdge.To))
-                item = GetItemsDictionary()[eventEdge.To];
-
-            if (item != null)
-                UpdateItem(eventEdge, item);
-
-            //
-
-            Dictionary<IVertex, IItem> ItemsDictionary_Down = GetItemsDictionary_Down();
-
-            IItem item_Down = null;
-
-            if (ItemsDictionary_Down.ContainsKey(eventEdge.To))
-                item_Down = GetItemsDictionary_Down()[eventEdge.To];
-
-            if (item_Down != null)
-                UpdateItem_Down(eventEdge, item_Down);*/
+            VisualiserDraw();
         }
 
         protected override void UpdateVertexValues()
@@ -207,7 +187,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
                 IsCurrentPenItemCenter = true;
         }
 
-        protected override void AddItemByEdge(IEdge itemEdge, List<IVertex> selectedVertexes)
+        protected void UpdateItem(IEdge itemEdge, IItem item)
         {
             IVertex itemEventVertex = itemEdge.To;
 
@@ -215,22 +195,10 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             int triggerTime = GraphUtil.GetIntegerValue(itemEventVertex.Get(false, "TriggerTime:"), ref dummy);
 
-            int length = GraphUtil.GetIntegerValue(itemEventVertex.Get(false, "Length:"), ref dummy);                     
+            int length = GraphUtil.GetIntegerValue(itemEventVertex.Get(false, "Length:"), ref dummy);
 
-            FrameworkElement newElement;
 
-            if (IsDrum)
-                newElement = new DrumItem(itemEdge, this, ShowVelocity);
-            else
-                newElement = new NoteItem(itemEdge, this, ShowLabel, ShowVelocity);
-
-            IItem newItem = (IItem)newElement;
-
-            if (selectedVertexes != null && selectedVertexes.Contains(itemEventVertex))
-            {
-                newItem.SelectHighlight();
-                PreviousSelectedItemContext = MainDownEnum.Main;
-            }
+            FrameworkElement newElement = (FrameworkElement)item;
 
             AxisSegment itemSegment = VerticalAD.Segments[0];
 
@@ -242,16 +210,40 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             if (IsDrum)
             {
-                newItem.HorizontalCenter = startPosition;
-                newItem.Top = itemSegment.StartPosition;
-                newItem.Bottom = itemSegment.EndPosition;
+                item.HorizontalCenter = startPosition;
+                item.Top = itemSegment.StartPosition;
+                item.Bottom = itemSegment.EndPosition;
             }
             else
             {
-                newItem.Left = startPosition;
-                newItem.Top = itemSegment.StartPosition;
-                newItem.Right = endPosition;
-                newItem.Bottom = itemSegment.EndPosition;
+                item.Left = startPosition;
+                item.Top = itemSegment.StartPosition;
+                item.Right = endPosition;
+                item.Bottom = itemSegment.EndPosition;
+            }
+
+            item.Update();
+        }
+
+        protected override void AddItemByEdge(IEdge itemEdge, List<IVertex> selectedVertexes)
+        {
+            FrameworkElement newElement;
+
+            if (IsDrum)
+                newElement = new DrumItem(itemEdge, this, ShowVelocity);
+            else
+                newElement = new NoteItem(itemEdge, this, ShowLabel, ShowVelocity);
+
+            IItem newItem = (IItem)newElement;
+
+            UpdateItem(itemEdge, newItem);
+
+            IVertex itemEventVertex = itemEdge.To;
+
+            if (selectedVertexes != null && selectedVertexes.Contains(itemEventVertex))
+            {
+                newItem.SelectHighlight();
+                PreviousSelectedItemContext = MainDownEnum.Main;
             }
 
             ItemsAdd(newItem);

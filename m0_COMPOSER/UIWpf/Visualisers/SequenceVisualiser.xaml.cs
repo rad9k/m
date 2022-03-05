@@ -90,7 +90,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
                 EdgeDisposed,                
                 new string[] {"Octave", "Note"},
                 new string[] {"TriggerTime", "Length", "Velocity"},
-                "Event",
+                new string[] {"Event" },
                 AddEdgeByMetaOrValueChangeHandler
                 )
             });
@@ -307,7 +307,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
                 AddItemByEdge_Down(itemEdge, selectedVertexes, false, true);
         }
 
-        protected void UpdateItem_Down(IEdge itemEdge, IItem _item)
+        protected override void UpdateItem_Down(IEdge itemEdge, IItem _item)
         {
             if (Height_Down == 0)
                 return;
@@ -340,36 +340,6 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             item.HorizontalCenter = startPosition;
             item.VerticalCenter = Height_Down - (((double)value / 127) * Height_Down);
-        }
-
-        protected override void AddItemByEdge_Down(IEdge itemEdge, List<IVertex> selectedVertexes, bool isUpdate, bool isNoteEvent)
-        {
-            if (Height_Down == 0)
-                return;
-
-            IVertex itemEventVertex = itemEdge.To;            
-
-
-            ControlChangeItem item = null;
-
-            if (isUpdate)
-                item = (ControlChangeItem)GetItemsDictionary_Down()[itemEventVertex];
-            else
-                item = new ControlChangeItem(itemEdge, this);
-
-
-            UpdateItem_Down(itemEdge, item);
-
-
-            if (selectedVertexes != null && selectedVertexes.Contains(itemEventVertex) && !isNoteEvent)
-            {
-                item.SelectHighlight();
-                PreviousSelectedItemContext = MainDownEnum.Down;
-            }
-
-
-            if (!isUpdate)
-                ItemsAdd_Down(item); // need this as item.Canvas needs to be set for the cc top mark
         }
 
         static IVertex r = MinusZero.Instance.Root;

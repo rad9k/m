@@ -1,6 +1,7 @@
 ﻿using m0;
 using m0.Foundation;
 using m0.Graph;
+using m0.Graph.ExecutionFlow;
 using m0.UIWpf;
 using m0.Util;
 using m0.ZeroTypes;
@@ -109,6 +110,33 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             verticalSpanVertex = r.Get(false, @"System\Lib\Music\Data\DefaultOneOctavePitchSet:");            
             
             horizontalSpanVertex = r.Get(false, @"System\Lib\Music\Data\DefaultNumberSpanLevel:");
+        }
+
+        
+
+        protected override INoInEdgeInOutVertexVertex CheckBaseEdgeChange(IExecution exe)
+        {
+            IVertex baseEdgeTo = VisualiserHelper.Vertex.Get(false, @"BaseEdge:\To:");
+
+            ExecutionFlowHelper.DoAddRemoveDisposeAddEdgeByMetaOrValueChangeHandlers(exe.Stack, new List<EventHandlers>()
+            { new EventHandlers(
+                baseEdgeTo,
+                EdgeAdded,
+                EdgeRemoved,
+                EdgeDisposed,
+                new string[] { },
+                new string[] {"Note", "Octave"},
+                new string[] {"Chord", "Pitch" },
+                AddEdgeByMetaOrValueChangeHandler
+                )
+            });
+
+            return exe.Stack;
+        }
+
+        protected void AddEdgeByMetaOrValueChangeHandler(IEdge eventEdge)
+        {
+            VisualiserDraw();
         }
     }
 }

@@ -1862,7 +1862,37 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             return null;
         }
         
-        protected virtual void AddItemByEdge_Down(IEdge itemEdge, List<IVertex> selectedVertexes, bool isUpdate, bool isNoteEvent) { }        
+        protected virtual void AddItemByEdge_Down(IEdge itemEdge, List<IVertex> selectedVertexes, bool isUpdate, bool isNoteEvent)
+        {
+            if (Height_Down == 0)
+                return;
+
+            IVertex itemEventVertex = itemEdge.To;
+
+
+            ControlChangeItem item = null;
+
+            if (isUpdate)
+                item = (ControlChangeItem)GetItemsDictionary_Down()[itemEventVertex];
+            else
+                item = new ControlChangeItem(itemEdge, this);
+
+
+           UpdateItem_Down(itemEdge, item);
+
+
+            if (selectedVertexes != null && selectedVertexes.Contains(itemEventVertex) && !isNoteEvent)
+            {
+                item.SelectHighlight();
+                PreviousSelectedItemContext = MainDownEnum.Down;
+            }
+
+
+            if (!isUpdate)
+                ItemsAdd_Down(item); // need this as item.Canvas needs to be set for the cc top mark
+        }
+
+        protected virtual void UpdateItem_Down(IEdge itemEdge, IItem _item) { }
 
         protected void ItemsAdd_Down(IItem i)
         {
