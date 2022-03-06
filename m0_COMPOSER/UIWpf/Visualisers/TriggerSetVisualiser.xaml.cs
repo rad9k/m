@@ -225,6 +225,8 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             item.Update();
         }
 
+
+
         protected override void AddItemByEdge(IEdge itemEdge, List<IVertex> selectedVertexes)
         {
             FrameworkElement newElement;

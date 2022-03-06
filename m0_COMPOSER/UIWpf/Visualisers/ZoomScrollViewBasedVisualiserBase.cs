@@ -1892,7 +1892,40 @@ namespace m0_COMPOSER.UIWpf.Visualisers
                 ItemsAdd_Down(item); // need this as item.Canvas needs to be set for the cc top mark
         }
 
-        protected virtual void UpdateItem_Down(IEdge itemEdge, IItem _item) { }
+        protected virtual void UpdateItem_Down(IEdge itemEdge, IItem _item)
+        {
+            if (Height_Down == 0)
+                return;
+
+            IVertex itemEventVertex = itemEdge.To;
+
+
+            bool isNoteEvent = true;
+
+            if (GraphUtil.ExistQueryOut(itemEventVertex, "$Is", "ControlChangeEvent"))
+                isNoteEvent = false;
+
+
+            bool dummy = false;
+
+            ControlChangeItem item = (ControlChangeItem)_item;
+
+            IVertex itemVertex = item.BaseEdge.To;
+
+            int triggerTime = GraphUtil.GetIntegerValue(itemVertex.Get(false, "TriggerTime:"), ref dummy);
+
+            int value;
+
+            if (isNoteEvent)
+                value = GraphUtil.GetIntegerValue(itemVertex.Get(false, "Velocity:"), ref dummy);
+            else
+                value = GraphUtil.GetIntegerValue(itemVertex.Get(false, "Value:"), ref dummy);
+
+            double startPosition = triggerTime * HorizontalAD.BaseUnitSize;
+
+            item.HorizontalCenter = startPosition;
+            item.VerticalCenter = Height_Down - (((double)value / 127) * Height_Down);
+        }
 
         protected void ItemsAdd_Down(IItem i)
         {
