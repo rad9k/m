@@ -171,77 +171,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             else
                 ExtendTimeLength = Midi.Standard.MidiTicksPerSixteen * 16; // default
 
-            if (VisualizedVertex.Get(false, "Length:") != null)
-                Length = (int)GraphUtil.GetIntegerValue(VisualizedVertex.Get(false, "Length:"));
-            else
-                Length = ExtendTimeLength;
-
-            SaveLength();
-
-
-            bool dummy = false;
-
-            IsDrum = GraphUtil.GetBooleanValue(VisualizedVertex.Get(false, "IsDrum:"), ref dummy);
-
-            if (IsDrum)
-                IsCurrentPenItemCenter = true;
-        }
-
-        protected void UpdateItem(IEdge itemEdge, IItem item)
-        {
-            IVertex itemEventVertex = itemEdge.To;
-
-            bool dummy = false;
-
-            int triggerTime = GraphUtil.GetIntegerValue(itemEventVertex.Get(false, "TriggerTime:"), ref dummy);
-
-            int length = GraphUtil.GetIntegerValue(itemEventVertex.Get(false, "Length:"), ref dummy);
-
-
-            FrameworkElement newElement = (FrameworkElement)item;
-
-            AxisSegment itemSegment = VerticalAD.Segments[0];
-
-
-            double startPosition = triggerTime * HorizontalAD.BaseUnitSize;
-
-            double endPosition = startPosition + (length * HorizontalAD.BaseUnitSize);
-
-
-            if (IsDrum)
-            {
-                item.HorizontalCenter = startPosition;
-                item.Top = itemSegment.StartPosition;
-                item.Bottom = itemSegment.EndPosition;
-            }
-            else
-            {
-                item.Left = startPosition;
-                item.Top = itemSegment.StartPosition;
-                item.Right = endPosition;
-                item.Bottom = itemSegment.EndPosition;
-            }
-
-            item.Update();
-        }
-
-
-
-        protected override void AddItemByEdge(IEdge itemEdge, List<IVertex> selectedVertexes)
-        {
-            FrameworkElement newElement;
-
-            if (IsDrum)
-                newElement = new DrumItem(itemEdge, this, ShowVelocity);
-            else
-                newElement = new NoteItem(itemEdge, this, ShowLabel, ShowVelocity);
-
-            IItem newItem = (IItem)newElement;
-
-            UpdateItem(itemEdge, newItem);
-
-            IVertex itemEventVertex = itemEdge.To;
-
+            if (Visualiz'`  
             if (selectedVertexes != null && selectedVertexes.Contains(itemEventVertex))
             {
                 newItem.SelectHighlight();
