@@ -27,7 +27,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
     /// </summary>
     public partial class SequenceVisualiser : ZoomScrollViewBasedVisualiserBase
     {
-        static string[] _MetaTriggeringUpdateVertex = new string[] { "ShowArrowLines:", "ShowSnapLines:", "ShowLabel:", "ShowVelocity:", "DefaultVelocity:", "SnapToGrid" };
+        static string[] _MetaTriggeringUpdateVertex = new string[] { "ShowArrowLines", "ShowSnapLines", "ShowLabel", "ShowVelocity", "DefaultVelocity", "SnapToGrid" };
         public override string[] MetaTriggeringUpdateVertex { get { return _MetaTriggeringUpdateVertex; } }
 
         static string[] _MetaTriggeringUpdateView = new string[] { };

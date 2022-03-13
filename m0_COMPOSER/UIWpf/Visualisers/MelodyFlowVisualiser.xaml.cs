@@ -17,7 +17,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 {
     public partial class MelodyFlowVisualiser : MelodyFlowVisualiserBase
     {
-        static string[] _MetaTriggeringUpdateVertex = new string[] { "ShowArrowLines:", "ShowLabel:", "ShowVelocity:", "DefaultVelocity:" };
+        static string[] _MetaTriggeringUpdateVertex = new string[] { "ShowArrowLines", "ShowLabel", "ShowVelocity", "DefaultVelocity" };
         public override string[] MetaTriggeringUpdateVertex { get { return _MetaTriggeringUpdateVertex; } }
 
         static string[] _MetaTriggeringUpdateView = new string[] { };

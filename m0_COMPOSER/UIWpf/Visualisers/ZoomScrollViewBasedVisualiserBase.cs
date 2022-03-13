@@ -195,7 +195,9 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
         //
 
-        public virtual void UpdateView() { }
+        public virtual void UpdateView() {
+            UpdateVertex();
+        }
 
         public void ZoomVisualiserContentChange() { }
 
