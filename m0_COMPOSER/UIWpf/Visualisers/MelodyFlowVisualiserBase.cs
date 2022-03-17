@@ -153,22 +153,13 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             item.Update();
         }
 
-        bool DoStepContainQuant(IVertex quantVertex)
-        {
-            if (GraphUtil.ExistQueryOut(quantVertex, Flow.StepToQuantMeta, null))
-                return true;
-
-            return false;
-        }
-
         protected override void AddItemByEdge(IEdge itemEdge, List<IVertex> selectedVertexes)
         {
             IVertex quantVertex = itemEdge.To;
-            return;
 
-            if (!DoStepContainQuant(quantVertex))
+            if (itemEdge.Meta.ToString() != Flow.StepToQuantMeta)
                 return;
-
+            
             FrameworkElement newElement;
 
             if (IsDrum)
