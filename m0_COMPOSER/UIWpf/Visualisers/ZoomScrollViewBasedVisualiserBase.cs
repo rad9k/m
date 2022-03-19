@@ -1826,7 +1826,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             Interaction.BeginInteractionWithGraph();
             ////////////////////////////////////////
 
-            IEdge newItemEventEdge = AddItemVertex_Down(mouseY, GetSnappedPosition(mouseDownPoint.X), out isUpdate, out isNoteEvent);
+            AddItemVertex_Down(mouseY, GetSnappedPosition(mouseDownPoint.X), out isUpdate, out isNoteEvent);
 
             ////////////////////////////////////////
             Interaction.EndInteractionWithGraph();
