@@ -1434,12 +1434,18 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             Dictionary<IVertex, IItem> ItemsDictinary = GetItemsDictionary();
             Dictionary<IVertex, IItem> ItemsDictinary_Down = GetItemsDictionary_Down();
 
-            IItem item = ItemsDictinary[itemEdge.To];
+            IItem item = null;
+            
+            if(ItemsDictinary.ContainsKey(itemEdge.To))
+                item = ItemsDictinary[itemEdge.To];
 
             if (item != null)
                 ItemsRemove(item);
 
-            IItem item_Down = ItemsDictinary_Down[itemEdge.To];
+            IItem item_Down = null;
+            
+            if(ItemsDictinary_Down.ContainsKey(itemEdge.To))
+                item_Down = ItemsDictinary_Down[itemEdge.To];
 
             if (item_Down != null)
                 ItemsRemove_Down(item_Down);
@@ -1956,7 +1962,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             Items_Down.Remove((FrameworkElement)i);
 
-            i.Remove();
+            //i.Remove();
         }
 
         protected Dictionary<IVertex, IItem> GetItemsDictionary_Down()
@@ -2045,7 +2051,15 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
                 //VertexChangeOff = true;
 
+                ////////////////////////////////////////
+                Interaction.BeginInteractionWithGraph();
+                ////////////////////////////////////////
+
                 ItemsRemoveAndRemoveAllEdges_Down(item);
+
+                ////////////////////////////////////////
+                Interaction.EndInteractionWithGraph();
+                ////////////////////////////////////////
 
                 //VertexChangeOff = false;
             }
@@ -2312,19 +2326,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
         ////////////////////////////////////////////////////////////////////////////////////
         /////////////// DOWN END ///////////////////////////////////////////////////////////
-        ////////////////////////////////////////////////////////////////////////////////////        
-
-        protected void TurnOnSelectedEdgesFireChange()
-        {
-            if (Vertex.Get(false, "SelectedEdges:") is VertexBase)
-                ((VertexBase)Vertex.Get(false, "SelectedEdges:")).CanFireChangeEvent = true;
-        }
-
-        protected void TurnOffSelectedEdgesFireChange()
-        {
-            if (Vertex.Get(false, "SelectedEdges:") is VertexBase)
-                ((VertexBase)Vertex.Get(false, "SelectedEdges:")).CanFireChangeEvent = false;
-        }
+        ////////////////////////////////////////////////////////////////////////////////////                
 
         protected void UnselectAllSelectedItems()
         {
@@ -2341,7 +2343,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
         {
             IVertex sv = Vertex.Get(false, "SelectedEdges:");
 
-            TurnOffSelectedEdgesFireChange();
+            //TurnOffSelectedEdgesFireChange();
 
             ////////////////////////////////////////
             Interaction.BeginInteractionWithGraph();
@@ -2354,7 +2356,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             Interaction.EndInteractionWithGraph();
             ////////////////////////////////////////
 
-            TurnOnSelectedEdgesFireChange();
+            //TurnOnSelectedEdgesFireChange();
         }
 
         protected void DrawSnapLines()
@@ -2722,6 +2724,10 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             Dictionary<IVertex, IItem> itemsDictionary_Down = GetItemsDictionary_Down();
 
+            ////////////////////////////////////////
+            Interaction.BeginInteractionWithGraph();
+            ////////////////////////////////////////
+
             foreach (IVertex v in GetSelectedVertexes())
             {
                 IItem i = null;
@@ -2740,6 +2746,10 @@ namespace m0_COMPOSER.UIWpf.Visualisers
                     ItemsRemoveAndRemoveAllEdges_Down(i);
                 }
             }
+
+            ////////////////////////////////////////
+            Interaction.EndInteractionWithGraph();
+            ////////////////////////////////////////
 
             UnselectAllSelectedEdges();
         }
