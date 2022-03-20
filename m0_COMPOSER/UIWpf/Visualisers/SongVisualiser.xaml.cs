@@ -29,7 +29,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
     /// </summary>
     public partial class SongVisualiser : ZoomScrollViewBasedVisualiserBase
     {
-        static string[] _MetaTriggeringUpdateVertex = new string[] { "ShowArrowLines:", "ShowSnapLines:", "ShowLabel:", "ShowVelocity:", "DefaultVelocity:", "SnapToGrid" };
+        static string[] _MetaTriggeringUpdateVertex = new string[] { "SnapToGrid", "ShowLabel", "ShowArrowLines", "ShowSnapLines", "ShowToolbarNames"};
         public override string[] MetaTriggeringUpdateVertex { get { return _MetaTriggeringUpdateVertex; } }
 
         static string[] _MetaTriggeringUpdateView = new string[] { };

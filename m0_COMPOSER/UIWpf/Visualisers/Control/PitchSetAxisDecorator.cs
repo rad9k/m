@@ -101,6 +101,16 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control
                 s.LineStyle.SetStyle(l);
 
                 Children.Add(l);
+
+                //
+
+                l = new Line();
+
+                WpfUtil.SetLinePosition(l, 0, s.EndPosition, Size.Width, s.EndPosition);
+
+                s.LineStyle.SetStyle(l);
+
+                Children.Add(l);
             }
 
             //
