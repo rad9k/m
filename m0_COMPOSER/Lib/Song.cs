@@ -56,15 +56,7 @@ namespace m0_COMPOSER.Lib
 
         public static IVertex GetTrackVertexFromSequenceEventVertex(IVertex sequenceEventVertex)
         {
-            return GraphUtil.GetQueryInFirst(sequenceEventVertex, "SequenceEvent", null);
-
-            /*
-            foreach (IEdge e in baseVertex.GetAll(false, @"Track:"))
-                foreach (IEdge ee in e.To)
-                    if (ee.To == sequenceEventVertex)
-                        return e.To;
-
-            return null;*/
+            return GraphUtil.GetQueryInFirst(sequenceEventVertex, "SequenceEvent", null);         
         }
 
         static IVertex r = MinusZero.Instance.Root;
@@ -105,9 +97,9 @@ namespace m0_COMPOSER.Lib
 
         public static IEdge AddSequenceEventVertex(IVertex trackVertex, int startPosition, int lengthPosition)
         {            
-            IEdge tempSequenceEventEdge = trackVertex.AddVertexAndReturnEdge(null, null);
+            IEdge sequenceEventEdge = trackVertex.AddVertexAndReturnEdge(sequenceEventAttributeMeta, null);
 
-            IVertex sequenceEventVertex = tempSequenceEventEdge.To;
+            IVertex sequenceEventVertex = sequenceEventEdge.To;
 
 
             sequenceEventVertex.AddEdge(MinusZero.Instance.Is, sequenceEventMeta);
@@ -119,18 +111,12 @@ namespace m0_COMPOSER.Lib
 
             sequenceVertex.Value = GetNameForNewSequenceEvent(trackVertex);
             
-            sequenceVertex.AddVertex(sequenceMeta.Get(false, @"Attribute:Length"), lengthPosition);
-
-            bool isDrum = false;
+            sequenceVertex.AddVertex(sequenceMeta.Get(false, @"Attribute:Length"), lengthPosition);            
 
             bool isNull = false;
 
             if (GraphUtil.GetBooleanValue(trackVertex.Get(false, "IsDrum:"), ref isNull))
-                sequenceVertex.AddVertex(sequenceIsDrumMeta, "True");
-
-            IEdge finalEdge = trackVertex.AddEdge(sequenceEventAttributeMeta, sequenceEventVertex);
-
-            trackVertex.DeleteEdge(tempSequenceEventEdge);
+                sequenceVertex.AddVertex(sequenceIsDrumMeta, "True");            
 
             // pitchset and ControlChangeDescription
 
@@ -149,8 +135,7 @@ namespace m0_COMPOSER.Lib
                     GraphUtil.CreateOrReplaceEdge(sequenceVertex, controlChangeDescriptionSetMeta, controlChangeDescriptionSet);
             }
 
-
-            return finalEdge;
+            return sequenceEventEdge;
         }
 
         public static void RazorCut(IVertex songVertex, IVertex sequenceEventVertex, int cutPoint)

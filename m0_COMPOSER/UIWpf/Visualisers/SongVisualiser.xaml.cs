@@ -52,8 +52,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
         static IVertex positionMeta = r.Get(false, @"System\Lib\Music\Song\Position");
 
         static IVertex isRepeatMeta = r.Get(false, @"System\Lib\Music\Song\IsRepeat");
-
-        int Position;
+        
 
         double Tempo;
 
@@ -190,6 +189,233 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             });
 
             return exe.Stack;
+        }
+
+        protected override void EdgeAdded(IEdge edge)
+        {
+         /*   if (GraphUtil.ExistQueryOut(edge.To, "$Is", "NoteEvent"))
+                AddItemByEdge(edge, null);
+            else
+                if (GraphUtil.GetIntegerValue(edge.To.Get(false, @"Number:")) == CurrentControlChangeNumber)
+                AddItemByEdge_Down(edge, null, false, false);*/
+        }
+
+        protected void AddEdgeByMetaOrValueChangeHandler(IEdge eventEdge)
+        {
+            /*Dictionary<IVertex, IItem> ItemsDictionary = GetItemsDictionary();
+
+            IItem item = null;
+
+            if (ItemsDictionary.ContainsKey(eventEdge.To))
+                item = GetItemsDictionary()[eventEdge.To];
+
+            if (item != null)
+                UpdateItem(eventEdge, item);*/
+        }
+
+        protected void UpdateItem(IEdge itemEdge, IItem item)
+        {
+            IVertex itemEventVertex = itemEdge.To;
+
+            bool dummy = false;
+
+            int triggerTime = GraphUtil.GetIntegerValue(itemEventVertex.Get(false, "TriggerTime:"), ref dummy);
+
+            int length = GraphUtil.GetIntegerValue(itemEventVertex.Get(false, "Length:"), ref dummy);
+
+            IVertex pitchVertex = MusicUtil.GetNoteFromPitchSet(verticalSpanVertex,
+                GraphUtil.GetIntegerValue(itemEventVertex.Get(false, "Octave:")),
+                GraphUtil.GetIntegerValue(itemEventVertex.Get(false, "Note:")));
+
+            string label = "x";
+
+            if (pitchVertex != null)
+                label = pitchVertex.Value.ToString();
+            else
+                return;
+
+            FrameworkElement newElement = (FrameworkElement)item;
+
+            AxisSegment itemSegment = GetVerticalSegment(pitchVertex);
+
+
+            double startPosition = triggerTime * HorizontalAD.BaseUnitSize;
+
+            double endPosition = startPosition + (length * HorizontalAD.BaseUnitSize);
+
+
+            if (IsDrum)
+            {
+                item.HorizontalCenter = startPosition;
+                item.Top = itemSegment.StartPosition;
+                item.Bottom = itemSegment.EndPosition;
+            }
+            else
+            {
+                item.Left = startPosition;
+                item.Top = itemSegment.StartPosition;
+                item.Right = endPosition;
+                item.Bottom = itemSegment.EndPosition;
+
+                ((NoteItem)item).Label = label;
+            }
+
+            item.Update();
+        }
+
+        protected override void AddItemByEdge(IEdge itemEdge, List<IVertex> selectedVertexes)
+        {
+            IVertex itemEventVertex = itemEdge.To;
+
+            int triggerTime = GetSequenceEventTriggerTime(itemEventVertex);
+
+            int length = GetSequenceEventLength(itemEventVertex);
+
+            SequenceEventItem newElement = new SequenceEventItem(itemEdge, this, ShowLabel);
+
+            if (selectedVertexes != null && selectedVertexes.Contains(itemEventVertex))
+            {
+                newElement.SelectHighlight();
+                PreviousSelectedItemContext = MainDownEnum.Main;
+            }
+
+            IVertex trackVertex = Song.GetTrackVertexFromSequenceEventVertex(itemEdge.To);
+
+            AxisSegment itemSegment = GetVerticalSegment(trackVertex);
+
+            newElement.TrackVertex = trackVertex;
+
+
+            bool performSnapCorrection = false;
+
+            if (CurrentCursorState == CursorStateEnum.PenDown)
+                performSnapCorrection = true;
+
+            double startPosition = MusicTimeToScreenPosition(triggerTime, performSnapCorrection);
+
+            double endPosition = startPosition + MusicTimeToScreenPosition(length, performSnapCorrection);
+
+
+            newElement.Left = startPosition;
+            newElement.Top = itemSegment.StartPosition;
+            newElement.Right = endPosition;
+            newElement.Bottom = itemSegment.EndPosition;
+
+            ItemsAdd(newElement);
+        }
+
+        protected override IEdge AddItemVertex(AxisSegment itemSegment, double startPosition_Screen, double lengthPosition_Screen)
+        {
+            IVertex trackVertex = itemSegment.BaseVertex;
+
+            bool needsSnapCorrection = false;
+
+            if (CurrentCursorState == CursorStateEnum.PenDown)
+                needsSnapCorrection = true;
+
+            int startPosition = ScreenPositionToMusicTime(startPosition_Screen, needsSnapCorrection);
+
+            int lengthPosition = ScreenPositionToMusicTime(lengthPosition_Screen, needsSnapCorrection);
+
+            return Song.AddSequenceEventVertex(trackVertex, startPosition, lengthPosition);
+        }
+
+        protected override void UpdateItem_VerticalPosition(IItem _item)
+        {
+            SequenceEventItem item;
+
+            if (!(_item is SequenceEventItem))
+                return;
+
+            item = (SequenceEventItem)_item;
+
+            IVertex itemVertex = _item.BaseEdge.To;
+
+            AxisSegment segment = FindVerticalSegment(_item.Top + 1);
+
+            IVertex newTrack = segment.BaseVertex;
+
+            IVertex oldTrack = Song.GetTrackVertexFromSequenceEventVertex(itemVertex);
+
+            if (newTrack != oldTrack)
+            {
+                IVertex sequnceEventMeta = MinusZero.Instance.root.Get(false, @"System\Lib\Music\Track\SequenceEvent");
+
+                newTrack.AddEdge(sequnceEventMeta, itemVertex);
+
+                GraphUtil.DeleteEdge(oldTrack, sequnceEventMeta, itemVertex);
+
+                item.TrackVertex = newTrack;
+            }
+        }
+
+        protected override void UpdateItem_HorizontalPosition(IItem item)
+        {
+            FrameworkElement element;
+
+            if (!(item is FrameworkElement))
+                return;
+
+            element = (FrameworkElement)item;
+
+            IVertex itemVertex = item.BaseEdge.To;
+
+            double itemWidth = element.Width;
+
+            int TriggerTime = ScreenPositionToMusicTime(item.Left, true);
+
+            int Length = ScreenPositionToMusicTime(itemWidth, false);
+
+            SetSequenceEventTriggerTime(itemVertex, TriggerTime);
+
+            if (Length != 0)
+                SetSequenceEventLength(itemVertex, Length);
+        }
+
+        protected override void UpdateVariablesFromBaseVertex()
+        {
+            VisualizedVertex = Vertex.Get(false, @"BaseEdge:\To:");
+
+            if (VisualizedVertex == previousBaseVertex)
+                return;
+
+            if (VisualizedVertex == null)
+            {
+                baseVertexIsEmpty();
+                return;
+            }
+
+            // if (previousBaseVertex != null)
+            //    PlatformClass.RemoveVertexChangeListeners_byGenericVertex(previousBaseVertex, new VertexChange(VertexChange_BaseEdge), "SongVisualiser");
+
+            if (VisualizedVertex.Get(false, "$Is:Song") == null)
+            {
+                VisualizedVertex = null;
+                baseVertexIsEmpty();
+                return;
+            }
+
+            previousBaseVertex = VisualizedVertex;
+
+            // PlatformClass.RegisterVertexChangeListeners_byGenericVertex(VisualizedVertex, new VertexChange(VertexChange_BaseEdge), new string[] { "Tempo", "Track" }, "SongVisualiser");
+
+
+            IVertex r = MinusZero.Instance.Root;
+
+            horizontalSpanVertex = r.Get(false, @"System\Lib\Music\Data\DefaultRealTimeSpanLevel:");
+
+            InitialiseBaseVertexBasedVisualiserControls();
+
+            positionMarkPrim_Beg = GraphUtil.GetIntegerValueOr0(VisualizedVertex.Get(false, "LoopBeg:"));
+            positionMarkPrim_End = GraphUtil.GetIntegerValueOr0(VisualizedVertex.Get(false, "LoopEnd:"));
+
+            IsRepeat = GraphUtil.GetBooleanValueOrFalse(VisualizedVertex.Get(false, "IsRepeat:"));
+
+            UpdateRepeatButton();
+
+            AddChangeListenersToAllTracksAndSong();
+
+            CheckOrStartAutoBackup();
         }
 
         // NEW END
@@ -453,53 +679,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
         void baseVertexIsEmpty()
         {
             StopAutoBackup();
-        }
-
-        protected override void UpdateVariablesFromBaseVertex()
-        {
-            VisualizedVertex = Vertex.Get(false, @"BaseEdge:\To:");
-
-            if (VisualizedVertex == previousBaseVertex)
-                return;
-
-            if (VisualizedVertex == null)
-            {
-                baseVertexIsEmpty();
-                return;
-            }
-                
-            if (previousBaseVertex != null)
-                PlatformClass.RemoveVertexChangeListeners_byGenericVertex(previousBaseVertex, new VertexChange(VertexChange_BaseEdge), "SongVisualiser");
-
-            if (VisualizedVertex.Get(false, "$Is:Song") == null)
-            {
-                VisualizedVertex = null;
-                baseVertexIsEmpty();
-                return;
-            }
-
-            previousBaseVertex = VisualizedVertex;
-
-            PlatformClass.RegisterVertexChangeListeners_byGenericVertex(VisualizedVertex, new VertexChange(VertexChange_BaseEdge), new string[] { "Tempo", "Track" }, "SongVisualiser");
-
-
-            IVertex r = MinusZero.Instance.Root;
-
-            horizontalSpanVertex = r.Get(false, @"System\Lib\Music\Data\DefaultRealTimeSpanLevel:");
-
-            InitialiseBaseVertexBasedVisualiserControls();
-
-            positionMarkPrim_Beg = GraphUtil.GetIntegerValueOr0(VisualizedVertex.Get(false, "LoopBeg:"));
-            positionMarkPrim_End = GraphUtil.GetIntegerValueOr0(VisualizedVertex.Get(false, "LoopEnd:"));
-
-            IsRepeat = GraphUtil.GetBooleanValueOrFalse(VisualizedVertex.Get(false, "IsRepeat:"));
-
-            UpdateRepeatButton();
-
-            AddChangeListenersToAllTracksAndSong();
-
-            CheckOrStartAutoBackup();
-        }
+        }        
         
         void CheckOrStartAutoBackup()
         {
@@ -905,48 +1085,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             IVertex sequenceVertex = sequenceEventVertex.Get(false, @"Sequence:");
 
             GraphUtil.SetVertexValue(sequenceVertex, MinusZero.Instance.root.Get(false, @"System\Lib\Music\Sequence\Length"), value);
-        }
-
-        protected override void AddItemByEdge(IEdge itemEdge, List<IVertex> selectedVertexes)
-        {
-            IVertex itemEventVertex = itemEdge.To;
-
-            int triggerTime = GetSequenceEventTriggerTime(itemEventVertex);
-
-            int length = GetSequenceEventLength(itemEventVertex);
-
-            SequenceEventItem newElement = new SequenceEventItem(itemEdge, this, ShowLabel);            
-
-            if (selectedVertexes != null && selectedVertexes.Contains(itemEventVertex))
-            {
-                newElement.SelectHighlight();
-                PreviousSelectedItemContext = MainDownEnum.Main;
-            }
-
-            IVertex trackVertex = Song.GetTrackVertexFromSequenceEventVertex(itemEdge.To);
-
-            AxisSegment itemSegment = GetVerticalSegment(trackVertex);
-
-            newElement.TrackVertex = trackVertex;
-
-
-            bool performSnapCorrection = false;
-
-            if (CurrentCursorState == CursorStateEnum.PenDown)
-                performSnapCorrection = true;
-
-            double startPosition = MusicTimeToScreenPosition(triggerTime, performSnapCorrection);
-
-            double endPosition = startPosition + MusicTimeToScreenPosition(length, performSnapCorrection);
-
-            
-            newElement.Left = startPosition;
-            newElement.Top = itemSegment.StartPosition;
-            newElement.Right = endPosition;
-            newElement.Bottom = itemSegment.EndPosition;            
-
-            ItemsAdd(newElement);            
-        }
+        }        
 
         protected override int ScreenPositionToMusicTime(double position, bool performSnapCorrection)
         {
@@ -978,23 +1117,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             double minuteWidth = HorizontalAD.SegmentLength * HorizontalAD.BaseUnitSize;
 
             return realTime * minuteWidth;
-        }
-
-        protected override IEdge AddItemVertex(AxisSegment itemSegment, double startPosition_Screen, double lengthPosition_Screen)
-        {
-            IVertex trackVertex = itemSegment.BaseVertex;
-
-            bool needsSnapCorrection = false;
-
-            if (CurrentCursorState == CursorStateEnum.PenDown)
-                needsSnapCorrection = true;
-
-            int startPosition = ScreenPositionToMusicTime(startPosition_Screen, needsSnapCorrection);
-
-            int lengthPosition = ScreenPositionToMusicTime(lengthPosition_Screen, needsSnapCorrection);
-
-            return Song.AddSequenceEventVertex(trackVertex, startPosition, lengthPosition);
-        }
+        }        
 
         protected override void DrawItems()
         {
@@ -1003,59 +1126,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             foreach (IEdge e in VisualizedVertex.GetAll(false, "Track:"))
                 foreach (IEdge ee in e.To.GetAll(false, "SequenceEvent:"))                
                     AddItemByEdge(ee, selectedVertexes);
-        }
-
-        protected override void UpdateItem_VerticalPosition(IItem _item)
-        {
-            SequenceEventItem item;
-
-            if (!(_item is SequenceEventItem))
-                return;
-
-            item = (SequenceEventItem)_item;
-
-            IVertex itemVertex = _item.BaseEdge.To;
-
-            AxisSegment segment = FindVerticalSegment(_item.Top + 1);
-
-            IVertex newTrack = segment.BaseVertex;
-
-            IVertex oldTrack = Song.GetTrackVertexFromSequenceEventVertex(itemVertex);
-
-            if (newTrack != oldTrack)
-            {
-                IVertex sequnceEventMeta = MinusZero.Instance.root.Get(false, @"System\Lib\Music\Track\SequenceEvent");
-
-                newTrack.AddEdge(sequnceEventMeta, itemVertex);
-
-                GraphUtil.DeleteEdge(oldTrack, sequnceEventMeta, itemVertex);
-
-                item.TrackVertex = newTrack;
-            }
-        }
-
-        protected override void UpdateItem_HorizontalPosition(IItem item)
-        {            
-            FrameworkElement element;
-
-            if (!(item is FrameworkElement))
-                return;
-
-            element = (FrameworkElement)item;
-
-            IVertex itemVertex = item.BaseEdge.To;
-
-            double itemWidth = element.Width;
-
-            int TriggerTime = ScreenPositionToMusicTime(item.Left, true);
-
-            int Length = ScreenPositionToMusicTime(itemWidth, false);                        
-
-            SetSequenceEventTriggerTime(itemVertex, TriggerTime);
-
-            if (Length != 0)
-                SetSequenceEventLength(itemVertex, Length);                
-        }
+        }        
 
         protected override void RemoveItemVertex(IItem i)
         {
