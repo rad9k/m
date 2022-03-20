@@ -21,6 +21,7 @@ using System.Windows.Media;
 using System.Windows.Shapes;
 using m0.ZeroCode;
 using System.Windows.Threading;
+using m0.Graph.ExecutionFlow;
 
 namespace m0_COMPOSER.UIWpf.Visualisers
 {
@@ -126,12 +127,10 @@ namespace m0_COMPOSER.UIWpf.Visualisers
                     RecordButton.IsChecked = true;
                     break;
             }
-        }
+        }        
 
         void SetupHelperVariables()
-        {
-            IVertex r = MinusZero.Instance.root;
-
+        {            
             postionAttribute = r.Get(false, @"System\Lib\Music\Song\Position");
         }
 
@@ -170,6 +169,30 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             InitSongState();            
         }
+
+        // NEW START
+
+        protected override INoInEdgeInOutVertexVertex CheckBaseEdgeChange(IExecution exe)
+        {
+            IVertex baseEdgeTo = VisualiserHelper.Vertex.Get(false, @"BaseEdge:\To:");
+
+            ExecutionFlowHelper.DoAddRemoveDisposeAddEdgeByMetaOrValueChangeHandlers(exe.Stack, new List<EventHandlers>()
+            { new EventHandlers(
+                baseEdgeTo,
+                EdgeAdded,
+                EdgeRemoved,
+                EdgeDisposed,
+                new string[] {"Octave", "Note"},
+                new string[] {"TriggerTime", "Length", "Velocity"},
+                new string[] {"Event" },
+                AddEdgeByMetaOrValueChangeHandler
+                )
+            });
+
+            return exe.Stack;
+        }
+
+        // NEW END
 
         Button newTrackButton;
 
