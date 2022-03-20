@@ -418,6 +418,65 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             CheckOrStartAutoBackup();
         }
 
+        void AddChangeListenersToAllTracksAndSong()
+        {
+            foreach (IEdge e in VisualizedVertex.GetAll(false, "Track:"))
+                AddChangeListenersToTrack(e.To);
+
+            PlatformClass.RegisterVertexChangeListeners_byGenericVertex(VisualizedVertex, new VertexChange(BaseVertexChange), new string[] { }, "SongVisualiser");
+        }
+
+        void RemoveChangeListenersToAllTracksAndSong()
+        {
+            foreach (IEdge e in VisualizedVertex.GetAll(false, "Track:"))
+                PlatformClass.RemoveVertexChangeListeners_byGenericVertex(e.To, new VertexChange(VertexChange_Track), "SongVisualiser");
+
+            PlatformClass.RemoveVertexChangeListeners_byGenericVertex(VisualizedVertex, new VertexChange(BaseVertexChange), "SongVisualiser");
+        }
+
+        void AddChangeListenersToTrack(IVertex v)
+        {
+            PlatformClass.RemoveVertexChangeListeners_byGenericVertex(v, new VertexChange(VertexChange_Track), "SongVisualiser");
+            PlatformClass.RegisterVertexChangeListeners_byGenericVertex(v, new VertexChange(VertexChange_Track), new string[] { "Sequence", "Color" }, "SongVisualiser");
+        }
+
+        protected void VertexChange_Track(object sender, VertexChangeEventArgs e)
+        {
+            //  if (VertexChangeOff)
+            //    return;
+
+            if (!(sender is IVertex))
+                return;
+
+            if (GraphUtil.DoEdgeListContainsVertex(VisualizedVertex.GetAll(false, @"Track:\Color:"), (IVertex)sender)
+                || GraphUtil.DoEdgeListContainsVertex(VisualizedVertex.GetAll(false, @"Track:\Color:\"), (IVertex)sender))
+                RedrawTracks();
+
+            if (GraphUtil.DoEdgeListContainsVertex(VisualizedVertex.GetAll(false, @"SequenceEvent:"), (IVertex)sender))
+                RedrawTracks();
+        }
+
+        protected void VertexChange_BaseEdge(object sender, VertexChangeEventArgs e)
+        {
+            //if (VertexChangeOff)
+            //return;
+
+            if (!(sender is IVertex))
+                return;
+
+            IVertex senderVertex = (IVertex)sender;
+
+            if ((sender == VisualizedVertex.Get(false, "Tempo:")) && (e.Type == VertexChangeType.ValueChanged))
+                UpdateTempo();
+
+            if (GraphUtil.DoEdgeListContainsVertex(VisualizedVertex.GetAll(false, "Track:"), senderVertex) && (e.Type == VertexChangeType.ValueChanged))
+                RedrawTracks();
+
+            if (GraphUtil.DoEdgeListContainsVertex(VisualizedVertex.GetAll(false, "Track:"), senderVertex) && (e.Type == VertexChangeType.EdgeAdded))
+                AddChangeListenersToTrack(senderVertex);
+        }
+
+
         // NEW END
 
         Button newTrackButton;
@@ -718,29 +777,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
                 if (AutoBackupVertexList.Contains(VisualizedVertex))
                     AutoBackupVertexList.Remove(VisualizedVertex);
             }
-        }
-
-        void AddChangeListenersToAllTracksAndSong()
-        {
-            foreach (IEdge e in VisualizedVertex.GetAll(false, "Track:"))
-                AddChangeListenersToTrack(e.To);
-
-            PlatformClass.RegisterVertexChangeListeners_byGenericVertex(VisualizedVertex, new VertexChange(BaseVertexChange), new string[] {}, "SongVisualiser");
-        }
-
-        void RemoveChangeListenersToAllTracksAndSong()
-        {
-            foreach (IEdge e in VisualizedVertex.GetAll(false, "Track:"))
-                PlatformClass.RemoveVertexChangeListeners_byGenericVertex(e.To, new VertexChange(VertexChange_Track), "SongVisualiser");
-
-            PlatformClass.RemoveVertexChangeListeners_byGenericVertex(VisualizedVertex, new VertexChange(BaseVertexChange), "SongVisualiser");
-        }
-
-        void AddChangeListenersToTrack(IVertex v)
-        {
-            PlatformClass.RemoveVertexChangeListeners_byGenericVertex(v, new VertexChange(VertexChange_Track), "SongVisualiser");
-            PlatformClass.RegisterVertexChangeListeners_byGenericVertex(v, new VertexChange(VertexChange_Track), new string[] { "Sequence", "Color" }, "SongVisualiser");
-        }
+        }        
 
         protected override void SetAxisDecorators()
         {
@@ -881,53 +918,6 @@ namespace m0_COMPOSER.UIWpf.Visualisers
                     PositionMark = SongPosition;
                 });
             }
-        }
-
-        /*protected override void VertexChange(object sender, VertexChangeEventArgs e)
-        {            
-           // if (VertexChangeOff)
-           //     return;
-
-            if ((sender == Vertex.Get(false, "ShowToolbarNames:")) && (e.Type == VertexChangeType.ValueChanged))
-                UpdateVertex();
-
-            base.VertexChange(sender, e);
-        }*/
-
-        protected void VertexChange_Track(object sender, VertexChangeEventArgs e)
-        {
-          //  if (VertexChangeOff)
-            //    return;
-
-            if (!(sender is IVertex))
-                return;
-
-            if (GraphUtil.DoEdgeListContainsVertex(VisualizedVertex.GetAll(false, @"Track:\Color:"), (IVertex)sender)
-                || GraphUtil.DoEdgeListContainsVertex(VisualizedVertex.GetAll(false, @"Track:\Color:\"), (IVertex)sender))
-                RedrawTracks();
-
-            if (GraphUtil.DoEdgeListContainsVertex(VisualizedVertex.GetAll(false, @"SequenceEvent:"), (IVertex)sender))
-                RedrawTracks();
-        }
-
-        protected void VertexChange_BaseEdge(object sender, VertexChangeEventArgs e)
-        {
-            //if (VertexChangeOff)
-                //return;
-
-            if (!(sender is IVertex))
-                return;
-
-            IVertex senderVertex = (IVertex)sender;
-
-            if ((sender == VisualizedVertex.Get(false, "Tempo:")) && (e.Type == VertexChangeType.ValueChanged))
-                UpdateTempo();
-
-            if (GraphUtil.DoEdgeListContainsVertex(VisualizedVertex.GetAll(false, "Track:"), senderVertex) && (e.Type == VertexChangeType.ValueChanged))
-                RedrawTracks();
-
-            if (GraphUtil.DoEdgeListContainsVertex(VisualizedVertex.GetAll(false, "Track:"), senderVertex) && (e.Type == VertexChangeType.EdgeAdded))
-                AddChangeListenersToTrack(senderVertex);
         }
 
         void UpdateHorizontalADLength()
