@@ -952,7 +952,17 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             base.ChildControlsLoaded();
         }
 
-        protected bool IsDisposed = false;
+        public virtual void Dispose()
+        {
+            if (!IsDisposed)
+            {
+                VisualiserHelper.Dispose();
+
+                DispachSubControls();
+
+                IsDisposed = true;
+            }
+        }
 
         public override void Dispose()
         {
