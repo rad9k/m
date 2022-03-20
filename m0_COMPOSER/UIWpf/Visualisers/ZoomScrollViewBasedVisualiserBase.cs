@@ -78,7 +78,8 @@ namespace m0_COMPOSER.UIWpf.Visualisers
         protected IVertex BaseEdgeToMetaVertex;
         protected IVertex VisualiserMetaVertex;
 
-        protected IList<string> listenerScopeQueries = new List<string> { @"", @"BaseEdge:\To:", @"BaseEdge:\To:\", @"BaseEdge:\To:\\" };
+        protected static IList<string> _listenerScopeQueries = new List<string> { @"", @"BaseEdge:\To:", @"BaseEdge:\To:\", @"BaseEdge:\To:\\" };
+        protected virtual IList<string> listenerScopeQueries { get { return _listenerScopeQueries; } }
 
         public IVertex VisualizedVertex;
         protected IVertex verticalSpanVertex;
@@ -1864,10 +1865,56 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             return false;
         }
 
+        static IVertex r = MinusZero.Instance.Root;
+
+        static IVertex musicEvent = r.Get(false, @"System\Lib\Music\Event");
+        static IVertex musicControlChangeEvent = r.Get(false, @"System\Lib\Music\ControlChangeEvent");
+        static IVertex musicNoteEvent = r.Get(false, @"System\Lib\Music\NoteEvent");
+
         protected virtual IEdge AddItemVertex_Down(double mouseY, double startPosition, out bool isUpdate, out bool isVelocityHavingEvent) {
             isUpdate = false;
+
+
+            int triggerTime = (int)((startPosition / HorizontalAD.BaseUnitSize) + 0.01);
+
+            IEdge eventEdge = null;
+
             isVelocityHavingEvent = false;
-            return null;
+
+            List<IItem> existingItems = GetDownItemFromNumberTriggerTimeDictionary(CurrentControlChangeNumber, triggerTime);
+
+            if (existingItems == null && MainItemsSyncedWithDown)
+                return null;
+
+            if (existingItems != null)
+            {
+                IItem item = existingItems[0];
+
+                eventEdge = item.BaseEdge;
+
+                isUpdate = true;
+
+                if (IsVelocityHavingVertex(eventEdge.To))
+                    isVelocityHavingEvent = true;
+            }
+            else
+                eventEdge = VisualizedVertex.AddVertexAndReturnEdge(musicEvent, null);
+
+            IVertex eventVertex = eventEdge.To;
+
+            if (!isUpdate)
+                eventVertex.AddEdge(MinusZero.Instance.Is, musicControlChangeEvent);
+
+            if (isVelocityHavingEvent)
+                GraphUtil.SetVertexValue(eventVertex, musicNoteEvent.Get(false, @"Attribute:Velocity"), ControlChangeItem.getValueFromMouseY_Down(mouseY, Height_Down));
+            else
+            {
+                GraphUtil.SetVertexValue(eventVertex, musicControlChangeEvent.Get(false, @"Attribute:Number"), CurrentControlChangeNumber);
+                GraphUtil.SetVertexValue(eventVertex, musicControlChangeEvent.Get(false, @"Attribute:Value"), ControlChangeItem.getValueFromMouseY_Down(mouseY, Height_Down));
+                GraphUtil.SetVertexValue(eventVertex, musicControlChangeEvent.Get(false, @"Attribute:TriggerTime"), triggerTime);
+            }
+
+            return eventEdge;
         }
         
         protected virtual void AddItemByEdge_Down(IEdge itemEdge, List<IVertex> selectedVertexes, bool isUpdate, bool isNoteEvent)
@@ -2931,9 +2978,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
                 UpdatePositionMark();
             }
-        }
-
-        static IVertex r = MinusZero.Instance.Root;
+        }        
 
         static IVertex loopBegMeta = r.Get(false, @"System\Lib\Music\Song\LoopBeg");
         static IVertex loopEndMeta = r.Get(false, @"System\Lib\Music\Song\LoopEnd");
@@ -3081,7 +3126,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             //VertexChangeOff = false;
 
-            VisualiserDraw();
+            //VisualiserDraw();
         }
 
         protected void CutButton_Click(object sender, RoutedEventArgs e)

@@ -106,6 +106,13 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             if (IsDrum)
                 IsCurrentPenItemCenter = true;
         }
+        protected override void EdgeRemoved(IEdge edge)
+        {
+            IEdge quantEdge = GraphUtil.GetQueryOutFirstEdge(edge.To, Flow.StepToQuantMeta, null);
+
+            if (quantEdge != null)
+                RemoveItemByEdge(quantEdge);
+        }
 
         protected void UpdateItem(IEdge itemEdge, IItem item)
         {

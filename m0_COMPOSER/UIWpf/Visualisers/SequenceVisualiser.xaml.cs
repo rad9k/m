@@ -331,54 +331,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
         }
 
         static IVertex musicEvent = r.Get(false, @"System\Lib\Music\Event");
-        static IVertex musicControlChangeEvent = r.Get(false, @"System\Lib\Music\ControlChangeEvent");        
-
-        protected override IEdge AddItemVertex_Down(double mouseY, double startPosition, out bool isUpdate, out bool isVelocityHavingEvent)
-        {
-            isUpdate = false;
-
-
-            int triggerTime = (int)((startPosition / HorizontalAD.BaseUnitSize) + 0.01);
-
-            IEdge eventEdge = null;
-
-            isVelocityHavingEvent = false;
-
-            List<IItem> existingItems = GetDownItemFromNumberTriggerTimeDictionary(CurrentControlChangeNumber, triggerTime);
-
-            if (existingItems == null && MainItemsSyncedWithDown)
-                return null;
-
-            if (existingItems != null)
-            {
-                IItem item = existingItems[0];
-
-                eventEdge = item.BaseEdge;
-
-                isUpdate = true;
-
-                if (IsVelocityHavingVertex(eventEdge.To))
-                    isVelocityHavingEvent = true;
-            }
-            else
-                eventEdge = VisualizedVertex.AddVertexAndReturnEdge(musicEvent, null);
-
-            IVertex eventVertex = eventEdge.To;
-
-            if (!isUpdate)
-                eventVertex.AddEdge(MinusZero.Instance.Is, musicControlChangeEvent);
-
-            if (isVelocityHavingEvent)
-                GraphUtil.SetVertexValue(eventVertex, musicNoteEvent.Get(false, @"Attribute:Velocity"), ControlChangeItem.getValueFromMouseY_Down(mouseY, Height_Down));
-            else
-            {
-                GraphUtil.SetVertexValue(eventVertex, musicControlChangeEvent.Get(false, @"Attribute:Number"), CurrentControlChangeNumber);
-                GraphUtil.SetVertexValue(eventVertex, musicControlChangeEvent.Get(false, @"Attribute:Value"), ControlChangeItem.getValueFromMouseY_Down(mouseY, Height_Down));
-                GraphUtil.SetVertexValue(eventVertex, musicControlChangeEvent.Get(false, @"Attribute:TriggerTime"), triggerTime);
-            }
-            
-            return eventEdge;
-        }
+        static IVertex musicControlChangeEvent = r.Get(false, @"System\Lib\Music\ControlChangeEvent");                
 
         protected override void DrawItems()
         {
