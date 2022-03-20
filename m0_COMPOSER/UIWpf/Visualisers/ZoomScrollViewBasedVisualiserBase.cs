@@ -1251,6 +1251,8 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             SaveSelectionArea();
         }
 
+        protected virtual void After_ArrowUp_FromMove() { }
+
         protected void ArrowUp_FromMove(object sender, MouseEventArgs e)
         {
             if (CurrentCursorState == CursorStateEnum.ArrowDown_MoveOnItem_Left || CurrentCursorState == CursorStateEnum.ArrowDown_MoveOnItem_Right)
@@ -1272,6 +1274,8 @@ namespace m0_COMPOSER.UIWpf.Visualisers
                 ////////////////////////////////////////
                 
                 VisualiserHelper.ForceVertexChangeOff = ForceVertexChangeOff_history;
+
+                After_ArrowUp_FromMove();
             }
 
             if (CurrentCursorState == CursorStateEnum.ArrowDown_MoveOnItem_MouseDownAndMove)
@@ -1297,6 +1301,8 @@ namespace m0_COMPOSER.UIWpf.Visualisers
                 ////////////////////////////////////////
                 
                 VisualiserHelper.ForceVertexChangeOff = ForceVertexChangeOff_history;
+
+                After_ArrowUp_FromMove();
             }
 
             if (MainItemsSyncedWithDown)

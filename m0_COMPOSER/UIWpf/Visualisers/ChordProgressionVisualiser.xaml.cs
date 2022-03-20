@@ -23,6 +23,10 @@ namespace m0_COMPOSER.UIWpf.Visualisers
         static string[] _MetaTriggeringUpdateView = new string[] { };
         public override string[] MetaTriggeringUpdateView { get { return _MetaTriggeringUpdateView; } }
 
+        protected static IList<string> _listenerScopeQueries = new List<string> { @"", @"BaseEdge:\To:", @"BaseEdge:\To:\", @"BaseEdge:\To:\\", @"BaseEdge:\To:\\\" };
+        protected override IList<string> listenerScopeQueries { get { return _listenerScopeQueries; } }
+
+
         public void InitXAMLInstances()
         {
             PenButton = PenButton_Instance;
@@ -112,7 +116,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             horizontalSpanVertex = r.Get(false, @"System\Lib\Music\Data\DefaultNumberSpanLevel:");
         }
 
-        
+        bool needToVisualiserDraw = false;
 
         protected override INoInEdgeInOutVertexVertex CheckBaseEdgeChange(IExecution exe)
         {
@@ -131,12 +135,15 @@ namespace m0_COMPOSER.UIWpf.Visualisers
                 )
             });
 
+            if (needToVisualiserDraw)
+                DoStepsCleanUpAndVisualiserDraw();
+            
             return exe.Stack;
         }
 
         protected void AddEdgeByMetaOrValueChangeHandler(IEdge eventEdge)
         {
-            VisualiserDraw();
+            needToVisualiserDraw = true;
         }
     }
 }

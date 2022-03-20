@@ -315,7 +315,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
                 //    Flow.RemoveStep(oldStep);                
             }
 
-            DoCleanUpAndVisualiserDraw();
+            //DoCleanUpAndVisualiserDraw();
 
             //VertexChangeOff = false;
         }
@@ -483,7 +483,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             PreviousSelectedItemContext = MainDownEnum.Main;
 
-            DoCleanUp();
+            DoStepsCleanUp();
         }
 
         private IEdge GetStepToQuantEdgeFromQuantVertes(IVertex quantVertex)
@@ -554,7 +554,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             return false;
         }
 
-        void DoCleanUp()
+        void DoStepsCleanUp()
         {
             int newNumberOfSteps;
 
@@ -563,9 +563,15 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             HorizontalAD.SetLength(newNumberOfSteps);
         }
 
-        void DoCleanUpAndVisualiserDraw()
+        protected override void After_ArrowUp_FromMove()
         {
-            DoCleanUp();
+            DoStepsCleanUpAndVisualiserDraw();
+            //DoStepsCleanUp(); // need to draw. can check if StepsCleanUp has wasThereChange = true
+        }
+
+        protected void DoStepsCleanUpAndVisualiserDraw()
+        {            
+            DoStepsCleanUp();
 
             VisualiserDraw();
         }
@@ -574,7 +580,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
         {
             SetCursorMode(CursorStateEnum.PenUp);
 
-            DoCleanUpAndVisualiserDraw();
+            //DoCleanUpAndVisualiserDraw();
         }
 
         protected override void AddItemByEdge_Down(IEdge itemEdge, List<IVertex> selectedVertexes, bool isUpdate, bool isNoteEvent)

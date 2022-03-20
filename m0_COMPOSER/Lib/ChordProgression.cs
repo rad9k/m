@@ -284,26 +284,43 @@ namespace m0_COMPOSER.Lib
 
         public bool GetNumberOfStepsAndCleanUp(out int newNumberOfSteps)
         {
-            List<IEdge> edges = new List<IEdge>();
-
-            foreach (IEdge e in baseVertex.GetAll(false, "Chord:"))
-                edges.Add(e);
+            bool needToCleanUp = false;
 
             int numberOfSteps = 0;
 
-            foreach (IEdge e in edges)
+            int stepsCount = baseVertex.GetAll(false, "Chord:").OutEdges.Count;
+
+            foreach (IEdge e in baseVertex.GetAll(false, "Chord:"))
             {
-                IVertex chordVertex = e.To;
-
-                if(chordVertex.GetAll(false, "Pitch:").Count() > 0)
-                    baseVertex.AddEdge(stepMeta, chordVertex);
-
                 numberOfSteps++;
+
+                if(numberOfSteps < stepsCount)
+                    if (!GraphUtil.ExistQueryOut(e.To, "Pitch", null))
+                        needToCleanUp = true;
+            }            
+
+            if (needToCleanUp)
+            {
+                numberOfSteps = 0;
+
+                List<IEdge> edges = new List<IEdge>();
+
+                foreach (IEdge e in baseVertex.GetAll(false, "Chord:"))
+                    edges.Add(e);                
+
+                foreach (IEdge e in edges)
+                {
+                    IVertex chordVertex = e.To;
+                    
+                    if(GraphUtil.ExistQueryOut(chordVertex, "Pitch", null))
+                        baseVertex.AddEdge(stepMeta, chordVertex);
+
+                    numberOfSteps++;
+                }
+
+                foreach (IEdge e in edges)
+                    baseVertex.DeleteEdge(e);
             }
-
-            foreach (IEdge e in edges)
-                baseVertex.DeleteEdge(e);
-
             //            
 
             IVertex stepVertex = GetStep(numberOfSteps - 1).StepVertex;

@@ -95,8 +95,8 @@ namespace m0_COMPOSER.UIWpf.Visualisers
                 )
             });
 
-            if(needToVisualiserDraw)
-                VisualiserDraw();
+            if (needToVisualiserDraw)            
+                DoStepsCleanUpAndVisualiserDraw();                
 
             return exe.Stack;
         }
