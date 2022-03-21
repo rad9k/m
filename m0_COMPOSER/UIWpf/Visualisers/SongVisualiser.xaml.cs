@@ -181,9 +181,9 @@ namespace m0_COMPOSER.UIWpf.Visualisers
                 EdgeAdded,
                 EdgeRemoved,
                 EdgeDisposed,
-                new string[] {"Octave", "Note"},
-                new string[] {"TriggerTime", "Length", "Velocity"},
-                new string[] {"Event" },
+                new string[] {"Track", "SequenceEvent"},
+                new string[] {/*"TriggerTime", "Length", "Velocity"*/ "Red", "Green", "Blue"},
+                new string[] {/*"SequenceEvent", "Sequence"*/ "Color" },
                 AddEdgeByMetaOrValueChangeHandler
                 )
             });
@@ -270,6 +270,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             int triggerTime = GetSequenceEventTriggerTime(itemEventVertex);
 
             int length = GetSequenceEventLength(itemEventVertex);
+
 
             SequenceEventItem newElement = new SequenceEventItem(itemEdge, this, ShowLabel);
 
@@ -952,36 +953,17 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             base.ChildControlsLoaded();
         }
 
-        public virtual void Dispose()
+        public override void Dispose()
         {
             if (!IsDisposed)
             {
+                IsDisposed = true;
+
+                StopAutoBackup();                
+
                 VisualiserHelper.Dispose();
 
-                DispachSubControls();
-
-                IsDisposed = true;
-            }
-        }
-
-        public override void Dispose()
-        {
-            if (IsDisposed == false)
-            {
-                IsDisposed = true;
-
-                StopAutoBackup();
-
-                DispachSubControls();
-
-                //PlatformClass.RemoveVertexChangeListeners(this.Vertex, new VertexChange(VertexChange));
-
-                RemoveChangeListenersToAllTracksAndSong();
-
-                // PlatformClass.RemoveVertexChangeListeners_byGenericVertex(baseVertex, new VertexChange(VertexChange_BaseEdge));
-
-                if (Vertex is IDisposable)
-                    ((IDisposable)Vertex).Dispose();                
+                DispachSubControls();                
             }
         }
 
@@ -1310,9 +1292,9 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             IVertex sequenceEventSequenceMeta = r.Get(false, @"System\Lib\Music\SequenceEvent\Sequence");
 
 
-            IEdge tempSequenceEventEdge = trackVertex.AddVertexAndReturnEdge(null, null);
+            IEdge sequenceEventEdge = trackVertex.AddVertexAndReturnEdge(sequenceEventAttribute, null);
 
-            IVertex sequenceEventVertex = tempSequenceEventEdge.To;
+            IVertex sequenceEventVertex = sequenceEventEdge.To;
 
 
             sequenceEventVertex.AddEdge(MinusZero.Instance.Is, sequenceEvent);
@@ -1328,13 +1310,9 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             IEdge sourceEdge = GraphUtil.FindEdge(v, sequenceEventSequenceMeta, sourceVertex);
 
             GraphUtil.DeepCopy(sourceEdge, sequenceEventVertex);
-
-
-            IEdge finalEdge = trackVertex.AddEdge(sequenceEventAttribute, sequenceEventVertex);
-
-            trackVertex.DeleteEdge(tempSequenceEventEdge);
             
-            return finalEdge;
+            
+            return sequenceEventEdge;
         }
 
         protected override int FindLastPosition(IEnumerable<IEdge> edges)

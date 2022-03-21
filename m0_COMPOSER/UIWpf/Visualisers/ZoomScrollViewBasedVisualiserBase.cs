@@ -2581,82 +2581,11 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             return CheckBaseEdgeChange(exe);
         }
 
-        /*protected virtual void VertexChange(object sender, VertexChangeEventArgs e)
-        {
-            // if (VertexChangeOff)
-            //    return;
-
-            new string[] { "ShowArrowLines:", "ShowSnapLines:", "ShowLabel:", "ShowVelocity:", "DefaultVelocity:", "SnapToGrid" };
-
-
-            if ((sender == Vertex.Get(false, "ShowArrowLines:")) && (e.Type == VertexChangeType.ValueChanged))
-                UpdateVertex();
-
-            if ((sender == Vertex.Get(false, "ShowSnapLines:")) && (e.Type == VertexChangeType.ValueChanged))
-                UpdateVertex();
-
-            if ((sender == Vertex.Get(false, "ShowLabel:")) && (e.Type == VertexChangeType.ValueChanged))
-                UpdateVertex();
-
-            if ((sender == Vertex.Get(false, "ShowVelocity:")) && (e.Type == VertexChangeType.ValueChanged))
-                UpdateVertex();
-
-            if ((sender == Vertex.Get(false, "DefaultVelocity:")) && (e.Type == VertexChangeType.ValueChanged))
-                UpdateVertexValues();
-
-            if ((sender == Vertex) && (e.Type == VertexChangeType.EdgeAdded) && (GeneralUtil.CompareStrings(e.Edge.Meta.Value, "SnapToGrid")))
-                UpdateVertexValues();
-
-            if ((sender == Vertex) && (e.Type == VertexChangeType.EdgeAdded) && (GeneralUtil.CompareStrings(e.Edge.Meta.Value, "BaseEdge")))
-                UpdateVertex();
-
-            if ((sender == Vertex.Get(false, "BaseEdge:")) && (e.Type == VertexChangeType.EdgeAdded) && (GeneralUtil.CompareStrings(e.Edge.Meta.Value, "To")))
-                UpdateVertex();
-
-            if (sender == Vertex.Get(false, @"BaseEdge:\To:") && (e.Type == VertexChangeType.EdgeAdded || e.Type == VertexChangeType.EdgeRemoved))
-                UpdateVertex();
-        }*/
-
-        /* protected IVertex _Vertex;
-
-         public IVertex Vertex
-         {
-             get { return _Vertex; }
-             set
-             {
-                 if (_Vertex != null)
-                     PlatformClass.RemoveVertexChangeListeners(this.Vertex, new VertexChange(VertexChange));
-
-                 _Vertex = value;
-
-                 PlatformClass.RegisterVertexChangeListeners(this.Vertex, new VertexChange(VertexChange), new string[] { "BaseEdge", "SelectedEdges" });
-
-                 UpdateBaseEdge();
-             }
-         }*/
-
         public IVertex Vertex
         {
             get { return VisualiserHelper.Vertex; }
             set { VisualiserHelper.SetVertex(value); }
         }
-
-        /*protected bool IsDisposed = false;
-
-        public virtual void Dispose()
-        {
-            if (IsDisposed == false)
-            {
-                IsDisposed = true;
-
-                DispachSubControls();
-
-                PlatformClass.RemoveVertexChangeListeners(this.Vertex, new VertexChange(VertexChange));
-
-                if (Vertex is IDisposable)
-                    ((IDisposable)Vertex).Dispose();
-            }
-        }*/
 
         protected bool IsDisposed = false;
 
