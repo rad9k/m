@@ -215,77 +215,11 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
         protected void UpdateItem(IEdge itemEdge, IItem item)
         {
-            IVertex itemEventVertex = itemEdge.To;
-
-            bool dummy = false;
-
-            int triggerTime = GraphUtil.GetIntegerValue(itemEventVertex.Get(false, "TriggerTime:"), ref dummy);
-
-            int length = GraphUtil.GetIntegerValue(itemEventVertex.Get(false, "Length:"), ref dummy);
-
-            IVertex pitchVertex = MusicUtil.GetNoteFromPitchSet(verticalSpanVertex,
-                GraphUtil.GetIntegerValue(itemEventVertex.Get(false, "Octave:")),
-                GraphUtil.GetIntegerValue(itemEventVertex.Get(false, "Note:")));
-
-            string label = "x";
-
-            if (pitchVertex != null)
-                label = pitchVertex.Value.ToString();
-            else
-                return;
-
-            FrameworkElement newElement = (FrameworkElement)item;
-
-            AxisSegment itemSegment = GetVerticalSegment(pitchVertex);
-
-
-            double startPosition = triggerTime * HorizontalAD.BaseUnitSize;
-
-            double endPosition = startPosition + (length * HorizontalAD.BaseUnitSize);
-
-
-            if (IsDrum)
-            {
-                item.HorizontalCenter = startPosition;
-                item.Top = itemSegment.StartPosition;
-                item.Bottom = itemSegment.EndPosition;
-            }
-            else
-            {
-                item.Left = startPosition;
-                item.Top = itemSegment.StartPosition;
-                item.Right = endPosition;
-                item.Bottom = itemSegment.EndPosition;
-
-                ((NoteItem)item).Label = label;
-            }
-
-            item.Update();
-        }
-
-        protected override void AddItemByEdge(IEdge itemEdge, List<IVertex> selectedVertexes)
-        {
-            IVertex itemEventVertex = itemEdge.To;
+            IVertex itemEventVertex = itemEdge.To;            
 
             int triggerTime = GetSequenceEventTriggerTime(itemEventVertex);
 
             int length = GetSequenceEventLength(itemEventVertex);
-
-
-            SequenceEventItem newElement = new SequenceEventItem(itemEdge, this, ShowLabel);
-
-            if (selectedVertexes != null && selectedVertexes.Contains(itemEventVertex))
-            {
-                newElement.SelectHighlight();
-                PreviousSelectedItemContext = MainDownEnum.Main;
-            }
-
-            IVertex trackVertex = Song.GetTrackVertexFromSequenceEventVertex(itemEdge.To);
-
-            AxisSegment itemSegment = GetVerticalSegment(trackVertex);
-
-            newElement.TrackVertex = trackVertex;
-
 
             bool performSnapCorrection = false;
 
@@ -296,11 +230,32 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             double endPosition = startPosition + MusicTimeToScreenPosition(length, performSnapCorrection);
 
+            IVertex trackVertex = Song.GetTrackVertexFromSequenceEventVertex(itemEdge.To);
 
-            newElement.Left = startPosition;
-            newElement.Top = itemSegment.StartPosition;
-            newElement.Right = endPosition;
-            newElement.Bottom = itemSegment.EndPosition;
+            AxisSegment itemSegment = GetVerticalSegment(trackVertex);
+
+            ((SequenceEventItem)item).TrackVertex = trackVertex;
+
+            item.Left = startPosition;
+            item.Top = itemSegment.StartPosition;
+            item.Right = endPosition;
+            item.Bottom = itemSegment.EndPosition;           
+
+            item.Update();
+        }
+
+        protected override void AddItemByEdge(IEdge itemEdge, List<IVertex> selectedVertexes)
+        {
+            IVertex itemEventVertex = itemEdge.To;
+
+
+            SequenceEventItem newElement = new SequenceEventItem(itemEdge, this, ShowLabel);
+
+            if (selectedVertexes != null && selectedVertexes.Contains(itemEventVertex))
+            {
+                newElement.SelectHighlight();
+                PreviousSelectedItemContext = MainDownEnum.Main;
+            }
 
             ItemsAdd(newElement);
         }
@@ -321,6 +276,8 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             return Song.AddSequenceEventVertex(trackVertex, startPosition, lengthPosition);
         }
 
+        static IVertex sequnceEventMeta = MinusZero.Instance.root.Get(false, @"System\Lib\Music\Track\SequenceEvent");
+
         protected override void UpdateItem_VerticalPosition(IItem _item)
         {
             SequenceEventItem item;
@@ -340,8 +297,6 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             if (newTrack != oldTrack)
             {
-                IVertex sequnceEventMeta = MinusZero.Instance.root.Get(false, @"System\Lib\Music\Track\SequenceEvent");
-
                 newTrack.AddEdge(sequnceEventMeta, itemVertex);
 
                 GraphUtil.DeleteEdge(oldTrack, sequnceEventMeta, itemVertex);
