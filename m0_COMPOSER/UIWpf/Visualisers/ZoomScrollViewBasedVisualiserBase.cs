@@ -509,7 +509,10 @@ namespace m0_COMPOSER.UIWpf.Visualisers
         }
 
         protected void DrawMain()
-        {            
+        {
+            if (Main == null)
+                return;
+
             Main.Children.Clear();
 
             InitialiseItems();

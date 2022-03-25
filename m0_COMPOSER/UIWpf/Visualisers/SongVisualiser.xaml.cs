@@ -22,6 +22,7 @@ using System.Windows.Shapes;
 using m0.ZeroCode;
 using System.Windows.Threading;
 using m0.Graph.ExecutionFlow;
+using m0.User.Process.UX;
 
 namespace m0_COMPOSER.UIWpf.Visualisers
 {
@@ -173,7 +174,10 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
         protected override INoInEdgeInOutVertexVertex CheckBaseEdgeChange(IExecution exe)
         {
-            UpdateTempo(); // executes VisualiserDraw();
+            if (ExecutionFlowHelper.IsVertexChange(exe.Stack, "Tempo"))
+                UpdateTempo(); // executes VisualiserDraw();
+            else
+                RedrawTracks();
 
             return exe.Stack;
         }
@@ -461,9 +465,17 @@ namespace m0_COMPOSER.UIWpf.Visualisers
         {
             IVertex r = MinusZero.Instance.root;
 
+            ////////////////////////////////////////
+            Interaction.BeginInteractionWithGraph();
+            ////////////////////////////////////////
+
             IVertex v = VertexOperations.AddInstance(VisualizedVertex, r.Get(false, @"System\Lib\Music\Track"), r.Get(false, @"System\Lib\Music\Song\Track"));
 
-            v.Value = GetNameForNewTrack();            
+            v.Value = GetNameForNewTrack();
+
+            ////////////////////////////////////////
+            Interaction.EndInteractionWithGraph();
+            ////////////////////////////////////////
 
             //newTrackButton.Background = (Brush)FindResource("0ForegroundBrush"); // fix to some system bug?
 
@@ -472,7 +484,8 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
         private void RedrawTracks()
         {
-            VerticalAD.SetBaseVertex(VisualizedVertex);
+            if(VerticalAD != null)
+                VerticalAD.SetBaseVertex(VisualizedVertex);
 
             DrawMain();
         }
