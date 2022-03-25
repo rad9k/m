@@ -173,6 +173,14 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
         protected override INoInEdgeInOutVertexVertex CheckBaseEdgeChange(IExecution exe)
         {
+            UpdateTempo(); // executes VisualiserDraw();
+
+            return exe.Stack;
+        }
+
+        /*
+        protected override INoInEdgeInOutVertexVertex CheckBaseEdgeChange(IExecution exe)
+        {
             IVertex baseEdgeTo = VisualiserHelper.Vertex.Get(false, @"BaseEdge:\To:");
 
             ExecutionFlowHelper.DoAddRemoveDisposeAddEdgeByMetaOrValueChangeHandlers(exe.Stack, new List<EventHandlers>()
@@ -182,8 +190,10 @@ namespace m0_COMPOSER.UIWpf.Visualisers
                 EdgeRemoved,
                 EdgeDisposed,
                 new string[] {"Track", "SequenceEvent"},
-                new string[] {/*"TriggerTime", "Length", "Velocity"*/ "Red", "Green", "Blue"},
-                new string[] {/*"SequenceEvent", "Sequence"*/ "Color" },
+                new string[] {//"TriggerTime", "Length", "Velocity", 
+                "Red", "Green", "Blue"},
+                new string[] {//"SequenceEvent", "Sequence",
+                "Color" },
                 AddEdgeByMetaOrValueChangeHandler
                 )
             });
@@ -192,27 +202,43 @@ namespace m0_COMPOSER.UIWpf.Visualisers
         }
 
         protected override void EdgeAdded(IEdge edge)
-        {
-         /*   if (GraphUtil.ExistQueryOut(edge.To, "$Is", "NoteEvent"))
-                AddItemByEdge(edge, null);
-            else
-                if (GraphUtil.GetIntegerValue(edge.To.Get(false, @"Number:")) == CurrentControlChangeNumber)
-                AddItemByEdge_Down(edge, null, false, false);*/
+        {         
         }
 
         protected void AddEdgeByMetaOrValueChangeHandler(IEdge eventEdge)
-        {
-            /*Dictionary<IVertex, IItem> ItemsDictionary = GetItemsDictionary();
-
-            IItem item = null;
-
-            if (ItemsDictionary.ContainsKey(eventEdge.To))
-                item = GetItemsDictionary()[eventEdge.To];
-
-            if (item != null)
-                UpdateItem(eventEdge, item);*/
+        {         
         }
 
+        protected void VertexChange_Track(object sender, VertexChangeEventArgs e)
+        {            
+            if (!(sender is IVertex))
+                return;
+
+            if (GraphUtil.DoEdgeListContainsVertex(VisualizedVertex.GetAll(false, @"Track:\Color:"), (IVertex)sender)
+                || GraphUtil.DoEdgeListContainsVertex(VisualizedVertex.GetAll(false, @"Track:\Color:\"), (IVertex)sender))
+                RedrawTracks();
+
+            if (GraphUtil.DoEdgeListContainsVertex(VisualizedVertex.GetAll(false, @"SequenceEvent:"), (IVertex)sender))
+                RedrawTracks();
+        }
+
+        protected void VertexChange_BaseEdge(object sender, VertexChangeEventArgs e)
+        {            
+            if (!(sender is IVertex))
+                return;
+
+            IVertex senderVertex = (IVertex)sender;
+
+            if ((sender == VisualizedVertex.Get(false, "Tempo:")) && (e.Type == VertexChangeType.ValueChanged))
+                UpdateTempo();
+
+            if (GraphUtil.DoEdgeListContainsVertex(VisualizedVertex.GetAll(false, "Track:"), senderVertex) && (e.Type == VertexChangeType.ValueChanged))
+                RedrawTracks();
+
+            if (GraphUtil.DoEdgeListContainsVertex(VisualizedVertex.GetAll(false, "Track:"), senderVertex) && (e.Type == VertexChangeType.EdgeAdded))
+                AddChangeListenersToTrack(senderVertex);
+        }
+*/
         protected void UpdateItem(IEdge itemEdge, IItem item)
         {
             IVertex itemEventVertex = itemEdge.To;            
@@ -367,70 +393,12 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             IsRepeat = GraphUtil.GetBooleanValueOrFalse(VisualizedVertex.Get(false, "IsRepeat:"));
 
-            UpdateRepeatButton();
-
-            AddChangeListenersToAllTracksAndSong();
+            UpdateRepeatButton();            
 
             CheckOrStartAutoBackup();
-        }
+        }        
 
-        void AddChangeListenersToAllTracksAndSong()
-        {
-            foreach (IEdge e in VisualizedVertex.GetAll(false, "Track:"))
-                AddChangeListenersToTrack(e.To);
-
-            PlatformClass.RegisterVertexChangeListeners_byGenericVertex(VisualizedVertex, new VertexChange(BaseVertexChange), new string[] { }, "SongVisualiser");
-        }
-
-        void RemoveChangeListenersToAllTracksAndSong()
-        {
-            foreach (IEdge e in VisualizedVertex.GetAll(false, "Track:"))
-                PlatformClass.RemoveVertexChangeListeners_byGenericVertex(e.To, new VertexChange(VertexChange_Track), "SongVisualiser");
-
-            PlatformClass.RemoveVertexChangeListeners_byGenericVertex(VisualizedVertex, new VertexChange(BaseVertexChange), "SongVisualiser");
-        }
-
-        void AddChangeListenersToTrack(IVertex v)
-        {
-            PlatformClass.RemoveVertexChangeListeners_byGenericVertex(v, new VertexChange(VertexChange_Track), "SongVisualiser");
-            PlatformClass.RegisterVertexChangeListeners_byGenericVertex(v, new VertexChange(VertexChange_Track), new string[] { "Sequence", "Color" }, "SongVisualiser");
-        }
-
-        protected void VertexChange_Track(object sender, VertexChangeEventArgs e)
-        {
-            //  if (VertexChangeOff)
-            //    return;
-
-            if (!(sender is IVertex))
-                return;
-
-            if (GraphUtil.DoEdgeListContainsVertex(VisualizedVertex.GetAll(false, @"Track:\Color:"), (IVertex)sender)
-                || GraphUtil.DoEdgeListContainsVertex(VisualizedVertex.GetAll(false, @"Track:\Color:\"), (IVertex)sender))
-                RedrawTracks();
-
-            if (GraphUtil.DoEdgeListContainsVertex(VisualizedVertex.GetAll(false, @"SequenceEvent:"), (IVertex)sender))
-                RedrawTracks();
-        }
-
-        protected void VertexChange_BaseEdge(object sender, VertexChangeEventArgs e)
-        {
-            //if (VertexChangeOff)
-            //return;
-
-            if (!(sender is IVertex))
-                return;
-
-            IVertex senderVertex = (IVertex)sender;
-
-            if ((sender == VisualizedVertex.Get(false, "Tempo:")) && (e.Type == VertexChangeType.ValueChanged))
-                UpdateTempo();
-
-            if (GraphUtil.DoEdgeListContainsVertex(VisualizedVertex.GetAll(false, "Track:"), senderVertex) && (e.Type == VertexChangeType.ValueChanged))
-                RedrawTracks();
-
-            if (GraphUtil.DoEdgeListContainsVertex(VisualizedVertex.GetAll(false, "Track:"), senderVertex) && (e.Type == VertexChangeType.EdgeAdded))
-                AddChangeListenersToTrack(senderVertex);
-        }
+        
 
 
         // NEW END
