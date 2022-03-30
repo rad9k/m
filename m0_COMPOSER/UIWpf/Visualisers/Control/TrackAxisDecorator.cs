@@ -12,6 +12,7 @@ using m0.UIWpf;
 using System.Windows.Media;
 using m0.Graph;
 using m0.UIWpf.Visualisers.Controls;
+using m0.User.Process.UX;
 
 namespace m0_COMPOSER.UIWpf.Visualisers.Control
 {
@@ -100,8 +101,12 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control
 
             IVertex metaVertex = m0.MinusZero.Instance.root.Get(false, @"System\Lib\Music\Track\IsMuted");
 
+            ////////////////////////////////////////
+            Interaction.BeginInteractionWithGraph();
+            ////////////////////////////////////////
+
             if (!isMuted)
-            {
+            {   
                 GraphUtil.SetVertexValue(trackBaseVertex, metaVertex, "True");
 
                 senderButton.On();
@@ -112,6 +117,10 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control
 
                 senderButton.Off();
             }
+
+            ////////////////////////////////////////
+            Interaction.EndInteractionWithGraph();
+            ////////////////////////////////////////
         }
 
         private void So_MouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
@@ -124,8 +133,12 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control
 
             IVertex metaVertex = m0.MinusZero.Instance.root.Get(false, @"System\Lib\Music\Track\IsSolo");
 
+            ////////////////////////////////////////
+            Interaction.BeginInteractionWithGraph();
+            ////////////////////////////////////////
+
             if (!isSolo)
-            {
+            {               
                 GraphUtil.SetVertexValue(trackBaseVertex, metaVertex, "True");
 
                 senderButton.On();
@@ -144,6 +157,10 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control
             foreach (LitButton b in SoloButtons)
                 if(b != senderButton)
                     b.Off();
+
+            ////////////////////////////////////////
+            Interaction.EndInteractionWithGraph();
+            ////////////////////////////////////////
         }
 
         private void Draw()
