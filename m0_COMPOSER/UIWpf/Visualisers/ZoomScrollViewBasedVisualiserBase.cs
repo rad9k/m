@@ -434,8 +434,18 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
         protected void SaveLength()
         {
-            if(GraphUtil.GetIntegerValueOr0(VisualizedVertex.Get(false, "Length:")) != Length)
+            if (GraphUtil.GetIntegerValueOr0(VisualizedVertex.Get(false, "Length:")) != Length)
+            {
+                ////////////////////////////////////////
+                Interaction.BeginInteractionWithGraph();
+                ////////////////////////////////////////
+                
                 GraphUtil.SetVertexValue(VisualizedVertex, BaseEdgeToMetaVertex.Get(false, "Length"), Length);
+
+                ////////////////////////////////////////
+                Interaction.EndInteractionWithGraph();
+                ////////////////////////////////////////
+            }
         }
 
         protected virtual void SetAxisDecorators() { }        

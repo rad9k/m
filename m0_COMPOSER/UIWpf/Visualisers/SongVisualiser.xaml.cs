@@ -281,6 +281,8 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             SequenceEventItem newElement = new SequenceEventItem(itemEdge, this, ShowLabel);
 
+            UpdateItem(itemEdge, newElement);
+
             if (selectedVertexes != null && selectedVertexes.Contains(itemEventVertex))
             {
                 newElement.SelectHighlight();
@@ -490,11 +492,6 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             DrawMain();
         }
 
-        private void CreateSongControls()
-        {
-            CreateAddNewTrackControl();
-        }
-
         private void RewindButton_Click(object sender, RoutedEventArgs e)
         {
             SetPosition(0);
@@ -531,9 +528,9 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
                 SetPlayRecordState(PlayRecordStateEnum.Play);
 
-                IVertex playMethod = VisualizedVertex.Get(false, @"$Is:\Method:Stop");
+                IVertex stopMethod = VisualizedVertex.Get(false, @"$Is:\Method:Stop");
 
-                ZeroCodeExecutonUtil.CreateExecutionAndVertexMethodExecute(playMethod, VisualizedVertex);
+                ZeroCodeExecutonUtil.CreateExecutionAndVertexMethodExecute(stopMethod, VisualizedVertex);
             }
 
             SetPlayRecordState(PlayRecordStateEnum.Stop);
@@ -559,14 +556,24 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
         void MuteAllOutput()
         {
-            if(VisualizedVertex!=null)
-            foreach (IEdge outputEdge in VisualizedVertex.GetAll(false, @"Track:\Output:"))
+            if (VisualizedVertex != null)
             {
-                IVertex outputVertex = outputEdge.To;
+                ////////////////////////////////////////
+                Interaction.BeginInteractionWithGraph();
+                ////////////////////////////////////////
 
-                IVertex silentMethod = outputVertex.Get(false, @"$Is:\Method:Silent");
+                foreach (IEdge outputEdge in VisualizedVertex.GetAll(false, @"Track:\Output:"))
+                {
+                    IVertex outputVertex = outputEdge.To;
 
-                ZeroCodeExecutonUtil.CreateExecutionAndVertexMethodExecute(silentMethod, outputVertex);
+                    IVertex silentMethod = outputVertex.Get(false, @"$Is:\Method:Silent");
+
+                    ZeroCodeExecutonUtil.CreateExecutionAndVertexMethodExecute(silentMethod, outputVertex);
+                }
+
+                ////////////////////////////////////////
+                Interaction.EndInteractionWithGraph();
+                ////////////////////////////////////////
             }
         }
 
@@ -884,7 +891,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
         public override void ChildControlsLoaded()
         {
-            CreateSongControls();
+            CreateAddNewTrackControl();
 
             base.ChildControlsLoaded();
         }
@@ -1052,9 +1059,17 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             IVertex trackVertex = Song.GetTrackVertexFromSequenceEventVertex(eventEdge.To);
 
+            ////////////////////////////////////////
+            Interaction.BeginInteractionWithGraph();
+            ////////////////////////////////////////
+            
             GraphUtil.DeleteEdgeByToVertex(trackVertex, eventEdge.To);
 
             Edge.DeleteVertexByEdgeTo(Vertex.Get(false, "SelectedEdges:"), eventEdge.To);
+
+            ////////////////////////////////////////
+            Interaction.EndInteractionWithGraph();
+            ////////////////////////////////////////
 
             NeedToRebuildItemsDictionary = true;
 
