@@ -511,11 +511,14 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
         protected void UpdateMainSize()
         {
-            Width = HorizontalAD.Size.Width;
-            Height = VerticalAD.Size.Height;
+            if (HorizontalAD != null && VerticalAD != null)
+            {
+                Width = HorizontalAD.Size.Width;
+                Height = VerticalAD.Size.Height;
 
-            Main.Width = Width;
-            Main.Height = Height;
+                Main.Width = Width;
+                Main.Height = Height;
+            }
         }
 
         protected void DrawMain()

@@ -489,6 +489,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             if(VerticalAD != null)
                 VerticalAD.SetBaseVertex(VisualizedVertex);
 
+            UpdateMainSize();
             DrawMain();
         }
 
