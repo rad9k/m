@@ -650,7 +650,8 @@ namespace m0_COMPOSER.UIWpf.Visualisers
                 case CursorStateEnum.ArrowUp_MoveOnItem_Left:
                 case CursorStateEnum.ArrowUp_MoveOnItem_Right:
                 case CursorStateEnum.ArrowUp_MoveOnItem:
-                    ArrowDown_FromUpMove(sender, e);
+                    if(!CheckIfOpenActionAndPerform(e))
+                        ArrowDown_FromUpMove(sender, e);
                     break;
 
                 case CursorStateEnum.Razor:
@@ -897,6 +898,32 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             return false;
         }
 
+        protected bool CheckIfOpenActionAndPerform(MouseButtonEventArgs e)
+        {
+            Point currentMousePosition = GetMainContentMousePosition(e);
+
+            FrameworkElement elementFound = WpfUtil.GetElementAtFromList(Items, currentMousePosition);
+
+            if (elementFound != null && elementFound is IItem)
+            {
+                IItem item = (IItem)elementFound;
+
+                if (e.ClickCount == 2 && NoControlKeyPressed())
+                {
+                    if (e.RightButton == MouseButtonState.Pressed)
+                        item.OpenFormVisualiser();
+                    else
+                        item.OpenDefaultVisualiser();
+
+                    UnselectAllSelectedEdges();
+
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
         protected void ArrowDown(object sender, MouseButtonEventArgs e)
         {
             Point currentMousePosition = GetMainContentMousePosition(e);
@@ -913,6 +940,8 @@ namespace m0_COMPOSER.UIWpf.Visualisers
                         item.OpenFormVisualiser();
                     else
                         item.OpenDefaultVisualiser();
+
+                    UnselectAllSelectedEdges();
                 }
                 else
                 {

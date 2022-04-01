@@ -273,7 +273,7 @@ namespace m0
 
         public bool DoLog = true;
 
-        public int LogLevel = 0;
+        public int LogLevel;
 
         public void InitializeLog()   // need this public hack for LegacySystem_m0 based generation in m0_SYSTEM_GENERATE
         {
