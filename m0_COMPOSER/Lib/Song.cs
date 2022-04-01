@@ -2,6 +2,7 @@
 using m0.Foundation;
 using m0.Graph;
 using m0.Lib;
+using m0.User.Process.UX;
 using m0.ZeroCode;
 using m0.ZeroCode.Helpers;
 using m0.ZeroTypes;
@@ -140,6 +141,10 @@ namespace m0_COMPOSER.Lib
 
         public static void RazorCut(IVertex songVertex, IVertex sequenceEventVertex, int cutPoint)
         {
+            ////////////////////////////////////////
+            Interaction.BeginInteractionWithGraph();
+            ////////////////////////////////////////
+            
             IVertex r = MinusZero.Instance.Root;
             bool isNull = false;
 
@@ -161,8 +166,8 @@ namespace m0_COMPOSER.Lib
 
             IVertex secondSequenceEventVertex = AddSequenceEventVertex(trackVertex, secondTriggerTime, secondLength).To;
             IVertex secondSequenceVertex = secondSequenceEventVertex.Get(false, @"Sequence:");
-
-            foreach(IEdge e in firstSequenceVertex.GetAll(false, "Event:"))
+            
+            foreach (IEdge e in firstSequenceVertex.GetAll(false, "Event:"))
             {
                 int positionInFirst = GraphUtil.GetIntegerValue(e.To.Get(false, "TriggerTime:"), ref isNull);
 
@@ -177,6 +182,10 @@ namespace m0_COMPOSER.Lib
                     GraphUtil.SetVertexValue(eventVertex, triggerTimeMeta, positionInFirst - firstLength);
                 }
             }
+
+            ////////////////////////////////////////
+            Interaction.EndInteractionWithGraph();
+            ////////////////////////////////////////
         }
 
         public static int SequenceEventTriggerTimeCompare(IEdge sequenceEventEdgeA, IEdge sequenceEventEdgeB)
@@ -235,6 +244,10 @@ namespace m0_COMPOSER.Lib
 
         public static void Glue(IVertex songVertex, IEdge sequenceEventEdge, int gluePoint)
         {
+            ////////////////////////////////////////
+            Interaction.BeginInteractionWithGraph();
+            ////////////////////////////////////////
+            
             IVertex r = MinusZero.Instance.Root;
             bool isNull = false;
 
@@ -249,7 +262,7 @@ namespace m0_COMPOSER.Lib
 
             int localPosition = gluePoint - triggerTime;
 
-            if(localPosition > (length / 2))
+            if (localPosition > (length / 2))
             {
                 IEdge sibilingSequenceEvent = GetSequenceOntheLeftOrRight(sequenceEventVertex, true);
 
@@ -277,6 +290,10 @@ namespace m0_COMPOSER.Lib
                         Glue(sequenceEventEdge, sibilingSequenceEvent);
                 }
             }
+
+            ////////////////////////////////////////
+            Interaction.EndInteractionWithGraph();
+            ////////////////////////////////////////
         }
 
         public static void Glue(IEdge sequenceEventEdge_Final, IEdge sequenceEventEdge_Delete)
