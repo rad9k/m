@@ -38,7 +38,7 @@ namespace m0_COMPOSER.Base
         {
             get
             {
-                return Minute + (Second / 60.0) + (Milisecond / (100.0*60.0));
+                return Minute + (Second / 60.0) + (Milisecond / (100.0 * 60.0));
             }
 
             set
