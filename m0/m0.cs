@@ -432,7 +432,7 @@ namespace m0
             if (IsInitialized)
                 return;
 
-            LogLevel = -2;
+            LogLevel = 2;
 
             InitializeLog();
 

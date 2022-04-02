@@ -259,15 +259,15 @@ namespace m0_COMPOSER.Lib
 
         void StartSongVertexChangeTracking()
         {
-            PlatformClass.RegisterVertexChangeListeners_byGenericVertex(SongVertex, new VertexChange(SongVertexChange), new string[] { }, "PlaySong");
+          //  PlatformClass.RegisterVertexChangeListeners_byGenericVertex(SongVertex, new VertexChange(SongVertexChange), new string[] { }, "PlaySong");
 
-            foreach (IEdge trackEdge in SongVertex.GetAll(false, "Track:"))
-                AddTrackListeners(trackEdge.To);
+        //    foreach (IEdge trackEdge in SongVertex.GetAll(false, "Track:"))
+               // AddTrackListeners(trackEdge.To);
         }
 
         void StopSongVertexChangeTracking()
         {         
-            PlatformClass.RemoveVertexChangeListeners_byGenericVertex(SongVertex, new VertexChange(SongVertexChange), "PlaySong");
+         /*   PlatformClass.RemoveVertexChangeListeners_byGenericVertex(SongVertex, new VertexChange(SongVertexChange), "PlaySong");
 
             foreach (IEdge trackEdge in SongVertex.GetAll(false, "Track:"))
             {
@@ -289,7 +289,7 @@ namespace m0_COMPOSER.Lib
                             PlatformClass.RemoveVertexChangeListeners_byGenericVertex(eventEdge.To, new VertexChange(SequenceVertexChange), "PlaySong");
                     }
                 }
-            }
+            }*/
         }
 
         void AddTrackListeners(IVertex trackVertex)
@@ -428,7 +428,9 @@ namespace m0_COMPOSER.Lib
         }
 
         public void Tick(object sender, EventArgs e)
-        {            
+        {
+            MinusZero.Instance.Log(0, "tick", "");
+
             if (CurrentPlayState.EventList.Count == 0)
             {
                 PositionStop();
@@ -441,7 +443,7 @@ namespace m0_COMPOSER.Lib
 
             //
 
-            if(CurrentPlayState.loopEnd > 0 && nowInTicks > CurrentPlayState.loopEnd)
+            if (CurrentPlayState.loopEnd > 0 && nowInTicks > CurrentPlayState.loopEnd)
             {
                 PositionUpdate(CurrentPlayState.loopBeg, false);
 
