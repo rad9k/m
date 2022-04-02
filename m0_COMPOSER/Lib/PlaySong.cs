@@ -130,9 +130,9 @@ namespace m0_COMPOSER.Lib
 
             //
 
-            SongVisualiser sv = SongVertexDictionary.GetSongVisualiser(SongVertex);
+            SongVisualiser songVisualiser = SongVertexDictionary.GetSongVisualiser(SongVertex);
 
-            if (sv.IsRepeat)
+            if (songVisualiser.IsRepeat)
             {
                 stateToFill.loopBeg = GraphUtil.GetIntegerValueOr0(SongVertex.Get(false, "LoopBeg:"));
                 stateToFill.loopEnd = GraphUtil.GetIntegerValueOr0(SongVertex.Get(false, "LoopEnd:"));
