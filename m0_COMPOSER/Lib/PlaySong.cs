@@ -429,8 +429,6 @@ namespace m0_COMPOSER.Lib
 
         public void Tick(object sender, EventArgs e)
         {
-            MinusZero.Instance.Log(0, "tick", "");
-
             if (CurrentPlayState.EventList.Count == 0)
             {
                 PositionStop();

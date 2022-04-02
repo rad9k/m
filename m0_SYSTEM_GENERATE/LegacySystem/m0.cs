@@ -2,8 +2,10 @@
 using m0.FormalTextLanguage;
 using m0.Foundation;
 using m0.Graph;
+using m0.Graph.ExecutionFlow;
 using m0.Store;
 using m0.Store.FileSystem;
+using m0.UIWpf.Visualisers.Helper;
 using m0.Util;
 using m0.ZeroTypes;
 using System;

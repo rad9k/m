@@ -1,7 +1,9 @@
 ﻿using m0;
 using m0.Foundation;
 using m0.Graph;
+using m0.Graph.ExecutionFlow;
 using m0.Store.Json;
+using m0.UIWpf.Visualisers.Helper;
 using m0.Util;
 using System;
 using System.Collections.Generic;
@@ -20,10 +22,19 @@ namespace m0_SYSTEM_GENERATE
             System.Console.Out.WriteLine(text);
         }
 
+        static void StaticMetaInitialize()
+        {
+            //GraphChangeTrigger.Initialize();
+            ExecutionFlowHelper.Initialize();
+            //GraphChangeTransactionAtom.Initialize();
+           // Transaction.Initialize();
+           //AtomVisualiserHelper.Initialize();
+        }
+
         static void Main(string[] args)
         {
             print("m0 SYSTEM GENERATE");
-            print("version 0.5 ");
+            print("version 0.8 ");
             print("SYSTEM / USER / EXAMPLES m0 files generator");
 
             print("");
@@ -99,16 +110,27 @@ namespace m0_SYSTEM_GENERATE
 
             //
 
+            StaticMetaInitialize();
+
+            print("* filling Lib::Std");
+
             Lib.CreateLib.CreateLibStd();
+
+            print("* filling Lib::Sys");
+
             Lib.CreateLib.CreateLibSys();
+
+            print("* filling Lib::Music");
             Music.CreateMusic.Create();
 
 
             Lib.CreateLib.Save(systemSubGraphWithLinks, storeOverride);
 
-            Music.CreateMusic.Save(systemSubGraphWithLinks, storeOverride);
-                        
+            print("* Lib::Std and Lib::Sys saved to \"lib_std.m0\" and \"lib_sys.m0\"");
 
+            Music.CreateMusic.Save(systemSubGraphWithLinks, storeOverride);
+
+            print("* Lib::Music saved \"lib_music.m0\"");
             //
 
             print("* creating \"_bootstrap.m0\"");
