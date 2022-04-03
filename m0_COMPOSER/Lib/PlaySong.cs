@@ -1,6 +1,7 @@
 ﻿using m0;
 using m0.Foundation;
 using m0.Graph;
+using m0.Graph.ExecutionFlow;
 using m0.Lib;
 using m0.Util;
 using m0.ZeroCode;
@@ -53,8 +54,11 @@ namespace m0_COMPOSER.Lib
         public Stopwatch Watch;
         public long WatchAddElapsedMiliseconds = 0;
 
+        SongVisualiser CurrentSongVisualiser;
         PlayState CurrentPlayState = new PlayState();
         PlayState NewPlayState = new PlayState();
+
+        IEdge graphChangeListenerEdge;
 
         //
 
@@ -130,9 +134,9 @@ namespace m0_COMPOSER.Lib
 
             //
 
-            SongVisualiser songVisualiser = SongVertexDictionary.GetSongVisualiser(SongVertex);
+            CurrentSongVisualiser = SongVertexDictionary.GetSongVisualiser(SongVertex);
 
-            if (songVisualiser.IsRepeat)
+            if (CurrentSongVisualiser.IsRepeat)
             {
                 stateToFill.loopBeg = GraphUtil.GetIntegerValueOr0(SongVertex.Get(false, "LoopBeg:"));
                 stateToFill.loopEnd = GraphUtil.GetIntegerValueOr0(SongVertex.Get(false, "LoopEnd:"));
@@ -259,10 +263,25 @@ namespace m0_COMPOSER.Lib
 
         void StartSongVertexChangeTracking()
         {
-          //  PlatformClass.RegisterVertexChangeListeners_byGenericVertex(SongVertex, new VertexChange(SongVertexChange), new string[] { }, "PlaySong");
+            graphChangeListenerEdge = ExecutionFlowHelper.AddTriggerAndListener(SongVertex,
+                     new List<string> { @"", @"\", @"\\", @"BaseEdge:\\\" },
+                     new List<GraphChangeFilterEnum> {GraphChangeFilterEnum.ValueChange,
+                         GraphChangeFilterEnum.OutputEdgeAdded,
+                         GraphChangeFilterEnum.OutputEdgeRemoved,
+                        GraphChangeFilterEnum.OutputEdgeDisposed},
+                    "PlaySong",
+                    VertexChange);
 
-        //    foreach (IEdge trackEdge in SongVertex.GetAll(false, "Track:"))
-               // AddTrackListeners(trackEdge.To);
+            //  PlatformClass.RegisterVertexChangeListeners_byGenericVertex(SongVertex, new VertexChange(SongVertexChange), new string[] { }, "PlaySong");
+
+            //    foreach (IEdge trackEdge in SongVertex.GetAll(false, "Track:"))
+            // AddTrackListeners(trackEdge.To);
+        }
+
+        protected INoInEdgeInOutVertexVertex VertexChange(IExecution exe)
+        {
+            UpdateEventDictionaries();
+            return exe.Stack;
         }
 
         void StopSongVertexChangeTracking()
@@ -521,6 +540,8 @@ namespace m0_COMPOSER.Lib
             {
                 m0Main.Instance.Dispatcher.Invoke(() => {
                     GraphUtil.SetVertexValue(SongVertex, songPositionMeta, nowInTicks);
+
+                    CurrentSongVisualiser.PositionUpdate();
                 });
                 prevNowInTicksReduced = nowInTicksReduced;
             }
@@ -528,8 +549,8 @@ namespace m0_COMPOSER.Lib
 
         public void MidiOut(IList<SongEvent> el)
         {
-            m0Main.Instance.Dispatcher.Invoke(() => // XXX ????????????? performance down
-            {
+            //m0Main.Instance.Dispatcher.Invoke(() => // XXX ????????????? performance down
+            //{
                 foreach (SongEvent e in el)
                 {
                     if (e is NoteOnEvent)
@@ -541,7 +562,7 @@ namespace m0_COMPOSER.Lib
                     if (e is ControlChangeEvent)
                         ControlChangeEvent((ControlChangeEvent)e);
                 }
-            });
+            //});
         }
 
         enum HighlightType { Play, Stop, Hit}

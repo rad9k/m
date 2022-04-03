@@ -163,7 +163,7 @@ namespace m0.UIWpf.Visualisers
             this.Padding = new Thickness(1);
 
             if (baseVertex != null)
-                listenerEdge = GraphChangeTrigger.AddTriggerAndListener(baseVertex, 
+                listenerEdge = ExecutionFlowHelper.AddTriggerAndListener(baseVertex, 
                     new List<string> { },
                     new List<GraphChangeFilterEnum> {GraphChangeFilterEnum.ValueChange,
                      GraphChangeFilterEnum.OutputEdgeAdded,

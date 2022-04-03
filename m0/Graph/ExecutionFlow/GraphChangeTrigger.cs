@@ -39,23 +39,6 @@ namespace m0.Graph.ExecutionFlow
             graphChangeFilterEnum_InputEdgeAdded_meta = r.Get(false, @"System\Meta\ZeroTypes\ExecutionFlow\GraphChangeFilterEnum\InputEdgeAdded");
             graphChangeFilterEnum_InputEdgeRemoved_meta = r.Get(false, @"System\Meta\ZeroTypes\ExecutionFlow\GraphChangeFilterEnum\nputEdgeRemoved");
             graphChangeFilterEnum_OutputEdgeDisposed_meta = r.Get(false, @"System\Meta\ZeroTypes\ExecutionFlow\GraphChangeFilterEnum\OutputEdgeDisposed");
-        }
-
-        public static IEdge AddTriggerAndListener(IVertex baseVertex, 
-            IList<string> scopeQueries,
-            IList<GraphChangeFilterEnum> changeTypeFilter,
-            string triggerVertexName, 
-            ExecutionFlowHelper.DotNetDelegate _delegate)
-        {
-            IEdge graphChangeTriggerEdge = GraphChangeTrigger.AddTrigger(baseVertex, 
-                scopeQueries, 
-                changeTypeFilter, 
-                triggerVertexName);
-
-            if (graphChangeTriggerEdge == null)
-                return null;
-
-            return ExecutionFlowHelper.AddListener_DotNetDelegate(graphChangeTriggerEdge.To, _delegate, "Listener");
         }        
 
         public static IEdge AddTrigger(IVertex baseVertex, 

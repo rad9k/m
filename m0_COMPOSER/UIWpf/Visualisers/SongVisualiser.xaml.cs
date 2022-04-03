@@ -37,6 +37,10 @@ namespace m0_COMPOSER.UIWpf.Visualisers
         static string[] _MetaTriggeringUpdateView = new string[] { };
         public override string[] MetaTriggeringUpdateView { get { return _MetaTriggeringUpdateView; } }
 
+        static IList<string> _listenerScopeQueries = new List<string> { @"", @"BaseEdge:\To:", @"BaseEdge:\To:\", @"BaseEdge:\To:\\", @"BaseEdge:\To:\\\" };
+        protected override IList<string> listenerScopeQueries { get { return _listenerScopeQueries; } }
+
+
         public int AutoBackupMinutes = 1;
         DispatcherTimer AutoBackupTimer;
 
@@ -50,7 +54,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
         static IVertex r = MinusZero.Instance.Root;
 
-        static IVertex positionMeta = r.Get(false, @"System\Lib\Music\Song\Position");
+        static IVertex positionAttributeMeta = r.Get(false, @"System\Lib\Music\Song\Position");
 
         static IVertex isRepeatMeta = r.Get(false, @"System\Lib\Music\Song\IsRepeat");
         
@@ -58,8 +62,6 @@ namespace m0_COMPOSER.UIWpf.Visualisers
         double Tempo;
 
         protected double ExtendTimeLength_Song;
-
-        IVertex postionAttribute;
 
         //
 
@@ -94,7 +96,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
         void SetPosition(int newPosition)
         {
-            GraphUtil.SetVertexValue(VisualizedVertex, postionAttribute, newPosition);
+            GraphUtil.SetVertexValue(VisualizedVertex, positionAttributeMeta, newPosition);
         }
 
         void InitSongState()
@@ -129,11 +131,6 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             }
         }        
 
-        void SetupHelperVariables()
-        {            
-            postionAttribute = r.Get(false, @"System\Lib\Music\Song\Position");
-        }
-
         public SongVisualiser(IVertex baseEdgeVertex, IVertex parentVisualiser)
         {
             InitializeComponent();
@@ -148,8 +145,6 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             VisualiserMetaVertex = mz.root.Get(false, @"System\Meta\Visualiser\Song");
 
             //
-
-            SetupHelperVariables();
 
             InitXAMLInstances();
 
@@ -829,18 +824,9 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             SetCursorMode(CursorStateEnum.Razor);
         }
 
-        protected void BaseVertexChange(object sender, VertexChangeEventArgs e)
-        {
-            if (sender == VisualizedVertex.Get(false, "Position:"))
-                PositionUpdate();
-
-            //if (VertexChangeOff)
-              //  return;
-        }
-
         bool doNotUpdatePositionVertex = false;
 
-        void PositionUpdate()
+        public void PositionUpdate()
         {
             if (VisualizedVertex != null)
             {
@@ -852,7 +838,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
                     this.Dispatcher.Invoke(() =>
                     {
-                        GraphUtil.SetVertexValue(VisualizedVertex, r.Get(false, @"System\Lib\Music\Song\Position"), 0);
+                        GraphUtil.SetVertexValue(VisualizedVertex, positionAttributeMeta, 0);
 
                         StopButton_Click(null, null);
                     });
@@ -1120,7 +1106,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             base.UpdatePositionMark();
         }
 
-        protected void GetMinMaxPostionFromSequenceEdges(IEnumerable<IEdge> edges, out int minPosition, out int maxPosition)
+        protected void GetMinMaxPositionFromSequenceEdges(IEnumerable<IEdge> edges, out int minPosition, out int maxPosition)
         {
             minPosition = Int32.MaxValue;
             maxPosition = Int32.MinValue;
@@ -1160,7 +1146,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             int minPosition, maxPosition;
 
-            GetMinMaxPostionFromSequenceEdges(edges, out minPosition, out maxPosition);
+            GetMinMaxPositionFromSequenceEdges(edges, out minPosition, out maxPosition);
 
             maxPosition = 0;
 
@@ -1340,7 +1326,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
                 positionMark = ScreenPositionToMusicTime(value, true);
 
                 if(!doNotUpdatePositionVertex)
-                    GraphUtil.SetVertexValue(VisualizedVertex, positionMeta, positionMark);
+                    GraphUtil.SetVertexValue(VisualizedVertex, positionAttributeMeta, positionMark);
 
                 doNotUpdatePositionVertex = false;
 
@@ -1364,7 +1350,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
                 positionMark = ScreenPositionToMusicTime(PositionMark_Screen, true);
 
                 if (!doNotUpdatePositionVertex)
-                    GraphUtil.SetVertexValue(VisualizedVertex, positionMeta, positionMark);
+                    GraphUtil.SetVertexValue(VisualizedVertex, positionAttributeMeta, positionMark);
 
                 doNotUpdatePositionVertex = false;
 

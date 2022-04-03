@@ -142,6 +142,23 @@ namespace m0.Graph.ExecutionFlow
                 currentTransaction.AddSecondStageCommitAction(commitAction);
         }
 
+        public static IEdge AddTriggerAndListener(IVertex baseVertex,
+            IList<string> scopeQueries,
+            IList<GraphChangeFilterEnum> changeTypeFilter,
+            string triggerVertexName,
+            ExecutionFlowHelper.DotNetDelegate _delegate)
+        {
+            IEdge graphChangeTriggerEdge = GraphChangeTrigger.AddTrigger(baseVertex,
+                scopeQueries,
+                changeTypeFilter,
+                triggerVertexName);
+
+            if (graphChangeTriggerEdge == null)
+                return null;
+
+            return ExecutionFlowHelper.AddListener_DotNetDelegate(graphChangeTriggerEdge.To, _delegate, "Listener");
+        }
+
         public static IEdge AddListener_DotNetStaticMethod(IVertex baseVertex, string _typeName, string _methodName)
         {
             return AddListener_DotNetStaticMethod(baseVertex, _typeName, _methodName, "");

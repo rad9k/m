@@ -54,7 +54,7 @@ namespace m0.UIWpf.Visualisers.Diagram
 
         public virtual void VertexSetedUp()
         {
-            graphChangeListenerEdge = GraphChangeTrigger.AddTriggerAndListener(Vertex,
+            graphChangeListenerEdge = ExecutionFlowHelper.AddTriggerAndListener(Vertex,
                 new List<string> { },
                 new List<GraphChangeFilterEnum> {GraphChangeFilterEnum.ValueChange,
                          GraphChangeFilterEnum.OutputEdgeAdded,
