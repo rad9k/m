@@ -264,7 +264,7 @@ namespace m0_COMPOSER.Lib
         void StartSongVertexChangeTracking()
         {
             graphChangeListenerEdge = ExecutionFlowHelper.AddTriggerAndListener(SongVertex,
-                     new List<string> { @"", @"\", @"\\", @"BaseEdge:\\\" },
+                     new List<string> { @"", @"\", @"\\", @"\\\" },
                      new List<GraphChangeFilterEnum> {GraphChangeFilterEnum.ValueChange,
                          GraphChangeFilterEnum.OutputEdgeAdded,
                          GraphChangeFilterEnum.OutputEdgeRemoved,
@@ -285,7 +285,10 @@ namespace m0_COMPOSER.Lib
         }
 
         void StopSongVertexChangeTracking()
-        {         
+        {
+            ExecutionFlowHelper.RemoveGraphChangeListener(graphChangeListenerEdge);
+
+
          /*   PlatformClass.RemoveVertexChangeListeners_byGenericVertex(SongVertex, new VertexChange(SongVertexChange), "PlaySong");
 
             foreach (IEdge trackEdge in SongVertex.GetAll(false, "Track:"))
@@ -310,7 +313,7 @@ namespace m0_COMPOSER.Lib
                 }
             }*/
         }
-
+        /*
         void AddTrackListeners(IVertex trackVertex)
         {            
             PlatformClass.RegisterVertexChangeListeners_byGenericVertex(trackVertex, new VertexChange(TrackVertexChange), new string[] { }, "PlaySong");
@@ -431,7 +434,7 @@ namespace m0_COMPOSER.Lib
                     UpdateEventDictionaries();                
             }
         }
-
+        */
         protected void UpdateEventDictionaries()
         {            
             long now = Watch.ElapsedMilliseconds + WatchAddElapsedMiliseconds;
