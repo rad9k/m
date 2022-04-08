@@ -182,10 +182,10 @@ namespace m0.Graph
 
         public bool CanFireChangeEvent = true;
 
-        public virtual void FireChange(VertexChangeEventArgs e) {
+        /*public virtual void FireChange(VertexChangeEventArgs e) {
             if (Change != null && CanFireChangeEvent)
                 Change(this, e);
-        }
+        }*/
 
         public virtual object Identifier
         {

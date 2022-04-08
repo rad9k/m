@@ -46,7 +46,7 @@ namespace m0.Graph
 
                 ValueChanged();
 
-                FireChange(new VertexChangeEventArgs(VertexChangeType.ValueChanged, null));
+                //FireChange(new VertexChangeEventArgs(VertexChangeType.ValueChanged, null));
 
                 if (CanEmitGraphChangeEvents)
                     ExecutionFlowHelper.AddTransactionAtom(new GraphChangeTransactionAtom(
@@ -513,7 +513,7 @@ namespace m0.Graph
             foreach (IEdge edge in OutEdgesRaw.ToList()) {             
                 OutEdgesRaw.Remove(edge);                
 
-                FireChange(new VertexChangeEventArgs(VertexChangeType.EdgeRemoved, edge)); // moved from before edge.Meta.DeleteMetaInEdge(edge); XXX !!!
+                //FireChange(new VertexChangeEventArgs(VertexChangeType.EdgeRemoved, edge)); // moved from before edge.Meta.DeleteMetaInEdge(edge); XXX !!!
             }            
         }
 

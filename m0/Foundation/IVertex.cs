@@ -32,9 +32,7 @@ namespace m0.Foundation
     {
         DisposeStateEnum DisposedState { get; set; }
 
-        bool IsRoot { get; set; }
-
-        event VertexChange Change;
+        bool IsRoot { get; set; }        
 
         Delegate[] GetChangeDelegateInvocationList();
 

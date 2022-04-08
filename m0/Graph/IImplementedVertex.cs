@@ -14,6 +14,6 @@ namespace m0.Graph
         int InheritanceCount { get; set; }
         bool HasInheritance { get; set; }
 
-        void FireChange(VertexChangeEventArgs e);
+        //void FireChange(VertexChangeEventArgs e);
     }
 }

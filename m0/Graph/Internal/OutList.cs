@@ -55,7 +55,7 @@ namespace m0.Graph.Internal
 
             edgeDictionaries.vertex.InheritChildsDictionariesNeedsRebuild(false);
 
-            edgeDictionaries.vertex.FireChange(new VertexChangeEventArgs(VertexChangeType.EdgeAdded, item));
+            //edgeDictionaries.vertex.FireChange(new VertexChangeEventArgs(VertexChangeType.EdgeAdded, item));
 
             GraphUtil.Debug(item.From, GraphUtil.DebugOperationEnum.OutEdgeAdd);
             GraphUtil.Debug(item.To, GraphUtil.DebugOperationEnum.InEdgeAdd);
@@ -85,7 +85,7 @@ namespace m0.Graph.Internal
 
             //
 
-            edgeDictionaries.vertex.FireChange(new VertexChangeEventArgs(VertexChangeType.EdgeRemoved, item));
+            //edgeDictionaries.vertex.FireChange(new VertexChangeEventArgs(VertexChangeType.EdgeRemoved, item));
         }
     }
 }
