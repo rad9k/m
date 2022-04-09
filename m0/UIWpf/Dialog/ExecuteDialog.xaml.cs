@@ -55,16 +55,20 @@ namespace m0.UIWpf.Dialog
 
                     CreateInputStack();
 
-                    IVertex inputStackEdgeVertex = //Edge.CreateTempEdgeVertex(
-                                                   //null,
-                                                   //null,
-                        Edge.CreateTempEdgeVertex(inputStackEdge);//); // ??
+                    IVertex inputStackEdgeVertex = Edge.CreateTempEdgeVertex(
+                                                   null,
+                                                   null,
+                        Edge.CreateTempEdgeVertex(inputStackEdge)); // ??
 
                     InputStackEdgeControl = new EdgeVisualiser(inputStackEdgeVertex, null);
 
                     OutputStackEdgeControl = new EdgeVisualiser(null, null);
 
                     InputStackContentControl = new TreeVisualiser(null, null);
+                    InputStackContentControl.Height = 100;
+                    InputStackContentControl.Width = 100;
+                    InputStackContentControl.Background = new SolidColorBrush(Colors.Aqua);
+
                     OutputStackContentControl = new TreeVisualiser(null, null);
 
                     this.ExecuteButton.IsEnabled = true;
@@ -76,6 +80,7 @@ namespace m0.UIWpf.Dialog
                     //CreateInputStack();
                  
                     InputStackEdgeControl_Border.Child = InputStackEdgeControl;
+                    InputStackEdgeControl_Border.Background = new SolidColorBrush(Colors.Red);
 
                     //IVertex InputStackEdgeControlBaseEdge = InputStackEdgeControl.Vertex.Get(false, @"BaseEdge:\To:");
                     //GraphUtil.RemoveAllEdges(InputStackEdgeControlBaseEdge);

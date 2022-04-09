@@ -79,7 +79,7 @@ namespace m0.UIWpf.Visualisers
 
         public void OnLoad(object sender, RoutedEventArgs e)
         {
-            VisualiserHelper.AddContextMenu();
+          //  VisualiserHelper.AddContextMenu(); // no contex menu here
         }        
 
         protected void AddEdge(IEdge e)
