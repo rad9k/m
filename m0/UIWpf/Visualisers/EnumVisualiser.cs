@@ -104,13 +104,11 @@ namespace m0.UIWpf.Visualisers
             IVertex fromv = bev.Get(false, "From:");
             IVertex metav = bev.Get(false, "Meta:");
             IVertex tov = fromv.Get(false, metav.Value.ToString()+":");
-                //bev.Get(false, "To:");
+            //bev.Get(false, "To:");
 
-            if(fromv!=null && metav!=null && tov!=null){                
-           //     this.Items.Clear();
+            this.IsEditable = true;
 
-                //ComboBoxItem SelectedItem=null;
-
+            if(fromv!=null && metav!=null && tov!=null){                           
                 CanProceedUIUpdateEvent = false;
 
                 int cnt = 0;
@@ -119,6 +117,7 @@ namespace m0.UIWpf.Visualisers
                 List<ComboBoxItem> valuesList = new List<ComboBoxItem>();
 
                 ComboBoxItem ToBeComboBoxItem=null;
+                string ToBeString = null;
 
                 foreach (IEdge e in metav.GetAll(false, @"$EdgeTarget:\EnumValue:"))
                 {
@@ -126,8 +125,7 @@ namespace m0.UIWpf.Visualisers
 
                     ComboBoxItem i = new ComboBoxItem();
                     i.Content = value;
-                    i.Tag = e.To;
-                   // this.Items.Add(i);
+                    i.Tag = e.To;                   
                    
                     valuesList.Add(i);
 
@@ -135,10 +133,10 @@ namespace m0.UIWpf.Visualisers
                     {
                         ToBeSelectedIndex = cnt;
                         ToBeComboBoxItem = i;
+                        ToBeString = value;
                     }
 
-                    cnt++;
-                        //SelectedItem = i;
+                    cnt++;                        
                 }
 
                 this.ItemsSource = valuesList;
@@ -147,20 +145,12 @@ namespace m0.UIWpf.Visualisers
                 {
                     this.SelectedIndex = ToBeSelectedIndex;
                     this.SelectedItem = ToBeComboBoxItem;
+                    this.Text = ToBeString;
                 }
-                
-                
-                /*
-                if (SelectedItem != null)
-                {
-                //    this.SelectedItem = SelectedItem;
-                    this.SelectedIndex = 2;
 
-                    //this.Text = "dupa";// tov.Value.ToString();
-                }
-                */
+                this.IsEditable = false;
+                
                 CanProceedUIUpdateEvent = true;
-
             }
 
         }
