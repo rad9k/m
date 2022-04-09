@@ -33,7 +33,7 @@ namespace m0.UIWpf.Commands
                 ){
                     if (baseSynchronisedVertex.Get(false, @"BaseEdge:\To:") == null) // if Disposed
                     {
-                        PlatformClass.RemoveVertexChangeListeners(selectSynchronisedVisualiser, new VertexChange(this.SynchronisedVisualiserChange));
+                  //      PlatformClass.RemoveVertexChangeListeners(selectSynchronisedVisualiser, new VertexChange(this.SynchronisedVisualiserChange));
                     }
                     else
                     {
@@ -406,7 +406,7 @@ namespace m0.UIWpf.Commands
 
             BaseSelectedSynchronisedHelper helper = new BaseSelectedSynchronisedHelper(pc.Vertex, synchronisedVisualiser);
 
-            PlatformClass.RegisterVertexChangeListeners(synchronisedVisualiser,new VertexChange(helper.SynchronisedVisualiserChange), new string[]{"BaseEdge","SelectedEdges"});
+            //PlatformClass.RegisterVertexChangeListeners(synchronisedVisualiser,new VertexChange(helper.SynchronisedVisualiserChange), new string[]{"BaseEdge","SelectedEdges"});
             
             IVertex firstSelectedVertex = synchronisedVisualiser.Get(false, @"SelectedEdges:\");
 

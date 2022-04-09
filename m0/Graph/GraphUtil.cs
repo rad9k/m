@@ -1359,11 +1359,11 @@ namespace m0.Graph
         }
 
 
-        public static void AddHandlerIfDelegateListDoesNotContainsIt(IVertex baseVertex, VertexChange _delegate)
+        /*public static void AddHandlerIfDelegateListDoesNotContainsIt(IVertex baseVertex, VertexChange _delegate)
         {
             if (baseVertex!=null&& !GeneralUtil.DoDelegateListContainDelegate(baseVertex.GetChangeDelegateInvocationList(), _delegate))
                 baseVertex.Change += _delegate;
-        }
+        }*/
 
         public static IVertex GetVertex(string storeName, long id)
         {

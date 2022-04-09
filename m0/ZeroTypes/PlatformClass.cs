@@ -8,7 +8,8 @@ using m0.Graph;
 
 namespace m0.ZeroTypes
 {
-    class PlatformClassVertexChangeListener{
+    class PlatformClassVertexChangeListener
+    {
         public PlatformClassVertexChangeListener(string[] watchList)
         {
             foreach (string w in watchList)
@@ -19,14 +20,14 @@ namespace m0.ZeroTypes
 
         public event VertexChange Change;
 
-        public virtual Delegate[] GetChangeDelegateInvocationList()
+        /*public virtual Delegate[] GetChangeDelegateInvocationList()
         {
             return Change.GetInvocationList();
-        }
+        }*/
 
         public IVertex PlatformClassVertex;
 
-        private bool CheckSender(object sender)
+        /*private bool CheckSender(object sender)
         {
             if (sender == PlatformClassVertex)
                 return true;
@@ -102,54 +103,54 @@ namespace m0.ZeroTypes
 
             if(Change!=null)
                 Change(sender, e);
-        }
+        }*/
     }
 
-    public class PlatformClass
-    {
-        static DictionaryList<string, Delegate> ListenerGroupDictionary = new DictionaryList<string, Delegate>();
-
-        public static IPlatformClass CreatePlatformObject(IVertex Vertex, IEdge baseEdge)
+        public class PlatformClass
         {
-            return CreatePlatformObject(Vertex, baseEdge, null);
-        }
+            // static DictionaryList<string, Delegate> ListenerGroupDictionary = new DictionaryList<string, Delegate>();
 
-        public static IPlatformClass CreatePlatformObject(IVertex Vertex, IEdge baseEdge, IVertex _parentVisualiser)
-        {
-            if (baseEdge == null)
-                return CreatePlatformObject(Vertex, null as IVertex, _parentVisualiser);
-            else
-                return CreatePlatformObject(Vertex, Edge.CreateTempEdgeVertex(baseEdge), _parentVisualiser);
-        }
-
-        public static IPlatformClass CreatePlatformObject(IVertex Vertex, IVertex baseEdgeVertex)
-        {
-            return CreatePlatformObject(Vertex, baseEdgeVertex, null);
-        }
-
-        public static IPlatformClass CreatePlatformObject(IVertex Vertex, IVertex baseEdgeVertex, IVertex _parentVisualiser)
-        {
-            IPlatformClass pc;
-
-            if (Vertex.Get(false, "$Is:Class") != null)
+            public static IPlatformClass CreatePlatformObject(IVertex Vertex, IEdge baseEdge)
             {
-                String classname = (string)Vertex.Get(false, "$PlatformClassName:").Value;
-
-                pc = (IPlatformClass)Activator.CreateInstance(Type.GetType(classname), new object[] { baseEdgeVertex, _parentVisualiser});
-            }
-            else
-            {
-                String classname = (string)Vertex.Get(false, @"$Is:{$Inherits:$PlatformClass}\$PlatformClassName:").Value;
-
-                pc = (IPlatformClass)Activator.CreateInstance(Type.GetType(classname), new object[] { baseEdgeVertex, _parentVisualiser});
-
-                pc.Vertex = Vertex;
+                return CreatePlatformObject(Vertex, baseEdge, null);
             }
 
-            return pc;
-        }
+            public static IPlatformClass CreatePlatformObject(IVertex Vertex, IEdge baseEdge, IVertex _parentVisualiser)
+            {
+                if (baseEdge == null)
+                    return CreatePlatformObject(Vertex, null as IVertex, _parentVisualiser);
+                else
+                    return CreatePlatformObject(Vertex, Edge.CreateTempEdgeVertex(baseEdge), _parentVisualiser);
+            }
 
-        public static void RegisterVertexChangeListeners_byGenericVertex(IVertex baseVertex, VertexChange action, string[] watchList)
+            public static IPlatformClass CreatePlatformObject(IVertex Vertex, IVertex baseEdgeVertex)
+            {
+                return CreatePlatformObject(Vertex, baseEdgeVertex, null);
+            }
+
+            public static IPlatformClass CreatePlatformObject(IVertex Vertex, IVertex baseEdgeVertex, IVertex _parentVisualiser)
+            {
+                IPlatformClass pc;
+
+                if (Vertex.Get(false, "$Is:Class") != null)
+                {
+                    String classname = (string)Vertex.Get(false, "$PlatformClassName:").Value;
+
+                    pc = (IPlatformClass)Activator.CreateInstance(Type.GetType(classname), new object[] { baseEdgeVertex, _parentVisualiser });
+                }
+                else
+                {
+                    String classname = (string)Vertex.Get(false, @"$Is:{$Inherits:$PlatformClass}\$PlatformClassName:").Value;
+
+                    pc = (IPlatformClass)Activator.CreateInstance(Type.GetType(classname), new object[] { baseEdgeVertex, _parentVisualiser });
+
+                    pc.Vertex = Vertex;
+                }
+
+                return pc;
+            }
+
+        /*public static void RegisterVertexChangeListeners_byGenericVertex(IVertex baseVertex, VertexChange action, string[] watchList)
         {
             RegisterVertexChangeListeners_byGenericVertex(baseVertex, action, watchList, null);
         }
@@ -262,7 +263,7 @@ namespace m0.ZeroTypes
                     if(listenerGroup != null && ListenerGroupDictionary.ContainsKey(listenerGroup))
                             if(!ListenerGroupDictionary.Contains(listenerGroup, d))
                                 can = false;
-                    
+
                     if (list.PlatformClassVertex == PlatformClassVertex && can
                             //&& action.Target == d.Target // XXX THIS CAUSES UNKNOWN PROBLEMS IN SongVisualiser Track at last
                             //&& action.Method == d.Method // XXX THIS ALSO 
@@ -274,6 +275,6 @@ namespace m0.ZeroTypes
                     }
                 }                
         }        
-
+        */
     }
 }

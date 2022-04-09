@@ -93,12 +93,12 @@ namespace m0.UIWpf.Visualisers.Method
             get { return _Vertex; }
             set
             {
-                if (_Vertex != null)
-                    PlatformClass.RemoveVertexChangeListeners(this.Vertex, new VertexChange(VertexChange));
+                if (_Vertex != null) { }
+                    //PlatformClass.RemoveVertexChangeListeners(this.Vertex, new VertexChange(VertexChange));
 
                 _Vertex = value;
 
-                PlatformClass.RegisterVertexChangeListeners(this.Vertex, new VertexChange(VertexChange), new string[] { "BaseEdge", "SelectedEdges" });
+               // PlatformClass.RegisterVertexChangeListeners(this.Vertex, new VertexChange(VertexChange), new string[] { "BaseEdge", "SelectedEdges" });
             }
         }
 
@@ -109,7 +109,7 @@ namespace m0.UIWpf.Visualisers.Method
             if (IsDisposed == false)
             {
                 IsDisposed = true;
-                PlatformClass.RemoveVertexChangeListeners(this.Vertex, new VertexChange(VertexChange));
+                //PlatformClass.RemoveVertexChangeListeners(this.Vertex, new VertexChange(VertexChange));
 
                 if (Vertex is IDisposable)
                     ((IDisposable)Vertex).Dispose();

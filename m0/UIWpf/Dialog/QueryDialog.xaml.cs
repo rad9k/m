@@ -40,7 +40,7 @@ namespace m0.UIWpf.Dialog
 
             GraphUtil.ReplaceEdge(this.Queries.Vertex.Get(false, "BaseEdge:"), "To", z.Root.Get(false, @"User\CurrentUser:\Queries:"));
 
-            PlatformClass.RegisterVertexChangeListeners(Queries.Vertex, QueriesVertexChange, new string[] { "BaseEdge", "SelectedEdges" });
+           // PlatformClass.RegisterVertexChangeListeners(Queries.Vertex, QueriesVertexChange, new string[] { "BaseEdge", "SelectedEdges" });
 
             this.Loaded += new RoutedEventHandler(OnLoad);
 
