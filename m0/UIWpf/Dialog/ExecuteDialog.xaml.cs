@@ -53,6 +53,8 @@ namespace m0.UIWpf.Dialog
             {
                 case StateEnum.NotStarted:
 
+                    CreateInputStack();
+
                     IVertex inputStackEdgeVertex = //Edge.CreateTempEdgeVertex(
                                                    //null,
                                                    //null,
@@ -71,7 +73,7 @@ namespace m0.UIWpf.Dialog
                     this.OutputStackEdgeControl.IsEnabled = false;
                     this.OutputStackContentControl.IsEnabled = false;
 
-                    CreateInputStack();
+                    //CreateInputStack();
                  
                     InputStackEdgeControl_Border.Child = InputStackEdgeControl;
 
