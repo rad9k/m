@@ -11,7 +11,7 @@ namespace m0.UIWpf.Visualisers.Helper
     {
         void SelectedVerticesUpdated();
 
-        void ZoomVisualiserContentChange();
+        //void ZoomVisualiserContentChange();
 
         void UpdateView();
 

@@ -23,13 +23,18 @@ namespace m0.UIWpf.Visualisers
         public AtomVisualiserHelper VisualiserHelper { get; set; }        
 
         public EnumVisualiser(IVertex baseEdgeVertex, IVertex parentVisualiser)
-        {
-            new AtomVisualiserHelper(parentVisualiser,
-                MinusZero.Instance.Root.Get(false, @"System\Meta\Visualiser\Enum"),
-                this, 
-                "EnumVisualiser", 
-                this,
-                baseEdgeVertex);
+        {            
+            new AtomVisualiserHelper(
+               parentVisualiser,
+               MinusZero.Instance.Root.Get(false, @"System\Meta\Visualiser\Enum"),
+               this,
+               "EnumVisualiser",
+               this,
+               false,
+               new List<string> { @"", @"BaseEdge:\From:" },
+               "EnumVisualiser",
+               baseEdgeVertex,
+               UpdateBaseEdgeCallSchemeEnum.OmmitSecond);
         }
 
         public void OnLoad(object sender, RoutedEventArgs e)
@@ -98,28 +103,62 @@ namespace m0.UIWpf.Visualisers
 
             IVertex fromv = bev.Get(false, "From:");
             IVertex metav = bev.Get(false, "Meta:");
-            IVertex tov = bev.Get(false, "To:");
+            IVertex tov = fromv.Get(false, metav.Value.ToString()+":");
+                //bev.Get(false, "To:");
 
             if(fromv!=null && metav!=null && tov!=null){                
-                this.Items.Clear();
+           //     this.Items.Clear();
 
-                ComboBoxItem SelectedItem=null;
-
-                foreach (IEdge e in metav.GetAll(false, @"$EdgeTarget:\EnumValue:"))
-                {
-                    ComboBoxItem i = new ComboBoxItem();
-                    i.Content = e.To.Value;
-                    i.Tag = e.To;
-                    this.Items.Add(i);
-
-                    if(tov.Value==e.To.Value)
-                        SelectedItem = i;
-                }
+                //ComboBoxItem SelectedItem=null;
 
                 CanProceedUIUpdateEvent = false;
 
-                this.SelectedItem = SelectedItem;
+                int cnt = 0;
+                int ToBeSelectedIndex = -1;
 
+                List<ComboBoxItem> valuesList = new List<ComboBoxItem>();
+
+                ComboBoxItem ToBeComboBoxItem=null;
+
+                foreach (IEdge e in metav.GetAll(false, @"$EdgeTarget:\EnumValue:"))
+                {
+                    string value = e.To.Value.ToString();
+
+                    ComboBoxItem i = new ComboBoxItem();
+                    i.Content = value;
+                    i.Tag = e.To;
+                   // this.Items.Add(i);
+                   
+                    valuesList.Add(i);
+
+                    if (tov.Value.ToString() == value)
+                    {
+                        ToBeSelectedIndex = cnt;
+                        ToBeComboBoxItem = i;
+                    }
+
+                    cnt++;
+                        //SelectedItem = i;
+                }
+
+                this.ItemsSource = valuesList;
+
+                if (ToBeSelectedIndex != -1)
+                {
+                    this.SelectedIndex = ToBeSelectedIndex;
+                    this.SelectedItem = ToBeComboBoxItem;
+                }
+                
+                
+                /*
+                if (SelectedItem != null)
+                {
+                //    this.SelectedItem = SelectedItem;
+                    this.SelectedIndex = 2;
+
+                    //this.Text = "dupa";// tov.Value.ToString();
+                }
+                */
                 CanProceedUIUpdateEvent = true;
 
             }

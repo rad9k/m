@@ -105,8 +105,6 @@ namespace m0.UIWpf.Visualisers.Helper
             listVisualiser = (IListVisualiser)_visualiser;
         }
 
-        public delegate INoInEdgeInOutVertexVertex CustomVertexChangeHandler(IExecution exe);
-
         public event CustomVertexChangeHandler CustomVertexChangeEvent;
 
         bool firstVertexChangeExecuted = false;
