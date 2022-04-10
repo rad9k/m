@@ -121,7 +121,7 @@ namespace m0_SYSTEM_GENERATE
             Lib.CreateLib.CreateLibSys();
 
             print("* filling Lib::Music");
-            Music.CreateMusic.Create();
+            Music.CreateMusic.CreateLibMusic();
 
 
             Lib.CreateLib.Save(systemSubGraphWithLinks, storeOverride);

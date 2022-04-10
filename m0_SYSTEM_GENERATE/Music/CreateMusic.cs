@@ -100,7 +100,7 @@ namespace m0_SYSTEM_GENERATE.Music
         new _Note("G# 4", "Mute Triangle"),
         new _Note("A 4", "Open Triangle") };
 
-        public static void Create()
+        public static void CreateLibMusic()
         {
             print("* creating Lib\\Music");
 
