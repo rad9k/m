@@ -159,6 +159,19 @@ namespace m0.Graph.ExecutionFlow
             return ExecutionFlowHelper.AddListener_DotNetDelegate(graphChangeTriggerEdge.To, _delegate, "Listener");
         }
 
+        public static IEdge AddTriggerAndListener(IVertex baseVertex, ExecutionFlowHelper.DotNetDelegate _delegate)
+        { 
+            return AddTriggerAndListener(baseVertex,
+                new List<string> { },
+                new List<GraphChangeFilterEnum> {GraphChangeFilterEnum.ValueChange,
+                         GraphChangeFilterEnum.OutputEdgeAdded,
+                         GraphChangeFilterEnum.OutputEdgeRemoved,
+                         GraphChangeFilterEnum.OutputEdgeDisposed
+                },
+                "SimpleDirectListener",
+                _delegate);
+        }
+
         public static IEdge AddListener_DotNetStaticMethod(IVertex baseVertex, string _typeName, string _methodName)
         {
             return AddListener_DotNetStaticMethod(baseVertex, _typeName, _methodName, "");

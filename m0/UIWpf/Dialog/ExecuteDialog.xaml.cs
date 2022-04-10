@@ -60,16 +60,26 @@ namespace m0.UIWpf.Dialog
                                                    null,
                         Edge.CreateTempEdgeVertex(inputStackEdge)); // ??
 
+                    ////////////////////////////////////////
+                    Interaction.BeginInteractionWithGraph();
+                    ////////////////////////////////////////
+
                     InputStackEdgeControl = new EdgeVisualiser(inputStackEdgeVertex, null);
+                    InputStackEdgeControl_Border.Child = InputStackEdgeControl;
 
                     OutputStackEdgeControl = new EdgeVisualiser(null, null);
+                    OutputStackEdgeControl_Border.Child = OutputStackEdgeControl;
 
                     InputStackContentControl = new TreeVisualiser(null, null);
-                    InputStackContentControl.Height = 100;
-                    InputStackContentControl.Width = 100;
-                    InputStackContentControl.Background = new SolidColorBrush(Colors.Aqua);
+                    InputStackContentControl_Border.Child = InputStackContentControl;
 
                     OutputStackContentControl = new TreeVisualiser(null, null);
+                    OutputStackContentControl_Border.Child = OutputStackContentControl;
+
+                    ////////////////////////////////////////
+                    Interaction.EndInteractionWithGraph();
+                    ////////////////////////////////////////
+
 
                     this.ExecuteButton.IsEnabled = true;
                     this.InputStackEdgeControl.IsEnabled = true;
@@ -78,9 +88,7 @@ namespace m0.UIWpf.Dialog
                     this.OutputStackContentControl.IsEnabled = false;
 
                     //CreateInputStack();
-                 
-                    InputStackEdgeControl_Border.Child = InputStackEdgeControl;
-                    InputStackEdgeControl_Border.Background = new SolidColorBrush(Colors.Red);
+                                     
 
                     //IVertex InputStackEdgeControlBaseEdge = InputStackEdgeControl.Vertex.Get(false, @"BaseEdge:\To:");
                     //GraphUtil.RemoveAllEdges(InputStackEdgeControlBaseEdge);
@@ -124,7 +132,7 @@ namespace m0.UIWpf.Dialog
                                           InputStackEdgeControl.Vertex.Get(false, @"BaseEdge:\To:\Meta:"),
                                           InputStackEdgeControl.Vertex.Get(false, @"BaseEdge:\To:\To:"));
 
-            Edge.ReplaceEdgeVertexEdges(InputStackContentControl.Vertex.Get(false, "BaseEdge:"), inputStackEdge);
+            Edge.AddOrReplaceEdgeVertexEdges(InputStackContentControl.Vertex.Get(false, @"BaseEdge:\To:"), inputStackEdge);
         }
 
         public ExecuteDialog(IVertex _baseVertex)
@@ -135,7 +143,7 @@ namespace m0.UIWpf.Dialog
 
             SetState(StateEnum.NotStarted);
 
-            ExecutionFlowHelper.AddListener_DotNetDelegate(InputStackEdgeControl.Vertex, inputStackEdgeControl_VertexChange);
+            ExecutionFlowHelper.AddTriggerAndListener(InputStackEdgeControl.Vertex.Get(false, @"BaseEdge:\To:"), inputStackEdgeControl_VertexChange);
 
            // PlatformClass.RegisterVertexChangeListeners(InputStackEdgeControl.Vertex, new VertexChange(inputStackEdgeControl_VertexChange), new string[] { "BaseEdge" });
         }

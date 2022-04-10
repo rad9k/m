@@ -140,6 +140,14 @@ namespace m0.ZeroTypes
             return ev;
         }
 
+        static public void AddOrReplaceEdgeVertexEdges(IVertex baseVertex, IEdge edge)
+        {
+            if (GraphUtil.ExistQueryOut(baseVertex, "From", null))
+                ReplaceEdgeVertexEdges(baseVertex, edge);
+            else
+                AddEdgeVertexEdges(baseVertex, edge);
+        }
+
         static public void ReplaceEdgeVertexEdges(IVertex baseVertex, IEdge edge)
         {
             GraphUtil.ReplaceEdge(baseVertex, "From", edge.From);
