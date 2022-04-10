@@ -18,9 +18,7 @@ namespace m0.ZeroCode
 
         public IVertex NewVertexCreationSpace { get; set; }
 
-        public bool MetaMode { get; set; }
-
-        static IVertex dolar = MinusZero.Instance.Dolar;
+        public bool MetaMode { get; set; }        
 
         public ZeroCodeExecution()
         {
@@ -68,7 +66,7 @@ namespace m0.ZeroCode
 
         private void AddDolarToStack(IVertex expression)
         {
-            Stack.AddEdge(dolar, expression);
+            Stack.AddEdge(MinusZero.Instance.Dolar, expression);
         }
 
         public void AddRootToStack()
