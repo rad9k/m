@@ -49,6 +49,7 @@ namespace m0.UIWpf.Commands
 
                 if (ee != null)
                 {
+                    GraphUtil.CreateOrReplaceEdge(baseEdge.Get(false, "To:"), r.Get(false, @"System\Meta\ZeroTypes\Edge\From"), ee.To.Get(false, "From:"));
                     GraphUtil.CreateOrReplaceEdge(baseEdge.Get(false, "To:"), r.Get(false, @"System\Meta\ZeroTypes\Edge\Meta"), ee.To.Get(false, "Meta:"));
                     GraphUtil.CreateOrReplaceEdge(baseEdge.Get(false, "To:"), r.Get(false, @"System\Meta\ZeroTypes\Edge\To"), ee.To.Get(false, "To:"));
                  

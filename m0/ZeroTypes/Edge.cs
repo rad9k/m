@@ -164,7 +164,7 @@ namespace m0.ZeroTypes
         {
             baseVertex.AddEdge(vIs, EdgeMeta);
 
-            if (edge.From.DisposedState == DisposeStateEnum.Live)
+            if (edge.From !=null && edge.From.DisposedState == DisposeStateEnum.Live)
                 baseVertex.AddEdge(FromMeta, edge.From);
             else
                 baseVertex.AddEdge(FromMeta, MinusZero.Instance.Empty);

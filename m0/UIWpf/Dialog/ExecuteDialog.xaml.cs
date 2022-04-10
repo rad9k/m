@@ -110,12 +110,11 @@ namespace m0.UIWpf.Dialog
                     this.InputStackEdgeControl.IsEnabled = true;
                     this.InputStackContentControl.IsEnabled = true;
                     this.OutputStackEdgeControl.IsEnabled = true;
-                    this.OutputStackContentControl.IsEnabled = true;
+                    this.OutputStackContentControl.IsEnabled = true;                    
+                    
+                    Edge.AddOrReplaceEdgeVertexEdges(OutputStackEdgeControl.Vertex.Get(false, @"BaseEdge:"), outputStackEdge);
 
-                    IVertex OutputStackEdgeControlBaseEdge = OutputStackEdgeControl.Vertex.Get(false, @"BaseEdge:\To:");
-                    GraphUtil.RemoveAllEdges(OutputStackEdgeControlBaseEdge);
-                    Edge.AddEdgeVertexEdges(OutputStackEdgeControlBaseEdge, outputStackEdge);
-                    Edge.ReplaceEdgeVertexEdges(OutputStackContentControl.Vertex.Get(false, "BaseEdge:"), outputStackEdge);
+                    Edge.AddOrReplaceEdgeVertexEdges(OutputStackContentControl.Vertex.Get(false, @"BaseEdge:"), outputStackEdge);
 
                     break;
             }
@@ -132,7 +131,7 @@ namespace m0.UIWpf.Dialog
                                           InputStackEdgeControl.Vertex.Get(false, @"BaseEdge:\To:\Meta:"),
                                           InputStackEdgeControl.Vertex.Get(false, @"BaseEdge:\To:\To:"));
 
-            Edge.AddOrReplaceEdgeVertexEdges(InputStackContentControl.Vertex.Get(false, @"BaseEdge:\To:"), inputStackEdge);
+            Edge.AddOrReplaceEdgeVertexEdges(InputStackContentControl.Vertex.Get(false, @"BaseEdge:"), inputStackEdge);
         }
 
         public ExecuteDialog(IVertex _baseVertex)
@@ -176,11 +175,11 @@ namespace m0.UIWpf.Dialog
 
             outputStackEdge = GraphUtil.CreateArtificialEdge(null, outputStackVertex);
 
+            SetState(StateEnum.AfterExecution);
+
             //////////////////////////////////////
             Interaction.EndInteractionWithGraph();
-            //////////////////////////////////////
-
-            SetState(StateEnum.AfterExecution);
+            //////////////////////////////////////            
         }
 
         private void UserControl_Unloaded(object sender, RoutedEventArgs e)
