@@ -121,8 +121,11 @@ namespace m0.Graph.ExecutionFlow
                             if(IsFilterMatch_OutEdgeValueChange(we, a))
                                 {                            
                                     IVertex eventVertex = a.CreateEventVertex_GraphChange(we.triggerVertex, we.sourceVertex, false);
-                                    if(eventVertex != null)
+                                    if (eventVertex != null)
+                                    {
                                         GeneralUtil.DictionaryAdd<IVertex, IVertex>(triggerEventDictionary, we.triggerVertex, eventVertex);
+                                        eventVertex.AddExternalReference();
+                                    }
                                 }                            
 
                 if (graphChangeTransactionAtoms_InEdge_copy.ContainsKey(kvp.Key))
@@ -131,8 +134,11 @@ namespace m0.Graph.ExecutionFlow
                             if(IsFilterMatch_InEdge(we, a))
                                 {
                                     IVertex eventVertex = a.CreateEventVertex_GraphChange(we.triggerVertex, we.sourceVertex, true);
-                                    if(eventVertex != null)
+                                    if (eventVertex != null)
+                                    {
                                         GeneralUtil.DictionaryAdd<IVertex, IVertex>(triggerEventDictionary, we.triggerVertex, eventVertex);
+                                        eventVertex.AddExternalReference();
+                                    }
                                 }                            
             }
                
@@ -153,8 +159,11 @@ namespace m0.Graph.ExecutionFlow
                             if (IsFilterMatch_OutEdgeValueChange(we, a))
                                 {
                                     IVertex eventVertex = a.CreateEventVertex_GraphChange(we.triggerVertex, we.sourceVertex, false);
-                                    if(eventVertex != null)
+                                    if (eventVertex != null)
+                                    {
                                         GeneralUtil.DictionaryAdd<IVertex, IVertex>(triggerEventDictionary, we.triggerVertex, eventVertex);
+                                        eventVertex.AddExternalReference();
+                                    }
                                 }                            
 
             foreach (KeyValuePair<IVertex, List<GraphChangeTransactionAtom>> kvp in graphChangeTransactionAtoms_InEdge_copy)
@@ -164,8 +173,11 @@ namespace m0.Graph.ExecutionFlow
                             if (IsFilterMatch_InEdge(we, a))
                                 {
                                     IVertex eventVertex = a.CreateEventVertex_GraphChange(we.triggerVertex, we.sourceVertex, true);
-                                    if(eventVertex != null)
+                                    if (eventVertex != null)
+                                    {
                                         GeneralUtil.DictionaryAdd<IVertex, IVertex>(triggerEventDictionary, we.triggerVertex, eventVertex);
+                                        eventVertex.AddExternalReference();
+                                    }
                                 }                            
 
             return triggerEventDictionary;
@@ -241,6 +253,17 @@ namespace m0.Graph.ExecutionFlow
             GraphChangeWatch = true;
 
             SendGrahChangeEvents(exe, triggerEventDictionary);
+
+            //
+
+            RemoveExternalReferences(triggerEventDictionary);
+        }
+
+        void RemoveExternalReferences(Dictionary<IVertex, List<IVertex>> triggerEventDictionary)
+        {
+            foreach (List<IVertex> eventList in triggerEventDictionary.Values)
+                foreach (IVertex v in eventList)
+                    v.RemoveExternalReference();
         }
 
         public void Commit_SecondStage()

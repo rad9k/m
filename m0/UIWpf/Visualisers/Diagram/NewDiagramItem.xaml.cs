@@ -95,7 +95,10 @@ namespace m0.UIWpf.Visualisers.Diagram
 
         protected void UpdateItemList()
         {
-          ItemsList = m0.MinusZero.Instance.CreateTempVertex();     
+            if (ItemsList != null)
+                ItemsList.RemoveExternalReference();
+
+           ItemsList = m0.MinusZero.Instance.CreateTempVertex();     
 
            if (InstanceRadio.IsChecked == true)
            {
@@ -141,6 +144,7 @@ namespace m0.UIWpf.Visualisers.Diagram
              
            }
 
+            ItemsList.AddExternalReference();
             List.ItemsSource = ItemsList;
 
             if (ItemsList.Count() > 0)
