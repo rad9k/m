@@ -20,7 +20,6 @@ remove ZeroCodeExecuter.AddRootToStack(exe); and ther is no. can be checked by "
 
 59. copy $Empty? [11] 
 60. copy from Graph error [59]
-97. removevertex listeners in tree.dispose for each leaf
 98. links in string2graph when having more than one meaning are made shorter in wrong way, for example:
 "X09PitchSet"
 	<@$Is :: @PitchSet>
@@ -84,8 +83,6 @@ a lot of "dupa" here :(
 			this.CopyAtomAttributes[]
 			this.CopyEvents[]
 			this.PutIntoStore[]
-103. SimpleTransformer referns to anther ZeroUML in root store, with ids > 4000. this is becouse of parsing in the m0_generate
-
 
 <><><> FUTURE 0.5
 
@@ -242,3 +239,5 @@ a lot of "dupa" here :(
 81. decimal support in jsonstore
 94. initial m0 files seems to be to big and contain too much
 51. transactions
+97. removevertex listeners in tree.dispose for each leaf
+103. SimpleTransformer referns to anther ZeroUML in root store, with ids > 4000. this is becouse of parsing in the m0_generate
