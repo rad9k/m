@@ -39,11 +39,11 @@ namespace m0_SYSTEM_GENERATE
 
             print("");
 
-            print("* initializing legacy system");
+           // print("* initializing legacy system");
 
-            m0.LegacySystem.LegacySystem a = new m0.LegacySystem.LegacySystem();
+            //m0.LegacySystem.LegacySystem a = new m0.LegacySystem.LegacySystem();
 
-            print("* legacy system initialized succesfully");
+           // print("* legacy system initialized succesfully");
 
 
             //
@@ -79,12 +79,7 @@ namespace m0_SYSTEM_GENERATE
 
             //
 
-            List<IVertex> systemSubGraphWithLinks = GraphUtil.GetSubGraphWithLinksAsListButExcludeRoot(system);
-            
-            //
-
-            //Lib.CreateLib.Create();
-            //Music.CreateMusic.Create();            
+            List<IVertex> systemSubGraphWithLinks = GraphUtil.GetSubGraphWithLinksAsListButExcludeRoot(system);  
 
             //            
 
@@ -119,6 +114,8 @@ namespace m0_SYSTEM_GENERATE
             print("* filling Lib::Sys");
 
             Lib.CreateLib.CreateLibSys();
+
+            LegacySystem_MinusZero.Instance.DefaultFormalTextLanguageVertexSetup(); // system.m0 instead of $-0$ROOT$STORE$
 
             print("* filling Lib::Music");
             Music.CreateMusic.CreateLibMusic();

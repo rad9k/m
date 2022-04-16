@@ -2388,7 +2388,7 @@ namespace m0
                 LegacySystem.Graph.EasyVertex.Get(smu, false, _is));
         }
 
-        void RootVariableVertexLinksCreate2()
+        public void DefaultFormalTextLanguageVertexSetup()
         {
             IVertex System = GraphUtil.GetQueryOutFirst(Root, null, "System");
             IVertex FormalTextLanguage = GraphUtil.GetQueryOutFirst(System, null, "FormalTextLanguage");
@@ -2438,7 +2438,7 @@ namespace m0
             IVertex zc = LegacySystem.Graph.EasyVertex.Get(Root, false, @"System\FormalTextLanguage").AddVertex(
                 LegacySystem.Graph.EasyVertex.Get(Root, false, @"System\Meta\ZeroTypes\FormalTextLanguage"),"ZeroCode");
 
-            RootVariableVertexLinksCreate2();
+            DefaultFormalTextLanguageVertexSetup();
 
             zc.AddEdge(LegacySystem.Graph.EasyVertex.Get(Root, false, @"System\Meta\Base\Vertex\$Is"),
                 LegacySystem.Graph.EasyVertex.Get(Root, false, @"System\Meta\ZeroTypes\FormalTextLanguage"));

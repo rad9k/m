@@ -249,9 +249,7 @@ namespace m0.ZeroCode
 
 
 
-        DictionariesForFormalTextLanguage dict;
-
-        static Dictionary<IVertex, DictionariesForFormalTextLanguage> DictionariesForFormalTextLanguageDictionary = new Dictionary<IVertex, DictionariesForFormalTextLanguage>();
+        DictionariesForFormalTextLanguage dict;        
 
         // PARSER AUTO TEST SECTION
 
