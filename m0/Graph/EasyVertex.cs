@@ -452,8 +452,8 @@ namespace m0.Graph
                 DeleteEdge(e); // Meta/To check to be performed
         }       
 
-        private static IDictionary<String, IVertex> QueryParseChache = new Dictionary<String, IVertex>();
-        private static IDictionary<String, IVertex> QueryParseChache_metaMode = new Dictionary<String, IVertex>();        
+        private static IDictionary<String, IVertex> QueryParseCache = new Dictionary<String, IVertex>();
+        private static IDictionary<String, IVertex> QueryParseCache_metaMode = new Dictionary<String, IVertex>();        
 
         public override void Dispose()
         {            
@@ -664,9 +664,9 @@ namespace m0.Graph
             IDictionary<String, IVertex> chache;
 
             if (metaMode)
-                chache = QueryParseChache_metaMode;
+                chache = QueryParseCache_metaMode;
             else
-                chache = QueryParseChache;
+                chache = QueryParseCache;
 
             if (chache.ContainsKey(query))
                 queryVertex = chache[query];
@@ -691,23 +691,23 @@ namespace m0.Graph
             IVertex queryVertex = null;
             IVertex parseError = null;
 
-            IDictionary<String, IVertex> chache;
+            IDictionary<String, IVertex> cache;
 
             if (metaMode)
-                chache = QueryParseChache_metaMode;
+                cache = QueryParseCache_metaMode;
             else
-                chache = QueryParseChache;
+                cache = QueryParseCache;
 
-            if (chache.ContainsKey(query))
-                queryVertex = chache[query];
+            if (cache.ContainsKey(query))
+                queryVertex = cache[query];
             else
             {
                 queryVertex = MinusZero.Instance.CreateTempVertex();
 
                 parseError = MinusZero.Instance.DefaultParser.Parse(queryVertex, query);
 
-                if (parseError == null || parseError.Count() == 0 || !chache.ContainsKey(query)) // it happens to exist there so need to check again
-                    chache.Add(query, queryVertex);
+                if (parseError == null || parseError.Count() == 0 || !cache.ContainsKey(query)) // it happens to exist there so need to check again
+                    cache.Add(query, queryVertex);
             }
 
             if (parseError != null && parseError.Count() > 0)
@@ -770,7 +770,7 @@ namespace m0.Graph
             cumulativeEdgesCount += ed.In.Count;
             cumulativeEdgesCount += ed.MetaIn.Count;
 
-            if (cumulativeEdgesCount == 0
+            if (cumulativeEdgesCount == 0 && ExternalReferenceCount == 0
                 && ed.vertex.Store.DetachState == DetachStateEnum.Attached
                 && !ed.vertex.IsRoot)                
                 Dispose();                

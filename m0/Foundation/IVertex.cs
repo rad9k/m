@@ -53,6 +53,17 @@ namespace m0.Foundation
 
         INoInEdgeInOutVertexVertex Execute(IExecution exe);
 
+        // 3.0 BEG
+
+        int ExternalReferenceCount { get; }
+
+        void AddExternalReference();
+
+        void RemoveExternalReference();
+
+
+        // 3.0 END
+
         // 2.0 BEG
 
         bool InEdgesDictionariesNeedsRebuild { get; set; }

@@ -369,5 +369,17 @@ namespace m0.Graph
         {
             throw new NotImplementedException();
         }
+
+        public int ExternalReferenceCount { get; private set; } = 0;
+
+        public void AddExternalReference()
+        {
+            ExternalReferenceCount++;
+        }
+
+        public void RemoveExternalReference()
+        {
+            ExternalReferenceCount--;
+        }
     }
 }

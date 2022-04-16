@@ -77,7 +77,7 @@ namespace m0.Graph.Internal
             cumulativeEdgesCount += edgeDictionaries.In.Count;
             cumulativeEdgesCount += edgeDictionaries.MetaIn.Count;
 
-            if (cumulativeEdgesCount == 0
+            if (cumulativeEdgesCount == 0 && edgeDictionaries.vertex.ExternalReferenceCount == 0
                 && edgeDictionaries.vertex.Store.DetachState == DetachStateEnum.Attached
                 && !edgeDictionaries.vertex.IsRoot)
             {                
