@@ -381,5 +381,10 @@ namespace m0.Graph
         {
             ExternalReferenceCount--;
         }
+
+        public virtual void ChackIfShouldDispose()
+        {
+
+        }
     }
 }

@@ -676,8 +676,11 @@ namespace m0.Graph
 
                 parseError = MinusZero.Instance.DefaultParser.Parse(queryVertex, query);
 
-                if (parseError == null || parseError.Count() == 0)
+                if (parseError == null || parseError.Count() == 0 /* && !cache.ContainsKey(query)*/)
+                {
                     chache.Add(query, queryVertex);
+                    queryVertex.AddExternalReference();
+                }
             }
 
             if (parseError != null && parseError.Count() > 0)
@@ -706,8 +709,11 @@ namespace m0.Graph
 
                 parseError = MinusZero.Instance.DefaultParser.Parse(queryVertex, query);
 
-                if (parseError == null || parseError.Count() == 0 || !cache.ContainsKey(query)) // it happens to exist there so need to check again
+                if (parseError == null || parseError.Count() == 0/* && || !cache.ContainsKey(query)*/)  // it happens to exist there so need to check again
+                {
                     cache.Add(query, queryVertex);
+                    queryVertex.AddExternalReference();
+                }
             }
 
             if (parseError != null && parseError.Count() > 0)
@@ -762,17 +768,7 @@ namespace m0.Graph
 
         public override void ExecuteSecondStageCommitAction()
         {
-            if (DisposedState != DisposeStateEnum.Live)
-                return;
-
-            int cumulativeEdgesCount = 0;
-
-            cumulativeEdgesCount += ed.In.Count;
-            cumulativeEdgesCount += ed.MetaIn.Count;
-
-            if (cumulativeEdgesCount == 0 && ExternalReferenceCount == 0
-                && ed.vertex.Store.DetachState == DetachStateEnum.Attached
-                && !ed.vertex.IsRoot)                
+                        
                 Dispose();                
         }
 
@@ -798,6 +794,30 @@ namespace m0.Graph
             }
 
             Store.StoreVertexIdentifier(this);
+        }
+
+        bool ShouldDispose()
+        {
+            if (DisposedState != DisposeStateEnum.Live)
+                return false;
+
+            int cumulativeEdgesCount = 0;
+
+            cumulativeEdgesCount += ed.In.Count;
+            cumulativeEdgesCount += ed.MetaIn.Count;
+
+            if (cumulativeEdgesCount == 0 && ExternalReferenceCount == 0
+                && ed.vertex.Store.DetachState == DetachStateEnum.Attached
+                && !ed.vertex.IsRoot)
+                return true;
+
+            return false;
+        }
+
+        public override void ChackIfShouldDispose()
+        {
+            if(ShouldDispose())
+
         }
     }
 }
