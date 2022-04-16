@@ -47,11 +47,11 @@ namespace m0.Graph.Internal
         public MetaInList MetaIn;
         public InList In;
 
-        public IImplementedVertex vertex;
+        public IImplementedVertex Vertex;
 
         public EdgeDictionaries(IImplementedVertex _v)
         {
-            vertex = _v;
+            Vertex = _v;
 
             Out = new OutList(this);
             MetaIn = new MetaInList(this);

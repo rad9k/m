@@ -41,9 +41,9 @@ namespace m0.Graph.Internal
 
         public override void OnAdd(IEdge item)
         {
-            edgeDictionaries.vertex.InEdgesDictionariesNeedsRebuild = true;
+            edgeDictionaries.Vertex.InEdgesDictionariesNeedsRebuild = true;
 
-            edgeDictionaries.vertex.InheritChildsDictionariesNeedsRebuild(true);
+            edgeDictionaries.Vertex.InheritChildsDictionariesNeedsRebuild(true);
         }
 
         public override void OnRemove(IEdge item)
@@ -66,23 +66,25 @@ namespace m0.Graph.Internal
 
             //
 
-            edgeDictionaries.vertex.InEdgesDictionariesNeedsRebuild = true;
+            edgeDictionaries.Vertex.InEdgesDictionariesNeedsRebuild = true;
 
-            edgeDictionaries.vertex.InheritChildsDictionariesNeedsRebuild(true);
+            edgeDictionaries.Vertex.InheritChildsDictionariesNeedsRebuild(true);
 
             //
 
-            int cumulativeEdgesCount = 0;
+            edgeDictionaries.Vertex.CheckIfShouldDispose();
+
+            /*int cumulativeEdgesCount = 0;
 
             cumulativeEdgesCount += edgeDictionaries.In.Count;
             cumulativeEdgesCount += edgeDictionaries.MetaIn.Count;
 
-            if (cumulativeEdgesCount == 0 && edgeDictionaries.vertex.ExternalReferenceCount == 0
-                && edgeDictionaries.vertex.Store.DetachState == DetachStateEnum.Attached
-                && !edgeDictionaries.vertex.IsRoot)
+            if (cumulativeEdgesCount == 0 && edgeDictionaries.Vertex.ExternalReferenceCount == 0
+                && edgeDictionaries.Vertex.Store.DetachState == DetachStateEnum.Attached
+                && !edgeDictionaries.Vertex.IsRoot)
             {                
-                ExecutionFlowHelper.AddSecondStageCommitAction(edgeDictionaries.vertex);
-            }
+                ExecutionFlowHelper.AddSecondStageCommitAction(edgeDictionaries.Vertex);
+            }*/
         }
     }
 }

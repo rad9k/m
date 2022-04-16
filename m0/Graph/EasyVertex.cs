@@ -23,7 +23,7 @@ namespace m0.Graph
     {
         protected bool CanEmitGraphChangeEvents = true;
 
-        protected EdgeDictionaries ed;
+        protected EdgeDictionaries edgeDictionaries;
 
         public object _Identifier;
         
@@ -76,7 +76,7 @@ namespace m0.Graph
 
         public int InheritanceCount { get; set; }
 
-        public override IList<IEdge> InEdgesRaw { get { return ed.In; } }
+        public override IList<IEdge> InEdgesRaw { get { return edgeDictionaries.In; } }
 
         private IList<IEdge> _InEdges;
 
@@ -112,7 +112,7 @@ namespace m0.Graph
                 _InEdges = InEdgesRaw;
         }
 
-        public override IList<IEdge> OutEdgesRaw { get { return ed.Out; } }
+        public override IList<IEdge> OutEdgesRaw { get { return edgeDictionaries.Out; } }
 
         protected IList<IEdge> _OutEdges;
 
@@ -130,7 +130,7 @@ namespace m0.Graph
             }
         }
 
-        public override IList<IEdge> MetaInEdgesRaw { get { return ed.MetaIn; } }
+        public override IList<IEdge> MetaInEdgesRaw { get { return edgeDictionaries.MetaIn; } }
 
         protected virtual void OutEdgesDictionariesRebuild_Edges()
         {
@@ -408,10 +408,10 @@ namespace m0.Graph
             {
                 if (GeneralUtil.CompareStrings(edge.Meta.Value, "$Inherits"))
                 {
-                    ed.vertex.InheritanceCount--;
+                    edgeDictionaries.Vertex.InheritanceCount--;
 
-                    if (ed.vertex.InheritanceCount == 0)
-                        ed.vertex.HasInheritance = false;
+                    if (edgeDictionaries.Vertex.InheritanceCount == 0)
+                        edgeDictionaries.Vertex.HasInheritance = false;
                 }
 
                 if (GeneralUtil.CompareStrings(edge.Meta.Value, "$GraphChangeTrigger"))
@@ -430,7 +430,7 @@ namespace m0.Graph
             if (DisposedState == DisposeStateEnum.Disposed)
                 throw new Exception("Vertex not live");
 
-            IEdge edge = ed.Out.Get(_edge);
+            IEdge edge = edgeDictionaries.Out.Get(_edge);
 
             if (edge != null)
             {                
@@ -462,11 +462,6 @@ namespace m0.Graph
             GraphUtil.Debug(this, DebugOperationEnum.Dispose);
 
             ChangeRemoveAllHandlers();
-
-            if(GraphUtil.ExistQueryOut(this, null, "xxx"))
-            {
-                int x = 0;
-            }
 
             DeleteAllInEdges();
             DeleteAllMetaInEdges();
@@ -739,7 +734,7 @@ namespace m0.Graph
 
         protected void VertexInit_First()
         {
-            ed = new EdgeDictionaries(this);
+            edgeDictionaries = new EdgeDictionaries(this);
 
             InheritanceCount = 0;
 
@@ -767,8 +762,8 @@ namespace m0.Graph
         }
 
         public override void ExecuteSecondStageCommitAction()
-        {
-                        
+        {   
+            if(ShouldDispose())
                 Dispose();                
         }
 
@@ -803,21 +798,21 @@ namespace m0.Graph
 
             int cumulativeEdgesCount = 0;
 
-            cumulativeEdgesCount += ed.In.Count;
-            cumulativeEdgesCount += ed.MetaIn.Count;
+            cumulativeEdgesCount += edgeDictionaries.In.Count;
+            cumulativeEdgesCount += edgeDictionaries.MetaIn.Count;
 
             if (cumulativeEdgesCount == 0 && ExternalReferenceCount == 0
-                && ed.vertex.Store.DetachState == DetachStateEnum.Attached
-                && !ed.vertex.IsRoot)
+                && edgeDictionaries.Vertex.Store.DetachState == DetachStateEnum.Attached
+                && !edgeDictionaries.Vertex.IsRoot)
                 return true;
 
             return false;
         }
 
-        public override void ChackIfShouldDispose()
+        public override void CheckIfShouldDispose()
         {
             if(ShouldDispose())
-
+                ExecutionFlowHelper.AddSecondStageCommitAction(edgeDictionaries.Vertex);
         }
     }
 }

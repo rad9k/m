@@ -51,9 +51,9 @@ namespace m0.Graph.Internal
                     item.To.InEdgesRaw.Add(item);                
             }
 
-            edgeDictionaries.vertex.OutEdgesDictionariesNeedsRebuild = true;
+            edgeDictionaries.Vertex.OutEdgesDictionariesNeedsRebuild = true;
 
-            edgeDictionaries.vertex.InheritChildsDictionariesNeedsRebuild(false);
+            edgeDictionaries.Vertex.InheritChildsDictionariesNeedsRebuild(false);
 
             //edgeDictionaries.vertex.FireChange(new VertexChangeEventArgs(VertexChangeType.EdgeAdded, item));
 
@@ -78,10 +78,10 @@ namespace m0.Graph.Internal
                 GraphUtil.Debug(item.To, GraphUtil.DebugOperationEnum.InEdgeRemove);
             }
 
-            edgeDictionaries.vertex.OutEdgesDictionariesNeedsRebuild = true;
-            edgeDictionaries.vertex.InheritChildsDictionariesNeedsRebuild(false);
+            edgeDictionaries.Vertex.OutEdgesDictionariesNeedsRebuild = true;
+            edgeDictionaries.Vertex.InheritChildsDictionariesNeedsRebuild(false);
 
-            edgeDictionaries.vertex.DettachEdge(item);
+            edgeDictionaries.Vertex.DettachEdge(item);
 
             //
 

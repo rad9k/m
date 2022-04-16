@@ -61,7 +61,7 @@ namespace m0.Foundation
 
         void RemoveExternalReference();
 
-        void ChackIfShouldDispose();
+        void CheckIfShouldDispose();
 
 
         // 3.0 END

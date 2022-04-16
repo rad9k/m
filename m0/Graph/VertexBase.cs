@@ -380,9 +380,12 @@ namespace m0.Graph
         public void RemoveExternalReference()
         {
             ExternalReferenceCount--;
+
+            if (ExternalReferenceCount == 0)
+                CheckIfShouldDispose();
         }
 
-        public virtual void ChackIfShouldDispose()
+        public virtual void CheckIfShouldDispose()
         {
 
         }

@@ -68,9 +68,9 @@ namespace m0.Graph.Internal
             cumulativeEdgesCount += edgeDictionaries.MetaIn.Count;
 
             if (cumulativeEdgesCount == 0
-                && edgeDictionaries.vertex.Store.DetachState == DetachStateEnum.Attached
-                && !edgeDictionaries.vertex.IsRoot)
-                ExecutionFlowHelper.AddSecondStageCommitAction(edgeDictionaries.vertex);
+                && edgeDictionaries.Vertex.Store.DetachState == DetachStateEnum.Attached
+                && !edgeDictionaries.Vertex.IsRoot)
+                ExecutionFlowHelper.AddSecondStageCommitAction(edgeDictionaries.Vertex);
         }
     }
 }

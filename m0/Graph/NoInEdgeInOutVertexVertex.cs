@@ -13,7 +13,7 @@ namespace m0.Graph
         {
             AllowInheritance = false;
             CanEmitGraphChangeEvents = false;
-            ed.NoInEdgeInOutVertexVertexMode = true;
+            edgeDictionaries.NoInEdgeInOutVertexVertexMode = true;
         }
 
         protected override IVertex CreateVertexInstance()
