@@ -289,6 +289,7 @@ namespace m0.UIWpf.Visualisers.Helper
                     dndVertex.AddEdge(null, Vertex.Get(false, @"BaseEdge:"));
 
                     dndVertex.AddExternalReference();
+
                     DataObject dragData = new DataObject("Vertex", dndVertex);
                     dragData.SetData("DragSource", visualiser);
 

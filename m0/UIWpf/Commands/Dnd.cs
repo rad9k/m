@@ -62,6 +62,8 @@ namespace m0.UIWpf.Commands
 
                 GraphUtil.RemoveAllEdges_WhereEdgeIsEdge(dndVertex);
 
+                dndVertex.RemoveExternalReference();
+
                 ////////////////////////////////////////
                 Interaction.EndInteractionWithGraph();
                 ////////////////////////////////////////
@@ -104,6 +106,8 @@ namespace m0.UIWpf.Commands
 
                 GraphUtil.RemoveAllEdges_WhereEdgeIsEdge(dndVertex);
 
+                dndVertex.RemoveExternalReference();
+
                 ////////////////////////////////////////
                 Interaction.EndInteractionWithGraph();
                 ////////////////////////////////////////
@@ -140,6 +144,8 @@ namespace m0.UIWpf.Commands
                     ((IHasSelectableEdges)sender).UnselectAllSelectedEdges();
 
                 GraphUtil.RemoveAllEdges_WhereEdgeIsEdge(dndVertex);
+
+                dndVertex.RemoveExternalReference();
 
                 ////////////////////////////////////////
                 Interaction.EndInteractionWithGraph();
@@ -186,6 +192,8 @@ namespace m0.UIWpf.Commands
                     ((IHasSelectableEdges)sender).UnselectAllSelectedEdges();
 
                 GraphUtil.RemoveAllEdges_WhereEdgeIsEdge(dndVertex);
+
+                dndVertex.RemoveExternalReference();
 
                 ////////////////////////////////////////
                 Interaction.EndInteractionWithGraph();

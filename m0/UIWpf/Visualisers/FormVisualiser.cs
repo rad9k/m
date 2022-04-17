@@ -693,7 +693,11 @@ namespace m0.UIWpf.Visualisers
 
             if (meta == null)
             { // BaseEdgeVertex
-                TabList[group].ControlInfos.Add(MinusZero.Instance.CreateTempVertex(), ci);
+                IVertex metaVertex = MinusZero.Instance.CreateTempVertex();
+
+                metaVertex.AddExternalReference();
+
+                TabList[group].ControlInfos.Add(metaVertex, ci);
             }
             else
             {

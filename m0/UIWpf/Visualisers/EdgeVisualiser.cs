@@ -119,9 +119,9 @@ namespace m0.UIWpf.Visualisers
 
                     //dndVertex.AddEdge(null, Vertex.Get(false, @"BaseEdge:")); // this is
 
-                    dndVertex.AddEdge(null, Vertex.Get(false, @"BaseEdge:\To:")); 
+                    dndVertex.AddEdge(null, Vertex.Get(false, @"BaseEdge:\To:"));
 
-
+                    dndVertex.AddExternalReference();
 
                     DataObject dragData = new DataObject("Vertex", dndVertex);
                     dragData.SetData("DragSource", this);

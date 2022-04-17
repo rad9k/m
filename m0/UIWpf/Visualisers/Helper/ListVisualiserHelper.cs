@@ -237,6 +237,8 @@ namespace m0.UIWpf.Visualisers.Helper
 
                 if (dndVertex.Count() > 0)
                 {
+                    dndVertex.AddExternalReference();
+
                     DataObject dragData = new DataObject("Vertex", dndVertex);
                     dragData.SetData("DragSource", visualiserAsFrameworkElement);
 
