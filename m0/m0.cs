@@ -112,7 +112,7 @@ namespace m0
             transactionStackTop = transaction;
         }
 
-        public IVertex CreateTempVertex() //form
+        public IVertex CreateTempVertex() //edge
         {
             IEdge edge = TempStore.Root.AddVertexAndReturnEdge(empty, null);
             TempStore.Root.DeleteEdge(edge);
