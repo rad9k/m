@@ -301,9 +301,9 @@ namespace m0.UIWpf.Visualisers.Diagram
 
         public virtual void DoCreateDiagramLine(DiagramItemBase toItem)
         {
-            IVertex toEdge=toItem.Vertex.Get(false, "BaseEdge:");
+            IVertex toEdge = toItem.Vertex.Get(false, "BaseEdge:");
 
-            IVertex r=m0.MinusZero.Instance.Root;
+            IVertex r = m0.MinusZero.Instance.Root;
 
             IVertex v = m0.MinusZero.Instance.CreateTempVertex();
 
@@ -321,8 +321,6 @@ namespace m0.UIWpf.Visualisers.Diagram
 
                     if (def.To.Get(false, "ToDiagramItemTestQuery:") != null && toItem.Vertex.Get(false, (string)def.To.Get(false, "ToDiagramItemTestQuery:").Value) == null)
                         canAdd = false;
-
-                    bool isOrInherits = false;
 
                     IVertex toTest_baseVertex = toEdge.Get(false, @"To:");
 

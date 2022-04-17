@@ -10,7 +10,7 @@ using System.Text.RegularExpressions;
 
 namespace m0.ZeroCode
 {
-    public class String2ZeroCodeGraphProcessing
+    public class String2ZeroCodeGraphProcessing: IDisposable
     {
         public class TextRange
         {
@@ -300,6 +300,11 @@ namespace m0.ZeroCode
             importMetaList = MinusZero.Instance.CreateTempVertex();
             importDirectList = MinusZero.Instance.CreateTempVertex();
             importDirectMetaList = MinusZero.Instance.CreateTempVertex();
+
+            importList.AddExternalReference();
+            importMetaList.AddExternalReference();
+            importDirectList.AddExternalReference();
+            importDirectMetaList.AddExternalReference();
 
             prepareImportList_FromString();
         }
@@ -2843,7 +2848,17 @@ namespace m0.ZeroCode
                 baseVertex.AddEdge(ParseArtefacts, errorList);
             }
 
+            DisposeImportList();
+
             return errorList;
+        }
+
+        public void DisposeImportList()
+        {
+            importList.AddExternalReference ();
+            importMetaList.AddExternalReference();
+            importDirectList.AddExternalReference();
+            importDirectMetaList.AddExternalReference();
         }
 
         public String2ZeroCodeGraphProcessing(IVertex formalTextLanguage)

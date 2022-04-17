@@ -30,6 +30,8 @@ namespace m0.UIWpf.Visualisers.Method
             {
                 Vertex = mz.CreateTempVertex();
 
+                Vertex.AddExternalReference();
+
                 Vertex.Value = "VoidVoidMethod" + this.GetHashCode();
 
                 ClassVertex.AddIsClassAndAllAttributesAndAssociations(Vertex, mz.Root.Get(false, @"System\Meta\Visualiser\Method\VoidVoidMethod"));

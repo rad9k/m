@@ -453,7 +453,12 @@ namespace m0.ZeroCode.Helpers
         {
             FormalTextLanguage = formalTextLanguage;
 
-            CRLFoperator = get("CRLFoperator");
+            importList.AddExternalReference();
+            importMetaList.AddExternalReference();
+            importDirectList.AddExternalReference();
+            importDirectMetaList.AddExternalReference();
+
+        CRLFoperator = get("CRLFoperator");
             MetaSeparator = get("MetaSeparator");
             CodeGraphVertexPrefix = get("CodeGraphVertexPrefix");
             CodeGraphVertexSuffix = get("CodeGraphVertexSuffix");

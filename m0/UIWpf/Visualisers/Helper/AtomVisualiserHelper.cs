@@ -164,6 +164,8 @@ namespace m0.UIWpf.Visualisers.Helper
                         ClassVertex.AddIsClassAndAllAttributesAndAssociations(vVertex.Get(false, "BaseEdge:"),
                             mz.Root.Get(false, @"System\Meta\ZeroTypes\Edge"));
 
+                    vVertex.AddExternalReference();
+
                     visualiser.Vertex = vVertex;
 
                     visualiser.Vertex.Value = visualiserName;

@@ -171,6 +171,8 @@ namespace m0.UIWpf.Visualisers.Helper
         {
             tempSelectedVertices = MinusZero.Instance.CreateTempVertex();
 
+            tempSelectedVertices.AddExternalReference();
+
             GraphUtil.CopyEdges(Vertex.GetAll(false, @"SelectedEdges:\{$Is:Edge}"), tempSelectedVertices);
         }
 
@@ -182,6 +184,8 @@ namespace m0.UIWpf.Visualisers.Helper
 
                 IVertex sv = Vertex.Get(false, "SelectedEdges:");
                 GraphUtil.CopyEdges(tempSelectedVertices, sv);
+
+                tempSelectedVertices.RemoveExternalReference();
             }
         }
 
