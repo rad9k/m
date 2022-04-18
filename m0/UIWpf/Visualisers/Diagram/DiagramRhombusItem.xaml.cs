@@ -43,7 +43,7 @@ namespace m0.UIWpf.Visualisers.Diagram
                 this.Rhombus.StrokeThickness = LineWidth;
         }
 
-        public DiagramRhombusItem(IVertex baseEdgeVertex) : base(baseEdgeVertex)
+        public DiagramRhombusItem(IVertex baseEdgeVertex, IVertex parentVisualiser) : base(baseEdgeVertex)
         {
             InitializeComponent();
         }        

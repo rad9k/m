@@ -35,7 +35,7 @@ namespace m0.UIWpf.Visualisers.Diagram
             }
         }
 
-        public DiagramRectangleItem(IVertex baseEdgeVertex) : base(baseEdgeVertex)  {
+        public DiagramRectangleItem(IVertex baseEdgeVertex, IVertex parentVisualiser) : base(baseEdgeVertex)  {
             InitializeComponent();
         }
         

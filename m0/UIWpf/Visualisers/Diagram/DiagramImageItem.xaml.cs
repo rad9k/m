@@ -40,7 +40,7 @@ namespace m0.UIWpf.Visualisers.Diagram
             this.Background = null;
         }        
 
-        public DiagramImageItem(IVertex baseEdgeVertex) : base(baseEdgeVertex)
+        public DiagramImageItem(IVertex baseEdgeVertex, IVertex parentVisualiser) : base(baseEdgeVertex)
         {
             InitializeComponent();
         }        

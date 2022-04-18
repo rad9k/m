@@ -38,7 +38,7 @@ namespace m0.UIWpf.Visualisers.Diagram
             }
         }
 
-        public DiagramLine(IVertex baseEdgeVertex)
+        public DiagramLine(IVertex baseEdgeVertex, IVertex parentVisualiser)
         {
             ForegroundColor = (Brush)Line.FindResource("0ForegroundBrush");
             BackgroundColor = (Brush)Line.FindResource("0BackgroundBrush");

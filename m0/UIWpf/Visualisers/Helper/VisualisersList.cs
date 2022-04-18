@@ -10,7 +10,7 @@ namespace m0.UIWpf.Visualisers.Helper
     class VisualiserData
     {
         public IVisualiser Visualiser;
-        public IEdge VisualiserVertexEdge;
+        public IEdge ParentVisualiserVertexEdge;
     }
 
     public class VisualisersList
@@ -33,7 +33,7 @@ namespace m0.UIWpf.Visualisers.Helper
 
             VisualiserData vd = new VisualiserData();
             vd.Visualiser = visualiser;
-            vd.VisualiserVertexEdge = visualiserVertexEdge;
+            vd.ParentVisualiserVertexEdge = visualiserVertexEdge;
 
             Visualisers.Add(visualiser.Vertex, vd);
         }
@@ -43,7 +43,7 @@ namespace m0.UIWpf.Visualisers.Helper
             if (!Visualisers.ContainsKey(visualiser.Vertex))
                 return;
 
-            IEdge visualiserVertexEdge = Visualisers[visualiser.Vertex].VisualiserVertexEdge;
+            IEdge visualiserVertexEdge = Visualisers[visualiser.Vertex].ParentVisualiserVertexEdge;
 
             if(visualiserVertexEdge.From.DisposedState == DisposeStateEnum.Live)
                 visualiserVertexEdge.From.DeleteEdge(visualiserVertexEdge);

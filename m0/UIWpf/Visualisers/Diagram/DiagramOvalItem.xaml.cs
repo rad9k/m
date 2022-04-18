@@ -20,7 +20,7 @@ namespace m0.UIWpf.Visualisers.Diagram
     /// </summary>
     public partial class DiagramOvalItem : DiagramRectangleItemBase
     {
-        public DiagramOvalItem(IVertex baseEdgeVertex) : base(baseEdgeVertex)
+        public DiagramOvalItem(IVertex baseEdgeVertex, IVertex parentVisualiser) : base(baseEdgeVertex)
         {
             InitializeComponent();
         }
