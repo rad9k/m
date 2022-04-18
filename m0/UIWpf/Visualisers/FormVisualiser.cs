@@ -656,7 +656,7 @@ namespace m0.UIWpf.Visualisers
                 {
                     IVertex baseEdgeVertex = Edge.CreateTempEdgeVertex(Vertex.GetAll(false, @"BaseEdge:\To:").FirstOrDefault());
 
-                    StringVisualiser sv = new StringVisualiser(baseEdgeVertex, null);
+                    StringVisualiser sv = new StringVisualiser(baseEdgeVertex, this.Vertex);
 
                     //Edge.ReplaceEdgeVertexEdges(sv.Vertex.Get(false, "BaseEdge:"), Vertex.GetAll(false, @"BaseEdge:\To:").FirstOrDefault());
 

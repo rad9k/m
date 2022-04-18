@@ -106,9 +106,9 @@ namespace m0.UIWpf.Visualisers
             IVertex tov = fromv.Get(false, metav.Value.ToString()+":");
             //bev.Get(false, "To:");
 
-            this.IsEditable = true;
+            
 
-            if(fromv!=null && metav!=null && tov!=null){                           
+            if(fromv!=null && metav!=null /*&& tov!=null*/){                           
                 CanProceedUIUpdateEvent = false;
 
                 int cnt = 0;
@@ -129,7 +129,7 @@ namespace m0.UIWpf.Visualisers
                    
                     valuesList.Add(i);
 
-                    if (tov.Value.ToString() == value)
+                    if (tov != null && tov.Value.ToString() == value)
                     {
                         ToBeSelectedIndex = cnt;
                         ToBeComboBoxItem = i;
@@ -143,12 +143,16 @@ namespace m0.UIWpf.Visualisers
 
                 if (ToBeSelectedIndex != -1)
                 {
+                    this.IsEditable = true;
+
                     this.SelectedIndex = ToBeSelectedIndex;
                     this.SelectedItem = ToBeComboBoxItem;
                     this.Text = ToBeString;
+
+                    this.IsEditable = false;
                 }
 
-                this.IsEditable = false;
+                
                 
                 CanProceedUIUpdateEvent = true;
             }
