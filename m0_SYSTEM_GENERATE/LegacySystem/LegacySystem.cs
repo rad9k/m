@@ -28,7 +28,9 @@ namespace m0.LegacySystem
         static void CreateLegacySystem()
         {
             IVertex legacySystem = m0.MinusZero.Instance.CreateTempVertex();
-                //= m0.MinusZero.Instance.Root.AddVertex(null, "LegacySystem");
+            //= m0.MinusZero.Instance.Root.AddVertex(null, "LegacySystem");
+
+            legacySystem.AddExternalReference();
 
             IVertex meta = legacySystem.AddVertex(null, "Meta");
 

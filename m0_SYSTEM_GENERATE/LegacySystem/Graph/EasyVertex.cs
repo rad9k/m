@@ -34,12 +34,16 @@ namespace m0.LegacySystem.Graph
                 queryVertex = chache[query];
             else
             {
-                queryVertex = MinusZero.Instance.CreateTempVertex();
+                queryVertex = MinusZero.Instance.CreateTempVertex();                
 
                 parseError = DefaultParser.Parse(queryVertex, query);
 
                 if (parseError == null)
+                {
+                    queryVertex.AddExternalReference();
+
                     chache.Add(query, queryVertex);
+                }
             }
 
             if (parseError != null)

@@ -10,7 +10,7 @@ using System.Text.RegularExpressions;
 
 namespace m0.ZeroCode
 {
-    public class String2ZeroCodeGraphProcessing: IDisposable
+    public class String2ZeroCodeGraphProcessing 
     {
         public class TextRange
         {

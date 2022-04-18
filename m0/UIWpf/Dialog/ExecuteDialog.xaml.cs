@@ -45,6 +45,8 @@ namespace m0.UIWpf.Dialog
             return baseVertex + " execute";
         }
 
+        IVertex localInputStackEdgeVertex = null;
+
         void SetState(StateEnum toBeState)
         {
             State = toBeState;
@@ -59,6 +61,10 @@ namespace m0.UIWpf.Dialog
                                                    null,
                                                    null,
                         Edge.CreateTempEdgeVertex(inputStackEdge)); // ??
+
+                    localInputStackEdgeVertex = inputStackEdgeVertex;
+
+                    localInputStackEdgeVertex.AddExternalReference();
 
                     ////////////////////////////////////////
                     Interaction.BeginInteractionWithGraph();
@@ -144,7 +150,14 @@ namespace m0.UIWpf.Dialog
 
             ExecutionFlowHelper.AddTriggerAndListener(InputStackEdgeControl.Vertex.Get(false, @"BaseEdge:\To:"), inputStackEdgeControl_VertexChange);
 
+            this.Unloaded += ExecuteDialog_Unloaded;
+
            // PlatformClass.RegisterVertexChangeListeners(InputStackEdgeControl.Vertex, new VertexChange(inputStackEdgeControl_VertexChange), new string[] { "BaseEdge" });
+        }
+
+        private void ExecuteDialog_Unloaded(object sender, RoutedEventArgs e)
+        {
+            Dispose();
         }
 
         protected virtual INoInEdgeInOutVertexVertex inputStackEdgeControl_VertexChange(IExecution exe)
@@ -189,6 +202,11 @@ namespace m0.UIWpf.Dialog
 
             OutputStackContentControl.Dispose();
             OutputStackEdgeControl.Dispose();
+        }
+        
+        void Dispose()
+        {
+            localInputStackEdgeVertex.RemoveExternalReference();
         }
     }
 }

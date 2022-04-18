@@ -458,7 +458,7 @@ namespace m0.ZeroCode.Helpers
             importDirectList.AddExternalReference();
             importDirectMetaList.AddExternalReference();
 
-        CRLFoperator = get("CRLFoperator");
+            CRLFoperator = get("CRLFoperator");
             MetaSeparator = get("MetaSeparator");
             CodeGraphVertexPrefix = get("CodeGraphVertexPrefix");
             CodeGraphVertexSuffix = get("CodeGraphVertexSuffix");

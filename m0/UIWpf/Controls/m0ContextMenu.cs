@@ -141,7 +141,8 @@ namespace m0.UIWpf.Controls
             foreach (IEdge ee in metaEdges)
                     if (ee.To.Value != null && !GeneralUtil.CompareStrings(ee.To.Value, "$Empty"))
                     {
-                        MenuItem ii = createMenuItem(ee.To.Value.ToString());
+                        MenuItem ii = createMenuItem(ee.To.Value.ToString());                        
+
                         ii.Tag = ee.To;
                         i.Items.Add(ii);
 

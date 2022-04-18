@@ -660,6 +660,8 @@ namespace m0.UIWpf.Visualisers
 
                     //Edge.ReplaceEdgeVertexEdges(sv.Vertex.Get(false, "BaseEdge:"), Vertex.GetAll(false, @"BaseEdge:\To:").FirstOrDefault());
 
+                    baseEdgeVertex.AddExternalReference();
+
                     dataControl = sv;
                 }
                 else
