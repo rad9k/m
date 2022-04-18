@@ -248,12 +248,12 @@ namespace m0.UIWpf.Visualisers.Helper
 
                 VisualisersList.RemoveVisualiser(visualiser);
 
-                GraphChangeTrigger.RemoveListener(graphChangeListenerEdge);                
+                GraphChangeTrigger.RemoveListener(graphChangeListenerEdge);
+
+                DisposeAllChildVisualisers();
 
                 if (Vertex is IDisposable)
-                    ((IDisposable)Vertex).Dispose();
-
-                DisposeAllChildVisualisers();                                
+                    ((IDisposable)Vertex).Dispose();                
             }
         }
 
