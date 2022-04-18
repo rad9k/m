@@ -140,7 +140,7 @@ namespace m0.ZeroTypes
                 }
                 else
                 {
-                    String classname = (string)Vertex.Get(false, @"$Is:{$Inherits:$PlatformClass}\$PlatformClassName:").Value;
+                    String classname = (string)Vertex.Get(false, @"$Is:\$PlatformClassName:").Value;
 
                     pc = (IPlatformClass)Activator.CreateInstance(Type.GetType(classname), new object[] { baseEdgeVertex, _parentVisualiser });
 
