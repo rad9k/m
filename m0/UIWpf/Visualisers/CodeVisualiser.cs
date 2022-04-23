@@ -92,7 +92,7 @@ namespace m0.UIWpf.Visualisers
             Vertex.Get(false, "TextMemoryMax:").Value = currentTextMemory;
             Vertex.Get(false, "TextMemoryCurrent:").Value = currentTextMemory;
 
-           // Vertex.Get(false, @"BaseEdge:\To:").Value = "XXX";
+            //Vertex.Get(false, @"BaseEdge:\To:").Value = "XXX";
 
             ////////////////////////////////////////
             Interaction.EndInteractionWithGraph();
