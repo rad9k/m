@@ -97,6 +97,14 @@ namespace m0.UIWpf.Visualisers.Diagram
 
         public Diagram(IVertex baseEdgeVertex, IVertex parentVisualiser)
         {
+            if(VisualisersList.GetVisualiser(baseEdgeVertex) != null)
+            {
+                UserInteractionUtil.ShowError("Diagram Visualiser", "There is allready Diagram Visualiser opened for this Edge");
+
+                return;
+            }
+
+
             Items = new List<DiagramItemBase>();
 
             TheCanvas = new Canvas();
@@ -1049,8 +1057,16 @@ namespace m0.UIWpf.Visualisers.Diagram
 
         public IVertex Vertex
         {
-            get { return VisualiserHelper.Vertex; }
-            set { VisualiserHelper.SetVertex(value); }
+            get {
+                if (VisualiserHelper != null)
+                    return VisualiserHelper.Vertex;
+
+                return null;
+            }
+            set {
+                if(VisualiserHelper != null)
+                    VisualiserHelper.SetVertex(value);
+            }
         }
 
         public bool IsDisposed = false;

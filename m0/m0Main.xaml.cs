@@ -167,6 +167,9 @@ namespace m0
             {
                 IPlatformClass pc=(IPlatformClass)obj;
 
+                if (pc.Vertex == null)
+                    return null;
+
                 if (pc.Vertex.Get(false, @"BaseEdge:\To:")!=null&&pc.Vertex.Get(false, @"BaseEdge:\To:").Value != null&&(!GeneralUtil.CompareStrings(pc.Vertex.Get(false, @"BaseEdge:\To:").Value,"")))
                     a.Title = pc.Vertex.Get(false, @"BaseEdge:\To:").Value.ToString();
                 else

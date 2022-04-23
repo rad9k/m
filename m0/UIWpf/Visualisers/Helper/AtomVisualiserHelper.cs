@@ -151,7 +151,11 @@ namespace m0.UIWpf.Visualisers.Helper
                 IVertex vVertex;
 
                 if (VisualiserAsBaseEdge)
+                {
                     vVertex = baseEdgeVertex;
+
+                    visualiser.Vertex = vVertex;
+                }
                 else
                 {
                     vVertex = mz.CreateTempVertex();
@@ -164,12 +168,12 @@ namespace m0.UIWpf.Visualisers.Helper
                         ClassVertex.AddIsClassAndAllAttributesAndAssociations(vVertex.Get(false, "BaseEdge:"),
                             mz.Root.Get(false, @"System\Meta\ZeroTypes\Edge"));
 
-                    vVertex.AddExternalReference();                    
+                    vVertex.AddExternalReference();
+
+                    visualiser.Vertex = vVertex;
+
+                    visualiser.Vertex.Value = visualiserName;
                 }
-
-                visualiser.Vertex = vVertex;
-
-                visualiser.Vertex.Value = visualiserName;
 
 
                 VisualisersList.AddVisualiser(visualiser, parentVisualiser);                
