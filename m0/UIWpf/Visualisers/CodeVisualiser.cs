@@ -86,13 +86,9 @@ namespace m0.UIWpf.Visualisers
             
             TextMemory.Add(Text);            
 
-            IVertex BaseEdgeToVertex = Vertex.Get(false, @"BaseEdge:\To:");
-
-            String2ZeroCodeGraphProcessing.PROCESS_TWEAK = true;
+            IVertex BaseEdgeToVertex = Vertex.Get(false, @"BaseEdge:\To:");            
 
             MinusZero.Instance.DefaultParser.Parse(BaseEdgeToVertex, Text);
-
-            String2ZeroCodeGraphProcessing.PROCESS_TWEAK = false;
 
             int currentTextMemory = TextMemory.Count;
 
