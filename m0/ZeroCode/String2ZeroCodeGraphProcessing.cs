@@ -2803,7 +2803,7 @@ namespace m0.ZeroCode
             baseVertex.Value = firstValue;
         }
 
-        
+        public static bool PROCESS_TWEAK = false;
 
         public IVertex Process(IVertex _baseVertex, string _text)
         {
@@ -2836,11 +2836,22 @@ namespace m0.ZeroCode
 
             if (errorList.Count() == 0)
             {
-                ProcessToVertexMocksToLinks();
+                if (PROCESS_TWEAK)
+                {
+                    //ProcessToVertexMocksToLinks();
 
-                MoveInEdgesComingFromOutsideOfSubGraphToParseRoot();
-                DeleteAllEdgesFromBaseVertex();
-                MoveAllParseRootEdgesToBaseVertex();
+                    //MoveInEdgesComingFromOutsideOfSubGraphToParseRoot();
+                    //DeleteAllEdgesFromBaseVertex();
+                    //MoveAllParseRootEdgesToBaseVertex();
+                }
+                else
+                {
+                    ProcessToVertexMocksToLinks();
+
+                    MoveInEdgesComingFromOutsideOfSubGraphToParseRoot();
+                    DeleteAllEdgesFromBaseVertex();
+                    MoveAllParseRootEdgesToBaseVertex();
+                }
             }
             else
             {

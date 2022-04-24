@@ -23,6 +23,7 @@ using System.IO;
 using System.Xml;
 using m0.UIWpf.Visualisers.Helper;
 using m0.User.Process.UX;
+using m0.ZeroCode;
 
 namespace m0.UIWpf.Visualisers
 {
@@ -83,9 +84,15 @@ namespace m0.UIWpf.Visualisers
             Interaction.BeginInteractionWithGraph();
             ////////////////////////////////////////
             
-            TextMemory.Add(Text);
+            TextMemory.Add(Text);            
 
-            MinusZero.Instance.DefaultParser.Parse(Vertex.Get(false, @"BaseEdge:\To:"), Text);
+            IVertex BaseEdgeToVertex = Vertex.Get(false, @"BaseEdge:\To:");
+
+            String2ZeroCodeGraphProcessing.PROCESS_TWEAK = true;
+
+            MinusZero.Instance.DefaultParser.Parse(BaseEdgeToVertex, Text);
+
+            String2ZeroCodeGraphProcessing.PROCESS_TWEAK = false;
 
             int currentTextMemory = TextMemory.Count;
 
