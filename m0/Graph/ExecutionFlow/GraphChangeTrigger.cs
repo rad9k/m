@@ -7,7 +7,7 @@ using System.Collections.Generic;
 
 namespace m0.Graph.ExecutionFlow
 {
-    public enum GraphChangeFilterEnum { NoBaseVertex, ValueChange, OutputEdgeAdded, OutputEdgeRemoved, InputEdgeAdded, InputEdgeRemoved, OutputEdgeDisposed };
+    public enum GraphChangeFilterEnum { OnlyTriggerRootVertex, FilterOutTriggerRootVertex, ValueChange, OutputEdgeAdded, OutputEdgeRemoved, InputEdgeAdded, InputEdgeRemoved, MetaEdgeAdded, MetaEdgeRemoved, OutputEdgeDisposed };
 
     public class GraphChangeTrigger
     {
@@ -15,12 +15,19 @@ namespace m0.Graph.ExecutionFlow
         static IVertex graphChangeTrigger_type;
         static IVertex scopeQuery_meta;
         static IVertex changeTypeFilter_meta;
-        static IVertex graphChangeFilterEnum_NoBaseVertex_meta;
+
+        static IVertex graphChangeFilterEnum_FilterOutTriggerRootVertex_meta;
         static IVertex graphChangeFilterEnum_ValueChange_meta;
+
         static IVertex graphChangeFilterEnum_OutputEdgeAdded_meta;
         static IVertex graphChangeFilterEnum_OutputEdgeRemoved_meta;
+
         static IVertex graphChangeFilterEnum_InputEdgeAdded_meta;
         static IVertex graphChangeFilterEnum_InputEdgeRemoved_meta;
+
+        static IVertex graphChangeFilterEnum_MetaEdgeAdded_meta;
+        static IVertex graphChangeFilterEnum_MetaEdgeRemoved_meta;
+
         static IVertex graphChangeFilterEnum_OutputEdgeDisposed_meta;
 
         public static void Initialize()
@@ -32,12 +39,18 @@ namespace m0.Graph.ExecutionFlow
             scopeQuery_meta = r.Get(false, @"System\Meta\ZeroTypes\ExecutionFlow\GraphChangeTrigger\ScopeQuery");
             changeTypeFilter_meta = r.Get(false, @"System\Meta\ZeroTypes\ExecutionFlow\GraphChangeTrigger\ChangeTypeFilter");
 
-            graphChangeFilterEnum_NoBaseVertex_meta = r.Get(false, @"System\Meta\ZeroTypes\ExecutionFlow\GraphChangeFilterEnum\NoBaseVertex");
+            graphChangeFilterEnum_FilterOutTriggerRootVertex_meta = r.Get(false, @"System\Meta\ZeroTypes\ExecutionFlow\GraphChangeFilterEnum\FilterOutTriggerRootVertex");
             graphChangeFilterEnum_ValueChange_meta = r.Get(false, @"System\Meta\ZeroTypes\ExecutionFlow\GraphChangeFilterEnum\ValueChange");
+
             graphChangeFilterEnum_OutputEdgeAdded_meta = r.Get(false, @"System\Meta\ZeroTypes\ExecutionFlow\GraphChangeFilterEnum\OutputEdgeAdded");
             graphChangeFilterEnum_OutputEdgeRemoved_meta = r.Get(false, @"System\Meta\ZeroTypes\ExecutionFlow\GraphChangeFilterEnum\OutputEdgeRemoved");
+
             graphChangeFilterEnum_InputEdgeAdded_meta = r.Get(false, @"System\Meta\ZeroTypes\ExecutionFlow\GraphChangeFilterEnum\InputEdgeAdded");
-            graphChangeFilterEnum_InputEdgeRemoved_meta = r.Get(false, @"System\Meta\ZeroTypes\ExecutionFlow\GraphChangeFilterEnum\nputEdgeRemoved");
+            graphChangeFilterEnum_InputEdgeRemoved_meta = r.Get(false, @"System\Meta\ZeroTypes\ExecutionFlow\GraphChangeFilterEnum\InputEdgeRemoved");
+
+            graphChangeFilterEnum_MetaEdgeAdded_meta = r.Get(false, @"System\Meta\ZeroTypes\ExecutionFlow\GraphChangeFilterEnum\MetaEdgeAdded");
+            graphChangeFilterEnum_MetaEdgeRemoved_meta = r.Get(false, @"System\Meta\ZeroTypes\ExecutionFlow\GraphChangeFilterEnum\MetaEdgeRemoved");
+
             graphChangeFilterEnum_OutputEdgeDisposed_meta = r.Get(false, @"System\Meta\ZeroTypes\ExecutionFlow\GraphChangeFilterEnum\OutputEdgeDisposed");
         }        
 
@@ -82,8 +95,8 @@ namespace m0.Graph.ExecutionFlow
                     {
                         switch (ct)
                         {
-                            case GraphChangeFilterEnum.NoBaseVertex:
-                                triggerEdge.To.AddEdge(changeTypeFilter_meta, graphChangeFilterEnum_NoBaseVertex_meta);
+                            case GraphChangeFilterEnum.FilterOutTriggerRootVertex:
+                                triggerEdge.To.AddEdge(changeTypeFilter_meta, graphChangeFilterEnum_FilterOutTriggerRootVertex_meta);
                                 break;
 
                             case GraphChangeFilterEnum.ValueChange:
@@ -104,6 +117,14 @@ namespace m0.Graph.ExecutionFlow
 
                             case GraphChangeFilterEnum.OutputEdgeRemoved:
                                 triggerEdge.To.AddEdge(changeTypeFilter_meta, graphChangeFilterEnum_OutputEdgeRemoved_meta);
+                                break;
+
+                            case GraphChangeFilterEnum.MetaEdgeAdded:
+                                triggerEdge.To.AddEdge(changeTypeFilter_meta, graphChangeFilterEnum_MetaEdgeAdded_meta);
+                                break;
+
+                            case GraphChangeFilterEnum.MetaEdgeRemoved:
+                                triggerEdge.To.AddEdge(changeTypeFilter_meta, graphChangeFilterEnum_MetaEdgeRemoved_meta);
                                 break;
 
                             case GraphChangeFilterEnum.OutputEdgeDisposed:

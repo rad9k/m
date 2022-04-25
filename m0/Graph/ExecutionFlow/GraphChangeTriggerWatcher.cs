@@ -13,7 +13,7 @@ namespace m0.Graph.ExecutionFlow
         public IVertex sourceVertex;
         public IVertex triggerVertex;
         public IList<string> scopeQuery;
-        public bool NoBaseVertex = false;
+        public bool FilterOutTriggerRootVertex = false;
         public IList<GraphChangeFilterEnum> graphChangeFilter;
         public IList<IVertex> vertexInScope;      
     }
@@ -81,8 +81,8 @@ namespace m0.Graph.ExecutionFlow
 
                         switch (value)
                         {
-                            case "NoBaseVertex":
-                                en.NoBaseVertex = true;                                
+                            case "FilterOutTriggerRootVertex":
+                                en.FilterOutTriggerRootVertex = true;                                
                                 break;
 
                             case "ValueChange":
@@ -103,6 +103,14 @@ namespace m0.Graph.ExecutionFlow
 
                             case "OutputEdgeRemoved":
                                 en.graphChangeFilter.Add(GraphChangeFilterEnum.OutputEdgeRemoved);
+                                break;                            
+
+                            case "MetaEdgeAdded":
+                                en.graphChangeFilter.Add(GraphChangeFilterEnum.MetaEdgeAdded);
+                                break;
+
+                            case "MetaEdgeRemoved":
+                                en.graphChangeFilter.Add(GraphChangeFilterEnum.MetaEdgeRemoved);
                                 break;
 
                             case "OutputEdgeDisposed":
@@ -122,7 +130,7 @@ namespace m0.Graph.ExecutionFlow
             {
                 en.vertexInScope = new List<IVertex>();
                 
-                if(!en.NoBaseVertex)
+                if(!en.FilterOutTriggerRootVertex)
                     en.vertexInScope.Add(en.sourceVertex); 
 
                 if (en.scopeQuery != null)

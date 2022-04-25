@@ -67,7 +67,7 @@ namespace m0
             
 
             IVertex trigger = GraphChangeTrigger.AddTrigger(v, scopelist, new List<GraphChangeFilterEnum> {GraphChangeFilterEnum.ValueChange,
-                     GraphChangeFilterEnum.NoBaseVertex,
+                     GraphChangeFilterEnum.FilterOutTriggerRootVertex,
                      GraphChangeFilterEnum.OutputEdgeAdded,
                      GraphChangeFilterEnum.OutputEdgeRemoved,
                      GraphChangeFilterEnum.OutputEdgeDisposed}).To;

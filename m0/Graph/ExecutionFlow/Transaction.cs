@@ -106,6 +106,27 @@ namespace m0.Graph.ExecutionFlow
             return false;
         }
 
+        bool IsFilterMatch_MetaEdge(WatcherEntry we, GraphChangeTransactionAtom ga)
+        {
+            if (we.graphChangeFilter == null || we.graphChangeFilter.Count() == 0)
+                return true;
+
+            switch (ga.Type)
+            {
+                case AtomGraphChangeTypeEnum.EdgeAdded:
+                    if (we.graphChangeFilter.Contains(GraphChangeFilterEnum.MetaEdgeAdded))
+                        return true;
+                    break;
+
+                case AtomGraphChangeTypeEnum.EdgeRemoved:
+                    if (we.graphChangeFilter.Contains(GraphChangeFilterEnum.MetaEdgeRemoved))
+                        return true;
+                    break;
+            }
+
+            return false;
+        }
+
         private Dictionary<IVertex, List<IVertex>> getTriggerEventDictionary_byWatchedVertexDictionary(
             Dictionary<IVertex, List<WatcherEntry>> watchedVertexDictionary,
             Dictionary<IVertex, List<GraphChangeTransactionAtom>> graphChangeTransactionAtoms_OutEdgeValueChange_copy,

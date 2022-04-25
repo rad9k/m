@@ -2695,8 +2695,8 @@ namespace m0
                 "ExecutionFlow");
 
 
-            m0.LegacySystem.Util.GeneralUtil.ParseAndExcute(smze, sm, "{Enum:GraphChangeEnum{EnumValue:ValueChange,EnumValue:OutputEdgeAdded,EnumValue:OutputEdgeRemoved,EnumValue:InputEdgeAdded,EnumValue:InputEdgeRemoved,EnumValue:OutputEdgeDisposed}"
-                + ",Enum:GraphChangeFilterEnum{EnumValue:NoBaseVertex}"
+            m0.LegacySystem.Util.GeneralUtil.ParseAndExcute(smze, sm, "{Enum:GraphChangeEnum{EnumValue:ValueChange,EnumValue:OutputEdgeAdded,EnumValue:OutputEdgeRemoved,EnumValue:InputEdgeAdded,EnumValue:InputEdgeRemoved,EnumValue:MetaEdgeRemoved,EnumValue:MetaEdgeAdded,EnumValue:OutputEdgeDisposed}"
+                + ",Enum:GraphChangeFilterEnum{EnumValue:FilterOutTriggerRootVertex,EnumValue:OnlyTriggerRootVertex}"
                 + ",Class:EventTrigger{Association:Listener{$MinCardinality:0,$MaxCardinality:-1}}"
                 + ",Class:Event{Association:Trigger{$MinCardinality:1,$MaxCardinality:1},Association:Source{$MinCardinality:0,$MaxCardinality:1}}"
                 + ",Class:GraphChangeTrigger{$Hide:0,$Hide:1,Attribute:ScopeQuery{$MinCardinality:0,$MaxCardinality:-1},Attribute:ChangeTypeFilter{$MinCardinality:0,$MaxCardinality:-1}}"
