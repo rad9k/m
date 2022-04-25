@@ -22,6 +22,8 @@ using ICSharpCode.AvalonEdit.Highlighting;
 using System.IO;
 using System.Xml;
 using m0.UIWpf.Visualisers.Helper;
+using m0.User.Process.UX;
+using m0.ZeroCode;
 
 namespace m0.UIWpf.Visualisers
 {
@@ -77,15 +79,26 @@ namespace m0.UIWpf.Visualisers
         public void SelectedVerticesUpdated() { }
 
         private void ExecuteParse()
-        {            
-            TextMemory.Add(Text);
+        {
+            ////////////////////////////////////////
+            Interaction.BeginInteractionWithGraph();
+            ////////////////////////////////////////
+            
+            TextMemory.Add(Text);            
 
-            MinusZero.Instance.DefaultParser.Parse(Vertex.Get(false, @"BaseEdge:\To:"), Text);
+            IVertex BaseEdgeToVertex = Vertex.Get(false, @"BaseEdge:\To:");            
+
+            MinusZero.Instance.DefaultParser.Parse(BaseEdgeToVertex, Text);
 
             int currentTextMemory = TextMemory.Count;
 
             Vertex.Get(false, "TextMemoryMax:").Value = currentTextMemory;
             Vertex.Get(false, "TextMemoryCurrent:").Value = currentTextMemory;
+            
+
+            ////////////////////////////////////////
+            Interaction.EndInteractionWithGraph();
+            ////////////////////////////////////////
         }
 
         private void ReferenceTextMemoryLeft()
@@ -99,8 +112,16 @@ namespace m0.UIWpf.Visualisers
 
                 Text = TextMemory[TextMemoryCurrent - 1];
 
+                ////////////////////////////////////////
+                Interaction.BeginInteractionWithGraph();
+                ////////////////////////////////////////
+
                 Vertex.Get(false, "TextMemoryCurrent:").Value = TextMemoryCurrent;
-            }            
+
+                ////////////////////////////////////////
+                Interaction.EndInteractionWithGraph();
+                ////////////////////////////////////////
+            }
         }
 
         private void ReferenceTextMemoryRight()
@@ -114,7 +135,15 @@ namespace m0.UIWpf.Visualisers
 
                 Text = TextMemory[TextMemoryCurrent - 1];
 
+                ////////////////////////////////////////
+                Interaction.BeginInteractionWithGraph();
+                ////////////////////////////////////////
+
                 Vertex.Get(false, "TextMemoryCurrent:").Value = TextMemoryCurrent;
+
+                ////////////////////////////////////////
+                Interaction.EndInteractionWithGraph();
+                ////////////////////////////////////////
             }
         }
 

@@ -1,4 +1,10 @@
 ﻿"Y"
+	import @System\Lib\Std direct meta
+	variable "In" @VertexType
+	In = "raz"
+	In = @@Substring[In, "2", "2"]
+
+"Y"
 	variable "a" @Vertex
 	variable "b" @String
 	variable "c" @Vertex

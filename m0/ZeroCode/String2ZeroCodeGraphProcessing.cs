@@ -2776,7 +2776,7 @@ namespace m0.ZeroCode
             IList<IVertex> toDestroyVertexList = new List<IVertex>();
 
             foreach (IEdge e in baseVertex.ToList())
-                if (!GeneralUtil.CompareStrings(e.Meta, "$ParseRoot"))
+                if (!GeneralUtil.CompareStrings(e.Meta, "$ParseRoot") && !GeneralUtil.CompareStrings(e.Meta, "$GraphChangeTrigger"))
                     foreach (IEdge ee in GraphUtil.GetSubGraphWithoutLinksEdgesAsList(e))
                         if (VertexOperations.IsLink(ee))
                             ee.From.DeleteEdge(ee);
@@ -2801,7 +2801,7 @@ namespace m0.ZeroCode
             GraphUtil.DeleteEdgeByMeta(baseVertex, "$ParseRoot");
 
             baseVertex.Value = firstValue;
-        }
+        }        
 
         public IVertex Process(IVertex _baseVertex, string _text)
         {
@@ -2833,12 +2833,12 @@ namespace m0.ZeroCode
             ProcessTextPart(parseRoot, 0, lineInfoList.Count - 1);
 
             if (errorList.Count() == 0)
-            {
+            {                
                 ProcessToVertexMocksToLinks();
 
                 MoveInEdgesComingFromOutsideOfSubGraphToParseRoot();
                 DeleteAllEdgesFromBaseVertex();
-                MoveAllParseRootEdgesToBaseVertex();
+                MoveAllParseRootEdgesToBaseVertex();             
             }
             else
             {
