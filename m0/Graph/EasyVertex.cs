@@ -456,7 +456,10 @@ namespace m0.Graph
         private static IDictionary<String, IVertex> QueryParseCache_metaMode = new Dictionary<String, IVertex>();        
 
         public override void Dispose()
-        {            
+        {
+            if (DisposedState != DisposeStateEnum.Live)
+                return;
+
             DisposedState = DisposeStateEnum.Disposing;
 
             GraphUtil.Debug(this, DebugOperationEnum.Dispose);

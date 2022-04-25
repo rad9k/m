@@ -37,14 +37,14 @@ namespace m0.Graph.ExecutionFlow
         {
             triggerEdge.To.Dispose();
 
-            //triggerEdgeList.Remove(triggerEdge);
+            triggerEdgeList.Remove(triggerEdge); // why this has been is removed?
 
             triggerListChanged = true;
         }
 
         public static void RemoveAllGraphChangeTriggers()
         {
-            foreach (IEdge e in triggerEdgeList)
+            foreach (IEdge e in triggerEdgeList.ToList())
                 RemoveGraphChangeTrigger(e);
         }
 
