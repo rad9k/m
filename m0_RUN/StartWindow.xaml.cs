@@ -50,7 +50,7 @@ namespace m0
         {            
             m0_RUN.Main.Run();
 
-           // ExtraRun();
+            ExtraRun();
 
             Close();
         }       
@@ -59,7 +59,7 @@ namespace m0
         {
             IVertex r = MinusZero.Instance.root;
 
-            IVertex v = r.AddVertex(null, "V");
+            IVertex v = r.Get(false, "examples").AddVertex(null, "V");
 
             List<string> scopelist = new List<string>();
 
