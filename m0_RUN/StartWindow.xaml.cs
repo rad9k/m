@@ -50,10 +50,50 @@ namespace m0
         {            
             m0_RUN.Main.Run();
 
-            ExtraRun();
+            //ExtraRun();
+
+            ExtraRun2();
 
             Close();
-        }       
+        }
+
+
+        void ExtraRun2()
+        {
+            IVertex r = MinusZero.Instance.root;
+
+            IVertex v = r/*.Get(false, "examples")*/.AddVertex(null, "X");
+
+            List<string> scopelist = new List<string>();
+
+            scopelist.Add("");
+            scopelist.Add("znak");
+
+
+            IVertex trigger = GraphChangeTrigger.AddTrigger(v, scopelist, new List<GraphChangeFilterEnum>
+            {
+                // GraphChangeFilterEnum.FilterOutTriggerRootVertex,
+                //GraphChangeFilterEnum.OutputEdgeAdded
+                //GraphChangeFilterEnum.ValueChange
+                         GraphChangeFilterEnum.MetaEdgeAdded
+            }).To;
+
+
+
+            test t = new test();
+
+            ExecutionFlowHelper.AddListener_DotNetDelegate(trigger, t.xxx);
+
+            ExecutionFlowHelper.StartTransaction();
+
+            IVertex meta = v.AddVertex(null, "meta");
+
+            meta.AddVertex(null, "new");
+
+            r.Get(false, "examples").AddVertex(meta, "nowy werteks");
+
+            ExecutionFlowHelper.CommitTransaction();
+        }
 
         void ExtraRun()
         {
