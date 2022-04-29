@@ -66,7 +66,7 @@ namespace m0
 
             List<string> scopelist = new List<string>();
 
-           // scopelist.Add("");
+            scopelist.Add("met");
             scopelist.Add("znak");
 
 
@@ -86,7 +86,7 @@ namespace m0
 
             ExecutionFlowHelper.StartTransaction();
 
-            IVertex meta = v.AddVertex(null, "meta");
+            IVertex meta = v.AddVertex(null, "met");
 
             meta.AddVertex(null, "new");
 
