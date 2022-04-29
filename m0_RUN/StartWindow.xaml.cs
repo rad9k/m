@@ -66,7 +66,7 @@ namespace m0
 
             List<string> scopelist = new List<string>();
 
-            scopelist.Add("");
+           // scopelist.Add("");
             scopelist.Add("znak");
 
 
@@ -90,7 +90,7 @@ namespace m0
 
             meta.AddVertex(null, "new");
 
-            r.Get(false, "examples").AddVertex(meta, "nowy werteks");
+            r.Get(false, "examples").AddVertex(meta, "nowy werteks").AddVertex(meta, "new");
 
             ExecutionFlowHelper.CommitTransaction();
         }
