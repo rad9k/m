@@ -13,7 +13,7 @@ namespace m0.Graph.ExecutionFlow
         public IVertex sourceVertex;
         public IVertex triggerVertex;
         public IList<string> scopeQuery;
-        public bool FilterOutTriggerRootVertex = false;
+        public bool FilterOutRootVertexEvents = false;
         public IList<GraphChangeFilterEnum> graphChangeFilter;
         public IList<IVertex> vertexInScope;      
     }
@@ -81,8 +81,8 @@ namespace m0.Graph.ExecutionFlow
 
                         switch (value)
                         {
-                            case "FilterOutTriggerRootVertex":
-                                en.FilterOutTriggerRootVertex = true;                                
+                            case "FilterOutRootVertexEvents":
+                                en.FilterOutRootVertexEvents = true;                                
                                 break;
 
                             case "ValueChange":
@@ -130,7 +130,7 @@ namespace m0.Graph.ExecutionFlow
             {
                 en.vertexInScope = new List<IVertex>();
                 
-                if(!en.FilterOutTriggerRootVertex)
+                if(!en.FilterOutRootVertexEvents)
                     en.vertexInScope.Add(en.sourceVertex); 
 
                 if (en.scopeQuery != null)

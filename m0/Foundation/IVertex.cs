@@ -63,6 +63,8 @@ namespace m0.Foundation
 
         void CheckIfShouldDispose();
 
+        bool Has
+
 
         // 3.0 END
 

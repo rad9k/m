@@ -7,7 +7,7 @@ using System.Collections.Generic;
 
 namespace m0.Graph.ExecutionFlow
 {
-    public enum GraphChangeFilterEnum { OnlyTriggerRootVertex, FilterOutTriggerRootVertex, ValueChange, OutputEdgeAdded, OutputEdgeRemoved, InputEdgeAdded, InputEdgeRemoved, MetaEdgeAdded, MetaEdgeRemoved, OutputEdgeDisposed };
+    public enum GraphChangeFilterEnum { OnlyRootVertexTrigger, FilterOutRootVertexEvents, ValueChange, OutputEdgeAdded, OutputEdgeRemoved, InputEdgeAdded, InputEdgeRemoved, MetaEdgeAdded, MetaEdgeRemoved, OutputEdgeDisposed };
 
     public class GraphChangeTrigger
     {
@@ -16,7 +16,7 @@ namespace m0.Graph.ExecutionFlow
         static IVertex scopeQuery_meta;
         static IVertex changeTypeFilter_meta;
 
-        static IVertex graphChangeFilterEnum_FilterOutTriggerRootVertex_meta;
+        static IVertex graphChangeFilterEnum_FilterOutRootVertexEvents_meta;
         static IVertex graphChangeFilterEnum_ValueChange_meta;
 
         static IVertex graphChangeFilterEnum_OutputEdgeAdded_meta;
@@ -39,7 +39,7 @@ namespace m0.Graph.ExecutionFlow
             scopeQuery_meta = r.Get(false, @"System\Meta\ZeroTypes\ExecutionFlow\GraphChangeTrigger\ScopeQuery");
             changeTypeFilter_meta = r.Get(false, @"System\Meta\ZeroTypes\ExecutionFlow\GraphChangeTrigger\ChangeTypeFilter");
 
-            graphChangeFilterEnum_FilterOutTriggerRootVertex_meta = r.Get(false, @"System\Meta\ZeroTypes\ExecutionFlow\GraphChangeFilterEnum\FilterOutTriggerRootVertex");
+            graphChangeFilterEnum_FilterOutRootVertexEvents_meta = r.Get(false, @"System\Meta\ZeroTypes\ExecutionFlow\GraphChangeFilterEnum\FilterOutRootVertexEvents");
             graphChangeFilterEnum_ValueChange_meta = r.Get(false, @"System\Meta\ZeroTypes\ExecutionFlow\GraphChangeFilterEnum\ValueChange");
 
             graphChangeFilterEnum_OutputEdgeAdded_meta = r.Get(false, @"System\Meta\ZeroTypes\ExecutionFlow\GraphChangeFilterEnum\OutputEdgeAdded");
@@ -95,8 +95,8 @@ namespace m0.Graph.ExecutionFlow
                     {
                         switch (ct)
                         {
-                            case GraphChangeFilterEnum.FilterOutTriggerRootVertex:
-                                triggerEdge.To.AddEdge(changeTypeFilter_meta, graphChangeFilterEnum_FilterOutTriggerRootVertex_meta);
+                            case GraphChangeFilterEnum.FilterOutRootVertexEvents:
+                                triggerEdge.To.AddEdge(changeTypeFilter_meta, graphChangeFilterEnum_FilterOutRootVertexEvents_meta);
                                 break;
 
                             case GraphChangeFilterEnum.ValueChange:
