@@ -7,7 +7,7 @@ using System.Collections.Generic;
 
 namespace m0.Graph.ExecutionFlow
 {
-    public enum GraphChangeFilterEnum { OnlyRootVertexTrigger, FilterOutRootVertexEvents, ValueChange, OutputEdgeAdded, OutputEdgeRemoved, InputEdgeAdded, InputEdgeRemoved, MetaEdgeAdded, MetaEdgeRemoved, OutputEdgeDisposed };
+    public enum GraphChangeFilterEnum { OnlyRootVertexEvents, FilterOutRootVertexEvents, ValueChange, OutputEdgeAdded, OutputEdgeRemoved, InputEdgeAdded, InputEdgeRemoved, MetaEdgeAdded, MetaEdgeRemoved, OutputEdgeDisposed };
 
     public class GraphChangeTrigger
     {
