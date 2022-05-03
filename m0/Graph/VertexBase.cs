@@ -402,7 +402,11 @@ namespace m0.Graph
 
         protected virtual void HasOnlyRootVertexEventsEdgeRebuild()
         {
+            _HasOnlyRootVertexEventsEdge = false;
 
+            foreach (IEdge e in GraphUtil.GetQueryOut(this, "$GraphChangeTrigger", null))
+                if (GraphUtil.ExistQueryOut(e.To, "ChangeTypeFilter", "OnlyRootVertexEvents"))
+                    _HasOnlyRootVertexEventsEdge = true;                
         }
 
         public virtual void CheckIfShouldDispose()

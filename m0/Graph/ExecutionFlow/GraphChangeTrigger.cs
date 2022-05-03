@@ -17,6 +17,7 @@ namespace m0.Graph.ExecutionFlow
         static IVertex changeTypeFilter_meta;
 
         static IVertex graphChangeFilterEnum_FilterOutRootVertexEvents_meta;
+        static IVertex graphChangeFilterEnum_OnlyRootVertexEvents_meta;
         static IVertex graphChangeFilterEnum_ValueChange_meta;
 
         static IVertex graphChangeFilterEnum_OutputEdgeAdded_meta;
@@ -40,6 +41,7 @@ namespace m0.Graph.ExecutionFlow
             changeTypeFilter_meta = r.Get(false, @"System\Meta\ZeroTypes\ExecutionFlow\GraphChangeTrigger\ChangeTypeFilter");
 
             graphChangeFilterEnum_FilterOutRootVertexEvents_meta = r.Get(false, @"System\Meta\ZeroTypes\ExecutionFlow\GraphChangeFilterEnum\FilterOutRootVertexEvents");
+            graphChangeFilterEnum_OnlyRootVertexEvents_meta = r.Get(false, @"System\Meta\ZeroTypes\ExecutionFlow\GraphChangeFilterEnum\OnlyRootVertexEvents");
             graphChangeFilterEnum_ValueChange_meta = r.Get(false, @"System\Meta\ZeroTypes\ExecutionFlow\GraphChangeFilterEnum\ValueChange");
 
             graphChangeFilterEnum_OutputEdgeAdded_meta = r.Get(false, @"System\Meta\ZeroTypes\ExecutionFlow\GraphChangeFilterEnum\OutputEdgeAdded");
@@ -95,6 +97,10 @@ namespace m0.Graph.ExecutionFlow
                     {
                         switch (ct)
                         {
+                            case GraphChangeFilterEnum.OnlyRootVertexEvents:
+                                triggerEdge.To.AddEdge(changeTypeFilter_meta, graphChangeFilterEnum_OnlyRootVertexEvents_meta);
+                                break;
+
                             case GraphChangeFilterEnum.FilterOutRootVertexEvents:
                                 triggerEdge.To.AddEdge(changeTypeFilter_meta, graphChangeFilterEnum_FilterOutRootVertexEvents_meta);
                                 break;

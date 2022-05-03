@@ -52,9 +52,39 @@ namespace m0
 
             //ExtraRun();
 
-            ExtraRun2();
+            //ExtraRun2();
+
+            ExtraRun3();
 
             Close();
+        }
+
+
+        void ExtraRun3()
+        {
+            IVertex r = MinusZero.Instance.root;
+
+            IVertex examples = r.Get(false, "examples");
+
+            List<string> scopelist = new List<string>();
+
+            scopelist.Add("met");
+            scopelist.Add("znak");
+
+            IEdge listener = GraphChangeTrigger.AddTrigger(examples, scopelist, new List<GraphChangeFilterEnum>
+            {
+                // GraphChangeFilterEnum.FilterOutRootVertexEvents,
+                //GraphChangeFilterEnum.OutputEdgeAdded
+                GraphChangeFilterEnum.OnlyRootVertexEvents,
+                         GraphChangeFilterEnum.MetaEdgeAdded
+            });
+
+            //examples.DeleteEdge(listener);
+
+            if (examples.HasOnlyRootVertexEventsEdge)
+            {
+                int x = 0;
+            }
         }
 
 
