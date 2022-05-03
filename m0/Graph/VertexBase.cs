@@ -385,6 +385,26 @@ namespace m0.Graph
                 CheckIfShouldDispose();
         }
 
+
+        protected bool _HasOnlyRootVertexEventsEdge;
+        public bool HasOnlyRootVertexEventsEdge { get {
+                if (HasOnlyRootVertexEventsEdgeNeedsRebuild)
+                {
+                    HasOnlyRootVertexEventsEdgeRebuild();
+
+                    HasOnlyRootVertexEventsEdgeNeedsRebuild = false;
+                }
+                return _HasOnlyRootVertexEventsEdge;
+            }
+        }
+
+        protected bool HasOnlyRootVertexEventsEdgeNeedsRebuild = false;
+
+        protected virtual void HasOnlyRootVertexEventsEdgeRebuild()
+        {
+
+        }
+
         public virtual void CheckIfShouldDispose()
         {
 

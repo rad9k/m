@@ -400,6 +400,9 @@ namespace m0.Graph
 
             if (GeneralUtil.CompareStrings(edge.Meta.Value, "$GraphChangeTrigger"))
                 GraphChangeTriggerWatcher.AddGraphChangeTrigger(edge);
+
+            if (GeneralUtil.CompareStrings(edge.Meta.Value, "$GraphChangeTrigger"))
+                GraphChangeTriggerWatcher.AddGraphChangeTrigger(edge);
         }
 
         public override void DettachEdge(IEdge edge)
