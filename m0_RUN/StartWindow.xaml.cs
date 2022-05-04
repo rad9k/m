@@ -54,7 +54,7 @@ namespace m0
 
             //ExtraRun2();
 
-            ExtraRun3();
+            //ExtraRun3();
 
             Close();
         }
@@ -66,20 +66,19 @@ namespace m0
 
             IVertex examples = r.Get(false, "examples");
 
-            List<string> scopelist = new List<string>();
 
-            scopelist.Add("met");
-            scopelist.Add("znak");
+            test t = new test();
+            IEdge listener = ExecutionFlowHelper.AddTriggerAndListener(examples, t.xxx);
 
-            IEdge listener = GraphChangeTrigger.AddTrigger(examples, scopelist, new List<GraphChangeFilterEnum>
-            {
-                // GraphChangeFilterEnum.FilterOutRootVertexEvents,
-                //GraphChangeFilterEnum.OutputEdgeAdded
-                GraphChangeFilterEnum.OnlyRootVertexEvents,
-                         GraphChangeFilterEnum.MetaEdgeAdded
-            });
+            IEdge trigger = examples.GetAll(false, "SimpleDirectTrigger").FirstOrDefault();
 
-            //examples.DeleteEdge(listener);
+            //   trigger.To.DeleteEdge(listener);
+            //examples.DeleteEdge(trigger);
+
+            IEdge e = trigger.To.GetAll(false, "OnlyRootVertexEvents").FirstOrDefault();
+
+
+            trigger.To.DeleteEdge(e);
 
             if (examples.HasOnlyRootVertexEventsEdge)
             {

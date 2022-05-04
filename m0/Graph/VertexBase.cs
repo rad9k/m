@@ -404,9 +404,10 @@ namespace m0.Graph
         {
             _HasOnlyRootVertexEventsEdge = false;
 
-            foreach (IEdge e in GraphUtil.GetQueryOut(this, "$GraphChangeTrigger", null))
-                if (GraphUtil.ExistQueryOut(e.To, "ChangeTypeFilter", "OnlyRootVertexEvents"))
-                    _HasOnlyRootVertexEventsEdge = true;                
+            foreach (IEdge triggerEdge in GraphUtil.GetQueryOut(this, "$GraphChangeTrigger", null))
+                if (GraphUtil.ExistQueryOut(triggerEdge.To, "ChangeTypeFilter", "OnlyRootVertexEvents") &&
+                    GraphUtil.ExistQueryOut(triggerEdge.To, "Listener", null))
+                    _HasOnlyRootVertexEventsEdge = true;
         }
 
         public virtual void CheckIfShouldDispose()

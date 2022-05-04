@@ -399,26 +399,14 @@ namespace m0.Graph
             }
 
             if (GeneralUtil.CompareStrings(edge.Meta.Value, "$GraphChangeTrigger"))
+            {
+                HasOnlyRootVertexEventsEdgeNeedsRebuild = true;
                 GraphChangeTriggerWatcher.AddGraphChangeTrigger(edge);
+            }
 
-            if (GeneralUtil.CompareStrings(edge.To.Value, "OnlyRootVertexEvents"))
-                OnlyRootVertexEventsAdded();
-        }
-
-        IList<IEdge> GetGraphChangeTriggerRoots()
-        {
-            return GraphUtil.GetQueryIn(this, "$GraphChangeTrigger", null);
-        }
-
-        protected void OnlyRootVertexEventsAdded()
-        {
-            foreach (IEdge e in GetGraphChangeTriggerRoots()) 
-                if(e.From is EasyVertex)
-                {
-                    EasyVertex ev = (EasyVertex)e.From;
-
-                    ev._HasOnlyRootVertexEventsEdge = true;
-                }                
+            if (GeneralUtil.CompareStrings(edge.To.Value, "OnlyRootVertexEvents") ||
+                GeneralUtil.CompareStrings(edge.Meta.Value, "Listener"))
+                OnlyRootVertexEvents_Listener_AddedRemoved();
         }
 
         public override void DettachEdge(IEdge edge)
@@ -438,17 +426,18 @@ namespace m0.Graph
                     GraphChangeTriggerWatcher.RemoveGraphChangeTrigger(edge);
                     }
 
-                if (GeneralUtil.CompareStrings(edge.To.Value, "OnlyRootVertexEvents"))
-                    OnlyRootVertexEventsRemoved();
+                if (GeneralUtil.CompareStrings(edge.To.Value, "OnlyRootVertexEvents") ||
+                    GeneralUtil.CompareStrings(edge.Meta.Value, "Listener"))
+                    OnlyRootVertexEvents_Listener_AddedRemoved();
             }
         }
 
-        protected void OnlyRootVertexEventsRemoved()
+        protected void OnlyRootVertexEvents_Listener_AddedRemoved()
         {
-            foreach (IEdge e in GetGraphChangeTriggerRoots())
-                if (e.To is EasyVertex)
+            foreach (IEdge e in GraphUtil.GetQueryIn(this, "$GraphChangeTrigger", null))
+                if (e.From is EasyVertex)
                 {
-                    EasyVertex ev = (EasyVertex)e.To;
+                    EasyVertex ev = (EasyVertex)e.From;
 
                     ev.HasOnlyRootVertexEventsEdgeNeedsRebuild = true;
                 }
