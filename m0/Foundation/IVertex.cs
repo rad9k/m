@@ -63,7 +63,7 @@ namespace m0.Foundation
 
         void CheckIfShouldDispose();
 
-        bool HasOnlyRootVertexEvents { get; }
+        bool HasOnlyRootVertexEventsEdge { get; }
 
 
         // 3.0 END

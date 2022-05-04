@@ -385,6 +385,30 @@ namespace m0.Graph
                 CheckIfShouldDispose();
         }
 
+
+        protected bool _HasOnlyRootVertexEventsEdge;
+        public bool HasOnlyRootVertexEventsEdge { get {
+                if (HasOnlyRootVertexEventsEdgeNeedsRebuild)
+                {
+                    HasOnlyRootVertexEventsEdgeRebuild();
+
+                    HasOnlyRootVertexEventsEdgeNeedsRebuild = false;
+                }
+                return _HasOnlyRootVertexEventsEdge;
+            }
+        }
+
+        protected bool HasOnlyRootVertexEventsEdgeNeedsRebuild = false;
+
+        protected virtual void HasOnlyRootVertexEventsEdgeRebuild()
+        {
+            _HasOnlyRootVertexEventsEdge = false;
+
+            foreach (IEdge e in GraphUtil.GetQueryOut(this, "$GraphChangeTrigger", null))
+                if (GraphUtil.ExistQueryOut(e.To, "ChangeTypeFilter", "OnlyRootVertexEvents"))
+                    _HasOnlyRootVertexEventsEdge = true;                
+        }
+
         public virtual void CheckIfShouldDispose()
         {
 
