@@ -407,54 +407,67 @@ namespace m0.Graph.ExecutionFlow
 
         public void AddAtom(ITransactionAtom atom)
         {
-            if (atom is GraphChangeTransactionAtom)
+            if (GraphChangeWatch)
             {
-                if (GraphChangeWatch)
+                if (atom is GraphChangeTransactionAtom)
                 {
                     GraphChangeTransactionAtom gcta = (GraphChangeTransactionAtom)atom;
 
-                    if (gcta.Type == AtomGraphChangeTypeEnum.EdgeAdded || gcta.Type == AtomGraphChangeTypeEnum.EdgeRemoved)
-                    {
-                        if (GeneralUtil.CompareStrings(gcta.Edge.Meta, "$GraphChangeTrigger"))
-                            return;
-
-                        if (GraphUtil.ExistQueryIn(gcta.Edge.From, "$GraphChangeTrigger", null))
-                            return;
-                    }
-
-                    if (gcta.Type == AtomGraphChangeTypeEnum.ValueChange)
-                        if (GraphUtil.ExistQueryIn(gcta.ChangedVertex, "$GraphChangeTrigger", null))
-                            return;
-
-                    GeneralUtil.DictionaryAdd<IVertex, GraphChangeTransactionAtom>(
-                        graphChangeTransactionAtoms_OutEdgeValueChange,
-                        gcta.ChangedVertex,
-                        gcta);
-
-                    if (gcta.Type == AtomGraphChangeTypeEnum.EdgeAdded || gcta.Type == AtomGraphChangeTypeEnum.EdgeRemoved)
-                    {
-                        GraphChangeTransactionAtom gcta_inEdge = new GraphChangeTransactionAtom(gcta);
-                        gcta_inEdge.ChangedVertex = gcta.Edge.To;
-
-                        GeneralUtil.DictionaryAdd<IVertex, GraphChangeTransactionAtom>(
-                            graphChangeTransactionAtoms_InEdge,
-                            gcta_inEdge.ChangedVertex,
-                            gcta_inEdge);
-
-                        //
-
-                        GraphChangeTransactionAtom gcta_metaEdge = new GraphChangeTransactionAtom(gcta);
-                        //gcta_inEdge.ChangedVertex = gcta.Edge.To;
-
-                        GeneralUtil.DictionaryAdd<IVertex, GraphChangeTransactionAtom>(
-                            graphChangeTransactionAtoms_MetaEdge,
-                            gcta.Edge.Meta, // is this ok???
-                            gcta_metaEdge);
-                    }
+                    if (gcta.ChangedVertex != null && gcta.ChangedVertex.HasOnlyNonTransactedRootVertexEventsEdge)
+                        AddAtom_NonTransacted(gcta);
+                    else
+                        AddAtom_Transacted(gcta);
                 }
+                else
+                    atoms.Add(atom);
             }
-            else
-                atoms.Add(atom);
+        }
+
+        public void AddAtom_NonTransacted(ITransactionAtom atom)
+        {
+
+        }
+
+        public void AddAtom_Transacted(GraphChangeTransactionAtom gcta)
+        {                        
+            if (gcta.Type == AtomGraphChangeTypeEnum.EdgeAdded || gcta.Type == AtomGraphChangeTypeEnum.EdgeRemoved)
+            {
+                if (GeneralUtil.CompareStrings(gcta.Edge.Meta, "$GraphChangeTrigger"))
+                    return;
+
+                if (GraphUtil.ExistQueryIn(gcta.Edge.From, "$GraphChangeTrigger", null))
+                    return;
+            }
+
+            if (gcta.Type == AtomGraphChangeTypeEnum.ValueChange)
+                if (GraphUtil.ExistQueryIn(gcta.ChangedVertex, "$GraphChangeTrigger", null))
+                    return;
+
+            GeneralUtil.DictionaryAdd<IVertex, GraphChangeTransactionAtom>(
+                graphChangeTransactionAtoms_OutEdgeValueChange,
+                gcta.ChangedVertex,
+                gcta);
+
+            if (gcta.Type == AtomGraphChangeTypeEnum.EdgeAdded || gcta.Type == AtomGraphChangeTypeEnum.EdgeRemoved)
+            {
+                GraphChangeTransactionAtom gcta_inEdge = new GraphChangeTransactionAtom(gcta);
+                gcta_inEdge.ChangedVertex = gcta.Edge.To;
+
+                GeneralUtil.DictionaryAdd<IVertex, GraphChangeTransactionAtom>(
+                    graphChangeTransactionAtoms_InEdge,
+                    gcta_inEdge.ChangedVertex,
+                    gcta_inEdge);
+
+                //
+
+                GraphChangeTransactionAtom gcta_metaEdge = new GraphChangeTransactionAtom(gcta);
+                //gcta_inEdge.ChangedVertex = gcta.Edge.To;
+
+                GeneralUtil.DictionaryAdd<IVertex, GraphChangeTransactionAtom>(
+                    graphChangeTransactionAtoms_MetaEdge,
+                    gcta.Edge.Meta, // is this ok???
+                    gcta_metaEdge);
+            }                        
         }
 
         public void AddSecondStageCommitAction(ISecondStageCommitAction commitAction)
