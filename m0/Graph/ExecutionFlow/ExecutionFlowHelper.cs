@@ -167,7 +167,7 @@ namespace m0.Graph.ExecutionFlow
                          GraphChangeFilterEnum.OutputEdgeAdded,
                          GraphChangeFilterEnum.OutputEdgeRemoved,
                          GraphChangeFilterEnum.OutputEdgeDisposed
-                         ,GraphChangeFilterEnum.OnlyRootVertexEvents
+                         ,GraphChangeFilterEnum.OnlyNonTransactedRootVertexEvents
                 },
                 "SimpleDirectTrigger",
                 _delegate);

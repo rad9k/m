@@ -7,7 +7,7 @@ using System.Collections.Generic;
 
 namespace m0.Graph.ExecutionFlow
 {
-    public enum GraphChangeFilterEnum { OnlyRootVertexEvents, FilterOutRootVertexEvents, ValueChange, OutputEdgeAdded, OutputEdgeRemoved, InputEdgeAdded, InputEdgeRemoved, MetaEdgeAdded, MetaEdgeRemoved, OutputEdgeDisposed };
+    public enum GraphChangeFilterEnum { OnlyNonTransactedRootVertexEvents, FilterOutRootVertexEvents, ValueChange, OutputEdgeAdded, OutputEdgeRemoved, InputEdgeAdded, InputEdgeRemoved, MetaEdgeAdded, MetaEdgeRemoved, OutputEdgeDisposed };
 
     public class GraphChangeTrigger
     {
@@ -17,7 +17,7 @@ namespace m0.Graph.ExecutionFlow
         static IVertex changeTypeFilter_meta;
 
         static IVertex graphChangeFilterEnum_FilterOutRootVertexEvents_meta;
-        static IVertex graphChangeFilterEnum_OnlyRootVertexEvents_meta;
+        static IVertex graphChangeFilterEnum_OnlyNonTransactedRootVertexEvents_meta;
         static IVertex graphChangeFilterEnum_ValueChange_meta;
 
         static IVertex graphChangeFilterEnum_OutputEdgeAdded_meta;
@@ -41,7 +41,7 @@ namespace m0.Graph.ExecutionFlow
             changeTypeFilter_meta = r.Get(false, @"System\Meta\ZeroTypes\ExecutionFlow\GraphChangeTrigger\ChangeTypeFilter");
 
             graphChangeFilterEnum_FilterOutRootVertexEvents_meta = r.Get(false, @"System\Meta\ZeroTypes\ExecutionFlow\GraphChangeFilterEnum\FilterOutRootVertexEvents");
-            graphChangeFilterEnum_OnlyRootVertexEvents_meta = r.Get(false, @"System\Meta\ZeroTypes\ExecutionFlow\GraphChangeFilterEnum\OnlyRootVertexEvents");
+            graphChangeFilterEnum_OnlyNonTransactedRootVertexEvents_meta = r.Get(false, @"System\Meta\ZeroTypes\ExecutionFlow\GraphChangeFilterEnum\OnlyNonTransactedRootVertexEvents");
             graphChangeFilterEnum_ValueChange_meta = r.Get(false, @"System\Meta\ZeroTypes\ExecutionFlow\GraphChangeFilterEnum\ValueChange");
 
             graphChangeFilterEnum_OutputEdgeAdded_meta = r.Get(false, @"System\Meta\ZeroTypes\ExecutionFlow\GraphChangeFilterEnum\OutputEdgeAdded");
@@ -97,8 +97,8 @@ namespace m0.Graph.ExecutionFlow
                     {
                         switch (ct)
                         {
-                            case GraphChangeFilterEnum.OnlyRootVertexEvents:
-                                triggerEdge.To.AddEdge(changeTypeFilter_meta, graphChangeFilterEnum_OnlyRootVertexEvents_meta);
+                            case GraphChangeFilterEnum.OnlyNonTransactedRootVertexEvents:
+                                triggerEdge.To.AddEdge(changeTypeFilter_meta, graphChangeFilterEnum_OnlyNonTransactedRootVertexEvents_meta);
                                 break;
 
                             case GraphChangeFilterEnum.FilterOutRootVertexEvents:

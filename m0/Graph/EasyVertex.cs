@@ -400,13 +400,13 @@ namespace m0.Graph
 
             if (GeneralUtil.CompareStrings(edge.Meta.Value, "$GraphChangeTrigger"))
             {
-                HasOnlyRootVertexEventsEdgeNeedsRebuild = true;
+                HasOnlyNonTransactedRootVertexEventsEdgeNeedsRebuild = true;
                 GraphChangeTriggerWatcher.AddGraphChangeTrigger(edge);
             }
 
-            if (GeneralUtil.CompareStrings(edge.To.Value, "OnlyRootVertexEvents") ||
+            if (GeneralUtil.CompareStrings(edge.To.Value, "OnlyNonTransactedRootVertexEvents") ||
                 GeneralUtil.CompareStrings(edge.Meta.Value, "Listener"))
-                OnlyRootVertexEvents_Listener_AddedRemoved();
+                OnlyNonTransactedRootVertexEvents_Listener_AddedRemoved();
         }
 
         public override void DettachEdge(IEdge edge)
@@ -422,24 +422,24 @@ namespace m0.Graph
                 }
 
                 if (GeneralUtil.CompareStrings(edge.Meta.Value, "$GraphChangeTrigger")) {
-                    HasOnlyRootVertexEventsEdgeNeedsRebuild = true;
+                    HasOnlyNonTransactedRootVertexEventsEdgeNeedsRebuild = true;
                     GraphChangeTriggerWatcher.RemoveGraphChangeTrigger(edge);
                     }
 
-                if (GeneralUtil.CompareStrings(edge.To.Value, "OnlyRootVertexEvents") ||
+                if (GeneralUtil.CompareStrings(edge.To.Value, "OnlyNonTransactedRootVertexEvents") ||
                     GeneralUtil.CompareStrings(edge.Meta.Value, "Listener"))
-                    OnlyRootVertexEvents_Listener_AddedRemoved();
+                    OnlyNonTransactedRootVertexEvents_Listener_AddedRemoved();
             }
         }
 
-        protected void OnlyRootVertexEvents_Listener_AddedRemoved()
+        protected void OnlyNonTransactedRootVertexEvents_Listener_AddedRemoved()
         {
             foreach (IEdge e in GraphUtil.GetQueryIn(this, "$GraphChangeTrigger", null))
                 if (e.From is EasyVertex)
                 {
                     EasyVertex ev = (EasyVertex)e.From;
 
-                    ev.HasOnlyRootVertexEventsEdgeNeedsRebuild = true;
+                    ev.HasOnlyNonTransactedRootVertexEventsEdgeNeedsRebuild = true;
                 }
         }
 

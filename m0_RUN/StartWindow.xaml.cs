@@ -75,12 +75,12 @@ namespace m0
             //   trigger.To.DeleteEdge(listener);
             //examples.DeleteEdge(trigger);
 
-            IEdge e = trigger.To.GetAll(false, "OnlyRootVertexEvents").FirstOrDefault();
+            IEdge e = trigger.To.GetAll(false, "OnlyNonTransactedRootVertexEvents").FirstOrDefault();
 
 
             trigger.To.DeleteEdge(e);
 
-            if (examples.HasOnlyRootVertexEventsEdge)
+            if (examples.HasOnlyNonTransactedRootVertexEventsEdge)
             {
                 int x = 0;
             }

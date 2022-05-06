@@ -386,28 +386,28 @@ namespace m0.Graph
         }
 
 
-        protected bool _HasOnlyRootVertexEventsEdge;
-        public bool HasOnlyRootVertexEventsEdge { get {
-                if (HasOnlyRootVertexEventsEdgeNeedsRebuild)
+        protected bool _HasOnlyNonTransactedRootVertexEventsEdge;
+        public bool HasOnlyNonTransactedRootVertexEventsEdge { get {
+                if (HasOnlyNonTransactedRootVertexEventsEdgeNeedsRebuild)
                 {
-                    HasOnlyRootVertexEventsEdgeRebuild();
+                    HasOnlyNonTransactedRootVertexEventsEdgeRebuild();
 
-                    HasOnlyRootVertexEventsEdgeNeedsRebuild = false;
+                    HasOnlyNonTransactedRootVertexEventsEdgeNeedsRebuild = false;
                 }
-                return _HasOnlyRootVertexEventsEdge;
+                return _HasOnlyNonTransactedRootVertexEventsEdge;
             }
         }
 
-        protected bool HasOnlyRootVertexEventsEdgeNeedsRebuild = false;
+        protected bool HasOnlyNonTransactedRootVertexEventsEdgeNeedsRebuild = false;
 
-        protected virtual void HasOnlyRootVertexEventsEdgeRebuild()
+        protected virtual void HasOnlyNonTransactedRootVertexEventsEdgeRebuild()
         {
-            _HasOnlyRootVertexEventsEdge = false;
+            _HasOnlyNonTransactedRootVertexEventsEdge = false;
 
             foreach (IEdge triggerEdge in GraphUtil.GetQueryOut(this, "$GraphChangeTrigger", null))
-                if (GraphUtil.ExistQueryOut(triggerEdge.To, "ChangeTypeFilter", "OnlyRootVertexEvents") &&
+                if (GraphUtil.ExistQueryOut(triggerEdge.To, "ChangeTypeFilter", "OnlyNonTransactedRootVertexEvents") &&
                     GraphUtil.ExistQueryOut(triggerEdge.To, "Listener", null))
-                    _HasOnlyRootVertexEventsEdge = true;
+                    _HasOnlyNonTransactedRootVertexEventsEdge = true;
         }
 
         public virtual void CheckIfShouldDispose()
