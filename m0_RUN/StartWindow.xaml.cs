@@ -52,7 +52,7 @@ namespace m0
 
             //ExtraRun();
 
-            //ExtraRun2();
+            ExtraRun2();
 
             //ExtraRun3();
 
@@ -102,9 +102,9 @@ namespace m0
             IVertex trigger = GraphChangeTrigger.AddTrigger(v, scopelist, new List<GraphChangeFilterEnum>
             {
                 // GraphChangeFilterEnum.FilterOutRootVertexEvents,
-                //GraphChangeFilterEnum.OutputEdgeAdded
+                GraphChangeFilterEnum.InputEdgeAdded
                 //GraphChangeFilterEnum.ValueChange
-                         GraphChangeFilterEnum.MetaEdgeAdded
+                //         GraphChangeFilterEnum.MetaEdgeAdded
             }).To;
 
 
@@ -115,11 +115,13 @@ namespace m0
 
             ExecutionFlowHelper.StartTransaction();
 
-            IVertex meta = v.AddVertex(null, "met");
+            v.AddVertex(null, "znak");
 
-            meta.AddVertex(null, "new");
+            //IVertex meta = v.AddVertex(null, "met");
 
-            r.Get(false, "examples").AddVertex(meta, "nowy werteks").AddVertex(meta, "new");
+            //meta.AddVertex(null, "new");
+
+            //r.Get(false, "examples").AddVertex(meta, "nowy werteks").AddVertex(meta, "new");
 
             ExecutionFlowHelper.CommitTransaction();
         }

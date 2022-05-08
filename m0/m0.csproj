@@ -122,6 +122,7 @@
     <Compile Include="Graph\ExecutionFlow\GraphChangeTransactionAtom.cs" />
     <Compile Include="Graph\ExecutionFlow\GraphChangeTrigger.cs" />
     <Compile Include="Graph\ExecutionFlow\GraphChangeTriggerWatcher.cs" />
+    <Compile Include="Graph\ExecutionFlow\NonTransactedEvent.cs" />
     <Compile Include="Graph\ExecutionFlow\TransacionAtom.cs" />
     <Compile Include="Graph\ExecutionFlow\Transaction.cs" />
     <Compile Include="Graph\IImplementedVertex.cs" />
