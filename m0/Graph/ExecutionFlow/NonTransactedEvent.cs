@@ -1,4 +1,5 @@
 ﻿using m0.Foundation;
+using m0.ZeroCode.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,11 +10,19 @@ namespace m0.Graph.ExecutionFlow
 {
     public class NonTransactedEvent
     {
-        static void FireTrigger(IVertex trigger, GraphChangeTransactionAtom gcta)
+        static void FireTrigger(IVertex triggerVertex, GraphChangeTransactionAtom gcta)
         {
-            IVertex eventVertex = gcta.CreateEventVertex(trigger, null);            
-                
+            IVertex eventVertex = gcta.CreateEventVertex(triggerVertex, null);
 
+            foreach (IEdge e in triggerVertex.GetAll(false, @"Listener:"))
+            {
+                IVertex parameters = InstructionHelpers.CreateStack();
+
+                foreach (IVertex eventVertex in kvp.Value)
+                    parameters.AddEdge(GenericEventHandler_event_meta, eventVertex);
+
+                ZeroCodeExecutonUtil.FuncionCall(exe, e.To, parameters);
+            }
         }
 
         public static void HandleOutEdgeValueChange(GraphChangeTransactionAtom gcta)
