@@ -19,7 +19,7 @@ namespace m0.Graph.ExecutionFlow
 
         static IVertex r = m0.MinusZero.Instance.root;
 
-        static IVertex GenericEventHandler_event_meta;
+        public static IVertex GenericEventHandler_event_meta;
 
         TransactionStateEnum state;
         public TransactionStateEnum State { get => state; }

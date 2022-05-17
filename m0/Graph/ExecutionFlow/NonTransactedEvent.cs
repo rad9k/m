@@ -1,4 +1,5 @@
 ﻿using m0.Foundation;
+using m0.ZeroCode;
 using m0.ZeroCode.Helpers;
 using System;
 using System.Collections.Generic;
@@ -10,16 +11,17 @@ namespace m0.Graph.ExecutionFlow
 {
     public class NonTransactedEvent
     {
-        static void FireTrigger(IVertex triggerVertex, GraphChangeTransactionAtom gcta)
+        static void FireTrigger(GraphChangeTransactionAtom gcta, IVertex triggerVertex, EdgeDirectionEnum edgeDirection)
         {
-            IVertex eventVertex = gcta.CreateEventVertex(triggerVertex, null);
+            IExecution exe = new ZeroCodeExecution();
+
+            IVertex eventVertex = gcta.CreateEventVertex_GraphChange(triggerVertex, gcta.ChangedVertex, edgeDirection);
 
             foreach (IEdge e in triggerVertex.GetAll(false, @"Listener:"))
             {
                 IVertex parameters = InstructionHelpers.CreateStack();
-
-                foreach (IVertex eventVertex in kvp.Value)
-                    parameters.AddEdge(GenericEventHandler_event_meta, eventVertex);
+                
+                parameters.AddEdge(Transaction.GenericEventHandler_event_meta, eventVertex);
 
                 ZeroCodeExecutonUtil.FuncionCall(exe, e.To, parameters);
             }
@@ -34,22 +36,22 @@ namespace m0.Graph.ExecutionFlow
                 {
                     case AtomGraphChangeTypeEnum.ValueChange:
                         if (GraphUtil.ExistQueryOut(trigger.To, "ChangeTypeFilter", "ValueChange"))
-                            FireTrigger(trigger.To, gcta);
+                            FireTrigger(gcta, trigger.To, EdgeDirectionEnum.Out);
                         break;
 
                     case AtomGraphChangeTypeEnum.EdgeAdded:
                         if (GraphUtil.ExistQueryOut(trigger.To, "ChangeTypeFilter", "OutputEdgeAdded"))
-                            FireTrigger(trigger.To, gcta);
+                            FireTrigger(gcta, trigger.To, EdgeDirectionEnum.Out);
                         break;
 
                     case AtomGraphChangeTypeEnum.EdgeRemoved:
                         if (GraphUtil.ExistQueryOut(trigger.To, "ChangeTypeFilter", "OutputEdgeRemoved"))
-                            FireTrigger(trigger.To, gcta);
+                            FireTrigger(gcta, trigger.To, EdgeDirectionEnum.Out);
                         break;
 
                     case AtomGraphChangeTypeEnum.OutputEdgeDisposed:
                         if (GraphUtil.ExistQueryOut(trigger.To, "ChangeTypeFilter", "OutputEdgeDisposed"))
-                            FireTrigger(trigger.To, gcta);
+                            FireTrigger(gcta, trigger.To, EdgeDirectionEnum.Out);
                         break;
                 }                                        
         }
@@ -63,12 +65,12 @@ namespace m0.Graph.ExecutionFlow
                 {                    
                     case AtomGraphChangeTypeEnum.EdgeAdded:
                         if (GraphUtil.ExistQueryOut(trigger.To, "ChangeTypeFilter", "InputEdgeAdded"))
-                            FireTrigger(trigger.To, gcta);
+                            FireTrigger(gcta, trigger.To, EdgeDirectionEnum.In);
                         break;
 
                     case AtomGraphChangeTypeEnum.EdgeRemoved:
                         if (GraphUtil.ExistQueryOut(trigger.To, "ChangeTypeFilter", "InputEdgeRemoved"))
-                            FireTrigger(trigger.To, gcta);
+                            FireTrigger(gcta, trigger.To, EdgeDirectionEnum.In);
                         break;
                 }
         }
@@ -83,12 +85,12 @@ namespace m0.Graph.ExecutionFlow
                 {
                     case AtomGraphChangeTypeEnum.EdgeAdded:
                         if (GraphUtil.ExistQueryOut(trigger.To, "ChangeTypeFilter", "MetaEdgeAdded"))
-                            FireTrigger(trigger.To, gcta);
+                            FireTrigger(gcta, trigger.To, EdgeDirectionEnum.Meta);
                         break;
 
                     case AtomGraphChangeTypeEnum.EdgeRemoved:
                         if (GraphUtil.ExistQueryOut(trigger.To, "ChangeTypeFilter", "MetaEdgeRemoved"))
-                            FireTrigger(trigger.To, gcta);
+                            FireTrigger(gcta, trigger.To, EdgeDirectionEnum.Meta);
                         break;
                 }
         }
