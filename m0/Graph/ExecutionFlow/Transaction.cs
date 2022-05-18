@@ -15,7 +15,7 @@ namespace m0.Graph.ExecutionFlow
     {
         static bool _GraphChangeWatch = true;
 
-        public bool GraphChangeWatch { get { return _GraphChangeWatch; } set { _GraphChangeWatch = value; } }
+        public bool GraphChangeWatchActive { get { return _GraphChangeWatch; } set { _GraphChangeWatch = value; } }
 
         static IVertex r = m0.MinusZero.Instance.root;
 
@@ -291,7 +291,7 @@ namespace m0.Graph.ExecutionFlow
             Dictionary<IVertex, List<GraphChangeTransactionAtom>> graphChangeTransactionAtoms_InEdge_copy,
             Dictionary<IVertex, List<GraphChangeTransactionAtom>> graphChangeTransactionAtoms_MetaEdge_copy)
         {
-            GraphChangeWatch = false;
+            GraphChangeWatchActive = false;
 
             Dictionary<IVertex, List<IVertex>> triggerEventDictionary;            
 
@@ -310,7 +310,7 @@ namespace m0.Graph.ExecutionFlow
                     graphChangeTransactionAtoms_InEdge_copy,
                     graphChangeTransactionAtoms_MetaEdge_copy);
 
-            GraphChangeWatch = true;
+            GraphChangeWatchActive = true;
 
             SendGrahChangeEvents(exe, triggerEventDictionary);
 
@@ -369,7 +369,7 @@ namespace m0.Graph.ExecutionFlow
 
         private void RollbackAtoms()
         {
-            GraphChangeWatch = false;
+            GraphChangeWatchActive = false;
 
             foreach (ITransactionAtom a in atoms)
                 a.Rollback();
@@ -380,7 +380,7 @@ namespace m0.Graph.ExecutionFlow
 
             // no need to rollback graphChangeTransactionAtoms_InEdge
 
-            GraphChangeWatch = true;
+            GraphChangeWatchActive = true;
         }
 
         public void Rollback(IExecution exe)
@@ -407,7 +407,7 @@ namespace m0.Graph.ExecutionFlow
 
         public void AddAtom(ITransactionAtom atom)
         {
-            if (GraphChangeWatch)
+            if (GraphChangeWatchActive)
             {
                 GraphChangeTransactionAtom gcta = (GraphChangeTransactionAtom)atom;
 

@@ -52,9 +52,9 @@ namespace m0
 
             //ExtraRun();
 
-            ExtraRun2();
+           // ExtraRun2();
 
-            //ExtraRun3();
+            ExtraRun3();
 
             Close();
         }
@@ -68,17 +68,11 @@ namespace m0
 
 
             test t = new test();
-            IEdge listener = ExecutionFlowHelper.AddTriggerAndListener(examples, t.xxx);
 
-            IEdge trigger = examples.GetAll(false, "SimpleDirectTrigger").FirstOrDefault();
-
-            //   trigger.To.DeleteEdge(listener);
-            //examples.DeleteEdge(trigger);
-
-            IEdge e = trigger.To.GetAll(false, "OnlyNonTransactedRootVertexEvents").FirstOrDefault();
+            IEdge listener = ExecutionFlowHelper.AddTriggerAndListener_NonTransacted(examples, t.xxx);
 
 
-            trigger.To.DeleteEdge(e);
+            r.AddEdge(null, examples);
 
             if (examples.HasOnlyNonTransactedRootVertexEventsEdge)
             {

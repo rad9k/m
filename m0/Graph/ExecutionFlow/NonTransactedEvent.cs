@@ -15,7 +15,11 @@ namespace m0.Graph.ExecutionFlow
         {
             IExecution exe = new ZeroCodeExecution();
 
+            ExecutionFlowHelper.GraphChangeWatchOff();
+
             IVertex eventVertex = gcta.CreateEventVertex_GraphChange(triggerVertex, gcta.ChangedVertex, edgeDirection);
+
+            ExecutionFlowHelper.GraphChangeWatchOn();
 
             foreach (IEdge e in triggerVertex.GetAll(false, @"Listener:"))
             {

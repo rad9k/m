@@ -116,14 +116,14 @@ namespace m0.Graph.ExecutionFlow
         {
             ITransaction currentTransaction = MinusZero.Instance.GetTopTransaction();
 
-            currentTransaction.GraphChangeWatch = false;
+            currentTransaction.GraphChangeWatchActive = false;
         }
 
         public static void GraphChangeWatchOn()
         {
             ITransaction currentTransaction = MinusZero.Instance.GetTopTransaction();
 
-            currentTransaction.GraphChangeWatch = true;
+            currentTransaction.GraphChangeWatchActive = true;
         }
 
         public static void AddTransactionAtom(ITransactionAtom atom)
@@ -167,9 +167,22 @@ namespace m0.Graph.ExecutionFlow
                          GraphChangeFilterEnum.OutputEdgeAdded,
                          GraphChangeFilterEnum.OutputEdgeRemoved,
                          GraphChangeFilterEnum.OutputEdgeDisposed
-                         ,GraphChangeFilterEnum.OnlyNonTransactedRootVertexEvents
                 },
                 "SimpleDirectTrigger",
+                _delegate);
+        }
+
+        public static IEdge AddTriggerAndListener_NonTransacted(IVertex baseVertex, ExecutionFlowHelper.DotNetDelegate _delegate)
+        {
+            return AddTriggerAndListener(baseVertex,
+                new List<string> { },
+                new List<GraphChangeFilterEnum> {GraphChangeFilterEnum.ValueChange,
+                         GraphChangeFilterEnum.OutputEdgeAdded,
+                         GraphChangeFilterEnum.OutputEdgeRemoved,
+                         GraphChangeFilterEnum.OutputEdgeDisposed,
+                         GraphChangeFilterEnum.OnlyNonTransactedRootVertexEvents
+                },
+                "SimpleDirectNonTransactedTrigger",
                 _delegate);
         }
 

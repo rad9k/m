@@ -10,7 +10,7 @@ namespace m0.Foundation
 
     public interface ITransaction
     {
-        bool GraphChangeWatch {get; set;}
+        bool GraphChangeWatchActive {get; set;}
 
         TransactionStateEnum State { get; }
 
