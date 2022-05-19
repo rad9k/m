@@ -518,8 +518,15 @@ namespace m0.UIWpf.Visualisers
                     i.doNotTrackGraphChanges = true;
             }
 
+            // DO NOT TRACK GRAPH CHANGE BEG
+
             if (e.Meta != null && GeneralUtil.CompareStrings(e.Meta.Value, "$GraphChangeTrigger"))
                 i.doNotTrackGraphChanges = true;
+
+            if (e.Meta != null && GeneralUtil.CompareStrings(e.Meta.Value, "FormalTextLanguage"))
+                i.doNotTrackGraphChanges = true;
+
+            // DO NOT TRACK GRAPH CHANGE END
 
             i.ParentVisualiser = this;
 

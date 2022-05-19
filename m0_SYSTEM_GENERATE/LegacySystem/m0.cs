@@ -2488,6 +2488,19 @@ namespace m0
             System.AddEdge(LegacySystem.Graph.EasyVertex.Get(Root, false, @"System\Meta\Base\Vertex\$IsLink"), Empty);
 
             di.AddEdge(System, LegacySystem.Graph.EasyVertex.Get(Root, false, @"System"));
+            
+            //
+
+            IVertex listener = zc
+
+                            LegacySystem.Graph.EasyVertex.Get(smz, false, @"ExecutionFlow\EventTrigger").AddVertex(
+                 LegacySystem.Graph.EasyVertex.Get(smuml, false, @"Class\Method"),
+                 "Fire");
+
+            LegacySystem.Graph.EasyVertex.Get(smz, false, @"ExecutionFlow\EventTrigger\Fire").AddVertex(
+                 LegacySystem.Graph.EasyVertex.Get(smuml, false, @"Class\Method\InputParameter"),
+                 "event");
+
         }
 
         void AddAttribute(IVertex baseVertex, string name, int MinCardinality, int MaxCardinality)
