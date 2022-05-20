@@ -2432,26 +2432,15 @@ namespace m0
             zcb.AddVertex(CodeViewTimeLinkKeywordPart, ",");
 
         }
+        
+        public void DecorateWithDotNetStaticMethod(IVertex baseVertex, string _typeName, string _methodName)
+        {            
+            baseVertex.AddEdge(LegacySystem.Graph.EasyVertex.Get(Root, false, @"System\Meta\Base\Vertex\$Is"),
+                LegacySystem.Graph.EasyVertex.Get(Root, false, @"System\Meta\ZeroTypes\ExecutionFlow\DotNetStaticMethod"));
 
-        static IVertex _is_meta;
-        _is_meta = r.Get(false, @"System\Meta\Base\Vertex\$Is");
+            baseVertex.AddVertex(LegacySystem.Graph.EasyVertex.Get(Root, false, @"System\Meta\ZeroTypes\ExecutionFlow\DotNetStaticMethod\DotNetTypeName"), _typeName);
 
-        static IVertex dotNetEndPoint_meta;
-        dotNetEndPoint_meta = r.Get(false, @"System\Meta\ZeroTypes\ExecutionFlow\DotNetStaticMethod");
-
-        static IVertex typeName_meta;
-        static IVertex methodName_meta;
-
-        typeName_meta = r.Get(false, @"System\Meta\ZeroTypes\ExecutionFlow\DotNetStaticMethod\DotNetTypeName");
-        methodName_meta = r.Get(false, @"System\Meta\ZeroTypes\ExecutionFlow\DotNetStaticMethod\DotNetMethodName");
-
-        public static void DecorateWithDotNetStaticMethod(IVertex baseVertex, string _typeName, string _methodName)
-        {
-            baseVertex.AddEdge(_is_meta, dotNetEndPoint_meta);
-
-            baseVertex.AddVertex(typeName_meta, _typeName);
-
-            baseVertex.AddVertex(methodName_meta, _methodName);
+            baseVertex.AddVertex(LegacySystem.Graph.EasyVertex.Get(Root, false, @"System\Meta\ZeroTypes\ExecutionFlow\DotNetStaticMethod\DotNetMethodName"), _methodName);
         }
 
         void CreateSystemFormalTextLanguageZeroCode()
