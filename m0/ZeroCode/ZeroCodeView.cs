@@ -9,7 +9,7 @@ namespace m0.ZeroCode
 {
     public class ZeroCodeView
     {
-        public static INoInEdgeInOutVertexVertex AddRemoveEdgeListener(IExecution exe)
+        public static INoInEdgeInOutVertexVertex ZeroCodeViewListener(IExecution exe)
         {
             return null;
         }

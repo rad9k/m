@@ -2433,6 +2433,27 @@ namespace m0
 
         }
 
+        static IVertex _is_meta;
+        _is_meta = r.Get(false, @"System\Meta\Base\Vertex\$Is");
+
+        static IVertex dotNetEndPoint_meta;
+        dotNetEndPoint_meta = r.Get(false, @"System\Meta\ZeroTypes\ExecutionFlow\DotNetStaticMethod");
+
+        static IVertex typeName_meta;
+        static IVertex methodName_meta;
+
+        typeName_meta = r.Get(false, @"System\Meta\ZeroTypes\ExecutionFlow\DotNetStaticMethod\DotNetTypeName");
+        methodName_meta = r.Get(false, @"System\Meta\ZeroTypes\ExecutionFlow\DotNetStaticMethod\DotNetMethodName");
+
+        public static void DecorateWithDotNetStaticMethod(IVertex baseVertex, string _typeName, string _methodName)
+        {
+            baseVertex.AddEdge(_is_meta, dotNetEndPoint_meta);
+
+            baseVertex.AddVertex(typeName_meta, _typeName);
+
+            baseVertex.AddVertex(methodName_meta, _methodName);
+        }
+
         void CreateSystemFormalTextLanguageZeroCode()
         {
             IVertex zc = LegacySystem.Graph.EasyVertex.Get(Root, false, @"System\FormalTextLanguage").AddVertex(
@@ -2488,18 +2509,16 @@ namespace m0
             System.AddEdge(LegacySystem.Graph.EasyVertex.Get(Root, false, @"System\Meta\Base\Vertex\$IsLink"), Empty);
 
             di.AddEdge(System, LegacySystem.Graph.EasyVertex.Get(Root, false, @"System"));
-            
+
             //
 
-            IVertex listener = zc
+            IVertex smzeg = LegacySystem.Graph.EasyVertex.Get(Root, false, @"System\Meta\ZeroTypes\ExecutionFlow\GenericEventHandler");
 
-                            LegacySystem.Graph.EasyVertex.Get(smz, false, @"ExecutionFlow\EventTrigger").AddVertex(
-                 LegacySystem.Graph.EasyVertex.Get(smuml, false, @"Class\Method"),
-                 "Fire");
+            IVertex listener = zc.AddVertex(smzeg, "ZeroCodeViewListener");
 
-            LegacySystem.Graph.EasyVertex.Get(smz, false, @"ExecutionFlow\EventTrigger\Fire").AddVertex(
-                 LegacySystem.Graph.EasyVertex.Get(smuml, false, @"Class\Method\InputParameter"),
-                 "event");
+            DecorateWithDotNetStaticMethod(listener,
+                "m0.ZeroCode.ZeroCodeView, m0, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null",
+                "ZeroCodeViewListener");
 
         }
 
