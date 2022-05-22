@@ -424,7 +424,7 @@ namespace m0.Graph
                 if (GeneralUtil.CompareStrings(edge.Meta.Value, "$GraphChangeTrigger")) {
                     HasOnlyNonTransactedRootVertexEventsEdgeNeedsRebuild = true;
                     GraphChangeTriggerWatcher.RemoveGraphChangeTrigger(edge);
-                    }
+                }
 
                 if (GeneralUtil.CompareStrings(edge.To.Value, "OnlyNonTransactedRootVertexEvents") ||
                     GeneralUtil.CompareStrings(edge.Meta.Value, "Listener"))
