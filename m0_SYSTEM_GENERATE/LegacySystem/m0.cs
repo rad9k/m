@@ -190,7 +190,7 @@ namespace m0
         {
             IVertex sm = LegacySystem.Graph.EasyVertex.Get(Root, false, @"System\Meta");
 
-            m0.LegacySystem.Util.GeneralUtil.ParseAndExcute(sm, null, "{Base{$,Vertex{$IsLink,$Inherits,$NoInherit,$StackFrameInherits,$Is,$EdgeTarget,$VertexTarget,$IsAggregation,$MinCardinality,$MaxCardinality,$DefaultValue,$DefaultViewVisualiser,$DefaultEditVisualiser,$DefaultOpenVisualiser,$Group,$Section,$Description,$ExecutableEndPoint,$GraphChangeTrigger,$VertexEval,Author,Dependency},$Import,$ImportMeta,$Keyword,$KeywordGroupDefinition,$$KeywordGroup,$$KeywordManyRoot,$$LocalRoot,$$StartInLocalRoot,$$EmptyKeyword,$$NewVertexKeyword,$$LinkKeyword,$$NonSelfRecursiveParameters,$$Import,$$ImportDirect,$$ImportMeta,$$ImportDirectMeta,$$NoSequentialExecution,$NewLine,$ParseRoot,$ParseArtefacts}}");
+            m0.LegacySystem.Util.GeneralUtil.ParseAndExcute(sm, null, "{Base{$,Vertex{$IsLink,$Inherits,$NoInherit,$StackFrameInherits,$Is,$EdgeTarget,$VertexTarget,$IsAggregation,$MinCardinality,$MaxCardinality,$DefaultValue,$DefaultViewVisualiser,$DefaultEditVisualiser,$DefaultOpenVisualiser,$Group,$Section,$Description,$ExecutableEndPoint,$GraphChangeTrigger,$VertexEval,MetaEdge,Author,Dependency},$Import,$ImportMeta,$Keyword,$KeywordGroupDefinition,$$KeywordGroup,$$KeywordManyRoot,$$LocalRoot,$$StartInLocalRoot,$$EmptyKeyword,$$NewVertexKeyword,$$LinkKeyword,$$NonSelfRecursiveParameters,$$Import,$$ImportDirect,$$ImportMeta,$$ImportDirectMeta,$$NoSequentialExecution,$NewLine,$ParseRoot,$ParseArtefacts}}");
 
             LegacySystem.Graph.EasyVertex.Get(sm, false, @"Base").AddEdge(
                 null,
@@ -2499,11 +2499,28 @@ namespace m0
 
             di.AddEdge(System, LegacySystem.Graph.EasyVertex.Get(Root, false, @"System"));
 
-            //
+            //   ZeroCodeViewGraphChange         
 
-            IVertex smzeg = LegacySystem.Graph.EasyVertex.Get(Root, false, @"System\Meta\ZeroTypes\ExecutionFlow\GenericEventHandler");
+            IVertex view = zc.AddVertex(LegacySystem.Graph.EasyVertex.Get(Root, false, @"System\Meta\ZeroTypes\FormalTextLanguage\FormalTextLanguageView"), 
+                "ZeroCodeView");
 
-            IVertex listener = zc.AddVertex(smzeg, "ZeroCodeViewListener");
+            IVertex graphChangeTrigger = view.AddVertex(LegacySystem.Graph.EasyVertex.Get(Root, false, @"System\Meta\Base\Vertex\$GraphChangeTrigger"),
+                "ZeroCodeViewGraphChange");
+
+            graphChangeTrigger.AddEdge(LegacySystem.Graph.EasyVertex.Get(Root, false, @"System\Meta\Base\Vertex\$Is"),
+                LegacySystem.Graph.EasyVertex.Get(Root, false, @"System\Meta\ZeroTypes\ExecutionFlow\GraphChangeTrigger"));
+
+            graphChangeTrigger.AddEdge(LegacySystem.Graph.EasyVertex.Get(Root, false, @"System\Meta\ZeroTypes\ExecutionFlow\GraphChangeTrigger\ChangeTypeFilter"),
+                LegacySystem.Graph.EasyVertex.Get(Root, false, @"System\Meta\ZeroTypes\ExecutionFlow\GraphChangeFilterEnum\OnlyNonTransactedRootVertexEvents"));
+
+            graphChangeTrigger.AddEdge(LegacySystem.Graph.EasyVertex.Get(Root, false, @"System\Meta\ZeroTypes\ExecutionFlow\GraphChangeTrigger\ChangeTypeFilter"),
+                LegacySystem.Graph.EasyVertex.Get(Root, false, @"System\Meta\ZeroTypes\ExecutionFlow\GraphChangeFilterEnum\MetaEdgeAdded"));
+
+            graphChangeTrigger.AddEdge(LegacySystem.Graph.EasyVertex.Get(Root, false, @"System\Meta\ZeroTypes\ExecutionFlow\GraphChangeTrigger\ChangeTypeFilter"),
+                LegacySystem.Graph.EasyVertex.Get(Root, false, @"System\Meta\ZeroTypes\ExecutionFlow\GraphChangeFilterEnum\MetaEdgeRemoved"));
+
+            IVertex listener = graphChangeTrigger.AddVertex(LegacySystem.Graph.EasyVertex.Get(Root, false, @"System\Meta\ZeroTypes\ExecutionFlow\GraphChangeTrigger\Listener"),
+                "ZeroCodeViewListener");
 
             DecorateWithDotNetStaticMethod(listener,
                 "m0.ZeroCode.ZeroCodeView, m0, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null",
@@ -2548,6 +2565,9 @@ namespace m0
             AddAttribute(FormalTextLanguage, "QuerySlash", 1, 1);            
 
             AddAttribute(FormalTextLanguage, "CodeViewTimeLinkKeywordPart", 0, -1);
+
+            FormalTextLanguage.AddVertex(LegacySystem.Graph.EasyVertex.Get(Root, false, @"System\Meta\Base\Vertex\MetaEdge"),
+                "FormalTextLanguageView");
 
             LegacySystem.Graph.EasyVertex.Get(sm, false, @"ZeroTypes\String").AddEdge(
                 LegacySystem.Graph.EasyVertex.Get(sm, false, @"*$Is"),

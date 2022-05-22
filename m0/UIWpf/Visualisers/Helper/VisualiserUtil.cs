@@ -39,6 +39,7 @@ namespace m0.UIWpf.Visualisers.Helper
                     list.Add(e);
 
             return list;
+            //return toFilterEdges;
         }
 
         public static bool FilterEdge(IEdge toFilterEdge, IVertex visualiserVertex)
