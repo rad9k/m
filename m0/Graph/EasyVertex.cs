@@ -40,12 +40,7 @@ namespace m0.Graph
                 object oldValue = _Value;
 
                 if (value == null)
-                    return;
-
-                if (value.ToString() == "Meta")
-                {
-                    int x = 0;
-                }
+                    return;                
 
                 _Value = value;
 

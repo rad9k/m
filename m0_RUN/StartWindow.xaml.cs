@@ -56,7 +56,18 @@ namespace m0
 
             ExtraRun3();
 
+            ExtraRun4();
+
             Close();
+        }
+
+        void ExtraRun4()
+        {
+            IVertex r = MinusZero.Instance.root;
+
+            IVertex examples = r.Get(false, "examples");
+
+            examples.AddVertex(r.Get(false, @"System\FormalTextLanguage\ZeroCode\ZeroCodeView"), "XX");
         }
 
 

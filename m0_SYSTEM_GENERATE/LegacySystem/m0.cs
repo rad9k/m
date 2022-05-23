@@ -2518,9 +2518,7 @@ namespace m0
 
             graphChangeTrigger.AddEdge(LegacySystem.Graph.EasyVertex.Get(Root, false, @"System\Meta\ZeroTypes\ExecutionFlow\GraphChangeTrigger\ChangeTypeFilter"),
                 LegacySystem.Graph.EasyVertex.Get(Root, false, @"System\Meta\ZeroTypes\ExecutionFlow\GraphChangeFilterEnum\MetaEdgeRemoved"));
-
-            return;
-
+            
             IVertex listener = graphChangeTrigger.AddVertex(LegacySystem.Graph.EasyVertex.Get(Root, false, @"System\Meta\ZeroTypes\ExecutionFlow\GraphChangeTrigger\Listener"),
                 "ZeroCodeViewListener");
 

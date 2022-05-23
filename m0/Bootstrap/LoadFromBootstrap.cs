@@ -14,7 +14,7 @@ namespace m0.Bootstrap
     {
         public static void Execute()
         {
-            JsonSerializationStore bootstrap = new JsonSerializationStore("_bootstrap.m0", MinusZero.Instance, new AccessLevelEnum[] { });
+            JsonSerializationStore bootstrap = new JsonSerializationStore("_bootstrap.m0", MinusZero.Instance, new AccessLevelEnum[] { }, true);
 
             IVertex root = MinusZero.Instance.root;
 
@@ -35,7 +35,7 @@ namespace m0.Bootstrap
 
                 if (isSystem)
                 {
-                    JsonSerializationStore imp = new JsonSerializationStore(importFilePath, MinusZero.Instance, new AccessLevelEnum[] { });
+                    JsonSerializationStore imp = new JsonSerializationStore(importFilePath, MinusZero.Instance, new AccessLevelEnum[] { }, true);
 
                     ZeroUMLInstructionHelpers.MoveEdgesIntoVertex(imp.Root, importRoot);
 
@@ -45,7 +45,7 @@ namespace m0.Bootstrap
                 }
                 else
                 {
-                    JsonSerializationStore imp = new JsonSerializationStore(importFilePath, MinusZero.Instance, new AccessLevelEnum[] { });
+                    JsonSerializationStore imp = new JsonSerializationStore(importFilePath, MinusZero.Instance, new AccessLevelEnum[] { }, true);
 
                     ZeroUMLInstructionHelpers.MoveEdgesIntoVertex_IncludeEverythingBesidesList(imp.Root, importRoot, system);
                 }

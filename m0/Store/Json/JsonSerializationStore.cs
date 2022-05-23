@@ -401,7 +401,11 @@ namespace m0.Store.Json
             _DetachState = DetachStateEnum.Detached;
         }
 
-        public JsonSerializationStore(String identifier, IStoreUniverse storeUniverse, AccessLevelEnum[] accessLeveList, )
+        public JsonSerializationStore(String identifier, IStoreUniverse storeUniverse, AccessLevelEnum[] accessLeveList, bool doVolatileCommit):
+            this(identifier, storeUniverse, accessLeveList)
+        {
+            _DoVolatileCommit = doVolatileCommit;
+        }
 
         public JsonSerializationStore(String identifier, IStoreUniverse storeUniverse, AccessLevelEnum[] accessLeveList)
             : base(identifier, storeUniverse, accessLeveList)
