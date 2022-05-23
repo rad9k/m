@@ -31,7 +31,7 @@ namespace m0.Foundation
     // - IStoreUniverse
     // - AccessLavels[]
 
-    public interface IStore:ITransactionRoot
+    public interface IStore: ITransactionRoot
     {
         IStoreUniverse StoreUniverse { get; }
 
@@ -41,7 +41,7 @@ namespace m0.Foundation
         
         String Identifier { get; }
                
-        bool AlwaysPresent { get; } // if AlwaysPresent, do not have to move its vertexes in the ZeroUMLInstructionHelper.MoveEdgesIntoVertex
+        bool AlwaysPresent { get; } // if AlwaysPresent, do not have to move its vertexes in the ZeroUMLInstructionHelper.MoveEdgesIntoVertex        
 
         void UpdateDetachStateData();
 

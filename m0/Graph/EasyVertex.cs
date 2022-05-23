@@ -42,6 +42,11 @@ namespace m0.Graph
                 if (value == null)
                     return;
 
+                if (value.ToString() == "Meta")
+                {
+                    int x = 0;
+                }
+
                 _Value = value;
 
                 ValueChanged();

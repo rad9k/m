@@ -40,6 +40,13 @@ namespace m0.Store
             get { return _root; }
         }
 
+        protected bool _DoVolatileCommit = false;
+
+        public bool DoVolatileCommit
+        {
+            get { return _DoVolatileCommit; }
+        }
+
         public void RefreshPre()
         {
             foreach (IVertex v in VertexIdentifiersDictionary.Values)
