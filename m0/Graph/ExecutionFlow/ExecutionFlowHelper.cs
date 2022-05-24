@@ -180,6 +180,7 @@ namespace m0.Graph.ExecutionFlow
                          GraphChangeFilterEnum.OutputEdgeAdded,
                          GraphChangeFilterEnum.OutputEdgeRemoved,
                          GraphChangeFilterEnum.OutputEdgeDisposed,
+                         GraphChangeFilterEnum.MetaEdgeAdded,
                          GraphChangeFilterEnum.OnlyNonTransactedRootVertexEvents
                 },
                 "SimpleDirectNonTransactedTrigger",

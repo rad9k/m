@@ -82,7 +82,8 @@ namespace m0.Graph.ExecutionFlow
 
         public static void HandleMetaEdge(GraphChangeTransactionAtom gcta)
         {
-            IVertex changedVeretx = gcta.ChangedVertex;
+            //IVertex changedVeretx = gcta.ChangedVertex;
+            IVertex changedVeretx = gcta.Edge.Meta;
 
             foreach (IEdge trigger in GraphUtil.GetQueryOut(changedVeretx, "$GraphChangeTrigger", null))
                 switch (gcta.Type)

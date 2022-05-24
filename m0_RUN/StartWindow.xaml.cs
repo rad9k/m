@@ -54,7 +54,7 @@ namespace m0
 
            // ExtraRun2();
 
-            ExtraRun3();
+            //ExtraRun3();
 
             ExtraRun4();
 
@@ -83,7 +83,8 @@ namespace m0
             IEdge listener = ExecutionFlowHelper.AddTriggerAndListener_NonTransacted(examples, t.xxx);
 
 
-            r.AddEdge(null, examples);
+            r.AddVertex(examples, "XXX");
+            //r.AddEdge(null, examples);
 
             if (examples.HasOnlyNonTransactedRootVertexEventsEdge)
             {
