@@ -304,6 +304,7 @@
     <Compile Include="ZeroCode\Helpers\DictionariesForFormalTextLanguage.cs" />
     <Compile Include="ZeroCode\Helpers\EdgeKey_FromMeta.cs" />
     <Compile Include="ZeroCode\Helpers\EdgeKey_MetaTo.cs" />
+    <Compile Include="ZeroCode\String2ZeroCodeGraphProcessing2.cs" />
     <Compile Include="ZeroCode\ZeroCodeExecutonUtil.cs" />
     <Compile Include="ZeroCode\ZeroCodeView.cs" />
     <Compile Include="ZeroTypes\ColorType.cs" />

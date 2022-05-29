@@ -10,7 +10,7 @@ using System.Text.RegularExpressions;
 
 namespace m0.ZeroCode
 {
-    public class String2ZeroCodeGraphProcessing 
+    public class String2ZeroCodeGraphProcessing2 
     {
         public class TextRange
         {
@@ -41,7 +41,7 @@ namespace m0.ZeroCode
             public int endLine;
 
             public int lineNo;
-            public LineInfo currentLineInfo;
+            public m0.ZeroCode.String2ZeroCodeGraphProcessing.LineInfo currentLineInfo;
 
             public string currentLineNoTabs;
 
@@ -149,7 +149,7 @@ namespace m0.ZeroCode
 
             public int getNextLineWithSameTabCount()
             {
-                List<LineInfo> li = processing.lineInfoList;
+                List<m0.ZeroCode.String2ZeroCodeGraphProcessing.LineInfo> li = processing.lineInfoList;
                 int iterationLineNo = lineNo + 1;
 
                 while (iterationLineNo < li.Count 
@@ -167,7 +167,7 @@ namespace m0.ZeroCode
 
             public int getNextLineWithLessTabCountIfNextLineHasMoreTabCount()
             {
-                List<LineInfo> li = processing.lineInfoList;
+                List<m0.ZeroCode.String2ZeroCodeGraphProcessing.LineInfo> li = processing.lineInfoList;
 
                 if (lineNo >= li.Count - 1)
                     return -1;
@@ -283,7 +283,7 @@ namespace m0.ZeroCode
 
         string text;
 
-        public List<LineInfo> lineInfoList;
+        List<LineInfo> lineInfoList;
 
         //
 
