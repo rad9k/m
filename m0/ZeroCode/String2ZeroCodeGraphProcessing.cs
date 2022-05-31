@@ -2803,6 +2803,8 @@ namespace m0.ZeroCode
             baseVertex.Value = firstValue;
         }        
 
+        public static bool TEST_RUN = false;
+
         public IVertex Process(IVertex _baseVertex, string _text)
         {
             baseVertex = _baseVertex;

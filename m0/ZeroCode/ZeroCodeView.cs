@@ -14,6 +14,6 @@ namespace m0.ZeroCode
             return null;
         }
 
-        static void EdgeAdded(IEdge )
+        //static void EdgeAdded(IEdge )
     }
 }

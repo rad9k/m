@@ -50,6 +50,8 @@ namespace m0
         {            
             m0_RUN.Main.Run();
 
+            ExtraRun5();
+
             //ExtraRun();
 
            // ExtraRun2();
@@ -59,6 +61,16 @@ namespace m0
             //ExtraRun4();
 
             Close();
+        }
+
+        void ExtraRun5()
+        {
+            String2ZeroCodeGraphProcessing.TEST_RUN = true;
+
+            IVertex x = m0.MinusZero.Instance.root.Get(false, "examples").AddVertex(null, "X");
+
+
+            GraphUtil.LoadParseAndMove(@"..\..\..\m0_SYSTEM_GENERATE\bin\Debug\_RES\Generator\SimpleTransformer.txt", x, "'SimpleTransformer'");
         }
 
         void ExtraRun4()
