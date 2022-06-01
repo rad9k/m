@@ -96,7 +96,9 @@ namespace m0.Graph
         {
             string text = System.IO.File.ReadAllText(fileName);
 
+            String2ZeroCodeGraphProcessing.TEST_RUN = true;
             MinusZero.Instance.DefaultParser.Parse(baseVertex, text);
+            String2ZeroCodeGraphProcessing.TEST_RUN = false;
         }
 
         public static void LoadParseAndMove(string fileName, IVertex baseVertex, string vertexName)

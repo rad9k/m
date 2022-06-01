@@ -2200,6 +2200,13 @@ namespace m0.ZeroCode
          
         IVertex _AddKeywordVertex(ParsingStack s, IVertex parent, keywordTryingData ktd, IVertex keywordAddingVertex, IVertex useMetaWhenANY, int subCount, IEdge parentMetaEdge)
         {
+            if (TEST_RUN & parent != null)
+            {
+                //IVertex newParent = parent.AddVertex(null, "P");
+
+              //  parent = newParent;
+            }
+
             IVertex nv=null;
 
             int min_subCount = 0;
@@ -2321,6 +2328,11 @@ namespace m0.ZeroCode
                             specialAddingTextPartHack(nv, subText);
                     }
                 }
+            }
+
+            if (TEST_RUN & parent != null)
+            {
+                IVertex newParent = parent.AddVertex(null, "P");
             }
 
             return nv;
