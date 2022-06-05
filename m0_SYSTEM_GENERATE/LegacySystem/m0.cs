@@ -429,7 +429,8 @@ namespace m0
             // "||" > "::"        
 
             m0.LegacySystem.Util.GeneralUtil.ParseAndExcute(smu, sm,
-                "{Link{Target{$MinCardinality:1,$MaxCardinality:1}},ExpressionAtom{NextExpression{$MinCardinality:1,$MaxCardinality:1}},Atom" +
+                // NextExpression{$MinCardinality:1 ?????? it was like this. maybe on a purpose :) :/
+                "{Link{Target{$MinCardinality:1,$MaxCardinality:1}},ExpressionAtom{NextExpression{$MinCardinality:0,$MaxCardinality:1}},Atom" +
                 ",PropagateToStackExpression,ZeroOperator" +
                 ",SingleOperator{Expression{$MinCardinality:1,$MaxCardinality:1}}" +                
                 ",DoubleOperator{LeftExpression{$MinCardinality:1,$MaxCardinality:1},RightExpression{$MinCardinality:1,$MaxCardinality:1}}" +                
@@ -2418,7 +2419,9 @@ namespace m0
             zcb.AddVertex(LegacySystem.Graph.EasyVertex.Get(ftl, false, "EscapeCharacter"), "%");
             zcb.AddVertex(LegacySystem.Graph.EasyVertex.Get(ftl, false, "SetIndexPrefix"), "<<");
             zcb.AddVertex(LegacySystem.Graph.EasyVertex.Get(ftl, false, "SetIndexPostfix"), ">>");
-            zcb.AddVertex(LegacySystem.Graph.EasyVertex.Get(ftl, false, "QuerySlash"), "\\");            
+            zcb.AddVertex(LegacySystem.Graph.EasyVertex.Get(ftl, false, "QuerySlash"), "\\");
+            zcb.AddEdge(LegacySystem.Graph.EasyVertex.Get(ftl, false, "NextAtomEdge"),
+                LegacySystem.Graph.EasyVertex.Get(Root, false, @"System\Meta\ZeroUML\NextOut\Next"));
 
             IVertex CodeViewTimeLinkKeywordPart = LegacySystem.Graph.EasyVertex.Get(ftl, false, "CodeViewTimeLinkKeywordPart");
 
@@ -2562,7 +2565,8 @@ namespace m0
             AddAttribute(FormalTextLanguage, "EscapeCharacter", 1, 1);
             AddAttribute(FormalTextLanguage, "SetIndexPrefix", 1, 1);
             AddAttribute(FormalTextLanguage, "SetIndexPostfix", 1, 1);
-            AddAttribute(FormalTextLanguage, "QuerySlash", 1, 1);            
+            AddAttribute(FormalTextLanguage, "QuerySlash", 1, 1);
+            AddAttribute(FormalTextLanguage, "NextAtomEdge", 1, 1);
 
             AddAttribute(FormalTextLanguage, "CodeViewTimeLinkKeywordPart", 0, -1);
 

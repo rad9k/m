@@ -49,6 +49,8 @@ namespace m0.ZeroCode
 
             public IVertex lastAddedVertex;
             public IVertex lastAddedVertexParent;
+            public IVertex nextAtomOverdrive;
+
             public int newLineCount;
 
             public bool skipParse = false;
@@ -2116,7 +2118,7 @@ namespace m0.ZeroCode
         void AddKeywordVertex_AddVertex(ParsingStack s, IVertex baseVertex, IEdge metaEdge, IVertex meta, object val, ref IVertex nv, keywordTryingData ktd, IEdge parentMetaEdge)
         {
             if (ZeroCodeUtil.IsDoubleDolarMeta(metaEdge))
-                return;
+                return;            
 
             //if (GeneralUtil.CompareStrings("$$LocalRoot", metaEdge.Meta.Value)
             //|| GeneralUtil.CompareStrings("$$StartInLocalRoot", metaEdge.Meta.Value)
@@ -2154,7 +2156,7 @@ namespace m0.ZeroCode
                         nv = AddEdge(s, baseVertex, meta, MinusZero.Instance.Empty).To;
                     else
                     {
-                        nv = AddVertex(s, baseVertex, meta, val);
+                        nv = AddVertex(s, baseVertex, meta, val);                        
 
                         if(val.ToString()!="$Empty")
                             lastAddedVertex = nv;
@@ -2197,7 +2199,7 @@ namespace m0.ZeroCode
 
             return false;
         }
-         
+
         IVertex _AddKeywordVertex(ParsingStack s, IVertex parent, keywordTryingData ktd, IVertex keywordAddingVertex, IVertex useMetaWhenANY, int subCount, IEdge parentMetaEdge)
         {
             if (TEST_RUN & parent != null)
@@ -2205,6 +2207,12 @@ namespace m0.ZeroCode
                 //IVertex newParent = parent.AddVertex(null, "P");
 
               //  parent = newParent;
+            }
+
+            if (s.nextAtomOverdrive != null)
+            {
+                parent = s.nextAtomOverdrive;
+                s.nextAtomOverdrive = null;
             }
 
             IVertex nv=null;
@@ -2270,14 +2278,16 @@ namespace m0.ZeroCode
                             if (sub is string)
                                 AddKeywordVertex_AddVertex(s, parent, e, meta, sub, ref nv, ktd, parentMetaEdge); // was marked: ERROR. why?? 
 
-                            if (sub is ToVertexMock)
-                                nv = AddKeywordVertex_AddEdge(s, parent, e, meta, (IVertex)sub).To;
+                            if (sub is ToVertexMock)                            
+                                nv = AddKeywordVertex_AddEdge(s, parent, e, meta, (IVertex)sub).To;                                
 
-                            if (sub is keywordTryingData)
-                                nv = _AddKeywordVertex(s, parent, (keywordTryingData)sub, ((keywordTryingData)sub).keywordVertex, meta, 0, null); // cnt_subCount);                            
+                            if (sub is keywordTryingData)                            
+                                nv = _AddKeywordVertex(s, parent, (keywordTryingData)sub, ((keywordTryingData)sub).keywordVertex, meta, 0, null); // cnt_subCount);                                                            
                         }
-                        else
+                        else                            
                             nv = AddKeywordVertex_AddEdge(s, parent, e, meta, e.To).To;
+                            
+                            
                         }
                     else
                     {
@@ -2299,11 +2309,11 @@ namespace m0.ZeroCode
                             if (sub is string)
                                 AddKeywordVertex_AddVertex(s, parent, e, meta, sub, ref nv, ktd, parentMetaEdge);
 
-                            if (sub is ToVertexMock)
-                                nv = AddKeywordVertex_AddEdge(s, parent, e, meta, (IVertex)sub).To;
+                            if (sub is ToVertexMock)                            
+                                nv = AddKeywordVertex_AddEdge(s, parent, e, meta, (IVertex)sub).To;                                
 
-                            if (sub is keywordTryingData)                              
-                                nv = _AddKeywordVertex(s, parent, (keywordTryingData)sub, ((keywordTryingData)sub).keywordVertex, meta, 0, null);// cnt_subCount);
+                            if (sub is keywordTryingData)             
+                                nv = _AddKeywordVertex(s, parent, (keywordTryingData)sub, ((keywordTryingData)sub).keywordVertex, meta, 0, null);// cnt_subCount);                            
 
                             tryLocalRootAdd(s, e, nv, ktd);
                         }
@@ -2332,7 +2342,7 @@ namespace m0.ZeroCode
 
             if (TEST_RUN & parent != null)
             {
-                IVertex newParent = parent.AddVertex(null, "P");
+              //  IVertex newParent = parent.AddVertex(null, "P");
             }
 
             return nv;
@@ -2487,7 +2497,8 @@ namespace m0.ZeroCode
             if (meta!=null && GeneralUtil.CompareStrings("(?<ANY>)", meta.Value))
                 meta = MinusZero.Instance.Empty;
 
-            s.lastAddedVertex = baseVertex.AddVertex(meta, val);
+            s.lastAddedVertex = baseVertex.AddVertex(meta, val);            
+
             return s.lastAddedVertex;
         }
 
@@ -2499,7 +2510,23 @@ namespace m0.ZeroCode
             if (meta != null && GeneralUtil.CompareStrings("(?<ANY>)", meta.Value))
                 meta = MinusZero.Instance.Empty;
 
+            NextAtomHandle(s, baseVertex, meta, to);
+
             return baseVertex.AddEdge(meta, to);
+        }
+
+        void NextAtomHandle(ParsingStack s, IVertex baseVertex, IVertex meta, IVertex to)
+        {
+            if (!TEST_RUN)
+                return;
+
+            if(GraphUtil.GetValueAndCompareStrings(meta, "$Is") &&
+                GraphUtil.ExistQueryOut(to, null, dict.NextAtomEdge.To.Value.ToString()))
+            {
+                s.nextAtomOverdrive = baseVertex;
+
+                baseVertex.AddVertex(null, "PP");
+            }            
         }
 
         IVertex ProcessLine(ParsingStack s, IVertex _baseVertex)
