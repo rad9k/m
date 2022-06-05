@@ -49,7 +49,12 @@ namespace m0.ZeroCode
 
             public IVertex lastAddedVertex;
             public IVertex lastAddedVertexParent;
-            public IVertex nextAtomOverdrive;
+
+            // next atom handle
+
+            public IVertex nextAtom_Overdrive;
+            public bool nextAtom_isFirstKeywordInLine;
+            public bool nextAtom_emitNext;
 
             public int newLineCount;
 
@@ -2479,6 +2484,12 @@ namespace m0.ZeroCode
             if (meta!=null && GeneralUtil.CompareStrings("(?<ANY>)", meta.Value))
                 meta = MinusZero.Instance.Empty;
 
+            if (s.nextAtom_emitNext)
+            {
+                meta = dict.NextAtomEdge;
+                s.nextAtom_emitNext = false;
+            }
+
             s.lastAddedVertex = baseVertex.AddVertex(meta, val);            
 
             return s.lastAddedVertex;
@@ -2488,9 +2499,9 @@ namespace m0.ZeroCode
         {
             s.lastAddedVertexParent = baseVertex;
             s.lastAddedVertex = null;
-            
+
             if (meta != null && GeneralUtil.CompareStrings("(?<ANY>)", meta.Value))
-                meta = MinusZero.Instance.Empty;
+                meta = MinusZero.Instance.Empty;            
 
             NextAtomHandle(s, baseVertex, meta, to);
 
@@ -2502,13 +2513,18 @@ namespace m0.ZeroCode
             if (!TEST_RUN)
                 return;
 
-            if(GraphUtil.GetValueAndCompareStrings(meta, "$Is") &&
-                GraphUtil.ExistQueryOut(to, null, dict.NextAtomEdge.To.Value.ToString()))
-            {
-                s.nextAtomOverdrive = baseVertex;
+            if (s.nextAtom_isFirstKeywordInLine && GraphUtil.GetValueAndCompareStrings(meta, "$Is")) {
+                s.nextAtom_isFirstKeywordInLine = false;
 
-                baseVertex.AddVertex(null, "PP");
-            }            
+                if (GraphUtil.ExistQueryOut(to, null, dict.NextAtomEdge.Value.ToString()))
+                {
+                    s.nextAtom_Overdrive = baseVertex;
+
+                    baseVertex.AddVertex(null, "PP");
+                }
+
+                
+            }
         }
 
         IVertex ProcessLine(ParsingStack s, IVertex _baseVertex)
@@ -2533,11 +2549,14 @@ namespace m0.ZeroCode
 
                 IVertex toAddVertex = _baseVertex;
 
-                if (s.nextAtomOverdrive != null)
+                if (s.nextAtom_Overdrive != null)
                 {
-                    toAddVertex = s.nextAtomOverdrive;
-                    s.nextAtomOverdrive = null;
+                    toAddVertex = s.nextAtom_Overdrive;
+                    s.nextAtom_Overdrive = null;
+                    s.nextAtom_emitNext = true;
                 }
+
+                s.nextAtom_isFirstKeywordInLine = true;
 
                 return AddKeywordVertex(s, toAddVertex, chosenKeyword);
             }
