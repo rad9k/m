@@ -2201,20 +2201,7 @@ namespace m0.ZeroCode
         }
 
         IVertex _AddKeywordVertex(ParsingStack s, IVertex parent, keywordTryingData ktd, IVertex keywordAddingVertex, IVertex useMetaWhenANY, int subCount, IEdge parentMetaEdge)
-        {
-            if (TEST_RUN & parent != null)
-            {
-                //IVertex newParent = parent.AddVertex(null, "P");
-
-              //  parent = newParent;
-            }
-
-            if (s.nextAtomOverdrive != null)
-            {
-                parent = s.nextAtomOverdrive;
-                s.nextAtomOverdrive = null;
-            }
-
+        {                        
             IVertex nv=null;
 
             int min_subCount = 0;
@@ -2338,11 +2325,6 @@ namespace m0.ZeroCode
                             specialAddingTextPartHack(nv, subText);
                     }
                 }
-            }
-
-            if (TEST_RUN & parent != null)
-            {
-              //  IVertex newParent = parent.AddVertex(null, "P");
             }
 
             return nv;
@@ -2549,7 +2531,15 @@ namespace m0.ZeroCode
 
                 keywordTryingData chosenKeyword = examinedKeywords[0];
 
-                return AddKeywordVertex(s, _baseVertex, chosenKeyword);
+                IVertex toAddVertex = _baseVertex;
+
+                if (s.nextAtomOverdrive != null)
+                {
+                    toAddVertex = s.nextAtomOverdrive;
+                    s.nextAtomOverdrive = null;
+                }
+
+                return AddKeywordVertex(s, toAddVertex, chosenKeyword);
             }
             else
             {
