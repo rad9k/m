@@ -67,11 +67,13 @@ namespace m0
         {
             IVertex x = m0.MinusZero.Instance.root.Get(false, "examples").AddVertex(null, "X");
 
-            
 
-            GraphUtil.LoadParseAndMove(@"..\..\..\m0_SYSTEM_GENERATE\bin\Debug\_RES\Generator\test.txt", x, "'SimpleTransformer'");
 
-           
+            //GraphUtil.LoadParseAndMove(@"..\..\..\m0_SYSTEM_GENERATE\bin\Debug\_RES\Generator\test.txt", x, "'SimpleTransformer'");
+
+            GraphUtil.LoadParseAndMove(@"..\..\..\m0_SYSTEM_GENERATE\bin\Debug\_RES\Generator\SimpleTransformer.txt", x, "'SimpleTransformer'");
+
+
         }
 
         void ExtraRun4()

@@ -2549,6 +2549,7 @@ namespace m0.ZeroCode
 
                 IVertex toAddVertex = _baseVertex;
 
+
                 if (s.nextAtom_Overdrive != null)
                 {
                     toAddVertex = s.nextAtom_Overdrive;
