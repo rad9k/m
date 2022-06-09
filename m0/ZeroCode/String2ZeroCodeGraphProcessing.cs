@@ -50,11 +50,14 @@ namespace m0.ZeroCode
             public IVertex lastAddedVertex;
             public IVertex lastAddedVertexParent;
 
-            // next atom handle
+            // next atom handle BEG
 
-            public IVertex nextAtom_Overdrive;
+            public IVertex nextAtom_toAddVertexOverdrive;
             public bool nextAtom_isFirstKeywordInLine;
             public bool nextAtom_emitNext;
+            public int nextAtom_tabsWhenAddingtoAddVertexOverdrive;
+
+            // next atom handle END
 
             public int newLineCount;
 
@@ -2518,7 +2521,10 @@ namespace m0.ZeroCode
 
                 if (GraphUtil.ExistQueryOut(to, null, dict.NextAtomEdge.Value.ToString()))
                 {
-                    s.nextAtom_Overdrive = baseVertex;
+                    if (s.nextAtom_toAddVertexOverdrive == null)
+                        s.nextAtom_tabsWhenAddingtoAddVertexOverdrive = s.getThisTabCount();
+
+                    s.nextAtom_toAddVertexOverdrive = baseVertex;
 
                     baseVertex.AddVertex(null, "PP");
                 }
@@ -2529,6 +2535,9 @@ namespace m0.ZeroCode
 
         IVertex ProcessLine(ParsingStack s, IVertex _baseVertex)
         {
+            if (s.lineNo > 0 /*&& s.getThisTabCount() < s.getPrevTabCount()*/ && s.getThisTabCount() < s.nextAtom_tabsWhenAddingtoAddVertexOverdrive)
+                s.nextAtom_toAddVertexOverdrive = null;
+
             AddNewLines(s);
 
             bool shallProcess = true;
@@ -2550,10 +2559,10 @@ namespace m0.ZeroCode
                 IVertex toAddVertex = _baseVertex;
 
 
-                if (s.nextAtom_Overdrive != null)
+                if (s.nextAtom_toAddVertexOverdrive != null)
                 {
-                    toAddVertex = s.nextAtom_Overdrive;
-                    s.nextAtom_Overdrive = null;
+                    toAddVertex = s.nextAtom_toAddVertexOverdrive;
+                    s.nextAtom_toAddVertexOverdrive = null;
                     s.nextAtom_emitNext = true;
                 }
 
