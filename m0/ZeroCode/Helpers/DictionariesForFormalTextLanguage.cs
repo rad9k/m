@@ -371,6 +371,8 @@ namespace m0.ZeroCode.Helpers
         public IDictionary<char, List<string>> allKeywordsSubstringsPositiveDictionary_witchoutLinkKeywordParts;
         public Dictionary<char, List<string>> allKeywordsSubstringsNegativeDictionary_witchoutLinkKeywordParts;
 
+        public IList
+
 
 
         public IDictionary<IVertex, KeywordInfo> keywordInfoDict;
