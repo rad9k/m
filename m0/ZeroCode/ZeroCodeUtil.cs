@@ -94,7 +94,7 @@ namespace m0.ZeroCode
             if (metaValue.Length >= 1 && metaValue[0] == '$')
                 return true;
 
-            if (GraphUtil.GetQueryOutCount(e.Meta, "$$NoSequentialExecution", null) > 0)
+            if (GraphUtil.ExistQueryOut(e.Meta, "$$NoSequentialExecution", null))
                 return true;
 
             return false;
