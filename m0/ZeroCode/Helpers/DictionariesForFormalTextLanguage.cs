@@ -121,7 +121,43 @@ namespace m0.ZeroCode.Helpers
 
             //
 
+            d.instructions_HasNextEdge = new HashSet<IVertex>();
+            d.instructions_NextAtomRoot = new HashSet<IVertex>();
+
+            addInstructions(d);
+
+            //
+
             return d;
+        }
+
+        static void addInstructions(DictionariesForFormalTextLanguage d)
+        {
+            IVertex root = MinusZero.Instance.root;
+
+            IVertex system = GraphUtil.GetQueryOutFirst(root, null, "System");
+
+            IVertex meta = GraphUtil.GetQueryOutFirst(system, null, "Meta");
+
+            IVertex zeroUML = GraphUtil.GetQueryOutFirst(meta, null, "ZeroUML");
+
+
+            foreach (IEdge e in zeroUML)
+            {
+                addInstructions_checkInstruction(d, e.To);
+
+                foreach(IEdge ee in e.To)
+                    addInstructions_checkInstruction(d, ee.To);
+            }
+        }
+
+        static void addInstructions_checkInstruction(DictionariesForFormalTextLanguage d, IVertex v)
+        {
+            if (GraphUtil.ExistQueryOut(v, "$$NextAtomRoot", null))
+                d.instructions_NextAtomRoot.Add(v);
+
+            if (GraphUtil.ExistQueryOut(v, null, "Next"))
+                d.instructions_HasNextEdge.Add(v);
         }
 
         static void prepareImportList_FormalTextLanguage(DictionariesForFormalTextLanguage d, IVertex FormalTextLanguage)
@@ -371,8 +407,8 @@ namespace m0.ZeroCode.Helpers
         public IDictionary<char, List<string>> allKeywordsSubstringsPositiveDictionary_witchoutLinkKeywordParts;
         public Dictionary<char, List<string>> allKeywordsSubstringsNegativeDictionary_witchoutLinkKeywordParts;
 
-        public IList
-
+        public HashSet<IVertex> instructions_NextAtomRoot;
+        public HashSet<IVertex> instructions_HasNextEdge;
 
 
         public IDictionary<IVertex, KeywordInfo> keywordInfoDict;

@@ -54,8 +54,7 @@ namespace m0.ZeroCode
 
             public IVertex nextAtom_toAddVertexOverdrive;
             public bool nextAtom_isFirstKeywordInLine;
-            public bool nextAtom_emitNext;
-            public int nextAtom_tabsWhenAddingtoAddVertexOverdrive;
+            public bool nextAtom_emitNextAsMeta;
 
             // next atom handle END
 
@@ -2487,10 +2486,13 @@ namespace m0.ZeroCode
             if (meta!=null && GeneralUtil.CompareStrings("(?<ANY>)", meta.Value))
                 meta = MinusZero.Instance.Empty;
 
-            if (s.nextAtom_emitNext)
+            if (dict.instructions_NextAtomRoot.Contains(meta))
+                s.nextAtom_toAddVertexOverdrive = null;
+
+            if (s.nextAtom_emitNextAsMeta)
             {
                 meta = dict.NextAtomEdge;
-                s.nextAtom_emitNext = false;
+                s.nextAtom_emitNextAsMeta = false;
             }
 
             s.lastAddedVertex = baseVertex.AddVertex(meta, val);            
@@ -2519,24 +2521,20 @@ namespace m0.ZeroCode
             if (s.nextAtom_isFirstKeywordInLine && GraphUtil.GetValueAndCompareStrings(meta, "$Is")) {
                 s.nextAtom_isFirstKeywordInLine = false;
 
-                if (GraphUtil.ExistQueryOut(to, null, dict.NextAtomEdge.Value.ToString()))
+                //if (GraphUtil.ExistQueryOut(to, null, dict.NextAtomEdge.Value.ToString()))
+                if(dict.instructions_HasNextEdge.Contains(to))
                 {
-                    if (s.nextAtom_toAddVertexOverdrive == null)
-                        s.nextAtom_tabsWhenAddingtoAddVertexOverdrive = s.getThisTabCount();
-
                     s.nextAtom_toAddVertexOverdrive = baseVertex;
 
                     baseVertex.AddVertex(null, "PP");
-                }
-
-                
+                }               
             }
         }
 
         IVertex ProcessLine(ParsingStack s, IVertex _baseVertex)
         {
-            if (s.lineNo > 0 /*&& s.getThisTabCount() < s.getPrevTabCount()*/ && s.getThisTabCount() < s.nextAtom_tabsWhenAddingtoAddVertexOverdrive)
-                s.nextAtom_toAddVertexOverdrive = null;
+           // if (s.lineNo > 0 /*&& s.getThisTabCount() < s.getPrevTabCount()*/)
+            //    s.nextAtom_toAddVertexOverdrive = null;
 
             AddNewLines(s);
 
@@ -2563,7 +2561,7 @@ namespace m0.ZeroCode
                 {
                     toAddVertex = s.nextAtom_toAddVertexOverdrive;
                     s.nextAtom_toAddVertexOverdrive = null;
-                    s.nextAtom_emitNext = true;
+                    s.nextAtom_emitNextAsMeta = true;
                 }
 
                 s.nextAtom_isFirstKeywordInLine = true;
