@@ -2486,8 +2486,8 @@ namespace m0.ZeroCode
             if (meta!=null && GeneralUtil.CompareStrings("(?<ANY>)", meta.Value))
                 meta = MinusZero.Instance.Empty;
 
-            if (dict.instructions_NextAtomRoot.Contains(meta))
-                s.nextAtom_toAddVertexOverdrive = null;
+           // if (dict.instructions_NextAtomRoot.Contains(meta))
+           //     s.nextAtom_toAddVertexOverdrive = null;
 
             if (s.nextAtom_emitNextAsMeta)
             {
@@ -2533,9 +2533,6 @@ namespace m0.ZeroCode
 
         IVertex ProcessLine(ParsingStack s, IVertex _baseVertex)
         {
-           // if (s.lineNo > 0 /*&& s.getThisTabCount() < s.getPrevTabCount()*/)
-            //    s.nextAtom_toAddVertexOverdrive = null;
-
             AddNewLines(s);
 
             bool shallProcess = true;
@@ -2553,6 +2550,13 @@ namespace m0.ZeroCode
                 }
 
                 keywordTryingData chosenKeyword = examinedKeywords[0];
+
+
+                if (s.lineNo > 0 
+                    && s.getThisTabCount() < s.getPrevTabCount()
+                    && chosenKeyword.keywordVertex.OutEdges.Count > 0
+                    && dict.instructions_NextAtomRoot.Contains(chosenKeyword.keywordVertex.OutEdges[0].Meta))
+                    s.nextAtom_toAddVertexOverdrive = null;
 
                 IVertex toAddVertex = _baseVertex;
 
