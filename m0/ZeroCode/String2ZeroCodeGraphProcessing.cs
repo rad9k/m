@@ -48,15 +48,7 @@ namespace m0.ZeroCode
             public IVertex LocalRoot;
 
             public IVertex lastAddedVertex;
-            public IVertex lastAddedVertexParent;
-
-            // next atom handle BEG
-
-            public IVertex nextAtom_toAddVertexOverdrive;
-            public bool nextAtom_isFirstKeywordInLine;
-            public bool nextAtom_emitNextAsMeta;
-
-            // next atom handle END
+            public IVertex lastAddedVertexParent;            
 
             public int newLineCount;
 
@@ -2484,16 +2476,7 @@ namespace m0.ZeroCode
             s.lastAddedVertexParent = baseVertex;
 
             if (meta!=null && GeneralUtil.CompareStrings("(?<ANY>)", meta.Value))
-                meta = MinusZero.Instance.Empty;
-
-           // if (dict.instructions_NextAtomRoot.Contains(meta))
-           //     s.nextAtom_toAddVertexOverdrive = null;
-
-            if (s.nextAtom_emitNextAsMeta)
-            {
-                meta = dict.NextAtomEdge;
-                s.nextAtom_emitNextAsMeta = false;
-            }
+                meta = MinusZero.Instance.Empty;           
 
             s.lastAddedVertex = baseVertex.AddVertex(meta, val);            
 
@@ -2506,30 +2489,10 @@ namespace m0.ZeroCode
             s.lastAddedVertex = null;
 
             if (meta != null && GeneralUtil.CompareStrings("(?<ANY>)", meta.Value))
-                meta = MinusZero.Instance.Empty;            
-
-            NextAtomHandle(s, baseVertex, meta, to);
+                meta = MinusZero.Instance.Empty;                        
 
             return baseVertex.AddEdge(meta, to);
-        }
-
-        void NextAtomHandle(ParsingStack s, IVertex baseVertex, IVertex meta, IVertex to)
-        {
-            if (!TEST_RUN)
-                return;
-
-            if (s.nextAtom_isFirstKeywordInLine && GraphUtil.GetValueAndCompareStrings(meta, "$Is")) {
-                s.nextAtom_isFirstKeywordInLine = false;
-
-                //if (GraphUtil.ExistQueryOut(to, null, dict.NextAtomEdge.Value.ToString()))
-                if(dict.instructions_HasNextEdge.Contains(to))
-                {
-                    s.nextAtom_toAddVertexOverdrive = baseVertex;
-
-                    baseVertex.AddVertex(null, "PP");
-                }               
-            }
-        }
+        }        
 
         IVertex ProcessLine(ParsingStack s, IVertex _baseVertex)
         {
@@ -2551,26 +2514,8 @@ namespace m0.ZeroCode
 
                 keywordTryingData chosenKeyword = examinedKeywords[0];
 
-
-                if (s.lineNo > 0 
-                    && s.getThisTabCount() < s.getPrevTabCount()
-                    && chosenKeyword.keywordVertex.OutEdges.Count > 0
-                    && dict.instructions_NextAtomRoot.Contains(chosenKeyword.keywordVertex.OutEdges[0].Meta))
-                    s.nextAtom_toAddVertexOverdrive = null;
-
-                IVertex toAddVertex = _baseVertex;
-
-
-                if (s.nextAtom_toAddVertexOverdrive != null)
-                {
-                    toAddVertex = s.nextAtom_toAddVertexOverdrive;
-                    s.nextAtom_toAddVertexOverdrive = null;
-                    s.nextAtom_emitNextAsMeta = true;
-                }
-
-                s.nextAtom_isFirstKeywordInLine = true;
-
-                return AddKeywordVertex(s, toAddVertex, chosenKeyword);
+        
+                return AddKeywordVertex(s, _baseVertex, chosenKeyword);
             }
             else
             {
