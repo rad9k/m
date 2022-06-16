@@ -2497,9 +2497,7 @@ namespace m0.ZeroCode
         IVertex ProcessLine(ParsingStack s, IVertex _baseVertex)
         {
             AddNewLines(s);
-
-            bool shallProcess = true;
-            IVertex toReturnVertex = null;
+            
             s.LocalRoot = null;
 
     
@@ -2528,9 +2526,7 @@ namespace m0.ZeroCode
                     AddError(s.lineNo, "SYNTAX ERROR");
 
                     return AddVertex(s, _baseVertex, null, "SYNTAX ERROR");
-                }
-
-                shallProcess = false;
+                }                
 
                 string currentLineInner = s.currentLineNoTabs.Substring(dict.CodeGraphVertexPrefix.Length,
                     s.currentLineNoTabs.Length - dict.CodeGraphVertexPrefix.Length - dict.CodeGraphVertexSuffix.Length);
@@ -2666,6 +2662,29 @@ namespace m0.ZeroCode
         private void ProcessToVertexMocksToLinks()
         {
             GraphUtil.DeepIterator(parseRoot, this.ProcessToVertexMocksToLinks_Delegate, false, true, false);
+        }
+
+        static bool NoCodeViewProcessReEnter = false; // in the parseRoot.AddVertexAndReturnEdge(codeViewMetaEdge, "view trigger"); processing there is 
+        // reccurent String2ZeroCodeGraphProcessing call that we need to avoid. this is ok as the expressions are simple and do not need CodeViewProcess()
+
+        private void CodeViewProcess()
+        {
+            if (NoCodeViewProcessReEnter)
+                return;
+
+            NoCodeViewProcessReEnter = true;
+            //if (!TEST_RUN)
+              //  return;
+
+            IVertex codeViewMetaEdge = GraphUtil.GetQueryOutFirst(FormalTextLanguage, "FormalTextLanguageView", null);
+
+            if (codeViewMetaEdge != null)
+            {
+                IEdge codeViewEdge = parseRoot.AddVertexAndReturnEdge(codeViewMetaEdge, "view trigger");
+                //parseRoot.DeleteEdge(codeViewEdge);
+            }
+
+            NoCodeViewProcessReEnter = false;
         }
 
         IEnumerable<IVertex> SubGraphPreProcessing;
@@ -2842,6 +2861,8 @@ namespace m0.ZeroCode
             if (errorList.Count() == 0)
             {                
                 ProcessToVertexMocksToLinks();
+
+                CodeViewProcess();
 
                 MoveInEdgesComingFromOutsideOfSubGraphToParseRoot();
                 DeleteAllEdgesFromBaseVertex();
