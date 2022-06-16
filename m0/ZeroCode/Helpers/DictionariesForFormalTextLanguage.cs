@@ -434,7 +434,7 @@ namespace m0.ZeroCode.Helpers
         public string SetIndexPrefix;
         public string SetIndexPostfix;
         public char QuerySlash;
-        public IVertex NextAtomEdge;
+        public IVertex NextAtomMeta;
 
         public HashSet<string> CodeViewTimeLinkKeywordParts;
 
@@ -513,7 +513,7 @@ namespace m0.ZeroCode.Helpers
             SetIndexPostfix = get("SetIndexPostfix");
             QuerySlash = get("QuerySlash").ToCharArray()[0];
 
-            NextAtomEdge = GraphUtil.GetQueryOutFirst(FormalTextLanguage, "NextAtomEdge", null);
+            NextAtomMeta = GraphUtil.GetQueryOutFirst(FormalTextLanguage, "NextAtomEdge", null);
 
             CodeViewTimeLinkKeywordParts = getHashSet("CodeViewTimeLinkKeywordPart");
 

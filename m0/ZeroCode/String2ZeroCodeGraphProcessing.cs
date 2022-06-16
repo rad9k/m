@@ -2672,16 +2672,20 @@ namespace m0.ZeroCode
             if (NoCodeViewProcessReEnter)
                 return;
 
+            if (!TEST_RUN)
+                return;
+
+            TEST_RUN = false;
+
             NoCodeViewProcessReEnter = true;
-            //if (!TEST_RUN)
-              //  return;
+            
 
             IVertex codeViewMetaEdge = GraphUtil.GetQueryOutFirst(FormalTextLanguage, "FormalTextLanguageView", null);
 
             if (codeViewMetaEdge != null)
             {
                 IEdge codeViewEdge = parseRoot.AddVertexAndReturnEdge(codeViewMetaEdge, "view trigger");
-                //parseRoot.DeleteEdge(codeViewEdge);
+                parseRoot.DeleteEdge(codeViewEdge);
             }
 
             NoCodeViewProcessReEnter = false;
@@ -2793,10 +2797,6 @@ namespace m0.ZeroCode
 
         void DeleteAllEdgesFromBaseVertex()
         {
-            //foreach (IEdge e in baseVertex.ToList())
-            //  if (!GeneralUtil.CompareStrings(e.Meta, "$ParseRoot"))
-            //baseVertex.DeleteEdge(e);
-
             IList<IVertex> toDestroyVertexList = new List<IVertex>();
 
             foreach (IEdge e in baseVertex.ToList())
@@ -2859,11 +2859,11 @@ namespace m0.ZeroCode
             ProcessTextPart(parseRoot, 0, lineInfoList.Count - 1);
 
             if (errorList.Count() == 0)
-            {                
-                ProcessToVertexMocksToLinks();
-
+            {
                 CodeViewProcess();
 
+                ProcessToVertexMocksToLinks();
+               
                 MoveInEdgesComingFromOutsideOfSubGraphToParseRoot();
                 DeleteAllEdgesFromBaseVertex();
                 MoveAllParseRootEdgesToBaseVertex();             
