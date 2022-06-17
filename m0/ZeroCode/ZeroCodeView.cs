@@ -14,7 +14,7 @@ namespace m0.ZeroCode
         static DictionariesForFormalTextLanguage dict = DictionariesForFormalTextLanguageFactory.Get(
             MinusZero.Instance.Root.Get(false, @"System\FormalTextLanguage\ZeroCode"));
 
-        public static INoInEdgeInOutVertexVertex ZeroCodeViewListener(IExecution exe)
+        static public INoInEdgeInOutVertexVertex ZeroCodeViewListener(IExecution exe)
         {
             if(exe.Stack.Get(false, @"event:\Type:MetaEdgeRemoved") != null)
             {
@@ -70,6 +70,29 @@ namespace m0.ZeroCode
                     ProcessVertex(e.To);
         }
 
+        static public IList<IEdge> Linearize(IVertex v)
+        {
+            IList<IEdge> linearizedList = new List<IEdge>();
+
+            foreach (IEdge e in v)
+                linearizedList.Add(e);
+
+            foreach (IEdge e in v)
+                AddNextEdges(linearizedList, e.To);
+
+            return linearizedList;
+        }
+
+        static void AddNextEdges(IList<IEdge> linearizedList, IVertex v)
+        {
+            foreach(IEdge e in v)
+                if(e.Meta == dict.NextAtomMeta)
+                {
+                    linearizedList.Add(e);
+
+                    AddNextEdges(linearizedList, e.To);
+                }
+        }
         
     }
 }
