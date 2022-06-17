@@ -1,4 +1,5 @@
 ﻿using m0.Foundation;
+using m0.Graph;
 using m0.ZeroCode.Helpers;
 using m0.ZeroTypes;
 using System;
@@ -75,7 +76,8 @@ namespace m0.ZeroCode
             IList<IEdge> linearizedList = new List<IEdge>();
 
             foreach (IEdge e in v)
-                linearizedList.Add(e);
+                if(e.Meta != dict.NextAtomMeta)
+                    linearizedList.Add(e);
 
             foreach (IEdge e in v)
                 AddNextEdges(linearizedList, e.To);
@@ -88,7 +90,9 @@ namespace m0.ZeroCode
             foreach(IEdge e in v)
                 if(e.Meta == dict.NextAtomMeta)
                 {
-                    linearizedList.Add(e);
+                    IEdge ee = new EasyEdge(e.From, MinusZero.Instance.Empty, e.To);
+
+                    linearizedList.Add(ee);
 
                     AddNextEdges(linearizedList, e.To);
                 }

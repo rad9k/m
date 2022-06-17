@@ -1463,7 +1463,12 @@ namespace m0.ZeroCode
 
             //IVertex firstMatchingEdgesInGraphToCompare = graphToCompare.GetAll(false, ZeroCodeCommon.stringToPossiblyEscapedString(edgeToCheck.Meta.ToString()) + ":");
 
-            IVertex firstMatchingEdgesInGraphToCompare = graphToCompare.GetAll(false, "\'"+edgeToCheck.Meta.ToString() + "\':");
+            //IVertex firstMatchingEdgesInGraphToCompare = graphToCompare.GetAll(false, "\'"+edgeToCheck.Meta.ToString() + "\':");
+
+            IVertex firstMatchingEdgesInGraphToCompare;
+
+            
+            firstMatchingEdgesInGraphToCompare = graphToCompare.GetAll(false, "\'" + edgeToCheck.Meta.ToString() + "\':");
 
             IEdge firstMatchEdgeInGraphToCompare = null;
 
@@ -1475,11 +1480,14 @@ namespace m0.ZeroCode
                     else
                         if (GraphUtil.GetValueAndCompareStrings(edgeToCheck.To, (String)e.To.Value)) 
                             firstMatchEdgeInGraphToCompare = e;
-                }
+                }            
 
             if (firstMatchEdgeInGraphToCompare == null) // lets try with (?<ANY>) @ meta
             {
-                firstMatchingEdgesInGraphToCompare = graphToCompare.GetAll(false, "'(?<ANY>)':");
+              //  if(edgeToCheck.Meta == dict.NextAtomMeta)
+                //    firstMatchingEdgesInGraphToCompare = graphToCompare.GetAll(false, "$Empty:");
+               // else
+                    firstMatchingEdgesInGraphToCompare = graphToCompare.GetAll(false, "'(?<ANY>)':");
 
                 if (firstMatchingEdgesInGraphToCompare.Count() > 0)
                 {
@@ -1770,7 +1778,8 @@ namespace m0.ZeroCode
                 been = false; // hack
 
             if (/*appendAsNew && !been &&*/ !isLink)
-                foreach (IEdge e in baseEdge.To.OutEdgesRaw)
+                //foreach (IEdge e in baseEdge.To.OutEdgesRaw)
+                foreach (IEdge e in ZeroCodeView.Linearize(baseEdge.To))
                 {
                     int newLevel = level + 1;                    
 
