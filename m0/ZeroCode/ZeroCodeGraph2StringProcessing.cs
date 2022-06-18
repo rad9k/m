@@ -1662,7 +1662,8 @@ namespace m0.ZeroCode
             if (path != null)
                 suffix = "\\";
 
-            foreach (IEdge ee in e.To.OutEdgesRaw)
+            //foreach (IEdge ee in e.To.OutEdgesRaw)
+            foreach (IEdge ee in ZeroCodeView.Linearize(e.To))
                 if (!VertexOperations.IsLink(ee)) 
                 {
                     string LinkString = path + suffix + GraphUtil.GetIdentyfyingQuerySubString_MetaMode(dict, ee);

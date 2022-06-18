@@ -106,7 +106,6 @@ namespace m0.ZeroCode
 
             debug(0, v, file);
 
-
             File.WriteAllText(fileName, file.ToString());
         }
 
@@ -118,6 +117,7 @@ namespace m0.ZeroCode
                 pre += "    ";
 
             foreach(IEdge e in Linearize(v))
+            //foreach (IEdge e in v)
             {
                 file.Append("\r\n" + pre + e.Meta + " : " + e.To);
 
