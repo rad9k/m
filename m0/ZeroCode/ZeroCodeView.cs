@@ -72,7 +72,7 @@ namespace m0.ZeroCode
                     ProcessVertex(e.To);
         }        
         
-        static public IList<IEdge> Linearize(IVertex v)
+        static public IList<IEdge> LinearizeVertex(IVertex v)
         {            
             IList<IEdge> linearizedList = new List<IEdge>();
 
@@ -100,29 +100,35 @@ namespace m0.ZeroCode
                 }
         }
 
-        static public void LinearizeDebug(IVertex v, string fileName)
+        static public IVertex LinearizeGraph(IVertex v)
+        {
+            IVertex nv = MinusZero.Instance.CreateTempVertex();
+
+            return nv;
+        }
+
+        static public void GraphDebug(IVertex v, string fileName)
         {
             StringBuilder file = new StringBuilder();            
 
-            debug(0, v, file);
+            GraphDebug_reccurent(0, v, file);
 
             File.WriteAllText(fileName, file.ToString());
         }
 
-        static void debug(int level, IVertex v, StringBuilder file)
+        static void GraphDebug_reccurent(int level, IVertex v, StringBuilder file)
         {
             string pre = "";
 
             for (int x = 0; x < level; x++)
                 pre += "    ";
-
-            foreach(IEdge e in Linearize(v))
-            //foreach (IEdge e in v)
+            
+            foreach (IEdge e in v)
             {
                 file.Append("\r\n" + pre + e.Meta + " : " + e.To);
 
                 if(!VertexOperations.IsLink(e))
-                    debug(level + 1, e.To, file);
+                    GraphDebug_reccurent(level + 1, e.To, file);
             }
         }
         
