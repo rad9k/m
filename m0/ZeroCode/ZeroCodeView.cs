@@ -71,16 +71,33 @@ namespace m0.ZeroCode
                     ProcessVertex(e.To);
         }
 
-        static public IList<IEdge> Linearize(IVertex v)
+        static IList<IVertex> visitedVertexes;
+
+        static void AddToLinearizedList(IList<IEdge> l, IEdge e)
         {
+            if (!visitedVertexes.Contains(e.To))
+            {
+                l.Add(e);
+                visitedVertexes.Add(e.To);
+            }
+        }
+
+        static public void ResetLinearizationState()
+        {
+            visitedVertexes = new List<IVertex>();
+        }
+
+        static public IList<IEdge> Linearize(IVertex v)
+        {            
             IList<IEdge> linearizedList = new List<IEdge>();
 
             foreach (IEdge e in v)
-                if(e.Meta != dict.NextAtomMeta)
-                    linearizedList.Add(e);
+                if (e.Meta != dict.NextAtomMeta)
+                    AddToLinearizedList(linearizedList, e);
 
             foreach (IEdge e in v)
-                AddNextEdges(linearizedList, e.To);
+                if (e.Meta != dict.NextAtomMeta)
+                    AddNextEdges(linearizedList, e.To);
 
             return linearizedList;
         }
@@ -92,7 +109,7 @@ namespace m0.ZeroCode
                 {
                     IEdge ee = new EasyEdge(e.From, MinusZero.Instance.Empty, e.To);
 
-                    linearizedList.Add(ee);
+                    AddToLinearizedList(linearizedList, ee);
 
                     AddNextEdges(linearizedList, e.To);
                 }
