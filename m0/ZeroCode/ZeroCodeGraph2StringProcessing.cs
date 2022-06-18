@@ -1839,9 +1839,7 @@ namespace m0.ZeroCode
 
             //AppendPrefix();
             AppendAsNew(graphBaseEdge.To);
-            //AppendSuffix();
-
-            ZeroCodeView.ResetLinearizationState();
+            //AppendSuffix();            
 
             //foreach (IEdge e in graphBaseEdge.To.OutEdgesRaw)
             foreach (IEdge e in ZeroCodeView.Linearize(graphBaseEdge.To))

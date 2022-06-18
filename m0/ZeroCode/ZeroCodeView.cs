@@ -4,6 +4,7 @@ using m0.ZeroCode.Helpers;
 using m0.ZeroTypes;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -69,31 +70,15 @@ namespace m0.ZeroCode
                     //&& e.Meta != dict.NextAtomMeta
                     && !VertexOperations.IsLink(e))
                     ProcessVertex(e.To);
-        }
-
-        static IList<IVertex> visitedVertexes;
-
-        static void AddToLinearizedList(IList<IEdge> l, IEdge e)
-        {
-            if (!visitedVertexes.Contains(e.To))
-            {
-                l.Add(e);
-                visitedVertexes.Add(e.To);
-            }
-        }
-
-        static public void ResetLinearizationState()
-        {
-            visitedVertexes = new List<IVertex>();
-        }
-
+        }        
+        
         static public IList<IEdge> Linearize(IVertex v)
         {            
             IList<IEdge> linearizedList = new List<IEdge>();
 
             foreach (IEdge e in v)
                 if (e.Meta != dict.NextAtomMeta)
-                    AddToLinearizedList(linearizedList, e);
+                    linearizedList.Add(e);
 
             foreach (IEdge e in v)
                 if (e.Meta != dict.NextAtomMeta)
@@ -109,10 +94,36 @@ namespace m0.ZeroCode
                 {
                     IEdge ee = new EasyEdge(e.From, MinusZero.Instance.Empty, e.To);
 
-                    AddToLinearizedList(linearizedList, ee);
+                    linearizedList.Add(ee);                    
 
                     AddNextEdges(linearizedList, e.To);
                 }
+        }
+
+        static public void LinearizeDebug(IVertex v, string fileName)
+        {
+            StringBuilder file = new StringBuilder();            
+
+            debug(0, v, file);
+
+
+            File.WriteAllText(fileName, file.ToString());
+        }
+
+        static void debug(int level, IVertex v, StringBuilder file)
+        {
+            string pre = "";
+
+            for (int x = 0; x < level; x++)
+                pre += "    ";
+
+            foreach(IEdge e in Linearize(v))
+            {
+                file.Append("\r\n" + pre + e.Meta + " : " + e.To);
+
+                if(!VertexOperations.IsLink(e))
+                    debug(level + 1, e.To, file);
+            }
         }
         
     }
