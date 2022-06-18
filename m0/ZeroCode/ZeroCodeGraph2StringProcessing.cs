@@ -928,6 +928,7 @@ namespace m0.ZeroCode
                     }
 
                     if(!VertexOperations.IsLink(be)) // XXX 2020
+                    //foreach (IEdge e in ZeroCodeView.Linearize(be.To))
                     foreach (IEdge e in be.To)
                         if (!km.MatchedEdges.Contains(e))
                         {
@@ -1185,6 +1186,7 @@ namespace m0.ZeroCode
             bool wasFirstNewLine = false;
 
             foreach (IEdge e in baseEdge.To)
+            //foreach (IEdge e in ZeroCodeView.Linearize(baseEdge.To))
             {
                 if (km.BaseEdge != baseEdge && !km.MatchedEdges.Contains(e))
                 {
@@ -1484,10 +1486,7 @@ namespace m0.ZeroCode
 
             if (firstMatchEdgeInGraphToCompare == null) // lets try with (?<ANY>) @ meta
             {
-              //  if(edgeToCheck.Meta == dict.NextAtomMeta)
-                //    firstMatchingEdgesInGraphToCompare = graphToCompare.GetAll(false, "$Empty:");
-               // else
-                    firstMatchingEdgesInGraphToCompare = graphToCompare.GetAll(false, "'(?<ANY>)':");
+                firstMatchingEdgesInGraphToCompare = graphToCompare.GetAll(false, "'(?<ANY>)':");
 
                 if (firstMatchingEdgesInGraphToCompare.Count() > 0)
                 {
@@ -1662,8 +1661,8 @@ namespace m0.ZeroCode
             if (path != null)
                 suffix = "\\";
 
-            //foreach (IEdge ee in e.To.OutEdgesRaw)
-            foreach (IEdge ee in ZeroCodeView.Linearize(e.To))
+            foreach (IEdge ee in e.To.OutEdgesRaw)
+            //foreach (IEdge ee in ZeroCodeView.Linearize(e.To))
                 if (!VertexOperations.IsLink(ee)) 
                 {
                     string LinkString = path + suffix + GraphUtil.GetIdentyfyingQuerySubString_MetaMode(dict, ee);
@@ -1701,8 +1700,9 @@ namespace m0.ZeroCode
                 suffix = "\\";
 
             foreach (IEdge ee in e.To.OutEdgesRaw)
-                //if (!IsLink(ee))
-                {
+            //foreach (IEdge ee in ZeroCodeView.Linearize(e.To))
+            //if (!IsLink(ee))
+            {
                     string LinkString = path + suffix + GraphUtil.GetIdentyfyingQuerySubString_MetaMode(dict, ee);
 
                     CheckVertexIfItMachesAnyKeywordGraphs(ee, LinkString, e);                    
@@ -1779,8 +1779,8 @@ namespace m0.ZeroCode
                 been = false; // hack
 
             if (/*appendAsNew && !been &&*/ !isLink)
-                //foreach (IEdge e in baseEdge.To.OutEdgesRaw)
-                foreach (IEdge e in ZeroCodeView.Linearize(baseEdge.To))
+                foreach (IEdge e in baseEdge.To.OutEdgesRaw)
+                //foreach (IEdge e in ZeroCodeView.Linearize(baseEdge.To))
                 {
                     int newLevel = level + 1;                    
 
@@ -1842,8 +1842,8 @@ namespace m0.ZeroCode
             AppendAsNew(graphBaseEdge.To);
             //AppendSuffix();            
 
-            //foreach (IEdge e in graphBaseEdge.To.OutEdgesRaw)
-            foreach (IEdge e in ZeroCodeView.Linearize(graphBaseEdge.To))
+            foreach (IEdge e in graphBaseEdge.To.OutEdgesRaw)
+            //foreach (IEdge e in ZeroCodeView.Linearize(graphBaseEdge.To))
                 ZeroCodeGraph2String_Reccurent(e, 1, graphBaseEdge, null);
 
             return Source.ToString();
