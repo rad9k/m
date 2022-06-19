@@ -101,10 +101,10 @@ namespace m0.ZeroCode
         }
 
         static public IVertex LinearizeGraph(IVertex sourceBaseVertex) // for future use cases ming return pairDict also (as a ref)
-        {            
-            IList<IVertex> subGraph = GraphUtil.GetSubGraphWithoutLinksAsList(sourceBaseVertex);
-
+        {
             IDictionary<IVertex, IVertex> sourceLinerizedDict = new Dictionary<IVertex, IVertex>();
+
+            IList<IVertex> subGraph = GraphUtil.GetSubGraphWithoutLinksAsList(sourceBaseVertex);
 
             foreach (IVertex v in subGraph) {
                 IVertex v_new = MinusZero.Instance.CreateTempVertex();
@@ -114,11 +114,14 @@ namespace m0.ZeroCode
                 sourceLinerizedDict.Add(v, v_new);
             }
 
-            return LinearizeGraph_Reccurent()            
+            return LinearizeGraph_Reccurent(sourceBaseVertex, sourceLinerizedDict);
         }
 
         static IVertex LinearizeGraph_Reccurent(IVertex sourceVertex, IDictionary<IVertex, IVertex> sourceLinerizedDict)
         {
+            if (!sourceLinerizedDict.ContainsKey(sourceVertex))
+                return sourceVertex;
+
             IVertex linearizedVertex = sourceLinerizedDict[sourceVertex];
 
             foreach(IEdge e in LinearizeVertex(sourceVertex))
@@ -130,13 +133,16 @@ namespace m0.ZeroCode
                 else
                     linearizedMeta = e.Meta;
 
-                IVertex linearizedTo = sourceLinerizedDict[e.To];
+                IVertex linearizedTo;
 
-                IEdge newEdge = new EasyEdge(linearizedVertex,
-                    linearizedMeta,
-                    linearizedTo);
+                if (sourceLinerizedDict.ContainsKey(e.To))
+                    linearizedTo = sourceLinerizedDict[e.To];
+                else
+                    linearizedTo = e.To;
 
-                LinearizeGraph_Reccurent(linearizedTo, sourceLinerizedDict);
+                linearizedVertex.AddEdge(linearizedMeta, linearizedTo);
+                
+                LinearizeGraph_Reccurent(e.To, sourceLinerizedDict);
             }
 
             return linearizedVertex;
@@ -146,9 +152,11 @@ namespace m0.ZeroCode
 
         static public void GraphDebug(IVertex v, string fileName)
         {
-            StringBuilder file = new StringBuilder();            
+            StringBuilder file = new StringBuilder();
 
-            GraphDebug_reccurent(0, v, file);
+            file.Append(v);
+
+            GraphDebug_reccurent(1, v, file);
 
             File.WriteAllText(fileName, file.ToString());
         }

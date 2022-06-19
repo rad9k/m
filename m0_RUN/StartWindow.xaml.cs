@@ -73,6 +73,8 @@ namespace m0
 
             //GraphUtil.LoadParseAndMove(@"..\..\..\m0_SYSTEM_GENERATE\bin\Debug\_RES\Generator\SimpleTransformer.txt", x, "'SimpleTransformer'");
 
+            ZeroCodeView.GraphDebug(ZeroCodeView.LinearizeGraph(x.Get(false, @"Class:\Method:PutIntoStore")), "y_pis.txt");
+
             //ZeroCodeView.LinearizeDebug(x.Get(false, @"Class:\Method : PutIntoStore"), "x_mod.txt");
            // ZeroCodeView.LinearizeDebug(x.Get(false, @"Class:\Method : PutIntoStore"), "x_mod2.txt");
            // ZeroCodeView.LinearizeDebug(x.Get(false, @"Class:\Method : PutIntoStore"), "x_mod3.txt");
