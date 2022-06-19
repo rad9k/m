@@ -1808,6 +1808,8 @@ namespace m0.ZeroCode
             IVertex v = ZeroCodeView.LinearizeGraph(_graphBaseEdge.To);
 
             BaseEdge = new EasyEdge(null, null, v);
+
+            //BaseEdge = _graphBaseEdge; // no linearization
         }
 
         public string Process(IEdge _graphBaseEdge)

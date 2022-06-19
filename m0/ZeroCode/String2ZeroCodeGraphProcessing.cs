@@ -2331,7 +2331,9 @@ namespace m0.ZeroCode
 
         private void specialAddingTextPartHack(IVertex nv, TextRange subText)
         {
-            ProcessTextPart(nv, subText.begLine - 1, subText.endLine);
+            ParsingStack stack;
+
+            ProcessTextPart(nv, subText.begLine - 1, subText.endLine, out stack);
 
             int count = nv.OutEdges.Count;
 
@@ -2607,9 +2609,9 @@ namespace m0.ZeroCode
             return errors;
         }
 
-        private IVertex ProcessTextPart(IVertex baseVertex, int begLine, int endLine)
+        private IVertex ProcessTextPart(IVertex baseVertex, int begLine, int endLine, out ParsingStack stack)
         {
-            ParsingStack stack = new ParsingStack(this, null, begLine, endLine);
+            stack = new ParsingStack(this, null, begLine, endLine);
 
             stack.parseNextLine();
 
@@ -2856,13 +2858,16 @@ namespace m0.ZeroCode
 
             parseRoot = baseVertex.AddVertex(_parseRoot, "");
 
-            ProcessTextPart(parseRoot, 0, lineInfoList.Count - 1);
+            ParsingStack stack;
+
+            ProcessTextPart(parseRoot, 0, lineInfoList.Count - 1, out stack);
 
             if (errorList.Count() == 0)
             {
                 CodeViewProcess();
 
-                ProcessToVertexMocksToLinks();
+                if(stack.lineNo > 0)
+                    ProcessToVertexMocksToLinks();
                
                 MoveInEdgesComingFromOutsideOfSubGraphToParseRoot();
                 DeleteAllEdgesFromBaseVertex();
