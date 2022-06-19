@@ -1803,9 +1803,17 @@ namespace m0.ZeroCode
             AppendAdditionalNewLines(baseEdge);
         }
 
-
-        public string Process(IEdge graphBaseEdge)
+        public void prepareBaseEdge(IEdge _graphBaseEdge)
         {
+            IVertex v = ZeroCodeView.LinearizeGraph(_graphBaseEdge.To);
+
+            BaseEdge = new EasyEdge(null, null, v);
+        }
+
+        public string Process(IEdge _graphBaseEdge)
+        {
+            prepareBaseEdge(_graphBaseEdge);
+
             BeenList = new List<IEdge>();
             BeenList_Keyword = new List<IEdge>();
             Source = new StringBuilder();
@@ -1817,9 +1825,7 @@ namespace m0.ZeroCode
             DoKeywordDefinitionContainLocalRoot_Dictionary = new Dictionary<IVertex, bool>();
             DoKeywordDefinitionContainStartInLocalRoot_Dictionary = new Dictionary<IVertex, bool>();
 
-            // 
-
-            BaseEdge = graphBaseEdge;
+            //             
 
             GetLinksForSubGraphVertices(BaseEdge, null, 0);
 
@@ -1831,20 +1837,20 @@ namespace m0.ZeroCode
 
             //
 
-            BeenList.Add(graphBaseEdge);
+            BeenList.Add(BaseEdge);
 
             //
 
             ImportImports(FormalTextLanguage.Get(false, "DefaultImports:"));
-            ImportImports(graphBaseEdge.To);
+            ImportImports(BaseEdge.To);
 
             //AppendPrefix();
-            AppendAsNew(graphBaseEdge.To);
+            AppendAsNew(BaseEdge.To);
             //AppendSuffix();            
 
-            foreach (IEdge e in graphBaseEdge.To.OutEdgesRaw)
+            foreach (IEdge e in BaseEdge.To.OutEdgesRaw)
             //foreach (IEdge e in ZeroCodeView.Linearize(graphBaseEdge.To))
-                ZeroCodeGraph2String_Reccurent(e, 1, graphBaseEdge, null);
+                ZeroCodeGraph2String_Reccurent(e, 1, BaseEdge, null);
 
             return Source.ToString();
         }
