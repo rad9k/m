@@ -2801,7 +2801,7 @@ namespace m0.ZeroCode
 
             foreach (IEdge e in baseVertex.ToList())
                 if (!GeneralUtil.CompareStrings(e.Meta, "$ParseRoot") && !GeneralUtil.CompareStrings(e.Meta, "$GraphChangeTrigger"))
-                    foreach (IEdge ee in GraphUtil.GetSubGraphWithoutLinksEdgesAsList(e))
+                    foreach (IEdge ee in GraphUtil.GetSubGraphAsEdgesWithoutLinksAsList(e))
                         if (VertexOperations.IsLink(ee))
                             ee.From.DeleteEdge(ee);
                         else

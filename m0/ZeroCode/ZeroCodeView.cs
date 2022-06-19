@@ -92,20 +92,57 @@ namespace m0.ZeroCode
             foreach(IEdge e in v)
                 if(e.Meta == dict.NextAtomMeta)
                 {
-                    IEdge ee = new EasyEdge(e.From, MinusZero.Instance.Empty, e.To);
+                    //IEdge ee = new EasyEdge(e.From, MinusZero.Instance.Empty, e.To);
 
-                    linearizedList.Add(ee);                    
+                    linearizedList.Add(e);                    
 
                     AddNextEdges(linearizedList, e.To);
                 }
         }
 
-        static public IVertex LinearizeGraph(IVertex v)
-        {
-            IVertex nv = MinusZero.Instance.CreateTempVertex();
+        static public IVertex LinearizeGraph(IVertex sourceBaseVertex) // for future use cases ming return pairDict also (as a ref)
+        {            
+            IList<IVertex> subGraph = GraphUtil.GetSubGraphWithoutLinksAsList(sourceBaseVertex);
 
-            return nv;
+            IDictionary<IVertex, IVertex> sourceLinerizedDict = new Dictionary<IVertex, IVertex>();
+
+            foreach (IVertex v in subGraph) {
+                IVertex v_new = MinusZero.Instance.CreateTempVertex();
+
+                v_new.Value = v.Value;
+
+                sourceLinerizedDict.Add(v, v_new);
+            }
+
+            return LinearizeGraph_Reccurent()            
         }
+
+        static IVertex LinearizeGraph_Reccurent(IVertex sourceVertex, IDictionary<IVertex, IVertex> sourceLinerizedDict)
+        {
+            IVertex linearizedVertex = sourceLinerizedDict[sourceVertex];
+
+            foreach(IEdge e in LinearizeVertex(sourceVertex))
+            {
+                IVertex linearizedMeta = null;
+
+                if (e.Meta == dict.NextAtomMeta)
+                    linearizedMeta = MinusZero.Instance.Empty;
+                else
+                    linearizedMeta = e.Meta;
+
+                IVertex linearizedTo = sourceLinerizedDict[e.To];
+
+                IEdge newEdge = new EasyEdge(linearizedVertex,
+                    linearizedMeta,
+                    linearizedTo);
+
+                LinearizeGraph_Reccurent(linearizedTo, sourceLinerizedDict);
+            }
+
+            return linearizedVertex;
+        }
+
+
 
         static public void GraphDebug(IVertex v, string fileName)
         {

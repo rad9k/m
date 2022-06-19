@@ -1280,18 +1280,18 @@ namespace m0.Graph
                         GetSubGraphWithoutLinks_Reccurent(e.To, visited);                           
         }
 
-        static public List<IEdge> GetSubGraphWithoutLinksEdgesAsList(IEdge iterationRoot)
+        static public List<IEdge> GetSubGraphAsEdgesWithoutLinksAsList(IEdge iterationRoot)
         {
             List<IVertex> visited = new List<IVertex>();
 
             List<IEdge> edges = new List<IEdge>();
 
-            GetSubGraphWithoutLinksEdges_Reccurent(iterationRoot, visited, edges);
+            GetSubGraphAsEdgesWithoutLinks_Reccurent(iterationRoot, visited, edges);
 
             return edges;
         }
 
-        static void GetSubGraphWithoutLinksEdges_Reccurent(IEdge baseEdge, List<IVertex> visited, List<IEdge> edges)
+        static void GetSubGraphAsEdgesWithoutLinks_Reccurent(IEdge baseEdge, List<IVertex> visited, List<IEdge> edges)
         {
             edges.Add(baseEdge);
 
@@ -1300,7 +1300,7 @@ namespace m0.Graph
                 visited.Add(baseEdge.To);
 
                 foreach (IEdge e in baseEdge.To.OutEdges)
-                    GetSubGraphWithoutLinksEdges_Reccurent(e, visited, edges);
+                    GetSubGraphAsEdgesWithoutLinks_Reccurent(e, visited, edges);
 
             }
         }
