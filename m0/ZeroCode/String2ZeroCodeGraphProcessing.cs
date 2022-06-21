@@ -2674,8 +2674,8 @@ namespace m0.ZeroCode
             if (NoCodeViewProcessReEnter)
                 return;
 
-            if (!TEST_RUN)
-                return;
+            //if (!TEST_RUN)
+            //    return;
 
             TEST_RUN = false;
 
@@ -2864,10 +2864,10 @@ namespace m0.ZeroCode
 
             if (errorList.Count() == 0)
             {
-                CodeViewProcess();
+                if (stack.lineNo > 0)
+                    CodeViewProcess();
 
-                if(stack.lineNo > 0)
-                    ProcessToVertexMocksToLinks();
+                ProcessToVertexMocksToLinks();
                
                 MoveInEdgesComingFromOutsideOfSubGraphToParseRoot();
                 DeleteAllEdgesFromBaseVertex();

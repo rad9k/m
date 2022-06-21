@@ -31,6 +31,17 @@ namespace m0_SYSTEM_GENERATE
            //AtomVisualiserHelper.Initialize();
         }
 
+        static void MinusZeroInstanceFix() // fpr ZeroCodeView
+        {
+            MinusZero.Instance.StackFrameInherits = LegacySystem_MinusZero.Instance.StackFrameInherits;
+
+            Transaction.GenericEventHandler_event_meta = LegacySystem_MinusZero.Instance.Root.Get(false, @"System\Meta\ZeroTypes\ExecutionFlow\GenericEventHandler\event");
+
+            GraphChangeTransactionAtom.GraphChangeEvent_Type_meta = LegacySystem_MinusZero.Instance.Root.Get(false, @"System\Meta\ZeroTypes\ExecutionFlow\GraphChangeEvent\Type");
+            GraphChangeTransactionAtom.GraphChangeEnum_MetaEdgeRemoved_meta = LegacySystem_MinusZero.Instance.Root.Get(false, @"System\Meta\ZeroTypes\ExecutionFlow\GraphChangeEnum\MetaEdgeRemoved");
+            GraphChangeTransactionAtom.GraphChangeEvent_Edge_meta = LegacySystem_MinusZero.Instance.Root.Get(false, @"System\Meta\ZeroTypes\ExecutionFlow\GraphChangeEvent\Edge");
+        }
+
         static void Main(string[] args)
         {
             print("m0 SYSTEM GENERATE");
@@ -39,11 +50,11 @@ namespace m0_SYSTEM_GENERATE
 
             print("");
 
-           // print("* initializing legacy system");
+            // print("* initializing legacy system");
 
             //m0.LegacySystem.LegacySystem a = new m0.LegacySystem.LegacySystem();
 
-           // print("* legacy system initialized succesfully");
+            // print("* legacy system initialized succesfully");
 
 
             //
@@ -53,6 +64,14 @@ namespace m0_SYSTEM_GENERATE
             LegacySystem_MinusZero.Instance.Initialize();
 
             print("* filling examples");
+
+            //
+
+            MinusZeroInstanceFix();
+
+            ExecutionFlowHelper.StartTransaction();
+
+            //
 
             CreateExamples.CreateTestData();            
 
@@ -86,6 +105,10 @@ namespace m0_SYSTEM_GENERATE
             Dictionary<string, StoreId> storeOverride = new Dictionary<string, StoreId>();
 
             storeOverride.Add("system.m0", new StoreId("m0.Store.MemoryStore, m0, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null", "$-0$ROOT$STORE$"));
+
+            //
+
+            ExecutionFlowHelper.StartTransaction();
 
             //
 
@@ -133,8 +156,10 @@ namespace m0_SYSTEM_GENERATE
             print("* creating \"_bootstrap.m0\"");
 
             CreateBootstrap.Create("_bootstrap.m0", true);
-                       
+
             //
+
+            ExecutionFlowHelper.CommitTransaction();
 
             print("");
 

@@ -18,10 +18,10 @@ namespace m0.Graph.ExecutionFlow
         static IVertex GraphChangeEvent_Trigger_meta;
         static IVertex GraphChangeEvent_Source_meta;
         static IVertex GraphChangeEvent_ChangedVertex_meta;
-        static IVertex GraphChangeEvent_Type_meta;
+        public static IVertex GraphChangeEvent_Type_meta;
         static IVertex GraphChangeEvent_OldValue_meta;
         static IVertex GraphChangeEvent_NewValue_meta;
-        static IVertex GraphChangeEvent_Edge_meta;
+        public static IVertex GraphChangeEvent_Edge_meta;
 
         static IVertex GraphChangeEnum_ValueChange_meta;
 
@@ -32,7 +32,7 @@ namespace m0.Graph.ExecutionFlow
         static IVertex GraphChangeEnum_InputEdgeRemoved_meta;
 
         static IVertex GraphChangeEnum_MetaEdgeAdded_meta;
-        static IVertex GraphChangeEnum_MetaEdgeRemoved_meta;
+        public static IVertex GraphChangeEnum_MetaEdgeRemoved_meta;
 
         static IVertex GraphChangeEnum_OutputEdgeDisposed_meta;
 
