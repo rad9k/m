@@ -103,6 +103,7 @@ namespace m0.ZeroCode
         static public IVertex LinearizeGraph(IVertex sourceBaseVertex) // for future use cases ming return pairDict also (as a ref)
         {
             IDictionary<IVertex, IVertex> sourceLinerizedDict = new Dictionary<IVertex, IVertex>();
+            IList<IVertex> beenList = new List<IVertex>();
 
             IList<IVertex> subGraph = GraphUtil.GetSubGraphWithoutLinksAsList(sourceBaseVertex);
 
@@ -114,13 +115,18 @@ namespace m0.ZeroCode
                 sourceLinerizedDict.Add(v, v_new);
             }
 
-            return LinearizeGraph_Reccurent(sourceBaseVertex, sourceLinerizedDict);
+            return LinearizeGraph_Reccurent(sourceBaseVertex, sourceLinerizedDict, beenList);
         }
 
-        static IVertex LinearizeGraph_Reccurent(IVertex sourceVertex, IDictionary<IVertex, IVertex> sourceLinerizedDict)
+        static IVertex LinearizeGraph_Reccurent(IVertex sourceVertex, IDictionary<IVertex, IVertex> sourceLinerizedDict, IList<IVertex> beenList)
         {
             if (!sourceLinerizedDict.ContainsKey(sourceVertex))
                 return sourceVertex;
+
+            if (beenList.Contains(sourceVertex))
+                return sourceVertex;
+
+            beenList.Add(sourceVertex);
 
             IVertex linearizedVertex = sourceLinerizedDict[sourceVertex];
 
@@ -142,7 +148,7 @@ namespace m0.ZeroCode
 
                 linearizedVertex.AddEdge(linearizedMeta, linearizedTo);
                 
-                LinearizeGraph_Reccurent(e.To, sourceLinerizedDict);
+                LinearizeGraph_Reccurent(e.To, sourceLinerizedDict, beenList);
             }
 
             return linearizedVertex;
