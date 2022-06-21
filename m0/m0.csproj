@@ -137,6 +137,13 @@
     <Compile Include="Lib\Sys.cs" />
     <Compile Include="Store\FileSystem\AbstractFileSystemVertex.cs" />
     <Compile Include="UIWpf\Commands\ExtraCommandHook.cs" />
+    <Compile Include="UIWpf\Controls\IZoomScrollView.cs" />
+    <Compile Include="UIWpf\Controls\IZoomScrollViewAxisDecorator.cs" />
+    <Compile Include="UIWpf\Controls\IZoomScrollViewerHost.cs" />
+    <Compile Include="UIWpf\Controls\LineStyle.cs" />
+    <Compile Include="UIWpf\Controls\ZoomScrollView.xaml.cs">
+      <DependentUpon>ZoomScrollView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="UIWpf\Dialog\StringQuestionWindow.xaml.cs">
       <DependentUpon>StringQuestionWindow.xaml</DependentUpon>
     </Compile>
@@ -389,6 +396,10 @@
     <Page Include="UIWpf\Controls\AnimatedHideArea.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UIWpf\Controls\ZoomScrollView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="UIWpf\Dialog\StringQuestionWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
