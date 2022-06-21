@@ -11,6 +11,7 @@ using System.Windows.Shapes;
 using m0.UIWpf;
 using System.Windows.Media;
 using m0.Graph;
+using m0.UIWpf.Controls;
 
 namespace m0_COMPOSER.UIWpf.Visualisers.Control
 {

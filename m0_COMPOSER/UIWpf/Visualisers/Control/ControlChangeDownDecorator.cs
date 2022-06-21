@@ -10,6 +10,7 @@ using m0.Graph;
 using System.Windows;
 using System.Windows.Shapes;
 using m0.UIWpf;
+using m0.UIWpf.Controls;
 
 namespace m0_COMPOSER.UIWpf.Visualisers.Control
 {

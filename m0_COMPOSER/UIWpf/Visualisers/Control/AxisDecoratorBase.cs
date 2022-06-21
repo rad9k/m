@@ -11,6 +11,8 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Shapes;
 
+using m0.UIWpf.Controls;
+
 namespace m0_COMPOSER.UIWpf.Visualisers.Control
 {
     public class AxisDecoratorBase : Canvas

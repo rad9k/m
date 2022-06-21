@@ -96,7 +96,6 @@
     <Compile Include="UIWpf\Visualisers\Control\Item\ItemDictionary.cs" />
     <Compile Include="UIWpf\Visualisers\Control\Item\SequenceEventItem.cs" />
     <Compile Include="UIWpf\Visualisers\Control\LitButton.cs" />
-    <Compile Include="UIWpf\Visualisers\Control\LineStyle.cs" />
     <Compile Include="UIWpf\Visualisers\Control\Item\NoteItem.cs" />
     <Compile Include="UIWpf\Visualisers\Control\OneSegmentAxisDecorator.cs" />
     <Compile Include="UIWpf\Visualisers\Control\RealTimeSpanAxisDecorator.cs" />
@@ -104,13 +103,7 @@
     <Compile Include="UIWpf\Visualisers\Control\PitchSetAxisDecorator.cs" />
     <Compile Include="UIWpf\Visualisers\Control\NumberSpanAxisDecorator.cs" />
     <Compile Include="UIWpf\Visualisers\Control\MusicTimeSpanAxisDecorator.cs" />
-    <Compile Include="UIWpf\Visualisers\Control\ZoomScrollView.xaml.cs">
-      <DependentUpon>ZoomScrollView.xaml</DependentUpon>
-    </Compile>
     <Compile Include="UIWpf\Visualisers\IItem.cs" />
-    <Compile Include="UIWpf\Visualisers\IZoomScrollView.cs" />
-    <Compile Include="UIWpf\Visualisers\IZoomScrollViewAxisDecorator.cs" />
-    <Compile Include="UIWpf\Visualisers\IZoomScrollViewerHost.cs" />
     <Compile Include="UIWpf\Visualisers\ChordProgressionVisualiser.xaml.cs">
       <DependentUpon>ChordProgressionVisualiser.xaml</DependentUpon>
     </Compile>
@@ -139,10 +132,6 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Page Include="UIWpf\Visualisers\Control\ZoomScrollView.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="UIWpf\Visualisers\ChordProgressionVisualiser.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>

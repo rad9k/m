@@ -12,6 +12,7 @@ using System.Windows;
 using m0.Graph;
 using m0.ZeroTypes;
 using m0.UIWpf.Commands;
+using m0.UIWpf.Controls;
 
 namespace m0_COMPOSER.UIWpf.Visualisers.Control.Item
 {

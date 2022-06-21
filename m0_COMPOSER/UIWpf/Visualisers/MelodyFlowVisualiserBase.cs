@@ -11,6 +11,7 @@ using System;
 using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Input;
+using m0.UIWpf.Controls;
 
 namespace m0_COMPOSER.UIWpf.Visualisers
 {

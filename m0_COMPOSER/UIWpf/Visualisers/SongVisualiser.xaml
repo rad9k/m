@@ -1,5 +1,6 @@
 ﻿<my:ZoomScrollViewBasedVisualiserBase xmlns:Controls="clr-namespace:m0_COMPOSER.UIWpf.Visualisers.Control"  x:Class="m0_COMPOSER.UIWpf.Visualisers.SongVisualiser"
              xmlns:my="clr-namespace:m0_COMPOSER.UIWpf.Visualisers"
+             xmlns:m0c="clr-namespace:m0.UIWpf.Controls;assembly=m0"
              xmlns:m0="clr-namespace:m0.UIWpf;assembly=m0"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -131,6 +132,6 @@
                 </Button>
             </ToolBar>
         </ToolBarTray>
-        <Controls:ZoomScrollView x:Name="ZoomScrollView_Instance" DownAreaVisible="True"/>
+        <m0c:ZoomScrollView x:Name="ZoomScrollView_Instance" DownAreaVisible="True"/>
     </DockPanel>
 </my:ZoomScrollViewBasedVisualiserBase>
