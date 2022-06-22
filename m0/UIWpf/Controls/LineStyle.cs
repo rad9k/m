@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using System.Windows.Media;
 using System.Windows.Shapes;
 
-namespace m0_COMPOSER.UIWpf.Visualisers.Control
+namespace m0.UIWpf.Controls
 {
     public class LineStyle
     {

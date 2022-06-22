@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 
-namespace m0_COMPOSER.UIWpf.Visualisers
+namespace m0.UIWpf.Controls
 {
     public interface IZoomScrollView
     {

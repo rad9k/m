@@ -1,5 +1,4 @@
 ﻿using m0.Foundation;
-using m0_COMPOSER.UIWpf.Visualisers.Control;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,7 +7,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media;
 
-namespace m0_COMPOSER.UIWpf.Visualisers
+namespace m0.UIWpf.Controls
 {
     public class AxisSegment
     {
