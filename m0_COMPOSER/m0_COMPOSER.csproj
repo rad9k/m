@@ -118,6 +118,9 @@
       <DependentUpon>MelodyFlowVisualiser.xaml</DependentUpon>
     </Compile>
     <Compile Include="UIWpf\Visualisers\MelodyFlowVisualiserBase.cs" />
+    <Compile Include="UIWpf\Visualisers\Set2DVisualiser.xaml.cs">
+      <DependentUpon>Set2DVisualiser.xaml</DependentUpon>
+    </Compile>
     <Compile Include="UIWpf\Visualisers\TriggerSetVisualiser.xaml.cs">
       <DependentUpon>TriggerSetVisualiser.xaml</DependentUpon>
     </Compile>
@@ -148,6 +151,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="UIWpf\Visualisers\MelodyFlowVisualiser.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="UIWpf\Visualisers\Set2DVisualiser.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

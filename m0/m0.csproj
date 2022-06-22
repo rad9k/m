@@ -588,6 +588,11 @@
   <ItemGroup>
     <Resource Include="_PROJECT\architecture\_EVENT.txt" />
   </ItemGroup>
+  <ItemGroup>
+    <Resource Include="_RESOURCES\basic\extend_down.png" />
+    <Resource Include="_RESOURCES\basic\extend_left.png" />
+    <Resource Include="_RESOURCES\basic\extend_up.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
