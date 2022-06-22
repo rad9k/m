@@ -1,6 +1,5 @@
 ﻿<my:MelodyFlowVisualiserBase xmlns:Controls="clr-namespace:m0_COMPOSER.UIWpf.Visualisers.Control"  x:Class="m0_COMPOSER.UIWpf.Visualisers.ChordProgressionVisualiser"
              xmlns:my="clr-namespace:m0_COMPOSER.UIWpf.Visualisers"
-             xmlns:m0c="clr-namespace:m0.UIWpf.Controls;assembly=m0"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
@@ -53,6 +52,6 @@
 
             </ToolBar>
         </ToolBarTray>
-        <m0c:ZoomScrollView x:Name="ZoomScrollView_Instance" DownAreaVisible="True"/>
+        <Controls:ZoomScrollView x:Name="ZoomScrollView_Instance" DownAreaVisible="True"/>
     </DockPanel>
 </my:MelodyFlowVisualiserBase>

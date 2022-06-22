@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 
-namespace m0.UIWpf.Controls
+namespace m0_COMPOSER.UIWpf.Visualisers
 {
     public interface IZoomScrollViewerHost
     {
