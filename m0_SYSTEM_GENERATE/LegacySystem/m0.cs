@@ -3409,6 +3409,7 @@ namespace m0
             sm.Get(false, @"Visualiser\Set2D\HorizontalMax").AddEdge(sm.Get(false, @"?$EdgeTarget"), sm.Get(false, @"?Float"));
             sm.Get(false, @"Visualiser\Set2D\VerticalMin").AddEdge(sm.Get(false, @"?$EdgeTarget"), sm.Get(false, @"?Float"));
             sm.Get(false, @"Visualiser\Set2D\VerticalMax").AddEdge(sm.Get(false, @"?$EdgeTarget"), sm.Get(false, @"?Float"));
+            sm.Get(false, @"Visualiser\Set2D").AddEdge(sm.Get(false, @"Visualiser\BaseEdgeTarget"), sm.Get(false, @"Visualiser\BaseEdgeTarget\Any"));
 
 
             sm.Get(false, @"Visualiser\Sequence").AddEdge(sm.Get(false, "?$Inherits"), sm.Get(false, @"Visualiser\AbstractVisualiser"));            
