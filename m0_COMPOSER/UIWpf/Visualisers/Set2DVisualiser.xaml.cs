@@ -38,8 +38,6 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             PenButton = PenButton_Instance;
             ArrowButton = ArrowButton_Instance;
             EraseButton = EraseButton_Instance;
-            TruncateButton = TruncateButton_Instance;
-            ExtendButton = ExtendButton_Instance;
 
             CutButton = CutButton_Instance;
             CopyButton = CopyButton_Instance;
@@ -58,8 +56,8 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             VisualiserName = "Set2DVisualiser";
 
-            BaseEdgeToMetaVertex = mz.root.Get(false, @"System\Lib\Music\Class:Sequence");
-            VisualiserMetaVertex = mz.root.Get(false, @"System\Meta\Visualiser\Sequence");
+            BaseEdgeToMetaVertex = mz.root.Get(false, @"System\Meta\ZeroTypes\Vertex");
+            VisualiserMetaVertex = mz.root.Get(false, @"System\Meta\Visualiser\Set2D");
 
             //
 
@@ -71,7 +69,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             //
 
-            HasDown = true;
+            HasDown = false;
 
             //
 
@@ -134,7 +132,9 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
         protected override void UpdateVertexValues()
         {
-            IVertex r = MinusZero.Instance.root;            
+            IVertex r = MinusZero.Instance.root;
+
+            return;
 
             bool dummy = false;
 
@@ -144,9 +144,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             ShowSnapLines = GraphUtil.GetBooleanValue(Vertex.Get(false, "ShowSnapLines:"), ref dummy);
             DefaultVelocity = GraphUtil.GetIntegerValue(Vertex.Get(false, "DefaultVelocity:"), ref dummy);
 
-            if (Vertex.Get(false, "SnapToGrid:") == null || Vertex.Get(false, "SnapToGrid:").Value.ToString() == "")
-                GraphUtil.ReplaceEdge(Vertex, r.Get(false, @"System\Meta\Visualiser\Sequence\SnapToGrid"), r.Get(false, @"System\Meta\Visualiser\SnapToGridEnum\'1/16 bar'"));
-
+            
             SnapToGridComboBox_SelectionChange();
         }        
 
@@ -495,14 +493,6 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             return noteEventEdge;
         }
 
-        // copy & paste rules for SequenceVisualiser
-        //
-        // what is selected before cut / paste | what is copied | what is selected after paste
-        // ------------------------------------+----------------+---------------
-        //                               notes | notes + cc     | notes
-        //                     note velocities | notes + cc     | notes
-        //                                  cc | cc             | cc
-
         protected enum WhatIsInEdgesEnum { OnlyNotes, OnlyCC, Mix}
 
         protected WhatIsInEdgesEnum GetWhatIsInEdges(IEnumerable<IEdge> edges, out int minPosition, out int maxPosition, out bool onlyCopy)
@@ -603,21 +593,6 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             return edgesOut;
         }        
 
-        protected IEdge AddCCVertex(int triggerTime, int number, int value)
-        {            
-            IEdge noteEventEdge = VisualizedVertex.AddVertexAndReturnEdge(musicEvent, null);
-
-            IVertex noteEventVertex = noteEventEdge.To;
-
-            noteEventVertex.AddEdge(MinusZero.Instance.Is, musicControlChangeEvent);
-
-            noteEventVertex.AddVertex(musicControlChangeEvent.Get(false, @"Attribute:Number"), number);
-            noteEventVertex.AddVertex(musicControlChangeEvent.Get(false, @"Attribute:Value"), value);
-            noteEventVertex.AddVertex(musicControlChangeEvent.Get(false, @"Attribute:TriggerTime"), triggerTime);            
-
-            return noteEventEdge;
-        }
-
         protected override void PasteEdgesFromClipboard(IEnumerable<IEdge> edges)
         {
             bool o = false;            
@@ -688,28 +663,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
                        AddToSelectedEdges(newEdge);
                     }
 
-                    if (v.Get(false, "$Is:ControlChangeEvent") != null) // CONTROLCHANGE
-                    {
-                        int triggerTime = GraphUtil.GetIntegerValue(v.Get(false, "TriggerTime:"), ref o) - minPosition + PositionMark;
-
-                        if (isClipboardCopy)
-                            newEdge = AddCCVertex(triggerTime,
-                                GraphUtil.GetIntegerValue(v.Get(false, "Number:"), ref o),
-                                GraphUtil.GetIntegerValue(v.Get(false, "Value:"), ref o));
-
-                        if (isClipboardCut)
-                        {
-                            newEdge = edge;
-
-                            UpdateCCVertex(edge,
-                                triggerTime,
-                                GraphUtil.GetIntegerValue(v.Get(false, "Number:"), ref o),
-                                GraphUtil.GetIntegerValue(v.Get(false, "Value:"), ref o));
-                        }                        
-
-                        if (whatIsClipboard == WhatIsInEdgesEnum.OnlyCC)
-                            AddToSelectedEdges(newEdge);
-                    }
+        
                 }                
             }
 
@@ -729,34 +683,8 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             GraphUtil.SetVertexValue(noteEventVertex, musicNoteEvent.Get(false, @"Attribute:Velocity"), velocity);                        
         }
 
-        private void UpdateCCVertex(IEdge ccEventEdge, int triggerTime, int number, int value)
-        {            
-            IVertex noteEventVertex = ccEventEdge.To;            
-
-            GraphUtil.SetVertexValue(noteEventVertex, musicControlChangeEvent.Get(false, @"Attribute:Number"), number);
-            GraphUtil.SetVertexValue(noteEventVertex, musicControlChangeEvent.Get(false, @"Attribute:Value"), value);
-            GraphUtil.SetVertexValue(noteEventVertex, musicControlChangeEvent.Get(false, @"Attribute:TriggerTime"), triggerTime);
-        }
-
-        protected override void DrawItems_Down()
-        {
-            List<IVertex> selectedVertexes = GetSelectedVertexes();
-
-            if (CurrentControlChangeNumber == -1)
-            {
-                foreach (IEdge e in VisualizedVertex.GetAll(false, "Event:"))
-                    if (GraphUtil.ExistQueryOut(e.To, "$Is", "NoteEvent"))
-                        if (ApplyFilter_Down(e.To))
-                            AddItemByEdge_Down(e, selectedVertexes, false, true);
-            }
-            else
-            {
-                foreach (IEdge e in VisualizedVertex.GetAll(false, "Event:"))
-                    if (GraphUtil.ExistQueryOut(e.To, "$Is", "ControlChangeEvent")
-                        && GraphUtil.GetIntegerValue(e.To.Get(false, @"Number:")) == CurrentControlChangeNumber)
-                        AddItemByEdge_Down(e, selectedVertexes, false, false);
-            }
-        }        
+        
+        
 
         public override void Dispose()
             {
@@ -771,5 +699,25 @@ namespace m0_COMPOSER.UIWpf.Visualisers
                     IsDisposed = true;
                 }            
             }
+
+        private void ExtendUpButton_Click(object sender, RoutedEventArgs e)
+        {
+
         }
+
+        private void ExtendDownButton_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void ExtendLeftButton_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void ExtendRightButton_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+    }
 }

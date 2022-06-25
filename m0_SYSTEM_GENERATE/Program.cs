@@ -45,7 +45,7 @@ namespace m0_SYSTEM_GENERATE
         static void Main(string[] args)
         {
             print("m0 SYSTEM GENERATE");
-            print("version 0.8 ");
+            print("version 1.0");
             print("SYSTEM / USER / EXAMPLES m0 files generator");
 
             print("");

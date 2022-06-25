@@ -78,7 +78,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control
 
         void DownWidthUpdate()
         {
-            if(DownMain != null)
+            if(DownMain != null && VerticalAxisDecorator != null)
                 DownMain.Width = DownHideArea.ActualWidth - VerticalAxisDecorator.Size.Width;
         }
 

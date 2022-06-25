@@ -10,19 +10,19 @@
     <DockPanel>
         <ToolBarTray DockPanel.Dock="Top">
             <ToolBar>
-                <ToggleButton Name="ArrowButton_Instance" ToolTip="Select multiple notes" Click="ArrowButton_Click">
+                <ToggleButton Name="ArrowButton_Instance" ToolTip="Select" Click="ArrowButton_Click">
                     <StackPanel Orientation="Horizontal">
                         <Image RenderOptions.BitmapScalingMode="HighQuality" Source="pack://application:,,/m0;Component/_resources/basic/pointer.png" Width="15" Height="15"/>
                         <TextBlock Margin="3,0,0,0">Select</TextBlock>
                     </StackPanel>
                 </ToggleButton>
-                <ToggleButton Name="PenButton_Instance" ToolTip="Add new note" Click="PenButton_Click">
+                <ToggleButton Name="PenButton_Instance" ToolTip="Add" Click="PenButton_Click">
                     <StackPanel Orientation="Horizontal">
                         <Image RenderOptions.BitmapScalingMode="HighQuality" Source="pack://application:,,/m0;Component/_resources/basic/pen.png" Width="15" Height="15"/>
                         <TextBlock Margin="3,0,0,0">New</TextBlock>
                     </StackPanel>
                 </ToggleButton>
-                <ToggleButton Name="EraseButton_Instance" ToolTip="Erase note" Click="EraseButton_Click">
+                <ToggleButton Name="EraseButton_Instance" ToolTip="Erase" Click="EraseButton_Click">
                     <StackPanel Orientation="Horizontal">
                         <Image RenderOptions.BitmapScalingMode="HighQuality" Source="pack://application:,,/m0;Component/_resources/basic/eraser.png" Width="15" Height="15"/>
                         <TextBlock Margin="3,0,0,0">Erase</TextBlock>
@@ -31,19 +31,19 @@
                 
                 <Separator/>
 
-                <Button Name="CutButton_Instance" ToolTip="Cut notes" Click="CutButton_Click">
+                <Button Name="CutButton_Instance" ToolTip="Cut" Click="CutButton_Click">
                     <StackPanel Orientation="Horizontal">
                         <Image RenderOptions.BitmapScalingMode="HighQuality" Source="pack://application:,,/m0;Component/_resources/basic/cut.png" Width="15" Height="15"/>
                         <TextBlock Margin="3,0,0,0">Cut</TextBlock>
                     </StackPanel>
                 </Button>
-                <Button Name="CopyButton_Instance" ToolTip="Copy notes" Click="CopyButton_Click">
+                <Button Name="CopyButton_Instance" ToolTip="Copy" Click="CopyButton_Click">
                     <StackPanel Orientation="Horizontal">
                         <Image RenderOptions.BitmapScalingMode="HighQuality" Source="pack://application:,,/m0;Component/_resources/basic/copy.png" Width="15" Height="15"/>
                         <TextBlock Margin="3,0,0,0">Copy</TextBlock>
                     </StackPanel>
                 </Button>
-                <Button Name="PasteButton_Instance" ToolTip="Paste notes" Click="PasteButton_Click">
+                <Button Name="PasteButton_Instance" ToolTip="Paste" Click="PasteButton_Click">
                     <StackPanel Orientation="Horizontal">
                         <Image RenderOptions.BitmapScalingMode="HighQuality" Source="pack://application:,,/m0;Component/_resources/basic/paste.png" Width="15" Height="15"/>
                         <TextBlock Margin="3,0,0,0">Paste</TextBlock>
@@ -52,16 +52,28 @@
 
                 <Separator/>
                 
-                <Button Name="TruncateButton_Instance" ToolTip="Truncate the sequence length" Click="TruncateButton_Click">
+                <Button Name="ExtendUpButton" ToolTip="Extend vertical axis towards positive values by 10%" Click="ExtendUpButton_Click">
                     <StackPanel Orientation="Horizontal">
-                        <Image RenderOptions.BitmapScalingMode="HighQuality" Source="pack://application:,,/m0;Component/_resources/basic/truncate.png" Width="15" Height="15"/>
-                        <TextBlock Margin="3,0,0,0">Truncate</TextBlock>
+                        <Image RenderOptions.BitmapScalingMode="HighQuality" Source="pack://application:,,/m0;Component/_resources/basic/extend_up.png" Width="15" Height="15"/>
+                        <TextBlock Margin="3,0,0,0">Extend Up</TextBlock>
                     </StackPanel>
                 </Button>
-                <Button Name="ExtendButton_Instance" ToolTip="Extend the sequence length" Click="ExtendButton_Click">
+                <Button Name="ExtendDownButton" ToolTip="Extend vertical axis towards negative values by 10%" Click="ExtendDownButton_Click">
                     <StackPanel Orientation="Horizontal">
                         <Image RenderOptions.BitmapScalingMode="HighQuality" Source="pack://application:,,/m0;Component/_resources/basic/extend.png" Width="15" Height="15"/>
-                        <TextBlock Margin="3,0,0,0">Extend</TextBlock>
+                        <TextBlock Margin="3,0,0,0">Extend Down</TextBlock>
+                    </StackPanel>
+                </Button>
+                <Button Name="ExtendLeftButton" ToolTip="Extend horizontal axis towards negative values by 10%" Click="ExtendLeftButton_Click">
+                    <StackPanel Orientation="Horizontal">
+                        <Image RenderOptions.BitmapScalingMode="HighQuality" Source="pack://application:,,/m0;Component/_resources/basic/extend_left.png" Width="15" Height="15"/>
+                        <TextBlock Margin="3,0,0,0">Extend Left</TextBlock>
+                    </StackPanel>
+                </Button>
+                <Button Name="ExtendRightButton" ToolTip="Extend horizontal axis towards positive values by 10%" Click="ExtendRightButton_Click">
+                    <StackPanel Orientation="Horizontal">
+                        <Image RenderOptions.BitmapScalingMode="HighQuality" Source="pack://application:,,/m0;Component/_resources/basic/extend_right.png" Width="15" Height="15"/>
+                        <TextBlock Margin="3,0,0,0">Extend Right</TextBlock>
                     </StackPanel>
                 </Button>
                 <Separator/>
