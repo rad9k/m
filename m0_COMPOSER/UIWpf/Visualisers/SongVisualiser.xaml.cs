@@ -609,15 +609,6 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             InitializeSongVertex();
         }
 
-        protected void SetButtonComponentName(ContentControl c, string text)
-        {
-            StackPanel s = (StackPanel)c.Content;
-
-            TextBlock t = (TextBlock)s.Children[1];
-
-            t.Text = text;
-        }
-
         protected void ShowToolbarNames_SelectionChange()
         {
             if (ShowToolbarNames)

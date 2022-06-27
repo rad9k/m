@@ -283,6 +283,15 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
         protected virtual void UpdateVertexValues() { }
 
+        protected void SetButtonComponentName(ContentControl c, string text)
+        {
+            StackPanel s = (StackPanel)c.Content;
+
+            TextBlock t = (TextBlock)s.Children[1];
+
+            t.Text = text;
+        }
+
         protected void SetMouseOverItem(IItem item)
         {
             if (!(item is FrameworkElement))

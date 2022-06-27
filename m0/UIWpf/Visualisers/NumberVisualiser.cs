@@ -144,8 +144,8 @@ namespace m0.UIWpf.Visualisers
                 if (typeof(T) == typeof(decimal?))
                 {
                     decimal _ret = 0;
-                    decimal _MinValue = (decimal)(object)MinValue;
-                    decimal _MaxValue = (decimal)(object)MaxValue;
+                    decimal? _MinValue = (decimal?)(object)MinValue;
+                    decimal? _MaxValue = (decimal?)(object)MaxValue;
 
                     if (Decimal.TryParse((string)val, out _ret) == false)
                     {
@@ -173,8 +173,8 @@ namespace m0.UIWpf.Visualisers
                 if (typeof(T) == typeof(double?))
                 {
                     double _ret = 0;
-                    double _MinValue = (double)(object)MinValue;
-                    double _MaxValue = (double)(object)MaxValue;
+                    double? _MinValue = (double?)(object)MinValue;
+                    double? _MaxValue = (double?)(object)MaxValue;
 
                     if (Double.TryParse((string)val, out _ret) == false)
                     {

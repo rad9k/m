@@ -60,7 +60,7 @@
                 </Button>
                 <Button Name="ExtendDownButton" ToolTip="Extend vertical axis towards negative values by 10%" Click="ExtendDownButton_Click">
                     <StackPanel Orientation="Horizontal">
-                        <Image RenderOptions.BitmapScalingMode="HighQuality" Source="pack://application:,,/m0;Component/_resources/basic/extend.png" Width="15" Height="15"/>
+                        <Image RenderOptions.BitmapScalingMode="HighQuality" Source="pack://application:,,/m0;Component/_resources/basic/extend_down.png" Width="15" Height="15"/>
                         <TextBlock Margin="3,0,0,0">Extend Down</TextBlock>
                     </StackPanel>
                 </Button>
@@ -72,7 +72,7 @@
                 </Button>
                 <Button Name="ExtendRightButton" ToolTip="Extend horizontal axis towards positive values by 10%" Click="ExtendRightButton_Click">
                     <StackPanel Orientation="Horizontal">
-                        <Image RenderOptions.BitmapScalingMode="HighQuality" Source="pack://application:,,/m0;Component/_resources/basic/extend_right.png" Width="15" Height="15"/>
+                        <Image RenderOptions.BitmapScalingMode="HighQuality" Source="pack://application:,,/m0;Component/_resources/basic/extend.png" Width="15" Height="15"/>
                         <TextBlock Margin="3,0,0,0">Extend Right</TextBlock>
                     </StackPanel>
                 </Button>

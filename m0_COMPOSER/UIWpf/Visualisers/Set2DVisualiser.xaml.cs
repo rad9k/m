@@ -27,6 +27,15 @@ namespace m0_COMPOSER.UIWpf.Visualisers
     /// </summary>
     public partial class Set2DVisualiser : ZoomScrollViewBasedVisualiserBase
     {
+        // Set2D
+
+        protected bool ShowToolbarNames;
+        protected bool ConnectPoints;
+        protected bool CanEdit;
+
+
+        // Set2D
+
         static string[] _MetaTriggeringUpdateVertex = new string[] { "ShowArrowLines", "ShowSnapLines", "ShowLabel", "ShowVelocity", "DefaultVelocity", "SnapToGrid" };
         public override string[] MetaTriggeringUpdateVertex { get { return _MetaTriggeringUpdateVertex; } }
 
@@ -134,19 +143,68 @@ namespace m0_COMPOSER.UIWpf.Visualisers
         {
             IVertex r = MinusZero.Instance.root;
 
-            return;
-
             bool dummy = false;
 
-            ShowLabel = GraphUtil.GetBooleanValue(Vertex.Get(false, "ShowLabel:"), ref dummy);
-            ShowVelocity = GraphUtil.GetBooleanValue(Vertex.Get(false, "ShowVelocity:"), ref dummy);
+            
             ShowArowLines = GraphUtil.GetBooleanValue(Vertex.Get(false, "ShowArrowLines:"), ref dummy);
             ShowSnapLines = GraphUtil.GetBooleanValue(Vertex.Get(false, "ShowSnapLines:"), ref dummy);
             DefaultVelocity = GraphUtil.GetIntegerValue(Vertex.Get(false, "DefaultVelocity:"), ref dummy);
+            ShowToolbarNames = GraphUtil.GetBooleanValue(Vertex.Get(false, "ShowToolbarNames:"), ref dummy);
+            CanEdit = GraphUtil.GetBooleanValue(Vertex.Get(false, "CanEdit:"), ref dummy);
+            ConnectPoints = GraphUtil.GetBooleanValue(Vertex.Get(false, "ConnectPoints:"), ref dummy);
 
-            
             SnapToGridComboBox_SelectionChange();
-        }        
+        }
+
+        protected void ShowToolbarNames_SelectionChange()
+        {
+            if (ShowToolbarNames)
+            {
+                SetButtonComponentName(PenButton, "New");
+                SetButtonComponentName(ArrowButton, "Select");
+                SetButtonComponentName(EraseButton, "Erase");
+                SetButtonComponentName(GlueButton, "Merge");
+                SetButtonComponentName(RazorButton, "Razor");
+
+                SetButtonComponentName(RewindButton, "Rewind");
+                SetButtonComponentName(PlayButton, "Play");
+                SetButtonComponentName(RecordButton, "Record");
+                SetButtonComponentName(StopButton, "Stop");
+                SetButtonComponentName(RepeatButton, "Repeat");
+
+                SetButtonComponentName(CutButton, "Cut");
+                SetButtonComponentName(CopyButton, "Copy");
+                SetButtonComponentName(PasteButton, "Paste");
+
+                SetButtonComponentName(TruncateButton, "Truncate");
+                SetButtonComponentName(ExtendButton, "Extend");
+
+                SetButtonComponentName(MuteSpeakerButton, "Silence");
+            }
+            else
+            {
+                SetButtonComponentName(PenButton, "");
+                SetButtonComponentName(ArrowButton, "");
+                SetButtonComponentName(EraseButton, "");
+                SetButtonComponentName(GlueButton, "");
+                SetButtonComponentName(RazorButton, "");
+
+                SetButtonComponentName(RewindButton, "");
+                SetButtonComponentName(PlayButton, "");
+                SetButtonComponentName(RecordButton, "");
+                SetButtonComponentName(StopButton, "");
+                SetButtonComponentName(RepeatButton, "");
+
+                SetButtonComponentName(CutButton, "");
+                SetButtonComponentName(CopyButton, "");
+                SetButtonComponentName(PasteButton, "");
+
+                SetButtonComponentName(TruncateButton, "");
+                SetButtonComponentName(ExtendButton, "");
+
+                SetButtonComponentName(MuteSpeakerButton, "");
+            }
+        }
 
         protected override void UpdateVariablesFromBaseVertex()
         {
