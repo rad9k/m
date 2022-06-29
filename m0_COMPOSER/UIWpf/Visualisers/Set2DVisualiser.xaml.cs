@@ -36,7 +36,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
         // Set2D
 
-        static string[] _MetaTriggeringUpdateVertex = new string[] { "ShowArrowLines", "ShowSnapLines", "ShowLabel", "ShowVelocity", "DefaultVelocity", "SnapToGrid" };
+        static string[] _MetaTriggeringUpdateVertex = new string[] { "ShowArrowLines", "CanEdit", "ConnectPoints", "ShowToolbarNames" };
         public override string[] MetaTriggeringUpdateVertex { get { return _MetaTriggeringUpdateVertex; } }
 
         static string[] _MetaTriggeringUpdateView = new string[] { };
@@ -147,13 +147,11 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             
             ShowArowLines = GraphUtil.GetBooleanValue(Vertex.Get(false, "ShowArrowLines:"), ref dummy);
-            ShowSnapLines = GraphUtil.GetBooleanValue(Vertex.Get(false, "ShowSnapLines:"), ref dummy);
-            DefaultVelocity = GraphUtil.GetIntegerValue(Vertex.Get(false, "DefaultVelocity:"), ref dummy);
             ShowToolbarNames = GraphUtil.GetBooleanValue(Vertex.Get(false, "ShowToolbarNames:"), ref dummy);
             CanEdit = GraphUtil.GetBooleanValue(Vertex.Get(false, "CanEdit:"), ref dummy);
             ConnectPoints = GraphUtil.GetBooleanValue(Vertex.Get(false, "ConnectPoints:"), ref dummy);
 
-            SnapToGridComboBox_SelectionChange();
+            ShowToolbarNames_SelectionChange();
         }
 
         protected void ShowToolbarNames_SelectionChange()
@@ -163,46 +161,31 @@ namespace m0_COMPOSER.UIWpf.Visualisers
                 SetButtonComponentName(PenButton, "New");
                 SetButtonComponentName(ArrowButton, "Select");
                 SetButtonComponentName(EraseButton, "Erase");
-                SetButtonComponentName(GlueButton, "Merge");
-                SetButtonComponentName(RazorButton, "Razor");
-
-                SetButtonComponentName(RewindButton, "Rewind");
-                SetButtonComponentName(PlayButton, "Play");
-                SetButtonComponentName(RecordButton, "Record");
-                SetButtonComponentName(StopButton, "Stop");
-                SetButtonComponentName(RepeatButton, "Repeat");
-
+         
+                
                 SetButtonComponentName(CutButton, "Cut");
                 SetButtonComponentName(CopyButton, "Copy");
                 SetButtonComponentName(PasteButton, "Paste");
 
-                SetButtonComponentName(TruncateButton, "Truncate");
-                SetButtonComponentName(ExtendButton, "Extend");
-
-                SetButtonComponentName(MuteSpeakerButton, "Silence");
+                SetButtonComponentName(ExtendUpButton, "Extend Up");
+                SetButtonComponentName(ExtendDownButton, "Extend Down");
+                SetButtonComponentName(ExtendLeftButton, "Extend Left");
+                SetButtonComponentName(ExtendRightButton, "Extend Right");
             }
             else
             {
                 SetButtonComponentName(PenButton, "");
                 SetButtonComponentName(ArrowButton, "");
                 SetButtonComponentName(EraseButton, "");
-                SetButtonComponentName(GlueButton, "");
-                SetButtonComponentName(RazorButton, "");
-
-                SetButtonComponentName(RewindButton, "");
-                SetButtonComponentName(PlayButton, "");
-                SetButtonComponentName(RecordButton, "");
-                SetButtonComponentName(StopButton, "");
-                SetButtonComponentName(RepeatButton, "");
-
+                
                 SetButtonComponentName(CutButton, "");
                 SetButtonComponentName(CopyButton, "");
                 SetButtonComponentName(PasteButton, "");
 
-                SetButtonComponentName(TruncateButton, "");
-                SetButtonComponentName(ExtendButton, "");
-
-                SetButtonComponentName(MuteSpeakerButton, "");
+                SetButtonComponentName(ExtendUpButton, "");
+                SetButtonComponentName(ExtendDownButton, "");
+                SetButtonComponentName(ExtendLeftButton, "");
+                SetButtonComponentName(ExtendRightButton, "");
             }
         }
 
