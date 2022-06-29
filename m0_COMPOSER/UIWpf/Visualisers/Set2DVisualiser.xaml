@@ -28,8 +28,19 @@
                         <TextBlock Margin="3,0,0,0">Erase</TextBlock>
                     </StackPanel>
                 </ToggleButton>
-                
-                <Separator/>
+            
+            </ToolBar>
+
+            <ToolBar>
+                <Label>Item:</Label>
+                <ComboBox Name="SetItemsDefiningMetaComboBox" ToolTip="Meta edge to use while defining items set" SelectionChanged="SetItemsDefiningMetaComboBox_SelectionChanged"/>
+                <Label>X:</Label>
+                <ComboBox Name="SetItemHorizontalAxisMetaComboBox" ToolTip="Item's meta edge to use for Horizontal Axis" SelectionChanged="SetItemHorizontalAxisMetaComboBox_SelectionChanged"/>
+                <Label>Y:</Label>
+                <ComboBox Name="SetItemVerticalAxisMetaComboBox" ToolTip="Item's meta edge to use for Vertical Axis" SelectionChanged="SetItemVerticalAxisMetaComboBox_SelectionChanged"/>
+            </ToolBar>
+           
+            <ToolBar>
 
                 <Button Name="CutButton_Instance" ToolTip="Cut" Click="CutButton_Click">
                     <StackPanel Orientation="Horizontal">
@@ -76,7 +87,6 @@
                         <TextBlock Margin="3,0,0,0">Extend Right</TextBlock>
                     </StackPanel>
                 </Button>
-                <Separator/>
 
             </ToolBar>
         </ToolBarTray>

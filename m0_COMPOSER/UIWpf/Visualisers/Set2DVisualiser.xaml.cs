@@ -27,14 +27,22 @@ namespace m0_COMPOSER.UIWpf.Visualisers
     /// </summary>
     public partial class Set2DVisualiser : ZoomScrollViewBasedVisualiserBase
     {
-        // Set2D
+        // Set2D beg
 
         protected bool ShowToolbarNames;
         protected bool ConnectPoints;
         protected bool CanEdit;
 
+        IVertex baseEdgeTo;
 
-        // Set2D
+        IVertex SetItemsDefiningMeta;
+        IVertex SetItemsDefiningMetaIs;
+        string SetItemsDefiningMetaString;
+
+        string SetItemHorizontalAxisMetaString;
+        string SetItemVerticalAxisMetaString;
+
+        // Set2D end
 
         static string[] _MetaTriggeringUpdateVertex = new string[] { "ShowArrowLines", "CanEdit", "ConnectPoints", "ShowToolbarNames" };
         public override string[] MetaTriggeringUpdateVertex { get { return _MetaTriggeringUpdateVertex; } }
@@ -85,9 +93,18 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             ZoomScrollViewBasedVisualiserBase_Init(baseEdgeVertex, parentVisualiser);
         }
 
+        
+
+        protected void baseEdgeToUpdated()
+        {
+            ISet<IVertex> metaDictionary = new HashSet<IVertex>();
+        }
+
         protected override INoInEdgeInOutVertexVertex CheckBaseEdgeChange(IExecution exe)
         {
-            IVertex baseEdgeTo = VisualiserHelper.Vertex.Get(false, @"BaseEdge:\To:");
+            baseEdgeTo = VisualiserHelper.Vertex.Get(false, @"BaseEdge:\To:");
+
+            baseEdgeToUpdated();
 
             ExecutionFlowHelper.DoAddRemoveDisposeAddEdgeByMetaOrValueChangeHandlers(exe.Stack, new List<EventHandlers>()
             { new EventHandlers(
@@ -757,6 +774,21 @@ namespace m0_COMPOSER.UIWpf.Visualisers
         }
 
         private void ExtendRightButton_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void SetItemsDefiningMetaComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+
+        }
+
+        private void SetItemHorizontalAxisMetaComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+
+        }
+
+        private void SetItemVerticalAxisMetaComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
 
         }
