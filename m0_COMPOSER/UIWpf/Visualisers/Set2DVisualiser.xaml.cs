@@ -811,7 +811,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             int cnt = 0;
 
-            foreach(IEdge _e in SetItemsDefiningMeta)
+            foreach(IEdge _e in SetItemsDefiningMeta.GetAll(false, @"$EdgeTarget:\"))
             {
                 if (VisualiserUtil.FilterEdge(_e, this.Vertex))
                 {
@@ -820,13 +820,22 @@ namespace m0_COMPOSER.UIWpf.Visualisers
                     i.Tag = _e.To;
 
                     SetItemHorizontalAxisMetaComboBox.Items.Add(i);
-                    SetItemVerticalAxisMetaComboBox.Items.Add(i);
 
                     if (cnt == 0)
-                    {
-                        isFirst = false;
                         i.IsSelected = true;
-                    }
+
+                    //
+
+                    i = new ComboBoxItem();
+                    i.Content = _e.To.Value;
+                    i.Tag = _e.To;
+
+                    SetItemVerticalAxisMetaComboBox.Items.Add(i);
+
+                    if (cnt == 1)
+                        i.IsSelected = true;
+
+                    cnt++;
                 }
             }
         }
