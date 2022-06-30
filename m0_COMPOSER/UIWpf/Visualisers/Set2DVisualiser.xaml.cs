@@ -19,6 +19,7 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Shapes;
+using m0.UIWpf.Visualisers.Helper;
 
 namespace m0_COMPOSER.UIWpf.Visualisers
 {
@@ -98,13 +99,36 @@ namespace m0_COMPOSER.UIWpf.Visualisers
         protected void baseEdgeToUpdated()
         {
             ISet<IVertex> metaDictionary = new HashSet<IVertex>();
+
+            foreach (IEdge e in baseEdgeTo)
+                if (!metaDictionary.Contains(e.Meta) && VisualiserUtil.FilterEdge(e, this.Vertex))
+                    metaDictionary.Add(e.Meta);
+
+            SetItemsDefiningMetaComboBox.Items.Clear();
+
+            bool isFirst = true;
+
+            foreach (IVertex v in metaDictionary)
+            {
+                ComboBoxItem i = new ComboBoxItem();
+                i.Content = v.Value;
+                i.Tag = v;
+                SetItemsDefiningMetaComboBox.Items.Add(i);
+
+                if (isFirst)
+                {
+                    isFirst = false;
+                    i.IsSelected = true;
+                }
+            }
         }
 
         protected override INoInEdgeInOutVertexVertex CheckBaseEdgeChange(IExecution exe)
         {
             baseEdgeTo = VisualiserHelper.Vertex.Get(false, @"BaseEdge:\To:");
 
-            baseEdgeToUpdated();
+            if (baseEdgeTo != null)
+                baseEdgeToUpdated();
 
             ExecutionFlowHelper.DoAddRemoveDisposeAddEdgeByMetaOrValueChangeHandlers(exe.Stack, new List<EventHandlers>()
             { new EventHandlers(
@@ -780,7 +804,31 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
         private void SetItemsDefiningMetaComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
+            SetItemsDefiningMeta = (IVertex) ((ComboBoxItem)SetItemsDefiningMetaComboBox.SelectedItem).Tag;
 
+            SetItemHorizontalAxisMetaComboBox.Items.Clear();
+            SetItemVerticalAxisMetaComboBox.Items.Clear();
+
+            int cnt = 0;
+
+            foreach(IEdge _e in SetItemsDefiningMeta)
+            {
+                if (VisualiserUtil.FilterEdge(_e, this.Vertex))
+                {
+                    ComboBoxItem i = new ComboBoxItem();
+                    i.Content = _e.To.Value;
+                    i.Tag = _e.To;
+
+                    SetItemHorizontalAxisMetaComboBox.Items.Add(i);
+                    SetItemVerticalAxisMetaComboBox.Items.Add(i);
+
+                    if (cnt == 0)
+                    {
+                        isFirst = false;
+                        i.IsSelected = true;
+                    }
+                }
+            }
         }
 
         private void SetItemHorizontalAxisMetaComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)

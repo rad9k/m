@@ -50,7 +50,9 @@ namespace m0
         {            
             m0_RUN.Main.Run();
 
-            ExtraRun5();
+            ExtraRun6();
+
+            //ExtraRun5();
 
             //ExtraRun();
 
@@ -61,6 +63,45 @@ namespace m0
             //ExtraRun4();
 
             Close();
+        }
+
+        void ExtraRun6()
+        {
+            IVertex r = m0.MinusZero.Instance.root;
+
+            IVertex xxx = r.Get(false, "examples").AddVertex(null, "XXX");
+
+            IVertex c = xxx.AddVertex(null, "C");
+
+            IVertex x = c.AddVertex(null, "X");
+            IVertex y = c.AddVertex(null, "Y");
+            IVertex z = c.AddVertex(null, "Z");
+            IVertex w = c.AddVertex(null, "W");
+
+            IVertex ed1 = xxx.AddVertex(null, "edge1");
+            ed1.AddEdge(r.Get(false, @"System\Meta\Base\Vertex\$EdgeTarget"), c);
+
+            IVertex ed2 = xxx.AddVertex(null, "edge2");
+            ed2.AddEdge(r.Get(false, @"System\Meta\Base\Vertex\$EdgeTarget"), c);
+
+            IVertex data = xxx.AddVertex(null, "data");
+
+            for(int xx=0; xx< 10; xx++)
+            {
+                IVertex d = data.AddVertex(ed1, xx);
+
+                d.AddVertex(x, xx);
+                d.AddVertex(y, xx * 2);
+                d.AddVertex(z, xx * -4);
+                d.AddVertex(w, Math.Sin(xx));
+
+                d = data.AddVertex(ed2, xx);
+
+                d.AddVertex(x, xx * 10 );
+                d.AddVertex(y, xx * 20);
+                d.AddVertex(z, xx * -400);
+                d.AddVertex(w, Math.Sin(((double)xx)/10));
+            }
         }
 
         void ExtraRun5()
