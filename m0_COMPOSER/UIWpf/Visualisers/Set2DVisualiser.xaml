@@ -32,11 +32,11 @@
             </ToolBar>
 
             <ToolBar>
-                <Label>Item:</Label>
+                <Label>Items:</Label>
                 <ComboBox Name="SetItemsDefiningMetaComboBox" ToolTip="Meta edge to use while defining items set" SelectionChanged="SetItemsDefiningMetaComboBox_SelectionChanged"/>
-                <Label>X:</Label>
+                <Label>Horizontal:</Label>
                 <ComboBox Name="SetItemHorizontalAxisMetaComboBox" ToolTip="Item's meta edge to use for Horizontal Axis" SelectionChanged="SetItemHorizontalAxisMetaComboBox_SelectionChanged"/>
-                <Label>Y:</Label>
+                <Label>Vertical:</Label>
                 <ComboBox Name="SetItemVerticalAxisMetaComboBox" ToolTip="Item's meta edge to use for Vertical Axis" SelectionChanged="SetItemVerticalAxisMetaComboBox_SelectionChanged"/>
             </ToolBar>
            

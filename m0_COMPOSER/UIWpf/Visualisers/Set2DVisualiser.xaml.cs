@@ -804,6 +804,9 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
         private void SetItemsDefiningMetaComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
+            if (SetItemsDefiningMetaComboBox.SelectedItem == null)
+                return;
+
             SetItemsDefiningMeta = (IVertex) ((ComboBoxItem)SetItemsDefiningMetaComboBox.SelectedItem).Tag;
 
             SetItemHorizontalAxisMetaComboBox.Items.Clear();
