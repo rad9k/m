@@ -14,9 +14,9 @@ using System.Windows.Media;
 
 namespace m0_COMPOSER.UIWpf.Visualisers.Control
 {
-    class NumberSpanAxisDecorator : AxisDecoratorBase, IZoomScrollViewAxisDecorator
+    class IntegerSpanAxisDecorator : AxisDecoratorBase, IZoomScrollViewAxisDecorator
     {      
-        public NumberSpanAxisDecorator(ZoomScrollViewBasedVisualiserBase _visualiser) : base()
+        public IntegerSpanAxisDecorator(ZoomScrollViewBasedVisualiserBase _visualiser) : base()
         {
             segmentLength = 1;
 

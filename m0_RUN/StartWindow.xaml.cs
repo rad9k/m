@@ -74,9 +74,16 @@ namespace m0
             IVertex c = xxx.AddVertex(null, "C");
 
             IVertex x = c.AddVertex(null, "X");
+            x.AddEdge(r.Get(false, @"System\Meta\Base\Vertex\$EdgeTarget"), r.Get(false, @"System\Meta\ZeroTypes\Float"));
+
             IVertex y = c.AddVertex(null, "Y");
+            y.AddEdge(r.Get(false, @"System\Meta\Base\Vertex\$EdgeTarget"), r.Get(false, @"System\Meta\ZeroTypes\Float"));
+
             IVertex z = c.AddVertex(null, "Z");
+            z.AddEdge(r.Get(false, @"System\Meta\Base\Vertex\$EdgeTarget"), r.Get(false, @"System\Meta\ZeroTypes\Float"));
+
             IVertex w = c.AddVertex(null, "W");
+            x.AddEdge(r.Get(false, @"System\Meta\Base\Vertex\$EdgeTarget"), r.Get(false, @"System\Meta\ZeroTypes\Float"));
 
             IVertex ed1 = xxx.AddVertex(null, "edge1");
             ed1.AddEdge(r.Get(false, @"System\Meta\Base\Vertex\$EdgeTarget"), c);

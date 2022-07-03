@@ -91,6 +91,7 @@
     <Compile Include="UIWpf\Visualisers\Control\Common.cs" />
     <Compile Include="UIWpf\Visualisers\Control\ControlChangeDownDecorator.cs" />
     <Compile Include="UIWpf\Visualisers\Control\AxisDecoratorBase.cs" />
+    <Compile Include="UIWpf\Visualisers\Control\FloatSpanAxisDecorator.cs" />
     <Compile Include="UIWpf\Visualisers\Control\Item\ControlChangeItem.cs" />
     <Compile Include="UIWpf\Visualisers\Control\Item\DrumItem.cs" />
     <Compile Include="UIWpf\Visualisers\Control\Item\ItemDictionary.cs" />
@@ -102,7 +103,7 @@
     <Compile Include="UIWpf\Visualisers\Control\RealTimeSpanAxisDecorator.cs" />
     <Compile Include="UIWpf\Visualisers\Control\TrackAxisDecorator.cs" />
     <Compile Include="UIWpf\Visualisers\Control\PitchSetAxisDecorator.cs" />
-    <Compile Include="UIWpf\Visualisers\Control\NumberSpanAxisDecorator.cs" />
+    <Compile Include="UIWpf\Visualisers\Control\IntegerSpanAxisDecorator.cs" />
     <Compile Include="UIWpf\Visualisers\Control\MusicTimeSpanAxisDecorator.cs" />
     <Compile Include="UIWpf\Visualisers\Control\ZoomScrollView.xaml.cs">
       <DependentUpon>ZoomScrollView.xaml</DependentUpon>

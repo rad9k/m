@@ -34,8 +34,6 @@ namespace m0_COMPOSER.UIWpf.Visualisers
         protected bool ConnectPoints;
         protected bool CanEdit;
 
-        IVertex baseEdgeTo;
-
         IVertex SetItemsDefiningMeta;
         IVertex SetItemsDefiningMetaIs;
         string SetItemsDefiningMetaString;
@@ -94,13 +92,11 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             ZoomScrollViewBasedVisualiserBase_Init(baseEdgeVertex, parentVisualiser);
         }
 
-        
-
-        protected void baseEdgeToUpdated()
+        protected void VisualizedVertexToUpdated()
         {
             ISet<IVertex> metaDictionary = new HashSet<IVertex>();
 
-            foreach (IEdge e in baseEdgeTo)
+            foreach (IEdge e in VisualizedVertex)
                 if (!metaDictionary.Contains(e.Meta) && VisualiserUtil.FilterEdge(e, this.Vertex))
                     metaDictionary.Add(e.Meta);
 
@@ -125,12 +121,12 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
         protected override INoInEdgeInOutVertexVertex CheckBaseEdgeChange(IExecution exe)
         {
-            baseEdgeTo = VisualiserHelper.Vertex.Get(false, @"BaseEdge:\To:");
+            VisualizedVertex = VisualiserHelper.Vertex.Get(false, @"BaseEdge:\To:");
 
-            if (baseEdgeTo != null)
-                baseEdgeToUpdated();
+            if (VisualizedVertex != null)
+                VisualizedVertexToUpdated();
 
-            ExecutionFlowHelper.DoAddRemoveDisposeAddEdgeByMetaOrValueChangeHandlers(exe.Stack, new List<EventHandlers>()
+/*            ExecutionFlowHelper.DoAddRemoveDisposeAddEdgeByMetaOrValueChangeHandlers(exe.Stack, new List<EventHandlers>()
             { new EventHandlers(
                 baseEdgeTo,
                 EdgeAdded,
@@ -142,17 +138,13 @@ namespace m0_COMPOSER.UIWpf.Visualisers
                 AddEdgeByMetaOrValueChangeHandler
                 )
             });
-
+            */
             return exe.Stack;
         }        
 
         protected override void EdgeAdded(IEdge edge)
         {
-            if (GraphUtil.ExistQueryOut(edge.To, "$Is", "NoteEvent"))
-                AddItemByEdge(edge, null);
-            else
-                if(GraphUtil.GetIntegerValue(edge.To.Get(false, @"Number:")) == CurrentControlChangeNumber)
-                    AddItemByEdge_Down(edge, null, false, false);
+           // AddItemByEdge(edge, null);
         }
 
         protected void AddEdgeByMetaOrValueChangeHandler(IEdge eventEdge)
@@ -236,29 +228,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             if (VisualizedVertex == null)
                 return;            
-
-            if (VisualizedVertex.Get(false, "$Is:Sequence") == null)
-            {
-                VisualizedVertex = null;
-                return;
-            }
-
-            IVertex r = MinusZero.Instance.Root;
-
-            verticalSpanVertex = VisualizedVertex.Get(false, "PitchSet:");
-
-            if (verticalSpanVertex == null)
-                if (IsDrum)
-                    verticalSpanVertex = r.Get(false, @"System\Lib\Music\Data\DefaultDrumPitchSet:");
-                else
-                    verticalSpanVertex = r.Get(false, @"System\Lib\Music\Data\DefaultPitchSet:");
-
-            verticalSpanVertex_Down = VisualizedVertex.Get(false, "ControlChangeDescriptionSet:");
-
-            horizontalSpanVertex = VisualizedVertex.Get(false, "TimeSpan:");
-
-            if (horizontalSpanVertex == null)
-                horizontalSpanVertex = r.Get(false, @"System\Lib\Music\Data\DefaultMusicTimeSpanLevel:");
+            
         }
 
         protected override void SetAxisDecorators()
@@ -802,6 +772,23 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
         }
 
+        private bool IsMetaSuitableForAxis(IVertex v)
+        {
+            IVertex edgeTarget = v.Get(false, "$EdgeTarget:");
+
+            if (edgeTarget == null)
+                return false;
+
+            string type = edgeTarget. Value.ToString();
+
+            if (type == "Integer" 
+                || type == "Float" 
+                || type == "Decimal")
+                return true;
+
+            return false;
+        }
+
         private void SetItemsDefiningMetaComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (SetItemsDefiningMetaComboBox.SelectedItem == null)
@@ -815,40 +802,60 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             int cnt = 0;
 
             foreach(IEdge _e in SetItemsDefiningMeta.GetAll(false, @"$EdgeTarget:\"))
-            {
-                if (VisualiserUtil.FilterEdge(_e, this.Vertex))
+                if(IsMetaSuitableForAxis(_e.To))
                 {
-                    ComboBoxItem i = new ComboBoxItem();
-                    i.Content = _e.To.Value;
-                    i.Tag = _e.To;
+                    if (VisualiserUtil.FilterEdge(_e, this.Vertex))
+                    {
+                        ComboBoxItem i = new ComboBoxItem();
+                        i.Content = _e.To.Value;
+                        i.Tag = _e.To;
 
-                    SetItemHorizontalAxisMetaComboBox.Items.Add(i);
+                        SetItemHorizontalAxisMetaComboBox.Items.Add(i);
 
-                    if (cnt == 0)
-                        i.IsSelected = true;
+                        if (cnt == 0)
+                            i.IsSelected = true;
 
-                    //
+                        //
 
-                    i = new ComboBoxItem();
-                    i.Content = _e.To.Value;
-                    i.Tag = _e.To;
+                        i = new ComboBoxItem();
+                        i.Content = _e.To.Value;
+                        i.Tag = _e.To;
 
-                    SetItemVerticalAxisMetaComboBox.Items.Add(i);
+                        SetItemVerticalAxisMetaComboBox.Items.Add(i);
 
-                    if (cnt == 1)
-                        i.IsSelected = true;
+                        if (cnt == 1)
+                            i.IsSelected = true;
 
-                    cnt++;
+                        cnt++;
+                    }
                 }
-            }
         }
 
         private void SetItemHorizontalAxisMetaComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
+            if (SetItemHorizontalAxisMetaComboBox.SelectedItem == null)
+                return;
 
+            IVertex SetItemHorizontalAxisMetaVertex = (IVertex)((ComboBoxItem)SetItemHorizontalAxisMetaComboBox.SelectedItem).Tag;
+
+            SetItemHorizontalAxisMetaString = SetItemHorizontalAxisMetaVertex.Value.ToString();
+
+            FillWithData();
         }
 
         private void SetItemVerticalAxisMetaComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (SetItemVerticalAxisMetaComboBox.SelectedItem == null)
+                return;
+
+            IVertex SetItemVerticalAxisMetaVertex = (IVertex)((ComboBoxItem)SetItemVerticalAxisMetaComboBox.SelectedItem).Tag;
+
+            SetItemVerticalAxisMetaString = SetItemVerticalAxisMetaVertex.Value.ToString();
+
+            FillWithData();
+        }
+
+        protected void FillWithData()
         {
 
         }
