@@ -262,14 +262,6 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control
             Update();
         }
 
-        public void SetValueSpaceMax(double length)
-        {
-            if (length < 1.0)
-                length = 1.0;
-
-            Length = length;
-        }
-
         public event EventHandler SelectionChanged;
 
         public object Selection { get; set; }

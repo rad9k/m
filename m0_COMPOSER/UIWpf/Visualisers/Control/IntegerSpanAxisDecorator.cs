@@ -18,7 +18,17 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control
     {
         public double ValueSpaceMin { get; set; }
 
-        public double ValueSpaceMax { get; set; }
+        double _ValueSpaceMax;
+
+        public double ValueSpaceMax {
+            get { return _ValueSpaceMax; }
+            set {
+                if (value < 1.0)
+                    value = 1.0;
+
+                _ValueSpaceMax = value;
+            }
+        }
 
         public double ScreenToValueSpace(double screenPosition) { return 0; }
 
@@ -33,12 +43,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control
             visualiser = _visualiser;
         }
 
-        public int BoldLineCount;        
-
-                    if (length< 1.0)
-                length = 1.0;
-
-            _ValueSpaceMax = length;
+        public int BoldLineCount;                            
 
         double FontSize = 10;
 
@@ -53,9 +58,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control
 
         List<timeSpanLevel> timeSpanStructure;
 
-        int timeSpanLevels;        
-
-        double _ValueSpaceMax;        
+        int timeSpanLevels;                
 
         //
 

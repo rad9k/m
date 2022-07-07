@@ -55,9 +55,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control
 
         List<timeSpanLevel> timeSpanStructure;
 
-        int timeSpanLevels;        
-
-        double Length;
+        int timeSpanLevels;                
 
         //        
 
@@ -66,7 +64,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control
             timeSpanHeight = FontSize * 2;
 
             Size s = new Size();
-            s.Width = Length * baseUnitSize;
+            s.Width = ValueSpaceMax * baseUnitSize;
             s.Height = timeSpanHeight;
 
             Size = s;
@@ -110,7 +108,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control
 
             int textCount = 1;
 
-            for (int cnt = 0; cnt < Length; cnt += thisLevel.BaseMusicTimeSpanLevelCountForThisLevel)
+            for (int cnt = 0; cnt < ValueSpaceMax; cnt += thisLevel.BaseMusicTimeSpanLevelCountForThisLevel)
             {                
                 double horizontalPosition = cnt * baseUnitSize;
 
@@ -210,7 +208,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control
 
             int nextUnitBaseCount = 0;
 
-            for (int cnt = 0; cnt <= Length; cnt += baseUnit)
+            for (int cnt = 0; cnt <= ValueSpaceMax; cnt += baseUnit)
             {
                 AxisSegment segment = new AxisSegment();
 
@@ -262,11 +260,6 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control
                 baseUnitSize = 0.02 + (1.0 / 5 * zoomFactor / 40);
 
             Update();
-        }
-
-        public void SetValueSpaceMax(double length)
-        {
-            Length = length;
         }
 
         public event EventHandler SelectionChanged;

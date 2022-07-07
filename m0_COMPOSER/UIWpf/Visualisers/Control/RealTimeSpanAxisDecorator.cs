@@ -18,7 +18,19 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control
     {
         public double ValueSpaceMin { get; set; }
 
-        public double ValueSpaceMax { get; set; }
+        double _ValueSpaceMax;
+
+        public double ValueSpaceMax
+        {
+            get { return _ValueSpaceMax; }
+            set
+            {
+                if (value < 1.0)
+                    value = 1.0;
+
+                _ValueSpaceMax = value;
+            }
+        }
 
         public double ScreenToValueSpace(double screenPosition) { return 0; }
 
@@ -50,9 +62,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control
 
         List<timeSpanLevel> timeSpanStructure;
 
-        int timeSpanLevels;        
-
-        double Length;
+        int timeSpanLevels;                
 
         int MilisecondsInMinute = 60 * 100;
 
@@ -63,7 +73,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control
             timeSpanHeight = FontSize * 2;
 
             Size s = new Size();
-            s.Width = Length * baseUnitSize * MilisecondsInMinute;
+            s.Width = ValueSpaceMax * baseUnitSize * MilisecondsInMinute;
             s.Height = timeSpanHeight;
 
             Size = s;
@@ -107,7 +117,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control
 
             int textCount = 0;
 
-            for (int cnt = 0; cnt < Length * MilisecondsInMinute; cnt += thisLevel.BaseMusicTimeSpanLevelCountForThisLevel)
+            for (int cnt = 0; cnt < ValueSpaceMax * MilisecondsInMinute; cnt += thisLevel.BaseMusicTimeSpanLevelCountForThisLevel)
             {                
                 double horizontalPosition = cnt * baseUnitSize;
 
@@ -207,7 +217,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control
 
             int nextUnitBaseCount = 0;
 
-            for (int cnt = 0; cnt <= Length * MilisecondsInMinute; cnt += baseUnit)
+            for (int cnt = 0; cnt <= ValueSpaceMax * MilisecondsInMinute; cnt += baseUnit)
             {
                 AxisSegment segment = new AxisSegment();
 
@@ -259,14 +269,6 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control
                 baseUnitSize = 0.018 + (1.0 / 30 * zoomFactor / 30);
 
             Update();
-        }
-
-        public void SetValueSpaceMax(double length)
-        {
-            if (length < 1.0)
-                length = 1.0;
-
-            Length = length;
         }
 
         public event EventHandler SelectionChanged;
