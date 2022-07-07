@@ -96,10 +96,16 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
         protected void VisualizedVertexToUpdated()
         {
-            comboBoxesUpdate();
+            AxisUpdate();
+            ComboBoxesUpdate();
         }
 
-        protected void comboBoxesUpdate()
+        void AxisUpdate()
+        {
+            foreach(IEdge e in VisualizedVertex.GetAll(false, )
+        }
+
+        protected void ComboBoxesUpdate()
         {
             ISet<IVertex> metaDictionary = new HashSet<IVertex>();
 
