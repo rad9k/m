@@ -16,6 +16,16 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control
 {
     public class MusicTimeSpanAxisDecorator : AxisDecoratorBase, IZoomScrollViewAxisDecorator
     {
+        public double ValueSpaceMin { get; set; }
+
+        public double ValueSpaceMax { get; set; }
+
+        public double ScreenToValueSpace(double screenPosition) { return 0; }
+
+        public double ValueSpaceToScreen(double valueSpacePosition) { return 0; }
+
+        public bool isHorizontal { get; set; }
+
         public MusicTimeSpanAxisDecorator(ZoomScrollViewBasedVisualiserBase _visualiser)
         {
             visualiser = _visualiser;
@@ -254,7 +264,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control
             Update();
         }
 
-        public void SetLength(double length)
+        public void SetValueSpaceMax(double length)
         {
             Length = length;
         }

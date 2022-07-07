@@ -26,6 +26,11 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
     public interface IZoomScrollViewAxisDecorator
     {
+        double ValueSpaceMin { get; set; }
+
+        double ValueSpaceMax { get; set; }
+
+        bool isHorizontal { get; set; }
         Size Size { get; set; }
         List<AxisSegment> Segments { get; }
 
@@ -37,7 +42,11 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
         void SetZoomFactor(double zoomFactor);
 
-        void SetLength(double length);
+
+
+        double ScreenToValueSpace(double screenPosition);
+
+        double ValueSpaceToScreen(double valueSpacePosition);
 
         event EventHandler SelectionChanged;
 

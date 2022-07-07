@@ -16,7 +16,17 @@ using m0.UIWpf.Visualisers.Controls;
 namespace m0_COMPOSER.UIWpf.Visualisers.Control
 {
     class OneSegmentAxisDecorator : AxisDecoratorBase, IZoomScrollViewAxisDecorator
-    {        
+    {
+        public double ValueSpaceMin { get; set; }
+
+        public double ValueSpaceMax { get; set; }
+
+        public double ScreenToValueSpace(double screenPosition) { return 0; }
+
+        public double ValueSpaceToScreen(double valueSpacePosition) { return 0; }
+
+        public bool isHorizontal { get; set; }
+
         double FontSize = 12;        
 
         double segmentSize;        
@@ -70,7 +80,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control
             Update();
         }
 
-        public void SetLength(double length) { }
+        public void SetValueSpaceMax(double length) { }
 
         public OneSegmentAxisDecorator() { }        
 

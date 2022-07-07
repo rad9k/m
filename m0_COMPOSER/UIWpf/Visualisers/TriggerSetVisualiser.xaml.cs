@@ -156,7 +156,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
                 HorizontalAD.SetBaseVertex(horizontalSpanVertex);
 
-                HorizontalAD.SetLength(Length);
+                HorizontalAD.ValueSpaceMax = Length;
             }
 
             ZoomScrollView.SetVerticalAxisDecorator(VerticalAD);

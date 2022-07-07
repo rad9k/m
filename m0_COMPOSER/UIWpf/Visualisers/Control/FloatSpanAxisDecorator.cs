@@ -15,7 +15,19 @@ using System.Windows.Media;
 namespace m0_COMPOSER.UIWpf.Visualisers.Control
 {
     class FloatSpanAxisDecorator : AxisDecoratorBase, IZoomScrollViewAxisDecorator
-    {      
+    {
+        public double ValueSpaceMin { get; set; }
+
+        public double ValueSpaceMax { get; set; }
+
+        public double ScreenToValueSpace(double screenPosition) { return 0; }
+
+        public double ValueSpaceToScreen(double valueSpacePosition) { return 0; }
+
+
+
+        public bool isHorizontal { get; set; }
+
         public FloatSpanAxisDecorator(ZoomScrollViewBasedVisualiserBase _visualiser) : base()
         {
             segmentLength = 1;
@@ -250,7 +262,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control
             Update();
         }
 
-        public void SetLength(double length)
+        public void SetValueSpaceMax(double length)
         {
             if (length < 1.0)
                 length = 1.0;

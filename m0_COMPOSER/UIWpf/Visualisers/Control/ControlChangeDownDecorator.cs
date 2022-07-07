@@ -67,6 +67,19 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control
 
     public class ControlChangeDownDecorator : StackPanel, IZoomScrollViewAxisDecorator
     {
+        public double ValueSpaceMin { get; set; }
+
+        public double ValueSpaceMax { get; set; }
+
+        public double ScreenToValueSpace(double screenPosition) { return 0; }
+
+        public double ValueSpaceToScreen(double valueSpacePosition) { return 0; }
+
+
+
+        public bool isHorizontal { get; set; }
+
+
         public double PositionMark { get; set; }
 
         IVertex baseVertex;
@@ -162,11 +175,6 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control
         }
 
         public void SetZoomFactor(double zoomFactor)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void SetLength(double length)
         {
             throw new NotImplementedException();
         }

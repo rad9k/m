@@ -2799,7 +2799,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             SaveLength();
 
-            HorizontalAD.SetLength(Length);
+            HorizontalAD.ValueSpaceMax = Length;
 
             VisualiserDraw();
         }
@@ -2810,7 +2810,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             SaveLength();
 
-            HorizontalAD.SetLength(Length);
+            HorizontalAD.ValueSpaceMax = Length;
 
             VisualiserDraw();
         }

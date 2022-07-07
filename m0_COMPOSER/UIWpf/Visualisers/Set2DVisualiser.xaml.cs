@@ -41,6 +41,8 @@ namespace m0_COMPOSER.UIWpf.Visualisers
         string SetItemHorizontalAxisMetaString;
         string SetItemVerticalAxisMetaString;
 
+        double horizontalMinValue;
+
         // Set2D end
 
         static string[] _MetaTriggeringUpdateVertex = new string[] { "ShowArrowLines", "CanEdit", "ConnectPoints", "ShowToolbarNames" };
@@ -93,6 +95,11 @@ namespace m0_COMPOSER.UIWpf.Visualisers
         }
 
         protected void VisualizedVertexToUpdated()
+        {
+            comboBoxesUpdate();
+        }
+
+        protected void comboBoxesUpdate()
         {
             ISet<IVertex> metaDictionary = new HashSet<IVertex>();
 
@@ -157,19 +164,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
                 item = GetItemsDictionary()[eventEdge.To];
 
             if(item != null)
-                UpdateItem(eventEdge, item);
-
-            //
-
-            Dictionary<IVertex, IItem> ItemsDictionary_Down = GetItemsDictionary_Down();
-
-            IItem item_Down = null;
-
-            if (ItemsDictionary_Down.ContainsKey(eventEdge.To))
-                item_Down = GetItemsDictionary_Down()[eventEdge.To];
-           
-            if (item_Down != null)
-                UpdateItem_Down(eventEdge, item_Down);            
+                UpdateItem(eventEdge, item);        
         }
 
         protected override void UpdateVertexValues()
@@ -231,11 +226,13 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             
         }
 
+   
+
         protected override void SetAxisDecorators()
         {
             if (VerticalAD == null)
             {
-                VerticalAD = new PitchSetAxisDecorator();
+                VerticalAD = new FloatSpanAxisDecorator(this);
 
                 VerticalAD.SetBaseVertex(verticalSpanVertex);
             }
@@ -249,7 +246,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
                 HorizontalAD.SetBaseVertex(horizontalSpanVertex);
 
-                HorizontalAD.SetLength(Length);
+                HorizontalAD.ValueSpaceMax = Length;
             }
 
             ZoomScrollView.SetVerticalAxisDecorator(VerticalAD);

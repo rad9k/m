@@ -91,7 +91,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
                 HorizontalAD.SetBaseVertex(horizontalSpanVertex);
 
-                HorizontalAD.SetLength(Length);
+                HorizontalAD.ValueSpaceMax = Length;
             }
 
             ZoomScrollView.SetVerticalAxisDecorator(VerticalAD);
@@ -560,7 +560,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             Flow.GetNumberOfStepsAndCleanUp(out newNumberOfSteps);
 
-            HorizontalAD.SetLength(newNumberOfSteps);
+            HorizontalAD.ValueSpaceMax = newNumberOfSteps;
         }
 
         protected override void After_ArrowUp_FromMove()

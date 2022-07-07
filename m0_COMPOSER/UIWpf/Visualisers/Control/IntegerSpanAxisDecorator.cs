@@ -15,7 +15,17 @@ using System.Windows.Media;
 namespace m0_COMPOSER.UIWpf.Visualisers.Control
 {
     class IntegerSpanAxisDecorator : AxisDecoratorBase, IZoomScrollViewAxisDecorator
-    {      
+    {
+        public double ValueSpaceMin { get; set; }
+
+        public double ValueSpaceMax { get; set; }
+
+        public double ScreenToValueSpace(double screenPosition) { return 0; }
+
+        public double ValueSpaceToScreen(double valueSpacePosition) { return 0; }
+
+        public bool isHorizontal { get; set; }
+
         public IntegerSpanAxisDecorator(ZoomScrollViewBasedVisualiserBase _visualiser) : base()
         {
             segmentLength = 1;
@@ -25,7 +35,10 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control
 
         public int BoldLineCount;        
 
-        
+                    if (length< 1.0)
+                length = 1.0;
+
+            _ValueSpaceMax = length;
 
         double FontSize = 10;
 
@@ -42,7 +55,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control
 
         int timeSpanLevels;        
 
-        double Length;        
+        double _ValueSpaceMax;        
 
         //
 
@@ -51,7 +64,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control
             timeSpanHeight = FontSize * 2;
 
             Size s = new Size();
-            s.Width = Length * baseUnitSize;
+            s.Width = _ValueSpaceMax * baseUnitSize;
             s.Height = timeSpanHeight;
 
             Size = s;
@@ -95,7 +108,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control
 
             int textCount = 0;
 
-            for (int cnt = 0; cnt < Length; cnt += thisLevel.BaseMusicTimeSpanLevelCountForThisLevel)
+            for (int cnt = 0; cnt < _ValueSpaceMax; cnt += thisLevel.BaseMusicTimeSpanLevelCountForThisLevel)
             {                
                 double horizontalPosition = cnt * baseUnitSize;
 
@@ -195,7 +208,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control
 
             int nextUnitBaseCount = 0;
 
-            for (int cnt = 0; cnt <= Length ; cnt += baseUnit)
+            for (int cnt = 0; cnt <= _ValueSpaceMax ; cnt += baseUnit)
             {
                 AxisSegment segment = new AxisSegment();
 
@@ -248,14 +261,6 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control
             baseUnitSize = baseUnitSize * 500;
 
             Update();
-        }
-
-        public void SetLength(double length)
-        {
-            if (length < 1.0)
-                length = 1.0;
-
-            Length = length;
         }
 
         public event EventHandler SelectionChanged;

@@ -15,7 +15,17 @@ using System.Windows.Media;
 namespace m0_COMPOSER.UIWpf.Visualisers.Control
 {
     class RealTimeSpanAxisDecorator : AxisDecoratorBase, IZoomScrollViewAxisDecorator
-    {      
+    {
+        public double ValueSpaceMin { get; set; }
+
+        public double ValueSpaceMax { get; set; }
+
+        public double ScreenToValueSpace(double screenPosition) { return 0; }
+
+        public double ValueSpaceToScreen(double valueSpacePosition) { return 0; }
+
+        public bool isHorizontal { get; set; }
+
         public RealTimeSpanAxisDecorator(ZoomScrollViewBasedVisualiserBase _visualiser) : base()
         {
             segmentLength = 60 * 100;
@@ -251,7 +261,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control
             Update();
         }
 
-        public void SetLength(double length)
+        public void SetValueSpaceMax(double length)
         {
             if (length < 1.0)
                 length = 1.0;

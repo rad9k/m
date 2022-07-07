@@ -846,7 +846,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
         {
             double RealTimeLength = GetRealTimeFromMusicTime(Length);
 
-            HorizontalAD.SetLength(RealTimeLength);
+            HorizontalAD.ValueSpaceMax = RealTimeLength;
         }
 
         protected void UpdateTempo()
