@@ -16,9 +16,24 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control
 {
     class FloatSpanAxisDecorator : AxisDecoratorBase, IZoomScrollViewAxisDecorator
     {
-        public double ValueSpaceMin { get; set; }
+        double valueSpaceMin;
 
-        public double ValueSpaceMax { get; set; }
+        public double ValueSpaceMin { get { return valueSpaceMin; }
+            set {
+                valueSpaceMin = value;
+                Draw();
+            }
+        }
+
+        double valueSpaceMax;
+
+        public double ValueSpaceMax {
+            get { return valueSpaceMax; }
+            set {
+                valueSpaceMax = value;
+                Draw();
+            }
+        }
 
         public double ScreenToValueSpace(double screenPosition) { return 0; }
 
@@ -62,6 +77,13 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control
 
         private void Draw()
         {
+            if (isHorizontal)
+            {
+
+            }
+
+            return;
+
             timeSpanHeight = FontSize * 2;
 
             Size s = new Size();

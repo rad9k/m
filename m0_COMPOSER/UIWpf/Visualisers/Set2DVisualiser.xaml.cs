@@ -237,9 +237,13 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             if (HorizontalAD == null)
                 HorizontalAD = new FloatSpanAxisDecorator(this);
 
+            HorizontalAD.isHorizontal = true;
+
             ZoomScrollView.SetVerticalAxisDecorator(VerticalAD);
 
             ZoomScrollView.SetHorizontalAxisDecorator(HorizontalAD);
+
+            FillWithData();
         }        
 
         protected override void SetupLocalVariablesFromBaseVertexVertexes()
@@ -843,7 +847,9 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
         void AxisUpdate()
         {
-            if (SetItemsDefiningMetaString == null)
+            if (SetItemsDefiningMetaString == null
+                || HorizontalAD == null
+                || VerticalAD == null)
                 return;
 
             double horizontalMin = double.PositiveInfinity;
