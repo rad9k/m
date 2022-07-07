@@ -54,9 +54,11 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control
 
         int timeSpanLevels;        
 
-        double Length;        
+        double Length;
 
         //
+
+        public override void PositionMarkUpdate() { }
 
         private void Draw()
         {
@@ -197,7 +199,11 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control
 
         private void Update()
         {
-            CreateTimeSpanStructure();
+            Segments = new List<AxisSegment>();
+
+            return;
+
+            // CreateTimeSpanStructure();
 
             int baseUnit = timeSpanStructure[timeSpanLevels - 2].BaseMusicTimeSpanLevelCountForThisLevel;
 

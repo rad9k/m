@@ -96,13 +96,8 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
         protected void VisualizedVertexToUpdated()
         {
-            AxisUpdate();
+            FillWithData();
             ComboBoxesUpdate();
-        }
-
-        void AxisUpdate()
-        {
-            foreach(IEdge e in VisualizedVertex.GetAll(false, )
         }
 
         protected void ComboBoxesUpdate()
@@ -237,23 +232,10 @@ namespace m0_COMPOSER.UIWpf.Visualisers
         protected override void SetAxisDecorators()
         {
             if (VerticalAD == null)
-            {
                 VerticalAD = new FloatSpanAxisDecorator(this);
 
-                VerticalAD.SetBaseVertex(verticalSpanVertex);
-            }
-
             if (HorizontalAD == null)
-            {
-                MusicTimeSpanAxisDecorator TimeSpanAD = new MusicTimeSpanAxisDecorator(this);
-                TimeSpanAD.BoldLineCount = 4;
-
-                HorizontalAD = TimeSpanAD;
-
-                HorizontalAD.SetBaseVertex(horizontalSpanVertex);
-
-                HorizontalAD.ValueSpaceMax = Length;
-            }
+                HorizontalAD = new FloatSpanAxisDecorator(this);
 
             ZoomScrollView.SetVerticalAxisDecorator(VerticalAD);
 
@@ -272,7 +254,6 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             else
                 Length = ExtendTimeLength;
 
-            SaveLength();
 
 
             bool dummy = false;
@@ -799,6 +780,8 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             SetItemsDefiningMeta = (IVertex) ((ComboBoxItem)SetItemsDefiningMetaComboBox.SelectedItem).Tag;
 
+            SetItemsDefiningMetaString = SetItemsDefiningMeta.Value.ToString();
+
             SetItemHorizontalAxisMetaComboBox.Items.Clear();
             SetItemVerticalAxisMetaComboBox.Items.Clear();
 
@@ -858,9 +841,48 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             FillWithData();
         }
 
+        void AxisUpdate()
+        {
+            if (SetItemsDefiningMetaString == null)
+                return;
+
+            double horizontalMin = double.PositiveInfinity;
+            double horizontalMax = double.NegativeInfinity;
+
+            double verticalMin = double.PositiveInfinity;
+            double verticalMax = double.NegativeInfinity;
+
+            foreach (IEdge e in VisualizedVertex.GetAll(false, SetItemsDefiningMetaString + ":"))
+            {
+                IVertex horizontalVertex = GraphUtil.GetQueryOutFirst(e.To, SetItemHorizontalAxisMetaString, null);
+                double horizontalValue = GraphUtil.GetDoubleValueOr0(horizontalVertex);
+
+                IVertex verticalVertex = GraphUtil.GetQueryOutFirst(e.To, SetItemVerticalAxisMetaString, null);
+                double verticalValue = GraphUtil.GetDoubleValueOr0(verticalVertex);
+
+                if (horizontalValue > horizontalMax)
+                    horizontalMax = horizontalValue;
+
+                if (horizontalValue < horizontalMin)
+                    horizontalMin = horizontalValue;
+
+                if (verticalValue > verticalMax)
+                    verticalMax = verticalValue;
+
+                if (verticalValue < verticalMin)
+                    verticalMin = verticalValue;
+            }
+
+            VerticalAD.ValueSpaceMax = verticalMax;
+            VerticalAD.ValueSpaceMin = verticalMin;
+
+            HorizontalAD.ValueSpaceMax = horizontalMax;
+            HorizontalAD.ValueSpaceMin = horizontalMin;
+        }
+
         protected void FillWithData()
         {
-
+            AxisUpdate();
         }
     }
 }
