@@ -21,7 +21,8 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control
         public double ValueSpaceMin { get { return valueSpaceMin; }
             set {
                 valueSpaceMin = value;
-                Draw();
+
+                Update();
             }
         }
 
@@ -31,7 +32,8 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control
             get { return valueSpaceMax; }
             set {
                 valueSpaceMax = value;
-                Draw();
+
+                Update();
             }
         }
 
@@ -45,14 +47,9 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control
 
         public FloatSpanAxisDecorator(ZoomScrollViewBasedVisualiserBase _visualiser) : base()
         {
-            segmentLength = 1;
-
             visualiser = _visualiser;
         }
-
-        public int BoldLineCount;        
-
-        
+            
 
         double FontSize = 10;
 
@@ -71,24 +68,45 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control
 
         double Length;
 
+        double segmentStep;
+        double segmentStart;
+        double segmentStop;
+
+        public event EventHandler SelectionChanged;
+
         //
 
         public override void PositionMarkUpdate() { }
 
-        private void Draw()
+        private void SegmentStepUpdate()
         {
+            segmentStep = 10;
+        }
+
+        private void SegmentStartStopUpdate()
+        {
+            segmentStart = valueSpaceMin;
+            segmentStop = ValueSpaceMax;
+        }
+
+        private void Draw()
+        { 
+            Size s = new Size();
+
+            double decoratorSize = 20;
+
+            double valueSpaceSize = ValueSpaceMax - ValueSpaceMin;
+
             if (isHorizontal)
             {
-
+                s.Width = valueSpaceSize * baseUnitSize;
+                s.Height = decoratorSize;
             }
-
-            return;
-
-            timeSpanHeight = FontSize * 2;
-
-            Size s = new Size();
-            s.Width = Length * baseUnitSize;
-            s.Height = timeSpanHeight;
+            else
+            {
+                s.Width = decoratorSize;
+                s.Height = valueSpaceSize * baseUnitSize;
+            }
 
             Size = s;
 
@@ -101,171 +119,68 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control
 
             DrawBackground();
 
-            Draw_Recurent(0);
-
-            CreateAndDrawPositionMark();
-        }
-
-        Brush getBrushForLevel(int level)
-        {
-            if (level == 0)
-                return (Brush)WpfUtil.FindResource("0GrayBrush");
-
-            return (Brush)WpfUtil.FindResource("0LightGrayBrush");
-        }
-
-        double getThicknessForLevel(int level)        
-        {
-            if (level == 0)
-                return 3;
-
-            return 1;
-        }
-
-        private void Draw_Recurent(int level)
-        {
-            if (level == timeSpanLevels - 1)
-                return;
-
-            timeSpanLevel thisLevel = timeSpanStructure[level];
-
-            int textCount = 0;
-
-            for (int cnt = 0; cnt < Length; cnt += thisLevel.BaseMusicTimeSpanLevelCountForThisLevel)
-            {                
-                double horizontalPosition = cnt * baseUnitSize;
-
-                double verticalStartPosition = ((double)level / (timeSpanLevels -1)) * Size.Height;
-
-                //
-
-                if (level == 0 || baseUnitSize > 0.15)
+            foreach (AxisSegment ax in Segments)
                 {
                     TextBlock t = new TextBlock();
 
-                    t.PreviewMouseDown += MouseDownHandler;
+                    t.Foreground = (Brush)WpfUtil.FindResource("0ForegroundBrush");
 
-                    t.Foreground = getBrushForLevel(level);
-
-                    t.Text = textCount.ToString();
+                    t.Text = ax.Tag.ToString();
 
                     t.FontSize = FontSize;
 
-                    WpfUtil.SetPosition(t, horizontalPosition + 3, verticalStartPosition - 3);
+                    if (isHorizontal)
+                        WpfUtil.SetPosition(t, ax.StartPosition + 2, 0);
+                    else
+                        WpfUtil.SetPosition(t, 2, ax.StartPosition);
 
                     Children.Add(t);
 
-                    textCount++;
+                    //
 
-                    if (level > 0 && timeSpanStructure[level - 1].length  == textCount)
-                        textCount = 0;
+                    Line l = new Line();
+
+                    if (isHorizontal)
+                        WpfUtil.SetLinePosition(l, ax.StartPosition, 0, ax.StartPosition, decoratorSize);
+                    else
+                        WpfUtil.SetLinePosition(l, 0, ax.StartPosition, decoratorSize, ax.StartPosition);
+
+                    l.StrokeThickness = 1;
+
+                    l.Stroke = (Brush)WpfUtil.FindResource("0ForegroundBrush");
+
+                    Children.Add(l);
                 }
-
-                //
-
-                Line l = new Line();
-
-                l.PreviewMouseDown += MouseDownHandler;
-
-                WpfUtil.SetLinePosition(l, horizontalPosition, verticalStartPosition, horizontalPosition, Size.Height);
-
-                l.StrokeThickness = getThicknessForLevel(level);
-
-                l.Stroke = (Brush)WpfUtil.FindResource("0ForegroundBrush");
-
-                Children.Add(l);                                
-            }
-
-
-            Draw_Recurent(level + 1);
-        }
-        
-        private int GetTimeSpanStructureDeepLevel_Reccurent(IVertex thisVertex, IVertex targetVertex, int deepLevel)
-        {
-            timeSpanLevel tsl = new timeSpanLevel();
-
-            tsl.timeSpanLevelVertex = thisVertex;
-            tsl.length = (int)GraphUtil.GetIntegerValue(thisVertex.Get(false, "Length:"));
-
-            timeSpanStructure.Add(tsl);
-
-            if (thisVertex == targetVertex)
-                return deepLevel;
-
-            return GetTimeSpanStructureDeepLevel_Reccurent(thisVertex.Get(false, @"SubLevel:"), targetVertex, deepLevel + 1);
-        }
-
-        private void CreateTimeSpanStructure()
-        {            
-            timeSpanStructure = new List<timeSpanLevel>();
-
-            IVertex r = m0.MinusZero.Instance.root;
-
-            IVertex BaseMusicTimeSpanLevelVertex = r.Get(false, @"System\Lib\Music\Data\BaseNumberSpanLevel:");
-
-            GetTimeSpanStructureDeepLevel_Reccurent(baseVertex, BaseMusicTimeSpanLevelVertex, 0);
-
-            timeSpanLevels = timeSpanStructure.Count;
-
-            int BaseMusicTimeSpanLevelCount = 1;
-
-            for (int x = timeSpanStructure.Count - 1 ; x!=-1 ; x--)
-            {
-                BaseMusicTimeSpanLevelCount = BaseMusicTimeSpanLevelCount * timeSpanStructure[x].length;
-                timeSpanStructure[x].BaseMusicTimeSpanLevelCountForThisLevel = BaseMusicTimeSpanLevelCount;
-            }
-
-           // segmentLength = timeSpanStructure[timeSpanStructure.Count - 2].length;
-           // we use 100 * 60 as we know the time span structure for real time
         }
 
         private void Update()
         {
-            Segments = new List<AxisSegment>();
 
-            return;
+            SegmentStepUpdate();
+            SegmentStartStopUpdate();
 
-            // CreateTimeSpanStructure();
+            SegmentsUpdate();
 
-            int baseUnit = timeSpanStructure[timeSpanLevels - 2].BaseMusicTimeSpanLevelCountForThisLevel;
+            Draw();
+        }
 
-            int nextUnitBaseCountMax = 10;
-
+        private void SegmentsUpdate() { 
             Segments = new List<AxisSegment>();            
 
-            int nextUnitBaseCount = 0;
 
-            for (int cnt = 0; cnt <= Length ; cnt += baseUnit)
+            for (double position = segmentStart; position < segmentStop ; position += segmentStep)
             {
                 AxisSegment segment = new AxisSegment();
 
                 segment.LineStyle = new LineStyle();
 
-                segment.StartPosition = cnt * baseUnitSize;
-                segment.EndPosition = -1;
+                segment.StartPosition = position * baseUnitSize;
+                segment.EndPosition = (position + segmentStep) * baseUnitSize;
 
-                //
-
-                if (nextUnitBaseCount == 0)                
-                    segment.LineStyle.StrokeThickness = 3;
-                else
-                {
-                    if (BoldLineCount != 0)
-                        if (nextUnitBaseCount % BoldLineCount != 0)
-                            segment.LineStyle.Stroke = (Brush)WpfUtil.FindResource("0LightForegroundBrush");
-                        else
-                            segment.LineStyle.StrokeThickness = 2;
-                }
-
-                nextUnitBaseCount++;
-
-                if (nextUnitBaseCount == nextUnitBaseCountMax)
-                    nextUnitBaseCount = 0;
+                segment.Tag = position;
 
                 Segments.Add(segment);
-            }            
-
-            Draw();
+            }                        
         }
 
         public void SetBaseVertex(IVertex _baseVertex)
@@ -279,18 +194,11 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control
         {
             zoomFactor = _zoomFactor;
 
-
-            if(zoomFactor > 50)
-                baseUnitSize = -0.08 + (zoomFactor / 300 );
-            else
-                baseUnitSize = 0.005 + (1.0 / 20 * zoomFactor / 30);
-
-            baseUnitSize = baseUnitSize * 500;
+            baseUnitSize = 10;
 
             Update();
         }
 
-        public event EventHandler SelectionChanged;
 
         public object Selection { get; set; }
 

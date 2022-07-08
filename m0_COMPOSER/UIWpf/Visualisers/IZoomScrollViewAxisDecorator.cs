@@ -22,6 +22,8 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
         public bool UseBackgroundColor;
         public Color BackgroundColor;
+
+        public object Tag;
     }
 
     public interface IZoomScrollViewAxisDecorator
