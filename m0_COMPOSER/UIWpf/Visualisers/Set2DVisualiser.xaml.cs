@@ -889,6 +889,8 @@ namespace m0_COMPOSER.UIWpf.Visualisers
         protected void FillWithData()
         {
             AxisUpdate();
+
+            VisualiserDraw();
         }
     }
 }
