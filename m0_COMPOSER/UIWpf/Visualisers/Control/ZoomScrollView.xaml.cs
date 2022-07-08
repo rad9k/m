@@ -13,6 +13,9 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control
     /// </summary>
     public partial class ZoomScrollView : UserControl, IZoomScrollView
     {
+        public Slider HorizontalZoomSlider_public;
+        public Slider VerticalZoomSlider_public;
+
         bool downAreaVisible = true;
 
         public bool DownAreaVisible {
@@ -153,6 +156,9 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control
 
         private void HorizontalZoomSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
+            if (ScrollViewer.Content == null)
+                return;
+
             double half = ScrollViewer.ActualWidth / 2;
 
             double scrollBarPosAbstract = (this.ScrollViewer.HorizontalOffset + half) / ((FrameworkElement)ScrollViewer.Content).Width;
@@ -166,6 +172,9 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control
 
         private void VerticalZoomSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
+            if (ScrollViewer.Content == null)
+                return;
+
             double half =  ScrollViewer.ActualHeight / 2;
 
             double scrollBarPosAbstract = (this.ScrollViewer.VerticalOffset + half) / ((FrameworkElement)ScrollViewer.Content).Height;
@@ -193,6 +202,9 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control
             DownMain = (ScrollViewer)((StackPanel)DownHideArea.Content).Children[1];
 
             LeftDownCorner = (Border)ScrollViewer.Template.FindName("LeftDownCorner", ScrollViewer);
+
+            HorizontalZoomSlider_public = HorizontalZoomSlider;
+            VerticalZoomSlider_public = VerticalZoomSlider;
         }
 
         void InitializeLocalControls()

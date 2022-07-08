@@ -16,9 +16,12 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control
 {
     class FloatSpanAxisDecorator : AxisDecoratorBase, IZoomScrollViewAxisDecorator
     {
+        double valueSpaceSize;
+
         double valueSpaceMin;
 
-        public double ValueSpaceMin { get { return valueSpaceMin; }
+        public double ValueSpaceMin {
+            get { return valueSpaceMin; }
             set {
                 valueSpaceMin = value;
 
@@ -37,11 +40,21 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control
             }
         }
 
-        public double ScreenToValueSpace(double screenPosition) { return 0; }
+        public double ScreenToValueSpace(double screenPosition) {            
+            //if (!isHorizontal)
+              //  screenPosition = Size.Height - screenPosition;
 
-        public double ValueSpaceToScreen(double valueSpacePosition) { return 0; }
+            return screenPosition / BaseUnitSize;
+        }
 
+        public double ValueSpaceToScreen(double valueSpacePosition) {
+            double ret = valueSpacePosition * BaseUnitSize;
 
+            //if (!isHorizontal)
+             //   ret = Size.Height - ret;
+
+            return ret;
+        }
 
         public bool isHorizontal { get; set; }
 
@@ -53,21 +66,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control
 
         double FontSize = 10;
 
-        double timeSpanHeight;
-
-        class timeSpanLevel
-        {
-            public int BaseMusicTimeSpanLevelCountForThisLevel;
-            public int length;
-            public IVertex timeSpanLevelVertex;
-        }
-
-        List<timeSpanLevel> timeSpanStructure;
-
-        int timeSpanLevels;        
-
-        double Length;
-
+    
         double segmentStep;
         double segmentStart;
         double segmentStop;
@@ -85,6 +84,8 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control
 
         private void SegmentStartStopUpdate()
         {
+            valueSpaceSize = ValueSpaceMax - ValueSpaceMin;
+
             segmentStart = valueSpaceMin;
             segmentStop = ValueSpaceMax;
         }
@@ -93,9 +94,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control
         { 
             Size s = new Size();
 
-            double decoratorSize = 20;
-
-            double valueSpaceSize = ValueSpaceMax - ValueSpaceMin;
+            double decoratorSize = 20;            
 
             if (isHorizontal)
             {
@@ -132,7 +131,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control
                     if (isHorizontal)
                         WpfUtil.SetPosition(t, ax.StartPosition + 2, 0);
                     else
-                        WpfUtil.SetPosition(t, 2, ax.StartPosition);
+                        WpfUtil.SetPosition(t, 2, ax.StartPosition - FontSize - 4);
 
                     Children.Add(t);
 
@@ -155,7 +154,6 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control
 
         private void Update()
         {
-
             SegmentStepUpdate();
             SegmentStartStopUpdate();
 
@@ -174,8 +172,8 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control
 
                 segment.LineStyle = new LineStyle();
 
-                segment.StartPosition = position * baseUnitSize;
-                segment.EndPosition = (position + segmentStep) * baseUnitSize;
+                segment.StartPosition = ValueSpaceToScreen(position);
+                segment.EndPosition = ValueSpaceToScreen(position + segmentStep);
 
                 segment.Tag = position;
 
@@ -192,9 +190,21 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control
 
         public void SetZoomFactor(double _zoomFactor)
         {
+            if (visualiser.Main == null)
+                return;
+
             zoomFactor = _zoomFactor;
 
-            baseUnitSize = 10;
+            double scale = 1 + (zoomFactor/4);
+
+            double mainSize;
+
+            if (isHorizontal)
+                mainSize = visualiser.Main.ActualWidth;
+            else
+                mainSize = visualiser.Main.ActualHeight;
+
+            baseUnitSize = (mainSize / valueSpaceSize) * scale;
 
             Update();
         }

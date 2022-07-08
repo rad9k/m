@@ -93,6 +93,7 @@
     <Compile Include="UIWpf\Visualisers\Control\AxisDecoratorBase.cs" />
     <Compile Include="UIWpf\Visualisers\Control\FloatSpanAxisDecorator.cs" />
     <Compile Include="UIWpf\Visualisers\Control\Item\ControlChangeItem.cs" />
+    <Compile Include="UIWpf\Visualisers\Control\Item\Set2DItem.cs" />
     <Compile Include="UIWpf\Visualisers\Control\Item\DrumItem.cs" />
     <Compile Include="UIWpf\Visualisers\Control\Item\ItemDictionary.cs" />
     <Compile Include="UIWpf\Visualisers\Control\Item\SequenceEventItem.cs" />

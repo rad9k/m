@@ -41,8 +41,6 @@ namespace m0_COMPOSER.UIWpf.Visualisers
         string SetItemHorizontalAxisMetaString;
         string SetItemVerticalAxisMetaString;
 
-        double horizontalMinValue;
-
         // Set2D end
 
         static string[] _MetaTriggeringUpdateVertex = new string[] { "ShowArrowLines", "CanEdit", "ConnectPoints", "ShowToolbarNames" };
@@ -89,14 +87,16 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             HasDown = false;
 
-            //
+            //            
+
+            ZoomSliderZero = true;
 
             ZoomScrollViewBasedVisualiserBase_Init(baseEdgeVertex, parentVisualiser);
         }
 
         protected void VisualizedVertexToUpdated()
         {
-            FillWithData();
+            AxisUpdate();
             ComboBoxesUpdate();
         }
 
@@ -243,7 +243,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             ZoomScrollView.SetHorizontalAxisDecorator(HorizontalAD);
 
-            FillWithData();
+            AxisUpdate();
         }        
 
         protected override void SetupLocalVariablesFromBaseVertexVertexes()
@@ -272,60 +272,30 @@ namespace m0_COMPOSER.UIWpf.Visualisers
         {
             IVertex itemEventVertex = itemEdge.To;
 
-            bool dummy = false;
+            IVertex horizontalVertex = GraphUtil.GetQueryOutFirst(itemEventVertex, SetItemHorizontalAxisMetaString, null);
+            double horizontalValue = GraphUtil.GetDoubleValueOr0(horizontalVertex);
+            double horizontalPosition = HorizontalAD.ValueSpaceToScreen(horizontalValue);
 
-            int triggerTime = GraphUtil.GetIntegerValue(itemEventVertex.Get(false, "TriggerTime:"), ref dummy);
+            IVertex verticalVertex = GraphUtil.GetQueryOutFirst(itemEventVertex, SetItemVerticalAxisMetaString, null);
+            double verticalValue = GraphUtil.GetDoubleValueOr0(verticalVertex);
+            double verticalPosition = VerticalAD.ValueSpaceToScreen(verticalValue);
 
-            int length = GraphUtil.GetIntegerValue(itemEventVertex.Get(false, "Length:"), ref dummy);
-
-            IVertex pitchVertex = MusicUtil.GetNoteFromPitchSet(verticalSpanVertex,
-                GraphUtil.GetIntegerValue(itemEventVertex.Get(false, "Octave:")),
-                GraphUtil.GetIntegerValue(itemEventVertex.Get(false, "Note:")));
-
-            string label = "x";
-
-            if (pitchVertex != null)
-                label = pitchVertex.Value.ToString();
-            else
-                return;
+            bool dummy = false;                        
 
             FrameworkElement newElement = (FrameworkElement)item;                        
-
-            AxisSegment itemSegment = GetVerticalSegment(pitchVertex);
-
-
-            double startPosition = triggerTime * HorizontalAD.BaseUnitSize;
-
-            double endPosition = startPosition + (length * HorizontalAD.BaseUnitSize);
-
-
-            if (IsDrum)
-            {
-                item.HorizontalCenter = startPosition;
-                item.Top = itemSegment.StartPosition;
-                item.Bottom = itemSegment.EndPosition;
-            }
-            else
-            {
-                item.Left = startPosition;
-                item.Top = itemSegment.StartPosition;
-                item.Right = endPosition;
-                item.Bottom = itemSegment.EndPosition;
-
-                ((NoteItem)item).Label = label;
-            }
+            
+            item.HorizontalCenter = horizontalPosition;
+            item.Top = verticalPosition - 5;
+            item.Bottom = verticalPosition + 5;
 
             item.Update();
         }
 
         protected override void AddItemByEdge(IEdge itemEdge, List<IVertex> selectedVertexes)
-        {            
+        {
             FrameworkElement newElement;
-
-            if (IsDrum)
-                newElement = new DrumItem(itemEdge, this, ShowVelocity);
-            else
-                newElement = new NoteItem(itemEdge, this, ShowLabel, ShowVelocity);
+            
+            newElement = new Set2DItem(itemEdge, this);
 
             IItem newItem = (IItem)newElement;
 
@@ -340,11 +310,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             }            
 
             ItemsAdd(newItem);
-
-            if (MainItemsSyncedWithDown)
-                AddItemByEdge_Down(itemEdge, selectedVertexes, false, true);
         }
-
   
 
         static IVertex r = MinusZero.Instance.Root;
@@ -377,9 +343,9 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             List<IVertex> selectedVertexes = GetSelectedVertexes();
 
-            foreach (IEdge e in VisualizedVertex.GetAll(false, "Event:"))
-                if (GraphUtil.ExistQueryOut(e.To, "$Is", "NoteEvent"))
-                    AddItemByEdge(e, selectedVertexes);
+
+            foreach (IEdge e in VisualizedVertex.GetAll(false, SetItemsDefiningMetaString + ":"))
+                AddItemByEdge(e, selectedVertexes);            
         }
 
         static IVertex musicPitchOctave = r.Get(false, @"System\Lib\Music\Pitch\Octave");
@@ -469,16 +435,6 @@ namespace m0_COMPOSER.UIWpf.Visualisers
                 return musicTime;
         }
 
-        protected override double MusicTimeToScreenPosition(int musicTime, bool performSnapCorrection)
-        {
-            if (performSnapCorrection)
-                musicTime = MusicTimeSnapCorrect(musicTime);
-
-            if (HorizontalAD == null)
-                return 0;
-
-            return musicTime * HorizontalAD.BaseUnitSize;
-        }
 
         protected override int FindLastPosition(IEnumerable<IEdge> edges)
         {
@@ -830,7 +786,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             SetItemHorizontalAxisMetaString = SetItemHorizontalAxisMetaVertex.Value.ToString();
 
-            FillWithData();
+            AxisUpdate();
         }
 
         private void SetItemVerticalAxisMetaComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -842,7 +798,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             SetItemVerticalAxisMetaString = SetItemVerticalAxisMetaVertex.Value.ToString();
 
-            FillWithData();
+            AxisUpdate();
         }
 
         void AxisUpdate()
@@ -884,13 +840,6 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             HorizontalAD.ValueSpaceMax = horizontalMax;
             HorizontalAD.ValueSpaceMin = horizontalMin;
-        }
-
-        protected void FillWithData()
-        {
-            AxisUpdate();
-
-            VisualiserDraw();
-        }
+        }        
     }
 }

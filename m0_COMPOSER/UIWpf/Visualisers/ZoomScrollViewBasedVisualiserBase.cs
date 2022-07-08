@@ -30,6 +30,8 @@ namespace m0_COMPOSER.UIWpf.Visualisers
     {
         public AtomVisualiserHelper VisualiserHelper { get; set; }
 
+        public bool ZoomSliderZero;
+
         static string[] _MetaTriggeringUpdateVertex = new string[] { };
         public virtual string[] MetaTriggeringUpdateVertex { get { return _MetaTriggeringUpdateVertex; } }
 
@@ -72,7 +74,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
         protected bool ShowLabel;
 
-        protected Canvas Main;
+        public Canvas Main;
         protected SelectionArea SelectionArea;
 
         protected IVertex BaseEdgeToMetaVertex;
@@ -2665,6 +2667,12 @@ namespace m0_COMPOSER.UIWpf.Visualisers
         public virtual void ChildControlsLoaded()
         {
             isLoaded = true;
+
+            if (ZoomSliderZero)
+            {
+                ZoomScrollView.HorizontalZoomSlider_public.Value = 0;
+                ZoomScrollView.VerticalZoomSlider_public.Value = 0;
+            }
 
             VisualiserDraw();
         }
