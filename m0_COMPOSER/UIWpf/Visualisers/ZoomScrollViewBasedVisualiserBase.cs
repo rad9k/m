@@ -66,7 +66,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
         protected Button TruncateButton;
         protected Button ExtendButton;
 
-        protected ZoomScrollView ZoomScrollView;
+        public ZoomScrollView ZoomScrollView;
 
         //
 

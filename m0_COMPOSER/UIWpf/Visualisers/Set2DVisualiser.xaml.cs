@@ -96,7 +96,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
         protected void VisualizedVertexToUpdated()
         {
-            AxisUpdate();
+            CanDoItemsUpdate();
             ComboBoxesUpdate();
         }
 
@@ -223,11 +223,8 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             VisualizedVertex = Vertex.Get(false, @"BaseEdge:\To:");
 
             if (VisualizedVertex == null)
-                return;            
-            
-        }
-
-   
+                return;                       
+        }   
 
         protected override void SetAxisDecorators()
         {
@@ -243,8 +240,8 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             ZoomScrollView.SetHorizontalAxisDecorator(HorizontalAD);
 
-            AxisUpdate();
-        }        
+            CanDoItemsUpdate();
+        }
 
         protected override void SetupLocalVariablesFromBaseVertexVertexes()
         {
@@ -677,10 +674,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             GraphUtil.SetVertexValue(noteEventVertex, musicNoteEvent.Get(false, @"Attribute:Octave"), octave);
             GraphUtil.SetVertexValue(noteEventVertex, musicNoteEvent.Get(false, @"Attribute:Note"), note);
             GraphUtil.SetVertexValue(noteEventVertex, musicNoteEvent.Get(false, @"Attribute:Velocity"), velocity);                        
-        }
-
-        
-        
+        } 
 
         public override void Dispose()
             {
@@ -786,7 +780,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             SetItemHorizontalAxisMetaString = SetItemHorizontalAxisMetaVertex.Value.ToString();
 
-            AxisUpdate();
+            CanDoItemsUpdate();
         }
 
         private void SetItemVerticalAxisMetaComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -798,6 +792,11 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             SetItemVerticalAxisMetaString = SetItemVerticalAxisMetaVertex.Value.ToString();
 
+            CanDoItemsUpdate();
+        }
+
+        void CanDoItemsUpdate()
+        {
             AxisUpdate();
         }
 

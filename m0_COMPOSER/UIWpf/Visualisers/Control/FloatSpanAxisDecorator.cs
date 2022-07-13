@@ -16,6 +16,8 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control
 {
     class FloatSpanAxisDecorator : AxisDecoratorBase, IZoomScrollViewAxisDecorator
     {
+        double decoratorSize = 20;
+
         double valueSpaceSize;
 
         double valueSpaceMin;
@@ -24,6 +26,8 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control
             get { return valueSpaceMin; }
             set {
                 valueSpaceMin = value;
+
+                valueSpaceSize = ValueSpaceMax - ValueSpaceMin;
 
                 Update();
             }
@@ -35,6 +39,8 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control
             get { return valueSpaceMax; }
             set {
                 valueSpaceMax = value;
+
+                valueSpaceSize = ValueSpaceMax - ValueSpaceMin;
 
                 Update();
             }
@@ -61,6 +67,8 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control
         public FloatSpanAxisDecorator(ZoomScrollViewBasedVisualiserBase _visualiser) : base()
         {
             visualiser = _visualiser;
+
+            Size = new Size(decoratorSize, decoratorSize);
         }
             
 
@@ -84,17 +92,13 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control
 
         private void SegmentStartStopUpdate()
         {
-            valueSpaceSize = ValueSpaceMax - ValueSpaceMin;
-
             segmentStart = valueSpaceMin;
             segmentStop = ValueSpaceMax;
         }
 
         private void Draw()
         { 
-            Size s = new Size();
-
-            double decoratorSize = 20;            
+            Size s = new Size();           
 
             if (isHorizontal)
             {
@@ -154,6 +158,8 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control
 
         private void Update()
         {
+            UpdateBaseUntSize();
+
             SegmentStepUpdate();
             SegmentStartStopUpdate();
 
@@ -190,23 +196,25 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control
 
         public void SetZoomFactor(double _zoomFactor)
         {
-            if (visualiser.Main == null)
-                return;
-
             zoomFactor = _zoomFactor;
+            UpdateBaseUntSize();
+        }
+
+        void UpdateBaseUntSize() { 
+            if (visualiser.ZoomScrollView.ScrollViewer == null
+                && valueSpaceSize != 0)
+                return;
 
             double scale = 1 + (zoomFactor/4);
 
             double mainSize;
 
             if (isHorizontal)
-                mainSize = visualiser.Main.ActualWidth;
+                mainSize = visualiser.ZoomScrollView.ScrollViewer.ActualWidth;
             else
-                mainSize = visualiser.Main.ActualHeight;
+                mainSize = visualiser.ZoomScrollView.ScrollViewer.ActualHeight;
 
             baseUnitSize = (mainSize / valueSpaceSize) * scale;
-
-            Update();
         }
 
 
