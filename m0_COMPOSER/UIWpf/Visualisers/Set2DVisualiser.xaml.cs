@@ -41,6 +41,14 @@ namespace m0_COMPOSER.UIWpf.Visualisers
         string SetItemHorizontalAxisMetaString;
         string SetItemVerticalAxisMetaString;
 
+        double horizontalMin;
+        double horizontalMax;
+
+        double verticalMin;
+        double verticalMax;
+
+        bool canDraw = false;
+
         // Set2D end
 
         static string[] _MetaTriggeringUpdateVertex = new string[] { "ShowArrowLines", "CanEdit", "ConnectPoints", "ShowToolbarNames" };
@@ -336,6 +344,9 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
         protected override void DrawItems()
         {
+            if (!canDraw)
+                return;
+
             ItemDictionary.RemoveAllByHost(this);
 
             List<IVertex> selectedVertexes = GetSelectedVertexes();
@@ -807,11 +818,11 @@ namespace m0_COMPOSER.UIWpf.Visualisers
                 || VerticalAD == null)
                 return;
 
-            double horizontalMin = double.PositiveInfinity;
-            double horizontalMax = double.NegativeInfinity;
+            horizontalMin = double.PositiveInfinity;
+            horizontalMax = double.NegativeInfinity;
 
-            double verticalMin = double.PositiveInfinity;
-            double verticalMax = double.NegativeInfinity;
+            verticalMin = double.PositiveInfinity;
+            verticalMax = double.NegativeInfinity;
 
             foreach (IEdge e in VisualizedVertex.GetAll(false, SetItemsDefiningMetaString + ":"))
             {
@@ -839,6 +850,26 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             HorizontalAD.ValueSpaceMax = horizontalMax;
             HorizontalAD.ValueSpaceMin = horizontalMin;
-        }        
+        }
+
+        public void AxisMinMaxValuesUpdate()
+        {
+            VerticalAD.ValueSpaceMax = verticalMax;
+            VerticalAD.ValueSpaceMin = verticalMin;
+
+            HorizontalAD.ValueSpaceMax = horizontalMax;
+            HorizontalAD.ValueSpaceMin = horizontalMin;
+        }
+
+        public override void ChildControlsLoaded()
+        {
+            base.ChildControlsLoaded();
+
+            AxisMinMaxValuesUpdate();
+
+            canDraw = true;
+
+            DrawMain();
+        }
     }
 }
