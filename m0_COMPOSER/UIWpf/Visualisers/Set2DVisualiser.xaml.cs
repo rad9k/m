@@ -100,6 +100,19 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             ZoomSliderZero = true;
 
             ZoomScrollViewBasedVisualiserBase_Init(baseEdgeVertex, parentVisualiser);
+
+            ZoomScrollView.ScrollViewer.Loaded += ScrollViewer_Loaded;
+        }
+
+        private void ScrollViewer_Loaded(object sender, RoutedEventArgs e)
+        {
+            base.ChildControlsLoaded();
+
+            AxisMinMaxValuesUpdate();
+
+            canDraw = true;
+
+            DrawMain();
         }
 
         protected void VisualizedVertexToUpdated()
@@ -859,17 +872,6 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             HorizontalAD.ValueSpaceMax = horizontalMax;
             HorizontalAD.ValueSpaceMin = horizontalMin;
-        }
-
-        public override void ChildControlsLoaded()
-        {
-            base.ChildControlsLoaded();
-
-            AxisMinMaxValuesUpdate();
-
-            canDraw = true;
-
-            DrawMain();
         }
     }
 }

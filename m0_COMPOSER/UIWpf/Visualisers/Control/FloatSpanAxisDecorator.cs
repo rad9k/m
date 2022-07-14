@@ -210,9 +210,29 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control
             double mainSize;
 
             if (isHorizontal)
-                mainSize = visualiser.ZoomScrollView.ScrollViewer.ActualWidth;
+                mainSize = visualiser.ZoomScrollView.ActualWidth
+                    - visualiser.ZoomScrollView.VerticalAxisDecoratorScrollViewer.ActualWidth
+            - visualiser.ZoomScrollView.VerticalZoomSlider.ActualWidth;
             else
-                mainSize = visualiser.ZoomScrollView.ScrollViewer.ActualHeight;
+                mainSize = visualiser.ZoomScrollView.ActualHeight
+            -visualiser.ZoomScrollView.HorizontalAxisDecoratorScrollViewer.ActualHeight
+                    - visualiser.ZoomScrollView.HorizontalZoomSlider.ActualHeight;
+
+            if (mainSize < 0)
+                mainSize = 0;
+
+          /*  Rectangle r = new Rectangle();
+
+            WpfUtil.SetPosition(r, 0, 0, 520, 467);
+
+            r.Fill = new SolidColorBrush(Colors.Aqua);
+
+            r.Stroke = (Brush)FindResource("0ForegroundBrush");
+
+
+
+            if(visualiser.Main != null)
+                visualiser.Main.Children.Add(r);*/
 
             baseUnitSize = (mainSize / valueSpaceSize) * scale;
         }

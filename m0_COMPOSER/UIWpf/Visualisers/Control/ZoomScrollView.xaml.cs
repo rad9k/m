@@ -96,10 +96,10 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control
             ((FrameworkElement)DownMain.Content).Width = HorizontalAxisDecorator.Size.Width;
         }
 
-        ScrollViewer HorizontalAxisDecoratorScrollViewer;
-        ScrollViewer VerticalAxisDecoratorScrollViewer;
-        Slider HorizontalZoomSlider;
-        Slider VerticalZoomSlider;
+        public ScrollViewer HorizontalAxisDecoratorScrollViewer;
+        public ScrollViewer VerticalAxisDecoratorScrollViewer;
+        public Slider HorizontalZoomSlider;
+        public Slider VerticalZoomSlider;
         Grid Grid;
         AnimatedHideArea DownHideArea;
         Border DownGrip;
