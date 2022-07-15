@@ -47,8 +47,8 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control
         }
 
         public double ScreenToValueSpace(double screenPosition) {            
-            //if (!isHorizontal)
-              //  screenPosition = Size.Height - screenPosition;
+            if (!isHorizontal)
+                screenPosition = Size.Height - screenPosition;
 
             return screenPosition / BaseUnitSize;
         }
@@ -56,8 +56,8 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control
         public double ValueSpaceToScreen(double valueSpacePosition) {
             double ret = valueSpacePosition * BaseUnitSize;
 
-            //if (!isHorizontal)
-             //   ret = Size.Height - ret;
+            if (!isHorizontal)
+                ret = Size.Height - ret;
 
             return ret;
         }
@@ -85,6 +85,18 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control
         //
 
         public override void PositionMarkUpdate() { }
+
+        private void Update()
+        {
+            UpdateBaseUntSize();
+
+            SegmentStepUpdate();
+            SegmentStartStopUpdate();
+
+            SegmentsUpdate();
+
+            Draw();
+        }
 
         private void SegmentStepUpdate()
         {
@@ -157,18 +169,6 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control
                 }
         }
 
-        private void Update()
-        {
-            UpdateBaseUntSize();
-
-            SegmentStepUpdate();
-            SegmentStartStopUpdate();
-
-            SegmentsUpdate();
-
-            Draw();
-        }
-
         private void SegmentsUpdate() { 
             Segments = new List<AxisSegment>();            
 
@@ -178,6 +178,8 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control
                 AxisSegment segment = new AxisSegment();
 
                 segment.LineStyle = new LineStyle();
+
+                segment.LineStyle.Stroke = (Brush)WpfUtil.FindResource("0VeryLightForegroundBrush");
 
                 segment.StartPosition = ValueSpaceToScreen(position);
                 segment.EndPosition = ValueSpaceToScreen(position + segmentStep);
@@ -202,15 +204,18 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control
         }
 
         void UpdateBaseUntSize() { 
-            if (visualiser.ZoomScrollView.ScrollViewer == null
-                && valueSpaceSize != 0)
-                return;
+            FrameworkElement wholeBox = visualiser.ZoomScrollView;
 
-            if (isHorizontal)
-            {
-                baseUnitSize = 1;
+            FrameworkElement horizontalSlider = visualiser.ZoomScrollView.HorizontalZoomSlider;
+
+            FrameworkElement verticalSlider = visualiser.ZoomScrollView.VerticalZoomSlider;
+
+            FrameworkElement horizontalDecorator = (FrameworkElement)visualiser.ZoomScrollView.HorizontalAxisDecoratorScrollViewer.Content;
+
+            FrameworkElement verticalDecorator = (FrameworkElement)visualiser.ZoomScrollView.VerticalAxisDecoratorScrollViewer.Content;
+
+            if (wholeBox == null || horizontalSlider == null || horizontalDecorator == null)
                 return;
-            }
 
 
             double scale = 1 + (zoomFactor/4);
@@ -218,13 +223,9 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control
             double mainSize;
 
             if (isHorizontal)
-                mainSize = visualiser.ZoomScrollView.ActualWidth
-                    - visualiser.ZoomScrollView.VerticalAxisDecoratorScrollViewer.ActualWidth
-            - visualiser.ZoomScrollView.VerticalZoomSlider.ActualWidth;
+                mainSize = wholeBox.ActualWidth - verticalDecorator.Width - verticalSlider.ActualWidth - 2;
             else
-                mainSize = visualiser.ZoomScrollView.ActualHeight
-            - visualiser.ZoomScrollView.HorizontalAxisDecoratorScrollViewer.ActualHeight;
-            //        - visualiser.ZoomScrollView.HorizontalZoomSlider.ActualHeight;
+                mainSize = wholeBox.ActualHeight - horizontalDecorator.Height - horizontalSlider.ActualHeight - 2;
 
             if (mainSize < 0)
                 mainSize = 0;

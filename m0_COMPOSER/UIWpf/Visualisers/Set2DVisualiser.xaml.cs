@@ -101,12 +101,32 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             ZoomScrollViewBasedVisualiserBase_Init(baseEdgeVertex, parentVisualiser);
 
-            ZoomScrollView.ScrollViewer. Loaded += ScrollViewer_Loaded;
+            ZoomScrollView.ScrollViewer.Loaded += ScrollViewer_Loaded;
         }
 
-        private void ScrollViewer_Loaded(object sender, RoutedEventArgs e)
+        private void ScrollViewer_Loaded(object sender, EventArgs e)
         {
             base.ChildControlsLoaded();
+
+            ContentControl c0 = this.ZoomScrollView;
+
+            ContentControl c1 = this.ZoomScrollView.HorizontalAxisDecoratorScrollViewer;
+
+            FrameworkElement c2 = (FrameworkElement)this.ZoomScrollView.HorizontalAxisDecoratorScrollViewer.Content;
+
+            FrameworkElement c3 = this.ZoomScrollView.HorizontalZoomSlider;
+
+            double h0 = c0.Height;
+            double h0a = c0.ActualHeight;
+
+            double h1 = c1.Height;
+            double h1a = c1.ActualHeight;
+
+            double h2 = c2.Height;
+            double h2a = c2.ActualHeight;
+
+            double h3 = c3.Height;
+            double h3a = c3.ActualHeight;
 
             AxisMinMaxValuesUpdate();
 
