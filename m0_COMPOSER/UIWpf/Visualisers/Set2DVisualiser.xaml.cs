@@ -101,7 +101,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             ZoomScrollViewBasedVisualiserBase_Init(baseEdgeVertex, parentVisualiser);
 
-            ZoomScrollView.ScrollViewer.Loaded += ScrollViewer_Loaded;
+            ZoomScrollView.ScrollViewer. Loaded += ScrollViewer_Loaded;
         }
 
         private void ScrollViewer_Loaded(object sender, RoutedEventArgs e)
@@ -822,6 +822,8 @@ namespace m0_COMPOSER.UIWpf.Visualisers
         void CanDoItemsUpdate()
         {
             AxisUpdate();
+
+           // VisualiserDraw();
         }
 
         void AxisUpdate()

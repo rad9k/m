@@ -68,7 +68,8 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control
         {
             visualiser = _visualiser;
 
-            Size = new Size(decoratorSize, decoratorSize);
+            Width = decoratorSize;
+            Height = decoratorSize;
         }
             
 
@@ -205,6 +206,13 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control
                 && valueSpaceSize != 0)
                 return;
 
+            if (isHorizontal)
+            {
+                baseUnitSize = 1;
+                return;
+            }
+
+
             double scale = 1 + (zoomFactor/4);
 
             double mainSize;
@@ -215,8 +223,8 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control
             - visualiser.ZoomScrollView.VerticalZoomSlider.ActualWidth;
             else
                 mainSize = visualiser.ZoomScrollView.ActualHeight
-            -visualiser.ZoomScrollView.HorizontalAxisDecoratorScrollViewer.ActualHeight
-                    - visualiser.ZoomScrollView.HorizontalZoomSlider.ActualHeight;
+            - visualiser.ZoomScrollView.HorizontalAxisDecoratorScrollViewer.ActualHeight;
+            //        - visualiser.ZoomScrollView.HorizontalZoomSlider.ActualHeight;
 
             if (mainSize < 0)
                 mainSize = 0;
