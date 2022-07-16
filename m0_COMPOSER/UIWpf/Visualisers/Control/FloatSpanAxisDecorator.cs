@@ -90,22 +90,23 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control
         {
             UpdateBaseUntSize();
 
-            SegmentStepUpdate();
-            SegmentStartStopUpdate();
+            SegmentStepStartStopUpdate();
 
             SegmentsUpdate();
 
             Draw();
         }
 
-        private void SegmentStepUpdate()
+        private void SegmentStepStartStopUpdate()
         {
-            segmentStep = 10;
-        }
+            double baseUnitSize_log = Math.Log10(baseUnitSize);
+            double baseUnitSize_log_round = Math.Round(baseUnitSize_log);
 
-        private void SegmentStartStopUpdate()
-        {
-            segmentStart = valueSpaceMin;
+            double segmentStep_log = 2 - baseUnitSize_log_round;
+
+            segmentStep = Math.Pow(10, segmentStep_log);
+ 
+            segmentStart = Math.Round(valueSpaceMin, baseUnitSize_log_round, MidpointRounding.
             segmentStop = ValueSpaceMax;
         }
 

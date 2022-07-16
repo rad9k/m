@@ -93,7 +93,7 @@ namespace m0
 
             IVertex data = xxx.AddVertex(null, "data");
 
-            for(int xx=0; xx< 10; xx++)
+            for(double xx=0.33; xx < 10; xx++)
             {
                 IVertex d = data.AddVertex(ed1, xx);
 
