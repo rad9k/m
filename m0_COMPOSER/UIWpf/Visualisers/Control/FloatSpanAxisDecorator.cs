@@ -100,14 +100,14 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control
         private void SegmentStepStartStopUpdate()
         {
             double baseUnitSize_log = Math.Log10(baseUnitSize);
-            double baseUnitSize_log_round = Math.Round(baseUnitSize_log);
+            int baseUnitSize_log_round = (int)Math.Round(baseUnitSize_log);
 
-            double segmentStep_log = 2 - baseUnitSize_log_round;
+            int segmentStep_log = 2 - baseUnitSize_log_round;
 
             segmentStep = Math.Pow(10, segmentStep_log);
- 
-            segmentStart = Math.Round(valueSpaceMin, baseUnitSize_log_round, MidpointRounding.
-            segmentStop = ValueSpaceMax;
+
+            segmentStart = MathUtil.RoundUp(ValueSpaceMin, segmentStep_log - 1);
+            segmentStop = MathUtil.RoundDown(ValueSpaceMax, segmentStep_log - 1);
         }
 
         private void Draw()
