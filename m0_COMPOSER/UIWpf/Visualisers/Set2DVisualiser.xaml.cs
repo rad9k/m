@@ -108,26 +108,6 @@ namespace m0_COMPOSER.UIWpf.Visualisers
         {
             base.ChildControlsLoaded();
 
-            ContentControl c0 = this.ZoomScrollView;
-
-            ContentControl c1 = this.ZoomScrollView.HorizontalAxisDecoratorScrollViewer;
-
-            FrameworkElement c2 = (FrameworkElement)this.ZoomScrollView.HorizontalAxisDecoratorScrollViewer.Content;
-
-            FrameworkElement c3 = this.ZoomScrollView.HorizontalZoomSlider;
-
-            double h0 = c0.Height;
-            double h0a = c0.ActualHeight;
-
-            double h1 = c1.Height;
-            double h1a = c1.ActualHeight;
-
-            double h2 = c2.Height;
-            double h2a = c2.ActualHeight;
-
-            double h3 = c3.Height;
-            double h3a = c3.ActualHeight;
-
             AxisMinMaxValuesUpdate();
 
             canDraw = true;
@@ -270,12 +250,10 @@ namespace m0_COMPOSER.UIWpf.Visualisers
         protected override void SetAxisDecorators()
         {
             if (VerticalAD == null)
-                VerticalAD = new FloatSpanAxisDecorator(this);
+                VerticalAD = new FloatSpanAxisDecorator(this, false);
 
             if (HorizontalAD == null)
-                HorizontalAD = new FloatSpanAxisDecorator(this);
-
-            HorizontalAD.isHorizontal = true;
+                HorizontalAD = new FloatSpanAxisDecorator(this, true);
 
             ZoomScrollView.SetVerticalAxisDecorator(VerticalAD);
 
@@ -308,14 +286,12 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
         protected void UpdateItem(IEdge itemEdge, IItem item)
         {
-            IVertex itemEventVertex = itemEdge.To;
+            IVertex itemVertex = itemEdge.To;
 
-            IVertex horizontalVertex = GraphUtil.GetQueryOutFirst(itemEventVertex, SetItemHorizontalAxisMetaString, null);
-            double horizontalValue = GraphUtil.GetDoubleValueOr0(horizontalVertex);
+            double horizontalValue = GetHorizontal(itemVertex);
             double horizontalPosition = HorizontalAD.ValueSpaceToScreen(horizontalValue);
-
-            IVertex verticalVertex = GraphUtil.GetQueryOutFirst(itemEventVertex, SetItemVerticalAxisMetaString, null);
-            double verticalValue = GraphUtil.GetDoubleValueOr0(verticalVertex);
+            
+            double verticalValue = GetVertical(itemVertex);
             double verticalPosition = VerticalAD.ValueSpaceToScreen(verticalValue);
 
             bool dummy = false;                        
@@ -846,6 +822,18 @@ namespace m0_COMPOSER.UIWpf.Visualisers
            // VisualiserDraw();
         }
 
+        double GetHorizontal(IVertex item)
+        {
+            IVertex horizontalVertex = GraphUtil.GetQueryOutFirst(item, SetItemHorizontalAxisMetaString, null);
+            return GraphUtil.GetDoubleValueOr0(horizontalVertex);
+        }
+
+        double GetVertical(IVertex item)
+        {
+            IVertex verticalVertex = GraphUtil.GetQueryOutFirst(item, SetItemVerticalAxisMetaString, null);
+            return GraphUtil.GetDoubleValueOr0(verticalVertex);
+        }
+
         void AxisUpdate()
         {
             if (SetItemsDefiningMetaString == null
@@ -861,11 +849,9 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             foreach (IEdge e in VisualizedVertex.GetAll(false, SetItemsDefiningMetaString + ":"))
             {
-                IVertex horizontalVertex = GraphUtil.GetQueryOutFirst(e.To, SetItemHorizontalAxisMetaString, null);
-                double horizontalValue = GraphUtil.GetDoubleValueOr0(horizontalVertex);
+                double horizontalValue = GetHorizontal(e.To);
 
-                IVertex verticalVertex = GraphUtil.GetQueryOutFirst(e.To, SetItemVerticalAxisMetaString, null);
-                double verticalValue = GraphUtil.GetDoubleValueOr0(verticalVertex);
+                double verticalValue = GetVertical(e.To);
 
                 if (horizontalValue > horizontalMax)
                     horizontalMax = horizontalValue;

@@ -131,7 +131,9 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control.Item
 
             path.StrokeThickness = 2;
 
-            SetBorder((Brush)WpfUtil.FindResource("0BlackBrush"));            
+            SetBorder((Brush)WpfUtil.FindResource("0ForegroundBrush"));
+
+            SetBackground((Brush)WpfUtil.FindResource("0ForegroundBrush"));
         }
 
         Path path;
@@ -191,8 +193,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control.Item
             
 
             path.StrokeThickness = 2;
-                       
-
+           
             path.Data = pathGeometry;
 
             this.Child = path;

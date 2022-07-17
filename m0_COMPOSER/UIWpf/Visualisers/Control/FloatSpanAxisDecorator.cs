@@ -17,7 +17,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control
     class FloatSpanAxisDecorator : AxisDecoratorBase, IZoomScrollViewAxisDecorator
     {
         double decoratorSize = 20;
-
+        
         double valueSpaceSize;
 
         double valueSpaceMin;
@@ -50,10 +50,12 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control
             if (!isHorizontal)
                 screenPosition = Size.Height - screenPosition;
 
-            return screenPosition / BaseUnitSize;
+            return (screenPosition / BaseUnitSize) + segmentStart_valueSpace;
         }
 
         public double ValueSpaceToScreen(double valueSpacePosition) {
+            valueSpacePosition -= segmentStart_valueSpace;
+
             double ret = valueSpacePosition * BaseUnitSize;
 
             if (!isHorizontal)
@@ -64,9 +66,14 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control
 
         public bool isHorizontal { get; set; }
 
-        public FloatSpanAxisDecorator(ZoomScrollViewBasedVisualiserBase _visualiser) : base()
+        public FloatSpanAxisDecorator(ZoomScrollViewBasedVisualiserBase _visualiser, bool _isHorizontal)
         {
+            isHorizontal = _isHorizontal;
+        
             visualiser = _visualiser;
+
+            if (!isHorizontal)
+                decoratorSize = 35;
 
             Width = decoratorSize;
             Height = decoratorSize;
@@ -75,10 +82,11 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control
 
         double FontSize = 10;
 
-    
-        double segmentStep;
-        double segmentStart;
-        double segmentStop;
+        double segmentStep_valueSpace;
+        double segmentStart_valueSpace;
+        double segmentStop_valueSpace;
+
+        int segmentDigits;
 
         public event EventHandler SelectionChanged;
 
@@ -104,10 +112,16 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control
 
             int segmentStep_log = 2 - baseUnitSize_log_round;
 
-            segmentStep = Math.Pow(10, segmentStep_log);
+            if ((segmentStep_log - 1) < 0)
+                segmentDigits = -1 * (segmentStep_log -1);
+            else
+                segmentDigits = 0;
 
-            segmentStart = MathUtil.RoundUp(ValueSpaceMin, segmentStep_log - 1);
-            segmentStop = MathUtil.RoundDown(ValueSpaceMax, segmentStep_log - 1);
+            segmentStep_valueSpace = Math.Pow(10, segmentStep_log);
+
+
+            segmentStart_valueSpace = MathUtil.RoundDown(ValueSpaceMin, segmentStep_log - 1);
+            segmentStop_valueSpace = MathUtil.RoundUp(ValueSpaceMax, segmentStep_log - 1);
         }
 
         private void Draw()
@@ -142,7 +156,16 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control
 
                     t.Foreground = (Brush)WpfUtil.FindResource("0ForegroundBrush");
 
-                    t.Text = ax.Tag.ToString();
+                    if(segmentDigits == 0)
+                        t.Text = ax.Tag.ToString();
+                    else
+                    {
+                        double value = (double)ax.Tag;
+
+                        value = Math.Round(value, segmentDigits);
+
+                        t.Text = value.ToString();
+                    }
 
                     t.FontSize = FontSize;
 
@@ -174,7 +197,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control
             Segments = new List<AxisSegment>();            
 
 
-            for (double position = segmentStart; position < segmentStop ; position += segmentStep)
+            for (double position = segmentStart_valueSpace; position < segmentStop_valueSpace ; position += segmentStep_valueSpace)
             {
                 AxisSegment segment = new AxisSegment();
 
@@ -183,7 +206,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control
                 segment.LineStyle.Stroke = (Brush)WpfUtil.FindResource("0VeryLightForegroundBrush");
 
                 segment.StartPosition = ValueSpaceToScreen(position);
-                segment.EndPosition = ValueSpaceToScreen(position + segmentStep);
+                segment.EndPosition = ValueSpaceToScreen(position + segmentStep_valueSpace);
 
                 segment.Tag = position;
 
