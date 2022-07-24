@@ -14,7 +14,7 @@ using System.Windows.Media;
 
 namespace m0_COMPOSER.UIWpf.Visualisers.Control
 {
-    class FloatSpanAxisDecorator : AxisDecoratorBase, IZoomScrollViewAxisDecorator
+    class FloatSpanAxisDecorator : AxisDecoratorBase, IZoomScrollViewAxisDecorator // dedicated to Set2DVisualiser
     {
         double decoratorSize = 20;
         
@@ -107,6 +107,9 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control
 
         private void SegmentStepStartStopUpdate()
         {
+            if (baseUnitSize < 0)
+                return;
+
             double baseUnitSize_log = Math.Log10(baseUnitSize);
             int baseUnitSize_log_round = (int)Math.Round(baseUnitSize_log);
 

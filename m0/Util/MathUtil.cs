@@ -19,19 +19,19 @@ namespace m0.Util
             {
                 double counter = 0;
 
-                while (counter < toRound)
+                while (Math.Round(counter, digits * -1) < toRound)
                     counter += step;
 
-                return counter;
+                return Math.Round(counter, digits * -1);
             }
             else
             {
                 double counter = 0;
 
-                while (counter > toRound)
+                while (Math.Round(counter, digits * -1) > toRound)
                     counter -= step;
 
-                return counter + step;
+                return Math.Round(counter + step, digits * -1);
             }
         }
 
@@ -46,19 +46,19 @@ namespace m0.Util
             {
                 double counter = 0;
 
-                while (counter < toRound)
+                while (Math.Round(counter, digits * -1) < toRound)
                     counter += step;
 
-                return counter - step;
+                return Math.Round(counter, digits * -1);
             }
             else
             {
                 double counter = 0;
 
-                while (counter > toRound)
+                while (Math.Round(counter, digits * -1) > toRound)
                     counter -= step;
 
-                return counter;
+                return Math.Round(counter, digits * -1);
             }
         }
     }

@@ -83,7 +83,7 @@ namespace m0
             z.AddEdge(r.Get(false, @"System\Meta\Base\Vertex\$EdgeTarget"), r.Get(false, @"System\Meta\ZeroTypes\Float"));
 
             IVertex w = c.AddVertex(null, "W");
-            x.AddEdge(r.Get(false, @"System\Meta\Base\Vertex\$EdgeTarget"), r.Get(false, @"System\Meta\ZeroTypes\Float"));
+            w.AddEdge(r.Get(false, @"System\Meta\Base\Vertex\$EdgeTarget"), r.Get(false, @"System\Meta\ZeroTypes\Float"));
 
             IVertex ed1 = xxx.AddVertex(null, "edge1");
             ed1.AddEdge(r.Get(false, @"System\Meta\Base\Vertex\$EdgeTarget"), c);
@@ -93,7 +93,8 @@ namespace m0
 
             IVertex data = xxx.AddVertex(null, "data");
 
-            for(double xx=-10.1; xx < 10 ; xx++)
+            //for(double xx=-10.1; xx < 10 ; xx++)
+            for (double xx = 1.99; xx <= 3; xx++)
             {
                 IVertex d = data.AddVertex(ed1, xx);
 
@@ -107,7 +108,7 @@ namespace m0
                 d.AddVertex(x, xx * 10 );
                 d.AddVertex(y, xx * 20);
                 d.AddVertex(z, xx * -400);
-                d.AddVertex(w, Math.Sin(((double)xx)/10));
+                d.AddVertex(w, Math.Sin(((double)xx)/3));
             }
         }
 
