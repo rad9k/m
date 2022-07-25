@@ -22,6 +22,9 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control
 
         double valueSpaceMin;
 
+        bool valueSpaceMinSet = false;
+        bool valueSpaceMaxSet = false;
+
         public double ValueSpaceMin {
             get { return valueSpaceMin; }
             set {
@@ -29,7 +32,10 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control
 
                 valueSpaceSize = ValueSpaceMax - ValueSpaceMin;
 
-                Update();
+                valueSpaceMinSet = true;
+
+                if (valueSpaceMinSet && valueSpaceMaxSet)
+                    Update();
             }
         }
 
@@ -42,7 +48,10 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control
 
                 valueSpaceSize = ValueSpaceMax - ValueSpaceMin;
 
-                Update();
+                valueSpaceMaxSet = true;
+
+                if (valueSpaceMinSet && valueSpaceMaxSet)
+                    Update();
             }
         }
 
@@ -77,6 +86,8 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control
 
             Width = decoratorSize;
             Height = decoratorSize;
+
+            Segments = new List<AxisSegment>();
         }
             
 
@@ -122,6 +133,10 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control
 
             segmentStep_valueSpace = Math.Pow(10, segmentStep_log);
 
+            if(!isHorizontal)
+            {
+                int x = 0;
+            }
 
             segmentStart_valueSpace = MathUtil.RoundDown(ValueSpaceMin, segmentStep_log - 1);
             segmentStop_valueSpace = MathUtil.RoundUp(ValueSpaceMax, segmentStep_log - 1);
@@ -256,19 +271,6 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control
 
             if (mainSize < 0)
                 mainSize = 0;
-
-          /*  Rectangle r = new Rectangle();
-
-            WpfUtil.SetPosition(r, 0, 0, 520, 467);
-
-            r.Fill = new SolidColorBrush(Colors.Aqua);
-
-            r.Stroke = (Brush)FindResource("0ForegroundBrush");
-
-
-
-            if(visualiser.Main != null)
-                visualiser.Main.Children.Add(r);*/
 
             baseUnitSize = (mainSize / valueSpaceSize) * scale;
         }

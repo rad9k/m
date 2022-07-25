@@ -106,13 +106,15 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
         private void ScrollViewer_Loaded(object sender, EventArgs e)
         {
-            base.ChildControlsLoaded();
-
-            AxisMinMaxValuesUpdate();
+            base.ChildControlsLoaded();            
 
             canDraw = true;
 
-            DrawMain();
+            AxisMinMaxValuesUpdate();
+
+            VisualiserDraw();
+
+            //DrawMain();
         }
 
         protected void VisualizedVertexToUpdated()
@@ -817,7 +819,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
         void CanDoItemsUpdate()
         {
-            AxisUpdate();
+            //AxisUpdate();
 
            // VisualiserDraw();
         }
@@ -839,6 +841,9 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             if (SetItemsDefiningMetaString == null
                 || HorizontalAD == null
                 || VerticalAD == null)
+                return;
+
+            if (!canDraw)
                 return;
 
             horizontalMin = double.PositiveInfinity;
@@ -865,12 +870,6 @@ namespace m0_COMPOSER.UIWpf.Visualisers
                 if (verticalValue < verticalMin)
                     verticalMin = verticalValue;
             }
-
-            VerticalAD.ValueSpaceMax = verticalMax;
-            VerticalAD.ValueSpaceMin = verticalMin;
-
-            HorizontalAD.ValueSpaceMax = horizontalMax;
-            HorizontalAD.ValueSpaceMin = horizontalMin;
         }
 
         public void AxisMinMaxValuesUpdate()
