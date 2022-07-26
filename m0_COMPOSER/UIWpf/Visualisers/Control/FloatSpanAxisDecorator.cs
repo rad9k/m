@@ -28,14 +28,18 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control
         public double ValueSpaceMin {
             get { return valueSpaceMin; }
             set {
-                valueSpaceMin = value;
+                if (value != valueSpaceMin)
+                {
+                    valueSpaceMin = value;                    
 
-                valueSpaceSize = ValueSpaceMax - ValueSpaceMin;
+                    valueSpaceMinSet = true;
 
-                valueSpaceMinSet = true;
-
-                if (valueSpaceMinSet && valueSpaceMaxSet)
-                    Update();
+                    if (valueSpaceMinSet && valueSpaceMaxSet)
+                    {
+                        valueSpaceSize = ValueSpaceMax - ValueSpaceMin;
+                        Update();
+                    }
+                }
             }
         }
 
@@ -44,14 +48,18 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control
         public double ValueSpaceMax {
             get { return valueSpaceMax; }
             set {
-                valueSpaceMax = value;
+                if (value != valueSpaceMax)
+                {
+                    valueSpaceMax = value;                    
 
-                valueSpaceSize = ValueSpaceMax - ValueSpaceMin;
+                    valueSpaceMaxSet = true;
 
-                valueSpaceMaxSet = true;
-
-                if (valueSpaceMinSet && valueSpaceMaxSet)
-                    Update();
+                    if (valueSpaceMinSet && valueSpaceMaxSet)
+                    {
+                        valueSpaceSize = ValueSpaceMax - ValueSpaceMin;
+                        Update();
+                    }
+                }
             }
         }
 
