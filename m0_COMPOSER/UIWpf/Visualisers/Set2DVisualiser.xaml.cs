@@ -110,6 +110,8 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             canDraw = true;
 
+            AxisUpdate();
+
             AxisMinMaxValuesUpdate();
 
             VisualiserDraw();
@@ -261,7 +263,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             ZoomScrollView.SetHorizontalAxisDecorator(HorizontalAD);
 
-            CanDoItemsUpdate();
+            //CanDoItemsUpdate();
         }
 
         protected override void SetupLocalVariablesFromBaseVertexVertexes()
@@ -821,7 +823,8 @@ namespace m0_COMPOSER.UIWpf.Visualisers
         {
             //AxisUpdate();
 
-           // VisualiserDraw();
+            if(canDraw)
+                VisualiserDraw();
         }
 
         double GetHorizontal(IVertex item)
