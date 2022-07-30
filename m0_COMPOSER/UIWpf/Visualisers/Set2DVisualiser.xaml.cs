@@ -106,11 +106,12 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
         private void ScrollViewer_Loaded(object sender, EventArgs e)
         {
-            base.ChildControlsLoaded();            
-
-            canDraw = true;
+            base.ChildControlsLoaded();                        
 
             AxisUpdate();
+
+            if(verticalMax != verticalMin && horizontalMax != horizontalMin)
+                canDraw = true;
 
             AxisMinMaxValuesUpdate();
 

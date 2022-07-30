@@ -127,7 +127,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control
 
         private void SegmentStepStartStopUpdate()
         {
-            if (baseUnitSize < 0)
+            if (baseUnitSize <= 0 || baseUnitSize == double.PositiveInfinity)
                 return;
 
             double baseUnitSize_log = Math.Log10(baseUnitSize);
