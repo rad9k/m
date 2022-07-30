@@ -121,7 +121,8 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control
 
             SegmentsUpdate();
 
-            Draw();
+            if(Segments.Count > 0)
+                Draw();
         }
 
         private void SegmentStepStartStopUpdate()
@@ -250,7 +251,8 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control
         public void SetZoomFactor(double _zoomFactor)
         {
             zoomFactor = _zoomFactor;
-            UpdateBaseUntSize();
+            //UpdateBaseUntSize();
+            Update();
         }
 
         void UpdateBaseUntSize() { 
