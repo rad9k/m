@@ -95,7 +95,7 @@ namespace m0
 
             //for(double xx=-10.1; xx < 10 ; xx++)
             //for (double xx = 1.99; xx <= 3; xx++)
-            for (double xx = 2.01; xx <= 3; xx++)
+            for (double xx = 2.01; xx <= 3.01; xx++)
             {
                 IVertex d = data.AddVertex(ed1, xx);
 
