@@ -38,6 +38,9 @@ namespace m0_COMPOSER.UIWpf.Visualisers
         IVertex SetItemsDefiningMetaIs;
         string SetItemsDefiningMetaString;
 
+        IVertex SetItemHorizontalAxisMetaVertex;
+        IVertex SetItemVerticalAxisMetaVertex;
+
         string SetItemHorizontalAxisMetaString;
         string SetItemVerticalAxisMetaString;
 
@@ -108,7 +111,11 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             ZoomScrollViewBasedVisualiserBase_Init(baseEdgeVertex, parentVisualiser);
 
             ZoomScrollView.ScrollViewer.Loaded += ScrollViewer_Loaded;
+
+            IsCurrentPenItemCenter = true;
         }
+
+        protected override AxisSegment FindVerticalSegment(double position) { return null; }
 
         private void ScrollViewer_Loaded(object sender, EventArgs e)
         {
@@ -116,7 +123,13 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             canDraw = true;
 
-            AxisUpdate();            
+            UpdateAxisAndDraw();
+
+        }
+
+        void UpdateAxisAndDraw()
+        {
+            AxisUpdate();
 
             if (verticalMax_fromData == verticalMin_fromData || horizontalMax_fromData == horizontalMin_fromData)
                 canDraw = false;
@@ -124,14 +137,35 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             AxisMinMaxValuesUpdate();
 
             VisualiserDraw();
-
-            //DrawMain();
         }
 
         protected void VisualizedVertexToUpdated()
         {
-            CanDoItemsUpdate();
+            //CanDoItemsUpdate();
+            //UpdateAxisAndDraw();
             ComboBoxesUpdate();
+        }
+
+        public override double GetSnappedPosition(double position)
+        {
+            return position;
+        }
+
+        protected override void PenUp(object sender, MouseButtonEventArgs e)
+        {
+            ////////////////////////////////////////
+            Interaction.BeginInteractionWithGraph();
+            ////////////////////////////////////////
+
+            PerformPenUp_part1();
+
+            AddItemVertex(GetSnappedPosition(MouseDownPoint.X), GetSnappedPosition(MouseDownPoint.Y));
+            
+            PerformPenUp_part2();
+            
+            ////////////////////////////////////////
+            Interaction.EndInteractionWithGraph();
+            ////////////////////////////////////////
         }
 
         protected void ComboBoxesUpdate()
@@ -186,7 +220,9 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
         protected override void EdgeAdded(IEdge edge)
         {
-           // AddItemByEdge(edge, null);
+            // AddItemByEdge(edge, null);
+
+            int x = 0;
         }
 
         protected void AddEdgeByMetaOrValueChangeHandler(IEdge eventEdge)
@@ -339,30 +375,17 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             ItemsAdd(newItem);
         }
   
+        protected IEdge AddItemVertex(double x, double y)
+        {
+            IEdge dataEdge = VertexOperations.AddInstanceAndReturnEdge(VisualizedVertex, SetItemsDefiningMeta);
 
-        static IVertex r = MinusZero.Instance.Root;
-        static IVertex musicSequenceEvent = r.Get(false, @"System\Lib\Music\Sequence\Event");
-        static IVertex musicNoteEvent = r.Get(false, @"System\Lib\Music\NoteEvent");
+            IVertex dataVertex = dataEdge.To;
 
-        protected override IEdge AddItemVertex(AxisSegment itemSegment, double startPosition, double lengthPosition)
-        {            
-            IEdge noteEventEdge = VisualizedVertex.AddVertexAndReturnEdge(musicSequenceEvent, null);            
-
-            IVertex noteEventVertex = noteEventEdge.To;
-
-            noteEventVertex.AddEdge(MinusZero.Instance.Is, musicNoteEvent);
-
-            noteEventVertex.AddVertex(musicNoteEvent.Get(false, @"Attribute:TriggerTime"), (int)((startPosition / HorizontalAD.BaseUnitSize) + 0.01));
-            noteEventVertex.AddVertex(musicNoteEvent.Get(false, @"Attribute:Length"), (int)((lengthPosition / HorizontalAD.BaseUnitSize) + 0.01));            
-            noteEventVertex.AddVertex(musicNoteEvent.Get(false, @"Attribute:Octave"), itemSegment.BaseVertex.Get(false, "Octave:").Value);
-            noteEventVertex.AddVertex(musicNoteEvent.Get(false, @"Attribute:Note"), itemSegment.BaseVertex.Get(false, "Note:").Value);
-            noteEventVertex.AddVertex(musicNoteEvent.Get(false, @"Attribute:Velocity"), DefaultVelocity);
-                       
-            return noteEventEdge;
+            dataVertex.AddVertex(SetItemHorizontalAxisMetaVertex, HorizontalAD.ScreenToValueSpace(x));
+            dataVertex.AddVertex(SetItemVerticalAxisMetaVertex, VerticalAD.ScreenToValueSpace(y));
+            
+            return dataEdge;
         }
-
-        static IVertex musicEvent = r.Get(false, @"System\Lib\Music\Event");
-        static IVertex musicControlChangeEvent = r.Get(false, @"System\Lib\Music\ControlChangeEvent");                
 
         protected override void DrawItems()
         {
@@ -377,13 +400,10 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             foreach (IEdge e in VisualizedVertex.GetAll(false, SetItemsDefiningMetaString + ":"))
                 AddItemByEdge(e, selectedVertexes);            
         }
-
-        static IVertex musicPitchOctave = r.Get(false, @"System\Lib\Music\Pitch\Octave");
-        static IVertex musicPitchNote = r.Get(false, @"System\Lib\Music\Pitch\Note");
-
+        
         protected override void UpdateItem_VerticalPosition(IItem item)
         {            
-            FrameworkElement element;
+      /*      FrameworkElement element;
 
             if (!(item is FrameworkElement))
                 return;
@@ -410,15 +430,12 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             item.Label = label;
 
-            item.Update();
+            item.Update();*/
         }
-
-        static IVertex musicEventTriggerTime = r.Get(false, @"System\Lib\Music\Event\TriggerTime");
-        static IVertex musicHasLengthLength = r.Get(false, @"System\Lib\Music\HasLength\Length");
 
         protected override void UpdateItem_HorizontalPosition(IItem item)
         {                        
-            FrameworkElement element;
+            /*FrameworkElement element;
 
             if (!(item is FrameworkElement))
                 return;
@@ -449,7 +466,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             GraphUtil.SetVertexValue(itemVertex, musicEventTriggerTime, TriggerTime);
 
             if (Length != 0)
-                GraphUtil.SetVertexValue(itemVertex, musicHasLengthLength, Length);            
+                GraphUtil.SetVertexValue(itemVertex, musicHasLengthLength, Length);  */          
         }
 
         protected override int ScreenPositionToMusicTime(double position, bool performSnapCorrection)
@@ -503,8 +520,8 @@ namespace m0_COMPOSER.UIWpf.Visualisers
         }
         
         protected IEdge AddNoteVertex(IVertex octave, IVertex note, int triggerTime, int length, int velocity)
-        {            
-            IEdge noteEventEdge = VisualizedVertex.AddVertexAndReturnEdge(musicEvent, null);
+        {
+            /*IEdge noteEventEdge = VisualizedVertex.AddVertexAndReturnEdge(musicEvent, null);
 
             IVertex noteEventVertex = noteEventEdge.To;
 
@@ -516,7 +533,9 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             noteEventVertex.AddVertex(musicNoteEvent.Get(false, @"Attribute:Note"), note.Value);            
             noteEventVertex.AddVertex(musicNoteEvent.Get(false, @"Attribute:Velocity"), velocity);            
 
-            return noteEventEdge;
+            return noteEventEdge;*/
+
+            return null;
         }
 
         protected enum WhatIsInEdgesEnum { OnlyNotes, OnlyCC, Mix}
@@ -699,7 +718,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
         }
 
         private void UpdateNoteVertex(IEdge noteEventEdge, object octave, object note, int triggerTime, int length, int velocity)
-        {
+        {/*
             IVertex noteEventVertex = noteEventEdge.To;            
 
             GraphUtil.SetVertexValue(noteEventVertex, musicNoteEvent.Get(false, @"Attribute:TriggerTime"), triggerTime);
@@ -707,6 +726,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             GraphUtil.SetVertexValue(noteEventVertex, musicNoteEvent.Get(false, @"Attribute:Octave"), octave);
             GraphUtil.SetVertexValue(noteEventVertex, musicNoteEvent.Get(false, @"Attribute:Note"), note);
             GraphUtil.SetVertexValue(noteEventVertex, musicNoteEvent.Get(false, @"Attribute:Velocity"), velocity);                        
+            */
         } 
 
         public override void Dispose()
@@ -825,11 +845,12 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             if (SetItemHorizontalAxisMetaComboBox.SelectedItem == null)
                 return;
 
-            IVertex SetItemHorizontalAxisMetaVertex = (IVertex)((ComboBoxItem)SetItemHorizontalAxisMetaComboBox.SelectedItem).Tag;
+            SetItemHorizontalAxisMetaVertex = (IVertex)((ComboBoxItem)SetItemHorizontalAxisMetaComboBox.SelectedItem).Tag;
 
             SetItemHorizontalAxisMetaString = SetItemHorizontalAxisMetaVertex.Value.ToString();
 
-            CanDoItemsUpdate();
+            UpdateAxisAndDraw();
+            //CanDoItemsUpdate();
         }
 
         private void SetItemVerticalAxisMetaComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -837,20 +858,21 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             if (SetItemVerticalAxisMetaComboBox.SelectedItem == null)
                 return;
 
-            IVertex SetItemVerticalAxisMetaVertex = (IVertex)((ComboBoxItem)SetItemVerticalAxisMetaComboBox.SelectedItem).Tag;
+            SetItemVerticalAxisMetaVertex = (IVertex)((ComboBoxItem)SetItemVerticalAxisMetaComboBox.SelectedItem).Tag;
 
             SetItemVerticalAxisMetaString = SetItemVerticalAxisMetaVertex.Value.ToString();
 
-            CanDoItemsUpdate();
+            UpdateAxisAndDraw();
+            //CanDoItemsUpdate();
         }
 
-        void CanDoItemsUpdate()
+        /*void CanDoItemsUpdate()
         {
-            //AxisUpdate();
+            AxisUpdate();
 
             if(canDraw)
                 VisualiserDraw();
-        }
+        }*/
 
         double GetHorizontal(IVertex item)
         {
@@ -907,11 +929,14 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
         public void AxisMinMaxValuesUpdate()
         {
-            VerticalAD.ValueSpaceMax = verticalMax;
-            VerticalAD.ValueSpaceMin = verticalMin;
+            if (VerticalAD != null && HorizontalAD != null)
+            {
+                VerticalAD.ValueSpaceMax = verticalMax;
+                VerticalAD.ValueSpaceMin = verticalMin;
 
-            HorizontalAD.ValueSpaceMax = horizontalMax;
-            HorizontalAD.ValueSpaceMin = horizontalMin;
+                HorizontalAD.ValueSpaceMax = horizontalMax;
+                HorizontalAD.ValueSpaceMin = horizontalMin;
+            }
         }
     }
 }

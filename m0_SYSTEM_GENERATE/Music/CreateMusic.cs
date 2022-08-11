@@ -428,7 +428,7 @@ namespace m0_SYSTEM_GENERATE.Music
 
             HasLength = GraphUtil.AddClass(Music, "HasLength");
 
-            GraphUtil.AddAttribute(HasLength, "Length", Integer, 0, 1);
+            GraphUtil.AddAttribute(HasLength, "Length", Integer, 1, 1, 0);
             GraphUtil.AddAssociation(HasLength, "TimeSpan", TimeSpanLevel, 0, 1);
 
             // EVENT

@@ -1438,7 +1438,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             SaveSelectionArea();
         }
 
-        protected AxisSegment FindVerticalSegment(double position)
+        protected virtual AxisSegment FindVerticalSegment(double position)
         {
             foreach (AxisSegment s in VerticalAD.Segments)
                 if (s.StartPosition < position && position < s.EndPosition)
