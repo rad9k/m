@@ -41,6 +41,12 @@ namespace m0_COMPOSER.UIWpf.Visualisers
         string SetItemHorizontalAxisMetaString;
         string SetItemVerticalAxisMetaString;
 
+        double horizontalMin_fromData;
+        double horizontalMax_fromData;
+
+        double verticalMin_fromData;
+        double verticalMax_fromData;
+
         double horizontalMin;
         double horizontalMax;
 
@@ -112,7 +118,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             AxisUpdate();            
 
-            if (verticalMax == verticalMin || horizontalMax == horizontalMin)
+            if (verticalMax_fromData == verticalMin_fromData || horizontalMax_fromData == horizontalMin_fromData)
                 canDraw = false;
 
             AxisMinMaxValuesUpdate();
@@ -719,22 +725,38 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
         private void ExtendUpButton_Click(object sender, RoutedEventArgs e)
         {
+            verticalMax = verticalMax + (Math.Abs(verticalMax-verticalMin) * 0.1);
 
+            AxisMinMaxValuesUpdate();
+
+            VisualiserDraw();
         }
 
         private void ExtendDownButton_Click(object sender, RoutedEventArgs e)
         {
+            verticalMin = verticalMin - (Math.Abs(verticalMax - verticalMin) * 0.1);
 
+            AxisMinMaxValuesUpdate();
+
+            VisualiserDraw();
         }
 
         private void ExtendLeftButton_Click(object sender, RoutedEventArgs e)
         {
+            horizontalMin = horizontalMin - (Math.Abs(horizontalMax - horizontalMin) * 0.1);
 
+            AxisMinMaxValuesUpdate();
+
+            VisualiserDraw();
         }
 
         private void ExtendRightButton_Click(object sender, RoutedEventArgs e)
         {
+            horizontalMax = horizontalMax + (Math.Abs(horizontalMax - horizontalMin) * 0.1);
 
+            AxisMinMaxValuesUpdate();
+
+            VisualiserDraw();
         }
 
         private bool IsMetaSuitableForAxis(IVertex v)
@@ -852,11 +874,11 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             if (!canDraw)
                 return;
 
-            horizontalMin = double.PositiveInfinity;
-            horizontalMax = double.NegativeInfinity;
+            horizontalMin_fromData = double.PositiveInfinity;
+            horizontalMax_fromData = double.NegativeInfinity;
 
-            verticalMin = double.PositiveInfinity;
-            verticalMax = double.NegativeInfinity;
+            verticalMin_fromData = double.PositiveInfinity;
+            verticalMax_fromData = double.NegativeInfinity;
 
             foreach (IEdge e in VisualizedVertex.GetAll(false, SetItemsDefiningMetaString + ":"))
             {
@@ -864,18 +886,23 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
                 double verticalValue = GetVertical(e.To);
 
-                if (horizontalValue > horizontalMax)
-                    horizontalMax = horizontalValue;
+                if (horizontalValue > horizontalMax_fromData)
+                    horizontalMax_fromData = horizontalValue;
 
-                if (horizontalValue < horizontalMin)
-                    horizontalMin = horizontalValue;
+                if (horizontalValue < horizontalMin_fromData)
+                    horizontalMin_fromData = horizontalValue;
 
-                if (verticalValue > verticalMax)
-                    verticalMax = verticalValue;
+                if (verticalValue > verticalMax_fromData)
+                    verticalMax_fromData = verticalValue;
 
-                if (verticalValue < verticalMin)
-                    verticalMin = verticalValue;
+                if (verticalValue < verticalMin_fromData)
+                    verticalMin_fromData = verticalValue;
             }
+
+            verticalMin = verticalMin_fromData;
+            verticalMax = verticalMax_fromData;
+            horizontalMin = horizontalMin_fromData;
+            horizontalMax = horizontalMax_fromData;
         }
 
         public void AxisMinMaxValuesUpdate()

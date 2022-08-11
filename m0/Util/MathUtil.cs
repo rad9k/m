@@ -8,6 +8,14 @@ namespace m0.Util
 {
     public class MathUtil
     {
+        public static double Round(double toRound, int digits)
+        {
+            if (digits > 0)
+                return Math.Floor (toRound);
+            else
+                return Math.Round(toRound, digits * -1);
+        }
+
         public static double RoundUp(double toRound, int digits)
         {
             if (toRound == 0)
@@ -19,19 +27,19 @@ namespace m0.Util
             {
                 double counter = 0;
 
-                while (Math.Round(counter, digits * -1) < toRound)
+                while (MathUtil.Round(counter, digits) < toRound)
                     counter += step;
 
-                return Math.Round(counter, digits * -1);
+                return MathUtil.Round(counter, digits);
             }
             else
             {
                 double counter = 0;
 
-                while (Math.Round(counter, digits * -1) > toRound)
+                while (MathUtil.Round(counter, digits) > toRound)
                     counter -= step;
 
-                return Math.Round(counter + step, digits * -1);
+                return MathUtil.Round(counter + step, digits);
             }
         }
 
@@ -46,19 +54,19 @@ namespace m0.Util
             {
                 double counter = 0;
 
-                while (Math.Round(counter, digits * -1) < toRound)
+                while (MathUtil.Round(counter, digits) < toRound)
                     counter += step;
 
-                return Math.Round(counter, digits * -1);
+                return MathUtil.Round(counter - step, digits);
             }
             else
             {
                 double counter = 0;
 
-                while (Math.Round(counter, digits * -1) > toRound)
+                while (MathUtil.Round(counter, digits) > toRound)
                     counter -= step;
 
-                return Math.Round(counter, digits * -1);
+                return MathUtil.Round(counter, digits);
             }
         }
     }

@@ -1,6 +1,7 @@
 ﻿using m0.Foundation;
 using m0.Graph;
 using m0.Graph.ExecutionFlow;
+using m0.UIWpf.Commands;
 using m0.ZeroCode;
 using m0.ZeroTypes;
 using System;
@@ -93,9 +94,10 @@ namespace m0
 
             IVertex data = xxx.AddVertex(null, "data");
 
-            //for(double xx=-10.1; xx < 10 ; xx++)
+            for(double xx=3.1; xx < 6.1 ; xx++)
             //for (double xx = 1.99; xx <= 3; xx++)
-            for (double xx = 2.01; xx <= 3.01; xx++)
+            //for (double xx = -3.01; xx <= 200.01; xx++)
+            //for (double xx = 2; xx <= 3.01; xx+=1.01)
             {
                 IVertex d = data.AddVertex(ed1, xx);
 
@@ -111,6 +113,8 @@ namespace m0
                 d.AddVertex(z, xx * -400);
                 d.AddVertex(w, Math.Sin(((double)xx)/3));
             }
+
+            BaseCommands.OpenVisualiser(Edge.CreateTempEdgeVertex(null, null, data), r.Get(false, @"System\Meta\Visualiser\Set2D"));
         }
 
         void ExtraRun5()

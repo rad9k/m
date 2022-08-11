@@ -25,6 +25,19 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control
         bool valueSpaceMinSet = false;
         bool valueSpaceMaxSet = false;
 
+        //
+
+        double FontSize = 10;
+
+        double segmentsStep_valueSpace;
+        double segmentsStart_valueSpace;
+        double segmentsStop_valueSpace;
+        double segmentsSize_valueSpace;
+
+        int segmentDigits;
+
+
+
         public double ValueSpaceMin {
             get { return valueSpaceMin; }
             set {
@@ -67,11 +80,11 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control
             if (!isHorizontal)
                 screenPosition = Size.Height - screenPosition;
 
-            return (screenPosition / BaseUnitSize) + segmentStart_valueSpace;
+            return (screenPosition / BaseUnitSize) + segmentsStart_valueSpace;
         }
 
         public double ValueSpaceToScreen(double valueSpacePosition) {
-            valueSpacePosition -= segmentStart_valueSpace;
+            valueSpacePosition -= segmentsStart_valueSpace;
 
             double ret = valueSpacePosition * BaseUnitSize;
 
@@ -98,15 +111,6 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control
             Segments = new List<AxisSegment>();
         }
             
-
-        double FontSize = 10;
-
-        double segmentStep_valueSpace;
-        double segmentStart_valueSpace;
-        double segmentStop_valueSpace;
-
-        int segmentDigits;
-
         public event EventHandler SelectionChanged;
 
         //
@@ -115,13 +119,15 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control
 
         private void Update()
         {
-            UpdateBaseUntSize();
+            UpdateBaseUntSize(false);
 
             SegmentStepStartStopUpdate();
 
+            UpdateBaseUntSize(true);
+
             SegmentsUpdate();
 
-            if(Segments.Count > 0)
+            if (Segments.Count > 0)
                 Draw();
         }
 
@@ -136,19 +142,21 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control
             int segmentStep_log = 2 - baseUnitSize_log_round;
 
             if ((segmentStep_log - 1) < 0)
-                segmentDigits = -1 * (segmentStep_log -1);
+                segmentDigits = -1 * (segmentStep_log - 1);
             else
                 segmentDigits = 0;
 
-            segmentStep_valueSpace = Math.Pow(10, segmentStep_log);
+            segmentsStep_valueSpace = Math.Pow(10, segmentStep_log);
 
             if(!isHorizontal)
             {
                 int x = 0;
             }
 
-            segmentStart_valueSpace = MathUtil.RoundDown(ValueSpaceMin, segmentStep_log - 1);
-            segmentStop_valueSpace = MathUtil.RoundUp(ValueSpaceMax, segmentStep_log - 1);
+            segmentsStart_valueSpace = MathUtil.RoundDown(ValueSpaceMin, segmentStep_log);
+            segmentsStop_valueSpace = MathUtil.RoundUp(ValueSpaceMax, segmentStep_log);
+
+            segmentsSize_valueSpace = Math.Abs(segmentsStop_valueSpace - segmentsStart_valueSpace);
         }
 
         private void Draw()
@@ -157,13 +165,15 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control
 
             if (isHorizontal)
             {
-                s.Width = valueSpaceSize * baseUnitSize;
+                //s.Width = valueSpaceSize * baseUnitSize;
+                s.Width = segmentsSize_valueSpace * baseUnitSize;
                 s.Height = decoratorSize;
             }
             else
             {
                 s.Width = decoratorSize;
-                s.Height = valueSpaceSize * baseUnitSize;
+                //s.Height = valueSpaceSize * baseUnitSize;
+                s.Height = segmentsSize_valueSpace * baseUnitSize;
             }
 
             Size = s;
@@ -224,7 +234,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control
             Segments = new List<AxisSegment>();            
 
 
-            for (double position = segmentStart_valueSpace; position < segmentStop_valueSpace ; position += segmentStep_valueSpace)
+            for (double position = segmentsStart_valueSpace; position < segmentsStop_valueSpace ; position += segmentsStep_valueSpace)
             {
                 AxisSegment segment = new AxisSegment();
 
@@ -233,7 +243,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control
                 segment.LineStyle.Stroke = (Brush)WpfUtil.FindResource("0VeryLightForegroundBrush");
 
                 segment.StartPosition = ValueSpaceToScreen(position);
-                segment.EndPosition = ValueSpaceToScreen(position + segmentStep_valueSpace);
+                segment.EndPosition = ValueSpaceToScreen(position + segmentsStep_valueSpace);
 
                 segment.Tag = position;
 
@@ -255,7 +265,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control
             Update();
         }
 
-        void UpdateBaseUntSize() { 
+        void UpdateBaseUntSize(bool useSegments) { 
             FrameworkElement wholeBox = visualiser.ZoomScrollView;
 
             FrameworkElement horizontalSlider = visualiser.ZoomScrollView.HorizontalZoomSlider;
@@ -282,7 +292,10 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control
             if (mainSize < 0)
                 mainSize = 0;
 
-            baseUnitSize = (mainSize / valueSpaceSize) * scale;
+            if(useSegments)
+                baseUnitSize = (mainSize / segmentsSize_valueSpace) * scale;
+            else
+                baseUnitSize = (mainSize / valueSpaceSize) * scale;
         }
 
 
