@@ -2598,7 +2598,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             CurrentSnapToGridValue = 1.0/16;
         }        
 
-        public void UpdateVertex()
+        public virtual void UpdateVertex()
         {
             IVertex bas = Vertex.Get(false, @"BaseEdge:\To:");
 

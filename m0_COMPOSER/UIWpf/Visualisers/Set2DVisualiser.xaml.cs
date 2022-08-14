@@ -195,35 +195,55 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             }
         }
 
+        bool VisualizedVertexToUpdated_executed = false;
+
         protected override INoInEdgeInOutVertexVertex CheckBaseEdgeChange(IExecution exe)
         {
-            VisualizedVertex = VisualiserHelper.Vertex.Get(false, @"BaseEdge:\To:");
+            IVertex baseEdgeTo = VisualiserHelper.Vertex.Get(false, @"BaseEdge:\To:");
 
-            if (VisualizedVertex != null)
+            if (baseEdgeTo != null && !VisualizedVertexToUpdated_executed)
+            {
                 VisualizedVertexToUpdated();
+                VisualizedVertexToUpdated_executed = true;
+            }
 
-/*            ExecutionFlowHelper.DoAddRemoveDisposeAddEdgeByMetaOrValueChangeHandlers(exe.Stack, new List<EventHandlers>()
+            ExecutionFlowHelper.DoAddRemoveDisposeAddEdgeByMetaOrValueChangeHandlers(exe.Stack, new List<EventHandlers>()
             { new EventHandlers(
                 baseEdgeTo,
                 EdgeAdded,
                 EdgeRemoved,
                 EdgeDisposed,                
-                new string[] {"Octave", "Note"},
-                new string[] {"TriggerTime", "Length", "Velocity"},
-                new string[] {"Event" },
+                new string[] {SetItemVerticalAxisMetaString, SetItemHorizontalAxisMetaString},
+                new string[] {SetItemVerticalAxisMetaString, SetItemHorizontalAxisMetaString},
+                new string[] {SetItemHorizontalAxisMetaString },
                 AddEdgeByMetaOrValueChangeHandler
                 )
             });
-            */
+            
             return exe.Stack;
-        }        
+        }
 
-        protected override void EdgeAdded(IEdge edge)
+        public override void UpdateVertex()
+        {
+            IVertex bas = Vertex.Get(false, @"BaseEdge:\To:");
+
+            if (bas != null)
+            {
+                UpdateVertexValues();
+
+                UpdateVariablesFromBaseVertex();
+
+                // SnapToGridComboBox_SelectionChange(); in UpdateVertexValues() does this;
+                VisualiserDraw();
+            }
+        }
+
+        /*protected override void EdgeAdded(IEdge edge)
         {
             // AddItemByEdge(edge, null);
 
             int x = 0;
-        }
+        }*/
 
         protected void AddEdgeByMetaOrValueChangeHandler(IEdge eventEdge)
         {            
