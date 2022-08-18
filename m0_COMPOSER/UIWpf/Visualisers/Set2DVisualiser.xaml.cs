@@ -238,12 +238,12 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             }
         }
 
-        /*protected override void EdgeAdded(IEdge edge)
+        protected override void EdgeAdded(IEdge edge)
         {
             // AddItemByEdge(edge, null);
 
             int x = 0;
-        }*/
+        }
 
         protected void AddEdgeByMetaOrValueChangeHandler(IEdge eventEdge)
         {            
