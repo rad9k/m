@@ -41,8 +41,8 @@ namespace m0_COMPOSER.UIWpf.Visualisers
         IVertex SetItemHorizontalAxisMetaVertex;
         IVertex SetItemVerticalAxisMetaVertex;
 
-        string SetItemHorizontalAxisMetaString;
-        string SetItemVerticalAxisMetaString;
+        public string SetItemHorizontalAxisMetaString;
+        public string SetItemVerticalAxisMetaString;
 
         double horizontalMin_fromData;
         double horizontalMax_fromData;
@@ -215,7 +215,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
                 EdgeDisposed,                
                 new string[] {SetItemVerticalAxisMetaString, SetItemHorizontalAxisMetaString},
                 new string[] {SetItemVerticalAxisMetaString, SetItemHorizontalAxisMetaString},
-                new string[] {SetItemHorizontalAxisMetaString },
+                new string[] {SetItemsDefiningMetaString },
                 AddEdgeByMetaOrValueChangeHandler
                 )
             });
@@ -240,7 +240,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
         protected override void EdgeAdded(IEdge edge)
         {
-            // AddItemByEdge(edge, null);
+            AddItemByEdge(edge, null);
 
             int x = 0;
         }
@@ -368,9 +368,8 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             FrameworkElement newElement = (FrameworkElement)item;                        
             
             item.HorizontalCenter = horizontalPosition;
-            item.Top = verticalPosition - 5;
-            item.Bottom = verticalPosition + 5;
-
+            item.VerticalCenter = verticalPosition;
+            
             item.Update();
         }
 
@@ -423,39 +422,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
         
         protected override void UpdateItem_VerticalPosition(IItem item)
         {            
-      /*      FrameworkElement element;
-
-            if (!(item is FrameworkElement))
-                return;
-
-            element = (FrameworkElement)item;
-
-            IVertex noteEventVertex = item.BaseEdge.To;
-
-            AxisSegment segment = FindVerticalSegment(item.Top + 1);
-
-            IVertex octaveVertex = segment.BaseVertex.Get(false, "Octave:");
-            IVertex noteVertex = segment.BaseVertex.Get(false, "Note:");             
-
-            GraphUtil.CreateOrReplaceEdge(noteEventVertex, musicPitchOctave, octaveVertex);
-            GraphUtil.CreateOrReplaceEdge(noteEventVertex, musicPitchNote, noteVertex);
-                      
-
-            int? octave = GraphUtil.GetIntegerValue(octaveVertex);
-            int? note = GraphUtil.GetIntegerValue(noteVertex);
-
-            IVertex pitchVertex = MusicUtil.GetNoteFromPitchSet(verticalSpanVertex, octave, note);
-
-            string label = pitchVertex.Value.ToString();
-
-            item.Label = label;
-
-            item.Update();*/
-        }
-
-        protected override void UpdateItem_HorizontalPosition(IItem item)
-        {                        
-            /*FrameworkElement element;
+            FrameworkElement element;
 
             if (!(item is FrameworkElement))
                 return;
@@ -464,29 +431,29 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             IVertex itemVertex = item.BaseEdge.To;
 
-            double itemWidth = element.Width;
+            double itemVerticalPosition_valueSpace = VerticalAD.ScreenToValueSpace(item.VerticalCenter);
 
-            int TriggerTime;
+            GraphUtil.SetVertexValue(itemVertex, SetItemVerticalAxisMetaVertex, itemVerticalPosition_valueSpace);
 
-            int Length;
+            item.Update();
+        }
 
-            if (item.IsCentered)
-            {
-                TriggerTime = (int)(item.HorizontalCenter / HorizontalAD.BaseUnitSize);
+        protected override void UpdateItem_HorizontalPosition(IItem item)
+        {
+            FrameworkElement element;
 
-                Length = 0;
-            }
-            else
-            {
-                TriggerTime = (int)(item.Left / HorizontalAD.BaseUnitSize);
+            if (!(item is FrameworkElement))
+                return;
 
-                Length = (int)(itemWidth / HorizontalAD.BaseUnitSize);
-            }            
-            
-            GraphUtil.SetVertexValue(itemVertex, musicEventTriggerTime, TriggerTime);
+            element = (FrameworkElement)item;
 
-            if (Length != 0)
-                GraphUtil.SetVertexValue(itemVertex, musicHasLengthLength, Length);  */          
+            IVertex itemVertex = item.BaseEdge.To;
+
+            double itemHorizontalPosition_valueSpace = HorizontalAD.ScreenToValueSpace(item.HorizontalCenter);
+
+            GraphUtil.SetVertexValue(itemVertex, SetItemHorizontalAxisMetaVertex, itemHorizontalPosition_valueSpace);
+
+            item.Update();
         }
 
         protected override int ScreenPositionToMusicTime(double position, bool performSnapCorrection)

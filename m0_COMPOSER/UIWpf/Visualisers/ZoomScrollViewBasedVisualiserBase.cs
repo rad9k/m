@@ -1371,7 +1371,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
         protected MainDownEnum GetItemContext(IItem item)
         {
-            if (item is NoteItem || item is DrumItem || item is SequenceEventItem)
+            if (item is NoteItem || item is DrumItem || item is SequenceEventItem || item is Set2DItem)
                 return MainDownEnum.Main;
 
             if (item is ControlChangeItem)

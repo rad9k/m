@@ -36,8 +36,6 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control
 
         int segmentDigits;
 
-
-
         public double ValueSpaceMin {
             get { return valueSpaceMin; }
             set {
@@ -147,11 +145,6 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control
                 segmentDigits = 0;
 
             segmentsStep_valueSpace = Math.Pow(10, segmentStep_log);
-
-            if(!isHorizontal)
-            {
-                int x = 0;
-            }
 
             segmentsStart_valueSpace = MathUtil.RoundDown(ValueSpaceMin, segmentStep_log);
             segmentsStop_valueSpace = MathUtil.RoundUp(ValueSpaceMax, segmentStep_log);

@@ -129,7 +129,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control.Item
         {
             isSelected = false;
 
-            path.StrokeThickness = 2;
+            path.StrokeThickness = 1;
 
             SetBorder((Brush)WpfUtil.FindResource("0ForegroundBrush"));
 
@@ -201,6 +201,9 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control.Item
 
         public Set2DItem(IEdge baseEdge, IZoomScrollViewerHost host)
         {
+            Width = 10;
+            Height = 10;
+
             BaseEdge = baseEdge;
 
             Host = host;            
@@ -222,13 +225,18 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control.Item
         Brush velocityColorBrush = (Brush)WpfUtil.FindResource("0LightForegroundBrush");
 
         public void Update()
-        {            
-            
-        }
-
-        protected void UpdateVerticalCenter()
         {
-            VerticalCenter = Top + (Height / 2.0);
+            if(Host is Set2DVisualiser)
+            {
+                Set2DVisualiser set2Dhost = (Set2DVisualiser)Host;
+
+                string horizontalValue = GraphUtil.GetQueryOutFirst(this.BaseEdge.To, set2Dhost.SetItemHorizontalAxisMetaString, null).ToString();
+
+                string verticalValue = GraphUtil.GetQueryOutFirst(this.BaseEdge.To, set2Dhost.SetItemVerticalAxisMetaString, null).ToString();
+
+                this.ToolTip = set2Dhost.SetItemHorizontalAxisMetaString + ":" + horizontalValue + " / " +
+                    set2Dhost.SetItemVerticalAxisMetaString + ":" + verticalValue;
+            }
         }
 
         public double Left { get; set; }
@@ -240,30 +248,22 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control.Item
             get { return Canvas.GetLeft(this) + (Height / 2.0); }
             set {
                 horizontalCenter = value;
-                Canvas.SetLeft(this, horizontalCenter  - (Height/2.0));
+                Canvas.SetLeft(this, horizontalCenter  - (Height / 2.0));
             }
         }
 
-        public double VerticalCenter { get; set; }
-
-        public double Top
-        {
-            get { return Canvas.GetTop(this); }
-            set {
-                Canvas.SetTop(this, value);
-                UpdateVerticalCenter();
+        double verticalCenter;
+        public double VerticalCenter {
+            get { return Canvas.GetTop(this) + (Width / 2.0); }
+            set
+            {
+                verticalCenter = value;
+                Canvas.SetTop(this, verticalCenter - (Width / 2.0));
             }
         }
 
-        public double Bottom
-        {
-            get { return Top + Height; }
-            set {
-                Height = value - Top;
-                Width = Height;
-                Canvas.SetLeft(this, horizontalCenter - Height / 2.0);
-                UpdateVerticalCenter();
-            }
-        }
+        public double Top { get; set; }
+
+        public double Bottom { get; set; }
     }
 }
