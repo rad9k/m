@@ -16,6 +16,9 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control
 {
     class FloatSpanAxisDecorator : AxisDecoratorBase, IZoomScrollViewAxisDecorator // dedicated to Set2DVisualiser
     {
+        Set2DVisualiser Visualiser;
+
+
         double decoratorSize = 20;
         
         double valueSpaceSize;
@@ -134,7 +137,15 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control
             if (baseUnitSize <= 0 || baseUnitSize == double.PositiveInfinity)
                 return;
 
-            double baseUnitSize_log = Math.Log10(baseUnitSize);
+            double scaleLinesDensity = 1;
+
+            if(visualiser is Set2DVisualiser)
+            {
+                Set2DVisualiser set2Dvisualiser = (Set2DVisualiser)visualiser;
+                scaleLinesDensity = set2Dvisualiser.scaleLinesDensity;
+            }
+
+            double baseUnitSize_log = Math.Log10(baseUnitSize * scaleLinesDensity);
             int baseUnitSize_log_round = (int)Math.Round(baseUnitSize_log);
 
             int segmentStep_log = 2 - baseUnitSize_log_round;

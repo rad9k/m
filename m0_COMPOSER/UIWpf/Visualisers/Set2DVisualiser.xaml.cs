@@ -34,6 +34,8 @@ namespace m0_COMPOSER.UIWpf.Visualisers
         protected bool ConnectPoints;
         protected bool CanEdit;
 
+        public double scaleLinesDensity;
+
         IVertex SetItemsDefiningMeta;
         IVertex SetItemsDefiningMetaIs;
         string SetItemsDefiningMetaString;
@@ -263,12 +265,13 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             IVertex r = MinusZero.Instance.root;
 
             bool dummy = false;
-
             
             ShowArowLines = GraphUtil.GetBooleanValue(Vertex.Get(false, "ShowArrowLines:"), ref dummy);
             ShowToolbarNames = GraphUtil.GetBooleanValue(Vertex.Get(false, "ShowToolbarNames:"), ref dummy);
             CanEdit = GraphUtil.GetBooleanValue(Vertex.Get(false, "CanEdit:"), ref dummy);
             ConnectPoints = GraphUtil.GetBooleanValue(Vertex.Get(false, "ConnectPoints:"), ref dummy);
+
+            scaleLinesDensity = GraphUtil.GetDoubleValue(Vertex.Get(false, "ScaleLinesDensity:"), ref dummy);
 
             ShowToolbarNames_SelectionChange();
         }
