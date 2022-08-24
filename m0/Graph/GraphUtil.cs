@@ -983,6 +983,16 @@ namespace m0.Graph
                 destination.AddEdge(e.Meta, e.To);
         }
 
+        static public IEdge CopyEdge(IEdge source, IVertex destination)
+        {
+            IVertex newVertex = destination.AddVertex(source.Meta, source.To.Value);
+
+            foreach (IEdge e in source.To)
+                newVertex.AddEdge(e.Meta, e.To);
+
+            return newVertex;
+        }
+
         static public void RemoveAllEdges(IVertex v)
         {
             IList<IEdge> el = GeneralUtil.CreateAndCopyList<IEdge>(v);

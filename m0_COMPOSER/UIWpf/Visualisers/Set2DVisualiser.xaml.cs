@@ -530,125 +530,13 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             return noteEventEdge;*/
 
             return null;
-        }
-
-        protected enum WhatIsInEdgesEnum { OnlyNotes, OnlyCC, Mix}
-
-        protected WhatIsInEdgesEnum GetWhatIsInEdges(IEnumerable<IEdge> edges, out int minPosition, out int maxPosition, out bool onlyCopy)
-        {
-            minPosition = Int32.MaxValue;
-            maxPosition = Int32.MinValue;
-
-            bool notes = false;
-
-            bool cc = false;
-
-            onlyCopy = true;
-
-            foreach(IEdge e in edges)
-            {
-                if (GeneralUtil.CompareStrings(e.Meta, "ClipboardCut"))
-                    onlyCopy = false;
-
-                IEdge edge = Edge.GetIEdgeByEdgeVertex(e.To);
-
-                IVertex v = edge.To;
-
-                bool isNull = false;
-
-                if (v.Get(false, "$Is:NoteEvent") != null)
-                {
-                    notes = true;
-
-                    int triggerTime = GraphUtil.GetIntegerValue(v.Get(false, "TriggerTime:"), ref isNull);
-
-                    if (triggerTime > maxPosition)
-                        maxPosition = triggerTime;
-
-                    if (triggerTime < minPosition)
-                        minPosition = triggerTime;
-
-                    int triggerTimePlusLength = triggerTime + GraphUtil.GetIntegerValue(v.Get(false, "Length:"), ref isNull);
-
-                    if (triggerTimePlusLength > maxPosition)
-                        maxPosition = triggerTimePlusLength;
-
-                    if (triggerTimePlusLength < minPosition)
-                        minPosition = triggerTimePlusLength;
-                }
-
-                if (v.Get(false, "$Is:ControlChangeEvent") != null)
-                {
-                    cc = true;
-
-                    int triggerTime = GraphUtil.GetIntegerValue(v.Get(false, "TriggerTime:"), ref isNull);
-
-                    if (triggerTime > maxPosition)
-                        maxPosition = triggerTime;
-
-                    if (triggerTime < minPosition)
-                        minPosition = triggerTime;
-                }
-            }
-
-            if (notes && !cc)
-                return WhatIsInEdgesEnum.OnlyNotes;
-
-            if (!notes && cc)
-                return WhatIsInEdgesEnum.OnlyCC;
-
-            return WhatIsInEdgesEnum.Mix;
-        }
-
-        protected IEnumerable<IEdge> GetCCEdges(IEnumerable<IEdge> edgesIn, int minPosition, int maxPosition, bool onlyCopy)
-        {
-            IVertex clipboardMeta;
-
-            if (onlyCopy)
-                clipboardMeta = m0.MinusZero.Instance.root.Get(false, @"System\Meta\User\Session\ClipboardCopy");
-            else
-                clipboardMeta = m0.MinusZero.Instance.root.Get(false, @"System\Meta\User\Session\ClipboardCut");
-
-            bool isNull = false;
-
-            List<IEdge> edgesOut = new List<IEdge>();
-
-            edgesOut.AddRange(edgesIn);
-
-            foreach (IEdge e in VisualizedVertex.GetAll(false, @"Event:{$Is:ControlChangeEvent}"))
-            {
-                int triggerTime = GraphUtil.GetIntegerValue(e.To.Get(false, "TriggerTime:"), ref isNull);
-
-                if (triggerTime >= minPosition && triggerTime <= maxPosition)
-                {
-                    IVertex edgeVertex = Edge.CreateTempEdgeVertex(e);
-
-                    IEdge newEdge = new EasyEdge(null, clipboardMeta, edgeVertex);
-
-                    edgesOut.Add(newEdge);
-                }
-            }
-
-            return edgesOut;
         }        
 
         protected override void PasteEdgesFromClipboard(IEnumerable<IEdge> edges)
         {
             bool o = false;            
 
-            int minPosition, maxPosition;
-
             bool onlyCopy;
-
-            WhatIsInEdgesEnum whatIsClipboard = GetWhatIsInEdges(edges, out minPosition, out maxPosition, out onlyCopy);
-
-            if (whatIsClipboard == WhatIsInEdgesEnum.Mix)
-                return;
-
-            if (whatIsClipboard == WhatIsInEdgesEnum.OnlyNotes)
-                edges = GetCCEdges(edges, minPosition, maxPosition, onlyCopy);
-
-            maxPosition = 0;
 
             foreach (IEdge e in edges)
             {
@@ -657,20 +545,17 @@ namespace m0_COMPOSER.UIWpf.Visualisers
                 IVertex v = edge.To;
 
                 bool isClipboardCopy = false;
-                bool isClipboardCut = false;
 
                 if (GeneralUtil.CompareStrings(e.Meta, "ClipboardCopy"))
                     isClipboardCopy = true;
-
-                if (GeneralUtil.CompareStrings(e.Meta, "ClipboardCut"))
-                    isClipboardCut = true;
-
-                if (isClipboardCopy || isClipboardCut)
+                
+                if (isClipboardCopy)
                 {
                     IEdge newEdge = null;
 
-                    if (v.Get(false, "$Is:NoteEvent") != null) // NOTE
-                    {
+                    GraphUtil.CopyEdge()
+
+                    
                         int triggerTime = GraphUtil.GetIntegerValue(v.Get(false, "TriggerTime:"), ref o) - minPosition + PositionMark;
                         int length = GraphUtil.GetIntegerValue(v.Get(false, "Length:"), ref o);
 
@@ -686,27 +571,14 @@ namespace m0_COMPOSER.UIWpf.Visualisers
                                 triggerTime,
                                 length,
                                 GraphUtil.GetIntegerValue(v.Get(false, "Velocity:"), ref o));
-
-                        if (isClipboardCut)
-                        {
-                            newEdge = edge;
-
-                            UpdateNoteVertex(edge,
-                                v.Get(false, "Octave:").Value,
-                                v.Get(false, "Note:").Value,
-                                triggerTime,
-                                length,
-                                GraphUtil.GetIntegerValue(v.Get(false, "Velocity:"), ref o));
-                        }                       
+                       
                         
-                       AddToSelectedEdges(newEdge);
-                    }
+                    AddToSelectedEdges(newEdge);
+                    
 
         
                 }                
             }
-
-            PositionMark = MusicTimeSnapCorrect_Up(maxPosition);
 
             PreviousSelectedItemContext = MainDownEnum.Main;
         }
