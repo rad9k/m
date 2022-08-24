@@ -62,7 +62,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
         // Set2D end
 
-        static string[] _MetaTriggeringUpdateVertex = new string[] { "ShowArrowLines", "CanEdit", "ConnectPoints", "ShowToolbarNames" };
+        static string[] _MetaTriggeringUpdateVertex = new string[] { "ShowArrowLines", "CanEdit", "ConnectPoints", "ShowToolbarNames", "ScaleLinesDensity" };
         public override string[] MetaTriggeringUpdateVertex { get { return _MetaTriggeringUpdateVertex; } }
 
         static string[] _MetaTriggeringUpdateView = new string[] { };
@@ -106,15 +106,17 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             HasDown = false;
 
-            //            
+            PositionMarkEnabled = false;
 
             ZoomSliderZero = true;
+
+            IsCurrentPenItemCenter = true;
+
+            //            
 
             ZoomScrollViewBasedVisualiserBase_Init(baseEdgeVertex, parentVisualiser);
 
             ZoomScrollView.ScrollViewer.Loaded += ScrollViewer_Loaded;
-
-            IsCurrentPenItemCenter = true;
         }
 
         protected override AxisSegment FindVerticalSegment(double position) { return null; }
@@ -272,6 +274,8 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             ConnectPoints = GraphUtil.GetBooleanValue(Vertex.Get(false, "ConnectPoints:"), ref dummy);
 
             scaleLinesDensity = GraphUtil.GetDoubleValue(Vertex.Get(false, "ScaleLinesDensity:"), ref dummy);
+
+            VisualiserDraw();
 
             ShowToolbarNames_SelectionChange();
         }
