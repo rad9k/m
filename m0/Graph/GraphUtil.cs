@@ -985,12 +985,12 @@ namespace m0.Graph
 
         static public IEdge CopyEdge(IEdge source, IVertex destination)
         {
-            IVertex newVertex = destination.AddVertex(source.Meta, source.To.Value);
+            IEdge newEdge = destination.AddVertexAndReturnEdge(source.Meta, source.To.Value);
 
             foreach (IEdge e in source.To)
-                newVertex.AddEdge(e.Meta, e.To);
+                newEdge.To.AddEdge(e.Meta, e.To);
 
-            return newVertex;
+            return newEdge;
         }
 
         static public void RemoveAllEdges(IVertex v)

@@ -73,8 +73,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             PenButton = PenButton_Instance;
             ArrowButton = ArrowButton_Instance;
             EraseButton = EraseButton_Instance;
-
-            CutButton = CutButton_Instance;
+            
             CopyButton = CopyButton_Instance;
             PasteButton = PasteButton_Instance;
 
@@ -553,7 +552,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
                 {
                     IEdge newEdge = null;
 
-                    GraphUtil.CopyEdge()
+                    /*GraphUtil.CopyEdge()
 
                     
                         int triggerTime = GraphUtil.GetIntegerValue(v.Get(false, "TriggerTime:"), ref o) - minPosition + PositionMark;
@@ -571,7 +570,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
                                 triggerTime,
                                 length,
                                 GraphUtil.GetIntegerValue(v.Get(false, "Velocity:"), ref o));
-                       
+                      */ 
                         
                     AddToSelectedEdges(newEdge);
                     
