@@ -114,7 +114,7 @@ namespace m0
                 d.AddVertex(w, Math.Sin(((double)xx)/3));
             }
 
-            //BaseCommands.OpenVisualiser(Edge.CreateTempEdgeVertex(null, null, data), r.Get(false, @"System\Meta\Visualiser\Set2D"));
+            BaseCommands.OpenVisualiser(Edge.CreateTempEdgeVertex(null, null, data), r.Get(false, @"System\Meta\Visualiser\Set2D"));
         }
 
         void ExtraRun5()

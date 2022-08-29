@@ -127,7 +127,6 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             canDraw = true;
 
             UpdateAxisAndDraw();
-
         }
 
         void UpdateAxisAndDraw()
@@ -303,7 +302,6 @@ namespace m0_COMPOSER.UIWpf.Visualisers
                 SetButtonComponentName(ArrowButton, "");
                 SetButtonComponentName(EraseButton, "");
                 
-                SetButtonComponentName(CutButton, "");
                 SetButtonComponentName(CopyButton, "");
                 SetButtonComponentName(PasteButton, "");
 
