@@ -120,18 +120,9 @@ namespace m0.ZeroTypes
         static public void AddEdgeVertexEdgeByEdgeVertex(IVertex baseVertex, IVertex edge)
         {
             baseVertex.AddEdge(EdgeMeta, edge);          
-        }
+        }        
 
         static public IVertex CreateTempEdgeVertex(IEdge edge)
-        {
-            IVertex ev = MinusZero.Instance.CreateTempVertex();
-
-            AddEdgeVertexEdges(ev, edge);
-
-            return ev;
-        }
-
-        static public IEdge CreateTempEdgeVertex(IEdge edge)
         {
             IVertex ev = MinusZero.Instance.CreateTempVertex();
 

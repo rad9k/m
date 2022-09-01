@@ -99,19 +99,12 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control.Item
 
         public void PlayHighlight()
         {            
-            path.StrokeThickness = 2;
 
-            SetBorder((Brush)WpfUtil.FindResource("0HardHighlightBrush"));
-
-            SetBackground((Brush)WpfUtil.FindResource("0HardHighlightBrush"));
         }
 
         public void StopHighlight()
         {
-            if (isSelected)
-                SelectHighlight();
-            else
-                NoHighlight();
+
         }
 
         public void SelectHighlight()

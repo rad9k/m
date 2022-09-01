@@ -496,7 +496,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
                     newEdge = GraphUtil.CopyEdge(edge, VisualizedVertex);
                         
-                    AddToSelectedEdges(Edge.CreateTempEdgeVertex(newEdge));   
+                    AddToSelectedEdges(newEdge);   
                 }                
             }
 
