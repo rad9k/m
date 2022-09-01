@@ -550,8 +550,8 @@ namespace m0_COMPOSER.UIWpf.Visualisers
                 {
                     IEdge newEdge = null;
 
-                    /*GraphUtil.CopyEdge()
-
+                    GraphUtil.CopyEdge()
+                        /*
                     
                         int triggerTime = GraphUtil.GetIntegerValue(v.Get(false, "TriggerTime:"), ref o) - minPosition + PositionMark;
                         int length = GraphUtil.GetIntegerValue(v.Get(false, "Length:"), ref o);
