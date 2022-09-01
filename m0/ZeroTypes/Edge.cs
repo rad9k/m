@@ -131,6 +131,15 @@ namespace m0.ZeroTypes
             return ev;
         }
 
+        static public IEdge CreateTempEdgeVertex(IEdge edge)
+        {
+            IVertex ev = MinusZero.Instance.CreateTempVertex();
+
+            AddEdgeVertexEdges(ev, edge);
+
+            return ev;
+        }
+
         static public IVertex CreateTempEdgeVertex(IVertex from, IVertex meta, IVertex to)
         {
             IVertex ev = MinusZero.Instance.CreateTempVertex();

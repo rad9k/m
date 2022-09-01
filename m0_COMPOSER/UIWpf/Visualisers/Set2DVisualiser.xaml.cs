@@ -472,63 +472,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             else
                 return musicTime;
         }
-
-
-        protected override int FindLastPosition(IEnumerable<IEdge> edges)
-        {
-            int last = 0;
-
-            foreach(IEdge e in edges)
-            {
-                IVertex v = e.To.Get(false, "To:");
-
-                if(v.Get(false, "$Is:NoteEvent") != null)
-                {
-                    bool o = false;
-
-                    int trigger = GraphUtil.GetIntegerValue(v.Get(false, "TriggerTime:"), ref o);
-
-                    int length = GraphUtil.GetIntegerValue(v.Get(false, "Length:"), ref o);
-
-                    int max = trigger + length;
-
-                    if (last < max)
-                        last = max;
-                }
-
-                if (v.Get(false, "$Is:ControlChangeEvent") != null)
-                {
-                    bool o = false;
-
-                    int trigger = GraphUtil.GetIntegerValue(v.Get(false, "TriggerTime:"), ref o);
-
-                    if (last < trigger)
-                        last = trigger;
-                }
-            }
-
-            return last;
-        }
-        
-        protected IEdge AddNoteVertex(IVertex octave, IVertex note, int triggerTime, int length, int velocity)
-        {
-            /*IEdge noteEventEdge = VisualizedVertex.AddVertexAndReturnEdge(musicEvent, null);
-
-            IVertex noteEventVertex = noteEventEdge.To;
-
-            noteEventVertex.AddEdge(MinusZero.Instance.Is, musicNoteEvent);
-
-            noteEventVertex.AddVertex(musicNoteEvent.Get(false, @"Attribute:TriggerTime"), triggerTime);
-            noteEventVertex.AddVertex(musicNoteEvent.Get(false, @"Attribute:Length"), length);
-            noteEventVertex.AddVertex(musicNoteEvent.Get(false, @"Attribute:Octave"), octave.Value);
-            noteEventVertex.AddVertex(musicNoteEvent.Get(false, @"Attribute:Note"), note.Value);            
-            noteEventVertex.AddVertex(musicNoteEvent.Get(false, @"Attribute:Velocity"), velocity);            
-
-            return noteEventEdge;*/
-
-            return null;
-        }        
-
+               
         protected override void PasteEdgesFromClipboard(IEnumerable<IEdge> edges)
         {
             bool o = false;            
@@ -550,61 +494,28 @@ namespace m0_COMPOSER.UIWpf.Visualisers
                 {
                     IEdge newEdge = null;
 
-                    GraphUtil.CopyEdge()
-                        /*
-                    
-                        int triggerTime = GraphUtil.GetIntegerValue(v.Get(false, "TriggerTime:"), ref o) - minPosition + PositionMark;
-                        int length = GraphUtil.GetIntegerValue(v.Get(false, "Length:"), ref o);
-
-                        if (triggerTime > maxPosition)
-                            maxPosition = triggerTime;
-
-                        if ((length + triggerTime) > maxPosition)
-                            maxPosition = length + triggerTime;
-
-                        if (isClipboardCopy)
-                            newEdge = AddNoteVertex(v.Get(false, "Octave:"),
-                                v.Get(false, "Note:"),
-                                triggerTime,
-                                length,
-                                GraphUtil.GetIntegerValue(v.Get(false, "Velocity:"), ref o));
-                      */ 
+                    newEdge = GraphUtil.CopyEdge(edge, VisualizedVertex);
                         
-                    AddToSelectedEdges(newEdge);
-                    
-
-        
+                    AddToSelectedEdges(Edge.CreateTempEdgeVertex(newEdge));   
                 }                
             }
 
             PreviousSelectedItemContext = MainDownEnum.Main;
         }
 
-        private void UpdateNoteVertex(IEdge noteEventEdge, object octave, object note, int triggerTime, int length, int velocity)
-        {/*
-            IVertex noteEventVertex = noteEventEdge.To;            
-
-            GraphUtil.SetVertexValue(noteEventVertex, musicNoteEvent.Get(false, @"Attribute:TriggerTime"), triggerTime);
-            GraphUtil.SetVertexValue(noteEventVertex, musicNoteEvent.Get(false, @"Attribute:Length"), length);
-            GraphUtil.SetVertexValue(noteEventVertex, musicNoteEvent.Get(false, @"Attribute:Octave"), octave);
-            GraphUtil.SetVertexValue(noteEventVertex, musicNoteEvent.Get(false, @"Attribute:Note"), note);
-            GraphUtil.SetVertexValue(noteEventVertex, musicNoteEvent.Get(false, @"Attribute:Velocity"), velocity);                        
-            */
-        } 
-
         public override void Dispose()
+        {
+            if (!IsDisposed)
             {
-                if (!IsDisposed)
-                {
-                    VisualiserHelper.Dispose();
+                VisualiserHelper.Dispose();
 
-                    DispachSubControls();
+                DispachSubControls();
 
-                    ItemDictionary.RemoveAllByHost(this);
+                ItemDictionary.RemoveAllByHost(this);
 
-                    IsDisposed = true;
-                }            
-            }
+                IsDisposed = true;
+            }            
+        }
 
         private void ExtendUpButton_Click(object sender, RoutedEventArgs e)
         {
