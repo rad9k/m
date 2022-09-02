@@ -5,6 +5,7 @@ using m0.Graph.ExecutionFlow;
 using m0.UIWpf;
 using m0.UIWpf.Controls;
 using m0.UIWpf.Visualisers;
+using m0.UIWpf.Visualisers.Helper;
 using m0.Util;
 using m0.ZeroTypes;
 using m0.ZeroUML;
@@ -275,7 +276,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
         protected override void DrawItems()
         {
-            List<IVertex> selectedVertexes = GetSelectedVertexes();
+            ISet<IVertex> selectedVertexes = ((ListVisualiserHelper)VisualiserHelper).GetSelectedVertexes();
 
             foreach (IEdge e in VisualizedVertex.GetAll(false, "Trigger:"))
                 //if (GraphUtil.ExistQueryOut(e.To, "$Is", "Trigger"))

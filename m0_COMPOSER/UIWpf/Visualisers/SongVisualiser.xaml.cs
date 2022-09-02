@@ -23,6 +23,7 @@ using m0.ZeroCode;
 using System.Windows.Threading;
 using m0.Graph.ExecutionFlow;
 using m0.User.Process.UX;
+using m0.UIWpf.Visualisers.Helper;
 
 namespace m0_COMPOSER.UIWpf.Visualisers
 {
@@ -269,7 +270,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             item.Update();
         }
 
-        protected override void AddItemByEdge(IEdge itemEdge, List<IVertex> selectedVertexes)
+        protected override void AddItemByEdge(IEdge itemEdge, ISet<IVertex> selectedVertexes)
         {
             IVertex itemEventVertex = itemEdge.To;
 
@@ -1024,7 +1025,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
         protected override void DrawItems()
         {
-            List<IVertex> selectedVertexes = GetSelectedVertexes();
+            ISet<IVertex> selectedVertexes = ((ListVisualiserHelper)VisualiserHelper).GetSelectedVertexes();
 
             foreach (IEdge e in VisualizedVertex.GetAll(false, "Track:"))
                 foreach (IEdge ee in e.To.GetAll(false, "SequenceEvent:"))                

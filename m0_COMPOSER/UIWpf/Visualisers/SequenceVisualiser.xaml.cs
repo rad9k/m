@@ -19,6 +19,7 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Shapes;
+using m0.UIWpf.Visualisers.Helper;
 
 namespace m0_COMPOSER.UIWpf.Visualisers
 {
@@ -101,7 +102,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
         protected override void EdgeAdded(IEdge edge)
         {
             if (GraphUtil.ExistQueryOut(edge.To, "$Is", "NoteEvent"))
-                AddItemByEdge(edge, null);
+                AddItemByEdge(edge, SelectedVertexes);
             else
                 if(GraphUtil.GetIntegerValue(edge.To.Get(false, @"Number:")) == CurrentControlChangeNumber)
                     AddItemByEdge_Down(edge, null, false, false);
@@ -280,7 +281,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             item.Update();
         }
 
-        protected override void AddItemByEdge(IEdge itemEdge, List<IVertex> selectedVertexes)
+        protected override void AddItemByEdge(IEdge itemEdge, ISet<IVertex> selectedVertexes)
         {            
             FrameworkElement newElement;
 
@@ -337,7 +338,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
         {
             ItemDictionary.RemoveAllByHost(this);
 
-            List<IVertex> selectedVertexes = GetSelectedVertexes();
+            ISet<IVertex> selectedVertexes = ((ListVisualiserHelper)VisualiserHelper).GetSelectedVertexes();
 
             foreach (IEdge e in VisualizedVertex.GetAll(false, "Event:"))
                 if (GraphUtil.ExistQueryOut(e.To, "$Is", "NoteEvent"))

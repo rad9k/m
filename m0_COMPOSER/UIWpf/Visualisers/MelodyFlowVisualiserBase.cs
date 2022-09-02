@@ -2,6 +2,7 @@
 using m0.Foundation;
 using m0.Graph;
 using m0.UIWpf;
+using m0.UIWpf.Visualisers.Helper;
 using m0.Util;
 using m0.ZeroTypes;
 using m0_COMPOSER.Lib;
@@ -160,7 +161,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             item.Update();
         }
 
-        protected override void AddItemByEdge(IEdge itemEdge, List<IVertex> selectedVertexes)
+        protected override void AddItemByEdge(IEdge itemEdge, ISet<IVertex> selectedVertexes)
         {
             IVertex quantVertex = itemEdge.To;
 
@@ -220,7 +221,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
         protected override void DrawItems()
         {
-            List<IVertex> selectedVertexes = GetSelectedVertexes();
+            ISet<IVertex> selectedVertexes = ((ListVisualiserHelper)VisualiserHelper).GetSelectedVertexes();
 
             for (int stepCnt = 0; stepCnt < Flow.GetNumberOfSteps(); stepCnt++)
             {

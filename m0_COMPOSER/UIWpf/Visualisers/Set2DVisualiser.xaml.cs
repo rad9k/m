@@ -242,9 +242,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
         protected override void EdgeAdded(IEdge edge)
         {
-            AddItemByEdge(edge, null);
-
-            int x = 0;
+            AddItemByEdge(edge, SelectedVertexes);
         }
 
         protected void AddEdgeByMetaOrValueChangeHandler(IEdge eventEdge)
@@ -377,7 +375,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             item.Update();
         }
 
-        protected override void AddItemByEdge(IEdge itemEdge, List<IVertex> selectedVertexes)
+        protected override void AddItemByEdge(IEdge itemEdge, ISet<IVertex> selectedVertexes)
         {
             FrameworkElement newElement;
             
@@ -417,7 +415,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             ItemDictionary.RemoveAllByHost(this);
 
-            List<IVertex> selectedVertexes = GetSelectedVertexes();
+            ISet<IVertex> selectedVertexes = ((ListVisualiserHelper)VisualiserHelper).GetSelectedVertexes();
 
 
             foreach (IEdge e in VisualizedVertex.GetAll(false, SetItemsDefiningMetaString + ":"))

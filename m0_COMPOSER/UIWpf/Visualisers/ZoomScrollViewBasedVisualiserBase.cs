@@ -47,6 +47,8 @@ namespace m0_COMPOSER.UIWpf.Visualisers
         protected bool IsDrum;
         protected int CurrentControlChangeNumber;
 
+        protected ISet<IVertex> SelectedVertexes;
+
         // behavior
 
         public bool NewItemWidthOneSnapLimit = false;
@@ -986,19 +988,9 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             }
         }
 
-        protected List<IVertex> GetSelectedVertexes()
-        {
-            List<IVertex> selectedVertexes = new List<IVertex>();
-
-            foreach (IEdge e in Vertex.GetAll(false, @"SelectedEdges:\\To:"))
-                selectedVertexes.Add(e.To);
-
-            return selectedVertexes;
-        }
-
         protected List<IItem> GetSelectedItems()
         {
-            List<IVertex> selectedVertexes = GetSelectedVertexes();
+            ISet<IVertex> selectedVertexes = ((ListVisualiserHelper)VisualiserHelper).GetSelectedVertexes();
 
             List<IItem> selectedItems = new List<IItem>();
 
@@ -1491,7 +1483,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             return null;
         }
 
-        protected virtual void AddItemByEdge(IEdge itemEdge, List<IVertex> selectedVertexes) { }
+        protected virtual void AddItemByEdge(IEdge itemEdge, ISet<IVertex> selectedVertexes) { }
 
         protected virtual void RemoveItemByEdge(IEdge itemEdge) {
             Dictionary<IVertex, IItem> ItemsDictinary = GetItemsDictionary();
@@ -2582,7 +2574,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
         protected virtual void DrawItems()
         {
-            List<IVertex> selectedVertexes = GetSelectedVertexes();
+            ISet<IVertex> selectedVertexes = ((ListVisualiserHelper)VisualiserHelper).GetSelectedVertexes();
 
             foreach (IEdge e in VisualizedVertex.GetAll(false, "Event:"))
                 if (GraphUtil.ExistQueryOut(e.To, "$Is", "NoteEvent"))
@@ -2622,7 +2614,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
         protected virtual void EdgeAdded(IEdge edge)
         {
-            AddItemByEdge(edge, null);
+            AddItemByEdge(edge, SelectedVertexes);
         }
 
         protected virtual void EdgeDisposed(IEdge edge)
@@ -2633,6 +2625,8 @@ namespace m0_COMPOSER.UIWpf.Visualisers
         protected virtual INoInEdgeInOutVertexVertex CustomVertexChange(IExecution exe)
         {
             ((ListVisualiserHelper)VisualiserHelper).VertexChangeLogic(exe);
+
+            GetSelectedVertexes = ((ListVisualiserHelper)VisualiserHelper).GetSelectedVertexes();
 
             return CheckBaseEdgeChange(exe);
         }
