@@ -109,6 +109,16 @@ namespace m0.UIWpf.Visualisers.Helper
 
         bool firstVertexChangeExecuted = false;
 
+        public ICollection<IVertex> GetSelectedVertexes()
+        {
+            ICollection<IVertex> selectedVertexList = new HashSet<IVertex>();
+
+            foreach (IEdge e in Vertex.Get(false, "SelectedEdges:"))
+                selectedVertexList.Add(e.To);
+
+            return selectedVertexList;
+        }
+
         protected override INoInEdgeInOutVertexVertex VertexChange(IExecution exe)
         {
             if (ForceVertexChangeOff)
