@@ -741,7 +741,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
         protected override void DrawItems_Down()
         {
-            List<IVertex> selectedVertexes = GetSelectedVertexes();
+            ISet<IVertex> selectedVertexes = ((ListVisualiserHelper)VisualiserHelper).GetSelectedVertexes();
 
             if (CurrentControlChangeNumber == -1)
             {

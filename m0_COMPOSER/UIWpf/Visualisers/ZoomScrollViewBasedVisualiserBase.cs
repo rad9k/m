@@ -1971,7 +1971,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             return eventEdge;
         }
         
-        protected virtual void AddItemByEdge_Down(IEdge itemEdge, List<IVertex> selectedVertexes, bool isUpdate, bool isNoteEvent)
+        protected virtual void AddItemByEdge_Down(IEdge itemEdge, ISet<IVertex> selectedVertexes, bool isUpdate, bool isNoteEvent)
         {
             if (Height_Down == 0)
                 return;
@@ -2626,7 +2626,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
         {
             ((ListVisualiserHelper)VisualiserHelper).VertexChangeLogic(exe);
 
-            GetSelectedVertexes = ((ListVisualiserHelper)VisualiserHelper).GetSelectedVertexes();
+            SelectedVertexes = ((ListVisualiserHelper)VisualiserHelper).GetSelectedVertexes();
 
             return CheckBaseEdgeChange(exe);
         }
@@ -2765,8 +2765,8 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             ////////////////////////////////////////
             Interaction.BeginInteractionWithGraph();
             ////////////////////////////////////////
-
-            foreach (IVertex v in GetSelectedVertexes())
+            
+            foreach (IVertex v in ((ListVisualiserHelper)VisualiserHelper).GetSelectedVertexes())
             {
                 IItem i = null;
 

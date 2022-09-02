@@ -226,7 +226,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             item.Update();
         }
 
-        protected override void AddItemByEdge(IEdge itemEdge, List<IVertex> selectedVertexes)
+        protected override void AddItemByEdge(IEdge itemEdge, ISet<IVertex> selectedVertexes)
         {
             FrameworkElement newElement;
 
@@ -542,7 +542,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
         protected override void DrawItems_Down()
         {
-            List<IVertex> selectedVertexes = GetSelectedVertexes();
+            ISet<IVertex> selectedVertexes = ((ListVisualiserHelper)VisualiserHelper).GetSelectedVertexes();
 
             if (CurrentControlChangeNumber == -1)
             {

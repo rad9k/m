@@ -584,7 +584,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             //DoCleanUpAndVisualiserDraw();
         }
 
-        protected override void AddItemByEdge_Down(IEdge itemEdge, List<IVertex> selectedVertexes, bool isUpdate, bool isNoteEvent)
+        protected override void AddItemByEdge_Down(IEdge itemEdge, ISet<IVertex> selectedVertexes, bool isUpdate, bool isNoteEvent)
         {
             if (Height_Down == 0)
                 return;
@@ -624,7 +624,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
         protected override void DrawItems_Down()
         {
-            List<IVertex> selectedVertexes = GetSelectedVertexes();
+            ISet<IVertex> selectedVertexes = ((ListVisualiserHelper)VisualiserHelper).GetSelectedVertexes();            
 
             for (int stepCnt = 0; stepCnt < Flow.GetNumberOfSteps(); stepCnt++)
             {
