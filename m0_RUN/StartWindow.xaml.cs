@@ -94,7 +94,7 @@ namespace m0
 
             IVertex data = xxx.AddVertex(null, "data");
 
-            for(double xx=-5; xx < 5 ; xx += 1)
+            for(double xx=1; xx < 5 ; xx += 1)
             //for (double xx = 1.99; xx <= 3; xx++)
             //for (double xx = -3.01; xx <= 200.01; xx++)
             //for (double xx = 2; xx <= 3.01; xx+=1.01)
@@ -106,12 +106,12 @@ namespace m0
                 d.AddVertex(z, xx * -4);
                 d.AddVertex(w, Math.Sin(xx));
 
-                d = data.AddVertex(ed2, xx);
+                /*d = data.AddVertex(ed2, xx);
 
                 d.AddVertex(x, xx * 10 );
                 d.AddVertex(y, xx * 20);
                 d.AddVertex(z, xx * -400);
-                d.AddVertex(w, Math.Sin(((double)xx)/3));
+                d.AddVertex(w, Math.Sin(((double)xx)/3));*/
             }
 
             BaseCommands.OpenVisualiser(Edge.CreateTempEdgeVertex(null, null, data), r.Get(false, @"System\Meta\Visualiser\Set2D"));

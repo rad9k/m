@@ -472,11 +472,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
         }
                
         protected override void PasteEdgesFromClipboard(IEnumerable<IEdge> edges)
-        {
-            bool o = false;            
-
-            bool onlyCopy;
-
+        {            
             foreach (IEdge e in edges)
             {
                 IEdge edge = Edge.GetIEdgeByEdgeVertex(e.To);
@@ -621,8 +617,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             SetItemHorizontalAxisMetaString = SetItemHorizontalAxisMetaVertex.Value.ToString();
 
-            UpdateAxisAndDraw();
-            //CanDoItemsUpdate();
+            UpdateAxisAndDraw();            
         }
 
         private void SetItemVerticalAxisMetaComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -635,16 +630,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             SetItemVerticalAxisMetaString = SetItemVerticalAxisMetaVertex.Value.ToString();
 
             UpdateAxisAndDraw();
-            //CanDoItemsUpdate();
         }
-
-        /*void CanDoItemsUpdate()
-        {
-            AxisUpdate();
-
-            if(canDraw)
-                VisualiserDraw();
-        }*/
 
         double GetHorizontal(IVertex item)
         {
