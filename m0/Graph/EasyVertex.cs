@@ -99,7 +99,7 @@ namespace m0.Graph
         {
             if (HasInheritance && AllowInheritance)
             {
-                List<IEdge> FullEdges = InEdgesRaw.ToList();
+                List<IEdge> FullEdges = GeneralUtil.GetList<IEdge>(InEdgesRaw);// InEdgesRaw.ToList();
 
                 HashSet<IVertex> parents = GraphUtil.GetInheritParents_RawEnumerate(this);
 
@@ -136,7 +136,7 @@ namespace m0.Graph
         {
             if (HasInheritance && AllowInheritance)
             {
-                List<IEdge> FullEdges = OutEdgesRaw.ToList();
+                List<IEdge> FullEdges = GeneralUtil.GetList<IEdge>(OutEdgesRaw);//.ToList();
 
                 HashSet<IVertex> parents = GraphUtil.GetInheritParents_RawEnumerate(this);
 
@@ -504,7 +504,7 @@ namespace m0.Graph
             if (DisposedState == DisposeStateEnum.Disposed)
                 throw new Exception("Vertex not live");
 
-            foreach (IEdge edge in InEdgesRaw.ToList())
+            foreach (IEdge edge in GeneralUtil.GetList<IEdge>(InEdgesRaw)/*.ToList()*/)
             {
                 InEdgesRaw.Remove(edge);                
 
@@ -523,7 +523,7 @@ namespace m0.Graph
             if (DisposedState == DisposeStateEnum.Disposed)
                 throw new Exception("Vertex not live");
 
-            foreach (IEdge edge in MetaInEdgesRaw.ToList())
+            foreach (IEdge edge in GeneralUtil.GetList<IEdge>(MetaInEdgesRaw)/*.ToList()*/)
                 MetaInEdgesRaw.Remove(edge);
         }
 
@@ -532,7 +532,7 @@ namespace m0.Graph
             if (DisposedState == DisposeStateEnum.Disposed)
                 throw new Exception("Vertex not live");
 
-            foreach (IEdge edge in OutEdgesRaw.ToList()) {             
+            foreach (IEdge edge in GeneralUtil.GetList<IEdge>(OutEdgesRaw)/*.ToList()*/) {             
                 OutEdgesRaw.Remove(edge);                
 
                 //FireChange(new VertexChangeEventArgs(VertexChangeType.EdgeRemoved, edge)); // moved from before edge.Meta.DeleteMetaInEdge(edge); XXX !!!
@@ -611,7 +611,7 @@ namespace m0.Graph
                 return;
             }
 
-            results = OutEdges.ToList();
+            results = GeneralUtil.GetList<IEdge>(OutEdges)/*.ToList()*/;
         }
 
         public override void QueryInEdges(object meta, object from, out IEdge result, out IList<IEdge> results)
@@ -675,7 +675,7 @@ namespace m0.Graph
                 return;
             }
 
-            results = InEdges.ToList();
+            results = GeneralUtil.GetList<IEdge>(InEdges)/*.ToList()*/;
         }
 
         public override IVertex Get(bool metaMode, string query)

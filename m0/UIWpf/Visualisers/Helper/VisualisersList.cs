@@ -1,4 +1,5 @@
 ﻿using m0.Foundation;
+using m0.Util;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -53,7 +54,7 @@ namespace m0.UIWpf.Visualisers.Helper
 
         public static void RemoveAllVisualisers()
         {
-            foreach (VisualiserData vd in Visualisers.Values.ToList())
+            foreach (VisualiserData vd in GeneralUtil.GetList<VisualiserData>(Visualisers.Values)/*.ToList()*/)
                 vd.Visualiser.Dispose();                
         }
 

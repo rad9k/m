@@ -1,5 +1,6 @@
 ﻿using m0.Foundation;
 using m0.Graph;
+using m0.Util;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -60,7 +61,7 @@ namespace m0.Store.FileSystem
         {
             if (HasInheritance && AllowInheritance)
             {
-                List<IEdge> FullEdges = OutEdgesRaw.ToList();
+                List<IEdge> FullEdges = GeneralUtil.GetList<IEdge>(OutEdgesRaw)/*.ToList()*/;
 
                 HashSet<IVertex> parents = GraphUtil.GetInheritParents_RawEnumerate(this);
 

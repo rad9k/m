@@ -332,7 +332,7 @@ namespace m0.Graph.ExecutionFlow
 
             while(secondStageCommitActionList.Count() > 0)
             {
-                secondStageCommitActionList_copy = secondStageCommitActionList.ToList();
+                secondStageCommitActionList_copy = GeneralUtil.GetList<ISecondStageCommitAction>(secondStageCommitActionList)/*.ToList()*/;
 
                 secondStageCommitActionList.Clear();
 

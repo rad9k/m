@@ -1,5 +1,6 @@
 ﻿using m0.Foundation;
 using m0.Graph;
+using m0.Util;
 using m0.ZeroCode.Helpers;
 using System;
 using System.Collections.Generic;
@@ -124,7 +125,7 @@ namespace m0.Lib
 
             QueryStringEdgeComparer qsec = new QueryStringEdgeComparer(queryString, true);
 
-            List<IEdge> edgesList = toSortList.ToList<IEdge>();
+            List<IEdge> edgesList = GeneralUtil.GetList<IEdge>(toSortList)/*.ToList<IEdge>()*/;
             edgesList.Sort(qsec);
 
             INoInEdgeInOutVertexVertex newStack = InstructionHelpers.CreateStack();
@@ -150,7 +151,7 @@ namespace m0.Lib
 
             QueryStringEdgeComparer qsec = new QueryStringEdgeComparer(queryString, false);
 
-            List<IEdge> edgesList = toSortList.ToList<IEdge>();
+            List<IEdge> edgesList = GeneralUtil.GetList<IEdge>(toSortList)/*.ToList<IEdge>()*/;
             edgesList.Sort(qsec);
 
             INoInEdgeInOutVertexVertex newStack = InstructionHelpers.CreateStack();
@@ -172,7 +173,7 @@ namespace m0.Lib
 
             EdgeComparer ec = new EdgeComparer(true);
 
-            List<IEdge> edgesList = toSortList.ToList<IEdge>();
+            List<IEdge> edgesList = GeneralUtil.GetList<IEdge>(toSortList)/*.ToList<IEdge>()*/;
             edgesList.Sort(ec);
 
             INoInEdgeInOutVertexVertex newStack = InstructionHelpers.CreateStack();
@@ -194,7 +195,7 @@ namespace m0.Lib
 
             EdgeComparer ec = new EdgeComparer(false);
 
-            List<IEdge> edgesList = toSortList.ToList<IEdge>();
+            List<IEdge> edgesList = GeneralUtil.GetList<IEdge>(toSortList)/*.ToList<IEdge>()*/;
             edgesList.Sort(ec);
 
             INoInEdgeInOutVertexVertex newStack = InstructionHelpers.CreateStack();
