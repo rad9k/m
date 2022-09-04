@@ -983,12 +983,13 @@ namespace m0.Graph
                 destination.AddEdge(e.Meta, e.To);
         }
 
-        static public IEdge CopyEdge(IEdge source, IVertex destination)
+        static public IEdge CopyVertexOneLevel(IEdge source, IVertex destination)
         {
             IEdge newEdge = destination.AddVertexAndReturnEdge(source.Meta, source.To.Value);
 
             foreach (IEdge e in source.To)
-                newEdge.To.AddEdge(e.Meta, e.To);
+                if(e.Meta.Value.ToString() != "$GraphChangeTrigger")
+                    newEdge.To.AddVertex(e.Meta, e.To.Value);
 
             return newEdge;
         }

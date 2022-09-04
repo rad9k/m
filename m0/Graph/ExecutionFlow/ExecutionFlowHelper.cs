@@ -532,9 +532,10 @@ namespace m0.Graph.ExecutionFlow
                 }
 
             foreach (ToExecuteHandler teh in toExecute)
-                if (/*(teh.HandlerType == HandlerType 
-                        || (teh.HandlerType == HandlerTypeEnum.AddEdgeHandler) )
-                        &&*/ teh.Handlers == Handlers && Edge.CompareIEdges(teh.EventEdge,EventEdge))
+                if(teh.HandlerType == HandlerType && teh.Handlers == Handlers /*&& Edge.CompareIEdges(teh.EventEdge, EventEdge)*/)
+                /*if (/*(teh.HandlerType == HandlerType  // ???
+                        || (teh.HandlerType == HandlerTypeEnum.AddEdgeHandler) ) // ???
+                        && teh.Handlers == Handlers && Edge.CompareIEdges(teh.EventEdge,EventEdge)) // ???????*/  // WHAT IS GOOD HERE. I DO NOT KNOW
                     exist = true;
 
             if (!exist && EventEdge != null)

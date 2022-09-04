@@ -23,7 +23,8 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control
         
         double valueSpaceSize;
 
-        double valueSpaceMin;
+        double valueSpaceMin = double.NegativeInfinity;
+        double valueSpaceMax = double.NegativeInfinity;
 
         bool valueSpaceMinSet = false;
         bool valueSpaceMaxSet = false;
@@ -55,9 +56,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control
                     }
                 }
             }
-        }
-
-        double valueSpaceMax;
+        }        
 
         public double ValueSpaceMax {
             get { return valueSpaceMax; }

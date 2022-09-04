@@ -416,7 +416,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             GraphUtil.SetVertexValue(itemVertex, musicEventTriggerTime, TriggerTime);
 
             if (Length != 0)
-                GraphUtil.SetVertexValue(itemVertex, musicHasLengthLength, Length);            
+                GraphUtil.SetVertexValue(itemVertex, musicHasLengthLength, Length * 2);            
         }
 
         protected override int ScreenPositionToMusicTime(double position, bool performSnapCorrection)

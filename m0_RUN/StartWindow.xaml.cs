@@ -94,7 +94,7 @@ namespace m0
 
             IVertex data = xxx.AddVertex(null, "data");
 
-            for(double xx=1; xx < 5 ; xx += 1)
+            for(double xx=0; xx < 4 ; xx += 1)
             //for (double xx = 1.99; xx <= 3; xx++)
             //for (double xx = -3.01; xx <= 200.01; xx++)
             //for (double xx = 2; xx <= 3.01; xx+=1.01)
