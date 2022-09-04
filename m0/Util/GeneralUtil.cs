@@ -132,7 +132,7 @@ namespace m0.Util
             return false;
         }
 
-        public List<T> GetList<T>(IEnumerable<T> source)
+        public static List<T> GetList<T>(IEnumerable<T> source)
         {
             if (source is List<T>)
                 return (List<T>)source;

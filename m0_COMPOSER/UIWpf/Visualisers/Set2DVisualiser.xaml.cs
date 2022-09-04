@@ -30,7 +30,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
     {
         // Set2D beg
 
-        IList<Line> PointLinesList;
+        IList<Line> PointLinesList = new List<Line>();
 
         protected bool ShowToolbarNames;
         protected bool ConnectPoints;
@@ -408,14 +408,9 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             return dataEdge;
         }
 
-        protected IList<IEdge> GetItemEdges()
-        {
-            IList<IEdge> list = null;
-
-            return list.ToList();
-
-
-            return VisualizedVertex.GetAll(false, SetItemsDefiningMetaString + ":").OutEdges.ToList();
+        protected List<IEdge> GetItemEdges()
+        {            
+            return GeneralUtil.GetList<IEdge>(VisualizedVertex.GetAll(false, SetItemsDefiningMetaString + ":").OutEdges);
         }
 
         protected override void DrawItems()
@@ -441,7 +436,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             foreach (Line l in PointLinesList) // delete old lines
                 Main.Children.Remove(l);
 
-            IList<IEdge> sortedItemEdges = itemEdges.
+            //IList<IEdge> sortedItemEdges = itemEdges.
         }
         
         protected override void UpdateItem_VerticalPosition(IItem item)
