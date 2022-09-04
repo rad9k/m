@@ -410,7 +410,12 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
         protected IList<IEdge> GetItemEdges()
         {
-            return VisualizedVertex.GetAll(false, SetItemsDefiningMetaString + ":").OutEdges;
+            IList<IEdge> list = null;
+
+            return list.ToList();
+
+
+            return VisualizedVertex.GetAll(false, SetItemsDefiningMetaString + ":").OutEdges.ToList();
         }
 
         protected override void DrawItems()
