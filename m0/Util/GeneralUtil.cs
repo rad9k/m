@@ -132,7 +132,15 @@ namespace m0.Util
             return false;
         }
 
-        public static IList<T> CreateAndCopyList<T>(IEnumerable<T> source){
+        public List<T> GetList<T>(IEnumerable<T> source)
+        {
+            if (source is List<T>)
+                return (List<T>)source;
+
+            return source.ToList<T>();
+        }
+
+        public static IList<T> CreateAndCopyList<T>(IEnumerable<T> source) {
             IList<T> list=new List<T>();
 
             foreach (T o in source)
