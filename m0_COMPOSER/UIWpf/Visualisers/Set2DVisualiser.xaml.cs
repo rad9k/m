@@ -30,6 +30,8 @@ namespace m0_COMPOSER.UIWpf.Visualisers
     {
         // Set2D beg
 
+        IList<Line> PointLinesList;
+
         protected bool ShowToolbarNames;
         protected bool ConnectPoints;
         protected bool CanEdit;
@@ -328,9 +330,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             ZoomScrollView.SetVerticalAxisDecorator(VerticalAD);
 
-            ZoomScrollView.SetHorizontalAxisDecorator(HorizontalAD);
-
-            //CanDoItemsUpdate();
+            ZoomScrollView.SetHorizontalAxisDecorator(HorizontalAD);            
         }
 
         protected override void SetupLocalVariablesFromBaseVertexVertexes()
@@ -408,9 +408,9 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             return dataEdge;
         }
 
-        protected IEnumerable<IEdge> GetItemEdges()
+        protected IList<IEdge> GetItemEdges()
         {
-            return VisualizedVertex.GetAll(false, SetItemsDefiningMetaString + ":");
+            return VisualizedVertex.GetAll(false, SetItemsDefiningMetaString + ":").OutEdges;
         }
 
         protected override void DrawItems()
@@ -422,16 +422,21 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             ISet<IVertex> selectedVertexes = ((ListVisualiserHelper)VisualiserHelper).GetSelectedVertexes();
 
-            if (ConnectPoints)
-                DrawPointLines();
+            IList<IEdge> itemEdges = GetItemEdges();
 
-            foreach (IEdge e in GetItemEdges())
+            if (ConnectPoints)
+                DrawPointLines(itemEdges);
+
+            foreach (IEdge e in itemEdges)
                 AddItemByEdge(e, selectedVertexes);            
         }
 
-        protected void DrawPointLines()
+        protected void DrawPointLines(IList<IEdge> itemEdges)
         {
+            foreach (Line l in PointLinesList) // delete old lines
+                Main.Children.Remove(l);
 
+            IList<IEdge> sortedItemEdges = itemEdges.
         }
         
         protected override void UpdateItem_VerticalPosition(IItem item)
