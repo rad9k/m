@@ -141,7 +141,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control
             if(visualiser is Set2DVisualiser)
             {
                 Set2DVisualiser set2Dvisualiser = (Set2DVisualiser)visualiser;
-                scaleLinesDensity = set2Dvisualiser.scaleLinesDensity;
+                scaleLinesDensity = set2Dvisualiser.ScaleLinesDensity;
             }
 
             double baseUnitSize_log = Math.Log10(baseUnitSize * scaleLinesDensity);

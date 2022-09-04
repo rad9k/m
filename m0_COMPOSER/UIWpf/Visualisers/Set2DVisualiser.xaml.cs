@@ -34,7 +34,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
         protected bool ConnectPoints;
         protected bool CanEdit;
 
-        public double scaleLinesDensity;
+        public double ScaleLinesDensity;
 
         IVertex SetItemsDefiningMeta;
         IVertex SetItemsDefiningMetaIs;
@@ -269,7 +269,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             CanEdit = GraphUtil.GetBooleanValue(Vertex.Get(false, "CanEdit:"), ref dummy);
             ConnectPoints = GraphUtil.GetBooleanValue(Vertex.Get(false, "ConnectPoints:"), ref dummy);
 
-            scaleLinesDensity = GraphUtil.GetDoubleValue(Vertex.Get(false, "ScaleLinesDensity:"), ref dummy);
+            ScaleLinesDensity = GraphUtil.GetDoubleValue(Vertex.Get(false, "ScaleLinesDensity:"), ref dummy);
 
             VisualiserDraw();
 
@@ -408,6 +408,11 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             return dataEdge;
         }
 
+        protected IEnumerable<IEdge> GetItemEdges()
+        {
+            return VisualizedVertex.GetAll(false, SetItemsDefiningMetaString + ":");
+        }
+
         protected override void DrawItems()
         {
             if (!canDraw)
@@ -417,9 +422,16 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             ISet<IVertex> selectedVertexes = ((ListVisualiserHelper)VisualiserHelper).GetSelectedVertexes();
 
+            if (ConnectPoints)
+                DrawPointLines();
 
-            foreach (IEdge e in VisualizedVertex.GetAll(false, SetItemsDefiningMetaString + ":"))
+            foreach (IEdge e in GetItemEdges())
                 AddItemByEdge(e, selectedVertexes);            
+        }
+
+        protected void DrawPointLines()
+        {
+
         }
         
         protected override void UpdateItem_VerticalPosition(IItem item)
@@ -658,7 +670,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             verticalMin_fromData = double.PositiveInfinity;
             verticalMax_fromData = double.NegativeInfinity;
 
-            foreach (IEdge e in VisualizedVertex.GetAll(false, SetItemsDefiningMetaString + ":"))
+            foreach (IEdge e in GetItemEdges())
             {
                 double horizontalValue = GetHorizontal(e.To);
 
