@@ -20,9 +20,49 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Shapes;
 using m0.UIWpf.Visualisers.Helper;
+using System.Linq;
 
 namespace m0_COMPOSER.UIWpf.Visualisers
 {
+    public class AxisEdgeComparer : IComparer<IEdge>
+    {
+        string AxisMetaString;        
+        
+        public int Compare(IEdge x, IEdge y)
+        {
+            if (x == null || y == null)
+                return 0;
+
+            IVertex xv = GraphUtil.GetQueryOutFirst(x.To, AxisMetaString, null);
+            IVertex yv = GraphUtil.GetQueryOutFirst(y.To, AxisMetaString, null);
+
+            if (xv == null || yv == null)
+                return 0;
+
+            
+            bool isXnull = false, isYnull = false;
+
+            double xValue = GraphUtil.GetDoubleValue(xv, ref isXnull);
+            double yValue = GraphUtil.GetDoubleValue(yv, ref isYnull);
+
+            if (isXnull || isYnull)
+                return 0;
+
+            if (xValue == yValue)
+                return 0;
+
+            if (yValue < xValue)
+                return 1;
+
+            return -1;            
+        }
+
+        public AxisEdgeComparer(string _AxisMetaString)
+        {
+            AxisMetaString = _AxisMetaString;            
+        }
+    }
+
     /// <summary>
     /// Interaction logic for SequenceVisualiser.xaml
     /// </summary>
@@ -355,22 +395,27 @@ namespace m0_COMPOSER.UIWpf.Visualisers
                 IsCurrentPenItemCenter = true;
         }
 
+        Point GetPointFromVertex(IVertex itemVertex)
+        {
+            double horizontalValue = GetHorizontal(itemVertex);
+            double horizontalPosition = HorizontalAD.ValueSpaceToScreen(horizontalValue);
+
+            double verticalValue = GetVertical(itemVertex);
+            double verticalPosition = VerticalAD.ValueSpaceToScreen(verticalValue);
+
+            return new Point(horizontalPosition, verticalPosition);
+        }
+
         protected void UpdateItem(IEdge itemEdge, IItem item)
         {
             IVertex itemVertex = itemEdge.To;
 
-            double horizontalValue = GetHorizontal(itemVertex);
-            double horizontalPosition = HorizontalAD.ValueSpaceToScreen(horizontalValue);
-            
-            double verticalValue = GetVertical(itemVertex);
-            double verticalPosition = VerticalAD.ValueSpaceToScreen(verticalValue);
-
-            bool dummy = false;                        
+            Point point = GetPointFromVertex(itemVertex);                       
 
             FrameworkElement newElement = (FrameworkElement)item;                        
             
-            item.HorizontalCenter = horizontalPosition;
-            item.VerticalCenter = verticalPosition;
+            item.HorizontalCenter = point.X;
+            item.VerticalCenter = point.Y;
             
             item.Update();
         }
@@ -408,9 +453,11 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             return dataEdge;
         }
 
-        protected List<IEdge> GetItemEdges()
-        {            
-            return GeneralUtil.GetList<IEdge>(VisualizedVertex.GetAll(false, SetItemsDefiningMetaString + ":").OutEdges);
+        protected IList<IEdge> GetItemEdges()
+        {
+            //return VisualizedVertex.GetAll(false, SetItemsDefiningMetaString + ":");
+
+            return GraphUtil.GetQueryOut(VisualizedVertex, SetItemsDefiningMetaString, null);
         }
 
         protected override void DrawItems()
@@ -431,12 +478,39 @@ namespace m0_COMPOSER.UIWpf.Visualisers
                 AddItemByEdge(e, selectedVertexes);            
         }
 
+        void DeleteLines() // delete old lines
+        {
+            foreach (Line l in PointLinesList.ToList())
+            {
+                Main.Children.Remove(l);
+                PointLinesList.Remove(l);
+            }
+        }
+
         protected void DrawPointLines(IList<IEdge> itemEdges)
         {
-            foreach (Line l in PointLinesList) // delete old lines
-                Main.Children.Remove(l);
+            DeleteLines();
 
-            //IList<IEdge> sortedItemEdges = itemEdges.
+            List<IEdge> sortedItemEdges = itemEdges.ToList();
+            
+            sortedItemEdges.Sort(new AxisEdgeComparer(SetItemHorizontalAxisMetaString));
+
+            for(int cnt = 0; cnt < sortedItemEdges.Count -1; cnt++)
+            {
+                Point from = GetPointFromVertex(sortedItemEdges[cnt].To);
+                Point to = GetPointFromVertex(sortedItemEdges[cnt + 1].To);
+
+                Line l = new Line();
+
+                WpfUtil.SetLinePosition(l, from.X, from.Y, to.X, to.Y);
+
+                l.StrokeThickness = 1;
+
+                l.Stroke = (Brush)WpfUtil.FindResource("0ForegroundBrush");
+
+                Main.Children.Add(l);
+                PointLinesList.Add(l);
+            }
         }
         
         protected override void UpdateItem_VerticalPosition(IItem item)
