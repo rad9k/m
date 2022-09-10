@@ -2728,6 +2728,16 @@ namespace m0
                 LegacySystem.Graph.EasyVertex.Get(sm, false, @"ZeroTypes\String"));
         }
 
+        void CreateSystemMetaZeroTypes_Item()
+        {
+            IVertex sm = LegacySystem.Graph.EasyVertex.Get(Root, false, @"System\Meta");
+
+            IVertex smz = LegacySystem.Graph.EasyVertex.Get(Root, false, @"System\Meta\ZeroTypes");
+
+
+            m0.LegacySystem.Util.GeneralUtil.ParseAndExcute(smz, sm, "{Class:Item{Aggregation:Item,Attribute:$PlatformClassName},Class:DisplayItem{Attribute:Size,Attribute:Position,Attribute:Layout,Attribute:BackgroundColor,Attribute:ForegroundColor,Attribute:BorderColor,Attribute:BorderSize},Class:DisplayItemAggregator{Attribute:IsExpanded,Attribute:CollapsedSize,Attribute:ExpandedSize}}");
+        }
+
         void CreateSystemMetaZeroTypesExecutionFlow_Part1()
         {
             IVertex sm = LegacySystem.Graph.EasyVertex.Get(Root, false, @"System\Meta");
@@ -5195,6 +5205,8 @@ namespace m0
             CreateSystemMetaZeroUML();
 
             CreateSystemMetaZeroTypes();
+
+            CreateSystemMetaZeroTypes_Item();
 
             CreateSystemMetaZeroTypesExecutionFlow_Part1();
 

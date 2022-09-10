@@ -183,13 +183,6 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             VisualiserDraw();
         }
 
-        protected void VisualizedVertexToUpdated()
-        {
-            //CanDoItemsUpdate();
-            //UpdateAxisAndDraw();
-            ComboBoxesUpdate();
-        }
-
         public override double GetSnappedPosition(double position)
         {
             return position;
@@ -247,9 +240,11 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             if (baseEdgeTo != null && !VisualizedVertexToUpdated_executed)
             {
-                VisualizedVertexToUpdated();
+                ComboBoxesUpdate();
                 VisualizedVertexToUpdated_executed = true;
             }
+
+            WasThereEdgeAddedRemovedDisposed = false;
 
             ExecutionFlowHelper.DoAddRemoveDisposeAddEdgeByMetaOrValueChangeHandlers(exe.Stack, new List<EventHandlers>()
             { new EventHandlers(
@@ -263,6 +258,9 @@ namespace m0_COMPOSER.UIWpf.Visualisers
                 AddEdgeByMetaOrValueChangeHandler
                 )
             });
+
+            if (WasThereEdgeAddedRemovedDisposed)
+                LinesUpdateIfNeeded();
             
             return exe.Stack;
         }
@@ -285,6 +283,8 @@ namespace m0_COMPOSER.UIWpf.Visualisers
         protected override void EdgeAdded(IEdge edge)
         {
             AddItemByEdge(edge, SelectedVertexes);
+
+            WasThereEdgeAddedRemovedDisposed = true;
         }
 
         protected void AddEdgeByMetaOrValueChangeHandler(IEdge eventEdge)
@@ -512,7 +512,22 @@ namespace m0_COMPOSER.UIWpf.Visualisers
                 PointLinesList.Add(l);
             }
         }
-        
+
+        void LinesUpdateIfNeeded()
+        {
+            if (ConnectPoints)
+            {
+                IList<IEdge> itemEdges = GetItemEdges();
+
+                DrawPointLines(itemEdges);
+            }
+        }
+
+        protected override void After_ArrowUp_FromMove()
+        {
+            LinesUpdateIfNeeded();
+        }
+
         protected override void UpdateItem_VerticalPosition(IItem item)
         {            
             FrameworkElement element;

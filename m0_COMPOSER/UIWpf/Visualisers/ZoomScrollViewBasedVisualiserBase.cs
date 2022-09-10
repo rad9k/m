@@ -38,6 +38,8 @@ namespace m0_COMPOSER.UIWpf.Visualisers
         static string[] _MetaTriggeringUpdateView = new string[] {  };
         public virtual string[] MetaTriggeringUpdateView { get { return _MetaTriggeringUpdateView; } }
 
+        protected bool WasThereEdgeAddedRemovedDisposed = false;
+
         // sequencer specyfic
 
         protected bool ShowVelocity;
@@ -1299,7 +1301,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             SaveSelectionArea();
         }
 
-        protected virtual void After_ArrowUp_FromMove() { }
+        protected virtual void After_ArrowUp_FromMove() { }        
 
         protected void ArrowUp_FromMove(object sender, MouseEventArgs e)
         {
@@ -1346,7 +1348,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
                 ////////////////////////////////////////
                 Interaction.EndInteractionWithGraph();
-                ////////////////////////////////////////
+                ////////////////////////////////////////               
                 
                 VisualiserHelper.ForceVertexChangeOff = ForceVertexChangeOff_history;
 
@@ -2610,16 +2612,22 @@ namespace m0_COMPOSER.UIWpf.Visualisers
         protected virtual void EdgeRemoved(IEdge edge)
         {            
             RemoveItemByEdge(edge);
+
+            WasThereEdgeAddedRemovedDisposed = true;
         }
 
         protected virtual void EdgeAdded(IEdge edge)
         {
             AddItemByEdge(edge, SelectedVertexes);
+
+            WasThereEdgeAddedRemovedDisposed = true;
         }
 
         protected virtual void EdgeDisposed(IEdge edge)
         {
             UpdateVertex();
+
+            WasThereEdgeAddedRemovedDisposed = true;
         }
 
         protected virtual INoInEdgeInOutVertexVertex CustomVertexChange(IExecution exe)
