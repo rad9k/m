@@ -99,7 +99,7 @@ namespace m0.Store
                 if(!(v is NoInEdgeInOutVertexVertex))
                 //foreach (IEdge e in v.OutEdges)
                 //foreach (IEdge e in v.OutEdgesRaw) // ToList was bit beeded
-                foreach (IEdge e in GeneralUtil.GetList<IEdge>(v.OutEdgesRaw)/*.ToList()*/) // ToList was bit beeded
+                foreach (IEdge e in v.OutEdgesRaw.ToList()) // ToList was bit beeded
                     if (e is IDetachableEdge)
                     {                        
                         IDetachableEdge de = (IDetachableEdge)e;

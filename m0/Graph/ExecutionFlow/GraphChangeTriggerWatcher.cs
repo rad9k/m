@@ -44,7 +44,7 @@ namespace m0.Graph.ExecutionFlow
 
         public static void RemoveAllGraphChangeTriggers()
         {
-            foreach (IEdge e in GeneralUtil.GetList<IEdge>(triggerEdgeList)/*.ToList()*/)
+            foreach (IEdge e in triggerEdgeList.ToList())
                 RemoveGraphChangeTrigger(e);
         }
 

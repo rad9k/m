@@ -305,7 +305,7 @@ namespace m0.UIWpf.Visualisers
                     if (data != null)
                         ItemsSourceValue = data.ToList();                    
                 }
-                else                
+                else
                     ItemsSourceValue = _bas.ToList(); // if there is no .ToList DataGrid can not edit
                 
 

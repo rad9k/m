@@ -1223,7 +1223,7 @@ namespace m0.Graph
             IEnumerable<IEdge> outEdges;
 
             if (canModifyOutEdges)
-                outEdges = GeneralUtil.GetList<IEdge>(iterationRoot.OutEdges)/*.ToList()*/;
+                outEdges = iterationRoot.OutEdges.ToList();
             else
                 outEdges = iterationRoot.OutEdges;
 

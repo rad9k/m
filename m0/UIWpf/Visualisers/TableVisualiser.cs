@@ -227,9 +227,9 @@ namespace m0.UIWpf.Visualisers
                 }
 
 
-                if (Vertex.Get(false, @"FilterQuery:") != null&&Vertex.Get(false, @"FilterQuery:").Value!=null) // do the filtering
+                if (Vertex.Get(false, @"FilterQuery:") != null && Vertex.Get(false, @"FilterQuery:").Value != null) // do the filtering
                 {
-                    IVertex data=VertexOperations.DoFilter(bas, Vertex.Get(false, @"FilterQuery:"));
+                    IVertex data = VertexOperations.DoFilter(bas, Vertex.Get(false, @"FilterQuery:"));
 
                     if (data != null)
                         ThisDataGrid.ItemsSource = data.ToList();
