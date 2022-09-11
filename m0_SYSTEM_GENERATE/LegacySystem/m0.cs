@@ -2718,8 +2718,8 @@ namespace m0
                 + ",Class:DisplayItem{Attribute:Size{$MinCardinality:0,$MaxCardinality:1},Attribute:Position{$MinCardinality:0,$MaxCardinality:1},Attribute:Layout{$MinCardinality:0,$MaxCardinality:1},Attribute:BackgroundColor{$MinCardinality:0,$MaxCardinality:1},Attribute:ForegroundColor{$MinCardinality:0,$MaxCardinality:1},Attribute:BorderColor{$MinCardinality:0,$MaxCardinality:1},Attribute:BorderSize{$MinCardinality:0,$MaxCardinality:1}}"
                 + ",Class:DisplayItemAggregator{Attribute:IsExpanded{{$MinCardinality:1,$MaxCardinality:1,$DefaultValue:True},Attribute:CollapsedSize{$MinCardinality:0,$MaxCardinality:1},Attribute:ExpandedSize{$MinCardinality:0,$MaxCardinality:1}}"
                 + ",Class:Size{Attribute:Width,Attribute:Height}"
-                +",Class:Position{Attribute:X,Attribute:Y}"
-                +",Enum:LayoutTypeEnum{EnumValue:Vertical,EnumValue:Horizontal,EnumValue:Wrap,EnumValue:Manual,EnumValue:Auto}}}");
+                + ",Class:Position{Attribute:X,Attribute:Y}"
+                + ",Enum:LayoutTypeEnum{EnumValue:Vertical,EnumValue:Horizontal,EnumValue:Wrap,EnumValue:Manual,EnumValue:Auto}}}");
 
             LegacySystem.Graph.EasyVertex.Get(smz, false, @"Display\HasColor").AddEdge(
                 LegacySystem.Graph.EasyVertex.Get(sm, false, @"*$Is"),
