@@ -20,7 +20,7 @@ namespace m0.ZeroTypes
             IVertex color = baseVertex.AddVertex(vColor, name);
 
             color.AddEdge(MinusZero.Instance.Root.Get(false, @"System\Meta\Base\Vertex\$Is"),
-                MinusZero.Instance.Root.Get(false, @"System\Meta\ZeroTypes\Display\Color"));
+               MinusZero.Instance.Root.Get(false, @"System\Meta\ZeroTypes\Display\Color"));
 
             color.AddVertex(vRed, red);
             color.AddVertex(vGreen, green);
