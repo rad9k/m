@@ -2753,44 +2753,50 @@ namespace m0
                 LegacySystem.Graph.EasyVertex.Get(sm, false, @"*$EdgeTarget"),
                 LegacySystem.Graph.EasyVertex.Get(sm, false, @"ZeroTypes\Display\Item"));
 
+            // DisplayItem
 
-            LegacySystem.Graph.EasyVertex.Get(smz, false, @"Display\DisplayItem\").AddEdge(
+            LegacySystem.Graph.EasyVertex.Get(smz, false, @"Display\DisplayItem\Size").AddEdge(
+                LegacySystem.Graph.EasyVertex.Get(sm, false, @"*$EdgeTarget"),
+                LegacySystem.Graph.EasyVertex.Get(sm, false, @"ZeroTypes\Display\Size"));
+
+            LegacySystem.Graph.EasyVertex.Get(smz, false, @"Display\DisplayItem\Position").AddEdge(
+                LegacySystem.Graph.EasyVertex.Get(sm, false, @"*$EdgeTarget"),
+                LegacySystem.Graph.EasyVertex.Get(sm, false, @"ZeroTypes\Display\Position"));
+
+            LegacySystem.Graph.EasyVertex.Get(smz, false, @"Display\DisplayItem\Layout").AddEdge(
+                LegacySystem.Graph.EasyVertex.Get(sm, false, @"*$EdgeTarget"),
+                LegacySystem.Graph.EasyVertex.Get(sm, false, @"ZeroTypes\Display\LayoutTypeEnum"));
+
+            LegacySystem.Graph.EasyVertex.Get(smz, false, @"Display\DisplayItem\BackgroundColor").AddEdge(
                 LegacySystem.Graph.EasyVertex.Get(sm, false, @"*$EdgeTarget"),
                 LegacySystem.Graph.EasyVertex.Get(sm, false, @"ZeroTypes\Display\Color"));
 
-            LegacySystem.Graph.EasyVertex.Get(smz, false, @"Display\DisplayItem\").AddEdge(
+            LegacySystem.Graph.EasyVertex.Get(smz, false, @"Display\DisplayItem\ForegroundColor").AddEdge(
+                LegacySystem.Graph.EasyVertex.Get(sm, false, @"*$EdgeTarget"),
+                 LegacySystem.Graph.EasyVertex.Get(sm, false, @"ZeroTypes\Display\Color"));
+
+            LegacySystem.Graph.EasyVertex.Get(smz, false, @"Display\DisplayItem\BorderColor").AddEdge(
                 LegacySystem.Graph.EasyVertex.Get(sm, false, @"*$EdgeTarget"),
                 LegacySystem.Graph.EasyVertex.Get(sm, false, @"ZeroTypes\Display\Color"));
 
 
-            LegacySystem.Graph.EasyVertex.Get(smz, false, @"Display\DisplayItem\").AddEdge(
+            LegacySystem.Graph.EasyVertex.Get(smz, false, @"Display\DisplayItem\BorderSize").AddEdge(
                 LegacySystem.Graph.EasyVertex.Get(sm, false, @"*$EdgeTarget"),
-                LegacySystem.Graph.EasyVertex.Get(sm, false, @"ZeroTypes\Display\Color"));
+                LegacySystem.Graph.EasyVertex.Get(sm, false, @"ZeroTypes\Integer"));
 
+            // DisplayItemAggregator
 
-            LegacySystem.Graph.EasyVertex.Get(smz, false, @"Display\DisplayItem\").AddEdge(
+            LegacySystem.Graph.EasyVertex.Get(smz, false, @"Display\DisplayItemAggregator\IsExpanded").AddEdge(
                 LegacySystem.Graph.EasyVertex.Get(sm, false, @"*$EdgeTarget"),
-                LegacySystem.Graph.EasyVertex.Get(sm, false, @"ZeroTypes\Display\Color"));
+                LegacySystem.Graph.EasyVertex.Get(sm, false, @"ZeroTypes\Boolean"));
 
+            LegacySystem.Graph.EasyVertex.Get(smz, false, @"Display\DisplayItemAggregator\CollapsedSize").AddEdge(
+                LegacySystem.Graph.EasyVertex.Get(sm, false, @"*$EdgeTarget"),
+                LegacySystem.Graph.EasyVertex.Get(sm, false, @"ZeroTypes\Display\Size"));
 
-            LegacySystem.Graph.EasyVertex.Get(smz, false, @"Display\DisplayItem\").AddEdge(
-    LegacySystem.Graph.EasyVertex.Get(sm, false, @"*$EdgeTarget"),
-    LegacySystem.Graph.EasyVertex.Get(sm, false, @"ZeroTypes\Display\Color"));
-
-
-            LegacySystem.Graph.EasyVertex.Get(smz, false, @"Display\DisplayItem\").AddEdge(
-    LegacySystem.Graph.EasyVertex.Get(sm, false, @"*$EdgeTarget"),
-    LegacySystem.Graph.EasyVertex.Get(sm, false, @"ZeroTypes\Display\Color"));
-
-
-            LegacySystem.Graph.EasyVertex.Get(smz, false, @"Display\DisplayItem\").AddEdge(
-    LegacySystem.Graph.EasyVertex.Get(sm, false, @"*$EdgeTarget"),
-    LegacySystem.Graph.EasyVertex.Get(sm, false, @"ZeroTypes\Display\Color"));
-
-
-            LegacySystem.Graph.EasyVertex.Get(smz, false, @"Display\DisplayItem\").AddEdge(
-    LegacySystem.Graph.EasyVertex.Get(sm, false, @"*$EdgeTarget"),
-    LegacySystem.Graph.EasyVertex.Get(sm, false, @"ZeroTypes\Display\Color"));
+            LegacySystem.Graph.EasyVertex.Get(smz, false, @"Display\DisplayItemAggregator\ExpandedSize").AddEdge(
+                LegacySystem.Graph.EasyVertex.Get(sm, false, @"*$EdgeTarget"),
+                LegacySystem.Graph.EasyVertex.Get(sm, false, @"ZeroTypes\Display\Size"));
 
 
         }
