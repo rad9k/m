@@ -2714,9 +2714,9 @@ namespace m0
             m0.LegacySystem.Util.GeneralUtil.ParseAndExcute(smz, sm, "{Display{"
                 +"Class:Color{Attribute:Red{MinValue:0,MaxValue:255,$DefaultValue:0,$MinCardinality:1,$MaxCardinality:1},Attribute:Green{MinValue:0,MaxValue:255,$DefaultValue:0,$MinCardinality:1,$MaxCardinality:1},Attribute:Blue{MinValue:0,MaxValue:255,$DefaultValue:0,$MinCardinality:1,$MaxCardinality:1},Attribute:Opacity{MinValue:0,MaxValue:255,$MinCardinality:0,$MaxCardinality:1}}"
                 +",Class:HasColor{Attribute:Color{$MinCardinality:0,$MaxCardinality:1}}"
-                + ",Class:Item{Aggregation:Item{$MinCardinality:0,$MaxCardinality:-1},Attribute:$PlatformClassName{$MinCardinality:0,$MaxCardinality:1}}"
+                + ",Class:Item{Aggregation:Item{$MinCardinality:0,$MaxCardinality:-1}}"
                 + ",Class:DisplayItem{Attribute:Size{$MinCardinality:0,$MaxCardinality:1},Attribute:Position{$MinCardinality:0,$MaxCardinality:1},Attribute:Layout{$MinCardinality:0,$MaxCardinality:1},Attribute:BackgroundColor{$MinCardinality:0,$MaxCardinality:1},Attribute:ForegroundColor{$MinCardinality:0,$MaxCardinality:1},Attribute:BorderColor{$MinCardinality:0,$MaxCardinality:1},Attribute:BorderSize{$MinCardinality:0,$MaxCardinality:1}}"
-                + ",Class:DisplayItemAggregator{Attribute:IsExpanded{$DefaultValue:True},Attribute:CollapsedSize{$MinCardinality:0,$MaxCardinality:1},Attribute:ExpandedSize{$MinCardinality:0,$MaxCardinality:1}}"
+                + ",Class:DisplayItemAggregator{Attribute:IsExpanded{{$MinCardinality:1,$MaxCardinality:1,$DefaultValue:True},Attribute:CollapsedSize{$MinCardinality:0,$MaxCardinality:1},Attribute:ExpandedSize{$MinCardinality:0,$MaxCardinality:1}}"
                 + ",Class:Size{Attribute:Width,Attribute:Height}"
                 +",Class:Position{Attribute:X,Attribute:Y}"
                 +",Enum:LayoutTypeEnum{EnumValue:Vertical,EnumValue:Horizontal,EnumValue:Wrap,EnumValue:Manual,EnumValue:Auto}}}");
@@ -2744,6 +2744,54 @@ namespace m0
             LegacySystem.Graph.EasyVertex.Get(smz, false, @"Display\HasColor\Color").AddEdge(
                 LegacySystem.Graph.EasyVertex.Get(sm, false, @"*$EdgeTarget"),
                 LegacySystem.Graph.EasyVertex.Get(sm, false, @"ZeroTypes\Display\Color"));
+
+            LegacySystem.Graph.EasyVertex.Get(smz, false, @"Display\HasColor\Color").AddEdge(
+                LegacySystem.Graph.EasyVertex.Get(sm, false, @"*$EdgeTarget"),
+                LegacySystem.Graph.EasyVertex.Get(sm, false, @"ZeroTypes\Display\Color"));
+
+            LegacySystem.Graph.EasyVertex.Get(smz, false, @"Display\Item\Item").AddEdge(
+                LegacySystem.Graph.EasyVertex.Get(sm, false, @"*$EdgeTarget"),
+                LegacySystem.Graph.EasyVertex.Get(sm, false, @"ZeroTypes\Display\Item"));
+
+
+            LegacySystem.Graph.EasyVertex.Get(smz, false, @"Display\DisplayItem\").AddEdge(
+                LegacySystem.Graph.EasyVertex.Get(sm, false, @"*$EdgeTarget"),
+                LegacySystem.Graph.EasyVertex.Get(sm, false, @"ZeroTypes\Display\Color"));
+
+            LegacySystem.Graph.EasyVertex.Get(smz, false, @"Display\DisplayItem\").AddEdge(
+                LegacySystem.Graph.EasyVertex.Get(sm, false, @"*$EdgeTarget"),
+                LegacySystem.Graph.EasyVertex.Get(sm, false, @"ZeroTypes\Display\Color"));
+
+
+            LegacySystem.Graph.EasyVertex.Get(smz, false, @"Display\DisplayItem\").AddEdge(
+                LegacySystem.Graph.EasyVertex.Get(sm, false, @"*$EdgeTarget"),
+                LegacySystem.Graph.EasyVertex.Get(sm, false, @"ZeroTypes\Display\Color"));
+
+
+            LegacySystem.Graph.EasyVertex.Get(smz, false, @"Display\DisplayItem\").AddEdge(
+                LegacySystem.Graph.EasyVertex.Get(sm, false, @"*$EdgeTarget"),
+                LegacySystem.Graph.EasyVertex.Get(sm, false, @"ZeroTypes\Display\Color"));
+
+
+            LegacySystem.Graph.EasyVertex.Get(smz, false, @"Display\DisplayItem\").AddEdge(
+    LegacySystem.Graph.EasyVertex.Get(sm, false, @"*$EdgeTarget"),
+    LegacySystem.Graph.EasyVertex.Get(sm, false, @"ZeroTypes\Display\Color"));
+
+
+            LegacySystem.Graph.EasyVertex.Get(smz, false, @"Display\DisplayItem\").AddEdge(
+    LegacySystem.Graph.EasyVertex.Get(sm, false, @"*$EdgeTarget"),
+    LegacySystem.Graph.EasyVertex.Get(sm, false, @"ZeroTypes\Display\Color"));
+
+
+            LegacySystem.Graph.EasyVertex.Get(smz, false, @"Display\DisplayItem\").AddEdge(
+    LegacySystem.Graph.EasyVertex.Get(sm, false, @"*$EdgeTarget"),
+    LegacySystem.Graph.EasyVertex.Get(sm, false, @"ZeroTypes\Display\Color"));
+
+
+            LegacySystem.Graph.EasyVertex.Get(smz, false, @"Display\DisplayItem\").AddEdge(
+    LegacySystem.Graph.EasyVertex.Get(sm, false, @"*$EdgeTarget"),
+    LegacySystem.Graph.EasyVertex.Get(sm, false, @"ZeroTypes\Display\Color"));
+
 
         }
 
