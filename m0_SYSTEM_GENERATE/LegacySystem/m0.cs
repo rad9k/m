@@ -2623,18 +2623,11 @@ namespace m0
 
             LegacySystem.Graph.EasyVertex.Get(sm, false, @"ZeroTypes\HasFilter").AddEdge(
                 LegacySystem.Graph.EasyVertex.Get(sm, false, @"*$Is"),
-                LegacySystem.Graph.EasyVertex.Get(sm, false, @"ZeroUML\Class"));
-
-            LegacySystem.Graph.EasyVertex.Get(sm, false, @"ZeroTypes\HasColor").AddEdge(
-                LegacySystem.Graph.EasyVertex.Get(sm, false, @"*$Is"),
-                LegacySystem.Graph.EasyVertex.Get(sm, false, @"ZeroUML\Class"));
+                LegacySystem.Graph.EasyVertex.Get(sm, false, @"ZeroUML\Class"));            
 
             LegacySystem.Graph.EasyVertex.Get(sm, false, @"ZeroTypes\$PlatformClass").AddEdge(
                 LegacySystem.Graph.EasyVertex.Get(sm, false, @"*$Is"), LegacySystem.Graph.EasyVertex.Get(sm, false, @"ZeroUML\Class"));
-
-            LegacySystem.Graph.EasyVertex.Get(sm, false, @"ZeroTypes\Color").AddEdge(
-                LegacySystem.Graph.EasyVertex.Get(sm, false, @"*$Is"), LegacySystem.Graph.EasyVertex.Get(sm, false, @"ZeroUML\Class"));
-
+            
             LegacySystem.Graph.EasyVertex.Get(sm, false, @"ZeroTypes\EnumBase").AddEdge(
                 LegacySystem.Graph.EasyVertex.Get(sm, false, @"*$EdgeTarget"),
                 LegacySystem.Graph.EasyVertex.Get(sm, false, @"Base\Vertex"));
@@ -2696,23 +2689,6 @@ namespace m0
                  LegacySystem.Graph.EasyVertex.Get(sm, false, @"*$EdgeTarget"),
                  LegacySystem.Graph.EasyVertex.Get(sm, false, @"ZeroTypes\VertexType"));
 
-            LegacySystem.Graph.EasyVertex.Get(sm, false, @"ZeroTypes\Color\Red").AddEdge(
-                LegacySystem.Graph.EasyVertex.Get(sm, false, @"*$EdgeTarget"),
-                LegacySystem.Graph.EasyVertex.Get(sm, false, @"ZeroTypes\Integer"));            
-            LegacySystem.Graph.EasyVertex.Get(sm, false, @"ZeroTypes\Color\Green").AddEdge(
-                LegacySystem.Graph.EasyVertex.Get(sm, false, @"*$EdgeTarget"),
-                LegacySystem.Graph.EasyVertex.Get(sm, false, @"ZeroTypes\Integer"));
-            LegacySystem.Graph.EasyVertex.Get(sm, false, @"ZeroTypes\Color\Blue").AddEdge(
-                LegacySystem.Graph.EasyVertex.Get(sm, false, @"*$EdgeTarget"),
-                LegacySystem.Graph.EasyVertex.Get(sm, false, @"ZeroTypes\Integer"));
-            LegacySystem.Graph.EasyVertex.Get(sm, false, @"ZeroTypes\Color\Opacity").AddEdge(
-                LegacySystem.Graph.EasyVertex.Get(sm, false, @"*$EdgeTarget"),
-                LegacySystem.Graph.EasyVertex.Get(sm, false, @"ZeroTypes\Integer"));
-
-            LegacySystem.Graph.EasyVertex.Get(sm, false, @"ZeroTypes\HasColor\Color").AddEdge(
-                LegacySystem.Graph.EasyVertex.Get(sm, false, @"*$EdgeTarget"),
-                LegacySystem.Graph.EasyVertex.Get(sm, false, @"ZeroTypes\Color"));
-
             LegacySystem.Graph.EasyVertex.Get(sm, false, @"ZeroTypes\ExceptionTypeEnum").AddEdge(
                 LegacySystem.Graph.EasyVertex.Get(sm, false, "*$Inherits"),
                 LegacySystem.Graph.EasyVertex.Get(sm, false, @"ZeroTypes\EnumBase"));
@@ -2736,6 +2712,31 @@ namespace m0
 
 
             m0.LegacySystem.Util.GeneralUtil.ParseAndExcute(smz, sm, "{Display{Class:Color{Attribute:Red{MinValue:0,MaxValue:255,$DefaultValue:0,$MinCardinality:1,$MaxCardinality:1},Attribute:Green{MinValue:0,MaxValue:255,$DefaultValue:0,$MinCardinality:1,$MaxCardinality:1},Attribute:Blue{MinValue:0,MaxValue:255,$DefaultValue:0,$MinCardinality:1,$MaxCardinality:1},Attribute:Opacity{MinValue:0,MaxValue:255,$MinCardinality:0,$MaxCardinality:1}},Class:HasColor{Attribute:Color{$MinCardinality:0,$MaxCardinality:1}},Class:Item{Aggregation:Item,Attribute:$PlatformClassName},Class:DisplayItem{Attribute:Size,Attribute:Position,Attribute:Layout,Attribute:BackgroundColor,Attribute:ForegroundColor,Attribute:BorderColor,Attribute:BorderSize},Class:DisplayItemAggregator{Attribute:IsExpanded,Attribute:CollapsedSize,Attribute:ExpandedSize}}}");
+
+            LegacySystem.Graph.EasyVertex.Get(smz, false, @"Display\HasColor").AddEdge(
+                LegacySystem.Graph.EasyVertex.Get(sm, false, @"*$Is"),
+                LegacySystem.Graph.EasyVertex.Get(sm, false, @"ZeroUML\Class"));
+
+            LegacySystem.Graph.EasyVertex.Get(smz, false, @"Display\Color").AddEdge(
+                LegacySystem.Graph.EasyVertex.Get(sm, false, @"*$Is"), LegacySystem.Graph.EasyVertex.Get(sm, false, @"ZeroUML\Class"));
+
+            LegacySystem.Graph.EasyVertex.Get(smz, false, @"Display\Color\Red").AddEdge(
+                LegacySystem.Graph.EasyVertex.Get(sm, false, @"*$EdgeTarget"),
+                LegacySystem.Graph.EasyVertex.Get(sm, false, @"ZeroTypes\Integer"));
+            LegacySystem.Graph.EasyVertex.Get(smz, false, @"Display\Color\Green").AddEdge(
+                LegacySystem.Graph.EasyVertex.Get(sm, false, @"*$EdgeTarget"),
+                LegacySystem.Graph.EasyVertex.Get(sm, false, @"ZeroTypes\Integer"));
+            LegacySystem.Graph.EasyVertex.Get(smz, false, @"Display\Color\Blue").AddEdge(
+                LegacySystem.Graph.EasyVertex.Get(sm, false, @"*$EdgeTarget"),
+                LegacySystem.Graph.EasyVertex.Get(sm, false, @"ZeroTypes\Integer"));
+            LegacySystem.Graph.EasyVertex.Get(smz, false, @"Display\Color\Opacity").AddEdge(
+                LegacySystem.Graph.EasyVertex.Get(sm, false, @"*$EdgeTarget"),
+                LegacySystem.Graph.EasyVertex.Get(sm, false, @"ZeroTypes\Integer"));
+
+            LegacySystem.Graph.EasyVertex.Get(smz, false, @"Display\HasColor\Color").AddEdge(
+                LegacySystem.Graph.EasyVertex.Get(sm, false, @"*$EdgeTarget"),
+                LegacySystem.Graph.EasyVertex.Get(sm, false, @"ZeroTypes\Display\Color"));
+
         }
 
         void CreateSystemMetaZeroTypesExecutionFlow_Part1()
@@ -3053,10 +3054,10 @@ namespace m0
             smv.Get(false, @"DiagramInternal\DiagramItemBase\LineWidth").AddEdge(sm.Get(false, @"?$EdgeTarget"), sm.Get(false, @"ZeroTypes\Float"));
             IVertex lookSection = smv.Get(false, @"DiagramInternal\DiagramItemBase\LineWidth").AddVertex(sm.Get(false, @"?$Section"), "Look");
 
-            smv.Get(false, @"DiagramInternal\DiagramItemBase\BackgroundColor").AddEdge(sm.Get(false, @"?$EdgeTarget"), sm.Get(false, @"ZeroTypes\Color"));
+            smv.Get(false, @"DiagramInternal\DiagramItemBase\BackgroundColor").AddEdge(sm.Get(false, @"?$EdgeTarget"), sm.Get(false, @"ZeroTypes\Display\Color"));
             smv.Get(false, @"DiagramInternal\DiagramItemBase\BackgroundColor").AddEdge(sm.Get(false, @"?$Section"), lookSection);
 
-            smv.Get(false, @"DiagramInternal\DiagramItemBase\ForegroundColor").AddEdge(sm.Get(false, @"?$EdgeTarget"), sm.Get(false, @"ZeroTypes\Color"));
+            smv.Get(false, @"DiagramInternal\DiagramItemBase\ForegroundColor").AddEdge(sm.Get(false, @"?$EdgeTarget"), sm.Get(false, @"ZeroTypes\Display\Color"));
             smv.Get(false, @"DiagramInternal\DiagramItemBase\ForegroundColor").AddEdge(sm.Get(false, @"?$Section"), lookSection);
 
             smv.Get(false, @"DiagramInternal\DiagramItemBase\DiagramLine").AddEdge(sm.Get(false, @"?$EdgeTarget"), smv.Get(false, @"DiagramInternal\DiagramLineBase"));
@@ -3084,10 +3085,10 @@ namespace m0
             smv.Get(false, @"DiagramInternal\DiagramLineBase\LineWidth").AddEdge(sm.Get(false, @"?$EdgeTarget"), sm.Get(false, @"ZeroTypes\Float"));
             smv.Get(false, @"DiagramInternal\DiagramLineBase\LineWidth").AddEdge(sm.Get(false, @"?$Section"), lookSection);
 
-            smv.Get(false, @"DiagramInternal\DiagramLineBase\BackgroundColor").AddEdge(sm.Get(false, @"?$EdgeTarget"), sm.Get(false, @"ZeroTypes\Color"));
+            smv.Get(false, @"DiagramInternal\DiagramLineBase\BackgroundColor").AddEdge(sm.Get(false, @"?$EdgeTarget"), sm.Get(false, @"ZeroTypes\Display\Color"));
             smv.Get(false, @"DiagramInternal\DiagramLineBase\BackgroundColor").AddEdge(sm.Get(false, @"?$Section"), lookSection);
 
-            smv.Get(false, @"DiagramInternal\DiagramLineBase\ForegroundColor").AddEdge(sm.Get(false, @"?$EdgeTarget"), sm.Get(false, @"ZeroTypes\Color"));
+            smv.Get(false, @"DiagramInternal\DiagramLineBase\ForegroundColor").AddEdge(sm.Get(false, @"?$EdgeTarget"), sm.Get(false, @"ZeroTypes\Display\Color"));
             smv.Get(false, @"DiagramInternal\DiagramLineBase\ForegroundColor").AddEdge(sm.Get(false, @"?$Section"), lookSection);
 
             smv.Get(false, @"DiagramInternal\DiagramLineBase\ToDiagramItem").AddEdge(sm.Get(false, @"?$EdgeTarget"), smv.Get(false, @"DiagramInternal\DiagramItemBase"));
