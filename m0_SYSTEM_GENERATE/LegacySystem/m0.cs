@@ -2720,11 +2720,7 @@ namespace m0
                 + ",Class:Size{Attribute:Width,Attribute:Height}"
                 + ",Class:Position{Attribute:X,Attribute:Y}"
                 + ",Enum:LayoutTypeEnum{EnumValue:Vertical,EnumValue:Horizontal,EnumValue:Wrap,EnumValue:Manual,EnumValue:Auto}}}");
-
-            LegacySystem.Graph.EasyVertex.Get(smz, false, @"Display\HasColor").AddEdge(
-                LegacySystem.Graph.EasyVertex.Get(sm, false, @"*$Is"),
-                LegacySystem.Graph.EasyVertex.Get(sm, false, @"ZeroUML\Class"));
-
+            
             LegacySystem.Graph.EasyVertex.Get(smz, false, @"Display\Color").AddEdge(
                 LegacySystem.Graph.EasyVertex.Get(sm, false, @"*$Is"), LegacySystem.Graph.EasyVertex.Get(sm, false, @"ZeroUML\Class"));
 
@@ -2741,14 +2737,14 @@ namespace m0
                 LegacySystem.Graph.EasyVertex.Get(sm, false, @"*$EdgeTarget"),
                 LegacySystem.Graph.EasyVertex.Get(sm, false, @"ZeroTypes\Integer"));
 
-            LegacySystem.Graph.EasyVertex.Get(smz, false, @"Display\HasColor\Color").AddEdge(
-                LegacySystem.Graph.EasyVertex.Get(sm, false, @"*$EdgeTarget"),
-                LegacySystem.Graph.EasyVertex.Get(sm, false, @"ZeroTypes\Display\Color"));
+            LegacySystem.Graph.EasyVertex.Get(smz, false, @"Display\HasColor").AddEdge(
+                LegacySystem.Graph.EasyVertex.Get(sm, false, @"*$Is"),
+                LegacySystem.Graph.EasyVertex.Get(sm, false, @"ZeroUML\Class"));
 
             LegacySystem.Graph.EasyVertex.Get(smz, false, @"Display\HasColor\Color").AddEdge(
                 LegacySystem.Graph.EasyVertex.Get(sm, false, @"*$EdgeTarget"),
                 LegacySystem.Graph.EasyVertex.Get(sm, false, @"ZeroTypes\Display\Color"));
-
+            
             LegacySystem.Graph.EasyVertex.Get(smz, false, @"Display\Item\Item").AddEdge(
                 LegacySystem.Graph.EasyVertex.Get(sm, false, @"*$EdgeTarget"),
                 LegacySystem.Graph.EasyVertex.Get(sm, false, @"ZeroTypes\Display\Item"));
@@ -2802,24 +2798,22 @@ namespace m0
 
             LegacySystem.Graph.EasyVertex.Get(smz, false, @"Display\Size\Width").AddEdge(
                 LegacySystem.Graph.EasyVertex.Get(sm, false, @"*$EdgeTarget"),
-                LegacySystem.Graph.EasyVertex.Get(sm, false, @"ZeroTypes\Display\Float"));
+                LegacySystem.Graph.EasyVertex.Get(sm, false, @"ZeroTypes\ZeroTypes\Float"));
 
-            LegacySystem.Graph.EasyVertex.Get(smz, false, @"Display\Size\Heigth").AddEdge(
+            LegacySystem.Graph.EasyVertex.Get(smz, false, @"Display\Size\Height").AddEdge(
                 LegacySystem.Graph.EasyVertex.Get(sm, false, @"*$EdgeTarget"),
-                LegacySystem.Graph.EasyVertex.Get(sm, false, @"ZeroTypes\Display\Float"));
+                LegacySystem.Graph.EasyVertex.Get(sm, false, @"ZeroTypes\ZeroTypes\Float"));
 
 
             // Position
 
             LegacySystem.Graph.EasyVertex.Get(smz, false, @"Display\Position\X").AddEdge(
                 LegacySystem.Graph.EasyVertex.Get(sm, false, @"*$EdgeTarget"),
-                LegacySystem.Graph.EasyVertex.Get(sm, false, @"ZeroTypes\Display\Float"));
+                LegacySystem.Graph.EasyVertex.Get(sm, false, @"ZeroTypes\ZeroTypes\Float"));
 
             LegacySystem.Graph.EasyVertex.Get(smz, false, @"Display\Position\Y").AddEdge(
                 LegacySystem.Graph.EasyVertex.Get(sm, false, @"*$EdgeTarget"),
-                LegacySystem.Graph.EasyVertex.Get(sm, false, @"ZeroTypes\Display\Float"));
-
-
+                LegacySystem.Graph.EasyVertex.Get(sm, false, @"ZeroTypes\ZeroTypes\Float"));
 
         }
 
