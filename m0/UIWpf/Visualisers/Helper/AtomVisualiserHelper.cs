@@ -241,7 +241,7 @@ namespace m0.UIWpf.Visualisers.Helper
 
         public void DisposeAllChildVisualisers()
         {
-            foreach (IEdge e in visualiser.Vertex.GetAll(false, "ChildVisualiser:"))
+            foreach (IEdge e in visualiser.Vertex.GetAll(false, "Item:"))
                 VisualisersList.GetVisualiser(e.To).Dispose();
         }
 

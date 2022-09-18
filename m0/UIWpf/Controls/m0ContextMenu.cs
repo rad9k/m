@@ -296,7 +296,7 @@ namespace m0.UIWpf.Controls
 
             // IVertex vislist = root.GetAll(false, @"System\Meta\Visualiser\"); BaseEdge ones currently not supported
 
-            IVertex vislist = root.GetAll(false, @"System\Meta\Visualiser\Class:{$Inherits:AbstractVisualiser,BaseEdgeTarget:Any}");
+            IVertex vislist = root.GetAll(false, @"System\Meta\Visualiser\Class:{$Inherits:Item,BaseEdgeTarget:Any}");
 
             foreach (IEdge vis in vislist)
             {
@@ -321,7 +321,7 @@ namespace m0.UIWpf.Controls
             MenuItem OpenMetaVisualiser = createMenuItem("Open Visualiser for Meta");
             Special.Items.Add(OpenMetaVisualiser);
 
-            IVertex vislist = root.GetAll(false, @"System\Meta\Visualiser\Class:{$Inherits:HasBaseEdge,BaseEdgeTarget:Any}");
+            IVertex vislist = root.GetAll(false, @"System\Meta\Visualiser\Class:{$Inherits:Item,BaseEdgeTarget:Any}");
 
             foreach (IEdge vis in vislist)
             {

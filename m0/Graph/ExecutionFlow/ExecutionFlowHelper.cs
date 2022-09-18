@@ -625,7 +625,7 @@ namespace m0.Graph.ExecutionFlow
                 if (eventEdge == null)
                     return false;
 
-                if (GraphUtil.GetQueryOutCount(eventEdge, "Meta", "ChildVisualiser") == 0)
+                if (GraphUtil.GetQueryOutCount(eventEdge, "Meta", "Item") == 0)
                     return false;                
             }
 
