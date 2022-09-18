@@ -245,6 +245,13 @@ namespace m0.UIWpf.Visualisers.Helper
                 VisualisersList.GetVisualiser(e.To).Dispose();
         }
 
+        public void DisposeAllChildVisualisersExceptWrap()
+        {
+            foreach (IEdge e in visualiser.Vertex.GetAll(false, "Item:"))
+                if(!GraphUtil.ExistQueryOut(e.To, "$Is", "Wrap"))
+                    VisualisersList.GetVisualiser(e.To).Dispose();
+        }        
+
         public void Dispose()
         {
             if (IsDisposed == false)

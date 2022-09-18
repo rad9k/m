@@ -293,7 +293,7 @@ namespace m0.UIWpf.Visualisers
 
             //ExecutionFlowHelper.
 
-            VisualiserHelper.DisposeAllChildVisualisers();
+            VisualiserHelper.DisposeAllChildVisualisersExceptWrap();
 
             BaseVertexEdgeAdded_PreFill = false;
             BaseVertexEdgeAdded = false;
