@@ -316,6 +316,11 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             VisualiserDraw();
 
             ShowToolbarNames_SelectionChange();
+
+            if (CanEdit)
+                PenButton.IsEnabled = true;
+            else
+                PenButton.IsEnabled = false;
         }
 
         protected void ShowToolbarNames_SelectionChange()
@@ -325,15 +330,13 @@ namespace m0_COMPOSER.UIWpf.Visualisers
                 SetButtonComponentName(PenButton, "New");
                 SetButtonComponentName(ArrowButton, "Select");
                 SetButtonComponentName(EraseButton, "Erase");
-         
-                
-                SetButtonComponentName(CutButton, "Cut");
+                                         
                 SetButtonComponentName(CopyButton, "Copy");
                 SetButtonComponentName(PasteButton, "Paste");
 
                 SetButtonComponentName(ExtendUpButton, "Extend Up");
                 SetButtonComponentName(ExtendDownButton, "Extend Down");
-                SetButtonComponentName(ExtendLeftButton, "Extend Left");
+                SetButtonComponentName(ExtendLeftButton, "Extend Left");                
                 SetButtonComponentName(ExtendRightButton, "Extend Right");
             }
             else
@@ -348,7 +351,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
                 SetButtonComponentName(ExtendUpButton, "");
                 SetButtonComponentName(ExtendDownButton, "");
                 SetButtonComponentName(ExtendLeftButton, "");
-                SetButtonComponentName(ExtendRightButton, "");
+                SetButtonComponentName(ExtendRightButton, "");                
             }
         }
 
