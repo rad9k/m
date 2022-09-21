@@ -395,7 +395,7 @@ namespace m0_SYSTEM_GENERATE.Music
         static IVertex Integer = r.Get(false, @"System\Meta\ZeroTypes\Integer");
         static IVertex Boolean = r.Get(false, @"System\Meta\ZeroTypes\Boolean");
         static IVertex Float = r.Get(false, @"System\Meta\ZeroTypes\Float");
-        static IVertex Color = r.Get(false, @"System\Meta\ZeroTypes\Display\Color");
+        static IVertex Color = r.Get(false, @"System\Meta\ZeroTypes\UX\Color");
 
         static IVertex Note;
         static IVertex Pitch;
@@ -545,7 +545,7 @@ namespace m0_SYSTEM_GENERATE.Music
 
             Track = GraphUtil.AddClass(Music, "Track");
 
-            GraphUtil.AddInherits(Track, r.Get(false, @"System\Meta\ZeroTypes\Display\HasColor"));
+            GraphUtil.AddInherits(Track, r.Get(false, @"System\Meta\ZeroTypes\UX\HasColor"));
 
             //GraphUtil.AddAttribute(Track, "Name", String, 0, 1);
             //GraphUtil.AddAttribute(Track, "Color", Color, 0, 1);

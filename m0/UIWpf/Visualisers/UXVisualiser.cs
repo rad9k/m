@@ -21,18 +21,18 @@ using m0.UIWpf.Visualisers.Helper;
 
 namespace m0.UIWpf.Visualisers
 {
-    public class TestVisualiser : TextBox, IVisualiser
+    public class UXVisualiser : TextBox, IVisualiser
     {
         public AtomVisualiserHelper VisualiserHelper { get; set; }        
 
-        public TestVisualiser(IVertex baseEdgeVertex, IVertex parentVisualiser)
+        public UXVisualiser(IVertex baseEdgeVertex, IVertex parentVisualiser)
         {
             this.AcceptsReturn = true;
 
             new AtomVisualiserHelper(parentVisualiser,
-                MinusZero.Instance.Root.Get(false, @"System\Meta\Visualiser\Test"), 
+                MinusZero.Instance.Root.Get(false, @"System\Meta\Visualiser\UX"), 
                 this, 
-                "TestVisualiser", 
+                "UXVisualiser", 
                 this,
                 baseEdgeVertex);
         }

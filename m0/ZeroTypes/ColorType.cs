@@ -9,18 +9,18 @@ namespace m0.ZeroTypes
 {
     public class ColorType
     {
-        static IVertex vColor = MinusZero.Instance.Root.Get(false, @"System\Meta\ZeroTypes\Display\Color");
-        static IVertex vRed = MinusZero.Instance.Root.Get(false, @"System\Meta\ZeroTypes\Display\Color\Red");
-        static IVertex vGreen = MinusZero.Instance.Root.Get(false, @"System\Meta\ZeroTypes\Display\Color\Green");
-        static IVertex vBlue = MinusZero.Instance.Root.Get(false, @"System\Meta\ZeroTypes\Display\Color\Blue");
-        static IVertex vOpacity = MinusZero.Instance.Root.Get(false, @"System\Meta\ZeroTypes\Display\Color\Opacity");
+        static IVertex vColor = MinusZero.Instance.Root.Get(false, @"System\Meta\ZeroTypes\UX\Color");
+        static IVertex vRed = MinusZero.Instance.Root.Get(false, @"System\Meta\ZeroTypes\UX\Color\Red");
+        static IVertex vGreen = MinusZero.Instance.Root.Get(false, @"System\Meta\ZeroTypes\UX\Color\Green");
+        static IVertex vBlue = MinusZero.Instance.Root.Get(false, @"System\Meta\ZeroTypes\UX\Color\Blue");
+        static IVertex vOpacity = MinusZero.Instance.Root.Get(false, @"System\Meta\ZeroTypes\UX\Color\Opacity");
 
         public static IVertex AddColor(IVertex baseVertex, string name, int red, int green, int blue, int opacity)
         {
             IVertex color = baseVertex.AddVertex(vColor, name);
 
             color.AddEdge(MinusZero.Instance.Root.Get(false, @"System\Meta\Base\Vertex\$Is"),
-               MinusZero.Instance.Root.Get(false, @"System\Meta\ZeroTypes\Display\Color"));
+               MinusZero.Instance.Root.Get(false, @"System\Meta\ZeroTypes\UX\Color"));
 
             color.AddVertex(vRed, red);
             color.AddVertex(vGreen, green);

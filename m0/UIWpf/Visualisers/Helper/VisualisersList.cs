@@ -26,10 +26,10 @@ namespace m0.UIWpf.Visualisers.Helper
 
             if(parentVisualiserVertex == null)
                 visualiserVertexEdge = mz.Root.Get(false, @"User\CurrentUser:\Session:\Visualisers:").
-                        AddEdge(mz.Root.Get(false, @"System\Meta\ZeroTypes\Display\Item"), visualiser.Vertex);
+                        AddEdge(mz.Root.Get(false, @"System\Meta\ZeroTypes\UX\Item"), visualiser.Vertex);
             else
                 visualiserVertexEdge = parentVisualiserVertex.
-                        AddEdge(mz.Root.Get(false, @"System\Meta\ZeroTypes\Display\Item\Item"), visualiser.Vertex);
+                        AddEdge(mz.Root.Get(false, @"System\Meta\ZeroTypes\UX\Item\Item"), visualiser.Vertex);
 
 
             VisualiserData vd = new VisualiserData();
