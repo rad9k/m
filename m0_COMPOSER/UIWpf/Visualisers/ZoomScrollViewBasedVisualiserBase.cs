@@ -206,7 +206,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             UpdateVertex();
         }
 
-        public void ZoomVisualiserContentChange() { }
+        public void ScaleChange() { }
 
         public void SelectedVerticesUpdated() { }        
 

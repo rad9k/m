@@ -60,7 +60,7 @@ namespace m0.UIWpf.Visualisers
 
             SetVertexDefaultValues();
 
-            ZoomVisualiserContentChange();
+            ScaleChange();
 
             TextMemory = new List<string>();
 
@@ -221,7 +221,7 @@ namespace m0.UIWpf.Visualisers
 
         protected virtual void SetVertexDefaultValues()
         {
-            Vertex.Get(false, "ZoomVisualiserContent:").Value = 15.0;
+            Vertex.Get(false, "Scale:").Value = 15.0;
             Vertex.Get(false, "ShowWhiteSpace:").Value = "False";
             Vertex.Get(false, "ShowLineNumbers:").Value = "False";
             Vertex.Get(false, "HighlightedLine:").Value = "True";
@@ -242,9 +242,9 @@ namespace m0.UIWpf.Visualisers
                 this.Text = "Ø";
         }
 
-        public void ZoomVisualiserContentChange()
+        public void ScaleChange()
         {
-            double scale = ((double)GraphUtil.GetDoubleValue(Vertex.Get(false, "ZoomVisualiserContent:")));
+            double scale = ((double)GraphUtil.GetDoubleValue(Vertex.Get(false, "Scale:")));
 
             this.FontSize = scale;
         }
@@ -255,9 +255,9 @@ namespace m0.UIWpf.Visualisers
 
             if (changedVertex != null)
             {
-                if (GraphUtil.ExistQueryIn(changedVertex, "ZoomVisualiserContent", null))
+                if (GraphUtil.ExistQueryIn(changedVertex, "Scale", null))
                 {
-                    ZoomVisualiserContentChange();
+                    ScaleChange();
                     return exe.Stack;
                 }
 

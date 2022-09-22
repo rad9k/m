@@ -971,9 +971,9 @@ namespace m0.UIWpf.Visualisers.Diagram
             ClickTarget = ClickTargetEnum.MouseUpOrLeave;
         }
 
-        public void ZoomVisualiserContentChange()
+        public void ScaleChange()
         {
-            double scale = ((double)GraphUtil.GetIntegerValue(Vertex.Get(false, "ZoomVisualiserContent:"))) / 100;
+            double scale = ((double)GraphUtil.GetIntegerValue(Vertex.Get(false, "Scale:"))) / 100;
 
             if (scale != 1.0)
             {
@@ -1048,8 +1048,8 @@ namespace m0.UIWpf.Visualisers.Diagram
             if (sender is IVertex && GraphUtil.FindEdgeByToVertex(Vertex.GetAll(false, @"SelectedEdges:\"), (IVertex)sender) != null)
             { SelectedVerticesUpdated(); return; }
 
-            if (sender == Vertex.Get(false, "ZoomVisualiserContent:") && e.Type == VertexChangeType.ValueChanged)
-            { ZoomVisualiserContentChange(); return; }
+            if (sender == Vertex.Get(false, "Scale:") && e.Type == VertexChangeType.ValueChanged)
+            { ScaleChange(); return; }
 
             if ((sender == Vertex.Get(false, "SizeX:") || sender == Vertex.Get(false, "SizeY:")) && e.Type == VertexChangeType.ValueChanged)
             { PaintDiagram(); return; }   

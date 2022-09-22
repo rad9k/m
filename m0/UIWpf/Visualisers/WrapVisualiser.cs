@@ -33,7 +33,7 @@ namespace m0.UIWpf.Visualisers
 
         public void SelectedVerticesUpdated() { }
 
-        public void ZoomVisualiserContentChange() { }
+        public void ScaleChange() { }
 
         public void UpdateView() { }
 

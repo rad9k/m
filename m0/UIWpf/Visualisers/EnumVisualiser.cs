@@ -42,7 +42,7 @@ namespace m0.UIWpf.Visualisers
             VisualiserHelper.AddContextMenu();
         }
 
-        public void ZoomVisualiserContentChange() { }
+        public void ScaleChange() { }
 
         bool DoingSelectionChanged = false;
 

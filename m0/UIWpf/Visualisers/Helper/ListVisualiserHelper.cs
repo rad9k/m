@@ -138,8 +138,8 @@ namespace m0.UIWpf.Visualisers.Helper
 
         public INoInEdgeInOutVertexVertex VertexChangeLogic(IExecution exe)
         {
-            if (IsVertexChangeOrEdgeAddedRemovedDisposedByMetaAndFrom(exe.Stack, visualiser.Vertex, "ZoomVisualiserContent"))
-                listVisualiser.ZoomVisualiserContentChange();
+            if (IsVertexChangeOrEdgeAddedRemovedDisposedByMetaAndFrom(exe.Stack, visualiser.Vertex, "Scale"))
+                listVisualiser.ScaleChange();
 
             if (IsVertexChangeOrEdgeAddedRemovedDisposedByMetaAndFrom(exe.Stack, visualiser.Vertex, "SelectedEdges")
                 || IsEdgeAddedRemovedDiscardedFrom(exe.Stack, Vertex.Get(false, @"SelectedEdges:")))

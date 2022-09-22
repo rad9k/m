@@ -17,6 +17,6 @@ namespace m0.UIWpf.Visualisers.Helper
 
         void UpdateVertex();
 
-        void ZoomVisualiserContentChange();
+        void ScaleChange();
     }
 }

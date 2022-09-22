@@ -180,7 +180,7 @@ namespace m0.UIWpf.Visualisers
             Vertex.Get(false, "ShowHeader:").Value = "True";
             Vertex.Get(false, "ExpertMode:").Value = "False";
             Vertex.Get(false, "AlternatingRows:").Value = "True";
-            Vertex.Get(false, "ZoomVisualiserContent:").Value = 100;
+            Vertex.Get(false, "Scale:").Value = 100;
 
             GraphUtil.ReplaceEdge(Vertex, "GridStyle", MinusZero.Instance.Root.Get(false, @"System\Meta\Visualiser\GridStyleEnum\Round"));
         }        

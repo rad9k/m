@@ -42,7 +42,7 @@ namespace m0.UIWpf.Visualisers
             VisualiserHelper.AddContextMenu();
         }
 
-        public void ZoomVisualiserContentChange() { }
+        public void ScaleChange() { }
 
         protected override void OnDragEnter(DragEventArgs e) { } // Do not want standard base implemention, that prevents allow drop
 

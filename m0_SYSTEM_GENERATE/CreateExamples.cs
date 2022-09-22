@@ -528,7 +528,7 @@ namespace m0_SYSTEM_GENERATE
                 }
             }
 
-            m0.LegacySystem.Util.GeneralUtil.ParseAndExcute(tr.Get(false, "TEST"), tr.Get(false, @"System\Meta"), "{Diagram:TestDiagram{ZoomVisualiserContent:100,SelectedEdges:,CreationPool:}}");
+            m0.LegacySystem.Util.GeneralUtil.ParseAndExcute(tr.Get(false, "TEST"), tr.Get(false, @"System\Meta"), "{Diagram:TestDiagram{Scale:100,SelectedEdges:,CreationPool:}}");
 
             tr.Get(false, @"TEST\TestDiagram").AddVertex(r.Get(false, @"System\Meta\Visualiser\Diagram\SizeX"), 600.0);
 

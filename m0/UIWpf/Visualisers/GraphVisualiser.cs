@@ -594,7 +594,7 @@ namespace m0.UIWpf.Visualisers
 
         protected void SetVertexDefaultValues()
         {
-            Vertex.Get(false, "ZoomVisualiserContent:").Value = 100;
+            Vertex.Get(false, "Scale:").Value = 100;
             Vertex.Get(false, "VisualiserCircleSize:").Value = 200;
             Vertex.Get(false, "NumberOfCircles:").Value = 2;
             Vertex.Get(false, "FastMode:").Value = "True";
@@ -611,9 +611,9 @@ namespace m0.UIWpf.Visualisers
             }
         }
 
-        public void ZoomVisualiserContentChange()
+        public void ScaleChange()
         {
-            double scale = ((double)GraphUtil.GetIntegerValue(Vertex.Get(false, "ZoomVisualiserContent:"))) / 100;
+            double scale = ((double)GraphUtil.GetIntegerValue(Vertex.Get(false, "Scale:"))) / 100;
 
             if (scale != 1.0)
             {

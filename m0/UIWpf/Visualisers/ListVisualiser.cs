@@ -248,9 +248,9 @@ namespace m0.UIWpf.Visualisers
             }
         }
 
-        public void ZoomVisualiserContentChange()
+        public void ScaleChange()
         {
-            double scale = ((double)GraphUtil.GetIntegerValue(Vertex.Get(false, "ZoomVisualiserContent:")))/100;
+            double scale = ((double)GraphUtil.GetIntegerValue(Vertex.Get(false, "Scale:")))/100;
 
             if (scale != 1.0)
                 this.LayoutTransform = new ScaleTransform(scale, scale);
@@ -282,7 +282,7 @@ namespace m0.UIWpf.Visualisers
             Vertex.Get(false, "IsMetaRightAlign:").Value = "False";
             Vertex.Get(false, "IsAllVisualisersEdit:").Value = "False";
             Vertex.Get(false, "ShowMeta:").Value = "True";
-            Vertex.Get(false, "ZoomVisualiserContent:").Value = 100;
+            Vertex.Get(false, "Scale:").Value = 100;
 
             GraphUtil.ReplaceEdge(Vertex, "GridStyle", MinusZero.Instance.Root.Get(false, @"System\Meta\Visualiser\GridStyleEnum\None"));
         }

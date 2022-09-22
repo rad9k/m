@@ -42,7 +42,7 @@ namespace m0.UIWpf.Visualisers
             VisualiserHelper.AddContextMenu();
         }
 
-        public void ZoomVisualiserContentChange() { }
+        public void ScaleChange() { }
 
         string GetEdgeString(IVertex meta, IVertex to)
         {
@@ -79,9 +79,11 @@ namespace m0.UIWpf.Visualisers
             this.Children.Add(tb);
         }
 
-        private void AddVertexLine(string s, IVertex v)
+        private void AddVertexVertexLine(string s, IVertex v1, IVertex v2)
         {
             StackPanel sp = new StackPanel();
+
+            sp.Orientation = Orientation.Horizontal;
 
             TextBlock tb = new TextBlock();
 
@@ -89,20 +91,45 @@ namespace m0.UIWpf.Visualisers
 
             tb.Text = " " + s;
 
+            //meta
+
+            Button b_m = new Button();
+
+            b_m.Padding = new Thickness(0);
+
+            b_m.FontSize = 6;
+
+            b_m.Tag = v1;
+
+            b_m.Width = 25;
+            b_m.Height = 10;
+
+            b_m.Content = "go meta";
+
+            b_m.Click += GoEvent;
+
+            sp.Children.Add(b_m);
+
+            //to
+
             Button b = new Button();
 
-            b.Tag = v;
+            b.Padding = new Thickness(0);
 
-            b.Width = 10;
+            b.FontSize = 6;
+
+            b.Tag = v2;
+
+            b.Width = 20;
             b.Height = 10;
 
-            b.Content = "go";
+            b.Content = "go to";
 
             b.Click += GoEvent;
 
-            sp.Orientation = Orientation.Horizontal;
-
             sp.Children.Add(b);
+
+
             sp.Children.Add(tb);
 
             this.Children.Add(sp);
@@ -146,7 +173,7 @@ namespace m0.UIWpf.Visualisers
                 AddLine(sb);
 
                 foreach (IEdge e in bv.InEdgesRaw)
-                    AddVertexLine(GetEdgeString(e.Meta, e.From), e.From);
+                    AddVertexVertexLine(GetEdgeString(e.Meta, e.From), e.Meta, e.From);
                 
 
                 sb.Clear();
@@ -160,7 +187,7 @@ namespace m0.UIWpf.Visualisers
                 AddLine(sb);
 
                 foreach (IEdge e in bv.OutEdgesRaw)
-                    AddVertexLine(GetEdgeString(e.Meta, e.To), e.To);                       
+                    AddVertexVertexLine(GetEdgeString(e.Meta, e.To), e.Meta, e.To);                       
 
                 return;
             }
