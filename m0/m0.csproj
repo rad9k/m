@@ -309,6 +309,9 @@
     <Compile Include="ZeroCode\ZeroCodeExecutonUtil.cs" />
     <Compile Include="ZeroCode\ZeroCodeView.cs" />
     <Compile Include="ZeroTypes\ColorType.cs" />
+    <Compile Include="ZeroTypes\TypedVertex.cs" />
+    <Compile Include="ZeroTypes\UX\Item.cs" />
+    <Compile Include="ZeroTypes\UX\Color.cs" />
     <Compile Include="ZeroUML\ClassVertex.cs" />
     <Compile Include="Util\GeneralUtil.cs">
       <SubType>Code</SubType>
@@ -595,6 +598,7 @@
     <Resource Include="_RESOURCES\basic\extend_left.png" />
     <Resource Include="_RESOURCES\basic\extend_up.png" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

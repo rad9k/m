@@ -51,6 +51,8 @@ namespace m0
         {            
             m0_RUN.Main.Run();
 
+            ExtraRun7();
+
             ExtraRun6();
 
             //ExtraRun5();
@@ -64,6 +66,24 @@ namespace m0
             //ExtraRun4();
 
             Close();
+        }
+
+        void ExtraRun7()
+        {
+            IVertex r = m0.MinusZero.Instance.root;
+
+            IVertex e = r.Get(false, "examples");
+
+            IVertex c = VertexOperations.AddInstance(e, r.Get(false, @"System\Meta\ZeroTypes\UX\Color"));
+
+            ZeroTypes.UX.Color clr = new ZeroTypes.UX.Color(c);
+
+            int red = clr.Red;
+            int green = clr.Green;
+            int blue = clr.Blue;
+            int opacity = clr.Opacity;
+
+            clr.Opacity = 150;
         }
 
         void ExtraRun6()
