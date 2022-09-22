@@ -12,6 +12,7 @@ namespace m0.ZeroTypes.UX
     {
         static IVertex BaseEdge_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\HasBaseEdge\BaseEdge");
         static IVertex Item_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\Item\Item");
+        static IVertex UXItem_type = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\UXItem");
 
 
         public Item(IVertex vertex) : base(vertex) { }
@@ -33,7 +34,7 @@ namespace m0.ZeroTypes.UX
             }
         }
 
-        public IList<Item> Item
+        public IList<Item> Items
         {
             get
             {
@@ -51,10 +52,15 @@ namespace m0.ZeroTypes.UX
             }
         }
 
-        IVertex AddItem()
+        public UXItem AddItem_UXItem()
         {
-
+            return AddItem_UXItem(UXItem_type);
         }
-        
+
+        public UXItem AddItem_UXItem(IVertex typeVertex)
+        {
+            IVertex v = 
+        }
+
     }
 }

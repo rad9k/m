@@ -312,6 +312,7 @@
     <Compile Include="ZeroTypes\TypedVertex.cs" />
     <Compile Include="ZeroTypes\UX\Item.cs" />
     <Compile Include="ZeroTypes\UX\Color.cs" />
+    <Compile Include="ZeroTypes\UX\UXItem.cs" />
     <Compile Include="ZeroUML\ClassVertex.cs" />
     <Compile Include="Util\GeneralUtil.cs">
       <SubType>Code</SubType>
