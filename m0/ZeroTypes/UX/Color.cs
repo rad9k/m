@@ -8,14 +8,14 @@ using System.Threading.Tasks;
 
 namespace m0.ZeroTypes.UX
 {
-    public class Color: TypedVertex
+    public class Color: TypedEdge
     {
         static IVertex Red_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\Color\Red");
         static IVertex Green_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\Color\Green");
         static IVertex Blue_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\Color\Blue");
         static IVertex Opacity_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\Color\Opacity");
 
-        public Color(IVertex vertex) : base(vertex) { }
+        public Color(IEdge edge) : base(edge) { }
 
         public int Red
         {

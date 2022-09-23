@@ -8,14 +8,14 @@ using System.Threading.Tasks;
 
 namespace m0.ZeroTypes.UX
 {
-    public class Item: TypedVertex
+    public class Item: TypedEdge
     {
         static IVertex BaseEdge_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\HasBaseEdge\BaseEdge");
         static IVertex Item_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\Item\Item");
         static IVertex UXItem_type = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\UXItem");
 
 
-        public Item(IVertex vertex) : base(vertex) { }
+        public Item(IEdge edge) : base(edge) { }
 
         public IVertex BaseEdge
         {
@@ -43,7 +43,13 @@ namespace m0.ZeroTypes.UX
                 IList<Item> ret = new List<Item>();
 
                 foreach (IEdge e in list)
-                    ret.Add(new Item(e.To));
+                {
+                    Item i = (Item)TypedEdge.Get(e.To);
+
+                    if (i == null)
+                        i = new Item(e);
+                    ret.Add(i);
+                }
 
                 return ret;
             }
@@ -59,7 +65,14 @@ namespace m0.ZeroTypes.UX
 
         public UXItem AddItem_UXItem(IVertex typeVertex)
         {
-            IVertex v = 
+            IEdge newEdge = VertexOperations.AddInstanceAndReturnEdge(Vertex, typeVertex, Item_meta);
+
+            return new UXItem(newEdge);
+        }
+
+        public void RemoveItem(Item item)
+        {
+            Vertex.DeleteEdge(item.Edge);
         }
 
     }

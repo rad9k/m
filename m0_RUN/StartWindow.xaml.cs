@@ -4,6 +4,7 @@ using m0.Graph.ExecutionFlow;
 using m0.UIWpf.Commands;
 using m0.ZeroCode;
 using m0.ZeroTypes;
+using m0.ZeroTypes.UX;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -74,7 +75,7 @@ namespace m0
 
             IVertex e = r.Get(false, "examples");
 
-            IVertex c = VertexOperations.AddInstance(e, r.Get(false, @"System\Meta\ZeroTypes\UX\Color"));
+            IEdge c = VertexOperations.AddInstanceAndReturnEdge(e, r.Get(false, @"System\Meta\ZeroTypes\UX\Color"));
 
             ZeroTypes.UX.Color clr = new ZeroTypes.UX.Color(c);
 
@@ -84,6 +85,16 @@ namespace m0
             int opacity = clr.Opacity;
 
             clr.Opacity = 150;
+
+            IEdge i_e = VertexOperations.AddInstanceAndReturnEdge(e, r.Get(false, @"System\Meta\ZeroTypes\UX\UXItem"));
+
+            UXItem i = new UXItem(i_e);
+
+            for (int x = 0; x < 10; x++)
+                i.AddItem_UXItem().Vertex.Value = x;
+
+            for (int x = 0; x < 10; x++)
+                i.AddItem_UXItem(r.Get(false, @"System\Meta\ZeroTypes\UX\UXAggregator")).Vertex.Value = x;
         }
 
         void ExtraRun6()

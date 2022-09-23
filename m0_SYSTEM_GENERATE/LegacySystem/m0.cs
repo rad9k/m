@@ -2712,8 +2712,8 @@ namespace m0
                 +"Class:Color{Attribute:Red{MinValue:0,MaxValue:255,$DefaultValue:0,$MinCardinality:1,$MaxCardinality:1},Attribute:Green{MinValue:0,MaxValue:255,$DefaultValue:0,$MinCardinality:1,$MaxCardinality:1},Attribute:Blue{MinValue:0,MaxValue:255,$DefaultValue:0,$MinCardinality:1,$MaxCardinality:1},Attribute:Opacity{MinValue:0,MaxValue:255,$MinCardinality:0,$MaxCardinality:1}}"
                 +",Class:HasColor{Attribute:Color{$MinCardinality:0,$MaxCardinality:1}}"
                 + ",Class:Item{Aggregation:Item{$MinCardinality:0,$MaxCardinality:-1}}"
-                + ",Class:UXItem{Attribute:Scale{$MinCardinality:1,$MaxCardinality:1,$DisplayLarger:,$DefaultValue:100},Attribute:DesignMode{$MinCardinality:0,$MaxCardinality:1},Attribute:Size{$MinCardinality:0,$MaxCardinality:1},Attribute:Position{$MinCardinality:0,$MaxCardinality:1},Attribute:Layout{$MinCardinality:0,$MaxCardinality:1},Attribute:BackgroundColor{$MinCardinality:0,$MaxCardinality:1},Attribute:ForegroundColor{$MinCardinality:0,$MaxCardinality:1},Attribute:BorderColor{$MinCardinality:0,$MaxCardinality:1},Attribute:BorderSize{$MinCardinality:0,$MaxCardinality:1}}"
-                + ",Class:UxAggregator{Attribute:IsExpanded{$MinCardinality:1,$MaxCardinality:1,$DefaultValue:True},Attribute:CollapsedSize{$MinCardinality:0,$MaxCardinality:1},Attribute:ExpandedSize{$MinCardinality:0,$MaxCardinality:1}}"
+                + ",Class:UXItem{Attribute:Scale{$MinCardinality:1,$MaxCardinality:1,$DisplayLarger:,$DefaultValue:100},Attribute:DesignMode{$MinCardinality:0,$MaxCardinality:1},Attribute:Size{$MinCardinality:0,$MaxCardinality:1},Attribute:Position{$MinCardinality:0,$MaxCardinality:1},Attribute:Layout{$MinCardinality:0,$MaxCardinality:1},Attribute:BackgroundColor{$MinCardinality:0,$MaxCardinality:1},Attribute:ForegroundColor{$MinCardinality:0,$MaxCardinality:1},Attribute:BorderColor{$MinCardinality:0,$MaxCardinality:1},Attribute:BorderSize{$MinCardinality:0,$MaxCardinality:1},Attribute:Margin{$MinCardinality:0,$MaxCardinality:1}}"
+                + ",Class:UXAggregator{Attribute:IsExpanded{$MinCardinality:1,$MaxCardinality:1,$DefaultValue:True},Attribute:CollapsedSize{$MinCardinality:0,$MaxCardinality:1},Attribute:ExpandedSize{$MinCardinality:0,$MaxCardinality:1}}"
                 + ",Class:Size{Attribute:Width,Attribute:Height}"
                 + ",Class:Position{Attribute:X,Attribute:Y}"
                 + ",Enum:LayoutTypeEnum{EnumValue:Vertical,EnumValue:Horizontal,EnumValue:Wrap,EnumValue:Manual,EnumValue:Auto}}}");
@@ -2796,22 +2796,29 @@ namespace m0
                 LegacySystem.Graph.EasyVertex.Get(sm, false, @"*$EdgeTarget"),
                 LegacySystem.Graph.EasyVertex.Get(sm, false, @"ZeroTypes\UX\Color"));
 
-
             LegacySystem.Graph.EasyVertex.Get(smz, false, @"UX\UXItem\BorderSize").AddEdge(
                 LegacySystem.Graph.EasyVertex.Get(sm, false, @"*$EdgeTarget"),
                 LegacySystem.Graph.EasyVertex.Get(sm, false, @"ZeroTypes\Float"));
 
-            // UxAggregator
+            LegacySystem.Graph.EasyVertex.Get(smz, false, @"UX\UXItem\Margin").AddEdge(
+                 LegacySystem.Graph.EasyVertex.Get(sm, false, @"*$EdgeTarget"),
+                 LegacySystem.Graph.EasyVertex.Get(sm, false, @"ZeroTypes\Float"));
 
-            LegacySystem.Graph.EasyVertex.Get(smz, false, @"UX\UxAggregator\IsExpanded").AddEdge(
+            // UXAggregator
+
+            LegacySystem.Graph.EasyVertex.Get(smz, false, @"UX\UXAggregator").AddEdge(
+                LegacySystem.Graph.EasyVertex.Get(sm, false, @"*$Inherits"),
+                LegacySystem.Graph.EasyVertex.Get(sm, false, @"ZeroTypes\UX\UXItem"));
+
+            LegacySystem.Graph.EasyVertex.Get(smz, false, @"UX\UXAggregator\IsExpanded").AddEdge(
                 LegacySystem.Graph.EasyVertex.Get(sm, false, @"*$EdgeTarget"),
                 LegacySystem.Graph.EasyVertex.Get(sm, false, @"ZeroTypes\Boolean"));
 
-            LegacySystem.Graph.EasyVertex.Get(smz, false, @"UX\UxAggregator\CollapsedSize").AddEdge(
+            LegacySystem.Graph.EasyVertex.Get(smz, false, @"UX\UXAggregator\CollapsedSize").AddEdge(
                 LegacySystem.Graph.EasyVertex.Get(sm, false, @"*$EdgeTarget"),
                 LegacySystem.Graph.EasyVertex.Get(sm, false, @"ZeroTypes\UX\Size"));
 
-            LegacySystem.Graph.EasyVertex.Get(smz, false, @"UX\UxAggregator\ExpandedSize").AddEdge(
+            LegacySystem.Graph.EasyVertex.Get(smz, false, @"UX\UXAggregator\ExpandedSize").AddEdge(
                 LegacySystem.Graph.EasyVertex.Get(sm, false, @"*$EdgeTarget"),
                 LegacySystem.Graph.EasyVertex.Get(sm, false, @"ZeroTypes\UX\Size"));
 
