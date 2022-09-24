@@ -43,18 +43,9 @@ namespace m0.ZeroTypes.UX
                 IList<Item> ret = new List<Item>();
 
                 foreach (IEdge e in list)
-                {
-                    Item i = (Item)TypedEdge.Get(e.To);
-
-                    if (i == null)
-                        i = new Item(e);
-                    ret.Add(i);
-                }
+                    ret.Add((Item)TypedEdge.Get(e, typeof(Item)));
 
                 return ret;
-            }
-            set
-            {
             }
         }
 

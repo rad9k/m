@@ -309,9 +309,10 @@
     <Compile Include="ZeroCode\ZeroCodeExecutonUtil.cs" />
     <Compile Include="ZeroCode\ZeroCodeView.cs" />
     <Compile Include="ZeroTypes\ColorType.cs" />
-    <Compile Include="ZeroTypes\TypedEdgecs.cs" />
+    <Compile Include="ZeroTypes\TypedEdge.cs" />
     <Compile Include="ZeroTypes\UX\Item.cs" />
     <Compile Include="ZeroTypes\UX\Color.cs" />
+    <Compile Include="ZeroTypes\UX\LayoutTypeEnum.cs" />
     <Compile Include="ZeroTypes\UX\Position.cs" />
     <Compile Include="ZeroTypes\UX\Size.cs" />
     <Compile Include="ZeroTypes\UX\UXItem.cs" />
