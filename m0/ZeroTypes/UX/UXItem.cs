@@ -111,18 +111,13 @@ namespace m0.ZeroTypes.UX
         {
             get
             {
-                IVertex val = GraphUtil.GetQueryOutFirst(Vertex, "Layout", null);                
+                IVertex val = GraphUtil.GetQueryOutFirst(Vertex, "Layout", null);
 
-                return LayoutTypeEnumHelper.
+                return LayoutTypeEnumHelper.GetEnum(val);
             }
             set
             {
-                IVertex val = GraphUtil.GetQueryOutFirst(Vertex, "Scale", null);
-
-                if (val == null)
-                    val = Vertex.AddVertex(Scale_meta, value);
-                else
-                    val.Value = value;
+                GraphUtil.CreateOrReplaceEdge(Vertex, Layout_meta, LayoutTypeEnumHelper.GetVertex(value));                
             }
         }
 

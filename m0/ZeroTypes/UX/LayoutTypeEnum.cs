@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace m0.ZeroTypes.UX
 {
-    enum LayoutTypeEnum { Vertical, Horizontal, Wrap, Manual, Auto }
+    public enum LayoutTypeEnum { Vertical, Horizontal, Wrap, Manual, Auto }
 
     class LayoutTypeEnumHelper
     {
