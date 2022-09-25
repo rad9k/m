@@ -315,6 +315,7 @@
     <Compile Include="ZeroTypes\UX\LayoutTypeEnum.cs" />
     <Compile Include="ZeroTypes\UX\Position.cs" />
     <Compile Include="ZeroTypes\UX\Size.cs" />
+    <Compile Include="ZeroTypes\UX\UXAggregator.cs" />
     <Compile Include="ZeroTypes\UX\UXItem.cs" />
     <Compile Include="ZeroUML\ClassVertex.cs" />
     <Compile Include="Util\GeneralUtil.cs">
