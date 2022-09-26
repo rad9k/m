@@ -75,7 +75,7 @@ namespace m0.ZeroTypes.UX
         {
             get
             {
-                IEdge val = GraphUtil.GetQueryInFirstEdge(Vertex, "Size", null);
+                IEdge val = GraphUtil.GetQueryOutFirstEdge(Vertex, "Size", null);
 
                 if (val == null)
                     return null;
@@ -93,7 +93,7 @@ namespace m0.ZeroTypes.UX
         {
             get
             {
-                IEdge val = GraphUtil.GetQueryInFirstEdge(Vertex, "Position", null);
+                IEdge val = GraphUtil.GetQueryOutFirstEdge(Vertex, "Position", null);
 
                 if (val == null)
                     return null;
@@ -125,7 +125,7 @@ namespace m0.ZeroTypes.UX
         {
             get
             {
-                IEdge val = GraphUtil.GetQueryInFirstEdge(Vertex, "BackgroundColor", null);
+                IEdge val = GraphUtil.GetQueryOutFirstEdge(Vertex, "BackgroundColor", null);
 
                 if (val == null)
                     return null;
@@ -143,7 +143,7 @@ namespace m0.ZeroTypes.UX
         {
             get
             {
-                IEdge val = GraphUtil.GetQueryInFirstEdge(Vertex, "ForegroundColor", null);
+                IEdge val = GraphUtil.GetQueryOutFirstEdge(Vertex, "ForegroundColor", null);
 
                 if (val == null)
                     return null;
@@ -161,7 +161,7 @@ namespace m0.ZeroTypes.UX
         {
             get
             {
-                IEdge val = GraphUtil.GetQueryInFirstEdge(Vertex, "BorderColor", null);
+                IEdge val = GraphUtil.GetQueryOutFirstEdge(Vertex, "BorderColor", null);
 
                 if (val == null)
                     return null;

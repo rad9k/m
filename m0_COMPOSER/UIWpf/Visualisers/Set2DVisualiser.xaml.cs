@@ -584,7 +584,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
         {            
             foreach (IEdge e in edges)
             {
-                IEdge edge = Edge.GetIEdgeByEdgeVertex(e.To);
+                IEdge edge = EdgeHelper.GetIEdgeByEdgeVertex(e.To);
 
                 IVertex v = edge.To;
 

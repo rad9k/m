@@ -515,7 +515,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             GraphUtil.DeleteEdgeByToVertex(VisualizedVertex, eventEdge.To);
 
-            Edge.DeleteVertexByEdgeTo(Vertex.Get(false, "SelectedEdges:"), eventEdge.To);            
+            EdgeHelper.DeleteVertexByEdgeTo(Vertex.Get(false, "SelectedEdges:"), eventEdge.To);            
         }
 
         protected void SetupScrollViewer()
@@ -1376,7 +1376,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
         protected void AddToSelectedEdges(IEdge edge)
         {
-            Edge.AddEdgeVertex(Vertex.Get(false, "SelectedEdges:"), edge);
+            EdgeHelper.AddEdgeVertex(Vertex.Get(false, "SelectedEdges:"), edge);
         }
 
         protected void SelectItem(IItem item)
@@ -1397,7 +1397,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
         {
             item.NoHighlight();
 
-            Edge.DeleteVertexByEdge(Vertex.Get(false, "SelectedEdges:"), item.BaseEdge);
+            EdgeHelper.DeleteVertexByEdge(Vertex.Get(false, "SelectedEdges:"), item.BaseEdge);
         }
 
         protected void ArrowUp_FromMoveOnItem_MouseDown(object sender, MouseButtonEventArgs e)
@@ -2059,7 +2059,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             GraphUtil.DeleteEdgeByToVertex(VisualizedVertex, eventEdge.To);
 
-            Edge.DeleteVertexByEdgeTo(Vertex.Get(false, "SelectedEdges:"), eventEdge.To);
+            EdgeHelper.DeleteVertexByEdgeTo(Vertex.Get(false, "SelectedEdges:"), eventEdge.To);
 
             //NeedToRebuildItemsDictionary_Down = true;
 

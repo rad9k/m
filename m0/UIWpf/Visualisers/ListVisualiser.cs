@@ -131,7 +131,7 @@ namespace m0.UIWpf.Visualisers
                 IVertex baseVertex = Vertex.Get(false, @"BaseEdge:\To:");
 
                 foreach (IEdge ee in ThisDataGrid.SelectedItems)
-                    Edge.AddEdgeVertex(sv, baseVertex, ee.Meta, ee.To); // becouse of possible FilterQuery
+                    EdgeHelper.AddEdgeVertex(sv, baseVertex, ee.Meta, ee.To); // becouse of possible FilterQuery
                                                                         // Edge.AddEdge(sv, ee);
 
                 ////////////////////////////////////////
@@ -352,7 +352,7 @@ namespace m0.UIWpf.Visualisers
                                 return null;
 
                             IVertex v = MinusZero.Instance.CreateTempVertex();
-                            Edge.AddEdgeVertexEdges(v, (IEdge)roww.Item);
+                            EdgeHelper.AddEdgeVertexEdges(v, (IEdge)roww.Item);
                             return v;
                         }
                 }

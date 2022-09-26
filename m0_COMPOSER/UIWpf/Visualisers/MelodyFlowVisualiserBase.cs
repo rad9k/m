@@ -684,7 +684,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             quant.Remove();
 
-            Edge.DeleteVertexByEdgeTo(Vertex.Get(false, "SelectedEdges:"), eventEdge.To);
+            EdgeHelper.DeleteVertexByEdgeTo(Vertex.Get(false, "SelectedEdges:"), eventEdge.To);
 
             NeedToRebuildItemsDictionary = true;
 

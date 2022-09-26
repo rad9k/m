@@ -46,10 +46,10 @@ namespace m0.UIWpf.Dialog
             Interaction.BeginInteractionWithGraph();
             ////////////////////////////////////////
 
-            IVertex metaBaseEdgeVertex = Edge.CreateTempEdgeVertex(
+            IVertex metaBaseEdgeVertex = EdgeHelper.CreateTempEdgeVertex(
                                            null,
                                            null,
-                                           Edge.CreateTempEdgeVertex(null,
+                                           EdgeHelper.CreateTempEdgeVertex(null,
                                                 null,
                                                 MinusZero.Instance.Empty));
 
@@ -63,10 +63,10 @@ namespace m0.UIWpf.Dialog
 
             //GraphUtil.ReplaceEdge(this.Meta.Vertex.Get(false, "BaseEdge:"),"To", MetaEdge);
 
-            IVertex toBaseEdgeVertex = Edge.CreateTempEdgeVertex(
+            IVertex toBaseEdgeVertex = EdgeHelper.CreateTempEdgeVertex(
                                            null,
                                            null,
-                                           Edge.CreateTempEdgeVertex(null,
+                                           EdgeHelper.CreateTempEdgeVertex(null,
                                                 null,
                                                 MinusZero.Instance.Empty));
 

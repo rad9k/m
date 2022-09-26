@@ -74,7 +74,7 @@ namespace m0.UIWpf
             if (defvis != null)
                 pc = (IPlatformClass)PlatformClass.CreatePlatformObject(defvis, e, parentVisualiser);
             else
-                pc = new StringViewVisualiser(Edge.CreateTempEdgeVertex(e), parentVisualiser);
+                pc = new StringViewVisualiser(EdgeHelper.CreateTempEdgeVertex(e), parentVisualiser);
             
             _this.Content = pc;
         }

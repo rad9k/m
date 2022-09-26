@@ -89,7 +89,7 @@ namespace m0.UIWpf
 
             DockPanel.SetDock(fe, Dock.Bottom);
 
-            IVertex baseEdgeVertex = Edge.CreateTempEdgeVertex(null, null, pc.Vertex);
+            IVertex baseEdgeVertex = EdgeHelper.CreateTempEdgeVertex(null, null, pc.Vertex);
 
             topRow = new WrapVisualiser(baseEdgeVertex, 0.6, pc.Vertex);            
 

@@ -211,7 +211,7 @@ namespace m0.UIWpf.Visualisers
 
                         ExecutionFlowHelper.GraphChangeWatchOff();
 
-                        Edge.AddEdgeVertexEdges(Vertex.Get(false, @"ToShowEdgesMeta:"), e);
+                        EdgeHelper.AddEdgeVertexEdges(Vertex.Get(false, @"ToShowEdgesMeta:"), e);
 
                         ExecutionFlowHelper.GraphChangeWatchOn();
                     }

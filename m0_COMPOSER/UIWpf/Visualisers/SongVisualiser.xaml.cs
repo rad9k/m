@@ -1044,7 +1044,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             
             GraphUtil.DeleteEdgeByToVertex(trackVertex, eventEdge.To);
 
-            Edge.DeleteVertexByEdgeTo(Vertex.Get(false, "SelectedEdges:"), eventEdge.To);
+            EdgeHelper.DeleteVertexByEdgeTo(Vertex.Get(false, "SelectedEdges:"), eventEdge.To);
 
             ////////////////////////////////////////
             Interaction.EndInteractionWithGraph();
@@ -1105,7 +1105,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             foreach (IEdge e in edges)
             {
-                IEdge edge = Edge.GetIEdgeByEdgeVertex(e.To);
+                IEdge edge = EdgeHelper.GetIEdgeByEdgeVertex(e.To);
 
                 IVertex v = edge.To;
 
@@ -1144,7 +1144,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             foreach (IEdge e in edges)
             {
-                IEdge edge = Edge.GetIEdgeByEdgeVertex(e.To);
+                IEdge edge = EdgeHelper.GetIEdgeByEdgeVertex(e.To);
 
                 IVertex v = edge.To;
 

@@ -120,7 +120,7 @@ namespace m0.ZeroTypes
                 if (baseEdge == null)
                     return CreatePlatformObject(Vertex, null as IVertex, _parentVisualiser);
                 else
-                    return CreatePlatformObject(Vertex, Edge.CreateTempEdgeVertex(baseEdge), _parentVisualiser);
+                    return CreatePlatformObject(Vertex, EdgeHelper.CreateTempEdgeVertex(baseEdge), _parentVisualiser);
             }
 
             public static IPlatformClass CreatePlatformObject(IVertex Vertex, IVertex baseEdgeVertex)

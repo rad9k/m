@@ -430,7 +430,7 @@ namespace m0.UIWpf.Visualisers.Diagram
 
             GraphUtil.CreateOrReplaceEdge(l, r.Get(false, @"System\Meta\Visualiser\DiagramInternal\DiagramLineBase\Definition"), diagramLineDefinition);
             
-            Edge.CreateOrReplaceEdgeVertexFromIEdgeByMeta(l, r.Get(false, @"System\Meta\ZeroTypes\HasBaseEdge\BaseEdge"), edge);
+            EdgeHelper.CreateOrReplaceEdgeVertexFromIEdgeByMeta(l, r.Get(false, @"System\Meta\ZeroTypes\HasBaseEdge\BaseEdge"), edge);
 
             AddDiagramLineObject(toItem, l);
 
@@ -690,7 +690,7 @@ namespace m0.UIWpf.Visualisers.Diagram
             Interaction.BeginInteractionWithGraph();
             //////////////////////////////////////// 
             
-            Edge.AddEdgeVertexEdgeByEdgeVertex(Diagram.Vertex.Get(false, "SelectedEdges:"), Vertex.Get(false, "BaseEdge:"));
+            EdgeHelper.AddEdgeVertexEdgeByEdgeVertex(Diagram.Vertex.Get(false, "SelectedEdges:"), Vertex.Get(false, "BaseEdge:"));
 
             ////////////////////////////////////////
             Interaction.EndInteractionWithGraph();

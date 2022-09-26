@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace m0.ZeroTypes
 {
-    public class ColorType
+    public class ColorHelper
     {
         static IVertex vColor = MinusZero.Instance.Root.Get(false, @"System\Meta\ZeroTypes\UX\Color");
         static IVertex vRed = MinusZero.Instance.Root.Get(false, @"System\Meta\ZeroTypes\UX\Color\Red");

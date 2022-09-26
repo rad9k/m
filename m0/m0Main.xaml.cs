@@ -48,7 +48,7 @@ namespace m0
             MinusZero.Instance.Initialize();
 
 
-            IVertex baseEdgeVertex = Edge.CreateTempEdgeVertex(null, null, MinusZero.Instance.Root);
+            IVertex baseEdgeVertex = EdgeHelper.CreateTempEdgeVertex(null, null, MinusZero.Instance.Root);
 
             TreeVisualiser stv = new TreeVisualiser(baseEdgeVertex, null);
 

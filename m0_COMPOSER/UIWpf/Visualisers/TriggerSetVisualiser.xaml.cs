@@ -419,7 +419,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
                 if (GeneralUtil.CompareStrings(e.Meta, "ClipboardCut"))
                     onlyCopy = false;
 
-                IEdge edge = Edge.GetIEdgeByEdgeVertex(e.To);
+                IEdge edge = EdgeHelper.GetIEdgeByEdgeVertex(e.To);
 
                 IVertex v = edge.To;
 
@@ -465,7 +465,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             foreach (IEdge e in edges)
             {
-                IEdge edge = Edge.GetIEdgeByEdgeVertex(e.To);
+                IEdge edge = EdgeHelper.GetIEdgeByEdgeVertex(e.To);
 
                 IVertex v = edge.To;
 

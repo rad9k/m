@@ -346,7 +346,7 @@ namespace m0.UIWpf.Visualisers
         {
             if (!FastMode)
             {
-                IVertex baseEdgeVertex = Edge.CreateTempEdgeVertex(null, null, v);
+                IVertex baseEdgeVertex = EdgeHelper.CreateTempEdgeVertex(null, null, v);
 
                 StringViewVisualiser s = new StringViewVisualiser(baseEdgeVertex, null);
 
@@ -684,13 +684,13 @@ namespace m0.UIWpf.Visualisers
                                // THIS GOES TO 
                                kvp.Value.Unselect();                               
 
-                               Edge.DeleteVertexByEdgeTo(sv, kvp.Key); 
+                               EdgeHelper.DeleteVertexByEdgeTo(sv, kvp.Key); 
                            }
                            else
                            {
                                kvp.Value.Select();
 
-                               Edge.AddEdgeVertexByToVertex(sv, kvp.Key);
+                               EdgeHelper.AddEdgeVertexByToVertex(sv, kvp.Key);
                            }
                        }
                        else
@@ -701,7 +701,7 @@ namespace m0.UIWpf.Visualisers
 
                            kvp.Value.Select();
 
-                           Edge.AddEdgeVertexByToVertex(sv, kvp.Key);                           
+                           EdgeHelper.AddEdgeVertexByToVertex(sv, kvp.Key);                           
                        }
 
                        ////////////////////////////////////////
@@ -820,7 +820,7 @@ namespace m0.UIWpf.Visualisers
                 if (VisualTreeHelper.HitTest(kvp.Value, TranslatePoint(p, kvp.Value)) != null)
                 {
                     IVertex v = MinusZero.Instance.CreateTempVertex();
-                    Edge.AddEdgeVertexEdgesOnlyTo(v, kvp.Value.baseVertex);
+                    EdgeHelper.AddEdgeVertexEdgesOnlyTo(v, kvp.Value.baseVertex);
                     vertexByLocationToReturn = v;
                 }
             }

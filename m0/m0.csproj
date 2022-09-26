@@ -135,6 +135,7 @@
     <Compile Include="Lib\LibUtil.cs" />
     <Compile Include="Lib\Std.cs" />
     <Compile Include="Lib\Sys.cs" />
+    <Compile Include="UIWpf\Visualisers\UXTestVisualiser.cs" />
     <Compile Include="UIWpf\Visualisers\UXVisualiser.cs" />
     <Compile Include="Util\MathUtil.cs" />
     <Compile Include="Store\FileSystem\AbstractFileSystemVertex.cs" />
@@ -308,8 +309,9 @@
     <Compile Include="ZeroCode\Helpers\EdgeKey_MetaTo.cs" />
     <Compile Include="ZeroCode\ZeroCodeExecutonUtil.cs" />
     <Compile Include="ZeroCode\ZeroCodeView.cs" />
-    <Compile Include="ZeroTypes\ColorType.cs" />
+    <Compile Include="ZeroTypes\ColorHelper.cs" />
     <Compile Include="ZeroTypes\TypedEdge.cs" />
+    <Compile Include="ZeroTypes\Edge.cs" />
     <Compile Include="ZeroTypes\UX\Item.cs" />
     <Compile Include="ZeroTypes\UX\Color.cs" />
     <Compile Include="ZeroTypes\UX\LayoutTypeEnum.cs" />
@@ -333,7 +335,7 @@
     <Compile Include="ZeroCode\ZeroCodeGraph2StringProcessing.cs" />
     <Compile Include="ZeroCode\ZeroCodeUtil.cs" />
     <Compile Include="ZeroTypes\DateTime.cs" />
-    <Compile Include="ZeroTypes\Edge.cs" />
+    <Compile Include="ZeroTypes\EdgeHelper.cs" />
     <Compile Include="ZeroTypes\PlatformClass.cs" />
     <Compile Include="ZeroTypes\VertexOperations.cs" />
     <Compile Include="ZeroUML\Instructions\ZeroUMLInstructionHelpers - Copy.cs" />

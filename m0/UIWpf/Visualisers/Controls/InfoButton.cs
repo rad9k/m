@@ -67,7 +67,7 @@ namespace m0.UIWpf.Visualisers.Controls
                     Interaction.BeginInteractionWithGraph();
                     ////////////////////////////////////////
                     
-                    Edge.ReplaceEdgeVertexEdges(v.Vertex.Get(false, "BaseEdge:"), BaseEdge);
+                    EdgeHelper.ReplaceEdgeVertexEdges(v.Vertex.Get(false, "BaseEdge:"), BaseEdge);
 
                     ////////////////////////////////////////
                     Interaction.EndInteractionWithGraph();
@@ -76,7 +76,7 @@ namespace m0.UIWpf.Visualisers.Controls
                 else
                 {
                     IVertex v2 = MinusZero.Instance.CreateTempVertex();
-                    Edge.AddEdgeVertexEdges(v2, BaseEdge);
+                    EdgeHelper.AddEdgeVertexEdges(v2, BaseEdge);
 
                     //BaseCommands.Open(v2,null); // want Form Visuliser always
                     BaseCommands.OpenFormVisualiser(v2);

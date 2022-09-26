@@ -138,7 +138,7 @@ namespace m0.UIWpf.Visualisers
                     Interaction.BeginInteractionWithGraph();
                     ////////////////////////////////////////
                     
-                    Edge.CopyAndReplaceEdgeVertexByEdgeVertex(v.Vertex, "BaseEdge", Vertex.Get(false, "BaseEdge:"));
+                    EdgeHelper.CopyAndReplaceEdgeVertexByEdgeVertex(v.Vertex, "BaseEdge", Vertex.Get(false, "BaseEdge:"));
 
                     ////////////////////////////////////////
                     Interaction.EndInteractionWithGraph();

@@ -52,7 +52,7 @@ namespace m0
         {            
             m0_RUN.Main.Run();
 
-            ExtraRun7();
+            ExtraRun8();
 
             ExtraRun6();
 
@@ -68,6 +68,34 @@ namespace m0
 
             Close();
         }
+
+        void ExtraRun8()
+        {
+            IVertex r = m0.MinusZero.Instance.root;
+
+
+            IVertex UXTest = r.Get(false, @"System\Meta\Visualiser\UXTest");
+
+            IVertex e = r.Get(false, "examples");
+
+            IVertex v = e.AddVertex(null, "A SAMPLE");
+
+            IEdge a_e = VertexOperations.AddInstanceAndReturnEdge(e, r.Get(false, @"System\Meta\ZeroTypes\UX\UXAggregator"));
+
+            UXAggregator a = new UXAggregator(a_e);
+
+            UXItem i1 = a.AddItem_UXAggregator(UXTest);
+
+            i1.Layout = LayoutTypeEnum.Manual;
+            i1.PositionCreate();
+            i1.Position.X = 100;
+            i1.Position.Y = 100;
+            i1.SizeCreate();
+            i1.Size.Width = 100;
+            i1.Size.Height = 100;
+
+        }
+
 
         void ExtraRun7()
         {
@@ -86,9 +114,43 @@ namespace m0
 
             clr.Opacity = 150;
 
-            IEdge i_e = VertexOperations.AddInstanceAndReturnEdge(e, r.Get(false, @"System\Meta\ZeroTypes\UX\UXItem"));
+            IEdge i_e = VertexOperations.AddInstanceAndReturnEdge(e, r.Get(false, @"System\Meta\ZeroTypes\UX\UXAggregator"));
 
-            UXItem i = new UXItem(i_e);
+            UXAggregator i = new UXAggregator(i_e);
+
+            i.BackgroundColorCreate();
+            i.BackgroundColor.Blue = 1;
+
+            i.BorderColorCreate();
+            i.BorderColor.Green = 2;
+
+            i.BorderSize = 3;
+
+            i.DesignMode = true;
+
+            i.ForegroundColorCreate();
+            i.ForegroundColor.Red = 4;
+
+            i.Layout = LayoutTypeEnum.Manual;
+
+            i.Margin = 4;
+
+            i.SizeCreate();
+            i.Size.Height = 50;
+            i.Size.Width = 500;
+
+            i.PositionCreate();
+            i.Position.X = 12;
+            i.Position.Y = 13;
+
+            i.ExpandedSizeCreate();
+            i.ExpandedSize.Width = 111;
+            i.ExpandedSize.Height = 222;
+
+            i.CollapsedSizeCreate();
+            i.CollapsedSize.Width = 333;
+            i.CollapsedSize.Height = 444;
+
 
             for (int x = 0; x < 10; x++)
                 i.AddItem_UXItem().Vertex.Value = x;
@@ -145,7 +207,7 @@ namespace m0
                 d.AddVertex(w, Math.Sin(((double)xx)/3));
             }
 
-            BaseCommands.OpenVisualiser(Edge.CreateTempEdgeVertex(null, null, data), r.Get(false, @"System\Meta\Visualiser\Set2D"));
+            BaseCommands.OpenVisualiser(EdgeHelper.CreateTempEdgeVertex(null, null, data), r.Get(false, @"System\Meta\Visualiser\Set2D"));
         }
 
         void ExtraRun5()

@@ -93,7 +93,7 @@ namespace m0.UIWpf.Visualisers
         protected override void OnMouseDown(MouseButtonEventArgs e)
         {
             if (e.ClickCount == 2)
-                BaseCommands.Open(Edge.CreateTempEdgeVertex(GetEdge()), null);            
+                BaseCommands.Open(EdgeHelper.CreateTempEdgeVertex(GetEdge()), null);            
         }
 
         protected override void OnMouseLeftButtonDown(MouseButtonEventArgs a)
@@ -246,7 +246,7 @@ namespace m0.UIWpf.Visualisers
             {
                 IList l = GeneralUtil.CreateAndCopyList(Items);
                 foreach (TreeVisualiserViewItem i in l)
-                    if (Edge.CompareIEdges(((IEdge)i.Tag), edge))
+                    if (EdgeHelper.CompareIEdges(((IEdge)i.Tag), edge))
                         Items.Remove(i);
             }
         }
@@ -388,7 +388,7 @@ namespace m0.UIWpf.Visualisers
         {
             IList l = GeneralUtil.CreateAndCopyList(Items);
             foreach (TreeVisualiserViewItem i in l)
-                if (Edge.CompareIEdges(((IEdge)i.Tag), edge))
+                if (EdgeHelper.CompareIEdges(((IEdge)i.Tag), edge))
                     Items.Remove(i);
         }
 
@@ -424,7 +424,7 @@ namespace m0.UIWpf.Visualisers
                 TreeVisualiserViewItem ii = (TreeVisualiserViewItem)i;
 
                 
-                if (Edge.FindEdgeVertexByToVertex(sv, ((IEdge)ii.Tag).To)!=null)                
+                if (EdgeHelper.FindEdgeVertexByToVertex(sv, ((IEdge)ii.Tag).To)!=null)                
                     ii.IsSelected = true;
                 else
                     ii.IsSelected = false;
@@ -453,9 +453,9 @@ namespace m0.UIWpf.Visualisers
                 GraphUtil.RemoveAllEdges_WhereEdgeIsEdge(sv);
 
             if (item.IsSelected)
-                Edge.AddEdgeVertex(sv, e);
+                EdgeHelper.AddEdgeVertex(sv, e);
             else
-                Edge.DeleteVertexByEdgeOnlyToVertex(sv, e);
+                EdgeHelper.DeleteVertexByEdgeOnlyToVertex(sv, e);
 
             ////////////////////////////////////////
             Interaction.EndInteractionWithGraph();
@@ -540,7 +540,7 @@ namespace m0.UIWpf.Visualisers
 
             IVertex sv = Vertex.GetAll(false, @"SelectedEdges:\{$Is:Edge}");
 
-            if (Edge.FindIEdgeVertexByIEdge(sv, e)!=null)
+            if (EdgeHelper.FindIEdgeVertexByIEdge(sv, e)!=null)
                 i.IsSelected = true;
 
             TurnOffSelectedVerticesUpdate = false;
@@ -601,7 +601,7 @@ namespace m0.UIWpf.Visualisers
               //  ((VertexBase)selectedEdges).CanFireChangeEvent = false;                        
 
             foreach (IEdge ee in Vertex.Get(false, @"BaseEdge:\To:"))
-                Edge.AddEdgeVertex(selectedEdges, ee);
+                EdgeHelper.AddEdgeVertex(selectedEdges, ee);
 
             //if (selectedEdges is VertexBase)
               //  ((VertexBase)selectedEdges).CanFireChangeEvent = true;            
@@ -661,7 +661,7 @@ namespace m0.UIWpf.Visualisers
                 if (VisualTreeHelper.HitTest(i, TranslatePoint(p, i)) != null)
                 {
                     IVertex v = MinusZero.Instance.CreateTempVertex();
-                    Edge.AddEdgeVertexEdges(v, (IEdge)i.Tag);
+                    EdgeHelper.AddEdgeVertexEdges(v, (IEdge)i.Tag);
                     vertexByLocationToReturn = v;
                 }
                     

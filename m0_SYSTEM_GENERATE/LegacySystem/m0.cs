@@ -3300,6 +3300,7 @@ namespace m0
                 "Class:ChordProgression{Attribute:ShowLabel{$MinCardinality:1,$MaxCardinality:1,$DefaultValue:True},Attribute:ShowArrowLines{$MinCardinality:1,$MaxCardinality:1,$DefaultValue:True}}," +
                 "Class:Song{Attribute:SnapToGrid{$MinCardinality:1,$MaxCardinality:1},Attribute:ShowLabel{$MinCardinality:1,$MaxCardinality:1,$DefaultValue:True},Attribute:ShowArrowLines{$MinCardinality:1,$MaxCardinality:1,$DefaultValue:True},Attribute:ShowSnapLines{$MinCardinality:1,$MaxCardinality:1,$DefaultValue:True},Attribute:ShowToolbarNames{$MinCardinality:1,$MaxCardinality:1,$DefaultValue:False}}," +
                 "Class:UX," +
+                "Class:UXTest," +
                 "Class:Test}");
 
             sm.Get(false, @"Visualiser\BaseEdgeTarget").AddEdge(sm.Get(false, "?$Inherits"), sm.Get(false, @"ZeroTypes\EnumBase"));
@@ -3572,6 +3573,11 @@ namespace m0
             sm.Get(false, @"Visualiser\Test").AddVertex(sm.Get(false, "?$PlatformClassName"), @"m0.UIWpf.Visualisers.TestVisualiser, m0, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null");
             sm.Get(false, @"Visualiser\Test").AddEdge(sm.Get(false, @"?$Is"), sm.Get(false, @"ZeroUML\Class"));
             sm.Get(false, @"Visualiser\Test").AddEdge(sm.Get(false, @"Visualiser\BaseEdgeTarget"), sm.Get(false, @"Visualiser\BaseEdgeTarget\Any"));
+
+            sm.Get(false, @"Visualiser\UXTest").AddEdge(sm.Get(false, "?$Inherits"), sm.Get(false, @"ZeroTypes\UX\UXItem"));
+            sm.Get(false, @"Visualiser\UXTest").AddVertex(sm.Get(false, "?$PlatformClassName"), @"m0.UIWpf.Visualisers.UXTestVisualiser, m0, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null");
+            sm.Get(false, @"Visualiser\UXTest").AddEdge(sm.Get(false, @"?$Is"), sm.Get(false, @"ZeroUML\Class"));
+            sm.Get(false, @"Visualiser\UXTest").AddEdge(sm.Get(false, @"Visualiser\BaseEdgeTarget"), sm.Get(false, @"Visualiser\BaseEdgeTarget\Any"));
         }
 
         void CreateSystemMetaMethodVisualiser()
@@ -5219,15 +5225,15 @@ namespace m0
 
             IVertex Colors = UX.AddVertex(null, "Colors");
 
-            ColorType.AddColor(Colors, "White", 255, 255, 255, 255);
-            ColorType.AddColor(Colors, "Black", 0, 0, 0, 255);
-            ColorType.AddColor(Colors, "Gray", 127, 127, 127, 255);
-            ColorType.AddColor(Colors, "LightGray", 160, 160, 160, 255);
-            ColorType.AddColor(Colors, "VeryLightGray", 200, 200, 200, 255);
-            ColorType.AddColor(Colors, "VeryVeryLightGray", 220, 220, 220, 255);            
+            ColorHelper.AddColor(Colors, "White", 255, 255, 255, 255);
+            ColorHelper.AddColor(Colors, "Black", 0, 0, 0, 255);
+            ColorHelper.AddColor(Colors, "Gray", 127, 127, 127, 255);
+            ColorHelper.AddColor(Colors, "LightGray", 160, 160, 160, 255);
+            ColorHelper.AddColor(Colors, "VeryLightGray", 200, 200, 200, 255);
+            ColorHelper.AddColor(Colors, "VeryVeryLightGray", 220, 220, 220, 255);            
 
             for (int x = 0; x < 12; x++)
-                ColorType.AddColor(Colors, "Gray" + x, x * 23, x * 23, x * 23, 255);
+                ColorHelper.AddColor(Colors, "Gray" + x, x * 23, x * 23, x * 23, 255);
 
             var baseColors = new Dictionary<string, int[]> {
                 ["Red"] = new int[] {255, 0, 0},
@@ -5251,16 +5257,16 @@ namespace m0
             };
 
             foreach (var de in baseColors)
-                ColorType.AddColor(Colors, de.Key, de.Value[0], de.Value[1], de.Value[2], 255);
+                ColorHelper.AddColor(Colors, de.Key, de.Value[0], de.Value[1], de.Value[2], 255);
 
             foreach (var de in baseColors)
-                ColorType.AddColor(Colors, "Light"+de.Key, ScaleUp(de.Value[0], 0.3), ScaleUp(de.Value[1], 0.3), ScaleUp(de.Value[2], 0.3), 255);
+                ColorHelper.AddColor(Colors, "Light"+de.Key, ScaleUp(de.Value[0], 0.3), ScaleUp(de.Value[1], 0.3), ScaleUp(de.Value[2], 0.3), 255);
 
             foreach (var de in baseColors)
-                ColorType.AddColor(Colors, "VeryLight"+de.Key, ScaleUp(de.Value[0], 0.6), ScaleUp(de.Value[1], 0.6), ScaleUp(de.Value[2], 0.6), 255);
+                ColorHelper.AddColor(Colors, "VeryLight"+de.Key, ScaleUp(de.Value[0], 0.6), ScaleUp(de.Value[1], 0.6), ScaleUp(de.Value[2], 0.6), 255);
 
             foreach (var de in baseColors)
-                ColorType.AddColor(Colors, "VeryVeryLight"+de.Key, ScaleUp(de.Value[0], 0.8), ScaleUp(de.Value[1], 0.8), ScaleUp(de.Value[2], 0.8), 255);
+                ColorHelper.AddColor(Colors, "VeryVeryLight"+de.Key, ScaleUp(de.Value[0], 0.8), ScaleUp(de.Value[1], 0.8), ScaleUp(de.Value[2], 0.8), 255);
 
         }
 

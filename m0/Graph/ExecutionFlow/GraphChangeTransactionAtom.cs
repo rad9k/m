@@ -152,7 +152,7 @@ namespace m0.Graph.ExecutionFlow
                     break;
 
                 case AtomGraphChangeTypeEnum.EdgeAdded:
-                    IVertex edgeVertex = ZeroTypes.Edge.CreateTempEdgeVertex(Edge);
+                    IVertex edgeVertex = ZeroTypes.EdgeHelper.CreateTempEdgeVertex(Edge);
 
                     switch (edgeDirection)
                     {
@@ -177,7 +177,7 @@ namespace m0.Graph.ExecutionFlow
                     break;
 
                 case AtomGraphChangeTypeEnum.EdgeRemoved:
-                    IVertex edgeVertex2 = ZeroTypes.Edge.CreateTempEdgeVertex(Edge);
+                    IVertex edgeVertex2 = ZeroTypes.EdgeHelper.CreateTempEdgeVertex(Edge);
 
                     switch (edgeDirection)
                     {
@@ -202,7 +202,7 @@ namespace m0.Graph.ExecutionFlow
                     break;
 
                 case AtomGraphChangeTypeEnum.OutputEdgeDisposed:
-                    IVertex edgeVertex3 = ZeroTypes.Edge.CreateTempEdgeVertex(Edge.From, Edge.Meta, null);
+                    IVertex edgeVertex3 = ZeroTypes.EdgeHelper.CreateTempEdgeVertex(Edge.From, Edge.Meta, null);
                     
                     eventVertex.AddEdge(GraphChangeEvent_ChangedVertex_meta, ChangedVertex);
                     eventVertex.AddEdge(GraphChangeEvent_Type_meta, GraphChangeEnum_OutputEdgeDisposed_meta);

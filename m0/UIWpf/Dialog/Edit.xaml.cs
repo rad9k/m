@@ -50,7 +50,7 @@ namespace m0.UIWpf.Dialog
             Interaction.BeginInteractionWithGraph();
             ////////////////////////////////////////
 
-            IVertex baseEdgeVertex = Edge.CreateTempEdgeVertex(null, null, baseVertex);
+            IVertex baseEdgeVertex = EdgeHelper.CreateTempEdgeVertex(null, null, baseVertex);
 
             FormVisualiser = new FormVisualiser(baseEdgeVertex, null);
 

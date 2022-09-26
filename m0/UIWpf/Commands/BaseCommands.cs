@@ -394,7 +394,7 @@ namespace m0.UIWpf.Commands
 
         public static IVertex OpenVisualiserSelectedBase(IVertex baseVertex, IVertex inputVertex)
         {
-            IVertex baseEdgeVertex = Edge.CreateTempEdgeVertex(null, baseVertex.Get(false, "Meta:"), baseVertex.Get(false, "To:"));
+            IVertex baseEdgeVertex = EdgeHelper.CreateTempEdgeVertex(null, baseVertex.Get(false, "Meta:"), baseVertex.Get(false, "To:"));
 
             IPlatformClass pc = (IPlatformClass)PlatformClass.CreatePlatformObject(inputVertex.Get(false, "VisualiserClass:"), baseEdgeVertex);
 

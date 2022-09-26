@@ -522,7 +522,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
                 if (GeneralUtil.CompareStrings(e.Meta, "ClipboardCut"))
                     onlyCopy = false;
 
-                IEdge edge = Edge.GetIEdgeByEdgeVertex(e.To);
+                IEdge edge = EdgeHelper.GetIEdgeByEdgeVertex(e.To);
 
                 IVertex v = edge.To;
 
@@ -593,7 +593,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
                 if (triggerTime >= minPosition && triggerTime <= maxPosition)
                 {
-                    IVertex edgeVertex = Edge.CreateTempEdgeVertex(e);
+                    IVertex edgeVertex = EdgeHelper.CreateTempEdgeVertex(e);
 
                     IEdge newEdge = new EasyEdge(null, clipboardMeta, edgeVertex);
 
@@ -639,7 +639,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             foreach (IEdge e in edges)
             {
-                IEdge edge = Edge.GetIEdgeByEdgeVertex(e.To);
+                IEdge edge = EdgeHelper.GetIEdgeByEdgeVertex(e.To);
 
                 IVertex v = edge.To;
 

@@ -13,7 +13,7 @@ namespace m0.ZeroTypes.UX
         static IVertex BaseEdge_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\HasBaseEdge\BaseEdge");
         static IVertex Item_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\Item\Item");
         static IVertex UXItem_type = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\UXItem");
-
+        static IVertex UXAggregator_type = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\UXAggregator");
 
         public Item(IEdge edge) : base(edge) { }
 
@@ -59,6 +59,18 @@ namespace m0.ZeroTypes.UX
             IEdge newEdge = VertexOperations.AddInstanceAndReturnEdge(Vertex, typeVertex, Item_meta);
 
             return new UXItem(newEdge);
+        }
+
+        public UXItem AddItem_UXAggregator()
+        {
+            return AddItem_UXAggregator(UXAggregator_type);
+        }
+
+        public UXItem AddItem_UXAggregator(IVertex typeVertex)
+        {
+            IEdge newEdge = VertexOperations.AddInstanceAndReturnEdge(Vertex, typeVertex, Item_meta);
+
+            return new UXAggregator(newEdge);
         }
 
         public void RemoveItem(Item item)

@@ -532,7 +532,7 @@ namespace m0.Graph.ExecutionFlow
                 }
 
             foreach (ToExecuteHandler teh in toExecute)
-                if(teh.HandlerType == HandlerType && teh.Handlers == Handlers && Edge.CompareIEdges(teh.EventEdge, EventEdge)) // maybe this?
+                if(teh.HandlerType == HandlerType && teh.Handlers == Handlers && EdgeHelper.CompareIEdges(teh.EventEdge, EventEdge)) // maybe this?
                 /*if (/*(teh.HandlerType == HandlerType  // ???
                         || (teh.HandlerType == HandlerTypeEnum.AddEdgeHandler) ) // ???
                         && teh.Handlers == Handlers && Edge.CompareIEdges(teh.EventEdge,EventEdge)) // ???????*/  // WHAT IS GOOD HERE. I DO NOT KNOW
@@ -562,22 +562,22 @@ namespace m0.Graph.ExecutionFlow
                             switch (eventType.Value.ToString())
                             {
                                 case "OutputEdgeAdded":
-                                    AddToExecuteList(toExecute, HandlerTypeEnum.AddEdgeHandler, h, Edge.CreateIEdgeFromEdgeVertex(eventEdge));                                   
+                                    AddToExecuteList(toExecute, HandlerTypeEnum.AddEdgeHandler, h, EdgeHelper.CreateIEdgeFromEdgeVertex(eventEdge));                                   
                                     break;
 
                                 case "OutputEdgeRemoved":
-                                    AddToExecuteList(toExecute, HandlerTypeEnum.RemoveEdgeHandler, h, Edge.CreateIEdgeFromEdgeVertex(eventEdge));                                    
+                                    AddToExecuteList(toExecute, HandlerTypeEnum.RemoveEdgeHandler, h, EdgeHelper.CreateIEdgeFromEdgeVertex(eventEdge));                                    
                                     break;
 
                                 case "OutputEdgeDisposed":
-                                    AddToExecuteList(toExecute, HandlerTypeEnum.DisposeEdgeHandler, h, Edge.CreateIEdgeFromEdgeVertex(eventEdge));                                    
+                                    AddToExecuteList(toExecute, HandlerTypeEnum.DisposeEdgeHandler, h, EdgeHelper.CreateIEdgeFromEdgeVertex(eventEdge));                                    
                                     break;
                             }
                         else
                             if(h.AddEdgeMeta != null)                        
                                 foreach (string meta in h.AddEdgeMeta)                            
                                     if (eventEdgeMeta.Value.ToString() == meta)
-                                        AddToExecuteList(toExecute, HandlerTypeEnum.AddEdgeByMetaOrValueChangeHandler, h, Edge.CreateIEdgeFromEdgeVertex(eventEdge));                
+                                        AddToExecuteList(toExecute, HandlerTypeEnum.AddEdgeByMetaOrValueChangeHandler, h, EdgeHelper.CreateIEdgeFromEdgeVertex(eventEdge));                
                 }else
                      if (eventType.Value.ToString() == "ValueChange")
                      {

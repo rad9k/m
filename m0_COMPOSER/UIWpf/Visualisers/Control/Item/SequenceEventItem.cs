@@ -23,7 +23,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control.Item
             if (BaseEdge == null)
                 return;
 
-            IVertex edgeVertex = Edge.CreateTempEdgeVertex(BaseEdge.To.GetAll(false, @"Sequence:").FirstOrDefault());
+            IVertex edgeVertex = EdgeHelper.CreateTempEdgeVertex(BaseEdge.To.GetAll(false, @"Sequence:").FirstOrDefault());
 
             BaseCommands.Open(edgeVertex, null);
         }
@@ -33,7 +33,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control.Item
             if (BaseEdge == null)
                 return;
 
-            IVertex edgeVertex = Edge.CreateTempEdgeVertex(BaseEdge.To.GetAll(false, @"Sequence:").FirstOrDefault());
+            IVertex edgeVertex = EdgeHelper.CreateTempEdgeVertex(BaseEdge.To.GetAll(false, @"Sequence:").FirstOrDefault());
 
             BaseCommands.OpenFormVisualiser(edgeVertex);
         }

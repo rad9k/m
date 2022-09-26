@@ -57,10 +57,10 @@ namespace m0.UIWpf.Dialog
 
                     CreateInputStack();
 
-                    IVertex inputStackEdgeVertex = Edge.CreateTempEdgeVertex(
+                    IVertex inputStackEdgeVertex = EdgeHelper.CreateTempEdgeVertex(
                                                    null,
                                                    null,
-                        Edge.CreateTempEdgeVertex(inputStackEdge)); // ??
+                        EdgeHelper.CreateTempEdgeVertex(inputStackEdge)); // ??
 
                     localInputStackEdgeVertex = inputStackEdgeVertex;
 
@@ -118,9 +118,9 @@ namespace m0.UIWpf.Dialog
                     this.OutputStackEdgeControl.IsEnabled = true;
                     this.OutputStackContentControl.IsEnabled = true;                    
                     
-                    Edge.AddOrReplaceEdgeVertexEdges(OutputStackEdgeControl.Vertex.Get(false, @"BaseEdge:"), outputStackEdge);
+                    EdgeHelper.AddOrReplaceEdgeVertexEdges(OutputStackEdgeControl.Vertex.Get(false, @"BaseEdge:"), outputStackEdge);
 
-                    Edge.AddOrReplaceEdgeVertexEdges(OutputStackContentControl.Vertex.Get(false, @"BaseEdge:"), outputStackEdge);
+                    EdgeHelper.AddOrReplaceEdgeVertexEdges(OutputStackContentControl.Vertex.Get(false, @"BaseEdge:"), outputStackEdge);
 
                     break;
             }
@@ -137,7 +137,7 @@ namespace m0.UIWpf.Dialog
                                           InputStackEdgeControl.Vertex.Get(false, @"BaseEdge:\To:\Meta:"),
                                           InputStackEdgeControl.Vertex.Get(false, @"BaseEdge:\To:\To:"));
 
-            Edge.AddOrReplaceEdgeVertexEdges(InputStackContentControl.Vertex.Get(false, @"BaseEdge:"), inputStackEdge);
+            EdgeHelper.AddOrReplaceEdgeVertexEdges(InputStackContentControl.Vertex.Get(false, @"BaseEdge:"), inputStackEdge);
         }
 
         public ExecuteDialog(IVertex _baseVertex)

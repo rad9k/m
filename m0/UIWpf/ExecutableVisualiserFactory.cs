@@ -56,7 +56,7 @@ namespace m0.UIWpf
         {
             VoidVoidMethodVisualiser vvv = new VoidVoidMethodVisualiser();
 
-            Edge.ReplaceEdgeVertexEdges(vvv.Vertex.Get(false, "BaseEdge:"), baseEdge);
+            EdgeHelper.ReplaceEdgeVertexEdges(vvv.Vertex.Get(false, "BaseEdge:"), baseEdge);
 
             GraphUtil.CreateOrReplaceEdge(vvv.Vertex, executableVertexMeta, executableVertex);
 

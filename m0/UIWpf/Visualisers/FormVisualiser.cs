@@ -630,7 +630,7 @@ namespace m0.UIWpf.Visualisers
             
             if (isSet)
             {
-                IVertex baseEdgeVertex = Edge.CreateTempEdgeVertex(null, null, Vertex.Get(false, @"BaseEdge:\To:"));
+                IVertex baseEdgeVertex = EdgeHelper.CreateTempEdgeVertex(null, null, Vertex.Get(false, @"BaseEdge:\To:"));
 
                 TableVisualiser tableVisualiser = new TableVisualiser(baseEdgeVertex, Vertex);
 
@@ -654,7 +654,7 @@ namespace m0.UIWpf.Visualisers
             {
                 if (meta == BaseVertexEdge)
                 {
-                    IVertex baseEdgeVertex = Edge.CreateTempEdgeVertex(Vertex.GetAll(false, @"BaseEdge:\To:").FirstOrDefault());
+                    IVertex baseEdgeVertex = EdgeHelper.CreateTempEdgeVertex(Vertex.GetAll(false, @"BaseEdge:\To:").FirstOrDefault());
 
                     StringVisualiser sv = new StringVisualiser(baseEdgeVertex, this.Vertex);
 
@@ -785,7 +785,7 @@ namespace m0.UIWpf.Visualisers
                 if (VisualTreeHelper.HitTest(kvp.Value.MetaControl, TranslatePoint(p, kvp.Value.MetaControl)) != null)
                 {
                     IVertex v = MinusZero.Instance.CreateTempVertex();
-                    Edge.AddEdgeVertexEdgesOnlyTo(v, kvp.Key);
+                    EdgeHelper.AddEdgeVertexEdgesOnlyTo(v, kvp.Key);
                     return(v);
                 }
                

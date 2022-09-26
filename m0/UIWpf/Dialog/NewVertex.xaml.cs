@@ -40,10 +40,10 @@ namespace m0.UIWpf.Dialog
 
             Vertex = _Vertex;
 
-            IVertex schemaBaseEdgeVertex = Edge.CreateTempEdgeVertex(
+            IVertex schemaBaseEdgeVertex = EdgeHelper.CreateTempEdgeVertex(
                                null,
                                null,
-                               Edge.CreateTempEdgeVertex(null,
+                               EdgeHelper.CreateTempEdgeVertex(null,
                                     null,
                                     MinusZero.Instance.Empty));
 

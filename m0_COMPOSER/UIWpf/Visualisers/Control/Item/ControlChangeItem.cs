@@ -28,7 +28,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control.Item
             if (BaseEdge == null)
                 return;
 
-            IVertex edgeVertex = Edge.CreateTempEdgeVertex(BaseEdge);
+            IVertex edgeVertex = EdgeHelper.CreateTempEdgeVertex(BaseEdge);
 
             BaseCommands.OpenFormVisualiser(edgeVertex);
         }
