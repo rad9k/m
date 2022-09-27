@@ -102,5 +102,10 @@ namespace m0.ZeroTypes.UX
                     val.Value = value;
             }
         }
+
+        public System.Windows.Media.Color GetColor()
+        {
+            return ColorHelper.GetColorFromColorVertex(Vertex);
+        }
     }
 }

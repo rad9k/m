@@ -333,7 +333,7 @@ namespace m0.UIWpf.Visualisers.Diagram
                     {
                         string toTest_class = (string)e.To.Get(false, @"$EdgeTarget:").Value;
                         
-                        if(!InstructionHelpers.CheckIfIsOrInherits_I_WOULD_SAY_THAT_THIS_WAS_WRONG(toTest_baseVertex, toTest_class))
+                        if(!InstructionHelpers.CheckIfIsOrInherits(toTest_baseVertex, toTest_class))
                             canAdd = false;
                     }
 
@@ -344,7 +344,7 @@ namespace m0.UIWpf.Visualisers.Diagram
                     {
                         string toTest_class = (string)e.To.Get(false, @"$VertexTarget:").Value;
 
-                        if(!InstructionHelpers.CheckIfIsOrInherits_I_WOULD_SAY_THAT_THIS_WAS_WRONG(toTest_baseVertex, toTest_class))    
+                        if(!InstructionHelpers.CheckIfIsOrInherits(toTest_baseVertex, toTest_class))    
                             canAdd = false;
                     }
 

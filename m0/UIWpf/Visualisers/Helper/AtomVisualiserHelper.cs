@@ -16,7 +16,9 @@ using m0.UIWpf.Foundation;
 using m0.UIWpf.Commands;
 using m0.Graph.ExecutionFlow;
 using m0.User.Process.UX;
-
+using m0.UIWpf.UX;
+using m0.ZeroTypes.UX;
+using m0.ZeroCode.Helpers;
 
 namespace m0.UIWpf.Visualisers.Helper
 {
@@ -26,16 +28,16 @@ namespace m0.UIWpf.Visualisers.Helper
     {
         public bool ForceVertexChangeOff = false;
 
-        protected bool VisualiserAsBaseEdge = false;
+        protected bool IsUX = false;
 
-        protected IVisualiser visualiser;
-        protected FrameworkElement visualiserAsFrameworkElement;
+        protected IVisualiser Visualiser;
+        protected FrameworkElement VisualiserAsFrameworkElement;
 
-        protected IList<string> scopeQueries;
-        protected IList<GraphChangeFilterEnum> changeTypeFilter;
-        protected string scopeQueriesName;
+        protected IList<string> ScopeQueries;
+        protected IList<GraphChangeFilterEnum> ChangeTypeFilter;
+        protected string ScopeQueriesName;
 
-        public string visualiserName;
+        public string VisualiserName;
 
         protected bool dndSupport;
 
@@ -44,6 +46,8 @@ namespace m0.UIWpf.Visualisers.Helper
         public IEdge graphChangeListenerEdge;
 
         public IVertex Vertex;
+
+        public IVertex baseEdgeVertex;
 
         static IVertex baseEdge_meta;
 
@@ -117,44 +121,48 @@ namespace m0.UIWpf.Visualisers.Helper
             bool _dndSupport, 
             IList<string> _scopeQueries,
             string _scopeQueriesName,
-            IVertex baseEdgeVertex,
+            IVertex _baseEdgeVertex,
             UpdateBaseEdgeCallSchemeEnum _updateBaseEdgeCallSchema,            
             bool _visualiserAsBaseEdge)
         {
-            visualiser = _visualiser;
+            baseEdgeVertex = _baseEdgeVertex;
 
-            visualiserAsFrameworkElement = _visualiserAsFrameworkElement;
+            Visualiser = _visualiser;
 
-            VisualiserAsBaseEdge = _visualiserAsBaseEdge;
+            VisualiserAsFrameworkElement = _visualiserAsFrameworkElement;
+
+            IsUX = _visualiserAsBaseEdge;
 
             dndSupport = _dndSupport;
 
-            scopeQueries = _scopeQueries;
+            ScopeQueries = _scopeQueries;
 
             updateBaseEdgeCallSchema = _updateBaseEdgeCallSchema;
 
-            changeTypeFilter = new List<GraphChangeFilterEnum> {GraphChangeFilterEnum.ValueChange,
+            ChangeTypeFilter = new List<GraphChangeFilterEnum> {GraphChangeFilterEnum.ValueChange,
                      GraphChangeFilterEnum.OutputEdgeAdded,
                      GraphChangeFilterEnum.OutputEdgeRemoved,
                      GraphChangeFilterEnum.OutputEdgeDisposed};
 
-            scopeQueriesName = _scopeQueriesName;
+            ScopeQueriesName = _scopeQueriesName;
 
-            visualiser.VisualiserHelper = this;
+            Visualiser.VisualiserHelper = this;
 
             MinusZero mz = MinusZero.Instance;
 
-            visualiserName = _visualiserName + visualiser.GetHashCode();
+            VisualiserName = _visualiserName + Visualiser.GetHashCode();
 
             if (mz != null && mz.IsInitialized)
             {
                 IVertex vVertex;
 
-                if (VisualiserAsBaseEdge)
+                if (IsUX)
                 {
                     vVertex = baseEdgeVertex;
 
-                    visualiser.Vertex = vVertex;
+                    InitUX();
+
+                    Visualiser.Vertex = vVertex;
                 }
                 else
                 {
@@ -170,35 +178,37 @@ namespace m0.UIWpf.Visualisers.Helper
 
                     vVertex.AddExternalReference();
 
-                    visualiser.Vertex = vVertex;
+                    Visualiser.Vertex = vVertex;
 
-                    visualiser.Vertex.Value = visualiserName;
+                    Visualiser.Vertex.Value = VisualiserName;
+
+                    VisualisersList.AddVisualiser(Visualiser, parentVisualiser);
                 }
 
 
-                VisualisersList.AddVisualiser(visualiser, parentVisualiser);                
+                //VisualisersList.AddVisualiser(Visualiser, parentVisualiser); // no no                
 
 
-                visualiserAsFrameworkElement.Loaded += new RoutedEventHandler(visualiser.OnLoad);
+                VisualiserAsFrameworkElement.Loaded += new RoutedEventHandler(Visualiser.OnLoad);
 
                 if (dndSupport)
                 {
-                    visualiserAsFrameworkElement.PreviewMouseLeftButtonDown += dndPreviewMouseLeftButtonDown;
-                    visualiserAsFrameworkElement.PreviewMouseMove += dndPreviewMouseMove;
-                    visualiserAsFrameworkElement.Drop += dndDrop;
-                    visualiserAsFrameworkElement.AllowDrop = true;
+                    VisualiserAsFrameworkElement.PreviewMouseLeftButtonDown += dndPreviewMouseLeftButtonDown;
+                    VisualiserAsFrameworkElement.PreviewMouseMove += dndPreviewMouseMove;
+                    VisualiserAsFrameworkElement.Drop += dndDrop;
+                    VisualiserAsFrameworkElement.AllowDrop = true;
 
-                    visualiserAsFrameworkElement.MouseEnter += dndMouseEnter;
+                    VisualiserAsFrameworkElement.MouseEnter += dndMouseEnter;
                 }else
-                    visualiserAsFrameworkElement.AllowDrop = false;
+                    VisualiserAsFrameworkElement.AllowDrop = false;
             }
 
         }
 
         public void AddContextMenu()
         {
-            if (!WpfUtil.HasParentsGotContextMenu(visualiserAsFrameworkElement))
-                visualiserAsFrameworkElement.ContextMenu = new m0ContextMenu(visualiser);
+            if (!WpfUtil.HasParentsGotContextMenu(VisualiserAsFrameworkElement))
+                VisualiserAsFrameworkElement.ContextMenu = new m0ContextMenu(Visualiser);
         }        
 
         bool firstVertexChangeExecuted = false;
@@ -214,7 +224,7 @@ namespace m0.UIWpf.Visualisers.Helper
                 return exe.Stack;
             }
           
-            visualiser.UpdateVertex();          
+            Visualiser.UpdateVertex();          
 
             return exe.Stack;
         }        
@@ -227,27 +237,27 @@ namespace m0.UIWpf.Visualisers.Helper
             Vertex = value;
 
             IEdge graphChangeTriggerEdge = GraphChangeTrigger.AddTrigger(Vertex, 
-                scopeQueries, 
-                changeTypeFilter,
-                scopeQueriesName);
+                ScopeQueries, 
+                ChangeTypeFilter,
+                ScopeQueriesName);
 
-            graphChangeListenerEdge = ExecutionFlowHelper.AddListener_DotNetDelegate(graphChangeTriggerEdge.To, VertexChange, visualiserName);            
+            graphChangeListenerEdge = ExecutionFlowHelper.AddListener_DotNetDelegate(graphChangeTriggerEdge.To, VertexChange, VisualiserName);            
 
             if(updateBaseEdgeCallSchema != UpdateBaseEdgeCallSchemeEnum.OmmitFirst)
-                visualiser.UpdateVertex();
+                Visualiser.UpdateVertex();
         }
 
         public bool IsDisposed = false;
 
         public void DisposeAllChildVisualisers()
         {
-            foreach (IEdge e in visualiser.Vertex.GetAll(false, "Item:"))
+            foreach (IEdge e in Visualiser.Vertex.GetAll(false, "Item:"))
                 VisualisersList.GetVisualiser(e.To).Dispose();
         }
 
         public void DisposeAllChildVisualisersExceptWrap()
         {
-            foreach (IEdge e in visualiser.Vertex.GetAll(false, "Item:"))
+            foreach (IEdge e in Visualiser.Vertex.GetAll(false, "Item:"))
                 if(!GraphUtil.ExistQueryOut(e.To, "$Is", "Wrap"))
                     VisualisersList.GetVisualiser(e.To).Dispose();
         }        
@@ -258,7 +268,7 @@ namespace m0.UIWpf.Visualisers.Helper
             {
                 IsDisposed = true;
 
-                VisualisersList.RemoveVisualiser(visualiser);
+                VisualisersList.RemoveVisualiser(Visualiser);
 
                 GraphChangeTrigger.RemoveListener(graphChangeListenerEdge);
 
@@ -275,7 +285,7 @@ namespace m0.UIWpf.Visualisers.Helper
 
         protected virtual void dndPreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            dndStartPoint = e.GetPosition(visualiserAsFrameworkElement);
+            dndStartPoint = e.GetPosition(VisualiserAsFrameworkElement);
 
             MinusZero.Instance.IsGUIDragging = false;
 
@@ -287,7 +297,7 @@ namespace m0.UIWpf.Visualisers.Helper
 
         protected virtual void dndPreviewMouseMove(object sender, MouseEventArgs e)
         {
-            Point mousePos = e.GetPosition(visualiserAsFrameworkElement);
+            Point mousePos = e.GetPosition(VisualiserAsFrameworkElement);
             Vector diff = dndStartPoint - mousePos;
 
             if (hasButtonBeenDown && isDraggin == false && (e.LeftButton == MouseButtonState.Pressed) && (
@@ -305,9 +315,9 @@ namespace m0.UIWpf.Visualisers.Helper
                     dndVertex.AddExternalReference();
 
                     DataObject dragData = new DataObject("Vertex", dndVertex);
-                    dragData.SetData("DragSource", visualiser);
+                    dragData.SetData("DragSource", Visualiser);
 
-                    Dnd.DoDragDrop(visualiserAsFrameworkElement, dragData);
+                    Dnd.DoDragDrop(VisualiserAsFrameworkElement, dragData);
 
                     isDraggin = false;
                 }
@@ -316,12 +326,78 @@ namespace m0.UIWpf.Visualisers.Helper
 
         protected virtual void dndDrop(object sender, System.Windows.DragEventArgs e)
         {
-            Dnd.DoDrop(visualiser, Vertex.Get(false, @"BaseEdge:\To:"), e);
+            Dnd.DoDrop(Visualiser, Vertex.Get(false, @"BaseEdge:\To:"), e);
         }
 
         protected virtual void dndMouseEnter(object sender, MouseEventArgs e)
         {
             hasButtonBeenDown = false;
+        }
+
+        // UX
+
+        public void InitUX()
+        {
+            if (!(Visualiser is IUX))
+                return;
+
+            IUX iux = (IUX)Visualiser;
+
+            IEdge e = EdgeHelper.CreateIEdgeFromEdgeVertex(baseEdgeVertex);
+
+            if (e == null || e.To == null)
+                return;
+
+            IVertex visualiserVertex = e.To;
+
+            bool isUXItem = false;
+            bool isUXAggregator = false;
+
+            if (InstructionHelpers.CheckIfIsOrInherits(visualiserVertex, "UXItem"))
+                isUXItem = true;
+
+            if (InstructionHelpers.CheckIfIsOrInherits(visualiserVertex, "UXAggregator"))
+            {
+                isUXItem = false;
+                isUXAggregator = true;
+            }
+
+            if (isUXItem)
+                iux.uxItem = (UXItem)TypedEdge.Get(e, typeof(UXItem));
+
+            if (isUXAggregator)
+            {
+                iux.uxAggregator = (UXAggregator)TypedEdge.Get(e, typeof(UXAggregator));
+                iux.uxItem = (UXItem)iux.uxAggregator;
+            }
+        }
+
+        public void UpdateControl(FrameworkElement c, UXItem ui)
+        {
+            if (ui.Position != null)
+            {
+                Canvas.SetLeft(c, ui.Position.X);
+                Canvas.SetTop(c, ui.Position.Y);
+            }
+
+            if (ui.Size != null)
+            {
+                c.Width = ui.Size.Width;
+                c.Height = ui.Size.Height;
+            }
+        }
+
+        public void UpdateBorder(Border b, UXItem ui)
+        {
+            if (ui.BorderColor != null)
+                b.BorderBrush = new SolidColorBrush(ui.BorderColor.GetColor());
+
+            if (ui.BorderSize != 0)
+                b.BorderThickness = new Thickness(ui.BorderSize);
+
+            if (ui.BackgroundColor != null)
+                b.Background = new SolidColorBrush(ui.BackgroundColor.GetColor());
+
         }
     }
 }

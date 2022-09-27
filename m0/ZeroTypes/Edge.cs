@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace m0.ZeroTypes.UX
+namespace m0.ZeroTypes
 {
     public class Edge:TypedEdge
     {

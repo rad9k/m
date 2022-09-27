@@ -84,6 +84,8 @@ namespace m0
 
             UXAggregator a = new UXAggregator(a_e);
 
+            a.Vertex.Value = "VIS";
+
             UXItem i1 = a.AddItem_UXAggregator(UXTest);
 
             i1.Layout = LayoutTypeEnum.Manual;
@@ -94,6 +96,37 @@ namespace m0
             i1.Size.Width = 100;
             i1.Size.Height = 100;
 
+            i1.BackgroundColorCreate();
+            i1.BackgroundColor.Red = 100;
+
+            i1.ForegroundColorCreate();
+            i1.ForegroundColor.Blue = 255;
+            i1.ForegroundColor.Green = 255;
+
+            i1.BorderSize = 5;
+            i1.BorderColorCreate();
+            i1.BorderColor.Green = 100;
+
+            i1.BaseEdgeCreate();
+
+            i1.BaseEdge.To = v;
+
+            UXItem i2 = a.AddItem_UXAggregator(UXTest);
+
+            i2.Layout = LayoutTypeEnum.Manual;
+            i2.PositionCreate();
+            i2.Position.X = 300;
+            i2.Position.Y = 300;
+            i2.SizeCreate();
+            i2.Size.Width = 50;
+            i2.Size.Height = 50;
+
+            i2.BackgroundColorCreate();
+            i2.BackgroundColor.Blue = 100;
+
+            i2.BaseEdgeCreate();
+
+            i2.BaseEdge.To = v;
         }
 
 

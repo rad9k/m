@@ -11,6 +11,7 @@ using System.Windows.Shapes;
 using m0.UIWpf;
 using System.Windows.Media;
 using m0.Graph;
+using m0.ZeroTypes;
 
 namespace m0_COMPOSER.UIWpf.Visualisers.Control
 {
@@ -167,7 +168,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control
                 IVertex colorVertex = segment.BaseVertex.Get(false, "PitchColor:");
 
                 if (colorVertex != null)
-                    segment.Color = WpfUtil.GetColorFromColorVertex(colorVertex);
+                    segment.Color = ColorHelper.GetColorFromColorVertex(colorVertex);
 
                 //
 
@@ -176,7 +177,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control
                 if (noteBackgroundColorVertex != null)
                 {
                     segment.UseBackgroundColor = true;
-                    segment.BackgroundColor = WpfUtil.GetColorFromColorVertex(noteBackgroundColorVertex);
+                    segment.BackgroundColor = ColorHelper.GetColorFromColorVertex(noteBackgroundColorVertex);
                 }
 
 

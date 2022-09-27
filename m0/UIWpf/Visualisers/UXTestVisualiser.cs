@@ -18,23 +18,28 @@ using m0.Graph.ExecutionFlow;
 using m0.User.Process.UX;
 
 using m0.UIWpf.Visualisers.Helper;
+using m0.ZeroTypes.UX;
+using m0.UIWpf.UX;
 
 namespace m0.UIWpf.Visualisers
 {
-    public class UXTestVisualiser : TextBox, IVisualiser
+    public class UXTestVisualiser : Border, IVisualiser, IUX
     {
         public AtomVisualiserHelper VisualiserHelper { get; set; }        
 
         public UXTestVisualiser(IVertex baseEdgeVertex, IVertex parentVisualiser)
         {
-            this.AcceptsReturn = true;
-
             new AtomVisualiserHelper(parentVisualiser,
                 MinusZero.Instance.Root.Get(false, @"System\Meta\Visualiser\UXTest"), 
                 this, 
                 "UXTestVisualiser", 
                 this,
-                baseEdgeVertex);
+                false,
+                new List<string> { "", @"BaseEdge:\To:" },
+                "AtomVisualiser",
+                baseEdgeVertex,
+                UpdateBaseEdgeCallSchemeEnum.OmmitSecond,
+                true);
         }
 
         public void OnLoad(object sender, RoutedEventArgs e)
@@ -47,38 +52,6 @@ namespace m0.UIWpf.Visualisers
         protected override void OnDragEnter(DragEventArgs e) { } // Do not want standard base implemention, that prevents allow drop
 
         protected override void OnDragOver(DragEventArgs e) { } // Do not want standard base implemention, that prevents allow drop        
-
-        protected bool CanProceedUIUpdateEvent = true;
-
-        protected override void OnTextChanged(TextChangedEventArgs e)
-        {
-            if (!CanProceedUIUpdateEvent)
-                return;
-
-            base.OnTextChanged(e);
-
-            IVertex bv = Vertex.Get(false, @"BaseEdge:\To:");
-
-            ////////////////////////////////////////
-            Interaction.BeginInteractionWithGraph();
-            ////////////////////////////////////////
-
-            if (bv == null || bv == MinusZero.Instance.Empty)
-            {
-                IVertex from = Vertex.Get(false, @"BaseEdge:\From:");
-                IVertex meta = Vertex.Get(false, @"BaseEdge:\Meta:");
-
-                GraphUtil.SetVertexValue(from, meta, this.Text);
-
-                IsNull = false;
-            }
-            else
-                bv.Value = this.Text;
-
-            //////////////////////////////////////
-            Interaction.EndInteractionWithGraph();
-            //////////////////////////////////////
-        }
 
         bool _IsNull;
 
@@ -94,24 +67,6 @@ namespace m0.UIWpf.Visualisers
                 else
                     this.Background = (Brush)FindResource("0BackgroundBrush");
             }
-        }
-
-        public void UpdateVertex()
-        {
-            IVertex bv = Vertex.Get(false, @"BaseEdge:\To:");
-
-            if (bv != null && bv.Value != null && bv != MinusZero.Instance.Empty /*&& ((String)bv.Value) != "$Empty"*/)
-            {
-                CanProceedUIUpdateEvent = false;
-
-                this.Text = bv.Value.ToString();
-
-                CanProceedUIUpdateEvent = true;
-
-                IsNull = false;
-            }
-            else
-                IsNull = true;
         }
 
         public IVertex Vertex
@@ -138,6 +93,50 @@ namespace m0.UIWpf.Visualisers
         public FrameworkElement GetVisualElementByEdge(IVertex vertex)
         {
             throw new NotImplementedException();
+        }
+
+        // UX
+
+        IVertex baseEdgeTo;
+        Canvas canvas;
+
+        public UXItem uxItem { get; set; }
+        public UXAggregator uxAggregator { get; set; }
+
+        public void UpdateVertex()
+        {
+            baseEdgeTo = Vertex.Get(false, @"BaseEdge:\To:");
+
+            if (baseEdgeTo != null && baseEdgeTo.Value != null && baseEdgeTo != MinusZero.Instance.Empty /*&& ((String)bv.Value) != "$Empty"*/)
+            {
+                IsNull = false;
+
+                CreateUX();
+            }
+            else
+                IsNull = true;
+        }
+
+        void CreateUX()
+        {
+            if (IsNull)
+                return;
+
+            canvas = new Canvas();
+
+            this.Child = canvas;
+
+
+            Label l = new Label();
+
+            l.Content = baseEdgeTo.Value.ToString();
+
+            if (uxItem.ForegroundColor != null)
+                l.Foreground = new SolidColorBrush(uxItem.ForegroundColor.GetColor());
+
+            canvas.Children.Add(l);
+
+            VisualiserHelper.UpdateBorder(this, uxItem);
         }
     }
 }

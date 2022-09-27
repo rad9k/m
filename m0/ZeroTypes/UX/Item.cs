@@ -14,24 +14,34 @@ namespace m0.ZeroTypes.UX
         static IVertex Item_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\Item\Item");
         static IVertex UXItem_type = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\UXItem");
         static IVertex UXAggregator_type = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\UXAggregator");
+        static IVertex Edge_type = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\Edge");
 
         public Item(IEdge edge) : base(edge) { }
 
-        public IVertex BaseEdge
+        public Edge BaseEdge
         {
             get {
-                IVertex val = GraphUtil.GetQueryOutFirst(Vertex, "BaseEdge", null);
-
-                return val;
-            }
-            set {
-                IVertex val = GraphUtil.GetQueryOutFirst(Vertex, "BaseEdge", null);
+                IEdge val = GraphUtil.GetQueryOutFirstEdge(Vertex, "BaseEdge", null);
 
                 if (val == null)
-                    val = Vertex.AddVertex(BaseEdge_meta, value);
-                else
-                    val.Value = value;
+                    return null;
+
+                return (Edge)TypedEdge.Get(val, typeof(Edge));
             }
+        }
+
+        public Edge BaseEdgeCreate()
+        {
+            IEdge baseEdgeEdge = GraphUtil.GetQueryOutFirstEdge(Vertex, "BaseEdge", null);
+
+            if (baseEdgeEdge != null)
+                Vertex.DeleteEdge(baseEdgeEdge);
+
+            baseEdgeEdge = VertexOperations.AddInstanceAndReturnEdge(Vertex, Edge_type, BaseEdge_meta);
+
+            baseEdgeEdge.To.AddVertex(ZeroTypes.Edge.From_meta, ""); // from has 0..1 multiplicity
+
+            return new Edge(baseEdgeEdge);
         }
 
         public IList<Item> Items

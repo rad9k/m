@@ -68,7 +68,7 @@ namespace m0.ZeroCode.Helpers
             return false;
         }
 
-        public static bool CheckIfIsOrInherits_I_WOULD_SAY_THAT_THIS_WAS_WRONG(IVertex baseVertex, string value)
+        public static bool CheckIfIsOrInherits(IVertex baseVertex, string value)
         {
             IList<IEdge> allIs = InstructionHelpers.GetAllIs(baseVertex);
 
@@ -100,7 +100,7 @@ namespace m0.ZeroCode.Helpers
             if (is_v == null)
                 return true;
 
-            return CheckIfIsOrInherits_I_WOULD_SAY_THAT_THIS_WAS_WRONG(is_v, "AtomType");
+            return CheckIfIsOrInherits(is_v, "AtomType");
         }
 
         public static void CopyVertex(IEdge edgeToCopy, IVertex copyTo)

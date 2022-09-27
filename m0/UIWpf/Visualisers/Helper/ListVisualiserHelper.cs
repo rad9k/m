@@ -138,10 +138,10 @@ namespace m0.UIWpf.Visualisers.Helper
 
         public INoInEdgeInOutVertexVertex VertexChangeLogic(IExecution exe)
         {
-            if (IsVertexChangeOrEdgeAddedRemovedDisposedByMetaAndFrom(exe.Stack, visualiser.Vertex, "Scale"))
+            if (IsVertexChangeOrEdgeAddedRemovedDisposedByMetaAndFrom(exe.Stack, Visualiser.Vertex, "Scale"))
                 listVisualiser.ScaleChange();
 
-            if (IsVertexChangeOrEdgeAddedRemovedDisposedByMetaAndFrom(exe.Stack, visualiser.Vertex, "SelectedEdges")
+            if (IsVertexChangeOrEdgeAddedRemovedDisposedByMetaAndFrom(exe.Stack, Visualiser.Vertex, "SelectedEdges")
                 || IsEdgeAddedRemovedDiscardedFrom(exe.Stack, Vertex.Get(false, @"SelectedEdges:")))
                 listVisualiser.SelectedVerticesUpdated();
 
@@ -154,7 +154,7 @@ namespace m0.UIWpf.Visualisers.Helper
                 bool needToUpdateBaseEdge = false;
 
                 foreach (string meta in listVisualiser.MetaTriggeringUpdateVertex)
-                    if (IsVertexChangeOrEdgeAddedRemovedDisposedByMetaAndFrom(exe.Stack, visualiser.Vertex, meta))
+                    if (IsVertexChangeOrEdgeAddedRemovedDisposedByMetaAndFrom(exe.Stack, Visualiser.Vertex, meta))
                         needToUpdateBaseEdge = true;
 
                 if (needToUpdateBaseEdge)
@@ -163,7 +163,7 @@ namespace m0.UIWpf.Visualisers.Helper
                 bool needToUpdateView = false;
 
                 foreach (string meta in listVisualiser.MetaTriggeringUpdateView)
-                    if (IsVertexChangeOrEdgeAddedRemovedDisposedByMetaAndFrom(exe.Stack, visualiser.Vertex, meta))
+                    if (IsVertexChangeOrEdgeAddedRemovedDisposedByMetaAndFrom(exe.Stack, Visualiser.Vertex, meta))
                         needToUpdateView = true;
 
                 if (needToUpdateView)
@@ -190,7 +190,7 @@ namespace m0.UIWpf.Visualisers.Helper
         {            
             if (tempSelectedVertices != null)
             {
-                VisualiserUtil.RemoveAllSelectedEdges(visualiser);
+                VisualiserUtil.RemoveAllSelectedEdges(Visualiser);
 
                 IVertex sv = Vertex.Get(false, "SelectedEdges:");
                 GraphUtil.CopyEdges(tempSelectedVertices, sv);
@@ -201,7 +201,7 @@ namespace m0.UIWpf.Visualisers.Helper
 
         private void dndPreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            dndStartPoint = e.GetPosition(visualiserAsFrameworkElement);
+            dndStartPoint = e.GetPosition(VisualiserAsFrameworkElement);
             hasButtonBeenDown = true;
 
             CopySelectedVerticesToTemp();
@@ -211,10 +211,10 @@ namespace m0.UIWpf.Visualisers.Helper
 
         protected override void dndPreviewMouseMove(object sender, MouseEventArgs e)
         {
-            Point mousePos = e.GetPosition(visualiserAsFrameworkElement);
+            Point mousePos = e.GetPosition(VisualiserAsFrameworkElement);
             Vector diff = dndStartPoint - mousePos;
 
-            var headersPresenter = m0.UIWpf.WpfUtil.FindVisualChild<DataGridColumnHeadersPresenter>(visualiserAsFrameworkElement);
+            var headersPresenter = m0.UIWpf.WpfUtil.FindVisualChild<DataGridColumnHeadersPresenter>(VisualiserAsFrameworkElement);
 
             if (headersPresenter != null)
             {
@@ -244,7 +244,7 @@ namespace m0.UIWpf.Visualisers.Helper
                         dndVertex.AddEdge(null, ee.To);
                 else
                 {
-                    IVertex v = visualiser.GetEdgeByLocation(dndStartPoint);
+                    IVertex v = Visualiser.GetEdgeByLocation(dndStartPoint);
                     if (v != null)
                         dndVertex.AddEdge(null, v);
                 }
@@ -254,9 +254,9 @@ namespace m0.UIWpf.Visualisers.Helper
                     dndVertex.AddExternalReference();
 
                     DataObject dragData = new DataObject("Vertex", dndVertex);
-                    dragData.SetData("DragSource", visualiserAsFrameworkElement);
+                    dragData.SetData("DragSource", VisualiserAsFrameworkElement);
 
-                    Dnd.DoDragDrop(visualiserAsFrameworkElement, dragData);
+                    Dnd.DoDragDrop(VisualiserAsFrameworkElement, dragData);
 
                     e.Handled = true;
                 }
@@ -267,7 +267,7 @@ namespace m0.UIWpf.Visualisers.Helper
 
         private void dndDrop(object sender, DragEventArgs e)
         {
-            IVertex v = visualiser.GetEdgeByLocation(e.GetPosition(visualiserAsFrameworkElement));
+            IVertex v = Visualiser.GetEdgeByLocation(e.GetPosition(VisualiserAsFrameworkElement));
 
             if (v == null && GeneralUtil.CompareStrings(MinusZero.Instance.Root.Get(false, @"User\CurrentUser:\Settings:\AllowBlankAreaDragAndDrop:").Value, "OnlyEnd"))
                 v = Vertex.Get(false, "BaseEdge:");

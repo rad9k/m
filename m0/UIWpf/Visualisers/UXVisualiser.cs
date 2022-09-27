@@ -17,24 +17,32 @@ using m0.UIWpf.Commands;
 using m0.Graph.ExecutionFlow;
 using m0.User.Process.UX;
 
+using m0.ZeroTypes.UX;
+
 using m0.UIWpf.Visualisers.Helper;
+using m0.UIWpf.UX;
 
 namespace m0.UIWpf.Visualisers
 {
-    public class UXVisualiser : TextBox, IVisualiser
+    public class UXVisualiser : Canvas, IVisualiser, IUX
     {
         public AtomVisualiserHelper VisualiserHelper { get; set; }        
 
         public UXVisualiser(IVertex baseEdgeVertex, IVertex parentVisualiser)
         {
-            this.AcceptsReturn = true;
-
             new AtomVisualiserHelper(parentVisualiser,
                 MinusZero.Instance.Root.Get(false, @"System\Meta\Visualiser\UX"), 
                 this, 
                 "UXVisualiser", 
                 this,
-                baseEdgeVertex);
+                false,
+                new List<string> { "", @"BaseEdge:\To:" },
+                "AtomVisualiser",
+                baseEdgeVertex,
+                UpdateBaseEdgeCallSchemeEnum.OmmitFirst,
+                true);
+
+            CreateUX();
         }
 
         public void OnLoad(object sender, RoutedEventArgs e)
@@ -50,35 +58,7 @@ namespace m0.UIWpf.Visualisers
 
         protected bool CanProceedUIUpdateEvent = true;
 
-        protected override void OnTextChanged(TextChangedEventArgs e)
-        {
-            if (!CanProceedUIUpdateEvent)
-                return;
-
-            base.OnTextChanged(e);
-
-            IVertex bv = Vertex.Get(false, @"BaseEdge:\To:");
-
-            ////////////////////////////////////////
-            Interaction.BeginInteractionWithGraph();
-            ////////////////////////////////////////
-
-            if (bv == null || bv == MinusZero.Instance.Empty)
-            {
-                IVertex from = Vertex.Get(false, @"BaseEdge:\From:");
-                IVertex meta = Vertex.Get(false, @"BaseEdge:\Meta:");
-
-                GraphUtil.SetVertexValue(from, meta, this.Text);
-
-                IsNull = false;
-            }
-            else
-                bv.Value = this.Text;
-
-            //////////////////////////////////////
-            Interaction.EndInteractionWithGraph();
-            //////////////////////////////////////
-        }
+      
 
         bool _IsNull;
 
@@ -102,11 +82,6 @@ namespace m0.UIWpf.Visualisers
 
             if (bv != null && bv.Value != null && bv != MinusZero.Instance.Empty /*&& ((String)bv.Value) != "$Empty"*/)
             {
-                CanProceedUIUpdateEvent = false;
-
-                this.Text = bv.Value.ToString();
-
-                CanProceedUIUpdateEvent = true;
 
                 IsNull = false;
             }
@@ -139,5 +114,46 @@ namespace m0.UIWpf.Visualisers
         {
             throw new NotImplementedException();
         }
+
+        ////////////////////////// UX
+
+        public UXItem uxItem { get; set; }
+        public UXAggregator uxAggregator { get; set; }
+
+
+
+        void CreateUX()
+        {
+            if (uxItem == null)
+                return;
+
+            foreach (Item i in uxItem.Items)
+                AddItem(i, uxItem.Vertex);
+        }
+
+        public void AddItem(Item i, IVertex parent)
+        {
+            if (!(i is UXItem))
+                return;
+
+            UXItem ui = (UXItem)i;
+
+            IVertex visEdge = EdgeHelper.CreateTempEdgeVertex(i.Edge);
+
+            visEdge.AddVertex(null, "helo");
+
+            IPlatformClass pc = PlatformClass.CreatePlatformObject(ui.Vertex, visEdge, parent);
+
+            if (!(pc is FrameworkElement))
+                return;
+
+            FrameworkElement f = (FrameworkElement)pc;
+
+            VisualiserHelper.UpdateControl(f, ui);
+
+            Children.Add(f);
+        }
+
+        
     }
 }
