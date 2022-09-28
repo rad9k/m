@@ -1,5 +1,6 @@
 ﻿using m0.Foundation;
 using m0.Graph;
+using m0.ZeroCode.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -53,7 +54,27 @@ namespace m0.ZeroTypes.UX
                 IList<Item> ret = new List<Item>();
 
                 foreach (IEdge e in list)
-                    ret.Add((Item)TypedEdge.Get(e, typeof(Item)));
+                {
+
+                    if (InstructionHelpers.CheckIfIsOrInherits(e.To, "UXAggregator"))
+                    {
+                        ret.Add((Item)TypedEdge.Get(e, typeof(UXAggregator)));
+                    }
+                    else
+                    {
+                        if (InstructionHelpers.CheckIfIsOrInherits(e.To, "UXItem"))
+                        {
+                            ret.Add((Item)TypedEdge.Get(e, typeof(UXItem)));
+                        }
+                        else
+                        {
+                            if (InstructionHelpers.CheckIfIsOrInherits(e.To, "Item"))
+                            {
+                                ret.Add((Item)TypedEdge.Get(e, typeof(Item)));
+                            }
+                        }
+                    }
+                }
 
                 return ret;
             }

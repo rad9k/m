@@ -158,11 +158,18 @@ namespace m0.UIWpf.Visualisers.Helper
 
                 if (IsUX)
                 {
-                    vVertex = baseEdgeVertex;
+                    IVertex baseEdgeVertexTo = GraphUtil.GetQueryOutFirst(baseEdgeVertex, "To", null);
+
+                    if (baseEdgeVertexTo != null)
+                        vVertex = baseEdgeVertexTo;
+                    else
+                        vVertex = baseEdgeVertex;
 
                     InitUX();
 
                     Visualiser.Vertex = vVertex;
+
+                    VisualisersList.AddVisualiser(Visualiser, parentVisualiser, false);
                 }
                 else
                 {
@@ -182,12 +189,8 @@ namespace m0.UIWpf.Visualisers.Helper
 
                     Visualiser.Vertex.Value = VisualiserName;
 
-                    VisualisersList.AddVisualiser(Visualiser, parentVisualiser);
-                }
-
-
-                //VisualisersList.AddVisualiser(Visualiser, parentVisualiser); // no no                
-
+                    VisualisersList.AddVisualiser(Visualiser, parentVisualiser, true);
+                }               
 
                 VisualiserAsFrameworkElement.Loaded += new RoutedEventHandler(Visualiser.OnLoad);
 
@@ -276,6 +279,23 @@ namespace m0.UIWpf.Visualisers.Helper
 
                 if (Vertex is IDisposable)
                     ((IDisposable)Vertex).Dispose();                
+            }
+        }
+
+        public void Dispose_UX() // dispose variant for UX visualisers
+        {
+            if (IsDisposed == false)
+            {
+                IsDisposed = true;
+
+                VisualisersList.RemoveVisualiser(Visualiser);
+
+                GraphChangeTrigger.RemoveListener(graphChangeListenerEdge);
+
+                DisposeAllChildVisualisers();
+
+               // if (Vertex is IDisposable) NO NO !
+                 //   ((IDisposable)Vertex).Dispose();
             }
         }
 

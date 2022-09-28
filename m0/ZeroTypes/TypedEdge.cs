@@ -42,12 +42,7 @@ namespace m0.ZeroTypes
             }
             else
             {
-                TypedEdge te = (TypedEdge)Activator.CreateInstance(toCreateType);
-
-                te.Edge = edge;
-                te.Vertex = edge.To;
-
-                vertexDictionary.Add(te.Vertex, te);
+                TypedEdge te = (TypedEdge)Activator.CreateInstance(toCreateType, edge);
 
                 return te;
             }

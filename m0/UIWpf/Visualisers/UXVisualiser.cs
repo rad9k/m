@@ -97,7 +97,7 @@ namespace m0.UIWpf.Visualisers
 
         public void Dispose()
         {
-            VisualiserHelper.Dispose();
+            VisualiserHelper.Dispose_UX();
         }
 
         public IVertex GetEdgeByLocation(Point point)
@@ -119,39 +119,49 @@ namespace m0.UIWpf.Visualisers
 
         public UXItem uxItem { get; set; }
         public UXAggregator uxAggregator { get; set; }
-
-
+        public Canvas Canvas { get { return this; } }
 
         void CreateUX()
         {
             if (uxItem == null)
                 return;
 
-            foreach (Item i in uxItem.Items)
-                AddItem(i, uxItem.Vertex);
+            IterateItems(Canvas, uxItem);
         }
 
-        public void AddItem(Item i, IVertex parent)
+        void IterateItems(Canvas c, UXItem parentUXItem)
         {
-            if (!(i is UXItem))
-                return;
+            foreach (Item i in parentUXItem.Items)
+                if (i is UXItem)
+                {
+                    UXItem ux = (UXItem)i;
 
-            UXItem ui = (UXItem)i;
+                    if (!GraphUtil.ExistQueryOut(ux.Vertex, "$Is", "Wrap"))
+                    {
+                        IUX iux = AddItem(c, ux, parentUXItem.Vertex);
 
-            IVertex visEdge = EdgeHelper.CreateTempEdgeVertex(i.Edge);
+                        if (iux != null)
+                            IterateItems(iux.Canvas, ux);
+                    }
+                }
+        }
 
-            visEdge.AddVertex(null, "helo");
+        public IUX AddItem(Canvas c, UXItem ui, IVertex parent)
+        {
+            IVertex visEdge = EdgeHelper.CreateTempEdgeVertex(ui.Edge);
 
             IPlatformClass pc = PlatformClass.CreatePlatformObject(ui.Vertex, visEdge, parent);
 
-            if (!(pc is FrameworkElement))
-                return;
+            if (!(pc is FrameworkElement) || !(pc is IUX))
+                return null;
 
             FrameworkElement f = (FrameworkElement)pc;
 
             VisualiserHelper.UpdateControl(f, ui);
 
-            Children.Add(f);
+            c.Children.Add(f);
+
+            return (IUX)pc;
         }
 
         

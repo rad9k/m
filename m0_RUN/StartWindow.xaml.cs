@@ -69,16 +69,18 @@ namespace m0
             Close();
         }
 
+        static IVertex r = null; 
+        static IVertex UXTest = null; 
+
         void ExtraRun8()
         {
-            IVertex r = m0.MinusZero.Instance.root;
+            r = m0.MinusZero.Instance.root;
 
-
-            IVertex UXTest = r.Get(false, @"System\Meta\Visualiser\UXTest");
+            UXTest = r.Get(false, @"System\Meta\Visualiser\UXTest");
 
             IVertex e = r.Get(false, "examples");
 
-            IVertex v = e.AddVertex(null, "A SAMPLE");
+            IVertex v = e.AddVertex(null, "X");
 
             IEdge a_e = VertexOperations.AddInstanceAndReturnEdge(e, r.Get(false, @"System\Meta\ZeroTypes\UX\UXAggregator"));
 
@@ -86,12 +88,17 @@ namespace m0
 
             a.Vertex.Value = "VIS";
 
+            UXAdd(a, v);
+        }
+
+        UXItem UXAdd(UXItem a, IVertex v)
+        {
             UXItem i1 = a.AddItem_UXAggregator(UXTest);
 
             i1.Layout = LayoutTypeEnum.Manual;
             i1.PositionCreate();
-            i1.Position.X = 100;
-            i1.Position.Y = 100;
+            i1.Position.X = 10;
+            i1.Position.Y = 10;
             i1.SizeCreate();
             i1.Size.Width = 100;
             i1.Size.Height = 100;
@@ -115,19 +122,79 @@ namespace m0
 
             i2.Layout = LayoutTypeEnum.Manual;
             i2.PositionCreate();
-            i2.Position.X = 300;
-            i2.Position.Y = 300;
+            i2.Position.X = 150;
+            i2.Position.Y = 150;
             i2.SizeCreate();
-            i2.Size.Width = 50;
-            i2.Size.Height = 50;
+            i2.Size.Width = 100;
+            i2.Size.Height = 100;
 
             i2.BackgroundColorCreate();
             i2.BackgroundColor.Blue = 100;
 
+            i2.ForegroundColorCreate();
+            i2.ForegroundColor.Red = 250;
+
             i2.BaseEdgeCreate();
 
             i2.BaseEdge.To = v;
+            
+            UXAdd2(i1, v);
+
+            UXAdd2(i2, v);
+
+            return i1;
         }
+
+        UXItem UXAdd2(UXItem a, IVertex v)
+        {
+            UXItem i1 = a.AddItem_UXAggregator(UXTest);
+
+            i1.Layout = LayoutTypeEnum.Manual;
+            i1.PositionCreate();
+            i1.Position.X = 10;
+            i1.Position.Y = 10;
+            i1.SizeCreate();
+            i1.Size.Width = 30;
+            i1.Size.Height = 30;
+
+            i1.BackgroundColorCreate();
+            i1.BackgroundColor.Red = 100;
+
+            i1.ForegroundColorCreate();
+            i1.ForegroundColor.Blue = 255;
+            i1.ForegroundColor.Green = 255;
+
+            i1.BorderSize = 5;
+            i1.BorderColorCreate();
+            i1.BorderColor.Green = 100;
+
+            i1.BaseEdgeCreate();
+
+            i1.BaseEdge.To = v;
+
+            UXItem i2 = a.AddItem_UXAggregator(UXTest);
+
+            i2.Layout = LayoutTypeEnum.Manual;
+            i2.PositionCreate();
+            i2.Position.X = 50;
+            i2.Position.Y = 50;
+            i2.SizeCreate();
+            i2.Size.Width = 30;
+            i2.Size.Height = 30;
+
+            i2.BackgroundColorCreate();
+            i2.BackgroundColor.Blue = 100;
+
+            i2.ForegroundColorCreate();
+            i2.ForegroundColor.Red = 250;
+
+            i2.BaseEdgeCreate();
+
+            i2.BaseEdge.To = v;
+
+            return i1;
+        }
+
 
 
         void ExtraRun7()

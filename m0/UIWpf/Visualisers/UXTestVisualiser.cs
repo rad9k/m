@@ -77,7 +77,7 @@ namespace m0.UIWpf.Visualisers
 
         public void Dispose()
         {
-            VisualiserHelper.Dispose();
+            VisualiserHelper.Dispose_UX();
         }
 
         public IVertex GetEdgeByLocation(Point point)
@@ -102,6 +102,7 @@ namespace m0.UIWpf.Visualisers
 
         public UXItem uxItem { get; set; }
         public UXAggregator uxAggregator { get; set; }
+        public Canvas Canvas { get { return canvas; } }
 
         public void UpdateVertex()
         {

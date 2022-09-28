@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace m0.ZeroTypes.UX
 {
-    public enum LayoutTypeEnum { Vertical, Horizontal, Wrap, Manual, Auto }
+    public enum LayoutTypeEnum { Vertical, Horizontal, Wrap, Manual, Auto, Hidden }
 
     class LayoutTypeEnumHelper
     {
@@ -16,6 +16,7 @@ namespace m0.ZeroTypes.UX
         static IVertex Wrap_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\LayoutTypeEnum\Wrap");
         static IVertex Manual_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\LayoutTypeEnum\Manual");
         static IVertex Auto_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\LayoutTypeEnum\Auto");
+        static IVertex Hidden_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\LayoutTypeEnum\Hidden");
 
         public static LayoutTypeEnum GetEnum(IVertex v)
         {
@@ -34,7 +35,9 @@ namespace m0.ZeroTypes.UX
 
                 case "Auto": return LayoutTypeEnum.Auto;
 
-                default: return LayoutTypeEnum.Auto;
+                case "Hidden": return LayoutTypeEnum.Hidden;
+
+                default: return LayoutTypeEnum.Hidden;
             }
         }
 
@@ -49,7 +52,9 @@ namespace m0.ZeroTypes.UX
 
                 case LayoutTypeEnum.Vertical: return Vertical_meta;
 
-                case LayoutTypeEnum.Wrap: return Wrap_meta;                
+                case LayoutTypeEnum.Wrap: return Wrap_meta;
+
+                case LayoutTypeEnum.Hidden: return Hidden_meta;
             }
 
             return Auto_meta;
