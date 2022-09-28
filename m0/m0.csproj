@@ -311,6 +311,7 @@
     <Compile Include="ZeroCode\ZeroCodeExecutonUtil.cs" />
     <Compile Include="ZeroCode\ZeroCodeView.cs" />
     <Compile Include="ZeroTypes\ColorHelper.cs" />
+    <Compile Include="ZeroTypes\ITypedEdge.cs" />
     <Compile Include="ZeroTypes\TypedEdge.cs" />
     <Compile Include="ZeroTypes\Edge.cs" />
     <Compile Include="ZeroTypes\UX\Item.cs" />
@@ -318,6 +319,7 @@
     <Compile Include="ZeroTypes\UX\LayoutTypeEnum.cs" />
     <Compile Include="ZeroTypes\UX\Position.cs" />
     <Compile Include="ZeroTypes\UX\Size.cs" />
+    <Compile Include="ZeroTypes\UX\TypedEdgeUserControl.cs" />
     <Compile Include="ZeroTypes\UX\UXAggregator.cs" />
     <Compile Include="ZeroTypes\UX\UXItem.cs" />
     <Compile Include="ZeroUML\ClassVertex.cs" />

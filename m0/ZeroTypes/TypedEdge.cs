@@ -7,30 +7,32 @@ using System.Threading.Tasks;
 
 namespace m0.ZeroTypes
 {
-    public class TypedEdge
+    public class TypedEdge : ITypedEdge
     {
-        static Dictionary<IVertex, TypedEdge> vertexDictionary = new Dictionary<IVertex, TypedEdge>();
+        public static Dictionary<IVertex, ITypedEdge> vertexDictionary = new Dictionary<IVertex, ITypedEdge>();
 
-        public IEdge Edge; 
+        IEdge edge;
+        public IEdge Edge { get { return edge; } }
 
-        public IVertex Vertex;
+        IVertex vertex;
+        public IVertex Vertex { get { return vertex; } }
 
-        public TypedEdge(IEdge edge)
+        public TypedEdge(IEdge _edge)
         {
-            Edge = edge;
+            edge = _edge;
 
-            Vertex = edge.To;
+            vertex = _edge.To;
 
             vertexDictionary.Add(this.Edge.To, this);
         }
 
-        static public TypedEdge Get(IEdge edge, Type toCreateType)
+        static public ITypedEdge Get(IEdge edge, Type toCreateType)
         {
             IVertex v = edge.To;
 
             if (vertexDictionary.ContainsKey(v))
             {
-                TypedEdge ret = vertexDictionary[v];
+                ITypedEdge ret = vertexDictionary[v];
 
                 if (ret.Edge.To.DisposedState != DisposeStateEnum.Live)
                     throw new Exception("Vertex not live");
@@ -45,9 +47,7 @@ namespace m0.ZeroTypes
                 TypedEdge te = (TypedEdge)Activator.CreateInstance(toCreateType, edge);
 
                 return te;
-            }
-
-            
+            }           
         }
     }
 }
