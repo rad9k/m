@@ -9,7 +9,7 @@ using System.Text;
 
 namespace LovFlov.ZeroTypes
 {
-    class Flov : TypedEdge
+    public class Flov : TypedEdge
     {
         static IVertex ParameterDefinition_meta = MinusZero.Instance.root.Get(false, @"LovFlov\Meta\Flov\ParameterDefinition");
         static IVertex AddressDefinition_meta = MinusZero.Instance.root.Get(false, @"LovFlov\Meta\Flov\AddressDefinition");

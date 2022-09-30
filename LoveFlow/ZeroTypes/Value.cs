@@ -40,6 +40,11 @@ namespace LovFlov.ZeroTypes
 
                 return (ValueDefinition)TypedEdge.Get(e, typeof(ValueDefinition));
             }
+
+            set
+            {
+                GraphUtil.CreateOrReplaceEdge(this.Vertex, Definition_meta, value.Vertex);
+            }
         }
 
         public IList<Step> Steps

@@ -72,6 +72,7 @@ namespace LovFlov
             GraphUtil.AddAttribute(flovInstanceClass, "Days", Integer, 0, 1);
             GraphUtil.AddAggregation(flovInstanceClass, "Parameter", parameterClass, 0, -1);
             GraphUtil.AddAggregation(flovInstanceClass, "Address", addressClass, 0, -1);
+            GraphUtil.AddAssociation(flovInstanceClass, "Definition", flovClass, 1, 1);
 
             // Flov
             GraphUtil.AddAggregation(flovClass, "ParameterDefinition", parameterDefinitionClass, 0, -1);
@@ -82,8 +83,8 @@ namespace LovFlov
         {
             CreateLoweFlov();
 
-            ChainlinkSimulation.Create();
-            ChainlinkSimulation.Run();
+            ChainlinkDefinition.Create();
+            ChainlinkSimulation.Run(90);
         }
     }
 }

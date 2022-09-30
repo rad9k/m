@@ -11,9 +11,11 @@ namespace LovFlov.ZeroTypes
 {
     public class FlovInstance : TypedEdge
     {
-        static IVertex Days_meta = MinusZero.Instance.root.Get(false, @"LovFlov\Meta\FlovInstance\Parameter");
+        static IVertex Days_meta = MinusZero.Instance.root.Get(false, @"LovFlov\Meta\FlovInstance\Days");
         static IVertex Parameter_meta = MinusZero.Instance.root.Get(false, @"LovFlov\Meta\FlovInstance\Parameter");
         static IVertex Address_meta = MinusZero.Instance.root.Get(false, @"LovFlov\Meta\FlovInstance\Address");
+        static IVertex Definition_meta = MinusZero.Instance.root.Get(false, @"LovFlov\Meta\FlovInstance\Definition");
+
         static IVertex Parameter_type = MinusZero.Instance.root.Get(false, @"LovFlov\Meta\Parameter");
         static IVertex Address_type = MinusZero.Instance.root.Get(false, @"LovFlov\Meta\Address");
 
@@ -83,6 +85,23 @@ namespace LovFlov.ZeroTypes
             IEdge newEdge = VertexOperations.AddInstanceAndReturnEdge(Vertex, Address_type, Address_meta);
 
             return new Address(newEdge);
+        }
+
+        public Flov Definition
+        {
+            get
+            {
+                IEdge e = GraphUtil.GetQueryOutFirstEdge(Vertex, "Definition", null);
+
+                if (e == null)
+                    return null;
+
+                return (Flov)TypedEdge.Get(e, typeof(Flov));
+            }
+            set
+            {
+                GraphUtil.CreateOrReplaceEdge(this.Vertex, Definition_meta, value.Vertex);
+            }
         }
     }
 }

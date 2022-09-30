@@ -37,10 +37,10 @@ namespace m0.ZeroTypes
                 if (ret.Edge.To.DisposedState != DisposeStateEnum.Live)
                     throw new Exception("Vertex not live");
 
-                if (EdgeHelper.CompareIEdges(ret.Edge, edge))
+                //if (EdgeHelper.CompareIEdges(ret.Edge, edge))
                     return ret;
-                else
-                    throw new Exception("Vertex allready in TypedEdge.vertexDictionary. Tried to access from another Edge.");
+               // else
+                 //   throw new Exception("Vertex allready in TypedEdge.vertexDictionary. Tried to access from another Edge.");
             }
             else
             {

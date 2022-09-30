@@ -1,10 +1,11 @@
 ﻿using m0.Foundation;
-using m0.ZeroTypes;
 using System;
 using System.Collections.Generic;
 using System.Text;
 
 using LovFlov.ZeroTypes;
+using m0.ZeroTypes;
+using m0.Graph;
 
 namespace LovFlov
 {
@@ -12,113 +13,86 @@ namespace LovFlov
     {
         static IVertex r = m0.MinusZero.Instance.root;
 
+        static FlovInstance ci;
         static Flov cf;
 
-        static AddressDefinition End_client,
-            Product_creator,
-            Product_contract,
-            Centralized_Oracle,
-            Golem_Requestor,
-            Golem_Provider;
-
-        static ParameterDefinition GLM_ETH_rate,
-            Daily_Oracle_calls,
-            One_Centralized_oracle_usage_payment,
-            No_of_Providers,
-            Requestor_fee,
-            Daily_Provider_usage_payment,
-            Product_creator_fee,
-            Daily_end_client_lock,
-            LINK_GLM_rate,
-            Daily_Golem_Oracle_usage_payment,
-            Daily_Centralized_Oracle_usage_payment,
-            Product_creator_income;
-
-        static public void Create()
+        static public void Run(int days)
         {
             IVertex lf = r.Get(false, "LovFlov");
 
-            IEdge cf_edge = VertexOperations.AddInstanceAndReturnEdge(lf, r.Get(false, @"LovFlov\Meta\Flov"));
+            IEdge ci_edge = VertexOperations.AddInstanceAndReturnEdge(lf, r.Get(false, @"LovFlov\Meta\FlovInstance"));
 
-            cf = new Flov(cf_edge);
+            ci = (FlovInstance)TypedEdge.Get(ci_edge, typeof(FlovInstance));
+            ci.Days = days;
 
-            cf.Vertex.Value = "Chainlink";
+            cf = (Flov)TypedEdge.Get(GraphUtil.GetQueryOutFirstEdge(lf, "Flov", "Chainlink"), typeof(Flov));
+            ci.Definition = cf;
 
-            AddAddressesDefinitions();
-            AddFlows();
-            AddParametersDefinitions();
+            AddParameterInstances();
+            AddAddressesInstances();
         }
 
-        static public void Run()
+        static void AddParameterInstances()
         {
-
+            AddParameterInstances_notDerived();
+            AddParameterInstances_Derived();
         }
 
-        static void AddAddressesDefinitions()
+        static void AddParameterInstances_notDerived()
         {
-            End_client = AddAddressDefintion("End client");
-            Product_creator = AddAddressDefintion("Product creator");
-            Product_contract = AddAddressDefintion("Product contract");
-            Centralized_Oracle = AddAddressDefintion("Centralized Oracle");
-            Golem_Requestor = AddAddressDefintion("Golem Requestor");
-            Golem_Provider = AddAddressDefintion("Golem Provider");
+            foreach (IEdge e in cf.Vertex.GetAll(false, "ParameterDefinition:{IsDerived:False}"))
+            {
+                ParameterDefinition pd = (ParameterDefinition)TypedEdge.Get(e, typeof(ParameterDefinition));
+
+                Parameter p = ci.AddParameter();
+                p.Definition = pd;
+
+                p.Vertex.Value = pd.Name;
+
+                AddStepsForParameter(p);
+            }
         }
 
-        static void AddFlows()
+        static void AddStepsForParameter(Parameter p)
         {
-            AddFlow(End_client, Product_contract, "value lock");
-            AddFlow(Product_contract, Product_creator, "product creator income");
-            AddFlow(Product_contract, Centralized_Oracle, "Centralized Oracle payment");
-            AddFlow(Product_contract, Golem_Requestor, "Decentralized Oracle payment");
-            AddFlow(Golem_Requestor, Golem_Provider, "Golem payment");
+            double val = p.Definition.MinValue;
+
+            for(int d=1; d <= ci.Days; d++)
+            {
+                Step s = p.AddStep();
+
+                s.Day = d;
+                s.Value = val;
+
+                val += (p.Definition.MaxValue - p.Definition.MinValue) / ci.Days;
+            }
         }
 
-        static void AddFlow(AddressDefinition from, AddressDefinition to, string name)
+        static void AddParameterInstances_Derived()
         {
-            Flow f = from.AddFlow();
+            foreach (IEdge e in cf.Vertex.GetAll(false, "ParameterDefinition:{IsDerived:True}"))
+            {
+                ParameterDefinition pd = (ParameterDefinition)TypedEdge.Get(e, typeof(ParameterDefinition));
 
-            f.Destination = to;
-            f.Vertex.Value = name;
+                Parameter p = ci.AddParameter();
+                p.Definition = pd;
+
+                p.Vertex.Value = pd.Name;
+            }
         }
 
-        static AddressDefinition AddAddressDefintion(string Name)
+        static void AddAddressesInstances()
         {
-            AddressDefinition ad = cf.AddAddressDefinition();
-            ad.Name = Name;
-            ad.Vertex.Value = Name;
+            foreach(IEdge e in cf.Vertex.GetAll(false, "AddressDefinition:"))
+            {
+                AddressDefinition ad = (AddressDefinition)TypedEdge.Get(e, typeof(AddressDefinition));
 
-            return ad;
-        }
+                Address a = ci.AddAddress();
+                a.Definition = ad;
 
-        static void AddParametersDefinitions()
-        {
-            GLM_ETH_rate = AddParameterDefinition("GLM ETH rate", false, 1, 10);
-            Daily_Oracle_calls = AddParameterDefinition("Daily Oracle calls", false, 1, 10);
-            One_Centralized_oracle_usage_payment = AddParameterDefinition("One Centralized oracle usage payment", false, 1, 10);
-            No_of_Providers = AddParameterDefinition("No of Providers", false, 1, 10);
-            Requestor_fee = AddParameterDefinition("Requestor fee", false, 1, 10);
-            Daily_Provider_usage_payment = AddParameterDefinition("Daily Provider usage payment", false, 1, 10);
-            Product_creator_fee = AddParameterDefinition("Product creator fee", false, 1, 10);
-            Daily_end_client_lock = AddParameterDefinition("Daily end client lock", false, 1, 10);
+                a.Vertex.Value = ad.Name;
 
-            LINK_GLM_rate = AddParameterDefinition("LINK GLM rate", true, 1, 10);
-            Daily_Golem_Oracle_usage_payment = AddParameterDefinition("Daily Golem Oracle usage_payment", true, 1, 10);
-            Daily_Centralized_Oracle_usage_payment = AddParameterDefinition("Daily Centralized Oracle usage payment", true, 1, 10);
-            Product_creator_income = AddParameterDefinition("Product creator income", true, 1, 10);
-        }
-
-       static ParameterDefinition AddParameterDefinition(string Name, bool isDerived, double MinValue, double MaxValue)
-        {
-            ParameterDefinition pd = cf.AddParameterDefinition();
-
-            pd.Name = Name;
-            pd.Vertex.Value = Name;
-
-            pd.IsDerived = isDerived;
-            pd.MinValue = MinValue;
-            pd.MaxValue = MaxValue;
-
-            return pd;
+            }
         }
     }
 }
