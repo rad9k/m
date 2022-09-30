@@ -14,7 +14,12 @@ namespace LovFlov
 
         static Flov cf;
 
-        static string[] Address_Names = { "End client", "Product creator", "Product contract", "Centralized wallet", "Golem Requestor wallet", "Provider wallet" };
+        static AddressDefinition End_client,
+            Product_creator,
+            Product_contract,
+            Centralized_Oracle,
+            Golem_Requestor,
+            Golem_Provider;
 
         static ParameterDefinition GLM_ETH_rate,
             Daily_Oracle_calls,
@@ -39,8 +44,9 @@ namespace LovFlov
 
             cf.Vertex.Value = "Chainlink";
 
-            AddAddresses();
-            AddParameters();
+            AddAddressesDefinitions();
+            AddFlows();
+            AddParametersDefinitions();
         }
 
         static public void Run()
@@ -48,34 +54,60 @@ namespace LovFlov
 
         }
 
-        static void AddAddresses()
+        static void AddAddressesDefinitions()
         {
-            foreach (string s in Address_Names)
-            {
-                AddressDefinition ad = cf.AddAddressDefinition();
-                ad.Name = s;
-                ad.Vertex.Value = s;
-            }
+            End_client = AddAddressDefintion("End client");
+            Product_creator = AddAddressDefintion("Product creator");
+            Product_contract = AddAddressDefintion("Product contract");
+            Centralized_Oracle = AddAddressDefintion("Centralized Oracle");
+            Golem_Requestor = AddAddressDefintion("Golem Requestor");
+            Golem_Provider = AddAddressDefintion("Golem Provider");
         }
 
-        static void AddParameters()
+        static void AddFlows()
         {
-            GLM_ETH_rate = AddParameter("GLM ETH rate", false, 1, 10);
-            Daily_Oracle_calls = AddParameter("Daily Oracle calls", false, 1, 10);
-            One_Centralized_oracle_usage_payment = AddParameter("One Centralized oracle usage payment", false, 1, 10);
-            No_of_Providers = AddParameter("No of Providers", false, 1, 10);
-            Requestor_fee = AddParameter("Requestor fee", false, 1, 10);
-            Daily_Provider_usage_payment = AddParameter("Daily Provider usage payment", false, 1, 10);
-            Product_creator_fee = AddParameter("Product creator fee", false, 1, 10);
-            Daily_end_client_lock = AddParameter("Daily end client lock", false, 1, 10);
-
-            LINK_GLM_rate = AddParameter("LINK GLM rate", true, 1, 10);
-            Daily_Golem_Oracle_usage_payment = AddParameter("Daily Golem Oracle usage_payment", true, 1, 10);
-            Daily_Centralized_Oracle_usage_payment = AddParameter("Daily Centralized Oracle usage payment", true, 1, 10);
-            Product_creator_income = AddParameter("Product creator income", true, 1, 10);
+            AddFlow(End_client, Product_contract, "value lock");
+            AddFlow(Product_contract, Product_creator, "product creator income");
+            AddFlow(Product_contract, Centralized_Oracle, "Centralized Oracle payment");
+            AddFlow(Product_contract, Golem_Requestor, "Decentralized Oracle payment");
+            AddFlow(Golem_Requestor, Golem_Provider, "Golem payment");
         }
 
-       static ParameterDefinition AddParameter(string Name, bool isDerived, double MinValue, double MaxValue)
+        static void AddFlow(AddressDefinition from, AddressDefinition to, string name)
+        {
+            Flow f = from.AddFlow();
+
+            f.Destination = to;
+            f.Vertex.Value = name;
+        }
+
+        static AddressDefinition AddAddressDefintion(string Name)
+        {
+            AddressDefinition ad = cf.AddAddressDefinition();
+            ad.Name = Name;
+            ad.Vertex.Value = Name;
+
+            return ad;
+        }
+
+        static void AddParametersDefinitions()
+        {
+            GLM_ETH_rate = AddParameterDefinition("GLM ETH rate", false, 1, 10);
+            Daily_Oracle_calls = AddParameterDefinition("Daily Oracle calls", false, 1, 10);
+            One_Centralized_oracle_usage_payment = AddParameterDefinition("One Centralized oracle usage payment", false, 1, 10);
+            No_of_Providers = AddParameterDefinition("No of Providers", false, 1, 10);
+            Requestor_fee = AddParameterDefinition("Requestor fee", false, 1, 10);
+            Daily_Provider_usage_payment = AddParameterDefinition("Daily Provider usage payment", false, 1, 10);
+            Product_creator_fee = AddParameterDefinition("Product creator fee", false, 1, 10);
+            Daily_end_client_lock = AddParameterDefinition("Daily end client lock", false, 1, 10);
+
+            LINK_GLM_rate = AddParameterDefinition("LINK GLM rate", true, 1, 10);
+            Daily_Golem_Oracle_usage_payment = AddParameterDefinition("Daily Golem Oracle usage_payment", true, 1, 10);
+            Daily_Centralized_Oracle_usage_payment = AddParameterDefinition("Daily Centralized Oracle usage payment", true, 1, 10);
+            Product_creator_income = AddParameterDefinition("Product creator income", true, 1, 10);
+        }
+
+       static ParameterDefinition AddParameterDefinition(string Name, bool isDerived, double MinValue, double MaxValue)
         {
             ParameterDefinition pd = cf.AddParameterDefinition();
 
