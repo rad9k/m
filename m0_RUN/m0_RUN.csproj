@@ -137,6 +137,10 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\LoveFlow\LovFlov.csproj">
+      <Project>{39d8c90b-8ca6-49d6-ac1f-f0e3c02f6ffd}</Project>
+      <Name>LovFlov</Name>
+    </ProjectReference>
     <ProjectReference Include="..\m0\m0.csproj">
       <Project>{a8a00ded-611c-4ff5-8b12-5ecc14242b23}</Project>
       <Name>m0</Name>

@@ -37,7 +37,9 @@ namespace m0
     /// </summary>
     public partial class m0Main : Window, IUserInteraction
     {
-        public static m0Main Instance;        
+        public static m0Main Instance;
+
+        public static TreeVisualiser mainTree;
 
         public m0Main()
         {
@@ -47,14 +49,13 @@ namespace m0
 
             MinusZero.Instance.Initialize();
 
-
             IVertex baseEdgeVertex = EdgeHelper.CreateTempEdgeVertex(null, null, MinusZero.Instance.Root);
 
-            TreeVisualiser stv = new TreeVisualiser(baseEdgeVertex, null);
+            mainTree = new TreeVisualiser(baseEdgeVertex, null);
 
             //GraphUtil.ReplaceEdge(stv.Vertex.Get(false, "BaseEdge:"), "To", MinusZero.Instance.Root);                                    
             
-            this.root.Content=stv;
+            this.root.Content=mainTree;
 
 
             this.Loaded += new RoutedEventHandler(m0Main_Loaded);
