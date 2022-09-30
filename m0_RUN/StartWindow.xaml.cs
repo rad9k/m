@@ -52,7 +52,7 @@ namespace m0
         {            
             m0_RUN.Main.Run();
 
-            LoveFlov.LovFlov.Execute();
+            LovFlov.LovFlov.Execute();
 
             m0Main.mainTree.UpdateVertex();
 

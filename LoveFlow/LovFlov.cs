@@ -34,6 +34,7 @@ namespace LovFlov
             GraphUtil.AddAttribute(valueDefinitionClass, "Name", String, 0, 1);
             GraphUtil.AddAttribute(valueDefinitionClass, "MinValue", Float, 0, 1);
             GraphUtil.AddAttribute(valueDefinitionClass, "MaxnValue", Float, 0, 1);
+            GraphUtil.AddAttribute(valueDefinitionClass, "Unit", String, 0, 1);
 
             // Value
             IVertex valueClass = GraphUtil.AddClass(meta, "Value");
@@ -68,6 +69,7 @@ namespace LovFlov
 
             // FlovInstance
             IVertex flovInstanceClass = GraphUtil.AddClass(meta, "FlovInstance");
+            GraphUtil.AddAttribute(flovInstanceClass, "Days", Integer, 0, 1);
             GraphUtil.AddAggregation(flovInstanceClass, "Parameter", parameterClass, 0, -1);
             GraphUtil.AddAggregation(flovInstanceClass, "Address", addressClass, 0, -1);
 
@@ -79,7 +81,9 @@ namespace LovFlov
         static public void Execute()
         {
             CreateLoweFlov();
+
             ChainlinkSimulation.Create();
+            ChainlinkSimulation.Run();
         }
     }
 }

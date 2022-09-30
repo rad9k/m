@@ -13,6 +13,7 @@ namespace LovFlov.ZeroTypes
         static IVertex Name_meta = MinusZero.Instance.root.Get(false, @"LovFlov\Meta\ValueDefinition\Name");
         static IVertex MinValue_meta = MinusZero.Instance.root.Get(false, @"LovFlov\Meta\ValueDefinition\MinValue");
         static IVertex MaxValue_meta = MinusZero.Instance.root.Get(false, @"LovFlov\Meta\ValueDefinition\MaxnValue");
+        static IVertex Unit_meta = MinusZero.Instance.root.Get(false, @"LovFlov\Meta\ValueDefinition\Unit");
 
         public ValueDefinition(IEdge edge) : base(edge) { }
 
@@ -77,6 +78,28 @@ namespace LovFlov.ZeroTypes
 
                 if (val == null)
                     val = Vertex.AddVertex(MaxValue_meta, value);
+                else
+                    val.Value = value;
+            }
+        }
+
+        public string Unit
+        {
+            get
+            {
+                IVertex val = GraphUtil.GetQueryOutFirst(Vertex, "Unit", null);
+
+                if (val == null)
+                    return null;
+
+                return GraphUtil.GetStringValue(val);
+            }
+            set
+            {
+                IVertex val = GraphUtil.GetQueryOutFirst(Vertex, "Unit", null);
+
+                if (val == null)
+                    val = Vertex.AddVertex(Unit_meta, value);
                 else
                     val.Value = value;
             }

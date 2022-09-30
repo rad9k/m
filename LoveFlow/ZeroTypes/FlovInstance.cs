@@ -11,12 +11,35 @@ namespace LovFlov.ZeroTypes
 {
     public class FlovInstance : TypedEdge
     {
+        static IVertex Days_meta = MinusZero.Instance.root.Get(false, @"LovFlov\Meta\FlovInstance\Parameter");
         static IVertex Parameter_meta = MinusZero.Instance.root.Get(false, @"LovFlov\Meta\FlovInstance\Parameter");
         static IVertex Address_meta = MinusZero.Instance.root.Get(false, @"LovFlov\Meta\FlovInstance\Address");
         static IVertex Parameter_type = MinusZero.Instance.root.Get(false, @"LovFlov\Meta\Parameter");
         static IVertex Address_type = MinusZero.Instance.root.Get(false, @"LovFlov\Meta\Address");
 
         public FlovInstance(IEdge edge) : base(edge) { }
+
+        public int Days
+        {
+            get
+            {
+                IVertex val = GraphUtil.GetQueryOutFirst(Vertex, "Days", null);
+
+                if (val == null)
+                    return 0;
+
+                return GraphUtil.GetIntegerValueOr0(val);
+            }
+            set
+            {
+                IVertex val = GraphUtil.GetQueryOutFirst(Vertex, "Days", null);
+
+                if (val == null)
+                    val = Vertex.AddVertex(Days_meta, value);
+                else
+                    val.Value = value;
+            }
+        }
 
         public IList<Parameter> Parameters
         {
