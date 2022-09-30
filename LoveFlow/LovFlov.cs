@@ -33,7 +33,7 @@ namespace LovFlov
             IVertex valueDefinitionClass = GraphUtil.AddClass(meta, "ValueDefinition");
             GraphUtil.AddAttribute(valueDefinitionClass, "Name", String, 0, 1);
             GraphUtil.AddAttribute(valueDefinitionClass, "MinValue", Float, 0, 1);
-            GraphUtil.AddAttribute(valueDefinitionClass, "MaxnValue", Float, 0, 1);
+            GraphUtil.AddAttribute(valueDefinitionClass, "MaxValue", Float, 0, 1);
             GraphUtil.AddAttribute(valueDefinitionClass, "Unit", String, 0, 1);
 
             // Value

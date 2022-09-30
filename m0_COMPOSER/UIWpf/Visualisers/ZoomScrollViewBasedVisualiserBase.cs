@@ -281,10 +281,13 @@ namespace m0_COMPOSER.UIWpf.Visualisers
         {
             ItemsDictinaryHolder.Clear();
 
-            foreach (IItem i in Items)
-                ItemsDictinaryHolder.Add(i.BaseEdge.To, i);
+            if (Items != null)
+            {
+                foreach (IItem i in Items)
+                    ItemsDictinaryHolder.Add(i.BaseEdge.To, i);
 
-            NeedToRebuildItemsDictionary = false;
+                NeedToRebuildItemsDictionary = false;
+            }
         }
 
         protected virtual void UpdateVertexValues() { }

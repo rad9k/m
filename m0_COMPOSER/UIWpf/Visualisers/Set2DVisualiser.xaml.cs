@@ -463,9 +463,16 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             return GraphUtil.GetQueryOut(VisualizedVertex, SetItemsDefiningMetaString, null);
         }
 
+        int cnt = 0;
+
         protected override void DrawItems()
         {
-            if (!canDraw)
+            // if (!canDraw)
+            //    return;
+
+            cnt++;
+
+            if (cnt < 5)
                 return;
 
             ItemDictionary.RemoveAllByHost(this);
@@ -758,8 +765,8 @@ namespace m0_COMPOSER.UIWpf.Visualisers
                 || VerticalAD == null)
                 return;
 
-            if (!canDraw)
-                return;
+           // if (!canDraw)
+            //    return;
 
             horizontalMin_fromData = double.PositiveInfinity;
             horizontalMax_fromData = double.NegativeInfinity;

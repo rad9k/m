@@ -64,7 +64,7 @@ namespace LovFlov
                 s.Day = d;
                 s.Value = val;
 
-                val += (p.Definition.MaxValue - p.Definition.MinValue) / ci.Days;
+                val += (p.Definition.MaxValue - p.Definition.MinValue) / (ci.Days - 1);
             }
         }
 

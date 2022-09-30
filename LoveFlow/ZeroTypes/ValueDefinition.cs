@@ -12,7 +12,7 @@ namespace LovFlov.ZeroTypes
     {
         static IVertex Name_meta = MinusZero.Instance.root.Get(false, @"LovFlov\Meta\ValueDefinition\Name");
         static IVertex MinValue_meta = MinusZero.Instance.root.Get(false, @"LovFlov\Meta\ValueDefinition\MinValue");
-        static IVertex MaxValue_meta = MinusZero.Instance.root.Get(false, @"LovFlov\Meta\ValueDefinition\MaxnValue");
+        static IVertex MaxValue_meta = MinusZero.Instance.root.Get(false, @"LovFlov\Meta\ValueDefinition\MaxValue");
         static IVertex Unit_meta = MinusZero.Instance.root.Get(false, @"LovFlov\Meta\ValueDefinition\Unit");
 
         public ValueDefinition(IEdge edge) : base(edge) { }
