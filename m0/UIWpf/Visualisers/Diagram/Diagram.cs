@@ -932,7 +932,8 @@ namespace m0.UIWpf.Visualisers.Diagram
             MouseUpOrLeave(false,e);
         }
 
-        protected void MouseButtonUpHandler(object sender, MouseButtonEventArgs e){
+        protected void MouseButtonUpHandler(object sender, MouseButtonEventArgs e)
+        {
             MouseUpOrLeave(true,e);
         }
 

@@ -482,7 +482,7 @@ namespace m0.UIWpf.Visualisers.Diagram
             line.ToDiagramItem.RemoveToLine(line);
 
             line.RemoveFromCanvas();
-        }     
+        }
 
         protected void RemoveToLine(DiagramLineBase line)
         {

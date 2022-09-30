@@ -17,29 +17,32 @@ using m0.UIWpf.Commands;
 using m0.Graph.ExecutionFlow;
 using m0.User.Process.UX;
 
-using m0.UIWpf.Visualisers.Helper;
 using m0.ZeroTypes.UX;
+
+using m0.UIWpf.Visualisers.Helper;
 using m0.UIWpf.UX;
 
-namespace m0.UIWpf.Visualisers
+namespace m0.UIWpf.UX
 {
-    public class UXTestVisualiser : Border, IVisualiser, IUX
+    public class UXVisualiser : Canvas, IVisualiser, IUX
     {
         public AtomVisualiserHelper VisualiserHelper { get; set; }        
 
-        public UXTestVisualiser(IVertex baseEdgeVertex, IVertex parentVisualiser)
+        public UXVisualiser(IVertex baseEdgeVertex, IVertex parentVisualiser)
         {
             new AtomVisualiserHelper(parentVisualiser,
-                MinusZero.Instance.Root.Get(false, @"System\Meta\Visualiser\UXTest"), 
+                MinusZero.Instance.Root.Get(false, @"System\Meta\Visualiser\UX"), 
                 this, 
-                "UXTestVisualiser", 
+                "UXVisualiser", 
                 this,
                 false,
                 new List<string> { "", @"BaseEdge:\To:" },
                 "AtomVisualiser",
                 baseEdgeVertex,
-                UpdateBaseEdgeCallSchemeEnum.OmmitSecond,
+                UpdateBaseEdgeCallSchemeEnum.OmmitFirst,
                 true);
+
+            CreateUX();
         }
 
         public void OnLoad(object sender, RoutedEventArgs e)
@@ -52,6 +55,10 @@ namespace m0.UIWpf.Visualisers
         protected override void OnDragEnter(DragEventArgs e) { } // Do not want standard base implemention, that prevents allow drop
 
         protected override void OnDragOver(DragEventArgs e) { } // Do not want standard base implemention, that prevents allow drop        
+
+        protected bool CanProceedUIUpdateEvent = true;
+
+      
 
         bool _IsNull;
 
@@ -67,6 +74,19 @@ namespace m0.UIWpf.Visualisers
                 else
                     this.Background = (Brush)FindResource("0BackgroundBrush");
             }
+        }
+
+        public void UpdateVertex()
+        {
+            IVertex bv = Vertex.Get(false, @"BaseEdge:\To:");
+
+            if (bv != null && bv.Value != null && bv != MinusZero.Instance.Empty /*&& ((String)bv.Value) != "$Empty"*/)
+            {
+
+                IsNull = false;
+            }
+            else
+                IsNull = true;
         }
 
         public IVertex Vertex
@@ -95,49 +115,55 @@ namespace m0.UIWpf.Visualisers
             throw new NotImplementedException();
         }
 
-        // UX
-
-        IVertex baseEdgeTo;
-        Canvas canvas;
+        ////////////////////////// UX
 
         public UXItem uxItem { get; set; }
         public UXAggregator uxAggregator { get; set; }
-        public Canvas Canvas { get { return canvas; } }
-
-        public void UpdateVertex()
-        {
-            baseEdgeTo = Vertex.Get(false, @"BaseEdge:\To:");
-
-            if (baseEdgeTo != null && baseEdgeTo.Value != null && baseEdgeTo != MinusZero.Instance.Empty /*&& ((String)bv.Value) != "$Empty"*/)
-            {
-                IsNull = false;
-
-                CreateUX();
-            }
-            else
-                IsNull = true;
-        }
+        public Canvas Canvas { get { return this; } }
 
         void CreateUX()
         {
-            if (IsNull)
+            if (uxItem == null)
                 return;
 
-            canvas = new Canvas();
-
-            this.Child = canvas;
-
-
-            Label l = new Label();
-
-            l.Content = baseEdgeTo.Value.ToString();
-
-            if (uxItem.ForegroundColor != null)
-                l.Foreground = new SolidColorBrush(uxItem.ForegroundColor.GetColor());
-
-            canvas.Children.Add(l);
-
-            VisualiserHelper.UpdateBorder(this, uxItem);
+            IterateItems(Canvas, uxItem);
         }
+
+        void IterateItems(Canvas c, UXItem parentUXItem)
+        {
+            foreach (Item i in parentUXItem.Items)
+                if (i is UXItem)
+                {
+                    UXItem ux = (UXItem)i;
+
+                    if (!GraphUtil.ExistQueryOut(ux.Vertex, "$Is", "Wrap"))
+                    {
+                        IUX iux = AddItem(c, ux, parentUXItem.Vertex);
+
+                        if (iux != null)
+                            IterateItems(iux.Canvas, ux);
+                    }
+                }
+        }
+
+        public IUX AddItem(Canvas c, UXItem ui, IVertex parent)
+        {
+            IVertex visEdge = EdgeHelper.CreateTempEdgeVertex(ui.Edge);
+
+            IPlatformClass pc = PlatformClass.CreatePlatformObject(ui.Vertex, visEdge, parent);
+
+            if (!(pc is FrameworkElement) || !(pc is IUX))
+                return null;
+
+            FrameworkElement f = (FrameworkElement)pc;
+
+            VisualiserHelper.UpdateControl(f, ui);
+
+            c.Children.Add(f);
+
+            return (IUX)pc;
+        }
+
+        
     }
 }

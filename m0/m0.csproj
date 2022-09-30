@@ -136,8 +136,8 @@
     <Compile Include="Lib\Std.cs" />
     <Compile Include="Lib\Sys.cs" />
     <Compile Include="UIWpf\UX\IUX.cs" />
-    <Compile Include="UIWpf\Visualisers\UXTestVisualiser.cs" />
-    <Compile Include="UIWpf\Visualisers\UXVisualiser.cs" />
+    <Compile Include="UIWpf\UX\UXTestVisualiser.cs" />
+    <Compile Include="UIWpf\UX\UXVisualiser.cs" />
     <Compile Include="Util\MathUtil.cs" />
     <Compile Include="Store\FileSystem\AbstractFileSystemVertex.cs" />
     <Compile Include="UIWpf\Commands\ExtraCommandHook.cs" />
@@ -319,7 +319,6 @@
     <Compile Include="ZeroTypes\UX\LayoutTypeEnum.cs" />
     <Compile Include="ZeroTypes\UX\Position.cs" />
     <Compile Include="ZeroTypes\UX\Size.cs" />
-    <Compile Include="ZeroTypes\UX\TypedEdgeUserControl.cs" />
     <Compile Include="ZeroTypes\UX\UXAggregator.cs" />
     <Compile Include="ZeroTypes\UX\UXItem.cs" />
     <Compile Include="ZeroUML\ClassVertex.cs" />
@@ -608,7 +607,9 @@
     <Resource Include="_RESOURCES\basic\extend_left.png" />
     <Resource Include="_RESOURCES\basic\extend_up.png" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Resource Include="ZeroTypes\UX\UX.txt" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
