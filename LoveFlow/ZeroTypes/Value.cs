@@ -7,7 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace LoveFlov.ZeroTypes
+namespace LovFlov.ZeroTypes
 {
     public class Value : TypedEdge
     {
@@ -28,7 +28,7 @@ namespace LoveFlov.ZeroTypes
 
                 if (InstructionHelpers.CheckIfIsOrInherits(e.To, "ParameterDefinition"))
                 {
-                    return (ValueDefinition)TypedEdge.Get(e, typeof(ParameterDefinition)));
+                    return (ValueDefinition)TypedEdge.Get(e, typeof(ParameterDefinition));
                 }
                 else
                 {
@@ -41,6 +41,7 @@ namespace LoveFlov.ZeroTypes
                 return (ValueDefinition)TypedEdge.Get(e, typeof(ValueDefinition));
             }
         }
+
         public IList<Step> Steps
         {
             get

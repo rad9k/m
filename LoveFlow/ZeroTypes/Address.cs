@@ -7,11 +7,11 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace LoveFlov.ZeroTypes
+namespace LovFlov.ZeroTypes
 {
-    public class Parameter : Value
+    public class Address : Value
     {
-        public Parameter(IEdge edge) : base(edge) { }
+        public Address(IEdge edge) : base(edge) { }
 
     }
 }

@@ -6,13 +6,13 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace LoveFlov.ZeroTypes
+namespace LovFlov.ZeroTypes
 {
     public class ValueDefinition : TypedEdge
     {
         static IVertex Name_meta = MinusZero.Instance.root.Get(false, @"LovFlov\Meta\ValueDefinition\Name");
         static IVertex MinValue_meta = MinusZero.Instance.root.Get(false, @"LovFlov\Meta\ValueDefinition\MinValue");
-        static IVertex MaxnValue_meta = MinusZero.Instance.root.Get(false, @"LovFlov\Meta\ValueDefinition\MaxnValue");
+        static IVertex MaxValue_meta = MinusZero.Instance.root.Get(false, @"LovFlov\Meta\ValueDefinition\MaxnValue");
 
         public ValueDefinition(IEdge edge) : base(edge) { }
 

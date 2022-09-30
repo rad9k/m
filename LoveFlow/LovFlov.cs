@@ -2,7 +2,7 @@
 using m0.Graph;
 using System;
 
-namespace LoveFlov
+namespace LovFlov
 {
     public class LovFlov
     {

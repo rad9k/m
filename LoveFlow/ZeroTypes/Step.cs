@@ -6,7 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace LoveFlov.ZeroTypes
+namespace LovFlov.ZeroTypes
 {
     public class Step: TypedEdge
     {
