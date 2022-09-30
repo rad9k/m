@@ -51,12 +51,12 @@ namespace LovFlov
 
         static void AddAddressesDefinitions()
         {
-            End_client = AddAddressDefintion("End client");
-            Product_creator = AddAddressDefintion("Product creator");
-            Product_contract = AddAddressDefintion("Product contract");
-            Centralized_Oracle = AddAddressDefintion("Centralized Oracle");
-            Golem_Requestor = AddAddressDefintion("Golem Requestor");
-            Golem_Provider = AddAddressDefintion("Golem Provider");
+            End_client = AddAddressDefintion("End client", 1000);
+            Product_creator = AddAddressDefintion("Product creator", 0);
+            Product_contract = AddAddressDefintion("Product contract", 1000);
+            Centralized_Oracle = AddAddressDefintion("Centralized Oracle", 0);
+            Golem_Requestor = AddAddressDefintion("Golem Requestor", 0);
+            Golem_Provider = AddAddressDefintion("Golem Provider", 0);
         }
 
         static void AddFlows()
@@ -76,18 +76,19 @@ namespace LovFlov
             f.Vertex.Value = name;
         }
 
-        static AddressDefinition AddAddressDefintion(string Name)
+        static AddressDefinition AddAddressDefintion(string Name, double InitialValue)
         {
             AddressDefinition ad = cf.AddAddressDefinition();
             ad.Name = Name;
             ad.Vertex.Value = Name;
+            ad.InitialValue = InitialValue;
 
             return ad;
         }
 
         static void AddParametersDefinitions()
         {
-            GLM_ETH_rate = AddParameterDefinition("GLM ETH rate", false, 1, 10);
+            GLM_ETH_rate = AddParameterDefinition("GLM ETH rate", false, 0.0001956, 0.0001956);
             Daily_Oracle_calls = AddParameterDefinition("Daily Oracle calls", false, 1, 10);
             One_Centralized_oracle_usage_payment = AddParameterDefinition("One Centralized oracle usage payment", false, 1, 10);
             No_of_Providers = AddParameterDefinition("No of Providers", false, 1, 10);
@@ -96,10 +97,10 @@ namespace LovFlov
             Product_creator_fee = AddParameterDefinition("Product creator fee", false, 1, 10);
             Daily_end_client_lock = AddParameterDefinition("Daily end client lock", false, 1, 10);
 
-            LINK_GLM_rate = AddParameterDefinition("LINK GLM rate", true, 1, 10);
-            Daily_Golem_Oracle_usage_payment = AddParameterDefinition("Daily Golem Oracle usage_payment", true, 1, 10);
-            Daily_Centralized_Oracle_usage_payment = AddParameterDefinition("Daily Centralized Oracle usage payment", true, 1, 10);
-            Product_creator_income = AddParameterDefinition("Product creator income", true, 1, 10);
+            LINK_GLM_rate = AddParameterDefinition("LINK GLM rate", true, 0, 0);
+            Daily_Golem_Oracle_usage_payment = AddParameterDefinition("Daily Golem Oracle usage payment", true, 0, 0);
+            Daily_Centralized_Oracle_usage_payment = AddParameterDefinition("Daily Centralized Oracle usage payment", true, 0, 0);
+            Product_creator_income = AddParameterDefinition("Product creator income", true, 0, 0);
         }
 
        static ParameterDefinition AddParameterDefinition(string Name, bool isDerived, double MinValue, double MaxValue)

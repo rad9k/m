@@ -17,7 +17,7 @@ namespace LovFlov.ZeroTypes
 
         public AddressDefinition(IEdge edge) : base(edge) { }
 
-        public int InitialValue
+        public double InitialValue
         {
             get
             {
@@ -26,7 +26,7 @@ namespace LovFlov.ZeroTypes
                 if (val == null)
                     return 0;
 
-                return GraphUtil.GetIntegerValueOr0(val);
+                return GraphUtil.GetDoubleValueOr0(val);
             }
             set
             {
