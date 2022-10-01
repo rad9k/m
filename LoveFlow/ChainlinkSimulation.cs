@@ -310,6 +310,9 @@ namespace LovFlov
                         Daily_end_client_lock_Steps = p.Steps; break;
 
                     case ("LINK GLM rate"):
+                        LINK_GLM_rate_Steps = p.Steps; break;
+
+                    case ("Daily Golem Oracle usage payment"):
                         Daily_Golem_Oracle_usage_payment_Steps = p.Steps; break;
 
                     case ("Daily Centralized Oracle usage payment"):
@@ -402,7 +405,7 @@ namespace LovFlov
             sProduct_contract.Value -= v_LINK;
             Product_contract_prev = sProduct_contract.Value;
 
-            Step sGolem_Requestor = Golem_Requestor.AddStep();
+            sGolem_Requestor = Golem_Requestor.AddStep();
             sGolem_Requestor.Day = day;
             sGolem_Requestor.Value = Golem_Requestor_prev + v_LINK * (1/LINK_GLM_rate);
             Golem_Requestor_prev = sGolem_Requestor.Value;
