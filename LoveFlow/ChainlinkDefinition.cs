@@ -92,9 +92,9 @@ namespace LovFlov
             Daily_Oracle_calls = AddParameterDefinition("Daily Oracle calls", false, 1, 10);
             One_Centralized_oracle_usage_payment = AddParameterDefinition("One Centralized oracle usage payment", false, 1, 10);
             No_of_Providers = AddParameterDefinition("No of Providers", false, 1, 10);
-            Requestor_fee = AddParameterDefinition("Requestor fee", false, 1, 10);
+            Requestor_fee = AddParameterDefinition("Requestor fee", false, 0.1, 0.5);
             Daily_Provider_usage_payment = AddParameterDefinition("Daily Provider usage payment", false, 1, 10);
-            Product_creator_fee = AddParameterDefinition("Product creator fee", false, 1, 10);
+            Product_creator_fee = AddParameterDefinition("Product creator fee", false, 0.1, 0.2);
             Daily_end_client_lock = AddParameterDefinition("Daily end client lock", false, 1, 10);
 
             LINK_GLM_rate = AddParameterDefinition("LINK GLM rate", true, 0, 0);
