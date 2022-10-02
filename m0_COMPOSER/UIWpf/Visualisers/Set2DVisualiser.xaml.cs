@@ -209,29 +209,33 @@ namespace m0_COMPOSER.UIWpf.Visualisers
         {
             Dictionary<IVertex, int> metaCount = new Dictionary<IVertex, int>();
 
-            ISet<IVertex> metaDictionary = new HashSet<IVertex>();
-
             foreach (IEdge e in VisualizedVertex)
-                if (!metaDictionary.Contains(e.Meta) && VisualiserUtil.FilterEdge(e, this.Vertex))
-                    metaDictionary.Add(e.Meta);
+                if (VisualiserUtil.FilterEdge(e, this.Vertex)) {
+                    if (metaCount.ContainsKey(e.Meta))
+                        metaCount[e.Meta]++;
+                    else
+                        metaCount.Add(e.Meta, 1);
+                }
 
             SetItemsDefiningMetaComboBox.Items.Clear();
 
             bool isFirst = true;
 
-            foreach (IVertex v in metaDictionary)
-            {
-                ComboBoxItem i = new ComboBoxItem();
-                i.Content = v.Value;
-                i.Tag = v;
-                SetItemsDefiningMetaComboBox.Items.Add(i);
 
-                if (isFirst)
-                {
-                    isFirst = false;
-                    i.IsSelected = true;
-                }
-            }
+            foreach (KeyValuePair<IVertex,int> kvp in metaCount)
+                if(kvp.Value > 1)                    
+                    {
+                        ComboBoxItem i = new ComboBoxItem();
+                        i.Content = kvp.Key.Value;
+                        i.Tag = kvp.Key;
+                        SetItemsDefiningMetaComboBox.Items.Add(i);
+
+                        if (isFirst)
+                        {
+                            isFirst = false;
+                            i.IsSelected = true;
+                        }
+                    }
         }
 
         bool VisualizedVertexToUpdated_executed = false;
