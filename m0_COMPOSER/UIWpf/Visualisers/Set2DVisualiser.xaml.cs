@@ -204,9 +204,11 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             Interaction.EndInteractionWithGraph();
             ////////////////////////////////////////
         }
-
+        
         protected void ComboBoxesUpdate()
         {
+            Dictionary<IVertex, int> metaCount = new Dictionary<IVertex, int>();
+
             ISet<IVertex> metaDictionary = new HashSet<IVertex>();
 
             foreach (IEdge e in VisualizedVertex)
