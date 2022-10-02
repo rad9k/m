@@ -463,17 +463,17 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             return GraphUtil.GetQueryOut(VisualizedVertex, SetItemsDefiningMetaString, null);
         }
 
-        int cnt = 0;
+        //int cnt = 0;
 
         protected override void DrawItems()
         {
-            // if (!canDraw)
-            //    return;
-
-            cnt++;
-
-            if (cnt < 5)
+             if (!canDraw)
                 return;
+
+          //  cnt++;
+
+            //if (cnt < 5)
+              //  return;
 
             ItemDictionary.RemoveAllByHost(this);
 
@@ -677,6 +677,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             return false;
         }
+        bool ommit_SetItemHorizontalAxisMetaComboBox_SelectionChanged = false;
 
         private void SetItemsDefiningMetaComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
@@ -704,7 +705,10 @@ namespace m0_COMPOSER.UIWpf.Visualisers
                         SetItemHorizontalAxisMetaComboBox.Items.Add(i);
 
                         if (cnt == 0)
+                        {
+                            ommit_SetItemHorizontalAxisMetaComboBox_SelectionChanged = true;
                             i.IsSelected = true;
+                        }
 
                         //
 
@@ -731,6 +735,12 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             SetItemHorizontalAxisMetaString = SetItemHorizontalAxisMetaVertex.Value.ToString();
 
+
+            if (ommit_SetItemHorizontalAxisMetaComboBox_SelectionChanged)                            
+                ommit_SetItemHorizontalAxisMetaComboBox_SelectionChanged = false;
+            else
+                canDraw = true;
+
             UpdateAxisAndDraw();            
         }
 
@@ -742,6 +752,8 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             SetItemVerticalAxisMetaVertex = (IVertex)((ComboBoxItem)SetItemVerticalAxisMetaComboBox.SelectedItem).Tag;
 
             SetItemVerticalAxisMetaString = SetItemVerticalAxisMetaVertex.Value.ToString();
+
+            canDraw = true;
 
             UpdateAxisAndDraw();
         }
@@ -765,8 +777,8 @@ namespace m0_COMPOSER.UIWpf.Visualisers
                 || VerticalAD == null)
                 return;
 
-           // if (!canDraw)
-            //    return;
+            if (!canDraw)
+                return;
 
             horizontalMin_fromData = double.PositiveInfinity;
             horizontalMax_fromData = double.NegativeInfinity;

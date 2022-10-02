@@ -58,7 +58,7 @@ namespace m0
 
             ExtraRun8();
 
-           // ExtraRun6();
+            ExtraRun6();
 
             //ExtraRun5();
 
@@ -269,6 +269,8 @@ namespace m0
 
             IVertex xxx = r.Get(false, "examples").AddVertex(null, "XXX");
 
+            
+
             IVertex c = xxx.AddVertex(null, "C");
 
             IVertex x = c.AddVertex(null, "X");
@@ -291,7 +293,9 @@ namespace m0
 
             IVertex data = xxx.AddVertex(null, "data");
 
-            for(double xx=-30; xx < 30 ; xx += 0.1)
+            data.AddEdge(xxx, null);
+
+            for (double xx=-30; xx < 30 ; xx += 0.1)
             //for (double xx = 1.99; xx <= 3; xx++)
             //for (double xx = -3.01; xx <= 200.01; xx++)
             //for (double xx = 2; xx <= 3.01; xx+=1.01)

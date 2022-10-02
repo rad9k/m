@@ -219,7 +219,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control.Item
 
         public void Update()
         {
-            if(Host is Set2DVisualiser)
+            if (Host is Set2DVisualiser)
             {
                 Set2DVisualiser set2Dhost = (Set2DVisualiser)Host;
 
@@ -227,8 +227,14 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control.Item
 
                 string verticalValue = GraphUtil.GetQueryOutFirst(this.BaseEdge.To, set2Dhost.SetItemVerticalAxisMetaString, null).ToString();
 
-                this.ToolTip = set2Dhost.SetItemHorizontalAxisMetaString + ":" + horizontalValue + " / " +
-                    set2Dhost.SetItemVerticalAxisMetaString + ":" + verticalValue;
+                this.ToolTip = "[" + 
+                    set2Dhost.SetItemHorizontalAxisMetaString
+                    + "] : "
+                    + horizontalValue 
+                    + " / [" 
+                    + set2Dhost.SetItemVerticalAxisMetaString 
+                    + "] : " 
+                    + verticalValue;
             }
         }
 
