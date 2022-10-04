@@ -1,5 +1,6 @@
 ﻿using m0.Foundation;
 using m0.Graph;
+using m0.ZeroCode.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -20,10 +21,12 @@ namespace m0.ZeroTypes.UX
         static IVertex BorderColor_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\UXItem\BorderColor");
         static IVertex BorderSize_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\UXItem\BorderSize");
         static IVertex Margin_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\UXItem\Margin");
+        static IVertex Decorator_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\UXItem\Decorator");
 
         static IVertex Color_type = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\Color");
         static IVertex Size_type = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\Size");
         static IVertex Position_type = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\Position");
+        static IVertex LineDecorator_type = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\LineDecorator");
 
         public UXItem(IEdge edge) : base(edge) { }
 
@@ -217,6 +220,59 @@ namespace m0.ZeroTypes.UX
                 else
                     val.Value = value;
             }
+        }
+
+        public UX.UXTemplate Template
+        {
+            get
+            {
+                IEdge val = GraphUtil.GetQueryOutFirstEdge(Vertex, "Template", null);
+
+                if (val == null)
+                    return null;
+
+                return (UXTemplate)TypedEdge.Get(val, typeof(UXTemplate));
+            }
+        }
+
+        public IList<Decorator> Decorators
+        {
+            get
+            {
+                IList<IEdge> list = GraphUtil.GetQueryOut(Vertex, "Decorator", null);
+
+                IList<Item> ret = new List<Item>();
+
+                foreach (IEdge e in list)
+                {
+
+                    if (InstructionHelpers.CheckIfIsOrInherits(e.To, "LineDecorator"))
+                    {
+                        ret.Add((LineDecorator)TypedEdge.Get(e, typeof(LineDecorator)));
+                    }
+                    else
+                    {
+                        if (InstructionHelpers.CheckIfIsOrInherits(e.To, "Decorator"))
+                        {
+                            ret.Add((Decorator)TypedEdge.Get(e, typeof(Decorator)));
+                        }
+                    }
+                }
+
+                return ret;
+            }
+        }
+
+        public UXItem AddDecorator_LineDecorator()
+        {
+            return AddItem_UXItem(LineDecorator_type);
+        }
+
+        public UXItem AddDecorator(IVertex typeVertex)
+        {
+            IEdge newEdge = VertexOperations.AddInstanceAndReturnEdge(Vertex, typeVertex, Decorator_meta);
+
+            return new UXItem(newEdge);
         }
     }
 }

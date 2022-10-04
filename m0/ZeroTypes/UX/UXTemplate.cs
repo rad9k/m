@@ -1,0 +1,116 @@
+﻿using m0.Foundation;
+using m0.Graph;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace m0.ZeroTypes.UX
+{
+    public class UXTemplate: TypedEdge
+    {
+        static IVertex DirectVertexTestQuery_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\UXTemplate\DirectVertexTestQuery");
+        static IVertex MetaVertexTestQuery_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\UXTemplate\MetaVertexTestQuery");
+        static IVertex ItemClass_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\UXTemplate\ItemClass");
+        static IVertex ItemVertex_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\UXTemplate\ItemVertex");
+        static IVertex InstanceCreation_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\UXTemplate\InstanceCreation");
+        static IVertex DecoratorTemplate_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\UXTemplate\DecoratorTemplate");
+        static IVertex DoNotShowInherited_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\UXTemplate\DoNotShowInherited");
+        static IVertex ForceShowEditForm_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\UXTemplate\ForceShowEditForm");
+
+        static IVertex Size_type = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\Size");
+
+        public UXTemplate(IEdge edge) : base(edge) { }
+
+        public string DirectVertexTestQuery
+        {
+            get
+            {
+                IVertex val = GraphUtil.GetQueryOutFirst(Vertex, "DirectVertexTestQuery", null);
+
+                if (val == null)
+                    return null;
+
+                return GraphUtil.GetStringValue(val);
+            }
+            set
+            {
+                IVertex val = GraphUtil.GetQueryOutFirst(Vertex, "DirectVertexTestQuery", null);
+
+                if (val == null)
+                    val = Vertex.AddVertex(DirectVertexTestQuery_meta, value);
+                else
+                    val.Value = value;
+            }
+        }
+
+        public string MetaVertexTestQuery
+        {
+            get
+            {
+                IVertex val = GraphUtil.GetQueryOutFirst(Vertex, "MetaVertexTestQuery", null);
+
+                if (val == null)
+                    return null;
+
+                return GraphUtil.GetStringValue(val);
+            }
+            set
+            {
+                IVertex val = GraphUtil.GetQueryOutFirst(Vertex, "MetaVertexTestQuery", null);
+
+                if (val == null)
+                    val = Vertex.AddVertex(MetaVertexTestQuery_meta, value);
+                else
+                    val.Value = value;
+            }
+        }
+
+        public IVertex ItemClass
+        {
+            get
+            {
+                IVertex val = GraphUtil.GetQueryOutFirst(Vertex, "ItemClass", null);
+
+                if (val == null)
+                    return null;
+
+                return val;
+            }
+            set
+            {
+                IVertex val = GraphUtil.GetQueryOutFirst(Vertex, "ItemClass", null);
+
+                if (val == null)
+                    val = Vertex.AddVertex(ItemClass_meta, value);
+                else
+                    val.Value = value;
+            }
+        }
+
+        public IVertex ItemVertex
+        {
+            get
+            {
+                IVertex val = GraphUtil.GetQueryOutFirst(Vertex, "ItemVertex", null);
+
+                if (val == null)
+                    return null;
+
+                return val;
+            }
+            set
+            {
+                IVertex val = GraphUtil.GetQueryOutFirst(Vertex, "ItemVertex", null);
+
+                if (val == null)
+                    val = Vertex.AddVertex(ItemVertex_meta, value);
+                else
+                    val.Value = value;
+            }
+        }
+
+    }
+
+}
