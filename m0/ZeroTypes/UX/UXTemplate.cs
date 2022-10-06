@@ -111,6 +111,76 @@ namespace m0.ZeroTypes.UX
             }
         }
 
+        public InstanceCreationEnum InstanceCreationEnum
+        {
+            get
+            {
+                IVertex val = GraphUtil.GetQueryOutFirst(Vertex, "InstanceCreationEnum", null);
+
+                return InstanceCreationEnumHelper.GetEnum(val);
+            }
+            set
+            {
+                GraphUtil.CreateOrReplaceEdge(Vertex, InstanceCreation_meta, InstanceCreationEnumHelper.GetVertex(value));
+            }
+        }
+
+        public UX.UXDecoratorTemplate DecoratorTemplate
+        {
+            get
+            {
+                IEdge val = GraphUtil.GetQueryOutFirstEdge(Vertex, "DecoratorTemplate", null);
+
+                if (val == null)
+                    return null;
+
+                return (UXDecoratorTemplate)TypedEdge.Get(val, typeof(UXDecoratorTemplate));
+            }
+        }
+
+        public bool DoNotShowInherited
+        {
+            get
+            {
+                IVertex val = GraphUtil.GetQueryOutFirst(Vertex, "DoNotShowInherited", null);
+
+                if (val == null)
+                    return false;
+
+                return GraphUtil.GetBooleanValueOrFalse(val);
+            }
+            set
+            {
+                IVertex val = GraphUtil.GetQueryOutFirst(Vertex, "DoNotShowInherited", null);
+
+                if (val == null)
+                    val = Vertex.AddVertex(DoNotShowInherited_meta, value);
+                else
+                    val.Value = value;
+            }
+        }
+
+        public bool ForceShowEditForm
+        {
+            get
+            {
+                IVertex val = GraphUtil.GetQueryOutFirst(Vertex, "ForceShowEditForm", null);
+
+                if (val == null)
+                    return false;
+
+                return GraphUtil.GetBooleanValueOrFalse(val);
+            }
+            set
+            {
+                IVertex val = GraphUtil.GetQueryOutFirst(Vertex, "ForceShowEditForm", null);
+
+                if (val == null)
+                    val = Vertex.AddVertex(ForceShowEditForm_meta, value);
+                else
+                    val.Value = value;
+            }
+        }
     }
 
 }

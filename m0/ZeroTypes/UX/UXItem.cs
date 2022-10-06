@@ -21,6 +21,7 @@ namespace m0.ZeroTypes.UX
         static IVertex BorderColor_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\UXItem\BorderColor");
         static IVertex BorderSize_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\UXItem\BorderSize");
         static IVertex Margin_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\UXItem\Margin");
+        static IVertex Template_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\UXItem\Template");
         static IVertex Decorator_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\UXItem\Decorator");
 
         static IVertex Color_type = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\Color");
@@ -233,15 +234,21 @@ namespace m0.ZeroTypes.UX
 
                 return (UXTemplate)TypedEdge.Get(val, typeof(UXTemplate));
             }
+            set
+            {
+                IVertex val = GraphUtil.GetQueryOutFirst(Vertex, "Template", null);
+
+                GraphUtil.CreateOrReplaceEdge(Vertex, Template_meta, value.Vertex);
+            }
         }
 
-        public IList<Decorator> Decorators
+        public IList<UXItem> Decorators
         {
             get
             {
-                IList<IEdge> list = GraphUtil.GetQueryOut(Vertex, "Decorator", null);
+                IList<IEdge> list = GraphUtil.GetQueryOut(Vertex, "UXItem", null);
 
-                IList<Item> ret = new List<Item>();
+                IList<UXItem> ret = new List<UXItem>();
 
                 foreach (IEdge e in list)
                 {
@@ -252,9 +259,9 @@ namespace m0.ZeroTypes.UX
                     }
                     else
                     {
-                        if (InstructionHelpers.CheckIfIsOrInherits(e.To, "Decorator"))
+                        if (InstructionHelpers.CheckIfIsOrInherits(e.To, "MetaExtendedLineDecorator"))
                         {
-                            ret.Add((Decorator)TypedEdge.Get(e, typeof(Decorator)));
+                            ret.Add((MetaExtendedLineDecorator)TypedEdge.Get(e, typeof(MetaExtendedLineDecorator)));
                         }
                     }
                 }
