@@ -51,7 +51,7 @@ namespace LovFlov
 
         static void AddAddressesDefinitions()
         {
-            End_client = AddAddressDefintion("End client", 1000);
+            End_client = AddAddressDefintion("End client", 1000000);
             Product_creator = AddAddressDefintion("Product creator", 0);
             Product_contract = AddAddressDefintion("Product contract", 1000);
             Centralized_Oracle = AddAddressDefintion("Centralized Oracle", 0);
@@ -88,14 +88,14 @@ namespace LovFlov
 
         static void AddParametersDefinitions()
         {
-            GLM_ETH_rate = AddParameterDefinition("GLM ETH rate", false, 0.0001956, 0.0001956);
-            Daily_Oracle_calls = AddParameterDefinition("Daily Oracle calls", false, 1, 10);
-            One_Centralized_oracle_usage_payment = AddParameterDefinition("One Centralized oracle usage payment", false, 1, 10);
-            No_of_Providers = AddParameterDefinition("No of Providers", false, 1, 10);
-            Requestor_fee = AddParameterDefinition("Requestor fee", false, 0.1, 0.5);
-            Daily_Provider_usage_payment = AddParameterDefinition("Daily Provider usage payment", false, 1, 10);
+            GLM_ETH_rate = AddParameterDefinition("GLM ETH rate", false, 0.0001956, 0.0002);
+            Daily_Oracle_calls = AddParameterDefinition("Daily Oracle calls", false, 15000, 16000);
+            One_Centralized_oracle_usage_payment = AddParameterDefinition("One Centralized oracle usage payment", false, 1, 1.1);
+            No_of_Providers = AddParameterDefinition("No of Providers", false, 10, 20);
+            Requestor_fee = AddParameterDefinition("Requestor fee", false, 90, 120);
+            Daily_Provider_usage_payment = AddParameterDefinition("Daily Provider usage payment", false, 0.4056, 0.5);
             Product_creator_fee = AddParameterDefinition("Product creator fee", false, 0.1, 0.2);
-            Daily_end_client_lock = AddParameterDefinition("Daily end client lock", false, 1, 10);
+            Daily_end_client_lock = AddParameterDefinition("Daily end client lock", false, 2000, 2100);
 
             LINK_GLM_rate = AddParameterDefinition("LINK GLM rate", true, 0, 0);
             Daily_Golem_Oracle_usage_payment = AddParameterDefinition("Daily Golem Oracle usage payment", true, 0, 0);

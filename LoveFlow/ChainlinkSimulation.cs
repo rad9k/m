@@ -11,6 +11,8 @@ namespace LovFlov
 {
     public class ChainlinkSimulation
     {
+        static double DoNotWantNewBias = 0.01;
+
         static IVertex r = m0.MinusZero.Instance.root;
 
         static FlovInstance ci;
@@ -109,7 +111,7 @@ namespace LovFlov
 
                 double GLM_ETH_rate_Value = GLM_ETH_rate_Steps[d - 1].Value;
 
-                s.Value = (0.00005706) * GLM_ETH_rate_Value;
+                s.Value = (1/0.005706) * GLM_ETH_rate_Value;
             }
         }
 
@@ -135,7 +137,7 @@ namespace LovFlov
                 if (tp.Vertex.Value.ToString() == "Daily Provider usage payment")
                     Daily_Provider_usage_payment = tp;
 
-                if (tp.Vertex.Value.ToString() == "Daily Provider usage payment")
+                if (tp.Vertex.Value.ToString() == "LINK GLM rate")
                     LINK_GLM_rate = tp;
             }
 
@@ -392,7 +394,15 @@ namespace LovFlov
 
         static void Simulate_Centralized_Oracle_payment(int day)
         {
+            double v_LINK = Daily_Centralized_Oracle_usage_payment_Steps[day - 1].Value * (1-DoNotWantNewBias);
 
+            sProduct_contract.Value -= v_LINK;
+            Product_contract_prev = sProduct_contract.Value;
+
+            Step sCentralized_Oracle = Centralized_Oracle.AddStep();
+            sCentralized_Oracle.Day = day;
+            sCentralized_Oracle.Value = Centralized_Oracle_prev + v_LINK;
+            Centralized_Oracle_prev = sCentralized_Oracle.Value;
         }
 
         static Step sGolem_Requestor;
@@ -400,7 +410,7 @@ namespace LovFlov
         static void Simulate_Decentralized_Oracle_payment(int day)
         {
             double LINK_GLM_rate = LINK_GLM_rate_Steps[day - 1].Value;
-            double v_LINK = Daily_Golem_Oracle_usage_payment_Steps[day - 1].Value;
+            double v_LINK = Daily_Golem_Oracle_usage_payment_Steps[day - 1].Value * DoNotWantNewBias;
 
             sProduct_contract.Value -= v_LINK;
             Product_contract_prev = sProduct_contract.Value;
