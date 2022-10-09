@@ -2711,8 +2711,9 @@ namespace m0
             m0.LegacySystem.Util.GeneralUtil.ParseAndExcute(smz, sm, "{UX{"
                 +"Class:Color{Attribute:Red{MinValue:0,MaxValue:255,$DefaultValue:0,$MinCardinality:1,$MaxCardinality:1},Attribute:Green{MinValue:0,MaxValue:255,$DefaultValue:0,$MinCardinality:1,$MaxCardinality:1},Attribute:Blue{MinValue:0,MaxValue:255,$DefaultValue:0,$MinCardinality:1,$MaxCardinality:1},Attribute:Opacity{MinValue:0,MaxValue:255,$MinCardinality:0,$MaxCardinality:1}}"
                 +",Class:HasColor{Attribute:Color{$MinCardinality:0,$MaxCardinality:1}}"
-                + ",Class:Item{Aggregation:Item{$MinCardinality:0,$MaxCardinality:-1}}"
-                + ",Class:UXItem{Attribute:Scale{$MinCardinality:1,$MaxCardinality:1,$DisplayLarger:,$DefaultValue:100},Attribute:DesignMode{$MinCardinality:0,$MaxCardinality:1},Attribute:Size{$MinCardinality:0,$MaxCardinality:1},Attribute:Position{$MinCardinality:0,$MaxCardinality:1},Attribute:Layout{$MinCardinality:0,$MaxCardinality:1},Attribute:BackgroundColor{$MinCardinality:0,$MaxCardinality:1},Attribute:ForegroundColor{$MinCardinality:0,$MaxCardinality:1},Attribute:BorderColor{$MinCardinality:0,$MaxCardinality:1},Attribute:BorderSize{MinValue:0,MaxValue:10,$MinCardinality:0,$MaxCardinality:1},Attribute:Margin{$MinCardinality:0,$MaxCardinality:1},Association:Template{$MinCardinality:0,$MaxCardinality:1},Attribute:Decorator{$MinCardinality:0,$MaxCardinality:-1}}"
+                + ",Class:Template{Aggregation:Template{$MinCardinality:0,$MaxCardinality:-1}}"
+                + ",Class:Item{Aggregation:Item{$MinCardinality:0,$MaxCardinality:-1},Association:Template{$MinCardinality:0,$MaxCardinality:1}}"
+                + ",Class:UXItem{Attribute:Scale{$MinCardinality:1,$MaxCardinality:1,$DisplayLarger:,$DefaultValue:100},Attribute:DesignMode{$MinCardinality:0,$MaxCardinality:1},Attribute:Size{$MinCardinality:0,$MaxCardinality:1},Attribute:Position{$MinCardinality:0,$MaxCardinality:1},Attribute:Layout{$MinCardinality:0,$MaxCardinality:1},Attribute:BackgroundColor{$MinCardinality:0,$MaxCardinality:1},Attribute:ForegroundColor{$MinCardinality:0,$MaxCardinality:1},Attribute:BorderColor{$MinCardinality:0,$MaxCardinality:1},Attribute:BorderSize{MinValue:0,MaxValue:10,$MinCardinality:0,$MaxCardinality:1},Attribute:Margin{$MinCardinality:0,$MaxCardinality:1},Attribute:Decorator{$MinCardinality:0,$MaxCardinality:-1}}"
                 + ",Class:UXAggregator{Attribute:IsExpanded{$MinCardinality:1,$MaxCardinality:1,$DefaultValue:True},Attribute:CollapsedSize{$MinCardinality:0,$MaxCardinality:1},Attribute:ExpandedSize{$MinCardinality:0,$MaxCardinality:1}}"
                 + ",Class:Size{Attribute:Width,Attribute:Height}"
                 + ",Class:Position{Attribute:X,Attribute:Y}"
@@ -2743,6 +2744,13 @@ namespace m0
                 LegacySystem.Graph.EasyVertex.Get(sm, false, @"*$EdgeTarget"),
                 LegacySystem.Graph.EasyVertex.Get(sm, false, @"ZeroTypes\UX\Color"));
 
+            // Template
+
+            LegacySystem.Graph.EasyVertex.Get(smz, false, @"UX\Template\Template").AddEdge(
+                LegacySystem.Graph.EasyVertex.Get(sm, false, @"*$EdgeTarget"),
+                LegacySystem.Graph.EasyVertex.Get(sm, false, @"ZeroTypes\UX\Template"));
+
+
             // Item
 
             LegacySystem.Graph.EasyVertex.Get(smz, false, @"UX\Item").AddEdge(
@@ -2752,6 +2760,10 @@ namespace m0
             LegacySystem.Graph.EasyVertex.Get(smz, false, @"UX\Item\Item").AddEdge(
                 LegacySystem.Graph.EasyVertex.Get(sm, false, @"*$EdgeTarget"),
                 LegacySystem.Graph.EasyVertex.Get(sm, false, @"ZeroTypes\UX\Item"));
+
+            LegacySystem.Graph.EasyVertex.Get(smz, false, @"UX\Item\Template").AddEdge(
+                LegacySystem.Graph.EasyVertex.Get(sm, false, @"*$EdgeTarget"),
+                LegacySystem.Graph.EasyVertex.Get(sm, false, @"ZeroTypes\UX\Template"));
 
             // UXItem
 
@@ -2804,10 +2816,6 @@ namespace m0
             LegacySystem.Graph.EasyVertex.Get(smz, false, @"UX\UXItem\Margin").AddEdge(
                  LegacySystem.Graph.EasyVertex.Get(sm, false, @"*$EdgeTarget"),
                  LegacySystem.Graph.EasyVertex.Get(sm, false, @"ZeroTypes\Float"));
-
-        /*    LegacySystem.Graph.EasyVertex.Get(smz, false, @"UX\UXItem\Template").AddEdge(
-                LegacySystem.Graph.EasyVertex.Get(sm, false, @"*$EdgeTarget"),
-                LegacySystem.Graph.EasyVertex.Get(sm, false, @"ZeroTypes\UX\UXTemplate"));*/
 
             LegacySystem.Graph.EasyVertex.Get(smz, false, @"UX\UXItem\Decorator").AddEdge(
                  LegacySystem.Graph.EasyVertex.Get(sm, false, @"*$EdgeTarget"),
@@ -3322,10 +3330,6 @@ namespace m0
 
             smzu.Get(false, @"InstanceCreationEnum").AddEdge(sm.Get(false, "?$Inherits"), sm.Get(false, @"ZeroTypes\EnumBase"));
             smzu.Get(false, @"LineEndEnum").AddEdge(sm.Get(false, "?$Inherits"), sm.Get(false, @"ZeroTypes\EnumBase"));
-
-            // UXItem
-
-            smzu.Get(false, @"UXItem\Template").AddEdge(sm.Get(false, @"?$EdgeTarget"), smzu.Get(false, @"UXTemplate"));
 
             // UXTemplate
 
@@ -5052,7 +5056,7 @@ namespace m0
             m0.LegacySystem.Util.GeneralUtil.ParseAndExcute(sm, sm, "{User{CurrentUser,"+
                 "Class:NonAtomProcess{Attribute:StartTimeStamp{$MinCardinality:1,$MaxCardinality:1}},"+
                 "Class:Session{Attribute:StartTimeStamp{$MinCardinality:1,$MaxCardinality:1},Aggregation:ClipboardCopy{$MinCardinality:0,$MaxCardinality:-1},Aggregation:ClipboardCut{$MinCardinality:0,$MaxCardinality:-1},Aggregation:Process{$MinCardinality:0,$MaxCardinality:-1},Attribute:Visualisers{$MinCardinality:1,$MaxCardinality:1}}," +
-                "Class:User{Attribute:CurrentSession{$MinCardinality:1,$MaxCardinality:1},Aggregation:Session{$MinCardinality:0,$MaxCardinality:-1},Aggregation:Settings{$MinCardinality:1,$MaxCardinality:1},Aggregation:DefaultFormalTextLanguage{$MinCardinality:1,$MaxCardinality:1},Aggregation:Queries{$MinCardinality:1,$MaxCardinality:1}},"+
+                "Class:User{Attribute:CurrentSession{$MinCardinality:1,$MaxCardinality:1},Aggregation:Session{$MinCardinality:0,$MaxCardinality:-1},Aggregation:Settings{$MinCardinality:1,$MaxCardinality:1},Association:DefaultFormalTextLanguage{$MinCardinality:1,$MaxCardinality:1},Association:DefaultUXTemplate{$MinCardinality:1,$MaxCardinality:1},Aggregation:Queries{$MinCardinality:1,$MaxCardinality:1}}," +
                 "Class:Settings{Attribute:CopyOnDragAndDrop{$MinCardinality:1,$MaxCardinality:1},Association:AllowBlankAreaDragAndDrop{$MinCardinality:1,$MaxCardinality:1},Attribute:AllowManyDiagramItemsForOneVertex{$MinCardinality:1,$MaxCardinality:1}},Enum:AllowBlankAreaDragAndDropEnum{EnumValue:No,EnumValue:OnlyEnd,EnumValue:StartAndEnd},"+
                 "Class:VisualiserList{Association:Visualiser{$MinCardinality:0,$MaxCardinality:-1}}}}");
 
@@ -5073,6 +5077,7 @@ namespace m0
             sm.Get(false, @"User\User\CurrentSession").AddEdge(sm.Get(false, @"?$EdgeTarget"), sm.Get(false, @"User\Session"));
             sm.Get(false, @"User\User\Settings").AddEdge(sm.Get(false, @"?$EdgeTarget"), sm.Get(false, @"User\Settings"));
             sm.Get(false, @"User\User\DefaultFormalTextLanguage").AddEdge(sm.Get(false, @"?$EdgeTarget"), sm.Get(false, @"ZeroTypes\FormalTextLanguage"));
+            sm.Get(false, @"User\User\DefaultUXTemplate").AddEdge(sm.Get(false, @"?$EdgeTarget"), sm.Get(false, @"ZeroTypes\UX\UXTemplate"));
             sm.Get(false, @"User\User\Queries").AddEdge(sm.Get(false, @"?$EdgeTarget"), sm.Get(false, @"ZeroTypes\VertexType"));
 
             sm.Get(false, @"User\AllowBlankAreaDragAndDropEnum").AddEdge(sm.Get(false, @"?$Inherits"), sm.Get(false, @"ZeroTypes\EnumBase"));
@@ -5363,7 +5368,7 @@ namespace m0
             return o;
         }
 
-        public void CreateDataUXColor()
+        public void CreateSystemDataUXColor()
         {
             IVertex r = MinusZero.Instance.root;
 
@@ -5416,6 +5421,160 @@ namespace m0
             foreach (var de in baseColors)
                 ColorHelper.AddColor(Colors, "VeryVeryLight"+de.Key, ScaleUp(de.Value[0], 0.8), ScaleUp(de.Value[1], 0.8), ScaleUp(de.Value[2], 0.8), 255);
 
+        }
+
+
+        IVertex AddUXTemplate(IVertex where, String Value, bool doNotShowInherited,
+            String DirectVertexTestQuery,
+            String MetaVertexTestQuery,
+            IVertex DiagramItemClass,
+            IVertex InstanceCreation,
+            bool CreateDiagraItemVertex,
+            double LineWidth,
+            IVertex ForegroundColor, IVertex BackgroundColor,
+            bool? ForceShowEditForm = null)
+        {
+            IVertex ut = Root.Get(false, @"System\Meta\ZeroTypes\UX\UXTemplate");
+
+            IVertex sm = Root.Get(false, @"System\Meta");
+            
+            //
+
+            IVertex v = where.AddVertex(ut, Value);
+
+            v.AddEdge(Root.Get(false, @"System\Meta?$Is"), ut);
+
+            if (DirectVertexTestQuery != null)
+                v.AddVertex(ut.Get(false, "DirectVertexTestQuery"), DirectVertexTestQuery);
+
+            if (MetaVertexTestQuery != null)
+                v.AddVertex(ut.Get(false, "MetaVertexTestQuery"), MetaVertexTestQuery);
+
+            v.AddEdge(ut.Get(false, "ItemClass"), DiagramItemClass);
+
+            v.AddEdge(ut.Get(false, "InstanceCreation"), InstanceCreation);
+
+
+            //
+
+            if (doNotShowInherited)
+                v.AddVertex(ut.Get(false, @"DoNotShowInherited"), "True");
+
+            if (ForceShowEditForm != null)
+            {
+                if (ForceShowEditForm == true)
+                    v.AddVertex(ut.Get(false, @"ForceShowEditForm"), "True");
+
+                if (ForceShowEditForm == false)
+                    v.AddVertex(ut.Get(false, @"ForceShowEditForm"), "False");
+            }
+
+            if (CreateDiagraItemVertex)
+            {
+                IVertex iv = v.AddVertex(ut.Get(false, "ItemVertex"), null);
+
+                if (LineWidth > -1)
+                    iv.AddVertex(Root.Get(false, @"System\Meta?LineWidth"), LineWidth);
+
+                if (ForegroundColor != null)
+                    GraphUtil.CreateOrReplaceEdge(v, Root.Get(false, @"System\Meta\ZeroTypes\UX\Color"), ForegroundColor);
+
+
+                if (BackgroundColor != null)
+                    GraphUtil.CreateOrReplaceEdge(v, Root.Get(false, @"System\Meta\ZeroTypes\UX\Color"), BackgroundColor);
+            }
+
+            return v;
+        }
+
+        IVertex AddUXTemplate_RectangleItem(IVertex where, String Value, bool doNotShowInherited,
+              String DirectVertexTestQuery,
+              String MetaVertexTestQuery,
+              IVertex DiagramItemClass,
+              IVertex InstanceCreation,
+              bool CreateDiagraItemVertex,
+              double BorderWidth,
+              IVertex BackgroundColor, IVertex ForegroundColor,
+              int RoundEdgeSize, bool showMeta,
+              IVertex VisualiserClass, bool VisualiserVertex,
+              bool? ForceShowEditForm = null)
+        {
+               IVertex v = AddUXTemplate(where, Value, doNotShowInherited, DirectVertexTestQuery, MetaVertexTestQuery, DiagramItemClass, InstanceCreation,
+                CreateDiagraItemVertex,
+              BorderWidth,
+              ForegroundColor, BackgroundColor,
+              ForceShowEditForm);
+
+            if (CreateDiagraItemVertex && RoundEdgeSize > -1)
+                v.Get(false, "ItemVertex:").AddVertex(Root.Get(false, @"System\Meta\ZeroTypes\UX\RectangleItem\RoundEdgeSize"), RoundEdgeSize);
+
+            if (CreateDiagraItemVertex && showMeta)
+                v.Get(false, "ItemVertex:").AddVertex(Root.Get(false, @"System\Meta\ZeroTypes\UX\RectangleItem\ShowMeta"), "True");
+            else
+                v.Get(false, "ItemVertex:").AddVertex(Root.Get(false, @"System\Meta\ZeroTypes\UX\RectangleItem\ShowMeta"), "False");
+
+            if (VisualiserClass != null)
+                v.Get(false, @"ItemVertex:").AddEdge(Root.Get(false, @"System\Meta\ZeroTypes\UX\RectangleItem\VisualiserClass"), VisualiserClass);
+
+            if (VisualiserVertex)
+                v.Get(false, @"ItemVertex:").AddVertex(Root.Get(false, @"System\Meta\ZeroTypes\UX\RectangleItem\VisualiserVertex"), null);
+
+            return v;
+        }
+
+        void CreateSystemDataUXZeroUMLTemplate()
+        {
+            IVertex smzu = Root.Get(false, @"System\Meta\ZeroTypes\UX");
+
+            IVertex sdu = Root.Get(false, @"System\Data\UX");
+
+            IVertex sduc = Root.Get(false, @"System\Data\Colors");
+
+            IVertex sdut = sdu.AddVertex(null, "Templates");
+
+            IVertex sdutz = VertexOperations.AddInstance(sdut, smzu.Get(false, "Template"));
+
+            sdutz.Value = "ZeroUML";
+
+            //IVertex sduz = sdu.AddVertex(null, "ZeroUMLTemplate");
+
+            IVertex Instance = smzu.Get(false, "?Instance");
+            IVertex InstanceAndDirect = smzu.Get(false, "?InstanceAndDirect");
+            IVertex Direct = smzu.Get(false, "?Direct");
+
+            IVertex arrow = smzu.Get(false, @"LineEndEnum\Arrow");
+            IVertex triangle = smzu.Get(false, @"LineEndEnum\Triangle");
+            IVertex filledTriangle = smzu.Get(false, @"LineEndEnum\FilledTriangle");
+            IVertex diamond = smzu.Get(false, @"LineEndEnum\Diamond");
+            IVertex filledDiamond = smzu.Get(false, @"LineEndEnum\FilledDiamond");
+            IVertex straight = smzu.Get(false, @"LineEndEnum\Straight");
+
+
+            /////////////////////////////////////////////////////////////////////////
+            // Vertex 
+            /////////////////////////////////////////////////////////////////////////
+            
+            IVertex v4 = AddUXTemplate_RectangleItem(sdutz, "Vertex", false,
+             @"",
+             null,
+             smzu.Get(false, @"?RectangleItem"),
+             Direct,
+            true, -1,
+          null, null,
+          -1, false,
+          null, false);
+            
+            /*AddDiagramLine_Combo(v4,
+               "Edge",
+               @"$Is:\",
+               @"",
+               smzu.Get(false, @"?DiagramInternal\DiagramMetaExtendedLine"),
+               true,
+               null,
+               arrow,
+               -1, false,
+               -1, 0, 0, 0,
+               -1, 0, 0, 100);*/
         }
 
         private void Initialize_PreParserReady()
@@ -5484,9 +5643,9 @@ namespace m0
 
             CreateSystemData();
 
-            CreateSystemDataVisualiserDiagram();
+            CreateSystemDataVisualiserDiagram(); // out
 
-            CreateSystemDataVisualiserDiagram_ZeroUML();
+            CreateSystemDataVisualiserDiagram_ZeroUML(); // out
 
             CreateSystemMetaStoreFileSystem();
 
@@ -5501,7 +5660,9 @@ namespace m0
 
             CreateSystemHardware();
 
-            CreateDataUXColor();
+            CreateSystemDataUXColor();
+
+            CreateSystemDataUXZeroUMLTemplate();
 
 
             AddIsAttribute("Attribute");
