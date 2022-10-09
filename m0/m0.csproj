@@ -135,7 +135,18 @@
     <Compile Include="Lib\LibUtil.cs" />
     <Compile Include="Lib\Std.cs" />
     <Compile Include="Lib\Sys.cs" />
+    <Compile Include="UIWpf\UX\UXV.cs" />
+    <Compile Include="UIWpf\UX\DiagramItemBase.cs" />
+    <Compile Include="UIWpf\UX\DiagramLine.cs" />
+    <Compile Include="UIWpf\UX\DiagramLineBase.cs" />
+    <Compile Include="UIWpf\UX\DiagramRectangleItem.xaml.cs">
+      <DependentUpon>DiagramRectangleItem.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UIWpf\UX\DiagramRectangleItemBase.cs" />
     <Compile Include="UIWpf\UX\IUX.cs" />
+    <Compile Include="UIWpf\UX\NewDiagramItem.xaml.cs">
+      <DependentUpon>NewDiagramItem.xaml</DependentUpon>
+    </Compile>
     <Compile Include="UIWpf\UX\UXTestVisualiser.cs" />
     <Compile Include="UIWpf\UX\UXVisualiser.cs" />
     <Compile Include="Util\MathUtil.cs" />
@@ -454,6 +465,14 @@
     <Page Include="UIWpf\Forms\Transaction.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UIWpf\UX\DiagramRectangleItem.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="UIWpf\UX\NewDiagramItem.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="UIWpf\Visualisers\Diagram\DiagramImageItem.xaml">
       <SubType>Designer</SubType>

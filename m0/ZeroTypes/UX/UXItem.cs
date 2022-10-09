@@ -1,5 +1,6 @@
 ﻿using m0.Foundation;
 using m0.Graph;
+using m0.UIWpf.UX;
 using m0.ZeroCode.Helpers;
 using System;
 using System.Collections.Generic;
@@ -11,6 +12,85 @@ namespace m0.ZeroTypes.UX
 {
     public class UXItem:Item
     {
+        public UXVisualiser Diagram;
+
+        public virtual IVertex Vertex { get; set; }
+
+        public List<LineBaseDecorator> DiagramLines = new List<LineBaseDecorator>();
+
+        public virtual void VertexSetedUp()
+        {
+        }
+
+        public void Dispose() { }
+
+        public Dictionary<IVertex, List<LineBaseDecorator>> GetDiagramLinesBaseEdgeToDictionary()
+        {
+            return null;
+        }
+
+        public void RemoveFromCanvas()
+        {
+
+        }
+
+        public virtual void DoCreateDiagramLine(DiagramItemBase toItem)
+        {
+
+        }
+            
+        public void AddDiagramLineVertex(IEdge edge, IVertex diagramLineDefinition, DiagramItemBase toItem)
+        {
+
+        }
+
+        public void AddDiagramLineObject(DiagramItemBase toItem, IVertex l)
+        {
+
+        }
+
+        public void RemoveDiagramLine(DiagramLineBase line)
+        {
+
+        }
+            
+        public virtual void Select()
+        {
+
+        }
+
+        public virtual void Unselect()
+        {
+
+        }
+
+        public virtual void Highlight()
+        {
+
+        }
+
+        public virtual void Unhighlight()
+        {
+
+        }
+
+        public void MoveItem(double x, double y)
+        {
+
+        }
+
+        public void MoveAndResizeItem(double left, double top, double width, double height)
+        {
+
+        }
+
+        public void AddToSelectedEdges()
+        {
+
+        }
+
+        // UNDER
+
         static IVertex Scale_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\UXItem\Scale");
         static IVertex DesignMode_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\UXItem\DesignMode");
         static IVertex Size_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\UXItem\Size");
