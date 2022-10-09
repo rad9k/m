@@ -3412,7 +3412,7 @@ namespace m0
             smzu.Get(false, @"LineDecorator\IsDashed").AddEdge(sm.Get(false, @"?$EdgeTarget"), sm.Get(false, @"?Boolean"));
             //smzu.Get(false, @"LineDecorator\IsDashed").AddEdge(sm.Get(false, @"?$Section"), lookSection);
 
-            // MetaExtendedLine
+            // MetaExtendedLineDecorator
 
             smzu.Get(false, @"MetaExtendedLineDecorator").AddEdge(sm.Get(false, @"?$Is"), sm.Get(false, @"ZeroUML\Class"));
             smzu.Get(false, @"MetaExtendedLineDecorator").AddEdge(sm.Get(false, "?$Inherits"), smzu.Get(false, @"LineDecorator"));
@@ -5423,7 +5423,6 @@ namespace m0
 
         }
 
-
         IVertex AddUXTemplate(IVertex where, String Value, bool doNotShowInherited,
             String DirectVertexTestQuery,
             String MetaVertexTestQuery,
@@ -5431,7 +5430,7 @@ namespace m0
             IVertex InstanceCreation,
             bool CreateDiagraItemVertex,
             double LineWidth,
-            IVertex ForegroundColor, IVertex BackgroundColor,
+            IVertex BackgroundColor, IVertex ForegroundColor,
             bool? ForceShowEditForm = null)
         {
             IVertex ut = Root.Get(false, @"System\Meta\ZeroTypes\UX\UXTemplate");
@@ -5474,14 +5473,13 @@ namespace m0
                 IVertex iv = v.AddVertex(ut.Get(false, "ItemVertex"), null);
 
                 if (LineWidth > -1)
-                    iv.AddVertex(Root.Get(false, @"System\Meta?LineWidth"), LineWidth);
+                    iv.AddVertex(Root.Get(false, @"System\Meta\ZeroTypes\UX\UXItem\LineWidth"), LineWidth);
 
                 if (ForegroundColor != null)
-                    GraphUtil.CreateOrReplaceEdge(v, Root.Get(false, @"System\Meta\ZeroTypes\UX\Color"), ForegroundColor);
-
+                    iv.AddEdge(Root.Get(false, @"System\Meta\ZeroTypes\UX\UXItem\ForegroundColor"), ForegroundColor);
 
                 if (BackgroundColor != null)
-                    GraphUtil.CreateOrReplaceEdge(v, Root.Get(false, @"System\Meta\ZeroTypes\UX\Color"), BackgroundColor);
+                    iv.AddEdge(Root.Get(false, @"System\Meta\ZeroTypes\UX\UXItem\BackgroundColor"), BackgroundColor);
             }
 
             return v;
@@ -5490,25 +5488,25 @@ namespace m0
         IVertex AddUXTemplate_RectangleItem(IVertex where, String Value, bool doNotShowInherited,
               String DirectVertexTestQuery,
               String MetaVertexTestQuery,
-              IVertex DiagramItemClass,
+              IVertex ItemClass,
               IVertex InstanceCreation,
-              bool CreateDiagraItemVertex,
+              bool CreateItemVertex,
               double BorderWidth,
               IVertex BackgroundColor, IVertex ForegroundColor,
               int RoundEdgeSize, bool showMeta,
               IVertex VisualiserClass, bool VisualiserVertex,
               bool? ForceShowEditForm = null)
         {
-               IVertex v = AddUXTemplate(where, Value, doNotShowInherited, DirectVertexTestQuery, MetaVertexTestQuery, DiagramItemClass, InstanceCreation,
-                CreateDiagraItemVertex,
+               IVertex v = AddUXTemplate(where, Value, doNotShowInherited, DirectVertexTestQuery, MetaVertexTestQuery, ItemClass, InstanceCreation,
+                CreateItemVertex,
               BorderWidth,
               ForegroundColor, BackgroundColor,
               ForceShowEditForm);
 
-            if (CreateDiagraItemVertex && RoundEdgeSize > -1)
+            if (CreateItemVertex && RoundEdgeSize > -1)
                 v.Get(false, "ItemVertex:").AddVertex(Root.Get(false, @"System\Meta\ZeroTypes\UX\RectangleItem\RoundEdgeSize"), RoundEdgeSize);
 
-            if (CreateDiagraItemVertex && showMeta)
+            if (CreateItemVertex && showMeta)
                 v.Get(false, "ItemVertex:").AddVertex(Root.Get(false, @"System\Meta\ZeroTypes\UX\RectangleItem\ShowMeta"), "True");
             else
                 v.Get(false, "ItemVertex:").AddVertex(Root.Get(false, @"System\Meta\ZeroTypes\UX\RectangleItem\ShowMeta"), "False");
@@ -5522,13 +5520,82 @@ namespace m0
             return v;
         }
 
+        void AddLineDecorator(IVertex v,
+          String name,
+          String EdgeTestQuery,
+          String ToDiagramTestQuery,
+          IVertex DecoratorClass,
+          bool CreateLineVertex,
+          IVertex startAnchor,
+          IVertex endAnchor,
+          double LineWidth, bool isDashed,
+          IVertex BackgroundColor, IVertex ForegroundColor,
+          bool? CreateEdgeOnly = null,
+          bool? ForceShowEditForm = null)
+        {
+            IVertex uld = Root.Get(false, @"System\Meta\ZeroTypes\UX\LineDecorator");
+
+            IVertex udt = Root.Get(false, @"System\Meta\ZeroTypes\UX\UXDecoratorTemplate");
+
+            IVertex lv = v.AddVertex(udt, name);
+
+            lv.AddEdge(Root.Get(false, @"System\Meta\Base\Vertex\$Is"), udt);
+
+            lv.AddVertex(udt.Get(false, "EdgeTestQuery"), EdgeTestQuery);
+
+            lv.AddVertex(udt.Get(false, "ToDiagramItemTestQuery"), ToDiagramTestQuery);
+
+            lv.AddEdge(udt.Get(false, "DecoratorClass"), DecoratorClass);
+
+            if (CreateEdgeOnly != null)
+            {
+                if (CreateEdgeOnly == true)
+                    lv.AddVertex(udt.Get(false, @"CreateEdgeOnly"), "True");
+
+                if (CreateEdgeOnly == false)
+                    lv.AddVertex(udt.Get(false, @"CreateEdgeOnly"), "False");
+            }
+
+            if (ForceShowEditForm != null)
+            {
+                if (ForceShowEditForm == true)
+                    lv.AddVertex(udt.Get(false, @"ForceShowEditForm"), "True");
+
+                if (ForceShowEditForm == false)
+                    lv.AddVertex(udt.Get(false, @"ForceShowEditForm"), "False");
+            }
+
+            if (CreateLineVertex)
+            {
+                IVertex dlv = lv.AddVertex(udt.Get(false, "DecoratorVertex"), null);
+
+                if (isDashed)
+                    dlv.AddVertex(udt.Get(false, "IsDashed"), "True");
+
+                if (startAnchor != null)
+                    dlv.AddEdge(uld.Get(false, "StartAnchor"), startAnchor);
+
+                if (endAnchor != null)
+                    dlv.AddEdge(uld.Get(false, "EndAnchor"), endAnchor);
+
+                if (LineWidth > -1)
+                    dlv.AddVertex(uld.Get(false, @"LineWidth"), LineWidth);
+
+                if (ForegroundColor != null)
+                    dlv.AddEdge(Root.Get(false, @"System\Meta\ZeroTypes\UX\UXItem\ForegroundColor"), ForegroundColor);
+
+                if (BackgroundColor != null)
+                    dlv.AddEdge(Root.Get(false, @"System\Meta\ZeroTypes\UX\UXItem\BackgroundColor"), BackgroundColor);
+            }
+        }
+
         void CreateSystemDataUXZeroUMLTemplate()
         {
             IVertex smzu = Root.Get(false, @"System\Meta\ZeroTypes\UX");
 
             IVertex sdu = Root.Get(false, @"System\Data\UX");
 
-            IVertex sduc = Root.Get(false, @"System\Data\Colors");
+            IVertex colors = Root.Get(false, @"System\Data\UX\Colors");
 
             IVertex sdut = sdu.AddVertex(null, "Templates");
 
@@ -5554,7 +5621,7 @@ namespace m0
             // Vertex 
             /////////////////////////////////////////////////////////////////////////
             
-            IVertex v4 = AddUXTemplate_RectangleItem(sdutz, "Vertex", false,
+            IVertex v = AddUXTemplate_RectangleItem(sdutz, "Vertex", false,
              @"",
              null,
              smzu.Get(false, @"?RectangleItem"),
@@ -5564,17 +5631,17 @@ namespace m0
           -1, false,
           null, false);
             
-            /*AddDiagramLine_Combo(v4,
+            AddLineDecorator(v,
                "Edge",
                @"$Is:\",
                @"",
-               smzu.Get(false, @"?DiagramInternal\DiagramMetaExtendedLine"),
+               //smzu.Get(false, @"DiagramMetaExtendedLineDecorator"),
+               smzu.Get(false, @"LineDecorator"),
                true,
                null,
                arrow,
                -1, false,
-               -1, 0, 0, 0,
-               -1, 0, 0, 100);*/
+               null, null);
         }
 
         private void Initialize_PreParserReady()
