@@ -19,6 +19,18 @@ namespace m0.ZeroTypes.UX
 
         public Item(IEdge edge) : base(edge) { }
 
+        public IVertex BaseEdgeTo
+        {
+            get {
+                IEdge val = GraphUtil.GetQueryOutFirstEdge(Vertex, "BaseEdge", null);
+
+                if (val == null)
+                    return GraphUtil.GetQueryOutFirst(val.To, "To", null);
+
+                return null;
+            }
+        }
+
         public Edge BaseEdge
         {
             get {

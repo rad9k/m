@@ -13,12 +13,12 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 
-namespace m0.UIWpf.Visualisers.Diagram
+namespace m0.UIWpf.UX
 {
     /// <summary>
     /// Interaction logic for NewDiagramItem.xaml
     /// </summary>
-    public partial class NewDiagramItem : Window
+    public partial class NewUXItem : Window
     {
         bool IsSet;
 
@@ -31,7 +31,7 @@ namespace m0.UIWpf.Visualisers.Diagram
             WpfUtil.SetWindowPosition(this, _mousePosition);
         }
 
-        public NewDiagramItem(IVertex _baseedge, bool isSet, Point mousePos)
+        public NewUXItem(IVertex _baseedge, bool isSet, Point mousePos)
         {
             InitializeComponent();
 

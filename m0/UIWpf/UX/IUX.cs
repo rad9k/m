@@ -11,9 +11,9 @@ namespace m0.UIWpf.UX
 {
     public interface IUX: IVisualiser
     {
-        UXItem uxItem { get; set; }
+        UXItem UXItem { get; set; }
 
-        UXAggregator uxAggregator { get; set; }
+        UXAggregator UXAggregator { get; set; }
 
         Canvas Canvas { get; }
     }

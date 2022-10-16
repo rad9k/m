@@ -7,16 +7,17 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Controls;
 
 namespace m0.ZeroTypes.UX
 {
-    public class UXItem:Item
+    public class UXItem: UserControl, IPlatformClass
     {
         public UXVisualiser Diagram;
 
-        public virtual IVertex Vertex { get; set; }
+        //public virtual IVertex Vertex { get; set; }
 
-        public List<LineBaseDecorator> DiagramLines = new List<LineBaseDecorator>();
+        public List<LineDecoratorBase> DiagramLines = new List<LineDecoratorBase>();
 
         public virtual void VertexSetedUp()
         {
@@ -24,7 +25,7 @@ namespace m0.ZeroTypes.UX
 
         public void Dispose() { }
 
-        public Dictionary<IVertex, List<LineBaseDecorator>> GetDiagramLinesBaseEdgeToDictionary()
+        public Dictionary<IVertex, List<LineDecoratorBase>> GetDiagramLinesBaseEdgeToDictionary()
         {
             return null;
         }
@@ -101,7 +102,7 @@ namespace m0.ZeroTypes.UX
         static IVertex BorderColor_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\UXItem\BorderColor");
         static IVertex BorderSize_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\UXItem\BorderSize");
         static IVertex Margin_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\UXItem\Margin");
-        static IVertex Template_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\UXItem\Template");
+        static IVertex UXTemplate_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\UXItem\UXTemplate");
         static IVertex Decorator_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\UXItem\Decorator");
 
         static IVertex Color_type = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\Color");
@@ -109,7 +110,14 @@ namespace m0.ZeroTypes.UX
         static IVertex Position_type = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\Position");
         static IVertex LineDecorator_type = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\LineDecorator");
 
-        public UXItem(IEdge edge) : base(edge) { }
+        public UXItem(IEdge _edge) {
+
+            // TypedEdge
+            
+            edge = _edge;
+
+            vertex = _edge.To;            
+        }
 
         public double Scale
         {
@@ -303,11 +311,11 @@ namespace m0.ZeroTypes.UX
             }
         }
 
-        public UX.UXTemplate Template
+        public UX.UXTemplate UXTemplate
         {
             get
             {
-                IEdge val = GraphUtil.GetQueryOutFirstEdge(Vertex, "Template", null);
+                IEdge val = GraphUtil.GetQueryOutFirstEdge(Vertex, "UXTemplate", null);
 
                 if (val == null)
                     return null;
@@ -316,9 +324,9 @@ namespace m0.ZeroTypes.UX
             }
             set
             {
-                IVertex val = GraphUtil.GetQueryOutFirst(Vertex, "Template", null);
+                IVertex val = GraphUtil.GetQueryOutFirst(Vertex, "UXTemplate", null);
 
-                GraphUtil.CreateOrReplaceEdge(Vertex, Template_meta, value.Vertex);
+                GraphUtil.CreateOrReplaceEdge(Vertex, UXTemplate_meta, value.Vertex);
             }
         }
 
@@ -361,5 +369,135 @@ namespace m0.ZeroTypes.UX
 
             return new UXItem(newEdge);
         }
+
+        // Item
+
+        static IVertex BaseEdge_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\HasBaseEdge\BaseEdge");
+        static IVertex Item_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\Item\Item");
+        static IVertex UXItem_type = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\UXItem");
+        static IVertex UXAggregator_type = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\UXAggregator");
+        static IVertex Edge_type = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\Edge");
+
+        public IVertex BaseEdgeTo
+        {
+            get
+            {
+                IEdge val = GraphUtil.GetQueryOutFirstEdge(Vertex, "BaseEdge", null);
+
+                if (val == null)
+                    return GraphUtil.GetQueryOutFirst(val.To, "To", null);
+
+                return null;
+            }
+        }
+
+        public Edge BaseEdge
+        {
+            get
+            {
+                IEdge val = GraphUtil.GetQueryOutFirstEdge(Vertex, "BaseEdge", null);
+
+                if (val == null)
+                    return null;
+
+                return (Edge)TypedEdge.Get(val, typeof(Edge));
+            }
+        }
+
+        public Edge BaseEdgeCreate()
+        {
+            IEdge baseEdgeEdge = GraphUtil.GetQueryOutFirstEdge(Vertex, "BaseEdge", null);
+
+            if (baseEdgeEdge != null)
+                Vertex.DeleteEdge(baseEdgeEdge);
+
+            baseEdgeEdge = VertexOperations.AddInstanceAndReturnEdge(Vertex, Edge_type, BaseEdge_meta);
+
+            baseEdgeEdge.To.AddVertex(ZeroTypes.Edge.From_meta, ""); // from has 0..1 multiplicity
+
+            return new Edge(baseEdgeEdge);
+        }
+
+        public IList<object> Items
+        {
+            get
+            {
+                IList<IEdge> list = GraphUtil.GetQueryOut(Vertex, "Item", null);
+
+                IList<object> ret = new List<object>();
+
+                foreach (IEdge e in list)
+                {
+                    if (InstructionHelpers.CheckIfIsOrInherits(e.To, "UXAggregator"))
+                    {
+                        //ret.Add((Item)TypedEdge.Get(e, typeof(UXAggregator)));
+                        ret.Add(new UXAggregator(e));
+                    }
+                    else
+                    {
+                        if (InstructionHelpers.CheckIfIsOrInherits(e.To, "UXItem"))
+                        {
+                            //ret.Add((Item)TypedEdge.Get(e, typeof(UXItem)));
+                            ret.Add(new UXItem(e));
+                        }
+                        else
+                        {
+                            if (InstructionHelpers.CheckIfIsOrInherits(e.To, "Item"))
+                            {
+                                ret.Add((Item)TypedEdge.Get(e, typeof(Item)));
+                            }
+                        }
+                    }
+                }
+
+                return ret;
+            }
+        }
+
+        public UXItem AddItem_UXItem()
+        {
+            return AddItem_UXItem(UXItem_type);
+        }
+
+        public UXItem AddItem_UXItem(IVertex typeVertex)
+        {
+            IEdge newEdge = VertexOperations.AddInstanceAndReturnEdge(Vertex, typeVertex, Item_meta);
+
+            return new UXItem(newEdge);
+        }
+
+        public UXItem AddItem_UXAggregator()
+        {
+            return AddItem_UXAggregator(UXAggregator_type);
+        }
+
+        public UXItem AddItem_UXAggregator(IVertex typeVertex)
+        {
+            IEdge newEdge = VertexOperations.AddInstanceAndReturnEdge(Vertex, typeVertex, Item_meta);
+
+            return new UXAggregator(newEdge);
+        }
+
+        public void RemoveItem(Item item)
+        {
+            Vertex.DeleteEdge(item.Edge);
+        }
+
+        // TypedEdge
+
+        IEdge edge;
+        public IEdge Edge { get { return edge; } }
+
+        IVertex vertex;
+        public IVertex Vertex { get { return vertex; } }
+
+        /*public TypedEdge(IEdge _edge) // included in UXItem constructor
+        {
+            edge = _edge;
+
+            vertex = _edge.To;
+
+            vertexDictionary.Add(this.Edge.To, this);
+        }*/
     }
 }

@@ -17,12 +17,12 @@ using m0.Foundation;
 using m0.ZeroTypes;
 using m0.Util;
 
-namespace m0.UIWpf.Visualisers.Diagram
+namespace m0.ZeroTypes.UX
 {
     /// <summary>
     /// Interaction logic for DiagramRectangleItem.xaml
     /// </summary>
-    public partial class DiagramRectangleItem : DiagramRectangleItemBase
+    public partial class RectangleItemControl : UXItem
     {
         IPlatformClass ContentVisualiser;
 
@@ -35,7 +35,7 @@ namespace m0.UIWpf.Visualisers.Diagram
             }
         }
 
-        public DiagramRectangleItem(IVertex baseEdgeVertex, IVertex parentVisualiser) : base(baseEdgeVertex)  {
+        public RectangleItemControl(IVertex baseEdgeVertex, IVertex parentVisualiser) : base(baseEdgeVertex)  {
             InitializeComponent();
         }
         

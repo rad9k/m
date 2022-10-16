@@ -383,12 +383,12 @@ namespace m0.UIWpf.Visualisers.Helper
             }
 
             if (isUXItem)
-                iux.uxItem = (UXItem)TypedEdge.Get(e, typeof(UXItem));
+                iux.UXItem = (UXItem)TypedEdge.Get(e, typeof(UXItem));
 
             if (isUXAggregator)
             {
-                iux.uxAggregator = (UXAggregator)TypedEdge.Get(e, typeof(UXAggregator));
-                iux.uxItem = (UXItem)iux.uxAggregator;
+                iux.UXAggregator = (UXAggregator)TypedEdge.Get(e, typeof(UXAggregator));
+                iux.UXItem = (UXItem)iux.UXAggregator;
             }
         }
 

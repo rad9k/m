@@ -117,16 +117,16 @@ namespace m0.UIWpf.UX
 
         ////////////////////////// UX
 
-        public UXItem uxItem { get; set; }
-        public UXAggregator uxAggregator { get; set; }
+        public UXItem UXItem { get; set; }
+        public UXAggregator UXAggregator { get; set; }
         public Canvas Canvas { get { return this; } }
 
         void CreateUX()
         {
-            if (uxItem == null)
+            if (UXItem == null)
                 return;
 
-            IterateItems(Canvas, uxItem);
+            IterateItems(Canvas, UXItem);
         }
 
         void IterateItems(Canvas c, UXItem parentUXItem)

@@ -100,8 +100,8 @@ namespace m0.UIWpf.UX
         IVertex baseEdgeTo;
         Canvas canvas;
 
-        public UXItem uxItem { get; set; }
-        public UXAggregator uxAggregator { get; set; }
+        public UXItem UXItem { get; set; }
+        public UXAggregator UXAggregator { get; set; }
         public Canvas Canvas { get { return canvas; } }
 
         public void UpdateVertex()
@@ -132,12 +132,12 @@ namespace m0.UIWpf.UX
 
             l.Content = baseEdgeTo.Value.ToString();
 
-            if (uxItem.ForegroundColor != null)
-                l.Foreground = new SolidColorBrush(uxItem.ForegroundColor.GetColor());
+            if (UXItem.ForegroundColor != null)
+                l.Foreground = new SolidColorBrush(UXItem.ForegroundColor.GetColor());
 
             canvas.Children.Add(l);
 
-            VisualiserHelper.UpdateBorder(this, uxItem);
+            VisualiserHelper.UpdateBorder(this, UXItem);
         }
     }
 }

@@ -22,7 +22,7 @@ using m0.Graph.ExecutionFlow;
 using m0.UIWpf.Visualisers.Helper;
 using m0.User.Process.UX;
 
-namespace m0.UIWpf.Visualisers.UX
+namespace m0.UIWpf.UX
 {
     public enum ClickTargetEnum
     {
