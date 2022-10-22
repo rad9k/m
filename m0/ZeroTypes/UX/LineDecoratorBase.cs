@@ -13,8 +13,6 @@ namespace m0.ZeroTypes.UX
 {
     public class LineDecoratorBase : UXItem
     {
-        public virtual IVertex Vertex { get; set; }
-        public UXVisualiser Diagram;
         public UXItem FromDiagramItem;
 
         public UXItem ToDiagramItem;
@@ -38,22 +36,22 @@ namespace m0.ZeroTypes.UX
 
         }
 
-        public virtual void RemoveFromCanvas()
+        public override void RemoveFromCanvas()
         {
 
         }
 
-        public virtual void Highlight()
+        public override void Highlight()
         {
 
         }
 
-        public virtual void Unhighlight()
+        public override void Unhighlight()
         {
 
         }
 
-        public virtual void Dispose()
+        public override void Dispose()
         {
 
         }

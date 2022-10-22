@@ -15,42 +15,42 @@ namespace m0.ZeroTypes.UX
     {
         public UXVisualiser Diagram;
 
-        //public virtual IVertex Vertex { get; set; }
-
         public List<LineDecoratorBase> DiagramLines = new List<LineDecoratorBase>();
 
         public virtual void VertexSetedUp()
         {
         }
 
-        public void Dispose() { }
+        public virtual void Dispose()
+        {
+        }
 
         public Dictionary<IVertex, List<LineDecoratorBase>> GetDiagramLinesBaseEdgeToDictionary()
         {
             return null;
         }
 
-        public void RemoveFromCanvas()
+        public virtual void RemoveFromCanvas()
         {
 
         }
 
-        public virtual void DoCreateDiagramLine(DiagramItemBase toItem)
+        public virtual void DoCreateDiagramLine(UXItem toItem)
         {
 
         }
             
-        public void AddDiagramLineVertex(IEdge edge, IVertex diagramLineDefinition, DiagramItemBase toItem)
+        public void AddDiagramLineVertex(IEdge edge, IVertex diagramLineDefinition, UXItem toItem)
         {
 
         }
 
-        public void AddDiagramLineObject(DiagramItemBase toItem, IVertex l)
+        public void AddDiagramLineObject(UXItem toItem, IVertex l)
         {
 
         }
 
-        public void RemoveDiagramLine(DiagramLineBase line)
+        public void RemoveDiagramLine(LineDecoratorBase line)
         {
 
         }
@@ -91,6 +91,8 @@ namespace m0.ZeroTypes.UX
         }
 
         // UNDER
+
+        // UXItem
 
         static IVertex Scale_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\UXItem\Scale");
         static IVertex DesignMode_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\UXItem\DesignMode");
@@ -489,7 +491,10 @@ namespace m0.ZeroTypes.UX
         public IEdge Edge { get { return edge; } }
 
         IVertex vertex;
-        public IVertex Vertex { get { return vertex; } }
+        public IVertex Vertex {
+            get { return vertex; }
+            set { throw new Exception("please correct. not handling Vertex set in UXItem");
+        }
 
         /*public TypedEdge(IEdge _edge) // included in UXItem constructor
         {
