@@ -103,7 +103,7 @@ namespace m0.ZeroTypes.UX
         static IVertex ForegroundColor_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\UXItem\ForegroundColor");
         static IVertex BorderColor_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\UXItem\BorderColor");
         static IVertex BorderSize_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\UXItem\BorderSize");
-        static IVertex Margin_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\UXItem\Margin");
+        static IVertex Gap_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\UXItem\Gap");
         static IVertex UXTemplate_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\UXItem\UXTemplate");
         static IVertex Decorator_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\UXItem\Decorator");
 
@@ -291,11 +291,11 @@ namespace m0.ZeroTypes.UX
             }
         }
 
-        public double Margin
+        public double Gap
         {
             get
             {
-                IVertex val = GraphUtil.GetQueryOutFirst(Vertex, "Margin", null);
+                IVertex val = GraphUtil.GetQueryOutFirst(Vertex, "Gap", null);
 
                 if (val == null)
                     return 0;
@@ -304,10 +304,10 @@ namespace m0.ZeroTypes.UX
             }
             set
             {
-                IVertex val = GraphUtil.GetQueryOutFirst(Vertex, "Margin", null);
+                IVertex val = GraphUtil.GetQueryOutFirst(Vertex, "Gap", null);
 
                 if (val == null)
-                    val = Vertex.AddVertex(Margin_meta, value);
+                    val = Vertex.AddVertex(Gap_meta, value);
                 else
                     val.Value = value;
             }
