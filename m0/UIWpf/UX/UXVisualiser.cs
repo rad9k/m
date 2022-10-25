@@ -131,7 +131,7 @@ namespace m0.UIWpf.UX
 
         void IterateItems(Canvas c, UXItem parentUXItem)
         {
-            foreach (Item i in parentUXItem.Items)
+            foreach (object i in parentUXItem.Items)
                 if (i is UXItem)
                 {
                     UXItem ux = (UXItem)i;

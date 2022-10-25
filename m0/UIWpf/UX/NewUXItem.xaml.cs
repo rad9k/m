@@ -31,7 +31,7 @@ namespace m0.UIWpf.UX
             WpfUtil.SetWindowPosition(this, _mousePosition);
         }
 
-        public NewUXItem(IVertex _baseedge, bool isSet, Point mousePos)
+        public NewUXItem(IVertex _baseEdge, bool isSet, Point mousePos)
         {
             InitializeComponent();
 
@@ -39,7 +39,7 @@ namespace m0.UIWpf.UX
 
             _mousePosition = mousePos;
 
-            baseedge = _baseedge;
+            baseedge = _baseEdge;
 
             IsSet = isSet;
 
