@@ -137,7 +137,7 @@ namespace m0.UIWpf.UX
 
             canvas.Children.Add(l);
 
-            VisualiserHelper.UpdateBorder(this, UXItem);
+            VisualiserHelper.UpdateBorderAndBackgound(this, UXItem);
         }
     }
 }

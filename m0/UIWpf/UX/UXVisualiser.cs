@@ -136,7 +136,7 @@ namespace m0.UIWpf.UX
                 {
                     UXItem ux = (UXItem)i;
 
-                    if (!GraphUtil.ExistQueryOut(ux.Vertex, "$Is", "Wrap"))
+                    if (AtomVisualiserHelper.IsUXSubItem(ux.Vertex))
                     {
                         IUX iux = AddItem(c, ux, parentUXItem.Vertex);
 

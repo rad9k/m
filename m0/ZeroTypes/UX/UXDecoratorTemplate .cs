@@ -8,13 +8,13 @@ using System.Threading.Tasks;
 
 namespace m0.ZeroTypes.UX
 {
-    public class UXDecoratorTemplate: TypedEdge
+    public class UXDecoratorTemplate: UXTemplate
     {
         static IVertex EdgeTestQuery_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\UXDecoratorTemplate\EdgeTestQuery");
         static IVertex ToDiagramItemTestQuery_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\UXDecoratorTemplate\ToDiagramItemTestQuery");
         static IVertex DecoratorClass_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\UXDecoratorTemplate\DecoratorClass");
         static IVertex DecoratorVertex_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\UXDecoratorTemplate\DecoratorVertex");
-        static IVertex CreateEdgeOnlymeta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\UXDecoratorTemplate\CreateEdgeOnly");
+        static IVertex CreateEdgeOnly_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\UXDecoratorTemplate\CreateEdgeOnly");
         static IVertex ForceShowEditForm_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\UXDecoratorTemplate\ForceShowEditForm");
 
         static IVertex Size_type = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\Size");
@@ -109,11 +109,11 @@ namespace m0.ZeroTypes.UX
             }
         }
 
-        public bool ForceShowEditForm
+        public bool CreateEdgeOnly
         {
             get
             {
-                IVertex val = GraphUtil.GetQueryOutFirst(Vertex, "ForceShowEditForm", null);
+                IVertex val = GraphUtil.GetQueryOutFirst(Vertex, "CreateEdgeOnly", null);
 
                 if (val == null)
                     return false;
@@ -122,10 +122,10 @@ namespace m0.ZeroTypes.UX
             }
             set
             {
-                IVertex val = GraphUtil.GetQueryOutFirst(Vertex, "ForceShowEditForm", null);
+                IVertex val = GraphUtil.GetQueryOutFirst(Vertex, "CreateEdgeOnly", null);
 
                 if (val == null)
-                    val = Vertex.AddVertex(ForceShowEditForm_meta, value);
+                    val = Vertex.AddVertex(CreateEdgeOnly_meta, value);
                 else
                     val.Value = value;
             }

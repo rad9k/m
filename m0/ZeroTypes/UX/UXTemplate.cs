@@ -111,11 +111,11 @@ namespace m0.ZeroTypes.UX
             }
         }
 
-        public InstanceCreationEnum InstanceCreationEnum
+        public InstanceCreationEnum InstanceCreation
         {
             get
             {
-                IVertex val = GraphUtil.GetQueryOutFirst(Vertex, "InstanceCreationEnum", null);
+                IVertex val = GraphUtil.GetQueryOutFirst(Vertex, "InstanceCreation", null);
 
                 return InstanceCreationEnumHelper.GetEnum(val);
             }

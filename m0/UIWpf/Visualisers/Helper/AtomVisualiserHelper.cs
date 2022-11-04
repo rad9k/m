@@ -356,6 +356,14 @@ namespace m0.UIWpf.Visualisers.Helper
 
         // UX
 
+        public static bool IsUXSubItem(IVertex v)
+        {
+            if (!GraphUtil.ExistQueryOut(v, "$Is", "Wrap"))
+                return true;
+
+            return false;
+        }
+
         public void InitUX()
         {
             if (!(Visualiser is IUX))
@@ -407,7 +415,7 @@ namespace m0.UIWpf.Visualisers.Helper
             }
         }
 
-        public void UpdateBorder(Border b, UXItem ui)
+        public void UpdateBorderAndBackgound(Border b, UXItem ui)
         {
             if (ui.BorderColor != null)
                 b.BorderBrush = new SolidColorBrush(ui.BorderColor.GetColor());

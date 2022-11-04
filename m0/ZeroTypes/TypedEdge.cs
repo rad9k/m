@@ -44,7 +44,7 @@ namespace m0.ZeroTypes
             }
             else
             {
-                TypedEdge te = (TypedEdge)Activator.CreateInstance(toCreateType, edge);
+                ITypedEdge te = (ITypedEdge)Activator.CreateInstance(toCreateType, edge);
 
                 return te;
             }           

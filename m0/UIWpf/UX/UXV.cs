@@ -21,6 +21,7 @@ using m0.UIWpf.Dialog;
 using m0.Graph.ExecutionFlow;
 using m0.UIWpf.Visualisers.Helper;
 using m0.User.Process.UX;
+using m0.ZeroTypes.UX;
 
 namespace m0.UIWpf.UX
 {
@@ -33,26 +34,13 @@ namespace m0.UIWpf.UX
     {
         public IVertex Meta;
         public IVertex To;
-        public int DiagramLinesNumber;
+        public int LineDecoratorNumber;
         public int EdgesNumber;
     }
 
     public class UXV : Border, IListVisualiser
     {
         public AtomVisualiserHelper VisualiserHelper { get; set; }
-
-        public List<IDisposable> ChildVisualisers {
-            get {
-                List<IDisposable> list = new List<IDisposable>();
-
-                foreach (DiagramItemBase i in Items)
-                    list.Add(i);
-
-                return list;
-            }
-            set { }
-        }
-
 
         public Canvas TheCanvas;
 
@@ -67,13 +55,13 @@ namespace m0.UIWpf.UX
 
         public SelectionArea SelectionArea;
 
-        public List<DiagramItemBase> Items;
+        public List<UXItem> Items;
 
         public ClickTargetEnum ClickTarget;
 
-        public DiagramItemBase ClickedItem;
+        public UXItem ClickedItem;
 
-        public DiagramItemBase HighlightedItem;
+        public UXItem HighlightedItem;
 
         public double ClickPositionX_ItemCordinates;
         public double ClickPositionY_ItemCordinates;
@@ -85,7 +73,7 @@ namespace m0.UIWpf.UX
 
         bool IsFirstPainted = false;
 
-        static string[] _MetaTriggeringUpdateVertex = new string[] { "SizeX", "SizeY"};
+        static string[] _MetaTriggeringUpdateVertex = new string[] { "Width", "Height"};
         public virtual string[] MetaTriggeringUpdateVertex { get { return _MetaTriggeringUpdateVertex; } }
 
         static string[] _MetaTriggeringUpdateView = new string[] { };
@@ -105,7 +93,7 @@ namespace m0.UIWpf.UX
             }
 
 
-            Items = new List<DiagramItemBase>();
+            Items = new List<UXItem>();
 
             TheCanvas = new Canvas();
 
@@ -118,9 +106,9 @@ namespace m0.UIWpf.UX
             this.BorderBrush = (Brush)FindResource("0LightGrayBrush");
 
             new ListVisualiserHelper(parentVisualiser,
-                MinusZero.Instance.Root.Get(false, @"System\Meta\Visualiser\Diagram"),
+                MinusZero.Instance.Root.Get(false, @"System\Meta\Visualiser\UXV"),
                  this,
-                "DiagramVisualiser",
+                "UXV",
                 this,
                 false,
                 new List<string> { @"", @"BaseEdge:\To:" },
@@ -140,46 +128,20 @@ namespace m0.UIWpf.UX
             this.KeyDown += Diagram_KeyDown;
         }
 
-        private void VertexChangeListenOff()
-        {
-          //  ((EasyVertex)Vertex).CanFireChangeEvent = false;
-
-          //  PlatformClass.RemoveVertexChangeListeners(this.Vertex, new VertexChange(VertexChange));
-        }
-
-        private void VertexChangeListenOn()
-        {
-          //  ((EasyVertex)Vertex).CanFireChangeEvent = true;
-
-          //  PlatformClass.RegisterVertexChangeListeners(this.Vertex, new VertexChange(VertexChange), new string[] { "BaseEdge", "SelectedEdges" });
-        }
-
-        private void TurnOnSelectedEdgesFireChange()
-        {
-         //   if (Vertex.Get(false, "SelectedEdges:") is VertexBase)
-          //      ((VertexBase)Vertex.Get(false, "SelectedEdges:")).CanFireChangeEvent = true;
-        }
-
-        private void TurnOffSelectedEdgesFireChange()
-        {
-           // if (Vertex.Get(false, "SelectedEdges:") is VertexBase)
-           //     ((VertexBase)Vertex.Get(false, "SelectedEdges:")).CanFireChangeEvent = false;
-        }
-
         // OPTIMISATION START
 
-        Dictionary<IVertex, List<DiagramItemBase>> ItemsDictionary = new Dictionary<IVertex, List<DiagramItemBase>>();
+        Dictionary<IVertex, List<UXItem>> ItemsDictionary = new Dictionary<IVertex, List<UXItem>>();
 
         bool needRebuildItemsDictionary = true;
 
-        void AddToItems(DiagramItemBase item)
+        void AddToItems(UXItem item)
         {
             Items.Add(item);
 
             needRebuildItemsDictionary = true;
         }
 
-        void RemoveFromItems(DiagramItemBase item)
+        void RemoveFromItems(UXItem item)
         {
             Items.Remove(item);
 
@@ -187,7 +149,7 @@ namespace m0.UIWpf.UX
         }
 
         void ClearItems()
-          {
+        {
             Items.Clear();
 
             needRebuildItemsDictionary = true;
@@ -197,7 +159,7 @@ namespace m0.UIWpf.UX
         {
             ItemsDictionary.Clear();
 
-            foreach(DiagramItemBase i in Items)
+            foreach(UXItem i in Items)
             {
                 IVertex baseEdgeTo = i.Vertex.Get(false, @"BaseEdge:\To:");
 
@@ -205,7 +167,7 @@ namespace m0.UIWpf.UX
                     ItemsDictionary[baseEdgeTo].Add(i);
                 else
                 {
-                    List<DiagramItemBase> list = new List<DiagramItemBase>();
+                    List<UXItem> list = new List<UXItem>();
                     list.Add(i);
 
                     ItemsDictionary.Add(baseEdgeTo, list);
@@ -215,7 +177,7 @@ namespace m0.UIWpf.UX
             needRebuildItemsDictionary = false;
         }
 
-        public Dictionary<IVertex, List<DiagramItemBase>> GetItemsDictionary()
+        public Dictionary<IVertex, List<UXItem>> GetItemsDictionary()
         {
             if (needRebuildItemsDictionary)
                 RebuidItemsDictionary();
@@ -225,7 +187,7 @@ namespace m0.UIWpf.UX
 
         // OPTIMISATION END
 
-        public void RemoveItem(DiagramItemBase item)
+        public void RemoveItem(UXItem item)
         {
             RemoveFromItems(item);
 
@@ -233,17 +195,9 @@ namespace m0.UIWpf.UX
         }
 
         // TOO
-        protected List<DiagramItemBase> GetItemsByBaseEdge(IVertex to)
+        protected List<UXItem> GetItemsByBaseEdge(IVertex edgeToVertex)
         {
-           return GetItemsDictionary()[to.Get(false, "To:")];
-            
-            /*List<DiagramItemBase> r = new List<DiagramItemBase>();
-
-            foreach (DiagramItemBase i in GetItemsDictionary)
-               if (i.Vertex.Get(false, @"BaseEdge:\To:") == to.Get(false, "To:"))
-                    r.Add(i);
-
-            return r;*/
+           return GetItemsDictionary()[GraphUtil.GetQueryOutFirst(edgeToVertex, "To", null)];
         }        
 
         public void AddEdgesFromDefintion(IVertex baseVertex, IVertex definitionEdges)
@@ -260,9 +214,9 @@ namespace m0.UIWpf.UX
         protected void AddItem(IVertex ItemVertex){
             IPlatformClass pc = (IPlatformClass)PlatformClass.CreatePlatformObject(ItemVertex, null as IEdge);
 
-            if (pc is DiagramItemBase)
+            if (pc is UXItem)
             {
-                DiagramItemBase item = (DiagramItemBase)pc;
+                UXItem item = (UXItem)pc;
 
                 item.Diagram = this;                
 
@@ -271,17 +225,10 @@ namespace m0.UIWpf.UX
 
                 AddToItems(item);
                 
-
                 Panel.SetZIndex(item, 1);
-
-                double? positionX = GraphUtil.GetDoubleValue(item.Vertex.Get(false, "PositionX:"));
-                double? positionY = GraphUtil.GetDoubleValue(item.Vertex.Get(false, "PositionY:"));
-
-                if (positionX != null && positionY != null)
-                {
-                    Canvas.SetLeft(item, (double)positionX);
-                    Canvas.SetTop(item, (double)positionY);
-                }
+               
+                Canvas.SetLeft(item, item.Position.X);
+                Canvas.SetTop(item, item.Position.Y);     
 
                 TheCanvas.Children.Add(item);
 
@@ -294,80 +241,87 @@ namespace m0.UIWpf.UX
         {
             List<MetaToPair> metatopairs = new List<MetaToPair>();
 
-           foreach(DiagramItemBase item in Items){
+           foreach(UXItem item in Items)
+           {
                metatopairs.Clear();
 
-               foreach (IEdge l in item.Vertex.GetAll(false, "DiagramLine:")) // calculate DiagramLines number and Edges number for each Meta/To edge pair
-               {
+               foreach(UXItem decorator in item.Decorators) // calculate LineDecorator number and Edges number for each Meta/To edge pair
+                                                            //foreach (IEdge l in item.Vertex.GetAll(false, "DiagramLine:")) // calculate DiagramLines number and Edges number for each Meta/To edge pair
+               { 
                    MetaToPair found = null;
 
+                   Edge decorator_BaseEdge= decorator.BaseEdge;
+
                    foreach (MetaToPair pair in metatopairs)
-                       if (pair.Meta == l.To.Get(false, @"BaseEdge:\Meta:") && pair.To == l.To.Get(false, @"BaseEdge:\To:"))
+                       if (pair.Meta == decorator_BaseEdge.Meta && pair.To == decorator_BaseEdge.To)
                            found = pair;
 
                    if (found == null)
                    {
                        MetaToPair newpair = new MetaToPair();
-                       newpair.Meta = l.To.Get(false, @"BaseEdge:\Meta:");
-                       newpair.To = l.To.Get(false, @"BaseEdge:\To:");
-                       newpair.DiagramLinesNumber = 1;
+                       newpair.Meta = decorator_BaseEdge.Meta;
+                       newpair.To = decorator_BaseEdge.To;
+                       newpair.LineDecoratorNumber = 1;
                        newpair.EdgesNumber = 0;
 
-                       foreach(IEdge e in item.Vertex.GetAll(false, @"BaseEdge:\To:\"))
-                           if (newpair.Meta == e.Meta && newpair.To == e.To)
+                        //foreach(IEdge e in item.Vertex.GetAll(false, @"BaseEdge:\To:\"))
+                        foreach (IEdge e in item.BaseEdge.To)
+                            if (newpair.Meta == e.Meta && newpair.To == e.To)
                                newpair.EdgesNumber++;
 
                        metatopairs.Add(newpair);
                        
                    }else
-                       found.DiagramLinesNumber++;
+                       found.LineDecoratorNumber++;
                }
 
                foreach(MetaToPair pair in metatopairs){ // delete DiagramLines for edges that been deleted
-                   if(pair.DiagramLinesNumber>pair.EdgesNumber)
-                       foreach(IEdge e in item.Vertex.GetAll(false, "DiagramLine:")){
-                           if(pair.Meta == e.To.Get(false, @"BaseEdge:\Meta:") && pair.To == e.To.Get(false, @"BaseEdge:\To:") && pair.DiagramLinesNumber > pair.EdgesNumber){
-                               item.Vertex.DeleteEdge(e);
-                               pair.DiagramLinesNumber--;
+                   if(pair.LineDecoratorNumber > pair.EdgesNumber)
+                        //foreach(IEdge e in item.Vertex.GetAll(false, "DiagramLine:")){
+                        foreach (UXItem decorator in item.Decorators)
+                        {
+                            Edge decorator_BaseEdge = decorator.BaseEdge;
 
-                              //  IVertex c = m0.MinusZero.Instance.Root.Get(false, @"TEST\Counter:");
-                              //  c.Value=((int)c.Value)+1;
-                           }
-                       }
+                            if (pair.Meta == decorator_BaseEdge.Meta 
+                                && pair.To == decorator_BaseEdge.To 
+                                && pair.LineDecoratorNumber > pair.EdgesNumber)
+                            {
+                               item.Vertex.DeleteEdge(decorator.Edge);
+                               pair.LineDecoratorNumber--;
+                            }
+                        }
                }
 
-               foreach (IEdge l in item.Vertex.GetAll(false, "DiagramLine:")) // add diagram line objects
-                   item.AddDiagramLineObject(GetToDiagramItemFromLineVertex(l.To), l.To);
-               }
-                            
+                // Vertex.GetAll(false, "DiagramLine:")
+                foreach (UXItem decorator in item.Decorators)
+                // add diagram line objects
+                    if(decorator is LineDecorator)
+                    {
+                        LineDecorator lineDecorator = (LineDecorator)decorator;
+
+                        item.AddDiagramLineObject(GetToDiagramItemFromLineVertex(lineDecorator), lineDecorator);
+                    }
+           }
+           
         }
 
         // TOO
-        public DiagramItemBase GetToDiagramItemFromLineVertex(IVertex lineVertex)
+        public UXItem GetToDiagramItemFromLineVertex(LineDecorator lineDecorator)
         {
             IVertex toFind = null;
 
-            if (lineVertex.Get(false, @"BaseEdge:\Meta:\$VertexTarget:") != null
-                && !GraphUtil.GetValueAndCompareStrings(lineVertex.Get(false, @"Definition:\CreateEdgeOnly:"), "True"))
-                toFind = lineVertex.Get(false, @"BaseEdge:\To:\$EdgeTarget:");
+            Edge lineDecorator_BaseEdge = lineDecorator.BaseEdge;
+
+            if (GraphUtil.ExistQueryOut(lineDecorator_BaseEdge.Meta, "$VertexTarget", null)
+            && ((UXDecoratorTemplate)lineDecorator.UXTemplate).CreateEdgeOnly)
+                toFind = GraphUtil.GetQueryOutFirst(lineDecorator_BaseEdge.To, "$EdgeTarget", null);
             else
-                toFind = lineVertex.Get(false, @"BaseEdge:\To:");
+                toFind = lineDecorator_BaseEdge.To;
 
             if (toFind != null)
-                foreach(DiagramItemBase i in GetItemsDictionary()[toFind])
-                    if (!(lineVertex.Get(false, @"Definition:\ToDiagramItemTestQuery:") != null && i.Vertex.Get(false, (string)lineVertex.Get(false, @"Definition:\ToDiagramItemTestQuery:").Value) == null))
+                foreach(UXItem i in GetItemsDictionary()[toFind])
+                    if (!(lineDecorator.Get(false, @"Definition:\ToDiagramItemTestQuery:") != null && i.Vertex.Get(false, (string)lineDecorator.Get(false, @"Definition:\ToDiagramItemTestQuery:").Value) == null))
                         return i;
-
-               /* foreach (DiagramItemBase i in Items)
-                {
-                    bool canReturn = true;
-
-                    if (lineVertex.Get(false, @"Definition:\ToDiagramItemTestQuery:") != null && i.Vertex.Get(false, (string)lineVertex.Get(false, @"Definition:\ToDiagramItemTestQuery:").Value) == null)
-                        canReturn = false;
-
-                    if (i.Vertex.Get(false, @"BaseEdge:\To:") == toFind && canReturn)
-                        return i;
-                }*/
 
             return null;
         }
@@ -405,8 +359,6 @@ namespace m0.UIWpf.UX
 
             UnselectAllSelectedEdges();
 
-            TurnOffSelectedEdgesFireChange();
-
             foreach(DiagramItemBase i in Items){
                 int ileft, itop, iright, ibottom;
 
@@ -419,23 +371,13 @@ namespace m0.UIWpf.UX
                     i.AddToSelectedEdges();
             }
 
-            TurnOnSelectedEdgesFireChange();
-
             SelectedVerticesUpdated();
         }
 
         public void PaintDiagram()
         {
             if (ActualHeight != 0 || IsFirstPainted)
-            {
-                //MinusZero.Instance.Log(1, "Diagram", "");
-
-                // turn off Vertex.Change listener
-
-                VertexChangeListenOff();
-
-                //                                
-
+            {                       
                 IsPaiting = true;                
 
                 TheCanvas.Children.Clear();
@@ -486,13 +428,7 @@ namespace m0.UIWpf.UX
 
                 ////////////////////////////////////////
                 Interaction.EndInteractionWithGraph();
-                //////////////////////////////////////// 
-
-                // turn on Vertex.Change listener
-
-                VertexChangeListenOn();
-
-                //          
+                ////////////////////////////////////////           
             }
         }
 
@@ -997,8 +933,6 @@ namespace m0.UIWpf.UX
         {
             IVertex sv = Vertex.Get(false, @"SelectedEdges:");
 
-            TurnOffSelectedEdgesFireChange();
-
             ////////////////////////////////////////
             Interaction.BeginInteractionWithGraph();
             //////////////////////////////////////// 
@@ -1009,8 +943,6 @@ namespace m0.UIWpf.UX
             ////////////////////////////////////////
             Interaction.EndInteractionWithGraph();
             //////////////////////////////////////// 
-            
-            TurnOnSelectedEdgesFireChange();
 
             SelectedVerticesUpdated();
         }
@@ -1264,9 +1196,6 @@ namespace m0.UIWpf.UX
                 if(isSet)
                     User.Process.UX.NonAtomProcess.StartNonAtomProcess();
 
-
-                VertexChangeListenOff();
-
                 ////////////////////////////////////////
                 Interaction.BeginInteractionWithGraph();
                 //////////////////////////////////////// 
@@ -1283,8 +1212,6 @@ namespace m0.UIWpf.UX
                 //////////////////////////////////////// 
 
                 CheckAndUpdateDiagramLines();
-
-                VertexChangeListenOn();
 
                 UpdateLayout();
 

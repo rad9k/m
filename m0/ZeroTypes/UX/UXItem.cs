@@ -11,9 +11,9 @@ using System.Windows.Controls;
 
 namespace m0.ZeroTypes.UX
 {
-    public class UXItem: UserControl, IPlatformClass
+    public class UXItem: UserControl, IPlatformClass, ITypedEdge
     {
-        public UXVisualiser Diagram;
+        public UXV Diagram; // >> UXAggregator ParentAggregator
 
         public List<LineDecoratorBase> DiagramLines = new List<LineDecoratorBase>();
 
@@ -45,7 +45,7 @@ namespace m0.ZeroTypes.UX
 
         }
 
-        public void AddDiagramLineObject(UXItem toItem, IVertex l)
+        public void AddDiagramLineObject(UXItem toItem, LineDecorator lineDecorator)
         {
 
         }
@@ -353,6 +353,10 @@ namespace m0.ZeroTypes.UX
                         {
                             ret.Add((MetaExtendedLineDecorator)TypedEdge.Get(e, typeof(MetaExtendedLineDecorator)));
                         }
+                        else
+                            if (InstructionHelpers.CheckIfIsOrInherits(e.To, "UXItem"))
+                                ret.Add((UXItem)TypedEdge.Get(e, typeof(UXItem)));
+                                //ret.Add(new UXItem(e));
                     }
                 }
 
@@ -432,15 +436,15 @@ namespace m0.ZeroTypes.UX
                 {
                     if (InstructionHelpers.CheckIfIsOrInherits(e.To, "UXAggregator"))
                     {
-                        //ret.Add((Item)TypedEdge.Get(e, typeof(UXAggregator)));
-                        ret.Add(new UXAggregator(e));
+                        ret.Add((Item)TypedEdge.Get(e, typeof(UXAggregator)));
+                        //ret.Add(new UXAggregator(e));
                     }
                     else
                     {
                         if (InstructionHelpers.CheckIfIsOrInherits(e.To, "UXItem"))
                         {
-                            //ret.Add((Item)TypedEdge.Get(e, typeof(UXItem)));
-                            ret.Add(new UXItem(e));
+                            ret.Add((Item)TypedEdge.Get(e, typeof(UXItem)));
+                            //ret.Add(new UXItem(e));
                         }
                         else
                         {

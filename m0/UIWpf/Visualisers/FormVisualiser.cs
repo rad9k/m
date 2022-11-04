@@ -96,7 +96,7 @@ namespace m0.UIWpf.Visualisers
                 this, 
                 false, 
                 new List<string> { @""/*, @"BaseEdge:\To:"*/}, // currently the form does not need BaseEdge:\To:
-                "AtomVisualiserFull",
+                "AtomVisualiser",
                 baseEdgeVertex,
                 UpdateBaseEdgeCallSchemeEnum.OmmitFirst);            
 
