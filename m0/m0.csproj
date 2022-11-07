@@ -136,6 +136,7 @@
     <Compile Include="Lib\Std.cs" />
     <Compile Include="Lib\Sys.cs" />
     <Compile Include="UIWpf\UX\UXV.cs" />
+    <Compile Include="ZeroTypes\UX\IItem.cs" />
     <Compile Include="ZeroTypes\UX\RectangleItemControl.xaml.cs">
       <DependentUpon>RectangleItemControl.xaml</DependentUpon>
     </Compile>
@@ -334,8 +335,10 @@
     <Compile Include="ZeroTypes\UX\LayoutTypeEnum.cs" />
     <Compile Include="ZeroTypes\UX\Position.cs" />
     <Compile Include="ZeroTypes\UX\Size.cs" />
+    <Compile Include="ZeroTypes\UX\IUXAggregator.cs" />
     <Compile Include="ZeroTypes\UX\UXDecoratorTemplate .cs" />
     <Compile Include="ZeroTypes\UX\ImageItem.cs" />
+    <Compile Include="ZeroTypes\UX\IUXItem.cs" />
     <Compile Include="ZeroTypes\UX\UXTemplate.cs" />
     <Compile Include="ZeroTypes\UX\UXAggregator.cs" />
     <Compile Include="ZeroTypes\UX\UXItem.cs" />

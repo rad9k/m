@@ -11,7 +11,7 @@ using System.Windows.Controls;
 
 namespace m0.ZeroTypes.UX
 {
-    public class UXItem: UserControl, IPlatformClass, ITypedEdge
+    public class UXItem: UserControl, IUXItem, IPlatformClass
     {
         public UXV Diagram; // >> UXAggregator ParentAggregator
 
@@ -23,6 +23,7 @@ namespace m0.ZeroTypes.UX
 
         public virtual void Dispose()
         {
+            TypedEdge.RemoveFromDictionary(this);
         }
 
         public Dictionary<IVertex, List<LineDecoratorBase>> GetDiagramLinesBaseEdgeToDictionary()
@@ -110,7 +111,6 @@ namespace m0.ZeroTypes.UX
         static IVertex Color_type = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\Color");
         static IVertex Size_type = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\Size");
         static IVertex Position_type = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\Position");
-        static IVertex LineDecorator_type = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\LineDecorator");
 
         public UXItem(IEdge _edge) {
 
@@ -332,13 +332,13 @@ namespace m0.ZeroTypes.UX
             }
         }
 
-        public IList<UXItem> Decorators
+        public IList<IUXItem> Decorators
         {
             get
             {
-                IList<IEdge> list = GraphUtil.GetQueryOut(Vertex, "UXItem", null);
+                IList<IEdge> list = GraphUtil.GetQueryOut(Vertex, "Decorator", null);
 
-                IList<UXItem> ret = new List<UXItem>();
+                IList<IUXItem> ret = new List<IUXItem>();
 
                 foreach (IEdge e in list)
                 {
@@ -364,15 +364,11 @@ namespace m0.ZeroTypes.UX
             }
         }
 
-        public UXItem AddDecorator_LineDecorator()
-        {
-            return AddItem_UXItem(LineDecorator_type);
-        }
-
-        public UXItem AddDecorator(IVertex typeVertex)
+        public IUXItem AddDecorator(IVertex typeVertex)
         {
             IEdge newEdge = VertexOperations.AddInstanceAndReturnEdge(Vertex, typeVertex, Decorator_meta);
 
+            throw new Exception("please correct");
             return new UXItem(newEdge);
         }
 
@@ -424,33 +420,31 @@ namespace m0.ZeroTypes.UX
             return new Edge(baseEdgeEdge);
         }
 
-        public IList<object> Items
+        public IList<IItem> Items
         {
             get
             {
                 IList<IEdge> list = GraphUtil.GetQueryOut(Vertex, "Item", null);
 
-                IList<object> ret = new List<object>();
+                IList<IItem> ret = new List<IItem>();
 
                 foreach (IEdge e in list)
                 {
                     if (InstructionHelpers.CheckIfIsOrInherits(e.To, "UXAggregator"))
                     {
-                        ret.Add((Item)TypedEdge.Get(e, typeof(UXAggregator)));
-                        //ret.Add(new UXAggregator(e));
+                        ret.Add((IItem)TypedEdge.Get(e, typeof(UXAggregator)));
                     }
                     else
                     {
                         if (InstructionHelpers.CheckIfIsOrInherits(e.To, "UXItem"))
                         {
-                            ret.Add((Item)TypedEdge.Get(e, typeof(UXItem)));
-                            //ret.Add(new UXItem(e));
+                            ret.Add((IItem)TypedEdge.Get(e, typeof(UXItem)));
                         }
                         else
                         {
                             if (InstructionHelpers.CheckIfIsOrInherits(e.To, "Item"))
                             {
-                                ret.Add((Item)TypedEdge.Get(e, typeof(Item)));
+                                ret.Add((IItem)TypedEdge.Get(e, typeof(Item)));
                             }
                         }
                     }
@@ -460,31 +454,14 @@ namespace m0.ZeroTypes.UX
             }
         }
 
-        public UXItem AddItem_UXItem()
-        {
-            return AddItem_UXItem(UXItem_type);
-        }
-
-        public UXItem AddItem_UXItem(IVertex typeVertex)
+        public IItem AddItem(IVertex typeVertex)
         {
             IEdge newEdge = VertexOperations.AddInstanceAndReturnEdge(Vertex, typeVertex, Item_meta);
 
             return new UXItem(newEdge);
         }
 
-        public UXItem AddItem_UXAggregator()
-        {
-            return AddItem_UXAggregator(UXAggregator_type);
-        }
-
-        public UXItem AddItem_UXAggregator(IVertex typeVertex)
-        {
-            IEdge newEdge = VertexOperations.AddInstanceAndReturnEdge(Vertex, typeVertex, Item_meta);
-
-            return new UXAggregator(newEdge);
-        }
-
-        public void RemoveItem(Item item)
+        public void RemoveItem(IItem item)
         {
             Vertex.DeleteEdge(item.Edge);
         }

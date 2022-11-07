@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace m0.ZeroTypes.UX
 {
-    public class Item: TypedEdge
+    public class Item: TypedEdge, IItem
     {
         static IVertex BaseEdge_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\HasBaseEdge\BaseEdge");
         static IVertex Item_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\Item\Item");
@@ -57,32 +57,31 @@ namespace m0.ZeroTypes.UX
             return new Edge(baseEdgeEdge);
         }
 
-        public IList<Item> Items
+        public IList<IItem> Items
         {
             get
             {
                 IList<IEdge> list = GraphUtil.GetQueryOut(Vertex, "Item", null);
 
-                IList<Item> ret = new List<Item>();
+                IList<IItem> ret = new List<IItem>();
 
                 foreach (IEdge e in list)
                 {
-
                     if (InstructionHelpers.CheckIfIsOrInherits(e.To, "UXAggregator"))
                     {
-                        ret.Add((Item)TypedEdge.Get(e, typeof(UXAggregator)));
+                        ret.Add((IItem)TypedEdge.Get(e, typeof(UXAggregator)));
                     }
                     else
                     {
                         if (InstructionHelpers.CheckIfIsOrInherits(e.To, "UXItem"))
                         {
-                            ret.Add((Item)TypedEdge.Get(e, typeof(UXItem)));
+                            ret.Add((IItem)TypedEdge.Get(e, typeof(UXItem)));
                         }
                         else
                         {
                             if (InstructionHelpers.CheckIfIsOrInherits(e.To, "Item"))
                             {
-                                ret.Add((Item)TypedEdge.Get(e, typeof(Item)));
+                                ret.Add((IItem)TypedEdge.Get(e, typeof(Item)));
                             }
                         }
                     }
@@ -92,31 +91,16 @@ namespace m0.ZeroTypes.UX
             }
         }
 
-        public UXItem AddItem_UXItem()
-        {
-            return AddItem_UXItem(UXItem_type);
-        }
-
-        public UXItem AddItem_UXItem(IVertex typeVertex)
+        public IItem AddItem(IVertex typeVertex)
         {
             IEdge newEdge = VertexOperations.AddInstanceAndReturnEdge(Vertex, typeVertex, Item_meta);
+
+            throw new Exception("correct me");
 
             return new UXItem(newEdge);
         }
 
-        public UXItem AddItem_UXAggregator()
-        {
-            return AddItem_UXAggregator(UXAggregator_type);
-        }
-
-        public UXItem AddItem_UXAggregator(IVertex typeVertex)
-        {
-            IEdge newEdge = VertexOperations.AddInstanceAndReturnEdge(Vertex, typeVertex, Item_meta);
-
-            return new UXAggregator(newEdge);
-        }
-
-        public void RemoveItem(Item item)
+        public void RemoveItem(IItem item)
         {
             Vertex.DeleteEdge(item.Edge);
         }

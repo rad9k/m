@@ -26,6 +26,11 @@ namespace m0.ZeroTypes
             vertexDictionary.Add(this.Edge.To, this);
         }
 
+        static public void RemoveFromDictionary(ITypedEdge e)
+        {
+            vertexDictionary.Remove(e.Vertex);
+        }
+
         static public ITypedEdge Get(IEdge edge, Type toCreateType)
         {
             IVertex v = edge.To;

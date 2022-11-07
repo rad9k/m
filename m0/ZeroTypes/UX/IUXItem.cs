@@ -1,0 +1,52 @@
+﻿using m0.Foundation;
+using m0.Graph;
+using m0.UIWpf.UX;
+using m0.ZeroCode.Helpers;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Controls;
+
+namespace m0.ZeroTypes.UX
+{
+    public interface IUXItem: IItem
+    {
+        double Scale { get; set; }
+       
+        bool DesignMode { get; set; }
+        
+        UX.Size Size { get; }
+
+        UX.Size SizeCreate();
+
+        UX.Position Position { get; }
+
+        UX.Position PositionCreate();
+
+        LayoutTypeEnum Layout { get; set; }
+
+        UX.Color BackgroundColor { get; }
+
+        UX.Color BackgroundColorCreate();
+        
+        UX.Color ForegroundColor { get; }
+
+        UX.Color ForegroundColorCreate();
+
+        UX.Color BorderColor { get; }
+
+        UX.Color BorderColorCreate();
+
+        double BorderSize { get; set; }
+        
+        double Gap { get; set; }
+
+        UX.UXTemplate UXTemplate { get; set; }
+
+        IList<IUXItem> Decorators { get; }
+        
+        IUXItem AddDecorator(IVertex typeVertex);
+    }
+}

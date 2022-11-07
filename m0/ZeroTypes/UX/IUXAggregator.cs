@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace m0.ZeroTypes.UX
 {
-    public class UXAggregator: UXItem, IUXAggregator
+    public class UXAggregator: UXItem
     {
         static IVertex IsExpanded_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\UXAggregator\IsExpanded");
         static IVertex ExpandedSize_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\UXAggregator\ExpandedSize");

@@ -319,35 +319,29 @@ namespace m0.UIWpf.UX
                 toFind = lineDecorator_BaseEdge.To;
 
             if (toFind != null)
-                foreach(UXItem i in GetItemsDictionary()[toFind])
-                    if (!(lineDecorator.Get(false, @"Definition:\ToDiagramItemTestQuery:") != null && i.Vertex.Get(false, (string)lineDecorator.Get(false, @"Definition:\ToDiagramItemTestQuery:").Value) == null))
+                foreach (UXItem i in GetItemsDictionary()[toFind]) {
+                    string tdtq = ((UXDecoratorTemplate)lineDecorator.UXTemplate).ToDiagramItemTestQuery;
+
+                    if (!(tdtq != null && i.Vertex.Get(false, tdtq) == null))
                         return i;
+                }
 
             return null;
         }
 
         // TOO
-        public List<DiagramItemBase> GetToDiagramItemFromEdge(IEdge edge)
+        public List<UXItem> GetToDiagramItemFromEdge(IEdge edge)
         {
             IVertex toFind = null;
 
-            List<DiagramItemBase> list=new List<DiagramItemBase>();
+            List<UXItem> list=new List<UXItem>();
 
-            if (edge.Meta.Get(false, @"$VertexTarget:") != null)
-                toFind = edge.To.Get(false, @"$EdgeTarget:");
+            if (GraphUtil.ExistQueryOut(edge.Meta, "$VertexTarget", null))
+                toFind = GraphUtil.GetQueryOutFirst(edge.To, "$EdgeTarget", null);
             else
                 toFind = edge.To;
 
             return GetItemsDictionary()[toFind];
-
-           /* if (toFind != null)
-                foreach (DiagramItemBase i in Items)
-                {                  
-                    if (i.Vertex.Get(false, @"BaseEdge:\To:") == toFind)
-                        list.Add(i);
-                }
-
-            return list;*/
         }
 
         void SelectItemsBySelectionArea()
@@ -359,7 +353,7 @@ namespace m0.UIWpf.UX
 
             UnselectAllSelectedEdges();
 
-            foreach(DiagramItemBase i in Items){
+            foreach(UXItem i in Items){
                 int ileft, itop, iright, ibottom;
 
                 ileft = (int)Canvas.GetLeft(i);
@@ -382,9 +376,9 @@ namespace m0.UIWpf.UX
 
                 TheCanvas.Children.Clear();
 
-                foreach (DiagramItemBase e in Items)
-                    if (e is IDisposable)
-                        ((IDisposable)e).Dispose();
+                foreach (UXItem i in Items)
+                    if (i is IDisposable)
+                        ((IDisposable)i).Dispose();
 
                 ClearItems();
 
