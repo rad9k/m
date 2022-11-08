@@ -54,5 +54,30 @@ namespace m0.ZeroTypes
                 return te;
             }           
         }
+
+        static public ITypedEdge Get(IEdge edge)
+        {
+            IVertex v = edge.To;
+
+            if (vertexDictionary.ContainsKey(v))
+            {
+                ITypedEdge ret = vertexDictionary[v];
+
+                if (ret.Edge.To.DisposedState != DisposeStateEnum.Live)
+                    throw new Exception("Vertex not live");
+
+                //if (EdgeHelper.CompareIEdges(ret.Edge, edge))
+                return ret;
+                // else
+                //   throw new Exception("Vertex allready in TypedEdge.vertexDictionary. Tried to access from another Edge.");
+            }
+            else
+            {
+                ITypedEdge te = null;
+                    //(ITypedEdge)Activator.CreateInstance(toCreateType, edge);
+
+                return te;
+            }
+        }
     }
 }

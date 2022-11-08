@@ -66,26 +66,7 @@ namespace m0.ZeroTypes.UX
                 IList<IItem> ret = new List<IItem>();
 
                 foreach (IEdge e in list)
-                {
-                    if (InstructionHelpers.CheckIfIsOrInherits(e.To, "UXAggregator"))
-                    {
-                        ret.Add((IItem)TypedEdge.Get(e, typeof(UXAggregator)));
-                    }
-                    else
-                    {
-                        if (InstructionHelpers.CheckIfIsOrInherits(e.To, "UXItem"))
-                        {
-                            ret.Add((IItem)TypedEdge.Get(e, typeof(UXItem)));
-                        }
-                        else
-                        {
-                            if (InstructionHelpers.CheckIfIsOrInherits(e.To, "Item"))
-                            {
-                                ret.Add((IItem)TypedEdge.Get(e, typeof(Item)));
-                            }
-                        }
-                    }
-                }
+                    ret.Add((IItem)TypedEdge.Get(e));
 
                 return ret;
             }
@@ -95,9 +76,7 @@ namespace m0.ZeroTypes.UX
         {
             IEdge newEdge = VertexOperations.AddInstanceAndReturnEdge(Vertex, typeVertex, Item_meta);
 
-            throw new Exception("correct me");
-
-            return new UXItem(newEdge);
+            return (IItem)TypedEdge.Get(newEdge);
         }
 
         public void RemoveItem(IItem item)

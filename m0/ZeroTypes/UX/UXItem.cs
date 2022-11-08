@@ -11,7 +11,7 @@ using System.Windows.Controls;
 
 namespace m0.ZeroTypes.UX
 {
-    public class UXItem: UserControl, IUXItem, IPlatformClass
+    public class UXItem : UserControl, IUXItem, IPlatformClass
     {
         public UXV Diagram; // >> UXAggregator ParentAggregator
 
@@ -40,7 +40,7 @@ namespace m0.ZeroTypes.UX
         {
 
         }
-            
+
         public void AddDiagramLineVertex(IEdge edge, IVertex diagramLineDefinition, UXItem toItem)
         {
 
@@ -55,7 +55,7 @@ namespace m0.ZeroTypes.UX
         {
 
         }
-            
+
         public virtual void Select()
         {
 
@@ -112,13 +112,14 @@ namespace m0.ZeroTypes.UX
         static IVertex Size_type = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\Size");
         static IVertex Position_type = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\Position");
 
-        public UXItem(IEdge _edge) {
+        public UXItem(IEdge _edge)
+        {
 
             // TypedEdge
-            
+
             edge = _edge;
 
-            vertex = _edge.To;            
+            vertex = _edge.To;
         }
 
         public double Scale
@@ -175,7 +176,7 @@ namespace m0.ZeroTypes.UX
                     return null;
 
                 return (UX.Size)TypedEdge.Get(val, typeof(UX.Size));
-            }            
+            }
         }
 
         public UX.Size SizeCreate()
@@ -211,7 +212,7 @@ namespace m0.ZeroTypes.UX
             }
             set
             {
-                GraphUtil.CreateOrReplaceEdge(Vertex, Layout_meta, LayoutTypeEnumHelper.GetVertex(value));                
+                GraphUtil.CreateOrReplaceEdge(Vertex, Layout_meta, LayoutTypeEnumHelper.GetVertex(value));
             }
         }
 
@@ -341,24 +342,7 @@ namespace m0.ZeroTypes.UX
                 IList<IUXItem> ret = new List<IUXItem>();
 
                 foreach (IEdge e in list)
-                {
-
-                    if (InstructionHelpers.CheckIfIsOrInherits(e.To, "LineDecorator"))
-                    {
-                        ret.Add((LineDecorator)TypedEdge.Get(e, typeof(LineDecorator)));
-                    }
-                    else
-                    {
-                        if (InstructionHelpers.CheckIfIsOrInherits(e.To, "MetaExtendedLineDecorator"))
-                        {
-                            ret.Add((MetaExtendedLineDecorator)TypedEdge.Get(e, typeof(MetaExtendedLineDecorator)));
-                        }
-                        else
-                            if (InstructionHelpers.CheckIfIsOrInherits(e.To, "UXItem"))
-                                ret.Add((UXItem)TypedEdge.Get(e, typeof(UXItem)));
-                                //ret.Add(new UXItem(e));
-                    }
-                }
+                    ret.Add((IUXItem)TypedEdge.Get(e));
 
                 return ret;
             }
@@ -366,10 +350,9 @@ namespace m0.ZeroTypes.UX
 
         public IUXItem AddDecorator(IVertex typeVertex)
         {
-            IEdge newEdge = VertexOperations.AddInstanceAndReturnEdge(Vertex, typeVertex, Decorator_meta);
+            IEdge newEdge = VertexOperations.AddInstanceAndReturnEdge(Vertex, typeVertex, Item_meta);
 
-            throw new Exception("please correct");
-            return new UXItem(newEdge);
+            return (IUXItem)TypedEdge.Get(newEdge);
         }
 
         // Item
@@ -429,26 +412,7 @@ namespace m0.ZeroTypes.UX
                 IList<IItem> ret = new List<IItem>();
 
                 foreach (IEdge e in list)
-                {
-                    if (InstructionHelpers.CheckIfIsOrInherits(e.To, "UXAggregator"))
-                    {
-                        ret.Add((IItem)TypedEdge.Get(e, typeof(UXAggregator)));
-                    }
-                    else
-                    {
-                        if (InstructionHelpers.CheckIfIsOrInherits(e.To, "UXItem"))
-                        {
-                            ret.Add((IItem)TypedEdge.Get(e, typeof(UXItem)));
-                        }
-                        else
-                        {
-                            if (InstructionHelpers.CheckIfIsOrInherits(e.To, "Item"))
-                            {
-                                ret.Add((IItem)TypedEdge.Get(e, typeof(Item)));
-                            }
-                        }
-                    }
-                }
+                    ret.Add((IItem)TypedEdge.Get(e));
 
                 return ret;
             }
@@ -458,7 +422,7 @@ namespace m0.ZeroTypes.UX
         {
             IEdge newEdge = VertexOperations.AddInstanceAndReturnEdge(Vertex, typeVertex, Item_meta);
 
-            return new UXItem(newEdge);
+            return (IItem)TypedEdge.Get(newEdge);
         }
 
         public void RemoveItem(IItem item)
@@ -472,18 +436,13 @@ namespace m0.ZeroTypes.UX
         public IEdge Edge { get { return edge; } }
 
         IVertex vertex;
-        public IVertex Vertex {
-            get { return vertex; }
-            set { throw new Exception("please correct. not handling Vertex set in UXItem");
-        }
-
-        /*public TypedEdge(IEdge _edge) // included in UXItem constructor
+        public IVertex Vertex
         {
-            edge = _edge;
-
-            vertex = _edge.To;
-
-            vertexDictionary.Add(this.Edge.To, this);
-        }*/
+            get { return vertex; }
+            set
+            {
+                throw new Exception("please correct. not handling Vertex set in UXItem");
+            }
+        }
     }
 }
