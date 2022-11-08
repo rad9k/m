@@ -52,7 +52,6 @@ namespace m0.UIWpf.UX
 
         public FrameworkElement ClickedAnchor;
 
-
         public SelectionArea SelectionArea;
 
         public ClickTargetEnum ClickTarget;
@@ -89,9 +88,6 @@ namespace m0.UIWpf.UX
 
                 return;
             }
-
-
-            Items = new List<UXItem>();
 
             TheCanvas = new Canvas();
 
@@ -1011,57 +1007,7 @@ namespace m0.UIWpf.UX
             }
         }
 
-        /*private IVertex _Vertex;
-
-        public IVertex Vertex
-        {
-            get { return _Vertex; }
-            set
-            {
-                MinusZero mz = MinusZero.Instance;
-
-                if (_Vertex != null)
-                {
-                    GraphUtil.DeleteEdgeByToVertex(mz.Root.Get(false, @"System\Session\Visualisers"), Vertex);
-
-                    PlatformClass.RemoveVertexChangeListeners(this.Vertex, new VertexChange(VertexChange));
-                }
-
-                _Vertex = value;
-
-                PlatformClass.RegisterVertexChangeListeners(this.Vertex, new VertexChange(VertexChange), new string[] { "BaseEdge", "SelectedEdges" });
-
-                //mz.Root.Get(false, @"System\Session\Visualisers").AddEdge(null, Vertex);
-
-                PaintDiagram();
-            }
-        }
-
-        bool IsDisposed = false;
-
-        public void Dispose()
-        {
-            if (IsDisposed == false)
-            {
-                MinusZero mz = MinusZero.Instance;
-
-                IsDisposed = true;
-
-                foreach (DiagramItemBase e in Items)
-                    if (e is IDisposable)
-                        ((IDisposable)e).Dispose();
-                
-                //GraphUtil.DeleteEdgeByToVertex(mz.Root.Get(false, @"System\Session\Visualisers"), Vertex);
-
-                PlatformClass.RemoveVertexChangeListeners(this.Vertex, new VertexChange(VertexChange));
-
-                //if (Vertex is IDisposable) HELLO NO - Vertex stayes!!! this is not normal Visualiser where its Vertex disapears @ Dispose
-                 //   ((IDisposable)Vertex).Dispose();
-                
-            }
-        }*/
-
-
+      
         // IHasLocalizableEdges
 
         private IVertex vertexByLocationToReturn;
@@ -1780,7 +1726,7 @@ namespace m0.UIWpf.UX
         public IEdge Edge { get { return edge; } }
 
         IVertex vertex;
-        public IVertex Vertex
+        public IVertex Vertexx
         {
             get { return vertex; }
             set
