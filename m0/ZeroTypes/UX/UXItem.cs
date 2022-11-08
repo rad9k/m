@@ -17,6 +17,19 @@ namespace m0.ZeroTypes.UX
 
         public List<LineDecoratorBase> DiagramLines = new List<LineDecoratorBase>();
 
+        //
+
+        public UXItem(IEdge _edge)
+        {
+            edge = _edge;
+
+            vertex = _edge.To;
+
+            TypedEdge.vertexDictionary.Add(this.Edge.To, this);
+        }
+
+        //
+
         public virtual void VertexSetedUp()
         {
         }

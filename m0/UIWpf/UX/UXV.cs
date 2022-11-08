@@ -38,8 +38,11 @@ namespace m0.UIWpf.UX
         public int EdgesNumber;
     }
 
-    public class UXV : Border, IListVisualiser
+    public class UXV : Border, IListVisualiser, IUXAggregator
     {
+        bool IsVisualiser = false;
+        //
+
         public AtomVisualiserHelper VisualiserHelper { get; set; }
 
         public Canvas TheCanvas;
@@ -80,6 +83,21 @@ namespace m0.UIWpf.UX
 
         public virtual void UpdateVertex() { PaintDiagram(); }
 
+        //
+
+        public UXV(IEdge _edge)
+        {
+            edge = _edge;
+
+            vertex = _edge.To;
+
+            TypedEdge.vertexDictionary.Add(this.Edge.To, this);
+
+            IsVisualiser = false;
+        }
+
+        //
+
         public UXV(IVertex baseEdgeVertex, IVertex parentVisualiser)
         {
             if(VisualisersList.GetVisualiser(baseEdgeVertex) != null)
@@ -88,6 +106,8 @@ namespace m0.UIWpf.UX
 
                 return;
             }
+
+            IsVisualiser = true;
 
             TheCanvas = new Canvas();
 
@@ -120,6 +140,26 @@ namespace m0.UIWpf.UX
             this.Drop += dndDrop;
 
             this.KeyDown += Diagram_KeyDown;
+        }
+
+        IVertex vertex = null;
+
+        public IVertex Vertex
+        {
+            get
+            {
+                if (IsVisualiser && VisualiserHelper != null)
+                    return VisualiserHelper.Vertex;
+                else
+                    return vertex;
+            }
+            set
+            {
+                if (IsVisualiser && VisualiserHelper != null)
+                    VisualiserHelper.SetVertex(value);
+                else
+                    vertex = value;
+            }
         }
 
         // OPTIMISATION START
@@ -976,20 +1016,6 @@ namespace m0.UIWpf.UX
             { PaintDiagram(); return; }   
         }*/
 
-        public IVertex Vertex
-        {
-            get {
-                if (VisualiserHelper != null)
-                    return VisualiserHelper.Vertex;
-
-                return null;
-            }
-            set {
-                if(VisualiserHelper != null)
-                    VisualiserHelper.SetVertex(value);
-            }
-        }
-
         public bool IsDisposed = false;
 
         public void Dispose()
@@ -1402,16 +1428,6 @@ namespace m0.UIWpf.UX
         //static IVertex Size_type = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\Size");
         static IVertex Position_type = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\Position");
 
-        public UXItem(IEdge _edge)
-        {
-
-            // TypedEdge
-
-            edge = _edge;
-
-            vertex = _edge.To;
-        }
-
         public double Scale
         {
             get
@@ -1456,7 +1472,7 @@ namespace m0.UIWpf.UX
             }
         }
 
-        public UX.Size Size
+        public ZeroTypes.UX.Size Size
         {
             get
             {
@@ -1465,16 +1481,16 @@ namespace m0.UIWpf.UX
                 if (val == null)
                     return null;
 
-                return (UX.Size)TypedEdge.Get(val, typeof(UX.Size));
+                return (ZeroTypes.UX.Size)TypedEdge.Get(val, typeof(ZeroTypes.UX.Size));
             }
         }
 
-        public UX.Size SizeCreate()
+        public ZeroTypes.UX.Size SizeCreate()
         {
-            return new UX.Size(VertexOperations.AddInstanceAndReturnEdge(Vertex, Size_type, Size_meta));
+            return new ZeroTypes.UX.Size(VertexOperations.AddInstanceAndReturnEdge(Vertex, Size_type, Size_meta));
         }
 
-        public UX.Position Position
+        public ZeroTypes.UX.Position Position
         {
             get
             {
@@ -1483,13 +1499,13 @@ namespace m0.UIWpf.UX
                 if (val == null)
                     return null;
 
-                return (UX.Position)TypedEdge.Get(val, typeof(UX.Position));
+                return (ZeroTypes.UX.Position)TypedEdge.Get(val, typeof(ZeroTypes.UX.Position));
             }
         }
 
-        public UX.Position PositionCreate()
+        public ZeroTypes.UX.Position PositionCreate()
         {
-            return new UX.Position(VertexOperations.AddInstanceAndReturnEdge(Vertex, Position_type, Position_meta));
+            return new ZeroTypes.UX.Position(VertexOperations.AddInstanceAndReturnEdge(Vertex, Position_type, Position_meta));
         }
 
         public LayoutTypeEnum Layout
@@ -1506,7 +1522,7 @@ namespace m0.UIWpf.UX
             }
         }
 
-        public UX.Color BackgroundColor
+        public ZeroTypes.UX.Color BackgroundColor
         {
             get
             {
@@ -1515,16 +1531,16 @@ namespace m0.UIWpf.UX
                 if (val == null)
                     return null;
 
-                return (UX.Color)TypedEdge.Get(val, typeof(UX.Color));
+                return (ZeroTypes.UX.Color)TypedEdge.Get(val, typeof(ZeroTypes.UX.Color));
             }
         }
 
-        public UX.Color BackgroundColorCreate()
+        public ZeroTypes.UX.Color BackgroundColorCreate()
         {
-            return new UX.Color(VertexOperations.AddInstanceAndReturnEdge(Vertex, Color_type, BackgroundColor_meta));
+            return new ZeroTypes.UX.Color(VertexOperations.AddInstanceAndReturnEdge(Vertex, Color_type, BackgroundColor_meta));
         }
 
-        public UX.Color ForegroundColor
+        public ZeroTypes.UX.Color ForegroundColor
         {
             get
             {
@@ -1533,16 +1549,16 @@ namespace m0.UIWpf.UX
                 if (val == null)
                     return null;
 
-                return (UX.Color)TypedEdge.Get(val, typeof(UX.Color));
+                return (ZeroTypes.UX.Color)TypedEdge.Get(val, typeof(ZeroTypes.UX.Color));
             }
         }
 
-        public UX.Color ForegroundColorCreate()
+        public ZeroTypes.UX.Color ForegroundColorCreate()
         {
-            return new UX.Color(VertexOperations.AddInstanceAndReturnEdge(Vertex, Color_type, ForegroundColor_meta));
+            return new ZeroTypes.UX.Color(VertexOperations.AddInstanceAndReturnEdge(Vertex, Color_type, ForegroundColor_meta));
         }
 
-        public UX.Color BorderColor
+        public ZeroTypes.UX.Color BorderColor
         {
             get
             {
@@ -1551,13 +1567,13 @@ namespace m0.UIWpf.UX
                 if (val == null)
                     return null;
 
-                return (UX.Color)TypedEdge.Get(val, typeof(UX.Color));
+                return (ZeroTypes.UX.Color)TypedEdge.Get(val, typeof(ZeroTypes.UX.Color));
             }
         }
 
-        public UX.Color BorderColorCreate()
+        public ZeroTypes.UX.Color BorderColorCreate()
         {
-            return new UX.Color(VertexOperations.AddInstanceAndReturnEdge(Vertex, Color_type, BorderColor_meta));
+            return new ZeroTypes.UX.Color(VertexOperations.AddInstanceAndReturnEdge(Vertex, Color_type, BorderColor_meta));
         }
 
         public double BorderSize
@@ -1604,7 +1620,7 @@ namespace m0.UIWpf.UX
             }
         }
 
-        public UX.UXTemplate UXTemplate
+        public ZeroTypes.UX.UXTemplate UXTemplate
         {
             get
             {
@@ -1708,12 +1724,14 @@ namespace m0.UIWpf.UX
             }
         }
 
-        public IItem AddItem(IVertex typeVertex)
+        // AddItem is higher
+
+     /*   public IItem AddItem(IVertex typeVertex)
         {
             IEdge newEdge = VertexOperations.AddInstanceAndReturnEdge(Vertex, typeVertex, Item_meta);
 
             return (IItem)TypedEdge.Get(newEdge);
-        }
+        }*/
 
         public void RemoveItem(IItem item)
         {
@@ -1724,15 +1742,5 @@ namespace m0.UIWpf.UX
 
         IEdge edge;
         public IEdge Edge { get { return edge; } }
-
-        IVertex vertex;
-        public IVertex Vertexx
-        {
-            get { return vertex; }
-            set
-            {
-                throw new Exception("please correct. not handling Vertex set in UXItem");
-            }
-        }
     }
 }
