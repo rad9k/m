@@ -13,9 +13,14 @@ namespace m0.ZeroTypes.UX
 {
     public class UXItem : UserControl, IUXItem, IPlatformClass
     {
-        public UXV Diagram; // >> UXAggregator ParentAggregator
+        public IUXAggregator Diagram { get; set; } // ParentAggregator
 
-        public List<LineDecoratorBase> DiagramLines = new List<LineDecoratorBase>();
+        List<LineDecoratorBase> diagramLines = new List<LineDecoratorBase>();
+
+        public List<LineDecoratorBase> DiagramLines
+        {
+            get { return diagramLines; }
+        }
 
         //
 

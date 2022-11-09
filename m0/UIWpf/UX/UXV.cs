@@ -59,9 +59,9 @@ namespace m0.UIWpf.UX
 
         public ClickTargetEnum ClickTarget;
 
-        public UXItem ClickedItem;
+        public IUXItem ClickedItem;
 
-        public UXItem HighlightedItem;
+        public IUXItem HighlightedItem;
 
         public double ClickPositionX_ItemCordinates;
         public double ClickPositionY_ItemCordinates;
@@ -164,18 +164,18 @@ namespace m0.UIWpf.UX
 
         // OPTIMISATION START
 
-        Dictionary<IVertex, List<UXItem>> ItemsDictionary = new Dictionary<IVertex, List<UXItem>>();
+        Dictionary<IVertex, List<IUXItem>> ItemsDictionary = new Dictionary<IVertex, List<IUXItem>>();
 
         bool needRebuildItemsDictionary = true;
 
-        void AddToItems(UXItem item)
+        void AddToItems(IUXItem item)
         {
             Items.Add(item);
 
             needRebuildItemsDictionary = true;
         }
 
-        void RemoveFromItems(UXItem item)
+        void RemoveFromItems(IUXItem item)
         {
             Items.Remove(item);
 
@@ -193,7 +193,7 @@ namespace m0.UIWpf.UX
         {
             ItemsDictionary.Clear();
 
-            foreach(UXItem i in Items)
+            foreach(IUXItem i in Items)
             {
                 IVertex baseEdgeTo = i.Vertex.Get(false, @"BaseEdge:\To:");
 
@@ -201,7 +201,7 @@ namespace m0.UIWpf.UX
                     ItemsDictionary[baseEdgeTo].Add(i);
                 else
                 {
-                    List<UXItem> list = new List<UXItem>();
+                    List<IUXItem> list = new List<IUXItem>();
                     list.Add(i);
 
                     ItemsDictionary.Add(baseEdgeTo, list);
@@ -211,7 +211,7 @@ namespace m0.UIWpf.UX
             needRebuildItemsDictionary = false;
         }
 
-        public Dictionary<IVertex, List<UXItem>> GetItemsDictionary()
+        public Dictionary<IVertex, List<IUXItem>> GetItemsDictionary()
         {
             if (needRebuildItemsDictionary)
                 RebuidItemsDictionary();
@@ -221,7 +221,7 @@ namespace m0.UIWpf.UX
 
         // OPTIMISATION END
 
-        public void RemoveItem(UXItem item)
+        public void RemoveItem(IUXItem item)
         {
             RemoveFromItems(item);
 
@@ -229,7 +229,7 @@ namespace m0.UIWpf.UX
         }
 
         // TOO
-        protected List<UXItem> GetItemsByBaseEdge(IVertex edgeToVertex)
+        protected List<IUXItem> GetItemsByBaseEdge(IVertex edgeToVertex)
         {
            return GetItemsDictionary()[GraphUtil.GetQueryOutFirst(edgeToVertex, "To", null)];
         }        
@@ -245,12 +245,14 @@ namespace m0.UIWpf.UX
             }
         }
 
-        protected void AddItem(IVertex ItemVertex){
+        public IItem AddItem(IVertex ItemVertex){
             IPlatformClass pc = (IPlatformClass)PlatformClass.CreatePlatformObject(ItemVertex, null as IEdge);
 
-            if (pc is UXItem)
+            if (pc is IUXItem && pc is UIElement)
             {
-                UXItem item = (UXItem)pc;
+                IUXItem item = (IUXItem)pc;
+
+                UIElement item_UIElement = (UIElement)pc;
 
                 item.Diagram = this;                
 
@@ -259,15 +261,17 @@ namespace m0.UIWpf.UX
 
                 AddToItems(item);
                 
-                Panel.SetZIndex(item, 1);
+                Panel.SetZIndex(item_UIElement, 1);
                
-                Canvas.SetLeft(item, item.Position.X);
-                Canvas.SetTop(item, item.Position.Y);     
+                Canvas.SetLeft(item_UIElement, item.Position.X);
+                Canvas.SetTop(item_UIElement, item.Position.Y);     
 
-                TheCanvas.Children.Add(item);
+                TheCanvas.Children.Add(item_UIElement);
 
-                item.UpdateLayout(); 
+                item_UIElement.UpdateLayout(); 
             }
+
+            return null;
         }
 
         // TOO
@@ -275,11 +279,11 @@ namespace m0.UIWpf.UX
         {
             List<MetaToPair> metatopairs = new List<MetaToPair>();
 
-           foreach(UXItem item in Items)
+           foreach(IUXItem item in Items)
            {
                metatopairs.Clear();
 
-               foreach(UXItem decorator in item.Decorators) // calculate LineDecorator number and Edges number for each Meta/To edge pair
+               foreach(IUXItem decorator in item.Decorators) // calculate LineDecorator number and Edges number for each Meta/To edge pair
                                                             //foreach (IEdge l in item.Vertex.GetAll(false, "DiagramLine:")) // calculate DiagramLines number and Edges number for each Meta/To edge pair
                { 
                    MetaToPair found = null;
@@ -312,7 +316,7 @@ namespace m0.UIWpf.UX
                foreach(MetaToPair pair in metatopairs){ // delete DiagramLines for edges that been deleted
                    if(pair.LineDecoratorNumber > pair.EdgesNumber)
                         //foreach(IEdge e in item.Vertex.GetAll(false, "DiagramLine:")){
-                        foreach (UXItem decorator in item.Decorators)
+                        foreach (IUXItem decorator in item.Decorators)
                         {
                             Edge decorator_BaseEdge = decorator.BaseEdge;
 
@@ -327,7 +331,7 @@ namespace m0.UIWpf.UX
                }
 
                 // Vertex.GetAll(false, "DiagramLine:")
-                foreach (UXItem decorator in item.Decorators)
+                foreach (IUXItem decorator in item.Decorators)
                 // add diagram line objects
                     if(decorator is LineDecorator)
                     {
@@ -340,7 +344,7 @@ namespace m0.UIWpf.UX
         }
 
         // TOO
-        public UXItem GetToDiagramItemFromLineVertex(LineDecorator lineDecorator)
+        public IUXItem GetToDiagramItemFromLineVertex(LineDecorator lineDecorator)
         {
             IVertex toFind = null;
 
@@ -353,7 +357,7 @@ namespace m0.UIWpf.UX
                 toFind = lineDecorator_BaseEdge.To;
 
             if (toFind != null)
-                foreach (UXItem i in GetItemsDictionary()[toFind]) {
+                foreach (IUXItem i in GetItemsDictionary()[toFind]) {
                     string tdtq = ((UXDecoratorTemplate)lineDecorator.UXTemplate).ToDiagramItemTestQuery;
 
                     if (!(tdtq != null && i.Vertex.Get(false, tdtq) == null))
@@ -364,19 +368,6 @@ namespace m0.UIWpf.UX
         }
 
         // TOO
-        public List<UXItem> GetToDiagramItemFromEdge(IEdge edge)
-        {
-            IVertex toFind = null;
-
-            List<UXItem> list=new List<UXItem>();
-
-            if (GraphUtil.ExistQueryOut(edge.Meta, "$VertexTarget", null))
-                toFind = GraphUtil.GetQueryOutFirst(edge.To, "$EdgeTarget", null);
-            else
-                toFind = edge.To;
-
-            return GetItemsDictionary()[toFind];
-        }
 
         void SelectItemsBySelectionArea()
         {
@@ -387,13 +378,18 @@ namespace m0.UIWpf.UX
 
             UnselectAllSelectedEdges();
 
-            foreach(UXItem i in Items){
+            foreach(IUXItem i in Items){
+                if (!(i is FrameworkElement))
+                    continue;
+
+                FrameworkElement i_FrameworkElement = (FrameworkElement)i;
+
                 int ileft, itop, iright, ibottom;
 
-                ileft = (int)Canvas.GetLeft(i);
-                itop = (int)Canvas.GetTop(i);
-                iright = ileft + (int)i.ActualWidth;
-                ibottom = itop + (int)i.ActualHeight;
+                ileft = (int)Canvas.GetLeft(i_FrameworkElement);
+                itop = (int)Canvas.GetTop(i_FrameworkElement);
+                iright = ileft + (int)i_FrameworkElement.ActualWidth;
+                ibottom = itop + (int)i_FrameworkElement.ActualHeight;
 
                 if (left <= ileft && right >= iright && top <= itop && bottom >= ibottom)
                     i.AddToSelectedEdges();
@@ -410,7 +406,7 @@ namespace m0.UIWpf.UX
 
                 TheCanvas.Children.Clear();
 
-                foreach (UXItem i in Items)
+                foreach (IUXItem i in Items)
                     if (i is IDisposable)
                         ((IDisposable)i).Dispose();
 
@@ -424,7 +420,7 @@ namespace m0.UIWpf.UX
                     Height = (double) height;
                 }
 
-                Background = new SolidColorBrush(Color.FromRgb(255, 200, 200));
+                Background = new SolidColorBrush(System.Windows.Media.Color.FromRgb(255, 200, 200));
 
                 ////////////////////////////////////////
                 Interaction.BeginInteractionWithGraph();

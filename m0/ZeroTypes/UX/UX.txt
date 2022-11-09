@@ -8,11 +8,11 @@ void AddToItems(DiagramItemBase item)
 void RemoveFromItems(DiagramItemBase item)
 void ClearItems()
 void RebuidItemsDictionary()
-public Dictionary<IVertex, List<DiagramItemBase>> GetItemsDictionary()
+-public Dictionary<IVertex, List<DiagramItemBase>> GetItemsDictionary()
 
 public void RemoveItem(DiagramItemBase item)
 protected List<DiagramItemBase> GetItemsByBaseEdge(IVertex to)
-public void AddEdgesFromDefintion(IVertex baseVertex, IVertex definitionEdges)
+- public void AddEdgesFromDefintion(IVertex baseVertex, IVertex definitionEdges)
 
 protected void AddItem(IVertex ItemVertex)
 public void AddLineObjects()
@@ -24,7 +24,7 @@ void SelectItemsBySelectionArea()
 
 public void PaintDiagram()
 
-public void SetFocus()
+-public void SetFocus()
 
 public void OnLoad(object sender, RoutedEventArgs e)
 

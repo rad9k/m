@@ -13,6 +13,41 @@ namespace m0.ZeroTypes.UX
 {
     public interface IUXItem: IItem
     {
+        IUXAggregator Diagram { get; set; }
+
+        List<LineDecoratorBase> DiagramLines { get; }
+
+        void VertexSetedUp();
+
+        void Dispose();
+
+        Dictionary<IVertex, List<LineDecoratorBase>> GetDiagramLinesBaseEdgeToDictionary();
+
+        void RemoveFromCanvas();
+
+        void DoCreateDiagramLine(UXItem toItem);
+
+        void AddDiagramLineVertex(IEdge edge, IVertex diagramLineDefinition, UXItem toItem);
+
+        void AddDiagramLineObject(UXItem toItem, LineDecorator lineDecorator);
+
+        void RemoveDiagramLine(LineDecoratorBase line);
+
+        void Select();
+
+        void Unselect();
+
+        void Highlight();
+
+        void Unhighlight();
+
+        void MoveItem(double x, double y);
+
+        void MoveAndResizeItem(double left, double top, double width, double height);
+
+        void AddToSelectedEdges();
+        
+        //
         double Scale { get; set; }
        
         bool DesignMode { get; set; }
