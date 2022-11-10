@@ -175,16 +175,9 @@ namespace m0.UIWpf.UX
             needRebuildItemsDictionary = true;
         }
 
-        void RemoveFromItems(IUXItem item)
-        {
-            Items.Remove(item);
-
-            needRebuildItemsDictionary = true;
-        }
-
         void ClearItems()
         {
-            Items.Clear();
+            //Items.Clear();
 
             needRebuildItemsDictionary = true;
         }
@@ -195,16 +188,16 @@ namespace m0.UIWpf.UX
 
             foreach(IUXItem i in Items)
             {
-                IVertex baseEdgeTo = i.Vertex.Get(false, @"BaseEdge:\To:");
+                IVertex i_BaseEdgeTo = i.BaseEdgeTo;
 
-                if (ItemsDictionary.ContainsKey(baseEdgeTo))
-                    ItemsDictionary[baseEdgeTo].Add(i);
+                if (ItemsDictionary.ContainsKey(i_BaseEdgeTo))
+                    ItemsDictionary[i_BaseEdgeTo].Add(i);
                 else
                 {
                     List<IUXItem> list = new List<IUXItem>();
                     list.Add(i);
 
-                    ItemsDictionary.Add(baseEdgeTo, list);
+                    ItemsDictionary.Add(i_BaseEdgeTo, list);
                 }
             }
 
@@ -223,7 +216,9 @@ namespace m0.UIWpf.UX
 
         public void RemoveItem(IUXItem item)
         {
-            RemoveFromItems(item);
+            RemoveItem(item);
+
+            needRebuildItemsDictionary = true;
 
             item.RemoveFromCanvas();
         }
@@ -297,9 +292,8 @@ namespace m0.UIWpf.UX
                        newpair.LineDecoratorNumber = 1;
                        newpair.EdgesNumber = 0;
 
-                        //foreach(IEdge e in item.Vertex.GetAll(false, @"BaseEdge:\To:\"))
-                        foreach (IEdge e in item.BaseEdge.To)
-                            if (newpair.Meta == e.Meta && newpair.To == e.To)
+                       foreach (IEdge e in item.BaseEdge.To)
+                           if (newpair.Meta == e.Meta && newpair.To == e.To)
                                newpair.EdgesNumber++;
 
                        metatopairs.Add(newpair);
@@ -310,7 +304,6 @@ namespace m0.UIWpf.UX
 
                foreach(MetaToPair pair in metatopairs){ // delete DiagramLines for edges that been deleted
                    if(pair.LineDecoratorNumber > pair.EdgesNumber)
-                        //foreach(IEdge e in item.Vertex.GetAll(false, "DiagramLine:")){
                         foreach (IUXItem decorator in item.Decorators)
                         {
                             Edge decorator_BaseEdge = decorator.BaseEdge;
@@ -325,7 +318,6 @@ namespace m0.UIWpf.UX
                         }
                }
 
-                // Vertex.GetAll(false, "DiagramLine:")
                 foreach (IUXItem decorator in item.Decorators)
                 // add diagram line objects
                     if(decorator is LineDecorator)
@@ -416,8 +408,9 @@ namespace m0.UIWpf.UX
                 Interaction.BeginInteractionWithGraph();
                 //////////////////////////////////////// 
 
-                foreach (IEdge ie in Vertex.GetAll(false, "Item:"))
-                    HostItem(ie.To);
+                foreach (IItem i in Items)
+                    if(i is IUXItem)
+                        HostItem((IUXItem)i);
 
                 UpdateLayout(); // here
 
@@ -442,15 +435,11 @@ namespace m0.UIWpf.UX
                 Interaction.EndInteractionWithGraph();
                 ////////////////////////////////////////    
             }
-
-            if(!IsVisualiser)
-                TypedEdge.RemoveFromDictionary(this);
         }
 
         public void SetFocus()
         {
             this.Focusable = true;
-            //this.Focus();
 
             Keyboard.Focus(this);
         }
@@ -485,13 +474,13 @@ namespace m0.UIWpf.UX
                 return;
 
             IVertex info = m0.MinusZero.Instance.CreateTempVertex();
-            info.Value = "DELETE diagram item / vertex?";
+            info.Value = "DELETE UX item / underlying vertex?";
 
             IVertex options = m0.MinusZero.Instance.CreateTempVertex();
 
-            IVertex optionDiagramItemDelete = options.AddVertex(null, "Diagram only delete");
-            IVertex optionLocalEdgeDelete = options.AddVertex(null, "Edge delete");
-            IVertex optionAllEdgesDelete = options.AddVertex(null, "Remove from repository");
+            IVertex optionUXItemDelete = options.AddVertex(null, "UX Item only delete");
+            IVertex optionUnderlyingEdgeDelete = options.AddVertex(null, "Underlying Edge delete");
+            IVertex optionUnderlyingVertexDelete = options.AddVertex(null, "Underlying Vertex remove from repository");
             IVertex optionCancel = options.AddVertex(null, "Cancel");
 
             IVertex option = MinusZero.Instance.DefaultUserInteraction.SelectDialogButton(info, options, null);
@@ -508,23 +497,23 @@ namespace m0.UIWpf.UX
             UnselectAllSelectedEdges();
 
             foreach (IEdge e in selectedEdges_copy)
-                foreach (DiagramItemBase i in GetItemsDictionary()[e.To.Get(false, "To:")])
+                foreach (IUXItem i in GetItemsDictionary()[e.To.Get(false, "To:")])
                 {  // what about multiple items for same BaseEdge:\To: ?
 
-                    if (option == optionDiagramItemDelete)
+                    if (option == optionUXItemDelete)
                     {
-                        GraphUtil.DeleteEdgeByToVertex(Vertex, i.Vertex);
+                        GraphUtil.DeleteEdgeByToVertex(i.Edge.From, i.Vertex);
                         RemoveItem(i);
                     }
 
-                    if (option == optionLocalEdgeDelete)
+                    if (option == optionUnderlyingEdgeDelete)
                     {
                         GraphUtil.DeleteEdgeByToVertex(Vertex, i.Vertex);
                         RemoveItem(i);
                         VertexOperations.DeleteOneEdge(i.Vertex.Get(false, @"BaseEdge:\From:"), i.Vertex.Get(false, @"BaseEdge:\Meta:"),i.Vertex.Get(false, @"BaseEdge:\To:"));
                     }
 
-                    if (option == optionAllEdgesDelete)
+                    if (option == optionUnderlyingVertexDelete)
                     {
                         GraphUtil.DeleteEdgeByToVertex(Vertex, i.Vertex);
                         RemoveItem(i);
@@ -829,7 +818,7 @@ namespace m0.UIWpf.UX
         DiagramLineBase prevSelected;
         DiagramLineBase selectedLine;
 
-        public double lineSelectionDelta { get { return 10; } }
+        public double LineSelectionDelta { get { return 10; } }
 
         private void CheckIfLineNeedsSelection(Point p)
         {
@@ -1017,6 +1006,9 @@ namespace m0.UIWpf.UX
 
                 foreach (DiagramItemBase i in Items)
                     i.Dispose();
+
+                if (!IsVisualiser)
+                    TypedEdge.RemoveFromDictionary(this);
             }
         }
 
@@ -1422,7 +1414,7 @@ namespace m0.UIWpf.UX
 
         public void AddDiagramLineVertex(IEdge edge, IVertex diagramLineDefinition, UXItem toItem) { }
 
-        public void AddDiagramLineObject(UXItem toItem, LineDecorator lineDecorator) { }
+        public void AddDiagramLineObject(IUXItem toItem, LineDecorator lineDecorator) { }
 
         public void RemoveDiagramLine(LineDecoratorBase line) { }
 
@@ -1757,12 +1749,12 @@ namespace m0.UIWpf.UX
 
         // AddItem is higher
 
-     /*   public IItem AddItem(IVertex typeVertex)
+        public IItem AddItem(IVertex typeVertex)
         {
             IEdge newEdge = VertexOperations.AddInstanceAndReturnEdge(Vertex, typeVertex, Item_meta);
 
             return (IItem)TypedEdge.Get(newEdge);
-        }*/
+        }
 
         public void RemoveItem(IItem item)
         {

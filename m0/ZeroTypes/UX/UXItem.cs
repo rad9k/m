@@ -37,7 +37,7 @@ namespace m0.ZeroTypes.UX
 
         public void AddDiagramLineVertex(IEdge edge, IVertex diagramLineDefinition, UXItem toItem) {}
 
-        public void AddDiagramLineObject(UXItem toItem, LineDecorator lineDecorator) {}
+        public void AddDiagramLineObject(IUXItem toItem, LineDecorator lineDecorator) {}
 
         public void RemoveDiagramLine(LineDecoratorBase line) {}
 
