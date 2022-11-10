@@ -878,7 +878,7 @@ namespace m0.UIWpf.Visualisers.Diagram
         DiagramLineBase prevSelected;
         DiagramLineBase selectedLine;
 
-        public double lineSelectionDelta = 10;
+        public double LineSelectionDelta { get { return 10; } }
 
         private void CheckIfLineNeedsSelection(Point p)
         {
@@ -897,7 +897,7 @@ namespace m0.UIWpf.Visualisers.Diagram
                     }                    
                 }
 
-            if (best< lineSelectionDelta && bestLine != null) 
+            if (best< LineSelectionDelta && bestLine != null) 
             {
                 if (bestLine != prevSelected)
                 {

@@ -245,33 +245,28 @@ namespace m0.UIWpf.UX
             }
         }
 
-        public IItem AddItem(IVertex ItemVertex){
-            IPlatformClass pc = (IPlatformClass)PlatformClass.CreatePlatformObject(ItemVertex, null as IEdge);
+        public void HostItem(IUXItem item){
+            if (!(item is UIElement))
+                return;
 
-            if (pc is IUXItem && pc is UIElement)
-            {
-                IUXItem item = (IUXItem)pc;
+            UIElement item_UIElement = (UIElement)item;
 
-                UIElement item_UIElement = (UIElement)pc;
+            item.Diagram = this;                
 
-                item.Diagram = this;                
+            item.VertexSetedUp();
 
-                item.VertexSetedUp();
+            needRebuildItemsDictionary = true;
 
-
-                AddToItems(item);
+            AddToItems(item);
                 
-                Panel.SetZIndex(item_UIElement, 1);
+            Panel.SetZIndex(item_UIElement, 1);
                
-                Canvas.SetLeft(item_UIElement, item.Position.X);
-                Canvas.SetTop(item_UIElement, item.Position.Y);     
+            Canvas.SetLeft(item_UIElement, item.Position.X);
+            Canvas.SetTop(item_UIElement, item.Position.Y);     
 
-                TheCanvas.Children.Add(item_UIElement);
+            TheCanvas.Children.Add(item_UIElement);
 
-                item_UIElement.UpdateLayout(); 
-            }
-
-            return null;
+            item_UIElement.UpdateLayout(); 
         }
 
         // TOO
@@ -412,13 +407,8 @@ namespace m0.UIWpf.UX
 
                 ClearItems();
 
-                double? width = GraphUtil.GetDoubleValue(Vertex.Get(false, "SizeX:"));
-                double? height = GraphUtil.GetDoubleValue(Vertex.Get(false, "SizeY:"));
-
-                if (width != null && height != null) {
-                    Width = (double) width ;
-                    Height = (double) height;
-                }
+                Width = Size.Width ;
+                Height = Size.Height;
 
                 Background = new SolidColorBrush(System.Windows.Media.Color.FromRgb(255, 200, 200));
 
@@ -427,11 +417,9 @@ namespace m0.UIWpf.UX
                 //////////////////////////////////////// 
 
                 foreach (IEdge ie in Vertex.GetAll(false, "Item:"))
-                    AddItem(ie.To);
-
+                    HostItem(ie.To);
 
                 UpdateLayout(); // here
-
 
                 AddLineObjects();
 
@@ -452,8 +440,11 @@ namespace m0.UIWpf.UX
 
                 ////////////////////////////////////////
                 Interaction.EndInteractionWithGraph();
-                ////////////////////////////////////////           
+                ////////////////////////////////////////    
             }
+
+            if(!IsVisualiser)
+                TypedEdge.RemoveFromDictionary(this);
         }
 
         public void SetFocus()
@@ -838,7 +829,7 @@ namespace m0.UIWpf.UX
         DiagramLineBase prevSelected;
         DiagramLineBase selectedLine;
 
-        public double lineSelectionDelta = 10;
+        public double lineSelectionDelta { get { return 10; } }
 
         private void CheckIfLineNeedsSelection(Point p)
         {
@@ -1217,7 +1208,7 @@ namespace m0.UIWpf.UX
             
             EdgeHelper.AddEdgeVertexEdgesByEdgeVertex(edge, BaseEdge);
 
-            AddItem(v);            
+            HostItem(v);            
         }
 
         public void AddDiagramItem(double x, double y, IVertex DiagramItemDefinition, IVertex metaVertex,IVertex newVertex)
@@ -1228,7 +1219,7 @@ namespace m0.UIWpf.UX
 
             EdgeHelper.AddEdgeVertexEdgesOnlyMetaTo(be, metaVertex, newVertex);
 
-            AddItem(v);
+            HostItem(v);
 
          //   CheckAndUpdateDiagramLines();
         }
@@ -1404,6 +1395,50 @@ namespace m0.UIWpf.UX
         {
             return new ZeroTypes.UX.Size(VertexOperations.AddInstanceAndReturnEdge(Vertex, Size_type, CollapsedSize_meta));
         }
+
+        //
+
+        public IUXAggregator Diagram { get; set; } // ParentAggregator
+
+        List<LineDecoratorBase> diagramLines = new List<LineDecoratorBase>();
+
+        public List<LineDecoratorBase> DiagramLines
+        {
+            get { return diagramLines; }
+        }
+
+        public virtual void VertexSetedUp() { }
+
+        public virtual void Dispose()
+        {
+            TypedEdge.RemoveFromDictionary(this);
+        }
+
+        public Dictionary<IVertex, List<LineDecoratorBase>> GetDiagramLinesBaseEdgeToDictionary() { return null; }
+
+        public virtual void RemoveFromCanvas() { }
+
+        public virtual void DoCreateDiagramLine(UXItem toItem) { }
+
+        public void AddDiagramLineVertex(IEdge edge, IVertex diagramLineDefinition, UXItem toItem) { }
+
+        public void AddDiagramLineObject(UXItem toItem, LineDecorator lineDecorator) { }
+
+        public void RemoveDiagramLine(LineDecoratorBase line) { }
+
+        public virtual void Select() { }
+
+        public virtual void Unselect() { }
+
+        public virtual void Highlight() { }
+
+        public virtual void Unhighlight() { }
+
+        public void MoveItem(double x, double y) { }
+
+        public void MoveAndResizeItem(double left, double top, double width, double height) { }
+
+        public void AddToSelectedEdges() { }
 
         // UXItem
 

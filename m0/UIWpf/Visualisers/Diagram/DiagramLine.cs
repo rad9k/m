@@ -358,10 +358,10 @@ namespace m0.UIWpf.Visualisers.Diagram
 
             Line2D l2d = Geometry2D.GetLine2DFromPoints(_FromX, _FromY, _ToX, _ToY);
 
-            if (p.X + Diagram.lineSelectionDelta < Math.Min(_FromX, _ToX) ||
-                p.X - Diagram.lineSelectionDelta > Math.Max(_FromX, _ToX) ||
-                p.Y + Diagram.lineSelectionDelta < Math.Min(_FromY, _ToY) ||
-                p.Y - Diagram.lineSelectionDelta > Math.Max(_FromY, _ToY))
+            if (p.X + Diagram.LineSelectionDelta < Math.Min(_FromX, _ToX) ||
+                p.X - Diagram.LineSelectionDelta > Math.Max(_FromX, _ToX) ||
+                p.Y + Diagram.LineSelectionDelta < Math.Min(_FromY, _ToY) ||
+                p.Y - Diagram.LineSelectionDelta > Math.Max(_FromY, _ToY))
                 return max;
 
             return Geometry2D.GetPointDistanceFrom2DLine(l2d, p);

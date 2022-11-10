@@ -10,6 +10,14 @@ namespace m0.ZeroTypes.UX
 {
     public class UXAggregator: UXItem, IUXAggregator
     {
+        public Dictionary<IVertex, List<IUXItem>> GetItemsDictionary() { return null; }
+        public double LineSelectionDelta { get; }
+        public void AddEdgesFromDefintion(IVertex baseVertex, IVertex definitionEdges) { }
+        public void SetFocus() { }
+        public void UnselectAllSelectedEdges() { }
+
+        //
+
         static IVertex IsExpanded_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\UXAggregator\IsExpanded");
         static IVertex ExpandedSize_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\UXAggregator\ExpandedSize");
         static IVertex CollapsedSize_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\UXAggregator\CollapsedSize");

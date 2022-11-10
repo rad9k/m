@@ -1,4 +1,9 @@
 ﻿************************************  Diagram
+-public Dictionary<IVertex, List<DiagramItemBase>> GetItemsDictionary
+- public double LineSelectionDelta { get; }
+- public void AddEdgesFromDefintion(IVertex baseVertex, IVertex definitionEdges)
+-public void SetFocus()
+-public void UnselectAllSelectedEdges()
 
 public class MetaToPair
 
@@ -8,11 +13,10 @@ void AddToItems(DiagramItemBase item)
 void RemoveFromItems(DiagramItemBase item)
 void ClearItems()
 void RebuidItemsDictionary()
--public Dictionary<IVertex, List<DiagramItemBase>> GetItemsDictionary()
+()
 
 public void RemoveItem(DiagramItemBase item)
 protected List<DiagramItemBase> GetItemsByBaseEdge(IVertex to)
-- public void AddEdgesFromDefintion(IVertex baseVertex, IVertex definitionEdges)
 
 protected void AddItem(IVertex ItemVertex)
 public void AddLineObjects()
@@ -23,8 +27,6 @@ public List<DiagramItemBase> GetToDiagramItemFromEdge(IEdge edge)
 void SelectItemsBySelectionArea()
 
 public void PaintDiagram()
-
--public void SetFocus()
 
 public void OnLoad(object sender, RoutedEventArgs e)
 
@@ -54,11 +56,11 @@ public void ScaleChange()
 
 protected void UnselectAll()
 
-public void UnselectAllSelectedEdges()
-
 public void SelectedVerticesUpdated()
 
 protected void SelectWrappersForSelectedVertices()
+
+
 
 //
 
@@ -72,7 +74,7 @@ public void AddDiagramItem(double x, double y, IVertex DiagramItemDefinition, IV
 
 public void CheckAndUpdateDiagramLines()
 
-public void CheckAndUpdateDiagramLinesForItem(DiagramItemBase item)
+- public void CheckAndUpdateDiagramLinesForItem(DiagramItemBase item)
 
 protected List<DiagramItemBase> GetItemsByBaseEdgeTo_ForLines(IEdge toEdge)
 

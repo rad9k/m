@@ -22,6 +22,39 @@ namespace m0.ZeroTypes.UX
             get { return diagramLines; }
         }
 
+        public virtual void VertexSetedUp() {}
+
+        public virtual void Dispose()
+        {
+            TypedEdge.RemoveFromDictionary(this);
+        }
+
+        public Dictionary<IVertex, List<LineDecoratorBase>> GetDiagramLinesBaseEdgeToDictionary() { return null; }
+
+        public virtual void RemoveFromCanvas() {}
+
+        public virtual void DoCreateDiagramLine(UXItem toItem) {}
+
+        public void AddDiagramLineVertex(IEdge edge, IVertex diagramLineDefinition, UXItem toItem) {}
+
+        public void AddDiagramLineObject(UXItem toItem, LineDecorator lineDecorator) {}
+
+        public void RemoveDiagramLine(LineDecoratorBase line) {}
+
+        public virtual void Select() {}
+
+        public virtual void Unselect() {}
+
+        public virtual void Highlight() {}
+
+        public virtual void Unhighlight() {}
+
+        public void MoveItem(double x, double y) {}
+
+        public void MoveAndResizeItem(double left, double top, double width, double height) {}
+
+        public void AddToSelectedEdges() {}
+
         //
 
         public UXItem(IEdge _edge)
@@ -31,82 +64,6 @@ namespace m0.ZeroTypes.UX
             vertex = _edge.To;
 
             TypedEdge.vertexDictionary.Add(this.Edge.To, this);
-        }
-
-        //
-
-        public virtual void VertexSetedUp()
-        {
-        }
-
-        public virtual void Dispose()
-        {
-            TypedEdge.RemoveFromDictionary(this);
-        }
-
-        public Dictionary<IVertex, List<LineDecoratorBase>> GetDiagramLinesBaseEdgeToDictionary()
-        {
-            return null;
-        }
-
-        public virtual void RemoveFromCanvas()
-        {
-
-        }
-
-        public virtual void DoCreateDiagramLine(UXItem toItem)
-        {
-
-        }
-
-        public void AddDiagramLineVertex(IEdge edge, IVertex diagramLineDefinition, UXItem toItem)
-        {
-
-        }
-
-        public void AddDiagramLineObject(UXItem toItem, LineDecorator lineDecorator)
-        {
-
-        }
-
-        public void RemoveDiagramLine(LineDecoratorBase line)
-        {
-
-        }
-
-        public virtual void Select()
-        {
-
-        }
-
-        public virtual void Unselect()
-        {
-
-        }
-
-        public virtual void Highlight()
-        {
-
-        }
-
-        public virtual void Unhighlight()
-        {
-
-        }
-
-        public void MoveItem(double x, double y)
-        {
-
-        }
-
-        public void MoveAndResizeItem(double left, double top, double width, double height)
-        {
-
-        }
-
-        public void AddToSelectedEdges()
-        {
-
         }
 
         // UNDER

@@ -10,6 +10,18 @@ namespace m0.ZeroTypes.UX
 {
     public interface IUXAggregator: IUXItem
     {
+        Dictionary<IVertex, List<IUXItem>> GetItemsDictionary();
+
+        void AddEdgesFromDefintion(IVertex baseVertex, IVertex definitionEdges);
+
+        void SetFocus();
+
+        void UnselectAllSelectedEdges();
+
+        double LineSelectionDelta { get; }
+
+        //
+
         bool IsExpanded { get; set; }
         
         UX.Size ExpandedSize { get; }
