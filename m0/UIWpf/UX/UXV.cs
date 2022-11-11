@@ -594,18 +594,25 @@ namespace m0.UIWpf.UX
 
                 TheCanvas.Children.Add(CreatedDiagramLine);
 
-                CreatedDiagramLine.X1 = Canvas.GetLeft(ClickedItem)+ClickedItem.ActualWidth;
-                CreatedDiagramLine.Y1 = Canvas.GetTop(ClickedItem);
+                FrameworkElement ClickedItem_FrameworkElement = (FrameworkElement)ClickedItem;
+
+                CreatedDiagramLine.X1 = Canvas.GetLeft(ClickedItem_FrameworkElement) + ClickedItem_FrameworkElement.ActualWidth;
+                CreatedDiagramLine.Y1 = Canvas.GetTop(ClickedItem_FrameworkElement);
             }
 
-            CreatedDiagramLine.X2= ToX;
-            CreatedDiagramLine.Y2=ToY;
+            CreatedDiagramLine.X2 = ToX;
+            CreatedDiagramLine.Y2 = ToY;
 
             Point p = new Point(ToX, ToY);            
 
-            foreach (DiagramItemBase i in Items)
+            foreach (IUXItem i in Items)
             {
-                if (VisualTreeHelper.HitTest(i, TranslatePoint(p, i)) != null)
+                if (!(i is UIElement))
+                    continue;
+
+                UIElement i_UIElement = (UIElement)i;
+
+                if (VisualTreeHelper.HitTest(i_UIElement, TranslatePoint(p, i_UIElement)) != null)
                 {
                     if (HighlightedItem == null)
                     {
@@ -639,12 +646,17 @@ namespace m0.UIWpf.UX
                 MovingSprites.Clear();
 
                 foreach (IEdge ed in Vertex.GetAll(false, @"SelectedEdges:\{$Is:Edge}"))
-                    foreach (DiagramItemBase item in GetItemsByBaseEdge(ed.To))
+                    foreach (IUXItem item in GetItemsByBaseEdge(ed.To))
                     {
-                        double rx = Canvas.GetLeft(item);
-                        double ry = Canvas.GetTop(item);
-                        double rwidth = item.ActualWidth;
-                        double rheight = item.ActualHeight;
+                        if (!(item is FrameworkElement))
+                            continue;
+
+                        FrameworkElement item_FrameworkElement = (FrameworkElement)item;
+
+                        double rx = Canvas.GetLeft(item_FrameworkElement);
+                        double ry = Canvas.GetTop(item_FrameworkElement);
+                        double rwidth = item_FrameworkElement.ActualWidth;
+                        double rheight = item_FrameworkElement.ActualHeight;
 
                         Rectangle r = new Rectangle();
                         Canvas.SetLeft(r, rx);
@@ -811,8 +823,8 @@ namespace m0.UIWpf.UX
             }
         }
 
-        DiagramLineBase prevSelected;
-        DiagramLineBase selectedLine;
+        LineDecoratorBase prevSelected;
+        LineDecoratorBase selectedLine;
 
         public double LineSelectionDelta { get { return 10; } }
 
