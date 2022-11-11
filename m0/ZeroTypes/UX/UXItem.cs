@@ -87,16 +87,6 @@ namespace m0.ZeroTypes.UX
         static IVertex Size_type = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\Size");
         static IVertex Position_type = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\Position");
 
-        public UXItem(IEdge _edge)
-        {
-
-            // TypedEdge
-
-            edge = _edge;
-
-            vertex = _edge.To;
-        }
-
         public double Scale
         {
             get

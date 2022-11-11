@@ -207,7 +207,7 @@ namespace m0.UIWpf.UX
 
         // OPTIMISATION END
 
-        public void RemoveItem(IUXItem item)
+        public void RemoveUXItem(IUXItem item)
         {
             RemoveItem(item);
 
@@ -494,22 +494,27 @@ namespace m0.UIWpf.UX
                     if (option == optionUXItemDelete)
                     {
                         GraphUtil.DeleteEdgeByToVertex(i.Edge.From, i.Vertex);
-                        RemoveItem(i);
+                        RemoveUXItem(i);
                     }
 
                     if (option == optionUnderlyingEdgeDelete)
                     {
-                        GraphUtil.DeleteEdgeByToVertex(Vertex, i.Vertex);
-                        RemoveItem(i);
-                        VertexOperations.DeleteOneEdge(i.Vertex.Get(false, @"BaseEdge:\From:"), i.Vertex.Get(false, @"BaseEdge:\Meta:"),i.Vertex.Get(false, @"BaseEdge:\To:"));
+                        GraphUtil.DeleteEdgeByToVertex(i.Edge.From, i.Vertex);
+                        RemoveUXItem(i);
+
+                        Edge i_BaseEdge = i.BaseEdge;
+                        
+                        VertexOperations.DeleteOneEdge(i_BaseEdge.From,
+                            i_BaseEdge.Meta,
+                            i_BaseEdge.To);
                     }
 
                     if (option == optionUnderlyingVertexDelete)
                     {
-                        GraphUtil.DeleteEdgeByToVertex(Vertex, i.Vertex);
-                        RemoveItem(i);
-                        //VertexOperations.DeleteAllInOutEdges(i.Vertex.Get(false, @"BaseEdge:\To:"));
-                        i.Vertex.Get(false, @"BaseEdge:\To:").Dispose();
+                        GraphUtil.DeleteEdgeByToVertex(i.Edge.From, i.Vertex);
+                        RemoveUXItem(i);
+
+                        i.BaseEdge.To.Dispose();
                     }
 
                 }
