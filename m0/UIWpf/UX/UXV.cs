@@ -175,13 +175,6 @@ namespace m0.UIWpf.UX
             needRebuildItemsDictionary = true;
         }
 
-        void ClearItems()
-        {
-            //Items.Clear();
-
-            needRebuildItemsDictionary = true;
-        }
-
         void RebuidItemsDictionary()
         {
             ItemsDictionary.Clear();
@@ -396,8 +389,6 @@ namespace m0.UIWpf.UX
                 foreach (IUXItem i in Items)
                     if (i is IDisposable)
                         ((IDisposable)i).Dispose();
-
-                ClearItems();
 
                 Width = Size.Width ;
                 Height = Size.Height;
