@@ -15,6 +15,10 @@ namespace m0.ZeroTypes.UX
     {
         public IUXAggregator Diagram { get; set; } // ParentAggregator
 
+        public bool IsSelected { get; set; }
+
+        public bool IsHighlighted { get; set; }
+
         List<LineDecoratorBase> diagramLines = new List<LineDecoratorBase>();
 
         public List<LineDecoratorBase> DiagramLines

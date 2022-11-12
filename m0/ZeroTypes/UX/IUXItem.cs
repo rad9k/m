@@ -15,6 +15,10 @@ namespace m0.ZeroTypes.UX
     {
         IUXAggregator Diagram { get; set; }
 
+        bool IsSelected { get; set; }
+
+        bool IsHighlighted { get; set; }
+
         List<LineDecoratorBase> DiagramLines { get; }
 
         void VertexSetedUp();
