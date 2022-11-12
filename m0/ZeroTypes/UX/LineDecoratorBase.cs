@@ -4,18 +4,18 @@ using m0.UIWpf.UX;
 using m0.ZeroCode.Helpers;
 using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 
 namespace m0.ZeroTypes.UX
 {
-    public class LineDecoratorBase : UXItem
+    public class LineDecoratorBase : UXItem, ILineDecoratorBase
     {
-        public UXItem FromDiagramItem;
+        public UXItem FromDiagramItem { get; set; }
 
-        public UXItem ToDiagramItem;
+        public UXItem ToDiagramItem { get; set; }
 
         public virtual void SetPosition(double FromX, double FromY, double ToX, double ToY, bool isSelfRelation, double selfRelationX, double selfRelationY)
         {
@@ -82,6 +82,25 @@ namespace m0.ZeroTypes.UX
                     val = Vertex.AddVertex(LineWidth_meta, value);
                 else
                     val.Value = value;
+            }
+        }
+
+        public UX.IUXItem ToItem
+        {
+            get
+            {
+                IEdge val = GraphUtil.GetQueryOutFirstEdge(Vertex, "ToItem", null);
+
+                if (val == null)
+                    return null;
+
+                return (IUXItem)TypedEdge.Get(val);
+            }
+            set
+            {
+                IVertex val = GraphUtil.GetQueryOutFirst(Vertex, "ToItem", null);
+
+                GraphUtil.CreateOrReplaceEdge(Vertex, ToItem_meta, value.Vertex);
             }
         }
     }

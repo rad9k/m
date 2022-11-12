@@ -1,5 +1,7 @@
 ﻿using m0.Foundation;
 using m0.Graph;
+using m0.ZeroTypes;
+using m0.ZeroTypes.UX;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -178,7 +180,7 @@ namespace m0.UIWpf.UX
 
             if (answer != null)
             {
-                DiagramItemDefinition = answer;
+                UXTemplate = (UXTemplate)TypedEdge.GetFromDictionary(answer);
 
                 return true;
             }
@@ -205,7 +207,7 @@ namespace m0.UIWpf.UX
 
         public bool InstanceOfMeta;
         public string InstanceValue;
-        public IVertex DiagramItemDefinition;
+        public UXTemplate UXTemplate;
 
         private IVertex _BaseEdge;
         public IVertex BaseEdge{
@@ -238,7 +240,7 @@ namespace m0.UIWpf.UX
         {
             if (List.SelectedItem != null)
             {
-                DiagramItemDefinition = ((IEdge)List.SelectedValue).To;
+                UXTemplate = (UXTemplate)TypedEdge.Get((IEdge)List.SelectedValue, typeof(UXTemplate));
 
                 if (InstanceRadio.IsChecked == true)
                 {
@@ -250,7 +252,7 @@ namespace m0.UIWpf.UX
                 { 
                     IVertex question = GetRememberedQuestion();
                   
-                    m0.User.Process.UX.NonAtomProcess.AddUserChoice(question, DiagramItemDefinition, !IsSet);
+                    m0.User.Process.UX.NonAtomProcess.AddUserChoice(question, UXTemplate.Vertex, !IsSet);
                 }
 
                 this.Close();

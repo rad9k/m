@@ -55,6 +55,21 @@ namespace m0.ZeroTypes
             }           
         }
 
+        static public ITypedEdge GetFromDictionary(IVertex v)
+        {
+            if (vertexDictionary.ContainsKey(v))
+            {
+                ITypedEdge ret = vertexDictionary[v];
+
+                if (ret.Edge.To.DisposedState != DisposeStateEnum.Live)
+                    throw new Exception("Vertex not live");
+
+                return ret;
+            }
+            else
+                return null;
+        }
+
         static public ITypedEdge Get(IEdge edge)
         {
             IVertex v = edge.To;

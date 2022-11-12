@@ -29,7 +29,7 @@ namespace m0.ZeroTypes.UX
 
         void RemoveFromCanvas();
 
-        void DoCreateDiagramLine(UXItem toItem);
+        void DoCreateDiagramLine(IUXItem toItem);
 
         void AddDiagramLineVertex(IEdge edge, IVertex diagramLineDefinition, UXItem toItem);
 

@@ -137,6 +137,7 @@
     <Compile Include="Lib\Sys.cs" />
     <Compile Include="UIWpf\UX\UXV.cs" />
     <Compile Include="ZeroTypes\UX\IItem.cs" />
+    <Compile Include="ZeroTypes\UX\ILineDecoratorBase.cs" />
     <Compile Include="ZeroTypes\UX\RectangleItemControl.xaml.cs">
       <DependentUpon>RectangleItemControl.xaml</DependentUpon>
     </Compile>
