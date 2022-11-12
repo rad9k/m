@@ -41,6 +41,7 @@ namespace m0.UIWpf.UX
     public class UXV : Border, IListVisualiser, IUXAggregator
     {
         bool IsVisualiser = false;
+
         //
 
         public AtomVisualiserHelper VisualiserHelper { get; set; }
@@ -1058,21 +1059,9 @@ namespace m0.UIWpf.UX
 
                     v.Value = ndi.InstanceValue;
 
-                    bool? ForceShowEditForm = null;
-
-                    if (ndi.UXTemplate.Get(false, @"ForceShowEditForm:") != null)
-                    {
-                        if (GeneralUtil.CompareStrings(ndi.UXTemplate.Get(false, @"ForceShowEditForm:"), "True"))
-                            ForceShowEditForm = true;
-
-                        if (GeneralUtil.CompareStrings(ndi.UXTemplate.Get(false, @"ForceShowEditForm:"), "False"))
-                            ForceShowEditForm = false;
-                    }
-
-                    if (ForceShowEditForm.HasValue == true && ForceShowEditForm == true)
+                    if (ndi.UXTemplate.ForceShowEditForm)
                         MinusZero.Instance.DefaultUserInteraction.Edit(ve.To, WpfUtil.GetMousePositionDnd(e));
-
-                  
+         
                     AddDiagramItem(x,
                                    y,
                                    ndi.UXTemplate,
@@ -1083,19 +1072,18 @@ namespace m0.UIWpf.UX
                     bool ThereIsDiagramItemOfThisClassAndThisBaseEdgeTo = false;
                     bool ThereIsDiagramItemOfThisBaseEdgeTo = false;
 
-                    IVertex DiagramItemOfThisDiagramItemDefinition = Vertex.GetAll(false, @"Item:{Definition:" + ndi.UXTemplate.Value + "}");
+                    IVertex DiagramItemOfThisDiagramItemDefinition = Vertex.GetAll(false, @"Item:{Definition:" + ndi.UXTemplate.Vertex.Value + "}");
 
                     foreach (IEdge ee in DiagramItemOfThisDiagramItemDefinition)
                         if (ee.To.Get(false, @"BaseEdge:\To:") == ndi.BaseEdge.Get(false, "To:"))
                             ThereIsDiagramItemOfThisClassAndThisBaseEdgeTo = true;
 
                     if(GetItemsDictionary().ContainsKey(ndi.BaseEdge.Get(false, "To:")))
-                    foreach (DiagramItemBase b in GetItemsDictionary()[ndi.BaseEdge.Get(false, "To:")])
+                    foreach (IUXItem b in GetItemsDictionary()[ndi.BaseEdge.Get(false, "To:")])
                         ThereIsDiagramItemOfThisBaseEdgeTo = true;
 
                     /*if (b.Vertex.Get(false, @"BaseEdge:\To:") == ndi.BaseEdge.Get(false, "To:"))
                         ThereIsDiagramItemOfThisBaseEdgeTo = true;*/
-
 
                     if (ThereIsDiagramItemOfThisClassAndThisBaseEdgeTo == false)
                     {
@@ -1108,11 +1096,11 @@ namespace m0.UIWpf.UX
                                         ndi.BaseEdge);
                         }
                         else
-                            UserInteractionUtil.ShowError(Vertex.Value+" Diagram","There is allready diagram item, that visualises dropped vertex.\n\nNow, it is not possible to add second representation of same vertex.\n\nOne can change this limitation by changing \"User\\CurrentUser:\\Settings:\\AllowManyDiagramItemsForOneVertex:\" setting.");
+                            UserInteractionUtil.ShowError(Vertex.Value + " Diagram","There is allready diagram item, that visualises dropped vertex.\n\nNow, it is not possible to add second representation of same vertex.\n\nOne can change this limitation by changing \"User\\CurrentUser:\\Settings:\\AllowManyDiagramItemsForOneVertex:\" setting.");
                         
                     }
                     else
-                        UserInteractionUtil.ShowError(Vertex.Value + " Diagram","There is allready \"" + ndi.UXTemplate.Value + "\" diagram item, that visualises dropped vertex.\n\nIt is not possible to add second representation of same vertex, with the same diagram item type.");
+                        UserInteractionUtil.ShowError(Vertex.Value + " Diagram","There is allready \"" + ndi.UXTemplate.Vertex.Value + "\" diagram item, that visualises dropped vertex.\n\nIt is not possible to add second representation of same vertex, with the same diagram item type.");
                 }
             }
         }
@@ -1170,7 +1158,7 @@ namespace m0.UIWpf.UX
         private IVertex AddDiagramItem_Base(double x,double y, UXTemplate UXTemplate){
             IVertex r = m0.MinusZero.Instance.Root;
 
-            IVertex v = VertexOperations.AddInstance(Vertex, UXTemplate.Get(false, "DiagramItemClass:"), r.Get(false, @"System\Meta\Visualiser\Diagram\Item"));
+            IVertex v = VertexOperations.AddInstance(Vertex, UXTemplate.ItemClass, Item_meta);
 
             GraphUtil.SetVertexValue(v, r.Get(false, @"System\Meta\Visualiser\DiagramInternal\DiagramItemBase\PositionX"), x);
             GraphUtil.SetVertexValue(v, r.Get(false, @"System\Meta\Visualiser\DiagramInternal\DiagramItemBase\PositionY"), y);
@@ -1187,10 +1175,10 @@ namespace m0.UIWpf.UX
             return v;
         }
 
-        public void AddDiagramItem(double x,double y, IVertex DiagramItemDefinition, IVertex BaseEdge){
+        public void AddDiagramItem(double x,double y, UXTemplate UXTemplate, IVertex BaseEdge){
             IVertex r = m0.MinusZero.Instance.Root;
 
-            IVertex v = AddDiagramItem_Base(x, y, DiagramItemDefinition);
+            IVertex v = AddDiagramItem_Base(x, y, UXTemplate);
 
             IVertex edge = GraphUtil.CreateOrReplaceEdgeByValue(v, r.Get(false, @"System\Meta\ZeroTypes\HasBaseEdge\BaseEdge"), "");
             
