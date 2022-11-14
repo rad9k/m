@@ -1054,7 +1054,10 @@ namespace m0.UIWpf.UX
             {
                 if (ndi.InstanceOfMeta)
                 {
-                    IEdge ve = VertexOperations.AddInstanceAndReturnEdge(Vertex.Get(false, "CreationPool:"), ndi.BaseEdge.Get(false, "To:"));
+                    IEdge ve = VertexOperations.AddInstanceAndReturnEdge(
+                        BaseEdge.From
+                        //Vertex.Get(false, "CreationPool:")
+                        , ndi.BaseEdge.Get(false, "To:"));
                     IVertex v = ve.To;
 
                     v.Value = ndi.InstanceValue;
@@ -1072,7 +1075,7 @@ namespace m0.UIWpf.UX
                     bool ThereIsDiagramItemOfThisClassAndThisBaseEdgeTo = false;
                     bool ThereIsDiagramItemOfThisBaseEdgeTo = false;
 
-                    IVertex DiagramItemOfThisDiagramItemDefinition = Vertex.GetAll(false, @"Item:{Definition:" + ndi.UXTemplate.Vertex.Value + "}");
+                    IVertex DiagramItemOfThisDiagramItemDefinition = Vertex.GetAll(false, @"Item:{UXTemplate:" + ndi.UXTemplate.Vertex.Value + "}");
 
                     foreach (IEdge ee in DiagramItemOfThisDiagramItemDefinition)
                         if (ee.To.Get(false, @"BaseEdge:\To:") == ndi.BaseEdge.Get(false, "To:"))
@@ -1088,7 +1091,7 @@ namespace m0.UIWpf.UX
                     if (ThereIsDiagramItemOfThisClassAndThisBaseEdgeTo == false)
                     {
                         if (ThereIsDiagramItemOfThisBaseEdgeTo == false ||
-                            GeneralUtil.CompareStrings(r.Get(false, @"User\CurrentUser:\Settings:\AllowManyDiagramItemsForOneVertex:").Value, "True"))
+                            GeneralUtil.CompareStrings(r.Get(false, @"User\CurrentUser:\Settings:\AllowManyUXItemsWithSameBaseEdgeTo:").Value, "True"))
                         {
                             AddDiagramItem(x,
                                         y,
@@ -1096,11 +1099,11 @@ namespace m0.UIWpf.UX
                                         ndi.BaseEdge);
                         }
                         else
-                            UserInteractionUtil.ShowError(Vertex.Value + " Diagram","There is allready diagram item, that visualises dropped vertex.\n\nNow, it is not possible to add second representation of same vertex.\n\nOne can change this limitation by changing \"User\\CurrentUser:\\Settings:\\AllowManyDiagramItemsForOneVertex:\" setting.");
+                            UserInteractionUtil.ShowError(Vertex.Value + " UXAggregtor","There is allready UX Item, that visualises dropped vertex.\n\nNow, it is not possible to add second representation of same vertex.\n\nOne can change this limitation by changing \"User\\CurrentUser:\\Settings:\\AllowManyUXItemsWithSameBaseEdgeTo:\" setting.");
                         
                     }
                     else
-                        UserInteractionUtil.ShowError(Vertex.Value + " Diagram","There is allready \"" + ndi.UXTemplate.Vertex.Value + "\" diagram item, that visualises dropped vertex.\n\nIt is not possible to add second representation of same vertex, with the same diagram item type.");
+                        UserInteractionUtil.ShowError(Vertex.Value + " UXAggregator","There is allready \"" + ndi.UXTemplate.Vertex.Value + "\" UX Item, that visualises dropped vertex.\n\nIt is not possible to add second representation of same vertex, with the same UX Item type.");
                 }
             }
         }
@@ -1109,7 +1112,7 @@ namespace m0.UIWpf.UX
         {
             if (e.Data.GetDataPresent("Vertex"))
             {
-                IVertex r=m0.MinusZero.Instance.Root;
+                IVertex r = m0.MinusZero.Instance.Root;
 
                 IVertex dndVertex = e.Data.GetData("Vertex") as IVertex;
 
@@ -1142,7 +1145,6 @@ namespace m0.UIWpf.UX
 
                 UpdateLayout();
 
-                
 
                 if (isSet)
                     User.Process.UX.NonAtomProcess.StopNonAtomProcess();
@@ -1155,108 +1157,95 @@ namespace m0.UIWpf.UX
             }
         }
 
-        private IVertex AddDiagramItem_Base(double x,double y, UXTemplate UXTemplate){
-            IVertex r = m0.MinusZero.Instance.Root;
+        private IUXItem AddDiagramItem_Base(double x, double y , UXTemplate UXTemplate){
+            IItem _i = AddItem(UXTemplate.ItemClass);
 
-            IVertex v = VertexOperations.AddInstance(Vertex, UXTemplate.ItemClass, Item_meta);
+            if (!(_i is IUXItem))
+                return null;
 
-            GraphUtil.SetVertexValue(v, r.Get(false, @"System\Meta\Visualiser\DiagramInternal\DiagramItemBase\PositionX"), x);
-            GraphUtil.SetVertexValue(v, r.Get(false, @"System\Meta\Visualiser\DiagramInternal\DiagramItemBase\PositionY"), y);
+            IUXItem i = (IUXItem)_i;
 
-            GraphUtil.CreateOrReplaceEdge(v, r.Get(false, @"System\Meta\Visualiser\DiagramInternal\DiagramItemBase\Definition"), UXTemplate);
+            i.Position.X = x;
+            i.Position.Y = y;
+            i.UXTemplate = UXTemplate;
+             
+            if (UXTemplate.ItemVertex != null)
+                AddEdgesFromDefintion(i.Vertex, UXTemplate.ItemVertex);
 
-            //GraphUtil.CreateOrReplaceEdge(v, r.Get(false, @"System\Meta\ZeroTypes\HasBaseEdge\BaseEdge"), null); // NO
-
-            //v.AddVertex(r.Get(false, @"System\Meta\ZeroTypes\HasBaseEdge\BaseEdge"), null); // NO
-
-            if (v.Get(false, @"Definition:\DiagramItemVertex:") != null)
-                AddEdgesFromDefintion(v, v.Get(false, @"Definition:\DiagramItemVertex:"));
-
-            return v;
+            return i;
         }
 
-        public void AddDiagramItem(double x,double y, UXTemplate UXTemplate, IVertex BaseEdge){
-            IVertex r = m0.MinusZero.Instance.Root;
+        public void AddDiagramItem(double x, double y, UXTemplate UXTemplate, IVertex BaseEdge){
+            IUXItem i = AddDiagramItem_Base(x, y, UXTemplate);
 
-            IVertex v = AddDiagramItem_Base(x, y, UXTemplate);
+            IVertex edge = GraphUtil.CreateOrReplaceEdgeByValue(i.Vertex, BaseEdge_meta, "");
 
-            IVertex edge = GraphUtil.CreateOrReplaceEdgeByValue(v, r.Get(false, @"System\Meta\ZeroTypes\HasBaseEdge\BaseEdge"), "");
-            
-            EdgeHelper.AddEdgeVertexEdgesByEdgeVertex(edge, BaseEdge);
+            EdgeHelper.AddEdgeVertexEdgesByEdgeVertex(edge, BaseEdge);      
 
-            HostItem(v);            
+            HostItem(i);            
         }
 
         public void AddDiagramItem(double x, double y, UXTemplate UXTemplate, IVertex metaVertex,IVertex newVertex)
         {
-            IVertex v = AddDiagramItem_Base(x, y, UXTemplate);
+            IUXItem i = AddDiagramItem_Base(x, y, UXTemplate);
 
-            IVertex be = v.Get(false, "BaseEdge:");
+            IVertex be = i.Vertex.Get(false, "BaseEdge:");
 
             EdgeHelper.AddEdgeVertexEdgesOnlyMetaTo(be, metaVertex, newVertex);
 
-            HostItem(v);
-
-         //   CheckAndUpdateDiagramLines();
+            HostItem(i);
         }
 
         public void CheckAndUpdateDiagramLines()
         {
-            foreach(DiagramItemBase item in Items)
-                CheckAndUpdateDiagramLinesForItem(item);
+            foreach(IItem item in Items)
+                if(item is IUXItem)
+                    CheckAndUpdateDiagramLinesForItem((IUXItem)item);
         }
 
-        public void CheckAndUpdateDiagramLinesForItem(DiagramItemBase item)
+        public void CheckAndUpdateDiagramLinesForItem(IUXItem item)
         {
             IEnumerable<IEdge> edges;
 
-            if (item.Vertex.Get(false, @"Definition:\DoNotShowInherited:True") != null)
-                edges = item.Vertex.Get(false, @"BaseEdge:\To:").OutEdgesRaw;
+            IVertex item_BaseEdgeTo = item.BaseEdgeTo;
+
+            if (item.UXTemplate.DoNotShowInherited)
+                edges = item_BaseEdgeTo.OutEdgesRaw;
             else
-                edges = item.Vertex.Get(false, @"BaseEdge:\To:");
-
-            foreach (IEdge e in item.Vertex.Get(false, @"BaseEdge:\To:"))
+                edges = item_BaseEdgeTo;
+            
+            foreach (IEdge e in item_BaseEdgeTo)
             {
-                List<DiagramItemBase> toDiagramItems = null;
-
+                List<IUXItem> toDiagramItems = null;
 
                 bool needAdding = true;
 
                 if(item.GetDiagramLinesBaseEdgeToDictionary().ContainsKey(e.To))
-                foreach (DiagramLineBase l in item.GetDiagramLinesBaseEdgeToDictionary()[e.To])
-                    if (l.Vertex.Get(false, @"BaseEdge:\Meta:") == e.Meta)
-                        needAdding = false;
-                        
-               // foreach (IEdge ee in item.Vertex.GetAll(false, "DiagramLine:")) ////////////// OOO
-                 //   if (ee.To.Get(false, @"BaseEdge:\Meta:") == e.Meta && ee.To.Get(false, @"BaseEdge:\To:") == e.To)
-                 //       needAdding = false;
+                foreach (LineDecoratorBase l in item.GetDiagramLinesBaseEdgeToDictionary()[e.To])
+                    {
+                        IVertex l_BaseEdge = GraphUtil.GetQueryOutFirst(l.Vertex, "BaseEdge", null);
+
+                        if (l_BaseEdge != null &&
+                            GraphUtil.GetQueryOutFirst(l_BaseEdge, "Meta", null) == e.Meta)
+                            needAdding = false;
+                    }
 
                 if (needAdding) {
                     toDiagramItems = GetItemsByBaseEdgeTo_ForLines(e);
 
-                    foreach (DiagramItemBase toDiagramItem in toDiagramItems)
+                    foreach (IUXItem toDiagramItem in toDiagramItems)
                     {
                         IVertex lineDef = GetLineDefinition(e, item.Vertex, toDiagramItem);
 
                         if (lineDef != null)
-                        {
-                            bool canAdd = true;
-
-                           // if (item.Vertex.Get(false, @"Definition:\DoNotShowInherited:True") != null)
-                            //    if (VertexOperations.IsInheritedEdge(item.Vertex.Get(false, @"BaseEdge:\To:"), e.Meta))
-                             //       canAdd = false;
-                             //
-                             // done upper. left to check if done correctly
-
-                            if (canAdd)
-                                item.AddDiagramLineVertex(e, lineDef, toDiagramItem);
-                        }
+                            item.AddDiagramLineVertex(e, lineDef, toDiagramItem);
+                        
                     }
                 }           
             }
         }
 
-        protected List<DiagramItemBase> GetItemsByBaseEdgeTo_ForLines(IEdge toEdge) // MAX TOO
+        protected List<IUXItem> GetItemsByBaseEdgeTo_ForLines(IEdge toEdge) // MAX TOO
         {
             List<DiagramItemBase> r = new List<DiagramItemBase>();
 
@@ -1269,19 +1258,12 @@ namespace m0.UIWpf.UX
             foreach (DiagramItemBase i in GetItemsDictionary()[toEdge.To.Get(false, "$EdgeTarget:")])
                 r.Add(i);
 
-            /*foreach (DiagramItemBase i in Items)
-            {
-                if (i.Vertex.Get(false, @"BaseEdge:\To:") == toEdge.To)
-                    r.Add(i);
-
-                if (toEdge.Meta.Get(false, "$VertexTarget:") != null && toEdge.To.Get(false, "$EdgeTarget:") == i.Vertex.Get(false, @"BaseEdge:\To:"))
-                    r.Add(i);
-            }*/
+            
 
             return r;
         }
 
-        public IVertex GetLineDefinition(IEdge e,IVertex Vertex, DiagramItemBase toItem){
+        public IVertex GetLineDefinition(IEdge e,IVertex Vertex, IUXItem toItem){
             if (GeneralUtil.CompareStrings(Vertex.Get(false, "Definition:"), "Vertex")) // Vertex / Edge
                 return Vertex.Get(false, @"Definition:\DiagramLineDefinition:Edge");
 
@@ -1395,7 +1377,7 @@ namespace m0.UIWpf.UX
 
         public virtual void DoCreateDiagramLine(IUXItem toItem) { }
 
-        public void AddDiagramLineVertex(IEdge edge, IVertex diagramLineDefinition, UXItem toItem) { }
+        public void AddDiagramLineVertex(IEdge edge, IVertex diagramLineDefinition, IUXItem toItem) { }
 
         public void AddDiagramLineObject(IUXItem toItem, LineDecorator lineDecorator) { }
 

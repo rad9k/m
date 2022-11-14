@@ -1229,7 +1229,7 @@ namespace m0.UIWpf.Visualisers.Diagram
                     if (ThereIsDiagramItemOfThisClassAndThisBaseEdgeTo == false)
                     {
                         if (ThereIsDiagramItemOfThisBaseEdgeTo == false ||
-                            GeneralUtil.CompareStrings(r.Get(false, @"User\CurrentUser:\Settings:\AllowManyDiagramItemsForOneVertex:").Value, "True"))
+                            GeneralUtil.CompareStrings(r.Get(false, @"User\CurrentUser:\Settings:\AllowManyUXItemsWithSameBaseEdgeTo:").Value, "True"))
                         {
                             AddDiagramItem(x,
                                         y,
@@ -1237,7 +1237,7 @@ namespace m0.UIWpf.Visualisers.Diagram
                                         ndi.BaseEdge);
                         }
                         else
-                            UserInteractionUtil.ShowError(Vertex.Value+" Diagram","There is allready diagram item, that visualises dropped vertex.\n\nNow, it is not possible to add second representation of same vertex.\n\nOne can change this limitation by changing \"User\\CurrentUser:\\Settings:\\AllowManyDiagramItemsForOneVertex:\" setting.");
+                            UserInteractionUtil.ShowError(Vertex.Value+" Diagram","There is allready diagram item, that visualises dropped vertex.\n\nNow, it is not possible to add second representation of same vertex.\n\nOne can change this limitation by changing \"User\\CurrentUser:\\Settings:\\AllowManyUXItemsWithSameBaseEdgeTo:\" setting.");
                         
                     }
                     else
