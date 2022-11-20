@@ -1238,8 +1238,7 @@ namespace m0.UIWpf.UX
                         IVertex lineDef = GetLineDefinition(e, item.Vertex, toDiagramItem);
 
                         if (lineDef != null)
-                            item.AddDiagramLineVertex(e, lineDef, toDiagramItem);
-                        
+                            item.AddDiagramLineVertex(e, lineDef, toDiagramItem);                        
                     }
                 }           
             }
@@ -1247,19 +1246,21 @@ namespace m0.UIWpf.UX
 
         protected List<IUXItem> GetItemsByBaseEdgeTo_ForLines(IEdge toEdge) // MAX TOO
         {
-            List<DiagramItemBase> r = new List<DiagramItemBase>();
+            List<IUXItem> r = new List<IUXItem>();
 
             if(GetItemsDictionary().ContainsKey(toEdge.To))
-            foreach (DiagramItemBase i in GetItemsDictionary()[toEdge.To])
+            foreach (IUXItem i in GetItemsDictionary()[toEdge.To])
                 r.Add(i);
+
+            IVertex toEdgeToEdgeTarget = GraphUtil.GetQueryOutFirst(toEdge.To, "$EdgeTarget", null);
+
+            if (GraphUtil.ExistQueryOut(toEdge.Meta, "$VertexTarget", null) && toEdgeToEdgeTarget != null)
 
             if (toEdge.Meta.Get(false, "$VertexTarget:") != null && toEdge.To.Get(false, "$EdgeTarget:")!=null)
-            if(GetItemsDictionary().ContainsKey(toEdge.To.Get(false, "$EdgeTarget:")))
-            foreach (DiagramItemBase i in GetItemsDictionary()[toEdge.To.Get(false, "$EdgeTarget:")])
-                r.Add(i);
-
+                if (GetItemsDictionary().ContainsKey(toEdgeToEdgeTarget))
+                foreach (IUXItem i in GetItemsDictionary()[toEdgeToEdgeTarget])
+                    r.Add(i);
             
-
             return r;
         }
 
