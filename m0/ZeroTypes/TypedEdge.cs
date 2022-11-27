@@ -1,4 +1,5 @@
 ﻿using m0.Foundation;
+using m0.Graph;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -87,9 +88,15 @@ namespace m0.ZeroTypes
                 //   throw new Exception("Vertex allready in TypedEdge.vertexDictionary. Tried to access from another Edge.");
             }
             else
-            {
-                ITypedEdge te = null;
-                    //(ITypedEdge)Activator.CreateInstance(toCreateType, edge);
+            {                
+            
+                IVertex _is = GraphUtil.GetQueryOutFirst(edge.To, "$Is", null);
+
+                string pcn = GraphUtil.GetQueryOutFirst(_is, "$PlatformClassName", null).Value.ToString();
+
+                Type toCreateType = Type.GetType(pcn);
+
+                ITypedEdge te = (ITypedEdge)Activator.CreateInstance(toCreateType, edge);
 
                 return te;
             }

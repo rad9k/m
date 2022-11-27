@@ -74,7 +74,8 @@ namespace m0
         }
 
         static IVertex r = null; 
-        static IVertex UXTest = null; 
+        static IVertex UXTest = null;
+        static IVertex UXAggregatorType = null;
 
         void ExtraRun8()
         {
@@ -82,25 +83,27 @@ namespace m0
 
             UXTest = r.Get(false, @"System\Meta\Visualiser\UXTest");
 
+            UXAggregatorType = r.Get(false, @"System\Meta\Visualiser\UX");
+
             IVertex e = r.Get(false, "examples");
 
             IVertex v = e.AddVertex(null, "X");
 
             IEdge a_e = VertexOperations.AddInstanceAndReturnEdge(e,
-                r.Get(false, @"System\Meta\ZeroTypes\UX\UXAggregator"));//,
-                //r.Get(false, @"System\Meta\Visualiser\UXV"));
+                UXAggregatorType,
+                r.Get(false, @"System\Meta\ZeroTypes\UX\UXAggregator"));
 
             UXAggregator a = new UXAggregator(a_e);
 
             a.Vertex.Value = "VIS";
-
+            
             UXAdd(a, v);
         }
 
-        UXItem UXAdd(UXItem a, IVertex v)
+        IUXItem UXAdd(UXItem a, IVertex v)
         {
-            UXItem i1 = null;  //a.AddItem_UXAggregator(UXTest);
-            return null;
+            IUXItem i1 = (IUXItem)a.AddItem(UXAggregatorType);
+            
             i1.Layout = LayoutTypeEnum.Manual;
             i1.PositionCreate();
             i1.Position.X = 10;
@@ -124,7 +127,7 @@ namespace m0
 
             i1.BaseEdge.To = v;
 
-            UXItem i2 = null; // a.AddItem_UXAggregator(UXTest);
+            IUXItem i2 = (IUXItem)a.AddItem(UXAggregatorType);
 
             i2.Layout = LayoutTypeEnum.Manual;
             i2.PositionCreate();
@@ -151,10 +154,10 @@ namespace m0
             return i1;
         }
 
-        UXItem UXAdd2(UXItem a, IVertex v)
+        IUXItem UXAdd2(IUXItem a, IVertex v)
         {
-            UXItem i1 = null;// a.AddItem_UXAggregator(UXTest);
-            return null;
+            IUXItem i1 = (IUXItem)a.AddItem(UXAggregatorType);
+            
             i1.Layout = LayoutTypeEnum.Manual;
             i1.PositionCreate();
             i1.Position.X = 10;
@@ -178,7 +181,7 @@ namespace m0
 
             i1.BaseEdge.To = v;
 
-            UXItem i2 = null;// a.AddItem_UXAggregator(UXTest);
+            IUXItem i2 = (IUXItem)a.AddItem(UXAggregatorType);
 
             i2.Layout = LayoutTypeEnum.Manual;
             i2.PositionCreate();
