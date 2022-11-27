@@ -15,6 +15,6 @@ namespace m0.UIWpf.UX
 
         IUXAggregator UXAggregator { get; set; }
 
-        Canvas Canvas { get; }
+        Canvas Canvas { get; } 
     }
 }
