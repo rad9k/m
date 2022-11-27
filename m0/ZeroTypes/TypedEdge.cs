@@ -88,13 +88,15 @@ namespace m0.ZeroTypes
                 //   throw new Exception("Vertex allready in TypedEdge.vertexDictionary. Tried to access from another Edge.");
             }
             else
-            {                
-            
+            {                            
                 IVertex _is = GraphUtil.GetQueryOutFirst(edge.To, "$Is", null);
 
                 string pcn = GraphUtil.GetQueryOutFirst(_is, "$PlatformClassName", null).Value.ToString();
 
                 Type toCreateType = Type.GetType(pcn);
+
+                if (pcn.Contains("Wrap"))
+                    toCreateType = typeof(ZeroTypes.UX.UXItem);
 
                 ITypedEdge te = (ITypedEdge)Activator.CreateInstance(toCreateType, edge);
 
