@@ -35,7 +35,7 @@ namespace m0.ZeroTypes.UX
 
         void AddDiagramLineObject(IUXItem toItem, LineDecorator lineDecorator);
 
-        void RemoveDiagramLine(LineDecoratorBase line);
+        void RemoveDiagramLine(ILineDecoratorBase line);
 
         void Select();
 

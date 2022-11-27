@@ -415,7 +415,7 @@ namespace m0.UIWpf.Visualisers.Helper
             }
         }
 
-        public void UpdateBorderAndBackgound(Border b, UXItem ui)
+        public void UpdateBorderAndBackgound(Border b, IUXItem ui)
         {
             if (ui.BorderColor != null)
                 b.BorderBrush = new SolidColorBrush(ui.BorderColor.GetColor());

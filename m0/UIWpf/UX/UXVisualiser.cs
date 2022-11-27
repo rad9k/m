@@ -117,8 +117,8 @@ namespace m0.UIWpf.UX
 
         ////////////////////////// UX
 
-        public UXItem UXItem { get; set; }
-        public UXAggregator UXAggregator { get; set; }
+        public IUXItem UXItem { get; set; }
+        public IUXAggregator UXAggregator { get; set; }
         public Canvas Canvas { get { return this; } }
 
         void CreateUX()
@@ -129,7 +129,7 @@ namespace m0.UIWpf.UX
             IterateItems(Canvas, UXItem);
         }
 
-        void IterateItems(Canvas c, UXItem parentUXItem)
+        void IterateItems(Canvas c, IUXItem parentUXItem)
         {
             foreach (object i in parentUXItem.Items)
                 if (i is UXItem)

@@ -43,7 +43,7 @@ namespace m0.ZeroTypes.UX
 
         public void AddDiagramLineObject(IUXItem toItem, LineDecorator lineDecorator) {}
 
-        public void RemoveDiagramLine(LineDecoratorBase line) {}
+        public void RemoveDiagramLine(ILineDecoratorBase line) {}
 
         public virtual void Select() {}
 

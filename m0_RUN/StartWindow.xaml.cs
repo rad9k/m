@@ -86,7 +86,9 @@ namespace m0
 
             IVertex v = e.AddVertex(null, "X");
 
-            IEdge a_e = VertexOperations.AddInstanceAndReturnEdge(e, r.Get(false, @"System\Meta\ZeroTypes\UX\UXAggregator"));
+            IEdge a_e = VertexOperations.AddInstanceAndReturnEdge(e,
+                r.Get(false, @"System\Meta\ZeroTypes\UX\UXAggregator"));//,
+                //r.Get(false, @"System\Meta\Visualiser\UXV"));
 
             UXAggregator a = new UXAggregator(a_e);
 
@@ -97,8 +99,8 @@ namespace m0
 
         UXItem UXAdd(UXItem a, IVertex v)
         {
-            UXItem i1 = a.AddItem_UXAggregator(UXTest);
-
+            UXItem i1 = null;  //a.AddItem_UXAggregator(UXTest);
+            return null;
             i1.Layout = LayoutTypeEnum.Manual;
             i1.PositionCreate();
             i1.Position.X = 10;
@@ -122,7 +124,7 @@ namespace m0
 
             i1.BaseEdge.To = v;
 
-            UXItem i2 = a.AddItem_UXAggregator(UXTest);
+            UXItem i2 = null; // a.AddItem_UXAggregator(UXTest);
 
             i2.Layout = LayoutTypeEnum.Manual;
             i2.PositionCreate();
@@ -151,8 +153,8 @@ namespace m0
 
         UXItem UXAdd2(UXItem a, IVertex v)
         {
-            UXItem i1 = a.AddItem_UXAggregator(UXTest);
-
+            UXItem i1 = null;// a.AddItem_UXAggregator(UXTest);
+            return null;
             i1.Layout = LayoutTypeEnum.Manual;
             i1.PositionCreate();
             i1.Position.X = 10;
@@ -176,7 +178,7 @@ namespace m0
 
             i1.BaseEdge.To = v;
 
-            UXItem i2 = a.AddItem_UXAggregator(UXTest);
+            UXItem i2 = null;// a.AddItem_UXAggregator(UXTest);
 
             i2.Layout = LayoutTypeEnum.Manual;
             i2.PositionCreate();
@@ -237,7 +239,7 @@ namespace m0
 
             i.Layout = LayoutTypeEnum.Manual;
 
-            i.Margin = 4;
+            i.Gap = 4;
 
             i.SizeCreate();
             i.Size.Height = 50;
@@ -256,11 +258,11 @@ namespace m0
             i.CollapsedSize.Height = 444;
 
 
-            for (int x = 0; x < 10; x++)
+            /*for (int x = 0; x < 10; x++)
                 i.AddItem_UXItem().Vertex.Value = x;
 
             for (int x = 0; x < 10; x++)
-                i.AddItem_UXItem(r.Get(false, @"System\Meta\ZeroTypes\UX\UXAggregator")).Vertex.Value = x;
+                i.AddItem_UXItem(r.Get(false, @"System\Meta\ZeroTypes\UX\UXAggregator")).Vertex.Value = x;*/
         }
 
         void ExtraRun6()

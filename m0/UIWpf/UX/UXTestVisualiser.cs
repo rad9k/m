@@ -100,8 +100,8 @@ namespace m0.UIWpf.UX
         IVertex baseEdgeTo;
         Canvas canvas;
 
-        public UXItem UXItem { get; set; }
-        public UXAggregator UXAggregator { get; set; }
+        public IUXItem UXItem { get; set; }
+        public IUXAggregator UXAggregator { get; set; }
         public Canvas Canvas { get { return canvas; } }
 
         public void UpdateVertex()

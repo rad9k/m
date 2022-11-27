@@ -138,9 +138,6 @@
     <Compile Include="UIWpf\UX\UXV.cs" />
     <Compile Include="ZeroTypes\UX\IItem.cs" />
     <Compile Include="ZeroTypes\UX\ILineDecoratorBase.cs" />
-    <Compile Include="ZeroTypes\UX\RectangleItemControl.xaml.cs">
-      <DependentUpon>RectangleItemControl.xaml</DependentUpon>
-    </Compile>
     <Compile Include="UIWpf\UX\IUX.cs" />
     <Compile Include="UIWpf\UX\NewUXItem.xaml.cs">
       <DependentUpon>NewUXItem.xaml</DependentUpon>
@@ -465,10 +462,6 @@
     <Page Include="UIWpf\Forms\Transaction.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="ZeroTypes\UX\RectangleItemControl.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
     </Page>
     <Page Include="UIWpf\UX\NewUXItem.xaml">
       <Generator>MSBuild:Compile</Generator>

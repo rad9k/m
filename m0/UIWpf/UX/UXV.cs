@@ -1382,7 +1382,7 @@ namespace m0.UIWpf.UX
 
         public void AddDiagramLineObject(IUXItem toItem, LineDecorator lineDecorator) { }
 
-        public void RemoveDiagramLine(LineDecoratorBase line) { }
+        public void RemoveDiagramLine(ILineDecoratorBase line) { }
 
         public virtual void Select() { }
 
