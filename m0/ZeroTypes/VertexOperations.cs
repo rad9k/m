@@ -19,17 +19,9 @@ namespace m0.ZeroTypes
 
             if (GraphUtil.ExistQueryOut(e.Meta, "$EdgeTarget", null) && !GraphUtil.ExistQueryOut(e.Meta, "$IsAggregation", null))
                 return true;
-            //WAS
-            //if (e.Meta.Get(false, "$EdgeTarget:") != null && e.Meta.Get(false, "$IsAggregation:") == null)
-            //    //||e.Meta.Get(false, "$VertexTarget") != null)
-            //    return true;
 
             if (GraphUtil.GetQueryOutFirst(e.Meta, "$IsLink", null) != null)
                 return true;
-            
-            //WAS
-            //if (e.Meta.Get(false, "$IsLink:") != null)
-            //    return true;
 
             return false;
         }
@@ -40,25 +32,6 @@ namespace m0.ZeroTypes
                 return false;
             else
                 return true;
-
-            //WAS
-            /*
-            int count = 0;
-
-            foreach(IEdge e in baseVertex.OutEdgesRaw)
-            {
-                if (GeneralUtil.CompareStrings(e.Meta.Value, meta.Value) && GeneralUtil.CompareStrings(e.To.Value, to.Value))
-                    count++;
-
-                if (count > 1)
-                    return false;
-
-            }
-
-           // if (baseEdge.GetAll(false, "\""+meta.Value.ToString() + "\":\"" + to.Value.ToString()+ "\"").Count() > 1) // {} in the query
-            //    return false;
-
-            return true;*/
         }
 
         public static bool IsToVertexEnoughToIdentifyEdge(IVertex baseVertex, IVertex to)
@@ -80,7 +53,6 @@ namespace m0.ZeroTypes
         public static bool IsInheritedEdge(IVertex baseVertex, IVertex metaVertex)
         {
             foreach(IEdge e in GraphUtil.GetQueryOut(baseVertex, "$Inherits",null))
-            //foreach (IEdge e in baseVertex.GetAll(false, "$Inherits:"))
                 if (_IsInheritedEdge(e.To, metaVertex))
                     return true;
 
@@ -90,11 +62,9 @@ namespace m0.ZeroTypes
         private static bool _IsInheritedEdge(IVertex baseVertex, IVertex metaVertex)
         {
             if(GraphUtil.ExistQueryOut(baseVertex, metaVertex.Value, null))
-            //if (baseVertex.Get(false, metaVertex.Value + ":") != null)
                 return true;
 
             foreach (IEdge e in GraphUtil.GetQueryOut(baseVertex, "$Inherits", null))
-            //foreach (IEdge e in baseVertex.GetAll(false, "$Inherits:"))
                 if (_IsInheritedEdge(e.To, metaVertex))
                     return true;
 
@@ -123,7 +93,6 @@ namespace m0.ZeroTypes
                 return metaVertex.GetAll(false, "{$Inherits:Selector}:");
 
             IVertex edgeTarget = GraphUtil.GetQueryOutFirst(metaVertex, "$EdgeTarget", null);
-            //IVertex edgeTarget = metaVertex.Get(false, "$EdgeTarget:");
 
             if (edgeTarget != null && edgeTarget != metaVertex)
                 return GetChildEdges(edgeTarget);
@@ -178,7 +147,6 @@ namespace m0.ZeroTypes
                 return true;
 
             foreach (IEdge e in GraphUtil.GetQueryOut(baseVertex, "$Inherits", null))
-            //foreach (IEdge e in baseVertex.GetAll(false, "$Inherits:"))
                 if (InheritanceCompare(e.To, toCompare))
                     return true;
 
@@ -188,7 +156,6 @@ namespace m0.ZeroTypes
         public static IVertex TestIfNewEdgeValid(IVertex baseVertex, IVertex metaVertex, IVertex toVertex)
         {
             int? MaxCardinality = GraphUtil.GetIntegerValue(GraphUtil.GetQueryOutFirst(metaVertex,"$MaxCardinality",null));
-            //int? MaxCardinality = GraphUtil.GetIntegerValue(metaVertex.Get(false, @"$MaxCardinality:"));
 
             if (MaxCardinality != -1 && MaxCardinality != null)
             {
@@ -209,7 +176,6 @@ namespace m0.ZeroTypes
             }
 
             int? MaxTargetCardinality = GraphUtil.GetIntegerValue(GraphUtil.GetQueryOutFirst(metaVertex, "$MaxTargetCardinality", null));
-            //int? MaxTargetCardinality = GraphUtil.GetIntegerValue(metaVertex.Get(false, @"$MaxTargetCardinality:"));
 
             if (MaxTargetCardinality != -1 && MaxTargetCardinality != null && toVertex!=null)
             {
@@ -235,7 +201,6 @@ namespace m0.ZeroTypes
         public static IEdge AddEdgeOrVertexByMeta(IVertex baseVertex, IVertex metaVertex, IVertex toVertex, Point position, bool? CreateEdgeOnly, bool? ForceShowEditForm)
         {
             if (GraphUtil.ExistQueryOut(metaVertex,"$VertexTarget",null)
-            //if (metaVertex.Get(false, @"$VertexTarget:") != null
                 && (CreateEdgeOnly.HasValue == false||CreateEdgeOnly==false))
             {                
                 IVertex n=VertexOperations.AddInstance(baseVertex,metaVertex);
@@ -281,17 +246,13 @@ namespace m0.ZeroTypes
             ///
 
             if (GraphUtil.ExistQueryOut(metaVertex,"$IsAggregation",null))
-            //if (metaVertex.Get(false, "$IsAggregation:") != null)
                 nv.AddEdge(MinusZero.Instance.IsAggregation, MinusZero.Instance.Empty);
 
             ///
 
-          //  IVertex children = metaVertex.GetAll(false, "{$MinCardinality:1}"); 
-
             IVertex children = metaVertex; // can use VertexOperations.GetChildEdges, but $DefaultValue: should be OK
 
             foreach (IEdge child in children)
-            //foreach (IEdge child in children.GetAll(false, @"{$Inherits:Selector}:"))
             {
                 bool canAdd = false;
 
@@ -319,9 +280,7 @@ namespace m0.ZeroTypes
 
                 if(canAdd)
                     if (GraphUtil.ExistQueryOut(child.To, "$DefaultValue", null))
-                        //if (child.To.Get(false, "$DefaultValue:")!=null)
                         nv.AddVertex(child.To, GraphUtil.GetQueryOutFirst(child.To, "$DefaultValue", null).Value);
-                        //nv.AddEdge(child.To, child.To.Get(false, "$DefaultValue:"));
                     else
                         nv.AddVertex(child.To, null); // ? XXX
             }
@@ -343,22 +302,16 @@ namespace m0.ZeroTypes
         {
             // $EdgeTarget
             IVertex edgeVertexEdgeTarget = GraphUtil.GetQueryOutFirst(edgeVertex,"$EdgeTarget",null);
-            //IVertex edgeVertexEdgeTarget = edgeVertex.Get(false, "$EdgeTarget:");
 
             if (edgeVertexEdgeTarget != null)
                 return AddInstance(baseVertex, edgeVertexEdgeTarget, edgeVertex);
 
             // $VertexTarget
             IVertex edgeVertexVertexTarget = GraphUtil.GetQueryOutFirst(edgeVertex, "$VertexTarget", null);
-            //IVertex edgeVertexVertexTarget = edgeVertex.Get(false, "$VertexTarget:");
 
             if (edgeVertexVertexTarget != null)
             {
                 IVertex ret = AddInstance(baseVertex, edgeVertex, edgeVertex);
-
-                //   GraphUtil.CreateOrReplaceEdge(ret, MinusZero.Instance.Root.Get(false, @"System\Meta\Base\Vertex\$EdgeTarget"), edgeVertexVertexTarget);
-                //
-                // ???? this is not working like this
 
                 return ret;
             }

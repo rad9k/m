@@ -40,7 +40,7 @@ namespace m0.ZeroUML
             foreach (IEdge e in AttributeVertices)
                 if(e.To.Get(false,"$DefaultValue:") != null)
                     ObjectVertex.AddVertex(e.To, e.To.Get(false, "$DefaultValue:").Value);
-                else
+                else if (GraphUtil.GetIntegerValueOr0(e.To.Get(false, "$MinCardinality:")) != 0)
                     ObjectVertex.AddVertex(e.To, null);
 
             IVertex AssociationVertices = ObjectVertex.GetAll(false, @"$Is:\Association:");
