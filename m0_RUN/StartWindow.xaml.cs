@@ -96,8 +96,13 @@ namespace m0
             UXAggregator a = new UXAggregator(a_e);
 
             a.Vertex.Value = "VIS";
+
+            a.SizeCreate();
+
+            a.Size.Width = 1000;
+            a.Size.Height = 1000;
             
-            UXAdd(a, v);
+         //   UXAdd(a, v);
         }
 
         IUXItem UXAdd(UXItem a, IVertex v)
@@ -127,7 +132,7 @@ namespace m0
 
             i1.BaseEdge.To = v;
 
-            IUXItem i2 = (IUXItem)a.AddItem(UXAggregatorType);
+            /*IUXItem i2 = (IUXItem)a.AddItem(UXAggregatorType);
 
             i2.Layout = LayoutTypeEnum.Manual;
             i2.PositionCreate();
@@ -149,7 +154,7 @@ namespace m0
             
             UXAdd2(i1, v);
 
-            UXAdd2(i2, v);
+            UXAdd2(i2, v);*/
 
             return i1;
         }

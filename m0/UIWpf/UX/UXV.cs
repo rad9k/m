@@ -163,6 +163,17 @@ namespace m0.UIWpf.UX
             }
         }
 
+        public IUXItem GetUXItem(IItem i)
+        {
+            if (i is ZeroTypes.UX.UXItem)
+                return null;
+
+            if (i is IUXItem)
+                return (IUXItem)i;
+
+            return null;            
+        }
+
         // OPTIMISATION START
 
         Dictionary<IVertex, List<IUXItem>> ItemsDictionary = new Dictionary<IVertex, List<IUXItem>>();
@@ -180,10 +191,12 @@ namespace m0.UIWpf.UX
         {
             ItemsDictionary.Clear();
 
-            foreach(IItem i in Items)
-                if(i is IUXItem)
+            foreach(IItem i in Items)            
                 {
-                    IUXItem ui = (UXItem)i;
+                    IUXItem ui = GetUXItem(i);
+
+                    if (ui == null)
+                        continue;
 
                     IVertex i_BaseEdgeTo = i.BaseEdgeTo;
 
@@ -266,10 +279,12 @@ namespace m0.UIWpf.UX
         {
             List<MetaToPair> metatopairs = new List<MetaToPair>();
 
-           foreach(IItem _item in Items)
-               if(_item is IUXItem)
+           foreach(IItem _item in Items)               
                {
-                   IUXItem item = (IUXItem)_item;
+                   IUXItem item = GetUXItem(_item);
+
+                   if (item == null)
+                      continue;
 
                    metatopairs.Clear();
 
@@ -365,10 +380,12 @@ namespace m0.UIWpf.UX
 
             UnselectAllSelectedEdges();
 
-            foreach(IItem _i in Items)
-                if(_i is IUXItem && _i is FrameworkElement)
+            foreach(IItem _i in Items)                
                 {
-                    IUXItem i = (IUXItem)_i;
+                    IUXItem i = GetUXItem(_i);
+
+                    if (i == null || !(_i is FrameworkElement))
+                        continue;
 
                     FrameworkElement i_FrameworkElement = (FrameworkElement)i;
 
@@ -394,9 +411,9 @@ namespace m0.UIWpf.UX
 
                 TheCanvas.Children.Clear();
 
-                foreach (IItem i in Items)
-                    if (i is IDisposable)
-                        ((IDisposable)i).Dispose();
+                //foreach (IItem i in Items)
+                  //  if (i is IDisposable)
+                    //    ((IDisposable)i).Dispose();
 
                 Width = Size.Width ;
                 Height = Size.Height;
@@ -407,10 +424,16 @@ namespace m0.UIWpf.UX
                 Interaction.BeginInteractionWithGraph();
                 //////////////////////////////////////// 
 
-                foreach (IItem i in Items)
-                    if(i is IUXItem)
-                        HostItem((IUXItem)i);
+                foreach (IItem _i in Items)
+                {
+                    IUXItem i = GetUXItem(_i);
 
+                    if (i == null)
+                        continue;
+
+                    HostItem(i);
+                }                    
+                        
                 UpdateLayout(); // here
 
                 AddLineObjects();
