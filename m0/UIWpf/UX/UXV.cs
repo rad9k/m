@@ -1664,7 +1664,7 @@ namespace m0.UIWpf.UX
             {
                 IEdge val = GraphUtil.GetQueryOutFirstEdge(Vertex, "UXTemplate", null);
 
-                if (val != null)
+                if (val == null)
                     return null;
 
                 return (UXTemplate)TypedEdge.Get(val, typeof(UXTemplate));
@@ -1726,7 +1726,7 @@ namespace m0.UIWpf.UX
             {
                 IEdge val = GraphUtil.GetQueryOutFirstEdge(Vertex, "BaseEdge", null);
 
-                if (val != null)
+                if (val == null)
                     return null;
 
                 return (Edge)TypedEdge.Get(val, typeof(Edge));
