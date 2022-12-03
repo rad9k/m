@@ -444,7 +444,6 @@ namespace m0.UIWpf.UX
                 SelectionArea.HideSelectionArea();
 
                
-
                 SelectWrappersForSelectedVertices();
 
                 IsFirstPainted = true;
@@ -636,9 +635,11 @@ namespace m0.UIWpf.UX
             Point p = new Point(ToX, ToY);            
 
             foreach (IItem _i in Items)
-                if(_i is IUXItem && _i is UIElement)
                 {
-                    IUXItem i = (IUXItem)_i;
+                    IUXItem i = GetUXItem(_i);
+
+                    if (i == null || !(i is UIElement))
+                        continue;
 
                     UIElement i_UIElement = (UIElement)i;
 
@@ -851,8 +852,11 @@ namespace m0.UIWpf.UX
             ILineDecoratorBase bestLine = null;
 
             foreach (IItem _i in Items)
-                if (_i is IUXItem) {
-                    IUXItem i = (IUXItem)_i;
+                {
+                    IUXItem i = GetUXItem(_i);
+
+                    if (i == null)
+                        continue;
 
                     foreach (IUXItem _line in i.Decorators)
                         if(_line is ILineDecoratorBase)
@@ -966,9 +970,15 @@ namespace m0.UIWpf.UX
                 
         protected void UnselectAll()
         {
-            foreach (IItem i in Items)
-                if(i is IUXItem)
-                    ((IUXItem)i).Unselect();
+            foreach (IItem _i in Items)
+            {
+                IUXItem i = GetUXItem(_i);
+
+                if (i == null)
+                    continue;
+
+                i.Unselect();
+            }
         }
 
         public void UnselectAllSelectedEdges()
@@ -1021,9 +1031,15 @@ namespace m0.UIWpf.UX
 
                 GraphChangeTrigger.RemoveListener(VisualiserHelper.graphChangeListenerEdge);
 
-                foreach (IItem i in Items)
-                    if(i is IUXItem)
-                        ((IUXItem)i).Dispose();
+                foreach (IItem _i in Items)
+                {
+                    IUXItem i = GetUXItem(_i);
+
+                    if (i == null)
+                        continue;
+
+                    i.Dispose();
+                }
 
                 if (!IsVisualiser)
                     TypedEdge.RemoveFromDictionary(this);
@@ -1038,9 +1054,13 @@ namespace m0.UIWpf.UX
         {
             vertexByLocationToReturn = null;
 
-            foreach(IItem i in Items)
-                if(i is UIElement)
+            foreach(IItem _i in Items)
                 {
+                    IUXItem i = GetUXItem(_i);
+
+                    if (i == null)
+                        continue;
+
                     UIElement i_UIElement = (UIElement)i;
 
                     if (VisualTreeHelper.HitTest(i_UIElement, TranslatePoint(p, i_UIElement)) != null)
@@ -1221,9 +1241,15 @@ namespace m0.UIWpf.UX
 
         public void CheckAndUpdateDiagramLines()
         {
-            foreach(IItem item in Items)
-                if(item is IUXItem)
-                    CheckAndUpdateDiagramLinesForItem((IUXItem)item);
+            foreach(IItem _i in Items)
+            {
+                IUXItem item = GetUXItem(_i);
+
+                if (item == null)
+                    continue;
+
+                CheckAndUpdateDiagramLinesForItem((IUXItem)item);
+            }
         }
 
         public void CheckAndUpdateDiagramLinesForItem(IUXItem item)
