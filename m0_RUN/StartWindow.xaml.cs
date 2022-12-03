@@ -76,6 +76,7 @@ namespace m0
         static IVertex r = null; 
         static IVertex UXTest = null;
         static IVertex UXAggregatorType = null;
+        static IEdge template = null;
 
         void ExtraRun8()
         {
@@ -84,6 +85,8 @@ namespace m0
             UXTest = r.Get(false, @"System\Meta\Visualiser\UXTest");
 
             UXAggregatorType = r.Get(false, @"System\Meta\Visualiser\UX");
+
+            template = r.GetAll(false, @"System\Data\UX\Templates\ZeroUML\Vertex").First();
 
             IVertex e = r.Get(false, "examples");
 
@@ -102,13 +105,14 @@ namespace m0
             a.Size.Width = 1000;
             a.Size.Height = 1000;
             
-         //   UXAdd(a, v);
+            UXAdd(a, v);
         }
 
         IUXItem UXAdd(UXItem a, IVertex v)
         {
             IUXItem i1 = (IUXItem)a.AddItem(UXAggregatorType);
-            
+
+            i1.UXTemplate = new UXTemplate(template);
             i1.Layout = LayoutTypeEnum.Manual;
             i1.PositionCreate();
             i1.Position.X = 10;
@@ -134,6 +138,7 @@ namespace m0
 
             /*IUXItem i2 = (IUXItem)a.AddItem(UXAggregatorType);
 
+            i2.UXTemplate = new UXTemplate(template);
             i2.Layout = LayoutTypeEnum.Manual;
             i2.PositionCreate();
             i2.Position.X = 150;
@@ -162,7 +167,8 @@ namespace m0
         IUXItem UXAdd2(IUXItem a, IVertex v)
         {
             IUXItem i1 = (IUXItem)a.AddItem(UXAggregatorType);
-            
+
+            i1.UXTemplate = new UXTemplate(template);
             i1.Layout = LayoutTypeEnum.Manual;
             i1.PositionCreate();
             i1.Position.X = 10;
@@ -188,6 +194,7 @@ namespace m0
 
             IUXItem i2 = (IUXItem)a.AddItem(UXAggregatorType);
 
+            i2.UXTemplate = new UXTemplate(template);
             i2.Layout = LayoutTypeEnum.Manual;
             i2.PositionCreate();
             i2.Position.X = 50;
