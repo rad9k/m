@@ -338,7 +338,7 @@ namespace m0.ZeroTypes.UX
             {
                 IEdge val = GraphUtil.GetQueryOutFirstEdge(Vertex, "BaseEdge", null);
 
-                if (val == null)
+                if (val != null)
                     return GraphUtil.GetQueryOutFirst(val.To, "To", null);
 
                 return null;
