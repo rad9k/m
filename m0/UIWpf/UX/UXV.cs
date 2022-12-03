@@ -1027,22 +1027,25 @@ namespace m0.UIWpf.UX
             {
                 IsDisposed = true;
 
-                VisualisersList.RemoveVisualiser(this);
-
-                GraphChangeTrigger.RemoveListener(VisualiserHelper.graphChangeListenerEdge);
-
-                foreach (IItem _i in Items)
-                {
-                    IUXItem i = GetUXItem(_i);
-
-                    if (i == null)
-                        continue;
-
-                    i.Dispose();
-                }
-
                 if (!IsVisualiser)
+                {
+
+                    VisualisersList.RemoveVisualiser(this);
+
+                    GraphChangeTrigger.RemoveListener(VisualiserHelper.graphChangeListenerEdge);
+
+                    foreach (IItem _i in Items)
+                    {
+                        IUXItem i = GetUXItem(_i);
+
+                        if (i == null)
+                            continue;
+
+                        i.Dispose();
+                    }
+
                     TypedEdge.RemoveFromDictionary(this);
+                }
             }
         }
      
