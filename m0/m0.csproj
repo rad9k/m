@@ -323,8 +323,8 @@
     <Compile Include="ZeroTypes\UX\MetaExtendedLineDecorator.cs" />
     <Compile Include="ZeroTypes\UX\LineEndEnum.cs" />
     <Compile Include="ZeroTypes\UX\RectangleItem.cs" />
-    <Compile Include="ZeroTypes\UX\RectangleItemControl.xaml.cs">
-      <DependentUpon>RectangleItemControl.xaml</DependentUpon>
+    <Compile Include="ZeroTypes\UX\RectangleItem.xaml.cs">
+      <DependentUpon>RectangleItem.xaml</DependentUpon>
     </Compile>
     <Compile Include="ZeroTypes\UX\RhombusItem.cs" />
     <Compile Include="ZeroTypes\UX\OvalItem.cs" />
@@ -337,6 +337,7 @@
     <Compile Include="ZeroTypes\UX\Position.cs" />
     <Compile Include="ZeroTypes\UX\Size.cs" />
     <Compile Include="ZeroTypes\UX\IUXAggregator.cs" />
+    <Compile Include="ZeroTypes\UX\test.cs" />
     <Compile Include="ZeroTypes\UX\UXDecoratorTemplate .cs" />
     <Compile Include="ZeroTypes\UX\ImageItem.cs" />
     <Compile Include="ZeroTypes\UX\IUXItem.cs" />
@@ -506,9 +507,9 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="ZeroTypes\UX\RectangleItemControl.xaml">
-      <Generator>MSBuild:Compile</Generator>
+    <Page Include="ZeroTypes\UX\RectangleItem.xaml">
       <SubType>Designer</SubType>
+      <Generator>XamlIntelliSenseFileGenerator</Generator>
     </Page>
   </ItemGroup>
   <ItemGroup>

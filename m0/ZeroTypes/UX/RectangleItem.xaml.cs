@@ -1,4 +1,4 @@
-﻿/*using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -22,23 +22,21 @@ namespace m0.ZeroTypes.UX
     /// <summary>
     /// Interaction logic for DiagramRectangleItem.xaml
     /// </summary>
-    public partial class RectangleItemControl : UXItem
+    public partial class RectangleItem : UXItem
     {
         IPlatformClass ContentVisualiser;
 
-        public override IVertex Vertex
+        public RectangleItem() : base(null)
         {
-            get { return base.Vertex; }
-            set
-            {
-                base.Vertex = value;
-            }
+
         }
 
-        public RectangleItemControl(IVertex baseEdgeVertex, IVertex parentVisualiser) : base(baseEdgeVertex)  {
-            InitializeComponent();
-        }
-        
+
+        //  public RectangleItem(IVertex baseEdgeVertex, IVertex parentVisualiser) : base(baseEdgeVertex)  {
+        //    InitializeComponent();
+        //}
+
+        /*
         public override void VertexSetedUp()
         {
             if (Vertex.Get(false, "VisualiserClass:") != null)
@@ -221,6 +219,6 @@ namespace m0.ZeroTypes.UX
 
             //return base.VertexChange(exe);
         }
+    */
     }
 }
-*/
