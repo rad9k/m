@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Media;
 
 namespace m0.ZeroTypes.UX
 {
@@ -106,6 +107,11 @@ namespace m0.ZeroTypes.UX
         public System.Windows.Media.Color GetColor()
         {
             return ColorHelper.GetColorFromColorVertex(Vertex);
+        }
+
+        public Brush GetBrush()
+        {
+            return new SolidColorBrush(GetColor());
         }
     }
 }

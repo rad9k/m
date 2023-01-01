@@ -337,7 +337,6 @@
     <Compile Include="ZeroTypes\UX\Position.cs" />
     <Compile Include="ZeroTypes\UX\Size.cs" />
     <Compile Include="ZeroTypes\UX\IUXAggregator.cs" />
-    <Compile Include="ZeroTypes\UX\test.cs" />
     <Compile Include="ZeroTypes\UX\UXDecoratorTemplate .cs" />
     <Compile Include="ZeroTypes\UX\ImageItem.cs" />
     <Compile Include="ZeroTypes\UX\IUXItem.cs" />
