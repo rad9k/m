@@ -16,19 +16,13 @@ namespace m0.ZeroTypes.UX
 {
     public class UXItem : UserControl, IUXItem, IPlatformClass
     {
-        public List<FrameworkElement> Anchors;
+        public List<FrameworkElement> Anchors;        
 
-        public virtual IVertex Vertex { get; set; }
+        public double LineWidth;        
 
-        public double LineWidth;
+        protected List<IUXItem> DiagramToLines = new List<IUXItem>();
 
-        public Brush BackgroundColor;
-
-        public Brush ForegroundColor;
-
-        protected List<DiagramLineBase> DiagramToLines = new List<DiagramLineBase>();
-
-        protected List<DiagramLineBase> DiagramToAsMetaLines = new List<DiagramLineBase>();
+        protected List<ILineDecoratorBase> DiagramToAsMetaLines = new List<ILineDecoratorBase>();
 
         IEdge graphChangeListenerEdge;
 
@@ -56,27 +50,46 @@ namespace m0.ZeroTypes.UX
                          GraphChangeFilterEnum.OutputEdgeRemoved,
                          GraphChangeFilterEnum.OutputEdgeDisposed},
                 "UXItem",
-                VertexChange);
-
-            //PlatformClass.RegisterVertexChangeListeners(Vertex, new VertexChange(VertexChange), new string[] { "BaseEdge", "SelectedEdges", "ForegroundColor", "BackgroundColor" });
+                VertexChange);            
 
             VisualiserUpdate();
         } // to be called after Vertex is setted up
 
         public virtual void Dispose()
-        {
+        {            
+            foreach (IUXItem e in Items)
+                if (e is IDisposable)
+                    ((IDisposable)e).Dispose();
+
+            foreach (ILineDecoratorBase e in DiagramLines)
+                if (e is IDisposable)
+                    ((IDisposable)e).Dispose();
+
+            GraphChangeTrigger.RemoveListener(graphChangeListenerEdge);
+
             TypedEdge.RemoveFromDictionary(this);
         }
 
-        public Dictionary<IVertex, List<LineDecoratorBase>> GetDiagramLinesBaseEdgeToDictionary() { return null; }
+        public Dictionary<IVertex, List<ILineDecoratorBase>> GetDiagramLinesBaseEdgeToDictionary() { return null; }
 
-        public virtual void RemoveFromCanvas() {}
+        public virtual void RemoveFromCanvas()         
+        {
+            Diagram.TheCanvas.Children.Remove(this);
+
+            Unselect();
+
+            foreach (DiagramLineBase l in DiagramLines)
+                l.RemoveFromCanvas();
+
+            foreach (DiagramLineBase l in DiagramToLines)
+                l.RemoveFromCanvas();
+        }
 
         public virtual void DoCreateDiagramLine(IUXItem toItem) {}
 
         public void AddDiagramLineVertex(IEdge edge, IVertex diagramLineDefinition, IUXItem toItem) {}
 
-        public void AddDiagramLineObject(IUXItem toItem, LineDecorator lineDecorator) {}
+        public void AddDiagramLineObject(IUXItem toItem, ILineDecoratorBase lineDecorator) {}
 
         public void RemoveDiagramLine(ILineDecoratorBase line) {}
 
@@ -112,15 +125,7 @@ namespace m0.ZeroTypes.UX
         
         
 
-        public void Dispose()
-        {
-            foreach (DiagramLineBase e in DiagramLines)
-                if (e is IDisposable)
-                    ((IDisposable)e).Dispose();
-
-            GraphChangeTrigger.RemoveListener(graphChangeListenerEdge);
-            //PlatformClass.RemoveVertexChangeListeners(this.Vertex, new VertexChange(VertexChange));
-        }
+        
 
         protected virtual INoInEdgeInOutVertexVertex VertexChange(IExecution exe)
         {
@@ -274,18 +279,7 @@ namespace m0.ZeroTypes.UX
 
         // OPTIMISATION END
 
-        public void RemoveFromCanvas()
-        {
-            Diagram.TheCanvas.Children.Remove(this);
 
-            Unselect();
-
-            foreach (DiagramLineBase l in DiagramLines)
-                l.RemoveFromCanvas();
-
-            foreach (DiagramLineBase l in DiagramToLines)
-                l.RemoveFromCanvas();
-        }
 
         public void AddAsToMetaLine(DiagramLineBase line)
         {

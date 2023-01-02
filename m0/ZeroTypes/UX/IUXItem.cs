@@ -25,7 +25,7 @@ namespace m0.ZeroTypes.UX
 
         void Dispose();
 
-        Dictionary<IVertex, List<LineDecoratorBase>> GetDiagramLinesBaseEdgeToDictionary();
+        Dictionary<IVertex, List<ILineDecoratorBase>> GetDiagramLinesBaseEdgeToDictionary();
 
         void RemoveFromCanvas();
 
@@ -33,7 +33,7 @@ namespace m0.ZeroTypes.UX
 
         void AddDiagramLineVertex(IEdge edge, IVertex diagramLineDefinition, IUXItem toItem);
 
-        void AddDiagramLineObject(IUXItem toItem, LineDecorator lineDecorator);
+        void AddDiagramLineObject(IUXItem toItem, ILineDecoratorBase lineDecorator);
 
         void RemoveDiagramLine(ILineDecoratorBase line);
 

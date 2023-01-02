@@ -46,7 +46,7 @@ namespace m0.UIWpf.UX
 
         public AtomVisualiserHelper VisualiserHelper { get; set; }
 
-        public Canvas TheCanvas;
+        public Canvas TheCanvas { get; set; }
 
         public bool IsSelecting = false;
 
@@ -1273,7 +1273,7 @@ namespace m0.UIWpf.UX
                 bool needAdding = true;
 
                 if(item.GetDiagramLinesBaseEdgeToDictionary().ContainsKey(e.To))
-                foreach (LineDecoratorBase l in item.GetDiagramLinesBaseEdgeToDictionary()[e.To])
+                foreach (ILineDecoratorBase l in item.GetDiagramLinesBaseEdgeToDictionary()[e.To])
                     {
                         IVertex l_BaseEdge = GraphUtil.GetQueryOutFirst(l.Vertex, "BaseEdge", null);
 
@@ -1415,16 +1415,16 @@ namespace m0.UIWpf.UX
 
         public bool IsHighlighted { get; set; }
 
-        List<LineDecoratorBase> diagramLines = new List<LineDecoratorBase>();
+        List<ILineDecoratorBase> diagramLines = new List<ILineDecoratorBase>();
 
-        public List<LineDecoratorBase> DiagramLines
+        public List<ILineDecoratorBase> DiagramLines
         {
             get { return diagramLines; }
         }
 
         public virtual void VertexSetedUp() { }
 
-        public Dictionary<IVertex, List<LineDecoratorBase>> GetDiagramLinesBaseEdgeToDictionary() { return null; }
+        public Dictionary<IVertex, List<ILineDecoratorBase>> GetDiagramLinesBaseEdgeToDictionary() { return null; }
 
         public virtual void RemoveFromCanvas() { }
 

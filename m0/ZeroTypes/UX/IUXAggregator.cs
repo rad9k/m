@@ -5,11 +5,16 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Controls;
 
 namespace m0.ZeroTypes.UX
 {
     public interface IUXAggregator: IUXItem
     {
+        Canvas TheCanvas { get; }
+
+        //
+
         Dictionary<IVertex, List<IUXItem>> GetItemsDictionary();
 
         void AddEdgesFromDefintion(IVertex baseVertex, IVertex definitionEdges);
