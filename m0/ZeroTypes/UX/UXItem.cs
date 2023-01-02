@@ -34,9 +34,9 @@ namespace m0.ZeroTypes.UX
 
         public bool IsHighlighted { get; set; }
 
-        List<LineDecoratorBase> diagramLines = new List<LineDecoratorBase>();
+        List<ILineDecoratorBase> diagramLines = new List<ILineDecoratorBase>();
 
-        public List<LineDecoratorBase> DiagramLines
+        public List<ILineDecoratorBase> DiagramLines
         {
             get { return diagramLines; }
         }
@@ -78,10 +78,10 @@ namespace m0.ZeroTypes.UX
 
             Unselect();
 
-            foreach (DiagramLineBase l in DiagramLines)
+            foreach (ILineDecoratorBase l in DiagramLines)
                 l.RemoveFromCanvas();
 
-            foreach (DiagramLineBase l in DiagramToLines)
+            foreach (ILineDecoratorBase l in DiagramToLines)
                 l.RemoveFromCanvas();
         }
 

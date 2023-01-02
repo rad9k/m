@@ -19,7 +19,7 @@ namespace m0.ZeroTypes.UX
 
         bool IsHighlighted { get; set; }
 
-        List<LineDecoratorBase> DiagramLines { get; }
+        List<ILineDecoratorBase> DiagramLines { get; }
 
         void VertexSetedUp();
 

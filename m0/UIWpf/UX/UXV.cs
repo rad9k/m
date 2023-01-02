@@ -1432,7 +1432,7 @@ namespace m0.UIWpf.UX
 
         public void AddDiagramLineVertex(IEdge edge, IVertex diagramLineDefinition, IUXItem toItem) { }
 
-        public void AddDiagramLineObject(IUXItem toItem, LineDecorator lineDecorator) { }
+        public void AddDiagramLineObject(IUXItem toItem, ILineDecoratorBase lineDecorator) { }
 
         public void RemoveDiagramLine(ILineDecoratorBase line) { }
 
