@@ -3,6 +3,7 @@ using m0.Graph;
 using m0.Graph.ExecutionFlow;
 using m0.UIWpf;
 using m0.UIWpf.UX;
+using m0.User.Process.UX;
 using m0.Util;
 using m0.ZeroCode.Helpers;
 using System;
@@ -149,38 +150,49 @@ namespace m0.ZeroTypes.UX
 
                 if (test == null)
                 {
-                    UXDecoratorTemplate 
-
-
-                    bool? ForceShowEditForm = null; // ForceShowEditForm
-
-                    if (a.Get(false, @"OptionDiagramLineDefinition:\ForceShowEditForm:") != null)
-                    {
-                        if (GeneralUtil.CompareStrings(a.Get(false, @"OptionDiagramLineDefinition:\ForceShowEditForm:"), "True"))
-                            ForceShowEditForm = true;
-
-                        if (GeneralUtil.CompareStrings(a.Get(false, @"OptionDiagramLineDefinition:\ForceShowEditForm:"), "False"))
-                            ForceShowEditForm = false;
-                    }
-
-                    bool CreateEdgeOnly = false; // CreateEdgeOnly
-
-                    if (GraphUtil.GetValueAndCompareStrings(a.Get(false, @"OptionDiagramLineDefinition:\CreateEdgeOnly:"), "True"))
-                        CreateEdgeOnly = true;
-
-
-                    CanAutomaticallyAddEdges = false; // for VertexChange
-                    IEdge edge = VertexOperations.AddEdgeOrVertexByMeta(Vertex.Get(false, @"BaseEdge:\To:"), a.Get(false, "OptionEdge:"), toEdge.Get(false, "To:"), mousePosition, CreateEdgeOnly, ForceShowEditForm);
-                    CanAutomaticallyAddEdges = true;
-
-                    AddDiagramLineVertex(edge, a.Get(false, @"OptionDiagramLineDefinition:"), toItem);
+                    UXDecoratorTemplate chosenTemplate = new UXDecoratorTemplate(a.GetAll(false, "OptionDiagramLineDefinition:").FirstOrDefault());
+                                       
+                    IEdge edge = VertexOperations.AddEdgeOrVertexByMeta(BaseEdgeTo, 
+                        a.Get(false, "OptionEdge:"), 
+                        toEdge.To, 
+                        mousePosition, 
+                        chosenTemplate.CreateEdgeOnly,
+                        chosenTemplate.ForceShowEditForm);
+                    
+                    AddDiagramLineVertex(edge, chosenTemplate, toItem);
                 }
                 else
                     UserInteractionUtil.ShowError(Diagram.Vertex.Value + " Diagram", "Adding new diagram line  \"" + a.Value + "\" is not possible.\n\n" + test.Value);
             }
         }
 
-        public void AddDiagramLineVertex(IEdge edge, IVertex diagramLineDefinition, IUXItem toItem) {}
+        public void AddDiagramLineVertex(IEdge edge, UXDecoratorTemplate diagramLineDefinition, IUXItem toItem)        
+        {
+            ////////////////////////////////////////
+            Interaction.BeginInteractionWithGraph();
+            //////////////////////////////////////// 
+
+            IVertex r = MinusZero.Instance.Root;
+
+            //((EasyVertex)Vertex).CanFireChangeEvent = false;
+
+            IVertex l = VertexOperations.AddInstance(Vertex, diagramLineDefinition.DecoratorClass, 
+                r.Get(false, @"System\Meta\Visualiser\DiagramInternal\DiagramItemBase\DiagramLine"));
+
+            GraphUtil.CreateOrReplaceEdge(l, r.Get(false, @"System\Meta\Visualiser\DiagramInternal\DiagramLineBase\ToDiagramItem"), toItem.Vertex);
+
+            GraphUtil.CreateOrReplaceEdge(l, r.Get(false, @"System\Meta\Visualiser\DiagramInternal\DiagramLineBase\Definition"), diagramLineDefinition);
+
+            EdgeHelper.CreateOrReplaceEdgeVertexFromIEdgeByMeta(l, r.Get(false, @"System\Meta\ZeroTypes\HasBaseEdge\BaseEdge"), edge);
+
+            AddDiagramLineObject(toItem, l);
+
+            //((EasyVertex)Vertex).CanFireChangeEvent = true;
+
+            ////////////////////////////////////////
+            Interaction.EndInteractionWithGraph();
+            //////////////////////////////////////// 
+        }
 
         public void AddDiagramLineObject(IUXItem toItem, ILineDecoratorBase lineDecorator) {}
 
@@ -442,32 +454,7 @@ namespace m0.ZeroTypes.UX
             vv.AddEdge(r.Get(false, @"System\Meta\Visualiser\DiagramInternal\DiagramItemBase\OptionDiagramLineDefinition"), def.To);
         }
 
-        public void AddDiagramLineVertex(IEdge edge, IVertex diagramLineDefinition, DiagramItemBase toItem)
-        {
-            ////////////////////////////////////////
-            Interaction.BeginInteractionWithGraph();
-            //////////////////////////////////////// 
-
-            IVertex r = MinusZero.Instance.Root;
-
-            //((EasyVertex)Vertex).CanFireChangeEvent = false;
-
-            IVertex l = VertexOperations.AddInstance(Vertex, diagramLineDefinition.Get(false, "DiagramLineClass:"), r.Get(false, @"System\Meta\Visualiser\DiagramInternal\DiagramItemBase\DiagramLine"));
-
-            GraphUtil.CreateOrReplaceEdge(l, r.Get(false, @"System\Meta\Visualiser\DiagramInternal\DiagramLineBase\ToDiagramItem"), toItem.Vertex);
-
-            GraphUtil.CreateOrReplaceEdge(l, r.Get(false, @"System\Meta\Visualiser\DiagramInternal\DiagramLineBase\Definition"), diagramLineDefinition);
-
-            EdgeHelper.CreateOrReplaceEdgeVertexFromIEdgeByMeta(l, r.Get(false, @"System\Meta\ZeroTypes\HasBaseEdge\BaseEdge"), edge);
-
-            AddDiagramLineObject(toItem, l);
-
-            //((EasyVertex)Vertex).CanFireChangeEvent = true;
-
-            ////////////////////////////////////////
-            Interaction.EndInteractionWithGraph();
-            //////////////////////////////////////// 
-        }
+        
 
         public void AddDiagramLineObject(DiagramItemBase toItem, IVertex l)
         {
