@@ -95,57 +95,41 @@ namespace m0.ZeroTypes.UX
 
             IVertex v = m0.MinusZero.Instance.CreateTempVertex();
 
+            IVertex BaseEdgeTo = BaseEdge.To;
 
-            foreach (IEdge def in Vertex.GetAll(false, @"Definition:\DiagramLineDefinition:"))
+            foreach (UXDecoratorTemplate tem in UXTemplate.DecoratorTemplates)
             {
-                bool CreateEdgeOnly = false;
-
-                if (GraphUtil.GetValueAndCompareStrings(def.To.Get(false, "CreateEdgeOnly:"), "True"))
-                    CreateEdgeOnly = true;
-
-                foreach (IEdge e in Vertex.GetAll(false, @"BaseEdge:\To:\" + def.To.Get(false, "EdgeTestQuery:")))
+                foreach (IEdge e in BaseEdgeTo.GetAll(false, tem.EdgeTestQuery))
                 {
                     bool canAdd = true;
 
-                    if (def.To.Get(false, "ToDiagramItemTestQuery:") != null && toItem.Vertex.Get(false, (string)def.To.Get(false, "ToDiagramItemTestQuery:").Value) == null)
+                    if (tem.ToDiagramItemTestQuery != null && toItem.Vertex.Get(false, tem.ToDiagramItemTestQuery) == null)
                         canAdd = false;
 
-                    IVertex toTest_baseVertex = toEdge.Get(false, @"To:");
+                    string eToEdgeTarget = (string)GraphUtil.GetValue(e.To.Get(false, @"$EdgeTarget:"));
+                    string eToVertexTarget = (string)GraphUtil.GetValue(e.To.Get(false, @"$VertexTarget:"));
 
-
-
-                    if (e.To.Get(false, @"$EdgeTarget:") != null
-                        && !GeneralUtil.CompareStrings(e.To.Get(false, @"$EdgeTarget:").Value, "Vertex") // Vertices do not have $Is:Vertex
-                                                                                                         //&& toEdge.Get(false, @"To:\$Is:" + (string)e.To.Get(false, @"$EdgeTarget:").Value) == null                        
-                        )
-                    {
-                        string toTest_class = (string)e.To.Get(false, @"$EdgeTarget:").Value;
-
-                        if (!InstructionHelpers.CheckIfIsOrInherits(toTest_baseVertex, toTest_class))
+                    if (eToEdgeTarget != null
+                        && eToEdgeTarget != "Vertex" // Vertices do not have $Is:Vertex     
+                        && !InstructionHelpers.CheckIfIsOrInherits(toEdge.To, eToEdgeTarget))
                             canAdd = false;
-                    }
 
-                    if (CreateEdgeOnly == false
-                        && e.To.Get(false, @"$VertexTarget:") != null
-                        //&& toEdge.Get(false, @"To:\$Is:" + (string)e.To.Get(false, @"$VertexTarget:").Value) == null                        
+                    if (tem.CreateEdgeOnly
+                        && eToVertexTarget != null
+                        && !InstructionHelpers.CheckIfIsOrInherits(toEdge.To, eToVertexTarget)                     
                         )
-                    {
-                        string toTest_class = (string)e.To.Get(false, @"$VertexTarget:").Value;
-
-                        if (!InstructionHelpers.CheckIfIsOrInherits(toTest_baseVertex, toTest_class))
                             canAdd = false;
-                    }
 
                     if (canAdd)
-                        AddNewLineOption(v, def, e);
+                        AddNewLineOption(v, tem, e);
                 }
 
-                if (GeneralUtil.CompareStrings(def.To.Value, "Edge"))// Vertex\Edge
+                if (GeneralUtil.CompareStrings(tem, "Edge"))// Vertex\Edge
                     foreach (IEdge e in r.Get(false, @"System\Meta\Base\Vertex"))
-                        AddNewLineOption(v, def, e);
+                        AddNewLineOption(v, tem, e);
 
-                if (GeneralUtil.CompareStrings(def.To.Get(false, "EdgeTestQuery:"), "$EdgeTarget")) // $EdgeTarget is not present as there is no inheritance from Vertex
-                    AddNewLineOption(v, def, GraphUtil.FindEdgeByToVertex(r.Get(false, @"System\Meta\Base\Vertex"), "$EdgeTarget"));
+                if (tem.EdgeTestQuery == "$EdgeTarget") // $EdgeTarget is not present as there is no inheritance from Vertex
+                    AddNewLineOption(v, tem, GraphUtil.FindEdgeByToVertex(r.Get(false, @"System\Meta\Base\Vertex"), "$EdgeTarget"));
             }
 
             if (v.Count() == 0)
@@ -161,10 +145,13 @@ namespace m0.ZeroTypes.UX
 
             if (a != null)
             {
-                IVertex test = VertexOperations.TestIfNewEdgeValid(Vertex.Get(false, @"BaseEdge:\To:"), a.Get(false, "OptionEdge:"), toEdge.Get(false, "To:"));
+                IVertex test = VertexOperations.TestIfNewEdgeValid(BaseEdgeTo, a.Get(false, "OptionEdge:"), toEdge.To);
 
                 if (test == null)
                 {
+                    UXDecoratorTemplate 
+
+
                     bool? ForceShowEditForm = null; // ForceShowEditForm
 
                     if (a.Get(false, @"OptionDiagramLineDefinition:\ForceShowEditForm:") != null)
@@ -445,7 +432,7 @@ namespace m0.ZeroTypes.UX
 
 
 
-        private static void AddNewLineOption(IVertex v, IEdge def, IEdge e)
+        private static void AddNewLineOption(IVertex v, UXDecoratorTemplate def, IEdge e)
         {
             IVertex r = m0.MinusZero.Instance.Root;
 

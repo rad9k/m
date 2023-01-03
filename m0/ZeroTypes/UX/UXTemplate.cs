@@ -125,16 +125,33 @@ namespace m0.ZeroTypes.UX
             }
         }
 
-        public UX.UXDecoratorTemplate DecoratorTemplate
+        public IList<UXDecoratorTemplate> DecoratorTemplates
         {
             get
             {
-                IEdge val = GraphUtil.GetQueryOutFirstEdge(Vertex, "DecoratorTemplate", null);
+                IList<IEdge> list = GraphUtil.GetQueryOut(Vertex, "DecoratorTemplate", null);
 
-                if (val == null)
-                    return null;
+                IList<UXDecoratorTemplate> ret = new List<UXDecoratorTemplate>();
 
-                return (UXDecoratorTemplate)TypedEdge.Get(val, typeof(UXDecoratorTemplate));
+                foreach (IEdge e in list)
+                    ret.Add((UXDecoratorTemplate)TypedEdge.Get(e, typeof(UXDecoratorTemplate)));
+
+                return ret;
+            }
+        }
+
+        public IList<IUXItem> Decorators
+        {
+            get
+            {
+                IList<IEdge> list = GraphUtil.GetQueryOut(Vertex, "Decorator", null);
+
+                IList<IUXItem> ret = new List<IUXItem>();
+
+                foreach (IEdge e in list)
+                    ret.Add((IUXItem)TypedEdge.Get(e));
+
+                return ret;
             }
         }
 
