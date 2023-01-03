@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace m0.ZeroTypes
 {
-    public class Edge:TypedEdge
+    public class Edge:TypedEdge, IEdge
     {
         public static IVertex Edge_type = MinusZero.Instance.Root.Get(false, @"System\Meta\ZeroTypes\Edge");
 
@@ -74,5 +74,7 @@ namespace m0.ZeroTypes
                     val.Value = value;
             }
         }
+
+        public bool EdgeRemovalExecuting { get; set; }
     }
 }

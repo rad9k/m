@@ -1,7 +1,9 @@
 ﻿using m0.Foundation;
 using m0.Graph;
 using m0.Graph.ExecutionFlow;
+using m0.UIWpf;
 using m0.UIWpf.UX;
+using m0.Util;
 using m0.ZeroCode.Helpers;
 using System;
 using System.Collections.Generic;
@@ -87,7 +89,7 @@ namespace m0.ZeroTypes.UX
 
         public virtual void DoCreateDiagramLine(IUXItem toItem) 
         {
-            IVertex toEdge = toItem.Vertex.Get(false, "BaseEdge:");
+            IEdge toEdge = toItem.BaseEdge;
 
             IVertex r = m0.MinusZero.Instance.Root;
 
