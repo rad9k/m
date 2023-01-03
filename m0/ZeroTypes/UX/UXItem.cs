@@ -85,7 +85,111 @@ namespace m0.ZeroTypes.UX
                 l.RemoveFromCanvas();
         }
 
-        public virtual void DoCreateDiagramLine(IUXItem toItem) {}
+        public virtual void DoCreateDiagramLine(IUXItem toItem) 
+        {
+            IVertex toEdge = toItem.Vertex.Get(false, "BaseEdge:");
+
+            IVertex r = m0.MinusZero.Instance.Root;
+
+            IVertex v = m0.MinusZero.Instance.CreateTempVertex();
+
+
+            foreach (IEdge def in Vertex.GetAll(false, @"Definition:\DiagramLineDefinition:"))
+            {
+                bool CreateEdgeOnly = false;
+
+                if (GraphUtil.GetValueAndCompareStrings(def.To.Get(false, "CreateEdgeOnly:"), "True"))
+                    CreateEdgeOnly = true;
+
+                foreach (IEdge e in Vertex.GetAll(false, @"BaseEdge:\To:\" + def.To.Get(false, "EdgeTestQuery:")))
+                {
+                    bool canAdd = true;
+
+                    if (def.To.Get(false, "ToDiagramItemTestQuery:") != null && toItem.Vertex.Get(false, (string)def.To.Get(false, "ToDiagramItemTestQuery:").Value) == null)
+                        canAdd = false;
+
+                    IVertex toTest_baseVertex = toEdge.Get(false, @"To:");
+
+
+
+                    if (e.To.Get(false, @"$EdgeTarget:") != null
+                        && !GeneralUtil.CompareStrings(e.To.Get(false, @"$EdgeTarget:").Value, "Vertex") // Vertices do not have $Is:Vertex
+                                                                                                         //&& toEdge.Get(false, @"To:\$Is:" + (string)e.To.Get(false, @"$EdgeTarget:").Value) == null                        
+                        )
+                    {
+                        string toTest_class = (string)e.To.Get(false, @"$EdgeTarget:").Value;
+
+                        if (!InstructionHelpers.CheckIfIsOrInherits(toTest_baseVertex, toTest_class))
+                            canAdd = false;
+                    }
+
+                    if (CreateEdgeOnly == false
+                        && e.To.Get(false, @"$VertexTarget:") != null
+                        //&& toEdge.Get(false, @"To:\$Is:" + (string)e.To.Get(false, @"$VertexTarget:").Value) == null                        
+                        )
+                    {
+                        string toTest_class = (string)e.To.Get(false, @"$VertexTarget:").Value;
+
+                        if (!InstructionHelpers.CheckIfIsOrInherits(toTest_baseVertex, toTest_class))
+                            canAdd = false;
+                    }
+
+                    if (canAdd)
+                        AddNewLineOption(v, def, e);
+                }
+
+                if (GeneralUtil.CompareStrings(def.To.Value, "Edge"))// Vertex\Edge
+                    foreach (IEdge e in r.Get(false, @"System\Meta\Base\Vertex"))
+                        AddNewLineOption(v, def, e);
+
+                if (GeneralUtil.CompareStrings(def.To.Get(false, "EdgeTestQuery:"), "$EdgeTarget")) // $EdgeTarget is not present as there is no inheritance from Vertex
+                    AddNewLineOption(v, def, GraphUtil.FindEdgeByToVertex(r.Get(false, @"System\Meta\Base\Vertex"), "$EdgeTarget"));
+            }
+
+            if (v.Count() == 0)
+                UserInteractionUtil.ShowError(Diagram.Vertex.Value + " Diagram", "There is no diagram line definition matching selected source and target items.");
+
+            IVertex info = m0.MinusZero.Instance.CreateTempVertex();
+            info.Value = "choose diagram line:";
+
+
+            Point mousePosition = WpfUtil.GetMousePosition();
+
+            IVertex a = MinusZero.Instance.DefaultUserInteraction.SelectDialog(info, v, mousePosition);
+
+            if (a != null)
+            {
+                IVertex test = VertexOperations.TestIfNewEdgeValid(Vertex.Get(false, @"BaseEdge:\To:"), a.Get(false, "OptionEdge:"), toEdge.Get(false, "To:"));
+
+                if (test == null)
+                {
+                    bool? ForceShowEditForm = null; // ForceShowEditForm
+
+                    if (a.Get(false, @"OptionDiagramLineDefinition:\ForceShowEditForm:") != null)
+                    {
+                        if (GeneralUtil.CompareStrings(a.Get(false, @"OptionDiagramLineDefinition:\ForceShowEditForm:"), "True"))
+                            ForceShowEditForm = true;
+
+                        if (GeneralUtil.CompareStrings(a.Get(false, @"OptionDiagramLineDefinition:\ForceShowEditForm:"), "False"))
+                            ForceShowEditForm = false;
+                    }
+
+                    bool CreateEdgeOnly = false; // CreateEdgeOnly
+
+                    if (GraphUtil.GetValueAndCompareStrings(a.Get(false, @"OptionDiagramLineDefinition:\CreateEdgeOnly:"), "True"))
+                        CreateEdgeOnly = true;
+
+
+                    CanAutomaticallyAddEdges = false; // for VertexChange
+                    IEdge edge = VertexOperations.AddEdgeOrVertexByMeta(Vertex.Get(false, @"BaseEdge:\To:"), a.Get(false, "OptionEdge:"), toEdge.Get(false, "To:"), mousePosition, CreateEdgeOnly, ForceShowEditForm);
+                    CanAutomaticallyAddEdges = true;
+
+                    AddDiagramLineVertex(edge, a.Get(false, @"OptionDiagramLineDefinition:"), toItem);
+                }
+                else
+                    UserInteractionUtil.ShowError(Diagram.Vertex.Value + " Diagram", "Adding new diagram line  \"" + a.Value + "\" is not possible.\n\n" + test.Value);
+            }
+        }
 
         public void AddDiagramLineVertex(IEdge edge, IVertex diagramLineDefinition, IUXItem toItem) {}
 
@@ -337,111 +441,7 @@ namespace m0.ZeroTypes.UX
             return p;
         }
 
-        public virtual void DoCreateDiagramLine(DiagramItemBase toItem)
-        {
-            IVertex toEdge = toItem.Vertex.Get(false, "BaseEdge:");
 
-            IVertex r = m0.MinusZero.Instance.Root;
-
-            IVertex v = m0.MinusZero.Instance.CreateTempVertex();
-
-
-            foreach (IEdge def in Vertex.GetAll(false, @"Definition:\DiagramLineDefinition:"))
-            {
-                bool CreateEdgeOnly = false;
-
-                if (GraphUtil.GetValueAndCompareStrings(def.To.Get(false, "CreateEdgeOnly:"), "True"))
-                    CreateEdgeOnly = true;
-
-                foreach (IEdge e in Vertex.GetAll(false, @"BaseEdge:\To:\" + def.To.Get(false, "EdgeTestQuery:")))
-                {
-                    bool canAdd = true;
-
-                    if (def.To.Get(false, "ToDiagramItemTestQuery:") != null && toItem.Vertex.Get(false, (string)def.To.Get(false, "ToDiagramItemTestQuery:").Value) == null)
-                        canAdd = false;
-
-                    IVertex toTest_baseVertex = toEdge.Get(false, @"To:");
-
-
-
-                    if (e.To.Get(false, @"$EdgeTarget:") != null
-                        && !GeneralUtil.CompareStrings(e.To.Get(false, @"$EdgeTarget:").Value, "Vertex") // Vertices do not have $Is:Vertex
-                                                                                                         //&& toEdge.Get(false, @"To:\$Is:" + (string)e.To.Get(false, @"$EdgeTarget:").Value) == null                        
-                        )
-                    {
-                        string toTest_class = (string)e.To.Get(false, @"$EdgeTarget:").Value;
-
-                        if (!InstructionHelpers.CheckIfIsOrInherits(toTest_baseVertex, toTest_class))
-                            canAdd = false;
-                    }
-
-                    if (CreateEdgeOnly == false
-                        && e.To.Get(false, @"$VertexTarget:") != null
-                        //&& toEdge.Get(false, @"To:\$Is:" + (string)e.To.Get(false, @"$VertexTarget:").Value) == null                        
-                        )
-                    {
-                        string toTest_class = (string)e.To.Get(false, @"$VertexTarget:").Value;
-
-                        if (!InstructionHelpers.CheckIfIsOrInherits(toTest_baseVertex, toTest_class))
-                            canAdd = false;
-                    }
-
-                    if (canAdd)
-                        AddNewLineOption(v, def, e);
-                }
-
-                if (GeneralUtil.CompareStrings(def.To.Value, "Edge"))// Vertex\Edge
-                    foreach (IEdge e in r.Get(false, @"System\Meta\Base\Vertex"))
-                        AddNewLineOption(v, def, e);
-
-                if (GeneralUtil.CompareStrings(def.To.Get(false, "EdgeTestQuery:"), "$EdgeTarget")) // $EdgeTarget is not present as there is no inheritance from Vertex
-                    AddNewLineOption(v, def, GraphUtil.FindEdgeByToVertex(r.Get(false, @"System\Meta\Base\Vertex"), "$EdgeTarget"));
-            }
-
-            if (v.Count() == 0)
-                UserInteractionUtil.ShowError(Diagram.Vertex.Value + " Diagram", "There is no diagram line definition matching selected source and target items.");
-
-            IVertex info = m0.MinusZero.Instance.CreateTempVertex();
-            info.Value = "choose diagram line:";
-
-
-            Point mousePosition = WpfUtil.GetMousePosition();
-
-            IVertex a = MinusZero.Instance.DefaultUserInteraction.SelectDialog(info, v, mousePosition);
-
-            if (a != null)
-            {
-                IVertex test = VertexOperations.TestIfNewEdgeValid(Vertex.Get(false, @"BaseEdge:\To:"), a.Get(false, "OptionEdge:"), toEdge.Get(false, "To:"));
-
-                if (test == null)
-                {
-                    bool? ForceShowEditForm = null; // ForceShowEditForm
-
-                    if (a.Get(false, @"OptionDiagramLineDefinition:\ForceShowEditForm:") != null)
-                    {
-                        if (GeneralUtil.CompareStrings(a.Get(false, @"OptionDiagramLineDefinition:\ForceShowEditForm:"), "True"))
-                            ForceShowEditForm = true;
-
-                        if (GeneralUtil.CompareStrings(a.Get(false, @"OptionDiagramLineDefinition:\ForceShowEditForm:"), "False"))
-                            ForceShowEditForm = false;
-                    }
-
-                    bool CreateEdgeOnly = false; // CreateEdgeOnly
-
-                    if (GraphUtil.GetValueAndCompareStrings(a.Get(false, @"OptionDiagramLineDefinition:\CreateEdgeOnly:"), "True"))
-                        CreateEdgeOnly = true;
-
-
-                    CanAutomaticallyAddEdges = false; // for VertexChange
-                    IEdge edge = VertexOperations.AddEdgeOrVertexByMeta(Vertex.Get(false, @"BaseEdge:\To:"), a.Get(false, "OptionEdge:"), toEdge.Get(false, "To:"), mousePosition, CreateEdgeOnly, ForceShowEditForm);
-                    CanAutomaticallyAddEdges = true;
-
-                    AddDiagramLineVertex(edge, a.Get(false, @"OptionDiagramLineDefinition:"), toItem);
-                }
-                else
-                    UserInteractionUtil.ShowError(Diagram.Vertex.Value + " Diagram", "Adding new diagram line  \"" + a.Value + "\" is not possible.\n\n" + test.Value);
-            }
-        }
 
         private static void AddNewLineOption(IVertex v, IEdge def, IEdge e)
         {
