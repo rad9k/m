@@ -31,7 +31,7 @@ namespace m0.ZeroTypes.UX
 
         void DoCreateDiagramLine(IUXItem toItem);
 
-        void AddDiagramLineVertex(IEdge edge, IVertex diagramLineDefinition, IUXItem toItem);
+        void AddDiagramLineVertex(IEdge edge, UXDecoratorTemplate diagramLineDefinition, IUXItem toItem);
 
         void AddDiagramLineObject(IUXItem toItem, ILineDecoratorBase lineDecorator);
 

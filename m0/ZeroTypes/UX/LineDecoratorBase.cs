@@ -13,9 +13,9 @@ namespace m0.ZeroTypes.UX
 {
     public class LineDecoratorBase : UXItem, ILineDecoratorBase
     {
-        public UXItem FromDiagramItem { get; set; }
+        public IUXItem FromDiagramItem { get; set; }
 
-        public UXItem ToDiagramItem { get; set; }
+        public IUXItem ToDiagramItem { get; set; }
 
         public virtual void SetPosition(double FromX, double FromY, double ToX, double ToY, bool isSelfRelation, double selfRelationX, double selfRelationY)
         {

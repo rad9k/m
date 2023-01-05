@@ -174,7 +174,11 @@ namespace m0.ZeroTypes.UX
 
             IVertex r = MinusZero.Instance.Root;
 
-            //((EasyVertex)Vertex).CanFireChangeEvent = false;
+            LineDecoratorBase newLine = (LineDecoratorBase)AddDecorator(diagramLineDefinition.DecoratorClass);
+
+            newLine.ToDiagramItem = toItem;
+
+            newLine.UXTemplate = diagramLineDefinition;
 
             IVertex l = VertexOperations.AddInstance(Vertex, diagramLineDefinition.DecoratorClass, 
                 r.Get(false, @"System\Meta\Visualiser\DiagramInternal\DiagramItemBase\DiagramLine"));
@@ -187,7 +191,6 @@ namespace m0.ZeroTypes.UX
 
             AddDiagramLineObject(toItem, l);
 
-            //((EasyVertex)Vertex).CanFireChangeEvent = true;
 
             ////////////////////////////////////////
             Interaction.EndInteractionWithGraph();

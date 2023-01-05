@@ -76,6 +76,7 @@ namespace m0
         static IVertex r = null; 
         static IVertex UXTest = null;
         static IVertex UXAggregatorType = null;
+        static IVertex UXItemType = null;
         static IEdge template = null;
 
         void ExtraRun8()
@@ -84,7 +85,9 @@ namespace m0
 
             UXTest = r.Get(false, @"System\Meta\Visualiser\UXTest");
 
-            UXAggregatorType = r.Get(false, @"System\Meta\Visualiser\UX");
+            UXAggregatorType = r.Get(false, @"System\Meta\ZeroTypes\UX\UXAggregator");
+
+            UXItemType = r.Get(false, @"System\Meta\ZeroTypes\UX\UXItem");
 
             template = r.GetAll(false, @"System\Data\UX\Templates\ZeroUML\Vertex").First();
 
@@ -94,7 +97,7 @@ namespace m0
 
             IEdge a_e = VertexOperations.AddInstanceAndReturnEdge(e,
                 UXAggregatorType,
-                r.Get(false, @"System\Meta\ZeroTypes\UX\UXAggregator"));
+                UXAggregatorType);
 
             UXAggregator a = new UXAggregator(a_e);
 
