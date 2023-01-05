@@ -15,6 +15,8 @@ namespace m0.ZeroTypes.UX
 
         Edge BaseEdge { get; }
 
+        void BaseEdgeSet(IEdge value);
+
         Edge BaseEdgeCreate();
 
         IList<IItem> Items { get; }

@@ -63,6 +63,11 @@ namespace m0.ZeroTypes.UX
 
         public UX.Size ExpandedSizeCreate()
         {
+            IEdge expectedSizeEdge = GraphUtil.GetQueryOutFirstEdge(Vertex, "ExpandedSize", null);
+
+            if (expectedSizeEdge != null)
+                Vertex.DeleteEdge(expectedSizeEdge);
+
             return new UX.Size(VertexOperations.AddInstanceAndReturnEdge(Vertex, Size_type, ExpandedSize_meta));
         }
 

@@ -174,11 +174,13 @@ namespace m0.ZeroTypes.UX
 
             IVertex r = MinusZero.Instance.Root;
 
-            LineDecoratorBase newLine = (LineDecoratorBase)AddDecorator(diagramLineDefinition.DecoratorClass);
+            ILineDecoratorBase newLine = (LineDecoratorBase)AddDecorator(diagramLineDefinition.DecoratorClass);
 
             newLine.ToDiagramItem = toItem;
 
             newLine.UXTemplate = diagramLineDefinition;
+
+            newLine.BaseEdgeSet(edge);
 
             IVertex l = VertexOperations.AddInstance(Vertex, diagramLineDefinition.DecoratorClass, 
                 r.Get(false, @"System\Meta\Visualiser\DiagramInternal\DiagramItemBase\DiagramLine"));
@@ -189,7 +191,7 @@ namespace m0.ZeroTypes.UX
 
             EdgeHelper.CreateOrReplaceEdgeVertexFromIEdgeByMeta(l, r.Get(false, @"System\Meta\ZeroTypes\HasBaseEdge\BaseEdge"), edge);
 
-            AddDiagramLineObject(toItem, l);
+            AddDiagramLineObject(toItem, newLine);
 
 
             ////////////////////////////////////////
@@ -1153,6 +1155,11 @@ namespace m0.ZeroTypes.UX
 
         public UX.Size SizeCreate()
         {
+            IEdge sizeEdge = GraphUtil.GetQueryOutFirstEdge(Vertex, "Size", null);
+
+            if (sizeEdge != null)
+                Vertex.DeleteEdge(sizeEdge);
+
             return new UX.Size(VertexOperations.AddInstanceAndReturnEdge(Vertex, Size_type, Size_meta));
         }
 
@@ -1171,6 +1178,11 @@ namespace m0.ZeroTypes.UX
 
         public UX.Position PositionCreate()
         {
+            IEdge positionEdge = GraphUtil.GetQueryOutFirstEdge(Vertex, "Position", null);
+
+            if (positionEdge != null)
+                Vertex.DeleteEdge(positionEdge);
+
             return new UX.Position(VertexOperations.AddInstanceAndReturnEdge(Vertex, Position_type, Position_meta));
         }
 
@@ -1359,6 +1371,33 @@ namespace m0.ZeroTypes.UX
 
                 return (Edge)TypedEdge.Get(val, typeof(Edge));
             }
+            set
+            {
+                Edge baseEdge = BaseEdge;
+
+                if (value.From != null)
+                    baseEdge.From = value.From;
+
+                if (value.Meta != null)
+                    baseEdge.Meta = value.Meta;
+
+                if (value.To != null)
+                    baseEdge.To = value.To;
+            }
+        }
+
+        public void BaseEdgeSet(IEdge value)
+        {
+            Edge baseEdge = BaseEdge;
+
+            if (value.From != null)
+                baseEdge.From = value.From;
+
+            if (value.Meta != null)
+                baseEdge.Meta = value.Meta;
+
+            if (value.To != null)
+                baseEdge.To = value.To;
         }
 
         public Edge BaseEdgeCreate()

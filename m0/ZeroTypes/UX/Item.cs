@@ -41,6 +41,33 @@ namespace m0.ZeroTypes.UX
 
                 return (Edge)TypedEdge.Get(val, typeof(Edge));
             }
+            set
+            {
+                Edge baseEdge = BaseEdge;
+
+                if (value.From != null)
+                    baseEdge.From = value.From;
+
+                if (value.Meta != null)
+                    baseEdge.Meta = value.Meta;
+
+                if (value.To != null)
+                    baseEdge.To = value.To;
+            }
+        }
+
+        public void BaseEdgeSet(IEdge value)
+        {
+            Edge baseEdge = BaseEdge;
+
+            if (value.From != null)
+                baseEdge.From = value.From;
+
+            if (value.Meta != null)
+                baseEdge.Meta = value.Meta;
+
+            if (value.To != null)
+                baseEdge.To = value.To;
         }
 
         public Edge BaseEdgeCreate()
