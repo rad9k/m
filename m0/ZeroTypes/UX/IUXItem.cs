@@ -21,6 +21,10 @@ namespace m0.ZeroTypes.UX
 
         List<ILineDecoratorBase> DiagramLines { get; }
 
+        List<ILineDecoratorBase> DiagramToLines { get; }
+
+        List<ILineDecoratorBase> DiagramToAsMetaLines { get; }
+
         void VertexSetedUp();
 
         void Dispose();
@@ -87,5 +91,7 @@ namespace m0.ZeroTypes.UX
         IList<IUXItem> Decorators { get; }
         
         IUXItem AddDecorator(IVertex typeVertex);
+
+        void RemoveDecorator(IUXItem decorator);
     }
 }

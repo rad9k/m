@@ -23,10 +23,6 @@ namespace m0.ZeroTypes.UX
 
         public double LineWidth;        
 
-        protected List<IUXItem> DiagramToLines = new List<IUXItem>();
-
-        protected List<ILineDecoratorBase> DiagramToAsMetaLines = new List<ILineDecoratorBase>();
-
         IEdge graphChangeListenerEdge;
 
         //
@@ -37,12 +33,11 @@ namespace m0.ZeroTypes.UX
 
         public bool IsHighlighted { get; set; }
 
-        List<ILineDecoratorBase> diagramLines = new List<ILineDecoratorBase>();
+        public List<ILineDecoratorBase> DiagramLines { get; } = new List<ILineDecoratorBase>();
 
-        public List<ILineDecoratorBase> DiagramLines
-        {
-            get { return diagramLines; }
-        }
+        public List<ILineDecoratorBase> DiagramToLines { get; } = new List<ILineDecoratorBase>();
+
+        public List<ILineDecoratorBase> DiagramToAsMetaLines { get; } = new List<ILineDecoratorBase>();
 
         public virtual void VertexSetedUp()
         {
@@ -166,6 +161,10 @@ namespace m0.ZeroTypes.UX
             }
         }
 
+        ////////////// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        /// NEED TO move begin / end to the loop
+        ///////////////////////////////////////////////////////////////////
+        
         public void AddDiagramLineVertex(IEdge edge, UXDecoratorTemplate diagramLineDefinition, IUXItem toItem)        
         {
             ////////////////////////////////////////
@@ -182,36 +181,135 @@ namespace m0.ZeroTypes.UX
 
             newLine.BaseEdgeSet(edge);
 
-            IVertex l = VertexOperations.AddInstance(Vertex, diagramLineDefinition.DecoratorClass, 
-                r.Get(false, @"System\Meta\Visualiser\DiagramInternal\DiagramItemBase\DiagramLine"));
-
-            GraphUtil.CreateOrReplaceEdge(l, r.Get(false, @"System\Meta\Visualiser\DiagramInternal\DiagramLineBase\ToDiagramItem"), toItem.Vertex);
-
-            GraphUtil.CreateOrReplaceEdge(l, r.Get(false, @"System\Meta\Visualiser\DiagramInternal\DiagramLineBase\Definition"), diagramLineDefinition);
-
-            EdgeHelper.CreateOrReplaceEdgeVertexFromIEdgeByMeta(l, r.Get(false, @"System\Meta\ZeroTypes\HasBaseEdge\BaseEdge"), edge);
-
             AddDiagramLineObject(toItem, newLine);
-
 
             ////////////////////////////////////////
             Interaction.EndInteractionWithGraph();
             //////////////////////////////////////// 
         }
 
-        public void AddDiagramLineObject(IUXItem toItem, ILineDecoratorBase lineDecorator) {}
+        public void AddDiagramLineObject(IUXItem toItem, ILineDecoratorBase newline) 
+        {
+            newline.Diagram = this.Diagram;
 
-        public void RemoveDiagramLine(ILineDecoratorBase line) {}
+            if (newline.UXTemplate != null)
+                Diagram.AddEdgesFromDefintion(newline.Vertex, newline.UXTemplate.ItemVertex);
+         
 
-        public virtual void Select() {}
+            newline.FromDiagramItem = this;
 
-        public virtual void Unselect() {}
+            newline.ToDiagramItem = toItem;
 
-        public virtual void Highlight() {}
+            newline.AddToCanvas();
 
-        public virtual void Unhighlight() {}
+            AddToDiagramLines(newline);
 
-        public void MoveItem(double x, double y) {}
+            toItem.DiagramToLines.Add(newline);
+
+            UpdateDiagramLines(toItem);
+        }
+
+        public void RemoveDiagramLine(ILineDecoratorBase line) 
+        {
+            RemoveFromDiagramLines(line);
+
+            line.ToDiagramItem.DiagramToLines.Remove(line);
+
+            line.RemoveFromCanvas();
+
+            RemoveDecorator(line);
+        }
+
+        public virtual void Select() 
+        {
+            IsSelected = true;
+
+            GeneralUtil.SetPropertyIfPresent(this.Content, "Foreground", BackgroundColor.GetBrush());
+
+            Panel.SetZIndex(this, 99999);
+
+            double left = Canvas.GetLeft(this);
+            double top = Canvas.GetTop(this);
+            double right = left + ActualWidth;
+            double bottom = top + ActualHeight;
+            double width = ActualWidth;
+            double height = ActualHeight;
+
+            AddAnchor(ClickTargetEnum.AnchorLeftTop, left - AnchorSize, top - AnchorSize);
+            AddAnchor(ClickTargetEnum.AnchorMiddleTop, left - AnchorSize / 2 + width / 2, top - AnchorSize);
+            AddAnchor(ClickTargetEnum.AnchorRightTop_CreateDiagramLine, right, top - AnchorSize);
+
+            AddAnchor(ClickTargetEnum.AnchorLeftMiddle, left - AnchorSize, top - AnchorSize / 2 + height / 2);
+            AddAnchor(ClickTargetEnum.AnchorRightMiddle, right, top - AnchorSize / 2 + height / 2);
+
+            AddAnchor(ClickTargetEnum.AnchorLeftBottom, left - AnchorSize, bottom);
+            AddAnchor(ClickTargetEnum.AnchorMiddleBottom, left - AnchorSize / 2 + width / 2, bottom);
+            AddAnchor(ClickTargetEnum.AnchorRightBottom, right, bottom);
+        }
+
+        public virtual void Unselect() 
+        {
+            IsSelected = false;
+
+            GeneralUtil.SetPropertyIfPresent(this.Content, "Foreground", ForegroundColor.GetBrush());
+
+            Panel.SetZIndex(this, 0);
+
+            foreach (UIElement e in Anchors)
+                Diagram.TheCanvas.Children.Remove(e);
+
+            Anchors.Clear();
+        }
+
+        public virtual void Highlight()
+        {
+            IsHighlighted = true;
+
+            Panel.SetZIndex(this, 99999);
+        }
+
+        public virtual void Unhighlight()
+        {
+            IsHighlighted = false;
+
+            Panel.SetZIndex(this, 0);
+
+            if (IsSelected)
+                Select();
+            else
+                Unselect();
+        }
+
+        public void MoveItem(double x, double y)
+        {
+            Position pos = this.Position;
+
+            double? _positionX = GraphUtil.GetDoubleValue(Vertex.Get(false, "PositionX:"));
+            double? _positionY = GraphUtil.GetDoubleValue(Vertex.Get(false, "PositionY:"));
+
+            if (_positionX == null || _positionY == null)
+                return;
+
+            double positionX = (double)_positionX;
+            double positionY = (double)_positionY;
+
+            double deltax = positionX - x;
+            double deltay = positionY - y;
+
+            Vertex.Get(false, "PositionX:").Value = x;
+            Vertex.Get(false, "PositionY:").Value = y;
+
+            Canvas.SetLeft(this, x);
+            Canvas.SetTop(this, y);
+
+            foreach (UIElement a in Anchors)
+            {
+                Canvas.SetLeft(a, Canvas.GetLeft(a) - deltax);
+                Canvas.SetTop(a, Canvas.GetTop(a) - deltay);
+            }
+
+            UpdateDiagramLines();
+        }
 
         public void MoveAndResizeItem(double left, double top, double width, double height) {}
 
@@ -310,7 +408,7 @@ namespace m0.ZeroTypes.UX
 
         bool needRebuildDiagramLinesDictionary = true;
 
-        void AddToDiagramLines(DiagramLineBase line)
+        void AddToDiagramLines(ILineDecoratorBase line)
         {
             DiagramLines.Add(line);
 
@@ -325,7 +423,7 @@ namespace m0.ZeroTypes.UX
             needRebuildDiagramLinesDictionary = true;
         }
 
-        void RemoveFromDiagramLines(DiagramLineBase toRemove)
+        void RemoveFromDiagramLines(ILineDecoratorBase toRemove)
         {
             DiagramLines.Remove(toRemove);
 
@@ -461,29 +559,9 @@ namespace m0.ZeroTypes.UX
 
         
 
-        public void AddDiagramLineObject(DiagramItemBase toItem, IVertex l)
-        {
-            DiagramLineBase newline = (DiagramLineBase)PlatformClass.CreatePlatformObject(l, null as IVertex); // ??? ZZZ
 
-            newline.Diagram = this.Diagram;
 
-            if (newline.Vertex.Get(false, @"Definition:\DiagramLineVertex:") != null)
-                Diagram.AddEdgesFromDefintion(newline.Vertex, newline.Vertex.Get(false, @"Definition:\DiagramLineVertex:"));
-
-            newline.FromDiagramItem = this;
-
-            newline.ToDiagramItem = toItem;
-
-            newline.AddToCanvas();
-
-            AddToDiagramLines(newline);
-
-            toItem.DiagramToLines.Add(newline);
-
-            UpdateDiagramLines(toItem);
-        }
-
-        IEdge GetLineEdgeFromLineObject(DiagramLineBase line)
+        IEdge GetLineEdgeFromLineObject(ILineDecoratorBase line)
         {
             foreach (IEdge e in Vertex.GetAll(false, "DiagramLine:"))
                 if (e.To == line.Vertex)
@@ -492,24 +570,14 @@ namespace m0.ZeroTypes.UX
             return null;
         }
 
-        public void RemoveDiagramLine(DiagramLineBase line)
-        {
-            Vertex.DeleteEdge(GetLineEdgeFromLineObject(line));
 
-            RemoveFromDiagramLines(line);
-
-
-            line.ToDiagramItem.RemoveToLine(line);
-
-            line.RemoveFromCanvas();
-        }
 
         protected void RemoveToLine(DiagramLineBase line)
         {
             DiagramToLines.Remove(line);
         }
 
-        protected void UpdateDiagramLines(DiagramItemBase toItem)
+        protected void UpdateDiagramLines(IUXItem toItem)
         {
             List<DiagramLineBase> sameToItemLines = new List<DiagramLineBase>();
 
@@ -590,67 +658,9 @@ namespace m0.ZeroTypes.UX
 
         }
 
-        public virtual void Select()
-        {
-            IsSelected = true;
+        
 
-            GeneralUtil.SetPropertyIfPresent(this.Content, "Foreground", BackgroundColor);
 
-            Panel.SetZIndex(this, 99999);
-
-            double left = Canvas.GetLeft(this);
-            double top = Canvas.GetTop(this);
-            double right = left + ActualWidth;
-            double bottom = top + ActualHeight;
-            double width = ActualWidth;
-            double height = ActualHeight;
-
-            AddAnchor(ClickTargetEnum.AnchorLeftTop, left - AnchorSize, top - AnchorSize);
-            AddAnchor(ClickTargetEnum.AnchorMiddleTop, left - AnchorSize / 2 + width / 2, top - AnchorSize);
-            AddAnchor(ClickTargetEnum.AnchorRightTop_CreateDiagramLine, right, top - AnchorSize);
-
-            AddAnchor(ClickTargetEnum.AnchorLeftMiddle, left - AnchorSize, top - AnchorSize / 2 + height / 2);
-            AddAnchor(ClickTargetEnum.AnchorRightMiddle, right, top - AnchorSize / 2 + height / 2);
-
-            AddAnchor(ClickTargetEnum.AnchorLeftBottom, left - AnchorSize, bottom);
-            AddAnchor(ClickTargetEnum.AnchorMiddleBottom, left - AnchorSize / 2 + width / 2, bottom);
-            AddAnchor(ClickTargetEnum.AnchorRightBottom, right, bottom);
-        }
-
-        public virtual void Unselect()
-        {
-            IsSelected = false;
-
-            GeneralUtil.SetPropertyIfPresent(this.Content, "Foreground", ForegroundColor);
-
-            Panel.SetZIndex(this, 0);
-
-            foreach (UIElement e in Anchors)
-                Diagram.TheCanvas.Children.Remove(e);
-
-            Anchors.Clear();
-        }
-
-        public virtual void Highlight()
-        {
-            IsHighlighted = true;
-
-            //this.Foreground = (Brush)FindResource("0HighlightBrush");
-
-            Panel.SetZIndex(this, 99999);
-        }
-
-        public virtual void Unhighlight()
-        {
-            IsHighlighted = false;
-
-            Panel.SetZIndex(this, 0);
-
-            if (IsSelected)
-                Select();
-            else
-                Unselect();
-        }
 
         public void HighlightThisAndAllConectedByDiagramLine()
         {
@@ -875,34 +885,7 @@ namespace m0.ZeroTypes.UX
             e.Handled = true;
         }
 
-        public void MoveItem(double x, double y)
-        {
-            double? _positionX = GraphUtil.GetDoubleValue(Vertex.Get(false, "PositionX:"));
-            double? _positionY = GraphUtil.GetDoubleValue(Vertex.Get(false, "PositionY:"));
 
-            if (_positionX == null || _positionY == null)
-                return;
-
-            double positionX = (double)_positionX;
-            double positionY = (double)_positionY;
-
-            double deltax = positionX - x;
-            double deltay = positionY - y;
-
-            Vertex.Get(false, "PositionX:").Value = x;
-            Vertex.Get(false, "PositionY:").Value = y;
-
-            Canvas.SetLeft(this, x);
-            Canvas.SetTop(this, y);
-
-            foreach (UIElement a in Anchors)
-            {
-                Canvas.SetLeft(a, Canvas.GetLeft(a) - deltax);
-                Canvas.SetTop(a, Canvas.GetTop(a) - deltay);
-            }
-
-            UpdateDiagramLines();
-        }
 
         public void MoveAndResizeItem(double left, double top, double width, double height)
         {
@@ -1307,7 +1290,8 @@ namespace m0.ZeroTypes.UX
                 if (val == null)
                     return null;
 
-                return (UXTemplate)TypedEdge.Get(val, typeof(UXTemplate));
+                //return (UXTemplate)TypedEdge.Get(val, typeof(UXTemplate));
+                return (UXTemplate)TypedEdge.Get(val);
             }
             set
             {
@@ -1337,6 +1321,11 @@ namespace m0.ZeroTypes.UX
             IEdge newEdge = VertexOperations.AddInstanceAndReturnEdge(Vertex, typeVertex, Item_meta);
 
             return (IUXItem)TypedEdge.Get(newEdge);
+        }
+
+        public void RemoveDecorator(IUXItem decorator)
+        {
+            Vertex.DeleteEdge(decorator.Edge);
         }
 
         // Item
