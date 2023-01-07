@@ -13,7 +13,9 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 using System.Windows.Media;
+using static m0.Graph.ExecutionFlow.ExecutionFlowHelper;
 
 namespace m0.ZeroTypes.UX
 {
@@ -25,6 +27,8 @@ namespace m0.ZeroTypes.UX
 
         IEdge graphChangeListenerEdge;
 
+        double AnchorSize = 11;
+
         //
 
         public IUXAggregator Diagram { get; set; } // ParentAggregator
@@ -33,11 +37,24 @@ namespace m0.ZeroTypes.UX
 
         public bool IsHighlighted { get; set; }
 
-        public List<ILineDecoratorBase> DiagramLines { get; } = new List<ILineDecoratorBase>();
+        public List<ILineDecoratorBase> DiagramLines { get; } = new List<ILineDecoratorBase>(); // >> Decorators
 
         public List<ILineDecoratorBase> DiagramToLines { get; } = new List<ILineDecoratorBase>();
 
         public List<ILineDecoratorBase> DiagramToAsMetaLines { get; } = new List<ILineDecoratorBase>();
+
+        public UXItem(IVertex _baseEdgeVertex)
+        {
+            Anchors = new List<FrameworkElement>();
+
+            this.SizeChanged += DiagramItemBase_SizeChanged;
+
+            this.MouseEnter += DiagramItemBase_MouseEnter;
+
+            this.MouseLeave += DiagramItemBase_MouseLeave;
+        }
+
+        // PUBLIC
 
         public virtual void VertexSetedUp()
         {
@@ -66,9 +83,15 @@ namespace m0.ZeroTypes.UX
             GraphChangeTrigger.RemoveListener(graphChangeListenerEdge);
 
             TypedEdge.RemoveFromDictionary(this);
-        }
+        }        
 
-        public Dictionary<IVertex, List<ILineDecoratorBase>> GetDiagramLinesBaseEdgeToDictionary() { return null; }
+        public Dictionary<IVertex, List<ILineDecoratorBase>> GetDiagramLinesBaseEdgeToDictionary()
+        {
+            if (needRebuildDiagramLinesDictionary)
+                RebuidDiagramLinesDictionary();
+
+            return DiagramLinesBaseEdgeToDictionary;
+        }
 
         public virtual void RemoveFromCanvas()         
         {
@@ -347,38 +370,20 @@ namespace m0.ZeroTypes.UX
             //////////////////////////////////////// 
         }
 
-        //        
-
-
-
-        public DiagramItemBase(IVertex _baseEdgeVertex)
-        {
-            Anchors = new List<FrameworkElement>();
-
-            this.SizeChanged += DiagramItemBase_SizeChanged;
-
-            this.MouseEnter += DiagramItemBase_MouseEnter;
-
-            this.MouseLeave += DiagramItemBase_MouseLeave;
-        }
-
-        
-        
-
-        
+        /////// NON PUBLIC:        
 
         protected virtual INoInEdgeInOutVertexVertex VertexChange(IExecution exe)
         {
-            IVertex baseEdgeTo = Vertex.Get(false, @"BaseEdge:\To:");
+            IVertex baseEdgeTo = BaseEdgeTo;
 
             if (IsVertexChange(exe.Stack, baseEdgeTo))
                 VisualiserUpdate();
 
             foreach (IVertex edgeVertex in GetEdgesRemovedFrom(exe.Stack, baseEdgeTo))
             {
-                DiagramLineBase toRemove = null;
+                ILineDecoratorBase toRemove = null;
 
-                foreach (DiagramLineBase l in DiagramLines)
+                foreach (ILineDecoratorBase l in DiagramLines) // >> Decorator
                     if (l.Vertex.Get(false, @"BaseEdge:\Meta:") == edgeVertex.Get(false, "Meta:") &&
                         l.Vertex.Get(false, @"BaseEdge:\To:") == edgeVertex.Get(false, "To:"))
                         toRemove = l;
@@ -402,41 +407,12 @@ namespace m0.ZeroTypes.UX
                 VisualiserUpdate();
 
             return exe.Stack;
-        }
-
-        /*if (sender == Vertex.Get(false, @"BaseEdge:\To:") && e.Type == VertexChangeType.EdgeRemoved)
-        {
-            DiagramLineBase toRemove = null;
-
-            foreach (DiagramLineBase l in DiagramLines)
-                if (l.Vertex.Get(false, @"BaseEdge:\Meta:") == e.Edge.Meta &&
-                    l.Vertex.Get(false, @"BaseEdge:\To:") == e.Edge.To)
-                    toRemove = l;
-
-            if (toRemove != null)
-                RemoveDiagramLine(toRemove);
-        }*/
-
-        //if (sender == Vertex.Get(false, @"BaseEdge:\To:") && e.Type == VertexChangeType.ValueChanged)
-        //    VertexContentChange();
-
-        // if (sender == Vertex.Get(false, @"BaseEdge:\To:") && e.Type == VertexChangeType.EdgeAdded && CanAutomaticallyAddEdges)
-        // {
-        //     Diagram.CheckAndUpdateDiagramLinesForItem(this);
-        // }
-
-        /*  if (sender == Vertex.Get(false, @"LineWidth:") ||
-              sender == Vertex.Get(false, @"BackgroundColor:") || sender == Vertex.Get(false, @"BackgroundColor:\Red:") || sender == Vertex.Get(false, @"BackgroundColor:\Green:") || sender == Vertex.Get(false, @"BackgroundColor:\Blue:") || sender == Vertex.Get(false, @"BackgroundColor:\Opacity:") ||
-              sender == Vertex.Get(false, @"ForegroundColor:") || sender == Vertex.Get(false, @"ForegroundColor:\Red:") || sender == Vertex.Get(false, @"ForegroundColor:\Green:") || sender == Vertex.Get(false, @"ForegroundColor:\Blue:") || sender == Vertex.Get(false, @"ForegroundColor:\Opacity:"))
-              VisualiserUpdate();*/
-
-        /*   if (sender == Vertex || e.Type == VertexChangeType.EdgeAdded)
-               VisualiserUpdate();*/
+        }        
 
         // OPTIMISATION START
 
-        Dictionary<IVertex, List<DiagramLineBase>> DiagramLinesToDiagramItemDictionary = new Dictionary<IVertex, List<DiagramLineBase>>();
-        Dictionary<IVertex, List<DiagramLineBase>> DiagramLinesBaseEdgeToDictionary = new Dictionary<IVertex, List<DiagramLineBase>>();
+        Dictionary<IVertex, List<ILineDecoratorBase>> DiagramLinesToDiagramItemDictionary = new Dictionary<IVertex, List<ILineDecoratorBase>>();
+        Dictionary<IVertex, List<ILineDecoratorBase>> DiagramLinesBaseEdgeToDictionary = new Dictionary<IVertex, List<ILineDecoratorBase>>();
 
         bool needRebuildDiagramLinesDictionary = true;
 
@@ -467,7 +443,7 @@ namespace m0.ZeroTypes.UX
             DiagramLinesToDiagramItemDictionary.Clear();
             DiagramLinesBaseEdgeToDictionary.Clear();
 
-            foreach (DiagramLineBase l in DiagramLines)
+            foreach (ILineDecoratorBase l in DiagramLines)
             {
                 // ToDiagramItem:
 
@@ -477,7 +453,7 @@ namespace m0.ZeroTypes.UX
                     DiagramLinesToDiagramItemDictionary[toDiagramItem].Add(l);
                 else
                 {
-                    List<DiagramLineBase> list = new List<DiagramLineBase>();
+                    List<ILineDecoratorBase> list = new List<ILineDecoratorBase>();
                     list.Add(l);
 
                     DiagramLinesToDiagramItemDictionary.Add(toDiagramItem, list);
@@ -491,7 +467,7 @@ namespace m0.ZeroTypes.UX
                     DiagramLinesBaseEdgeToDictionary[BaseEdgeTo].Add(l);
                 else
                 {
-                    List<DiagramLineBase> list = new List<DiagramLineBase>();
+                    List<ILineDecoratorBase> list = new List<ILineDecoratorBase>();
                     list.Add(l);
 
                     DiagramLinesBaseEdgeToDictionary.Add(BaseEdgeTo, list);
@@ -501,7 +477,7 @@ namespace m0.ZeroTypes.UX
             needRebuildDiagramLinesDictionary = false;
         }
 
-        public Dictionary<IVertex, List<DiagramLineBase>> GetDiagramLinesToDiagramItemDictionary()
+        public Dictionary<IVertex, List<ILineDecoratorBase>> GetDiagramLinesToDiagramItemDictionary()
         {
             if (needRebuildDiagramLinesDictionary)
                 RebuidDiagramLinesDictionary();
@@ -509,65 +485,32 @@ namespace m0.ZeroTypes.UX
             return DiagramLinesToDiagramItemDictionary;
         }
 
-        public Dictionary<IVertex, List<DiagramLineBase>> GetDiagramLinesBaseEdgeToDictionary()
-        {
-            if (needRebuildDiagramLinesDictionary)
-                RebuidDiagramLinesDictionary();
-
-            return DiagramLinesBaseEdgeToDictionary;
-        }
-
         // OPTIMISATION END
 
-
-
-        public void AddAsToMetaLine(DiagramLineBase line)
+        public void AddAsToMetaLine(ILineDecoratorBase line) // metaextendedline uses that
         {
             DiagramToAsMetaLines.Add(line);
         }
 
         public virtual void VisualiserUpdate()
         {
+            Size size = Size;
 
-            double? sizeX = GraphUtil.GetDoubleValue(Vertex.Get(false, "SizeX:"));
-            double? sizeY = GraphUtil.GetDoubleValue(Vertex.Get(false, "SizeY:"));
-
-            if (sizeX != null && sizeY != null)
+            if (size != null)
             {
-                Width = (double)sizeX;
-                Height = (double)sizeY;
-            }
+                Width = size.Width;
+                Height = size.Height;
+            }          
 
-            if (Vertex.Get(false, "BackgroundColor:") != null)
-                BackgroundColor = WpfUtil.GetBrushFromColorVertex(Vertex.Get(false, "BackgroundColor:"));
+            UX.Color foregroundColor = ForegroundColor;
+
+            if (foregroundColor != null)
+                this.Foreground = foregroundColor.GetBrush();
             else
-                BackgroundColor = (Brush)FindResource("0BackgroundBrush");
+                this.Foreground = (Brush)FindResource("0ForegroundBrush");
+        }       
 
-            if (Vertex.Get(false, "ForegroundColor:") != null)
-                ForegroundColor = WpfUtil.GetBrushFromColorVertex(Vertex.Get(false, "ForegroundColor:"));
-            else
-                ForegroundColor = (Brush)FindResource("0ForegroundBrush");
-
-            double? _lineWidth = GraphUtil.GetDoubleValue(Vertex.Get(false, "LineWidth:"));
-
-            if (_lineWidth != null)
-                LineWidth = (double)_lineWidth;
-
-            SetBackAndForeground();
-        }
-
-        public virtual void SetBackAndForeground()
-        {
-            this.Foreground = ForegroundColor;
-
-            // this.Background = BackgroundColor;
-        }
-
-               
-
-        double AnchorSize = 11;
-
-        public virtual Point GetLineAnchorLocation(DiagramItemBase toItem, Point toPoint, int toItemDiagramLinesCount, int toItemDiagramLinesNumber, bool isSelfStart)
+        public virtual Point GetLineAnchorLocation(IUXItem toItem, Point toPoint, int toItemDiagramLinesCount, int toItemDiagramLinesNumber, bool isSelfStart)
         {
             Point p = new Point();
 
@@ -577,16 +520,14 @@ namespace m0.ZeroTypes.UX
             return p;
         }
 
-
-
         private static void AddNewLineOption(IVertex v, UXDecoratorTemplate def, IEdge e)
         {
             IVertex r = m0.MinusZero.Instance.Root;
 
-            IVertex vv = v.AddVertex(null, e.To.Value + " (" + def.To.Value + ")");//def.To.Value + " for " + e.To.Value);
+            IVertex vv = v.AddVertex(null, e.To.Value + " (" + def.Vertex.Value + ")");
 
             vv.AddEdge(r.Get(false, @"System\Meta\Visualiser\DiagramInternal\DiagramItemBase\OptionEdge"), e.To);
-            vv.AddEdge(r.Get(false, @"System\Meta\Visualiser\DiagramInternal\DiagramItemBase\OptionDiagramLineDefinition"), def.To);
+            vv.AddEdge(r.Get(false, @"System\Meta\Visualiser\DiagramInternal\DiagramItemBase\OptionDiagramLineDefinition"), def.Vertex);
         }
 
         

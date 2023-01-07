@@ -1415,12 +1415,11 @@ namespace m0.UIWpf.UX
 
         public bool IsHighlighted { get; set; }
 
-        List<ILineDecoratorBase> diagramLines = new List<ILineDecoratorBase>();
+        public List<ILineDecoratorBase> DiagramLines { get; } = new List<ILineDecoratorBase>();
 
-        public List<ILineDecoratorBase> DiagramLines
-        {
-            get { return diagramLines; }
-        }
+        public List<ILineDecoratorBase> DiagramToLines { get; } = new List<ILineDecoratorBase>();
+
+        public List<ILineDecoratorBase> DiagramToAsMetaLines { get; } = new List<ILineDecoratorBase>();
 
         public virtual void VertexSetedUp() { }
 
@@ -1430,7 +1429,7 @@ namespace m0.UIWpf.UX
 
         public virtual void DoCreateDiagramLine(IUXItem toItem) { }
 
-        public void AddDiagramLineVertex(IEdge edge, IVertex diagramLineDefinition, IUXItem toItem) { }
+        public void AddDiagramLineVertex(IEdge edge, UXDecoratorTemplate diagramLineDefinition, IUXItem toItem) { }
 
         public void AddDiagramLineObject(IUXItem toItem, ILineDecoratorBase lineDecorator) { }
 
@@ -1701,6 +1700,10 @@ namespace m0.UIWpf.UX
 
             return (IUXItem)TypedEdge.Get(newEdge);
         }
+        public void RemoveDecorator(IUXItem decorator)
+        {
+            Vertex.DeleteEdge(decorator.Edge);
+        }
 
         // Item
 
@@ -1734,6 +1737,20 @@ namespace m0.UIWpf.UX
 
                 return (Edge)TypedEdge.Get(val, typeof(Edge));
             }
+        }
+
+        public void BaseEdgeSet(IEdge value)
+        {
+            Edge baseEdge = BaseEdge;
+
+            if (value.From != null)
+                baseEdge.From = value.From;
+
+            if (value.Meta != null)
+                baseEdge.Meta = value.Meta;
+
+            if (value.To != null)
+                baseEdge.To = value.To;
         }
 
         public Edge BaseEdgeCreate()

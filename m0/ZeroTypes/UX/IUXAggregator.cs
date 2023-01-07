@@ -23,6 +23,8 @@ namespace m0.ZeroTypes.UX
 
         void UnselectAllSelectedEdges();
 
+        void CheckAndUpdateDiagramLinesForItem(IUXItem item);
+
         double LineSelectionDelta { get; }
 
         //
