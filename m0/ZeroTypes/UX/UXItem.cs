@@ -526,51 +526,23 @@ namespace m0.ZeroTypes.UX
 
             IVertex vv = v.AddVertex(null, e.To.Value + " (" + def.Vertex.Value + ")");
 
-            vv.AddEdge(r.Get(false, @"System\Meta\Visualiser\DiagramInternal\DiagramItemBase\OptionEdge"), e.To);
-            vv.AddEdge(r.Get(false, @"System\Meta\Visualiser\DiagramInternal\DiagramItemBase\OptionDiagramLineDefinition"), def.Vertex);
-        }
-
-        
-
-
-
-        IEdge GetLineEdgeFromLineObject(ILineDecoratorBase line)
-        {
-            foreach (IEdge e in Vertex.GetAll(false, "DiagramLine:"))
-                if (e.To == line.Vertex)
-                    return e;
-
-            return null;
-        }
-
-
-
-        protected void RemoveToLine(DiagramLineBase line)
-        {
-            DiagramToLines.Remove(line);
+            vv.AddEdge(r.Get(false, @"System\Meta\ZeroTypes\UX\OptionEdge"), e.To);
+            vv.AddEdge(r.Get(false, @"System\Meta\ZeroTypes\UX\OptionDiagramLineDefinition"), def.Vertex);
         }
 
         protected void UpdateDiagramLines(IUXItem toItem)
         {
-            List<DiagramLineBase> sameToItemLines = new List<DiagramLineBase>();
+            List<ILineDecoratorBase> sameToItemLines = new List<ILineDecoratorBase>();
 
             if (GetDiagramLinesToDiagramItemDictionary().ContainsKey(toItem.Vertex))
-                foreach (DiagramLineBase l in GetDiagramLinesToDiagramItemDictionary()[toItem.Vertex])
+                foreach (ILineDecoratorBase l in GetDiagramLinesToDiagramItemDictionary()[toItem.Vertex])
                     sameToItemLines.Add(l);
 
-            /*foreach (DiagramLineBase l in DiagramLines) // OOO
-                if (l.Vertex.Get(false, "ToDiagramItem:") == toItem.Vertex)
-                    sameToItemLines.Add(l);*/
-
-            List<DiagramLineBase> sameFromItemLinesTo = new List<DiagramLineBase>();
+            List<ILineDecoratorBase> sameFromItemLinesTo = new List<ILineDecoratorBase>();
 
             if (toItem.GetDiagramLinesToDiagramItemDictionary().ContainsKey(this.Vertex))
                 foreach (DiagramLineBase l in toItem.GetDiagramLinesToDiagramItemDictionary()[this.Vertex])
                     sameFromItemLinesTo.Add(l);
-
-            /*foreach (DiagramLineBase l in toItem.DiagramLines) // OOO
-                if (l.Vertex.Get(false, "ToDiagramItem:") == this.Vertex)
-                    sameFromItemLinesTo.Add(l);*/
 
             int allCnt = sameToItemLines.Count() + sameFromItemLinesTo.Count();
 
@@ -579,7 +551,7 @@ namespace m0.ZeroTypes.UX
             if (toItem == this)
                 allCnt = allCnt / 2;
 
-            foreach (DiagramLineBase l in sameToItemLines)
+            foreach (ILineDecoratorBase l in sameToItemLines)
             {
                 Point start = GetLineAnchorLocation(toItem, new Point(), allCnt, cnt, toItem == this);
 
@@ -593,7 +565,7 @@ namespace m0.ZeroTypes.UX
                 cnt++;
             }
 
-            foreach (DiagramLineBase l in sameFromItemLinesTo)
+            foreach (ILineDecoratorBase l in sameFromItemLinesTo)
             {
                 Point end = GetLineAnchorLocation(toItem, new Point(), allCnt, cnt, false);
 
