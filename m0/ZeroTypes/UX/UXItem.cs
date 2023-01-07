@@ -83,7 +83,15 @@ namespace m0.ZeroTypes.UX
             GraphChangeTrigger.RemoveListener(graphChangeListenerEdge);
 
             TypedEdge.RemoveFromDictionary(this);
-        }        
+        }
+
+        public Dictionary<IVertex, List<ILineDecoratorBase>> GetDiagramLinesToDiagramItemDictionary()
+        {
+            if (needRebuildDiagramLinesDictionary)
+                RebuidDiagramLinesDictionary();
+
+            return DiagramLinesToDiagramItemDictionary;
+        }
 
         public Dictionary<IVertex, List<ILineDecoratorBase>> GetDiagramLinesBaseEdgeToDictionary()
         {
@@ -475,15 +483,7 @@ namespace m0.ZeroTypes.UX
             }
 
             needRebuildDiagramLinesDictionary = false;
-        }
-
-        public Dictionary<IVertex, List<ILineDecoratorBase>> GetDiagramLinesToDiagramItemDictionary()
-        {
-            if (needRebuildDiagramLinesDictionary)
-                RebuidDiagramLinesDictionary();
-
-            return DiagramLinesToDiagramItemDictionary;
-        }
+        }        
 
         // OPTIMISATION END
 
@@ -510,16 +510,6 @@ namespace m0.ZeroTypes.UX
                 this.Foreground = (Brush)FindResource("0ForegroundBrush");
         }       
 
-        public virtual Point GetLineAnchorLocation(IUXItem toItem, Point toPoint, int toItemDiagramLinesCount, int toItemDiagramLinesNumber, bool isSelfStart)
-        {
-            Point p = new Point();
-
-            p.X = Canvas.GetLeft(this) + this.ActualWidth / 2;
-            p.Y = Canvas.GetTop(this) + this.ActualHeight / 2;
-
-            return p;
-        }
-
         private static void AddNewLineOption(IVertex v, UXDecoratorTemplate def, IEdge e)
         {
             IVertex r = m0.MinusZero.Instance.Root;
@@ -541,7 +531,7 @@ namespace m0.ZeroTypes.UX
             List<ILineDecoratorBase> sameFromItemLinesTo = new List<ILineDecoratorBase>();
 
             if (toItem.GetDiagramLinesToDiagramItemDictionary().ContainsKey(this.Vertex))
-                foreach (DiagramLineBase l in toItem.GetDiagramLinesToDiagramItemDictionary()[this.Vertex])
+                foreach (ILineDecoratorBase l in toItem.GetDiagramLinesToDiagramItemDictionary()[this.Vertex])
                     sameFromItemLinesTo.Add(l);
 
             int allCnt = sameToItemLines.Count() + sameFromItemLinesTo.Count();
@@ -580,12 +570,12 @@ namespace m0.ZeroTypes.UX
 
         protected void UpdateDiagramLines()
         {
-            foreach (DiagramLineBase m in DiagramToAsMetaLines)
+            foreach (ILineDecoratorBase m in DiagramToAsMetaLines)
                 m.UpdateMetaPosition();
 
-            List<DiagramItemBase> updatedItems = new List<DiagramItemBase>();
+            List<IUXItem> updatedItems = new List<IUXItem>();
 
-            foreach (DiagramLineBase l in DiagramLines)
+            foreach (ILineDecoratorBase l in DiagramLines)
                 if (!updatedItems.Contains(l.ToDiagramItem))
                 {
                     UpdateDiagramLines(l.ToDiagramItem);
@@ -593,19 +583,14 @@ namespace m0.ZeroTypes.UX
                     updatedItems.Add(l.ToDiagramItem);
                 }
 
-            foreach (DiagramLineBase l in DiagramToLines)
+            foreach (ILineDecoratorBase l in DiagramToLines)
                 if (!updatedItems.Contains(l.FromDiagramItem))
                 {
                     UpdateDiagramLines(l.FromDiagramItem);
 
                     updatedItems.Add(l.FromDiagramItem);
                 }
-
         }
-
-        
-
-
 
         public void HighlightThisAndAllConectedByDiagramLine()
         {
@@ -840,7 +825,7 @@ namespace m0.ZeroTypes.UX
 
         //
 
-        public Point GetLineAnchorLocation(UXItem toItem, Point toPoint, int toItemDiagramLinesCount, int toItemDiagramLinesNumber, bool isSelfStart)
+        public virtual Point GetLineAnchorLocation(IUXItem toItem, Point toPoint, int toItemDiagramLinesCount, int toItemDiagramLinesNumber, bool isSelfStart)
         {
             Point p = new Point();
 

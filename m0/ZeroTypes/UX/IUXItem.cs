@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Controls;
 
 namespace m0.ZeroTypes.UX
@@ -28,6 +29,8 @@ namespace m0.ZeroTypes.UX
         void VertexSetedUp();
 
         void Dispose();
+
+        Dictionary<IVertex, List<ILineDecoratorBase>> GetDiagramLinesToDiagramItemDictionary();
 
         Dictionary<IVertex, List<ILineDecoratorBase>> GetDiagramLinesBaseEdgeToDictionary();
 
@@ -54,7 +57,9 @@ namespace m0.ZeroTypes.UX
         void MoveAndResizeItem(double left, double top, double width, double height);
 
         void AddToSelectedEdges();
-        
+
+        Point GetLineAnchorLocation(IUXItem toItem, Point toPoint, int toItemDiagramLinesCount, int toItemDiagramLinesNumber, bool isSelfStart);
+
         //
         double Scale { get; set; }
        

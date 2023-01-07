@@ -1423,6 +1423,8 @@ namespace m0.UIWpf.UX
 
         public virtual void VertexSetedUp() { }
 
+        public Dictionary<IVertex, List<ILineDecoratorBase>> GetDiagramLinesToDiagramItemDictionary() { return null; }
+
         public Dictionary<IVertex, List<ILineDecoratorBase>> GetDiagramLinesBaseEdgeToDictionary() { return null; }
 
         public virtual void RemoveFromCanvas() { }
@@ -1448,6 +1450,8 @@ namespace m0.UIWpf.UX
         public void MoveAndResizeItem(double left, double top, double width, double height) { }
 
         public void AddToSelectedEdges() { }
+
+        public Point GetLineAnchorLocation(IUXItem toItem, Point toPoint, int toItemDiagramLinesCount, int toItemDiagramLinesNumber, bool isSelfStart) { return new Point(); }
 
         // UXItem
 
