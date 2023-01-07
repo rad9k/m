@@ -282,22 +282,16 @@ namespace m0.ZeroTypes.UX
 
         public void MoveItem(double x, double y)
         {
-            Position pos = this.Position;
-
-            double? _positionX = GraphUtil.GetDoubleValue(Vertex.Get(false, "PositionX:"));
-            double? _positionY = GraphUtil.GetDoubleValue(Vertex.Get(false, "PositionY:"));
-
-            if (_positionX == null || _positionY == null)
+            if (Position == null)
                 return;
 
-            double positionX = (double)_positionX;
-            double positionY = (double)_positionY;
+            Position position = this.Position;
 
-            double deltax = positionX - x;
-            double deltay = positionY - y;
+            double deltax = position.X - x;
+            double deltay = position.Y - y;
 
-            Vertex.Get(false, "PositionX:").Value = x;
-            Vertex.Get(false, "PositionY:").Value = y;
+            position.X = x;
+            position.Y = y;
 
             Canvas.SetLeft(this, x);
             Canvas.SetTop(this, y);
@@ -311,13 +305,51 @@ namespace m0.ZeroTypes.UX
             UpdateDiagramLines();
         }
 
-        public void MoveAndResizeItem(double left, double top, double width, double height) {}
+        public void MoveAndResizeItem(double left, double top, double width, double height)
+        {
+            if (width < 0 || height < 0)
+                return;
 
-        public void AddToSelectedEdges() {}
+            Position position = this.Position;
+
+            position.X = left;
+            position.Y = top;
+
+            Canvas.SetLeft(this, left);
+            Canvas.SetTop(this, top);
+
+            Size size = Size;
+
+            if (size == null)
+                size = SizeCreate();
+
+            size.Width = width;
+            size.Height = height;
+
+            Width = width;
+            Height = height;
+
+            UpdateAnchors(left, top, width, height);
+
+            UpdateDiagramLines();
+        }
+
+        public void AddToSelectedEdges() 
+        {
+            ////////////////////////////////////////
+            Interaction.BeginInteractionWithGraph();
+            //////////////////////////////////////// 
+
+            EdgeHelper.AddEdgeVertexEdgeByEdgeVertex(Diagram.Vertex.Get(false, "SelectedEdges:"), Vertex.Get(false, "BaseEdge:"));
+
+            ////////////////////////////////////////
+            Interaction.EndInteractionWithGraph();
+            //////////////////////////////////////// 
+        }
 
         //        
 
-        
+
 
         public DiagramItemBase(IVertex _baseEdgeVertex)
         {
@@ -715,19 +747,6 @@ namespace m0.ZeroTypes.UX
 
         private bool CanAutomaticallyAddEdges = true;
 
-        public void AddToSelectedEdges()
-        {
-            ////////////////////////////////////////
-            Interaction.BeginInteractionWithGraph();
-            //////////////////////////////////////// 
-
-            EdgeHelper.AddEdgeVertexEdgeByEdgeVertex(Diagram.Vertex.Get(false, "SelectedEdges:"), Vertex.Get(false, "BaseEdge:"));
-
-            ////////////////////////////////////////
-            Interaction.EndInteractionWithGraph();
-            //////////////////////////////////////// 
-        }
-
         public void RemoveFromSelectedEdges()
         {
             ////////////////////////////////////////
@@ -887,29 +906,7 @@ namespace m0.ZeroTypes.UX
 
 
 
-        public void MoveAndResizeItem(double left, double top, double width, double height)
-        {
-            if (width < 0 || height < 0)
-                return;
 
-            Vertex.Get(false, "PositionX:").Value = left;
-            Vertex.Get(false, "PositionY:").Value = top;
-
-            Canvas.SetLeft(this, left);
-            Canvas.SetTop(this, top);
-
-            IVertex r = m0.MinusZero.Instance.Root;
-
-            GraphUtil.SetVertexValue(this.Vertex, r.Get(false, @"System\Meta\Visualiser\Diagram\SizeX"), width);
-            GraphUtil.SetVertexValue(this.Vertex, r.Get(false, @"System\Meta\Visualiser\Diagram\SizeY"), height);
-
-            Width = width;
-            Height = height;
-
-            UpdateAnchors(left, top, width, height);
-
-            UpdateDiagramLines();
-        }
 
         private void UpdateAnchors(double left, double top, double width, double height)
         {
