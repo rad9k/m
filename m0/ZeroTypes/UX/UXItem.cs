@@ -15,6 +15,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Shapes;
 using static m0.Graph.ExecutionFlow.ExecutionFlowHelper;
 
 namespace m0.ZeroTypes.UX
@@ -596,13 +597,13 @@ namespace m0.ZeroTypes.UX
         {
             Highlight();
 
-            foreach (DiagramLineBase l in DiagramLines)
+            foreach (ILineDecoratorBase l in DiagramLines)
             {
                 l.Highlight();
                 l.ToDiagramItem.Highlight();
             }
 
-            foreach (DiagramLineBase l in DiagramToLines)
+            foreach (ILineDecoratorBase l in DiagramToLines)
             {
                 l.Highlight();
                 l.FromDiagramItem.Highlight();
@@ -613,13 +614,13 @@ namespace m0.ZeroTypes.UX
         {
             Unhighlight();
 
-            foreach (DiagramLineBase l in DiagramLines)
+            foreach (ILineDecoratorBase l in DiagramLines)
             {
                 l.Unhighlight();
                 l.ToDiagramItem.Unhighlight();
             }
 
-            foreach (DiagramLineBase l in DiagramToLines)
+            foreach (ILineDecoratorBase l in DiagramToLines)
             {
                 l.Unhighlight();
                 l.FromDiagramItem.Unhighlight();
@@ -802,10 +803,6 @@ namespace m0.ZeroTypes.UX
             e.Handled = true;
         }
 
-
-
-
-
         private void UpdateAnchors(double left, double top, double width, double height)
         {
             double right = left + width;
@@ -825,8 +822,14 @@ namespace m0.ZeroTypes.UX
 
         //
 
-        public virtual Point GetLineAnchorLocation(IUXItem toItem, Point toPoint, int toItemDiagramLinesCount, int toItemDiagramLinesNumber, bool isSelfStart)
+        public virtual Point GetLineAnchorLocation(IUXItem _toItem, Point toPoint, int toItemDiagramLinesCount, int toItemDiagramLinesNumber, bool isSelfStart)
         {
+            if (!(_toItem is FrameworkElement))
+                return new Point();
+
+            FrameworkElement toItem = (FrameworkElement)_toItem;
+
+
             Point p = new Point();
 
             Point pTo = new Point();

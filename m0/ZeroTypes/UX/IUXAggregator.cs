@@ -5,13 +5,37 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Controls;
 
 namespace m0.ZeroTypes.UX
 {
+    public enum ClickTargetEnum
+    {
+        MouseUpOrLeave, Selection, Item, AnchorLeftTop, AnchorMiddleTop, AnchorRightTop_CreateDiagramLine, AnchorLeftMiddle, AnchorRightMiddle, AnchorLeftBottom, AnchorMiddleBottom, AnchorRightBottom
+    }
+
     public interface IUXAggregator: IUXItem
     {
         Canvas TheCanvas { get; }
+
+        bool IsSelecting { get; }
+
+        bool IsDrawingLine { get; }
+
+        double LineSelectionDelta { get; }
+
+        double ClickPositionX_ItemCordinates { get; set; }
+        double ClickPositionY_ItemCordinates { get; set; }
+
+        double ClickPositionX_AnchorCordinates { get; set; }
+        double ClickPositionY_AnchorCordinates { get; set; }
+
+        IUXItem ClickedItem { get; set; }
+
+        ClickTargetEnum ClickTarget { get; set; }
+
+        FrameworkElement ClickedAnchor { get; set; }
 
         //
 
@@ -23,9 +47,7 @@ namespace m0.ZeroTypes.UX
 
         void UnselectAllSelectedEdges();
 
-        void CheckAndUpdateDiagramLinesForItem(IUXItem item);
-
-        double LineSelectionDelta { get; }
+        void CheckAndUpdateDiagramLinesForItem(IUXItem item);        
 
         //
 

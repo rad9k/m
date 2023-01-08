@@ -25,10 +25,6 @@ using m0.ZeroTypes.UX;
 
 namespace m0.UIWpf.UX
 {
-    public enum ClickTargetEnum
-    {
-        MouseUpOrLeave, Selection, Item, AnchorLeftTop, AnchorMiddleTop, AnchorRightTop_CreateDiagramLine, AnchorLeftMiddle, AnchorRightMiddle, AnchorLeftBottom, AnchorMiddleBottom, AnchorRightBottom
-    }
 
     public class MetaToPair
     {
@@ -48,28 +44,31 @@ namespace m0.UIWpf.UX
 
         public Canvas TheCanvas { get; set; }
 
-        public bool IsSelecting = false;
+        public bool IsSelecting { get; set; }
 
-        public bool IsDrawingLine = false;
+        public bool IsDrawingLine { get; set; }
+
+        public double ClickPositionX_ItemCordinates { get; set; }
+        public double ClickPositionY_ItemCordinates { get; set; }
+
+        public double ClickPositionX_AnchorCordinates { get; set; }
+        public double ClickPositionY_AnchorCordinates { get; set; }
+
+        public IUXItem ClickedItem { get; set; }
+
+        public ClickTargetEnum ClickTarget { get; set; }
+
+        public FrameworkElement ClickedAnchor { get; set; }
+
+        //
 
         public Line CreatedDiagramLine;
 
-        public FrameworkElement ClickedAnchor;
-
         public SelectionArea SelectionArea;
-
-        public ClickTargetEnum ClickTarget;
-
-        public IUXItem ClickedItem;
 
         public IUXItem HighlightedItem;
 
-        public double ClickPositionX_ItemCordinates;
-        public double ClickPositionY_ItemCordinates;
 
-        public double ClickPositionX_AnchorCordinates;
-        public double ClickPositionY_AnchorCordinates;
-        
         public bool IsPaiting = false;
 
         bool IsFirstPainted = false;
