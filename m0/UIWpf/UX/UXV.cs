@@ -1315,18 +1315,26 @@ namespace m0.UIWpf.UX
             return r;
         }
 
-        public UXDecoratorTemplate GetLineDefinition(IEdge e,IVertex Vertex, IUXItem toItem){
-            if (GeneralUtil.CompareStrings(Vertex.Get(false, "Definition:"), "Vertex")) // Vertex / Edge
-                return Vertex.Get(false, @"Definition:\DiagramLineDefinition:Edge");
+        public UXDecoratorTemplate GetLineDefinition(IEdge e, ILineDecoratorBase line, IUXItem toItem){
+            // Vertex / Edge handling
+            if (GraphUtil.GetValueAndCompareStrings(line.UXTemplate.Vertex, "Vertex"))
+            {
+                foreach(UXDecoratorTemplate tem in line.UXTemplate.DecoratorTemplates)
+            }
+            
 
-            foreach (IEdge def in Vertex.GetAll(false, @"Definition:\DiagramLineDefinition:"))
+
+            if (GeneralUtil.CompareStrings(line.Get(false, "Definition:"), "Vertex")) // Vertex / Edge
+                return line.Get(false, @"Definition:\DiagramLineDefinition:Edge");
+
+            foreach (IEdge def in line.GetAll(false, @"Definition:\DiagramLineDefinition:"))
             {
                 bool canReturn=true;
 
                 if(def.To.Get(false, "EdgeTestQuery:")!=null){
                     canReturn=false;
 
-                    foreach (IEdge toTest in Vertex.GetAll(false, @"BaseEdge:\To:\" + def.To.Get(false, "EdgeTestQuery:")))
+                    foreach (IEdge toTest in line.GetAll(false, @"BaseEdge:\To:\" + def.To.Get(false, "EdgeTestQuery:")))
                         if (toTest.To == e.Meta)
                             canReturn = true;
                 }
