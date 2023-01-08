@@ -1286,7 +1286,7 @@ namespace m0.UIWpf.UX
 
                     foreach (IUXItem toDiagramItem in toDiagramItems)
                     {
-                        IVertex lineDef = GetLineDefinition(e, item.Vertex, toDiagramItem);
+                        UXDecoratorTemplate lineDef = GetLineDefinition(e, item.Vertex, toDiagramItem);
 
                         if (lineDef != null)
                             item.AddDiagramLineVertex(e, lineDef, toDiagramItem);                        
@@ -1315,7 +1315,7 @@ namespace m0.UIWpf.UX
             return r;
         }
 
-        public IVertex GetLineDefinition(IEdge e,IVertex Vertex, IUXItem toItem){
+        public UXDecoratorTemplate GetLineDefinition(IEdge e,IVertex Vertex, IUXItem toItem){
             if (GeneralUtil.CompareStrings(Vertex.Get(false, "Definition:"), "Vertex")) // Vertex / Edge
                 return Vertex.Get(false, @"Definition:\DiagramLineDefinition:Edge");
 
