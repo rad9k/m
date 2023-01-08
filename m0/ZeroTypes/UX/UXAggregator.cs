@@ -4,17 +4,40 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Windows;
+using System.Windows.Controls;
 using System.Threading.Tasks;
 
 namespace m0.ZeroTypes.UX
 {
-    public class UXAggregator: UXItem, IUXAggregator
+    public class UXAggregator : UXItem, IUXAggregator
     {
+        public Canvas TheCanvas { get; set; }
+
+        public bool IsSelecting { get; set; }
+
+        public bool IsDrawingLine { get; set; }
+
+        public double ClickPositionX_ItemCordinates { get; set; }
+        public double ClickPositionY_ItemCordinates { get; set; }
+
+        public double ClickPositionX_AnchorCordinates { get; set; }
+        public double ClickPositionY_AnchorCordinates { get; set; }
+
+        public IUXItem ClickedItem { get; set; }
+
+        public ClickTargetEnum ClickTarget { get; set; }
+
+        public FrameworkElement ClickedAnchor { get; set; }
+
+
         public Dictionary<IVertex, List<IUXItem>> GetItemsDictionary() { return null; }
         public double LineSelectionDelta { get; }
         public void AddEdgesFromDefintion(IVertex baseVertex, IVertex definitionEdges) { }
         public void SetFocus() { }
         public void UnselectAllSelectedEdges() { }
+
+        public void CheckAndUpdateDiagramLinesForItem(IUXItem item) { }
 
         //
 

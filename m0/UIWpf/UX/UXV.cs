@@ -38,9 +38,9 @@ namespace m0.UIWpf.UX
     {
         bool IsVisualiser = false;
 
-        //
-
         public AtomVisualiserHelper VisualiserHelper { get; set; }
+
+        //
 
         public Canvas TheCanvas { get; set; }
 
