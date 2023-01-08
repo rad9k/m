@@ -1318,29 +1318,30 @@ namespace m0.UIWpf.UX
         public UXDecoratorTemplate GetLineDefinition(IEdge e, ILineDecoratorBase line, IUXItem toItem){
             // Vertex / Edge handling
             if (GraphUtil.GetValueAndCompareStrings(line.UXTemplate.Vertex, "Vertex"))
-            {
-                foreach(UXDecoratorTemplate tem in line.UXTemplate.DecoratorTemplates)
-            }
-            
-
-
-            if (GeneralUtil.CompareStrings(line.Get(false, "Definition:"), "Vertex")) // Vertex / Edge
-                return line.Get(false, @"Definition:\DiagramLineDefinition:Edge");
-
-            foreach (IEdge def in line.GetAll(false, @"Definition:\DiagramLineDefinition:"))
+                return new UXDecoratorTemplate(line.Vertex.GetAll(false, @"Definition:\DiagramLineDefinition:Edge").FirstOrDefault());
+           
+            foreach (UXDecoratorTemplate tem in line.UXTemplate.DecoratorTemplates)            
             {
                 bool canReturn=true;
 
-                if(def.To.Get(false, "EdgeTestQuery:")!=null){
+                string edgeTestQuery = tem.EdgeTestQuery;
+
+                if(edgeTestQuery != null){
                     canReturn=false;
 
-                    foreach (IEdge toTest in line.GetAll(false, @"BaseEdge:\To:\" + def.To.Get(false, "EdgeTestQuery:")))
+                    foreach (IEdge toTest in line.BaseEdgeTo.GetAll(false, edgeTestQuery))
                         if (toTest.To == e.Meta)
                             canReturn = true;
                 }
 
-                if (canReturn && def.To.Get(false, "ToDiagramItemTestQuery:") != null && toItem.Vertex.Get(false, (string)def.To.Get(false, "ToDiagramItemTestQuery:").Value) != null)
-                    return def.To;
+                if (canReturn)
+                {
+                    string toDiagramItemTestQuery = tem.ToDiagramItemTestQuery;
+
+                    if (toDiagramItemTestQuery != null
+                        && toItem.Vertex.Get(false, toDiagramItemTestQuery) != null)
+                        return tem;
+                }
             }
 
             return null;           
