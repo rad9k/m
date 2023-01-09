@@ -26,7 +26,7 @@ namespace m0.ZeroTypes.UX
     {
         IPlatformClass ContentVisualiser;
 
-        public RectangleItem() : base(null)
+        public RectangleItem() : base(new ZeroTypes.Edge(null))
         {
 
         }
