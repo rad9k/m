@@ -376,7 +376,7 @@ namespace m0.UIWpf.Visualisers.Diagram
 
                     if (test == null)
                     {
-                        bool? ForceShowEditForm = null; // ForceShowEditForm
+                        bool ForceShowEditForm = false; // ForceShowEditForm
 
                         if (a.Get(false, @"OptionDiagramLineDefinition:\ForceShowEditForm:") != null)
                         {

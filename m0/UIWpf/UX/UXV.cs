@@ -1286,7 +1286,7 @@ namespace m0.UIWpf.UX
 
                     foreach (IUXItem toDiagramItem in toDiagramItems)
                     {
-                        UXDecoratorTemplate lineDef = GetLineDefinition(e, item.Vertex, toDiagramItem);
+                        UXDecoratorTemplate lineDef = GetLineDefinition(e, item, toDiagramItem);
 
                         if (lineDef != null)
                             item.AddDiagramLineVertex(e, lineDef, toDiagramItem);                        
@@ -1315,12 +1315,12 @@ namespace m0.UIWpf.UX
             return r;
         }
 
-        public UXDecoratorTemplate GetLineDefinition(IEdge e, ILineDecoratorBase line, IUXItem toItem){
+        public UXDecoratorTemplate GetLineDefinition(IEdge e, IUXItem item, IUXItem toItem){
             // Vertex / Edge handling
-            if (GraphUtil.GetValueAndCompareStrings(line.UXTemplate.Vertex, "Vertex"))
-                return new UXDecoratorTemplate(line.Vertex.GetAll(false, @"Definition:\DiagramLineDefinition:Edge").FirstOrDefault());
+            if (GraphUtil.GetValueAndCompareStrings(item.UXTemplate.Vertex, "Vertex"))
+                return new UXDecoratorTemplate(item.Vertex.GetAll(false, @"Definition:\DiagramLineDefinition:Edge").FirstOrDefault());
            
-            foreach (UXDecoratorTemplate tem in line.UXTemplate.DecoratorTemplates)            
+            foreach (UXDecoratorTemplate tem in item.UXTemplate.DecoratorTemplates)            
             {
                 bool canReturn=true;
 
@@ -1329,7 +1329,7 @@ namespace m0.UIWpf.UX
                 if(edgeTestQuery != null){
                     canReturn=false;
 
-                    foreach (IEdge toTest in line.BaseEdgeTo.GetAll(false, edgeTestQuery))
+                    foreach (IEdge toTest in item.BaseEdgeTo.GetAll(false, edgeTestQuery))
                         if (toTest.To == e.Meta)
                             canReturn = true;
                 }
