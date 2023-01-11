@@ -1320,6 +1320,12 @@ namespace m0.ZeroTypes.UX
         {
             IEdge newEdge = VertexOperations.AddInstanceAndReturnEdge(Vertex, typeVertex, Item_meta);
 
+            if (GraphUtil.GetValueAndCompareStrings(typeVertex, "UXItem"))
+                return (IItem)TypedEdge.Get(newEdge, typeof(ZeroTypes.UX.UXItem));
+
+            if (GraphUtil.GetValueAndCompareStrings(typeVertex, "UXAggregator"))
+                return (IItem)TypedEdge.Get(newEdge, typeof(ZeroTypes.UX.UXAggregator));
+
             return (IItem)TypedEdge.Get(newEdge);
         }
 

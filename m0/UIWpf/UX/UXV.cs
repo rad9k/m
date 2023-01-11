@@ -1264,7 +1264,11 @@ namespace m0.UIWpf.UX
                 edges = item_BaseEdgeTo.OutEdgesRaw;
             else
                 edges = item_BaseEdgeTo;
-            
+
+            ////////////////////////////////////////
+            Interaction.BeginInteractionWithGraph();
+            ////////////////////////////////////////
+
             foreach (IEdge e in item_BaseEdgeTo)
             {
                 List<IUXItem> toDiagramItems = null;
@@ -1293,6 +1297,10 @@ namespace m0.UIWpf.UX
                     }
                 }           
             }
+
+            ////////////////////////////////////////
+            Interaction.EndInteractionWithGraph();
+            ////////////////////////////////////////
         }
 
         protected List<IUXItem> GetItemsByBaseEdgeTo_ForLines(IEdge toEdge) // MAX TOO

@@ -113,7 +113,7 @@ namespace m0
 
         IUXItem UXAdd(UXItem a, IVertex v)
         {
-            IUXItem i1 = (IUXItem)a.AddItem(UXAggregatorType);
+            IUXItem i1 = (IUXItem)a.AddItem(UXAggregatorType);//, typeof(ZeroTypes.UX.UXAggregator));
 
             i1.UXTemplate = new UXTemplate(template);
             i1.Layout = LayoutTypeEnum.Manual;
