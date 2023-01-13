@@ -106,10 +106,12 @@ namespace m0.UIWpf.Visualisers
             }
         }
 
-        protected T Parse(object val)
+        protected T Parse(object _val)
         {
-            if (val is T)
-                return (T)val;
+            if (_val is T)
+                return (T)_val;
+
+            string val = _val.ToString();
 
             if (val is string) {
                 if (typeof(T) == typeof(int?))
@@ -401,8 +403,11 @@ namespace m0.UIWpf.Visualisers
 
                 T value = Parse(bv.Value);
 
-                if(value==null)
-                    value = (T)bv.Value;
+                if (value == null)
+                    try
+                    {
+                        value = (T)bv.Value;
+                    }catch(Exception e) { }
                 
                 CreateComposite();
                 IsNull = false;
