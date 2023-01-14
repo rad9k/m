@@ -24,6 +24,8 @@ namespace m0.UIWpf.Visualisers
 {
     public class TableVisualiser : ListVisualiser
     {
+        static IVertex ToShowEdgesMeta_meta = MinusZero.Instance.root.Get(false, @"System\Meta\Visualiser\Table\ToShowEdgesMeta");
+        static IVertex FilterQuery_meta = MinusZero.Instance.root.Get(false, @"System\Meta\Visualiser\Table\FilterQuery");
 
         static string[] _MetaTriggeringUpdateVertex = new string[] { "ExpertMode" };
         public override string[] MetaTriggeringUpdateVertex { get { return _MetaTriggeringUpdateVertex; } }
@@ -211,8 +213,8 @@ namespace m0.UIWpf.Visualisers
 
                         ExecutionFlowHelper.GraphChangeWatchOff();
 
-                        //if (Vertex.Get(false, @"ToShowEdgesMeta:") == null)
-                          //  Vertex.AddVertex(MinusZero.Instance.root.Get(false, @"System\Meta\Visualiser\Table\ToShowEdgesMeta") , null);
+                        if (Vertex.Get(false, @"ToShowEdgesMeta:") == null)
+                            Vertex.AddVertex(ToShowEdgesMeta_meta , null);
 
                         EdgeHelper.AddEdgeVertexEdges(Vertex.Get(false, @"ToShowEdgesMeta:"), e);
 
@@ -224,7 +226,7 @@ namespace m0.UIWpf.Visualisers
                 {
                     ExecutionFlowHelper.GraphChangeWatchOff();
 
-                    Vertex.Get(false, @"FilterQuery:").Value = ToShowEdgesMeta.Value+":";
+                    GraphUtil.SetVertexValue(Vertex, FilterQuery_meta, ToShowEdgesMeta.Value + ":");                    
 
                     ExecutionFlowHelper.GraphChangeWatchOn();
                 }
