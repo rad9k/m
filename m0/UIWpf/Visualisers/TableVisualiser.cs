@@ -82,8 +82,9 @@ namespace m0.UIWpf.Visualisers
             if (ToShowEdgesMeta != null)
             {
                 childs = VertexOperations.GetChildEdges(ToShowEdgesMeta);
+               
                 foreach (IEdge e in childs)
-                    if (e.To.Get(false, "$Hide:") == null)
+                    if (e.To.Get(false, "$Hide:") == null) // need refactor to VisualiserUtil.Filter
                         AddColumn((string)e.To.Value, "To[" + (string)e.To.Value + "]");
 
                 if (ExpertMode)
@@ -174,8 +175,7 @@ namespace m0.UIWpf.Visualisers
         }
 
         protected override void SetVertexDefaultValues()
-        {
-            //Vertex.Get(false, "IsMetaRightAlign:").Value = "False";
+        {            
             Vertex.Get(false, "IsAllVisualisersEdit:").Value = "False";
             Vertex.Get(false, "ShowHeader:").Value = "True";
             Vertex.Get(false, "ExpertMode:").Value = "False";
@@ -211,8 +211,8 @@ namespace m0.UIWpf.Visualisers
 
                         ExecutionFlowHelper.GraphChangeWatchOff();
 
-                        if (Vertex.Get(false, @"ToShowEdgesMeta:") == null)
-                            Vertex.AddVertex(MinusZero.Instance.root.Get(false, @"System\Meta\Visualiser\Table\ToShowEdgesMeta") , null);
+                        //if (Vertex.Get(false, @"ToShowEdgesMeta:") == null)
+                          //  Vertex.AddVertex(MinusZero.Instance.root.Get(false, @"System\Meta\Visualiser\Table\ToShowEdgesMeta") , null);
 
                         EdgeHelper.AddEdgeVertexEdges(Vertex.Get(false, @"ToShowEdgesMeta:"), e);
 
