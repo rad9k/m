@@ -388,10 +388,13 @@ namespace m0.ZeroTypes.UX
             {
                 ILineDecoratorBase toRemove = null;
 
-                foreach (ILineDecoratorBase l in DiagramLines) // >> Decorator
-                    if (l.Vertex.Get(false, @"BaseEdge:\Meta:") == edgeVertex.Get(false, "Meta:") &&
-                        l.Vertex.Get(false, @"BaseEdge:\To:") == edgeVertex.Get(false, "To:"))
+                foreach (ILineDecoratorBase l in DiagramLines)
+                { // >> Decorator
+                    IEdge l_baseEdge = l.BaseEdge;
+                    if (l_baseEdge:\Meta:") == edgeVertex.Get(false, "Meta:") &&
+                        l_baseEdge:\To:") == edgeVertex.Get(false, "To:"))
                         toRemove = l;
+                }
 
                 if (toRemove != null)
                     RemoveDiagramLine(toRemove);

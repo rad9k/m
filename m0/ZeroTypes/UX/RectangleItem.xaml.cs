@@ -166,14 +166,19 @@ namespace m0.ZeroTypes.UX
         {
             base.Unselect();
 
-            this.Frame.Background = BackgroundColor;
+            Brush backgroundBrush = BackgroundColor.GetBrush();
 
-            this.Title.Foreground = ForegroundColor;
-            this.Foreground = ForegroundColor;
+            Brush foregroundBrush = ForegroundColor.GetBrush();
 
-            this.InternalFrame.BorderBrush = ForegroundColor;
 
-            this.Frame.BorderBrush = ForegroundColor;
+            this.Frame.Background = backgroundBrush;
+
+            this.Title.Foreground = foregroundBrush;
+            this.Foreground = foregroundBrush;
+
+            this.InternalFrame.BorderBrush = foregroundBrush;
+
+            this.Frame.BorderBrush = foregroundBrush;
 
             this.Title.Cursor = Cursors.Arrow;
         }
@@ -193,18 +198,22 @@ namespace m0.ZeroTypes.UX
 
         public override void Unhighlight()
         {
-            this.Foreground = ForegroundColor; 
+            Brush backgroundBrush = BackgroundColor.GetBrush();
 
-            this.Frame.Background = BackgroundColor;
-            this.Frame.BorderBrush = ForegroundColor;
+            Brush foregroundBrush = ForegroundColor.GetBrush();
 
-            this.InternalFrame.BorderBrush = ForegroundColor;           
-            this.Title.Foreground = ForegroundColor;
+            this.Foreground = foregroundBrush; 
+
+            this.Frame.Background = backgroundBrush;
+            this.Frame.BorderBrush = foregroundBrush;
+
+            this.InternalFrame.BorderBrush = foregroundBrush;
+            this.Title.Foreground = foregroundBrush;
             
             base.Unhighlight();
         }
 
-        protected virtual INoInEdgeInOutVertexVertex VertexChange(IExecution exe)        
+        protected override INoInEdgeInOutVertexVertex VertexChange(IExecution exe)        
         {
             IVertex changedVertex = exe.Stack.Get(false, @"event:\ChangedVertex:");
 
