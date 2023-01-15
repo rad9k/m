@@ -226,9 +226,9 @@ namespace m0.ZeroTypes.UX
                 }
             }
 
-            return exe.Stack;
+            //return exe.Stack;
 
-            //return base.VertexChange(exe);
+            return base.VertexChange(exe);
         }
         
         // UNDER        

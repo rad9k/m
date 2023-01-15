@@ -204,7 +204,7 @@ namespace m0.UIWpf.Visualisers.Diagram
             base.Unhighlight();
         }
 
-        protected virtual INoInEdgeInOutVertexVertex VertexChange(IExecution exe)        
+        protected override INoInEdgeInOutVertexVertex VertexChange(IExecution exe)        
         {
             IVertex changedVertex = exe.Stack.Get(false, @"event:\ChangedVertex:");
 
