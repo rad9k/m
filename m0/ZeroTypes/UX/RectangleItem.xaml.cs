@@ -28,13 +28,13 @@ namespace m0.ZeroTypes.UX
 
         public RectangleItem() : base(new ZeroTypes.Edge(null))
         {
-
+            InitializeComponent();
         }
 
-        //  public RectangleItem(IVertex baseEdgeVertex, IVertex parentVisualiser) : base(baseEdgeVertex)  {
-        //    InitializeComponent();
-        //}
-    
+        public RectangleItem(IEdge edge) : base(edge) {
+            InitializeComponent();
+        }
+
         public override void VertexSetedUp()
         {
             if (VisualiserClass != null)        
@@ -237,8 +237,6 @@ namespace m0.ZeroTypes.UX
         static IVertex RoundEdgeSize_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\RectangleItem\RoundEdgeSize");
         static IVertex VisualiserClass_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\RectangleItem\VisualiserClass");
         static IVertex VisualiserVertex_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\RectangleItem\VisualiserVertex");
-
-        public RectangleItem(IEdge edge) : base(edge) { }
 
         public bool ShowMeta
         {

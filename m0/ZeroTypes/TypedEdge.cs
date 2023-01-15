@@ -24,7 +24,8 @@ namespace m0.ZeroTypes
 
             vertex = _edge.To;
 
-            vertexDictionary.Add(this.Edge.To, this);
+            if(!vertexDictionary.ContainsKey(this.edge.To))
+                vertexDictionary.Add(this.Edge.To, this);
         }
 
         static public void RemoveFromDictionary(ITypedEdge e)

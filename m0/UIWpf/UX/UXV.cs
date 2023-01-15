@@ -100,7 +100,7 @@ namespace m0.UIWpf.UX
 
         public UXV(IVertex baseEdgeVertex, IVertex parentVisualiser)
         {
-            if(VisualisersList.GetVisualiser(baseEdgeVertex) != null)
+            if(VisualisersList.GetVisualiser(baseEdgeVertex.Get(false, "To:")) != null)
             {
                 UserInteractionUtil.ShowError("Diagram Visualiser", "There is allready Diagram Visualiser opened for this Edge");
 
@@ -164,7 +164,7 @@ namespace m0.UIWpf.UX
 
         public IUXItem GetUXItem(IItem i)
         {
-            if (i is ZeroTypes.UX.UXItem)
+            if (GraphUtil.ExistQueryOut(i.Vertex, "$Is", "Wrap"))
                 return null;
 
             if (i is IUXItem)
@@ -466,6 +466,9 @@ namespace m0.UIWpf.UX
 
         public void OnLoad(object sender, RoutedEventArgs e)
         {
+            if (IsFirstPainted)
+                return;
+
             SetFocus();
 
             PaintDiagram();
