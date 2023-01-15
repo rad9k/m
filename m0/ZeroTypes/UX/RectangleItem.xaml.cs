@@ -31,16 +31,13 @@ namespace m0.ZeroTypes.UX
 
         }
 
-
         //  public RectangleItem(IVertex baseEdgeVertex, IVertex parentVisualiser) : base(baseEdgeVertex)  {
         //    InitializeComponent();
         //}
-/*
     
         public override void VertexSetedUp()
         {
-            if (VisualiserClass != null)
-            if (Vertex.Get(false, "VisualiserClass:") != null)
+            if (VisualiserClass != null)        
             {
                 ContentVisualiser = PlatformClass.CreatePlatformObject(VisualiserClass, BaseEdge);                
 
@@ -53,64 +50,65 @@ namespace m0.ZeroTypes.UX
                 InternalFrame.BorderThickness = new Thickness(0);
                 ContentVisualiser = null;
             }
-
-           
-           
+                    
             if (VisualiserVertex != null && ContentVisualiser != null)
                 Diagram.AddEdgesFromDefintion(ContentVisualiser.Vertex, VisualiserVertex);
 
             base.VertexSetedUp();
         }
-        */
-        /*
+        
         public override void VisualiserUpdate()
         {
             base.VisualiserUpdate();
 
-            if (Vertex.Get(false, "ShowMeta:False") != null)
+            if(ShowMeta)            
             {
-                if (Vertex.Get(false, @"BaseEdge:\To:").Value != null)
-                    this.Title.Text = Vertex.Get(false, @"BaseEdge:\To:").Value.ToString();
+                IVertex baseEdgeTo = BaseEdgeTo;
+
+                if (baseEdgeTo != null)
+                    this.Title.Text = baseEdgeTo.Value.ToString();
                 else
                     this.Title.Text = "Ø";
             }
             else
             {
-                string mtext, ttext;
+                IEdge baseEdge = BaseEdge;
+                IVertex baseEdgeTo = baseEdge.To;
+                IVertex baseEdgeMeta = baseEdge.Meta;
 
-                if (Vertex.Get(false, @"BaseEdge:\Meta:").Value != null)
-                    mtext = Vertex.Get(false, @"BaseEdge:\Meta:").Value.ToString();
+                string meta_text, to_text;
+
+                if (baseEdgeMeta != null)
+                    meta_text = baseEdgeMeta.Value.ToString();
                 else
-                    mtext = "Ø";
+                    meta_text = "Ø";
 
-                if (Vertex.Get(false, @"BaseEdge:\To:").Value != null)
-                    ttext = Vertex.Get(false, @"BaseEdge:\To:").Value.ToString();
+                if (baseEdgeTo != null)
+                    to_text = baseEdgeTo.Value.ToString();
                 else
-                    ttext = "Ø";
+                    to_text = "Ø";
 
-                this.Title.Text = mtext + " : " + ttext;
+                this.Title.Text = meta_text + " : " + to_text;
             }
 
 
-            int? _esize = GraphUtil.GetIntegerValue(Vertex.Get(false, "RoundEdgeSize:"));
+            double roundEdgeSize = RoundEdgeSize;
 
-            if (_esize != null)
-            {
-                int esize = (int)_esize;
+            if (roundEdgeSize != 0)
+            {                
+                this.Frame.CornerRadius = new CornerRadius(RoundEdgeSize);
 
-                this.Frame.CornerRadius = new CornerRadius(esize);
-
-                if (Vertex.Get(false, "VisualiserClass:") != null)
+                if (VisualiserClass != null)
                 {
-                    this.Title.Margin = new Thickness(esize, esize, esize, 0);
+                    this.Title.Margin = new Thickness(RoundEdgeSize, RoundEdgeSize, RoundEdgeSize, 0);
 
-                    ((FrameworkElement)this.ContentVisualiser).Margin = new Thickness(esize, 0, esize, esize);
+                    ((FrameworkElement)this.ContentVisualiser).Margin = new Thickness(RoundEdgeSize, 0, RoundEdgeSize, RoundEdgeSize);
 
-                    TheGrid.RowDefinitions[0].Height = new GridLength(18 + esize);
+                    TheGrid.RowDefinitions[0].Height = new GridLength(18 + RoundEdgeSize);
                 }
                 else
                 {
-                    this.Title.Margin = new Thickness(esize);
+                    this.Title.Margin = new Thickness(RoundEdgeSize);
 
                     this.Title.TextWrapping = TextWrapping.Wrap;
 
@@ -120,18 +118,22 @@ namespace m0.ZeroTypes.UX
                 }
             }
 
-            this.Frame.Background = BackgroundColor;
+            Brush backgroundBrush = BackgroundColor.GetBrush();
 
-            this.Title.Foreground = ForegroundColor;
+            Brush foregroundBrush = ForegroundColor.GetBrush();
 
-            this.InternalFrame.BorderBrush = ForegroundColor;
+            this.Frame.Background = backgroundBrush;
 
-            this.Frame.BorderBrush = ForegroundColor;
+            this.Title.Foreground = foregroundBrush;
+
+            this.InternalFrame.BorderBrush = foregroundBrush;
+
+            this.Frame.BorderBrush = foregroundBrush;
 
             if (ContentVisualiser != null) // not always works, but can
             {
-                GeneralUtil.SetPropertyIfPresent(ContentVisualiser, "Foreground", ForegroundColor);
-                GeneralUtil.SetPropertyIfPresent(ContentVisualiser, "Background", BackgroundColor);
+                GeneralUtil.SetPropertyIfPresent(ContentVisualiser, "Foreground", foregroundBrush);
+                GeneralUtil.SetPropertyIfPresent(ContentVisualiser, "Background", backgroundBrush);
             }
 
             if (LineWidth != 0)
@@ -219,7 +221,7 @@ namespace m0.ZeroTypes.UX
 
             //return base.VertexChange(exe);
         }
-        */
+        
         // UNDER        
 
         static IVertex ShowMeta_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\RectangleItem\ShowMeta");
