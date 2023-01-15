@@ -391,8 +391,8 @@ namespace m0.ZeroTypes.UX
                 foreach (ILineDecoratorBase l in DiagramLines)
                 { // >> Decorator
                     IEdge l_baseEdge = l.BaseEdge;
-                    if (l_baseEdge:\Meta:") == edgeVertex.Get(false, "Meta:") &&
-                        l_baseEdge:\To:") == edgeVertex.Get(false, "To:"))
+                    if (l_baseEdge.Meta == edgeVertex.Get(false, "Meta:") &&
+                        l_baseEdge.To == edgeVertex.Get(false, "To:"))
                         toRemove = l;
                 }
 
