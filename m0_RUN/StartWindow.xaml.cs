@@ -74,9 +74,12 @@ namespace m0
         }
 
         static IVertex r = null; 
+
         static IVertex UXTest = null;
         static IVertex UXAggregatorType = null;
         static IVertex UXItemType = null;
+        static IVertex RectangleItem = null;
+
         static IEdge template = null;
 
         void ExtraRun8()
@@ -88,6 +91,8 @@ namespace m0
             UXAggregatorType = r.Get(false, @"System\Meta\ZeroTypes\UX\UXAggregator");
 
             UXItemType = r.Get(false, @"System\Meta\ZeroTypes\UX\UXItem");
+
+            RectangleItem = r.Get(false, @"System\Meta\ZeroTypes\UX\RectangleItem");
 
             template = r.GetAll(false, @"System\Data\UX\Templates\ZeroUML\Vertex").First();
 
@@ -113,7 +118,7 @@ namespace m0
 
         IUXItem UXAdd(UXItem a, IVertex v)
         {
-            IUXItem i1 = (IUXItem)a.AddItem(UXAggregatorType);//, typeof(ZeroTypes.UX.UXAggregator));
+            IUXItem i1 = (IUXItem)a.AddItem(RectangleItem);
 
             i1.UXTemplate = new UXTemplate(template);
             i1.Layout = LayoutTypeEnum.Manual;
