@@ -192,10 +192,6 @@ namespace m0.ZeroTypes.UX
                     UserInteractionUtil.ShowError(Diagram.Vertex.Value + " Diagram", "Adding new diagram line  \"" + a.Value + "\" is not possible.\n\n" + test.Value);
             }
         }
-
-        ////////////// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-        /// NEED TO move begin / end to the loop
-        ///////////////////////////////////////////////////////////////////
         
         public void AddDiagramLineVertex(IEdge edge, UXDecoratorTemplate diagramLineDefinition, IUXItem toItem)        
         {
