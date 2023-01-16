@@ -723,20 +723,36 @@ namespace m0.UIWpf.UX
             foreach (Rectangle r in MovingSprites)
                 TheCanvas.Children.Remove(r);
 
+            ////////////////////////////////////////
+            Interaction.BeginInteractionWithGraph();
+            //////////////////////////////////////// 
+
             foreach (IEdge ed in Vertex.GetAll(false, @"SelectedEdges:\{$Is:Edge}"))
                 foreach (IUXItem item in GetItemsByBaseEdge(ed.To))
                         item.MoveItem(item.Position.X + x, item.Position.Y + y);
+
+            ////////////////////////////////////////
+            Interaction.EndInteractionWithGraph();
+            //////////////////////////////////////// 
         }
 
         protected void MouseMoveHandler(object sender, MouseEventArgs e)
-        {
-            if (!(ClickedItem is FrameworkElement))
-                return;
-
-            FrameworkElement ClickedItem_FrameworkElement = (FrameworkElement) ClickedItem;
-
+        {            
             if (e.LeftButton == MouseButtonState.Pressed)
             {
+                if (ClickTarget == ClickTargetEnum.Selection) // selection
+                {
+                    SelectionArea.MoveSelectionArea(e.GetPosition(TheCanvas));
+
+                    //SelectItemsBySelectionArea(SelectionAreaLeft, SelectionAreaTop, e.GetPosition(TheCanvas).X, e.GetPosition(TheCanvas).Y);
+                    // too slow
+                }
+
+                if (!(ClickedItem is FrameworkElement))
+                    return;
+
+                FrameworkElement ClickedItem_FrameworkElement = (FrameworkElement)ClickedItem;
+
                 if (ClickTarget == ClickTargetEnum.AnchorLeftTop)
                 {
                     ClickedItem.MoveAndResizeItem(
@@ -801,15 +817,7 @@ namespace m0.UIWpf.UX
                       Canvas.GetTop(ClickedItem_FrameworkElement),
                       e.GetPosition(TheCanvas).X - Canvas.GetLeft(ClickedItem_FrameworkElement) - ClickPositionX_AnchorCordinates,
                     e.GetPosition(TheCanvas).Y - Canvas.GetTop(ClickedItem_FrameworkElement) - ClickPositionY_AnchorCordinates);
-                }
-
-                if (ClickTarget == ClickTargetEnum.Selection) // selection
-                {
-                    SelectionArea.MoveSelectionArea(e.GetPosition(TheCanvas));
-                    
-                    //SelectItemsBySelectionArea(SelectionAreaLeft, SelectionAreaTop, e.GetPosition(TheCanvas).X, e.GetPosition(TheCanvas).Y);
-                    // too slow
-                }
+                }                
 
                 if (ClickTarget == ClickTargetEnum.Item) // item move
                 {
@@ -917,6 +925,12 @@ namespace m0.UIWpf.UX
 
         protected void MouseUpOrLeave(bool IsUp, MouseEventArgs e)
         {
+            if (ClickTarget == ClickTargetEnum.Selection)
+            {
+                SelectItemsBySelectionArea();
+
+                SelectionArea.HideSelectionArea();
+            }
             if (!(ClickedItem is FrameworkElement))
                 return;
 
@@ -926,14 +940,7 @@ namespace m0.UIWpf.UX
 
             if (ClickTarget == ClickTargetEnum.Item && IsMultiSelectionMoving)
                 RemoveMultiSelectionMovingSprites(e.GetPosition(ClickedItem_FrameworkElemet).X - ClickPositionX_ItemCordinates,
-                            e.GetPosition(ClickedItem_FrameworkElemet).Y - ClickPositionY_ItemCordinates);
-
-            if (ClickTarget == ClickTargetEnum.Selection)
-            {
-                SelectItemsBySelectionArea();
-
-                SelectionArea.HideSelectionArea();
-            }
+                            e.GetPosition(ClickedItem_FrameworkElemet).Y - ClickPositionY_ItemCordinates);            
 
             if (ClickTarget == ClickTargetEnum.AnchorRightTop_CreateDiagramLine)
             {
@@ -1211,8 +1218,10 @@ namespace m0.UIWpf.UX
             if (!(_i is IUXItem))
                 return null;
 
+
             IUXItem i = (IUXItem)_i;
 
+            i.PositionCreate();
             i.Position.X = x;
             i.Position.Y = y;
             i.UXTemplate = UXTemplate;

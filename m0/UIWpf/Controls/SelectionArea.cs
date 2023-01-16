@@ -58,9 +58,6 @@ namespace m0.UIWpf.Controls
             Shape.Width = Right - Left;
             Shape.Height = Bottom - Top;
 
-            Shape.Width = 100;
-            Shape.Height = 100;
-
             IsSelecting = true;
         }
 

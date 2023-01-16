@@ -118,9 +118,10 @@ namespace m0.ZeroTypes.UX
                 }
             }
 
-            Brush backgroundBrush = BackgroundColor.GetBrush();
+            Brush backgroundBrush = GetBackgroundBrush();
 
-            Brush foregroundBrush = ForegroundColor.GetBrush();
+            Brush foregroundBrush = GetForegroundBrush();
+            
 
             this.Frame.Background = backgroundBrush;
 
@@ -166,9 +167,9 @@ namespace m0.ZeroTypes.UX
         {
             base.Unselect();
 
-            Brush backgroundBrush = BackgroundColor.GetBrush();
+            Brush backgroundBrush = GetBackgroundBrush();
 
-            Brush foregroundBrush = ForegroundColor.GetBrush();
+            Brush foregroundBrush = GetForegroundBrush();
 
 
             this.Frame.Background = backgroundBrush;
@@ -198,9 +199,9 @@ namespace m0.ZeroTypes.UX
 
         public override void Unhighlight()
         {
-            Brush backgroundBrush = BackgroundColor.GetBrush();
+            Brush backgroundBrush = GetBackgroundBrush();
 
-            Brush foregroundBrush = ForegroundColor.GetBrush();
+            Brush foregroundBrush = GetForegroundBrush();
 
             this.Foreground = foregroundBrush; 
 

@@ -61,6 +61,28 @@ namespace m0.ZeroTypes.UX
             this.MouseEnter += DiagramItemBase_MouseEnter;
 
             this.MouseLeave += DiagramItemBase_MouseLeave;
+
+            this.MouseLeftButtonDown += MouseLeftButtonDownHandler;            
+        }
+
+        protected Brush GetBackgroundBrush()
+        {
+            Color backgroundColor = BackgroundColor;
+
+            if (backgroundColor != null)
+                return backgroundColor.GetBrush();
+            else
+                return (Brush)FindResource("0BackgroundBrush");
+        }
+
+        protected Brush GetForegroundBrush()
+        {
+            Color foregroundColor = ForegroundColor;
+
+            if (foregroundColor != null)
+                return foregroundColor.GetBrush();
+            else
+                return (Brush)FindResource("0ForegroundBrush");
         }
 
         // PUBLIC
@@ -260,7 +282,7 @@ namespace m0.ZeroTypes.UX
         {
             IsSelected = true;
 
-            GeneralUtil.SetPropertyIfPresent(this.Content, "Foreground", BackgroundColor.GetBrush());
+            GeneralUtil.SetPropertyIfPresent(this.Content, "Foreground", GetBackgroundBrush());
 
             Panel.SetZIndex(this, 99999);
 
@@ -287,7 +309,7 @@ namespace m0.ZeroTypes.UX
         {
             IsSelected = false;
 
-            GeneralUtil.SetPropertyIfPresent(this.Content, "Foreground", ForegroundColor.GetBrush());
+            GeneralUtil.SetPropertyIfPresent(this.Content, "Foreground", GetForegroundBrush());
 
             Panel.SetZIndex(this, 0);
 
@@ -326,8 +348,16 @@ namespace m0.ZeroTypes.UX
             double deltax = position.X - x;
             double deltay = position.Y - y;
 
+            ////////////////////////////////////////
+            Interaction.BeginInteractionWithGraph();
+            //////////////////////////////////////// 
+
             position.X = x;
             position.Y = y;
+
+            ////////////////////////////////////////
+            Interaction.EndInteractionWithGraph();
+            //////////////////////////////////////// 
 
             Canvas.SetLeft(this, x);
             Canvas.SetTop(this, y);
@@ -348,19 +378,27 @@ namespace m0.ZeroTypes.UX
 
             Position position = this.Position;
 
+            ////////////////////////////////////////
+            Interaction.BeginInteractionWithGraph();
+            //////////////////////////////////////// 
+
             position.X = left;
             position.Y = top;
 
             Canvas.SetLeft(this, left);
             Canvas.SetTop(this, top);
 
-            Size size = Size;
+            Size size = Size;            
 
             if (size == null)
                 size = SizeCreate();
 
             size.Width = width;
             size.Height = height;
+
+            ////////////////////////////////////////
+            Interaction.EndInteractionWithGraph();
+            //////////////////////////////////////// 
 
             Width = width;
             Height = height;
@@ -751,8 +789,10 @@ namespace m0.ZeroTypes.UX
 
             r.MouseLeftButtonDown += AnchorMouseButtonDown;
 
+            r.ForceCursor = true;
+
             switch (anchorType)
-            {
+            {            
                 case ClickTargetEnum.AnchorLeftTop:
                     r.Cursor = Cursors.SizeNWSE;
                     break;
