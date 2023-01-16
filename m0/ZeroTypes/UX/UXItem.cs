@@ -42,10 +42,18 @@ namespace m0.ZeroTypes.UX
 
         public List<ILineDecoratorBase> DiagramToLines { get; } = new List<ILineDecoratorBase>();
 
-        public List<ILineDecoratorBase> DiagramToAsMetaLines { get; } = new List<ILineDecoratorBase>();
+        public List<ILineDecoratorBase> DiagramToAsMetaLines { get; } = new List<ILineDecoratorBase>();        
 
-        public UXItem(IVertex _baseEdgeVertex)
+        public UXItem(IEdge _edge)
         {
+            edge = _edge;
+
+            vertex = _edge.To;
+
+            TypedEdge.vertexDictionary.Add(this.Edge.To, this);
+
+            //
+
             Anchors = new List<FrameworkElement>();
 
             this.SizeChanged += DiagramItemBase_SizeChanged;
@@ -944,16 +952,14 @@ namespace m0.ZeroTypes.UX
 
         //
 
-        public UXItem() { }
-
-        public UXItem(IEdge _edge)
+        /*public UXItem(IEdge _edge)
         {
             edge = _edge;
 
             vertex = _edge.To;
 
             TypedEdge.vertexDictionary.Add(this.Edge.To, this);
-        }
+        }*/
 
         // UNDER
 
