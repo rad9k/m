@@ -17,6 +17,7 @@ using System.Windows.Shapes;
 using System.Globalization;
 using m0.UIWpf.Visualisers.Helper;
 using m0.ZeroTypes;
+using System.Windows.Threading;
 
 namespace m0.UIWpf
 {
@@ -32,6 +33,14 @@ namespace m0.UIWpf
         {
             Dnd.MinimumHorizontalDragDistance = SystemParameters.MinimumHorizontalDragDistance * 2;
             Dnd.MinimumVerticalDragDistance = SystemParameters.MinimumVerticalDragDistance * 2;
+        }
+
+        public static void SetCursor(FrameworkElement e, Cursor c)
+        {
+               Dispatcher.InvokeAsync(() =>
+                {
+                    e.Cursor = c;
+                });
         }
 
         public static Line CreateLine(double thickness, Brush stroke)

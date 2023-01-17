@@ -789,7 +789,7 @@ namespace m0.ZeroTypes.UX
 
             r.MouseLeftButtonDown += AnchorMouseButtonDown;
 
-            r.ForceCursor = true;
+            //r.ForceCursor = true;
 
             switch (anchorType)
             {            
@@ -825,6 +825,11 @@ namespace m0.ZeroTypes.UX
                     r.Cursor = Cursors.SizeNWSE;
                     break;
             }
+
+         /*   Dispatcher.InvokeAsync(() =>
+            {
+                Cursor = Cursors.ScrollNS;
+            });*/
 
             Diagram.TheCanvas.Children.Add(r);
 
