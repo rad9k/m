@@ -787,12 +787,20 @@ namespace m0.ZeroTypes.UX
 
             Anchors.Add(r);
 
-            r.MouseLeftButtonDown += AnchorMouseButtonDown;            
+            r.MouseLeftButtonDown += AnchorMouseButtonDown;
 
+            Diagram.TheCanvas.ForceCursor = true;
+            Diagram.TheCanvas.Cursor = Cursors.Cross;
+            
             switch (anchorType)
             {            
                 case ClickTargetEnum.AnchorLeftTop:
-                    WpfUtil.SetCursor(r, Cursors.SizeNWSE);                    
+                    Dispatcher.InvokeAsync(() =>
+                    {
+                        r.ForceCursor = true;
+                        r.Cursor = Cursors.ScrollNS;
+                    });
+                    //WpfUtil.SetCursor(r, Cursors.SizeNWSE);                    
                     break;
 
                 case ClickTargetEnum.AnchorMiddleTop:
