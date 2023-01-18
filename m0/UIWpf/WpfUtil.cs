@@ -29,6 +29,15 @@ namespace m0.UIWpf
 
         public static double IconSize = 15;
 
+        public static void SetCursor(FrameworkElement e, Cursor c)
+        {
+           /* Application.Current.Dispatcher.InvokeAsync(() =>
+            {
+                e.ForceCursor = true;
+                e.Cursor = c;
+            });*/
+        }
+
         public static void InitializeUIWpf()
         {
             Dnd.MinimumHorizontalDragDistance = SystemParameters.MinimumHorizontalDragDistance * 2;

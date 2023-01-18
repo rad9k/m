@@ -83,7 +83,7 @@ namespace m0.ZeroTypes.UX
                 return foregroundColor.GetBrush();
             else
                 return (Brush)FindResource("0ForegroundBrush");
-        }
+        }      
 
         // PUBLIC
 
@@ -789,47 +789,48 @@ namespace m0.ZeroTypes.UX
 
             r.MouseLeftButtonDown += AnchorMouseButtonDown;
 
-            //r.ForceCursor = true;
-
+            Diagram.TheCanvas.ForceCursor = true;
+            Diagram.TheCanvas.Cursor = Cursors.Cross;
+            
             switch (anchorType)
             {            
                 case ClickTargetEnum.AnchorLeftTop:
-                    r.Cursor = Cursors.SizeNWSE;
+                    Dispatcher.InvokeAsync(() =>
+                    {
+                        r.ForceCursor = true;
+                        r.Cursor = Cursors.ScrollNS;
+                    });
+                    //WpfUtil.SetCursor(r, Cursors.SizeNWSE);                    
                     break;
 
                 case ClickTargetEnum.AnchorMiddleTop:
-                    r.Cursor = Cursors.SizeNS;
+                    WpfUtil.SetCursor(r, Cursors.SizeNS);                    
                     break;
 
                 case ClickTargetEnum.AnchorRightTop_CreateDiagramLine:
-                    r.Cursor = Cursors.Pen;
+                    WpfUtil.SetCursor(r, Cursors.Pen);                    
                     break;
 
                 case ClickTargetEnum.AnchorLeftMiddle:
-                    r.Cursor = Cursors.SizeWE;
+                    WpfUtil.SetCursor(r, Cursors.SizeWE);                    
                     break;
 
                 case ClickTargetEnum.AnchorRightMiddle:
-                    r.Cursor = Cursors.SizeWE;
+                    WpfUtil.SetCursor(r, Cursors.SizeWE);                    
                     break;
 
                 case ClickTargetEnum.AnchorLeftBottom:
-                    r.Cursor = Cursors.SizeNESW;
+                    WpfUtil.SetCursor(r, Cursors.SizeNESW);                    
                     break;
 
                 case ClickTargetEnum.AnchorMiddleBottom:
-                    r.Cursor = Cursors.SizeNS;
+                    WpfUtil.SetCursor(r, Cursors.SizeNS);                    
                     break;
 
                 case ClickTargetEnum.AnchorRightBottom:
-                    r.Cursor = Cursors.SizeNWSE;
+                    WpfUtil.SetCursor(r, Cursors.SizeNWSE);                    
                     break;
             }
-
-         /*   Dispatcher.InvokeAsync(() =>
-            {
-                Cursor = Cursors.ScrollNS;
-            });*/
 
             Diagram.TheCanvas.Children.Add(r);
 
