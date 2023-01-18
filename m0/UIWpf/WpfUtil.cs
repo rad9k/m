@@ -27,29 +27,12 @@ namespace m0.UIWpf
         public static FontWeight BoldWeight = FontWeight.FromOpenTypeWeight(550);
         public static FontWeight ValueWeight = FontWeight.FromOpenTypeWeight(550); // FontWeights.Normal;
 
-        public static double IconSize = 15;
-
-        public static void SetCursor(FrameworkElement e, Cursor c)
-        {
-           /* Application.Current.Dispatcher.InvokeAsync(() =>
-            {
-                e.ForceCursor = true;
-                e.Cursor = c;
-            });*/
-        }
+        public static double IconSize = 15;        
 
         public static void InitializeUIWpf()
         {
             Dnd.MinimumHorizontalDragDistance = SystemParameters.MinimumHorizontalDragDistance * 2;
             Dnd.MinimumVerticalDragDistance = SystemParameters.MinimumVerticalDragDistance * 2;
-        }
-
-        public static void SetCursor(FrameworkElement e, Cursor c)
-        {
-               Dispatcher.InvokeAsync(() =>
-                {
-                    e.Cursor = c;
-                });
         }
 
         public static Line CreateLine(double thickness, Brush stroke)

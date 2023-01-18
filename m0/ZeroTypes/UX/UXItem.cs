@@ -2,6 +2,7 @@
 using m0.Graph;
 using m0.Graph.ExecutionFlow;
 using m0.UIWpf;
+using m0.UIWpf.Controls;
 using m0.UIWpf.UX;
 using m0.User.Process.UX;
 using m0.Util;
@@ -20,6 +21,12 @@ using static m0.Graph.ExecutionFlow.ExecutionFlowHelper;
 
 namespace m0.ZeroTypes.UX
 {
+    public class CursorAndClickTargetEnum
+    {
+        public Cursor Cursor;
+        public ClickTargetEnum ClickTarget;
+    }
+
     public class UXItem : UserControl, IUXItem, IPlatformClass
     {
         public List<FrameworkElement> Anchors;        
@@ -772,7 +779,8 @@ namespace m0.ZeroTypes.UX
             }
             else
             {
-                r = new Rectangle();
+                r = CreateRectangleWithCursor();
+
                 ((Rectangle)r).Fill = (Brush)FindResource("0SelectionBrush");
             }
 
@@ -836,6 +844,32 @@ namespace m0.ZeroTypes.UX
 
             return r;
         }
+
+        //
+
+        public Rectangle CreateRectangleWithCursor()
+        {
+            Rectangle r = new Rectangle();
+
+            r.MouseEnter += R_MouseEnter;
+            r.MouseLeave += R_MouseLeave;
+
+            return r;
+        }
+
+        private void R_MouseLeave(object sender, System.Windows.Input.MouseEventArgs e)
+        {
+            WpfUtil.SetCursor(Cursors.Arrow);
+        }
+
+        private void R_MouseEnter(object sender, System.Windows.Input.MouseEventArgs e)
+        {
+            FrameworkElement rectangle = (FrameworkElement)sender;
+
+            WpfUtil.SetCursor((Cursor)rectangle.Tag);
+        }
+
+        //
 
         public void AnchorMouseButtonDown(object sender, MouseButtonEventArgs e)
         {
