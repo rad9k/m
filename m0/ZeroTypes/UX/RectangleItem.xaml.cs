@@ -88,7 +88,10 @@ namespace m0.ZeroTypes.UX
                 else
                     to_text = "Ø";
 
-                this.Title.Text = meta_text + " : " + to_text;
+                if (meta_text != "$Empty" && meta_text != "")
+                    this.Title.Text = meta_text + " : " + to_text;
+                else
+                    this.Title.Text = to_text;
             }
 
 

@@ -21,7 +21,7 @@ using static m0.Graph.ExecutionFlow.ExecutionFlowHelper;
 
 namespace m0.ZeroTypes.UX
 {
-    public class CursorAndClickTargetEnum
+    public class CursorAndClickTarget
     {
         public Cursor Cursor;
         public ClickTargetEnum ClickTarget;
@@ -746,7 +746,7 @@ namespace m0.ZeroTypes.UX
         protected void UpdateAnchor(ClickTargetEnum anchorType, double left, double top)
         {
             foreach (FrameworkElement r in Anchors)
-                if ((ClickTargetEnum)r.Tag == anchorType)
+                if (GetClickTarget(r) == anchorType)
                 {
                     Canvas.SetLeft(r, left);
                     Canvas.SetTop(r, top);
@@ -779,10 +779,12 @@ namespace m0.ZeroTypes.UX
             }
             else
             {
-                r = CreateRectangleWithCursor();
-
+                r = new Rectangle();
+                
                 ((Rectangle)r).Fill = (Brush)FindResource("0SelectionBrush");
             }
+
+            DecorateWithCursor(r);
 
             Canvas.SetLeft(r, left);
             Canvas.SetTop(r, top);
@@ -790,53 +792,46 @@ namespace m0.ZeroTypes.UX
             r.Width = AnchorSize;
             r.Height = AnchorSize;
 
-            r.Tag = anchorType;
+            SetClickTarget(r, anchorType);
 
 
             Anchors.Add(r);
 
             r.MouseLeftButtonDown += AnchorMouseButtonDown;
-
-            Diagram.TheCanvas.ForceCursor = true;
-            Diagram.TheCanvas.Cursor = Cursors.Cross;
+            
             
             switch (anchorType)
             {            
-                case ClickTargetEnum.AnchorLeftTop:
-                    Dispatcher.InvokeAsync(() =>
-                    {
-                        r.ForceCursor = true;
-                        r.Cursor = Cursors.ScrollNS;
-                    });
-                    //WpfUtil.SetCursor(r, Cursors.SizeNWSE);                    
+                case ClickTargetEnum.AnchorLeftTop:                    
+                    SetCursor(r, Cursors.SizeNWSE);                    
                     break;
 
                 case ClickTargetEnum.AnchorMiddleTop:
-                    WpfUtil.SetCursor(r, Cursors.SizeNS);                    
+                    SetCursor(r, Cursors.SizeNS);                    
                     break;
 
                 case ClickTargetEnum.AnchorRightTop_CreateDiagramLine:
-                    WpfUtil.SetCursor(r, Cursors.Pen);                    
+                    SetCursor(r, Cursors.Pen);                    
                     break;
 
                 case ClickTargetEnum.AnchorLeftMiddle:
-                    WpfUtil.SetCursor(r, Cursors.SizeWE);                    
+                    SetCursor(r, Cursors.SizeWE);                    
                     break;
 
                 case ClickTargetEnum.AnchorRightMiddle:
-                    WpfUtil.SetCursor(r, Cursors.SizeWE);                    
+                    SetCursor(r, Cursors.SizeWE);                    
                     break;
 
                 case ClickTargetEnum.AnchorLeftBottom:
-                    WpfUtil.SetCursor(r, Cursors.SizeNESW);                    
+                    SetCursor(r, Cursors.SizeNESW);                    
                     break;
 
                 case ClickTargetEnum.AnchorMiddleBottom:
-                    WpfUtil.SetCursor(r, Cursors.SizeNS);                    
+                    SetCursor(r, Cursors.SizeNS);                    
                     break;
 
                 case ClickTargetEnum.AnchorRightBottom:
-                    WpfUtil.SetCursor(r, Cursors.SizeNWSE);                    
+                    SetCursor(r, Cursors.SizeNWSE);                    
                     break;
             }
 
@@ -847,14 +842,29 @@ namespace m0.ZeroTypes.UX
 
         //
 
-        public Rectangle CreateRectangleWithCursor()
+        public FrameworkElement DecorateWithCursor(FrameworkElement e)
+        {            
+            e.Tag = new CursorAndClickTarget();
+
+            e.MouseEnter += R_MouseEnter;
+            e.MouseLeave += R_MouseLeave;
+
+            return e;
+        }
+
+        public void SetCursor(FrameworkElement r, Cursor c)
         {
-            Rectangle r = new Rectangle();
+            ((CursorAndClickTarget)r.Tag).Cursor = c;
+        }
 
-            r.MouseEnter += R_MouseEnter;
-            r.MouseLeave += R_MouseLeave;
+        public void SetClickTarget (FrameworkElement r, ClickTargetEnum c)
+        {
+            ((CursorAndClickTarget)r.Tag).ClickTarget = c;
+        }
 
-            return r;
+        public ClickTargetEnum GetClickTarget(FrameworkElement r)
+        {
+            return ((CursorAndClickTarget)r.Tag).ClickTarget;
         }
 
         private void R_MouseLeave(object sender, System.Windows.Input.MouseEventArgs e)
@@ -866,7 +876,7 @@ namespace m0.ZeroTypes.UX
         {
             FrameworkElement rectangle = (FrameworkElement)sender;
 
-            WpfUtil.SetCursor((Cursor)rectangle.Tag);
+            WpfUtil.SetCursor(((CursorAndClickTarget)rectangle.Tag).Cursor);
         }
 
         //
@@ -881,7 +891,7 @@ namespace m0.ZeroTypes.UX
 
             FrameworkElement a = (FrameworkElement)sender;
 
-            Diagram.ClickTarget = (ClickTargetEnum)a.Tag;
+            Diagram.ClickTarget = GetClickTarget(a);
 
             Diagram.ClickedAnchor = a;
 
