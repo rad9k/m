@@ -28,12 +28,7 @@ namespace m0.ZeroTypes
             }
             set
             {
-                IVertex val = GraphUtil.GetQueryOutFirst(Vertex, "From", null);
-
-                if (val == null)
-                    val = Vertex.AddVertex(From_meta, value);
-                else
-                    val.Value = value;
+                GraphUtil.CreateOrReplaceEdge(Vertex, From_meta, value);
             }
         }
 
@@ -47,12 +42,7 @@ namespace m0.ZeroTypes
             }
             set
             {
-                IVertex val = GraphUtil.GetQueryOutFirst(Vertex, "Meta", null);
-
-                if (val == null)
-                    val = Vertex.AddVertex(Meta_meta, value);
-                else
-                    val.Value = value;
+                GraphUtil.CreateOrReplaceEdge(Vertex, Meta_meta, value);                
             }
         }
 
@@ -66,12 +56,7 @@ namespace m0.ZeroTypes
             }
             set
             {
-                IVertex val = GraphUtil.GetQueryOutFirst(Vertex, "To", null);
-
-                if (val == null)
-                    val = Vertex.AddVertex(To_meta, value);
-                else
-                    val.Value = value;
+                GraphUtil.CreateOrReplaceEdge(Vertex, To_meta, value);
             }
         }
 

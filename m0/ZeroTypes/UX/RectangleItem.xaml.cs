@@ -140,15 +140,15 @@ namespace m0.ZeroTypes.UX
                 GeneralUtil.SetPropertyIfPresent(ContentVisualiser, "Background", backgroundBrush);
             }
 
-            if (LineWidth != 0)
+            if (BorderSize != 0)
             {
-                this.Frame.BorderThickness = new Thickness(LineWidth);
+                this.Frame.BorderThickness = new Thickness(BorderSize);
 
                 if (ContentVisualiser != null)
                 {
-                    this.InternalFrame.BorderThickness = new Thickness(LineWidth / 2);
+                    this.InternalFrame.BorderThickness = new Thickness(BorderSize / 2);
 
-                    this.TheGrid.RowDefinitions[1].Height = new GridLength(LineWidth);
+                    this.TheGrid.RowDefinitions[1].Height = new GridLength(BorderSize);
                 }
             }
         }         

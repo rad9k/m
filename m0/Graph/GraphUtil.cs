@@ -1055,11 +1055,6 @@ namespace m0.Graph
         static public IEdge FindEdgeByMetaVertex(IVertex Vertex, IVertex metaVertex)
         {
             return GetQueryOutFirstEdge(Vertex, metaVertex.Value.ToString(), null);
-
-            /*foreach (IEdge e in Vertex)
-                if (e.Meta == metaVertex)
-                    return e;
-            return null;*/
         }
 
         static public IEdge FindEdge(IVertex Vertex, IVertex metaVertex, IVertex toVertex)

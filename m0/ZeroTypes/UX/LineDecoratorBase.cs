@@ -13,9 +13,7 @@ namespace m0.ZeroTypes.UX
 {
     public class LineDecoratorBase : UXItem, ILineDecoratorBase
     {
-        public IUXItem FromDiagramItem { get; set; }
-
-        public IUXItem ToDiagramItem { get; set; }
+        public IUXItem FromDiagramItem { get; set; }        
 
         public virtual void SetPosition(double FromX, double FromY, double ToX, double ToY, bool isSelfRelation, double selfRelationX, double selfRelationY)
         {
@@ -97,9 +95,7 @@ namespace m0.ZeroTypes.UX
                 return (IUXItem)TypedEdge.Get(val);
             }
             set
-            {
-                IVertex val = GraphUtil.GetQueryOutFirst(Vertex, "ToItem", null);
-
+            {                
                 GraphUtil.CreateOrReplaceEdge(Vertex, ToItem_meta, value.Vertex);
             }
         }

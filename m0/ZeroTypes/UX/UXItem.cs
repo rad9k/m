@@ -29,9 +29,7 @@ namespace m0.ZeroTypes.UX
 
     public class UXItem : UserControl, IUXItem, IPlatformClass
     {
-        public List<FrameworkElement> Anchors;        
-
-        public double LineWidth;        
+        public List<FrameworkElement> Anchors;                
 
         IEdge graphChangeListenerEdge;
 
@@ -240,7 +238,7 @@ namespace m0.ZeroTypes.UX
 
             ILineDecoratorBase newLine = (LineDecoratorBase)AddDecorator(diagramLineDefinition.DecoratorClass);
 
-            newLine.ToDiagramItem = toItem;
+            newLine.ToItem = toItem;
 
             newLine.UXTemplate = diagramLineDefinition;
 
@@ -263,7 +261,7 @@ namespace m0.ZeroTypes.UX
 
             newline.FromDiagramItem = this;
 
-            newline.ToDiagramItem = toItem;
+            newline.ToItem = toItem;
 
             newline.AddToCanvas();
 
@@ -278,7 +276,7 @@ namespace m0.ZeroTypes.UX
         {
             RemoveFromDiagramLines(line);
 
-            line.ToDiagramItem.DiagramToLines.Remove(line);
+            line.ToItem.DiagramToLines.Remove(line);
 
             line.RemoveFromCanvas();
 
@@ -508,7 +506,7 @@ namespace m0.ZeroTypes.UX
             {
                 // ToDiagramItem:
 
-                IVertex toDiagramItem = l.Vertex.Get(false, @"ToDiagramItem:");
+                IVertex toDiagramItem = l.Vertex.Get(false, @"ToItem:");
 
                 if (DiagramLinesToDiagramItemDictionary.ContainsKey(toDiagramItem))
                     DiagramLinesToDiagramItemDictionary[toDiagramItem].Add(l);
@@ -629,11 +627,11 @@ namespace m0.ZeroTypes.UX
             List<IUXItem> updatedItems = new List<IUXItem>();
 
             foreach (ILineDecoratorBase l in DiagramLines)
-                if (!updatedItems.Contains(l.ToDiagramItem))
+                if (!updatedItems.Contains(l.ToItem))
                 {
-                    UpdateDiagramLines(l.ToDiagramItem);
+                    UpdateDiagramLines(l.ToItem);
 
-                    updatedItems.Add(l.ToDiagramItem);
+                    updatedItems.Add(l.ToItem);
                 }
 
             foreach (ILineDecoratorBase l in DiagramToLines)
@@ -652,7 +650,7 @@ namespace m0.ZeroTypes.UX
             foreach (ILineDecoratorBase l in DiagramLines)
             {
                 l.Highlight();
-                l.ToDiagramItem.Highlight();
+                l.ToItem.Highlight();
             }
 
             foreach (ILineDecoratorBase l in DiagramToLines)
@@ -669,7 +667,7 @@ namespace m0.ZeroTypes.UX
             foreach (ILineDecoratorBase l in DiagramLines)
             {
                 l.Unhighlight();
-                l.ToDiagramItem.Unhighlight();
+                l.ToItem.Unhighlight();
             }
 
             foreach (ILineDecoratorBase l in DiagramToLines)

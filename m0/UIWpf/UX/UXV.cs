@@ -240,6 +240,9 @@ namespace m0.UIWpf.UX
 
         public void AddEdgesFromDefintion(IVertex baseVertex, IVertex definitionEdges)
         {
+            if (definitionEdges == null)
+                return;
+
             foreach (IEdge e in definitionEdges)
             {
                 if(VertexOperations.IsAtomicVertex(e.To))
