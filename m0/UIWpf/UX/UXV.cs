@@ -36,7 +36,7 @@ namespace m0.UIWpf.UX
 
     public class UXV : Border, IListVisualiser, IUXAggregator
     {
-        bool IsVisualiser = false;
+        bool IsVisualiser;
 
         public AtomVisualiserHelper VisualiserHelper { get; set; }
 
@@ -107,7 +107,7 @@ namespace m0.UIWpf.UX
                 return;
             }
 
-            IsVisualiser = true;
+            IsVisualiser = false;
 
             TheCanvas = new Canvas();
 
@@ -1257,7 +1257,7 @@ namespace m0.UIWpf.UX
         }
 
         public void CheckAndUpdateDiagramLines()
-        {
+        {            
             foreach(IItem _i in Items)
             {
                 IUXItem item = GetUXItem(_i);

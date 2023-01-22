@@ -98,7 +98,9 @@ namespace m0
 
             IVertex e = r.Get(false, "examples");
 
-            IVertex v = e.AddVertex(null, "X");
+            IVertex x_vertex = e.AddVertex(null, "X");
+
+            IVertex z_vertex = x_vertex.AddVertex(null, "Z");
 
             IEdge a_e = VertexOperations.AddInstanceAndReturnEdge(e,
                 UXAggregatorType,
@@ -113,18 +115,20 @@ namespace m0
             a.Size.Width = 1000;
             a.Size.Height = 1000;
             
-            UXAdd(a, v);
+            UXAdd(0,0, a, x_vertex);
+
+            UXAdd(100, 100, a, z_vertex);
         }
 
-        IUXItem UXAdd(UXItem a, IVertex v)
+        IUXItem UXAdd(double x, double y, UXItem a, IVertex v)
         {
             IUXItem i1 = (IUXItem)a.AddItem(RectangleItem);
 
             i1.UXTemplate = new UXTemplate(template);
             i1.Layout = LayoutTypeEnum.Manual;
             i1.PositionCreate();
-            i1.Position.X = 10;
-            i1.Position.Y = 10;
+            i1.Position.X = x+10;
+            i1.Position.Y = y+10;
             i1.SizeCreate();
             i1.Size.Width = 100;
             i1.Size.Height = 100;
@@ -149,8 +153,8 @@ namespace m0
             i2.UXTemplate = new UXTemplate(template);
             i2.Layout = LayoutTypeEnum.Manual;
             i2.PositionCreate();
-            i2.Position.X = 150;
-            i2.Position.Y = 150;
+            i2.Position.X = x+150;
+            i2.Position.Y = y+150;
             i2.SizeCreate();
             i2.Size.Width = 100;
             i2.Size.Height = 100;

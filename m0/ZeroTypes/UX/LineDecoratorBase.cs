@@ -56,8 +56,8 @@ namespace m0.ZeroTypes.UX
 
         // UNDER
 
-        static IVertex LineWidth_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\LineDecoratorBase\LineWidth");
-        static IVertex ToItem_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\LineDecoratorBase\ToItem");
+        static IVertex LineWidth_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\LineDecoratorBase\LineWidth");
+        static IVertex ToItem_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\LineDecoratorBase\ToItem");
 
         public LineDecoratorBase(IEdge edge) : base(edge) { }
 

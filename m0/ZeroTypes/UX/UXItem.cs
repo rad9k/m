@@ -106,19 +106,26 @@ namespace m0.ZeroTypes.UX
             VisualiserUpdate();
         } // to be called after Vertex is setted up
 
+        public bool IsDisposed = false;
+
         public virtual void Dispose()
-        {            
-            foreach (IUXItem e in Items)
-                if (e is IDisposable)
-                    ((IDisposable)e).Dispose();
+        {
+            if (!IsDisposed)
+            {
+                IsDisposed = true;
 
-            foreach (ILineDecoratorBase e in DiagramLines)
-                if (e is IDisposable)
-                    ((IDisposable)e).Dispose();
+                foreach (IUXItem e in Items)
+                    if (e is IDisposable)
+                        ((IDisposable)e).Dispose();
 
-            GraphChangeTrigger.RemoveListener(graphChangeListenerEdge);
+                foreach (ILineDecoratorBase e in DiagramLines)
+                    if (e is IDisposable)
+                        ((IDisposable)e).Dispose();
 
-            TypedEdge.RemoveFromDictionary(this);
+                GraphChangeTrigger.RemoveListener(graphChangeListenerEdge);
+
+                TypedEdge.RemoveFromDictionary(this);
+            }
         }
 
         public Dictionary<IVertex, List<ILineDecoratorBase>> GetDiagramLinesToDiagramItemDictionary()

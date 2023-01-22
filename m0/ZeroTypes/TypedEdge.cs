@@ -24,7 +24,7 @@ namespace m0.ZeroTypes
 
             vertex = _edge.To;
 
-            if(!vertexDictionary.ContainsKey(this.edge.To))
+            if (!vertexDictionary.ContainsKey(this.edge.To))
                 vertexDictionary.Add(this.Edge.To, this);
         }
 
@@ -45,16 +45,16 @@ namespace m0.ZeroTypes
                     throw new Exception("Vertex not live");
 
                 //if (EdgeHelper.CompareIEdges(ret.Edge, edge))
-                    return ret;
-               // else
-                 //   throw new Exception("Vertex allready in TypedEdge.vertexDictionary. Tried to access from another Edge.");
+                return ret;
+                // else
+                //   throw new Exception("Vertex allready in TypedEdge.vertexDictionary. Tried to access from another Edge.");
             }
             else
             {
                 ITypedEdge te = (ITypedEdge)Activator.CreateInstance(toCreateType, edge);
 
                 return te;
-            }           
+            }
         }
 
         static public ITypedEdge GetFromDictionary(IVertex v)
@@ -89,7 +89,7 @@ namespace m0.ZeroTypes
                 //   throw new Exception("Vertex allready in TypedEdge.vertexDictionary. Tried to access from another Edge.");
             }
             else
-            {                            
+            {
                 IVertex _is = GraphUtil.GetQueryOutFirst(edge.To, "$Is", null);
 
                 string pcn = GraphUtil.GetQueryOutFirst(_is, "$PlatformClassName", null).Value.ToString();
@@ -102,6 +102,16 @@ namespace m0.ZeroTypes
                 ITypedEdge te = (ITypedEdge)Activator.CreateInstance(toCreateType, edge);
 
                 return te;
+            }
+        }
+
+        public bool IsDisposed = false;
+
+        public void Dispose()
+        {
+            if (IsDisposed == false)
+            {
+                RemoveFromDictionary(this);
             }
         }
     }
