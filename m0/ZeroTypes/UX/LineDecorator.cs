@@ -1,6 +1,8 @@
 ﻿using m0.Foundation;
 using m0.Graph;
 using m0.Graph.ExecutionFlow;
+using m0.UIWpf.Controls;
+using m0.Util;
 using m0.ZeroCode.Helpers;
 using System;
 using System.Collections.Generic;
@@ -111,115 +113,57 @@ namespace m0.ZeroTypes.UX
             Line.Stroke = foregroundBrush;
             Label.Foreground = foregroundBrush;
 
-            switch (StartAnchor)
-            {
-                case (LayoutTypeEnum.):
-                    break;
+            LineEndings.StartEnding = StartAnchor;
+            Line.StartEnding = StartAnchor;
+
+            LineEndings.EndEnding = EndAnchor;
+            Line.EndEnding = EndAnchor;            
+
+            if (StartAnchor == LineEndEnum.Triangle)
+            {                
+                FillBrush = backgroundBrush;
+                HighlightFillBrush = backgroundBrush;
             }
 
-            switch (EndAnchor)
-            {
-                case ():
-                    break;
+            if (EndAnchor == LineEndEnum.Triangle)
+            {                
+                FillBrush = backgroundBrush;
+                HighlightFillBrush = backgroundBrush;
             }
 
-
-            string startAnchor = StartAnchor;
-            string endAnchor = EndAnchor;
-
-            if (StartAnchor == "Straight")
-            {
-                LineEndings.StartEnding = LineEndEnum.Straight;
-                Line.StartEnding = LineEndEnum.Straight;
-            }
-
-            if (EndAnchor == "Straight")
-            {
-                LineEndings.EndEnding = LineEndEnum.Straight;
-                Line.EndEnding = LineEndEnum.Straight;
-            }
-
-            if (StartAnchor == "Arrow")
-            {
-                LineEndings.StartEnding = LineEndEnum.Arrow;
-                Line.StartEnding = LineEndEnum.Arrow;
-            }
-
-            if (EndAnchor == "Arrow")
-            {
-                LineEndings.EndEnding = LineEndEnum.Arrow;
-                Line.EndEnding = LineEndEnum.Arrow;
-            }
-
-            if (StartAnchor == "Triangle")
-            {
-                LineEndings.StartEnding = LineEndEnum.Triangle;
-                Line.StartEnding = LineEndEnum.Triangle;
-
-                FillBrush = BackgroundColor;
-                HighlightFillBrush = BackgroundColor;
-            }
-
-            if (EndAnchor == "Triangle")
-            {
-                LineEndings.EndEnding = LineEndEnum.Triangle;
-                Line.EndEnding = LineEndEnum.Triangle;
-
-                FillBrush = BackgroundColor;
-                HighlightFillBrush = BackgroundColor;
-            }
-
-            if (StartAnchor == "FilledTriangle")
-            {
-                LineEndings.StartEnding = LineEndEnum.FilledTriangle;
-                Line.StartEnding = LineEndEnum.FilledTriangle;
-
-                FillBrush = ForegroundColor;
+            if (StartAnchor == LineEndEnum.FilledTriangle)
+            {                
+                FillBrush = foregroundBrush;
                 HighlightFillBrush = (Brush)LineEndings.FindResource("0LightHighlightBrush");
             }
 
-            if (EndAnchor == "FilledTriangle")
-            {
-                LineEndings.EndEnding = LineEndEnum.FilledTriangle;
-                Line.EndEnding = LineEndEnum.FilledTriangle;
-
-                FillBrush = ForegroundColor;
+            if (EndAnchor == LineEndEnum.FilledTriangle)
+            {                
+                FillBrush = foregroundBrush;
                 HighlightFillBrush = (Brush)LineEndings.FindResource("0LightHighlightBrush");
             }
 
-            if (StartAnchor == "Diamond")
-            {
-                LineEndings.StartEnding = LineEndEnum.Diamond;
-                Line.StartEnding = LineEndEnum.Diamond;
-
-                FillBrush = BackgroundColor;
-                HighlightFillBrush = BackgroundColor;
+            if (StartAnchor == LineEndEnum.Diamond)
+            {                
+                FillBrush = backgroundBrush;
+                HighlightFillBrush = backgroundBrush;
             }
 
-            if (EndAnchor == "Diamond")
-            {
-                LineEndings.EndEnding = LineEndEnum.Diamond;
-                Line.EndEnding = LineEndEnum.Diamond;
-
-                FillBrush = BackgroundColor;
-                HighlightFillBrush = BackgroundColor;
+            if (EndAnchor == LineEndEnum.Diamond)
+            {                
+                FillBrush = backgroundBrush;
+                HighlightFillBrush = backgroundBrush;
             }
 
-            if (StartAnchor == "FilledDiamond")
-            {
-                LineEndings.StartEnding = LineEndEnum.FilledDiamond;
-                Line.StartEnding = LineEndEnum.FilledDiamond;
-
-                FillBrush = ForegroundColor;
+            if (StartAnchor == LineEndEnum.FilledDiamond)
+            {                
+                FillBrush = foregroundBrush;
                 HighlightFillBrush = (Brush)LineEndings.FindResource("0LightHighlightBrush");
             }
 
-            if (EndAnchor == "FilledDiamond")
-            {
-                LineEndings.EndEnding = LineEndEnum.FilledDiamond;
-                Line.EndEnding = LineEndEnum.FilledDiamond;
-
-                FillBrush = ForegroundColor;
+            if (EndAnchor == LineEndEnum.FilledDiamond)
+            {                
+                FillBrush = foregroundBrush;
                 HighlightFillBrush = (Brush)LineEndings.FindResource("0LightHighlightBrush");
             }
 
@@ -239,19 +183,21 @@ namespace m0.ZeroTypes.UX
 
         private void VertexUpdated()
         {
-            if (Vertex.Get(false, @"Definition:Inheritence") != null) // not to display "$Inherits" 
+            if (GraphUtil.GetValueAndCompareStrings(UXTemplate.Vertex, "Inheritence")) // not to display "$Inherits"                 
                 return;
 
-            if (Vertex.Get(false, @"BaseEdge:\Meta:\$VertexTarget:") != null
-                && !GraphUtil.GetValueAndCompareStrings(Vertex.Get(false, @"Definition:\CreateEdgeOnly:"), "True"))
+            IEdge baseEdge = BaseEdge;
+
+            if (baseEdge.Meta.Get(false, "$VertexTarget:") != null
+                && ((UXDecoratorTemplate)UXTemplate).CreateEdgeOnly)                
             {
-                IVertex v = Vertex.Get(false, @"BaseEdge:\To:");
+                IVertex v = baseEdge.To;
                 if (v.Value != null && !GeneralUtil.CompareStrings(v.Value, "$Empty"))
                     Label.Text = (string)v.Value;
             }
             else
             {
-                IVertex v = Vertex.Get(false, @"BaseEdge:\Meta:");
+                IVertex v = baseEdge.Meta;
                 if (v.Value != null && !GeneralUtil.CompareStrings(v.Value, "$Empty"))
                     Label.Text = (string)v.Value;
             }
@@ -391,31 +337,31 @@ namespace m0.ZeroTypes.UX
 
         public LineDecorator(IEdge edge) : base(edge) { }
 
-        public LayoutTypeEnum StartAnchor
+        public LineEndEnum StartAnchor
         {
             get
             {
                 IVertex val = GraphUtil.GetQueryOutFirst(Vertex, "StartAnchor", null);
 
-                return LayoutTypeEnumHelper.GetEnum(val);
+                return LineEndEnumHelper.GetEnum(val);
             }
             set
             {
-                GraphUtil.CreateOrReplaceEdge(Vertex, StartAnchor_meta, LayoutTypeEnumHelper.GetVertex(value));
+                GraphUtil.CreateOrReplaceEdge(Vertex, StartAnchor_meta, LineEndEnumHelper.GetVertex(value));
             }
         }
 
-        public LayoutTypeEnum EndAnchor
+        public LineEndEnum EndAnchor
         {
             get
             {
                 IVertex val = GraphUtil.GetQueryOutFirst(Vertex, "EndAnchor", null);
 
-                return LayoutTypeEnumHelper.GetEnum(val);
+                return LineEndEnumHelper.GetEnum(val);
             }
             set
             {
-                GraphUtil.CreateOrReplaceEdge(Vertex, EndAnchor_meta, LayoutTypeEnumHelper.GetVertex(value));
+                GraphUtil.CreateOrReplaceEdge(Vertex, EndAnchor_meta, LineEndEnumHelper.GetVertex(value));
             }
         }
 

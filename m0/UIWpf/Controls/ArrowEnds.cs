@@ -12,10 +12,5 @@ namespace m0.UIWpf.Controls
         Start = 1,
         End = 2,
         Both = 3
-    }
-
-    public enum LineEndEnum
-    {
-        Straight, Arrow, Triangle, FilledTriangle, Diamond, FilledDiamond
-    }
+    } 
 }
