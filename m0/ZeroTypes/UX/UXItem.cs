@@ -88,7 +88,18 @@ namespace m0.ZeroTypes.UX
                 return foregroundColor.GetBrush();
             else
                 return (Brush)FindResource("0ForegroundBrush");
-        }      
+        }
+
+        protected Brush GetBorderBrush()
+        {
+            Color borderColor = BorderColor;
+
+            if (borderColor != null)
+                return borderColor.GetBrush();
+            else
+                return (Brush)FindResource("0ForegroundBrush");
+        }
+
 
         // PUBLIC
 
