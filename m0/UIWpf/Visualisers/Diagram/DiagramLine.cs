@@ -4,6 +4,7 @@ using m0.Graph.ExecutionFlow;
 using m0.UIWpf.Controls;
 using m0.Util;
 using m0.ZeroTypes;
+using m0.ZeroTypes.UX;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -123,7 +124,6 @@ namespace m0.UIWpf.Visualisers.Diagram
 
         protected virtual void UpdateLine()
         {
-
             double? _lineWidth = GraphUtil.GetDoubleValue(Vertex.Get(false, "LineWidth:"));
             if (_lineWidth != null)
                 LineWidth = (double)_lineWidth;

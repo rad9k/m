@@ -117,7 +117,7 @@ namespace m0
             
             UXAdd(0,0, a, x_vertex);
 
-            UXAdd(100, 100, a, z_vertex);
+          //  UXAdd(200, 200, a, z_vertex);
         }
 
         IUXItem UXAdd(double x, double y, UXItem a, IVertex v)
