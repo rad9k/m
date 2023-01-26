@@ -148,13 +148,27 @@ namespace m0.UIWpf.UX
         {
             ScrollViewer sv = ScrollViewerParent.GetScrollViewer();
 
-            double half_Vertical = sv.ActualHeight * 2;// / 2;
+            double scale = Scale;
 
-            double scrollCenter_Vertical = (sv.VerticalOffset + half_Vertical) / ((FrameworkElement)sv.Content).Height;
+            double content_height = ((FrameworkElement)sv.Content).ActualHeight * (scale/100);
+            double content_width = ((FrameworkElement)sv.Content).ActualWidth * (scale/100);
 
-            double half_Horizontal = sv.ActualWidth * 2;// / 2;
+            //double actual_height = sv.ScrollableHeight;
+            //double actual_width = sv.ScrollableWidth;
 
-            double scrollCenter_Horizontal = (sv.HorizontalOffset + half_Horizontal) / ((FrameworkElement)sv.Content).Width;
+            double actual_height = sv.ViewportHeight;
+            double actual_width = sv.ViewportWidth;
+
+            //double actual_height = sv.ExtentHeight;
+            //double actual_width = sv.ExtentWidth;
+
+            double half_Vertical = (actual_height * (actual_height / content_height)) / 4;
+            double half_Horizontal = (actual_width * (actual_width / content_width)) / 4;
+
+            // actual * ( actual / content)
+
+            double scrollCenter_Vertical = (sv.VerticalOffset + half_Vertical) / content_height;            
+            double scrollCenter_Horizontal = (sv.HorizontalOffset + half_Horizontal) / content_width;
 
 
             ////////////////////////////////////////
@@ -189,9 +203,9 @@ namespace m0.UIWpf.UX
 
             ScaleChange();
 
-            sv.ScrollToVerticalOffset((scrollCenter_Vertical * ((FrameworkElement)sv.Content).Height) - half_Vertical);
+            sv.ScrollToVerticalOffset((scrollCenter_Vertical * content_height) - half_Vertical);
 
-            sv.ScrollToHorizontalOffset((scrollCenter_Horizontal * ((FrameworkElement)sv.Content).Width) - half_Horizontal);
+            sv.ScrollToHorizontalOffset((scrollCenter_Horizontal * content_width) - half_Horizontal);
         }        
 
         IVertex vertex = null;
