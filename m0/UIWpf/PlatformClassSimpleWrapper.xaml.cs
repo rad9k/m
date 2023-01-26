@@ -19,21 +19,32 @@ using m0.Graph;
 using Xceed.Wpf.AvalonDock.Layout;
 using m0.User.Process.UX;
 using m0.UIWpf.Visualisers.Helper;
+using m0.UIWpf.Controls;
 
 namespace m0.UIWpf
 {
     /// <summary>
     /// Interaction logic for PlatformClassSimpleWrapper.xaml
     /// </summary>
-    public partial class PlatformClassSimpleWrapper : UserControl
+    public partial class PlatformClassSimpleWrapper : UserControl, IHasScrollViewer
     {
         public bool IsIntialising;
 
         public PlatformClassSimpleWrapper()
         {
             InitializeComponent();
+            
+            this.PreviewMouseWheel += PlatformClassSimpleWrapper_PreviewMouseWheel;
         }
-        
+
+        private void PlatformClassSimpleWrapper_PreviewMouseWheel(object sender, MouseWheelEventArgs e)
+        {
+            if (Content != null && Content is IMouseWheelHandler)
+                ((IMouseWheelHandler)Content).MouseWheelAction(e);
+
+            e.Handled = true;
+        }
+
         private void ListViewScrollViewer_PreviewMouseWheel(object sender, System.Windows.Input.MouseWheelEventArgs e)
         {
             ScrollViewer scv = (ScrollViewer)sender;
@@ -96,6 +107,11 @@ namespace m0.UIWpf
             //GraphUtil.ReplaceEdge(topRow.Vertex.Get(false, "BaseEdge:"), "To", pc.Vertex);
            
             this.expander.Content = topRow;
+        }
+
+        public ScrollViewer GetScrollViewer()
+        {
+            return this.Cont;
         }
     }
 

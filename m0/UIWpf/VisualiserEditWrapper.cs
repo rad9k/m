@@ -11,10 +11,12 @@ using m0.ZeroTypes;
 using m0.Util;
 using m0.Graph.ExecutionFlow;
 using m0.UIWpf.Visualisers.Helper;
+using m0.UIWpf.Controls;
+using System.Windows.Input;
 
 namespace m0.UIWpf
 {
-    public class VisualiserEditWrapper: ContentControl, IDisposable
+    public class VisualiserEditWrapper: ContentControl, IDisposable, IMouseWheelHandler
     {
         public bool TriggerNewTransaction = false;
 
@@ -27,7 +29,7 @@ namespace m0.UIWpf
             parentVisualiser = _parentVisualiser;
 
             //this.VerticalContentAlignment = VerticalAlignment.Center;
-            this.VerticalAlignment = VerticalAlignment.Center;
+            this.VerticalAlignment = VerticalAlignment.Center;            
         }
 
         public IEdge BaseEdge
@@ -94,6 +96,11 @@ namespace m0.UIWpf
                     ((IDisposable)this.Content).Dispose();
             }
         }
-        
+
+        public void MouseWheelAction(MouseWheelEventArgs e)
+        {
+            if (Content != null && Content is IMouseWheelHandler)
+                ((IMouseWheelHandler)Content).MouseWheelAction(e);
+        }
     }
 }

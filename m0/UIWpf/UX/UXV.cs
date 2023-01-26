@@ -34,11 +34,13 @@ namespace m0.UIWpf.UX
         public int EdgesNumber;
     }
 
-    public class UXV : Border, IListVisualiser, IUXAggregator
+    public class UXV : Border, IListVisualiser, IUXAggregator, IMouseWheelHandler
     {
         bool IsVisualiser;
 
         public AtomVisualiserHelper VisualiserHelper { get; set; }
+
+        IHasScrollViewer ScrollViewerParent;
 
         //
 
@@ -141,6 +143,56 @@ namespace m0.UIWpf.UX
 
             this.KeyDown += Diagram_KeyDown;
         }
+
+        public void MouseWheelAction(MouseWheelEventArgs e)
+        {
+            ScrollViewer sv = ScrollViewerParent.GetScrollViewer();
+
+            double half_Vertical = sv.ActualHeight * 2;// / 2;
+
+            double scrollCenter_Vertical = (sv.VerticalOffset + half_Vertical) / ((FrameworkElement)sv.Content).Height;
+
+            double half_Horizontal = sv.ActualWidth * 2;// / 2;
+
+            double scrollCenter_Horizontal = (sv.HorizontalOffset + half_Horizontal) / ((FrameworkElement)sv.Content).Width;
+
+
+            ////////////////////////////////////////
+            Interaction.BeginInteractionWithGraph();
+            //////////////////////////////////////// 
+            
+            if (e.Delta > 0)
+            {
+                if (Scale < 40)
+                    Scale = Scale + 1;
+                else
+                    Scale = Scale + 5;
+            }
+            else
+            {
+                double toBeScale = 0;
+
+                if (Scale < 40)
+                    toBeScale = Scale - 1;
+                else
+                    toBeScale = Scale - 5;
+
+                if (toBeScale < 0)
+                    Scale = 0;
+                else
+                    Scale = toBeScale;
+            }
+
+            ////////////////////////////////////////
+            Interaction.EndInteractionWithGraph();
+            //////////////////////////////////////// 
+
+            ScaleChange();
+
+            sv.ScrollToVerticalOffset((scrollCenter_Vertical * ((FrameworkElement)sv.Content).Height) - half_Vertical);
+
+            sv.ScrollToHorizontalOffset((scrollCenter_Horizontal * ((FrameworkElement)sv.Content).Width) - half_Horizontal);
+        }        
 
         IVertex vertex = null;
 
@@ -480,7 +532,20 @@ namespace m0.UIWpf.UX
                 this.Loaded -= OnLoad;
 
             VisualiserHelper.AddContextMenu();
+
+            ScrollViewerParent = GetScrollViewerParent(this);
         }             
+
+        IHasScrollViewer GetScrollViewerParent(DependencyObject e)
+        {
+            if (e == null || !(e is FrameworkElement))
+                return null;
+
+            if (e is IHasScrollViewer)
+                return (IHasScrollViewer)e;
+
+            return GetScrollViewerParent(((FrameworkElement)e).Parent);
+        }
 
         bool IsLineSelected = false;  
 
@@ -967,7 +1032,7 @@ namespace m0.UIWpf.UX
 
         public void ScaleChange()
         {
-            double scale = ((double)GraphUtil.GetIntegerValue(Vertex.Get(false, "Scale:"))) / 100;
+            double scale = Scale / 100;
 
             if (scale != 1.0)
             {
