@@ -100,14 +100,14 @@ namespace m0.UIWpf.UX
 
         public UXV(IVertex baseEdgeVertex, IVertex parentVisualiser)
         {
-            if(VisualisersList.GetVisualiser(baseEdgeVertex.Get(false, "To:")) != null)
+            if (VisualisersList.GetVisualiser(baseEdgeVertex.Get(false, "To:")) != null)
             {
                 UserInteractionUtil.ShowError("Diagram Visualiser", "There is allready Diagram Visualiser opened for this Edge");
 
                 return;
             }
 
-            IsVisualiser = false;
+            IsVisualiser = true;
 
             TheCanvas = new Canvas();
 
@@ -1039,9 +1039,8 @@ namespace m0.UIWpf.UX
             {
                 IsDisposed = true;
 
-                if (!IsVisualiser)
+                if (IsVisualiser)
                 {
-
                     VisualisersList.RemoveVisualiser(this);
 
                     GraphChangeTrigger.RemoveListener(VisualiserHelper.graphChangeListenerEdge);
@@ -1055,7 +1054,9 @@ namespace m0.UIWpf.UX
 
                         i.Dispose();
                     }
-
+                }
+                else
+                {
                     TypedEdge.RemoveFromDictionary(this);
                 }
             }
