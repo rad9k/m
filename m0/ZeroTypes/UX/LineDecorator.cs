@@ -23,7 +23,6 @@ namespace m0.ZeroTypes.UX
 
         public override void VertexSetedUp()
         {
-            return;
             VertexUpdated();
 
             graphChangeListenerEdge = ExecutionFlowHelper.AddTriggerAndListener(Vertex,
@@ -38,8 +37,6 @@ namespace m0.ZeroTypes.UX
      
         public LineDecorator(IEdge _edge) : base(_edge)
         {
-            return;
-
             LineEndings.IsEndings = true;
             LineEndings.StrokeThickness = 1;
             LineEndings.Stroke = GetForegroundBrush();
@@ -59,14 +56,11 @@ namespace m0.ZeroTypes.UX
 
         public override void Dispose()
         {
-            return;
-
             GraphChangeTrigger.RemoveListener(graphChangeListenerEdge);
         }
 
         protected virtual INoInEdgeInOutVertexVertex VertexChange(IExecution exe)
         {
-            return null;
             if (IsVertexChangeOrEdgeAddedRemovedDisposedByMetaAndFrom(exe.Stack, Vertex, "IsDashed")
                 || IsVertexChangeOrEdgeAddedRemovedDisposedByMetaAndFrom(exe.Stack, Vertex, "LineWidth"))
                 UpdateLine();
@@ -99,8 +93,6 @@ namespace m0.ZeroTypes.UX
 
         protected virtual void UpdateLine()
         {
-            return;
-
             double thickness = LineWidth;
 
             if (thickness == 0)
@@ -117,7 +109,6 @@ namespace m0.ZeroTypes.UX
 
         protected virtual void UpdateLineEnds()
         {
-            return;
             Brush backgroundBrush = GetBackgroundBrush();
             Brush foregroundBrush = GetForegroundBrush();
 
@@ -195,7 +186,6 @@ namespace m0.ZeroTypes.UX
 
         private void VertexUpdated()
         {
-            return;
             if (GraphUtil.GetValueAndCompareStrings(UXTemplate.Vertex, "Inheritence")) // not to display "$Inherits"                 
                 return;
 
@@ -223,7 +213,6 @@ namespace m0.ZeroTypes.UX
 
         public override void SetPosition(double _FromX, double _FromY, double _ToX, double _ToY, bool _isSelfRelation, double selfRelationX, double selfRelationY)
         {
-            return;
             FromX = _FromX;
             FromY = _FromY;
             ToX = _ToX;
@@ -258,7 +247,6 @@ namespace m0.ZeroTypes.UX
 
         public override double GetMouseDistance(Point p)
         {
-            return 0;
             if (!isSelfRelation)
             {
                 return GetMouseDistance_Helper(p, FromX, FromY, ToX, ToY);
@@ -299,7 +287,6 @@ namespace m0.ZeroTypes.UX
 
         public override void AddToCanvas()
         {
-            return;
             Diagram.TheCanvas.Children.Add(LineEndings);
             Diagram.TheCanvas.Children.Add(Line);
             Diagram.TheCanvas.Children.Add(Label);
@@ -307,7 +294,6 @@ namespace m0.ZeroTypes.UX
 
         public override void RemoveFromCanvas()
         {
-            return;
             Diagram.TheCanvas.Children.Remove(LineEndings);
             Diagram.TheCanvas.Children.Remove(Line);
             Diagram.TheCanvas.Children.Remove(Label);
@@ -315,7 +301,6 @@ namespace m0.ZeroTypes.UX
 
         public override void Highlight()
         {
-            return;
             IsHighlighted = true;
 
             LineEndings.Stroke = (Brush)LineEndings.FindResource("0LightHighlightBrush");
@@ -333,7 +318,6 @@ namespace m0.ZeroTypes.UX
 
         public override void Unhighlight()
         {
-            return;
             Brush foregroundBrush = GetForegroundBrush();
 
             IsHighlighted = false;
