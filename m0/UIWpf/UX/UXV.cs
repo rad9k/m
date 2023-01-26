@@ -163,7 +163,12 @@ namespace m0.UIWpf.UX
             //double actual_width = sv.ExtentWidth;
 
             double half_Vertical = (actual_height * (actual_height / content_height)) / 4;
-            double half_Horizontal = (actual_width * (actual_width / content_width)) / 4;
+
+            //double half_Horizontal = (actual_width * (actual_width / content_width)) / 4;
+
+            double half = sv.ActualWidth / 2;
+
+            double scrollBarPosAbstract = (sv.HorizontalOffset + half) / ((FrameworkElement)sv.Content).Width;
 
             // actual * ( actual / content)
 
