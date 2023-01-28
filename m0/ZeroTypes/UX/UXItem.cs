@@ -33,7 +33,7 @@ namespace m0.ZeroTypes.UX
 
         IEdge graphChangeListenerEdge;
 
-        double AnchorSize = 11;
+        protected double AnchorSize = 11;
 
         //
 
@@ -1327,7 +1327,7 @@ namespace m0.ZeroTypes.UX
 
         public IUXItem AddDecorator(IVertex typeVertex)
         {
-            IEdge newEdge = VertexOperations.AddInstanceAndReturnEdge(Vertex, typeVertex, Item_meta);
+            IEdge newEdge = VertexOperations.AddInstanceAndReturnEdge(Vertex, typeVertex, Decorator_meta);
 
             return (IUXItem)TypedEdge.Get(newEdge);
         }

@@ -38,25 +38,7 @@ namespace m0.ZeroTypes.UX
 
         }
 
-        public override void RemoveFromCanvas()
-        {
-
-        }
-
-        public override void Highlight()
-        {
-
-        }
-
-        public override void Unhighlight()
-        {
-
-        }
-
-        public override void Dispose()
-        {
-
-        }
+        
 
         // UNDER
 

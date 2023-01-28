@@ -334,6 +334,34 @@ namespace m0.ZeroTypes.UX
             Panel.SetZIndex(Label, 0);
         }
 
+        public override void Select()
+        {
+            return;
+            IsSelected = true;
+
+            GeneralUtil.SetPropertyIfPresent(this.Content, "Foreground", GetBackgroundBrush());
+
+            Panel.SetZIndex(this, 99999);
+
+            double left = Canvas.GetLeft(this);
+            double top = Canvas.GetTop(this);
+            double right = left + ActualWidth;
+            double bottom = top + ActualHeight;
+            double width = ActualWidth;
+            double height = ActualHeight;
+
+            AddAnchor(ClickTargetEnum.AnchorLeftTop, left - AnchorSize, top - AnchorSize);
+            AddAnchor(ClickTargetEnum.AnchorMiddleTop, left - AnchorSize / 2 + width / 2, top - AnchorSize);
+            AddAnchor(ClickTargetEnum.AnchorRightTop_CreateDiagramLine, right, top - AnchorSize);
+
+            AddAnchor(ClickTargetEnum.AnchorLeftMiddle, left - AnchorSize, top - AnchorSize / 2 + height / 2);
+            AddAnchor(ClickTargetEnum.AnchorRightMiddle, right, top - AnchorSize / 2 + height / 2);
+
+            AddAnchor(ClickTargetEnum.AnchorLeftBottom, left - AnchorSize, bottom);
+            AddAnchor(ClickTargetEnum.AnchorMiddleBottom, left - AnchorSize / 2 + width / 2, bottom);
+            AddAnchor(ClickTargetEnum.AnchorRightBottom, right, bottom);
+        }
+
         // UNDER
 
         static IVertex StartAnchor_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\LineDecorator\StartAnchor");

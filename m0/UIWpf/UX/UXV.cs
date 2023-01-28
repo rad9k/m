@@ -975,6 +975,8 @@ namespace m0.UIWpf.UX
 
                     bestLine.Highlight();
 
+                    bestLine.Select();
+
                     selectedLine = bestLine;
 
                     prevSelected = bestLine;
@@ -989,6 +991,8 @@ namespace m0.UIWpf.UX
                     IsLineSelected = false;
 
                     prevSelected.Unhighlight();
+
+                    prevSelected.Unselect();
 
                     selectedLine = null;
 
