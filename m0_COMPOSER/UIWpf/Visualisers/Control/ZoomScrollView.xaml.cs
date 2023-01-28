@@ -163,7 +163,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control
 
             double scrollBarPosAbstract = (this.ScrollViewer.HorizontalOffset + half) / ((FrameworkElement)ScrollViewer.Content).Width;
 
-            HorizontalAxisDecorator.SetZoomFactor(HorizontalZoomSlider.Value);
+            //HorizontalAxisDecorator.SetZoomFactor(HorizontalZoomSlider.Value);
 
             Host.VisualiserDraw();
 
@@ -179,7 +179,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control
 
             double scrollBarPosAbstract = (this.ScrollViewer.VerticalOffset + half) / ((FrameworkElement)ScrollViewer.Content).Height;
 
-            VerticalAxisDecorator.SetZoomFactor(VerticalZoomSlider.Value);
+            //VerticalAxisDecorator.SetZoomFactor(VerticalZoomSlider.Value);
 
             Host.VisualiserDraw();
 
