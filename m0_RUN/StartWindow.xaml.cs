@@ -112,8 +112,8 @@ namespace m0
 
             a.SizeCreate();
 
-            a.Size.Width = 1000;
-            a.Size.Height = 1000;
+            a.Size.Width = 5000;
+            a.Size.Height = 5000;
             
             UXAdd(0,0, a, x_vertex);
 

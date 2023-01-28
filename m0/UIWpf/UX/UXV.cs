@@ -48,7 +48,7 @@ namespace m0.UIWpf.UX
 
         public bool IsSelecting { get; set; }
 
-        public bool IsDrawingLine { get; set; }
+        public bool IsDrawingOrMovingLine { get; set; }
 
         public double ClickPositionX_ItemCordinates { get; set; }
         public double ClickPositionY_ItemCordinates { get; set; }
@@ -62,9 +62,14 @@ namespace m0.UIWpf.UX
 
         public FrameworkElement ClickedAnchor { get; set; }
 
+        ILineDecoratorBase prevSelectedLine;
+        ILineDecoratorBase SelectedLine;
+
+        public double LineSelectionDelta { get { return 10; } }
+
         //
 
-        public Line CreatedDiagramLine;
+        public Line CreateOrMoveDiagramLine;
 
         public SelectionArea SelectionArea;
 
@@ -642,7 +647,7 @@ namespace m0.UIWpf.UX
         {
             bool onlyEdge = true;
 
-            if (selectedLine.Vertex.Get(false, @"BaseEdge:\Meta:\$VertexTarget:") != null)
+            if (SelectedLine.Vertex.Get(false, @"BaseEdge:\Meta:\$VertexTarget:") != null)
                 onlyEdge = false;
 
             IVertex info = m0.MinusZero.Instance.CreateTempVertex();
@@ -663,23 +668,23 @@ namespace m0.UIWpf.UX
             if (option == optionCancel)
                 return;
 
-            selectedLine.FromDiagramItem.RemoveDiagramLine(selectedLine);
+            SelectedLine.FromDiagramItem.RemoveDiagramLine(SelectedLine);
 
             if (onlyEdge)
             {             
-                GraphUtil.DeleteEdge(selectedLine.FromDiagramItem.Vertex.Get(false, @"BaseEdge:\To:"), 
-                    selectedLine.Vertex.Get(false, @"BaseEdge:\Meta:"),
-                    selectedLine.Vertex.Get(false, @"BaseEdge:\To:"));
+                GraphUtil.DeleteEdge(SelectedLine.FromDiagramItem.Vertex.Get(false, @"BaseEdge:\To:"), 
+                    SelectedLine.Vertex.Get(false, @"BaseEdge:\Meta:"),
+                    SelectedLine.Vertex.Get(false, @"BaseEdge:\To:"));
             }
             else
             {
-                GraphUtil.DeleteEdge(selectedLine.Vertex.Get(false, @"BaseEdge:\To:"),
+                GraphUtil.DeleteEdge(SelectedLine.Vertex.Get(false, @"BaseEdge:\To:"),
                MinusZero.Instance.Root.Get(false, @"System\Meta\Base\Vertex\$EdgeTarget"),
-               selectedLine.Vertex.Get(false, @"BaseEdge:\To:\$EdgeTarget:"));
+               SelectedLine.Vertex.Get(false, @"BaseEdge:\To:\$EdgeTarget:"));
 
-                GraphUtil.DeleteEdge(selectedLine.FromDiagramItem.Vertex.Get(false, @"BaseEdge:\To:"),
-                  selectedLine.Vertex.Get(false, @"BaseEdge:\Meta:"),
-                  selectedLine.Vertex.Get(false, @"BaseEdge:\To:"));
+                GraphUtil.DeleteEdge(SelectedLine.FromDiagramItem.Vertex.Get(false, @"BaseEdge:\To:"),
+                  SelectedLine.Vertex.Get(false, @"BaseEdge:\Meta:"),
+                  SelectedLine.Vertex.Get(false, @"BaseEdge:\To:"));
             }
         }
 
@@ -692,30 +697,30 @@ namespace m0.UIWpf.UX
             UnselectAllSelectedEdges();
         }
 
-        protected void CreateAndUpdateDiagramLine(double ToX, double ToY)
+        protected void CreateAndUpdateCreateDiagramLine(double ToX, double ToY)
         {
-            if (CreatedDiagramLine == null)
+            if (CreateOrMoveDiagramLine == null)
             {
-                CreatedDiagramLine = new Line();
+                CreateOrMoveDiagramLine = new Line();
 
-                IsDrawingLine = true;
+                IsDrawingOrMovingLine = true;
 
-                Panel.SetZIndex(CreatedDiagramLine, 100000);
+                Panel.SetZIndex(CreateOrMoveDiagramLine, 100000);
 
-                CreatedDiagramLine.Stroke = (Brush)FindResource("0HighlightBrush");
+                CreateOrMoveDiagramLine.Stroke = (Brush)FindResource("0HighlightBrush");
 
-                CreatedDiagramLine.StrokeThickness = 2;
+                CreateOrMoveDiagramLine.StrokeThickness = 2;
 
-                TheCanvas.Children.Add(CreatedDiagramLine);
+                TheCanvas.Children.Add(CreateOrMoveDiagramLine);
 
                 FrameworkElement ClickedItem_FrameworkElement = (FrameworkElement)ClickedItem;
 
-                CreatedDiagramLine.X1 = Canvas.GetLeft(ClickedItem_FrameworkElement) + ClickedItem_FrameworkElement.ActualWidth;
-                CreatedDiagramLine.Y1 = Canvas.GetTop(ClickedItem_FrameworkElement);
+                CreateOrMoveDiagramLine.X1 = Canvas.GetLeft(ClickedItem_FrameworkElement) + ClickedItem_FrameworkElement.ActualWidth;
+                CreateOrMoveDiagramLine.Y1 = Canvas.GetTop(ClickedItem_FrameworkElement);
             }
 
-            CreatedDiagramLine.X2 = ToX;
-            CreatedDiagramLine.Y2 = ToY;
+            CreateOrMoveDiagramLine.X2 = ToX;
+            CreateOrMoveDiagramLine.Y2 = ToY;
 
             Point p = new Point(ToX, ToY);            
 
@@ -747,6 +752,63 @@ namespace m0.UIWpf.UX
                         }
                     }
                 }
+        }
+
+        protected void CreateAndUpdateMoveDiagramLine(double ToX, double ToY)
+        {
+            if (CreateOrMoveDiagramLine == null)
+            {
+                CreateOrMoveDiagramLine = new Line();
+
+                IsDrawingOrMovingLine = true;
+
+                Panel.SetZIndex(CreateOrMoveDiagramLine, 100000);
+
+                CreateOrMoveDiagramLine.Stroke = (Brush)FindResource("0HighlightBrush");
+
+                CreateOrMoveDiagramLine.StrokeThickness = 2;
+
+                TheCanvas.Children.Add(CreateOrMoveDiagramLine);
+
+                FrameworkElement ClickedItem_FrameworkElement = (FrameworkElement)ClickedItem;
+
+                CreateOrMoveDiagramLine.X1 = Canvas.GetLeft(ClickedItem_FrameworkElement) + ClickedItem_FrameworkElement.ActualWidth;
+                CreateOrMoveDiagramLine.Y1 = Canvas.GetTop(ClickedItem_FrameworkElement);
+            }
+
+            CreateOrMoveDiagramLine.X2 = ToX;
+            CreateOrMoveDiagramLine.Y2 = ToY;
+
+            Point p = new Point(ToX, ToY);
+
+            foreach (IItem _i in Items)
+            {
+                IUXItem i = GetUXItem(_i);
+
+                if (i == null || !(i is UIElement))
+                    continue;
+
+                UIElement i_UIElement = (UIElement)i;
+
+                if (VisualTreeHelper.HitTest(i_UIElement, TranslatePoint(p, i_UIElement)) != null)
+                {
+                    if (HighlightedItem == null)
+                    {
+                        i.Highlight();
+
+                        HighlightedItem = i;
+                    }
+                }
+                else
+                {
+                    if (HighlightedItem == i)
+                    {
+                        HighlightedItem = null;
+
+                        i.Unhighlight();
+                    }
+                }
+            }
         }
 
         bool IsMultiSelectionMoving = false;
@@ -855,7 +917,10 @@ namespace m0.UIWpf.UX
                 }
 
                 if (ClickTarget == ClickTargetEnum.AnchorRightTop_CreateDiagramLine)
-                    CreateAndUpdateDiagramLine(e.GetPosition(TheCanvas).X, e.GetPosition(TheCanvas).Y);
+                    CreateAndUpdateCreateDiagramLine(e.GetPosition(TheCanvas).X, e.GetPosition(TheCanvas).Y);
+
+                if (ClickTarget == ClickTargetEnum.AnchorRightTop_MoveDiagramLine)
+                    CreateAndUpdateMoveDiagramLine(e.GetPosition(TheCanvas).X, e.GetPosition(TheCanvas).Y);
 
                 if (ClickTarget == ClickTargetEnum.AnchorLeftMiddle)
                 {
@@ -932,12 +997,7 @@ namespace m0.UIWpf.UX
             {
                 CheckIfLineNeedsSelection(e.GetPosition(TheCanvas));
             }
-        }
-
-        ILineDecoratorBase prevSelected;
-        ILineDecoratorBase selectedLine;
-
-        public double LineSelectionDelta { get { return 10; } }
+        }        
 
         private void CheckIfLineNeedsSelection(System.Windows.Point p)
         {
@@ -968,18 +1028,22 @@ namespace m0.UIWpf.UX
 
             if (best < LineSelectionDelta && bestLine != null) 
             {
-                if (bestLine != prevSelected)
+                if (bestLine != prevSelectedLine)
                 {
-                    if (prevSelected != null)
-                        prevSelected.Unhighlight();
+                    if (prevSelectedLine != null)
+                    {
+                        prevSelectedLine.Unhighlight();
+
+                        prevSelectedLine.Unselect();
+                    }
 
                     bestLine.Highlight();
 
                     bestLine.Select();
 
-                    selectedLine = bestLine;
+                    SelectedLine = bestLine;
 
-                    prevSelected = bestLine;
+                    prevSelectedLine = bestLine;
 
                   //  UnselectAllSelectedEdges(); need to comment it
 
@@ -990,13 +1054,13 @@ namespace m0.UIWpf.UX
                 {
                     IsLineSelected = false;
 
-                    prevSelected.Unhighlight();
+                    prevSelectedLine.Unhighlight();
 
-                    prevSelected.Unselect();
+                    prevSelectedLine.Unselect();
 
-                    selectedLine = null;
+                    SelectedLine = null;
 
-                    prevSelected = null;
+                    prevSelectedLine = null;
                 }
         }
 
@@ -1040,13 +1104,35 @@ namespace m0.UIWpf.UX
                 }
 
                 HighlightedItem = null;
-                TheCanvas.Children.Remove(CreatedDiagramLine);
-                CreatedDiagramLine = null;
+                TheCanvas.Children.Remove(CreateOrMoveDiagramLine);
+                CreateOrMoveDiagramLine = null;
 
-                IsDrawingLine = false;
+                IsDrawingOrMovingLine = false;
+            }
+
+            if (ClickTarget == ClickTargetEnum.AnchorRightTop_MoveDiagramLine)
+            {
+                if (HighlightedItem != null)
+                {
+                    HighlightedItem.Unhighlight();
+
+                    if (IsUp)
+                        DoMoveLine(ClickedItem, HighlightedItem, SelectedLine);
+                }
+
+                HighlightedItem = null;
+                TheCanvas.Children.Remove(CreateOrMoveDiagramLine);
+                CreateOrMoveDiagramLine = null;
+
+                IsDrawingOrMovingLine = false;
             }
 
             ClickTarget = ClickTargetEnum.MouseUpOrLeave;
+        }
+
+        private void DoMoveLine(IUXItem fromItem, IUXItem toItem, ILineDecoratorBase line)
+        {
+
         }
 
         public void ScaleChange()

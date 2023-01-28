@@ -16,7 +16,7 @@ namespace m0.ZeroTypes.UX
 
         public bool IsSelecting { get; set; }
 
-        public bool IsDrawingLine { get; set; }
+        public bool IsDrawingOrMovingLine { get; set; }
 
         public double ClickPositionX_ItemCordinates { get; set; }
         public double ClickPositionY_ItemCordinates { get; set; }

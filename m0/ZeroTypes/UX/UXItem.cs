@@ -697,13 +697,13 @@ namespace m0.ZeroTypes.UX
 
         private void DiagramItemBase_MouseLeave(object sender, MouseEventArgs e)
         {
-            if (Diagram.IsDrawingLine == false && Diagram.IsSelecting == false)
+            if (Diagram.IsDrawingOrMovingLine == false && Diagram.IsSelecting == false)
                 UnhighlightThisAndAllConectedByDiagramLine();
         }
 
         private void DiagramItemBase_MouseEnter(object sender, MouseEventArgs e)
         {
-            if (Diagram.IsDrawingLine == false && Diagram.IsSelecting == false)
+            if (Diagram.IsDrawingOrMovingLine == false && Diagram.IsSelecting == false)
                 HighlightThisAndAllConectedByDiagramLine();
         }
 
@@ -776,15 +776,34 @@ namespace m0.ZeroTypes.UX
         {
             FrameworkElement r;
 
-            if (anchorType == ClickTargetEnum.AnchorRightTop_CreateDiagramLine)
+            if (anchorType == ClickTargetEnum.AnchorRightTop_CreateDiagramLine || anchorType == ClickTargetEnum.AnchorRightTop_MoveDiagramLine)
             {
                 TextBox l = new TextBox();
                 l.IsReadOnly = true;
                 l.Focusable = false;
-                l.Text = "*";
-                l.FontSize = 22;
+
+                if (anchorType == ClickTargetEnum.AnchorRightTop_CreateDiagramLine)
+                {
+                    l.FontSize = 22;
+                    l.Text = "*";
+                    l.Padding = new Thickness(-2, -3.8, 0, 0);
+                }
+
+                if (anchorType == ClickTargetEnum.AnchorRightTop_MoveDiagramLine)
+                {
+                    l.Text = "%";
+                    l.FontSize = 12;
+                    l.FontWeight = FontWeights.ExtraBold;
+                    l.Padding = new Thickness(-2.6, -1.1, 0, 0);
+
+                    /*l.Text = "#";
+                    l.FontSize = 15;
+                    l.FontWeight = FontWeights.ExtraBold;
+                    l.Padding = new Thickness(-0.2, -3, 0, 0);*/
+                }
+                
                 l.FontFamily = new FontFamily("Times New Roman");
-                l.Padding = new Thickness(-1.8, -3.5, 0, 0);
+                
                 l.Margin = new Thickness(0);
                 l.BorderThickness = new Thickness(0);
 
@@ -830,6 +849,10 @@ namespace m0.ZeroTypes.UX
                     SetCursor(r, Cursors.Pen);                    
                     break;
 
+                case ClickTargetEnum.AnchorRightTop_MoveDiagramLine:
+                    SetCursor(r, Cursors.Pen);
+                    break;
+
                 case ClickTargetEnum.AnchorLeftMiddle:
                     SetCursor(r, Cursors.SizeWE);                    
                     break;
@@ -850,6 +873,8 @@ namespace m0.ZeroTypes.UX
                     SetCursor(r, Cursors.SizeNWSE);                    
                     break;
             }
+
+            Panel.SetZIndex(r, 99999);
 
             Diagram.TheCanvas.Children.Add(r);
 

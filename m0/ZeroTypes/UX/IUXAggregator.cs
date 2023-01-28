@@ -12,7 +12,18 @@ namespace m0.ZeroTypes.UX
 {
     public enum ClickTargetEnum
     {
-        MouseUpOrLeave, Selection, Item, AnchorLeftTop, AnchorMiddleTop, AnchorRightTop_CreateDiagramLine, AnchorLeftMiddle, AnchorRightMiddle, AnchorLeftBottom, AnchorMiddleBottom, AnchorRightBottom
+        MouseUpOrLeave,
+        Selection,
+        Item,
+        AnchorLeftTop,
+        AnchorMiddleTop,
+        AnchorRightTop_CreateDiagramLine,
+        AnchorRightTop_MoveDiagramLine,
+        AnchorLeftMiddle,
+        AnchorRightMiddle,
+        AnchorLeftBottom,
+        AnchorMiddleBottom,
+        AnchorRightBottom
     }
 
     public interface IUXAggregator: IUXItem
@@ -21,7 +32,7 @@ namespace m0.ZeroTypes.UX
 
         bool IsSelecting { get; }
 
-        bool IsDrawingLine { get; }
+        bool IsDrawingOrMovingLine { get; }
 
         double LineSelectionDelta { get; }
 
