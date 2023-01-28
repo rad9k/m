@@ -167,7 +167,9 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control
 
             Host.VisualiserDraw();
 
-            SetHorizontalScrollPosition((scrollBarPosAbstract * ((FrameworkElement)ScrollViewer.Content).Width) - half);
+            double toScroll = (scrollBarPosAbstract * ((FrameworkElement)ScrollViewer.Content).Width) - half;
+
+            SetHorizontalScrollPosition(toScroll);
         }
 
         private void VerticalZoomSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)

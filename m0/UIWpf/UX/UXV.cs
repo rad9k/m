@@ -151,45 +151,62 @@ namespace m0.UIWpf.UX
             double scale = Scale;
 
             
-            double half = sv.ActualWidth / 2;
+            double half_horizontal = sv.ActualWidth / 2;
+            double half_vertical = sv.ActualHeight / 2;
 
-            double scrollBarPosAbstract = (sv.HorizontalOffset + half) / ((FrameworkElement)sv.Content).Width;
+            double scrollBarPosAbstract_horizontal = (sv.HorizontalOffset + half_horizontal) / (TheCanvas.ActualWidth * (scale / 100));
+            double scrollBarPosAbstract_vertical = (sv.VerticalOffset + half_vertical) / (TheCanvas.ActualHeight * (scale / 100));
 
-            // actual * ( actual / content)
-            
             ////////////////////////////////////////
             Interaction.BeginInteractionWithGraph();
             //////////////////////////////////////// 
             
+            double toBeScale = 0;
+
             if (e.Delta > 0)
             {
-                if (Scale < 40)
-                    Scale = Scale + 1;
-                else
-                    Scale = Scale + 5;
+                if (scale >= 0 && scale < 10)
+                    toBeScale = scale + 1;
+
+                if (scale >= 10 && scale < 20)
+                    toBeScale = scale + 2;
+
+                if (scale >= 20 && scale < 40)
+                    toBeScale = scale + 5;
+
+                if (scale >= 40)
+                    toBeScale = scale + 10;
             }
             else
-            {
-                double toBeScale = 0;
+            {                
+                if (scale >= 0 && scale < 10)
+                    toBeScale = scale - 1;
 
-                if (Scale < 40)
-                    toBeScale = Scale - 1;
-                else
-                    toBeScale = Scale - 5;
+                if (scale >= 10 && scale < 20)
+                    toBeScale = scale - 2;
 
-                if (toBeScale < 0)
-                    Scale = 0;
-                else
-                    Scale = toBeScale;
+                if (scale >= 20 && scale < 40)
+                    toBeScale = scale - 5;
+
+                if (scale >= 40)
+                    toBeScale = scale - 10;                
             }
+
+            toBeScale = Math.Abs(toBeScale);
+
+            if (toBeScale < 0)
+                Scale = 0.001;
+            else
+                Scale = toBeScale;
 
             ////////////////////////////////////////
             Interaction.EndInteractionWithGraph();
             //////////////////////////////////////// 
 
-            ScaleChange();            
-
-            sv.ScrollToHorizontalOffset((scrollBarPosAbstract * ((FrameworkElement)sv.Content).Width) - half);
+            ScaleChange();
+            
+            sv.ScrollToHorizontalOffset((scrollBarPosAbstract_horizontal * TheCanvas.ActualWidth * (Scale / 100)) - half_horizontal);
+            sv.ScrollToVerticalOffset((scrollBarPosAbstract_vertical * TheCanvas.ActualHeight * (Scale / 100)) - half_vertical);
         }        
 
         IVertex vertex = null;
