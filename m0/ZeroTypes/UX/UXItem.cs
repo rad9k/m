@@ -41,9 +41,7 @@ namespace m0.ZeroTypes.UX
 
         public bool IsSelected { get; set; }
 
-        public bool IsHighlighted { get; set; }
-
-        public List<ILineDecoratorBase> DiagramLines { get; } = new List<ILineDecoratorBase>(); // >> Decorators
+        public bool IsHighlighted { get; set; }        
 
         public List<ILineDecoratorBase> DiagramToLines { get; } = new List<ILineDecoratorBase>();
 
@@ -129,7 +127,7 @@ namespace m0.ZeroTypes.UX
                     if (e is IDisposable)
                         ((IDisposable)e).Dispose();
 
-                foreach (ILineDecoratorBase e in DiagramLines)
+                foreach (IUXItem e in Decorators)
                     if (e is IDisposable)
                         ((IDisposable)e).Dispose();
 
@@ -161,8 +159,13 @@ namespace m0.ZeroTypes.UX
 
             Unselect();
 
-            foreach (ILineDecoratorBase l in DiagramLines)
-                l.RemoveFromCanvas();
+            foreach (IUXItem _l in Decorators)
+                if (_l is ILineDecoratorBase)
+                {
+                    ILineDecoratorBase l = (ILineDecoratorBase)_l;
+
+                    l.RemoveFromCanvas();
+                }
 
             foreach (ILineDecoratorBase l in DiagramToLines)
                 l.RemoveFromCanvas();
@@ -283,7 +286,7 @@ namespace m0.ZeroTypes.UX
 
             newline.AddToCanvas();
 
-            AddToDiagramLines(newline);
+            needRebuildDiagramLinesDictionary = true;
 
             toItem.DiagramToLines.Add(newline);
 
@@ -291,8 +294,10 @@ namespace m0.ZeroTypes.UX
         }
 
         public void RemoveDiagramLine(ILineDecoratorBase line) 
-        {
-            RemoveFromDiagramLines(line);
+        {            
+            RemoveDecorator(line);
+
+            needRebuildDiagramLinesDictionary = true;
 
             line.ToItem.DiagramToLines.Remove(line);
 
@@ -457,13 +462,16 @@ namespace m0.ZeroTypes.UX
             {
                 ILineDecoratorBase toRemove = null;
 
-                foreach (ILineDecoratorBase l in DiagramLines)
-                { // >> Decorator
-                    IEdge l_baseEdge = l.BaseEdge;
-                    if (l_baseEdge.Meta == edgeVertex.Get(false, "Meta:") &&
-                        l_baseEdge.To == edgeVertex.Get(false, "To:"))
-                        toRemove = l;
-                }
+                foreach (IUXItem _l in Decorators)
+                    if (_l is ILineDecoratorBase)
+                    {
+                        ILineDecoratorBase l = (ILineDecoratorBase)_l;
+                                        
+                        IEdge l_baseEdge = l.BaseEdge;
+                        if (l_baseEdge.Meta == edgeVertex.Get(false, "Meta:") &&
+                            l_baseEdge.To == edgeVertex.Get(false, "To:"))
+                            toRemove = l;
+                    }
 
                 if (toRemove != null)
                     RemoveDiagramLine(toRemove);
@@ -491,14 +499,7 @@ namespace m0.ZeroTypes.UX
         Dictionary<IVertex, List<ILineDecoratorBase>> DiagramLinesToDiagramItemDictionary = new Dictionary<IVertex, List<ILineDecoratorBase>>();
         Dictionary<IVertex, List<ILineDecoratorBase>> DiagramLinesBaseEdgeToDictionary = new Dictionary<IVertex, List<ILineDecoratorBase>>();
 
-        bool needRebuildDiagramLinesDictionary = true;
-
-        void AddToDiagramLines(ILineDecoratorBase line)
-        {
-            DiagramLines.Add(line);
-
-            needRebuildDiagramLinesDictionary = true;
-        }
+        bool needRebuildDiagramLinesDictionary = true;        
 
         void ClearDiagramLines()
         {
@@ -506,22 +507,18 @@ namespace m0.ZeroTypes.UX
             DiagramLinesBaseEdgeToDictionary.Clear();
 
             needRebuildDiagramLinesDictionary = true;
-        }
-
-        void RemoveFromDiagramLines(ILineDecoratorBase toRemove)
-        {
-            DiagramLines.Remove(toRemove);
-
-            needRebuildDiagramLinesDictionary = true;
-        }
+        }        
 
         void RebuidDiagramLinesDictionary()
         {
             DiagramLinesToDiagramItemDictionary.Clear();
             DiagramLinesBaseEdgeToDictionary.Clear();
 
-            foreach (ILineDecoratorBase l in DiagramLines)
-            {
+            foreach (IUXItem _l in Decorators)
+                if (_l is ILineDecoratorBase)
+                {
+                    ILineDecoratorBase l = (ILineDecoratorBase)_l;
+                    
                 // ToDiagramItem:
 
                 IVertex toDiagramItem = l.Vertex.Get(false, @"ToItem:");
@@ -644,12 +641,18 @@ namespace m0.ZeroTypes.UX
 
             List<IUXItem> updatedItems = new List<IUXItem>();
 
-            foreach (ILineDecoratorBase l in DiagramLines)
-                if (!updatedItems.Contains(l.ToItem))
-                {
-                    UpdateDiagramLines(l.ToItem);
 
-                    updatedItems.Add(l.ToItem);
+            foreach (IUXItem _l in Decorators)
+                if (_l is ILineDecoratorBase)
+                {
+                    ILineDecoratorBase l = (ILineDecoratorBase)_l;
+                 
+                    if (!updatedItems.Contains(l.ToItem))
+                    {
+                        UpdateDiagramLines(l.ToItem);
+
+                        updatedItems.Add(l.ToItem);
+                    }
                 }
 
             foreach (ILineDecoratorBase l in DiagramToLines)
@@ -665,11 +668,14 @@ namespace m0.ZeroTypes.UX
         {
             Highlight();
 
-            foreach (ILineDecoratorBase l in DiagramLines)
-            {
-                l.Highlight();
-                l.ToItem.Highlight();
-            }
+            foreach (IUXItem _l in Decorators)
+                if (_l is ILineDecoratorBase)
+                {
+                    ILineDecoratorBase l = (ILineDecoratorBase)_l;
+                    
+                    l.Highlight();
+                    l.ToItem.Highlight();
+                }
 
             foreach (ILineDecoratorBase l in DiagramToLines)
             {
@@ -682,11 +688,14 @@ namespace m0.ZeroTypes.UX
         {
             Unhighlight();
 
-            foreach (ILineDecoratorBase l in DiagramLines)
-            {
-                l.Unhighlight();
-                l.ToItem.Unhighlight();
-            }
+            foreach (IUXItem _l in Decorators)
+                if (_l is ILineDecoratorBase)
+                {
+                    ILineDecoratorBase l = (ILineDecoratorBase)_l;
+                    
+                    l.Unhighlight();
+                    l.ToItem.Unhighlight();
+                }
 
             foreach (ILineDecoratorBase l in DiagramToLines)
             {
@@ -781,6 +790,7 @@ namespace m0.ZeroTypes.UX
                 TextBox l = new TextBox();
                 l.IsReadOnly = true;
                 l.Focusable = false;
+                l.BorderThickness = new Thickness(0);
 
                 if (anchorType == ClickTargetEnum.AnchorRightTop_CreateDiagramLine)
                 {
@@ -791,21 +801,17 @@ namespace m0.ZeroTypes.UX
 
                 if (anchorType == ClickTargetEnum.AnchorRightTop_MoveDiagramLine)
                 {
-                    l.Text = "%";
-                    l.FontSize = 12;
-                    l.FontWeight = FontWeights.ExtraBold;
-                    l.Padding = new Thickness(-2.6, -1.1, 0, 0);
+                    l.Text = "*";
+                    l.FontSize = 15;                    
+                    l.Padding = new Thickness(-3.5, -3.7, 0, 0);                    
 
-                    /*l.Text = "#";
-                    l.FontSize = 15;
-                    l.FontWeight = FontWeights.ExtraBold;
-                    l.Padding = new Thickness(-0.2, -3, 0, 0);*/
+                    l.BorderBrush = (Brush)this.FindResource("0LightHighlightBrush");
+                    l.BorderThickness = new Thickness(2);                    
                 }
                 
                 l.FontFamily = new FontFamily("Times New Roman");
                 
-                l.Margin = new Thickness(0);
-                l.BorderThickness = new Thickness(0);
+                l.Margin = new Thickness(0);                
 
                 l.Background = (Brush)FindResource("0SelectionBrush");
                 l.Foreground = (Brush)FindResource("0BackgroundBrush");

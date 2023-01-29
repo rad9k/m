@@ -18,9 +18,7 @@ namespace m0.ZeroTypes.UX
 
         bool IsSelected { get; set; }
 
-        bool IsHighlighted { get; set; }
-
-        List<ILineDecoratorBase> DiagramLines { get; }
+        bool IsHighlighted { get; set; }       
 
         List<ILineDecoratorBase> DiagramToLines { get; }
 

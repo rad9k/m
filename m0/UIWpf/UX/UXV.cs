@@ -62,8 +62,10 @@ namespace m0.UIWpf.UX
 
         public FrameworkElement ClickedAnchor { get; set; }
 
-        ILineDecoratorBase prevSelectedLine;
-        ILineDecoratorBase SelectedLine;
+        public ILineDecoratorBase prevSelectedLine;
+        public ILineDecoratorBase SelectedLine;
+        public IUXItem SelectedLine_FromItem;
+
 
         public double LineSelectionDelta { get { return 10; } }
 
@@ -1028,6 +1030,7 @@ namespace m0.UIWpf.UX
         {
             double best = 999999;
             ILineDecoratorBase bestLine = null;
+            IUXItem bestLine_FromItem = null;
 
             foreach (IItem _i in Items)
                 {
@@ -1047,6 +1050,7 @@ namespace m0.UIWpf.UX
                             {
                                 bestLine = line;
                                 best = len;
+                            bestLine_FromItem = i;
                             }
                         }
                 }
@@ -1067,6 +1071,7 @@ namespace m0.UIWpf.UX
                     bestLine.Select();
 
                     SelectedLine = bestLine;
+                    SelectedLine_FromItem = bestLine_FromItem;
 
                     prevSelectedLine = bestLine;
 
@@ -1142,7 +1147,7 @@ namespace m0.UIWpf.UX
                     HighlightedItem.Unhighlight();
 
                     if (IsUp)
-                        DoMoveLineProcess(ClickedItem, HighlightedItem, SelectedLine);
+                        DoMoveLineProcess(SelectedLine_FromItem, HighlightedItem, SelectedLine);
                 }
 
                 HighlightedItem = null;
@@ -1184,18 +1189,23 @@ namespace m0.UIWpf.UX
             IVertex fromItemBaseEdgeTo = fromItem.BaseEdgeTo;
 
             foreach (IEdge e in fromItemBaseEdgeTo)
-                if (e.Meta == meta && e.Meta == to)
+                if (e.Meta == meta && e.To == to)
                     toMoveEdge = e;
 
             if (toMoveEdge != null)
             {
-                fromItem.
-                line.ToItem = toItem;
+                fromItemBaseEdgeTo.DeleteEdge(toMoveEdge);
+
+                fromItemBaseEdgeTo.AddEdge(meta, toItem.BaseEdgeTo);
+
+                fromItem.RemoveDecorator(line);                
             }
 
             ////////////////////////////////////////
             Interaction.EndInteractionWithGraph();
             //////////////////////////////////////// 
+
+            PaintDiagram();
         }
 
 
