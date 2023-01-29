@@ -1406,11 +1406,11 @@ namespace m0.UIWpf.UX
 
             IVertex v = m0.MinusZero.Instance.CreateTempVertex();
 
-            IVertex BaseEdgeTo = BaseEdge.To;
+            IVertex fromItemBaseEdgeTo = fromItem.BaseEdge.To;
 
-            foreach (UXDecoratorTemplate tem in fromItem.UXTemplate.DecoratorTemplates)
+            foreach (UXDecoratorTemplate tem in fromItem.UXTemplate.UXDecoratorTemplates)
             {
-                foreach (IEdge e in BaseEdgeTo.GetAll(false, tem.EdgeTestQuery))
+                foreach (IEdge e in fromItemBaseEdgeTo.GetAll(false, tem.EdgeTestQuery))
                 {
                     bool canAdd = true;
 
@@ -1444,7 +1444,7 @@ namespace m0.UIWpf.UX
             }
 
             if (v.Count() == 0)
-                UserInteractionUtil.ShowError(Diagram.Vertex.Value + " Diagram", "There is no diagram line definition matching selected source and target items.");
+                UserInteractionUtil.ShowError(Vertex.Value + " Diagram", "There is no diagram line definition matching selected source and target items.");
 
             IVertex info = m0.MinusZero.Instance.CreateTempVertex();
             info.Value = "choose diagram line:";
@@ -1456,13 +1456,13 @@ namespace m0.UIWpf.UX
 
             if (a != null)
             {
-                IVertex test = VertexOperations.TestIfNewEdgeValid(BaseEdgeTo, a.Get(false, "OptionEdge:"), toEdge.To);
+                IVertex test = VertexOperations.TestIfNewEdgeValid(fromItemBaseEdgeTo, a.Get(false, "OptionEdge:"), toEdge.To);
 
                 if (test == null)
                 {
                     UXDecoratorTemplate chosenTemplate = new UXDecoratorTemplate(a.GetAll(false, "OptionDiagramLineDefinition:").FirstOrDefault());
 
-                    IEdge edge = VertexOperations.AddEdgeOrVertexByMeta(BaseEdgeTo,
+                    IEdge edge = VertexOperations.AddEdgeOrVertexByMeta(fromItemBaseEdgeTo,
                         a.Get(false, "OptionEdge:"),
                         toEdge.To,
                         mousePosition,
@@ -1688,7 +1688,7 @@ namespace m0.UIWpf.UX
             if (GraphUtil.GetValueAndCompareStrings(item.UXTemplate.Vertex, "Vertex"))
                 return new UXDecoratorTemplate(item.Vertex.GetAll(false, @"UXTemplate:\UXDecoratorTemplate:Edge").FirstOrDefault());
            
-            foreach (UXDecoratorTemplate tem in item.UXTemplate.DecoratorTemplates)            
+            foreach (UXDecoratorTemplate tem in item.UXTemplate.UXDecoratorTemplates)            
             {
                 bool canReturn=true;
 

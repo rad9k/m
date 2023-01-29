@@ -15,7 +15,7 @@ namespace m0.ZeroTypes.UX
         static IVertex ItemClass_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\UXTemplate\ItemClass");
         static IVertex ItemVertex_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\UXTemplate\ItemVertex");
         static IVertex InstanceCreation_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\UXTemplate\InstanceCreation");
-        static IVertex DecoratorTemplate_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\UXTemplate\DecoratorTemplate");
+        static IVertex UXDecoratorTemplate_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\UXTemplate\UXDecoratorTemplate");
         static IVertex DoNotShowInherited_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\UXTemplate\DoNotShowInherited");
         static IVertex ForceShowEditForm_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\UXTemplate\ForceShowEditForm");
 
@@ -125,11 +125,11 @@ namespace m0.ZeroTypes.UX
             }
         }
 
-        public IList<UXDecoratorTemplate> DecoratorTemplates
+        public IList<UXDecoratorTemplate> UXDecoratorTemplates
         {
             get
             {
-                IList<IEdge> list = GraphUtil.GetQueryOut(Vertex, "DecoratorTemplate", null);
+                IList<IEdge> list = GraphUtil.GetQueryOut(Vertex, "UXDecoratorTemplate", null);
 
                 IList<UXDecoratorTemplate> ret = new List<UXDecoratorTemplate>();
 
