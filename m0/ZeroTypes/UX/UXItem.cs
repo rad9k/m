@@ -170,9 +170,7 @@ namespace m0.ZeroTypes.UX
             foreach (ILineDecoratorBase l in DiagramToLines)
                 l.RemoveFromCanvas();
         }        
-        
-        
-
+               
         public void AddDiagramLineObject(IUXItem toItem, ILineDecoratorBase newline) 
         {
             newline.Diagram = this.Diagram;

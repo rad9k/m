@@ -1131,7 +1131,7 @@ namespace m0.UIWpf.UX
                     HighlightedItem.Unhighlight();
 
                     if (IsUp)
-                        ClickedItem.DoCreateDiagramLine(HighlightedItem);
+                        DoCreateDiagramLine(ClickedItem, HighlightedItem);
                 }
 
                 HighlightedItem = null;
@@ -1402,13 +1402,13 @@ namespace m0.UIWpf.UX
         {
             IEdge toEdge = toItem.BaseEdge;
 
-            IVertex r = m0.MinusZero.Instance.Root;
+            IVertex systemMetaBaseVertex = m0.MinusZero.Instance.Root.Get(false, @"System\Meta\Base\Vertex");
 
             IVertex v = m0.MinusZero.Instance.CreateTempVertex();
 
             IVertex BaseEdgeTo = BaseEdge.To;
 
-            foreach (UXDecoratorTemplate tem in UXTemplate.DecoratorTemplates)
+            foreach (UXDecoratorTemplate tem in fromItem.UXTemplate.DecoratorTemplates)
             {
                 foreach (IEdge e in BaseEdgeTo.GetAll(false, tem.EdgeTestQuery))
                 {
@@ -1436,11 +1436,11 @@ namespace m0.UIWpf.UX
                 }
 
                 if (GeneralUtil.CompareStrings(tem, "Edge"))// Vertex\Edge
-                    foreach (IEdge e in r.Get(false, @"System\Meta\Base\Vertex"))
+                    foreach (IEdge e in systemMetaBaseVertex)
                         AddNewLineOption(v, tem, e);
 
                 if (tem.EdgeTestQuery == "$EdgeTarget") // $EdgeTarget is not present as there is no inheritance from Vertex
-                    AddNewLineOption(v, tem, GraphUtil.FindEdgeByToVertex(r.Get(false, @"System\Meta\Base\Vertex"), "$EdgeTarget"));
+                    AddNewLineOption(v, tem, GraphUtil.FindEdgeByToVertex(systemMetaBaseVertex, "$EdgeTarget"));
             }
 
             if (v.Count() == 0)
@@ -1469,7 +1469,7 @@ namespace m0.UIWpf.UX
                         chosenTemplate.CreateEdgeOnly,
                         chosenTemplate.ForceShowEditForm);
 
-                    AddDiagramLineVertex(edge, chosenTemplate, toItem);
+                    AddDiagramLineVertex(fromItem, edge, chosenTemplate, toItem);
                 }
                 else
                     UserInteractionUtil.ShowError(Diagram.Vertex.Value + " Diagram", "Adding new diagram line  \"" + a.Value + "\" is not possible.\n\n" + test.Value);
@@ -1486,7 +1486,7 @@ namespace m0.UIWpf.UX
             vv.AddEdge(r.Get(false, @"System\Meta\ZeroTypes\UX\OptionDiagramLineDefinition"), def.Vertex);
         }
 
-        public void AddDiagramLineVertex(IEdge edge, UXDecoratorTemplate diagramLineDefinition, IUXItem toItem)
+        public void AddDiagramLineVertex(IUXItem fromItem, IEdge edge, UXDecoratorTemplate diagramLineDefinition, IUXItem toItem)
         {
             ////////////////////////////////////////
             Interaction.BeginInteractionWithGraph();
@@ -1502,12 +1502,14 @@ namespace m0.UIWpf.UX
 
             newLine.BaseEdgeSet(edge);
 
-            AddDiagramLineObject(toItem, newLine);
+            fromItem.AddDiagramLineObject(toItem, newLine);
 
             ////////////////////////////////////////
             Interaction.EndInteractionWithGraph();
             //////////////////////////////////////// 
         }
+
+
 
         //
 
@@ -1653,7 +1655,7 @@ namespace m0.UIWpf.UX
                         UXDecoratorTemplate lineDef = GetLineDefinition(e, item, toDiagramItem);
 
                         if (lineDef != null)
-                            item.AddDiagramLineVertex(e, lineDef, toDiagramItem);                        
+                            AddDiagramLineVertex(item, e, lineDef, toDiagramItem);
                     }
                 }           
             }
