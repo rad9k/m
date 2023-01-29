@@ -208,11 +208,47 @@ namespace m0.UIWpf.UX
             Interaction.EndInteractionWithGraph();
             //////////////////////////////////////// 
 
-            ScaleChange();
+            ScaleChange_internal();
             
             sv.ScrollToHorizontalOffset((scrollBarPosAbstract_horizontal * TheCanvas.ActualWidth * (Scale / 100)) - half_horizontal);
             sv.ScrollToVerticalOffset((scrollBarPosAbstract_vertical * TheCanvas.ActualHeight * (Scale / 100)) - half_vertical);
-        }        
+        }
+
+        public void ScaleChange()
+        {
+            ScaleChange_pre();
+
+            ScaleChange_internal();
+
+            ScaleChange_post();
+        }
+
+        public void ScaleChange_internal()
+        {
+            double scale = Scale / 100;
+
+            if (scale != 1.0)
+            {
+                if (ActualHeight != 0)
+                {
+                    this.LayoutTransform = new ScaleTransform(scale, scale, ActualWidth / 2, ActualHeight / 2);
+                }
+            }
+            else
+                this.LayoutTransform = null;
+        }
+
+        public void ScaleChange_pre()
+        {
+
+        }
+
+        public void ScaleChange_post()
+        {
+
+        }
+        
+
 
         IVertex vertex = null;
 
@@ -1134,22 +1170,7 @@ namespace m0.UIWpf.UX
         {
 
         }
-
-        public void ScaleChange()
-        {
-            double scale = Scale / 100;
-
-            if (scale != 1.0)
-            {
-                if (ActualHeight != 0)
-                {
-                    this.LayoutTransform = new ScaleTransform(scale, scale, ActualWidth / 2, ActualHeight / 2);
-                }
-            }
-            else
-                this.LayoutTransform = null;
-        }               
-                
+        
         protected void UnselectAll()
         {
             foreach (IItem _i in Items)
