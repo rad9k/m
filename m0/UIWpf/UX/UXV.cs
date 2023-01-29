@@ -150,17 +150,8 @@ namespace m0.UIWpf.UX
         }
 
         public void MouseWheelAction(MouseWheelEventArgs e)
-        {
-            ScrollViewer sv = ScrollViewerParent.GetScrollViewer();
-
+        {            
             double scale = Scale;
-
-            
-            double half_horizontal = sv.ActualWidth / 2;
-            double half_vertical = sv.ActualHeight / 2;
-
-            double scrollBarPosAbstract_horizontal = (sv.HorizontalOffset + half_horizontal) / (TheCanvas.ActualWidth * (scale / 100));
-            double scrollBarPosAbstract_vertical = (sv.VerticalOffset + half_vertical) / (TheCanvas.ActualHeight * (scale / 100));
 
             ////////////////////////////////////////
             Interaction.BeginInteractionWithGraph();
@@ -207,25 +198,28 @@ namespace m0.UIWpf.UX
             ////////////////////////////////////////
             Interaction.EndInteractionWithGraph();
             //////////////////////////////////////// 
-
-            ScaleChange_internal();
-            
-            sv.ScrollToHorizontalOffset((scrollBarPosAbstract_horizontal * TheCanvas.ActualWidth * (Scale / 100)) - half_horizontal);
-            sv.ScrollToVerticalOffset((scrollBarPosAbstract_vertical * TheCanvas.ActualHeight * (Scale / 100)) - half_vertical);
         }
+
+        double prev_Scale = -1;
 
         public void ScaleChange()
         {
-            ScaleChange_pre();
+            if (prev_Scale == -1)
+                prev_Scale = 1;
 
-            ScaleChange_internal();
+            //
 
-            ScaleChange_post();
-        }
-
-        public void ScaleChange_internal()
-        {
             double scale = Scale / 100;
+
+            ScrollViewer sv = ScrollViewerParent.GetScrollViewer();
+
+            double half_horizontal = sv.ActualWidth / 2;
+            double half_vertical = sv.ActualHeight / 2;
+
+            double scrollBarPosAbstract_horizontal = (sv.HorizontalOffset + half_horizontal) / (TheCanvas.ActualWidth * prev_Scale);
+            double scrollBarPosAbstract_vertical = (sv.VerticalOffset + half_vertical) / (TheCanvas.ActualHeight * prev_Scale);
+
+            //
 
             if (scale != 1.0)
             {
@@ -236,20 +230,15 @@ namespace m0.UIWpf.UX
             }
             else
                 this.LayoutTransform = null;
-        }
 
-        public void ScaleChange_pre()
-        {
+            //
 
-        }
+            sv.ScrollToHorizontalOffset((scrollBarPosAbstract_horizontal * TheCanvas.ActualWidth * scale) - half_horizontal);
+            sv.ScrollToVerticalOffset((scrollBarPosAbstract_vertical * TheCanvas.ActualHeight * scale) - half_vertical);
 
-        public void ScaleChange_post()
-        {
-
-        }
-        
-
-
+            prev_Scale = scale;
+        }        
+    
         IVertex vertex = null;
 
         public IVertex Vertex
