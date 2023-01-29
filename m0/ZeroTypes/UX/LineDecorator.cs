@@ -54,11 +54,6 @@ namespace m0.ZeroTypes.UX
             Label.Foreground = GetForegroundBrush();
         }
 
-        public override void Dispose()
-        {
-            GraphChangeTrigger.RemoveListener(graphChangeListenerEdge);
-        }
-
         protected virtual INoInEdgeInOutVertexVertex VertexChange(IExecution exe)
         {
             if (IsVertexChangeOrEdgeAddedRemovedDisposedByMetaAndFrom(exe.Stack, Vertex, "IsDashed")

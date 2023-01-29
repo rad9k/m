@@ -12,7 +12,7 @@ using System.Windows.Controls;
 
 namespace m0.ZeroTypes.UX
 {
-    public interface IUXItem: IItem
+    public interface IUXItem: IItem, IDisposable
     {
         IUXAggregator Diagram { get; set; }
 

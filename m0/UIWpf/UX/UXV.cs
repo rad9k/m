@@ -1175,8 +1175,23 @@ namespace m0.UIWpf.UX
             ////////////////////////////////////////
             Interaction.BeginInteractionWithGraph();
             //////////////////////////////////////// 
-            
-            line.ToItem = toItem;
+
+            IEdge toMoveEdge = null;
+
+            IVertex meta = line.BaseEdge.Meta;
+            IVertex to = line.BaseEdge.To;
+
+            IVertex fromItemBaseEdgeTo = fromItem.BaseEdgeTo;
+
+            foreach (IEdge e in fromItemBaseEdgeTo)
+                if (e.Meta == meta && e.Meta == to)
+                    toMoveEdge = e;
+
+            if (toMoveEdge != null)
+            {
+                fromItem.
+                line.ToItem = toItem;
+            }
 
             ////////////////////////////////////////
             Interaction.EndInteractionWithGraph();
