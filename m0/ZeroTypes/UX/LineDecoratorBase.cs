@@ -13,9 +13,12 @@ namespace m0.ZeroTypes.UX
 {
     public class LineDecoratorBase : UXItem, ILineDecoratorBase
     {
-        public double FromX, FromY, ToX, ToY;
+        public double FromX { get; set; }
+        public double FromY { get; set; }
+        public double ToX { get; set; }
+        public double ToY { get; set; }
 
-        public bool isSelfRelation;
+        public bool isSelfRelation { get; set; }
 
         public IUXItem FromDiagramItem { get; set; }        
 

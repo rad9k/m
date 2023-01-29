@@ -797,8 +797,8 @@ namespace m0.UIWpf.UX
 
                 FrameworkElement ClickedItem_FrameworkElement = (FrameworkElement)ClickedItem;
 
-                CreateOrMoveDiagramLine.X1 = Canvas.GetLeft(ClickedItem_FrameworkElement) + ClickedItem_FrameworkElement.ActualWidth;
-                CreateOrMoveDiagramLine.Y1 = Canvas.GetTop(ClickedItem_FrameworkElement);
+                CreateOrMoveDiagramLine.X1 = SelectedLine.FromX;
+                CreateOrMoveDiagramLine.Y1 = SelectedLine.FromY;
             }
 
             CreateOrMoveDiagramLine.X2 = ToX;
@@ -1142,7 +1142,7 @@ namespace m0.UIWpf.UX
                     HighlightedItem.Unhighlight();
 
                     if (IsUp)
-                        DoMoveLine(ClickedItem, HighlightedItem, SelectedLine);
+                        DoMoveLineProcess(ClickedItem, HighlightedItem, SelectedLine);
                 }
 
                 HighlightedItem = null;
@@ -1155,11 +1155,35 @@ namespace m0.UIWpf.UX
             ClickTarget = ClickTargetEnum.MouseUpOrLeave;
         }
 
-        private void DoMoveLine(IUXItem fromItem, IUXItem toItem, ILineDecoratorBase line)
+        private void DoMoveLineProcess(IUXItem fromItem, IUXItem toItem, ILineDecoratorBase line)
         {
+            if (CheckIfCanMove(fromItem, toItem, line))
+                MoveLine(fromItem, toItem, line);
+            else
+            {
 
+            }
         }
-        
+
+        private bool CheckIfCanMove(IUXItem fromItem, IUXItem toItem, ILineDecoratorBase line)
+        {
+            return true;
+        }
+
+        private void MoveLine(IUXItem fromItem, IUXItem toItem, ILineDecoratorBase line)
+        {
+            ////////////////////////////////////////
+            Interaction.BeginInteractionWithGraph();
+            //////////////////////////////////////// 
+            
+            line.ToItem = toItem;
+
+            ////////////////////////////////////////
+            Interaction.EndInteractionWithGraph();
+            //////////////////////////////////////// 
+        }
+
+
         protected void UnselectAll()
         {
             foreach (IItem _i in Items)

@@ -314,6 +314,13 @@ namespace m0.ZeroTypes.UX
 
             Panel.SetZIndex(LineEndings, 99999);
             Panel.SetZIndex(Label, 99999);
+
+            //
+
+            double thickness = LineWidth + 2;            
+
+            Line.StrokeThickness = thickness;
+            LineEndings.StrokeThickness = thickness;
         }
 
         public override void Unhighlight()
@@ -332,6 +339,16 @@ namespace m0.ZeroTypes.UX
 
             Panel.SetZIndex(LineEndings, 0);
             Panel.SetZIndex(Label, 0);
+
+            //
+
+            double thickness = LineWidth;
+
+            if (thickness == 0)
+                thickness = 1;
+
+            Line.StrokeThickness = thickness;
+            LineEndings.StrokeThickness = thickness;
         }
 
         public override void Select()

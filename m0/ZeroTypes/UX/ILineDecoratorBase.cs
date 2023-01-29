@@ -13,6 +13,15 @@ namespace m0.ZeroTypes.UX
 {
     public interface ILineDecoratorBase : IUXItem
     {
+        double FromX { get; set; }
+        double FromY { get; set; }
+        double ToX { get; set; }
+        double ToY { get; set; }
+
+        bool isSelfRelation { get; set; }
+
+        //
+
         IUXItem FromDiagramItem { get; set; }        
 
         void SetPosition(double FromX, double FromY, double ToX, double ToY, bool isSelfRelation, double selfRelationX, double selfRelationY);
