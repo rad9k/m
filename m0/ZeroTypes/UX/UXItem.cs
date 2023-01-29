@@ -178,7 +178,6 @@ namespace m0.ZeroTypes.UX
             if (newline.UXTemplate != null)
                 Diagram.AddEdgesFromDefintion(newline.Vertex, newline.UXTemplate.ItemVertex);
          
-
             newline.FromDiagramItem = this;
 
             newline.ToItem = toItem;

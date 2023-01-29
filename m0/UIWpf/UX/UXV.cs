@@ -1490,11 +1490,9 @@ namespace m0.UIWpf.UX
         {
             ////////////////////////////////////////
             Interaction.BeginInteractionWithGraph();
-            //////////////////////////////////////// 
+            ////////////////////////////////////////             
 
-            IVertex r = MinusZero.Instance.Root;
-
-            ILineDecoratorBase newLine = (LineDecoratorBase)AddDecorator(diagramLineDefinition.DecoratorClass);
+            ILineDecoratorBase newLine = (LineDecoratorBase)fromItem.AddDecorator(diagramLineDefinition.DecoratorClass);
 
             newLine.ToItem = toItem;
 
@@ -2074,7 +2072,7 @@ namespace m0.UIWpf.UX
 
         public IUXItem AddDecorator(IVertex typeVertex)
         {
-            IEdge newEdge = VertexOperations.AddInstanceAndReturnEdge(Vertex, typeVertex, Item_meta);
+            IEdge newEdge = VertexOperations.AddInstanceAndReturnEdge(Vertex, typeVertex, Decorator_meta);
 
             return (IUXItem)TypedEdge.Get(newEdge);
         }
