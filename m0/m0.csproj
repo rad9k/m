@@ -324,6 +324,9 @@
     <Compile Include="ZeroTypes\Edge.cs" />
     <Compile Include="ZeroTypes\UX\MetaExtendedLineDecorator.cs" />
     <Compile Include="ZeroTypes\UX\LineEndEnum.cs" />
+    <Compile Include="ZeroTypes\UX\AggregatingItem.xaml.cs">
+      <DependentUpon>AggregatingItem.xaml</DependentUpon>
+    </Compile>
     <Compile Include="ZeroTypes\UX\RectangleItem.cs" />
     <Compile Include="ZeroTypes\UX\RectangleItem.xaml.cs">
       <DependentUpon>RectangleItem.xaml</DependentUpon>
@@ -507,6 +510,10 @@
     <Page Include="UIWpf\Visualisers\Diagram\NewDiagramItem.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="ZeroTypes\UX\AggregatingItem.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="ZeroTypes\UX\RectangleItem.xaml">
       <SubType>Designer</SubType>
