@@ -285,6 +285,8 @@ namespace m0.ZeroTypes.UX
             Diagram.TheCanvas.Children.Add(LineEndings);
             Diagram.TheCanvas.Children.Add(Line);
             Diagram.TheCanvas.Children.Add(Label);
+
+            VertexSetedUp(); // is it best place for that?
         }
 
         public override void RemoveFromCanvas()

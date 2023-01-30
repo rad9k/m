@@ -1164,24 +1164,31 @@ namespace m0.UIWpf.UX
         private void DoMoveLineProcess(IUXItem fromItem, IUXItem toItem, ILineDecoratorBase line)
         {
             if (CheckIfCanMove(fromItem, toItem, line))
-                MoveLine(fromItem, toItem, line);
+                MoveLine(fromItem, toItem, line, false);
             else
-            {
-
-            }
+                if (DoCreateDiagramLine(fromItem, toItem))
+                    MoveLine(fromItem, toItem, line, true);            
         }
 
         private bool CheckIfCanMove(IUXItem fromItem, IUXItem toItem, ILineDecoratorBase line)
         {
-            return true;
+            bool canAdd = false;
+
+            UXDecoratorTemplate tem = (UXDecoratorTemplate)line.UXTemplate;
+
+            foreach (IEdge e in fromItem.BaseEdgeTo.GetAll(false, tem.EdgeTestQuery))            
+                if(CanAddLineByDecoratorTemplateAndFromItemBaseEdgeToQuery(toItem, toItem.BaseEdge, tem, e));
+                    canAdd = true;
+
+            return canAdd;
         }
 
-        private void MoveLine(IUXItem fromItem, IUXItem toItem, ILineDecoratorBase line)
+        private void MoveLine(IUXItem fromItem, IUXItem toItem, ILineDecoratorBase line, bool onlyDelete)
         {
             ////////////////////////////////////////
             Interaction.BeginInteractionWithGraph();
             //////////////////////////////////////// 
-
+            
             IEdge toMoveEdge = null;
 
             IVertex meta = line.BaseEdge.Meta;
@@ -1197,7 +1204,8 @@ namespace m0.UIWpf.UX
             {
                 fromItemBaseEdgeTo.DeleteEdge(toMoveEdge);
 
-                fromItemBaseEdgeTo.AddEdge(meta, toItem.BaseEdgeTo);
+                if(!onlyDelete)
+                    fromItemBaseEdgeTo.AddEdge(meta, toItem.BaseEdgeTo);
 
                 fromItem.RemoveDecorator(line);                
             }
@@ -1398,7 +1406,7 @@ namespace m0.UIWpf.UX
 
         //
 
-        public virtual void DoCreateDiagramLine(IUXItem fromItem, IUXItem toItem)
+        public virtual bool DoCreateDiagramLine(IUXItem fromItem, IUXItem toItem)
         {
             IEdge toEdge = toItem.BaseEdge;
 
@@ -1412,24 +1420,7 @@ namespace m0.UIWpf.UX
             {
                 foreach (IEdge e in fromItemBaseEdgeTo.GetAll(false, tem.EdgeTestQuery))
                 {
-                    bool canAdd = true;
-
-                    if (tem.ToDiagramItemTestQuery != null && toItem.Vertex.Get(false, tem.ToDiagramItemTestQuery) == null)
-                        canAdd = false;
-
-                    string eToEdgeTarget = (string)GraphUtil.GetValue(e.To.Get(false, @"$EdgeTarget:"));
-                    string eToVertexTarget = (string)GraphUtil.GetValue(e.To.Get(false, @"$VertexTarget:"));
-
-                    if (eToEdgeTarget != null
-                        && eToEdgeTarget != "Vertex" // Vertices do not have $Is:Vertex     
-                        && !InstructionHelpers.CheckIfIsOrInherits(toEdge.To, eToEdgeTarget))
-                        canAdd = false;
-
-                    if (tem.CreateEdgeOnly
-                        && eToVertexTarget != null
-                        && !InstructionHelpers.CheckIfIsOrInherits(toEdge.To, eToVertexTarget)
-                        )
-                        canAdd = false;
+                    bool canAdd = CanAddLineByDecoratorTemplateAndFromItemBaseEdgeToQuery(toItem, toEdge, tem, e);
 
                     if (canAdd)
                         AddNewLineOption(v, tem, e);
@@ -1460,8 +1451,12 @@ namespace m0.UIWpf.UX
 
                 if (test == null)
                 {
-                    UXDecoratorTemplate chosenTemplate = new UXDecoratorTemplate(a.GetAll(false, "OptionDiagramLineDefinition:").FirstOrDefault());
+                    //UXDecoratorTemplate chosenTemplate = new UXDecoratorTemplate(a.GetAll(false, "OptionDiagramLineDefinition:").FirstOrDefault());
 
+                    UXDecoratorTemplate chosenTemplate = (UXDecoratorTemplate)TypedEdge.Get(
+                        a.GetAll(false, "OptionDiagramLineDefinition:").FirstOrDefault(), 
+                        typeof(UXDecoratorTemplate));
+                        
                     IEdge edge = VertexOperations.AddEdgeOrVertexByMeta(fromItemBaseEdgeTo,
                         a.Get(false, "OptionEdge:"),
                         toEdge.To,
@@ -1470,10 +1465,38 @@ namespace m0.UIWpf.UX
                         chosenTemplate.ForceShowEditForm);
 
                     AddDiagramLineVertex(fromItem, edge, chosenTemplate, toItem);
+
+                    return true;
                 }
                 else
                     UserInteractionUtil.ShowError(Diagram.Vertex.Value + " Diagram", "Adding new diagram line  \"" + a.Value + "\" is not possible.\n\n" + test.Value);
             }
+
+            return false;
+        }
+
+        private static bool CanAddLineByDecoratorTemplateAndFromItemBaseEdgeToQuery(IUXItem toItem, IEdge toEdge, UXDecoratorTemplate tem, IEdge e)
+        {
+            bool canAdd = true;
+
+            if (tem.ToDiagramItemTestQuery != null && toItem.Vertex.Get(false, tem.ToDiagramItemTestQuery) == null)
+                canAdd = false;
+
+            string eToEdgeTarget = (string)GraphUtil.GetValue(e.To.Get(false, @"$EdgeTarget:"));
+            string eToVertexTarget = (string)GraphUtil.GetValue(e.To.Get(false, @"$VertexTarget:"));
+
+            if (eToEdgeTarget != null
+                && eToEdgeTarget != "Vertex" // Vertices do not have $Is:Vertex     
+                && !InstructionHelpers.CheckIfIsOrInherits(toEdge.To, eToEdgeTarget))
+                canAdd = false;
+
+            if (tem.CreateEdgeOnly
+                && eToVertexTarget != null
+                && !InstructionHelpers.CheckIfIsOrInherits(toEdge.To, eToVertexTarget)
+                )
+                canAdd = false;
+
+            return canAdd;
         }
 
         private static void AddNewLineOption(IVertex v, UXDecoratorTemplate def, IEdge e)

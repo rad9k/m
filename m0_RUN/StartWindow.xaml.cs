@@ -100,7 +100,7 @@ namespace m0
 
             IVertex x_vertex = e.AddVertex(null, "X");
 
-            IVertex z_vertex = x_vertex.AddVertex(null, "Z");
+            IVertex z_vertex = x_vertex.AddVertex(x_vertex, "Z");
 
             IEdge a_e = VertexOperations.AddInstanceAndReturnEdge(e,
                 UXAggregatorType,
