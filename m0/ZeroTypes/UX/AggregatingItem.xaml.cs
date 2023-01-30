@@ -22,7 +22,7 @@ namespace m0.ZeroTypes.UX
     /// <summary>
     /// Interaction logic for DiagramRectangleItem.xaml
     /// </summary>
-    public partial class AggregatingItem : UXItem, IUXAggregator
+    public partial class AggregatingItem : UXItem
     {
         IPlatformClass ContentVisualiser;
 
