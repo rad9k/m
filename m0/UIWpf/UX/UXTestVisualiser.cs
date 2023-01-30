@@ -101,7 +101,7 @@ namespace m0.UIWpf.UX
         Canvas canvas;
 
         public IUXItem UXItem { get; set; }
-        public IUXAggregator UXAggregator { get; set; }
+        public IUXAggregator IUXAggregator { get; set; }
         public Canvas Canvas { get { return canvas; } }
 
         public void UpdateVertex()

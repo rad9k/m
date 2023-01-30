@@ -14,7 +14,7 @@ namespace m0.ZeroTypes.UX
 {
     public interface IUXItem: IItem, IDisposable
     {
-        IUXAggregator Diagram { get; set; }
+        IUXVisualiser Diagram { get; set; }
 
         bool IsSelected { get; set; }
 

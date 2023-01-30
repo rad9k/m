@@ -9,11 +9,12 @@ using System.Windows.Controls;
 
 namespace m0.UIWpf.UX
 {
-    public interface IUX: IVisualiser
+    public interface IUX: IVisualiser // to delete
     {
         IUXItem UXItem { get; set; }
 
-        IUXAggregator UXAggregator { get; set; }
+        //IUXVisualiser IUXAggregator { get; set; }
+        IUXAggregator IUXAggregator { get; set; }
 
         Canvas Canvas { get; } 
     }

@@ -35,7 +35,7 @@ namespace m0.UIWpf.UX
         public int EdgesNumber;
     }
 
-    public class UXV : Border, IListVisualiser, IUXAggregator, IMouseWheelHandler
+    public class UXV : Border, IListVisualiser, IUXVisualiser, IMouseWheelHandler
     {
         bool IsVisualiser;
 
@@ -1808,7 +1808,7 @@ namespace m0.UIWpf.UX
 
         //
 
-        public IUXAggregator Diagram { get; set; } // ParentAggregator
+        public IUXVisualiser Diagram { get; set; } // ParentAggregator
 
         public bool IsSelected { get; set; }
 

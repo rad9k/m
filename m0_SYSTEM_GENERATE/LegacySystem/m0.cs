@@ -2713,7 +2713,7 @@ namespace m0
                 +",Class:HasColor{Attribute:Color{$MinCardinality:0,$MaxCardinality:1}}"
                 + ",Class:Item{Aggregation:Item{$MinCardinality:0,$MaxCardinality:-1}}"
                 + ",Class:UXItem{Attribute:Scale{$MinCardinality:1,$MaxCardinality:1,$DisplayLarger:,$DefaultValue:100},Attribute:DesignMode{$MinCardinality:0,$MaxCardinality:1},Attribute:Size{$MinCardinality:0,$MaxCardinality:1},Attribute:Position{$MinCardinality:0,$MaxCardinality:1},Attribute:Layout{$MinCardinality:0,$MaxCardinality:1},Attribute:BackgroundColor{$MinCardinality:0,$MaxCardinality:1},Attribute:ForegroundColor{$MinCardinality:0,$MaxCardinality:1},Attribute:BorderColor{$MinCardinality:0,$MaxCardinality:1},Attribute:BorderSize{MinValue:0,MaxValue:10,$MinCardinality:0,$MaxCardinality:1},Attribute:Gap{$MinCardinality:0,$MaxCardinality:1},Aggregation:Decorator{$MinCardinality:0,$MaxCardinality:-1},Association:UXTemplate{$MinCardinality:0,$MaxCardinality:1}}"
-                + ",Class:UXAggregator{Attribute:IsExpanded{$MinCardinality:1,$MaxCardinality:1,$DefaultValue:True},Attribute:CollapsedSize{$MinCardinality:0,$MaxCardinality:1},Attribute:ExpandedSize{$MinCardinality:0,$MaxCardinality:1}}"
+                + ",Class:UXAggregator{Attribute:IsExpanded{$MinCardinality:1,$MaxCardinality:1,$DefaultValue:True},Attribute:CollapsedSize{$MinCardinality:0,$MaxCardinality:1},Attribute:ExpandedSize{$MinCardinality:0,$MaxCardinality:1},Attribute:AggregatorEdgeQuery{$MinCardinality:0,$MaxCardinality:1}}"
                 + ",Class:Size{Attribute:Width,Attribute:Height}"
                 + ",Class:Position{Attribute:X,Attribute:Y}"
                 + ",Enum:LayoutTypeEnum{EnumValue:Vertical,EnumValue:Horizontal,EnumValue:Wrap,EnumValue:Manual,EnumValue:Auto,EnumValue:Hidden}"
@@ -2830,6 +2830,10 @@ namespace m0
             LegacySystem.Graph.EasyVertex.Get(smz, false, @"UX\UXAggregator\ExpandedSize").AddEdge(
                 LegacySystem.Graph.EasyVertex.Get(sm, false, @"*$EdgeTarget"),
                 LegacySystem.Graph.EasyVertex.Get(sm, false, @"ZeroTypes\UX\Size"));
+
+            LegacySystem.Graph.EasyVertex.Get(smz, false, @"UX\UXAggregator\AggregatorEdgeQuery").AddEdge(
+                LegacySystem.Graph.EasyVertex.Get(sm, false, @"*$EdgeTarget"),
+                LegacySystem.Graph.EasyVertex.Get(sm, false, @"ZeroTypes\String"));
 
             // Size
 
@@ -3312,7 +3316,8 @@ namespace m0
                 "Class:RectangleItem{Attribute:ShowMeta{$MinCardinality:0,$MaxCardinality:1},Attribute:RoundEdgeSize{MinValue:0,MaxValue:200,$MinCardinality:0,$MaxCardinality:1},Association:VisualiserClass{$MinCardinality:0,$MaxCardinality:1},Attribute:VisualiserVertex{$MinCardinality:0,$MaxCardinality:1}}," +
                 "Class:LineDecorator{Association:StartAnchor{$MinCardinality:0,$MaxCardinality:1},Association:EndAnchor{$MinCardinality:0,$MaxCardinality:1},Attribute:IsDashed{$MinCardinality:0,$MaxCardinality:1}}," +
                 "Enum:LineEndEnum{EnumValue:Straight,EnumValue:Arrow,EnumValue:Triangle,EnumValue:FilledTriangle,EnumValue:Diamond,EnumValue:FilledDiamond}," +
-                "Class:MetaExtendedLineDecorator{Association:StartAnchor{$MinCardinality:0,$MaxCardinality:1},Association:EndAnchor{$MinCardinality:0,$MaxCardinality:1},Attribute:IsDashed{$MinCardinality:0,$MaxCardinality:1}}" +
+                "Class:MetaExtendedLineDecorator{Association:StartAnchor{$MinCardinality:0,$MaxCardinality:1},Association:EndAnchor{$MinCardinality:0,$MaxCardinality:1},Attribute:IsDashed{$MinCardinality:0,$MaxCardinality:1}}," +
+                "Class:AggregatingItem{Attribute:ShowMeta{$MinCardinality:0,$MaxCardinality:1},Attribute:RoundEdgeSize{MinValue:0,MaxValue:200,$MinCardinality:0,$MaxCardinality:1}}" +
                 "}");
 
             // UXItem [EXTENSION]
@@ -3410,6 +3415,18 @@ namespace m0
             smzu.Get(false, @"MetaExtendedLineDecorator").AddEdge(sm.Get(false, @"?$Is"), sm.Get(false, @"ZeroUML\Class"));
             smzu.Get(false, @"MetaExtendedLineDecorator").AddEdge(sm.Get(false, "?$Inherits"), smzu.Get(false, @"LineDecorator"));
             smzu.Get(false, @"MetaExtendedLineDecorator").AddVertex(sm.Get(false, "?$PlatformClassName"), @"m0.ZeroTypes.UX.MetaExtendedLineDecorator, m0, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null");
+
+            // AggregatingItem
+
+            smzu.Get(false, @"AggregatingItem").AddEdge(sm.Get(false, @"?$Is"), sm.Get(false, @"ZeroUML\Class"));
+            smzu.Get(false, @"AggregatingItem").AddEdge(sm.Get(false, "?$Inherits"), smzu.Get(false, @"UXAggregator"));
+            smzu.Get(false, @"AggregatingItem").AddVertex(sm.Get(false, "?$PlatformClassName"), @"m0.ZeroTypes.UX.AggregatingItem, m0, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null");
+            
+            smzu.Get(false, @"AggregatingItem\RoundEdgeSize").AddEdge(sm.Get(false, @"?$EdgeTarget"), sm.Get(false, @"ZeroTypes\Integer"));
+            //smzu.Get(false, @"AggregatingItem\RoundEdgeSize").AddEdge(sm.Get(false, @"?$Section"), lookSection);
+
+            smzu.Get(false, @"AggregatingItem\ShowMeta").AddEdge(sm.Get(false, @"?$EdgeTarget"), sm.Get(false, @"ZeroTypes\Boolean"));
+            //smzu.Get(false, @"AggregatingItem\ShowMeta").AddEdge(sm.Get(false, @"?$Section"), lookSection);
         }
 
         void CreateSystemMetaVisualiser()

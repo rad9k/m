@@ -11,39 +11,11 @@ using System.Threading.Tasks;
 namespace m0.ZeroTypes.UX
 {
     public class UXAggregator : UXItem, IUXAggregator
-    {
-        public Canvas TheCanvas { get; set; }
-
-        public bool IsSelecting { get; set; }
-
-        public bool IsDrawingOrMovingLine { get; set; }
-
-        public double ClickPositionX_ItemCordinates { get; set; }
-        public double ClickPositionY_ItemCordinates { get; set; }
-
-        public double ClickPositionX_AnchorCordinates { get; set; }
-        public double ClickPositionY_AnchorCordinates { get; set; }
-
-        public IUXItem ClickedItem { get; set; }
-
-        public ClickTargetEnum ClickTarget { get; set; }
-
-        public FrameworkElement ClickedAnchor { get; set; }
-
-
-        public Dictionary<IVertex, List<IUXItem>> GetItemsDictionary() { return null; }
-        public double LineSelectionDelta { get; }
-        public void AddEdgesFromDefintion(IVertex baseVertex, IVertex definitionEdges) { }
-        public void SetFocus() { }
-        public void UnselectAllSelectedEdges() { }
-
-        public void CheckAndUpdateDiagramLinesForItem(IUXItem item) { }
-
-        //
-
+    {        
         static IVertex IsExpanded_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\UXAggregator\IsExpanded");
         static IVertex ExpandedSize_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\UXAggregator\ExpandedSize");
         static IVertex CollapsedSize_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\UXAggregator\CollapsedSize");
+        static IVertex AggregatorEdgeQuery_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\UXAggregator\AggregatorEdgeQuery");
 
         static IVertex Size_type = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\Size");
 
@@ -110,6 +82,28 @@ namespace m0.ZeroTypes.UX
         public UX.Size CollapsedSizeCreate()
         {
             return new UX.Size(VertexOperations.AddInstanceAndReturnEdge(Vertex, Size_type, CollapsedSize_meta));
+        }
+
+        public string AggregatorEdgeQuery
+        {
+            get
+            {
+                IVertex val = GraphUtil.GetQueryOutFirst(Vertex, "AggregatorEdgeQuery", null);
+
+                if (val == null)
+                    return "";
+
+                return GraphUtil.GetStringValue(val);
+            }
+            set
+            {
+                IVertex val = GraphUtil.GetQueryOutFirst(Vertex, "AggregatorEdgeQuery", null);
+
+                if (val == null)
+                    val = Vertex.AddVertex(AggregatorEdgeQuery_meta, value);
+                else
+                    val.Value = value;
+            }
         }
     }
 

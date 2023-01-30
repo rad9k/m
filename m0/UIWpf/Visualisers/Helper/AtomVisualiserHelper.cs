@@ -364,7 +364,7 @@ namespace m0.UIWpf.Visualisers.Helper
             return false;
         }
 
-        public void InitUX()
+        public void InitUX() // to delete
         {
             if (!(Visualiser is IUX))
                 return;
@@ -395,8 +395,8 @@ namespace m0.UIWpf.Visualisers.Helper
 
             if (isUXAggregator)
             {
-                iux.UXAggregator = (UXAggregator)TypedEdge.Get(e, typeof(UXAggregator));
-                iux.UXItem = (UXItem)iux.UXAggregator;
+                iux.IUXAggregator = (UXAggregator)TypedEdge.Get(e, typeof(UXAggregator));
+                iux.UXItem = (UXItem)iux.IUXAggregator;
             }
         }
 

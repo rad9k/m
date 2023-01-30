@@ -37,7 +37,7 @@ namespace m0.ZeroTypes.UX
 
         //
 
-        public IUXAggregator Diagram { get; set; } // ParentAggregator
+        public IUXVisualiser Diagram { get; set; } // ParentAggregator
 
         public bool IsSelected { get; set; }
 
