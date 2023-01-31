@@ -17,6 +17,7 @@ using m0.UIWpf.Commands;
 using m0.Graph.ExecutionFlow;
 using m0.User.Process.UX;
 using m0.UIWpf.UX;
+using m0.UIWpf.UX.Generic;
 using m0.ZeroTypes.UX;
 using m0.ZeroCode.Helpers;
 

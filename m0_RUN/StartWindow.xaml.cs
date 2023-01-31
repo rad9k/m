@@ -79,6 +79,7 @@ namespace m0
         static IVertex UXAggregatorType = null;
         static IVertex UXItemType = null;
         static IVertex RectangleItem = null;
+        static IVertex AggregatingItem = null;
 
         static IEdge template = null;
 
@@ -93,6 +94,8 @@ namespace m0
             UXItemType = r.Get(false, @"System\Meta\ZeroTypes\UX\UXItem");
 
             RectangleItem = r.Get(false, @"System\Meta\ZeroTypes\UX\RectangleItem");
+
+            AggregatingItem = r.Get(false, @"System\Meta\ZeroTypes\UX\AggregatingItem");
 
             template = r.GetAll(false, @"System\Data\UX\Templates\ZeroUML\Vertex").First();
 
@@ -122,7 +125,7 @@ namespace m0
 
         IUXItem UXAdd(double x, double y, UXItem a, IVertex v)
         {
-            IUXItem i1 = (IUXItem)a.AddItem(RectangleItem);
+            IUXItem i1 = (IUXItem)a.AddItem(AggregatingItem);
 
             i1.UXTemplate = new UXTemplate(template);
             i1.Layout = LayoutTypeEnum.Manual;
@@ -168,17 +171,17 @@ namespace m0
             i2.BaseEdgeCreate();
 
             i2.BaseEdge.To = v;
-            
+            */
             UXAdd2(i1, v);
 
-            UXAdd2(i2, v);*/
+            //UXAdd2(i2, v);
 
             return i1;
         }
 
         IUXItem UXAdd2(IUXItem a, IVertex v)
         {
-            IUXItem i1 = (IUXItem)a.AddItem(UXAggregatorType);
+            IUXItem i1 = (IUXItem)a.AddItem(RectangleItem);
 
             i1.UXTemplate = new UXTemplate(template);
             i1.Layout = LayoutTypeEnum.Manual;
@@ -204,7 +207,7 @@ namespace m0
 
             i1.BaseEdge.To = v;
 
-            IUXItem i2 = (IUXItem)a.AddItem(UXAggregatorType);
+            IUXItem i2 = (IUXItem)a.AddItem(RectangleItem);
 
             i2.UXTemplate = new UXTemplate(template);
             i2.Layout = LayoutTypeEnum.Manual;

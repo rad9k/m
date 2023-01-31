@@ -7,7 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Controls;
 
-namespace m0.UIWpf.UX
+namespace m0.UIWpf.UX.Generic
 {
     public interface IUX: IVisualiser // to delete
     {

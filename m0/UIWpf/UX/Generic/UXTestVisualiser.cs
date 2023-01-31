@@ -21,7 +21,7 @@ using m0.UIWpf.Visualisers.Helper;
 using m0.ZeroTypes.UX;
 using m0.UIWpf.UX;
 
-namespace m0.UIWpf.UX
+namespace m0.UIWpf.UX.Generic
 {
     public class UXTestVisualiser : Border, IVisualiser, IUX
     {
