@@ -29,7 +29,7 @@ namespace m0.ZeroTypes.UX
 
     public class UXItem : UserControl, IUXItem, IPlatformClass
     {
-        public IUXItem Parent { get; set; }
+        public IItem Parent { get; set; }
 
         public List<FrameworkElement> Anchors;                
 

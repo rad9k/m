@@ -96,8 +96,9 @@ namespace m0.ZeroTypes.UX
 
                 foreach (IEdge e in list)
                 {
-                    IItem i
-                    ret.Add((IItem)TypedEdge.Get(e));
+                    IItem i = (IItem)TypedEdge.Get(e);
+                    i.Parent = this;
+                    ret.Add(i);
                 }
 
                 return ret;
