@@ -287,23 +287,18 @@ namespace m0.UIWpf.UX
         {
             ItemsDictionary.Clear();
 
-            foreach(IItem i in Items_all)
-                {
-                    IUXItem ui = GetUXItem(i);
+            foreach(IUXItem ui in Items_all)
+                {                    
+                    IVertex ui_BaseEdgeTo = ui.BaseEdgeTo;
 
-                    if (ui == null)
-                        continue;
-
-                    IVertex i_BaseEdgeTo = i.BaseEdgeTo;
-
-                    if (ItemsDictionary.ContainsKey(i_BaseEdgeTo))
-                        ItemsDictionary[i_BaseEdgeTo].Add(ui);
+                    if (ItemsDictionary.ContainsKey(ui_BaseEdgeTo))
+                        ItemsDictionary[ui_BaseEdgeTo].Add(ui);
                     else
                     {
                         List<IUXItem> list = new List<IUXItem>();
                         list.Add(ui);
 
-                        ItemsDictionary.Add(i_BaseEdgeTo, list);
+                        ItemsDictionary.Add(ui_BaseEdgeTo, list);
                     }
                 }
 
@@ -322,13 +317,15 @@ namespace m0.UIWpf.UX
 
         public void RemoveUXItem(IUXItem item)
         {
-            RemoveItem(item);
+            item.ItemParent.RemoveItem(item);
 
             Items_all.Remove(item);
 
             needRebuildItemsDictionary = true;
 
             item.RemoveFromCanvas();
+
+            item.Dispose(); // check if will not cause problems
         }
 
         // TOO
@@ -544,6 +541,8 @@ namespace m0.UIWpf.UX
 
                 Items_all.Clear();
 
+                //
+
                 foreach (IItem _i in Items)
                 {
                     IUXItem i = GetUXItem(_i);
@@ -552,7 +551,9 @@ namespace m0.UIWpf.UX
                         continue;
 
                     HostItem(this, i);
-                }                    
+                } 
+                
+                //
                         
                 UpdateLayout(); // here
 

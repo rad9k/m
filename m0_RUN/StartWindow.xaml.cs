@@ -106,10 +106,10 @@ namespace m0
             IVertex z_vertex = x_vertex.AddVertex(x_vertex, "Z");
 
             IVertex x1_vertex = e.AddVertex(null, "X1");
-            IVertex x2_vertex = e.AddVertex(null, "X2");
+            IVertex x2_vertex = null;// e.AddVertex(null, "X2");
 
             IVertex z1_vertex = x_vertex.AddVertex(x_vertex, "Z1");
-            IVertex z2_vertex = x_vertex.AddVertex(x_vertex, "Z2");
+            IVertex z2_vertex = null; // x_vertex.AddVertex(x_vertex, "Z2");
 
             IEdge a_e = VertexOperations.AddInstanceAndReturnEdge(e,
                 UXAggregatorType,
@@ -126,7 +126,7 @@ namespace m0
             
             IUXItem xi = UXAdd(0,0, a, x_vertex);
 
-            UXAdd2(xi, x1_vertex, x2_vertex);
+            //UXAdd2(xi, x1_vertex, x2_vertex);
 
             IUXItem zi = UXAdd(200, 200, a, z_vertex);
 
@@ -192,7 +192,7 @@ namespace m0
 
             i1.BaseEdge.To = v;
 
-            IUXItem i2 = (IUXItem)a.AddItem(RectangleItem);
+            /*IUXItem i2 = (IUXItem)a.AddItem(RectangleItem);
 
             i2.UXTemplate = new UXTemplate(template);
             i2.Layout = LayoutTypeEnum.Manual;
@@ -211,7 +211,7 @@ namespace m0
 
             i2.BaseEdgeCreate();
 
-            i2.BaseEdge.To = v2;
+            i2.BaseEdge.To = v2;*/
 
             return i1;
         }
