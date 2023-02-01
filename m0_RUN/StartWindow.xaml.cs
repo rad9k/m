@@ -105,6 +105,12 @@ namespace m0
 
             IVertex z_vertex = x_vertex.AddVertex(x_vertex, "Z");
 
+            IVertex x1_vertex = e.AddVertex(null, "X1");
+            IVertex x2_vertex = e.AddVertex(null, "X2");
+
+            IVertex z1_vertex = x_vertex.AddVertex(x_vertex, "Z1");
+            IVertex z2_vertex = x_vertex.AddVertex(x_vertex, "Z2");
+
             IEdge a_e = VertexOperations.AddInstanceAndReturnEdge(e,
                 UXAggregatorType,
                 UXAggregatorType);
@@ -118,9 +124,13 @@ namespace m0
             a.Size.Width = 5000;
             a.Size.Height = 5000;
             
-            UXAdd(0,0, a, x_vertex);
+            IUXItem xi = UXAdd(0,0, a, x_vertex);
 
-            UXAdd(200, 200, a, z_vertex);
+            UXAdd2(xi, x1_vertex, x2_vertex);
+
+            IUXItem zi = UXAdd(200, 200, a, z_vertex);
+
+            UXAdd2(zi, z1_vertex, z2_vertex);
         }
 
         IUXItem UXAdd(double x, double y, UXItem a, IVertex v)
@@ -149,37 +159,12 @@ namespace m0
 
             i1.BaseEdgeCreate();
 
-            i1.BaseEdge.To = v;
-
-            /*IUXItem i2 = (IUXItem)a.AddItem(UXAggregatorType);
-
-            i2.UXTemplate = new UXTemplate(template);
-            i2.Layout = LayoutTypeEnum.Manual;
-            i2.PositionCreate();
-            i2.Position.X = x+150;
-            i2.Position.Y = y+150;
-            i2.SizeCreate();
-            i2.Size.Width = 100;
-            i2.Size.Height = 100;
-
-            i2.BackgroundColorCreate();
-            i2.BackgroundColor.Blue = 100;
-
-            i2.ForegroundColorCreate();
-            i2.ForegroundColor.Red = 250;
-
-            i2.BaseEdgeCreate();
-
-            i2.BaseEdge.To = v;
-            */
-            UXAdd2(i1, v);
-
-            //UXAdd2(i2, v);
+            i1.BaseEdge.To = v;            
 
             return i1;
         }
 
-        IUXItem UXAdd2(IUXItem a, IVertex v)
+        IUXItem UXAdd2(IUXItem a, IVertex v, IVertex v2)
         {
             IUXItem i1 = (IUXItem)a.AddItem(RectangleItem);
 
@@ -226,7 +211,7 @@ namespace m0
 
             i2.BaseEdgeCreate();
 
-            i2.BaseEdge.To = v;
+            i2.BaseEdge.To = v2;
 
             return i1;
         }

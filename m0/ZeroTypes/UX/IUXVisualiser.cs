@@ -27,9 +27,7 @@ namespace m0.ZeroTypes.UX
     }
 
     public interface IUXVisualiser: IUXAggregator
-    {
-        Canvas TheCanvas { get; }
-
+    {        
         bool IsSelecting { get; }
 
         bool IsDrawingOrMovingLine { get; }

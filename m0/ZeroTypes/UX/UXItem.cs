@@ -155,7 +155,7 @@ namespace m0.ZeroTypes.UX
 
         public virtual void RemoveFromCanvas()         
         {
-            Diagram.TheCanvas.Children.Remove(this);
+            Diagram.Canvas.Children.Remove(this);
 
             Unselect();
 
@@ -240,7 +240,7 @@ namespace m0.ZeroTypes.UX
             Panel.SetZIndex(this, 0);
 
             foreach (UIElement e in Anchors)
-                Diagram.TheCanvas.Children.Remove(e);
+                Diagram.Canvas.Children.Remove(e);
 
             Anchors.Clear();
         }
@@ -772,7 +772,7 @@ namespace m0.ZeroTypes.UX
 
             Panel.SetZIndex(r, 99999);
 
-            Diagram.TheCanvas.Children.Add(r);
+            Diagram.Canvas.Children.Add(r);
 
             return r;
         }

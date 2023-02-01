@@ -37,7 +37,7 @@ namespace m0.UIWpf.UX
 
     public class UXVisualiser : Border, IListVisualiser, IUXVisualiser, IMouseWheelHandler
     {
-        public Canvas Canvas { get; }
+       // public Canvas Canvas { get; }
 
         bool IsVisualiser;
 
@@ -47,7 +47,7 @@ namespace m0.UIWpf.UX
 
         //
 
-        public Canvas TheCanvas { get; set; }
+        public Canvas Canvas { get; set; }
 
         public bool IsSelecting { get; set; }
 
@@ -121,11 +121,11 @@ namespace m0.UIWpf.UX
 
             IsVisualiser = true;
 
-            TheCanvas = new Canvas();
+            Canvas = new Canvas();
 
-            TheCanvas.Background = (Brush)FindResource("0BackgroundBrush");
+            Canvas.Background = (Brush)FindResource("0BackgroundBrush");
 
-            this.Child = TheCanvas;
+            this.Child = Canvas;
 
             this.BorderThickness = new Thickness(1);
 
@@ -221,8 +221,8 @@ namespace m0.UIWpf.UX
             double half_horizontal = sv.ActualWidth / 2;
             double half_vertical = sv.ActualHeight / 2;
 
-            double scrollBarPosAbstract_horizontal = (sv.HorizontalOffset + half_horizontal) / (TheCanvas.ActualWidth * prev_Scale);
-            double scrollBarPosAbstract_vertical = (sv.VerticalOffset + half_vertical) / (TheCanvas.ActualHeight * prev_Scale);
+            double scrollBarPosAbstract_horizontal = (sv.HorizontalOffset + half_horizontal) / (Canvas.ActualWidth * prev_Scale);
+            double scrollBarPosAbstract_vertical = (sv.VerticalOffset + half_vertical) / (Canvas.ActualHeight * prev_Scale);
 
             //
 
@@ -238,8 +238,8 @@ namespace m0.UIWpf.UX
 
             //
 
-            sv.ScrollToHorizontalOffset((scrollBarPosAbstract_horizontal * TheCanvas.ActualWidth * scale) - half_horizontal);
-            sv.ScrollToVerticalOffset((scrollBarPosAbstract_vertical * TheCanvas.ActualHeight * scale) - half_vertical);
+            sv.ScrollToHorizontalOffset((scrollBarPosAbstract_horizontal * Canvas.ActualWidth * scale) - half_horizontal);
+            sv.ScrollToVerticalOffset((scrollBarPosAbstract_vertical * Canvas.ActualHeight * scale) - half_vertical);
 
             prev_Scale = scale;
         }        
@@ -280,13 +280,6 @@ namespace m0.UIWpf.UX
         Dictionary<IVertex, List<IUXItem>> ItemsDictionary = new Dictionary<IVertex, List<IUXItem>>();
 
         bool needRebuildItemsDictionary = true;
-
-        void AddToItems(IUXItem item)
-        {
-            Items.Add(item);
-
-            needRebuildItemsDictionary = true;
-        }
 
         void RebuidItemsDictionary()
         {
@@ -354,7 +347,7 @@ namespace m0.UIWpf.UX
             }
         }
 
-        public void HostItem(IUXItem item){
+        public void HostItem(IUXAggregator host, IUXItem item){
             if (!(item is UIElement))
                 return;
 
@@ -364,16 +357,29 @@ namespace m0.UIWpf.UX
 
             item.VertexSetedUp();
 
-            needRebuildItemsDictionary = true;
-
-            AddToItems(item);
+            needRebuildItemsDictionary = true;            
                 
             Panel.SetZIndex(item_UIElement, 1);
                
             Canvas.SetLeft(item_UIElement, item.Position.X);
             Canvas.SetTop(item_UIElement, item.Position.Y);     
 
-            TheCanvas.Children.Add(item_UIElement);
+            host.Canvas.Children.Add(item_UIElement);
+
+            //
+
+            if(item is IUXAggregator)
+                foreach (IItem _i in item.Items)
+                {
+                    IUXItem i = GetUXItem(_i);
+
+                    if (i == null)
+                        continue;
+
+                    HostItem((IUXAggregator)item, i);
+                }
+
+            //
 
             item_UIElement.UpdateLayout(); 
         }
@@ -513,7 +519,7 @@ namespace m0.UIWpf.UX
             {                       
                 IsPaiting = true;                
 
-                TheCanvas.Children.Clear();
+                Canvas.Children.Clear();
 
                 //foreach (IItem i in Items)
                   //  if (i is IDisposable)
@@ -535,14 +541,14 @@ namespace m0.UIWpf.UX
                     if (i == null)
                         continue;
 
-                    HostItem(i);
+                    HostItem(this, i);
                 }                    
                         
                 UpdateLayout(); // here
 
                 AddLineObjects();
 
-                SelectionArea = new SelectionArea(TheCanvas);
+                SelectionArea = new SelectionArea(Canvas);
                 
 
                 SelectionArea.HideSelectionArea();
@@ -720,7 +726,7 @@ namespace m0.UIWpf.UX
 
         protected void MouseButtonDownHandler(object sender, MouseButtonEventArgs e)
         {
-            SelectionArea.StartSelection(e.GetPosition(TheCanvas));            
+            SelectionArea.StartSelection(e.GetPosition(Canvas));            
 
             ClickTarget = ClickTargetEnum.Selection;
 
@@ -741,7 +747,7 @@ namespace m0.UIWpf.UX
 
                 CreateOrMoveDiagramLine.StrokeThickness = 2;
 
-                TheCanvas.Children.Add(CreateOrMoveDiagramLine);
+                Canvas.Children.Add(CreateOrMoveDiagramLine);
 
                 FrameworkElement ClickedItem_FrameworkElement = (FrameworkElement)ClickedItem;
 
@@ -798,7 +804,7 @@ namespace m0.UIWpf.UX
 
                 CreateOrMoveDiagramLine.StrokeThickness = 2;
 
-                TheCanvas.Children.Add(CreateOrMoveDiagramLine);
+                Canvas.Children.Add(CreateOrMoveDiagramLine);
 
                 FrameworkElement ClickedItem_FrameworkElement = (FrameworkElement)ClickedItem;
 
@@ -876,7 +882,7 @@ namespace m0.UIWpf.UX
                         r.Tag = item;
                         Panel.SetZIndex(r, 99999);
 
-                        TheCanvas.Children.Add(r);
+                        Canvas.Children.Add(r);
                         MovingSprites.Add(r);
                     }
             }else
@@ -896,7 +902,7 @@ namespace m0.UIWpf.UX
             IsMultiSelectionMoving = false;
 
             foreach (Rectangle r in MovingSprites)
-                TheCanvas.Children.Remove(r);
+                Canvas.Children.Remove(r);
 
             ////////////////////////////////////////
             Interaction.BeginInteractionWithGraph();
@@ -917,7 +923,7 @@ namespace m0.UIWpf.UX
             {
                 if (ClickTarget == ClickTargetEnum.Selection) // selection
                 {
-                    SelectionArea.MoveSelectionArea(e.GetPosition(TheCanvas));
+                    SelectionArea.MoveSelectionArea(e.GetPosition(Canvas));
 
                     //SelectItemsBySelectionArea(SelectionAreaLeft, SelectionAreaTop, e.GetPosition(TheCanvas).X, e.GetPosition(TheCanvas).Y);
                     // too slow
@@ -931,33 +937,33 @@ namespace m0.UIWpf.UX
                 if (ClickTarget == ClickTargetEnum.AnchorLeftTop)
                 {
                     ClickedItem.MoveAndResizeItem(
-                        (e.GetPosition(TheCanvas).X - ClickPositionX_ItemCordinates),
-                        (e.GetPosition(TheCanvas).Y - ClickPositionY_ItemCordinates),
-                        ClickedItem_FrameworkElement.ActualWidth - ((e.GetPosition(TheCanvas).X - ClickPositionX_ItemCordinates) - Canvas.GetLeft(ClickedItem_FrameworkElement)),
-                       ClickedItem_FrameworkElement.ActualHeight - ((e.GetPosition(TheCanvas).Y - ClickPositionY_ItemCordinates) - Canvas.GetTop(ClickedItem_FrameworkElement)) );                        
+                        (e.GetPosition(Canvas).X - ClickPositionX_ItemCordinates),
+                        (e.GetPosition(Canvas).Y - ClickPositionY_ItemCordinates),
+                        ClickedItem_FrameworkElement.ActualWidth - ((e.GetPosition(Canvas).X - ClickPositionX_ItemCordinates) - Canvas.GetLeft(ClickedItem_FrameworkElement)),
+                       ClickedItem_FrameworkElement.ActualHeight - ((e.GetPosition(Canvas).Y - ClickPositionY_ItemCordinates) - Canvas.GetTop(ClickedItem_FrameworkElement)) );                        
                 }
 
                 if (ClickTarget == ClickTargetEnum.AnchorMiddleTop)
                 {
                     ClickedItem.MoveAndResizeItem(
                         Canvas.GetLeft(ClickedItem_FrameworkElement),
-                        (e.GetPosition(TheCanvas).Y - ClickPositionY_ItemCordinates),
+                        (e.GetPosition(Canvas).Y - ClickPositionY_ItemCordinates),
                         ClickedItem_FrameworkElement.ActualWidth,
-                       ClickedItem_FrameworkElement.ActualHeight - ((e.GetPosition(TheCanvas).Y - ClickPositionY_ItemCordinates) - Canvas.GetTop(ClickedItem_FrameworkElement)));
+                       ClickedItem_FrameworkElement.ActualHeight - ((e.GetPosition(Canvas).Y - ClickPositionY_ItemCordinates) - Canvas.GetTop(ClickedItem_FrameworkElement)));
                 }
 
                 if (ClickTarget == ClickTargetEnum.AnchorRightTop_CreateDiagramLine)
-                    CreateAndUpdateCreateDiagramLine(e.GetPosition(TheCanvas).X, e.GetPosition(TheCanvas).Y);
+                    CreateAndUpdateCreateDiagramLine(e.GetPosition(Canvas).X, e.GetPosition(Canvas).Y);
 
                 if (ClickTarget == ClickTargetEnum.AnchorRightTop_MoveDiagramLine)
-                    CreateAndUpdateMoveDiagramLine(e.GetPosition(TheCanvas).X, e.GetPosition(TheCanvas).Y);
+                    CreateAndUpdateMoveDiagramLine(e.GetPosition(Canvas).X, e.GetPosition(Canvas).Y);
 
                 if (ClickTarget == ClickTargetEnum.AnchorLeftMiddle)
                 {
                     ClickedItem.MoveAndResizeItem(
-                        (e.GetPosition(TheCanvas).X - ClickPositionX_ItemCordinates),
+                        (e.GetPosition(Canvas).X - ClickPositionX_ItemCordinates),
                         Canvas.GetTop(ClickedItem_FrameworkElement),
-                        ClickedItem_FrameworkElement.ActualWidth - ((e.GetPosition(TheCanvas).X - ClickPositionX_ItemCordinates) - Canvas.GetLeft(ClickedItem_FrameworkElement)),
+                        ClickedItem_FrameworkElement.ActualWidth - ((e.GetPosition(Canvas).X - ClickPositionX_ItemCordinates) - Canvas.GetLeft(ClickedItem_FrameworkElement)),
                        ClickedItem_FrameworkElement.ActualHeight);
                 }
 
@@ -966,17 +972,17 @@ namespace m0.UIWpf.UX
                     ClickedItem.MoveAndResizeItem(
                         Canvas.GetLeft(ClickedItem_FrameworkElement),
                         Canvas.GetTop(ClickedItem_FrameworkElement),
-                        e.GetPosition(TheCanvas).X - Canvas.GetLeft(ClickedItem_FrameworkElement) - ClickPositionX_AnchorCordinates,
+                        e.GetPosition(Canvas).X - Canvas.GetLeft(ClickedItem_FrameworkElement) - ClickPositionX_AnchorCordinates,
                        ClickedItem_FrameworkElement.ActualHeight);
                 }
 
                 if (ClickTarget == ClickTargetEnum.AnchorLeftBottom)
                 {
                     ClickedItem.MoveAndResizeItem(
-                      (e.GetPosition(TheCanvas).X - ClickPositionX_ItemCordinates),
+                      (e.GetPosition(Canvas).X - ClickPositionX_ItemCordinates),
                       Canvas.GetTop(ClickedItem_FrameworkElement),
-                      ClickedItem_FrameworkElement.ActualWidth - ((e.GetPosition(TheCanvas).X - ClickPositionX_ItemCordinates) - Canvas.GetLeft(ClickedItem_FrameworkElement)),
-                    e.GetPosition(TheCanvas).Y - Canvas.GetTop(ClickedItem_FrameworkElement) - ClickPositionY_AnchorCordinates);
+                      ClickedItem_FrameworkElement.ActualWidth - ((e.GetPosition(Canvas).X - ClickPositionX_ItemCordinates) - Canvas.GetLeft(ClickedItem_FrameworkElement)),
+                    e.GetPosition(Canvas).Y - Canvas.GetTop(ClickedItem_FrameworkElement) - ClickPositionY_AnchorCordinates);
                 }
 
                 if (ClickTarget == ClickTargetEnum.AnchorMiddleBottom)
@@ -985,7 +991,7 @@ namespace m0.UIWpf.UX
                       Canvas.GetLeft(ClickedItem_FrameworkElement),
                       Canvas.GetTop(ClickedItem_FrameworkElement),
                       ClickedItem_FrameworkElement.ActualWidth,
-                    e.GetPosition(TheCanvas).Y - Canvas.GetTop(ClickedItem_FrameworkElement) - ClickPositionY_AnchorCordinates);
+                    e.GetPosition(Canvas).Y - Canvas.GetTop(ClickedItem_FrameworkElement) - ClickPositionY_AnchorCordinates);
                 }
 
                 if (ClickTarget == ClickTargetEnum.AnchorRightBottom)
@@ -993,8 +999,8 @@ namespace m0.UIWpf.UX
                     ClickedItem.MoveAndResizeItem(
                       Canvas.GetLeft(ClickedItem_FrameworkElement),
                       Canvas.GetTop(ClickedItem_FrameworkElement),
-                      e.GetPosition(TheCanvas).X - Canvas.GetLeft(ClickedItem_FrameworkElement) - ClickPositionX_AnchorCordinates,
-                    e.GetPosition(TheCanvas).Y - Canvas.GetTop(ClickedItem_FrameworkElement) - ClickPositionY_AnchorCordinates);
+                      e.GetPosition(Canvas).X - Canvas.GetLeft(ClickedItem_FrameworkElement) - ClickPositionX_AnchorCordinates,
+                    e.GetPosition(Canvas).Y - Canvas.GetTop(ClickedItem_FrameworkElement) - ClickPositionY_AnchorCordinates);
                 }                
 
                 if (ClickTarget == ClickTargetEnum.Item) // item move
@@ -1019,13 +1025,13 @@ namespace m0.UIWpf.UX
                             ClickedItem.AddToSelectedEdges();
                         }
 
-                        ClickedItem.MoveItem((e.GetPosition(TheCanvas).X - ClickPositionX_ItemCordinates), 
-                            (e.GetPosition(TheCanvas).Y - ClickPositionY_ItemCordinates));
+                        ClickedItem.MoveItem((e.GetPosition(Canvas).X - ClickPositionX_ItemCordinates), 
+                            (e.GetPosition(Canvas).Y - ClickPositionY_ItemCordinates));
                     }
                 }
             }else
             {
-                CheckIfLineNeedsSelection(e.GetPosition(TheCanvas));
+                CheckIfLineNeedsSelection(e.GetPosition(Canvas));
             }
         }        
 
@@ -1137,7 +1143,7 @@ namespace m0.UIWpf.UX
                 }
 
                 HighlightedItem = null;
-                TheCanvas.Children.Remove(CreateOrMoveDiagramLine);
+                Canvas.Children.Remove(CreateOrMoveDiagramLine);
                 CreateOrMoveDiagramLine = null;
 
                 IsDrawingOrMovingLine = false;
@@ -1154,7 +1160,7 @@ namespace m0.UIWpf.UX
                 }
 
                 HighlightedItem = null;
-                TheCanvas.Children.Remove(CreateOrMoveDiagramLine);
+                Canvas.Children.Remove(CreateOrMoveDiagramLine);
                 CreateOrMoveDiagramLine = null;
 
                 IsDrawingOrMovingLine = false;
@@ -1544,7 +1550,7 @@ namespace m0.UIWpf.UX
 
                 IVertex dndVertex = e.Data.GetData("Vertex") as IVertex;
 
-                double x = e.GetPosition(TheCanvas).X, y = e.GetPosition(TheCanvas).Y;
+                double x = e.GetPosition(Canvas).X, y = e.GetPosition(Canvas).Y;
 
                 bool isSet = false;
 
@@ -1612,7 +1618,7 @@ namespace m0.UIWpf.UX
 
             EdgeHelper.AddEdgeVertexEdgesByEdgeVertex(edge, BaseEdge);      
 
-            HostItem(i);            
+            HostItem(this, i);            
         }
 
         public void AddDiagramItem(double x, double y, UXTemplate UXTemplate, IVertex metaVertex,IVertex newVertex)
@@ -1623,7 +1629,7 @@ namespace m0.UIWpf.UX
 
             EdgeHelper.AddEdgeVertexEdgesOnlyMetaTo(be, metaVertex, newVertex);
 
-            HostItem(i);
+            HostItem(this, i);
         }
 
         public void CheckAndUpdateDiagramLines()
