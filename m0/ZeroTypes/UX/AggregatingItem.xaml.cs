@@ -39,6 +39,8 @@ namespace m0.ZeroTypes.UX
         {
             Canvas = new Canvas();
 
+            Canvas.ClipToBounds = true;
+
             Grid.SetRow(Canvas, 2);
 
             TheGrid.Children.Add(Canvas);            
