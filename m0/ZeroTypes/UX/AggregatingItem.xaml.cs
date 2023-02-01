@@ -24,7 +24,7 @@ namespace m0.ZeroTypes.UX
     /// </summary>
     public partial class AggregatingItem : UXItem, IUXAggregator
     {
-        IPlatformClass ContentVisualiser;
+        public Canvas Canvas { get; set; }        
 
         public AggregatingItem() : base(new ZeroTypes.Edge(null))
         {
@@ -37,22 +37,11 @@ namespace m0.ZeroTypes.UX
 
         public override void VertexSetedUp()
         {
-            if (VisualiserClass != null)        
-            {
-                ContentVisualiser = PlatformClass.CreatePlatformObject(VisualiserClass, BaseEdge);                
+            Canvas = new Canvas();
 
-                Grid.SetRow((UIElement)ContentVisualiser, 2);
+            Grid.SetRow(Canvas, 2);
 
-                TheGrid.Children.Add((UIElement)ContentVisualiser);
-            }
-            else
-            {
-                InternalFrame.BorderThickness = new Thickness(0);
-                ContentVisualiser = null;
-            }
-                    
-            if (VisualiserVertex != null && ContentVisualiser != null)
-                Diagram.AddEdgesFromDefintion(ContentVisualiser.Vertex, VisualiserVertex);
+            TheGrid.Children.Add(Canvas);            
 
             base.VertexSetedUp();
         }
@@ -100,25 +89,13 @@ namespace m0.ZeroTypes.UX
             if (roundEdgeSize != 0)
             {                
                 this.Frame.CornerRadius = new CornerRadius(RoundEdgeSize);
+                
+                this.Title.Margin = new Thickness(RoundEdgeSize, RoundEdgeSize, RoundEdgeSize, 0);
 
-                if (VisualiserClass != null)
-                {
-                    this.Title.Margin = new Thickness(RoundEdgeSize, RoundEdgeSize, RoundEdgeSize, 0);
+                Canvas.Margin = new Thickness(RoundEdgeSize, 0, RoundEdgeSize, RoundEdgeSize);
 
-                    ((FrameworkElement)this.ContentVisualiser).Margin = new Thickness(RoundEdgeSize, 0, RoundEdgeSize, RoundEdgeSize);
-
-                    TheGrid.RowDefinitions[0].Height = new GridLength(18 + RoundEdgeSize);
-                }
-                else
-                {
-                    this.Title.Margin = new Thickness(RoundEdgeSize);
-
-                    this.Title.TextWrapping = TextWrapping.Wrap;
-
-                    TheGrid.RowDefinitions[0].Height = new GridLength(0, GridUnitType.Auto);
-
-                    TheGrid.Children.Remove(InternalFrame);
-                }
+                TheGrid.RowDefinitions[0].Height = new GridLength(18 + RoundEdgeSize);
+                
             }
 
             Brush backgroundBrush = GetBackgroundBrush();
@@ -134,22 +111,16 @@ namespace m0.ZeroTypes.UX
 
             this.Frame.BorderBrush = foregroundBrush;
 
-            if (ContentVisualiser != null) // not always works, but can
-            {
-                GeneralUtil.SetPropertyIfPresent(ContentVisualiser, "Foreground", foregroundBrush);
-                GeneralUtil.SetPropertyIfPresent(ContentVisualiser, "Background", backgroundBrush);
-            }
+            Canvas.Background = backgroundBrush;
+
 
             if (BorderSize != 0)
             {
                 this.Frame.BorderThickness = new Thickness(BorderSize);
 
-                if (ContentVisualiser != null)
-                {
-                    this.InternalFrame.BorderThickness = new Thickness(BorderSize / 2);
+                this.InternalFrame.BorderThickness = new Thickness(BorderSize / 2);
 
-                    this.TheGrid.RowDefinitions[1].Height = new GridLength(BorderSize);
-                }
+                this.TheGrid.RowDefinitions[1].Height = new GridLength(BorderSize);                
             }
         }         
 
@@ -239,9 +210,7 @@ namespace m0.ZeroTypes.UX
 
         static IVertex ShowMeta_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\RectangleItem\ShowMeta");
         static IVertex RoundEdgeSize_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\RectangleItem\RoundEdgeSize");
-        static IVertex VisualiserClass_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\RectangleItem\VisualiserClass");
-        static IVertex VisualiserVertex_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\RectangleItem\VisualiserVertex");
-
+        
         public bool ShowMeta
         {
             get
@@ -284,51 +253,7 @@ namespace m0.ZeroTypes.UX
                 else
                     val.Value = value;
             }
-        }
-
-        public IVertex VisualiserClass
-        {
-            get
-            {
-                IVertex val = GraphUtil.GetQueryOutFirst(Vertex, "VisualiserClass", null);
-
-                if (val == null)
-                    return null;
-
-                return val;
-            }
-            set
-            {
-                IVertex val = GraphUtil.GetQueryOutFirst(Vertex, "VisualiserClass", null);
-
-                if (val == null)
-                    val = Vertex.AddVertex(VisualiserClass_meta, value);
-                else
-                    val.Value = value;
-            }
-        }
-
-        public IVertex VisualiserVertex
-        {
-            get
-            {
-                IVertex val = GraphUtil.GetQueryOutFirst(Vertex, "VisualiserVertex", null);
-
-                if (val == null)
-                    return null;
-
-                return val;
-            }
-            set
-            {
-                IVertex val = GraphUtil.GetQueryOutFirst(Vertex, "VisualiserVertex", null);
-
-                if (val == null)
-                    val = Vertex.AddVertex(VisualiserVertex_meta, value);
-                else
-                    val.Value = value;
-            }
-        }
+        }        
 
         //
 

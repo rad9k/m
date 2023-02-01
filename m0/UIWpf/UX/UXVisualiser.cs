@@ -37,6 +37,8 @@ namespace m0.UIWpf.UX
 
     public class UXVisualiser : Border, IListVisualiser, IUXVisualiser, IMouseWheelHandler
     {
+        public Canvas Canvas { get; }
+
         bool IsVisualiser;
 
         public AtomVisualiserHelper VisualiserHelper { get; set; }
