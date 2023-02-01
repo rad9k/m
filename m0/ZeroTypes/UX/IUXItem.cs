@@ -13,7 +13,7 @@ using System.Windows.Controls;
 namespace m0.ZeroTypes.UX
 {
     public interface IUXItem: IItem, IDisposable
-    {
+    {        
         IUXVisualiser Diagram { get; set; }
 
         bool IsSelected { get; set; }

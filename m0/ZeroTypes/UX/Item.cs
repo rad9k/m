@@ -11,6 +11,8 @@ namespace m0.ZeroTypes.UX
 {
     public class Item: TypedEdge, IItem
     {
+        public IUXItem Parent { get; set; }
+
         static IVertex BaseEdge_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\HasBaseEdge\BaseEdge");
         static IVertex Item_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\Item\Item");
         static IVertex UXItem_type = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\UXItem");
@@ -93,7 +95,10 @@ namespace m0.ZeroTypes.UX
                 IList<IItem> ret = new List<IItem>();
 
                 foreach (IEdge e in list)
+                {
+                    IItem i
                     ret.Add((IItem)TypedEdge.Get(e));
+                }
 
                 return ret;
             }

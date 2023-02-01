@@ -277,6 +277,8 @@ namespace m0.UIWpf.UX
 
         // OPTIMISATION START
 
+        List<IUXItem> Items_all = new List<IUXItem>();
+
         Dictionary<IVertex, List<IUXItem>> ItemsDictionary = new Dictionary<IVertex, List<IUXItem>>();
 
         bool needRebuildItemsDictionary = true;
@@ -285,7 +287,7 @@ namespace m0.UIWpf.UX
         {
             ItemsDictionary.Clear();
 
-            foreach(IItem i in Items)            
+            foreach(IItem i in Items_all)            
                 {
                     IUXItem ui = GetUXItem(i);
 
@@ -322,6 +324,8 @@ namespace m0.UIWpf.UX
         {
             RemoveItem(item);
 
+            Items_all.Remove(item);
+
             needRebuildItemsDictionary = true;
 
             item.RemoveFromCanvas();
@@ -350,6 +354,10 @@ namespace m0.UIWpf.UX
         public void HostItem(IUXAggregator host, IUXItem item){
             if (!(item is UIElement))
                 return;
+
+            Items_all.Add(item);
+
+            //
 
             UIElement item_UIElement = (UIElement)item;
 
@@ -533,6 +541,8 @@ namespace m0.UIWpf.UX
                 ////////////////////////////////////////
                 Interaction.BeginInteractionWithGraph();
                 //////////////////////////////////////// 
+
+                Items_all.Clear();
 
                 foreach (IItem _i in Items)
                 {

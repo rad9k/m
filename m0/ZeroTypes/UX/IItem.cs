@@ -11,6 +11,8 @@ namespace m0.ZeroTypes.UX
 {
     public interface IItem: ITypedEdge
     {
+        IUXItem Parent { get; set; }
+
         IVertex BaseEdgeTo { get; }
 
         Edge BaseEdge { get; }
