@@ -37,7 +37,7 @@ namespace m0.UIWpf.UX
 
     public class UXVisualiser : Border, IListVisualiser, IUXVisualiser, IMouseWheelHandler
     {
-       // public Canvas Canvas { get; }
+        public IItem ItemParent { get; set; }
 
         bool IsVisualiser;
 
@@ -287,7 +287,7 @@ namespace m0.UIWpf.UX
         {
             ItemsDictionary.Clear();
 
-            foreach(IItem i in Items_all)            
+            foreach(IItem i in Items_all)
                 {
                     IUXItem ui = GetUXItem(i);
 

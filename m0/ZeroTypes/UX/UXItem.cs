@@ -29,7 +29,7 @@ namespace m0.ZeroTypes.UX
 
     public class UXItem : UserControl, IUXItem, IPlatformClass
     {
-        public IItem Parent { get; set; }
+        public IItem ItemParent { get; set; }
 
         public List<FrameworkElement> Anchors;                
 
@@ -1344,7 +1344,11 @@ namespace m0.ZeroTypes.UX
                 IList<IItem> ret = new List<IItem>();
 
                 foreach (IEdge e in list)
-                    ret.Add((IItem)TypedEdge.Get(e));
+                {
+                    IItem i = (IItem)TypedEdge.Get(e);
+                    i.ItemParent = this;
+                    ret.Add(i);
+                }
 
                 return ret;
             }
