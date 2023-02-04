@@ -1870,7 +1870,7 @@ namespace m0.UIWpf.UX
 
         public void AddToSelectedEdges() { }
 
-        public Point GetLineAnchorLocation(IUXItem toItem, Point toPoint, int toItemDiagramLinesCount, int toItemDiagramLinesNumber, bool isSelfStart) { return new Point(); }
+        public Point GetLineAnchorLocation(IUXItem toItem, int toItemDiagramLinesCount, int toItemDiagramLinesNumber, bool isSelfStart) { return new Point(); }
 
         // UXItem
 

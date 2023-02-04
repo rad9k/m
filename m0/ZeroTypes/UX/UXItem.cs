@@ -535,9 +535,9 @@ namespace m0.ZeroTypes.UX
 
             foreach (ILineDecoratorBase l in sameToItemLines)
             {
-                Point start = GetLineAnchorLocation(toItem, new Point(), allCnt, cnt, toItem == this);
+                Point start = GetLineAnchorLocation(toItem, allCnt, cnt, toItem == this);
 
-                Point end = toItem.GetLineAnchorLocation(this, new Point(), allCnt, cnt, false);
+                Point end = toItem.GetLineAnchorLocation(this, allCnt, cnt, false);
 
                 if (toItem == this)
                     l.SetPosition(start.X, start.Y, end.X, end.Y, true, Canvas.GetLeft(this) + this.ActualWidth + 25 * (allCnt - cnt), Canvas.GetTop(this) - 25 * ((allCnt - cnt)));
@@ -549,9 +549,9 @@ namespace m0.ZeroTypes.UX
 
             foreach (ILineDecoratorBase l in sameFromItemLinesTo)
             {
-                Point end = GetLineAnchorLocation(toItem, new Point(), allCnt, cnt, false);
+                Point end = GetLineAnchorLocation(toItem, allCnt, cnt, false);
 
-                Point start = toItem.GetLineAnchorLocation(this, new Point(), allCnt, cnt, false);
+                Point start = toItem.GetLineAnchorLocation(this, allCnt, cnt, false);
 
                 if (toItem != this)
                     l.SetPosition(start.X, start.Y, end.X, end.Y, false, 0, 0);
@@ -892,7 +892,7 @@ namespace m0.ZeroTypes.UX
 
         //
 
-        public virtual Point GetLineAnchorLocation(IUXItem _toItem, Point toPoint, int toItemDiagramLinesCount, int toItemDiagramLinesNumber, bool isSelfStart)
+        public virtual Point GetLineAnchorLocation(IUXItem _toItem, int toItemDiagramLinesCount, int toItemDiagramLinesNumber, bool isSelfStart)
         {
             if (!(_toItem is FrameworkElement))
                 return new Point();
@@ -910,7 +910,7 @@ namespace m0.ZeroTypes.UX
                 pTo.Y = Canvas.GetTop(toItem) + toItem.ActualHeight / 2;
             }
             else
-                pTo = toPoint;
+                pTo = new Point();
 
             double tX = Canvas.GetLeft(this) + this.ActualWidth / 2;
             double tY = Canvas.GetTop(this) + this.ActualHeight / 2;
