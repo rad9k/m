@@ -1848,7 +1848,7 @@ namespace m0.UIWpf.UX
 
         public virtual void VertexSetedUp() { }
 
-        public Dictionary<IVertex, List<ILineDecoratorBase>> GetDiagramLinesToDiagramItemDictionary() { return null; }
+        public Dictionary<IUXItem, List<ILineDecoratorBase>> GetDiagramLinesToDiagramItemDictionary() { return null; }
 
         public Dictionary<IVertex, List<ILineDecoratorBase>> GetDiagramLinesBaseEdgeToDictionary() { return null; }
 

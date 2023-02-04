@@ -30,7 +30,7 @@ namespace m0.ZeroTypes.UX
 
         void Dispose();
 
-        Dictionary<IVertex, List<ILineDecoratorBase>> GetDiagramLinesToDiagramItemDictionary();
+        Dictionary<IUXItem, List<ILineDecoratorBase>> GetDiagramLinesToDiagramItemDictionary();
 
         Dictionary<IVertex, List<ILineDecoratorBase>> GetDiagramLinesBaseEdgeToDictionary();
 

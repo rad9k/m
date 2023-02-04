@@ -139,7 +139,7 @@ namespace m0.ZeroTypes.UX
             }
         }
 
-        public Dictionary<IVertex, List<ILineDecoratorBase>> GetDiagramLinesToDiagramItemDictionary()
+        public Dictionary<IUXItem, List<ILineDecoratorBase>> GetDiagramLinesToDiagramItemDictionary()
         {
             if (needRebuildDiagramLinesDictionary)
                 RebuidDiagramLinesDictionary();
@@ -422,7 +422,7 @@ namespace m0.ZeroTypes.UX
 
         // OPTIMISATION START
 
-        Dictionary<IVertex, List<ILineDecoratorBase>> DiagramLinesToDiagramItemDictionary = new Dictionary<IVertex, List<ILineDecoratorBase>>();
+        Dictionary<IUXItem, List<ILineDecoratorBase>> DiagramLinesToDiagramItemDictionary = new Dictionary<IUXItem, List<ILineDecoratorBase>>();
         Dictionary<IVertex, List<ILineDecoratorBase>> DiagramLinesBaseEdgeToDictionary = new Dictionary<IVertex, List<ILineDecoratorBase>>();
 
         bool needRebuildDiagramLinesDictionary = true;        
@@ -447,7 +447,7 @@ namespace m0.ZeroTypes.UX
                     
                 // ToDiagramItem:
 
-                IVertex toDiagramItem = l.Vertex.Get(false, @"ToItem:");
+                IUXItem toDiagramItem = l.ToItem;
 
                 if (DiagramLinesToDiagramItemDictionary.ContainsKey(toDiagramItem))
                     DiagramLinesToDiagramItemDictionary[toDiagramItem].Add(l);
@@ -461,7 +461,7 @@ namespace m0.ZeroTypes.UX
 
                 // BaseEdge:\To:
 
-                IVertex BaseEdgeTo = l.Vertex.Get(false, @"BaseEdge:\To:");
+                IVertex BaseEdgeTo = l.BaseEdgeTo;
 
                 if (DiagramLinesBaseEdgeToDictionary.ContainsKey(BaseEdgeTo))
                     DiagramLinesBaseEdgeToDictionary[BaseEdgeTo].Add(l);
@@ -508,14 +508,18 @@ namespace m0.ZeroTypes.UX
         {
             List<ILineDecoratorBase> sameToItemLines = new List<ILineDecoratorBase>();
 
-            if (GetDiagramLinesToDiagramItemDictionary().ContainsKey(toItem.Vertex))
-                foreach (ILineDecoratorBase l in GetDiagramLinesToDiagramItemDictionary()[toItem.Vertex])
+            Dictionary<IUXItem, List<ILineDecoratorBase>> DiagramLinesToDiagramItemDictionary = GetDiagramLinesToDiagramItemDictionary();
+
+            if (DiagramLinesToDiagramItemDictionary.ContainsKey(toItem))
+                foreach (ILineDecoratorBase l in DiagramLinesToDiagramItemDictionary[toItem])
                     sameToItemLines.Add(l);
 
             List<ILineDecoratorBase> sameFromItemLinesTo = new List<ILineDecoratorBase>();
 
-            if (toItem.GetDiagramLinesToDiagramItemDictionary().ContainsKey(this.Vertex))
-                foreach (ILineDecoratorBase l in toItem.GetDiagramLinesToDiagramItemDictionary()[this.Vertex])
+            Dictionary<IUXItem, List<ILineDecoratorBase>> toItemDiagramLinesToDiagramItemDictionary = toItem.GetDiagramLinesToDiagramItemDictionary();
+
+            if (toItemDiagramLinesToDiagramItemDictionary.ContainsKey(this))
+                foreach (ILineDecoratorBase l in toItemDiagramLinesToDiagramItemDictionary[this])
                     sameFromItemLinesTo.Add(l);
 
             int allCnt = sameToItemLines.Count() + sameFromItemLinesTo.Count();
