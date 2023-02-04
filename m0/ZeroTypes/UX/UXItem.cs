@@ -29,6 +29,9 @@ namespace m0.ZeroTypes.UX
 
     public class UXItem : UserControl, IUXItem, IPlatformClass
     {
+        public double ParentAbsolutePositionX { get; set; }
+        public double ParentAbsolutePositionY { get; set; }
+
         public IItem ItemParent { get; set; }
 
         public List<FrameworkElement> Anchors;                
@@ -296,9 +299,40 @@ namespace m0.ZeroTypes.UX
                 Canvas.SetTop(a, Canvas.GetTop(a) - deltay);
             }
 
+            UpdateParentPositionInSubItems();
+
             UpdateDiagramLines();
         }
 
+        public IUXItem GetUXItem(IItem i)
+        {
+            if (GraphUtil.ExistQueryOut(i.Vertex, "$Is", "Wrap"))
+                return null;
+
+            if (i is IUXItem)
+                return (IUXItem)i;
+
+            return null;
+        }
+
+        public void UpdateParentPositionInSubItems()
+        {
+            double thisAbsolutePositionX = ParentAbsolutePositionX + Position.X;
+            double thisAbsolutePositionY = ParentAbsolutePositionY + Position.Y;
+
+            foreach (IItem _i in Items)
+            {
+                IUXItem i = GetUXItem(_i);
+
+                if (i == null)
+                    continue;
+
+                i.ParentAbsolutePositionX = thisAbsolutePositionX;
+                i.ParentAbsolutePositionY = thisAbsolutePositionY;
+                i.UpdateParentPositionInSubItems();
+            }
+        }
+        
         public void MoveAndResizeItem(double left, double top, double width, double height)
         {
             if (width < 0 || height < 0)
@@ -893,15 +927,15 @@ namespace m0.ZeroTypes.UX
                 {
                     if (isSelfStart)
                     {
-                        p.X = Canvas.GetLeft(this) + (((double)toItemDiagramLinesNumber + 1) / ((double)toItemDiagramLinesCount + 1) * this.ActualWidth);
-                        p.Y = tY - this.ActualHeight / 2;
+                        p.X = ParentAbsolutePositionX + (Canvas.GetLeft(this) + (((double)toItemDiagramLinesNumber + 1) / ((double)toItemDiagramLinesCount + 1) * this.ActualWidth));
+                        p.Y = ParentAbsolutePositionY + (tY - this.ActualHeight / 2);
 
                         return p;
                     }
                     else
                     {
-                        p.X = tX + this.ActualWidth / 2;
-                        p.Y = Canvas.GetTop(this) + (((double)(toItemDiagramLinesCount - toItemDiagramLinesNumber)) / ((double)toItemDiagramLinesCount + 1) * this.ActualHeight);
+                        p.X = ParentAbsolutePositionX + (tX + this.ActualWidth / 2);
+                        p.Y = ParentAbsolutePositionY + (Canvas.GetTop(this) + (((double)(toItemDiagramLinesCount - toItemDiagramLinesNumber)) / ((double)toItemDiagramLinesCount + 1) * this.ActualHeight));
 
                         return p;
                     }
@@ -909,26 +943,26 @@ namespace m0.ZeroTypes.UX
 
                 if (testY <= 0 && Math.Abs(testX * this.ActualHeight) <= Math.Abs(testY * this.ActualWidth))
                 {
-                    p.X = Canvas.GetLeft(this) + (((double)toItemDiagramLinesNumber + 1) / ((double)toItemDiagramLinesCount + 1) * this.ActualWidth);
-                    p.Y = tY - this.ActualHeight / 2;
+                    p.X = ParentAbsolutePositionX + (Canvas.GetLeft(this) + (((double)toItemDiagramLinesNumber + 1) / ((double)toItemDiagramLinesCount + 1) * this.ActualWidth));
+                    p.Y = ParentAbsolutePositionY + (tY - this.ActualHeight / 2);
                 }
 
                 if (testY > 0 && Math.Abs(testX * this.ActualHeight) <= Math.Abs(testY * this.ActualWidth))
                 {
-                    p.X = Canvas.GetLeft(this) + (((double)toItemDiagramLinesNumber + 1) / ((double)toItemDiagramLinesCount + 1) * this.ActualWidth);
-                    p.Y = tY + this.ActualHeight / 2;
+                    p.X = ParentAbsolutePositionX + (Canvas.GetLeft(this) + (((double)toItemDiagramLinesNumber + 1) / ((double)toItemDiagramLinesCount + 1) * this.ActualWidth));
+                    p.Y = ParentAbsolutePositionY + (tY + this.ActualHeight / 2);
                 }
 
                 if (testX >= 0 && Math.Abs(testX * this.ActualHeight) >= Math.Abs(testY * this.ActualWidth))
                 {
-                    p.X = tX + this.ActualWidth / 2;
-                    p.Y = Canvas.GetTop(this) + (((double)toItemDiagramLinesNumber + 1) / ((double)toItemDiagramLinesCount + 1) * this.ActualHeight);
+                    p.X = ParentAbsolutePositionX + (tX + this.ActualWidth / 2);
+                    p.Y = ParentAbsolutePositionY + (Canvas.GetTop(this) + (((double)toItemDiagramLinesNumber + 1) / ((double)toItemDiagramLinesCount + 1) * this.ActualHeight));
                 }
 
                 if (testX <= 0 && Math.Abs(testX * this.ActualHeight) >= Math.Abs(testY * this.ActualWidth))
                 {
-                    p.X = tX - this.ActualWidth / 2;
-                    p.Y = Canvas.GetTop(this) + (((double)toItemDiagramLinesNumber + 1) / ((double)toItemDiagramLinesCount + 1) * this.ActualHeight);
+                    p.X = ParentAbsolutePositionX + (tX - this.ActualWidth / 2);
+                    p.Y = ParentAbsolutePositionY + (Canvas.GetTop(this) + (((double)toItemDiagramLinesNumber + 1) / ((double)toItemDiagramLinesCount + 1) * this.ActualHeight));
                 }
             }
             else
@@ -937,15 +971,15 @@ namespace m0.ZeroTypes.UX
                 {
                     if (isSelfStart)
                     {
-                        p.X = tX;
-                        p.Y = tY - this.ActualHeight / 2;
+                        p.X = ParentAbsolutePositionX + tX;
+                        p.Y = ParentAbsolutePositionY + (tY - this.ActualHeight / 2);
 
                         return p;
                     }
                     else
                     {
-                        p.X = tX + this.ActualWidth / 2;
-                        p.Y = tY;
+                        p.X = ParentAbsolutePositionX + (tX + this.ActualWidth / 2);
+                        p.Y = ParentAbsolutePositionY + tY;
 
                         return p;
                     }
@@ -953,26 +987,26 @@ namespace m0.ZeroTypes.UX
 
                 if (testY <= 0 && Math.Abs(testX * this.ActualHeight) <= Math.Abs(testY * this.ActualWidth))
                 {
-                    p.X = tX - (this.ActualHeight / 2 * testX / testY);
-                    p.Y = tY - this.ActualHeight / 2;
+                    p.X = ParentAbsolutePositionX + (tX - (this.ActualHeight / 2 * testX / testY));
+                    p.Y = ParentAbsolutePositionY + (tY - this.ActualHeight / 2);
                 }
 
                 if (testY > 0 && Math.Abs(testX * this.ActualHeight) <= Math.Abs(testY * this.ActualWidth))
                 {
-                    p.X = tX + (this.ActualHeight / 2 * testX / testY);
-                    p.Y = tY + this.ActualHeight / 2;
+                    p.X = ParentAbsolutePositionX + (tX + (this.ActualHeight / 2 * testX / testY));
+                    p.Y = ParentAbsolutePositionY + (tY + this.ActualHeight / 2);
                 }
 
                 if (testX >= 0 && Math.Abs(testX * this.ActualHeight) >= Math.Abs(testY * this.ActualWidth))
                 {
-                    p.X = tX + this.ActualWidth / 2;
-                    p.Y = tY + (this.ActualWidth / 2 * testY / testX);
+                    p.X = ParentAbsolutePositionX + (tX + this.ActualWidth / 2);
+                    p.Y = ParentAbsolutePositionY + (tY + (this.ActualWidth / 2 * testY / testX));
                 }
 
                 if (testX <= 0 && Math.Abs(testX * this.ActualHeight) >= Math.Abs(testY * this.ActualWidth))
                 {
-                    p.X = tX - this.ActualWidth / 2;
-                    p.Y = tY - (this.ActualWidth / 2 * testY / testX);
+                    p.X = ParentAbsolutePositionX + (tX - this.ActualWidth / 2);
+                    p.Y = ParentAbsolutePositionY + (tY - (this.ActualWidth / 2 * testY / testX));
                 }
             }
 

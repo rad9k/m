@@ -37,6 +37,11 @@ namespace m0.UIWpf.UX
 
     public class UXVisualiser : Border, IListVisualiser, IUXVisualiser, IMouseWheelHandler
     {
+        public double ParentAbsolutePositionX { get; set; }
+        public double ParentAbsolutePositionY { get; set; }
+
+        public void UpdateParentPositionInSubItems() { }
+
         public IItem ItemParent { get; set; }
 
         bool IsVisualiser;
@@ -917,7 +922,7 @@ namespace m0.UIWpf.UX
 
             ////////////////////////////////////////
             Interaction.BeginInteractionWithGraph();
-            //////////////////////////////////////// 
+            ////////////////////////////////////////            
 
             foreach (IEdge ed in Vertex.GetAll(false, @"SelectedEdges:\{$Is:Edge}"))
                 foreach (IUXItem item in GetItemsByBaseEdge(ed.To))
