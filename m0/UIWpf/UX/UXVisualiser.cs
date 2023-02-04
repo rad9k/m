@@ -2203,7 +2203,11 @@ namespace m0.UIWpf.UX
                 IList<IItem> ret = new List<IItem>();
 
                 foreach (IEdge e in list)
-                    ret.Add((IItem)TypedEdge.Get(e));
+                {
+                    IItem i = (IItem)TypedEdge.Get(e);
+                    i.ItemParent = this;
+                    ret.Add(i);                    
+                }
 
                 return ret;
             }
