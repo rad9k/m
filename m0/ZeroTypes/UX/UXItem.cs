@@ -302,6 +302,8 @@ namespace m0.ZeroTypes.UX
             UpdateParentPositionInSubItems();
 
             UpdateDiagramLines();
+
+            UpdateDiagramLinesInSubItems();
         }
 
         public IUXItem GetUXItem(IItem i)
@@ -313,6 +315,19 @@ namespace m0.ZeroTypes.UX
                 return (IUXItem)i;
 
             return null;
+        }
+
+        public void UpdateDiagramLinesInSubItems()
+        {            
+            foreach (IItem _i in Items)
+            {
+                IUXItem i = GetUXItem(_i);
+
+                if (i == null)
+                    continue;
+
+                i.UpdateDiagramLines();                
+            }
         }
 
         public void UpdateParentPositionInSubItems()
@@ -560,7 +575,7 @@ namespace m0.ZeroTypes.UX
             }
         }
 
-        protected void UpdateDiagramLines()
+        public void UpdateDiagramLines()
         {
             foreach (ILineDecoratorBase m in DiagramToAsMetaLines)
                 m.UpdateMetaPosition();
@@ -899,6 +914,15 @@ namespace m0.ZeroTypes.UX
 
             FrameworkElement toItem = (FrameworkElement)_toItem;
 
+            //
+
+            double CanvasGetLeft_toItem = Canvas.GetLeft(toItem) + _toItem.ParentAbsolutePositionX;
+            double CanvasGetTop_toItem = Canvas.GetTop(toItem) + _toItem.ParentAbsolutePositionY;
+
+            double CanvasGetLeft_this = Canvas.GetLeft(this) + ParentAbsolutePositionX;
+            double CanvasGetTop_this = Canvas.GetTop(this) + ParentAbsolutePositionY;
+
+            //
 
             Point p = new Point();
 
@@ -906,14 +930,14 @@ namespace m0.ZeroTypes.UX
 
             if (toItem != null)
             {
-                pTo.X = Canvas.GetLeft(toItem) + toItem.ActualWidth / 2;
-                pTo.Y = Canvas.GetTop(toItem) + toItem.ActualHeight / 2;
+                pTo.X = CanvasGetLeft_toItem + toItem.ActualWidth / 2;
+                pTo.Y = CanvasGetTop_toItem + toItem.ActualHeight / 2;
             }
             else
                 pTo = new Point();
 
-            double tX = Canvas.GetLeft(this) + this.ActualWidth / 2;
-            double tY = Canvas.GetTop(this) + this.ActualHeight / 2;
+            double tX = CanvasGetLeft_this + this.ActualWidth / 2;
+            double tY = CanvasGetTop_this + this.ActualHeight / 2;
 
             double testX = pTo.X - tX;
             double testY = pTo.Y - tY;
@@ -927,7 +951,7 @@ namespace m0.ZeroTypes.UX
                 {
                     if (isSelfStart)
                     {
-                        p.X = Canvas.GetLeft(this) + (((double)toItemDiagramLinesNumber + 1) / ((double)toItemDiagramLinesCount + 1) * this.ActualWidth);
+                        p.X = CanvasGetLeft_this + (((double)toItemDiagramLinesNumber + 1) / ((double)toItemDiagramLinesCount + 1) * this.ActualWidth);
                         p.Y = tY - this.ActualHeight / 2;
 
                         return p;
@@ -935,7 +959,7 @@ namespace m0.ZeroTypes.UX
                     else
                     {
                         p.X = tX + this.ActualWidth / 2;
-                        p.Y = Canvas.GetTop(this) + (((double)(toItemDiagramLinesCount - toItemDiagramLinesNumber)) / ((double)toItemDiagramLinesCount + 1) * this.ActualHeight);
+                        p.Y = CanvasGetTop_this + (((double)(toItemDiagramLinesCount - toItemDiagramLinesNumber)) / ((double)toItemDiagramLinesCount + 1) * this.ActualHeight);
 
                         return p;
                     }
@@ -943,26 +967,26 @@ namespace m0.ZeroTypes.UX
 
                 if (testY <= 0 && Math.Abs(testX * this.ActualHeight) <= Math.Abs(testY * this.ActualWidth))
                 {
-                    p.X = Canvas.GetLeft(this) + (((double)toItemDiagramLinesNumber + 1) / ((double)toItemDiagramLinesCount + 1) * this.ActualWidth);
+                    p.X = CanvasGetLeft_this + (((double)toItemDiagramLinesNumber + 1) / ((double)toItemDiagramLinesCount + 1) * this.ActualWidth);
                     p.Y = tY - this.ActualHeight / 2;
                 }
 
                 if (testY > 0 && Math.Abs(testX * this.ActualHeight) <= Math.Abs(testY * this.ActualWidth))
                 {
-                    p.X = Canvas.GetLeft(this) + (((double)toItemDiagramLinesNumber + 1) / ((double)toItemDiagramLinesCount + 1) * this.ActualWidth);
+                    p.X = CanvasGetLeft_this + (((double)toItemDiagramLinesNumber + 1) / ((double)toItemDiagramLinesCount + 1) * this.ActualWidth);
                     p.Y = tY + this.ActualHeight / 2;
                 }
 
                 if (testX >= 0 && Math.Abs(testX * this.ActualHeight) >= Math.Abs(testY * this.ActualWidth))
                 {
                     p.X = tX + this.ActualWidth / 2;
-                    p.Y = Canvas.GetTop(this) + (((double)toItemDiagramLinesNumber + 1) / ((double)toItemDiagramLinesCount + 1) * this.ActualHeight);
+                    p.Y = CanvasGetTop_this + (((double)toItemDiagramLinesNumber + 1) / ((double)toItemDiagramLinesCount + 1) * this.ActualHeight);
                 }
 
                 if (testX <= 0 && Math.Abs(testX * this.ActualHeight) >= Math.Abs(testY * this.ActualWidth))
                 {
                     p.X = tX - this.ActualWidth / 2;
-                    p.Y = Canvas.GetTop(this) + (((double)toItemDiagramLinesNumber + 1) / ((double)toItemDiagramLinesCount + 1) * this.ActualHeight);
+                    p.Y = CanvasGetTop_this + (((double)toItemDiagramLinesNumber + 1) / ((double)toItemDiagramLinesCount + 1) * this.ActualHeight);
                 }
             }
             else

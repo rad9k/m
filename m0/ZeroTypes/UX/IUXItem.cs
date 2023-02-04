@@ -61,6 +61,8 @@ namespace m0.ZeroTypes.UX
 
         Point GetLineAnchorLocation(IUXItem toItem, int toItemDiagramLinesCount, int toItemDiagramLinesNumber, bool isSelfStart);
 
+        void UpdateDiagramLines();
+
         //
         double Scale { get; set; }
        
