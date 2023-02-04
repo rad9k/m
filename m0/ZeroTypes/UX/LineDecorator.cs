@@ -52,6 +52,10 @@ namespace m0.ZeroTypes.UX
             Line.ArrowAngle = 60;
 
             Label.Foreground = GetForegroundBrush();
+
+            Panel.SetZIndex(Label, 99999);
+            Panel.SetZIndex(LineEndings, 99999);
+            Panel.SetZIndex(Line, 99999);
         }
 
         protected virtual INoInEdgeInOutVertexVertex VertexChange(IExecution exe)

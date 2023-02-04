@@ -103,7 +103,7 @@ namespace m0
 
             IVertex x_vertex = e.AddVertex(null, "X");
 
-            IVertex z_vertex = e.AddVertex(null, "Z");
+            IVertex z_vertex = x_vertex.AddVertex(x_vertex, "Z");
 
             IVertex x1_vertex = e.AddVertex(null, "X1");
             IVertex x2_vertex = null;// e.AddVertex(null, "X2");
@@ -126,7 +126,7 @@ namespace m0
             
             IUXItem xi = UXAdd(0,0, a, x_vertex);
 
-            //UXAdd2(xi, x1_vertex, x2_vertex);
+            UXAdd2(xi, x1_vertex, x2_vertex);
 
             IUXItem zi = UXAdd(200, 200, a, z_vertex);
 
@@ -146,8 +146,8 @@ namespace m0
             i1.Size.Width = 100;
             i1.Size.Height = 100;
 
-            i1.BackgroundColorCreate();
-            i1.BackgroundColor.Red = 100;
+            //i1.BackgroundColorCreate();
+            //i1.BackgroundColor.Red = 100;
 
             i1.ForegroundColorCreate();
             i1.ForegroundColor.Blue = 255;

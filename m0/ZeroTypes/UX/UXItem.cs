@@ -28,10 +28,7 @@ namespace m0.ZeroTypes.UX
     }
 
     public class UXItem : UserControl, IUXItem, IPlatformClass
-    {
-        public double ParentAbsolutePositionX { get; set; }
-        public double ParentAbsolutePositionY { get; set; }
-
+    {        
         public IItem ItemParent { get; set; }
 
         public List<FrameworkElement> Anchors;                
@@ -297,9 +294,7 @@ namespace m0.ZeroTypes.UX
             {
                 Canvas.SetLeft(a, Canvas.GetLeft(a) - deltax);
                 Canvas.SetTop(a, Canvas.GetTop(a) - deltay);
-            }
-
-            UpdateParentPositionInSubItems();
+            }            
 
             UpdateDiagramLines();
 
@@ -328,25 +323,7 @@ namespace m0.ZeroTypes.UX
 
                 i.UpdateDiagramLines();                
             }
-        }
-
-        public void UpdateParentPositionInSubItems()
-        {
-            double thisAbsolutePositionX = ParentAbsolutePositionX + Position.X;
-            double thisAbsolutePositionY = ParentAbsolutePositionY + Position.Y;
-
-            foreach (IItem _i in Items)
-            {
-                IUXItem i = GetUXItem(_i);
-
-                if (i == null)
-                    continue;
-
-                i.ParentAbsolutePositionX = thisAbsolutePositionX;
-                i.ParentAbsolutePositionY = thisAbsolutePositionY;
-                i.UpdateParentPositionInSubItems();
-            }
-        }
+        }        
         
         public void MoveAndResizeItem(double left, double top, double width, double height)
         {
@@ -916,11 +893,9 @@ namespace m0.ZeroTypes.UX
 
             //
 
-            double CanvasGetLeft_toItem = Canvas.GetLeft(toItem) + _toItem.ParentAbsolutePositionX;
-            double CanvasGetTop_toItem = Canvas.GetTop(toItem) + _toItem.ParentAbsolutePositionY;
+            Point toItemLeftTop = toItem.TranslatePoint(new Point(0, 0), Diagram.Canvas);
 
-            double CanvasGetLeft_this = Canvas.GetLeft(this) + ParentAbsolutePositionX;
-            double CanvasGetTop_this = Canvas.GetTop(this) + ParentAbsolutePositionY;
+            Point thisLeftTop = TranslatePoint(new Point(0, 0), Diagram.Canvas);
 
             //
 
@@ -930,14 +905,14 @@ namespace m0.ZeroTypes.UX
 
             if (toItem != null)
             {
-                pTo.X = CanvasGetLeft_toItem + toItem.ActualWidth / 2;
-                pTo.Y = CanvasGetTop_toItem + toItem.ActualHeight / 2;
+                pTo.X = toItemLeftTop.X + toItem.ActualWidth / 2;
+                pTo.Y = toItemLeftTop.Y + toItem.ActualHeight / 2;
             }
             else
                 pTo = new Point();
 
-            double tX = CanvasGetLeft_this + this.ActualWidth / 2;
-            double tY = CanvasGetTop_this + this.ActualHeight / 2;
+            double tX = thisLeftTop.X + this.ActualWidth / 2;
+            double tY = thisLeftTop.Y + this.ActualHeight / 2;
 
             double testX = pTo.X - tX;
             double testY = pTo.Y - tY;
@@ -951,7 +926,7 @@ namespace m0.ZeroTypes.UX
                 {
                     if (isSelfStart)
                     {
-                        p.X = CanvasGetLeft_this + (((double)toItemDiagramLinesNumber + 1) / ((double)toItemDiagramLinesCount + 1) * this.ActualWidth);
+                        p.X = thisLeftTop.X + (((double)toItemDiagramLinesNumber + 1) / ((double)toItemDiagramLinesCount + 1) * this.ActualWidth);
                         p.Y = tY - this.ActualHeight / 2;
 
                         return p;
@@ -959,7 +934,7 @@ namespace m0.ZeroTypes.UX
                     else
                     {
                         p.X = tX + this.ActualWidth / 2;
-                        p.Y = CanvasGetTop_this + (((double)(toItemDiagramLinesCount - toItemDiagramLinesNumber)) / ((double)toItemDiagramLinesCount + 1) * this.ActualHeight);
+                        p.Y = thisLeftTop.Y + (((double)(toItemDiagramLinesCount - toItemDiagramLinesNumber)) / ((double)toItemDiagramLinesCount + 1) * this.ActualHeight);
 
                         return p;
                     }
@@ -967,26 +942,26 @@ namespace m0.ZeroTypes.UX
 
                 if (testY <= 0 && Math.Abs(testX * this.ActualHeight) <= Math.Abs(testY * this.ActualWidth))
                 {
-                    p.X = CanvasGetLeft_this + (((double)toItemDiagramLinesNumber + 1) / ((double)toItemDiagramLinesCount + 1) * this.ActualWidth);
+                    p.X = thisLeftTop.X + (((double)toItemDiagramLinesNumber + 1) / ((double)toItemDiagramLinesCount + 1) * this.ActualWidth);
                     p.Y = tY - this.ActualHeight / 2;
                 }
 
                 if (testY > 0 && Math.Abs(testX * this.ActualHeight) <= Math.Abs(testY * this.ActualWidth))
                 {
-                    p.X = CanvasGetLeft_this + (((double)toItemDiagramLinesNumber + 1) / ((double)toItemDiagramLinesCount + 1) * this.ActualWidth);
+                    p.X = thisLeftTop.X + (((double)toItemDiagramLinesNumber + 1) / ((double)toItemDiagramLinesCount + 1) * this.ActualWidth);
                     p.Y = tY + this.ActualHeight / 2;
                 }
 
                 if (testX >= 0 && Math.Abs(testX * this.ActualHeight) >= Math.Abs(testY * this.ActualWidth))
                 {
                     p.X = tX + this.ActualWidth / 2;
-                    p.Y = CanvasGetTop_this + (((double)toItemDiagramLinesNumber + 1) / ((double)toItemDiagramLinesCount + 1) * this.ActualHeight);
+                    p.Y = thisLeftTop.Y + (((double)toItemDiagramLinesNumber + 1) / ((double)toItemDiagramLinesCount + 1) * this.ActualHeight);
                 }
 
                 if (testX <= 0 && Math.Abs(testX * this.ActualHeight) >= Math.Abs(testY * this.ActualWidth))
                 {
                     p.X = tX - this.ActualWidth / 2;
-                    p.Y = CanvasGetTop_this + (((double)toItemDiagramLinesNumber + 1) / ((double)toItemDiagramLinesCount + 1) * this.ActualHeight);
+                    p.Y = thisLeftTop.Y + (((double)toItemDiagramLinesNumber + 1) / ((double)toItemDiagramLinesCount + 1) * this.ActualHeight);
                 }
             }
             else

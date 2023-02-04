@@ -36,10 +36,7 @@ namespace m0.UIWpf.UX
     }
 
     public class UXVisualiser : Border, IListVisualiser, IUXVisualiser, IMouseWheelHandler
-    {
-        public double ParentAbsolutePositionX { get; set; }
-        public double ParentAbsolutePositionY { get; set; }        
-
+    {        
         public IItem ItemParent { get; set; }
 
         bool IsVisualiser;
@@ -1870,9 +1867,7 @@ namespace m0.UIWpf.UX
 
         public Point GetLineAnchorLocation(IUXItem toItem, int toItemDiagramLinesCount, int toItemDiagramLinesNumber, bool isSelfStart) { return new Point(); }
 
-        public void UpdateDiagramLines() { }
-
-        public void UpdateParentPositionInSubItems() { }
+        public void UpdateDiagramLines() { }        
 
         // UXItem
 

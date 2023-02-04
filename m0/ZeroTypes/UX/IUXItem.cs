@@ -13,10 +13,7 @@ using System.Windows.Controls;
 namespace m0.ZeroTypes.UX
 {
     public interface IUXItem: IItem, IDisposable
-    {   
-        double ParentAbsolutePositionX { get; set; }
-        double ParentAbsolutePositionY { get; set; }
-
+    {           
         IUXVisualiser Diagram { get; set; }
 
         bool IsSelected { get; set; }
@@ -27,9 +24,7 @@ namespace m0.ZeroTypes.UX
 
         List<ILineDecoratorBase> DiagramToAsMetaLines { get; }
 
-        //
-
-        void UpdateParentPositionInSubItems();
+        //        
 
         void VertexSetedUp();
 
