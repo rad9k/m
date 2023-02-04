@@ -367,23 +367,30 @@ namespace m0.UIWpf.UX
             Panel.SetZIndex(item_UIElement, 1);
                
             Canvas.SetLeft(item_UIElement, item.Position.X);
-            Canvas.SetTop(item_UIElement, item.Position.Y);     
+            Canvas.SetTop(item_UIElement, item.Position.Y);
 
-            host.Canvas.Children.Add(item_UIElement);
+            
+            host.Canvas.Children.Add(item_UIElement);            
 
-            //
+            //                     
 
-            if(item is IUXAggregator)
-                foreach (IItem _i in item.Items)
+            if (item is IUXAggregator)
+            {
+                IUXAggregator aggregator = (IUXAggregator)item;
+
+                if (aggregator.Canvas != null)
+                    aggregator.Canvas.Children.Clear();
+
+                foreach (IItem _i in aggregator.Items)
                 {
                     IUXItem i = GetUXItem(_i);
 
                     if (i == null)
                         continue;
 
-                    HostItem((IUXAggregator)item, i);
+                    HostItem(aggregator, i);
                 }
-
+            }
             //
 
             item_UIElement.UpdateLayout(); 

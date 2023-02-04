@@ -103,7 +103,9 @@ namespace m0
 
             IVertex x_vertex = e.AddVertex(null, "X");
 
-            IVertex z_vertex = x_vertex.AddVertex(x_vertex, "Z");
+            //x_vertex.AddEdge(x_vertex, x_vertex);
+
+            IVertex z_vertex = x_vertex.AddVertex(x_vertex, "Z");            
 
             IVertex x1_vertex = e.AddVertex(null, "X1");
             IVertex x2_vertex = null;// e.AddVertex(null, "X2");

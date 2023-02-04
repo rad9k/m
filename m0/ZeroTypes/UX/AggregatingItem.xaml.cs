@@ -37,13 +37,15 @@ namespace m0.ZeroTypes.UX
 
         public override void VertexSetedUp()
         {
-            Canvas = new Canvas();
+            if(Canvas == null) { 
+                Canvas = new Canvas();
+                TheGrid.Children.Add(Canvas);
+            }
 
             Canvas.ClipToBounds = true;
 
             Grid.SetRow(Canvas, 2);
-
-            TheGrid.Children.Add(Canvas);            
+            
 
             base.VertexSetedUp();
         }
