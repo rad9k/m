@@ -161,7 +161,7 @@ namespace m0.ZeroTypes.UX
 
         public virtual void RemoveFromCanvas()         
         {
-            Diagram.Canvas.Children.Remove(this);
+            Diagram.Canvases.Children.Remove(this);
 
             Unselect();
 
@@ -218,7 +218,7 @@ namespace m0.ZeroTypes.UX
 
             Panel.SetZIndex(this, 99999);
 
-            Point thisLeftTop = TranslatePoint(new Point(0, 0), Diagram.Canvas);
+            Point thisLeftTop = TranslatePoint(new Point(0, 0), Diagram.Canvases);
 
             double left = thisLeftTop.X; // Canvas.GetLeft(this);
             double top = thisLeftTop.Y; //Canvas.GetTop(this);
@@ -248,7 +248,7 @@ namespace m0.ZeroTypes.UX
             Panel.SetZIndex(this, 0);
 
             foreach (UIElement e in Anchors)
-                Diagram.Canvas.Children.Remove(e);
+                Diagram.Canvases.Children.Remove(e);
 
             Anchors.Clear();
         }
@@ -297,7 +297,7 @@ namespace m0.ZeroTypes.UX
             if (ItemParent != null)
             {
                 Point localCanvasPosition = new Point();
-                localCanvasPosition = Diagram.Canvas.TranslatePoint(new Point(x, y), ((IUXAggregator)ItemParent).Canvas);
+                localCanvasPosition = Diagram.Canvases.TranslatePoint(new Point(x, y), ((IUXAggregator)ItemParent).Canvases);
                 Canvas.SetLeft(this, localCanvasPosition.X);
                 Canvas.SetTop(this, localCanvasPosition.Y);
             }
@@ -824,7 +824,7 @@ namespace m0.ZeroTypes.UX
 
             Panel.SetZIndex(r, 99999);
 
-            Diagram.Canvas.Children.Add(r);
+            Diagram.Canvases.Children.Add(r);
 
             return r;
         }
@@ -931,9 +931,9 @@ namespace m0.ZeroTypes.UX
             }
             else*/
             {
-                toItemLeftTop = toItem.TranslatePoint(new Point(0, 0), Diagram.Canvas);
+                toItemLeftTop = toItem.TranslatePoint(new Point(0, 0), Diagram.Canvases);
 
-                thisLeftTop = TranslatePoint(new Point(0, 0), Diagram.Canvas);
+                thisLeftTop = TranslatePoint(new Point(0, 0), Diagram.Canvases);
             }
 
             //

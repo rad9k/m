@@ -286,18 +286,18 @@ namespace m0.ZeroTypes.UX
 
         public override void AddToCanvas()
         {
-            Diagram.Canvas.Children.Add(LineEndings);
-            Diagram.Canvas.Children.Add(Line);
-            Diagram.Canvas.Children.Add(Label);
+            Diagram.Canvases.Children.Add(LineEndings);
+            Diagram.Canvases.Children.Add(Line);
+            Diagram.Canvases.Children.Add(Label);
 
             VertexSetedUp(); // is it best place for that?
         }
 
         public override void RemoveFromCanvas()
         {
-            Diagram.Canvas.Children.Remove(LineEndings);
-            Diagram.Canvas.Children.Remove(Line);
-            Diagram.Canvas.Children.Remove(Label);
+            Diagram.Canvases.Children.Remove(LineEndings);
+            Diagram.Canvases.Children.Remove(Line);
+            Diagram.Canvases.Children.Remove(Label);
         }
 
         public override void Highlight()
@@ -370,7 +370,7 @@ namespace m0.ZeroTypes.UX
             Panel.SetZIndex(this, 0);
 
             foreach (UIElement e in Anchors)
-                Diagram.Canvas.Children.Remove(e);
+                Diagram.Canvases.Children.Remove(e);
 
             Anchors.Clear();
         }
