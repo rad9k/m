@@ -294,11 +294,13 @@ namespace m0.ZeroTypes.UX
             {
                 Canvas.SetLeft(a, Canvas.GetLeft(a) - deltax);
                 Canvas.SetTop(a, Canvas.GetTop(a) - deltay);
-            }            
+            }
 
-            UpdateDiagramLines();
+            UpdateLayout();
 
             UpdateDiagramLinesInSubItems();
+
+            UpdateDiagramLines();            
         }
 
         public IUXItem GetUXItem(IItem i)
@@ -901,7 +903,7 @@ namespace m0.ZeroTypes.UX
 
             Point thisLeftTop = new Point();
 
-            if(this.ItemParent is IUXVisualiser)
+            /*if(this.ItemParent is IUXVisualiser && _toItem.ItemParent is IUXVisualiser)
             {
                 toItemLeftTop.X = Canvas.GetLeft(toItem);
                 toItemLeftTop.Y = Canvas.GetTop(toItem);
@@ -909,7 +911,7 @@ namespace m0.ZeroTypes.UX
                 thisLeftTop.X = Canvas.GetLeft(this);
                 thisLeftTop.Y = Canvas.GetTop(this);
             }
-            else
+            else*/
             {
                 toItemLeftTop = toItem.TranslatePoint(new Point(0, 0), Diagram.Canvas);
 
