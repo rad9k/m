@@ -399,9 +399,14 @@ namespace m0.UIWpf.UX
         // TOO
         public void AddLineObjects()
         {
+            AddLineObjects_recurrent(this);
+        }
+
+        public void AddLineObjects_recurrent(IItem baseItem)
+        {
             List<MetaToPair> metatopairs = new List<MetaToPair>();
 
-           foreach(IItem _item in Items)               
+           foreach(IItem _item in baseItem.Items)               
                {
                    IUXItem item = GetUXItem(_item);
 
@@ -463,6 +468,8 @@ namespace m0.UIWpf.UX
 
                             item.AddDiagramLineObject(GetToDiagramItemFromLineVertex(lineDecorator), lineDecorator);
                         }
+
+                    AddLineObjects_recurrent(item);
                }
            
         }
@@ -578,13 +585,16 @@ namespace m0.UIWpf.UX
 
                 IsPaiting = false;
 
+                
                 CheckAndUpdateDiagramLines();
+                
 
                 ////////////////////////////////////////
                 Interaction.EndInteractionWithGraph();
                 ////////////////////////////////////////    
             }
         }
+        
 
         public void SetFocus()
         {
@@ -1245,7 +1255,12 @@ namespace m0.UIWpf.UX
 
         protected void UnselectAll()
         {
-            foreach (IItem _i in Items)
+            UnselectAll_recurent(this);
+        }
+
+        protected void UnselectAll_recurent(IItem item)
+        {
+            foreach (IItem _i in item.Items)
             {
                 IUXItem i = GetUXItem(_i);
 
@@ -1253,6 +1268,8 @@ namespace m0.UIWpf.UX
                     continue;
 
                 i.Unselect();
+
+                UnselectAll_recurent(i);
             }
         }
 
@@ -1651,8 +1668,13 @@ namespace m0.UIWpf.UX
         }
 
         public void CheckAndUpdateDiagramLines()
+        {
+            CheckAndUpdateDiagramLines_recurrent(this);
+        }
+
+        public void CheckAndUpdateDiagramLines_recurrent(IItem baseItem)
         {            
-            foreach(IItem _i in Items)
+            foreach(IItem _i in baseItem.Items)
             {
                 IUXItem item = GetUXItem(_i);
 
@@ -1660,6 +1682,8 @@ namespace m0.UIWpf.UX
                     continue;
 
                 CheckAndUpdateDiagramLinesForItem((IUXItem)item);
+
+                CheckAndUpdateDiagramLines_recurrent(item);
             }
         }
 

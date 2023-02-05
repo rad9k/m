@@ -113,6 +113,8 @@ namespace m0
             IVertex z1_vertex = x_vertex.AddVertex(x_vertex, "Z1");
             IVertex z2_vertex = null; // x_vertex.AddVertex(x_vertex, "Z2");
 
+            z1_vertex.AddEdge(null, x1_vertex);
+
             IEdge a_e = VertexOperations.AddInstanceAndReturnEdge(e,
                 UXAggregatorType,
                 UXAggregatorType);

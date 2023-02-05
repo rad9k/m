@@ -214,8 +214,10 @@ namespace m0.ZeroTypes.UX
 
             Panel.SetZIndex(this, 99999);
 
-            double left = Canvas.GetLeft(this);
-            double top = Canvas.GetTop(this);
+            Point thisLeftTop = TranslatePoint(new Point(0, 0), Diagram.Canvas);
+
+            double left = thisLeftTop.X; // Canvas.GetLeft(this);
+            double top = thisLeftTop.Y; //Canvas.GetTop(this);
             double right = left + ActualWidth;
             double bottom = top + ActualHeight;
             double width = ActualWidth;
@@ -287,8 +289,13 @@ namespace m0.ZeroTypes.UX
             Interaction.EndInteractionWithGraph();
             //////////////////////////////////////// 
 
-            Canvas.SetLeft(this, x);
-            Canvas.SetTop(this, y);
+            Point localCanvasPosition = Diagram.Canvas.TranslatePoint(new Point(x, y), ((IUXAggregator)ItemParent).Canvas);
+
+            //Canvas.SetLeft(this, x);
+            //Canvas.SetTop(this, y);
+
+            Canvas.SetLeft(this, localCanvasPosition.X);
+            Canvas.SetTop(this, localCanvasPosition.Y);
 
             foreach (UIElement a in Anchors)
             {
@@ -504,8 +511,6 @@ namespace m0.ZeroTypes.UX
                 this.Foreground = (Brush)FindResource("0ForegroundBrush");
         }       
 
-        
-
         protected void UpdateDiagramLines(IUXItem toItem)
         {
             List<ILineDecoratorBase> sameToItemLines = new List<ILineDecoratorBase>();
@@ -666,6 +671,9 @@ namespace m0.ZeroTypes.UX
 
             Diagram.ClickPositionX_ItemCordinates = e.GetPosition(this).X;
             Diagram.ClickPositionY_ItemCordinates = e.GetPosition(this).Y;
+
+            //Diagram.ClickPositionX_ItemCordinates = e.GetPosition(Diagram.Canvas).X;
+            //Diagram.ClickPositionY_ItemCordinates = e.GetPosition(Diagram.Canvas).Y;
 
             Diagram.ClickTarget = ClickTargetEnum.Item;
             Diagram.ClickedItem = this;
