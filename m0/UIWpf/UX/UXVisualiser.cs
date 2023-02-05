@@ -509,7 +509,7 @@ namespace m0.UIWpf.UX
 
             UnselectAllSelectedEdges();
 
-            foreach(IItem _i in Items)                
+            foreach(IItem _i in Items_all)                
                 {
                     IUXItem i = GetUXItem(_i);
 
