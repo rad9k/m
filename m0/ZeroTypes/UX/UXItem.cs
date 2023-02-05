@@ -293,13 +293,19 @@ namespace m0.ZeroTypes.UX
             Interaction.EndInteractionWithGraph();
             //////////////////////////////////////// 
 
-            Point localCanvasPosition = Diagram.Canvas.TranslatePoint(new Point(x, y), ((IUXAggregator)ItemParent).Canvas);
 
-            //Canvas.SetLeft(this, x);
-            //Canvas.SetTop(this, y);
-
-            Canvas.SetLeft(this, localCanvasPosition.X);
-            Canvas.SetTop(this, localCanvasPosition.Y);
+            if (ItemParent != null)
+            {
+                Point localCanvasPosition = new Point();
+                localCanvasPosition = Diagram.Canvas.TranslatePoint(new Point(x, y), ((IUXAggregator)ItemParent).Canvas);
+                Canvas.SetLeft(this, localCanvasPosition.X);
+                Canvas.SetTop(this, localCanvasPosition.Y);
+            }
+            else
+            {
+                Canvas.SetLeft(this, x);
+                Canvas.SetTop(this, y);
+            }                
 
             foreach (UIElement a in Anchors)
             {

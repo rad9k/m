@@ -500,12 +500,17 @@ namespace m0.UIWpf.UX
 
         void SelectItemsBySelectionArea()
         {
+            ////////////////////////////////////////
+            Interaction.BeginInteractionWithGraph();
+            //////////////////////////////////////// 
+            
+
             double left = SelectionArea.Left;
             double top = SelectionArea.Top;
             double right = SelectionArea.Right;
-            double bottom = SelectionArea.Bottom;            
+            double bottom = SelectionArea.Bottom;
 
-            UnselectAllSelectedEdges();
+            UnselectAllSelectedEdges_NoSelectedVerticesUpdated();
 
             foreach(IItem _i in Items_all)                
                 {
@@ -528,6 +533,10 @@ namespace m0.UIWpf.UX
                 }
 
             SelectedVerticesUpdated();
+
+            ////////////////////////////////////////
+            Interaction.EndInteractionWithGraph();
+            //////////////////////////////////////// 
         }
 
         public void PaintDiagram()
@@ -1248,13 +1257,8 @@ namespace m0.UIWpf.UX
         }
 
         protected void UnselectAll()
-        {
-            UnselectAll_recurent(this);
-        }
-
-        protected void UnselectAll_recurent(IItem item)
-        {
-            foreach (IItem _i in item.Items)
+        {            
+            foreach (IItem _i in Items_all)
             {
                 IUXItem i = GetUXItem(_i);
 
@@ -1262,12 +1266,17 @@ namespace m0.UIWpf.UX
                     continue;
 
                 i.Unselect();
-
-                UnselectAll_recurent(i);
             }
         }
 
         public void UnselectAllSelectedEdges()
+        {
+            UnselectAllSelectedEdges_NoSelectedVerticesUpdated();
+
+            SelectedVerticesUpdated();
+        }
+
+        private void UnselectAllSelectedEdges_NoSelectedVerticesUpdated()
         {
             IVertex sv = Vertex.Get(false, @"SelectedEdges:");
 
@@ -1281,8 +1290,6 @@ namespace m0.UIWpf.UX
             ////////////////////////////////////////
             Interaction.EndInteractionWithGraph();
             //////////////////////////////////////// 
-
-            SelectedVerticesUpdated();
         }
 
         public void SelectedVerticesUpdated()
@@ -1671,22 +1678,15 @@ namespace m0.UIWpf.UX
         }
 
         public void CheckAndUpdateDiagramLines()
-        {
-            CheckAndUpdateDiagramLines_recurrent(this);
-        }
-
-        public void CheckAndUpdateDiagramLines_recurrent(IItem baseItem)
-        {            
-            foreach(IItem _i in baseItem.Items)
+        {        
+            foreach(IItem _i in Items_all)
             {
                 IUXItem item = GetUXItem(_i);
 
                 if (item == null)
                     continue;
 
-                CheckAndUpdateDiagramLinesForItem((IUXItem)item);
-
-                CheckAndUpdateDiagramLines_recurrent(item);
+                CheckAndUpdateDiagramLinesForItem((IUXItem)item);                
             }
         }
 
