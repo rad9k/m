@@ -498,7 +498,17 @@ namespace m0.UIWpf.UX
 
         // TOO
 
-        void SelectItemsBySelectionArea()
+        Point GetItemAbsolutePosition(IUXItem item)
+        {            
+            UIElement uie = (UIElement)item;
+
+            if (item.ItemParent != this)
+                return uie.TranslatePoint(new Point(0, 0), Canvas);
+            else                 
+                return new Point(Canvas.GetLeft(uie), Canvas.GetTop(uie));            
+        }
+               
+       void SelectItemsBySelectionArea()
         {
             ////////////////////////////////////////
             Interaction.BeginInteractionWithGraph();
@@ -521,10 +531,13 @@ namespace m0.UIWpf.UX
 
                     FrameworkElement i_FrameworkElement = (FrameworkElement)i;
 
+                    Point itemLeftTop = GetItemAbsolutePosition(i);
+
                     int ileft, itop, iright, ibottom;
 
-                    ileft = (int)Canvas.GetLeft(i_FrameworkElement);
-                    itop = (int)Canvas.GetTop(i_FrameworkElement);
+                    ileft = (int)itemLeftTop.X;
+                    itop = (int)itemLeftTop.Y;
+                    
                     iright = ileft + (int)i_FrameworkElement.ActualWidth;
                     ibottom = itop + (int)i_FrameworkElement.ActualHeight;
 
