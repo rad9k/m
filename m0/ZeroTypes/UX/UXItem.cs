@@ -28,7 +28,9 @@ namespace m0.ZeroTypes.UX
     }
 
     public class UXItem : UserControl, IUXItem, IPlatformClass
-    {        
+    {
+        public int NestingLevel { get; set; }
+
         public IItem ItemParent { get; set; }
 
         public List<FrameworkElement> Anchors;                
@@ -51,6 +53,8 @@ namespace m0.ZeroTypes.UX
 
         public UXItem(IEdge _edge)
         {
+            NestingLevel = 0;
+
             edge = _edge;
 
             vertex = _edge.To;

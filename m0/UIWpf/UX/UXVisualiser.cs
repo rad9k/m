@@ -36,7 +36,11 @@ namespace m0.UIWpf.UX
     }
 
     public class UXVisualiser : Border, IListVisualiser, IUXVisualiser, IMouseWheelHandler
-    {        
+    {
+        static IVertex systemMetaBaseVertex = m0.MinusZero.Instance.Root.Get(false, @"System\Meta\Base\Vertex");
+
+        public int NestingLevel { get; set; }
+
         public IItem ItemParent { get; set; }
 
         bool IsVisualiser;
@@ -397,16 +401,12 @@ namespace m0.UIWpf.UX
         }
 
         // TOO
+        
         public void AddLineObjects()
-        {
-            AddLineObjects_recurrent(this);
-        }
-
-        public void AddLineObjects_recurrent(IItem baseItem)
         {
             List<MetaToPair> metatopairs = new List<MetaToPair>();
 
-           foreach(IItem _item in baseItem.Items)               
+           foreach(IItem _item in Items_all)
                {
                    IUXItem item = GetUXItem(_item);
 
@@ -467,9 +467,7 @@ namespace m0.UIWpf.UX
                             LineDecorator lineDecorator = (LineDecorator)decorator;
 
                             item.AddDiagramLineObject(GetToDiagramItemFromLineVertex(lineDecorator), lineDecorator);
-                        }
-
-                    AddLineObjects_recurrent(item);
+                        }                    
                }
            
         }
@@ -539,10 +537,6 @@ namespace m0.UIWpf.UX
                 IsPaiting = true;                
 
                 Canvas.Children.Clear();
-
-                //foreach (IItem i in Items)
-                  //  if (i is IDisposable)
-                    //    ((IDisposable)i).Dispose();
 
                 Width = Size.Width ;
                 Height = Size.Height;
@@ -711,7 +705,7 @@ namespace m0.UIWpf.UX
         {
             bool onlyEdge = true;
 
-            if (SelectedLine.Vertex.Get(false, @"BaseEdge:\Meta:\$VertexTarget:") != null)
+            if (SelectedLine.BaseEdge.Meta.Get(false, @"$VertexTarget:") != null)
                 onlyEdge = false;
 
             IVertex info = m0.MinusZero.Instance.CreateTempVertex();
@@ -788,7 +782,7 @@ namespace m0.UIWpf.UX
 
             Point p = new Point(ToX, ToY);            
 
-            foreach (IItem _i in Items)
+            foreach (IItem _i in Items_all)
                 {
                     IUXItem i = GetUXItem(_i);
 
@@ -845,7 +839,7 @@ namespace m0.UIWpf.UX
 
             Point p = new Point(ToX, ToY);
 
-            foreach (IItem _i in Items)
+            foreach (IItem _i in Items_all)
             {
                 IUXItem i = GetUXItem(_i);
 
@@ -1069,7 +1063,7 @@ namespace m0.UIWpf.UX
             ILineDecoratorBase bestLine = null;
             IUXItem bestLine_FromItem = null;
 
-            foreach (IItem _i in Items)
+            foreach (IItem _i in Items_all)
                 {
                     IUXItem i = GetUXItem(_i);
 
@@ -1087,7 +1081,7 @@ namespace m0.UIWpf.UX
                             {
                                 bestLine = line;
                                 best = len;
-                            bestLine_FromItem = i;
+                                bestLine_FromItem = i;
                             }
                         }
                 }
@@ -1332,7 +1326,7 @@ namespace m0.UIWpf.UX
                         if (i == null)
                             continue;
 
-                        i.Dispose();
+                        i.Dispose(); // that will iterate i.Items and will do Dispose for each of them
                     }
                 }
                 else
@@ -1346,11 +1340,13 @@ namespace m0.UIWpf.UX
 
         private IVertex vertexByLocationToReturn;
 
-        public IVertex GetEdgeByLocation(Point p)
+        public IVertex GetEdgeByLocation(Point p) 
         {
             vertexByLocationToReturn = null;
 
-            foreach(IItem _i in Items)
+            int highestNestingLevel = -1;
+
+            foreach(IItem _i in Items_all)
                 {
                     IUXItem i = GetUXItem(_i);
 
@@ -1362,9 +1358,16 @@ namespace m0.UIWpf.UX
                     if (VisualTreeHelper.HitTest(i_UIElement, TranslatePoint(p, i_UIElement)) != null)
                     {
                         IVertex v = MinusZero.Instance.CreateTempVertex();
-                        //Edge.AddEdgeEdgesOnlyTo(v, i.Vertex.Get(false, @"BaseEdge:\To:"));
-                        EdgeHelper.AddEdgeVertexEdges(v,i.Vertex.Get(false, @"BaseEdge:\From:"),i.Vertex.Get(false, @"BaseEdge:\Meta:"), i.Vertex.Get(false, @"BaseEdge:\To:"));
-                        vertexByLocationToReturn = v;
+
+                        IEdge iBaseEdge = i.BaseEdge;
+
+                        EdgeHelper.AddEdgeVertexEdges(v, iBaseEdge.From, iBaseEdge.Meta, iBaseEdge.To);
+
+                        if (i.NestingLevel > highestNestingLevel)
+                        {
+                            vertexByLocationToReturn = v;
+                            highestNestingLevel = i.NestingLevel;
+                        }
                     }
                 }          
 
@@ -1453,7 +1456,7 @@ namespace m0.UIWpf.UX
         {
             IEdge toEdge = toItem.BaseEdge;
 
-            IVertex systemMetaBaseVertex = m0.MinusZero.Instance.Root.Get(false, @"System\Meta\Base\Vertex");
+            
 
             IVertex v = m0.MinusZero.Instance.CreateTempVertex();
 
