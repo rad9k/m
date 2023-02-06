@@ -14,7 +14,7 @@ namespace m0.UIWpf.UX.Generic
         IUXItem UXItem { get; set; }
 
         //IUXVisualiser IUXAggregator { get; set; }
-        IUXAggregator IUXAggregator { get; set; }
+        IUXContainer IUXAggregator { get; set; }
 
         Canvas Canvas { get; } 
     }

@@ -26,7 +26,7 @@ namespace m0.ZeroTypes.UX
         AnchorRightBottom
     }
 
-    public interface IUXVisualiser: IUXAggregator
+    public interface IUXVisualiser: IUXContainer
     {        
         bool IsSelecting { get; }
 

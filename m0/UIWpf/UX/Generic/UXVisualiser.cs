@@ -118,7 +118,7 @@ namespace m0.UIWpf.UX.Generic
         ////////////////////////// UX
 
         public IUXItem UXItem { get; set; }
-        public IUXAggregator IUXAggregator { get; set; }
+        public IUXContainer IUXAggregator { get; set; }
         public Canvas Canvas { get { return this; } }
 
         void CreateUX()

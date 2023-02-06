@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace m0.ZeroTypes.UX
 {
-    public class UXAggregator : UXItem, IUXAggregator
+    public class UXAggregator : UXItem, IUXContainer
     {
         public Canvas Canvas { get; }
 

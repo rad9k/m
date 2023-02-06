@@ -7,7 +7,7 @@ using System.Windows.Controls;
 
 namespace m0.ZeroTypes.UX
 {
-    public interface IUXAggregator: IUXItem
+    public interface IUXContainer: IUXItem
     {
         Canvas Canvas { get; }
 

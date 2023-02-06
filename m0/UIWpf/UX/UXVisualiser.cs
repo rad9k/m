@@ -352,7 +352,7 @@ namespace m0.UIWpf.UX
             }
         }
 
-        public void HostItem(IUXAggregator host, IUXItem item){
+        public void HostItem(IUXContainer host, IUXItem item){
             if (!(item is UIElement))
                 return;
 
@@ -378,9 +378,9 @@ namespace m0.UIWpf.UX
 
             //                     
 
-            if (item is IUXAggregator)
+            if (item is IUXContainer)
             {
-                IUXAggregator aggregator = (IUXAggregator)item;
+                IUXContainer aggregator = (IUXContainer)item;
 
                 if (aggregator.Canvas != null)
                     aggregator.Canvas.Children.Clear();

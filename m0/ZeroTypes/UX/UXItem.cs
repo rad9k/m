@@ -297,7 +297,7 @@ namespace m0.ZeroTypes.UX
             if (ItemParent != null)
             {
                 Point localCanvasPosition = new Point();
-                localCanvasPosition = Diagram.Canvas.TranslatePoint(new Point(x, y), ((IUXAggregator)ItemParent).Canvas);
+                localCanvasPosition = Diagram.Canvas.TranslatePoint(new Point(x, y), ((IUXContainer)ItemParent).Canvas);
                 Canvas.SetLeft(this, localCanvasPosition.X);
                 Canvas.SetTop(this, localCanvasPosition.Y);
             }

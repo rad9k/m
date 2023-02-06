@@ -322,7 +322,7 @@
     <Compile Include="ZeroTypes\ITypedEdge.cs" />
     <Compile Include="ZeroTypes\TypedEdge.cs" />
     <Compile Include="ZeroTypes\Edge.cs" />
-    <Compile Include="ZeroTypes\UX\IUXAggregator.cs" />
+    <Compile Include="ZeroTypes\UX\IUXContainer.cs" />
     <Compile Include="ZeroTypes\UX\MetaExtendedLineDecorator.cs" />
     <Compile Include="ZeroTypes\UX\LineEndEnum.cs" />
     <Compile Include="ZeroTypes\UX\AggregatingItem.xaml.cs">
