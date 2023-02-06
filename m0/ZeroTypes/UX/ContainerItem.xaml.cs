@@ -22,30 +22,29 @@ namespace m0.ZeroTypes.UX
     /// <summary>
     /// Interaction logic for DiagramRectangleItem.xaml
     /// </summary>
-    public partial class AggregatingItem : UXItem, IUXContainer
+    public partial class ContainerItem : UXItem, IUXContainer
     {
-        public IList<Canvas> Canvases { get; set; }        
+        public Canvas Canvas { get; set; }        
 
-        public AggregatingItem() : base(new ZeroTypes.Edge(null))
+        public ContainerItem() : base(new ZeroTypes.Edge(null))
         {
             InitializeComponent();
         }
 
-        public AggregatingItem(IEdge edge) : base(edge) {
+        public ContainerItem(IEdge edge) : base(edge) {
             InitializeComponent();
         }
 
         public override void VertexSetedUp()
         {
-            if(Canvases == null) { 
-                Canvases = new List<Canvas>();
-                Canvases.Add(new Canvas());
-                TheGrid.Children.Add(Canvases[0]);
+            if(Canvas == null) { 
+                Canvas = new Canvas();
+                TheGrid.Children.Add(Canvas);
             }
 
-            Canvases[0].ClipToBounds = true;
+            Canvas.ClipToBounds = true;
 
-            Grid.SetRow(Canvases[0], 2);
+            Grid.SetRow(Canvas, 2);
             
 
             base.VertexSetedUp();
@@ -97,7 +96,7 @@ namespace m0.ZeroTypes.UX
                 
                 this.Title.Margin = new Thickness(RoundEdgeSize, RoundEdgeSize, RoundEdgeSize, 0);
 
-                Canvases.Margin = new Thickness(RoundEdgeSize, 0, RoundEdgeSize, RoundEdgeSize);
+                Canvas.Margin = new Thickness(RoundEdgeSize, 0, RoundEdgeSize, RoundEdgeSize);
 
                 TheGrid.RowDefinitions[0].Height = new GridLength(18 + RoundEdgeSize);
                 
@@ -116,7 +115,7 @@ namespace m0.ZeroTypes.UX
 
             this.Frame.BorderBrush = foregroundBrush;
 
-            Canvases.Background = backgroundBrush;
+            Canvas.Background = backgroundBrush;
 
 
             if (BorderSize != 0)
@@ -262,9 +261,10 @@ namespace m0.ZeroTypes.UX
 
         //
 
-        static IVertex IsExpanded_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\UXAggregator\IsExpanded");
-        static IVertex ExpandedSize_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\UXAggregator\ExpandedSize");
-        static IVertex CollapsedSize_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\UXAggregator\CollapsedSize");
+        static IVertex IsExpanded_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\UXContainer\IsExpanded");
+        static IVertex ExpandedSize_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\UXContainer\ExpandedSize");
+        static IVertex CollapsedSize_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\UXContainer\CollapsedSize");
+        static IVertex ContainerEdgeQuery_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\UXContainer\ContainerEdgeQuery");
 
         static IVertex Size_type = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\Size");        
 
@@ -329,6 +329,28 @@ namespace m0.ZeroTypes.UX
         public UX.Size CollapsedSizeCreate()
         {
             return new UX.Size(VertexOperations.AddInstanceAndReturnEdge(Vertex, Size_type, CollapsedSize_meta));
+        }
+
+        public string ContainerEdgeQuery
+        {
+            get
+            {
+                IVertex val = GraphUtil.GetQueryOutFirst(Vertex, "ContainerEdgeQuery", null);
+
+                if (val == null)
+                    return "";
+
+                return GraphUtil.GetStringValue(val);
+            }
+            set
+            {
+                IVertex val = GraphUtil.GetQueryOutFirst(Vertex, "ContainerEdgeQuery", null);
+
+                if (val == null)
+                    val = Vertex.AddVertex(ContainerEdgeQuery_meta, value);
+                else
+                    val.Value = value;
+            }
         }
 
     }

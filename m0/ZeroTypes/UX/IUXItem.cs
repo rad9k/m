@@ -14,11 +14,9 @@ namespace m0.ZeroTypes.UX
 {
     public interface IUXItem: IItem, IDisposable
     {           
-        int NestingLevel { get; set; }
+        int ItemNestingLevel { get; set; }
 
-        IUXVisualiser Diagram { get; set; }
-
-        Canvas HostingCanvas { get; set; }
+        IUXVisualiser Diagram { get; set; }        
 
         bool IsSelected { get; set; }
 

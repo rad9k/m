@@ -325,8 +325,8 @@
     <Compile Include="ZeroTypes\UX\IUXContainer.cs" />
     <Compile Include="ZeroTypes\UX\MetaExtendedLineDecorator.cs" />
     <Compile Include="ZeroTypes\UX\LineEndEnum.cs" />
-    <Compile Include="ZeroTypes\UX\AggregatingItem.xaml.cs">
-      <DependentUpon>AggregatingItem.xaml</DependentUpon>
+    <Compile Include="ZeroTypes\UX\ContainerItem.xaml.cs">
+      <DependentUpon>ContainerItem.xaml</DependentUpon>
     </Compile>
     <Compile Include="ZeroTypes\UX\RectangleItem.cs" />
     <Compile Include="ZeroTypes\UX\RectangleItem.xaml.cs">
@@ -347,7 +347,7 @@
     <Compile Include="ZeroTypes\UX\ImageItem.cs" />
     <Compile Include="ZeroTypes\UX\IUXItem.cs" />
     <Compile Include="ZeroTypes\UX\UXTemplate.cs" />
-    <Compile Include="ZeroTypes\UX\UXAggregator.cs" />
+    <Compile Include="ZeroTypes\UX\UXContainer.cs" />
     <Compile Include="ZeroTypes\UX\UXItem.cs" />
     <Compile Include="ZeroUML\ClassVertex.cs" />
     <Compile Include="Util\GeneralUtil.cs">
@@ -512,7 +512,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="ZeroTypes\UX\AggregatingItem.xaml">
+    <Page Include="ZeroTypes\UX\ContainerItem.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

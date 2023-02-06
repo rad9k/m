@@ -9,7 +9,7 @@ namespace m0.ZeroTypes.UX
 {
     public interface IUXContainer: IUXItem
     {
-        IList<Canvas> Canvases { get; }
+        Canvas Canvas { get; }
 
         bool IsExpanded { get; set; }
 
@@ -20,5 +20,7 @@ namespace m0.ZeroTypes.UX
         UX.Size CollapsedSize { get; }
 
         UX.Size CollapsedSizeCreate();
+
+        string ContainerEdgeQuery { get; set; }
     }
 }

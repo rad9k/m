@@ -10,20 +10,20 @@ using System.Threading.Tasks;
 
 namespace m0.ZeroTypes.UX
 {
-    public class UXAggregator : UXItem, IUXContainer
+    public class UXContainer : UXItem, IUXContainer
     {
-        public IList<Canvas> Canvases { get; }
+        public Canvas Canvas { get; }
 
         //
 
-        static IVertex IsExpanded_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\UXAggregator\IsExpanded");
-        static IVertex ExpandedSize_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\UXAggregator\ExpandedSize");
-        static IVertex CollapsedSize_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\UXAggregator\CollapsedSize");
-        static IVertex AggregatorEdgeQuery_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\UXAggregator\AggregatorEdgeQuery");
+        static IVertex IsExpanded_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\UXContainer\IsExpanded");
+        static IVertex ExpandedSize_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\UXContainer\ExpandedSize");
+        static IVertex CollapsedSize_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\UXContainer\CollapsedSize");
+        static IVertex ContainerEdgeQuery_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\UXContainer\ContainerEdgeQuery");
 
         static IVertex Size_type = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\Size");
 
-        public UXAggregator(IEdge edge) : base(edge) { }
+        public UXContainer(IEdge edge) : base(edge) { }
 
         public bool IsExpanded
         {
@@ -88,11 +88,11 @@ namespace m0.ZeroTypes.UX
             return new UX.Size(VertexOperations.AddInstanceAndReturnEdge(Vertex, Size_type, CollapsedSize_meta));
         }
 
-        public string AggregatorEdgeQuery
+        public string ContainerEdgeQuery
         {
             get
             {
-                IVertex val = GraphUtil.GetQueryOutFirst(Vertex, "AggregatorEdgeQuery", null);
+                IVertex val = GraphUtil.GetQueryOutFirst(Vertex, "ContainerEdgeQuery", null);
 
                 if (val == null)
                     return "";
@@ -101,10 +101,10 @@ namespace m0.ZeroTypes.UX
             }
             set
             {
-                IVertex val = GraphUtil.GetQueryOutFirst(Vertex, "AggregatorEdgeQuery", null);
+                IVertex val = GraphUtil.GetQueryOutFirst(Vertex, "ContainerEdgeQuery", null);
 
                 if (val == null)
-                    val = Vertex.AddVertex(AggregatorEdgeQuery_meta, value);
+                    val = Vertex.AddVertex(ContainerEdgeQuery_meta, value);
                 else
                     val.Value = value;
             }

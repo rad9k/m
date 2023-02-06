@@ -396,7 +396,7 @@ namespace m0.UIWpf.Visualisers.Helper
 
             if (isUXAggregator)
             {
-                iux.IUXAggregator = (UXAggregator)TypedEdge.Get(e, typeof(UXAggregator));
+                iux.IUXAggregator = (UXContainer)TypedEdge.Get(e, typeof(UXContainer));
                 iux.UXItem = (UXItem)iux.IUXAggregator;
             }
         }

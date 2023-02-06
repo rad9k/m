@@ -29,9 +29,9 @@ namespace m0.ZeroTypes.UX
 
     public class UXItem : UserControl, IUXItem, IPlatformClass
     {
-        public int NestingLevel { get; set; }
+        public int ItemNestingLevel { get; set; }
 
-        public IItem ItemParent { get; set; }
+        public IItem ParentItem { get; set; }
 
         public List<FrameworkElement> Anchors;                
 
@@ -53,7 +53,7 @@ namespace m0.ZeroTypes.UX
 
         public UXItem(IEdge _edge)
         {
-            NestingLevel = 0;
+            ItemNestingLevel = 0;
 
             edge = _edge;
 
@@ -161,7 +161,7 @@ namespace m0.ZeroTypes.UX
 
         public virtual void RemoveFromCanvas()         
         {
-            Diagram.Canvases.Children.Remove(this);
+            Diagram.Canvas.Children.Remove(this);
 
             Unselect();
 
@@ -218,7 +218,7 @@ namespace m0.ZeroTypes.UX
 
             Panel.SetZIndex(this, 99999);
 
-            Point thisLeftTop = TranslatePoint(new Point(0, 0), Diagram.Canvases);
+            Point thisLeftTop = TranslatePoint(new Point(0, 0), Diagram.Canvas);
 
             double left = thisLeftTop.X; // Canvas.GetLeft(this);
             double top = thisLeftTop.Y; //Canvas.GetTop(this);
@@ -248,7 +248,7 @@ namespace m0.ZeroTypes.UX
             Panel.SetZIndex(this, 0);
 
             foreach (UIElement e in Anchors)
-                Diagram.Canvases.Children.Remove(e);
+                Diagram.Canvas.Children.Remove(e);
 
             Anchors.Clear();
         }
@@ -294,14 +294,12 @@ namespace m0.ZeroTypes.UX
             //////////////////////////////////////// 
 
 
-            if (ItemParent != null)
+            if (ParentItem != null)
             {
                 Point localCanvasPosition = new Point();
-<<<<<<< HEAD
-                localCanvasPosition = Diagram.Canvas.TranslatePoint(new Point(x, y), ((IUXContainer)ItemParent).Canvas);
-=======
-                localCanvasPosition = Diagram.Canvases.TranslatePoint(new Point(x, y), ((IUXAggregator)ItemParent).Canvases);
->>>>>>> 453d2659532a294c3165a6fc3967959566c68d26
+
+                localCanvasPosition = Diagram.Canvas.TranslatePoint(new Point(x, y), ((IUXContainer)ParentItem).Canvas);
+
                 Canvas.SetLeft(this, localCanvasPosition.X);
                 Canvas.SetTop(this, localCanvasPosition.Y);
             }
@@ -828,7 +826,7 @@ namespace m0.ZeroTypes.UX
 
             Panel.SetZIndex(r, 99999);
 
-            Diagram.Canvases.Children.Add(r);
+            Diagram.Canvas.Children.Add(r);
 
             return r;
         }
@@ -935,9 +933,9 @@ namespace m0.ZeroTypes.UX
             }
             else*/
             {
-                toItemLeftTop = toItem.TranslatePoint(new Point(0, 0), Diagram.Canvases);
+                toItemLeftTop = toItem.TranslatePoint(new Point(0, 0), Diagram.Canvas);
 
-                thisLeftTop = TranslatePoint(new Point(0, 0), Diagram.Canvases);
+                thisLeftTop = TranslatePoint(new Point(0, 0), Diagram.Canvas);
             }
 
             //
@@ -1543,7 +1541,7 @@ namespace m0.ZeroTypes.UX
                 foreach (IEdge e in list)
                 {
                     IItem i = (IItem)TypedEdge.Get(e);
-                    i.ItemParent = this;
+                    i.ParentItem = this;
                     ret.Add(i);
                 }
 
@@ -1559,7 +1557,7 @@ namespace m0.ZeroTypes.UX
                 return (IItem)TypedEdge.Get(newEdge, typeof(ZeroTypes.UX.UXItem));
 
             if (GraphUtil.GetValueAndCompareStrings(typeVertex, "UXAggregator"))
-                return (IItem)TypedEdge.Get(newEdge, typeof(ZeroTypes.UX.UXAggregator));
+                return (IItem)TypedEdge.Get(newEdge, typeof(ZeroTypes.UX.UXContainer));
 
             return (IItem)TypedEdge.Get(newEdge);
         }

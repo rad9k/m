@@ -119,7 +119,7 @@ namespace m0
                 UXAggregatorType,
                 UXAggregatorType);
 
-            UXAggregator a = new UXAggregator(a_e);
+            UXContainer a = new UXContainer(a_e);
 
             a.Vertex.Value = "VIS";
 
@@ -241,7 +241,7 @@ namespace m0
 
             IEdge i_e = VertexOperations.AddInstanceAndReturnEdge(e, r.Get(false, @"System\Meta\ZeroTypes\UX\UXAggregator"));
 
-            UXAggregator i = new UXAggregator(i_e);
+            UXContainer i = new UXContainer(i_e);
 
             i.BackgroundColorCreate();
             i.BackgroundColor.Blue = 1;

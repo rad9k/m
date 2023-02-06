@@ -1,4 +1,4 @@
-﻿<my:UXItem x:Class="m0.ZeroTypes.UX.AggregatingItem"
+﻿<my:UXItem x:Class="m0.ZeroTypes.UX.ContainerItem"
              xmlns:my="clr-namespace:m0.ZeroTypes.UX"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
