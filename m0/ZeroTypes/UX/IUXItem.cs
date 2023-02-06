@@ -18,6 +18,8 @@ namespace m0.ZeroTypes.UX
 
         IUXVisualiser Diagram { get; set; }
 
+        Canvas HostingCanvas { get; set; }
+
         bool IsSelected { get; set; }
 
         bool IsHighlighted { get; set; }       

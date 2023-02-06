@@ -12,7 +12,7 @@ namespace m0.ZeroTypes.UX
 {
     public class UXAggregator : UXItem, IUXContainer
     {
-        public Canvas Canvas { get; }
+        public IList<Canvas> Canvases { get; }
 
         //
 

@@ -24,7 +24,7 @@ namespace m0.ZeroTypes.UX
     /// </summary>
     public partial class AggregatingItem : UXItem, IUXContainer
     {
-        public Canvas Canvas { get; set; }        
+        public IList<Canvas> Canvases { get; set; }        
 
         public AggregatingItem() : base(new ZeroTypes.Edge(null))
         {
@@ -37,14 +37,15 @@ namespace m0.ZeroTypes.UX
 
         public override void VertexSetedUp()
         {
-            if(Canvas == null) { 
-                Canvas = new Canvas();
-                TheGrid.Children.Add(Canvas);
+            if(Canvases == null) { 
+                Canvases = new List<Canvas>();
+                Canvases.Add(new Canvas());
+                TheGrid.Children.Add(Canvases[0]);
             }
 
-            Canvas.ClipToBounds = true;
+            Canvases[0].ClipToBounds = true;
 
-            Grid.SetRow(Canvas, 2);
+            Grid.SetRow(Canvases[0], 2);
             
 
             base.VertexSetedUp();
@@ -96,7 +97,7 @@ namespace m0.ZeroTypes.UX
                 
                 this.Title.Margin = new Thickness(RoundEdgeSize, RoundEdgeSize, RoundEdgeSize, 0);
 
-                Canvas.Margin = new Thickness(RoundEdgeSize, 0, RoundEdgeSize, RoundEdgeSize);
+                Canvases.Margin = new Thickness(RoundEdgeSize, 0, RoundEdgeSize, RoundEdgeSize);
 
                 TheGrid.RowDefinitions[0].Height = new GridLength(18 + RoundEdgeSize);
                 
@@ -115,7 +116,7 @@ namespace m0.ZeroTypes.UX
 
             this.Frame.BorderBrush = foregroundBrush;
 
-            Canvas.Background = backgroundBrush;
+            Canvases.Background = backgroundBrush;
 
 
             if (BorderSize != 0)
