@@ -646,13 +646,15 @@ namespace m0.ZeroTypes.UX
         }
 
         private void DiagramItemBase_MouseLeave(object sender, MouseEventArgs e)
-        {
+        {            
             if (Diagram.IsDrawingOrMovingLine == false && Diagram.IsSelecting == false)
                 UnhighlightThisAndAllConectedByDiagramLine();
         }
 
         private void DiagramItemBase_MouseEnter(object sender, MouseEventArgs e)
         {
+            Diagram.UnhighlightAllSelectedEdges();
+
             if (Diagram.IsDrawingOrMovingLine == false && Diagram.IsSelecting == false)
                 HighlightThisAndAllConectedByDiagramLine();
         }

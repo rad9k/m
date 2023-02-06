@@ -56,6 +56,8 @@ namespace m0.ZeroTypes.UX
 
         void UnselectAllSelectedEdges();
 
+        void UnhighlightAllSelectedEdges();
+
         void CheckAndUpdateDiagramLinesForItem(IUXItem item);        
     }
 

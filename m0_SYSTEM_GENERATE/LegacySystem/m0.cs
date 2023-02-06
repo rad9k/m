@@ -3317,7 +3317,7 @@ namespace m0
                 "Class:LineDecorator{Association:StartAnchor{$MinCardinality:0,$MaxCardinality:1},Association:EndAnchor{$MinCardinality:0,$MaxCardinality:1},Attribute:IsDashed{$MinCardinality:0,$MaxCardinality:1}}," +
                 "Enum:LineEndEnum{EnumValue:Straight,EnumValue:Arrow,EnumValue:Triangle,EnumValue:FilledTriangle,EnumValue:Diamond,EnumValue:FilledDiamond}," +
                 "Class:MetaExtendedLineDecorator{Association:StartAnchor{$MinCardinality:0,$MaxCardinality:1},Association:EndAnchor{$MinCardinality:0,$MaxCardinality:1},Attribute:IsDashed{$MinCardinality:0,$MaxCardinality:1}}," +
-                "Class:AggregatingItem{Attribute:ShowMeta{$MinCardinality:0,$MaxCardinality:1},Attribute:RoundEdgeSize{MinValue:0,MaxValue:200,$MinCardinality:0,$MaxCardinality:1}}" +
+                "Class:ContainerItem{Attribute:ShowMeta{$MinCardinality:0,$MaxCardinality:1},Attribute:RoundEdgeSize{MinValue:0,MaxValue:200,$MinCardinality:0,$MaxCardinality:1}}" +
                 "}");
 
             // UXItem [EXTENSION]
@@ -3418,15 +3418,15 @@ namespace m0
 
             // AggregatingItem
 
-            smzu.Get(false, @"AggregatingItem").AddEdge(sm.Get(false, @"?$Is"), sm.Get(false, @"ZeroUML\Class"));
-            smzu.Get(false, @"AggregatingItem").AddEdge(sm.Get(false, "?$Inherits"), smzu.Get(false, @"UXAggregator"));
-            smzu.Get(false, @"AggregatingItem").AddVertex(sm.Get(false, "?$PlatformClassName"), @"m0.ZeroTypes.UX.AggregatingItem, m0, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null");
+            smzu.Get(false, @"ContainerItem").AddEdge(sm.Get(false, @"?$Is"), sm.Get(false, @"ZeroUML\Class"));
+            smzu.Get(false, @"ContainerItem").AddEdge(sm.Get(false, "?$Inherits"), smzu.Get(false, @"UXContainer"));
+            smzu.Get(false, @"ContainerItem").AddVertex(sm.Get(false, "?$PlatformClassName"), @"m0.ZeroTypes.UX.ContainerItem, m0, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null");
             
-            smzu.Get(false, @"AggregatingItem\RoundEdgeSize").AddEdge(sm.Get(false, @"?$EdgeTarget"), sm.Get(false, @"ZeroTypes\Integer"));
-            //smzu.Get(false, @"AggregatingItem\RoundEdgeSize").AddEdge(sm.Get(false, @"?$Section"), lookSection);
+            smzu.Get(false, @"ContainerItem\RoundEdgeSize").AddEdge(sm.Get(false, @"?$EdgeTarget"), sm.Get(false, @"ZeroTypes\Integer"));
+            //smzu.Get(false, @"ContainerItem\RoundEdgeSize").AddEdge(sm.Get(false, @"?$Section"), lookSection);
 
-            smzu.Get(false, @"AggregatingItem\ShowMeta").AddEdge(sm.Get(false, @"?$EdgeTarget"), sm.Get(false, @"ZeroTypes\Boolean"));
-            //smzu.Get(false, @"AggregatingItem\ShowMeta").AddEdge(sm.Get(false, @"?$Section"), lookSection);
+            smzu.Get(false, @"ContainerItem\ShowMeta").AddEdge(sm.Get(false, @"?$EdgeTarget"), sm.Get(false, @"ZeroTypes\Boolean"));
+            //smzu.Get(false, @"ContainerItem\ShowMeta").AddEdge(sm.Get(false, @"?$Section"), lookSection);
         }
 
         void CreateSystemMetaVisualiser()
@@ -3721,7 +3721,7 @@ namespace m0
             sm.Get(false, @"Visualiser\Song\ShowToolbarNames").AddEdge(sm.Get(false, @"?$EdgeTarget"), sm.Get(false, @"?Boolean"));
             sm.Get(false, @"Visualiser\Song\SnapToGrid").AddEdge(sm.Get(false, @"?$EdgeTarget"), sm.Get(false, @"Visualiser\SongSnapToGridEnum"));
 
-            sm.Get(false, @"Visualiser\UX").AddEdge(sm.Get(false, "?$Inherits"), sm.Get(false, @"ZeroTypes\UX\UXAggregator"));            
+            sm.Get(false, @"Visualiser\UX").AddEdge(sm.Get(false, "?$Inherits"), sm.Get(false, @"ZeroTypes\UX\UXContainer"));            
             //sm.Get(false, @"Visualiser\UX").AddVertex(sm.Get(false, "?$PlatformClassName"), @"m0.UIWpf.UX.UXVisualiser, m0, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null");
 
             sm.Get(false, @"Visualiser\UX").AddVertex(sm.Get(false, "?$PlatformClassName"), @"m0.UIWpf.UX.UXVisualiser, m0, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null");
@@ -3729,11 +3729,11 @@ namespace m0
             sm.Get(false, @"Visualiser\UX").AddEdge(sm.Get(false, @" ?$Is"), sm.Get(false, @"ZeroUML\Class"));
             sm.Get(false, @"Visualiser\UX").AddEdge(sm.Get(false, @"Visualiser\BaseEdgeTarget"), sm.Get(false, @"Visualiser\BaseEdgeTarget\Any"));
             //sm.Get(false, @"ZeroTypes\UX\UXItem").AddEdge(sm.Get(false, "ZeroUML?$DefaultOpenVisualiser"), sm.Get(false, @"Visualiser\UX"));
-            sm.Get(false, @"ZeroTypes\UX\UXAggregator").AddEdge(sm.Get(false, "ZeroUML?$DefaultOpenVisualiser"), sm.Get(false, @"Visualiser\UX"));
+            sm.Get(false, @"ZeroTypes\UX\UXContainer").AddEdge(sm.Get(false, "ZeroUML?$DefaultOpenVisualiser"), sm.Get(false, @"Visualiser\UX"));
             //sm.Get(false, @"ZeroTypes\UX\UXItem").AddEdge(sm.Get(false, "ZeroUML?$DefaultViewVisualiser"), sm.Get(false, @"Visualiser\UX"));
-            sm.Get(false, @"ZeroTypes\UX\UXAggregator").AddEdge(sm.Get(false, "ZeroUML?$DefaultViewVisualiser"), sm.Get(false, @"Visualiser\UX"));
+            sm.Get(false, @"ZeroTypes\UX\UXContainer").AddEdge(sm.Get(false, "ZeroUML?$DefaultViewVisualiser"), sm.Get(false, @"Visualiser\UX"));
             //sm.Get(false, @"ZeroTypes\UX\UXItem").AddEdge(sm.Get(false, "ZeroUML?$DefaultEditVisualiser"), sm.Get(false, @"Visualiser\UX"));
-            sm.Get(false, @"ZeroTypes\UX\UXAggregator").AddEdge(sm.Get(false, "ZeroUML?$DefaultEditVisualiser"), sm.Get(false, @"Visualiser\UX"));
+            sm.Get(false, @"ZeroTypes\UX\UXContainer").AddEdge(sm.Get(false, "ZeroUML?$DefaultEditVisualiser"), sm.Get(false, @"Visualiser\UX"));
 
             sm.Get(false, @"Visualiser\Test").AddEdge(sm.Get(false, "?$Inherits"), sm.Get(false, @"ZeroTypes\UX\UXItem"));            
             sm.Get(false, @"Visualiser\Test").AddVertex(sm.Get(false, "?$PlatformClassName"), @"m0.UIWpf.Visualisers.TestVisualiser, m0, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null");

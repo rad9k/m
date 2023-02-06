@@ -2,21 +2,12 @@
 using m0.Graph;
 using m0.Graph.ExecutionFlow;
 using m0.UIWpf.Commands;
-using m0.ZeroCode;
 using m0.ZeroTypes;
 using m0.ZeroTypes.UX;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 
 namespace m0
 {
@@ -76,10 +67,10 @@ namespace m0
         static IVertex r = null; 
 
         static IVertex UXTest = null;
-        static IVertex UXAggregatorType = null;
+        static IVertex UXContainerType = null;
         static IVertex UXItemType = null;
         static IVertex RectangleItem = null;
-        static IVertex AggregatingItem = null;
+        static IVertex ContainerItem = null;
 
         static IEdge template = null;
 
@@ -89,13 +80,13 @@ namespace m0
 
             UXTest = r.Get(false, @"System\Meta\Visualiser\UXTest");
 
-            UXAggregatorType = r.Get(false, @"System\Meta\ZeroTypes\UX\UXAggregator");
+            UXContainerType = r.Get(false, @"System\Meta\ZeroTypes\UX\UXContainer");
 
             UXItemType = r.Get(false, @"System\Meta\ZeroTypes\UX\UXItem");
 
             RectangleItem = r.Get(false, @"System\Meta\ZeroTypes\UX\RectangleItem");
 
-            AggregatingItem = r.Get(false, @"System\Meta\ZeroTypes\UX\AggregatingItem");
+            ContainerItem = r.Get(false, @"System\Meta\ZeroTypes\UX\ContainerItem");
 
             template = r.GetAll(false, @"System\Data\UX\Templates\ZeroUML\Vertex").First();
 
@@ -116,8 +107,8 @@ namespace m0
             z1_vertex.AddEdge(null, x1_vertex);
 
             IEdge a_e = VertexOperations.AddInstanceAndReturnEdge(e,
-                UXAggregatorType,
-                UXAggregatorType);
+                UXContainerType,
+                UXContainerType);
 
             UXContainer a = new UXContainer(a_e);
 
@@ -139,7 +130,7 @@ namespace m0
 
         IUXItem UXAdd(double x, double y, UXItem a, IVertex v)
         {
-            IUXItem i1 = (IUXItem)a.AddItem(AggregatingItem);
+            IUXItem i1 = (IUXItem)a.AddItem(ContainerItem);
 
             i1.UXTemplate = new UXTemplate(template);
             i1.Layout = LayoutTypeEnum.Manual;

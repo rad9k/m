@@ -1287,6 +1287,17 @@ namespace m0.UIWpf.UX
             }
         }
 
+        public void UnhighlightAllSelectedEdges()
+        {
+            foreach (IUXItem i in Items_all)
+            {
+                i.Unhighlight();
+
+                foreach(IUXItem d in i.Decorators)
+                    d.Unhighlight();
+            }
+        }
+
         public void UnselectAllSelectedEdges()
         {
             UnselectAllSelectedEdges_NoSelectedVerticesUpdated();
