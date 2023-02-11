@@ -9,6 +9,7 @@ using m0.Util;
 using m0.ZeroCode.Helpers;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -277,6 +278,14 @@ namespace m0.ZeroTypes.UX
             if (Position == null)
                 return;
 
+            if (ParentItem != null)
+            {
+                Point localCanvasPosition = localCanvasPosition = Diagram.Canvas.TranslatePoint(new Point(x, y), ((IUXContainer)ParentItem).Canvas);
+
+                x = localCanvasPosition.X;
+                y = localCanvasPosition.Y;
+            }
+
             Position position = this.Position;
 
             double deltax = position.X - x;
@@ -291,23 +300,11 @@ namespace m0.ZeroTypes.UX
 
             ////////////////////////////////////////
             Interaction.EndInteractionWithGraph();
-            //////////////////////////////////////// 
-
-
-            if (ParentItem != null)
-            {
-                Point localCanvasPosition = new Point();
-
-                localCanvasPosition = Diagram.Canvas.TranslatePoint(new Point(x, y), ((IUXContainer)ParentItem).Canvas);
-
-                Canvas.SetLeft(this, localCanvasPosition.X);
-                Canvas.SetTop(this, localCanvasPosition.Y);
-            }
-            else
-            {
-                Canvas.SetLeft(this, x);
-                Canvas.SetTop(this, y);
-            }                
+            ////////////////////////////////////////             
+            
+            Canvas.SetLeft(this, x);
+            Canvas.SetTop(this, y);
+                            
 
             foreach (UIElement a in Anchors)
             {
@@ -346,10 +343,18 @@ namespace m0.ZeroTypes.UX
             }
         }        
         
-        public void MoveAndResizeItem(double left, double top, double width, double height)
+        public void MoveAndResizeItem(double x, double y, double width, double height)
         {
             if (width < 0 || height < 0)
                 return;
+
+         /*   if (ParentItem != null)
+            {
+                Point localCanvasPosition = localCanvasPosition = Diagram.Canvas.TranslatePoint(new Point(x, y), ((IUXContainer)ParentItem).Canvas);
+
+                x = localCanvasPosition.X;
+                y = localCanvasPosition.Y;
+            }*/
 
             Position position = this.Position;
 
@@ -357,28 +362,28 @@ namespace m0.ZeroTypes.UX
             Interaction.BeginInteractionWithGraph();
             //////////////////////////////////////// 
 
-            position.X = left;
-            position.Y = top;
+            position.X = x;
+            position.Y = y;
 
-            Canvas.SetLeft(this, left);
-            Canvas.SetTop(this, top);
+            Canvas.SetLeft(this, x);
+            Canvas.SetTop(this, y);
 
             Size size = Size;            
 
             if (size == null)
                 size = SizeCreate();
 
-            size.Width = width;
-            size.Height = height;
+           // size.Width = width;
+           // size.Height = height;
 
             ////////////////////////////////////////
             Interaction.EndInteractionWithGraph();
             //////////////////////////////////////// 
 
-            Width = width;
-            Height = height;
+            //Width = width;
+           // Height = height;
 
-            UpdateAnchors(left, top, width, height);
+            UpdateAnchors(x, y, width, height);
 
             UpdateDiagramLines();
         }
@@ -603,6 +608,18 @@ namespace m0.ZeroTypes.UX
 
                     updatedItems.Add(l.FromDiagramItem);
                 }
+
+            //
+
+            foreach (IItem _i in Items)
+            {
+                IUXItem i = GetUXItem(_i);
+
+                if (i == null)
+                    continue;
+
+                i.UpdateDiagramLines();
+            }
         }
 
         public void HighlightThisAndAllConectedByDiagramLine()

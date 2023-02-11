@@ -273,7 +273,7 @@ namespace m0.UIWpf.UX
             }
         }
 
-        public IUXItem GetUXItem(IItem i)
+        public static IUXItem GetUXItem(IItem i)
         {
             if (GraphUtil.ExistQueryOut(i.Vertex, "$Is", "Wrap"))
                 return null;
