@@ -1438,7 +1438,7 @@ namespace m0.UIWpf.UX
                     (itemPosition.X + itemSize.Width) > itemParentSize.Width ||
                     (itemPosition.Y + itemSize.Height) > itemParentSize.Height)
                 {
-                    IUXItem tobeParentItem = GetItemByPoint(itemPosition);
+                   // IUXItem tobeParentItem = GetItemByPoint(itemPosition);
                 }
             }            
         }
