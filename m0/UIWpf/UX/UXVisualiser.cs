@@ -1422,6 +1422,11 @@ namespace m0.UIWpf.UX
             return itemToReturn;
         }
 
+        void CheckAndUpdateItemComposition(IUXItem item)
+        {
+
+        }
+
 
         // IHasLocalizableEdges
 
