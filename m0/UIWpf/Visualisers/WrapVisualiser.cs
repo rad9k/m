@@ -147,7 +147,7 @@ namespace m0.UIWpf.Visualisers
             VisualiserHelper.Dispose();
         }
 
-        public IVertex GetEdgeByLocation(Point point)
+        public IVertex GetEdgeByPoint(Point point)
         {
             return null;
         }

@@ -118,7 +118,7 @@ namespace m0.UIWpf.Visualisers.Method
             }
         }
 
-        public IVertex GetEdgeByLocation(System.Windows.Point point)
+        public IVertex GetEdgeByPoint(System.Windows.Point point)
         {
             return Vertex.Get(false, @"BaseEdge:");
         }

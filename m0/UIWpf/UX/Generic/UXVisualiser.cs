@@ -100,7 +100,7 @@ namespace m0.UIWpf.UX.Generic
             VisualiserHelper.Dispose_UX();
         }
 
-        public IVertex GetEdgeByLocation(Point point)
+        public IVertex GetEdgeByPoint(Point point)
         {
             return Vertex.Get(false, @"BaseEdge:");
         }

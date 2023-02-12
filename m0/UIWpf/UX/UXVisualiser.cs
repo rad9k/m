@@ -1394,43 +1394,50 @@ namespace m0.UIWpf.UX
                 }
             }
         }
-     
+
+        public IUXItem GetItemByPoint(Point p)
+        {
+            IUXItem itemToReturn = null;
+
+            int highestNestingLevel = -1;
+
+            foreach (IItem _i in Items_all)
+            {
+                IUXItem i = GetUXItem(_i);
+
+                if (i == null)
+                    continue;
+
+                UIElement i_UIElement = (UIElement)i;
+
+                if (VisualTreeHelper.HitTest(i_UIElement, TranslatePoint(p, i_UIElement)) != null)                                  
+                    if (i.ItemNestingLevel > highestNestingLevel)
+                    {
+                        itemToReturn = i;
+                        highestNestingLevel = i.ItemNestingLevel;
+                    }
+                
+            }
+
+            return itemToReturn;
+        }
+
+
         // IHasLocalizableEdges
 
         private IVertex vertexByLocationToReturn;
 
-        public IVertex GetEdgeByLocation(Point p) 
+        public IVertex GetEdgeByPoint(Point p) 
         {
-            vertexByLocationToReturn = null;
+            IUXItem item = GetItemByPoint(p);
 
-            int highestNestingLevel = -1;
+            IVertex v = MinusZero.Instance.CreateTempVertex();
 
-            foreach(IItem _i in Items_all)
-                {
-                    IUXItem i = GetUXItem(_i);
+            IEdge iBaseEdge = item.BaseEdge;
 
-                    if (i == null)
-                        continue;
+            EdgeHelper.AddEdgeVertexEdges(v, iBaseEdge.From, iBaseEdge.Meta, iBaseEdge.To);            
 
-                    UIElement i_UIElement = (UIElement)i;
-
-                    if (VisualTreeHelper.HitTest(i_UIElement, TranslatePoint(p, i_UIElement)) != null)
-                    {
-                        IVertex v = MinusZero.Instance.CreateTempVertex();
-
-                        IEdge iBaseEdge = i.BaseEdge;
-
-                        EdgeHelper.AddEdgeVertexEdges(v, iBaseEdge.From, iBaseEdge.Meta, iBaseEdge.To);
-
-                        if (i.ItemNestingLevel > highestNestingLevel)
-                        {
-                            vertexByLocationToReturn = v;
-                            highestNestingLevel = i.ItemNestingLevel;
-                        }
-                    }
-                }          
-
-            return vertexByLocationToReturn;
+            return v;
         }
 
         public IVertex GetEdgeByVisualElement(FrameworkElement visualElement)

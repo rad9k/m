@@ -68,7 +68,7 @@ namespace m0.UIWpf.Controls
             if (PlatformClass is IHasLocalizableEdges && PlatformClass is IInputElement)
             {
                 Point p = Mouse.GetPosition((IInputElement)PlatformClass);
-                EdgeVertex = ((IHasLocalizableEdges)PlatformClass).GetEdgeByLocation(p);
+                EdgeVertex = ((IHasLocalizableEdges)PlatformClass).GetEdgeByPoint(p);
                 
 
                 //EnableMenuItems();

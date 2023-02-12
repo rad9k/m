@@ -58,7 +58,9 @@ namespace m0.ZeroTypes.UX
 
         void UnhighlightAllSelectedEdges();
 
-        void CheckAndUpdateDiagramLinesForItem(IUXItem item);        
+        void CheckAndUpdateDiagramLinesForItem(IUXItem item);
+
+        IUXItem GetItemByPoint(Point p);
     }
 
 }

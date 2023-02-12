@@ -330,7 +330,7 @@ namespace m0.UIWpf.Visualisers
             VisualiserHelper.Dispose();
         }
 
-        public IVertex GetEdgeByLocation(Point point)
+        public IVertex GetEdgeByPoint(Point point)
         {
             var headersPresenter = WpfUtil.FindVisualChild<DataGridColumnHeadersPresenter>(ThisDataGrid);
             double headerActualHeight = headersPresenter.ActualHeight;

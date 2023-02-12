@@ -212,7 +212,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
         public void OnLoad(object sender, RoutedEventArgs e) {  }
 
-        public IVertex GetEdgeByLocation(Point point) { return null; }
+        public IVertex GetEdgeByPoint(Point point) { return null; }
 
         public IVertex GetEdgeByVisualElement(FrameworkElement visualElement) { return null; }
 

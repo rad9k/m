@@ -642,7 +642,7 @@ namespace m0.UIWpf.Visualisers
 
         private IVertex vertexByLocationToReturn;
 
-        public IVertex GetEdgeByLocation(Point p)
+        public IVertex GetEdgeByPoint(Point p)
         {
             vertexByLocationToReturn = null;
 

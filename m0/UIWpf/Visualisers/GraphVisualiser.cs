@@ -811,7 +811,7 @@ namespace m0.UIWpf.Visualisers
 
         private IVertex vertexByLocationToReturn;
 
-        public IVertex GetEdgeByLocation(Point p)
+        public IVertex GetEdgeByPoint(Point p)
         {
             vertexByLocationToReturn = null;
 
@@ -877,7 +877,7 @@ namespace m0.UIWpf.Visualisers
                         dndVertex.AddEdge(null, ee.To);
                 else
                 {
-                    IVertex v = GetEdgeByLocation(dndStartPoint);
+                    IVertex v = GetEdgeByPoint(dndStartPoint);
                     if (v != null)
                         dndVertex.AddEdge(null, v);
                 }
@@ -896,7 +896,7 @@ namespace m0.UIWpf.Visualisers
 
         private void dndDrop(object sender, DragEventArgs e)
         {
-            IVertex v = GetEdgeByLocation(e.GetPosition(this));
+            IVertex v = GetEdgeByPoint(e.GetPosition(this));
 
             if (v == null && GeneralUtil.CompareStrings(MinusZero.Instance.Root.Get(false, @"User\CurrentUser:\Settings:\AllowBlankAreaDragAndDrop:").Value, "OnlyEnd"))
                 v = Vertex.Get(false, "BaseEdge:");

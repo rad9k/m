@@ -777,7 +777,7 @@ namespace m0.UIWpf.Visualisers
 
         // LOCATION STUFF
 
-        public IVertex GetEdgeByLocation(Point p)
+        public IVertex GetEdgeByPoint(Point p)
         {
             TabInfo t = getActiveTabInfo();
 

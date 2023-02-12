@@ -319,7 +319,9 @@ namespace m0.ZeroTypes.UX
 
             UpdateDiagramLinesInSubItems();
 
-            UpdateDiagramLines();            
+            UpdateDiagramLines();
+
+            Diagram.CheckAndUpdateItemComposition(this);
         }
 
         public IUXItem GetUXItem(IItem i)
@@ -392,6 +394,8 @@ namespace m0.ZeroTypes.UX
             UpdateAnchors(x_orginal, y_orginal, width, height);
 
             UpdateDiagramLines();
+
+            Diagram.CheckAndUpdateItemComposition(this);
         }
 
         public void AddToSelectedEdges() 

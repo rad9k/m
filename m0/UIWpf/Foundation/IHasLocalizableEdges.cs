@@ -9,7 +9,7 @@ namespace m0.UIWpf.Foundation
 {
     public interface IHasLocalizableEdges
     {
-        IVertex GetEdgeByLocation(Point point);
+        IVertex GetEdgeByPoint(Point point);
 
         IVertex GetEdgeByVisualElement(FrameworkElement visualElement);
 
