@@ -15,6 +15,8 @@ namespace m0.ZeroTypes.UX
 
         public Position(IEdge edge) : base(edge) { }
 
+        p
+
         public double X
         {
             get

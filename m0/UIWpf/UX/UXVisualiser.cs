@@ -1422,11 +1422,26 @@ namespace m0.UIWpf.UX
             return itemToReturn;
         }
 
-        void CheckAndUpdateItemComposition(IUXItem item)
+        public void CheckAndUpdateItemComposition(IUXItem item)
         {
+            Position itemPosition = item.Position;
+            ZeroTypes.UX.Size itemSize = item.Size;
 
+            if (item.ParentItem is IUXVisualiser)
+            {
+
+            }
+            else {
+                ZeroTypes.UX.Size itemParentSize = ((IUXItem)item.ParentItem).Size;
+
+                if (itemPosition.X < 0 || itemPosition.Y < 0 || 
+                    (itemPosition.X + itemSize.Width) > itemParentSize.Width ||
+                    (itemPosition.Y + itemSize.Height) > itemParentSize.Height)
+                {
+                    IUXItem tobeParentItem = GetItemByPoint(itemPosition);
+                }
+            }            
         }
-
 
         // IHasLocalizableEdges
 
