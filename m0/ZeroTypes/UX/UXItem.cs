@@ -278,8 +278,7 @@ namespace m0.ZeroTypes.UX
             if (Position == null)
                 return;
 
-
-            if (ParentItem != null)
+            if (!(ParentItem is IUXVisualiser))
             {
                 Point localCanvasPosition = localCanvasPosition = Diagram.Canvas.TranslatePoint(new Point(x, y), ((IUXContainer)ParentItem).Canvas);
 
@@ -344,18 +343,24 @@ namespace m0.ZeroTypes.UX
             }
         }        
         
-        public void MoveAndResizeItem(double x, double y, double width, double height)
+        public void MoveAndResizeItem(double x_orginal, double y_orginal, double width, double height)
         {
-            if (width < 0 || height < 0)
-                return;
+            width = 100;
+            height = 100;
 
-         /*   if (ParentItem != null)
+            //if (width < 0 || height < 0)
+            //return;
+
+            double x = x_orginal;
+            double y = y_orginal;
+
+            if (!(ParentItem is IUXVisualiser))
             {
-                Point localCanvasPosition = localCanvasPosition = Diagram.Canvas.TranslatePoint(new Point(x, y), ((IUXContainer)ParentItem).Canvas);
+                Point localCanvasPosition = Diagram.Canvas.TranslatePoint(new Point(x, y), ((IUXContainer)ParentItem).Canvas);
 
                 x = localCanvasPosition.X;
                 y = localCanvasPosition.Y;
-            }*/
+            }
 
             Position position = this.Position;
 
@@ -384,7 +389,7 @@ namespace m0.ZeroTypes.UX
             //Width = width;
            // Height = height;
 
-            UpdateAnchors(x, y, width, height);
+            UpdateAnchors(x_orginal, y_orginal, width, height);
 
             UpdateDiagramLines();
         }
