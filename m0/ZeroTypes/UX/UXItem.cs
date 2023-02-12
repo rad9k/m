@@ -66,7 +66,7 @@ namespace m0.ZeroTypes.UX
 
             Anchors = new List<FrameworkElement>();
 
-            this.SizeChanged += DiagramItemBase_SizeChanged;
+            //this.SizeChanged += DiagramItemBase_SizeChanged;
 
             this.MouseEnter += DiagramItemBase_MouseEnter;
 
@@ -213,6 +213,9 @@ namespace m0.ZeroTypes.UX
 
         public virtual void Select() 
         {
+            if (IsSelected)
+                return;
+
             IsSelected = true;
 
             GeneralUtil.SetPropertyIfPresent(this.Content, "Foreground", GetBackgroundBrush());
@@ -345,11 +348,8 @@ namespace m0.ZeroTypes.UX
         
         public void MoveAndResizeItem(double x_orginal, double y_orginal, double width, double height)
         {
-            width = 100;
-            height = 100;
-
-            //if (width < 0 || height < 0)
-            //return;
+            if (width < 0 || height < 0)
+            return;
 
             double x = x_orginal;
             double y = y_orginal;
@@ -379,15 +379,15 @@ namespace m0.ZeroTypes.UX
             if (size == null)
                 size = SizeCreate();
 
-           // size.Width = width;
-           // size.Height = height;
+            size.Width = width;
+            size.Height = height;
 
             ////////////////////////////////////////
             Interaction.EndInteractionWithGraph();
             //////////////////////////////////////// 
 
-            //Width = width;
-           // Height = height;
+            Width = width;
+            Height = height;
 
             UpdateAnchors(x_orginal, y_orginal, width, height);
 
@@ -682,10 +682,10 @@ namespace m0.ZeroTypes.UX
                 HighlightThisAndAllConectedByDiagramLine();
         }
 
-        protected void DiagramItemBase_SizeChanged(object sender, SizeChangedEventArgs e)
+        /*protected void DiagramItemBase_SizeChanged(object sender, SizeChangedEventArgs e)
         {
             UpdateAnchors(Canvas.GetLeft(this), Canvas.GetTop(this), this.ActualWidth, this.ActualHeight);
-        }
+        }*/
 
         private bool CanAutomaticallyAddEdges = true;
 

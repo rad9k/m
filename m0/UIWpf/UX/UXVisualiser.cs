@@ -983,22 +983,45 @@ namespace m0.UIWpf.UX
 
                 FrameworkElement ClickedItem_FrameworkElement = (FrameworkElement)ClickedItem;
 
+                //
+
+                double ClickedItem_left;
+                double ClickedItem_top;
+
+                if (ClickedItem.ParentItem is IUXVisualiser)
+                {
+                    ClickedItem_left = Canvas.GetLeft(ClickedItem_FrameworkElement);
+                    ClickedItem_top = Canvas.GetTop(ClickedItem_FrameworkElement);
+                }
+                else
+                {
+                    Point mainCanvasPosition = ((IUXContainer)ClickedItem.ParentItem).Canvas.TranslatePoint(
+                        new Point(Canvas.GetLeft(ClickedItem_FrameworkElement), 
+                        Canvas.GetTop(ClickedItem_FrameworkElement)), 
+                        Canvas);
+
+                    ClickedItem_left = mainCanvasPosition.X;
+                    ClickedItem_top = mainCanvasPosition.Y;
+                }
+
+                //
+
                 if (ClickTarget == ClickTargetEnum.AnchorLeftTop)
                 {
                     ClickedItem.MoveAndResizeItem(
                         (e.GetPosition(Canvas).X - ClickPositionX_ItemCordinates),
                         (e.GetPosition(Canvas).Y - ClickPositionY_ItemCordinates),
-                        ClickedItem_FrameworkElement.ActualWidth - ((e.GetPosition(Canvas).X - ClickPositionX_ItemCordinates) - Canvas.GetLeft(ClickedItem_FrameworkElement)),
-                       ClickedItem_FrameworkElement.ActualHeight - ((e.GetPosition(Canvas).Y - ClickPositionY_ItemCordinates) - Canvas.GetTop(ClickedItem_FrameworkElement)) );                        
+                        ClickedItem_FrameworkElement.ActualWidth - ((e.GetPosition(Canvas).X - ClickPositionX_ItemCordinates) - ClickedItem_left),
+                        ClickedItem_FrameworkElement.ActualHeight - ((e.GetPosition(Canvas).Y - ClickPositionY_ItemCordinates) - ClickedItem_top)); 
                 }
 
                 if (ClickTarget == ClickTargetEnum.AnchorMiddleTop)
                 {
                     ClickedItem.MoveAndResizeItem(
-                        Canvas.GetLeft(ClickedItem_FrameworkElement),
+                        ClickedItem_left,
                         (e.GetPosition(Canvas).Y - ClickPositionY_ItemCordinates),
                         ClickedItem_FrameworkElement.ActualWidth,
-                       ClickedItem_FrameworkElement.ActualHeight - ((e.GetPosition(Canvas).Y - ClickPositionY_ItemCordinates) - Canvas.GetTop(ClickedItem_FrameworkElement)));
+                       ClickedItem_FrameworkElement.ActualHeight - ((e.GetPosition(Canvas).Y - ClickPositionY_ItemCordinates) - ClickedItem_top));
                 }
 
                 if (ClickTarget == ClickTargetEnum.AnchorRightTop_CreateDiagramLine)
@@ -1011,45 +1034,45 @@ namespace m0.UIWpf.UX
                 {
                     ClickedItem.MoveAndResizeItem(
                         (e.GetPosition(Canvas).X - ClickPositionX_ItemCordinates),
-                        Canvas.GetTop(ClickedItem_FrameworkElement),
-                        ClickedItem_FrameworkElement.ActualWidth - ((e.GetPosition(Canvas).X - ClickPositionX_ItemCordinates) - Canvas.GetLeft(ClickedItem_FrameworkElement)),
-                       ClickedItem_FrameworkElement.ActualHeight);
+                        ClickedItem_top,
+                        ClickedItem_FrameworkElement.ActualWidth - ((e.GetPosition(Canvas).X - ClickPositionX_ItemCordinates) - ClickedItem_left),
+                        ClickedItem_FrameworkElement.ActualHeight);
                 }
 
                 if (ClickTarget == ClickTargetEnum.AnchorRightMiddle)
                 {
                     ClickedItem.MoveAndResizeItem(
-                        Canvas.GetLeft(ClickedItem_FrameworkElement),
-                        Canvas.GetTop(ClickedItem_FrameworkElement),
-                        e.GetPosition(Canvas).X - Canvas.GetLeft(ClickedItem_FrameworkElement) - ClickPositionX_AnchorCordinates,
-                       ClickedItem_FrameworkElement.ActualHeight);
+                        ClickedItem_left,
+                        ClickedItem_top,
+                        e.GetPosition(Canvas).X - ClickedItem_left - ClickPositionX_AnchorCordinates,
+                        ClickedItem_FrameworkElement.ActualHeight);
                 }
 
                 if (ClickTarget == ClickTargetEnum.AnchorLeftBottom)
                 {
                     ClickedItem.MoveAndResizeItem(
                       (e.GetPosition(Canvas).X - ClickPositionX_ItemCordinates),
-                      Canvas.GetTop(ClickedItem_FrameworkElement),
-                      ClickedItem_FrameworkElement.ActualWidth - ((e.GetPosition(Canvas).X - ClickPositionX_ItemCordinates) - Canvas.GetLeft(ClickedItem_FrameworkElement)),
-                    e.GetPosition(Canvas).Y - Canvas.GetTop(ClickedItem_FrameworkElement) - ClickPositionY_AnchorCordinates);
+                      ClickedItem_top,
+                      ClickedItem_FrameworkElement.ActualWidth - ((e.GetPosition(Canvas).X - ClickPositionX_ItemCordinates) - ClickedItem_left),
+                     e.GetPosition(Canvas).Y - ClickedItem_top - ClickPositionY_AnchorCordinates);
                 }
 
                 if (ClickTarget == ClickTargetEnum.AnchorMiddleBottom)
                 {
                     ClickedItem.MoveAndResizeItem(
-                      Canvas.GetLeft(ClickedItem_FrameworkElement),
-                      Canvas.GetTop(ClickedItem_FrameworkElement),
+                      ClickedItem_left,
+                      ClickedItem_top,
                       ClickedItem_FrameworkElement.ActualWidth,
-                    e.GetPosition(Canvas).Y - Canvas.GetTop(ClickedItem_FrameworkElement) - ClickPositionY_AnchorCordinates);
+                    e.GetPosition(Canvas).Y - ClickedItem_top - ClickPositionY_AnchorCordinates); ;
                 }
 
                 if (ClickTarget == ClickTargetEnum.AnchorRightBottom)
                 {
                     ClickedItem.MoveAndResizeItem(
-                      Canvas.GetLeft(ClickedItem_FrameworkElement),
-                      Canvas.GetTop(ClickedItem_FrameworkElement),
-                      e.GetPosition(Canvas).X - Canvas.GetLeft(ClickedItem_FrameworkElement) - ClickPositionX_AnchorCordinates,
-                    e.GetPosition(Canvas).Y - Canvas.GetTop(ClickedItem_FrameworkElement) - ClickPositionY_AnchorCordinates);
+                      ClickedItem_left,
+                      ClickedItem_top,
+                      e.GetPosition(Canvas).X - ClickedItem_left - ClickPositionX_AnchorCordinates,
+                    e.GetPosition(Canvas).Y - ClickedItem_top - ClickPositionY_AnchorCordinates);
                 }                
 
                 if (ClickTarget == ClickTargetEnum.Item) // item move
