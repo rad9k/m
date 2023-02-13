@@ -112,6 +112,12 @@ namespace m0.ZeroTypes.UX
             return (IItem)TypedEdge.Get(newEdge);
         }
 
+        public void AddExistingItem(IItem item)
+        {
+            Vertex.AddEdge(Item_meta, item.Vertex);
+            item.ParentItem = this;
+        }
+
         public void RemoveItem(IItem item)
         {
             Vertex.DeleteEdge(item.Edge);

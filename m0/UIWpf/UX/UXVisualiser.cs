@@ -988,7 +988,7 @@ namespace m0.UIWpf.UX
                 double ClickedItem_left;
                 double ClickedItem_top;
 
-                if (ClickedItem.ParentItem is IUXVisualiser)
+                if (ClickedItem.ParentItem == this || ClickedItem.ParentItem == null)
                 {
                     ClickedItem_left = Canvas.GetLeft(ClickedItem_FrameworkElement);
                     ClickedItem_top = Canvas.GetTop(ClickedItem_FrameworkElement);
@@ -1427,9 +1427,12 @@ namespace m0.UIWpf.UX
             Position itemPosition = item.Position;
             ZeroTypes.UX.Size itemSize = item.Size;
 
-            if (item.ParentItem is IUXVisualiser)
+            if (item.ParentItem == this || item.ParentItem == null)
             {
+                IUXItem toBeParentItem = GetItemByPoint(item.Position.GetPoint());
 
+                if(toBeParentItem != null)
+                    MoveToParentItem(item, toBeParentItem);
             }
             else {
                 ZeroTypes.UX.Size itemParentSize = ((IUXItem)item.ParentItem).Size;
@@ -1438,9 +1441,35 @@ namespace m0.UIWpf.UX
                     (itemPosition.X + itemSize.Width) > itemParentSize.Width ||
                     (itemPosition.Y + itemSize.Height) > itemParentSize.Height)
                 {
-                   // IUXItem tobeParentItem = GetItemByPoint(itemPosition);
+                    IUXItem toBeParentItem = GetItemByPoint(itemPosition.GetPoint());
+
+                    if (toBeParentItem == null)
+                        toBeParentItem = this;
+
+                    if (toBeParentItem != item.ParentItem)
+                        MoveToParentItem(item, toBeParentItem);
                 }
             }            
+        }
+
+        private void MoveToParentItem(IUXItem item, IUXItem tobeParentItem)
+        {
+            ////////////////////////////////////////
+            Interaction.BeginInteractionWithGraph();
+            ////////////////////////////////////////
+
+            ((IUXContainer)item.ParentItem).Canvas.Children.Remove((UIElement)item);
+
+            tobeParentItem.AddExistingItem(item);
+            item.ParentItem.RemoveItem(item);
+
+            ((IUXContainer)tobeParentItem).Canvas.Children.Add((UIElement)item);
+
+            needRebuildItemsDictionary = true;
+
+            ////////////////////////////////////////
+            Interaction.EndInteractionWithGraph();
+            ////////////////////////////////////////
         }
 
         // IHasLocalizableEdges
@@ -2349,6 +2378,12 @@ namespace m0.UIWpf.UX
             IEdge newEdge = VertexOperations.AddInstanceAndReturnEdge(Vertex, typeVertex, Item_meta);
 
             return (IItem)TypedEdge.Get(newEdge);
+        }
+
+        public void AddExistingItem(IItem item)
+        {
+            Vertex.AddEdge(Item_meta, item.Vertex);
+            item.ParentItem = this;
         }
 
         public void RemoveItem(IItem item)

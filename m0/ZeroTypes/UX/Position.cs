@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 
 namespace m0.ZeroTypes.UX
 {
@@ -15,7 +16,10 @@ namespace m0.ZeroTypes.UX
 
         public Position(IEdge edge) : base(edge) { }
 
-        //p
+        public Point GetPoint()
+        {
+            return new Point(X, Y);
+        }
 
         public double X
         {
