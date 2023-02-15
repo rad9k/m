@@ -1397,7 +1397,7 @@ namespace m0.UIWpf.UX
 
         public IUXItem GetItemByPoint(Point p)
         {
-            IUXItem itemToReturn = null;
+            IUXItem itemToReturn = this;
 
             int highestNestingLevel = -1;
 
@@ -1405,12 +1405,13 @@ namespace m0.UIWpf.UX
             {
                 IUXItem i = GetUXItem(_i);
 
-                if (i == null)
+                if (i == null || !(i is IUXContainer))
                     continue;
 
-                UIElement i_UIElement = (UIElement)i;
+                Canvas c = ((IUXContainer)i).Canvas;
 
-                if (VisualTreeHelper.HitTest(i_UIElement, TranslatePoint(p, i_UIElement)) != null)                                  
+
+                if (VisualTreeHelper.HitTest(c, TranslatePoint(p, c)) != null)                                  
                     if (i.ItemNestingLevel > highestNestingLevel)
                     {
                         itemToReturn = i;
@@ -1458,12 +1459,23 @@ namespace m0.UIWpf.UX
             Interaction.BeginInteractionWithGraph();
             ////////////////////////////////////////
 
-            ((IUXContainer)item.ParentItem).Canvas.Children.Remove((UIElement)item);
+            IUXContainer OldParentItem = (IUXContainer)item.ParentItem;
+            IUXContainer NewParentItem = (IUXContainer)tobeParentItem;
+
+            OldParentItem.Canvas.Children.Remove((UIElement)item);
 
             tobeParentItem.AddExistingItem(item);
-            item.ParentItem.RemoveItem(item);
+            item.ParentItem.RemoveItem(item);            
 
-            ((IUXContainer)tobeParentItem).Canvas.Children.Add((UIElement)item);
+            NewParentItem.Canvas.Children.Add((UIElement)item);
+
+            Point newPosition = OldParentItem.Canvas.TranslatePoint(item.Position.GetPoint(), NewParentItem.Canvas);
+
+            //Point newPosition = NewParentItem.Canvas.TranslatePoint(item.Position.GetPoint(), OldParentItem.Canvas);
+
+            Position p = item.Position;
+            p.X = newPosition.X;
+            p.Y = newPosition.Y;
 
             needRebuildItemsDictionary = true;
 

@@ -261,7 +261,7 @@ namespace m0.ZeroTypes.UX
         {
             IsHighlighted = true;
 
-            Panel.SetZIndex(this, 99999);
+            Panel.SetZIndex(this, 99998);
         }
 
         public virtual void Unhighlight()
