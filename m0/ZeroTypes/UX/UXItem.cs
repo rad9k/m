@@ -56,7 +56,7 @@ namespace m0.ZeroTypes.UX
         {
             ItemNestingLevel = 0;
 
-            edge = _edge;
+            Edge = _edge;
 
             vertex = _edge.To;
 
@@ -281,7 +281,7 @@ namespace m0.ZeroTypes.UX
             if (Position == null)
                 return;
 
-            if (!(ParentItem is IUXVisualiser))
+            if (!(ParentItem is IUXVisualiser) && ParentItem != null)
             {
                 Point localCanvasPosition = localCanvasPosition = Diagram.Canvas.TranslatePoint(new Point(x, y), ((IUXContainer)ParentItem).Canvas);
 
@@ -356,7 +356,7 @@ namespace m0.ZeroTypes.UX
             double x = x_orginal;
             double y = y_orginal;
 
-            if (!(ParentItem is IUXVisualiser))
+            if (!(ParentItem is IUXVisualiser) && ParentItem != null)
             {
                 Point localCanvasPosition = Diagram.Canvas.TranslatePoint(new Point(x, y), ((IUXContainer)ParentItem).Canvas);
 
@@ -1591,9 +1591,13 @@ namespace m0.ZeroTypes.UX
             return (IItem)TypedEdge.Get(newEdge);
         }
 
-        public void AddExistingItem(IItem item)
+        public void MoveExistingItemHere(IItem item)
         {
-            Vertex.AddEdge(Item_meta, item.Vertex);
+            item.Edge.From.DeleteEdge(item.Edge);
+
+            IEdge e = Vertex.AddEdge(Item_meta, item.Vertex);                       
+            item.Edge = e;
+
             item.ParentItem = this;
         }
 
@@ -1603,9 +1607,8 @@ namespace m0.ZeroTypes.UX
         }
 
         // TypedEdge
-
-        IEdge edge;
-        public IEdge Edge { get { return edge; } }
+        
+        public IEdge Edge { get; set; }
 
         IVertex vertex;
         public IVertex Vertex

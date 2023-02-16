@@ -11,20 +11,19 @@ namespace m0.ZeroTypes
     public class TypedEdge : ITypedEdge
     {
         public static Dictionary<IVertex, ITypedEdge> vertexDictionary = new Dictionary<IVertex, ITypedEdge>();
-
-        IEdge edge;
-        public IEdge Edge { get { return edge; } }
+        
+        public IEdge Edge { get; set; }
 
         IVertex vertex;
         public IVertex Vertex { get { return vertex; } }
 
         public TypedEdge(IEdge _edge)
         {
-            edge = _edge;
+            Edge = _edge;
 
             vertex = _edge.To;
 
-            if (!vertexDictionary.ContainsKey(this.edge.To))
+            if (!vertexDictionary.ContainsKey(this.Edge.To))
                 vertexDictionary.Add(this.Edge.To, this);
         }
 

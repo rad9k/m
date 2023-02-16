@@ -329,8 +329,5 @@ namespace m0.ZeroTypes.UX
                     val.Value = value;
             }
         }
-
-
-
     }
 }

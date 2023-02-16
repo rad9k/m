@@ -806,25 +806,26 @@ namespace m0.Graph
         static public int? GetIntegerValue(IVertex Vertex)
         {
             if (Vertex != null && Vertex.Value != null)
-                {
+            {
                 if (Vertex.Value is int)
                     return (int)Vertex.Value;
 
                 if (Vertex.Value is string)
-                    {
-                        int r;
-                        if (Int32.TryParse((string)Vertex.Value, out r))
-                            return r;
+                {
+                    int r;
+                    if (Int32.TryParse((string)Vertex.Value, out r))
+                        return r;
 
-                        return null; // optimisation
-                    }                    
+                    return null; // optimisation
                 }
 
-            try
-            {
-                return Convert.ToInt32(Vertex.Value);
+
+                try
+                {
+                    return Convert.ToInt32(Vertex.Value);
+                }
+                catch (Exception e) { }
             }
-            catch (Exception e) { }
 
             return null;
         }

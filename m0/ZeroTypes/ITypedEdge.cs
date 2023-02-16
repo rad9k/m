@@ -9,7 +9,7 @@ namespace m0.ZeroTypes
 {
     public interface ITypedEdge
     {
-        IEdge Edge { get; }
+        IEdge Edge { get; set; }
 
         IVertex Vertex { get; }
     }

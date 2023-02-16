@@ -103,7 +103,7 @@ namespace m0.UIWpf.UX
 
         public UXVisualiser(IEdge _edge)
         {
-            edge = _edge;
+            Edge = _edge;
 
             vertex = _edge.To;
 
@@ -1425,24 +1425,28 @@ namespace m0.UIWpf.UX
 
         public void CheckAndUpdateItemComposition(IUXItem item)
         {
-            Position itemPosition = item.Position;
+            Position itemPosition_relative = item.Position;
             ZeroTypes.UX.Size itemSize = item.Size;
+
+            Point itemPosition_absolute = ((IUXContainer)item.ParentItem).Canvas.TranslatePoint(itemPosition_relative.GetPoint(), Canvas);
+
+
 
             if (item.ParentItem == this || item.ParentItem == null)
             {
-                IUXItem toBeParentItem = GetItemByPoint(item.Position.GetPoint());
+                IUXItem toBeParentItem = GetItemByPoint(itemPosition_absolute);
 
-                if(toBeParentItem != null)
+                if(toBeParentItem != null && toBeParentItem != this)
                     MoveToParentItem(item, toBeParentItem);
             }
             else {
                 ZeroTypes.UX.Size itemParentSize = ((IUXItem)item.ParentItem).Size;
 
-                if (itemPosition.X < 0 || itemPosition.Y < 0 || 
-                    (itemPosition.X + itemSize.Width) > itemParentSize.Width ||
-                    (itemPosition.Y + itemSize.Height) > itemParentSize.Height)
+                if (itemPosition_relative.X < 0 || itemPosition_relative.Y < 0 || 
+                    (itemPosition_relative.X + itemSize.Width) > itemParentSize.Width ||
+                    (itemPosition_relative.Y + itemSize.Height) > itemParentSize.Height)
                 {
-                    IUXItem toBeParentItem = GetItemByPoint(itemPosition.GetPoint());
+                    IUXItem toBeParentItem = GetItemByPoint(itemPosition_absolute);
 
                     if (toBeParentItem == null)
                         toBeParentItem = this;
@@ -1463,10 +1467,9 @@ namespace m0.UIWpf.UX
             IUXContainer NewParentItem = (IUXContainer)tobeParentItem;
 
             OldParentItem.Canvas.Children.Remove((UIElement)item);
-
-            tobeParentItem.AddExistingItem(item);
-            item.ParentItem.RemoveItem(item);            
-
+            
+            tobeParentItem.MoveExistingItemHere(item);
+            
             NewParentItem.Canvas.Children.Add((UIElement)item);
 
             Point newPosition = OldParentItem.Canvas.TranslatePoint(item.Position.GetPoint(), NewParentItem.Canvas);
@@ -1702,8 +1705,6 @@ namespace m0.UIWpf.UX
             Interaction.EndInteractionWithGraph();
             //////////////////////////////////////// 
         }
-
-
 
         //
 
@@ -2381,9 +2382,7 @@ namespace m0.UIWpf.UX
 
                 return ret;
             }
-        }
-
-        // AddItem is higher
+        }        
 
         public IItem AddItem(IVertex typeVertex)
         {
@@ -2392,9 +2391,13 @@ namespace m0.UIWpf.UX
             return (IItem)TypedEdge.Get(newEdge);
         }
 
-        public void AddExistingItem(IItem item)
+        public void MoveExistingItemHere(IItem item)
         {
-            Vertex.AddEdge(Item_meta, item.Vertex);
+            item.Edge.From.DeleteEdge(item.Edge);
+
+            IEdge e = Vertex.AddEdge(Item_meta, item.Vertex);
+            item.Edge = e;
+
             item.ParentItem = this;
         }
 
@@ -2403,9 +2406,7 @@ namespace m0.UIWpf.UX
             Vertex.DeleteEdge(item.Edge);
         }
 
-        // TypedEdge
-
-        IEdge edge;
-        public IEdge Edge { get { return edge; } }
+        // TypedEdge        
+        public IEdge Edge { get; set; }
     }
 }

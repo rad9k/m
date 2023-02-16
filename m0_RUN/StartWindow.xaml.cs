@@ -96,10 +96,10 @@ namespace m0
 
             //x_vertex.AddEdge(x_vertex, x_vertex);
 
-            IVertex z_vertex = x_vertex.AddVertex(x_vertex, "Z");            
+            IVertex z_vertex =  x_vertex.AddVertex(x_vertex, "Z");            
 
             IVertex x1_vertex = e.AddVertex(null, "X1");
-            IVertex x2_vertex = null;// e.AddVertex(null, "X2");
+            IVertex x2_vertex = e.AddVertex(null, "X2");
 
             IVertex z1_vertex = x_vertex.AddVertex(x_vertex, "Z1");
             IVertex z2_vertex = null; // x_vertex.AddVertex(x_vertex, "Z2");
@@ -123,9 +123,9 @@ namespace m0
 
             UXAdd2(xi, x1_vertex, x2_vertex);
 
-            IUXItem zi = UXAdd(200, 200, a, z_vertex);
+            //IUXItem zi = UXAdd(200, 200, a, z_vertex);
 
-            UXAdd2(zi, z1_vertex, z2_vertex);
+            //UXAdd2(zi, z1_vertex, z2_vertex);
         }
 
         IUXItem UXAdd(double x, double y, UXItem a, IVertex v)
