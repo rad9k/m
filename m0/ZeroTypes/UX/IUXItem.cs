@@ -14,7 +14,7 @@ namespace m0.ZeroTypes.UX
 {
     public interface IUXItem: IItem, IDisposable
     {           
-        int ItemNestingLevel { get; set; }
+        int NestingLevel { get; set; }
 
         IUXVisualiser Diagram { get; set; }        
 

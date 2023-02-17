@@ -30,7 +30,7 @@ namespace m0.ZeroTypes.UX
 
     public class UXItem : UserControl, IUXItem, IPlatformClass
     {
-        public int ItemNestingLevel { get; set; }
+        public int NestingLevel { get; set; }
 
         public IItem ParentItem { get; set; }
 
@@ -54,7 +54,7 @@ namespace m0.ZeroTypes.UX
 
         public UXItem(IEdge _edge)
         {
-            ItemNestingLevel = 0;
+            NestingLevel = 0;
 
             Edge = _edge;
 
@@ -1451,7 +1451,7 @@ namespace m0.ZeroTypes.UX
             item.ParentItem = this;
 
             if (item is IUXItem)
-                ((IUXItem)item).ItemNestingLevel = ItemNestingLevel + 1;
+                ((IUXItem)item).NestingLevel = NestingLevel + 1;
         }
 
         public void RemoveItem(IItem item)

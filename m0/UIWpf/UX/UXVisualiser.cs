@@ -40,7 +40,7 @@ namespace m0.UIWpf.UX
     {
         static IVertex systemMetaBaseVertex = m0.MinusZero.Instance.Root.Get(false, @"System\Meta\Base\Vertex");
 
-        public int ItemNestingLevel { get; set; }
+        public int NestingLevel { get; set; }
 
         public IItem ParentItem { get; set; }
 
@@ -112,7 +112,7 @@ namespace m0.UIWpf.UX
 
             IsVisualiser = false;
 
-            ItemNestingLevel = 0;
+            NestingLevel = 0;
         }
 
         //
@@ -384,7 +384,7 @@ namespace m0.UIWpf.UX
             
             host.Canvas.Children.Add(item_UIElement);
 
-            item.ItemNestingLevel = host.ItemNestingLevel + 1;
+            item.NestingLevel = host.NestingLevel + 1;
 
             //                     
 
@@ -824,36 +824,7 @@ namespace m0.UIWpf.UX
             {
                 toHighlightItem.Highlight();
                 HighlightedItem = toHighlightItem;
-            }
-
-            /*foreach (IItem _i in Items_all)
-                {
-                    IUXItem i = GetUXItem(_i);
-
-                    if (i == null || !(i is UIElement))
-                        continue;
-
-                    UIElement i_UIElement = (UIElement)i;
-
-                    if (VisualTreeHelper.HitTest(i_UIElement, TranslatePoint(p, i_UIElement)) != null)
-                    {
-                        if (HighlightedItem == null)
-                        {
-                            i.Highlight();
-
-                            HighlightedItem = i;
-                        }
-                    }
-                    else
-                    {
-                        if (HighlightedItem == i)
-                        {
-                            HighlightedItem = null;
-
-                            i.Unhighlight();
-                        }
-                    }
-                }*/
+            }            
         }
 
         protected void CreateAndUpdateMoveDiagramLine(double ToX, double ToY)
@@ -880,37 +851,18 @@ namespace m0.UIWpf.UX
 
             CreateOrMoveDiagramLine.X2 = ToX;
             CreateOrMoveDiagramLine.Y2 = ToY;
-
+            
             Point p = new Point(ToX, ToY);
 
-            foreach (IItem _i in Items_all)
+            UnhighlightAllSelectedEdges_noDecorators();
+
+            IUXItem toHighlightItem = GetItemByPoint(p);
+
+            if (toHighlightItem != null)
             {
-                IUXItem i = GetUXItem(_i);
-
-                if (i == null || !(i is UIElement))
-                    continue;
-
-                UIElement i_UIElement = (UIElement)i;
-
-                if (VisualTreeHelper.HitTest(i_UIElement, TranslatePoint(p, i_UIElement)) != null)
-                {
-                    if (HighlightedItem == null)
-                    {
-                        i.Highlight();
-
-                        HighlightedItem = i;
-                    }
-                }
-                else
-                {
-                    if (HighlightedItem == i)
-                    {
-                        HighlightedItem = null;
-
-                        i.Unhighlight();
-                    }
-                }
-            }
+                toHighlightItem.Highlight();
+                HighlightedItem = toHighlightItem;
+            }            
         }
 
         bool IsMultiSelectionMoving = false;
@@ -928,7 +880,7 @@ namespace m0.UIWpf.UX
                 foreach (IEdge ed in Vertex.GetAll(false, @"SelectedEdges:\{$Is:Edge}"))
                     foreach (IUXItem item in GetItemsByBaseEdge(ed.To))
                     {
-                        if (!(item is FrameworkElement))
+                        if (!(item is FrameworkElement) || item.NestingLevel != 1)
                             continue;
 
                         FrameworkElement item_FrameworkElement = (FrameworkElement)item;
@@ -976,6 +928,7 @@ namespace m0.UIWpf.UX
 
             foreach (IEdge ed in Vertex.GetAll(false, @"SelectedEdges:\{$Is:Edge}"))
                 foreach (IUXItem item in GetItemsByBaseEdge(ed.To))
+                    if(item.NestingLevel == 1)
                         item.MoveItem(item.Position.X + x, item.Position.Y + y);
 
             ////////////////////////////////////////
@@ -1404,11 +1357,9 @@ namespace m0.UIWpf.UX
             }
         }
 
-
-
-        public IUXItem GetItemByPoint(Point p)
+        public IUXContainer GetItemByPoint_ByCanvas(Point p)
         {
-            IUXItem itemToReturn = this;
+            IUXContainer itemToReturn = null;
 
             int highestNestingLevel = -1;
 
@@ -1419,21 +1370,51 @@ namespace m0.UIWpf.UX
                 if (i == null || !(i is IUXContainer))
                     continue;
 
-                Canvas c = ((IUXContainer)i).Canvas;
+                Canvas item_canvas = ((IUXContainer)i).Canvas;
+                
+                Point item_absolute = item_canvas.TranslatePoint(new Point(0, 0), Canvas);
+                FrameworkElement item_FrameworkElement = (FrameworkElement)i;        
 
+                if (item_absolute.X <= p.X &&
+                    item_absolute.Y <= p.Y &&
+                    p.X <= item_absolute.X + item_FrameworkElement.ActualWidth &&
+                    p.Y <= item_absolute.Y + item_FrameworkElement.ActualHeight)
+                    if (i.NestingLevel > highestNestingLevel)
+                    {
+                        itemToReturn = (IUXContainer)i;
+                        highestNestingLevel = i.NestingLevel;
+                    }               
+            }            
 
-                if (VisualTreeHelper.HitTest(c, TranslatePoint(p, c)) != null)                                  
-                    if (i.ItemNestingLevel > highestNestingLevel)
+            return itemToReturn;
+        }
+
+        public IUXItem GetItemByPoint(Point p)
+        {
+            IUXItem itemToReturn = null;
+
+            int highestNestingLevel = -1;
+
+            foreach (IItem _i in Items_all)
+            {
+                IUXItem i = GetUXItem(_i);
+
+                if (i == null)
+                    continue;
+
+                FrameworkElement item_FrameworkElement = (FrameworkElement)i;
+
+                Point item_absolute = item_FrameworkElement.TranslatePoint(new Point(0, 0), Canvas);
+                
+                if (item_absolute.X <= p.X &&
+                    item_absolute.Y <= p.Y &&
+                    p.X <= item_absolute.X + item_FrameworkElement.ActualWidth &&
+                    p.Y <= item_absolute.Y + item_FrameworkElement.ActualHeight)
+                    if (i.NestingLevel > highestNestingLevel)
                     {
                         itemToReturn = i;
-                        highestNestingLevel = i.ItemNestingLevel;
+                        highestNestingLevel = i.NestingLevel;
                     }
-                
-            }
-
-            if (itemToReturn.ItemNestingLevel == 2)
-            {
-                int x = 0;
             }
 
             return itemToReturn;
@@ -1449,7 +1430,7 @@ namespace m0.UIWpf.UX
 
             if (item.ParentItem == this || item.ParentItem == null)
             {
-                IUXItem toBeParentItem = GetItemByPoint(itemPosition_absolute);
+                IUXItem toBeParentItem = GetItemByPoint_ByCanvas(itemPosition_absolute);
 
                 if(toBeParentItem != null && toBeParentItem != this)
                     MoveToParentItem(item, toBeParentItem);
@@ -1461,7 +1442,7 @@ namespace m0.UIWpf.UX
                     (itemPosition_relative.X + item_FrameworkElement.ActualWidth) > itemParent_FrameworkElement.ActualWidth ||
                     (itemPosition_relative.Y + item_FrameworkElement.Height) > itemParent_FrameworkElement.ActualHeight)
                 {
-                    IUXItem toBeParentItem = GetItemByPoint(itemPosition_absolute);
+                    IUXItem toBeParentItem = GetItemByPoint_ByCanvas(itemPosition_absolute);
 
                     if (toBeParentItem == null)
                         toBeParentItem = this;
@@ -1535,7 +1516,7 @@ namespace m0.UIWpf.UX
 
        /////////////////////////////
 
-        private void AddDiagramItemDialog(double x, double y, IVertex vv, bool isSet, DragEventArgs e)
+        private void AddDiagramItemDialog(Point p, IVertex vv, bool isSet, DragEventArgs e)
         {
             IVertex r = m0.MinusZero.Instance.Root;
 
@@ -1556,8 +1537,7 @@ namespace m0.UIWpf.UX
                     if (ndi.UXTemplate.ForceShowEditForm)
                         MinusZero.Instance.DefaultUserInteraction.Edit(ve.To, WpfUtil.GetMousePositionDnd(e));
          
-                    AddDiagramItem(x,
-                                   y,
+                    AddDiagramItem(p,
                                    ndi.UXTemplate,
                                    ndi.BaseEdge.Get(false, "To:"), v);
                 }
@@ -1584,8 +1564,7 @@ namespace m0.UIWpf.UX
                         if (ThereIsDiagramItemOfThisBaseEdgeTo == false ||
                             GeneralUtil.CompareStrings(r.Get(false, @"User\CurrentUser:\Settings:\AllowManyUXItemsWithSameBaseEdgeTo:").Value, "True"))
                         {
-                            AddDiagramItem(x,
-                                        y,
+                            AddDiagramItem(p,
                                         ndi.UXTemplate,
                                         ndi.BaseEdge);
                         }
@@ -1735,7 +1714,7 @@ namespace m0.UIWpf.UX
 
                 IVertex dndVertex = e.Data.GetData("Vertex") as IVertex;
 
-                double x = e.GetPosition(Canvas).X, y = e.GetPosition(Canvas).Y;
+                Point p = e.GetPosition(Canvas);                
 
                 bool isSet = false;
 
@@ -1751,9 +1730,9 @@ namespace m0.UIWpf.UX
 
                 foreach (IEdge eee in dndVertex)
                 {
-                    AddDiagramItemDialog(x,y, eee.To,isSet,e);
-                    x += 25;
-                    y += 25;
+                    AddDiagramItemDialog(p, eee.To,isSet,e);
+                    p.X += 25;
+                    p.Y += 25;
                 }
 
                 ////////////////////////////////////////
@@ -1776,8 +1755,8 @@ namespace m0.UIWpf.UX
             }
         }
 
-        private IUXItem AddDiagramItem_Base(double x, double y , UXTemplate UXTemplate){
-            IItem _i = AddItem(UXTemplate.ItemClass);
+        private IUXItem AddDiagramItem_Base(IUXContainer host, Point p, UXTemplate UXTemplate){
+            IItem _i = host.AddItem(UXTemplate.ItemClass);
 
             if (!(_i is IUXItem))
                 return null;
@@ -1786,8 +1765,8 @@ namespace m0.UIWpf.UX
             IUXItem i = (IUXItem)_i;
 
             i.PositionCreate();
-            i.Position.X = x;
-            i.Position.Y = y;
+            i.Position.X = p.X;
+            i.Position.Y = p.Y;
             i.UXTemplate = UXTemplate;
              
             if (UXTemplate.ItemVertex != null)
@@ -1796,25 +1775,51 @@ namespace m0.UIWpf.UX
             return i;
         }
 
-        public void AddDiagramItem(double x, double y, UXTemplate UXTemplate, IVertex BaseEdge){
-            IUXItem i = AddDiagramItem_Base(x, y, UXTemplate);
+        public void AddDiagramItem(Point p, UXTemplate UXTemplate, IVertex BaseEdge){
+            IUXContainer host = GetItemByPoint_ByCanvas(p);
+
+            Point p_translated = new Point(p.X, p.Y);
+
+            if (host == null)
+                host = this;
+            else
+                p_translated = Canvas.TranslatePoint(p, host.Canvas);
+
+            //
+
+            IUXItem i = AddDiagramItem_Base(host, p_translated, UXTemplate);
 
             IVertex edge = GraphUtil.CreateOrReplaceEdgeByValue(i.Vertex, BaseEdge_meta, "");
 
             EdgeHelper.AddEdgeVertexEdgesByEdgeVertex(edge, BaseEdge);      
 
-            HostItem(this, i);            
+            //
+
+            HostItem(host, i);            
         }
 
-        public void AddDiagramItem(double x, double y, UXTemplate UXTemplate, IVertex metaVertex,IVertex newVertex)
+        public void AddDiagramItem(Point p, UXTemplate UXTemplate, IVertex metaVertex, IVertex newVertex)
         {
-            IUXItem i = AddDiagramItem_Base(x, y, UXTemplate);
+            IUXContainer host = GetItemByPoint_ByCanvas(p);
+
+            Point p_translated = new Point(p.X, p.Y);
+
+            if (host == null)
+                host = this;
+            else
+                p_translated = Canvas.TranslatePoint(p, host.Canvas);            
+
+            IUXItem i = AddDiagramItem_Base(host, p_translated, UXTemplate);
+
+            //
 
             IVertex be = i.Vertex.Get(false, "BaseEdge:");
 
             EdgeHelper.AddEdgeVertexEdgesOnlyMetaTo(be, metaVertex, newVertex);
 
-            HostItem(this, i);
+            //
+
+            HostItem(host, i);
         }
 
         public void CheckAndUpdateDiagramLines()
