@@ -23,6 +23,7 @@ using m0.UIWpf.Visualisers.Helper;
 using m0.User.Process.UX;
 using m0.ZeroTypes.UX;
 using m0.ZeroCode.Helpers;
+using System.Security.Cryptography;
 
 namespace m0.UIWpf.UX
 {
@@ -1426,9 +1427,18 @@ namespace m0.UIWpf.UX
         public void CheckAndUpdateItemComposition(IUXItem item)
         {
             Position itemPosition_relative = item.Position;
-            ZeroTypes.UX.Size itemSize = item.Size;
+            //ZeroTypes.UX.Size itemSize = item.Size;
 
-            Point itemPosition_absolute = ((IUXContainer)item.ParentItem).Canvas.TranslatePoint(itemPosition_relative.GetPoint(), Canvas);
+            FrameworkElement item_FrameworkElement = (FrameworkElement)item;
+
+            Point itemPosition_relative_point = itemPosition_relative.GetPoint();
+
+            Point itemPosition_absolute = itemPosition_relative_point;
+
+            if(item.ParentItem != null)
+                itemPosition_absolute = ((IUXContainer)item.ParentItem).Canvas.TranslatePoint(itemPosition_relative_point, Canvas);
+
+            //Point itemPosition_absolute = Canvas.TranslatePoint(itemPosition_relative.GetPoint(), ((IUXContainer)item.ParentItem).Canvas);
 
 
 
@@ -1440,11 +1450,12 @@ namespace m0.UIWpf.UX
                     MoveToParentItem(item, toBeParentItem);
             }
             else {
-                ZeroTypes.UX.Size itemParentSize = ((IUXItem)item.ParentItem).Size;
+                //ZeroTypes.UX.Size itemParentSize = ((IUXItem)item.ParentItem).Size;
+                FrameworkElement itemParent_FrameworkElement = (FrameworkElement)item.ParentItem;
 
                 if (itemPosition_relative.X < 0 || itemPosition_relative.Y < 0 || 
-                    (itemPosition_relative.X + itemSize.Width) > itemParentSize.Width ||
-                    (itemPosition_relative.Y + itemSize.Height) > itemParentSize.Height)
+                    (itemPosition_relative.X + item_FrameworkElement.ActualWidth) > itemParent_FrameworkElement.ActualWidth ||
+                    (itemPosition_relative.Y + item_FrameworkElement.Height) > itemParent_FrameworkElement.ActualHeight)
                 {
                     IUXItem toBeParentItem = GetItemByPoint(itemPosition_absolute);
 
@@ -1466,6 +1477,9 @@ namespace m0.UIWpf.UX
             IUXContainer OldParentItem = (IUXContainer)item.ParentItem;
             IUXContainer NewParentItem = (IUXContainer)tobeParentItem;
 
+            if (OldParentItem == null)
+                OldParentItem = this;
+
             OldParentItem.Canvas.Children.Remove((UIElement)item);
             
             tobeParentItem.MoveExistingItemHere(item);
@@ -1479,6 +1493,9 @@ namespace m0.UIWpf.UX
             Position p = item.Position;
             p.X = newPosition.X;
             p.Y = newPosition.Y;
+
+            Canvas.SetLeft((UIElement)item, p.X);
+            Canvas.SetTop((UIElement)item, p.Y);
 
             needRebuildItemsDictionary = true;
 
