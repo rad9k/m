@@ -25,7 +25,7 @@ namespace m0.ZeroTypes.UX
 
         IItem AddItem(IVertex typeVertex);
 
-        void MoveExistingItemHere(IItem item);
+        void MoveExistingItemAsSubItem(IItem item);
 
         void RemoveItem(IItem item);
     }

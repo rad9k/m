@@ -686,11 +686,6 @@ namespace m0.ZeroTypes.UX
                 HighlightThisAndAllConectedByDiagramLine();
         }
 
-        /*protected void DiagramItemBase_SizeChanged(object sender, SizeChangedEventArgs e)
-        {
-            UpdateAnchors(Canvas.GetLeft(this), Canvas.GetTop(this), this.ActualWidth, this.ActualHeight);
-        }*/
-
         private bool CanAutomaticallyAddEdges = true;
 
         public void RemoveFromSelectedEdges()
@@ -712,9 +707,6 @@ namespace m0.ZeroTypes.UX
 
             Diagram.ClickPositionX_ItemCordinates = e.GetPosition(this).X;
             Diagram.ClickPositionY_ItemCordinates = e.GetPosition(this).Y;
-
-            //Diagram.ClickPositionX_ItemCordinates = e.GetPosition(Diagram.Canvas).X;
-            //Diagram.ClickPositionY_ItemCordinates = e.GetPosition(Diagram.Canvas).Y;
 
             Diagram.ClickTarget = ClickTargetEnum.Item;
             Diagram.ClickedItem = this;
@@ -952,20 +944,10 @@ namespace m0.ZeroTypes.UX
 
             Point thisLeftTop = new Point();
 
-            /*if(this.ItemParent is IUXVisualiser && _toItem.ItemParent is IUXVisualiser)
-            {
-                toItemLeftTop.X = Canvas.GetLeft(toItem);
-                toItemLeftTop.Y = Canvas.GetTop(toItem);
+   
+            toItemLeftTop = toItem.TranslatePoint(new Point(0, 0), Diagram.Canvas);
 
-                thisLeftTop.X = Canvas.GetLeft(this);
-                thisLeftTop.Y = Canvas.GetTop(this);
-            }
-            else*/
-            {
-                toItemLeftTop = toItem.TranslatePoint(new Point(0, 0), Diagram.Canvas);
-
-                thisLeftTop = TranslatePoint(new Point(0, 0), Diagram.Canvas);
-            }
+            thisLeftTop = TranslatePoint(new Point(0, 0), Diagram.Canvas);
 
             //
 
@@ -1081,139 +1063,7 @@ namespace m0.ZeroTypes.UX
 
             return p;
         }
-
-        /*public virtual Point GetLineAnchorLocation(IUXItem _toItem, int toItemDiagramLinesCount, int toItemDiagramLinesNumber, bool isSelfStart)
-        {
-            if (!(_toItem is FrameworkElement))
-                return new Point();
-
-            FrameworkElement toItem = (FrameworkElement)_toItem;
-
-
-            Point p = new Point();
-
-            Point pTo = new Point();
-
-            if (toItem != null)
-            {
-                pTo.X = Canvas.GetLeft(toItem) + toItem.ActualWidth / 2;
-                pTo.Y = Canvas.GetTop(toItem) + toItem.ActualHeight / 2;
-            }
-            else
-                pTo = new Point();
-
-            double tX = Canvas.GetLeft(this) + this.ActualWidth / 2;
-            double tY = Canvas.GetTop(this) + this.ActualHeight / 2;
-
-            double testX = pTo.X - tX;
-            double testY = pTo.Y - tY;
-
-            if (testX == 0) testX = 0.001;
-            if (testY == 0) testY = 0.001;
-
-            if (toItemDiagramLinesCount > 1)
-            {
-                if (toItem == this)
-                {
-                    if (isSelfStart)
-                    {
-                        p.X = Canvas.GetLeft(this) + (((double)toItemDiagramLinesNumber + 1) / ((double)toItemDiagramLinesCount + 1) * this.ActualWidth);
-                        p.Y = tY - this.ActualHeight / 2;
-
-                        return p;
-                    }
-                    else
-                    {
-                        p.X = tX + this.ActualWidth / 2;
-                        p.Y = Canvas.GetTop(this) + (((double)(toItemDiagramLinesCount - toItemDiagramLinesNumber)) / ((double)toItemDiagramLinesCount + 1) * this.ActualHeight);
-
-                        return p;
-                    }
-                }
-
-                if (testY <= 0 && Math.Abs(testX * this.ActualHeight) <= Math.Abs(testY * this.ActualWidth))
-                {
-                    p.X = Canvas.GetLeft(this) + (((double)toItemDiagramLinesNumber + 1) / ((double)toItemDiagramLinesCount + 1) * this.ActualWidth);
-                    p.Y = tY - this.ActualHeight / 2;
-                }
-
-                if (testY > 0 && Math.Abs(testX * this.ActualHeight) <= Math.Abs(testY * this.ActualWidth))
-                {
-                    p.X = Canvas.GetLeft(this) + (((double)toItemDiagramLinesNumber + 1) / ((double)toItemDiagramLinesCount + 1) * this.ActualWidth);
-                    p.Y = tY + this.ActualHeight / 2;
-                }
-
-                if (testX >= 0 && Math.Abs(testX * this.ActualHeight) >= Math.Abs(testY * this.ActualWidth))
-                {
-                    p.X = tX + this.ActualWidth / 2;
-                    p.Y = Canvas.GetTop(this) + (((double)toItemDiagramLinesNumber + 1) / ((double)toItemDiagramLinesCount + 1) * this.ActualHeight);
-                }
-
-                if (testX <= 0 && Math.Abs(testX * this.ActualHeight) >= Math.Abs(testY * this.ActualWidth))
-                {
-                    p.X = tX - this.ActualWidth / 2;
-                    p.Y = Canvas.GetTop(this) + (((double)toItemDiagramLinesNumber + 1) / ((double)toItemDiagramLinesCount + 1) * this.ActualHeight);
-                }
-            }
-            else
-            {
-                if (toItem == this)
-                {
-                    if (isSelfStart)
-                    {
-                        p.X = tX;
-                        p.Y = tY - this.ActualHeight / 2;
-
-                        return p;
-                    }
-                    else
-                    {
-                        p.X = tX + this.ActualWidth / 2;
-                        p.Y = tY;
-
-                        return p;
-                    }
-                }
-
-                if (testY <= 0 && Math.Abs(testX * this.ActualHeight) <= Math.Abs(testY * this.ActualWidth))
-                {
-                    p.X = tX - (this.ActualHeight / 2 * testX / testY);
-                    p.Y = tY - this.ActualHeight / 2;
-                }
-
-                if (testY > 0 && Math.Abs(testX * this.ActualHeight) <= Math.Abs(testY * this.ActualWidth))
-                {
-                    p.X = tX + (this.ActualHeight / 2 * testX / testY);
-                    p.Y = tY + this.ActualHeight / 2;
-                }
-
-                if (testX >= 0 && Math.Abs(testX * this.ActualHeight) >= Math.Abs(testY * this.ActualWidth))
-                {
-                    p.X = tX + this.ActualWidth / 2;
-                    p.Y = tY + (this.ActualWidth / 2 * testY / testX);
-                }
-
-                if (testX <= 0 && Math.Abs(testX * this.ActualHeight) >= Math.Abs(testY * this.ActualWidth))
-                {
-                    p.X = tX - this.ActualWidth / 2;
-                    p.Y = tY - (this.ActualWidth / 2 * testY / testX);
-                }
-            }
-
-            return p;
-        }*/
-
-        //
-
-        /*public UXItem(IEdge _edge)
-        {
-            edge = _edge;
-
-            vertex = _edge.To;
-
-            TypedEdge.vertexDictionary.Add(this.Edge.To, this);
-        }*/
-
+  
         // UNDER
 
         // UXItem
@@ -1591,7 +1441,7 @@ namespace m0.ZeroTypes.UX
             return (IItem)TypedEdge.Get(newEdge);
         }
 
-        public void MoveExistingItemHere(IItem item)
+        public void MoveExistingItemAsSubItem(IItem item)
         {
             item.Edge.From.DeleteEdge(item.Edge);
 
@@ -1599,6 +1449,9 @@ namespace m0.ZeroTypes.UX
             item.Edge = e;
 
             item.ParentItem = this;
+
+            if (item is IUXItem)
+                ((IUXItem)item).ItemNestingLevel = ItemNestingLevel + 1;
         }
 
         public void RemoveItem(IItem item)

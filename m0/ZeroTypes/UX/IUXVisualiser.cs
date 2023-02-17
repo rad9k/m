@@ -60,8 +60,6 @@ namespace m0.ZeroTypes.UX
 
         void CheckAndUpdateDiagramLinesForItem(IUXItem item);
 
-        IUXItem GetItemByPoint(Point p);
-
         void CheckAndUpdateItemComposition(IUXItem item);
     }
 

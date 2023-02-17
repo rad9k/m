@@ -111,6 +111,8 @@ namespace m0.UIWpf.UX
             TypedEdge.vertexDictionary.Add(this.Edge.To, this);
 
             IsVisualiser = false;
+
+            ItemNestingLevel = 0;
         }
 
         //
@@ -380,7 +382,9 @@ namespace m0.UIWpf.UX
             Canvas.SetTop(item_UIElement, item.Position.Y);
 
             
-            host.Canvas.Children.Add(item_UIElement);            
+            host.Canvas.Children.Add(item_UIElement);
+
+            item.ItemNestingLevel = host.ItemNestingLevel + 1;
 
             //                     
 
@@ -801,16 +805,28 @@ namespace m0.UIWpf.UX
 
                 FrameworkElement ClickedItem_FrameworkElement = (FrameworkElement)ClickedItem;
 
-                CreateOrMoveDiagramLine.X1 = Canvas.GetLeft(ClickedItem_FrameworkElement) + ClickedItem_FrameworkElement.ActualWidth;
-                CreateOrMoveDiagramLine.Y1 = Canvas.GetTop(ClickedItem_FrameworkElement);
+                Point ClickedItem_absolutePosition = GetItemAbsolutePosition(ClickedItem);
+
+                CreateOrMoveDiagramLine.X1 = ClickedItem_absolutePosition.X + ClickedItem_FrameworkElement.ActualWidth;
+                CreateOrMoveDiagramLine.Y1 = ClickedItem_absolutePosition.Y;
             }
 
             CreateOrMoveDiagramLine.X2 = ToX;
             CreateOrMoveDiagramLine.Y2 = ToY;
 
-            Point p = new Point(ToX, ToY);            
+            Point p = new Point(ToX, ToY);
 
-            foreach (IItem _i in Items_all)
+            UnhighlightAllSelectedEdges_noDecorators();
+            
+            IUXItem toHighlightItem = GetItemByPoint(p);
+
+            if (toHighlightItem != null)
+            {
+                toHighlightItem.Highlight();
+                HighlightedItem = toHighlightItem;
+            }
+
+            /*foreach (IItem _i in Items_all)
                 {
                     IUXItem i = GetUXItem(_i);
 
@@ -837,7 +853,7 @@ namespace m0.UIWpf.UX
                             i.Unhighlight();
                         }
                     }
-                }
+                }*/
         }
 
         protected void CreateAndUpdateMoveDiagramLine(double ToX, double ToY)
@@ -986,24 +1002,10 @@ namespace m0.UIWpf.UX
 
                 //
 
-                double ClickedItem_left;
-                double ClickedItem_top;
+                Point clickedItem_absolute = GetItemAbsolutePosition(ClickedItem);
 
-                if (ClickedItem.ParentItem == this || ClickedItem.ParentItem == null)
-                {
-                    ClickedItem_left = Canvas.GetLeft(ClickedItem_FrameworkElement);
-                    ClickedItem_top = Canvas.GetTop(ClickedItem_FrameworkElement);
-                }
-                else
-                {
-                    Point mainCanvasPosition = ((IUXContainer)ClickedItem.ParentItem).Canvas.TranslatePoint(
-                        new Point(Canvas.GetLeft(ClickedItem_FrameworkElement), 
-                        Canvas.GetTop(ClickedItem_FrameworkElement)), 
-                        Canvas);
-
-                    ClickedItem_left = mainCanvasPosition.X;
-                    ClickedItem_top = mainCanvasPosition.Y;
-                }
+                double ClickedItem_left = clickedItem_absolute.X;
+                double ClickedItem_top = clickedItem_absolute.Y;
 
                 //
 
@@ -1322,6 +1324,12 @@ namespace m0.UIWpf.UX
             }
         }
 
+        public void UnhighlightAllSelectedEdges_noDecorators()
+        {
+            foreach (IUXItem i in Items_all)
+                i.Unhighlight();
+        }
+
         public void UnselectAllSelectedEdges()
         {
             UnselectAllSelectedEdges_NoSelectedVerticesUpdated();
@@ -1396,6 +1404,8 @@ namespace m0.UIWpf.UX
             }
         }
 
+
+
         public IUXItem GetItemByPoint(Point p)
         {
             IUXItem itemToReturn = this;
@@ -1421,26 +1431,21 @@ namespace m0.UIWpf.UX
                 
             }
 
+            if (itemToReturn.ItemNestingLevel == 2)
+            {
+                int x = 0;
+            }
+
             return itemToReturn;
         }
 
         public void CheckAndUpdateItemComposition(IUXItem item)
         {
             Position itemPosition_relative = item.Position;
-            //ZeroTypes.UX.Size itemSize = item.Size;
 
             FrameworkElement item_FrameworkElement = (FrameworkElement)item;
 
-            Point itemPosition_relative_point = itemPosition_relative.GetPoint();
-
-            Point itemPosition_absolute = itemPosition_relative_point;
-
-            if(item.ParentItem != null)
-                itemPosition_absolute = ((IUXContainer)item.ParentItem).Canvas.TranslatePoint(itemPosition_relative_point, Canvas);
-
-            //Point itemPosition_absolute = Canvas.TranslatePoint(itemPosition_relative.GetPoint(), ((IUXContainer)item.ParentItem).Canvas);
-
-
+            Point itemPosition_absolute = GetItemAbsolutePosition(item);
 
             if (item.ParentItem == this || item.ParentItem == null)
             {
@@ -1450,7 +1455,6 @@ namespace m0.UIWpf.UX
                     MoveToParentItem(item, toBeParentItem);
             }
             else {
-                //ZeroTypes.UX.Size itemParentSize = ((IUXItem)item.ParentItem).Size;
                 FrameworkElement itemParent_FrameworkElement = (FrameworkElement)item.ParentItem;
 
                 if (itemPosition_relative.X < 0 || itemPosition_relative.Y < 0 || 
@@ -1482,13 +1486,11 @@ namespace m0.UIWpf.UX
 
             OldParentItem.Canvas.Children.Remove((UIElement)item);
             
-            tobeParentItem.MoveExistingItemHere(item);
+            tobeParentItem.MoveExistingItemAsSubItem(item);
             
             NewParentItem.Canvas.Children.Add((UIElement)item);
 
             Point newPosition = OldParentItem.Canvas.TranslatePoint(item.Position.GetPoint(), NewParentItem.Canvas);
-
-            //Point newPosition = NewParentItem.Canvas.TranslatePoint(item.Position.GetPoint(), OldParentItem.Canvas);
 
             Position p = item.Position;
             p.X = newPosition.X;
@@ -2408,7 +2410,7 @@ namespace m0.UIWpf.UX
             return (IItem)TypedEdge.Get(newEdge);
         }
 
-        public void MoveExistingItemHere(IItem item)
+        public void MoveExistingItemAsSubItem(IItem item)
         {
             item.Edge.From.DeleteEdge(item.Edge);
 

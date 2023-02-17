@@ -112,7 +112,7 @@ namespace m0.ZeroTypes.UX
             return (IItem)TypedEdge.Get(newEdge);
         }
 
-        public void MoveExistingItemHere(IItem item)
+        public void MoveExistingItemAsSubItem(IItem item)
         {
             item.Edge.From.DeleteEdge(item.Edge);
 

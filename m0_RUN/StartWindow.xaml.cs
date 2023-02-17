@@ -123,9 +123,9 @@ namespace m0
 
             UXAdd2(xi, x1_vertex, x2_vertex);
 
-            //IUXItem zi = UXAdd(200, 200, a, z_vertex);
+            IUXItem zi = UXAdd(200, 200, a, z_vertex);
 
-            //UXAdd2(zi, z1_vertex, z2_vertex);
+            UXAdd2(zi, z1_vertex, z2_vertex);
         }
 
         IUXItem UXAdd(double x, double y, UXItem a, IVertex v)
