@@ -100,10 +100,10 @@ namespace m0
 
             //IVertex z_vertex =  x_vertex.AddVertex(x_vertex, "Z");
 
-            IVertex agg_vertex = x_vertex.AddVertex(x_vertex, "AGR");
+            IVertex agg_vertex = r.Get(false, @"System\Meta\ZeroTypes\UX");
 
-            //IVertex x1_vertex = x_vertex.AddVertex(agg_vertex, "X1");
-            IVertex x1_vertex = x_vertex.AddVertex(null, "X1");
+            IVertex x1_vertex = x_vertex.AddVertex(agg_vertex, "X1");
+            //IVertex x1_vertex = x_vertex.AddVertex(null, "X1");
 
             IVertex x2_vertex = e.AddVertex(agg_vertex, "X2");           
 

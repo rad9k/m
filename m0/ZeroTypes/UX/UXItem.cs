@@ -1309,9 +1309,7 @@ namespace m0.ZeroTypes.UX
                 return (UXTemplate)TypedEdge.Get(val);
             }
             set
-            {
-                IVertex val = GraphUtil.GetQueryOutFirst(Vertex, "UXTemplate", null);
-
+            {                
                 GraphUtil.CreateOrReplaceEdge(Vertex, UXTemplate_meta, value.Vertex);
             }
         }

@@ -27,21 +27,24 @@ using System.Security.Cryptography;
 
 /*
 
-*** LOAD ITEM
+*** LOAD ITEM SUB ITEM
 
-IF item.UXTemplate.ContainerEdgeTestQuery!=null
+IF item.UXTemplate.ContainerEdge!=null
  	IF existing item.ParentItem.BaseEdgeTo <> item.BaseEdgeTo edge is container edge
 		THAN item.ContainerEdge = edge
+
 	IF no item.ParentItem <> item edges
+        THAN NOTHING (alternative: create any edge - hoping it will be displayed)
+
+        comment: we do not want to make any graph modifications during load time
 
 
-ADD NEW
+*** ADD NEW SUB ITEM
 
-IF existing edge is container edge
-	THAN item.ContainerEdge = edge
-
-IF
-
+IF item.UXTemplate.ContainerEdge!=null
+ 	IF existing item.ParentItem.BaseEdgeTo <> item.BaseEdgeTo edge is container edge
+		THAN item.ContainerEdge = edge
+    ELSE crete new item.UXTemplate.ContainerEdge from item.ParentItem.BaseEdgeTo to item.BaseEdgeTo
  
  */
 
@@ -435,20 +438,20 @@ namespace m0.UIWpf.UX
 
         void TryToFindContainerEdge(IUXItem item)
         {
-            string containerEdgeTestQuery = item.UXTemplate.ContainerEdgeTestQuery;
+            IVertex containerEdge = item.UXTemplate.ContainerEdge;
 
             IVertex itemBaseEdgeTo = item.BaseEdgeTo;
 
-            if (containerEdgeTestQuery != null)
+            if (containerEdge != null)
             {
-                IEdge containerEdge = null;
+                IEdge foundEdge = null;
 
-                foreach (IEdge e in item.ParentItem.BaseEdgeTo.GetAll(false, containerEdgeTestQuery))
+                foreach (IEdge e in GraphUtil.GetQueryOut(item.ParentItem.BaseEdgeTo, containerEdge.Value, itemBaseEdgeTo.Value))
                     if (e.To == itemBaseEdgeTo)
-                        containerEdge = e;
+                        foundEdge = e;
 
-                if (containerEdge != null)
-                    item.ContainerEdge = containerEdge;
+                if (foundEdge != null)
+                    item.ContainerEdge = foundEdge;                                
             }
         }
 
@@ -1998,12 +2001,12 @@ namespace m0.UIWpf.UX
 
         // UNDERPINNINGS
 
-        // UXAggregator
+        // UXContainer
 
         static IVertex IsExpanded_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\UXContainer\IsExpanded");
         static IVertex ExpandedSize_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\UXContainer\ExpandedSize");
         static IVertex CollapsedSize_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\UXContainer\CollapsedSize");
-        static IVertex ContainerEdgeTestQuery_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\UXContainer\ContainerEdgeTestQuery");
+        static IVertex ContainerEdge_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\UXContainer\ContainerEdge");
 
         static IVertex Size_type = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\Size");
 
@@ -2063,28 +2066,6 @@ namespace m0.UIWpf.UX
         public ZeroTypes.UX.Size CollapsedSizeCreate()
         {
             return new ZeroTypes.UX.Size(VertexOperations.AddInstanceAndReturnEdge(Vertex, Size_type, CollapsedSize_meta));
-        }
-
-        public string ContainerEdgeTestQuery
-        {
-            get
-            {
-                IVertex val = GraphUtil.GetQueryOutFirst(Vertex, "ContainerEdgeTestQuery", null);
-
-                if (val == null)
-                    return "";
-
-                return GraphUtil.GetStringValue(val);
-            }
-            set
-            {
-                IVertex val = GraphUtil.GetQueryOutFirst(Vertex, "ContainerEdgeTestQuery", null);
-
-                if (val == null)
-                    val = Vertex.AddVertex(ContainerEdgeTestQuery_meta, value);
-                else
-                    val.Value = value;
-            }
         }
 
         //
