@@ -25,6 +25,26 @@ using m0.ZeroTypes.UX;
 using m0.ZeroCode.Helpers;
 using System.Security.Cryptography;
 
+/*
+
+*** LOAD ITEM
+
+IF item.UXTemplate.ContainerEdgeTestQuery!=null
+ 	IF existing item.ParentItem.BaseEdgeTo <> item.BaseEdgeTo edge is container edge
+		THAN item.ContainerEdge = edge
+	IF no item.ParentItem <> item edges
+
+
+ADD NEW
+
+IF existing edge is container edge
+	THAN item.ContainerEdge = edge
+
+IF
+
+ 
+ */
+
 namespace m0.UIWpf.UX
 {
     public class MetaToPair
