@@ -15,7 +15,7 @@ namespace m0.ZeroTypes.UX
         static IVertex DecoratorClass_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\UXDecoratorTemplate\DecoratorClass");
         static IVertex DecoratorVertex_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\UXDecoratorTemplate\DecoratorVertex");
         static IVertex CreateEdgeOnly_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\UXDecoratorTemplate\CreateEdgeOnly");
-        static IVertex ForceShowEditForm_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\UXDecoratorTemplate\ForceShowEditForm");
+        static IVertex ForceShowEditForm_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\UXDecoratorTemplate\ForceShowEditForm");        
 
         static IVertex Size_type = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\Size");
 

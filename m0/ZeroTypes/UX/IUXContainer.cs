@@ -19,8 +19,6 @@ namespace m0.ZeroTypes.UX
 
         UX.Size CollapsedSize { get; }
 
-        UX.Size CollapsedSizeCreate();
-
-        string ContainerEdgeQuery { get; set; }
+        UX.Size CollapsedSizeCreate();        
     }
 }

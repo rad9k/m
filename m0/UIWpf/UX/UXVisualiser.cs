@@ -1945,7 +1945,7 @@ namespace m0.UIWpf.UX
         static IVertex IsExpanded_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\UXContainer\IsExpanded");
         static IVertex ExpandedSize_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\UXContainer\ExpandedSize");
         static IVertex CollapsedSize_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\UXContainer\CollapsedSize");
-        static IVertex ContainerEdgeQuery_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\UXContainer\ContainerEdgeQuery");
+        static IVertex ContainerEdgeTestQuery_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\UXContainer\ContainerEdgeTestQuery");
 
         static IVertex Size_type = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\Size");
 
@@ -2007,11 +2007,11 @@ namespace m0.UIWpf.UX
             return new ZeroTypes.UX.Size(VertexOperations.AddInstanceAndReturnEdge(Vertex, Size_type, CollapsedSize_meta));
         }
 
-        public string ContainerEdgeQuery
+        public string ContainerEdgeTestQuery
         {
             get
             {
-                IVertex val = GraphUtil.GetQueryOutFirst(Vertex, "ContainerEdgeQuery", null);
+                IVertex val = GraphUtil.GetQueryOutFirst(Vertex, "ContainerEdgeTestQuery", null);
 
                 if (val == null)
                     return "";
@@ -2020,10 +2020,10 @@ namespace m0.UIWpf.UX
             }
             set
             {
-                IVertex val = GraphUtil.GetQueryOutFirst(Vertex, "ContainerEdgeQuery", null);
+                IVertex val = GraphUtil.GetQueryOutFirst(Vertex, "ContainerEdgeTestQuery", null);
 
                 if (val == null)
-                    val = Vertex.AddVertex(ContainerEdgeQuery_meta, value);
+                    val = Vertex.AddVertex(ContainerEdgeTestQuery_meta, value);
                 else
                     val.Value = value;
             }

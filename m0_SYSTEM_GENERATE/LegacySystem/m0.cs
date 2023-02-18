@@ -2713,7 +2713,7 @@ namespace m0
                 +",Class:HasColor{Attribute:Color{$MinCardinality:0,$MaxCardinality:1}}"
                 + ",Class:Item{Aggregation:Item{$MinCardinality:0,$MaxCardinality:-1}}"
                 + ",Class:UXItem{Attribute:Scale{$MinCardinality:1,$MaxCardinality:1,$DisplayLarger:,$DefaultValue:100},Attribute:DesignMode{$MinCardinality:0,$MaxCardinality:1},Attribute:Size{$MinCardinality:0,$MaxCardinality:1},Attribute:Position{$MinCardinality:0,$MaxCardinality:1},Attribute:Layout{$MinCardinality:0,$MaxCardinality:1},Attribute:BackgroundColor{$MinCardinality:0,$MaxCardinality:1},Attribute:ForegroundColor{$MinCardinality:0,$MaxCardinality:1},Attribute:BorderColor{$MinCardinality:0,$MaxCardinality:1},Attribute:BorderSize{MinValue:0,MaxValue:10,$MinCardinality:0,$MaxCardinality:1},Attribute:Gap{$MinCardinality:0,$MaxCardinality:1},Aggregation:Decorator{$MinCardinality:0,$MaxCardinality:-1},Association:UXTemplate{$MinCardinality:0,$MaxCardinality:1}}"
-                + ",Class:UXContainer{Attribute:IsExpanded{$MinCardinality:1,$MaxCardinality:1,$DefaultValue:True},Attribute:CollapsedSize{$MinCardinality:0,$MaxCardinality:1},Attribute:ExpandedSize{$MinCardinality:0,$MaxCardinality:1},Attribute:ContainerEdgeQuery{$MinCardinality:0,$MaxCardinality:1}}"
+                + ",Class:UXContainer{Attribute:IsExpanded{$MinCardinality:1,$MaxCardinality:1,$DefaultValue:True},Attribute:CollapsedSize{$MinCardinality:0,$MaxCardinality:1},Attribute:ExpandedSize{$MinCardinality:0,$MaxCardinality:1},Attribute:ContainerEdgeTestQuery{$MinCardinality:0,$MaxCardinality:1}}"
                 + ",Class:Size{Attribute:Width,Attribute:Height}"
                 + ",Class:Position{Attribute:X,Attribute:Y}"
                 + ",Enum:LayoutTypeEnum{EnumValue:Vertical,EnumValue:Horizontal,EnumValue:Wrap,EnumValue:Manual,EnumValue:Auto,EnumValue:Hidden}"
@@ -2829,11 +2829,7 @@ namespace m0
 
             LegacySystem.Graph.EasyVertex.Get(smz, false, @"UX\UXContainer\ExpandedSize").AddEdge(
                 LegacySystem.Graph.EasyVertex.Get(sm, false, @"*$EdgeTarget"),
-                LegacySystem.Graph.EasyVertex.Get(sm, false, @"ZeroTypes\UX\Size"));
-
-            LegacySystem.Graph.EasyVertex.Get(smz, false, @"UX\UXContainer\ContainerEdgeQuery").AddEdge(
-                LegacySystem.Graph.EasyVertex.Get(sm, false, @"*$EdgeTarget"),
-                LegacySystem.Graph.EasyVertex.Get(sm, false, @"ZeroTypes\String"));
+                LegacySystem.Graph.EasyVertex.Get(sm, false, @"ZeroTypes\UX\Size"));            
 
             // Size
 
@@ -3306,7 +3302,7 @@ namespace m0
             m0.LegacySystem.Util.GeneralUtil.ParseAndExcute(smzu, sm, "{" +
                 "OptionEdge,"+
                 "OptionDiagramLineDefinition,"+
-                "Class:UXTemplate{Attribute:DirectVertexTestQuery{$MinCardinality:0,$MaxCardinality:1},Attribute:MetaVertexTestQuery{$MinCardinality:0,$MaxCardinality:1},Association:ItemClass{$MinCardinality:0,$MaxCardinality:1},Attribute:ItemVertex{$MinCardinality:0,$MaxCardinality:1},Association:InstanceCreation{$MinCardinality:0,$MaxCardinality:1},Attribute:UXDecoratorTemplate{$MinCardinality:0,$MaxCardinality:-1},Attribute:DoNotShowInherited{$MinCardinality:0,$MaxCardinality:1},Attribute:ForceShowEditForm{$MinCardinality:0,$MaxCardinality:1}}," +
+                "Class:UXTemplate{Attribute:DirectVertexTestQuery{$MinCardinality:0,$MaxCardinality:1},Attribute:MetaVertexTestQuery{$MinCardinality:0,$MaxCardinality:1},Association:ItemClass{$MinCardinality:0,$MaxCardinality:1},Attribute:ItemVertex{$MinCardinality:0,$MaxCardinality:1},Association:InstanceCreation{$MinCardinality:0,$MaxCardinality:1},Attribute:UXDecoratorTemplate{$MinCardinality:0,$MaxCardinality:-1},Attribute:DoNotShowInherited{$MinCardinality:0,$MaxCardinality:1},Attribute:ForceShowEditForm{$MinCardinality:0,$MaxCardinality:1},Attribute:ContainerEdgeTestQuery{$MinCardinality:0,$MaxCardinality:1}}," +
                 "Enum:InstanceCreationEnum{EnumValue:Instance,EnumValue:InstanceAndDirect,EnumValue:Direct}," +
                 "Class:LineDecoratorBase{Attribute:LineWidth{MinValue:1,MaxValue:10,$MinCardinality:0,$MaxCardinality:1},Association:ToItem{$MinCardinality:1,$MaxCardinality:1}}," +
                 "Class:UXDecoratorTemplate{Attribute:EdgeTestQuery{$MinCardinality:1,$MaxCardinality:1},Attribute:ToDiagramItemTestQuery{$MinCardinality:0,$MaxCardinality:1},Attribute:CreateEdgeOnly{$MinCardinality:0,$MaxCardinality:1},Attribute:ForceShowEditForm{$MinCardinality:0,$MaxCardinality:1},Attribute:DecoratorClass{$MinCardinality:0,$MaxCardinality:1},Attribute:DecoratorVertex{$MinCardinality:0,$MaxCardinality:1}}," +
@@ -3340,7 +3336,8 @@ namespace m0
             smzu.Get(false, @"UXTemplate\UXDecoratorTemplate").AddEdge(sm.Get(false, @"?$EdgeTarget"), smzu.Get(false, @"UXDecoratorTemplate"));
             smzu.Get(false, @"UXTemplate\DoNotShowInherited").AddEdge(sm.Get(false, @"?$EdgeTarget"), sm.Get(false, @"ZeroTypes\Boolean"));
             smzu.Get(false, @"UXTemplate\ForceShowEditForm").AddEdge(sm.Get(false, @"?$EdgeTarget"), sm.Get(false, @"ZeroTypes\Boolean"));
-            
+            smzu.Get(false, @"UXTemplate\ContainerEdgeTestQuery").AddEdge(sm.Get(false, @"?$EdgeTarget"), sm.Get(false, @"ZeroTypes\String"));            
+
             // LineDecoratorBase
 
             smzu.Get(false, @"LineDecoratorBase").AddEdge(sm.Get(false, @"?$Is"), sm.Get(false, @"ZeroUML\Class"));

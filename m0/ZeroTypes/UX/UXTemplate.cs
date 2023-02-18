@@ -18,6 +18,7 @@ namespace m0.ZeroTypes.UX
         static IVertex UXDecoratorTemplate_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\UXTemplate\UXDecoratorTemplate");
         static IVertex DoNotShowInherited_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\UXTemplate\DoNotShowInherited");
         static IVertex ForceShowEditForm_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\UXTemplate\ForceShowEditForm");
+        static IVertex ContainerEdgeTestQuery_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\UXTemplate\ContainerEdgeTestQuery");
 
         static IVertex Size_type = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\Size");
 
@@ -194,6 +195,28 @@ namespace m0.ZeroTypes.UX
 
                 if (val == null)
                     val = Vertex.AddVertex(ForceShowEditForm_meta, value);
+                else
+                    val.Value = value;
+            }
+        }
+
+        public string ContainerEdgeTestQuery
+        {
+            get
+            {
+                IVertex val = GraphUtil.GetQueryOutFirst(Vertex, "ContainerEdgeTestQuery", null);
+
+                if (val == null)
+                    return "";
+
+                return GraphUtil.GetStringValue(val);
+            }
+            set
+            {
+                IVertex val = GraphUtil.GetQueryOutFirst(Vertex, "ContainerEdgeTestQuery", null);
+
+                if (val == null)
+                    val = Vertex.AddVertex(ContainerEdgeTestQuery_meta, value);
                 else
                     val.Value = value;
             }
