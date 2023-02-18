@@ -30,6 +30,8 @@ namespace m0.ZeroTypes.UX
 
     public class UXItem : UserControl, IUXItem, IPlatformClass
     {
+        public IEdge ContainerEdge { get; set; }
+
         public int NestingLevel { get; set; }
 
         public IItem ParentItem { get; set; }

@@ -13,6 +13,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Threading;
+using System.Xml.Linq;
 
 
 namespace m0
@@ -5529,6 +5530,13 @@ namespace m0
                 v.Get(false, @"ItemVertex:").AddVertex(Root.Get(false, @"System\Meta\ZeroTypes\UX\RectangleItem\VisualiserVertex"), null);
 
             return v;
+        }
+
+        void AmendUXTemplate(IVertex v, string containerEdgeTestQuery)
+        {
+            IVertex cetq = Root.Get(false, @"System\Meta\ZeroTypes\UX\UXTemplate\ContainerEdgeTestQuery");
+
+            v.AddVertex(cetq, name);
         }
 
         void AddLineDecorator(IVertex v,

@@ -13,7 +13,9 @@ using System.Windows.Controls;
 namespace m0.ZeroTypes.UX
 {
     public interface IUXItem: IItem, IDisposable
-    {           
+    {
+        IEdge ContainerEdge { get; set; }
+
         int NestingLevel { get; set; }
 
         IUXVisualiser Diagram { get; set; }        

@@ -27,7 +27,6 @@ using System.Security.Cryptography;
 
 namespace m0.UIWpf.UX
 {
-
     public class MetaToPair
     {
         public IVertex Meta;
@@ -39,6 +38,8 @@ namespace m0.UIWpf.UX
     public class UXVisualiser : Border, IListVisualiser, IUXVisualiser, IMouseWheelHandler
     {
         static IVertex systemMetaBaseVertex = m0.MinusZero.Instance.Root.Get(false, @"System\Meta\Base\Vertex");
+
+        public IEdge ContainerEdge { get; set; }
 
         public int NestingLevel { get; set; }
 
