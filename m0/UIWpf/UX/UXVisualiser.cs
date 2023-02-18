@@ -384,7 +384,7 @@ namespace m0.UIWpf.UX
             }
         }
 
-        public void HostItem(IUXContainer host, IUXItem item){
+        public void HostItem(IUXContainer host, IUXItem item, bool newItemCreation){
             if (!(item is UIElement))
                 return;
 
@@ -426,32 +426,63 @@ namespace m0.UIWpf.UX
                     if (i == null)
                         continue;
 
-                    HostItem(container, i);
+                    HostItem(container, i, newItemCreation);
                 }
             }
             //
 
             item_UIElement.UpdateLayout();
 
-            TryToFindContainerEdge(item);
+            FindAndOrCreateContainerEdge(item, newItemCreation);
         }
 
-        void TryToFindContainerEdge(IUXItem item)
+        void FindAndOrCreateContainerEdge(IUXItem item, bool newItemCreation)
         {
             IVertex containerEdge = item.UXTemplate.ContainerEdge;
 
             IVertex itemBaseEdgeTo = item.BaseEdgeTo;
 
+            IVertex itemParentItemBaseEdgeTo = item.ParentItem.BaseEdgeTo;
+
+            item.ContainerEdge = null;
+
             if (containerEdge != null)
             {
                 IEdge foundEdge = null;
 
-                foreach (IEdge e in GraphUtil.GetQueryOut(item.ParentItem.BaseEdgeTo, containerEdge.Value, itemBaseEdgeTo.Value))
+                foreach (IEdge e in GraphUtil.GetQueryOut(itemParentItemBaseEdgeTo, containerEdge.Value, itemBaseEdgeTo.Value))
                     if (e.To == itemBaseEdgeTo)
                         foundEdge = e;
 
                 if (foundEdge != null)
-                    item.ContainerEdge = foundEdge;                                
+                    item.ContainerEdge = foundEdge;
+
+                if (foundEdge == null && newItemCreation)                                                        
+                    item.ContainerEdge = itemParentItemBaseEdgeTo.AddEdge(containerEdge, itemBaseEdgeTo);                
+            }
+
+            //
+
+            if (item.ContainerEdge != null)
+            {  // check if need to remove line
+                IUXItem itemParentItem = (UXItem)item.ParentItem;
+
+                foreach(IUXItem i in itemParentItem.Decorators)                
+                    if(i is LineDecoratorBase)
+                    {
+                        LineDecoratorBase line = (LineDecoratorBase)i;
+
+                        IEdge lineBaseEdge = line.BaseEdge;
+
+                        if (lineBaseEdge.Meta == item.ContainerEdge.Meta &&
+                            lineBaseEdge.To == item.ContainerEdge.To)
+                        {
+                            itemParentItem.RemoveDiagramLine(line);
+                            itemParentItem.RemoveDecorator(i);
+                        }
+                    }
+                
+
             }
         }
 
@@ -635,7 +666,7 @@ namespace m0.UIWpf.UX
                     if (i == null)
                         continue;
 
-                    HostItem(this, i);
+                    HostItem(this, i, false);
                 } 
                 
                 //
@@ -1518,6 +1549,8 @@ namespace m0.UIWpf.UX
             
             NewParentItem.Canvas.Children.Add((UIElement)item);
 
+            FindAndOrCreateContainerEdge(item, false);
+
             Point newPosition = OldParentItem.Canvas.TranslatePoint(item.Position.GetPoint(), NewParentItem.Canvas);
 
             Position p = item.Position;
@@ -1532,6 +1565,8 @@ namespace m0.UIWpf.UX
             ////////////////////////////////////////
             Interaction.EndInteractionWithGraph();
             ////////////////////////////////////////
+
+            CheckAndUpdateDiagramLinesForItem(OldParentItem); // container edge might need to be shown
         }
 
         // IHasLocalizableEdges
@@ -1842,7 +1877,7 @@ namespace m0.UIWpf.UX
 
             //
 
-            HostItem(host, i);            
+            HostItem(host, i, true);            
         }
 
         public void AddDiagramItem(Point p, UXTemplate UXTemplate, IVertex metaVertex, IVertex newVertex)
@@ -1866,8 +1901,8 @@ namespace m0.UIWpf.UX
 
             //
 
-            HostItem(host, i);
-        }
+            HostItem(host, i, true);
+        }        
 
         public void CheckAndUpdateDiagramLines()
         {        
@@ -1896,6 +1931,9 @@ namespace m0.UIWpf.UX
 
         public void CheckAndUpdateDiagramLinesForItem(IUXItem item)
         {
+            if (item == this) // currently support for Visualiser lines is limited
+                return;
+
             IEnumerable<IEdge> edges;
 
             IVertex item_BaseEdgeTo = item.BaseEdgeTo;

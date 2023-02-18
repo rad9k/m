@@ -120,10 +120,13 @@ namespace m0
 
             a.BaseEdgeSet(e_edge);
 
-            a.PositionCreate();
+            //a.PositionCreate();
 
-            a.Position.X = 0;
-            a.Position.Y = 0;
+            //a.Position.X = 0;
+            //a.Position.Y = 0;
+
+            UXTemplate diagram_template = new UXTemplate(r.GetAll(false, @"System\Data\UX\Templates\ZeroUML").FirstOrDefault());
+            a.UXTemplate = diagram_template;
 
             a.Vertex.Value = "VIS";
 
