@@ -929,7 +929,9 @@ namespace m0.UIWpf.UX
             foreach (IEdge ed in Vertex.GetAll(false, @"SelectedEdges:\{$Is:Edge}"))
                 foreach (IUXItem item in GetItemsByBaseEdge(ed.To))
                     if(item.NestingLevel == 1)
-                        item.MoveItem(item.Position.X + x, item.Position.Y + y);
+                        item.MoveItem(item.Position.X + x, item.Position.Y + y, false);
+                    else
+                        item.MoveItem(x, y, true);
 
             ////////////////////////////////////////
             Interaction.EndInteractionWithGraph();
@@ -1054,7 +1056,7 @@ namespace m0.UIWpf.UX
                         }
 
                         ClickedItem.MoveItem((e.GetPosition(Canvas).X - ClickPositionX_ItemCordinates), 
-                            (e.GetPosition(Canvas).Y - ClickPositionY_ItemCordinates));
+                            (e.GetPosition(Canvas).Y - ClickPositionY_ItemCordinates), false);
                     }
                 }
             }else
@@ -2061,7 +2063,7 @@ namespace m0.UIWpf.UX
 
         public virtual void Unhighlight() { }
 
-        public void MoveItem(double x, double y) { }
+        public void MoveItem(double x, double y, bool onlyAnchors) { }
 
         public void MoveAndResizeItem(double left, double top, double width, double height) { }
 

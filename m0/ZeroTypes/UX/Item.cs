@@ -109,7 +109,11 @@ namespace m0.ZeroTypes.UX
         {
             IEdge newEdge = VertexOperations.AddInstanceAndReturnEdge(Vertex, typeVertex, Item_meta);
 
-            return (IItem)TypedEdge.Get(newEdge);
+            IItem item = (IItem)TypedEdge.Get(newEdge);
+
+            item.ParentItem = this;
+
+            return item;
         }
 
         public void MoveExistingItemAsSubItem(IItem item)

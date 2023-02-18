@@ -50,7 +50,7 @@ namespace m0.ZeroTypes.UX
 
         void Unhighlight();
 
-        void MoveItem(double x, double y);
+        void MoveItem(double x, double y, bool onlyAnchors);
 
         void MoveAndResizeItem(double left, double top, double width, double height);
 

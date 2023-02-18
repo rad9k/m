@@ -276,12 +276,12 @@ namespace m0.ZeroTypes.UX
                 Unselect();
         }
 
-        public void MoveItem(double x, double y)
-        {
+        public void MoveItem(double x, double y, bool onlyAnchors)
+        {            
             if (Position == null)
                 return;
 
-            if (!(ParentItem is IUXVisualiser) && ParentItem != null)
+            if (!(ParentItem is IUXVisualiser) && ParentItem != null && !onlyAnchors)
             {
                 Point localCanvasPosition = localCanvasPosition = Diagram.Canvas.TranslatePoint(new Point(x, y), ((IUXContainer)ParentItem).Canvas);
 
@@ -294,21 +294,28 @@ namespace m0.ZeroTypes.UX
             double deltax = position.X - x;
             double deltay = position.Y - y;
 
-            ////////////////////////////////////////
-            Interaction.BeginInteractionWithGraph();
-            //////////////////////////////////////// 
+            if (!onlyAnchors)
+            {
+                ////////////////////////////////////////
+                Interaction.BeginInteractionWithGraph();
+                //////////////////////////////////////// 
 
-            position.X = x;
-            position.Y = y;
+                position.X = x;
+                position.Y = y;
 
-            ////////////////////////////////////////
-            Interaction.EndInteractionWithGraph();
-            ////////////////////////////////////////             
-            
-            Canvas.SetLeft(this, x);
-            Canvas.SetTop(this, y);
-                            
+                ////////////////////////////////////////
+                Interaction.EndInteractionWithGraph();
+                ////////////////////////////////////////             
 
+                Canvas.SetLeft(this, x);
+                Canvas.SetTop(this, y);
+            }
+            else
+            {
+                deltax = -x;
+                deltay = -y;
+            }
+                                        
             foreach (UIElement a in Anchors)
             {
                 Canvas.SetLeft(a, Canvas.GetLeft(a) - deltax);
@@ -1438,7 +1445,12 @@ namespace m0.ZeroTypes.UX
             if (GraphUtil.GetValueAndCompareStrings(typeVertex, "UXAggregator"))
                 return (IItem)TypedEdge.Get(newEdge, typeof(ZeroTypes.UX.UXContainer));
 
-            return (IItem)TypedEdge.Get(newEdge);
+
+            IItem item = (IItem)TypedEdge.Get(newEdge);
+
+            item.ParentItem = this;
+
+            return item;
         }
 
         public void MoveExistingItemAsSubItem(IItem item)
