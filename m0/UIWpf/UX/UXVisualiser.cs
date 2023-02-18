@@ -408,7 +408,28 @@ namespace m0.UIWpf.UX
             }
             //
 
-            item_UIElement.UpdateLayout(); 
+            item_UIElement.UpdateLayout();
+
+            TryToFindContainerEdge(item);
+        }
+
+        void TryToFindContainerEdge(IUXItem item)
+        {
+            string containerEdgeTestQuery = item.UXTemplate.ContainerEdgeTestQuery;
+
+            IVertex itemBaseEdgeTo = item.BaseEdgeTo;
+
+            if (containerEdgeTestQuery != null)
+            {
+                IEdge containerEdge = null;
+
+                foreach (IEdge e in item.ParentItem.BaseEdgeTo.GetAll(false, containerEdgeTestQuery))
+                    if (e.To == itemBaseEdgeTo)
+                        containerEdge = e;
+
+                if (containerEdge != null)
+                    item.ContainerEdge = containerEdge;
+            }
         }
 
         // TOO

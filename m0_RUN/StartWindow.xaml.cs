@@ -92,15 +92,17 @@ namespace m0
 
             IVertex e = r.Get(false, "examples");
 
+            IEdge e_edge = r.GetAll(false, "examples").FirstOrDefault();
+
             IVertex x_vertex = e.AddVertex(null, "X");
 
             //x_vertex.AddEdge(x_vertex, x_vertex);
 
             IVertex z_vertex =  x_vertex.AddVertex(x_vertex, "Z");
 
-            IVertex agg_vertex = x_vertex.AddVertex(x_vertex, "AGG");
+            IVertex agg_vertex = x_vertex.AddVertex(x_vertex, "AGR");
 
-            IVertex x1_vertex = e.AddVertex(agg_vertex, "X1");
+            IVertex x1_vertex = x_vertex.AddVertex(agg_vertex, "X1");
             IVertex x2_vertex = e.AddVertex(agg_vertex, "X2");
 
             IVertex z1_vertex = x_vertex.AddVertex(x_vertex, "Z1");
@@ -113,6 +115,13 @@ namespace m0
                 UXContainerType);
 
             UXContainer a = new UXContainer(a_e);
+
+            a.BaseEdgeSet(e_edge);
+
+            a.PositionCreate();
+
+            a.Position.X = 0;
+            a.Position.Y = 0;
 
             a.Vertex.Value = "VIS";
 

@@ -5536,7 +5536,7 @@ namespace m0
         {
             IVertex cetq = Root.Get(false, @"System\Meta\ZeroTypes\UX\UXTemplate\ContainerEdgeTestQuery");
 
-            v.AddVertex(cetq, name);
+            v.AddVertex(cetq, containerEdgeTestQuery);
         }
 
         void AddLineDecorator(IVertex v,
@@ -5649,6 +5649,8 @@ namespace m0
           null, null,
           -1, false,
           null, false);
+
+            AmendUXTemplate(v, "AGR:");
             
             AddLineDecorator(v,
                "Edge",
