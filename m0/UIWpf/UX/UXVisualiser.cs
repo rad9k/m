@@ -292,38 +292,38 @@ namespace m0.UIWpf.UX
 
         List<IUXItem> Items_all = new List<IUXItem>();
 
-        Dictionary<IVertex, List<IUXItem>> ItemsDictionary = new Dictionary<IVertex, List<IUXItem>>();
+        Dictionary<IVertex, List<IUXItem>> ItemsDictionaryByBaseEdgeTo = new Dictionary<IVertex, List<IUXItem>>();
 
         bool needRebuildItemsDictionary = true;
 
         void RebuidItemsDictionary()
         {
-            ItemsDictionary.Clear();
+            ItemsDictionaryByBaseEdgeTo.Clear();
 
             foreach(IUXItem ui in Items_all)
                 {                    
                     IVertex ui_BaseEdgeTo = ui.BaseEdgeTo;
 
-                    if (ItemsDictionary.ContainsKey(ui_BaseEdgeTo))
-                        ItemsDictionary[ui_BaseEdgeTo].Add(ui);
+                    if (ItemsDictionaryByBaseEdgeTo.ContainsKey(ui_BaseEdgeTo))
+                        ItemsDictionaryByBaseEdgeTo[ui_BaseEdgeTo].Add(ui);
                     else
                     {
                         List<IUXItem> list = new List<IUXItem>();
                         list.Add(ui);
 
-                        ItemsDictionary.Add(ui_BaseEdgeTo, list);
+                        ItemsDictionaryByBaseEdgeTo.Add(ui_BaseEdgeTo, list);
                     }
                 }
 
             needRebuildItemsDictionary = false;
         }
 
-        public Dictionary<IVertex, List<IUXItem>> GetItemsDictionary()
+        public Dictionary<IVertex, List<IUXItem>> GetItemsDictionaryByBaseEdgeTo()
         {
             if (needRebuildItemsDictionary)
                 RebuidItemsDictionary();
 
-            return ItemsDictionary;
+            return ItemsDictionaryByBaseEdgeTo;
         }
 
         // OPTIMISATION END
@@ -344,7 +344,7 @@ namespace m0.UIWpf.UX
         // TOO
         protected List<IUXItem> GetItemsByBaseEdge(IVertex edgeToVertex)
         {
-           return GetItemsDictionary()[GraphUtil.GetQueryOutFirst(edgeToVertex, "To", null)];
+           return GetItemsDictionaryByBaseEdgeTo()[GraphUtil.GetQueryOutFirst(edgeToVertex, "To", null)];
         }        
 
         public void AddEdgesFromDefintion(IVertex baseVertex, IVertex definitionEdges)
@@ -518,7 +518,7 @@ namespace m0.UIWpf.UX
                 toFind = lineDecorator_BaseEdge.To;
 
             if (toFind != null)
-                foreach (IUXItem i in GetItemsDictionary()[toFind]) {
+                foreach (IUXItem i in GetItemsDictionaryByBaseEdgeTo()[toFind]) {
                     string tdtq = ((UXDecoratorTemplate)lineDecorator.UXTemplate).ToDiagramItemTestQuery;
 
                     if (!(tdtq != null && i.Vertex.Get(false, tdtq) == null))
@@ -720,7 +720,7 @@ namespace m0.UIWpf.UX
             UnselectAllSelectedEdges();
 
             foreach (IEdge e in selectedEdges_copy)
-                foreach (IUXItem i in GetItemsDictionary()[e.To.Get(false, "To:")])
+                foreach (IUXItem i in GetItemsDictionaryByBaseEdgeTo()[e.To.Get(false, "To:")])
                 {  // what about multiple items for same BaseEdge:\To: ?
 
                     if (option == optionUXItemDelete)
@@ -1345,8 +1345,8 @@ namespace m0.UIWpf.UX
             IVertex sv = Vertex.GetAll(false, @"SelectedEdges:\{$Is:Edge}");
 
             foreach (IEdge e in sv)                
-                if(GetItemsDictionary().ContainsKey(e.To.Get(false, "To:")))
-                    foreach (IUXItem i in GetItemsDictionary()[e.To.Get(false, "To:")])
+                if(GetItemsDictionaryByBaseEdgeTo().ContainsKey(e.To.Get(false, "To:")))
+                    foreach (IUXItem i in GetItemsDictionaryByBaseEdgeTo()[e.To.Get(false, "To:")])
                         i.Select();
         }
 
@@ -1576,8 +1576,8 @@ namespace m0.UIWpf.UX
                         if (ee.To.Get(false, @"BaseEdge:\To:") == ndi.BaseEdge.Get(false, "To:"))
                             ThereIsDiagramItemOfThisClassAndThisBaseEdgeTo = true;
 
-                    if(GetItemsDictionary().ContainsKey(ndi.BaseEdge.Get(false, "To:")))
-                    foreach (IUXItem b in GetItemsDictionary()[ndi.BaseEdge.Get(false, "To:")])
+                    if(GetItemsDictionaryByBaseEdgeTo().ContainsKey(ndi.BaseEdge.Get(false, "To:")))
+                    foreach (IUXItem b in GetItemsDictionaryByBaseEdgeTo()[ndi.BaseEdge.Get(false, "To:")])
                         ThereIsDiagramItemOfThisBaseEdgeTo = true;
 
                     /*if (b.Vertex.Get(false, @"BaseEdge:\To:") == ndi.BaseEdge.Get(false, "To:"))
@@ -1859,6 +1859,18 @@ namespace m0.UIWpf.UX
             }
         }
 
+        bool IsContainerEdge(IEdge e)
+        {
+            Dictionary<IVertex, List<IUXItem>> idbbet = GetItemsDictionaryByBaseEdgeTo();
+
+            if(idbbet.ContainsKey(e.To))
+                foreach (IUXItem i in idbbet[e.To])
+                    if (e == i.ContainerEdge)
+                        return true;
+
+            return false;
+        }
+
         public void CheckAndUpdateDiagramLinesForItem(IUXItem item)
         {
             IEnumerable<IEdge> edges;
@@ -1876,6 +1888,10 @@ namespace m0.UIWpf.UX
 
             foreach (IEdge e in item_BaseEdgeTo)
             {
+                if (IsContainerEdge(e))
+                    continue;
+
+
                 List<IUXItem> toDiagramItems = null;
 
                 bool needAdding = true;
@@ -1912,8 +1928,8 @@ namespace m0.UIWpf.UX
         {
             List<IUXItem> r = new List<IUXItem>();
 
-            if(GetItemsDictionary().ContainsKey(toEdge.To))
-            foreach (IUXItem i in GetItemsDictionary()[toEdge.To])
+            if(GetItemsDictionaryByBaseEdgeTo().ContainsKey(toEdge.To))
+            foreach (IUXItem i in GetItemsDictionaryByBaseEdgeTo()[toEdge.To])
                 r.Add(i);
 
             IVertex toEdgeToEdgeTarget = GraphUtil.GetQueryOutFirst(toEdge.To, "$EdgeTarget", null);
@@ -1921,8 +1937,8 @@ namespace m0.UIWpf.UX
             if (GraphUtil.ExistQueryOut(toEdge.Meta, "$VertexTarget", null) && toEdgeToEdgeTarget != null)
 
             if (toEdge.Meta.Get(false, "$VertexTarget:") != null && toEdge.To.Get(false, "$EdgeTarget:")!=null)
-                if (GetItemsDictionary().ContainsKey(toEdgeToEdgeTarget))
-                foreach (IUXItem i in GetItemsDictionary()[toEdgeToEdgeTarget])
+                if (GetItemsDictionaryByBaseEdgeTo().ContainsKey(toEdgeToEdgeTarget))
+                foreach (IUXItem i in GetItemsDictionaryByBaseEdgeTo()[toEdgeToEdgeTarget])
                     r.Add(i);
             
             return r;

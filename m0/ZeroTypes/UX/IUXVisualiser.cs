@@ -48,7 +48,7 @@ namespace m0.ZeroTypes.UX
 
         //
 
-        Dictionary<IVertex, List<IUXItem>> GetItemsDictionary();
+        Dictionary<IVertex, List<IUXItem>> GetItemsDictionaryByBaseEdgeTo();
 
         void AddEdgesFromDefintion(IVertex baseVertex, IVertex definitionEdges);
 

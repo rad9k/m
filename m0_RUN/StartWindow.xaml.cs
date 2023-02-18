@@ -98,17 +98,19 @@ namespace m0
 
             //x_vertex.AddEdge(x_vertex, x_vertex);
 
-            IVertex z_vertex =  x_vertex.AddVertex(x_vertex, "Z");
+            //IVertex z_vertex =  x_vertex.AddVertex(x_vertex, "Z");
 
             IVertex agg_vertex = x_vertex.AddVertex(x_vertex, "AGR");
 
-            IVertex x1_vertex = x_vertex.AddVertex(agg_vertex, "X1");
-            IVertex x2_vertex = e.AddVertex(agg_vertex, "X2");
+            //IVertex x1_vertex = x_vertex.AddVertex(agg_vertex, "X1");
+            IVertex x1_vertex = x_vertex.AddVertex(null, "X1");
 
-            IVertex z1_vertex = x_vertex.AddVertex(x_vertex, "Z1");
+            IVertex x2_vertex = e.AddVertex(agg_vertex, "X2");           
+
+            //IVertex z1_vertex = x_vertex.AddVertex(x_vertex, "Z1");
             IVertex z2_vertex = null; // x_vertex.AddVertex(x_vertex, "Z2");
 
-            z1_vertex.AddEdge(null, x1_vertex);
+            //z1_vertex.AddEdge(null, x1_vertex);
 
             IEdge a_e = VertexOperations.AddInstanceAndReturnEdge(e,
                 UXContainerType,
@@ -132,7 +134,7 @@ namespace m0
             
             IUXItem xi = UXAdd(0,0, a, x_vertex);
 
-            UXAdd2(xi, x1_vertex, x2_vertex);
+            UXAdd2(xi, x1_vertex);
 
             //IUXItem zi = UXAdd(200, 200, a, z_vertex);
 
@@ -170,7 +172,7 @@ namespace m0
             return i1;
         }
 
-        IUXItem UXAdd2(IUXItem a, IVertex v, IVertex v2)
+        IUXItem UXAdd2(IUXItem a, IVertex v)
         {
             IUXItem i1 = (IUXItem)a.AddItem(RectangleItem);
 
