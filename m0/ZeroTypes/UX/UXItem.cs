@@ -1450,6 +1450,9 @@ namespace m0.ZeroTypes.UX
 
             item.ParentItem = this;
 
+            if (item is IUXItem)
+                ((IUXItem)item).NestingLevel = NestingLevel + 1;
+
             return item;
         }
 

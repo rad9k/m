@@ -365,9 +365,9 @@ namespace m0.UIWpf.UX
         }
 
         // TOO
-        protected List<IUXItem> GetItemsByBaseEdge(IVertex edgeToVertex)
+        protected List<IUXItem> GetItemsByBaseEdge(IVertex edgeVertex)
         {
-           return GetItemsDictionaryByBaseEdgeTo()[GraphUtil.GetQueryOutFirst(edgeToVertex, "To", null)];
+           return GetItemsDictionaryByBaseEdgeTo()[GraphUtil.GetQueryOutFirst(edgeVertex, "To", null)];
         }        
 
         public void AddEdgesFromDefintion(IVertex baseVertex, IVertex definitionEdges)
@@ -2558,6 +2558,9 @@ namespace m0.UIWpf.UX
 
             item.ParentItem = this;
 
+            if (item is IUXItem)
+                ((IUXItem)item).NestingLevel = NestingLevel + 1;
+
             return item;
         }
 
@@ -2569,6 +2572,9 @@ namespace m0.UIWpf.UX
             item.Edge = e;
 
             item.ParentItem = this;
+
+            if (item is IUXItem)
+                ((IUXItem)item).NestingLevel = NestingLevel + 1;
         }
 
         public void RemoveItem(IItem item)
