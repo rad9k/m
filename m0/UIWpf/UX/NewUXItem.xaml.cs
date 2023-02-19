@@ -115,7 +115,7 @@ namespace m0.UIWpf.UX
                     if(testVertex(BaseEdge.Get(false, "To:"),(string)GraphUtil.GetValue(d.To.Get(false, "MetaVertexTestQuery:"))))
                          ItemsList.AddEdge(null, d.To);
 
-                IVertex InstanceAndDirect = m0.MinusZero.Instance.Root.GetAll(false, @"System\Data\UX\Templates\ZeroUML\{InstanceCreation:InstanceAndDirect}");
+                IVertex InstanceAndDirect = visualiser.UXTemplate.Vertex.GetAll(false, @"{InstanceCreation:InstanceAndDirect}");
 
                 foreach (IEdge d in InstanceAndDirect) 
                      //if (BaseEdge.Get(false, "To:").Get(false, (string)GraphUtil.GetValue(d.To.Get(false, "MetaVertexTestQuery:"))) != null)
@@ -124,7 +124,7 @@ namespace m0.UIWpf.UX
            }
            else
            {               
-               IVertex InstanceAndDirect = m0.MinusZero.Instance.Root.GetAll(false, @"System\Data\UX\Templates\ZeroUML\{InstanceCreation:InstanceAndDirect}");
+               IVertex InstanceAndDirect = visualiser.UXTemplate.Vertex.GetAll(false, @"{InstanceCreation:InstanceAndDirect}");
 
                foreach (IEdge d in InstanceAndDirect)
                {
@@ -136,7 +136,7 @@ namespace m0.UIWpf.UX
                            ItemsList.AddEdge(null, d.To);
                }
 
-               IVertex Direct = m0.MinusZero.Instance.Root.GetAll(false, @"System\Data\UX\Templates\ZeroUML\{InstanceCreation:Direct}");
+               IVertex Direct = visualiser.UXTemplate.Vertex.GetAll(false, @"{InstanceCreation:Direct}");
 
                foreach (IEdge d in Direct)
                {
