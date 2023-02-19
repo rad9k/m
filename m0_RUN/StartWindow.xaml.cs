@@ -98,7 +98,7 @@ namespace m0
 
             //x_vertex.AddEdge(x_vertex, x_vertex);
 
-            //IVertex z_vertex =  x_vertex.AddVertex(x_vertex, "Z");
+            IVertex z_vertex =  x_vertex.AddVertex(x_vertex, "Z");
 
             IVertex agg_vertex = r.Get(false, @"System\Meta\ZeroTypes\UX");
 
@@ -137,9 +137,9 @@ namespace m0
             
             IUXItem xi = UXAdd(0,0, a, x_vertex);
 
-            UXAdd2(xi, x1_vertex);
+            //UXAdd2(xi, x1_vertex);
 
-            //IUXItem zi = UXAdd(200, 200, a, z_vertex);
+            IUXItem zi = UXAdd(200, 200, a, z_vertex);
 
            // UXAdd2(zi, z1_vertex, z2_vertex);
         }

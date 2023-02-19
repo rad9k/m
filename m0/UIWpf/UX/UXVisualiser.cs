@@ -436,9 +436,11 @@ namespace m0.UIWpf.UX
             FindAndOrCreateContainerEdge(item, newItemCreation);
         }
 
-        void FindAndOrCreateContainerEdge(IUXItem item, bool newItemCreation)
+        void FindAndOrCreateContainerEdge(IUXItem item, bool userDirectInteraction)
         {
-            IVertex containerEdge = item.UXTemplate.ContainerEdge;
+            IUXItem itemParentItem = (IUXItem)item.ParentItem;
+
+            IVertex containerEdge = itemParentItem.UXTemplate.ContainerEdge;
 
             IVertex itemBaseEdgeTo = item.BaseEdgeTo;
 
@@ -457,16 +459,14 @@ namespace m0.UIWpf.UX
                 if (foundEdge != null)
                     item.ContainerEdge = foundEdge;
 
-                if (foundEdge == null && newItemCreation)                                                        
+                if (foundEdge == null && userDirectInteraction)                                                        
                     item.ContainerEdge = itemParentItemBaseEdgeTo.AddEdge(containerEdge, itemBaseEdgeTo);                
             }
 
             //
 
             if (item.ContainerEdge != null)
-            {  // check if need to remove line
-                IUXItem itemParentItem = (UXItem)item.ParentItem;
-
+            {  // check if need to remove line                
                 foreach(IUXItem i in itemParentItem.Decorators)                
                     if(i is LineDecoratorBase)
                     {
@@ -836,6 +836,10 @@ namespace m0.UIWpf.UX
 
             SelectedLine.FromDiagramItem.RemoveDiagramLine(SelectedLine);
 
+            ////////////////////////////////////////
+            Interaction.BeginInteractionWithGraph();
+            ////////////////////////////////////////            
+
             if (onlyEdge)
             {             
                 GraphUtil.DeleteEdge(SelectedLine.FromDiagramItem.Vertex.Get(false, @"BaseEdge:\To:"), 
@@ -852,6 +856,10 @@ namespace m0.UIWpf.UX
                   SelectedLine.Vertex.Get(false, @"BaseEdge:\Meta:"),
                   SelectedLine.Vertex.Get(false, @"BaseEdge:\To:"));
             }
+
+            ////////////////////////////////////////
+            Interaction.EndInteractionWithGraph();
+            ////////////////////////////////////////            
         }
 
         protected void MouseButtonDownHandler(object sender, MouseButtonEventArgs e)
@@ -1437,7 +1445,7 @@ namespace m0.UIWpf.UX
 
         public IUXContainer GetItemByPoint_ByCanvas(Point p)
         {
-            IUXContainer itemToReturn = null;
+            IUXContainer itemToReturn = this;
 
             int highestNestingLevel = -1;
 
@@ -1469,7 +1477,7 @@ namespace m0.UIWpf.UX
 
         public IUXItem GetItemByPoint(Point p)
         {
-            IUXItem itemToReturn = null;
+            IUXItem itemToReturn = this;
 
             int highestNestingLevel = -1;
 
@@ -1549,7 +1557,7 @@ namespace m0.UIWpf.UX
             
             NewParentItem.Canvas.Children.Add((UIElement)item);
 
-            FindAndOrCreateContainerEdge(item, false);
+            FindAndOrCreateContainerEdge(item, true);
 
             Point newPosition = OldParentItem.Canvas.TranslatePoint(item.Position.GetPoint(), NewParentItem.Canvas);
 
@@ -1712,7 +1720,11 @@ namespace m0.UIWpf.UX
                     UXDecoratorTemplate chosenTemplate = (UXDecoratorTemplate)TypedEdge.Get(
                         a.GetAll(false, "OptionDiagramLineDefinition:").FirstOrDefault(), 
                         typeof(UXDecoratorTemplate));
-                        
+
+                    ////////////////////////////////////////
+                    Interaction.BeginInteractionWithGraph();
+                    ////////////////////////////////////////            
+
                     IEdge edge = VertexOperations.AddEdgeOrVertexByMeta(fromItemBaseEdgeTo,
                         a.Get(false, "OptionEdge:"),
                         toEdge.To,
@@ -1721,6 +1733,10 @@ namespace m0.UIWpf.UX
                         chosenTemplate.ForceShowEditForm);
 
                     AddDiagramLineVertex(fromItem, edge, chosenTemplate, toItem);
+
+                    ////////////////////////////////////////
+                    Interaction.EndInteractionWithGraph();
+                    ////////////////////////////////////////            
 
                     return true;
                 }
@@ -2491,7 +2507,11 @@ namespace m0.UIWpf.UX
         {
             IEdge newEdge = VertexOperations.AddInstanceAndReturnEdge(Vertex, typeVertex, Item_meta);
 
-            return (IItem)TypedEdge.Get(newEdge);
+            IItem item = (IItem)TypedEdge.Get(newEdge);
+
+            item.ParentItem = this;
+
+            return item;
         }
 
         public void MoveExistingItemAsSubItem(IItem item)
