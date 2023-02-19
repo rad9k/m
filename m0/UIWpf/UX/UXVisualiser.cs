@@ -1653,11 +1653,11 @@ namespace m0.UIWpf.UX
 
        /////////////////////////////
 
-        private void AddDiagramItemDialog(Point p, IVertex vv, bool isSet, DragEventArgs e)
+        private void AddDiagramItemDialog(Point p, IVertex droppedVertex, bool isSet, DragEventArgs e)
         {
             IVertex r = m0.MinusZero.Instance.Root;
 
-            NewUXItem ndi = new NewUXItem(vv, isSet, WpfUtil.GetMousePositionDnd(e));
+            NewUXItem ndi = new NewUXItem(this, droppedVertex, isSet, WpfUtil.GetMousePositionDnd(e));
 
             if (ndi.UXTemplate != null)
             {

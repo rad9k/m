@@ -33,8 +33,12 @@ namespace m0.UIWpf.UX
             WpfUtil.SetWindowPosition(this, _mousePosition);
         }
 
-        public NewUXItem(IVertex _baseEdge, bool isSet, Point mousePos)
+        IUXVisualiser visualiser;
+
+        public NewUXItem(IUXVisualiser _visualiser, IVertex _baseEdge, bool isSet, Point mousePos)
         {
+            visualiser = _visualiser;
+
             InitializeComponent();
 
           //  this.Owner = m0Main.Instance;
@@ -104,7 +108,7 @@ namespace m0.UIWpf.UX
 
            if (InstanceRadio.IsChecked == true)
            {
-                IVertex Instance = m0.MinusZero.Instance.Root.GetAll(false, @"System\Data\UX\Templates\ZeroUML\{InstanceCreation:Instance}");
+                IVertex Instance = visualiser.UXTemplate.Vertex.GetAll(false, @"{InstanceCreation:Instance}");
              
                foreach(IEdge d in Instance)
                     //if (BaseEdge.Get(false, "To:").Get(false, (string)GraphUtil.GetValue(d.To.Get(false, "MetaVertexTestQuery:"))) != null)
