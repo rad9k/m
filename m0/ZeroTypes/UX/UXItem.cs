@@ -328,9 +328,7 @@ namespace m0.ZeroTypes.UX
 
             UpdateDiagramLinesInSubItems();
 
-            UpdateDiagramLines();
-
-            Diagram.CheckAndUpdateItemComposition(this);
+            UpdateDiagramLines();            
         }
 
         public IUXItem GetUXItem(IItem i)

@@ -1242,9 +1242,14 @@ namespace m0.UIWpf.UX
 
             SetFocus();
 
-            if (ClickTarget == ClickTargetEnum.Item && IsMultiSelectionMoving)
-                RemoveMultiSelectionMovingSprites(e.GetPosition(ClickedItem_FrameworkElemet).X - ClickPositionX_ItemCordinates,
-                            e.GetPosition(ClickedItem_FrameworkElemet).Y - ClickPositionY_ItemCordinates);            
+            if (ClickTarget == ClickTargetEnum.Item)
+                if (IsMultiSelectionMoving)
+                    RemoveMultiSelectionMovingSprites(e.GetPosition(ClickedItem_FrameworkElemet).X - ClickPositionX_ItemCordinates,
+                            e.GetPosition(ClickedItem_FrameworkElemet).Y - ClickPositionY_ItemCordinates);
+                else
+                    CheckAndUpdateItemComposition(ClickedItem);
+            
+            
 
             if (ClickTarget == ClickTargetEnum.AnchorRightTop_CreateDiagramLine)
             {
@@ -1507,36 +1512,13 @@ namespace m0.UIWpf.UX
         }
 
         public void CheckAndUpdateItemComposition(IUXItem item)
-        {
-            Position itemPosition_relative = item.Position;
-
-            FrameworkElement item_FrameworkElement = (FrameworkElement)item;
-
+        {            
             Point itemPosition_absolute = GetItemAbsolutePosition(item);
 
-            if (item.ParentItem == this || item.ParentItem == null)
-            {
-                IUXItem toBeParentItem = GetItemByPoint_ByCanvas(itemPosition_absolute);
+            IUXItem toBeParentItem = GetItemByPoint_ByCanvas(itemPosition_absolute);
 
-                if(toBeParentItem != null && toBeParentItem != this)
-                    MoveToParentItem(item, toBeParentItem);
-            }
-            else {
-                FrameworkElement itemParent_FrameworkElement = (FrameworkElement)item.ParentItem;
-
-                if (itemPosition_relative.X < 0 || itemPosition_relative.Y < 0 || 
-                    (itemPosition_relative.X + item_FrameworkElement.ActualWidth) > itemParent_FrameworkElement.ActualWidth ||
-                    (itemPosition_relative.Y + item_FrameworkElement.Height) > itemParent_FrameworkElement.ActualHeight)
-                {
-                    IUXItem toBeParentItem = GetItemByPoint_ByCanvas(itemPosition_absolute);
-
-                    if (toBeParentItem == null)
-                        toBeParentItem = this;
-
-                    if (toBeParentItem != item.ParentItem)
-                        MoveToParentItem(item, toBeParentItem);
-                }
-            }            
+            if(toBeParentItem != item.ParentItem)
+                MoveToParentItem(item, toBeParentItem);
         }
 
         private void MoveToParentItem(IUXItem item, IUXItem tobeParentItem)
