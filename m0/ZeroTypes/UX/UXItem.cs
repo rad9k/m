@@ -940,7 +940,18 @@ namespace m0.ZeroTypes.UX
 
         //
 
-        public virtual Point GetLineAnchorLocation(IUXItem _toItem, int toItemDiagramLinesCount, int toItemDiagramLinesNumber, bool isSelfStart)
+        bool IsInParentHierarchy(IItem toItem)
+        {
+            if (toItem == null)
+                return false;
+
+            if (ParentItem == toItem)
+                return true;
+
+            return IsInParentHierarchy(toItem.ParentItem);
+        }
+
+        public virtual Point GetLineAnchorLocation(IUXItem _toItem, int toItemDiagramLinesCount, int toItemDiagramLineNumber, bool isSelfStart)
         {
             if (!(_toItem is FrameworkElement))
                 return new Point();
@@ -966,8 +977,16 @@ namespace m0.ZeroTypes.UX
 
             if (toItem != null)
             {
-                pTo.X = toItemLeftTop.X + toItem.ActualWidth / 2;
-                pTo.Y = toItemLeftTop.Y + toItem.ActualHeight / 2;
+                if (IsInParentHierarchy(_toItem))
+                {
+                    pTo.X = toItemLeftTop.X + toItem.ActualWidth / 2;
+                    pTo.Y = toItemLeftTop.Y;
+                }
+                else
+                {
+                    pTo.X = toItemLeftTop.X + toItem.ActualWidth / 2;
+                    pTo.Y = toItemLeftTop.Y + toItem.ActualHeight / 2;
+                }
             }
             else
                 pTo = new Point();
@@ -987,7 +1006,7 @@ namespace m0.ZeroTypes.UX
                 {
                     if (isSelfStart)
                     {
-                        p.X = thisLeftTop.X + (((double)toItemDiagramLinesNumber + 1) / ((double)toItemDiagramLinesCount + 1) * this.ActualWidth);
+                        p.X = thisLeftTop.X + (((double)toItemDiagramLineNumber + 1) / ((double)toItemDiagramLinesCount + 1) * this.ActualWidth);
                         p.Y = tY - this.ActualHeight / 2;
 
                         return p;
@@ -995,7 +1014,7 @@ namespace m0.ZeroTypes.UX
                     else
                     {
                         p.X = tX + this.ActualWidth / 2;
-                        p.Y = thisLeftTop.Y + (((double)(toItemDiagramLinesCount - toItemDiagramLinesNumber)) / ((double)toItemDiagramLinesCount + 1) * this.ActualHeight);
+                        p.Y = thisLeftTop.Y + (((double)(toItemDiagramLinesCount - toItemDiagramLineNumber)) / ((double)toItemDiagramLinesCount + 1) * this.ActualHeight);
 
                         return p;
                     }
@@ -1003,26 +1022,26 @@ namespace m0.ZeroTypes.UX
 
                 if (testY <= 0 && Math.Abs(testX * this.ActualHeight) <= Math.Abs(testY * this.ActualWidth))
                 {
-                    p.X = thisLeftTop.X + (((double)toItemDiagramLinesNumber + 1) / ((double)toItemDiagramLinesCount + 1) * this.ActualWidth);
+                    p.X = thisLeftTop.X + (((double)toItemDiagramLineNumber + 1) / ((double)toItemDiagramLinesCount + 1) * this.ActualWidth);
                     p.Y = tY - this.ActualHeight / 2;
                 }
 
                 if (testY > 0 && Math.Abs(testX * this.ActualHeight) <= Math.Abs(testY * this.ActualWidth))
                 {
-                    p.X = thisLeftTop.X + (((double)toItemDiagramLinesNumber + 1) / ((double)toItemDiagramLinesCount + 1) * this.ActualWidth);
+                    p.X = thisLeftTop.X + (((double)toItemDiagramLineNumber + 1) / ((double)toItemDiagramLinesCount + 1) * this.ActualWidth);
                     p.Y = tY + this.ActualHeight / 2;
                 }
 
                 if (testX >= 0 && Math.Abs(testX * this.ActualHeight) >= Math.Abs(testY * this.ActualWidth))
                 {
                     p.X = tX + this.ActualWidth / 2;
-                    p.Y = thisLeftTop.Y + (((double)toItemDiagramLinesNumber + 1) / ((double)toItemDiagramLinesCount + 1) * this.ActualHeight);
+                    p.Y = thisLeftTop.Y + (((double)toItemDiagramLineNumber + 1) / ((double)toItemDiagramLinesCount + 1) * this.ActualHeight);
                 }
 
                 if (testX <= 0 && Math.Abs(testX * this.ActualHeight) >= Math.Abs(testY * this.ActualWidth))
                 {
                     p.X = tX - this.ActualWidth / 2;
-                    p.Y = thisLeftTop.Y + (((double)toItemDiagramLinesNumber + 1) / ((double)toItemDiagramLinesCount + 1) * this.ActualHeight);
+                    p.Y = thisLeftTop.Y + (((double)toItemDiagramLineNumber + 1) / ((double)toItemDiagramLinesCount + 1) * this.ActualHeight);
                 }
             }
             else

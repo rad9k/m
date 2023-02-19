@@ -328,7 +328,6 @@
     <Compile Include="ZeroTypes\UX\ContainerItem.xaml.cs">
       <DependentUpon>ContainerItem.xaml</DependentUpon>
     </Compile>
-    <Compile Include="ZeroTypes\UX\RectangleItem.cs" />
     <Compile Include="ZeroTypes\UX\RectangleItem.xaml.cs">
       <DependentUpon>RectangleItem.xaml</DependentUpon>
     </Compile>
