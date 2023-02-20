@@ -2,17 +2,11 @@
 using m0.Graph;
 using m0.Graph.ExecutionFlow;
 using m0.UIWpf;
-using m0.UIWpf.Controls;
-using m0.UIWpf.UX;
 using m0.User.Process.UX;
 using m0.Util;
-using m0.ZeroCode.Helpers;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -36,7 +30,7 @@ namespace m0.ZeroTypes.UX
 
         public IItem ParentItem { get; set; }
 
-        public List<FrameworkElement> Anchors;                
+        public List<FrameworkElement> Anchors;
 
         IEdge graphChangeListenerEdge;
 
@@ -48,11 +42,11 @@ namespace m0.ZeroTypes.UX
 
         public bool IsSelected { get; set; }
 
-        public bool IsHighlighted { get; set; }        
+        public bool IsHighlighted { get; set; }
 
         public List<ILineDecoratorBase> DiagramToLines { get; } = new List<ILineDecoratorBase>();
 
-        public List<ILineDecoratorBase> DiagramToAsMetaLines { get; } = new List<ILineDecoratorBase>();        
+        public List<ILineDecoratorBase> DiagramToAsMetaLines { get; } = new List<ILineDecoratorBase>();
 
         public UXItem(IEdge _edge)
         {
@@ -74,7 +68,7 @@ namespace m0.ZeroTypes.UX
 
             this.MouseLeave += DiagramItemBase_MouseLeave;
 
-            this.MouseLeftButtonDown += MouseLeftButtonDownHandler;            
+            this.MouseLeftButtonDown += MouseLeftButtonDownHandler;
         }
 
         protected Brush GetBackgroundBrush()
@@ -119,7 +113,7 @@ namespace m0.ZeroTypes.UX
                          GraphChangeFilterEnum.OutputEdgeRemoved,
                          GraphChangeFilterEnum.OutputEdgeDisposed},
                 "UXItem",
-                VertexChange);            
+                VertexChange);
 
             VisualiserUpdate();
         } // to be called after Vertex is setted up
@@ -162,7 +156,7 @@ namespace m0.ZeroTypes.UX
             return DiagramLinesBaseEdgeToDictionary;
         }
 
-        public virtual void RemoveFromCanvas()         
+        public virtual void RemoveFromCanvas()
         {
             Diagram.Canvas.Children.Remove(this);
 
@@ -178,15 +172,15 @@ namespace m0.ZeroTypes.UX
 
             foreach (ILineDecoratorBase l in DiagramToLines)
                 l.RemoveFromCanvas();
-        }        
-               
-        public void AddDiagramLineObject(IUXItem toItem, ILineDecoratorBase newline) 
+        }
+
+        public void AddDiagramLineObject(IUXItem toItem, ILineDecoratorBase newline)
         {
             newline.Diagram = this.Diagram;
 
             if (newline.UXTemplate != null)
                 Diagram.AddEdgesFromDefintion(newline.Vertex, newline.UXTemplate.ItemVertex);
-         
+
             newline.FromDiagramItem = this;
 
             newline.ToItem = toItem;
@@ -200,8 +194,8 @@ namespace m0.ZeroTypes.UX
             UpdateDiagramLines(toItem);
         }
 
-        public void RemoveDiagramLine(ILineDecoratorBase line) 
-        {            
+        public void RemoveDiagramLine(ILineDecoratorBase line)
+        {
             RemoveDecorator(line);
 
             needRebuildDiagramLinesDictionary = true;
@@ -213,7 +207,7 @@ namespace m0.ZeroTypes.UX
             RemoveDecorator(line);
         }
 
-        public virtual void Select() 
+        public virtual void Select()
         {
             if (IsSelected)
                 return;
@@ -245,7 +239,7 @@ namespace m0.ZeroTypes.UX
             AddAnchor(ClickTargetEnum.AnchorRightBottom, right, bottom);
         }
 
-        public virtual void Unselect() 
+        public virtual void Unselect()
         {
             IsSelected = false;
 
@@ -279,7 +273,7 @@ namespace m0.ZeroTypes.UX
         }
 
         public void MoveItem(double x, double y, bool onlyAnchors)
-        {            
+        {
             if (Position == null)
                 return;
 
@@ -317,7 +311,7 @@ namespace m0.ZeroTypes.UX
                 deltax = -x;
                 deltay = -y;
             }
-                                        
+
             foreach (UIElement a in Anchors)
             {
                 Canvas.SetLeft(a, Canvas.GetLeft(a) - deltax);
@@ -345,7 +339,7 @@ namespace m0.ZeroTypes.UX
         }
 
         public void UpdateDiagramLinesInSubItems()
-        {            
+        {
             foreach (IItem _i in Items)
             {
                 IUXItem i = GetUXItem(_i);
@@ -353,14 +347,14 @@ namespace m0.ZeroTypes.UX
                 if (i == null)
                     continue;
 
-                i.UpdateDiagramLines();                
+                i.UpdateDiagramLines();
             }
-        }        
-        
+        }
+
         public void MoveAndResizeItem(double x_orginal, double y_orginal, double width, double height)
         {
             if (width < 0 || height < 0)
-            return;
+                return;
 
             double x = x_orginal;
             double y = y_orginal;
@@ -385,7 +379,7 @@ namespace m0.ZeroTypes.UX
             Canvas.SetLeft(this, x);
             Canvas.SetTop(this, y);
 
-            Size size = Size;            
+            Size size = Size;
 
             if (size == null)
                 size = SizeCreate();
@@ -407,7 +401,7 @@ namespace m0.ZeroTypes.UX
             Diagram.CheckAndUpdateItemComposition(this, true);
         }
 
-        public void AddToSelectedEdges() 
+        public void AddToSelectedEdges()
         {
             ////////////////////////////////////////
             Interaction.BeginInteractionWithGraph();
@@ -437,7 +431,7 @@ namespace m0.ZeroTypes.UX
                     if (_l is ILineDecoratorBase)
                     {
                         ILineDecoratorBase l = (ILineDecoratorBase)_l;
-                                        
+
                         IEdge l_baseEdge = l.BaseEdge;
                         if (l_baseEdge.Meta == edgeVertex.Get(false, "Meta:") &&
                             l_baseEdge.To == edgeVertex.Get(false, "To:"))
@@ -463,14 +457,14 @@ namespace m0.ZeroTypes.UX
                 VisualiserUpdate();
 
             return exe.Stack;
-        }        
+        }
 
         // OPTIMISATION START
 
         Dictionary<IUXItem, List<ILineDecoratorBase>> DiagramLinesToDiagramItemDictionary = new Dictionary<IUXItem, List<ILineDecoratorBase>>();
         Dictionary<IVertex, List<ILineDecoratorBase>> DiagramLinesBaseEdgeToDictionary = new Dictionary<IVertex, List<ILineDecoratorBase>>();
 
-        bool needRebuildDiagramLinesDictionary = true;        
+        bool needRebuildDiagramLinesDictionary = true;
 
         void ClearDiagramLines()
         {
@@ -478,7 +472,7 @@ namespace m0.ZeroTypes.UX
             DiagramLinesBaseEdgeToDictionary.Clear();
 
             needRebuildDiagramLinesDictionary = true;
-        }        
+        }
 
         void RebuidDiagramLinesDictionary()
         {
@@ -489,38 +483,38 @@ namespace m0.ZeroTypes.UX
                 if (_l is ILineDecoratorBase)
                 {
                     ILineDecoratorBase l = (ILineDecoratorBase)_l;
-                    
-                // ToDiagramItem:
 
-                IUXItem toDiagramItem = l.ToItem;
+                    // ToDiagramItem:
 
-                if (DiagramLinesToDiagramItemDictionary.ContainsKey(toDiagramItem))
-                    DiagramLinesToDiagramItemDictionary[toDiagramItem].Add(l);
-                else
-                {
-                    List<ILineDecoratorBase> list = new List<ILineDecoratorBase>();
-                    list.Add(l);
+                    IUXItem toDiagramItem = l.ToItem;
 
-                    DiagramLinesToDiagramItemDictionary.Add(toDiagramItem, list);
+                    if (DiagramLinesToDiagramItemDictionary.ContainsKey(toDiagramItem))
+                        DiagramLinesToDiagramItemDictionary[toDiagramItem].Add(l);
+                    else
+                    {
+                        List<ILineDecoratorBase> list = new List<ILineDecoratorBase>();
+                        list.Add(l);
+
+                        DiagramLinesToDiagramItemDictionary.Add(toDiagramItem, list);
+                    }
+
+                    // BaseEdge:\To:
+
+                    IVertex BaseEdgeTo = l.BaseEdgeTo;
+
+                    if (DiagramLinesBaseEdgeToDictionary.ContainsKey(BaseEdgeTo))
+                        DiagramLinesBaseEdgeToDictionary[BaseEdgeTo].Add(l);
+                    else
+                    {
+                        List<ILineDecoratorBase> list = new List<ILineDecoratorBase>();
+                        list.Add(l);
+
+                        DiagramLinesBaseEdgeToDictionary.Add(BaseEdgeTo, list);
+                    }
                 }
-
-                // BaseEdge:\To:
-
-                IVertex BaseEdgeTo = l.BaseEdgeTo;
-
-                if (DiagramLinesBaseEdgeToDictionary.ContainsKey(BaseEdgeTo))
-                    DiagramLinesBaseEdgeToDictionary[BaseEdgeTo].Add(l);
-                else
-                {
-                    List<ILineDecoratorBase> list = new List<ILineDecoratorBase>();
-                    list.Add(l);
-
-                    DiagramLinesBaseEdgeToDictionary.Add(BaseEdgeTo, list);
-                }
-            }
 
             needRebuildDiagramLinesDictionary = false;
-        }        
+        }
 
         // OPTIMISATION END
 
@@ -537,7 +531,7 @@ namespace m0.ZeroTypes.UX
             {
                 Width = size.Width;
                 Height = size.Height;
-            }          
+            }
 
             UX.Color foregroundColor = ForegroundColor;
 
@@ -545,7 +539,7 @@ namespace m0.ZeroTypes.UX
                 this.Foreground = foregroundColor.GetBrush();
             else
                 this.Foreground = (Brush)FindResource("0ForegroundBrush");
-        }       
+        }
 
         protected void UpdateDiagramLines(IUXItem toItem)
         {
@@ -611,7 +605,7 @@ namespace m0.ZeroTypes.UX
                 if (_l is ILineDecoratorBase)
                 {
                     ILineDecoratorBase l = (ILineDecoratorBase)_l;
-                 
+
                     if (!updatedItems.Contains(l.ToItem))
                     {
                         UpdateDiagramLines(l.ToItem);
@@ -649,7 +643,7 @@ namespace m0.ZeroTypes.UX
                 if (_l is ILineDecoratorBase)
                 {
                     ILineDecoratorBase l = (ILineDecoratorBase)_l;
-                    
+
                     l.Highlight();
                     l.ToItem.Highlight();
                 }
@@ -669,7 +663,7 @@ namespace m0.ZeroTypes.UX
                 if (_l is ILineDecoratorBase)
                 {
                     ILineDecoratorBase l = (ILineDecoratorBase)_l;
-                    
+
                     l.Unhighlight();
                     l.ToItem.Unhighlight();
                 }
@@ -682,7 +676,7 @@ namespace m0.ZeroTypes.UX
         }
 
         private void DiagramItemBase_MouseLeave(object sender, MouseEventArgs e)
-        {            
+        {
             if (Diagram.IsDrawingOrMovingLine == false && Diagram.IsSelecting == false)
                 UnhighlightThisAndAllConectedByDiagramLine();
         }
@@ -776,16 +770,16 @@ namespace m0.ZeroTypes.UX
                 if (anchorType == ClickTargetEnum.AnchorRightTop_MoveDiagramLine)
                 {
                     l.Text = "*";
-                    l.FontSize = 15;                    
-                    l.Padding = new Thickness(-3.5, -3.7, 0, 0);                    
+                    l.FontSize = 15;
+                    l.Padding = new Thickness(-3.5, -3.7, 0, 0);
 
                     l.BorderBrush = (Brush)this.FindResource("0LightHighlightBrush");
-                    l.BorderThickness = new Thickness(2);                    
+                    l.BorderThickness = new Thickness(2);
                 }
-                
+
                 l.FontFamily = new FontFamily("Times New Roman");
-                
-                l.Margin = new Thickness(0);                
+
+                l.Margin = new Thickness(0);
 
                 l.Background = (Brush)FindResource("0SelectionBrush");
                 l.Foreground = (Brush)FindResource("0BackgroundBrush");
@@ -795,7 +789,7 @@ namespace m0.ZeroTypes.UX
             else
             {
                 r = new Rectangle();
-                
+
                 ((Rectangle)r).Fill = (Brush)FindResource("0SelectionBrush");
             }
 
@@ -813,20 +807,20 @@ namespace m0.ZeroTypes.UX
             Anchors.Add(r);
 
             r.MouseLeftButtonDown += AnchorMouseButtonDown;
-            
-            
+
+
             switch (anchorType)
-            {            
-                case ClickTargetEnum.AnchorLeftTop:                    
-                    SetCursor(r, Cursors.SizeNWSE);                    
+            {
+                case ClickTargetEnum.AnchorLeftTop:
+                    SetCursor(r, Cursors.SizeNWSE);
                     break;
 
                 case ClickTargetEnum.AnchorMiddleTop:
-                    SetCursor(r, Cursors.SizeNS);                    
+                    SetCursor(r, Cursors.SizeNS);
                     break;
 
                 case ClickTargetEnum.AnchorRightTop_CreateDiagramLine:
-                    SetCursor(r, Cursors.Pen);                    
+                    SetCursor(r, Cursors.Pen);
                     break;
 
                 case ClickTargetEnum.AnchorRightTop_MoveDiagramLine:
@@ -834,23 +828,23 @@ namespace m0.ZeroTypes.UX
                     break;
 
                 case ClickTargetEnum.AnchorLeftMiddle:
-                    SetCursor(r, Cursors.SizeWE);                    
+                    SetCursor(r, Cursors.SizeWE);
                     break;
 
                 case ClickTargetEnum.AnchorRightMiddle:
-                    SetCursor(r, Cursors.SizeWE);                    
+                    SetCursor(r, Cursors.SizeWE);
                     break;
 
                 case ClickTargetEnum.AnchorLeftBottom:
-                    SetCursor(r, Cursors.SizeNESW);                    
+                    SetCursor(r, Cursors.SizeNESW);
                     break;
 
                 case ClickTargetEnum.AnchorMiddleBottom:
-                    SetCursor(r, Cursors.SizeNS);                    
+                    SetCursor(r, Cursors.SizeNS);
                     break;
 
                 case ClickTargetEnum.AnchorRightBottom:
-                    SetCursor(r, Cursors.SizeNWSE);                    
+                    SetCursor(r, Cursors.SizeNWSE);
                     break;
             }
 
@@ -864,7 +858,7 @@ namespace m0.ZeroTypes.UX
         //
 
         public FrameworkElement DecorateWithCursor(FrameworkElement e)
-        {            
+        {
             e.Tag = new CursorAndClickTarget();
 
             e.MouseEnter += R_MouseEnter;
@@ -878,7 +872,7 @@ namespace m0.ZeroTypes.UX
             ((CursorAndClickTarget)r.Tag).Cursor = c;
         }
 
-        public void SetClickTarget (FrameworkElement r, ClickTargetEnum c)
+        public void SetClickTarget(FrameworkElement r, ClickTargetEnum c)
         {
             ((CursorAndClickTarget)r.Tag).ClickTarget = c;
         }
@@ -964,7 +958,7 @@ namespace m0.ZeroTypes.UX
 
             Point thisLeftTop = new Point();
 
-   
+
             toItemLeftTop = toItem.TranslatePoint(new Point(0, 0), Diagram.Canvas);
 
             thisLeftTop = TranslatePoint(new Point(0, 0), Diagram.Canvas);
@@ -1091,7 +1085,7 @@ namespace m0.ZeroTypes.UX
 
             return p;
         }
-  
+
         // UNDER
 
         // UXItem
@@ -1328,7 +1322,7 @@ namespace m0.ZeroTypes.UX
                 return (UXTemplate)TypedEdge.Get(val);
             }
             set
-            {                
+            {
                 GraphUtil.CreateOrReplaceEdge(Vertex, UXTemplate_meta, value.Vertex);
             }
         }
@@ -1479,7 +1473,7 @@ namespace m0.ZeroTypes.UX
         {
             item.Edge.From.DeleteEdge(item.Edge);
 
-            IEdge e = Vertex.AddEdge(Item_meta, item.Vertex);                       
+            IEdge e = Vertex.AddEdge(Item_meta, item.Vertex);
             item.Edge = e;
 
             item.ParentItem = this;
@@ -1494,7 +1488,7 @@ namespace m0.ZeroTypes.UX
         }
 
         // TypedEdge
-        
+
         public IEdge Edge { get; set; }
 
         IVertex vertex;
