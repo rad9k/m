@@ -10,6 +10,8 @@ namespace m0.ZeroTypes.UX
 {
     public class UXTemplate: TypedEdge
     {
+        static IVertex Name_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\UXTemplate\Name");
+        static IVertex UXTemplate_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\UXTemplate\UXTemplate");
         static IVertex DirectVertexTestQuery_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\UXTemplate\DirectVertexTestQuery");
         static IVertex MetaVertexTestQuery_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\UXTemplate\MetaVertexTestQuery");
         static IVertex ItemClass_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\UXTemplate\ItemClass");
@@ -19,10 +21,62 @@ namespace m0.ZeroTypes.UX
         static IVertex DoNotShowInherited_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\UXTemplate\DoNotShowInherited");
         static IVertex ForceShowEditForm_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\UXTemplate\ForceShowEditForm");
         static IVertex ContainerEdge_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\UXTemplate\ContainerEdge");
+        static IVertex BaseEdgeQuery_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\UXTemplate\BaseEdgeQuery");
 
         static IVertex Size_type = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\Size");
+        static IVertex UXTemplate_type = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\UXTemplate");
+
 
         public UXTemplate(IEdge edge) : base(edge) { }
+
+        public string Name
+        {
+            get
+            {
+                IVertex val = GraphUtil.GetQueryOutFirst(Vertex, "Name", null);
+
+                if (val == null)
+                    return null;
+
+                return GraphUtil.GetStringValue(val);
+            }
+            set
+            {
+                IVertex val = GraphUtil.GetQueryOutFirst(Vertex, "Name", null);
+
+                if (val == null)
+                    val = Vertex.AddVertex(Name_meta, value);
+                else
+                    val.Value = value;
+            }
+        }
+
+        public IList<UXTemplate> UXTemplate_
+        {
+            get
+            {
+                IList<IEdge> list = GraphUtil.GetQueryOut(Vertex, "UXTemplate", null);
+
+                IList<UXTemplate> ret = new List<UXTemplate>();
+
+                foreach (IEdge e in list)
+                    ret.Add((UXTemplate)TypedEdge.Get(e));
+
+                return ret;
+            }
+        }
+
+        public UXTemplate AddUXTemplate()
+        {
+            IEdge newEdge = VertexOperations.AddInstanceAndReturnEdge(Vertex, UXTemplate_type, UXTemplate_meta);
+
+            return (UXTemplate)TypedEdge.Get(newEdge, typeof(ZeroTypes.UX.UXTemplate));
+        }
+
+        public void RemoveUXTemplate(UXTemplate template)
+        {
+            Vertex.DeleteEdge(template.Edge);
+        }
 
         public string DirectVertexTestQuery
         {
@@ -201,6 +255,28 @@ namespace m0.ZeroTypes.UX
             set
             {
                 GraphUtil.CreateOrReplaceEdge(Vertex, ContainerEdge_meta, value);
+            }
+        }
+
+        public string BaseEdgeQuery
+        {
+            get
+            {
+                IVertex val = GraphUtil.GetQueryOutFirst(Vertex, "BaseEdgeQuery", null);
+
+                if (val == null)
+                    return null;
+
+                return GraphUtil.GetStringValue(val);
+            }
+            set
+            {
+                IVertex val = GraphUtil.GetQueryOutFirst(Vertex, "BaseEdgeQuery", null);
+
+                if (val == null)
+                    val = Vertex.AddVertex(BaseEdgeQuery_meta, value);
+                else
+                    val.Value = value;
             }
         }
     }
