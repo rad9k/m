@@ -138,6 +138,7 @@
     <Compile Include="UIWpf\Controls\IHasScrollViewer.cs" />
     <Compile Include="UIWpf\Controls\IMouseWheelHandler.cs" />
     <Compile Include="UIWpf\UX\UXVisualiser.cs" />
+    <Compile Include="ZeroTypes\UX\OrientationEnum.cs" />
     <Compile Include="ZeroTypes\UX\MultiContainerItem.xaml.cs">
       <DependentUpon>MultiContainerItem.xaml</DependentUpon>
     </Compile>

@@ -212,9 +212,10 @@ namespace m0.ZeroTypes.UX
         
         // UNDER        
 
-        static IVertex ShowMeta_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\RectangleItem\ShowMeta");
-        static IVertex RoundEdgeSize_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\RectangleItem\RoundEdgeSize");
-        
+        static IVertex ShowMeta_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\MultiContainerItem\ShowMeta");
+        static IVertex RoundEdgeSize_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\MultiContainerItem\RoundEdgeSize");
+        static IVertex Orientation_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\MultiContainerItem\Orientation");
+
         public bool ShowMeta
         {
             get
@@ -257,7 +258,22 @@ namespace m0.ZeroTypes.UX
                 else
                     val.Value = value;
             }
-        }        
+        }
+
+        public OrientationEnum Orientation
+        {
+            get
+            {
+                IVertex val = GraphUtil.GetQueryOutFirst(Vertex, "Orientation", null);
+
+                return OrientationEnumHelper.GetEnum(val);
+            }
+            set
+            {
+                GraphUtil.CreateOrReplaceEdge(Vertex, Orientation_meta, OrientationEnumHelper.GetVertex(value));
+            }
+        }
+
 
         //
 

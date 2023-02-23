@@ -210,10 +210,10 @@ namespace m0.ZeroTypes.UX
             return base.VertexChange(exe);
         }
         
-        // UNDER        
+        // ContainerItem     
 
-        static IVertex ShowMeta_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\RectangleItem\ShowMeta");
-        static IVertex RoundEdgeSize_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\RectangleItem\RoundEdgeSize");
+        static IVertex ShowMeta_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\ContainerItem\ShowMeta");
+        static IVertex RoundEdgeSize_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\ContainerItem\RoundEdgeSize");
         
         public bool ShowMeta
         {
