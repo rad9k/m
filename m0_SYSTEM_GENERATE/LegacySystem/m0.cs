@@ -5556,7 +5556,6 @@ namespace m0
         IVertex AddUXTemplate_ContainerItem(IVertex where, String Value, bool doNotShowInherited,
               String DirectVertexTestQuery,
               String MetaVertexTestQuery,
-              IVertex ItemClass,
               IVertex InstanceCreation,
               bool CreateItemVertex,
               double BorderWidth,
@@ -5580,18 +5579,10 @@ namespace m0
                 v.Get(false, "ItemVertex:").AddVertex(Root.Get(false, @"System\Meta\ZeroTypes\UX\RectangleItem\ShowMeta"), "False");
 
             if (ContainerEdge!= null)
-            {
-
-            }
+                v.AddEdge(Root.Get(false, @"System\Meta\ZeroTypes\UX\UXTemplate\ContainerEdge"), 
+                    ContainerEdge);
             
             return v;
-        }
-
-        void AmendUXTemplate_ContainerEdge(IVertex v, IVertex containerEdge)
-        {
-            IVertex ce = Root.Get(false, @"System\Meta\ZeroTypes\UX\UXTemplate\ContainerEdge");
-
-            v.AddEdge(ce, containerEdge);
         }
 
         void AddLineDecorator(IVertex v,
@@ -5715,15 +5706,22 @@ namespace m0
             IVertex v3 = AddUXTemplate_ContainerItem(/*where*/sdutz, /*name*/"TEST Vertex3",/*doNotShowInherited*/ false,
             /*DirectVertexTestQuery*/ @"TEST",
             /*MetaVertexTestQuery*/ null,
+            /*InstanceCreation*/ Direct,
+            /*CreateItemVertex*/ true, /*BorderWidth*/ -1,
+            /*BackgroundColor*/null,/*ForegroundColor*/ null,
+            /*RoundEdgeSize*/-1,/*ShowMeta*/ false,
+            /*ContainerEdge*/smzu);
+
+            IVertex v4 = AddUXTemplate_MultiContainerItem(/*where*/sdutz, /*name*/"TEST Vertex3",/*doNotShowInherited*/ false,
+            /*DirectVertexTestQuery*/ @"TEST",
+            /*MetaVertexTestQuery*/ null,
             /*ItemClass*/ smzu.Get(false, @"?MultiContainerItem"),
             /*InstanceCreation*/ Direct,
             /*CreateItemVertex*/ true, /*BorderWidth*/ -1,
             /*BackgroundColor*/null,/*ForegroundColor*/ null,
             /*RoundEdgeSize*/-1,/*ShowMeta*/ false,
-            /*VisualiserClass*/null,/*VisualiserVertex*/ false);
+            /*ContainerEdge*/smzu);
 
-            AmendUXTemplate_ContainerEdge(v, smzu);
-            
             AddLineDecorator(v,
                "Edge",
                @"$Is:\",
