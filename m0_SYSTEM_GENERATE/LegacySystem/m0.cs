@@ -5564,8 +5564,8 @@ namespace m0
               IVertex ContainerEdge,
               bool? ForceShowEditForm = null)
         {
-            IVertex v = AddUXTemplate(where, Value, doNotShowInherited, DirectVertexTestQuery, MetaVertexTestQuery, ItemClass, InstanceCreation,
-             CreateItemVertex,
+            IVertex v = AddUXTemplate(where, Value, doNotShowInherited, DirectVertexTestQuery, MetaVertexTestQuery,
+                Root.Get(false, @"System\Meta\ZeroTypes\UX\ContainerItem"), InstanceCreation, CreateItemVertex,
            BorderWidth,
            ForegroundColor, BackgroundColor,
            ForceShowEditForm);
@@ -5582,6 +5582,33 @@ namespace m0
                 v.AddEdge(Root.Get(false, @"System\Meta\ZeroTypes\UX\UXTemplate\ContainerEdge"), 
                     ContainerEdge);
             
+            return v;
+        }
+
+        IVertex AddUXTemplate_MultiContainerItem(IVertex where, String Value, bool doNotShowInherited,
+              String DirectVertexTestQuery,
+              String MetaVertexTestQuery,
+              IVertex InstanceCreation,
+              bool CreateItemVertex,
+              double BorderWidth,
+              IVertex BackgroundColor, IVertex ForegroundColor,
+              int RoundEdgeSize, bool showMeta,              
+              bool? ForceShowEditForm = null)
+        {
+            IVertex v = AddUXTemplate(where, Value, doNotShowInherited, DirectVertexTestQuery, MetaVertexTestQuery,
+                Root.Get(false, @"System\Meta\ZeroTypes\UX\MultiContainerItem"), InstanceCreation, CreateItemVertex,
+           BorderWidth,
+           ForegroundColor, BackgroundColor,
+           ForceShowEditForm);
+
+            if (CreateItemVertex && RoundEdgeSize > -1)
+                v.Get(false, "ItemVertex:").AddVertex(Root.Get(false, @"System\Meta\ZeroTypes\UX\RectangleItem\RoundEdgeSize"), RoundEdgeSize);
+
+            if (CreateItemVertex && showMeta)
+                v.Get(false, "ItemVertex:").AddVertex(Root.Get(false, @"System\Meta\ZeroTypes\UX\RectangleItem\ShowMeta"), "True");
+            else
+                v.Get(false, "ItemVertex:").AddVertex(Root.Get(false, @"System\Meta\ZeroTypes\UX\RectangleItem\ShowMeta"), "False");
+
             return v;
         }
 
@@ -5655,7 +5682,7 @@ namespace m0
         }
 
         void CreateSystemDataUXZeroUMLTemplate()
-        {            
+        {
             IVertex smzu = Root.Get(false, @"System\Meta\ZeroTypes\UX");
 
             IVertex sdu = Root.Get(false, @"System\Data\UX");
@@ -5686,53 +5713,46 @@ namespace m0
             // Vertex 
             /////////////////////////////////////////////////////////////////////////
 
-            IVertex v = AddUXTemplate(/*where*/sdutz, /*name*/"TEST Vertex",/*doNotShowInherited*/ false,
-            /*DirectVertexTestQuery*/ @"TEST",
+            IVertex v = AddUXTemplate(/*where*/sdutz, /*name*/"Vertex", /*doNotShowInherited*/ false,
+            /*DirectVertexTestQuery*/ @"",
             /*MetaVertexTestQuery*/ null,
-            /*ItemClass*/ smzu.Get(false, @"?MultiContainerItem"),
-            /*InstanceCreation*/ Direct,
-            /*CreateItemVertex*/ true, /*BorderWidth*/ -1,
-            /*BackgroundColor*/null,/*ForegroundColor*/ null);
-
-            IVertex v2 = AddUXTemplate_RectangleItem(/*where*/sdutz, /*name*/"TEST Vertex2",/*doNotShowInherited*/ false,
-            /*DirectVertexTestQuery*/ @"TEST",
+            /*ItemClass*/ smzu.Get(false, @"?RectangleItem"), /*InstanceCreation*/ Direct,
+            /*CreateItemVertex*/ true, /*BorderWidth*/ -1, /*BackgroundColor*/null,/*ForegroundColor*/ null);
+            
+            IVertex v2 = AddUXTemplate_RectangleItem(/*where*/sdutz, /*name*/"Vertex RectangleItem", /*doNotShowInherited*/ false,
+            /*DirectVertexTestQuery*/ @"",
             /*MetaVertexTestQuery*/ null,
             /*InstanceCreation*/ Direct,
-            /*CreateItemVertex*/ true, /*BorderWidth*/ -1,
-            /*BackgroundColor*/null,/*ForegroundColor*/ null,
+            /*CreateItemVertex*/ true, /*BorderWidth*/ -1, /*BackgroundColor*/null, /*ForegroundColor*/ null,
             /*RoundEdgeSize*/-1,/*ShowMeta*/ false,
             /*VisualiserClass*/null,/*VisualiserVertex*/ false);
 
-            IVertex v3 = AddUXTemplate_ContainerItem(/*where*/sdutz, /*name*/"TEST Vertex3",/*doNotShowInherited*/ false,
-            /*DirectVertexTestQuery*/ @"TEST",
+            IVertex v3 = AddUXTemplate_ContainerItem(/*where*/sdutz, /*name*/"Vertex ContainerItem",/*doNotShowInherited*/ false,
+            /*DirectVertexTestQuery*/ @"",
             /*MetaVertexTestQuery*/ null,
             /*InstanceCreation*/ Direct,
-            /*CreateItemVertex*/ true, /*BorderWidth*/ -1,
-            /*BackgroundColor*/null,/*ForegroundColor*/ null,
-            /*RoundEdgeSize*/-1,/*ShowMeta*/ false,
-            /*ContainerEdge*/smzu);
+            /*CreateItemVertex*/ true, /*BorderWidth*/ -1, /*BackgroundColor*/null, /*ForegroundColor*/ null,
+            /*RoundEdgeSize*/-1,/*ShowMeta*/ false, /*ContainerEdge*/smzu);
 
-            IVertex v4 = AddUXTemplate_MultiContainerItem(/*where*/sdutz, /*name*/"TEST Vertex3",/*doNotShowInherited*/ false,
-            /*DirectVertexTestQuery*/ @"TEST",
-            /*MetaVertexTestQuery*/ null,
-            /*ItemClass*/ smzu.Get(false, @"?MultiContainerItem"),
+            IVertex v4 = AddUXTemplate_MultiContainerItem(/*where*/sdutz, /*name*/"Vertex MultiContainerItem",/*doNotShowInherited*/ false,
+            /*DirectVertexTestQuery*/ @"",
+            /*MetaVertexTestQuery*/ null,            
             /*InstanceCreation*/ Direct,
-            /*CreateItemVertex*/ true, /*BorderWidth*/ -1,
-            /*BackgroundColor*/null,/*ForegroundColor*/ null,
-            /*RoundEdgeSize*/-1,/*ShowMeta*/ false,
-            /*ContainerEdge*/smzu);
+            /*CreateItemVertex*/ true, /*BorderWidth*/ -1, /*BackgroundColor*/null, /*ForegroundColor*/ null,
+            /*RoundEdgeSize*/-1, /*ShowMeta*/ false);
 
-            AddLineDecorator(v,
-               "Edge",
-               @"$Is:\",
-               @"",
-               //smzu.Get(false, @"DiagramMetaExtendedLineDecorator"),
-               smzu.Get(false, @"LineDecorator"),
-               true,
-               null,
-               arrow,
-               -1, false,
-               null, null);
+            AddLineDecorator(/*where*/v, /*name*/ "Edge",
+               /*EdgeTestQuery*/@"",
+               /*ToDiagramTestQuery*/@"",
+               //smzu.Get(false, @"MetaExtendedLineDecorator"),
+               /*DecoratorClass*/smzu.Get(false, @"LineDecorator"),
+               /*CreateeLineVertex*/true,
+               /*StartAnchor*/null,
+               /*EndAnchor*/arrow,
+               /*LineWidth*/-1, /*IsDashed*/false,
+               /*BackgroundColor*/null, null);
+
+            
         }
 
         private void Initialize_PreParserReady()

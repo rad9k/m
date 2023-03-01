@@ -2070,8 +2070,8 @@ namespace m0.UIWpf.UX
 
         public UXDecoratorTemplate GetLineDefinition(IEdge e, IUXItem item, IUXItem toItem){
             // Vertex / Edge handling
-            if (GraphUtil.GetValueAndCompareStrings(item.UXTemplate.Vertex, "Vertex"))
-                return new UXDecoratorTemplate(item.Vertex.GetAll(false, @"UXTemplate:\UXDecoratorTemplate:Edge").FirstOrDefault());
+            //if (GraphUtil.GetValueAndCompareStrings(item.UXTemplate.Vertex, "Vertex"))
+              //  return new UXDecoratorTemplate(item.Vertex.GetAll(false, @"UXTemplate:\UXDecoratorTemplate:Edge").FirstOrDefault());
            
             foreach (UXDecoratorTemplate tem in item.UXTemplate.UXDecoratorTemplates)            
             {
