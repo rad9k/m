@@ -5741,7 +5741,7 @@ namespace m0
             /*CreateItemVertex*/ true, /*BorderWidth*/ -1, /*BackgroundColor*/null, /*ForegroundColor*/ null,
             /*RoundEdgeSize*/-1, /*ShowMeta*/ false);
 
-            AddLineDecorator(/*where*/v, /*name*/ "Edge",
+            AddLineDecorator(/*where*/v, /*name*/ "_VERTEX_EDGE_",
                /*EdgeTestQuery*/@"",
                /*ToDiagramTestQuery*/@"",
                //smzu.Get(false, @"MetaExtendedLineDecorator"),
@@ -5752,7 +5752,18 @@ namespace m0
                /*LineWidth*/-1, /*IsDashed*/false,
                /*BackgroundColor*/null, null);
 
-            
+            AddLineDecorator(/*where*/v4, /*name*/ "edge",
+               /*EdgeTestQuery*/@"",
+               /*ToDiagramTestQuery*/@"",
+               //smzu.Get(false, @"MetaExtendedLineDecorator"),
+               /*DecoratorClass*/smzu.Get(false, @"LineDecorator"),
+               /*CreateeLineVertex*/true,
+               /*StartAnchor*/null,
+               /*EndAnchor*/arrow,
+               /*LineWidth*/-1, /*IsDashed*/false,
+               /*BackgroundColor*/null, null);
+
+
         }
 
         private void Initialize_PreParserReady()

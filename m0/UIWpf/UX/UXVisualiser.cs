@@ -1737,7 +1737,7 @@ namespace m0.UIWpf.UX
                         AddNewLineOption(v, tem, e);
                 }
 
-                if (GeneralUtil.CompareStrings(tem.Vertex.Value, "Edge"))// Vertex\Edge
+                if (GeneralUtil.CompareStrings(tem.Vertex.Value, "_VERTEX_EDGE_"))// Vertex\Edge
                     foreach (IEdge e in systemMetaBaseVertex)
                         AddNewLineOption(v, tem, e);
 
@@ -2069,17 +2069,17 @@ namespace m0.UIWpf.UX
         }
 
         public UXDecoratorTemplate GetLineDefinition(IEdge e, IUXItem item, IUXItem toItem){
-            // Vertex / Edge handling
+            // Vertex / Edge handling << that was replaced by if(edgeTestQuery != null && edgeTestQuery != ""){ below
             //if (GraphUtil.GetValueAndCompareStrings(item.UXTemplate.Vertex, "Vertex"))
-              //  return new UXDecoratorTemplate(item.Vertex.GetAll(false, @"UXTemplate:\UXDecoratorTemplate:Edge").FirstOrDefault());
-           
+            //  return new UXDecoratorTemplate(item.Vertex.GetAll(false, @"UXTemplate:\UXDecoratorTemplate:Edge").FirstOrDefault());
+
             foreach (UXDecoratorTemplate tem in item.UXTemplate.UXDecoratorTemplates)            
             {
                 bool canReturn=true;
 
                 string edgeTestQuery = tem.EdgeTestQuery;
 
-                if(edgeTestQuery != null){
+                if(edgeTestQuery != null && edgeTestQuery != ""){
                     canReturn=false;
 
                     foreach (IEdge toTest in item.BaseEdgeTo.GetAll(false, edgeTestQuery))
