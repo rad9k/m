@@ -37,6 +37,10 @@ namespace m0.ZeroTypes.UX
 
             base.SetPosition(FromX, FromY, ToX, ToY, isSelfRelation, selfRelationX, selfRelationY);
 
+            //IEdge baseEdge = BaseEdge;
+            //if (Diagram.GetItemsDictionaryByBaseEdgeTo().ContainsKey(baseEdge.Meta))
+                //MetaDiagramItem = Diagram.GetItemsDictionaryByBaseEdgeTo()[baseEdge.Meta].FirstOrDefault();
+
             if (MetaDiagramItem == null)
                 return;
 
@@ -47,7 +51,7 @@ namespace m0.ZeroTypes.UX
             {
                 Point p = new Point(FromX + ((ToX - FromX) / 2), FromY + ((ToY - FromY) / 2));
                 pc.Add(p);
-                pc.Add(MetaDiagramItem.GetLineAnchorLocation(null, 1, 1, false));                    
+                pc.Add(MetaDiagramItem.GetLineAnchorLocation(this, 1, 1, false));                    
 
                 MetaLine.Points = pc;
             }
@@ -61,7 +65,7 @@ namespace m0.ZeroTypes.UX
 
             Point p = new Point(FromX + ((ToX - FromX) / 2), FromY + ((ToY - FromY) / 2));
             pc.Add(p);
-            pc.Add(MetaDiagramItem.GetLineAnchorLocation(null, 1, 1, false));
+            pc.Add(MetaDiagramItem.GetLineAnchorLocation(this, 1, 1, false));
 
             MetaLine.Points = pc;
         }
