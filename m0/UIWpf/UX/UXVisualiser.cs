@@ -1737,7 +1737,7 @@ namespace m0.UIWpf.UX
                         AddNewLineOption(v, tem, e);
                 }
 
-                if (GeneralUtil.CompareStrings(tem.Vertex.Value, "_VERTEX_EDGE_"))// Vertex\Edge
+                if (GeneralUtil.CompareStrings(tem.Vertex.Value, "VERTEX EDGE"))// Vertex\Edge
                     foreach (IEdge e in systemMetaBaseVertex)
                         AddNewLineOption(v, tem, e);
 

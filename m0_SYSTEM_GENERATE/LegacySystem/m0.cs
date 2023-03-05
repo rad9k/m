@@ -5681,6 +5681,22 @@ namespace m0
             }
         }
 
+        void AddLineDecorator(IVertex v,
+            String name,
+            String EdgeTestQuery,
+            String ToDiagramTestQuery,
+            IVertex startAnchor,
+            IVertex endAnchor,
+            double LineWidth, bool isDashed,
+            IVertex BackgroundColor, IVertex ForegroundColor,
+            bool? CreateEdgeOnly = null,
+            bool? ForceShowEditForm = null)
+        {
+            AddLineDecorator(v, name, EdgeTestQuery, ToDiagramTestQuery,
+                Root.Get(false, @"System\Meta\ZeroTypes\UX\LineDecorator"), true,
+                startAnchor, endAnchor, LineWidth, isDashed, BackgroundColor, ForegroundColor, CreateEdgeOnly, ForceShowEditForm);
+        }
+
         void CreateSystemDataUXZeroUMLTemplate()
         {
             IVertex smzu = Root.Get(false, @"System\Meta\ZeroTypes\UX");
@@ -5741,11 +5757,10 @@ namespace m0
             /*CreateItemVertex*/ true, /*BorderWidth*/ -1, /*BackgroundColor*/null, /*ForegroundColor*/ null,
             /*RoundEdgeSize*/-1, /*ShowMeta*/ false);
 
-            AddLineDecorator(/*where*/v, /*name*/ "_VERTEX_EDGE_",
+            AddLineDecorator(/*where*/v, /*name*/ "VERTEX EDGE",
                /*EdgeTestQuery*/@"",
                /*ToDiagramTestQuery*/@"",
-               //smzu.Get(false, @"MetaExtendedLineDecorator"),
-               /*DecoratorClass*/smzu.Get(false, @"LineDecorator"),
+               /*DecoratorClass*/smzu.Get(false, @"MetaExtendedLineDecorator"),               
                /*CreateeLineVertex*/true,
                /*StartAnchor*/null,
                /*EndAnchor*/arrow,
@@ -5755,9 +5770,7 @@ namespace m0
             AddLineDecorator(/*where*/v4, /*name*/ "edge",
                /*EdgeTestQuery*/@"",
                /*ToDiagramTestQuery*/@"",
-               //smzu.Get(false, @"MetaExtendedLineDecorator"),
-               /*DecoratorClass*/smzu.Get(false, @"LineDecorator"),
-               /*CreateeLineVertex*/true,
+               //smzu.Get(false, @"MetaExtendedLineDecorator"),               
                /*StartAnchor*/null,
                /*EndAnchor*/arrow,
                /*LineWidth*/-1, /*IsDashed*/false,
