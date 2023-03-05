@@ -9,6 +9,7 @@ using m0.ZeroTypes;
 using m0.Util;
 using m0.UIWpf.Dialog;
 using m0.User.Process.UX;
+using m0.ZeroTypes.UX;
 
 namespace m0.UIWpf.Commands
 {
@@ -152,15 +153,26 @@ namespace m0.UIWpf.Commands
             Interaction.BeginInteractionWithGraph();
             ////////////////////////////////////////
 
-            IVertex dv = VertexOperations.AddInstance(baseVertex.Get(false, "To:"), MinusZero.Instance.Root.Get(false, @"System\Meta\Visualiser\Class:UX"));
+            IEdge Visualiser_Edge = VertexOperations.AddInstanceAndReturnEdge(baseVertex.Get(false, "To:"), MinusZero.Instance.Root.Get(false, @"System\Meta\ZeroTypes\UX\UXContainer"));
 
-            GraphUtil.CreateOrReplaceEdge(dv, MinusZero.Instance.Root.Get(false, @"System\Meta\ZeroTypes\Class:HasBaseEdge\BaseEdge"), baseVertex.Get(false, "To:"));
+            IVertex Visualiser_Vertex = Visualiser_Edge.To;            
+
+            UXContainer c = new UXContainer(Visualiser_Edge);
+
+            EdgeHelper.AddEdgeVertexEdgesByEdgeVertex(Visualiser_Vertex.Get(false, "BaseEdge:"), baseVertex);
+
+            c.SizeCreate();
+            c.Size.Width = 5000;
+            c.Size.Height = 5000;
+
+            UXTemplate diagram_template = new UXTemplate(MinusZero.Instance.Root.GetAll(false, @"System\Data\UX\Templates\ZeroUML").FirstOrDefault());
+            c.UXTemplate = diagram_template;
 
             ////////////////////////////////////////
             Interaction.EndInteractionWithGraph();
             ////////////////////////////////////////
 
-            MinusZero.Instance.DefaultUserInteraction.Edit(dv, null);
+            MinusZero.Instance.DefaultUserInteraction.Edit(Visualiser_Vertex, null);
 
             return null;
         }
