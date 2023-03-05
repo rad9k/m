@@ -5757,6 +5757,8 @@ namespace m0
             /*CreateItemVertex*/ true, /*BorderWidth*/ -1, /*BackgroundColor*/null, /*ForegroundColor*/ null,
             /*RoundEdgeSize*/-1, /*ShowMeta*/ false);
 
+            //MultiContainerItem_AddUXTemplate(v4, "raz")
+
             AddLineDecorator(/*where*/v, /*name*/ "VERTEX EDGE",
                /*EdgeTestQuery*/@"",
                /*ToDiagramTestQuery*/@"",
