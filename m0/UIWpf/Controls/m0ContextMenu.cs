@@ -48,6 +48,8 @@ namespace m0.UIWpf.Controls
 
             AddNewDiagram();
 
+            AddNewUX();
+
             AddSeparator();
 
             AddNew();
@@ -226,6 +228,13 @@ namespace m0.UIWpf.Controls
         {
             MenuItem NewVertex = createMenuItem("New Diagram");
             NewVertex.Click += OnNewDiagram;
+            this.Items.Add(NewVertex);
+        }
+
+        private void AddNewUX()
+        {
+            MenuItem NewVertex = createMenuItem("New Diagram / UX");
+            NewVertex.Click += OnNewUX;
             this.Items.Add(NewVertex);
         }
 
@@ -422,6 +431,10 @@ namespace m0.UIWpf.Controls
             BaseCommands.NewDiagram(this.EdgeVertex, null);
         }
 
+        void OnNewUX(object sender, System.Windows.RoutedEventArgs e)
+        {
+            BaseCommands.NewUX(this.EdgeVertex, null);
+        }
 
         void OnCut(object sender, System.Windows.RoutedEventArgs e)
         {

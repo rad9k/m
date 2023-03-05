@@ -146,6 +146,25 @@ namespace m0.UIWpf.Commands
             return null;
         }
 
+        public static IVertex NewUX(IVertex baseVertex, IVertex inputVertex)
+        {
+            ////////////////////////////////////////
+            Interaction.BeginInteractionWithGraph();
+            ////////////////////////////////////////
+
+            IVertex dv = VertexOperations.AddInstance(baseVertex.Get(false, "To:"), MinusZero.Instance.Root.Get(false, @"System\Meta\Visualiser\Class:UX"));
+
+            GraphUtil.CreateOrReplaceEdge(dv, MinusZero.Instance.Root.Get(false, @"System\Meta\ZeroTypes\Class:HasBaseEdge\BaseEdge"), baseVertex.Get(false, "To:"));
+
+            ////////////////////////////////////////
+            Interaction.EndInteractionWithGraph();
+            ////////////////////////////////////////
+
+            MinusZero.Instance.DefaultUserInteraction.Edit(dv, null);
+
+            return null;
+        }
+
         protected static IList<IVertex> CutPasteStore = new List<IVertex>();
 
         protected static bool DoCut;

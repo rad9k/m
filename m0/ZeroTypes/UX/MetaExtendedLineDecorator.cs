@@ -35,11 +35,7 @@ namespace m0.ZeroTypes.UX
             ToX = _ToX;
             ToY = _ToY;
 
-            base.SetPosition(FromX, FromY, ToX, ToY, isSelfRelation, selfRelationX, selfRelationY);
-
-            //IEdge baseEdge = BaseEdge;
-            //if (Diagram.GetItemsDictionaryByBaseEdgeTo().ContainsKey(baseEdge.Meta))
-                //MetaDiagramItem = Diagram.GetItemsDictionaryByBaseEdgeTo()[baseEdge.Meta].FirstOrDefault();
+            base.SetPosition(FromX, FromY, ToX, ToY, isSelfRelation, selfRelationX, selfRelationY);            
 
             if (MetaDiagramItem == null)
                 return;
