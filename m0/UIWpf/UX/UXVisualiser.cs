@@ -831,7 +831,7 @@ namespace m0.UIWpf.UX
 
             IVertex option = MinusZero.Instance.DefaultUserInteraction.SelectDialogButton(info, options, null);
 
-            if (option == optionCancel)
+            if (option == optionCancel || option == null)
                 return;
 
             SelectedLine.FromDiagramItem.RemoveDiagramLine(SelectedLine);
@@ -1650,8 +1650,12 @@ namespace m0.UIWpf.UX
         {
             throw new NotImplementedException();
         }
+        public void AddAsToMetaLine(ILineDecoratorBase line)
+        {
+            throw new NotImplementedException();
+        }
 
-       /////////////////////////////
+        /////////////////////////////
 
         private void AddDiagramItemDialog(Point p, IVertex droppedVertex, bool isSet, DragEventArgs e)
         {
@@ -2580,7 +2584,7 @@ namespace m0.UIWpf.UX
         public void RemoveItem(IItem item)
         {
             Vertex.DeleteEdge(item.Edge);
-        }
+        }        
 
         // TypedEdge        
         public IEdge Edge { get; set; }

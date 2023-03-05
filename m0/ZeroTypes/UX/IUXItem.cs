@@ -100,5 +100,7 @@ namespace m0.ZeroTypes.UX
         IUXItem AddDecorator(IVertex typeVertex);
 
         void RemoveDecorator(IUXItem decorator);
+
+        void AddAsToMetaLine(ILineDecoratorBase line);
     }
 }

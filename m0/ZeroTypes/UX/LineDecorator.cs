@@ -19,6 +19,11 @@ namespace m0.ZeroTypes.UX
 {
     public class LineDecorator: LineDecoratorBase
     {
+        protected ArrowPolyline LineEndings = new ArrowPolyline();
+        protected ArrowPolyline Line = new ArrowPolyline();
+
+        protected TextBlock Label = new TextBlock();
+
         IEdge graphChangeListenerEdge;
 
         public override void VertexSetedUp()
@@ -190,6 +195,9 @@ namespace m0.ZeroTypes.UX
 
             IEdge baseEdge = BaseEdge;
 
+            if (baseEdge.Meta == null) // during disposing
+                return;
+
             if (baseEdge.Meta.Get(false, "$VertexTarget:") != null
                 && ((UXDecoratorTemplate)UXTemplate).CreateEdgeOnly)                
             {
@@ -204,11 +212,6 @@ namespace m0.ZeroTypes.UX
                     Label.Text = (string)v.Value;
             }
         }
-
-        protected ArrowPolyline LineEndings = new ArrowPolyline();
-        protected ArrowPolyline Line = new ArrowPolyline();
-
-        protected TextBlock Label = new TextBlock();
 
         public override void SetPosition(double _FromX, double _FromY, double _ToX, double _ToY, bool _isSelfRelation, double selfRelationX, double selfRelationY)
         {
