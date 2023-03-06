@@ -29,20 +29,20 @@ using System.Security.Cryptography;
 
 *** LOAD ITEM SUB ITEM
 
-IF item.UXTemplate.ContainerEdgeMetaVertex!=null
- 	IF existing item.ParentItem.BaseEdgeTo <> item.BaseEdgeTo edge is container edge
-		THAN item.ContainerEdgeMetaVertex = edge
+IF item.UXTemplate.ContainerEdgeMetaVertex != null
+ 	IF existing edge: (item.ParentItem.BaseEdgeTo <> item.BaseEdgeTo).Meta == item.UXTemplate.ContainerEdgeMetaVertex
+		THAN item.ContainerEdge = edge
 
 	IF no item.ParentItem <> item edges
-        THAN NOTHING (alternative: create any edge - hoping it will be displayed)
+        THAN NOTHING 
 
         comment: we do not want to make any graph modifications during load time
 
 
 *** ADD NEW SUB ITEM
 
-IF item.UXTemplate.ContainerEdgeMetaVertex!=null
- 	IF existing item.ParentItem.BaseEdgeTo <> item.BaseEdgeTo edge is container edge
+IF item.UXTemplate.ContainerEdgeMetaVertex != null
+ 	IF existing edge: (item.ParentItem.BaseEdgeTo <> item.BaseEdgeTo).Meta edge is container edge
 		THAN item.ContainerEdgeMetaVertex = edge
     ELSE crete new item.UXTemplate.ContainerEdgeMetaVertex from item.ParentItem.BaseEdgeTo to item.BaseEdgeTo
  
