@@ -29,9 +29,9 @@ using System.Security.Cryptography;
 
 *** LOAD ITEM SUB ITEM
 
-IF item.UXTemplate.ContainerEdge!=null
+IF item.UXTemplate.ContainerEdgeMetaVertex!=null
  	IF existing item.ParentItem.BaseEdgeTo <> item.BaseEdgeTo edge is container edge
-		THAN item.ContainerEdge = edge
+		THAN item.ContainerEdgeMetaVertex = edge
 
 	IF no item.ParentItem <> item edges
         THAN NOTHING (alternative: create any edge - hoping it will be displayed)
@@ -41,10 +41,10 @@ IF item.UXTemplate.ContainerEdge!=null
 
 *** ADD NEW SUB ITEM
 
-IF item.UXTemplate.ContainerEdge!=null
+IF item.UXTemplate.ContainerEdgeMetaVertex!=null
  	IF existing item.ParentItem.BaseEdgeTo <> item.BaseEdgeTo edge is container edge
-		THAN item.ContainerEdge = edge
-    ELSE crete new item.UXTemplate.ContainerEdge from item.ParentItem.BaseEdgeTo to item.BaseEdgeTo
+		THAN item.ContainerEdgeMetaVertex = edge
+    ELSE crete new item.UXTemplate.ContainerEdgeMetaVertex from item.ParentItem.BaseEdgeTo to item.BaseEdgeTo
  
  */
 
@@ -440,7 +440,7 @@ namespace m0.UIWpf.UX
         {
             IUXItem itemParentItem = (IUXItem)item.ParentItem;
 
-            IVertex containerEdge = itemParentItem.UXTemplate.ContainerEdge;
+            IVertex ContainerEdgeMetaVertex = itemParentItem.UXTemplate.ContainerEdgeMetaVertex;
 
             IVertex itemBaseEdgeTo = item.BaseEdgeTo;
 
@@ -448,11 +448,11 @@ namespace m0.UIWpf.UX
 
             item.ContainerEdge = null;
 
-            if (containerEdge != null)
+            if (ContainerEdgeMetaVertex != null)
             {
                 IEdge foundEdge = null;
 
-                foreach (IEdge e in GraphUtil.GetQueryOut(itemParentItemBaseEdgeTo, containerEdge.Value, itemBaseEdgeTo.Value))
+                foreach (IEdge e in GraphUtil.GetQueryOut(itemParentItemBaseEdgeTo, ContainerEdgeMetaVertex.Value, itemBaseEdgeTo.Value))
                     if (e.To == itemBaseEdgeTo)
                         foundEdge = e;
 
@@ -460,7 +460,7 @@ namespace m0.UIWpf.UX
                     item.ContainerEdge = foundEdge;
 
                 if (foundEdge == null && userDirectInteraction)                                                        
-                    item.ContainerEdge = itemParentItemBaseEdgeTo.AddEdge(containerEdge, itemBaseEdgeTo);                
+                    item.ContainerEdge = itemParentItemBaseEdgeTo.AddEdge(ContainerEdgeMetaVertex, itemBaseEdgeTo);                
             }
 
             //
@@ -2111,7 +2111,7 @@ namespace m0.UIWpf.UX
         static IVertex IsExpanded_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\UXContainer\IsExpanded");
         static IVertex ExpandedSize_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\UXContainer\ExpandedSize");
         static IVertex CollapsedSize_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\UXContainer\CollapsedSize");
-        static IVertex ContainerEdge_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\UXContainer\ContainerEdge");
+        static IVertex ContainerEdgeMetaVertex_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\UXContainer\ContainerEdgeMetaVertex");
 
         static IVertex Size_type = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\Size");
 

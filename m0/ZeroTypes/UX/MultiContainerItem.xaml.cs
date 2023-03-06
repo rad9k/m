@@ -347,7 +347,7 @@ namespace m0.ZeroTypes.UX
             return new UX.Size(VertexOperations.AddInstanceAndReturnEdge(Vertex, Size_type, CollapsedSize_meta));
         }
 
-        public string ContainerEdgeTestQuery
+        public string ContainerEdgeQuery
         {
             get
             {

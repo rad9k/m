@@ -3303,7 +3303,7 @@ namespace m0
             m0.LegacySystem.Util.GeneralUtil.ParseAndExcute(smzu, sm, "{" +
                 "OptionEdge,"+
                 "OptionDiagramLineDefinition,"+
-                "Class:UXTemplate{Attribute:Name{$MinCardinality:0,$MaxCardinality:1},Aggregation:UXTemplate{$MinCardinality:0,$MaxCardinality:-1},Attribute:DirectVertexTestQuery{$MinCardinality:0,$MaxCardinality:1},Attribute:MetaVertexTestQuery{$MinCardinality:0,$MaxCardinality:1},Association:ItemClass{$MinCardinality:0,$MaxCardinality:1},Attribute:ItemVertex{$MinCardinality:0,$MaxCardinality:1},Association:InstanceCreation{$MinCardinality:0,$MaxCardinality:1},Aggregation:UXDecoratorTemplate{$MinCardinality:0,$MaxCardinality:-1},Attribute:DoNotShowInherited{$MinCardinality:0,$MaxCardinality:1},Attribute:ForceShowEditForm{$MinCardinality:0,$MaxCardinality:1},Attribute:ContainerEdge{$MinCardinality:0,$MaxCardinality:1},Attribute:BaseEdgeQuery{$MinCardinality:0,$MaxCardinality:1}}," +
+                "Class:UXTemplate{Attribute:Name{$MinCardinality:0,$MaxCardinality:1},Aggregation:UXTemplate{$MinCardinality:0,$MaxCardinality:-1},Attribute:DirectVertexTestQuery{$MinCardinality:0,$MaxCardinality:1},Attribute:MetaVertexTestQuery{$MinCardinality:0,$MaxCardinality:1},Association:ItemClass{$MinCardinality:0,$MaxCardinality:1},Attribute:ItemVertex{$MinCardinality:0,$MaxCardinality:1},Association:InstanceCreation{$MinCardinality:0,$MaxCardinality:1},Aggregation:UXDecoratorTemplate{$MinCardinality:0,$MaxCardinality:-1},Attribute:DoNotShowInherited{$MinCardinality:0,$MaxCardinality:1},Attribute:ForceShowEditForm{$MinCardinality:0,$MaxCardinality:1},Attribute:ContainerEdgeMetaVertex{$MinCardinality:0,$MaxCardinality:1},Attribute:BaseEdgeQuery{$MinCardinality:0,$MaxCardinality:1}}," +
                 "Enum:InstanceCreationEnum{EnumValue:Instance,EnumValue:InstanceAndDirect,EnumValue:Direct}," +
                 "Class:LineDecoratorBase{Attribute:LineWidth{MinValue:1,MaxValue:10,$MinCardinality:0,$MaxCardinality:1},Association:ToItem{$MinCardinality:1,$MaxCardinality:1}}," +
                 "Class:UXDecoratorTemplate{Attribute:EdgeTestQuery{$MinCardinality:1,$MaxCardinality:1},Attribute:ToDiagramItemTestQuery{$MinCardinality:0,$MaxCardinality:1},Attribute:CreateEdgeOnly{$MinCardinality:0,$MaxCardinality:1},Attribute:ForceShowEditForm{$MinCardinality:0,$MaxCardinality:1},Attribute:DecoratorClass{$MinCardinality:0,$MaxCardinality:1},Attribute:DecoratorVertex{$MinCardinality:0,$MaxCardinality:1}}," +
@@ -3342,7 +3342,7 @@ namespace m0
             smzu.Get(false, @"UXTemplate\UXDecoratorTemplate").AddEdge(sm.Get(false, @"?$EdgeTarget"), smzu.Get(false, @"UXDecoratorTemplate"));
             smzu.Get(false, @"UXTemplate\DoNotShowInherited").AddEdge(sm.Get(false, @"?$EdgeTarget"), sm.Get(false, @"ZeroTypes\Boolean"));
             smzu.Get(false, @"UXTemplate\ForceShowEditForm").AddEdge(sm.Get(false, @"?$EdgeTarget"), sm.Get(false, @"ZeroTypes\Boolean"));
-            smzu.Get(false, @"UXTemplate\ContainerEdge").AddEdge(sm.Get(false, @"?$EdgeTarget"), sm.Get(false, @"ZeroTypes\VertexType"));
+            smzu.Get(false, @"UXTemplate\ContainerEdgeMetaVertex").AddEdge(sm.Get(false, @"?$EdgeTarget"), sm.Get(false, @"ZeroTypes\VertexType"));
             smzu.Get(false, @"UXTemplate\BaseEdgeQuery").AddEdge(sm.Get(false, @"?$EdgeTarget"), sm.Get(false, @"ZeroTypes\String"));
 
             // LineDecoratorBase
@@ -5561,7 +5561,7 @@ namespace m0
               double BorderWidth,
               IVertex BackgroundColor, IVertex ForegroundColor,
               int RoundEdgeSize, bool showMeta,
-              IVertex ContainerEdge,
+              IVertex ContainerEdgeMetaVertex,
               bool? ForceShowEditForm = null)
         {
             IVertex v = AddUXTemplate(where, Value, doNotShowInherited, DirectVertexTestQuery, MetaVertexTestQuery,
@@ -5578,9 +5578,9 @@ namespace m0
             else
                 v.Get(false, "ItemVertex:").AddVertex(Root.Get(false, @"System\Meta\ZeroTypes\UX\RectangleItem\ShowMeta"), "False");
 
-            if (ContainerEdge!= null)
-                v.AddEdge(Root.Get(false, @"System\Meta\ZeroTypes\UX\UXTemplate\ContainerEdge"), 
-                    ContainerEdge);
+            if (ContainerEdgeMetaVertex!= null)
+                v.AddEdge(Root.Get(false, @"System\Meta\ZeroTypes\UX\UXTemplate\ContainerEdgeMetaVertex"), 
+                    ContainerEdgeMetaVertex);
             
             return v;
         }
@@ -5610,6 +5610,11 @@ namespace m0
                 v.Get(false, "ItemVertex:").AddVertex(Root.Get(false, @"System\Meta\ZeroTypes\UX\RectangleItem\ShowMeta"), "False");
 
             return v;
+        }
+
+        void MultiContainerItem_AddUXTemplate(IVertex where, IVertex ContainerEdgeMetaVertex, string baseEdgeQuery)
+        {
+
         }
 
         void AddLineDecorator(IVertex v,
@@ -5748,16 +5753,19 @@ namespace m0
             /*MetaVertexTestQuery*/ null,
             /*InstanceCreation*/ Direct,
             /*CreateItemVertex*/ true, /*BorderWidth*/ -1, /*BackgroundColor*/null, /*ForegroundColor*/ null,
-            /*RoundEdgeSize*/-1,/*ShowMeta*/ false, /*ContainerEdge*/smzu);
+            /*RoundEdgeSize*/-1,/*ShowMeta*/ false, /*ContainerEdgeMetaVertex*/smzu);
 
-            IVertex v4 = AddUXTemplate_MultiContainerItem(/*where*/sdutz, /*name*/"Vertex MultiContainerItem",/*doNotShowInherited*/ false,
+            IVertex v4 = AddUXTemplate_MultiContainerItem(/*where*/sdutz, /*name*/"DoubleOperator",/*doNotShowInherited*/ false,
             /*DirectVertexTestQuery*/ @"",
             /*MetaVertexTestQuery*/ null,            
-            /*InstanceCreation*/ Direct,
+            /*InstanceCreation*/ Instance,
             /*CreateItemVertex*/ true, /*BorderWidth*/ -1, /*BackgroundColor*/null, /*ForegroundColor*/ null,
             /*RoundEdgeSize*/-1, /*ShowMeta*/ false);
 
-            //MultiContainerItem_AddUXTemplate(v4, "raz")
+            //MultiContainerItem_AddUXTemplate(v4, Root.Get(false, @"System\Meta\ZeroUML\DoubleOperator\LeftExpression"),"LeftExpression:");
+            //MultiContainerItem_AddUXTemplate(v4, Root.Get(false, @"System\Meta\ZeroUML\DoubleOperator\RightExpression"), "RightExpression:");
+
+            
 
             AddLineDecorator(/*where*/v, /*name*/ "VERTEX EDGE",
                /*EdgeTestQuery*/@"",

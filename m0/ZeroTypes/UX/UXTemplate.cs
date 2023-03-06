@@ -20,7 +20,7 @@ namespace m0.ZeroTypes.UX
         static IVertex UXDecoratorTemplate_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\UXTemplate\UXDecoratorTemplate");
         static IVertex DoNotShowInherited_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\UXTemplate\DoNotShowInherited");
         static IVertex ForceShowEditForm_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\UXTemplate\ForceShowEditForm");
-        static IVertex ContainerEdge_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\UXTemplate\ContainerEdge");
+        static IVertex ContainerEdgeMetaVertex_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\UXTemplate\ContainerEdgeMetaVertex");
         static IVertex BaseEdgeQuery_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\UXTemplate\BaseEdgeQuery");
 
         static IVertex Size_type = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\Size");
@@ -244,17 +244,17 @@ namespace m0.ZeroTypes.UX
             }
         }
 
-        public IVertex ContainerEdge
+        public IVertex ContainerEdgeMetaVertex
         {
             get
             {
-                IVertex val = GraphUtil.GetQueryOutFirst(Vertex, "ContainerEdge", null);
+                IVertex val = GraphUtil.GetQueryOutFirst(Vertex, "ContainerEdgeMetaVertex", null);
                 
                 return val;
             }
             set
             {
-                GraphUtil.CreateOrReplaceEdge(Vertex, ContainerEdge_meta, value);
+                GraphUtil.CreateOrReplaceEdge(Vertex, ContainerEdgeMetaVertex_meta, value);
             }
         }
 
