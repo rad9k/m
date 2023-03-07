@@ -5780,11 +5780,12 @@ namespace m0
             /*InstanceCreation*/ Direct,
             /*CreateItemVertex*/ true, /*BorderWidth*/ -1, /*BackgroundColor*/null, /*ForegroundColor*/ null,
             /*RoundEdgeSize*/-1,/*ShowMeta*/ false, /*ContainerEdgeMetaVertex*/smzu);
+            
 
             IVertex v4 = AddUXTemplate_MultiContainerItem(/*where*/sdutz, /*name*/"DoubleOperator",/*doNotShowInherited*/ false,
-            /*DirectVertexTestQuery*/ @"",
-            /*MetaVertexTestQuery*/ null,            
-            /*InstanceCreation*/ Instance,
+            /*DirectVertexTestQuery*/ @"{$Is:DoubleOperator}",
+            /*MetaVertexTestQuery*/ @"{$Inherits:DoubleOperator}",            
+            /*InstanceCreation*/ InstanceAndDirect,
             /*CreateItemVertex*/ true, /*BorderWidth*/ -1, /*BackgroundColor*/null, /*ForegroundColor*/ null,
             /*RoundEdgeSize*/-1, /*ShowMeta*/ false, /*Orientation*/ OrientationEnum.Vertical);
 
