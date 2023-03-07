@@ -5577,12 +5577,12 @@ namespace m0
             if (CreateItemVertex)
             {
                 if (RoundEdgeSize > -1)
-                    v.Get(false, "ItemVertex:").AddVertex(Root.Get(false, @"System\Meta\ZeroTypes\UX\RectangleItem\RoundEdgeSize"), RoundEdgeSize);
+                    v.Get(false, "ItemVertex:").AddVertex(Root.Get(false, @"System\Meta\ZeroTypes\UX\ContainerItem\RoundEdgeSize"), RoundEdgeSize);
 
                 if (showMeta)
-                    v.Get(false, "ItemVertex:").AddVertex(Root.Get(false, @"System\Meta\ZeroTypes\UX\RectangleItem\ShowMeta"), "True");
+                    v.Get(false, "ItemVertex:").AddVertex(Root.Get(false, @"System\Meta\ZeroTypes\UX\ContainerItem\ShowMeta"), "True");
                 else
-                    v.Get(false, "ItemVertex:").AddVertex(Root.Get(false, @"System\Meta\ZeroTypes\UX\RectangleItem\ShowMeta"), "False");
+                    v.Get(false, "ItemVertex:").AddVertex(Root.Get(false, @"System\Meta\ZeroTypes\UX\ContainerItem\ShowMeta"), "False");
             }
 
             if (ContainerEdgeMetaVertex!= null)
@@ -5611,20 +5611,36 @@ namespace m0
             if (CreateItemVertex)
             {
                 if (RoundEdgeSize > -1)
-                    v.Get(false, "ItemVertex:").AddVertex(Root.Get(false, @"System\Meta\ZeroTypes\UX\RectangleItem\RoundEdgeSize"), RoundEdgeSize);
+                    v.Get(false, "ItemVertex:").AddVertex(Root.Get(false, @"System\Meta\ZeroTypes\UX\MultiContainerItem\RoundEdgeSize"), RoundEdgeSize);
 
                 if (showMeta)
-                    v.Get(false, "ItemVertex:").AddVertex(Root.Get(false, @"System\Meta\ZeroTypes\UX\RectangleItem\ShowMeta"), "True");
+                    v.Get(false, "ItemVertex:").AddVertex(Root.Get(false, @"System\Meta\ZeroTypes\UX\MultiContainerItem\ShowMeta"), "True");
                 else
-                    v.Get(false, "ItemVertex:").AddVertex(Root.Get(false, @"System\Meta\ZeroTypes\UX\RectangleItem\ShowMeta"), "False");
+                    v.Get(false, "ItemVertex:").AddVertex(Root.Get(false, @"System\Meta\ZeroTypes\UX\MultiContainerItem\ShowMeta"), "False");
+                
+                v.Get(false, "ItemVertex:").AddEdge(Root.Get(false, @"System\Meta\ZeroTypes\UX\MultiContainerItem\Orientation"),
+                    OrientationEnumHelper.GetVertex(orientation));
             }
 
             return v;
         }
 
-        void MultiContainerItem_AddUXTemplate(IVertex where, IVertex ContainerEdgeMetaVertex, string baseEdgeQuery)
+        void MultiContainerItem_AddUXTemplate(IVertex where, string Name, IVertex ContainerEdgeMetaVertex, string baseEdgeQuery, double Width, double Height)
         {
-            
+            IVertex t = where.AddVertex(Root.Get(false, @"System\Meta\ZeroTypes\UX\UXTemplate"), null);
+
+            t.AddVertex(Root.Get(false, @"System\Meta\ZeroTypes\UX\UXTemplate\Name"), Name);
+            t.AddEdge(Root.Get(false, @"System\Meta\ZeroTypes\UX\UXTemplate\ContainerEdgeMetaVertex"), ContainerEdgeMetaVertex);
+            t.AddVertex(Root.Get(false, @"System\Meta\ZeroTypes\UX\UXTemplate\BaseEdgeQuery"), baseEdgeQuery);
+
+            IVertex t_ItemVertex = t.AddVertex(Root.Get(false, @"System\Meta\ZeroTypes\UX\UXTemplate\ItemVertex"), null);
+
+            IVertex t_ItemVertex_Size = t_ItemVertex.AddVertex(Root.Get(false, @"System\Meta\ZeroTypes\UX\Size"), null);
+            t_ItemVertex_Size.AddEdge(Root.Get(false, @"System\Meta\Base\Vertex\$Is"),
+                Root.Get(false, @"System\Meta\ZeroTypes\UX\Size"));
+
+            t_ItemVertex_Size.AddVertex(Root.Get(false, @"System\Meta\ZeroTypes\UX\Size\Width"), Width);
+            t_ItemVertex_Size.AddVertex(Root.Get(false, @"System\Meta\ZeroTypes\UX\Size\Height"), Height);
         }
 
         void AddLineDecorator(IVertex v,
@@ -5772,8 +5788,15 @@ namespace m0
             /*CreateItemVertex*/ true, /*BorderWidth*/ -1, /*BackgroundColor*/null, /*ForegroundColor*/ null,
             /*RoundEdgeSize*/-1, /*ShowMeta*/ false, /*Orientation*/ OrientationEnum.Vertical);
 
-            MultiContainerItem_AddUXTemplate(v4, Root.Get(false, @"System\Meta\ZeroUML\DoubleOperator\LeftExpression"),"LeftExpression:");
-            MultiContainerItem_AddUXTemplate(v4, Root.Get(false, @"System\Meta\ZeroUML\DoubleOperator\RightExpression"), "RightExpression:");
+            MultiContainerItem_AddUXTemplate(v4, "Left", 
+                Root.Get(false, @"System\Meta\ZeroUML\DoubleOperator\LeftExpression"),
+                "LeftExpression:",
+                25, 0);
+
+            MultiContainerItem_AddUXTemplate(v4, "Right",
+                Root.Get(false, @"System\Meta\ZeroUML\DoubleOperator\RightExpression"), 
+                "RightExpression:",
+                75, 0);
 
             
 

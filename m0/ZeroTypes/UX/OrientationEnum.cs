@@ -9,7 +9,7 @@ namespace m0.ZeroTypes.UX
 {
     public enum OrientationEnum { Horizontal, Vertical }
 
-    class OrientationEnumHelper
+    public class OrientationEnumHelper
     {
         static IVertex Horizontal_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\OrientationEnum\Horizontal");
         static IVertex Vertical_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\OrientationEnum\Vertical");
