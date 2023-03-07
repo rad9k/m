@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace m0.ZeroTypes.UX
 {
-    public enum OrientationEnum { Horizontal, Vertial }
+    public enum OrientationEnum { Horizontal, Vertical }
 
     class OrientationEnumHelper
     {
@@ -24,7 +24,7 @@ namespace m0.ZeroTypes.UX
             {
                 case "Horizontal": return OrientationEnum.Horizontal;
 
-                case "Vertical": return OrientationEnum.Vertial;
+                case "Vertical": return OrientationEnum.Vertical;
 
                 default: return OrientationEnum.Horizontal;
             }
@@ -35,7 +35,7 @@ namespace m0.ZeroTypes.UX
             switch(e){
                 case OrientationEnum.Horizontal: return Horizontal_meta;
 
-                case OrientationEnum.Vertial: return Vertical_meta;
+                case OrientationEnum.Vertical: return Vertical_meta;
             }
 
             return Horizontal_meta;

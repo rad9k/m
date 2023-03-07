@@ -8,6 +8,7 @@ using m0.Store.FileSystem;
 using m0.UIWpf.Visualisers.Helper;
 using m0.Util;
 using m0.ZeroTypes;
+using m0.ZeroTypes.UX;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -5592,7 +5593,7 @@ namespace m0
               bool CreateItemVertex,
               double BorderWidth,
               IVertex BackgroundColor, IVertex ForegroundColor,
-              int RoundEdgeSize, bool showMeta,              
+              int RoundEdgeSize, bool showMeta, OrientationEnum orientation,       
               bool? ForceShowEditForm = null)
         {
             IVertex v = AddUXTemplate(where, Value, doNotShowInherited, DirectVertexTestQuery, MetaVertexTestQuery,
@@ -5614,7 +5615,7 @@ namespace m0
 
         void MultiContainerItem_AddUXTemplate(IVertex where, IVertex ContainerEdgeMetaVertex, string baseEdgeQuery)
         {
-
+            
         }
 
         void AddLineDecorator(IVertex v,
@@ -5760,10 +5761,10 @@ namespace m0
             /*MetaVertexTestQuery*/ null,            
             /*InstanceCreation*/ Instance,
             /*CreateItemVertex*/ true, /*BorderWidth*/ -1, /*BackgroundColor*/null, /*ForegroundColor*/ null,
-            /*RoundEdgeSize*/-1, /*ShowMeta*/ false);
+            /*RoundEdgeSize*/-1, /*ShowMeta*/ false, /*Orientation*/ OrientationEnum.Vertical);
 
-            //MultiContainerItem_AddUXTemplate(v4, Root.Get(false, @"System\Meta\ZeroUML\DoubleOperator\LeftExpression"),"LeftExpression:");
-            //MultiContainerItem_AddUXTemplate(v4, Root.Get(false, @"System\Meta\ZeroUML\DoubleOperator\RightExpression"), "RightExpression:");
+            MultiContainerItem_AddUXTemplate(v4, Root.Get(false, @"System\Meta\ZeroUML\DoubleOperator\LeftExpression"),"LeftExpression:");
+            MultiContainerItem_AddUXTemplate(v4, Root.Get(false, @"System\Meta\ZeroUML\DoubleOperator\RightExpression"), "RightExpression:");
 
             
 
