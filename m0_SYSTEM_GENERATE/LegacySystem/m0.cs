@@ -5537,13 +5537,16 @@ namespace m0
               ForegroundColor, BackgroundColor,
               ForceShowEditForm);
 
-            if (CreateItemVertex && RoundEdgeSize > -1)
-                v.Get(false, "ItemVertex:").AddVertex(Root.Get(false, @"System\Meta\ZeroTypes\UX\RectangleItem\RoundEdgeSize"), RoundEdgeSize);
+            if (CreateItemVertex)
+            {
+                if (RoundEdgeSize > -1)
+                    v.Get(false, "ItemVertex:").AddVertex(Root.Get(false, @"System\Meta\ZeroTypes\UX\RectangleItem\RoundEdgeSize"), RoundEdgeSize);
 
-            if (CreateItemVertex && showMeta)
-                v.Get(false, "ItemVertex:").AddVertex(Root.Get(false, @"System\Meta\ZeroTypes\UX\RectangleItem\ShowMeta"), "True");
-            else
-                v.Get(false, "ItemVertex:").AddVertex(Root.Get(false, @"System\Meta\ZeroTypes\UX\RectangleItem\ShowMeta"), "False");
+                if (showMeta)
+                    v.Get(false, "ItemVertex:").AddVertex(Root.Get(false, @"System\Meta\ZeroTypes\UX\RectangleItem\ShowMeta"), "True");
+                else
+                    v.Get(false, "ItemVertex:").AddVertex(Root.Get(false, @"System\Meta\ZeroTypes\UX\RectangleItem\ShowMeta"), "False");
+            }
 
             if (VisualiserClass != null)
                 v.Get(false, @"ItemVertex:").AddEdge(Root.Get(false, @"System\Meta\ZeroTypes\UX\RectangleItem\VisualiserClass"), VisualiserClass);
@@ -5571,13 +5574,16 @@ namespace m0
            ForegroundColor, BackgroundColor,
            ForceShowEditForm);
 
-            if (CreateItemVertex && RoundEdgeSize > -1)
-                v.Get(false, "ItemVertex:").AddVertex(Root.Get(false, @"System\Meta\ZeroTypes\UX\RectangleItem\RoundEdgeSize"), RoundEdgeSize);
+            if (CreateItemVertex)
+            {
+                if (RoundEdgeSize > -1)
+                    v.Get(false, "ItemVertex:").AddVertex(Root.Get(false, @"System\Meta\ZeroTypes\UX\RectangleItem\RoundEdgeSize"), RoundEdgeSize);
 
-            if (CreateItemVertex && showMeta)
-                v.Get(false, "ItemVertex:").AddVertex(Root.Get(false, @"System\Meta\ZeroTypes\UX\RectangleItem\ShowMeta"), "True");
-            else
-                v.Get(false, "ItemVertex:").AddVertex(Root.Get(false, @"System\Meta\ZeroTypes\UX\RectangleItem\ShowMeta"), "False");
+                if (showMeta)
+                    v.Get(false, "ItemVertex:").AddVertex(Root.Get(false, @"System\Meta\ZeroTypes\UX\RectangleItem\ShowMeta"), "True");
+                else
+                    v.Get(false, "ItemVertex:").AddVertex(Root.Get(false, @"System\Meta\ZeroTypes\UX\RectangleItem\ShowMeta"), "False");
+            }
 
             if (ContainerEdgeMetaVertex!= null)
                 v.AddEdge(Root.Get(false, @"System\Meta\ZeroTypes\UX\UXTemplate\ContainerEdgeMetaVertex"), 
@@ -5602,13 +5608,16 @@ namespace m0
            ForegroundColor, BackgroundColor,
            ForceShowEditForm);
 
-            if (CreateItemVertex && RoundEdgeSize > -1)
-                v.Get(false, "ItemVertex:").AddVertex(Root.Get(false, @"System\Meta\ZeroTypes\UX\RectangleItem\RoundEdgeSize"), RoundEdgeSize);
+            if (CreateItemVertex)
+            {
+                if (RoundEdgeSize > -1)
+                    v.Get(false, "ItemVertex:").AddVertex(Root.Get(false, @"System\Meta\ZeroTypes\UX\RectangleItem\RoundEdgeSize"), RoundEdgeSize);
 
-            if (CreateItemVertex && showMeta)
-                v.Get(false, "ItemVertex:").AddVertex(Root.Get(false, @"System\Meta\ZeroTypes\UX\RectangleItem\ShowMeta"), "True");
-            else
-                v.Get(false, "ItemVertex:").AddVertex(Root.Get(false, @"System\Meta\ZeroTypes\UX\RectangleItem\ShowMeta"), "False");
+                if (showMeta)
+                    v.Get(false, "ItemVertex:").AddVertex(Root.Get(false, @"System\Meta\ZeroTypes\UX\RectangleItem\ShowMeta"), "True");
+                else
+                    v.Get(false, "ItemVertex:").AddVertex(Root.Get(false, @"System\Meta\ZeroTypes\UX\RectangleItem\ShowMeta"), "False");
+            }
 
             return v;
         }
