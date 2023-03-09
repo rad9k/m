@@ -3317,7 +3317,8 @@ namespace m0
                 "Class:MetaExtendedLineDecorator{Association:StartAnchor{$MinCardinality:0,$MaxCardinality:1},Association:EndAnchor{$MinCardinality:0,$MaxCardinality:1},Attribute:IsDashed{$MinCardinality:0,$MaxCardinality:1}}," +
                 "Class:ContainerItem{Attribute:ShowMeta{$MinCardinality:0,$MaxCardinality:1},Attribute:RoundEdgeSize{MinValue:0,MaxValue:200,$MinCardinality:0,$MaxCardinality:1}}," +
                 "Enum:OrientationEnum{EnumValue:Horizontal,EnumValue:Vertical},"+
-                "Class:MultiContainerItem{Attribute:Orientation{$MinCardinality:0,$MaxCardinality:1},Attribute:ShowMeta{$MinCardinality:0,$MaxCardinality:1},Attribute:RoundEdgeSize{MinValue:0,MaxValue:200,$MinCardinality:0,$MaxCardinality:1}}" +
+                "Class:MultiContainerItem{Attribute:Orientation{$MinCardinality:0,$MaxCardinality:1},Attribute:ShowMeta{$MinCardinality:0,$MaxCardinality:1},Attribute:RoundEdgeSize{MinValue:0,MaxValue:200,$MinCardinality:0,$MaxCardinality:1}}," +
+                "Class:MultiContainerSubItem" +
                 "}");
 
             // UXItem [EXTENSION]
@@ -3446,6 +3447,13 @@ namespace m0
             //smzu.Get(false, @"ContainerItem\ShowMeta").AddEdge(sm.Get(false, @"?$Section"), lookSection);
 
             smzu.Get(false, @"MultiContainerItem\Orientation").AddEdge(sm.Get(false, @"?$EdgeTarget"), sm.Get(false, @"ZeroTypes\UX\OrientationEnum"));
+
+            // MultiContainerSubItem
+
+            smzu.Get(false, @"MultiContainerSubItem").AddEdge(sm.Get(false, @"?$Is"), sm.Get(false, @"ZeroUML\Class"));
+            smzu.Get(false, @"MultiContainerSubItem").AddEdge(sm.Get(false, "?$Inherits"), smzu.Get(false, @"UXContainer"));
+            smzu.Get(false, @"MultiContainerSubItem").AddVertex(sm.Get(false, "?$PlatformClassName"), @"m0.ZeroTypes.UX.MultiContainerSubItem, m0, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null");
+
 
         }
 

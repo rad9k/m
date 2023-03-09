@@ -24,15 +24,31 @@ namespace m0.ZeroTypes.UX
     /// </summary>
     public partial class MultiContainerItem : UXItem, IUXContainer
     {
-        public Canvas Canvas { get; set; }        
+        public Canvas Canvas { get; set; }
+
+        static IVertex MultiContainerSubItem_type = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\MultiContainerSubItem");
 
         public MultiContainerItem() : base(new ZeroTypes.Edge(null))
         {
             InitializeComponent();
+
+            CreateSubItemVertexes();
+        }
+
+        void CreateSubItemVertexes()
+        {
+            if (Items.Count == 0)            
+                foreach(UXTemplate t in UXTemplate.UXTemplate_)                
+                    AddItem(MultiContainerSubItem_type);                            
         }
 
         public MultiContainerItem(IEdge edge) : base(edge) {
             InitializeComponent();
+        }
+
+        void SubItemsSetUp()
+        {
+
         }
 
         public override void VertexSetedUp()
@@ -46,8 +62,9 @@ namespace m0.ZeroTypes.UX
 
             Grid.SetRow(Canvas, 2);
             
-
             base.VertexSetedUp();
+
+            SubItemsSetUp();
         }
         
         public override void VisualiserUpdate()
@@ -203,9 +220,7 @@ namespace m0.ZeroTypes.UX
                     VisualiserUpdate();
                     return exe.Stack;
                 }
-            }
-
-            //return exe.Stack;
+            }            
 
             return base.VertexChange(exe);
         }
@@ -275,7 +290,7 @@ namespace m0.ZeroTypes.UX
         }
 
 
-        //
+        // UXContainer
 
         static IVertex IsExpanded_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\UXContainer\IsExpanded");
         static IVertex ExpandedSize_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\UXContainer\ExpandedSize");

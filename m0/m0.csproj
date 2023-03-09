@@ -138,6 +138,9 @@
     <Compile Include="UIWpf\Controls\IHasScrollViewer.cs" />
     <Compile Include="UIWpf\Controls\IMouseWheelHandler.cs" />
     <Compile Include="UIWpf\UX\UXVisualiser.cs" />
+    <Compile Include="ZeroTypes\UX\MultiContainerSubItem.xaml.cs">
+      <DependentUpon>MultiContainerSubItem.xaml</DependentUpon>
+    </Compile>
     <Compile Include="ZeroTypes\UX\OrientationEnum.cs" />
     <Compile Include="ZeroTypes\UX\MultiContainerItem.xaml.cs">
       <DependentUpon>MultiContainerItem.xaml</DependentUpon>
@@ -514,6 +517,10 @@
     <Page Include="UIWpf\Visualisers\Diagram\NewDiagramItem.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="ZeroTypes\UX\MultiContainerSubItem.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="ZeroTypes\UX\MultiContainerItem.xaml">
       <Generator>MSBuild:Compile</Generator>
