@@ -3334,6 +3334,7 @@ namespace m0
             // UXTemplate
 
             smzu.Get(false, @"UXTemplate").AddEdge(sm.Get(false, @"?$Is"), sm.Get(false, @"ZeroUML\Class"));
+            smzu.Get(false, @"UXTemplate").AddVertex(sm.Get(false, "?$PlatformClassName"), @"m0.ZeroTypes.UX.UXTemplate, m0, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null");
             smzu.Get(false, @"UXTemplate\Name").AddEdge(sm.Get(false, @"?$EdgeTarget"), sm.Get(false, @"ZeroTypes\String"));
             smzu.Get(false, @"UXTemplate\UXTemplate").AddEdge(sm.Get(false, @"?$EdgeTarget"), sm.Get(false, @"ZeroTypes\UX\UXTemplate"));
             smzu.Get(false, @"UXTemplate\DirectVertexTestQuery").AddEdge(sm.Get(false, @"?$EdgeTarget"), sm.Get(false, @"ZeroTypes\String"));
@@ -5636,6 +5637,8 @@ namespace m0
         void MultiContainerItem_AddUXTemplate(IVertex where, string Name, IVertex ContainerEdgeMetaVertex, string baseEdgeQuery, double Width, double Height)
         {
             IVertex t = where.AddVertex(Root.Get(false, @"System\Meta\ZeroTypes\UX\UXTemplate"), null);
+
+            t.AddEdge(Is, Root.Get(false, @"System\Meta\ZeroTypes\UX\UXTemplate"));
 
             t.AddVertex(Root.Get(false, @"System\Meta\ZeroTypes\UX\UXTemplate\Name"), Name);
             t.AddEdge(Root.Get(false, @"System\Meta\ZeroTypes\UX\UXTemplate\ContainerEdgeMetaVertex"), ContainerEdgeMetaVertex);

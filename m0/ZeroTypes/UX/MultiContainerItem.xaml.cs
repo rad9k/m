@@ -30,9 +30,7 @@ namespace m0.ZeroTypes.UX
 
         public MultiContainerItem() : base(new ZeroTypes.Edge(null))
         {
-            InitializeComponent();
-
-            CreateSubItemVertexes();
+            InitializeComponent();            
         }
 
         void CreateSubItemVertexes()
@@ -43,15 +41,10 @@ namespace m0.ZeroTypes.UX
         }
 
         public MultiContainerItem(IEdge edge) : base(edge) {
-            InitializeComponent();
-
-          //  CreateSubItemVertexes();
+            InitializeComponent();        
         }
 
-        void SubItemsSetUp()
-        {
-
-        }
+        
 
         public override void VertexSetedUp()
         {
@@ -66,7 +59,7 @@ namespace m0.ZeroTypes.UX
             
             base.VertexSetedUp();
 
-            SubItemsSetUp();
+            CreateSubItemVertexes();
         }
         
         public override void VisualiserUpdate()
