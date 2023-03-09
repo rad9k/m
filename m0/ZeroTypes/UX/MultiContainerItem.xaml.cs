@@ -44,6 +44,8 @@ namespace m0.ZeroTypes.UX
 
         public MultiContainerItem(IEdge edge) : base(edge) {
             InitializeComponent();
+
+          //  CreateSubItemVertexes();
         }
 
         void SubItemsSetUp()
