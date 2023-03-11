@@ -153,20 +153,7 @@ namespace m0.UIWpf.Commands
             Interaction.BeginInteractionWithGraph();
             ////////////////////////////////////////
 
-            IEdge Visualiser_Edge = VertexOperations.AddInstanceAndReturnEdge(baseVertex.Get(false, "To:"), MinusZero.Instance.Root.Get(false, @"System\Meta\ZeroTypes\UX\UXContainer"));
-
-            IVertex Visualiser_Vertex = Visualiser_Edge.To;            
-
-            UXContainer c = new UXContainer(Visualiser_Edge);
-
-            EdgeHelper.AddEdgeVertexEdgesByEdgeVertex(Visualiser_Vertex.Get(false, "BaseEdge:"), baseVertex);
-
-            c.SizeCreate();
-            c.Size.Width = 5000;
-            c.Size.Height = 5000;
-
-            UXTemplate diagram_template = new UXTemplate(MinusZero.Instance.Root.GetAll(false, @"System\Data\UX\Templates\ZeroUML").FirstOrDefault());
-            c.UXTemplate = diagram_template;
+            IVertex Visualiser_Vertex = UXContainer.CreateDefaultContainer(baseVertex.Get(false, "To:"));
 
             ////////////////////////////////////////
             Interaction.EndInteractionWithGraph();

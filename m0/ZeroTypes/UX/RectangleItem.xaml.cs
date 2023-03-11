@@ -40,31 +40,20 @@ namespace m0.ZeroTypes.UX
         public override void VertexSetedUp()
         {
             if (VisualiserClass != null)        
-            {
-                ////////////////////////////////////////
-                //Interaction.BeginInteractionWithGraph();
-                //////////////////////////////////////// 
-                
+            {                
                 ContentVisualiser = PlatformClass.CreatePlatformObject(VisualiserClass, BaseEdge);                
 
                 Grid.SetRow((UIElement)ContentVisualiser, 2);
-
-                ((FrameworkElement)ContentVisualiser).Height = 100;
-                ((FrameworkElement)ContentVisualiser).Width = 100;
-
+                
                 TheGrid.Children.Add((UIElement)ContentVisualiser);
 
                 //
 
-                Button b = new Button();
+                //Button b = new Button();
 
-                Grid.SetRow(b, 3);
+                //Grid.SetRow(b, 3);
 
-                TheGrid.Children.Add(b);
-
-                ////////////////////////////////////////
-                //Interaction.EndInteractionWithGraph();
-                //////////////////////////////////////// 
+                //TheGrid.Children.Add(b);
             }
             else
             {

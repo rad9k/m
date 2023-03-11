@@ -11,6 +11,7 @@ using System.Windows.Controls;
 using m0.ZeroTypes;
 using m0.Graph;
 using m0.User.Process.UX;
+using m0.ZeroTypes.UX;
 
 namespace m0.UIWpf.Commands
 {
@@ -108,8 +109,7 @@ namespace m0.UIWpf.Commands
         }        
 
         static IVertex musicSpaceMeta = r.Get(false, @"System\Lib\Music\MusicSpace");
-        static IVertex songMeta = r.Get(false, @"System\Lib\Music\Song");
-        static IVertex diagramMeta = r.Get(false, @"System\Meta\Visualiser\Diagram");
+        static IVertex songMeta = r.Get(false, @"System\Lib\Music\Song");        
         static IVertex creationPoolMeta = r.Get(false, @"System\Meta\Visualiser\Diagram\CreationPool");
 
         static IVertex classMeta = r.Get(false, @"System\Meta\ZeroUML\Class");
@@ -126,11 +126,11 @@ namespace m0.UIWpf.Commands
             IVertex ms = VertexOperations.AddInstance(baseVertex, musicSpaceMeta);
 
             ms.Value = "New Music Space";
-            
 
-            IVertex diagram = VertexOperations.AddInstance(ms, diagramMeta);
 
-            diagram.Value = "Mew Music Space Diagram";
+            IVertex uxcontainer = UXContainer.CreateDefaultContainer(ms);
+
+            uxcontainer.Value = "Music Space";
 
 
             IVertex msm = ms.AddVertex(null, "Meta");
@@ -152,7 +152,7 @@ namespace m0.UIWpf.Commands
             ms.AddEdge(null, MinusZero.Instance.root.Get(false, @"System\Lib\Music\Chord"));
 
 
-            GraphUtil.CreateOrReplaceEdge(diagram, creationPoolMeta, ms);
+            GraphUtil.CreateOrReplaceEdge(uxcontainer, creationPoolMeta, ms);
 
             IVertex song = VertexOperations.AddInstance(ms, songMeta);
 
