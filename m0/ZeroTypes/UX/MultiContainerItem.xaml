@@ -8,7 +8,7 @@
              >
 
     <Border x:Name="Frame"  BorderBrush="{StaticResource 0ForegroundBrush}" BorderThickness="1" HorizontalAlignment="Stretch"  VerticalAlignment="Stretch">
-        <Grid x:Name="TheGrid">
+        <Grid x:Name="MainGrid">
             <Grid.RowDefinitions>
                 <RowDefinition Height="17"/>
                 <RowDefinition Height="1"/>
@@ -18,6 +18,9 @@
            <TextBlock Grid.Row="0" x:Name="Title" HorizontalAlignment="Center" Padding="3,0,3,0"></TextBlock>
 
             <Border x:Name="InternalFrame" Grid.Row="1"  BorderThickness="0.5"/>
+
+            <Grid x:Name="SubGrid" Grid.Row="2">
+            </Grid>
 
         </Grid>
 

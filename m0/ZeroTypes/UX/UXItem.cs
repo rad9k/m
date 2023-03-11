@@ -327,7 +327,7 @@ namespace m0.ZeroTypes.UX
             Diagram.CheckAndUpdateItemComposition(this, true);
         }
 
-        public IUXItem GetUXItem(IItem i)
+        static public IUXItem GetUXItem(IItem i)
         {
             if (GraphUtil.ExistQueryOut(i.Vertex, "$Is", "Wrap"))
                 return null;

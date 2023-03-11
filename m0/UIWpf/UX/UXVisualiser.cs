@@ -300,17 +300,6 @@ namespace m0.UIWpf.UX
             }
         }
 
-        public static IUXItem GetUXItem(IItem i)
-        {
-            if (GraphUtil.ExistQueryOut(i.Vertex, "$Is", "Wrap"))
-                return null;
-
-            if (i is IUXItem)
-                return (IUXItem)i;
-
-            return null;            
-        }
-
         // OPTIMISATION START
 
         List<IUXItem> Items_all = new List<IUXItem>();
@@ -388,6 +377,22 @@ namespace m0.UIWpf.UX
             if (!(item is UIElement))
                 return;
 
+            if (item is IMultiContainerSubItem)
+            {
+                foreach (IItem _i in item.Items)
+                {
+                    IUXItem i = UXItem.GetUXItem(_i);
+
+                    if (i == null)
+                        continue;
+
+                    HostItem(host, i, newItemCreation);
+                }
+
+                return;
+            }
+            
+
             Items_all.Add(item);
 
             //
@@ -421,7 +426,7 @@ namespace m0.UIWpf.UX
 
                 foreach (IItem _i in container.Items)
                 {
-                    IUXItem i = GetUXItem(_i);
+                    IUXItem i = UXItem.GetUXItem(_i);
 
                     if (i == null)
                         continue;
@@ -494,7 +499,7 @@ namespace m0.UIWpf.UX
 
            foreach(IItem _item in Items_all)
                {
-                   IUXItem item = GetUXItem(_item);
+                   IUXItem item = UXItem.GetUXItem(_item);
 
                    if (item == null)
                       continue;
@@ -610,7 +615,7 @@ namespace m0.UIWpf.UX
 
             foreach(IItem _i in Items_all)                
                 {
-                    IUXItem i = GetUXItem(_i);
+                    IUXItem i = UXItem.GetUXItem(_i);
 
                     if (i == null || !(_i is FrameworkElement))
                         continue;
@@ -661,7 +666,7 @@ namespace m0.UIWpf.UX
 
                 foreach (IItem _i in Items)
                 {
-                    IUXItem i = GetUXItem(_i);
+                    IUXItem i = UXItem.GetUXItem(_i);
 
                     if (i == null)
                         continue;
@@ -1157,7 +1162,7 @@ namespace m0.UIWpf.UX
 
             foreach (IItem _i in Items_all)
                 {
-                    IUXItem i = GetUXItem(_i);
+                    IUXItem i = UXItem.GetUXItem(_i);
 
                     if (i == null)
                         continue;
@@ -1348,7 +1353,7 @@ namespace m0.UIWpf.UX
         {            
             foreach (IItem _i in Items_all)
             {
-                IUXItem i = GetUXItem(_i);
+                IUXItem i = UXItem.GetUXItem(_i);
 
                 if (i == null)
                     continue;
@@ -1433,7 +1438,7 @@ namespace m0.UIWpf.UX
 
                     foreach (IItem _i in Items)
                     {
-                        IUXItem i = GetUXItem(_i);
+                        IUXItem i = UXItem.GetUXItem(_i);
 
                         if (i == null)
                             continue;
@@ -1456,7 +1461,7 @@ namespace m0.UIWpf.UX
 
             foreach (IItem _i in Items_all)
             {
-                IUXItem i = GetUXItem(_i);
+                IUXItem i = UXItem.GetUXItem(_i);
 
                 if (i == null || !(i is IUXContainer))
                     continue;
@@ -1488,7 +1493,7 @@ namespace m0.UIWpf.UX
 
             foreach (IItem _i in Items_all)
             {
-                IUXItem i = GetUXItem(_i);
+                IUXItem i = UXItem.GetUXItem(_i);
 
                 if (i == null)
                     continue;
@@ -1509,45 +1514,7 @@ namespace m0.UIWpf.UX
             }
 
             return itemToReturn;
-        }
-
-        /*
-         
-        public void CheckAndUpdateItemComposition(IUXItem item)
-        {
-            Position itemPosition_relative = item.Position;
-
-            FrameworkElement item_FrameworkElement = (FrameworkElement)item;
-
-            Point itemPosition_absolute = GetItemAbsolutePosition(item);
-
-            if (item.ParentItem == this || item.ParentItem == null)
-            {
-                IUXItem toBeParentItem = GetItemByPoint_ByCanvas(itemPosition_absolute);
-
-                if(toBeParentItem != null && toBeParentItem != this)
-                    MoveToParentItem(item, toBeParentItem);
-            }
-            else {
-                FrameworkElement itemParent_FrameworkElement = (FrameworkElement)item.ParentItem;
-
-                if (itemPosition_relative.X < 0 || itemPosition_relative.Y < 0 || 
-                    (itemPosition_relative.X + item_FrameworkElement.ActualWidth) > itemParent_FrameworkElement.ActualWidth ||
-                    (itemPosition_relative.Y + item_FrameworkElement.Height) > itemParent_FrameworkElement.ActualHeight)
-                {
-                    IUXItem toBeParentItem = GetItemByPoint_ByCanvas(itemPosition_absolute);
-
-                    if (toBeParentItem == null)
-                        toBeParentItem = this;
-
-                    if (toBeParentItem != item.ParentItem)
-                        MoveToParentItem(item, toBeParentItem);
-                }
-            }            
-        }
-        
-        */
-
+        }        
 
         public void CheckAndUpdateItemComposition(IUXItem item, bool fastMode)
         {            
@@ -1975,7 +1942,7 @@ namespace m0.UIWpf.UX
         {        
             foreach(IItem _i in Items_all)
             {
-                IUXItem item = GetUXItem(_i);
+                IUXItem item = UXItem.GetUXItem(_i);
 
                 if (item == null)
                     continue;

@@ -35,9 +35,95 @@ namespace m0.ZeroTypes.UX
 
         void CreateSubItemVertexes()
         {
-            if (Items.Count == 0)            
-                foreach(UXTemplate t in UXTemplate.UXTemplate_)                
-                    AddItem(MultiContainerSubItem_type);                            
+            if (Items.Count == 0)
+                foreach (UXTemplate t in UXTemplate.UXTemplate_)
+                {
+                    IUXItem i = (IUXItem)AddItem(MultiContainerSubItem_type);
+                    i.UXTemplate = t;
+                }
+        }
+
+        void CreateSubConainerControls()
+        {
+            int cnt = 0;
+
+            foreach(IItem _i in Items)
+            {
+                IUXItem i = UXItem.GetUXItem(_i);
+
+                if (i == null)
+                    continue;
+
+                InsertSubContainer(i, cnt++);
+            }
+        }
+
+        void InsertSubContainer(IUXItem i, int cnt)
+        {
+            UXTemplate iUXTemplate = i.UXTemplate;
+
+            IEdge sizeEdge = GraphUtil.GetQueryOutFirstEdge(iUXTemplate.ItemVertex, "Size", null);
+
+            TextBlock label = null;
+
+            if (iUXTemplate.Name != null) {
+                label = new TextBlock();
+                label.Text = iUXTemplate.Name;
+
+                SubGrid.Children.Add(label);
+            }
+
+            //
+
+            Canvas canvas = new Canvas();
+            SubGrid.Children.Add(canvas);
+
+            //
+
+            GridSplitter splitter = new GridSplitter();
+            SubGrid.Children.Add(splitter);
+
+            if (Orientation == OrientationEnum.Horizontal)
+            {
+                RowDefinition rowDefinition = new RowDefinition();
+
+                if (sizeEdge != null) {
+                    Size size = new Size(sizeEdge);
+
+                    rowDefinition.Height = new GridLength(size.Height, GridUnitType.Star);
+                }
+
+                SubGrid.RowDefinitions.Add(rowDefinition);
+
+                splitter.HorizontalAlignment = HorizontalAlignment.Stretch;
+                splitter.Height = 5;
+
+                if (label != null)
+                    Grid.SetRow(label, cnt);
+
+                Grid.SetRow(canvas, cnt);
+            }
+            else
+            {
+                ColumnDefinition columnDefinition = new ColumnDefinition();
+
+                if (sizeEdge != null)
+                {
+                    Size size = new Size(sizeEdge);
+
+                    columnDefinition.Width = new GridLength(size.Width, GridUnitType.Star);
+                }
+
+                SubGrid.ColumnDefinitions.Add(columnDefinition);
+
+                splitter.VerticalAlignment = VerticalAlignment.Stretch;
+                splitter.Width = 5;
+
+                if (label != null)
+                    Grid.SetColumn(label, cnt);
+
+                Grid.SetColumn(canvas, cnt);
+            }
         }
 
         public MultiContainerItem(IEdge edge) : base(edge) {
@@ -45,12 +131,11 @@ namespace m0.ZeroTypes.UX
         }
 
         
-
         public override void VertexSetedUp()
         {
             if(Canvas == null) { 
                 Canvas = new Canvas();
-                TheGrid.Children.Add(Canvas);
+                MainGrid.Children.Add(Canvas);
             }
 
             Canvas.ClipToBounds = true;
@@ -59,7 +144,11 @@ namespace m0.ZeroTypes.UX
             
             base.VertexSetedUp();
 
+            //
+
             CreateSubItemVertexes();
+
+            CreateSubConainerControls();
         }
         
         public override void VisualiserUpdate()
@@ -110,7 +199,7 @@ namespace m0.ZeroTypes.UX
 
                 Canvas.Margin = new Thickness(RoundEdgeSize, 0, RoundEdgeSize, RoundEdgeSize);
 
-                TheGrid.RowDefinitions[0].Height = new GridLength(18 + RoundEdgeSize);
+                MainGrid.RowDefinitions[0].Height = new GridLength(18 + RoundEdgeSize);
                 
             }
 
@@ -136,7 +225,7 @@ namespace m0.ZeroTypes.UX
 
                 this.InternalFrame.BorderThickness = new Thickness(BorderSize / 2);
 
-                this.TheGrid.RowDefinitions[1].Height = new GridLength(BorderSize);                
+                this.MainGrid.RowDefinitions[1].Height = new GridLength(BorderSize);                
             }
         }         
 
