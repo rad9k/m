@@ -13,6 +13,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading;
 using System.Xml.Linq;
 
@@ -192,7 +193,7 @@ namespace m0
         {
             IVertex sm = LegacySystem.Graph.EasyVertex.Get(Root, false, @"System\Meta");
 
-            m0.LegacySystem.Util.GeneralUtil.ParseAndExcute(sm, null, "{Base{$,Vertex{$IsLink,$Inherits,$NoInherit,$StackFrameInherits,$Is,$EdgeTarget,$VertexTarget,$IsAggregation,$MinCardinality,$MaxCardinality,$DefaultValue,$DefaultViewVisualiser,$DefaultEditVisualiser,$DefaultOpenVisualiser,$Group,$Section,$Description,$ExecutableEndPoint,$GraphChangeTrigger,$VertexEval,MetaEdge,Author,Dependency},$Import,$ImportMeta,$Keyword,$KeywordGroupDefinition,$$KeywordGroup,$$KeywordManyRoot,$$LocalRoot,$$StartInLocalRoot,$$EmptyKeyword,$$NewVertexKeyword,$$LinkKeyword,$$NonSelfRecursiveParameters,$$Import,$$ImportDirect,$$ImportMeta,$$ImportDirectMeta,$$NoSequentialExecution,$$NextAtomRoot,$NewLine,$ParseRoot,$ParseArtefacts}}");
+            m0.LegacySystem.Util.GeneralUtil.ParseAndExcute(sm, null, "{Base{$,Vertex{$IsLink,$Inherits,$NoInherit,$StackFrameInherits,$Is,$EdgeTarget,$VertexTarget,$IsAggregation,$MinCardinality,$MaxCardinality,$MaxTargetCardinality,$DefaultValue,$DefaultViewVisualiser,$DefaultEditVisualiser,$DefaultOpenVisualiser,$Group,$Section,$Description,$ExecutableEndPoint,$GraphChangeTrigger,$VertexEval,MetaEdge,Author,Dependency},$Import,$ImportMeta,$Keyword,$KeywordGroupDefinition,$$KeywordGroup,$$KeywordManyRoot,$$LocalRoot,$$StartInLocalRoot,$$EmptyKeyword,$$NewVertexKeyword,$$LinkKeyword,$$NonSelfRecursiveParameters,$$Import,$$ImportDirect,$$ImportMeta,$$ImportDirectMeta,$$NoSequentialExecution,$$NextAtomRoot,$NewLine,$ParseRoot,$ParseArtefacts}}");
 
             LegacySystem.Graph.EasyVertex.Get(sm, false, @"Base").AddEdge(
                 null,
@@ -3358,6 +3359,7 @@ namespace m0
             // UXDecoratorTemplate
 
             smzu.Get(false, @"UXDecoratorTemplate").AddEdge(sm.Get(false, @"?$Is"), sm.Get(false, @"ZeroUML\Class"));
+            smzu.Get(false, @"UXDecoratorTemplate").AddEdge(sm.Get(false, "?$Inherits"), smzu.Get(false, @"UXTemplate"));
             smzu.Get(false, @"UXDecoratorTemplate\EdgeTestQuery").AddEdge(sm.Get(false, @"?$EdgeTarget"), sm.Get(false, @"ZeroTypes\String"));
             smzu.Get(false, @"UXDecoratorTemplate\ToDiagramItemTestQuery").AddEdge(sm.Get(false, @"?$EdgeTarget"), sm.Get(false, @"ZeroTypes\String"));
             smzu.Get(false, @"UXDecoratorTemplate\CreateEdgeOnly").AddEdge(sm.Get(false, @"?$EdgeTarget"), sm.Get(false, @"ZeroTypes\Boolean"));
@@ -5704,7 +5706,7 @@ namespace m0
                 IVertex dlv = lv.AddVertex(udt.Get(false, "DecoratorVertex"), null);
 
                 if (isDashed)
-                    dlv.AddVertex(udt.Get(false, "IsDashed"), "True");
+                    dlv.AddVertex(uld.Get(false, "IsDashed"), "True");
 
                 if (startAnchor != null)
                     dlv.AddEdge(uld.Get(false, "StartAnchor"), startAnchor);
@@ -5834,6 +5836,74 @@ namespace m0
 
         }
 
+        void CreateSystemDataUXZeroUMLTemplate_MSX()
+        {
+            IVertex smzu = Root.Get(false, @"System\Meta\ZeroTypes\UX");
+
+            IVertex sdu = Root.Get(false, @"System\Data\UX");
+
+            IVertex colors = Root.Get(false, @"System\Data\UX\Colors");
+
+            IVertex sdut = sdu.AddVertex(null, "Templates");
+
+            IVertex sdutz = VertexOperations.AddInstance(sdut, smzu.Get(false, "UXTemplate"));
+
+            sdutz.Value = "ZeroUML";
+
+            //IVertex sduz = sdu.AddVertex(null, "ZeroUMLTemplate");
+
+            IVertex Instance = smzu.Get(false, "?Instance");
+            IVertex InstanceAndDirect = smzu.Get(false, "?InstanceAndDirect");
+            IVertex Direct = smzu.Get(false, "?Direct");
+
+            IVertex arrow = smzu.Get(false, @"LineEndEnum\Arrow");
+            IVertex triangle = smzu.Get(false, @"LineEndEnum\Triangle");
+            IVertex filledTriangle = smzu.Get(false, @"LineEndEnum\FilledTriangle");
+            IVertex diamond = smzu.Get(false, @"LineEndEnum\Diamond");
+            IVertex filledDiamond = smzu.Get(false, @"LineEndEnum\FilledDiamond");
+            IVertex straight = smzu.Get(false, @"LineEndEnum\Straight");
+
+
+            /////////////////////////////////////////////////////////////////////////
+            // Object
+            /////////////////////////////////////////////////////////////////////////
+
+            
+
+            IVertex obj = AddUXTemplate_RectangleItem(/*where*/sdutz, /*name*/"Object", /*doNotShowInherited*/ false,
+            /*DirectVertexTestQuery*/ @"{$Is:{$Is:Class}}",
+            /*MetaVertexTestQuery*/ @"{$Is: Class}",
+            /*InstanceCreation*/ InstanceAndDirect,
+            /*CreateItemVertex*/ true, /*BorderWidth*/ -1, /*BackgroundColor*/null, /*ForegroundColor*/ null,
+            /*RoundEdgeSize*/-1,/*ShowMeta*/ false,
+            /*VisualiserClass*/Root.Get(false, @"System\Meta?List"), /*ItemVertex*/ true);
+
+            IVertex vv = obj.Get(false, @"ItemVertex:\VisualiserVertex:");
+
+            vv.AddVertex(Root.Get(false, @"System\Meta?FilterQuery"), "{$Is:Attribute}:");
+
+            vv.AddVertex(Root.Get(false, @"System\Meta?ShowHeader"), "False");
+
+            AddLineDecorator(/*where*/obj, /*name*/ "Association instance",
+               /*EdgeTestQuery*/@"$Is:{$Is:Class}\Association:",
+               /*ToDiagramTestQuery*/@"UXTemplate:Object",               
+               /*StartAnchor*/null,
+               /*EndAnchor*/arrow,
+               /*LineWidth*/-1, /*IsDashed*/true,
+               /*BackgroundColor*/null, null);
+
+            AddLineDecorator(/*where*/obj, /*name*/ "Aggregation instance",
+               /*EdgeTestQuery*/@"$Is:{$Is:Class}\Aggregation:",
+               /*ToDiagramTestQuery*/@"UXTemplate:Object",
+               //smzu.Get(false, @"MetaExtendedLineDecorator"),               
+               /*StartAnchor*/null,
+               /*EndAnchor*/diamond,
+               /*LineWidth*/-1, /*IsDashed*/true,
+               /*BackgroundColor*/null, null);
+
+
+        }
+
         private void Initialize_PreParserReady()
         {
             LogLevel = -2;
@@ -5919,7 +5989,7 @@ namespace m0
 
             CreateSystemDataUXColor();
 
-            CreateSystemDataUXZeroUMLTemplate();
+            CreateSystemDataUXZeroUMLTemplate_MSX();
 
 
             AddIsAttribute("Attribute");

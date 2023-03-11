@@ -13,6 +13,7 @@
                 <RowDefinition Height="17"/>
                 <RowDefinition Height="1"/>
                 <RowDefinition Height="*"/>
+                <RowDefinition Height="*"/>
             </Grid.RowDefinitions>        
                 
            <TextBlock Grid.Row="0" x:Name="Title" HorizontalAlignment="Center" Padding="3,0,3,0"></TextBlock>

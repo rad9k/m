@@ -105,7 +105,7 @@ namespace m0.ZeroTypes.UX
             Line.StrokeThickness = thickness;
             LineEndings.StrokeThickness = thickness;
 
-            if (IsDasched)            
+            if (IsDashed)            
                 Line.StrokeDashArray = new DoubleCollection(new double[] { 5, 3 });
             else
                 Line.StrokeDashArray = null;
@@ -382,7 +382,7 @@ namespace m0.ZeroTypes.UX
 
         static IVertex StartAnchor_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\LineDecorator\StartAnchor");
         static IVertex EndAnchor_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\LineDecorator\EndAnchor");
-        static IVertex IsDasched_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\LineDecorator\IsDasched");        
+        static IVertex IsDashed_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\LineDecorator\IsDashed");        
 
         public LineEndEnum StartAnchor
         {
@@ -412,11 +412,11 @@ namespace m0.ZeroTypes.UX
             }
         }
 
-        public bool IsDasched
+        public bool IsDashed
         {
             get
             {
-                IVertex val = GraphUtil.GetQueryOutFirst(Vertex, "IsDasched", null);
+                IVertex val = GraphUtil.GetQueryOutFirst(Vertex, "IsDashed", null);
 
                 if (val == null)
                     return false;
@@ -425,10 +425,10 @@ namespace m0.ZeroTypes.UX
             }
             set
             {
-                IVertex val = GraphUtil.GetQueryOutFirst(Vertex, "IsDasched", null);
+                IVertex val = GraphUtil.GetQueryOutFirst(Vertex, "IsDashed", null);
 
                 if (val == null)
-                    val = Vertex.AddVertex(IsDasched_meta, value);
+                    val = Vertex.AddVertex(IsDashed_meta, value);
                 else
                     val.Value = value;
             }

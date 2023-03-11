@@ -16,6 +16,8 @@ using m0.Graph;
 using m0.Foundation;
 using m0.ZeroTypes;
 using m0.Util;
+using System.Xml.Linq;
+using m0.User.Process.UX;
 
 namespace m0.ZeroTypes.UX
 {
@@ -39,11 +41,30 @@ namespace m0.ZeroTypes.UX
         {
             if (VisualiserClass != null)        
             {
+                ////////////////////////////////////////
+                //Interaction.BeginInteractionWithGraph();
+                //////////////////////////////////////// 
+                
                 ContentVisualiser = PlatformClass.CreatePlatformObject(VisualiserClass, BaseEdge);                
 
                 Grid.SetRow((UIElement)ContentVisualiser, 2);
 
+                ((FrameworkElement)ContentVisualiser).Height = 100;
+                ((FrameworkElement)ContentVisualiser).Width = 100;
+
                 TheGrid.Children.Add((UIElement)ContentVisualiser);
+
+                //
+
+                Button b = new Button();
+
+                Grid.SetRow(b, 3);
+
+                TheGrid.Children.Add(b);
+
+                ////////////////////////////////////////
+                //Interaction.EndInteractionWithGraph();
+                //////////////////////////////////////// 
             }
             else
             {

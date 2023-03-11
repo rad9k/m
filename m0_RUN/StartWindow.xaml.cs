@@ -43,13 +43,13 @@ namespace m0
         {            
             m0_RUN.Main.Run();
 
-            LovFlov.LovFlov.Execute();
+          //  LovFlov.LovFlov.Execute();
 
             m0Main.mainTree.UpdateVertex();
 
-            ExtraRun8();
+            //ExtraRun8();
 
-            ExtraRun6();
+            //ExtraRun6();
 
             //ExtraRun5();
 

@@ -1759,7 +1759,7 @@ namespace m0.UIWpf.UX
                     return true;
                 }
                 else
-                    UserInteractionUtil.ShowError(Diagram.Vertex.Value + " Diagram", "Adding new diagram line  \"" + a.Value + "\" is not possible.\n\n" + test.Value);
+                    UserInteractionUtil.ShowError(Vertex.Value + " Diagram", "Adding new diagram line  \"" + a.Value + "\" is not possible.\n\n" + test.Value);
             }
 
             return false;
