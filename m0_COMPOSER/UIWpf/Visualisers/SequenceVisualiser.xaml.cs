@@ -408,20 +408,12 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             }
             else
             {
-
-                //(int)((startPosition / HorizontalAD.BaseUnitSize) + 0.01));
-                //(int)((lengthPosition / HorizontalAD.BaseUnitSize) + 0.01));
-
-
                 TriggerTime = (int)((item.Left / HorizontalAD.BaseUnitSize) + 0.01);
 
                 Length = (int)((itemWidth / HorizontalAD.BaseUnitSize) + 0.01);
             }            
             
-            GraphUtil.SetVertexValue(itemVertex, musicEventTriggerTime, TriggerTime);
-
-            if (Length != 0)
-                GraphUtil.SetVertexValue(itemVertex, musicHasLengthLength, Length * 2);            
+            GraphUtil.SetVertexValue(itemVertex, musicEventTriggerTime, TriggerTime);            
         }
 
         protected override int ScreenPositionToMusicTime(double position, bool performSnapCorrection)
