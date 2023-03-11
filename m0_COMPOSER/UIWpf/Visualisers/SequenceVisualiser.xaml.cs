@@ -408,9 +408,14 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             }
             else
             {
-                TriggerTime = (int)(item.Left / HorizontalAD.BaseUnitSize);
 
-                Length = (int)(itemWidth / HorizontalAD.BaseUnitSize);
+                //(int)((startPosition / HorizontalAD.BaseUnitSize) + 0.01));
+                //(int)((lengthPosition / HorizontalAD.BaseUnitSize) + 0.01));
+
+
+                TriggerTime = (int)((item.Left / HorizontalAD.BaseUnitSize) + 0.01);
+
+                Length = (int)((itemWidth / HorizontalAD.BaseUnitSize) + 0.01);
             }            
             
             GraphUtil.SetVertexValue(itemVertex, musicEventTriggerTime, TriggerTime);
