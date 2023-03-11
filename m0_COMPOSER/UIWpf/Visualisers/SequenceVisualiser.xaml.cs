@@ -413,7 +413,10 @@ namespace m0_COMPOSER.UIWpf.Visualisers
                 Length = (int)((itemWidth / HorizontalAD.BaseUnitSize) + 0.01);
             }            
             
-            GraphUtil.SetVertexValue(itemVertex, musicEventTriggerTime, TriggerTime);            
+            GraphUtil.SetVertexValue(itemVertex, musicEventTriggerTime, TriggerTime);
+
+            if (Length != 0)
+                GraphUtil.SetVertexValue(itemVertex, musicHasLengthLength, Length);            
         }
 
         protected override int ScreenPositionToMusicTime(double position, bool performSnapCorrection)
