@@ -264,7 +264,7 @@ namespace m0_COMPOSER.Lib
         void StartSongVertexChangeTracking()
         {
             graphChangeListenerEdge = ExecutionFlowHelper.AddTriggerAndListener(SongVertex,
-                     new List<string> { @"", @"\", @"\\", @"\\\" },
+                     new List<string> { @"", @"\", @"\\", @"\\\", @"\\\\" },
                      new List<GraphChangeFilterEnum> {GraphChangeFilterEnum.ValueChange,
                          GraphChangeFilterEnum.OutputEdgeAdded,
                          GraphChangeFilterEnum.OutputEdgeRemoved,
