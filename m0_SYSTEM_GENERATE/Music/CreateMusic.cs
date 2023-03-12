@@ -495,7 +495,7 @@ namespace m0_SYSTEM_GENERATE.Music
             GraphUtil.AddAssociation(PitchSet, "BasedOn", PitchSet, 0, 1);
             GraphUtil.AddAggregation(PitchSet, "Pitch", Pitch, 0, -1);
 
-            PitchSet.AddEdge(r.Get(false, @"System\Meta\Base\Vertex\$DefaultOpenVisualiser"), r.Get(false, @"System\Meta\Visualiser\PitchSet"));
+          //  PitchSet.AddEdge(r.Get(false, @"System\Meta\Base\Vertex\$DefaultOpenVisualiser"), r.Get(false, @"System\Meta\Visualiser\PitchSet"));
 
             // TIMESPANLEVEL            
 
@@ -740,8 +740,12 @@ namespace m0_SYSTEM_GENERATE.Music
 
         public static void AddFromFiles()
         {
+            // Generator
+            
             GraphUtil.LoadParseAndMove(@"_RES\Generator\HarmonyMelodyTimeGenerator.txt", MusicGenerator, "'HarmonyMelodyTimeGenerator'");
             GraphUtil.LoadParseAndMove(@"_RES\Generator\SimpleTransformer.txt", MusicGenerator, "'SimpleTransformer'");
+
+            // Instrument
 
             IVertex Instrument = Music.AddVertex(r.Get(false, @"System\Meta\ZeroUML\Package"), "Instrument");
 
@@ -750,6 +754,12 @@ namespace m0_SYSTEM_GENERATE.Music
             GraphUtil.LoadParseAndMove(@"_RES\Instrument\X09\X09_CC.txt", X09, "'XBase09_ControlChangeDescriptionSet'");
             GraphUtil.LoadParseAndMove(@"_RES\Instrument\X09\X09_mode_1_PitchSet.txt", X09, "'XBase09_mode_1_PitchSet'");
             GraphUtil.LoadParseAndMove(@"_RES\Instrument\X09\X09_mode_2_PitchSet.txt", X09, "'XBase09_mode_2_PitchSet'");
+
+            IVertex TR8S = Instrument.AddVertex(r.Get(false, @"System\Meta\ZeroUML\Package"), "TR8S");
+
+            GraphUtil.LoadParseAndMove(@"_RES\Instrument\TR8S\TR8S_PitchSet.txt", TR8S, "'TR8S_PitchSet'");
+
+            // Chord
 
             IVertex Chord = Music.AddVertex(r.Get(false, @"System\Meta\ZeroUML\Package"), "Chord");
 
