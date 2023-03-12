@@ -16,7 +16,9 @@ namespace m0_COMPOSER.Lib
 
         static IVertex MakeSongVertexUnique(IVertex songVertex)
         {
-            return songVertex.Get(false, "Track:"); // we can not use songVertex becouse it will be stack version of the vertex that is not the same as main IVertex
+            //return songVertex.Get(false, "Track:"); // we can not use songVertex becouse it will be stack version of the vertex that is not the same as main IVertex
+
+            return songVertex.Get(false, "Tempo:"); // we can not use songVertex becouse it will be stack version of the vertex that is not the same as main IVertex
         }
 
         public static void SetSongVisualiser(IVertex _songVertex, SongVisualiser visualiser)

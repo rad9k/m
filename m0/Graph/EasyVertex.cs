@@ -777,15 +777,23 @@ namespace m0.Graph
             CanEmitGraphChangeEvents = tempCanEmitGraphChangeEvents;
         }
 
+        static object lock_object = new object();        
         protected virtual void VertexInit()
         {
-            VertexInit_First();
+            lock (lock_object)
+            {
+                VertexInit_First();
 
-            _Identifier = Store.VertexIdentifierCount++;
+                _Identifier = Store.VertexIdentifierCount++;
 
-            GraphUtil.Debug(this, DebugOperationEnum.Init);
+                //Store.VertexIdentifierCount += RND.Next(10) + 1;
 
-            Store.StoreVertexIdentifier(this);
+                //_Identifier = Store.VertexIdentifierCount;
+
+                GraphUtil.Debug(this, DebugOperationEnum.Init);
+
+                Store.StoreVertexIdentifier(this);
+            }
         }
 
         public override void ExecuteSecondStageCommitAction()
