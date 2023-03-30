@@ -638,7 +638,7 @@ namespace m0.UIWpf.Visualisers
                     GraphUtil.SetVertexValue(tableVisualiser.Vertex, MinusZero.Instance.Root.Get(false, @"System\Meta\Visualiser\Table\ExpertMode"), "True");               
 
                 // need to remove and add to have "transaction" // THIS DOES NOT WORK
-                //GraphUtil.CreateOrReplaceEdge(tableVisualiser.Vertex.Get(false, "ToShowEdgesMeta:"), r.Get(false, @"System\Meta\ZeroTypes\Edge\Meta"), meta);
+                GraphUtil.CreateOrReplaceEdge(tableVisualiser.Vertex.Get(false, "ToShowEdgesMeta:"), r.Get(false, @"System\Meta\ZeroTypes\Edge\Meta"), meta);
 
                // IVertex v = tableVisualiser.Vertex.Get(false, "ToShowEdgesMeta:"); /////////////// this ToShowEdgesMeta is a trash bin XXX
 

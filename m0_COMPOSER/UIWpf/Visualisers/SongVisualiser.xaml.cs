@@ -1107,6 +1107,9 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             {
                 IEdge edge = EdgeHelper.GetIEdgeByEdgeVertex(e.To);
 
+                if (edge == null)
+                    continue;
+
                 IVertex v = edge.To;
 
                 bool isNull = false;
@@ -1145,6 +1148,9 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             foreach (IEdge e in edges)
             {
                 IEdge edge = EdgeHelper.GetIEdgeByEdgeVertex(e.To);
+
+                if (edge == null)
+                    continue;
 
                 IVertex v = edge.To;
 

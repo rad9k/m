@@ -52,6 +52,9 @@ namespace m0.UIWpf.Visualisers
                          "AtomVisualiserFull",
                          baseEdgeVertex,
                          UpdateBaseEdgeCallSchemeEnum.OmmitFirst);
+
+            if (Vertex.Get(false, @"ToShowEdgesMeta:") == null)
+                Vertex.AddVertex(ToShowEdgesMeta_meta, null);
         }
 
         protected override void AddFooter()
