@@ -1342,6 +1342,8 @@ namespace m0.UIWpf.UX
                 fromItem.RemoveDecorator(line);                
             }
 
+            //PaintDiagram();
+
             ////////////////////////////////////////
             Interaction.EndInteractionWithGraph();
             //////////////////////////////////////// 
