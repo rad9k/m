@@ -242,6 +242,8 @@ namespace m0.Graph.ExecutionFlow
 
                 foreach (IEdge e in triggerVertex.GetAll(false, @"Listener:"))
                 {
+                    m0.MinusZero.Instance.Log(2, "SendGrahChangeEvents", "\nraz\ndwa");
+
                     IVertex parameters = InstructionHelpers.CreateStack();
 
                     foreach (IVertex eventVertex in kvp.Value)

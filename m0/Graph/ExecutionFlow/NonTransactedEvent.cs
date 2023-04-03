@@ -79,7 +79,6 @@ namespace m0.Graph.ExecutionFlow
                 }
         }
 
-
         public static void HandleMetaEdge(GraphChangeTransactionAtom gcta)
         {
             //IVertex changedVeretx = gcta.ChangedVertex;
