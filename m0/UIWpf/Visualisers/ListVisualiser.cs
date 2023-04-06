@@ -45,7 +45,7 @@ namespace m0.UIWpf.Visualisers
         protected IVertex parentVisualiser;
 
         public ListVisualiser(IVertex baseEdgeVertex, IVertex _parentVisualiser)
-        {
+        {            
             parentVisualiser = _parentVisualiser;
 
             ThisDataGrid = new DataGrid();
@@ -79,6 +79,8 @@ namespace m0.UIWpf.Visualisers
 
                 ThisDataGrid.SelectionChanged += _OnSelectionChanged;
             }
+
+            m0.MinusZero.Instance.Log(2, "ListVisualiser", "CONSTRUCTOR " + GraphUtil.GetVertexIdString(this.Vertex));
         }
 
         protected virtual void PlatformClassInitialize(IVertex baseEdgeVertex)

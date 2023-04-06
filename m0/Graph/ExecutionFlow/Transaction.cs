@@ -234,16 +234,45 @@ namespace m0.Graph.ExecutionFlow
             return triggerEventDictionary;
         }
 
+        private void SendGrahChangeEvents_log(Dictionary<IVertex, List<IVertex>> triggerEventDictionary)
+        {
+            m0.MinusZero.Instance.Log(2, "SendGrahChangeEvents", "START");
+            
+
+            foreach (KeyValuePair<IVertex, List<IVertex>> kvp in triggerEventDictionary)
+            {
+                IVertex triggerVertex = kvp.Key;
+
+                m0.MinusZero.Instance.Log(2, "SendGrahChangeEvents", "Trigger Vertex:"+ GraphUtil.GetVertexIdString(triggerVertex));
+
+                foreach (IEdge e in triggerVertex.GetAll(false, @"Listener:"))
+                {
+                    m0.MinusZero.Instance.Log(2, "SendGrahChangeEvents", "\tListener Vertex:" + GraphUtil.GetVertexIdString(e.To));
+
+                    foreach (IVertex eventVertex in kvp.Value)
+                    {
+                        m0.MinusZero.Instance.Log(2, "SendGrahChangeEvents", "\t\tevent");
+                        
+                        foreach(IEdge ee in eventVertex)
+                            m0.MinusZero.Instance.Log(2, "SendGrahChangeEvents", "\t\t\t" 
+                                + ee.Meta.Value.ToString() 
+                                + " :: " + ee.To.Value.ToString() 
+                                + " // " + GraphUtil.GetVertexIdString(ee.To));
+                    }
+                }
+            }
+        }
+
         private void SendGrahChangeEvents(IExecution exe, Dictionary<IVertex, List<IVertex>> triggerEventDictionary)
         {
-            foreach(KeyValuePair<IVertex, List<IVertex>> kvp in triggerEventDictionary)
+            SendGrahChangeEvents_log(triggerEventDictionary);
+
+            foreach (KeyValuePair<IVertex, List<IVertex>> kvp in triggerEventDictionary)
             {
                 IVertex triggerVertex = kvp.Key;
 
                 foreach (IEdge e in triggerVertex.GetAll(false, @"Listener:"))
-                {
-                    m0.MinusZero.Instance.Log(2, "SendGrahChangeEvents", "\nraz\ndwa");
-
+                {             
                     IVertex parameters = InstructionHelpers.CreateStack();
 
                     foreach (IVertex eventVertex in kvp.Value)

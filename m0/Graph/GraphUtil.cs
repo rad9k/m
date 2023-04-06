@@ -71,6 +71,8 @@ namespace m0.Graph
 
         public static void Debug(IVertex v, DebugOperationEnum Operation)
         {
+            return;
+
             if (v != null
                 && v.Identifier != null 
                 && v.Identifier is long 
@@ -80,6 +82,11 @@ namespace m0.Graph
             {
                 int x = 0;                
             }
+        }
+
+        public static  string GetVertexIdString(IVertex v)
+        {
+            return "[" + v.Store.Identifier.ToString() + ":" + v.Identifier.ToString() + "]";
         }
 
         public static IList<IVertex> GetVertexListFromEdgeEnumerable(IEnumerable<IEdge> edges)
