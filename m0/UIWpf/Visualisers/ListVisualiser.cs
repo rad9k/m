@@ -79,8 +79,9 @@ namespace m0.UIWpf.Visualisers
 
                 ThisDataGrid.SelectionChanged += _OnSelectionChanged;
             }
-
-            m0.MinusZero.Instance.Log(2, "ListVisualiser", "CONSTRUCTOR " + GraphUtil.GetVertexIdString(this.Vertex));
+            
+            m0.MinusZero.Instance.Log(2, "ListVisualiser", "CONSTRUCTOR " + GraphUtil.GetVertexIdString(this.Vertex) + " listener: " 
+                + GraphUtil.GetVertexIdString(Vertex.Get(false, ":AtomVisualiserFull")));
         }
 
         protected virtual void PlatformClassInitialize(IVertex baseEdgeVertex)
@@ -292,6 +293,9 @@ namespace m0.UIWpf.Visualisers
         protected virtual void AddFooter() { }       
 
         public virtual void UpdateVertex(){
+            m0.MinusZero.Instance.Log(2, "ListVisualiser", "UpdateVertex " + GraphUtil.GetVertexIdString(this.Vertex));
+
+
             IVertex _bas = Vertex.Get(false, @"BaseEdge:\To:");
 
             IEnumerable ItemsSourceValue = null;

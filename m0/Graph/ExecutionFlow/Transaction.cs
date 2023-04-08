@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Documents;
 
 namespace m0.Graph.ExecutionFlow
 {
@@ -234,7 +235,7 @@ namespace m0.Graph.ExecutionFlow
             return triggerEventDictionary;
         }
 
-        private void SendGrahChangeEvents_log(Dictionary<IVertex, List<IVertex>> triggerEventDictionary)
+        private void SendGrahChangeEvents_log(Dictionary<IVertex, List<IVertex>> triggerEventDictionary, bool fast)
         {
             m0.MinusZero.Instance.Log(2, "SendGrahChangeEvents", "START");
             
@@ -242,8 +243,11 @@ namespace m0.Graph.ExecutionFlow
             foreach (KeyValuePair<IVertex, List<IVertex>> kvp in triggerEventDictionary)
             {
                 IVertex triggerVertex = kvp.Key;
+                            
+                m0.MinusZero.Instance.Log(2, "SendGrahChangeEvents", "Trigger Vertex:"+ GraphUtil.GetVertexIdString(triggerVertex) + " events: " + kvp.Value.Count());
 
-                m0.MinusZero.Instance.Log(2, "SendGrahChangeEvents", "Trigger Vertex:"+ GraphUtil.GetVertexIdString(triggerVertex));
+                if (fast)
+                    continue;
 
                 foreach (IEdge e in triggerVertex.GetAll(false, @"Listener:"))
                 {
@@ -265,7 +269,7 @@ namespace m0.Graph.ExecutionFlow
 
         private void SendGrahChangeEvents(IExecution exe, Dictionary<IVertex, List<IVertex>> triggerEventDictionary)
         {
-            SendGrahChangeEvents_log(triggerEventDictionary);
+            SendGrahChangeEvents_log(triggerEventDictionary, false);
 
             foreach (KeyValuePair<IVertex, List<IVertex>> kvp in triggerEventDictionary)
             {

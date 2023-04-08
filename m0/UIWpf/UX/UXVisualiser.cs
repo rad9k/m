@@ -1848,6 +1848,8 @@ namespace m0.UIWpf.UX
                 if(isSet)
                     User.Process.UX.NonAtomProcess.StartNonAtomProcess();
 
+                m0.MinusZero.Instance.LogLevel = 2;
+
                 ////////////////////////////////////////
                 Interaction.BeginInteractionWithGraph();
                 //////////////////////////////////////// 
