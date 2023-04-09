@@ -40,20 +40,15 @@ namespace m0.ZeroTypes.UX
         public override void VertexSetedUp()
         {
             if (VisualiserClass != null)        
-            {                
-                ContentVisualiser = PlatformClass.CreatePlatformObject(VisualiserClass, BaseEdge);                
+            {
+                if (ContentVisualiser != null && ContentVisualiser is IDisposable)
+                    ((IDisposable)ContentVisualiser).Dispose();
+
+                ContentVisualiser = PlatformClass.CreatePlatformObject(VisualiserClass, BaseEdge, this.Vertex);
 
                 Grid.SetRow((UIElement)ContentVisualiser, 2);
                 
-                TheGrid.Children.Add((UIElement)ContentVisualiser);
-
-                //
-
-                //Button b = new Button();
-
-                //Grid.SetRow(b, 3);
-
-                //TheGrid.Children.Add(b);
+                TheGrid.Children.Add((UIElement)ContentVisualiser);                
             }
             else
             {

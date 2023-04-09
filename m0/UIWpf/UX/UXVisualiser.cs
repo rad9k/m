@@ -365,12 +365,13 @@ namespace m0.UIWpf.UX
                 return;
 
             foreach (IEdge e in definitionEdges)
-            {
-                if(VertexOperations.IsAtomicVertex(e.To))
-                    GraphUtil.SetVertexValue(baseVertex, e.Meta, e.To.Value); // shallow copy
-                else
-                    GraphUtil.CreateOrReplaceEdge(baseVertex, e.Meta, e.To); // deep BUT NOT COPY
-            }
+                if(!(GraphUtil.ExistQueryOut(e.Meta, "$NoCopy", null) || GraphUtil.ExistQueryOut(e.To, "$NoCopy", null)))
+                {
+                    if(VertexOperations.IsAtomicVertex(e.To))
+                        GraphUtil.SetVertexValue(baseVertex, e.Meta, e.To.Value); // shallow copy
+                    else
+                        GraphUtil.CreateOrReplaceEdge(baseVertex, e.Meta, e.To); // deep BUT NOT COPY
+                }
         }
 
         public void HostItem(IUXContainer host, IUXItem item, bool newItemCreation){
