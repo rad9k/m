@@ -256,12 +256,29 @@ namespace m0.Graph.ExecutionFlow
                     foreach (IVertex eventVertex in kvp.Value)
                     {
                         m0.MinusZero.Instance.Log(2, "SendGrahChangeEvents", "\t\tevent");
-                        
-                        foreach(IEdge ee in eventVertex)
-                            m0.MinusZero.Instance.Log(2, "SendGrahChangeEvents", "\t\t\t" 
-                                + ee.Meta.Value.ToString() 
-                                + " :: " + ee.To.Value.ToString() 
-                                + " // " + GraphUtil.GetVertexIdString(ee.To));
+
+                        foreach (IEdge ee in eventVertex)
+                        {
+                            if(ee.Meta.Value.ToString() == "Edge")
+                            {
+                                m0.MinusZero.Instance.Log(2, "SendGrahChangeEvents", "\t\t\t"
+                                    + ee.Meta.Value.ToString()
+                                    + " :: " + ee.To.Value.ToString()
+                                    + " // " + GraphUtil.GetVertexIdString(ee.To));
+
+                                m0.MinusZero.Instance.Log(2, "SendGrahChangeEvents", "\t\t\t\t"
+                                    + "From " + ee.To.Get(false, "From:"));
+                                m0.MinusZero.Instance.Log(2, "SendGrahChangeEvents", "\t\t\t\t"
+                                    + "Meta " + ee.To.Get(false, "Meta:"));
+                                m0.MinusZero.Instance.Log(2, "SendGrahChangeEvents", "\t\t\t\t"
+                                    + "To " + ee.To.Get(false, "To:"));
+                            }
+                            else
+                                m0.MinusZero.Instance.Log(2, "SendGrahChangeEvents", "\t\t\t"
+                                    + ee.Meta.Value.ToString()
+                                    + " :: " + ee.To.Value.ToString()
+                                    + " // " + GraphUtil.GetVertexIdString(ee.To));
+                        }
                     }
                 }
             }
@@ -269,7 +286,7 @@ namespace m0.Graph.ExecutionFlow
 
         private void SendGrahChangeEvents(IExecution exe, Dictionary<IVertex, List<IVertex>> triggerEventDictionary)
         {
-            SendGrahChangeEvents_log(triggerEventDictionary, false);
+            SendGrahChangeEvents_log(triggerEventDictionary, true);
 
             foreach (KeyValuePair<IVertex, List<IVertex>> kvp in triggerEventDictionary)
             {

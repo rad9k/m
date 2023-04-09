@@ -21,6 +21,7 @@ using System.Windows.Controls.Primitives;
 using m0.UIWpf.Visualisers.Helper;
 using m0.Graph.ExecutionFlow;
 using m0.User.Process.UX;
+using System.Windows.Forms;
 
 namespace m0.UIWpf.Visualisers
 {
@@ -28,7 +29,7 @@ namespace m0.UIWpf.Visualisers
     {
         public AtomVisualiserHelper VisualiserHelper { get; set; }        
 
-        protected DataGrid ThisDataGrid;
+        protected System.Windows.Controls.DataGrid ThisDataGrid;
 
         protected bool TurnOffSelectedItemsUpdate = false;
 
@@ -44,11 +45,13 @@ namespace m0.UIWpf.Visualisers
 
         protected IVertex parentVisualiser;
 
+        static int cnt = 0;
+
         public ListVisualiser(IVertex baseEdgeVertex, IVertex _parentVisualiser)
         {            
             parentVisualiser = _parentVisualiser;
 
-            ThisDataGrid = new DataGrid();
+            ThisDataGrid = new System.Windows.Controls.DataGrid();
 
             this.Children.Add(ThisDataGrid);
 
@@ -79,8 +82,10 @@ namespace m0.UIWpf.Visualisers
 
                 ThisDataGrid.SelectionChanged += _OnSelectionChanged;
             }
+
+            cnt++;
             
-            m0.MinusZero.Instance.Log(2, "ListVisualiser", "CONSTRUCTOR " + GraphUtil.GetVertexIdString(this.Vertex) + " listener: " 
+            m0.MinusZero.Instance.Log(2, "ListVisualiser", cnt +" CONSTRUCTOR " + GraphUtil.GetVertexIdString(this.Vertex) + " listener: " 
                 + GraphUtil.GetVertexIdString(Vertex.Get(false, ":AtomVisualiserFull")));
         }
 
@@ -159,7 +164,7 @@ namespace m0.UIWpf.Visualisers
 
             if (ShowMeta)
             {
-                Binding mb = new Binding("Meta.Value");
+                System.Windows.Data.Binding mb = new System.Windows.Data.Binding("Meta.Value");
                 mb.Mode = BindingMode.OneWay;
                 metaColumn.Binding = mb;
 
@@ -187,14 +192,14 @@ namespace m0.UIWpf.Visualisers
             {
                 valueColumn.CellTemplate = new DataTemplate();
                 FrameworkElementFactory factory = new FrameworkElementFactory(typeof(VisualiserEditWrapper));
-                factory.SetBinding(VisualiserEditWrapper.BaseEdgeProperty, new Binding(""));                
+                factory.SetBinding(VisualiserEditWrapper.BaseEdgeProperty, new System.Windows.Data.Binding(""));                
                 valueColumn.CellTemplate.VisualTree = factory;
             }
             else
             {
                 valueColumn.CellTemplate = new DataTemplate();
                 FrameworkElementFactory factory = new FrameworkElementFactory(typeof(VisualiserViewWrapper));
-                factory.SetBinding(VisualiserViewWrapper.BaseEdgeProperty, new Binding(""));
+                factory.SetBinding(VisualiserViewWrapper.BaseEdgeProperty, new System.Windows.Data.Binding(""));
                 valueColumn.CellTemplate.VisualTree = factory;
             }
 
@@ -203,7 +208,7 @@ namespace m0.UIWpf.Visualisers
             //
             valueColumn.CellEditingTemplate = new DataTemplate();
             FrameworkElementFactory EditFactory = new FrameworkElementFactory(typeof(VisualiserEditWrapper));
-            EditFactory.SetBinding(VisualiserEditWrapper.BaseEdgeProperty, new Binding(""));
+            EditFactory.SetBinding(VisualiserEditWrapper.BaseEdgeProperty, new  System.Windows.Data.Binding(""));
             valueColumn.CellEditingTemplate.VisualTree = EditFactory;
 
 
