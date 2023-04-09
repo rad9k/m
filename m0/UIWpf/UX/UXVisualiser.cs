@@ -1342,19 +1342,13 @@ namespace m0.UIWpf.UX
                 fromItem.RemoveDecorator(line);                
             }
 
-            //PaintDiagram();
-
-            m0.MinusZero.Instance.Log(2, "UXVisualiser.MoveLine", "EndInteractionWithGraph BEFORE");
+            //PaintDiagram();            
 
             ////////////////////////////////////////
             Interaction.EndInteractionWithGraph();
-            //////////////////////////////////////// 
-            
-            m0.MinusZero.Instance.Log(2, "UXVisualiser.MoveLine", "EndInteractionWithGraph AFTER bef PaintDiagram");
+            ////////////////////////////////////////                        
 
-            PaintDiagram();
-
-            m0.MinusZero.Instance.Log(2, "UXVisualiser.MoveLine", "EndInteractionWithGraph after PainDiagram");
+            PaintDiagram();            
         }
 
         protected void UnselectAll()
@@ -1846,9 +1840,7 @@ namespace m0.UIWpf.UX
                     isSet = true;
 
                 if(isSet)
-                    User.Process.UX.NonAtomProcess.StartNonAtomProcess();
-
-                m0.MinusZero.Instance.LogLevel = 2;
+                    User.Process.UX.NonAtomProcess.StartNonAtomProcess();                
 
                 ////////////////////////////////////////
                 Interaction.BeginInteractionWithGraph();
@@ -1861,13 +1853,10 @@ namespace m0.UIWpf.UX
                     p.Y += 25;
                 }
 
-                m0.MinusZero.Instance.Log(2, "UXVisualiser.dndDrop", "EndInteractionWithGraph BEFORE");
-
                 ////////////////////////////////////////
                 Interaction.EndInteractionWithGraph();
                 //////////////////////////////////////// 
-                
-                m0.MinusZero.Instance.Log(2, "UXVisualiser.dndDrop", "EndInteractionWithGraph END");
+               
 
                 CheckAndUpdateDiagramLines();
 

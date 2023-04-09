@@ -45,8 +45,6 @@ namespace m0.UIWpf.Visualisers
 
         protected IVertex parentVisualiser;
 
-        static int cnt = 0;
-
         public ListVisualiser(IVertex baseEdgeVertex, IVertex _parentVisualiser)
         {            
             parentVisualiser = _parentVisualiser;
@@ -82,12 +80,7 @@ namespace m0.UIWpf.Visualisers
 
                 ThisDataGrid.SelectionChanged += _OnSelectionChanged;
             }
-
-            cnt++;
-            
-            m0.MinusZero.Instance.Log(2, "ListVisualiser", cnt +" CONSTRUCTOR " + GraphUtil.GetVertexIdString(this.Vertex) + " listener: " 
-                + GraphUtil.GetVertexIdString(Vertex.Get(false, ":AtomVisualiserFull")));
-        }
+        }        
 
         protected virtual void PlatformClassInitialize(IVertex baseEdgeVertex)
         {
@@ -297,10 +290,7 @@ namespace m0.UIWpf.Visualisers
 
         protected virtual void AddFooter() { }       
 
-        public virtual void UpdateVertex(){
-            m0.MinusZero.Instance.Log(2, "ListVisualiser", "UpdateVertex " + GraphUtil.GetVertexIdString(this.Vertex));
-
-
+        public virtual void UpdateVertex(){            
             IVertex _bas = Vertex.Get(false, @"BaseEdge:\To:");
 
             IEnumerable ItemsSourceValue = null;
@@ -374,8 +364,7 @@ namespace m0.UIWpf.Visualisers
             if (GeneralUtil.CompareStrings(MinusZero.Instance.Root.Get(false, @"User\CurrentUser:\Settings:\AllowBlankAreaDragAndDrop:").Value, "StartAndEnd"))
                 return Vertex.Get(false, "BaseEdge:");
             else
-                return null;
-            
+                return null;            
         }                        
 
         public IVertex GetEdgeByVisualElement(FrameworkElement visualElement)

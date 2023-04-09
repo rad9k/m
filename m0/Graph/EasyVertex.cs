@@ -15,6 +15,7 @@ using m0.DotNetIntegration;
 using m0.Graph.Internal;
 using m0.Graph.ExecutionFlow;
 using static m0.Graph.GraphUtil;
+using m0.UIWpf.Visualisers;
 
 namespace m0.Graph
 {
@@ -452,7 +453,7 @@ namespace m0.Graph
         public override void DeleteEdge(IEdge _edge)
         {
             if (DisposedState == DisposeStateEnum.Disposed)
-                throw new Exception("Vertex not live");
+                throw new Exception("Vertex not live");            
 
             IEdge edge = edgeDictionaries.Out.Get(_edge);
 

@@ -137,9 +137,7 @@ namespace m0.UIWpf.Visualisers.Helper
         }
 
         public INoInEdgeInOutVertexVertex VertexChangeLogic(IExecution exe)
-        {
-            m0.MinusZero.Instance.Log(2, "ListVisualiserHelper", "VertexChangeLogic " + GraphUtil.GetVertexIdString(this.Vertex));
-
+        {            
             if (IsVertexChangeOrEdgeAddedRemovedDisposedByMetaAndFrom(exe.Stack, Visualiser.Vertex, "Scale"))
                 listVisualiser.ScaleChange();
 

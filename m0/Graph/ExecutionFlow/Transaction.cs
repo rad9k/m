@@ -286,7 +286,7 @@ namespace m0.Graph.ExecutionFlow
 
         private void SendGrahChangeEvents(IExecution exe, Dictionary<IVertex, List<IVertex>> triggerEventDictionary)
         {
-            SendGrahChangeEvents_log(triggerEventDictionary, true);
+            //SendGrahChangeEvents_log(triggerEventDictionary, true);
 
             foreach (KeyValuePair<IVertex, List<IVertex>> kvp in triggerEventDictionary)
             {

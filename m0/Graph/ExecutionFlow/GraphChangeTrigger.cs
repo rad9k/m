@@ -1,5 +1,6 @@
 ﻿using m0.DotNetIntegration;
 using m0.Foundation;
+using m0.UIWpf.Visualisers;
 using m0.ZeroCode;
 using m0.ZeroCode.Helpers;
 using m0.ZeroTypes;
@@ -144,9 +145,9 @@ namespace m0.Graph.ExecutionFlow
         }
 
         public static void RemoveListener(IEdge listenerEdge)
-        {
+        {            
             if (listenerEdge == null)
-                return;
+                return;            
 
             IVertex triggerVertex = listenerEdge.From;
 

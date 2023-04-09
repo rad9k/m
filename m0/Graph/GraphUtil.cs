@@ -1108,12 +1108,7 @@ namespace m0.Graph
 
         static public IEdge CreateOrReplaceEdge(IVertex Vertex, IVertex metaVertex, IVertex NewEdgeToVertex)
         {
-            IEdge toReplace = FindEdgeByMetaVertex(Vertex, metaVertex);
-
-            /*if (toReplace != null)
-                Vertex.DeleteEdge(toReplace);
-
-            return Vertex.AddEdge(metaVertex, NewEdgeToVertex);*/
+            IEdge toReplace = FindEdgeByMetaVertex(Vertex, metaVertex);            
 
             if (toReplace != null)
                 Vertex.DeleteEdge(toReplace);
