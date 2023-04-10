@@ -49,7 +49,7 @@ namespace m0.ZeroTypes.UX
 
             foreach(IItem _i in Items)
             {
-                IUXItem i = UXItem.GetUXItem(_i);
+                IUXItem i = UXItem.GetUXItem(this, _i);
 
                 if (i == null)
                     continue;

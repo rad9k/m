@@ -382,7 +382,7 @@ namespace m0.UIWpf.UX
             {
                 foreach (IItem _i in item.Items)
                 {
-                    IUXItem i = UXItem.GetUXItem(_i);
+                    IUXItem i = UXItem.GetUXItem(this, _i);
 
                     if (i == null)
                         continue;
@@ -427,7 +427,7 @@ namespace m0.UIWpf.UX
 
                 foreach (IItem _i in container.Items)
                 {
-                    IUXItem i = UXItem.GetUXItem(_i);
+                    IUXItem i = UXItem.GetUXItem(this, _i);
 
                     if (i == null)
                         continue;
@@ -500,7 +500,7 @@ namespace m0.UIWpf.UX
 
            foreach(IItem _item in Items_all)
                {
-                   IUXItem item = UXItem.GetUXItem(_item);
+                   IUXItem item = UXItem.GetUXItem(this, _item);
 
                    if (item == null)
                       continue;
@@ -616,7 +616,7 @@ namespace m0.UIWpf.UX
 
             foreach(IItem _i in Items_all)                
                 {
-                    IUXItem i = UXItem.GetUXItem(_i);
+                    IUXItem i = UXItem.GetUXItem(this, _i);
 
                     if (i == null || !(_i is FrameworkElement))
                         continue;
@@ -667,7 +667,7 @@ namespace m0.UIWpf.UX
 
                 foreach (IItem _i in Items)
                 {
-                    IUXItem i = UXItem.GetUXItem(_i);
+                    IUXItem i = UXItem.GetUXItem(this, _i);
 
                     if (i == null)
                         continue;
@@ -1163,7 +1163,7 @@ namespace m0.UIWpf.UX
 
             foreach (IItem _i in Items_all)
                 {
-                    IUXItem i = UXItem.GetUXItem(_i);
+                    IUXItem i = UXItem.GetUXItem(this, _i);
 
                     if (i == null)
                         continue;
@@ -1356,7 +1356,7 @@ namespace m0.UIWpf.UX
         {            
             foreach (IItem _i in Items_all)
             {
-                IUXItem i = UXItem.GetUXItem(_i);
+                IUXItem i = UXItem.GetUXItem(this, _i);
 
                 if (i == null)
                     continue;
@@ -1441,7 +1441,7 @@ namespace m0.UIWpf.UX
 
                     foreach (IItem _i in Items)
                     {
-                        IUXItem i = UXItem.GetUXItem(_i);
+                        IUXItem i = UXItem.GetUXItem(this, _i);
 
                         if (i == null)
                             continue;
@@ -1464,7 +1464,7 @@ namespace m0.UIWpf.UX
 
             foreach (IItem _i in Items_all)
             {
-                IUXItem i = UXItem.GetUXItem(_i);
+                IUXItem i = UXItem.GetUXItem(this, _i);
 
                 if (i == null || !(i is IUXContainer))
                     continue;
@@ -1496,7 +1496,7 @@ namespace m0.UIWpf.UX
 
             foreach (IItem _i in Items_all)
             {
-                IUXItem i = UXItem.GetUXItem(_i);
+                IUXItem i = UXItem.GetUXItem(this, _i);
 
                 if (i == null)
                     continue;
@@ -1946,7 +1946,7 @@ namespace m0.UIWpf.UX
         {        
             foreach(IItem _i in Items_all)
             {
-                IUXItem item = UXItem.GetUXItem(_i);
+                IUXItem item = UXItem.GetUXItem(this, _i);
 
                 if (item == null)
                     continue;

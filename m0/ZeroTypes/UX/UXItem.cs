@@ -327,7 +327,7 @@ namespace m0.ZeroTypes.UX
             Diagram.CheckAndUpdateItemComposition(this, true);
         }
 
-        static public IUXItem GetUXItem(IItem i)
+        static public IUXItem GetUXItem(IItem parent, IItem i)
         {
             if (GraphUtil.ExistQueryOut(i.Vertex, "$Is", "Wrap"))
                 return null;
@@ -342,7 +342,7 @@ namespace m0.ZeroTypes.UX
         {
             foreach (IItem _i in Items)
             {
-                IUXItem i = GetUXItem(_i);
+                IUXItem i = GetUXItem(this, _i);
 
                 if (i == null)
                     continue;
@@ -626,7 +626,7 @@ namespace m0.ZeroTypes.UX
 
             foreach (IItem _i in Items)
             {
-                IUXItem i = GetUXItem(_i);
+                IUXItem i = GetUXItem(this, _i);
 
                 if (i == null)
                     continue;
