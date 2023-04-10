@@ -329,11 +329,19 @@ namespace m0.ZeroTypes.UX
 
         static public IUXItem GetUXItem(IItem parent, IItem i)
         {
-            if (GraphUtil.ExistQueryOut(i.Vertex, "$Is", "Wrap"))
-                return null;
+            if (parent is IUXContainer)
+            {
 
-            if (i is IUXItem)
-                return (IUXItem)i;
+            }
+            else
+            {
+
+                if (GraphUtil.ExistQueryOut(i.Vertex, "$Is", "Wrap"))
+                    return null;
+
+                if (i is IUXItem)
+                    return (IUXItem)i;
+            }
 
             return null;
         }
