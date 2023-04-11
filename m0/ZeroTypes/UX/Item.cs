@@ -96,9 +96,13 @@ namespace m0.ZeroTypes.UX
 
                 foreach (IEdge e in list)
                 {
-                    IItem i = (IItem)TypedEdge.Get(e);
-                    i.ParentItem = this;
-                    ret.Add(i);
+                    IItem i = TypedEdge.Get_ItemVersion(e);
+
+                    if (i != null)
+                    {
+                        i.ParentItem = this;
+                        ret.Add(i);
+                    }
                 }
 
                 return ret;
@@ -109,7 +113,7 @@ namespace m0.ZeroTypes.UX
         {
             IEdge newEdge = VertexOperations.AddInstanceAndReturnEdge(Vertex, typeVertex, Item_meta);
 
-            IItem item = (IItem)TypedEdge.Get(newEdge);
+            IItem item = TypedEdge.Get_ItemVersion(newEdge);
 
             item.ParentItem = this;
 

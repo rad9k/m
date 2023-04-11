@@ -81,7 +81,7 @@ namespace m0.ZeroTypes.UX
                 if (val == null)
                     return null;
 
-                return (IUXItem)TypedEdge.Get(val);
+                return TypedEdge.Get_UXItemVersion(val);
             }
             set
             {                

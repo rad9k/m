@@ -2427,7 +2427,12 @@ namespace m0.UIWpf.UX
                 IList<IUXItem> ret = new List<IUXItem>();
 
                 foreach (IEdge e in list)
-                    ret.Add((IUXItem)TypedEdge.Get(e));
+                {
+                    IUXItem i = TypedEdge.Get_UXItemVersion(e);
+
+                    if(i != null)
+                        ret.Add(i);
+                }
 
                 return ret;
             }
@@ -2437,7 +2442,7 @@ namespace m0.UIWpf.UX
         {
             IEdge newEdge = VertexOperations.AddInstanceAndReturnEdge(Vertex, typeVertex, Decorator_meta);
 
-            return (IUXItem)TypedEdge.Get(newEdge);
+            return TypedEdge.Get_UXItemVersion(newEdge);
         }
         public void RemoveDecorator(IUXItem decorator)
         {
@@ -2516,9 +2521,13 @@ namespace m0.UIWpf.UX
 
                 foreach (IEdge e in list)
                 {
-                    IItem i = (IItem)TypedEdge.Get(e);
-                    i.ParentItem = this;
-                    ret.Add(i);                    
+                    IItem i = TypedEdge.Get_ItemVersion(e);
+
+                    if (i != null)
+                    {
+                        i.ParentItem = this;
+                        ret.Add(i);
+                    }
                 }
 
                 return ret;
@@ -2529,7 +2538,7 @@ namespace m0.UIWpf.UX
         {
             IEdge newEdge = VertexOperations.AddInstanceAndReturnEdge(Vertex, typeVertex, Item_meta);
 
-            IItem item = (IItem)TypedEdge.Get(newEdge);
+            IItem item = TypedEdge.Get_ItemVersion(newEdge);
 
             item.ParentItem = this;
 

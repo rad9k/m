@@ -11,7 +11,7 @@ using System.Windows;
 
 namespace m0.ZeroTypes.UX
 {
-    public interface ILineDecoratorBase : IUXItem
+    public interface ILineDecoratorBase : IUXItem, IUXDecorator
     {
         double FromX { get; set; }
         double FromY { get; set; }

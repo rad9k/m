@@ -139,6 +139,7 @@
     <Compile Include="UIWpf\Controls\IMouseWheelHandler.cs" />
     <Compile Include="UIWpf\UX\UXVisualiser.cs" />
     <Compile Include="ZeroTypes\UX\IMultiContainerSubItem.cs" />
+    <Compile Include="ZeroTypes\UX\IUXDecorator.cs" />
     <Compile Include="ZeroTypes\UX\MultiContainerSubItem.xaml.cs">
       <DependentUpon>MultiContainerSubItem.xaml</DependentUpon>
     </Compile>

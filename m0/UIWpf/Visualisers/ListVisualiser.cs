@@ -43,7 +43,7 @@ namespace m0.UIWpf.Visualisers
 
         public virtual void UpdateView() { ResetView(); }
 
-        protected IVertex parentVisualiser;
+        protected IVertex parentVisualiser;        
 
         public ListVisualiser(IVertex baseEdgeVertex, IVertex _parentVisualiser)
         {            
