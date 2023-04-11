@@ -1,7 +1,10 @@
 ﻿using m0.Foundation;
 using m0.Graph;
+using m0.Util;
+using m0.ZeroTypes.UX;
 using System;
 using System.Collections.Generic;
+using System.Data.SqlTypes;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -86,7 +89,13 @@ namespace m0.ZeroTypes
 
             foreach(IEdge e in is_edges)
             {
-                if(GraphUtil.ExistQueryOut(e.To, "$Inherits", "UXItem"))
+                if (GraphUtil.GetValueAndCompareStrings(e.To, "Item"))
+                {
+                    toCreateType = typeof(Item);
+                    return true;
+                }
+
+                if(GraphUtil.ExistQueryOut(e.To, "$Inherits", "Item"))
                 {
                     string pcn = GraphUtil.GetQueryOutFirst(e.To, "$PlatformClassName", null).Value.ToString();
 
@@ -99,6 +108,35 @@ namespace m0.ZeroTypes
             }
 
             return false;            
+        }
+
+        public static bool IsUXItem(IVertex v, out Type toCreateType)
+        {
+            toCreateType = null;
+
+            IList<IEdge> is_edges = GraphUtil.GetQueryOut(v, "$Is", null);
+
+            foreach (IEdge e in is_edges)
+            {
+                if (GraphUtil.GetValueAndCompareStrings(e.To, "UXItem"))
+                {
+                    toCreateType = typeof(UXItem);
+                    return true;
+                }
+
+                if (GraphUtil.ExistQueryOut(e.To, "$Inherits", "UXItem"))
+                {
+                    string pcn = GraphUtil.GetQueryOutFirst(e.To, "$PlatformClassName", null).Value.ToString();
+
+                    if (pcn == null)
+                        return false;
+
+                    toCreateType = Type.GetType(pcn);
+                    return true;
+                }
+            }
+
+            return false;
         }
 
         public static Type GetPlatformClass(IVertex v)
@@ -118,7 +156,7 @@ namespace m0.ZeroTypes
             return null;
         }
 
-        static public ITypedEdge Get_itemVerstion(IEdge edge)
+        static public IItem Get_ItemVersion(IEdge edge)
         {
             IVertex v = edge.To;
 
@@ -128,8 +166,11 @@ namespace m0.ZeroTypes
 
                 if (ret.Edge.To.DisposedState != DisposeStateEnum.Live)
                     throw new Exception("Vertex not live");
+
+                if (ret is IItem)
+                    return (IItem)ret;
                 
-                return ret;                
+                return null;                
             }
             else
             {
@@ -138,9 +179,34 @@ namespace m0.ZeroTypes
                 if (!IsItem(v, out toCreateType))
                     return null; 
                                                
-                ITypedEdge te = (ITypedEdge)Activator.CreateInstance(toCreateType, edge);
+                return (IUXItem)Activator.CreateInstance(toCreateType, edge);                
+            }
+        }
 
-                return te;
+        static public IUXItem Get_UXItemVersion(IEdge edge)
+        {
+            IVertex v = edge.To;
+
+            if (vertexDictionary.ContainsKey(v))
+            {
+                ITypedEdge ret = vertexDictionary[v];
+
+                if (ret.Edge.To.DisposedState != DisposeStateEnum.Live)
+                    throw new Exception("Vertex not live");
+
+                if (ret is IUXItem)
+                    return (IUXItem)ret;
+
+                return (IUXItem)ret;
+            }
+            else
+            {
+                Type toCreateType;
+
+                if (!IsUXItem(v, out toCreateType))
+                    return null;
+
+                return (IUXItem)Activator.CreateInstance(toCreateType, edge);
             }
         }
 
@@ -164,9 +230,7 @@ namespace m0.ZeroTypes
                 if (toCreateType == null)
                     return null;
 
-                ITypedEdge te = (ITypedEdge)Activator.CreateInstance(toCreateType, edge);
-
-                return te;
+                return (ITypedEdge)Activator.CreateInstance(toCreateType, edge);
             }
         }
 

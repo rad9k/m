@@ -60,7 +60,9 @@ namespace m0.ZeroTypes.UX
                 IList<UXTemplate> ret = new List<UXTemplate>();
 
                 foreach (IEdge e in list)
+                {
                     ret.Add((UXTemplate)TypedEdge.Get(e));
+                }
 
                 return ret;
             }
