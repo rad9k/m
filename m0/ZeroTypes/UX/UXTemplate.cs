@@ -196,7 +196,12 @@ namespace m0.ZeroTypes.UX
                 IList<IUXItem> ret = new List<IUXItem>();
 
                 foreach (IEdge e in list)
-                    ret.Add((IUXItem)TypedEdge.Get(e));
+                {
+                    IUXItem i = TypedEdge.Get_UXItemVersion(e);
+
+                    if (i != null)
+                        ret.Add(i);
+                }
 
                 return ret;
             }
