@@ -95,7 +95,7 @@ namespace m0.ZeroTypes
                     return true;
                 }
 
-                if(GraphUtil.ExistQueryOut(e.To, "$Inherits", "Item"))
+                if (GraphUtil.ExistQueryOut(e.To, "$Inherits", "Item"))
                 {
                     string pcn = GraphUtil.GetQueryOutFirst(e.To, "$PlatformClassName", null).Value.ToString();
 
@@ -108,6 +108,27 @@ namespace m0.ZeroTypes
             }
 
             return false;            
+        }
+
+        private static string IsItem_reccurent(IVertex v)
+        {
+            foreach(IEdge e in GraphUtil.GetQueryOut(v, "$Inherits", null))
+            {
+                if (GraphUtil.GetValueAndCompareStrings(e.To, "Item"))
+                {
+                    IVertex pcv = GraphUtil.GetQueryOutFirst(e.To, "$PlatformClassName", null);
+
+                    if (pcv != null)
+                        return pcv.Value.ToString();                                       
+                }
+
+                string s = IsItem_reccurent(e.To);
+
+                if (s != null)
+                    return s;
+            }
+
+            return null;
         }
 
         public static bool IsUXItem(IVertex v, out Type toCreateType)

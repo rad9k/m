@@ -2287,7 +2287,7 @@ namespace m0.ZeroUML.Instructions
             if(methodBody==null) // not found
                 return CreateStack();
 
-            if (methodBody!=null && !CheckIfIsOrInherits(methodBody,"Method")) // not a method
+            if (methodBody!=null && !CheckIfIsOrInherits(methodBody, "Method")) // not a method
                 return CreateStack();
 
             IList<IEdge> inputParameters = GraphUtil.GetQueryOut(methodBody, "InputParameter", null);

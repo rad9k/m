@@ -68,7 +68,9 @@ namespace m0.ZeroCode.Helpers
             return false;
         }
 
-        public static bool CheckIfIsOrInherits(IVertex baseVertex, string value)
+        public static bool CheckIfIsOrInherits(IVertex baseVertex, string value) 
+            // $Inherits target can have $Inherits also. This is not checked here, so basically IS WRONG
+            // BUT as this seems to be working, I leave it for now XXX
         {
             IList<IEdge> allIs = InstructionHelpers.GetAllIs(baseVertex);
 
@@ -85,6 +87,8 @@ namespace m0.ZeroCode.Helpers
         }
 
         public static bool CheckIfIsInherits(IVertex baseVertex, string value)
+        // $Inherits target can have $Inherits also. This is not checked here, so basically IS WRONG
+        // BUT as this seems to be working, I leave it for now XXX
         {
             IList<IEdge> allIs = InstructionHelpers.GetAllIs(baseVertex);            
 
