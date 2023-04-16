@@ -326,11 +326,6 @@ namespace m0.UIWpf.Visualisers
             set { VisualiserHelper.SetVertex(value); }
         }
 
-        public void Dispose()
-        {
-            VisualiserHelper.Dispose();
-        }
-
         public IVertex GetEdgeByPoint(Point point)
         {
             var headersPresenter = WpfUtil.FindVisualChild<DataGridColumnHeadersPresenter>(ThisDataGrid);
