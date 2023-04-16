@@ -18,11 +18,22 @@ using m0.UIWpf.Visualisers.Helper;
 
 namespace m0.UIWpf.Visualisers
 {
-    class ClassVisualiser : TextBlock, IVisualiser
+    class ClassVisualiser : TextBlock, IVisualiser, ITypedEdge
     {
         public AtomVisualiserHelper VisualiserHelper { get; set; }        
 
         List<IVertex> manuallyAddedVertexChangeListeners = new List<IVertex>();
+
+        // TypedEdge START
+        public ClassVisualiser(IEdge _edge)
+        {
+            Edge = _edge;
+
+            TypedEdge.vertexDictionary.Add(Edge.To, this);
+        }
+
+        public IEdge Edge { get; set; }
+        // TypedEdge END
 
         public ClassVisualiser(IVertex baseEdgeVertex, IVertex parentVisualiser)
         {

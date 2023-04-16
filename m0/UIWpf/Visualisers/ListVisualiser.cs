@@ -25,7 +25,7 @@ using System.Windows.Forms;
 
 namespace m0.UIWpf.Visualisers
 {
-    public class ListVisualiser : StackPanel,  IListVisualiser
+    public class ListVisualiser : StackPanel,  IListVisualiser, ITypedEdge
     {
         public AtomVisualiserHelper VisualiserHelper { get; set; }        
 
@@ -43,7 +43,19 @@ namespace m0.UIWpf.Visualisers
 
         public virtual void UpdateView() { ResetView(); }
 
-        protected IVertex parentVisualiser;        
+        protected IVertex parentVisualiser;
+
+        // TypedEdge START
+        
+        public ListVisualiser(IEdge _edge)
+        {
+            Edge = _edge;
+
+            //TypedEdge.vertexDictionary.Add(Edge.To, this);            
+        }
+
+        public IEdge Edge { get; set; }
+        // TypedEdge END
 
         public ListVisualiser(IVertex baseEdgeVertex, IVertex _parentVisualiser)
         {            
@@ -324,6 +336,11 @@ namespace m0.UIWpf.Visualisers
         {
             get { return VisualiserHelper.Vertex; }
             set { VisualiserHelper.SetVertex(value); }
+        }
+
+        public void Dispose()
+        {
+            VisualiserHelper.Dispose();
         }
 
         public IVertex GetEdgeByPoint(Point point)

@@ -19,7 +19,7 @@ using m0.Graph.ExecutionFlow;
 
 namespace m0.UIWpf.Visualisers
 {
-    public class WrapVisualiser : WrapPanel, IListVisualiser
+    public class WrapVisualiser : WrapPanel, IListVisualiser, ITypedEdge
     {
         public AtomVisualiserHelper VisualiserHelper { get; set; }        
 
@@ -42,7 +42,18 @@ namespace m0.UIWpf.Visualisers
         public string[] MetaTriggeringUpdateView { get; }
 
         public WrapVisualiser(IVertex baseEdgeVertex, IVertex parentVertex) : this(baseEdgeVertex, 1.0, parentVertex) { }
-         
+
+        // TypedEdge START
+        public WrapVisualiser(IEdge _edge)
+        {
+            Edge = _edge;            
+
+            TypedEdge.vertexDictionary.Add(Edge.To, this);
+        }
+
+        public IEdge Edge { get; set; }
+        // TypedEdge END
+
         public WrapVisualiser(IVertex baseEdgeVertex, double _scale, IVertex parentVertex)
         {
             Scale = _scale;
