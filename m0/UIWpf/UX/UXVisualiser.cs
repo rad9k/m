@@ -2428,10 +2428,10 @@ namespace m0.UIWpf.UX
 
                 foreach (IEdge e in list)
                 {
-                    IUXItem i = TypedEdge.Get_UXItemVersion(e);
+                    ITypedEdge i = TypedEdge.Get(e);                    
 
-                    if(i != null)
-                        ret.Add(i);
+                    if(i != null && i is IUXItem)
+                        ret.Add((IUXItem)i);
                 }
 
                 return ret;
@@ -2440,9 +2440,9 @@ namespace m0.UIWpf.UX
 
         public IUXItem AddDecorator(IVertex typeVertex)
         {
-            IEdge newEdge = VertexOperations.AddInstanceAndReturnEdge(Vertex, typeVertex, Decorator_meta);
+            IEdge newEdge = VertexOperations.AddInstanceAndReturnEdge(Vertex, typeVertex, Decorator_meta);            
 
-            return TypedEdge.Get_UXItemVersion(newEdge);
+            return (IUXItem)TypedEdge.Get(newEdge);
         }
         public void RemoveDecorator(IUXItem decorator)
         {
@@ -2521,13 +2521,14 @@ namespace m0.UIWpf.UX
 
                 foreach (IEdge e in list)
                 {
-                    IItem i = TypedEdge.Get_ItemVersion(e);
+                    ITypedEdge _i = TypedEdge.Get(e);
 
-                    if (i != null)
+                    if (_i != null && _i is IUXItem)
                     {
+                        IItem i = (IItem)_i;
                         i.ParentItem = this;
                         ret.Add(i);
-                    }
+                    }                        
                 }
 
                 return ret;
@@ -2538,14 +2539,21 @@ namespace m0.UIWpf.UX
         {
             IEdge newEdge = VertexOperations.AddInstanceAndReturnEdge(Vertex, typeVertex, Item_meta);
 
-            IItem item = TypedEdge.Get_ItemVersion(newEdge);
+            ITypedEdge i = TypedEdge.Get(newEdge);
 
-            item.ParentItem = this;
+            if (i != null && i is IItem)
+            {
+                IItem item = (IItem)i;
 
-            if (item is IUXItem)
-                ((IUXItem)item).NestingLevel = NestingLevel + 1;
+                item.ParentItem = this;
 
-            return item;
+                if (item is IUXItem)
+                    ((IUXItem)item).NestingLevel = NestingLevel + 1;
+
+                return item;
+            }
+
+            return null;
         }
 
         public void MoveExistingItemAsSubItem(IItem item)

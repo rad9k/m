@@ -197,10 +197,10 @@ namespace m0.ZeroTypes.UX
 
                 foreach (IEdge e in list)
                 {
-                    IUXItem i = TypedEdge.Get_UXItemVersion(e);
+                    ITypedEdge _i = TypedEdge.Get(e);
 
-                    if (i != null)
-                        ret.Add(i);
+                    if (_i != null && _i is IUXItem)
+                        ret.Add((IUXItem)_i);
                 }
 
                 return ret;

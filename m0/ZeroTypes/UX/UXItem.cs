@@ -1329,8 +1329,13 @@ namespace m0.ZeroTypes.UX
 
                 if (val == null)
                     return null;
-                
-                return (UXTemplate)TypedEdge.Get_UXItemVersion(val);
+
+                ITypedEdge _i = TypedEdge.Get(val);
+
+                if (_i != null && _i is UXTemplate)
+                    return (UXTemplate)_i;
+
+                return null;                                
             }
             set
             {
@@ -1348,10 +1353,10 @@ namespace m0.ZeroTypes.UX
 
                 foreach (IEdge e in list)
                 {
-                    IUXItem i = TypedEdge.Get_UXItemVersion(e);
+                    ITypedEdge _i = TypedEdge.Get(e);
 
-                    if (i != null)
-                        ret.Add(i);
+                    if (_i != null && _i is IUXItem)                    
+                        ret.Add((IUXItem)_i);                    
                 }
 
                 return ret;
@@ -1362,7 +1367,12 @@ namespace m0.ZeroTypes.UX
         {
             IEdge newEdge = VertexOperations.AddInstanceAndReturnEdge(Vertex, typeVertex, Decorator_meta);
 
-            return TypedEdge.Get_UXItemVersion(newEdge);
+            ITypedEdge _i = TypedEdge.Get(newEdge);
+
+            if (_i != null && _i is IUXItem)
+                return (IUXItem)_i;
+
+            return null;
         }
 
         public void RemoveDecorator(IUXItem decorator)
@@ -1455,12 +1465,14 @@ namespace m0.ZeroTypes.UX
 
                 foreach (IEdge e in list)
                 {
-                    IItem i = TypedEdge.Get_ItemVersion(e);
+                    ITypedEdge _i = TypedEdge.Get(e);
 
-                    if (i != null)
+                    if (_i != null && _i is IItem)
                     {
-                        i.ParentItem = this;
-                        ret.Add(i);
+                        IItem item = (IItem)_i;
+
+                        item.ParentItem = this;
+                        ret.Add(item);
                     }
                 }
 
@@ -1472,7 +1484,7 @@ namespace m0.ZeroTypes.UX
         {
             IEdge newEdge = VertexOperations.AddInstanceAndReturnEdge(Vertex, typeVertex, Item_meta);
 
-            IItem item = null;
+            /*IItem item = null;
 
             if (GraphUtil.GetValueAndCompareStrings(typeVertex, "UXItem"))
                 item = (IItem)TypedEdge.Get(newEdge, typeof(ZeroTypes.UX.UXItem));
@@ -1481,13 +1493,23 @@ namespace m0.ZeroTypes.UX
                 item = (IItem)TypedEdge.Get(newEdge, typeof(ZeroTypes.UX.UXContainer));
             else
                 item = TypedEdge.Get_ItemVersion(newEdge);
+            */
 
-            item.ParentItem = this;
+            ITypedEdge _i = TypedEdge.Get(newEdge);
 
-            if (item is IUXItem)
-                ((IUXItem)item).NestingLevel = NestingLevel + 1;
+            if (_i != null && _i is IItem)
+            {
+                IItem item = (IItem)_i;
 
-            return item;
+                item.ParentItem = this;
+
+                if (item is IUXItem)
+                    ((IUXItem)item).NestingLevel = NestingLevel + 1;
+
+                return item;
+            }
+
+            return null;
         }
 
         public void MoveExistingItemAsSubItem(IItem item)

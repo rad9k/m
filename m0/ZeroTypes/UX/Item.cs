@@ -96,10 +96,12 @@ namespace m0.ZeroTypes.UX
 
                 foreach (IEdge e in list)
                 {
-                    IItem i = TypedEdge.Get_ItemVersion(e);
+                    ITypedEdge _i = TypedEdge.Get(e);
 
-                    if (i != null)
+                    if(_i != null && _i is IItem)
                     {
+                        IItem i = (Item)_i;
+
                         i.ParentItem = this;
                         ret.Add(i);
                     }
@@ -113,11 +115,18 @@ namespace m0.ZeroTypes.UX
         {
             IEdge newEdge = VertexOperations.AddInstanceAndReturnEdge(Vertex, typeVertex, Item_meta);
 
-            IItem item = TypedEdge.Get_ItemVersion(newEdge);
+            ITypedEdge _i = TypedEdge.Get(newEdge);
+            
+            if (_i != null && _i is IItem)
+            {
+                IItem item = (IItem)_i;
 
-            item.ParentItem = this;
+                item.ParentItem = this;
 
-            return item;
+                return item;
+            }
+
+            return null;
         }
 
         public void MoveExistingItemAsSubItem(IItem item)
