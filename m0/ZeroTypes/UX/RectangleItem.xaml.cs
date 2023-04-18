@@ -42,7 +42,10 @@ namespace m0.ZeroTypes.UX
             if (VisualiserClass != null)        
             {
                 if (ContentVisualiser != null && ContentVisualiser is IDisposable)
+                {
+                    TheGrid.Children.Remove((UIElement)ContentVisualiser);
                     ((IDisposable)ContentVisualiser).Dispose();
+                }
 
                 ContentVisualiser = PlatformClass.CreatePlatformObject(VisualiserClass, BaseEdge, this.Vertex);
 

@@ -1349,7 +1349,11 @@ namespace m0.UIWpf.UX
             Interaction.EndInteractionWithGraph();
             ////////////////////////////////////////                        
 
-            PaintDiagram();            
+            VisualiserHelper.ForceVertexChangeOff = true;
+
+            PaintDiagram();
+
+            VisualiserHelper.ForceVertexChangeOff = false;
         }
 
         protected void UnselectAll()

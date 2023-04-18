@@ -129,8 +129,7 @@ namespace m0.ZeroTypes.UX
         public MultiContainerItem(IEdge edge) : base(edge) {
             InitializeComponent();        
         }
-
-        
+ 
         public override void VertexSetedUp()
         {
             if(Canvas == null) { 
