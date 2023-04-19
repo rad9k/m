@@ -195,16 +195,14 @@ namespace m0.ZeroTypes.UX
         }
 
         public void RemoveDiagramLine(ILineDecoratorBase line)
-        {
-            RemoveDecorator(line);
-
+        {            
             needRebuildDiagramLinesDictionary = true;
 
             line.ToItem.DiagramToLines.Remove(line);
 
             line.RemoveFromCanvas();
 
-            RemoveDecorator(line);
+            Vertex.DeleteEdge(line.Edge);            
         }
 
         public virtual void Select()
@@ -1373,12 +1371,7 @@ namespace m0.ZeroTypes.UX
                 return (IUXItem)_i;
 
             return null;
-        }
-
-        public void RemoveDecorator(IUXItem decorator)
-        {
-            Vertex.DeleteEdge(decorator.Edge);
-        }
+        }        
 
         // Item
 

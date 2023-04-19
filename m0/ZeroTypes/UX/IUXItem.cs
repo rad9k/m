@@ -97,9 +97,7 @@ namespace m0.ZeroTypes.UX
 
         IList<IUXItem> Decorators { get; }
         
-        IUXItem AddDecorator(IVertex typeVertex);
-
-        void RemoveDecorator(IUXItem decorator);
+        IUXItem AddDecorator(IVertex typeVertex);        
 
         void AddAsToMetaLine(ILineDecoratorBase line);
     }

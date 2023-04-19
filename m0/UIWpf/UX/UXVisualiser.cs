@@ -481,14 +481,9 @@ namespace m0.UIWpf.UX
                         IEdge lineBaseEdge = line.BaseEdge;
 
                         if (lineBaseEdge.Meta == item.ContainerEdge.Meta &&
-                            lineBaseEdge.To == item.ContainerEdge.To)
-                        {
-                            itemParentItem.RemoveDiagramLine(line);
-                            itemParentItem.RemoveDecorator(i);
-                        }
-                    }
-                
-
+                            lineBaseEdge.To == item.ContainerEdge.To)                        
+                            itemParentItem.RemoveDiagramLine(line);                                                    
+                    }                
             }
         }
 
@@ -1337,10 +1332,14 @@ namespace m0.UIWpf.UX
             {
                 fromItemBaseEdgeTo.DeleteEdge(toMoveEdge);
 
-                if(!onlyDelete)
-                    fromItemBaseEdgeTo.AddEdge(meta, toItem.BaseEdgeTo);
+                fromItem.RemoveDiagramLine(line);
 
-                fromItem.RemoveDecorator(line);                
+                if (!onlyDelete)
+                {
+                    IEdge newEdge = fromItemBaseEdgeTo.AddEdge(meta, toItem.BaseEdgeTo);
+
+                    AddDiagramLineVertex(fromItem, newEdge, (UXDecoratorTemplate)line.UXTemplate, toItem);
+                }
             }
 
             //PaintDiagram();            
@@ -1349,11 +1348,11 @@ namespace m0.UIWpf.UX
             Interaction.EndInteractionWithGraph();
             ////////////////////////////////////////                        
 
-            VisualiserHelper.ForceVertexChangeOff = true;
+            /*VisualiserHelper.ForceVertexChangeOff = true; 
 
-            PaintDiagram();
+            PaintDiagram(); // NEED TO DO BETTER NO NEED TO REPAINT
 
-            VisualiserHelper.ForceVertexChangeOff = false;
+            VisualiserHelper.ForceVertexChangeOff = false;*/
         }
 
         protected void UnselectAll()
