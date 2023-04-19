@@ -107,7 +107,7 @@ namespace m0.ZeroTypes.UX
         public virtual void VertexSetedUp()
         {
             graphChangeListenerEdge = ExecutionFlowHelper.AddTriggerAndListener(Vertex,
-                new List<string> { },
+                new List<string> { @"" },
                 new List<GraphChangeFilterEnum> {GraphChangeFilterEnum.ValueChange,
                          GraphChangeFilterEnum.OutputEdgeAdded,
                          GraphChangeFilterEnum.OutputEdgeRemoved,

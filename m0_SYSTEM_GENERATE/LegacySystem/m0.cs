@@ -5828,6 +5828,15 @@ namespace m0
                /*LineWidth*/-1, /*IsDashed*/false,
                /*BackgroundColor*/null, null);
 
+            AddLineDecorator(/*where*/v2, /*name*/ "edge",
+               /*EdgeTestQuery*/@"",
+               /*ToDiagramTestQuery*/@"",
+               //smzu.Get(false, @"MetaExtendedLineDecorator"),               
+               /*StartAnchor*/null,
+               /*EndAnchor*/arrow,
+               /*LineWidth*/-1, /*IsDashed*/false,
+               /*BackgroundColor*/null, null);
+
             AddLineDecorator(/*where*/v4, /*name*/ "edge",
                /*EdgeTestQuery*/@"",
                /*ToDiagramTestQuery*/@"",
@@ -5993,7 +6002,9 @@ namespace m0
 
             CreateSystemDataUXColor();
 
-            CreateSystemDataUXZeroUMLTemplate_MSX();
+            CreateSystemDataUXZeroUMLTemplate();
+
+            //CreateSystemDataUXZeroUMLTemplate_MSX();
 
 
             AddIsAttribute("Attribute");

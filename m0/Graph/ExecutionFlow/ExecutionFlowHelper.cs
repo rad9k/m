@@ -443,6 +443,8 @@ namespace m0.Graph.ExecutionFlow
             foreach (IEdge eventEdge in stack.GetAll(false, @"event:"))
             {
                 IVertex edgeVertex = eventEdge.To.Get(false, @"Edge:");
+
+                if
                 IVertex eventFrom = edgeVertex.Get(false, @"From:");
 
                 if (eventFrom == toFrom)

@@ -42,8 +42,7 @@ namespace m0.ZeroTypes.UX
 
             PointCollection pc = new PointCollection();
 
-            if (isSelfRelation) { }
-            else
+            if (!isSelfRelation) 
             {
                 Point p = new Point(FromX + ((ToX - FromX) / 2), FromY + ((ToY - FromY) / 2));
                 pc.Add(p);
