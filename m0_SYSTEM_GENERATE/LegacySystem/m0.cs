@@ -5773,9 +5773,35 @@ namespace m0
             IVertex straight = smzu.Get(false, @"LineEndEnum\Straight");
 
 
-            /////////////////////////////////////////////////////////////////////////
-            // Vertex 
-            /////////////////////////////////////////////////////////////////////////
+            IVertex v4 = AddUXTemplate_MultiContainerItem(/*where*/sdutz, /*name*/"DoubleOperator",/*doNotShowInherited*/ false,
+                /*DirectVertexTestQuery*/ @"{{$Inherits:DoubleOperator}}",
+                /*MetaVertexTestQuery*/ @"{$Inherits:DoubleOperator}",
+                /*InstanceCreation*/ InstanceAndDirect,
+                /*CreateItemVertex*/ true, /*BorderWidth*/ -1, /*BackgroundColor*/null, /*ForegroundColor*/ null,
+                /*RoundEdgeSize*/-1, /*ShowMeta*/ false, /*Orientation*/ OrientationEnum.Vertical);
+
+            MultiContainerItem_AddUXTemplate(v4, "Left",
+                Root.Get(false, @"System\Meta\ZeroUML\DoubleOperator\LeftExpression"),
+                "LeftExpression:",
+                25, 0);
+
+            MultiContainerItem_AddUXTemplate(v4, "Right",
+                Root.Get(false, @"System\Meta\ZeroUML\DoubleOperator\RightExpression"),
+                "RightExpression:",
+                75, 0);
+
+            AddLineDecorator(/*where*/v4, /*name*/ "edge",
+               /*EdgeTestQuery*/@"",
+               /*ToDiagramTestQuery*/@"",
+               //smzu.Get(false, @"MetaExtendedLineDecorator"),               
+               /*StartAnchor*/null,
+               /*EndAnchor*/arrow,
+               /*LineWidth*/-1, /*IsDashed*/false,
+               /*BackgroundColor*/null, null);
+
+
+            return;
+
 
             IVertex v = AddUXTemplate(/*where*/sdutz, /*name*/"Vertex", /*doNotShowInherited*/ false,
             /*DirectVertexTestQuery*/ @"",
@@ -5799,23 +5825,7 @@ namespace m0
             /*RoundEdgeSize*/-1,/*ShowMeta*/ false, /*ContainerEdgeMetaVertex*/smzu);
             
 
-            IVertex v4 = AddUXTemplate_MultiContainerItem(/*where*/sdutz, /*name*/"DoubleOperator",/*doNotShowInherited*/ false,
-            /*DirectVertexTestQuery*/ @"{$Is:DoubleOperator}",
-            /*MetaVertexTestQuery*/ @"{$Inherits:DoubleOperator}",            
-            /*InstanceCreation*/ InstanceAndDirect,
-            /*CreateItemVertex*/ true, /*BorderWidth*/ -1, /*BackgroundColor*/null, /*ForegroundColor*/ null,
-            /*RoundEdgeSize*/-1, /*ShowMeta*/ false, /*Orientation*/ OrientationEnum.Vertical);
-
-            MultiContainerItem_AddUXTemplate(v4, "Left", 
-                Root.Get(false, @"System\Meta\ZeroUML\DoubleOperator\LeftExpression"),
-                "LeftExpression:",
-                25, 0);
-
-            MultiContainerItem_AddUXTemplate(v4, "Right",
-                Root.Get(false, @"System\Meta\ZeroUML\DoubleOperator\RightExpression"), 
-                "RightExpression:",
-                75, 0);
-
+        
             
 
             AddLineDecorator(/*where*/v, /*name*/ "VERTEX EDGE",
@@ -5836,16 +5846,6 @@ namespace m0
                /*EndAnchor*/arrow,
                /*LineWidth*/-1, /*IsDashed*/false,
                /*BackgroundColor*/null, null);
-
-            AddLineDecorator(/*where*/v4, /*name*/ "edge",
-               /*EdgeTestQuery*/@"",
-               /*ToDiagramTestQuery*/@"",
-               //smzu.Get(false, @"MetaExtendedLineDecorator"),               
-               /*StartAnchor*/null,
-               /*EndAnchor*/arrow,
-               /*LineWidth*/-1, /*IsDashed*/false,
-               /*BackgroundColor*/null, null);
-
 
         }
 

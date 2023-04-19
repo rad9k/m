@@ -31,7 +31,7 @@ namespace m0.ZeroTypes.UX
             VertexUpdated();
 
             graphChangeListenerEdge = ExecutionFlowHelper.AddTriggerAndListener(Vertex,
-                 new List<string> { "", @"BaseEdge:\To:" },
+                 new List<string> { "", @"\" },
                  new List<GraphChangeFilterEnum> {GraphChangeFilterEnum.ValueChange,
                          GraphChangeFilterEnum.OutputEdgeAdded,
                          GraphChangeFilterEnum.OutputEdgeRemoved,
@@ -63,7 +63,7 @@ namespace m0.ZeroTypes.UX
             Panel.SetZIndex(Line, 99999);
         }
 
-        protected virtual INoInEdgeInOutVertexVertex VertexChange(IExecution exe)
+        protected override INoInEdgeInOutVertexVertex VertexChange(IExecution exe)
         {
             if (IsVertexChangeOrEdgeAddedRemovedDisposedByMetaAndFrom(exe.Stack, Vertex, "IsDashed")
                 || IsVertexChangeOrEdgeAddedRemovedDisposedByMetaAndFrom(exe.Stack, Vertex, "LineWidth"))
@@ -293,7 +293,7 @@ namespace m0.ZeroTypes.UX
             Diagram.Canvas.Children.Add(Line);
             Diagram.Canvas.Children.Add(Label);
 
-            VertexSetedUp(); // is it best place for that?
+            VertexSetedUp(); 
         }
 
         public override void RemoveFromCanvas()

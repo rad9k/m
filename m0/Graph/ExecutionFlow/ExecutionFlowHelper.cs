@@ -444,7 +444,9 @@ namespace m0.Graph.ExecutionFlow
             {
                 IVertex edgeVertex = eventEdge.To.Get(false, @"Edge:");
 
-                if
+                if (edgeVertex == null)
+                    continue;
+
                 IVertex eventFrom = edgeVertex.Get(false, @"From:");
 
                 if (eventFrom == toFrom)

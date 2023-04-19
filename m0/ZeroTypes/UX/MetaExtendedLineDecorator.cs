@@ -85,7 +85,17 @@ namespace m0.ZeroTypes.UX
             }
             else
                 Diagram.Canvas.Children.Add(Label);
-        }        
+            
+            VertexSetedUp();
+        }
+
+        public override void RemoveFromCanvas()
+        {
+            Diagram.Canvas.Children.Remove(MetaLine);
+            Diagram.Canvas.Children.Remove(LineEndings);
+            Diagram.Canvas.Children.Remove(Line);
+            Diagram.Canvas.Children.Remove(Label);
+        }
 
         protected override void UpdateLine()
         {
