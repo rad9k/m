@@ -5800,7 +5800,7 @@ namespace m0
                /*BackgroundColor*/null, null);
 
 
-            return;
+            //return;
 
 
             IVertex v = AddUXTemplate(/*where*/sdutz, /*name*/"Vertex", /*doNotShowInherited*/ false,

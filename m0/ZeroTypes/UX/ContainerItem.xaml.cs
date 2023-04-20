@@ -54,16 +54,7 @@ namespace m0.ZeroTypes.UX
         {
             base.VisualiserUpdate();
 
-            if(ShowMeta)            
-            {
-                IVertex baseEdgeTo = BaseEdgeTo;
-
-                if (baseEdgeTo != null)
-                    this.Title.Text = baseEdgeTo.Value.ToString();
-                else
-                    this.Title.Text = "Ø";
-            }
-            else
+            if(ShowMeta)
             {
                 IEdge baseEdge = BaseEdge;
                 IVertex baseEdgeTo = baseEdge.To;
@@ -85,8 +76,16 @@ namespace m0.ZeroTypes.UX
                     this.Title.Text = meta_text + " : " + to_text;
                 else
                     this.Title.Text = to_text;
-            }
+            }            
+            else
+            {
+                IVertex baseEdgeTo = BaseEdgeTo;
 
+                if (baseEdgeTo != null)
+                    this.Title.Text = baseEdgeTo.Value.ToString();
+                else
+                    this.Title.Text = "Ø";
+            }
 
             double roundEdgeSize = RoundEdgeSize;
 
@@ -198,7 +197,8 @@ namespace m0.ZeroTypes.UX
 
             if (changedVertex != null)
             {
-                if (GraphUtil.ExistQueryIn(changedVertex, "RoundEdgeSize", null))
+                if (GraphUtil.ExistQueryIn(changedVertex, "RoundEdgeSize", null)
+                    || GraphUtil.ExistQueryIn(changedVertex, "ShowMeta", null))
                 {
                     VisualiserUpdate();
                     return exe.Stack;
