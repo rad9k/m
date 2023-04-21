@@ -90,12 +90,12 @@ namespace m0.ZeroTypes.UX
             l.Text = "TEST";
             l.Foreground = new SolidColorBrush(Colors.AliceBlue);
 
-          //  SubGrid.Children.Add(l);
+            SubGrid.Children.Add(l);
 
             RowDefinition rrowDefinition = new RowDefinition();
-            //SubGrid.RowDefinitions.Add(rrowDefinition);
+            SubGrid.RowDefinitions.Add(rrowDefinition);
 
-            //Grid.SetColumn(l, 0);
+            Grid.SetColumn(l, 0);
 
             SubGrid.Background = new SolidColorBrush(Colors.Aqua);
 
