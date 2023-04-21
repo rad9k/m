@@ -33,6 +33,32 @@ namespace m0.ZeroTypes.UX
             InitializeComponent();            
         }
 
+        public MultiContainerItem(IEdge edge) : base(edge)
+        {
+            InitializeComponent();
+        }
+
+        public override void VertexSetedUp()
+        {
+            if (Canvas == null)
+            {
+                Canvas = new Canvas();
+                MainGrid.Children.Add(Canvas);
+            }
+
+            Canvas.ClipToBounds = true;
+
+            Grid.SetRow(Canvas, 2);
+
+            base.VertexSetedUp();
+
+            //
+
+            CreateSubItemVertexes();
+
+            CreateSubConainerControls();
+        }
+
         void CreateSubItemVertexes()
         {
             if (Items.Count == 0)
@@ -64,6 +90,11 @@ namespace m0.ZeroTypes.UX
 
             IEdge sizeEdge = GraphUtil.GetQueryOutFirstEdge(iUXTemplate.ItemVertex, "Size", null);
 
+            Size size = null;
+
+            if (sizeEdge != null)
+                size = new Size(sizeEdge);
+
             TextBlock label = null;
 
             if (iUXTemplate.Name != null) {
@@ -76,48 +107,41 @@ namespace m0.ZeroTypes.UX
             //
 
             Canvas canvas = new Canvas();
-            SubGrid.Children.Add(canvas);
+          //  SubGrid.Children.Add(canvas);
 
             //
 
-            GridSplitter splitter = new GridSplitter();
-            SubGrid.Children.Add(splitter);
+            //GridSplitter splitter = new GridSplitter();
+           // SubGrid.Children.Add(splitter);
 
             if (Orientation == OrientationEnum.Horizontal)
             {
                 RowDefinition rowDefinition = new RowDefinition();
 
-                if (sizeEdge != null) {
-                    Size size = new Size(sizeEdge);
-
+                if (size != null) 
                     rowDefinition.Height = new GridLength(size.Height, GridUnitType.Star);
-                }
 
                 SubGrid.RowDefinitions.Add(rowDefinition);
 
-                splitter.HorizontalAlignment = HorizontalAlignment.Stretch;
-                splitter.Height = 5;
+               // splitter.HorizontalAlignment = HorizontalAlignment.Stretch;
+               // splitter.Height = 5;
 
                 if (label != null)
                     Grid.SetRow(label, cnt);
 
-                Grid.SetRow(canvas, cnt);
+               // Grid.SetRow(canvas, cnt);
             }
             else
             {
                 ColumnDefinition columnDefinition = new ColumnDefinition();
 
-                if (sizeEdge != null)
-                {
-                    Size size = new Size(sizeEdge);
-
+                if (size != null)
                     columnDefinition.Width = new GridLength(size.Width, GridUnitType.Star);
-                }
 
                 SubGrid.ColumnDefinitions.Add(columnDefinition);
 
-                splitter.VerticalAlignment = VerticalAlignment.Stretch;
-                splitter.Width = 5;
+               // splitter.VerticalAlignment = VerticalAlignment.Stretch;
+               // splitter.Width = 5;
 
                 if (label != null)
                     Grid.SetColumn(label, cnt);
@@ -125,45 +149,12 @@ namespace m0.ZeroTypes.UX
                 Grid.SetColumn(canvas, cnt);
             }
         }
-
-        public MultiContainerItem(IEdge edge) : base(edge) {
-            InitializeComponent();        
-        }
- 
-        public override void VertexSetedUp()
-        {
-            if(Canvas == null) { 
-                Canvas = new Canvas();
-                MainGrid.Children.Add(Canvas);
-            }
-
-            Canvas.ClipToBounds = true;
-
-            Grid.SetRow(Canvas, 2);
-            
-            base.VertexSetedUp();
-
-            //
-
-            CreateSubItemVertexes();
-
-            CreateSubConainerControls();
-        }
         
         public override void VisualiserUpdate()
         {
             base.VisualiserUpdate();
 
-            if(ShowMeta)            
-            {
-                IVertex baseEdgeTo = BaseEdgeTo;
-
-                if (baseEdgeTo != null)
-                    this.Title.Text = baseEdgeTo.Value.ToString();
-                else
-                    this.Title.Text = "Ø";
-            }
-            else
+            if(ShowMeta)
             {
                 IEdge baseEdge = BaseEdge;
                 IVertex baseEdgeTo = baseEdge.To;
@@ -186,7 +177,15 @@ namespace m0.ZeroTypes.UX
                 else
                     this.Title.Text = to_text;
             }
+            else
+            {
+                IVertex baseEdgeTo = BaseEdgeTo;
 
+                if (baseEdgeTo != null)
+                    this.Title.Text = baseEdgeTo.Value.ToString();
+                else
+                    this.Title.Text = "Ø";
+            }
 
             double roundEdgeSize = RoundEdgeSize;
 
@@ -198,8 +197,7 @@ namespace m0.ZeroTypes.UX
 
                 Canvas.Margin = new Thickness(RoundEdgeSize, 0, RoundEdgeSize, RoundEdgeSize);
 
-                MainGrid.RowDefinitions[0].Height = new GridLength(18 + RoundEdgeSize);
-                
+                MainGrid.RowDefinitions[0].Height = new GridLength(18 + RoundEdgeSize);              
             }
 
             Brush backgroundBrush = GetBackgroundBrush();
@@ -298,7 +296,8 @@ namespace m0.ZeroTypes.UX
 
             if (changedVertex != null)
             {
-                if (GraphUtil.ExistQueryIn(changedVertex, "RoundEdgeSize", null))
+                if (GraphUtil.ExistQueryIn(changedVertex, "RoundEdgeSize", null)
+                    || GraphUtil.ExistQueryIn(changedVertex, "ShowMeta", null))
                 {
                     VisualiserUpdate();
                     return exe.Stack;
