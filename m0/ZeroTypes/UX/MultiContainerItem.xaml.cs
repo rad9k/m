@@ -86,6 +86,23 @@ namespace m0.ZeroTypes.UX
 
         void InsertSubContainer(IUXItem i, int cnt)
         {
+            TextBlock l = new TextBlock();
+            l.Text = "TEST";
+            l.Foreground = new SolidColorBrush(Colors.AliceBlue);
+
+          //  SubGrid.Children.Add(l);
+
+            RowDefinition rrowDefinition = new RowDefinition();
+            //SubGrid.RowDefinitions.Add(rrowDefinition);
+
+            //Grid.SetColumn(l, 0);
+
+            SubGrid.Background = new SolidColorBrush(Colors.Aqua);
+
+
+            return;
+
+
             UXTemplate iUXTemplate = i.UXTemplate;
 
             IEdge sizeEdge = GraphUtil.GetQueryOutFirstEdge(iUXTemplate.ItemVertex, "Size", null);
@@ -100,6 +117,7 @@ namespace m0.ZeroTypes.UX
             if (iUXTemplate.Name != null) {
                 label = new TextBlock();
                 label.Text = iUXTemplate.Name;
+                label.Foreground = (Brush)FindResource("0BackgroundBrush");
 
                 SubGrid.Children.Add(label);
             }

@@ -19,8 +19,9 @@
 
             <Border x:Name="InternalFrame" Grid.Row="1"  BorderThickness="0.5"/>
 
+            <!--
             <Grid x:Name="SubGrid" Grid.Row="2">
-            </Grid>
+            </Grid>-->
 
         </Grid>
 
