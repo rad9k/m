@@ -71,6 +71,18 @@ namespace m0.ZeroTypes.UX
 
         void CreateSubConainerControls()
         {
+            TextBlock l = new TextBlock();
+            l.Text = "TEST";
+            l.Foreground = new SolidColorBrush(Colors.AliceBlue);
+
+            SubGrid.Children.Add(l);
+
+            RowDefinition rrowDefinition = new RowDefinition();
+            SubGrid.RowDefinitions.Add(rrowDefinition);
+
+            Grid.SetRow(l, 0);            
+            //
+
             int cnt = 0;
 
             foreach(IItem _i in Items)
@@ -86,20 +98,6 @@ namespace m0.ZeroTypes.UX
 
         void InsertSubContainer(IUXItem i, int cnt)
         {
-            TextBlock l = new TextBlock();
-            l.Text = "TEST";
-            l.Foreground = new SolidColorBrush(Colors.AliceBlue);
-
-            SubGrid.Children.Add(l);
-
-            RowDefinition rrowDefinition = new RowDefinition();
-            SubGrid.RowDefinitions.Add(rrowDefinition);
-
-            Grid.SetColumn(l, 0);
-
-            SubGrid.Background = new SolidColorBrush(Colors.Aqua);
-
-
             return;
 
 
@@ -119,7 +117,7 @@ namespace m0.ZeroTypes.UX
                 label.Text = iUXTemplate.Name;
                 label.Foreground = (Brush)FindResource("0BackgroundBrush");
 
-                SubGrid.Children.Add(label);
+               // SubGrid.Children.Add(label);
             }
 
             //
@@ -139,7 +137,7 @@ namespace m0.ZeroTypes.UX
                 if (size != null) 
                     rowDefinition.Height = new GridLength(size.Height, GridUnitType.Star);
 
-                SubGrid.RowDefinitions.Add(rowDefinition);
+                //SubGrid.RowDefinitions.Add(rowDefinition);
 
                // splitter.HorizontalAlignment = HorizontalAlignment.Stretch;
                // splitter.Height = 5;
@@ -156,7 +154,7 @@ namespace m0.ZeroTypes.UX
                 if (size != null)
                     columnDefinition.Width = new GridLength(size.Width, GridUnitType.Star);
 
-                SubGrid.ColumnDefinitions.Add(columnDefinition);
+                //SubGrid.ColumnDefinitions.Add(columnDefinition);
 
                // splitter.VerticalAlignment = VerticalAlignment.Stretch;
                // splitter.Width = 5;
