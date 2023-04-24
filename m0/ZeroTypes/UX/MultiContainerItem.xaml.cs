@@ -44,6 +44,7 @@ namespace m0.ZeroTypes.UX
 
             base.VertexSetedUp();
 
+
             //
 
             CreateSubItemVertexes();
