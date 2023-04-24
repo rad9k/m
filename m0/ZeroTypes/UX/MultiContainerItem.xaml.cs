@@ -40,15 +40,7 @@ namespace m0.ZeroTypes.UX
 
         public override void VertexSetedUp()
         {
-            if (Canvas == null)
-            {
-                Canvas = new Canvas();
-                MainGrid.Children.Add(Canvas);
-            }
-
-            Canvas.ClipToBounds = true;
-
-            Grid.SetRow(Canvas, 2);
+            Canvas = _Canvas;
 
             base.VertexSetedUp();
 
@@ -71,7 +63,7 @@ namespace m0.ZeroTypes.UX
 
         void CreateSubConainerControls()
         {
-            TextBlock l = new TextBlock();
+            /*TextBlock l = new TextBlock();
             l.Text = "TEST";
             l.Foreground = new SolidColorBrush(Colors.AliceBlue);
 
@@ -80,7 +72,7 @@ namespace m0.ZeroTypes.UX
             RowDefinition rrowDefinition = new RowDefinition();
             SubGrid.RowDefinitions.Add(rrowDefinition);
 
-            Grid.SetRow(l, 0);            
+            Grid.SetRow(l, 0);            */
             //
 
             int cnt = 0;
