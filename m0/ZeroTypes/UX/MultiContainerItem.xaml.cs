@@ -91,9 +91,6 @@ namespace m0.ZeroTypes.UX
 
         void InsertSubContainer(IUXItem i, int cnt)
         {
-            return;
-
-
             UXTemplate iUXTemplate = i.UXTemplate;
 
             IEdge sizeEdge = GraphUtil.GetQueryOutFirstEdge(iUXTemplate.ItemVertex, "Size", null);
@@ -108,17 +105,10 @@ namespace m0.ZeroTypes.UX
             if (iUXTemplate.Name != null) {
                 label = new TextBlock();
                 label.Text = iUXTemplate.Name;
-                label.Foreground = (Brush)FindResource("0BackgroundBrush");
+                label.Foreground = (Brush)FindResource("0BackgroundBrush");                
+            }           
 
-               // SubGrid.Children.Add(label);
-            }
-
-            //
-
-            Canvas canvas = new Canvas();
-          //  SubGrid.Children.Add(canvas);
-
-            //
+            Canvas canvas = new Canvas();            
 
             //GridSplitter splitter = new GridSplitter();
            // SubGrid.Children.Add(splitter);
@@ -147,15 +137,23 @@ namespace m0.ZeroTypes.UX
                 if (size != null)
                     columnDefinition.Width = new GridLength(size.Width, GridUnitType.Star);
 
-                //SubGrid.ColumnDefinitions.Add(columnDefinition);
+                SubGrid.ColumnDefinitions.Add(columnDefinition);
 
-               // splitter.VerticalAlignment = VerticalAlignment.Stretch;
-               // splitter.Width = 5;
+                // splitter.VerticalAlignment = VerticalAlignment.Stretch;
+                // splitter.Width = 5;
+
+                StackPanel panel = new StackPanel();
+
+                SubGrid.Children.Add(panel);
+
+                Grid.SetColumn(panel, cnt);
+
+                panel.Orientation = System.Windows.Controls.Orientation.Horizontal;                
 
                 if (label != null)
-                    Grid.SetColumn(label, cnt);
+                    panel.Children.Add(label);
 
-                Grid.SetColumn(canvas, cnt);
+                panel.Children.Add(canvas);
             }
         }
         

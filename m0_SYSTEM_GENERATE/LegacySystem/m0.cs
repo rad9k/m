@@ -5783,12 +5783,12 @@ namespace m0
             MultiContainerItem_AddUXTemplate(v4, "Left",
                 Root.Get(false, @"System\Meta\ZeroUML\DoubleOperator\LeftExpression"),
                 "LeftExpression:",
-                25, 0);
+                70, 0);
 
             MultiContainerItem_AddUXTemplate(v4, "Right",
                 Root.Get(false, @"System\Meta\ZeroUML\DoubleOperator\RightExpression"),
                 "RightExpression:",
-                75, 0);
+                30, 0);
 
             AddLineDecorator(/*where*/v4, /*name*/ "edge",
                /*EdgeTestQuery*/@"",
