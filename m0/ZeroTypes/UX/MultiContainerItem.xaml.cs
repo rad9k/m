@@ -40,7 +40,7 @@ namespace m0.ZeroTypes.UX
 
         public override void VertexSetedUp()
         {
-            Canvas = _Canvas;
+            Canvas = new Canvas();// _Canvas;
 
             base.VertexSetedUp();
 
