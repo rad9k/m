@@ -74,12 +74,16 @@ namespace m0.ZeroTypes.UX
                 if (i == null)
                     continue;
 
-                if(cnt == 0)
+                if (cnt == 0)
+                {
                     InsertSubContainer(i, cnt, false);
+                    cnt++;
+                }
                 else
+                {
                     InsertSubContainer(i, cnt, true);
-
-                cnt++;
+                    cnt += 2;
+                }                
             }
         }
 
@@ -120,7 +124,7 @@ namespace m0.ZeroTypes.UX
             if (addSplitter) {
                 splitter = new GridSplitter();
 
-                splitter.Background = (Brush)FindResource("0ForegroundBrush");
+                splitter.Background = new SolidColorBrush(Colors.Red);// (Brush)FindResource("0ForegroundBrush");
 
                 SubGrid.Children.Add(splitter);
             }
@@ -136,8 +140,16 @@ namespace m0.ZeroTypes.UX
 
                 if (addSplitter)
                 {
+                    RowDefinition splitterRow = new RowDefinition();
+
+                    SubGrid.RowDefinitions.Add(splitterRow);
+
                     splitter.VerticalAlignment = VerticalAlignment.Stretch;
                     splitter.Height = 3;
+
+                    Grid.SetRow(splitter, cnt);
+
+                    cnt++;
 
                     WpfUtil.DecorateWithCustomCursor(splitter, Cursors.SizeNS);
                 }
