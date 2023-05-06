@@ -5789,10 +5789,11 @@ namespace m0
                 "RightExpression:",
                 0, 50);
 
+            /*
             MultiContainerItem_AddUXTemplate(v5, "THIRD",
                 Root.Get(false, @"System\Meta\ZeroUML\DoubleOperator\RightExpression"),
                 "RightExpression:",
-                0, 30);
+                0, 30);*/
 
             AddLineDecorator(/*where*/v5, /*name*/ "edge",
                /*EdgeTestQuery*/@"",

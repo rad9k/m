@@ -113,9 +113,7 @@ namespace m0.ZeroTypes.UX
 
             Canvas canvas = new Canvas();
 
-            canvas.Background = (Brush)FindResource("0BackgroundBrush");
-
-            
+            canvas.Background = (Brush)FindResource("0BackgroundBrush");            
 
             //
 
@@ -124,27 +122,22 @@ namespace m0.ZeroTypes.UX
             if (addSplitter) {
                 splitter = new GridSplitter();
 
-                splitter.Background = new SolidColorBrush(Colors.Red);// (Brush)FindResource("0ForegroundBrush");
+                splitter.Background = (Brush)FindResource("0VeryLightHighlightBrush");
 
                 SubGrid.Children.Add(splitter);
             }
 
             if (Orientation == OrientationEnum.Horizontal)
-            {                
-                RowDefinition rowDefinition = new RowDefinition();
-
-                if (size != null)
-                    rowDefinition.Height = new GridLength(size.Height, GridUnitType.Star);
-
-                SubGrid.RowDefinitions.Add(rowDefinition);
-
+            {                                
                 if (addSplitter)
                 {
                     RowDefinition splitterRow = new RowDefinition();
 
+                    splitterRow.Height = new GridLength(3, GridUnitType.Pixel);
+
                     SubGrid.RowDefinitions.Add(splitterRow);
 
-                    splitter.VerticalAlignment = VerticalAlignment.Stretch;
+                    splitter.HorizontalAlignment = HorizontalAlignment.Stretch;
                     splitter.Height = 3;
 
                     Grid.SetRow(splitter, cnt);
@@ -153,6 +146,17 @@ namespace m0.ZeroTypes.UX
 
                     WpfUtil.DecorateWithCustomCursor(splitter, Cursors.SizeNS);
                 }
+
+                //
+
+                RowDefinition rowDefinition = new RowDefinition();
+
+                if (size != null)
+                    rowDefinition.Height = new GridLength(size.Height, GridUnitType.Star);
+
+                SubGrid.RowDefinitions.Add(rowDefinition);
+
+                //
 
                 DockPanel panel = new DockPanel();
 
@@ -169,7 +173,27 @@ namespace m0.ZeroTypes.UX
                 panel.Children.Add(canvas);
             }
             else
-            {
+            {                
+                if (addSplitter)
+                {
+                    ColumnDefinition splitterRow = new ColumnDefinition();
+
+                    splitterRow.Width = new GridLength(3, GridUnitType.Pixel);
+
+                    SubGrid.ColumnDefinitions.Add(splitterRow);
+
+                    splitter.VerticalAlignment = VerticalAlignment.Stretch;
+                    splitter.Width = 3;
+
+                    Grid.SetColumn(splitter, cnt);
+
+                    cnt++;
+
+                    WpfUtil.DecorateWithCustomCursor(splitter, Cursors.SizeWE);
+                }
+
+                //
+
                 ColumnDefinition columnDefinition = new ColumnDefinition();
 
                 if (size != null)
@@ -177,13 +201,7 @@ namespace m0.ZeroTypes.UX
 
                 SubGrid.ColumnDefinitions.Add(columnDefinition);
 
-                if (addSplitter)
-                {
-                    splitter.VerticalAlignment = VerticalAlignment.Stretch;
-                    splitter.Width = 3;
-
-                    WpfUtil.DecorateWithCustomCursor(splitter, Cursors.SizeWE);
-                }
+                //
 
                 DockPanel panel = new DockPanel();
 

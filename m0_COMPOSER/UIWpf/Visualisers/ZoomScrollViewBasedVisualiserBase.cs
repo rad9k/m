@@ -2093,6 +2093,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             ItemsDictinaryHolder_Number_TriggerTime_Down.Clear();
 
+            if(Items_Down != null)
             foreach (IItem i in Items_Down)
             {
                 IVertex v = i.BaseEdge.To;
