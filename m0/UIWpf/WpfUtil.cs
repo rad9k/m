@@ -35,6 +35,11 @@ namespace m0.UIWpf
             Dnd.MinimumVerticalDragDistance = SystemParameters.MinimumVerticalDragDistance * 2;
         }
 
+        public static void DecorateWithCustomCursor(FrameworkElement e, Cursor cursor)
+        {
+
+        }
+
         public static Line CreateLine(double thickness, Brush stroke)
         {
             Line l = new Line();

@@ -63,19 +63,7 @@ namespace m0.ZeroTypes.UX
         }
 
         void CreateSubConainerControls()
-        {
-            /*TextBlock l = new TextBlock();
-            l.Text = "TEST";
-            l.Foreground = new SolidColorBrush(Colors.AliceBlue);
-
-            SubGrid.Children.Add(l);
-
-            RowDefinition rrowDefinition = new RowDefinition();
-            SubGrid.RowDefinitions.Add(rrowDefinition);
-
-            Grid.SetRow(l, 0);            */
-            //
-
+        {            
             int cnt = 0;
 
             foreach(IItem _i in Items)
@@ -85,11 +73,16 @@ namespace m0.ZeroTypes.UX
                 if (i == null)
                     continue;
 
-                InsertSubContainer(i, cnt++);
+                if(cnt == 0)
+                    InsertSubContainer(i, cnt, false);
+                else
+                    InsertSubContainer(i, cnt, true);
+
+                cnt++;
             }
         }
 
-        void InsertSubContainer(IUXItem i, int cnt)
+        void InsertSubContainer(IUXItem i, int cnt, bool addSplitter)
         {
             UXTemplate iUXTemplate = i.UXTemplate;
 
@@ -100,18 +93,36 @@ namespace m0.ZeroTypes.UX
             if (sizeEdge != null)
                 size = new Size(sizeEdge);
 
+            //
+
             TextBlock label = null;
 
             if (iUXTemplate.Name != null) {
                 label = new TextBlock();
                 label.Text = iUXTemplate.Name;
-                label.Foreground = (Brush)FindResource("0BackgroundBrush");                
-            }           
+                label.Background = (Brush)FindResource("0ForegroundBrush");
+                label.Foreground = (Brush)FindResource("0BackgroundBrush");
+            } 
+            
+            //
 
-            Canvas canvas = new Canvas();            
+            Canvas canvas = new Canvas();
 
-            //GridSplitter splitter = new GridSplitter();
-           // SubGrid.Children.Add(splitter);
+            canvas.Background = (Brush)FindResource("0BackgroundBrush");
+
+            
+
+            //
+
+            GridSplitter splitter = null;            
+
+            if (addSplitter) {
+                splitter = new GridSplitter();
+
+                splitter.Background = (Brush)FindResource("0ForegroundBrush");
+
+                SubGrid.Children.Add(splitter);
+            }
 
             if (Orientation == OrientationEnum.Horizontal)
             {
@@ -139,19 +150,24 @@ namespace m0.ZeroTypes.UX
 
                 SubGrid.ColumnDefinitions.Add(columnDefinition);
 
-                // splitter.VerticalAlignment = VerticalAlignment.Stretch;
-                // splitter.Width = 5;
+                if (addSplitter)
+                {
+                    splitter.VerticalAlignment = VerticalAlignment.Stretch;
+                    splitter.Width = 5;
+                    splitter.Cursor = Cursors.SizeWE;
+                }
 
-                StackPanel panel = new StackPanel();
+                DockPanel panel = new DockPanel();
 
                 SubGrid.Children.Add(panel);
 
                 Grid.SetColumn(panel, cnt);
 
-                panel.Orientation = System.Windows.Controls.Orientation.Horizontal;                
-
                 if (label != null)
+                {
                     panel.Children.Add(label);
+                    DockPanel.SetDock(label, Dock.Top);
+                }
 
                 panel.Children.Add(canvas);
             }
