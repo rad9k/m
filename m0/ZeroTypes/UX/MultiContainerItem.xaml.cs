@@ -16,6 +16,7 @@ using m0.Graph;
 using m0.Foundation;
 using m0.ZeroTypes;
 using m0.Util;
+using m0.UIWpf;
 
 namespace m0.ZeroTypes.UX
 {
@@ -125,21 +126,35 @@ namespace m0.ZeroTypes.UX
             }
 
             if (Orientation == OrientationEnum.Horizontal)
-            {
+            {                
                 RowDefinition rowDefinition = new RowDefinition();
 
-                if (size != null) 
+                if (size != null)
                     rowDefinition.Height = new GridLength(size.Height, GridUnitType.Star);
 
-                //SubGrid.RowDefinitions.Add(rowDefinition);
+                SubGrid.RowDefinitions.Add(rowDefinition);
 
-               // splitter.HorizontalAlignment = HorizontalAlignment.Stretch;
-               // splitter.Height = 5;
+                if (addSplitter)
+                {
+                    splitter.VerticalAlignment = VerticalAlignment.Stretch;
+                    splitter.Height = 3;
+
+                    WpfUtil.DecorateWithCustomCursor(splitter, Cursors.SizeNS);
+                }
+
+                DockPanel panel = new DockPanel();
+
+                SubGrid.Children.Add(panel);
+
+                Grid.SetRow(panel, cnt);
 
                 if (label != null)
-                    Grid.SetRow(label, cnt);
+                {
+                    panel.Children.Add(label);
+                    DockPanel.SetDock(label, Dock.Top);
+                }
 
-               // Grid.SetRow(canvas, cnt);
+                panel.Children.Add(canvas);
             }
             else
             {
@@ -153,8 +168,9 @@ namespace m0.ZeroTypes.UX
                 if (addSplitter)
                 {
                     splitter.VerticalAlignment = VerticalAlignment.Stretch;
-                    splitter.Width = 5;
-                    splitter.Cursor = Cursors.SizeWE;
+                    splitter.Width = 3;
+
+                    WpfUtil.DecorateWithCustomCursor(splitter, Cursors.SizeWE);
                 }
 
                 DockPanel panel = new DockPanel();

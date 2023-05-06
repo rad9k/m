@@ -18,6 +18,7 @@ using System.Globalization;
 using m0.UIWpf.Visualisers.Helper;
 using m0.ZeroTypes;
 using System.Windows.Threading;
+using m0.ZeroTypes.UX;
 
 namespace m0.UIWpf
 {
@@ -37,7 +38,23 @@ namespace m0.UIWpf
 
         public static void DecorateWithCustomCursor(FrameworkElement e, Cursor cursor)
         {
+            e.Tag = cursor;
 
+            e.MouseEnter += DecorateWithCustomCursor_MouseEnter;
+            e.MouseLeave += DecorateWithCustomCursor_MouseLeave;
+        }
+
+        private static void DecorateWithCustomCursor_MouseLeave(object sender, System.Windows.Input.MouseEventArgs e)
+        {
+            WpfUtil.SetCursor(Cursors.Arrow);
+        }
+
+        private static void DecorateWithCustomCursor_MouseEnter(object sender, System.Windows.Input.MouseEventArgs e)
+        {
+            FrameworkElement fe = (FrameworkElement)sender;
+
+            if (fe.Tag is Cursor)
+                WpfUtil.SetCursor((Cursor)fe.Tag);
         }
 
         public static Line CreateLine(double thickness, Brush stroke)
@@ -146,7 +163,7 @@ namespace m0.UIWpf
             Mouse.OverrideCursor = cursor;
         }
 
-        public static Size MeasureTextBlock(TextBlock tb)
+        public static System.Windows.Size MeasureTextBlock(TextBlock tb)
         {
             var formattedText = new FormattedText(
                 tb.Text,
@@ -157,12 +174,12 @@ namespace m0.UIWpf
                 Brushes.Black,
                 new NumberSubstitution(), TextFormattingMode.Display);
 
-            return new Size(formattedText.Width, formattedText.Height);
+            return new System.Windows.Size(formattedText.Width, formattedText.Height);
         }
 
-        public static Color GetNegativeColor(Color inColor)
+        public static System.Windows.Media.Color GetNegativeColor(System.Windows.Media.Color inColor)
         {
-            Color c = new Color();
+            System.Windows.Media.Color c = new System.Windows.Media.Color();
 
             c.A = inColor.A;
 
@@ -173,7 +190,7 @@ namespace m0.UIWpf
             return c;
         }
 
-        public static Color GetNegativeColorWhiteOrBlack(Color inColor)
+        public static System.Windows.Media.Color GetNegativeColorWhiteOrBlack(System.Windows.Media.Color inColor)
         {
             int sum = inColor.R + inColor.G + inColor.B;
 
