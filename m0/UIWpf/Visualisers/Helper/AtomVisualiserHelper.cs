@@ -426,7 +426,6 @@ namespace m0.UIWpf.Visualisers.Helper
 
             if (ui.BackgroundColor != null)
                 b.Background = new SolidColorBrush(ui.BackgroundColor.GetColor());
-
         }
     }
 }

@@ -756,7 +756,7 @@ namespace m0.UIWpf.Visualisers
             Vertex.Get(false, "Scale:").Value = 100;
             Vertex.Get(false, "ColumnNumber:").Value = 1;
             Vertex.Get(false, "SectionsAsTabs:").Value = "False";
-            Vertex.Get(false, "MetaOnLeft:").Value = "False";            
+            Vertex.Get(false, "MetaOnLeft:").Value = "True";            
         }        
 
         public void ScaleChange()

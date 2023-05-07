@@ -543,12 +543,21 @@ namespace m0.ZeroTypes.UX
                 Height = size.Height;
             }
 
-            UX.Color foregroundColor = ForegroundColor;
-
-            if (foregroundColor != null)
-                this.Foreground = foregroundColor.GetBrush();
+            if (IsSelected)
+                Highlight();
             else
-                this.Foreground = (Brush)FindResource("0ForegroundBrush");
+                Unhighlight();
+
+            this.Foreground = GetForegroundBrush();
+
+            //
+
+            BorderBrush = GetBorderBrush();
+
+            double borderSize = BorderSize;
+
+            if (borderSize != 0)
+                BorderThickness = new Thickness(BorderSize);
         }
 
         protected void UpdateDiagramLines(IUXItem toItem)
