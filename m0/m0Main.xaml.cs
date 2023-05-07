@@ -194,7 +194,12 @@ namespace m0
                 
                 pcsw.IsIntialising = true;
 
-                a.Hide(); // this works
+                try
+                {
+                    a.Hide(); // this works
+                }catch(Exception e)
+                { } // sometimes it fails
+
                 a.Show(); // for getting focus
 
                 pcsw.IsIntialising = false;

@@ -86,13 +86,13 @@ namespace m0.ZeroTypes
             IList<IEdge> is_edges = GraphUtil.GetQueryOut(v, "$Is", null);
 
             foreach (IEdge e in is_edges)
-            {               
-                string pcn = GraphUtil.GetQueryOutFirst(e.To, "$PlatformClassName", null).Value.ToString();
+            {
+                IVertex pcnv = GraphUtil.GetQueryOutFirst(e.To, "$PlatformClassName", null);
 
-                if (pcn == null)
-                    return null;
+                if (pcnv != null)
+                    return Type.GetType(pcnv.Value.ToString());
 
-                return Type.GetType(pcn);                                
+                return null;
             }
 
             return null;
