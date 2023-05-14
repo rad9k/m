@@ -194,11 +194,14 @@ namespace m0
                 
                 pcsw.IsIntialising = true;
 
-                try
-                {
+                //try
+                //{
+
+                //if(a.ContentId != null) // need to find exception source
                     a.Hide(); // this works
-                }catch(Exception e)
-                { } // sometimes it fails
+
+                //}catch(Exception e)
+                //{ } // sometimes it fails
 
                 a.Show(); // for getting focus
 
