@@ -385,7 +385,7 @@ namespace m0.UIWpf.Visualisers
                             AddEdge(e.To, false);
 
                 if (MetaOnLeft){
-                    if (!HasTabs)
+                    if (!HasTabs && TabList.ContainsKey(""))
                         CorrectWidth(TabList[""]);
                 }
             }
