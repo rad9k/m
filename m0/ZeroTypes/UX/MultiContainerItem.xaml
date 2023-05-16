@@ -23,13 +23,6 @@
                 
                 <Grid x:Name="SubGrid" Width="{Binding ElementName=_Canvas, Path=ActualWidth}" Height="{Binding ElementName=_Canvas, Path=ActualHeight}">
                 
-            <!--
-            <Grid.RowDefinitions>
-                    <RowDefinition/>
-                </Grid.RowDefinitions>
-                <TextBlock Text="HALO" Grid.Row="0" Background="Aqua" Foreground="Red"/>
-            
-            -->
                 </Grid>
                 
             </Canvas>

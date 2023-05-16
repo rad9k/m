@@ -553,11 +553,6 @@ namespace m0.ZeroTypes.UX
             //
 
             BorderBrush = GetBorderBrush();
-
-            double borderSize = BorderSize;
-
-            if (borderSize != 0)
-                BorderThickness = new Thickness(BorderSize);
         }
 
         protected void UpdateDiagramLines(IUXItem toItem)

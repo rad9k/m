@@ -97,8 +97,7 @@ namespace m0.ZeroTypes.UX
 
                 Canvas.Margin = new Thickness(RoundEdgeSize, 0, RoundEdgeSize, RoundEdgeSize);
 
-                TheGrid.RowDefinitions[0].Height = new GridLength(18 + RoundEdgeSize);
-                
+                TheGrid.RowDefinitions[0].Height = new GridLength(18 + RoundEdgeSize);                
             }
 
             Brush backgroundBrush = GetBackgroundBrush();
@@ -116,15 +115,25 @@ namespace m0.ZeroTypes.UX
 
             Canvas.Background = backgroundBrush;
 
+            double borderSize = BorderSize;
 
-            if (BorderSize != 0)
+            if (borderSize != 0)
             {
-                this.Frame.BorderThickness = new Thickness(BorderSize);
+                this.Frame.BorderThickness = new Thickness(borderSize);
+                this.InternalFrame.BorderThickness = new Thickness(borderSize / 2);
 
-                this.InternalFrame.BorderThickness = new Thickness(BorderSize / 2);
-
-                this.TheGrid.RowDefinitions[1].Height = new GridLength(BorderSize);                
+                this.TheGrid.RowDefinitions[1].Height = new GridLength(borderSize);
             }
+            else
+            {
+                this.Frame.BorderThickness = new Thickness(1);
+                this.InternalFrame.BorderThickness = new Thickness(1);
+            }
+
+            Brush borderBrush = GetBorderBrush();
+
+            this.Frame.BorderBrush = borderBrush;
+            this.InternalFrame.BorderBrush = borderBrush;
         }         
 
         public override void Select()
@@ -198,7 +207,8 @@ namespace m0.ZeroTypes.UX
             if (changedVertex != null)
             {
                 if (GraphUtil.ExistQueryIn(changedVertex, "RoundEdgeSize", null)
-                    || GraphUtil.ExistQueryIn(changedVertex, "ShowMeta", null))
+                    || GraphUtil.ExistQueryIn(changedVertex, "ShowMeta", null)
+                    || GraphUtil.ExistQueryIn(changedVertex, "BorderSize", null))
                 {
                     VisualiserUpdate();
                     return exe.Stack;

@@ -148,16 +148,17 @@ namespace m0.ZeroTypes.UX
             }
 
             if (BorderSize != 0)
-            {
                 this.Frame.BorderThickness = new Thickness(BorderSize);
 
-                if (ContentVisualiser != null)
-                {
-                    this.InternalFrame.BorderThickness = new Thickness(BorderSize / 2);
+            if (ContentVisualiser != null)
+            {
+                this.InternalFrame.BorderThickness = new Thickness(BorderSize / 2);
 
-                    this.TheGrid.RowDefinitions[1].Height = new GridLength(BorderSize);
-                }
+                this.TheGrid.RowDefinitions[1].Height = new GridLength(BorderSize);
             }
+
+            this.Frame.BorderBrush = GetBorderBrush();
+            
         }         
 
         public override void Select()
@@ -181,15 +182,17 @@ namespace m0.ZeroTypes.UX
 
             Brush foregroundBrush = GetForegroundBrush();
 
+            Brush borderBrush = GetBorderBrush();
+
 
             this.Frame.Background = backgroundBrush;
 
             this.Title.Foreground = foregroundBrush;
             this.Foreground = foregroundBrush;
 
-            this.InternalFrame.BorderBrush = foregroundBrush;
+            this.InternalFrame.BorderBrush = borderBrush;
 
-            this.Frame.BorderBrush = foregroundBrush;
+            this.Frame.BorderBrush = borderBrush;
 
             this.Title.Cursor = Cursors.Arrow;
         }
@@ -213,12 +216,14 @@ namespace m0.ZeroTypes.UX
 
             Brush foregroundBrush = GetForegroundBrush();
 
+            Brush borderBrush = GetBorderBrush();
+
             this.Foreground = foregroundBrush; 
 
             this.Frame.Background = backgroundBrush;
-            this.Frame.BorderBrush = foregroundBrush;
+            this.Frame.BorderBrush = borderBrush;
 
-            this.InternalFrame.BorderBrush = foregroundBrush;
+            this.InternalFrame.BorderBrush = borderBrush;
             this.Title.Foreground = foregroundBrush;
             
             base.Unhighlight();
