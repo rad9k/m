@@ -19,7 +19,7 @@
 
             <Border x:Name="InternalFrame" Grid.Row="1"  BorderThickness="0.5"/>
 
-            <Canvas Grid.Row="2" x:Name="_Canvas" Background="BlanchedAlmond" >
+            <Canvas Grid.Row="2" x:Name="_Canvas" >
                 
                 <Grid x:Name="SubGrid" Width="{Binding ElementName=_Canvas, Path=ActualWidth}" Height="{Binding ElementName=_Canvas, Path=ActualHeight}">
                 

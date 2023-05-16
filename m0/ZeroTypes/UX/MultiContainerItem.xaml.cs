@@ -85,6 +85,8 @@ namespace m0.ZeroTypes.UX
                     cnt += 2;
                 }                
             }
+
+            int x = 0;
         }
 
         void InsertSubContainer(IUXItem i, int cnt, bool addSplitter)
@@ -124,7 +126,7 @@ namespace m0.ZeroTypes.UX
 
                 splitter.Background = (Brush)FindResource("0VeryLightHighlightBrush");
 
-                SubGrid.Children.Add(splitter);
+             //   SubGrid.Children.Add(splitter);
             }
 
             if (Orientation == OrientationEnum.Horizontal)
@@ -173,6 +175,59 @@ namespace m0.ZeroTypes.UX
                 panel.Children.Add(canvas);
             }
             else
+            {
+                if (addSplitter)
+                {
+                    ColumnDefinition splitterColumn = new ColumnDefinition();
+
+                    splitterColumn.Width = new GridLength(3, GridUnitType.Pixel);
+
+                    SubGrid.ColumnDefinitions.Add(splitterColumn);
+
+                    splitter.VerticalAlignment = VerticalAlignment.Stretch;
+                    splitter.Width = 3;
+                    splitter.ResizeBehavior = GridResizeBehavior.PreviousAndNext;
+
+                    Grid.SetColumn(splitter, cnt);
+
+                    SubGrid.Children.Add(splitter);
+
+                    cnt++;
+
+                    WpfUtil.DecorateWithCustomCursor(splitter, Cursors.SizeWE);
+                }
+
+                //
+
+                ColumnDefinition columnDefinition = new ColumnDefinition();
+
+                if (size != null)
+                    columnDefinition.Width = new GridLength(10, GridUnitType.Star);
+
+                SubGrid.ColumnDefinitions.Add(columnDefinition);
+
+                //
+
+                DockPanel panel = new DockPanel();
+
+                //SubGrid.Children.Add(panel);
+
+                //Grid.SetColumn(panel, cnt);
+
+                if (label != null)
+                {
+                    //panel.Children.Add(label);
+                    //DockPanel.SetDock(label, Dock.Top);
+                }
+
+                //panel.Children.Add(canvas);
+
+                SubGrid.Children.Add(canvas);
+                Grid.SetColumn(canvas, cnt);
+            }
+
+
+            /*else
             {                
                 if (addSplitter)
                 {
@@ -216,7 +271,7 @@ namespace m0.ZeroTypes.UX
                 }
 
                 panel.Children.Add(canvas);
-            }
+            }*/
         }
         
         public override void VisualiserUpdate()
