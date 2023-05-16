@@ -327,15 +327,18 @@ namespace m0.ZeroTypes.UX
 
             Brush foregroundBrush = GetForegroundBrush();
 
+            Brush borderBrush = GetBorderBrush();
+
+
 
             this.Frame.Background = backgroundBrush;
 
             this.Title.Foreground = foregroundBrush;
             this.Foreground = foregroundBrush;
 
-            this.InternalFrame.BorderBrush = foregroundBrush;
+            this.InternalFrame.BorderBrush = borderBrush;
 
-            this.Frame.BorderBrush = foregroundBrush;
+            this.Frame.BorderBrush = borderBrush;
 
             this.Title.Cursor = Cursors.Arrow;
         }
@@ -359,12 +362,15 @@ namespace m0.ZeroTypes.UX
 
             Brush foregroundBrush = GetForegroundBrush();
 
+            Brush borderBrush = GetBorderBrush();
+
+
             this.Foreground = foregroundBrush; 
 
             this.Frame.Background = backgroundBrush;
-            this.Frame.BorderBrush = foregroundBrush;
+            this.Frame.BorderBrush = borderBrush;
 
-            this.InternalFrame.BorderBrush = foregroundBrush;
+            this.InternalFrame.BorderBrush = borderBrush;
             this.Title.Foreground = foregroundBrush;
             
             base.Unhighlight();
