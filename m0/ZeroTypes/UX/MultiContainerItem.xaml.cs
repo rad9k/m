@@ -89,8 +89,6 @@ namespace m0.ZeroTypes.UX
                     cnt += 2;
                 }                
             }
-
-            int x = 0;
         }
 
         void InsertSubContainer(IUXItem i, int cnt, bool addSplitter, Brush backgroundBrush, Brush foregroundBrush)
