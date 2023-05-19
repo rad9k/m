@@ -5782,12 +5782,22 @@ namespace m0
             MultiContainerItem_AddUXTemplate(v5, "Left",
                 Root.Get(false, @"System\Meta\ZeroUML\DoubleOperator\LeftExpression"),
                 "LeftExpression:",
-                0, 20);
+                0, 10);
 
             MultiContainerItem_AddUXTemplate(v5, "Right",
                 Root.Get(false, @"System\Meta\ZeroUML\DoubleOperator\RightExpression"),
                 "RightExpression:",
-                0, 50);
+                0, 20);
+
+            MultiContainerItem_AddUXTemplate(v5, "Left2",
+                Root.Get(false, @"System\Meta\ZeroUML\DoubleOperator\LeftExpression"),
+                "LeftExpression:",
+                0, 30);
+
+            MultiContainerItem_AddUXTemplate(v5, "Right2",
+                Root.Get(false, @"System\Meta\ZeroUML\DoubleOperator\RightExpression"),
+                "RightExpression:",
+                0, 40);
 
             /*
             MultiContainerItem_AddUXTemplate(v5, "THIRD",
@@ -5818,12 +5828,22 @@ namespace m0
             MultiContainerItem_AddUXTemplate(v4, "Left",
                 Root.Get(false, @"System\Meta\ZeroUML\DoubleOperator\LeftExpression"),
                 "LeftExpression:",
-                70, 0);
+                10, 0);
 
             MultiContainerItem_AddUXTemplate(v4, "Right",
                 Root.Get(false, @"System\Meta\ZeroUML\DoubleOperator\RightExpression"),
                 "RightExpression:",
+                20, 0);
+
+            MultiContainerItem_AddUXTemplate(v4, "Left2",
+                Root.Get(false, @"System\Meta\ZeroUML\DoubleOperator\LeftExpression"),
+                "LeftExpression:",
                 30, 0);
+
+            MultiContainerItem_AddUXTemplate(v4, "Right2",
+                Root.Get(false, @"System\Meta\ZeroUML\DoubleOperator\RightExpression"),
+                "RightExpression:",
+                40, 0);
 
             AddLineDecorator(/*where*/v4, /*name*/ "edge",
                /*EdgeTestQuery*/@"",

@@ -67,7 +67,11 @@ namespace m0.ZeroTypes.UX
         {            
             int cnt = 0;
 
-            foreach(IItem _i in Items)
+            Brush backgroundBrush = GetBackgroundBrush();
+
+            Brush foregroundBrush = GetForegroundBrush();        
+
+            foreach (IItem _i in Items)
             {
                 IUXItem i = UXItem.GetUXItem(this, _i);
 
@@ -76,12 +80,12 @@ namespace m0.ZeroTypes.UX
 
                 if (cnt == 0)
                 {
-                    InsertSubContainer(i, cnt, false);
+                    InsertSubContainer(i, cnt, false, backgroundBrush, foregroundBrush);
                     cnt++;
                 }
                 else
                 {
-                    InsertSubContainer(i, cnt, true);
+                    InsertSubContainer(i, cnt, true, backgroundBrush, foregroundBrush);
                     cnt += 2;
                 }                
             }
@@ -89,7 +93,7 @@ namespace m0.ZeroTypes.UX
             int x = 0;
         }
 
-        void InsertSubContainer(IUXItem i, int cnt, bool addSplitter)
+        void InsertSubContainer(IUXItem i, int cnt, bool addSplitter, Brush backgroundBrush, Brush foregroundBrush)
         {
             UXTemplate iUXTemplate = i.UXTemplate;
 
@@ -107,15 +111,15 @@ namespace m0.ZeroTypes.UX
             if (iUXTemplate.Name != null) {
                 label = new TextBlock();
                 label.Text = iUXTemplate.Name;
-                label.Background = (Brush)FindResource("0ForegroundBrush");
-                label.Foreground = (Brush)FindResource("0BackgroundBrush");
+                label.Background = foregroundBrush;
+                label.Foreground = backgroundBrush;
             } 
             
             //
 
             Canvas canvas = new Canvas();
 
-            canvas.Background = (Brush)FindResource("0BackgroundBrush");            
+            canvas.Background = backgroundBrush;            
 
             //
 
@@ -201,7 +205,7 @@ namespace m0.ZeroTypes.UX
                 ColumnDefinition columnDefinition = new ColumnDefinition();
 
                 if (size != null)
-                    columnDefinition.Width = new GridLength(10, GridUnitType.Star);
+                    columnDefinition.Width = new GridLength(size.Width, GridUnitType.Star);
 
                 SubGrid.ColumnDefinitions.Add(columnDefinition);
 
@@ -308,7 +312,14 @@ namespace m0.ZeroTypes.UX
 
             this.Frame.BorderBrush = borderBrush;
             this.InternalFrame.BorderBrush = borderBrush;
-        }         
+
+            VisualiserUpdate_Items();
+        }
+
+        public void VisualiserUpdate_Items()
+        {
+            foreach
+        }
 
         public override void Select()
         {
