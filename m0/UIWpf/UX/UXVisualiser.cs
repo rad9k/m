@@ -141,11 +141,21 @@ namespace m0.UIWpf.UX
 
         //
 
+        protected Brush GetBackgroundBrush()
+        {
+            ZeroTypes.UX.Color backgroundColor = BackgroundColor;
+
+            if (backgroundColor != null)
+                return backgroundColor.GetBrush();
+            else
+                return (Brush)FindResource("0BackgroundBrush");
+        }
+
         void SetUpCanvas()
         {            
             Canvas = new Canvas();            
 
-            Canvas.Background = (Brush)FindResource("0BackgroundBrush");
+            Canvas.Background = GetBackgroundBrush(); 
 
             this.Child = Canvas;
         }
@@ -639,7 +649,7 @@ namespace m0.UIWpf.UX
             //////////////////////////////////////// 
         }
 
-        public void VisualiserUpdat()
+        public void ItemVisualUpdate()        
         {
             PaintDiagram();
         }
@@ -1347,17 +1357,9 @@ namespace m0.UIWpf.UX
                 }
             }
 
-            //PaintDiagram();            
-
             ////////////////////////////////////////
             Interaction.EndInteractionWithGraph();
             ////////////////////////////////////////                        
-
-            /*VisualiserHelper.ForceVertexChangeOff = true; 
-
-            PaintDiagram(); // NEED TO DO BETTER NO NEED TO REPAINT
-
-            VisualiserHelper.ForceVertexChangeOff = false;*/
         }
 
         protected void UnselectAll()
