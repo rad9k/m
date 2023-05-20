@@ -39,7 +39,11 @@ namespace m0.ZeroTypes.UX
         }
 
         public override void VertexSetedUp()
-        {            
+        {
+            Brush backgroundBrush = GetParentBackgroundBrush();
+            Brush foregroundBrush = GetParentForegroundBrush();
+
+
             Canvas.ClipToBounds = true;                       
 
             base.VertexSetedUp();
@@ -63,15 +67,15 @@ namespace m0.ZeroTypes.UX
             if (ParentItem == null || !(ParentItem is UXItem))
                 return null;
 
-            Color foregroundColor_parent = ((UXItem)ParentItem).BackgroundColor;
+            Color foregroundColor_parent = ((UXItem)ParentItem).ForegroundColor;
 
             if (foregroundColor_parent != null)
                 return foregroundColor_parent.GetBrush();
             else
-                return (Brush)FindResource("0BackgroundBrush");
+                return (Brush)FindResource("0ForegroundBrush");
         }
 
-        public override void VisualiserUpdate()
+        public override void ItemVisualUpdate()
         {
             // base.VisualiserUpdate();            
 

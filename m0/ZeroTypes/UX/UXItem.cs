@@ -115,7 +115,7 @@ namespace m0.ZeroTypes.UX
                 "UXItem",
                 VertexChange);
 
-            VisualiserUpdate();
+            ItemVisualUpdate();
         } // to be called after Vertex is setted up
 
         public bool IsDisposed = false;
@@ -332,17 +332,17 @@ namespace m0.ZeroTypes.UX
                 return null;
 
             if (parent is IUXContainer)
-            {
-                if (GraphUtil.ExistQueryOut(i.Vertex, "$Is", "Wrap"))
-                    return null;
-
+            {                
                 if (i is IUXItem)
                     return (IUXItem)i;
             }
             else
-            {                
+            {
                 if (i is IUXDecorator)
+                {
+                    throw new Exception("kto mnie wolal?");
                     return (IUXItem)i;
+                }
             }
 
             return null;
@@ -431,7 +431,7 @@ namespace m0.ZeroTypes.UX
             IVertex baseEdgeTo = BaseEdgeTo;
 
             if (IsVertexChange(exe.Stack, baseEdgeTo))
-                VisualiserUpdate();
+                ItemVisualUpdate();
 
             foreach (IVertex edgeVertex in GetEdgesRemovedFrom(exe.Stack, baseEdgeTo))
             {
@@ -461,10 +461,10 @@ namespace m0.ZeroTypes.UX
                 || IsVertexChangeOrEdgeAddedRemovedDisposedByMetaAndFrom(exe.Stack, Vertex, "Green")
                 || IsVertexChangeOrEdgeAddedRemovedDisposedByMetaAndFrom(exe.Stack, Vertex, "Blue")
                 || IsVertexChangeOrEdgeAddedRemovedDisposedByMetaAndFrom(exe.Stack, Vertex, "Opacity"))
-                VisualiserUpdate();
+                ItemVisualUpdate();
 
             if (IsEdgeAddedTo(exe.Stack, Vertex))
-                VisualiserUpdate();
+                ItemVisualUpdate();
 
             return exe.Stack;
         }
@@ -533,7 +533,7 @@ namespace m0.ZeroTypes.UX
             DiagramToAsMetaLines.Add(line);
         }
 
-        public virtual void VisualiserUpdate()
+        public virtual void ItemVisualUpdate()
         {
             Size size = Size;
 

@@ -639,6 +639,11 @@ namespace m0.UIWpf.UX
             //////////////////////////////////////// 
         }
 
+        public void VisualiserUpdat()
+        {
+            PaintDiagram();
+        }
+
         public void PaintDiagram()
         {
             if (ActualHeight != 0 || IsFirstPainted)

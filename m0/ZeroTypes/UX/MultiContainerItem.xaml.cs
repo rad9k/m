@@ -225,9 +225,9 @@ namespace m0.ZeroTypes.UX
             }
         }
         
-        public override void VisualiserUpdate()
+        public override void ItemVisualUpdate()
         {
-            base.VisualiserUpdate();
+            base.ItemVisualUpdate();
 
             if(ShowMeta)
             {
@@ -316,7 +316,15 @@ namespace m0.ZeroTypes.UX
 
         public void VisualiserUpdate_Items()
         {
-            foreach
+            foreach (IItem _i in Items)
+            {
+                IUXItem i = UXItem.GetUXItem(this, _i);
+
+                if (i == null)
+                    continue;
+
+                //i.VisualiserUpdate();
+            }
         }
 
         public override void Select()
@@ -399,7 +407,7 @@ namespace m0.ZeroTypes.UX
                     || GraphUtil.ExistQueryIn(changedVertex, "ShowMeta", null)
                     || GraphUtil.ExistQueryIn(changedVertex, "BorderSize", null))
                 {
-                    VisualiserUpdate();
+                    ItemVisualUpdate();
                     return exe.Stack;
                 }
             }            

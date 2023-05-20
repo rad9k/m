@@ -50,9 +50,9 @@ namespace m0.ZeroTypes.UX
             base.VertexSetedUp();
         }
         
-        public override void VisualiserUpdate()
+        public override void ItemVisualUpdate()
         {
-            base.VisualiserUpdate();
+            base.ItemVisualUpdate();
 
             if(ShowMeta)
             {
@@ -215,7 +215,7 @@ namespace m0.ZeroTypes.UX
                     || GraphUtil.ExistQueryIn(changedVertex, "ShowMeta", null)
                     || GraphUtil.ExistQueryIn(changedVertex, "BorderSize", null))
                 {
-                    VisualiserUpdate();
+                    ItemVisualUpdate();
                     return exe.Stack;
                 }
             }

@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace m0.ZeroTypes.UX
 {
-    public interface IUXDecorator
+    public interface IUXDecorator: IUXItem // there seems to be a need to have IUXDecorator type for UXItem.GetUXItem
     {
     }
 }

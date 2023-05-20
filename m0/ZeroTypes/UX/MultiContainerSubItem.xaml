@@ -7,8 +7,8 @@
              mc:Ignorable="d" 
              >
 
-    <Canvas x:Name="SubCanvas" Background="{StaticResource 0BackgroundBrush}" HorizontalAlignment="Stretch"  VerticalAlignment="Stretch">
-        
+    <Canvas x:Name="SubCanvas" HorizontalAlignment="Stretch"  VerticalAlignment="Stretch">
+        <Label Canvas.Left="0" Canvas.Top="0">siema siema</Label>
     </Canvas>
         
 </my:UXItem>
