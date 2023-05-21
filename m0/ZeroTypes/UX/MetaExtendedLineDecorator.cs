@@ -69,32 +69,32 @@ namespace m0.ZeroTypes.UX
         {
             IEdge baseEdge = BaseEdge;
 
-            Diagram.Canvas.Children.Add(LineEndings);
-            Diagram.Canvas.Children.Add(Line);
+            UXVisualiser.Canvas.Children.Add(LineEndings);
+            UXVisualiser.Canvas.Children.Add(Line);
 
             if (baseEdge.Meta == MinusZero.Instance.Empty)
                 return;           
 
-            if (Diagram.GetItemsDictionaryByBaseEdgeTo().ContainsKey(baseEdge.Meta))
-                MetaDiagramItem = Diagram.GetItemsDictionaryByBaseEdgeTo()[baseEdge.Meta].FirstOrDefault();
+            if (UXVisualiser.GetItemsDictionaryByBaseEdgeTo().ContainsKey(baseEdge.Meta))
+                MetaDiagramItem = UXVisualiser.GetItemsDictionaryByBaseEdgeTo()[baseEdge.Meta].FirstOrDefault();
 
             if (MetaDiagramItem != null)
             {
-                Diagram.Canvas.Children.Add(MetaLine);
+                UXVisualiser.Canvas.Children.Add(MetaLine);
                 MetaDiagramItem.AddAsToMetaLine(this);
             }
             else
-                Diagram.Canvas.Children.Add(Label);
+                UXVisualiser.Canvas.Children.Add(Label);
             
             VertexSetedUp();
         }
 
         public override void RemoveFromCanvas()
         {
-            Diagram.Canvas.Children.Remove(MetaLine);
-            Diagram.Canvas.Children.Remove(LineEndings);
-            Diagram.Canvas.Children.Remove(Line);
-            Diagram.Canvas.Children.Remove(Label);
+            UXVisualiser.Canvas.Children.Remove(MetaLine);
+            UXVisualiser.Canvas.Children.Remove(LineEndings);
+            UXVisualiser.Canvas.Children.Remove(Line);
+            UXVisualiser.Canvas.Children.Remove(Label);
         }
 
         protected override void UpdateLine()

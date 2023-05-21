@@ -38,7 +38,7 @@ namespace m0.ZeroTypes.UX
 
         //
 
-        public IUXVisualiser Diagram { get; set; } // ParentAggregator
+        public IUXVisualiser UXVisualiser { get; set; } // ParentAggregator
 
         public bool IsSelected { get; set; }
 
@@ -158,7 +158,7 @@ namespace m0.ZeroTypes.UX
 
         public virtual void RemoveFromCanvas()
         {
-            Diagram.Canvas.Children.Remove(this);
+            UXVisualiser.Canvas.Children.Remove(this);
 
             Unselect();
 
@@ -176,10 +176,10 @@ namespace m0.ZeroTypes.UX
 
         public void AddDiagramLineObject(IUXItem toItem, ILineDecoratorBase newline)
         {
-            newline.Diagram = this.Diagram;
+            newline.UXVisualiser = this.UXVisualiser;
 
             if (newline.UXTemplate != null)
-                Diagram.AddEdgesFromDefintion(newline.Vertex, ((UXDecoratorTemplate)newline.UXTemplate).DecoratorVertex);
+                UXVisualiser.AddEdgesFromDefintion(newline.Vertex, ((UXDecoratorTemplate)newline.UXTemplate).DecoratorVertex);
 
             newline.FromDiagramItem = this;
 
@@ -216,7 +216,7 @@ namespace m0.ZeroTypes.UX
 
             Panel.SetZIndex(this, 99999);
 
-            Point thisLeftTop = TranslatePoint(new Point(0, 0), Diagram.Canvas);
+            Point thisLeftTop = TranslatePoint(new Point(0, 0), UXVisualiser.Canvas);
 
             double left = thisLeftTop.X; // Canvas.GetLeft(this);
             double top = thisLeftTop.Y; //Canvas.GetTop(this);
@@ -246,7 +246,7 @@ namespace m0.ZeroTypes.UX
             Panel.SetZIndex(this, 0);
 
             foreach (UIElement e in Anchors)
-                Diagram.Canvas.Children.Remove(e);
+                UXVisualiser.Canvas.Children.Remove(e);
 
             Anchors.Clear();
         }
@@ -277,7 +277,7 @@ namespace m0.ZeroTypes.UX
 
             if (!(ParentItem is IUXVisualiser) && ParentItem != null && !onlyAnchors)
             {
-                Point localCanvasPosition = localCanvasPosition = Diagram.Canvas.TranslatePoint(new Point(x, y), ((IUXContainer)ParentItem).Canvas);
+                Point localCanvasPosition = localCanvasPosition = UXVisualiser.Canvas.TranslatePoint(new Point(x, y), ((IUXContainer)ParentItem).Canvas);
 
                 x = localCanvasPosition.X;
                 y = localCanvasPosition.Y;
@@ -322,7 +322,7 @@ namespace m0.ZeroTypes.UX
 
             UpdateDiagramLines();
 
-            Diagram.CheckAndUpdateItemComposition(this, true);
+            UXVisualiser.CheckAndUpdateItemComposition(this, true);
         }
 
         static public IUXItem GetUXItem(IItem parent, IItem i)
@@ -371,7 +371,7 @@ namespace m0.ZeroTypes.UX
 
             if (!(ParentItem is IUXVisualiser) && ParentItem != null)
             {
-                Point localCanvasPosition = Diagram.Canvas.TranslatePoint(new Point(x, y), ((IUXContainer)ParentItem).Canvas);
+                Point localCanvasPosition = UXVisualiser.Canvas.TranslatePoint(new Point(x, y), ((IUXContainer)ParentItem).Canvas);
 
                 x = localCanvasPosition.X;
                 y = localCanvasPosition.Y;
@@ -408,7 +408,7 @@ namespace m0.ZeroTypes.UX
 
             UpdateDiagramLines();
 
-            Diagram.CheckAndUpdateItemComposition(this, true);
+            UXVisualiser.CheckAndUpdateItemComposition(this, true);
         }
 
         public void AddToSelectedEdges()
@@ -417,7 +417,7 @@ namespace m0.ZeroTypes.UX
             Interaction.BeginInteractionWithGraph();
             //////////////////////////////////////// 
 
-            EdgeHelper.AddEdgeVertexEdgeByEdgeVertex(Diagram.Vertex.Get(false, "SelectedEdges:"), Vertex.Get(false, "BaseEdge:"));
+            EdgeHelper.AddEdgeVertexEdgeByEdgeVertex(UXVisualiser.Vertex.Get(false, "SelectedEdges:"), Vertex.Get(false, "BaseEdge:"));
 
             ////////////////////////////////////////
             Interaction.EndInteractionWithGraph();
@@ -453,7 +453,7 @@ namespace m0.ZeroTypes.UX
             }
 
             if (IsEdgeAddedTo(exe.Stack, baseEdgeTo) && CanAutomaticallyAddEdges)
-                Diagram.CheckAndUpdateDiagramLinesForItem(this);
+                UXVisualiser.CheckAndUpdateDiagramLinesForItem(this);
 
             if (IsVertexChangeOrEdgeAddedRemovedDisposedByMetaAndFrom(exe.Stack, Vertex, "BackgroundColor")
                 || IsVertexChangeOrEdgeAddedRemovedDisposedByMetaAndFrom(exe.Stack, Vertex, "ForegroundColor")
@@ -544,9 +544,14 @@ namespace m0.ZeroTypes.UX
             }
 
             if (IsSelected)
-                Highlight();
+                Select();
             else
-                Unhighlight();
+            {
+                if (IsHighlighted)
+                    Highlight();
+                else
+                    Unhighlight();
+            }
 
             this.Foreground = GetForegroundBrush();
 
@@ -691,15 +696,15 @@ namespace m0.ZeroTypes.UX
 
         private void DiagramItemBase_MouseLeave(object sender, MouseEventArgs e)
         {
-            if (Diagram.IsDrawingOrMovingLine == false && Diagram.IsSelecting == false)
+            if (UXVisualiser.IsDrawingOrMovingLine == false && UXVisualiser.IsSelecting == false)
                 UnhighlightThisAndAllConectedByDiagramLine();
         }
 
         private void DiagramItemBase_MouseEnter(object sender, MouseEventArgs e)
         {
-            Diagram.UnhighlightAllSelectedEdges();
+            UXVisualiser.UnhighlightAllSelectedEdges();
 
-            if (Diagram.IsDrawingOrMovingLine == false && Diagram.IsSelecting == false)
+            if (UXVisualiser.IsDrawingOrMovingLine == false && UXVisualiser.IsSelecting == false)
                 HighlightThisAndAllConectedByDiagramLine();
         }
 
@@ -711,7 +716,7 @@ namespace m0.ZeroTypes.UX
             Interaction.BeginInteractionWithGraph();
             //////////////////////////////////////// 
 
-            GraphUtil.DeleteEdgeByToVertex(Diagram.Vertex.Get(false, "SelectedEdges:"), Vertex.Get(false, "BaseEdge:"));
+            GraphUtil.DeleteEdgeByToVertex(UXVisualiser.Vertex.Get(false, "SelectedEdges:"), Vertex.Get(false, "BaseEdge:"));
 
             ////////////////////////////////////////
             Interaction.EndInteractionWithGraph();
@@ -720,13 +725,13 @@ namespace m0.ZeroTypes.UX
 
         protected void MouseLeftButtonDownHandler(object sender, MouseButtonEventArgs e)
         {
-            Diagram.SetFocus();
+            UXVisualiser.SetFocus();
 
-            Diagram.ClickPositionX_ItemCordinates = e.GetPosition(this).X;
-            Diagram.ClickPositionY_ItemCordinates = e.GetPosition(this).Y;
+            UXVisualiser.ClickPositionX_ItemCordinates = e.GetPosition(this).X;
+            UXVisualiser.ClickPositionY_ItemCordinates = e.GetPosition(this).Y;
 
-            Diagram.ClickTarget = ClickTargetEnum.Item;
-            Diagram.ClickedItem = this;
+            UXVisualiser.ClickTarget = ClickTargetEnum.Item;
+            UXVisualiser.ClickedItem = this;
 
             if (Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl))
             {
@@ -741,7 +746,7 @@ namespace m0.ZeroTypes.UX
                     RemoveFromSelectedEdges();
                 else
                 {
-                    Diagram.UnselectAllSelectedEdges();
+                    UXVisualiser.UnselectAllSelectedEdges();
 
                     AddToSelectedEdges();
                 }
@@ -864,7 +869,7 @@ namespace m0.ZeroTypes.UX
 
             Panel.SetZIndex(r, 99999);
 
-            Diagram.Canvas.Children.Add(r);
+            UXVisualiser.Canvas.Children.Add(r);
 
             return r;
         }
@@ -912,19 +917,19 @@ namespace m0.ZeroTypes.UX
 
         public void AnchorMouseButtonDown(object sender, MouseButtonEventArgs e)
         {
-            Diagram.ClickPositionX_ItemCordinates = e.GetPosition(this).X;
-            Diagram.ClickPositionY_ItemCordinates = e.GetPosition(this).Y;
+            UXVisualiser.ClickPositionX_ItemCordinates = e.GetPosition(this).X;
+            UXVisualiser.ClickPositionY_ItemCordinates = e.GetPosition(this).Y;
 
-            Diagram.ClickPositionX_AnchorCordinates = e.GetPosition((IInputElement)sender).X;
-            Diagram.ClickPositionY_AnchorCordinates = e.GetPosition((IInputElement)sender).Y;
+            UXVisualiser.ClickPositionX_AnchorCordinates = e.GetPosition((IInputElement)sender).X;
+            UXVisualiser.ClickPositionY_AnchorCordinates = e.GetPosition((IInputElement)sender).Y;
 
             FrameworkElement a = (FrameworkElement)sender;
 
-            Diagram.ClickTarget = GetClickTarget(a);
+            UXVisualiser.ClickTarget = GetClickTarget(a);
 
-            Diagram.ClickedAnchor = a;
+            UXVisualiser.ClickedAnchor = a;
 
-            Diagram.ClickedItem = this;
+            UXVisualiser.ClickedItem = this;
 
             e.Handled = true;
         }
@@ -973,9 +978,9 @@ namespace m0.ZeroTypes.UX
             Point thisLeftTop = new Point();
 
 
-            toItemLeftTop = toItem.TranslatePoint(new Point(0, 0), Diagram.Canvas);
+            toItemLeftTop = toItem.TranslatePoint(new Point(0, 0), UXVisualiser.Canvas);
 
-            thisLeftTop = TranslatePoint(new Point(0, 0), Diagram.Canvas);
+            thisLeftTop = TranslatePoint(new Point(0, 0), UXVisualiser.Canvas);
 
             //
 

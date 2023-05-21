@@ -278,10 +278,10 @@ namespace m0.ZeroTypes.UX
 
             Line2D l2d = Geometry2D.GetLine2DFromPoints(_FromX, _FromY, _ToX, _ToY);
 
-            if (p.X + Diagram.LineSelectionDelta < Math.Min(_FromX, _ToX) ||
-                p.X - Diagram.LineSelectionDelta > Math.Max(_FromX, _ToX) ||
-                p.Y + Diagram.LineSelectionDelta < Math.Min(_FromY, _ToY) ||
-                p.Y - Diagram.LineSelectionDelta > Math.Max(_FromY, _ToY))
+            if (p.X + UXVisualiser.LineSelectionDelta < Math.Min(_FromX, _ToX) ||
+                p.X - UXVisualiser.LineSelectionDelta > Math.Max(_FromX, _ToX) ||
+                p.Y + UXVisualiser.LineSelectionDelta < Math.Min(_FromY, _ToY) ||
+                p.Y - UXVisualiser.LineSelectionDelta > Math.Max(_FromY, _ToY))
                 return max;
 
             return Geometry2D.GetPointDistanceFrom2DLine(l2d, p);
@@ -289,18 +289,18 @@ namespace m0.ZeroTypes.UX
 
         public override void AddToCanvas()
         {
-            Diagram.Canvas.Children.Add(LineEndings);
-            Diagram.Canvas.Children.Add(Line);
-            Diagram.Canvas.Children.Add(Label);
+            UXVisualiser.Canvas.Children.Add(LineEndings);
+            UXVisualiser.Canvas.Children.Add(Line);
+            UXVisualiser.Canvas.Children.Add(Label);
 
             VertexSetedUp(); 
         }
 
         public override void RemoveFromCanvas()
         {
-            Diagram.Canvas.Children.Remove(LineEndings);
-            Diagram.Canvas.Children.Remove(Line);
-            Diagram.Canvas.Children.Remove(Label);
+            UXVisualiser.Canvas.Children.Remove(LineEndings);
+            UXVisualiser.Canvas.Children.Remove(Line);
+            UXVisualiser.Canvas.Children.Remove(Label);
         }
 
         public override void Highlight()
@@ -373,7 +373,7 @@ namespace m0.ZeroTypes.UX
             Panel.SetZIndex(this, 0);
 
             foreach (UIElement e in Anchors)
-                Diagram.Canvas.Children.Remove(e);
+                UXVisualiser.Canvas.Children.Remove(e);
 
             Anchors.Clear();
         }

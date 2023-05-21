@@ -410,7 +410,7 @@ namespace m0.UIWpf.UX
 
             UIElement item_UIElement = (UIElement)item;
 
-            item.Diagram = this;                
+            item.UXVisualiser = this;                
 
             item.VertexSetedUp();
 
@@ -2156,7 +2156,7 @@ namespace m0.UIWpf.UX
 
         //
 
-        public IUXVisualiser Diagram { get; set; } // ParentAggregator
+        public IUXVisualiser UXVisualiser { get; set; } // ParentAggregator
 
         public bool IsSelected { get; set; }
 

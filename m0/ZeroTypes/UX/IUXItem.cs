@@ -18,7 +18,7 @@ namespace m0.ZeroTypes.UX
 
         int NestingLevel { get; set; }
 
-        IUXVisualiser Diagram { get; set; }        
+        IUXVisualiser UXVisualiser { get; set; }        
 
         bool IsSelected { get; set; }
 
@@ -30,9 +30,7 @@ namespace m0.ZeroTypes.UX
 
         //        
 
-        void VertexSetedUp();
-
-        void Dispose();
+        void VertexSetedUp();        
 
         Dictionary<IUXItem, List<ILineDecoratorBase>> GetDiagramLinesToDiagramItemDictionary();
 

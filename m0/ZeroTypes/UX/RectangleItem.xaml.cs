@@ -60,7 +60,7 @@ namespace m0.ZeroTypes.UX
             }
                     
             if (VisualiserVertex != null && ContentVisualiser != null)
-                Diagram.AddEdgesFromDefintion(ContentVisualiser.Vertex, VisualiserVertex);
+                UXVisualiser.AddEdgesFromDefintion(ContentVisualiser.Vertex, VisualiserVertex);
 
             base.VertexSetedUp();
         }
