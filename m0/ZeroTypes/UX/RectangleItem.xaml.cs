@@ -126,26 +126,7 @@ namespace m0.ZeroTypes.UX
 
                     TheGrid.Children.Remove(InternalFrame);
                 }
-            }
-
-            Brush backgroundBrush = GetBackgroundBrush();
-
-            Brush foregroundBrush = GetForegroundBrush();
-            
-
-            this.Frame.Background = backgroundBrush;
-
-            this.Title.Foreground = foregroundBrush;
-
-            this.InternalFrame.BorderBrush = foregroundBrush;
-
-            this.Frame.BorderBrush = foregroundBrush;
-
-            if (ContentVisualiser != null) // not always works, but can
-            {
-                GeneralUtil.SetPropertyIfPresent(ContentVisualiser, "Foreground", foregroundBrush);
-                GeneralUtil.SetPropertyIfPresent(ContentVisualiser, "Background", backgroundBrush);
-            }
+            }                        
 
             if (BorderSize != 0)
                 this.Frame.BorderThickness = new Thickness(BorderSize);
@@ -158,7 +139,17 @@ namespace m0.ZeroTypes.UX
             }
 
             this.Frame.BorderBrush = GetBorderBrush();
-            
+
+            if (IsSelected)
+                Select();
+            else
+            {
+                if (IsHighlighted)
+                    Highlight();
+                else
+                    Unhighlight();
+            }
+
         }         
 
         public override void Select()
@@ -172,6 +163,14 @@ namespace m0.ZeroTypes.UX
             this.Frame.Background = (Brush)FindResource("0SelectionBrush");
 
             this.Title.Cursor = Cursors.ScrollAll;
+
+            //
+
+            if (ContentVisualiser != null) // not always works, but can
+            {
+                GeneralUtil.SetPropertyIfPresent(ContentVisualiser, "Foreground", (Brush)FindResource("0BackgroundBrush"));
+                GeneralUtil.SetPropertyIfPresent(ContentVisualiser, "Background", (Brush)FindResource("0SelectionBrush"));
+            }
         }
 
         public override void Unselect()
@@ -195,6 +194,14 @@ namespace m0.ZeroTypes.UX
             this.Frame.BorderBrush = borderBrush;
 
             this.Title.Cursor = Cursors.Arrow;
+
+            //
+
+            if (ContentVisualiser != null) // not always works, but can
+            {
+                GeneralUtil.SetPropertyIfPresent(ContentVisualiser, "Foreground", backgroundBrush);
+                GeneralUtil.SetPropertyIfPresent(ContentVisualiser, "Background", foregroundBrush);
+            }
         }
 
         public override void Highlight()

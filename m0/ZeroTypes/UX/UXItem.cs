@@ -551,9 +551,7 @@ namespace m0.ZeroTypes.UX
                     Highlight();
                 else
                     Unhighlight();
-            }
-
-            this.Foreground = GetForegroundBrush();
+            }            
 
             //
 
