@@ -278,10 +278,10 @@ namespace m0.ZeroTypes.UX
 
             Line2D l2d = Geometry2D.GetLine2DFromPoints(_FromX, _FromY, _ToX, _ToY);
 
-            if (p.X + UXVisualiser.LineSelectionDelta < Math.Min(_FromX, _ToX) ||
-                p.X - UXVisualiser.LineSelectionDelta > Math.Max(_FromX, _ToX) ||
-                p.Y + UXVisualiser.LineSelectionDelta < Math.Min(_FromY, _ToY) ||
-                p.Y - UXVisualiser.LineSelectionDelta > Math.Max(_FromY, _ToY))
+            if (p.X + OwningVisualiser.LineSelectionDelta < Math.Min(_FromX, _ToX) ||
+                p.X - OwningVisualiser.LineSelectionDelta > Math.Max(_FromX, _ToX) ||
+                p.Y + OwningVisualiser.LineSelectionDelta < Math.Min(_FromY, _ToY) ||
+                p.Y - OwningVisualiser.LineSelectionDelta > Math.Max(_FromY, _ToY))
                 return max;
 
             return Geometry2D.GetPointDistanceFrom2DLine(l2d, p);
@@ -289,18 +289,18 @@ namespace m0.ZeroTypes.UX
 
         public override void AddToCanvas()
         {
-            UXVisualiser.Canvas.Children.Add(LineEndings);
-            UXVisualiser.Canvas.Children.Add(Line);
-            UXVisualiser.Canvas.Children.Add(Label);
+            OwningVisualiser.Canvas.Children.Add(LineEndings);
+            OwningVisualiser.Canvas.Children.Add(Line);
+            OwningVisualiser.Canvas.Children.Add(Label);
 
             VertexSetedUp(); 
         }
 
         public override void RemoveFromCanvas()
         {
-            UXVisualiser.Canvas.Children.Remove(LineEndings);
-            UXVisualiser.Canvas.Children.Remove(Line);
-            UXVisualiser.Canvas.Children.Remove(Label);
+            OwningVisualiser.Canvas.Children.Remove(LineEndings);
+            OwningVisualiser.Canvas.Children.Remove(Line);
+            OwningVisualiser.Canvas.Children.Remove(Label);
         }
 
         public override void Highlight()
@@ -373,7 +373,7 @@ namespace m0.ZeroTypes.UX
             Panel.SetZIndex(this, 0);
 
             foreach (UIElement e in Anchors)
-                UXVisualiser.Canvas.Children.Remove(e);
+                OwningVisualiser.Canvas.Children.Remove(e);
 
             Anchors.Clear();
         }

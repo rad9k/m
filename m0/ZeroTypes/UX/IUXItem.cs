@@ -18,7 +18,7 @@ namespace m0.ZeroTypes.UX
 
         int NestingLevel { get; set; }
 
-        IUXVisualiser UXVisualiser { get; set; }        
+        IUXVisualiser OwningVisualiser { get; set; }        
 
         bool IsSelected { get; set; }
 

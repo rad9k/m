@@ -273,22 +273,7 @@ namespace m0.ZeroTypes.UX
                 Canvas.Margin = new Thickness(RoundEdgeSize, 0, RoundEdgeSize, RoundEdgeSize);
 
                 MainGrid.RowDefinitions[0].Height = new GridLength(18 + RoundEdgeSize);              
-            }
-
-            Brush backgroundBrush = GetBackgroundBrush();
-
-            Brush foregroundBrush = GetForegroundBrush();
-            
-
-            this.Frame.Background = backgroundBrush;
-
-            this.Title.Foreground = foregroundBrush;
-
-            this.InternalFrame.BorderBrush = foregroundBrush;
-
-            this.Frame.BorderBrush = foregroundBrush;
-
-            Canvas.Background = backgroundBrush;
+            }                        
 
             double borderSize = BorderSize;
 
@@ -311,6 +296,16 @@ namespace m0.ZeroTypes.UX
             this.Frame.BorderBrush = borderBrush;
             this.InternalFrame.BorderBrush = borderBrush;
 
+            if (IsSelected)
+                Select();
+            else
+            {
+                if (IsHighlighted)
+                    Highlight();
+                else
+                    Unhighlight();
+            }
+
             VisualiserUpdate_Items();
         }
 
@@ -323,7 +318,7 @@ namespace m0.ZeroTypes.UX
                 if (i == null)
                     continue;
 
-                //i.VisualiserUpdate();
+                i.ItemVisualUpdate();
             }
         }
 

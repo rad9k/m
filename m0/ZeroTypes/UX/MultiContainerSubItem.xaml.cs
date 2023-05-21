@@ -77,7 +77,15 @@ namespace m0.ZeroTypes.UX
 
         public override void ItemVisualUpdate()
         {
-            // base.VisualiserUpdate();            
+            if (IsSelected)
+                Select();
+            else
+            {
+                if (IsHighlighted)
+                    Highlight();
+                else
+                    Unhighlight();
+            }
 
             Brush backgroundBrush = GetParentBackgroundBrush();
         }

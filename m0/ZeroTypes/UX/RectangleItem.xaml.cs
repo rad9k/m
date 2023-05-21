@@ -60,7 +60,7 @@ namespace m0.ZeroTypes.UX
             }
                     
             if (VisualiserVertex != null && ContentVisualiser != null)
-                UXVisualiser.AddEdgesFromDefintion(ContentVisualiser.Vertex, VisualiserVertex);
+                OwningVisualiser.AddEdgesFromDefintion(ContentVisualiser.Vertex, VisualiserVertex);
 
             base.VertexSetedUp();
         }
@@ -199,8 +199,8 @@ namespace m0.ZeroTypes.UX
 
             if (ContentVisualiser != null) // not always works, but can
             {
-                GeneralUtil.SetPropertyIfPresent(ContentVisualiser, "Foreground", backgroundBrush);
-                GeneralUtil.SetPropertyIfPresent(ContentVisualiser, "Background", foregroundBrush);
+                GeneralUtil.SetPropertyIfPresent(ContentVisualiser, "Foreground", foregroundBrush);
+                GeneralUtil.SetPropertyIfPresent(ContentVisualiser, "Background", backgroundBrush);
             }
         }
 
@@ -214,7 +214,13 @@ namespace m0.ZeroTypes.UX
             this.Frame.Background = (Brush)FindResource("0HighlightBrush");
 
             this.InternalFrame.BorderBrush = (Brush)FindResource("0HighlightBrush");
-            this.Title.Foreground = (Brush)FindResource("0HighlightForegroundBrush");            
+            this.Title.Foreground = (Brush)FindResource("0HighlightForegroundBrush");
+
+            if (ContentVisualiser != null) // not always works, but can
+            {
+                GeneralUtil.SetPropertyIfPresent(ContentVisualiser, "Foreground", (Brush)FindResource("0HighlightForegroundBrush"));
+                GeneralUtil.SetPropertyIfPresent(ContentVisualiser, "Background", (Brush)FindResource("0HighlightBrush"));
+            }
         }
 
         public override void Unhighlight()
@@ -234,6 +240,12 @@ namespace m0.ZeroTypes.UX
             this.Title.Foreground = foregroundBrush;
             
             base.Unhighlight();
+
+            if (ContentVisualiser != null) // not always works, but can
+            {
+                GeneralUtil.SetPropertyIfPresent(ContentVisualiser, "Foreground", foregroundBrush);
+                GeneralUtil.SetPropertyIfPresent(ContentVisualiser, "Background", backgroundBrush);
+            }
         }
 
         protected override INoInEdgeInOutVertexVertex VertexChange(IExecution exe)        

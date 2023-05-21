@@ -114,7 +114,7 @@ namespace m0.UIWpf.UX
 
         bool IsFirstPainted = false;
 
-        static string[] _MetaTriggeringUpdateVertex = new string[] { "Width", "Height"};
+        static string[] _MetaTriggeringUpdateVertex = new string[] { "Width", "Height", "BackgroundColor" };
         public virtual string[] MetaTriggeringUpdateVertex { get { return _MetaTriggeringUpdateVertex; } }
 
         static string[] _MetaTriggeringUpdateView = new string[] { };
@@ -153,9 +153,7 @@ namespace m0.UIWpf.UX
 
         void SetUpCanvas()
         {            
-            Canvas = new Canvas();            
-
-            Canvas.Background = GetBackgroundBrush(); 
+            Canvas = new Canvas();                        
 
             this.Child = Canvas;
         }
@@ -410,7 +408,7 @@ namespace m0.UIWpf.UX
 
             UIElement item_UIElement = (UIElement)item;
 
-            item.UXVisualiser = this;                
+            item.OwningVisualiser = this;                
 
             item.VertexSetedUp();
 
@@ -665,7 +663,8 @@ namespace m0.UIWpf.UX
                 Width = Size.Width ;
                 Height = Size.Height;
 
-                Background = new SolidColorBrush(System.Windows.Media.Color.FromRgb(255, 200, 200));
+                Background = GetBackgroundBrush();
+                    //new SolidColorBrush(System.Windows.Media.Color.FromRgb(255, 200, 200));
 
                 ////////////////////////////////////////
                 Interaction.BeginInteractionWithGraph();
@@ -2156,7 +2155,7 @@ namespace m0.UIWpf.UX
 
         //
 
-        public IUXVisualiser UXVisualiser { get; set; } // ParentAggregator
+        public IUXVisualiser OwningVisualiser { get; set; } // ParentAggregator
 
         public bool IsSelected { get; set; }
 
