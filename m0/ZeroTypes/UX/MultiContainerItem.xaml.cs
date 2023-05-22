@@ -65,11 +65,7 @@ namespace m0.ZeroTypes.UX
 
         void CreateSubConainerControls()
         {            
-            int cnt = 0;
-
-            Brush backgroundBrush = GetBackgroundBrush();
-
-            Brush foregroundBrush = GetForegroundBrush();        
+            int cnt = 0;            
 
             foreach (IItem _i in Items)
             {
@@ -80,19 +76,24 @@ namespace m0.ZeroTypes.UX
 
                 if (cnt == 0)
                 {
-                    InsertSubContainer(i, cnt, false, backgroundBrush, foregroundBrush);
+                    InsertSubContainer(i, cnt, false);
                     cnt++;
                 }
                 else
                 {
-                    InsertSubContainer(i, cnt, true, backgroundBrush, foregroundBrush);
+                    InsertSubContainer(i, cnt, true);
                     cnt += 2;
                 }                
             }
         }
 
-        void InsertSubContainer(IUXItem subItem, int cnt, bool addSplitter, Brush backgroundBrush, Brush foregroundBrush)
+        void InsertSubContainer(IUXItem subItem, int cnt, bool addSplitter)
         {
+            if (!(subItem is UIElement))
+                return;
+
+            UIElement subItem_UIElement = (UIElement)subItem;
+
             UXTemplate iUXTemplate = subItem.UXTemplate;
 
             IEdge sizeEdge = GraphUtil.GetQueryOutFirstEdge(iUXTemplate.ItemVertex, "Size", null);
@@ -101,24 +102,7 @@ namespace m0.ZeroTypes.UX
 
             if (sizeEdge != null)
                 size = new Size(sizeEdge);
-
-            //
-
-            TextBlock label = null;
-
-            if (iUXTemplate.Name != null) {
-                label = new TextBlock();
-                label.Text = iUXTemplate.Name;
-                label.Background = foregroundBrush;
-                label.Foreground = backgroundBrush;
-            } 
             
-            //
-
-            Canvas canvas = new Canvas();
-
-            canvas.Background = backgroundBrush;            
-
             //
 
             GridSplitter splitter = null;            
@@ -163,19 +147,9 @@ namespace m0.ZeroTypes.UX
 
                 //
 
-                DockPanel panel = new DockPanel();
+                SubGrid.Children.Add(subItem_UIElement);
 
-                SubGrid.Children.Add(panel);
-
-                Grid.SetRow(panel, cnt);
-
-                if (label != null)
-                {
-                    panel.Children.Add(label);
-                    DockPanel.SetDock(label, Dock.Top);
-                }
-
-                panel.Children.Add(canvas);
+                Grid.SetColumn(subItem_UIElement, cnt);
             }
             else
             {
@@ -208,20 +182,10 @@ namespace m0.ZeroTypes.UX
                 SubGrid.ColumnDefinitions.Add(columnDefinition);
 
                 //
+                
+                SubGrid.Children.Add(subItem_UIElement);
 
-                DockPanel panel = new DockPanel();
-
-                SubGrid.Children.Add(panel);
-
-                Grid.SetColumn(panel, cnt);
-
-                if (label != null)
-                {
-                    panel.Children.Add(label);
-                    DockPanel.SetDock(label, Dock.Top);
-                }
-
-                panel.Children.Add(canvas);
+                Grid.SetColumn(subItem_UIElement, cnt);
             }
         }
         
