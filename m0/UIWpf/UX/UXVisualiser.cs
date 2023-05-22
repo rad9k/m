@@ -114,7 +114,7 @@ namespace m0.UIWpf.UX
 
         bool IsFirstPainted = false;
 
-        static string[] _MetaTriggeringUpdateVertex = new string[] { "Width", "Height", "BackgroundColor" };
+        static string[] _MetaTriggeringUpdateVertex = new string[] { "Width", "Height" };
         public virtual string[] MetaTriggeringUpdateVertex { get { return _MetaTriggeringUpdateVertex; } }
 
         static string[] _MetaTriggeringUpdateView = new string[] { };

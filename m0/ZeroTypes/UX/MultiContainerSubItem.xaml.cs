@@ -25,7 +25,7 @@ namespace m0.ZeroTypes.UX
     public partial class MultiContainerSubItem : UXItem, IUXContainer, IMultiContainerSubItem
     {
         public Canvas Canvas { 
-            get { return SubCanvas; }
+            get { return canvas; }
             set { }
         }        
 
@@ -39,11 +39,7 @@ namespace m0.ZeroTypes.UX
         }
 
         public override void VertexSetedUp()
-        {
-            Brush backgroundBrush = GetParentBackgroundBrush();
-            Brush foregroundBrush = GetParentForegroundBrush();
-
-
+        {            
             Canvas.ClipToBounds = true;                       
 
             base.VertexSetedUp();
@@ -76,7 +72,10 @@ namespace m0.ZeroTypes.UX
         }
 
         public override void ItemVisualUpdate()
-        {
+        {            
+            Label.Text = UXTemplate.Name;
+            
+
             if (IsSelected)
                 Select();
             else
@@ -85,14 +84,26 @@ namespace m0.ZeroTypes.UX
                     Highlight();
                 else
                     Unhighlight();
-            }
-
-            Brush backgroundBrush = GetParentBackgroundBrush();
+            }        
         }
 
-        public override void Select() {}
+        public override void Select() {
+            Brush backgroundBrush = GetParentBackgroundBrush();
+            Brush foregroundBrush = GetParentForegroundBrush();
 
-        public override void Unselect() {}
+            Label.Background = foregroundBrush;
+            Label.Foreground = backgroundBrush;
+        }
+
+        public override void Unselect() {
+            Brush backgroundBrush = GetParentBackgroundBrush();
+            Brush foregroundBrush = GetParentForegroundBrush();
+
+            Label.Background = foregroundBrush;
+            Label.Foreground = backgroundBrush;
+
+            canvas.Background = backgroundBrush;
+        }
 
         public override void Highlight() {}
 

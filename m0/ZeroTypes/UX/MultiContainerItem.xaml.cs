@@ -91,9 +91,9 @@ namespace m0.ZeroTypes.UX
             }
         }
 
-        void InsertSubContainer(IUXItem i, int cnt, bool addSplitter, Brush backgroundBrush, Brush foregroundBrush)
+        void InsertSubContainer(IUXItem subItem, int cnt, bool addSplitter, Brush backgroundBrush, Brush foregroundBrush)
         {
-            UXTemplate iUXTemplate = i.UXTemplate;
+            UXTemplate iUXTemplate = subItem.UXTemplate;
 
             IEdge sizeEdge = GraphUtil.GetQueryOutFirstEdge(iUXTemplate.ItemVertex, "Size", null);
 
