@@ -75,7 +75,6 @@ namespace m0.ZeroTypes.UX
         {            
             Label.Text = UXTemplate.Name;
             
-
             if (IsSelected)
                 Select();
             else
@@ -87,15 +86,26 @@ namespace m0.ZeroTypes.UX
             }        
         }
 
+        private void SetColors(Brush backgroundBrush, Brush foregroundBrush)
+        {
+
+        }
+
         public override void Select() {
             Brush backgroundBrush = GetParentBackgroundBrush();
             Brush foregroundBrush = GetParentForegroundBrush();
 
             Label.Background = foregroundBrush;
             Label.Foreground = backgroundBrush;
+
+            canvas.Background = backgroundBrush;
         }
 
         public override void Unselect() {
+            this.Foreground = (Brush)FindResource("0BackgroundBrush");
+
+            this.Frame.Background = (Brush)FindResource("0SelectionBrush");
+
             Brush backgroundBrush = GetParentBackgroundBrush();
             Brush foregroundBrush = GetParentForegroundBrush();
 
