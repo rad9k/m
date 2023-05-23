@@ -88,36 +88,27 @@ namespace m0.ZeroTypes.UX
 
         private void SetColors(Brush backgroundBrush, Brush foregroundBrush)
         {
+            Label.Background = foregroundBrush;
+            Label.Foreground = backgroundBrush;
 
+            canvas.Background = backgroundBrush;
         }
 
         public override void Select() {
-            Brush backgroundBrush = GetParentBackgroundBrush();
-            Brush foregroundBrush = GetParentForegroundBrush();
-
-            Label.Background = foregroundBrush;
-            Label.Foreground = backgroundBrush;
-
-            canvas.Background = backgroundBrush;
+            SetColors((Brush)FindResource("0SelectionBrush"), (Brush)FindResource("0BackgroundBrush"));
         }
 
         public override void Unselect() {
-            this.Foreground = (Brush)FindResource("0BackgroundBrush");
-
-            this.Frame.Background = (Brush)FindResource("0SelectionBrush");
-
-            Brush backgroundBrush = GetParentBackgroundBrush();
-            Brush foregroundBrush = GetParentForegroundBrush();
-
-            Label.Background = foregroundBrush;
-            Label.Foreground = backgroundBrush;
-
-            canvas.Background = backgroundBrush;
+            SetColors(GetParentBackgroundBrush(), GetParentForegroundBrush());            
         }
 
-        public override void Highlight() {}
+        public override void Highlight() {
+            SetColors((Brush)FindResource("0HighlightForegroundBrush"), (Brush)FindResource("0HighlightBrush"));
+        }
 
-        public override void Unhighlight() {}
+        public override void Unhighlight() {
+            SetColors(GetParentBackgroundBrush(), GetParentForegroundBrush());
+        }
 
         protected override INoInEdgeInOutVertexVertex VertexChange(IExecution exe)        
         {

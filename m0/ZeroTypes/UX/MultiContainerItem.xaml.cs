@@ -92,6 +92,8 @@ namespace m0.ZeroTypes.UX
             if (!(subItem is UIElement))
                 return;
 
+            subItem.OwningVisualiser = this.OwningVisualiser;
+
             UIElement subItem_UIElement = (UIElement)subItem;
 
             UXTemplate iUXTemplate = subItem.UXTemplate;
