@@ -1,4 +1,4 @@
-﻿<my:UXItem x:Class="m0.ZeroTypes.UX.MultiContainerSubItem"
+﻿<UserControl x:Class="m0.ZeroTypes.UX.MultiContainerSubItem"
              xmlns:my="clr-namespace:m0.ZeroTypes.UX"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -12,4 +12,4 @@
         <Canvas x:Name="canvas" />
     </DockPanel>
         
-</my:UXItem>
+</UserControl>
