@@ -17,6 +17,7 @@ using m0.Foundation;
 using m0.ZeroTypes;
 using m0.Util;
 using System.Windows.Forms.VisualStyles;
+using m0.Graph.ExecutionFlow;
 
 namespace m0.ZeroTypes.UX
 {
@@ -696,9 +697,16 @@ namespace m0.ZeroTypes.UX
             throw new NotImplementedException();
         }
 
-        public void Dispose()
+        public bool IsDisposed = false;
+
+        public virtual void Dispose()
         {
-            throw new NotImplementedException();
+            if (!IsDisposed)
+            {
+                IsDisposed = true;
+
+                TypedEdge.RemoveFromDictionary(this);
+            }
         }
 
         // TypedEdge

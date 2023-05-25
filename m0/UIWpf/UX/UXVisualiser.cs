@@ -1529,7 +1529,7 @@ namespace m0.UIWpf.UX
         }        
 
         public void CheckAndUpdateItemComposition(IUXItem item, bool fastMode)
-        {            
+        {
             Point itemPosition_absolute = GetItemAbsolutePosition(item);
 
             if (fastMode)
@@ -1551,7 +1551,7 @@ namespace m0.UIWpf.UX
                         if (toBeParentItem == null)
                             toBeParentItem = this;
 
-                        if (toBeParentItem != item.ParentItem)
+                        if (toBeParentItem != item.ParentItem && toBeParentItem != item)
                             MoveToParentItem(item, toBeParentItem);
                     }
                 }
@@ -1560,7 +1560,7 @@ namespace m0.UIWpf.UX
             {
                 IUXItem toBeParentItem = GetItemByPoint_ByCanvas(itemPosition_absolute); // can take some time, especially when moving
 
-                if (toBeParentItem != item.ParentItem)
+                if (toBeParentItem != item.ParentItem && toBeParentItem != item)
                     MoveToParentItem(item, toBeParentItem);
             }
         }
