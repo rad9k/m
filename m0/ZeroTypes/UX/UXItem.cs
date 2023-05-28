@@ -550,7 +550,7 @@ namespace m0.ZeroTypes.UX
                 if (IsHighlighted)
                     Highlight();
                 else
-                    Unhighlight();
+                    Unselect();
             }            
 
             //

@@ -151,7 +151,7 @@ namespace m0.ZeroTypes.UX
 
                 SubGrid.Children.Add(subItem_UIElement);
 
-                Grid.SetColumn(subItem_UIElement, cnt);
+                Grid.SetRow(subItem_UIElement, cnt);
             }
             else
             {
@@ -260,17 +260,7 @@ namespace m0.ZeroTypes.UX
             Brush borderBrush = GetBorderBrush();
 
             this.Frame.BorderBrush = borderBrush;
-            this.InternalFrame.BorderBrush = borderBrush;
-
-            if (IsSelected)
-                Select();
-            else
-            {
-                if (IsHighlighted)
-                    Highlight();
-                else
-                    Unhighlight();
-            }
+            this.InternalFrame.BorderBrush = borderBrush;          
 
             VisualiserUpdate_Items();
         }
@@ -289,20 +279,36 @@ namespace m0.ZeroTypes.UX
         }
 
         public override void Select()
-        {
+        {            
             base.Select();
+
+            return;
 
             
             this.Title.Foreground = (Brush)FindResource("0BackgroundBrush");
             this.Foreground = (Brush)FindResource("0BackgroundBrush");
 
-            this.Frame.Background = (Brush)FindResource("0SelectionBrush");
+            this.Frame.Background = new SolidColorBrush(Colors.Red);
+                
+                //(Brush)FindResource("0SelectionBrush");
 
             this.Title.Cursor = Cursors.ScrollAll;
+
+            //
+
+            foreach (IItem _i in Items)
+            {
+                IUXItem i = UXItem.GetUXItem(this, _i);
+
+                if (i == null)
+                    continue;
+
+                i.Select();
+            }
         }
 
         public override void Unselect()
-        {
+        {            
             base.Unselect();
 
             Brush backgroundBrush = GetBackgroundBrush();
@@ -323,11 +329,23 @@ namespace m0.ZeroTypes.UX
             this.Frame.BorderBrush = borderBrush;
 
             this.Title.Cursor = Cursors.Arrow;
+
+            //
+
+            foreach (IItem _i in Items)
+            {
+                IUXItem i = UXItem.GetUXItem(this, _i);
+
+                if (i == null)
+                    continue;
+
+                i.Unselect();
+            }
         }
 
         public override void Highlight()
-        {
-            base.Highlight();
+        {            
+            //base.Highlight();
 
             this.Foreground = (Brush)FindResource("0HighlightForegroundBrush"); 
 
@@ -335,11 +353,32 @@ namespace m0.ZeroTypes.UX
             this.Frame.Background = (Brush)FindResource("0HighlightBrush");
 
             this.InternalFrame.BorderBrush = (Brush)FindResource("0HighlightBrush");
-            this.Title.Foreground = (Brush)FindResource("0HighlightForegroundBrush");            
+            this.Title.Foreground = (Brush)FindResource("0HighlightForegroundBrush");
+
+            //
+
+            foreach (IItem _i in Items)
+            {
+                IUXItem i = UXItem.GetUXItem(this, _i);
+
+                if (i == null)
+                    continue;
+
+                i.Highlight();
+            }
         }
 
         public override void Unhighlight()
-        {
+        {            
+            ItemVisualUpdate();
+
+            VisualiserUpdate_Items();
+
+            return;
+
+
+            //
+
             Brush backgroundBrush = GetBackgroundBrush();
 
             Brush foregroundBrush = GetForegroundBrush();
@@ -356,6 +395,18 @@ namespace m0.ZeroTypes.UX
             this.Title.Foreground = foregroundBrush;
             
             base.Unhighlight();
+
+            //
+
+            foreach (IItem _i in Items)
+            {
+                IUXItem i = UXItem.GetUXItem(this, _i);
+
+                if (i == null)
+                    continue;
+
+                i.Unhighlight();
+            }
         }
 
         protected override INoInEdgeInOutVertexVertex VertexChange(IExecution exe)        
