@@ -138,25 +138,42 @@ namespace m0.ZeroTypes.UX
                 this.TheGrid.RowDefinitions[1].Height = new GridLength(BorderSize);
             }
 
-            this.Frame.BorderBrush = GetBorderBrush();
+            SetBaselineColors();
+        }
 
-            if (IsSelected)
-                Select();
-            else
+        void SetBaselineColors()
+        {
+            Brush backgroundBrush = GetBackgroundBrush();
+
+            Brush foregroundBrush = GetForegroundBrush();
+
+            Brush borderBrush = GetBorderBrush();
+
+
+            this.Frame.Background = backgroundBrush;
+
+            this.Title.Foreground = foregroundBrush;
+            this.Foreground = foregroundBrush;
+
+            this.InternalFrame.BorderBrush = borderBrush;
+
+            this.Frame.BorderBrush = borderBrush;
+
+            if (ContentVisualiser != null) // not always works, but can
             {
-                if (IsHighlighted)
-                    Highlight();
-                else
-                    Unhighlight();
+                GeneralUtil.SetPropertyIfPresent(ContentVisualiser, "Foreground", foregroundBrush);
+                GeneralUtil.SetPropertyIfPresent(ContentVisualiser, "Background", backgroundBrush);
             }
-
-        }         
+        }
 
         public override void Select()
         {
             base.Select();
 
-            
+            this.InternalFrame.BorderBrush = (Brush)FindResource("0SelectionBrush");
+            this.Frame.BorderBrush = (Brush)FindResource("0SelectionBrush");
+
+
             this.Title.Foreground = (Brush)FindResource("0BackgroundBrush");
             this.Foreground = (Brush)FindResource("0BackgroundBrush");
 
@@ -177,43 +194,22 @@ namespace m0.ZeroTypes.UX
         {
             base.Unselect();
 
-            Brush backgroundBrush = GetBackgroundBrush();
-
-            Brush foregroundBrush = GetForegroundBrush();
-
-            Brush borderBrush = GetBorderBrush();
-
-
-            this.Frame.Background = backgroundBrush;
-
-            this.Title.Foreground = foregroundBrush;
-            this.Foreground = foregroundBrush;
-
-            this.InternalFrame.BorderBrush = borderBrush;
-
-            this.Frame.BorderBrush = borderBrush;
+            SetBaselineColors();
 
             this.Title.Cursor = Cursors.Arrow;
-
-            //
-
-            if (ContentVisualiser != null) // not always works, but can
-            {
-                GeneralUtil.SetPropertyIfPresent(ContentVisualiser, "Foreground", foregroundBrush);
-                GeneralUtil.SetPropertyIfPresent(ContentVisualiser, "Background", backgroundBrush);
-            }
         }
 
         public override void Highlight()
         {
             base.Highlight();
 
-            this.Foreground = (Brush)FindResource("0HighlightForegroundBrush"); 
-
-            this.Frame.BorderBrush = (Brush)FindResource("0HighlightBrush");
-            this.Frame.Background = (Brush)FindResource("0HighlightBrush");
-
             this.InternalFrame.BorderBrush = (Brush)FindResource("0HighlightBrush");
+            this.Frame.BorderBrush = (Brush)FindResource("0HighlightBrush");
+
+            this.Foreground = (Brush)FindResource("0HighlightForegroundBrush"); 
+           
+            this.Frame.Background = (Brush)FindResource("0HighlightBrush");
+            
             this.Title.Foreground = (Brush)FindResource("0HighlightForegroundBrush");
 
             if (ContentVisualiser != null) // not always works, but can
@@ -225,27 +221,7 @@ namespace m0.ZeroTypes.UX
 
         public override void Unhighlight()
         {
-            Brush backgroundBrush = GetBackgroundBrush();
-
-            Brush foregroundBrush = GetForegroundBrush();
-
-            Brush borderBrush = GetBorderBrush();
-
-            this.Foreground = foregroundBrush; 
-
-            this.Frame.Background = backgroundBrush;
-            this.Frame.BorderBrush = borderBrush;
-
-            this.InternalFrame.BorderBrush = borderBrush;
-            this.Title.Foreground = foregroundBrush;
-            
             base.Unhighlight();
-
-            if (ContentVisualiser != null) // not always works, but can
-            {
-                GeneralUtil.SetPropertyIfPresent(ContentVisualiser, "Foreground", foregroundBrush);
-                GeneralUtil.SetPropertyIfPresent(ContentVisualiser, "Background", backgroundBrush);
-            }
         }
 
         protected override INoInEdgeInOutVertexVertex VertexChange(IExecution exe)        

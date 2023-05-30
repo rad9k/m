@@ -282,15 +282,13 @@ namespace m0.ZeroTypes.UX
         {            
             base.Select();
 
-            return;
+            this.Frame.BorderBrush = (Brush)FindResource("0SelectionBrush");
+            this.InternalFrame.BorderBrush = (Brush)FindResource("0SelectionBrush");
 
-            
             this.Title.Foreground = (Brush)FindResource("0BackgroundBrush");
             this.Foreground = (Brush)FindResource("0BackgroundBrush");
 
-            this.Frame.Background = new SolidColorBrush(Colors.Red);
-                
-                //(Brush)FindResource("0SelectionBrush");
+            this.Frame.Background = (Brush)FindResource("0SelectionBrush");//new SolidColorBrush(Colors.Red);
 
             this.Title.Cursor = Cursors.ScrollAll;
 
@@ -308,27 +306,10 @@ namespace m0.ZeroTypes.UX
         }
 
         public override void Unselect()
-        {            
+        {   
+            SetBaselineColors();
+
             base.Unselect();
-
-            Brush backgroundBrush = GetBackgroundBrush();
-
-            Brush foregroundBrush = GetForegroundBrush();
-
-            Brush borderBrush = GetBorderBrush();
-
-
-
-            this.Frame.Background = backgroundBrush;
-
-            this.Title.Foreground = foregroundBrush;
-            this.Foreground = foregroundBrush;
-
-            this.InternalFrame.BorderBrush = borderBrush;
-
-            this.Frame.BorderBrush = borderBrush;
-
-            this.Title.Cursor = Cursors.Arrow;
 
             //
 
@@ -345,7 +326,7 @@ namespace m0.ZeroTypes.UX
 
         public override void Highlight()
         {            
-            //base.Highlight();
+            base.Highlight();
 
             this.Foreground = (Brush)FindResource("0HighlightForegroundBrush"); 
 
@@ -368,45 +349,27 @@ namespace m0.ZeroTypes.UX
             }
         }
 
-        public override void Unhighlight()
-        {            
-            ItemVisualUpdate();
-
-            VisualiserUpdate_Items();
-
-            return;
-
-
-            //
-
+        void SetBaselineColors()
+        {
             Brush backgroundBrush = GetBackgroundBrush();
 
             Brush foregroundBrush = GetForegroundBrush();
 
             Brush borderBrush = GetBorderBrush();
 
+            this.Frame.BorderBrush = borderBrush;
+            this.InternalFrame.BorderBrush = borderBrush;
 
-            this.Foreground = foregroundBrush; 
+            this.Foreground = foregroundBrush;
 
             this.Frame.Background = backgroundBrush;
-            this.Frame.BorderBrush = borderBrush;
 
-            this.InternalFrame.BorderBrush = borderBrush;
             this.Title.Foreground = foregroundBrush;
-            
+        }
+
+        public override void Unhighlight()
+        {
             base.Unhighlight();
-
-            //
-
-            foreach (IItem _i in Items)
-            {
-                IUXItem i = UXItem.GetUXItem(this, _i);
-
-                if (i == null)
-                    continue;
-
-                i.Unhighlight();
-            }
         }
 
         protected override INoInEdgeInOutVertexVertex VertexChange(IExecution exe)        

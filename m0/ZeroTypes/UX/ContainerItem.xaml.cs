@@ -117,12 +117,12 @@ namespace m0.ZeroTypes.UX
 
             //
 
-            NormalColorsUpdate();
+            SetBaselineColors();
 
             //
         }
 
-        void NormalColorsUpdate()
+        void SetBaselineColors()
         {
             Brush backgroundBrush = GetBackgroundBrush();
 
@@ -143,7 +143,10 @@ namespace m0.ZeroTypes.UX
         {
             base.Select();
 
-            
+            this.InternalFrame.BorderBrush = (Brush)FindResource("0SelectionBrush");
+            this.Frame.BorderBrush = (Brush)FindResource("0SelectionBrush");
+
+
             this.Title.Foreground = (Brush)FindResource("0BackgroundBrush");
             this.Foreground = (Brush)FindResource("0BackgroundBrush");
 
@@ -156,7 +159,7 @@ namespace m0.ZeroTypes.UX
         {
             base.Unselect();
 
-            NormalColorsUpdate();
+            SetBaselineColors();
 
             this.Title.Cursor = Cursors.Arrow;
         }
@@ -165,19 +168,18 @@ namespace m0.ZeroTypes.UX
         {
             base.Highlight();
 
+            this.InternalFrame.BorderBrush = (Brush)FindResource("0HighlightBrush");
+            this.Frame.BorderBrush = (Brush)FindResource("0HighlightBrush");
+
             this.Foreground = (Brush)FindResource("0HighlightForegroundBrush"); 
 
-            this.Frame.BorderBrush = (Brush)FindResource("0HighlightBrush");
             this.Frame.Background = (Brush)FindResource("0HighlightBrush");
-
-            this.InternalFrame.BorderBrush = (Brush)FindResource("0HighlightBrush");
+          
             this.Title.Foreground = (Brush)FindResource("0HighlightForegroundBrush");            
         }
 
         public override void Unhighlight()
-        {
-            NormalColorsUpdate();
-            
+        {           
             base.Unhighlight();
         }
 
