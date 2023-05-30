@@ -24,7 +24,7 @@ namespace m0.ZeroTypes.UX
     /// </summary>
     public partial class ContainerItem : UXItem, IUXContainer
     {
-        public Canvas Canvas { get; set; }        
+        public Canvas Canvas { get; set; }
 
         public ContainerItem() : base(new ZeroTypes.Edge(null))
         {
@@ -37,7 +37,7 @@ namespace m0.ZeroTypes.UX
 
         public override void VertexSetedUp()
         {
-            if(Canvas == null) { 
+            if (Canvas == null) {
                 Canvas = new Canvas();
                 TheGrid.Children.Add(Canvas);
             }
@@ -45,16 +45,16 @@ namespace m0.ZeroTypes.UX
             Canvas.ClipToBounds = true;
 
             Grid.SetRow(Canvas, 2);
-            
+
 
             base.VertexSetedUp();
         }
-        
+
         public override void ItemVisualUpdate()
         {
             base.ItemVisualUpdate();
 
-            if(ShowMeta)
+            if (ShowMeta)
             {
                 IEdge baseEdge = BaseEdge;
                 IVertex baseEdgeTo = baseEdge.To;
@@ -76,7 +76,7 @@ namespace m0.ZeroTypes.UX
                     this.Title.Text = meta_text + " : " + to_text;
                 else
                     this.Title.Text = to_text;
-            }            
+            }
             else
             {
                 IVertex baseEdgeTo = BaseEdgeTo;
@@ -90,15 +90,15 @@ namespace m0.ZeroTypes.UX
             double roundEdgeSize = RoundEdgeSize;
 
             if (roundEdgeSize != 0)
-            {                
+            {
                 this.Frame.CornerRadius = new CornerRadius(RoundEdgeSize);
-                
+
                 this.Title.Margin = new Thickness(RoundEdgeSize, RoundEdgeSize, RoundEdgeSize, 0);
 
                 Canvas.Margin = new Thickness(RoundEdgeSize, 0, RoundEdgeSize, RoundEdgeSize);
 
-                TheGrid.RowDefinitions[0].Height = new GridLength(18 + RoundEdgeSize);                
-            }                       
+                TheGrid.RowDefinitions[0].Height = new GridLength(18 + RoundEdgeSize);
+            }
 
             double borderSize = BorderSize;
 
@@ -117,6 +117,13 @@ namespace m0.ZeroTypes.UX
 
             //
 
+            NormalColorsUpdate();
+
+            //
+        }
+
+        void NormalColorsUpdate()
+        {
             Brush backgroundBrush = GetBackgroundBrush();
 
             Brush foregroundBrush = GetForegroundBrush();
@@ -130,9 +137,7 @@ namespace m0.ZeroTypes.UX
 
             this.InternalFrame.BorderBrush = borderBrush;
             this.Title.Foreground = foregroundBrush;
-
-            //
-        }         
+        }
 
         public override void Select()
         {
@@ -151,21 +156,7 @@ namespace m0.ZeroTypes.UX
         {
             base.Unselect();
 
-            Brush backgroundBrush = GetBackgroundBrush();
-
-            Brush foregroundBrush = GetForegroundBrush();
-
-            Brush borderBrush = GetBorderBrush();
-
-
-            this.Frame.Background = backgroundBrush;
-
-            this.Title.Foreground = foregroundBrush;
-            this.Foreground = foregroundBrush;
-
-            this.InternalFrame.BorderBrush = borderBrush;
-
-            this.Frame.BorderBrush = borderBrush;
+            NormalColorsUpdate();
 
             this.Title.Cursor = Cursors.Arrow;
         }
@@ -185,20 +176,7 @@ namespace m0.ZeroTypes.UX
 
         public override void Unhighlight()
         {
-            Brush backgroundBrush = GetBackgroundBrush();
-
-            Brush foregroundBrush = GetForegroundBrush();
-
-            Brush borderBrush = GetBorderBrush();
-
-
-            this.Foreground = foregroundBrush; 
-
-            this.Frame.Background = backgroundBrush;
-            this.Frame.BorderBrush = borderBrush;
-
-            this.InternalFrame.BorderBrush = borderBrush;
-            this.Title.Foreground = foregroundBrush;
+            NormalColorsUpdate();
             
             base.Unhighlight();
         }
