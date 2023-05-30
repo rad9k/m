@@ -543,15 +543,9 @@ namespace m0.ZeroTypes.UX
                 Height = size.Height;
             }
 
-            if (IsSelected)
-                Select();
-            else
-            {
-                if (IsHighlighted)
-                    Highlight();
-                else
-                    Unselect();
-            }            
+            //
+
+            GeneralUtil.SetPropertyIfPresent(this.Content, "Foreground", GetForegroundBrush());
 
             //
 
@@ -1483,17 +1477,6 @@ namespace m0.ZeroTypes.UX
         public IItem AddItem(IVertex typeVertex)
         {
             IEdge newEdge = VertexOperations.AddInstanceAndReturnEdge(Vertex, typeVertex, Item_meta);
-
-            /*IItem item = null;
-
-            if (GraphUtil.GetValueAndCompareStrings(typeVertex, "UXItem"))
-                item = (IItem)TypedEdge.Get(newEdge, typeof(ZeroTypes.UX.UXItem));
-            else
-            if (GraphUtil.GetValueAndCompareStrings(typeVertex, "UXAggregator"))
-                item = (IItem)TypedEdge.Get(newEdge, typeof(ZeroTypes.UX.UXContainer));
-            else
-                item = TypedEdge.Get_ItemVersion(newEdge);
-            */
 
             ITypedEdge _i = TypedEdge.Get(newEdge);
 

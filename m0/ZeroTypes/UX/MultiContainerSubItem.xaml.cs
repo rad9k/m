@@ -82,16 +82,8 @@ namespace m0.ZeroTypes.UX
         public void ItemVisualUpdate()
         {            
             Label.Text = UXTemplate.Name;
-            
-            if (IsSelected)
-                Select();
-            else
-            {
-                if (IsHighlighted)
-                    Highlight();
-                else
-                    Unhighlight();
-            }        
+
+            SetColors(GetParentBackgroundBrush(), GetParentForegroundBrush());      
         }
 
         private void SetColors(Brush backgroundBrush, Brush foregroundBrush)

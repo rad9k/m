@@ -115,20 +115,23 @@ namespace m0.ZeroTypes.UX
                 this.InternalFrame.BorderThickness = new Thickness(1);
             }
 
+            //
+
+            Brush backgroundBrush = GetBackgroundBrush();
+
+            Brush foregroundBrush = GetForegroundBrush();
+
             Brush borderBrush = GetBorderBrush();
 
-            this.Frame.BorderBrush = borderBrush;
-            this.InternalFrame.BorderBrush = borderBrush;
+            this.Foreground = foregroundBrush;
 
-            if (IsSelected)
-                Select();
-            else
-            {
-                if (IsHighlighted)
-                    Highlight();
-                else
-                    Unhighlight();
-            }
+            this.Frame.Background = backgroundBrush;
+            this.Frame.BorderBrush = borderBrush;
+
+            this.InternalFrame.BorderBrush = borderBrush;
+            this.Title.Foreground = foregroundBrush;
+
+            //
         }         
 
         public override void Select()
