@@ -337,11 +337,18 @@
     <Compile Include="ZeroTypes\UX\ContainerItem.xaml.cs">
       <DependentUpon>ContainerItem.xaml</DependentUpon>
     </Compile>
+    <Compile Include="ZeroTypes\UX\OvalItem.xaml.cs">
+      <DependentUpon>OvalItem.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="ZeroTypes\UX\ImageItem.xaml.cs">
+      <DependentUpon>ImageItem.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="ZeroTypes\UX\RhombusItem.xaml.cs">
+      <DependentUpon>RhombusItem.xaml</DependentUpon>
+    </Compile>
     <Compile Include="ZeroTypes\UX\RectangleItem.xaml.cs">
       <DependentUpon>RectangleItem.xaml</DependentUpon>
     </Compile>
-    <Compile Include="ZeroTypes\UX\RhombusItem.cs" />
-    <Compile Include="ZeroTypes\UX\OvalItem.cs" />
     <Compile Include="ZeroTypes\UX\InstanceCreationEnum.cs" />
     <Compile Include="ZeroTypes\UX\LineDecoratorBase.cs" />
     <Compile Include="ZeroTypes\UX\LineDecorator.cs" />
@@ -352,7 +359,6 @@
     <Compile Include="ZeroTypes\UX\Size.cs" />
     <Compile Include="ZeroTypes\UX\IUXVisualiser.cs" />
     <Compile Include="ZeroTypes\UX\UXDecoratorTemplate .cs" />
-    <Compile Include="ZeroTypes\UX\ImageItem.cs" />
     <Compile Include="ZeroTypes\UX\IUXItem.cs" />
     <Compile Include="ZeroTypes\UX\UXTemplate.cs" />
     <Compile Include="ZeroTypes\UX\UXContainer.cs" />
@@ -529,6 +535,18 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="ZeroTypes\UX\ContainerItem.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="ZeroTypes\UX\OvalItem.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="ZeroTypes\UX\ImageItem.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="ZeroTypes\UX\RhombusItem.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
