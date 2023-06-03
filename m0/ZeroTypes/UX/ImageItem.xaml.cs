@@ -47,7 +47,9 @@ namespace m0.ZeroTypes.UX
                 BitmapImage b = new BitmapImage(new Uri("images\\" + Filename, UriKind.Relative));
                 int q = b.PixelHeight; // will not load without this
                 Image.Source = b;
-            } catch { }
+            } catch {
+                UserInteractionUtil.ShowError("ImageItem", ""
+            }
 
             base.ItemVisualUpdate();
 
