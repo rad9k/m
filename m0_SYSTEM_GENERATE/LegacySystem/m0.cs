@@ -3313,7 +3313,7 @@ namespace m0
                 "Enum:InstanceCreationEnum{EnumValue:Instance,EnumValue:InstanceAndDirect,EnumValue:Direct}," +
                 "Class:LineDecoratorBase{Attribute:LineWidth{MinValue:1,MaxValue:10,$MinCardinality:0,$MaxCardinality:1},Association:ToItem{$MinCardinality:1,$MaxCardinality:1}}," +
                 "Class:UXDecoratorTemplate{Attribute:EdgeTestQuery{$MinCardinality:1,$MaxCardinality:1},Attribute:ToDiagramItemTestQuery{$MinCardinality:0,$MaxCardinality:1},Attribute:CreateEdgeOnly{$MinCardinality:0,$MaxCardinality:1},Attribute:ForceShowEditForm{$MinCardinality:0,$MaxCardinality:1},Attribute:DecoratorClass{$MinCardinality:0,$MaxCardinality:1},Attribute:DecoratorVertex{$MinCardinality:0,$MaxCardinality:1}}," +
-                "Class:ImageItem{Attribute:Filename{$MinCardinality:1,$MaxCardinality:1},Attribute:ShowMeta{$MinCardinality:0,$MaxCardinality:1}}," +
+                "Class:ImageItem{Attribute:Filename{$MinCardinality:1,$MaxCardinality:1},Attribute:ShowName{$MinCardinality:0,$MaxCardinality:1},Attribute:ShowMeta{$MinCardinality:0,$MaxCardinality:1}}," +
                 "Class:OvalItem{Attribute:ShowMeta{$MinCardinality:0,$MaxCardinality:1}}," +
                 "Class:RhombusItem{Attribute:ShowMeta{$MinCardinality:0,$MaxCardinality:1}}," +
                 "Class:RectangleItem{Attribute:ShowMeta{$MinCardinality:0,$MaxCardinality:1},Attribute:RoundEdgeSize{MinValue:0,MaxValue:200,$MinCardinality:0,$MaxCardinality:1},Association:VisualiserClass{$MinCardinality:0,$MaxCardinality:1},Attribute:VisualiserVertex{$MinCardinality:0,$MaxCardinality:1}}," +
@@ -3378,6 +3378,7 @@ namespace m0
             smzu.Get(false, @"ImageItem").AddVertex(sm.Get(false, "?$PlatformClassName"), @"m0.ZeroTypes.UX.ImageItem, m0, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null");
             smzu.Get(false, @"ImageItem\Filename").AddEdge(sm.Get(false, @"?$EdgeTarget"), sm.Get(false, @"ZeroTypes\String"));
             smzu.Get(false, @"ImageItem\ShowMeta").AddEdge(sm.Get(false, @"?$EdgeTarget"), sm.Get(false, @"ZeroTypes\Boolean"));
+            smzu.Get(false, @"ImageItem\ShowName").AddEdge(sm.Get(false, @"?$EdgeTarget"), sm.Get(false, @"ZeroTypes\Boolean"));
 
             // OvalItem
 
@@ -5866,7 +5867,31 @@ namespace m0
             /*MetaVertexTestQuery*/ null,
             /*ItemClass*/ smzu.Get(false, @"?RectangleItem"), /*InstanceCreation*/ Direct,
             /*CreateItemVertex*/ true, /*BorderWidth*/ -1, /*BackgroundColor*/null,/*ForegroundColor*/ null);
-            
+
+            IVertex vi = AddUXTemplate(/*where*/sdutz, /*name*/"Image", /*doNotShowInherited*/ false,
+            /*DirectVertexTestQuery*/ @"",
+            /*MetaVertexTestQuery*/ null,
+            /*ItemClass*/ smzu.Get(false, @"?ImageItem"), /*InstanceCreation*/ Direct,
+            /*CreateItemVertex*/ true, /*BorderWidth*/ -1, /*BackgroundColor*/null,/*ForegroundColor*/ null);
+
+            vi.Get(false, "ItemVertex:").AddVertex(Root.Get(false, @"System\Meta\ZeroTypes\UX\ImageItem\Filename"), "prezes.jpg");
+
+            IVertex vo = AddUXTemplate(/*where*/sdutz, /*name*/"Oval", /*doNotShowInherited*/ false,
+            /*DirectVertexTestQuery*/ @"",
+            /*MetaVertexTestQuery*/ null,
+            /*ItemClass*/ smzu.Get(false, @"?OvalItem"), /*InstanceCreation*/ Direct,
+            /*CreateItemVertex*/ true, /*BorderWidth*/ -1, /*BackgroundColor*/null,/*ForegroundColor*/ null);
+
+
+            IVertex vr = AddUXTemplate(/*where*/sdutz, /*name*/"Rhombus", /*doNotShowInherited*/ false,
+            /*DirectVertexTestQuery*/ @"",
+            /*MetaVertexTestQuery*/ null,
+            /*ItemClass*/ smzu.Get(false, @"?RhombusItem"), /*InstanceCreation*/ Direct,
+            /*CreateItemVertex*/ true, /*BorderWidth*/ -1, /*BackgroundColor*/null,/*ForegroundColor*/ null);
+
+
+
+
             IVertex v2 = AddUXTemplate_RectangleItem(/*where*/sdutz, /*name*/"Vertex RectangleItem", /*doNotShowInherited*/ false,
             /*DirectVertexTestQuery*/ @"",
             /*MetaVertexTestQuery*/ null,

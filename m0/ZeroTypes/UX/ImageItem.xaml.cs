@@ -37,13 +37,18 @@ namespace m0.ZeroTypes.UX
 
         public override void VertexSetedUp()
         {            
-            InternalFrame.BorderThickness = new Thickness(0);           
-
             base.VertexSetedUp();
         }
         
         public override void ItemVisualUpdate()
         {
+            try
+            {
+                BitmapImage b = new BitmapImage(new Uri("images\\" + Filename, UriKind.Relative));
+                int q = b.PixelHeight; // will not load without this
+                Image.Source = b;
+            } catch { }
+
             base.ItemVisualUpdate();
 
             if (ShowMeta)
@@ -71,12 +76,19 @@ namespace m0.ZeroTypes.UX
             }            
             else
             {
-                IVertex baseEdgeTo = BaseEdgeTo;
+                if (ShowName)
+                {
+                    IVertex baseEdgeTo = BaseEdgeTo;
 
-                if (baseEdgeTo != null)
-                    this.Title.Text = baseEdgeTo.Value.ToString();
+                    if (baseEdgeTo != null)
+                        this.Title.Text = baseEdgeTo.Value.ToString();
+                    else
+                        this.Title.Text = "Ø";
+                }
                 else
-                    this.Title.Text = "Ø";
+                {
+                    Title.Height = 0;
+                }
             }
            
             if (BorderSize != 0)
@@ -99,8 +111,6 @@ namespace m0.ZeroTypes.UX
             this.Title.Foreground = foregroundBrush;
             this.Foreground = foregroundBrush;
 
-            this.InternalFrame.BorderBrush = borderBrush;
-
             this.Frame.BorderBrush = borderBrush;            
         }
 
@@ -108,9 +118,7 @@ namespace m0.ZeroTypes.UX
         {
             base.Select();
 
-            this.InternalFrame.BorderBrush = (Brush)FindResource("0SelectionBrush");
             this.Frame.BorderBrush = (Brush)FindResource("0SelectionBrush");
-
 
             this.Title.Foreground = (Brush)FindResource("0BackgroundBrush");
             this.Foreground = (Brush)FindResource("0BackgroundBrush");
@@ -133,7 +141,6 @@ namespace m0.ZeroTypes.UX
         {
             base.Highlight();
 
-            this.InternalFrame.BorderBrush = (Brush)FindResource("0HighlightBrush");
             this.Frame.BorderBrush = (Brush)FindResource("0HighlightBrush");
 
             this.Foreground = (Brush)FindResource("0HighlightForegroundBrush"); 
@@ -170,7 +177,8 @@ namespace m0.ZeroTypes.UX
         
         // UNDER        
 
-        static IVertex ShowMeta_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\ImageItem\ShowMeta");        
+        static IVertex ShowMeta_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\ImageItem\ShowMeta");
+        static IVertex ShowName_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\ImageItem\ShowName");
         static IVertex Filename_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\ImageItem\Filename");
 
         public string Filename
@@ -194,6 +202,29 @@ namespace m0.ZeroTypes.UX
                     val.Value = value;
             }
         }
+
+        public bool ShowName
+        {
+            get
+            {
+                IVertex val = GraphUtil.GetQueryOutFirst(Vertex, "ShowName", null);
+
+                if (val == null)
+                    return false;
+
+                return GraphUtil.GetBooleanValueOrFalse(val);
+            }
+            set
+            {
+                IVertex val = GraphUtil.GetQueryOutFirst(Vertex, "ShowMeta", null);
+
+                if (val == null)
+                    val = Vertex.AddVertex(ShowName_meta, value);
+                else
+                    val.Value = value;
+            }
+        }
+    
         public bool ShowMeta
         {
             get
