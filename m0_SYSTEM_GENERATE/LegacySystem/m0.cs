@@ -3313,7 +3313,7 @@ namespace m0
                 "Enum:InstanceCreationEnum{EnumValue:Instance,EnumValue:InstanceAndDirect,EnumValue:Direct}," +
                 "Class:LineDecoratorBase{Attribute:LineWidth{MinValue:1,MaxValue:10,$MinCardinality:0,$MaxCardinality:1},Association:ToItem{$MinCardinality:1,$MaxCardinality:1}}," +
                 "Class:UXDecoratorTemplate{Attribute:EdgeTestQuery{$MinCardinality:1,$MaxCardinality:1},Attribute:ToDiagramItemTestQuery{$MinCardinality:0,$MaxCardinality:1},Attribute:CreateEdgeOnly{$MinCardinality:0,$MaxCardinality:1},Attribute:ForceShowEditForm{$MinCardinality:0,$MaxCardinality:1},Attribute:DecoratorClass{$MinCardinality:0,$MaxCardinality:1},Attribute:DecoratorVertex{$MinCardinality:0,$MaxCardinality:1}}," +
-                "Class:ImageItem{Attribute:Filename{$MinCardinality:1,$MaxCardinality:1},Attribute:ShowName{$MinCardinality:0,$MaxCardinality:1},Attribute:ShowMeta{$MinCardinality:0,$MaxCardinality:1}}," +
+                "Class:ImageItem{Attribute:Filename{$MinCardinality:1,$MaxCardinality:1},Attribute:ShowName{$MinCardinality:1,$MaxCardinality:1,$DefaultValue:True},Attribute:ShowMeta{$MinCardinality:0,$MaxCardinality:1}}," +
                 "Class:OvalItem{Attribute:ShowMeta{$MinCardinality:0,$MaxCardinality:1}}," +
                 "Class:RhombusItem{Attribute:ShowMeta{$MinCardinality:0,$MaxCardinality:1}}," +
                 "Class:RectangleItem{Attribute:ShowMeta{$MinCardinality:0,$MaxCardinality:1},Attribute:RoundEdgeSize{MinValue:0,MaxValue:200,$MinCardinality:0,$MaxCardinality:1},Association:VisualiserClass{$MinCardinality:0,$MaxCardinality:1},Attribute:VisualiserVertex{$MinCardinality:0,$MaxCardinality:1}}," +
