@@ -39,17 +39,22 @@ namespace m0.ZeroTypes.UX
         {            
             base.VertexSetedUp();
         }
+
+        bool shouldTryToLoad = true;
         
         public override void ItemVisualUpdate()
         {
-            try
-            {
-                BitmapImage b = new BitmapImage(new Uri("images\\" + Filename, UriKind.Relative));
-                int q = b.PixelHeight; // will not load without this
-                Image.Source = b;
-            } catch {
-                UserInteractionUtil.ShowError("ImageItem", "images\\" + Filename + " not found");
-            }
+            if(shouldTryToLoad)
+                try
+                {
+                    BitmapImage b = new BitmapImage(new Uri("images\\" + Filename, UriKind.Relative));
+                    int q = b.PixelHeight; // will not load without this
+                    Image.Source = b;
+                } catch {
+                    UserInteractionUtil.ShowError("ImageItem", "images\\" + Filename + " not found");
+
+                    shouldTryToLoad = false;
+                }
 
             base.ItemVisualUpdate();
 
