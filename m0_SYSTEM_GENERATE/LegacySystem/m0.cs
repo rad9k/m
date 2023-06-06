@@ -5875,6 +5875,8 @@ namespace m0
             /*CreateItemVertex*/ true, /*BorderWidth*/ -1, /*BackgroundColor*/null,/*ForegroundColor*/ null);
 
             vi.Get(false, "ItemVertex:").AddVertex(Root.Get(false, @"System\Meta\ZeroTypes\UX\ImageItem\Filename"), "prezes.jpg");
+            vi.Get(false, "ItemVertex:").AddVertex(Root.Get(false, @"System\Meta\ZeroTypes\UX\ImageItem\ShowName"), "False");
+            vi.Get(false, "ItemVertex:").AddVertex(Root.Get(false, @"System\Meta\ZeroTypes\UX\ImageItem\BorderSize"), "0");
 
             IVertex vo = AddUXTemplate(/*where*/sdutz, /*name*/"Oval", /*doNotShowInherited*/ false,
             /*DirectVertexTestQuery*/ @"",
@@ -5882,12 +5884,30 @@ namespace m0
             /*ItemClass*/ smzu.Get(false, @"?OvalItem"), /*InstanceCreation*/ Direct,
             /*CreateItemVertex*/ true, /*BorderWidth*/ -1, /*BackgroundColor*/null,/*ForegroundColor*/ null);
 
+            AddLineDecorator(/*where*/vo, /*name*/ "edge",
+   /*EdgeTestQuery*/@"",
+   /*ToDiagramTestQuery*/@"",
+   //smzu.Get(false, @"MetaExtendedLineDecorator"),               
+   /*StartAnchor*/null,
+   /*EndAnchor*/arrow,
+   /*LineWidth*/-1, /*IsDashed*/false,
+   /*BackgroundColor*/null, null);
+
 
             IVertex vr = AddUXTemplate(/*where*/sdutz, /*name*/"Rhombus", /*doNotShowInherited*/ false,
             /*DirectVertexTestQuery*/ @"",
             /*MetaVertexTestQuery*/ null,
             /*ItemClass*/ smzu.Get(false, @"?RhombusItem"), /*InstanceCreation*/ Direct,
             /*CreateItemVertex*/ true, /*BorderWidth*/ -1, /*BackgroundColor*/null,/*ForegroundColor*/ null);
+
+            AddLineDecorator(/*where*/vr, /*name*/ "edge",
+   /*EdgeTestQuery*/@"",
+   /*ToDiagramTestQuery*/@"",
+   //smzu.Get(false, @"MetaExtendedLineDecorator"),               
+   /*StartAnchor*/null,
+   /*EndAnchor*/arrow,
+   /*LineWidth*/-1, /*IsDashed*/false,
+   /*BackgroundColor*/null, null);
 
 
 

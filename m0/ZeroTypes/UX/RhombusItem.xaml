@@ -7,21 +7,10 @@
              mc:Ignorable="d" 
              >
 
-    <Border x:Name="Frame"  BorderBrush="{StaticResource 0ForegroundBrush}" BorderThickness="1" HorizontalAlignment="Stretch"  VerticalAlignment="Stretch">
-        <Grid x:Name="TheGrid">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="17"/>
-                <RowDefinition Height="1"/>
-                <RowDefinition Height="*"/>
-            </Grid.RowDefinitions>        
-                
-           <TextBlock Grid.Row="0" x:Name="Title" HorizontalAlignment="Center" Padding="3,0,3,0"></TextBlock>
-
-            <Border x:Name="InternalFrame" Grid.Row="1"  BorderThickness="0.5"/>
-
-        </Grid>
-
-    </Border>
+    <Grid>
+        <Path x:Name="Rhombus" Data="M50,0L100,50 50,100 0,50z"  Stretch="Fill" Margin="0" HorizontalAlignment="Left"  VerticalAlignment="Top"/>
+        <TextBlock x:Name="Title" HorizontalAlignment="Center" VerticalAlignment="Center" TextWrapping="Wrap" TextTrimming="CharacterEllipsis"/>
+    </Grid>
 
 
 </my:UXItem>

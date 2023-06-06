@@ -10,7 +10,7 @@
     <Border x:Name="Frame"  BorderBrush="{StaticResource 0ForegroundBrush}" BorderThickness="1" HorizontalAlignment="Stretch"  VerticalAlignment="Stretch">
         <StackPanel Orientation="Vertical">
             <Image Name="Image" Stretch="Fill"></Image>
-            <TextBlock x:Name="Title" HorizontalAlignment="Center" TextWrapping="Wrap" TextTrimming="CharacterEllipsis" Margin="0,2,0,0"/>
+            <TextBlock x:Name="Title" HorizontalAlignment="Center" TextWrapping="Wrap" TextTrimming="CharacterEllipsis" Margin="0,2,0,0" Background="Red"/>
         </StackPanel>
 
     </Border>

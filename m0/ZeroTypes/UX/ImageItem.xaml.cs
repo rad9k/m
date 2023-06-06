@@ -97,9 +97,8 @@ namespace m0.ZeroTypes.UX
                     Title.Height = 0;
                 }
             }
-           
-            if (BorderSize != 0)
-                this.Frame.BorderThickness = new Thickness(BorderSize);            
+                       
+            this.Frame.BorderThickness = new Thickness(BorderSize);            
 
             SetBaselineColors();
         }
