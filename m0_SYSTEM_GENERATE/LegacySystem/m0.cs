@@ -2720,7 +2720,7 @@ namespace m0
                 +",Class:HasColor{Attribute:Color{$MinCardinality:0,$MaxCardinality:1}}"
                 + ",Class:Item{Aggregation:Item{$MinCardinality:0,$MaxCardinality:-1}}"
                 + ",Class:UXItem{Attribute:Scale{$MinCardinality:1,$MaxCardinality:1,$DisplayLarger:,$DefaultValue:100},Attribute:DesignMode{$MinCardinality:0,$MaxCardinality:1},Attribute:Size{$MinCardinality:0,$MaxCardinality:1},Attribute:Position{$MinCardinality:0,$MaxCardinality:1},Attribute:Layout{$MinCardinality:0,$MaxCardinality:1},Attribute:BackgroundColor{$MinCardinality:0,$MaxCardinality:1},Attribute:ForegroundColor{$MinCardinality:0,$MaxCardinality:1},Attribute:BorderColor{$MinCardinality:0,$MaxCardinality:1},Attribute:BorderSize{MinValue:0,MaxValue:10,$MinCardinality:0,$MaxCardinality:1},Attribute:Gap{$MinCardinality:0,$MaxCardinality:1},Aggregation:Decorator{$MinCardinality:0,$MaxCardinality:-1},Association:UXTemplate{$MinCardinality:0,$MaxCardinality:1}}"
-                + ",Class:UXContainer{Attribute:IsExpanded{$MinCardinality:1,$MaxCardinality:1,$DefaultValue:True},Attribute:CollapsedSize{$MinCardinality:0,$MaxCardinality:1},Attribute:ExpandedSize{$MinCardinality:0,$MaxCardinality:1}}"
+                + ",Class:UXContainer{Attribute:IsExpanded{$MinCardinality:1,$MaxCardinality:1,$DefaultValue:True},Attribute:CollapsedSize{$MinCardinality:0,$MaxCardinality:1},Attribute:ExpandedSize{$MinCardinality:0,$MaxCardinality:1},Association:NewItemUXTemplate{$MinCardinality:0,$MaxCardinality:1}}"
                 + ",Class:Size{Attribute:Width,Attribute:Height}"
                 + ",Class:Position{Attribute:X,Attribute:Y}"
                 + ",Enum:LayoutTypeEnum{EnumValue:Vertical,EnumValue:Horizontal,EnumValue:Wrap,EnumValue:Manual,EnumValue:Auto,EnumValue:Hidden}"
@@ -3329,7 +3329,11 @@ namespace m0
             // UXItem [EXTENSION]
 
             smzu.Get(false, @"UXItem\UXTemplate").AddEdge(sm.Get(false, @"?$EdgeTarget"), sm.Get(false, @"ZeroTypes\UX\UXTemplate"));
-            
+
+            // UXContainer [EXTENSION]
+
+            smzu.Get(false, @"UXContainer\NewItemUXTemplate").AddEdge(sm.Get(false, @"?$EdgeTarget"), sm.Get(false, @"ZeroTypes\UX\UXTemplate"));
+
             // enums
 
             smzu.Get(false, @"InstanceCreationEnum").AddEdge(sm.Get(false, "?$Inherits"), sm.Get(false, @"ZeroTypes\EnumBase"));
@@ -5920,16 +5924,17 @@ namespace m0
             /*RoundEdgeSize*/-1,/*ShowMeta*/ false,
             /*VisualiserClass*/null,/*VisualiserVertex*/ false);
 
-            IVertex v3 = AddUXTemplate_ContainerItem(/*where*/sdutz, /*name*/"Vertex ContainerItem",/*doNotShowInherited*/ false,
+            IVertex vci = AddUXTemplate_ContainerItem(/*where*/sdutz, /*name*/"Vertex ContainerItem",/*doNotShowInherited*/ false,
             /*DirectVertexTestQuery*/ @"",
             /*MetaVertexTestQuery*/ null,
             /*InstanceCreation*/ Direct,
             /*CreateItemVertex*/ true, /*BorderWidth*/ -1, /*BackgroundColor*/null, /*ForegroundColor*/ null,
             /*RoundEdgeSize*/-1,/*ShowMeta*/ false, /*ContainerEdgeMetaVertex*/smzu);
-            
 
-        
-            
+            vci.Get(false, "ItemVertex:").AddEdge(Root.Get(false, @"System\Meta\ZeroTypes\UX\UXContainer\NewItemUXTemplate"),
+                Root.Get(false, @"System\Data\UX\Templates\ZeroUML"));
+
+
 
             AddLineDecorator(/*where*/v, /*name*/ "VERTEX EDGE",
                /*EdgeTestQuery*/@"",

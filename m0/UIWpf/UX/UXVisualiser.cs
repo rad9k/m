@@ -419,8 +419,14 @@ namespace m0.UIWpf.UX
             Canvas.SetLeft(item_UIElement, item.Position.X);
             Canvas.SetTop(item_UIElement, item.Position.Y);
 
-            
-            host.Canvas.Children.Add(item_UIElement);
+            try
+            {
+                host.Canvas.Children.Add(item_UIElement);
+            }
+            catch
+            {
+                UserInteractionUtil.ShowError("UXVisualiser", "Item allready opened in another visualiser instance");
+            }
 
             item.NestingLevel = host.NestingLevel + 1;
 
@@ -2092,6 +2098,7 @@ namespace m0.UIWpf.UX
         static IVertex ExpandedSize_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\UXContainer\ExpandedSize");
         static IVertex CollapsedSize_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\UXContainer\CollapsedSize");
         static IVertex ContainerEdgeMetaVertex_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\UXContainer\ContainerEdgeMetaVertex");
+        static IVertex NewItemUXTemplate_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\UXContainer\NewItemUXTemplate");
 
         static IVertex Size_type = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\Size");
 
@@ -2151,6 +2158,28 @@ namespace m0.UIWpf.UX
         public ZeroTypes.UX.Size CollapsedSizeCreate()
         {
             return new ZeroTypes.UX.Size(VertexOperations.AddInstanceAndReturnEdge(Vertex, Size_type, CollapsedSize_meta));
+        }
+
+        public ZeroTypes.UX.UXTemplate NewItemUXTemplate
+        {
+            get
+            {
+                IEdge val = GraphUtil.GetQueryOutFirstEdge(Vertex, "NewItemUXTemplate", null);
+
+                if (val == null)
+                    return null;
+
+                ITypedEdge _i = TypedEdge.Get(val);
+
+                if (_i != null && _i is UXTemplate)
+                    return (UXTemplate)_i;
+
+                return null;
+            }
+            set
+            {
+                GraphUtil.CreateOrReplaceEdge(Vertex, NewItemUXTemplate_meta, value.Vertex);
+            }
         }
 
         //

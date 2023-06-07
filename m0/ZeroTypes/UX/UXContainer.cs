@@ -29,7 +29,7 @@ namespace m0.ZeroTypes.UX
             c.Size.Height = 5000;
 
             UXTemplate diagram_template = new UXTemplate(MinusZero.Instance.Root.GetAll(false, @"System\Data\UX\Templates\ZeroUML").FirstOrDefault());
-            c.UXTemplate = diagram_template;
+            c.NewItemUXTemplate = diagram_template;
 
             return Visualiser_Vertex;
         }
@@ -38,13 +38,15 @@ namespace m0.ZeroTypes.UX
 
         static IVertex IsExpanded_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\UXContainer\IsExpanded");
         static IVertex ExpandedSize_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\UXContainer\ExpandedSize");
-        static IVertex CollapsedSize_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\UXContainer\CollapsedSize");        
+        static IVertex CollapsedSize_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\UXContainer\CollapsedSize");
+        static IVertex ContainerEdgeQuery_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\UXContainer\ContainerEdgeQuery");
+        static IVertex NewItemUXTemplate_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\UXContainer\NewItemUXTemplate");
 
         static IVertex Size_type = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\Size");
 
         public UXContainer(IEdge edge) : base(edge) { }
 
-        public bool IsExpanded
+        bool IUXContainer.IsExpanded
         {
             get
             {
@@ -105,7 +107,51 @@ namespace m0.ZeroTypes.UX
         public UX.Size CollapsedSizeCreate()
         {
             return new UX.Size(VertexOperations.AddInstanceAndReturnEdge(Vertex, Size_type, CollapsedSize_meta));
-        }     
+        }
+
+        public string ContainerEdgeQuery
+        {
+            get
+            {
+                IVertex val = GraphUtil.GetQueryOutFirst(Vertex, "ContainerEdgeQuery", null);
+
+                if (val == null)
+                    return "";
+
+                return GraphUtil.GetStringValue(val);
+            }
+            set
+            {
+                IVertex val = GraphUtil.GetQueryOutFirst(Vertex, "ContainerEdgeQuery", null);
+
+                if (val == null)
+                    val = Vertex.AddVertex(ContainerEdgeQuery_meta, value);
+                else
+                    val.Value = value;
+            }
+        }
+
+        public UX.UXTemplate NewItemUXTemplate
+        {
+            get
+            {
+                IEdge val = GraphUtil.GetQueryOutFirstEdge(Vertex, "NewItemUXTemplate", null);
+
+                if (val == null)
+                    return null;
+
+                ITypedEdge _i = TypedEdge.Get(val);
+
+                if (_i != null && _i is UXTemplate)
+                    return (UXTemplate)_i;
+
+                return null;
+            }
+            set
+            {
+                GraphUtil.CreateOrReplaceEdge(Vertex, NewItemUXTemplate_meta, value.Vertex);
+            }
+        }
     }
 
 }

@@ -19,6 +19,8 @@ namespace m0.ZeroTypes.UX
 
         UX.Size CollapsedSize { get; }
 
-        UX.Size CollapsedSizeCreate();        
+        UX.Size CollapsedSizeCreate();
+
+        UX.UXTemplate NewItemUXTemplate { get; set; }
     }
 }

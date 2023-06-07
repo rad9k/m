@@ -108,14 +108,14 @@ namespace m0.UIWpf.UX
 
            if (InstanceRadio.IsChecked == true)
            {
-                IVertex Instance = visualiser.UXTemplate.Vertex.GetAll(false, @"{InstanceCreation:Instance}");
+                IVertex Instance = visualiser.NewItemUXTemplate.Vertex.GetAll(false, @"{InstanceCreation:Instance}");
              
                foreach(IEdge d in Instance)
                     //if (BaseEdge.Get(false, "To:").Get(false, (string)GraphUtil.GetValue(d.To.Get(false, "MetaVertexTestQuery:"))) != null)
                     if(testVertex(BaseEdge.Get(false, "To:"),(string)GraphUtil.GetValue(d.To.Get(false, "MetaVertexTestQuery:"))))
                          ItemsList.AddEdge(null, d.To);
 
-                IVertex InstanceAndDirect = visualiser.UXTemplate.Vertex.GetAll(false, @"{InstanceCreation:InstanceAndDirect}");
+                IVertex InstanceAndDirect = visualiser.NewItemUXTemplate.Vertex.GetAll(false, @"{InstanceCreation:InstanceAndDirect}");
 
                 foreach (IEdge d in InstanceAndDirect) 
                      //if (BaseEdge.Get(false, "To:").Get(false, (string)GraphUtil.GetValue(d.To.Get(false, "MetaVertexTestQuery:"))) != null)
@@ -124,7 +124,7 @@ namespace m0.UIWpf.UX
            }
            else
            {               
-               IVertex InstanceAndDirect = visualiser.UXTemplate.Vertex.GetAll(false, @"{InstanceCreation:InstanceAndDirect}");
+               IVertex InstanceAndDirect = visualiser.NewItemUXTemplate.Vertex.GetAll(false, @"{InstanceCreation:InstanceAndDirect}");
 
                foreach (IEdge d in InstanceAndDirect)
                {
@@ -136,7 +136,7 @@ namespace m0.UIWpf.UX
                            ItemsList.AddEdge(null, d.To);
                }
 
-               IVertex Direct = visualiser.UXTemplate.Vertex.GetAll(false, @"{InstanceCreation:Direct}");
+               IVertex Direct = visualiser.NewItemUXTemplate.Vertex.GetAll(false, @"{InstanceCreation:Direct}");
 
                foreach (IEdge d in Direct)
                {

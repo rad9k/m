@@ -288,7 +288,10 @@ namespace m0.UIWpf.Commands
 
             DefaultVis=baseVertex.Get(false, @"Meta:\$DefaultOpenVisualiser:");
 
-            if(DefaultVis==null)
+            if (DefaultVis == null)
+                DefaultVis = baseVertex.Get(false, @"To:\$Is:\$DefaultOpenVisualiser:"); // yes. bad but it is
+
+            if (DefaultVis==null)
                 DefaultVis=baseVertex.Get(false, @"To:\$Is:\$Is:\$DefaultOpenVisualiser:"); // yes. bad but it is
 
             if (DefaultVis == null)
