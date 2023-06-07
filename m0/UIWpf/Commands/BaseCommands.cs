@@ -153,7 +153,7 @@ namespace m0.UIWpf.Commands
             Interaction.BeginInteractionWithGraph();
             ////////////////////////////////////////
 
-            IVertex Visualiser_Vertex = UXContainer.CreateDefaultContainer(baseVertex.Get(false, "To:"));
+            IVertex Visualiser_Vertex = UXContainer.CreateDefaultContainer(baseVertex);
 
             ////////////////////////////////////////
             Interaction.EndInteractionWithGraph();

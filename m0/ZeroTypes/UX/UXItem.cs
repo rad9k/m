@@ -176,6 +176,9 @@ namespace m0.ZeroTypes.UX
 
         public void AddDiagramLineObject(IUXItem toItem, ILineDecoratorBase newline)
         {
+            if (toItem == null)
+                return;
+
             newline.OwningVisualiser = this.OwningVisualiser;
 
             if (newline.UXTemplate != null)

@@ -16,7 +16,7 @@ namespace m0.ZeroTypes.UX
         
         public static IVertex CreateDefaultContainer(IVertex baseVertex)
         {
-            IEdge Visualiser_Edge = VertexOperations.AddInstanceAndReturnEdge(baseVertex, MinusZero.Instance.Root.Get(false, @"System\Meta\ZeroTypes\UX\UXContainer"));
+            IEdge Visualiser_Edge = VertexOperations.AddInstanceAndReturnEdge(baseVertex.Get(false, "To:"), MinusZero.Instance.Root.Get(false, @"System\Meta\ZeroTypes\UX\UXContainer"));
 
             IVertex Visualiser_Vertex = Visualiser_Edge.To;
 

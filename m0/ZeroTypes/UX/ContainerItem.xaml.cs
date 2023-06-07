@@ -134,6 +134,8 @@ namespace m0.ZeroTypes.UX
             this.Frame.BorderBrush = borderBrush;
 
             this.InternalFrame.BorderBrush = borderBrush;
+
+            this.Title.Background = backgroundBrush;
             this.Title.Foreground = foregroundBrush;
         }
 
@@ -144,7 +146,7 @@ namespace m0.ZeroTypes.UX
             this.InternalFrame.BorderBrush = (Brush)FindResource("0SelectionBrush");
             this.Frame.BorderBrush = (Brush)FindResource("0SelectionBrush");
 
-
+            this.Title.Background = (Brush)FindResource("0SelectionBrush");
             this.Title.Foreground = (Brush)FindResource("0BackgroundBrush");
             this.Foreground = (Brush)FindResource("0BackgroundBrush");
 
@@ -171,8 +173,10 @@ namespace m0.ZeroTypes.UX
 
             this.Foreground = (Brush)FindResource("0HighlightForegroundBrush"); 
 
-            this.Frame.Background = (Brush)FindResource("0HighlightBrush");
-          
+            this.Frame.Background = (Brush)FindResource("0BackgroundBrush");
+
+            this.Title.Background = (Brush)FindResource("0HighlightBrush");
+
             this.Title.Foreground = (Brush)FindResource("0HighlightForegroundBrush");            
         }
 

@@ -364,7 +364,14 @@ namespace m0.UIWpf.UX
         // TOO
         protected List<IUXItem> GetItemsByBaseEdge(IVertex edgeVertex)
         {
-           return GetItemsDictionaryByBaseEdgeTo()[GraphUtil.GetQueryOutFirst(edgeVertex, "To", null)];
+            Dictionary<IVertex, List<IUXItem>> dict = GetItemsDictionaryByBaseEdgeTo();
+
+            IVertex to = GraphUtil.GetQueryOutFirst(edgeVertex, "To", null);
+
+            if (dict.ContainsKey(to))
+                return dict[to];
+
+           return new List<IUXItem>();
         }        
 
         public void AddEdgesFromDefintion(IVertex baseVertex, IVertex definitionEdges)
@@ -587,12 +594,18 @@ namespace m0.UIWpf.UX
                 toFind = lineDecorator_BaseEdge.To;
 
             if (toFind != null)
-                foreach (IUXItem i in GetItemsDictionaryByBaseEdgeTo()[toFind]) {
-                    string tdtq = ((UXDecoratorTemplate)lineDecorator.UXTemplate).ToDiagramItemTestQuery;
+            {
+                Dictionary<IVertex, List<IUXItem>> dict = GetItemsDictionaryByBaseEdgeTo();
 
-                    if (!(tdtq != null && i.Vertex.Get(false, tdtq) == null))
-                        return i;
-                }
+                if(dict.ContainsKey(toFind))
+                    foreach (IUXItem i in dict[toFind])
+                    {
+                        string tdtq = ((UXDecoratorTemplate)lineDecorator.UXTemplate).ToDiagramItemTestQuery;
+
+                        if (!(tdtq != null && i.Vertex.Get(false, tdtq) == null))
+                            return i;
+                    }
+            }
 
             return null;
         }
@@ -1652,8 +1665,11 @@ namespace m0.UIWpf.UX
             {
                 if (ndi.InstanceOfMeta)
                 {
+                    IUXItem clickedItem = GetItemByPoint(p);
+
                     IEdge ve = VertexOperations.AddInstanceAndReturnEdge(
-                        BaseEdge.From
+                        clickedItem.BaseEdge.To
+                        //BaseEdge.To
                         //Vertex.Get(false, "CreationPool:")
                         , ndi.BaseEdge.Get(false, "To:"));
                     IVertex v = ve.To;

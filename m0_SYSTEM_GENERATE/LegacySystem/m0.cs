@@ -5787,6 +5787,9 @@ namespace m0
                 /*CreateItemVertex*/ true, /*BorderWidth*/ -1, /*BackgroundColor*/null, /*ForegroundColor*/ null,
                 /*RoundEdgeSize*/-1, /*ShowMeta*/ false, /*Orientation*/ OrientationEnum.Horizontal);
 
+            v5.Get(false, "ItemVertex:").AddEdge(Root.Get(false, @"System\Meta\ZeroTypes\UX\UXContainer\NewItemUXTemplate"),
+                Root.Get(false, @"System\Data\UX\Templates\ZeroUML"));
+
             MultiContainerItem_AddUXTemplate(v5, "Left",
                 Root.Get(false, @"System\Meta\ZeroUML\DoubleOperator\LeftExpression"),
                 "LeftExpression:",
@@ -5833,6 +5836,9 @@ namespace m0
                 /*CreateItemVertex*/ true, /*BorderWidth*/ -1, /*BackgroundColor*/null, /*ForegroundColor*/ null,
                 /*RoundEdgeSize*/-1, /*ShowMeta*/ false, /*Orientation*/ OrientationEnum.Vertical);
 
+            v4.Get(false, "ItemVertex:").AddEdge(Root.Get(false, @"System\Meta\ZeroTypes\UX\UXContainer\NewItemUXTemplate"),
+                Root.Get(false, @"System\Data\UX\Templates\ZeroUML"));
+
             MultiContainerItem_AddUXTemplate(v4, "Left",
                 Root.Get(false, @"System\Meta\ZeroUML\DoubleOperator\LeftExpression"),
                 "LeftExpression:",
@@ -5868,8 +5874,8 @@ namespace m0
 
             IVertex v = AddUXTemplate(/*where*/sdutz, /*name*/"Vertex", /*doNotShowInherited*/ false,
             /*DirectVertexTestQuery*/ @"",
-            /*MetaVertexTestQuery*/ null,
-            /*ItemClass*/ smzu.Get(false, @"?RectangleItem"), /*InstanceCreation*/ Direct,
+            /*MetaVertexTestQuery*/ @"",
+            /*ItemClass*/ smzu.Get(false, @"?RectangleItem"), /*InstanceCreation*/ InstanceAndDirect,
             /*CreateItemVertex*/ true, /*BorderWidth*/ -1, /*BackgroundColor*/null,/*ForegroundColor*/ null);
 
             IVertex vi = AddUXTemplate(/*where*/sdutz, /*name*/"Image", /*doNotShowInherited*/ false,

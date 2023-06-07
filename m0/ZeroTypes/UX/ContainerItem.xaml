@@ -15,7 +15,7 @@
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>        
                 
-           <TextBlock Grid.Row="0" x:Name="Title" HorizontalAlignment="Center" Padding="3,0,3,0"></TextBlock>
+           <TextBlock Grid.Row="0" x:Name="Title" HorizontalAlignment="Stretch" Padding="3,0,3,0" TextAlignment="Center"></TextBlock>
 
             <Border x:Name="InternalFrame" Grid.Row="1"  BorderThickness="0.5"/>
 
