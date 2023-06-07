@@ -12,7 +12,7 @@ namespace m0.ZeroTypes.UX
 {
     public class UXContainer : UXItem, IUXContainer
     {
-        public Canvas Canvas { get; }
+        public Canvas Canvas { get; set; }
         
         public static IVertex CreateDefaultContainer(IVertex baseVertex)
         {

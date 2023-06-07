@@ -122,6 +122,7 @@ namespace m0.ZeroTypes.UX
         static IVertex ExpandedSize_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\UXContainer\ExpandedSize");
         static IVertex CollapsedSize_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\UXContainer\CollapsedSize");
         static IVertex ContainerEdgeQuery_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\UXContainer\ContainerEdgeQuery");
+        static IVertex NewItemUXTemplate_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\UXContainer\NewItemUXTemplate");
 
         static IVertex Size_type = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\Size");        
 
@@ -207,6 +208,28 @@ namespace m0.ZeroTypes.UX
                     val = Vertex.AddVertex(ContainerEdgeQuery_meta, value);
                 else
                     val.Value = value;
+            }
+        }
+
+        public UX.UXTemplate NewItemUXTemplate
+        {
+            get
+            {
+                IEdge val = GraphUtil.GetQueryOutFirstEdge(Vertex, "NewItemUXTemplate", null);
+
+                if (val == null)
+                    return null;
+
+                ITypedEdge _i = TypedEdge.Get(val);
+
+                if (_i != null && _i is UXTemplate)
+                    return (UXTemplate)_i;
+
+                return null;
+            }
+            set
+            {
+                GraphUtil.CreateOrReplaceEdge(Vertex, NewItemUXTemplate_meta, value.Vertex);
             }
         }
 

@@ -458,9 +458,9 @@ namespace m0.UIWpf.UX
 
         void FindAndOrCreateContainerEdge(IUXItem item, bool userDirectInteraction)
         {
-            IUXItem itemParentItem = (IUXItem)item.ParentItem;
+            IUXContainer itemParentItem = (IUXContainer)item.ParentItem;
 
-            IVertex ContainerEdgeMetaVertex = itemParentItem.UXTemplate.ContainerEdgeMetaVertex;
+            IVertex ContainerEdgeMetaVertex = itemParentItem.NewItemUXTemplate.ContainerEdgeMetaVertex;
 
             IVertex itemBaseEdgeTo = item.BaseEdgeTo;
 

@@ -9,7 +9,7 @@ namespace m0.ZeroTypes.UX
 {
     public interface IUXContainer: IUXItem
     {
-        Canvas Canvas { get; }
+        Canvas Canvas { get; set; }
 
         bool IsExpanded { get; set; }
 
