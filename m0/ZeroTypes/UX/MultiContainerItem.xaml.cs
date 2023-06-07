@@ -24,9 +24,7 @@ namespace m0.ZeroTypes.UX
     /// Interaction logic for DiagramRectangleItem.xaml
     /// </summary>
     public partial class MultiContainerItem : UXContainer
-    {
-        public Canvas Canvas { get; set; }
-
+    {        
         static IVertex MultiContainerSubItem_type = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\MultiContainerSubItem");
 
         public MultiContainerItem() : base(new ZeroTypes.Edge(null))

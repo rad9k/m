@@ -23,9 +23,7 @@ namespace m0.ZeroTypes.UX
     /// Interaction logic for DiagramRectangleItem.xaml
     /// </summary>
     public partial class ContainerItem : UXContainer
-    {
-        public Canvas Canvas { get; set; }
-
+    {        
         public ContainerItem() : base(new ZeroTypes.Edge(null))
         {
             InitializeComponent();
