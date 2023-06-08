@@ -5798,23 +5798,8 @@ namespace m0
             MultiContainerItem_AddUXTemplate(v5, "Right",
                 Root.Get(false, @"System\Meta\ZeroUML\DoubleOperator\RightExpression"),
                 "RightExpression:",
-                0, 20);
-
-            MultiContainerItem_AddUXTemplate(v5, "Left2",
-                Root.Get(false, @"System\Meta\ZeroUML\DoubleOperator\LeftExpression"),
-                "LeftExpression:",
-                0, 30);
-
-            MultiContainerItem_AddUXTemplate(v5, "Right2",
-                Root.Get(false, @"System\Meta\ZeroUML\DoubleOperator\RightExpression"),
-                "RightExpression:",
-                0, 40);
-
-            /*
-            MultiContainerItem_AddUXTemplate(v5, "THIRD",
-                Root.Get(false, @"System\Meta\ZeroUML\DoubleOperator\RightExpression"),
-                "RightExpression:",
-                0, 30);*/
+                0, 20);            
+            
 
             AddLineDecorator(/*where*/v5, /*name*/ "edge",
                /*EdgeTestQuery*/@"",
@@ -5849,15 +5834,6 @@ namespace m0
                 "RightExpression:",
                 20, 0);
 
-            MultiContainerItem_AddUXTemplate(v4, "Left2",
-                Root.Get(false, @"System\Meta\ZeroUML\DoubleOperator\LeftExpression"),
-                "LeftExpression:",
-                30, 0);
-
-            MultiContainerItem_AddUXTemplate(v4, "Right2",
-                Root.Get(false, @"System\Meta\ZeroUML\DoubleOperator\RightExpression"),
-                "RightExpression:",
-                40, 0);
 
             AddLineDecorator(/*where*/v4, /*name*/ "edge",
                /*EdgeTestQuery*/@"",
@@ -5939,6 +5915,15 @@ namespace m0
 
             vci.Get(false, "ItemVertex:").AddEdge(Root.Get(false, @"System\Meta\ZeroTypes\UX\UXContainer\NewItemUXTemplate"),
                 Root.Get(false, @"System\Data\UX\Templates\ZeroUML"));
+
+            AddLineDecorator(/*where*/vci, /*name*/ "any edge",
+               /*EdgeTestQuery*/@"",
+               /*ToDiagramTestQuery*/@"",
+               //smzu.Get(false, @"MetaExtendedLineDecorator"),               
+               /*StartAnchor*/null,
+               /*EndAnchor*/arrow,
+               /*LineWidth*/-1, /*IsDashed*/false,
+               /*BackgroundColor*/null, null);
 
 
 

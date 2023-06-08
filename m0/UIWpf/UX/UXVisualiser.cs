@@ -467,7 +467,10 @@ namespace m0.UIWpf.UX
         {
             IUXContainer itemParentItem = (IUXContainer)item.ParentItem;
 
-            IVertex ContainerEdgeMetaVertex = itemParentItem.NewItemUXTemplate.ContainerEdgeMetaVertex;
+            IVertex ContainerEdgeMetaVertex = null;
+            
+            if(itemParentItem.UXTemplate != null)
+                ContainerEdgeMetaVertex = itemParentItem.UXTemplate.ContainerEdgeMetaVertex;
 
             IVertex itemBaseEdgeTo = item.BaseEdgeTo;
 
