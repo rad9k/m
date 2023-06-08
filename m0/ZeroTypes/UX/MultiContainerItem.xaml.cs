@@ -51,6 +51,11 @@ namespace m0.ZeroTypes.UX
             CreateSubConainerControls();
         }
 
+        public IUXMultiContainerSubItem GetContainerSubItem(IUXItem item)
+        {
+            return null;
+        }
+
         void CreateSubItemVertexes()
         {
             if (Items.Count == 0)

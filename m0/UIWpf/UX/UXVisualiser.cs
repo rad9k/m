@@ -393,7 +393,7 @@ namespace m0.UIWpf.UX
             if (!(item is UIElement))
                 return;
 
-            if (item is IMultiContainerSubItem)
+            if (item is IUXMultiContainerSubItem)
             {
                 foreach (IItem _i in item.Items)
                 {
@@ -1568,7 +1568,7 @@ namespace m0.UIWpf.UX
                         (itemPosition_relative.X + item_FrameworkElement.ActualWidth) > itemParent_FrameworkElement.ActualWidth ||
                         (itemPosition_relative.Y + item_FrameworkElement.Height) > itemParent_FrameworkElement.ActualHeight)
                     {
-                        IUXItem toBeParentItem = GetItemByPoint_ByCanvas(itemPosition_absolute);
+                        IUXContainer toBeParentItem = GetItemByPoint_ByCanvas(itemPosition_absolute);
 
                         if (toBeParentItem == null)
                             toBeParentItem = this;
@@ -1580,28 +1580,34 @@ namespace m0.UIWpf.UX
             }
             else
             {
-                IUXItem toBeParentItem = GetItemByPoint_ByCanvas(itemPosition_absolute); // can take some time, especially when moving
+                IUXContainer toBeParentItem = GetItemByPoint_ByCanvas(itemPosition_absolute); // can take some time, especially when moving
 
                 if (toBeParentItem != item.ParentItem && toBeParentItem != item)
                     MoveToParentItem(item, toBeParentItem);
             }
         }
 
-        private void MoveToParentItem(IUXItem item, IUXItem tobeParentItem)
+        private void MoveToParentItem(IUXItem item, IUXContainer NewParentItem)
         {
+            if (NewParentItem is IUXMultiContainerItem)
+            {
+                NewParentItem = ((IUXMultiContainerItem)NewParentItem).GetContainerSubItem(item);
+
+                if (NewParentItem == null)
+                    return;
+            }
             ////////////////////////////////////////
             Interaction.BeginInteractionWithGraph();
             ////////////////////////////////////////
 
-            IUXContainer OldParentItem = (IUXContainer)item.ParentItem;
-            IUXContainer NewParentItem = (IUXContainer)tobeParentItem;
+            IUXContainer OldParentItem = (IUXContainer)item.ParentItem;            
 
             if (OldParentItem == null)
                 OldParentItem = this;
 
             OldParentItem.Canvas.Children.Remove((UIElement)item);
-            
-            tobeParentItem.MoveExistingItemAsSubItem(item);
+
+            NewParentItem.MoveExistingItemAsSubItem(item);
             
             NewParentItem.Canvas.Children.Add((UIElement)item);
 

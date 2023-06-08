@@ -24,7 +24,7 @@ namespace m0.ZeroTypes.UX
     /// <summary>
     /// Interaction logic for DiagramRectangleItem.xaml
     /// </summary>
-    public partial class MultiContainerSubItem : UserControl, IMultiContainerSubItem
+    public partial class MultiContainerSubItem : UserControl, IUXMultiContainerSubItem
     {
         public Canvas Canvas { 
             get { return canvas; }
