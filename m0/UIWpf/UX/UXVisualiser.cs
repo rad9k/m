@@ -1589,13 +1589,13 @@ namespace m0.UIWpf.UX
 
         private void MoveToParentItem(IUXItem item, IUXContainer NewParentItem)
         {
-            if (NewParentItem is IUXMultiContainerItem)
+            /*if (NewParentItem is IUXMultiContainerItem)
             {
                 NewParentItem = ((IUXMultiContainerItem)NewParentItem).GetContainerSubItem(item);
 
                 if (NewParentItem == null)
                     return;
-            }
+            }*/
             ////////////////////////////////////////
             Interaction.BeginInteractionWithGraph();
             ////////////////////////////////////////

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace m0.ZeroTypes.UX
 {
-    public interface IMultiContainerSubItem: IUXContainer
-    {
+    public interface IUXMultiContainerSubItem: IUXContainer
+    {        
     }
 }

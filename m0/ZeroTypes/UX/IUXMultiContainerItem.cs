@@ -6,7 +6,8 @@ using System.Threading.Tasks;
 
 namespace m0.ZeroTypes.UX
 {
-    internal class IMultiContainerItem
+    public interface IUXMultiContainerItem : IUXContainer
     {
+        IUXMultiContainerSubItem GetContainerSubItem(IUXItem item);
     }
 }
