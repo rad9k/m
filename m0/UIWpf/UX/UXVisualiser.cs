@@ -1497,7 +1497,7 @@ namespace m0.UIWpf.UX
             {
                 IUXItem i = UXItem.GetUXItem(this, _i);
 
-                if (i == null || !(i is IUXContainer))
+                if (i == null || !(i is IUXContainer) || ((IUXContainer)i).Canvas == null)
                     continue;
 
                 Canvas item_canvas = ((IUXContainer)i).Canvas;
