@@ -18,6 +18,7 @@ using m0.ZeroTypes;
 using m0.Util;
 using System.Windows.Forms.VisualStyles;
 using m0.Graph.ExecutionFlow;
+using m0.User.Process.UX;
 
 namespace m0.ZeroTypes.UX
 {
@@ -51,6 +52,23 @@ namespace m0.ZeroTypes.UX
         public void VertexSetedUp()
         {            
             Canvas.ClipToBounds = true;                                   
+        }
+
+        private void UserControl_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            Size s = Size;
+
+            ////////////////////////////////////////
+            Interaction.BeginInteractionWithGraph();
+            //////////////////////////////////////// 
+
+            s.Width = ActualWidth;
+
+            s.Height = ActualHeight;
+
+            ////////////////////////////////////////
+            Interaction.EndInteractionWithGraph();
+            //////////////////////////////////////// 
         }
 
         protected Brush GetParentBackgroundBrush()
@@ -748,6 +766,6 @@ namespace m0.ZeroTypes.UX
 
         public List<ILineDecoratorBase> DiagramToAsMetaLines => throw new NotImplementedException();
 
-        public IItem ParentItem { get; set; }
+        public IItem ParentItem { get; set; }        
     }
 }

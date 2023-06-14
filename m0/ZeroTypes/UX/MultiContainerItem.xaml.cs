@@ -61,8 +61,24 @@ namespace m0.ZeroTypes.UX
             if (Items.Count == 0)
                 foreach (UXTemplate t in UXTemplate.UXTemplate_)
                 {
-                    IUXItem i = (IUXItem)AddItem(MultiContainerSubItem_type);
-                    i.UXTemplate = t;
+                    IUXItem item = (IUXItem)AddItem(MultiContainerSubItem_type);
+                    item.UXTemplate = t;                    
+
+                    IEdge template_SizeEdge = GraphUtil.GetQueryOutFirstEdge(t.ItemVertex, "Size", null);
+
+                    Size template_Size = null;
+
+                    if (template_SizeEdge != null)
+                    {
+                        template_Size = new Size(template_SizeEdge);
+
+                        item.SizeCreate();
+
+                        Size item_Size = item.Size;
+
+                        item_Size.Width = template_Size.Width;
+                        item_Size.Height = template_Size.Height;
+                    }
                 }
         }
 
@@ -90,23 +106,19 @@ namespace m0.ZeroTypes.UX
             }
         }
 
-        void InsertSubContainer(IUXItem subItem, int cnt, bool addSplitter)
+        void InsertSubContainer(IUXItem item, int cnt, bool addSplitter)
         {
-            if (!(subItem is UIElement))
+            if (!(item is UIElement))
                 return;
 
-            subItem.OwningVisualiser = this.OwningVisualiser;
+            item.OwningVisualiser = this.OwningVisualiser;
 
-            UIElement subItem_UIElement = (UIElement)subItem;
+            UIElement subItem_UIElement = (UIElement)item;
 
-            UXTemplate iUXTemplate = subItem.UXTemplate;
+            UXTemplate iUXTemplate = item.UXTemplate;
 
-            IEdge sizeEdge = GraphUtil.GetQueryOutFirstEdge(iUXTemplate.ItemVertex, "Size", null);
 
-            Size size = null;
-
-            if (sizeEdge != null)
-                size = new Size(sizeEdge);
+            Size size = item.Size;
             
             //
 
@@ -455,7 +467,6 @@ namespace m0.ZeroTypes.UX
             {
                 GraphUtil.CreateOrReplaceEdge(Vertex, Orientation_meta, OrientationEnumHelper.GetVertex(value));
             }
-        }        
-
+        }
     }
 }
