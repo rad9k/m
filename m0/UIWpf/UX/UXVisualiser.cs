@@ -393,6 +393,8 @@ namespace m0.UIWpf.UX
             if (!(item is UIElement))
                 return;
 
+            Items_all.Add(item);
+
             if (item is IUXMultiContainerSubItem)
             {
                 foreach (IItem _i in item.Items)
@@ -406,10 +408,7 @@ namespace m0.UIWpf.UX
                 }
 
                 return;
-            }
-            
-
-            Items_all.Add(item);
+            }                        
 
             //
 
