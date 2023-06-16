@@ -86,7 +86,7 @@ namespace m0.ZeroTypes.UX
 
                     Edge item_BaseEdge = item.BaseEdge;
 
-                    item_BaseEdge.From = empty;
+                    item_BaseEdge.From = empty; // need to have FAKE edge here
                     item_BaseEdge.Meta = empty; 
                     item_BaseEdge.To = empty;
 

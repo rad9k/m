@@ -397,6 +397,7 @@ namespace m0.UIWpf.UX
 
             if (item is IUXMultiContainerSubItem)
             {
+                IUXMultiContainerSubItem item_multiContainerSubItem = (IUXMultiContainerSubItem)item;
                 foreach (IItem _i in item.Items)
                 {
                     IUXItem i = UXItem.GetUXItem(this, _i);
@@ -404,7 +405,8 @@ namespace m0.UIWpf.UX
                     if (i == null)
                         continue;
 
-                    HostItem(host, i, newItemCreation);
+                    //HostItem(host, i, newItemCreation);
+                    HostItem(item_multiContainerSubItem, i, newItemCreation);
                 }
 
                 return;

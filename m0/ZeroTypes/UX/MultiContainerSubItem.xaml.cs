@@ -685,7 +685,7 @@ namespace m0.ZeroTypes.UX
 
         public Dictionary<IVertex, List<ILineDecoratorBase>> GetDiagramLinesBaseEdgeToDictionary()
         {
-            throw new NotImplementedException();
+            return new Dictionary<IVertex, List<ILineDecoratorBase>>();
         }
 
         public void RemoveFromCanvas()
@@ -737,6 +737,14 @@ namespace m0.ZeroTypes.UX
             if (!IsDisposed)
             {
                 IsDisposed = true;
+
+                foreach (IUXItem e in Items)
+                    if (e is IDisposable)
+                        ((IDisposable)e).Dispose();
+
+                foreach (IUXItem e in Decorators)
+                    if (e is IDisposable)
+                        ((IDisposable)e).Dispose();                
 
                 TypedEdge.RemoveFromDictionary(this);
             }
