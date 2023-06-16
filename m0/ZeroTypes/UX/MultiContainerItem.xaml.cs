@@ -60,6 +60,8 @@ namespace m0.ZeroTypes.UX
                 {
                     IUXItem item = (IUXItem)AddItem(MultiContainerSubItem_type);
 
+                    item.NestingLevel = this.NestingLevel + 1;
+
                     item.Vertex.Value = template.Name;
 
                     item.UXTemplate = template;                    

@@ -177,7 +177,7 @@ namespace m0.UIWpf.UX
 
             new ListVisualiserHelper(parentVisualiser,
                 MinusZero.Instance.Root.Get(false, @"System\Meta\Visualiser\UXV"),
-                 this,
+                this,
                 "UXV",
                 this,
                 false,

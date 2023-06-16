@@ -723,7 +723,17 @@ namespace m0.ZeroTypes.UX
             throw new NotImplementedException();
         }
 
-        public void UpdateDiagramLines() {}
+        public void UpdateDiagramLines() {
+            foreach (IItem _i in Items)
+            {
+                IUXItem i = UXItem.GetUXItem(this, _i);
+
+                if (i == null)
+                    continue;
+
+                i.UpdateDiagramLines();
+            }
+        }
 
         public void AddAsToMetaLine(ILineDecoratorBase line)
         {
