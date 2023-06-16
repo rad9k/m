@@ -762,9 +762,9 @@ namespace m0.ZeroTypes.UX
         public bool IsSelected { get; set; }
         public bool IsHighlighted { get; set; }
 
-        public List<ILineDecoratorBase> DiagramToLines => throw new NotImplementedException();
+        public List<ILineDecoratorBase> DiagramToLines { get; }
 
-        public List<ILineDecoratorBase> DiagramToAsMetaLines => throw new NotImplementedException();
+        public List<ILineDecoratorBase> DiagramToAsMetaLines { get; }
 
         public IItem ParentItem { get; set; }        
     }

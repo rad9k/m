@@ -427,7 +427,8 @@ namespace m0.UIWpf.UX
 
             try
             {
-                host.Canvas.Children.Add(item_UIElement);
+                if(host.Canvas != null)
+                    host.Canvas.Children.Add(item_UIElement);
             }
             catch
             {

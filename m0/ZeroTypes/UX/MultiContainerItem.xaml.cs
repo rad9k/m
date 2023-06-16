@@ -51,20 +51,20 @@ namespace m0.ZeroTypes.UX
             CreateSubConainerControls();
         }
 
-        public IUXMultiContainerSubItem GetContainerSubItem(IUXItem item)
-        {
-            return null;
-        }
-
         void CreateSubItemVertexes()
         {
+            IVertex baseEdgeTo = BaseEdge.To;
+
             if (Items.Count == 0)
-                foreach (UXTemplate t in UXTemplate.UXTemplate_)
+                foreach (UXTemplate template in UXTemplate.UXTemplate_)
                 {
                     IUXItem item = (IUXItem)AddItem(MultiContainerSubItem_type);
-                    item.UXTemplate = t;                    
 
-                    IEdge template_SizeEdge = GraphUtil.GetQueryOutFirstEdge(t.ItemVertex, "Size", null);
+                    item.Vertex.Value = template.Name;
+
+                    item.UXTemplate = template;                    
+
+                    IEdge template_SizeEdge = GraphUtil.GetQueryOutFirstEdge(template.ItemVertex, "Size", null);
 
                     Size template_Size = null;
 
@@ -79,6 +79,24 @@ namespace m0.ZeroTypes.UX
                         item_Size.Width = template_Size.Width;
                         item_Size.Height = template_Size.Height;
                     }
+
+                    item.BaseEdgeCreate();
+
+                    IVertex empty = m0.MinusZero.Instance.Empty;
+
+                    Edge item_BaseEdge = item.BaseEdge;
+
+                    item_BaseEdge.From = empty;
+                    item_BaseEdge.Meta = empty; 
+                    item_BaseEdge.To = empty;
+
+                    /*IEdge baseEdge = baseEdgeTo.GetAll(false, template.BaseEdgeQuery).FirstOrDefault();
+
+                    Edge item_BaseEdge = item.BaseEdge;
+
+                    item_BaseEdge.From = baseEdge.From;
+                    item_BaseEdge.Meta = baseEdge.Meta;
+                    item_BaseEdge.To = baseEdge.To;*/
                 }
         }
 
