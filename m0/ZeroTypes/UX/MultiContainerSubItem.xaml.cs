@@ -69,6 +69,8 @@ namespace m0.ZeroTypes.UX
             ////////////////////////////////////////
             Interaction.EndInteractionWithGraph();
             //////////////////////////////////////// 
+
+            UpdateDiagramLines();
         }
 
         protected Brush GetParentBackgroundBrush()
