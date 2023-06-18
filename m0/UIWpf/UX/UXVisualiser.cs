@@ -1108,6 +1108,9 @@ namespace m0.UIWpf.UX
                 if (ClickTarget == ClickTargetEnum.AnchorRightTop_CreateDiagramLine)
                     CreateAndUpdateCreateDiagramLine(e.GetPosition(Canvas).X, e.GetPosition(Canvas).Y);
 
+                if (ClickTarget == ClickTargetEnum.AnchorRightTop_SubItem_CreateDiagramLine)
+                    CreateAndUpdateCreateDiagramLine(e.GetPosition(Canvas).X, e.GetPosition(Canvas).Y);
+
                 if (ClickTarget == ClickTargetEnum.AnchorRightTop_MoveDiagramLine)
                     CreateAndUpdateMoveDiagramLine(e.GetPosition(Canvas).X, e.GetPosition(Canvas).Y);
 
@@ -1290,7 +1293,8 @@ namespace m0.UIWpf.UX
             
             
 
-            if (ClickTarget == ClickTargetEnum.AnchorRightTop_CreateDiagramLine)
+            if (ClickTarget == ClickTargetEnum.AnchorRightTop_CreateDiagramLine
+                || ClickTarget == ClickTargetEnum.AnchorRightTop_SubItem_CreateDiagramLine)
             {
                 if (HighlightedItem != null)
                 {
@@ -2225,9 +2229,13 @@ namespace m0.UIWpf.UX
 
         public virtual void VertexSetedUp() { }
 
-        public Dictionary<IUXItem, List<ILineDecoratorBase>> GetDiagramLinesToDiagramItemDictionary() { return null; }
+        public Dictionary<IUXItem, List<ILineDecoratorBase>> GetDiagramLinesToDiagramItemDictionary() { 
+            return new Dictionary<IUXItem, List<ILineDecoratorBase>>(); 
+        }
 
-        public Dictionary<IVertex, List<ILineDecoratorBase>> GetDiagramLinesBaseEdgeToDictionary() { return null; }
+        public Dictionary<IVertex, List<ILineDecoratorBase>> GetDiagramLinesBaseEdgeToDictionary() {
+            return new Dictionary<IVertex, List<ILineDecoratorBase>>();
+        }
 
         public virtual void RemoveFromCanvas() { }
 

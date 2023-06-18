@@ -17,13 +17,14 @@ using m0.Foundation;
 using m0.ZeroTypes;
 using m0.Util;
 using m0.UIWpf;
+using System.Windows.Media.Media3D;
 
 namespace m0.ZeroTypes.UX
 {
     /// <summary>
     /// Interaction logic for DiagramRectangleItem.xaml
     /// </summary>
-    public partial class MultiContainerItem : UXContainer
+    public partial class MultiContainerItem : UXContainer, IUXMultiContainerItem
     {        
         static IVertex MultiContainerSubItem_type = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\MultiContainerSubItem");
 
@@ -150,6 +151,8 @@ namespace m0.ZeroTypes.UX
                 splitter.Background = (Brush)FindResource("0VeryLightHighlightBrush");
 
                 SubGrid.Children.Add(splitter);
+
+                splitter.DragCompleted += Splitter_DragCompleted;
             }
 
             if (Orientation == OrientationEnum.Horizontal)
@@ -224,6 +227,11 @@ namespace m0.ZeroTypes.UX
 
                 Grid.SetColumn(subItem_UIElement, cnt);
             }
+        }
+
+        private void Splitter_DragCompleted(object sender, System.Windows.Controls.Primitives.DragCompletedEventArgs e)
+        {
+            UpdateSubItemAchors();
         }
         
         public override void ItemVisualUpdate()
@@ -334,10 +342,12 @@ namespace m0.ZeroTypes.UX
                 IUXItem i = UXItem.GetUXItem(this, _i);
 
                 if (i == null)
-                    continue;
+                    continue;            
 
                 i.Select();
             }
+
+            AddSubItemAchors();
         }
 
         public override void Unselect()
@@ -382,6 +392,55 @@ namespace m0.ZeroTypes.UX
 
                 i.Highlight();
             }
+        }
+        protected override void UpdateAnchors(double left, double top, double width, double height)
+        {
+            base.UpdateAnchors(left, top, width, height);
+
+            UpdateSubItemAchors();
+        }
+
+        void UpdateSubItemAchors() { UpdateOrAddSubItemAchors(true); }
+
+        void AddSubItemAchors() { UpdateOrAddSubItemAchors(false); }
+
+        void UpdateOrAddSubItemAchors(bool doUpdate)
+        {
+            foreach (IItem _i in Items)
+            {
+                IUXItem i = UXItem.GetUXItem(this, _i);
+
+                if (i == null || !(i is IUXContainer) || !(i is FrameworkElement))
+                    continue;
+
+                IUXContainer subItem = (IUXContainer)i;
+
+                FrameworkElement subItem_FrameworkElement = (FrameworkElement)i;
+
+                Point subItemLeftTop = subItem_FrameworkElement.TranslatePoint(new Point(0, 0), OwningVisualiser.Canvas);
+
+                double _left = subItemLeftTop.X;
+                double _top = subItemLeftTop.Y;
+                double _right = _left + subItem_FrameworkElement.ActualWidth;
+
+                if (doUpdate)
+                    UpdateAnchor(ClickTargetEnum.AnchorRightTop_SubItem_CreateDiagramLine, _right, _top - AnchorSize, subItem);
+                else
+                    AddAnchor(ClickTargetEnum.AnchorRightTop_SubItem_CreateDiagramLine, _right, _top - AnchorSize, subItem);
+            }
+        }
+
+        protected void UpdateAnchor(ClickTargetEnum anchorType, double left, double top, IUXItem item)
+        {
+            foreach (FrameworkElement r in Anchors)
+                if (GetAnchorsClickTarget(r) == anchorType && GetAnchorsSubItem(r) == item)
+                {
+                    Canvas.SetLeft(r, left);
+                    Canvas.SetTop(r, top);
+
+                    r.Width = AnchorSize;
+                    r.Height = AnchorSize;
+                }
         }
 
         void SetBaselineColors()

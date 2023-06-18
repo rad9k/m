@@ -18,6 +18,7 @@ namespace m0.ZeroTypes.UX
         AnchorLeftTop,
         AnchorMiddleTop,
         AnchorRightTop_CreateDiagramLine,
+        AnchorRightTop_SubItem_CreateDiagramLine,
         AnchorRightTop_MoveDiagramLine,
         AnchorLeftMiddle,
         AnchorRightMiddle,

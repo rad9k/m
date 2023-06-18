@@ -20,6 +20,7 @@ namespace m0.ZeroTypes.UX
     {
         public Cursor Cursor;
         public ClickTargetEnum ClickTarget;
+        public IUXItem SubItem;
     }
 
     public class UXItem : UserControl, IUXItem, IPlatformClass
@@ -198,14 +199,14 @@ namespace m0.ZeroTypes.UX
         }
 
         public void RemoveDiagramLine(ILineDecoratorBase line)
-        {            
+        {
             needRebuildDiagramLinesDictionary = true;
 
             line.ToItem.DiagramToLines.Remove(line);
 
             line.RemoveFromCanvas();
 
-            Vertex.DeleteEdge(line.Edge);            
+            Vertex.DeleteEdge(line.Edge);
         }
 
         public virtual void Select()
@@ -335,7 +336,7 @@ namespace m0.ZeroTypes.UX
                 return null;
 
             if (parent is IUXContainer)
-            {                
+            {
                 if (i is IUXItem)
                     return (IUXItem)i;
             }
@@ -753,7 +754,7 @@ namespace m0.ZeroTypes.UX
         protected void UpdateAnchor(ClickTargetEnum anchorType, double left, double top)
         {
             foreach (FrameworkElement r in Anchors)
-                if (GetClickTarget(r) == anchorType)
+                if (GetAnchorsClickTarget(r) == anchorType)
                 {
                     Canvas.SetLeft(r, left);
                     Canvas.SetTop(r, top);
@@ -765,16 +766,24 @@ namespace m0.ZeroTypes.UX
 
         protected FrameworkElement AddAnchor(ClickTargetEnum anchorType, double left, double top)
         {
-            FrameworkElement r;
+            return AddAnchor(anchorType, left, top, null);
+        }
 
-            if (anchorType == ClickTargetEnum.AnchorRightTop_CreateDiagramLine || anchorType == ClickTargetEnum.AnchorRightTop_MoveDiagramLine)
+        protected FrameworkElement AddAnchor(ClickTargetEnum anchorType, double left, double top, IUXItem subItem)
+        {
+            FrameworkElement r;            
+
+            if (anchorType == ClickTargetEnum.AnchorRightTop_CreateDiagramLine
+                || anchorType == ClickTargetEnum.AnchorRightTop_SubItem_CreateDiagramLine
+                || anchorType == ClickTargetEnum.AnchorRightTop_MoveDiagramLine)
             {
                 TextBox l = new TextBox();
                 l.IsReadOnly = true;
                 l.Focusable = false;
                 l.BorderThickness = new Thickness(0);
 
-                if (anchorType == ClickTargetEnum.AnchorRightTop_CreateDiagramLine)
+                if (anchorType == ClickTargetEnum.AnchorRightTop_CreateDiagramLine
+                    || anchorType == ClickTargetEnum.AnchorRightTop_SubItem_CreateDiagramLine)
                 {
                     l.FontSize = 22;
                     l.Text = "*";
@@ -815,7 +824,10 @@ namespace m0.ZeroTypes.UX
             r.Width = AnchorSize;
             r.Height = AnchorSize;
 
-            SetClickTarget(r, anchorType);
+            SetAnchorsClickTarget(r, anchorType);
+
+            if (subItem != null)
+                SetAnchorsSubItem(r, subItem);
 
 
             Anchors.Add(r);
@@ -826,39 +838,43 @@ namespace m0.ZeroTypes.UX
             switch (anchorType)
             {
                 case ClickTargetEnum.AnchorLeftTop:
-                    SetCursor(r, Cursors.SizeNWSE);
+                    SetAnchorsCursor(r, Cursors.SizeNWSE);
                     break;
 
                 case ClickTargetEnum.AnchorMiddleTop:
-                    SetCursor(r, Cursors.SizeNS);
+                    SetAnchorsCursor(r, Cursors.SizeNS);
                     break;
 
                 case ClickTargetEnum.AnchorRightTop_CreateDiagramLine:
-                    SetCursor(r, Cursors.Pen);
+                    SetAnchorsCursor(r, Cursors.Pen);
+                    break;
+
+                case ClickTargetEnum.AnchorRightTop_SubItem_CreateDiagramLine:
+                    SetAnchorsCursor(r, Cursors.Pen);
                     break;
 
                 case ClickTargetEnum.AnchorRightTop_MoveDiagramLine:
-                    SetCursor(r, Cursors.Pen);
+                    SetAnchorsCursor(r, Cursors.Pen);
                     break;
 
                 case ClickTargetEnum.AnchorLeftMiddle:
-                    SetCursor(r, Cursors.SizeWE);
+                    SetAnchorsCursor(r, Cursors.SizeWE);
                     break;
 
                 case ClickTargetEnum.AnchorRightMiddle:
-                    SetCursor(r, Cursors.SizeWE);
+                    SetAnchorsCursor(r, Cursors.SizeWE);
                     break;
 
                 case ClickTargetEnum.AnchorLeftBottom:
-                    SetCursor(r, Cursors.SizeNESW);
+                    SetAnchorsCursor(r, Cursors.SizeNESW);
                     break;
 
                 case ClickTargetEnum.AnchorMiddleBottom:
-                    SetCursor(r, Cursors.SizeNS);
+                    SetAnchorsCursor(r, Cursors.SizeNS);
                     break;
 
                 case ClickTargetEnum.AnchorRightBottom:
-                    SetCursor(r, Cursors.SizeNWSE);
+                    SetAnchorsCursor(r, Cursors.SizeNWSE);
                     break;
             }
 
@@ -881,17 +897,27 @@ namespace m0.ZeroTypes.UX
             return e;
         }
 
-        public void SetCursor(FrameworkElement r, Cursor c)
+        public void SetAnchorsCursor(FrameworkElement r, Cursor c)
         {
             ((CursorAndClickTarget)r.Tag).Cursor = c;
         }
 
-        public void SetClickTarget(FrameworkElement r, ClickTargetEnum c)
+        public void SetAnchorsClickTarget(FrameworkElement r, ClickTargetEnum c)
         {
             ((CursorAndClickTarget)r.Tag).ClickTarget = c;
         }
 
-        public ClickTargetEnum GetClickTarget(FrameworkElement r)
+        public void SetAnchorsSubItem(FrameworkElement r, IUXItem i)
+        {
+            ((CursorAndClickTarget)r.Tag).SubItem = i;
+        }
+
+        public IUXItem GetAnchorsSubItem(FrameworkElement r)
+        {
+            return ((CursorAndClickTarget)r.Tag).SubItem;
+        }
+
+        public ClickTargetEnum GetAnchorsClickTarget(FrameworkElement r)
         {
             return ((CursorAndClickTarget)r.Tag).ClickTarget;
         }
@@ -918,18 +944,21 @@ namespace m0.ZeroTypes.UX
             OwningVisualiser.ClickPositionX_AnchorCordinates = e.GetPosition((IInputElement)sender).X;
             OwningVisualiser.ClickPositionY_AnchorCordinates = e.GetPosition((IInputElement)sender).Y;
 
-            FrameworkElement a = (FrameworkElement)sender;
+            FrameworkElement anchor = (FrameworkElement)sender;
 
-            OwningVisualiser.ClickTarget = GetClickTarget(a);
+            OwningVisualiser.ClickTarget = GetAnchorsClickTarget(anchor);
 
-            OwningVisualiser.ClickedAnchor = a;
+            OwningVisualiser.ClickedAnchor = anchor;
 
-            OwningVisualiser.ClickedItem = this;
+            if (OwningVisualiser.ClickTarget == ClickTargetEnum.AnchorRightTop_SubItem_CreateDiagramLine)
+                OwningVisualiser.ClickedItem = GetAnchorsSubItem(anchor);
+            else
+                OwningVisualiser.ClickedItem = this;
 
             e.Handled = true;
         }
 
-        private void UpdateAnchors(double left, double top, double width, double height)
+        protected virtual void UpdateAnchors(double left, double top, double width, double height)
         {
             double right = left + width;
             double bottom = top + height;
