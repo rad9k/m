@@ -5648,7 +5648,7 @@ namespace m0
             return v;
         }
 
-        void MultiContainerItem_AddUXTemplate(IVertex where, string Name, IVertex ContainerEdgeMetaVertex, string baseEdgeQuery, double Width, double Height)
+        IVertex MultiContainerItem_AddUXTemplate(IVertex where, string Name, IVertex ContainerEdgeMetaVertex, string baseEdgeQuery, double Width, double Height)
         {
             IVertex t = where.AddVertex(Root.Get(false, @"System\Meta\ZeroTypes\UX\UXTemplate"), null);
 
@@ -5666,6 +5666,8 @@ namespace m0
 
             t_ItemVertex_Size.AddVertex(Root.Get(false, @"System\Meta\ZeroTypes\UX\Size\Width"), Width);
             t_ItemVertex_Size.AddVertex(Root.Get(false, @"System\Meta\ZeroTypes\UX\Size\Height"), Height);
+
+            return t;
         }
 
         void AddLineDecorator(IVertex v,
@@ -5790,10 +5792,19 @@ namespace m0
             v5.Get(false, "ItemVertex:").AddEdge(Root.Get(false, @"System\Meta\ZeroTypes\UX\UXContainer\NewItemUXTemplate"),
                 Root.Get(false, @"System\Data\UX\Templates\ZeroUML"));
 
-            MultiContainerItem_AddUXTemplate(v5, "Left",
+            IVertex lt = MultiContainerItem_AddUXTemplate(v5, "Left",
                 Root.Get(false, @"System\Meta\ZeroUML\DoubleOperator\LeftExpression"),
                 "LeftExpression:",
                 0, 10);
+
+            AddLineDecorator(/*where*/lt, /*name*/ "edge",
+               /*EdgeTestQuery*/@"",
+               /*ToDiagramTestQuery*/@"",
+               //smzu.Get(false, @"MetaExtendedLineDecorator"),               
+               /*StartAnchor*/null,
+               /*EndAnchor*/arrow,
+               /*LineWidth*/-1, /*IsDashed*/false,
+               /*BackgroundColor*/null, null);
 
             MultiContainerItem_AddUXTemplate(v5, "Right",
                 Root.Get(false, @"System\Meta\ZeroUML\DoubleOperator\RightExpression"),
@@ -5824,10 +5835,19 @@ namespace m0
             v4.Get(false, "ItemVertex:").AddEdge(Root.Get(false, @"System\Meta\ZeroTypes\UX\UXContainer\NewItemUXTemplate"),
                 Root.Get(false, @"System\Data\UX\Templates\ZeroUML"));
 
-            MultiContainerItem_AddUXTemplate(v4, "Left",
+            IVertex v4_lt = MultiContainerItem_AddUXTemplate(v4, "Left",
                 Root.Get(false, @"System\Meta\ZeroUML\DoubleOperator\LeftExpression"),
                 "LeftExpression:",
                 10, 0);
+
+            AddLineDecorator(/*where*/v4_lt, /*name*/ "edge",
+               /*EdgeTestQuery*/@"",
+               /*ToDiagramTestQuery*/@"",
+               //smzu.Get(false, @"MetaExtendedLineDecorator"),               
+               /*StartAnchor*/null,
+               /*EndAnchor*/arrow,
+               /*LineWidth*/-1, /*IsDashed*/false,
+               /*BackgroundColor*/null, null);
 
             MultiContainerItem_AddUXTemplate(v4, "Right",
                 Root.Get(false, @"System\Meta\ZeroUML\DoubleOperator\RightExpression"),
