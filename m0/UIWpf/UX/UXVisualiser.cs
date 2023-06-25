@@ -2053,9 +2053,14 @@ namespace m0.UIWpf.UX
 
                 if (needAdding) {
                     toDiagramItems = GetItemsByBaseEdgeTo_ForLines(e);
-
+                    
                     foreach (IUXItem toDiagramItem in toDiagramItems)
                     {
+                        if (item is IUXMultiContainerItem
+                            && toDiagramItem is IUXMultiContainerSubItem
+                            && toDiagramItem.ParentItem == item)
+                            continue;
+
                         UXDecoratorTemplate lineDef = GetLineDefinition(e, item, toDiagramItem);
 
                         if (lineDef != null)

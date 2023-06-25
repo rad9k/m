@@ -87,19 +87,19 @@ namespace m0.ZeroTypes.UX
 
                     IVertex empty = m0.MinusZero.Instance.Empty;
 
-                    Edge item_BaseEdge = item.BaseEdge;
+                    /*Edge item_BaseEdge = item.BaseEdge;
 
                     item_BaseEdge.From = empty; // need to have FAKE edge here
                     item_BaseEdge.Meta = empty; 
-                    item_BaseEdge.To = empty;
+                    item_BaseEdge.To = empty; */
 
-                    /*IEdge baseEdge = baseEdgeTo.GetAll(false, template.BaseEdgeQuery).FirstOrDefault();
+                    IEdge baseEdge = baseEdgeTo.GetAll(false, template.BaseEdgeQuery).FirstOrDefault();
 
                     Edge item_BaseEdge = item.BaseEdge;
 
                     item_BaseEdge.From = baseEdge.From;
                     item_BaseEdge.Meta = baseEdge.Meta;
-                    item_BaseEdge.To = baseEdge.To;*/
+                    item_BaseEdge.To = baseEdge.To;
                 }
         }
 
