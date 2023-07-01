@@ -49,7 +49,11 @@ namespace m0.ZeroTypes.UX
 
         public List<ILineDecoratorBase> DiagramToAsMetaLines { get; } = new List<ILineDecoratorBase>();
 
-        public UXItem(IEdge _edge)
+        public UXItem(IEdge _edge): this(_edge, false)
+        {
+        }
+
+        public UXItem(IEdge _edge, bool noAnchors)
         {
             NestingLevel = 0;
 
@@ -61,15 +65,18 @@ namespace m0.ZeroTypes.UX
 
             //
 
-            Anchors = new List<FrameworkElement>();
+            if (!noAnchors)
+            {
+                Anchors = new List<FrameworkElement>();
 
-            //this.SizeChanged += DiagramItemBase_SizeChanged;
+                //this.SizeChanged += DiagramItemBase_SizeChanged;
 
-            this.MouseEnter += DiagramItemBase_MouseEnter;
+                this.MouseEnter += DiagramItemBase_MouseEnter;
 
-            this.MouseLeave += DiagramItemBase_MouseLeave;
+                this.MouseLeave += DiagramItemBase_MouseLeave;
 
-            this.MouseLeftButtonDown += MouseLeftButtonDownHandler;
+                this.MouseLeftButtonDown += MouseLeftButtonDownHandler;
+            }
         }
 
         protected Brush GetBackgroundBrush()

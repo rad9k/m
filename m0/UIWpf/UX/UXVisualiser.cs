@@ -1739,6 +1739,9 @@ namespace m0.UIWpf.UX
 
         public virtual bool DoCreateDiagramLine(IUXItem fromItem, IUXItem toItem)
         {
+            if (toItem == this)
+                return false;
+
             IEdge toEdge = toItem.BaseEdge;
 
             
