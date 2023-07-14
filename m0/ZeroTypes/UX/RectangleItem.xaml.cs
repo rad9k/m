@@ -51,7 +51,12 @@ namespace m0.ZeroTypes.UX
 
                 Grid.SetRow((UIElement)ContentVisualiser, 2);
                 
-                TheGrid.Children.Add((UIElement)ContentVisualiser);                
+                TheGrid.Children.Add((UIElement)ContentVisualiser);
+
+                if (!ShowHeader)
+                {
+
+                }
             }
             else
             {
@@ -247,6 +252,7 @@ namespace m0.ZeroTypes.UX
         // UNDER        
 
         static IVertex ShowMeta_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\RectangleItem\ShowMeta");
+        static IVertex ShowHeader_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\RectangleItem\ShowHeader");
         static IVertex RoundEdgeSize_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\RectangleItem\RoundEdgeSize");
         static IVertex VisualiserClass_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\RectangleItem\VisualiserClass");
         static IVertex VisualiserVertex_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\RectangleItem\VisualiserVertex");
@@ -268,6 +274,28 @@ namespace m0.ZeroTypes.UX
 
                 if (val == null)
                     val = Vertex.AddVertex(ShowMeta_meta, value);
+                else
+                    val.Value = value;
+            }
+        }
+
+        public bool ShowHeader
+        {
+            get
+            {
+                IVertex val = GraphUtil.GetQueryOutFirst(Vertex, "ShowHeader", null);
+
+                if (val == null)
+                    return false;
+
+                return GraphUtil.GetBooleanValueOrFalse(val);
+            }
+            set
+            {
+                IVertex val = GraphUtil.GetQueryOutFirst(Vertex, "ShowHeader", null);
+
+                if (val == null)
+                    val = Vertex.AddVertex(ShowHeader_meta, value);
                 else
                     val.Value = value;
             }
