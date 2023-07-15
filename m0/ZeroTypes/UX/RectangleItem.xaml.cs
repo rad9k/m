@@ -39,42 +39,29 @@ namespace m0.ZeroTypes.UX
 
         public override void VertexSetedUp()
         {
-          if (VisualiserClass != null)        
+            if (VisualiserClass != null)        
             {
-               /*if (ContentVisualiser != null && ContentVisualiser is IDisposable)
+                if (ContentVisualiser != null && ContentVisualiser is IDisposable)
                 {
                     TheGrid.Children.Remove((UIElement)ContentVisualiser);
                     ((IDisposable)ContentVisualiser).Dispose();
-                }*/
+                }
 
                 ContentVisualiser = PlatformClass.CreatePlatformObject(VisualiserClass, BaseEdge, this.Vertex);
 
-               // Grid.SetRow((UIElement)ContentVisualiser, 2);
+                Grid.SetRow((UIElement)ContentVisualiser, 2);
                 
-               // TheGrid.Children.Add((UIElement)ContentVisualiser);
-
-                /*if (HideHeader)
-                {
-                    TheGrid.RowDefinitions[0].Height = new GridLength(0);
-                    TheGrid.RowDefinitions[1].Height = new GridLength(10);
-                }
-                else
-                {
-                    TheGrid.RowDefinitions[0].Height = new GridLength(17);
-                    TheGrid.RowDefinitions[1].Height = new GridLength(10);
-                }*/
+                TheGrid.Children.Add((UIElement)ContentVisualiser);
             }
             else
             {
-                TheGrid.RowDefinitions[1].Height = new GridLength(0);
-
                 ContentVisualiser = null;
             }
                     
-           // if (VisualiserVertex != null && ContentVisualiser != null)
-            //    OwningVisualiser.AddEdgesFromDefintion(ContentVisualiser.Vertex, VisualiserVertex);
+            if (VisualiserVertex != null && ContentVisualiser != null)
+                OwningVisualiser.AddEdgesFromDefintion(ContentVisualiser.Vertex, VisualiserVertex);
 
-           base.VertexSetedUp();
+            base.VertexSetedUp();
         }
         
         public override void ItemVisualUpdate()
@@ -147,8 +134,21 @@ namespace m0.ZeroTypes.UX
             {
                 this.InternalFrame.BorderThickness = new Thickness(BorderSize / 2);
 
-                this.TheGrid.RowDefinitions[1].Height = new GridLength(BorderSize);
+                if (HideHeader)
+                {
+                    this.TheGrid.RowDefinitions[0].Height = new GridLength(0);
+                    this.TheGrid.RowDefinitions[1].Height = new GridLength(0);
+                }
+                else
+                {
+                    this.TheGrid.RowDefinitions[0].Height = new GridLength(17);
+                    this.TheGrid.RowDefinitions[1].Height = new GridLength(1);
+                }
+                //new GridLength(BorderSize);
+
             }
+            else
+                this.TheGrid.RowDefinitions[1].Height = new GridLength(0);
 
             SetBaselineColors();
         }
@@ -244,6 +244,7 @@ namespace m0.ZeroTypes.UX
             {
                 if (GraphUtil.ExistQueryIn(changedVertex, "RoundEdgeSize", null)
                     || GraphUtil.ExistQueryIn(changedVertex, "ShowMeta", null)
+                    || GraphUtil.ExistQueryIn(changedVertex, "HideHeader", null)
                     || GraphUtil.ExistQueryIn(changedVertex, "BorderSize", null))
                 {
                     ItemVisualUpdate();
