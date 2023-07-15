@@ -3316,8 +3316,8 @@ namespace m0
                 "Class:ImageItem{Attribute:Filename{$MinCardinality:1,$MaxCardinality:1},Attribute:ShowName{$MinCardinality:1,$MaxCardinality:1,$DefaultValue:True},Attribute:ShowMeta{$MinCardinality:0,$MaxCardinality:1}}," +
                 "Class:OvalItem{Attribute:ShowMeta{$MinCardinality:0,$MaxCardinality:1}}," +
                 "Class:RhombusItem{Attribute:ShowMeta{$MinCardinality:0,$MaxCardinality:1}}," +
-                "Class:CodeItem{Attribute:ShowHeader{$MinCardinality:0,$MaxCardinality:1},Attribute:ShowMeta{$MinCardinality:0,$MaxCardinality:1}}," +
-                "Class:RectangleItem{Attribute:ShowHeader{$MinCardinality:0,$MaxCardinality:1},Attribute:ShowMeta{$MinCardinality:0,$MaxCardinality:1},Attribute:RoundEdgeSize{MinValue:0,MaxValue:200,$MinCardinality:0,$MaxCardinality:1},Association:VisualiserClass{$MinCardinality:0,$MaxCardinality:1},Attribute:VisualiserVertex{$MinCardinality:0,$MaxCardinality:1}}," +
+                "Class:CodeItem{Attribute:HideHeader{$MinCardinality:0,$MaxCardinality:1},Attribute:ShowMeta{$MinCardinality:0,$MaxCardinality:1}}," +
+                "Class:RectangleItem{Attribute:HideHeader{$MinCardinality:0,$MaxCardinality:1},Attribute:ShowMeta{$MinCardinality:0,$MaxCardinality:1},Attribute:RoundEdgeSize{MinValue:0,MaxValue:200,$MinCardinality:0,$MaxCardinality:1},Association:VisualiserClass{$MinCardinality:0,$MaxCardinality:1},Attribute:VisualiserVertex{$MinCardinality:0,$MaxCardinality:1}}," +
                 "Class:LineDecorator{Association:StartAnchor{$MinCardinality:0,$MaxCardinality:1},Association:EndAnchor{$MinCardinality:0,$MaxCardinality:1},Attribute:IsDashed{$MinCardinality:0,$MaxCardinality:1}}," +
                 "Enum:LineEndEnum{EnumValue:Straight,EnumValue:Arrow,EnumValue:Triangle,EnumValue:FilledTriangle,EnumValue:Diamond,EnumValue:FilledDiamond}," +
                 "Class:MetaExtendedLineDecorator{Association:StartAnchor{$MinCardinality:0,$MaxCardinality:1},Association:EndAnchor{$MinCardinality:0,$MaxCardinality:1},Attribute:IsDashed{$MinCardinality:0,$MaxCardinality:1}}," +
@@ -3408,7 +3408,7 @@ namespace m0
             smzu.Get(false, @"CodeItem\ShowMeta").AddEdge(sm.Get(false, @"?$EdgeTarget"), sm.Get(false, @"ZeroTypes\Boolean"));
             //smzu.Get(false, @"CodeItem\ShowMeta").AddEdge(sm.Get(false, @"?$Section"), lookSection);
 
-            smzu.Get(false, @"CodeItem\ShowHeader").AddEdge(sm.Get(false, @"?$EdgeTarget"), sm.Get(false, @"ZeroTypes\Boolean"));
+            smzu.Get(false, @"CodeItem\HideHeader").AddEdge(sm.Get(false, @"?$EdgeTarget"), sm.Get(false, @"ZeroTypes\Boolean"));
             //smzu.Get(false, @"CodeItem\ShowHeader").AddEdge(sm.Get(false, @"?$Section"), lookSection);
 
 
@@ -3430,7 +3430,7 @@ namespace m0
             smzu.Get(false, @"RectangleItem\ShowMeta").AddEdge(sm.Get(false, @"?$EdgeTarget"), sm.Get(false, @"ZeroTypes\Boolean"));
             //smzu.Get(false, @"RectangleItem\ShowMeta").AddEdge(sm.Get(false, @"?$Section"), lookSection);
 
-            smzu.Get(false, @"RectangleItem\ShowHeader").AddEdge(sm.Get(false, @"?$EdgeTarget"), sm.Get(false, @"ZeroTypes\Boolean"));
+            smzu.Get(false, @"RectangleItem\HideHeader").AddEdge(sm.Get(false, @"?$EdgeTarget"), sm.Get(false, @"ZeroTypes\Boolean"));
             //smzu.Get(false, @"RectangleItem\ShowHeader").AddEdge(sm.Get(false, @"?$Section"), lookSection);
 
 
@@ -5776,6 +5776,11 @@ namespace m0
                 startAnchor, endAnchor, LineWidth, isDashed, BackgroundColor, ForegroundColor, CreateEdgeOnly, ForceShowEditForm);
         }
 
+        void AddItemVertex(IVertex v, IVertex meta, object value)
+        {
+            v.Get(false, "ItemVertex:").AddVertex(meta, value);
+        }
+
         void CreateSystemDataUXZeroUMLTemplate()
         {
             IVertex smzu = Root.Get(false, @"System\Meta\ZeroTypes\UX");
@@ -5905,9 +5910,9 @@ namespace m0
             /*ItemClass*/ smzu.Get(false, @"?ImageItem"), /*InstanceCreation*/ Direct,
             /*CreateItemVertex*/ true, /*BorderWidth*/ -1, /*BackgroundColor*/null,/*ForegroundColor*/ null);
 
-            vi.Get(false, "ItemVertex:").AddVertex(Root.Get(false, @"System\Meta\ZeroTypes\UX\ImageItem\Filename"), "prezes.jpg");
-            vi.Get(false, "ItemVertex:").AddVertex(Root.Get(false, @"System\Meta\ZeroTypes\UX\ImageItem\ShowName"), "False");
-            vi.Get(false, "ItemVertex:").AddVertex(Root.Get(false, @"System\Meta\ZeroTypes\UX\ImageItem\BorderSize"), "0");
+            AddItemVertex(vi, Root.Get(false, @"System\Meta\ZeroTypes\UX\ImageItem\Filename"), "prezes.jpg");
+            AddItemVertex(vi, Root.Get(false, @"System\Meta\ZeroTypes\UX\ImageItem\ShowName"), "False");
+            AddItemVertex(vi, Root.Get(false, @"System\Meta\ZeroTypes\UX\ImageItem\BorderSize"), "0");
 
             IVertex vo = AddUXTemplate(/*where*/sdutz, /*name*/"Oval", /*doNotShowInherited*/ false,
             /*DirectVertexTestQuery*/ @"",
@@ -5924,12 +5929,23 @@ namespace m0
    /*LineWidth*/-1, /*IsDashed*/false,
    /*BackgroundColor*/null, null);
 
-            IVertex vc = AddUXTemplate(/*where*/sdutz, /*name*/"Code", /*doNotShowInherited*/ false,
+            IVertex vc = AddUXTemplate(/*where*/sdutz, /*name*/"Code hidden", /*doNotShowInherited*/ false,
          /*DirectVertexTestQuery*/ @"",
          /*MetaVertexTestQuery*/ null,
          /*ItemClass*/ smzu.Get(false, @"?CodeItem"), /*InstanceCreation*/ Direct,
          /*CreateItemVertex*/ true, /*BorderWidth*/ -1, /*BackgroundColor*/null,/*ForegroundColor*/ null);
 
+
+            AddItemVertex(vc, Root.Get(false, @"System\Meta\ZeroTypes\UX\CodeItem\HideHeader"), "1");
+
+            AddUXTemplate(/*where*/sdutz, /*name*/"Code", /*doNotShowInherited*/ false,
+/*DirectVertexTestQuery*/ @"",
+/*MetaVertexTestQuery*/ null,
+/*ItemClass*/ smzu.Get(false, @"?CodeItem"), /*InstanceCreation*/ Direct,
+/*CreateItemVertex*/ true, /*BorderWidth*/ -1, /*BackgroundColor*/null,/*ForegroundColor*/ null);
+
+
+            AddItemVertex(vc, Root.Get(false, @"System\Meta\ZeroTypes\UX\CodeItem\HideHeader"), "1");
 
             IVertex vr = AddUXTemplate(/*where*/sdutz, /*name*/"Rhombus", /*doNotShowInherited*/ false,
             /*DirectVertexTestQuery*/ @"",
@@ -5946,7 +5962,15 @@ namespace m0
    /*LineWidth*/-1, /*IsDashed*/false,
    /*BackgroundColor*/null, null);
 
+            
 
+            AddUXTemplate_RectangleItem(/*where*/sdutz, /*name*/"Vertex RectangleItem LIST", /*doNotShowInherited*/ false,
+            /*DirectVertexTestQuery*/ @"",
+            /*MetaVertexTestQuery*/ null,
+            /*InstanceCreation*/ Direct,
+            /*CreateItemVertex*/ true, /*BorderWidth*/ -1, /*BackgroundColor*/null, /*ForegroundColor*/ null,
+            /*RoundEdgeSize*/-1,/*ShowMeta*/ false,
+            /*VisualiserClass*/Root.Get(false, @"System\Meta?List"),/*VisualiserVertex*/ false);
 
 
             IVertex v2 = AddUXTemplate_RectangleItem(/*where*/sdutz, /*name*/"Vertex RectangleItem", /*doNotShowInherited*/ false,

@@ -39,35 +39,42 @@ namespace m0.ZeroTypes.UX
 
         public override void VertexSetedUp()
         {
-            if (VisualiserClass != null)        
+          if (VisualiserClass != null)        
             {
-                if (ContentVisualiser != null && ContentVisualiser is IDisposable)
+               /*if (ContentVisualiser != null && ContentVisualiser is IDisposable)
                 {
                     TheGrid.Children.Remove((UIElement)ContentVisualiser);
                     ((IDisposable)ContentVisualiser).Dispose();
-                }
+                }*/
 
                 ContentVisualiser = PlatformClass.CreatePlatformObject(VisualiserClass, BaseEdge, this.Vertex);
 
-                Grid.SetRow((UIElement)ContentVisualiser, 2);
+               // Grid.SetRow((UIElement)ContentVisualiser, 2);
                 
-                TheGrid.Children.Add((UIElement)ContentVisualiser);
+               // TheGrid.Children.Add((UIElement)ContentVisualiser);
 
-                if (!ShowHeader)
+                /*if (HideHeader)
                 {
-
+                    TheGrid.RowDefinitions[0].Height = new GridLength(0);
+                    TheGrid.RowDefinitions[1].Height = new GridLength(10);
                 }
+                else
+                {
+                    TheGrid.RowDefinitions[0].Height = new GridLength(17);
+                    TheGrid.RowDefinitions[1].Height = new GridLength(10);
+                }*/
             }
             else
             {
-                InternalFrame.BorderThickness = new Thickness(0);
+                TheGrid.RowDefinitions[1].Height = new GridLength(0);
+
                 ContentVisualiser = null;
             }
                     
-            if (VisualiserVertex != null && ContentVisualiser != null)
-                OwningVisualiser.AddEdgesFromDefintion(ContentVisualiser.Vertex, VisualiserVertex);
+           // if (VisualiserVertex != null && ContentVisualiser != null)
+            //    OwningVisualiser.AddEdgesFromDefintion(ContentVisualiser.Vertex, VisualiserVertex);
 
-            base.VertexSetedUp();
+           base.VertexSetedUp();
         }
         
         public override void ItemVisualUpdate()
@@ -252,7 +259,7 @@ namespace m0.ZeroTypes.UX
         // UNDER        
 
         static IVertex ShowMeta_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\RectangleItem\ShowMeta");
-        static IVertex ShowHeader_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\RectangleItem\ShowHeader");
+        static IVertex HideHeader_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\RectangleItem\HideHeader");
         static IVertex RoundEdgeSize_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\RectangleItem\RoundEdgeSize");
         static IVertex VisualiserClass_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\RectangleItem\VisualiserClass");
         static IVertex VisualiserVertex_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\RectangleItem\VisualiserVertex");
@@ -279,11 +286,11 @@ namespace m0.ZeroTypes.UX
             }
         }
 
-        public bool ShowHeader
+        public bool HideHeader
         {
             get
             {
-                IVertex val = GraphUtil.GetQueryOutFirst(Vertex, "ShowHeader", null);
+                IVertex val = GraphUtil.GetQueryOutFirst(Vertex, "HideHeader", null);
 
                 if (val == null)
                     return false;
@@ -292,10 +299,10 @@ namespace m0.ZeroTypes.UX
             }
             set
             {
-                IVertex val = GraphUtil.GetQueryOutFirst(Vertex, "ShowHeader", null);
+                IVertex val = GraphUtil.GetQueryOutFirst(Vertex, "HideHeader", null);
 
                 if (val == null)
-                    val = Vertex.AddVertex(ShowHeader_meta, value);
+                    val = Vertex.AddVertex(HideHeader_meta, value);
                 else
                     val.Value = value;
             }

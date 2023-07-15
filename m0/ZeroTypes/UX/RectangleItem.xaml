@@ -11,13 +11,13 @@
         <Grid x:Name="TheGrid">
             <Grid.RowDefinitions>
                 <RowDefinition Height="17"/>
-                <RowDefinition Height="1"/>
+                <RowDefinition Height="10"/>
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>        
                 
            <TextBlock Grid.Row="0" x:Name="Title" HorizontalAlignment="Center" Padding="3,0,3,0"></TextBlock>
 
-            <Border x:Name="InternalFrame" Grid.Row="1"  BorderThickness="0.5"/>
+            <Border x:Name="InternalFrame" Grid.Row="1"  BorderThickness="0.5" Background="Red"/>
 
         </Grid>
 
