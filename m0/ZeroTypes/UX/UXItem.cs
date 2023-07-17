@@ -25,6 +25,10 @@ namespace m0.ZeroTypes.UX
 
     public class UXItem : UserControl, IUXItem, IPlatformClass
     {
+        static string[] SubVertexesTriggeringItemVisualUpdate = new string[] { };
+
+        //
+
         public IEdge ContainerEdge { get; set; }
 
         public int NestingLevel { get; set; }
@@ -439,6 +443,22 @@ namespace m0.ZeroTypes.UX
 
         protected virtual INoInEdgeInOutVertexVertex VertexChange(IExecution exe)
         {
+            IVertex changedVertex = exe.Stack.Get(false, @"event:\ChangedVertex:");
+
+            if (changedVertex != null)
+            {
+                bool trigger = false;
+
+                foreach (string s in SubVertexesTriggeringItemVisualUpdate)
+                    if (GraphUtil.ExistQueryIn(changedVertex, s, null))
+                        trigger = true;
+
+                if (trigger)
+                    ItemVisualUpdate();
+            }
+
+            //
+
             IVertex baseEdgeTo = BaseEdgeTo;
 
             if (IsVertexChange(exe.Stack, baseEdgeTo))

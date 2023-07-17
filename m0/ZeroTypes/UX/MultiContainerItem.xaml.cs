@@ -44,7 +44,6 @@ namespace m0.ZeroTypes.UX
 
             base.VertexSetedUp();
 
-
             //
 
             CreateSubItemVertexes();
@@ -86,12 +85,6 @@ namespace m0.ZeroTypes.UX
                     item.BaseEdgeCreate();
 
                     IVertex empty = m0.MinusZero.Instance.Empty;
-
-                    /*Edge item_BaseEdge = item.BaseEdge;
-
-                    item_BaseEdge.From = empty; // need to have FAKE edge here
-                    item_BaseEdge.Meta = empty; 
-                    item_BaseEdge.To = empty; */
 
                     IEdge baseEdge = baseEdgeTo.GetAll(false, template.BaseEdgeQuery).FirstOrDefault();
 
@@ -305,10 +298,10 @@ namespace m0.ZeroTypes.UX
             this.Frame.BorderBrush = borderBrush;
             this.InternalFrame.BorderBrush = borderBrush;          
 
-            VisualiserUpdate_Items();
+            ItemVisualUpdate_Items();
         }
 
-        public void VisualiserUpdate_Items()
+        public void ItemVisualUpdate_Items()
         {
             foreach (IItem _i in Items)
             {

@@ -23,7 +23,10 @@ namespace m0.ZeroTypes.UX
     /// Interaction logic for DiagramRectangleItem.xaml
     /// </summary>
     public partial class ContainerItem : UXContainer
-    {        
+    {
+        static string[] SubVertexesTriggeringItemVisualUpdate = new string[] {
+            "RoundEdgeSize", "ShowMeta",  "BorderSize"};
+
         public ContainerItem() : base(new ZeroTypes.Edge(null))
         {
             InitializeComponent();
@@ -183,26 +186,6 @@ namespace m0.ZeroTypes.UX
         public override void Unhighlight()
         {           
             base.Unhighlight();
-        }
-
-        protected override INoInEdgeInOutVertexVertex VertexChange(IExecution exe)        
-        {
-            IVertex changedVertex = exe.Stack.Get(false, @"event:\ChangedVertex:");
-
-            if (changedVertex != null)
-            {
-                if (GraphUtil.ExistQueryIn(changedVertex, "RoundEdgeSize", null)
-                    || GraphUtil.ExistQueryIn(changedVertex, "ShowMeta", null)
-                    || GraphUtil.ExistQueryIn(changedVertex, "BorderSize", null))
-                {
-                    ItemVisualUpdate();
-                    return exe.Stack;
-                }
-            }
-
-            //return exe.Stack;
-
-            return base.VertexChange(exe);
         }
         
         // ContainerItem     

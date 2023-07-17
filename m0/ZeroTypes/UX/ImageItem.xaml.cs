@@ -35,11 +35,6 @@ namespace m0.ZeroTypes.UX
             InitializeComponent();
         }
 
-        public override void VertexSetedUp()
-        {            
-            base.VertexSetedUp();
-        }
-
         bool shouldTryToLoad = true;
         
         public override void ItemVisualUpdate()
