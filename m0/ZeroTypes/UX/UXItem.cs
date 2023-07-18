@@ -25,7 +25,7 @@ namespace m0.ZeroTypes.UX
 
     public class UXItem : UserControl, IUXItem, IPlatformClass
     {
-        static string[] SubVertexesTriggeringItemVisualUpdate = new string[] { };
+        public virtual string[] SubVertexesTriggeringItemVisualUpdate { get; }
 
         //
 

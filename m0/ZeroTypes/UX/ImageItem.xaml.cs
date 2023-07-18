@@ -25,7 +25,11 @@ namespace m0.ZeroTypes.UX
     /// Interaction logic for DiagramRectangleItem.xaml
     /// </summary>
     public partial class ImageItem : UXItem
-    {        
+    {
+        static string[] _SubVertexesTriggeringItemVisualUpdate = new string[] {
+            "RoundEdgeSize", "ShowMeta", "ShowName", "BorderSize"};
+        public override string[] SubVertexesTriggeringItemVisualUpdate { get { return _SubVertexesTriggeringItemVisualUpdate; } }
+
         public ImageItem() : base(new ZeroTypes.Edge(null))
         {
             InitializeComponent();
@@ -53,32 +57,32 @@ namespace m0.ZeroTypes.UX
 
             base.ItemVisualUpdate();
 
-            if (ShowMeta)
+            if (ShowName)
             {
-                IEdge baseEdge = BaseEdge;
-                IVertex baseEdgeTo = baseEdge.To;
-                IVertex baseEdgeMeta = baseEdge.Meta;
+                if (ShowMeta)
+                {
+                    IEdge baseEdge = BaseEdge;
+                    IVertex baseEdgeTo = baseEdge.To;
+                    IVertex baseEdgeMeta = baseEdge.Meta;
 
-                string meta_text, to_text;
+                    string meta_text, to_text;
 
-                if (baseEdgeMeta != null)
-                    meta_text = baseEdgeMeta.Value.ToString();
+                    if (baseEdgeMeta != null)
+                        meta_text = baseEdgeMeta.Value.ToString();
+                    else
+                        meta_text = "Ø";
+
+                    if (baseEdgeTo != null)
+                        to_text = baseEdgeTo.Value.ToString();
+                    else
+                        to_text = "Ø";
+
+                    if (meta_text != "$Empty" && meta_text != "")
+                        this.Title.Text = meta_text + " : " + to_text;
+                    else
+                        this.Title.Text = to_text;
+                }
                 else
-                    meta_text = "Ø";
-
-                if (baseEdgeTo != null)
-                    to_text = baseEdgeTo.Value.ToString();
-                else
-                    to_text = "Ø";
-
-                if (meta_text != "$Empty" && meta_text != "")
-                    this.Title.Text = meta_text + " : " + to_text;
-                else
-                    this.Title.Text = to_text;
-            }            
-            else
-            {
-                if (ShowName)
                 {
                     IVertex baseEdgeTo = BaseEdgeTo;
 
@@ -87,12 +91,24 @@ namespace m0.ZeroTypes.UX
                     else
                         this.Title.Text = "Ø";
                 }
-                else
-                {
-                    Title.Height = 0;
-                }
+
+                double allHeight = this.ActualHeight;
+
+                Grid.RowDefinitions[1].Height = new GridLength(17);
+
+                if (allHeight > 0)
+                    this.Height = allHeight;
             }
-                       
+            else
+            {
+                double allHeight = this.ActualHeight;
+
+                Grid.RowDefinitions[1].Height = new GridLength(0);
+
+                if (allHeight > 0)
+                    this.Height = allHeight;
+            }
+
             this.Frame.BorderThickness = new Thickness(BorderSize);            
 
             SetBaselineColors();
@@ -155,26 +171,6 @@ namespace m0.ZeroTypes.UX
         {
             base.Unhighlight();
         }
-
-        protected override INoInEdgeInOutVertexVertex VertexChange(IExecution exe)        
-        {
-            IVertex changedVertex = exe.Stack.Get(false, @"event:\ChangedVertex:");
-
-            if (changedVertex != null)
-            {
-                if (GraphUtil.ExistQueryIn(changedVertex, "RoundEdgeSize", null)
-                    || GraphUtil.ExistQueryIn(changedVertex, "ShowMeta", null)
-                    || GraphUtil.ExistQueryIn(changedVertex, "BorderSize", null))
-                {
-                    ItemVisualUpdate();
-                    return exe.Stack;
-                }                
-            }
-
-            //return exe.Stack;
-
-            return base.VertexChange(exe);
-        }
         
         // UNDER        
 
@@ -217,7 +213,7 @@ namespace m0.ZeroTypes.UX
             }
             set
             {
-                IVertex val = GraphUtil.GetQueryOutFirst(Vertex, "ShowMeta", null);
+                IVertex val = GraphUtil.GetQueryOutFirst(Vertex, "ShowName", null);
 
                 if (val == null)
                     val = Vertex.AddVertex(ShowName_meta, value);

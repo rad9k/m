@@ -25,7 +25,13 @@ namespace m0.ZeroTypes.UX
     /// Interaction logic for DiagramRectangleItem.xaml
     /// </summary>
     public partial class MultiContainerItem : UXContainer, IUXMultiContainerItem
-    {        
+    {
+        static string[] _SubVertexesTriggeringItemVisualUpdate = new string[] {
+            "RoundEdgeSize", "ShowMeta",  "BorderSize"};
+        public override string[] SubVertexesTriggeringItemVisualUpdate { get { return _SubVertexesTriggeringItemVisualUpdate; } }
+
+        //
+
         static IVertex MultiContainerSubItem_type = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\MultiContainerSubItem");
 
         public MultiContainerItem() : base(new ZeroTypes.Edge(null))
@@ -457,24 +463,6 @@ namespace m0.ZeroTypes.UX
         public override void Unhighlight()
         {
             base.Unhighlight();
-        }
-
-        protected override INoInEdgeInOutVertexVertex VertexChange(IExecution exe)        
-        {
-            IVertex changedVertex = exe.Stack.Get(false, @"event:\ChangedVertex:");
-
-            if (changedVertex != null)
-            {
-                if (GraphUtil.ExistQueryIn(changedVertex, "RoundEdgeSize", null)
-                    || GraphUtil.ExistQueryIn(changedVertex, "ShowMeta", null)
-                    || GraphUtil.ExistQueryIn(changedVertex, "BorderSize", null))
-                {
-                    ItemVisualUpdate();
-                    return exe.Stack;
-                }
-            }            
-
-            return base.VertexChange(exe);
         }
         
         // UNDER        

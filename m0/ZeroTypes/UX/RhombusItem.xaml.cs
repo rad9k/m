@@ -28,6 +28,11 @@ namespace m0.ZeroTypes.UX
     /// </summary>
     public partial class RhombusItem : UXItem
     {
+        static string[] _SubVertexesTriggeringItemVisualUpdate = new string[] {
+            "RoundEdgeSize", "ShowMeta", "BorderSize"};
+        public override string[] SubVertexesTriggeringItemVisualUpdate { get { return _SubVertexesTriggeringItemVisualUpdate; } }
+
+        //
         public RhombusItem() : base(new ZeroTypes.Edge(null))
         {
             InitializeComponent();
@@ -138,26 +143,6 @@ namespace m0.ZeroTypes.UX
         public override void Unhighlight()
         {
             base.Unhighlight();
-        }
-
-        protected override INoInEdgeInOutVertexVertex VertexChange(IExecution exe)
-        {
-            IVertex changedVertex = exe.Stack.Get(false, @"event:\ChangedVertex:");
-
-            if (changedVertex != null)
-            {
-                if (GraphUtil.ExistQueryIn(changedVertex, "RoundEdgeSize", null)
-                    || GraphUtil.ExistQueryIn(changedVertex, "ShowMeta", null)
-                    || GraphUtil.ExistQueryIn(changedVertex, "BorderSize", null))
-                {
-                    ItemVisualUpdate();
-                    return exe.Stack;
-                }
-            }
-
-            //return exe.Stack;
-
-            return base.VertexChange(exe);
         }
 
         public override Point GetLineAnchorLocation(IUXItem _toItem, int toItemDiagramLinesCount, int toItemDiagramLineNumber, bool isSelfStart)        

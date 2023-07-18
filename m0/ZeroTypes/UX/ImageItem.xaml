@@ -8,10 +8,14 @@
              >
 
     <Border x:Name="Frame"  BorderBrush="{StaticResource 0ForegroundBrush}" BorderThickness="1" HorizontalAlignment="Stretch"  VerticalAlignment="Stretch">
-        <StackPanel Orientation="Vertical">
-            <Image Name="Image" Stretch="Fill"></Image>
-            <TextBlock x:Name="Title" HorizontalAlignment="Center" TextWrapping="Wrap" TextTrimming="CharacterEllipsis" Margin="0,2,0,0" Background="Red"/>
-        </StackPanel>
+        <Grid Name="Grid">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="17"/>
+            </Grid.RowDefinitions>
+            <Image Name="Image" Stretch="Fill" Grid.Row="0"></Image>
+            <TextBlock x:Name="Title" Grid.Row="1" HorizontalAlignment="Center" TextWrapping="Wrap" TextTrimming="CharacterEllipsis" />
+        </Grid>
 
     </Border>
 

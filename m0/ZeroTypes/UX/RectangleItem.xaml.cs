@@ -26,6 +26,12 @@ namespace m0.ZeroTypes.UX
     /// </summary>
     public partial class RectangleItem : UXItem
     {
+        static string[] _SubVertexesTriggeringItemVisualUpdate = new string[] {
+            "RoundEdgeSize", "ShowMeta", "HideHeader", "BorderSize"};
+        public override string[] SubVertexesTriggeringItemVisualUpdate { get { return _SubVertexesTriggeringItemVisualUpdate; } }
+
+        //
+
         IPlatformClass ContentVisualiser;
 
         public RectangleItem() : base(new ZeroTypes.Edge(null))
@@ -234,27 +240,6 @@ namespace m0.ZeroTypes.UX
         public override void Unhighlight()
         {
             base.Unhighlight();
-        }
-
-        protected override INoInEdgeInOutVertexVertex VertexChange(IExecution exe)        
-        {
-            IVertex changedVertex = exe.Stack.Get(false, @"event:\ChangedVertex:");
-
-            if (changedVertex != null)
-            {
-                if (GraphUtil.ExistQueryIn(changedVertex, "RoundEdgeSize", null)
-                    || GraphUtil.ExistQueryIn(changedVertex, "ShowMeta", null)
-                    || GraphUtil.ExistQueryIn(changedVertex, "HideHeader", null)
-                    || GraphUtil.ExistQueryIn(changedVertex, "BorderSize", null))
-                {
-                    ItemVisualUpdate();
-                    return exe.Stack;
-                }                
-            }
-
-            //return exe.Stack;
-
-            return base.VertexChange(exe);
         }
         
         // UNDER        

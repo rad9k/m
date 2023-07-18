@@ -24,8 +24,9 @@ namespace m0.ZeroTypes.UX
     /// </summary>
     public partial class ContainerItem : UXContainer
     {
-        static string[] SubVertexesTriggeringItemVisualUpdate = new string[] {
+        static string[] _SubVertexesTriggeringItemVisualUpdate = new string[] {
             "RoundEdgeSize", "ShowMeta",  "BorderSize"};
+        public override string[] SubVertexesTriggeringItemVisualUpdate { get { return _SubVertexesTriggeringItemVisualUpdate; } }
 
         public ContainerItem() : base(new ZeroTypes.Edge(null))
         {
