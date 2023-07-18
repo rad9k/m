@@ -131,14 +131,18 @@ namespace m0.ZeroTypes.UX
 
                     TheGrid.Children.Remove(InternalFrame);
                 }
-            }                        
+            }
+            
+            double BorderSize_nonZero = BorderSize; ;
 
-            if (BorderSize != 0)
-                this.Frame.BorderThickness = new Thickness(BorderSize);
+            if (BorderSize_nonZero == 0)
+                BorderSize_nonZero = 1;
+
+            this.Frame.BorderThickness = new Thickness(BorderSize_nonZero);
 
             if (ContentVisualiser != null)
             {
-                this.InternalFrame.BorderThickness = new Thickness(BorderSize / 2);
+                this.InternalFrame.BorderThickness = new Thickness(BorderSize_nonZero / 2);
 
                 if (HideHeader)
                 {
@@ -148,7 +152,7 @@ namespace m0.ZeroTypes.UX
                 else
                 {
                     this.TheGrid.RowDefinitions[0].Height = new GridLength(17);
-                    this.TheGrid.RowDefinitions[1].Height = new GridLength(1);
+                    this.TheGrid.RowDefinitions[1].Height = new GridLength(BorderSize_nonZero);
                 }
                 //new GridLength(BorderSize);
 

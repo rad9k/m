@@ -17,7 +17,7 @@
                 
            <TextBlock Grid.Row="0" x:Name="Title" HorizontalAlignment="Center" Padding="3,0,3,0"></TextBlock>
 
-            <Border x:Name="InternalFrame" Grid.Row="1"  BorderThickness="0.5" Background="Red"/>
+            <Border x:Name="InternalFrame" Grid.Row="1"  BorderThickness="0.5" BorderBrush="{StaticResource 0ForegroundBrush}"/>
 
         </Grid>
 

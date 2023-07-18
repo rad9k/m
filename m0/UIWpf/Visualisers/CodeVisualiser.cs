@@ -71,10 +71,7 @@ namespace m0.UIWpf.Visualisers
             this.PreviewKeyDown += CodeVisualiser_KeyDown;
         }
 
-        public void OnLoad(object sender, RoutedEventArgs e)
-        {
-            //VisualiserHelper.AddContextMenu();
-        }
+        public void OnLoad(object sender, RoutedEventArgs e) { }
 
         public void SelectedVerticesUpdated() { }
 
@@ -179,6 +176,7 @@ namespace m0.UIWpf.Visualisers
             else
                 Options.HighlightCurrentLine = false;
         }
+
         void EditSetup()
         {
             UpdateEditView();
