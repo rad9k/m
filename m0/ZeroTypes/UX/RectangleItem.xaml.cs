@@ -108,12 +108,37 @@ namespace m0.ZeroTypes.UX
             }
 
             double roundEdgeSize = RoundEdgeSize;
+            
+            double BorderSize_nonZero = BorderSize; ;
+
+            if (BorderSize_nonZero == 0)
+                BorderSize_nonZero = 1;
+
+            this.Frame.BorderThickness = new Thickness(BorderSize_nonZero);
+
+            if (ContentVisualiser != null)
+            {
+                if (HideHeader)
+                {
+                    this.TheGrid.RowDefinitions[0].Height = new GridLength(0);
+                    this.TheGrid.RowDefinitions[1].Height = new GridLength(0);
+                }
+                else
+                {
+                    this.TheGrid.RowDefinitions[0].Height = new GridLength(17);
+                    this.TheGrid.RowDefinitions[1].Height = new GridLength(BorderSize_nonZero);
+                }
+            }
+            else
+                this.TheGrid.RowDefinitions[1].Height = new GridLength(0);
+
+            //
 
             if (roundEdgeSize != 0)
-            {                
+            {
                 this.Frame.CornerRadius = new CornerRadius(RoundEdgeSize);
 
-                if (VisualiserClass != null)
+                if (ContentVisualiser != null)
                 {
                     this.Title.Margin = new Thickness(RoundEdgeSize, RoundEdgeSize, RoundEdgeSize, 0);
 
@@ -132,33 +157,8 @@ namespace m0.ZeroTypes.UX
                     TheGrid.Children.Remove(InternalFrame);
                 }
             }
-            
-            double BorderSize_nonZero = BorderSize; ;
 
-            if (BorderSize_nonZero == 0)
-                BorderSize_nonZero = 1;
-
-            this.Frame.BorderThickness = new Thickness(BorderSize_nonZero);
-
-            if (ContentVisualiser != null)
-            {
-                this.InternalFrame.BorderThickness = new Thickness(BorderSize_nonZero / 2);
-
-                if (HideHeader)
-                {
-                    this.TheGrid.RowDefinitions[0].Height = new GridLength(0);
-                    this.TheGrid.RowDefinitions[1].Height = new GridLength(0);
-                }
-                else
-                {
-                    this.TheGrid.RowDefinitions[0].Height = new GridLength(17);
-                    this.TheGrid.RowDefinitions[1].Height = new GridLength(BorderSize_nonZero);
-                }
-                //new GridLength(BorderSize);
-
-            }
-            else
-                this.TheGrid.RowDefinitions[1].Height = new GridLength(0);
+            //
 
             SetBaselineColors();
         }
@@ -177,7 +177,7 @@ namespace m0.ZeroTypes.UX
             this.Title.Foreground = foregroundBrush;
             this.Foreground = foregroundBrush;
 
-            this.InternalFrame.BorderBrush = borderBrush;
+            this.InternalFrame.Background = borderBrush;
 
             this.Frame.BorderBrush = borderBrush;
 
@@ -192,7 +192,7 @@ namespace m0.ZeroTypes.UX
         {
             base.Select();
 
-            this.InternalFrame.BorderBrush = (Brush)FindResource("0SelectionBrush");
+            this.InternalFrame.Background = (Brush)FindResource("0SelectionBrush");
             this.Frame.BorderBrush = (Brush)FindResource("0SelectionBrush");
 
 
@@ -225,7 +225,7 @@ namespace m0.ZeroTypes.UX
         {
             base.Highlight();
 
-            this.InternalFrame.BorderBrush = (Brush)FindResource("0HighlightBrush");
+            this.InternalFrame.Background = (Brush)FindResource("0HighlightBrush");
             this.Frame.BorderBrush = (Brush)FindResource("0HighlightBrush");
 
             this.Foreground = (Brush)FindResource("0HighlightForegroundBrush"); 
