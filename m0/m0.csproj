@@ -345,6 +345,9 @@
     <Compile Include="ZeroTypes\UX\ImageItem.xaml.cs">
       <DependentUpon>ImageItem.xaml</DependentUpon>
     </Compile>
+    <Compile Include="ZeroTypes\UX\CodeItem.xaml.cs">
+      <DependentUpon>CodeItem.xaml</DependentUpon>
+    </Compile>
     <Compile Include="ZeroTypes\UX\RhombusItem.xaml.cs">
       <DependentUpon>RhombusItem.xaml</DependentUpon>
     </Compile>
@@ -545,6 +548,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="ZeroTypes\UX\ImageItem.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="ZeroTypes\UX\CodeItem.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
