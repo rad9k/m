@@ -27,19 +27,21 @@ using m0.ZeroCode;
 
 namespace m0.UIWpf.Visualisers
 {
-    public class CodeVisualiser : TextEditor, IListVisualiser, IOwnScrolling
+    public class CodeVisualiser : Border, IListVisualiser, IOwnScrolling
     {
-        public AtomVisualiserHelper VisualiserHelper { get; set; }        
+        CodeControl codeControl;
 
-        IList<string> TextMemory;
+        //
+
+        public AtomVisualiserHelper VisualiserHelper { get; set; }        
 
         static string[] _MetaTriggeringUpdateVertex = new string[] { };
         public string[] MetaTriggeringUpdateVertex { get { return _MetaTriggeringUpdateVertex; } }
 
-        static string[] _MetaTriggeringUpdateView = new string[] {"ShowWhiteSpace", "ShowLineNumbers", "HighlightedLine"  };
+        static string[] _MetaTriggeringUpdateView = new string[] {"ShowWhiteSpace", "ShowLineNumbers", "HighlightedLine", "FontSize" };
         public string[] MetaTriggeringUpdateView { get { return _MetaTriggeringUpdateView; } }
 
-        public void UpdateView() { UpdateEditView(); }
+        public void UpdateView() { codeControl.UpdateEditView(); }
 
         public void UnselectAllSelectedEdges() { }
 
@@ -56,221 +58,30 @@ namespace m0.UIWpf.Visualisers
                 baseEdgeVertex,
                 UpdateBaseEdgeCallSchemeEnum.OmmitSecond);
 
-            //((ListVisualiserHelper)VisualiserHelper).CustomVertexChangeEvent += CustomVertexChange;
+            codeControl = new CodeControl(Vertex, false);
 
-            SetVertexDefaultValues();
+            this.Child = codeControl;
 
-            ScaleChange();
-
-            TextMemory = new List<string>();
-
-            EditSetup();
-
-            UpdateEditView();
-
-            this.PreviewKeyDown += CodeVisualiser_KeyDown;
+            UpdateVertex();
         }
 
         public void OnLoad(object sender, RoutedEventArgs e) { }
 
         public void SelectedVerticesUpdated() { }
 
-        private void ExecuteParse()
-        {
-            ////////////////////////////////////////
-            Interaction.BeginInteractionWithGraph();
-            ////////////////////////////////////////
-            
-            TextMemory.Add(Text);            
-
-            IVertex BaseEdgeToVertex = Vertex.Get(false, @"BaseEdge:\To:");            
-
-            MinusZero.Instance.DefaultParser.Parse(BaseEdgeToVertex, Text);
-
-            int currentTextMemory = TextMemory.Count;
-
-            Vertex.Get(false, "TextMemoryMax:").Value = currentTextMemory;
-            Vertex.Get(false, "TextMemoryCurrent:").Value = currentTextMemory;
-            
-
-            ////////////////////////////////////////
-            Interaction.EndInteractionWithGraph();
-            ////////////////////////////////////////
-        }
-
-        private void ReferenceTextMemoryLeft()
-        {            
-            int TextMemoryCurrent = (int)GraphUtil.GetIntegerValue(Vertex.Get(false, "TextMemoryCurrent:"));        
-
-            if (TextMemoryCurrent > 0)
-            {
-                if (TextMemoryCurrent > 1)
-                    TextMemoryCurrent--;
-
-                Text = TextMemory[TextMemoryCurrent - 1];
-
-                ////////////////////////////////////////
-                Interaction.BeginInteractionWithGraph();
-                ////////////////////////////////////////
-
-                Vertex.Get(false, "TextMemoryCurrent:").Value = TextMemoryCurrent;
-
-                ////////////////////////////////////////
-                Interaction.EndInteractionWithGraph();
-                ////////////////////////////////////////
-            }
-        }
-
-        private void ReferenceTextMemoryRight()
-        {
-            int TextMemoryMax = (int)GraphUtil.GetIntegerValue(Vertex.Get(false, "TextMemoryMax:"));
-            int TextMemoryCurrent = (int)GraphUtil.GetIntegerValue(Vertex.Get(false, "TextMemoryCurrent:"));            
-
-            if (TextMemoryCurrent < TextMemoryMax)
-            {
-                TextMemoryCurrent++;
-
-                Text = TextMemory[TextMemoryCurrent - 1];
-
-                ////////////////////////////////////////
-                Interaction.BeginInteractionWithGraph();
-                ////////////////////////////////////////
-
-                Vertex.Get(false, "TextMemoryCurrent:").Value = TextMemoryCurrent;
-
-                ////////////////////////////////////////
-                Interaction.EndInteractionWithGraph();
-                ////////////////////////////////////////
-            }
-        }
-
-        private void CodeVisualiser_KeyDown(object sender, KeyEventArgs e)
-        {
-            if (e.Key == Key.Escape)
-                ExecuteParse();
-
-            if (e.Key == Key.Left && Keyboard.IsKeyDown(Key.RightAlt))
-                ReferenceTextMemoryLeft();
-
-            if (e.Key == Key.Right && Keyboard.IsKeyDown(Key.RightAlt))
-                ReferenceTextMemoryRight();
-        }
-
-        TabFoldingStrategy foldingStrategy;
-        FoldingManager foldingManager;
-
-        void UpdateEditView()
-        {
-            if(GraphUtil.GetValueAndCompareStrings(Vertex.Get(false, @"ShowWhiteSpace:"),"True"))
-                Options.ShowTabs = true;
-            else
-                Options.ShowTabs = false;
-
-            if (GraphUtil.GetValueAndCompareStrings(Vertex.Get(false, @"ShowLineNumbers:"), "True"))
-                this.ShowLineNumbers = true;
-            else
-                this.ShowLineNumbers = false;
-
-            if (GraphUtil.GetValueAndCompareStrings(Vertex.Get(false, @"HighlightedLine:"), "True"))
-                Options.HighlightCurrentLine = true;
-            else
-                Options.HighlightCurrentLine = false;
-        }
-
-        void EditSetup()
-        {
-            UpdateEditView();
-
-            this.FontFamily = new FontFamily("Consolas");
-            this.FontWeight = FontWeight.FromOpenTypeWeight(1);
-            
-            Foreground = new SolidColorBrush(Color.FromRgb(0X2B, 0X91, 0XAF));
-
-            this.LineNumbersForeground = new SolidColorBrush(Colors.LightGray);
-
-            foldingManager = FoldingManager.Install(TextArea);
-            foldingStrategy = new TabFoldingStrategy();
-            foldingStrategy.UpdateFoldings(foldingManager, Document);
-
-            DispatcherTimer foldingUpdateTimer = new DispatcherTimer();
-            foldingUpdateTimer.Interval = TimeSpan.FromSeconds(2);
-            foldingUpdateTimer.Tick += delegate { UpdateFoldings(); };
-            foldingUpdateTimer.Start();
-
-            IHighlightingDefinition customHighlighting;
-            using (Stream s = typeof(m0.MinusZero).Assembly.GetManifestResourceStream("m0.ZeroCodeHighlighting.xshd"))
-            {
-                if (s == null)
-                    throw new InvalidOperationException("Could not find embedded resource");
-                using (XmlReader reader = new XmlTextReader(s))
-                {
-                    customHighlighting = ICSharpCode.AvalonEdit.Highlighting.Xshd.
-                        HighlightingLoader.Load(reader, HighlightingManager.Instance);
-                }
-            }
-
-            SyntaxHighlighting = customHighlighting;
-        }
-
-        void UpdateFoldings()
-        {           
-            foldingStrategy.UpdateFoldings(foldingManager, Document);            
-        }
-
-        protected virtual void SetVertexDefaultValues()
-        {
-            Vertex.Get(false, "Scale:").Value = 15.0;
-            Vertex.Get(false, "ShowWhiteSpace:").Value = "False";
-            Vertex.Get(false, "ShowLineNumbers:").Value = "False";
-            Vertex.Get(false, "HighlightedLine:").Value = "True";
-            Vertex.Get(false, "TextMemoryCurrent:").Value = 0;
-            Vertex.Get(false, "TextMemoryMax:").Value = 0;
-        }
-
         public void UpdateVertex()
         {
-            IVertex bv = Vertex.Get(false, @"BaseEdge:\To:");
+            if (codeControl != null)
+                codeControl.UpdateVertex();
+        }
 
-            if (bv != null /*&& bv.Value != null && ((String)bv.Value)!="$Empty"*/)
-            {
-                EdgeBase ee = new EdgeBase(Vertex.Get(false, @"BaseEdge:\From:"), Vertex.Get(false, @"BaseEdge:\Meta:"), Vertex.Get(false, @"BaseEdge:\To:"));
-                this.Text = this.Text = MinusZero.Instance.DefaultCodeGenerator.Generate(ee);
-            }
+        public void ScaleChange() {
+            double scale = ((double)GraphUtil.GetIntegerValue(Vertex.Get(false, "Scale:"))) / 100;
+
+            if (scale != 1.0)
+                this.LayoutTransform = new ScaleTransform(scale, scale);
             else
-                this.Text = "Ø";
-        }
-
-        public void ScaleChange()
-        {
-            double scale = ((double)GraphUtil.GetDoubleValue(Vertex.Get(false, "Scale:")));
-
-            this.FontSize = scale;
-        }
-
-        protected INoInEdgeInOutVertexVertex CustomVertexChange(IExecution exe)
-        {
-            IVertex changedVertex = exe.Stack.Get(false, @"event:\ChangedVertex:");
-
-            if (changedVertex != null)
-            {
-                if (GraphUtil.ExistQueryIn(changedVertex, "Scale", null))
-                {
-                    ScaleChange();
-                    return exe.Stack;
-                }
-
-                if (GraphUtil.ExistQueryIn(changedVertex, "ShowWhiteSpace", null) 
-                    || GraphUtil.ExistQueryIn(changedVertex, "ShowLineNumbers", null)
-                    || GraphUtil.ExistQueryIn(changedVertex, "HighlightedLine", null))
-                {
-                    UpdateEditView();
-                    return exe.Stack;
-                }                
-            }            
-
-            UpdateVertex();
-
-            return exe.Stack;
+                this.LayoutTransform = null;
         }
 
         public IVertex Vertex

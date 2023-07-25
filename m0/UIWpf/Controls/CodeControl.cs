@@ -27,40 +27,21 @@ using m0.ZeroCode;
 
 namespace m0.UIWpf.Visualisers
 {
-    public class CodeControl : TextEditor, IListVisualiser, IOwnScrolling
+    public class CodeControl : TextEditor
     {
-        public AtomVisualiserHelper VisualiserHelper { get; set; }        
-
         IList<string> TextMemory;
-
-        static string[] _MetaTriggeringUpdateVertex = new string[] { };
-        public string[] MetaTriggeringUpdateVertex { get { return _MetaTriggeringUpdateVertex; } }
-
-        static string[] _MetaTriggeringUpdateView = new string[] {"ShowWhiteSpace", "ShowLineNumbers", "HighlightedLine"  };
-        public string[] MetaTriggeringUpdateView { get { return _MetaTriggeringUpdateView; } }
 
         public void UpdateView() { UpdateEditView(); }
 
         public void UnselectAllSelectedEdges() { }
 
-        public CodeControl(IVertex baseEdgeVertex, IVertex parentVisualiser)
+        public CodeControl(IVertex _Vertex, bool _NoVertexForTextMemory)
         {
-            new ListVisualiserHelper(parentVisualiser,
-                MinusZero.Instance.Root.Get(false, @"System\Meta\Visualiser\Code"),
-                this,
-                "CodeVisualiser",
-                this,
-                false,
-                new List<string> { @"", @"BaseEdge:\To:" },
-                "AtomVisualiserFull",
-                baseEdgeVertex,
-                UpdateBaseEdgeCallSchemeEnum.OmmitSecond);
+            NoVertexForTextMemory = _NoVertexForTextMemory;
 
-            //((ListVisualiserHelper)VisualiserHelper).CustomVertexChangeEvent += CustomVertexChange;
+            Vertex = _Vertex;
 
             SetVertexDefaultValues();
-
-            ScaleChange();
 
             TextMemory = new List<string>();
 
@@ -71,9 +52,67 @@ namespace m0.UIWpf.Visualisers
             this.PreviewKeyDown += CodeVisualiser_KeyDown;
         }
 
-        public void OnLoad(object sender, RoutedEventArgs e) { }
+        public IVertex Vertex { get; set; }
 
-        public void SelectedVerticesUpdated() { }
+        public bool NoVertexForTextMemory = false;
+
+        int _TextMemoryMax;
+        int TextMemoryMax
+        {
+            get {
+                if (NoVertexForTextMemory)
+                    return _TextMemoryMax;
+                else
+                    return (int)GraphUtil.GetIntegerValue(Vertex.Get(false, "TextMemoryMax:"));
+            }
+
+            set {
+                if (NoVertexForTextMemory)
+                    _TextMemoryMax = value;
+                else
+                {
+                    ////////////////////////////////////////
+                    Interaction.BeginInteractionWithGraph();
+                    ////////////////////////////////////////
+                    
+                    Vertex.Get(false, "TextMemoryMax:").Value = value;
+
+                    ////////////////////////////////////////
+                    Interaction.EndInteractionWithGraph();
+                    ////////////////////////////////////////
+                }
+            }
+        }
+
+        int _TextMemoryCurrent;
+        int TextMemoryCurrent
+        {
+            get
+            {
+                if (NoVertexForTextMemory)
+                    return _TextMemoryCurrent;
+                else
+                    return (int)GraphUtil.GetIntegerValue(Vertex.Get(false, "TextMemoryCurrent:"));
+            }
+
+            set
+            {
+                if (NoVertexForTextMemory)
+                    _TextMemoryCurrent = value;
+                else
+                {
+                    ////////////////////////////////////////
+                    Interaction.BeginInteractionWithGraph();
+                    ////////////////////////////////////////
+                    
+                    Vertex.Get(false, "TextMemoryCurrent:").Value = value;
+
+                    ////////////////////////////////////////
+                    Interaction.EndInteractionWithGraph();
+                    ////////////////////////////////////////
+                }
+            }
+        }
 
         private void ExecuteParse()
         {
@@ -89,10 +128,9 @@ namespace m0.UIWpf.Visualisers
 
             int currentTextMemory = TextMemory.Count;
 
-            Vertex.Get(false, "TextMemoryMax:").Value = currentTextMemory;
-            Vertex.Get(false, "TextMemoryCurrent:").Value = currentTextMemory;
+            TextMemoryMax = currentTextMemory;
+            TextMemoryCurrent = currentTextMemory;
             
-
             ////////////////////////////////////////
             Interaction.EndInteractionWithGraph();
             ////////////////////////////////////////
@@ -108,39 +146,16 @@ namespace m0.UIWpf.Visualisers
                     TextMemoryCurrent--;
 
                 Text = TextMemory[TextMemoryCurrent - 1];
-
-                ////////////////////////////////////////
-                Interaction.BeginInteractionWithGraph();
-                ////////////////////////////////////////
-
-                Vertex.Get(false, "TextMemoryCurrent:").Value = TextMemoryCurrent;
-
-                ////////////////////////////////////////
-                Interaction.EndInteractionWithGraph();
-                ////////////////////////////////////////
             }
         }
 
         private void ReferenceTextMemoryRight()
         {
-            int TextMemoryMax = (int)GraphUtil.GetIntegerValue(Vertex.Get(false, "TextMemoryMax:"));
-            int TextMemoryCurrent = (int)GraphUtil.GetIntegerValue(Vertex.Get(false, "TextMemoryCurrent:"));            
-
             if (TextMemoryCurrent < TextMemoryMax)
             {
                 TextMemoryCurrent++;
 
                 Text = TextMemory[TextMemoryCurrent - 1];
-
-                ////////////////////////////////////////
-                Interaction.BeginInteractionWithGraph();
-                ////////////////////////////////////////
-
-                Vertex.Get(false, "TextMemoryCurrent:").Value = TextMemoryCurrent;
-
-                ////////////////////////////////////////
-                Interaction.EndInteractionWithGraph();
-                ////////////////////////////////////////
             }
         }
 
@@ -159,7 +174,7 @@ namespace m0.UIWpf.Visualisers
         TabFoldingStrategy foldingStrategy;
         FoldingManager foldingManager;
 
-        void UpdateEditView()
+        public void UpdateEditView()
         {
             if(GraphUtil.GetValueAndCompareStrings(Vertex.Get(false, @"ShowWhiteSpace:"),"True"))
                 Options.ShowTabs = true;
@@ -175,12 +190,16 @@ namespace m0.UIWpf.Visualisers
                 Options.HighlightCurrentLine = true;
             else
                 Options.HighlightCurrentLine = false;
+
+            //
+
+            double fontSize = ((double)GraphUtil.GetDoubleValue(Vertex.Get(false, "FontSize:")));
+
+            this.FontSize = fontSize;
         }
 
         void EditSetup()
         {
-            UpdateEditView();
-
             this.FontFamily = new FontFamily("Consolas");
             this.FontWeight = FontWeight.FromOpenTypeWeight(1);
             
@@ -217,14 +236,10 @@ namespace m0.UIWpf.Visualisers
             foldingStrategy.UpdateFoldings(foldingManager, Document);            
         }
 
-        protected virtual void SetVertexDefaultValues()
+        public virtual void SetVertexDefaultValues()
         {
-            Vertex.Get(false, "Scale:").Value = 15.0;
-            Vertex.Get(false, "ShowWhiteSpace:").Value = "False";
-            Vertex.Get(false, "ShowLineNumbers:").Value = "False";
-            Vertex.Get(false, "HighlightedLine:").Value = "True";
-            Vertex.Get(false, "TextMemoryCurrent:").Value = 0;
-            Vertex.Get(false, "TextMemoryMax:").Value = 0;
+            TextMemoryCurrent = 0;
+            TextMemoryMax = 0;
         }
 
         public void UpdateVertex()
@@ -238,65 +253,6 @@ namespace m0.UIWpf.Visualisers
             }
             else
                 this.Text = "Ø";
-        }
-
-        public void ScaleChange()
-        {
-            double scale = ((double)GraphUtil.GetDoubleValue(Vertex.Get(false, "Scale:")));
-
-            this.FontSize = scale;
-        }
-
-        protected INoInEdgeInOutVertexVertex CustomVertexChange(IExecution exe)
-        {
-            IVertex changedVertex = exe.Stack.Get(false, @"event:\ChangedVertex:");
-
-            if (changedVertex != null)
-            {
-                if (GraphUtil.ExistQueryIn(changedVertex, "Scale", null))
-                {
-                    ScaleChange();
-                    return exe.Stack;
-                }
-
-                if (GraphUtil.ExistQueryIn(changedVertex, "ShowWhiteSpace", null) 
-                    || GraphUtil.ExistQueryIn(changedVertex, "ShowLineNumbers", null)
-                    || GraphUtil.ExistQueryIn(changedVertex, "HighlightedLine", null))
-                {
-                    UpdateEditView();
-                    return exe.Stack;
-                }                
-            }            
-
-            UpdateVertex();
-
-            return exe.Stack;
-        }
-
-        public IVertex Vertex
-        {
-            get { return VisualiserHelper.Vertex; }
-            set { VisualiserHelper.SetVertex(value); }
-        }
-
-        public void Dispose()
-        {
-            VisualiserHelper.Dispose();
-        }      
-
-        public IVertex GetEdgeByPoint(System.Windows.Point point)
-        {
-            return Vertex.Get(false, @"BaseEdge:");
-        }
-
-        public IVertex GetEdgeByVisualElement(System.Windows.FrameworkElement visualElement)
-        {
-            throw new NotImplementedException();
-        }
-
-        public System.Windows.FrameworkElement GetVisualElementByEdge(IVertex vertex)
-        {
-            throw new NotImplementedException();
         }
     }
 }
