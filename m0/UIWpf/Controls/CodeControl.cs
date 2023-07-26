@@ -29,17 +29,29 @@ namespace m0.UIWpf.Visualisers
 {
     public class CodeControl : TextEditor
     {
+        public bool BaseEdgeInsteadBaseVertex;
+
+        public IVertex Vertex;
+
+        public bool NoVertexForTextMemory = false;
+
+        //
+
         IList<string> TextMemory;
 
         public void UpdateView() { UpdateEditView(); }
 
         public void UnselectAllSelectedEdges() { }
 
-        public CodeControl(IVertex _Vertex, bool _NoVertexForTextMemory)
+        public CodeControl(IVertex _Vertex, bool _NoVertexForTextMemory, bool _BaseEdgeInsteadBaseVertex)
         {
+            Vertex = _Vertex;
+
             NoVertexForTextMemory = _NoVertexForTextMemory;
 
-            Vertex = _Vertex;
+            BaseEdgeInsteadBaseVertex = _BaseEdgeInsteadBaseVertex;
+
+            //
 
             SetVertexDefaultValues();
 
@@ -51,10 +63,6 @@ namespace m0.UIWpf.Visualisers
 
             this.PreviewKeyDown += CodeVisualiser_KeyDown;
         }
-
-        public IVertex Vertex { get; set; }
-
-        public bool NoVertexForTextMemory = false;
 
         int _TextMemoryMax;
         int TextMemoryMax
@@ -137,9 +145,7 @@ namespace m0.UIWpf.Visualisers
         }
 
         private void ReferenceTextMemoryLeft()
-        {            
-            int TextMemoryCurrent = (int)GraphUtil.GetIntegerValue(Vertex.Get(false, "TextMemoryCurrent:"));        
-
+        {                   
             if (TextMemoryCurrent > 0)
             {
                 if (TextMemoryCurrent > 1)

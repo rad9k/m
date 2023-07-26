@@ -18,6 +18,7 @@ using m0.ZeroTypes;
 using m0.Util;
 using System.Xml.Linq;
 using m0.User.Process.UX;
+using m0.UIWpf.Visualisers;
 
 namespace m0.ZeroTypes.UX
 {
@@ -26,6 +27,10 @@ namespace m0.ZeroTypes.UX
     /// </summary>
     public partial class CodeItem : UXItem
     {
+        CodeControl codeControl;
+
+        //
+
         static string[] _SubVertexesTriggeringItemVisualUpdate = new string[] {
             "RoundEdgeSize", "ShowMeta", "HideHeader", "BorderSize"};
         public override string[] SubVertexesTriggeringItemVisualUpdate { get { return _SubVertexesTriggeringItemVisualUpdate; } }
@@ -45,33 +50,25 @@ namespace m0.ZeroTypes.UX
 
         public override void VertexSetedUp()
         {
-           /* if (VisualiserClass != null)        
-            {
-                if (ContentVisualiser != null && ContentVisualiser is IDisposable)
-                {
-                    TheGrid.Children.Remove((UIElement)ContentVisualiser);
-                    ((IDisposable)ContentVisualiser).Dispose();
-                }
+            if (codeControl != null)
+                TheGrid.Children.Remove((UIElement)ContentVisualiser);
 
-                ContentVisualiser = PlatformClass.CreatePlatformObject(VisualiserClass, BaseEdge, this.Vertex);
+            codeControl = new CodeControl(Vertex, true, true);
 
-                Grid.SetRow((UIElement)ContentVisualiser, 2);
-                
-                TheGrid.Children.Add((UIElement)ContentVisualiser);
-            }
-            else
-            {
-                ContentVisualiser = null;
-            }
-                    
-            if (VisualiserVertex != null && ContentVisualiser != null)
-                OwningVisualiser.AddEdgesFromDefintion(ContentVisualiser.Vertex, VisualiserVertex);
-           */
+            Grid.SetRow(codeControl, 2);
+
+            TheGrid.Children.Add(codeControl);
+
             base.VertexSetedUp();
         }
         
         public override void ItemVisualUpdate()
         {
+            if (codeControl != null)
+                codeControl.UpdateVertex();
+
+            //
+
             base.ItemVisualUpdate();
 
             if (ShowMeta)
@@ -114,21 +111,16 @@ namespace m0.ZeroTypes.UX
 
             this.Frame.BorderThickness = new Thickness(BorderSize_nonZero);
 
-            if (ContentVisualiser != null)
+            if (HideHeader)
             {
-                if (HideHeader)
-                {
-                    this.TheGrid.RowDefinitions[0].Height = new GridLength(0);
-                    this.TheGrid.RowDefinitions[1].Height = new GridLength(0);
-                }
-                else
-                {
-                    this.TheGrid.RowDefinitions[0].Height = new GridLength(17);
-                    this.TheGrid.RowDefinitions[1].Height = new GridLength(BorderSize_nonZero);
-                }
+                this.TheGrid.RowDefinitions[0].Height = new GridLength(0);
+                this.TheGrid.RowDefinitions[1].Height = new GridLength(0);
             }
             else
-                this.TheGrid.RowDefinitions[1].Height = new GridLength(0);
+            {
+                this.TheGrid.RowDefinitions[0].Height = new GridLength(17);
+                this.TheGrid.RowDefinitions[1].Height = new GridLength(BorderSize_nonZero);
+            }
 
             //
 
