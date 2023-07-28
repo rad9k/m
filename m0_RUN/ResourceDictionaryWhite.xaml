@@ -20,6 +20,7 @@
     <Color x:Key="0VeryLightHighlight">#B1C5FF</Color>
     <Color x:Key="0Processing">#FCFFA5</Color>
     <Color x:Key="0Error">#FF0000</Color>
+    <Color x:Key="0LightError">#ffbbbb</Color>
     <Color x:Key="0Black">#000000</Color>
     <Color x:Key="0White">#FFFFFF</Color>
 
@@ -41,6 +42,7 @@
     <SolidColorBrush x:Key="0LightHighlightBrush" Color="{StaticResource 0LightHighlight}" />
     <SolidColorBrush x:Key="0VeryLightHighlightBrush" Color="{StaticResource 0VeryLightHighlight}" />
     <SolidColorBrush x:Key="0ProcessingBrush" Color="{StaticResource 0Processing}" />
+    <SolidColorBrush x:Key="0LightErrorBrush" Color="{StaticResource 0LightError}" />
     <SolidColorBrush x:Key="0ErrorBrush" Color="{StaticResource 0Error}" />
     <SolidColorBrush x:Key="0BlackBrush" Color="{StaticResource 0Black}" />
     <SolidColorBrush x:Key="0WhiteBrush" Color="{StaticResource 0White}" />
