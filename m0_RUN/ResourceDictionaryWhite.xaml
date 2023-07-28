@@ -18,7 +18,7 @@
     <Color x:Key="0HighlightForeground">#FFFFFF</Color>
     <Color x:Key="0LightHighlight">#0195FF</Color>
     <Color x:Key="0VeryLightHighlight">#B1C5FF</Color>
-    <Color x:Key="0Processing">#FCFFD6</Color>
+    <Color x:Key="0Processing">#FCFFA5</Color>
     <Color x:Key="0Error">#FF0000</Color>
     <Color x:Key="0Black">#000000</Color>
     <Color x:Key="0White">#FFFFFF</Color>
