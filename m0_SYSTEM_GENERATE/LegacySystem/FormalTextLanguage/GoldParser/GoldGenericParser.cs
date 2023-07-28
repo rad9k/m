@@ -11,7 +11,7 @@ using m0;
 
 namespace m0.FormalTextLanguage.GoldParser
 {
-    class GoldGenericParser: IParser
+    class GoldGenericParser: IFormalTextParser
     {
         GoldGenericParser_BackEnd goldParser;
 

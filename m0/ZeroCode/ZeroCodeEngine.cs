@@ -8,7 +8,7 @@ using m0.Foundation;
 
 namespace m0.ZeroCode
 {
-    public class ZeroCodeEngine : ICodeGenerator, IParser, IExecuter
+    public class ZeroCodeEngine : IFormalTextGenerator, IFormalTextParser, IExecuter
     {             
         ZeroCodeExecuter ZeroCodeExecuter_Instance;
         ZeroCodeGraph2StringProcessing ZeroCodeGraph2StringProcessing_Instance;

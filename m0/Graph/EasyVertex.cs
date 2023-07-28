@@ -697,7 +697,7 @@ namespace m0.Graph
             {
                 queryVertex = MinusZero.Instance.CreateTempVertex();
 
-                parseError = MinusZero.Instance.DefaultParser.Parse(queryVertex, query);
+                parseError = MinusZero.Instance.DefaultFormalTextParser.Parse(queryVertex, query);
 
                 if (parseError == null || parseError.Count() == 0 /* && !cache.ContainsKey(query)*/)
                 {
@@ -730,7 +730,7 @@ namespace m0.Graph
             {
                 queryVertex = MinusZero.Instance.CreateTempVertex();
 
-                parseError = MinusZero.Instance.DefaultParser.Parse(queryVertex, query);
+                parseError = MinusZero.Instance.DefaultFormalTextParser.Parse(queryVertex, query);
 
                 if (parseError == null || parseError.Count() == 0/* && || !cache.ContainsKey(query)*/)  // it happens to exist there so need to check again
                 {

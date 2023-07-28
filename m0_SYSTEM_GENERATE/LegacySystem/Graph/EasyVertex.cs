@@ -11,7 +11,7 @@ namespace m0.LegacySystem.Graph
     public class EasyVertex
     {
         public static IExecuter DefaultExecuter;
-        public static IParser DefaultParser;
+        public static IFormalTextParser DefaultParser;
 
         private static IDictionary<String, IVertex> QueryParseChache = new Dictionary<String, IVertex>();
         private static IDictionary<String, IVertex> QueryParseChache_metaMode = new Dictionary<String, IVertex>();

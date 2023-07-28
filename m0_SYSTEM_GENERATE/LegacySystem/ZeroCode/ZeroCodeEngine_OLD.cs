@@ -12,7 +12,7 @@ using m0.ZeroTypes;
 
 namespace m0.LegacySystem.ZeroCode
 {
-    public class ZeroCodeEngine_OLD: IParser, IExecuter
+    public class ZeroCodeEngine_OLD: IFormalTextParser, IExecuter
     {
         private GoldGenericParser Parser;
 

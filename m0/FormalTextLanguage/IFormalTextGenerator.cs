@@ -7,7 +7,7 @@ using m0.Foundation;
 
 namespace m0.FormalTextLanguage
 {
-    public interface ICodeGenerator
+    public interface IFormalTextGenerator
     {
         string Generate(IEdge graphBaseEdge);
 

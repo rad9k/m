@@ -138,7 +138,7 @@ namespace m0_SYSTEM_GENERATE
 
 
             IVertex code1 = code.AddVertex(null, null);
-            MinusZero.Instance.DefaultParser.Parse(code1,
+            MinusZero.Instance.DefaultFormalTextParser.Parse(code1,
                 "\"Code1\"" + "" +
                 "\r\n\tvariable \"A\" @String" +
                 "\r\n\tvariable \"B\" @String" +
@@ -158,7 +158,7 @@ namespace m0_SYSTEM_GENERATE
                 );
 
             IVertex code2 = code.AddVertex(null, null);
-            MinusZero.Instance.DefaultParser.Parse(code2,
+            MinusZero.Instance.DefaultFormalTextParser.Parse(code2,
                             "\"Code2\"" +
                             "\r\n\tvariable \"Test\" @String" +
                             "\r\n\tvariable \"Test2\" @String" +
@@ -174,7 +174,7 @@ namespace m0_SYSTEM_GENERATE
                             );
 
             IVertex code3 = code.AddVertex(null, null);
-            MinusZero.Instance.DefaultParser.Parse(code3,
+            MinusZero.Instance.DefaultFormalTextParser.Parse(code3,
             "\"Code3\"" +
             "\r\n\tvariable \"A\" @String" +
             "\r\n\tvariable \"B\" @String" +
@@ -188,7 +188,7 @@ namespace m0_SYSTEM_GENERATE
             );
 
             IVertex code4 = code.AddVertex(null, null);
-            MinusZero.Instance.DefaultParser.Parse(code4,
+            MinusZero.Instance.DefaultFormalTextParser.Parse(code4,
             "\"Code4\"" +
             "\r\n\tvariable \"A\" @String" +
             "\r\n\tvariable \"B\" @String" +
@@ -213,7 +213,7 @@ namespace m0_SYSTEM_GENERATE
             //() ! <>
 
             IVertex code5 = code.AddVertex(null, null);
-            MinusZero.Instance.DefaultParser.Parse(code5,
+            MinusZero.Instance.DefaultFormalTextParser.Parse(code5,
            "\"Code5\"" +
            "\r\n\tvariable \"A\" @String" +
            "\r\n\tvariable \"B\" @String" +
@@ -228,7 +228,7 @@ namespace m0_SYSTEM_GENERATE
            );
 
             IVertex code6 = code.AddVertex(null, null);
-            MinusZero.Instance.DefaultParser.Parse(code6,
+            MinusZero.Instance.DefaultFormalTextParser.Parse(code6,
           "\"Code6\"" +
           "\r\n\tvariable \"A\" @String" +
           "\r\n\tvariable \"B\" @String" +
@@ -240,7 +240,7 @@ namespace m0_SYSTEM_GENERATE
           );
 
             IVertex code7 = code.AddVertex(null, null);
-            MinusZero.Instance.DefaultParser.Parse(code7,
+            MinusZero.Instance.DefaultFormalTextParser.Parse(code7,
              "\"Code7\"" +
              "\r\n\tvariable \"A\" @String" +
              "\r\n\tvariable \"B\" @String" +
@@ -269,7 +269,7 @@ namespace m0_SYSTEM_GENERATE
              );
 
             IVertex code8 = code.AddVertex(null, null);
-            MinusZero.Instance.DefaultParser.Parse(code8,
+            MinusZero.Instance.DefaultFormalTextParser.Parse(code8,
        "\"Code8\"" +
        "\r\n\tvariable \"A\" @String" +
        "\r\n\tvariable \"B\" @String" +
@@ -281,13 +281,13 @@ namespace m0_SYSTEM_GENERATE
        );
 
             IVertex code9 = code.AddVertex(null, null);
-            MinusZero.Instance.DefaultParser.Parse(code9,
+            MinusZero.Instance.DefaultFormalTextParser.Parse(code9,
         "\"Code9\"" +
         "\r\n\tvariable \"a\" @Vertex" +
         "\r\n\ta=@@System");
 
             IVertex code10 = code.AddVertex(null, null);
-            MinusZero.Instance.DefaultParser.Parse(code10,
+            MinusZero.Instance.DefaultFormalTextParser.Parse(code10,
         "\"Code10\"" +
         "\r\n\t\"X\"" +
         "\r\n\t\t\"2\" * (\"2\" + \"1\")" +
@@ -302,7 +302,7 @@ namespace m0_SYSTEM_GENERATE
         );
 
             IVertex code11 = code.AddVertex(null, null);
-            MinusZero.Instance.DefaultParser.Parse(code11,
+            MinusZero.Instance.DefaultFormalTextParser.Parse(code11,
             "\"Code11\"" +
             "\r\n\t\"x\"" +
             "\r\n\t\t\"a\"" +
@@ -317,7 +317,7 @@ namespace m0_SYSTEM_GENERATE
             "\r\n\t@@x<<\"2\">>\\b<<\"2\">>\\z3");
 
             IVertex code12 = code.AddVertex(null, null);
-            MinusZero.Instance.DefaultParser.Parse(code12,
+            MinusZero.Instance.DefaultFormalTextParser.Parse(code12,
         "\"Code12\"" +
         "\r\n\tclass \"Person\"" +
         "\r\n\t\tattribute \"Name\" @String \"1\":\"1\"" +
@@ -332,7 +332,7 @@ namespace m0_SYSTEM_GENERATE
     "\r\n\tname = person.getName[]");
 
             IVertex code13 = code.AddVertex(null, null);
-            MinusZero.Instance.DefaultParser.Parse(code13,
+            MinusZero.Instance.DefaultFormalTextParser.Parse(code13,
             "\"Code13\"" +
     "\r\n\tvariable \"mis\" @Boolean" +
     "\r\n\tif (\"1\" + \"2\") == \"3\"" +

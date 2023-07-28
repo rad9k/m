@@ -24,6 +24,7 @@ using System.Xml;
 using m0.UIWpf.Visualisers.Helper;
 using m0.User.Process.UX;
 using m0.ZeroCode;
+using Xceed.Wpf.Toolkit.Core.Converters;
 
 namespace m0.UIWpf.Visualisers
 {
@@ -130,9 +131,14 @@ namespace m0.UIWpf.Visualisers
             
             TextMemory.Add(Text);            
 
-            IVertex BaseEdgeToVertex = Vertex.Get(false, @"BaseEdge:\To:");            
+            IVertex BaseEdgeToVertex = Vertex.Get(false, @"BaseEdge:\To:");
 
-            MinusZero.Instance.DefaultParser.Parse(BaseEdgeToVertex, Text);
+            IVertex ftl = GraphUtil.GetQueryOutFirst(Vertex, "FormalTextLanguage", null);
+
+            if (ftl == null)
+                MinusZero.Instance.DefaultFormalTextParser.Parse(BaseEdgeToVertex, Text);
+            else
+                MinusZero.Instance.DefaultFormalTextParser.Parse(ftl, BaseEdgeToVertex, Text);
 
             int currentTextMemory = TextMemory.Count;
 
@@ -213,20 +219,25 @@ namespace m0.UIWpf.Visualisers
 
             this.LineNumbersForeground = new SolidColorBrush(Colors.LightGray);
 
-            foldingManager = FoldingManager.Install(TextArea);
-            foldingStrategy = new TabFoldingStrategy();
-            foldingStrategy.UpdateFoldings(foldingManager, Document);
+            bool showFolding = GraphUtil.GetBooleanValueOrFalse(GraphUtil.GetQueryOutFirst(Vertex, "ShowFolding", null));
 
-            DispatcherTimer foldingUpdateTimer = new DispatcherTimer();
-            foldingUpdateTimer.Interval = TimeSpan.FromSeconds(2);
-            foldingUpdateTimer.Tick += delegate { UpdateFoldings(); };
-            foldingUpdateTimer.Start();
+            if (showFolding) {
+                foldingManager = FoldingManager.Install(TextArea);
+                foldingStrategy = new TabFoldingStrategy();
+                foldingStrategy.UpdateFoldings(foldingManager, Document);
+
+                DispatcherTimer foldingUpdateTimer = new DispatcherTimer();
+                foldingUpdateTimer.Interval = TimeSpan.FromSeconds(2);
+                foldingUpdateTimer.Tick += delegate { UpdateFoldings(); };
+                foldingUpdateTimer.Start();
+            }
 
             IHighlightingDefinition customHighlighting;
             using (Stream s = typeof(m0.MinusZero).Assembly.GetManifestResourceStream("m0.ZeroCodeHighlighting.xshd"))
             {
                 if (s == null)
                     throw new InvalidOperationException("Could not find embedded resource");
+
                 using (XmlReader reader = new XmlTextReader(s))
                 {
                     customHighlighting = ICSharpCode.AvalonEdit.Highlighting.Xshd.
@@ -255,7 +266,13 @@ namespace m0.UIWpf.Visualisers
             if (bv != null /*&& bv.Value != null && ((String)bv.Value)!="$Empty"*/)
             {
                 EdgeBase ee = new EdgeBase(Vertex.Get(false, @"BaseEdge:\From:"), Vertex.Get(false, @"BaseEdge:\Meta:"), Vertex.Get(false, @"BaseEdge:\To:"));
-                this.Text = this.Text = MinusZero.Instance.DefaultCodeGenerator.Generate(ee);
+
+                IVertex ftl = GraphUtil.GetQueryOutFirst(Vertex, "FormalTextLanguage", null);
+
+                if (ftl == null)
+                    this.Text = MinusZero.Instance.DefaultFormalTextGenerator.Generate(ee);
+                else
+                    this.Text = MinusZero.Instance.DefaultFormalTextGenerator.Generate(ftl, ee);
             }
             else
                 this.Text = "Ø";

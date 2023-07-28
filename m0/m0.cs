@@ -69,9 +69,9 @@ namespace m0
         public IUserInteraction DefaultUserInteraction { get { return _DefaultUserInteraction; } }
 
 
-        public IParser _DefaultParser; // need this public hack for LegacySystem_m0 based generation in m0_SYSTEM_GENERATE
+        public IFormalTextParser _DefaultFormalTextParser; // need this public hack for LegacySystem_m0 based generation in m0_SYSTEM_GENERATE
 
-        public IParser DefaultParser { get { return _DefaultParser; } }
+        public IFormalTextParser DefaultFormalTextParser { get { return _DefaultFormalTextParser; } }
 
 
         public IExecuter _DefaultExecuter; // need this public hack for LegacySystem_m0 based generation in m0_SYSTEM_GENERATE
@@ -85,9 +85,9 @@ namespace m0
         public IVertex DefaultFormalTextLanguage { get { return _DefaultFormalTextLanguage; } }
 
 
-        public ICodeGenerator _DefaultCodeGenerator; // need this public hack for LegacySystem_m0 based generation in m0_SYSTEM_GENERATE
+        public IFormalTextGenerator _DefaultFormalTextGenerator; // need this public hack for LegacySystem_m0 based generation in m0_SYSTEM_GENERATE
 
-        public ICodeGenerator DefaultCodeGenerator { get { return _DefaultCodeGenerator; } }
+        public IFormalTextGenerator DefaultFormalTextGenerator { get { return _DefaultFormalTextGenerator; } }
 
 
         public IVertex tempRoot; // need this public hack for LegacySystem_m0 based generation in m0_SYSTEM_GENERATE
@@ -163,10 +163,10 @@ namespace m0
         {
             ZeroCode.ZeroCodeEngine zeroCodeEngine = new ZeroCode.ZeroCodeEngine();
 
-            _DefaultParser = zeroCodeEngine;
+            _DefaultFormalTextParser = zeroCodeEngine;
             _DefaultExecuter = zeroCodeEngine;
 
-            _DefaultCodeGenerator = zeroCodeEngine;
+            _DefaultFormalTextGenerator = zeroCodeEngine;
         }
 
         void LoadRootFromM0(){

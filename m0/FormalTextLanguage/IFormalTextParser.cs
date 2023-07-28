@@ -7,7 +7,7 @@ using m0.Foundation;
 
 namespace m0.FormalTextLanguage
 {
-    public interface IParser
+    public interface IFormalTextParser
     {
         IVertex Parse(IVertex rootVertex, string text);
 

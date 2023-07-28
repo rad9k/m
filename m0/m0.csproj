@@ -203,10 +203,10 @@
     <Compile Include="FormalTextLanguage\IExecuter.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="FormalTextLanguage\IZeroCodeGraph2String.cs">
+    <Compile Include="FormalTextLanguage\IFormalTextGenerator.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="FormalTextLanguage\IParser.cs">
+    <Compile Include="FormalTextLanguage\IFormalTextParser.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="UIWpf\Commands\BaseCommands.cs" />

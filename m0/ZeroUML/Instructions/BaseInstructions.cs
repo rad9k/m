@@ -2203,7 +2203,7 @@ namespace m0.ZeroUML.Instructions
             {
                 IVertex newVertex = newStack.AddVertex(null, "");
 
-                MinusZero.Instance.DefaultParser.Parse(language, newVertex, e.To.Value.ToString());
+                MinusZero.Instance.DefaultFormalTextParser.Parse(language, newVertex, e.To.Value.ToString());
             }
 
             return newStack;
@@ -2233,7 +2233,7 @@ namespace m0.ZeroUML.Instructions
 
             foreach (IEdge e in expressionResult)
             {
-                string parsed = MinusZero.Instance.DefaultCodeGenerator.Generate(language, e);
+                string parsed = MinusZero.Instance.DefaultFormalTextGenerator.Generate(language, e);
 
                 newStack.AddVertex(null, parsed);
             }
