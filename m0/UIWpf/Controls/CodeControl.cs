@@ -25,11 +25,15 @@ using m0.UIWpf.Visualisers.Helper;
 using m0.User.Process.UX;
 using m0.ZeroCode;
 using Xceed.Wpf.Toolkit.Core.Converters;
+using ICSharpCode.AvalonEdit.Editing;
+using System.Threading;
 
 namespace m0.UIWpf.Visualisers
 {
-    public class CodeControl : TextEditor
+    public class CodeControl : Border
     {
+        TextEditor editor = new TextEditor();
+
         public bool BaseEdgeInsteadBaseVertex;
 
         public IVertex Vertex;
@@ -63,6 +67,10 @@ namespace m0.UIWpf.Visualisers
             UpdateEditView();
 
             this.PreviewKeyDown += CodeVisualiser_KeyDown;
+
+            this.Child = editor;
+
+            editor.Background = null;
         }
 
         int _TextMemoryMax;
@@ -123,31 +131,63 @@ namespace m0.UIWpf.Visualisers
             }
         }
 
+        string editor_Text;
+
         private void ExecuteParse()
+        {
+            editor_Text = editor.Text;
+
+            Thread thread = new Thread(_ExecuteParse);
+            thread.IsBackground = true;
+            thread.Start();
+        }
+
+        private void _ExecuteParse()
         {
             ////////////////////////////////////////
             Interaction.BeginInteractionWithGraph();
             ////////////////////////////////////////
             
-            TextMemory.Add(Text);            
+            TextMemory.Add(editor_Text);            
 
             IVertex BaseEdgeToVertex = Vertex.Get(false, @"BaseEdge:\To:");
 
             IVertex ftl = GraphUtil.GetQueryOutFirst(Vertex, "FormalTextLanguage", null);
 
+            //
+
+            m0Main.Instance.Dispatcher.Invoke(() =>
+            {
+                editor.Background = (Brush)FindResource("0ProcessingBrush");
+            });
+
+            //
+
             if (ftl == null)
-                MinusZero.Instance.DefaultFormalTextParser.Parse(BaseEdgeToVertex, Text);
+                MinusZero.Instance.DefaultFormalTextParser.Parse(BaseEdgeToVertex, editor_Text);
             else
-                MinusZero.Instance.DefaultFormalTextParser.Parse(ftl, BaseEdgeToVertex, Text);
+                MinusZero.Instance.DefaultFormalTextParser.Parse(ftl, BaseEdgeToVertex, editor_Text);
+
+            //
+
+            m0Main.Instance.Dispatcher.Invoke(() =>
+            {
+                editor.Background = (Brush)FindResource("0BackgroundBrush");
+            });
+
+            //
 
             int currentTextMemory = TextMemory.Count;
 
             TextMemoryMax = currentTextMemory;
             TextMemoryCurrent = currentTextMemory;
-            
-            ////////////////////////////////////////
-            Interaction.EndInteractionWithGraph();
-            ////////////////////////////////////////
+
+            m0Main.Instance.Dispatcher.Invoke(() =>
+            {
+                ////////////////////////////////////////
+                Interaction.EndInteractionWithGraph();
+                ////////////////////////////////////////
+            });
         }
 
         private void ReferenceTextMemoryLeft()
@@ -157,7 +197,7 @@ namespace m0.UIWpf.Visualisers
                 if (TextMemoryCurrent > 1)
                     TextMemoryCurrent--;
 
-                Text = TextMemory[TextMemoryCurrent - 1];
+                editor.Text = TextMemory[TextMemoryCurrent - 1];
             }
         }
 
@@ -167,7 +207,7 @@ namespace m0.UIWpf.Visualisers
             {
                 TextMemoryCurrent++;
 
-                Text = TextMemory[TextMemoryCurrent - 1];
+                editor.Text = TextMemory[TextMemoryCurrent - 1];
             }
         }
 
@@ -189,42 +229,42 @@ namespace m0.UIWpf.Visualisers
         public void UpdateEditView()
         {
             if(GraphUtil.GetValueAndCompareStrings(Vertex.Get(false, @"ShowWhiteSpace:"),"True"))
-                Options.ShowTabs = true;
+                editor.Options.ShowTabs = true;
             else
-                Options.ShowTabs = false;
+                editor.Options.ShowTabs = false;
 
             if (GraphUtil.GetValueAndCompareStrings(Vertex.Get(false, @"ShowLineNumbers:"), "True"))
-                this.ShowLineNumbers = true;
+                editor.ShowLineNumbers = true;
             else
-                this.ShowLineNumbers = false;
+                editor.ShowLineNumbers = false;
 
             if (GraphUtil.GetValueAndCompareStrings(Vertex.Get(false, @"HighlightedLine:"), "True"))
-                Options.HighlightCurrentLine = true;
+                editor.Options.HighlightCurrentLine = true;
             else
-                Options.HighlightCurrentLine = false;
+                editor.Options.HighlightCurrentLine = false;
 
             //
 
             double fontSize = ((double)GraphUtil.GetDoubleValue(Vertex.Get(false, "FontSize:")));
 
-            this.FontSize = fontSize;
+            editor.FontSize = fontSize;
         }
 
         void EditSetup()
         {
-            this.FontFamily = new FontFamily("Consolas");
-            this.FontWeight = FontWeight.FromOpenTypeWeight(1);
-            
-            Foreground = new SolidColorBrush(Color.FromRgb(0X2B, 0X91, 0XAF));
+            editor.FontFamily = new FontFamily("Consolas");
+            editor.FontWeight = FontWeight.FromOpenTypeWeight(1);
 
-            this.LineNumbersForeground = new SolidColorBrush(Colors.LightGray);
+            editor.Foreground = new SolidColorBrush(Color.FromRgb(0X2B, 0X91, 0XAF));
+
+            editor.LineNumbersForeground = new SolidColorBrush(Colors.LightGray);
 
             bool showFolding = GraphUtil.GetBooleanValueOrFalse(GraphUtil.GetQueryOutFirst(Vertex, "ShowFolding", null));
 
             if (showFolding) {
-                foldingManager = FoldingManager.Install(TextArea);
+                foldingManager = FoldingManager.Install(editor.TextArea);
                 foldingStrategy = new TabFoldingStrategy();
-                foldingStrategy.UpdateFoldings(foldingManager, Document);
+                foldingStrategy.UpdateFoldings(foldingManager, editor.Document);
 
                 DispatcherTimer foldingUpdateTimer = new DispatcherTimer();
                 foldingUpdateTimer.Interval = TimeSpan.FromSeconds(2);
@@ -245,12 +285,12 @@ namespace m0.UIWpf.Visualisers
                 }
             }
 
-            SyntaxHighlighting = customHighlighting;
+            editor.SyntaxHighlighting = customHighlighting;
         }
 
         void UpdateFoldings()
         {           
-            foldingStrategy.UpdateFoldings(foldingManager, Document);            
+            foldingStrategy.UpdateFoldings(foldingManager, editor.Document);            
         }
 
         public virtual void SetVertexDefaultValues()
@@ -270,12 +310,12 @@ namespace m0.UIWpf.Visualisers
                 IVertex ftl = GraphUtil.GetQueryOutFirst(Vertex, "FormalTextLanguage", null);
 
                 if (ftl == null)
-                    this.Text = MinusZero.Instance.DefaultFormalTextGenerator.Generate(ee);
+                    editor.Text = MinusZero.Instance.DefaultFormalTextGenerator.Generate(ee);
                 else
-                    this.Text = MinusZero.Instance.DefaultFormalTextGenerator.Generate(ftl, ee);
+                    editor.Text = MinusZero.Instance.DefaultFormalTextGenerator.Generate(ftl, ee);
             }
             else
-                this.Text = "Ø";
+                editor.Text = "Ø";
         }
     }
 }
