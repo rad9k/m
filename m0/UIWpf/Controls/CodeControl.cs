@@ -34,6 +34,10 @@ namespace m0.UIWpf.Visualisers
     {
         TextEditor editor = new TextEditor();
 
+        bool doNotParse = false;
+
+        //
+
         public bool BaseEdgeInsteadBaseVertex;
 
         public IVertex Vertex;
@@ -174,12 +178,18 @@ namespace m0.UIWpf.Visualisers
 
             //
 
+            int errorLine = -1;
+
             m0Main.Instance.Dispatcher.Invoke(() =>
             {
-                if(errorList.OutEdges.Count == 0)
+                if (errorList.OutEdges.Count == 0)
                     editor.Background = (Brush)FindResource("0BackgroundBrush");
                 else
+                {
                     editor.Background = (Brush)FindResource("0LightErrorBrush");
+
+                    errorLine = GraphUtil.GetIntegerValueOr0(errorList.OutEdges[0].To.Get(false, "Where:"));
+                }
             });
 
             //
@@ -191,9 +201,16 @@ namespace m0.UIWpf.Visualisers
 
             m0Main.Instance.Dispatcher.Invoke(() =>
             {
+                doNotParse = true;
+                
                 ////////////////////////////////////////
                 Interaction.EndInteractionWithGraph();
                 ////////////////////////////////////////
+                
+                doNotParse = false;
+                
+                if (errorLine != -1)
+                    editor.TextArea.Caret.Line = errorLine + 1;
             });
         }
 
@@ -306,8 +323,13 @@ namespace m0.UIWpf.Visualisers
             TextMemoryMax = 0;
         }
 
+        bool isFirstParse = true;
+
         public void UpdateVertex()
         {
+            if (doNotParse)
+                return;
+
             IVertex bv = Vertex.Get(false, @"BaseEdge:\To:");
 
             if (bv != null /*&& bv.Value != null && ((String)bv.Value)!="$Empty"*/)
@@ -320,6 +342,18 @@ namespace m0.UIWpf.Visualisers
                     editor.Text = MinusZero.Instance.DefaultFormalTextGenerator.Generate(ee);
                 else
                     editor.Text = MinusZero.Instance.DefaultFormalTextGenerator.Generate(ftl, ee);
+
+                if (isFirstParse)
+                {
+                    TextMemory.Add(editor.Text);
+
+                    int currentTextMemory = TextMemory.Count;
+
+                    TextMemoryMax = currentTextMemory;
+                    TextMemoryCurrent = currentTextMemory;
+
+                    isFirstParse = false;
+                }
             }
             else
                 editor.Text = "Ø";
