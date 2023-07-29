@@ -2615,7 +2615,7 @@ namespace m0.ZeroCode
 
             stack.parseNextLine();
 
-            IVertex errors=Process_reccurent(stack, baseVertex);
+            IVertex errors = Process_reccurent(stack, baseVertex);
 
             AddNewLines(stack);
 
@@ -2788,13 +2788,13 @@ namespace m0.ZeroCode
 
             IVertex error = VertexOperations.AddInstance(errorList, Exception);
 
-            error.AddVertex(GraphUtil.GetQueryOutFirst(smz, null, "Where"), lineNumber.ToString());
+            error.AddVertex(GraphUtil.GetQueryOutFirst(Exception, null, "Where"), lineNumber.ToString());
 
             IVertex ExceptionTypeEnum = GraphUtil.GetQueryOutFirst(smz, null, "ExceptionTypeEnum");
 
-            error.AddEdge(GraphUtil.GetQueryOutFirst(smz, null, "Type"), GraphUtil.GetQueryOutFirst(ExceptionTypeEnum, null, "Error"));
+            error.AddEdge(GraphUtil.GetQueryOutFirst(Exception, null, "Type"), GraphUtil.GetQueryOutFirst(ExceptionTypeEnum, null, "Error"));
 
-            error.AddVertex(GraphUtil.GetQueryOutFirst(smz, null, "What"), value);
+            GraphUtil.SetVertexValue(error, GraphUtil.GetQueryOutFirst(Exception, null, "What"), value);
         }
 
         void DeleteAllEdgesFromBaseVertex()

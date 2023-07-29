@@ -137,11 +137,11 @@ namespace m0.UIWpf.Visualisers
         {
             editor_Text = editor.Text;
 
-            _ExecuteParse();
+            //_ExecuteParse();
 
-           // Thread thread = new Thread(_ExecuteParse);
-            //thread.IsBackground = true;
-            //thread.Start();
+            Thread thread = new Thread(_ExecuteParse);
+            thread.IsBackground = true;
+            thread.Start();
         }
 
         private void _ExecuteParse()
@@ -158,10 +158,10 @@ namespace m0.UIWpf.Visualisers
 
             //
 
-          //  m0Main.Instance.Dispatcher.Invoke(() =>
-           // {
+            m0Main.Instance.Dispatcher.Invoke(() =>
+            {
                 editor.Background = (Brush)FindResource("0ProcessingBrush");
-           // });
+            });
 
             //
 
@@ -174,13 +174,13 @@ namespace m0.UIWpf.Visualisers
 
             //
 
-           // m0Main.Instance.Dispatcher.Invoke(() =>
-           // {
+            m0Main.Instance.Dispatcher.Invoke(() =>
+            {
                 if(errorList.OutEdges.Count == 0)
                     editor.Background = (Brush)FindResource("0BackgroundBrush");
                 else
                     editor.Background = (Brush)FindResource("0LightErrorBrush");
-           // });
+            });
 
             //
 
@@ -189,12 +189,12 @@ namespace m0.UIWpf.Visualisers
             TextMemoryMax = currentTextMemory;
             TextMemoryCurrent = currentTextMemory;
 
-           // m0Main.Instance.Dispatcher.Invoke(() =>
-           // {
+            m0Main.Instance.Dispatcher.Invoke(() =>
+            {
                 ////////////////////////////////////////
                 Interaction.EndInteractionWithGraph();
                 ////////////////////////////////////////
-           // });
+            });
         }
 
         private void ReferenceTextMemoryLeft()
