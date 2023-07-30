@@ -12,14 +12,22 @@
         <Expander IsExpanded="False" ExpandDirection="Down" DockPanel.Dock="Top" 
                   Template="{DynamicResource StretchyExpanderTemp}" OverridesDefaultStyle="True" Header=""  >
             <StackPanel>
-                <ContentControl Name="expander" Foreground="{StaticResource 0ForegroundBrush}"/>                
+                <ContentControl Name="expander_Top" Foreground="{StaticResource 0ForegroundBrush}"/>                
                 <Border BorderBrush="{StaticResource 0ForegroundBrush}" BorderThickness="1"/>
             </StackPanel>                        
         </Expander>
         
         <ScrollViewer Name="Cont" Foreground="{StaticResource 0ForegroundBrush}" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto"  PreviewMouseWheel="ListViewScrollViewer_PreviewMouseWheel"/>
-    
-        </DockPanel>
+
+        <Expander IsExpanded="False" ExpandDirection="Up" DockPanel.Dock="Bottom" 
+                  Template="{DynamicResource StretchyExpanderTemp}" OverridesDefaultStyle="True" Header=""  >
+            <StackPanel>
+                <ContentControl Name="expander_Down" Foreground="{StaticResource 0ForegroundBrush}"/>
+                <Border BorderBrush="{StaticResource 0ForegroundBrush}" BorderThickness="1"/>
+            </StackPanel>
+        </Expander>
+
+    </DockPanel>
     
     
     <UserControl.Resources>

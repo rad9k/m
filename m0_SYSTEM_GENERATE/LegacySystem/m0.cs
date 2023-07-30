@@ -5949,7 +5949,7 @@ namespace m0
 
 
             AddItemVertex(vc, Root.Get(false, @"System\Meta\ZeroTypes\UX\CodeItem\HideHeader"), "true");
-            AddItemVertex(vc, Root.Get(false, @"System\Meta\ZeroTypes\UX\CodeItem\ShowScrollBar"), "true");
+            AddItemVertex(vc, Root.Get(false, @"System\Meta\ZeroTypes\UX\CodeItem\ShowScrollBars"), "true");
 
             AddLineDecorator(/*where*/vc, /*name*/ "any edge",
    /*EdgeTestQuery*/@"",
@@ -5966,9 +5966,6 @@ namespace m0
 /*MetaVertexTestQuery*/ null,
 /*ItemClass*/ smzu.Get(false, @"?CodeItem"), /*InstanceCreation*/ Direct,
 /*CreateItemVertex*/ true, /*BorderWidth*/ -1, /*BackgroundColor*/null,/*ForegroundColor*/ null);
-
-
-            AddItemVertex(vc, Root.Get(false, @"System\Meta\ZeroTypes\UX\CodeItem\HideHeader"), "1");
 
             IVertex vr = AddUXTemplate(/*where*/sdutz, /*name*/"Rhombus", /*doNotShowInherited*/ false,
             /*DirectVertexTestQuery*/ @"",
