@@ -9,49 +9,17 @@
              xmlns:sys="clr-namespace:System;assembly=mscorlib"       
              >    
     <DockPanel Background="{StaticResource 0BackgroundBrush}" Name="ParentCont">
-        <Expander DockPanel.Dock="Top"
-                  IsExpanded="False" 
-                  ExpandDirection="Down"  
-                  Template="{DynamicResource StretchyExpanderTemp}" 
-                  OverridesDefaultStyle="True" Header=""  >
+        <Expander IsExpanded="False" ExpandDirection="Down" DockPanel.Dock="Top" 
+                  Template="{DynamicResource StretchyExpanderTemp}" OverridesDefaultStyle="True" Header=""  >
             <StackPanel>
-                <ContentControl 
-                    Name="expander_Top" 
-                    Foreground="{StaticResource 0ForegroundBrush}"/>                
-                <Border BorderBrush="{StaticResource 0ForegroundBrush}" 
-                        BorderThickness="1"/>
+                <ContentControl Name="expander" Foreground="{StaticResource 0ForegroundBrush}"/>                
+                <Border BorderBrush="{StaticResource 0ForegroundBrush}" BorderThickness="1"/>
             </StackPanel>                        
         </Expander>
-
-        <Grid DockPanel.Dock="Bottom">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="*"/>
-                <RowDefinition Height="10"/>
-            </Grid.RowDefinitions>
-
-            <Expander  Grid.Row="1"
-                  IsExpanded="False" 
-                  ExpandDirection="Up" 
-                  Template="{DynamicResource StretchyExpanderTemp}" 
-                  OverridesDefaultStyle="True" 
-                  Header=""  >
-                <StackPanel>
-                    <Border BorderBrush="{StaticResource 0ForegroundBrush}" 
-                            BorderThickness="1"/>
-                    <ContentControl Name="expander_Down" 
-                                    Foreground="{StaticResource 0ForegroundBrush}"/>
-                </StackPanel>
-            </Expander>
-
-        <ScrollViewer Grid.Row="0"
-                      Name="Cont" 
-                      Foreground="{StaticResource 0ForegroundBrush}" 
-                      VerticalScrollBarVisibility="Auto" 
-                      HorizontalScrollBarVisibility="Auto"  
-                      PreviewMouseWheel="ListViewScrollViewer_PreviewMouseWheel"/>
-        </Grid>
+        
+        <ScrollViewer Name="Cont" Foreground="{StaticResource 0ForegroundBrush}" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto"  PreviewMouseWheel="ListViewScrollViewer_PreviewMouseWheel"/>
     
-    </DockPanel>
+        </DockPanel>
     
     
     <UserControl.Resources>

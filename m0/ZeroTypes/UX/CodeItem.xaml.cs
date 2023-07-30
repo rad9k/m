@@ -53,10 +53,7 @@ namespace m0.ZeroTypes.UX
             if (codeControl != null)
                 TheGrid.Children.Remove((UIElement)ContentVisualiser);
 
-            if (ShowScrollBars)
-                codeControl = new CodeControl(Vertex, true, true, true);
-            else
-                codeControl = new CodeControl(Vertex, true, true, false);
+            codeControl = new CodeControl(Vertex, true, true);
 
             Grid.SetRow(codeControl, 2);
 
@@ -172,10 +169,10 @@ namespace m0.ZeroTypes.UX
 
             //
 
-            if (codeControl != null) // not always works, but can
+            if (ContentVisualiser != null) // not always works, but can
             {
-                GeneralUtil.SetPropertyIfPresent(codeControl, "Foreground", (Brush)FindResource("0ForegroundBrush"));
-                GeneralUtil.SetPropertyIfPresent(codeControl, "Background", (Brush)FindResource("0BackgroundBrush"));
+                GeneralUtil.SetPropertyIfPresent(ContentVisualiser, "Foreground", (Brush)FindResource("0BackgroundBrush"));
+                GeneralUtil.SetPropertyIfPresent(ContentVisualiser, "Background", (Brush)FindResource("0SelectionBrush"));
             }
         }
 
@@ -201,10 +198,10 @@ namespace m0.ZeroTypes.UX
             
             this.Title.Foreground = (Brush)FindResource("0HighlightForegroundBrush");
 
-            if (codeControl != null) // not always works, but can
+            if (ContentVisualiser != null) // not always works, but can
             {
-                GeneralUtil.SetPropertyIfPresent(codeControl, "Foreground", (Brush)FindResource("0ForegroundBrush"));
-                GeneralUtil.SetPropertyIfPresent(codeControl, "Background", (Brush)FindResource("0BackgroundBrush"));
+                GeneralUtil.SetPropertyIfPresent(ContentVisualiser, "Foreground", (Brush)FindResource("0HighlightForegroundBrush"));
+                GeneralUtil.SetPropertyIfPresent(ContentVisualiser, "Background", (Brush)FindResource("0HighlightBrush"));
             }
         }
 
@@ -216,10 +213,7 @@ namespace m0.ZeroTypes.UX
         // UNDER        
 
         static IVertex ShowMeta_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\CodeItem\ShowMeta");
-        static IVertex ShowScrollBars_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\CodeItem\ShowScrollBars");
         static IVertex HideHeader_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\CodeItem\HideHeader");
-        
-        
         public bool ShowMeta
         {
             get
@@ -237,28 +231,6 @@ namespace m0.ZeroTypes.UX
 
                 if (val == null)
                     val = Vertex.AddVertex(ShowMeta_meta, value);
-                else
-                    val.Value = value;
-            }
-        }
-
-        public bool ShowScrollBars
-        {
-            get
-            {
-                IVertex val = GraphUtil.GetQueryOutFirst(Vertex, "ShowScrollBars", null);
-
-                if (val == null)
-                    return false;
-
-                return GraphUtil.GetBooleanValueOrFalse(val);
-            }
-            set
-            {
-                IVertex val = GraphUtil.GetQueryOutFirst(Vertex, "ShowScrollBars", null);
-
-                if (val == null)
-                    val = Vertex.AddVertex(ShowScrollBars_meta, value);
                 else
                     val.Value = value;
             }
