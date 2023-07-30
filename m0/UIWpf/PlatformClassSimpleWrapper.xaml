@@ -26,7 +26,7 @@
         <Grid DockPanel.Dock="Bottom">
             <Grid.RowDefinitions>
                 <RowDefinition Height="*"/>
-                <RowDefinition Height="10"/>
+                <RowDefinition Height="30"/>
             </Grid.RowDefinitions>
 
             <Expander  Grid.Row="1"
