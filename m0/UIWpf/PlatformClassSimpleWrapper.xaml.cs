@@ -60,7 +60,6 @@ namespace m0.UIWpf
         }
 
         public void ClosedEventHandler(object sender, EventArgs e)
-        //public void ClosedEventHandler(object sender, System.ComponentModel.CancelEventArgs e)
         {
             if(!IsIntialising)
                 CloseContent();
@@ -75,8 +74,11 @@ namespace m0.UIWpf
             if (Content is IDisposable)
                 ((IDisposable)Content).Dispose();
 
-            if (this.expander.Content is IDisposable)
-                ((IDisposable)this.expander.Content).Dispose();
+            if (this.expander_Top.Content is IDisposable)
+                ((IDisposable)this.expander_Top.Content).Dispose();
+
+            if (this.expander_Down.Content is IDisposable)
+                ((IDisposable)this.expander_Top.Content).Dispose();
 
             ////////////////////////////////////////
             Interaction.EndInteractionWithGraph();
@@ -85,7 +87,10 @@ namespace m0.UIWpf
 
         object Content;
 
-        WrapVisualiser topRow;
+        WrapVisualiser WrapOverVisualiser;
+        CodeVisualiser CodeOverVisualiser;
+        FormVisualiser FormOverVisualiser;
+
 
         public void SetContent(IPlatformClass pc){
             Content = pc;
@@ -102,11 +107,17 @@ namespace m0.UIWpf
 
             IVertex baseEdgeVertex = EdgeHelper.CreateTempEdgeVertex(null, null, pc.Vertex);
 
-            topRow = new WrapVisualiser(baseEdgeVertex, 0.6, pc.Vertex);            
-
-            //GraphUtil.ReplaceEdge(topRow.Vertex.Get(false, "BaseEdge:"), "To", pc.Vertex);
+            WrapOverVisualiser = new WrapVisualiser(baseEdgeVertex, 0.6, pc.Vertex);            
            
-            this.expander.Content = topRow;
+            this.expander_Top.Content = WrapOverVisualiser;
+
+            //
+
+            CodeOverVisualiser = new CodeVisualiser(null, null);
+
+            this.expander_Down.Content = CodeOverVisualiser;
+
+            //
         }
 
         public ScrollViewer GetScrollViewer()

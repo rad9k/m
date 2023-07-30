@@ -44,6 +44,8 @@ namespace m0.UIWpf.Visualisers
 
         public bool NoVertexForTextMemory = false;
 
+        public bool ShowScrollBar = true;
+
         //
 
         IList<string> TextMemory;
@@ -52,13 +54,15 @@ namespace m0.UIWpf.Visualisers
 
         public void UnselectAllSelectedEdges() { }
 
-        public CodeControl(IVertex _Vertex, bool _NoVertexForTextMemory, bool _BaseEdgeInsteadBaseVertex)
+        public CodeControl(IVertex _Vertex, bool _NoVertexForTextMemory, bool _BaseEdgeInsteadBaseVertex, bool _ShowScrollBar)
         {
             Vertex = _Vertex;
 
             NoVertexForTextMemory = _NoVertexForTextMemory;
 
             BaseEdgeInsteadBaseVertex = _BaseEdgeInsteadBaseVertex;
+
+            ShowScrollBar = _ShowScrollBar;
 
             //
 
@@ -75,6 +79,13 @@ namespace m0.UIWpf.Visualisers
             this.Child = editor;
 
             editor.Background = null;
+
+            if (!ShowScrollBar)
+            {
+                editor.VerticalScrollBarVisibility = ScrollBarVisibility.Hidden;
+
+                editor.HorizontalScrollBarVisibility = ScrollBarVisibility.Hidden;
+            }
         }
 
         int _TextMemoryMax;

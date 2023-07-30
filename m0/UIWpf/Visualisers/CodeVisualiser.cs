@@ -58,7 +58,7 @@ namespace m0.UIWpf.Visualisers
                 baseEdgeVertex,
                 UpdateBaseEdgeCallSchemeEnum.OmmitSecond);
 
-            codeControl = new CodeControl(Vertex, false, false);
+            codeControl = new CodeControl(Vertex, false, false, true);
 
             this.Child = codeControl;
 
