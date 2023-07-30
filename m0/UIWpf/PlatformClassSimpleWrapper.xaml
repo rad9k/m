@@ -9,23 +9,40 @@
              xmlns:sys="clr-namespace:System;assembly=mscorlib"       
              >    
     <DockPanel Background="{StaticResource 0BackgroundBrush}" Name="ParentCont">
-        <Expander IsExpanded="False" ExpandDirection="Down" DockPanel.Dock="Top" 
-                  Template="{DynamicResource StretchyExpanderTemp}" OverridesDefaultStyle="True" Header=""  >
+        <Expander DockPanel.Dock="Top"
+                  IsExpanded="False" 
+                  ExpandDirection="Down"  
+                  Template="{DynamicResource StretchyExpanderTemp}" 
+                  OverridesDefaultStyle="True" Header=""  >
             <StackPanel>
-                <ContentControl Name="expander_Top" Foreground="{StaticResource 0ForegroundBrush}"/>                
-                <Border BorderBrush="{StaticResource 0ForegroundBrush}" BorderThickness="1"/>
+                <ContentControl 
+                    Name="expander_Top" 
+                    Foreground="{StaticResource 0ForegroundBrush}"/>                
+                <Border BorderBrush="{StaticResource 0ForegroundBrush}" 
+                        BorderThickness="1"/>
             </StackPanel>                        
         </Expander>
-        
-        <ScrollViewer Name="Cont" Foreground="{StaticResource 0ForegroundBrush}" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto"  PreviewMouseWheel="ListViewScrollViewer_PreviewMouseWheel"/>
 
-        <Expander IsExpanded="False" ExpandDirection="Up" DockPanel.Dock="Bottom" 
-                  Template="{DynamicResource StretchyExpanderTemp}" OverridesDefaultStyle="True" Header=""  >
+        <Expander DockPanel.Dock="Bottom" 
+                  IsExpanded="False" 
+                  ExpandDirection="Up" 
+                  Template="{DynamicResource StretchyExpanderTemp}" 
+                  OverridesDefaultStyle="True" 
+                  Header=""  >
             <StackPanel>
-                <ContentControl Name="expander_Down" Foreground="{StaticResource 0ForegroundBrush}"/>
-                <Border BorderBrush="{StaticResource 0ForegroundBrush}" BorderThickness="1"/>
+                <Border BorderBrush="{StaticResource 0ForegroundBrush}" 
+                        BorderThickness="1"/>
+                <ContentControl Name="expander_Down" 
+                                Foreground="{StaticResource 0ForegroundBrush}"/>
             </StackPanel>
         </Expander>
+
+        <ScrollViewer DockPanel.Dock="Bottom" 
+                      Name="Cont" 
+                      Foreground="{StaticResource 0ForegroundBrush}" 
+                      VerticalScrollBarVisibility="Auto" 
+                      HorizontalScrollBarVisibility="Auto"  
+                      PreviewMouseWheel="ListViewScrollViewer_PreviewMouseWheel"/>
 
     </DockPanel>
     
