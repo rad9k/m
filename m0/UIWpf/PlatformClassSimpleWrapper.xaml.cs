@@ -74,11 +74,11 @@ namespace m0.UIWpf
             if (Content is IDisposable)
                 ((IDisposable)Content).Dispose();
 
-            if (this.expander_Top.Content is IDisposable)
-                ((IDisposable)this.expander_Top.Content).Dispose();
+           // if (this.expander_Top.Content is IDisposable)
+          //      ((IDisposable)this.expander_Top.Content).Dispose();
 
-            if (this.expander_Down.Content is IDisposable)
-                ((IDisposable)this.expander_Top.Content).Dispose();
+          //  if (this.expander_Down.Content is IDisposable)
+          //      ((IDisposable)this.expander_Top.Content).Dispose();
 
             ////////////////////////////////////////
             Interaction.EndInteractionWithGraph();
@@ -109,13 +109,13 @@ namespace m0.UIWpf
 
             WrapOverVisualiser = new WrapVisualiser(baseEdgeVertex, 0.6, pc.Vertex);            
            
-            this.expander_Top.Content = WrapOverVisualiser;
+           // this.expander_Top.Content = WrapOverVisualiser;
 
             //
 
             CodeOverVisualiser = new CodeVisualiser(null, null);
 
-            this.expander_Down.Content = CodeOverVisualiser;
+            //this.expander_Down.Content = CodeOverVisualiser;
 
             //
         }
