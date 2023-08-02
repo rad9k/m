@@ -11,9 +11,15 @@
     <UserControl.Template>
         <ControlTemplate TargetType="{x:Type UserControl}">
 
-                <Expander x:Name="Expander" IsExpanded="False" ExpandDirection="Down" DockPanel.Dock="Top" 
-                  Template="{DynamicResource StretchyExpanderTemp}" OverridesDefaultStyle="True" Header="" 
-                  Expanded="Expander_Expanded" Collapsed="Expander_Collapsed">
+                <Expander x:Name="Expander" 
+                          IsExpanded="False" 
+                          ExpandDirection="Down" 
+                          DockPanel.Dock="Top" 
+                          Template="{DynamicResource StretchyExpanderTemp}" 
+                          OverridesDefaultStyle="True" 
+                          Header="" 
+                          Expanded="Expander_Expanded" 
+                          Collapsed="Expander_Collapsed">
                     <ContentPresenter/>
                 </Expander>
             
@@ -69,15 +75,7 @@
                 </Trigger>
 
                 <!-- MouseOver, Pressed behaviours-->
-                <Trigger Property="IsMouseOver"
-                                 Value="true">
-                    <Setter Property="Stroke"
-                                    Value="#FF3C7FB1"
-                                    TargetName="Circle"/>
-                    <Setter Property="Stroke"
-                                    Value="#222"
-                                    TargetName="Sign"/>
-                </Trigger>
+
                 <Trigger Property="IsPressed"
                                  Value="true">
                     <Setter Property="Stroke"

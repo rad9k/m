@@ -26,8 +26,8 @@
         <Grid DockPanel.Dock="Bottom">
             <Grid.RowDefinitions>
                 <RowDefinition Height="*"/>
-                <RowDefinition Height="5"/>
-                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="0"/>
+                <RowDefinition Height="0"/>
             </Grid.RowDefinitions>
 
             <GridSplitter Grid.Row="1" Height="5" Width="300" ResizeDirection="Rows" />
@@ -75,7 +75,7 @@
                         </Grid.ColumnDefinitions>
                         <Rectangle Fill="Transparent"
                                Grid.ColumnSpan="2"/>
-                        <Ellipse Name="Circle"
+                    <Ellipse Name="Circle"
                          Grid.Column="0"
                          Stroke="DarkGray"
                          Width="20"
@@ -83,7 +83,7 @@
                          HorizontalAlignment="Center"
                          VerticalAlignment="Center"
                          />
-                        <Path x:Name="Sign"
+                    <Path x:Name="Sign"
                       Grid.Column="0"
                       Data="M 0,5 H 10 M 5,0 V 10 Z"
                       Stroke="#FF666666"
@@ -170,7 +170,7 @@
                         </Grid.ColumnDefinitions>
                         <Rectangle Fill="Transparent"
                                Grid.ColumnSpan="2"/>
-                        <Ellipse Name="Circle"
+                    <Ellipse Name="Circle"
                          Grid.Column="0"
                          Stroke="DarkGray"
                          Width="10"
@@ -178,7 +178,7 @@
                          HorizontalAlignment="Center"
                          VerticalAlignment="Center"
                          />
-                        <Path x:Name="Arrow"
+                    <Path x:Name="Arrow"
                       Grid.Column="0"
                       Data="M 1,1.5 L 4.5,5 8,1.5"
                       Stroke="#FF666666"
