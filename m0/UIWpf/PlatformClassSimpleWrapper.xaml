@@ -6,7 +6,8 @@
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300"
              xmlns:local ="clr-namespace:m0.UIWpf"
-             xmlns:sys="clr-namespace:System;assembly=mscorlib"       
+             xmlns:sys="clr-namespace:System;assembly=mscorlib"  
+             xmlns:m="clr-namespace:m0.UIWpf.Controls;assembly=m0"
              >    
     <DockPanel Background="{StaticResource 0BackgroundBrush}" Name="ParentCont">
         <Expander DockPanel.Dock="Top"
