@@ -107,9 +107,10 @@ namespace m0.UIWpf
 
             IVertex baseEdgeVertex = EdgeHelper.CreateTempEdgeVertex(null, null, pc.Vertex);
 
-            WrapOverVisualiser = new WrapVisualiser(baseEdgeVertex, 0.6, pc.Vertex);            
+            WrapOverVisualiser = new WrapVisualiser(baseEdgeVertex, 0.6, pc.Vertex);
+
+            this.TopExpander.Content = WrapOverVisualiser;
            
-           // this.expander_Top.Content = WrapOverVisualiser;
 
             //
 

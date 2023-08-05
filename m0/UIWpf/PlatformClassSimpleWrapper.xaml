@@ -8,21 +8,12 @@
              xmlns:local ="clr-namespace:m0.UIWpf"
              xmlns:sys="clr-namespace:System;assembly=mscorlib"  
              xmlns:m="clr-namespace:m0.UIWpf.Controls"
-             >    
+             >
     <DockPanel Background="{StaticResource 0BackgroundBrush}" Name="ParentCont">
 
-        <m:AnimatedHideArea 
-            Grid.Row="6" 
-            Grid.Column="0" 
-            Grid.ColumnSpan="5" 
-            x:Name="Expander" 
-            IsExpanded="False">
-            <StackPanel Orientation="Horizontal">
-                <ContentControl 
-                    Foreground="{StaticResource 0ForegroundBrush}"/>
-                <Border BorderBrush="{StaticResource 0ForegroundBrush}" 
-                        BorderThickness="1"/>
-            </StackPanel>
+        <m:AnimatedHideArea DockPanel.Dock="Top"
+                            x:Name="TopExpander" 
+                            IsExpanded="False">
         </m:AnimatedHideArea>
 
         <Grid DockPanel.Dock="Bottom">

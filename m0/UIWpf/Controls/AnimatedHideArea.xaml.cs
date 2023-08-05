@@ -49,7 +49,6 @@ namespace m0.UIWpf.Controls
             InitializeComponent();
 
             this.Loaded += AnimatedHideArea_Loaded;
-
         }
 
         private void AnimatedHideArea_Loaded(object sender, RoutedEventArgs e)
@@ -61,12 +60,14 @@ namespace m0.UIWpf.Controls
 
         private void Expander_Expanded(object sender, RoutedEventArgs e)
         {
-            Expanded.Invoke(sender, e);
+            if (Expanded != null)
+                Expanded.Invoke(sender, e);
         }
 
         private void Expander_Collapsed(object sender, RoutedEventArgs e)
         {
-            Collapsed.Invoke(sender, e);
+            if (Expanded != null)
+                Collapsed.Invoke(sender, e);
         }
     }
 
