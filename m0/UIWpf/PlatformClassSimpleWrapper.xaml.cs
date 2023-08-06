@@ -109,7 +109,7 @@ namespace m0.UIWpf
 
             WrapOverVisualiser = new WrapVisualiser(baseEdgeVertex, 0.6, pc.Vertex);
 
-            this.TopExpander.Content = WrapOverVisualiser;
+            ((ContentPresenter)((DockPanel)this.TopExpander.Content).Children[0]).Content = WrapOverVisualiser;
            
 
             //

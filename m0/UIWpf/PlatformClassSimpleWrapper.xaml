@@ -14,6 +14,10 @@
         <m:AnimatedHideArea DockPanel.Dock="Top"
                             x:Name="TopExpander" 
                             IsExpanded="False">
+            <DockPanel>
+                <ContentPresenter DockPanel.Dock="Top"/>
+                <Border DockPanel.Dock="Bottom" BorderBrush="{StaticResource 0ForegroundBrush}" BorderThickness="1"/>
+            </DockPanel>
         </m:AnimatedHideArea>
 
         <Grid DockPanel.Dock="Bottom">
