@@ -84,7 +84,7 @@ implementation. Thanks to
 	- **Alebra of programming languages**
 	- To have usable **graphical imperative code representation**
 
-## current state
+# current state
 
 _updated on 21.08.2023_
 
@@ -123,6 +123,6 @@ _bold = feature ready_
 	- markdown Visualiser @WPF
 	- Web Server
 
-## contact
+# contact
 
 For troubleshuting or any other issues related to -0, please contact me at _tereszczuk@gmail.com_
