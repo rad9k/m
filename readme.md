@@ -1,6 +1,4 @@
-# what is it?
-
-## common user summary
+# common user summary
 
 - Windows desktop executable with WPF front-end
 
@@ -24,7 +22,13 @@
 
 - **in the end you should be able to create, execute and maintain super complex back-end REST services**
 
-## modeling phreak tales :)
+- there are two example user programs based on -0
+	- **ZeroComposer** - complex MIDI sequencer
+	- **LoveFlow** - complex economies simulator
+	
+# modeling phreak tales :)
+
+## what is it?
 
 - **Modelling** environment
 
@@ -41,7 +45,7 @@
 	- Graph virtual machine in the db
 	- Can do anything with the data
 
-# main properties
+## main properties
 
 - Based on **meta graph** _(abstraction of normal mathematical graph)_
 
@@ -60,7 +64,7 @@
 - Updatable views on graph, thus **auto updatable model transformations**
 	- **executable views on code!**
 
-# why anyone could need it?
+## why anyone could need it?
 
 - **Better software build process** through increasing level of abstraction 
 	- Possibly faster / easier to maintain
@@ -80,7 +84,7 @@ implementation. Thanks to
 	- **Alebra of programming languages**
 	- To have usable **graphical imperative code representation**
 
-# current state
+## current state
 
 _updated on 21.08.2023_
 
@@ -119,6 +123,6 @@ _bold = feature ready_
 	- markdown Visualiser @WPF
 	- Web Server
 
-# contact
+## contact
 
 For troubleshuting or any other issues related to -0, please contact me at _tereszczuk@gmail.com_
