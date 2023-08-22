@@ -19,7 +19,7 @@ namespace m0.UIWpf.Controls
     /// <summary>
     /// Interaction logic for AnimatedHideArea.xaml
     /// </summary>
-    public partial class AnimatedHideArea : UserControl
+    public partial class AnimatedHideArea_HorizontalDown: UserControl
     {
         Expander Expander;
 
@@ -44,7 +44,7 @@ namespace m0.UIWpf.Controls
             }
         }
 
-        public AnimatedHideArea()
+        public AnimatedHideArea_HorizontalDown()
         {
             InitializeComponent();
 
@@ -69,25 +69,5 @@ namespace m0.UIWpf.Controls
             if (Expanded != null)
                 Collapsed.Invoke(sender, e);
         }
-    }
-
-    public class MultiplyConverter : IMultiValueConverter
-    {
-        public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
-        {
-            double result = 1.0;
-            for (int i = 0; i < values.Length; i++)
-            {
-                if (values[i] is double)
-                    result *= (double)values[i];
-            }
-
-            return result;
-        }
-
-        public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)
-        {
-            throw new Exception("Not implemented");
-        }        
     }
 }

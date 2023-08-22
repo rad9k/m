@@ -78,7 +78,7 @@
                             </StackPanel>
                         </Border>
 
-                        <m:AnimatedHideArea 
+                        <m:AnimatedHideArea_HorizontalUp
                             Grid.Row="6" 
                             Grid.Column="0" 
                             Grid.ColumnSpan="5" 
@@ -92,7 +92,7 @@
                                 <Border />
                                 <ScrollViewer HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Hidden"/>
                             </StackPanel>
-                        </m:AnimatedHideArea>
+                        </m:AnimatedHideArea_HorizontalUp>
 
                         <Border Grid.Row="7" Grid.Column="0" MouseEnter="DownHideAreaGrip_MouseLeave_Hard" x:Name="LeftDownCorner"/>
                         <Border Grid.Row="5" Grid.Column="7" Grid.RowSpan="3" MouseEnter="DownHideAreaGrip_MouseLeave_Hard"/>

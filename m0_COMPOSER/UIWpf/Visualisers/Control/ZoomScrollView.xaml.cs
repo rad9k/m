@@ -101,7 +101,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control
         public Slider HorizontalZoomSlider;
         public Slider VerticalZoomSlider;
         Grid Grid;
-        AnimatedHideArea DownHideArea;
+        AnimatedHideArea_HorizontalUp DownHideArea;
         Border DownGrip;
         Border DownDecorator;
         ScrollViewer DownMain;
@@ -197,7 +197,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control
             Grid = (Grid)ScrollViewer.Template.FindName("Grid", ScrollViewer);
             ContentPresenter = (ScrollContentPresenter)ScrollViewer.Template.FindName("PART_ScrollContentPresenter", ScrollViewer);
 
-            DownHideArea = (AnimatedHideArea)ScrollViewer.Template.FindName("DownHideArea", ScrollViewer);
+            DownHideArea = (AnimatedHideArea_HorizontalUp)ScrollViewer.Template.FindName("DownHideArea", ScrollViewer);
             DownGrip = (Border)ScrollViewer.Template.FindName("DownGrip", ScrollViewer);
 
             DownDecorator = (Border)((StackPanel)DownHideArea.Content).Children[0];

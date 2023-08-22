@@ -507,8 +507,6 @@ namespace m0
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            m0_RUN.AltWindow w = new m0_RUN.AltWindow();
-            w.Show();
         }
     }
 }

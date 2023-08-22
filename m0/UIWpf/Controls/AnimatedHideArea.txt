@@ -1,18 +1,6 @@
 ﻿using System;
 Expander -> Template="{DynamicResource StretchyExpanderTemp}" 
 
-SimpleExpanderButtonTemp TargetType="{x:Type ToggleButton}
-	<Ellipse Name="Circle"
-	Path x:Name="Sign"
-	-> IsChecked
-	-> IsMouseOver
-
-SimpleExpanderTemp TargetType="{x:Type Expander}
-	<ToggleButton x:Name="ExpanderButton" 
-		Template="{StaticResource SimpleExpanderButtonTemp}"
-	ContentPresenter x:Name="ExpanderContent"
-	-> IsExpanded
-
 AnimatedExpanderButtonTemp  TargetType="{x:Type ToggleButton}">
 	<Ellipse Name="Circle"
 	<Path x:Name="Arrow"

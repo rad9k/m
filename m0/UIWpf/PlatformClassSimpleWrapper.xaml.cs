@@ -109,7 +109,7 @@ namespace m0.UIWpf
 
             WrapOverVisualiser = new WrapVisualiser(baseEdgeVertex, 0.6, pc.Vertex);
 
-            ((ContentPresenter)((DockPanel)this.TopExpander.Content).Children[0]).Content = WrapOverVisualiser;
+            ((ContentPresenter)((DockPanel)this.Expander_Top.Content).Children[0]).Content = WrapOverVisualiser;
            
 
             //
@@ -124,26 +124,6 @@ namespace m0.UIWpf
         public ScrollViewer GetScrollViewer()
         {
             return this.Cont;
-        }
-    }
-
-    public class MultiplyConverter : IMultiValueConverter
-    {
-        public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
-        {
-            double result = 1.0;
-            for (int i = 0; i < values.Length; i++)
-            {
-                if (values[i] is double)
-                    result *= (double)values[i];
-            }
-
-            return result;
-        }
-
-        public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)
-        {
-            throw new Exception("Not implemented");
         }
     } 
 }
