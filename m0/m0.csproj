@@ -135,15 +135,6 @@
     <Compile Include="Lib\LibUtil.cs" />
     <Compile Include="Lib\Std.cs" />
     <Compile Include="Lib\Sys.cs" />
-    <Compile Include="UIWpf\Controls\AnimatedHideArea_VerticalRight.xaml.cs">
-      <DependentUpon>AnimatedHideArea_VerticalRight.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="UIWpf\Controls\AnimatedHideArea_HorizontalDown.xaml.cs">
-      <DependentUpon>AnimatedHideArea_HorizontalDown.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="UIWpf\Controls\Backup\AnimatedHideArea.xaml.cs">
-      <DependentUpon>AnimatedHideArea.xaml</DependentUpon>
-    </Compile>
     <Compile Include="UIWpf\Controls\CodeControl.cs" />
     <Compile Include="UIWpf\Controls\IHasScrollViewer.cs" />
     <Compile Include="UIWpf\Controls\IMouseWheelHandler.cs" />
@@ -221,9 +212,6 @@
     </Compile>
     <Compile Include="UIWpf\Commands\BaseCommands.cs" />
     <Compile Include="UIWpf\Commands\Dnd.cs" />
-    <Compile Include="UIWpf\Controls\AnimatedHideArea_HorizontalUp.xaml.cs">
-      <DependentUpon>AnimatedHideArea_HorizontalUp.xaml</DependentUpon>
-    </Compile>
     <Compile Include="UIWpf\Controls\ArrowEnds.cs" />
     <Compile Include="UIWpf\Controls\ArrowLine.cs" />
     <Compile Include="UIWpf\Controls\ArrowLineBase.cs" />
@@ -457,22 +445,6 @@
       <DependentUpon>m0Main.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Page Include="UIWpf\Controls\AnimatedHideArea_VerticalRight.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="UIWpf\Controls\AnimatedHideArea_HorizontalDown.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="UIWpf\Controls\AnimatedHideArea_HorizontalUp.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="UIWpf\Controls\Backup\AnimatedHideArea.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
     <Page Include="UIWpf\Dialog\StringQuestionWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -717,9 +689,6 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="_PROJECT\new_hope.txt" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="UIWpf\Controls\Backup\AnimatedHideArea.txt" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="UIWpf\Controls\AnimatedHideArea.txt" />
