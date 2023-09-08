@@ -66,6 +66,10 @@
     <Reference Include="Jil, Version=2.16.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Jil.2.16.0\lib\net45\Jil.dll</HintPath>
     </Reference>
+    <Reference Include="m0, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>bin\Debug\m0.dll</HintPath>
+    </Reference>
     <Reference Include="Sigil, Version=4.7.0.0, Culture=neutral, PublicKeyToken=2d06c3494341c8ab, processorArchitecture=MSIL">
       <HintPath>..\packages\Sigil.4.7.0\lib\net45\Sigil.dll</HintPath>
     </Reference>
@@ -135,6 +139,9 @@
     <Compile Include="Lib\LibUtil.cs" />
     <Compile Include="Lib\Std.cs" />
     <Compile Include="Lib\Sys.cs" />
+    <Compile Include="UIWpf\Controls\AnimatedHideArea_HorizontalDown.xaml.cs">
+      <DependentUpon>AnimatedHideArea_HorizontalDown.xaml</DependentUpon>
+    </Compile>
     <Compile Include="UIWpf\Controls\CodeControl.cs" />
     <Compile Include="UIWpf\Controls\IHasScrollViewer.cs" />
     <Compile Include="UIWpf\Controls\IMouseWheelHandler.cs" />
@@ -445,6 +452,10 @@
       <DependentUpon>m0Main.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="UIWpf\Controls\AnimatedHideArea_HorizontalDown.xaml">
+      <SubType>Designer</SubType>
+      <Generator>XamlIntelliSenseFileGenerator</Generator>
+    </Page>
     <Page Include="UIWpf\Dialog\StringQuestionWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>

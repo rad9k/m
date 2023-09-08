@@ -168,10 +168,8 @@
             </ControlTemplate.Triggers>
         </ControlTemplate>
 
-        <!-- Slide Out Content Expander's Template, 
-        Uses: AnimatedExpanderButtonTemp from above, 
-              MultiplyConverter in codebehind-->
         <local:MultiplyConverter x:Key="multiplyConverter" />
+        <!--
         <ControlTemplate x:Key="RevealExpanderTemp" TargetType="{x:Type Expander}">
             <DockPanel>
                 <ToggleButton x:Name="ExpanderButton" 
@@ -225,7 +223,7 @@
                 </Trigger>
             </ControlTemplate.Triggers>
         </ControlTemplate>
-
+-->
     </UserControl.Resources>
 
 </UserControl>
