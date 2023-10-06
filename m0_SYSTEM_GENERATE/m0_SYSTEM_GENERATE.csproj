@@ -54,7 +54,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="GOLD Engine">
-      <HintPath>..\m0\bin\Debug\GOLD Engine.dll</HintPath>
+      <HintPath>bin\Debug\GOLD Engine.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
