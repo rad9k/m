@@ -138,6 +138,9 @@
     <Compile Include="UIWpf\Controls\AnimatedHideArea_HorizontalDown.xaml.cs">
       <DependentUpon>AnimatedHideArea_HorizontalDown.xaml</DependentUpon>
     </Compile>
+    <Compile Include="UIWpf\Controls\AnimatedHideArea_HorizontalUp.xaml.cs">
+      <DependentUpon>AnimatedHideArea_HorizontalUp.xaml</DependentUpon>
+    </Compile>
     <Compile Include="UIWpf\Controls\CodeControl.cs" />
     <Compile Include="UIWpf\Controls\IHasScrollViewer.cs" />
     <Compile Include="UIWpf\Controls\IMouseWheelHandler.cs" />
@@ -451,6 +454,10 @@
     <Page Include="UIWpf\Controls\AnimatedHideArea_HorizontalDown.xaml">
       <SubType>Designer</SubType>
       <Generator>XamlIntelliSenseFileGenerator</Generator>
+    </Page>
+    <Page Include="UIWpf\Controls\AnimatedHideArea_HorizontalUp.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="UIWpf\Dialog\StringQuestionWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
