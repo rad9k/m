@@ -57,8 +57,7 @@
                         <Button Grid.Column="5" Grid.Row="2" BorderThickness="0" Padding="0" Style="{StaticResource TransparentStyle}" Click="VerticalIn" MouseEnter="DownHideAreaGrip_MouseLeave_Hard">
                             <Image Margin="0,3,0,3" RenderOptions.BitmapScalingMode="HighQuality" Source="pack://application:,,/m0;Component/_resources/basic/zoom-in.png"/>
                         </Button>
-
-
+                        
                         <Border Name="DownGrip" 
                                 Grid.Row="5" 
                                 Height="5" 
@@ -70,7 +69,8 @@
                                 MouseLeave="DownHideAreaGrip_MouseLeave" 
                                 MouseDown="DownHideAreaGrip_MouseDown" 
                                 MouseMove="DownHideAreaGrip_MouseMove" 
-                                MouseUp="DownHideAreaGrip_MouseUp">
+                                MouseUp="DownHideAreaGrip_MouseUp"
+                            >
                             <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
                                 <Ellipse Height="3" Width="3" Fill="Black" Margin="1,0,1,0"/>
                                 <Ellipse Height="3" Width="3" Fill="Black" Margin="1,0,1,0"/>
