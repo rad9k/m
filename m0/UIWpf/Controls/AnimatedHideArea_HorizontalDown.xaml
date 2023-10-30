@@ -60,7 +60,7 @@
                       RenderTransformOrigin="0.5,0.5"
                       >
                         <Path.RenderTransform>
-                            <RotateTransform Angle="0"/>
+                            <RotateTransform Angle="180"/>
                         </Path.RenderTransform>
                     </Path>
                     <ContentPresenter x:Name="HeaderContent"
@@ -78,7 +78,7 @@
                             <Storyboard>
                                 <DoubleAnimation Storyboard.TargetName="Arrow"
                                                  Storyboard.TargetProperty="(Path.RenderTransform).(RotateTransform.Angle)"
-                                                 To="180"
+                                                 To="0"
                                                  Duration="0:0:0.2"/>
                             </Storyboard>
                         </BeginStoryboard>
@@ -88,7 +88,7 @@
                             <Storyboard>
                                 <DoubleAnimation Storyboard.TargetName="Arrow"
                                                  Storyboard.TargetProperty="(Path.RenderTransform).(RotateTransform.Angle)"
-                                                 To="0"
+                                                 To="180"
                                                  Duration="0:0:0.2"/>
                             </Storyboard>
                         </BeginStoryboard>
@@ -124,22 +124,23 @@
         Uses: AnimatedExpanderButtonTemp from above-->
         <ControlTemplate x:Key="StretchyExpanderTemp" TargetType="{x:Type Expander}">
             <DockPanel>
+                <Border DockPanel.Dock="Top" Height="3"/>
+                <ContentPresenter x:Name="ExpanderContent"
+                  ContentSource="Content"
+                  DockPanel.Dock="Top"
+                  >
+                    <ContentPresenter.LayoutTransform>
+                        <ScaleTransform ScaleY="0"/>
+                    </ContentPresenter.LayoutTransform>
+                </ContentPresenter>
                 <ToggleButton x:Name="ExpanderButton" 
-                              DockPanel.Dock="Top"
+                              DockPanel.Dock="Bottom"
                               Template="{StaticResource AnimatedExpanderButtonTemp}"
                               Content="{TemplateBinding Header}"
                               IsChecked="{Binding Path=IsExpanded, RelativeSource={RelativeSource TemplatedParent}}"
                               OverridesDefaultStyle="True"
                               Padding="1.5,0">
                 </ToggleButton>
-                <ContentPresenter x:Name="ExpanderContent"
-                                  ContentSource="Content"
-                                  DockPanel.Dock="Bottom"
-                                  >
-                    <ContentPresenter.LayoutTransform>
-                        <ScaleTransform ScaleY="0"/>
-                    </ContentPresenter.LayoutTransform>
-                </ContentPresenter>
             </DockPanel>
             <ControlTemplate.Triggers>
                 <Trigger Property="IsExpanded" Value="True">
@@ -169,61 +170,7 @@
         </ControlTemplate>
 
         <local:MultiplyConverter x:Key="multiplyConverter" />
-        <!--
-        <ControlTemplate x:Key="RevealExpanderTemp" TargetType="{x:Type Expander}">
-            <DockPanel>
-                <ToggleButton x:Name="ExpanderButton" 
-                              DockPanel.Dock="Top"
-                              Template="{StaticResource AnimatedExpanderButtonTemp}"
-                              Content="{TemplateBinding Header}"
-                              IsChecked="{Binding Path=IsExpanded, RelativeSource={RelativeSource TemplatedParent}}"
-                              OverridesDefaultStyle="True"
-                              Padding="1.5,0">
-                </ToggleButton>
-                <ScrollViewer x:Name="ExpanderContentScrollView" DockPanel.Dock="Bottom"
-                              HorizontalScrollBarVisibility="Hidden"
-                              VerticalScrollBarVisibility="Hidden"
-                              HorizontalContentAlignment="Stretch"
-                              VerticalContentAlignment="Bottom"
-                              >
-                    <ScrollViewer.Tag>
-                        <sys:Double>0.0</sys:Double>
-                    </ScrollViewer.Tag>
-                    <ScrollViewer.Height>
-                        <MultiBinding Converter="{StaticResource multiplyConverter}">
-                            <Binding Path="ActualHeight" ElementName="ExpanderContent"/>
-                            <Binding Path="Tag" RelativeSource="{RelativeSource Self}" />
-                        </MultiBinding>
-                    </ScrollViewer.Height>
-                    <ContentPresenter x:Name="ExpanderContent" ContentSource="Content"/>
-                </ScrollViewer>
-            </DockPanel>
-            <ControlTemplate.Triggers>
-                <Trigger Property="IsExpanded" Value="True">
-                    <Trigger.EnterActions>
-                        <BeginStoryboard>
-                            <Storyboard>
-                                <DoubleAnimation Storyboard.TargetName="ExpanderContentScrollView"
-                                                 Storyboard.TargetProperty="Tag"                                                 
-                                                 To="1"
-                                                 Duration="0:0:4"/>
-                            </Storyboard>
-                        </BeginStoryboard>
-                    </Trigger.EnterActions>
-                    <Trigger.ExitActions>
-                        <BeginStoryboard>
-                            <Storyboard>
-                                <DoubleAnimation Storyboard.TargetName="ExpanderContentScrollView"
-                                                 Storyboard.TargetProperty="Tag"                                                 
-                                                 To="0"
-                                                 Duration="0:0:4"/>
-                            </Storyboard>
-                        </BeginStoryboard>
-                    </Trigger.ExitActions>
-                </Trigger>
-            </ControlTemplate.Triggers>
-        </ControlTemplate>
--->
+     
     </UserControl.Resources>
 
 </UserControl>

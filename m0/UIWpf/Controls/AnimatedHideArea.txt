@@ -1,5 +1,4 @@
-﻿using System;
-Expander -> Template="{DynamicResource StretchyExpanderTemp}" 
+﻿Expander -> Template="{DynamicResource StretchyExpanderTemp}" 
 
 AnimatedExpanderButtonTemp  TargetType="{x:Type ToggleButton}">
 	<Ellipse Name="Circle"
