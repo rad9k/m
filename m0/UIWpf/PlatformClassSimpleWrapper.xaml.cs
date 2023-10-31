@@ -35,6 +35,8 @@ namespace m0.UIWpf
             InitializeComponent();
             
             this.PreviewMouseWheel += PlatformClassSimpleWrapper_PreviewMouseWheel;
+
+            SetContentPresenters();
         }
 
         private void PlatformClassSimpleWrapper_PreviewMouseWheel(object sender, MouseWheelEventArgs e)
@@ -87,43 +89,163 @@ namespace m0.UIWpf
 
         object Content;
 
-        WrapVisualiser WrapOverVisualiser;
-        CodeVisualiser CodeOverVisualiser;
-        FormVisualiser FormOverVisualiser;
+        WrapVisualiser Visualiser_Top;
+        CodeVisualiser Visualiser_Down;
+        FormVisualiser Visualiser_Right;
 
+        ContentPresenter Content_Top;
+        ContentPresenter Content_Down;
+        ContentPresenter Content_Right;
+
+        void SetContentPresenters()
+        {
+            Content_Top = ((ContentPresenter)((DockPanel)this.Expander_Top.Content).Children[0]);
+            Content_Down = ((ContentPresenter)((DockPanel)this.Expander_Down.Content).Children[0]);
+            //ContentRight = ((ContentPresenter)((DockPanel)this.ExpanderRight.Content).Children[0]);
+        }
 
         public void SetContent(IPlatformClass pc){
+            SetContent_Main(pc);
+            SetContent_Down(pc);
+            SetContent_Right(pc);
+        }
+
+        public void SetContent_Main(IPlatformClass pc)
+        {
             Content = pc;
 
             FrameworkElement fe = (FrameworkElement)pc;
 
-            if(fe is IOwnScrolling)
+            if (fe is IOwnScrolling)
             {
                 this.ParentCont.Children.Add(fe);
-            }else
-                  this.Cont.Content = fe;
+            }
+            else
+                this.MainContent.Content = fe;
 
             DockPanel.SetDock(fe, Dock.Bottom);
 
             IVertex baseEdgeVertex = EdgeHelper.CreateTempEdgeVertex(null, null, pc.Vertex);
 
-            WrapOverVisualiser = new WrapVisualiser(baseEdgeVertex, 0.6, pc.Vertex);
+            Visualiser_Top = new WrapVisualiser(baseEdgeVertex, 0.6, pc.Vertex);
 
-            ((ContentPresenter)((DockPanel)this.Expander_Top.Content).Children[0]).Content = WrapOverVisualiser;
-           
+            Content_Top.Content = Visualiser_Top;
+        }
 
-            //
+        public void SetContent_Down(IPlatformClass pc)
+        {
+            Visualiser_Down = new CodeVisualiser(null, null);
 
-           // CodeOverVisualiser = new CodeVisualiser(null, null);
+            Content_Down.Content = Visualiser_Down;
+        }
 
-            //this.expander_Down.Content = CodeOverVisualiser;
-
-            //
+        public void SetContent_Right(IPlatformClass pc)
+        {
         }
 
         public ScrollViewer GetScrollViewer()
         {
-            return this.Cont;
+            return this.MainContent;
         }
-    } 
+
+        // general grip beg
+
+        Point prevMousePosition;
+
+        enum ContentCursorStateEnum { MouseOverUp, MouseOverDown, MouseOutside }
+
+        ContentCursorStateEnum DownCursorState;
+
+        // general grip end
+
+        // DOWN HIDE AREA BEG
+
+        bool ExpanderDownVisible = false;
+
+        private void Down_MouseEnter(object sender, MouseEventArgs e) //
+        {
+            if (Expander_Down.IsExpanded)
+            {
+                WpfUtil.SetCursor(Cursors.SizeNS);
+
+                if (DownCursorState != ContentCursorStateEnum.MouseOverDown)
+                    DownCursorState = ContentCursorStateEnum.MouseOverUp;
+            }
+            else
+                WpfUtil.SetCursor(Cursors.Arrow);
+        }
+
+        private void Down_MouseLeave(object sender, MouseEventArgs e) //
+        {
+            if (DownCursorState != ContentCursorStateEnum.MouseOverDown)
+            {
+                WpfUtil.SetCursor(Cursors.Arrow);
+                DownCursorState = ContentCursorStateEnum.MouseOutside;
+            }
+        }
+
+        private void Down_MouseLeave_Hard(object sender, MouseEventArgs e) //
+        {
+            WpfUtil.SetCursor(Cursors.Arrow);
+            DownCursorState = ContentCursorStateEnum.MouseOutside;
+        }
+
+        private void Down_MouseDown(object sender, MouseButtonEventArgs e) //
+        {
+            if (DownCursorState == ContentCursorStateEnum.MouseOverUp)
+            {
+                DownCursorState = ContentCursorStateEnum.MouseOverDown;
+
+                prevMousePosition = e.GetPosition(this);
+            }
+        }
+
+        private void Down_MouseUp(object sender, MouseButtonEventArgs e) //
+        {
+            if (DownCursorState == ContentCursorStateEnum.MouseOverDown)
+                DownCursorState = ContentCursorStateEnum.MouseOverUp;
+        }
+
+        private void Down_MouseMove(object sender, MouseEventArgs e) //
+        {
+            if (DownCursorState == ContentCursorStateEnum.MouseOverDown)
+            {
+                Point currentMousePosition = e.GetPosition(this);
+
+                double deltaY = prevMousePosition.Y - currentMousePosition.Y;
+
+                prevMousePosition = currentMousePosition;
+
+                double contentElementHeight = Content_Down.Height + deltaY;
+
+                if (contentElementHeight < 0)
+                    contentElementHeight = 0;
+
+                if (contentElementHeight == 0)
+                    Expander_Down.IsExpanded = false;
+
+                if (contentElementHeight > this.ActualHeight - 200)
+                    contentElementHeight = this.ActualHeight - 200;
+
+                Content_Down.Height = contentElementHeight;
+            }
+        }
+
+        private void Down_Expanded(object sender, System.EventArgs e) //
+        {
+            if (ExpanderDownVisible)
+            {
+                DownGrip.Height = 5;
+                VerticalGrid.RowDefinitions[1].Height = new GridLength(5);
+            }
+        }
+
+        private void Down_Collapsed(object sender, System.EventArgs e) //
+        {
+            DownGrip.Height = 0;
+            VerticalGrid.RowDefinitions[1].Height = new GridLength(0);
+        }
+
+        // DOWN HIDE AREA END
+    }
 }

@@ -1,50 +1,67 @@
 ﻿<UserControl x:Class="m0.UIWpf.PlatformClassSimpleWrapper"
-             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             mc:Ignorable="d" 
-             d:DesignHeight="300" d:DesignWidth="300"
-             xmlns:local ="clr-namespace:m0.UIWpf"
-             xmlns:sys="clr-namespace:System;assembly=mscorlib"  
-             xmlns:m="clr-namespace:m0.UIWpf.Controls"
-             >
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+    mc:Ignorable="d" 
+    d:DesignHeight="300" d:DesignWidth="300"
+    xmlns:local ="clr-namespace:m0.UIWpf"
+    xmlns:sys="clr-namespace:System;assembly=mscorlib"  
+    xmlns:m="clr-namespace:m0.UIWpf.Controls">
     <DockPanel Background="{StaticResource 0BackgroundBrush}" Name="ParentCont">
 
-        <m:AnimatedHideArea_HorizontalUp DockPanel.Dock="Top"
-                            x:Name="Expander_Top" 
-                            IsExpanded="False">
+    <m:AnimatedHideArea_HorizontalUp DockPanel.Dock="Top"
+        x:Name="Expander_Top" 
+        IsExpanded="False">
+        <DockPanel>
+            <ContentPresenter DockPanel.Dock="Top"/>
+            <Border DockPanel.Dock="Bottom" BorderBrush="{StaticResource 0ForegroundBrush}" BorderThickness="1"/>
+        </DockPanel>
+    </m:AnimatedHideArea_HorizontalUp>
+
+    <Grid DockPanel.Dock="Bottom" x:Name="VerticalGrid">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="5"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <ScrollViewer Grid.Row="0" 
+            Name="MainContent" 
+            Foreground="{StaticResource 0ForegroundBrush}" 
+            VerticalScrollBarVisibility="Auto" 
+            HorizontalScrollBarVisibility="Auto"  
+            PreviewMouseWheel="ListViewScrollViewer_PreviewMouseWheel"/>
+
+        <Border Name="DownGrip" 
+            Grid.Row="1" 
+            Height="5" 
+            HorizontalAlignment="Stretch" 
+            Background="{StaticResource 0VeryLightHighlightBrush}" 
+            MouseEnter="Down_MouseEnter" 
+            MouseLeave="Down_MouseLeave" 
+            MouseDown="Down_MouseDown" 
+            MouseMove="Down_MouseMove" 
+            MouseUp="Down_MouseUp">
+            <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
+                <Ellipse Height="3" Width="3" Fill="Black" Margin="1,0,1,0"/>
+                <Ellipse Height="3" Width="3" Fill="Black" Margin="1,0,1,0"/>
+                <Ellipse Height="3" Width="3" Fill="Black" Margin="1,0,1,0"/>
+            </StackPanel>
+        </Border>
+            
+        <m:AnimatedHideArea_HorizontalDown Grid.Row="2"
+            x:Name="Expander_Down" 
+            MouseMove="Down_MouseMove" 
+            MouseUp="Down_MouseUp" 
+            Expanded="Down_Expanded" 
+            Collapsed="Down_Collapsed" 
+            IsExpanded="False">
             <DockPanel>
                 <ContentPresenter DockPanel.Dock="Top"/>
-                <Border DockPanel.Dock="Bottom" BorderBrush="{StaticResource 0ForegroundBrush}" BorderThickness="1"/>
             </DockPanel>
-        </m:AnimatedHideArea_HorizontalUp>
+        </m:AnimatedHideArea_HorizontalDown>
 
-        <Grid DockPanel.Dock="Bottom">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="*"/>
-                <RowDefinition Height="0"/>
-                <RowDefinition Height="0"/>
-            </Grid.RowDefinitions>
-
-            <ScrollViewer Grid.Row="0" 
-                      Name="Cont" 
-                      Foreground="{StaticResource 0ForegroundBrush}" 
-                      VerticalScrollBarVisibility="Auto" 
-                      HorizontalScrollBarVisibility="Auto"  
-                      PreviewMouseWheel="ListViewScrollViewer_PreviewMouseWheel"/>
-
-            <GridSplitter Grid.Row="1" Height="5"  ResizeDirection="Rows" Background="Red" />
-            <!--
-            <m:AnimatedHideArea_HorizontalUp Grid.Row="2"
-                    x:Name="Expander_Down" 
-                    IsExpanded="False">
-                <DockPanel>
-                    <ContentPresenter DockPanel.Dock="Top"/>
-                    <Border DockPanel.Dock="Bottom" BorderBrush="{StaticResource 0ForegroundBrush}" BorderThickness="1"/>
-                </DockPanel>
-            </m:AnimatedHideArea_HorizontalUp>
--->
         </Grid>
     
     </DockPanel>

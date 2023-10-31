@@ -48,7 +48,6 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control
 
                 if (DownHideArea != null)
                     DownHideArea.IsExpanded = downAreaIsExpanded;
-
             }
         }
 
@@ -347,30 +346,19 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control
 
                 prevMousePosition = currentMousePosition;
                 
-
                 double contentElementHeight = DownMain.Height + deltaY;
-
-                //double contentElementHeight = Grid.RowDefinitions[6].Height.Value + deltaY;
 
                 if (contentElementHeight < 0)
                     contentElementHeight = 0;
 
                 if (contentElementHeight == 0)
-                {
-                    int x = 0;
-
                     DownHideArea.IsExpanded = false;
-                }
 
                 if (contentElementHeight > this.ActualHeight - 200)
                     contentElementHeight = this.ActualHeight - 200;
 
                 DownDecorator.Height = contentElementHeight;
                 DownMain.Height = contentElementHeight;
-                
-                //double downHideAreaHeight = contentElementHeight;
-
-                //Grid.RowDefinitions[6].Height = new GridLength(downHideAreaHeight);
             }
         }
 
