@@ -291,7 +291,9 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control
                 VerticalZoomSlider.Value = VerticalZoomSlider.Value - 1;
         }
 
-        private void DownHideAreaGrip_MouseEnter(object sender, MouseEventArgs e)
+        // DOWN HIDE AREA BEG
+
+        private void DownHideAreaGrip_MouseEnter(object sender, MouseEventArgs e) //
         {
             if (DownHideArea.IsExpanded)
             {
@@ -304,7 +306,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control
                 WpfUtil.SetCursor(Cursors.Arrow);
         }
 
-        private void DownHideAreaGrip_MouseLeave(object sender, MouseEventArgs e)
+        private void DownHideAreaGrip_MouseLeave(object sender, MouseEventArgs e) //
         {
             if (DownCursorState != DownContentCursorStateEnum.MouseOverDown)
             {
@@ -313,13 +315,13 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control
             }
         }
 
-        private void DownHideAreaGrip_MouseLeave_Hard(object sender, MouseEventArgs e)
+        private void DownHideAreaGrip_MouseLeave_Hard(object sender, MouseEventArgs e) //
         {            
             WpfUtil.SetCursor(Cursors.Arrow);
             DownCursorState = DownContentCursorStateEnum.MouseOutside;         
         }
 
-        private void DownHideAreaGrip_MouseDown(object sender, MouseButtonEventArgs e)
+        private void DownHideAreaGrip_MouseDown(object sender, MouseButtonEventArgs e) //
         {
             if (DownCursorState == DownContentCursorStateEnum.MouseOverUp)
             {
@@ -329,13 +331,13 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control
             }
         }
 
-        private void DownHideAreaGrip_MouseUp(object sender, MouseButtonEventArgs e)
+        private void DownHideAreaGrip_MouseUp(object sender, MouseButtonEventArgs e) //
         {
             if (DownCursorState == DownContentCursorStateEnum.MouseOverDown)
                 DownCursorState = DownContentCursorStateEnum.MouseOverUp;
         }
 
-        private void DownHideAreaGrip_MouseMove(object sender, MouseEventArgs e)
+        private void DownHideAreaGrip_MouseMove(object sender, MouseEventArgs e) //
         {
             if (DownCursorState == DownContentCursorStateEnum.MouseOverDown)
             {
@@ -365,7 +367,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control
             }
         }
 
-        private void DownHideArea_Expanded(object sender, System.EventArgs e)
+        private void DownHideArea_Expanded(object sender, System.EventArgs e) //
         {
             DownGrip.Background = (Brush)WpfUtil.FindResource("0VeryLightHighlightBrush");
 
@@ -374,7 +376,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control
 
         }
 
-        private void DownHideArea_Collapsed(object sender, System.EventArgs e)
+        private void DownHideArea_Collapsed(object sender, System.EventArgs e) //
         {
             DownGrip.Background = (Brush)WpfUtil.FindResource("0BackgroundBrush");
 
