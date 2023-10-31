@@ -358,6 +358,8 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control
                 if (contentElementHeight == 0)
                 {
                     int x = 0;
+
+                    DownHideArea.IsExpanded = false;
                 }
 
                 if (contentElementHeight > this.ActualHeight - 200)
@@ -374,15 +376,24 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control
 
         private void DownHideArea_Expanded(object sender, System.EventArgs e) //
         {
-            DownGrip.Background = (Brush)WpfUtil.FindResource("0VeryLightHighlightBrush");
+            if (downAreaVisible)
+            {
+                DownGrip.Background = (Brush)WpfUtil.FindResource("0VeryLightHighlightBrush");
 
-            foreach (Ellipse el in ((StackPanel)DownGrip.Child).Children)
-                el.Fill = (Brush)WpfUtil.FindResource("0ForegroundBrush");
+                DownGrip.Height = 5;
+                Grid.RowDefinitions[5].Height = new GridLength(5);
+
+                foreach (Ellipse el in ((StackPanel)DownGrip.Child).Children)
+                    el.Fill = (Brush)WpfUtil.FindResource("0ForegroundBrush");
+            }
         }
 
         private void DownHideArea_Collapsed(object sender, System.EventArgs e) //
         {
             DownGrip.Background = (Brush)WpfUtil.FindResource("0BackgroundBrush");
+
+            DownGrip.Height = 0;
+            Grid.RowDefinitions[5].Height = new GridLength(0);           
 
             foreach (Ellipse el in ((StackPanel)DownGrip.Child).Children)
                 el.Fill = (Brush)WpfUtil.FindResource("0LightBackgroundBrush");

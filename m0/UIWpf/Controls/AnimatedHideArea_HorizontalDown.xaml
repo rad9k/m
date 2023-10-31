@@ -124,7 +124,7 @@
         Uses: AnimatedExpanderButtonTemp from above-->
         <ControlTemplate x:Key="StretchyExpanderTemp" TargetType="{x:Type Expander}">
             <DockPanel>
-                <Border DockPanel.Dock="Top" Height="3"/>
+                <Border DockPanel.Dock="Top" Height="2"/>
                 <ContentPresenter x:Name="ExpanderContent"
                   ContentSource="Content"
                   DockPanel.Dock="Top"
