@@ -355,6 +355,11 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control
                 if (contentElementHeight < 0)
                     contentElementHeight = 0;
 
+                if (contentElementHeight == 0)
+                {
+                    int x = 0;
+                }
+
                 if (contentElementHeight > this.ActualHeight - 200)
                     contentElementHeight = this.ActualHeight - 200;
 
@@ -373,7 +378,6 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control
 
             foreach (Ellipse el in ((StackPanel)DownGrip.Child).Children)
                 el.Fill = (Brush)WpfUtil.FindResource("0ForegroundBrush");
-
         }
 
         private void DownHideArea_Collapsed(object sender, System.EventArgs e) //
@@ -383,6 +387,8 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control
             foreach (Ellipse el in ((StackPanel)DownGrip.Child).Children)
                 el.Fill = (Brush)WpfUtil.FindResource("0LightBackgroundBrush");
         }
+
+        // DOWN HIDE AREA END
 
         private void ScrollViewer_SizeChanged(object sender, SizeChangedEventArgs e)
         {
