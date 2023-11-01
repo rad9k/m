@@ -28,7 +28,9 @@
                 <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
 
-            <ScrollViewer Grid.Row="0" 
+            <Grid Grid.Row="0">
+
+            <ScrollViewer Grid.Column="0" 
                 Name="MainContent" 
                 Foreground="{StaticResource 0ForegroundBrush}" 
                 VerticalScrollBarVisibility="Auto" 
@@ -37,8 +39,8 @@
             
                 MouseMove="Down_MouseMove" 
                 MouseUp="Down_MouseUp"/>
+            </Grid>
 
-          <!--  <GridSplitter Grid.Row="1" Height="5" Width="100" ResizeDirection="Rows" DragDelta="GridSplitter_DragDelta"/>-->
 
             <Border Name="DownGrip" 
                 Grid.Row="1" 

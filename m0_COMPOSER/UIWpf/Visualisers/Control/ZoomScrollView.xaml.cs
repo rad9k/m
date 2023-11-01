@@ -333,7 +333,11 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control
         private void DownHideAreaGrip_MouseUp(object sender, MouseButtonEventArgs e) //
         {
             if (DownCursorState == DownContentCursorStateEnum.MouseOverDown)
+            {
+                WpfUtil.SetCursor(Cursors.Arrow);
+
                 DownCursorState = DownContentCursorStateEnum.MouseOverUp;
+            }
         }
 
         private void DownHideAreaGrip_MouseMove(object sender, MouseEventArgs e) //

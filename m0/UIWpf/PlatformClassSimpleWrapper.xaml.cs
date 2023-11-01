@@ -31,6 +31,7 @@ namespace m0.UIWpf
         public bool IsIntialising;
 
         IVertex BaseEdge;
+        IPlatformClass pcObject;
 
         static IVertex r = m0.MinusZero.Instance.root;
 
@@ -111,20 +112,20 @@ namespace m0.UIWpf
         }
 
         public void SetContent(IPlatformClass pc){
+            pcObject = pc;
+
             BaseEdge = pc.Vertex.Get(false, "BaseEdge:");
 
-            SetContent_Main(pc);
-            SetContent_Down(pc);
-            SetContent_Right(pc);
+            SetContent_Main();
         }
 
-        public void SetContent_Main(IPlatformClass pc)
+        public void SetContent_Main()
         {
-            IVertex baseEdgeVertex = EdgeHelper.CreateTempEdgeVertex(null, null, pc.Vertex);
+            IVertex baseEdgeVertex = EdgeHelper.CreateTempEdgeVertex(null, null, pcObject.Vertex);
 
-            Content = pc;
+            Content = pcObject;
 
-            FrameworkElement fe = (FrameworkElement)pc;
+            FrameworkElement fe = (FrameworkElement)pcObject;
 
             if (fe is IOwnScrolling)
             {
@@ -136,22 +137,21 @@ namespace m0.UIWpf
             DockPanel.SetDock(fe, Dock.Bottom);
 
             
-
-            Visualiser_Top = new WrapVisualiser(baseEdgeVertex, 0.6, pc.Vertex);
+            Visualiser_Top = new WrapVisualiser(baseEdgeVertex, 0.6, pcObject.Vertex);
 
             Content_Top.Content = Visualiser_Top;
         }
 
-        public void SetContent_Down(IPlatformClass pc)
+        public void SetContent_Down()
         {
-            Visualiser_Down = new CodeVisualiser(BaseEdge, pc.Vertex);
+            Visualiser_Down = new CodeVisualiser(BaseEdge, pcObject.Vertex);
 
             GraphUtil.SetVertexValue(Visualiser_Down.Vertex, showLineNumbers_meta, "False"); 
 
             Content_Down.Content = Visualiser_Down;
         }
 
-        public void SetContent_Right(IPlatformClass pc)
+        public void SetContent_Right()
         {
         }
 
@@ -215,7 +215,11 @@ namespace m0.UIWpf
         private void Down_MouseUp(object sender, MouseButtonEventArgs e) //
         {
             if (DownCursorState == ContentCursorStateEnum.MouseOverDown)
+            {
                 DownCursorState = ContentCursorStateEnum.MouseOverUp;
+
+                WpfUtil.SetCursor(Cursors.Arrow);
+            }
         }
 
         private void Down_MouseMove(object sender, MouseEventArgs e) //
@@ -249,6 +253,9 @@ namespace m0.UIWpf
             {
                 DownGrip.Height = 5;
                 VerticalGrid.RowDefinitions[1].Height = new GridLength(5);
+
+                if (Content_Down.Content == null)
+                    SetContent_Down();
 
                 if(Double.IsNaN(Content_Down.Height))
                     Content_Down.Height = this.ActualHeight / 5;
