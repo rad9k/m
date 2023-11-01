@@ -30,6 +30,12 @@ namespace m0.UIWpf
     {
         public bool IsIntialising;
 
+        IVertex BaseEdge;
+
+        static IVertex r = m0.MinusZero.Instance.root;
+
+        static IVertex showLineNumbers_meta = r.Get(false, @"System\Meta\Visualiser\Code\ShowLineNumbers");
+
         public PlatformClassSimpleWrapper()
         {
             InitializeComponent();
@@ -76,11 +82,11 @@ namespace m0.UIWpf
             if (Content is IDisposable)
                 ((IDisposable)Content).Dispose();
 
-           // if (this.expander_Top.Content is IDisposable)
-          //      ((IDisposable)this.expander_Top.Content).Dispose();
+            if (this.Expander_Top.Content is IDisposable)
+                ((IDisposable)this.Expander_Top.Content).Dispose();
 
-          //  if (this.expander_Down.Content is IDisposable)
-          //      ((IDisposable)this.expander_Top.Content).Dispose();
+            if (this.Expander_Down.Content is IDisposable)
+                ((IDisposable)this.Expander_Down.Content).Dispose();
 
             ////////////////////////////////////////
             Interaction.EndInteractionWithGraph();
@@ -100,11 +106,13 @@ namespace m0.UIWpf
         void SetContentPresenters()
         {
             Content_Top = ((ContentPresenter)((DockPanel)this.Expander_Top.Content).Children[0]);
-            Content_Down = ((ContentPresenter)((DockPanel)this.Expander_Down.Content).Children[0]);
+            Content_Down = (ContentPresenter)this.Expander_Down.Content;
             //ContentRight = ((ContentPresenter)((DockPanel)this.ExpanderRight.Content).Children[0]);
         }
 
         public void SetContent(IPlatformClass pc){
+            BaseEdge = pc.Vertex.Get(false, "BaseEdge:");
+
             SetContent_Main(pc);
             SetContent_Down(pc);
             SetContent_Right(pc);
@@ -112,6 +120,8 @@ namespace m0.UIWpf
 
         public void SetContent_Main(IPlatformClass pc)
         {
+            IVertex baseEdgeVertex = EdgeHelper.CreateTempEdgeVertex(null, null, pc.Vertex);
+
             Content = pc;
 
             FrameworkElement fe = (FrameworkElement)pc;
@@ -125,7 +135,7 @@ namespace m0.UIWpf
 
             DockPanel.SetDock(fe, Dock.Bottom);
 
-            IVertex baseEdgeVertex = EdgeHelper.CreateTempEdgeVertex(null, null, pc.Vertex);
+            
 
             Visualiser_Top = new WrapVisualiser(baseEdgeVertex, 0.6, pc.Vertex);
 
@@ -134,7 +144,9 @@ namespace m0.UIWpf
 
         public void SetContent_Down(IPlatformClass pc)
         {
-            Visualiser_Down = new CodeVisualiser(null, null);
+            Visualiser_Down = new CodeVisualiser(BaseEdge, pc.Vertex);
+
+            GraphUtil.SetVertexValue(Visualiser_Down.Vertex, showLineNumbers_meta, "False"); 
 
             Content_Down.Content = Visualiser_Down;
         }
@@ -154,13 +166,13 @@ namespace m0.UIWpf
 
         enum ContentCursorStateEnum { MouseOverUp, MouseOverDown, MouseOutside }
 
-        ContentCursorStateEnum DownCursorState;
-
         // general grip end
 
-        // DOWN HIDE AREA BEG
+        // DOWN BEG
 
-        bool ExpanderDownVisible = false;
+        ContentCursorStateEnum DownCursorState;
+
+        bool ExpanderDownVisible = true;
 
         private void Down_MouseEnter(object sender, MouseEventArgs e) //
         {
@@ -237,6 +249,9 @@ namespace m0.UIWpf
             {
                 DownGrip.Height = 5;
                 VerticalGrid.RowDefinitions[1].Height = new GridLength(5);
+
+                if(Double.IsNaN(Content_Down.Height))
+                    Content_Down.Height = this.ActualHeight / 5;
             }
         }
 
@@ -246,6 +261,11 @@ namespace m0.UIWpf
             VerticalGrid.RowDefinitions[1].Height = new GridLength(0);
         }
 
-        // DOWN HIDE AREA END
+        private void GridSplitter_DragDelta(object sender, System.Windows.Controls.Primitives.DragDeltaEventArgs e)
+        {
+            Content_Down.Height -= e.VerticalChange;
+        }
+
+        // DOWN END
     }
 }
