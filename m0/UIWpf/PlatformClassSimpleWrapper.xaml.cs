@@ -36,6 +36,7 @@ namespace m0.UIWpf
         static IVertex r = m0.MinusZero.Instance.root;
 
         static IVertex showLineNumbers_meta = r.Get(false, @"System\Meta\Visualiser\Code\ShowLineNumbers");
+        static IVertex scale_meta = r.Get(false, @"System\Meta\ZeroTypes\UX\UXItem\Scale");
 
         public PlatformClassSimpleWrapper()
         {
@@ -98,7 +99,7 @@ namespace m0.UIWpf
 
         WrapVisualiser Visualiser_Top;
         CodeVisualiser Visualiser_Down;
-        FormVisualiser Visualiser_Right;
+        CodeVisualiser Visualiser_Right;
 
         ContentPresenter Content_Top;
         ContentPresenter Content_Down;
@@ -108,7 +109,7 @@ namespace m0.UIWpf
         {
             Content_Top = ((ContentPresenter)((DockPanel)this.Expander_Top.Content).Children[0]);
             Content_Down = (ContentPresenter)this.Expander_Down.Content;
-            //ContentRight = ((ContentPresenter)((DockPanel)this.ExpanderRight.Content).Children[0]);
+            Content_Right = (ContentPresenter)this.Expander_Right.Content;
         }
 
         public void SetContent(IPlatformClass pc){
@@ -146,13 +147,36 @@ namespace m0.UIWpf
         {
             Visualiser_Down = new CodeVisualiser(BaseEdge, pcObject.Vertex);
 
-            GraphUtil.SetVertexValue(Visualiser_Down.Vertex, showLineNumbers_meta, "False"); 
+            ////////////////////////////////////////
+            Interaction.BeginInteractionWithGraph();
+            ////////////////////////////////////////
+            
+            GraphUtil.SetVertexValue(Visualiser_Down.Vertex, showLineNumbers_meta, "False");
+            GraphUtil.SetVertexValue(Visualiser_Down.Vertex, scale_meta, 80);
+
+            ////////////////////////////////////////
+            Interaction.EndInteractionWithGraph();
+            ////////////////////////////////////////
 
             Content_Down.Content = Visualiser_Down;
         }
 
         public void SetContent_Right()
         {
+            Visualiser_Right = new CodeVisualiser(BaseEdge, pcObject.Vertex);
+            //new FormVisualiser(BaseEdge, pcObject.Vertex);
+
+            ////////////////////////////////////////
+            Interaction.BeginInteractionWithGraph();
+            ////////////////////////////////////////
+
+            GraphUtil.SetVertexValue(Visualiser_Right.Vertex, scale_meta, 80);
+
+            ////////////////////////////////////////
+            Interaction.EndInteractionWithGraph();
+            ////////////////////////////////////////
+
+            Content_Right.Content = Visualiser_Right;
         }
 
         public ScrollViewer GetScrollViewer()
@@ -164,67 +188,67 @@ namespace m0.UIWpf
 
         Point prevMousePosition;
 
-        enum ContentCursorStateEnum { MouseOverUp, MouseOverDown, MouseOutside }
+        enum ContentCursorStateEnum { MouseOverUp_Down, MouseOverDown_Down, MouseOverUp_Right, MouseOverDown_Right, MouseOutside }
+
+        ContentCursorStateEnum CursorState;
 
         // general grip end
 
         // DOWN BEG
 
-        ContentCursorStateEnum DownCursorState;
+        bool ExpanderRightVisible = true;
 
-        bool ExpanderDownVisible = true;
-
-        private void Down_MouseEnter(object sender, MouseEventArgs e) //
+        private void MouseEnter_Down(object sender, MouseEventArgs e) //
         {
             if (Expander_Down.IsExpanded)
             {
                 WpfUtil.SetCursor(Cursors.SizeNS);
 
-                if (DownCursorState != ContentCursorStateEnum.MouseOverDown)
-                    DownCursorState = ContentCursorStateEnum.MouseOverUp;
+                if (CursorState != ContentCursorStateEnum.MouseOverDown_Down)
+                    CursorState = ContentCursorStateEnum.MouseOverUp_Down;
             }
             else
                 WpfUtil.SetCursor(Cursors.Arrow);
         }
 
-        private void Down_MouseLeave(object sender, MouseEventArgs e) //
+        private void MouseLeave_Down(object sender, MouseEventArgs e) //
         {
-            if (DownCursorState != ContentCursorStateEnum.MouseOverDown)
+            if (CursorState != ContentCursorStateEnum.MouseOverDown_Down)
             {
                 WpfUtil.SetCursor(Cursors.Arrow);
-                DownCursorState = ContentCursorStateEnum.MouseOutside;
+                CursorState = ContentCursorStateEnum.MouseOutside;
             }
         }
 
-        private void Down_MouseLeave_Hard(object sender, MouseEventArgs e) //
+        private void MouseLeave_Hard(object sender, MouseEventArgs e) //
         {
             WpfUtil.SetCursor(Cursors.Arrow);
-            DownCursorState = ContentCursorStateEnum.MouseOutside;
+            CursorState = ContentCursorStateEnum.MouseOutside;
         }
 
-        private void Down_MouseDown(object sender, MouseButtonEventArgs e) //
+        private void MouseDown_Down(object sender, MouseButtonEventArgs e) //
         {
-            if (DownCursorState == ContentCursorStateEnum.MouseOverUp)
+            if (CursorState == ContentCursorStateEnum.MouseOverUp_Down)
             {
-                DownCursorState = ContentCursorStateEnum.MouseOverDown;
+                CursorState = ContentCursorStateEnum.MouseOverDown_Down;
 
                 prevMousePosition = e.GetPosition(this);
             }
         }
 
-        private void Down_MouseUp(object sender, MouseButtonEventArgs e) //
+        private void MouseUp_Down(object sender, MouseButtonEventArgs e) //
         {
-            if (DownCursorState == ContentCursorStateEnum.MouseOverDown)
+            if (CursorState == ContentCursorStateEnum.MouseOverDown_Down)
             {
-                DownCursorState = ContentCursorStateEnum.MouseOverUp;
+                CursorState = ContentCursorStateEnum.MouseOverUp_Down;
 
                 WpfUtil.SetCursor(Cursors.Arrow);
             }
         }
 
-        private void Down_MouseMove(object sender, MouseEventArgs e) //
+        private void MouseMove_Down(object sender, MouseEventArgs e) //
         {
-            if (DownCursorState == ContentCursorStateEnum.MouseOverDown)
+            if (CursorState == ContentCursorStateEnum.MouseOverDown_Down)
             {
                 Point currentMousePosition = e.GetPosition(this);
 
@@ -247,11 +271,11 @@ namespace m0.UIWpf
             }
         }
 
-        private void Down_Expanded(object sender, System.EventArgs e) //
+        private void Expanded_Down(object sender, System.EventArgs e) //
         {
             if (ExpanderDownVisible)
             {
-                DownGrip.Height = 5;
+                Grip_Down.Height = 5;
                 VerticalGrid.RowDefinitions[1].Height = new GridLength(5);
 
                 if (Content_Down.Content == null)
@@ -262,17 +286,110 @@ namespace m0.UIWpf
             }
         }
 
-        private void Down_Collapsed(object sender, System.EventArgs e) //
+        private void Collapsed_Down(object sender, System.EventArgs e) //
         {
-            DownGrip.Height = 0;
+            Grip_Down.Height = 0;
             VerticalGrid.RowDefinitions[1].Height = new GridLength(0);
         }
 
-        private void GridSplitter_DragDelta(object sender, System.Windows.Controls.Primitives.DragDeltaEventArgs e)
+        // DOWN END
+
+        // RIGHT BEG
+
+        bool ExpanderDownVisible = true;
+
+        private void MouseEnter_Right(object sender, MouseEventArgs e) //
         {
-            Content_Down.Height -= e.VerticalChange;
+            if (Expander_Right.IsExpanded)
+            {
+                WpfUtil.SetCursor(Cursors.SizeWE);
+
+                if (CursorState != ContentCursorStateEnum.MouseOverDown_Right)
+                    CursorState = ContentCursorStateEnum.MouseOverUp_Right;
+            }
+            else
+                WpfUtil.SetCursor(Cursors.Arrow);
         }
 
-        // DOWN END
+        private void MouseLeave_Right(object sender, MouseEventArgs e) //
+        {
+            if (CursorState != ContentCursorStateEnum.MouseOverDown_Right)
+            {
+                WpfUtil.SetCursor(Cursors.Arrow);
+                CursorState = ContentCursorStateEnum.MouseOutside;
+            }
+        }
+
+        private void MouseDown_Right(object sender, MouseButtonEventArgs e) //
+        {
+            if (CursorState == ContentCursorStateEnum.MouseOverUp_Right)
+            {
+                CursorState = ContentCursorStateEnum.MouseOverDown_Right;
+
+                prevMousePosition = e.GetPosition(this);
+            }
+        }
+
+        private void MouseUp_Right(object sender, MouseButtonEventArgs e) //
+        {
+            if (CursorState == ContentCursorStateEnum.MouseOverDown_Right)
+            {
+                CursorState = ContentCursorStateEnum.MouseOverUp_Right;
+
+                WpfUtil.SetCursor(Cursors.Arrow);
+            }
+        }
+
+        private void MouseMove_Right(object sender, MouseEventArgs e) //
+        {
+            if (CursorState == ContentCursorStateEnum.MouseOverDown_Right)
+            {
+                Point currentMousePosition = e.GetPosition(this);
+
+                double deltaX = prevMousePosition.X - currentMousePosition.X;
+
+                prevMousePosition = currentMousePosition;
+
+                double contentElementWidth = Content_Right.Width + deltaX;
+
+                if (contentElementWidth < 0)
+                    contentElementWidth = 0;
+
+                if (contentElementWidth == 0)
+                    Expander_Right.IsExpanded = false;
+
+                if (contentElementWidth > this.ActualWidth - 200)
+                    contentElementWidth = this.ActualWidth - 200;
+
+                Content_Right.Width = contentElementWidth;
+            }
+        }
+
+        private void Expanded_Right(object sender, System.EventArgs e) //
+        {
+            if (ExpanderRightVisible)
+            {
+                Grip_Right.Width = 5;
+                HorizontalGrid.ColumnDefinitions[1].Width = new GridLength(5);
+
+                if (Content_Right.Content == null)
+                    SetContent_Right();
+
+                if (Double.IsNaN(Content_Right.Height)) {
+                    if (this.ActualWidth < 200)
+                        Content_Right.Width = 60;
+                    else
+                        Content_Right.Width = 150;
+                }
+            }
+        }
+
+        private void Collapsed_Right(object sender, System.EventArgs e) //
+        {
+            Grip_Right.Width = 0;
+            HorizontalGrid.ColumnDefinitions[1].Width = new GridLength(0);
+        }
+
+        // RIGHT END
     }
 }

@@ -9,12 +9,12 @@
     xmlns:sys="clr-namespace:System;assembly=mscorlib"  
     xmlns:m="clr-namespace:m0.UIWpf.Controls">
     <DockPanel Background="{StaticResource 0BackgroundBrush}" Name="ParentCont"
-        MouseLeave="Down_MouseLeave_Hard">
+        MouseLeave="MouseLeave_Hard">
 
         <m:AnimatedHideArea_HorizontalUp DockPanel.Dock="Top"
             x:Name="Expander_Top" 
             IsExpanded="False"
-            MouseEnter="Down_MouseLeave_Hard">
+            MouseEnter="MouseLeave_Hard">
             <DockPanel>
                 <ContentPresenter DockPanel.Dock="Top"/>
                 <Border DockPanel.Dock="Bottom" BorderBrush="{StaticResource 0ForegroundBrush}" BorderThickness="1"/>
@@ -28,30 +28,62 @@
                 <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
 
-            <Grid Grid.Row="0">
+            <Grid Grid.Row="0" x:Name="HorizontalGrid">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="0"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
 
-            <ScrollViewer Grid.Column="0" 
-                Name="MainContent" 
-                Foreground="{StaticResource 0ForegroundBrush}" 
-                VerticalScrollBarVisibility="Auto" 
-                HorizontalScrollBarVisibility="Auto"  
-                PreviewMouseWheel="ListViewScrollViewer_PreviewMouseWheel"
+                <ScrollViewer Grid.Column="0" 
+                    Name="MainContent" 
+                    Foreground="{StaticResource 0ForegroundBrush}" 
+                    VerticalScrollBarVisibility="Auto" 
+                    HorizontalScrollBarVisibility="Auto"  
+                    PreviewMouseWheel="ListViewScrollViewer_PreviewMouseWheel"
             
-                MouseMove="Down_MouseMove" 
-                MouseUp="Down_MouseUp"/>
+                    MouseMove="MouseMove_Down" 
+                    MouseUp="MouseUp_Down"/>
+
+                <Border Name="Grip_Right" 
+                    Grid.Column="1" 
+                    Width="5" 
+                    HorizontalAlignment="Stretch" 
+                    Background="{StaticResource 0VeryLightHighlightBrush}" 
+                    MouseEnter="MouseEnter_Right" 
+                    MouseLeave="MouseLeave_Right" 
+                    MouseDown="MouseDown_Right" 
+                    MouseMove="MouseMove_Right" 
+                    MouseUp="MouseUp_Right">
+                    <StackPanel VerticalAlignment="Center" Orientation="Vertical">
+                        <Ellipse Height="3" Width="3" Fill="Black" Margin="0,1,0,1"/>
+                        <Ellipse Height="3" Width="3" Fill="Black" Margin="0,1,0,1"/>
+                        <Ellipse Height="3" Width="3" Fill="Black" Margin="0,1,0,1"/>
+                    </StackPanel>
+                </Border>
+
+                <m:AnimatedHideArea_VerticalRight Grid.Column="2"
+                    x:Name="Expander_Right" 
+                    MouseMove="MouseMove_Right" 
+                    MouseUp="MouseUp_Right" 
+                    Expanded="Expanded_Right" 
+                    Collapsed="Collapsed_Right" 
+                    IsExpanded="False">
+                    <ContentPresenter/>
+                </m:AnimatedHideArea_VerticalRight>
+
             </Grid>
 
-
-            <Border Name="DownGrip" 
+            <Border Name="Grip_Down" 
                 Grid.Row="1" 
                 Height="5" 
                 HorizontalAlignment="Stretch" 
                 Background="{StaticResource 0VeryLightHighlightBrush}" 
-                MouseEnter="Down_MouseEnter" 
-                MouseLeave="Down_MouseLeave" 
-                MouseDown="Down_MouseDown" 
-                MouseMove="Down_MouseMove" 
-                MouseUp="Down_MouseUp">
+                MouseEnter="MouseEnter_Down" 
+                MouseLeave="MouseLeave_Down" 
+                MouseDown="MouseDown_Down" 
+                MouseMove="MouseMove_Down" 
+                MouseUp="MouseUp_Down">
                 <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
                     <Ellipse Height="3" Width="3" Fill="Black" Margin="1,0,1,0"/>
                     <Ellipse Height="3" Width="3" Fill="Black" Margin="1,0,1,0"/>
@@ -61,12 +93,12 @@
 
             <m:AnimatedHideArea_HorizontalDown Grid.Row="2"
                 x:Name="Expander_Down" 
-                MouseMove="Down_MouseMove" 
-                MouseUp="Down_MouseUp" 
-                Expanded="Down_Expanded" 
-                Collapsed="Down_Collapsed" 
+                MouseMove="MouseMove_Down" 
+                MouseUp="MouseUp_Down" 
+                Expanded="Expanded_Down" 
+                Collapsed="Collapsed_Down" 
                 IsExpanded="False">
-                <ContentPresenter DockPanel.Dock="Top"/>
+                <ContentPresenter/>
             </m:AnimatedHideArea_HorizontalDown>
 
             </Grid>
