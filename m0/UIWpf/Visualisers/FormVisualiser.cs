@@ -101,6 +101,11 @@ namespace m0.UIWpf.Visualisers
                 UpdateBaseEdgeCallSchemeEnum.OmmitFirst);            
 
             SetVertexDefaultValues();
+
+            this.BorderBrush = new SolidColorBrush(Colors.Red);
+            this.BorderThickness = new Thickness(10);
+
+            this.Foreground = new SolidColorBrush(Colors.Purple);
         }
         
         public void OnLoad(object sender, RoutedEventArgs e)
@@ -511,6 +516,8 @@ namespace m0.UIWpf.Visualisers
             }
             else
                 Content = CreateColumnedContent();
+
+            Content = new Button();
         }
 
         private void TabControl_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -600,7 +607,8 @@ namespace m0.UIWpf.Visualisers
         bool BaseVertexEdgeAdded = false;
 
         protected void AddEdge(IVertex meta, bool isSet)
-        {            
+        {
+            return;    
             if (DisplayBaseVertex && BaseVertexEdgeAdded == false) { 
                 BaseVertexEdge = getMetaForForm();
                 BaseVertexEdgeAdded = true;

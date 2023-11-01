@@ -99,17 +99,18 @@ namespace m0.UIWpf
 
         WrapVisualiser Visualiser_Top;
         CodeVisualiser Visualiser_Down;
-        CodeVisualiser Visualiser_Right;
+        TreeVisualiser Visualiser_Right;
 
         ContentPresenter Content_Top;
         ContentPresenter Content_Down;
-        ContentPresenter Content_Right;
+        ScrollViewer Content_Right;
 
         void SetContentPresenters()
         {
             Content_Top = ((ContentPresenter)((DockPanel)this.Expander_Top.Content).Children[0]);
             Content_Down = (ContentPresenter)this.Expander_Down.Content;
-            Content_Right = (ContentPresenter)this.Expander_Right.Content;
+            //Content_Right = (ContentPresenter)this.Expander_Right.Content;
+            Content_Right = (ScrollViewer)this.Expander_Right.Content;
         }
 
         public void SetContent(IPlatformClass pc){
@@ -163,14 +164,13 @@ namespace m0.UIWpf
 
         public void SetContent_Right()
         {
-            Visualiser_Right = new CodeVisualiser(BaseEdge, pcObject.Vertex);
-            //new FormVisualiser(BaseEdge, pcObject.Vertex);
-
             ////////////////////////////////////////
             Interaction.BeginInteractionWithGraph();
             ////////////////////////////////////////
+            
+            Visualiser_Right = new TreeVisualiser(BaseEdge, pcObject.Vertex);
 
-            GraphUtil.SetVertexValue(Visualiser_Right.Vertex, scale_meta, 80);
+           // GraphUtil.SetVertexValue(Visualiser_Right.Vertex, scale_meta, 80);
 
             ////////////////////////////////////////
             Interaction.EndInteractionWithGraph();
