@@ -294,6 +294,8 @@ namespace m0.UIWpf.Visualisers
 
         public void UpdateVertex()
         {
+            Content = new Button();
+            return;
             VisualiserHelper.ForceVertexChangeOff = true;
 
             //ExecutionFlowHelper.

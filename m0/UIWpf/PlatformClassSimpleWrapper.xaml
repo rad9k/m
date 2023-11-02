@@ -42,8 +42,8 @@
                     HorizontalScrollBarVisibility="Auto"  
                     PreviewMouseWheel="ListViewScrollViewer_PreviewMouseWheel"
             
-                    MouseMove="MouseMove_Down" 
-                    MouseUp="MouseUp_Down"/>
+                    MouseMove="MouseMove_All" 
+                    MouseUp="MouseUp_All"/>
 
                 <Border Name="Grip_Right" 
                     Grid.Column="1" 

@@ -192,6 +192,18 @@ namespace m0.UIWpf
 
         ContentCursorStateEnum CursorState;
 
+        private void MouseUp_All(object sender, MouseButtonEventArgs e)
+        {
+            MouseUp_Down(sender, e);
+            MouseUp_Right(sender, e);
+        }
+
+        private void MouseMove_All(object sender, MouseEventArgs e)
+        {
+            MouseMove_Down(sender, e);
+            MouseMove_Right(sender, e);
+        }
+
         // general grip end
 
         // DOWN BEG
