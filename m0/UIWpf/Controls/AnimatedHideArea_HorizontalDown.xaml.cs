@@ -26,7 +26,7 @@ namespace m0.UIWpf.Controls
         public event EventHandler Expanded;
         public event EventHandler Collapsed;
 
-        bool isExpanded=true;
+        bool isExpanded = true;
 
         public bool IsExpanded {
             get {
@@ -55,7 +55,7 @@ namespace m0.UIWpf.Controls
         {
             Expander = (Expander)this.Template.FindName("Expander", this);
 
-            Expander.IsExpanded = isExpanded;
+        //    Expander.IsExpanded = isExpanded;
         }
 
         private void Expander_Expanded(object sender, RoutedEventArgs e)

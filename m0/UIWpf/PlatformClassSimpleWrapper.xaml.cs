@@ -99,7 +99,7 @@ namespace m0.UIWpf
 
         WrapVisualiser Visualiser_Top;
         CodeVisualiser Visualiser_Down;
-        TreeVisualiser Visualiser_Right;
+        FormVisualiser Visualiser_Right;
 
         ContentPresenter Content_Top;
         ContentPresenter Content_Down;
@@ -151,9 +151,11 @@ namespace m0.UIWpf
             ////////////////////////////////////////
             Interaction.BeginInteractionWithGraph();
             ////////////////////////////////////////
-            
-            GraphUtil.SetVertexValue(Visualiser_Down.Vertex, showLineNumbers_meta, "False");
-            GraphUtil.SetVertexValue(Visualiser_Down.Vertex, scale_meta, 80);
+
+  
+
+            //GraphUtil.SetVertexValue(Visualiser_Down.Vertex, showLineNumbers_meta, "False");
+            GraphUtil.SetVertexValue(Visualiser_Down.Vertex, scale_meta, 50);
 
             ////////////////////////////////////////
             Interaction.EndInteractionWithGraph();
@@ -167,10 +169,16 @@ namespace m0.UIWpf
             ////////////////////////////////////////
             Interaction.BeginInteractionWithGraph();
             ////////////////////////////////////////
-            
-            Visualiser_Right = new TreeVisualiser(BaseEdge, pcObject.Vertex);
+            ///
+            IVertex b = EdgeHelper.CreateTempEdgeVertex(m0.MinusZero.Instance.empty, m0.MinusZero.Instance.empty, m0.MinusZero.Instance.root);
 
-           // GraphUtil.SetVertexValue(Visualiser_Right.Vertex, scale_meta, 80);
+
+            VisualisersList.x = true;
+            Visualiser_Right = new FormVisualiser(b, pcObject.Vertex);
+
+
+            
+            GraphUtil.SetVertexValue(Visualiser_Right.Vertex, scale_meta, 80);
 
             ////////////////////////////////////////
             Interaction.EndInteractionWithGraph();
@@ -276,9 +284,6 @@ namespace m0.UIWpf
                 if (contentElementHeight == 0)
                     Expander_Down.IsExpanded = false;
 
-                if (contentElementHeight > this.ActualHeight - 200)
-                    contentElementHeight = this.ActualHeight - 200;
-
                 Content_Down.Height = contentElementHeight;
             }
         }
@@ -369,9 +374,6 @@ namespace m0.UIWpf
 
                 if (contentElementWidth == 0)
                     Expander_Right.IsExpanded = false;
-
-                if (contentElementWidth > this.ActualWidth - 200)
-                    contentElementWidth = this.ActualWidth - 200;
 
                 Content_Right.Width = contentElementWidth;
             }

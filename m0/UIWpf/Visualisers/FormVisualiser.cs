@@ -294,8 +294,7 @@ namespace m0.UIWpf.Visualisers
 
         public void UpdateVertex()
         {
-            Content = new Button();
-            return;
+           // Content = new Button();
             VisualiserHelper.ForceVertexChangeOff = true;
 
             //ExecutionFlowHelper.
@@ -370,7 +369,7 @@ namespace m0.UIWpf.Visualisers
 
                     }
                 }
-               
+                
                 if (ExpertMode)
                 {
                     foreach (IEdge e in MinusZero.Instance.Root.Get(false, @"System\Meta\Base\Vertex"))
@@ -385,18 +384,19 @@ namespace m0.UIWpf.Visualisers
                             AddEdge(e.To, false);
                     }
                 }
-
+                
                 if (ExecutableVisualiserFactory.IsOfExecutableMeta(metaForForm))
                     foreach (IEdge e in ExecutableVisualiserFactory.GetExecutableEdges(metaForForm))
                         if (e.To.Get(false, "$Hide:") == null)
                             AddEdge(e.To, false);
-
+                
                 if (MetaOnLeft){
                     if (!HasTabs && TabList.ContainsKey(""))
                         CorrectWidth(TabList[""]);
                 }
+                
             }
-
+            //return;
             VisualiserHelper.ForceVertexChangeOff = false;
         }
 
@@ -519,7 +519,7 @@ namespace m0.UIWpf.Visualisers
             else
                 Content = CreateColumnedContent();
 
-            Content = new Button();
+           // Content = new Button();
         }
 
         private void TabControl_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -610,7 +610,6 @@ namespace m0.UIWpf.Visualisers
 
         protected void AddEdge(IVertex meta, bool isSet)
         {
-            return;    
             if (DisplayBaseVertex && BaseVertexEdgeAdded == false) { 
                 BaseVertexEdge = getMetaForForm();
                 BaseVertexEdgeAdded = true;

@@ -18,6 +18,7 @@ namespace m0.UIWpf.Visualisers.Helper
     {
         static Dictionary<IVertex, VisualiserData> Visualisers = new Dictionary<IVertex, VisualiserData>();
 
+        public static bool x = false;
         public static void AddVisualiser(IVisualiser visualiser, IVertex parentVisualiserVertex, bool AddVertex)
         {
             MinusZero mz = MinusZero.Instance;
@@ -30,8 +31,18 @@ namespace m0.UIWpf.Visualisers.Helper
                     visualiserVertexEdge = mz.Root.Get(false, @"User\CurrentUser:\Session:\Visualisers:").
                             AddEdge(mz.Root.Get(false, @"System\Meta\ZeroTypes\UX\Item"), visualiser.Vertex);
                 else
-                    visualiserVertexEdge = parentVisualiserVertex.
-                            AddEdge(mz.Root.Get(false, @"System\Meta\ZeroTypes\UX\Item\Item"), visualiser.Vertex);
+                {
+                   // if (x)
+                       // visualiserVertexEdge = mz.Root.Get(false, @"User\CurrentUser:\Session:\Visualisers:").
+                       //     AddEdge(mz.Root.Get(false, @"System\Meta\ZeroTypes\UX\Item"), visualiser.Vertex);
+                   
+                    //visualiserVertexEdge = parentVisualiserVertex.
+                      //             AddEdge(mz.Root.Get(false, @"System\Meta\Base\$Empty"), visualiser.Vertex);
+                    //else
+                        visualiserVertexEdge = parentVisualiserVertex.
+                               AddEdge(mz.Root.Get(false, @"System\Meta\ZeroTypes\UX\Item\Item"), visualiser.Vertex);
+
+                }
             }
 
             VisualiserData vd = new VisualiserData();
