@@ -177,7 +177,22 @@ namespace m0.UIWpf
 
             //Visualiser_Right = (TreeVisualiser)PlatformClass.CreatePlatformObject(MinusZero.Instance.Root.Get(false, @"System\Meta\Visualiser\Tree"), BaseEdge);
 
-            Visualiser_Right = new CodeVisualiser(BaseEdge, pcObject.Vertex);
+            //Visualiser_Right = new CodeVisualiser(BaseEdge, pcObject.Vertex);
+            //Visualiser_Right = new TreeVisualiser(BaseEdge, pcObject.Vertex);
+            //Visualiser_Right = new GraphVisualiser(BaseEdge, pcObject.Vertex);
+            //Visualiser_Right = new FormVisualiser(BaseEdge, pcObject.Vertex);
+            Visualiser_Right = new StringVisualiser(BaseEdge, pcObject.Vertex);
+            //Visualiser_Right = new ListVisualiser(BaseEdge, pcObject.Vertex);
+            //Visualiser_Right = new WrapVisualiser(BaseEdge, pcObject.Vertex);
+
+            //Visualiser_Right = new CodeVisualiser(b, pcObject.Vertex);
+            //Visualiser_Right = new TreeVisualiser(b, pcObject.Vertex);
+            //Visualiser_Right = new GraphVisualiser(b, pcObject.Vertex);
+            //Visualiser_Right = new FormVisualiser(b, pcObject.Vertex);
+            //Visualiser_Right = new StringVisualiser(b, pcObject.Vertex);
+            //Visualiser_Right = new ListVisualiser(b, pcObject.Vertex);
+            //Visualiser_Right = new WrapVisualiser(b, pcObject.Vertex);
+
 
             ////////////////////////////////////////
             Interaction.BeginInteractionWithGraph();
