@@ -109,8 +109,9 @@ namespace m0.UIWpf
         {
             Content_Top = ((ContentPresenter)((DockPanel)this.Expander_Top.Content).Children[0]);
             Content_Down = (ContentPresenter)this.Expander_Down.Content;
-            //Content_Right = (ContentPresenter)this.Expander_Right.Content;
-            Content_Right = (ScrollViewer)this.Expander_Right.Content;
+
+            //Content_Right = (ScrollViewer)this.Expander_Right.Content;
+            Content_Right = TestContent;
         }
 
         public void SetContent(IPlatformClass pc){
@@ -119,7 +120,7 @@ namespace m0.UIWpf
             BaseEdge = pc.Vertex.Get(false, "BaseEdge:");
 
             SetContent_Main();
-            //SetContent_Right();
+            SetContent_Right();
         }
 
         public void SetContent_Main()
@@ -175,27 +176,28 @@ namespace m0.UIWpf
 
 
             VisualisersList.x = true;
+
             ////////////////////////////////////////
             Interaction.BeginInteractionWithGraph();
             ////////////////////////////////////////
 
+
             //Visualiser_Right = (TreeVisualiser)PlatformClass.CreatePlatformObject(MinusZero.Instance.Root.Get(false, @"System\Meta\Visualiser\Tree"), BaseEdge);
 
-            Visualiser_Right = new CodeVisualiser(BaseEdge, null);
-            //Visualiser_Right = new TreeVisualiser(BaseEdge, null);
-            //Visualiser_Right = new GraphVisualiser(BaseEdge, null);
-            //Visualiser_Right = new FormVisualiser(BaseEdge, null);
-            //Visualiser_Right = new StringVisualiser(BaseEdge, null);
-            //Visualiser_Right = new ListVisualiser(BaseEdge, null);
-            //Visualiser_Right = new WrapVisualiser(BaseEdge, null);
+            Visualiser_Right = new CodeVisualiser(BaseEdge, pcObject.Vertex);
+            //Visualiser_Right = new TreeVisualiser(BaseEdge, pcObject.Vertex);
+            //Visualiser_Right = new GraphVisualiser(BaseEdge, pcObject.Vertex);
+            //Visualiser_Right = new FormVisualiser(BaseEdge, pcObject.Vertex);
+            //Visualiser_Right = new ListVisualiser(BaseEdge, pcObject.Vertex);
 
-            //Visualiser_Right = new CodeVisualiser(b, null);
-            //Visualiser_Right = new TreeVisualiser(b, null);
-            //Visualiser_Right = new GraphVisualiser(b, null);
-            //Visualiser_Right = new FormVisualiser(b, null);
-            //Visualiser_Right = new StringVisualiser(b, null);
-            //Visualiser_Right = new ListVisualiser(b, null);
-            //Visualiser_Right = new WrapVisualiser(b, null);
+
+            //Visualiser_Right = new CodeVisualiser(b, pcObject.Vertex);
+            //Visualiser_Right = new TreeVisualiser(b, pcObject.Vertex);
+            //Visualiser_Right = new GraphVisualiser(b, pcObject.Vertex);
+            //Visualiser_Right = new FormVisualiser(b, pcObject.Vertex);
+            //Visualiser_Right = new ListVisualiser(b, pcObject.Vertex);
+
+            
 
             GraphUtil.SetVertexValue(Visualiser_Right.Vertex, scale_meta, 50);
 
@@ -204,6 +206,7 @@ namespace m0.UIWpf
             //////////////////////////////////////
 
             Content_Right.Content = Visualiser_Right;
+
         }
 
         public ScrollViewer GetScrollViewer()
