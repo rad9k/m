@@ -169,34 +169,33 @@ namespace m0.UIWpf
         {
 
 
-            IVertex b = EdgeHelper.CreateTempEdgeVertex(m0.MinusZero.Instance.empty, m0.MinusZero.Instance.empty, m0.MinusZero.Instance.root);
+            IVertex b = EdgeHelper.CreateTempEdgeVertex(m0.MinusZero.Instance.empty, m0.MinusZero.Instance.empty, m0.MinusZero.Instance.root.Get(false, @"examples\code\Code1"));
+                
 
 
 
             VisualisersList.x = true;
-
-            //Visualiser_Right = (TreeVisualiser)PlatformClass.CreatePlatformObject(MinusZero.Instance.Root.Get(false, @"System\Meta\Visualiser\Tree"), BaseEdge);
-
-            //Visualiser_Right = new CodeVisualiser(BaseEdge, pcObject.Vertex);
-            //Visualiser_Right = new TreeVisualiser(BaseEdge, pcObject.Vertex);
-            //Visualiser_Right = new GraphVisualiser(BaseEdge, pcObject.Vertex);
-            //Visualiser_Right = new FormVisualiser(BaseEdge, pcObject.Vertex);
-            Visualiser_Right = new StringVisualiser(BaseEdge, pcObject.Vertex);
-            //Visualiser_Right = new ListVisualiser(BaseEdge, pcObject.Vertex);
-            //Visualiser_Right = new WrapVisualiser(BaseEdge, pcObject.Vertex);
-
-            //Visualiser_Right = new CodeVisualiser(b, pcObject.Vertex);
-            //Visualiser_Right = new TreeVisualiser(b, pcObject.Vertex);
-            //Visualiser_Right = new GraphVisualiser(b, pcObject.Vertex);
-            //Visualiser_Right = new FormVisualiser(b, pcObject.Vertex);
-            //Visualiser_Right = new StringVisualiser(b, pcObject.Vertex);
-            //Visualiser_Right = new ListVisualiser(b, pcObject.Vertex);
-            //Visualiser_Right = new WrapVisualiser(b, pcObject.Vertex);
-
-
             ////////////////////////////////////////
             Interaction.BeginInteractionWithGraph();
             ////////////////////////////////////////
+
+            //Visualiser_Right = (TreeVisualiser)PlatformClass.CreatePlatformObject(MinusZero.Instance.Root.Get(false, @"System\Meta\Visualiser\Tree"), BaseEdge);
+
+            Visualiser_Right = new CodeVisualiser(BaseEdge, null);
+            //Visualiser_Right = new TreeVisualiser(BaseEdge, null);
+            //Visualiser_Right = new GraphVisualiser(BaseEdge, null);
+            //Visualiser_Right = new FormVisualiser(BaseEdge, null);
+            //Visualiser_Right = new StringVisualiser(BaseEdge, null);
+            //Visualiser_Right = new ListVisualiser(BaseEdge, null);
+            //Visualiser_Right = new WrapVisualiser(BaseEdge, null);
+
+            //Visualiser_Right = new CodeVisualiser(b, null);
+            //Visualiser_Right = new TreeVisualiser(b, null);
+            //Visualiser_Right = new GraphVisualiser(b, null);
+            //Visualiser_Right = new FormVisualiser(b, null);
+            //Visualiser_Right = new StringVisualiser(b, null);
+            //Visualiser_Right = new ListVisualiser(b, null);
+            //Visualiser_Right = new WrapVisualiser(b, null);
 
             GraphUtil.SetVertexValue(Visualiser_Right.Vertex, scale_meta, 50);
 
