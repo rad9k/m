@@ -55,7 +55,8 @@ namespace m0.UIWpf.Controls
         {
             Expander = (Expander)this.Template.FindName("Expander", this);
 
-        //    Expander.IsExpanded = isExpanded;
+            //    Expander.IsExpanded = isExpanded; // this makes expander collaps after visualiser control is covered by other control
+            // and visualiser gets back to being view top
         }
 
         private void Expander_Expanded(object sender, RoutedEventArgs e)

@@ -99,7 +99,7 @@ namespace m0.UIWpf
 
         WrapVisualiser Visualiser_Top;
         CodeVisualiser Visualiser_Down;
-        FormVisualiser Visualiser_Right;
+        IVisualiser Visualiser_Right;
 
         ContentPresenter Content_Top;
         ContentPresenter Content_Down;
@@ -119,6 +119,7 @@ namespace m0.UIWpf
             BaseEdge = pc.Vertex.Get(false, "BaseEdge:");
 
             SetContent_Main();
+            //SetContent_Right();
         }
 
         public void SetContent_Main()
@@ -166,23 +167,27 @@ namespace m0.UIWpf
 
         public void SetContent_Right()
         {
-            ////////////////////////////////////////
-            Interaction.BeginInteractionWithGraph();
-            ////////////////////////////////////////
-            ///
+
+
             IVertex b = EdgeHelper.CreateTempEdgeVertex(m0.MinusZero.Instance.empty, m0.MinusZero.Instance.empty, m0.MinusZero.Instance.root);
 
 
+
             VisualisersList.x = true;
-            Visualiser_Right = new FormVisualiser(b, pcObject.Vertex);
 
+            //Visualiser_Right = (TreeVisualiser)PlatformClass.CreatePlatformObject(MinusZero.Instance.Root.Get(false, @"System\Meta\Visualiser\Tree"), BaseEdge);
 
-            
-            GraphUtil.SetVertexValue(Visualiser_Right.Vertex, scale_meta, 80);
+            Visualiser_Right = new CodeVisualiser(BaseEdge, pcObject.Vertex);
 
             ////////////////////////////////////////
+            Interaction.BeginInteractionWithGraph();
+            ////////////////////////////////////////
+
+            GraphUtil.SetVertexValue(Visualiser_Right.Vertex, scale_meta, 50);
+
+            //////////////////////////////////////
             Interaction.EndInteractionWithGraph();
-            ////////////////////////////////////////
+            //////////////////////////////////////
 
             Content_Right.Content = Visualiser_Right;
         }
