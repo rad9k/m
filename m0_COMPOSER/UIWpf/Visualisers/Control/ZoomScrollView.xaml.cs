@@ -370,7 +370,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control
         {
             if (downAreaVisible)
             {
-                DownGrip.Background = (Brush)WpfUtil.FindResource("0VeryLightHighlightBrush");
+                DownGrip.Background = (Brush)WpfUtil.FindResource("0GripBrush");
 
                 DownGrip.Height = 5;
                 Grid.RowDefinitions[5].Height = new GridLength(5);

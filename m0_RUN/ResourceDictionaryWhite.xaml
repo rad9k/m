@@ -17,7 +17,8 @@
     <Color x:Key="0Highlight">#2151FF</Color>
     <Color x:Key="0HighlightForeground">#FFFFFF</Color>
     <Color x:Key="0LightHighlight">#0195FF</Color>
-    <Color x:Key="0VeryLightHighlight">#E1E5FF</Color>
+    <Color x:Key="0VeryLightHighlight">#B1C5FF</Color>
+    <Color x:Key="0Grip">#E1E5FF</Color>
     <Color x:Key="0Processing">#FCFFA5</Color>
     <Color x:Key="0Error">#FF0000</Color>
     <Color x:Key="0LightError">#ffbbbb</Color>
@@ -41,6 +42,7 @@
     <SolidColorBrush x:Key="0HighlightForegroundBrush" Color="{StaticResource 0HighlightForeground}" />
     <SolidColorBrush x:Key="0LightHighlightBrush" Color="{StaticResource 0LightHighlight}" />
     <SolidColorBrush x:Key="0VeryLightHighlightBrush" Color="{StaticResource 0VeryLightHighlight}" />
+    <SolidColorBrush x:Key="0GripBrush" Color="{StaticResource 0Grip}" />
     <SolidColorBrush x:Key="0ProcessingBrush" Color="{StaticResource 0Processing}" />
     <SolidColorBrush x:Key="0LightErrorBrush" Color="{StaticResource 0LightError}" />
     <SolidColorBrush x:Key="0ErrorBrush" Color="{StaticResource 0Error}" />
