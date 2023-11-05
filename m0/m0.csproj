@@ -605,6 +605,7 @@
     </None>
     <AppDesigner Include="Properties\" />
     <EmbeddedResource Include="ZeroCodeHighlighting.xshd" />
+    <None Include="_PROJECT\bug_and_test\parent _ bug.xlsx" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Images\Untitled1.png" />
