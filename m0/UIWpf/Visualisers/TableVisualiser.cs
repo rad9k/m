@@ -22,7 +22,7 @@ using m0.Graph.ExecutionFlow;
 
 namespace m0.UIWpf.Visualisers
 {
-    public class TableVisualiser : ListVisualiser
+    public class TableVisualiser : ListVisualiser, ITypedEdge
     {
         static IVertex ToShowEdgesMeta_meta = MinusZero.Instance.root.Get(false, @"System\Meta\Visualiser\Table\ToShowEdgesMeta");
         static IVertex FilterQuery_meta = MinusZero.Instance.root.Get(false, @"System\Meta\Visualiser\Table\FilterQuery");
@@ -33,7 +33,19 @@ namespace m0.UIWpf.Visualisers
         static string[] _MetaTriggeringUpdateView = new string[] {"IsAllVisualisersEdit", "ShowHeader", "GridStyle", "AlternatingRows" };
         public override string[] MetaTriggeringUpdateView { get { return _MetaTriggeringUpdateView; } }
 
-        public override void UpdateView() { ResetView(); }        
+        public override void UpdateView() { ResetView(); }
+
+        // TypedEdge START
+
+        public TableVisualiser(IEdge _edge) : base(_edge)
+        {
+            Edge = _edge;
+
+            TypedEdge.vertexDictionary.Add(Edge.To, this);
+        }
+
+        public IEdge Edge { get; set; }
+        // TypedEdge END
 
         public TableVisualiser(IVertex baseEdgeVertex, IVertex _parentVisualiser) : base(baseEdgeVertex, _parentVisualiser)
         {

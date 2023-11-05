@@ -120,7 +120,7 @@ namespace m0.UIWpf
             BaseEdge = pc.Vertex.Get(false, "BaseEdge:");
 
             SetContent_Main();
-            SetContent_Right();
+           // SetContent_Right();
         }
 
         public void SetContent_Main()

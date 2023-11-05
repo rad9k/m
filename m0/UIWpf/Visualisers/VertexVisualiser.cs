@@ -20,7 +20,7 @@ using m0.User.Process.UX;
 
 namespace m0.UIWpf.Visualisers
 {
-    public class VertexVisualiser : Grid, IVisualiser
+    public class VertexVisualiser : Grid, IVisualiser, ITypedEdge
     {
         public AtomVisualiserHelper VisualiserHelper { get; set; }        
 
@@ -29,6 +29,18 @@ namespace m0.UIWpf.Visualisers
         Button Button;
 
         bool buttonStateIsNew;
+
+        // TypedEdge START
+
+        public VertexVisualiser(IEdge _edge)
+        {
+            Edge = _edge;
+
+            TypedEdge.vertexDictionary.Add(Edge.To, this);
+        }
+
+        public IEdge Edge { get; set; }
+        // TypedEdge END
 
         public VertexVisualiser(IVertex baseEdgeVertex, IVertex parentVisualiser)
         {

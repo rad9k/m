@@ -50,7 +50,7 @@ namespace m0.UIWpf.Visualisers
         }
     }
 
-    public class FormVisualiser : ContentControl, IListVisualiser
+    public class FormVisualiser : ContentControl, IListVisualiser, ITypedEdge
     {
         public AtomVisualiserHelper VisualiserHelper { get; set; }        
 
@@ -86,6 +86,18 @@ namespace m0.UIWpf.Visualisers
         public void UpdateView() { }
 
         public void UnselectAllSelectedEdges() { }
+
+        // TypedEdge START
+
+        public FormVisualiser(IEdge _edge)
+        {
+            Edge = _edge;
+
+            TypedEdge.vertexDictionary.Add(Edge.To, this);
+        }
+
+        public IEdge Edge { get; set; }
+        // TypedEdge END
 
         public FormVisualiser(IVertex baseEdgeVertex, IVertex parentVisualiser)
         {

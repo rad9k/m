@@ -18,12 +18,23 @@ using m0.UIWpf.Foundation;
 
 namespace m0.UIWpf.Visualisers
 {
-    public class FloatVisualiser : NumberVisualiser<double?>
+    public class FloatVisualiser : NumberVisualiser<double?>, ITypedEdge
     {
         protected override string visualiserName { get { return "FloatVisualiser"; } set { } }
 
         protected override IVertex visualiserMetaVertex { get { return MinusZero.Instance.Root.Get(false, @"System\Meta\Visualiser\Float"); } set { } }
 
+        // TypedEdge START
+
+        public FloatVisualiser(IEdge _edge) : base(null, null)
+        {
+            Edge = _edge;
+
+            TypedEdge.vertexDictionary.Add(Edge.To, this);
+        }
+
+        public IEdge Edge { get; set; }
+        // TypedEdge END
         public FloatVisualiser(IVertex baseEdgeVertex, IVertex parentVisualiser) : base(baseEdgeVertex, parentVisualiser)
         {
 

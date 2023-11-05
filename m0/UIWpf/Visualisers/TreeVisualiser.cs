@@ -274,7 +274,7 @@ namespace m0.UIWpf.Visualisers
         }
     }
 
-    public class TreeVisualiser: TreeView, IListVisualiser, IHasSelectableEdges
+    public class TreeVisualiser: TreeView, IListVisualiser, IHasSelectableEdges, ITypedEdge
     {
         public AtomVisualiserHelper VisualiserHelper { get; set; }        
 
@@ -293,6 +293,18 @@ namespace m0.UIWpf.Visualisers
         public string[] MetaTriggeringUpdateView { get { return _MetaTriggeringUpdateView; } }
 
         public void UpdateView() { }
+
+        // TypedEdge START
+
+        public TreeVisualiser(IEdge _edge)
+        {
+            Edge = _edge;
+
+            TypedEdge.vertexDictionary.Add(Edge.To, this);
+        }
+
+        public IEdge Edge { get; set; }
+        // TypedEdge END
 
         public TreeVisualiser(IVertex baseEdgeVertex, IVertex parentVisualiser)
         {

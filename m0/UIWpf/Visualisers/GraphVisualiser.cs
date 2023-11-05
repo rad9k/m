@@ -196,7 +196,7 @@ namespace m0.UIWpf.Visualisers
         }        
     }
 
-    public class GraphVisualiser: Canvas, IListVisualiser, IHasSelectableEdges
+    public class GraphVisualiser: Canvas, IListVisualiser, IHasSelectableEdges, ITypedEdge
     {
         public AtomVisualiserHelper VisualiserHelper { get; set; }        
 
@@ -212,6 +212,19 @@ namespace m0.UIWpf.Visualisers
         public string[] MetaTriggeringUpdateView { get { return _MetaTriggeringUpdateView; } }
 
         public void UpdateView() { }
+
+        // TypedEdge START
+
+        public GraphVisualiser(IEdge _edge)
+        {
+            Edge = _edge;
+
+            TypedEdge.vertexDictionary.Add(Edge.To, this);
+        }
+
+        public IEdge Edge { get; set; }
+        // TypedEdge END
+
 
         public GraphVisualiser(IVertex baseEdgeVertex, IVertex parentVisualiser)
         {

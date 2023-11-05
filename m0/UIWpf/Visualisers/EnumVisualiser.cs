@@ -18,9 +18,21 @@ using m0.User.Process.UX;
 
 namespace m0.UIWpf.Visualisers
 {
-    public class EnumVisualiser : ComboBox, IVisualiser
+    public class EnumVisualiser : ComboBox, IVisualiser, ITypedEdge
     {
-        public AtomVisualiserHelper VisualiserHelper { get; set; }        
+        public AtomVisualiserHelper VisualiserHelper { get; set; }
+
+        // TypedEdge START
+
+        public EnumVisualiser(IEdge _edge)
+        {
+            Edge = _edge;
+
+            TypedEdge.vertexDictionary.Add(Edge.To, this);
+        }
+
+        public IEdge Edge { get; set; }
+        // TypedEdge END
 
         public EnumVisualiser(IVertex baseEdgeVertex, IVertex parentVisualiser)
         {            

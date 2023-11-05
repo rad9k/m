@@ -18,11 +18,23 @@ using m0.UIWpf.Commands;
 
 namespace m0.UIWpf.Visualisers
 {
-    public class DecimalVisualiser : NumberVisualiser<decimal?>
+    public class DecimalVisualiser : NumberVisualiser<decimal?>, ITypedEdge
     {
         protected override string visualiserName { get { return "DecimalVisualiser"; } set { } }
 
         protected override IVertex visualiserMetaVertex { get { return MinusZero.Instance.Root.Get(false, @"System\Meta\Visualiser\Decimal"); } set { } }
+
+        // TypedEdge START
+
+        public DecimalVisualiser(IEdge _edge) : base(null, null)
+        {
+            Edge = _edge;
+
+            TypedEdge.vertexDictionary.Add(Edge.To, this);
+        }
+
+        public IEdge Edge { get; set; }
+        // TypedEdge END
 
         public DecimalVisualiser(IVertex baseEdgeVertex, IVertex parentVisualiser) : base(baseEdgeVertex, parentVisualiser)
         {

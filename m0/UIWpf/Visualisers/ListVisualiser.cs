@@ -51,7 +51,7 @@ namespace m0.UIWpf.Visualisers
         {
             Edge = _edge;
 
-            //TypedEdge.vertexDictionary.Add(Edge.To, this);            
+            TypedEdge.vertexDictionary.Add(Edge.To, this);            
         }
 
         public IEdge Edge { get; set; }

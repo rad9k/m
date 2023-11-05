@@ -27,7 +27,7 @@ using m0.ZeroCode;
 
 namespace m0.UIWpf.Visualisers
 {
-    public class CodeVisualiser : Border, IListVisualiser, IOwnScrolling
+    public class CodeVisualiser : Border, IListVisualiser, IOwnScrolling, ITypedEdge
     {
         CodeControl codeControl;
 
@@ -44,6 +44,19 @@ namespace m0.UIWpf.Visualisers
         public void UpdateView() { codeControl.UpdateEditView(); }
 
         public void UnselectAllSelectedEdges() { }
+
+
+        // TypedEdge START
+
+        public CodeVisualiser(IEdge _edge)
+        {
+            Edge = _edge;
+
+            TypedEdge.vertexDictionary.Add(Edge.To, this);
+        }
+
+        public IEdge Edge { get; set; }
+        // TypedEdge END
 
         public CodeVisualiser(IVertex baseEdgeVertex, IVertex parentVisualiser)
         {

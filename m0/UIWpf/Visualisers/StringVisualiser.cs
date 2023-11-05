@@ -21,9 +21,21 @@ using m0.UIWpf.Visualisers.Helper;
 
 namespace m0.UIWpf.Visualisers
 {
-    public class StringVisualiser : TextBox, IVisualiser
+    public class StringVisualiser : TextBox, IVisualiser, ITypedEdge
     {
-        public AtomVisualiserHelper VisualiserHelper { get; set; }        
+        public AtomVisualiserHelper VisualiserHelper { get; set; }
+
+        // TypedEdge START
+
+        public StringVisualiser(IEdge _edge)
+        {
+            Edge = _edge;
+
+            TypedEdge.vertexDictionary.Add(Edge.To, this);
+        }
+
+        public IEdge Edge { get; set; }
+        // TypedEdge END
 
         public StringVisualiser(IVertex baseEdgeVertex, IVertex parentVisualiser)
         {

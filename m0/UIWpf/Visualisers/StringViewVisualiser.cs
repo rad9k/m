@@ -18,9 +18,21 @@ using m0.UIWpf.Visualisers.Helper;
 
 namespace m0.UIWpf.Visualisers
 {
-    public class StringViewVisualiser : TextBlock, IVisualiser
+    public class StringViewVisualiser : TextBlock, IVisualiser, ITypedEdge
     {
-        public AtomVisualiserHelper VisualiserHelper { get; set; }     
+        public AtomVisualiserHelper VisualiserHelper { get; set; }
+
+        // TypedEdge START
+
+        public StringViewVisualiser(IEdge _edge)
+        {
+            Edge = _edge;
+
+            TypedEdge.vertexDictionary.Add(Edge.To, this);
+        }
+
+        public IEdge Edge { get; set; }
+        // TypedEdge END
 
         public StringViewVisualiser(IVertex baseEdgeVertex, IVertex parentVisualiser)
         {

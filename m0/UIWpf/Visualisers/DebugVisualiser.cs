@@ -19,9 +19,21 @@ using m0.User.Process.UX;
 
 namespace m0.UIWpf.Visualisers
 {
-    public class DebugVisualiser : StackPanel, IVisualiser
+    public class DebugVisualiser : StackPanel, IVisualiser, ITypedEdge
     {
-        public AtomVisualiserHelper VisualiserHelper { get; set; }        
+        public AtomVisualiserHelper VisualiserHelper { get; set; }
+
+        // TypedEdge START
+
+        public DebugVisualiser(IEdge _edge)
+        {
+            Edge = _edge;
+
+            TypedEdge.vertexDictionary.Add(Edge.To, this);
+        }
+
+        public IEdge Edge { get; set; }
+        // TypedEdge END
 
         public DebugVisualiser(IVertex baseEdgeVertex, IVertex parentVisualiser)
         {            
