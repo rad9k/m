@@ -276,6 +276,8 @@ namespace m0.UIWpf.Visualisers
 
     public class TreeVisualiser: TreeView, IListVisualiser, IHasSelectableEdges, ITypedEdge
     {
+        public event Notify OnSelectedEdgeChange;
+
         public AtomVisualiserHelper VisualiserHelper { get; set; }        
 
 

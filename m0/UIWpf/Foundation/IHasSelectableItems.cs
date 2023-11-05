@@ -5,8 +5,10 @@ using System.Text;
 
 namespace m0.UIWpf.Foundation
 {
+    public delegate void Notify();
     public interface IHasSelectableEdges
     {
+        event Notify OnSelectedEdgeChange;
         void UnselectAllSelectedEdges();
     }
 }

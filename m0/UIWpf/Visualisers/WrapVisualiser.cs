@@ -21,6 +21,8 @@ namespace m0.UIWpf.Visualisers
 {
     public class WrapVisualiser : WrapPanel, IListVisualiser, ITypedEdge
     {
+        public event Notify OnSelectedEdgeChange;
+
         public AtomVisualiserHelper VisualiserHelper { get; set; }        
 
         public double Scale { get; set; } // do not want to expose those as PlatformClass.Vertex

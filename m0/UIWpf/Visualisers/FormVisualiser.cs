@@ -15,6 +15,7 @@ using System.Windows.Media;
 using m0.UIWpf.Visualisers.Method;
 using m0.UIWpf.Visualisers.Helper;
 using m0.Graph.ExecutionFlow;
+using m0.UIWpf.Foundation;
 
 namespace m0.UIWpf.Visualisers
 {
@@ -52,6 +53,8 @@ namespace m0.UIWpf.Visualisers
 
     public class FormVisualiser : ContentControl, IListVisualiser, ITypedEdge
     {
+        public event Notify OnSelectedEdgeChange;
+
         public AtomVisualiserHelper VisualiserHelper { get; set; }        
 
         bool DisplayBaseVertex = true; /////////////////////////////////////////

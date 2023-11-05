@@ -27,6 +27,8 @@ namespace m0.UIWpf.Visualisers
 {
     public class ListVisualiser : StackPanel,  IListVisualiser, ITypedEdge
     {
+        public event Notify OnSelectedEdgeChange;
+
         public AtomVisualiserHelper VisualiserHelper { get; set; }        
 
         protected System.Windows.Controls.DataGrid ThisDataGrid;

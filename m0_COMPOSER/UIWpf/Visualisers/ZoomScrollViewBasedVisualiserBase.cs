@@ -23,11 +23,14 @@ using System.Windows.Shapes;
 using m0.UIWpf.Visualisers.Helper;
 using m0.User.Process.UX;
 using m0.Graph.ExecutionFlow;
+using m0.UIWpf.Foundation;
 
 namespace m0_COMPOSER.UIWpf.Visualisers
 {
     public class ZoomScrollViewBasedVisualiserBase : UserControl, IListVisualiser, IOwnScrolling, IZoomScrollViewerHost        
     {
+        public event Notify OnSelectedEdgeChange;
+
         public AtomVisualiserHelper VisualiserHelper { get; set; }
 
         public bool ZoomSliderZero;

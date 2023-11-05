@@ -60,6 +60,8 @@ namespace m0.UIWpf.UX
 
     public class UXVisualiser : Border, IListVisualiser, IUXVisualiser, IMouseWheelHandler
     {
+        public event Notify OnSelectedEdgeChange;
+
         static IVertex systemMetaBaseVertex = m0.MinusZero.Instance.Root.Get(false, @"System\Meta\Base\Vertex");
 
         public IEdge ContainerEdge { get; set; }

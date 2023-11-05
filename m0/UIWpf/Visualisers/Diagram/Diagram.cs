@@ -39,6 +39,8 @@ namespace m0.UIWpf.Visualisers.Diagram
 
     public class Diagram : Border, IListVisualiser
     {
+        public event Notify OnSelectedEdgeChange;
+
         public AtomVisualiserHelper VisualiserHelper { get; set; }
 
         public List<IDisposable> ChildVisualisers {
