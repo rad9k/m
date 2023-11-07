@@ -276,7 +276,7 @@ namespace m0.UIWpf.Visualisers
 
     public class TreeVisualiser: TreeView, IListVisualiser, IHasSelectableEdges, ITypedEdge
     {
-        public event Notify OnSelectedEdgeChange;
+        public event Notify SelectedEdgeChange;
 
         public AtomVisualiserHelper VisualiserHelper { get; set; }        
 
@@ -429,6 +429,8 @@ namespace m0.UIWpf.Visualisers
                 SelectedVerticesUpdated_Reccurent(i,sv);
 
             TurnOffSelectedVerticesUpdate = false;
+
+            SelectedEdgeChange();
         }
 
         private void SelectedVerticesUpdated_Reccurent(TreeViewItem i,IVertex sv)

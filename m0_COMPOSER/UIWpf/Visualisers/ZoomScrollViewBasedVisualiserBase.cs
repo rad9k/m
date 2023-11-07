@@ -29,7 +29,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 {
     public class ZoomScrollViewBasedVisualiserBase : UserControl, IListVisualiser, IOwnScrolling, IZoomScrollViewerHost        
     {
-        public event Notify OnSelectedEdgeChange;
+        public event Notify SelectedEdgeChange;
 
         public AtomVisualiserHelper VisualiserHelper { get; set; }
 

@@ -53,7 +53,7 @@ namespace m0.UIWpf.Visualisers
 
     public class FormVisualiser : ContentControl, IListVisualiser, ITypedEdge
     {
-        public event Notify OnSelectedEdgeChange;
+        public event Notify SelectedEdgeChange;
 
         public AtomVisualiserHelper VisualiserHelper { get; set; }        
 

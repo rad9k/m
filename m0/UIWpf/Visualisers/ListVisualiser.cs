@@ -27,7 +27,7 @@ namespace m0.UIWpf.Visualisers
 {
     public class ListVisualiser : StackPanel,  IListVisualiser, ITypedEdge
     {
-        public event Notify OnSelectedEdgeChange;
+        public event Notify SelectedEdgeChange;
 
         public AtomVisualiserHelper VisualiserHelper { get; set; }        
 
