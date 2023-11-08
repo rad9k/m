@@ -1,29 +1,22 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Windows.Controls;
-using m0.Foundation;
-using m0.ZeroUML;
-using m0.ZeroTypes;
-using System.Windows;
+﻿using m0.Foundation;
 using m0.Graph;
-using m0.Util;
-using System.Windows.Media;
-using System.Windows.Shapes;
-using m0.UIWpf.Controls;
-using System.Windows.Input;
-using System.Diagnostics;
-using m0.UIWpf.Foundation;
-using m0.UIWpf.Commands;
-using m0.UIWpf.Visualisers;
-using m0.UIWpf.Dialog;
 using m0.Graph.ExecutionFlow;
+using m0.UIWpf.Controls;
+using m0.UIWpf.Foundation;
 using m0.UIWpf.Visualisers.Helper;
 using m0.User.Process.UX;
-using m0.ZeroTypes.UX;
+using m0.Util;
 using m0.ZeroCode.Helpers;
-using System.Security.Cryptography;
+using m0.ZeroTypes;
+using m0.ZeroTypes.UX;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Input;
+using System.Windows.Media;
+using System.Windows.Shapes;
 
 /*
 
@@ -60,7 +53,7 @@ namespace m0.UIWpf.UX
 
     public class UXVisualiser : Border, IListVisualiser, IUXVisualiser, IMouseWheelHandler
     {
-        public event Notify SelectedEdgeChange;
+        public event Notify SelectedEdgesChange;
 
         static IVertex systemMetaBaseVertex = m0.MinusZero.Instance.Root.Get(false, @"System\Meta\Base\Vertex");
 
@@ -1452,6 +1445,8 @@ namespace m0.UIWpf.UX
 
                 SelectWrappersForSelectedVertices();
             }
+
+            SelectedEdgesChange();
         }
 
         protected void SelectWrappersForSelectedVertices()

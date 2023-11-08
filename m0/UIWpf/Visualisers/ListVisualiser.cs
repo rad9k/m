@@ -27,7 +27,7 @@ namespace m0.UIWpf.Visualisers
 {
     public class ListVisualiser : StackPanel,  IListVisualiser, ITypedEdge
     {
-        public event Notify SelectedEdgeChange;
+        public event Notify SelectedEdgesChange;
 
         public AtomVisualiserHelper VisualiserHelper { get; set; }        
 
@@ -289,6 +289,8 @@ namespace m0.UIWpf.Visualisers
                 if (ee != null)
                     ThisDataGrid.SelectedItems.Add(ee);
             }
+
+            SelectedEdgesChange();
 
             TurnOffSelectedVerticesUpdate = false;
         }

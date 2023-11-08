@@ -198,7 +198,7 @@ namespace m0.UIWpf.Visualisers
 
     public class GraphVisualiser: Canvas, IListVisualiser, IHasSelectableEdges, ITypedEdge
     {
-        public event Notify SelectedEdgeChange;
+        public event Notify SelectedEdgesChange;
 
         public AtomVisualiserHelper VisualiserHelper { get; set; }        
 
@@ -796,6 +796,8 @@ namespace m0.UIWpf.Visualisers
 
                 SelectWrappersForSelectedVertices();
             }
+
+            SelectedEdgesChange();
         }
 
         protected void SelectWrappersForSelectedVertices()

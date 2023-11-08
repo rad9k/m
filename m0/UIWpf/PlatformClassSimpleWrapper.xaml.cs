@@ -120,7 +120,7 @@ namespace m0.UIWpf
             BaseEdge = pc.Vertex.Get(false, "BaseEdge:");
 
             SetContent_Main();
-           // SetContent_Right();
+            //SetContent_Right();
         }
 
         public void SetContent_Main()
@@ -146,64 +146,37 @@ namespace m0.UIWpf
             Content_Top.Content = Visualiser_Top;
         }
 
-        public void SetContent_Down()
+        public void EnsureVisualiserReadyAndSetBaseEdge_Down()
         {
-            Visualiser_Down = new CodeVisualiser(BaseEdge, pcObject.Vertex);
+            if (Visualiser_Down == null)
+            {
+                Visualiser_Down = new CodeVisualiser(BaseEdge, pcObject.Vertex);
 
-            ////////////////////////////////////////
-            Interaction.BeginInteractionWithGraph();
-            ////////////////////////////////////////
+                ////////////////////////////////////////
+                Interaction.BeginInteractionWithGraph();
+                ////////////////////////////////////////
 
-  
 
-            //GraphUtil.SetVertexValue(Visualiser_Down.Vertex, showLineNumbers_meta, "False");
-            GraphUtil.SetVertexValue(Visualiser_Down.Vertex, scale_meta, 50);
 
-            ////////////////////////////////////////
-            Interaction.EndInteractionWithGraph();
-            ////////////////////////////////////////
+                //GraphUtil.SetVertexValue(Visualiser_Down.Vertex, showLineNumbers_meta, "False");
+                GraphUtil.SetVertexValue(Visualiser_Down.Vertex, scale_meta, 50);
 
-            Content_Down.Content = Visualiser_Down;
+                ////////////////////////////////////////
+                Interaction.EndInteractionWithGraph();
+                ////////////////////////////////////////
+            }
         }
 
-        public void SetContent_Right()
+        public void EnsureContentReadyAndSetBaseEdge_Right()
         {
-
-
-            IVertex b = EdgeHelper.CreateTempEdgeVertex(m0.MinusZero.Instance.empty, m0.MinusZero.Instance.empty, m0.MinusZero.Instance.root.Get(false, @"examples\code\Code1"));
-                
-
-
-
             VisualisersList.x = true;
 
             ////////////////////////////////////////
             Interaction.BeginInteractionWithGraph();
             ////////////////////////////////////////
 
-
-            //Visualiser_Right = (TreeVisualiser)PlatformClass.CreatePlatformObject(MinusZero.Instance.Root.Get(false, @"System\Meta\Visualiser\Tree"), BaseEdge);
-
-            //Visualiser_Right = new CodeVisualiser(BaseEdge, pcObject.Vertex);
-            //Visualiser_Right = new TreeVisualiser(BaseEdge, pcObject.Vertex);
-            //Visualiser_Right = new GraphVisualiser(BaseEdge, pcObject.Vertex);
             Visualiser_Right = new FormVisualiser(BaseEdge, pcObject.Vertex);
-            //Visualiser_Right = new ListVisualiser(BaseEdge, pcObject.Vertex);
-
-
-            //Visualiser_Right = new CodeVisualiser(b, pcObject.Vertex);
-            //Visualiser_Right = new TreeVisualiser(b, pcObject.Vertex);
-            //Visualiser_Right = new GraphVisualiser(b, pcObject.Vertex);
-            //Visualiser_Right = new FormVisualiser(b, pcObject.Vertex);
-            //Visualiser_Right = new ListVisualiser(b, pcObject.Vertex);
-
-            //////////////////////////////////////
-            Interaction.EndInteractionWithGraph();
-            //////////////////////////////////////
-
-            ////////////////////////////////////////
-            Interaction.BeginInteractionWithGraph();
-            ////////////////////////////////////////
+ 
 
             GraphUtil.SetVertexValue(Visualiser_Right.Vertex, scale_meta, 50);
 
@@ -324,7 +297,7 @@ namespace m0.UIWpf
                 VerticalGrid.RowDefinitions[1].Height = new GridLength(5);
 
                 if (Content_Down.Content == null)
-                    SetContent_Down();
+                    EnsureVisualiserReadyAndSetBaseEdge_Down();
 
                 if(Double.IsNaN(Content_Down.Height))
                     Content_Down.Height = this.ActualHeight / 5;
@@ -415,7 +388,7 @@ namespace m0.UIWpf
                 HorizontalGrid.ColumnDefinitions[1].Width = new GridLength(5);
 
                 if (Content_Right.Content == null)
-                    SetContent_Right();
+                    EnsureContentReadyAndSetBaseEdge_Right();
 
                 if (Double.IsNaN(Content_Right.Height)) {
                     if (this.ActualWidth < 200)

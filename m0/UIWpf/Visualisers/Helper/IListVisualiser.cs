@@ -9,9 +9,9 @@ namespace m0.UIWpf.Visualisers.Helper
 {
     public interface IListVisualiser : IVisualiser, IHasSelectableEdges
     {
-        void SelectedVerticesUpdated();
+        event Notify SelectedEdgesChange;
 
-        //void ScaleChange();
+        void SelectedVerticesUpdated();
 
         void UpdateView();
 

@@ -29,7 +29,7 @@ namespace m0.UIWpf.Visualisers
 {
     public class CodeVisualiser : Border, IListVisualiser, IOwnScrolling, ITypedEdge
     {
-        public event Notify SelectedEdgeChange;
+        public event Notify SelectedEdgesChange;
 
         CodeControl codeControl;
 

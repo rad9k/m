@@ -21,7 +21,7 @@ namespace m0.UIWpf.Visualisers
 {
     public class WrapVisualiser : WrapPanel, IListVisualiser, ITypedEdge
     {
-        public event Notify SelectedEdgeChange;
+        public event Notify SelectedEdgesChange;
 
         public AtomVisualiserHelper VisualiserHelper { get; set; }        
 
