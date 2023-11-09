@@ -39,6 +39,7 @@ namespace m0.UIWpf
 
         static IVertex showLineNumbers_meta = r.Get(false, @"System\Meta\Visualiser\Code\ShowLineNumbers");
         static IVertex scale_meta = r.Get(false, @"System\Meta\ZeroTypes\UX\UXItem\Scale");
+       static IVertex baseEdge_meta = r.Get(false, @"System\Meta\ZeroTypes\HasBaseEdge\BaseEdge");
 
         public PlatformClassSimpleWrapper()
         {
@@ -168,10 +169,12 @@ namespace m0.UIWpf
 
         void VisualiserUpdate_Down()
         {
-            if(currentSelectedEdgesFirst != null)
+            if (currentSelectedEdgesFirst != null && Expander_Down.IsExpanded)
+                EnsureContentReadyAndSetBaseEdge_Down(currentSelectedEdgesFirst);
+            else
             {
 
-            }else
+            }
         }
 
         void VisualiserUpdate_Right()
@@ -179,7 +182,7 @@ namespace m0.UIWpf
 
         }
 
-        public void EnsureVisualiserReadyAndSetBaseEdge_Down(IVertex baseEdge)
+        public void EnsureContentReadyAndSetBaseEdge_Down(IVertex baseEdge)
         {
             if (Visualiser_Down == null)
             {
@@ -189,8 +192,6 @@ namespace m0.UIWpf
                 Interaction.BeginInteractionWithGraph();
                 ////////////////////////////////////////
 
-
-
                 //GraphUtil.SetVertexValue(Visualiser_Down.Vertex, showLineNumbers_meta, "False");
                 GraphUtil.SetVertexValue(Visualiser_Down.Vertex, scale_meta, 50);
 
@@ -198,24 +199,30 @@ namespace m0.UIWpf
                 Interaction.EndInteractionWithGraph();
                 ////////////////////////////////////////
             }
+            else
+                GraphUtil.CreateOrReplaceEdge(Visualiser_Down.Vertex, baseEdge_meta, baseEdge);
+
+            Content_Down.Content = Visualiser_Down;
         }
 
         public void EnsureContentReadyAndSetBaseEdge_Right(IVertex baseEdge)
         {
-            VisualisersList.x = true;
+            if (Visualiser_Right == null)
+            {
+                ////////////////////////////////////////
+                Interaction.BeginInteractionWithGraph();
+                ////////////////////////////////////////
 
-            ////////////////////////////////////////
-            Interaction.BeginInteractionWithGraph();
-            ////////////////////////////////////////
+                Visualiser_Right = new FormVisualiser(baseEdge, platformClassObject.Vertex);
 
-            Visualiser_Right = new FormVisualiser(baseEdge, platformClassObject.Vertex);
- 
 
-            GraphUtil.SetVertexValue(Visualiser_Right.Vertex, scale_meta, 50);
+                GraphUtil.SetVertexValue(Visualiser_Right.Vertex, scale_meta, 50);
 
-            //////////////////////////////////////
-            Interaction.EndInteractionWithGraph();
-            //////////////////////////////////////
+                //////////////////////////////////////
+                Interaction.EndInteractionWithGraph();
+                //////////////////////////////////////
+            }else
+                GraphUtil.CreateOrReplaceEdge(Visualiser_Right.Vertex, baseEdge_meta, baseEdge);
 
             Content_Right.Content = Visualiser_Right;
         }
