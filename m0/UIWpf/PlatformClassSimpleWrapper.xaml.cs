@@ -30,8 +30,10 @@ namespace m0.UIWpf
     {
         public bool IsIntialising;
 
+        IVertex currentSelectedEdgesFirst = null;
+
         IVertex BaseEdge;
-        IPlatformClass pcObject;
+        IPlatformClass platformClassObject;
 
         static IVertex r = m0.MinusZero.Instance.root;
 
@@ -115,7 +117,7 @@ namespace m0.UIWpf
         }
 
         public void SetContent(IPlatformClass pc){
-            pcObject = pc;
+            platformClassObject = pc;
 
             BaseEdge = pc.Vertex.Get(false, "BaseEdge:");
 
@@ -125,11 +127,11 @@ namespace m0.UIWpf
 
         public void SetContent_Main()
         {
-            IVertex baseEdgeVertex = EdgeHelper.CreateTempEdgeVertex(null, null, pcObject.Vertex);
+            IVertex baseEdgeVertex = EdgeHelper.CreateTempEdgeVertex(null, null, platformClassObject.Vertex);
 
-            Content = pcObject;
+            Content = platformClassObject;
 
-            FrameworkElement fe = (FrameworkElement)pcObject;
+            FrameworkElement fe = (FrameworkElement)platformClassObject;
 
             if (fe is IOwnScrolling)
             {
@@ -140,17 +142,48 @@ namespace m0.UIWpf
 
             DockPanel.SetDock(fe, Dock.Bottom);
 
+            if(fe is IVisualiser)
+                ((IListVisualiser)fe).SelectedEdgesChange += PlatformClassSimpleWrapper_SelectedEdgesChange;
+
             
-            Visualiser_Top = new WrapVisualiser(baseEdgeVertex, 0.6, pcObject.Vertex);
+            Visualiser_Top = new WrapVisualiser(baseEdgeVertex, 0.6, platformClassObject.Vertex);
 
             Content_Top.Content = Visualiser_Top;
         }
 
-        public void EnsureVisualiserReadyAndSetBaseEdge_Down()
+        private void PlatformClassSimpleWrapper_SelectedEdgesChange()
+        {
+            IVisualiser platformClassObject_IVisualiser = (IVisualiser)platformClassObject;
+
+            IVertex selectedEdges = GraphUtil.GetQueryOutFirst(platformClassObject_IVisualiser.Vertex, "SelectedEdges", null);
+
+            currentSelectedEdgesFirst = null;
+
+            if (selectedEdges != null)
+                currentSelectedEdgesFirst = GraphUtil.GetQueryOutFirst(selectedEdges, "Edge", null);
+
+            VisualiserUpdate_Down();
+            VisualiserUpdate_Right();
+        }
+
+        void VisualiserUpdate_Down()
+        {
+            if(currentSelectedEdgesFirst != null)
+            {
+
+            }else
+        }
+
+        void VisualiserUpdate_Right()
+        {
+
+        }
+
+        public void EnsureVisualiserReadyAndSetBaseEdge_Down(IVertex baseEdge)
         {
             if (Visualiser_Down == null)
             {
-                Visualiser_Down = new CodeVisualiser(BaseEdge, pcObject.Vertex);
+                Visualiser_Down = new CodeVisualiser(baseEdge, platformClassObject.Vertex);
 
                 ////////////////////////////////////////
                 Interaction.BeginInteractionWithGraph();
@@ -167,7 +200,7 @@ namespace m0.UIWpf
             }
         }
 
-        public void EnsureContentReadyAndSetBaseEdge_Right()
+        public void EnsureContentReadyAndSetBaseEdge_Right(IVertex baseEdge)
         {
             VisualisersList.x = true;
 
@@ -175,7 +208,7 @@ namespace m0.UIWpf
             Interaction.BeginInteractionWithGraph();
             ////////////////////////////////////////
 
-            Visualiser_Right = new FormVisualiser(BaseEdge, pcObject.Vertex);
+            Visualiser_Right = new FormVisualiser(baseEdge, platformClassObject.Vertex);
  
 
             GraphUtil.SetVertexValue(Visualiser_Right.Vertex, scale_meta, 50);
@@ -185,7 +218,6 @@ namespace m0.UIWpf
             //////////////////////////////////////
 
             Content_Right.Content = Visualiser_Right;
-
         }
 
         public ScrollViewer GetScrollViewer()
@@ -296,8 +328,8 @@ namespace m0.UIWpf
                 Grip_Down.Height = 5;
                 VerticalGrid.RowDefinitions[1].Height = new GridLength(5);
 
-                if (Content_Down.Content == null)
-                    EnsureVisualiserReadyAndSetBaseEdge_Down();
+             //   if (Content_Down.Content == null)
+               //     EnsureVisualiserReadyAndSetBaseEdge_Down();
 
                 if(Double.IsNaN(Content_Down.Height))
                     Content_Down.Height = this.ActualHeight / 5;
@@ -387,8 +419,8 @@ namespace m0.UIWpf
                 Grip_Right.Width = 5;
                 HorizontalGrid.ColumnDefinitions[1].Width = new GridLength(5);
 
-                if (Content_Right.Content == null)
-                    EnsureContentReadyAndSetBaseEdge_Right();
+               // if (Content_Right.Content == null)
+               //     EnsureContentReadyAndSetBaseEdge_Right();
 
                 if (Double.IsNaN(Content_Right.Height)) {
                     if (this.ActualWidth < 200)
