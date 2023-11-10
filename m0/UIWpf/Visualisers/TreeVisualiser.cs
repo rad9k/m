@@ -418,6 +418,9 @@ namespace m0.UIWpf.Visualisers
 
         public void SelectedVerticesUpdated()
         {
+            if (SelectedEdgesChange != null)
+                SelectedEdgesChange();
+
             if (TurnOffSelectedItemsUpdate)
                 return;
 
@@ -427,8 +430,6 @@ namespace m0.UIWpf.Visualisers
 
             foreach (TreeViewItem i in Items)
                 SelectedVerticesUpdated_Reccurent(i,sv);
-
-            SelectedEdgesChange();
 
             TurnOffSelectedVerticesUpdate = false;
         }

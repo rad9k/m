@@ -797,7 +797,8 @@ namespace m0.UIWpf.Visualisers
                 SelectWrappersForSelectedVertices();
             }
 
-            SelectedEdgesChange();
+            if (SelectedEdgesChange != null)
+                SelectedEdgesChange();
         }
 
         protected void SelectWrappersForSelectedVertices()

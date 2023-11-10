@@ -1446,7 +1446,8 @@ namespace m0.UIWpf.UX
                 SelectWrappersForSelectedVertices();
             }
 
-            SelectedEdgesChange();
+            if (SelectedEdgesChange != null)
+                SelectedEdgesChange();
         }
 
         protected void SelectWrappersForSelectedVertices()

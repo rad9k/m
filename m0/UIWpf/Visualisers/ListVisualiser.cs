@@ -274,6 +274,9 @@ namespace m0.UIWpf.Visualisers
         }        
 
         public void SelectedVerticesUpdated(){
+            if (SelectedEdgesChange != null)
+                SelectedEdgesChange();
+
             if (TurnOffSelectedItemsUpdate)
                 return;
 
@@ -289,8 +292,6 @@ namespace m0.UIWpf.Visualisers
                 if (ee != null)
                     ThisDataGrid.SelectedItems.Add(ee);
             }
-
-            SelectedEdgesChange();
 
             TurnOffSelectedVerticesUpdate = false;
         }

@@ -32,7 +32,6 @@
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="0"/>
-                    <ColumnDefinition Width="0"/>
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
 
@@ -46,18 +45,8 @@
                     MouseMove="MouseMove_All" 
                     MouseUp="MouseUp_All"/>
 
-                <ScrollViewer Grid.Column="1" 
-    Name="TestContent" 
-    Foreground="{StaticResource 0ForegroundBrush}" 
-    VerticalScrollBarVisibility="Auto" 
-    HorizontalScrollBarVisibility="Auto"  
-    PreviewMouseWheel="ListViewScrollViewer_PreviewMouseWheel"
-            
-    MouseMove="MouseMove_All" 
-    MouseUp="MouseUp_All"/>
-
                 <Border Name="Grip_Right" 
-                    Grid.Column="2" 
+                    Grid.Column="1" 
                     Width="5" 
                     HorizontalAlignment="Stretch" 
                     Background="{StaticResource 0GripBrush}" 
@@ -73,7 +62,7 @@
                     </StackPanel>
                 </Border>
 
-                <m:AnimatedHideArea_VerticalRight Grid.Column="3"
+                <m:AnimatedHideArea_VerticalRight Grid.Column="2"
                     x:Name="Expander_Right" 
                     MouseMove="MouseMove_Right" 
                     MouseUp="MouseUp_Right" 

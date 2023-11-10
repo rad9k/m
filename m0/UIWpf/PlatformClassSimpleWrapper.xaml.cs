@@ -30,6 +30,7 @@ namespace m0.UIWpf
     {
         public bool IsIntialising;
 
+        bool IsListVisualiser = false;
         IVertex currentSelectedEdgesFirst = null;
 
         IVertex BaseEdge;
@@ -39,7 +40,7 @@ namespace m0.UIWpf
 
         static IVertex showLineNumbers_meta = r.Get(false, @"System\Meta\Visualiser\Code\ShowLineNumbers");
         static IVertex scale_meta = r.Get(false, @"System\Meta\ZeroTypes\UX\UXItem\Scale");
-       static IVertex baseEdge_meta = r.Get(false, @"System\Meta\ZeroTypes\HasBaseEdge\BaseEdge");
+        static IVertex baseEdge_meta = r.Get(false, @"System\Meta\ZeroTypes\HasBaseEdge\BaseEdge");
 
         public PlatformClassSimpleWrapper()
         {
@@ -104,6 +105,9 @@ namespace m0.UIWpf
         CodeVisualiser Visualiser_Down;
         IVisualiser Visualiser_Right;
 
+        Border Dummy_Down = new Border();
+        Border Dummy_Right = new Border();
+
         ContentPresenter Content_Top;
         ContentPresenter Content_Down;
         ScrollViewer Content_Right;
@@ -114,7 +118,6 @@ namespace m0.UIWpf
             Content_Down = (ContentPresenter)this.Expander_Down.Content;
 
             Content_Right = (ScrollViewer)this.Expander_Right.Content;
-            //Content_Right = TestContent;
         }
 
         public void SetContent(IPlatformClass pc){
@@ -122,12 +125,6 @@ namespace m0.UIWpf
 
             BaseEdge = pc.Vertex.Get(false, "BaseEdge:");
 
-            SetContent_Main();
-            //SetContent_Right();
-        }
-
-        public void SetContent_Main()
-        {
             IVertex baseEdgeVertex = EdgeHelper.CreateTempEdgeVertex(null, null, platformClassObject.Vertex);
 
             Content = platformClassObject;
@@ -143,13 +140,34 @@ namespace m0.UIWpf
 
             DockPanel.SetDock(fe, Dock.Bottom);
 
-            if(fe is IVisualiser)
+            if (fe is IListVisualiser)
+            {
+                IsListVisualiser = true;
                 ((IListVisualiser)fe).SelectedEdgesChange += PlatformClassSimpleWrapper_SelectedEdgesChange;
+            }
 
-            
             Visualiser_Top = new WrapVisualiser(baseEdgeVertex, 0.6, platformClassObject.Vertex);
 
             Content_Top.Content = Visualiser_Top;
+
+            CheckVisibility_DownRight();
+        }
+
+        void CheckVisibility_DownRight()
+        {
+            if (!IsListVisualiser)
+            {
+                ExpanderVisible_Down = false;
+                ExpanderVisible_Right = false;
+
+                Expander_Down.Height = 0;
+                Expander_Right.Width = 0;
+            }
+            else
+            {
+                ExpanderVisible_Down = true;
+                ExpanderVisible_Right = true;
+            }
         }
 
         private void PlatformClassSimpleWrapper_SelectedEdgesChange()
@@ -163,26 +181,28 @@ namespace m0.UIWpf
             if (selectedEdges != null)
                 currentSelectedEdgesFirst = GraphUtil.GetQueryOutFirst(selectedEdges, "Edge", null);
 
-            VisualiserUpdate_Down();
-            VisualiserUpdate_Right();
+            EnsureContentReady_Down();
+            EnsureContentReady_Right();
         }
 
-        void VisualiserUpdate_Down()
+        void EnsureContentReady_Down()
         {
             if (currentSelectedEdgesFirst != null && Expander_Down.IsExpanded)
-                EnsureContentReadyAndSetBaseEdge_Down(currentSelectedEdgesFirst);
+                EnsureVisualiserReadyAndSetBaseEdge_Down(currentSelectedEdgesFirst);
             else
-            {
-
-            }
+                Content_Down.Content = Dummy_Down;
         }
 
-        void VisualiserUpdate_Right()
+        void EnsureContentReady_Right()
         {
-
+            if (currentSelectedEdgesFirst != null && Expander_Right.IsExpanded)
+                EnsureVisualiserReadyAndSetBaseEdge_Right(currentSelectedEdgesFirst);
+            else
+                Content_Right.Content = Dummy_Down;
         }
+    
 
-        public void EnsureContentReadyAndSetBaseEdge_Down(IVertex baseEdge)
+        public void EnsureVisualiserReadyAndSetBaseEdge_Down(IVertex baseEdge)
         {
             if (Visualiser_Down == null)
             {
@@ -205,7 +225,7 @@ namespace m0.UIWpf
             Content_Down.Content = Visualiser_Down;
         }
 
-        public void EnsureContentReadyAndSetBaseEdge_Right(IVertex baseEdge)
+        public void EnsureVisualiserReadyAndSetBaseEdge_Right(IVertex baseEdge)
         {
             if (Visualiser_Right == null)
             {
@@ -256,7 +276,7 @@ namespace m0.UIWpf
 
         // DOWN BEG
 
-        bool ExpanderRightVisible = true;
+        bool ExpanderVisible_Down = false;
 
         private void MouseEnter_Down(object sender, MouseEventArgs e) //
         {
@@ -330,15 +350,14 @@ namespace m0.UIWpf
 
         private void Expanded_Down(object sender, System.EventArgs e) //
         {
-            if (ExpanderDownVisible)
+            if (ExpanderVisible_Down)
             {
                 Grip_Down.Height = 5;
                 VerticalGrid.RowDefinitions[1].Height = new GridLength(5);
 
-             //   if (Content_Down.Content == null)
-               //     EnsureVisualiserReadyAndSetBaseEdge_Down();
+                EnsureContentReady_Down();
 
-                if(Double.IsNaN(Content_Down.Height))
+                if (Double.IsNaN(Content_Down.Height))
                     Content_Down.Height = this.ActualHeight / 5;
             }
         }
@@ -353,7 +372,7 @@ namespace m0.UIWpf
 
         // RIGHT BEG
 
-        bool ExpanderDownVisible = true;
+        bool ExpanderVisible_Right = false;
 
         private void MouseEnter_Right(object sender, MouseEventArgs e) //
         {
@@ -421,13 +440,12 @@ namespace m0.UIWpf
 
         private void Expanded_Right(object sender, System.EventArgs e) //
         {
-            if (ExpanderRightVisible)
+            if (ExpanderVisible_Right)
             {
                 Grip_Right.Width = 5;
                 HorizontalGrid.ColumnDefinitions[1].Width = new GridLength(5);
 
-               // if (Content_Right.Content == null)
-               //     EnsureContentReadyAndSetBaseEdge_Right();
+                EnsureContentReady_Right();
 
                 if (Double.IsNaN(Content_Right.Height)) {
                     if (this.ActualWidth < 200)
