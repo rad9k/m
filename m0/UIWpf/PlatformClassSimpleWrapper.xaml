@@ -102,7 +102,11 @@
                 Expanded="Expanded_Down" 
                 Collapsed="Collapsed_Down" 
                 IsExpanded="False">
-                <ContentPresenter/>
+                <ScrollViewer  
+                    Foreground="{StaticResource 0ForegroundBrush}" 
+                    VerticalScrollBarVisibility="Auto" 
+                    HorizontalScrollBarVisibility="Auto"  
+                    PreviewMouseWheel="ListViewScrollViewer_PreviewMouseWheel"/>
             </m:AnimatedHideArea_HorizontalDown>
 
             </Grid>

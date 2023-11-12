@@ -27,6 +27,7 @@ using m0.ZeroCode;
 using Xceed.Wpf.Toolkit.Core.Converters;
 using ICSharpCode.AvalonEdit.Editing;
 using System.Threading;
+using m0.UIWpf.Dialog;
 
 namespace m0.UIWpf.Visualisers
 {
@@ -44,7 +45,32 @@ namespace m0.UIWpf.Visualisers
 
         public bool NoVertexForTextMemory = false;
 
-        public bool ShowScrollBar = true;
+        bool _ShowScrollBar = true;
+
+        public bool ShowScrollBar
+        {
+            get
+            {
+                return _ShowScrollBar;
+            }
+            set
+            {
+                _ShowScrollBar = value;
+
+                if (_ShowScrollBar)
+                {
+                    editor.VerticalScrollBarVisibility = ScrollBarVisibility.Visible;
+
+                    editor.HorizontalScrollBarVisibility = ScrollBarVisibility.Visible;
+                }
+                else
+                {
+                    editor.VerticalScrollBarVisibility = ScrollBarVisibility.Hidden;
+
+                    editor.HorizontalScrollBarVisibility = ScrollBarVisibility.Hidden;
+                }
+            }
+        }
 
         //
 
@@ -79,13 +105,6 @@ namespace m0.UIWpf.Visualisers
             this.Child = editor;
 
             editor.Background = null;
-
-            if (!ShowScrollBar)
-            {
-                editor.VerticalScrollBarVisibility = ScrollBarVisibility.Hidden;
-
-                editor.HorizontalScrollBarVisibility = ScrollBarVisibility.Hidden;
-            }
         }
 
         int _TextMemoryMax;
@@ -345,15 +364,8 @@ namespace m0.UIWpf.Visualisers
 
             if (bv != null /*&& bv.Value != null && ((String)bv.Value)!="$Empty"*/)
             {
-                EdgeBase ee = new EdgeBase(Vertex.Get(false, @"BaseEdge:\From:"), Vertex.Get(false, @"BaseEdge:\Meta:"), Vertex.Get(false, @"BaseEdge:\To:"));
-
-                IVertex ftl = GraphUtil.GetQueryOutFirst(Vertex, "FormalTextLanguage", null);
-
-                if (ftl == null)
-                    editor.Text = MinusZero.Instance.DefaultFormalTextGenerator.Generate(ee);
-                else
-                    editor.Text = MinusZero.Instance.DefaultFormalTextGenerator.Generate(ftl, ee);
-
+                ExecuteGenerate();
+                
                 if (isFirstParse)
                 {
                     TextMemory.Add(editor.Text);
@@ -368,6 +380,44 @@ namespace m0.UIWpf.Visualisers
             }
             else
                 editor.Text = "Ø";
+        }
+
+        void ExecuteGenerate()
+        {
+            Thread thread = new Thread(_ExecuteGenerate);
+            thread.IsBackground = true;
+            thread.Start();
+        }
+
+        private void _ExecuteGenerate()
+        {
+            m0Main.Instance.Dispatcher.Invoke(() =>
+            {
+                editor.Background = (Brush)FindResource("0ProcessingBrush");
+            });
+
+            //
+
+            EdgeBase ee = new EdgeBase(Vertex.Get(false, @"BaseEdge:\From:"), Vertex.Get(false, @"BaseEdge:\Meta:"), Vertex.Get(false, @"BaseEdge:\To:"));
+
+            IVertex ftl = GraphUtil.GetQueryOutFirst(Vertex, "FormalTextLanguage", null);
+
+            string generated;
+
+            if (ftl == null)
+                generated = MinusZero.Instance.DefaultFormalTextGenerator.Generate(ee);
+            else
+                generated = MinusZero.Instance.DefaultFormalTextGenerator.Generate(ftl, ee);
+
+
+            m0Main.Instance.Dispatcher.Invoke(() =>
+            {
+                editor.Text = generated;
+
+                editor.Background = (Brush)FindResource("0BackgroundBrush");
+            });
+
+            
         }
     }
 }

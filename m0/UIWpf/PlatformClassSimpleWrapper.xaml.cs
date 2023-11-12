@@ -41,6 +41,7 @@ namespace m0.UIWpf
         static IVertex showLineNumbers_meta = r.Get(false, @"System\Meta\Visualiser\Code\ShowLineNumbers");
         static IVertex scale_meta = r.Get(false, @"System\Meta\ZeroTypes\UX\UXItem\Scale");
         static IVertex baseEdge_meta = r.Get(false, @"System\Meta\ZeroTypes\HasBaseEdge\BaseEdge");
+        static IVertex metaAlignLeft_meta = r.Get(false, @"System\Meta\Visualiser\Form\MetaAlignLeft");
 
         public PlatformClassSimpleWrapper()
         {
@@ -109,13 +110,13 @@ namespace m0.UIWpf
         Border Dummy_Right = new Border();
 
         ContentPresenter Content_Top;
-        ContentPresenter Content_Down;
+        ScrollViewer Content_Down;
         ScrollViewer Content_Right;
 
         void SetContentPresenters()
         {
             Content_Top = ((ContentPresenter)((DockPanel)this.Expander_Top.Content).Children[0]);
-            Content_Down = (ContentPresenter)this.Expander_Down.Content;
+            Content_Down = (ScrollViewer)this.Expander_Down.Content;
 
             Content_Right = (ScrollViewer)this.Expander_Right.Content;
         }
@@ -210,19 +211,24 @@ namespace m0.UIWpf
         public void EnsureVisualiserReadyAndSetBaseEdge_Down(IVertex baseEdge)
         {
             if (Visualiser_Down == null)
-            {
+            {               
                 Visualiser_Down = new CodeVisualiser(baseEdge, platformClassObject.Vertex);
+
+                Visualiser_Down.CodeControl.ShowScrollBar = false;
+
 
                 ////////////////////////////////////////
                 Interaction.BeginInteractionWithGraph();
                 ////////////////////////////////////////
-
+                
                 //GraphUtil.SetVertexValue(Visualiser_Down.Vertex, showLineNumbers_meta, "False");
                 GraphUtil.SetVertexValue(Visualiser_Down.Vertex, scale_meta, 80);
 
                 ////////////////////////////////////////
                 Interaction.EndInteractionWithGraph();
                 ////////////////////////////////////////
+
+                Visualiser_Down.ScaleChange();
             }
             else
                 GraphUtil.CreateOrReplaceEdge(Visualiser_Down.Vertex, baseEdge_meta, baseEdge);
@@ -240,7 +246,7 @@ namespace m0.UIWpf
 
                 Visualiser_Right = new FormVisualiser(baseEdge, platformClassObject.Vertex);
 
-
+                GraphUtil.SetVertexValue(Visualiser_Right.Vertex, metaAlignLeft_meta, "False");
                 GraphUtil.SetVertexValue(Visualiser_Right.Vertex, scale_meta, 80);
 
                 //////////////////////////////////////

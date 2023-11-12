@@ -132,6 +132,8 @@
                               OverridesDefaultStyle="True"
                               Padding="1.5,0">
                 </ToggleButton>
+
+                <Border DockPanel.Dock="Left" Width="3"/>
                 <ContentPresenter x:Name="ExpanderContent"
                                   ContentSource="Content"
                                   DockPanel.Dock="Bottom"

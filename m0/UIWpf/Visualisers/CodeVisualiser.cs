@@ -31,7 +31,7 @@ namespace m0.UIWpf.Visualisers
     {
         public event Notify SelectedEdgesChange;
 
-        CodeControl codeControl;
+        public CodeControl CodeControl;
 
         //
 
@@ -43,7 +43,7 @@ namespace m0.UIWpf.Visualisers
         static string[] _MetaTriggeringUpdateView = new string[] {"ShowWhiteSpace", "ShowLineNumbers", "HighlightedLine", "FontSize" };
         public string[] MetaTriggeringUpdateView { get { return _MetaTriggeringUpdateView; } }
 
-        public void UpdateView() { codeControl.UpdateEditView(); }
+        public void UpdateView() { CodeControl.UpdateEditView(); }
 
         public void UnselectAllSelectedEdges() { }
 
@@ -73,9 +73,9 @@ namespace m0.UIWpf.Visualisers
                 baseEdgeVertex,
                 UpdateBaseEdgeCallSchemeEnum.OmmitSecond);
 
-            codeControl = new CodeControl(Vertex, false, false, true);
+            CodeControl = new CodeControl(Vertex, false, false, true);
 
-            this.Child = codeControl;
+            this.Child = CodeControl;
 
             UpdateVertex();
         }
@@ -86,8 +86,8 @@ namespace m0.UIWpf.Visualisers
 
         public void UpdateVertex()
         {
-            if (codeControl != null)
-                codeControl.UpdateVertex();
+            if (CodeControl != null)
+                CodeControl.UpdateVertex();
         }
 
         public void ScaleChange() {
