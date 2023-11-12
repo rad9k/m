@@ -147,6 +147,7 @@ namespace m0.UIWpf.Visualisers
         }
 
         public void UpdateHeader(){
+            bool wasSelected = IsSelected;
             StackPanel s = new StackPanel();
 
             IEdge e = GetEdge();
@@ -193,6 +194,9 @@ namespace m0.UIWpf.Visualisers
             }
 
             Header = s;
+
+            if(wasSelected)
+                IsSelected = true;
         }        
 
         public INoInEdgeInOutVertexVertex VertexChange(IExecution exe)

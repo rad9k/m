@@ -60,7 +60,7 @@
                       RenderTransformOrigin="0.5,0.5"
                       >
                         <Path.RenderTransform>
-                            <RotateTransform Angle="0"/>
+                            <RotateTransform Angle="90"/>
                         </Path.RenderTransform>
                     </Path>
                     <ContentPresenter x:Name="HeaderContent"
@@ -78,7 +78,7 @@
                             <Storyboard>
                                 <DoubleAnimation Storyboard.TargetName="Arrow"
                                                  Storyboard.TargetProperty="(Path.RenderTransform).(RotateTransform.Angle)"
-                                                 To="180"
+                                                 To="270"
                                                  Duration="0:0:0.2"/>
                             </Storyboard>
                         </BeginStoryboard>
@@ -88,7 +88,7 @@
                             <Storyboard>
                                 <DoubleAnimation Storyboard.TargetName="Arrow"
                                                  Storyboard.TargetProperty="(Path.RenderTransform).(RotateTransform.Angle)"
-                                                 To="0"
+                                                 To="90"
                                                  Duration="0:0:0.2"/>
                             </Storyboard>
                         </BeginStoryboard>
@@ -137,7 +137,7 @@
                                   DockPanel.Dock="Bottom"
                                   >
                     <ContentPresenter.LayoutTransform>
-                        <ScaleTransform ScaleY="0"/>
+                        <ScaleTransform ScaleX="0"/>
                     </ContentPresenter.LayoutTransform>
                 </ContentPresenter>
             </DockPanel>
@@ -147,7 +147,7 @@
                         <BeginStoryboard>
                             <Storyboard>
                                 <DoubleAnimation Storyboard.TargetName="ExpanderContent"
-                                                 Storyboard.TargetProperty="(ContentPresenter.LayoutTransform).(ScaleTransform.ScaleY)"                                                 
+                                                 Storyboard.TargetProperty="(ContentPresenter.LayoutTransform).(ScaleTransform.ScaleX)"                                                 
                                                  To="1"
                                                  Duration="0:0:0.2"/>
                             </Storyboard>
@@ -157,7 +157,7 @@
                         <BeginStoryboard>
                             <Storyboard>
                                 <DoubleAnimation Storyboard.TargetName="ExpanderContent"
-                                                 Storyboard.TargetProperty="(ContentPresenter.LayoutTransform).(ScaleTransform.ScaleY)"
+                                                 Storyboard.TargetProperty="(ContentPresenter.LayoutTransform).(ScaleTransform.ScaleX)"
                                                  To="0"
                                                  Duration="0:0:0.2"/>
                             </Storyboard>

@@ -30,7 +30,7 @@ namespace m0.UIWpf
     {
         public bool IsIntialising;
 
-        bool IsListVisualiser = false;
+        bool MainVisualiserHasSelectableEdges = false;
         IVertex currentSelectedEdgesFirst = null;
 
         IVertex BaseEdge;
@@ -140,10 +140,15 @@ namespace m0.UIWpf
 
             DockPanel.SetDock(fe, Dock.Bottom);
 
-            if (fe is IListVisualiser)
+            if (fe is IVisualiser)
             {
-                IsListVisualiser = true;
-                ((IListVisualiser)fe).SelectedEdgesChange += PlatformClassSimpleWrapper_SelectedEdgesChange;
+                IVisualiser fe_Visualiser = (IVisualiser)fe;
+
+                if (fe_Visualiser.Vertex.Get(false, @"SelectedEdges:") != null)
+                {
+                    MainVisualiserHasSelectableEdges = true;
+                    ((IListVisualiser)fe).SelectedEdgesChange += PlatformClassSimpleWrapper_SelectedEdgesChange;
+                }
             }
 
             Visualiser_Top = new WrapVisualiser(baseEdgeVertex, 0.6, platformClassObject.Vertex);
@@ -155,7 +160,7 @@ namespace m0.UIWpf
 
         void CheckVisibility_DownRight()
         {
-            if (!IsListVisualiser)
+            if (!MainVisualiserHasSelectableEdges)
             {
                 ExpanderVisible_Down = false;
                 ExpanderVisible_Right = false;
@@ -198,7 +203,7 @@ namespace m0.UIWpf
             if (currentSelectedEdgesFirst != null && Expander_Right.IsExpanded)
                 EnsureVisualiserReadyAndSetBaseEdge_Right(currentSelectedEdgesFirst);
             else
-                Content_Right.Content = Dummy_Down;
+                Content_Right.Content = Dummy_Right;
         }
     
 
@@ -213,7 +218,7 @@ namespace m0.UIWpf
                 ////////////////////////////////////////
 
                 //GraphUtil.SetVertexValue(Visualiser_Down.Vertex, showLineNumbers_meta, "False");
-                GraphUtil.SetVertexValue(Visualiser_Down.Vertex, scale_meta, 50);
+                GraphUtil.SetVertexValue(Visualiser_Down.Vertex, scale_meta, 80);
 
                 ////////////////////////////////////////
                 Interaction.EndInteractionWithGraph();
@@ -236,7 +241,7 @@ namespace m0.UIWpf
                 Visualiser_Right = new FormVisualiser(baseEdge, platformClassObject.Vertex);
 
 
-                GraphUtil.SetVertexValue(Visualiser_Right.Vertex, scale_meta, 50);
+                GraphUtil.SetVertexValue(Visualiser_Right.Vertex, scale_meta, 80);
 
                 //////////////////////////////////////
                 Interaction.EndInteractionWithGraph();

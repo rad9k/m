@@ -38,7 +38,6 @@
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto"/>
-                        <ColumnDefinition Width="*"/>
                     </Grid.ColumnDefinitions>
                     <Rectangle Fill="Transparent"
                                Grid.ColumnSpan="2"/>
@@ -63,10 +62,6 @@
                             <RotateTransform Angle="180"/>
                         </Path.RenderTransform>
                     </Path>
-                    <ContentPresenter x:Name="HeaderContent"
-                                      Grid.Column="1"
-                                      Margin="4,0,0,0"
-                                      ContentSource="Content"/>
                 </Grid>
             </Border>
             <ControlTemplate.Triggers>
@@ -124,6 +119,14 @@
         Uses: AnimatedExpanderButtonTemp from above-->
         <ControlTemplate x:Key="StretchyExpanderTemp" TargetType="{x:Type Expander}">
             <DockPanel>
+                <ToggleButton x:Name="ExpanderButton" 
+                              DockPanel.Dock="Left"
+                              Template="{StaticResource AnimatedExpanderButtonTemp}"
+                              Content="{TemplateBinding Header}"
+                              IsChecked="{Binding Path=IsExpanded, RelativeSource={RelativeSource TemplatedParent}}"
+                              OverridesDefaultStyle="True"
+                              Padding="1.5,0">
+                </ToggleButton>
                 <Border DockPanel.Dock="Top" Height="3"/>
                 <ContentPresenter x:Name="ExpanderContent"
                   ContentSource="Content"
@@ -133,14 +136,6 @@
                         <ScaleTransform ScaleY="0"/>
                     </ContentPresenter.LayoutTransform>
                 </ContentPresenter>
-                <ToggleButton x:Name="ExpanderButton" 
-                              DockPanel.Dock="Bottom"
-                              Template="{StaticResource AnimatedExpanderButtonTemp}"
-                              Content="{TemplateBinding Header}"
-                              IsChecked="{Binding Path=IsExpanded, RelativeSource={RelativeSource TemplatedParent}}"
-                              OverridesDefaultStyle="True"
-                              Padding="1.5,0">
-                </ToggleButton>
             </DockPanel>
             <ControlTemplate.Triggers>
                 <Trigger Property="IsExpanded" Value="True">

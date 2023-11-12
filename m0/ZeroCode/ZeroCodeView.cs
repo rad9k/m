@@ -147,7 +147,7 @@ namespace m0.ZeroCode
                     linearizedTo = e.To;
 
                 linearizedVertex.AddEdge(linearizedMeta, linearizedTo);
-                
+
                 LinearizeGraph_Reccurent(e.To, sourceLinerizedDict, beenList);
             }
 

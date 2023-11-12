@@ -1809,10 +1809,55 @@ namespace m0.ZeroCode
 
             BaseEdge = new EasyEdge(null, null, v);
 
-            //BaseEdge = _graphBaseEdge; // no linearization
+            BaseEdge = _graphBaseEdge; // no linearization
         }
 
         public string Process(IEdge _graphBaseEdge)
+        {       
+            prepareBaseEdge(_graphBaseEdge);
+
+            BeenList = new List<IEdge>();
+            BeenList_Keyword = new List<IEdge>();
+            Source = new StringBuilder();
+            Imports = new Dictionary<IVertex, IList<IVertex>>();
+            VerticesDictionary = new Dictionary<IVertex, VertexData>();
+            SubGraphVerticesDictionary = new Dictionary<IVertex, VertexData>();
+            KeywordMatchedSubGraphEdges = new Dictionary<IEdge, KeywordMatch>();
+
+            DoKeywordDefinitionContainLocalRoot_Dictionary = new Dictionary<IVertex, bool>();
+            DoKeywordDefinitionContainStartInLocalRoot_Dictionary = new Dictionary<IVertex, bool>();
+            
+            //             
+
+            GetLinksForSubGraphVertices(BaseEdge, null, 0);
+
+            BeenList.Clear();
+
+            MatchKeywords(BaseEdge, null);
+
+            BeenList.Clear();
+
+            //
+
+            BeenList.Add(BaseEdge);
+
+            //
+
+            ImportImports(FormalTextLanguage.Get(false, "DefaultImports:"));
+            ImportImports(BaseEdge.To);
+            
+            //AppendPrefix();
+            AppendAsNew(BaseEdge.To);
+            //AppendSuffix();            
+            
+            foreach (IEdge e in BaseEdge.To.OutEdgesRaw)
+            //foreach (IEdge e in ZeroCodeView.Linearize(graphBaseEdge.To))
+                ZeroCodeGraph2String_Reccurent(e, 1, BaseEdge, null);
+
+            return Source.ToString();
+        }
+
+        public string _Process(IEdge _graphBaseEdge)
         {
             prepareBaseEdge(_graphBaseEdge);
 
@@ -1851,7 +1896,7 @@ namespace m0.ZeroCode
             //AppendSuffix();            
 
             foreach (IEdge e in BaseEdge.To.OutEdgesRaw)
-            //foreach (IEdge e in ZeroCodeView.Linearize(graphBaseEdge.To))
+                //foreach (IEdge e in ZeroCodeView.Linearize(graphBaseEdge.To))
                 ZeroCodeGraph2String_Reccurent(e, 1, BaseEdge, null);
 
             return Source.ToString();
