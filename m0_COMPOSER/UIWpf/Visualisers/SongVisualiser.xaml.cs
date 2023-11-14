@@ -30,7 +30,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
     /// <summary>
     /// Interaction logic for SongVisualiser.xaml
     /// </summary>
-    public partial class SongVisualiser : ZoomScrollViewBasedVisualiserBase
+    public partial class SongVisualiser : ZoomScrollViewBasedVisualiserBase, INoDownVisualiser
     {
         static string[] _MetaTriggeringUpdateVertex = new string[] { "SnapToGrid", "ShowLabel", "ShowArrowLines", "ShowSnapLines", "ShowToolbarNames"};
         public override string[] MetaTriggeringUpdateVertex { get { return _MetaTriggeringUpdateVertex; } }

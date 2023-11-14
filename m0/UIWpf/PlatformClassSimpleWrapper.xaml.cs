@@ -31,6 +31,7 @@ namespace m0.UIWpf
         public bool IsIntialising;
 
         bool MainVisualiserHasSelectableEdges = false;
+
         IVertex currentSelectedEdgesFirst = null;
 
         IVertex BaseEdge;
@@ -133,9 +134,15 @@ namespace m0.UIWpf
             FrameworkElement fe = (FrameworkElement)platformClassObject;
 
             if (fe is IOwnScrolling)
+            {
                 this.MainContent_NoScroll.Child = fe;
+                this.MainContent.Visibility = Visibility.Hidden;
+            }
             else
+            {
                 this.MainContent.Content = fe;
+                this.MainContent_NoScroll.Visibility = Visibility.Hidden;
+            }
 
             DockPanel.SetDock(fe, Dock.Bottom);
 
@@ -169,7 +176,14 @@ namespace m0.UIWpf
             }
             else
             {
-                ExpanderVisible_Down = true;
+                if (platformClassObject is INoDownVisualiser)
+                {
+                    VerticalGrid.RowDefinitions[2].Height = new GridLength(0);
+                    ExpanderVisible_Down = false;
+                }
+                else
+                    ExpanderVisible_Down = true;
+
                 ExpanderVisible_Right = true;
             }
         }

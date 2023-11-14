@@ -66,7 +66,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
     /// <summary>
     /// Interaction logic for SequenceVisualiser.xaml
     /// </summary>
-    public partial class Set2DVisualiser : ZoomScrollViewBasedVisualiserBase
+    public partial class Set2DVisualiser : ZoomScrollViewBasedVisualiserBase, INoDownVisualiser
     {
         // Set2D beg
 

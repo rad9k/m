@@ -26,7 +26,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
     /// <summary>
     /// Interaction logic for SequenceVisualiser.xaml
     /// </summary>
-    public partial class SequenceVisualiser : ZoomScrollViewBasedVisualiserBase
+    public partial class SequenceVisualiser : ZoomScrollViewBasedVisualiserBase, INoDownVisualiser
     {
         static string[] _MetaTriggeringUpdateVertex = new string[] { "ShowArrowLines", "ShowSnapLines", "ShowLabel", "ShowVelocity", "DefaultVelocity", "SnapToGrid" };
         public override string[] MetaTriggeringUpdateVertex { get { return _MetaTriggeringUpdateVertex; } }

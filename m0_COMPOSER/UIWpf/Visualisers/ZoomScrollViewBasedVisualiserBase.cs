@@ -211,7 +211,10 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
         public void ScaleChange() { }
 
-        public void SelectedVerticesUpdated() { }        
+        public void SelectedVerticesUpdated() {
+            if (SelectedEdgesChange != null)
+                SelectedEdgesChange();
+        }        
 
         public void OnLoad(object sender, RoutedEventArgs e) {  }
 

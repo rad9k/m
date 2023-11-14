@@ -3,6 +3,7 @@ using m0.Foundation;
 using m0.Graph;
 using m0.Graph.ExecutionFlow;
 using m0.UIWpf;
+using m0.UIWpf.Visualisers;
 using m0.Util;
 using m0.ZeroTypes;
 using m0_COMPOSER.Lib;
@@ -15,7 +16,7 @@ using System.Windows.Input;
 
 namespace m0_COMPOSER.UIWpf.Visualisers
 {
-    public partial class MelodyFlowVisualiser : MelodyFlowVisualiserBase
+    public partial class MelodyFlowVisualiser : MelodyFlowVisualiserBase, INoDownVisualiser
     {
         static string[] _MetaTriggeringUpdateVertex = new string[] { "ShowArrowLines", "ShowLabel", "ShowVelocity", "DefaultVelocity" };
         public override string[] MetaTriggeringUpdateVertex { get { return _MetaTriggeringUpdateVertex; } }
