@@ -79,7 +79,7 @@
                         
                         <Border Name="DownGrip" 
                                 Grid.Row="5" 
-                                Height="5" 
+                                Height="0" 
                                 Grid.Column="0" 
                                 Grid.ColumnSpan="5" 
                                 HorizontalAlignment="Stretch" 

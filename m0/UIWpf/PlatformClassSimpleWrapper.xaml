@@ -35,6 +35,9 @@
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
 
+                <Border Name="MainContent_NoScroll" 
+                    Grid.Column="0"/>
+
                 <ScrollViewer Grid.Column="0" 
                     Name="MainContent" 
                     Foreground="{StaticResource 0ForegroundBrush}" 

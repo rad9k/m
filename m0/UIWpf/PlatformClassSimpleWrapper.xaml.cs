@@ -133,9 +133,7 @@ namespace m0.UIWpf
             FrameworkElement fe = (FrameworkElement)platformClassObject;
 
             if (fe is IOwnScrolling)
-            {
-                this.ParentCont.Children.Add(fe);
-            }
+                this.MainContent_NoScroll.Child = fe;
             else
                 this.MainContent.Content = fe;
 
