@@ -212,9 +212,9 @@ namespace m0_COMPOSER.UIWpf.Visualisers
         public void ScaleChange() { }
 
         public void SelectedVerticesUpdated() {
-            if (SelectedEdgesChange != null)
-                SelectedEdgesChange();
-        }        
+            //  if (SelectedEdgesChange != null) // THIS IS TEMPORARY IN ArrowDown
+            //    SelectedEdgesChange();
+        }
 
         public void OnLoad(object sender, RoutedEventArgs e) {  }
 
@@ -985,7 +985,6 @@ namespace m0_COMPOSER.UIWpf.Visualisers
                             SelectItem(item);
                     }
                 }
-                
             }
             else
             {
@@ -1431,6 +1430,10 @@ namespace m0_COMPOSER.UIWpf.Visualisers
                     else
                         SelectItem(item);
                 }
+
+                // 
+                if (SelectedEdgesChange != null) // THIS SHOULD BE IN SelectedVerticesUpdated()
+                    SelectedEdgesChange();
             }
 
             SetCursorMode(CursorStateEnum.ArrowUp);
