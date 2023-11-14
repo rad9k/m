@@ -4,8 +4,8 @@
 	- ZeroCode <> diagram (template)
 
 2) Selected View
-	- Form on right
-	- Code on bottom
+	+ Form on right
+	+ Code on bottom
 	- Diagram supports Edge / Item switch for SelectedEdges
 
 3) Parser update

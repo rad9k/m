@@ -212,7 +212,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
         public void ScaleChange() { }
 
         public void SelectedVerticesUpdated() {
-            //  if (SelectedEdgesChange != null) // THIS IS TEMPORARY IN ArrowDown
+            //  if (SelectedEdgesChange != null) // THIS IS TEMPORARY IN ArrowUp_FromMoveOnItem_MouseDown
             //    SelectedEdgesChange();
         }
 

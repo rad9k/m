@@ -199,8 +199,16 @@ namespace m0.UIWpf
             if (selectedEdges != null)
                 currentSelectedEdgesFirst = GraphUtil.GetQueryOutFirst(selectedEdges, "Edge", null);
 
+            ////////////////////////////////////////
+            Interaction.BeginInteractionWithGraph();
+            ////////////////////////////////////////
+            
             EnsureContentReady_Down();
             EnsureContentReady_Right();
+
+            ////////////////////////////////////////
+            Interaction.EndInteractionWithGraph();
+            ////////////////////////////////////////
         }
 
         void EnsureContentReady_Down()
@@ -242,7 +250,7 @@ namespace m0.UIWpf
 
                 Visualiser_Down.ScaleChange();
             }
-            else
+            else 
                 GraphUtil.CreateOrReplaceEdge(Visualiser_Down.Vertex, baseEdge_meta, baseEdge);
 
             Content_Down.Content = Visualiser_Down;
