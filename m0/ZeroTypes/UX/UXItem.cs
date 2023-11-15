@@ -432,7 +432,9 @@ namespace m0.ZeroTypes.UX
             Interaction.BeginInteractionWithGraph();
             //////////////////////////////////////// 
 
-            EdgeHelper.AddEdgeVertexEdgeByEdgeVertex(OwningVisualiser.Vertex.Get(false, "SelectedEdges:"), Vertex.Get(false, "BaseEdge:"));
+            //EdgeHelper.AddEdgeVertexEdgeByEdgeVertex(OwningVisualiser.Vertex.Get(false, "SelectedEdges:"), Vertex.Get(false, "BaseEdge:")); // we can have alg here that gets ShowSelectedEdgesBaseEdge:
+
+            EdgeHelper.AddEdgeVertex(OwningVisualiser.Vertex.Get(false, "SelectedEdges:"), Edge.From, Edge.Meta, Edge.To);
 
             ////////////////////////////////////////
             Interaction.EndInteractionWithGraph();

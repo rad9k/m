@@ -341,6 +341,33 @@ namespace m0.UIWpf.UX
             return ItemsDictionaryByBaseEdgeTo;
         }
 
+        Dictionary<IVertex, IUXItem> ItemsDictionaryByVertex = new Dictionary<IVertex, IUXItem>();
+
+        bool needRebuildItemsDictionaryByVertex = true;
+
+        void RebuidItemsByVertexDictionary()
+        {
+            ItemsDictionaryByVertex.Clear();
+
+            foreach (IUXItem ui in Items_all)
+            {
+                IVertex ui_Vertex = ui.Vertex;
+
+                ItemsDictionaryByVertex[ui.Vertex] = ui;
+    
+            }
+
+            needRebuildItemsDictionaryByVertex = false;
+        }
+
+        public Dictionary<IVertex, IUXItem> GetItemsDictionaryByVertex()
+        {
+            if (needRebuildItemsDictionary)
+                RebuidItemsDictionary();
+
+            return ItemsDictionaryByVertex;
+        }
+
         // OPTIMISATION END
 
         public void RemoveUXItem(IUXItem item)
@@ -367,7 +394,23 @@ namespace m0.UIWpf.UX
                 return dict[to];
 
            return new List<IUXItem>();
-        }        
+        }
+
+        protected List<IUXItem> GetItemsByVertex(IVertex edgeVertex)
+        {
+            Dictionary<IVertex, IUXItem> dict = GetItemsDictionaryByVertex();
+
+            IVertex to = GraphUtil.GetQueryOutFirst(edgeVertex, "To", null);
+
+            if (dict.ContainsKey(to))
+            {
+                List<IUXItem> l = new List<IUXItem>();
+                l.Add(dict[to]);
+                return l;
+            }
+
+            return new List<IUXItem>();
+        }
 
         public void AddEdgesFromDefintion(IVertex baseVertex, IVertex definitionEdges)
         {
@@ -808,35 +851,36 @@ namespace m0.UIWpf.UX
             UnselectAllSelectedEdges();
 
             foreach (IEdge e in selectedEdges_copy)
-                foreach (IUXItem i in GetItemsDictionaryByBaseEdgeTo()[e.To.Get(false, "To:")])
-                {  // what about multiple items for same BaseEdge:\To: ?
+            {  // what about multiple items for same BaseEdge:\To: ?
 
-                    if (option == optionUXItemDelete)
-                    {
-                        GraphUtil.DeleteEdgeByToVertex(i.Edge.From, i.Vertex);
-                        RemoveUXItem(i);
-                    }
+                IUXItem i = GetItemsDictionaryByVertex()[e.To.Get(false, "To:")];
 
-                    if (option == optionUnderlyingEdgeDelete)
-                    {
-                        GraphUtil.DeleteEdgeByToVertex(i.Edge.From, i.Vertex);
-                        RemoveUXItem(i);
-
-                        Edge i_BaseEdge = i.BaseEdge;
-                        
-                        VertexOperations.DeleteOneEdge(i_BaseEdge.From,
-                            i_BaseEdge.Meta,
-                            i_BaseEdge.To);
-                    }
-
-                    if (option == optionUnderlyingVertexDelete)
-                    {
-                        GraphUtil.DeleteEdgeByToVertex(i.Edge.From, i.Vertex);
-                        RemoveUXItem(i);
-
-                        i.BaseEdge.To.Dispose();
-                    }
+                if (option == optionUXItemDelete)
+                {
+                    GraphUtil.DeleteEdgeByToVertex(i.Edge.From, i.Vertex);
+                    RemoveUXItem(i);
                 }
+
+                if (option == optionUnderlyingEdgeDelete)
+                {
+                    GraphUtil.DeleteEdgeByToVertex(i.Edge.From, i.Vertex);
+                    RemoveUXItem(i);
+
+                    Edge i_BaseEdge = i.BaseEdge;
+                        
+                    VertexOperations.DeleteOneEdge(i_BaseEdge.From,
+                        i_BaseEdge.Meta,
+                        i_BaseEdge.To);
+                }
+
+                if (option == optionUnderlyingVertexDelete)
+                {
+                    GraphUtil.DeleteEdgeByToVertex(i.Edge.From, i.Vertex);
+                    RemoveUXItem(i);
+
+                    i.BaseEdge.To.Dispose();
+                }
+            }
 
             ////////////////////////////////////////
             Interaction.EndInteractionWithGraph();
@@ -996,7 +1040,7 @@ namespace m0.UIWpf.UX
                 MovingSprites.Clear();
 
                 foreach (IEdge ed in Vertex.GetAll(false, @"SelectedEdges:\{$Is:Edge}"))
-                    foreach (IUXItem item in GetItemsByBaseEdge(ed.To))
+                    foreach (IUXItem item in GetItemsByVertex(ed.To))
                     {
                         if (!(item is FrameworkElement) || item.NestingLevel != 1)
                             continue;
@@ -1045,7 +1089,7 @@ namespace m0.UIWpf.UX
             ////////////////////////////////////////            
 
             foreach (IEdge ed in Vertex.GetAll(false, @"SelectedEdges:\{$Is:Edge}"))
-                foreach (IUXItem item in GetItemsByBaseEdge(ed.To))
+                foreach (IUXItem item in GetItemsByVertex(ed.To))
                     if(item.NestingLevel == 1)
                         item.MoveItem(item.Position.X + x, item.Position.Y + y, false);
                     else
@@ -1454,10 +1498,9 @@ namespace m0.UIWpf.UX
         {
             IVertex sv = Vertex.GetAll(false, @"SelectedEdges:\{$Is:Edge}");
 
-            foreach (IEdge e in sv)                
-                if(GetItemsDictionaryByBaseEdgeTo().ContainsKey(e.To.Get(false, "To:")))
-                    foreach (IUXItem i in GetItemsDictionaryByBaseEdgeTo()[e.To.Get(false, "To:")])
-                        i.Select();
+            foreach (IEdge e in sv)
+                if (GetItemsDictionaryByVertex().ContainsKey(e.To.Get(false, "To:")))
+                    GetItemsDictionaryByVertex()[e.To.Get(false, "To:")].Select();
         }
 
         public bool IsDisposed = false;
