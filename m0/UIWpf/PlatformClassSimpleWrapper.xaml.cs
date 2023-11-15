@@ -199,6 +199,10 @@ namespace m0.UIWpf
             if (selectedEdges != null)
                 currentSelectedEdgesFirst = GraphUtil.GetQueryOutFirst(selectedEdges, "Edge", null);
 
+            if (currentSelectedEdgesFirst != null && 
+                GraphUtil.GetBooleanValueOrFalse(platformClassObject_IVisualiser.Vertex.Get(false, "ShowSelectedEdgesBaseEdge:")))
+                currentSelectedEdgesFirst = currentSelectedEdgesFirst.Get(false, @"To:/BaseEdge:");
+
             ////////////////////////////////////////
             Interaction.BeginInteractionWithGraph();
             ////////////////////////////////////////
