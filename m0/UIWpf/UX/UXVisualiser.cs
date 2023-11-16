@@ -309,7 +309,13 @@ namespace m0.UIWpf.UX
 
         Dictionary<IVertex, List<IUXItem>> ItemsDictionaryByBaseEdgeTo = new Dictionary<IVertex, List<IUXItem>>();
 
-        bool needRebuildItemsDictionary = true;
+        bool _needRebuildItemsDictionary = true;
+
+        void needRebuildItemsDictionary()
+        {
+            _needRebuildItemsDictionary = true;
+            _needRebuildItemsDictionaryByVertex = true;
+        }
 
         void RebuidItemsDictionary()
         {
@@ -330,12 +336,12 @@ namespace m0.UIWpf.UX
                     }
                 }
 
-            needRebuildItemsDictionary = false;
+            _needRebuildItemsDictionary = false;
         }
 
         public Dictionary<IVertex, List<IUXItem>> GetItemsDictionaryByBaseEdgeTo()
         {
-            if (needRebuildItemsDictionary)
+            if (_needRebuildItemsDictionary)
                 RebuidItemsDictionary();
 
             return ItemsDictionaryByBaseEdgeTo;
@@ -343,7 +349,7 @@ namespace m0.UIWpf.UX
 
         Dictionary<IVertex, IUXItem> ItemsDictionaryByVertex = new Dictionary<IVertex, IUXItem>();
 
-        bool needRebuildItemsDictionaryByVertex = true;
+        bool _needRebuildItemsDictionaryByVertex = true;
 
         void RebuidItemsByVertexDictionary()
         {
@@ -357,13 +363,13 @@ namespace m0.UIWpf.UX
     
             }
 
-            needRebuildItemsDictionaryByVertex = false;
+            _needRebuildItemsDictionaryByVertex = false;
         }
 
         public Dictionary<IVertex, IUXItem> GetItemsDictionaryByVertex()
         {
-            if (needRebuildItemsDictionary)
-                RebuidItemsDictionary();
+            if (_needRebuildItemsDictionaryByVertex)
+                RebuidItemsByVertexDictionary();
 
             return ItemsDictionaryByVertex;
         }
@@ -376,7 +382,7 @@ namespace m0.UIWpf.UX
 
             Items_all.Remove(item);
 
-            needRebuildItemsDictionary = true;
+            needRebuildItemsDictionary();
 
             item.RemoveFromCanvas();
 
@@ -458,7 +464,7 @@ namespace m0.UIWpf.UX
 
             item.VertexSetedUp();
 
-            needRebuildItemsDictionary = true;            
+            needRebuildItemsDictionary();            
                 
             Panel.SetZIndex(item_UIElement, 1);
                
@@ -1669,7 +1675,7 @@ namespace m0.UIWpf.UX
             Canvas.SetLeft((UIElement)item, p.X);
             Canvas.SetTop((UIElement)item, p.Y);
 
-            needRebuildItemsDictionary = true;
+            needRebuildItemsDictionary();
 
             ////////////////////////////////////////
             Interaction.EndInteractionWithGraph();
