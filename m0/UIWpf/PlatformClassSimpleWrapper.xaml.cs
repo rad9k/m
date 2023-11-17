@@ -28,6 +28,8 @@ namespace m0.UIWpf
     /// </summary>
     public partial class PlatformClassSimpleWrapper : UserControl, IHasScrollViewer
     {
+        bool CODE_ON_RIGHT = true;
+
         public bool IsIntialising;
 
         bool MainVisualiserHasSelectableEdges = false;
@@ -240,12 +242,10 @@ namespace m0.UIWpf
 
                 Visualiser_Down.CodeControl.ShowScrollBar = false;
 
-
                 ////////////////////////////////////////
                 Interaction.BeginInteractionWithGraph();
                 ////////////////////////////////////////
                 
-                //GraphUtil.SetVertexValue(Visualiser_Down.Vertex, showLineNumbers_meta, "False");
                 GraphUtil.SetVertexValue(Visualiser_Down.Vertex, scale_meta, 80);
 
                 ////////////////////////////////////////
@@ -263,20 +263,42 @@ namespace m0.UIWpf
         public void EnsureVisualiserReadyAndSetBaseEdge_Right(IVertex baseEdge)
         {
             if (Visualiser_Right == null)
-            {
-                ////////////////////////////////////////
-                Interaction.BeginInteractionWithGraph();
-                ////////////////////////////////////////
+            {                
+                if (CODE_ON_RIGHT)
+                {
+                    Visualiser_Right = new CodeVisualiser(baseEdge, platformClassObject.Vertex);
 
-                Visualiser_Right = new FormVisualiser(baseEdge, platformClassObject.Vertex);
+                    ((CodeVisualiser)Visualiser_Right).CodeControl.ShowScrollBar = false;
 
-                GraphUtil.SetVertexValue(Visualiser_Right.Vertex, metaAlignLeft_meta, "False");
-                GraphUtil.SetVertexValue(Visualiser_Right.Vertex, scale_meta, 80);
+                    ////////////////////////////////////////
+                    Interaction.BeginInteractionWithGraph();
+                    ////////////////////////////////////////
 
-                //////////////////////////////////////
-                Interaction.EndInteractionWithGraph();
-                //////////////////////////////////////
-            }else
+                    GraphUtil.SetVertexValue(Visualiser_Right.Vertex, scale_meta, 80);
+
+                    ////////////////////////////////////////
+                    Interaction.EndInteractionWithGraph();
+                    ////////////////////////////////////////
+
+                    Visualiser_Right.ScaleChange();
+                }
+                else
+                {
+                    ////////////////////////////////////////
+                    Interaction.BeginInteractionWithGraph();
+                    ////////////////////////////////////////
+                    
+                    Visualiser_Right = new FormVisualiser(baseEdge, platformClassObject.Vertex);
+
+                    GraphUtil.SetVertexValue(Visualiser_Right.Vertex, metaAlignLeft_meta, "False");
+                    GraphUtil.SetVertexValue(Visualiser_Right.Vertex, scale_meta, 80);
+
+                    //////////////////////////////////////
+                    Interaction.EndInteractionWithGraph();
+                    //////////////////////////////////////
+                }
+            }
+            else
                 GraphUtil.CreateOrReplaceEdge(Visualiser_Right.Vertex, baseEdge_meta, baseEdge);
 
             Content_Right.Content = Visualiser_Right;

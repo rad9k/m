@@ -1,12 +1,13 @@
 ﻿1) Code Diagram
 	+ MultiContainer
 	+ CodeBlock
+	- CodeBlock for MultiContainer
 	- ZeroCode <> diagram (template)
 
 2) Selected View
 	+ Form on right
 	+ Code on bottom
-	- Diagram supports Edge / Item switch for SelectedEdges
+	+ Diagram supports Edge / Item switch for SelectedEdges
 
 3) Parser update
 	- multiplicity bug
@@ -19,6 +20,7 @@
 	- update creation language support
 
 5) HTTP Server
+	- REST API consumption
 	- REST end point creation support
 	- markdown Visualiser @WPF
 	- Web Server
