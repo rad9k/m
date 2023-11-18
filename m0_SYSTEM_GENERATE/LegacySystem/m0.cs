@@ -245,15 +245,15 @@ namespace m0
 
             LegacySystem.Graph.EasyVertex.Get(sm, false, @"Base\Vertex\$DefaultViewVisualiser").AddEdge(
                 LegacySystem.Graph.EasyVertex.Get(sm, false, @"*$IsLink"),
-                LegacySystem.Graph.EasyVertex.Get(sm, false, @"Base\Vertex"));
+                Empty);
 
             LegacySystem.Graph.EasyVertex.Get(sm, false, @"Base\Vertex\$DefaultEditVisualiser").AddEdge(
                 LegacySystem.Graph.EasyVertex.Get(sm, false, @"*$IsLink"),
-                LegacySystem.Graph.EasyVertex.Get(sm, false, @"Base\Vertex"));
+                Empty);
 
             LegacySystem.Graph.EasyVertex.Get(sm, false, @"Base\Vertex\$DefaultOpenVisualiser").AddEdge(
                 LegacySystem.Graph.EasyVertex.Get(sm, false, @"*$IsLink"),
-                LegacySystem.Graph.EasyVertex.Get(sm, false, @"Base\Vertex"));
+                Empty);
 
 
             LegacySystem.Graph.EasyVertex.Get(sm, false, @"Base\Vertex\$IsAggregation").AddEdge(
