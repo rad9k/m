@@ -259,22 +259,21 @@ namespace m0
             LegacySystem.Graph.EasyVertex.Get(sm, false, @"Base\Vertex\$IsAggregation").AddEdge(
                 LegacySystem.Graph.EasyVertex.Get(sm, false, @"*$EdgeTarget"),
                 LegacySystem.Graph.EasyVertex.Get(sm, false, @"Base\Vertex"));            
-
-            //
-
-            LegacySystem.Graph.EasyVertex.Get(sm, false, @"Base\Vertex\$MinCardinality").AddEdge(
-              LegacySystem.Graph.EasyVertex.Get(sm, false, @"*$EdgeTarget"),
-              LegacySystem.Graph.EasyVertex.Get(sm, false, @"System\Meta\ZeroTypes\Integer"));
-
-            LegacySystem.Graph.EasyVertex.Get(sm, false, @"Base\Vertex\$MaxCardinality").AddEdge(
-              LegacySystem.Graph.EasyVertex.Get(sm, false, @"*$EdgeTarget"),
-              LegacySystem.Graph.EasyVertex.Get(sm, false, @"System\Meta\ZeroTypes\Integer"));
-
         }
 
         void CreateSystemMetaBase_Part2()
         {
-            IVertex sm = LegacySystem.Graph.EasyVertex.Get(Root, false, @"System\Meta");
+            IVertex sm = LegacySystem.Graph.EasyVertex.Get(Root, false, @"System\Meta");            
+
+            LegacySystem.Graph.EasyVertex.Get(sm, false, @"Base\Vertex\$MinCardinality").AddEdge(
+              LegacySystem.Graph.EasyVertex.Get(sm, false, @"*$EdgeTarget"),
+              LegacySystem.Graph.EasyVertex.Get(sm, false, @"ZeroTypes\Integer"));
+
+            LegacySystem.Graph.EasyVertex.Get(sm, false, @"Base\Vertex\$MaxCardinality").AddEdge(
+              LegacySystem.Graph.EasyVertex.Get(sm, false, @"*$EdgeTarget"),
+              LegacySystem.Graph.EasyVertex.Get(sm, false, @"ZeroTypes\Integer"));
+
+            //
 
             LegacySystem.Graph.EasyVertex.Get(sm, false, @"Base\Vertex\$ExecutableEndPoint").AddEdge(
               LegacySystem.Graph.EasyVertex.Get(sm, false, @"*$EdgeTarget"),
