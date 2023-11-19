@@ -279,9 +279,8 @@ namespace m0
               LegacySystem.Graph.EasyVertex.Get(sm, false, @"*$EdgeTarget"),
               LegacySystem.Graph.EasyVertex.Get(sm, false, @"ZeroTypes\ExecutionFlow\Executable"));
 
-            //LegacySystem.Graph.EasyVertex.Get(sm, false, @"Base\Vertex\$ExecutableEndPoint").AddEdge( // XXX ????
-            //  LegacySystem.Graph.EasyVertex.Get(sm, false, @"*$IsAggregation"),
-            //Empty);            
+            LegacySystem.Graph.EasyVertex.Get(sm, false, @"Base\Vertex\$ExecutableEndPoint").AddEdge( // XXX ????
+              LegacySystem.Graph.EasyVertex.Get(sm, false, @"*$IsAggregation"), Empty);            
 
             LegacySystem.Graph.EasyVertex.Get(sm, false, @"Base\Vertex\$GraphChangeTrigger").AddEdge(
                 LegacySystem.Graph.EasyVertex.Get(sm, false, @"*$EdgeTarget"),
@@ -560,7 +559,8 @@ namespace m0
             IVertex method = LegacySystem.Graph.EasyVertex.Get(sm, false, @"ZeroUML\Class").AddVertex(null, "Method");
             method.AddEdge(LegacySystem.Graph.EasyVertex.Get(sm, false, "*$Inherits"),
                 LegacySystem.Graph.EasyVertex.Get(smu, false, "StackFrameCreatorWithInputOutput"));
-            m0.LegacySystem.Util.GeneralUtil.ParseAndExcute(method, sm, "{$MinCardinality: 0,$MaxCardinality: -1}");
+
+            m0.LegacySystem.Util.GeneralUtil.ParseAndExcute(method, sm, "{$MinCardinality:0,$MaxCardinality:-1}");
 
             // cycle edges
             LegacySystem.Graph.EasyVertex.Get(smu, false, @"StackFrameCreator").AddEdge(
