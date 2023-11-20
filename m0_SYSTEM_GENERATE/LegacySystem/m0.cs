@@ -3027,6 +3027,9 @@ namespace m0
                 LegacySystem.Graph.EasyVertex.Get(smuml, false, @"Class\Method"),
                 "GetValue");
 
+            LegacySystem.Graph.EasyVertex.Get(smz, false, @"ExecutionFlow\VertexEval\GetValue").AddEdge(
+                Is, LegacySystem.Graph.EasyVertex.Get(smuml, false, @"Class\Method"));
+
             LegacySystem.Graph.EasyVertex.Get(smz, false, @"ExecutionFlow\VertexEval\GetValue").AddVertex(
                 LegacySystem.Graph.EasyVertex.Get(smuml, false, @"Class\Method\Output"),
                 "");
@@ -3040,6 +3043,9 @@ namespace m0
             LegacySystem.Graph.EasyVertex.Get(smz, false, @"ExecutionFlow\VertexEval").AddVertex(
                 LegacySystem.Graph.EasyVertex.Get(smuml, false, @"Class\Method"),
                 "SetValue");
+
+            LegacySystem.Graph.EasyVertex.Get(smz, false, @"ExecutionFlow\VertexEval\SetValue").AddEdge(
+                Is, LegacySystem.Graph.EasyVertex.Get(smuml, false, @"Class\Method"));
 
             LegacySystem.Graph.EasyVertex.Get(smz, false, @"ExecutionFlow\VertexEval\SetValue").AddVertex(
                 LegacySystem.Graph.EasyVertex.Get(smuml, false, @"Class\Method\InputParameter"),
@@ -3055,6 +3061,9 @@ namespace m0
                 LegacySystem.Graph.EasyVertex.Get(smuml, false, @"Class\Method"),
                 "GetOutEdges");
 
+            LegacySystem.Graph.EasyVertex.Get(smz, false, @"ExecutionFlow\VertexEval\GetOutEdges").AddEdge(
+                Is, LegacySystem.Graph.EasyVertex.Get(smuml, false, @"Class\Method"));
+
             LegacySystem.Graph.EasyVertex.Get(smz, false, @"ExecutionFlow\VertexEval\GetOutEdges").AddVertex(
                 LegacySystem.Graph.EasyVertex.Get(smuml, false, @"Class\Method\Output"),
                 "");
@@ -3069,6 +3078,9 @@ namespace m0
                 LegacySystem.Graph.EasyVertex.Get(smuml, false, @"Class\Method"),
                 "GetInEdges");
 
+            LegacySystem.Graph.EasyVertex.Get(smz, false, @"ExecutionFlow\VertexEval\GetInEdges").AddEdge(
+                Is, LegacySystem.Graph.EasyVertex.Get(smuml, false, @"Class\Method"));
+
             LegacySystem.Graph.EasyVertex.Get(smz, false, @"ExecutionFlow\VertexEval\GetInEdges").AddVertex(
                 LegacySystem.Graph.EasyVertex.Get(smuml, false, @"Class\Method\Output"),
                 "");
@@ -3082,6 +3094,9 @@ namespace m0
             LegacySystem.Graph.EasyVertex.Get(smz, false, @"ExecutionFlow\VertexEval").AddVertex(
                 LegacySystem.Graph.EasyVertex.Get(smuml, false, @"Class\Method"),
                 "AddVertexAndReturnEdge");
+
+            LegacySystem.Graph.EasyVertex.Get(smz, false, @"ExecutionFlow\VertexEval\AddVertexAndReturnEdge").AddEdge(
+                Is, LegacySystem.Graph.EasyVertex.Get(smuml, false, @"Class\Method"));
 
             LegacySystem.Graph.EasyVertex.Get(smz, false, @"ExecutionFlow\VertexEval\AddVertexAndReturnEdge").AddVertex(
                 LegacySystem.Graph.EasyVertex.Get(smuml, false, @"Class\Method\InputParameter"),
@@ -3113,6 +3128,9 @@ namespace m0
                 LegacySystem.Graph.EasyVertex.Get(smuml, false, @"Class\Method"),
                 "AddEdge");
 
+            LegacySystem.Graph.EasyVertex.Get(smz, false, @"ExecutionFlow\VertexEval\AddEdge").AddEdge(
+                       Is, LegacySystem.Graph.EasyVertex.Get(smuml, false, @"Class\Method"));
+
             LegacySystem.Graph.EasyVertex.Get(smz, false, @"ExecutionFlow\VertexEval\AddEdge").AddVertex(
                 LegacySystem.Graph.EasyVertex.Get(smuml, false, @"Class\Method\InputParameter"),
                 "metaVertex");
@@ -3135,6 +3153,9 @@ namespace m0
                 LegacySystem.Graph.EasyVertex.Get(smuml, false, @"Class\Method"),
                 "DeleteEdge");
 
+            LegacySystem.Graph.EasyVertex.Get(smz, false, @"ExecutionFlow\VertexEval\DeleteEdge").AddEdge(
+                  Is, LegacySystem.Graph.EasyVertex.Get(smuml, false, @"Class\Method"));
+
             LegacySystem.Graph.EasyVertex.Get(smz, false, @"ExecutionFlow\VertexEval\DeleteEdge").AddVertex(
                 LegacySystem.Graph.EasyVertex.Get(smuml, false, @"Class\Method\InputParameter"),
                 "edge");
@@ -3148,6 +3169,9 @@ namespace m0
             LegacySystem.Graph.EasyVertex.Get(smz, false, @"ExecutionFlow\VertexEval").AddVertex(
                 LegacySystem.Graph.EasyVertex.Get(smuml, false, @"Class\Method"),
                 "Execute");
+
+            LegacySystem.Graph.EasyVertex.Get(smz, false, @"ExecutionFlow\VertexEval\Execute").AddEdge(
+                Is, LegacySystem.Graph.EasyVertex.Get(smuml, false, @"Class\Method"));
         }
 
         void CreateSystemMetaVisualiserDiagram()
@@ -3467,6 +3491,13 @@ namespace m0
             smzu.Get(false, @"MetaExtendedLineDecorator").AddEdge(sm.Get(false, "?$Inherits"), smzu.Get(false, @"LineDecorator"));
             smzu.Get(false, @"MetaExtendedLineDecorator").AddVertex(sm.Get(false, "?$PlatformClassName"), @"m0.ZeroTypes.UX.MetaExtendedLineDecorator, m0, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null");
 
+            smzu.Get(false, @"MetaExtendedLineDecorator\StartAnchor").AddEdge(sm.Get(false, @"?$EdgeTarget"), sm.Get(false, @"?LineEndEnum"));
+
+            smzu.Get(false, @"MetaExtendedLineDecorator\EndAnchor").AddEdge(sm.Get(false, @"?$EdgeTarget"), sm.Get(false, @"?LineEndEnum"));
+
+            smzu.Get(false, @"MetaExtendedLineDecorator\IsDashed").AddEdge(sm.Get(false, @"?$EdgeTarget"), sm.Get(false, @"?Boolean"));
+
+
             // ContatinerItem
 
             smzu.Get(false, @"ContainerItem").AddEdge(sm.Get(false, @"?$Is"), sm.Get(false, @"ZeroUML\Class"));
@@ -3512,7 +3543,7 @@ namespace m0
                 "Enum:GridStyleEnum{EnumValue:None,EnumValue:Vertical,EnumValue:Horizontal,EnumValue:All,EnumValue:AllAndRound,EnumValue:Round},"+
                 "Enum:SongSnapToGridEnum{EnumValue:1 bar,EnumValue:1/2 bar,EnumValue:1/4 bar,EnumValue:1/8 bar,EnumValue:1/16 bar,EnumValue:1/32 bar,EnumValue:no snap},"+
                 "Enum:SnapToGridEnum{EnumValue:1/16 bar,EnumValue:1/32 bar,EnumValue:1/64 bar,EnumValue:1/128 bar,EnumValue:1/256 bar,EnumValue:1/512 bar,EnumValue:no snap}," +
-                "Class:Form{Attribute:ExpertMode{$MinCardinality:1,$MaxCardinality:1,$DefaultValue:False},Attribute:ColumnNumber{$MinCardinality:1,$MaxCardinality:1,$DefaultValue:1,$UpdateAfterInteractionEnds:},Attribute:MetaOnLeft{$MinCardinality:1,$MaxCardinality:1,$DefaultValue:True},Attribute:MetaAlignLeft{$MinCardinality:1,$MaxCardinality:1,$DefaultValue:True},Attribute:SectionsAsTabs{$MinCardinality:1,$MaxCardinality:1,$DefaultValue:False}}," +
+                "Class:Form{Attribute:ExpertMode{$MinCardinality:1,$MaxCardinality:1,$DefaultValue:False},Attribute:ColumnNumber{$MinCardinality:1,$MaxCardinality:1,$DefaultValue:1},Attribute:MetaOnLeft{$MinCardinality:1,$MaxCardinality:1,$DefaultValue:True},Attribute:MetaAlignLeft{$MinCardinality:1,$MaxCardinality:1,$DefaultValue:True},Attribute:SectionsAsTabs{$MinCardinality:1,$MaxCardinality:1,$DefaultValue:False}}," +
                 "Class:Code{Attribute:FontSize{$MinCardinality:1,$MaxCardinality:1,$DefaultValue:15,MinValue:1,MaxValue:40,$DisplayLarger:},Attribute:ShowWhiteSpace{$MinCardinality:1,$MaxCardinality:1,$DefaultValue:False},Attribute:ShowLineNumbers{$MinCardinality:1,$MaxCardinality:1,$DefaultValue:False},Attribute:HighlightedLine{$MinCardinality:1,$MaxCardinality:1,$DefaultValue:True},,Attribute:ShowFolding{$MinCardinality:1,$MaxCardinality:1,$DefaultValue:True},Attribute:FormalTextLanguage{$MinCardinality:0,$MaxCardinality:1},Attribute:TextMemoryCurrent{$MinCardinality:1,$MaxCardinality:1,$DefaultValue:0},Attribute:TextMemoryMax{$MinCardinality:1,$MaxCardinality:1,$DefaultValue:0}}," +
                 "Class:Table{Attribute:ToShowEdgesMeta{$MinCardinality:0,$MaxCardinality:1},Attribute:ExpertMode{$MinCardinality:1,$MaxCardinality:1,$DefaultValue:False},Attribute:IsAllVisualisersEdit{$MinCardinality:1,$MaxCardinality:1,$DefaultValue:False},Attribute:ShowHeader{$MinCardinality:1,$MaxCardinality:1,$DefaultValue:True},Association:GridStyle{$MinCardinality:1,$MaxCardinality:1},Attribute:AlternatingRows{$MinCardinality:1,$MaxCardinality:1}}," +
                 "Class:TableFast{Attribute:ToShowEdgesMeta{$MinCardinality:0,$MaxCardinality:1},Attribute:IsAllVisualisersEdit{$MinCardinality:1,$MaxCardinality:1,$DefaultValue:False},Attribute:ShowHeader{$MinCardinality:1,$MaxCardinality:1,$DefaultValue:True},Association:GridStyle{$MinCardinality:1,$MaxCardinality:1},Attribute:AlternatingRows{$MinCardinality:1,$MaxCardinality:1}}," +
