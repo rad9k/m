@@ -822,7 +822,7 @@ namespace m0
             //Link
             LegacySystem.Graph.EasyVertex.Get(smu, false, @"Link\Target").AddEdge(
                 LegacySystem.Graph.EasyVertex.Get(sm, false, @"*$EdgeTarget"),
-                LegacySystem.Graph.EasyVertex.Get(smu, false, @"Vertex"));
+                LegacySystem.Graph.EasyVertex.Get(smu, false, @"VertexType"));
 
             //expression edges
             LegacySystem.Graph.EasyVertex.Get(smu, false, @"StackFrameCreatorWithInputOutput\InputParameter").AddEdge(

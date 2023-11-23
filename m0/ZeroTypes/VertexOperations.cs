@@ -104,8 +104,8 @@ namespace m0.ZeroTypes
                 if (GeneralUtil.CompareStrings(e.Meta, "$VertexTarget"))
                     ret.AddEdge(null, m0.MinusZero.Instance.EdgeTarget);
                 else
-                    if ((e.To.Value != null) && ((string)e.To.Value != "") && (((string)e.To.Value)[0] != '$') &&
-                    (GeneralUtil.CompareStrings(e.Meta, "$Empty") || ((string)e.Meta.Value)[0] != '$')) // is extanded                    
+                    if (e.To.Value != null && e.To.Value.ToString() != "" && (e.To.Value.ToString()[0] != '$') &&
+                    (GeneralUtil.CompareStrings(e.Meta, "$Empty") || e.Meta.Value.ToString()[0] != '$')) // is extanded                    
                                                                                                         // if (e.To.Get(false, "$VertexTarget:") != null || e.To.Get(false, "$EdgeTarget:") != null)
                     ret.AddEdge(null, e.To);
             }
