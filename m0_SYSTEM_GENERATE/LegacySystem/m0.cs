@@ -423,6 +423,7 @@ namespace m0
         void CreateSystemMetaZeroUML_ZeroCode_part()
         {
             IVertex smu = LegacySystem.Graph.EasyVertex.Get(Root, false, @"System\Meta\ZeroUML");
+            IVertex smzt = LegacySystem.Graph.EasyVertex.Get(Root, false, @"System\Meta\ZeroTypes");
             IVertex sm = LegacySystem.Graph.EasyVertex.Get(Root, false, @"System\Meta");
 
             IVertex nse = LegacySystem.Graph.EasyVertex.Get(Root, false, @"System\Meta\Base\$$NoSequentialExecution");
@@ -822,7 +823,7 @@ namespace m0
             //Link
             LegacySystem.Graph.EasyVertex.Get(smu, false, @"Link\Target").AddEdge(
                 LegacySystem.Graph.EasyVertex.Get(sm, false, @"*$EdgeTarget"),
-                LegacySystem.Graph.EasyVertex.Get(smu, false, @"VertexType"));
+                LegacySystem.Graph.EasyVertex.Get(smzt, false, @"VertexType"));
 
             //expression edges
             LegacySystem.Graph.EasyVertex.Get(smu, false, @"StackFrameCreatorWithInputOutput\InputParameter").AddEdge(
