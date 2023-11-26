@@ -606,6 +606,7 @@
     </None>
     <AppDesigner Include="Properties\" />
     <EmbeddedResource Include="ZeroCodeHighlighting.xshd" />
+    <None Include="_PROJECT\bug_and_test\errors.xlsx" />
     <None Include="_PROJECT\bug_and_test\parent _ bug.xlsx" />
   </ItemGroup>
   <ItemGroup>
@@ -715,6 +716,9 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="UIWpf\Controls\AnimatedHideArea.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="_PROJECT\bug_and_test\graph2string_ERRORS.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

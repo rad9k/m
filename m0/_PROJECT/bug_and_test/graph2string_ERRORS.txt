@@ -1,0 +1,666 @@
+> Meta\Store\FileSystem\Class:Directory\File
+
+cardinality not as "" << happens all the time
+
+"File"
+	<@$EdgeTarget :: @System\Meta\Store\FileSystem\File>
+	<@$MinCardinality :: @System\Meta\Store\FileSystem\Directory\File\0>
+	<@$MaxCardinality :: @System\Meta\Store\FileSystem\Directory\File\-1>
+	<@$IsAggregation :: @$Empty>
+
+
+> Meta\ZeroUML\Link
+
+Is link not meaningful
+
+"Link"
+		"Target"
+			<@$MinCardinality :: @Link\Target\$MinCardinality:1>
+			<@$MaxCardinality :: @Link\Target\$MaxCardinality:1>
+			<@$EdgeTarget :: @$Empty>
+		<@$ExecutableEndPoint :: "">
+			<@$Is :: @Link\$ExecutableEndPoint:\DotNetStaticMethod>
+			<@DotNetTypeName :: "m0.ZeroUML.Instructions.BaseInstructions, m0, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+			<@DotNetMethodName :: "Link">
+
+propagatetostackexpression
+
+
+> Meta\ZeroUML (\Function works)
+
+no $$NoSequentialExecution
+
+"Function"
+		<@$Inherits :: @StackFrameCreatorWithInputOutput>
+
+> Meta\ZeroTypes\Edge
+
+no "" in assoc
+
+"Edge"
+	association "From" @VertexType @Edge\From\0:@Edge\From\1
+	association "Meta" @VertexType @Edge\Meta\$MinCardinality:1:@Edge\Meta\$MaxCardinality:1
+	association "To" @VertexType @Edge\To\$MinCardinality:1:@Edge\To\$MaxCardinality:1
+	<@$Is :: @Class>
+	<@$DefaultViewVisualiser :: @Edge\$DefaultViewVisualiser:Edge>
+	<@$DefaultEditVisualiser :: @Edge\$DefaultViewVisualiser:Edge>
+
+
+> Meta\ZeroTypes\UX\Item
+
+two times @$IsAggregation :: @$Empty
+
+attribute should not be shown as it is inherited
+
+attribute should be displayed as "attribute"
+
+class "Item"
+		aggregation "Item" @Item @String\String\UXItem\$Inherits:Item\Item\0:@String\String\UXItem\$Inherits:Item\Item\-1
+			<@$IsAggregation :: @$Empty>
+			<@$IsAggregation :: @$Empty>
+
+		<@$Inherits :: @HasBaseEdge>
+		<@Attribute :: @HasBaseEdge\BaseEdge>
+			<@$MinCardinality :: @HasBaseEdge\BaseEdge\$MinCardinality:1>
+			<@$MaxCardinality :: @HasBaseEdge\BaseEdge\$MaxCardinality:1>
+
+
+> Meta\ZeroTypes\UX\UXItem
+
+two times @$IsAggregation :: @$Empty in Decorator
+
+two times @$Inherits :: @Item
+
+	class "UXItem"
+		attribute "Scale" @Integer @String\String\UXItem\Scale\$MinCardinality:1:@String\String\UXItem\Scale\$MaxCardinality:1 <<"0":"200">>
+			<@System\Meta\Presentation\$DisplayLarger :: "">
+			default "100"
+		attribute "DesignMode" @Boolean @String\String\UXItem\DesignMode\0:@String\String\UXItem\DesignMode\1
+		attribute "Size" @Size @String\String\UXItem\Size\0:@String\String\UXItem\Size\1
+		attribute "Position" @Position @String\String\UXItem\Position\0:@String\String\UXItem\Position\1
+		attribute "Layout" @LayoutTypeEnum @String\String\UXItem\Layout\0:@String\String\UXItem\Layout\1
+		attribute "BackgroundColor" @Color @String\String\UXItem\BackgroundColor\0:@String\String\UXItem\BackgroundColor\1
+		attribute "ForegroundColor" @Color @String\String\UXItem\ForegroundColor\0:@String\String\UXItem\ForegroundColor\1
+		attribute "BorderColor" @Color @String\String\UXItem\BorderColor\0:@String\String\UXItem\BorderColor\1
+		attribute "BorderSize" @Float @String\String\UXItem\BorderSize\$MinCardinality:0:@String\String\UXItem\BorderSize\1 <<"0":"10">>
+		attribute "Gap" @Float @String\String\UXItem\Gap\0:@String\String\UXItem\Gap\1
+		aggregation "Decorator" @UXItem @String\String\UXItem\Decorator\0:@String\String\UXItem\Decorator\-1
+			<@$IsAggregation :: @$Empty>
+			<@$IsAggregation :: @$Empty>
+		association "UXTemplate" @UXTemplate @String\String\UXItem\UXTemplate\0:@String\String\UXItem\UXTemplate\1
+		<@$Inherits :: @Item>
+		<@$Inherits :: @Item>
+
+> Meta\ZeroTypes\UX\UXContainer
+
+@Attribute :: @HasSelectedEdges\SelectedEdges should be not displayed
+@Attribute :: @HasSelectedEdges\ShowSelectedEdgesBaseEdge shouyld be not displayed
+
+	class "UXContainer"
+		attribute "IsExpanded" @Boolean @UX\UXContainer\IsExpanded\$MinCardinality:1:@UX\UXContainer\IsExpanded\$MaxCardinality:1
+			default "True"
+		attribute "CollapsedSize" @Size @UX\UXContainer\CollapsedSize\0:@UX\UXContainer\CollapsedSize\1
+		attribute "ExpandedSize" @Size @UX\UXContainer\ExpandedSize\0:@UX\UXContainer\ExpandedSize\1
+		association "NewItemUXTemplate" @UXTemplate @UX\UXContainer\NewItemUXTemplate\0:@UX\UXContainer\NewItemUXTemplate\1
+		<@$Inherits :: @UXItem>
+		<@$Inherits :: @HasSelectedEdges>
+		<@$DefaultOpenVisualiser :: @UX\UXContainer\$DefaultOpenVisualiser:UX>
+		<@$DefaultViewVisualiser :: @UX\UXContainer\$DefaultOpenVisualiser:UX>
+		<@$DefaultEditVisualiser :: @UX\UXContainer\$DefaultOpenVisualiser:UX>
+		<@Attribute :: @HasSelectedEdges\SelectedEdges>
+			<@$MinCardinality :: @HasSelectedEdges\SelectedEdges\$MinCardinality:1>
+			<@$MaxCardinality :: @HasSelectedEdges\SelectedEdges\$MaxCardinality:1>
+			<@$DefaultValue :: @HasSelectedEdges\SelectedEdges\$DefaultValue:>
+			<@$EdgeTarget :: @VertexType>
+			<@$Group :: @HasSelectedEdges\SelectedEdges\Details>
+			<@$Is :: @Attribute>
+			<@$IsAggregation :: @$Empty>
+		<@Attribute :: @HasSelectedEdges\ShowSelectedEdgesBaseEdge>
+			<@$MinCardinality :: @HasSelectedEdges\ShowSelectedEdgesBaseEdge\$MinCardinality:1>
+			<@$MaxCardinality :: @HasSelectedEdges\ShowSelectedEdgesBaseEdge\$MaxCardinality:1>
+			<@$DefaultValue :: @HasSelectedEdges\ShowSelectedEdgesBaseEdge\$DefaultValue:>
+
+
+> Meta\ZeroTypes\UX\UXTemplate
+
+two times @$IsAggregation :: @$Empty in UXTemplate, AggregationTemplate
+
+	class "UXTemplate"
+		attribute "Name" @String @String\String\UXItem\UXTemplate\UXTemplate\Name\0:@String\String\UXItem\UXTemplate\UXTemplate\Name\1
+		aggregation "UXTemplate" @UXTemplate @String\String\UXItem\UXTemplate\UXTemplate\UXTemplate\0:@String\String\UXItem\UXTemplate\UXTemplate\UXTemplate\-1
+			<@$IsAggregation :: @$Empty>
+			<@$IsAggregation :: @$Empty>
+		attribute "DirectVertexTestQuery" @String @String\String\UXItem\UXTemplate\UXTemplate\DirectVertexTestQuery\0:@String\String\UXItem\UXTemplate\UXTemplate\DirectVertexTestQuery\1
+		attribute "MetaVertexTestQuery" @String @String\String\UXItem\UXTemplate\UXTemplate\MetaVertexTestQuery\0:@String\String\UXItem\UXTemplate\UXTemplate\MetaVertexTestQuery\1
+		association "ItemClass" @$Empty @String\String\UXItem\UXTemplate\UXTemplate\ItemClass\0:@String\String\UXItem\UXTemplate\UXTemplate\ItemClass\1
+		attribute "ItemVertex" @VertexType @String\String\UXItem\UXTemplate\UXTemplate\ItemVertex\0:@String\String\UXItem\UXTemplate\UXTemplate\ItemVertex\1
+		association "InstanceCreation" @InstanceCreationEnum @String\String\UXItem\UXTemplate\UXTemplate\InstanceCreation\0:@String\String\UXItem\UXTemplate\UXTemplate\InstanceCreation\1
+		aggregation "UXDecoratorTemplate" @UXDecoratorTemplate @String\String\UXItem\UXTemplate\UXTemplate\UXDecoratorTemplate\0:@String\String\UXItem\UXTemplate\UXTemplate\UXDecoratorTemplate\-1
+			<@$IsAggregation :: @$Empty>
+			<@$IsAggregation :: @$Empty>
+		attribute "DoNotShowInherited" @Boolean @String\String\UXItem\UXTemplate\UXTemplate\DoNotShowInherited\0:@String\String\UXItem\UXTemplate\UXTemplate\DoNotShowInherited\1
+		attribute "ForceShowEditForm" @Boolean @String\String\UXItem\UXTemplate\UXTemplate\ForceShowEditForm\0:@String\String\UXItem\UXTemplate\UXTemplate\ForceShowEditForm\1
+		attribute "ContainerEdgeMetaVertex" @VertexType @String\String\UXItem\UXTemplate\UXTemplate\ContainerEdgeMetaVertex\0:@String\String\UXItem\UXTemplate\UXTemplate\ContainerEdgeMetaVertex\1
+		attribute "BaseEdgeQuery" @String @String\String\UXItem\UXTemplate\UXTemplate\BaseEdgeQuery\0:@String\String\UXItem\UXTemplate\UXTemplate\BaseEdgeQuery\1
+		<@$PlatformClassName :: "m0.ZeroTypes.UX.UXTemplate, m0, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+
+> Meta\ZeroTypes\UX\LineDecoratorBase
+
+two times @$Inherits :: @UXItem
+
+	class "LineDecoratorBase"
+		attribute "LineWidth" @Float @UX\LineDecoratorBase\LineWidth\0:@UX\LineDecoratorBase\LineWidth\$MaxCardinality:1 <<"1":"10">>
+		association "ToItem" @UXItem @UX\LineDecoratorBase\ToItem\$MinCardinality:1:@UX\LineDecoratorBase\ToItem\$MaxCardinality:1
+		<@$Inherits :: @UXItem>
+		<@$Inherits :: @UXItem>
+
+> Meta\ZeroTypes\UX\UXDecoratorTemplate
+
+two times @$Inherits :: @UXTemplate
+
+	class "UXDecoratorTemplate"
+		attribute "EdgeTestQuery" @String @String\String\UXItem\UXTemplate\UXTemplate\UXDecoratorTemplate\UXDecoratorTemplate\EdgeTestQuery\$MinCardinality:1:@String\String\UXItem\UXTemplate\UXTemplate\UXDecoratorTemplate\UXDecoratorTemplate\EdgeTestQuery\$MaxCardinality:1
+		attribute "ToDiagramItemTestQuery" @String @String\String\UXItem\UXTemplate\UXTemplate\UXDecoratorTemplate\UXDecoratorTemplate\ToDiagramItemTestQuery\0:@String\String\UXItem\UXTemplate\UXTemplate\UXDecoratorTemplate\UXDecoratorTemplate\ToDiagramItemTestQuery\1
+		attribute "CreateEdgeOnly" @Boolean @String\String\UXItem\UXTemplate\UXTemplate\UXDecoratorTemplate\UXDecoratorTemplate\CreateEdgeOnly\0:@String\String\UXItem\UXTemplate\UXTemplate\UXDecoratorTemplate\UXDecoratorTemplate\CreateEdgeOnly\1
+		attribute "ForceShowEditForm" @Boolean @String\String\UXItem\UXTemplate\UXTemplate\UXDecoratorTemplate\UXDecoratorTemplate\Attribute:ForceShowEditForm<<"1">>\0:@String\String\UXItem\UXTemplate\UXTemplate\UXDecoratorTemplate\UXDecoratorTemplate\Attribute:ForceShowEditForm<<"1">>\1
+		attribute "DecoratorClass" @Class @String\String\UXItem\UXTemplate\UXTemplate\UXDecoratorTemplate\UXDecoratorTemplate\DecoratorClass\0:@String\String\UXItem\UXTemplate\UXTemplate\UXDecoratorTemplate\UXDecoratorTemplate\DecoratorClass\1
+		attribute "DecoratorVertex" @$Empty @String\String\UXItem\UXTemplate\UXTemplate\UXDecoratorTemplate\UXDecoratorTemplate\DecoratorVertex\0:@String\String\UXItem\UXTemplate\UXTemplate\UXDecoratorTemplate\UXDecoratorTemplate\DecoratorVertex\1
+		<@$Inherits :: @UXTemplate>
+		<@$Inherits :: @UXTemplate>
+
+> Meta\ZeroTypes\UX\ImageItem
+
+two times @$Inherits :: @UXItem
+
+	class "ImageItem"
+		attribute "Filename" @String @UX\ImageItem\Filename\$MinCardinality:1:@UX\ImageItem\Filename\$MaxCardinality:1
+		attribute "ShowName" @Boolean @UX\ImageItem\ShowName\$MinCardinality:1:@UX\ImageItem\ShowName\$MaxCardinality:1
+			default "True"
+		attribute "ShowMeta" @Boolean @UX\ImageItem\ShowMeta\0:@UX\ImageItem\ShowMeta\1
+		<@$Inherits :: @UXItem>
+		<@$PlatformClassName :: "m0.ZeroTypes.UX.ImageItem, m0, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+		<@$Inherits :: @UXItem>
+
+> Meta\ZeroTypes\UX\OvalItem
+
+two times @$Inherits :: @UXItem
+
+	class "OvalItem"
+		attribute "ShowMeta" @Boolean @UX\OvalItem\ShowMeta\0:@UX\OvalItem\ShowMeta\1
+		<@$Inherits :: @UXItem>
+		<@$PlatformClassName :: "m0.ZeroTypes.UX.OvalItem, m0, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+		<@$Inherits :: @UXItem>
+
+> Meta\ZeroTypes\UX\RhombusItem
+
+two times @$Inherits :: @UXItem
+
+	class "RhombusItem"
+		attribute "ShowMeta" @Boolean @UX\RhombusItem\ShowMeta\0:@UX\RhombusItem\ShowMeta\1
+		<@$Inherits :: @UXItem>
+		<@$PlatformClassName :: "m0.ZeroTypes.UX.RhombusItem, m0, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+		<@$Inherits :: @UXItem>
+
+
+> Meta\ZeroTypes\UX\CodeItem
+
+two times @$Inherits :: @UXItem
+
+	class "CodeItem"
+		attribute "HideHeader" @Boolean @UX\CodeItem\HideHeader\0:@UX\CodeItem\HideHeader\1
+		attribute "ShowMeta" @Boolean @UX\CodeItem\ShowMeta\0:@UX\CodeItem\ShowMeta\1
+		attribute "FontSize" @Float @UX\CodeItem\FontSize\$MinCardinality:1:@UX\CodeItem\FontSize\$MaxCardinality:1 <<"1":"40">>
+			default "15"
+			<@System\Meta\Presentation\$DisplayLarger :: "">
+		attribute "ShowWhiteSpace" @Boolean @UX\CodeItem\ShowWhiteSpace\$MinCardinality:1:@UX\CodeItem\ShowWhiteSpace\$MaxCardinality:1
+			default "False"
+		attribute "ShowLineNumbers" @Boolean @UX\CodeItem\ShowLineNumbers\$MinCardinality:1:@UX\CodeItem\ShowLineNumbers\$MaxCardinality:1
+			default "False"
+		attribute "ShowFolding" @Boolean @UX\CodeItem\ShowFolding\$MinCardinality:1:@UX\CodeItem\ShowFolding\$MaxCardinality:1
+			default "False"
+		attribute "HighlightedLine" @Boolean @UX\CodeItem\HighlightedLine\$MinCardinality:1:@UX\CodeItem\HighlightedLine\$MaxCardinality:1
+			default "True"
+		attribute "ShowScrollBars" @VertexType @UX\CodeItem\ShowScrollBars\0:@UX\CodeItem\ShowScrollBars\1
+		attribute "FormalTextLanguage" @VertexType @UX\CodeItem\FormalTextLanguage\0:@UX\CodeItem\FormalTextLanguage\1
+		<@$Inherits :: @UXItem>
+		<@$PlatformClassName :: "m0.ZeroTypes.UX.CodeItem, m0, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+		<@$Inherits :: @UXItem>
+
+
+> Meta\ZeroTypes\UX\RectangleItem
+
+two times @$Inherits :: @UXItem
+
+	class "RectangleItem"
+		attribute "HideHeader" @Boolean @UX\RectangleItem\HideHeader\0:@UX\RectangleItem\HideHeader\1
+		attribute "ShowMeta" @Boolean @UX\RectangleItem\ShowMeta\0:@UX\RectangleItem\ShowMeta\1
+		attribute "RoundEdgeSize" @Integer @UX\RectangleItem\RoundEdgeSize\$MinCardinality:0:@UX\RectangleItem\RoundEdgeSize\1 <<"0":"200">>
+		association "VisualiserClass" @Class @UX\RectangleItem\VisualiserClass\0:@UX\RectangleItem\VisualiserClass\1
+		attribute "VisualiserVertex" @VertexType @UX\RectangleItem\VisualiserVertex\0:@UX\RectangleItem\VisualiserVertex\1
+		<@$Inherits :: @UXItem>
+		<@$PlatformClassName :: "m0.ZeroTypes.UX.RectangleItem, m0, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+		<@$Inherits :: @UXItem>
+
+
+> Meta\ZeroTypes\UX\LineDecorator 
+
+two times @$Inherits :: @LineDecoratorBase	
+
+class "LineDecorator"
+		association "StartAnchor" @LineEndEnum @UX\LineDecorator\StartAnchor\0:@UX\LineDecorator\StartAnchor\1
+		association "EndAnchor" @LineEndEnum @UX\LineDecorator\EndAnchor\0:@UX\LineDecorator\EndAnchor\1
+		attribute "IsDashed" @Boolean @UX\LineDecorator\IsDashed\0:@UX\LineDecorator\IsDashed\1
+		<@$Inherits :: @LineDecoratorBase>
+		<@$PlatformClassName :: "m0.ZeroTypes.UX.LineDecorator, m0, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+		<@$Inherits :: @LineDecoratorBase>
+
+
+> Meta\ZeroTypes\UX\MetaExtendedLineDecorator
+
+two times @$Inherits :: @LineDecorator
+
+	class "MetaExtendedLineDecorator"
+		association "StartAnchor" @LineEndEnum @UX\MetaExtendedLineDecorator\Association:StartAnchor<<"1">>\0:@UX\MetaExtendedLineDecorator\Association:StartAnchor<<"1">>\1
+		association "EndAnchor" @LineEndEnum @UX\MetaExtendedLineDecorator\Association:EndAnchor<<"1">>\0:@UX\MetaExtendedLineDecorator\Association:EndAnchor<<"1">>\1
+		attribute "IsDashed" @Boolean @UX\MetaExtendedLineDecorator\Attribute:IsDashed<<"1">>\0:@UX\MetaExtendedLineDecorator\Attribute:IsDashed<<"1">>\1
+		<@$Inherits :: @LineDecorator>
+		<@$PlatformClassName :: "m0.ZeroTypes.UX.MetaExtendedLineDecorator, m0, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+		<@$Inherits :: @LineDecorator>
+
+> Meta\ZeroTypes\UX\ContainterItem
+
+two times @$Inherits :: @UXContainer
+
+	class "ContainerItem"
+		attribute "ShowMeta" @Boolean @UX\ContainerItem\ShowMeta\0:@UX\ContainerItem\ShowMeta\1
+		attribute "RoundEdgeSize" @Integer @UX\ContainerItem\RoundEdgeSize\$MinCardinality:0:@UX\ContainerItem\RoundEdgeSize\1 <<"0":"200">>
+		<@$Inherits :: @UXContainer>
+		<@$PlatformClassName :: "m0.ZeroTypes.UX.ContainerItem, m0, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+		<@$DefaultOpenVisualiser :: @UX\UXContainer\$DefaultOpenVisualiser:UX>
+		<@$DefaultViewVisualiser :: @UX\UXContainer\$DefaultOpenVisualiser:UX>
+		<@$DefaultEditVisualiser :: @UX\UXContainer\$DefaultOpenVisualiser:UX>
+		<@$Inherits :: @UXContainer>
+
+> Meta\ZeroTypes\UX\MultiContainerItem
+
+two times @$Inherits :: @UXContainer
+
+	class "MultiContainerItem"
+		attribute "Orientation" @OrientationEnum @UX\MultiContainerItem\Orientation\0:@UX\MultiContainerItem\Orientation\1
+		attribute "ShowMeta" @Boolean @UX\MultiContainerItem\ShowMeta\0:@UX\MultiContainerItem\ShowMeta\1
+		attribute "RoundEdgeSize" @Integer @UX\MultiContainerItem\RoundEdgeSize\$MinCardinality:0:@UX\MultiContainerItem\RoundEdgeSize\1 <<"0":"200">>
+		<@$Inherits :: @UXContainer>
+		<@$PlatformClassName :: "m0.ZeroTypes.UX.MultiContainerItem, m0, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+		<@$DefaultOpenVisualiser :: @UX\UXContainer\$DefaultOpenVisualiser:UX>
+		<@$DefaultViewVisualiser :: @UX\UXContainer\$DefaultOpenVisualiser:UX>
+		<@$DefaultEditVisualiser :: @UX\UXContainer\$DefaultOpenVisualiser:UX>
+
+
+> Meta\ZeroTypes\UX\MultiContainerSubItem
+
+two times @$Inherits :: @UXContainer
+
+	class "MultiContainerSubItem"
+		<@$Inherits :: @UXContainer>
+		<@$PlatformClassName :: "m0.ZeroTypes.UX.MultiContainerSubItem, m0, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+		<@$DefaultOpenVisualiser :: @UX\UXContainer\$DefaultOpenVisualiser:UX>
+		<@$DefaultViewVisualiser :: @UX\UXContainer\$DefaultOpenVisualiser:UX>
+		<@$DefaultEditVisualiser :: @UX\UXContainer\$DefaultOpenVisualiser:UX>
+		<@$Inherits :: @UXContainer>
+		<@$Inherits :: @UXContainer>
+
+> Meta\ZeroTypes\ExecutionFlow\GraphChangeTrigger
+
+	class "GraphChangeTrigger"
+		<@System\Meta\Presentation\$Hide :: @$GraphChangeTrigger\GraphChangeTrigger\0>
+		<@System\Meta\Presentation\$Hide :: @$GraphChangeTrigger\GraphChangeTrigger\1>
+		attribute "ScopeQuery" @String @$GraphChangeTrigger\GraphChangeTrigger\ScopeQuery\0:@$GraphChangeTrigger\GraphChangeTrigger\ScopeQuery\-1
+		attribute "ChangeTypeFilter" @GraphChangeFilterEnum @$GraphChangeTrigger\GraphChangeTrigger\ChangeTypeFilter\0:@$GraphChangeTrigger\GraphChangeTrigger\ChangeTypeFilter\-1
+		<@$Inherits :: @EventTrigger>
+		<@System\Meta\Presentation\$Hide :: @$GraphChangeTrigger\GraphChangeTrigger\0>
+		<@System\Meta\Presentation\$Hide :: @$GraphChangeTrigger\GraphChangeTrigger\1>
+		<@$Inherits :: @EventTrigger>
+
+> Meta\ZeroTypes\ExecutionFlow\GraphChangeEvent
+
+two times @$Inherits :: @Event
+
+	class "GraphChangeEvent"
+		attribute "ChangedVertex" @VertexType @ExecutionFlow\GraphChangeEvent\ChangedVertex\0:@ExecutionFlow\GraphChangeEvent\ChangedVertex\1
+		attribute "Type" @GraphChangeEnum @ExecutionFlow\GraphChangeEvent\Type\$MinCardinality:1:@ExecutionFlow\GraphChangeEvent\Type\$MaxCardinality:1
+		attribute "OldValue" @VertexType @ExecutionFlow\GraphChangeEvent\OldValue\0:@ExecutionFlow\GraphChangeEvent\OldValue\1
+		attribute "NewValue" @VertexType @ExecutionFlow\GraphChangeEvent\NewValue\0:@ExecutionFlow\GraphChangeEvent\NewValue\1
+		attribute "Edge" @Edge @ExecutionFlow\GraphChangeEvent\Edge\0:@ExecutionFlow\GraphChangeEvent\Edge\1
+		<@$Inherits :: @Event>
+		<@$Inherits :: @Event>
+
+> Meta\ZeroTypes\ExecutionFlow\Delegate
+
+two times @$Inherits :: @Executable
+
+	class "Delegate"
+		attribute "Object" @VertexType @ExecutionFlow\Delegate\Object\$MinCardinality:1:@ExecutionFlow\Delegate\Object\$MaxCardinality:1
+		attribute "Method" @VertexType @ExecutionFlow\Delegate\Method\$MinCardinality:1:@ExecutionFlow\Delegate\Method\$MaxCardinality:1
+		<@$Inherits :: @Executable>
+		<@$Inherits :: @Executable>
+
+> Meta\ZeroTypes\ExecutionFlow\DotNetStaticMethod
+
+two times @$Inherits :: @Executable
+
+	class "DotNetStaticMethod"
+		attribute "DotNetTypeName" @String @InEdgesSlash\\DotNetStaticMethod\DotNetTypeName\$MinCardinality:1:@InEdgesSlash\\DotNetStaticMethod\DotNetTypeName\$MaxCardinality:1
+		attribute "DotNetMethodName" @String @InEdgesSlash\\DotNetStaticMethod\DotNetMethodName\$MinCardinality:1:@InEdgesSlash\\DotNetStaticMethod\DotNetMethodName\$MaxCardinality:1
+		<@$Inherits :: @Executable>
+		<@$Inherits :: @Executable>
+
+> Meta\ZeroTypes\ExecutionFlow\DotNetDelegate
+
+two times @$Inherits :: @Executable
+
+	class "DotNetDelegate"
+		attribute "DotNetDelegatePointer" @VertexType @ExecutionFlow\DotNetDelegate\DotNetDelegatePointer\$MinCardinality:1:@ExecutionFlow\DotNetDelegate\DotNetDelegatePointer\$MaxCardinality:1
+		<@$Inherits :: @Executable>
+		<@$Inherits :: @Executable>
+
+> Meta\ZeroTypes\ExecutionFlow\VertexEval
+
+method not displayed properly. several cases
+
+	class "VertexEval"
+		method "GetValue" @$VertexEval\VertexEval\GetValue\Output:()
+		<@Method :: "SetValue">
+			<@$Is :: @Method>
+			<@InputParameter :: "value">
+				<@$EdgeTarget :: @VertexType>
+		method "GetOutEdges" @$VertexEval\VertexEval\GetOutEdges\Output:()
+		method "GetInEdges" @$VertexEval\VertexEval\GetInEdges\Output:()
+		<@Method :: "AddVertexAndReturnEdge">
+			<@$Is :: @Method>
+			<@InputParameter :: "metaVertex">
+				<@$EdgeTarget :: @VertexType>
+			<@InputParameter :: "val">
+				<@$EdgeTarget :: @VertexType>
+			<@Output :: @$VertexEval\VertexEval\AddVertexAndReturnEdge\Output:>
+		<@Method :: "AddEdge">
+			<@$Is :: @Method>
+			<@InputParameter :: "metaVertex">
+				<@$EdgeTarget :: @VertexType>
+			<@InputParameter :: "destVertex">
+				<@$EdgeTarget :: @VertexType>
+		<@Method :: "DeleteEdge">
+			<@$Is :: @Method>
+			<@InputParameter :: "edge">
+				<@$EdgeTarget :: @VertexType>
+		method "Execute" ()
+
+> Meta\Visualiser\DiagramInternal\DiagramItemBase
+
+two times @$Inherits :: @HasBaseEdge
+
+<@Attribute :: @HasBaseEdge\BaseEdge> instead of attribute
+
+BaseEdge should be not displayed
+
+		class "DiagramItemBase"
+			association "Definition" @DiagramInternal\DiagramItemDefinition @System\Meta\Visualiser\DiagramInternal\DiagramItemBase\Definition\$MinCardinality:1:@System\Meta\Visualiser\DiagramInternal\DiagramItemBase\Definition\$MaxCardinality:1
+				<@$Section :: "Definition">
+			attribute "PositionX" @Float @System\Meta\Visualiser\DiagramInternal\DiagramItemBase\PositionX\$MinCardinality:1:@System\Meta\Visualiser\DiagramInternal\DiagramItemBase\PositionX\$MaxCardinality:1
+				<@$Section :: "Position and size">
+			attribute "PositionY" @Float @System\Meta\Visualiser\DiagramInternal\DiagramItemBase\PositionY\$MinCardinality:1:@System\Meta\Visualiser\DiagramInternal\DiagramItemBase\PositionY\$MaxCardinality:1
+				<@$Section :: @DiagramInternal\DiagramItemBase\PositionX\'Position and size'>
+			attribute "SizeX" @Float @System\Meta\Visualiser\DiagramInternal\DiagramItemBase\SizeX\$MinCardinality:1:@System\Meta\Visualiser\DiagramInternal\DiagramItemBase\SizeX\$MaxCardinality:1
+				<@$Section :: @DiagramInternal\DiagramItemBase\PositionX\'Position and size'>
+			attribute "SizeY" @Float @System\Meta\Visualiser\DiagramInternal\DiagramItemBase\SizeY\$MinCardinality:1:@System\Meta\Visualiser\DiagramInternal\DiagramItemBase\SizeY\$MaxCardinality:1
+				<@$Section :: @DiagramInternal\DiagramItemBase\PositionX\'Position and size'>
+			attribute "LineWidth" @Float @System\Meta\Visualiser\DiagramInternal\DiagramItemBase\LineWidth\0:@System\Meta\Visualiser\DiagramInternal\DiagramItemBase\LineWidth\$MaxCardinality:1 <<"1":"10">>
+				<@$Section :: "Look">
+			attribute "ForegroundColor" @String\String\UXItem\BackgroundColor\Color @System\Meta\Visualiser\DiagramInternal\DiagramItemBase\ForegroundColor\0:@System\Meta\Visualiser\DiagramInternal\DiagramItemBase\ForegroundColor\1
+				<@$Section :: @DiagramInternal\DiagramItemBase\LineWidth\Look>
+			attribute "BackgroundColor" @String\String\UXItem\BackgroundColor\Color @System\Meta\Visualiser\DiagramInternal\DiagramItemBase\BackgroundColor\0:@System\Meta\Visualiser\DiagramInternal\DiagramItemBase\BackgroundColor\1
+				<@$Section :: @DiagramInternal\DiagramItemBase\LineWidth\Look>
+			attribute "DiagramLine" @DiagramInternal\DiagramLineBase @System\Meta\Visualiser\DiagramInternal\DiagramItemBase\DiagramLine\0:@System\Meta\Visualiser\DiagramInternal\DiagramItemBase\DiagramLine\-1
+				<@$Section :: "Base">
+			"OptionEdge"
+			"OptionDiagramLineDefinition"
+			<@$Inherits :: @HasBaseEdge>
+			<@Attribute :: @HasBaseEdge\BaseEdge>
+				<@$MinCardinality :: @HasBaseEdge\BaseEdge\$MinCardinality:1>
+				<@$MaxCardinality :: @HasBaseEdge\BaseEdge\$MaxCardinality:1>
+				<@$EdgeTarget :: @Edge>
+				<@$Section :: @DiagramInternal\DiagramItemBase\DiagramLine\Base>
+				<@$Is :: @Attribute>
+				<@$IsAggregation :: @$Empty>
+			<@$Is :: @Class>
+			<@$Inherits :: @HasBaseEdge>
+
+> Meta\Visualiser\DiagramInternal\DiagramLineBase  
+
+two times @$Inherits :: @HasBaseEdge	
+
+class "DiagramLineBase"
+			association "Definition" @DiagramInternal\DiagramLineDefinition @System\Meta\Visualiser\DiagramInternal\DiagramLineBase\Definition\$MinCardinality:1:@System\Meta\Visualiser\DiagramInternal\DiagramLineBase\Definition\$MaxCardinality:1
+				<@$Section :: @DiagramInternal\DiagramItemBase\Definition\Definition>
+			attribute "LineWidth" @Float @System\Meta\Visualiser\DiagramInternal\DiagramLineBase\LineWidth\0:@System\Meta\Visualiser\DiagramInternal\DiagramLineBase\LineWidth\$MaxCardinality:1 <<"1":"10">>
+				<@$Section :: @DiagramInternal\DiagramItemBase\LineWidth\Look>
+			attribute "ForegroundColor" @String\String\UXItem\BackgroundColor\Color @System\Meta\Visualiser\DiagramInternal\DiagramLineBase\ForegroundColor\0:@System\Meta\Visualiser\DiagramInternal\DiagramLineBase\ForegroundColor\1
+				<@$Section :: @DiagramInternal\DiagramItemBase\LineWidth\Look>
+			attribute "BackgroundColor" @String\String\UXItem\BackgroundColor\Color @System\Meta\Visualiser\DiagramInternal\DiagramLineBase\BackgroundColor\0:@System\Meta\Visualiser\DiagramInternal\DiagramLineBase\BackgroundColor\1
+				<@$Section :: @DiagramInternal\DiagramItemBase\LineWidth\Look>
+			association "ToDiagramItem" @DiagramInternal\DiagramItemBase @System\Meta\Visualiser\DiagramInternal\DiagramLineBase\ToDiagramItem\$MinCardinality:1:@System\Meta\Visualiser\DiagramInternal\DiagramLineBase\ToDiagramItem\$MaxCardinality:1
+				<@$Section :: @DiagramInternal\DiagramItemBase\DiagramLine\Base>
+			<@$Inherits :: @HasBaseEdge>
+			<@$Inherits :: @HasBaseEdge>
+
+> Meta\Visualiser\DiagramInternal\DiagramImageItem
+
+two @$Inherits :: @DiagramInternal\DiagramItemBase
+
+		class "DiagramImageItem"
+			attribute "Filename" @String
+			<@$Inherits :: @DiagramInternal\DiagramItemBase>
+			<@$PlatformClassName :: "m0.UIWpf.Visualisers.Diagram.DiagramImageItem, m0, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+			<@$Inherits :: @DiagramInternal\DiagramItemBase>
+
+> Meta\Visualiser\DiagramInternal\DiagramOvalItem
+
+two @$Inherits :: @DiagramInternal\DiagramItemBase
+
+		class "DiagramOvalItem"
+			<@$Inherits :: @DiagramInternal\DiagramItemBase>
+			<@$PlatformClassName :: "m0.UIWpf.Visualisers.Diagram.DiagramOvalItem, m0, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+			<@$Inherits :: @DiagramInternal\DiagramItemBase>
+
+> Meta\Visualiser\DiagramInternal\DiagramRhombusItem
+
+two @$Inherits :: @DiagramInternal\DiagramItemBase
+
+		class "DiagramRhombusItem"
+			<@$Inherits :: @DiagramInternal\DiagramItemBase>
+			<@$PlatformClassName :: "m0.UIWpf.Visualisers.Diagram.DiagramRhombusItem, m0, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+			<@$Inherits :: @DiagramInternal\DiagramItemBase>
+
+> Meta\Visualiser\DiagramInternal\DiagramLine
+
+two @$Inherits :: @DiagramInternal\DiagramLineBase
+
+		class "DiagramLine"
+			association "StartAnchor" @DiagramInternal\LineEndEnum @System\Meta\Visualiser\DiagramInternal\DiagramLine\StartAnchor\0:@System\Meta\Visualiser\DiagramInternal\DiagramLine\StartAnchor\1
+				<@$Section :: @DiagramInternal\DiagramItemBase\LineWidth\Look>
+			association "EndAnchor" @DiagramInternal\LineEndEnum @System\Meta\Visualiser\DiagramInternal\DiagramLine\EndAnchor\0:@System\Meta\Visualiser\DiagramInternal\DiagramLine\EndAnchor\1
+				<@$Section :: @DiagramInternal\DiagramItemBase\LineWidth\Look>
+			attribute "IsDashed" @Boolean @System\Meta\Visualiser\DiagramInternal\DiagramLine\IsDashed\0:@System\Meta\Visualiser\DiagramInternal\DiagramLine\IsDashed\1
+				<@$Section :: @DiagramInternal\DiagramItemBase\LineWidth\Look>
+			<@$Inherits :: @DiagramInternal\DiagramLineBase>
+			<@$PlatformClassName :: "m0.UIWpf.Visualisers.Diagram.DiagramLine, m0, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+			<@$Inherits :: @DiagramInternal\DiagramLineBase>
+
+> Meta\Visualiser\DiagramInternal\DiagramMetaExtendedLine
+
+two times @$Inherits :: @DiagramInternal\DiagramLineBase
+
+		class "DiagramMetaExtendedLine"
+			association "StartAnchor" @DiagramInternal\LineEndEnum @System\Meta\Visualiser\DiagramInternal\DiagramMetaExtendedLine\StartAnchor\0:@System\Meta\Visualiser\DiagramInternal\DiagramMetaExtendedLine\StartAnchor\1
+				<@$Section :: @DiagramInternal\DiagramItemBase\LineWidth\Look>
+			association "EndAnchor" @DiagramInternal\LineEndEnum @System\Meta\Visualiser\DiagramInternal\DiagramMetaExtendedLine\EndAnchor\0:@System\Meta\Visualiser\DiagramInternal\DiagramMetaExtendedLine\EndAnchor\1
+				<@$Section :: @DiagramInternal\DiagramItemBase\LineWidth\Look>
+			attribute "IsDashed" @Boolean @System\Meta\Visualiser\DiagramInternal\DiagramMetaExtendedLine\IsDashed\0:@System\Meta\Visualiser\DiagramInternal\DiagramMetaExtendedLine\IsDashed\1
+				<@$Section :: @DiagramInternal\DiagramItemBase\LineWidth\Look>
+			<@$Inherits :: @DiagramInternal\DiagramLineBase>
+			<@$PlatformClassName :: "m0.UIWpf.Visualisers.Diagram.DiagramMetaExtendedLine, m0, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+			<@$Inherits :: @DiagramInternal\DiagramLineBase>
+
+> Meta\Visualiser\Form
+
+attribute not as "attribute"
+two times @$Inherits :: @String\String\UXItem
+
+class "Form"
+		attribute "ExpertMode" @Boolean @System\Meta\Visualiser\Form\ExpertMode\$MinCardinality:1:@System\Meta\Visualiser\Form\ExpertMode\$MaxCardinality:1
+			default "False"
+		attribute "ColumnNumber" @Integer @System\Meta\Visualiser\Form\ColumnNumber\$MinCardinality:1:@System\Meta\Visualiser\Form\ColumnNumber\$MaxCardinality:1 <<"1":"8">>
+			default "1"
+			""
+		attribute "MetaOnLeft" @Boolean @System\Meta\Visualiser\Form\MetaOnLeft\$MinCardinality:1:@System\Meta\Visualiser\Form\MetaOnLeft\$MaxCardinality:1
+			default "True"
+		attribute "MetaAlignLeft" @Boolean @System\Meta\Visualiser\Form\MetaAlignLeft\$MinCardinality:1:@System\Meta\Visualiser\Form\MetaAlignLeft\$MaxCardinality:1
+			default "True"
+		attribute "SectionsAsTabs" @Boolean @System\Meta\Visualiser\Form\SectionsAsTabs\$MinCardinality:1:@System\Meta\Visualiser\Form\SectionsAsTabs\$MaxCardinality:1
+			default "False"
+		<@$Inherits :: @String\String\UXItem>
+		<@$PlatformClassName :: "m0.UIWpf.Visualisers.FormVisualiser, m0, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+		<@BaseEdgeTarget :: @BaseEdgeTarget\Any>
+		<@Attribute :: @String\String\UXItem\Scale>
+			<@$MinCardinality :: @String\String\UXItem\Scale\$MinCardinality:1>
+			<@$MaxCardinality :: @String\String\UXItem\Scale\$MaxCardinality:1>
+			<@System\Meta\Presentation\$DisplayLarger :: @String\String\UXItem\Scale\$DisplayLarger:>
+			<@$DefaultValue :: @String\String\UXItem\Scale\100>
+			<@$EdgeTarget :: @Integer>
+			<@MinValue :: @String\String\UXItem\Scale\0>
+			<@MaxValue :: @String\String\UXItem\Scale\200>
+			<@$Is :: @Attribute>
+			<@$IsAggregation :: @$Empty>
+
+> Meta\Visualiser\Code
+
+two times @$Inherits :: @String\String\UXItem
+two times @BaseEdgeTarget :: @BaseEdgeTarget\Any
+
+> Meta\Visualiser\Table
+
+two times @$Inherits :: @String\String\UXItem
+two times @$Inherits :: @HasSelectedEdges
+two times @$Inherits :: @HasFilter
+
+
+should not display SelectedEdges
+should not display ShowSelectedEdgesBaseEdge
+should not display FilterQuery
+
+> Meta\Visualiser\TableFast
+
+two times @$Inherits :: @String\String\UXItem
+two times @$Inherits :: @HasSelectedEdges
+two times @$Inherits :: @HasFilter
+@BaseEdgeTarget :: @BaseEdgeTarget\Any
+
+> Meta\Visualiser\Tree
+
+two times @$Inherits :: @String\String\UXItem
+two times @$Inherits :: @HasSelectedEdges
+@BaseEdgeTarget :: @BaseEdgeTarget\Any
+
+> Meta\Visualiser\Graph
+
+two times @$Inherits :: @String\String\UXItem
+two times @$Inherits :: @HasSelectedEdges
+two times @BaseEdgeTarget :: @BaseEdgeTarget\Any
+
+> Meta\Visualiser\Class
+
+two times @$Inherits :: @String\String\UXItem
+two times @BaseEdgeTarget :: @BaseEdgeTarget\Specyfic
+
+> Meta\Visualiser\String | StringView, Vertex, Edge, Integer, Decimal, Float, Boolean, Enum, Debug, Wrap, Set2D, Sequence, MelodyFlow. TriggerSet, ChordProgression, Song, Test
+
+two times @$Inherits :: @String\String\UXItem
+two times @BaseEdgeTarget :: @BaseEdgeTarget\Specyfic / Any
+
+> Meta\Visualiser\Diagram
+
+@$Inherits :: @String\String\UXItem
+@$Inherits :: @HasSelectedEdges
+@BaseEdgeTarget :: @BaseEdgeTarget\Specyfic
+
+> Meta\Visualiser\List
+
+@$Inherits :: @String\String\UXItem
+@$Inherits :: @HasSelectedEdges
+@$Inherits :: @HasFilter
+@BaseEdgeTarget :: @BaseEdgeTarget\Any
+
+> Meta\Visualiser\UX
+
+@$Inherits :: @UX\UXContainer
+@BaseEdgeTarget :: @BaseEdgeTarget\Any
+
+should not display IsExpanded, CollapsedSize, ExpandedSize, NewItemUXTemplate
+
+> Meta\Visualiser\Method\VoidVoidMethod
+
+@$Inherits :: @HasBaseEdge
+@$Inherits :: @HasExecutableVertex
+
+should not display ExecutableVertex
+
+> Meta\User\Session, User
+
+@$IsAggregation :: @$Empty in aggregation
+
+> FormalTextLanguage\ZeroCode\Keywords\$Keyword: <<(?<expr>)>>
+
+any not displayed
+@$$StartInLocalRoot :: "" displayed without reason
+@$$LocalRoot :: @ZeroCode\Keywords:\ColonEmptyInner2SlashMarkIndexMethod> displayed without reason
+
+
+  <@$Keyword :: "<<(?<expr>)>>">
+<@$$KeywordGroup :: @ZeroCode\Keywords:\SlashMarkIndexMethod>
+<@$$KeywordGroup :: @ZeroCode\Keywords:\SlashMarkIndexMethodInner2>
+<@$$KeywordGroup :: @ZeroCode\Keywords:\ColonEmptyInner2SlashMarkIndexMethod>
+<@$$KeywordGroup :: @ZeroCode\Keywords:\ColonEmptyInner2SlashMarkIndexMethodNewLink>
+<@$$KeywordGroup :: @ZeroCode\Keywords:\ColonEmptyInner2SlashMarkIndexMethodNewLinkBracketCopy><<"(?<expr>)">>
+<@$$StartInLocalRoot :: "">
+<@$$LocalRoot :: @ZeroCode\Keywords:\ColonEmptyInner2SlashMarkIndexMethod>
+
+> FormalTextLanguage\ZeroCode\Keywords\$Keyword: <>
+
+@$$StartInLocalRoot :: "" displayed without reason
+
+<@$Keyword :: "<>">
+<@$$KeywordGroup :: @ZeroCode\Keywords:\SlashMarkIndexMethod>
+<@$$KeywordGroup :: @ZeroCode\Keywords:\SlashMarkIndexMethodInner2>
+<@$$KeywordGroup :: @ZeroCode\Keywords:\ColonEmptyInner2SlashMarkIndexMethod>
+<@$$KeywordGroup :: @ZeroCode\Keywords:\ColonEmptyInner2SlashMarkIndexMethodNewLink>
+<@$$KeywordGroup :: @ZeroCode\Keywords:\ColonEmptyInner2SlashMarkIndexMethodNewLinkBracketCopy><>
+<@$$StartInLocalRoot :: "">
+
+> FormalTextLanguage\ZeroCode\Keywords\$Keyword: several keywords
+
+no ALL
+
+> Data\Visualiser\Diagram\Package\DiagramLineDefinition :: "%"* %"" %"\ %" "%"|%"" "%"||%""
+
+"%"* %"" ??
+%"* %"" ??
+
+> Lib\Music\TimeSpanLevel (subLevel) | ControlChangeDecriptionSet (ControlChangeDecription) | PitchSet (Pitch) | History (Event)
+
+@HasLengtgh
+
+> Generator code not Next
+
+> examples\code\Code13 
+
+case not displaying correctly
+
