@@ -475,23 +475,11 @@ namespace m0.ZeroCode
 
         string NewLine = "\r\n";
 
-
-       // int cnt = 0;
-
         void SourceAppend(string s)
         {        
             string NewLineStringPlusNewLine = getNewLineAndTabsString();            
 
             s = s.Replace("\r\n", NewLineStringPlusNewLine);
-
-         /*   MinusZero.Instance.Log(-2, "S.A", s+" "+cnt);
-
-            if (cnt == 5)
-            {
-                int xxx = 0;
-            }
-
-            cnt++;*/
 
             Source.Append(s);            
         }
@@ -519,54 +507,7 @@ namespace m0.ZeroCode
             }
         }
 
-        int tabTimes;
-
-        /*Dictionary<int, int> tabTimesReductionDict = new Dictionary<int, int>();
-
-        int prevTabTimes;
-
-        string getNewLineAndTabsString() // special version with tab control
-        {
-            StringBuilder sb = new StringBuilder();
-
-            if (prevTabTimes == -1)
-                prevTabTimes = tabTimes;
-
-            int toUseTabTimes = tabTimes;
-
-            if (tabTimesReductionDict.ContainsKey(tabTimes))
-                toUseTabTimes = tabTimesReductionDict[tabTimes];
-
-            if (prevTabTimes < toUseTabTimes - 1)
-            {
-                toUseTabTimes = prevTabTimes + 1;
-
-                tabTimesReductionDict.Add(tabTimes, toUseTabTimes);
-            }
-            else
-            {
-                List<int> keysToRemove = new List<int>();
-
-                foreach (int i in tabTimesReductionDict.Keys)
-                    if (i > tabTimes)
-                        keysToRemove.Add(i);
-
-                foreach (int i in keysToRemove)
-                    tabTimesReductionDict.Remove(i);
-            }
-
-            prevTabTimes = toUseTabTimes;
-
-            sb.Append(NewLine);
-
-            MinusZero.Instance.Log(-2, "out", toUseTabTimes.ToString());
-
-            for (int i = 0; i < toUseTabTimes; i++)
-                sb.Append(Tab);                       
-
-            return sb.ToString();
-        }*/
-        
+        int tabTimes;      
 
         string getNewLineAndTabsString()
         {
@@ -1856,7 +1797,7 @@ namespace m0.ZeroCode
 
             return Source.ToString();
         }
-
+        /*
         public string _Process(IEdge _graphBaseEdge)
         {
             prepareBaseEdge(_graphBaseEdge);
@@ -1900,6 +1841,6 @@ namespace m0.ZeroCode
                 ZeroCodeGraph2String_Reccurent(e, 1, BaseEdge, null);
 
             return Source.ToString();
-        }
+        }*/
     }
 }

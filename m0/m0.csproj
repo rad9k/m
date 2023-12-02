@@ -608,6 +608,7 @@
     <EmbeddedResource Include="ZeroCodeHighlighting.xshd" />
     <None Include="_PROJECT\bug_and_test\errors.xlsx" />
     <None Include="_PROJECT\bug_and_test\parent _ bug.xlsx" />
+    <None Include="_PROJECT\diagrams.eap" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Images\Untitled1.png" />
