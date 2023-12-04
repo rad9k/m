@@ -1750,7 +1750,7 @@ namespace m0.ZeroCode
 
             BaseEdge = new EasyEdge(null, null, v);
 
-            BaseEdge = _graphBaseEdge; // no linearization
+           // BaseEdge = _graphBaseEdge; // no linearization was usefull when it gone wrong (where?)
         }
 
         public string Process(IEdge _graphBaseEdge)

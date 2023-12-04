@@ -154,8 +154,6 @@ namespace m0.ZeroCode
             return linearizedVertex;
         }
 
-
-
         static public void GraphDebug(IVertex v, string fileName)
         {
             StringBuilder file = new StringBuilder();
