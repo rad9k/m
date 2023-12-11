@@ -17,7 +17,7 @@ namespace m0.ZeroCode
 
         ZeroCodeGraph2StringProcessing zcg2sp;
 
-        IList<IVertex> linkBeenList;
+        HashSet<IVertex> linkBeenList;
 
         IEdge parent;
 
@@ -55,7 +55,7 @@ namespace m0.ZeroCode
             if (zcg2sp.VerticesDictionary.ContainsKey(v))
                 return zcg2sp.VerticesDictionary[v].LinkString;
 
-            linkBeenList = new List<IVertex>();
+            linkBeenList = new HashSet<IVertex>();
 
             shortestLink = "LINK NOT FOUND";
             shortestLinkLength = 99999;
@@ -441,8 +441,8 @@ namespace m0.ZeroCode
     {
         public IEdge BaseEdge;
 
-        public IList<IEdge> BeenList;
-        public IList<IEdge> BeenList_Keyword;
+        public HashSet<IEdge> BeenList;
+        public HashSet<IEdge> BeenList_Keyword;
 
         public StringBuilder Source;
 
@@ -1760,8 +1760,8 @@ namespace m0.ZeroCode
         {       
             prepareBaseEdge(_graphBaseEdge);
 
-            BeenList = new List<IEdge>();
-            BeenList_Keyword = new List<IEdge>();
+            BeenList = new HashSet<IEdge>();
+            BeenList_Keyword = new HashSet<IEdge>();
             Source = new StringBuilder();
             Imports = new Dictionary<IVertex, IList<IVertex>>();
             VerticesDictionary = new Dictionary<IVertex, VertexData>();
