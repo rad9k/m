@@ -1401,7 +1401,7 @@ namespace m0.ZeroCode
             return null;
         }
 
-        public IList<IEdge> MatchGraphs(IEdge edgeToCheck, IVertex graphToCompare, out string newValueString)
+        public IList<IEdge> MatchGraphs(IEdge edgeToCheck, IVertex keywordToCompare, out string newValueString)
         {
             newValueString = null;
 
@@ -1414,7 +1414,7 @@ namespace m0.ZeroCode
             IVertex firstMatchingEdgesInGraphToCompare;
 
             
-            firstMatchingEdgesInGraphToCompare = graphToCompare.GetAll(false, "\'" + edgeToCheck.Meta.ToString() + "\':");
+            firstMatchingEdgesInGraphToCompare = keywordToCompare.GetAll(false, "\'" + edgeToCheck.Meta.ToString() + "\':");
 
             IEdge firstMatchEdgeInGraphToCompare = null;
 
@@ -1430,7 +1430,7 @@ namespace m0.ZeroCode
 
             if (firstMatchEdgeInGraphToCompare == null) // lets try with (?<ANY>) @ meta
             {
-                firstMatchingEdgesInGraphToCompare = graphToCompare.GetAll(false, "'(?<ANY>)':");
+                firstMatchingEdgesInGraphToCompare = keywordToCompare.GetAll(false, "'(?<ANY>)':");
 
                 if (firstMatchingEdgesInGraphToCompare.Count() > 0)
                 {
@@ -1445,7 +1445,7 @@ namespace m0.ZeroCode
                     }
                     else
                         if (GraphUtil.GetValueAndCompareStrings(edgeToCheck.To, (String)e.To.Value))
-                        firstMatchEdgeInGraphToCompare = e;
+                            firstMatchEdgeInGraphToCompare = e;
                 }
             }
 
@@ -1458,13 +1458,13 @@ namespace m0.ZeroCode
                // if (GraphUtil.GetValueAndCompareStrings(graphToCompare, "import (?<name>) (?<link>)")
                //     || GraphUtil.GetValueAndCompareStrings(graphToCompare, "import (?<name>) (?<link>) meta"))
 
-                    if (graphToCompare == dict.Import.keywordVertex
-                || graphToCompare == dict.ImportMeta.keywordVertex)
-                        return MatchGraphs_import(edgeToCheck);
+                    if (keywordToCompare == dict.Import.keywordVertex
+                        || keywordToCompare == dict.ImportMeta.keywordVertex)
+                            return MatchGraphs_import(edgeToCheck);
 
                 // end of $ImportMeta and $Import special handling
 
-                        foreach (IEdge keywordEdge in graphToCompare)
+                    foreach (IEdge keywordEdge in keywordToCompare)
                     //if (!IsLink(keywordEdge))
                     {
                         if (keywordEdge == firstMatchEdgeInGraphToCompare)

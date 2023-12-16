@@ -72,10 +72,6 @@ namespace m0.ZeroCode
             foreach (IEdge e in GraphUtil.GetQueryOut(keywords, "$Keyword", null))
                 if (GraphUtil.GetQueryOutCount(e.To, metaFilter, null) > 0)
                     list.Add(e.To);
-
-            //foreach (IEdge e in FormalTextLanguage.GetAll(false, @"Keywords:\$Keyword:{" + Filter + "}"))                            
-            //foreach (IEdge e in GraphUtil.GetQueryOut(keywords, metaFilter, null))
-                //list.Add(e.To);
             
             return list;
         }
