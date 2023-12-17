@@ -6,21 +6,21 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using static m0.ZeroCode.String2ZeroCodeGraphProcessing;
+using static m0.ZeroCode.Text2GraphProcessing;
 
 namespace m0.ZeroCode.Helpers
 {
     public class DictionariesForFormalTextLanguageFactory
     {
-        static Dictionary<IVertex, DictionariesForFormalTextLanguage> dict = new Dictionary<IVertex, DictionariesForFormalTextLanguage>();
+        static Dictionary<IVertex, FormalTextLanguageDictinaries_Text2Graph> dict = new Dictionary<IVertex, FormalTextLanguageDictinaries_Text2Graph>();
 
-        static public DictionariesForFormalTextLanguage Get(IVertex formalTextLanguage)
+        static public FormalTextLanguageDictinaries_Text2Graph Get(IVertex formalTextLanguage)
         {
             if (dict.ContainsKey(formalTextLanguage))
                 return dict[formalTextLanguage];
             else
             {
-                DictionariesForFormalTextLanguage dictionaries = prepareDictionaries_ForFormalTextLanguage(formalTextLanguage);
+                FormalTextLanguageDictinaries_Text2Graph dictionaries = prepareDictionaries_ForFormalTextLanguage(formalTextLanguage);
 
                 dict.Add(formalTextLanguage, dictionaries);
 
@@ -28,9 +28,9 @@ namespace m0.ZeroCode.Helpers
             }
         }
 
-        static private DictionariesForFormalTextLanguage prepareDictionaries_ForFormalTextLanguage(IVertex FormalTextLanguage)
+        static private FormalTextLanguageDictinaries_Text2Graph prepareDictionaries_ForFormalTextLanguage(IVertex FormalTextLanguage)
         {
-            DictionariesForFormalTextLanguage d = new DictionariesForFormalTextLanguage(FormalTextLanguage);
+            FormalTextLanguageDictinaries_Text2Graph d = new FormalTextLanguageDictinaries_Text2Graph(FormalTextLanguage);
 
             prepareImportList_FormalTextLanguage(d, FormalTextLanguage);
 
@@ -131,7 +131,7 @@ namespace m0.ZeroCode.Helpers
             return d;
         }
 
-        static void addInstructions(DictionariesForFormalTextLanguage d)
+        static void addInstructions(FormalTextLanguageDictinaries_Text2Graph d)
         {
             IVertex root = MinusZero.Instance.root;
 
@@ -146,12 +146,12 @@ namespace m0.ZeroCode.Helpers
             {
                 addInstructions_checkInstruction(d, e.To);
 
-                foreach(IEdge ee in e.To)
+                foreach (IEdge ee in e.To)
                     addInstructions_checkInstruction(d, ee.To);
             }
         }
 
-        static void addInstructions_checkInstruction(DictionariesForFormalTextLanguage d, IVertex v)
+        static void addInstructions_checkInstruction(FormalTextLanguageDictinaries_Text2Graph d, IVertex v)
         {
             if (GraphUtil.ExistQueryOut(v, "$$NextAtomRoot", null))
                 d.instructions_NextAtomRoot.Add(v);
@@ -160,7 +160,7 @@ namespace m0.ZeroCode.Helpers
                 d.instructions_HasNextEdge.Add(v);
         }
 
-        static void prepareImportList_FormalTextLanguage(DictionariesForFormalTextLanguage d, IVertex FormalTextLanguage)
+        static void prepareImportList_FormalTextLanguage(FormalTextLanguageDictinaries_Text2Graph d, IVertex FormalTextLanguage)
         {
             //IVertex formalTextLanguageDefaultImports = FormalTextLanguage.Get(false, "DefaultImports:");                
             IVertex formalTextLanguageDefaultImports = GraphUtil.GetQueryOutFirst(FormalTextLanguage, "DefaultImports", null);
@@ -199,7 +199,7 @@ namespace m0.ZeroCode.Helpers
 
         }
 
-        static private void prepareSpecialKeywordsGroups(DictionariesForFormalTextLanguage d, IVertex FormalTextLanguage)
+        static private void prepareSpecialKeywordsGroups(FormalTextLanguageDictinaries_Text2Graph d, IVertex FormalTextLanguage)
         {
             d.emptyKeywordByGroupsDictionary = ZeroCodeUtil.GetFilteredKeywordListByGroup(FormalTextLanguage, "$$EmptyKeyword");
 
@@ -225,7 +225,7 @@ namespace m0.ZeroCode.Helpers
             return false;
         }
 
-        static private void addKeywordsSubstrings(DictionariesForFormalTextLanguage d, string keywordString)
+        static private void addKeywordsSubstrings(FormalTextLanguageDictinaries_Text2Graph d, string keywordString)
         {
             if (keywordString == "")
                 return;
@@ -290,7 +290,7 @@ namespace m0.ZeroCode.Helpers
             addSubString(d, keywordString.Substring(prevPos, keywordPos - prevPos), isFirstAdd);
         }
 
-        static private void addSubString(DictionariesForFormalTextLanguage d, string subString, bool isFirstAdd)
+        static private void addSubString(FormalTextLanguageDictinaries_Text2Graph d, string subString, bool isFirstAdd)
         {
             subString = subString.Trim();
 
@@ -299,7 +299,7 @@ namespace m0.ZeroCode.Helpers
 
             addSubString_dictionary(d.allKeywordsSubstringsDictionary, subString);
 
-            if(isFirstAdd)
+            if (isFirstAdd)
                 addSubString_dictionary(d.allKeywordsSubstringsDictionary_onlyFirstPart, subString);
 
             if (!Char.IsLetter(subString[0]))
@@ -337,7 +337,7 @@ namespace m0.ZeroCode.Helpers
 
         }
 
-        static private void PrepareKeywordInfo(DictionariesForFormalTextLanguage d, keywordTryingData ktd)
+        static private void PrepareKeywordInfo(FormalTextLanguageDictinaries_Text2Graph d, keywordTryingData ktd)
         {
             KeywordInfo ki = new KeywordInfo();
 
@@ -361,7 +361,7 @@ namespace m0.ZeroCode.Helpers
             d.keywordInfoDict.Add(ktd.keywordVertex, ki);
         }
 
-        static private void AddSpaceToAllKeywordsSubstringsDictionaries(DictionariesForFormalTextLanguage d)
+        static private void AddSpaceToAllKeywordsSubstringsDictionaries(FormalTextLanguageDictinaries_Text2Graph d)
         {
             List<string> l = new List<string>();
 
@@ -377,7 +377,7 @@ namespace m0.ZeroCode.Helpers
                 d.allKeywordsSubstringsPositiveDictionary_witchoutLinkKeywordParts.Add(' ', l);
         }
 
-        static private void PrepareNegativeNegativeDictionary_witchoutLinkKeywordParts(DictionariesForFormalTextLanguage d)
+        static private void PrepareNegativeNegativeDictionary_witchoutLinkKeywordParts(FormalTextLanguageDictinaries_Text2Graph d)
         {
             foreach (string s in d.CodeViewTimeLinkKeywordParts)
             {
@@ -385,142 +385,6 @@ namespace m0.ZeroCode.Helpers
 
                 GeneralUtil.DictionaryAdd<char, string>(d.allKeywordsSubstringsNegativeDictionary_witchoutLinkKeywordParts, key, s);
             }
-        }
-    }
-
-    public class ImportInformation
-    {
-        public IVertex keywordVertex;
-        public string regexpString;
-    }
-
-    public class DictionariesForFormalTextLanguage
-    {
-        public IDictionary<string, IList<IVertex>> emptyKeywordByGroupsDictionary;
-        public IDictionary<string, IList<IVertex>> newVertexKeywordByGroupsDictionary;
-        public IDictionary<string, IList<IVertex>> linkKeywordByGroupsDictionary;
-        public IDictionary<string, List<keywordTryingData>> examinedKeywords_All; // all keywords are here
-        public IDictionary<string, List<keywordTryingData>> examinedKeywords_StartInLocalRootOnly; // StartInLocalRoot only?
-        public IDictionary<char, List<string>> allKeywordsSubstringsDictionary;
-        public IDictionary<char, List<string>> allKeywordsSubstringsDictionary_onlyFirstPart;      
-        public IDictionary<char, List<string>> allKeywordsSubstringsDictionary_witchoutAlpha;
-        public IDictionary<char, List<string>> allKeywordsSubstringsPositiveDictionary_witchoutLinkKeywordParts;
-        public Dictionary<char, List<string>> allKeywordsSubstringsNegativeDictionary_witchoutLinkKeywordParts;
-
-        public HashSet<IVertex> instructions_NextAtomRoot;
-        public HashSet<IVertex> instructions_HasNextEdge;
-
-
-        public IDictionary<IVertex, KeywordInfo> keywordInfoDict;
-
-        public IVertex importList = MinusZero.Instance.CreateTempVertex();
-        public IVertex importMetaList = MinusZero.Instance.CreateTempVertex();
-        public IVertex importDirectList = MinusZero.Instance.CreateTempVertex();
-        public IVertex importDirectMetaList = MinusZero.Instance.CreateTempVertex();
-
-
-        public string CRLFoperator;
-        public string MetaSeparator;
-        public string CodeGraphVertexPrefix;
-        public string CodeGraphVertexSuffix;
-        public char LineContinuationPrefix;
-        public char CodeGraphLinkPrefix;
-        public string CodeGraphLinkKeywordPrefix; // we store it here and in the textlanguage
-        public char NewVertexPrefix;
-        public char NewVertexSuffix;
-        public char EscapedSequencePrefix;
-        public char EscapedSequenceSuffix;
-        public char EscapeCharacter;
-        public string SetIndexPrefix;
-        public string SetIndexPostfix;
-        public char QuerySlash;
-        public IVertex NextAtomMeta;
-
-        public HashSet<string> CodeViewTimeLinkKeywordParts;
-
-        public ImportInformation Import;
-        public ImportInformation ImportMeta;
-        public ImportInformation ImportDirect;
-        public ImportInformation ImportDirectMeta;
-
-        string get(string what)
-        {
-            IVertex v = GraphUtil.GetQueryOutFirst(FormalTextLanguage, what, null);
-
-            if (v != null)
-                return v.Value.ToString();
-
-            return null;
-        }
-
-        HashSet<string> getHashSet(string what)
-        {
-            IList<IEdge> v = GraphUtil.GetQueryOut(FormalTextLanguage, what, null);
-
-            HashSet<string> set = new HashSet<string>();
-
-            foreach (IEdge e in v)
-                set.Add(e.To.Value.ToString());
-
-            return set;
-        }
-
-        ImportInformation getImportInformation(string metaIdentyfication)
-        {
-            IVertex keywords = GraphUtil.GetQueryOutFirst(FormalTextLanguage, "Keywords", null);
-
-            foreach(IEdge e in keywords)
-            {
-                IVertex importInfo = GraphUtil.GetQueryOutFirst(e.To, metaIdentyfication, null);
-
-                if (importInfo != null)
-                {
-                    ImportInformation i = new ImportInformation();
-                    i.keywordVertex = e.To;
-                    i.regexpString = importInfo.Value.ToString();
-
-                    return i;
-                }
-            }
-
-            return null;
-        }
-
-        IVertex FormalTextLanguage;
-
-        public DictionariesForFormalTextLanguage(IVertex formalTextLanguage)
-        {
-            FormalTextLanguage = formalTextLanguage;
-
-            importList.AddExternalReference();
-            importMetaList.AddExternalReference();
-            importDirectList.AddExternalReference();
-            importDirectMetaList.AddExternalReference();
-
-            CRLFoperator = get("CRLFoperator");
-            MetaSeparator = get("MetaSeparator");
-            CodeGraphVertexPrefix = get("CodeGraphVertexPrefix");
-            CodeGraphVertexSuffix = get("CodeGraphVertexSuffix");
-            LineContinuationPrefix = get("LineContinuationPrefix").ToCharArray()[0];
-            CodeGraphLinkPrefix = get("CodeGraphLinkPrefix").ToCharArray()[0];
-            CodeGraphLinkKeywordPrefix = get("CodeGraphLinkKeywordPrefix"); // we store it here and in the textlanguage
-            NewVertexPrefix = get("NewVertexPrefix").ToCharArray()[0];
-            NewVertexSuffix = get("NewVertexSuffix").ToCharArray()[0];
-            EscapedSequencePrefix = get("EscapedSequencePrefix").ToCharArray()[0];
-            EscapedSequenceSuffix = get("EscapedSequenceSuffix").ToCharArray()[0];
-            EscapeCharacter = get("EscapeCharacter").ToCharArray()[0];
-            SetIndexPrefix = get("SetIndexPrefix");
-            SetIndexPostfix = get("SetIndexPostfix");
-            QuerySlash = get("QuerySlash").ToCharArray()[0];
-
-            NextAtomMeta = GraphUtil.GetQueryOutFirst(FormalTextLanguage, "NextAtomEdge", null);
-
-            CodeViewTimeLinkKeywordParts = getHashSet("CodeViewTimeLinkKeywordPart");
-
-            Import = getImportInformation("$$Import");
-            ImportMeta = getImportInformation("$$ImportMeta");
-            ImportDirect = getImportInformation("$$ImportDirect");
-            ImportDirectMeta = getImportInformation("$$ImportDirectMeta");
         }
     }
 }

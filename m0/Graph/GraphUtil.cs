@@ -103,9 +103,9 @@ namespace m0.Graph
         {
             string text = System.IO.File.ReadAllText(fileName);
 
-            String2ZeroCodeGraphProcessing.TEST_RUN = true;
+            Text2GraphProcessing.TEST_RUN = true;
             MinusZero.Instance.DefaultFormalTextParser.Parse(baseVertex, text);
-            String2ZeroCodeGraphProcessing.TEST_RUN = false;
+            Text2GraphProcessing.TEST_RUN = false;
         }
 
         public static void LoadParseAndMove(string fileName, IVertex baseVertex, string vertexName)
@@ -559,7 +559,7 @@ namespace m0.Graph
                     to.Add(e);
         }
 
-        public static string GetQueryStringPart_MetaMode(DictionariesForFormalTextLanguage dict, IVertex meta, IVertex to)
+        public static string GetQueryStringPart_MetaMode(FormalTextLanguageDictinaries_Text2Graph dict, IVertex meta, IVertex to)
         {
             if (GeneralUtil.CompareStrings(meta.ToString(), "$Empty"))
                 return ZeroCodeCommon.stringToPossiblyEscapedString(dict, to.ToString());
@@ -567,7 +567,7 @@ namespace m0.Graph
                 return ZeroCodeCommon.stringToPossiblyEscapedString(dict, meta.ToString()) + dict.MetaSeparator + ZeroCodeCommon.stringToPossiblyEscapedString(dict, to.ToString());
         }
 
-        public static string GetIdentyfyingQuerySubString_MetaMode(DictionariesForFormalTextLanguage dict, IEdge e) // this is used in String2Graph, so we need to reference ZeroCodeCommon.MetaSeparator
+        public static string GetIdentyfyingQuerySubString_MetaMode(FormalTextLanguageDictinaries_Text2Graph dict, IEdge e) // this is used in String2Graph, so we need to reference ZeroCodeCommon.MetaSeparator
         {
             if (VertexOperations.IsToVertexEnoughToIdentifyEdge(e.From, e.To))
                 return ZeroCodeCommon.stringToPossiblyEscapedString(dict, e.To.ToString()+""); // there was no ToString. might cause problems. XXX why this "" as we do not have null To?

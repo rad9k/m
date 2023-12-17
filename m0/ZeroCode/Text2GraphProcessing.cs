@@ -10,7 +10,7 @@ using System.Text.RegularExpressions;
 
 namespace m0.ZeroCode
 {
-    public class String2ZeroCodeGraphProcessing 
+    public class Text2GraphProcessing 
     {
         public class TextRange
         {
@@ -33,7 +33,7 @@ namespace m0.ZeroCode
 
             //
 
-            String2ZeroCodeGraphProcessing processing;
+            Text2GraphProcessing processing;
 
             public ParsingStack parentStack;
 
@@ -61,7 +61,7 @@ namespace m0.ZeroCode
             public Dictionary<object, TextRange> subTextRanges;            
 
 
-            public ParsingStack(String2ZeroCodeGraphProcessing _parent, ParsingStack _parentStack, int _begLine, int _endLine)
+            public ParsingStack(Text2GraphProcessing _parent, ParsingStack _parentStack, int _begLine, int _endLine)
             {
                 processing = _parent;
                 parentStack = _parentStack;
@@ -250,7 +250,7 @@ namespace m0.ZeroCode
 
 
 
-        DictionariesForFormalTextLanguage dict;        
+        FormalTextLanguageDictinaries_Text2Graph dict;        
 
         // PARSER AUTO TEST SECTION
 
@@ -578,7 +578,7 @@ namespace m0.ZeroCode
 
         public class keywordTryingData
         {
-            public String2ZeroCodeGraphProcessing parent;
+            public Text2GraphProcessing parent;
             public IVertex keywordVertex;
             public String keyword;
 
@@ -615,7 +615,7 @@ namespace m0.ZeroCode
 
             bool lastCharWasSkippedSpace; // space support            
 
-            public keywordTryingData(keywordTryingData source, String2ZeroCodeGraphProcessing _parent)
+            public keywordTryingData(keywordTryingData source, Text2GraphProcessing _parent)
             {                
                 parent = _parent;
                 keywordVertex = source.keywordVertex;
@@ -653,7 +653,7 @@ namespace m0.ZeroCode
                 }
             }
 
-            public keywordTryingData(IVertex k, String2ZeroCodeGraphProcessing _processing)
+            public keywordTryingData(IVertex k, Text2GraphProcessing _processing)
             {
                 parent = _processing;
                 keywordVertex = k;
@@ -2894,7 +2894,7 @@ namespace m0.ZeroCode
             importDirectMetaList.AddExternalReference();
         }
 
-        public String2ZeroCodeGraphProcessing(IVertex formalTextLanguage)
+        public Text2GraphProcessing(IVertex formalTextLanguage)
         {
             FormalTextLanguage = formalTextLanguage;
 

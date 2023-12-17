@@ -11,9 +11,9 @@ namespace m0.ZeroCode
     public class ZeroCodeEngine : IFormalTextGenerator, IFormalTextParser, IExecuter
     {             
         ZeroCodeExecuter ZeroCodeExecuter_Instance;
-        ZeroCodeGraph2StringProcessing ZeroCodeGraph2StringProcessing_Instance;
+        Graph2TextProcessing ZeroCodeGraph2StringProcessing_Instance;
         
-        Dictionary<IVertex, ZeroCodeGraph2StringProcessing> ZeroCodeGraph2StringProcessing_InstanceDictionary = new Dictionary<IVertex, ZeroCodeGraph2StringProcessing>();
+        Dictionary<IVertex, Graph2TextProcessing> ZeroCodeGraph2StringProcessing_InstanceDictionary = new Dictionary<IVertex, Graph2TextProcessing>();
 
         public IVertex Execute(IVertex baseVertex, IVertex expression)
         {            
@@ -37,7 +37,7 @@ namespace m0.ZeroCode
 
         public IVertex Parse(IVertex formalTextLanguage, IVertex rootVertex, string text)
         {
-            String2ZeroCodeGraphProcessing instance = new String2ZeroCodeGraphProcessing(formalTextLanguage);            
+            Text2GraphProcessing instance = new Text2GraphProcessing(formalTextLanguage);            
 
             return instance.Process(rootVertex, text);
         }
@@ -49,13 +49,13 @@ namespace m0.ZeroCode
 
         public string Generate(IVertex formalTextLanguage, IEdge graphBaseEdge)
         {
-            ZeroCodeGraph2StringProcessing instance;
+            Graph2TextProcessing instance;
 
             if (ZeroCodeGraph2StringProcessing_InstanceDictionary.ContainsKey(formalTextLanguage))
                 instance = ZeroCodeGraph2StringProcessing_InstanceDictionary[formalTextLanguage];
             else
             {
-                instance = new ZeroCodeGraph2StringProcessing(formalTextLanguage);
+                instance = new Graph2TextProcessing(formalTextLanguage);
 
                 ZeroCodeGraph2StringProcessing_InstanceDictionary.Add(formalTextLanguage, instance);
             }
@@ -66,7 +66,7 @@ namespace m0.ZeroCode
         public ZeroCodeEngine()
         {            
             ZeroCodeExecuter_Instance = new ZeroCodeExecuter();
-            ZeroCodeGraph2StringProcessing_Instance = new ZeroCodeGraph2StringProcessing(MinusZero.Instance.DefaultFormalTextLanguage);
+            ZeroCodeGraph2StringProcessing_Instance = new Graph2TextProcessing(MinusZero.Instance.DefaultFormalTextLanguage);
         }
     }
 }

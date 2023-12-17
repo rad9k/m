@@ -15,7 +15,7 @@ namespace m0.ZeroCode
     {
         IVertex Vertex;
 
-        ZeroCodeGraph2StringProcessing zcg2sp;
+        Graph2TextProcessing zcg2sp;
 
         HashSet<IVertex> linkBeenList;
 
@@ -24,9 +24,9 @@ namespace m0.ZeroCode
         string shortestLink;
         int shortestLinkLength;
 
-        DictionariesForFormalTextLanguage dict;
+        FormalTextLanguageDictinaries_Text2Graph dict;
 
-        public string Process(DictionariesForFormalTextLanguage _dict, ZeroCodeGraph2StringProcessing _zcg2sp, IVertex v, IEdge _parent)
+        public string Process(FormalTextLanguageDictinaries_Text2Graph _dict, Graph2TextProcessing _zcg2sp, IVertex v, IEdge _parent)
         {
             dict = _dict;
 
@@ -81,7 +81,7 @@ namespace m0.ZeroCode
             return shortestLink;
         }
 
-        static void Append(DictionariesForFormalTextLanguage dict, StringBuilder s, IVertex v)
+        static void Append(FormalTextLanguageDictinaries_Text2Graph dict, StringBuilder s, IVertex v)
         {
             if (v == null || v.Value==null)
                 return;
@@ -97,7 +97,7 @@ namespace m0.ZeroCode
             s.Append(ZeroCodeCommon.stringToPossiblyEscapedString(dict, v.Value.ToString()));
         }
 
-        public static string GetStringFromEdgesList(DictionariesForFormalTextLanguage dict, List<IEdge> edgesList, bool isImportMeta)
+        public static string GetStringFromEdgesList(FormalTextLanguageDictinaries_Text2Graph dict, List<IEdge> edgesList, bool isImportMeta)
         {
             StringBuilder s = new StringBuilder();
 
@@ -121,7 +121,7 @@ namespace m0.ZeroCode
                     if (isImportMeta)
                     {
                         if (!VertexOperations.IsToVertexEnoughToIdentifyEdge(e.From, e.To)
-                            && !ZeroCodeGraph2StringProcessing.IsNullOrEmpty(e.Meta))
+                            && !Graph2TextProcessing.IsNullOrEmpty(e.Meta))
                         {
                             Append(dict, toAppend, e.Meta);
 
@@ -307,16 +307,16 @@ namespace m0.ZeroCode
     {
         IVertex Vertex;
 
-        ZeroCodeGraph2StringProcessing zcg2sp;
+        Graph2TextProcessing zcg2sp;
 
         IList<IVertex> linkBeenList;
 
         string shortestLink;
         int shortestLinkLength;
 
-        DictionariesForFormalTextLanguage dict;
+        FormalTextLanguageDictinaries_Text2Graph dict;
 
-        public string Process(DictionariesForFormalTextLanguage _dict, ZeroCodeGraph2StringProcessing _zcg2sp, IVertex v)
+        public string Process(FormalTextLanguageDictinaries_Text2Graph _dict, Graph2TextProcessing _zcg2sp, IVertex v)
         {
             dict = _dict;
 
@@ -392,7 +392,7 @@ namespace m0.ZeroCode
 		//}
         //}	
 
-    public KeywordMatch(IVertex _KeywordDefinition, ZeroCodeGraph2StringProcessing processing)
+    public KeywordMatch(IVertex _KeywordDefinition, Graph2TextProcessing processing)
         {
             KeywordDefinition = _KeywordDefinition;
 
@@ -437,7 +437,7 @@ namespace m0.ZeroCode
         }
     }
 
-    class ZeroCodeGraph2StringProcessing
+    class Graph2TextProcessing
     {
         public IEdge BaseEdge;
 
@@ -459,9 +459,9 @@ namespace m0.ZeroCode
         IList<IVertex> newVertexKeywordVertexList;
         IList<IVertex> emptyKeywordVertexList;
 
-        DictionariesForFormalTextLanguage dict;
+        FormalTextLanguageDictinaries_Text2Graph dict;
 
-        public ZeroCodeGraph2StringProcessing(IVertex formalTextLanguage)
+        public Graph2TextProcessing(IVertex formalTextLanguage)
         {
             FormalTextLanguage = formalTextLanguage;
 
