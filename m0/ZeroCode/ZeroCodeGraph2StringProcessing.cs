@@ -1335,25 +1335,22 @@ namespace m0.ZeroCode
             
             bool toReturn = false;
 
-           // foreach (IEdge searchResult in parentToCheck)
             foreach (IEdge searchResult in GraphUtil.GetQueryOut(parentToCheck,searchString_firstPart, searchString_secondPart))
-          //      if(GeneralUtil.CompareStrings(searchString_firstPart,searchResult.Meta.Value)&& 
-            //        (searchString_secondPart == "" || GeneralUtil.CompareStrings(searchString_secondPart, searchResult.To.Value)))
-                    if (!currentMatchGraphEdgeList.Contains(searchResult))
-                        {
-                            if (!VertexOperations.IsLink(keywordEdge))
-                                foreach (IEdge subKeywordEdge in keywordEdge.To)
-                                    if (!ZeroCodeUtil.IsDoubleDolarMeta(subKeywordEdge)
-                                        && GetGraphMatch(searchResult.To, subKeywordEdge) == false)
-                                        return false;
+                if (!currentMatchGraphEdgeList.Contains(searchResult))
+                    {
+                        if (!VertexOperations.IsLink(keywordEdge))
+                            foreach (IEdge subKeywordEdge in keywordEdge.To)
+                                if (!ZeroCodeUtil.IsDoubleDolarMeta(subKeywordEdge)
+                                    && GetGraphMatch(searchResult.To, subKeywordEdge) == false)
+                                    return false;
 
-                            currentMatchGraphEdgeList.Add(searchResult);
+                        currentMatchGraphEdgeList.Add(searchResult);
 
-                            if (keywordEdge.To.Get(false, "$$KeywordManyRoot:") == null)
-                                return true;
-                            else
-                                toReturn = true; 
-                        }                                
+                        if (keywordEdge.To.Get(false, "$$KeywordManyRoot:") == null)
+                            return true;
+                        else
+                            toReturn = true; 
+                    }                                
 
             if (keywordEdge.To.Get(false, "$$KeywordManyRoot:") != null || keywordEdge.To.Get(false, "$$LocalRoot:") != null)
                 return true;
@@ -1365,17 +1362,17 @@ namespace m0.ZeroCode
 
         public IList<IEdge> MatchGraphs_import(IEdge edgeToCheck)
         {
-            IEdge secondEdge = edgeToCheck.From.GetAll(false, ZeroCodeCommon.stringToPossiblyEscapedString(dict, edgeToCheck.To.ToString()) + ":").FirstOrDefault();
+            // IEdge secondEdge = edgeToCheck.From.GetAll(false, ZeroCodeCommon.stringToPossiblyEscapedString(dict, edgeToCheck.To.ToString()) + ":").FirstOrDefault();
+
+            IEdge secondEdge = GraphUtil.GetQueryOutFirstEdge(edgeToCheck.From, ZeroCodeCommon.stringToPossiblyEscapedString(dict, edgeToCheck.To.ToString()), null);
 
             if (secondEdge != null)
             {
                 foreach(IEdge e in edgeToCheck.To)
                     currentMatchGraphEdgeList.Add(e);
 
-                //IEdge isLink = edgeToCheck.To.OutEdges[0];
-                //currentMatchGraphEdgeList.Add(isLink);
-
                 currentMatchGraphEdgeList.Add(secondEdge);
+
                 return currentMatchGraphEdgeList;
             }
 
@@ -1388,14 +1385,11 @@ namespace m0.ZeroCode
 
             currentMatchGraphEdgeList = new List<IEdge>();
 
-            //IVertex firstMatchingEdgesInGraphToCompare = graphToCompare.GetAll(false, ZeroCodeCommon.stringToPossiblyEscapedString(edgeToCheck.Meta.ToString()) + ":");
+            IList<IEdge> firstMatchingEdgesInGraphToCompare;
 
-            //IVertex firstMatchingEdgesInGraphToCompare = graphToCompare.GetAll(false, "\'"+edgeToCheck.Meta.ToString() + "\':");
+            //firstMatchingEdgesInGraphToCompare = keywordToCompare.GetAll(false, "\'" + edgeToCheck.Meta.ToString() + "\':");
 
-            IVertex firstMatchingEdgesInGraphToCompare;
-
-            
-            firstMatchingEdgesInGraphToCompare = keywordToCompare.GetAll(false, "\'" + edgeToCheck.Meta.ToString() + "\':");
+            firstMatchingEdgesInGraphToCompare = GraphUtil.GetQueryOut(keywordToCompare, edgeToCheck.Meta.ToString(), null);
 
             IEdge firstMatchEdgeInGraphToCompare = null;
 
@@ -1411,7 +1405,9 @@ namespace m0.ZeroCode
 
             if (firstMatchEdgeInGraphToCompare == null) // lets try with (?<ANY>) @ meta
             {
-                firstMatchingEdgesInGraphToCompare = keywordToCompare.GetAll(false, "'(?<ANY>)':");
+                //firstMatchingEdgesInGraphToCompare = keywordToCompare.GetAll(false, "'(?<ANY>)':");
+
+                firstMatchingEdgesInGraphToCompare = GraphUtil.GetQueryOut(keywordToCompare, "(?<ANY>)", null);
 
                 if (firstMatchingEdgesInGraphToCompare.Count() > 0)
                 {
@@ -1436,29 +1432,24 @@ namespace m0.ZeroCode
 
                 // if this is $ImportMeta or $Import we will handle it separetly
 
-               // if (GraphUtil.GetValueAndCompareStrings(graphToCompare, "import (?<name>) (?<link>)")
-               //     || GraphUtil.GetValueAndCompareStrings(graphToCompare, "import (?<name>) (?<link>) meta"))
+                if (keywordToCompare == dict.Import.keywordVertex
+                    || keywordToCompare == dict.ImportMeta.keywordVertex)
+                        return MatchGraphs_import(edgeToCheck);
 
-                    if (keywordToCompare == dict.Import.keywordVertex
-                        || keywordToCompare == dict.ImportMeta.keywordVertex)
-                            return MatchGraphs_import(edgeToCheck);
-
-                // end of $ImportMeta and $Import special handling
-
-                    foreach (IEdge keywordEdge in keywordToCompare)
-                    //if (!IsLink(keywordEdge))
+                foreach (IEdge keywordEdge in keywordToCompare)
+                //if (!IsLink(keywordEdge))
+                {
+                    if (keywordEdge == firstMatchEdgeInGraphToCompare)
                     {
-                        if (keywordEdge == firstMatchEdgeInGraphToCompare)
-                        {
-                            foreach (IEdge keywordEdgeNested in firstMatchEdgeInGraphToCompare.To)
-                               // if (!IsLink(keywordEdgeNested))
-                                if (GetGraphMatch(edgeToCheck.To, keywordEdgeNested) == false)
-                                    return null;                                                                 
-                        }
-                        else
-                          if (GetGraphMatch(edgeToCheck.From, keywordEdge) == false)
-                                return null;                       
+                        foreach (IEdge keywordEdgeNested in firstMatchEdgeInGraphToCompare.To)
+                            // if (!IsLink(keywordEdgeNested))
+                            if (GetGraphMatch(edgeToCheck.To, keywordEdgeNested) == false)
+                                return null;                                                                 
                     }
+                    else
+                        if (GetGraphMatch(edgeToCheck.From, keywordEdge) == false)
+                            return null;                       
+                }
             }
 
             return currentMatchGraphEdgeList;
@@ -1480,18 +1471,9 @@ namespace m0.ZeroCode
 
         public void CheckVertexIfItMachesAnyKeywordGraphs(IEdge edgeToCheck, string path, IEdge edgeToCheck_parent)
         {
-            //if (KeywordMatchedSubGraphEdges.ContainsKey(edgeToCheck))
-            //   return;
-
-            bool thereWasMatch = false;
-
             foreach (IEdge keyword in FormalTextLanguage.GetAll(false, @"Keywords:\$Keyword:"))
                 if (!newVertexKeywordVertexList.Contains(keyword.To))
-                    if (CheckMatchForKeywordAndAddKeywordMatchIfThereIsMatch(edgeToCheck, path, edgeToCheck_parent, keyword.To))
-                        thereWasMatch = true;
-
-            //if(!thereWasMatch && !KeywordMatchedSubGraphEdges.ContainsKey(edgeToCheck)) // WE CAN HAVE KEYWORD MATCH FOR NEW VERTEX HERE!
-              //  CheckMatchForKeywordAndAddKeywordMatchIfThereIsMatch(edgeToCheck, path, edgeToCheck_parent, newVertexKeywordVertexList[0]);
+                    CheckMatchForKeywordAndAddKeywordMatchIfThereIsMatch(edgeToCheck, path, edgeToCheck_parent, keyword.To) ;
         }
 
         private bool CheckMatchForKeywordAndAddKeywordMatchIfThereIsMatch(IEdge edgeToCheck, string path, IEdge edgeToCheck_parent, IVertex keywordVertex)
@@ -1511,24 +1493,13 @@ namespace m0.ZeroCode
                 if (newValueKeyword != null)
                     match.newValue = newValueKeyword;
 
-                // match.BaseEdge = matchedEdges[0];
-                match.BaseEdge = edgeToCheck; // same as above
+                match.BaseEdge = edgeToCheck; 
                 match.BaseEdgePath = path;
 
                 match.BaseEdgePathLength = getNumberOfOccurances(match.BaseEdgePath, '\\');
 
-                /*if (KeywordMatchedSubGraphEdges.ContainsKey(edgeToCheck_parent))
-                {
-                    KeywordMatch match_parent = KeywordMatchedSubGraphEdges[edgeToCheck_parent];
-
-                    if (match_parent.DoKeywordDefinitionContainLocalRoot && match.DoKeywordDefinitionContainStartInLocalRoot)
-                        match.IsStartInLocalRoot = true;
-                }
-                else
-                {*/
-                    if (!GraphUtil.GetValueAndCompareStrings(edgeToCheck.Meta, "$Empty") && match.DoKeywordDefinitionContainStartInLocalRoot)
-                        match.IsStartInLocalRoot = true; // XXX this is done for "a"\
-                //} // XXX
+                if (!GraphUtil.GetValueAndCompareStrings(edgeToCheck.Meta, "$Empty") && match.DoKeywordDefinitionContainStartInLocalRoot)
+                    match.IsStartInLocalRoot = true; // XXX this is done for "a"\
 
                 foreach (IEdge e in matchedEdges)
                 {
@@ -1553,27 +1524,12 @@ namespace m0.ZeroCode
                                 KeywordMatchedSubGraphEdges.Remove(e);
                                 KeywordMatchedSubGraphEdges.Add(e, match);
                             }
-
-                            //KeywordMatch oldMatch = KeywordMatchedSubGraphEdges[e];
-
-                            //oldMatch.BaseEdgePath = match.BaseEdgePath;
-                            //oldMatch.BaseEdgePathLength = match.BaseEdgePathLength;
                         }
-
-                        /*  if (KeywordMatchedSubGraphEdges[e].BaseEdge.To != e.To
-                              || 
-                              && match.BaseEdgePathLength < KeywordMatchedSubGraphEdges[e].BaseEdgePathLength) 
-                          {
-                              KeywordMatchedSubGraphEdges.Remove(e);
-                              KeywordMatchedSubGraphEdges.Add(e, match);
-                          }*/
-
                     }
                     else
                         KeywordMatchedSubGraphEdges.Add(e, match);
                 }
             }
-
             return thereWasMatch;
         }
 
@@ -1625,8 +1581,6 @@ namespace m0.ZeroCode
                 suffix = "\\";
 
             foreach (IEdge ee in e.To.OutEdgesRaw)
-            //foreach (IEdge ee in ZeroCodeView.Linearize(e.To))
-            //if (!IsLink(ee))
             {
                     string LinkString = path + suffix + GraphUtil.GetIdentyfyingQuerySubString_MetaMode(dict, ee);
 
@@ -1634,7 +1588,7 @@ namespace m0.ZeroCode
 
                     if (!BeenList.Contains(ee)&&!VertexOperations.IsLink(ee))
                         MatchKeywords(ee, LinkString);
-                }
+            }
         }
 
         void AppendPrefix()
