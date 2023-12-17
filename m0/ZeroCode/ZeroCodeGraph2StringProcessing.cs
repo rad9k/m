@@ -1323,56 +1323,37 @@ namespace m0.ZeroCode
 
         public bool GetGraphMatch(IVertex parentToCheck, IEdge keywordEdge)
         {
-            //if (keywordEdge.To.Get(false, "$$KeywordManyRoot:") != null)
-            // return true; // WTF ???? or Meta? eigher does not work for function parameters
-
             if(ZeroCodeUtil.IsDoubleDolarMeta(keywordEdge))
-            //if (isNotComparableKeywordEdge(keywordEdge.Meta.ToString()))
                 return true;
 
-            //string searchString;
-
             string searchString_firstPart = ZeroCodeCommon.stringToPossiblyEscapedString(dict, keywordEdge.Meta.ToString());
-            string searchString_secondPart = "";
+            string searchString_secondPart = null;
 
             if (!IsKeywordVertexWildcard(keywordEdge.To))
                 //searchString_secondPart = ZeroCodeCommon.stringToPossiblyEscapedString(keywordEdge.To.ToString());
                 searchString_secondPart = keywordEdge.To.ToString();
-
-            //searchString = searchString_firstPart + ":" + searchString_secondPart;
-
-            //IVertex search = parentToCheck.GetAll(false, searchString); // current query implementation does not handle quotas properly : {}, \ keywords does not work properly
-
+            
             bool toReturn = false;
 
-            // foreach (IEdge searchResult in search)
-            foreach (IEdge searchResult in parentToCheck)
-                if(GeneralUtil.CompareStrings(searchString_firstPart,searchResult.Meta.Value)&& 
-                    (searchString_secondPart == "" || GeneralUtil.CompareStrings(searchString_secondPart, searchResult.To.Value)))
-            {
-           
+           // foreach (IEdge searchResult in parentToCheck)
+            foreach (IEdge searchResult in GraphUtil.GetQueryOut(parentToCheck,searchString_firstPart, searchString_secondPart))
+          //      if(GeneralUtil.CompareStrings(searchString_firstPart,searchResult.Meta.Value)&& 
+            //        (searchString_secondPart == "" || GeneralUtil.CompareStrings(searchString_secondPart, searchResult.To.Value)))
+                    if (!currentMatchGraphEdgeList.Contains(searchResult))
+                        {
+                            if (!VertexOperations.IsLink(keywordEdge))
+                                foreach (IEdge subKeywordEdge in keywordEdge.To)
+                                    if (!ZeroCodeUtil.IsDoubleDolarMeta(subKeywordEdge)
+                                        && GetGraphMatch(searchResult.To, subKeywordEdge) == false)
+                                        return false;
 
-                if (/*!KeywordMatchedSubGraphEdges.ContainsKey(searchResult) &&*/ !currentMatchGraphEdgeList.Contains(searchResult))
-                {
-                        if (!VertexOperations.IsLink(keywordEdge))
-                            foreach (IEdge subKeywordEdge in keywordEdge.To)
-                                if (/*!IsLink(subKeywordEdge) 
-                                && !isNotComparableKeywordEdge(subKeywordEdge.Meta.ToString()) // WTF ????*/
-                                !ZeroCodeUtil.IsDoubleDolarMeta(subKeywordEdge)
-                                && GetGraphMatch(searchResult.To, subKeywordEdge) == false)
-                                return false;
+                            currentMatchGraphEdgeList.Add(searchResult);
 
-                    //if (!currentMatchGraphEdgeList.Contains(searchResult))
-                    {
-                        currentMatchGraphEdgeList.Add(searchResult);
-
-                        if (keywordEdge.To.Get(false, "$$KeywordManyRoot:") == null)
-                            return true;
-                        else
-                            toReturn = true; // this is strange. but we are leaving it AS IS. not to break something
-                    }
-                }
-            }
+                            if (keywordEdge.To.Get(false, "$$KeywordManyRoot:") == null)
+                                return true;
+                            else
+                                toReturn = true; 
+                        }                                
 
             if (keywordEdge.To.Get(false, "$$KeywordManyRoot:") != null || keywordEdge.To.Get(false, "$$LocalRoot:") != null)
                 return true;

@@ -134,10 +134,22 @@ namespace m0_SYSTEM_GENERATE
         static void exeTest(IVertex x)
         {
             IVertex code = x.AddVertex(null, "code");
-            IVertex stack = x.AddVertex(null, "stack");
 
+            _exeTest(code);
+            _exeTest(code);
+            _exeTest(code);
+            _exeTest(code);
+            _exeTest(code);
+            _exeTest(code);
+            _exeTest(code);
+            _exeTest(code);
+            _exeTest(code);
+            _exeTest(code);
+        }
 
-            IVertex code1 = code.AddVertex(null, null);
+            static void _exeTest(IVertex code)
+            {
+                IVertex code1 = code.AddVertex(null, null);
             MinusZero.Instance.DefaultFormalTextParser.Parse(code1,
                 "\"Code1\"" + "" +
                 "\r\n\tvariable \"A\" @String" +
