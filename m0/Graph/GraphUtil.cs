@@ -9,6 +9,7 @@ using m0.ZeroTypes;
 using m0.ZeroCode;
 using m0.ZeroCode.Helpers;
 using m0.Store;
+using System.Security.RightsManagement;
 
 namespace m0.Graph
 {
@@ -68,6 +69,16 @@ namespace m0.Graph
             DebugOperationEnum.Value,
             DebugOperationEnum.Dispose
         };
+
+        public static bool IsMetaDoubleDollar(IEdge e)
+        {
+            string meta = e.Meta.Value.ToString();
+
+            if (meta.Length >= 2 && meta[0] == '$' && meta[1] == '$')
+                return true;
+
+            return false;
+        }
 
         public static void Debug(IVertex v, DebugOperationEnum Operation)
         {

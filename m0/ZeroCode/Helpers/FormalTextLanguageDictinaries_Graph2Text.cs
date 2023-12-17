@@ -19,13 +19,34 @@ namespace m0.ZeroCode.Helpers
         {
             formalTextLangugeVertex = _formalTextLangugeVertex;
 
-            createFirstEdge2KeywordVertex();
-            createFirstEdgeIs2KeywordVertex();
-        }
+            firstEdge2KeywordVertex = new Dictionary<string, IVertex>();
+            firstEdgeIs2KeywordVertex = new Dictionary<string, IVertex>();
 
-        void createFirstEdge2KeywordVertex()
-        {
-            IList<IEdge> keywords = GraphUtil.GetQueryOut(formalTextLangugeVertex, "Keywords", null);
+            IVertex keywordsVertex = GraphUtil.GetQueryOutFirst(formalTextLangugeVertex, "Keywords", null);
+
+            foreach(IVertex keyword in GraphUtil.GetQueryOut(keywordsVertex, "$Keyword", null))
+            {
+                IEdge firstEdge = null;
+
+                foreach(IEdge e in keyword)
+                    if (!GraphUtil.IsMetaDoubleDollar(e))
+                    {
+                        firstEdge = e;
+                        break;
+                    }
+
+                if (firstEdge != null)
+                {
+                    string firstEdgeToValue = firstEdge.To.Value.ToString();
+
+                    firstEdge2KeywordVertex.Add(firstEdgeToValue, keyword);
+
+                    IEdge firstEdgeIs = GraphUtil.GetQueryOutFirstEdge(firstEdge.To, "$Is", null);
+
+                    if (firstEdgeIs != null)
+                        firstEdge2KeywordVertex.Add(firstEdgeToValue + "|" + firstEdgeIs.To.Value.ToString(), keyword);
+                }
+            }
         }
 
         void createFirstEdgeIs2KeywordVertex()
