@@ -18,8 +18,8 @@ namespace m0.ZeroCode.Helpers
 
     public class FormalTextLanguageDictinaries_Text2Graph
     {
-        public IDictionary<string, IList<IVertex>> emptyKeywordByGroupsDictionary;
-        public IDictionary<string, IList<IVertex>> newVertexKeywordByGroupsDictionary;
+        public IDictionary<string, IList<IVertex>> emptyKeywordByGroups;
+        public IDictionary<string, IList<IVertex>> newVertexKeywordByGroups;
         public IDictionary<string, IList<IVertex>> linkKeywordByGroupsDictionary;
         public IDictionary<string, List<keywordTryingData>> examinedKeywords_All; // all keywords are here
         public IDictionary<string, List<keywordTryingData>> examinedKeywords_StartInLocalRootOnly; // StartInLocalRoot only?

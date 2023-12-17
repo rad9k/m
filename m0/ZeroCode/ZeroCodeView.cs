@@ -13,7 +13,7 @@ namespace m0.ZeroCode
 {
     public class ZeroCodeView
     {
-        static FormalTextLanguageDictinaries_Text2Graph dict = DictionariesForFormalTextLanguageFactory.Get(
+        static FormalTextLanguageDictinaries_Text2Graph dict = DictionariesForFormalTextLanguageFactory.Get_Text2Graph(
             MinusZero.Instance.Root.Get(false, @"System\FormalTextLanguage\ZeroCode"));
 
         static public INoInEdgeInOutVertexVertex ZeroCodeViewListener(IExecution exe)

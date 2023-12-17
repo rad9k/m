@@ -468,7 +468,7 @@ namespace m0.ZeroCode
             newVertexKeywordVertexList = ZeroCodeUtil.GetFilteredKeywordList(FormalTextLanguage, "$$NewVertexKeyword");
             emptyKeywordVertexList = ZeroCodeUtil.GetFilteredKeywordList(FormalTextLanguage, "$$EmptyKeyword");
 
-            dict = DictionariesForFormalTextLanguageFactory.Get(formalTextLanguage);
+            dict = DictionariesForFormalTextLanguageFactory.Get_Text2Graph(formalTextLanguage);
         }
 
         string Tab = "\t";
@@ -1387,8 +1387,6 @@ namespace m0.ZeroCode
 
             IList<IEdge> firstMatchingEdgesInGraphToCompare;
 
-            //firstMatchingEdgesInGraphToCompare = keywordToCompare.GetAll(false, "\'" + edgeToCheck.Meta.ToString() + "\':");
-
             firstMatchingEdgesInGraphToCompare = GraphUtil.GetQueryOut(keywordToCompare, edgeToCheck.Meta.ToString(), null);
 
             IEdge firstMatchEdgeInGraphToCompare = null;
@@ -1405,8 +1403,6 @@ namespace m0.ZeroCode
 
             if (firstMatchEdgeInGraphToCompare == null) // lets try with (?<ANY>) @ meta
             {
-                //firstMatchingEdgesInGraphToCompare = keywordToCompare.GetAll(false, "'(?<ANY>)':");
-
                 firstMatchingEdgesInGraphToCompare = GraphUtil.GetQueryOut(keywordToCompare, "(?<ANY>)", null);
 
                 if (firstMatchingEdgesInGraphToCompare.Count() > 0)
@@ -1687,8 +1683,6 @@ namespace m0.ZeroCode
             IVertex v = ZeroCodeView.LinearizeGraph(_graphBaseEdge.To);
 
             BaseEdge = new EasyEdge(null, null, v);
-
-           // BaseEdge = _graphBaseEdge; // no linearization was usefull when it gone wrong (where?)
         }
 
         public string Process(IEdge _graphBaseEdge)
@@ -1730,55 +1724,9 @@ namespace m0.ZeroCode
             //AppendSuffix();            
             
             foreach (IEdge e in BaseEdge.To.OutEdgesRaw)
-            //foreach (IEdge e in ZeroCodeView.Linearize(graphBaseEdge.To))
                 ZeroCodeGraph2String_Reccurent(e, 1, BaseEdge, null);
 
             return Source.ToString();
         }
-        /*
-        public string _Process(IEdge _graphBaseEdge)
-        {
-            prepareBaseEdge(_graphBaseEdge);
-
-            BeenList = new List<IEdge>();
-            BeenList_Keyword = new List<IEdge>();
-            Source = new StringBuilder();
-            Imports = new Dictionary<IVertex, IList<IVertex>>();
-            VerticesDictionary = new Dictionary<IVertex, VertexData>();
-            SubGraphVerticesDictionary = new Dictionary<IVertex, VertexData>();
-            KeywordMatchedSubGraphEdges = new Dictionary<IEdge, KeywordMatch>();
-
-            DoKeywordDefinitionContainLocalRoot_Dictionary = new Dictionary<IVertex, bool>();
-            DoKeywordDefinitionContainStartInLocalRoot_Dictionary = new Dictionary<IVertex, bool>();
-
-            //             
-
-            GetLinksForSubGraphVertices(BaseEdge, null, 0);
-
-            BeenList.Clear();
-
-            MatchKeywords(BaseEdge, null);
-
-            BeenList.Clear();
-
-            //
-
-            BeenList.Add(BaseEdge);
-
-            //
-
-            ImportImports(FormalTextLanguage.Get(false, "DefaultImports:"));
-            ImportImports(BaseEdge.To);
-
-            //AppendPrefix();
-            AppendAsNew(BaseEdge.To);
-            //AppendSuffix();            
-
-            foreach (IEdge e in BaseEdge.To.OutEdgesRaw)
-                //foreach (IEdge e in ZeroCodeView.Linearize(graphBaseEdge.To))
-                ZeroCodeGraph2String_Reccurent(e, 1, BaseEdge, null);
-
-            return Source.ToString();
-        }*/
     }
 }

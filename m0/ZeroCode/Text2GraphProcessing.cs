@@ -1276,11 +1276,11 @@ namespace m0.ZeroCode
                 // !!!!!!!!!!!!!!!!!!!!!!! A or B ! YOU DECIDE. I do not know :)
 
 
-                if (dict.emptyKeywordByGroupsDictionary.ContainsKey(keywordsFilter))
-                    possible_emptyKeyworsByKeywordsFilter = dict.emptyKeywordByGroupsDictionary[keywordsFilter];                
+                if (dict.emptyKeywordByGroups.ContainsKey(keywordsFilter))
+                    possible_emptyKeyworsByKeywordsFilter = dict.emptyKeywordByGroups[keywordsFilter];                
 
-                if (dict.newVertexKeywordByGroupsDictionary.ContainsKey(keywordsFilter))
-                    possible_newVertexKeywordsByKeywordsFilter = dict.newVertexKeywordByGroupsDictionary[keywordsFilter];
+                if (dict.newVertexKeywordByGroups.ContainsKey(keywordsFilter))
+                    possible_newVertexKeywordsByKeywordsFilter = dict.newVertexKeywordByGroups[keywordsFilter];
 
                 if (dict.linkKeywordByGroupsDictionary.ContainsKey(keywordsFilter))
                     possible_linkKeywordsByKeywordsFilter = dict.linkKeywordByGroupsDictionary[keywordsFilter];
@@ -2900,7 +2900,7 @@ namespace m0.ZeroCode
 
             setupHelpVariables_onlyOnce();
 
-            dict = DictionariesForFormalTextLanguageFactory.Get(formalTextLanguage);
+            dict = DictionariesForFormalTextLanguageFactory.Get_Text2Graph(formalTextLanguage);
         }
     }
 }

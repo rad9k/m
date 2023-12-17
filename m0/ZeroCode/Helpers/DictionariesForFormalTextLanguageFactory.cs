@@ -12,17 +12,32 @@ namespace m0.ZeroCode.Helpers
 {
     public class DictionariesForFormalTextLanguageFactory
     {
-        static Dictionary<IVertex, FormalTextLanguageDictinaries_Text2Graph> dict = new Dictionary<IVertex, FormalTextLanguageDictinaries_Text2Graph>();
-
-        static public FormalTextLanguageDictinaries_Text2Graph Get(IVertex formalTextLanguage)
+        static Dictionary<IVertex, FormalTextLanguageDictinaries_Text2Graph> dict_Text2Graph = new Dictionary<IVertex, FormalTextLanguageDictinaries_Text2Graph>();
+        static Dictionary<IVertex, FormalTextLanguageDictinaries_Graph2Text> dict_Graph2Text = new Dictionary<IVertex, FormalTextLanguageDictinaries_Graph2Text>();
+        
+        static public FormalTextLanguageDictinaries_Text2Graph Get_Text2Graph(IVertex formalTextLanguage)
         {
-            if (dict.ContainsKey(formalTextLanguage))
-                return dict[formalTextLanguage];
+            if (dict_Text2Graph.ContainsKey(formalTextLanguage))
+                return dict_Text2Graph[formalTextLanguage];
             else
             {
                 FormalTextLanguageDictinaries_Text2Graph dictionaries = prepareDictionaries_ForFormalTextLanguage(formalTextLanguage);
 
-                dict.Add(formalTextLanguage, dictionaries);
+                dict_Text2Graph.Add(formalTextLanguage, dictionaries);
+
+                return dictionaries;
+            }
+        }
+
+        static public FormalTextLanguageDictinaries_Graph2Text Get_Graph2Text(IVertex formalTextLanguage)
+        {
+            if (dict_Graph2Text.ContainsKey(formalTextLanguage))
+                return dict_Graph2Text[formalTextLanguage];
+            else
+            {
+                FormalTextLanguageDictinaries_Graph2Text dictionaries = new FormalTextLanguageDictinaries_Graph2Text(formalTextLanguage);
+
+                dict_Graph2Text.Add(formalTextLanguage, dictionaries);
 
                 return dictionaries;
             }
@@ -201,9 +216,9 @@ namespace m0.ZeroCode.Helpers
 
         static private void prepareSpecialKeywordsGroups(FormalTextLanguageDictinaries_Text2Graph d, IVertex FormalTextLanguage)
         {
-            d.emptyKeywordByGroupsDictionary = ZeroCodeUtil.GetFilteredKeywordListByGroup(FormalTextLanguage, "$$EmptyKeyword");
+            d.emptyKeywordByGroups = ZeroCodeUtil.GetFilteredKeywordListByGroup(FormalTextLanguage, "$$EmptyKeyword");
 
-            d.newVertexKeywordByGroupsDictionary = ZeroCodeUtil.GetFilteredKeywordListByGroup(FormalTextLanguage, "$$NewVertexKeyword");
+            d.newVertexKeywordByGroups = ZeroCodeUtil.GetFilteredKeywordListByGroup(FormalTextLanguage, "$$NewVertexKeyword");
 
             d.linkKeywordByGroupsDictionary = ZeroCodeUtil.GetFilteredKeywordListByGroup(FormalTextLanguage, "$$LinkKeyword");
         }

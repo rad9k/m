@@ -2538,7 +2538,7 @@ namespace m0
 
         }
 
-        void AddAttribute(IVertex baseVertex, string name, int MinCardinality, int MaxCardinality)
+        void AddAttribute(IVertex baseVertex, string name, int MinCardinality, int MaxCardinality, IVertex edgeTarget)
         {
             IVertex sm = LegacySystem.Graph.EasyVertex.Get(Root, false, @"System\Meta");
 
@@ -2558,7 +2558,9 @@ namespace m0
 
             IVertex FormalTextLanguage = LegacySystem.Graph.EasyVertex.Get(sm, false, @"ZeroTypes\FormalTextLanguage");
 
-            AddAttribute(FormalTextLanguage, "CRLFoperator", 1, 1);
+            IVertex vertexType = LegacySystem.Graph.EasyVertex.Get(sm, false, @"ZeroTypes\VertexType");
+
+            AddAttribute(FormalTextLanguage, "CRLFoperator", 1, 1, vertexType);
             AddAttribute(FormalTextLanguage, "MetaSeparator", 1, 1);
             AddAttribute(FormalTextLanguage, "CodeGraphVertexPrefix", 1, 1);
             AddAttribute(FormalTextLanguage, "CodeGraphVertexSuffix", 1, 1);
@@ -6159,6 +6161,90 @@ namespace m0
 
         }
 
+        void CreateSystemDataUXZeroUMLTemplate_Parent()
+        {
+            IVertex smzu = Root.Get(false, @"System\Meta\ZeroTypes\UX");
+
+            IVertex sdu = Root.Get(false, @"System\Data\UX");
+
+            IVertex colors = Root.Get(false, @"System\Data\UX\Colors");
+
+            IVertex sdut = sdu.AddVertex(null, "Templates");
+
+            IVertex sdutz = VertexOperations.AddInstance(sdut, smzu.Get(false, "UXTemplate"));
+
+            sdutz.Value = "ZeroUML";
+
+            //IVertex sduz = sdu.AddVertex(null, "ZeroUMLTemplate");
+
+            IVertex Instance = smzu.Get(false, "?Instance");
+            IVertex InstanceAndDirect = smzu.Get(false, "?InstanceAndDirect");
+            IVertex Direct = smzu.Get(false, "?Direct");
+
+            IVertex arrow = smzu.Get(false, @"LineEndEnum\Arrow");
+            IVertex triangle = smzu.Get(false, @"LineEndEnum\Triangle");
+            IVertex filledTriangle = smzu.Get(false, @"LineEndEnum\FilledTriangle");
+            IVertex diamond = smzu.Get(false, @"LineEndEnum\Diamond");
+            IVertex filledDiamond = smzu.Get(false, @"LineEndEnum\FilledDiamond");
+            IVertex straight = smzu.Get(false, @"LineEndEnum\Straight");
+
+
+            IVertex vi_code = AddUXTemplate_RectangleItem(/*where*/sdutz, /*name*/"Vertex RectangleItem CODE", /*doNotShowInherited*/ false,
+            /*DirectVertexTestQuery*/ @"",
+            /*MetaVertexTestQuery*/ null,
+            /*InstanceCreation*/ Direct,
+            /*CreateItemVertex*/ true, /*BorderWidth*/ -1, /*BackgroundColor*/null, /*ForegroundColor*/ null,
+            /*RoundEdgeSize*/-1,/*ShowMeta*/ false,
+            /*VisualiserClass*/Root.Get(false, @"System\Meta\Visualiser\Code"),/*VisualiserVertex*/ false);
+
+            AddVisualiserVertex(vi_code, Root.Get(false, @"System\Meta\ZeroTypes\UX\UXItem\Scale"), 50);
+
+            IVertex vi_tree = AddUXTemplate_RectangleItem(/*where*/sdutz, /*name*/"Vertex RectangleItem TREE", /*doNotShowInherited*/ false,
+/*DirectVertexTestQuery*/ @"",
+/*MetaVertexTestQuery*/ null,
+/*InstanceCreation*/ Direct,
+/*CreateItemVertex*/ true, /*BorderWidth*/ -1, /*BackgroundColor*/null, /*ForegroundColor*/ null,
+/*RoundEdgeSize*/-1,/*ShowMeta*/ false,
+/*VisualiserClass*/Root.Get(false, @"System\Meta\Visualiser\Tree"),/*VisualiserVertex*/ false);
+
+            AddVisualiserVertex(vi_tree, Root.Get(false, @"System\Meta\ZeroTypes\UX\UXItem\Scale"), 50);
+
+            IVertex vi_graph = AddUXTemplate_RectangleItem(/*where*/sdutz, /*name*/"Vertex RectangleItem GRAPH", /*doNotShowInherited*/ false,
+/*DirectVertexTestQuery*/ @"",
+/*MetaVertexTestQuery*/ null,
+/*InstanceCreation*/ Direct,
+/*CreateItemVertex*/ true, /*BorderWidth*/ -1, /*BackgroundColor*/null, /*ForegroundColor*/ null,
+/*RoundEdgeSize*/-1,/*ShowMeta*/ false,
+/*VisualiserClass*/Root.Get(false, @"System\Meta\Visualiser\Graph"),/*VisualiserVertex*/ false);
+
+            AddVisualiserVertex(vi_graph, Root.Get(false, @"System\Meta\ZeroTypes\UX\UXItem\Scale"), 50);
+
+            IVertex vi_list = AddUXTemplate_RectangleItem(/*where*/sdutz, /*name*/"Vertex RectangleItem LIST", /*doNotShowInherited*/ false,
+/*DirectVertexTestQuery*/ @"",
+/*MetaVertexTestQuery*/ null,
+/*InstanceCreation*/ Direct,
+/*CreateItemVertex*/ true, /*BorderWidth*/ -1, /*BackgroundColor*/null, /*ForegroundColor*/ null,
+/*RoundEdgeSize*/-1,/*ShowMeta*/ false,
+/*VisualiserClass*/Root.Get(false, @"System\Meta\Visualiser\List"),/*VisualiserVertex*/ false);
+
+            AddVisualiserVertex(vi_list, Root.Get(false, @"System\Meta\ZeroTypes\UX\UXItem\Scale"), 50);
+
+
+            IVertex vi_form = AddUXTemplate_RectangleItem(/*where*/sdutz, /*name*/"Vertex RectangleItem FORM", /*doNotShowInherited*/ false,
+/*DirectVertexTestQuery*/ @"",
+/*MetaVertexTestQuery*/ null,
+/*InstanceCreation*/ Direct,
+/*CreateItemVertex*/ true, /*BorderWidth*/ -1, /*BackgroundColor*/null, /*ForegroundColor*/ null,
+/*RoundEdgeSize*/-1,/*ShowMeta*/ false,
+/*VisualiserClass*/Root.Get(false, @"System\Meta\Visualiser\Form"),/*VisualiserVertex*/ false);
+
+            AddVisualiserVertex(vi_form, Root.Get(false, @"System\Meta\ZeroTypes\UX\UXItem\Scale"), 50);
+
+
+
+
+        }
+
         private void Initialize_PreParserReady()
         {
             LogLevel = -2;
@@ -6275,88 +6361,6 @@ namespace m0
             Initialize_PostParserReady();
 
         }
-        void CreateSystemDataUXZeroUMLTemplate_Parent()
-        {
-            IVertex smzu = Root.Get(false, @"System\Meta\ZeroTypes\UX");
-
-            IVertex sdu = Root.Get(false, @"System\Data\UX");
-
-            IVertex colors = Root.Get(false, @"System\Data\UX\Colors");
-
-            IVertex sdut = sdu.AddVertex(null, "Templates");
-
-            IVertex sdutz = VertexOperations.AddInstance(sdut, smzu.Get(false, "UXTemplate"));
-
-            sdutz.Value = "ZeroUML";
-
-            //IVertex sduz = sdu.AddVertex(null, "ZeroUMLTemplate");
-
-            IVertex Instance = smzu.Get(false, "?Instance");
-            IVertex InstanceAndDirect = smzu.Get(false, "?InstanceAndDirect");
-            IVertex Direct = smzu.Get(false, "?Direct");
-
-            IVertex arrow = smzu.Get(false, @"LineEndEnum\Arrow");
-            IVertex triangle = smzu.Get(false, @"LineEndEnum\Triangle");
-            IVertex filledTriangle = smzu.Get(false, @"LineEndEnum\FilledTriangle");
-            IVertex diamond = smzu.Get(false, @"LineEndEnum\Diamond");
-            IVertex filledDiamond = smzu.Get(false, @"LineEndEnum\FilledDiamond");
-            IVertex straight = smzu.Get(false, @"LineEndEnum\Straight");
-
-
-            IVertex vi_code = AddUXTemplate_RectangleItem(/*where*/sdutz, /*name*/"Vertex RectangleItem CODE", /*doNotShowInherited*/ false,
-            /*DirectVertexTestQuery*/ @"",
-            /*MetaVertexTestQuery*/ null,
-            /*InstanceCreation*/ Direct,
-            /*CreateItemVertex*/ true, /*BorderWidth*/ -1, /*BackgroundColor*/null, /*ForegroundColor*/ null,
-            /*RoundEdgeSize*/-1,/*ShowMeta*/ false,
-            /*VisualiserClass*/Root.Get(false, @"System\Meta\Visualiser\Code"),/*VisualiserVertex*/ false);
-
-            AddVisualiserVertex(vi_code, Root.Get(false, @"System\Meta\ZeroTypes\UX\UXItem\Scale"), 50);
-
-            IVertex vi_tree = AddUXTemplate_RectangleItem(/*where*/sdutz, /*name*/"Vertex RectangleItem TREE", /*doNotShowInherited*/ false,
-/*DirectVertexTestQuery*/ @"",
-/*MetaVertexTestQuery*/ null,
-/*InstanceCreation*/ Direct,
-/*CreateItemVertex*/ true, /*BorderWidth*/ -1, /*BackgroundColor*/null, /*ForegroundColor*/ null,
-/*RoundEdgeSize*/-1,/*ShowMeta*/ false,
-/*VisualiserClass*/Root.Get(false, @"System\Meta\Visualiser\Tree"),/*VisualiserVertex*/ false);
-
-            AddVisualiserVertex(vi_tree, Root.Get(false, @"System\Meta\ZeroTypes\UX\UXItem\Scale"), 50);
-
-            IVertex vi_graph = AddUXTemplate_RectangleItem(/*where*/sdutz, /*name*/"Vertex RectangleItem GRAPH", /*doNotShowInherited*/ false,
-/*DirectVertexTestQuery*/ @"",
-/*MetaVertexTestQuery*/ null,
-/*InstanceCreation*/ Direct,
-/*CreateItemVertex*/ true, /*BorderWidth*/ -1, /*BackgroundColor*/null, /*ForegroundColor*/ null,
-/*RoundEdgeSize*/-1,/*ShowMeta*/ false,
-/*VisualiserClass*/Root.Get(false, @"System\Meta\Visualiser\Graph"),/*VisualiserVertex*/ false);
-
-            AddVisualiserVertex(vi_graph, Root.Get(false, @"System\Meta\ZeroTypes\UX\UXItem\Scale"), 50);
-
-            IVertex vi_list = AddUXTemplate_RectangleItem(/*where*/sdutz, /*name*/"Vertex RectangleItem LIST", /*doNotShowInherited*/ false,
-/*DirectVertexTestQuery*/ @"",
-/*MetaVertexTestQuery*/ null,
-/*InstanceCreation*/ Direct,
-/*CreateItemVertex*/ true, /*BorderWidth*/ -1, /*BackgroundColor*/null, /*ForegroundColor*/ null,
-/*RoundEdgeSize*/-1,/*ShowMeta*/ false,
-/*VisualiserClass*/Root.Get(false, @"System\Meta\Visualiser\List"),/*VisualiserVertex*/ false);
-
-            AddVisualiserVertex(vi_list, Root.Get(false, @"System\Meta\ZeroTypes\UX\UXItem\Scale"), 50);
-
-
-            IVertex vi_form = AddUXTemplate_RectangleItem(/*where*/sdutz, /*name*/"Vertex RectangleItem FORM", /*doNotShowInherited*/ false,
-/*DirectVertexTestQuery*/ @"",
-/*MetaVertexTestQuery*/ null,
-/*InstanceCreation*/ Direct,
-/*CreateItemVertex*/ true, /*BorderWidth*/ -1, /*BackgroundColor*/null, /*ForegroundColor*/ null,
-/*RoundEdgeSize*/-1,/*ShowMeta*/ false,
-/*VisualiserClass*/Root.Get(false, @"System\Meta\Visualiser\Form"),/*VisualiserVertex*/ false);
-
-            AddVisualiserVertex(vi_form, Root.Get(false, @"System\Meta\ZeroTypes\UX\UXItem\Scale"), 50);
-
-
-
-
-        }
+        
     }
 }
