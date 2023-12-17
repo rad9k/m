@@ -2547,6 +2547,9 @@ namespace m0
             atr.AddVertex(LegacySystem.Graph.EasyVertex.Get(sm, false, @"Base\Vertex\$MinCardinality"), MinCardinality);
 
             atr.AddVertex(LegacySystem.Graph.EasyVertex.Get(sm, false, @"Base\Vertex\$MaxCardinality"), MaxCardinality);
+
+            atr.AddEdge(LegacySystem.Graph.EasyVertex.Get(sm, false, @"*$EdgeTarget"),
+                 LegacySystem.Graph.EasyVertex.Get(sm, false, @"ZeroTypes\Integer"));
         }
 
         void CreateSystemMetaZeroTypes()
@@ -2561,23 +2564,23 @@ namespace m0
             IVertex vertexType = LegacySystem.Graph.EasyVertex.Get(sm, false, @"ZeroTypes\VertexType");
 
             AddAttribute(FormalTextLanguage, "CRLFoperator", 1, 1, vertexType);
-            AddAttribute(FormalTextLanguage, "MetaSeparator", 1, 1);
-            AddAttribute(FormalTextLanguage, "CodeGraphVertexPrefix", 1, 1);
-            AddAttribute(FormalTextLanguage, "CodeGraphVertexSuffix", 1, 1);
-            AddAttribute(FormalTextLanguage, "LineContinuationPrefix", 1, 1);
-            AddAttribute(FormalTextLanguage, "CodeGraphLinkPrefix", 1, 1);
-            AddAttribute(FormalTextLanguage, "CodeGraphLinkKeywordPrefix", 1, 1); 
-            AddAttribute(FormalTextLanguage, "NewVertexPrefix", 1, 1);
-            AddAttribute(FormalTextLanguage, "NewVertexSuffix", 1, 1);
-            AddAttribute(FormalTextLanguage, "EscapedSequencePrefix", 1, 1);
-            AddAttribute(FormalTextLanguage, "EscapedSequenceSuffix", 1, 1);
-            AddAttribute(FormalTextLanguage, "EscapeCharacter", 1, 1);
-            AddAttribute(FormalTextLanguage, "SetIndexPrefix", 1, 1);
-            AddAttribute(FormalTextLanguage, "SetIndexPostfix", 1, 1);
-            AddAttribute(FormalTextLanguage, "QuerySlash", 1, 1);
-            AddAttribute(FormalTextLanguage, "NextAtomEdge", 1, 1);
+            AddAttribute(FormalTextLanguage, "MetaSeparator", 1, 1, vertexType);
+            AddAttribute(FormalTextLanguage, "CodeGraphVertexPrefix", 1, 1, vertexType);
+            AddAttribute(FormalTextLanguage, "CodeGraphVertexSuffix", 1, 1, vertexType);
+            AddAttribute(FormalTextLanguage, "LineContinuationPrefix", 1, 1, vertexType);
+            AddAttribute(FormalTextLanguage, "CodeGraphLinkPrefix", 1, 1, vertexType);
+            AddAttribute(FormalTextLanguage, "CodeGraphLinkKeywordPrefix", 1, 1, vertexType); 
+            AddAttribute(FormalTextLanguage, "NewVertexPrefix", 1, 1, vertexType);
+            AddAttribute(FormalTextLanguage, "NewVertexSuffix", 1, 1, vertexType);
+            AddAttribute(FormalTextLanguage, "EscapedSequencePrefix", 1, 1, vertexType);
+            AddAttribute(FormalTextLanguage, "EscapedSequenceSuffix", 1, 1, vertexType);
+            AddAttribute(FormalTextLanguage, "EscapeCharacter", 1, 1, vertexType);
+            AddAttribute(FormalTextLanguage, "SetIndexPrefix", 1, 1, vertexType);
+            AddAttribute(FormalTextLanguage, "SetIndexPostfix", 1, 1, vertexType);
+            AddAttribute(FormalTextLanguage, "QuerySlash", 1, 1, vertexType);
+            AddAttribute(FormalTextLanguage, "NextAtomEdge", 1, 1, vertexType);
 
-            AddAttribute(FormalTextLanguage, "CodeViewTimeLinkKeywordPart", 0, -1);
+            AddAttribute(FormalTextLanguage, "CodeViewTimeLinkKeywordPart", 0, -1, vertexType);
 
             FormalTextLanguage.AddVertex(LegacySystem.Graph.EasyVertex.Get(Root, false, @"System\Meta\Base\Vertex\MetaEdge"),
                 "FormalTextLanguageView");
