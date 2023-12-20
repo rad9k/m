@@ -38,9 +38,11 @@ namespace m0.ZeroCode
 
            if (_parent != null)
             {
-                IVertex Is = _parent.To.Get(false, "$Is:");
+                //IVertex Is = _parent.To.Get(false, "$Is:");
+                IVertex Is = GraphUtil.GetQueryOutFirst(_parent.To, "$Is", null);
 
-                if (Is != null && Is.Get(false, ZeroCodeCommon.stringToPossiblyEscapedString(dict, v.Value.ToString()) ) == v)
+                //if (Is != null && Is.Get(false, ZeroCodeCommon.stringToPossiblyEscapedString(dict, v.Value.ToString()) ) == v)
+                if (Is != null && GraphUtil.GetQueryOutFirst(Is, null, v.Value.ToString()) == v)
                     return (v.Value.ToString());
             }
 
@@ -89,11 +91,6 @@ namespace m0.ZeroCode
             if (GeneralUtil.CompareStrings(v.Value, ""))
                 return;
 
-            //if (GeneralUtil.CompareStrings(v.Value, "$Empty")) //XXX
-            //  return;
-
-            //s.Append(v.Value.ToString()); // XXX
-
             s.Append(ZeroCodeCommon.stringToPossiblyEscapedString(dict, v.Value.ToString()));
         }
 
@@ -103,7 +100,7 @@ namespace m0.ZeroCode
 
             bool wasPrevious = false;
 
-            for(int x=edgesList.Count-1; x!=-1; x--)
+            for (int x = edgesList.Count-1; x!=-1; x--)
             {
                 IEdge e = edgesList[x];
 
@@ -111,7 +108,6 @@ namespace m0.ZeroCode
                     s.Append("\\");
 
                 if (e.Meta != null && e.To == null)
-                    //s.Append(e.Meta.Value);
                     s.Append(ZeroCodeCommon.stringToPossiblyEscapedString(dict, e.Meta.Value.ToString()));
 
                 StringBuilder toAppend = new StringBuilder();
@@ -135,7 +131,6 @@ namespace m0.ZeroCode
                     {
                         if (e.Meta == null || GeneralUtil.CompareStrings(e.Meta,"$Empty"))
                         {
-                            //toAppend.Append(dict.MetaSeparator);
                             possibleMetaSeparator = dict.MetaSeparator;
 
                             Append(dict, toAppend, e.To);
@@ -143,20 +138,17 @@ namespace m0.ZeroCode
                             if(!VertexOperations.IsToVertexEnoughToIdentifyEdge(e.From,e.To))
                                 Append(dict, toAppend, e.Meta);
 
-                            //toAppend.Append(dict.MetaSeparator);
                             possibleMetaSeparator = dict.MetaSeparator;
 
                             Append(dict, toAppend, e.To);
                         }
                     }
 
-                    if(VertexOperations.IsMetaAndToVertexEnoughToIdentifyEdge(e.From, e.Meta, e.To))
-                        //s.Append(possibleMetaSeparator + ZeroCodeCommon.stringToPossiblyEscapedString(dict, toAppend.ToString()));
+                    if (VertexOperations.IsMetaAndToVertexEnoughToIdentifyEdge(e.From, e.Meta, e.To))
                         s.Append(possibleMetaSeparator + toAppend.ToString());
                     else
                     {
                         int pos = 0;
-                        IVertex q = e.From.GetAll(false, e.Meta + ":" + e.To);
 
                         IEdge result;
                         IList<IEdge> results;
@@ -171,7 +163,7 @@ namespace m0.ZeroCode
                         else
                         {
                             listToUse = new List<IEdge>();
-                            if(result!=null)
+                            if (result != null)
                                 listToUse.Add(result);
                         }
 
@@ -182,7 +174,6 @@ namespace m0.ZeroCode
                             pos++;
                         } while (tv != e.To);
 
-                        //s.Append(possibleMetaSeparator + ZeroCodeCommon.stringToPossiblyEscapedString(dict, toAppend.ToString()) + dict.SetIndexPrefix + "\"" + pos +"\"" + dict.SetIndexPostfix);
                         s.Append(possibleMetaSeparator + toAppend.ToString() + dict.SetIndexPrefix + "\"" + pos + "\"" + dict.SetIndexPostfix);
                     }
                 }    
@@ -257,8 +248,6 @@ namespace m0.ZeroCode
                     bool _isMetaDirect = false;
 
                     GetLinkString_Recurrect(e.From, edgesList, ref _isMetaDirect);
-
-                    //checkIfNewBest(edgesList, _isMetaDirect, returnedLink);
 
                     edgesList.RemoveAt(edgesList.Count - 1);
                 }
@@ -343,7 +332,6 @@ namespace m0.ZeroCode
             
             if (v == MinusZero.Instance.Root)
             {
-                //string toReturn = getLinkStringProcessing.GetStringFromEdgesList(edgesList,false);
                 string toReturn = getLinkStringProcessing.GetStringFromEdgesList(dict, edgesList, true); // this is temporary as .Get does not support meta quey syntax
 
                 if (toReturn.Length < shortestLinkLength)
@@ -530,7 +518,8 @@ namespace m0.ZeroCode
 
         void AppendAdditionalNewLines(IEdge e)
         {
-            IVertex nl = e.To.Get(false, @"$NewLine:");
+            //IVertex nl = e.To.Get(false, @"$NewLine:");
+            IVertex nl = GraphUtil.GetQueryOutFirst(e.To, "$NewLine", null);
 
             if (nl == null)
                 return;
@@ -565,12 +554,7 @@ namespace m0.ZeroCode
         void AppendAsNew(IVertex v)
         {
             if (!IsNull(v))
-            {
-                //VerticesAsLink.Add(v, path + "\\" + v.Value); // what is it? not neccesarry now
-
                 SourceAppend(ZeroCodeCommon.stringToNewVertexString(dict, v.Value.ToString())); // XXX we are catching newVertices as keywords so...
-                //SourceAppend(v.Value.ToString());
-            }
         }
 
         void AppendIs(IEdge e)
@@ -643,7 +627,7 @@ namespace m0.ZeroCode
                 { // XXX 'ANY'
                     firstSlahPosition = queryString.IndexOf('\\');
                     
-                    secondQueryPart = queryString.Substring(firstSlahPosition + 1, queryString.Length - firstSlahPosition - 1);                    
+                    secondQueryPart = queryString.Substring(firstSlahPosition + 1, queryString.Length - firstSlahPosition - 1);
 
                     return km.BaseEdge.To.GetAll(false, secondQueryPart).FirstOrDefault();
                 }
@@ -727,7 +711,7 @@ namespace m0.ZeroCode
         {
             KeywordMatch km = KeywordMatchedSubGraphEdges[keywordEdge];
 
-            IEdge importEdge=null;
+            IEdge importEdge = null;
 
              foreach(IEdge e in km.MatchedEdges)
              {
@@ -744,8 +728,6 @@ namespace m0.ZeroCode
                 if (e.Meta == importEdge.To)
                     linkEdge = e;
 
-            //if (linkEdge == null)
-              //  return false;
 
             string name = ZeroCodeCommon.stringToNewVertexString(dict, importEdge.To.ToString());
 
@@ -765,26 +747,6 @@ namespace m0.ZeroCode
             return false;
         }
         
-        /*bool AppendImportDirectKeyword(IEdge keywordEdge, bool isMeta)
-        {
-            KeywordMatch km = KeywordMatchedSubGraphEdges[keywordEdge];
-
-            IEdge linkEdge = km.MatchedEdges[0];
-            
-            if (isMeta)
-            {
-                SourceAppend("import direct meta ");
-                AppendAsLink_FromRoot(linkEdge.To);
-            }
-            else
-            {
-                SourceAppend("import direct ");
-                AppendAsLink_FromRoot(linkEdge.To);
-            }
-
-            return false;
-        }*/
-
         bool AppendKeyword(IEdge keywordEdge, bool isNested, bool ParentKmHasTabAddingOmmit)
         {            
             KeywordMatch km = KeywordMatchedSubGraphEdges[keywordEdge];
@@ -824,20 +786,11 @@ namespace m0.ZeroCode
                     shouldDecreaseTabTimes = true;                    
                 }
 
-
-                //if (GraphUtil.GetValueAndCompareStrings(km.KeywordDefinition, "import (?<name>) (?<link>)"))
                 if(km.KeywordDefinition == dict.Import.keywordVertex)
                     return AppendImportKeyword(keywordEdge, false);
 
-                //if (GraphUtil.GetValueAndCompareStrings(km.KeywordDefinition, "import (?<name>) (?<link>) meta"))
                 if (km.KeywordDefinition == dict.ImportMeta.keywordVertex)
                     return AppendImportKeyword(keywordEdge, true);
-
-               /* if (GraphUtil.GetValueAndCompareStrings(km.KeywordDefinition, "import direct (?<link>)"))
-                    return AppendImportDirectKeyword(keywordEdge, false);
-
-                if (GraphUtil.GetValueAndCompareStrings(km.KeywordDefinition, "import direct meta (?<link>)"))
-                    return AppendImportDirectKeyword(keywordEdge, true);*/
 
 
                 int keywordManyRootBaseCount;
@@ -862,7 +815,7 @@ namespace m0.ZeroCode
 
                     string path = GetPathFromKeywordMatchAndKeywordEdge(km, be, null);
 
-                    //if (/*zeroMatch&&*/km.DoKeywordDefinitionContainStartInLocalRoot) // XXX YYY
+
                     if (/*zeroMatch&&*/km.DoKeywordDefinitionContainLocalRoot) // WE SHOULD USE THAT ONE
                     { // hack if there are no params but there are local roots
                         // hack EDIT in order to a[b<"3">\] to work hack has been reduced by zeroMatch
@@ -1064,10 +1017,6 @@ namespace m0.ZeroCode
                             ProcessSentencePart(km, sentence, ref prevPos, ref wasThereNewLine, match, e, ParentKmHasTabAddingOmmit);
                         }
 
-                      //  if (wasThereNewLine)
-                      //      SourceAppend("Y" + sentence.Substring(prevPos));
-                       // else
-                       //     SourceAppend(sentence.Substring(prevPos));
                         SourceAppend(sentence.Substring(prevPos));
                     }
                 }
@@ -1130,7 +1079,6 @@ namespace m0.ZeroCode
             bool wasFirstNewLine = false;
 
             foreach (IEdge e in baseEdge.To)
-            //foreach (IEdge e in ZeroCodeView.Linearize(baseEdge.To))
             {
                 if (km.BaseEdge != baseEdge && !km.MatchedEdges.Contains(e))
                 {
@@ -1209,7 +1157,6 @@ namespace m0.ZeroCode
         {
             if (VertexOperations.IsLink(e))
             {
-                //SourceAppend("L1!");
                 AppendAsLink(e.To, null, hideLinkPrefix);
 
                 if (appendSuffix)
@@ -1219,8 +1166,6 @@ namespace m0.ZeroCode
             }
             else
             {
-                //  SourceAppend("<" + SubGraphVerticesAsLink[e.To].String + ":" + path + ">");
-
                 if (isVertexNew(e, path))
                 {
                     AppendAsNew(e.To);
@@ -1313,9 +1258,7 @@ namespace m0.ZeroCode
             if (v.Value == null)
                 return false;
 
-            if (((String)v.Value).StartsWith("(?<")
-                /*|| ((String)v.Value).StartsWith("(?<")
-                || ((String)v.Value).StartsWith("(?<")*/)
+            if (((String)v.Value).StartsWith("(?<"))
                 return true;
 
             return false;
@@ -1330,7 +1273,6 @@ namespace m0.ZeroCode
             string searchString_secondPart = null;
 
             if (!IsKeywordVertexWildcard(keywordEdge.To))
-                //searchString_secondPart = ZeroCodeCommon.stringToPossiblyEscapedString(keywordEdge.To.ToString());
                 searchString_secondPart = keywordEdge.To.ToString();
             
             bool toReturn = false;
@@ -1539,7 +1481,6 @@ namespace m0.ZeroCode
                 suffix = "\\";
 
             foreach (IEdge ee in e.To.OutEdgesRaw)
-            //foreach (IEdge ee in ZeroCodeView.Linearize(e.To))
                 if (!VertexOperations.IsLink(ee)) 
                 {
                     string LinkString = path + suffix + GraphUtil.GetIdentyfyingQuerySubString_MetaMode(dict, ee);
@@ -1562,7 +1503,7 @@ namespace m0.ZeroCode
                     }else
                         SubGraphVerticesDictionary.Add(ee.To, new VertexData(LinkString, nestedLevel));
 
-                    if(beenThereButNeedToReEnter || !BeenList.Contains(ee))
+                    if (beenThereButNeedToReEnter || !BeenList.Contains(ee))
                         GetLinksForSubGraphVertices(ee, LinkString, nestedLevel+1);
                 }
         }
@@ -1582,7 +1523,7 @@ namespace m0.ZeroCode
 
                     CheckVertexIfItMachesAnyKeywordGraphs(ee, LinkString, e);                    
 
-                    if (!BeenList.Contains(ee)&&!VertexOperations.IsLink(ee))
+                    if (!BeenList.Contains(ee) && !VertexOperations.IsLink(ee))
                         MatchKeywords(ee, LinkString);
             }
         }
