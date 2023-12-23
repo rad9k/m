@@ -151,7 +151,6 @@
     <Compile Include="UIWpf\UX\UXVisualiser.cs" />
     <Compile Include="UIWpf\Visualisers\INoDownVisualiser.cs" />
     <Compile Include="ZeroCode\Helpers\DictionariesForFormalTextLanguageFactory.cs" />
-    <Compile Include="ZeroCode\Helpers\FormalTextLanguageDictinaries_Graph2Text.cs" />
     <Compile Include="ZeroTypes\UX\IUXMultiContainerItem.cs" />
     <Compile Include="ZeroTypes\UX\IUXMultiContainerSubItem.cs" />
     <Compile Include="ZeroTypes\UX\IUXDecorator.cs" />
@@ -334,7 +333,7 @@
     <Compile Include="Util\ExtandableDictionaryListAsList.cs" />
     <Compile Include="Util\ExtandableHashSetAsList.cs" />
     <Compile Include="Util\ExtandableList.cs" />
-    <Compile Include="ZeroCode\Helpers\FormalTextLanguageDictinaries_Text2Graph.cs" />
+    <Compile Include="ZeroCode\Helpers\FormalTextLanguageDictinaries.cs" />
     <Compile Include="ZeroCode\Helpers\EdgeKey_FromMeta.cs" />
     <Compile Include="ZeroCode\Helpers\EdgeKey_MetaTo.cs" />
     <Compile Include="ZeroCode\ZeroCodeExecutonUtil.cs" />

@@ -88,7 +88,7 @@ namespace m0.ZeroCode
         ///////
 
 
-        public static bool IsSpecialCharacter(FormalTextLanguageDictinaries_Text2Graph dict, string s, int pos)
+        public static bool IsSpecialCharacter(FormalTextLanguageDictinaries dict, string s, int pos)
         {
             if (ZeroCodeUtil.TryStringMatch(s, pos, dict.CRLFoperator))
                 return true;
@@ -128,7 +128,7 @@ namespace m0.ZeroCode
 
             return false;
         }
-        public static string stringToLinkString(FormalTextLanguageDictinaries_Text2Graph dict, string s, bool hideLinkPrefix)
+        public static string stringToLinkString(FormalTextLanguageDictinaries dict, string s, bool hideLinkPrefix)
         {
             if (hideLinkPrefix)
                 return s;
@@ -136,7 +136,7 @@ namespace m0.ZeroCode
                 return dict.CodeGraphLinkPrefix + s;
         }
 
-        public static string stringFromLinkString(FormalTextLanguageDictinaries_Text2Graph dict, string s, bool hideLinkPrefix)
+        public static string stringFromLinkString(FormalTextLanguageDictinaries dict, string s, bool hideLinkPrefix)
         {
             if (hideLinkPrefix)
                 return s;
@@ -144,14 +144,14 @@ namespace m0.ZeroCode
                 return s.Substring(dict.CodeGraphLinkPrefix.ToString().Length);
         }
 
-        public static string stringFromLinkKeywordString(FormalTextLanguageDictinaries_Text2Graph dict, string s)
+        public static string stringFromLinkKeywordString(FormalTextLanguageDictinaries dict, string s)
         {
             return s.Substring(dict.CodeGraphLinkKeywordPrefix.ToString().Length).TrimEnd();
         }
 
         // to be used only in ZeroCodeCommon.stringFromLinkString( , FALSE) scenario
         // and that means that TO BE USED ONLY IN KEYWORDS
-        public static string tryStringFromLinkString(FormalTextLanguageDictinaries_Text2Graph dict, string text, int startPos, ref int pos, int endPos, IDictionary<char, List<string>> allKeywordsSubstringsDictionary)
+        public static string tryStringFromLinkString(FormalTextLanguageDictinaries dict, string text, int startPos, ref int pos, int endPos, IDictionary<char, List<string>> allKeywordsSubstringsDictionary)
         {
             string newVertex = null;
 
@@ -236,7 +236,7 @@ namespace m0.ZeroCode
             return false;
         }
 
-        public static bool isLinkString(FormalTextLanguageDictinaries_Text2Graph dict, string s, int beg)
+        public static bool isLinkString(FormalTextLanguageDictinaries dict, string s, int beg)
         {
             if (s[beg] == dict.CodeGraphLinkPrefix && s.Length>=beg && s[beg + 1] != dict.CodeGraphLinkPrefix) // @@ support
                 return true;
@@ -244,7 +244,7 @@ namespace m0.ZeroCode
             return false;
         }
 
-        public static bool isLinkKeywordString(FormalTextLanguageDictinaries_Text2Graph dict, string s, int beg)
+        public static bool isLinkKeywordString(FormalTextLanguageDictinaries dict, string s, int beg)
         {
             for (int x = 0; x < dict.CodeGraphLinkKeywordPrefix.Length; x++)
                 if (s[beg + x] != dict.CodeGraphLinkKeywordPrefix[x])
@@ -256,7 +256,7 @@ namespace m0.ZeroCode
         //  NewVertexString
         ///////////////////
 
-        public static string stringToNewVertexString(FormalTextLanguageDictinaries_Text2Graph dict, object o)
+        public static string stringToNewVertexString(FormalTextLanguageDictinaries dict, object o)
         {
             if (o == null)
                 return "";
@@ -280,7 +280,7 @@ namespace m0.ZeroCode
             return dict.NewVertexPrefix + s + dict.NewVertexSuffix;
         }
 
-        public static string stringFromNewVertexString(FormalTextLanguageDictinaries_Text2Graph dict, string s)
+        public static string stringFromNewVertexString(FormalTextLanguageDictinaries dict, string s)
         {
             s = s.Substring(1, s.Length - 2);                       
 
@@ -292,7 +292,7 @@ namespace m0.ZeroCode
             return s;
         }
 
-        public static string tryStringFromNewVertexString(FormalTextLanguageDictinaries_Text2Graph dict, string text, int startPos, ref int pos)
+        public static string tryStringFromNewVertexString(FormalTextLanguageDictinaries dict, string text, int startPos, ref int pos)
         {
             string newVertex = null;
 
@@ -328,14 +328,14 @@ namespace m0.ZeroCode
             return newVertex;
         }
 
-        public static bool isNewVertexString(FormalTextLanguageDictinaries_Text2Graph dict, string s, int beg, int end)
+        public static bool isNewVertexString(FormalTextLanguageDictinaries dict, string s, int beg, int end)
         {
             if (s[beg] == dict.NewVertexPrefix && s[end] == dict.NewVertexSuffix)
                 return true;
 
             return false;
         }
-        public static bool isNewVertexString(FormalTextLanguageDictinaries_Text2Graph dict, string s)
+        public static bool isNewVertexString(FormalTextLanguageDictinaries dict, string s)
         {
             if (s.Length > 0
                 && s[0] == dict.NewVertexPrefix
@@ -348,12 +348,12 @@ namespace m0.ZeroCode
         // Escaped
         //////////
 
-        public static string surroundWithEscape(FormalTextLanguageDictinaries_Text2Graph dict, string s)
+        public static string surroundWithEscape(FormalTextLanguageDictinaries dict, string s)
         {
             return dict.EscapedSequencePrefix + s + dict.EscapedSequenceSuffix;
         }
 
-        public static string stringToPossiblyEscapedString(FormalTextLanguageDictinaries_Text2Graph dict, object o)
+        public static string stringToPossiblyEscapedString(FormalTextLanguageDictinaries dict, object o)
         {
             if (o == null)
                 return "";
@@ -398,7 +398,7 @@ namespace m0.ZeroCode
 
         }        
 
-        public static string tryEscapedLinkStringAndDeescape(FormalTextLanguageDictinaries_Text2Graph dict, string text, ref int sPos)
+        public static string tryEscapedLinkStringAndDeescape(FormalTextLanguageDictinaries dict, string text, ref int sPos)
         {         
             int begSpos = sPos;
 

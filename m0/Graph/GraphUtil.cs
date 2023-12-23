@@ -570,7 +570,7 @@ namespace m0.Graph
                     to.Add(e);
         }
 
-        public static string GetQueryStringPart_MetaMode(FormalTextLanguageDictinaries_Text2Graph dict, IVertex meta, IVertex to)
+        public static string GetQueryStringPart_MetaMode(FormalTextLanguageDictinaries dict, IVertex meta, IVertex to)
         {
             if (GeneralUtil.CompareStrings(meta.ToString(), "$Empty"))
                 return ZeroCodeCommon.stringToPossiblyEscapedString(dict, to.ToString());
@@ -578,7 +578,7 @@ namespace m0.Graph
                 return ZeroCodeCommon.stringToPossiblyEscapedString(dict, meta.ToString()) + dict.MetaSeparator + ZeroCodeCommon.stringToPossiblyEscapedString(dict, to.ToString());
         }
 
-        public static string GetIdentyfyingQuerySubString_MetaMode(FormalTextLanguageDictinaries_Text2Graph dict, IEdge e) // this is used in String2Graph, so we need to reference ZeroCodeCommon.MetaSeparator
+        public static string GetIdentyfyingQuerySubString_MetaMode(FormalTextLanguageDictinaries dict, IEdge e) // this is used in String2Graph, so we need to reference ZeroCodeCommon.MetaSeparator
         {
             if (VertexOperations.IsToVertexEnoughToIdentifyEdge(e.From, e.To))
                 return ZeroCodeCommon.stringToPossiblyEscapedString(dict, e.To.ToString()+""); // there was no ToString. might cause problems. XXX why this "" as we do not have null To?

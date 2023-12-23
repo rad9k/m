@@ -16,8 +16,17 @@ namespace m0.ZeroCode.Helpers
         public string regexpString;
     }
 
-    public class FormalTextLanguageDictinaries_Text2Graph
+    public class FormalTextLanguageDictinaries
     {
+        public IVertex FormalTextLanguageVertex;
+
+        // Graph2Text
+
+        public Dictionary<string, List<IVertex>> firstEdge2KeywordVertex;
+        public Dictionary<string, List<IVertex>> firstEdgeANYIs2KeywordVertex;
+
+        // Text2Graph
+
         public IDictionary<string, IList<IVertex>> emptyKeywordByGroups;
         public IDictionary<string, IList<IVertex>> newVertexKeywordByGroups;
         public IDictionary<string, IList<IVertex>> linkKeywordByGroupsDictionary;
@@ -67,7 +76,7 @@ namespace m0.ZeroCode.Helpers
 
         string get(string what)
         {
-            IVertex v = GraphUtil.GetQueryOutFirst(FormalTextLanguage, what, null);
+            IVertex v = GraphUtil.GetQueryOutFirst(FormalTextLanguageVertex, what, null);
 
             if (v != null)
                 return v.Value.ToString();
@@ -77,7 +86,7 @@ namespace m0.ZeroCode.Helpers
 
         HashSet<string> getHashSet(string what)
         {
-            IList<IEdge> v = GraphUtil.GetQueryOut(FormalTextLanguage, what, null);
+            IList<IEdge> v = GraphUtil.GetQueryOut(FormalTextLanguageVertex, what, null);
 
             HashSet<string> set = new HashSet<string>();
 
@@ -89,7 +98,7 @@ namespace m0.ZeroCode.Helpers
 
         ImportInformation getImportInformation(string metaIdentyfication)
         {
-            IVertex keywords = GraphUtil.GetQueryOutFirst(FormalTextLanguage, "Keywords", null);
+            IVertex keywords = GraphUtil.GetQueryOutFirst(FormalTextLanguageVertex, "Keywords", null);
 
             foreach(IEdge e in keywords)
             {
@@ -106,13 +115,11 @@ namespace m0.ZeroCode.Helpers
             }
 
             return null;
-        }
+        }        
 
-        IVertex FormalTextLanguage;
-
-        public FormalTextLanguageDictinaries_Text2Graph(IVertex formalTextLanguage)
+        public FormalTextLanguageDictinaries(IVertex formalTextLanguage)
         {
-            FormalTextLanguage = formalTextLanguage;
+            FormalTextLanguageVertex = formalTextLanguage;
 
             importList.AddExternalReference();
             importMetaList.AddExternalReference();
@@ -135,7 +142,7 @@ namespace m0.ZeroCode.Helpers
             SetIndexPostfix = get("SetIndexPostfix");
             QuerySlash = get("QuerySlash").ToCharArray()[0];
 
-            NextAtomMeta = GraphUtil.GetQueryOutFirst(FormalTextLanguage, "NextAtomEdge", null);
+            NextAtomMeta = GraphUtil.GetQueryOutFirst(FormalTextLanguageVertex, "NextAtomEdge", null);
 
             CodeViewTimeLinkKeywordParts = getHashSet("CodeViewTimeLinkKeywordPart");
 

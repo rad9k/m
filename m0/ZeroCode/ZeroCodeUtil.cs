@@ -151,7 +151,7 @@ namespace m0.ZeroCode
             return pos;
         }
     
-        public static void GetQueryFirstAndSecondPart(FormalTextLanguageDictinaries_Text2Graph dict, string query, out string firstPart, out string secondPart)
+        public static void GetQueryFirstAndSecondPart(FormalTextLanguageDictinaries dict, string query, out string firstPart, out string secondPart)
         {
             firstPart = null;
             secondPart = null;

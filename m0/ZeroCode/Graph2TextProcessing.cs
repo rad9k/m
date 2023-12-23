@@ -24,9 +24,9 @@ namespace m0.ZeroCode
         string shortestLink;
         int shortestLinkLength;
 
-        FormalTextLanguageDictinaries_Text2Graph dict;
+        FormalTextLanguageDictinaries dict;
 
-        public string Process(FormalTextLanguageDictinaries_Text2Graph _dict, Graph2TextProcessing _zcg2sp, IVertex v, IEdge _parent)
+        public string Process(FormalTextLanguageDictinaries _dict, Graph2TextProcessing _zcg2sp, IVertex v, IEdge _parent)
         {
             dict = _dict;
 
@@ -83,7 +83,7 @@ namespace m0.ZeroCode
             return shortestLink;
         }
 
-        static void Append(FormalTextLanguageDictinaries_Text2Graph dict, StringBuilder s, IVertex v)
+        static void Append(FormalTextLanguageDictinaries dict, StringBuilder s, IVertex v)
         {
             if (v == null || v.Value==null)
                 return;
@@ -94,7 +94,7 @@ namespace m0.ZeroCode
             s.Append(ZeroCodeCommon.stringToPossiblyEscapedString(dict, v.Value.ToString()));
         }
 
-        public static string GetStringFromEdgesList(FormalTextLanguageDictinaries_Text2Graph dict, List<IEdge> edgesList, bool isImportMeta)
+        public static string GetStringFromEdgesList(FormalTextLanguageDictinaries dict, List<IEdge> edgesList, bool isImportMeta)
         {
             StringBuilder s = new StringBuilder();
 
@@ -303,9 +303,9 @@ namespace m0.ZeroCode
         string shortestLink;
         int shortestLinkLength;
 
-        FormalTextLanguageDictinaries_Text2Graph dict;
+        FormalTextLanguageDictinaries dict;
 
-        public string Process(FormalTextLanguageDictinaries_Text2Graph _dict, Graph2TextProcessing _zcg2sp, IVertex v)
+        public string Process(FormalTextLanguageDictinaries _dict, Graph2TextProcessing _zcg2sp, IVertex v)
         {
             dict = _dict;
 
@@ -447,7 +447,7 @@ namespace m0.ZeroCode
         IList<IVertex> newVertexKeywordVertexList;
         IList<IVertex> emptyKeywordVertexList;
 
-        FormalTextLanguageDictinaries_Text2Graph dict;
+        FormalTextLanguageDictinaries dict;
 
         public Graph2TextProcessing(IVertex formalTextLanguage)
         {
@@ -456,7 +456,7 @@ namespace m0.ZeroCode
             newVertexKeywordVertexList = ZeroCodeUtil.GetFilteredKeywordList(FormalTextLanguage, "$$NewVertexKeyword");
             emptyKeywordVertexList = ZeroCodeUtil.GetFilteredKeywordList(FormalTextLanguage, "$$EmptyKeyword");
 
-            dict = DictionariesForFormalTextLanguageFactory.Get_Text2Graph(formalTextLanguage);
+            dict = DictionariesForFormalTextLanguageFactory.Get(formalTextLanguage);
         }
 
         string Tab = "\t";
@@ -1409,6 +1409,12 @@ namespace m0.ZeroCode
 
         public void CheckVertexIfItMachesAnyKeywordGraphs(IEdge edgeToCheck, string path, IEdge edgeToCheck_parent)
         {
+            string edgeToCheckMetaValue = edgeToCheck.Meta.Value.ToString();
+
+        //    if (dict.firstEdge2KeywordVertex.ContainsKey(edgeToCheckMetaValue))
+              //  foreach
+
+
             foreach (IEdge keyword in FormalTextLanguage.GetAll(false, @"Keywords:\$Keyword:"))
                 if (!newVertexKeywordVertexList.Contains(keyword.To))
                     CheckMatchForKeywordAndAddKeywordMatchIfThereIsMatch(edgeToCheck, path, edgeToCheck_parent, keyword.To) ;

@@ -12,40 +12,25 @@ namespace m0.ZeroCode.Helpers
 {
     public class DictionariesForFormalTextLanguageFactory
     {
-        static Dictionary<IVertex, FormalTextLanguageDictinaries_Text2Graph> dict_Text2Graph = new Dictionary<IVertex, FormalTextLanguageDictinaries_Text2Graph>();
-        static Dictionary<IVertex, FormalTextLanguageDictinaries_Graph2Text> dict_Graph2Text = new Dictionary<IVertex, FormalTextLanguageDictinaries_Graph2Text>();
+        static Dictionary<IVertex, FormalTextLanguageDictinaries> dict = new Dictionary<IVertex, FormalTextLanguageDictinaries>();        
         
-        static public FormalTextLanguageDictinaries_Text2Graph Get_Text2Graph(IVertex formalTextLanguage)
+        static public FormalTextLanguageDictinaries Get(IVertex formalTextLanguage)
         {
-            if (dict_Text2Graph.ContainsKey(formalTextLanguage))
-                return dict_Text2Graph[formalTextLanguage];
+            if (dict.ContainsKey(formalTextLanguage))
+                return dict[formalTextLanguage];
             else
             {
-                FormalTextLanguageDictinaries_Text2Graph dictionaries = prepareDictionaries_ForFormalTextLanguage(formalTextLanguage);
+                FormalTextLanguageDictinaries dictionaries = prepareDictionaries_ForFormalTextLanguage(formalTextLanguage);
 
-                dict_Text2Graph.Add(formalTextLanguage, dictionaries);
+                dict.Add(formalTextLanguage, dictionaries);
 
                 return dictionaries;
             }
         }
 
-        static public FormalTextLanguageDictinaries_Graph2Text Get_Graph2Text(IVertex formalTextLanguage)
+        static private FormalTextLanguageDictinaries prepareDictionaries_ForFormalTextLanguage(IVertex FormalTextLanguage)
         {
-            if (dict_Graph2Text.ContainsKey(formalTextLanguage))
-                return dict_Graph2Text[formalTextLanguage];
-            else
-            {
-                FormalTextLanguageDictinaries_Graph2Text dictionaries = new FormalTextLanguageDictinaries_Graph2Text(formalTextLanguage);
-
-                dict_Graph2Text.Add(formalTextLanguage, dictionaries);
-
-                return dictionaries;
-            }
-        }
-
-        static private FormalTextLanguageDictinaries_Text2Graph prepareDictionaries_ForFormalTextLanguage(IVertex FormalTextLanguage)
-        {
-            FormalTextLanguageDictinaries_Text2Graph d = new FormalTextLanguageDictinaries_Text2Graph(FormalTextLanguage);
+            FormalTextLanguageDictinaries d = new FormalTextLanguageDictinaries(FormalTextLanguage);
 
             prepareImportList_FormalTextLanguage(d, FormalTextLanguage);
 
@@ -143,10 +128,51 @@ namespace m0.ZeroCode.Helpers
 
             //
 
+            prepare_Graph2Text(d);
+
             return d;
         }
 
-        static void addInstructions(FormalTextLanguageDictinaries_Text2Graph d)
+        static void prepare_Graph2Text(FormalTextLanguageDictinaries d)
+        {
+            d.firstEdge2KeywordVertex = new Dictionary<string, List<IVertex>>();
+            d.firstEdgeANYIs2KeywordVertex = new Dictionary<string, List<IVertex>>();
+
+            IVertex keywordsVertex = GraphUtil.GetQueryOutFirst(d.FormalTextLanguageVertex, "Keywords", null);
+
+            foreach (IEdge keywordEdge in GraphUtil.GetQueryOut(keywordsVertex, "$Keyword", null))
+            {
+                IVertex keywordVertex = keywordEdge.To;
+
+                IEdge firstEdge = null;
+
+                foreach (IEdge e in keywordVertex)
+                    if (!GraphUtil.IsMetaDoubleDollar(e))
+                    {
+                        firstEdge = e;
+                        break;
+                    }
+
+                if (firstEdge != null)
+                {
+                    string firstEdgeMetaValue = firstEdge.Meta.Value.ToString();
+
+                    if (firstEdgeMetaValue != "(?<ANY>)")
+                        GeneralUtil.DictionaryAdd<string, IVertex>(d.firstEdge2KeywordVertex, firstEdgeMetaValue, keywordVertex);
+                    else
+                    {
+                        IEdge firstEdgeANYIs = GraphUtil.GetQueryOutFirstEdge(firstEdge.To, "$Is", null);
+
+                        if (firstEdgeANYIs != null) {
+                            string firstEdgeANYIsToValue = firstEdgeANYIs.To.Value.ToString();
+                            GeneralUtil.DictionaryAdd<string, IVertex>(d.firstEdgeANYIs2KeywordVertex, firstEdgeANYIsToValue, keywordVertex);
+                        }
+                    }
+                }
+            }
+        }
+
+        static void addInstructions(FormalTextLanguageDictinaries d)
         {
             IVertex root = MinusZero.Instance.root;
 
@@ -166,7 +192,7 @@ namespace m0.ZeroCode.Helpers
             }
         }
 
-        static void addInstructions_checkInstruction(FormalTextLanguageDictinaries_Text2Graph d, IVertex v)
+        static void addInstructions_checkInstruction(FormalTextLanguageDictinaries d, IVertex v)
         {
             if (GraphUtil.ExistQueryOut(v, "$$NextAtomRoot", null))
                 d.instructions_NextAtomRoot.Add(v);
@@ -175,7 +201,7 @@ namespace m0.ZeroCode.Helpers
                 d.instructions_HasNextEdge.Add(v);
         }
 
-        static void prepareImportList_FormalTextLanguage(FormalTextLanguageDictinaries_Text2Graph d, IVertex FormalTextLanguage)
+        static void prepareImportList_FormalTextLanguage(FormalTextLanguageDictinaries d, IVertex FormalTextLanguage)
         {
             //IVertex formalTextLanguageDefaultImports = FormalTextLanguage.Get(false, "DefaultImports:");                
             IVertex formalTextLanguageDefaultImports = GraphUtil.GetQueryOutFirst(FormalTextLanguage, "DefaultImports", null);
@@ -214,7 +240,7 @@ namespace m0.ZeroCode.Helpers
 
         }
 
-        static private void prepareSpecialKeywordsGroups(FormalTextLanguageDictinaries_Text2Graph d, IVertex FormalTextLanguage)
+        static private void prepareSpecialKeywordsGroups(FormalTextLanguageDictinaries d, IVertex FormalTextLanguage)
         {
             d.emptyKeywordByGroups = ZeroCodeUtil.GetFilteredKeywordListByGroup(FormalTextLanguage, "$$EmptyKeyword");
 
@@ -240,7 +266,7 @@ namespace m0.ZeroCode.Helpers
             return false;
         }
 
-        static private void addKeywordsSubstrings(FormalTextLanguageDictinaries_Text2Graph d, string keywordString)
+        static private void addKeywordsSubstrings(FormalTextLanguageDictinaries d, string keywordString)
         {
             if (keywordString == "")
                 return;
@@ -305,7 +331,7 @@ namespace m0.ZeroCode.Helpers
             addSubString(d, keywordString.Substring(prevPos, keywordPos - prevPos), isFirstAdd);
         }
 
-        static private void addSubString(FormalTextLanguageDictinaries_Text2Graph d, string subString, bool isFirstAdd)
+        static private void addSubString(FormalTextLanguageDictinaries d, string subString, bool isFirstAdd)
         {
             subString = subString.Trim();
 
@@ -352,7 +378,7 @@ namespace m0.ZeroCode.Helpers
 
         }
 
-        static private void PrepareKeywordInfo(FormalTextLanguageDictinaries_Text2Graph d, keywordTryingData ktd)
+        static private void PrepareKeywordInfo(FormalTextLanguageDictinaries d, keywordTryingData ktd)
         {
             KeywordInfo ki = new KeywordInfo();
 
@@ -376,7 +402,7 @@ namespace m0.ZeroCode.Helpers
             d.keywordInfoDict.Add(ktd.keywordVertex, ki);
         }
 
-        static private void AddSpaceToAllKeywordsSubstringsDictionaries(FormalTextLanguageDictinaries_Text2Graph d)
+        static private void AddSpaceToAllKeywordsSubstringsDictionaries(FormalTextLanguageDictinaries d)
         {
             List<string> l = new List<string>();
 
@@ -392,7 +418,7 @@ namespace m0.ZeroCode.Helpers
                 d.allKeywordsSubstringsPositiveDictionary_witchoutLinkKeywordParts.Add(' ', l);
         }
 
-        static private void PrepareNegativeNegativeDictionary_witchoutLinkKeywordParts(FormalTextLanguageDictinaries_Text2Graph d)
+        static private void PrepareNegativeNegativeDictionary_witchoutLinkKeywordParts(FormalTextLanguageDictinaries d)
         {
             foreach (string s in d.CodeViewTimeLinkKeywordParts)
             {

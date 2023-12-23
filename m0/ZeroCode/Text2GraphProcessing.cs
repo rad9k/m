@@ -250,7 +250,7 @@ namespace m0.ZeroCode
 
 
 
-        FormalTextLanguageDictinaries_Text2Graph dict;        
+        FormalTextLanguageDictinaries dict;        
 
         // PARSER AUTO TEST SECTION
 
@@ -2900,7 +2900,7 @@ namespace m0.ZeroCode
 
             setupHelpVariables_onlyOnce();
 
-            dict = DictionariesForFormalTextLanguageFactory.Get_Text2Graph(formalTextLanguage);
+            dict = DictionariesForFormalTextLanguageFactory.Get(formalTextLanguage);
         }
     }
 }
