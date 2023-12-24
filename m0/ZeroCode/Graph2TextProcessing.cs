@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Windows.Input;
 
 namespace m0.ZeroCode
 {
@@ -1411,17 +1412,39 @@ namespace m0.ZeroCode
         {
             string edgeToCheckMetaValue = edgeToCheck.Meta.Value.ToString();
 
-        //    if (dict.firstEdge2KeywordVertex.ContainsKey(edgeToCheckMetaValue))
-              //  foreach
+            if (dict.firstEdge2KeywordVertex.ContainsKey(edgeToCheckMetaValue))
+            {
+                foreach (IVertex keywordTo in dict.firstEdge2KeywordVertex[edgeToCheckMetaValue])
+                    if (CheckMatchForKeywordAndAddKeywordMatchIfThereIsMatch(edgeToCheck, path, edgeToCheck_parent, keywordTo))
+                        break;
+            }
+            else
+            {
+                IList<IEdge> isEdges = GraphUtil.GetQueryOut(edgeToCheck.To, "$Is", null);
 
+                foreach (IEdge isEdge in isEdges)
+                {
+                    string isEdgeToValue = isEdge.To.Value.ToString();
 
-            foreach (IEdge keyword in FormalTextLanguage.GetAll(false, @"Keywords:\$Keyword:"))
-                if (!newVertexKeywordVertexList.Contains(keyword.To))
-                    CheckMatchForKeywordAndAddKeywordMatchIfThereIsMatch(edgeToCheck, path, edgeToCheck_parent, keyword.To) ;
+                    if (dict.firstEdgeANYIs2KeywordVertex.ContainsKey(isEdgeToValue))
+                    {
+                        foreach (IVertex keywordTo in dict.firstEdgeANYIs2KeywordVertex[isEdgeToValue])
+                            if (CheckMatchForKeywordAndAddKeywordMatchIfThereIsMatch(edgeToCheck, path, edgeToCheck_parent, keywordTo))
+                                break;
+                    }
+                }
+            }
+
+            //foreach (IEdge keyword in FormalTextLanguage.GetAll(false, @"Keywords:\$Keyword:"))
+              //  if (!newVertexKeywordVertexList.Contains(keyword.To))
+                //    CheckMatchForKeywordAndAddKeywordMatchIfThereIsMatch(edgeToCheck, path, edgeToCheck_parent, keyword.To) ;
         }
 
         private bool CheckMatchForKeywordAndAddKeywordMatchIfThereIsMatch(IEdge edgeToCheck, string path, IEdge edgeToCheck_parent, IVertex keywordVertex)
         {
+            if (newVertexKeywordVertexList.Contains(keywordVertex))
+                return false;
+
             bool thereWasMatch = false;
 
             string newValueKeyword;
@@ -1457,7 +1480,7 @@ namespace m0.ZeroCode
 
                             if (oldMatch.BaseEdge == match.BaseEdge)
                             {
-                                if (match.BaseEdgePathLength < oldMatch.BaseEdgePathLength)
+                                if (match.BaseEdgePathLength < oldMatch.BaseEdgePathLength) // not sure if it can happen, but just in case (some strange graph struct?)
                                 {
                                     oldMatch.BaseEdgePath = match.BaseEdgePath;
                                     oldMatch.BaseEdgePathLength = match.BaseEdgePathLength;
