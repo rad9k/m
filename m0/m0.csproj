@@ -59,9 +59,8 @@
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="ICSharpCode.AvalonEdit, Version=5.0.3.0, Culture=neutral, PublicKeyToken=9cc39be672370310, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\m0_RUN\bin\Debug\ICSharpCode.AvalonEdit.dll</HintPath>
+    <Reference Include="ICSharpCode.AvalonEdit, Version=6.3.0.90, Culture=neutral, PublicKeyToken=9cc39be672370310, processorArchitecture=MSIL">
+      <HintPath>..\packages\AvalonEdit.6.3.0.90\lib\net462\ICSharpCode.AvalonEdit.dll</HintPath>
     </Reference>
     <Reference Include="Jil, Version=2.16.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Jil.2.16.0\lib\net45\Jil.dll</HintPath>
