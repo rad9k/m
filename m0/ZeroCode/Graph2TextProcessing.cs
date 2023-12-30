@@ -584,7 +584,7 @@ namespace m0.ZeroCode
             if (GraphUtil.GetValueAndCompareStrings(baseVertex, toFind))
                 return pre;
 
-            foreach (IEdge e in baseVertex)
+            foreach (IEdge e in baseVertex.OutEdgesRaw)
             {
                 if (GraphUtil.GetValueAndCompareStrings(e.To, toFind))
                     return pre + toAdd + ZeroCodeCommon.stringToPossiblyEscapedString(dict, e.Meta.Value.ToString()) + ":";
@@ -664,7 +664,7 @@ namespace m0.ZeroCode
 
             int count = 1;
 
-            foreach(IEdge e in kmrEdge.From)
+            foreach(IEdge e in kmrEdge.From.OutEdgesRaw)
             {
                 if (e == kmrEdge)
                 {
@@ -868,7 +868,7 @@ namespace m0.ZeroCode
 
                     string manySentenceSecond = manySentenceFirst;
 
-                    if(sentence.Contains("(+") && sentence.Contains("+)"))
+                    if (sentence.Contains("(+") && sentence.Contains("+)"))
                     {
                         manySentenceSecond = manySentenceSecond.Substring(0, manySentenceSecond.IndexOf("(+"))
                             + manySentenceSecond.Substring(manySentenceSecond.IndexOf("(+") + 2, manySentenceSecond.IndexOf("+)") - manySentenceSecond.IndexOf("(+") - 2)
@@ -993,7 +993,7 @@ namespace m0.ZeroCode
             if (edgeFromKeywordManyRootQueryString == null)
                 return wasThereNewLine;
 
-            foreach (IEdge ee in edgeFromKeywordManyRootQueryString.From)
+            foreach (IEdge ee in edgeFromKeywordManyRootQueryString.From.OutEdgesRaw)
             {
                 if (ee.Meta == keywordManyRoot.Meta)
                 {
@@ -1074,7 +1074,7 @@ namespace m0.ZeroCode
 
                 bool wasNewVertex = true; // for empty
 
-                if(!emptyKeywordVertexList.Contains(km.KeywordDefinition))                
+                if (!emptyKeywordVertexList.Contains(km.KeywordDefinition))                
                     wasNewVertex = AppendVertex(e, path, false, false, false); // non emptyKeword (standard)
                 else
                     SourceAppend(ZeroCodeCommon.stringToPossiblyEscapedString(dict, e.To.Value.ToString())); // emptyKeyword handling
@@ -1294,7 +1294,7 @@ namespace m0.ZeroCode
                 if (!currentMatchGraphEdgeList.Contains(searchResult))
                     {
                         if (!VertexOperations.IsLink(keywordEdge))
-                            foreach (IEdge subKeywordEdge in keywordEdge.To)
+                            foreach (IEdge subKeywordEdge in keywordEdge.To.OutEdgesRaw)
                                 if (!ZeroCodeUtil.IsDoubleDolarMeta(subKeywordEdge)
                                     && GetGraphMatch(searchResult.To, subKeywordEdge) == false)
                                     return false;
@@ -1392,7 +1392,7 @@ namespace m0.ZeroCode
                 {
                     if (keywordEdge == firstMatchEdgeInGraphToCompare)
                     {
-                        foreach (IEdge keywordEdgeNested in firstMatchEdgeInGraphToCompare.To)
+                        foreach (IEdge keywordEdgeNested in firstMatchEdgeInGraphToCompare.To.OutEdgesRaw)
                             // if (!IsLink(keywordEdgeNested))
                             if (GetGraphMatch(edgeToCheck.To, keywordEdgeNested) == false)
                                 return null;                                                                 
