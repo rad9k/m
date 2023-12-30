@@ -213,8 +213,7 @@ namespace m0.ZeroCode
 
                                 checkIfNewBest(edgesList, true, s);
 
-                                return;
-                                
+                                return;                      
                             }
                         }
                         else
@@ -470,7 +469,10 @@ namespace m0.ZeroCode
 
             s = s.Replace("\r\n", NewLineStringPlusNewLine);
 
-            Source.Append(s);            
+            Source.Append(s);
+
+            if (log)
+                m0.MinusZero.Instance.Log(1, "SourceAppend", s);
         }
 
         void ImportImports(IVertex baseVertex)
@@ -681,7 +683,8 @@ namespace m0.ZeroCode
         {
             keywordManyRootQueryString = "";
 
-            if (baseEdge.To.Get(false, "$$KeywordManyRoot:") != null)
+            if (GraphUtil.ExistQueryOut(baseEdge.To, "$$KeywordManyRoot", null))
+            //if (baseEdge.To.Get(false, "$$KeywordManyRoot:") != null)
             {
                 keywordManyRootQueryString = path;
                 return baseEdge;
@@ -694,7 +697,7 @@ namespace m0.ZeroCode
             else
                 toAdd = path + "\\";
 
-            foreach(IEdge e in baseEdge.To)
+            foreach(IEdge e in baseEdge.To.OutEdgesRaw)
             {
                 if (!VertexOperations.IsLink(e))
                 {
@@ -825,14 +828,23 @@ namespace m0.ZeroCode
                             AppendSubVertices(km, be, path);
                     }
 
+                    if(log && keywordEdge.Meta.ToString() == "Aggregation" && keywordEdge.To.ToString() == "Item")
+                    {
+                        int x = 0;
+                    }
+
                     if(!VertexOperations.IsLink(be)) // XXX 2020
                     //foreach (IEdge e in ZeroCodeView.Linearize(be.To))
-                    foreach (IEdge e in be.To)
+                    foreach (IEdge e in be.To.OutEdgesRaw)
                         if (!km.MatchedEdges.Contains(e))
                         {
                             int tabTimes_copy = tabTimes;
 
+                            if (log)
+                                MinusZero.Instance.Log(0, "AppendKeyword", "BEG " + keywordEdge.Meta.ToString() + " :: " + keywordEdge.To.ToString());
                             ZeroCodeGraph2String_Reccurent(e, tabTimes + 1, be, path); // XXX NEW
+                            if (log)
+                                MinusZero.Instance.Log(0, "AppendKeyword", "END " + keywordEdge.Meta.ToString() + " :: " + keywordEdge.To.ToString());
 
                             tabTimes = tabTimes_copy;
                         }
@@ -1079,7 +1091,7 @@ namespace m0.ZeroCode
 
             bool wasFirstNewLine = false;
 
-            foreach (IEdge e in baseEdge.To)
+            foreach (IEdge e in baseEdge.To.OutEdgesRaw)
             {
                 if (km.BaseEdge != baseEdge && !km.MatchedEdges.Contains(e))
                 {
@@ -1130,7 +1142,7 @@ namespace m0.ZeroCode
                if (ShouldAppendKeywordHere(e,path))
                     return AppendKeyword(e, false, ParentKmHasTabAddingOmmit);
                 else
-                    if(KeywordMatchedSubGraphEdges[e].BaseEdge.To!=e.To) // :O)
+                    if (KeywordMatchedSubGraphEdges[e].BaseEdge.To != e.To) // :O)
                           return true; // ?????????????????????? or true?
 
             AppendNewLineAndTabs();
@@ -1311,7 +1323,7 @@ namespace m0.ZeroCode
 
             if (secondEdge != null)
             {
-                foreach(IEdge e in edgeToCheck.To)
+                foreach(IEdge e in edgeToCheck.To.OutEdgesRaw)
                     currentMatchGraphEdgeList.Add(e);
 
                 currentMatchGraphEdgeList.Add(secondEdge);
@@ -1567,10 +1579,20 @@ namespace m0.ZeroCode
             SourceAppend(dict.CodeGraphVertexSuffix);
         }
 
-        int levelCorrection = 0;        
+        int levelCorrection = 0;
+
+        bool log = false;
 
         void ZeroCodeGraph2String_Reccurent(IEdge baseEdge, int level, IEdge parent, string path)
-        { 
+        {
+            if (baseEdge.To.ToString() == "Item" && baseEdge.Meta.ToString() == "Class")
+            {
+                log = true;
+            }
+
+            if (log)
+                m0.MinusZero.Instance.Log(1, level, "ZeroCodeGraph2String_Reccurent", baseEdge.Meta.ToString() + "::" + baseEdge.To.ToString());
+
             if (BeenList.Contains(baseEdge))
                 return;
 

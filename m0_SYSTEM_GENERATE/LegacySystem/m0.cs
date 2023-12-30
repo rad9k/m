@@ -1277,6 +1277,8 @@ namespace m0
 
             aggregation2_aggregation.AddEdge(_is, LegacySystem.Graph.EasyVertex.Get(smu, false, @"Class\Aggregation"));
 
+            aggregation2_aggregation.AddEdge(LegacySystem.Graph.EasyVertex.Get(Root, false, @"System\Meta\Base\Vertex\$IsAggregation"), empty);
+
             // aggregation
             //
             // aggregation (?<name>) (?<type>)
@@ -1288,6 +1290,8 @@ namespace m0
             aggregation_aggregation.AddVertex(LegacySystem.Graph.EasyVertex.Get(smb, false, @"Vertex\$EdgeTarget"), "(?<type>)");
 
             aggregation_aggregation.AddEdge(_is, LegacySystem.Graph.EasyVertex.Get(smu, false, @"Class\Aggregation"));
+
+            aggregation_aggregation.AddEdge(LegacySystem.Graph.EasyVertex.Get(Root, false, @"System\Meta\Base\Vertex\$IsAggregation"), empty);
 
             // method
             //

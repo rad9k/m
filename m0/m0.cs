@@ -14,6 +14,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using System.Text;
 using System.Threading;
 
 
@@ -288,8 +289,18 @@ namespace m0
 
         public void Log(int Level, string Where, string What)
         {
+            Log(Level, 0, Where, What);
+        }
+
+        public void Log(int Level, int nesting, string Where, string What)
+        {
+            StringBuilder pre = new StringBuilder();
+
+            for (int x = 0; x < nesting; x++)
+                pre.Append(" . ");
+
             if (DoLog && Level <= LogLevel)
-                logFile.WriteLine(System.DateTime.Now.ToLongTimeString()+":"+ System.DateTime.Now.Millisecond+"["+Level+"]:"+" "+Where+": "+What);        
+                logFile.WriteLine(System.DateTime.Now.ToLongTimeString() + ":" + System.DateTime.Now.Millisecond + "[" + Level + "]:" + " " + pre + Where + ": " + What);
         }
 
         private void DisposeLog()
