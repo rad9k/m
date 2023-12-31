@@ -1424,13 +1424,17 @@ namespace m0.ZeroCode
         {
             string edgeToCheckMetaValue = edgeToCheck.Meta.Value.ToString();
 
+            bool found = false;
+
             if (dict.firstEdge2KeywordVertex.ContainsKey(edgeToCheckMetaValue))
             {
                 foreach (IVertex keywordTo in dict.firstEdge2KeywordVertex[edgeToCheckMetaValue])
                     if (CheckMatchForKeywordAndAddKeywordMatchIfThereIsMatch(edgeToCheck, path, edgeToCheck_parent, keywordTo))
-                        break;
+                        found = true;
+                        //break; // future possible optimisation
             }
-            else
+            
+            if (!found)
             {
                 IList<IEdge> isEdges = GraphUtil.GetQueryOut(edgeToCheck.To, "$Is", null);
 
@@ -1441,8 +1445,9 @@ namespace m0.ZeroCode
                     if (dict.firstEdgeANYIs2KeywordVertex.ContainsKey(isEdgeToValue))
                     {
                         foreach (IVertex keywordTo in dict.firstEdgeANYIs2KeywordVertex[isEdgeToValue])
-                            if (CheckMatchForKeywordAndAddKeywordMatchIfThereIsMatch(edgeToCheck, path, edgeToCheck_parent, keywordTo))
-                                break;
+                            CheckMatchForKeywordAndAddKeywordMatchIfThereIsMatch(edgeToCheck, path, edgeToCheck_parent, keywordTo);
+                            //if (CheckMatchForKeywordAndAddKeywordMatchIfThereIsMatch(edgeToCheck, path, edgeToCheck_parent, keywordTo))
+                            //break; // future possible optimisation
                     }
                 }
             }
