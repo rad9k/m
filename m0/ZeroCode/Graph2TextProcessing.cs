@@ -1583,8 +1583,13 @@ namespace m0.ZeroCode
 
         void ZeroCodeGraph2String_Reccurent(IEdge baseEdge, int level, IEdge parent, string path)
         {
+            if (baseEdge.To.ToString() == "Item" && baseEdge.Meta.ToString() == "Class")
+            {
+                log = true;
+            }
 
-            m0.MinusZero.Instance.Log(1, level, "ZeroCodeGraph2String_Reccurent", baseEdge.Meta.ToString() + "::" + baseEdge.To.ToString());
+            if (log)
+                m0.MinusZero.Instance.Log(1, level, "ZeroCodeGraph2String_Reccurent", baseEdge.Meta.ToString() + "::" + baseEdge.To.ToString());
 
             if (BeenList.Contains(baseEdge))
                 return;
