@@ -842,7 +842,7 @@ namespace m0.ZeroCode
 
                             if (log)
                                 MinusZero.Instance.Log(0, "AppendKeyword", "BEG " + keywordEdge.Meta.ToString() + " :: " + keywordEdge.To.ToString());
-                            ZeroCodeGraph2String_Reccurent(e, tabTimes + 1, be, path); // XXX NEW
+                            //ZeroCodeGraph2String_Reccurent(e, tabTimes + 1, be, path); // XXX NEW
                             if (log)
                                 MinusZero.Instance.Log(0, "AppendKeyword", "END " + keywordEdge.Meta.ToString() + " :: " + keywordEdge.To.ToString());
 
