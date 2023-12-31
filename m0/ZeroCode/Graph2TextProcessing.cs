@@ -471,8 +471,8 @@ namespace m0.ZeroCode
 
             Source.Append(s);
 
-            if (log)
-                m0.MinusZero.Instance.Log(1, "SourceAppend", s);
+
+            m0.MinusZero.Instance.Log(1, "SourceAppend", s);
         }
 
         void ImportImports(IVertex baseVertex)
@@ -828,11 +828,6 @@ namespace m0.ZeroCode
                             AppendSubVertices(km, be, path);
                     }
 
-                    if(log && keywordEdge.Meta.ToString() == "Aggregation" && keywordEdge.To.ToString() == "Item")
-                    {
-                        int x = 0;
-                    }
-
                     if(!VertexOperations.IsLink(be)) // XXX 2020
                     //foreach (IEdge e in ZeroCodeView.Linearize(be.To))
                     foreach (IEdge e in be.To.OutEdgesRaw)
@@ -840,11 +835,11 @@ namespace m0.ZeroCode
                         {
                             int tabTimes_copy = tabTimes;
 
-                            if (log)
-                                MinusZero.Instance.Log(0, "AppendKeyword", "BEG " + keywordEdge.Meta.ToString() + " :: " + keywordEdge.To.ToString());
+                            MinusZero.Instance.Log(0, "AppendKeyword", "BEG " + keywordEdge.Meta.ToString() + " :: " + keywordEdge.To.ToString());
+
                             ZeroCodeGraph2String_Reccurent(e, tabTimes + 1, be, path); // XXX NEW
-                            if (log)
-                                MinusZero.Instance.Log(0, "AppendKeyword", "END " + keywordEdge.Meta.ToString() + " :: " + keywordEdge.To.ToString());
+
+                            MinusZero.Instance.Log(0, "AppendKeyword", "END " + keywordEdge.Meta.ToString() + " :: " + keywordEdge.To.ToString());
 
                             tabTimes = tabTimes_copy;
                         }
@@ -1586,17 +1581,10 @@ namespace m0.ZeroCode
 
         int levelCorrection = 0;
 
-        bool log = false;
-
         void ZeroCodeGraph2String_Reccurent(IEdge baseEdge, int level, IEdge parent, string path)
         {
-            if (baseEdge.To.ToString() == "Item" && baseEdge.Meta.ToString() == "Class")
-            {
-                log = true;
-            }
 
-            if (log)
-                m0.MinusZero.Instance.Log(1, level, "ZeroCodeGraph2String_Reccurent", baseEdge.Meta.ToString() + "::" + baseEdge.To.ToString());
+            m0.MinusZero.Instance.Log(1, level, "ZeroCodeGraph2String_Reccurent", baseEdge.Meta.ToString() + "::" + baseEdge.To.ToString());
 
             if (BeenList.Contains(baseEdge))
                 return;
