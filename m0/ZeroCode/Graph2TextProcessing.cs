@@ -471,8 +471,8 @@ namespace m0.ZeroCode
 
             Source.Append(s);
 
-
-            m0.MinusZero.Instance.Log(1, "SourceAppend", s);
+            if(log)
+                m0.MinusZero.Instance.Log(1, "SourceAppend", s);
         }
 
         void ImportImports(IVertex baseVertex)
@@ -835,11 +835,13 @@ namespace m0.ZeroCode
                         {
                             int tabTimes_copy = tabTimes;
 
-                            MinusZero.Instance.Log(0, "AppendKeyword", "BEG " + keywordEdge.Meta.ToString() + " :: " + keywordEdge.To.ToString());
+                            if(log)
+                                MinusZero.Instance.Log(0, "AppendKeyword", "BEG " + keywordEdge.Meta.ToString() + " :: " + keywordEdge.To.ToString());
 
                             ZeroCodeGraph2String_Reccurent(e, tabTimes + 1, be, path); // XXX NEW
 
-                            MinusZero.Instance.Log(0, "AppendKeyword", "END " + keywordEdge.Meta.ToString() + " :: " + keywordEdge.To.ToString());
+                            if(log)
+                                MinusZero.Instance.Log(0, "AppendKeyword", "END " + keywordEdge.Meta.ToString() + " :: " + keywordEdge.To.ToString());
 
                             tabTimes = tabTimes_copy;
                         }
@@ -1581,9 +1583,21 @@ namespace m0.ZeroCode
 
         int levelCorrection = 0;
 
+        bool log = false;
+
         void ZeroCodeGraph2String_Reccurent(IEdge baseEdge, int level, IEdge parent, string path)
         {
-            m0.MinusZero.Instance.Log(1, level, "ZeroCodeGraph2String_Reccurent", baseEdge.Meta.ToString() + "::" + baseEdge.To.ToString());
+            if (baseEdge.Meta.ToString() == "Class" && baseEdge.To.ToString() == "Item")
+                log = true;
+
+            if (log && baseEdge.Meta.ToString() == "$Inherits" && baseEdge.To.ToString() == "HasBaseEdge")
+            {
+                int x = 0;
+            }
+                
+
+            if (log)
+                m0.MinusZero.Instance.Log(1, level, "ZeroCodeGraph2String_Reccurent", baseEdge.Meta.ToString() + "::" + baseEdge.To.ToString());
 
             if (BeenList.Contains(baseEdge))
                 return;
@@ -1631,7 +1645,7 @@ namespace m0.ZeroCode
 
             bool appendAsNew = AppendEdge(baseEdge, parent, path, false);
 
-            if (!isLink)
+            //if (!isLink)
                 BeenList.Add(baseEdge);
 
             if (baseEdge == BaseEdge)
