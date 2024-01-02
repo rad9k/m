@@ -76,11 +76,11 @@ namespace m0.ZeroCode
         {            
             IList<IEdge> linearizedList = new List<IEdge>();
 
-            foreach (IEdge e in v)
+            foreach (IEdge e in v.OutEdgesRaw)
                 if (e.Meta != dict.NextAtomMeta)
                     linearizedList.Add(e);
 
-            foreach (IEdge e in v)
+            foreach (IEdge e in v.OutEdgesRaw)
                 if (e.Meta != dict.NextAtomMeta)
                     AddNextEdges(linearizedList, e.To);
 
@@ -105,7 +105,7 @@ namespace m0.ZeroCode
             IDictionary<IVertex, IVertex> sourceLinerizedDict = new Dictionary<IVertex, IVertex>();
             IList<IVertex> beenList = new List<IVertex>();
 
-            IList<IVertex> subGraph = GraphUtil.GetSubGraphWithoutLinksAsList(sourceBaseVertex);
+            IList<IVertex> subGraph = GraphUtil.GetSubGraphWithoutLinksAsList_Raw(sourceBaseVertex);
 
             foreach (IVertex v in subGraph) {
                 IVertex v_new = MinusZero.Instance.CreateTempVertex();

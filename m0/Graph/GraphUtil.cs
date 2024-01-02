@@ -1300,6 +1300,24 @@ namespace m0.Graph
                         GetSubGraphWithoutLinks_Reccurent(e.To, visited);                           
         }
 
+        static public List<IVertex> GetSubGraphWithoutLinksAsList_Raw(IVertex iterationRoot)
+        {
+            List<IVertex> visited = new List<IVertex>();
+
+            GetSubGraphWithoutLinks_Reccurent_Raw(iterationRoot, visited);
+
+            return visited;
+        }
+
+        static void GetSubGraphWithoutLinks_Reccurent_Raw(IVertex baseVertex, IList<IVertex> visited)
+        {
+            visited.Add(baseVertex);
+
+            foreach (IEdge e in baseVertex.OutEdgesRaw)
+                if (!visited.Contains(e.To) && !VertexOperations.IsLink(e))
+                    GetSubGraphWithoutLinks_Reccurent_Raw(e.To, visited);
+        }
+
         static public List<IEdge> GetSubGraphAsEdgesWithoutLinksAsList(IEdge iterationRoot)
         {
             List<IVertex> visited = new List<IVertex>();

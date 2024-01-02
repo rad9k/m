@@ -1583,7 +1583,7 @@ namespace m0.ZeroCode
 
         int levelCorrection = 0;
 
-        bool log = false;
+        bool log = true;
 
         void ZeroCodeGraph2String_Reccurent(IEdge baseEdge, int level, IEdge parent, string path)
         {
@@ -1645,7 +1645,7 @@ namespace m0.ZeroCode
 
             bool appendAsNew = AppendEdge(baseEdge, parent, path, false);
 
-            if (!isLink)
+            //if (!isLink)
                 BeenList.Add(baseEdge);
 
             if (baseEdge == BaseEdge)
