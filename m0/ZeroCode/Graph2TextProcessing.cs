@@ -1645,7 +1645,7 @@ namespace m0.ZeroCode
 
             bool appendAsNew = AppendEdge(baseEdge, parent, path, false);
 
-            //if (!isLink)
+            if (!isLink)
                 BeenList.Add(baseEdge);
 
             if (baseEdge == BaseEdge)
