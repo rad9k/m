@@ -1308,7 +1308,7 @@ namespace m0
 
             IVertex mmip = method_method.AddVertex(LegacySystem.Graph.EasyVertex.Get(smu, false, @"Class\Method\InputParameter"), "(?<paramName>)");
 
-            mmip.AddVertex(LegacySystem.Graph.EasyVertex.Get(smb, false, @"Vertex\$VertexTarget"), "(?<paramType>)");
+            mmip.AddVertex(LegacySystem.Graph.EasyVertex.Get(smb, false, @"Vertex\$EdgeTarget"), "(?<paramType>)");
 
             mmip.AddEdge(LegacySystem.Graph.EasyVertex.Get(smb, false, @"$$KeywordManyRoot"),
                 Empty);
@@ -1326,7 +1326,7 @@ namespace m0
 
             IVertex m2fip = method2_method.AddVertex(LegacySystem.Graph.EasyVertex.Get(smu, false, @"Class\Method\InputParameter"), "(?<paramName>)");
 
-            m2fip.AddVertex(LegacySystem.Graph.EasyVertex.Get(smb, false, @"Vertex\$VertexTarget"), "(?<paramType>)");
+            m2fip.AddVertex(LegacySystem.Graph.EasyVertex.Get(smb, false, @"Vertex\$EdgeTarget"), "(?<paramType>)");
 
             m2fip.AddEdge(LegacySystem.Graph.EasyVertex.Get(smb, false, @"$$KeywordManyRoot"),
                 Empty);
@@ -1346,7 +1346,7 @@ namespace m0
 
             IVertex ffip = function_function.AddVertex(LegacySystem.Graph.EasyVertex.Get(smu, false, @"Function\InputParameter"), "(?<paramName>)");
 
-            ffip.AddVertex(LegacySystem.Graph.EasyVertex.Get(smb, false, @"Vertex\$VertexTarget"), "(?<paramType>)");
+            ffip.AddVertex(LegacySystem.Graph.EasyVertex.Get(smb, false, @"Vertex\$EdgeTarget"), "(?<paramType>)");
 
             ffip.AddEdge(LegacySystem.Graph.EasyVertex.Get(smb, false, @"$$KeywordManyRoot"), 
                 Empty);
@@ -1364,7 +1364,7 @@ namespace m0
 
             IVertex f2fip = function2_function.AddVertex(LegacySystem.Graph.EasyVertex.Get(smu, false, @"Function\InputParameter"), "(?<paramName>)");
 
-            f2fip.AddVertex(LegacySystem.Graph.EasyVertex.Get(smb, false, @"Vertex\$VertexTarget"), "(?<paramType>)");
+            f2fip.AddVertex(LegacySystem.Graph.EasyVertex.Get(smb, false, @"Vertex\$EdgeTarget"), "(?<paramType>)");
 
             f2fip.AddEdge(LegacySystem.Graph.EasyVertex.Get(smb, false, @"$$KeywordManyRoot"),
                 Empty);
