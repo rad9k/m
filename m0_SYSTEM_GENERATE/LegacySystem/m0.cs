@@ -2577,6 +2577,10 @@ namespace m0
 
             IVertex FormalTextLanguage = LegacySystem.Graph.EasyVertex.Get(sm, false, @"ZeroTypes\FormalTextLanguage");
 
+            FormalTextLanguage.AddVertex(LegacySystem.Graph.EasyVertex.Get(Root, false, @"System\Meta\Base\Vertex\MetaEdge"),
+                "FormalTextLanguageView");
+
+
             IVertex vertexType = LegacySystem.Graph.EasyVertex.Get(sm, false, @"ZeroTypes\VertexType");
 
             AddAssociation(FormalTextLanguage, "DefaultImports", 0, 1, vertexType);
