@@ -5328,9 +5328,7 @@ namespace m0
 
         private void AddIsAttribute(string what)
         {
-            AddIsAttribute_inner(@"System\Meta\ZeroTypes?" + what + ":", what);
-            AddIsAttribute_inner(@"System\Meta\Visualiser?" + what + ":", what);
-            AddIsAttribute_inner(@"System\Meta\User?" + what + ":", what);
+            AddIsAttribute_inner(@"System\Meta?" + what + ":", what);         
         }
 
         private void AddIsAttribute_inner(string s, string what)
@@ -5346,17 +5344,8 @@ namespace m0
 
         private void AddIsAggregation()
         {
-            AddIsAggregation_inner(@"System\Meta\Store?Attribute:");
-            AddIsAggregation_inner(@"System\Meta\Store?Aggregation:");
-
-            AddIsAggregation_inner(@"System\Meta\ZeroTypes?Attribute:");
-            AddIsAggregation_inner(@"System\Meta\ZeroTypes?Aggregation:");
-
-            AddIsAggregation_inner(@"System\Meta\Visualiser?Attribute:");
-            AddIsAggregation_inner(@"System\Meta\Visualiser?Aggregation:");
-
-            AddIsAggregation_inner(@"System\Meta\User?Attribute:");
-            AddIsAggregation_inner(@"System\Meta\User?Aggregation:");
+            AddIsAggregation_inner(@"System\Meta?Attribute:");
+            AddIsAggregation_inner(@"System\Meta?Aggregation:");
         }
 
         private void AddIsAggregation_inner(string s)
@@ -6365,6 +6354,8 @@ namespace m0
             AddIsAttribute("Association");
 
             AddIsAttribute("Aggregation");
+
+            AddIsAttribute("Method");
 
             AddIsAggregation();
 

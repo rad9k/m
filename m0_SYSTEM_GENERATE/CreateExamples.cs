@@ -136,6 +136,7 @@ namespace m0_SYSTEM_GENERATE
             IVertex code = x.AddVertex(null, "code");
 
             _exeTest(code);
+          /*  _exeTest(code);
             _exeTest(code);
             _exeTest(code);
             _exeTest(code);
@@ -143,8 +144,7 @@ namespace m0_SYSTEM_GENERATE
             _exeTest(code);
             _exeTest(code);
             _exeTest(code);
-            _exeTest(code);
-            _exeTest(code);
+            _exeTest(code);*/
         }
 
             static void _exeTest(IVertex code)

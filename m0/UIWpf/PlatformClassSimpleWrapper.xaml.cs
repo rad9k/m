@@ -28,7 +28,7 @@ namespace m0.UIWpf
     /// </summary>
     public partial class PlatformClassSimpleWrapper : UserControl, IHasScrollViewer
     {
-        bool CODE_ON_RIGHT = false;
+        bool CODE_ON_RIGHT = true;
 
         public bool IsIntialising;
 
