@@ -193,7 +193,7 @@ namespace m0
         {
             IVertex sm = LegacySystem.Graph.EasyVertex.Get(Root, false, @"System\Meta");
 
-            m0.LegacySystem.Util.GeneralUtil.ParseAndExcute(sm, null, "{Base{$,Vertex{$IsLink,$Inherits,$NoInherit,$NoCopy,$StackFrameInherits,$Is,$EdgeTarget,$VertexTarget,$IsAggregation,$MinCardinality,$MaxCardinality,$MaxTargetCardinality,$DefaultValue,$DefaultViewVisualiser,$DefaultEditVisualiser,$DefaultOpenVisualiser,$Group,$Section,$Description,$ExecutableEndPoint,$GraphChangeTrigger,$VertexEval,MetaEdge,Author,Dependency},$Import,$ImportMeta,$Keyword,$KeywordGroupDefinition,$$KeywordGroup,$$KeywordManyRoot,$$LocalRoot,$$StartInLocalRoot,$$EmptyKeyword,$$NewVertexKeyword,$$LinkKeyword,$$NonSelfRecursiveParameters,$$Import,$$ImportDirect,$$ImportMeta,$$ImportDirectMeta,$$NoSequentialExecution,$$NextAtomRoot,$NewLine,$ParseRoot,$ParseArtefacts}}");
+            m0.LegacySystem.Util.GeneralUtil.ParseAndExcute(sm, null, "{Base{$,Vertex{$IsLink,$Inherits,$NoInherit,$NoCopy,$StackFrameInherits,$Is,$EdgeTarget,$VertexTarget,$IsAggregation,$MinCardinality,$MaxCardinality,$MaxTargetCardinality,$DefaultValue,$DefaultViewVisualiser,$DefaultEditVisualiser,$DefaultOpenVisualiser,$Group,$Section,$Description,$ExecutableEndPoint,$GraphChangeTrigger,$VertexEval,MetaEdge,Author,Dependency},$Import,$ImportMeta,$Keyword,$KeywordGroupDefinition,$$KeywordGroup,$$KeywordManyRoot,$$LocalRoot,$$StartInLocalRoot,$$EmptyKeyword,$$NewVertexKeyword,$$ForceNewVertex,$$LinkKeyword,$$NonSelfRecursiveParameters,$$Import,$$ImportDirect,$$ImportMeta,$$ImportDirectMeta,$$NoSequentialExecution,$$NextAtomRoot,$NewLine,$ParseRoot,$ParseArtefacts}}");
 
             LegacySystem.Graph.EasyVertex.Get(sm, false, @"Base").AddEdge(
                 null,
@@ -335,6 +335,32 @@ namespace m0
             m0.LegacySystem.Util.GeneralUtil.ParseAndExcute(sm, null, "{ZeroUML{Type,AtomType,StateMachine{State{Transition}},Enum{EnumValue},Selector,Class{Attribute{MinValue,MaxValue},Association,Aggregation,$PlatformClassName}}}");
 
             m0.LegacySystem.Util.GeneralUtil.ParseAndExcute(LegacySystem.Graph.EasyVertex.Get(sm, false, @"ZeroUML\Selector"), sm, "{$MinCardinality:0,$MaxCardinality:-1}");
+
+            LegacySystem.Graph.EasyVertex.Get(sm, false, @"ZeroUML\Class\Attribute\MinValue").AddVertex(
+                LegacySystem.Graph.EasyVertex.Get(sm, false, @"*$MinCardinality"), "0");
+
+            LegacySystem.Graph.EasyVertex.Get(sm, false, @"ZeroUML\Class\Attribute\MinValue").AddVertex(
+                LegacySystem.Graph.EasyVertex.Get(sm, false, @"*$MaxCardinality"), "1");
+
+            LegacySystem.Graph.EasyVertex.Get(sm, false, @"ZeroUML\Class\Attribute\MinValue").AddEdge(
+                LegacySystem.Graph.EasyVertex.Get(sm, false, @"*$EdgeTarget"),
+                LegacySystem.Graph.EasyVertex.Get(sm, false, @"ZeroTypes\Integer"));
+
+            LegacySystem.Graph.EasyVertex.Get(sm, false, @"ZeroUML\Class\Attribute\MaxValue").AddVertex(
+                LegacySystem.Graph.EasyVertex.Get(sm, false, @"*$MinCardinality"), "0");
+
+            LegacySystem.Graph.EasyVertex.Get(sm, false, @"ZeroUML\Class\Attribute\MaxValue").AddVertex(
+                LegacySystem.Graph.EasyVertex.Get(sm, false, @"*$MaxCardinality"), "1");
+
+            LegacySystem.Graph.EasyVertex.Get(sm, false, @"ZeroUML\Class\Attribute\MaxValue").AddEdge(
+                LegacySystem.Graph.EasyVertex.Get(sm, false, @"*$EdgeTarget"),
+                LegacySystem.Graph.EasyVertex.Get(sm, false, @"ZeroTypes\Integer"));
+
+            LegacySystem.Graph.EasyVertex.Get(sm, false, @"ZeroUML\Selector").AddEdge(
+                null, LegacySystem.Graph.EasyVertex.Get(sm, false, @"*$MinCardinality"));
+
+            LegacySystem.Graph.EasyVertex.Get(sm, false, @"ZeroUML\Selector").AddEdge(
+                null, LegacySystem.Graph.EasyVertex.Get(sm, false, @"*$MaxCardinality"));
 
             LegacySystem.Graph.EasyVertex.Get(sm, false, @"ZeroUML\Class\Attribute").AddEdge(
                 LegacySystem.Graph.EasyVertex.Get(sm, false, @"*$IsAggregation"), empty);
@@ -1016,6 +1042,8 @@ namespace m0
             IVertex keyword = LegacySystem.Graph.EasyVertex.Get(smb, false, @"$Keyword");
             IVertex keywordGroup = LegacySystem.Graph.EasyVertex.Get(smb, false, @"$$KeywordGroup");
             IVertex keywordGroupDefinition = LegacySystem.Graph.EasyVertex.Get(smb, false, @"$KeywordGroupDefinition");
+
+            IVertex forceNewVertex = LegacySystem.Graph.EasyVertex.Get(smb, false, @"$$ForceNewVertex");
 
             IVertex kgd_ColonEmptyInner2SlashMarkIndexMethodNewLink = k.AddVertex(keywordGroupDefinition, "ColonEmptyInner2SlashMarkIndexMethodNewLink");
             IVertex kgd_ColonEmptyInner2SlashMarkIndexMethodNewLinkBracketCopy = k.AddVertex(keywordGroupDefinition, "ColonEmptyInner2SlashMarkIndexMethodNewLinkBracketCopy");

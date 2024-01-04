@@ -465,6 +465,11 @@ namespace m0.ZeroCode
 
         void SourceAppend(string s)
         {        
+            if (s == "\"test\"")
+            {
+                int x = 0;
+            }
+
             string NewLineStringPlusNewLine = getNewLineAndTabsString();            
 
             s = s.Replace("\r\n", NewLineStringPlusNewLine);
@@ -1586,16 +1591,7 @@ namespace m0.ZeroCode
         bool log = true;
 
         void ZeroCodeGraph2String_Reccurent(IEdge baseEdge, int level, IEdge parent, string path)
-        {
-            if (baseEdge.Meta.ToString() == "Class" && baseEdge.To.ToString() == "Item")
-                log = true;
-
-            if (log && baseEdge.Meta.ToString() == "$Inherits" && baseEdge.To.ToString() == "HasBaseEdge")
-            {
-                int x = 0;
-            }
-                
-
+        {               
             if (log)
                 m0.MinusZero.Instance.Log(1, level, "ZeroCodeGraph2String_Reccurent", baseEdge.Meta.ToString() + "::" + baseEdge.To.ToString());
 
