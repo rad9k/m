@@ -11,7 +11,7 @@
 
 3) Parser update
 	+ multiplicity bug
-	- proper parsing where there are errors now
+	+ proper parsing where there are errors now
 	- empty line handling
 	- m0t support
 

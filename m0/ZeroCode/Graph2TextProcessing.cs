@@ -739,6 +739,8 @@ namespace m0.ZeroCode
                 if (e.Meta == importEdge.To)
                     linkEdge = e;
 
+            if (linkEdge == null)
+                return false;
 
             string name = ZeroCodeCommon.stringToNewVertexString(dict, importEdge.To.ToString());
 
