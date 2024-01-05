@@ -33,11 +33,7 @@ namespace m0.UIWpf.Visualisers
 {
     public class CodeControl : Border
     {
-        TextEditor editor = new TextEditor();
-
-        bool doNotParse = false;
-
-        //
+        public bool GenerateAfterParse = true;
 
         public bool BaseEdgeInsteadBaseVertex;
 
@@ -46,6 +42,12 @@ namespace m0.UIWpf.Visualisers
         public bool NoVertexForTextMemory = false;
 
         bool _ShowScrollBar = true;
+
+        //
+
+        TextEditor editor = new TextEditor();
+
+        bool doNotParse = false;
 
         public bool ShowScrollBar
         {
@@ -210,10 +212,20 @@ namespace m0.UIWpf.Visualisers
 
             int errorLine = -1;
 
+            string generated = null;
+
+            if (errorList.OutEdges.Count == 0 && GenerateAfterParse)
+                generated = _ExecuteGenerate_Internal();
+
             m0Main.Instance.Dispatcher.Invoke(() =>
             {
                 if (errorList.OutEdges.Count == 0)
+                {
+                    if (generated != null)
+                        editor.Text = generated;
+
                     editor.Background = (Brush)FindResource("0BackgroundBrush");
+                }
                 else
                 {
                     editor.Background = (Brush)FindResource("0LightErrorBrush");
@@ -389,15 +401,8 @@ namespace m0.UIWpf.Visualisers
             thread.Start();
         }
 
-        private void _ExecuteGenerate()
+        private string _ExecuteGenerate_Internal()
         {
-            m0Main.Instance.Dispatcher.Invoke(() =>
-            {
-                editor.Background = (Brush)FindResource("0ProcessingBrush");
-            });
-
-            //
-
             EdgeBase ee = new EdgeBase(Vertex.Get(false, @"BaseEdge:\From:"), Vertex.Get(false, @"BaseEdge:\Meta:"), Vertex.Get(false, @"BaseEdge:\To:"));
 
             IVertex ftl = GraphUtil.GetQueryOutFirst(Vertex, "FormalTextLanguage", null);
@@ -408,6 +413,19 @@ namespace m0.UIWpf.Visualisers
                 generated = MinusZero.Instance.DefaultFormalTextGenerator.Generate(ee);
             else
                 generated = MinusZero.Instance.DefaultFormalTextGenerator.Generate(ftl, ee);
+
+            return generated;
+        }
+
+        private void _ExecuteGenerate()
+        {
+            m0Main.Instance.Dispatcher.Invoke(() =>
+            {
+                editor.Background = (Brush)FindResource("0ProcessingBrush");
+            });
+
+            
+            string generated = _ExecuteGenerate_Internal();
 
 
             m0Main.Instance.Dispatcher.Invoke(() =>
