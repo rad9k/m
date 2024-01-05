@@ -10,7 +10,7 @@
 	+ Diagram supports Edge / Item switch for SelectedEdges
 
 3) Parser update
-	- multiplicity bug
+	+ multiplicity bug
 	- proper parsing where there are errors now
 	- empty line handling
 	- m0t support

@@ -465,11 +465,6 @@ namespace m0.ZeroCode
 
         void SourceAppend(string s)
         {        
-            if (s == "\"test\"")
-            {
-                int x = 0;
-            }
-
             string NewLineStringPlusNewLine = getNewLineAndTabsString();            
 
             s = s.Replace("\r\n", NewLineStringPlusNewLine);
@@ -579,7 +574,7 @@ namespace m0.ZeroCode
             SourceAppend(" :: ");
         }
 
-        string FindKeywordEdge(string pre, IVertex baseVertex, string toFind)
+        string FindKeywordEdge(string pre, IVertex baseVertex, string toFind, ref IVertex keywordSubVertex)
         {
             string toAdd = "";
 
@@ -587,16 +582,23 @@ namespace m0.ZeroCode
                 toAdd = @"\";
 
             if (GraphUtil.GetValueAndCompareStrings(baseVertex, toFind))
+            {
+                keywordSubVertex = baseVertex;
                 return pre;
+            }
 
             foreach (IEdge e in baseVertex.OutEdgesRaw)
             {
                 if (GraphUtil.GetValueAndCompareStrings(e.To, toFind))
+                {
+                    keywordSubVertex = e.To;
+
                     return pre + toAdd + ZeroCodeCommon.stringToPossiblyEscapedString(dict, e.Meta.Value.ToString()) + ":";
+                }
                 
                 if (!VertexOperations.IsLink(e))
                 {
-                    string ret = FindKeywordEdge(pre + toAdd + ZeroCodeCommon.stringToPossiblyEscapedString(dict, e.Meta.Value.ToString()) + ":", e.To, toFind);
+                    string ret = FindKeywordEdge(pre + toAdd + ZeroCodeCommon.stringToPossiblyEscapedString(dict, e.Meta.Value.ToString()) + ":", e.To, toFind, ref keywordSubVertex);
 
                     if (ret != null)
                         return ret;
@@ -916,7 +918,7 @@ namespace m0.ZeroCode
                 string ret = null;
 
                 if(!VertexOperations.IsLink(ee))
-                    ret=GetPathFromKeywordMatchAndKeywordEdge(km, ee, GraphUtil.GetIdentyfyingQuerySubString_MetaMode(dict, e) + suffix + path);
+                    ret = GetPathFromKeywordMatchAndKeywordEdge(km, ee, GraphUtil.GetIdentyfyingQuerySubString_MetaMode(dict, e) + suffix + path);
 
                 if (ret != null)
                     return ret;
@@ -962,14 +964,16 @@ namespace m0.ZeroCode
                 }
                 else
                 {
-                    string queryString = FindKeywordEdge("", km.KeywordDefinition, match.Value);
+                    IVertex keywordSubVertex = null;
+
+                    string queryString = FindKeywordEdge("", km.KeywordDefinition, match.Value, ref keywordSubVertex);
 
                     IEdge e = GetKewordEdgeByQuerystring(km, queryString);
 
                     if (VertexOperations.IsLink(e))
                         BeenList.Add(e);
 
-                    ProcessSentencePart(km, sentence, ref prevPos, ref wasThereNewLine, match, e, ParentKmHasTabAddingOmmit);
+                    ProcessSentencePart(km, sentence, ref prevPos, ref wasThereNewLine, match, e, ParentKmHasTabAddingOmmit, keywordSubVertex);
                 }
 
             if (wasThereNewLine)
@@ -1017,7 +1021,9 @@ namespace m0.ZeroCode
 
                         foreach (Match match in rgx.Matches(sentence))
                         {
-                            string queryString = FindKeywordEdge("", keywordManyRoot.To, match.Value);
+                            IVertex keywordSubVertex = null;
+
+                            string queryString = FindKeywordEdge("", keywordManyRoot.To, match.Value, ref keywordSubVertex);
 
                             IEdge e;
 
@@ -1029,7 +1035,7 @@ namespace m0.ZeroCode
                             if(VertexOperations.IsLink(ee))
                                 BeenList.Add(ee);
 
-                            ProcessSentencePart(km, sentence, ref prevPos, ref wasThereNewLine, match, e, ParentKmHasTabAddingOmmit);
+                            ProcessSentencePart(km, sentence, ref prevPos, ref wasThereNewLine, match, e, ParentKmHasTabAddingOmmit, keywordSubVertex);
                         }
 
                         SourceAppend(sentence.Substring(prevPos));
@@ -1040,7 +1046,7 @@ namespace m0.ZeroCode
             return wasThereNewLine;
         }
 
-        private void ProcessSentencePart(KeywordMatch km, string sentence, ref int prevPos, ref bool wasThereNewLine, Match match, IEdge e, bool ParentKmHasTabAddingOmmit)
+        private void ProcessSentencePart(KeywordMatch km, string sentence, ref int prevPos, ref bool wasThereNewLine, Match match, IEdge e, bool ParentKmHasTabAddingOmmit, IVertex keywordSubVertex)
         {
             //
 
@@ -1077,7 +1083,7 @@ namespace m0.ZeroCode
                 bool wasNewVertex = true; // for empty
 
                 if (!emptyKeywordVertexList.Contains(km.KeywordDefinition))                
-                    wasNewVertex = AppendVertex(e, path, false, false, false); // non emptyKeword (standard)
+                    wasNewVertex = AppendVertex(e, path, false, false, false, keywordSubVertex); // non emptyKeword (standard)
                 else
                     SourceAppend(ZeroCodeCommon.stringToPossiblyEscapedString(dict, e.To.Value.ToString())); // emptyKeyword handling
                     //SourceAppend(e.To.Value.ToString()); // emptyKeyword handling
@@ -1165,12 +1171,17 @@ namespace m0.ZeroCode
             }
 
             //return AppendVertex(e, path, prefixAppended, true, true);
-            return AppendVertex(e, path, prefixAppended, true, false); // XXX we want cvtq linx in <> with @
+            return AppendVertex(e, path, prefixAppended, true, false, null); // XXX we want cvtq linx in <> with @
         }
 
-        private bool AppendVertex(IEdge e, string path, bool prefixAppended, bool appendSuffix, bool hideLinkPrefix)
+        private bool AppendVertex(IEdge e, string path, bool prefixAppended, bool appendSuffix, bool hideLinkPrefix, IVertex keywordSubVertex)
         {
-            if (VertexOperations.IsLink(e))
+            bool forceNewVertex = false;
+
+            if (keywordSubVertex != null && GraphUtil.ExistQueryOut(keywordSubVertex, "$$ForceNewVertex", null))
+                forceNewVertex = true;
+
+            if (VertexOperations.IsLink(e) && !forceNewVertex)
             {
                 AppendAsLink(e.To, null, hideLinkPrefix);
 
@@ -1181,7 +1192,7 @@ namespace m0.ZeroCode
             }
             else
             {
-                if (isVertexNew(e, path))
+                if (isVertexNew(e, path) || forceNewVertex)
                 {
                     AppendAsNew(e.To);
 
@@ -1208,13 +1219,11 @@ namespace m0.ZeroCode
         private bool isVertexNew(IEdge e, string path)
         {
             if (!SubGraphVerticesDictionary.ContainsKey(e.To))
-                return false; // is it possible?
+                return false; // is it possible? YES
 
             VertexData eVertexData = SubGraphVerticesDictionary[e.To];
-            string firstQuery = eVertexData.LinkString;
-            string secondQuery = path;
 
-            if ((path == null || firstQuery == secondQuery) && !eVertexData.VertexHasBeenAppendedAsNew)
+            if ((path == null || eVertexData.LinkString == path) && !eVertexData.VertexHasBeenAppendedAsNew)
             {
                 eVertexData.VertexHasBeenAppendedAsNew = true;
                 return true;
