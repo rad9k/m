@@ -1043,8 +1043,6 @@ namespace m0
             IVertex keywordGroup = LegacySystem.Graph.EasyVertex.Get(smb, false, @"$$KeywordGroup");
             IVertex keywordGroupDefinition = LegacySystem.Graph.EasyVertex.Get(smb, false, @"$KeywordGroupDefinition");
 
-            IVertex forceNewVertex = LegacySystem.Graph.EasyVertex.Get(smb, false, @"$$ForceNewVertex");
-
             IVertex kgd_ColonEmptyInner2SlashMarkIndexMethodNewLink = k.AddVertex(keywordGroupDefinition, "ColonEmptyInner2SlashMarkIndexMethodNewLink");
             IVertex kgd_ColonEmptyInner2SlashMarkIndexMethodNewLinkBracketCopy = k.AddVertex(keywordGroupDefinition, "ColonEmptyInner2SlashMarkIndexMethodNewLinkBracketCopy");
             IVertex kgd_ColonEmptyInner2SlashMarkIndexMethod = k.AddVertex(keywordGroupDefinition, "ColonEmptyInner2SlashMarkIndexMethod");
@@ -1066,6 +1064,7 @@ namespace m0
 
             IVertex emptyKeyword = LegacySystem.Graph.EasyVertex.Get(smb, false, "$$EmptyKeyword");
             IVertex newVertexKeyword = LegacySystem.Graph.EasyVertex.Get(smb, false, "$$NewVertexKeyword");
+            IVertex forceNewVertex = LegacySystem.Graph.EasyVertex.Get(smb, false, @"$$ForceNewVertex");
             IVertex linkKeyword = LegacySystem.Graph.EasyVertex.Get(smb, false, "$$LinkKeyword");
             IVertex nonSelfRecursiveParameters = LegacySystem.Graph.EasyVertex.Get(smb, false, @"$$NonSelfRecursiveParameters");
 
@@ -1167,13 +1166,21 @@ namespace m0
 
             attribute3_attribute.AddVertex(LegacySystem.Graph.EasyVertex.Get(smb, false, @"Vertex\$EdgeTarget"), "(?<type>)");
 
-            attribute3_attribute.AddVertex(LegacySystem.Graph.EasyVertex.Get(smu, false, @"Class\Attribute\MinValue"), "(?<MinValue>)");
+            IVertex fnv = attribute3_attribute.AddVertex(LegacySystem.Graph.EasyVertex.Get(smu, false, @"Class\Attribute\MinValue"), "(?<MinValue>)");
 
-            attribute3_attribute.AddVertex(LegacySystem.Graph.EasyVertex.Get(smu, false, @"Class\Attribute\MaxValue"), "(?<MaxValue>)");
+            fnv.AddEdge(forceNewVertex, empty);
 
-            attribute3_attribute.AddVertex(LegacySystem.Graph.EasyVertex.Get(smb, false, @"Vertex\$MinCardinality"), "(?<MinCardinality>)");
+            fnv = attribute3_attribute.AddVertex(LegacySystem.Graph.EasyVertex.Get(smu, false, @"Class\Attribute\MaxValue"), "(?<MaxValue>)");
 
-            attribute3_attribute.AddVertex(LegacySystem.Graph.EasyVertex.Get(smb, false, @"Vertex\$MaxCardinality"), "(?<MaxCardinality>)");
+            fnv.AddEdge(forceNewVertex, empty);
+
+            fnv = attribute3_attribute.AddVertex(LegacySystem.Graph.EasyVertex.Get(smb, false, @"Vertex\$MinCardinality"), "(?<MinCardinality>)");
+
+            fnv.AddEdge(forceNewVertex, empty);
+
+            fnv = attribute3_attribute.AddVertex(LegacySystem.Graph.EasyVertex.Get(smb, false, @"Vertex\$MaxCardinality"), "(?<MaxCardinality>)");
+
+            fnv.AddEdge(forceNewVertex, empty);
 
             attribute3_attribute.AddEdge(isAggregation, empty);
 
@@ -1189,9 +1196,13 @@ namespace m0
 
             attribute4_attribute.AddVertex(LegacySystem.Graph.EasyVertex.Get(smb, false, @"Vertex\$EdgeTarget"), "(?<type>)");
 
-            attribute4_attribute.AddVertex(LegacySystem.Graph.EasyVertex.Get(smb, false, @"Vertex\$MinCardinality"), "(?<MinCardinality>)");
+            fnv = attribute4_attribute.AddVertex(LegacySystem.Graph.EasyVertex.Get(smb, false, @"Vertex\$MinCardinality"), "(?<MinCardinality>)");
 
-            attribute4_attribute.AddVertex(LegacySystem.Graph.EasyVertex.Get(smb, false, @"Vertex\$MaxCardinality"), "(?<MaxCardinality>)");
+            fnv.AddEdge(forceNewVertex, empty);
+
+            fnv = attribute4_attribute.AddVertex(LegacySystem.Graph.EasyVertex.Get(smb, false, @"Vertex\$MaxCardinality"), "(?<MaxCardinality>)");
+
+            fnv.AddEdge(forceNewVertex, empty);
 
             attribute4_attribute.AddEdge(isAggregation, empty);
 
@@ -1207,9 +1218,13 @@ namespace m0
 
             attribute2_attribute.AddVertex(LegacySystem.Graph.EasyVertex.Get(smb, false, @"Vertex\$EdgeTarget"), "(?<type>)");
 
-            attribute2_attribute.AddVertex(LegacySystem.Graph.EasyVertex.Get(smu, false, @"Class\Attribute\MinValue"), "(?<xMinValue>)");
+            fnv = attribute2_attribute.AddVertex(LegacySystem.Graph.EasyVertex.Get(smu, false, @"Class\Attribute\MinValue"), "(?<xMinValue>)");
 
-            attribute2_attribute.AddVertex(LegacySystem.Graph.EasyVertex.Get(smu, false, @"Class\Attribute\MaxValue"), "(?<MaxValue>)");
+            fnv.AddEdge(forceNewVertex, empty);
+
+            fnv = attribute2_attribute.AddVertex(LegacySystem.Graph.EasyVertex.Get(smu, false, @"Class\Attribute\MaxValue"), "(?<MaxValue>)");
+
+            fnv.AddEdge(forceNewVertex, empty);
 
             attribute2_attribute.AddEdge(isAggregation, empty);
 
@@ -1269,9 +1284,13 @@ namespace m0
 
             IVertex association2_association = association2.AddVertex(LegacySystem.Graph.EasyVertex.Get(smu, false, @"Class\Association"), "(?<name>)");
 
-            association2_association.AddVertex(LegacySystem.Graph.EasyVertex.Get(smb, false, @"Vertex\$MinCardinality"), "(?<MinCardinality>)");
+            fnv = association2_association.AddVertex(LegacySystem.Graph.EasyVertex.Get(smb, false, @"Vertex\$MinCardinality"), "(?<MinCardinality>)");
 
-            association2_association.AddVertex(LegacySystem.Graph.EasyVertex.Get(smb, false, @"Vertex\$MaxCardinality"), "(?<MaxCardinality>)");
+            fnv.AddEdge(forceNewVertex, empty);
+
+            fnv = association2_association.AddVertex(LegacySystem.Graph.EasyVertex.Get(smb, false, @"Vertex\$MaxCardinality"), "(?<MaxCardinality>)");
+
+            fnv.AddEdge(forceNewVertex, empty);
 
             association2_association.AddVertex(LegacySystem.Graph.EasyVertex.Get(smb, false, @"Vertex\$EdgeTarget"), "(?<type>)");
 
@@ -1297,9 +1316,13 @@ namespace m0
 
             IVertex aggregation2_aggregation = aggregation2.AddVertex(LegacySystem.Graph.EasyVertex.Get(smu, false, @"Class\Aggregation"), "(?<name>)");
 
-            aggregation2_aggregation.AddVertex(LegacySystem.Graph.EasyVertex.Get(smb, false, @"Vertex\$MinCardinality"), "(?<MinCardinality>)");
+            fnv = aggregation2_aggregation.AddVertex(LegacySystem.Graph.EasyVertex.Get(smb, false, @"Vertex\$MinCardinality"), "(?<MinCardinality>)");
 
-            aggregation2_aggregation.AddVertex(LegacySystem.Graph.EasyVertex.Get(smb, false, @"Vertex\$MaxCardinality"), "(?<MaxCardinality>)");
+            fnv.AddEdge(forceNewVertex, empty);
+
+            fnv = aggregation2_aggregation.AddVertex(LegacySystem.Graph.EasyVertex.Get(smb, false, @"Vertex\$MaxCardinality"), "(?<MaxCardinality>)");
+
+            fnv.AddEdge(forceNewVertex, empty);
 
             aggregation2_aggregation.AddVertex(LegacySystem.Graph.EasyVertex.Get(smb, false, @"Vertex\$EdgeTarget"), "(?<type>)");
 
