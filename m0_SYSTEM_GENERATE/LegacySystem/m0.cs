@@ -1254,9 +1254,13 @@ namespace m0
 
             variable_variable.AddVertex(LegacySystem.Graph.EasyVertex.Get(smb, false, @"Vertex\$EdgeTarget"), "(?<type>)");
 
-            variable_variable.AddVertex(LegacySystem.Graph.EasyVertex.Get(smb, false, @"Vertex\$MinCardinality"), "(?<MinCardinality>)");
+            fnv = variable_variable.AddVertex(LegacySystem.Graph.EasyVertex.Get(smb, false, @"Vertex\$MinCardinality"), "(?<MinCardinality>)");
 
-            variable_variable.AddVertex(LegacySystem.Graph.EasyVertex.Get(smb, false, @"Vertex\$MaxCardinality"), "(?<MaxCardinality>)");
+            fnv.AddEdge(forceNewVertex, empty);
+
+            fnv = variable_variable.AddVertex(LegacySystem.Graph.EasyVertex.Get(smb, false, @"Vertex\$MaxCardinality"), "(?<MaxCardinality>)");
+
+            fnv.AddEdge(forceNewVertex, empty);
 
             variable_variable.AddEdge(isAggregation, empty);
 
@@ -2619,6 +2623,19 @@ namespace m0
             atr.AddEdge(LegacySystem.Graph.EasyVertex.Get(sm, false, @"*$EdgeTarget"), edgeTarget);
         }
 
+        void AddAggregation(IVertex baseVertex, string name, int MinCardinality, int MaxCardinality, IVertex edgeTarget)
+        {
+            IVertex sm = LegacySystem.Graph.EasyVertex.Get(Root, false, @"System\Meta");
+
+            IVertex atr = baseVertex.AddVertex(LegacySystem.Graph.EasyVertex.Get(sm, false, @"ZeroUML\Class\Aggregation"), name);
+
+            atr.AddVertex(LegacySystem.Graph.EasyVertex.Get(sm, false, @"Base\Vertex\$MinCardinality"), MinCardinality);
+
+            atr.AddVertex(LegacySystem.Graph.EasyVertex.Get(sm, false, @"Base\Vertex\$MaxCardinality"), MaxCardinality);
+
+            atr.AddEdge(LegacySystem.Graph.EasyVertex.Get(sm, false, @"*$EdgeTarget"), edgeTarget);
+        }
+
         void CreateSystemMetaZeroTypes()
         {
             IVertex sm = LegacySystem.Graph.EasyVertex.Get(Root, false, @"System\Meta");
@@ -2635,7 +2652,7 @@ namespace m0
             IVertex vertexType = LegacySystem.Graph.EasyVertex.Get(sm, false, @"ZeroTypes\VertexType");
 
             AddAssociation(FormalTextLanguage, "DefaultImports", 0, 1, vertexType);
-            AddAssociation(FormalTextLanguage, "Keywords", 0, 1, vertexType);
+            AddAggregation(FormalTextLanguage, "Keywords", 0, 1, vertexType);
 
             AddAttribute(FormalTextLanguage, "CRLFoperator", 1, 1, vertexType);
             AddAttribute(FormalTextLanguage, "MetaSeparator", 1, 1, vertexType);

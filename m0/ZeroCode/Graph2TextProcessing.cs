@@ -1650,6 +1650,9 @@ namespace m0.ZeroCode
 
             bool appendAsNew = AppendEdge(baseEdge, parent, path, false);
 
+            if (!appendAsNew)
+                isLink = true;
+
             //if (!isLink)
                 BeenList.Add(baseEdge);
 
