@@ -1,5 +1,6 @@
 ﻿using m0.Foundation;
 using m0.Graph;
+using m0.User.Process.UX;
 using m0.Util;
 using m0.ZeroCode.Helpers;
 using m0.ZeroTypes;
@@ -2833,6 +2834,10 @@ namespace m0.ZeroCode
 
         public IVertex Process(IVertex _baseVertex, string _text)
         {
+            ////////////////////////////////////////
+            Interaction.BeginInteractionWithGraph();
+            ////////////////////////////////////////
+
             baseVertex = _baseVertex;
 
             errorList = MinusZero.Instance.CreateTempVertex();
@@ -2882,6 +2887,11 @@ namespace m0.ZeroCode
             }
 
             DisposeImportList();
+
+
+            //////////////////////////////////////
+            Interaction.EndInteractionWithGraph();
+            //////////////////////////////////////
 
             return errorList;
         }

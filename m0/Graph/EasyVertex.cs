@@ -684,15 +684,15 @@ namespace m0.Graph
             IVertex queryVertex = null;
             IVertex parseError = null;
 
-            IDictionary<String, IVertex> chache;
+            IDictionary<String, IVertex> cache;
 
             if (metaMode)
-                chache = QueryParseCache_metaMode;
+                cache = QueryParseCache_metaMode;
             else
-                chache = QueryParseCache;
+                cache = QueryParseCache;
 
-            if (chache.ContainsKey(query))
-                queryVertex = chache[query];
+            if (cache.ContainsKey(query))
+                queryVertex = cache[query];
             else
             {
                 queryVertex = MinusZero.Instance.CreateTempVertex();
@@ -701,7 +701,7 @@ namespace m0.Graph
 
                 if (parseError == null || parseError.Count() == 0 /* && !cache.ContainsKey(query)*/)
                 {
-                    chache.Add(query, queryVertex);
+                    cache.Add(query, queryVertex);
                     queryVertex.AddExternalReference();
                 }
             }
