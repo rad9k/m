@@ -2776,6 +2776,25 @@ namespace m0.ZeroCode
                 }
         }
 
+        void MoveTriggersToParseRoot()
+        {
+            IVertex System = GraphUtil.GetQueryOutFirst(MinusZero.Instance.Root, null, "System");
+            IVertex Meta = GraphUtil.GetQueryOutFirst(System, null, "Meta");
+            IVertex Base = GraphUtil.GetQueryOutFirst(Meta, null, "Base");
+            IVertex Vertex = GraphUtil.GetQueryOutFirst(Base, null, "Vertex");
+            IVertex GraphChangeTriggerDollar = GraphUtil.GetQueryOutFirst(MinusZero.Instance.Root, null, "$GraphChangeTrigger");
+             
+            foreach (IEdge e in GraphUtil.GetQueryOut(baseVertex, "$GraphChangeTrigger", null))
+            {
+                IVertex newGraphChangeTrigger = parseRoot.AddVertex(GraphChangeTriggerDollar, e.To.Value);
+
+                foreach(IEdge ee in e.To)
+                    newGraphChangeTrigger.AddEdge(ee.Meta, ee.To);
+
+                e.From.DeleteEdge(e);
+            }
+        }
+
         void AddError(int lineNumber, string value)
         {
             //IVertex smz = MinusZero.Instance.Root.Get(false, @"System\Meta\ZeroTypes");
@@ -2834,6 +2853,10 @@ namespace m0.ZeroCode
 
         public IVertex Process(IVertex _baseVertex, string _text)
         {
+            if (_baseVertex.Value.ToString() == "Y")
+            {
+                int x = 9;
+            }
             baseVertex = _baseVertex;
 
             errorList = MinusZero.Instance.CreateTempVertex();
@@ -2865,12 +2888,13 @@ namespace m0.ZeroCode
 
             if (errorList.Count() == 0)
             {
-                if (stack.lineNo > 0)
-                    CodeViewProcess();
+                //if (stack.lineNo > 0)
+                 //   CodeViewProcess();
 
                 ProcessToVertexMocksToLinks();
                
                 MoveInEdgesComingFromOutsideOfSubGraphToParseRoot();
+               // MoveTriggersToParseRoot();
                 DeleteAllEdgesFromBaseVertex();
                 MoveAllParseRootEdgesToBaseVertex();             
             }

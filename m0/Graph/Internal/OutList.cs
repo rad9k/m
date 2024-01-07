@@ -63,6 +63,11 @@ namespace m0.Graph.Internal
 
         public override void OnRemove(IEdge item)
         {
+            if (item.From.Value.ToString() == "Y" && item.Meta.Value.ToString() == "$GraphChangeTrigger")
+            {
+                int x = 0;
+            }
+
             if (item.EdgeRemovalExecuting == false && !edgeDictionaries.NoInEdgeInOutVertexVertexMode)
             {
                 item.EdgeRemovalExecuting = true;

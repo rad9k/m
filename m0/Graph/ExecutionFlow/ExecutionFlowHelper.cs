@@ -642,12 +642,18 @@ namespace m0.Graph.ExecutionFlow
             
             foreach(IEdge e in GraphUtil.GetQueryOut(stack, "event", null))
             {
-                MinusZero.Instance.Log(1, "DebugStackStraceAsEvents", "    Trigger      :" + e.To.Get(false, "Trigger:"));
-                MinusZero.Instance.Log(1, "DebugStackStraceAsEvents", "    Source       :" + e.To.Get(false, "Source:"));
-                MinusZero.Instance.Log(1, "DebugStackStraceAsEvents", "    ChangedVertex:" + e.To.Get(false, "ChangedVertex:"));
+                MinusZero.Instance.Log(1, "DebugStackStraceAsEvents", "event");
+                MinusZero.Instance.Log(1, "DebugStackStraceAsEvents", "    Type          : " + e.To.Get(false, "Type:"));
+                MinusZero.Instance.Log(1, "DebugStackStraceAsEvents", "    Trigger       : " + e.To.Get(false, "Trigger:"));
+                MinusZero.Instance.Log(1, "DebugStackStraceAsEvents", "    Source        : " + e.To.Get(false, "Source:"));
+                MinusZero.Instance.Log(1, "DebugStackStraceAsEvents", "    ChangedVertex : " + e.To.Get(false, "ChangedVertex:"));                
+                MinusZero.Instance.Log(1, "DebugStackStraceAsEvents", "    Edge     From : " + e.To.Get(false, @"Edge:\From:"));
+                MinusZero.Instance.Log(1, "DebugStackStraceAsEvents", "    Edge     Meta : " + e.To.Get(false, @"Edge:\Meta:"));
+                MinusZero.Instance.Log(1, "DebugStackStraceAsEvents", "    Edge       To : " + e.To.Get(false, @"Edge:\To:"));
+                MinusZero.Instance.Log(1, "DebugStackStraceAsEvents", "    OldValue      : " + e.To.Get(false, "OldValue:"));
+                MinusZero.Instance.Log(1, "DebugStackStraceAsEvents", "    NewValue      : " + e.To.Get(false, "NewValue:"));
             }
 
-            MinusZero.Instance.Log(1, "DebugStackStraceAsEvents", "START");
             MinusZero.Instance.Log(1, "DebugStackStraceAsEvents", "STOP");
         }
     }
