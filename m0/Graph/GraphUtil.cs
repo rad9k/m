@@ -120,7 +120,7 @@ namespace m0.Graph
             {
                 s.Append(tab);
 
-                s.Append(e.Meta.ToString() + " :: " + e.To.ToString());
+                s.Append(e.Meta.ToString() + " :: " + e.To.ToString() + "\n") ;
 
                 GetSubVertexesAsString_Reccurent(s, e.To, level + 1, nestLimit);
             }

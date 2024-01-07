@@ -635,5 +635,20 @@ namespace m0.Graph.ExecutionFlow
 
             return true;
         }
+
+        public static void DebugStackStraceAsEvents(IVertex stack)
+        {
+            MinusZero.Instance.Log(1, "DebugStackStraceAsEvents", "START");
+            
+            foreach(IEdge e in GraphUtil.GetQueryOut(stack, "event", null))
+            {
+                MinusZero.Instance.Log(1, "DebugStackStraceAsEvents", "    Trigger      :" + e.To.Get(false, "Trigger:"));
+                MinusZero.Instance.Log(1, "DebugStackStraceAsEvents", "    Source       :" + e.To.Get(false, "Source:"));
+                MinusZero.Instance.Log(1, "DebugStackStraceAsEvents", "    ChangedVertex:" + e.To.Get(false, "ChangedVertex:"));
+            }
+
+            MinusZero.Instance.Log(1, "DebugStackStraceAsEvents", "START");
+            MinusZero.Instance.Log(1, "DebugStackStraceAsEvents", "STOP");
+        }
     }
 }
