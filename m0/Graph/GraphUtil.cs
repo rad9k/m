@@ -95,6 +95,37 @@ namespace m0.Graph
             }
         }
 
+        public static string GetSubVertexesAsString(IVertex v, int nestLimit)
+        {
+            StringBuilder s = new StringBuilder();
+
+            s.Append(v.Value.ToString());
+
+            GetSubVertexesAsString_Reccurent(s, v, 0, nestLimit);
+
+            return s.ToString();
+        }
+
+        static void GetSubVertexesAsString_Reccurent(StringBuilder s, IVertex v, int level, int nestLimit)
+        {
+            if (nestLimit <= level)
+                return;
+
+            StringBuilder tab = new StringBuilder();
+
+            for (int x = 0; x < level; x++)
+                tab.Append("    ");
+
+            foreach(IEdge e in v)
+            {
+                s.Append(tab);
+
+                s.Append(e.Meta.ToString() + " :: " + e.To.ToString());
+
+                GetSubVertexesAsString_Reccurent(s, e.To, level + 1, nestLimit);
+            }
+        }
+
         public static  string GetVertexIdString(IVertex v)
         {
             return "[" + v.Store.Identifier.ToString() + ":" + v.Identifier.ToString() + "]";

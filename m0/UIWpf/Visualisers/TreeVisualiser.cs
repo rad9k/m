@@ -201,6 +201,8 @@ namespace m0.UIWpf.Visualisers
 
         public INoInEdgeInOutVertexVertex VertexChange(IExecution exe)
         {
+            MinusZero.Instance.Log(1, "TreeVisualiser VertexChange", GraphUtil.GetSubVertexesAsString(exe.Stack,4));
+
             if (ParentVisualiser.VisualiserHelper.IsDisposed)
                 return exe.Stack;
 
