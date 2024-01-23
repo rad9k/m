@@ -802,10 +802,19 @@ namespace m0.Graph
             }
         }
 
+        static int cnt = 0;
         public override void ExecuteSecondStageCommitAction()
-        {   
-            if(ShouldDispose())
-                Dispose();                
+        {
+            if (ShouldDispose())
+            {
+                if (Value.ToString() == "Y")
+                {
+                    cnt++;
+                    ShouldDispose();
+                }
+
+                Dispose();
+            }
         }
 
         public EasyVertex(IStore _store) : base(_store)
