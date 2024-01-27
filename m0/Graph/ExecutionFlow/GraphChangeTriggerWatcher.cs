@@ -35,9 +35,9 @@ namespace m0.Graph.ExecutionFlow
 
         public static void RemoveGraphChangeTrigger(IEdge triggerEdge)
         {
-            triggerEdge.To.Dispose();
+           // triggerEdge.To.Dispose(); // this is redundant and sometimes makes troubles
 
-            triggerEdgeList.Remove(triggerEdge); // why this has been is removed?
+            triggerEdgeList.Remove(triggerEdge);
 
             triggerListChanged = true;
         }

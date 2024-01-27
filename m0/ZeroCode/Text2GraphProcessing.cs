@@ -2782,13 +2782,13 @@ namespace m0.ZeroCode
             IVertex Meta = GraphUtil.GetQueryOutFirst(System, null, "Meta");
             IVertex Base = GraphUtil.GetQueryOutFirst(Meta, null, "Base");
             IVertex Vertex = GraphUtil.GetQueryOutFirst(Base, null, "Vertex");
-            IVertex GraphChangeTriggerDollar = GraphUtil.GetQueryOutFirst(MinusZero.Instance.Root, null, "$GraphChangeTrigger");
+            IVertex GraphChangeTriggerDollar = GraphUtil.GetQueryOutFirst(Vertex, null, "$GraphChangeTrigger");
              
             foreach (IEdge e in GraphUtil.GetQueryOut(baseVertex, "$GraphChangeTrigger", null))
             {
-                IVertex newGraphChangeTrigger = parseRoot.AddVertex(GraphChangeTriggerDollar, e.To.Value);
+                IVertex newGraphChangeTrigger = parseRoot.OutEdges[0].To.AddVertex(GraphChangeTriggerDollar, e.To.Value);
 
-                foreach(IEdge ee in e.To)
+                foreach (IEdge ee in e.To)
                     newGraphChangeTrigger.AddEdge(ee.Meta, ee.To);
 
                 e.From.DeleteEdge(e);
@@ -2850,13 +2850,9 @@ namespace m0.ZeroCode
         }        
 
         public static bool TEST_RUN = false;
-
+      
         public IVertex Process(IVertex _baseVertex, string _text)
         {
-            if (_baseVertex.Value.ToString() == "Y")
-            {
-                int x = 9;
-            }
             baseVertex = _baseVertex;
 
             errorList = MinusZero.Instance.CreateTempVertex();
@@ -2888,15 +2884,15 @@ namespace m0.ZeroCode
 
             if (errorList.Count() == 0)
             {
-                //if (stack.lineNo > 0)
-                 //   CodeViewProcess();
+                if (stack.lineNo > 0)
+                    CodeViewProcess();
 
                 ProcessToVertexMocksToLinks();
-               
+                
                 MoveInEdgesComingFromOutsideOfSubGraphToParseRoot();
-               // MoveTriggersToParseRoot();
+                MoveTriggersToParseRoot();
                 DeleteAllEdgesFromBaseVertex();
-                MoveAllParseRootEdgesToBaseVertex();             
+                MoveAllParseRootEdgesToBaseVertex();
             }
             else
             {

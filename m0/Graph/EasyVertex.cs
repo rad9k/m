@@ -452,11 +452,6 @@ namespace m0.Graph
         
         public override void DeleteEdge(IEdge _edge)
         {
-            if (_edge.From.Value.ToString() == "Y" &&  _edge.Meta.Value.ToString() == "$GraphChangeTrigger")
-            {
-                int x = 0;
-            }
-
             if (DisposedState == DisposeStateEnum.Disposed)
                 throw new Exception("Vertex not live");            
 
@@ -802,17 +797,10 @@ namespace m0.Graph
             }
         }
 
-        static int cnt = 0;
         public override void ExecuteSecondStageCommitAction()
         {
             if (ShouldDispose())
             {
-                if (Value.ToString() == "Y")
-                {
-                    cnt++;
-                    ShouldDispose();
-                }
-
                 Dispose();
             }
         }
