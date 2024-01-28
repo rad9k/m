@@ -410,7 +410,7 @@ namespace m0.Graph
                 OnlyNonTransactedRootVertexEvents_Listener_AddedRemoved();
         }
 
-        public override void DettachEdge(IEdge edge)
+        public override void DetachEdge(IEdge edge)
         {
             if (edge.Meta != null)
             {

@@ -72,6 +72,8 @@ namespace m0.Graph
            
             _meta = null;
 
+            From.DetachEdge(this); // is it ok????? not sure if will not break something
+
             _DetachState = DetachStateEnum.Detached;
         }
 
