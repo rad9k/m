@@ -1,6 +1,5 @@
 ﻿using m0.Foundation;
 using m0.Graph;
-using m0.User.Process.UX;
 using m0.Util;
 using m0.ZeroCode.Helpers;
 using m0.ZeroTypes;
@@ -385,9 +384,11 @@ namespace m0.ZeroCode
 
         static IVertex smb;
 
-        static IVertex Direct;
+        static IVertex Direct_meta;
 
-        static IVertex DirectMeta;
+        static IVertex DirectMeta_meta;
+
+        static IVertex NewLine_meta;
 
         void setupHelpVariables_onlyOnce()
         {
@@ -399,9 +400,11 @@ namespace m0.ZeroCode
 
                 smb = GraphUtil.GetQueryOutFirst(Meta, null, "Base");                
 
-                Direct = GraphUtil.GetQueryOutFirst(smb, null, "$ImportDirect");
+                Direct_meta = GraphUtil.GetQueryOutFirst(smb, null, "$ImportDirect");
 
-                DirectMeta = GraphUtil.GetQueryOutFirst(smb, null, "$ImportDirectMeta");
+                DirectMeta_meta = GraphUtil.GetQueryOutFirst(smb, null, "$ImportDirectMeta");
+
+                NewLine_meta = GraphUtil.GetQueryOutFirst(smb, null, "$NewLine");
             }
         }
 
@@ -418,9 +421,9 @@ namespace m0.ZeroCode
                 IVertex target = r.Get(false, link); // YYY huston..... we assume that this get will not go into infinite reccursion as link variable is simple run time query
 
                 if (target != null)
-                    importDirectList.AddEdge(Direct, target);
+                    importDirectList.AddEdge(Direct_meta, target);
                 else
-                    importDirectList.AddEdge(Direct, MinusZero.Instance.Empty);
+                    importDirectList.AddEdge(Direct_meta, MinusZero.Instance.Empty);
             }
         }
 
@@ -437,9 +440,9 @@ namespace m0.ZeroCode
                 IVertex target = r.Get(false, link); // YYY huston..... we assume that this get will not go into infinite reccursion as link variable is simple run time query
 
                 if (target != null)
-                    importDirectMetaList.AddEdge(DirectMeta, target);
+                    importDirectMetaList.AddEdge(DirectMeta_meta, target);
                 else
-                    importDirectMetaList.AddEdge(DirectMeta, MinusZero.Instance.Empty);
+                    importDirectMetaList.AddEdge(DirectMeta_meta, MinusZero.Instance.Empty);
             }
         }
 
@@ -2460,18 +2463,23 @@ namespace m0.ZeroCode
 
         void AddNewLines(ParsingStack s)
         {
-            IVertex newLineVertex = GraphUtil.GetQueryOutFirst(smb, null, "$NewLine");
+            NewLine_meta = GraphUtil.GetQueryOutFirst(smb, null, "$NewLine");
 
             if (s.newLineCount != 0)
             {
-                if (s.lastAddedVertex != null)
-                    s.lastAddedVertex.AddVertex(newLineVertex, s.newLineCount);
-                else
-                    if(s.lastAddedVertexParent!=null)
-                    s.lastAddedVertexParent.AddVertex(newLineVertex, s.newLineCount);
-            }
+                IVertex toAdd = null;
 
-            s.newLineCount = 0;
+                if (s.lastAddedVertexParent != null)
+                    toAdd = s.lastAddedVertexParent;
+                else if(s.lastAddedVertex != null)
+                    toAdd = s.lastAddedVertex;
+
+                if (toAdd != null)
+                    for (int x = 0; x < s.newLineCount; x++)
+                        toAdd.AddEdge(NewLine_meta, MinusZero.Instance.Empty);
+
+                s.newLineCount = 0;
+            }  
         }
 
         IVertex AddVertex(ParsingStack s, IVertex baseVertex, IVertex meta, object val)
@@ -2835,6 +2843,9 @@ namespace m0.ZeroCode
 
         void MoveAllParseRootEdgesToBaseVertex()
         {
+            if (parseRoot.OutEdges.Count == 0)
+                return;
+
             object firstValue = parseRoot.FirstOrDefault().To.Value;
 
             foreach(IEdge e in parseRoot.FirstOrDefault().To.ToList())
