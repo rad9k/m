@@ -416,10 +416,10 @@ namespace m0.Graph
             {
                 if (GeneralUtil.CompareStrings(edge.Meta.Value, "$Inherits"))
                 {
-                    edgeDictionaries.Vertex.InheritanceCount--;
+                    InheritanceCount--;
 
-                    if (edgeDictionaries.Vertex.InheritanceCount == 0)
-                        edgeDictionaries.Vertex.HasInheritance = false;
+                    if (InheritanceCount == 0)
+                        HasInheritance = false;
                 }
 
                 if (GeneralUtil.CompareStrings(edge.Meta.Value, "$GraphChangeTrigger")) {
@@ -843,7 +843,12 @@ namespace m0.Graph
                 && Store.DetachState == DetachStateEnum.Attached
                 && !IsRoot)
             {
-             //   if(edgeDictionaries.Vertex)
+                //if (Value.ToString() == "$Empty")
+                if (Value.ToString() == "kupa")
+                {
+                    int x = 0;
+                }
+
                 return true;
             }
 
