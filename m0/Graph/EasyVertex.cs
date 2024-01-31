@@ -840,9 +840,12 @@ namespace m0.Graph
             cumulativeEdgesCount += edgeDictionaries.MetaIn.Count;
 
             if (cumulativeEdgesCount == 0 && ExternalReferenceCount == 0
-                && edgeDictionaries.Vertex.Store.DetachState == DetachStateEnum.Attached
-                && !edgeDictionaries.Vertex.IsRoot)
+                && Store.DetachState == DetachStateEnum.Attached
+                && !IsRoot)
+            {
+             //   if(edgeDictionaries.Vertex)
                 return true;
+            }
 
             return false;
         }
