@@ -841,16 +841,8 @@ namespace m0.Graph
 
             if (cumulativeEdgesCount == 0 && ExternalReferenceCount == 0
                 && Store.DetachState == DetachStateEnum.Attached
-                && !IsRoot)
-            {
-                //if (Value.ToString() == "$Empty")
-                if (Value.ToString() == "kupa")
-                {
-                    int x = 0;
-                }
-
-                return true;
-            }
+                && !IsRoot)          
+                return true;            
 
             return false;
         }
