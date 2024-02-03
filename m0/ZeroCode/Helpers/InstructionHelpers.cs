@@ -211,6 +211,73 @@ namespace m0.ZeroCode.Helpers
             return stack;
         }
 
+        public static INoInEdgeInOutVertexVertex _SequentiallyExecuteInstructions(IExecution exe, INoInEdgeInOutVertexVertex inStack, IVertex baseVertex, out bool isStackFrameReturn, bool montevideo)
+        {
+            isStackFrameReturn = false;
+
+            INoInEdgeInOutVertexVertex stack = inStack;
+            
+            foreach (IEdge e in ZeroCodeView.LinearizeVertex(baseVertex))
+                if (!ZeroCodeUtil.ShouldNotExecute(e))
+                { // XXX in some cases it might not work - instruction with meta begginning with $ will not be executed. nor its children
+                    bool local_isStackFrameReturn;
+
+                    INoInEdgeInOutVertexVertex possibleToReturnStack;
+
+                    if (montevideo)
+                        possibleToReturnStack = exe.ExecuteInstructionByMontevideoPrinciples(stack, e.To, out local_isStackFrameReturn);
+                    else
+                        possibleToReturnStack = exe.ExecuteInstruction(stack, e.To, out local_isStackFrameReturn);
+
+                    if (local_isStackFrameReturn)
+                    {
+                        isStackFrameReturn = true;
+
+                        stack = possibleToReturnStack;
+
+                        break;
+                    }
+                }
+
+            return stack;
+        }
+
+
+
+        /*
+         
+           static public IList<IEdge> LinearizeVertex(IVertex v)
+        {            
+            IList<IEdge> linearizedList = new List<IEdge>();
+
+            foreach (IEdge e in v.OutEdgesRaw)
+                if (e.Meta != dict.NextAtomMeta)
+                    linearizedList.Add(e);
+
+            foreach (IEdge e in v.OutEdgesRaw)
+                if (e.Meta != dict.NextAtomMeta)
+                    AddNextEdges(linearizedList, e.To);
+
+            return linearizedList;
+        }
+
+        static void AddNextEdges(IList<IEdge> linearizedList, IVertex v)
+        {
+            foreach(IEdge e in v)
+                if(e.Meta == dict.NextAtomMeta)
+                {
+                    //IEdge ee = new EasyEdge(e.From, MinusZero.Instance.Empty, e.To);
+
+                    linearizedList.Add(e);                    
+
+                    AddNextEdges(linearizedList, e.To);
+                }
+        }
+
+
+        */
+
+
         public static IDictionary<EdgeKey_FromMeta, IList<IEdge>> CreateEdgeKey_FromMetaDictionary(INoInEdgeInOutVertexVertex queryResult)
         {
             IDictionary<EdgeKey_FromMeta, IList<IEdge>> dict = new Dictionary<EdgeKey_FromMeta, IList<IEdge>>();
