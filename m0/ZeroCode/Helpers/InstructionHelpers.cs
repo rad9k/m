@@ -187,7 +187,7 @@ namespace m0.ZeroCode.Helpers
 
             INoInEdgeInOutVertexVertex possibleToReturnStack;
 
-            foreach (IEdge e in v.OutEdgesRaw)
+            foreach (IEdge e in baseVertex.OutEdgesRaw)
                 if (e.Meta != dict.NextAtomMeta)
                     linearizedList.Add(e);
 
