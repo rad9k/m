@@ -178,26 +178,19 @@ namespace m0.ZeroCode.Helpers
             return Create_INoInEdgeInOutVertexVertex_FromEdgesList(inStack);
         }
 
-        public static INoInEdgeInOutVertexVertex SequentiallyExecuteInstructions(IExecution exe, INoInEdgeInOutVertexVertex inStack, IVertex baseVertex, out bool isStackFrameReturn, bool montevideo)
-        {
+        public static INoInEdgeInOutVertexVertex SequentiallyExecuteInstructions(IExecution exe, INoInEdgeInOutVertexVertex inStack, IVertex baseVertex, out bool isStackFrameReturn) { 
             isStackFrameReturn = false;
 
             INoInEdgeInOutVertexVertex stack = inStack;
 
-            //foreach (IEdge e in baseVertex.ToList())
             foreach (IEdge e in ZeroCodeView.LinearizeVertex(baseVertex))
-            //foreach (IEdge e in baseVertex) // XXX
-                //stack = exe.ExecuteInstruction(stack, e.To); // XXX another interesting processing approach
                 if (!ZeroCodeUtil.ShouldNotExecute(e))
                 { // XXX in some cases it might not work - instruction with meta begginning with $ will not be executed. nor its children
                     bool local_isStackFrameReturn;
 
                     INoInEdgeInOutVertexVertex possibleToReturnStack;
 
-                    if (montevideo)
-                        possibleToReturnStack = exe.ExecuteInstructionByMontevideoPrinciples(stack, e.To, out local_isStackFrameReturn);
-                    else
-                        possibleToReturnStack = exe.ExecuteInstruction(stack, e.To, out local_isStackFrameReturn);
+                    possibleToReturnStack = exe.ExecuteInstruction(stack, e.To, out local_isStackFrameReturn);
 
                     if (local_isStackFrameReturn)
                     {
@@ -212,7 +205,7 @@ namespace m0.ZeroCode.Helpers
             return stack;
         }
 
-        public static INoInEdgeInOutVertexVertex _SequentiallyExecuteInstructions(IExecution exe, INoInEdgeInOutVertexVertex inStack, IVertex baseVertex, out bool isStackFrameReturn, bool useMontevideoPrinciples)
+        public static INoInEdgeInOutVertexVertex _SequentiallyExecuteInstructions(IExecution exe, INoInEdgeInOutVertexVertex inStack, IVertex baseVertex, out bool isStackFrameReturn)
         {
             isStackFrameReturn = false;
 
@@ -237,18 +230,20 @@ namespace m0.ZeroCode.Helpers
 
                 INoInEdgeInOutVertexVertex possibleToReturnStack;
 
-                if (useMontevideoPrinciples)
-                    possibleToReturnStack = exe.ExecuteInstructionByMontevideoPrinciples(stack, instructionVertex, out local_isStackFrameReturn);
-                else
-                    possibleToReturnStack = exe.ExecuteInstruction(stack, instructionVertex, out local_isStackFrameReturn);
+                    if (montevideo)
+                        possibleToReturnStack = exe.ExecuteInstructionByMontevideoPrinciples(stack, e.To, out local_isStackFrameReturn);
+                    else
+                        possibleToReturnStack = exe.ExecuteInstruction(stack, e.To, out local_isStackFrameReturn);
 
                 if (local_isStackFrameReturn)
                 {
                     isStackFrameReturn = true;
 
-                    return possibleToReturnStack;                    
+                        stack = possibleToReturnStack;
+
+                        break;
+                    }
                 }
-            }
 
             return null;
         }
@@ -542,7 +537,7 @@ namespace m0.ZeroCode.Helpers
 
             exe.AddStackFrame(); // ENTER NEW STACK                                
 
-            possibleToReturnStack = InstructionHelpers.SequentiallyExecuteInstructions(exe, exe.Stack, instructionVertex, out isStackFrameReturn, false);
+            possibleToReturnStack = InstructionHelpers.SequentiallyExecuteInstructions(exe, exe.Stack, instructionVertex, out isStackFrameReturn);
 
             exe.RemoveStackFrame();  // LEAVE NEW STACK                
 
