@@ -76,7 +76,7 @@ namespace m0.ZeroCode
             return list;
         }
 
-        public static bool ShouldNotExecute(IEdge e)
+        public static bool ShouldNotExecute(IEdge e) // XXX in some cases it might not work - instruction with meta begginning with $ will not be executed. nor its children
         {
             if (!(e.Meta.Value is string))
                 return false;

@@ -183,13 +183,14 @@ namespace m0.ZeroCode.Helpers
 
             INoInEdgeInOutVertexVertex stack = inStack;
 
+            bool local_isStackFrameReturn;
+
+            INoInEdgeInOutVertexVertex possibleToReturnStack;
+
+
             foreach (IEdge e in ZeroCodeView.LinearizeVertex(baseVertex))
                 if (!ZeroCodeUtil.ShouldNotExecute(e))
-                { // XXX in some cases it might not work - instruction with meta begginning with $ will not be executed. nor its children
-                    bool local_isStackFrameReturn;
-
-                    INoInEdgeInOutVertexVertex possibleToReturnStack;
-
+                {         
                     possibleToReturnStack = exe.ExecuteInstruction(stack, e.To, out local_isStackFrameReturn);
 
                     if (local_isStackFrameReturn)
@@ -205,49 +206,8 @@ namespace m0.ZeroCode.Helpers
             return stack;
         }
 
-        public static INoInEdgeInOutVertexVertex _SequentiallyExecuteInstructions(IExecution exe, INoInEdgeInOutVertexVertex inStack, IVertex baseVertex, out bool isStackFrameReturn)
-        {
-            isStackFrameReturn = false;
-
-            INoInEdgeInOutVertexVertex stack = inStack;
-            
-            foreach (IEdge e in ZeroCodeView.LinearizeVertex(baseVertex))
-               
-
-            return stack;
-        }
-
-
-        private static INoInEdgeInOutVertexVertex ExecuteInstruction(IExecution exe, INoInEdgeInOutVertexVertex stack, IEdge instructionEdge, out bool isStackFrameReturn, bool useMontevideoPrinciples)
-        {
-            isStackFrameReturn = false;
-
-            if (!ZeroCodeUtil.ShouldNotExecute(instructionEdge))
-            { // XXX in some cases it might not work - instruction with meta begginning with $ will not be executed. nor its children
-                IVertex instructionVertex = instructionEdge.To;
-
-                bool local_isStackFrameReturn;
-
-                INoInEdgeInOutVertexVertex possibleToReturnStack;
-
-                    if (montevideo)
-                        possibleToReturnStack = exe.ExecuteInstructionByMontevideoPrinciples(stack, e.To, out local_isStackFrameReturn);
-                    else
-                        possibleToReturnStack = exe.ExecuteInstruction(stack, e.To, out local_isStackFrameReturn);
-
-                if (local_isStackFrameReturn)
-                {
-                    isStackFrameReturn = true;
-
-                        stack = possibleToReturnStack;
-
-                        break;
-                    }
-                }
-
-            return null;
-        }
-
+        
+        
 
 
         /*
