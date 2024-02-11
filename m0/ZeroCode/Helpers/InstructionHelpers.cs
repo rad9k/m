@@ -187,10 +187,17 @@ namespace m0.ZeroCode.Helpers
 
             INoInEdgeInOutVertexVertex possibleToReturnStack;
 
+            foreach (IEdge e in v.OutEdgesRaw)
+                if (e.Meta != dict.NextAtomMeta)
+                    linearizedList.Add(e);
+
 
             foreach (IEdge e in ZeroCodeView.LinearizeVertex(baseVertex))
                 if (!ZeroCodeUtil.ShouldNotExecute(e))
-                {         
+                {
+                    
+
+
                     possibleToReturnStack = exe.ExecuteInstruction(stack, e.To, out local_isStackFrameReturn);
 
                     if (local_isStackFrameReturn)
