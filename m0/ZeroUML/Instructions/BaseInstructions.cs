@@ -1810,7 +1810,7 @@ namespace m0.ZeroUML.Instructions
 
                     exe.Stack.AddEdgeForNoInEdgeInOutVertexVertex_BAD_BEHAVIOR_IEdge_MANY_TIMES(variableEdge);
 
-                    possibleToReturnStack = SequentiallyExecuteInstructions(exe, exe.Stack, instructionVertex, out local_isStackFrameReturn);
+                    possibleToReturnStack = ZeroCodeExecutonUtil.SequentiallyExecuteInstructions(exe, exe.Stack, instructionVertex, out local_isStackFrameReturn);
 
                     if (local_isStackFrameReturn)
                         break;                    
@@ -1844,7 +1844,7 @@ namespace m0.ZeroUML.Instructions
                 {
                     exe.AddStackFrame(); // ENTER NEW STACK
 
-                    possibleToReturnStack = SequentiallyExecuteInstructions(exe, exe.Stack, instructionVertex, out local_isStackFrameReturn);
+                    possibleToReturnStack = ZeroCodeExecutonUtil.SequentiallyExecuteInstructions(exe, exe.Stack, instructionVertex, out local_isStackFrameReturn);
 
                     if (local_isStackFrameReturn)
                         break;
@@ -2132,7 +2132,7 @@ namespace m0.ZeroUML.Instructions
             
             exe.NewVertexCreationSpace = inputStack;
 
-            possibleToReturnStack = SequentiallyExecuteInstructions(exe, 
+            possibleToReturnStack = ZeroCodeExecutonUtil.SequentiallyExecuteInstructions(exe, 
                     exe.Stack, instructionVertex, out local_isStackFrameReturn);
 
             exe.NewVertexCreationSpace = newVertexCreationSpace_copy;

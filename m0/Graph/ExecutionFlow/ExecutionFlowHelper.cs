@@ -314,7 +314,7 @@ namespace m0.Graph.ExecutionFlow
                 return null;
             }
             else
-                return InstructionHelpers.SequentiallyExecuteInstructions(exe, exe.Stack, baseVertex, out dummy);
+                return ZeroCodeExecutonUtil.SequentiallyExecuteInstructions(exe, exe.Stack, baseVertex, out dummy);
         }
 
         public static bool IsVertexChangeOrEdgeAddedRemovedDisposedByMetaAndFrom(IVertex stack, IVertex from, string meta)

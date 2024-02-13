@@ -12,16 +12,6 @@ namespace m0.ZeroCode.Helpers
 {
     public class InstructionHelpers
     {
-        static IVertex NextAtom_meta = getNextAtomMeta();
-
-        static IVertex getNextAtomMeta()
-        {
-            IVertex System = GraphUtil.GetQueryOutFirst(MinusZero.Instance.Root, "System", null);
-            IVertex FormalTextLanguage = GraphUtil.GetQueryOutFirst(System, "FormalTextLanguage", null);
-            IVertex ZeroCode = GraphUtil.GetQueryOutFirst(FormalTextLanguage, "ZeroCode", null);
-            return GraphUtil.GetQueryOutFirst(ZeroCode, null, "NextAtomEdge");
-        }
-
         public static INoInEdgeInOutVertexVertex CreateStack()
         {
             return new NoInEdgeInOutVertexVertex(MinusZero.Instance.TempStore);
@@ -187,79 +177,6 @@ namespace m0.ZeroCode.Helpers
 
             return Create_INoInEdgeInOutVertexVertex_FromEdgesList(inStack);
         }
-
-        public static INoInEdgeInOutVertexVertex SequentiallyExecuteInstructions(IExecution exe, INoInEdgeInOutVertexVertex inStack, IVertex baseVertex, out bool isStackFrameReturn) { 
-            isStackFrameReturn = false;
-
-            INoInEdgeInOutVertexVertex stack = inStack;
-
-            bool local_isStackFrameReturn;
-
-            INoInEdgeInOutVertexVertex possibleToReturnStack;
-
-        /*    foreach (IEdge e in baseVertex.OutEdgesRaw)
-                if (e.Meta != dict.NextAtomMeta)
-                    linearizedList.Add(e);*/
-
-
-            foreach (IEdge e in ZeroCodeView.LinearizeVertex(baseVertex))
-                if (!ZeroCodeUtil.ShouldNotExecute(e))
-                {
-                    
-
-
-                    possibleToReturnStack = exe.ExecuteInstruction(stack, e.To, out local_isStackFrameReturn);
-
-                    if (local_isStackFrameReturn)
-                    {
-                        isStackFrameReturn = true;
-
-                        stack = possibleToReturnStack;
-
-                        break;
-                    }
-                }
-
-            return stack;
-        }
-
-        
-        
-
-
-        /*
-         
-           static public IList<IEdge> LinearizeVertex(IVertex v)
-        {            
-            IList<IEdge> linearizedList = new List<IEdge>();
-
-            foreach (IEdge e in v.OutEdgesRaw)
-                if (e.Meta != dict.NextAtomMeta)
-                    linearizedList.Add(e);
-
-            foreach (IEdge e in v.OutEdgesRaw)
-                if (e.Meta != dict.NextAtomMeta)
-                    AddNextEdges(linearizedList, e.To);
-
-            return linearizedList;
-        }
-
-        static void AddNextEdges(IList<IEdge> linearizedList, IVertex v)
-        {
-            foreach(IEdge e in v)
-                if(e.Meta == dict.NextAtomMeta)
-                {
-                    //IEdge ee = new EasyEdge(e.From, MinusZero.Instance.Empty, e.To);
-
-                    linearizedList.Add(e);                    
-
-                    AddNextEdges(linearizedList, e.To);
-                }
-        }
-
-
-        */
-
 
         public static IDictionary<EdgeKey_FromMeta, IList<IEdge>> CreateEdgeKey_FromMetaDictionary(INoInEdgeInOutVertexVertex queryResult)
         {
@@ -514,7 +431,7 @@ namespace m0.ZeroCode.Helpers
 
             exe.AddStackFrame(); // ENTER NEW STACK                                
 
-            possibleToReturnStack = InstructionHelpers.SequentiallyExecuteInstructions(exe, exe.Stack, instructionVertex, out isStackFrameReturn);
+            possibleToReturnStack = ZeroCodeExecutonUtil.SequentiallyExecuteInstructions(exe, exe.Stack, instructionVertex, out isStackFrameReturn);
 
             exe.RemoveStackFrame();  // LEAVE NEW STACK                
 

@@ -19,7 +19,7 @@ namespace m0.ZeroCode
 
             bool local_isStackFrameReturn;
 
-            return InstructionHelpers.SequentiallyExecuteInstructions(exe, exe.Stack, expression, out local_isStackFrameReturn);            
+            return ZeroCodeExecutonUtil.SequentiallyExecuteInstructions(exe, exe.Stack, expression, out local_isStackFrameReturn);            
         }
 
         public IVertex Get(bool metaMode, IVertex baseVertex, IVertex expression)
