@@ -62,38 +62,70 @@ namespace m0.ZeroCode
         {
             isStackFrameReturn = false;
 
-            INoInEdgeInOutVertexVertex stack = inStack;
-
             bool local_isStackFrameReturn;
 
             INoInEdgeInOutVertexVertex possibleToReturnStack;
 
-            /*    foreach (IEdge e in baseVertex.OutEdgesRaw)
-                    if (e.Meta != dict.NextAtomMeta)
-                        linearizedList.Add(e);*/
+            foreach (IEdge e in baseVertex.OutEdgesRaw)
+                if (e.Meta != NextAtom_meta && !ZeroCodeUtil.ShouldNotExecute(e)) // EXECUTE BLOCK BEG
+                    {                        
+                        possibleToReturnStack = exe.ExecuteInstruction(inStack, e.To, out local_isStackFrameReturn);
 
+                        if (local_isStackFrameReturn)
+                        {
+                            isStackFrameReturn = true;
 
-            foreach (IEdge e in ZeroCodeView.LinearizeVertex(baseVertex))
-                if (!ZeroCodeUtil.ShouldNotExecute(e))
+                            return possibleToReturnStack;
+                        }
+                    } // EXECUTE BLOCK END
+
+            foreach (IEdge e in baseVertex.OutEdgesRaw)
+                if (e.Meta != NextAtom_meta)
                 {
-
-
-
-                    possibleToReturnStack = exe.ExecuteInstruction(stack, e.To, out local_isStackFrameReturn);
+                    possibleToReturnStack = SequentiallyExecuteInstructions_NextEdges(exe, inStack, e.To, out local_isStackFrameReturn);
 
                     if (local_isStackFrameReturn)
                     {
                         isStackFrameReturn = true;
 
-                        stack = possibleToReturnStack;
-
-                        break;
+                        return possibleToReturnStack;
                     }
                 }
 
-            return stack;
+            return inStack;
         }
 
+        public static INoInEdgeInOutVertexVertex SequentiallyExecuteInstructions_NextEdges(IExecution exe, INoInEdgeInOutVertexVertex inStack, IVertex baseVertex, out bool isStackFrameReturn)
+        {
+            isStackFrameReturn = false;
+
+            foreach (IEdge e in baseVertex)
+                if (e.Meta != NextAtom_meta && !ZeroCodeUtil.ShouldNotExecute(e)) // EXECUTE BLOCK BEG
+                {
+                    bool local_isStackFrameReturn;
+
+                    INoInEdgeInOutVertexVertex possibleToReturnStack = exe.ExecuteInstruction(inStack, e.To, out local_isStackFrameReturn);
+
+                    if (local_isStackFrameReturn)
+                    {
+                        isStackFrameReturn = true;
+
+                        return possibleToReturnStack;
+                    }
+                    // EXECUTE BLOCK END
+
+                    possibleToReturnStack = SequentiallyExecuteInstructions_NextEdges(exe, inStack, e.To, out local_isStackFrameReturn);
+
+                    if (local_isStackFrameReturn)
+                    {
+                        isStackFrameReturn = true;
+
+                        return possibleToReturnStack;
+                    }
+                } 
+
+            return inStack;
+        }
 
 
 
