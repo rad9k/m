@@ -12,6 +12,16 @@ namespace m0.ZeroCode.Helpers
 {
     public class InstructionHelpers
     {
+        static IVertex NextAtom_meta = getNextAtomMeta();
+
+        static IVertex getNextAtomMeta()
+        {
+            IVertex System = GraphUtil.GetQueryOutFirst(MinusZero.Instance.Root, "System", null);
+            IVertex FormalTextLanguage = GraphUtil.GetQueryOutFirst(System, "FormalTextLanguage", null);
+            IVertex ZeroCode = GraphUtil.GetQueryOutFirst(FormalTextLanguage, "ZeroCode", null);
+            return GraphUtil.GetQueryOutFirst(ZeroCode, null, "NextAtomEdge");
+        }
+
         public static INoInEdgeInOutVertexVertex CreateStack()
         {
             return new NoInEdgeInOutVertexVertex(MinusZero.Instance.TempStore);
@@ -187,9 +197,9 @@ namespace m0.ZeroCode.Helpers
 
             INoInEdgeInOutVertexVertex possibleToReturnStack;
 
-            foreach (IEdge e in baseVertex.OutEdgesRaw)
+        /*    foreach (IEdge e in baseVertex.OutEdgesRaw)
                 if (e.Meta != dict.NextAtomMeta)
-                    linearizedList.Add(e);
+                    linearizedList.Add(e);*/
 
 
             foreach (IEdge e in ZeroCodeView.LinearizeVertex(baseVertex))
