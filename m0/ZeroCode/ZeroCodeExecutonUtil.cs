@@ -100,7 +100,7 @@ namespace m0.ZeroCode
             isStackFrameReturn = false;
 
             foreach (IEdge e in baseVertex)
-                if (e.Meta != NextAtom_meta && !ZeroCodeUtil.ShouldNotExecute(e)) // EXECUTE BLOCK BEG
+                if (e.Meta == NextAtom_meta && !ZeroCodeUtil.ShouldNotExecute(e)) // EXECUTE BLOCK BEG
                 {
                     bool local_isStackFrameReturn;
 
@@ -126,41 +126,5 @@ namespace m0.ZeroCode
 
             return inStack;
         }
-
-
-
-
-        /*
-         
-           static public IList<IEdge> LinearizeVertex(IVertex v)
-        {            
-            IList<IEdge> linearizedList = new List<IEdge>();
-
-            foreach (IEdge e in v.OutEdgesRaw)
-                if (e.Meta != dict.NextAtomMeta)
-                    linearizedList.Add(e);
-
-            foreach (IEdge e in v.OutEdgesRaw)
-                if (e.Meta != dict.NextAtomMeta)
-                    AddNextEdges(linearizedList, e.To);
-
-            return linearizedList;
-        }
-
-        static void AddNextEdges(IList<IEdge> linearizedList, IVertex v)
-        {
-            foreach(IEdge e in v)
-                if(e.Meta == dict.NextAtomMeta)
-                {
-                    //IEdge ee = new EasyEdge(e.From, MinusZero.Instance.Empty, e.To);
-
-                    linearizedList.Add(e);                    
-
-                    AddNextEdges(linearizedList, e.To);
-                }
-        }
-
-
-        */
     }
 }
