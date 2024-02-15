@@ -534,53 +534,7 @@ namespace m0.Graph
             return toRet;
         }
         
-        public static HashSet<IVertex> GetInheritChilds_RawEnumerate(IVertex baseVertex)
-        {
-            HashSet<IVertex> inheritsSet = new HashSet<IVertex>();
-
-            GetInheritChilds_RawEnumerate_recurrent(baseVertex, inheritsSet);
-
-            return inheritsSet;
-        }
         
-        private static void GetInheritChilds_RawEnumerate_recurrent(IVertex baseVertex, HashSet<IVertex> inheritedSet)
-        {            
-            foreach (IEdge e in baseVertex.InEdgesRaw)
-                if (GeneralUtil.CompareStrings(e.Meta, "$Inherits")  && !inheritedSet.Contains(e.From))
-                {
-                    inheritedSet.Add(e.From);
-                    GetInheritChilds_RawEnumerate_recurrent(e.From, inheritedSet);
-                }
-        }
-
-        public static HashSet<IVertex> GetInheritParents_RawEnumerate(IVertex baseVertex)
-        {
-            HashSet<IVertex> inheritsSet = new HashSet<IVertex>();
-
-            GetInheritParents_RawEnumerate_recurrent(baseVertex, inheritsSet);
-
-            return inheritsSet;
-        }
-
-        /*private static void GetInheritParents_RawEnumerate_recurrent(IVertex baseVertex, HashSet<IVertex> inheritedSet)
-        {
-            foreach (IEdge e in GraphUtil.GetQueryOut(baseVertex, "$Inherits", null))
-                if (e.From == baseVertex && !inheritedSet.Contains(e.From))
-                {
-                    inheritedSet.Add(e.To);
-                    GetInheritParents_RawEnumerate_recurrent(e.To, inheritedSet);
-                }
-        }*/
-
-        private static void GetInheritParents_RawEnumerate_recurrent(IVertex baseVertex, HashSet<IVertex> inheritedSet)
-        {
-            foreach (IEdge e in baseVertex.OutEdgesRaw)
-                if (GeneralUtil.CompareStrings(e.Meta, "$Inherits") && !inheritedSet.Contains(e.To))
-                {
-                    inheritedSet.Add(e.To);
-                    GetInheritParents_RawEnumerate_recurrent(e.To, inheritedSet);
-                }
-        }
 
         public static void AddRange_NoNoInherit(IList<IEdge> to, IList<IEdge> from)
         {

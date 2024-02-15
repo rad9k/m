@@ -102,7 +102,7 @@ namespace m0.Graph
             {
                 List<IEdge> FullEdges = InEdgesRaw.ToList();
 
-                HashSet<IVertex> parents = GraphUtil.GetInheritParents_RawEnumerate(this);
+                HashSet<IVertex> parents = VertexHelper.GetInheritParents(this);
 
                 foreach (IVertex v in parents)
                     FullEdges.AddRange(v.InEdgesRaw);
@@ -139,7 +139,7 @@ namespace m0.Graph
             {
                 List<IEdge> FullEdges = OutEdgesRaw.ToList();
 
-                HashSet<IVertex> parents = GraphUtil.GetInheritParents_RawEnumerate(this);
+                HashSet<IVertex> parents = VertexHelper.GetInheritParents(this);
 
                 foreach (IVertex v in parents)
                     GraphUtil.AddRange_NoNoInherit(FullEdges, v.OutEdgesRaw);                    
@@ -542,7 +542,7 @@ namespace m0.Graph
 
         public void InheritChildsDictionariesNeedsRebuild(bool inDictiories)
         {
-            HashSet<IVertex> inheritsSet = GraphUtil.GetInheritChilds_RawEnumerate(this);
+            HashSet<IVertex> inheritsSet = VertexHelper.GetInheritChilds(this);
 
             foreach (IVertex v in inheritsSet)
                 if (inDictiories)

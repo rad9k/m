@@ -1,5 +1,6 @@
 ﻿using m0.Foundation;
 using m0.Graph;
+using m0.Graph.Internal;
 using m0.Util;
 using System;
 using System.Collections.Generic;
@@ -63,7 +64,7 @@ namespace m0.Store.FileSystem
             {
                 List<IEdge> FullEdges = OutEdgesRaw.ToList();
 
-                HashSet<IVertex> parents = GraphUtil.GetInheritParents_RawEnumerate(this);
+                HashSet<IVertex> parents = VertexHelper.GetInheritParents_IVertex(this);
 
                 foreach (IVertex v in parents)
                     FullEdges.AddRange(v.OutEdgesRaw);

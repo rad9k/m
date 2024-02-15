@@ -129,6 +129,7 @@
     <Compile Include="Graph\Internal\MetaInList.cs" />
     <Compile Include="Graph\Internal\InList.cs" />
     <Compile Include="Graph\Internal\OutList.cs" />
+    <Compile Include="Graph\Internal\VertexHelper.cs" />
     <Compile Include="Graph\OLD\EasyEdge - Copy.cs" />
     <Compile Include="Graph\OLD\EasyVertex - OldVersion.cs" />
     <Compile Include="Lib\LibUtil.cs" />
