@@ -36,7 +36,7 @@ namespace m0.DotNetIntegration
 
             CallableEndPointDelegate del = null;
 
-            IVertex _is = GraphUtil.GetQueryOutFirst(instructionVertex, null, "$Is");
+            IVertex _is = GraphUtil.GetQueryOutFirst(instructionVertex, "$Is", null);
 
             if (_is == null)
                 return null;
@@ -45,15 +45,15 @@ namespace m0.DotNetIntegration
                 del = DotNetEndPointDictionary[_is];
             else
             {            
-                IVertex ep = GraphUtil.GetQueryOutFirst(_is, null, "$ExecutableEndPoint");
+                IVertex ep = GraphUtil.GetQueryOutFirst(_is, "$ExecutableEndPoint", null);
 
                 if (ep == null)
                     return null;
 
                 if (GraphUtil.GetQueryOutFirst(ep, "$Is", "DotNetStaticMethod") != null)
                 {
-                    string typeString = (string)GraphUtil.GetQueryOutFirst(ep, null, "DotNetTypeName").Value;
-                    string methodString = (string)GraphUtil.GetQueryOutFirst(ep, null, "DotNetMethodName").Value;
+                    string typeString = (string)GraphUtil.GetQueryOutFirst(ep, "DotNetTypeName", null).Value;
+                    string methodString = (string)GraphUtil.GetQueryOutFirst(ep, "DotNetMethodName", null).Value;
 
                     Type type = Type.GetType(typeString);
                     MethodInfo method = type.GetMethod(methodString);
