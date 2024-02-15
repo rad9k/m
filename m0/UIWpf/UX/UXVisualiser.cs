@@ -1811,8 +1811,8 @@ namespace m0.UIWpf.UX
                     foreach (IEdge e in systemMetaBaseVertex)
                         AddNewLineOption(v, tem, e);
 
-                if (tem.EdgeTestQuery == "$EdgeTarget") // $EdgeTarget is not present as there is no inheritance from Vertex
-                    AddNewLineOption(v, tem, GraphUtil.FindEdgeByToVertex(systemMetaBaseVertex, "$EdgeTarget"));
+                if (tem.EdgeTestQuery == "$EdgeTarget") // $EdgeTarget is not present as there is no inheritance from Vertex                    
+                    AddNewLineOption(v, tem, GraphUtil.GetQueryOutFirstEdge(systemMetaBaseVertex, null, "$EdgeTarget"));
             }
 
             if (v.Count() == 0)

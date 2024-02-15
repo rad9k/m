@@ -30,8 +30,8 @@ namespace m0.DotNetIntegration
             {            
                 if (GraphUtil.GetQueryOutFirst(callableEndPointVertex, "$Is", "DotNetStaticMethod") != null)
                 {
-                    string typeString = (string)GraphUtil.FindOneByMeta(callableEndPointVertex, "DotNetTypeName").Value;
-                    string methodString = (string)GraphUtil.FindOneByMeta(callableEndPointVertex, "DotNetMethodName").Value;
+                    string typeString = (string)GraphUtil.GetQueryOutFirst(callableEndPointVertex, null, "DotNetTypeName").Value;
+                    string methodString = (string)GraphUtil.GetQueryOutFirst(callableEndPointVertex, null, "DotNetMethodName").Value;
 
                     Type type = Type.GetType(typeString);
                     MethodInfo method = type.GetMethod(methodString);

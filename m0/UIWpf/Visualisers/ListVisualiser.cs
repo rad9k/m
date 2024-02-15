@@ -284,11 +284,11 @@ namespace m0.UIWpf.Visualisers
 
             ThisDataGrid.SelectedItems.Clear();
 
-            IVertex b=Vertex.Get(false, @"BaseEdge:\To:");
+            IVertex b = Vertex.Get(false, @"BaseEdge:\To:");
 
-            if (b!=null)
+            if (b != null)
             foreach(IEdge e in Vertex.Get(false, "SelectedEdges:")){
-                IEdge ee = GraphUtil.FindEdgeByToVertex(b, e.To.Get(false, "To:"));
+                IEdge ee = GraphUtil.FindEdgeByToVertex_fromVertex(b, e.To.Get(false, "To:"));
                 if (ee != null)
                     ThisDataGrid.SelectedItems.Add(ee);
             }

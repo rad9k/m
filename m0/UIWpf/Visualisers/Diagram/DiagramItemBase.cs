@@ -356,8 +356,8 @@ namespace m0.UIWpf.Visualisers.Diagram
                     foreach (IEdge e in r.Get(false, @"System\Meta\Base\Vertex"))
                         AddNewLineOption(v, def, e);
 
-                if (GeneralUtil.CompareStrings(def.To.Get(false, "EdgeTestQuery:"), "$EdgeTarget")) // $EdgeTarget is not present as there is no inheritance from Vertex
-                    AddNewLineOption(v, def, GraphUtil.FindEdgeByToVertex(r.Get(false, @"System\Meta\Base\Vertex"),"$EdgeTarget"));
+                if (GeneralUtil.CompareStrings(def.To.Get(false, "EdgeTestQuery:"), "$EdgeTarget")) // $EdgeTarget is not present as there is no inheritance from Vertex                    
+                    AddNewLineOption(v, def, GraphUtil.GetQueryOutFirstEdge(r.Get(false, @"System\Meta\Base\Vertex"), null, "$EdgeTarget"));
             }
 
                 if (v.Count() == 0)

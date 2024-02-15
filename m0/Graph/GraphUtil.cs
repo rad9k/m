@@ -163,18 +163,6 @@ namespace m0.Graph
             baseVertex.DeleteEdge(tmp);
         }        
 
-        public static bool DoEdgeListContainsVertex(IVertex list, IVertex toCheckVertex)
-        {
-            if (list == null)
-                return false;
-
-            foreach (IEdge e in list)
-                if (e.To == toCheckVertex)
-                    return true;
-
-            return false;
-        }
-
         public static IVertex AddEnum(IVertex baseVertex, string enumName, string[] values)
         {
             IVertex r = MinusZero.Instance.root;
@@ -458,12 +446,12 @@ namespace m0.Graph
             return new List<IEdge>();
         }
 
-        public static IList<IEdge> GetQueryIn(IVertex baseVertex, object meta, object value)
+        public static IList<IEdge> GetQueryIn(IVertex baseVertex, object meta, object from)
         {
             IEdge result;
             IList<IEdge> results;
 
-            baseVertex.QueryInEdges(meta, value, out result, out results);
+            baseVertex.QueryInEdges(meta, from, out result, out results);
 
             if (result != null)
             {
@@ -534,18 +522,8 @@ namespace m0.Graph
 
         public static object GetMetaAndValueObject(object meta, object value)
         {
-            /*StringBuilder sb = new StringBuilder();
-            if (meta != null)
-                sb.Append(meta.ToString());
-
-            sb.Append("@#$#@");
-
-            if (value != null)
-                sb.Append(value.ToString());            
-
-            return sb.ToString();*/
-
             int toRet = 0;
+
             if (meta != null)
                 toRet = meta.GetHashCode();
 
@@ -567,8 +545,8 @@ namespace m0.Graph
 
         private static void GetInheritChilds_RawEnumerate_recurrent(IVertex baseVertex, HashSet<IVertex> inheritedSet)
         {
-            foreach (IEdge e in baseVertex.InEdgesRaw)
-                if (GeneralUtil.CompareStrings(e.Meta, "$Inherits") && !inheritedSet.Contains(e.From))
+            foreach (IEdge e in GraphUtil.GetQueryIn(baseVertex, "$Inherits", null))
+                if (e.To == baseVertex && !inheritedSet.Contains(e.From))
                 {
                     inheritedSet.Add(e.From);
                     GetInheritChilds_RawEnumerate_recurrent(e.From, inheritedSet);
@@ -586,8 +564,8 @@ namespace m0.Graph
 
         private static void GetInheritParents_RawEnumerate_recurrent(IVertex baseVertex, HashSet<IVertex> inheritedSet)
         {
-            foreach (IEdge e in baseVertex.OutEdgesRaw)
-                if (GeneralUtil.CompareStrings(e.Meta, "$Inherits") && !inheritedSet.Contains(e.To))
+            foreach (IEdge e in GraphUtil.GetQueryOut(baseVertex, "$Inherits", null))
+                if (e.From == baseVertex && !inheritedSet.Contains(e.From))
                 {
                     inheritedSet.Add(e.To);
                     GetInheritParents_RawEnumerate_recurrent(e.To, inheritedSet);
@@ -637,16 +615,12 @@ namespace m0.Graph
         {
             IVertex _startMeta = startMeta;
 
-           // if (startMeta.Get(false, "$EdgeTarget") != null) // XXX this is error!!!!! but before correcting it, we need to check what will happen
-            //    _startMeta = startMeta.Get(false, "$EdgeTarget:");
-
             IVertex highestInheritanceLevel=null;
             int highestInheritanceLevel_level = 0;
 
             int tempLevel;
 
             foreach (IEdge e in GraphUtil.GetQueryOut(baseVertex,"$Is",null))
-            //foreach (IEdge e in baseVertex.GetAll(false, "$Is:"))
             {
                 tempLevel = GetInheritanceLevel(e.To, _startMeta, 0);
 
@@ -668,7 +642,6 @@ namespace m0.Graph
             int biggest = 0;
 
             foreach(IEdge e in GraphUtil.GetQueryOut(testMeta, "$Inherits", false))
-            //foreach (IEdge e in testMeta.GetAll(false, "$Inherits:"))
             {
                 int temp = GetInheritanceLevel(e.To, startMeta, input + 1);
                 if (temp > biggest)
@@ -726,7 +699,6 @@ namespace m0.Graph
             if (vertex == null || metaVertex == null)
                 return null;
 
-            //IVertex getByMeta=vertex.Get(false, metaVertex.Value + ":");
             IVertex getByMeta = GetQueryOutFirst(vertex, metaVertex.Value, null);                
 
             if (getByMeta == null)
@@ -867,7 +839,6 @@ namespace m0.Graph
 
                     return null; // optimisation
                 }
-
 
                 try
                 {
@@ -1057,19 +1028,16 @@ namespace m0.Graph
             IList<IEdge> el = GeneralUtil.CreateAndCopyList<IEdge>(v);
 
             foreach (IEdge e in el)
-                if(GraphUtil.GetQueryOutCount(e.To, "$Is", "Edge") > 0)
-                {
-                    //RemoveAllEdges(e.To); // it took almoust a week
-
+                if (GraphUtil.GetQueryOutCount(e.To, "$Is", "Edge") > 0)
                     v.DeleteEdge(e);
-                }
+                
         }
 
         static public void DeleteEdgeByToVertex(IVertex source, IVertex toVertex)
         {
-            IEdge e = FindEdgeByToVertex(source, toVertex);
+            IEdge e = FindEdgeByToVertex_fromVertex(source, toVertex);
 
-            if(e!=null)
+            if (e != null)
                 source.DeleteEdge(e);
         }
 
@@ -1085,7 +1053,7 @@ namespace m0.Graph
         {
             IList<IEdge> edges = GetQueryOut(source, MetaValue, null);
 
-            foreach(IEdge e in edges)            
+            foreach (IEdge e in edges)            
                 source.DeleteEdge(e);
         }
 
@@ -1109,8 +1077,8 @@ namespace m0.Graph
 
         static public IEdge FindEdge(IVertex Vertex, IVertex metaVertex, IVertex toVertex)
         {
-            foreach (IEdge e in Vertex)
-                if (e.Meta == metaVertex&&e.To==toVertex)
+            foreach (IEdge e in GraphUtil.GetQueryOut(Vertex, metaVertex.Value.ToString(), toVertex.Value.ToString()))
+                if (e.Meta == metaVertex && e.To == toVertex)
                     return e;
             return null;
         }
@@ -1124,10 +1092,10 @@ namespace m0.Graph
             return null;
         }
 
-        static public IEdge FindEdgeByToVertex(IEnumerable<IEdge> edges, string toVertexValue)
+        static public IEdge FindEdgeByToVertex_fromVertex(IVertex v, IVertex toVertex)
         {
-            foreach (IEdge e in edges)
-                if (GeneralUtil.CompareStrings(e.To.Value,toVertexValue))
+            foreach (IEdge e in GraphUtil.GetQueryOut(v, null, toVertex.Value.ToString()))
+                if (e.To == toVertex)
                     return e;
 
             return null;
@@ -1209,27 +1177,6 @@ namespace m0.Graph
 
             return false;
         }     
-
-        static public IVertex FindOneByValue(IVertex findRoot, string value)
-        {
-            return GetQueryOutFirst(findRoot, null, value);
-            /*foreach (IEdge e in findRoot)
-                if (GeneralUtil.CompareStrings(e.To.Value, value))
-                    return e.To;
-
-            return null;*/
-        }
-
-        static public IVertex FindOneByMeta(IVertex findRoot, string value)
-        {
-            return GetQueryOutFirst(findRoot, value, null);
-
-            /*foreach (IEdge e in findRoot)
-                if (GeneralUtil.CompareStrings(e.Meta.Value, value))
-                    return e.To;
-
-            return null;            */
-        }
 
         static public IVertex DeepFindOneByValue(IVertex findRoot, string value, bool canGoIntoLinks)
         {
@@ -1428,13 +1375,6 @@ namespace m0.Graph
                 if (!visited.Contains(e.To) && !excludeList.Contains(e.To) && !VertexOperations.IsLink(e))
                     GetSubGraphWithoutLinks_Reccurent_ExcludeList(e.To, visited, excludeList);
         }
-
-
-        /*public static void AddHandlerIfDelegateListDoesNotContainsIt(IVertex baseVertex, VertexChange _delegate)
-        {
-            if (baseVertex!=null&& !GeneralUtil.DoDelegateListContainDelegate(baseVertex.GetChangeDelegateInvocationList(), _delegate))
-                baseVertex.Change += _delegate;
-        }*/
 
         public static IVertex GetVertex(string storeName, long id)
         {

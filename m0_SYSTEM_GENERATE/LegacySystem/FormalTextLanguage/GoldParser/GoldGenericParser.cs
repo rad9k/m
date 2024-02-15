@@ -74,13 +74,13 @@ namespace m0.FormalTextLanguage.GoldParser
                     string leaf = ParseLeaf( (string)reduction[x].Data );
 
                     //IVertex def= langDef.Get(false, "\"" + leaf + "\"");                    
-                    IVertex def = GraphUtil.FindOneByValue(langDef, leaf);
+                    IVertex def = GraphUtil.GetQueryOutFirst(langDef, null, leaf);                        
 
                     if (def != null)
                     {
 
                         //if (def.Get(false, "PreviousTerminalMoveDown:") != null)
-                        if (GraphUtil.FindOneByMeta(def, "PreviousTerminalMoveDown") != null)
+                        if (GraphUtil.GetQueryOutFirst(def, null, "PreviousTerminalMoveDown") != null)
                         {
                             IEdge previousEdge = v.OutEdges.Last();
 
@@ -95,7 +95,7 @@ namespace m0.FormalTextLanguage.GoldParser
                             // }else if(def.Get(false, "MoveDownToPreviousContainerTerminalOrCretedEmpty:")!=null){
 
                         }
-                        else if (GraphUtil.FindOneByMeta(def, "MoveDownToPreviousContainerTerminalOrCretedEmpty") != null)
+                        else if (GraphUtil.GetQueryOutFirst(def, null, "MoveDownToPreviousContainerTerminalOrCretedEmpty") != null)
                         {
                             IEdge previousEdge = v.OutEdges.LastOrDefault();
 
@@ -103,7 +103,7 @@ namespace m0.FormalTextLanguage.GoldParser
                             if (
                                 ((previousEdge != null) && generatedVertexList.Contains(previousEdge.To)) && (
                                  ((GeneralUtil.CompareStrings(previousEdge.Meta.Value, "$Empty"))
-                                || (GraphUtil.FindOneByMeta(previousEdge.Meta, "ContainerTerminal") != null))                                
+                                || (GraphUtil.GetQueryOutFirst(previousEdge.Meta, null, "ContainerTerminal") != null))                                
                                 ))
                             {
                                 IVertex previousVertex = previousEdge.To;
@@ -114,10 +114,8 @@ namespace m0.FormalTextLanguage.GoldParser
                             }
                             else
                             {
-                                //current = v.AddVertex(MetaFormalTextLanguageParsedTree.Get(false, "$EmptyContainerTerminal"), null);
-
-                                current = v.AddVertex(GraphUtil.FindOneByValue(MetaFormalTextLanguageParsedTree, "$EmptyContainerTerminal"), null);
-
+                                current = v.AddVertex(GraphUtil.GetQueryOutFirst(MetaFormalTextLanguageParsedTree, null, "$EmptyContainerTerminal"), null);
+                                
                                 generatedVertexList.Add(current);
 
                                 current = current.AddVertex(def, leaf);
