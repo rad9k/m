@@ -10,6 +10,11 @@ namespace m0.Graph.Internal
 {
     internal class VertexHelper
     {
+        // InEdges
+        // from == who inherits from me
+        // meta == $Inherits
+        // to == this
+
         public static HashSet<IVertex> GetInheritChilds(IVertex baseVertex)
         {
             HashSet<IVertex> inheritsSet = new HashSet<IVertex>();
@@ -29,6 +34,10 @@ namespace m0.Graph.Internal
                 }
         }
 
+        // OutEdgesRaw
+        // from == this
+        // meta == $Inherits
+        // to == who I inherit from
         public static HashSet<IVertex> GetInheritParents(IVertex baseVertex)
         {
             HashSet<IVertex> inheritsSet = new HashSet<IVertex>();
