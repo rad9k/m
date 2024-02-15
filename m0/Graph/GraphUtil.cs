@@ -533,34 +533,6 @@ namespace m0.Graph
 
             return toRet;
         }
-
-        // COR
-
-
-      /*  private static void GetInheritChilds_RawEnumerate_recurrent(IVertex baseVertex, HashSet<IVertex> inheritedSet)
-        {
-            foreach (IEdge e in baseVertex.InEdgesRaw)
-                if (GeneralUtil.CompareStrings(e.Meta, "$Inherits") && !inheritedSet.Contains(e.From))
-                {
-                    inheritedSet.Add(e.From);
-                    GetInheritChilds_RawEnumerate_recurrent(e.From, inheritedSet);
-                }
-        }*/
-
-
-        private static void GetInheritParents_RawEnumerate_recurrent(IVertex baseVertex, HashSet<IVertex> inheritedSet)
-        {
-            foreach (IEdge e in baseVertex.OutEdgesRaw)
-                if (GeneralUtil.CompareStrings(e.Meta, "$Inherits") && !inheritedSet.Contains(e.To))
-                {
-                    inheritedSet.Add(e.To);
-                    GetInheritParents_RawEnumerate_recurrent(e.To, inheritedSet);
-                }
-        }
-
-
-        // COR
-
         
         public static HashSet<IVertex> GetInheritChilds_RawEnumerate(IVertex baseVertex)
         {
@@ -572,35 +544,13 @@ namespace m0.Graph
         }
         
         private static void GetInheritChilds_RawEnumerate_recurrent(IVertex baseVertex, HashSet<IVertex> inheritedSet)
-        {
-            int cnt0 = 0, cnt1=0;
-
+        {            
             foreach (IEdge e in baseVertex.InEdgesRaw)
-                if (GeneralUtil.CompareStrings(e.Meta, "$Inherits")
-                    cnt0++;
-
-            foreach (IEdge e in GraphUtil.GetQueryIn(baseVertex, "$Inherits", null))
-                cnt1++;
-
-            if (cnt0 != cnt1)
-            {
-                int x = 0;
-            }
-
-            foreach (IEdge e in baseVertex.InEdgesRaw)
-            //foreach (IEdge e in GraphUtil.GetQueryIn(baseVertex, "$Inherits", null))
-                if (GeneralUtil.CompareStrings(e.Meta, "$Inherits") && e.To == baseVertex && !inheritedSet.Contains(e.From))
+                if (GeneralUtil.CompareStrings(e.Meta, "$Inherits")  && !inheritedSet.Contains(e.From))
                 {
                     inheritedSet.Add(e.From);
                     GetInheritChilds_RawEnumerate_recurrent(e.From, inheritedSet);
                 }
-
-            /*foreach (IEdge e in GraphUtil.GetQueryIn(baseVertex, "$Inherits", null))
-                if (e.To == baseVertex && !inheritedSet.Contains(e.From))
-                {
-                    inheritedSet.Add(e.From);
-                    GetInheritChilds_RawEnumerate_recurrent(e.From, inheritedSet);
-                }*/
         }
 
         public static HashSet<IVertex> GetInheritParents_RawEnumerate(IVertex baseVertex)
@@ -611,7 +561,7 @@ namespace m0.Graph
 
             return inheritsSet;
         }
-        
+
         /*private static void GetInheritParents_RawEnumerate_recurrent(IVertex baseVertex, HashSet<IVertex> inheritedSet)
         {
             foreach (IEdge e in GraphUtil.GetQueryOut(baseVertex, "$Inherits", null))
@@ -621,7 +571,17 @@ namespace m0.Graph
                     GetInheritParents_RawEnumerate_recurrent(e.To, inheritedSet);
                 }
         }*/
-        
+
+        private static void GetInheritParents_RawEnumerate_recurrent(IVertex baseVertex, HashSet<IVertex> inheritedSet)
+        {
+            foreach (IEdge e in baseVertex.OutEdgesRaw)
+                if (GeneralUtil.CompareStrings(e.Meta, "$Inherits") && !inheritedSet.Contains(e.To))
+                {
+                    inheritedSet.Add(e.To);
+                    GetInheritParents_RawEnumerate_recurrent(e.To, inheritedSet);
+                }
+        }
+
         public static void AddRange_NoNoInherit(IList<IEdge> to, IList<IEdge> from)
         {
             foreach (IEdge e in from)
