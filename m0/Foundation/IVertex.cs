@@ -91,6 +91,8 @@ namespace m0.Foundation
 
         void AttachEdge(IEdge edge);
 
+        void DetachInEdge(IEdge edge); // 4.0 !
+
         void DetachEdge(IEdge edge);
 
         void AddEdgesList(IEnumerable<IEdge> edges);

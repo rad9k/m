@@ -73,6 +73,7 @@ namespace m0.Graph
             _meta = null;
 
             From.DetachEdge(this); // is it ok????? not sure if will not break something
+            To.DetachInEdge(this);
 
             _DetachState = DetachStateEnum.Detached;
         }
@@ -107,6 +108,7 @@ namespace m0.Graph
                 Meta.MetaInEdgesRaw.Add(this);
 
             From.AttachEdge(this);
+            To.AttachInEdge(this);
 
             _DetachState = DetachStateEnum.Attached;
         }      
