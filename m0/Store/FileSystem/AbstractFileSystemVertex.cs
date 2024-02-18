@@ -64,7 +64,7 @@ namespace m0.Store.FileSystem
             {
                 List<IEdge> FullEdges = OutEdgesRaw.ToList();
 
-                HashSet<IVertex> parents = VertexHelper.GetInheritParents_IVertex(this);
+                HashSet<IVertex> parents = VertexHelper.GetInheritParents(this);
 
                 foreach (IVertex v in parents)
                     FullEdges.AddRange(v.OutEdgesRaw);

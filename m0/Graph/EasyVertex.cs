@@ -80,14 +80,14 @@ namespace m0.Graph
         // meta == $Inherits
         // to == this
 
-        IList<IEdge> InheritsInEdges;
+        public IList<IEdge> InheritsInEdges;
 
         // OutEdgesRaw
         // from == this
         // meta == $Inherits
         // to == who I inherit from
 
-        IList<IEdge> InheritsOutEdges;
+        public IList<IEdge> InheritsOutEdges;
 
         public override IList<IEdge> InEdgesRaw { get { return edgeDictionaries.In; } }
 

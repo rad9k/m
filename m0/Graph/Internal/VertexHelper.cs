@@ -26,12 +26,24 @@ namespace m0.Graph.Internal
 
         private static void GetInheritChilds_RawEnumerate_recurrent(IVertex baseVertex, HashSet<IVertex> inheritedSet)
         {
-            foreach (IEdge e in baseVertex.InEdgesRaw)
-                if (GeneralUtil.CompareStrings(e.Meta, "$Inherits") && !inheritedSet.Contains(e.From))
-                {
-                    inheritedSet.Add(e.From);
-                    GetInheritChilds_RawEnumerate_recurrent(e.From, inheritedSet);
-                }
+           if (baseVertex is EasyVertex) // FAST
+            {
+                EasyVertex baseVertex_EasyVertex = (EasyVertex)baseVertex;
+
+                foreach (IEdge e in baseVertex_EasyVertex.InheritsInEdges)
+                    if (!inheritedSet.Contains(e.From))
+                    {
+                        inheritedSet.Add(e.From);
+                        GetInheritChilds_RawEnumerate_recurrent(e.From, inheritedSet);
+                    }
+            }
+            else // SLOW
+                foreach (IEdge e in baseVertex.InEdgesRaw)
+                    if (GeneralUtil.CompareStrings(e.Meta, "$Inherits") && !inheritedSet.Contains(e.From))
+                    {
+                        inheritedSet.Add(e.From);
+                        GetInheritChilds_RawEnumerate_recurrent(e.From, inheritedSet);
+                    }
         }
 
         // OutEdgesRaw
@@ -49,31 +61,24 @@ namespace m0.Graph.Internal
 
         private static void GetInheritParents_RawEnumerate_recurrent(IVertex baseVertex, HashSet<IVertex> inheritedSet)
         {
-            foreach (IEdge e in baseVertex.OutEdgesRaw)
-                if (GeneralUtil.CompareStrings(e.Meta, "$Inherits") && !inheritedSet.Contains(e.To))
-                {
-                    inheritedSet.Add(e.To);
-                    GetInheritParents_RawEnumerate_recurrent(e.To, inheritedSet);
-                }
-        }
+            if (baseVertex is EasyVertex) // FAST
+            {
+                EasyVertex baseVertex_EasyVertex = (EasyVertex)baseVertex;
 
-        public static HashSet<IVertex> GetInheritParents_IVertex(IVertex baseVertex)
-        {
-            HashSet<IVertex> inheritsSet = new HashSet<IVertex>();
-
-            GetInheritParents_IVertex_recurrent(baseVertex, inheritsSet);
-
-            return inheritsSet;
-        }
-
-        private static void GetInheritParents_IVertex_recurrent(IVertex baseVertex, HashSet<IVertex> inheritedSet)
-        {
-            foreach (IEdge e in baseVertex.OutEdgesRaw)
-                if (GeneralUtil.CompareStrings(e.Meta, "$Inherits") && !inheritedSet.Contains(e.To))
-                {
-                    inheritedSet.Add(e.To);
-                    GetInheritParents_RawEnumerate_recurrent(e.To, inheritedSet);
-                }
+                foreach (IEdge e in baseVertex_EasyVertex.InheritsOutEdges)
+                    if (!inheritedSet.Contains(e.To))
+                    {
+                        inheritedSet.Add(e.To);
+                        GetInheritParents_RawEnumerate_recurrent(e.To, inheritedSet);
+                    }
+            } 
+            else // SLOW
+                foreach (IEdge e in baseVertex.OutEdgesRaw)
+                    if (GeneralUtil.CompareStrings(e.Meta, "$Inherits") && !inheritedSet.Contains(e.To))
+                    {
+                        inheritedSet.Add(e.To);
+                        GetInheritParents_RawEnumerate_recurrent(e.To, inheritedSet);
+                    }
         }
     }
 }
