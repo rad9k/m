@@ -2691,7 +2691,7 @@ namespace m0.ZeroCode
             NoCodeViewProcessReEnter = true;
             
 
-            IVertex codeViewMetaEdge = GraphUtil.GetQueryOutFirst(FormalTextLanguage, "FormalTextLanguageView", null);
+            IVertex codeViewMetaEdge = GraphUtil.GetQueryOutFirst(FormalTextLanguage, "FormalTextLanguageView", "ZeroCodeView");
 
             if (codeViewMetaEdge != null)
             {

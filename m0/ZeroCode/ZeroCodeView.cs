@@ -16,6 +16,8 @@ namespace m0.ZeroCode
         static FormalTextLanguageDictinaries dict = DictionariesForFormalTextLanguageFactory.Get(
             MinusZero.Instance.Root.Get(false, @"System\FormalTextLanguage\ZeroCode"));
 
+        // USES:
+        // - Text2GraphProcessing.CodeViewProcess
         static public INoInEdgeInOutVertexVertex ZeroCodeViewListener(IExecution exe)
         {
             if(exe.Stack.Get(false, @"event:\Type:MetaEdgeRemoved") != null)
@@ -41,7 +43,10 @@ namespace m0.ZeroCode
 
                 foreach (IEdge e_is in InstructionHelpers.GetAllIs(e.To))
                     if (dict.instructions_HasNextEdge.Contains(e_is.To))
+                    {
                         metaHasNextEdge = true;
+                        break;
+                    }
                 
                 if (metaHasNextEdge)
                     edgeMetaHavingNext.Add(e);
@@ -70,7 +75,10 @@ namespace m0.ZeroCode
                     //&& e.Meta != dict.NextAtomMeta
                     && !VertexOperations.IsLink(e))
                     ProcessVertex(e.To);
-        }        
+        }
+        
+        
+        /////////////////////////////////////////////////////////////////////////////
         
         static public IList<IEdge> LinearizeVertex(IVertex v)
         {            
