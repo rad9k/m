@@ -75,7 +75,19 @@ namespace m0.Graph
 
         public bool AllowInheritance = true;
 
-        public int InheritanceCount { get; set; }
+        // InEdges
+        // from == who inherits from me
+        // meta == $Inherits
+        // to == this
+
+        IList<IEdge> InheritsInEdges;
+
+        // OutEdgesRaw
+        // from == this
+        // meta == $Inherits
+        // to == who I inherit from
+
+        IList<IEdge> InheritsOutEdges;
 
         public override IList<IEdge> InEdgesRaw { get { return edgeDictionaries.In; } }
 
@@ -361,6 +373,13 @@ namespace m0.Graph
             OutEdgesDictionariesNeedsRebuild_MetaAndValue = false;
         }
 
+        // edge = new Edge in Attached state
+        // OutEdgesRaw.OnAdd
+        //    edge.Meta.MetaInEdgesRaw.Add(edge);                                
+        //    edge.To.InEdgesRaw.Add(edge);
+        // this.AttachEdge(edge)
+        // edge.To.AttachInEdge(edge)
+
         public override IEdge AddEdge(IVertex metaVertex, IVertex destVertex)
         {
             if (DisposedState == DisposeStateEnum.Disposed)
@@ -378,6 +397,7 @@ namespace m0.Graph
             OutEdgesRaw.Add(ne);
 
             AttachEdge(ne);
+            destVertex.AttachInEdge(ne);
 
             if (CanEmitGraphChangeEvents)
                 ExecutionFlowHelper.AddTransactionAtom(new GraphChangeTransactionAtom(
@@ -390,11 +410,17 @@ namespace m0.Graph
             return ne;
         }
 
+        public override void AttachInEdge(IEdge edge)
+        {
+            if (GeneralUtil.CompareStrings(edge.Meta.Value, "$Inherits"))
+                InheritsInEdges.Add(edge);
+        }
+
         public override void AttachEdge(IEdge edge)
         {            
             if (GeneralUtil.CompareStrings(edge.Meta.Value, "$Inherits"))
             {
-                InheritanceCount++;
+                InheritsOutEdges.Add(edge);                
 
                 HasInheritance = true;
             }
@@ -410,15 +436,21 @@ namespace m0.Graph
                 OnlyNonTransactedRootVertexEvents_Listener_AddedRemoved();
         }
 
+        public override void DetachInEdge(IEdge edge)
+        {
+            if (GeneralUtil.CompareStrings(edge.Meta.Value, "$Inherits"))
+                InheritsInEdges.Remove(edge);
+        }
+
         public override void DetachEdge(IEdge edge)
         {
             if (edge.Meta != null)
             {
                 if (GeneralUtil.CompareStrings(edge.Meta.Value, "$Inherits"))
                 {
-                    InheritanceCount--;
+                    InheritsOutEdges.Remove(edge);                    
 
-                    if (InheritanceCount == 0)
+                    if (InheritsOutEdges.Count == 0)
                         HasInheritance = false;
                 }
 
@@ -449,7 +481,12 @@ namespace m0.Graph
             foreach (IEdge e in edges) // possibly not optimal implementation
                 AddEdge(e.Meta, e.To);
         }
-        
+
+        // OutEdgesRaw.OnRemove
+        //      edge.Meta.MetaInEdgesRaw.Remove(edge);
+        //      edge.To.InEdgesRaw.Remove(edge);
+        //          edge.To.CheckIfShouldDispose();
+        //      edge.From.DetachEdge(item);
         public override void DeleteEdge(IEdge _edge)
         {
             if (DisposedState == DisposeStateEnum.Disposed)
@@ -764,7 +801,8 @@ namespace m0.Graph
         {
             edgeDictionaries = new EdgeDictionaries(this);
 
-            InheritanceCount = 0;
+            InheritsInEdges = new List<IEdge>();
+            InheritsOutEdges = new List<IEdge>();
 
             InEdgesDictionariesNeedsRebuild = true;
             OutEdgesDictionariesNeedsRebuild = true;

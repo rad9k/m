@@ -68,12 +68,16 @@ namespace m0.Graph
             if (_meta != null)
                 Meta.MetaInEdgesRaw.Remove(this);
 
-            _to = null;
+            //_to = null; // BELOW
            
-            _meta = null;
+            //_meta = null;
 
             From.DetachEdge(this); // is it ok????? not sure if will not break something
             To.DetachInEdge(this);
+
+            _to = null;
+
+            _meta = null;
 
             _DetachState = DetachStateEnum.Detached;
         }

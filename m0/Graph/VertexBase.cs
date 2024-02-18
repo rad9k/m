@@ -266,7 +266,17 @@ namespace m0.Graph
             throw new NotImplementedException();
         }
 
+        public virtual void AttachInEdge(IEdge edge)
+        {
+            throw new NotImplementedException();
+        }
+
         public virtual void AttachEdge(IEdge edge)
+        {
+            throw new NotImplementedException();
+        }
+
+        public virtual void DetachInEdge(IEdge edge)
         {
             throw new NotImplementedException();
         }

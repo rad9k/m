@@ -82,6 +82,7 @@ namespace m0.Graph.Internal
             edgeDictionaries.Vertex.InheritChildsDictionariesNeedsRebuild(false);
 
             edgeDictionaries.Vertex.DetachEdge(item);
+            item.To.DetachInEdge(item);
 
             //
 
