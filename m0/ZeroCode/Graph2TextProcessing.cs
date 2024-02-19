@@ -1688,7 +1688,7 @@ namespace m0.ZeroCode
 
         public void prepareBaseEdge(IEdge _graphBaseEdge)
         {
-            IVertex v = ZeroCodeView.LinearizeGraph(_graphBaseEdge.To);
+            IVertex v = ZeroCodeView.NextBasedExecutionForm_to_LinearExecutionForm_ProcessGraph(_graphBaseEdge.To);
 
             BaseEdge = new EasyEdge(null, null, v);
         }

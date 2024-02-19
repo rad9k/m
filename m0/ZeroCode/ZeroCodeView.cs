@@ -18,19 +18,22 @@ namespace m0.ZeroCode
 
         // USES:
         // - Text2GraphProcessing.CodeViewProcess
+
+        // Linear exection form => Next based execution form
+        // Vertexes are moved
         static public INoInEdgeInOutVertexVertex ZeroCodeViewListener(IExecution exe)
         {
             if(exe.Stack.Get(false, @"event:\Type:MetaEdgeRemoved") != null)
             {
                 IVertex from = exe.Stack.Get(false, @"event:\Edge:\From:");
 
-                ProcessVertex(from);
+                LinearExecutionForm_to_NextBasedExecutionForm_ProcessGraph(from);
             }
 
             return null;
         }
 
-        static void ProcessVertex(IVertex v)
+        static public void LinearExecutionForm_to_NextBasedExecutionForm_ProcessGraph(IVertex v)
         {
             IList<IEdge> edgeMetaHavingNext = new List<IEdge>();
 
@@ -74,12 +77,12 @@ namespace m0.ZeroCode
                 if (e.Meta.Value.ToString() != "$Is"
                     //&& e.Meta != dict.NextAtomMeta
                     && !VertexOperations.IsLink(e))
-                    ProcessVertex(e.To);
+                    LinearExecutionForm_to_NextBasedExecutionForm_ProcessGraph(e.To);
         }
-        
-        
+
+
         /////////////////////////////////////////////////////////////////////////////
-        
+
         static public IList<IEdge> LinearizeVertex(IVertex v)
         {            
             IList<IEdge> linearizedList = new List<IEdge>();
@@ -108,7 +111,13 @@ namespace m0.ZeroCode
                 }
         }
 
-        static public IVertex LinearizeGraph(IVertex sourceBaseVertex) // for future use cases ming return pairDict also (as a ref)
+        // USES:
+        // - Graph2TextProcessing.prepareBaseEdge
+
+        // Next based execution form => Linear exection form
+        // Vertexes are moved?
+
+        static public IVertex NextBasedExecutionForm_to_LinearExecutionForm_ProcessGraph(IVertex sourceBaseVertex) // for future use cases ming return pairDict also (as a ref)
         {
             IDictionary<IVertex, IVertex> sourceLinerizedDict = new Dictionary<IVertex, IVertex>();
             IList<IVertex> beenList = new List<IVertex>();
@@ -161,6 +170,8 @@ namespace m0.ZeroCode
 
             return linearizedVertex;
         }
+
+        /////////////////////////////////////////////////////////////////////////////
 
         static public void GraphDebug(IVertex v, string fileName)
         {
