@@ -519,21 +519,11 @@ namespace m0.ZeroCode
             Source.Append(getNewLineAndTabsString());            
         }   
 
-        void AppendAdditionalNewLines(IEdge e)
+        void AppendNewLines(IEdge e)
         {
-            //IVertex nl = e.To.Get(false, @"$NewLine:");
             IVertex nl = GraphUtil.GetQueryOutFirst(e.To, "$NewLine", null);
 
-            if (nl == null)
-                return;
-
-            int? nlAsInt = GraphUtil.GetIntegerValue(nl);
-
-            if (nlAsInt != null)
-                for (int x = 0; x < nlAsInt; x++)
-                    SourceAppend(NewLine);
-            else
-                SourceAppend(NewLine);
+            SourceAppend(NewLine);
         }
 
         void AppendAsLink(IVertex v, IEdge parent, bool hideLinkPrefix)
@@ -1261,7 +1251,7 @@ namespace m0.ZeroCode
 
         bool ShallProcess(IEdge e)
         {
-            if(GeneralUtil.CompareStrings(e.Meta.Value, "$NewLine"))
+            if(GeneralUtil.CompareStrings(e.Meta.Value, "$NewLine")) // ?
                 return false;
 
             /*if (GeneralUtil.CompareStrings(e.Meta.Value, "$Import"))
@@ -1609,11 +1599,13 @@ namespace m0.ZeroCode
             if (BeenList.Contains(baseEdge))
                 return;
 
-            if (!ZeroCodeUtil.FilterEdge(baseEdge))
+            if (!ZeroCodeUtil.FilterEdgeForGraph2TextProcessing(baseEdge))
                 return;
 
-            tabTimes = level;         
-         
+            tabTimes = level;
+
+            AppendNewLines(baseEdge);
+
             if (!ShallProcess(baseEdge))
                 return;
 
@@ -1682,8 +1674,6 @@ namespace m0.ZeroCode
 
                     ZeroCodeGraph2String_Reccurent(e, newLevel, baseEdge, path);
                 }
-
-            AppendAdditionalNewLines(baseEdge);
         }
 
         public void prepareBaseEdge(IEdge _graphBaseEdge)

@@ -13,7 +13,7 @@ namespace m0.ZeroCode
 {
     public class ZeroCodeUtil
     {
-        public static bool FilterEdge(IEdge toFilterEdge)
+        public static bool FilterEdgeForGraph2TextProcessing(IEdge toFilterEdge)
         {
             if (GeneralUtil.CompareStrings(toFilterEdge.Meta, "$GraphChangeTrigger")) 
                 return false;            
