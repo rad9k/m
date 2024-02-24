@@ -145,7 +145,18 @@ namespace m0.ZeroCode
 
             public int getPrevTabCount()
             {
-                return processing.lineInfoList[lineNo - 1].tabCount; // to be corrected
+                int currentLine = lineNo - 1;
+
+                while (true)
+                {
+                    if (currentLine == -1)
+                        return 0;
+
+                    if (!processing.lineInfoList[currentLine].isEmpty)
+                        return processing.lineInfoList[currentLine].tabCount; // to be corrected // why?
+
+                    currentLine--;
+                }
             }
 
             public int getNextLineWithSameTabCount()
@@ -211,7 +222,8 @@ namespace m0.ZeroCode
 
                 // and now check if there are only whitespaces
 
-                if (ZeroCodeUtil.IsStringOnlyWhiteSpaces(currentLineNoTabs))
+                //if (ZeroCodeUtil.IsStringOnlyWhiteSpaces(currentLineNoTabs))
+                if (currentLineInfo.isEmpty)
                 {
                     newLineCount++;
                     return parseNextLine();
@@ -2435,6 +2447,17 @@ namespace m0.ZeroCode
                     if (text[li.lineBeg] == dict.LineContinuationPrefix)
                         li.startsWithLineContinuation = true;
 
+                    li.isEmpty = true;
+                    for (int x = li.lineBeg; x <= li.lineEnd; x++)
+                        if (text[x] != ' ' || text[x] != '\t')
+                        {
+                            li.isEmpty = false;                            
+                            break;
+                        }
+
+                    if (li.isEmpty == true)
+                        li.tabCount = 0;
+
                     if (li.lineEnd < li.lineBeg)
                     {
                         li.isEmpty = true;
@@ -2463,16 +2486,19 @@ namespace m0.ZeroCode
 
         void AddNewLines(ParsingStack s)
         {
-            NewLine_meta = GraphUtil.GetQueryOutFirst(smb, null, "$NewLine");
-
             if (s.newLineCount != 0)
             {
                 IVertex toAdd = null;
 
-                if (s.lastAddedVertexParent != null)
+                /*if (s.lastAddedVertexParent != null) // WAS
                     toAdd = s.lastAddedVertexParent;
                 else if(s.lastAddedVertex != null)
+                    toAdd = s.lastAddedVertex;*/
+
+                if (s.lastAddedVertex != null)
                     toAdd = s.lastAddedVertex;
+                else if (s.lastAddedVertexParent != null)
+                    toAdd = s.lastAddedVertexParent;
 
                 if (toAdd != null)
                     for (int x = 0; x < s.newLineCount; x++)

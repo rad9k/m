@@ -520,10 +520,9 @@ namespace m0.ZeroCode
         }   
 
         void AppendNewLines(IEdge e)
-        {
-            IVertex nl = GraphUtil.GetQueryOutFirst(e.To, "$NewLine", null);
-
-            SourceAppend(NewLine);
+        {           
+            if (e.Meta.Value.ToString() == "$NewLine" /*GraphUtil.ExistQueryOut(e.To, "$NewLine", null)*/)
+                SourceAppend(NewLine);
         }
 
         void AppendAsLink(IVertex v, IEdge parent, bool hideLinkPrefix)
