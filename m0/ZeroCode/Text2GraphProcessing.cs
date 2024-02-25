@@ -2512,9 +2512,12 @@ namespace m0.ZeroCode
         {
             s.lastAddedVertexParent = baseVertex;
 
-            if (meta!=null && GeneralUtil.CompareStrings("(?<ANY>)", meta.Value))
-                meta = MinusZero.Instance.Empty;           
+            if (meta != null && GeneralUtil.CompareStrings("(?<ANY>)", meta.Value))
+                meta = MinusZero.Instance.Empty;
 
+            if (baseVertex is ToVertexMock)
+                return null;
+            
             s.lastAddedVertex = baseVertex.AddVertex(meta, val);            
 
             return s.lastAddedVertex;

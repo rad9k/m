@@ -18,7 +18,7 @@ namespace m0.ZeroCode
 
         Graph2TextProcessing zcg2sp;
 
-        HashSet<IVertex> linkBeenList;
+        HashSet<IVertex> linkBeenList;        
 
         IEdge parent;
 
@@ -135,7 +135,7 @@ namespace m0.ZeroCode
                             possibleMetaSeparator = dict.MetaSeparator;
 
                             Append(dict, toAppend, e.To);
-                        }else {
+                        } else {
                             if(!VertexOperations.IsToVertexEnoughToIdentifyEdge(e.From,e.To))
                                 Append(dict, toAppend, e.Meta);
 
@@ -432,6 +432,8 @@ namespace m0.ZeroCode
         public HashSet<IEdge> BeenList;
         public HashSet<IEdge> BeenList_Keyword;
 
+        HashSet<IEdge> newLinesBeenList;
+
         public StringBuilder Source;
 
         public IDictionary<IVertex, IList<IVertex>> Imports;
@@ -470,6 +472,11 @@ namespace m0.ZeroCode
             s = s.Replace("\r\n", NewLineStringPlusNewLine);
 
             Source.Append(s);
+
+            if (s.Contains("NewLine"))
+            {
+                int x = 0;
+            }
 
             //if(log)
               //  m0.MinusZero.Instance.Log(1, "SourceAppend", s);
@@ -519,10 +526,18 @@ namespace m0.ZeroCode
             Source.Append(getNewLineAndTabsString());            
         }   
 
-        void AppendNewLines(IEdge e)
-        {           
-            if (e.Meta.Value.ToString() == "$NewLine" /*GraphUtil.ExistQueryOut(e.To, "$NewLine", null)*/)
+        bool AppendNewLines(IEdge e)
+        {            
+            if (e.Meta.Value.ToString() == "$NewLine" && !newLinesBeenList.Contains(e))
+            {
                 SourceAppend(NewLine);
+
+                newLinesBeenList.Add(e);
+
+                return true;
+            }
+
+            return false;
         }
 
         void AppendAsLink(IVertex v, IEdge parent, bool hideLinkPrefix)
@@ -1144,6 +1159,9 @@ namespace m0.ZeroCode
                     if (KeywordMatchedSubGraphEdges[e].BaseEdge.To != e.To) // :O)
                           return true; // ?????????????????????? or true?
 
+            if (AppendNewLines(e))
+                return false;
+            
             AppendNewLineAndTabs();
 
             bool prefixAppended = false;
@@ -1688,6 +1706,8 @@ namespace m0.ZeroCode
 
             BeenList = new HashSet<IEdge>();
             BeenList_Keyword = new HashSet<IEdge>();
+            newLinesBeenList = new HashSet<IEdge>();
+
             Source = new StringBuilder();
             Imports = new Dictionary<IVertex, IList<IVertex>>();
             VerticesDictionary = new Dictionary<IVertex, VertexData>();
