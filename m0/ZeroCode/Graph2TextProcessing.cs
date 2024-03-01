@@ -524,10 +524,36 @@ namespace m0.ZeroCode
             // SourceAppend(getNewLineAndTabsString()); << no as SourceAppend adds getNewLineAndTabsString() on its own
 
             Source.Append(getNewLineAndTabsString());            
-        }   
+        }
+
+
+        int AppendNewLines_remember = 0;
+
+        bool AppendNewLines_onlyRemember(IEdge e)
+        {
+            if (e.Meta.Value.ToString() == "$NewLine" && !newLinesBeenList.Contains(e))
+            {
+                //SourceAppend(NewLine);
+
+                AppendNewLines_remember++;
+
+                newLinesBeenList.Add(e);
+
+                return true;
+            }
+
+            return false;
+        }
 
         bool AppendNewLines(IEdge e)
-        {            
+        {
+            if (AppendNewLines_remember > 0)
+                while (AppendNewLines_remember > 0)
+                {
+                    AppendNewLines_remember--;
+                    SourceAppend(NewLine);
+                }
+            
             if (e.Meta.Value.ToString() == "$NewLine" && !newLinesBeenList.Contains(e))
             {
                 SourceAppend(NewLine);
@@ -1159,7 +1185,7 @@ namespace m0.ZeroCode
                     if (KeywordMatchedSubGraphEdges[e].BaseEdge.To != e.To) // :O)
                           return true; // ?????????????????????? or true?
 
-            if (AppendNewLines(e))
+            if (AppendNewLines_onlyRemember(e))
                 return false;
             
             AppendNewLineAndTabs();
@@ -1606,11 +1632,11 @@ namespace m0.ZeroCode
 
         int levelCorrection = 0;
 
-       // bool log = true;
+        // bool log = true;
 
         void ZeroCodeGraph2String_Reccurent(IEdge baseEdge, int level, IEdge parent, string path)
-        {               
-            //if (log)
+        {
+              //if (log)
               //  m0.MinusZero.Instance.Log(1, level, "ZeroCodeGraph2String_Reccurent", baseEdge.Meta.ToString() + "::" + baseEdge.To.ToString());
 
             if (BeenList.Contains(baseEdge))

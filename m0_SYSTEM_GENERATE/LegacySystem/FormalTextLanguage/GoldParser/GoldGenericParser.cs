@@ -80,7 +80,7 @@ namespace m0.FormalTextLanguage.GoldParser
                     {
 
                         //if (def.Get(false, "PreviousTerminalMoveDown:") != null)
-                        if (GraphUtil.GetQueryOutFirst(def, null, "PreviousTerminalMoveDown") != null)
+                        if (GraphUtil.GetQueryOutFirst(def, "PreviousTerminalMoveDown", null) != null)
                         {
                             IEdge previousEdge = v.OutEdges.Last();
 
@@ -95,7 +95,7 @@ namespace m0.FormalTextLanguage.GoldParser
                             // }else if(def.Get(false, "MoveDownToPreviousContainerTerminalOrCretedEmpty:")!=null){
 
                         }
-                        else if (GraphUtil.GetQueryOutFirst(def, null, "MoveDownToPreviousContainerTerminalOrCretedEmpty") != null)
+                        else if (GraphUtil.GetQueryOutFirst(def, "MoveDownToPreviousContainerTerminalOrCretedEmpty", null) != null)
                         {
                             IEdge previousEdge = v.OutEdges.LastOrDefault();
 
@@ -103,7 +103,7 @@ namespace m0.FormalTextLanguage.GoldParser
                             if (
                                 ((previousEdge != null) && generatedVertexList.Contains(previousEdge.To)) && (
                                  ((GeneralUtil.CompareStrings(previousEdge.Meta.Value, "$Empty"))
-                                || (GraphUtil.GetQueryOutFirst(previousEdge.Meta, null, "ContainerTerminal") != null))                                
+                                || (GraphUtil.GetQueryOutFirst(previousEdge.Meta, "ContainerTerminal", null) != null))                                
                                 ))
                             {
                                 IVertex previousVertex = previousEdge.To;
