@@ -199,6 +199,8 @@ namespace m0.ZeroCode
                 return iterationLineNo;
             }
 
+            HashSet<LineInfo> lineInfosThatResultedNewLine = new HashSet<LineInfo>();
+
             public bool parseNextLine()
             {
                 if (skipParse)
@@ -225,7 +227,12 @@ namespace m0.ZeroCode
                 //if (ZeroCodeUtil.IsStringOnlyWhiteSpaces(currentLineNoTabs))
                 if (currentLineInfo.isEmpty)
                 {
-                    newLineCount++;
+                    if (!lineInfosThatResultedNewLine.Contains(currentLineInfo))
+                    {
+                        newLineCount++;
+                        lineInfosThatResultedNewLine.Add(currentLineInfo);
+                    }
+
                     return parseNextLine();
                 }
 
@@ -2932,7 +2939,7 @@ namespace m0.ZeroCode
                 MoveInEdgesComingFromOutsideOfSubGraphToParseRoot();
                 MoveTriggersToParseRoot();
                 DeleteAllEdgesFromBaseVertex();
-                MoveAllParseRootEdgesToBaseVertex();
+               // MoveAllParseRootEdgesToBaseVertex();
             }
             else
             {
