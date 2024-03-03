@@ -2939,7 +2939,7 @@ namespace m0.ZeroCode
                 MoveInEdgesComingFromOutsideOfSubGraphToParseRoot();
                 MoveTriggersToParseRoot();
                 DeleteAllEdgesFromBaseVertex();
-               // MoveAllParseRootEdgesToBaseVertex();
+                MoveAllParseRootEdgesToBaseVertex();
             }
             else
             {
