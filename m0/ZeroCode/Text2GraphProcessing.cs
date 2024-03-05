@@ -1541,7 +1541,7 @@ namespace m0.ZeroCode
                             ktd.waitingUntilPositionInText = ParameterChache[paramFilterName].waitingUntilPositionInText;
                         }
 
-                        if(!chacheHit) 
+                        if (!chacheHit) 
                         {
                             int isTryKeyword_endPos = endPos_forAtomParts;
 
@@ -1869,7 +1869,7 @@ namespace m0.ZeroCode
                     if (maxKtd != null)
                         examinedKeywords.Add(maxKtd);                    
                 }
-            }else
+            } else
                 newPos = sPos;
 
             //MinusZero.Instance.Log(1, "_tryIsKeyword", LOGPREFIX+"END link:"+link+" keywordsCount:"+examinedKeywords.Count);
@@ -2939,7 +2939,9 @@ namespace m0.ZeroCode
                 MoveInEdgesComingFromOutsideOfSubGraphToParseRoot();
                 MoveTriggersToParseRoot();
                 DeleteAllEdgesFromBaseVertex();
-                MoveAllParseRootEdgesToBaseVertex();
+
+                if (_baseVertex.Value.ToString() != "Code1")
+                    MoveAllParseRootEdgesToBaseVertex();
             }
             else
             {
