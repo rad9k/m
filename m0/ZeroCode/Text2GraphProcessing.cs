@@ -2765,7 +2765,7 @@ namespace m0.ZeroCode
 
                     IEdge foundInParsed = FindSimilarEdge(parsedVertex, e);
 
-                    if (foundInParsed != null)
+                    if (foundInParsed != null && foundInParsed.To != e.To)
                         {
                             MoveInEdgesComingFromOutsideOfSubGraphToParseVertex_forOneVertex(e.To, foundInParsed.To);
 
@@ -2940,8 +2940,7 @@ namespace m0.ZeroCode
                 MoveTriggersToParseRoot();
                 DeleteAllEdgesFromBaseVertex();
 
-                if (_baseVertex.Value.ToString() != "Code1")
-                    MoveAllParseRootEdgesToBaseVertex();
+                MoveAllParseRootEdgesToBaseVertex();
             }
             else
             {
