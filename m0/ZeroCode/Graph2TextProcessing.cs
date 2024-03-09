@@ -468,16 +468,14 @@ namespace m0.ZeroCode
 
         void SourceAppend(string s)
         {
-            string NewLineStringPlusNewLine = getNewLineAndTabsString();
+            if (s.Contains("\r\n"))
+            {
+                string NewLineStringPlusNewLine = getNewLineAndTabsString();
 
-            s = s.Replace("\r\n", NewLineStringPlusNewLine);
+                s = s.Replace("\r\n", NewLineStringPlusNewLine);
+            }
 
             Source.Append(s);
-
-            if (s.Contains("NewLine"))
-            {
-                int x = 0;
-            }
 
             //if(log)
             //  m0.MinusZero.Instance.Log(1, "SourceAppend", s);
@@ -512,6 +510,13 @@ namespace m0.ZeroCode
         {
             StringBuilder sb = new StringBuilder();
 
+            if (AppendNewLines_remember > 0)
+                while (AppendNewLines_remember > 0)
+                {
+                    AppendNewLines_remember--;
+                    sb.Append(NewLine);
+                }
+
             sb.Append(NewLine);
 
             for (int i = 0; i < tabTimes; i++)
@@ -534,8 +539,6 @@ namespace m0.ZeroCode
         {
             if (e.Meta.Value.ToString() == "$NewLine" && !newLinesBeenList.Contains(e))
             {
-                //SourceAppend(NewLine);
-
                 AppendNewLines_remember++;
 
                 newLinesBeenList.Add(e);
@@ -548,16 +551,9 @@ namespace m0.ZeroCode
 
         bool AppendNewLines(IEdge e)
         {
-            if (AppendNewLines_remember > 0)
-                while (AppendNewLines_remember > 0)
-                {
-                    AppendNewLines_remember--;
-                    SourceAppend(NewLine);
-                }
-
             if (e.Meta.Value.ToString() == "$NewLine" && !newLinesBeenList.Contains(e))
-            {
-                SourceAppend(NewLine);
+            {         
+                AppendNewLines_remember++;
 
                 newLinesBeenList.Add(e);
 
