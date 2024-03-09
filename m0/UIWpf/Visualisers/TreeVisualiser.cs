@@ -207,6 +207,18 @@ namespace m0.UIWpf.Visualisers
             if (GetEdge().To.DisposedState != DisposeStateEnum.Live)
                 return exe.Stack;
 
+            // will do this
+
+            UpdateHeader();
+            Fill();
+            return exe.Stack;
+
+            // instead of this
+            // NEED TO DO:
+            // exe.Stack.GetAll(false, @"event:\Type:OutputEdgeAdded")
+            // exe.Stack.GetAll(false, @"event:\Type:OutputEdgeRemoved")
+            // exe.Stack.GetAll(false, @"event:\Type:OutputEdgeDisposed")
+            /*
             IVertex edgeVertex = exe.Stack.Get(false, @"event:\Edge:");
 
             if (edgeVertex != null)
@@ -241,7 +253,7 @@ namespace m0.UIWpf.Visualisers
 
             UpdateHeader();
 
-            return exe.Stack;
+            return exe.Stack;*/
         }
 
         private void EdgeRemoved(IEdge edge)

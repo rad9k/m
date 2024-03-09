@@ -2719,13 +2719,7 @@ namespace m0.ZeroCode
             if (NoCodeViewProcessReEnter)
                 return;
 
-            //if (!TEST_RUN)
-            //    return;
-
-            TEST_RUN = false;
-
-            NoCodeViewProcessReEnter = true;
-            
+            NoCodeViewProcessReEnter = true;           
 
             IVertex codeViewMetaEdge = GraphUtil.GetQueryOutFirst(FormalTextLanguage, "FormalTextLanguageView", "ZeroCodeView");
 
@@ -2895,8 +2889,6 @@ namespace m0.ZeroCode
 
             baseVertex.Value = firstValue;
         }        
-
-        public static bool TEST_RUN = false;
       
         public IVertex Process(IVertex _baseVertex, string _text)
         {

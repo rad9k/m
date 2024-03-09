@@ -145,9 +145,7 @@ namespace m0.Graph
         {
             string text = System.IO.File.ReadAllText(fileName);
 
-            Text2GraphProcessing.TEST_RUN = true;
             MinusZero.Instance.DefaultFormalTextParser.Parse(baseVertex, text);
-            Text2GraphProcessing.TEST_RUN = false;
         }
 
         public static void LoadParseAndMove(string fileName, IVertex baseVertex, string vertexName)
