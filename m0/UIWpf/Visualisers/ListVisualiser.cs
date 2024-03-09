@@ -288,6 +288,9 @@ namespace m0.UIWpf.Visualisers
 
             if (b != null)
             foreach(IEdge e in Vertex.Get(false, "SelectedEdges:")){
+                if (e.Meta.Value.ToString() != "Edge") // can have event trigger here
+                    continue;
+
                 IEdge ee = GraphUtil.FindEdgeByToVertex_fromVertex(b, e.To.Get(false, "To:"));
                 if (ee != null)
                     ThisDataGrid.SelectedItems.Add(ee);
