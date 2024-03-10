@@ -107,6 +107,40 @@ namespace m0.ZeroCode
                 subTextRanges = _parentStack.subTextRanges;
             }
 
+            public override int GetHashCode()
+            {
+                return             public Dictionary<IVertex, int> sameStartPosKewords = new Dictionary<IVertex, int>();
+
+            //
+
+            Text2GraphProcessing processing;
+
+            public ParsingStack parentStack;
+
+            public int begLine;
+            public int endLine;
+
+            public int lineNo;
+            public LineInfo currentLineInfo;
+
+            public string currentLineNoTabs;
+
+            public IVertex LocalRoot;
+
+            public IVertex lastAddedVertex;
+            public IVertex lastAddedVertexParent;
+
+            public int newLineCount;
+
+            public bool skipParse = false;
+            public int parseRecurrentReturnNo = -1;
+
+            public int memory_tabCount = -1;
+            public bool can_initialize_memory_tabCount = true;
+
+            public Dictionary<object, TextRange> subTextRanges;  ;
+            }
+
             public void copyFrom(ParsingStack copyFrom)
             {
                 sameStartPosKewords = copyFrom.sameStartPosKewords;
@@ -1240,8 +1274,8 @@ namespace m0.ZeroCode
                 endPos_forAtomParts,
                 canStopByForAtomParts,
                 afterKeywordPartExist,
-                examinedKeywords,
-                link,
+                null,
+                null,
                 isTopLevelCall,
                 newPos,
                 lookForLocalRootOnly,
