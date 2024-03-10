@@ -1049,6 +1049,7 @@ namespace m0.ZeroCode
        
         class tryIsKeyword_Parameters_IN
         {
+            public ParsingStack s;
             public string LOGPREFIX;
             public int startPos;
             public int prev_startPos;
@@ -1057,10 +1058,10 @@ namespace m0.ZeroCode
             public int endPos_forAtomParts;
             public bool canStopByForAtomParts;
             public bool afterKeywordPartExist;
-            public out List<keywordTryingData> examinedKeywords;
-            public out string link;
+            public List<keywordTryingData> examinedKeywords;
+            public string link;
             public bool isTopLevelCall;
-            public ref int newPos;
+            public int newPos;
             public bool lookForLocalRootOnly;
             public IVertex parentKeyword;
             public tryIsKeyword_Parameters_IN parentParams;
@@ -1068,6 +1069,7 @@ namespace m0.ZeroCode
             public bool isSpaceNext;
 
             public tryIsKeyword_Parameters_IN(
+                ParsingStack s,
                 string _LOGPREFIX,
                 int _startPos,
                 int _prev_startPos,
@@ -1087,28 +1089,49 @@ namespace m0.ZeroCode
                 bool _isSpaceNext
                 )
             {
-                _LOGPREFIX = LOGPREFIX;
-                _startPos = startPos;
-                _prev_startPos = prev_startPos;
-                _isPrevStartPosSameAsStartPosParentCount = isPrevStartPosSameAsStartPosParentCount;
-                _endPos = endPos;
-                _endPos_forAtomParts = endPos_forAtomParts;
-                _canStopByForAtomParts = canStopByForAtomParts;
-                _afterKeywordPartExist = afterKeywordPartExist;
-                _examinedKeywords = examinedKeywords;
-                _link = link;
-                _isTopLevelCall = isTopLevelCall;
-                _newPos = newPos;
-                _lookForLocalRootOnly = lookForLocalRootOnly;
-                _parentKeyword = parentKeyword;
-                _parentParams = parentParams;
-                _keywordsFilter = keywordsFilter;
-                _isSpaceNext = isSpaceNext;
+                LOGPREFIX = _LOGPREFIX;
+                startPos = _startPos;
+                prev_startPos = _prev_startPos;
+                isPrevStartPosSameAsStartPosParentCount = _isPrevStartPosSameAsStartPosParentCount;
+                endPos = _endPos;
+                endPos_forAtomParts = _endPos_forAtomParts;
+                canStopByForAtomParts = _canStopByForAtomParts;
+                afterKeywordPartExist = _afterKeywordPartExist;
+                //examinedKeywords = _examinedKeywords;
+                //link = _link;
+                isTopLevelCall = _isTopLevelCall;
+                //newPos = _newPos;
+                lookForLocalRootOnly = _lookForLocalRootOnly;
+                parentKeyword = _parentKeyword;
+                parentParams = _parentParams;
+                keywordsFilter = _keywordsFilter;
+                isSpaceNext = _isSpaceNext;
             }
 
             public override int GetHashCode()
             {
-                return             public string LOGPREFIX;
+                return LOGPREFIX.GetHashCode()
+                + startPos.GetHashCode()
+                + prev_startPos.GetHashCode()
+                + isPrevStartPosSameAsStartPosParentCount.GetHashCode()
+                + endPos.GetHashCode()
+                + endPos_forAtomParts.GetHashCode()
+                + canStopByForAtomParts.GetHashCode()
+                + afterKeywordPartExist.GetHashCode()
+                + examinedKeywords.GetHashCode()
+                + link.GetHashCode()
+                + isTopLevelCall.GetHashCode()
+                + newPos.GetHashCode()
+                + lookForLocalRootOnly.GetHashCode()
+                + parentKeyword.GetHashCode()
+                + parentParams.GetHashCode()
+                + keywordsFilter.GetHashCode()
+                + isSpaceNext.GetHashCode();
+            }
+        }
+        class tryIsKeyword_Parameters_OUT
+        {
+            public string LOGPREFIX;
             public int startPos;
             public int prev_startPos;
             public int isPrevStartPosSameAsStartPosParentCount;
@@ -1116,16 +1139,75 @@ namespace m0.ZeroCode
             public int endPos_forAtomParts;
             public bool canStopByForAtomParts;
             public bool afterKeywordPartExist;
-            public out List<keywordTryingData> examinedKeywords;
-            public out string link;
+            public List<keywordTryingData> examinedKeywords;
+            public string link;
             public bool isTopLevelCall;
-            public ref int newPos;
+            public int newPos;
             public bool lookForLocalRootOnly;
             public IVertex parentKeyword;
             public tryIsKeyword_Parameters_IN parentParams;
             public string keywordsFilter;
             public bool isSpaceNext;
-        }
+
+            public tryIsKeyword_Parameters_OUT(
+                string _LOGPREFIX,
+                int _startPos,
+                int _prev_startPos,
+                int _isPrevStartPosSameAsStartPosParentCount,
+                int _endPos,
+                int _endPos_forAtomParts,
+                bool _canStopByForAtomParts,
+                bool _afterKeywordPartExist,
+                List<keywordTryingData> _examinedKeywords,
+                string _link,
+                bool _isTopLevelCall,
+                int _newPos,
+                bool _lookForLocalRootOnly,
+                IVertex _parentKeyword,
+                tryIsKeyword_Parameters_IN _parentParams,
+                string _keywordsFilter,
+                bool _isSpaceNext
+                )
+            {
+                /* LOGPREFIX = _LOGPREFIX;
+                startPos = _startPos;
+                prev_startPos = _prev_startPos;
+                isPrevStartPosSameAsStartPosParentCount = _isPrevStartPosSameAsStartPosParentCount;
+                endPos = _endPos;
+                endPos_forAtomParts = _endPos_forAtomParts;
+                canStopByForAtomParts = _canStopByForAtomParts;
+                afterKeywordPartExist = _afterKeywordPartExist;*/
+                examinedKeywords = _examinedKeywords;
+                link = _link;
+                //isTopLevelCall = _isTopLevelCall;
+                newPos = _newPos;
+                /*lookForLocalRootOnly = _lookForLocalRootOnly;
+                parentKeyword = _parentKeyword;
+                parentParams = _parentParams;
+                keywordsFilter = _keywordsFilter;
+                isSpaceNext = _isSpaceNext;*/
+            }
+
+            public override int GetHashCode()
+            {
+                return LOGPREFIX.GetHashCode()
+                + startPos.GetHashCode()
+                + prev_startPos.GetHashCode()
+                + isPrevStartPosSameAsStartPosParentCount.GetHashCode()
+                + endPos.GetHashCode()
+                + endPos_forAtomParts.GetHashCode()
+                + canStopByForAtomParts.GetHashCode()
+                + afterKeywordPartExist.GetHashCode()
+                + examinedKeywords.GetHashCode()
+                + link.GetHashCode()
+                + isTopLevelCall.GetHashCode()
+                + newPos.GetHashCode()
+                + lookForLocalRootOnly.GetHashCode()
+                + parentKeyword.GetHashCode()
+                + parentParams.GetHashCode()
+                + keywordsFilter.GetHashCode()
+                + isSpaceNext.GetHashCode();
+            }
         }
 
         void _tryIsKeyword(ParsingStack s, 
@@ -1148,18 +1230,24 @@ namespace m0.ZeroCode
             bool isSpaceNext)
         {
             //ZeroCodeCommon.testIfIsKeywordSubstring(0, "<<", dict.allKeywordsSubstringsPositiveDictionary_witchoutLinkKeywordParts, dict.allKeywordsSubstringsNegativeDictionary_witchoutLinkKeywordParts);
-            tryIsKeyword_Parameters_IN callParams = new tryIsKeyword_Parameters(
-                s, 
-                LOGPREFIX, 
-                startPos, 
-                prev_startPos, 
-                isPrevStartPosSameAsStartPosParentCount, 
-                endPos, 
-                endPos_forAtomParts, 
-                afterKeywordPartExist, 
-                parentKeyword, 
-                parentParams, 
-                keywordsFilter, 
+            tryIsKeyword_Parameters_IN callParams = new tryIsKeyword_Parameters_IN(
+                s,
+                LOGPREFIX,
+                startPos,
+                prev_startPos,
+                isPrevStartPosSameAsStartPosParentCount,
+                endPos,
+                endPos_forAtomParts,
+                canStopByForAtomParts,
+                afterKeywordPartExist,
+                examinedKeywords,
+                link,
+                isTopLevelCall,
+                newPos,
+                lookForLocalRootOnly,
+                parentKeyword,
+                parentParams,
+                keywordsFilter,
                 isSpaceNext);
             
             //MinusZero.Instance.Log(0, "_tryIfKeyword", LOGPREFIX + "RUN "+callParams.ToString());
