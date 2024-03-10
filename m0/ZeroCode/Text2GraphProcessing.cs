@@ -1047,49 +1047,85 @@ namespace m0.ZeroCode
             public int waitingUntilPositionInText = 0;
         }
        
-        class tryIsKeyword_Parameters
+        class tryIsKeyword_Parameters_IN
         {
-            string LOGPREFIX;
-            int startPos;
-            int prev_startPos;
-            int isPrevStartPosSameAsStartPosParentCount;
-            int endPos;
-            int endPos_forAtomParts;
-            bool canStopByForAtomParts;
-            bool afterKeywordPartExist;
-            out List<keywordTryingData> examinedKeywords;
-            out string link;
-            bool isTopLevelCall;
-            ref int newPos;
-            bool lookForLocalRootOnly;
-            IVertex parentKeyword
-            IVertex tryIsKeyword_Parameters parentParams,
-            string keywordsFilter,
-            bool isSpaceNext
+            public string LOGPREFIX;
+            public int startPos;
+            public int prev_startPos;
+            public int isPrevStartPosSameAsStartPosParentCount;
+            public int endPos;
+            public int endPos_forAtomParts;
+            public bool canStopByForAtomParts;
+            public bool afterKeywordPartExist;
+            public out List<keywordTryingData> examinedKeywords;
+            public out string link;
+            public bool isTopLevelCall;
+            public ref int newPos;
+            public bool lookForLocalRootOnly;
+            public IVertex parentKeyword;
+            public tryIsKeyword_Parameters_IN parentParams;
+            public string keywordsFilter;
+            public bool isSpaceNext;
 
-            public tryIsKeyword_Parameters(ParsingStack _s, string _LOGPREFIX, int _startPos, int _prev_startPos, int _isPrevStartPosSameAsStartPosParentCount, int _endPos, int _endPos_forAtomParts, bool _afterKeywordPartExist, IVertex _parentKeyword, tryIsKeyword_Parameters _parentParams, string _keywordsFilter, bool _isSpaceNext)
+            public tryIsKeyword_Parameters_IN(
+                string _LOGPREFIX,
+                int _startPos,
+                int _prev_startPos,
+                int _isPrevStartPosSameAsStartPosParentCount,
+                int _endPos,
+                int _endPos_forAtomParts,
+                bool _canStopByForAtomParts,
+                bool _afterKeywordPartExist,
+                List<keywordTryingData> _examinedKeywords,
+                string _link,
+                bool _isTopLevelCall,
+                int _newPos,
+                bool _lookForLocalRootOnly,
+                IVertex _parentKeyword,
+                tryIsKeyword_Parameters_IN _parentParams,
+                string _keywordsFilter,
+                bool _isSpaceNext
+                )
             {
-                s = _s;
-                LOGPREFIX = _LOGPREFIX;
-                startPos = _startPos;
-                prev_startPos = _prev_startPos;
-                isPrevStartPosSameAsStartPosParentCount = _isPrevStartPosSameAsStartPosParentCount;
-                endPos = _endPos;
-                endPos_forAtomParts = _endPos_forAtomParts;
-                afterKeywordPartExist = _afterKeywordPartExist;
-                parentKeyword = _parentKeyword;
-                parentParams = _parentParams;
-                keywordsFilter = _keywordsFilter;
-                isSpaceNext = _isSpaceNext;
+                _LOGPREFIX = LOGPREFIX;
+                _startPos = startPos;
+                _prev_startPos = prev_startPos;
+                _isPrevStartPosSameAsStartPosParentCount = isPrevStartPosSameAsStartPosParentCount;
+                _endPos = endPos;
+                _endPos_forAtomParts = endPos_forAtomParts;
+                _canStopByForAtomParts = canStopByForAtomParts;
+                _afterKeywordPartExist = afterKeywordPartExist;
+                _examinedKeywords = examinedKeywords;
+                _link = link;
+                _isTopLevelCall = isTopLevelCall;
+                _newPos = newPos;
+                _lookForLocalRootOnly = lookForLocalRootOnly;
+                _parentKeyword = parentKeyword;
+                _parentParams = parentParams;
+                _keywordsFilter = keywordsFilter;
+                _isSpaceNext = isSpaceNext;
             }
 
-            public override string ToString()
+            public override int GetHashCode()
             {
-                if(parentKeyword!=null)
-                    return "startPos: " + startPos + " parentKeyword: " + parentKeyword.Value + " prev_startPos: " + prev_startPos + " PrevStartCount: " + isPrevStartPosSameAsStartPosParentCount + " endPos: " + endPos + " endPos_forAtomParts: " + endPos_forAtomParts + " afterKeywordPartExist: " + afterKeywordPartExist;
-                else
-                    return "startPos: " + startPos + " parentKeyword: NULL" + " prev_startPos: " + prev_startPos + " PrevStartCount: " + isPrevStartPosSameAsStartPosParentCount + " endPos: " + endPos + " endPos_forAtomParts: " + endPos_forAtomParts + " afterKeywordPartExist: " + afterKeywordPartExist;
-            }
+                return             public string LOGPREFIX;
+            public int startPos;
+            public int prev_startPos;
+            public int isPrevStartPosSameAsStartPosParentCount;
+            public int endPos;
+            public int endPos_forAtomParts;
+            public bool canStopByForAtomParts;
+            public bool afterKeywordPartExist;
+            public out List<keywordTryingData> examinedKeywords;
+            public out string link;
+            public bool isTopLevelCall;
+            public ref int newPos;
+            public bool lookForLocalRootOnly;
+            public IVertex parentKeyword;
+            public tryIsKeyword_Parameters_IN parentParams;
+            public string keywordsFilter;
+            public bool isSpaceNext;
+        }
         }
 
         void _tryIsKeyword(ParsingStack s, 
@@ -1106,12 +1142,13 @@ namespace m0.ZeroCode
             bool isTopLevelCall, 
             ref int newPos, 
             bool lookForLocalRootOnly, 
-            IVertex parentKeyword, tryIsKeyword_Parameters parentParams, 
+            IVertex parentKeyword, 
+            tryIsKeyword_Parameters_IN parentParams, 
             string keywordsFilter, 
             bool isSpaceNext)
         {
             //ZeroCodeCommon.testIfIsKeywordSubstring(0, "<<", dict.allKeywordsSubstringsPositiveDictionary_witchoutLinkKeywordParts, dict.allKeywordsSubstringsNegativeDictionary_witchoutLinkKeywordParts);
-            tryIsKeyword_Parameters callParams = new tryIsKeyword_Parameters(
+            tryIsKeyword_Parameters_IN callParams = new tryIsKeyword_Parameters(
                 s, 
                 LOGPREFIX, 
                 startPos, 
@@ -1547,9 +1584,6 @@ namespace m0.ZeroCode
                 }
 
                 Dictionary<string, ParameterChache> ParameterChache = new Dictionary<string, ParameterChache>();
-
-                ParameterChache NonAtomParameterChache = null;
-                ParameterChache AtomParameterChache = null;
 
                 // check if anything fits info keyword parameters
                 foreach (keywordTryingData ktd in examinedKeywords)
