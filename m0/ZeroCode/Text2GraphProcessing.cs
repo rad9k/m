@@ -1131,23 +1131,23 @@ namespace m0.ZeroCode
 
             public override int GetHashCode()
             {
-                return LOGPREFIX.GetHashCode()
-                + startPos.GetHashCode()
-                + prev_startPos.GetHashCode()
-                + isPrevStartPosSameAsStartPosParentCount.GetHashCode()
-                + endPos.GetHashCode()
-                + endPos_forAtomParts.GetHashCode()
-                + canStopByForAtomParts.GetHashCode()
-                + afterKeywordPartExist.GetHashCode()
-                + examinedKeywords.GetHashCode()
-                + link.GetHashCode()
-                + isTopLevelCall.GetHashCode()
-                + newPos.GetHashCode()
-                + lookForLocalRootOnly.GetHashCode()
-                + parentKeyword.GetHashCode()
-                + parentParams.GetHashCode()
-                + keywordsFilter.GetHashCode()
-                + isSpaceNext.GetHashCode();
+                return GeneralUtil.GetHashCode(LOGPREFIX)
+                + GeneralUtil.GetHashCode(startPos)
+                + GeneralUtil.GetHashCode(prev_startPos)
+                + GeneralUtil.GetHashCode(isPrevStartPosSameAsStartPosParentCount)
+                + GeneralUtil.GetHashCode(endPos)
+                + GeneralUtil.GetHashCode(endPos_forAtomParts)
+                + GeneralUtil.GetHashCode(canStopByForAtomParts)
+                + GeneralUtil.GetHashCode(afterKeywordPartExist)
+                + GeneralUtil.GetHashCode(examinedKeywords)
+                + GeneralUtil.GetHashCode(link)
+                + GeneralUtil.GetHashCode(isTopLevelCall)
+                + GeneralUtil.GetHashCode(newPos)
+                + GeneralUtil.GetHashCode(lookForLocalRootOnly)
+                + GeneralUtil.GetHashCode(parentKeyword)
+                + GeneralUtil.GetHashCode(parentParams)
+                + GeneralUtil.GetHashCode(keywordsFilter)
+                + GeneralUtil.GetHashCode(isSpaceNext);
             }
         }
         class tryIsKeyword_Parameters_OUT
@@ -1231,6 +1231,8 @@ namespace m0.ZeroCode
             }
         }
 
+        HashSet<int> params_hash = new HashSet<int>();
+
         void _tryIsKeyword(ParsingStack s, 
             string LOGPREFIX, 
             int startPos, 
@@ -1270,6 +1272,9 @@ namespace m0.ZeroCode
                 parentParams,
                 keywordsFilter,
                 isSpaceNext);
+
+
+
             
             //MinusZero.Instance.Log(0, "_tryIfKeyword", LOGPREFIX + "RUN "+callParams.ToString());
 

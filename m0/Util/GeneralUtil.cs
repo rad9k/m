@@ -36,6 +36,14 @@ namespace m0.Util
             return Guid.NewGuid();
         }
 
+        public static int GetHashCode(object o)
+        {
+            if (o == null)
+                return 0;
+
+            return o.GetHashCode();
+        }
+
         public static int Double2Int(double d)
         {
             double floor = Math.Floor(d);
