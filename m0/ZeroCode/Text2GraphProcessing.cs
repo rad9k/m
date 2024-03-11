@@ -1131,7 +1131,8 @@ namespace m0.ZeroCode
             int r;
             public override int GetHashCode()
             {
-                return GeneralUtil.GetHashCode(LOGPREFIX)
+                return //GeneralUtil.GetHashCode(s)
+                 GeneralUtil.GetHashCode(LOGPREFIX)
                 + GeneralUtil.GetHashCode(startPos)
                 + GeneralUtil.GetHashCode(prev_startPos)
                 + GeneralUtil.GetHashCode(isPrevStartPosSameAsStartPosParentCount)
@@ -1145,7 +1146,7 @@ namespace m0.ZeroCode
                 //+ GeneralUtil.GetHashCode(newPos)
                 + GeneralUtil.GetHashCode(lookForLocalRootOnly)
                 + GeneralUtil.GetHashCode(parentKeyword)
-                + GeneralUtil.GetHashCode(parentParams)
+               // + GeneralUtil.GetHashCode(parentParams)
                 + GeneralUtil.GetHashCode(keywordsFilter)
                 + GeneralUtil.GetHashCode(isSpaceNext);
 
@@ -1163,23 +1164,9 @@ namespace m0.ZeroCode
                 int _newPos
                 )
             {
-                /* LOGPREFIX = _LOGPREFIX;
-                startPos = _startPos;
-                prev_startPos = _prev_startPos;
-                isPrevStartPosSameAsStartPosParentCount = _isPrevStartPosSameAsStartPosParentCount;
-                endPos = _endPos;
-                endPos_forAtomParts = _endPos_forAtomParts;
-                canStopByForAtomParts = _canStopByForAtomParts;
-                afterKeywordPartExist = _afterKeywordPartExist;*/
                 examinedKeywords = _examinedKeywords;
                 link = _link;
-                //isTopLevelCall = _isTopLevelCall;
                 newPos = _newPos;
-                /*lookForLocalRootOnly = _lookForLocalRootOnly;
-                parentKeyword = _parentKeyword;
-                parentParams = _parentParams;
-                keywordsFilter = _keywordsFilter;
-                isSpaceNext = _isSpaceNext;*/
             }
 
             public override int GetHashCode()
@@ -1244,6 +1231,8 @@ namespace m0.ZeroCode
                 examinedKeywords = parameters_OUT.examinedKeywords;
                 link = parameters_OUT.link;
                 newPos = parameters_OUT.newPos;
+
+                MinusZero.Instance.Log(0, "YES", "");
 
                 return;
             }
