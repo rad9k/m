@@ -1128,7 +1128,7 @@ namespace m0.ZeroCode
                 keywordsFilter = _keywordsFilter;
                 isSpaceNext = _isSpaceNext;
             }
-
+            int r;
             public override int GetHashCode()
             {
                 return GeneralUtil.GetHashCode(LOGPREFIX)
@@ -1139,10 +1139,10 @@ namespace m0.ZeroCode
                 + GeneralUtil.GetHashCode(endPos_forAtomParts)
                 + GeneralUtil.GetHashCode(canStopByForAtomParts)
                 + GeneralUtil.GetHashCode(afterKeywordPartExist)
-                + GeneralUtil.GetHashCode(examinedKeywords)
-                + GeneralUtil.GetHashCode(link)
+                //+ GeneralUtil.GetHashCode(examinedKeywords)
+                //+ GeneralUtil.GetHashCode(link)
                 + GeneralUtil.GetHashCode(isTopLevelCall)
-                + GeneralUtil.GetHashCode(newPos)
+                //+ GeneralUtil.GetHashCode(newPos)
                 + GeneralUtil.GetHashCode(lookForLocalRootOnly)
                 + GeneralUtil.GetHashCode(parentKeyword)
                 + GeneralUtil.GetHashCode(parentParams)
@@ -1153,42 +1153,14 @@ namespace m0.ZeroCode
         }
         class tryIsKeyword_Parameters_OUT
         {
-            public string LOGPREFIX;
-            public int startPos;
-            public int prev_startPos;
-            public int isPrevStartPosSameAsStartPosParentCount;
-            public int endPos;
-            public int endPos_forAtomParts;
-            public bool canStopByForAtomParts;
-            public bool afterKeywordPartExist;
             public List<keywordTryingData> examinedKeywords;
             public string link;
-            public bool isTopLevelCall;
             public int newPos;
-            public bool lookForLocalRootOnly;
-            public IVertex parentKeyword;
-            public tryIsKeyword_Parameters_IN parentParams;
-            public string keywordsFilter;
-            public bool isSpaceNext;
 
             public tryIsKeyword_Parameters_OUT(
-                string _LOGPREFIX,
-                int _startPos,
-                int _prev_startPos,
-                int _isPrevStartPosSameAsStartPosParentCount,
-                int _endPos,
-                int _endPos_forAtomParts,
-                bool _canStopByForAtomParts,
-                bool _afterKeywordPartExist,
                 List<keywordTryingData> _examinedKeywords,
                 string _link,
-                bool _isTopLevelCall,
-                int _newPos,
-                bool _lookForLocalRootOnly,
-                IVertex _parentKeyword,
-                tryIsKeyword_Parameters_IN _parentParams,
-                string _keywordsFilter,
-                bool _isSpaceNext
+                int _newPos
                 )
             {
                 /* LOGPREFIX = _LOGPREFIX;
@@ -1212,27 +1184,14 @@ namespace m0.ZeroCode
 
             public override int GetHashCode()
             {
-                return LOGPREFIX.GetHashCode()
-                + startPos.GetHashCode()
-                + prev_startPos.GetHashCode()
-                + isPrevStartPosSameAsStartPosParentCount.GetHashCode()
-                + endPos.GetHashCode()
-                + endPos_forAtomParts.GetHashCode()
-                + canStopByForAtomParts.GetHashCode()
-                + afterKeywordPartExist.GetHashCode()
-                + examinedKeywords.GetHashCode()
+                return examinedKeywords.GetHashCode()
                 + link.GetHashCode()
-                + isTopLevelCall.GetHashCode()
-                + newPos.GetHashCode()
-                + lookForLocalRootOnly.GetHashCode()
-                + parentKeyword.GetHashCode()
-                + parentParams.GetHashCode()
-                + keywordsFilter.GetHashCode()
-                + isSpaceNext.GetHashCode();
+                + newPos.GetHashCode();
             }
         }
 
-        HashSet<int> params_hash = new HashSet<int>();
+        Dictionary<int, tryIsKeyword_Parameters_OUT> params_IN_OUT_dictionary = new Dictionary<int, tryIsKeyword_Parameters_OUT> ();
+
 
         void _tryIsKeyword(ParsingStack s, 
             string LOGPREFIX, 
@@ -1254,7 +1213,7 @@ namespace m0.ZeroCode
             bool isSpaceNext)
         {
             //ZeroCodeCommon.testIfIsKeywordSubstring(0, "<<", dict.allKeywordsSubstringsPositiveDictionary_witchoutLinkKeywordParts, dict.allKeywordsSubstringsNegativeDictionary_witchoutLinkKeywordParts);
-            tryIsKeyword_Parameters_IN callParams = new tryIsKeyword_Parameters_IN(
+            tryIsKeyword_Parameters_IN parameters_IN = new tryIsKeyword_Parameters_IN(
                 s,
                 LOGPREFIX,
                 startPos,
@@ -1274,10 +1233,20 @@ namespace m0.ZeroCode
                 keywordsFilter,
                 isSpaceNext);
 
+            tryIsKeyword_Parameters_OUT parameters_OUT;
 
-
-            
             //MinusZero.Instance.Log(0, "_tryIfKeyword", LOGPREFIX + "RUN "+callParams.ToString());
+
+            if (params_IN_OUT_dictionary.ContainsKey(parameters_IN.GetHashCode()))
+            {
+                parameters_OUT = params_IN_OUT_dictionary[parameters_IN.GetHashCode()];
+
+                examinedKeywords = parameters_OUT.examinedKeywords;
+                link = parameters_OUT.link;
+                newPos = parameters_OUT.newPos;
+
+                return;
+            }
 
             //
 
@@ -1291,11 +1260,22 @@ namespace m0.ZeroCode
             { // the + 2 might be not needed, but who knows....
               //if (text[startPos] == '\r' || text[startPos] == '\n')
                 newPos = s.currentLineInfo.lineEnd_NoTrim + 1;
+
+                parameters_OUT = new tryIsKeyword_Parameters_OUT(examinedKeywords, link, newPos);
+
+                params_IN_OUT_dictionary.Add(parameters_IN.GetHashCode(), parameters_OUT);
+
                 return;
             }
 
             if (startPos == endPos_forAtomParts)
+            {
+                parameters_OUT = new tryIsKeyword_Parameters_OUT(examinedKeywords, link, newPos);
+
+                params_IN_OUT_dictionary.Add(parameters_IN.GetHashCode(), parameters_OUT);
+
                 return;
+            }
 
             //
 
@@ -1344,7 +1324,13 @@ namespace m0.ZeroCode
             int sPos = startPos;
 
             if (sPos == endPos)
-                return;        
+            {
+                parameters_OUT = new tryIsKeyword_Parameters_OUT(examinedKeywords, link, newPos);
+
+                params_IN_OUT_dictionary.Add(parameters_IN.GetHashCode(), parameters_OUT);
+
+                return;
+            }
 
             
             bool shallProceed = true;
@@ -1533,6 +1519,10 @@ namespace m0.ZeroCode
                         //MinusZero.Instance.Log(1, "_tryIsKeyword", LOGPREFIX + "RETURN:" + trySpecialKeyword + " newPos:" + newPos);
                     }
 
+                   parameters_OUT = new tryIsKeyword_Parameters_OUT(examinedKeywords, link, newPos);
+
+                    params_IN_OUT_dictionary.Add(parameters_IN.GetHashCode(), parameters_OUT);
+
                     return;
                 }
                 else
@@ -1578,11 +1568,15 @@ namespace m0.ZeroCode
               // MIGHT NEED TO MAKE THIS "2" BEING CONFIGURED BY keywordsFilter !!!!!!!!!!!!!!!!!!!!!!!!
                 || keywordsFilter == "Atom") // here we also should use A ????? that is specialKeywordGroups_empty.Contains(keywordsFilter)
             { // do not want inifinite recursion
-               // if(containsCondition)
-               //     MinusZero.Instance.Log(0, "_tryIsKeyword", LOGPREFIX + "HARD RETURN PARENT "+ parentKeyword.Value);
-               // else
-                    
+              // if(containsCondition)
+              //     MinusZero.Instance.Log(0, "_tryIsKeyword", LOGPREFIX + "HARD RETURN PARENT "+ parentKeyword.Value);
+              // else
+
                 //MinusZero.Instance.Log(0, "_tryIsKeyword", LOGPREFIX + "HARD RETURN");
+
+                parameters_OUT = new tryIsKeyword_Parameters_OUT(examinedKeywords, link, newPos);
+
+                params_IN_OUT_dictionary.Add(parameters_IN.GetHashCode(), parameters_OUT);
 
                 return;
             }
@@ -1787,7 +1781,7 @@ namespace m0.ZeroCode
                                 if (dict.keywordInfoDict[ktd.keywordVertex].NonSelfRecursiveParameters)
                                     _canStopByForAtomParts = true;
 
-                                _tryIsKeyword(s, LOGPREFIX + "    ", sPos, startPos, isPrevStartPosSameAsStartPosThisCount, endPos, isTryKeyword_endPos, _canStopByForAtomParts, _afterKeywordPartExist, out foundKeywords, out foundLink, false, ref _newPos, false, ktd.keywordVertex, callParams, paramFilterName, _isSpaceNext);
+                                _tryIsKeyword(s, LOGPREFIX + "    ", sPos, startPos, isPrevStartPosSameAsStartPosThisCount, endPos, isTryKeyword_endPos, _canStopByForAtomParts, _afterKeywordPartExist, out foundKeywords, out foundLink, false, ref _newPos, false, ktd.keywordVertex, parameters_IN, paramFilterName, _isSpaceNext);
 
                                 // BACK TO OLD STACK
 
@@ -2053,6 +2047,10 @@ namespace m0.ZeroCode
                 }
             } else
                 newPos = sPos;
+
+            parameters_OUT = new tryIsKeyword_Parameters_OUT(examinedKeywords, link, newPos);
+
+            params_IN_OUT_dictionary.Add(parameters_IN.GetHashCode(), parameters_OUT);
 
             //MinusZero.Instance.Log(1, "_tryIsKeyword", LOGPREFIX+"END link:"+link+" keywordsCount:"+examinedKeywords.Count);
 
