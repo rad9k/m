@@ -403,18 +403,18 @@ namespace m0.ZeroCode
 
             if (s.Length < pos + toMatchLength)
             {
-                smdict.TryStringMatch.Add(p.GetHashCode(), false);
+               // smdict.TryStringMatch.Add(p.GetHashCode(), false);
                 return false;
             }
 
             for (int x = 0; x < toMatchLength; x++)
                 if (s[pos + x] != toMatch[x])
                 {
-                    smdict.TryStringMatch.Add(p.GetHashCode(), false);
+               //     smdict.TryStringMatch.Add(p.GetHashCode(), false);
                     return false;
                 }
 
-            smdict.TryStringMatch.Add(p.GetHashCode(), true);
+          //  smdict.TryStringMatch.Add(p.GetHashCode(), true);
             return true;
         }
 
@@ -429,7 +429,7 @@ namespace m0.ZeroCode
 
             if (s.Length < pos + toMatchLength)
             {
-                smdict.TabRemove_tryStringMatch.Add(p.GetHashCode(), false);
+              //  smdict.TabRemove_tryStringMatch.Add(p.GetHashCode(), false);
                 return false;
             }
 
@@ -445,18 +445,18 @@ namespace m0.ZeroCode
 
                 if (s.Length < pos + toMatchLength + tabPhase)
                 {
-                    smdict.TabRemove_tryStringMatch.Add(p.GetHashCode(), false);
+                  //  smdict.TabRemove_tryStringMatch.Add(p.GetHashCode(), false);
                     return false;
                 }
 
                 if (s[pos + x + tabPhase] != toMatch[x])
                 {
-                    smdict.TabRemove_tryStringMatch.Add(p.GetHashCode(), false);
+                  //  smdict.TabRemove_tryStringMatch.Add(p.GetHashCode(), false);
                     return false;
                 }
             }
 
-            smdict.TabRemove_tryStringMatch.Add(p.GetHashCode(), true);
+            //smdict.TabRemove_tryStringMatch.Add(p.GetHashCode(), true);
             return true;
         }
 
@@ -484,18 +484,18 @@ namespace m0.ZeroCode
 
             if (s.Length < toMatchLength)
             {
-                smdict.TryStringEndMatch.Add(p.GetHashCode(), false);
+                //smdict.TryStringEndMatch.Add(p.GetHashCode(), false);
                 return false;
             }
 
             for (int x = 1; x <= toMatch.Length; x++)
                 if (s[sLength - x] != toMatch[toMatchLength - x])
                 {
-                    smdict.TryStringEndMatch.Add(p.GetHashCode(), false);
+                   // smdict.TryStringEndMatch.Add(p.GetHashCode(), false);
                     return false;
                 }
 
-            smdict.TryStringEndMatch.Add(p.GetHashCode(), true);
+           // smdict.TryStringEndMatch.Add(p.GetHashCode(), true);
             return true;
         }
 
@@ -512,14 +512,14 @@ namespace m0.ZeroCode
             {
                 if (TryStringMatch(s, pos, toMatch))
                 {
-                    smdict.GetNextMatch.Add(p.GetHashCode(), pos);
+                    //smdict.GetNextMatch.Add(p.GetHashCode(), pos);
                     return pos;
                 }
 
                 pos++;
             }
 
-            smdict.GetNextMatch.Add(p.GetHashCode(), -1);
+            //smdict.GetNextMatch.Add(p.GetHashCode(), -1);
             return -1;
         }
 
@@ -545,13 +545,13 @@ namespace m0.ZeroCode
                 {
                     if (canCheck1 && TryStringMatch(s, pos, toMatch1) && toMatch1.Length > 0)
                     {
-                        smdict.GetNextMatch_twoAtOnce.Add(p.GetHashCode(), 1);
+                       // smdict.GetNextMatch_twoAtOnce.Add(p.GetHashCode(), 1);
                         return 1;
                     }
 
                     if (canCheck2 && TryStringMatch(s, pos, toMatch2) && toMatch2.Length > 0)
                     {
-                        smdict.GetNextMatch_twoAtOnce.Add(p.GetHashCode(), 2);
+                        //smdict.GetNextMatch_twoAtOnce.Add(p.GetHashCode(), 2);
                         return 2;
                     }
                 }
@@ -559,7 +559,7 @@ namespace m0.ZeroCode
                 pos++;
             }
 
-            smdict.GetNextMatch_twoAtOnce.Add(p.GetHashCode(), 0);
+            //smdict.GetNextMatch_twoAtOnce.Add(p.GetHashCode(), 0);
             return 0;
         }
 
@@ -577,7 +577,7 @@ namespace m0.ZeroCode
                 {
                     string ret = keyword.Substring(startFrom, x - startFrom);
 
-                    smdict.GetNextCharacterPartFromKeyword_startingFromNonParameter.Add(p.GetHashCode(), ret);
+                    //smdict.GetNextCharacterPartFromKeyword_startingFromNonParameter.Add(p.GetHashCode(), ret);
 
                     return ret;
                 }
@@ -586,7 +586,7 @@ namespace m0.ZeroCode
                 {
                     string ret2 = keyword.Substring(startFrom, x - startFrom);
 
-                    smdict.GetNextCharacterPartFromKeyword_startingFromNonParameter.Add(p.GetHashCode(), ret2);
+                   // smdict.GetNextCharacterPartFromKeyword_startingFromNonParameter.Add(p.GetHashCode(), ret2);
 
                     return ret2;
                 }
@@ -594,7 +594,7 @@ namespace m0.ZeroCode
 
             string ret3 = keyword.Substring(startFrom);
 
-            smdict.GetNextCharacterPartFromKeyword_startingFromNonParameter.Add(p.GetHashCode(), ret3);
+            //smdict.GetNextCharacterPartFromKeyword_startingFromNonParameter.Add(p.GetHashCode(), ret3);
 
             return ret3;
         }
