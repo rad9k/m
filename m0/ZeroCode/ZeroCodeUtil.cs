@@ -26,7 +26,21 @@ namespace m0.ZeroCode
 
         public override int GetHashCode()
         {
-            return s.GetHashCode() + pos + toMatch.GetHashCode();
+            int result = 37; 
+
+            result *= 397; 
+                        
+            result += s.GetHashCode();
+
+            result *= 397;
+
+            result += pos.GetHashCode();
+
+            result *= 397;
+
+            result += toMatch.GetHashCode();
+
+            return result;
         }
     }
 
@@ -46,8 +60,26 @@ namespace m0.ZeroCode
         }
 
         public override int GetHashCode()
-        {
-            return s.GetHashCode() + pos + toMatch.GetHashCode() + (10000 * toRemoveTabs);
+        {            
+            int result = 37;
+
+            result *= 397;
+
+            result += s.GetHashCode();
+
+            result *= 397;
+
+            result += pos.GetHashCode();
+
+            result *= 397;
+
+            result += toMatch.GetHashCode();
+
+            result *= 397;
+
+            result += toRemoveTabs.GetHashCode();
+
+            return result;
         }
     }
 
@@ -63,8 +95,18 @@ namespace m0.ZeroCode
         }
 
         public override int GetHashCode()
-        {
-            return s.GetHashCode() + toMatch.GetHashCode();
+        {            
+            int result = 37;
+
+            result *= 397;
+
+            result += s.GetHashCode();
+
+            result *= 397;
+
+            result += toMatch.GetHashCode();
+
+            return result;
         }
     }
 
@@ -82,8 +124,22 @@ namespace m0.ZeroCode
         }
 
         public override int GetHashCode()
-        {
-            return s.GetHashCode() + startFrom + toMatch.GetHashCode();
+        {            
+            int result = 37;
+
+            result *= 397;
+
+            result += s.GetHashCode();
+
+            result *= 397;
+
+            result += startFrom.GetHashCode();
+
+            result *= 397;
+
+            result += toMatch.GetHashCode();            
+
+            return result;
         }
     }
 
@@ -104,7 +160,21 @@ namespace m0.ZeroCode
 
         public override int GetHashCode()
         {
-            return s.GetHashCode() + startFrom + toMatch1.GetHashCode() + toMatch2.GetHashCode();
+            int result = 37;
+
+            result *= 397;
+
+            result += s.GetHashCode();
+
+            result *= 397;
+
+            result += toMatch1.GetHashCode();
+
+            result *= 397;
+
+            result += toMatch2.GetHashCode();
+
+            return result;
         }
     }
 
@@ -117,6 +187,21 @@ namespace m0.ZeroCode
         {
             this.keyword = keyword;
             this.startFrom = startFrom;
+        }
+
+        public override int GetHashCode()
+        {            
+            int result = 37;
+
+            result *= 397;
+
+            result += keyword.GetHashCode();
+
+            result *= 397;
+
+            result += startFrom.GetHashCode();
+
+            return result;
         }
     }
 
@@ -440,7 +525,7 @@ namespace m0.ZeroCode
 
         public static int GetNextMatch_twoAtOnce(string s, int startFrom, string toMatch1, string toMatch2)
         {
-            GetNextMatch_twoAtOnce_params p = new GetNextMatch_twoAtOnce_params(s, startFrom,toMatch1,toMatch2);
+            GetNextMatch_twoAtOnce_params p = new GetNextMatch_twoAtOnce_params(s, startFrom, toMatch1, toMatch2);
 
             if (smdict.GetNextMatch_twoAtOnce.ContainsKey(p.GetHashCode()))
                 return smdict.GetNextMatch_twoAtOnce[p.GetHashCode()];
