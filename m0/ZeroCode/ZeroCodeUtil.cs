@@ -32,7 +32,7 @@ namespace m0.ZeroCode
 
             //result += s.GetHashCode();
 
-            s.GetHashCode();
+            IEqualityComparer<String> s.GetHashCode();
 
             result *= 397;
 
