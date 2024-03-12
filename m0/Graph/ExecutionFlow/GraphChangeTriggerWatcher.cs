@@ -14,7 +14,7 @@ namespace m0.Graph.ExecutionFlow
         public IVertex triggerVertex;
         public IList<string> scopeQuery;
         public bool FilterOutRootVertexEvents = false;
-        public IList<GraphChangeFilterEnum> graphChangeFilter;
+        public HashSet<GraphChangeFilterEnum> graphChangeFilter;
         public IList<IVertex> vertexInScope;      
     }
 
@@ -73,7 +73,7 @@ namespace m0.Graph.ExecutionFlow
 
                 if (changeTypeFilterEdges.OutEdges.Count > 0)
                 {
-                    en.graphChangeFilter = new List<GraphChangeFilterEnum>();
+                    en.graphChangeFilter = new HashSet<GraphChangeFilterEnum>();
 
                     foreach (IEdge ee in changeTypeFilterEdges)
                     {

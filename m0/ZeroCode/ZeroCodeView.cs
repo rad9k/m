@@ -122,7 +122,7 @@ namespace m0.ZeroCode
             IDictionary<IVertex, IVertex> sourceLinerizedDict = new Dictionary<IVertex, IVertex>();
             IList<IVertex> beenList = new List<IVertex>();
 
-            IList<IVertex> subGraph = GraphUtil.GetSubGraphWithoutLinksAsList_Raw(sourceBaseVertex);
+            IEnumerable<IVertex> subGraph = GraphUtil.GetSubGraphWithoutLinksAsList_Raw(sourceBaseVertex);
 
             foreach (IVertex v in subGraph) {
                 IVertex v_new = MinusZero.Instance.CreateTempVertex();

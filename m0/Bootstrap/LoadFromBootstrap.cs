@@ -21,7 +21,7 @@ namespace m0.Bootstrap
             bool isSystem = true;
 
 
-            IList<IVertex> system = null;
+            IEnumerable<IVertex> system = null;
 
             foreach(IEdge e in bootstrap.Root)
             {
@@ -47,7 +47,7 @@ namespace m0.Bootstrap
                 {
                     JsonSerializationStore imp = new JsonSerializationStore(importFilePath, MinusZero.Instance, new AccessLevelEnum[] { }, true);
 
-                    ZeroUMLInstructionHelpers.MoveEdgesIntoVertex_IncludeEverythingBesidesList(imp.Root, importRoot, system);
+                    ZeroUMLInstructionHelpers.MoveEdgesIntoVertex_IncludeEverythingBesidesList(imp.Root, importRoot, new HashSet<IVertex>(system));
                 }
             }
         }

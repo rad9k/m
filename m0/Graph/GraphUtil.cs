@@ -1156,7 +1156,7 @@ namespace m0.Graph
 
         static public IEnumerable<IVertex> DeepIterator(IVertex iterationRoot, GraphIteratorIterate iterate, bool isSingleResult, bool canModifyOutEdges, bool canGoIntoLinks)
         {
-            List<IVertex> visited = new List<IVertex>();
+            HashSet<IVertex> visited = new HashSet<IVertex>();
 
             List<IVertex> returnList = new List<IVertex>();
 
@@ -1165,7 +1165,7 @@ namespace m0.Graph
             return returnList;
         }
 
-        static bool DeepIterator_Reccurent(IVertex iterationRoot, GraphIteratorIterate iterate, List<IVertex> visited, List<IVertex> returnList, bool isSingleResult, bool canModifyOutEdges, bool canGoIntoLinks)
+        static bool DeepIterator_Reccurent(IVertex iterationRoot, GraphIteratorIterate iterate, HashSet<IVertex> visited, List<IVertex> returnList, bool isSingleResult, bool canModifyOutEdges, bool canGoIntoLinks)
         {
             bool toReturn = false;
 
@@ -1204,12 +1204,12 @@ namespace m0.Graph
 
         static public void DeepCopy(IEdge edgeToCopy, IVertex copyTo)
         {
-            List<IVertex> visited = new List<IVertex>();            
+            HashSet<IVertex> visited = new HashSet<IVertex>();            
 
             DeepCopy_Reccurent(edgeToCopy, copyTo, visited);            
         }
 
-        static void DeepCopy_Reccurent(IEdge edgeToCopy, IVertex copyTo, List<IVertex> visited)
+        static void DeepCopy_Reccurent(IEdge edgeToCopy, IVertex copyTo, HashSet<IVertex> visited)
         {
             visited.Add(edgeToCopy.To);
 
@@ -1222,16 +1222,16 @@ namespace m0.Graph
                     newVertex.AddEdge(e.Meta, e.To);                      
         }
 
-        static public List<IVertex> GetSubGraphWithoutLinksAsList(IVertex iterationRoot)
+        static public IEnumerable<IVertex> GetSubGraphWithoutLinksAsList(IVertex iterationRoot)
         {
-            List<IVertex> visited = new List<IVertex>();            
+            HashSet<IVertex> visited = new HashSet<IVertex>();            
 
             GetSubGraphWithoutLinks_Reccurent(iterationRoot, visited);
 
             return visited;
         }
 
-        static void GetSubGraphWithoutLinks_Reccurent(IVertex baseVertex, IList<IVertex> visited)
+        static void GetSubGraphWithoutLinks_Reccurent(IVertex baseVertex, HashSet<IVertex> visited)
         {
             visited.Add(baseVertex);
 
@@ -1240,16 +1240,16 @@ namespace m0.Graph
                         GetSubGraphWithoutLinks_Reccurent(e.To, visited);                           
         }
 
-        static public List<IVertex> GetSubGraphWithoutLinksAsList_Raw(IVertex iterationRoot)
+        static public IEnumerable<IVertex> GetSubGraphWithoutLinksAsList_Raw(IVertex iterationRoot)
         {
-            List<IVertex> visited = new List<IVertex>();
+            HashSet<IVertex> visited = new HashSet<IVertex>();
 
             GetSubGraphWithoutLinks_Reccurent_Raw(iterationRoot, visited);
 
             return visited;
         }
 
-        static void GetSubGraphWithoutLinks_Reccurent_Raw(IVertex baseVertex, IList<IVertex> visited)
+        static void GetSubGraphWithoutLinks_Reccurent_Raw(IVertex baseVertex, HashSet<IVertex> visited)
         {
             visited.Add(baseVertex);
 
@@ -1260,7 +1260,7 @@ namespace m0.Graph
 
         static public List<IEdge> GetSubGraphAsEdgesWithoutLinksAsList(IEdge iterationRoot)
         {
-            List<IVertex> visited = new List<IVertex>();
+            HashSet<IVertex> visited = new HashSet<IVertex>();
 
             List<IEdge> edges = new List<IEdge>();
 
@@ -1269,7 +1269,7 @@ namespace m0.Graph
             return edges;
         }
 
-        static void GetSubGraphAsEdgesWithoutLinks_Reccurent(IEdge baseEdge, List<IVertex> visited, List<IEdge> edges)
+        static void GetSubGraphAsEdgesWithoutLinks_Reccurent(IEdge baseEdge, HashSet<IVertex> visited, List<IEdge> edges)
         {
             edges.Add(baseEdge);
 
@@ -1283,16 +1283,16 @@ namespace m0.Graph
             }
         }
 
-        static public List<IVertex> GetSubGraphWithLinksAsListButExcludeRoot(IVertex iterationRoot)
+        static public IEnumerable<IVertex> GetSubGraphWithLinksAsListButExcludeRoot(IVertex iterationRoot)
         {
-            List<IVertex> visited = new List<IVertex>();
+            HashSet<IVertex> visited = new HashSet<IVertex>();
 
             GetSubGraphWithLinksButExcludeRoot_Reccurent(iterationRoot, visited);
 
             return visited;
         }
 
-        static void GetSubGraphWithLinksButExcludeRoot_Reccurent(IVertex baseVertex, List<IVertex> visited)
+        static void GetSubGraphWithLinksButExcludeRoot_Reccurent(IVertex baseVertex, HashSet<IVertex> visited)
         {
             visited.Add(baseVertex);
 
@@ -1301,16 +1301,16 @@ namespace m0.Graph
                     GetSubGraphWithLinksButExcludeRoot_Reccurent(e.To, visited);
         }
 
-        static public List<IVertex> GetSubGraphWithLinksAsListButExcludeList(IVertex iterationRoot, IList<IVertex> excludeList)
+        static public IEnumerable<IVertex> GetSubGraphWithLinksAsListButExcludeList(IVertex iterationRoot, HashSet<IVertex> excludeList)
         {
-            List<IVertex> visited = new List<IVertex>();
+            HashSet<IVertex> visited = new HashSet<IVertex>();
 
             GetSubGraph_Reccurent_ExcludeList(iterationRoot, visited, excludeList);
 
             return visited;
         }
 
-        static void GetSubGraph_Reccurent_ExcludeList(IVertex baseVertex, IList<IVertex> visited, IList<IVertex> excludeList)
+        static void GetSubGraph_Reccurent_ExcludeList(IVertex baseVertex, HashSet<IVertex> visited, HashSet<IVertex> excludeList)
         {
             visited.Add(baseVertex);
 
@@ -1320,16 +1320,16 @@ namespace m0.Graph
         }
         
 
-        static public List<IVertex> GetSubGraphWithoutLinksAsListButExcludeList(IVertex iterationRoot, IList<IVertex> excludeList)
+        static public IEnumerable<IVertex> GetSubGraphWithoutLinksAsListButExcludeList(IVertex iterationRoot, HashSet<IVertex> excludeList)
         {
-            List<IVertex> visited = new List<IVertex>();
+            HashSet<IVertex> visited = new HashSet<IVertex>();
 
             GetSubGraphWithoutLinks_Reccurent_ExcludeList(iterationRoot, visited, excludeList);
 
             return visited;
         }
 
-        static void GetSubGraphWithoutLinks_Reccurent_ExcludeList(IVertex baseVertex, IList<IVertex> visited, IList<IVertex> excludeList)
+        static void GetSubGraphWithoutLinks_Reccurent_ExcludeList(IVertex baseVertex, HashSet<IVertex> visited, HashSet<IVertex> excludeList)
         {
             visited.Add(baseVertex);
 

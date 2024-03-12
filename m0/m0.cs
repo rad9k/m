@@ -22,7 +22,7 @@ namespace m0
 {
     public class MinusZero : IStoreUniverse, IDisposable
     {
-        public IList<IVertex> BootstrapVertexes;
+        public IEnumerable<IVertex> BootstrapVertexes;
 
         public bool AllowBug = true;
 
@@ -186,7 +186,7 @@ namespace m0
 
             JsonSerializationStore userStore = new JsonSerializationStore("user.m0", this, new AccessLevelEnum[] { });
 
-            ZeroUMLInstructionHelpers.MoveEdgesIntoVertex_IncludeEverythingBesidesList(userStore.Root, user, GraphUtil.GetSubGraphWithLinksAsListButExcludeRoot(system));
+            ZeroUMLInstructionHelpers.MoveEdgesIntoVertex_IncludeEverythingBesidesList(userStore.Root, user, new HashSet<IVertex>(GraphUtil.GetSubGraphWithLinksAsListButExcludeRoot(system)));
 
             //ZeroUMLInstructionHelpers.MoveEdgesIntoVertex_NoLocalMeta(userStore.Root, user);
 
@@ -196,7 +196,7 @@ namespace m0
 
             JsonSerializationStore examplesStore = new JsonSerializationStore("examples.m0", this, new AccessLevelEnum[] { });
 
-            ZeroUMLInstructionHelpers.MoveEdgesIntoVertex_IncludeEverythingBesidesList(examplesStore.Root, examples, GraphUtil.GetSubGraphWithLinksAsListButExcludeRoot(system));
+            ZeroUMLInstructionHelpers.MoveEdgesIntoVertex_IncludeEverythingBesidesList(examplesStore.Root, examples, new HashSet<IVertex>(GraphUtil.GetSubGraphWithLinksAsListButExcludeRoot(system)));
 
             //ZeroUMLInstructionHelpers.MoveEdgesIntoVertex_NoLocalMeta(examplesStore.Root, examples);
 

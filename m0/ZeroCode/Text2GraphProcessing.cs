@@ -875,14 +875,11 @@ namespace m0.ZeroCode
                 if (isInMultiParameter()) {
                     if(currentPosition == multiParameterString.Length)
                     {
-                            int whatMatch;
-
                             multiParameterAfterSeparatorString = ZeroCodeUtil.GetNextCharacterPartFromKeyword_startingFromNonParameter(keyword, multiParameterStringEndPosition + 1);
 
-                            int twoPos = ZeroCodeUtil.GetNextMatch_twoAtOnce(parent.text, curSpos,
+                            int whatMatch = ZeroCodeUtil.GetNextMatch_twoAtOnce(parent.text, curSpos,
                                 multiParameterSeparator,
-                                multiParameterAfterSeparatorString,
-                                out whatMatch);
+                                multiParameterAfterSeparatorString);
 
                             if (whatMatch == 0)
                                 afterParameterString = "";
@@ -895,12 +892,9 @@ namespace m0.ZeroCode
                     }
                     else
                     {
-                        int whatMatch;
-
-                        ZeroCodeUtil.GetNextMatch_twoAtOnce(parent.text, curSpos,
+                        int whatMatch = ZeroCodeUtil.GetNextMatch_twoAtOnce(parent.text, curSpos,
                             multiParameterAfterParamBeforeSeparator + multiParameterSeparator,
-                            multiParameterAfterParamBeforeSeparator + multiParameterAfterSeparatorString,
-                            out whatMatch);
+                            multiParameterAfterParamBeforeSeparator + multiParameterAfterSeparatorString);
 
                         if (whatMatch == 0)
                             afterParameterString = "";
@@ -1121,34 +1115,25 @@ namespace m0.ZeroCode
                 parentParams = _parentParams;
                 keywordsFilter = _keywordsFilter;
                 isSpaceNext = _isSpaceNext;
-
-                Random ra = new Random();
-                r = (int)(ra.NextDouble() * 10000);
             }
 
-            int hv = 0;
-            int r = 0;
             public override int GetHashCode()
             {
-                if (hv == 0)
-                {
-                    hv = //GeneralUtil.GetHashCode(LOGPREFIX)
+                    return  
                     GeneralUtil.GetHashCode(startPos)
                    + GeneralUtil.GetHashCode(prev_startPos)
                    + GeneralUtil.GetHashCode(isPrevStartPosSameAsStartPosParentCount)
-                   //+ GeneralUtil.GetHashCode(endPos)
-                   //+ GeneralUtil.GetHashCode(endPos_forAtomParts)
-                   //+ GeneralUtil.GetHashCode(canStopByForAtomParts)
-                   //+ GeneralUtil.GetHashCode(afterKeywordPartExist)
-                   //+ GeneralUtil.GetHashCode(isTopLevelCall)
-                   //+ GeneralUtil.GetHashCode(lookForLocalRootOnly)
+                   + GeneralUtil.GetHashCode(endPos)
+                   + GeneralUtil.GetHashCode(endPos_forAtomParts)
+                   + GeneralUtil.GetHashCode(canStopByForAtomParts)
+                   + GeneralUtil.GetHashCode(afterKeywordPartExist)
+                   + GeneralUtil.GetHashCode(isTopLevelCall)
+                   + GeneralUtil.GetHashCode(lookForLocalRootOnly)
                    + GeneralUtil.GetHashCode(parentKeyword)
                    //+ GeneralUtil.GetHashCode(parentParams)
-                   + GeneralUtil.GetHashCode(keywordsFilter) + r;
-                   //+ GeneralUtil.GetHashCode(isSpaceNext);
-                }
-
-                return hv;
+                   + GeneralUtil.GetHashCode(keywordsFilter)
+                   + GeneralUtil.GetHashCode(isSpaceNext);
+                
             }    
         }
 
@@ -1224,7 +1209,8 @@ namespace m0.ZeroCode
 
             //MinusZero.Instance.Log(0, "_tryIfKeyword", LOGPREFIX + "RUN "+callParams.ToString());
 
-            if (params_IN_OUT_dictionary.ContainsKey(parameters_IN.GetHashCode()))
+            // PARAMS OPTIMISATION OUT!!! as it does not increase performance
+            /*if (params_IN_OUT_dictionary.ContainsKey(parameters_IN.GetHashCode()))
             {
                 parameters_OUT = params_IN_OUT_dictionary[parameters_IN.GetHashCode()];
 
@@ -1235,7 +1221,7 @@ namespace m0.ZeroCode
               //  MinusZero.Instance.Log(0, "YES", "");
 
                 return;
-            }
+            }*/
 
             //
 
@@ -1250,18 +1236,18 @@ namespace m0.ZeroCode
               //if (text[startPos] == '\r' || text[startPos] == '\n')
                 newPos = s.currentLineInfo.lineEnd_NoTrim + 1;
 
-                parameters_OUT = new tryIsKeyword_Parameters_OUT(examinedKeywords, link, newPos);
+               // parameters_OUT = new tryIsKeyword_Parameters_OUT(examinedKeywords, link, newPos);
 
-                params_IN_OUT_dictionary.Add(parameters_IN.GetHashCode(), parameters_OUT);
+                //params_IN_OUT_dictionary.Add(parameters_IN.GetHashCode(), parameters_OUT);
 
                 return;
             }
 
             if (startPos == endPos_forAtomParts)
             {
-                parameters_OUT = new tryIsKeyword_Parameters_OUT(examinedKeywords, link, newPos);
+               // parameters_OUT = new tryIsKeyword_Parameters_OUT(examinedKeywords, link, newPos);
 
-                params_IN_OUT_dictionary.Add(parameters_IN.GetHashCode(), parameters_OUT);
+               // params_IN_OUT_dictionary.Add(parameters_IN.GetHashCode(), parameters_OUT);
 
                 return;
             }
@@ -1314,9 +1300,9 @@ namespace m0.ZeroCode
 
             if (sPos == endPos)
             {
-                parameters_OUT = new tryIsKeyword_Parameters_OUT(examinedKeywords, link, newPos);
+               // parameters_OUT = new tryIsKeyword_Parameters_OUT(examinedKeywords, link, newPos);
 
-                params_IN_OUT_dictionary.Add(parameters_IN.GetHashCode(), parameters_OUT);
+                //params_IN_OUT_dictionary.Add(parameters_IN.GetHashCode(), parameters_OUT);
 
                 return;
             }
@@ -1508,9 +1494,9 @@ namespace m0.ZeroCode
                         //MinusZero.Instance.Log(1, "_tryIsKeyword", LOGPREFIX + "RETURN:" + trySpecialKeyword + " newPos:" + newPos);
                     }
 
-                   parameters_OUT = new tryIsKeyword_Parameters_OUT(examinedKeywords, link, newPos);
+                   //parameters_OUT = new tryIsKeyword_Parameters_OUT(examinedKeywords, link, newPos);
 
-                    params_IN_OUT_dictionary.Add(parameters_IN.GetHashCode(), parameters_OUT);
+                   // params_IN_OUT_dictionary.Add(parameters_IN.GetHashCode(), parameters_OUT);
 
                     return;
                 }
@@ -1563,9 +1549,9 @@ namespace m0.ZeroCode
 
                 //MinusZero.Instance.Log(0, "_tryIsKeyword", LOGPREFIX + "HARD RETURN");
 
-                parameters_OUT = new tryIsKeyword_Parameters_OUT(examinedKeywords, link, newPos);
+                //parameters_OUT = new tryIsKeyword_Parameters_OUT(examinedKeywords, link, newPos);
 
-                params_IN_OUT_dictionary.Add(parameters_IN.GetHashCode(), parameters_OUT);
+                //params_IN_OUT_dictionary.Add(parameters_IN.GetHashCode(), parameters_OUT);
 
                 return;
             }
@@ -2037,10 +2023,10 @@ namespace m0.ZeroCode
             } else
                 newPos = sPos;
 
-            parameters_OUT = new tryIsKeyword_Parameters_OUT(examinedKeywords, link, newPos);
+            //parameters_OUT = new tryIsKeyword_Parameters_OUT(examinedKeywords, link, newPos);
 
-            if (!params_IN_OUT_dictionary.ContainsKey(parameters_IN.GetHashCode()))
-                params_IN_OUT_dictionary.Add(parameters_IN.GetHashCode(), parameters_OUT);
+           // if (!params_IN_OUT_dictionary.ContainsKey(parameters_IN.GetHashCode()))
+             //   params_IN_OUT_dictionary.Add(parameters_IN.GetHashCode(), parameters_OUT);
 
             //MinusZero.Instance.Log(1, "_tryIsKeyword", LOGPREFIX+"END link:"+link+" keywordsCount:"+examinedKeywords.Count);
 

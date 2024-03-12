@@ -11,8 +11,129 @@ using m0.ZeroCode.Helpers;
 
 namespace m0.ZeroCode
 {
+    public class TryStringMatch_params
+    {
+        public string s;
+        public int pos;
+        public string toMatch;
+
+        public TryStringMatch_params(string _s, int _pos, string _toMatch)
+        {
+            this.s = _s;
+            this.pos = _pos;
+            this.toMatch = _toMatch;
+        }
+
+        public override int GetHashCode()
+        {
+            return s.GetHashCode() + pos + toMatch.GetHashCode();
+        }
+    }
+
+    class TabRemove_tryStringMatch
+    {
+        public string s;
+        public int pos;
+        public string toMatch;
+        public int toRemoveTabs;
+
+        public TabRemove_tryStringMatch(string s, int pos, string toMatch, int toRemoveTabs)
+        {
+            this.s = s;
+            this.pos = pos;
+            this.toMatch = toMatch;
+            this.toRemoveTabs = toRemoveTabs;
+        }
+
+        public override int GetHashCode()
+        {
+            return s.GetHashCode() + pos + toMatch.GetHashCode() + (10000 * toRemoveTabs);
+        }
+    }
+
+    class TryStringEndMatch
+    {
+        public string s;
+        public string toMatch;
+
+        public TryStringEndMatch(string s, string toMatch)
+        {
+            this.s = s;
+            this.toMatch = toMatch;
+        }
+
+        public override int GetHashCode()
+        {
+            return s.GetHashCode() + toMatch.GetHashCode();
+        }
+    }
+
+    class GetNextMatch
+    {
+        public string s;
+        public int startFrom;
+        public string toMatch;
+
+        public GetNextMatch(string s, int startFrom, string toMatch)
+        {
+            this.s = s;
+            this.startFrom = startFrom;
+            this.toMatch = toMatch;
+        }
+
+        public override int GetHashCode()
+        {
+            return s.GetHashCode() + startFrom + toMatch.GetHashCode();
+        }
+    }
+
+    class GetNextMatch_twoAtOnce
+    {
+        public string s;
+        public int startFrom;
+        public string toMatch1;
+        public string toMatch2;
+
+        public GetNextMatch_twoAtOnce(string s, int startFrom, string toMatch1, string toMatch2)
+        {
+            this.s = s;
+            this.startFrom = startFrom;
+            this.toMatch1 = toMatch1;
+            this.toMatch2 = toMatch2;
+        }
+
+        public override int GetHashCode()
+        {
+            return s.GetHashCode() + startFrom + toMatch1.GetHashCode() + toMatch2.GetHashCode();
+        }
+    }
+
+    class GetNextCharacterPartFromKeyword_startingFromNonParameter
+    {
+        public string keyword;
+        public int startFrom;
+
+        public GetNextCharacterPartFromKeyword_startingFromNonParameter(string keyword, int startFrom)
+        {
+            this.keyword = keyword;
+            this.startFrom = startFrom;
+        }
+    }
+
+    class StringMatchingDictionary
+    {
+        public Dictionary<int, bool> TryStringMatch = new Dictionary<int, bool>();
+        public Dictionary<int, bool> TabRemove_tryStringMatch = new Dictionary<int, bool>();
+        public Dictionary<int, bool> TryStringEndMatch = new Dictionary<int, bool>();
+        public Dictionary<int, int> GetNextMatch = new Dictionary<int, int>();
+        public Dictionary<int, int> GetNextMatch_twoAtOnce = new Dictionary<int, int>();
+        public Dictionary<int, string> GetNextCharacterPartFromKeyword_startingFromNonParameter = new Dictionary<int, string>();
+    }
+
     public class ZeroCodeUtil
     {
+        StringMatchingDictionary smdict = new StringMatchingDictionary();
+
         public static bool FilterEdgeForGraph2TextProcessing(IEdge toFilterEdge)
         {
             if (GeneralUtil.CompareStrings(toFilterEdge.Meta, "$GraphChangeTrigger")) 
@@ -269,10 +390,8 @@ namespace m0.ZeroCode
             return -1;
         }
 
-        public static int GetNextMatch_twoAtOnce(string s, int startFrom, string toMatch1, string toMatch2, out int whatMatch)
+        public static int GetNextMatch_twoAtOnce(string s, int startFrom, string toMatch1, string toMatch2)
         {
-            whatMatch = 0;
-
             int pos = startFrom;
 
             bool shallProcess = true;
@@ -287,34 +406,16 @@ namespace m0.ZeroCode
                 else
                 {
                     if (canCheck1 && TryStringMatch(s, pos, toMatch1) && toMatch1.Length > 0)
-                    {
-                        whatMatch = 1;
-                        return pos;
-                    }
+                        return 1;
 
                     if (canCheck2 && TryStringMatch(s, pos, toMatch2) && toMatch2.Length > 0)
-                    {
-                        whatMatch = 2;
-                        return pos;
-                    }
+                        return  2;
                 }
 
                 pos++;
             }
 
             return -1;
-        }
-
-        public static char GetFirstCharacterFromKeyword(string keyword)
-        {
-            if (ZeroCodeUtil.TryStringMatch(keyword, 0, "(?<"))
-            {
-                int pos = ZeroCodeUtil.GetNextMatch(keyword, 3, ">)");
-
-                return keyword[pos + 2];
-            }
-            else
-                return keyword[0];
         }
 
         public static string GetNextCharacterPartFromKeyword_startingFromNonParameter(string keyword, int startFrom)

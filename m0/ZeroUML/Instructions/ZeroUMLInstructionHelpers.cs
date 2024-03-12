@@ -57,7 +57,7 @@ namespace m0.ZeroUML.Instructions
 
         public static void MoveEdgesIntoVertex(IVertex source, IVertex target)
         {
-            IList<IVertex> sourceGraph_Flat = GraphUtil.GetSubGraphWithLinksAsListButExcludeRoot(source);
+            IEnumerable<IVertex> sourceGraph_Flat = GraphUtil.GetSubGraphWithLinksAsListButExcludeRoot(source);
 
             sourceGraph_Flat = RemoveAlwaysPresent(sourceGraph_Flat);
 
@@ -66,7 +66,7 @@ namespace m0.ZeroUML.Instructions
 
         public static void MoveEdgesIntoVertex_NoBootstrap(IVertex source, IVertex target)
         {
-            IList<IVertex> sourceGraph_Flat = GraphUtil.GetSubGraphWithLinksAsListButExcludeList(source, MinusZero.Instance.BootstrapVertexes);
+            IEnumerable<IVertex> sourceGraph_Flat = GraphUtil.GetSubGraphWithLinksAsListButExcludeList(source, new HashSet<IVertex>(MinusZero.Instance.BootstrapVertexes));
 
             sourceGraph_Flat = RemoveAlwaysPresent(sourceGraph_Flat);
 
@@ -75,7 +75,7 @@ namespace m0.ZeroUML.Instructions
 
         public static void MoveEdgesIntoVertex_NoLinks(IVertex source, IVertex target)
         {
-            IList<IVertex> sourceGraph_Flat = GraphUtil.GetSubGraphWithoutLinksAsList(source);
+            IEnumerable<IVertex> sourceGraph_Flat = GraphUtil.GetSubGraphWithoutLinksAsList(source);
 
             sourceGraph_Flat = RemoveAlwaysPresent(sourceGraph_Flat);
 
@@ -84,7 +84,7 @@ namespace m0.ZeroUML.Instructions
 
         public static void MoveEdgesIntoVertex_NoLinksNoBootstrap(IVertex source, IVertex target)
         {
-            IList<IVertex> sourceGraph_Flat = GraphUtil.GetSubGraphWithoutLinksAsListButExcludeList(source, MinusZero.Instance.BootstrapVertexes);
+            IEnumerable<IVertex> sourceGraph_Flat = GraphUtil.GetSubGraphWithoutLinksAsListButExcludeList(source, new HashSet<IVertex>(MinusZero.Instance.BootstrapVertexes));
 
             sourceGraph_Flat = RemoveAlwaysPresent(sourceGraph_Flat);
 
@@ -92,7 +92,7 @@ namespace m0.ZeroUML.Instructions
         }
 
 
-        static IList<IVertex> RemoveAlwaysPresent(IList<IVertex> vertexList)
+        static IList<IVertex> RemoveAlwaysPresent(IEnumerable<IVertex> vertexList)
         {
             IList<IVertex> afterRemoval = new List<IVertex>();
 
@@ -103,9 +103,9 @@ namespace m0.ZeroUML.Instructions
             return afterRemoval;
         }
 
-        public static void MoveEdgesIntoVertex_IncludeEverythingBesidesList(IVertex source, IVertex target, IList<IVertex> excludeList)
+        public static void MoveEdgesIntoVertex_IncludeEverythingBesidesList(IVertex source, IVertex target, HashSet<IVertex> excludeList)
         {
-            IList<IVertex> sourceGraph_Flat = GraphUtil.GetSubGraphWithLinksAsListButExcludeRoot(source);
+            IEnumerable<IVertex> sourceGraph_Flat = GraphUtil.GetSubGraphWithLinksAsListButExcludeRoot(source);
 
             sourceGraph_Flat = RemoveAlwaysPresent(sourceGraph_Flat);
 
@@ -118,7 +118,7 @@ namespace m0.ZeroUML.Instructions
             _MoveEdgesIntoVertex(source, target, sourceGraph_Flat_afterRemoval);
         }
 
-        private static void _MoveEdgesIntoVertex(IVertex sourceRoot, IVertex targetRoot, IList<IVertex> sourceGraph_Flat)
+        private static void _MoveEdgesIntoVertex(IVertex sourceRoot, IVertex targetRoot, IEnumerable<IVertex> sourceGraph_Flat)
         {
             Dictionary<IVertex, IVertex> source2targetDictionary = new Dictionary<IVertex, IVertex>();
             List<IEdge> toDeleteEdges = new List<IEdge>();
