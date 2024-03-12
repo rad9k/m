@@ -98,7 +98,7 @@ namespace m0_SYSTEM_GENERATE
 
             //
 
-            List<IVertex> systemSubGraphWithLinks = GraphUtil.GetSubGraphWithLinksAsListButExcludeRoot(system);  
+            IEnumerable<IVertex> systemSubGraphWithLinks = GraphUtil.GetSubGraphWithLinksAsListButExcludeRoot(system);  
 
             //            
 
@@ -114,7 +114,7 @@ namespace m0_SYSTEM_GENERATE
 
             print("* saving User to \"user.m0\"");            
 
-            GeneralUtil.CreateM0AndMoveEdgesIntoIt_IncludeEverythingBesidesList("user.m0", User, systemSubGraphWithLinks, storeOverride);            
+            GeneralUtil.CreateM0AndMoveEdgesIntoIt_IncludeEverythingBesidesList("user.m0", User, new HashSet<IVertex>(systemSubGraphWithLinks), storeOverride);            
 
             print("* User saved to \"user.m0\"");
 
@@ -122,7 +122,7 @@ namespace m0_SYSTEM_GENERATE
 
             print("* saving examples to \"examples.m0\"");
 
-            GeneralUtil.CreateM0AndMoveEdgesIntoIt_IncludeEverythingBesidesList("examples.m0", examples, systemSubGraphWithLinks, storeOverride);
+            GeneralUtil.CreateM0AndMoveEdgesIntoIt_IncludeEverythingBesidesList("examples.m0", examples, new HashSet<IVertex>(systemSubGraphWithLinks), storeOverride);
 
             print("* examples saved to \"examples.m0\"");
 

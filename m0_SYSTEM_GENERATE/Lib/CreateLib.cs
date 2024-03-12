@@ -84,15 +84,15 @@ namespace m0_SYSTEM_GENERATE.Lib
             AddFunction(LibSys, "RollbackTransaction", type, "RollbackTransaction", null, new TypeName[] { });
         }
 
-            public static void Save(List<IVertex> systemSubGraphWithLinks, Dictionary<string, StoreId> storeOverride)
+            public static void Save(IEnumerable<IVertex> systemSubGraphWithLinks, Dictionary<string, StoreId> storeOverride)
         {            
             print("* saving Lib\\Std");
 
-            GeneralUtil.CreateM0AndMoveEdgesIntoIt_IncludeEverythingBesidesList("lib_std.m0", LibStd, systemSubGraphWithLinks, storeOverride);
+            GeneralUtil.CreateM0AndMoveEdgesIntoIt_IncludeEverythingBesidesList("lib_std.m0", LibStd, new HashSet<IVertex>(systemSubGraphWithLinks), storeOverride);
 
             print("* saving Lib\\Sys");
 
-            GeneralUtil.CreateM0AndMoveEdgesIntoIt_IncludeEverythingBesidesList("lib_sys.m0", LibSys, systemSubGraphWithLinks, storeOverride);
+            GeneralUtil.CreateM0AndMoveEdgesIntoIt_IncludeEverythingBesidesList("lib_sys.m0", LibSys, new HashSet<IVertex>(systemSubGraphWithLinks), storeOverride);
         }
 
     }

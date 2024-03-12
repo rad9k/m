@@ -28,17 +28,19 @@ namespace m0.ZeroCode
         {
             int result = 37; 
 
-            result *= 397; 
-                        
-            result += s.GetHashCode();
+            result *= 397;
+
+            //result += s.GetHashCode();
+
+            s.GetHashCode();
 
             result *= 397;
 
-            result += pos.GetHashCode();
+            //result += pos.GetHashCode();
 
             result *= 397;
 
-            result += toMatch.GetHashCode();
+            //result += toMatch.GetHashCode();
 
             return result;
         }
@@ -392,12 +394,14 @@ namespace m0.ZeroCode
             firstPart = query.Substring(0, slashPos);
         }
 
-        public static bool _TryStringMatch(string s, int pos, string toMatch)
+        public static bool TryStringMatch(string s, int pos, string toMatch)
         {
             TryStringMatch_params p = new TryStringMatch_params(s, pos, toMatch);
 
-            if (smdict.TryStringMatch.ContainsKey(p.GetHashCode()))
-                return smdict.TryStringMatch[p.GetHashCode()];
+            p.GetHashCode();
+
+            //if (smdict.TryStringMatch.ContainsKey(p.GetHashCode()))
+            //  return smdict.TryStringMatch[p.GetHashCode()];
 
             int toMatchLength = toMatch.Length;
 
@@ -719,7 +723,7 @@ namespace m0.ZeroCode
 
         /////
 
-        public static bool TryStringMatch(string s, int pos, string toMatch)
+        public static bool _TryStringMatch(string s, int pos, string toMatch)
         {
             int toMatchLength = toMatch.Length;
 

@@ -16,11 +16,11 @@ namespace m0_SYSTEM_GENERATE.Music
 {
     public class CreateMusic
     {
-        public static void Save(List<IVertex> systemSubGraphWithLinks, Dictionary<string, StoreId> storeOverride)
+        public static void Save(IEnumerable<IVertex> systemSubGraphWithLinks, Dictionary<string, StoreId> storeOverride)
         {            
             print("* saving Lib\\Music");
 
-            GeneralUtil.CreateM0AndMoveEdgesIntoIt_IncludeEverythingBesidesList("lib_music.m0", Music, systemSubGraphWithLinks, storeOverride);                        
+            GeneralUtil.CreateM0AndMoveEdgesIntoIt_IncludeEverythingBesidesList("lib_music.m0", Music, new HashSet<IVertex>(systemSubGraphWithLinks), storeOverride);                        
         }
 
         static IVertex Music;
