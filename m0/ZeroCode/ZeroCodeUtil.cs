@@ -8,6 +8,7 @@ using m0.Foundation;
 using m0.Util;
 using m0.Graph;
 using m0.ZeroCode.Helpers;
+using System.Runtime.CompilerServices;
 
 namespace m0.ZeroCode
 {
@@ -32,7 +33,7 @@ namespace m0.ZeroCode
 
             //result += s.GetHashCode();
 
-            IEqualityComparer<String> s.GetHashCode();
+            //RuntimeHelpers.GetHashCode(s);
 
             result *= 397;
 
