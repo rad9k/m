@@ -30,14 +30,14 @@ namespace m0.ZeroCode
         }
     }
 
-    class TabRemove_tryStringMatch
+    class TabRemove_tryStringMatch_params
     {
         public string s;
         public int pos;
         public string toMatch;
         public int toRemoveTabs;
 
-        public TabRemove_tryStringMatch(string s, int pos, string toMatch, int toRemoveTabs)
+        public TabRemove_tryStringMatch_params(string s, int pos, string toMatch, int toRemoveTabs)
         {
             this.s = s;
             this.pos = pos;
@@ -51,12 +51,12 @@ namespace m0.ZeroCode
         }
     }
 
-    class TryStringEndMatch
+    class TryStringEndMatch_params
     {
         public string s;
         public string toMatch;
 
-        public TryStringEndMatch(string s, string toMatch)
+        public TryStringEndMatch_params(string s, string toMatch)
         {
             this.s = s;
             this.toMatch = toMatch;
@@ -68,13 +68,13 @@ namespace m0.ZeroCode
         }
     }
 
-    class GetNextMatch
+    class GetNextMatch_params
     {
         public string s;
         public int startFrom;
         public string toMatch;
 
-        public GetNextMatch(string s, int startFrom, string toMatch)
+        public GetNextMatch_params(string s, int startFrom, string toMatch)
         {
             this.s = s;
             this.startFrom = startFrom;
@@ -87,14 +87,14 @@ namespace m0.ZeroCode
         }
     }
 
-    class GetNextMatch_twoAtOnce
+    class GetNextMatch_twoAtOnce_params
     {
         public string s;
         public int startFrom;
         public string toMatch1;
         public string toMatch2;
 
-        public GetNextMatch_twoAtOnce(string s, int startFrom, string toMatch1, string toMatch2)
+        public GetNextMatch_twoAtOnce_params(string s, int startFrom, string toMatch1, string toMatch2)
         {
             this.s = s;
             this.startFrom = startFrom;
@@ -108,12 +108,12 @@ namespace m0.ZeroCode
         }
     }
 
-    class GetNextCharacterPartFromKeyword_startingFromNonParameter
+    class GetNextCharacterPartFromKeyword_startingFromNonParameter_params
     {
         public string keyword;
         public int startFrom;
 
-        public GetNextCharacterPartFromKeyword_startingFromNonParameter(string keyword, int startFrom)
+        public GetNextCharacterPartFromKeyword_startingFromNonParameter_params(string keyword, int startFrom)
         {
             this.keyword = keyword;
             this.startFrom = startFrom;
@@ -132,7 +132,7 @@ namespace m0.ZeroCode
 
     public class ZeroCodeUtil
     {
-        StringMatchingDictionary smdict = new StringMatchingDictionary();
+        static StringMatchingDictionary smdict = new StringMatchingDictionary();
 
         public static bool FilterEdgeForGraph2TextProcessing(IEdge toFilterEdge)
         {
@@ -309,24 +309,44 @@ namespace m0.ZeroCode
 
         public static bool TryStringMatch(string s, int pos, string toMatch)
         {
+            TryStringMatch_params p = new TryStringMatch_params(s, pos, toMatch);
+
+            if (smdict.TryStringMatch.ContainsKey(p.GetHashCode()))
+                return smdict.TryStringMatch[p.GetHashCode()];
+
             int toMatchLength = toMatch.Length;
 
             if (s.Length < pos + toMatchLength)
+            {
+                smdict.TryStringMatch.Add(p.GetHashCode(), false);
                 return false;
+            }
 
             for (int x = 0; x < toMatchLength; x++)
                 if (s[pos + x] != toMatch[x])
+                {
+                    smdict.TryStringMatch.Add(p.GetHashCode(), false);
                     return false;
+                }
 
+            smdict.TryStringMatch.Add(p.GetHashCode(), true);
             return true;
         }
 
         public static bool TabRemove_tryStringMatch(string s, int pos, string toMatch, int toRemoveTabs)
         {
+            TabRemove_tryStringMatch_params p = new TabRemove_tryStringMatch_params(s, pos, toMatch, toRemoveTabs);
+
+            if (smdict.TabRemove_tryStringMatch.ContainsKey(p.GetHashCode()))
+                return smdict.TabRemove_tryStringMatch[p.GetHashCode()];
+
             int toMatchLength = toMatch.Length;
 
             if (s.Length < pos + toMatchLength)
+            {
+                smdict.TabRemove_tryStringMatch.Add(p.GetHashCode(), false);
                 return false;
+            }
 
             int tabPhase = 0;
 
@@ -339,12 +359,19 @@ namespace m0.ZeroCode
                 }
 
                 if (s.Length < pos + toMatchLength + tabPhase)
+                {
+                    smdict.TabRemove_tryStringMatch.Add(p.GetHashCode(), false);
                     return false;
+                }
 
                 if (s[pos + x + tabPhase] != toMatch[x])
+                {
+                    smdict.TabRemove_tryStringMatch.Add(p.GetHashCode(), false);
                     return false;
+                }
             }
 
+            smdict.TabRemove_tryStringMatch.Add(p.GetHashCode(), true);
             return true;
         }
 
@@ -361,37 +388,63 @@ namespace m0.ZeroCode
 
         public static bool TryStringEndMatch(string s, string toMatch)
         {
+            TryStringEndMatch_params p = new TryStringEndMatch_params(s, toMatch);
+
+            if (smdict.TryStringEndMatch.ContainsKey(p.GetHashCode()))
+                return smdict.TryStringEndMatch[p.GetHashCode()];
+
             int sLength = s.Length;
 
             int toMatchLength = toMatch.Length;
 
             if (s.Length < toMatchLength)
+            {
+                smdict.TryStringEndMatch.Add(p.GetHashCode(), false);
                 return false;
+            }
 
             for (int x = 1; x <= toMatch.Length; x++)
                 if (s[sLength - x] != toMatch[toMatchLength - x])
+                {
+                    smdict.TryStringEndMatch.Add(p.GetHashCode(), false);
                     return false;
+                }
 
+            smdict.TryStringEndMatch.Add(p.GetHashCode(), true);
             return true;
         }
 
         public static int GetNextMatch(string s, int startFrom, string toMatch)
         {
+            GetNextMatch_params p = new GetNextMatch_params(s, startFrom, toMatch);
+
+            if (smdict.GetNextMatch.ContainsKey(p.GetHashCode()))
+                return smdict.GetNextMatch[p.GetHashCode()];
+
             int pos = startFrom;
 
             while ( (pos+toMatch.Length) <= s.Length)
             {
                 if (TryStringMatch(s, pos, toMatch))
+                {
+                    smdict.GetNextMatch.Add(p.GetHashCode(), pos);
                     return pos;
+                }
 
                 pos++;
             }
 
+            smdict.GetNextMatch.Add(p.GetHashCode(), -1);
             return -1;
         }
 
         public static int GetNextMatch_twoAtOnce(string s, int startFrom, string toMatch1, string toMatch2)
         {
+            GetNextMatch_twoAtOnce_params p = new GetNextMatch_twoAtOnce_params(s, startFrom,toMatch1,toMatch2);
+
+            if (smdict.GetNextMatch_twoAtOnce.ContainsKey(p.GetHashCode()))
+                return smdict.GetNextMatch_twoAtOnce[p.GetHashCode()];
+
             int pos = startFrom;
 
             bool shallProcess = true;
@@ -406,45 +459,59 @@ namespace m0.ZeroCode
                 else
                 {
                     if (canCheck1 && TryStringMatch(s, pos, toMatch1) && toMatch1.Length > 0)
+                    {
+                        smdict.GetNextMatch_twoAtOnce.Add(p.GetHashCode(), 1);
                         return 1;
+                    }
 
                     if (canCheck2 && TryStringMatch(s, pos, toMatch2) && toMatch2.Length > 0)
-                        return  2;
+                    {
+                        smdict.GetNextMatch_twoAtOnce.Add(p.GetHashCode(), 2);
+                        return 2;
+                    }
                 }
 
                 pos++;
             }
 
-            return -1;
+            smdict.GetNextMatch_twoAtOnce.Add(p.GetHashCode(), 0);
+            return 0;
         }
 
         public static string GetNextCharacterPartFromKeyword_startingFromNonParameter(string keyword, int startFrom)
         {
+            GetNextCharacterPartFromKeyword_startingFromNonParameter_params p = new GetNextCharacterPartFromKeyword_startingFromNonParameter_params(keyword, startFrom);
+
+            if (smdict.GetNextCharacterPartFromKeyword_startingFromNonParameter.ContainsKey(p.GetHashCode()))
+                return smdict.GetNextCharacterPartFromKeyword_startingFromNonParameter[p.GetHashCode()];
+                
+            
             for (int x = startFrom; x < keyword.Length; x++)
             {
                 if (ZeroCodeUtil.TryStringMatch(keyword, x, "(?<"))
-                    return keyword.Substring(startFrom, x - startFrom);
+                {
+                    string ret = keyword.Substring(startFrom, x - startFrom);
+
+                    smdict.GetNextCharacterPartFromKeyword_startingFromNonParameter.Add(p.GetHashCode(), ret);
+
+                    return ret;
+                }
 
                 if (ZeroCodeUtil.TryStringMatch(keyword, x, "(*")) // needs some clever tests ideas, if this is valid????
-                    return keyword.Substring(startFrom, x - startFrom);
+                {
+                    string ret2 = keyword.Substring(startFrom, x - startFrom);
+
+                    smdict.GetNextCharacterPartFromKeyword_startingFromNonParameter.Add(p.GetHashCode(), ret2);
+
+                    return ret2;
+                }
             }
 
-            return keyword.Substring(startFrom);
-            /*
-            int firstTryPos = getNextMatch(keyword, startFrom, "(*(+");
+            string ret3 = keyword.Substring(startFrom);
 
-            int secondTryPos = getNextMatch(keyword, startFrom, "(?<");
+            smdict.GetNextCharacterPartFromKeyword_startingFromNonParameter.Add(p.GetHashCode(), ret3);
 
-            if(firstTryPos==-1 && secondTryPos==-1)
-                return keyword.Substring(startFrom);
-
-            if(secondTryPos == -1)
-                return keyword.Substring(startFrom, firstTryPos - startFrom);
-
-            if(firstTryPos == -1)
-                return keyword.Substring(startFrom, secondTryPos - startFrom);
-
-            return keyword.Substring(startFrom, Math.Min(firstTryPos,secondTryPos) - startFrom);*/
+            return ret3;
         }
 
         public static bool IsStringOnlyWhiteSpaces(string s)
