@@ -872,29 +872,36 @@ namespace m0.ZeroCode
                 currentPosition = ZeroCodeUtil.GetNextMatch(str, currentPosition + 2, ">)") + 2;
                 currentlyProcessedParameterName = str.Substring(begCurrentPosition + 3, currentPosition - begCurrentPosition - 5);
 
-                if (isInMultiParameter()) {
-                    if(currentPosition == multiParameterString.Length)
+                if (isInMultiParameter())
+                {
+                    if (currentPosition == multiParameterString.Length)
                     {
-                            multiParameterAfterSeparatorString = ZeroCodeUtil.GetNextCharacterPartFromKeyword_startingFromNonParameter(keyword, multiParameterStringEndPosition + 1);
+                        int whatMatch;
 
-                            int whatMatch = ZeroCodeUtil.GetNextMatch_twoAtOnce(parent.text, curSpos,
-                                multiParameterSeparator,
-                                multiParameterAfterSeparatorString);
+                        multiParameterAfterSeparatorString = ZeroCodeUtil.GetNextCharacterPartFromKeyword_startingFromNonParameter(keyword, multiParameterStringEndPosition + 1);
 
-                            if (whatMatch == 0)
-                                afterParameterString = "";
+                        int twoPos = ZeroCodeUtil.GetNextMatch_twoAtOnce(parent.text, curSpos,
+                            multiParameterSeparator,
+                            multiParameterAfterSeparatorString,
+                            out whatMatch);
 
-                            if (whatMatch == 1)
-                                afterParameterString = multiParameterSeparator;
+                        if (whatMatch == 0)
+                            afterParameterString = "";
 
-                            if (whatMatch == 2)
-                                afterParameterString = multiParameterAfterSeparatorString;
+                        if (whatMatch == 1)
+                            afterParameterString = multiParameterSeparator;
+
+                        if (whatMatch == 2)
+                            afterParameterString = multiParameterAfterSeparatorString;
                     }
                     else
                     {
-                        int whatMatch = ZeroCodeUtil.GetNextMatch_twoAtOnce(parent.text, curSpos,
+                        int whatMatch;
+
+                        ZeroCodeUtil.GetNextMatch_twoAtOnce(parent.text, curSpos,
                             multiParameterAfterParamBeforeSeparator + multiParameterSeparator,
-                            multiParameterAfterParamBeforeSeparator + multiParameterAfterSeparatorString);
+                            multiParameterAfterParamBeforeSeparator + multiParameterAfterSeparatorString,
+                            out whatMatch);
 
                         if (whatMatch == 0)
                             afterParameterString = "";
@@ -905,7 +912,8 @@ namespace m0.ZeroCode
                         if (whatMatch == 2)
                             afterParameterString = multiParameterAfterParamBeforeSeparator + multiParameterAfterSeparatorString;
                     }
-                } else
+                }
+                else
                     afterParameterString = ZeroCodeUtil.GetNextCharacterPartFromKeyword_startingFromNonParameter(str, currentPosition);
 
                 //MinusZero.Instance.Log(1, "GetParameter", "currentlyProcessedParameterName:"+ currentlyProcessedParameterName+" curPosition:" + currentPosition+ " afterParameterString:"+ afterParameterString);
@@ -919,7 +927,7 @@ namespace m0.ZeroCode
                 }
                 else
                     currentPositionInKeyword = currentPosition;
-                   
+
             }
 
             private bool isSubPlus1(int curSpos)

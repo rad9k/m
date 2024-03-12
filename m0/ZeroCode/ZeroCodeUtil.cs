@@ -392,7 +392,7 @@ namespace m0.ZeroCode
             firstPart = query.Substring(0, slashPos);
         }
 
-        public static bool TryStringMatch(string s, int pos, string toMatch)
+        public static bool _TryStringMatch(string s, int pos, string toMatch)
         {
             TryStringMatch_params p = new TryStringMatch_params(s, pos, toMatch);
 
@@ -418,7 +418,7 @@ namespace m0.ZeroCode
             return true;
         }
 
-        public static bool TabRemove_tryStringMatch(string s, int pos, string toMatch, int toRemoveTabs)
+        public static bool _TabRemove_tryStringMatch(string s, int pos, string toMatch, int toRemoveTabs)
         {
             TabRemove_tryStringMatch_params p = new TabRemove_tryStringMatch_params(s, pos, toMatch, toRemoveTabs);
 
@@ -460,7 +460,7 @@ namespace m0.ZeroCode
             return true;
         }
 
-        public static bool DoTextRangeContainString(string s, int beg, int end, string toMatch)
+        public static bool _DoTextRangeContainString(string s, int beg, int end, string toMatch)
         {
             int cnt;
 
@@ -471,7 +471,7 @@ namespace m0.ZeroCode
             return false;
         }
 
-        public static bool TryStringEndMatch(string s, string toMatch)
+        public static bool _TryStringEndMatch(string s, string toMatch)
         {
             TryStringEndMatch_params p = new TryStringEndMatch_params(s, toMatch);
 
@@ -499,7 +499,7 @@ namespace m0.ZeroCode
             return true;
         }
 
-        public static int GetNextMatch(string s, int startFrom, string toMatch)
+        public static int _GetNextMatch(string s, int startFrom, string toMatch)
         {
             GetNextMatch_params p = new GetNextMatch_params(s, startFrom, toMatch);
 
@@ -523,7 +523,7 @@ namespace m0.ZeroCode
             return -1;
         }
 
-        public static int GetNextMatch_twoAtOnce(string s, int startFrom, string toMatch1, string toMatch2)
+        public static int _GetNextMatch_twoAtOnce(string s, int startFrom, string toMatch1, string toMatch2)
         {
             GetNextMatch_twoAtOnce_params p = new GetNextMatch_twoAtOnce_params(s, startFrom, toMatch1, toMatch2);
 
@@ -563,7 +563,7 @@ namespace m0.ZeroCode
             return 0;
         }
 
-        public static string GetNextCharacterPartFromKeyword_startingFromNonParameter(string keyword, int startFrom)
+        public static string _GetNextCharacterPartFromKeyword_startingFromNonParameter(string keyword, int startFrom)
         {
             GetNextCharacterPartFromKeyword_startingFromNonParameter_params p = new GetNextCharacterPartFromKeyword_startingFromNonParameter_params(keyword, startFrom);
 
@@ -715,6 +715,168 @@ namespace m0.ZeroCode
                 l.Add(current);
 
             return l;
+        }
+
+        /////
+
+        public static bool TryStringMatch(string s, int pos, string toMatch)
+        {
+            int toMatchLength = toMatch.Length;
+
+            if (s.Length < pos + toMatchLength)
+                return false;
+
+            for (int x = 0; x < toMatchLength; x++)
+                if (s[pos + x] != toMatch[x])
+                    return false;
+
+            return true;
+        }
+
+        public static bool TabRemove_tryStringMatch(string s, int pos, string toMatch, int toRemoveTabs)
+        {
+            int toMatchLength = toMatch.Length;
+
+            if (s.Length < pos + toMatchLength)
+                return false;
+
+            int tabPhase = 0;
+
+            for (int x = 0; x < toMatchLength; x++)
+            {
+                while (s[pos + x + tabPhase] == '\t' && toRemoveTabs > 0)
+                {
+                    toRemoveTabs--;
+                    tabPhase++;
+                }
+
+                if (s.Length < pos + toMatchLength + tabPhase)
+                    return false;
+
+                if (s[pos + x + tabPhase] != toMatch[x])
+                    return false;
+            }
+
+            return true;
+        }
+
+        public static bool DoTextRangeContainString(string s, int beg, int end, string toMatch)
+        {
+            int cnt;
+
+            for (cnt = beg; cnt + toMatch.Length - 1 <= end; cnt++)
+                if (TryStringMatch(s, cnt, toMatch))
+                    return true;
+
+            return false;
+        }
+
+        public static bool TryStringEndMatch(string s, string toMatch)
+        {
+            int sLength = s.Length;
+
+            int toMatchLength = toMatch.Length;
+
+            if (s.Length < toMatchLength)
+                return false;
+
+            for (int x = 1; x <= toMatch.Length; x++)
+                if (s[sLength - x] != toMatch[toMatchLength - x])
+                    return false;
+
+            return true;
+        }
+
+        public static int GetNextMatch(string s, int startFrom, string toMatch)
+        {
+            int pos = startFrom;
+
+            while ((pos + toMatch.Length) <= s.Length)
+            {
+                if (TryStringMatch(s, pos, toMatch))
+                    return pos;
+
+                pos++;
+            }
+
+            return -1;
+        }
+
+        public static int GetNextMatch_twoAtOnce(string s, int startFrom, string toMatch1, string toMatch2, out int whatMatch)
+        {
+            whatMatch = 0;
+
+            int pos = startFrom;
+
+            bool shallProcess = true;
+
+            while (shallProcess)
+            {
+                bool canCheck1 = (pos + toMatch1.Length) <= s.Length;
+                bool canCheck2 = (pos + toMatch2.Length) <= s.Length;
+
+                if (!canCheck1 && !canCheck2)
+                    shallProcess = false;
+                else
+                {
+                    if (canCheck1 && TryStringMatch(s, pos, toMatch1) && toMatch1.Length > 0)
+                    {
+                        whatMatch = 1;
+                        return pos;
+                    }
+
+                    if (canCheck2 && TryStringMatch(s, pos, toMatch2) && toMatch2.Length > 0)
+                    {
+                        whatMatch = 2;
+                        return pos;
+                    }
+                }
+
+                pos++;
+            }
+
+            return -1;
+        }
+
+        public static char GetFirstCharacterFromKeyword(string keyword)
+        {
+            if (ZeroCodeUtil.TryStringMatch(keyword, 0, "(?<"))
+            {
+                int pos = ZeroCodeUtil.GetNextMatch(keyword, 3, ">)");
+
+                return keyword[pos + 2];
+            }
+            else
+                return keyword[0];
+        }
+
+        public static string GetNextCharacterPartFromKeyword_startingFromNonParameter(string keyword, int startFrom)
+        {
+            for (int x = startFrom; x < keyword.Length; x++)
+            {
+                if (ZeroCodeUtil.TryStringMatch(keyword, x, "(?<"))
+                    return keyword.Substring(startFrom, x - startFrom);
+
+                if (ZeroCodeUtil.TryStringMatch(keyword, x, "(*")) // needs some clever tests ideas, if this is valid????
+                    return keyword.Substring(startFrom, x - startFrom);
+            }
+
+            return keyword.Substring(startFrom);
+            /*
+            int firstTryPos = getNextMatch(keyword, startFrom, "(*(+");
+
+            int secondTryPos = getNextMatch(keyword, startFrom, "(?<");
+
+            if(firstTryPos==-1 && secondTryPos==-1)
+                return keyword.Substring(startFrom);
+
+            if(secondTryPos == -1)
+                return keyword.Substring(startFrom, firstTryPos - startFrom);
+
+            if(firstTryPos == -1)
+                return keyword.Substring(startFrom, secondTryPos - startFrom);
+
+            return keyword.Substring(startFrom, Math.Min(firstTryPos,secondTryPos) - startFrom);*/
         }
     }
 }
