@@ -14,11 +14,11 @@ namespace m0.ZeroCode
 {
     public class TryStringMatch_params
     {
-        public string s;
+        public zstring s;
         public int pos;
         public string toMatch;
 
-        public TryStringMatch_params(string _s, int _pos, string _toMatch)
+        public TryStringMatch_params(zstring _s, int _pos, string _toMatch)
         {
             this.s = _s;
             this.pos = _pos;
@@ -30,18 +30,16 @@ namespace m0.ZeroCode
             int result = 37; 
 
             result *= 397;
-
-            result += RuntimeHelpers.GetHashCode(toMatch);
-            //result += s.GetHashCode();
+            
+            result += s.GetHashCode();
 
             result *= 397;
 
             result += pos;
 
             result *= 397;
-
-            result += RuntimeHelpers.GetHashCode(s);
-            //result += toMatch.GetHashCode();
+            
+            result += toMatch.GetHashCode();
 
             return result;
         }
@@ -401,8 +399,8 @@ namespace m0.ZeroCode
 
              //int h = p.GetHashCode();
 
-            if (smdict.TryStringMatch.ContainsKey(h))
-              return smdict.TryStringMatch[h];
+            //if (smdict.TryStringMatch.ContainsKey(h))
+//              return smdict.TryStringMatch[h];
 
             int toMatchLength = toMatch.Length;
 
@@ -425,7 +423,7 @@ namespace m0.ZeroCode
 
         public static bool TryStringMatch(string s, int pos, string toMatch)
         {
-            TryStringMatch_params p = new TryStringMatch_params(s, pos, toMatch);
+            //TryStringMatch_params p = new TryStringMatch_params(s, pos, toMatch);
 
            // int h = p.GetHashCode();
 
