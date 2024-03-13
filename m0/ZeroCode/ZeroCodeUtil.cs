@@ -31,8 +31,8 @@ namespace m0.ZeroCode
 
             result *= 397;
 
-            //result += RuntimeHelpers.GetHashCode(toMatch);
-            result += s.GetHashCode();
+            result += RuntimeHelpers.GetHashCode(toMatch);
+            //result += s.GetHashCode();
 
             result *= 397;
 
@@ -399,27 +399,27 @@ namespace m0.ZeroCode
         {
             TryStringMatch_params p = new TryStringMatch_params(s, pos, toMatch);
 
-            int h = p.GetHashCode();
+           // int h = p.GetHashCode();
 
-            if (smdict.TryStringMatch.ContainsKey(h))
-              return smdict.TryStringMatch[h];
+            //if (smdict.TryStringMatch.ContainsKey(h))
+            //  return smdict.TryStringMatch[h];
 
             int toMatchLength = toMatch.Length;
 
             if (s.Length < pos + toMatchLength)
             {
-                smdict.TryStringMatch.Add(h, false);
+            //    smdict.TryStringMatch.Add(h, false);
                 return false;
             }
 
             for (int x = 0; x < toMatchLength; x++)
                 if (s[pos + x] != toMatch[x])
                 {
-                    smdict.TryStringMatch.Add(h, false);
+              //      smdict.TryStringMatch.Add(h, false);
                     return false;
                 }
 
-            smdict.TryStringMatch.Add(h, true);
+          //  smdict.TryStringMatch.Add(h, true);
             return true;
         }
 
