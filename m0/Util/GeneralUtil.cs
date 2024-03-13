@@ -11,6 +11,7 @@ using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 using m0.Store.Json;
 using System.IO;
+using System.Runtime.CompilerServices;
 
 namespace m0.Util
 {
@@ -41,7 +42,8 @@ namespace m0.Util
             if (o == null)
                 return 0;
 
-            return o.GetHashCode();
+            //return o.GetHashCode();
+            return RuntimeHelpers.GetHashCode(o);
         }
 
         public static int Double2Int(double d)

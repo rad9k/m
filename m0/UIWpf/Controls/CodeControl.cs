@@ -28,6 +28,7 @@ using Xceed.Wpf.Toolkit.Core.Converters;
 using ICSharpCode.AvalonEdit.Editing;
 using System.Threading;
 using m0.UIWpf.Dialog;
+using System.Diagnostics;
 
 namespace m0.UIWpf.Visualisers
 {
@@ -173,12 +174,15 @@ namespace m0.UIWpf.Visualisers
         {
             editor_Text = editor.Text;
 
-            //_ExecuteParse();
+            watch = System.Diagnostics.Stopwatch.StartNew();
 
             Thread thread = new Thread(_ExecuteParse);
             thread.IsBackground = true;
             thread.Start();
         }
+
+        Stopwatch watch;
+
 
         private void _ExecuteParse()
         {
@@ -207,6 +211,13 @@ namespace m0.UIWpf.Visualisers
                 errorList = MinusZero.Instance.DefaultFormalTextParser.Parse(BaseEdgeToVertex, editor_Text);
             else
                 errorList = MinusZero.Instance.DefaultFormalTextParser.Parse(ftl, BaseEdgeToVertex, editor_Text);
+
+            //
+
+            watch.Stop();
+            var elapsedMs = watch.ElapsedMilliseconds;
+
+            MinusZero.Instance.Log(0, "parse", elapsedMs.ToString());
 
             //
 

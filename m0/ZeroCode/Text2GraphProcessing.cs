@@ -6,6 +6,7 @@ using m0.ZeroTypes;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text.RegularExpressions;
 
 namespace m0.ZeroCode
@@ -1127,20 +1128,48 @@ namespace m0.ZeroCode
 
             public override int GetHashCode()
             {
-                    return  
-                    GeneralUtil.GetHashCode(startPos)
-                   + GeneralUtil.GetHashCode(prev_startPos)
-                   + GeneralUtil.GetHashCode(isPrevStartPosSameAsStartPosParentCount)
-                   + GeneralUtil.GetHashCode(endPos)
-                   + GeneralUtil.GetHashCode(endPos_forAtomParts)
-                   + GeneralUtil.GetHashCode(canStopByForAtomParts)
-                   + GeneralUtil.GetHashCode(afterKeywordPartExist)
-                   + GeneralUtil.GetHashCode(isTopLevelCall)
-                   + GeneralUtil.GetHashCode(lookForLocalRootOnly)
-                   + GeneralUtil.GetHashCode(parentKeyword)
-                   //+ GeneralUtil.GetHashCode(parentParams)
-                   + GeneralUtil.GetHashCode(keywordsFilter)
-                   + GeneralUtil.GetHashCode(isSpaceNext);
+                int result = 37;
+
+                result *= 397;
+                result += startPos;
+
+                result *= 397;
+                result += prev_startPos;
+
+                result *= 397;
+                result += isPrevStartPosSameAsStartPosParentCount;
+
+                result *= 397;
+                result += endPos;
+
+                result *= 397;
+                result += endPos_forAtomParts;
+
+                result *= 397;
+                result += canStopByForAtomParts.GetHashCode();
+
+                result *= 397;
+                result += afterKeywordPartExist.GetHashCode();
+
+                result *= 397;
+                result += isTopLevelCall.GetHashCode();
+
+                result *= 397;
+                result += lookForLocalRootOnly.GetHashCode();
+
+                result *= 397;
+                result += GeneralUtil.GetHashCode(parentKeyword);
+
+                result *= 397;
+                result += GeneralUtil.GetHashCode(parentParams);
+
+                result *= 397;
+                result += keywordsFilter.GetHashCode();
+
+                result *= 397;
+                result += isSpaceNext.GetHashCode();
+
+                return result;
                 
             }    
         }
@@ -1160,13 +1189,6 @@ namespace m0.ZeroCode
                 examinedKeywords = _examinedKeywords;
                 link = _link;                
                 newPos = _newPos;                
-            }
-
-            public override int GetHashCode()
-            {
-                return examinedKeywords.GetHashCode()
-                + link.GetHashCode()
-                + newPos.GetHashCode();
             }
         }
 
@@ -1217,8 +1239,8 @@ namespace m0.ZeroCode
 
             //MinusZero.Instance.Log(0, "_tryIfKeyword", LOGPREFIX + "RUN "+callParams.ToString());
 
-            // PARAMS OPTIMISATION OUT!!! as it does not increase performance
-            /*if (params_IN_OUT_dictionary.ContainsKey(parameters_IN.GetHashCode()))
+            // PARAMS OPTIMISATION 
+            if (params_IN_OUT_dictionary.ContainsKey(parameters_IN.GetHashCode()))
             {
                 parameters_OUT = params_IN_OUT_dictionary[parameters_IN.GetHashCode()];
 
@@ -1226,10 +1248,8 @@ namespace m0.ZeroCode
                 link = parameters_OUT.link;
                 newPos = parameters_OUT.newPos;
 
-              //  MinusZero.Instance.Log(0, "YES", "");
-
                 return;
-            }*/
+            }
 
             //
 
@@ -1244,18 +1264,18 @@ namespace m0.ZeroCode
               //if (text[startPos] == '\r' || text[startPos] == '\n')
                 newPos = s.currentLineInfo.lineEnd_NoTrim + 1;
 
-               // parameters_OUT = new tryIsKeyword_Parameters_OUT(examinedKeywords, link, newPos);
+                parameters_OUT = new tryIsKeyword_Parameters_OUT(examinedKeywords, link, newPos);
 
-                //params_IN_OUT_dictionary.Add(parameters_IN.GetHashCode(), parameters_OUT);
+                params_IN_OUT_dictionary.Add(parameters_IN.GetHashCode(), parameters_OUT);
 
                 return;
             }
 
             if (startPos == endPos_forAtomParts)
             {
-               // parameters_OUT = new tryIsKeyword_Parameters_OUT(examinedKeywords, link, newPos);
+                parameters_OUT = new tryIsKeyword_Parameters_OUT(examinedKeywords, link, newPos);
 
-               // params_IN_OUT_dictionary.Add(parameters_IN.GetHashCode(), parameters_OUT);
+                params_IN_OUT_dictionary.Add(parameters_IN.GetHashCode(), parameters_OUT);
 
                 return;
             }
@@ -1308,9 +1328,9 @@ namespace m0.ZeroCode
 
             if (sPos == endPos)
             {
-               // parameters_OUT = new tryIsKeyword_Parameters_OUT(examinedKeywords, link, newPos);
+                parameters_OUT = new tryIsKeyword_Parameters_OUT(examinedKeywords, link, newPos);
 
-                //params_IN_OUT_dictionary.Add(parameters_IN.GetHashCode(), parameters_OUT);
+                params_IN_OUT_dictionary.Add(parameters_IN.GetHashCode(), parameters_OUT);
 
                 return;
             }
@@ -1502,9 +1522,9 @@ namespace m0.ZeroCode
                         //MinusZero.Instance.Log(1, "_tryIsKeyword", LOGPREFIX + "RETURN:" + trySpecialKeyword + " newPos:" + newPos);
                     }
 
-                   //parameters_OUT = new tryIsKeyword_Parameters_OUT(examinedKeywords, link, newPos);
+                    parameters_OUT = new tryIsKeyword_Parameters_OUT(examinedKeywords, link, newPos);
 
-                   // params_IN_OUT_dictionary.Add(parameters_IN.GetHashCode(), parameters_OUT);
+                    params_IN_OUT_dictionary.Add(parameters_IN.GetHashCode(), parameters_OUT);
 
                     return;
                 }
@@ -1557,9 +1577,9 @@ namespace m0.ZeroCode
 
                 //MinusZero.Instance.Log(0, "_tryIsKeyword", LOGPREFIX + "HARD RETURN");
 
-                //parameters_OUT = new tryIsKeyword_Parameters_OUT(examinedKeywords, link, newPos);
+                parameters_OUT = new tryIsKeyword_Parameters_OUT(examinedKeywords, link, newPos);
 
-                //params_IN_OUT_dictionary.Add(parameters_IN.GetHashCode(), parameters_OUT);
+                params_IN_OUT_dictionary.Add(parameters_IN.GetHashCode(), parameters_OUT);
 
                 return;
             }
@@ -2031,10 +2051,10 @@ namespace m0.ZeroCode
             } else
                 newPos = sPos;
 
-            //parameters_OUT = new tryIsKeyword_Parameters_OUT(examinedKeywords, link, newPos);
+            parameters_OUT = new tryIsKeyword_Parameters_OUT(examinedKeywords, link, newPos);
 
-           // if (!params_IN_OUT_dictionary.ContainsKey(parameters_IN.GetHashCode()))
-             //   params_IN_OUT_dictionary.Add(parameters_IN.GetHashCode(), parameters_OUT);
+            if (!params_IN_OUT_dictionary.ContainsKey(parameters_IN.GetHashCode()))
+                params_IN_OUT_dictionary.Add(parameters_IN.GetHashCode(), parameters_OUT);
 
             //MinusZero.Instance.Log(1, "_tryIsKeyword", LOGPREFIX+"END link:"+link+" keywordsCount:"+examinedKeywords.Count);
 
