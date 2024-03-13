@@ -395,6 +395,34 @@ namespace m0.ZeroCode
             firstPart = query.Substring(0, slashPos);
         }
 
+        public static bool TryStringMatch(zstring s, int pos, string toMatch)
+        {
+            //TryStringMatch_params p = new TryStringMatch_params(s, pos, toMatch);
+
+             //int h = p.GetHashCode();
+
+            if (smdict.TryStringMatch.ContainsKey(h))
+              return smdict.TryStringMatch[h];
+
+            int toMatchLength = toMatch.Length;
+
+            if (s.Length < pos + toMatchLength)
+            {
+                //    smdict.TryStringMatch.Add(h, false);
+                return false;
+            }
+
+            for (int x = 0; x < toMatchLength; x++)
+                if (s[pos + x] != toMatch[x])
+                {
+                    //      smdict.TryStringMatch.Add(h, false);
+                    return false;
+                }
+
+            //  smdict.TryStringMatch.Add(h, true);
+            return true;
+        }
+
         public static bool TryStringMatch(string s, int pos, string toMatch)
         {
             TryStringMatch_params p = new TryStringMatch_params(s, pos, toMatch);
