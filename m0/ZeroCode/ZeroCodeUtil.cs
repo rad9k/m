@@ -16,9 +16,9 @@ namespace m0.ZeroCode
     {
         public zstring s;
         public int pos;
-        public string toMatch;
+        public zstring toMatch;
 
-        public TryStringMatch_params(zstring _s, int _pos, string _toMatch)
+        public TryStringMatch_params(zstring _s, int _pos, zstring _toMatch)
         {
             this.s = _s;
             this.pos = _pos;
@@ -47,12 +47,12 @@ namespace m0.ZeroCode
 
     class TabRemove_tryStringMatch_params
     {
-        public string s;
+        public zstring s;
         public int pos;
-        public string toMatch;
+        public zstring toMatch;
         public int toRemoveTabs;
 
-        public TabRemove_tryStringMatch_params(string s, int pos, string toMatch, int toRemoveTabs)
+        public TabRemove_tryStringMatch_params(zstring s, int pos, zstring toMatch, int toRemoveTabs)
         {
             this.s = s;
             this.pos = pos;
@@ -84,12 +84,14 @@ namespace m0.ZeroCode
         }
     }
 
+    public static bool DoTextRangeContainString(zstring s, int beg, int end, zstring toMatch)
+
     class TryStringEndMatch_params
     {
-        public string s;
-        public string toMatch;
+        public zstring s;
+        public zstring toMatch;
 
-        public TryStringEndMatch_params(string s, string toMatch)
+        public TryStringEndMatch_params(zstring s, zstring toMatch)
         {
             this.s = s;
             this.toMatch = toMatch;
@@ -113,11 +115,11 @@ namespace m0.ZeroCode
 
     class GetNextMatch_params
     {
-        public string s;
+        public zstring s;
         public int startFrom;
-        public string toMatch;
+        public zstring toMatch;
 
-        public GetNextMatch_params(string s, int startFrom, string toMatch)
+        public GetNextMatch_params(zstring s, int startFrom, zstring toMatch)
         {
             this.s = s;
             this.startFrom = startFrom;
@@ -146,12 +148,12 @@ namespace m0.ZeroCode
 
     class GetNextMatch_twoAtOnce_params
     {
-        public string s;
+        public zstring s;
         public int startFrom;
-        public string toMatch1;
-        public string toMatch2;
+        public zstring toMatch1;
+        public zstring toMatch2;
 
-        public GetNextMatch_twoAtOnce_params(string s, int startFrom, string toMatch1, string toMatch2)
+        public GetNextMatch_twoAtOnce_params(zstring s, int startFrom, zstring toMatch1, zstring toMatch2)
         {
             this.s = s;
             this.startFrom = startFrom;
@@ -181,10 +183,10 @@ namespace m0.ZeroCode
 
     class GetNextCharacterPartFromKeyword_startingFromNonParameter_params
     {
-        public string keyword;
+        public zstring keyword;
         public int startFrom;
 
-        public GetNextCharacterPartFromKeyword_startingFromNonParameter_params(string keyword, int startFrom)
+        public GetNextCharacterPartFromKeyword_startingFromNonParameter_params(zstring keyword, int startFrom)
         {
             this.keyword = keyword;
             this.startFrom = startFrom;
@@ -393,7 +395,8 @@ namespace m0.ZeroCode
             firstPart = query.Substring(0, slashPos);
         }
 
-        public static bool TryStringMatch(zstring s, int pos, string toMatch)
+        // Z-version
+        public static bool TryStringMatch(zstring s, int pos, zstring toMatch)
         {
             //TryStringMatch_params p = new TryStringMatch_params(s, pos, toMatch);
 
@@ -421,40 +424,12 @@ namespace m0.ZeroCode
             return true;
         }
 
-        public static bool TryStringMatch(string s, int pos, string toMatch)
+        public static bool TabRemove_tryStringMatch(zstring s, int pos, zstring toMatch, int toRemoveTabs)
         {
-            //TryStringMatch_params p = new TryStringMatch_params(s, pos, toMatch);
+            //TabRemove_tryStringMatch_params p = new TabRemove_tryStringMatch_params(s, pos, toMatch, toRemoveTabs);
 
-           // int h = p.GetHashCode();
-
-            //if (smdict.TryStringMatch.ContainsKey(h))
-            //  return smdict.TryStringMatch[h];
-
-            int toMatchLength = toMatch.Length;
-
-            if (s.Length < pos + toMatchLength)
-            {
-            //    smdict.TryStringMatch.Add(h, false);
-                return false;
-            }
-
-            for (int x = 0; x < toMatchLength; x++)
-                if (s[pos + x] != toMatch[x])
-                {
-              //      smdict.TryStringMatch.Add(h, false);
-                    return false;
-                }
-
-          //  smdict.TryStringMatch.Add(h, true);
-            return true;
-        }
-
-        public static bool _TabRemove_tryStringMatch(string s, int pos, string toMatch, int toRemoveTabs)
-        {
-            TabRemove_tryStringMatch_params p = new TabRemove_tryStringMatch_params(s, pos, toMatch, toRemoveTabs);
-
-            if (smdict.TabRemove_tryStringMatch.ContainsKey(p.GetHashCode()))
-                return smdict.TabRemove_tryStringMatch[p.GetHashCode()];
+            //if (smdict.TabRemove_tryStringMatch.ContainsKey(p.GetHashCode()))
+              //  return smdict.TabRemove_tryStringMatch[p.GetHashCode()];
 
             int toMatchLength = toMatch.Length;
 
@@ -491,7 +466,7 @@ namespace m0.ZeroCode
             return true;
         }
 
-        public static bool _DoTextRangeContainString(string s, int beg, int end, string toMatch)
+        public static bool DoTextRangeContainString(zstring s, int beg, int end, zstring toMatch)
         {
             int cnt;
 

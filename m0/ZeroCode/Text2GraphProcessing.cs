@@ -626,6 +626,7 @@ namespace m0.ZeroCode
             public Text2GraphProcessing parent;
             public IVertex keywordVertex;
             public String keyword;
+            public zstring zkeyword;
 
             public keywordTryingState state;
             public int currentPositionInKeyword;
@@ -665,6 +666,7 @@ namespace m0.ZeroCode
                 parent = _parent;
                 keywordVertex = source.keywordVertex;
                 keyword = source.keyword;
+                zkeyword = source.zkeyword;
                 currentPositionInKeyword = source.currentPositionInKeyword;
                 state = source.state;
                 currentlyProcessedParameterName = source.currentlyProcessedParameterName;
@@ -707,6 +709,8 @@ namespace m0.ZeroCode
 
                 keyword = removeSpaces((String)keywordVertex.Value);
 
+                zkeyword = new zstring(keyword);
+
                // MinusZero.Instance.Log(-1, "KTD", keyword);
 
                 currentPositionInKeyword = 0;
@@ -723,9 +727,9 @@ namespace m0.ZeroCode
 
             public bool currentPositionInKeyword_isParameterMatch(ParsingStack s, int curSpos)
             {
-                 if(ZeroCodeUtil.TryStringMatch(keyword, currentPositionInKeyword, "(*") &&!isInMultiParameter())
+                 if(ZeroCodeUtil.TryStringMatch(zkeyword, currentPositionInKeyword, "(*") &&!isInMultiParameter())
                   {
-                      if(ZeroCodeUtil.TryStringMatch(keyword, currentPositionInKeyword+2, "(+"))
+                      if(ZeroCodeUtil.TryStringMatch(zkeyword, currentPositionInKeyword+2, "(+"))
                       {
                         int multiParameterSeparatorEndPos = ZeroCodeUtil.GetNextMatch(keyword, currentPositionInKeyword + 4, "+)");
 
@@ -2272,22 +2276,6 @@ namespace m0.ZeroCode
             }
 
             return newPos;
-        }
-
-        private bool testIfIsKeyword_noStartingWithParameter(int startPos)
-        {
-            char charAtPos = text[startPos];
-
-            if (!dict.allKeywordsSubstringsDictionary.ContainsKey(charAtPos))
-                return false;
-
-            List<string> l = dict.allKeywordsSubstringsDictionary[charAtPos];
-
-            foreach (string s in l)
-                if (ZeroCodeUtil.TryStringMatch(text, startPos, s))
-                    return true;
-
-            return false;
         }
 
         void log_keywords(List<keywordTryingData> examinedKeywords, int pos, string LOGPREFIX)
