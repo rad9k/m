@@ -654,6 +654,7 @@ namespace m0.ZeroCode
 
             public string currentlyProcessedParameterName;
             public string afterParameterString;
+            public zstring zafterParameterString;
 
             public int multiParameterCount = 0;
 
@@ -667,11 +668,13 @@ namespace m0.ZeroCode
             //
 
             string multiParameterSeparator;
+            zstring zmultiParameterSeparator;
             string multiParameterString;
             zstring zmultiParameterString;
             string multiParamPlusSeparatorString;
             string multiParameterAfterParamBeforeSeparator;
             string multiParameterAfterSeparatorString;
+            zstring zmultiParameterAfterSeparatorString;
 
             int currentPositionInMultiParamPlusSeparatorString = -1;
 
@@ -690,6 +693,7 @@ namespace m0.ZeroCode
                 state = source.state;
                 currentlyProcessedParameterName = source.currentlyProcessedParameterName;
                 afterParameterString = source.afterParameterString;
+                zafterParameterString = new zstring(afterParameterString);
             }
 
             static Dictionary<string, string> keywordNoSpacesDict = new Dictionary<string, string>();
@@ -748,7 +752,7 @@ namespace m0.ZeroCode
             static zstring bracket_plus = new zstring("(+");
             static zstring plus_bracket = new zstring("+)");
             static zstring star_bracket = new zstring("*)");
-            static zstring anglebracket_bracket = new zstring("*)");
+            static zstring anglebracket_bracket = new zstring(">)");
 
             public bool currentPositionInKeyword_isParameterMatch(ParsingStack s, int curSpos)
             {
@@ -759,6 +763,7 @@ namespace m0.ZeroCode
                         int multiParameterSeparatorEndPos = ZeroCodeUtil.GetNextMatch(zkeyword, currentPositionInKeyword + 4, plus_bracket);
 
                         multiParameterSeparator = keyword.Substring(currentPositionInKeyword + 4, multiParameterSeparatorEndPos - currentPositionInKeyword - 4);
+                        zmultiParameterSeparator = new zstring(multiParameterSeparator);
 
                         multiParameterStringBegPosition = multiParameterSeparatorEndPos + 2;
 
@@ -772,6 +777,7 @@ namespace m0.ZeroCode
                     else
                     {
                         multiParameterSeparator = "";
+                        zmultiParameterSeparator = new zstring(multiParameterSeparator);
 
                         multiParameterStringBegPosition = currentPositionInKeyword + 2;
 
@@ -788,8 +794,9 @@ namespace m0.ZeroCode
                     multiParameterAfterParamBeforeSeparator = multiParameterString.Substring(multiParameterAfterParamBeg);
 
                     multiParameterAfterSeparatorString = ZeroCodeUtil.GetNextCharacterPartFromKeyword_startingFromNonParameter(keyword, multiParameterStringEndPosition + 1);
+                    zmultiParameterAfterSeparatorString = new zstring(multiParameterAfterSeparatorString);
 
-                    if(ZeroCodeUtil.TabRemove_tryStringMatch(parent.ztext, curSpos, zkeyword.Substring(multiParameterStringEndPosition + 1), s.currentLineInfo.tabCount))
+                    if (ZeroCodeUtil.TabRemove_tryStringMatch(parent.ztext, curSpos, zkeyword.Substring(multiParameterStringEndPosition + 1), s.currentLineInfo.tabCount))
                     {
                         currentPositionInKeyword = multiParameterStringEndPosition + 1;
                     }
@@ -885,55 +892,62 @@ namespace m0.ZeroCode
             {
                 int currentPosition;
                 string str;
+                zstring zstr;
 
                 if (isInMultiParameter())
                 {
                     //MinusZero.Instance.Log(1, "GetParameter", "MULTI: currentPositionInMultiParamPlusSeparatorString:"+ currentPositionInMultiParamPlusSeparatorString);
                     currentPosition = currentPositionInMultiParamPlusSeparatorString;
                     str = multiParamPlusSeparatorString;
+                    zstr = new zstring(str);
                 }
                 else
                 {
                     //MinusZero.Instance.Log(1, "GetParameter", "NORMAL");
                     currentPosition = currentPositionInKeyword;
                     str = keyword;
+                    zstr = new zstring(str);
                 }
 
                 int begCurrentPosition = currentPosition;
 
-                currentPosition = ZeroCodeUtil.GetNextMatch(str, currentPosition + 2, ">)") + 2;
+                currentPosition = ZeroCodeUtil.GetNextMatch(zstr, currentPosition + 2, anglebracket_bracket) + 2;
                 currentlyProcessedParameterName = str.Substring(begCurrentPosition + 3, currentPosition - begCurrentPosition - 5);
 
                 if (isInMultiParameter())
                 {
                     if (currentPosition == multiParameterString.Length)
                     {
-                        int whatMatch;
-
                         multiParameterAfterSeparatorString = ZeroCodeUtil.GetNextCharacterPartFromKeyword_startingFromNonParameter(keyword, multiParameterStringEndPosition + 1);
+                        zmultiParameterAfterSeparatorString = new zstring(multiParameterAfterSeparatorString);
 
-                        int twoPos = ZeroCodeUtil.GetNextMatch_twoAtOnce(parent.text, curSpos,
-                            multiParameterSeparator,
-                            multiParameterAfterSeparatorString,
-                            out whatMatch);
+                        int whatMatch = ZeroCodeUtil.GetNextMatch_twoAtOnce(parent.ztext, curSpos,
+                            zmultiParameterSeparator,
+                            zmultiParameterAfterSeparatorString);
 
                         if (whatMatch == 0)
+                        {
                             afterParameterString = "";
+                            zafterParameterString = new zstring(afterParameterString);
+                        }
 
                         if (whatMatch == 1)
+                        {
                             afterParameterString = multiParameterSeparator;
+                            zafterParameterString = new zstring(afterParameterString);
+                        }
 
                         if (whatMatch == 2)
+                        {
                             afterParameterString = multiParameterAfterSeparatorString;
+                            zafterParameterString = new zstring(afterParameterString);
+                        }
                     }
                     else
                     {
-                        int whatMatch;
-
-                        ZeroCodeUtil.GetNextMatch_twoAtOnce(parent.text, curSpos,
-                            multiParameterAfterParamBeforeSeparator + multiParameterSeparator,
-                            multiParameterAfterParamBeforeSeparator + multiParameterAfterSeparatorString,
-                            out whatMatch);
+                        int whatMatch = ZeroCodeUtil.GetNextMatch_twoAtOnce(parent.ztext, curSpos,
+                            new zstring(multiParameterAfterParamBeforeSeparator + multiParameterSeparator),
+                            new zstring(multiParameterAfterParamBeforeSeparator + zmultiParameterAfterSeparatorString));
 
                         if (whatMatch == 0)
                             afterParameterString = "";
@@ -946,7 +960,10 @@ namespace m0.ZeroCode
                     }
                 }
                 else
+                {
                     afterParameterString = ZeroCodeUtil.GetNextCharacterPartFromKeyword_startingFromNonParameter(str, currentPosition);
+                    zafterParameterString = new zstring(afterParameterString);
+                }
 
                 //MinusZero.Instance.Log(1, "GetParameter", "currentlyProcessedParameterName:"+ currentlyProcessedParameterName+" curPosition:" + currentPosition+ " afterParameterString:"+ afterParameterString);
 
@@ -1766,7 +1783,7 @@ namespace m0.ZeroCode
                                 if (ktd.afterParameterString.Length > 0 && ktd.afterParameterString[0] == ' ')
                                     _isSpaceNext = true;
 
-                                int sPosAfterParameter = ZeroCodeUtil.GetNextMatch(text, sPos, ktd.afterParameterString);
+                                int sPosAfterParameter = ZeroCodeUtil.GetNextMatch(ztext, sPos, ktd.zafterParameterString);
 
                               //  MinusZero.Instance.Log(1, "_tryIsKeyword", LOGPREFIX+"sPosAfterParameter:" + sPosAfterParameter+ " for afterParameterString:"+ktd.afterParameterString);
 

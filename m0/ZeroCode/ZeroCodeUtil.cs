@@ -522,21 +522,6 @@ namespace m0.ZeroCode
             return true;
         }             
 
-        public static int GetNextMatch(string s, int startFrom, string toMatch)
-        {
-            int pos = startFrom;
-
-            while ((pos + toMatch.Length) <= s.Length)
-            {
-                if (TryStringMatch(s, pos, toMatch))
-                    return pos;
-
-                pos++;
-            }
-
-            return -1;
-        }
-
         public static int GetNextMatch_twoAtOnce(string s, int startFrom, string toMatch1, string toMatch2, out int whatMatch)
         {
             whatMatch = 0;
