@@ -45,6 +45,7 @@ namespace m0.ZeroCode
             public LineInfo currentLineInfo;
 
             public string currentLineNoTabs;
+            public zstring zcurrentLineNoTabs;
 
             public IVertex LocalRoot;
 
@@ -91,6 +92,7 @@ namespace m0.ZeroCode
                 currentLineInfo = _parentStack.currentLineInfo;
 
                 currentLineNoTabs = _parentStack.currentLineNoTabs;
+                zcurrentLineNoTabs = new zstring(currentLineNoTabs);
 
                 LocalRoot = _parentStack.LocalRoot;
 
@@ -146,6 +148,7 @@ namespace m0.ZeroCode
                 currentLineInfo = copyFrom.currentLineInfo;
 
                 currentLineNoTabs = copyFrom.currentLineNoTabs;
+                zcurrentLineNoTabs = copyFrom.zcurrentLineNoTabs;
 
                 LocalRoot = copyFrom.LocalRoot;
 
@@ -240,9 +243,15 @@ namespace m0.ZeroCode
                 currentLineInfo = processing.lineInfoList[lineNo];
 
                 if (currentLineInfo.isEmpty)
+                {
                     currentLineNoTabs = "";
+                    zcurrentLineNoTabs = new zstring("");
+                }
                 else
+                {
                     currentLineNoTabs = processing.text.Substring(currentLineInfo.lineBeg, currentLineInfo.lineEnd - currentLineInfo.lineBeg + 1);
+                    zcurrentLineNoTabs = new zstring(currentLineNoTabs);
+                }
 
                 // and now check if there are only whitespaces
 
@@ -267,12 +276,20 @@ namespace m0.ZeroCode
                     return false;
                 
                 currentLineInfo = processing.lineInfoList[newLineNo];
+                zcurrentLineNoTabs = new zstring(currentLineNoTabs);
+
                 lineNo = newLineNo;
 
                 if (currentLineInfo.isEmpty)
+                {
                     currentLineNoTabs = "";
+                    zcurrentLineNoTabs = new zstring("");
+                }
                 else
+                {
                     currentLineNoTabs = processing.text.Substring(currentLineInfo.lineBeg, currentLineInfo.lineEnd - currentLineInfo.lineBeg + 1);
+                    zcurrentLineNoTabs = new zstring(currentLineNoTabs);
+                }
 
                 // we will do not do this now BUT might think about it in future
 
@@ -324,6 +341,7 @@ namespace m0.ZeroCode
         public IVertex baseVertex;
 
         string text;
+        zstring ztext;
 
         public List<LineInfo> lineInfoList;
 
@@ -650,6 +668,7 @@ namespace m0.ZeroCode
 
             string multiParameterSeparator;
             string multiParameterString;
+            zstring zmultiParameterString;
             string multiParamPlusSeparatorString;
             string multiParameterAfterParamBeforeSeparator;
             string multiParameterAfterSeparatorString;
@@ -725,21 +744,28 @@ namespace m0.ZeroCode
                 return LocalRootNext.getMatchedOnPositionInText_Reccurent();
             }
 
+            static zstring bracket_star = new zstring("(*");
+            static zstring bracket_plus = new zstring("(+");
+            static zstring plus_bracket = new zstring("+)");
+            static zstring star_bracket = new zstring("*)");
+            static zstring anglebracket_bracket = new zstring("*)");
+
             public bool currentPositionInKeyword_isParameterMatch(ParsingStack s, int curSpos)
             {
-                 if(ZeroCodeUtil.TryStringMatch(zkeyword, currentPositionInKeyword, "(*") &&!isInMultiParameter())
+                 if(ZeroCodeUtil.TryStringMatch(zkeyword, currentPositionInKeyword, bracket_star) &&!isInMultiParameter())
                   {
-                      if(ZeroCodeUtil.TryStringMatch(zkeyword, currentPositionInKeyword+2, "(+"))
+                      if(ZeroCodeUtil.TryStringMatch(zkeyword, currentPositionInKeyword+2, bracket_plus))
                       {
-                        int multiParameterSeparatorEndPos = ZeroCodeUtil.GetNextMatch(keyword, currentPositionInKeyword + 4, "+)");
+                        int multiParameterSeparatorEndPos = ZeroCodeUtil.GetNextMatch(zkeyword, currentPositionInKeyword + 4, plus_bracket);
 
                         multiParameterSeparator = keyword.Substring(currentPositionInKeyword + 4, multiParameterSeparatorEndPos - currentPositionInKeyword - 4);
 
                         multiParameterStringBegPosition = multiParameterSeparatorEndPos + 2;
 
-                        multiParameterStringEndPosition = ZeroCodeUtil.GetNextMatch(keyword, multiParameterSeparatorEndPos, "*)") + 1;
+                        multiParameterStringEndPosition = ZeroCodeUtil.GetNextMatch(zkeyword, multiParameterSeparatorEndPos, star_bracket) + 1;
 
                         multiParameterString = keyword.Substring(multiParameterStringBegPosition, multiParameterStringEndPosition - multiParameterStringBegPosition - 1);
+                        zmultiParameterString = new zstring(multiParameterString);
 
                         multiParamPlusSeparatorString = multiParameterString + multiParameterSeparator;
                     }
@@ -749,20 +775,21 @@ namespace m0.ZeroCode
 
                         multiParameterStringBegPosition = currentPositionInKeyword + 2;
 
-                        multiParameterStringEndPosition = ZeroCodeUtil.GetNextMatch(keyword, multiParameterStringBegPosition, "*)") + 1;
+                        multiParameterStringEndPosition = ZeroCodeUtil.GetNextMatch(zkeyword, multiParameterStringBegPosition, star_bracket) + 1;
 
                         multiParameterString = keyword.Substring(multiParameterStringBegPosition, multiParameterStringEndPosition - multiParameterStringBegPosition - 1);
+                        zmultiParameterString = new zstring(multiParameterString);
 
                         multiParamPlusSeparatorString = multiParameterString;
                     }
 
-                    int multiParameterAfterParamBeg = ZeroCodeUtil.GetNextMatch(multiParameterString, 4, ">)") + 2;
+                    int multiParameterAfterParamBeg = ZeroCodeUtil.GetNextMatch(zmultiParameterString, 4, anglebracket_bracket) + 2;
 
                     multiParameterAfterParamBeforeSeparator = multiParameterString.Substring(multiParameterAfterParamBeg);
 
                     multiParameterAfterSeparatorString = ZeroCodeUtil.GetNextCharacterPartFromKeyword_startingFromNonParameter(keyword, multiParameterStringEndPosition + 1);
 
-                    if(ZeroCodeUtil.TabRemove_tryStringMatch(parent.text, curSpos, keyword.Substring(multiParameterStringEndPosition + 1), s.currentLineInfo.tabCount))
+                    if(ZeroCodeUtil.TabRemove_tryStringMatch(parent.ztext, curSpos, zkeyword.Substring(multiParameterStringEndPosition + 1), s.currentLineInfo.tabCount))
                     {
                         currentPositionInKeyword = multiParameterStringEndPosition + 1;
                     }
@@ -819,7 +846,7 @@ namespace m0.ZeroCode
                     if ((currentPositionInMultiParamPlusSeparatorString == multiParameterString.Length // after multi param string
                        || (multiParameterCount > 1 && currentPositionInMultiParamPlusSeparatorString == 0)) // after multi param and no separator
                        // && keyword[multiParameterStringEndPosition + 1] == v) // we are going out of multi
-                       && ZeroCodeUtil.TabRemove_tryStringMatch(parent.text,curPos,keyword.Substring(multiParameterStringEndPosition + 1), s.currentLineInfo.tabCount)) // this is the way
+                       && ZeroCodeUtil.TabRemove_tryStringMatch(parent.ztext,curPos,zkeyword.Substring(multiParameterStringEndPosition + 1), s.currentLineInfo.tabCount)) // this is the way
                     {
                         currentPositionInKeyword = multiParameterStringEndPosition + 1;
                         currentPositionInMultiParamPlusSeparatorString = -1; // out of multi
@@ -1008,8 +1035,8 @@ namespace m0.ZeroCode
             if (s.currentLineInfo.lineBeg >= text.Length)
                 return null;
 
-            if (!ZeroCodeUtil.TryStringMatch(s.currentLineNoTabs, 0, dict.CodeGraphVertexPrefix) 
-                || !ZeroCodeUtil.TryStringEndMatch(s.currentLineNoTabs, dict.CodeGraphVertexSuffix))
+            if (!ZeroCodeUtil.TryStringMatch(s.zcurrentLineNoTabs, 0, dict.zCodeGraphVertexPrefix) 
+                || !ZeroCodeUtil.TryStringEndMatch(s.zcurrentLineNoTabs, dict.zCodeGraphVertexSuffix))
             {
                 string link;
 
@@ -2138,7 +2165,7 @@ namespace m0.ZeroCode
             if (parentKeyword == null || !dict.keywordInfoDict[parentKeyword].hasCRLF)
                 return sPos;
 
-            if (ZeroCodeUtil.DoTextRangeContainString(text, lineInfoList[s.lineNo].lineBeg, lineInfoList[s.lineNo].lineEnd, dict.CRLFoperator))
+            if (ZeroCodeUtil.DoTextRangeContainString(ztext, lineInfoList[s.lineNo].lineBeg, lineInfoList[s.lineNo].lineEnd, dict.zCRLFoperator))
                 return sPos; // XXX bit hacky but no better idea
 
             if (examinedKeywords == null)
@@ -3071,6 +3098,7 @@ namespace m0.ZeroCode
             GestSubGraphPreProcessing();
 
             text = _text + "\r\n"; // for regexpes
+            ztext = new zstring(text);
 
             prepareLineInfoList();
 

@@ -33,7 +33,7 @@ namespace m0.Util
 
         public override string ToString()
         {
-            return internalString.ToString();
+            return internalString;
         }
 
         public zstring Substring(int start, int length)

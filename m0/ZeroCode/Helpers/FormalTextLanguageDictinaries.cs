@@ -51,9 +51,12 @@ namespace m0.ZeroCode.Helpers
 
 
         public string CRLFoperator;
+        public zstring zCRLFoperator;
         public string MetaSeparator;
         public string CodeGraphVertexPrefix;
+        public zstring zCodeGraphVertexPrefix;
         public string CodeGraphVertexSuffix;
+        public zstring zCodeGraphVertexSuffix;
         public char LineContinuationPrefix;
         public char CodeGraphLinkPrefix;
         public string CodeGraphLinkKeywordPrefix; // we store it here and in the textlanguage
@@ -127,9 +130,12 @@ namespace m0.ZeroCode.Helpers
             importDirectMetaList.AddExternalReference();
 
             CRLFoperator = get("CRLFoperator");
+            zCRLFoperator = new zstring(CRLFoperator);
             MetaSeparator = get("MetaSeparator");
             CodeGraphVertexPrefix = get("CodeGraphVertexPrefix");
+            zCodeGraphVertexPrefix = new zstring(CodeGraphVertexPrefix);
             CodeGraphVertexSuffix = get("CodeGraphVertexSuffix");
+            zCodeGraphVertexSuffix = new zstring(CodeGraphVertexSuffix);
             LineContinuationPrefix = get("LineContinuationPrefix").ToCharArray()[0];
             CodeGraphLinkPrefix = get("CodeGraphLinkPrefix").ToCharArray()[0];
             CodeGraphLinkKeywordPrefix = get("CodeGraphLinkKeywordPrefix"); // we store it here and in the textlanguage
