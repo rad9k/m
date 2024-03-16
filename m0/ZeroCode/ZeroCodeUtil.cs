@@ -522,56 +522,6 @@ namespace m0.ZeroCode
             return true;
         }             
 
-        public static int GetNextMatch_twoAtOnce(string s, int startFrom, string toMatch1, string toMatch2, out int whatMatch)
-        {
-            whatMatch = 0;
-
-            int pos = startFrom;
-
-            bool shallProcess = true;
-
-            while (shallProcess)
-            {
-                bool canCheck1 = (pos + toMatch1.Length) <= s.Length;
-                bool canCheck2 = (pos + toMatch2.Length) <= s.Length;
-
-                if (!canCheck1 && !canCheck2)
-                    shallProcess = false;
-                else
-                {
-                    if (canCheck1 && TryStringMatch(s, pos, toMatch1) && toMatch1.Length > 0)
-                    {
-                        whatMatch = 1;
-                        return pos;
-                    }
-
-                    if (canCheck2 && TryStringMatch(s, pos, toMatch2) && toMatch2.Length > 0)
-                    {
-                        whatMatch = 2;
-                        return pos;
-                    }
-                }
-
-                pos++;
-            }
-
-            return -1;
-        }
-
-        public static string GetNextCharacterPartFromKeyword_startingFromNonParameter(string keyword, int startFrom)
-        {
-            for (int x = startFrom; x < keyword.Length; x++)
-            {
-                if (ZeroCodeUtil.TryStringMatch(keyword, x, "(?<"))
-                    return keyword.Substring(startFrom, x - startFrom);
-
-                if (ZeroCodeUtil.TryStringMatch(keyword, x, "(*")) // needs some clever tests ideas, if this is valid????
-                    return keyword.Substring(startFrom, x - startFrom);
-            }
-
-            return keyword.Substring(startFrom);
-        }
-
         /////        
 
         public static bool FilterEdgeForGraph2TextProcessing(IEdge toFilterEdge)

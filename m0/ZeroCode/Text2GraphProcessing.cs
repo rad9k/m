@@ -793,7 +793,8 @@ namespace m0.ZeroCode
 
                     multiParameterAfterParamBeforeSeparator = multiParameterString.Substring(multiParameterAfterParamBeg);
 
-                    multiParameterAfterSeparatorString = ZeroCodeUtil.GetNextCharacterPartFromKeyword_startingFromNonParameter(keyword, multiParameterStringEndPosition + 1);
+                    multiParameterAfterSeparatorString = ZeroCodeUtil.GetNextCharacterPartFromKeyword_startingFromNonParameter(
+                        zkeyword, multiParameterStringEndPosition + 1);
                     zmultiParameterAfterSeparatorString = new zstring(multiParameterAfterSeparatorString);
 
                     if (ZeroCodeUtil.TabRemove_tryStringMatch(parent.ztext, curSpos, zkeyword.Substring(multiParameterStringEndPosition + 1), s.currentLineInfo.tabCount))
@@ -918,7 +919,8 @@ namespace m0.ZeroCode
                 {
                     if (currentPosition == multiParameterString.Length)
                     {
-                        multiParameterAfterSeparatorString = ZeroCodeUtil.GetNextCharacterPartFromKeyword_startingFromNonParameter(keyword, multiParameterStringEndPosition + 1);
+                        multiParameterAfterSeparatorString = ZeroCodeUtil.GetNextCharacterPartFromKeyword_startingFromNonParameter(
+                            zkeyword, multiParameterStringEndPosition + 1);
                         zmultiParameterAfterSeparatorString = new zstring(multiParameterAfterSeparatorString);
 
                         int whatMatch = ZeroCodeUtil.GetNextMatch_twoAtOnce(parent.ztext, curSpos,
@@ -961,7 +963,7 @@ namespace m0.ZeroCode
                 }
                 else
                 {
-                    afterParameterString = ZeroCodeUtil.GetNextCharacterPartFromKeyword_startingFromNonParameter(str, currentPosition);
+                    afterParameterString = ZeroCodeUtil.GetNextCharacterPartFromKeyword_startingFromNonParameter(zstr, currentPosition);
                     zafterParameterString = new zstring(afterParameterString);
                 }
 
