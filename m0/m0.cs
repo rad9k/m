@@ -8,6 +8,7 @@ using m0.Store.FileSystem;
 using m0.Store.Json;
 using m0.UIWpf.Visualisers.Helper;
 using m0.Util;
+using m0.ZeroCode;
 using m0.ZeroTypes;
 using m0.ZeroUML.Instructions;
 using System;
@@ -305,6 +306,10 @@ namespace m0
 
         private void DisposeLog()
         {
+            foreach (KeyValuePair<int, int> kvp in ZeroCodeUtil.GetNextMatch_stats)            
+                Log(0, kvp.Key.ToString(), kvp.Value.ToString());                
+            
+
             Log(0, "DisposeLog", "STOP");
             logFile.Close();
         }
