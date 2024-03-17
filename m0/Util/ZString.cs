@@ -23,7 +23,7 @@ namespace m0.Util
         {
             if (!hashGenerted)
             {
-                hash = internalString.GetHashCode();
+                //hash = internalString.GetHashCode();
 
                 hashGenerted = true;
             }
