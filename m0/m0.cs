@@ -309,7 +309,7 @@ namespace m0
             foreach (KeyValuePair<int, int> kvp in ZeroCodeUtil.GetNextMatch_stats)            
                 Log(0, kvp.Key.ToString(), kvp.Value.ToString());
 
-
+            Log(0, "GetNextMatch_dict", ZeroCodeUtil.GetNextMatch_dict.ToString());
             Log(0, "TryStringMatch_match", ZeroCodeUtil.TryStringMatch_match.ToString());
             Log(0, "TryStringMatch_nomatch", ZeroCodeUtil.TryStringMatch_nomatch.ToString());
             Log(0, "TabRemove_tryStringMatch_match", ZeroCodeUtil.TabRemove_tryStringMatch_match.ToString());

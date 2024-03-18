@@ -369,6 +369,7 @@ namespace m0.ZeroCode
 
         public static int GetNextMatch_match = 0;
         public static int GetNextMatch_nomatch = 0;
+        public static int GetNextMatch_dict = 0;
         public static int GetNextMatch(zstring s, int startFrom, zstring toMatch)
         {
             GetNextMatch_params p = new GetNextMatch_params(s, startFrom, toMatch);
@@ -406,7 +407,10 @@ namespace m0.ZeroCode
                     int lastNotSeen = dict_for_s[toMatch.GetHashCode()];
 
                     if (lastNotSeen <= startFrom)
+                    {
+                        GetNextMatch_dict++;
                         return -1;
+                    }
                 }
 
             }
