@@ -45,7 +45,7 @@ namespace m0.ZeroCode
 
             result *= 397;
             
-            //result += s.GetHashCode();
+            result += s.GetHashCode();
 
             result *= 397;
 
@@ -53,7 +53,7 @@ namespace m0.ZeroCode
 
             result *= 397;
             
-            //result += toMatch.GetHashCode();
+            result += toMatch.GetHashCode();
 
             return result;
         }
@@ -183,7 +183,7 @@ namespace m0.ZeroCode
 
             result *= 397;
 
-            //result += s.GetHashCode();
+            result += s.GetHashCode();
 
             result *= 397;
 
@@ -191,7 +191,7 @@ namespace m0.ZeroCode
 
             result *= 397;
 
-            //result += toMatch.GetHashCode();            
+            result += toMatch.GetHashCode();            
 
             return result;
         }
@@ -308,6 +308,9 @@ namespace m0.ZeroCode
 
         public Dictionary<int, string> GetNextCharacterPartFromKeyword_startingFromNonParameter =
             new Dictionary<int, string>();
+
+        public Dictionary<int, Dictionary<int, int>> GetNextMatch_not_found_dictionary = 
+            new Dictionary<int, Dictionary<int, int>>();
     }
 
     public class ZeroCodeUtil
@@ -335,30 +338,30 @@ namespace m0.ZeroCode
 
             int h = p.GetHashCode();
 
-            /*if (smdict.TryStringMatch.ContainsKey(h))
+            if (smdict.TryStringMatch.ContainsKey(h))
             {
                 TryStringMatch_match++;
                 return smdict.TryStringMatch[h];
             }
             else
-                TryStringMatch_nomatch++;*/
+                TryStringMatch_nomatch++;
 
             int toMatchLength = toMatch.Length;
 
             if (s.Length < pos + toMatchLength)
             {
-                //smdict.TryStringMatch.Add(h, false);
+                smdict.TryStringMatch.Add(h, false);
                 return false;
             }
 
             for (int x = 0; x < toMatchLength; x++)
                 if (s[pos + x] != toMatch[x])
                 {
-                    //smdict.TryStringMatch.Add(h, false);
+                    smdict.TryStringMatch.Add(h, false);
                     return false;
                 }
 
-            //smdict.TryStringMatch.Add(h, true);
+            smdict.TryStringMatch.Add(h, true);
             return true;
         }
 
@@ -373,7 +376,7 @@ namespace m0.ZeroCode
             int h = p.GetHashCode();
 
 
-            /*int val = -2;
+            int val = -2;
 
             if (smdict.GetNextMatch.ContainsKey(h))                            
                 val = smdict.GetNextMatch[h];
@@ -381,15 +384,33 @@ namespace m0.ZeroCode
             if (GetNextMatch_stats.ContainsKey(val))
                 GetNextMatch_stats[val]++;
             else
-                GetNextMatch_stats.Add(val, 0);*/
+                GetNextMatch_stats.Add(val, 0);
 
-            /*if (smdict.GetNextMatch.ContainsKey(h))
+            if (smdict.GetNextMatch.ContainsKey(h))
             {
                 GetNextMatch_match++;
                 return smdict.GetNextMatch[h];
             }
             else
-                GetNextMatch_nomatch++;*/
+                GetNextMatch_nomatch++;
+
+            // NOT FOUND DICT START
+            Dictionary<int, int> dict_for_s = null;
+
+            if (smdict.GetNextMatch_not_found_dictionary.ContainsKey(s.GetHashCode()))
+            {
+                dict_for_s = smdict.GetNextMatch_not_found_dictionary[s.GetHashCode()];
+
+                if (dict_for_s.ContainsKey(toMatch.GetHashCode()))
+                {
+                    int lastNotSeen = dict_for_s[toMatch.GetHashCode()];
+
+                    if (lastNotSeen <= startFrom)
+                        return -1;
+                }
+
+            }
+            // NOT FOUND DICT STOP
 
             int pos = startFrom;
 
@@ -397,14 +418,32 @@ namespace m0.ZeroCode
             {
                 if (TryStringMatch(s, pos, toMatch))
                 {
-                    //smdict.GetNextMatch.Add(h, pos);
+                    smdict.GetNextMatch.Add(h, pos);
                     return pos;
                 }
 
                 pos++;
             }
 
-            //smdict.GetNextMatch.Add(h, -1);
+            smdict.GetNextMatch.Add(h, -1);
+
+            // NOT FOUND DICT START
+            dict_for_s = null;
+
+            if (smdict.GetNextMatch_not_found_dictionary.ContainsKey(s.GetHashCode()))
+                dict_for_s = smdict.GetNextMatch_not_found_dictionary[s.GetHashCode()];
+            else
+            {
+                dict_for_s = new Dictionary<int, int>();
+                smdict.GetNextMatch_not_found_dictionary.Add(s.GetHashCode(), dict_for_s);
+            }
+
+            if (dict_for_s.ContainsKey(toMatch.GetHashCode()))
+                dict_for_s[toMatch.GetHashCode()] = startFrom;
+            else
+                dict_for_s.Add(toMatch.GetHashCode(), startFrom);
+            // NOT FOUND DICT STOP
+
             return -1;
         }
 
