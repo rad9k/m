@@ -314,6 +314,8 @@ namespace m0
             Log(0, "TryStringMatch_nomatch", ZeroCodeUtil.TryStringMatch_nomatch.ToString());
             Log(0, "TabRemove_tryStringMatch_match", ZeroCodeUtil.TabRemove_tryStringMatch_match.ToString());
             Log(0, "TabRemove_tryStringMatch_nomatch", ZeroCodeUtil.TabRemove_tryStringMatch_nomatch.ToString());
+            Log(0, "DoTextRangeContainString_match", ZeroCodeUtil.DoTextRangeContainString_match.ToString());
+            Log(0, "DoTextRangeContainString_nomatch", ZeroCodeUtil.DoTextRangeContainString_nomatch.ToString());
             Log(0, "GetNextMatch_match", ZeroCodeUtil.GetNextMatch_match.ToString());
             Log(0, "GetNextMatch_nomatch", ZeroCodeUtil.GetNextMatch_nomatch.ToString());
             Log(0, "GetNextMatch_twoAtOnce_match", ZeroCodeUtil.GetNextMatch_twoAtOnce_match.ToString());

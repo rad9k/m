@@ -347,19 +347,132 @@ namespace m0.ZeroCode
 
             if (s.Length < pos + toMatchLength)
             {
-                smdict.TryStringMatch.Add(h, false);
+                //smdict.TryStringMatch.Add(h, false);
                 return false;
             }
 
             for (int x = 0; x < toMatchLength; x++)
                 if (s[pos + x] != toMatch[x])
                 {
-                    smdict.TryStringMatch.Add(h, false);
+                    //smdict.TryStringMatch.Add(h, false);
                     return false;
                 }
 
-            smdict.TryStringMatch.Add(h, true);
+            //smdict.TryStringMatch.Add(h, true);
             return true;
+        }
+
+        public static Dictionary<int, int> GetNextMatch_stats = new Dictionary<int, int>();
+
+        public static int GetNextMatch_match = 0;
+        public static int GetNextMatch_nomatch = 0;
+        public static int GetNextMatch(zstring s, int startFrom, zstring toMatch)
+        {
+            GetNextMatch_params p = new GetNextMatch_params(s, startFrom, toMatch);
+
+            int h = p.GetHashCode();
+
+
+            /*int val = -2;
+
+            if (smdict.GetNextMatch.ContainsKey(h))                            
+                val = smdict.GetNextMatch[h];
+
+            if (GetNextMatch_stats.ContainsKey(val))
+                GetNextMatch_stats[val]++;
+            else
+                GetNextMatch_stats.Add(val, 0);*/
+
+            if (smdict.GetNextMatch.ContainsKey(h))
+            {
+                GetNextMatch_match++;
+                return smdict.GetNextMatch[h];
+            }
+            else
+                GetNextMatch_nomatch++;
+
+            int pos = startFrom;
+
+            while ((pos + toMatch.Length) <= s.Length)
+            {
+                if (TryStringMatch(s, pos, toMatch))
+                {
+                    //smdict.GetNextMatch.Add(h, pos);
+                    return pos;
+                }
+
+                pos++;
+            }
+
+            //smdict.GetNextMatch.Add(h, -1);
+            return -1;
+        }
+
+        public static int TryStringEndMatch_match = 0;
+        public static int TryStringEndMatch_nomatch = 0;
+
+        public static bool TryStringEndMatch(zstring s, zstring toMatch)
+        {
+            TryStringEndMatch_params p = new TryStringEndMatch_params(s, toMatch);
+
+            int h = p.GetHashCode();
+
+            if (smdict.TryStringEndMatch.ContainsKey(h))
+            {
+                TryStringEndMatch_match++;
+                return smdict.TryStringEndMatch[h];
+            }
+            else
+                TryStringEndMatch_nomatch++;
+
+            int sLength = s.Length;
+
+            int toMatchLength = toMatch.Length;
+
+            if (s.Length < toMatchLength)
+            {
+                smdict.TryStringEndMatch.Add(h, false);
+                return false;
+            }
+
+            for (int x = 1; x <= toMatch.Length; x++)
+                if (s[sLength - x] != toMatch[toMatchLength - x])
+                {
+                    smdict.TryStringEndMatch.Add(h, false);
+                    return false;
+                }
+
+            smdict.TryStringEndMatch.Add(h, true);
+            return true;
+        }
+
+        public static int DoTextRangeContainString_match = 0;
+        public static int DoTextRangeContainString_nomatch = 0;
+        public static bool DoTextRangeContainString(zstring s, int beg, int end, zstring toMatch)
+        {
+            DoTextRangeContainString_params p = new DoTextRangeContainString_params(s, beg, end, toMatch);
+
+            int h = p.GetHashCode();
+
+            if (smdict.DoTextRangeContainString.ContainsKey(h))
+            {
+                DoTextRangeContainString_match++;
+                return smdict.DoTextRangeContainString[h];
+            }
+            else
+                DoTextRangeContainString_nomatch++;
+
+            int cnt;
+
+            for (cnt = beg; cnt + toMatch.Length - 1 <= end; cnt++)
+                if (TryStringMatch(s, cnt, toMatch))
+                {
+                    smdict.DoTextRangeContainString.Add(h, true);
+                    return true;
+                }
+
+            smdict.DoTextRangeContainString.Add(h, false);
+            return false;
         }
 
         public static int TabRemove_tryStringMatch_match = 0;
@@ -411,119 +524,6 @@ namespace m0.ZeroCode
 
             smdict.TabRemove_tryStringMatch.Add(h, true);
             return true;
-        }
-
-        public static int DoTextRangeContainString_match = 0;
-        public static int DoTextRangeContainString_nomatch = 0;
-        public static bool DoTextRangeContainString(zstring s, int beg, int end, zstring toMatch)
-        {
-            DoTextRangeContainString_params p = new DoTextRangeContainString_params(s, beg, end, toMatch);
-
-            int h = p.GetHashCode();
-
-            if (smdict.DoTextRangeContainString.ContainsKey(h))
-            {
-                DoTextRangeContainString_match++;
-                return smdict.DoTextRangeContainString[h];
-            }
-            else
-                DoTextRangeContainString_nomatch++;
-
-            int cnt;
-
-            for (cnt = beg; cnt + toMatch.Length - 1 <= end; cnt++)
-                if (TryStringMatch(s, cnt, toMatch))
-                {
-                    smdict.DoTextRangeContainString.Add(h, true);
-                    return true;
-                }
-
-            smdict.DoTextRangeContainString.Add(h, false);
-            return false;
-        }
-
-        public static int TryStringEndMatch_match = 0;
-        public static int TryStringEndMatch_nomatch = 0;
-
-        public static bool TryStringEndMatch(zstring s, zstring toMatch)
-        {
-            TryStringEndMatch_params p = new TryStringEndMatch_params(s, toMatch);
-
-            int h = p.GetHashCode();
-
-            if (smdict.TryStringEndMatch.ContainsKey(h))
-            {
-                TryStringEndMatch_match++;
-                return smdict.TryStringEndMatch[h];
-            }
-            else
-                TryStringEndMatch_nomatch++;
-
-            int sLength = s.Length;
-
-            int toMatchLength = toMatch.Length;
-
-            if (s.Length < toMatchLength)
-            {
-                smdict.TryStringEndMatch.Add(h, false);
-                return false;
-            }
-
-            for (int x = 1; x <= toMatch.Length; x++)
-                if (s[sLength - x] != toMatch[toMatchLength - x])
-                {
-                    smdict.TryStringEndMatch.Add(h, false);
-                    return false;
-                }
-
-            smdict.TryStringEndMatch.Add(h, true);
-            return true;
-        }
-
-        public static Dictionary<int, int> GetNextMatch_stats = new Dictionary<int, int>();
-
-        public static int GetNextMatch_match = 0;
-        public static int GetNextMatch_nomatch = 0;
-        public static int GetNextMatch(zstring s, int startFrom, zstring toMatch)
-        {
-            GetNextMatch_params p = new GetNextMatch_params(s, startFrom, toMatch);
-
-            int h = p.GetHashCode();
-
-
-            /*int val = -2;
-
-            if (smdict.GetNextMatch.ContainsKey(h))                            
-                val = smdict.GetNextMatch[h];
-
-            if (GetNextMatch_stats.ContainsKey(val))
-                GetNextMatch_stats[val]++;
-            else
-                GetNextMatch_stats.Add(val, 0);*/
-
-            if (smdict.GetNextMatch.ContainsKey(h))
-            {
-                GetNextMatch_match++;
-                return smdict.GetNextMatch[h];
-            }
-            else
-                GetNextMatch_nomatch++;
-
-            int pos = startFrom;
-
-            while ( (pos+toMatch.Length) <= s.Length)
-            {
-                if (TryStringMatch(s, pos, toMatch))
-                {
-                    smdict.GetNextMatch.Add(h, pos);
-                    return pos;
-                }
-
-                pos++;
-            }
-
-            smdict.GetNextMatch.Add(h, -1);
-            return -1;
         }
 
         public static int GetNextMatch_twoAtOnce_match = 0;
