@@ -45,7 +45,7 @@ namespace m0.ZeroCode
 
             result *= 397;
             
-            result += s.GetHashCode();
+            //result += s.GetHashCode();
 
             result *= 397;
 
@@ -53,7 +53,7 @@ namespace m0.ZeroCode
 
             result *= 397;
             
-            result += toMatch.GetHashCode();
+            //result += toMatch.GetHashCode();
 
             return result;
         }
@@ -183,7 +183,7 @@ namespace m0.ZeroCode
 
             result *= 397;
 
-            result += s.GetHashCode();
+            //result += s.GetHashCode();
 
             result *= 397;
 
@@ -191,7 +191,7 @@ namespace m0.ZeroCode
 
             result *= 397;
 
-            result += toMatch.GetHashCode();            
+            //result += toMatch.GetHashCode();            
 
             return result;
         }
@@ -335,13 +335,13 @@ namespace m0.ZeroCode
 
             int h = p.GetHashCode();
 
-            if (smdict.TryStringMatch.ContainsKey(h))
+            /*if (smdict.TryStringMatch.ContainsKey(h))
             {
                 TryStringMatch_match++;
                 return smdict.TryStringMatch[h];
             }
             else
-                TryStringMatch_nomatch++;
+                TryStringMatch_nomatch++;*/
 
             int toMatchLength = toMatch.Length;
 
@@ -383,13 +383,13 @@ namespace m0.ZeroCode
             else
                 GetNextMatch_stats.Add(val, 0);*/
 
-            if (smdict.GetNextMatch.ContainsKey(h))
+            /*if (smdict.GetNextMatch.ContainsKey(h))
             {
                 GetNextMatch_match++;
                 return smdict.GetNextMatch[h];
             }
             else
-                GetNextMatch_nomatch++;
+                GetNextMatch_nomatch++;*/
 
             int pos = startFrom;
 
