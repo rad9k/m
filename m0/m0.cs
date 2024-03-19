@@ -306,22 +306,6 @@ namespace m0
 
         private void DisposeLog()
         {
-            foreach (KeyValuePair<int, int> kvp in ZeroCodeUtil.GetNextMatch_stats)            
-                Log(0, kvp.Key.ToString(), kvp.Value.ToString());
-
-            Log(0, "GetNextMatch_dict", ZeroCodeUtil.GetNextMatch_dict.ToString());
-            Log(0, "TryStringMatch_match", ZeroCodeUtil.TryStringMatch_match.ToString());
-            Log(0, "TryStringMatch_nomatch", ZeroCodeUtil.TryStringMatch_nomatch.ToString());
-            Log(0, "TabRemove_tryStringMatch_match", ZeroCodeUtil.TabRemove_tryStringMatch_match.ToString());
-            Log(0, "TabRemove_tryStringMatch_nomatch", ZeroCodeUtil.TabRemove_tryStringMatch_nomatch.ToString());
-            Log(0, "DoTextRangeContainString_match", ZeroCodeUtil.DoTextRangeContainString_match.ToString());
-            Log(0, "DoTextRangeContainString_nomatch", ZeroCodeUtil.DoTextRangeContainString_nomatch.ToString());
-            Log(0, "GetNextMatch_match", ZeroCodeUtil.GetNextMatch_match.ToString());
-            Log(0, "GetNextMatch_nomatch", ZeroCodeUtil.GetNextMatch_nomatch.ToString());
-            Log(0, "GetNextMatch_twoAtOnce_match", ZeroCodeUtil.GetNextMatch_twoAtOnce_match.ToString());
-            Log(0, "GetNextMatch_twoAtOnce_nomatch", ZeroCodeUtil.GetNextMatch_twoAtOnce_nomatch.ToString());
-            Log(0, "GetNextCharacterPartFromKeyword_startingFromNonParameter_match", ZeroCodeUtil.GetNextCharacterPartFromKeyword_startingFromNonParameter_match.ToString());
-            Log(0, "GetNextCharacterPartFromKeyword_startingFromNonParameter_nomatch", ZeroCodeUtil.GetNextCharacterPartFromKeyword_startingFromNonParameter_nomatch.ToString());
 
         Log(0, "DisposeLog", "STOP");
             logFile.Close();

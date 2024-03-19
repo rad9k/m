@@ -1210,8 +1210,8 @@ namespace m0.ZeroCode
                 result *= 397;
                 result += GeneralUtil.GetHashCode(parentKeyword);
 
-                result *= 397;
-                result += GeneralUtil.GetHashCode(parentParams);
+               // result *= 397;
+               // result += GeneralUtil.GetHashCode(parentParams);
 
                 result *= 397;
                 result += keywordsFilter.GetHashCode();
@@ -3110,6 +3110,8 @@ namespace m0.ZeroCode
       
         public IVertex Process(IVertex _baseVertex, string _text)
         {
+            ZeroCodeUtil.ClearZeroCodeUtilDicionaries();
+
             baseVertex = _baseVertex;
 
             errorList = MinusZero.Instance.CreateTempVertex();

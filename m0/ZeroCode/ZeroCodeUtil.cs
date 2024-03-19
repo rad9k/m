@@ -326,15 +326,14 @@ namespace m0.ZeroCode
             smdict.TabRemove_tryStringMatch.Clear();
             smdict.TryStringEndMatch.Clear();
             smdict.TryStringMatch.Clear();
+
+            smdict.GetNextMatch_not_found_dictionary.Clear();
         }
 
         // Z-version
-
-        public static int TryStringMatch_match = 0;
-        public static int TryStringMatch_nomatch = 0;
         public static bool TryStringMatch(zstring s, int pos, zstring toMatch)
         {
-            TryStringMatch_params p = new TryStringMatch_params(s, pos, toMatch);
+           /* TryStringMatch_params p = new TryStringMatch_params(s, pos, toMatch);
 
             int h = p.GetHashCode();
 
@@ -345,55 +344,34 @@ namespace m0.ZeroCode
             }
             else
                 TryStringMatch_nomatch++;
-
+           */
             int toMatchLength = toMatch.Length;
 
             if (s.Length < pos + toMatchLength)
             {
-                smdict.TryStringMatch.Add(h, false);
+                //smdict.TryStringMatch.Add(h, false);
                 return false;
             }
 
             for (int x = 0; x < toMatchLength; x++)
                 if (s[pos + x] != toMatch[x])
                 {
-                    smdict.TryStringMatch.Add(h, false);
+                //    smdict.TryStringMatch.Add(h, false);
                     return false;
                 }
 
-            smdict.TryStringMatch.Add(h, true);
+           // smdict.TryStringMatch.Add(h, true);
             return true;
         }
 
-        public static Dictionary<int, int> GetNextMatch_stats = new Dictionary<int, int>();
-
-        public static int GetNextMatch_match = 0;
-        public static int GetNextMatch_nomatch = 0;
-        public static int GetNextMatch_dict = 0;
         public static int GetNextMatch(zstring s, int startFrom, zstring toMatch)
         {
             GetNextMatch_params p = new GetNextMatch_params(s, startFrom, toMatch);
 
             int h = p.GetHashCode();
 
-
-            int val = -2;
-
-            if (smdict.GetNextMatch.ContainsKey(h))                            
-                val = smdict.GetNextMatch[h];
-
-            if (GetNextMatch_stats.ContainsKey(val))
-                GetNextMatch_stats[val]++;
-            else
-                GetNextMatch_stats.Add(val, 0);
-
             if (smdict.GetNextMatch.ContainsKey(h))
-            {
-                GetNextMatch_match++;
                 return smdict.GetNextMatch[h];
-            }
-            else
-                GetNextMatch_nomatch++;
 
             // NOT FOUND DICT START
             Dictionary<int, int> dict_for_s = null;
@@ -407,10 +385,7 @@ namespace m0.ZeroCode
                     int lastNotSeen = dict_for_s[toMatch.GetHashCode()];
 
                     if (lastNotSeen <= startFrom)
-                    {
-                        GetNextMatch_dict++;
                         return -1;
-                    }
                 }
 
             }
@@ -451,9 +426,6 @@ namespace m0.ZeroCode
             return -1;
         }
 
-        public static int TryStringEndMatch_match = 0;
-        public static int TryStringEndMatch_nomatch = 0;
-
         public static bool TryStringEndMatch(zstring s, zstring toMatch)
         {
             TryStringEndMatch_params p = new TryStringEndMatch_params(s, toMatch);
@@ -461,12 +433,7 @@ namespace m0.ZeroCode
             int h = p.GetHashCode();
 
             if (smdict.TryStringEndMatch.ContainsKey(h))
-            {
-                TryStringEndMatch_match++;
                 return smdict.TryStringEndMatch[h];
-            }
-            else
-                TryStringEndMatch_nomatch++;
 
             int sLength = s.Length;
 
@@ -489,8 +456,6 @@ namespace m0.ZeroCode
             return true;
         }
 
-        public static int DoTextRangeContainString_match = 0;
-        public static int DoTextRangeContainString_nomatch = 0;
         public static bool DoTextRangeContainString(zstring s, int beg, int end, zstring toMatch)
         {
             DoTextRangeContainString_params p = new DoTextRangeContainString_params(s, beg, end, toMatch);
@@ -498,12 +463,8 @@ namespace m0.ZeroCode
             int h = p.GetHashCode();
 
             if (smdict.DoTextRangeContainString.ContainsKey(h))
-            {
-                DoTextRangeContainString_match++;
                 return smdict.DoTextRangeContainString[h];
-            }
-            else
-                DoTextRangeContainString_nomatch++;
+
 
             int cnt;
 
@@ -518,8 +479,6 @@ namespace m0.ZeroCode
             return false;
         }
 
-        public static int TabRemove_tryStringMatch_match = 0;
-        public static int TabRemove_tryStringMatch_nomatch = 0;
         public static bool TabRemove_tryStringMatch(zstring s, int pos, zstring toMatch, int toRemoveTabs)
         {
             TabRemove_tryStringMatch_params p = new TabRemove_tryStringMatch_params(s, pos, toMatch, toRemoveTabs);
@@ -527,12 +486,7 @@ namespace m0.ZeroCode
             int h = p.GetHashCode();
 
             if (smdict.TabRemove_tryStringMatch.ContainsKey(h))
-            {
-                TabRemove_tryStringMatch_match++;
                 return smdict.TabRemove_tryStringMatch[h];
-            }
-            else
-                TabRemove_tryStringMatch_nomatch++;
 
             int toMatchLength = toMatch.Length;
 
@@ -569,8 +523,6 @@ namespace m0.ZeroCode
             return true;
         }
 
-        public static int GetNextMatch_twoAtOnce_match = 0;
-        public static int GetNextMatch_twoAtOnce_nomatch = 0;
         public static int GetNextMatch_twoAtOnce(zstring s, int startFrom, zstring toMatch1, zstring toMatch2)
         {
             GetNextMatch_twoAtOnce_params p = new GetNextMatch_twoAtOnce_params(s, startFrom, toMatch1, toMatch2);
@@ -578,13 +530,7 @@ namespace m0.ZeroCode
             int h = p.GetHashCode();
 
             if (smdict.GetNextMatch_twoAtOnce.ContainsKey(h))
-            {
-                GetNextMatch_twoAtOnce_match++;
                 return smdict.GetNextMatch_twoAtOnce[h];
-            }
-            else
-                GetNextMatch_twoAtOnce_nomatch++;
-
 
             int pos = startFrom;
 
@@ -623,8 +569,6 @@ namespace m0.ZeroCode
 
         static zstring bracket_star = new zstring("(*");
 
-        public static int GetNextCharacterPartFromKeyword_startingFromNonParameter_match = 0;
-        public static int GetNextCharacterPartFromKeyword_startingFromNonParameter_nomatch = 0;
         public static string GetNextCharacterPartFromKeyword_startingFromNonParameter(zstring keyword, int startFrom)
         {
             GetNextCharacterPartFromKeyword_startingFromNonParameter_params p = new GetNextCharacterPartFromKeyword_startingFromNonParameter_params(keyword, startFrom);
@@ -632,14 +576,7 @@ namespace m0.ZeroCode
             int h = p.GetHashCode();
 
             if (smdict.GetNextCharacterPartFromKeyword_startingFromNonParameter.ContainsKey(h))
-            {
-                GetNextCharacterPartFromKeyword_startingFromNonParameter_match++;
-                return smdict.GetNextCharacterPartFromKeyword_startingFromNonParameter[h];
-            }
-            else
-                GetNextCharacterPartFromKeyword_startingFromNonParameter_nomatch++;
-
-
+                return smdict.GetNextCharacterPartFromKeyword_startingFromNonParameter[h];   
 
             for (int x = startFrom; x < keyword.Length; x++)
             {
