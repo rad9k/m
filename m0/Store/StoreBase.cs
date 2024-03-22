@@ -10,7 +10,7 @@ using m0.Graph;
 
 namespace m0.Store
 {
-    public class StoreBase:IStore
+    public class StoreBase : IStore
     {
         protected IStoreUniverse _StoreUniverse;
 

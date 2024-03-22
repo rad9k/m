@@ -17,6 +17,7 @@ namespace m0.Store.FileSystem
         FileInfo FI;
 
         public JsonSerializationStore JsonStore;
+        public TextStore TextStore;
 
         public override object Value
         {
@@ -53,8 +54,9 @@ namespace m0.Store.FileSystem
 
                         _Identifier = newFileName;                        
 
-                        string extension = FileSystemUtil.getExtension(newFileName);
-                        if (extension == "m0" || extension == "M0") // need this now
+                        string extension = FileSystemUtil.getExtension(newFileName).ToLower();
+                        if (extension == "m0j" || extension == "m0t")
+
                         {
                             GraphUtil.RemoveAllEdges(this);
 
@@ -115,13 +117,20 @@ namespace m0.Store.FileSystem
             if (((FileSystemStore)this.Store).IncludeFileContent)
                 AddEdge(FileSystemStore.File_Content, new FileContentVertex(FI.FullName, this.Store));
 
-            if (FI.Extension == ".m0" || FI.Extension == ".M0")
-            {
-                //JsonStore = new JsonSerializationStore(Identifier.ToString(), MinusZero.Instance, new AccessLevelEnum[] { });
+            string exgtension = FI.Extension.ToLower();
 
+            if (extension == ".m0j")
+            {
                 JsonStore = (JsonSerializationStore)Store.StoreUniverse.GetStore("m0.Store.Json.JsonSerializationStore, m0, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null", Identifier.ToString());
 
                 AddEdge(FileSystemStore.Store, JsonStore.Root);
+            }
+
+            if (extension == ".m0t")
+            {
+                TextStore = (TextStore)Store.StoreUniverse.GetStore("m0.Store.Text.TextStore, m0, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null", Identifier.ToString());
+
+                AddEdge(FileSystemStore.Store, TextStore.Root);
             }
         }        
 
