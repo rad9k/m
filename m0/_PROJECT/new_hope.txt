@@ -12,7 +12,7 @@
 3) Parser update
 	+ multiplicity bug
 	+ proper parsing where there are errors now
-	- empty line handling
+	+ empty line handling
 	- m0t support
 
 4) View support in ZeroCode
