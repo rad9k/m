@@ -20,7 +20,7 @@ namespace m0_SYSTEM_GENERATE.Music
         {            
             print("* saving Lib\\Music");
 
-            GeneralUtil.CreateM0AndMoveEdgesIntoIt_IncludeEverythingBesidesList("lib_music.m0", Music, new HashSet<IVertex>(systemSubGraphWithLinks), storeOverride);                        
+            GeneralUtil.CreateM0JAndMoveEdgesIntoIt_IncludeEverythingBesidesList("lib_music.m0", Music, new HashSet<IVertex>(systemSubGraphWithLinks), storeOverride);                        
         }
 
         static IVertex Music;

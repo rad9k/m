@@ -65,7 +65,7 @@ namespace m0.Util
             s.Attach();
         }
 
-        public static IVertex CreateM0AndMoveEdgesIntoIt(string fileName, IVertex baseVertex, int vertexIdentifierCompensate)
+        public static IVertex CreateM0JAndMoveEdgesIntoIt(string fileName, IVertex baseVertex, int vertexIdentifierCompensate)
         {
             File.Delete(fileName);
 
@@ -82,7 +82,7 @@ namespace m0.Util
             return s.Root;
         }
 
-        public static void CreateM0AndMoveEdgesIntoIt_IncludeEverythingBesidesList(string fileName, IVertex baseVertex, HashSet<IVertex> vertexToLeave, Dictionary<string, StoreId> storeOverride)
+        public static void CreateM0JAndMoveEdgesIntoIt_IncludeEverythingBesidesList(string fileName, IVertex baseVertex, HashSet<IVertex> vertexToLeave, Dictionary<string, StoreId> storeOverride)
         {
             File.Delete(fileName);
 

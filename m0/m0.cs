@@ -171,39 +171,6 @@ namespace m0
             _DefaultFormalTextGenerator = zeroCodeEngine;
         }
 
-        void LoadRootFromM0(){
-
-            IVertex system = root.AddVertex(null, "System");
-
-            //
-
-            JsonSerializationStore rootStore = new JsonSerializationStore("system.m0", this, new AccessLevelEnum[] { });
-
-            ZeroUMLInstructionHelpers.MoveEdgesIntoVertex(rootStore.Root, system);
-
-            //
-
-            IVertex user = root.AddVertex(null, "System");
-
-            JsonSerializationStore userStore = new JsonSerializationStore("user.m0", this, new AccessLevelEnum[] { });
-
-            ZeroUMLInstructionHelpers.MoveEdgesIntoVertex_IncludeEverythingBesidesList(userStore.Root, user, new HashSet<IVertex>(GraphUtil.GetSubGraphWithLinksAsListButExcludeRoot(system)));
-
-            //ZeroUMLInstructionHelpers.MoveEdgesIntoVertex_NoLocalMeta(userStore.Root, user);
-
-            //
-
-            IVertex examples = root.AddVertex(null, "System");
-
-            JsonSerializationStore examplesStore = new JsonSerializationStore("examples.m0", this, new AccessLevelEnum[] { });
-
-            ZeroUMLInstructionHelpers.MoveEdgesIntoVertex_IncludeEverythingBesidesList(examplesStore.Root, examples, new HashSet<IVertex>(GraphUtil.GetSubGraphWithLinksAsListButExcludeRoot(system)));
-
-            //ZeroUMLInstructionHelpers.MoveEdgesIntoVertex_NoLocalMeta(examplesStore.Root, examples);
-
-
-        }
-
         void InitRootVariables()
         {
             IVertex System = GraphUtil.GetQueryOutFirst(Root, null, "System");

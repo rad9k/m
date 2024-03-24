@@ -83,7 +83,7 @@ namespace m0_SYSTEM_GENERATE
 
             print("* saving System to \"system.m0\"");
             
-            IVertex system = GeneralUtil.CreateM0AndMoveEdgesIntoIt(@"system.m0", System, 1);
+            IVertex system = GeneralUtil.CreateM0JAndMoveEdgesIntoIt(@"system.m0", System, 1);
 
             LegacySystem_MinusZero.Instance.AddFastAccessVertexes(); // after save need to update
 
@@ -112,19 +112,19 @@ namespace m0_SYSTEM_GENERATE
 
             //
 
-            print("* saving User to \"user.m0\"");            
+            print("* saving User to \"user.m0j\"");            
 
-            GeneralUtil.CreateM0AndMoveEdgesIntoIt_IncludeEverythingBesidesList("user.m0", User, new HashSet<IVertex>(systemSubGraphWithLinks), storeOverride);            
+            GeneralUtil.CreateM0JAndMoveEdgesIntoIt_IncludeEverythingBesidesList("user.m0j", User, new HashSet<IVertex>(systemSubGraphWithLinks), storeOverride);            
 
-            print("* User saved to \"user.m0\"");
+            print("* User saved to \"user.m0j\"");
 
             //
 
-            print("* saving examples to \"examples.m0\"");
+            print("* saving examples to \"examples.m0j\"");
 
-            GeneralUtil.CreateM0AndMoveEdgesIntoIt_IncludeEverythingBesidesList("examples.m0", examples, new HashSet<IVertex>(systemSubGraphWithLinks), storeOverride);
+            GeneralUtil.CreateM0JAndMoveEdgesIntoIt_IncludeEverythingBesidesList("examples.m0j", examples, new HashSet<IVertex>(systemSubGraphWithLinks), storeOverride);
 
-            print("* examples saved to \"examples.m0\"");
+            print("* examples saved to \"examples.m0j\"");
 
             //
 
@@ -146,16 +146,16 @@ namespace m0_SYSTEM_GENERATE
 
             Lib.CreateLib.Save(systemSubGraphWithLinks, storeOverride);
 
-            print("* Lib::Std and Lib::Sys saved to \"lib_std.m0\" and \"lib_sys.m0\"");
+            print("* Lib::Std and Lib::Sys saved to \"lib_std.m0j\" and \"lib_sys.m0j\"");
 
             Music.CreateMusic.Save(systemSubGraphWithLinks, storeOverride);
 
-            print("* Lib::Music saved \"lib_music.m0\"");
+            print("* Lib::Music saved \"lib_music.m0j\"");
             //
 
-            print("* creating \"_bootstrap.m0\"");
+            print("* creating \"_bootstrap.m0j\"");
 
-            CreateBootstrap.Create("_bootstrap.m0", true);
+            CreateBootstrap.Create("_bootstrap.m0j", true);
 
             //
 
