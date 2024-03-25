@@ -14,7 +14,7 @@ namespace m0.Bootstrap
     {
         public static void Execute()
         {
-            JsonSerializationStore bootstrap = new JsonSerializationStore("_bootstrap.m0", MinusZero.Instance, new AccessLevelEnum[] { }, true);
+            JsonSerializationStore bootstrap = new JsonSerializationStore("_bootstrap.m0j", MinusZero.Instance, new AccessLevelEnum[] { }, true);
 
             IVertex root = MinusZero.Instance.root;
 
