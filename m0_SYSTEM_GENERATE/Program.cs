@@ -46,7 +46,7 @@ namespace m0_SYSTEM_GENERATE
         {
             print("m0 SYSTEM GENERATE");
             print("version 1.0");
-            print("SYSTEM / USER / EXAMPLES m0 files generator");
+            print("SYSTEM / USER / EXAMPLES m0j files generator");
 
             print("");
 
@@ -81,9 +81,9 @@ namespace m0_SYSTEM_GENERATE
 
             IVertex examples = root.Get(false, "examples");
 
-            print("* saving System to \"system.m0\"");
+            print("* saving System to \"system.m0j\"");
             
-            IVertex system = GeneralUtil.CreateM0JAndMoveEdgesIntoIt(@"system.m0", System, 1);
+            IVertex system = GeneralUtil.CreateM0JAndMoveEdgesIntoIt(@"system.m0j", System, 1);
 
             LegacySystem_MinusZero.Instance.AddFastAccessVertexes(); // after save need to update
 
@@ -91,7 +91,7 @@ namespace m0_SYSTEM_GENERATE
 
 
 
-            print("* System saved to \"system.m0\"");
+            print("* System saved to \"system.m0j\"");
 
             //VertexDebugDB.EmitDB();
             //return;
