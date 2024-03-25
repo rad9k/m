@@ -23,24 +23,24 @@ namespace m0_SYSTEM_GENERATE
             IVertex r = store.Root;            
 
             IVertex system = r.AddVertex(null, "System");
-            system.AddVertex(null, "system.m0");
+            system.AddVertex(null, "system.m0j");
 
             IVertex user = r.AddVertex(null, "User");
-            user.AddVertex(null, "user.m0");
+            user.AddVertex(null, "user.m0j");
 
             IVertex examples = r.AddVertex(null, "examples");
-            examples.AddVertex(null, "examples.m0");
+            examples.AddVertex(null, "examples.m0j");
 
             IVertex lib_std = r.AddVertex(null, "System\\Lib\\Std");
-            lib_std.AddVertex(null, "lib_std.m0");
+            lib_std.AddVertex(null, "lib_std.m0j");
 
             IVertex lib_sys = r.AddVertex(null, "System\\Lib\\Sys");
-            lib_sys.AddVertex(null, "lib_sys.m0");
+            lib_sys.AddVertex(null, "lib_sys.m0j");
 
             if (music)
             {
                 IVertex lib_music = r.AddVertex(null, "System\\Lib\\Music");
-                lib_music.AddVertex(null, "lib_music.m0");
+                lib_music.AddVertex(null, "lib_music.m0j");
             }
 
             GeneralUtil.SaveStore(store);
