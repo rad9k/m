@@ -31,9 +31,9 @@ namespace m0.Store.Json
                     { // create new sub graph
                         EasyVertex __root = new EasyVertex(this);
 
-                        _root = __root;
+                        root = __root;
 
-                        _root.IsRoot = true;                        
+                        root.IsRoot = true;                        
                     }
                     else
                     { // load graph from store
@@ -44,9 +44,9 @@ namespace m0.Store.Json
                         ReconstructVerticesFromSerialisationData(data);
 
 
-                        _root = GetVertexByIdentifier(GetRootIdentifier());
+                        root = GetVertexByIdentifier(GetRootIdentifier());
 
-                        _root.IsRoot = true;
+                        root.IsRoot = true;
                         
 
                         Attach();
@@ -70,9 +70,9 @@ namespace m0.Store.Json
             { // create new
                 EasyVertex __root = new EasyVertex(this);                
 
-                _root = __root;
+                root = __root;
 
-                _root.IsRoot = true;                
+                root.IsRoot = true;                
             }
             
         }

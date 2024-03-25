@@ -26,7 +26,7 @@ namespace m0.Store
         public MemoryStore(String identifier, IStoreUniverse storeUniverse, AccessLevelEnum[] accessLeveList)
             :base(identifier, storeUniverse, accessLeveList)
         {
-            _root = new EasyVertex(this);
+            root = new EasyVertex(this);
         }
 
         public MemoryStore(String identifier, IStoreUniverse storeUniverse, AccessLevelEnum[] accessLeveList, bool _IsTemporaryStore)
@@ -37,9 +37,9 @@ namespace m0.Store
             if (identifier == "$-0$EMPTY$STORE$") // hack
                 alwaysPresent = true;
 
-            _root = new EasyVertex(this);
+            root = new EasyVertex(this);
 
-            _root.IsRoot = true;
+            root.IsRoot = true;
         }
 
      //   public override void StoreVertexIdentifier(IVertex Vertex)

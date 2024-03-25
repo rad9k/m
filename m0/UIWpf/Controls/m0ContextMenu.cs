@@ -46,7 +46,7 @@ namespace m0.UIWpf.Controls
 
             AddSeparator();
 
-            AddNewDiagram();
+            //AddNewDiagram();
 
             AddNewUX();
 

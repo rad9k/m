@@ -44,14 +44,14 @@ namespace m0.Store
 
                 readStream.Close();
 
-                _root = GetVertexByIdentifier(RootIdentifier);
+                root = GetVertexByIdentifier(RootIdentifier);
 
                 Attach();
             }
             else
             {
-                _root = new EasyVertex(this);
-                _root.IsRoot = true;
+                root = new EasyVertex(this);
+                root.IsRoot = true;
             }
             
         }

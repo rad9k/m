@@ -33,11 +33,11 @@ namespace m0.Store
             get { return _Identifier; }
         }
 
-        protected IVertex _root;
+        protected IVertex root;
 
         public virtual IVertex Root
         {
-            get { return _root; }
+            get { return root; }
         }
 
         protected bool _DoVolatileCommit = false;

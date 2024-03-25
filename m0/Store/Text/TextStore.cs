@@ -17,6 +17,9 @@ namespace m0.Store.Json
     {
         bool canWrite = true;
 
+        string pathToLanguageDefinition = null;
+        string body = null;
+
         private StoreId RootStore;
 
         void Load()
@@ -31,12 +34,16 @@ namespace m0.Store.Json
                     { // create new sub graph
                         EasyVertex __root = new EasyVertex(this);
 
-                        _root = __root;
+                        root = __root;
 
-                        _root.IsRoot = true;                        
+                        root.IsRoot = true;                        
                     }
                     else
                     { // load graph from store
+
+                        string content = readStream.ReadToEnd();
+
+
                         JsonSerializationData data = JSON.Deserialize<JsonSerializationData>(readStream);
 
                         //readStream.Close();
@@ -44,9 +51,9 @@ namespace m0.Store.Json
                         ReconstructVerticesFromSerialisationData(data);
 
 
-                        _root = GetVertexByIdentifier(GetRootIdentifier());
+                        root = GetVertexByIdentifier(GetRootIdentifier());
 
-                        _root.IsRoot = true;
+                        root.IsRoot = true;
                         
 
                         Attach();
@@ -70,9 +77,9 @@ namespace m0.Store.Json
             { // create new
                 EasyVertex __root = new EasyVertex(this);                
 
-                _root = __root;
+                root = __root;
 
-                _root.IsRoot = true;                
+                root.IsRoot = true;                
             }
             
         }
