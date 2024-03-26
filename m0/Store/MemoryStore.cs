@@ -41,10 +41,5 @@ namespace m0.Store
 
             root.IsRoot = true;
         }
-
-     //   public override void StoreVertexIdentifier(IVertex Vertex)
-      //  {
-      //      VertexIdentifiersDictionary.Add(Vertex.Identifier, Vertex);
-      //  }
     }
 }

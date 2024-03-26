@@ -6,6 +6,7 @@ using m0.Foundation;
 using m0.Graph;
 using System.IO;
 using m0.Store.Json;
+using m0.Store.Text;
 using m0.ZeroTypes;
 using m0.Util;
 using m0.Graph.ExecutionFlow;
@@ -55,7 +56,7 @@ namespace m0.Store.FileSystem
                         _Identifier = newFileName;                        
 
                         string extension = FileSystemUtil.getExtension(newFileName).ToLower();
-                        if (extension == "m0j" || extension == "m0t")
+                        if (extension == "m0j" || extension == "m0t" || extension == "m0x")
 
                         {
                             GraphUtil.RemoveAllEdges(this);
@@ -117,18 +118,25 @@ namespace m0.Store.FileSystem
             if (((FileSystemStore)this.Store).IncludeFileContent)
                 AddEdge(FileSystemStore.File_Content, new FileContentVertex(FI.FullName, this.Store));
 
-            string exgtension = FI.Extension.ToLower();
+            string extension_lower = FI.Extension.ToLower();
 
-            if (extension == ".m0j")
+            if (extension_lower == ".m0j")
             {
                 JsonStore = (JsonSerializationStore)Store.StoreUniverse.GetStore("m0.Store.Json.JsonSerializationStore, m0, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null", Identifier.ToString());
 
                 AddEdge(FileSystemStore.Store, JsonStore.Root);
             }
 
-            if (extension == ".m0t")
+            if (extension_lower == ".m0t")
             {
                 TextStore = (TextStore)Store.StoreUniverse.GetStore("m0.Store.Text.TextStore, m0, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null", Identifier.ToString());
+
+                AddEdge(FileSystemStore.Store, TextStore.Root);
+            }
+
+            if (extension_lower == ".m0x")
+            {
+                TextStore = (TextStore)Store.StoreUniverse.GetStore("m0.Store.Binary.BinaryStore, m0, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null", Identifier.ToString());
 
                 AddEdge(FileSystemStore.Store, TextStore.Root);
             }

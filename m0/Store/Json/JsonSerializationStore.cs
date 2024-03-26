@@ -13,7 +13,7 @@ using m0.Store.FileSystem;
 
 namespace m0.Store.Json
 {
-    public class JsonSerializationStore:StoreBase
+    public class JsonSerializationStore : StoreBase
     {
         bool canWrite = true;
 
@@ -231,7 +231,7 @@ namespace m0.Store.Json
 
             if (!canWrite)
             {
-                UserInteractionUtil.ShowError("Json Serlialisation to " + fileName, "As json serialisation file " + fileName + " has not been properly loaded, commit(saving) is disabled for the file. This will protect existing file content.");
+                UserInteractionUtil.ShowError("Json Serlialisation to " + fileName, "As json serialisation file " + fileName + " has not been properly loaded, commit (saving) is disabled for the file. This will protect existing file content.");
                 return;
             }
 

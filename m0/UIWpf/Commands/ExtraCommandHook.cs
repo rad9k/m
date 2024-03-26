@@ -48,11 +48,28 @@ namespace m0.UIWpf.Commands
 
                 //
 
-                MenuItem newStoreMenuItem2 = m0ContextMenu.createMenuItem("New store");
+                MenuItem newStoreMenuItem4 = m0ContextMenu.createMenuItem("New M0X store");
 
-                newStoreMenuItem2.Click += OnNewStore;
+                newStoreMenuItem4.Click += OnNewM0XStore;
+
+                contextMenu.Items.Add(newStoreMenuItem4);
+
+                //
+
+                MenuItem newStoreMenuItem3 = m0ContextMenu.createMenuItem("New M0T store");
+
+                newStoreMenuItem3.Click += OnNewM0TStore;
+
+                contextMenu.Items.Add(newStoreMenuItem3);
+
+                //
+
+                MenuItem newStoreMenuItem2 = m0ContextMenu.createMenuItem("New M0J store");
+
+                newStoreMenuItem2.Click += OnNewM0JStore;
 
                 contextMenu.Items.Add(newStoreMenuItem2);
+
 
                 contextMenu.AddSeparator();
             }
@@ -64,8 +81,8 @@ namespace m0.UIWpf.Commands
 
             if (storeName != "")
             {
-                if (!storeName.EndsWith(".m0"))
-                    storeName += ".m0";
+                if (!storeName.EndsWith(".m0j"))
+                    storeName += ".m0j";
 
                 IVertex baseVertex = contextMenu.EdgeVertex.Get(false, "To:");
 
@@ -85,14 +102,14 @@ namespace m0.UIWpf.Commands
             }
         }
 
-        void OnNewStore(object sender, System.Windows.RoutedEventArgs e)
+        void OnNewM0JStore(object sender, System.Windows.RoutedEventArgs e)
         {
             string storeName = UserInteractionUtil.Ask("please enter new store name");
 
             if (storeName != null && storeName != "")
             {
-                if (!storeName.EndsWith(".m0"))
-                    storeName += ".m0";
+                if (!storeName.EndsWith(".m0j"))
+                    storeName += ".m0j";
 
                 ////////////////////////////////////////
                 Interaction.BeginInteractionWithGraph();
@@ -106,7 +123,53 @@ namespace m0.UIWpf.Commands
                 Interaction.EndInteractionWithGraph();
                 ////////////////////////////////////////
             }
-        }        
+        }
+
+        void OnNewM0XStore(object sender, System.Windows.RoutedEventArgs e)
+        {
+            string storeName = UserInteractionUtil.Ask("please enter new store name");
+
+            if (storeName != null && storeName != "")
+            {
+                if (!storeName.EndsWith(".m0x"))
+                    storeName += ".m0x";
+
+                ////////////////////////////////////////
+                Interaction.BeginInteractionWithGraph();
+                ////////////////////////////////////////
+
+                IVertex baseVertex = contextMenu.EdgeVertex.Get(false, "To:");
+
+                baseVertex.AddVertex(fileMeta, storeName);
+
+                ////////////////////////////////////////
+                Interaction.EndInteractionWithGraph();
+                ////////////////////////////////////////
+            }
+        }
+
+        void OnNewM0TStore(object sender, System.Windows.RoutedEventArgs e)
+        {
+            string storeName = UserInteractionUtil.Ask("please enter new store name");
+
+            if (storeName != null && storeName != "")
+            {
+                if (!storeName.EndsWith(".m0t"))
+                    storeName += ".m0t";
+
+                ////////////////////////////////////////
+                Interaction.BeginInteractionWithGraph();
+                ////////////////////////////////////////
+
+                IVertex baseVertex = contextMenu.EdgeVertex.Get(false, "To:");
+
+                baseVertex.AddVertex(fileMeta, storeName);
+
+                ////////////////////////////////////////
+                Interaction.EndInteractionWithGraph();
+                ////////////////////////////////////////
+            }
+        }
 
         static IVertex musicSpaceMeta = r.Get(false, @"System\Lib\Music\MusicSpace");
         static IVertex songMeta = r.Get(false, @"System\Lib\Music\Song");        
