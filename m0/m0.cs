@@ -348,10 +348,15 @@ namespace m0
         public void CommitTransaction()
         {
             foreach (IStore s in Stores)
+                if (s is ICommintBeforeGlobalDetachStore)
+                    s.CommitTransaction();
+
+            foreach (IStore s in Stores)
                 s.Detach();
 
             foreach (IStore s in Stores)
-                s.CommitTransaction();
+                if (!(s is ICommintBeforeGlobalDetachStore))
+                    s.CommitTransaction();
 
             foreach (IStore s in Stores)
                 s.Attach();

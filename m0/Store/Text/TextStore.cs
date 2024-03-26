@@ -15,7 +15,7 @@ using static System.Net.WebRequestMethods;
 
 namespace m0.Store.Text
 {
-    public class TextStore : StoreBase
+    public class TextStore : StoreBase, ICommintBeforeGlobalDetachStore
     {
         bool canWrite = true;
 
@@ -80,10 +80,10 @@ namespace m0.Store.Text
 
         public override void CommitTransaction()
         {
-            CommitTransaction(Identifier, true);
+            CommitTransaction(Identifier);
         }
 
-        public void CommitTransaction(string fileName, bool checkIfIsDetached)
+        public void CommitTransaction(string fileName)
         {
             if (_DoVolatileCommit)
                 return;
@@ -94,20 +94,28 @@ namespace m0.Store.Text
                 return;
             }
 
-            if (checkIfIsDetached && DetachState != DetachStateEnum.Detached)
-                throw new Exception("Store not Detached");
+            bool wasDetached = false;
+
+            if (this.DetachState == DetachStateEnum.Detached)
+            {
+                wasDetached = true;
+                Attach();
+            }
 
             StreamWriter writeStream = new StreamWriter(fileName);
 
             writeStream.WriteLine(pathToLanguageDefinition);
 
-            EasyEdge e = new EasyEdge(null, null, root);
+            EasyEdge e = new EasyEdge(MinusZero.Instance.Empty, null, root);
 
             string generated = MinusZero.Instance.DefaultFormalTextGenerator.Generate(ftl, e);
 
             writeStream.Write(generated);
 
             base.CommitTransaction();
+
+            if (wasDetached)
+                Detach();
         }
 
         public TextStore(String identifier, IStoreUniverse storeUniverse, AccessLevelEnum[] accessLeveList, bool doVolatileCommit):
@@ -142,7 +150,7 @@ namespace m0.Store.Text
                 string backupFileName = pathPart + fileName + "." + extension + ".backup";
 
 
-                CommitTransaction(backupFileName, false);
+                CommitTransaction(backupFileName);
             }
         }
     }
