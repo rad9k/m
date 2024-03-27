@@ -104,7 +104,7 @@ namespace m0_SYSTEM_GENERATE
 
             Dictionary<string, StoreId> storeOverride = new Dictionary<string, StoreId>();
 
-            storeOverride.Add("system.m0", new StoreId("m0.Store.MemoryStore, m0, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null", "$-0$ROOT$STORE$"));
+            storeOverride.Add("system.m0j", new StoreId("m0.Store.MemoryStore, m0, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null", "$-0$ROOT$STORE$"));
 
             //
 
