@@ -112,6 +112,8 @@ namespace m0.Store.Text
 
             writeStream.Write(generated);
 
+            writeStream.Close();
+
             base.CommitTransaction();
 
             if (wasDetached)
