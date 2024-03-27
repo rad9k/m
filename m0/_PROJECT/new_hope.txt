@@ -13,7 +13,7 @@
 	+ multiplicity bug
 	+ proper parsing where there are errors now
 	+ empty line handling
-	- m0t support
+	+ m0t support
 
 4) View support in ZeroCode
 	- view creation language support
