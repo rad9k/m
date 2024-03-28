@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 
 namespace m0.Graph.Internal
 {
+    [Serializable]
     public class MetaInList : ExtandableList<IEdge>
     {
         EdgeDictionaries edgeDictionaries;

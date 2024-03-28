@@ -23,8 +23,6 @@ namespace m0.Store.Text
         string body = null;
         IVertex ftl = null;
 
-        private StoreId RootStore;
-
         void Load()
         {
             if (System.IO.File.Exists(Identifier))
@@ -129,8 +127,6 @@ namespace m0.Store.Text
         public TextStore(String identifier, IStoreUniverse storeUniverse, AccessLevelEnum[] accessLeveList)
             : base(identifier, storeUniverse, accessLeveList)
         {
-            RootStore = new StoreId(MinusZero.Instance.root.Store.TypeName, MinusZero.Instance.root.Store.Identifier);
-
             Load();
 
             Attach();

@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 
 namespace m0.Store.FileSystem
 {
+    [Serializable]
     public class AbstractFileSystemVertex : EasyVertex
     {
         protected EasyVertex FileSystemVertex;

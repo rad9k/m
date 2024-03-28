@@ -10,7 +10,9 @@ using m0.Util;
 
 namespace m0.Graph
 {
+    [Serializable]
     public class List_VertexBase : List<IEdge> { } // to be used in dictionaries, to identify list of List<IEdge> :)
+
     [Serializable]
     public class VertexBase : IVertex, IDisposable
     {

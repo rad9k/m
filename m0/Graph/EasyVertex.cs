@@ -890,5 +890,36 @@ namespace m0.Graph
             if(ShouldDispose())
                 ExecutionFlowHelper.AddSecondStageCommitAction(edgeDictionaries.Vertex);
         }
+
+        public void ClearDictionaries()
+        {
+            this.InEdgesDictionariesNeedsRebuild = true;
+            this.InEdgesDictionariesNeedsRebuild_Edges = true;
+            this.InEdgesDictionariesNeedsRebuild_Meta = true;
+            this.InEdgesDictionariesNeedsRebuild_MetaAndValue = true;
+            this.InEdgesDictionariesNeedsRebuild_Value = true;
+
+            this.OutEdgesDictionariesNeedsRebuild = true;
+            this.OutEdgesDictionariesNeedsRebuild_Edges = true;
+            this.OutEdgesDictionariesNeedsRebuild_Meta = true;
+            this.OutEdgesDictionariesNeedsRebuild_MetaAndValue = true;
+            this.OutEdgesDictionariesNeedsRebuild_Value = true;
+
+            // InEdgesRaw.Clear();
+            // OutEdgesRaw.Clear();
+            //MetaInEdgesRaw.Clear();
+
+            OutEdgesByMeta.Clear();
+           // OutEdgesByValue.Clear();
+            //OutEdgesByMetaAndValue.Clear();
+           // InEdgesByMeta.Clear();
+           // InEdgesByValue.Clear();
+          //  InEdgesByMetaAndValue.Clear();
+
+
+            QueryParseCache.Clear();
+            QueryParseCache_metaMode.Clear();
+
+        }
     }
 }

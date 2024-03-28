@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 
 namespace m0.Util
 {
+    [Serializable]
     public class ExtandableList<T> : IList<T>
     {
         public virtual T Get(T toCheckEdge) { return default(T); }

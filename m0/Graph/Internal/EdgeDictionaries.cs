@@ -39,6 +39,7 @@ OutEdges              InEdges
 
 namespace m0.Graph.Internal
 {
+    [Serializable]
     public class EdgeDictionaries
     {
         public bool NoInEdgeInOutVertexVertexMode = false;

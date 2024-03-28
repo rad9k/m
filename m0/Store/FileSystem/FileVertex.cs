@@ -7,18 +7,21 @@ using m0.Graph;
 using System.IO;
 using m0.Store.Json;
 using m0.Store.Text;
+using m0.Store.Binary;
 using m0.ZeroTypes;
 using m0.Util;
 using m0.Graph.ExecutionFlow;
 
 namespace m0.Store.FileSystem
 {
+    [Serializable]
     public class FileVertex : AbstractFileSystemVertex
     {             
         FileInfo FI;
 
         public JsonSerializationStore JsonStore;
         public TextStore TextStore;
+        public BinaryStore BinaryStore;
 
         public override object Value
         {
@@ -136,9 +139,9 @@ namespace m0.Store.FileSystem
 
             if (extension_lower == ".m0x")
             {
-                TextStore = (TextStore)Store.StoreUniverse.GetStore("m0.Store.Binary.BinaryStore, m0, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null", Identifier.ToString());
+                BinaryStore = (BinaryStore)Store.StoreUniverse.GetStore("m0.Store.Binary.BinaryStore, m0, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null", Identifier.ToString());
 
-                AddEdge(FileSystemStore.Store, TextStore.Root);
+                AddEdge(FileSystemStore.Store, BinaryStore.Root);
             }
         }        
 
