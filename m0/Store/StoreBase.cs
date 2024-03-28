@@ -87,7 +87,7 @@ namespace m0.Store
 
         public virtual void Detach()
         {
-            if(DetachState!=DetachStateEnum.Attached)
+            if (DetachState != DetachStateEnum.Attached)
                 throw new Exception("Store not Attached");
 
             //            

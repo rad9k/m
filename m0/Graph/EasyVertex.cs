@@ -909,7 +909,7 @@ namespace m0.Graph
             // OutEdgesRaw.Clear();
             //MetaInEdgesRaw.Clear();
 
-            OutEdgesByMeta.Clear();
+           // OutEdgesByMeta.Clear();
            // OutEdgesByValue.Clear();
             //OutEdgesByMetaAndValue.Clear();
            // InEdgesByMeta.Clear();

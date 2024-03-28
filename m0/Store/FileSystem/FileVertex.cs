@@ -14,7 +14,7 @@ using m0.Graph.ExecutionFlow;
 
 namespace m0.Store.FileSystem
 {
-    [Serializable]
+
     public class FileVertex : AbstractFileSystemVertex
     {             
         FileInfo FI;
