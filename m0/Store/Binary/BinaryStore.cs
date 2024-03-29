@@ -54,9 +54,7 @@ namespace m0.Store.Binary
                     VertexIdentifiersDictionary = (Dictionary<object, IVertex>)formatter.Deserialize(readStream);
                     string RootIdentifier = (string)formatter.Deserialize(readStream);
 
-                    RestoreStoreDataInVertices();
-
-                    readStream.Close();
+                    RestoreStoreDataInVertices();                    
 
                     root = GetVertexByIdentifier(RootIdentifier);
 
@@ -67,6 +65,8 @@ namespace m0.Store.Binary
                     root = new EasyVertex(this);
                     root.IsRoot = true;
                 }
+
+                readStream.Close();
             }
             else
             {
@@ -82,9 +82,6 @@ namespace m0.Store.Binary
 
         public void CommitTransaction(string fileName)
         {
-            if (_DoVolatileCommit)
-                return;
-
             if (DetachState != DetachStateEnum.Detached)
                 throw new Exception("Store not Detached");
 
@@ -101,12 +98,6 @@ namespace m0.Store.Binary
             base.CommitTransaction();
 
             RestoreStoreDataInVertices();
-        }
-
-        public BinaryStore(String identifier, IStoreUniverse storeUniverse, AccessLevelEnum[] accessLeveList, bool doVolatileCommit):
-            this(identifier, storeUniverse, accessLeveList)
-        {
-            _DoVolatileCommit = doVolatileCommit;
         }
 
         public BinaryStore(String identifier, IStoreUniverse storeUniverse, AccessLevelEnum[] accessLeveList)

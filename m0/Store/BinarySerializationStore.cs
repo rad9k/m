@@ -67,9 +67,6 @@ namespace m0.Store
 
         public override void CommitTransaction()
         {
-            if (_DoVolatileCommit)
-                return;
-
             if (DetachState != DetachStateEnum.Detached)
                 throw new Exception("Store not Detached");
 

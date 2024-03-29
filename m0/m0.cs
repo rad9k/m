@@ -387,6 +387,11 @@ namespace m0
             return null;
         }
 
+        public void RemoveStore(IStore store)
+        {
+            Stores.Remove(store);
+        }
+
         void FillBootstrapVertexes()
         {
             BootstrapVertexes = GraphUtil.GetSubGraphWithoutLinksAsList(root);

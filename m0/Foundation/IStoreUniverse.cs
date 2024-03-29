@@ -6,11 +6,13 @@ using System.Threading.Tasks;
 
 namespace m0.Foundation
 {
-    public interface IStoreUniverse:ITransactionRoot
+    public interface IStoreUniverse : ITransactionRoot
     {
         IList<IStore> Stores { get; }
 
         IStore GetStore(string StoreTypeName, string StoreIdentifier);
+
+        void RemoveStore(IStore store);
                         
         IVertex Empty { get; }
     }

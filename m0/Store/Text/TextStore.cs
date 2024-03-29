@@ -82,10 +82,7 @@ namespace m0.Store.Text
         }
 
         public void CommitTransaction(string fileName)
-        {
-            if (_DoVolatileCommit)
-                return;
-
+        {            
             if (!canWrite)
             {
                 UserInteractionUtil.ShowError("Text serlialisation to " + fileName, "As text file " + fileName + " has not been properly loaded, commit (saving) is disabled for the file. This will protect existing file content.");
@@ -116,12 +113,6 @@ namespace m0.Store.Text
 
             if (wasDetached)
                 Detach();
-        }
-
-        public TextStore(String identifier, IStoreUniverse storeUniverse, AccessLevelEnum[] accessLeveList, bool doVolatileCommit):
-            this(identifier, storeUniverse, accessLeveList)
-        {
-            _DoVolatileCommit = doVolatileCommit;
         }
 
         public TextStore(String identifier, IStoreUniverse storeUniverse, AccessLevelEnum[] accessLeveList)

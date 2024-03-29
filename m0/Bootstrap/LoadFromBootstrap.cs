@@ -14,7 +14,7 @@ namespace m0.Bootstrap
     {
         public static void Execute()
         {
-            JsonSerializationStore bootstrap = new JsonSerializationStore("_bootstrap.m0j", MinusZero.Instance, new AccessLevelEnum[] { }, true);
+            JsonSerializationStore bootstrap = new JsonSerializationStore("_bootstrap.m0j", MinusZero.Instance, new AccessLevelEnum[] { });
 
             IVertex root = MinusZero.Instance.root;
 
@@ -31,13 +31,15 @@ namespace m0.Bootstrap
                 IVertex importRoot = GraphUtil.DivideQueryAndGetByPart(root, importVertexPath);
 
                 if (importRoot == null)
-                    importRoot = GraphUtil.SimpleCreateVertexPath(root, importVertexPath);                        
+                    importRoot = GraphUtil.SimpleCreateVertexPath(root, importVertexPath);
+
+                JsonSerializationStore loadedStore;
 
                 if (isSystem)
                 {
-                    JsonSerializationStore imp = new JsonSerializationStore(importFilePath, MinusZero.Instance, new AccessLevelEnum[] { }, true);
+                    loadedStore = new JsonSerializationStore(importFilePath, MinusZero.Instance, new AccessLevelEnum[] { });
 
-                    ZeroUMLInstructionHelpers.MoveEdgesIntoVertex(imp.Root, importRoot);
+                    ZeroUMLInstructionHelpers.MoveEdgesIntoVertex(loadedStore.Root, importRoot);
 
                     isSystem = false;
 
@@ -45,10 +47,12 @@ namespace m0.Bootstrap
                 }
                 else
                 {
-                    JsonSerializationStore imp = new JsonSerializationStore(importFilePath, MinusZero.Instance, new AccessLevelEnum[] { }, true);
+                    loadedStore = new JsonSerializationStore(importFilePath, MinusZero.Instance, new AccessLevelEnum[] { });
 
-                    ZeroUMLInstructionHelpers.MoveEdgesIntoVertex_IncludeEverythingBesidesList(imp.Root, importRoot, new HashSet<IVertex>(system));
+                    ZeroUMLInstructionHelpers.MoveEdgesIntoVertex_IncludeEverythingBesidesList(loadedStore.Root, importRoot, new HashSet<IVertex>(system));
                 }
+
+                MinusZero.Instance.RemoveStore(loadedStore);
             }
         }
     }
