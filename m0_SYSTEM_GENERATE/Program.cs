@@ -106,6 +106,7 @@ namespace m0_SYSTEM_GENERATE
 
             storeOverride.Add("system.m0j", new StoreId("m0.Store.MemoryStore, m0, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null", "$-0$ROOT$STORE$"));
 
+
             //
 
             ExecutionFlowHelper.StartTransaction();

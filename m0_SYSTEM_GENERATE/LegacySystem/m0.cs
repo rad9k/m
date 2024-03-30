@@ -6443,6 +6443,10 @@ namespace m0
             Initialize_PostParserReady();
 
         }
-        
+
+        public void RemoveStore(IStore store)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
