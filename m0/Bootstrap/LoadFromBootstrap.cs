@@ -14,16 +14,20 @@ namespace m0.Bootstrap
     {
         public static void Execute()
         {
-            JsonSerializationStore bootstrap = new JsonSerializationStore("_bootstrap.m0j", MinusZero.Instance, new AccessLevelEnum[] { });
+            JsonSerializationStore bootstrapStore = new JsonSerializationStore("_bootstrap.m0j", MinusZero.Instance, new AccessLevelEnum[] { });
 
             IVertex root = MinusZero.Instance.root;
 
             bool isSystem = true;
 
+            IVertex x;
 
             IEnumerable<IVertex> system = null;
 
-            foreach(IEdge e in bootstrap.Root)
+            IVertex systemVertex = null;
+            IVertex systemImportRoot = null;
+
+            foreach(IEdge e in bootstrapStore.Root)
             {
                 string importVertexPath = e.To.Value.ToString();
                 string importFilePath = e.To.OutEdges[0].To.Value.ToString();
@@ -39,6 +43,65 @@ namespace m0.Bootstrap
                 {
                     loadedStore = new JsonSerializationStore(importFilePath, MinusZero.Instance, new AccessLevelEnum[] { });
 
+                    systemVertex = loadedStore.Root;
+                    systemImportRoot = importRoot;
+
+                    //ZeroUMLInstructionHelpers.MoveEdgesIntoVertex(loadedStore.Root, importRoot);
+
+                    isSystem = false;
+
+                    //system = GraphUtil.GetSubGraphWithLinksAsListButExcludeRoot(importRoot);
+                }
+                else
+                {
+                    loadedStore = new JsonSerializationStore(importFilePath, MinusZero.Instance, new AccessLevelEnum[] { });
+
+                    //ZeroUMLInstructionHelpers.MoveEdgesIntoVertex_IncludeEverythingBesidesList(loadedStore.Root, importRoot, new HashSet<IVertex>(system));
+
+                    ZeroUMLInstructionHelpers.MoveEdgesIntoVertex(loadedStore.Root, importRoot);
+                }
+
+                //MinusZero.Instance.RemoveStore(loadedStore);
+            }
+
+            ZeroUMLInstructionHelpers.MoveEdgesIntoVertex(systemVertex, systemImportRoot);
+
+            // MinusZero.Instance.RemoveStore(bootstrapStore);
+
+            int xx = 0;
+        }
+    }
+}
+/*
+
+ public static void Execute()
+        {
+            JsonSerializationStore bootstrapStore = new JsonSerializationStore("_bootstrap.m0j", MinusZero.Instance, new AccessLevelEnum[] { });
+
+            IVertex root = MinusZero.Instance.root;
+
+            bool isSystem = true;
+
+            IVertex x;
+
+            IEnumerable<IVertex> system = null;
+
+            foreach(IEdge e in bootstrapStore.Root)
+            {
+                string importVertexPath = e.To.Value.ToString();
+                string importFilePath = e.To.OutEdges[0].To.Value.ToString();
+
+                IVertex importRoot = GraphUtil.DivideQueryAndGetByPart(root, importVertexPath);
+
+                if (importRoot == null)
+                    importRoot = GraphUtil.SimpleCreateVertexPath(root, importVertexPath);
+
+                JsonSerializationStore loadedStore;
+
+                if (isSystem)
+                {
+                    loadedStore = new JsonSerializationStore(importFilePath, MinusZero.Instance, new AccessLevelEnum[] { });
+                    x = loadedStore.Root;
                     ZeroUMLInstructionHelpers.MoveEdgesIntoVertex(loadedStore.Root, importRoot);
 
                     isSystem = false;
@@ -52,8 +115,12 @@ namespace m0.Bootstrap
                     ZeroUMLInstructionHelpers.MoveEdgesIntoVertex_IncludeEverythingBesidesList(loadedStore.Root, importRoot, new HashSet<IVertex>(system));
                 }
 
-                MinusZero.Instance.RemoveStore(loadedStore);
+                //MinusZero.Instance.RemoveStore(loadedStore);
             }
+
+            // MinusZero.Instance.RemoveStore(bootstrapStore);
+
+            int xx = 0;
         }
-    }
-}
+
+*/
