@@ -12,6 +12,7 @@ using m0.Util;
 using m0.Store.FileSystem;
 using m0.Store.Json;
 using static System.Net.WebRequestMethods;
+using System.Security.Cryptography;
 
 namespace m0.Store.Binary
 {
@@ -87,10 +88,87 @@ namespace m0.Store.Binary
             CommitTransaction(Identifier);
         }
 
+        List<IEdge> temporaryRemovedEdges;
+
+        void removeTemporaryRemovedEdges()
+        {
+            temporaryRemovedEdges = new List<IEdge>();
+
+            temporaryRemoveEdges_recurent(Root);
+        }
+
+        void temporaryRemoveEdges_recurent(IVertex v)
+        {
+            if (v.Store != this)
+                return;
+
+            foreach (IEdge e in v.OutEdges.ToList())
+            {
+                if (e.Meta.Value.ToString() == "$GraphChangeTrigger")
+                    removeListener(e);
+
+                temporaryRemoveEdges_recurent(e.To);
+            }
+        }
+
+        void removeListener(IEdge baseEdge)
+        {
+            IEdge GraphChangeTrigger_TreeViewItem = baseEdge;
+
+            IEdge Listener_Listener = GraphUtil.GetQueryOutFirstEdge(baseEdge.To, "Listener", "Listener");
+
+            IEdge DotNetDelegatePointer_delegate = null;
+
+            if (Listener_Listener != null)
+                DotNetDelegatePointer_delegate = GraphUtil.GetQueryOutFirstEdge(Listener_Listener.To, "DotNetDelegatePointer", null);
+
+            temporaryRemoveEdge(GraphChangeTrigger_TreeViewItem);
+            temporaryRemoveEdge(Listener_Listener);
+            temporaryRemoveEdge(DotNetDelegatePointer_delegate);
+        }
+
+        void temporaryRemoveEdge(IEdge e)
+        {
+            if (e == null)
+                return;
+
+            temporaryRemovedEdges.Add(e);
+
+            e.From.DeleteEdge(e);
+
+            VertexIdentifiersDictionary.Remove(e.To.Identifier);
+        }
+
+        void addTemporaryRemovedEdges() 
+        {
+            if (temporaryRemovedEdges == null)
+                return;
+
+            foreach(IEdge e in temporaryRemovedEdges)
+            {
+                e.From.AddEdge(e.Meta, e.To);
+                VertexIdentifiersDictionary.Add(e.To.Identifier, e.To);
+            }
+        }
+
+        public override void Attach()
+        {
+            base.Attach();
+
+            addTemporaryRemovedEdges();
+        }
+
+        public override void Detach()
+        {
+            removeTemporaryRemovedEdges();
+
+            base.Detach();
+        }
+
         public void CommitTransaction(string fileName)
         {
             if (DetachState != DetachStateEnum.Detached)
-                throw new Exception("Store not Detached");
+                throw new Exception("Store not Detached");            
 
             FileStream writeStream = new FileStream(Identifier, FileMode.Create);
             BinaryFormatter formatter = new BinaryFormatter();
@@ -105,7 +183,7 @@ namespace m0.Store.Binary
 
             base.CommitTransaction();
 
-            RestoreStoreDataInVertices();
+            RestoreStoreDataInVertices();            
         }
 
         public BinaryStore(String identifier, IStoreUniverse storeUniverse, AccessLevelEnum[] accessLeveList)

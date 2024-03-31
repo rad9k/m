@@ -48,7 +48,7 @@ namespace m0.UIWpf.Commands
 
                 //
 
-                MenuItem newStoreMenuItem4 = m0ContextMenu.createMenuItem("New M0X store");
+                MenuItem newStoreMenuItem4 = m0ContextMenu.createMenuItem("New M0X store (binary)");
 
                 newStoreMenuItem4.Click += OnNewM0XStore;
 
@@ -56,7 +56,7 @@ namespace m0.UIWpf.Commands
 
                 //
 
-                MenuItem newStoreMenuItem3 = m0ContextMenu.createMenuItem("New M0T store");
+                MenuItem newStoreMenuItem3 = m0ContextMenu.createMenuItem("New M0T store (text language)");
 
                 newStoreMenuItem3.Click += OnNewM0TStore;
 
@@ -64,7 +64,7 @@ namespace m0.UIWpf.Commands
 
                 //
 
-                MenuItem newStoreMenuItem2 = m0ContextMenu.createMenuItem("New M0J store");
+                MenuItem newStoreMenuItem2 = m0ContextMenu.createMenuItem("New M0J store (json)");
 
                 newStoreMenuItem2.Click += OnNewM0JStore;
 
@@ -154,8 +154,8 @@ namespace m0.UIWpf.Commands
 
             if (storeName != null && storeName != "")
             {
-                if (!storeName.EndsWith(".m0j"))
-                    storeName += ".m0j";
+                if (!storeName.EndsWith(".m0t"))
+                    storeName += ".m0t";
 
                 ////////////////////////////////////////
                 Interaction.BeginInteractionWithGraph();

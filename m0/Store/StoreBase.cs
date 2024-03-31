@@ -154,7 +154,7 @@ namespace m0.Store
                             de.To.Store.Attach();
                     }
                         
-            }
+            }           
 
             _DetachState = DetachStateEnum.Attached;
         }
