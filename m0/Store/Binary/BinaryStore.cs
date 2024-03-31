@@ -42,6 +42,11 @@ namespace m0.Store.Binary
             }
         }
 
+        public override void RemoveVertexIdentifier(IVertex Vertex)
+        {
+            VertexIdentifiersDictionary.Remove(Vertex.Identifier);
+        }
+
         void Load()
         {
             if (System.IO.File.Exists(Identifier))
@@ -52,7 +57,7 @@ namespace m0.Store.Binary
                 try
                 {
                     VertexIdentifiersDictionary = (Dictionary<object, IVertex>)formatter.Deserialize(readStream);
-                    string RootIdentifier = (string)formatter.Deserialize(readStream);
+                    object RootIdentifier = formatter.Deserialize(readStream);
 
                     RestoreStoreDataInVertices();                    
 

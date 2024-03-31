@@ -439,8 +439,6 @@ namespace m0
 
             LoadFromBootstrap.Execute();
 
-            //LoadRootFromM0();
-
             InitRootVariables();
 
             Init_AfterZeroCodeDefintionCreated();

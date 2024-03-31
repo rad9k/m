@@ -21,7 +21,7 @@ namespace m0.Store.Text
 
         string pathToLanguageDefinition = null;
         string body = null;
-        IVertex ftl = null;
+        IVertex formalTextLanguageVertex = null;
 
         void Load()
         {
@@ -44,16 +44,16 @@ namespace m0.Store.Text
                         body = readStream.ReadToEnd();
 
                         if (pathToLanguageDefinition != null && pathToLanguageDefinition != "")
-                            ftl = MinusZero.Instance.Root.Get(false, pathToLanguageDefinition);
+                            formalTextLanguageVertex = MinusZero.Instance.Root.Get(false, pathToLanguageDefinition);
                         else
                             pathToLanguageDefinition = @"System\FormalTextLanguage\ZeroCode";
 
-                        if (ftl == null)
-                            ftl = MinusZero.Instance.Root.Get(false, @"System\FormalTextLanguage\ZeroCode");
+                        if (formalTextLanguageVertex == null)
+                            formalTextLanguageVertex = MinusZero.Instance.Root.Get(false, @"System\FormalTextLanguage\ZeroCode");
 
                         root = new EasyVertex(this);
 
-                        IVertex errorList = MinusZero.Instance.DefaultFormalTextParser.Parse(ftl, root, body);
+                        IVertex errorList = MinusZero.Instance.DefaultFormalTextParser.Parse(formalTextLanguageVertex, root, body);
 
                         if (errorList.OutEdges.Count > 0)
                             canWrite = false;
@@ -68,7 +68,7 @@ namespace m0.Store.Text
                 EasyVertex __root = new EasyVertex(this);
 
                 pathToLanguageDefinition = @"System\FormalTextLanguage\ZeroCode";
-                ftl = MinusZero.Instance.Root.Get(false, @"System\FormalTextLanguage\ZeroCode");
+                formalTextLanguageVertex = MinusZero.Instance.Root.Get(false, @"System\FormalTextLanguage\ZeroCode");
 
                 root = __root;
 
@@ -97,13 +97,23 @@ namespace m0.Store.Text
                 Attach();
             }
 
+            //
+
+            if (pathToLanguageDefinition == null)
+                pathToLanguageDefinition = @"System\FormalTextLanguage\ZeroCode";
+
+            if (formalTextLanguageVertex == null)
+                formalTextLanguageVertex = MinusZero.Instance.Root.Get(false, @"System\FormalTextLanguage\ZeroCode");
+
+            //
+
             StreamWriter writeStream = new StreamWriter(fileName);
 
             writeStream.WriteLine(pathToLanguageDefinition);
 
             EasyEdge e = new EasyEdge(MinusZero.Instance.Empty, null, root);
 
-            string generated = MinusZero.Instance.DefaultFormalTextGenerator.Generate(ftl, e);
+            string generated = MinusZero.Instance.DefaultFormalTextGenerator.Generate(formalTextLanguageVertex, e);
 
             writeStream.Write(generated);
 

@@ -81,8 +81,8 @@ namespace m0.UIWpf.Commands
 
             if (storeName != "")
             {
-                if (!storeName.EndsWith(".m0j"))
-                    storeName += ".m0j";
+                if (!storeName.EndsWith(".m0t"))
+                    storeName += ".m0t";
 
                 IVertex baseVertex = contextMenu.EdgeVertex.Get(false, "To:");
 
@@ -154,8 +154,8 @@ namespace m0.UIWpf.Commands
 
             if (storeName != null && storeName != "")
             {
-                if (!storeName.EndsWith(".m0t"))
-                    storeName += ".m0t";
+                if (!storeName.EndsWith(".m0j"))
+                    storeName += ".m0j";
 
                 ////////////////////////////////////////
                 Interaction.BeginInteractionWithGraph();
@@ -176,6 +176,7 @@ namespace m0.UIWpf.Commands
         static IVertex creationPoolMeta = r.Get(false, @"System\Meta\Visualiser\Diagram\CreationPool");
 
         static IVertex classMeta = r.Get(false, @"System\Meta\ZeroUML\Class");
+        static IVertex linkMeta = r.Get(false, @"System\Meta\Base\Link");
 
         static IVertex trackMeta = r.Get(false, @"System\Lib\Music\Track");
         static IVertex sequenceEventMeta = r.Get(false, @"System\Lib\Music\SequenceEvent");
@@ -198,21 +199,21 @@ namespace m0.UIWpf.Commands
 
             IVertex msm = ms.AddVertex(null, "Meta");
 
-            msm.AddEdge(classMeta, songMeta);
-            msm.AddEdge(classMeta, trackMeta);
-            msm.AddEdge(classMeta, sequenceEventMeta);
-            msm.AddEdge(classMeta, sequenceMeta);
-            msm.AddEdge(classMeta, melodyFlowMeta);
-            msm.AddEdge(classMeta, triggerSetMeta);
-            msm.AddEdge(classMeta, chordProgressionMeta);
+            msm.AddEdge(linkMeta, songMeta);
+            msm.AddEdge(linkMeta, trackMeta);
+            msm.AddEdge(linkMeta, sequenceEventMeta);
+            msm.AddEdge(linkMeta, sequenceMeta);
+            msm.AddEdge(linkMeta, melodyFlowMeta);
+            msm.AddEdge(linkMeta, triggerSetMeta);
+            msm.AddEdge(linkMeta, chordProgressionMeta);
 
             IVertex zm = ms.AddVertex(null, "ZeroMachines");
-            zm.AddEdge(classMeta, m0.MinusZero.Instance.root.Get(false, @"System\Lib\Music\Generator\'HarmonyMelodyTimeGenerator'"));
-            zm.AddEdge(classMeta, m0.MinusZero.Instance.root.Get(false, @"System\Lib\Music\Generator\'SimpleTransformer'"));
+            zm.AddEdge(linkMeta, m0.MinusZero.Instance.root.Get(false, @"System\Lib\Music\Generator\'HarmonyMelodyTimeGenerator'"));
+            zm.AddEdge(linkMeta, m0.MinusZero.Instance.root.Get(false, @"System\Lib\Music\Generator\'SimpleTransformer'"));
 
-            ms.AddEdge(null, MinusZero.Instance.root.Get(false, @"System\Lib\Music\Instrument"));
+            ms.AddEdge(linkMeta, MinusZero.Instance.root.Get(false, @"System\Lib\Music\Instrument"));
 
-            ms.AddEdge(null, MinusZero.Instance.root.Get(false, @"System\Lib\Music\Chord"));
+            ms.AddEdge(linkMeta, MinusZero.Instance.root.Get(false, @"System\Lib\Music\Chord"));
 
 
             GraphUtil.CreateOrReplaceEdge(uxcontainer, creationPoolMeta, ms);
@@ -220,6 +221,6 @@ namespace m0.UIWpf.Commands
             IVertex song = VertexOperations.AddInstance(ms, songMeta);
 
             song.Value = "New Song";
-        }
+        }        
     }
 }

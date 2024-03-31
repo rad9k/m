@@ -89,7 +89,8 @@ namespace m0.Graph
 
             // to
 
-            IStore store = From.Store.StoreUniverse.GetStore(ToStoreTypeName, ToStoreIdentifier);
+            //IStore store = From.Store.StoreUniverse.GetStore(ToStoreTypeName, ToStoreIdentifier);
+            IStore store = MinusZero.Instance.GetStore(ToStoreTypeName, ToStoreIdentifier);
 
             if (store == null)
                 throw new Exception(ToStoreIdentifier + " store not found");
@@ -101,7 +102,8 @@ namespace m0.Graph
 
             // meta
 
-            store = From.Store.StoreUniverse.GetStore(MetaStoreTypeName, MetaStoreIdentifier);
+            //store = From.Store.StoreUniverse.GetStore(MetaStoreTypeName, MetaStoreIdentifier);
+            store = MinusZero.Instance.GetStore(MetaStoreTypeName, MetaStoreIdentifier);
 
             if (store == null)
                 throw new Exception(MetaStoreIdentifier + " store not found");
