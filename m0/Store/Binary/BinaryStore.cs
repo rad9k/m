@@ -58,6 +58,8 @@ namespace m0.Store.Binary
                 {
                     VertexIdentifiersDictionary = (Dictionary<object, IVertex>)formatter.Deserialize(readStream);
                     object RootIdentifier = formatter.Deserialize(readStream);
+                    VertexIdentifierCount = (long)formatter.Deserialize(readStream);
+
 
                     RestoreStoreDataInVertices();                    
 
@@ -97,6 +99,7 @@ namespace m0.Store.Binary
 
             formatter.Serialize(writeStream, VertexIdentifiersDictionary);
             formatter.Serialize(writeStream, Root.Identifier);
+            formatter.Serialize(writeStream, VertexIdentifierCount);
 
             writeStream.Close();
 
