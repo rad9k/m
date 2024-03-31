@@ -539,7 +539,8 @@ namespace m0_SYSTEM_GENERATE.Music
             SequenceEvent = GraphUtil.AddClass(Music, "SequenceEvent");
 
             GraphUtil.AddInherits(SequenceEvent, Event);
-            GraphUtil.AddAssociation(SequenceEvent, "Sequence", Sequence, 1, 1);
+            //GraphUtil.AddAssociation(SequenceEvent, "Sequence", Sequence, 1, 1);
+            GraphUtil.AddAggregation(SequenceEvent, "Sequence", Sequence, 1, 1); // TEMP
 
             // TRACK
 
