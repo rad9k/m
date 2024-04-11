@@ -760,6 +760,10 @@ namespace m0_SYSTEM_GENERATE.Music
 
             GraphUtil.LoadParseAndMove(@"_RES\Instrument\TR8S\TR8S_PitchSet.txt", TR8S, "'TR8S_PitchSet'");
 
+            IVertex MFB522 = Instrument.AddVertex(r.Get(false, @"System\Meta\ZeroUML\Package"), "MFB522");
+
+            GraphUtil.LoadParseAndMove(@"_RES\Instrument\MFB522\MFB522_PitchSet.txt", MFB522, "'MFB522_PitchSet'");
+
             // Chord
 
             IVertex Chord = Music.AddVertex(r.Get(false, @"System\Meta\ZeroUML\Package"), "Chord");

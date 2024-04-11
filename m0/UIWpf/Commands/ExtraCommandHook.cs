@@ -81,8 +81,8 @@ namespace m0.UIWpf.Commands
 
             if (storeName != "")
             {
-                if (!storeName.EndsWith(".m0t"))
-                    storeName += ".m0t";
+                if (!storeName.EndsWith(".m0j"))
+                    storeName += ".m0j";
 
                 IVertex baseVertex = contextMenu.EdgeVertex.Get(false, "To:");
 
@@ -187,12 +187,13 @@ namespace m0.UIWpf.Commands
 
         public static void NewMusicSpaceStore(IVertex baseVertex)
         {
-            IVertex ms = VertexOperations.AddInstance(baseVertex, musicSpaceMeta);
+            IEdge ms_Edge = VertexOperations.AddInstanceAndReturnEdge(baseVertex, musicSpaceMeta);
 
+            IVertex ms = ms_Edge.To;
             ms.Value = "New Music Space";
 
 
-            IVertex uxcontainer = UXContainer.CreateDefaultContainer(ms);
+            IVertex uxcontainer = UXContainer.CreateDefaultContainer(EdgeHelper.CreateTempEdgeVertex(ms_Edge));
 
             uxcontainer.Value = "Music Space";
 
