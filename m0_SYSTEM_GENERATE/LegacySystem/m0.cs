@@ -1080,9 +1080,9 @@ namespace m0
             //
             // import meta (?<name>) (?<link>)
 
-            IVertex importMeta = k.AddVertex(keyword, "import (?<name>) (?<link>) meta");
+            IVertex importMeta = k.AddVertex(keyword, "import meta (?<name>) (?<link>)");
 
-            importMeta.AddVertex(LegacySystem.Graph.EasyVertex.Get(smb, false, "$$ImportMeta"), "import[ ]+\"(?<name>.*)\"[ ]+@(?<link>[^ ]+)[ ]+meta[ ]*\\r");
+            importMeta.AddVertex(LegacySystem.Graph.EasyVertex.Get(smb, false, "$$ImportMeta"), "import[ ]+meta[ ]+\"(?<name>.*)\"[ ]+@(?<link>[^ ]+)[ ]*\\r");
 
             IVertex importMeta_name = importMeta.AddVertex(LegacySystem.Graph.EasyVertex.Get(smb, false, @"$ImportMeta"), "(?<name>)");
 
@@ -1116,9 +1116,9 @@ namespace m0
             //
             // import direct  (?<link>)
 
-            IVertex importDirect = k.AddVertex(keyword, "import (?<link>) direct");
+            IVertex importDirect = k.AddVertex(keyword, "import direct (?<link>)");
 
-            importDirect.AddVertex(LegacySystem.Graph.EasyVertex.Get(smb, false, "$$ImportDirect"), "import[ ]+@(?<link>[^ ]+)[ ]+direct[ ]*\\r");
+            importDirect.AddVertex(LegacySystem.Graph.EasyVertex.Get(smb, false, "$$ImportDirect"), "import[ ]+direct[ ]+@(?<link>[^ ]+)[ ]*\\r");
 
             IVertex importDirect_link = importDirect.AddVertex(LegacySystem.Graph.EasyVertex.Get(smb, false, @"$ImportDirect"), "(?<link>)");
 
@@ -1127,9 +1127,9 @@ namespace m0
             //
             // import direct meta (?<link>)
 
-            IVertex importDirectMeta = k.AddVertex(keyword, "import (?<link>) direct meta");
+            IVertex importDirectMeta = k.AddVertex(keyword, "import direct meta (?<link>)");
 
-            importDirectMeta.AddVertex(LegacySystem.Graph.EasyVertex.Get(smb, false, "$$ImportDirectMeta"), "import[ ]+@(?<link>[^ ]+)[ ]+direct[ ]+meta[ ]*\\r");
+            importDirectMeta.AddVertex(LegacySystem.Graph.EasyVertex.Get(smb, false, "$$ImportDirectMeta"), "import[ ]+direct[ ]+meta[ ]+@(?<link>[^ ]+)[ ]*\\r");
 
             IVertex importDirectMeta_link = importDirectMeta.AddVertex(LegacySystem.Graph.EasyVertex.Get(smb, false, @"$ImportDirectMeta"), "(?<link>)");
 
