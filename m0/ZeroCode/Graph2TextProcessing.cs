@@ -493,7 +493,12 @@ namespace m0.ZeroCode
         private void ImportImports_internal(IEdge e)
         {
             if (Imports.ContainsKey(e.Meta))
-                Imports[e.Meta].Add(e.To);
+            {
+                IList<IVertex> list = Imports[e.Meta];
+
+                if (!list.Contains(e.To))
+                    list.Add(e.To);
+            }
             else
             {
                 IList<IVertex> l = new List<IVertex>();
@@ -502,7 +507,7 @@ namespace m0.ZeroCode
 
                 Imports.Add(e.Meta, l);
             }
-        }
+        }        
 
         int tabTimes;
 
