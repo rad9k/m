@@ -154,7 +154,12 @@ namespace m0.ZeroCode
                 if (e.Meta == dict.NextAtomMeta)
                     linearizedMeta = MinusZero.Instance.Empty;
                 else
-                    linearizedMeta = e.Meta;
+                {
+                    if (sourceLinerizedDict.ContainsKey(e.Meta))
+                        linearizedMeta = sourceLinerizedDict[e.Meta];
+                    else
+                        linearizedMeta = e.Meta;
+                }
 
                 IVertex linearizedTo;
 

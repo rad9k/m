@@ -1728,7 +1728,9 @@ namespace m0.ZeroCode
         {
             IVertex v = ZeroCodeView.NextBasedExecutionForm_to_LinearExecutionForm_ProcessGraph(_graphBaseEdge.To);
 
-            BaseEdge = new EasyEdge(null, null, v);
+            // BaseEdge = new EasyEdge(null, null, v);            
+
+            BaseEdge = _graphBaseEdge;
         }
 
         public string Process(IEdge _graphBaseEdge)
@@ -1766,7 +1768,7 @@ namespace m0.ZeroCode
 
             //ImportImports(FormalTextLanguage.Get(false, "DefaultImports:"));
             ImportImports(GraphUtil.GetQueryOutFirst(FormalTextLanguage, "DefaultImports", null));
-            ImportImports(BaseEdge.To);
+            ImportImports(BaseEdge.To);            
             
             //AppendPrefix();
             AppendAsNew(BaseEdge.To);

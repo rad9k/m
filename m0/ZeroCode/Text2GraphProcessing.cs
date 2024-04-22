@@ -3148,12 +3148,10 @@ namespace m0.ZeroCode
                     CodeViewProcess();
 
                 ProcessToVertexMocksToLinks();
-                
                 MoveInEdgesComingFromOutsideOfSubGraphToParseRoot();
-                MoveTriggersToParseRoot();
+                MoveTriggersToParseRoot();                
                 DeleteAllEdgesFromBaseVertex();
-
-                MoveAllParseRootEdgesToBaseVertex();
+                MoveAllParseRootEdgesToBaseVertex();                
             }
             else
             {

@@ -1264,7 +1264,8 @@ namespace m0.Graph
 
             List<IEdge> edges = new List<IEdge>();
 
-            GetSubGraphAsEdgesWithoutLinks_Reccurent(iterationRoot, visited, edges);
+            if(!VertexOperations.IsLink(iterationRoot))
+                GetSubGraphAsEdgesWithoutLinks_Reccurent(iterationRoot, visited, edges);
 
             return edges;
         }
