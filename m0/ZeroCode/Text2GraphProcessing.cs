@@ -3075,18 +3075,15 @@ namespace m0.ZeroCode
 
         void DeleteAllEdgesFromBaseVertex()
         {
-           // IList<IVertex> toDestroyVertexList = new List<IVertex>(); // WTF
+           List<List<IEdge>> toDelete = new List<List<IEdge>>();
 
             foreach (IEdge e in baseVertex.ToList())
                 if (!GeneralUtil.CompareStrings(e.Meta, "$ParseRoot") && !GeneralUtil.CompareStrings(e.Meta, "$GraphChangeTrigger"))
-                    foreach (IEdge ee in GraphUtil.GetSubGraphAsEdgesWithoutLinksAsList(e))
-                       // if (VertexOperations.IsLink(ee))
-                            ee.From.DeleteEdge(ee);
-                        //else // WTF
-                          //  toDestroyVertexList.Add(ee.To);
-
-         //   foreach (IVertex v in toDestroyVertexList) //WTF
-           //     v.Dispose();
+                    toDelete.Add(GraphUtil.GetSubGraphAsEdgesWithoutLinksAsList(e));
+            
+            foreach(List<IEdge> edgesList in toDelete)
+                foreach(IEdge e in edgesList)                    
+                    e.From.DeleteEdge(e);
         }
 
         void MoveAllParseRootEdgesToBaseVertex()
