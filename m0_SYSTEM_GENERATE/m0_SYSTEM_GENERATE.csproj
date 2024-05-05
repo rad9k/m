@@ -84,6 +84,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+    <None Include="_RES\UXTemplate\ZeroUML.m0t" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\m0\m0.csproj">
@@ -125,6 +126,9 @@
     <None Include="_RES\Instrument\TR8S\TR8S_PitchSet.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="_RES\Instrument\MFB522\MFB522_PitchSet.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
