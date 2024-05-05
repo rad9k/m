@@ -469,10 +469,6 @@ namespace m0.ZeroCode
 
         void SourceAppend(string s)
         {
-            if (s.Contains("import"))
-            {
-                int x = 0;
-            }
             if (s.Contains("\r\n"))
             {
                 string NewLineStringPlusNewLine = getNewLineAndTabsString();
