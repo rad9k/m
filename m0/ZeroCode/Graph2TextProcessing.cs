@@ -769,15 +769,16 @@ namespace m0.ZeroCode
                 if (GraphUtil.GetValueAndCompareStrings(e.Meta, "$Import"))
                     importEdge = e;
 
-                if (GraphUtil.GetValueAndCompareStrings(e.Meta, "$Import"))
+                if (GraphUtil.GetValueAndCompareStrings(e.Meta, "$ImportDirect"))
                     importEdge = e;
 
-                if (GraphUtil.GetValueAndCompareStrings(e.Meta, "$Import"))
+                if (GraphUtil.GetValueAndCompareStrings(e.Meta, "$ImportDirectMeta"))
                     importEdge = e;
             }
 
             IEdge linkEdge = null;
 
+            
             foreach (IEdge e in km.MatchedEdges)
                 if (e.Meta == importEdge.To)
                     linkEdge = e;
@@ -794,7 +795,8 @@ namespace m0.ZeroCode
             string keyword = km.KeywordDefinition.Value.ToString();
 
 
-            keyword = keyword.Replace("(?<name>)", name);
+            if (!isDirect)
+                keyword = keyword.Replace("(?<name>)", name);
 
             keyword = keyword.Replace("(?<link>)", link);
 
