@@ -755,7 +755,7 @@ namespace m0.ZeroCode
             return null;
         }
 
-        bool AppendImportKeyword(IEdge keywordEdge, bool isMeta)
+        bool AppendImportKeyword(IEdge keywordEdge, bool isDirect, bool isMeta)
         {
             KeywordMatch km = KeywordMatchedSubGraphEdges[keywordEdge];
 
@@ -763,10 +763,16 @@ namespace m0.ZeroCode
 
             foreach (IEdge e in km.MatchedEdges)
             {
-                if (isMeta && GraphUtil.GetValueAndCompareStrings(e.Meta, "$ImportMeta"))
+                if (GraphUtil.GetValueAndCompareStrings(e.Meta, "$ImportMeta"))
                     importEdge = e;
 
-                if (!isMeta && GraphUtil.GetValueAndCompareStrings(e.Meta, "$Import"))
+                if (GraphUtil.GetValueAndCompareStrings(e.Meta, "$Import"))
+                    importEdge = e;
+
+                if (GraphUtil.GetValueAndCompareStrings(e.Meta, "$Import"))
+                    importEdge = e;
+
+                if (GraphUtil.GetValueAndCompareStrings(e.Meta, "$Import"))
                     importEdge = e;
             }
 
@@ -795,47 +801,18 @@ namespace m0.ZeroCode
             SourceAppend(keyword);
 
             return false;
-        }
-
-        bool IsImportKeyword(KeywordMatch km)
-        {
-            if (GraphUtil.ExistQueryOut(km.KeywordDefinition, "$$ImportMeta", null))
-                return true;
-
-            if (GraphUtil.ExistQueryOut(km.KeywordDefinition, "$$Import", null))
-                return true;
-
-            if (GraphUtil.ExistQueryOut(km.KeywordDefinition, "$$ImportDirect", null))
-                return true;
-
-            if (GraphUtil.ExistQueryOut(km.KeywordDefinition, "$$ImportDirectMeta", null))
-                return true;
-
-            return false;
-        }
-
-        bool isImportKeyword;
+        }                
 
         bool AppendKeyword(IEdge keywordEdge, bool isNested, bool ParentKmHasTabAddingOmmit)
         {
-            KeywordMatch km = KeywordMatchedSubGraphEdges[keywordEdge];
-
-            isImportKeyword = IsImportKeyword(km);
-
-            if (isImportKeyword)
-            {
-                int x = 0;
-            }
+            KeywordMatch km = KeywordMatchedSubGraphEdges[keywordEdge];            
 
             if (ParentKmHasTabAddingOmmit)
                 km.WasHereTabAddingOmmit = true;
 
-            if (BeenList_Keyword.Contains(keywordEdge))
-            {
-                isImportKeyword = false;
+            if (BeenList_Keyword.Contains(keywordEdge))            
                 return false;
-            }
-
+            
             BeenList_Keyword.Add(keywordEdge);
 
             bool whatToReturn = true;
@@ -866,10 +843,16 @@ namespace m0.ZeroCode
                     }
 
                 if (km.KeywordDefinition == dict.Import.keywordVertex)
-                    return AppendImportKeyword(keywordEdge, false);
+                    return AppendImportKeyword(keywordEdge, false, false);
 
                 if (km.KeywordDefinition == dict.ImportMeta.keywordVertex)
-                    return AppendImportKeyword(keywordEdge, true);
+                    return AppendImportKeyword(keywordEdge, false, true);
+
+                if (km.KeywordDefinition == dict.ImportDirect.keywordVertex)
+                    return AppendImportKeyword(keywordEdge, true, false);
+
+                if (km.KeywordDefinition == dict.ImportDirectMeta.keywordVertex)
+                    return AppendImportKeyword(keywordEdge, true, true);
 
 
                 int keywordManyRootBaseCount;
@@ -964,12 +947,10 @@ namespace m0.ZeroCode
                         tabTimes--;
 
                 }
-
-                isImportKeyword = false;
+                
                 return whatToReturn;
             }
-
-            isImportKeyword = false;
+            
             return false;
         }
 
