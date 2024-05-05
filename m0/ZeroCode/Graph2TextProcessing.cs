@@ -776,21 +776,26 @@ namespace m0.ZeroCode
                     importEdge = e;
             }
 
-            IEdge linkEdge = null;
+            IVertex linkVertex = null;
 
-            
-            foreach (IEdge e in km.MatchedEdges)
-                if (e.Meta == importEdge.To)
-                    linkEdge = e;
+            if (isDirect)
+                linkVertex = importEdge.To;
+            else
+                foreach (IEdge e in km.MatchedEdges)
+                    if (e.Meta == importEdge.To)
+                        linkVertex = e.To;
 
-            if (linkEdge == null)
+            if (linkVertex == null)
                 return false;
 
-            string name = ZeroCodeCommon.stringToNewVertexString(dict, importEdge.To.ToString());
+            string name = null;
+            
+            if (!isDirect)
+                name = ZeroCodeCommon.stringToNewVertexString(dict, importEdge.To.ToString());
 
             getLinkStringProcessing_FromRoot glsp = new getLinkStringProcessing_FromRoot();
 
-            string link = dict.CodeGraphLinkPrefix + glsp.Process(dict, this, linkEdge.To);
+            string link = dict.CodeGraphLinkPrefix + glsp.Process(dict, this, linkVertex);
 
             string keyword = km.KeywordDefinition.Value.ToString();
 
