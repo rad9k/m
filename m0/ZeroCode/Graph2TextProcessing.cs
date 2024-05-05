@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading;
 using System.Windows.Input;
 
 namespace m0.ZeroCode
@@ -468,6 +469,10 @@ namespace m0.ZeroCode
 
         void SourceAppend(string s)
         {
+            if (s.Contains("import"))
+            {
+                int x = 0;
+            }
             if (s.Contains("\r\n"))
             {
                 string NewLineStringPlusNewLine = getNewLineAndTabsString();
@@ -792,15 +797,44 @@ namespace m0.ZeroCode
             return false;
         }
 
+        bool IsImportKeyword(KeywordMatch km)
+        {
+            if (GraphUtil.ExistQueryOut(km.KeywordDefinition, "$$ImportMeta", null))
+                return true;
+
+            if (GraphUtil.ExistQueryOut(km.KeywordDefinition, "$$Import", null))
+                return true;
+
+            if (GraphUtil.ExistQueryOut(km.KeywordDefinition, "$$ImportDirect", null))
+                return true;
+
+            if (GraphUtil.ExistQueryOut(km.KeywordDefinition, "$$ImportDirectMeta", null))
+                return true;
+
+            return false;
+        }
+
+        bool isImportKeyword;
+
         bool AppendKeyword(IEdge keywordEdge, bool isNested, bool ParentKmHasTabAddingOmmit)
         {
             KeywordMatch km = KeywordMatchedSubGraphEdges[keywordEdge];
+
+            isImportKeyword = IsImportKeyword(km);
+
+            if (isImportKeyword)
+            {
+                int x = 0;
+            }
 
             if (ParentKmHasTabAddingOmmit)
                 km.WasHereTabAddingOmmit = true;
 
             if (BeenList_Keyword.Contains(keywordEdge))
+            {
+                isImportKeyword = false;
                 return false;
+            }
 
             BeenList_Keyword.Add(keywordEdge);
 
@@ -931,9 +965,11 @@ namespace m0.ZeroCode
 
                 }
 
+                isImportKeyword = false;
                 return whatToReturn;
             }
 
+            isImportKeyword = false;
             return false;
         }
 
