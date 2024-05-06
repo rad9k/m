@@ -5931,6 +5931,17 @@ namespace m0
         }
 
         void CreateSystemDataUXZeroUMLTemplate()
+        {            
+            IVertex sdu = Root.Get(false, @"System\Data\UX");          
+
+            IVertex sdut = sdu.AddVertex(null, "Templates");                        
+
+            GraphUtil.LoadParseAndMove(@"_RES\UXTemplate\ZeroUML.txt",
+                sdut, 
+                "ZeroUML");
+        }
+
+        void _CreateSystemDataUXZeroUMLTemplate()
         {
             IVertex smzu = Root.Get(false, @"System\Meta\ZeroTypes\UX");
 
@@ -6243,7 +6254,7 @@ namespace m0
                /*BackgroundColor*/null, null);
 
 
-        }
+        }        
 
         void CreateSystemDataUXZeroUMLTemplate_Parent()
         {
@@ -6414,9 +6425,9 @@ namespace m0
 
             CreateSystemDataUXColor();
 
-            //CreateSystemDataUXZeroUMLTemplate(); // <<<<<<<<<<<<<<<<<<<
+            CreateSystemDataUXZeroUMLTemplate(); // <<<<<<<<<<<<<<<<<<<
 
-            CreateSystemDataUXZeroUMLTemplate_Parent();
+            //CreateSystemDataUXZeroUMLTemplate_Parent();
 
             //CreateSystemDataUXZeroUMLTemplate_MSX();
 
