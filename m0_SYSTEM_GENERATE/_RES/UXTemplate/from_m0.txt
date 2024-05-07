@@ -1,3 +1,11 @@
+"VeryVeryLightRose"
+"VeryVeryLightVioletBlue"
+"VeryVeryLightAzure"
+"VeryVeryLightBlueGreen"
+"VeryVeryLightLimeGreen"
+"VeryVeryLightOrange"
+
+
 "Templates"
 	import @System\Meta\ZeroTypes\UX direct meta
 	<@UXTemplate :: "ZeroUML">
